@@ -29,8 +29,8 @@ class EFFECT_ANALYSIS : public EFFECT_BASE {
  */
 class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
 
-  static const int range_count = 16;
-  static const SAMPLE_SPECS::sample_t clip_amplitude = SAMPLE_SPECS::max_amplitude - SAMPLE_SPECS::max_amplitude / 16384.0f; // max-(max/2^15)
+  static const int range_count;
+  static const SAMPLE_SPECS::sample_t clip_amplitude;
 
   mutable std::vector<unsigned long int> num_of_samples; // number of samples processed
   mutable std::vector<std::vector<unsigned long int> > ranges;
