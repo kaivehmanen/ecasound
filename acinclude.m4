@@ -41,6 +41,8 @@ AC_DEFUN(AC_CHECK_CXX_NAMESPACE_SUPPORT,
 [
 AC_MSG_CHECKING(if C++ compiler supports namespaces)
 AC_LANG_CPLUSPLUS
+old_cxx_flags=$CXXFLAGS
+CXXFLAGS="-fno-exceptions $CXXFLAGS" # hack around gcc3.x feature
 AC_TRY_RUN(
 [
 #include <string>
@@ -66,7 +68,9 @@ int main(void)
 [
 	AC_MSG_RESULT(no.)
 ]
-)])
+)
+CXXFLAGS=$old_cxx_flags
+])
 
 ## ------------------------------------------------------------------------
 ## Find the meta object compiler in the PATH, in $QTDIR/bin, and some
