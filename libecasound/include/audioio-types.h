@@ -103,16 +103,55 @@ class AUDIO_IO_FILE : public AUDIO_IO_BUFFERED {
 
 /**
  * Virtual base class for real-time devices.
+ *
+ * Here, a realtime device...
+ *
+ * - is disabled after device is opened
+ *
+ * - is enabled with start()
+ *
+ * - once enabled, will handle I/O at a constant speed
+ *   based on the sample format paremeters
+ *
+ * - is disabled with stop()
+ *
  * @author Kai Vehmanen
  */
 class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
  
  public:
 
-  virtual bool is_realtime(void) const { return(true); }
+  /**
+   * Start prosessing sample data. Underruns will occur if the 
+   * calling program can't handle data at the speed of the 
+   * source device. Write_buffer() calls are blocked if necessary.
+   *
+   * ensure:
+   *  (io_mode() == si_read && readable() == true) || writable()
+   */
+  virtual void start(void) = 0;
+
+  /**
+   * Stop processing. Doesn't usually concern non-realtime devices.
+   * I/O is not allowed after this call. This should be used when 
+   * audio object is not going to be used for a while.
+   *
+   * ensure:
+   *  readable() == false
+   *  writable() == false
+   */
+  virtual void stop(void) = 0;
+
+  /**
+   * Estimed processing latency in samples.
+   */
+  virtual long int latency(void) const { return(0); }
+
+  //  virtual bool is_realtime(void) const { return(true); }
   virtual bool finished(void) const { return(is_open() == false); }
   virtual void seek_position(void) { }
   virtual long position_in_samples(void) const = 0;
+  virtual string status(void) const;
 
   AUDIO_IO_DEVICE(const string& name, 
 		  const SIMODE mode, 

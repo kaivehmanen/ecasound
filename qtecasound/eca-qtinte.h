@@ -14,6 +14,7 @@
 // #include "eca-qtsession.h"
 class QERuntimePosition;
 class QESession;
+class QEButtonRow;
 
 class QEInterface : public QWidget
 {
@@ -22,11 +23,8 @@ public:
   QEInterface(ECA_CONTROLLER* control, const ECA_SESSION* session, QWidget *parent=0, const char *name=0 );
 
 protected:
-  void keyPressEvent(QKeyEvent*  kevent);
-  void timerEvent( QTimerEvent * );
   void focusInEvent ( QFocusEvent * );
   void focusOutEvent ( QFocusEvent * );
-  //  void resizeEvent( QResizeEvent * );
 
 public slots:
   void emsg_general(void);
@@ -38,6 +36,7 @@ public slots:
   void emsg_rewind(void);
   void emsg_rw_begin(void);
   void emsg_status(void);
+  void emsg_csstatus(void);
   void emsg_estatus(void);
   void emsg_fstatus(void);
   void emsg_cstatus(void);
@@ -45,10 +44,9 @@ public slots:
   void get_focus(void);
 
 private slots:
-  void init_signallevel(void);
   void init_sessionsetup(void);
   void update_statusbar(void);
-  void update_qtbuttons(void);
+  void update_runtimebar(void);
   void not_implemented(void);
   void sessionsetup_closed(void);
 
@@ -63,19 +61,18 @@ private:
   QLineEdit* tekstirivi;
   QStatusBar* statusbar;
 
-  QERuntimePosition* rpos;
-  QESession* ssetup;
+  QEButtonRow* buttonrow;
 
-  bool sessionsetup_opened;
+  QERuntimePosition* rpos;
+  QESession* child_setup;
 
   ECA_CONTROLLER* ctrl;
   const ECA_SESSION* ecaparams;
 
-  void init_shortcuts(void);
   void init_statusbar(void);
-  void init_qtbuttons(QBoxLayout* buttons);
+  void init_buttons();
+  void init_runtimebar(QBoxLayout* buttons);
   void init_bottomrow(QBoxLayout* bottomrow);
-  void init_buttons(QBoxLayout* buttons);
   void init_textinput(QBoxLayout* textinput);
   void init_debugout(QBoxLayout* debugout);
 };

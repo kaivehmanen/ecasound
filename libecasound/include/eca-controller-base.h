@@ -88,6 +88,18 @@ class ECA_CONTROLLER_BASE : public DEFINITION_BY_CONTRACT {
   void stop(void);
 
   /**
+   * Start the processing engine and block until 
+   * processing is finished.
+   *
+   * require:
+   *  is_connected() == true
+   *
+   * ensure:
+   *  is_finished() == true
+   */
+  void run(void);
+
+  /**
    * Stop the processing engine and throw an ECA_QUIT exception.
    */
   void quit(void);

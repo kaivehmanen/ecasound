@@ -1,6 +1,8 @@
 #ifndef _ECA_QT_CHAINSETUP_H
 #define _ECA_QT_CHAINSETUP_H
 
+#include <vector>
+
 #include <qwidget.h>
 #include <qlayout.h>
 #include <qlistview.h>
@@ -8,8 +10,8 @@
 class AUDIO_IO;
 class ECA_CONTROLLER;
 class ECA_CHAINSETUP;
-
-#include "eca-qtwaveform.h"
+class QEButtonRow;
+class QEChain;
 
 class QEChainsetup : public QWidget
 {
@@ -21,12 +23,10 @@ public slots:
  void update_filesetuplist(bool clean = true);
  void update_chainsetuplist(void);
  void update_chainsetuplist_clean(void);
- void update_layout(void);
  // --
  void button_add_file(void);
  void button_remove_file(void);
  void button_chainselect(void);
- void init_waveform(void);
  void init_waveedit(void);
  // --
  void init_chainview(void);
@@ -37,17 +37,18 @@ public slots:
  void button_chain_bypass(void);
  // --
  void close_session(void);
+ void child_closed(void);
 
 private slots:
   void not_implemented(void);
 
 signals:
-  void close_waveforms(void); 
+ void widget_closed(void);
 
 protected:
 
+  void closeEvent( QCloseEvent * );
   void timerEvent( QTimerEvent * );
-  //  void keyPressEvent(QKeyEvent*  kevent);
 
  private:
 
@@ -66,18 +67,18 @@ protected:
   void init_file_buttons(void);
   void init_chain_buttons(void);
 
-  void init_shortcuts(void);
-
   QBoxLayout* topLayout;
-  QBoxLayout* gen_buttons;
-  QBoxLayout* file_buttons;
-  QBoxLayout* chain_buttons;
+
+  QEButtonRow* gen_buttons;
+  QEButtonRow* file_buttons;
+  QEButtonRow* chain_buttons;
 
   ECA_CONTROLLER* ctrl;
   const ECA_CHAINSETUP* chainsetup;
 
   QListView* filesetupview;
   QListView* chainsetupview;
+  QEChain* child_chain;
 
   QListViewItem* newitem;
   vector<AUDIO_IO*>::size_type aiod_sizet;
@@ -92,5 +93,3 @@ protected:
 };
 
 #endif
-
-

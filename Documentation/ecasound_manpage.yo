@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (17.01.2000)
+       (05.02.2000)
        ()
        (Multimedia software)
 
@@ -200,8 +200,8 @@ be obvious) nor to ALSA's loopback device.
 em(SPECIAL INPUT/OUTPUT DEVICES)
 dit(ALSA devices)
 When using ALSA drivers, in addition to /dev/snd/pcm* files, you can 
-also use option syntax bf(-i[:]alsa,card_number,device_number). You
-can also use individual subdevices, bf(-i[:]alsa,card_number,device_number,subdevice_number).
+also use option syntax bf(-i[:]alsa,card_number,device_number). If 
+you need to specify individual subdevices, bf(-i[:]alsa,card_number,device_number,subdevice_number).
 
 dit(ALSA loopback device)
 By using the ALSA loopback system, you can grab audio data from any
@@ -209,6 +209,13 @@ other ALSA pcm device. Option syntax is
 bf(-i[:]alsalb,card_number,device_number,loop_mode). Loopmode 
 is either bf("p") for looping a playback device or bf("c") for
 a capture device.
+
+dit(Loop device) 
+Loop devices make it possible to route data between chains.
+Option syntax is bf(-[io][:]loop,id_number). If you add a loop 
+output with id '1', all data written to this output is routed
+to all loop inputs with id '1'. You can attach the same loop
+device to multiple inputs and outputs.
 
 dit(Null inputs/outputs)
 If you specify "null" or "/dev/null" as the input or output, 
@@ -419,25 +426,32 @@ during processing. All controllers are attached to the selected
 (=usually the last specified effect/chainop) effect. The first 
 three parameters are common for all controllers. 'fx_param' 
 specifies the parameter to be controlled. Value '1' means 
-the first parameter, '2' the second and so on. 'low_range' 
-and 'high_range' set the value range. You really should see
+the first parameter, '2' the second and so on. 'start_value' 
+and 'end_value' set the value range. You really should see
 em(examples.html) for some more info. 
 
-dit(-kos:fx_param,low_range,high_range,freq,i_phase)
+dit(-kos:fx_param,start_value,end_value,freq,i_phase)
 Sine oscillator with frequency of 'freq' Hz and initial phase
 of 'i_phase' times pi. 
 
-dit(-kf:fx_param,low_range,high_range,freq,genosc_number)
+dit(-kf:fx_param,start_value,end_value,freq,genosc_number)
 Generic oscillator. 'genosc_number' is the number of the 
 oscillator preset to be loaded. The location for the preset
 file is taken from ./ecasoundrc (see em(ecasoundrc(5))).
 
-dit(-kl:fx_param,low_range,high_range,time_in_seconds)
-Linear envelope that starts from 'low_range' and linearly 
-increases to 'high_range' during 'time_in_seconds'. Can
+dit(-kl:fx_param,start_value,end_value,time_in_seconds)
+Linear envelope that starts from 'start_value' and linearly 
+increases to 'end_value' during 'time_in_seconds'. Can
 be used for fadeins and fadeouts.
 
-dit(-km:fx_param,low_range,high_range,controller,channel)
+dit(-kl2:fx_param,start_value,end_value,1st_stage_length,2nd_stage_length,midpoint_value_%)
+Two-stage linear envelope that starts from 'start_value' and linearly 
+increases to the middle value (specified in percents) during 
+'1st_stage_length' seconds. Then it continues to 'end_value' 
+during '2nd_stage_length' seconds. A more versatile for doing
+fade-ins and fade-outs.
+
+dit(-km:fx_param,start_value,end_value,controller,channel)
 MIDI continuous controller (control change messages). 
 Messages on the MIDI-channel 'channel' that are coming from
 controller number 'controller' are used as the controller

@@ -27,6 +27,7 @@
 #include "osc-gen.h"
 #include "osc-sine.h"
 #include "linear-envelope.h"
+#include "two-stage-linear-envelope.h"
 
 map<string, DYNAMIC_OBJECT*> ECA_CONTROLLER_MAP::object_map;
 map<string, string> ECA_CONTROLLER_MAP::object_prefix_map;
@@ -42,9 +43,10 @@ void ECA_CONTROLLER_MAP::register_default_objects(void) {
   static bool defaults_registered = false;
   if (defaults_registered) return;
   defaults_registered = true;
-  
+
   register_object("kf", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR()));
   register_object("kl", new GENERIC_CONTROLLER(new LINEAR_ENVELOPE()));
+  register_object("kl2", new GENERIC_CONTROLLER(new TWO_STAGE_LINEAR_ENVELOPE()));
   register_object("km", new GENERIC_CONTROLLER(new MIDI_CONTROLLER()));
   register_object("kos", new GENERIC_CONTROLLER(new SINE_OSCILLATOR()));
 }

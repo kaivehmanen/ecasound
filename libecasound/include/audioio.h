@@ -124,50 +124,6 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
    */
   virtual void close(void) = 0;
 
-  /**
-   * Start prosessing sample data. Underruns will occur if the 
-   * calling program can't handle data at the speed of the 
-   * source device. Write_buffer() calls are blocked if necessary.
-   *
-   * ensure:
-   *  (io_mode() == si_read && readable() == true) || writable()
-   */
-  virtual void start(void) { }
-
-  /**
-   * Stop processing. Doesn't usually concern non-realtime devices.
-   * I/O is not allowed after this call. This should be used when 
-   * audio object is not going to be used for a while.
-   *
-   * ensure:
-   *  readable() == false
-   *  writable() == false
-   */
-  virtual void stop(void) { } 
-
-  // ===================================================================
-  // Features (virtual)
-
-  /**
-   * With this method, derived class can specify whether it
-   * represents a realtime device? Here, a realtime device...
-   *
-   * - is disabled after device is opened
-   *
-   * - is enabled with start()
-   *
-   * - once enabled, will handle I/O at a constant speed
-   *   based on the sample format paremeters
-   *
-   * - is disabled with stop()
-   */
-  virtual bool is_realtime(void) const = 0;
-
-  /**
-   * Estimed processing latency in samples.
-   */
-  virtual long int latency(void) const { return(0); }
-
   // ===================================================================
   // Status and info
 

@@ -20,10 +20,9 @@ class FINITE_ENVELOPE : public CONTROLLER_SOURCE {
   /**
    * Constructor
    * 
-   * @param freq Oscillator frequency
-   * @param phase Initial phase, multiple of pi
+   * @param time_in_seconds Envelope length in seconds
    */
-  FINITE_ENVELOPE(parameter_type time_in_seconds) : length_in_seconds_rep(time_in_seconds) { } 
+  FINITE_ENVELOPE(parameter_type time_in_seconds = 0.0) : length_in_seconds_rep(time_in_seconds) { } 
 
  protected:
 

@@ -576,7 +576,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void add_chain_operator(CHAIN_OPERATOR* cotmp);
 
   /** 
-   * Get a const to the Nth chain operator. If chain 
+   * Get a const pointer to the Nth chain operator. If chain 
    * operator is not valid, 0 is returned.
    *
    * require:

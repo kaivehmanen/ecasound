@@ -126,7 +126,7 @@ void ECA_CONTROLLER_OBJECTS::select_chainsetup_by_index(const string& index) {
   for(vector<ECA_CHAINSETUP*>::size_type p = 0; 
       p != session_rep->chainsetups.size();
       p++) {
-    if (index_number == p + 1) {
+    if (index_number == static_cast<int>(p + 1)) {
       select_chainsetup(session_rep->chainsetups[p]->name());
       break;
     }
@@ -664,14 +664,14 @@ void ECA_CONTROLLER_OBJECTS::select_audio_object_by_index(const string& index) {
   vector<AUDIO_IO*>::size_type p = 0;
   if (index[0] == 'i') {
     for(p = 0; p != selected_chainsetup_rep->inputs.size(); p++) {
-      if (index_number == p + 1) {
+      if (index_number == static_cast<int>(p + 1)) {
 	selected_audio_object_rep = selected_chainsetup_rep->inputs[p];
       }
     }
   }  
   else if (index[0] == 'o') {
     for(p = 0; p != selected_chainsetup_rep->outputs.size(); p++) {
-      if (index_number == p + 1) {
+      if (index_number == static_cast<int>(p + 1)) {
 	selected_audio_object_rep = selected_chainsetup_rep->outputs[p];
       }
     }
@@ -859,7 +859,7 @@ CHAIN_OPERATOR* ECA_CONTROLLER_OBJECTS::get_chain_operator(int chainop_id) const
 	p != selected_chainsetup_rep->chains.size();
 	p++) {
       if (selected_chainsetup_rep->chains[p]->name() == *o) {
-	if (chainop_id - 1 < selected_chainsetup_rep->chains[p]->chainops.size())
+	if (chainop_id - 1 < static_cast<int>(selected_chainsetup_rep->chains[p]->chainops.size()))
 	  return(selected_chainsetup_rep->chains[p]->chainops[chainop_id - 1]);
 	else
 	  return(0);
@@ -867,6 +867,7 @@ CHAIN_OPERATOR* ECA_CONTROLLER_OBJECTS::get_chain_operator(int chainop_id) const
     }
     ++o;
   }
+  return(0);
 }
 
 void ECA_CONTROLLER_OBJECTS::remove_chain_operator(int chainop_id) { 
@@ -920,7 +921,7 @@ void ECA_CONTROLLER_OBJECTS::set_chain_operator_parameter(int chainop_id,
 	  ecasound_queue.push_back(ECA_PROCESSOR::ep_copp_value, value);
 	}
 	else {
-	  if (chainop_id < selected_chainsetup_rep->chains[p]->chainops.size() + 1) {
+	  if (chainop_id < static_cast<int>(selected_chainsetup_rep->chains[p]->chainops.size() + 1)) {
 	    selected_chainsetup_rep->chains[p]->select_chain_operator(chainop_id);
 	    selected_chainsetup_rep->chains[p]->set_parameter(param,value);
 	  }

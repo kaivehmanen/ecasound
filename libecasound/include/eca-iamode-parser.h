@@ -27,6 +27,7 @@ class ECA_IAMODE_PARSER {
     ec_exit,
     ec_start,
     ec_stop,
+    ec_run,
     ec_debug,
     // --
     ec_st_general,

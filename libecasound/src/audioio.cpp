@@ -42,15 +42,10 @@ string AUDIO_IO::status(void) const {
   MESSAGE_ITEM mitem;
   mitem.setprecision(3);
 
-  if (is_realtime()) {
-    mitem << "realtime-device, processed ";
-    mitem << position_in_samples() << " samples.";
-  }
-  else {
-    mitem << "position (" << position_in_seconds_exact();
-    mitem << "/" << length_in_seconds_exact();
-    mitem << ") seconds.";
-  }
+  mitem << "position (" << position_in_seconds_exact();
+  mitem << "/" << length_in_seconds_exact();
+  mitem << ") seconds.";
+  
   return(mitem.to_string());
 }
 

@@ -124,3 +124,12 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   position_in_samples_advance(sbuf->length_in_samples());
   extend_position();
 }
+
+string AUDIO_IO_DEVICE::status(void) const {
+  MESSAGE_ITEM mitem;
+
+  mitem << "realtime-device, processed ";
+  mitem << position_in_samples() << " samples.";
+
+  return(mitem.to_string());
+}

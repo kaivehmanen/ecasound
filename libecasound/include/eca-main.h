@@ -9,12 +9,13 @@
 #include <kvutils/kvutils.h>
 
 #include "samplebuffer.h"
+#include "eca-chainsetup.h"
 
 class AUDIO_IO;
+class AUDIO_IO_DEVICE;
 class ECA_SESSION;
 class CHAIN;
 class CHAIN_OPERATOR;
-class ECA_CHAINSETUP;
 
 extern VALUE_QUEUE ecasound_queue;
 
@@ -59,10 +60,6 @@ private:
   pthread_t chain_thread;
   struct timespec sleepcount;
 
-  bool rt_infiles, rt_outfiles;
-  bool nonrt_infiles;
-  bool nonrt_outfiles;
-
   bool was_running;
   bool end_request;
   bool continue_request;
@@ -81,8 +78,16 @@ private:
   vector<AUDIO_IO*>* inputs;
   vector<AUDIO_IO*>* outputs;
   vector<CHAIN*>* chains;
-  vector<long int> input_start_pos;
-  vector<long int> output_start_pos;
+
+  // ---
+  // Various audio objects groupings
+  // ---
+  vector<AUDIO_IO_DEVICE*> realtime_inputs;
+  vector<AUDIO_IO_DEVICE*> realtime_outputs;
+  vector<AUDIO_IO_DEVICE*> realtime_objects;
+  vector<AUDIO_IO*> non_realtime_inputs;
+  vector<AUDIO_IO*> non_realtime_outputs;
+  vector<AUDIO_IO*> non_realtime_objects;
 
   // ---
   // Data objects
@@ -91,15 +96,14 @@ private:
   vector<pthread_mutex_t*> chain_muts;
   vector<pthread_cond_t*> chain_conds;
   vector<SAMPLE_BUFFER> inslots;
+  vector<long int> input_start_pos;
+  vector<long int> output_start_pos;
+  vector<int> input_chain_count;
+  vector<int> output_chain_count;
 
   SAMPLE_BUFFER mixslot;
   long int buffersize_rep;
-
-  int input_sync_index;
-  int output_sync_index;
-
-  vector<int> input_chain_count;
-  vector<int> output_chain_count;
+  ECA_CHAINSETUP::EP_MM_MODE mixmode;
 
   int input_count, output_count, chain_count;
 
@@ -166,9 +170,13 @@ private:
    */
   void trigger_outputs(void);
 
+  void init_variables(void);
   void init_connection_to_chainsetup(void) throw(ECA_ERROR*);
-  void init_status_variables(void);
+  void init_multitrack_mode(void);
   void init_mix_method(void);
+  void init_inputs(void);
+  void init_outputs(void);
+  void init_chains(void);
 
   bool is_slave_output(AUDIO_IO* aiod) const;
 

@@ -26,7 +26,7 @@ htmlcommand(
 
 manpage(qtecasound)
        (1)
-       (13.12.1999)
+       (30.01.2000)
        ()
        (Multimedia software)
 
@@ -70,8 +70,8 @@ dit(Keyboard shortcuts)
 My goal is that qtecasound can be used without a mouse. Shortcuts 
 work everywhere. All pushbuttons have a short description and 
 shortcut keys are marked with parenthesis (for example: "S(t)art").
-Shortcuts em(a), em(A) and em(ctrl+a) all do the same thing.
-This applies to all shortcut keys.
+Shortcuts are triggered using ALT-key. This applies to all shortcut 
+keys.
 
 enddit()
 

@@ -32,6 +32,10 @@ void ECA_CONTROL_POSITION::length_in_samples(long pos) {
   length_set_rep = true;
 }
 
+void ECA_CONTROL_POSITION::change_position(double  samples) {
+ change_position(static_cast<long>(samples * srate_rep));
+}
+
 void ECA_CONTROL_POSITION::length_in_seconds(double pos_in_seconds) { 
   length_in_samples(pos_in_seconds * srate_rep);
 }

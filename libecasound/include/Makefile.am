@@ -26,7 +26,8 @@ ecasound_audioio_src = 	audioio-cdr.h \
 			audioio-rtnull.h \
 			audioio-mikmod.h \
 			audioio-types.h \
-			audioio-alsa2.h
+			audioio-alsa2.h \
+			audioio-loop.h
 
 ecasound_controller_src = \
 	generic-controller.h \
@@ -36,7 +37,8 @@ ecasound_controller_src = \
 	osc-gen.h \
 	osc-sine.h \
 	finite-envelope.h \
-	linear-envelope.h
+	linear-envelope.h \
+	two-stage-linear-envelope.h
 
 ecasound_general_src = 	eca-chain.h \
 			eca-chainop.h \

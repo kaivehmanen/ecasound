@@ -94,11 +94,11 @@ bin_PROGRAMS = $(qt_binaries)
 # ---
 # qtecasound
 # ---
-@COMPILE_QTECASOUND_TRUE@ecasound_qt_src = eca-qtdebug.cpp 			eca-qtinte.cpp 			eca-qtlevelmeter.cpp 			eca-qtmain.cpp 			eca-qtrtposition.cpp 			eca-qtsignallevel.cpp 			eca-qtwaveform.cpp 			qtdebug_if.cpp 			eca-qtwavedata.cpp 			eca-qtsession.cpp 			eca-qtchainsetup.cpp 			eca-qtchain.cpp 			eca-qtiodevdialog.cpp 			qstringdialog.cpp 			eca-qtchainselectdialog.cpp
+@COMPILE_QTECASOUND_TRUE@ecasound_qt_src = eca-qtdebug.cpp 			eca-qtinte.cpp 			eca-qtlevelmeter.cpp 			eca-qtmain.cpp 			eca-qtrtposition.cpp 			eca-qtsignallevel.cpp 			qtdebug_if.cpp 			eca-qtsession.cpp 			eca-qtchainsetup.cpp 			eca-qtchain.cpp 			eca-qtiodevdialog.cpp 			eca-qtchainselectdialog.cpp 			qestringdialog.cpp 			qebuttonrow.cpp
 
-@COMPILE_QTECASOUND_TRUE@ecasound_qt_includes = eca-qtdebug.h 			eca-qtinte.h 			eca-qtlevelmeter.h 			eca-qtchainselectdialog.h 			qstringdialog.h 			eca-qtiodevdialog.h 			eca-qtchain.h 		 	eca-qtchainsetup.h 			eca-qtsession.h  			eca-qtwavedata.h 			qtdebug_if.h 			eca-qtwaveform.h 			eca-qtrtposition.h 			eca-qtmain.h 			eca-qtsignallevel.h
+@COMPILE_QTECASOUND_TRUE@ecasound_qt_includes = eca-qtdebug.h 			eca-qtinte.h 			eca-qtlevelmeter.h 			eca-qtchainselectdialog.h 			eca-qtiodevdialog.h 			eca-qtchain.h 		 	eca-qtchainsetup.h 			eca-qtsession.h  			qtdebug_if.h 			eca-qtrtposition.h 			eca-qtmain.h 			eca-qtsignallevel.h 			qestringdialog.h 			qebuttonrow.h
 
-@COMPILE_QTECASOUND_TRUE@ecasound_qt_mocs = eca-qtdebug_moc.cpp 			eca-qtinte_moc.cpp 			eca-qtchainselectdialog_moc.cpp 			qstringdialog_moc.cpp 			eca-qtiodevdialog_moc.cpp 			eca-qtchain_moc.cpp 			eca-qtchainsetup_moc.cpp 			eca-qtsession_moc.cpp 			eca-qtwaveform_moc.cpp 			eca-qtsignallevel_moc.cpp 			eca-qtrtposition_moc.cpp
+@COMPILE_QTECASOUND_TRUE@ecasound_qt_mocs = eca-qtdebug_moc.cpp 			eca-qtinte_moc.cpp 			eca-qtchainselectdialog_moc.cpp 			eca-qtiodevdialog_moc.cpp 			eca-qtchain_moc.cpp 			eca-qtchainsetup_moc.cpp 			eca-qtsession_moc.cpp 			eca-qtsignallevel_moc.cpp 			eca-qtrtposition_moc.cpp 			qestringdialog_moc.cpp 			qebuttonrow_moc.cpp
 
 @COMPILE_QTECASOUND_TRUE@qtecasound_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
@@ -128,31 +128,31 @@ LIBS = @LIBS@
 @COMPILE_QTECASOUND_TRUE@qtecasound_OBJECTS =  eca-qtdebug.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtinte.o eca-qtlevelmeter.o eca-qtmain.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtrtposition.o eca-qtsignallevel.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtwaveform.o qtdebug_if.o eca-qtwavedata.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtsession.o eca-qtchainsetup.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtchain.o eca-qtiodevdialog.o \
-@COMPILE_QTECASOUND_TRUE@qstringdialog.o eca-qtchainselectdialog.o \
+@COMPILE_QTECASOUND_TRUE@qtdebug_if.o eca-qtsession.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtchainsetup.o eca-qtchain.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtiodevdialog.o eca-qtchainselectdialog.o \
+@COMPILE_QTECASOUND_TRUE@qestringdialog.o qebuttonrow.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtdebug_moc.o eca-qtinte_moc.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtchainselectdialog_moc.o \
-@COMPILE_QTECASOUND_TRUE@qstringdialog_moc.o eca-qtiodevdialog_moc.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtchain_moc.o eca-qtchainsetup_moc.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtsession_moc.o eca-qtwaveform_moc.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.o eca-qtrtposition_moc.o
+@COMPILE_QTECASOUND_TRUE@eca-qtiodevdialog_moc.o eca-qtchain_moc.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtchainsetup_moc.o eca-qtsession_moc.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.o eca-qtrtposition_moc.o \
+@COMPILE_QTECASOUND_TRUE@qestringdialog_moc.o qebuttonrow_moc.o
 @COMPILE_QTECASOUND_TRUE@qtecasound_DEPENDENCIES =  \
 @COMPILE_QTECASOUND_TRUE@$(top_builddir)/libecasound/src/libecasound.la
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_OBJECTS =  eca-qtdebug.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtinte.o eca-qtlevelmeter.o eca-qtmain.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtrtposition.o eca-qtsignallevel.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtwaveform.o qtdebug_if.o eca-qtwavedata.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtsession.o eca-qtchainsetup.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtchain.o eca-qtiodevdialog.o \
-@COMPILE_QTECASOUND_TRUE@qstringdialog.o eca-qtchainselectdialog.o \
+@COMPILE_QTECASOUND_TRUE@qtdebug_if.o eca-qtsession.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtchainsetup.o eca-qtchain.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtiodevdialog.o eca-qtchainselectdialog.o \
+@COMPILE_QTECASOUND_TRUE@qestringdialog.o qebuttonrow.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtdebug_moc.o eca-qtinte_moc.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtchainselectdialog_moc.o \
-@COMPILE_QTECASOUND_TRUE@qstringdialog_moc.o eca-qtiodevdialog_moc.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtchain_moc.o eca-qtchainsetup_moc.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtsession_moc.o eca-qtwaveform_moc.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.o eca-qtrtposition_moc.o
+@COMPILE_QTECASOUND_TRUE@eca-qtiodevdialog_moc.o eca-qtchain_moc.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtchainsetup_moc.o eca-qtsession_moc.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.o eca-qtrtposition_moc.o \
+@COMPILE_QTECASOUND_TRUE@qestringdialog_moc.o qebuttonrow_moc.o
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_DEPENDENCIES =  \
 @COMPILE_QTECASOUND_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
 CXXFLAGS = @CXXFLAGS@
@@ -183,9 +183,9 @@ DEP_FILES =  .deps/eca-qtchain.P .deps/eca-qtchain_moc.P \
 .deps/eca-qtmain.P .deps/eca-qtrtposition.P \
 .deps/eca-qtrtposition_moc.P .deps/eca-qtsession.P \
 .deps/eca-qtsession_moc.P .deps/eca-qtsignallevel.P \
-.deps/eca-qtsignallevel_moc.P .deps/eca-qtwavedata.P \
-.deps/eca-qtwaveform.P .deps/eca-qtwaveform_moc.P .deps/qstringdialog.P \
-.deps/qstringdialog_moc.P .deps/qtdebug_if.P
+.deps/eca-qtsignallevel_moc.P .deps/qebuttonrow.P \
+.deps/qebuttonrow_moc.P .deps/qestringdialog.P \
+.deps/qestringdialog_moc.P .deps/qtdebug_if.P
 SOURCES = $(qtecasound_SOURCES) $(qtecasound_debug_SOURCES)
 OBJECTS = $(qtecasound_OBJECTS) $(qtecasound_debug_OBJECTS)
 
@@ -454,15 +454,14 @@ mostlyclean distclean maintainer-clean
 
 #qlistview-dumb.cpp: qlistview-dumb.h
 #	$(MOC) -o qlistview-dumb_moc.cpp qlistview-dumb.h
-@COMPILE_QTECASOUND_TRUE@qstringdialog_moc.cpp: $(srcdir)/qstringdialog.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o qstringdialog_moc.cpp $(srcdir)/qstringdialog.h
-
+@COMPILE_QTECASOUND_TRUE@qestringdialog_moc.cpp: $(srcdir)/qestringdialog.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o qestringdialog_moc.cpp $(srcdir)/qestringdialog.h
+@COMPILE_QTECASOUND_TRUE@qebuttonrow_moc.cpp: $(srcdir)/qebuttonrow.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o qebuttonrow_moc.cpp $(srcdir)/qebuttonrow.h
 @COMPILE_QTECASOUND_TRUE@eca-qtinte_moc.cpp: $(srcdir)/eca-qtinte.h
 @COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtinte_moc.cpp $(srcdir)/eca-qtinte.h
 @COMPILE_QTECASOUND_TRUE@eca-qtdebug_moc.cpp: $(srcdir)/eca-qtdebug.h
 @COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtdebug_moc.cpp $(srcdir)/eca-qtdebug.h
-@COMPILE_QTECASOUND_TRUE@eca-qtwaveform_moc.cpp: $(srcdir)/eca-qtwaveform.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtwaveform_moc.cpp $(srcdir)/eca-qtwaveform.h
 @COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.cpp: $(srcdir)/eca-qtsignallevel.h
 @COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtsignallevel_moc.cpp $(srcdir)/eca-qtsignallevel.h
 @COMPILE_QTECASOUND_TRUE@eca-qtrtposition_moc.cpp: $(srcdir)/eca-qtrtposition.h

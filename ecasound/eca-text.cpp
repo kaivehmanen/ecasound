@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-text.cpp: Textmode user-interface routines for ecasound.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include "../config.h"
+
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
 #include <signal.h>
+#include <cstdio>
 
 #include <kvutils.h>
 
@@ -32,6 +35,9 @@
 #include <eca-version.h>
 #include <eca-debug.h>
 #include <eca-error.h>
+
+#include <curses.h>
+#include <term.h>
 
 #define READLINE_LIBRARY
 #include <../readline-4.0/readline.h>
@@ -69,8 +75,8 @@ int main(int argc, char *argv[])
 	cline.has("stdout") || 
 	cline.has('q'))
       ecadebug->disable();
-    
-    ecadebug->msg(print_header());
+
+    print_header();
 
     ecaparams = new ECA_SESSION(cline);
     global_pointer_to_ecaparams = ecaparams;  // used only for signal handling! 
@@ -117,15 +123,24 @@ void signal_handler(int signum) {
   exit(0);
 }
 
-string print_header(void) 
-{
-  MESSAGE_ITEM mout;
+void print_header(void) {
+#ifdef USE_NCURSES
+  //  clear();
+  putp(tigetstr("smm"));
+  //  newterm(0, 1, 0);
+#endif
 
-  mout << "****************************************************************************\n";
-  mout << "*                [1mecasound " << ecasound_version << " (C) 1997-2000 Kai Vehmanen[0m            *\n";
-  mout << "****************************************************************************\n";
-  
-  return(mout.to_string());
+  cout << "****************************************************************************\n";
+  cout << "*";
+#ifdef USE_NCURSES
+  putp(tigetstr("bold"));
+#endif
+  cout << "               ecasound " << ecasound_version << " (C) 1997-2000 Kai Vehmanen              ";
+#ifdef USE_NCURSES
+  putp(tigetstr("rmso"));
+#endif
+  cout << "*\n";
+  cout << "****************************************************************************\n";
 }
 
 void start_iactive(ECA_SESSION* param) {

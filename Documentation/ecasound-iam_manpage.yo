@@ -30,7 +30,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (17.01.2000)
+       (05.02.2000)
        ()
        (Multimedia software)
 
@@ -58,6 +58,9 @@ Processing is started (play).
 
 dit(stop, s)
 Stop processing. 
+
+dit(run)
+Like 'start' but blocks until processing is finished.
 
 dit(debug 'debug-level')
 Set debug level to 'debug-level'. Notice that client programs can

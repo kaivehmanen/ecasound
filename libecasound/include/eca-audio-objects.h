@@ -2,10 +2,12 @@
 #define _ECA_AUDIO_OBJECTS_H
 
 #include <vector>
+#include <map>
 #include <string>
 
 #include "eca-chain.h"
 #include "audioio.h"
+#include "audioio-loop.h"
 
 #include "eca-error.h"
 
@@ -38,7 +40,8 @@ class ECA_AUDIO_OBJECTS {
     TYPE_STDOUT =       14,
     TYPE_NULL =         15,
     TYPE_RTNULL =       18,
-    TYPE_MIKMOD =       17
+    TYPE_MIKMOD =       17,
+    TYPE_LOOP =         19
   };
 
  private:
@@ -50,6 +53,8 @@ class ECA_AUDIO_OBJECTS {
   ECA_AUDIO_FORMAT default_audio_format_rep;
 
   AUDIO_IO* last_audio_object;
+  map<int,LOOP_DEVICE*> loop_map;
+
   vector<double> input_start_pos;
   vector<double> output_start_pos;
 
@@ -91,7 +96,7 @@ class ECA_AUDIO_OBJECTS {
    *  argu.empty() != true &&
    *  buffersize > 0
    */
-  AUDIO_IO* create_audio_object(const string& tname, const SIMODE mode, const ECA_AUDIO_FORMAT& format, long int buffersize_rep) const throw(ECA_ERROR*);
+  AUDIO_IO* create_audio_object(const string& tname, const SIMODE mode, const ECA_AUDIO_FORMAT& format, long int buffersize_rep) throw(ECA_ERROR*);
 
   /**
    * Print format and id information

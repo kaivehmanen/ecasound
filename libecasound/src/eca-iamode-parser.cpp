@@ -41,6 +41,7 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map["t"] = ec_start;
   cmd_map["stop"] = ec_stop;
   cmd_map["s"] = ec_stop;
+  cmd_map["run"] = ec_run;
 
   cmd_map["debug"] = ec_debug;
 
@@ -168,6 +169,7 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
 bool ECA_IAMODE_PARSER::action_requires_connected(int id) { 
   switch(id) {
   case ec_start:
+  case ec_run:
   case ec_cs_disconnect:
   case ec_c_forward:
   case ec_c_rewind: 

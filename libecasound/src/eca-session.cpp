@@ -183,7 +183,7 @@ void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) throw(ECA_ERROR*
   // --------
   // ensure:
   assert(selected_chainsetup == comline_setup);
-  assert(chainsetups.size() == old_size + 1);
+  assert(static_cast<int>(chainsetups.size()) == old_size + 1);
   // --------
 }
 

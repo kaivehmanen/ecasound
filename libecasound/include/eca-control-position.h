@@ -22,6 +22,7 @@ class ECA_CONTROL_POSITION {
 
   void set_sample_rate(long int srate) { srate_rep = srate; }
   inline void change_position(long int  samples) { curpos_rep += samples; }
+  void change_position(double  samples);
   void set_position(long int samples) { curpos_rep = samples; }
 
   void toggle_looping(bool v) { looping_rep = v; }

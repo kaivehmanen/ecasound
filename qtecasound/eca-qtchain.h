@@ -8,6 +8,8 @@
 #include <eca-chain.h>
 #include <eca-controller.h>
 
+class QEButtonRow;
+
 class QEChain : public QWidget
 {
   Q_OBJECT
@@ -22,19 +24,19 @@ private slots:
   void not_implemented(void);
 
 signals:
+ void widget_closed(void);
 
 protected:
 
+  void closeEvent( QCloseEvent * );
   void timerEvent( QTimerEvent * );
-  //  void keyPressEvent(QKeyEvent*  kevent);
 
  private:
 
   void init_chainlist(void);
   void init_buttons(void);
-  void init_shortcuts(void);
 
-  QBoxLayout* buttons;
+  QEButtonRow* buttons;
 
   ECA_CONTROLLER* ctrl;
   const CHAIN* chain;

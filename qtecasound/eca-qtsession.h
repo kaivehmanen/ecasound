@@ -12,6 +12,7 @@
 // #include "eca-qtchainsetup.h"
 
 class QEChainsetup;
+class QEButtonRow;
 
 class QESession : public QWidget
 {
@@ -29,6 +30,7 @@ public slots:
  void button_open_chainsetup(void);
  void button_edit_chainsetup(void);
  void button_chainsetup_clicked(QListViewItem* i);
+ void child_setup_closed(void);
 
 private slots:
 
@@ -39,21 +41,21 @@ protected:
 
   void timerEvent( QTimerEvent * );
   void closeEvent( QCloseEvent * );
-//  void keyPressEvent(QKeyEvent*  kevent);
-//  void paintEvent( QPaintEvent * );
 
  private:
   
   bool is_chainsetup_highlighted(void) const;
   void select_highlighted_chainsetup(void);
 
-  void init_shortcuts(void);
   void init_chainsetuplist(void);
-  void init_buttons(QBoxLayout* buttons);
+  void init_buttons(void);
 
   int timer_id;
 
   QListView* chainsetupview;
+  QEChainsetup* child_csetup;
+  
+  QEButtonRow* buttons;
   QString current_dir;
 
   ECA_CONTROLLER* ctrl;

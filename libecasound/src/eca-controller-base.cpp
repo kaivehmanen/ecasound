@@ -72,6 +72,32 @@ void ECA_CONTROLLER_BASE::start(bool ignore_lock) {
   // --------
 }
 
+void ECA_CONTROLLER_BASE::run(void) {
+  // --------
+  // require:
+  assert(is_connected() == true);
+  // --------
+
+  if (session_rep->status() == ep_status_running) return;
+
+  start(true);
+
+  struct timespec sleepcount;
+  sleepcount.tv_sec = 1;
+  sleepcount.tv_nsec = 0;
+
+  while(is_finished() == false) {
+    nanosleep(&sleepcount, NULL);
+  }      
+
+  ecadebug->control_flow("Controller/Processing finished");
+
+  // --------
+  // ensure:
+  assert(is_finished() == true);
+  // --------
+}
+
 void ECA_CONTROLLER_BASE::stop(void) {
   // --------
   // require:
@@ -165,8 +191,9 @@ long ECA_CONTROLLER_BASE::length_in_samples(void) const {
 }
 
 double ECA_CONTROLLER_BASE::length_in_seconds_exact(void) const { 
-  if (is_connected() == true)
+  if (is_connected() == true) {
       return session_rep->connected_chainsetup->length_in_seconds_exact(); 
+  }
   else
     return(0.0);
 }
@@ -178,8 +205,9 @@ long ECA_CONTROLLER_BASE::position_in_samples(void) const {
     return(0);
 }
 double ECA_CONTROLLER_BASE::position_in_seconds_exact(void) const {
-  if (is_connected() == true)
+  if (is_connected() == true) {
       return session_rep->connected_chainsetup->position_in_seconds_exact(); 
+  }
   else
     return(0.0);
 }

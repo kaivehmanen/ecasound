@@ -74,6 +74,9 @@ ecawave_debug_LDFLAGS = $(ecawave_LDFLAGS)
 # ------
 # qt-moc
 # ------
+dist-hook:
+	rm -f $(distdir)/*_moc.cpp
+
 qesession_moc.cpp: $(srcdir)/qesession.h
 	$(MOC) -o qesession_moc.cpp $(srcdir)/qesession.h
 

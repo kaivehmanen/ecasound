@@ -1,3 +1,4 @@
+#include "../config.h"
 #include <iostream>
 #include <string>
 #include <iomanip>
@@ -5,6 +6,9 @@
 #include <eca-debug.h>
 
 #include "textdebug.h"
+
+#include <curses.h>
+#include <term.h>
 
 void TEXTDEBUG::stream(ostream* dos) {
   dostream = dos;
@@ -22,10 +26,17 @@ void TEXTDEBUG::set_debug_level(int level) {
 
 void TEXTDEBUG::control_flow(const string& part) {
   if (is_enabled() == false) return;
-  
+
+#ifdef USE_NCURSES
+  *dostream << "- [ ";
+  putp(tigetstr("bold"));
+  *dostream << part;
+  putp(tigetstr("rmso"));
+  *dostream << " ] ";
+#else
   *dostream << "- [[1m " << part << "[0m ] ";
-  for (unsigned char n = 0; n < (69 - part.size()); n++)
-    *dostream << '-';
+#endif
+  for (unsigned char n = 0; n < (69 - part.size()); n++) *dostream << "-";
   *dostream << "\n";
 }
 

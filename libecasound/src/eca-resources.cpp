@@ -45,7 +45,7 @@ void ECA_RESOURCES::set_defaults(void) {
 
   resource("ext-text-editor","pico");
   resource("ext-text-editor-use-getenv","true");
-  resource("ext-wave-editor","snd");
+  resource("ext-wave-editor","ecawave");
 
   resource("ext-mpg123-path","mpg123");
   resource("ext-mpg123-args","-b 0");

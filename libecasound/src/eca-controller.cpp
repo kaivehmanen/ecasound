@@ -132,12 +132,12 @@ void ECA_CONTROLLER::action(int action_id,
   case ec_exit: { quit(); break; }
   case ec_start: 
     { 
-      if (is_connected()) start();
-      else 
-	ecadebug->msg("(eca-controller) Can't perform requested action; no chainsetup connected.");
+      start();
+      // ecadebug->msg("(eca-controller) Can't perform requested action; no chainsetup connected.");
       break; 
     }
   case ec_stop: { if (is_engine_started() == true) stop(); break; }
+  case ec_run: { run(); break; }
   case ec_debug:
     {
       int level = atoi((args[0]).c_str());

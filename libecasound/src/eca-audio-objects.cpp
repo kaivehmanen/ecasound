@@ -43,6 +43,7 @@
 #include "audioio-raw.h"
 #include "audioio-null.h"
 #include "audioio-rtnull.h"
+#include "audioio-loop.h"
 
 #include "eca-chain.h"
 #include "samplebuffer.h"
@@ -68,16 +69,25 @@ ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
   }
   
   for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
-    ecadebug->msg(1, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
-    delete *q;
+    if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) {
+      ecadebug->msg(1, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
+      delete *q;
+    }
   }
   //  inputs.resize(0);
   
   for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
-    ecadebug->msg(1, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
-    delete *q;
+    if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) {
+      ecadebug->msg(1, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
+      delete *q;
+    }
   }
   //  outputs.resize(0);
+
+  for(map<int,LOOP_DEVICE*>::iterator q = loop_map.begin(); q != loop_map.end(); q++) {
+    ecadebug->msg(1, "(eca-audio-objects) Deleting loop device \"" + q->second->label() + "\".");
+    delete q->second;
+  }
 }
 
 bool ECA_AUDIO_OBJECTS::is_valid(void) const {
@@ -162,7 +172,7 @@ void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu, const stri
 AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu, 
 						 const SIMODE mode, 
 						 const ECA_AUDIO_FORMAT& format,
-						 long int buffersize_arg) const throw(ECA_ERROR*) {
+						 long int buffersize_arg) throw(ECA_ERROR*) {
   // --------
   // require:
   assert(argu.empty() != true && 
@@ -339,6 +349,21 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu,
   case TYPE_NULL:
     {
       main_file = new NULLFILE ("null", mode, format);
+      break;
+    }
+
+  case TYPE_LOOP:
+    {
+      int id = atoi(get_argument_number(2, argu).c_str());
+      if (loop_map.find(id) == loop_map.end()) { 
+	loop_map[id] = new LOOP_DEVICE(id);
+      }
+      main_file = static_cast<AUDIO_IO*>(loop_map[id]);
+      if (mode == si_read)
+	loop_map[id]->register_input();
+      else 
+	loop_map[id]->register_output();
+   
       break;
     }
 
@@ -620,7 +645,7 @@ string ECA_AUDIO_OBJECTS::inputs_to_string(void) const {
   MESSAGE_ITEM t; 
   t.setprecision(3);
   int p = 0;
-  while (p < inputs.size()) {
+  while (p < static_cast<int>(inputs.size())) {
     t << "-a:";
     vector<string> c = get_connected_chains_to_input(inputs[p]);
     vector<string>::const_iterator cp = c.begin();
@@ -791,11 +816,11 @@ int ECA_AUDIO_OBJECTS::get_type_from_extension(const string& filename) {
   else if (strstr(teksti.c_str(),".au") != 0) typevar = TYPE_AUDIOFILE;
   else if (strstr(teksti.c_str(),".snd") != 0) typevar = TYPE_AUDIOFILE;
 
-
   else if (teksti == "stdin") typevar = TYPE_STDIN;
   else if (teksti == "stdout") typevar = TYPE_STDOUT;
   else if (strstr(teksti.c_str(),"rtnull") != 0) typevar = TYPE_RTNULL;
   else if (strstr(teksti.c_str(),"null") != 0) typevar = TYPE_NULL;
+  else if (strstr(teksti.c_str(),"loop") != 0) typevar = TYPE_LOOP;
 
   return(typevar);
 }

@@ -27,7 +27,6 @@ DYNAMIC_PARAMETERS::parameter_type LINEAR_ENVELOPE::value(void) {
   if (curpos <= length_in_seconds()) {
     curval = (curpos / length_in_seconds());
   }
-  else curval = 1.0;
   return(curval);
 }
 
@@ -40,7 +39,7 @@ void LINEAR_ENVELOPE::init(DYNAMIC_PARAMETERS::parameter_type step) {
   step_length(step);
 
   MESSAGE_ITEM otemp;
-  otemp << "(fadein-envelope) Fade-in enveloped initialized; length ";
+  otemp << "(linear-envelope) Fade-in enveloped initialized; length ";
   otemp.setprecision(3);
   otemp << length_in_seconds();
   otemp << " seconds.";

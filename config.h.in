@@ -46,6 +46,12 @@
 /* well, are you? :) */
 #undef FEELING_EXPERIMENTAL
 
+/* use libncurses for termcap info */
+#undef USE_NCURSES
+
+/* use libtermcap for termcap info */
+#undef USE_TERMCAP
+
 /* Define if you have the getpagesize function.  */
 #undef HAVE_GETPAGESIZE
 

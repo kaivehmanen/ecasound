@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
-// eca-qtsession.cpp: Qt widget representing a ECA_SESSION object and 
+// eca-qtsession.cpp: Qt widget representing a ecasound session object and 
 //                    its state.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,8 @@
 #include <qmessagebox.h>
 #include <qaccel.h>
 
-#include "qstringdialog.h"
+#include "qestringdialog.h"
+#include "qebuttonrow.h"
 
 #include "eca-qtchainsetup.h"
 
@@ -51,22 +52,19 @@ QESession::QESession (ECA_CONTROLLER* econtrol, const ECA_SESSION*
   : QWidget( parent, name ), ctrl(econtrol), ecasession(esession)
 {
   setMinimumSize( 600, 0 );
-  //  setMaximumSize( 1024, 768 );
 
   timer_id = startTimer(100);
   current_dir = "";
+  child_csetup = 0;
 
   setCaption("qtecasound - session setup window");
 
   QBoxLayout* topLayout = new QVBoxLayout( this );
-  QBoxLayout* buttons = new QHBoxLayout();
 
   init_chainsetuplist();
-  init_buttons(buttons);
+  init_buttons();
 
-  init_shortcuts();
-
-  topLayout->addLayout(buttons, 1);
+  topLayout->addWidget(buttons);
   topLayout->addWidget(chainsetupview, 0, 0);
 
   setFocusPolicy(QWidget::ClickFocus);
@@ -82,6 +80,9 @@ QESession::QESession (ECA_CONTROLLER* econtrol, const ECA_SESSION*
 
 void QESession::closeEvent( QCloseEvent *e )
 {
+  if (child_csetup != 0) {
+    child_csetup->close(true);
+  }
   emit session_closed();
   e->accept();      // hides the widget
 }
@@ -99,154 +100,61 @@ void QESession::timerEvent( QTimerEvent * ) {
   update_chainsetuplist();
 }
 
-void QESession::init_shortcuts(void) {
-  QAccel *a = new QAccel(this);
+void QESession::init_buttons(void) {
+  buttons = new QEButtonRow(this, "buttonrow");
+  buttons->add_button(new QPushButton("Control (p)anel",buttons), 
+		      ALT+Key_P,
+		      reinterpret_cast<QEInterface*>(qApp->mainWidget()), 
+		      SLOT(get_focus()));
 
-  a->connectItem(a->insertItem(Key_Exclam),
-		 reinterpret_cast<QEInterface*>(qApp->mainWidget()),
-		 SLOT(get_focus()));
+  buttons->add_button(new QPushButton("(F)ocus to list",buttons), 
+		      ALT+Key_F,
+		      chainsetupview,
+		      SLOT(setFocus()));
 
-  a->connectItem(a->insertItem(Key_Exclam),
-		 reinterpret_cast<QEInterface*>(qApp->mainWidget()),
-		 SLOT(get_focus()));
+  buttons->add_button(new QPushButton("(N)ew",buttons), 
+		      ALT+Key_N,
+		      this,
+		      SLOT(button_new()));
 
-  a->connectItem(a->insertItem(SHIFT+Key_Exclam),
-		 reinterpret_cast<QEInterface*>(qApp->mainWidget()),
-		 SLOT(get_focus()));
+  buttons->add_button(new QPushButton("(L)oad",buttons), 
+		      ALT+Key_L,
+		      this,
+		      SLOT(button_load()));
 
-  a->connectItem(a->insertItem(Key_C), this,
-		 SLOT(button_toggle_connected()));
-  a->connectItem(a->insertItem(SHIFT+Key_C), this,
-		 SLOT(button_toggle_connected()));
-  a->connectItem(a->insertItem(CTRL+Key_C), this,
-		 SLOT(button_toggle_connected()));
+  buttons->add_button(new QPushButton("(S)ave",buttons), 
+		      ALT+Key_S,
+		      this,
+		      SLOT(button_save()));
 
-  a->connectItem(a->insertItem(Key_D), this,
-		 SLOT(button_del()));
-  a->connectItem(a->insertItem(SHIFT+Key_D), this,
-		 SLOT(button_del()));
-  a->connectItem(a->insertItem(CTRL+Key_D), this,
-		 SLOT(button_del()));
+  buttons->add_button(new QPushButton("(D)elete",buttons), 
+		      ALT+Key_D,
+		      this,
+		      SLOT(button_del()));
 
-  a->connectItem(a->insertItem(Key_E), this,
-		 SLOT(button_edit_chainsetup()));
-  a->connectItem(a->insertItem(SHIFT+Key_E), this,
-		 SLOT(button_edit_chainsetup()));
-  a->connectItem(a->insertItem(CTRL+Key_E), this,
-		 SLOT(button_edit_chainsetup()));
+  buttons->add_button(new QPushButton("Dis/(c)onnect",buttons), 
+		      ALT+Key_C,
+		      this,
+		      SLOT(button_toggle_connected()));
 
-  a->connectItem(a->insertItem(Key_F), chainsetupview,
-		 SLOT(setFocus()));
-  a->connectItem(a->insertItem(SHIFT+Key_F), chainsetupview,
-		 SLOT(setFocus()));
-  a->connectItem(a->insertItem(CTRL+Key_F), chainsetupview,
-		 SLOT(setFocus()));
+  buttons->add_button(new QPushButton("(O)pen",buttons), 
+		      ALT+Key_O,
+		      this,
+		      SLOT(button_open_chainsetup()));
 
-  a->connectItem(a->insertItem(Key_L), this,
-		 SLOT(button_load()));
-  a->connectItem(a->insertItem(SHIFT+Key_L), this,
-		 SLOT(button_load()));
-  a->connectItem(a->insertItem(CTRL+Key_L), this,
-		 SLOT(button_load()));
+  buttons->add_button(new QPushButton("(E)dit",buttons), 
+		      ALT+Key_E,
+		      this,
+		      SLOT(button_edit_chainsetup()));
 
-  a->connectItem(a->insertItem(Key_N), this,
-		 SLOT(button_new()));
-  a->connectItem(a->insertItem(SHIFT+Key_N), this,
-		 SLOT(button_new()));
-  a->connectItem(a->insertItem(CTRL+Key_N), this,
-		 SLOT(button_new()));
-
-  a->connectItem(a->insertItem(Key_O), this,
-		 SLOT(button_open_chainsetup()));
-  a->connectItem(a->insertItem(SHIFT+Key_O), this,
-		 SLOT(button_open_chainsetup()));
-  a->connectItem(a->insertItem(CTRL+Key_O), this,
-		 SLOT(button_open_chainsetup()));
-
-  a->connectItem(a->insertItem(Key_Q), this,
-		 SLOT(close()));
-  a->connectItem(a->insertItem(SHIFT+Key_Q), this,
-		 SLOT(close()));
-  a->connectItem(a->insertItem(CTRL+Key_Q), this,
-		 SLOT(close()));
-
-  a->connectItem(a->insertItem(Key_S), this,
-		 SLOT(button_save()));
-  a->connectItem(a->insertItem(SHIFT+Key_S), this,
-		 SLOT(button_save()));
-  a->connectItem(a->insertItem(CTRL+Key_S), this,
-		 SLOT(button_save()));
-}
-
-void QESession::init_buttons(QBoxLayout* buttons) {
-  QFont butfont ("Helvetica", 12, QFont::Normal);
-
-  QPushButton* cpanelbut = new QPushButton( "(!) Control panel", this, "cpanelbut" );
-  cpanelbut->setFont(butfont);
-  buttons->addWidget( cpanelbut, 1, 0);
-
-  QPushButton* ffocus = new QPushButton( "(F)ocus to list", this, "ffocus" );
-  ffocus->setFont(butfont);
-  buttons->addWidget( ffocus, 1, 0);
-
-  QPushButton* newb = new QPushButton( "(N)ew", this, "newb" );
-  newb->setFont(butfont);
-  buttons->addWidget( newb, 1, 0 );
-
-  QPushButton* load = new QPushButton( "(L)oad", this, "load" );
-  load->setFont(butfont);
-  buttons->addWidget( load, 1, 0 );
-
-  QPushButton* save = new QPushButton( "(S)ave", this, "save" );
-  save->setFont(butfont);
-  buttons->addWidget( save, 1, 0 );
-
-  QPushButton* del = new QPushButton( "(D)elete", this, "del" );
-  del->setFont(butfont);
-  buttons->addWidget( del, 1, 0 );
-
-  QPushButton* activate = new QPushButton( "(C)onnect/disconnect", this, "activat" );
-  activate->setFont(butfont);
-  buttons->addWidget( activate, 1, 0 );
-
-  QPushButton* open = new QPushButton( "(O)pen", this, "open" );
-  open->setFont(butfont);
-  buttons->addWidget( open, 2, 0 );
-
-  QPushButton* edit = new QPushButton( "(E)dit", this, "edit" );
-  edit->setFont(butfont);
-  buttons->addWidget( edit, 2, 0 );
-
-  QPushButton* quit = new QPushButton( "(Q)uit", this, "quit" );
-  quit->setFont(butfont);
-  buttons->addWidget( quit, 1, 0);
-
-  QObject::connect( cpanelbut, SIGNAL(clicked()), 
-		    reinterpret_cast<QEInterface*>(qApp->mainWidget()), 
-		    SLOT(get_focus()));
-
-  //		    reinterpret_cast<QObject*>(qApp->mainWidget()), 
-  //		    SLOT(setFocus()));
-
-  QObject::connect( load, SIGNAL(clicked()), this, SLOT(button_load()));
-  QObject::connect( save, SIGNAL(clicked()), this, SLOT(button_save()));
-  QObject::connect( newb, SIGNAL(clicked()), this, SLOT(button_new()));
-  QObject::connect( del, SIGNAL(clicked()), this, SLOT(button_del()));
-  QObject::connect( activate, SIGNAL(clicked()), this, SLOT(button_toggle_connected()));
-  QObject::connect( open, SIGNAL(clicked()), this, SLOT(button_open_chainsetup()));
-  QObject::connect( edit, SIGNAL(clicked()), this, SLOT(button_edit_chainsetup()));
-  QObject::connect( ffocus, SIGNAL(clicked()), chainsetupview, SLOT(setFocus()));
-  QObject::connect( quit, SIGNAL(clicked()), this, SLOT(close()));
-  //  connect(rewind, SIGNAL(clicked()), this, SLOT(emsg_rewind()) );
-  //  connect(quit, SIGNAL(clicked()), this, SLOT(emsg_quit()) );
+  buttons->add_button(new QPushButton("(Q)uit",buttons), 
+		      ALT+Key_Q,
+		      this,
+		      SLOT(close()));
 }
 
 void QESession::init_chainsetuplist (void) {
-
-  //  chainsetupview = new QListView_dumb(this, "chainsetupview");
   chainsetupview = new QListView(this, "chainsetupview");
-
-  //chainsetupview->setMinimumSize( 600, 100 );
 
   chainsetupview->addColumn("Chainsetup");
   chainsetupview->addColumn("Inputs");
@@ -254,18 +162,11 @@ void QESession::init_chainsetuplist (void) {
   chainsetupview->addColumn("Chains");
   chainsetupview->addColumn("Status");
 
-//    chainsetupview->setColumnAlignment(0, AlignLeft);
-//    chainsetupview->setColumnAlignment(1, AlignRight);
-//    chainsetupview->setColumnAlignment(2, AlignRight);
-//    chainsetupview->setColumnAlignment(3, AlignRight);
-//    chainsetupview->setColumnAlignment(4, AlignRight);
-
   chainsetupview->setAllColumnsShowFocus(true); 
   chainsetupview->setSorting(0);
 
   update_chainsetuplist();
-  chainsetupview->setGeometry(0, 0, width() - 4, chainsetupview->height()
-			      - 15);
+  chainsetupview->setGeometry(0, 0, width() - 4, chainsetupview->height() - 15);
 
   chainsetupview->show();
 }
@@ -288,7 +189,6 @@ void QESession::update_chainsetuplist (void) {
 
   vector<ECA_CHAINSETUP*>::const_iterator p = ecasession->get_chainsetups().begin();
   while(p != ecasession->get_chainsetups().end()) {
-    //    cerr << "Adding a new one!\n";
     QString astring;
     if (ctrl->connected_chainsetup() == (*p)->name())
       astring = "connected";
@@ -378,8 +278,8 @@ void QESession::button_save(void) {
 
 void QESession::button_new(void) {
   try {
-    QStringDialog* sdialog = new QStringDialog("Chainsetup name: ", this);
-    if (sdialog->exec() == QStringDialog::Accepted) {
+    QEStringDialog* sdialog = new QEStringDialog("Chainsetup name: ", this);
+    if (sdialog->exec() == QEStringDialog::Accepted) {
       ctrl->add_chainsetup(sdialog->resultString().latin1());
       update_chainsetuplist();
     }
@@ -467,12 +367,16 @@ void QESession::button_open_chainsetup(void) {
   else {
     ctrl->select_chainsetup(item->text(0).latin1());
     if (ctrl->is_selected() == false) return;
-    QEChainsetup* active_csetup = new QEChainsetup(ctrl,
-				     ctrl->get_chainsetup());
-
-    active_csetup->show();
+    if (child_csetup != 0) {
+      child_csetup->close(true);
+    }
+    child_csetup = new QEChainsetup(ctrl, ctrl->get_chainsetup());
+    child_csetup->show();
+    connect(child_csetup, SIGNAL(widget_closed()), this, SLOT(child_setup_closed()));
   }
 }
+
+void QESession::child_setup_closed(void) { child_csetup = 0; }
 
 void QESession::button_edit_chainsetup(void) { 
   try {
@@ -505,7 +409,3 @@ void QESession::button_edit_chainsetup(void) {
 void QESession::button_chainsetup_clicked(QListViewItem* i) { 
   if (i != 0) button_open_chainsetup();
 }
-
-
-
-

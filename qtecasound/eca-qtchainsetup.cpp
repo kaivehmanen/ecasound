@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-qtchainsetup: Qt widget representing a ECA_CHAINSETUP object and 
 //                   its state.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,24 +23,22 @@
 #include <string>
 
 #include <qapplication.h>
-#include <qaccel.h>
 #include <qwidget.h>
-#include <qfont.h>
-#include <qpushbutton.h>
 #include <qmessagebox.h>
+#include <qpushbutton.h>
 
 #include <kvutils.h>
 
-#include "qstringdialog.h"
+#include "qestringdialog.h"
+#include "qebuttonrow.h"
 
 #include "eca-chain.h"
+#include "audioio-types.h"
 #include "eca-controller.h"
 #include "eca-chainsetup.h"
 
 #include "eca-qtinte.h"
 #include "eca-qtchain.h"
-#include "eca-qtwaveform.h"
-// #include "qlistview-dumb.h"
 #include "eca-qtchainsetup.h"
 #include "eca-qtiodevdialog.h"
 #include "eca-qtchainselectdialog.h"
@@ -52,30 +50,26 @@ QEChainsetup::QEChainsetup (ECA_CONTROLLER* econtrol,
   : ctrl(econtrol), chainsetup(csetup)
 {
   setMinimumSize( 600, 0 );
-  //  setMaximumSize( 1024, 768 );
-
   startTimer(1000);
 
+  child_chain = 0;
   current_dir = "";
-
   string caption = "qtecasound - chainsetup: " + csetup->name();
   setCaption(caption.c_str());
 
   topLayout = new QVBoxLayout( this );
-  gen_buttons = new QHBoxLayout();
-  file_buttons = new QHBoxLayout();
-  chain_buttons = new QHBoxLayout();
 
   init_filesetuplist();
   init_chainsetuplist();
-
-  init_shortcuts();
-
   init_gen_buttons();
   init_file_buttons();
   init_chain_buttons();
 
-  update_layout();
+  topLayout->addWidget(gen_buttons);
+  topLayout->addWidget(file_buttons);
+  topLayout->addWidget(filesetupview);
+  topLayout->addWidget(chain_buttons);
+  topLayout->addWidget(chainsetupview);
 
   QObject::connect( chainsetupview,
 		    SIGNAL(doubleClicked(QListViewItem*)), 
@@ -85,122 +79,19 @@ QEChainsetup::QEChainsetup (ECA_CONTROLLER* econtrol,
 		    this, SLOT(init_chainview(QListViewItem*)));
 }
 
-void QEChainsetup::close_session(void) {
-  emit close_waveforms();
-  //  cerr << "Here!";
-  //  close();
+void QEChainsetup::closeEvent(QCloseEvent *e) {
+  if (child_chain != 0) {
+    child_chain->close(true);
+  }
+  emit widget_closed();
+  e->accept();
 }
+
+void QEChainsetup::close_session(void) { }
 
 void QEChainsetup::not_implemented(void) {
   QMessageBox* mbox = new QMessageBox(this, "mbox");
   mbox->information(this, "qtecasound", "This feature is not implemented...",0);
-}
-
-void QEChainsetup::init_shortcuts(void) {
-  QAccel *a = new QAccel(this);
-
-  a->connectItem(a->insertItem(Key_Exclam),
-		 reinterpret_cast<QEInterface*>(qApp->mainWidget()),
-		 SLOT(get_focus()));
-
-  a->connectItem(a->insertItem(Key_Exclam),
-		 reinterpret_cast<QEInterface*>(qApp->mainWidget()),
-		 SLOT(get_focus()));
-
-  a->connectItem(a->insertItem(SHIFT+Key_Exclam),
-		 reinterpret_cast<QEInterface*>(qApp->mainWidget()),
-		 SLOT(get_focus()));
-
-  a->connectItem(a->insertItem(Key_A), this,
-		 SLOT(button_add_file()));
-  a->connectItem(a->insertItem(SHIFT+Key_A), this,
-		 SLOT(button_add_file()));
-  a->connectItem(a->insertItem(CTRL+Key_A), this,
-		 SLOT(button_add_file()));
-
-  a->connectItem(a->insertItem(Key_B), this,
-		 SLOT(button_chain_bypass()));
-  a->connectItem(a->insertItem(SHIFT+Key_B), this,
-		 SLOT(button_chain_bypass()));
-  a->connectItem(a->insertItem(CTRL+Key_B), this,
-		 SLOT(button_chain_bypass()));
-
-  a->connectItem(a->insertItem(Key_C), chainsetupview,
-		 SLOT(setFocus()));
-  a->connectItem(a->insertItem(SHIFT+Key_C), chainsetupview,
-		 SLOT(setFocus()));
-  a->connectItem(a->insertItem(CTRL+Key_C), chainsetupview,
-		 SLOT(setFocus()));
-
-  a->connectItem(a->insertItem(Key_D), this,
-		 SLOT(button_remove_chain()));
-  a->connectItem(a->insertItem(SHIFT+Key_D), this,
-		 SLOT(button_remove_chain()));
-  a->connectItem(a->insertItem(CTRL+Key_D), this,
-		 SLOT(button_remove_chain()));
-
-  a->connectItem(a->insertItem(Key_F), filesetupview,
-		 SLOT(setFocus()));
-  a->connectItem(a->insertItem(SHIFT+Key_F), filesetupview,
-		 SLOT(setFocus()));
-  a->connectItem(a->insertItem(CTRL+Key_F), filesetupview,
-		 SLOT(setFocus()));
-
-  a->connectItem(a->insertItem(Key_N), this,
-		 SLOT(button_add_chain()));
-  a->connectItem(a->insertItem(SHIFT+Key_N), this,
-		 SLOT(button_add_chain()));
-  a->connectItem(a->insertItem(CTRL+Key_N), this,
-		 SLOT(button_add_chain()));
-
-  a->connectItem(a->insertItem(Key_M), this,
-		 SLOT(button_chain_muting()));
-  a->connectItem(a->insertItem(SHIFT+Key_M), this,
-		 SLOT(button_chain_muting()));
-  a->connectItem(a->insertItem(CTRL+Key_M), this,
-		 SLOT(button_chain_muting()));
-
-  a->connectItem(a->insertItem(Key_O), this,
-		 SLOT(init_chainview()));
-  a->connectItem(a->insertItem(SHIFT+Key_O), this,
-		 SLOT(init_chainview()));
-  a->connectItem(a->insertItem(CTRL+Key_O), this,
-		 SLOT(init_chainview()));
-
-  a->connectItem(a->insertItem(Key_Q), this,
-		 SLOT(close()));
-  a->connectItem(a->insertItem(SHIFT+Key_Q), this,
-		 SLOT(close()));
-  a->connectItem(a->insertItem(CTRL+Key_Q), this,
-		 SLOT(close()));
-
-  a->connectItem(a->insertItem(Key_R), this,
-		 SLOT(button_remove_file()));
-  a->connectItem(a->insertItem(SHIFT+Key_R), this,
-		 SLOT(button_remove_file()));
-  a->connectItem(a->insertItem(CTRL+Key_R), this,
-		 SLOT(button_remove_file()));
-
-  a->connectItem(a->insertItem(Key_S), this,
-		 SLOT(button_chainselect()));
-  a->connectItem(a->insertItem(SHIFT+Key_S), this,
-		 SLOT(button_chainselect()));
-  a->connectItem(a->insertItem(CTRL+Key_S), this,
-		 SLOT(button_chainselect()));
-
-  a->connectItem(a->insertItem(Key_V), this,
-		 SLOT(init_waveform()));
-  a->connectItem(a->insertItem(SHIFT+Key_V), this,
-		 SLOT(init_waveform()));
-  a->connectItem(a->insertItem(CTRL+Key_V), this,
-		 SLOT(init_waveform()));
-
-  a->connectItem(a->insertItem(Key_W), this,
-		 SLOT(init_waveedit()));
-  a->connectItem(a->insertItem(SHIFT+Key_W), this,
-		 SLOT(init_waveedit()));
-  a->connectItem(a->insertItem(CTRL+Key_W), this,
-		 SLOT(init_waveedit()));
 }
 
 void QEChainsetup::init_chainview(void) {
@@ -214,121 +105,99 @@ void QEChainsetup::init_chainview(QListViewItem* item) {
     const CHAIN* chain =
       chainsetup->get_chain_with_name(item->text(0).latin1());
     if (chain != 0) {
-      QEChain* csetup = new QEChain(ctrl, chain);
-      csetup->show();
+      if (child_chain != 0) {
+	child_chain->close(true);
+      }
+      child_chain = new QEChain(ctrl, chain);
+      child_chain->show();
+      connect(child_chain, SIGNAL(widget_closed()), this, SLOT(child_closed()));
     }
   }
   else
     QMessageBox::information(this, "qtecasound", "No chain selected!",0);
 }
 
+void QEChainsetup::child_closed(void) { child_chain = 0; }
+
 void QEChainsetup::init_gen_buttons(void) {
-  QFont butfont ("Helvetica", 12, QFont::Normal);
+  gen_buttons = new QEButtonRow(this, "genbuttonrow");
+  gen_buttons->add_button(new QPushButton("Control (p)anel",gen_buttons), 
+		      ALT+Key_P,
+		      reinterpret_cast<QEInterface*>(qApp->mainWidget()), 
+		      SLOT(get_focus()));
 
-  QPushButton* cpanelbut = new QPushButton( "(!) Control panel", this, "cpanelbut" );
-  cpanelbut->setFont(butfont);
-  gen_buttons->addWidget( cpanelbut, 1, 0);
+  gen_buttons->add_button(new QPushButton("Focus to (f)iles",gen_buttons), 
+		      ALT+Key_F,
+		      filesetupview,
+		      SLOT(setFocus()));
 
-  QObject::connect( cpanelbut, SIGNAL(clicked()), 
-		 reinterpret_cast<QEInterface*>(qApp->mainWidget()), 
-		 SLOT(get_focus()));
+  gen_buttons->add_button(new QPushButton("Focus to (c)hains",gen_buttons), 
+		      ALT+Key_C,
+		      chainsetupview,
+		      SLOT(setFocus()));
 
-  QPushButton* ffocus = new QPushButton( "Focus to (f)iles", this, "ffocus" );
-  ffocus->setFont(butfont);
-  gen_buttons->addWidget( ffocus, 1, 0);
-
-  QPushButton* cfocus = new QPushButton( "Focus to (c)hains", this, "cfocus" );
-  cfocus->setFont(butfont);
-  gen_buttons->addWidget( cfocus, 1, 0);
-
-  QPushButton* quit = new QPushButton( "(Q)uit", this, "quit" );
-  quit->setFont(butfont);
-  gen_buttons->addWidget( quit, 2, 0);
-
-  QObject::connect( cfocus, SIGNAL(clicked()), chainsetupview,
-		    SLOT(setFocus()));
-  QObject::connect( ffocus, SIGNAL(clicked()), filesetupview,
-		    SLOT(setFocus()));
-  QObject::connect( quit, SIGNAL(clicked()), this, SLOT(close()));
-  //  connect(quit, SIGNAL(clicked()), this, SLOT(emsg_quit()) );
+  gen_buttons->add_button(new QPushButton("(Q)uit",gen_buttons), 
+		      ALT+Key_Q,
+		      this,
+		      SLOT(close()));
 }
 
-void QEChainsetup::update_layout(void) {
-  // if (topLayout != 0) delete topLayout;
-  // topLayout = new QVBoxLayout( this );
-
-  topLayout->addLayout(gen_buttons, 0);
-
-  topLayout->addLayout(file_buttons, 0);
-  topLayout->addWidget(filesetupview, 0, 0);
-
-  topLayout->addLayout(chain_buttons, 0);
-  topLayout->addWidget(chainsetupview, 0, 0);
-}
 
 void QEChainsetup::init_file_buttons(void) { 
-  QFont butfont ("Helvetica", 12, QFont::Normal);
+  file_buttons = new QEButtonRow(this, "filebuttonrow");
+  file_buttons->add_button(new QPushButton("(A)dd",file_buttons), 
+		      ALT+Key_A,
+		      this,
+		      SLOT(button_add_file()));
 
-  QPushButton* add = new QPushButton( "(A)dd", this, "add" );
-  add->setFont(butfont);
-  file_buttons->addWidget( add, 1, 0);
+  file_buttons->add_button(new QPushButton("(R)emove from setup",file_buttons), 
+		      ALT+Key_R,
+		      this,
+		      SLOT(button_remove_file()));
 
-  QPushButton* remove = new QPushButton( "(R)emove from setup", this, "remove" );
-  remove->setFont(butfont);
-  file_buttons->addWidget( remove, 1, 0);
+  file_buttons->add_button(new QPushButton("Attach to chain(s)",file_buttons), 
+		      ALT+Key_S,
+		      this,
+		      SLOT(button_chainselect()));
 
-  QPushButton* change = new QPushButton( "Attach to chain(s)", this, "change" );
-  change->setFont(butfont);
-  file_buttons->addWidget( change, 1, 0);
+  file_buttons->add_button(new QPushButton("(W)ave form edit",file_buttons), 
+		      ALT+Key_W,
+		      this,
+		      SLOT(init_waveedit()));
 
-  QPushButton* wform = new QPushButton( "Wave form (v)iew", this, "wform" );
-  wform->setFont(butfont);
-  file_buttons->addWidget( wform, 2, 0);
-
-  QPushButton* wedit = new QPushButton( "(W)ave form edit", this, "wedit" );
-  wedit->setFont(butfont);
-  file_buttons->addWidget( wedit, 2, 0);
-
-  QObject::connect( add, SIGNAL(clicked()), this, SLOT(button_add_file()));
-  QObject::connect( remove, SIGNAL(clicked()), this, SLOT(button_remove_file()));
-  QObject::connect( change, SIGNAL(clicked()), this, SLOT(button_chainselect()));
-  QObject::connect( wform, SIGNAL(clicked()), this, SLOT(init_waveform()));
-  QObject::connect( wedit, SIGNAL(clicked()), this, SLOT(init_waveedit()));
 }
 
 void QEChainsetup::init_chain_buttons(void) { 
-  QFont butfont ("Helvetica", 12, QFont::Normal);
+  chain_buttons = new QEButtonRow(this, "chainbuttonrow");
+  chain_buttons->add_button(new QPushButton("(N)ew chain",chain_buttons), 
+		      ALT+Key_N,
+		      this,
+		      SLOT(button_add_chain()));
 
-  QPushButton* newb = new QPushButton( "(N)ew chain", this, "newb" );
-  newb->setFont(butfont);
-  chain_buttons->addWidget( newb, 1, 0);
+  chain_buttons->add_button(new QPushButton("(D)elete chain",chain_buttons), 
+		      ALT+Key_D,
+		      this,
+		      SLOT(button_remove_chain()));
 
-  QPushButton* delchain = new QPushButton( "(D)elete chain", this, "delchain" );
-  delchain->setFont(butfont);
-  chain_buttons->addWidget( delchain, 1, 0);
+  chain_buttons->add_button(new QPushButton("(M)uting",chain_buttons), 
+		      ALT+Key_M,
+		      this,
+		      SLOT(button_chain_muting()));
 
-  QPushButton* mute = new QPushButton( "(M)uting", this, "mute" );
-  mute->setFont(butfont);
-  chain_buttons->addWidget( mute, 1, 0);
+  chain_buttons->add_button(new QPushButton("(B)ypass",chain_buttons), 
+		      ALT+Key_B,
+		      this,
+		      SLOT(button_chain_bypass()));
 
-  QPushButton* bp_on = new QPushButton( "(B)ypass", this, "bp_on" );
-  bp_on->setFont(butfont);
-  chain_buttons->addWidget( bp_on, 1, 0);
-
-  QPushButton* open = new QPushButton( "(O)pen", this, "open" );
-  open->setFont(butfont);
-  chain_buttons->addWidget( open, 2, 0);
-
-  QObject::connect( bp_on,  SIGNAL(clicked()), this, SLOT(button_chain_bypass()));
-  QObject::connect( mute, SIGNAL(clicked()), this, SLOT(button_chain_muting()));
-  QObject::connect( delchain, SIGNAL(clicked()), this, SLOT(button_remove_chain()));
-  QObject::connect( open, SIGNAL(clicked()), this, SLOT(init_chainview()));
-  QObject::connect( newb, SIGNAL(clicked()), this, SLOT(button_add_chain()));
+  chain_buttons->add_button(new QPushButton("(O)pen",chain_buttons), 
+		      ALT+Key_O,
+		      this,
+		      SLOT(init_chainview()));
 }
  
 void QEChainsetup::button_add_chain(void) { 
-  QStringDialog* sdialog = new QStringDialog("Chain name: ", this);
-  if (sdialog->exec() == QStringDialog::Accepted) {
+  QEStringDialog* sdialog = new QEStringDialog("Chain name: ", this);
+  if (sdialog->exec() == QEStringDialog::Accepted) {
     ctrl->select_chainsetup(chainsetup->name());
     if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
     ctrl->add_chain(sdialog->resultString().latin1());
@@ -491,11 +360,11 @@ void QEChainsetup::update_filesetup_clean (const vector<AUDIO_IO*>&
       }
     }
 
-    if (flist[aiod_sizet]->is_realtime()) 
+    AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(flist[aiod_sizet]);
+    if (p != 0)
       cs_rtstring = "yes";
     else
       cs_rtstring = "no";
-
   
     cs_format.sprintf("%d/%d/%ld", 
 		   flist[aiod_sizet]->bits(),
@@ -698,34 +567,6 @@ void QEChainsetup::button_chainselect(void) {
     QMessageBox::information(this, "qtecasound", "No file selected!",0);
 }
 
-void QEChainsetup::init_waveform(void) {
-  if (ctrl->is_engine_started()) ctrl->stop();
-  QEWaveForm* wform = 0;
-  string name = "";
-
-  QListViewItem* item = filesetupview->selectedItem();
-  if (item == 0) item = filesetupview->currentItem();
-  if (item != 0) {
-    name = string(item->text(0).latin1());
-    AUDIO_IO* dev = 0;
-    ctrl->select_chainsetup(chainsetup->name());
-    ctrl->select_audio_object(name);
-    dev = ctrl->get_audio_object();
-    if (dev != 0) {
-      wform = new QEWaveForm(static_cast<AUDIO_IO_FILE*>(dev));
-      if (wform != 0) {
-	QObject::connect(this, SIGNAL(close_waveforms()), 
-			  wform, SLOT(close()));
-
-	wform->updateWaveData();
-	wform->show();  
-      }
-    }
-  }
-  else
-    QMessageBox::information(this, "qtecasound", "No file selected!",0);
-}
-
 void QEChainsetup::init_waveedit(void) {
   if (is_filesetup_highlighted()) {
     if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
@@ -741,6 +582,3 @@ void QEChainsetup::timerEvent( QTimerEvent * ) {
   update_filesetuplist(false);
   update_chainsetuplist();
 }
-
-
-

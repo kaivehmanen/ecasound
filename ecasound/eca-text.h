@@ -6,7 +6,7 @@
 
 #include <eca-session.h>
 
-string print_header(void);
+void print_header(void);
 void signal_handler(int signum);
 
 void start_iactive(ECA_SESSION* param);

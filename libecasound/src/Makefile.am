@@ -7,9 +7,9 @@ af_libs = -laudiofile
 endif
 
 if INCLUDE_DEBUG
-eca_ldflags = -version-info 4:0:0 -lkvutils
+eca_ldflags = -version-info 5:0:0 -lkvutils
 else
-eca_ldflags = -s -version-info 4:0:0 -lkvutils
+eca_ldflags = -s -version-info 5:0:0 -lkvutils
 endif
 
 if INCLUDE_DEBUG
@@ -61,6 +61,7 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-mikmod.cpp \
 			audioio-rtnull.cpp \
 			audioio-types.cpp \
+			audioio-loop.cpp \
 			$(ecasound_audioio_oss_src) \
 			$(ecasound_audioio_alsa_src)
 
@@ -69,7 +70,8 @@ ecasound_controller_src = \
 	midi-cc.cpp \
 	osc-gen.cpp \
 	osc-sine.cpp \
-	linear-envelope.cpp
+	linear-envelope.cpp \
+	two-stage-linear-envelope.cpp
 
 ecasound_general_src = 	eca-chain.cpp \
 			eca-main.cpp \

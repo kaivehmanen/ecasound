@@ -37,7 +37,7 @@
 #undef COMPILE_TESTBENCH
 
 /* use libncurses for termcap info */
-/* #undef USE_NCURSES */
+#undef USE_NCURSES
 
 /* use libtermcap for termcap info */
-/* #undef USE_TERMCAP */
+#undef USE_TERMCAP
