@@ -1,3 +1,5 @@
+EXTRA_DIST = ecasound.el
+
 if ECA_AM_DEBUG_MODE
 libecasound_path = $(top_builddir)/libecasound/libecasound_debug.la \
 	 	   $(top_builddir)/kvutils/libkvutils_debug.la
