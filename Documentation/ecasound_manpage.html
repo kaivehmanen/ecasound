@@ -37,7 +37,7 @@ page]</A></H4></CENTER>
 <hr>
 
 <h1>ecasound</h1>
-<h2>06.10.2000</h2>
+<h2>21.10.2000</h2>
 
 
     
@@ -75,6 +75,9 @@ etc.). See <a href="ecasound-iam_manpage.html">ecasound-iam(1)</a>.
 Set the debug level to 'debug_level'. This a bitmasked value, 
 that defaults to 3. See ECA_DEBUG class documentation for 
 more detailed info about various debug_level values.
+<p><p></p><dt><strong>-D</strong><dd>
+Print all debug information to stderr (unbuffered, plain output
+without ncurses).
 <p><p></p><dt><strong>-q</strong><dd>
 Quiet mode, no output. Same as <em>-d:0</em>.
 <p><p></p><dt><strong>--help</strong><dd>
@@ -120,20 +123,20 @@ in real-time (all inputs and outputs are normal files), values between
 512 - 4096 often give better results. Default is 1024.
 <p><p></p><dt><strong>-m:mix-mode</strong><dd>
 Force ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
-'simple' =  only one input/chain/output, 'normal' = normal single-threaded
-mode and 'mthreaded' = multithreaded mixing. In most cases, ecasound is 
-able to find out the correct mode automatically.
+'simple' =  only one input/chain/output and 'normal' = normal 
+single-threaded mode. In most cases, ecasound is able to find out 
+the correct mode automatically.
 <p><p></p><dt><strong>-r</strong><dd>
 Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
 ecasound doesn't have root priviledges. Beware! This gives better 
 performance, but can cause total lock-ups if something goes wrong.
 <p><p></p><dt><strong>-x</strong><dd>
-Truncate outputs. If this isn't set, ecasound opens all outputs 
-- if format allows it - in readwrite mode.
+Truncate outputs. If this is _not_ set, ecasound opens all outputs 
+- if format allows it - in readwrite mode (-&gt; prevents truncation).
 <p><p></p><dt><strong>-z:feature</strong><dd>
-Enable 'feature'. 'db' enables double-buffering for audio inputs 
+Enable 'feature'. 'db' enables double-buffering for audio objects 
 that support it. 'psr' enables the <em>precise-sample-rates</em> mode 
-for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>.
+for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>. 
 <p></dl>
 <p><strong>PROCESSING CONTROL</strong>
 <dl>
@@ -149,12 +152,12 @@ again from the initial position.
 <p>See <a href="users_guide/users_guide.html">ecasound user's guide</a> for 
 more detailed documentation.
 <p><dl>
-<p></p><dt><strong>-f:sample_format,channel,sample-rate</strong><dd>
+<p></p><dt><strong>-f:sample_format,channel,sample-rate,interleaving</strong><dd>
 Set default sampling parameters. These are used for all following
 input and output files or until another -f is specified. If no -f
-option is present, ecasound uses s16_le/2ch/44100 as the default
-value. Some audio objects may override this altogether (for instance, 
-RIFF WAVE inputs and outputs).
+option is present, ecasound uses s16_le/2ch/44100/interleaved as the 
+default value. Some audio objects may override this altogether (for 
+instance, RIFF WAVE inputs and outputs).
 <p>Sample format is given as a a formatted string. The first letter is 
 either "u", "s" and "f" (unsigned, signed, floating point). The 
 following number specifies sample size in bits. If sample is 
@@ -163,6 +166,8 @@ little endian, "_le" is added to the end. Similarly if big endian,
 Currently supported formats are "u8" (same as "8"), "s16_le" (same 
 as "16"), "s16_be", "s24_le", "s24_be", "s32_le", "s32_be", "f32_le" 
 and "f32_be".
+<p>The 4th parameter 'interleaving' should either be 'i' (default) for
+interleaved stream format, or 'n' for noninterleaved.
 <p><p></p><dt><strong>-y:seconds</strong><dd>
 Set starting position for last specified input/output. If 
 you need more flexible control over audio objects, you should

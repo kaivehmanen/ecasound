@@ -8,6 +8,11 @@
 
 - embedded effect preset parameters [done!]
 - internal plugin support [done!]
+- C-API for libecasound
+- new disk i/o buffering subsystem [specs ready]
+
+1.9.x series:
+
 - MIDI-subsystem updates [specs ready]
 
 2.x series (1.x -> 2.x requirements):
@@ -68,7 +73,6 @@ User-interfaces:
 Other ares:
 
 - interactive mode: cs-copy 'chainsetupname' (duplicate chainsetup)
-- C-API for libecasound
 - smart mixing / dithering
 - ecaduplex; tool for testing full-duplex performance, maybe
   simulating normal multitrack recording
