@@ -42,6 +42,8 @@ DISTFILES = 	Makefile.am \
 # ---------------------------------------------------------------------
 # local targets for generating docs from latex and yodl sources
 
+all:
+
 docs: docs_guides docs_files
 
 docs_guides:
