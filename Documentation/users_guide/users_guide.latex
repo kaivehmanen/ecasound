@@ -7,7 +7,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{18122003}
+\date{11122004}
 \begin{document}
 
 \maketitle
@@ -32,6 +32,7 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 11.12.2004 - Added section ``Filenames with commas not handled correctly''
 \item 18.12.2003 - Many typo fixes and other corrections from Eric 
                    Rzewnicki.
 \item 18.11.2003 - Typo fixes.
@@ -358,6 +359,25 @@ If you leave out the -erc operators, chains will still be converted
 to stereo (as -epp is a stereo operator), but on each chain, only 
 the first channel (left) will contain any audio from the input 
 files.
+
+\subsection{Filenames with commas not handled correctly}
+
+There are some pitfalls in how commas in filenames are handled
+by ecasound. If you have a filename ``foo,bar.ogg'', the following
+will not work:
+
+\begin{verbatim}
+ecasound -i foo,bar.ogg -o alsa
+\end{verbatim} 
+
+The only way around this is to escape all the commas with backslashes:
+
+\begin{verbatim}
+ecasound -i foo\\,bar.ogg -o alsa
+\end{verbatim} 
+
+The backslash has to be a double-backslash as the shell strips 
+one of the backslashes away before passing the string to ecasound.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
