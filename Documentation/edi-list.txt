@@ -27,6 +27,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+31.10.2002 - edi-27 closed
 29.10.2002 - edi-28 and edi-30 closed, edi-32, edi-33 and edi-34 added
 23.10.2002 - edi-31 added
 15.10.2002 - edi-30 added
@@ -78,8 +79,6 @@ xx.xx.2001 no history information
 	- submitted: kaiv, 22.02.2002
 (edi-26): Logarithmic linear envelopes
         - submitted: jhall, 23.04.2002
-(edi-27): NetECI - network interface for controlling ecasound operation.
-         - submitted: kaiv, 28.06.2002
 (edi-29): Ecamonitor - ecasound monitor client implemented using NetECI.
          - submitted: kaiv, 29.09.2002
 (edi-31): Support for dynamic sampling rate and buffersize changes.
@@ -143,6 +142,8 @@ xx.xx.2001 no history information
 (edi-24): Resample audio object
          - submitted: kaiv, 22.02.2002
 	 - implemented: kaiv, 22.08.2002, 2.1dev12
+(edi-27): NetECI - network interface for controlling ecasound operation.
+         - submitted: kaiv, 28.06.2002
 (edi-28): Extending the EIAM command set to allow writing standalone ECI 
 	  implementations.
          - submitted: kaiv, 29.09.2002

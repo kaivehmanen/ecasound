@@ -1,8 +1,9 @@
 ------------------------------------------------------------------------
-Status: OPEN
+Status: CLOSED
 
 (edi-27): NetECI - network interface for controlling ecasound operation.
          - submitted: kaiv, 28.06.2002
+	 - done: kaiv, 31.10.2002
 
 ------------------------------------------------------------------------
 Details:
@@ -17,6 +18,9 @@ Details:
     - functionality available to clients equivalent to 
       the ECI API
 - todo-list
+- results
+    - see screenshot at...
+      http://www.eca.cx/screenshots/ecasound-2.2.0-pre4_neteci_ecamonitor.png
 
 ------------------------------------------------------------------------
 [kaiv on ecasound-list, 28.06.2002]
