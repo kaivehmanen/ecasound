@@ -91,6 +91,10 @@ void ECA_CURSES::read_command(const string& prompt)
     last_cmd_rep = last_cmdchar_repp;
     free(last_cmdchar_repp);
   }
+  else {
+    /* handle EOF */
+    last_cmd_rep = "q";
+  }
 }
 
 const string& ECA_CURSES::last_command(void) const
