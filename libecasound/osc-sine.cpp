@@ -48,7 +48,7 @@ void SINE_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_t phasestep) {
   otemp << frequency();
   otemp << " and initial phase of "; 
   otemp << phase_offset() << ".";
-  ecadebug->msg(otemp.to_string());
+  ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
 }
 
 void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {

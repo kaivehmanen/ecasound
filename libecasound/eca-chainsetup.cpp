@@ -80,7 +80,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
   : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default),
     cparser_rep(this) {
 
-  ecadebug->control_flow("Chainsetup created (opts)");
+  ecadebug->control_flow("Chainsetup created (cmdline)");
 
   impl_repp = new ECA_CHAINSETUP_impl;
 
@@ -585,7 +585,7 @@ void ECA_CHAINSETUP::add_new_chains(const vector<string>& newchains) {
 void ECA_CHAINSETUP::add_chain_helper(const string& name) {
   chains.push_back(new CHAIN());
   chains.back()->name(name);
-  ecadebug->msg(ECA_DEBUG::info,"(eca-chainsetup) Chain \"" + name + "\" created.");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Chain \"" + name + "\" created.");
 }
 
 /**
