@@ -182,9 +182,6 @@ void SAMPLE_BUFFER::resize(buf_size_t buffersize) {
     for(size_t n = 0; n < buffer.size(); n++) {
       delete[] buffer[n];
       buffer[n] = new sample_type [reserved_samples_rep * sizeof(sample_type)];
-      for(buf_size_t m = 0; m < reserved_samples_rep; m++) {
-	buffer[n][m] = SAMPLE_SPECS::silent_value;
-      }
     }
 
     if (impl_repp->old_buffer_repp != 0) {
@@ -193,7 +190,15 @@ void SAMPLE_BUFFER::resize(buf_size_t buffersize) {
     }
   }
 
-  buffersize_rep = buffersize;
+  if (buffersize != buffersize_rep) {
+    for(size_t n = 0; n < buffer.size(); n++) {
+      for(buf_size_t m = 0; m < buffersize; m++) {
+	buffer[n][m] = SAMPLE_SPECS::silent_value;
+      }
+    }
+
+    buffersize_rep = buffersize;
+  }
 }
 
 
