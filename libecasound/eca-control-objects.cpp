@@ -253,12 +253,12 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
   string filename = tempfile_dir_rep.create_filename("cs-edit-tmp", ".ecs");
 
   if (hot_swap == true)
-    set_chainsetup_parameter("-n:cs-edit-temp");
+    session_repp->connected_chainsetup_repp->set_name("cs-edit-temp");
 
   save_chainsetup(filename);
 
   if (hot_swap == true)
-    set_chainsetup_parameter(string("-n:") + origname);
+    session_repp->connected_chainsetup_repp->set_name(origname);
   else
     remove_chainsetup();
 
@@ -275,6 +275,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
     ecadebug->msg("(eca-controller) Can't edit; no text editor specified/available.");
   }
 
+  // FIXME: we should drop priviledge-level here (at least if root)!
   editori += " " + filename;
   int res = ::system(editori.c_str());
 
@@ -310,7 +311,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
 	  remove_chainsetup();
 	  if (restart == true) start();
 	  select_chainsetup("cs-edit-temp");
-	  set_chainsetup_parameter(string("-n:") + origname);
+	  session_repp->connected_chainsetup_repp->set_name(origname);
 	}
       }
     }

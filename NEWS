@@ -36,6 +36,7 @@ Last officially released version is -*> v2.0.3 *-
 		   ladspa-register and preset-register commands
 	- fixed: multitrack mode was not properly detected if 
 		 buffering mode was selected explicitly (-B)
+	- fixed: eiam - minor 'cs-edit' bugs fixed
 21102001 (v2.1dev3)
 	- note: major changes to effect preset system which 
 		break some old preset definitions
