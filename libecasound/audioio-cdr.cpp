@@ -123,27 +123,25 @@ void CDRFILE::seek_position(void) {
     off_t curpos_rep = position_in_samples() * frame_size();
 /* fseeko doesn't seem to work with glibc 2.1.x */
 #if _LARGEFILE_SOURCE
-    DBC_CHECK(curpos_rep < 9223372036854775807LL); /* 2^63-1 */
-    if (curpos_rep > LONG_MAX) {
-      // std::cerr << "(audioio-cdr) seeking from 0 to " << LONG_MAX << std::endl;
-      int res = std::fseek(fobject, LONG_MAX, SEEK_SET);
-      if (res == 0) {
-	// std::cerr << "(audioio-cdr) fw-seeking from " << LONG_MAX << " to " << curpos_rep << std::endl; 
-	int res2 = std::fseek(fobject, static_cast<long int>(curpos_rep - LONG_MAX), SEEK_CUR);
-	if (res2 != 0) {
-	  ecadebug->msg(ECA_DEBUG::info, "(audioio-cdr) fseek() error2! (lfs).");
-	}
+    off_t seekpos = 0;
+    off_t seekstep = 0;
+    int whence = SEEK_SET;
+    while(curpos_rep - seekpos > 0) {
+      if (curpos_rep - seekpos > LONG_MAX)
+	seekstep = LONG_MAX;
+      else
+	seekstep = curpos_rep - seekpos;
+
+      // std::cerr << "(audioio-cdr) fw-seeking from " << seekpos << " to " << seekpos+seekstep << std::endl;
+      int res = std::fseek(fobject, seekstep, whence);
+      if (res != 0) {
+	  ecadebug->msg(ECA_DEBUG::info, "(audioio-cdr) fseek() error! (lfs).");
+	  curpos_rep = 0;
+	  std::fseek(fobject, 0, SEEK_SET);
+	  break;
       }
-      else {
-	ecadebug->msg(ECA_DEBUG::info, "(audioio-cdr) fseek() error1! (lfs).");
-      }
-    }
-    else {
-      // std::cerr << "(audioio-cdr) seeking from 0 to " << curpos_rep << std::endl; 
-      int res = std::fseek(fobject, static_cast<long int>(curpos_rep), SEEK_SET);
-      if (res == -1) {
-	ecadebug->msg(ECA_DEBUG::info, "(audioio-cdr) fseek() error3! (lfs).");
-      }
+      if (seekpos == 0) whence = SEEK_CUR;
+      seekpos += seekstep;
     }
 #else
     DBC_CHECK(sizeof(long int) == sizeof(off_t));

@@ -156,12 +156,7 @@ void RAWFILE::seek_position(void) {
 }
 
 void RAWFILE::set_length_in_bytes(void) {
-  long int savetemp = fio_repp->get_file_position();
-
-  fio_repp->set_file_position_end();
-  length_in_samples(fio_repp->get_file_position() / frame_size());
-
-  fio_repp->set_file_position(savetemp);
+  length_in_samples(fio_repp->get_file_length() / frame_size());
 }
 
 

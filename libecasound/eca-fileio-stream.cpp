@@ -119,33 +119,30 @@ void ECA_FILE_IO_STREAM::set_file_position(off_t newpos) {
   if (standard_mode != true) {
 /* fseeko doesn't seem to work with glibc 2.1.x */
 #if _LARGEFILE_SOURCE
-    DBC_CHECK(curpos_rep < 9223372036854775807LL); /* 2^63-1 */
-    if (curpos_rep > LONG_MAX) {
-      std::cerr << "(eca-fileio-stream) seeking from 0 to " << LONG_MAX << std::endl;
-      int res = std::fseek(f1, LONG_MAX, SEEK_SET);
-      if (res == 0) {
-	std::cerr << "(eca-fileio-stream) fw-seeking from " << LONG_MAX << " to " << curpos_rep << std::endl; 
-	int res2 = std::fseek(f1, static_cast<long int>(curpos_rep - LONG_MAX), SEEK_CUR);
-	if (res2 != 0) {
-	  ecadebug->msg(ECA_DEBUG::info, "(eca-fileio-stream) fseek() error2! (lfs).");
-	}
+    off_t seekpos = 0;
+    off_t seekstep = 0;
+    int whence = SEEK_SET;
+    while(curpos_rep - seekpos > 0) {
+      if (curpos_rep - seekpos > LONG_MAX)
+	seekstep = LONG_MAX;
+      else
+	seekstep = curpos_rep - seekpos;
+
+      // std::cerr << "(eca-fileio-stream) fw-seeking from " << seekpos << " to " << seekpos+seekstep << std::endl;
+      int res = std::fseek(f1, seekstep, whence);
+      if (res != 0) {
+	  ecadebug->msg(ECA_DEBUG::info, "(eca-fileio-stream) fseek() error! (lfs).");
+	  curpos_rep = 0;
+	  std::fseek(f1, 0, SEEK_SET);
+	  break;
       }
-      else {
-	ecadebug->msg(ECA_DEBUG::info, "(eca-fileio-stream) fseek() error1! (lfs).");
-      }
-    }
-    else {
-      std::cerr << "(eca-fileio-stream) seeking from 0 to " << curpos_rep << std::endl; 
-      int res = std::fseek(f1, static_cast<long int>(curpos_rep), SEEK_SET);
-      if (res == -1) {
-	ecadebug->msg(ECA_DEBUG::info, "(eca-fileio-stream) fseek() error3! (lfs).");
-      }
+      if (seekpos == 0) whence = SEEK_CUR;
+      seekpos += seekstep;
     }
 #else
     DBC_CHECK(sizeof(long int) == sizeof(off_t));
     std::fseek(f1, curpos_rep, SEEK_SET);
 #endif
-
   }
 }
 
@@ -157,7 +154,10 @@ void ECA_FILE_IO_STREAM::set_file_position_advance(off_t fw) {
 
 void ECA_FILE_IO_STREAM::set_file_position_end(void) { 
   if (standard_mode == false) {
-    std::fseek(f1, 0, SEEK_END);
+    int res = std::fseek(f1, 0, SEEK_END);
+    if (res != 0) {
+      ecadebug->msg(ECA_DEBUG::info, "(eca-fileio-stream) fseek() error! (seek_end).");
+    }
   }
 }
 
@@ -172,6 +172,8 @@ off_t ECA_FILE_IO_STREAM::get_file_length(void) const {
   struct stat temp;
   stat(fname_rep.c_str(), &temp);
   off_t lentemp = temp.st_size;
+
+  std::cerr << "File-length: " << lentemp << "." << std::endl;
 
   return(lentemp); 
 }

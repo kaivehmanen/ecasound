@@ -4,15 +4,7 @@
 #include <string>
 #include <cstdio>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* off_t */
-#else
-typedef long int off_t;
-#endif
 
 /**
  * Interface for blocking file input/output with buffering
