@@ -14,11 +14,6 @@
 #include "eca-engine-driver.h"
 #include "audioio_jack.h"
 
-/* for ECA_JACK_TRANSPORT_API */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 class AUDIO_IO;
 
 using std::list;
@@ -38,10 +33,12 @@ class AUDIO_IO_JACK_MANAGER : public AUDIO_IO_MANAGER,
 
  public:
 
-  friend int eca_jack_process(jack_nframes_t nframes, void *arg);
+  friend int eca_jack_process_callback(jack_nframes_t nframes, void *arg);
+  friend int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t *pos, void *arg);
+  friend void eca_jack_sync_start_seek_to(jack_transport_state_t state, jack_position_t *pos, void *arg);
+  friend void eca_jack_sync_start_live_seek_to(jack_transport_state_t state, jack_position_t *pos, void *arg);
   friend void eca_jack_process_engine_iteration(jack_nframes_t nframes, void *arg);
   friend void eca_jack_process_mute(jack_nframes_t nframes, void *arg);
-  friend void eca_jack_process_timebase_master(jack_nframes_t nframes, void *arg);
   friend void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg);
   friend int eca_jack_bufsize (jack_nframes_t nframes, void *arg);
   friend int eca_jack_srate (jack_nframes_t nframes, void *arg);
@@ -68,9 +65,10 @@ public:
  private:
 
   typedef enum Operation_mode {
-    Streaming,
-    Master,
-    Slave
+    Transport_none,
+    Transport_receive,
+    Transport_send,
+    Transport_send_receive
   } Operation_mode_t;
 
  public:
@@ -210,10 +208,7 @@ private:
   long int buffersize_rep;
   long int cb_allocated_frames_rep;
 
-#if ECA_JACK_TRANSPORT_API >= 2
   int last_transport_state_rep;
-  jack_transport_info_t transport_info_rep;
-#endif
 };
 
 #endif

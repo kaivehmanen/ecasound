@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 310503) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 080803) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -32,7 +32,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   this by specifying the python module directory 
 		   explicitly with the --with-python-modules=DIR 
 		   option
-	- changed: updates to JACK transport code
+	- changed: JACK transport support code to the new API 
+		   introduced in 0.76.1 and newer
 	- fixed: use of the JACK transport API was never actually 
                  enabled in 2.2.3
 	- fixed: .aiff/.snd/.au input/output was not working at all
