@@ -34,20 +34,19 @@
 
 #include "ecatools_play.h"
 
-static ECA_CONTROL* ectrl_repp = 0;
-static PROCEDURE_TIMER* ptimer_repp = 0;
-static struct timeval* lowerlimit_repp;
-static int exit_request_rep = 0;
+static ECA_CONTROL* ecaplay_ectrl_repp = 0;
+static PROCEDURE_TIMER* ecaplay_ptimer_repp = 0;
+static struct timeval* ecaplay_lowerlimit_repp;
+static int ecaplay_exit_request_rep = 0;
+static int ecaplay_skip_files = 0;
+
+static const string ecaplay_version = "20011009";
+
+int process_option(const string& option);
 
 int main(int argc, char *argv[])
 {
-#ifdef NDEBUG
   ecadebug->disable();
-#else
-  ecadebug->set_debug_level(ECA_DEBUG::info |
-    			    ECA_DEBUG::module_flow |
-    			    ECA_DEBUG::user_objects);
-#endif
 
   struct sigaction es_handler_int;
   es_handler_int.sa_handler = signal_handler;
@@ -61,31 +60,52 @@ int main(int argc, char *argv[])
     print_usage();
     return(1);
   }
+
+  cline.combine();
   
   PROCEDURE_TIMER ptimer;
-  ptimer_repp = &ptimer;
+  ecaplay_ptimer_repp = &ptimer;
 
   struct timeval lowerlimit;
-  lowerlimit_repp = &lowerlimit;
+  ecaplay_lowerlimit_repp = &lowerlimit;
   lowerlimit.tv_sec = 1;
   lowerlimit.tv_usec = 0;
 
   try {
-    string filename;
-
     ECA_SESSION esession;
     ECA_CONTROL ectrl (&esession);
-    ectrl_repp = &ectrl;
+    ecaplay_ectrl_repp = &ectrl;
     ECA_AUDIO_FORMAT aio_params;
 
     ectrl.toggle_interactive_mode(true);
     cline.begin();
     cline.next(); // skip the program name
-    while(cline.end() == false &&
-	  exit_request_rep == 0) {
-      filename = cline.current();
 
-      std::cerr << "Playing file \"" << filename << "\".\n";
+    while(cline.end() == false &&
+	  ecaplay_exit_request_rep == 0) {
+
+      // --
+      // parse command-line options
+      if (cline.current().size() > 1 &&
+	  cline.current()[0] == '-') {
+	int ret = process_option(cline.current());
+	if (ret != 0) return(ret);
+
+	cline.next();
+	continue;
+      }
+      
+      string filename = cline.current();
+
+      if (ecaplay_skip_files == 0) {
+	std::cout << "Playing file '" << filename << "'." << endl; 
+      }
+      else {
+	std::cout << "Skipping file '" << filename << "'." << endl;
+	--ecaplay_skip_files;
+	cline.next();
+	continue;
+      }
 
       ectrl.add_chainsetup("default");
       ectrl.add_chain("default");
@@ -122,28 +142,66 @@ int main(int argc, char *argv[])
 
 void signal_handler(int signum) {
 //    std::cerr << "Caught an interrupt... moving to next file.\n";
-  if (ptimer_repp != 0) {
-    ptimer_repp->stop();
-    if (ptimer_repp->events_under_lower_bound() > 0) {
+  if (ecaplay_ptimer_repp != 0) {
+    ecaplay_ptimer_repp->stop();
+    if (ecaplay_ptimer_repp->events_under_lower_bound() > 0) {
       std::cerr << std::endl << "Caught an exception. Exiting..." << std::endl;
-      exit_request_rep = 1;
+      ecaplay_exit_request_rep = 1;
     }
-    ptimer_repp->reset();
-    ptimer_repp->set_lower_bound(lowerlimit_repp);
-    ptimer_repp->start();
+    ecaplay_ptimer_repp->reset();
+    ecaplay_ptimer_repp->set_lower_bound(ecaplay_lowerlimit_repp);
+    ecaplay_ptimer_repp->start();
   }
 
-  if (ectrl_repp != 0)
-    ectrl_repp->quit();
+  if (ecaplay_ectrl_repp != 0)
+    ecaplay_ectrl_repp->quit();
 }
 
 void print_usage(void) {
   std::cerr << "****************************************************************************\n";
-  std::cerr << "* ecatools_play, v" << ecatools_play_version;
+  std::cerr << "* ecatools_play, v" << ecaplay_version;
   std::cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
   std::cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence \n";
   std::cerr << "****************************************************************************\n";
 
-  std::cerr << "\nUSAGE: ecatools_play file1 [ file2, ... fileN ]\n\n";
+  std::cerr << "\nUSAGE: ecaplay [-dhk] file1 [ file2, ... fileN ]\n\n";
+}
+
+int process_option(const string& option) {
+  if (option == "--help" ||
+      option == "--version") {
+    print_usage();
+    return(1);
+  }
+
+  switch(option[1]) 
+    {
+    case 'd': 
+      {
+	int debuglevel = atoi(get_argument_number(1,option).c_str());
+	ecadebug->set_debug_level(debuglevel);
+	break;
+      }
+      
+    case 'k': 
+      {
+	ecaplay_skip_files = atoi(get_argument_number(1,option).c_str());
+	break;
+      }
+      
+    case 'h': 
+      {
+	print_usage();
+	return(1);
+      }
+      
+    default:
+      {
+	std::cerr << "Error! Unknown option '" << option
+		  << "'." << endl;
+	return(2);
+      }
+    }
+  return(0);
 }

@@ -4,7 +4,5 @@
 int main(int argc, char *argv[]);
 void print_usage(void);
 
-const string ecatools_play_version = "20000607";
-
 #endif
 

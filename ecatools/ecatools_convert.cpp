@@ -32,6 +32,8 @@
 
 #include "ecatools_convert.h"
 
+static const string ecatools_play_version = "20011009";
+
 int main(int argc, char *argv[])
 {
 #ifdef NDEBUG
@@ -113,8 +115,8 @@ void print_usage(void) {
   std::cerr << "* ecatools_convert, v" << ecatools_play_version;
   std::cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
-  std::cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence \n";
+  std::cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence \n";
   std::cerr << "****************************************************************************\n";
 
-  std::cerr << "\nUSAGE: ecatools_convert .extension file1 [ file2, ... fileN ]\n\n";
+  std::cerr << "\nUSAGE: ecaconvert .extension file1 [ file2, ... fileN ]\n\n";
 }

@@ -50,9 +50,10 @@
 
 #include "ecatools_signalview.h"
 
-bool enable_debug, enable_cumulative_mode;
-long int buffersize, rate_msec;
-string input, output, format_string;
+static bool enable_debug, enable_cumulative_mode;
+static long int buffersize, rate_msec;
+static string input, output, format_string;
+const string ecatools_signalview_version = "20001124";
 
 void parse_command_line(int argc, char *argv[]) {
   COMMAND_LINE cline = COMMAND_LINE (argc, argv);
@@ -194,10 +195,10 @@ void print_usage(void) {
   std::cerr << "* ecatools_signalview, v" << ecatools_signalview_version;
   std::cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
-  std::cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence\n";
+  std::cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence\n";
   std::cerr << "****************************************************************************\n";
 
-  std::cerr << "\nUSAGE: ecatools_signalview [options] [input] [output] \n";
+  std::cerr << "\nUSAGE: ecatsignalview [options] [input] [output] \n";
   std::cerr << "\toptions:";
   std::cerr << "\t-b:buffersize\n";
   std::cerr << "\t-c (cumulative mode)\n";

@@ -39,6 +39,9 @@
 
 #include "ecatools_fixdc.h"
 
+static const string ecatools_fixdc_version = "20011009";
+static string ecatools_fixdc_tempfile;
+
 int main(int argc, char *argv[])
 {
 #ifdef NDEBUG
@@ -179,10 +182,10 @@ void print_usage(void) {
   std::cerr << "* ecatools_fixdc, v" << ecatools_fixdc_version;
   std::cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
-  std::cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence \n";
+  std::cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence \n";
   std::cerr << "****************************************************************************\n";
 
-  std::cerr << "\nUSAGE: ecatools_fixdc file1 [ file2, ... fileN ]\n\n";
+  std::cerr << "\nUSAGE: ecafixdc file1 [ file2, ... fileN ]\n\n";
 }
 
 void signal_handler(int signum) {

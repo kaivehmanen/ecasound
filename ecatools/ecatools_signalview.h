@@ -6,6 +6,4 @@ void parse_command_line(int argc, char *argv[]);
 void print_usage(void);
 void signal_handler(int signum);
 
-const string ecatools_signalview_version = "20001124";
-
 #endif
