@@ -34,18 +34,17 @@ check_PROGRAMS = libecasoundc_tester
 # header files
 # ----------------------------------------------------------------------
 
-ecasoundc_includes = ecasoundc.h
+ecasoundc_includes =	ecasoundc.h \
+			eca-control-interface.h
 noinst_HEADERS = $(ecasoundc_includes)
 
 # ----------------------------------------------------------------------
 # source files
 # ----------------------------------------------------------------------
 
-# implementation using libecasound
-#ecasoundc_src = ecasoundc.cpp
-
 # standalone implementation (forks and execs the ecasound binary)
-ecasoundc_src = ecasoundc_sa.c
+ecasoundc_src =	ecasoundc_sa.c \
+		eca-control-interface.cpp
 
 # ----------------------------------------------------------------------
 # library definitons

@@ -93,16 +93,10 @@ void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   if (child()->supports_seeking() != true) {
     throw(SETUP_ERROR(SETUP_ERROR::dynamic_params, "AUDIOIO-REVERSE: Unable to reverse audio object types that don't support seek (" + child()->label() + ")."));
   }
-  
-  child()->set_buffersize(buffersize());
-  child()->set_io_mode(io_mode());
-  child()->set_audio_format(audio_format());
+
+  pre_child_open();
   child()->open();
-  if (child()->locked_audio_format() == true) {
-    set_audio_format(child()->audio_format());
-  }
-  set_label(child()->label());
-  set_length_in_samples(child()->length_in_samples());
+  post_child_open();
 
   AUDIO_IO::open();
 }
@@ -163,6 +157,7 @@ void AUDIO_IO_REVERSE::seek_position(void)
   finished_rep = false;
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-reverse) seek_position " + kvu_numtostr(position_in_samples()) + ".");
+  AUDIO_IO_PROXY::seek_position();
 }
 
 void AUDIO_IO_REVERSE::read_buffer(SAMPLE_BUFFER* sbuf)

@@ -7,7 +7,6 @@
  *        died so better to give an error */
 /* FIXME: add check for msgsize errors */
 /* FIXME: get rid of the static string lengths (C... blaah ;)) */
-/* FIXME: add documentation for ECASOUND envvar */
 /* FIXME: add proper signal handling */
 
 /** ------------------------------------------------------------------------

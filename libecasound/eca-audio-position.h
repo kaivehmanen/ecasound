@@ -21,8 +21,8 @@ class ECA_AUDIO_POSITION : public ECA_SAMPLERATE_AWARE {
 
   /** @name Public functions for getting length information */
   /*@{*/
-
-  virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const;
+  
+  SAMPLE_SPECS::sample_pos_t length_in_samples(void) const;
   int length_in_seconds(void) const;
   double length_in_seconds_exact(void) const;
 
@@ -35,7 +35,7 @@ class ECA_AUDIO_POSITION : public ECA_SAMPLERATE_AWARE {
   /** @name Protected functions for setting length */
   /*@{*/
 
-  virtual void set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos);
+  void set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos);
   void set_length_in_seconds(int pos_in_seconds);
   void set_length_in_seconds(double pos_in_seconds);
 
@@ -58,7 +58,7 @@ class ECA_AUDIO_POSITION : public ECA_SAMPLERATE_AWARE {
   /** @name Public functions for getting position information */
   /*@{*/
 
-  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
+  SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
   int position_in_seconds(void) const;
   double position_in_seconds_exact(void) const;
 
@@ -69,7 +69,7 @@ class ECA_AUDIO_POSITION : public ECA_SAMPLERATE_AWARE {
   /** @name Protected functions for setting position (without action) */
   /*@{*/
 
-  virtual void set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
+  void set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
   void set_position_in_seconds(int pos_in_seconds);
   void set_position_in_seconds(double pos_in_seconds);
   void change_position_in_samples(SAMPLE_SPECS::sample_pos_t pos);

@@ -14,6 +14,13 @@ class SAMPLE_BUFFER;
  * Related design patterns:
  *     - Proxy (GoF207
  *
+ * Guide lines for subclassing:
+ *     - reimplement (or explicitly use the existing implementation)
+ *       all public getter and setter functions
+ *     -> rationale: otherwise the class might return invalid
+ *        data not related to the proxied child object, or setting 
+ *        parameters never affect the proxy target
+ *
  * @author Kai Vehmanen
  */
 class AUDIO_IO_PROXY : public AUDIO_IO {
@@ -36,6 +43,15 @@ class AUDIO_IO_PROXY : public AUDIO_IO {
 
   /*@}*/
 
+  /** @name Reimplemented functions from DYNAMIC_PARAMETERS */
+  /*@{*/
+
+  virtual std::string parameter_names(void) const;
+  virtual void set_parameter(int param, std::string value);
+  virtual std::string get_parameter(int param) const;
+
+  /*@}*/
+
   /** @name Reimplemented functions from DYNAMIC_OBJECT<string> */
   /*@{*/
 
@@ -47,10 +63,6 @@ class AUDIO_IO_PROXY : public AUDIO_IO {
   /** @name Reimplemented functions from ECA_AUDIO_POSITION */
   /*@{*/
 
-  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const { return(child_repp->position_in_samples()); }
-  virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const { return(child_repp->length_in_samples()); }
-  virtual void set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
-  virtual void set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos);
   virtual void seek_position(void) { return(child_repp->seek_position()); }
 
   /*@}*/
@@ -58,7 +70,10 @@ class AUDIO_IO_PROXY : public AUDIO_IO {
   /** @name Reimplemented functions from AUDIO_IO */
   /*@{*/
 
+  virtual int supported_io_modes(void) const { return(child_repp->supported_io_modes()); }
   virtual bool supports_nonblocking_mode(void) const { return(child_repp->supports_nonblocking_mode()); }
+  virtual bool supports_seeking(void) const { return(child_repp->supports_seeking()); }
+  virtual bool finite_length_stream(void) const { return( child_repp->finite_length_stream()); }
   virtual bool locked_audio_format(void) const { return(child_repp->locked_audio_format()); }
 
   virtual void set_buffersize(long int samples);
@@ -76,12 +91,25 @@ class AUDIO_IO_PROXY : public AUDIO_IO {
 
   virtual void set_channels(SAMPLE_SPECS::channel_t v);
   virtual void set_sample_format(Sample_format v) throw(ECA_ERROR&);
+  virtual void set_audio_format(const ECA_AUDIO_FORMAT& f_str);
+  virtual void toggle_interleaved_channels(bool v);
+
+  /*@}*/
+
+  /** @name Reimplemented functions from ECA_SAMPLERATE_AWARE */
+  /*@{*/
+  
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
 
   /*@}*/
 
  protected: 
 
   void set_child(AUDIO_IO* v);
+  void release_child_no_delete(void);
+  void pre_child_open(void);
+  void post_child_open(void);
+
   AUDIO_IO* child(void) const { return child_repp; }
 
  private:

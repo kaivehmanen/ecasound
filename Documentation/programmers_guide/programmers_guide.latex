@@ -31,6 +31,7 @@ ecasound version.
 \chapter{Document history}
 
 \begin{itemize}
+\item 25.10.2002 - Added ``Checklist for Audio Object Implementations''.
 \item 17.10.2002 - Added a warning against direct use of libecasound
                    and libkvutils. Using ECI is from now on the 
 		   preferred way of using ecasound as a development
@@ -795,6 +796,23 @@ Adding the new object to ecasound is much like adding a new effect
 (see the next section). Basicly you just add it to the makefiles and
 then register it to the appropriate object map (see below).
 
+\subsection{Checklist for Audio Object Implementations}
+
+\begin{enumerate}
+\item Check the read\_buffer() and write\_buffer() change the
+      internal position with either set\_position\_in\_samples()
+      or change\_position\_in\_samples() functions of ECA\_AUDIO\_POSITION.
+      Also, when writing a new file, extend\_position() should
+      also be called. All this is done automatically if using 
+      read\_samples() and write\_samples() from AUDIO\_IO\_BUFFERED.
+\item If implementing a proxy object, separately consider all public 
+      functions of audioio-proxy.h (whether to reimplement or use
+      as they are).
+\item Check that open() and close() call AUDIO\_IO::open() and
+      AUDIO\_IO::close(), and in the right order.
+\item If the object supports seeking, seek\_position() must
+      be implemented.
+\end{enumerate}
 
 % ----------------------------------------------------------------------
 \section{Effects and other chain operators}

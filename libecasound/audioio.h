@@ -189,6 +189,9 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * operations. If you need direct access to object's data, a lower 
    * abstraction level should be used (@see AUDIO_IO_BUFFERED).
    *
+   * Note! The implementations should call set_position_in_samples()
+   *       or change_position_in_samples() in ECA_AUDIO_POSITION.
+   *
    * @pre io_mode() == io_read || io_mode() == io_readwrite
    * @pre readable() == true
    * @pre sbuf != 0
@@ -200,6 +203,9 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * Writes all data from sample buffer pointed by 'sbuf' to
    * this object. Notes concerning read_buffer() also apply to 
    * this routine.
+   *
+   * Note! The implementations should call set_position_in_samples()
+   *       or change_position_in_samples() in ECA_AUDIO_POSITION.
    *
    * @pre io_mode() == io_write || io_mode() == io_readwrite
    * @pre writable() == true

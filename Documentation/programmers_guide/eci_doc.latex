@@ -6,7 +6,7 @@
 
 \title{Ecasound Control Interface Guide}
 \author{Kai Vehmanen}
-\date{24102002}
+\date{26102002}
 \begin{document}
 
 \maketitle
@@ -29,6 +29,7 @@ detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 26.10.2002 - Changed the C++ linking example.
 \item 24.10.2002 - Added ``Notes Concerning Standalone ECI Implementations''
                    section. Added compilation examples.
 \item 06.10.2002 - Added ``Application development'' section.
@@ -208,9 +209,8 @@ STL vector is used for representing collections of objects
 \item \#include <eca-control-interface.h>
 \item create an instance of the ECA\_CONTROL\_INTERFACE class
       and use its member functions
-\item link you app agains libecasound (-lecasoundX, where
-      X is the interface number)
-\item compilation example: \emph{c++ -o ecidoc\_example ecidoc\_example.cpp `libecasound-config --cflags --libs`}
+\item link you app agains libecasound (-lecasoundc)
+\item compilation example: \emph{c++ -o ecidoc\_example ecidoc\_example.cpp `libecasoundc-config --cflags --libs`}
 \end{enumerate}
 
 \subsubsection{Example}

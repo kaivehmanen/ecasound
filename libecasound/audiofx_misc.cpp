@@ -173,7 +173,7 @@ void EFFECT_PITCH_SHIFT::process(void)
   sbuf_repp->resample(samples_per_second(), target_rate_rep); 
 }
 
-long int EFFECT_PITCH_SHIFT::output_samples(long int i_samples) const
+long int EFFECT_PITCH_SHIFT::max_output_samples(long int i_samples) const
 {
   DBC_CHECK(sbuf_repp != 0);
   return(static_cast<long int>(static_cast<double>(target_rate_rep) /

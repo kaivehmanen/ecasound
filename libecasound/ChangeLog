@@ -1,3 +1,10 @@
+2002-10-26  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* eca-chainop.h (output_samples): renamed to max_output_samples()
+	* eca-audio-position.h (set_length_in_samples,
+	length_in_samples, set_position_in_samples,
+	position_in_samples): turned into non-virtuals
+
 2002-10-22  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* eca-operator.h (parameter_description): turned into

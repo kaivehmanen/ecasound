@@ -96,16 +96,22 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 	      ", srate=" + kvu_numtostr(samples_per_second()) +
 	      ", bsize=" + kvu_numtostr(child_buffersize_rep) + ".");
     
+  /* note, we don't use pre_child_open() as 
+   * we want to set srate differently */
   child()->set_buffersize(child_buffersize_rep);
   child()->set_io_mode(io_mode());
   child()->set_audio_format(audio_format());
   child()->set_samples_per_second(child_srate_rep);
+
   child()->open();
+
+  /* same for the post processing */ 
   SAMPLE_SPECS::sample_rate_t orig_srate = samples_per_second();
   if (child()->locked_audio_format() == true) {
     set_audio_format(child()->audio_format());
     set_samples_per_second(orig_srate);
   }
+
   set_label(child()->label());
   set_length_in_samples(child()->length_in_samples());
 
@@ -175,6 +181,8 @@ void AUDIO_IO_RESAMPLE::seek_position(void)
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-resample) seek_position " + kvu_numtostr(position_in_samples()) + ".");
   child()->seek_position_in_samples(position_in_samples());
+
+  AUDIO_IO_PROXY::seek_position();
 }
 
 void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* sbuf)

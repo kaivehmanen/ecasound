@@ -41,10 +41,43 @@ AUDIO_IO_PROXY::~AUDIO_IO_PROXY(void)
  */
 void AUDIO_IO_PROXY::set_child(AUDIO_IO* v)
 { 
-  if (v != 0) {
-    delete child_repp; // the placeholder null object
-    child_repp = v;
+  if (child_repp != 0) {
+    delete child_repp;
   }
+  child_repp = v;
+}
+
+/**
+ * Releases the current child without deleting Itx.
+ */
+void AUDIO_IO_PROXY::release_child_no_delete(void)
+{
+  child_repp = new NULLFILE("uninitialized");
+}
+
+/**
+ * Prepares child object for opening.
+ */
+void AUDIO_IO_PROXY::pre_child_open(void)
+{
+  child()->set_buffersize(buffersize());
+  child()->set_io_mode(io_mode());
+  child()->set_audio_format(audio_format());
+  child()->set_samples_per_second(samples_per_second());
+}
+
+/**
+ * Checks if any audio parameters were changed
+ * during child's open(), fetches any changes,
+ * set object length and sets the label.
+ */
+void AUDIO_IO_PROXY::post_child_open(void)
+{
+  if (child()->locked_audio_format() == true) {
+    set_audio_format(child()->audio_format());
+  }
+  set_label(child()->label());
+  set_length_in_samples(child()->length_in_samples());
 }
 
 void AUDIO_IO_PROXY::set_buffersize(long int samples)
@@ -65,14 +98,36 @@ void AUDIO_IO_PROXY::set_sample_format(Sample_format v) throw(ECA_ERROR&)
   child_repp->set_sample_format(v);
 }
 
-void AUDIO_IO_PROXY::set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos)
+void AUDIO_IO_PROXY::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
 {
-  /* only way to update the current position */
-  child_repp->seek_position_in_samples(pos);
-  AUDIO_IO::set_position_in_samples(pos);
+  AUDIO_IO::set_audio_format(f_str);
+  child_repp->set_audio_format(f_str);
 }
 
-void AUDIO_IO_PROXY::set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
+void AUDIO_IO_PROXY::toggle_interleaved_channels(bool v)
 {
-  AUDIO_IO::set_length_in_samples(pos);
+  AUDIO_IO::toggle_interleaved_channels(v);
+  child_repp->toggle_interleaved_channels(v);
+}
+
+void AUDIO_IO_PROXY::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
+{
+  AUDIO_IO::set_samples_per_second(v);
+  child_repp->set_samples_per_second(v);
+}
+
+std::string AUDIO_IO_PROXY::parameter_names(void) const
+{
+  return(child_repp->parameter_names()); 
+}
+
+void AUDIO_IO_PROXY::set_parameter(int param, std::string value)
+{
+  AUDIO_IO::set_parameter(param, value);
+  child_repp->set_parameter(param, value);
+}
+
+std::string AUDIO_IO_PROXY::get_parameter(int param) const
+{
+  return(child_repp->get_parameter(param));
 }

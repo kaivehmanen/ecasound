@@ -162,7 +162,6 @@ ecasound_general_include = 	\
 			eca-control-objects.h \
 			eca-control-dump.h \
 			eca-iamode-parser.h \
-			eca-control-interface.h \
 			eca-audio-position.h \
 			eca-fileio.h  \
 			eca-fileio-stream.h \
@@ -288,7 +287,6 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-control-objects.cpp \
 			eca-control-dump.cpp \
 			eca-iamode-parser.cpp \
-			eca-control-interface.cpp \
 			eca-samplerate-aware.cpp \
 			eca-audio-position.cpp \
 			eca-audio-format.cpp \

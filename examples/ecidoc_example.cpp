@@ -18,6 +18,7 @@
 /* compile with: 
  *
  * c++ -o ecidoc_example ecidoc_example.cpp `libecasound-config --cflags --libs`
+ * c++ -o ecidoc_example ecidoc_example.cpp `libecasoundc-config --cflags --libs`
  */
 
 int main(int argc, char *argv[])

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-ewf.cpp: Ecasound wave format input/output
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,18 +37,13 @@
 using std::cerr;
 using std::endl;
 
+EWFFILE::EWFFILE (const std::string& name)
+{
+  set_label(name);
+}
+
 EWFFILE::~EWFFILE(void)
 {
-  if (is_open() == true) {
-    close();
-  }
-
-  buffersize_rep = 0;
-
-  if (child != 0) {
-    delete child;
-    child = 0;
-  }
 }
 
 EWFFILE* EWFFILE::clone(void) const
@@ -68,52 +63,44 @@ void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   ewf_rc.load();
   read_ewf_data();
 
-  child = ECA_OBJECT_FACTORY::create_audio_object(child_name_rep);
-  if (child == 0) 
-    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-EWF: Couldn't open child object."));
+  if (init_rep != true) {
+    AUDIO_IO* tmp = ECA_OBJECT_FACTORY::create_audio_object(child_name_rep);
+    if (tmp == 0) 
+      throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-EWF: Couldn't open child object."));
 
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "AUDIOIO-EWF: Opening ewf-child:" + child->label() + ".");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "AUDIOIO-EWF: Opening ewf-child:" + tmp->label() + ".");
 
-  child->set_buffersize(buffersize());
-  child->set_io_mode(io_mode());
-  child->set_audio_format(audio_format());
-  child->open();
-  if (child->locked_audio_format() == true) {
-    set_audio_format(child->audio_format());
+    set_child(tmp);
   }
 
-  child_offset_rep.set_samples_per_second(child->samples_per_second());
-  child_start_pos_rep.set_samples_per_second(child->samples_per_second());
-  child_length_rep.set_samples_per_second(child->samples_per_second());
+  pre_child_open();
+  child()->open();
+  post_child_open();
+
+  child_offset_rep.set_samples_per_second(child()->samples_per_second());
+  child_start_pos_rep.set_samples_per_second(child()->samples_per_second());
+  child_length_rep.set_samples_per_second(child()->samples_per_second());
   if (child_length_rep.samples() == 0)
-    child_length_rep.set_samples(child->length_in_samples() - child_start_pos_rep.samples());
+    child_length_rep.set_samples(child()->length_in_samples() - child_start_pos_rep.samples());
 
-  tmp_buffer.number_of_channels(child->channels());
-  tmp_buffer.length_in_samples(child->buffersize());
+  set_length_in_samples(child_offset_rep.samples() + child_length_rep.samples());
 
-  AUDIO_IO::open();
+  tmp_buffer.number_of_channels(child()->channels());
+  tmp_buffer.length_in_samples(child()->buffersize());
+
+  AUDIO_IO_PROXY::open();
 }
 
 void EWFFILE::close(void)
 {
-  if (child->is_open() == true) child->close();
+  if (child()->is_open() == true) child()->close();
+
   write_ewf_data();
   child_active = false;
 
-  AUDIO_IO::close();
+  AUDIO_IO_PROXY::close();
 }
 
-void EWFFILE::set_buffersize(long int samples)
-{ 
-  buffersize_rep = samples;
-  if (child != 0) child->set_buffersize(buffersize_rep); 
-}
-
-long int EWFFILE::buffersize(void) const
-{ 
-  return(buffersize_rep);
-  DBC_CHECK(child != 0 && child->buffersize() == buffersize_rep || child == 0);
-}
 
 void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
 {
@@ -158,10 +145,10 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
 	  position_in_samples() < child_offset_rep.samples() + child_length_rep.samples()) {
 	ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-ewf) child-object activated" + label());
 	child_active = true;
-	child->seek_position_in_samples(child_start_pos_rep.samples() +
+	child()->seek_position_in_samples(child_start_pos_rep.samples() +
 					position_in_samples()
 				      - child_offset_rep.samples());
-	child->read_buffer(sbuf);
+	child()->read_buffer(sbuf);
       }
       else {
 	sbuf->make_silent();
@@ -183,7 +170,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
       // ---
       // case 2: reading child file
       // ---
-      child->read_buffer(sbuf);
+      child()->read_buffer(sbuf);
       change_position_in_samples(sbuf->length_in_samples());
     }
     else {
@@ -194,7 +181,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
 	// ---
 	// case 3a: we're looping
 	// ---
-	child->read_buffer(sbuf);
+	child()->read_buffer(sbuf);
 	SAMPLE_SPECS::sample_pos_t tail = position_in_samples()
 	  + buffersize()
 	  - child_offset_rep.samples()
@@ -205,14 +192,14 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
 
 	DBC_CHECK(tail <= buffersize());
 
-	child->seek_position_in_samples(child_start_pos_rep.samples());
-	long int save_bsize = child->buffersize();
-	child->set_buffersize(tail);
-	child->read_buffer(&tmp_buffer);
+	child()->seek_position_in_samples(child_start_pos_rep.samples());
+	long int save_bsize = child()->buffersize();
+	child()->set_buffersize(tail);
+	child()->read_buffer(&tmp_buffer);
 
 	DBC_CHECK(tmp_buffer.length_in_samples() == tail);
 
-	child->set_buffersize(save_bsize);
+	child()->set_buffersize(save_bsize);
 	sbuf->length_in_samples(buffersize());
 	sbuf->copy_range(tmp_buffer, 
 			 0,
@@ -220,16 +207,16 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
 			 sbuf->length_in_samples() - tail);
 	
 	set_position_in_samples(child_offset_rep.samples() + 
-				child->position_in_samples() - child_start_pos_rep.samples());
+				child()->position_in_samples() - child_start_pos_rep.samples());
       }
       else {
 	// ---
 	// case 3b: not looping, reaching child file end during the next read
 	// ---
 	child_active = false;
-	child->read_buffer(sbuf);
+	child()->read_buffer(sbuf);
       
-	SAMPLE_SPECS::sample_pos_t tail = child->position_in_samples() 
+	SAMPLE_SPECS::sample_pos_t tail = child()->position_in_samples() 
 	  - child_start_pos_rep.samples() 
 	  - child_length_rep.samples();
 	DBC_CHECK(tail >= 0);
@@ -249,7 +236,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
 void EWFFILE::dump_child_debug(void)
 {
   cerr << "Global position (in samples): " << position_in_samples() << endl;
-  cerr << "child-pos: " << child->position_in_samples() << endl;
+  cerr << "child-pos: " << child()->position_in_samples() << endl;
   cerr << "child-offset: " << child_offset_rep.samples() << endl;
   cerr << "child-startpos: " << child_start_pos_rep.samples() << endl;
   cerr << "child-length: " << child_length_rep.samples() << endl;
@@ -265,7 +252,7 @@ void EWFFILE::write_buffer(SAMPLE_BUFFER* sbuf)
     ECA_LOG_MSG(ECA_LOGGER::user_objects, m.to_string());
   }
   
-  child->write_buffer(sbuf);
+  child()->write_buffer(sbuf);
   change_position_in_samples(sbuf->length_in_samples());
   extend_position();
 }
@@ -277,13 +264,13 @@ void EWFFILE::seek_position(void)
 	(io_mode() != AUDIO_IO::io_read &&
 	 child_active == true)) {
       if (position_in_samples() >= child_offset_rep.samples()) {
-	child->seek_position_in_samples(position_in_samples() -
+	child()->seek_position_in_samples(position_in_samples() -
 					child_offset_rep.samples() + 
 					child_start_pos_rep.samples());
       }
       else {
 	child_active = false;
-	child->seek_position_in_samples(child_start_pos_rep.samples());
+	child()->seek_position_in_samples(child_start_pos_rep.samples());
       }
     }
   }
@@ -336,8 +323,8 @@ void EWFFILE::write_ewf_data(void)
   if (child_offset_rep.samples() != 0) ewf_rc.resource("offset", kvu_numtostr(child_offset_rep.seconds(),6));
   if (child_start_pos_rep.samples() != 0) ewf_rc.resource("start-position", kvu_numtostr(child_start_pos_rep.seconds(), 6));
   if (child_looping_rep == true) ewf_rc.resource("looping","true");
-  if (io_mode() != AUDIO_IO::io_read) child_length_rep = child->length();    
-  if (child_length_rep.samples() != child->length_in_samples()) 
+  if (io_mode() != AUDIO_IO::io_read) child_length_rep = child()->length();    
+  if (child_length_rep.samples() != child()->length_in_samples()) 
     ewf_rc.resource("length", kvu_numtostr(child_length_rep.seconds(),  6));
 
   if (io_mode() != AUDIO_IO::io_read) ewf_rc.save();
@@ -353,17 +340,10 @@ bool EWFFILE::finished(void) const
   // FIXME: when proper infinite stream support is in place, replace
   //        the 'length == 0' hack
 
-  if (child->finished() ||
+  if (child()->finished() ||
       (child_looping_rep != true &&
        child_length_rep.samples() != 0 &&
        position_in_samples() > child_offset_rep.samples() + child_length_rep.samples()))
     return(true);
   return(false);
-}
-
-SAMPLE_SPECS::sample_pos_t EWFFILE::length_in_samples(void) const 
-{
-  if (child_looping_rep == true)  return(0);
-
-  return(child_offset_rep.samples() + child_length_rep.samples());
 }

@@ -75,15 +75,19 @@ void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
     init_rep = true; /* must be set after dyn. parameters */
   }
-  
-  child()->set_buffersize(buffersize());
-  child()->set_io_mode(io_mode());
-  child()->set_audio_format(audio_format());
+
+  pre_child_open();
   child()->open();
+  post_child_open();
+
+  /* if child changed the format during open; 
+   * fetch the changes */
   if (child()->locked_audio_format() == true) {
     set_audio_format(child()->audio_format());
   }
+
   set_label(child()->label());
+  set_length_in_samples(child()->length_in_samples());
 
   AUDIO_IO_PROXY::open();
 }

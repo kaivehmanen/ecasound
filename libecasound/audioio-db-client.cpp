@@ -38,10 +38,9 @@ AUDIO_IO_DB_CLIENT::AUDIO_IO_DB_CLIENT (AUDIO_IO_DB_SERVER *pserver,
 					AUDIO_IO* aobject,
 					bool transfer_ownership) 
   : pserver_repp(pserver),
-    child_repp(aobject),
     free_child_rep(transfer_ownership) 
 {
-  set_label(child_repp->label());
+  set_child(aobject);
   pbuffer_repp = 0;
   xruns_rep = 0;
   finished_rep = false;
@@ -49,37 +48,27 @@ AUDIO_IO_DB_CLIENT::AUDIO_IO_DB_CLIENT (AUDIO_IO_DB_SERVER *pserver,
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		std::string("(audioio-db-client) DB-client created for ") +
-		child_repp->label() +
+		child()->label() +
 		".");
 
   // just in case the child object has already been configured
-  fetch_child_data();
+  fetch_initial_child_data();
 }
 
 /**
  * Copy attributes from the proxied (child) object.
  */
-void AUDIO_IO_DB_CLIENT::fetch_child_data(void)
+void AUDIO_IO_DB_CLIENT::fetch_initial_child_data(void)
 {
-  if (pbuffer_repp != 0) {
-    if (child_repp->io_mode() == AUDIO_IO::io_read) 
-      pbuffer_repp->io_mode_rep = AUDIO_IO::io_read;
-    else
-      pbuffer_repp->io_mode_rep = AUDIO_IO::io_write;
-  }
-
-  set_audio_format(child_repp->audio_format());
-  set_position_in_samples(child_repp->position_in_samples());
-  
-  int channels = child_repp->channels();
-  int buffersize = child_repp->buffersize();
-
-  if (pbuffer_repp != 0) {
-    for(unsigned int n = 0; n < pbuffer_repp->sbufs_rep.size(); n++) {
-      pbuffer_repp->sbufs_rep[n]->number_of_channels(channels);
-      pbuffer_repp->sbufs_rep[n]->length_in_samples(buffersize);
-    }
-  }
+  // note! the child object is one that is configured
+  //       at this point
+  set_audio_format(child()->audio_format());
+  set_position_in_samples(child()->position_in_samples());
+  set_length_in_samples(child()->length_in_samples());
+  set_buffersize(child()->buffersize());
+  set_io_mode(child()->io_mode());
+  set_label(child()->label());
+  toggle_nonblocking_mode(child()->nonblocking_mode());
 }
 
 /**
@@ -103,7 +92,7 @@ AUDIO_IO_DB_CLIENT::~AUDIO_IO_DB_CLIENT(void)
       DBC_CHECK(pserver_repp->is_running() != true);
     }
 
-    pserver_repp->unregister_client(child_repp);
+    pserver_repp->unregister_client(child());
     pbuffer_repp = 0;
 
     if (was_running == true) {
@@ -111,10 +100,10 @@ AUDIO_IO_DB_CLIENT::~AUDIO_IO_DB_CLIENT(void)
     }
   }
   
-  if (free_child_rep == true) {
-    delete child_repp;
+  if (free_child_rep != true) {
+    /* to avoid deleting the original registered child */
+    release_child_no_delete();
   }
-  child_repp = 0;
     
   if (xruns_rep > 0) 
     std::cerr << "(audioio-db-client) There were total " << xruns_rep << " xruns." << std::endl;
@@ -154,7 +143,7 @@ void AUDIO_IO_DB_CLIENT::read_buffer(SAMPLE_BUFFER* sbuf)
     else {
       xruns_rep++;
       std::cerr << "(audioio-db-client) Warning! Underrun in reading from \"" 
-		<< child_repp->label() 
+		<< child()->label() 
 		<< "\". Trying to recover." << std::endl;
       pserver_repp->wait_for_full();
       if (recursing_rep != true && pbuffer_repp->read_space() > 0) {
@@ -193,7 +182,7 @@ void AUDIO_IO_DB_CLIENT::write_buffer(SAMPLE_BUFFER* sbuf)
     else {
       xruns_rep++;
       std::cerr << "(audioio-db-client) Warning! Overrun in writing to \"" 
-		<< child_repp->label() 
+		<< child()->label() 
 		<< "\". Trying to recover." << std::endl;
       pserver_repp->wait_for_full();
       if (recursing_rep != true && pbuffer_repp->write_space() > 0) {
@@ -225,7 +214,7 @@ void AUDIO_IO_DB_CLIENT::seek_position(void)
     pserver_repp->wait_for_stop();
     DBC_CHECK(pserver_repp->is_running() != true);
   }
-  child_repp->seek_position_in_samples(position_in_samples());
+  child()->seek_position_in_samples(position_in_samples());
   if (pbuffer_repp != 0) {
     pbuffer_repp->reset();
   }
@@ -235,18 +224,8 @@ void AUDIO_IO_DB_CLIENT::seek_position(void)
     pserver_repp->wait_for_full();
     DBC_CHECK(pserver_repp->is_running() == true);
   }
-}
 
-void AUDIO_IO_DB_CLIENT::set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos)
-{
-  /* only way to update the current position */
-  child_repp->seek_position_in_samples(pos);
-  AUDIO_IO::set_position_in_samples(pos);
-}
-
-void AUDIO_IO_DB_CLIENT::set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
-{
-  AUDIO_IO::set_length_in_samples(pos);
+  AUDIO_IO_PROXY::seek_position();
 }
 
 /**
@@ -258,14 +237,27 @@ void AUDIO_IO_DB_CLIENT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-db-client) open " + label() + ".");
 
-  if (child_repp->is_open() != true) {
-    child_repp->open();
+  if (child()->is_open() != true) {
+    child()->open();
   }
+
+  set_audio_format(child()->audio_format());
+  set_length_in_samples(child()->length_in_samples());
+
   if (pbuffer_repp == 0) {
-    pserver_repp->register_client(child_repp);
-    pbuffer_repp = pserver_repp->get_client_buffer(child_repp);
+    pserver_repp->register_client(child());
+    pbuffer_repp = pserver_repp->get_client_buffer(child());
+
+    for(unsigned int n = 0; n < pbuffer_repp->sbufs_rep.size(); n++) {
+      pbuffer_repp->sbufs_rep[n]->number_of_channels(channels());
+      pbuffer_repp->sbufs_rep[n]->length_in_samples(buffersize());
+    }
+
+    if (io_mode() == AUDIO_IO::io_read) 
+      pbuffer_repp->io_mode_rep = AUDIO_IO::io_read;
+    else
+      pbuffer_repp->io_mode_rep = AUDIO_IO::io_write;
   }
-  fetch_child_data();
 
   AUDIO_IO::open();
 }
@@ -279,7 +271,7 @@ void AUDIO_IO_DB_CLIENT::close(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-db-client) close " + label() + ".");
 
-  if (child_repp->is_open() == true) child_repp->close();
+  if (child()->is_open() == true) child()->close();
 
   AUDIO_IO::close();
 }

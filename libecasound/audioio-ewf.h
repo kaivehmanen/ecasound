@@ -2,7 +2,7 @@
 #define INCLUDED_AUDIOIO_EWF_H
 
 #include <string>
-#include "audioio.h"
+#include "audioio-proxy.h"
 #include "audioio-wave.h"
 #include "samplebuffer.h"
 #include "eca-audio-time.h"
@@ -22,20 +22,67 @@
  *
  * @author Kai Vehmanen
  */
-class EWFFILE : public AUDIO_IO {
+class EWFFILE : public AUDIO_IO_PROXY {
 
  public:
 
-  EWFFILE (const std::string& name = "") { set_label(name); child = 0; }
+  /** @name Public functions */
+  /*@{*/
+
+  EWFFILE (const std::string& name = "");
   virtual ~EWFFILE(void);
 
-  virtual EWFFILE* clone(void) const;
-  virtual EWFFILE* new_expr(void) const { return new EWFFILE(); }
+  /*@}*/
+  
+  /** @name Reimplemented functions from ECA_OBJECT */
+  /*@{*/
 
   virtual std::string name(void) const { return("Ecasound wave file"); }
   virtual std::string description(void) const { return("Special format acts as a wrapper for other file formats. It can used for looping, audio data relocation and other special tasks."); }
 
+  /*@}*/
+
+  /** @name Reimplemented functions from DYNAMIC_PARAMETERS<string> */
+  /*@{*/
+
+  /* none */
+
+  /*@}*/
+
+  /** @name Reimplemented functions from DYNAMIC_OBJECT<string> */
+  /*@{*/
+
+  virtual EWFFILE* clone(void) const;
+  virtual EWFFILE* new_expr(void) const { return new EWFFILE(); }
+
+  /*@}*/
+
+  /** @name Reimplemented functions from ECA_AUDIO_POSITION */
+  /*@{*/
+
+  virtual void seek_position(void);
+
+  /*@}*/
+
+  /** @name Reimplemented functions from AUDIO_IO */
+  /*@{*/
+
   virtual bool locked_audio_format(void) const { return(true); }
+  virtual bool supports_seeking(void) const { return(true); }
+  virtual bool finite_length_stream(void) const { return(!child_looping_rep); }
+
+  virtual bool finished(void) const;
+
+  virtual void read_buffer(SAMPLE_BUFFER* sbuf);
+  virtual void write_buffer(SAMPLE_BUFFER* sbuf);
+
+  virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
+  virtual void close(void);
+
+  /*@}*/
+
+  /** @name New functions */
+  /*@{*/
 
   /**
    * Set start offset for child object
@@ -57,35 +104,10 @@ class EWFFILE : public AUDIO_IO {
    */
   void toggle_looping(bool v) { child_looping_rep = v; }
     
-  virtual bool finished(void) const;
-
-  virtual void set_buffersize(long int samples);
-  virtual long int buffersize(void) const;
-
-  virtual void read_buffer(SAMPLE_BUFFER* sbuf);
-  virtual void write_buffer(SAMPLE_BUFFER* sbuf);
-
-  /** @name Reimplemented functions from ECA_AUDIO_POSITION */
-  /*@{*/
-
-  virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const;
-  virtual void seek_position(void);
-
-  /* -- not reimplemented 
-   * virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
-   * virtual void set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos);
-   * virtual void set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
-   */
- 
   /*@}*/
 
-
-  virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
-  virtual void close(void);
- 
 private:
 
-  AUDIO_IO* child;
   SAMPLE_BUFFER tmp_buffer;
 
   bool child_looping_rep;
@@ -95,6 +117,7 @@ private:
   std::string child_name_rep;
   long int buffersize_rep;
   bool child_active;
+  bool init_rep;
 
   RESOURCE_FILE ewf_rc;
 

@@ -499,6 +499,9 @@ void EFFECT_MODULATING_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter
     {
       dtime_msec = value;
       dtime = static_cast<long int>(dtime_msec * (CHAIN_OPERATOR::parameter_t)samples_per_second() / 1000);
+      if (dtime < 1) { 
+	dtime = 1;
+      }
       DBC_CHECK(buffer.size() == delay_index.size());
       DBC_CHECK(buffer.size() == filled.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {

@@ -63,7 +63,7 @@ class CHAIN_OPERATOR : public OPERATOR {
   virtual std::string status(void) const { return(""); }
 
   /** 
-   * Returns the length of the sample buffer after
+   * Returns the maximum length of the sample buffer after
    * a call to process(), if the buffer's original 
    * length was 'i_samples'.
    *
@@ -73,7 +73,7 @@ class CHAIN_OPERATOR : public OPERATOR {
    *
    * @see process()
    */
-  virtual long int output_samples(long int i_samples) const { return(i_samples); }
+  virtual long int max_output_samples(long int i_samples) const { return(i_samples); }
 
   /** 
    * Returns number of channels of the sample buffer

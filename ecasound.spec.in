@@ -109,7 +109,7 @@ strip --strip-unneeded \
 
 %files
 %defattr(-, root, root)
-%doc NEWS README INSTALL BUGS Documentation examples
+%doc NEWS COPYING COPYING.GPL COPYING.LGPL README INSTALL BUGS Documentation examples
 %doc /usr/local/man/man1/ecasound.1
 %doc /usr/local/man/man1/ecatools.1
 %doc /usr/local/man/man1/ecasound-iam.1
@@ -157,6 +157,10 @@ strip --strip-unneeded \
 
 # ---
 # changelog
+
+%changelog
+* Thu Oct 24 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+- added the COPYING files to the package
 
 %changelog
 * Thu Oct 17 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
