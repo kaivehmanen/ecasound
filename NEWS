@@ -21,8 +21,8 @@ Last officially released version is -*> v2.0.3 *-
 	- added: ecasound-config - --ldflags and --prefix for 
 	- added: engine profiling info (printed to stderr)
 	- changed: pyecasound - makefile-hack that allows pyecasound
-		   to work even though libecasound and libkvutils 
-		   was compiled against are not installed to 
+		   to work even though compiled against libecasound 
+		   and libkvutils that are not installed to 
 		   a directory listed in /etc/ld.so.conf
 	- changed: disk i/o subsystem is put to sleep more 
 		   aggressively, which should further decrease 

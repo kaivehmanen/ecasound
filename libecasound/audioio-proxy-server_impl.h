@@ -2,6 +2,7 @@
 #define INCLUDED_AUDIOIO_PROXY_SERVER_IMPL_H
 
 #include <pthread.h>
+#include <kvutils/procedure_timer.h>
 
 class AUDIO_IO_PROXY_SERVER_impl {
 
@@ -27,6 +28,7 @@ class AUDIO_IO_PROXY_SERVER_impl {
   size_t profile_write_xrun_danger_rep;
   size_t profile_rounds_total_rep;
 
+  PROCEDURE_TIMER looptimer_rep;
 };
 
 #endif /* INCLUDED_AUDIOIO_PROXY_SERVER_IMPL_H */

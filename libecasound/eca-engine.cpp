@@ -242,7 +242,6 @@ void ECA_ENGINE::dump_profile_info(void) {
                             impl_repp->looptimer_rep.events_over_upper_bound();
 
   std::cerr << "(eca-engine) *** profile begin ***" << endl;
-  std::cerr << "Total loops: " << kvu_numtostr(impl_repp->looptimer_rep.event_count()) << endl;
   std::cerr << "Loops faster than realtime: "  << kvu_numtostr(impl_repp->looptimer_rep.events_under_lower_bound());
   std::cerr << " (<" << kvu_numtostr(impl_repp->looptimer_low_rep * 1000, 1) << " msec)" << endl;
   std::cerr << "Loops slower than realtime: "  << kvu_numtostr(slower_than_rt);
@@ -251,11 +250,13 @@ void ECA_ENGINE::dump_profile_info(void) {
   std::cerr << " (>" << kvu_numtostr(impl_repp->looptimer_mid_rep * 1000, 1) << " msec)" << endl;
   std::cerr << "Loops exceeding all buffering: " << kvu_numtostr(impl_repp->looptimer_rep.events_over_upper_bound());
   std::cerr << " (>" << kvu_numtostr(impl_repp->looptimer_high_rep * 1000, 1) << " msec)" << endl;
-  std::cerr << "Fastest loop: " << kvu_numtostr(impl_repp->looptimer_rep.min_duration_seconds() * 1000, 1);
-  std::cerr << " msec." << endl;
-  std::cerr << "Slowest loop: " << kvu_numtostr(impl_repp->looptimer_rep.max_duration_seconds() * 1000, 1);
-  std::cerr << " msec." << endl;
-  std::cerr << "Average loop time: " << kvu_numtostr(impl_repp->looptimer_rep.average_duration_seconds() * 1000, 1);
+  std::cerr << "Total loops: " << kvu_numtostr(impl_repp->looptimer_rep.event_count()) << endl;
+  std::cerr << "Fastest/slowest/average loop time: ";
+  std::cerr << kvu_numtostr(impl_repp->looptimer_rep.min_duration_seconds() * 1000, 1);
+  std::cerr << "/";
+  std::cerr << kvu_numtostr(impl_repp->looptimer_rep.max_duration_seconds() * 1000, 1);
+  std::cerr << "/";
+  std::cerr << kvu_numtostr(impl_repp->looptimer_rep.average_duration_seconds() * 1000, 1);
   std::cerr << " msec." << endl;
   std::cerr << "(eca-engine) *** profile end   ***" << endl;
 }

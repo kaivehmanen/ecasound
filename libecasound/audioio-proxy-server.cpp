@@ -124,9 +124,7 @@ AUDIO_IO_PROXY_SERVER::~AUDIO_IO_PROXY_SERVER(void) {
 
   delete impl_repp;
 
-#ifdef PROXY_PROFILING
-  dump_profile_counters();
-#endif
+  PROXY_PROFILING_STATEMENT(dump_profile_counters());
 }
 
 /**
@@ -430,6 +428,8 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 
     int min_free_space = buffercount_rep;
 
+    PROXY_PROFILING_STATEMENT(impl_repp->looptimer_rep.start());
+
     for(unsigned int p = 0; p < clients_rep.size(); p++) {
       if (clients_rep[p] == 0 ||
 	  buffers_rep[p]->finished_rep.get()) continue;
@@ -480,6 +480,8 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
     if (min_free_space == 0) passive_rounds++;
     else passive_rounds = 0;
 
+    PROXY_PROFILING_STATEMENT(impl_repp->looptimer_rep.stop());
+
     if (processed == 0) {
       if (passive_rounds > 1) {
 	/* case 1: nothing processed during x rounds ==> full, sleep */
@@ -514,13 +516,20 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 void AUDIO_IO_PROXY_SERVER::dump_profile_counters(void) {
   if (impl_repp->profile_not_full_anymore_rep > 0) {
     std::cerr << "(audioio-proxy-server) *** profile begin ***" << endl;
-    std::cerr << "profile_full_rep: " << impl_repp->profile_full_rep << endl;
-    std::cerr << "profile_no_processing_rep: " << impl_repp->profile_no_processing_rep << endl;
-    std::cerr << "profile_not_full_anymore_rep: " << impl_repp->profile_not_full_anymore_rep << endl;
-    std::cerr << "profile_processing_rep: " << impl_repp->profile_processing_rep << endl;
-    std::cerr << "profile_read_xrun_danger_rep: " << impl_repp->profile_read_xrun_danger_rep << endl;
-    std::cerr << "profile_write_xrun_danger_rep: " << impl_repp->profile_write_xrun_danger_rep << endl;
-    std::cerr << "profile_rounds_total_rep: " << impl_repp->profile_rounds_total_rep << endl;
+    std::cerr << "Profile_full_rep: " << impl_repp->profile_full_rep << endl;
+    std::cerr << "Profile_no_processing_rep: " << impl_repp->profile_no_processing_rep << endl;
+    std::cerr << "Profile_not_full_anymore_rep: " << impl_repp->profile_not_full_anymore_rep << endl;
+    std::cerr << "Profile_processing_rep: " << impl_repp->profile_processing_rep << endl;
+    std::cerr << "Profile_read_xrun_danger_rep: " << impl_repp->profile_read_xrun_danger_rep << endl;
+    std::cerr << "Profile_write_xrun_danger_rep: " << impl_repp->profile_write_xrun_danger_rep << endl;
+    std::cerr << "Profile_rounds_total_rep: " << impl_repp->profile_rounds_total_rep << endl;
+    std::cerr << "Fastest/slowest/average loop time: ";
+    std::cerr << kvu_numtostr(impl_repp->looptimer_rep.min_duration_seconds() * 1000, 1);
+    std::cerr << "/";
+    std::cerr << kvu_numtostr(impl_repp->looptimer_rep.max_duration_seconds() * 1000, 1);
+    std::cerr << "/";
+    std::cerr << kvu_numtostr(impl_repp->looptimer_rep.average_duration_seconds() * 1000, 1);
+    std::cerr << " msec." << endl;
     std::cerr << "(audioio-proxy-server) *** profile end   ***" << endl;
   }
 }
