@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 091204) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 121204) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,13 +14,34 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 xx022005 (v2.3.6)  -** stable release **-
+	- edi-entries: edi-40 progress
 	- added: support for having commas in arguments by escaping 
 	 	 them with a backslash (example: "ai-add foo\,bar.wav")
+	- added: pretty-printing of ecasound output; wrap output so
+		 so that all lines fit into 74 columns; does not affect
+		 wellformed output mode nor stderr output (-D)
+	- added: new section about handling commas in filenames to 
+		 Ecasound User's Guide
+	- added: eiam - new 'int-log-history' command to query 
+	 	 recent log messages sent by libecasound; this is a very
+		 useful tool for debugging ECI scripts and apps
+	- added: eiam - new 'int-set-log-history-length' command to set
+		 log history length; default to 5 items
+	- changed: more helpful messages explain why a chainsetup 
+		   cannot be connected to the engine
+	- changed: EIAM - when returning a list of strings, replace all 
+		   commas with semi-colons in the string items to avoid 
+		   ambiguity in parsing
+	- changed: new default debug level of 271
 	- fixed: correctly interpret EIAM command arguments containing
 	         whitespace (example: "ai-add foo bar.wav")
 	- fixed: denormal problems in filter and delay operators
 	- fixex: setting radius params of -etc comb filter
 	- fixed: make check target in readline-4.0 subdir
+	- fixed: avoid segfault when receiving a bufsize or srate
+		 changed event from JACK; ecasound cannot change bufsize 
+		 or srate changes on the fly, but at least it now fails 
+		 gracefully
 12112004 (v2.3.5)  -** stable release **-
 	- note: main website address has changed to www.eca.cx/ecasound
 	- changed: collected all email addresses from source files to 
