@@ -58,9 +58,8 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   // Setup helper functions
   // ---
 
-  static AUDIO_IO* create_audio_object(const string& tname);
-  AUDIO_IO* create_loop_input(const string& tname);
-  AUDIO_IO* create_loop_output(const string& tname);
+  AUDIO_IO* create_loop_input(const string& arg);
+  AUDIO_IO* create_loop_output(const string& arg);
 
   void audio_object_info(const AUDIO_IO* aio) const;
   void add_default_chain(void);

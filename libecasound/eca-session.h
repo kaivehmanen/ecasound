@@ -7,6 +7,7 @@
 #include <pthread.h>
 
 #include <kvutils/kvutils.h>
+#include <kvutils/com_line.h>
 
 #include "samplebuffer.h"
 
@@ -52,9 +53,12 @@ class ECA_SESSION {
   // Setup interpretation
   // ---
   void set_defaults(void);
+
   void interpret_general_options(COMMAND_LINE& cline);
   void interpret_general_option (const string& argu);
   void interpret_chainsetup (const string& argu);
+  void create_chainsetup_options(COMMAND_LINE& cline, vector<string>* options);
+  bool is_session_option(const string& arg) const;
 
   // ---
   // Function for handling chainsetups

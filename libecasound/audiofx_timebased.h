@@ -33,6 +33,7 @@ class EFFECT_DELAY : public EFFECT_TIME_BASED {
   parameter_type surround;
   parameter_type dnum;
   parameter_type dtime;
+  parameter_type dtime_msec;
   parameter_type mix;
 
   parameter_type laskuri;
@@ -69,6 +70,7 @@ class EFFECT_MULTITAP_DELAY : public EFFECT_TIME_BASED {
   parameter_type surround;
   parameter_type mix;
 
+  parameter_type dtime_msec;
   long int dtime, dnum;
 
   vector<long int> delay_index;
@@ -100,6 +102,7 @@ class EFFECT_FAKE_STEREO : public EFFECT_TIME_BASED {
   vector<deque<SAMPLE_SPECS::sample_type> > buffer;
   SAMPLE_ITERATOR_CHANNEL l,r;
   parameter_type dtime;
+  parameter_type dtime_msec;
 
  public:
 
@@ -131,6 +134,7 @@ class EFFECT_REVERB : public EFFECT_TIME_BASED {
   parameter_type surround;
   parameter_type feedback;
   parameter_type dtime;
+  parameter_type dtime_msec;
 
  public:
 
@@ -161,6 +165,7 @@ class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
   vector<vector<SAMPLE_SPECS::sample_type> > buffer;
   SAMPLE_ITERATOR_CHANNELS i;
   long int dtime;
+  parameter_type dtime_msec;
   parameter_type feedback, vartime;
   SINE_OSCILLATOR lfo;
   vector<long int> delay_index;
@@ -172,7 +177,7 @@ class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
   virtual void set_parameter(int param, parameter_type value);
 
   virtual void init(SAMPLE_BUFFER* insample);
-  EFFECT_MODULATING_DELAY(void) : dtime(1000), feedback(50.0), vartime(10), lfo(0.01) { }
+  EFFECT_MODULATING_DELAY(void) : dtime_msec(1000), feedback(50.0), vartime(10), lfo(0.01) { }
 };
 
 /**

@@ -159,7 +159,12 @@ void ECA_CONTROL::action(int action_id,
   case ec_direct_option: 
     {
       vector<string> nargs = args;
-      selected_chainsetup_repp->interpret_options(nargs);
+      try {
+	selected_chainsetup_repp->interpret_options(nargs);
+      }
+      catch(ECA_ERROR* e) {
+	ecadebug->msg("(eca-control) ERROR: [" + e->error_section() + "] : \"" + e->error_msg() + "\"");
+      }
       break;
     }
 

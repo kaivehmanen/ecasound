@@ -2,12 +2,11 @@
 *** Ecasound - Known bugs                                           ***
 -----------------------------------------------------------------------
 
+- setups using -kx aren't saved correctly (cs-save, cs-save-as)
+- ecasound crashes if /dev/midi points to an invalid rawmidi device
 - RIFF WAVE files
 	- doesn't preserve extra RIFF-blocks
 - controller sources
 	- big buffersizes cause problems; for instance 
 	  there's distortion when using sine-oscillators
   	  with big buffers
-- ecasound crashes if /dev/midi points to an invalid rawmidi device
-
-

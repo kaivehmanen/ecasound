@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "sample-specs.h"
 #include "samplebuffer_iterators.h"
 #include "eca-chainop.h"
 
@@ -26,6 +27,11 @@ class EFFECT_BASE : public CHAIN_OPERATOR {
   void set_samples_per_second(long int v) { srate_rep = v; }
   void set_channels(int v) { channels_rep = v; }
 
+ public:
+
+  EFFECT_BASE(void) : 
+    srate_rep(SAMPLE_SPECS::sample_rate_default),
+    channels_rep(SAMPLE_SPECS::channel_count_default) { }
   virtual ~EFFECT_BASE(void) { }
 };
 

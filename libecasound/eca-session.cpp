@@ -70,8 +70,11 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*) {
   cline.combine();
   interpret_general_options(cline);
 
+  vector<string> options;
+  create_chainsetup_options(cline, &options);
+
   if (chainsetups_rep.size() == 0) {
-    ECA_CHAINSETUP* comline_setup = new ECA_CHAINSETUP(cline);
+    ECA_CHAINSETUP* comline_setup = new ECA_CHAINSETUP(options);
     try {
       //      select_chainsetup(comline_setup->name());
       add_chainsetup(comline_setup);
@@ -288,6 +291,35 @@ vector<string> ECA_SESSION::chainsetup_names(void) const {
   return(result);
 }
 
+void ECA_SESSION::create_chainsetup_options(COMMAND_LINE& cline,
+					    vector<string>* options) {
+  cline.begin();
+  cline.next(); // skip the program name
+  while(cline.end() == false) {
+    if (is_session_option(cline.current()) != true) 
+      options->push_back(cline.current());
+    cline.next();
+  }
+}
+
+/**
+ * Tests whether the given argument is a session-level option.
+ */
+bool ECA_SESSION::is_session_option(const string& arg) const {
+  if (arg.size() < 2 ||
+      arg[0] != '-') return(false);
+
+  switch(arg[1]) {
+  case 'c':
+  case 'd':
+  case 'h':
+  case 'r':
+  case 's': 
+    return(true);
+  }
+  return(false);
+}
+
 void ECA_SESSION::interpret_general_options(COMMAND_LINE& cline) {
   cline.begin();
   while(cline.end() == false) {
@@ -333,7 +365,7 @@ void ECA_SESSION::interpret_general_option (const string& argu) {
       raisepriority_rep = true;
       break;
     }
-
+    
   default: { }
   }
 }
@@ -345,15 +377,16 @@ void ECA_SESSION::interpret_chainsetup (const string& argu) {
  
   if (argu.size() < 2) return;
   switch(argu[1]) {
-  case 's':
+  case 's': {
     if (argu.size() > 2 && argu[2] == ':') {
       load_chainsetup(tname);
       if (selected_chainsetup_repp->is_valid()) connect_chainsetup();
     }
     break;
   }
+  default: { }
+  }
 }
-
 
 void ECA_SESSION::status(ECA_SESSION::Engine_status temp) { ep_status_rep = temp; }
 ECA_SESSION::Engine_status ECA_SESSION::status(void) const { return(ep_status_rep); }

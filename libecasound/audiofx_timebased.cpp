@@ -40,7 +40,7 @@ EFFECT_DELAY::EFFECT_DELAY (CHAIN_OPERATOR::parameter_type delay_time, int surro
 CHAIN_OPERATOR::parameter_type EFFECT_DELAY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(dtime / (CHAIN_OPERATOR::parameter_type)samples_per_second() * 1000.0);
+    return(dtime_msec);
   case 2:
     return(surround);
   case 3:
@@ -55,7 +55,8 @@ void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value
   switch (param) {
   case 1:
     {
-      dtime = value * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
+      dtime_msec = value;
+      dtime = dtime_msec * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
       vector<vector<SINGLE_BUFFER> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
 	vector<SINGLE_BUFFER>::iterator q = p->begin();
@@ -100,6 +101,7 @@ void EFFECT_DELAY::init(SAMPLE_BUFFER* insample) {
 
   set_channels(insample->number_of_channels());
   set_samples_per_second(insample->sample_rate());
+  set_parameter(1, dtime_msec);
 
   buffer.resize(2, vector<SINGLE_BUFFER> (dnum));
 }
@@ -188,7 +190,7 @@ EFFECT_MULTITAP_DELAY::EFFECT_MULTITAP_DELAY (CHAIN_OPERATOR::parameter_type del
 CHAIN_OPERATOR::parameter_type EFFECT_MULTITAP_DELAY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(dtime / (CHAIN_OPERATOR::parameter_type)samples_per_second() * 1000.0);
+    return(dtime_msec);
   case 2:
     return(dnum);
   case 3:
@@ -201,7 +203,8 @@ void EFFECT_MULTITAP_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t
   switch (param) {
   case 1:
     {
-      dtime = static_cast<long int>(value * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000);
+      dtime_msec = value;
+      dtime = static_cast<long int>(dtime_msec * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000);
       assert(buffer.size() == filled.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
 	if ((dtime * dnum) > static_cast<int>(buffer[n].size())) {
@@ -243,6 +246,7 @@ void EFFECT_MULTITAP_DELAY::init(SAMPLE_BUFFER* insample) {
 
   set_channels(insample->number_of_channels());
   set_samples_per_second(insample->sample_rate());
+  set_parameter(1, dtime_msec);
 
   delay_index.resize(channels(), dtime * dnum - 1);
   filled.resize(channels(), vector<bool> (dnum, false));
@@ -284,7 +288,7 @@ EFFECT_FAKE_STEREO::EFFECT_FAKE_STEREO (CHAIN_OPERATOR::parameter_type delay_tim
 CHAIN_OPERATOR::parameter_type EFFECT_FAKE_STEREO::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(dtime / (CHAIN_OPERATOR::parameter_type)samples_per_second() * 1000.0);
+    return(dtime_msec);
   }
   return(0.0);
 }
@@ -292,7 +296,8 @@ CHAIN_OPERATOR::parameter_type EFFECT_FAKE_STEREO::get_parameter(int param) cons
 void EFFECT_FAKE_STEREO::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1:
-    dtime = value * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
+    dtime_msec = value;
+    dtime = dtime_msec * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
     vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
     while(p != buffer.end()) {
       if (p->size() > dtime) {
@@ -310,6 +315,7 @@ void EFFECT_FAKE_STEREO::init(SAMPLE_BUFFER* insample) {
 
   set_channels(insample->number_of_channels());
   set_samples_per_second(insample->sample_rate());
+  set_parameter(1, dtime_msec);
 
   buffer.resize(2);
 }
@@ -356,7 +362,7 @@ EFFECT_REVERB::EFFECT_REVERB (CHAIN_OPERATOR::parameter_type delay_time, int sur
 CHAIN_OPERATOR::parameter_type EFFECT_REVERB::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(dtime / (CHAIN_OPERATOR::parameter_type)samples_per_second() * 1000.0);
+    return(dtime_msec);
   case 2:
     return(surround);
   case 3:
@@ -369,7 +375,8 @@ void EFFECT_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_type valu
   switch (param) {
   case 1: 
     {
-      dtime = value * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
+      dtime_msec = value;
+      dtime = dtime_msec * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
       vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
 	if (p->size() > dtime) {
@@ -396,6 +403,7 @@ void EFFECT_REVERB::init(SAMPLE_BUFFER* insample) {
 
   set_channels(insample->number_of_channels());
   set_samples_per_second(insample->sample_rate());
+  set_parameter(1, dtime_msec);
 
   buffer.resize(2);
 }
@@ -436,7 +444,7 @@ void EFFECT_REVERB::process(void) {
 CHAIN_OPERATOR::parameter_type EFFECT_MODULATING_DELAY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(dtime / (CHAIN_OPERATOR::parameter_type)samples_per_second() * 1000.0);
+    return(dtime_msec);
 
   case 2: 
     return(vartime);
@@ -454,7 +462,8 @@ void EFFECT_MODULATING_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter
   switch (param) {
   case 1:
     {
-      dtime = static_cast<long int>(value * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000);
+      dtime_msec = value;
+      dtime = static_cast<long int>(dtime_msec * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000);
       assert(buffer.size() == delay_index.size());
       assert(buffer.size() == filled.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
@@ -486,9 +495,9 @@ void EFFECT_MODULATING_DELAY::init(SAMPLE_BUFFER* insample) {
   lfo.init(1.0 /
 	   insample->sample_rate() /
 	   insample->number_of_channels());
-
   set_channels(insample->number_of_channels());
   set_samples_per_second(insample->sample_rate());
+  set_parameter(1, dtime_msec);
 
   filled.resize(channels(), false);
   delay_index.resize(channels(), 2 * dtime);

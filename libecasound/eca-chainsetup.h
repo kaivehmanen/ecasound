@@ -5,7 +5,6 @@
 #include <string>
 #include <map>
 
-#include <kvutils/com_line.h>
 #include "eca-chainsetup-position.h"
 #include "eca-audio-objects.h"
 #include "eca-error.h"
@@ -66,13 +65,13 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
   CHAIN_OPERATOR* create_vst_plugin (const string& arg);
   GENERIC_CONTROLLER* create_controller (const string& arg);
 
-  void interpret_option(const string& arg);
+  void interpret_option(const string& arg) throw(ECA_ERROR*);
   void interpret_global_option(const string& arg);
-  void interpret_object_option(const string& arg);
-  void interpret_options(vector<string>& opts);
+  void interpret_object_option(const string& arg) throw(ECA_ERROR*);
+  void interpret_options(vector<string>& opts) throw(ECA_ERROR*);
 
   /**
-   * Returns the result of last call to interpret_option(), interpret_global_options() 
+   * Returns the result of last call to interpret_option(), interpret_global_option() 
    * or interpret_object_option().
    *
    * @result true if options interpreted succesfully, otherwise false
@@ -106,7 +105,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
   const string& filename(void) const { return(setup_filename_rep); }
   enum Mix_mode mixmode(void) const { return(mixmode_rep); }
 
-  ECA_CHAINSETUP(COMMAND_LINE& cline);
+  ECA_CHAINSETUP(const vector<string>& options);
   ECA_CHAINSETUP(const string& setup_file, bool fromfile = true);
   virtual ~ECA_CHAINSETUP(void);
 };

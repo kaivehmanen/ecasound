@@ -45,6 +45,7 @@
 #include "eca-chainop-map.h"
 #include "eca-controller-map.h"
 
+#include "eca-object-factory.h"
 #include "eca-chainsetup-position.h"
 #include "eca-audio-objects.h"
 #include "sample-specs.h"
@@ -59,25 +60,26 @@
  * ensure:
  *   buffersize != 0
  */
-ECA_CHAINSETUP::ECA_CHAINSETUP(COMMAND_LINE& cline) 
-  : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default) {
+ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts) 
+  : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default),
+    options(opts) {
 
   setup_name_rep = "command-line-setup";
   setup_filename_rep = "";
 
   set_defaults();
 
-  string temp;
-  cline.begin();
-  cline.next(); // skip the program name
-  while(cline.end() == false) {
-    temp = cline.current();
-    if (temp != "") {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding \"" + temp + "\" to options.");
-      options.push_back(temp);
-    }
-    cline.next();
-  }
+//    string temp;
+//    cline.begin();
+//    cline.next(); // skip the program name
+//    while(cline.end() == false) {
+//      temp = cline.current();
+//      if (temp != "") {
+//        ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding \"" + temp + "\" to options.");
+//        options.push_back(temp);
+//      }
+//      cline.next();
+//    }
 
   preprocess_options(options);
   interpret_options(options);
@@ -226,7 +228,7 @@ void ECA_CHAINSETUP::preprocess_options(vector<string>& opts) {
  *  (option succesfully interpreted && interpretation_result() ==  true) ||
  *  (unknown or invalid option && interpretation_result() == false)
  */
-void ECA_CHAINSETUP::interpret_option (const string& arg) {
+void ECA_CHAINSETUP::interpret_option (const string& arg) throw(ECA_ERROR*) {
   interpret_global_option(arg);
   if (istatus_rep == false) interpret_object_option(arg);
 }
@@ -263,7 +265,7 @@ void ECA_CHAINSETUP::interpret_global_option (const string& arg) {
  *  (option succesfully interpreted && interpretation_result() ==  true) ||
  *  (unknown or invalid option && interpretation_result() == false)
  */
-void ECA_CHAINSETUP::interpret_object_option (const string& arg) {
+void ECA_CHAINSETUP::interpret_object_option (const string& arg) throw(ECA_ERROR*) {
   istatus_rep = false;
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting object option \"" + arg + "\".");
   interpret_chains(arg);
@@ -276,7 +278,7 @@ void ECA_CHAINSETUP::interpret_object_option (const string& arg) {
 /**
  * Interpret a vector of options.
  */
-void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
+void ECA_CHAINSETUP::interpret_options(vector<string>& opts) throw(ECA_ERROR*) {
   vector<string>::iterator p = opts.begin();
   p = opts.begin();
   while(p != opts.end()) {
@@ -289,6 +291,12 @@ void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
   p = opts.begin();
   while(p != opts.end()) {
     interpret_object_option(*p);
+    if (interpretation_status() == false) {
+      interpret_global_option(*p);
+      if (interpretation_status() == false) {
+	throw(new ECA_ERROR("ECA-CHAINSETUP", "Invalid argument, unable to parse: '" + *p + "'"));
+      }
+    }
     ++p;
   }
 }
@@ -582,20 +590,20 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
   case 'i':
     {
       ecadebug->msg(ECA_DEBUG::system_objects, "Eca-audio-objects/Parsing input");
-      last_audio_object = create_audio_object(argu);
+      last_audio_object = ECA_OBJECT_FACTORY::create_audio_object(argu);
       if (last_audio_object == 0) 
 	last_audio_object = create_loop_input(argu);
       if (last_audio_object != 0) {
 	if ((last_audio_object->supported_io_modes() &
 	    AUDIO_IO::io_read) != AUDIO_IO::io_read) {
-	  throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "I/O-mode 'io_read' not supported by " + last_audio_object->name()));
+	  throw(new ECA_ERROR("ECA-CHAINSETUP", "I/O-mode 'io_read' not supported by " + last_audio_object->name()));
 	}
 	last_audio_object->io_mode(AUDIO_IO::io_read);
 	last_audio_object->set_audio_format(default_audio_format_rep);
 	add_input(last_audio_object);
       }
       else {
-	throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "Format of input " +
+	throw(new ECA_ERROR("ECA-CHAINSETUP", "Format of input " +
 			    tname + " not recognized."));
       }
       break;
@@ -604,7 +612,7 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
   case 'o':
     {
       ecadebug->msg(ECA_DEBUG::system_objects, "Eca-audio-objects/Parsing output");
-      last_audio_object = create_audio_object(argu);
+      last_audio_object = ECA_OBJECT_FACTORY::create_audio_object(argu);
       if (last_audio_object == 0) last_audio_object = create_loop_output(argu);
       if (last_audio_object != 0) {
 	int mode_tmp = output_openmode();
@@ -616,7 +624,7 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
 	}
 	if ((last_audio_object->supported_io_modes() &
 	    mode_tmp != mode_tmp)) {
-	    throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "I/O-mode 'io_write' not supported by " + last_audio_object->name()));
+	    throw(new ECA_ERROR("ECA-CHAINSETUP", "I/O-mode 'io_write' not supported by " + last_audio_object->name()));
 	}
       
 	last_audio_object->io_mode(mode_tmp);
@@ -624,7 +632,7 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
 	add_output(last_audio_object);
       }
       else {
-	throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "Format of output " +
+	throw(new ECA_ERROR("ECA-CHAINSETUP", "Format of output " +
 			    tname + " not recognized."));
       }
       break;
@@ -675,7 +683,10 @@ void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
   CHAIN_OPERATOR* t = create_chain_operator(argu);
   if (t == 0) t = create_ladspa_plugin(argu);
   if (t == 0) t = create_vst_plugin(argu);
-  if (t != 0) add_chain_operator(t);
+  if (t != 0) {
+    add_chain_operator(t);
+    istatus_rep = true;
+  }
   else 
     interpret_effect_preset(argu);
 }

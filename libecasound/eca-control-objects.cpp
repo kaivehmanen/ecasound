@@ -541,7 +541,13 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_sample_format(const string& name) {
 	 name.empty() != true);
   // --------
 
-  selected_chainsetup_repp->interpret_object_option("-f:" + name);
+  try {
+    selected_chainsetup_repp->interpret_object_option("-f:" + name);
+  }
+  catch(ECA_ERROR* e) {
+    ecadebug->msg("(eca-control-objects) ERROR: [" + e->error_section() + "] : \"" + e->error_msg() + "\"");
+  }
+
 }
 
 /**
@@ -1000,7 +1006,14 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const string& sfrm,
   format += ",";
   format += kvu_numtostr(srate);
 
-  selected_chainsetup_repp->interpret_object_option(format);
+  try {
+    selected_chainsetup_repp->interpret_object_option(format);
+  }
+  catch(ECA_ERROR* e) {
+    ecadebug->msg("(eca-control-objects) ERROR: [" +
+		  e->error_section() + "] : \"" + e->error_msg() + "\"");
+  }
+
 }
 
 /**
@@ -1164,7 +1177,7 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
     ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
   }
   catch(ECA_ERROR* e) {
-    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+    ecadebug->msg("(eca-control-objects) ERROR: [" + e->error_section() + "] : \"" + e->error_msg() + "\"");
   }
 }
 
@@ -1192,7 +1205,7 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
 		  "\".");
   }
   catch(ECA_ERROR* e) {
-    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+    ecadebug->msg("(eca-control-objects) ERROR: [" + e->error_section() + "] : \"" + e->error_msg() + "\"");
   }
 }
 
@@ -1382,7 +1395,13 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(const string& chainop_params) {
     stop_on_condition();
   }
 
-  selected_chainsetup_repp->interpret_object_option(chainop_params);
+  try {
+    selected_chainsetup_repp->interpret_object_option(chainop_params);
+  }
+  catch(ECA_ERROR* e) {
+    ecadebug->msg("(eca-control-objects) ERROR: [" +
+		  e->error_section() + "] : \"" + e->error_msg() + "\"");
+  }
 
   if (was_running == true)
     ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
@@ -1569,7 +1588,12 @@ void ECA_CONTROL_OBJECTS::add_controller(const string& gcontrol_params) {
     stop_on_condition();
   }
 
-  selected_chainsetup_repp->interpret_object_option(gcontrol_params);
+  try {
+    selected_chainsetup_repp->interpret_object_option(gcontrol_params);
+  }
+  catch(ECA_ERROR* e) {
+    ecadebug->msg("(eca-control-objects) ERROR: [" + e->error_section() + "] : \"" + e->error_msg() + "\"");
+  }
 
   if (was_running == true)
     ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);

@@ -33,7 +33,6 @@
 #include "audioio-loop.h"
 #include "audioio-null.h"
 #include "eca-static-object-maps.h"
-#include "eca-audio-object-map.h"
 
 #include "eca-chain.h"
 #include "samplebuffer.h"
@@ -106,36 +105,6 @@ bool ECA_AUDIO_OBJECTS::is_valid(void) const {
   return(true);
 }
 
-
-/**
- * Create a new audio object based on the formatted argument string
- *
- * require:
- *  argu.empty() != true
- */
-AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu) {
-  assert(argu.empty() != true);
- 
-  register_default_objects();
-  string fname = get_argument_number(1, argu);
-  if (fname.find(".") != string::npos) {
-    fname = string(fname, fname.find_last_of("."), string::npos);
-  }
-
-  AUDIO_IO* main_file = 0;
-  main_file = ECA_AUDIO_OBJECT_MAP::object(fname);
-
-  if (main_file != 0) {
-    main_file = main_file->new_expr();
-    main_file->map_parameters();
-    ecadebug->msg(ECA_DEBUG::system_objects, "(e-a-o) number of params: " + main_file->name() + "=" + 
-		  kvu_numtostr(main_file->number_of_params()));
-    for(int n = 0; n < main_file->number_of_params(); n++) {
-      main_file->set_parameter(n + 1, get_argument_number(n + 1, argu));
-    }
-  }
-  return(main_file);
-}
 
 /**
  * Create a new loop input object

@@ -26,7 +26,7 @@
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
 
-#include "eca-audio-objects.h"
+#include "eca-object-factory.h"
 #include "samplebuffer.h"
 #include "audioio-ewf.h"
 
@@ -45,8 +45,7 @@ void EWFFILE::open(void) throw(ECA_ERROR*) {
   ewf_rc.resource_file(label());
   read_ewf_data();
 
-  ECA_AUDIO_OBJECTS t;
-  child = t.create_audio_object(child_name_rep);
+  child = ECA_OBJECT_FACTORY::create_audio_object(child_name_rep);
   if (child == 0) 
     throw(new ECA_ERROR("AUDIOIO-EWF", "Couldn't open child object.",ECA_ERROR::retry));
 

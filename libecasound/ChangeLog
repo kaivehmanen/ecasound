@@ -20,6 +20,9 @@
 	* various: renamed all enum type names from "ALL_CAPITAL" to 
 	"Starting_capital_only"
 	* eca-audio-objects.h (interpret_audio_object): moved to eca-chainsetup.h
+	* eca-audio-objects.h (create_audio_object): moved to eca-object-factory.h
+	* eca-chainsetup.h (constructor): removed interaction with
+	COMMAND_LINE objects
 		
 2000-09-16  Kai Vehmanen <kaiv@wakkanet.fi>
 

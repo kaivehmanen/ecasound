@@ -112,6 +112,7 @@ ecasound_general_include = 	\
 			samplebuffer_iterators.h \
 			sample-specs.h \
 			eca-version.h \
+			eca-object-factory.h \
 			eca-chainsetup.h \
 			eca-chainsetup-position.h \
 			eca-control.h \
@@ -201,6 +202,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			layer.cpp \
 			samplebuffer_iterators.cpp \
 			eca-version.cpp  \
+			eca-object-factory.cpp \
 			eca-chainsetup.cpp \
 			eca-control.cpp \
 			eca-control-base.cpp \
