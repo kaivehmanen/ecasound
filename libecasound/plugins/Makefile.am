@@ -83,8 +83,8 @@ endif
 # source files
 # ----------------------------------------------------------------------
 
-libecasound_plugins_la_SOURCES		= audioio_dummy.cpp \
-					  $(af_src) \
+libecasound_plugins_la_SOURCES         = audioio_dummy.cpp
+EXTRA_libecasound_plugins_la_SOURCES    = $(af_src) \
                                           $(alsa_src) \
                                           $(arts_src) \
                                           $(jack_src)
