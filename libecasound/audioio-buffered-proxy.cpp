@@ -140,7 +140,7 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf)
       std::cerr << "(audioio-buffered-proxy) Warning! Underrun in reading from \"" 
 		<< child_repp->label() 
 		<< "\". Trying to recover." << std::endl;
-      wait_for_full();
+      pserver_repp->wait_for_full();
       if (recursing_rep != true && pbuffer_repp->read_space() > 0) {
 	recursing_rep = true;
 	this->read_buffer(sbuf);
@@ -177,7 +177,7 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf)
       std::cerr << "(audioio-buffered-proxy) Warning! Overrun in writing to \"" 
 		<< child_repp->label() 
 		<< "\". Trying to recover." << std::endl;
-      wait_for_full();
+      pserver_repp->wait_for_full();
       if (recursing_rep != true && pbuffer_repp->write_space() > 0) {
 	recursing_rep = true;
 	this->write_buffer(sbuf);
