@@ -54,7 +54,8 @@ ecasoundc_src = ecasoundc.cpp
 # library definitons
 # ----------------------------------------------------------------------
 
-libecasoundc_debug_la_SOURCES = $(ecasoundc_src)
+libecasoundc_la_SOURCES = $(ecasoundc_src)
+libecasoundc_debug_la_SOURCES = $(libecasoundc_la_SOURCES)
 libecasoundc_la_LIBADD = $(ecasound_libs) $(kvutils_libs)
 libecasoundc_debug_la_LIBADD = $(libecasoundc_la_LIBADD)
 libecasoundc_la_LDFLAGS = -export-dynamic $(eca_ldflags)
