@@ -32,3 +32,6 @@ ecasoundrc: ecasoundrc.in Makefile.am
             -e "s%[@]prefix[@]%$(prefix)%" \
             -e "s%[@]pkgdatadir[@]%$(pkgdatadir)%" \
             < $(top_srcdir)/ecasoundrc.in > ecasoundrc 
+
+clean-local:
+	rm -fv ecasoundrc
