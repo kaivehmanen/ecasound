@@ -24,6 +24,7 @@
 #include <signal.h>
 
 #include <kvutils/com_line.h>
+#include <kvutils/procedure_timer.h>
 
 #include <eca-debug.h>
 #include <eca-error.h>
@@ -35,6 +36,9 @@
 #include "ecatools_play.h"
 
 static ECA_CONTROL* ectrl_repp = 0;
+static PROCEDURE_TIMER* ptimer_repp = 0;
+static struct timeval* lowerlimit_repp;
+static int exit_request_rep = 0;
 
 int main(int argc, char *argv[])
 {
@@ -58,6 +62,14 @@ int main(int argc, char *argv[])
     print_usage();
     return(1);
   }
+  
+  PROCEDURE_TIMER ptimer;
+  ptimer_repp = &ptimer;
+
+  struct timeval lowerlimit;
+  lowerlimit_repp = &lowerlimit;
+  lowerlimit.tv_sec = 1;
+  lowerlimit.tv_usec = 0;
 
   try {
     string filename;
@@ -70,7 +82,8 @@ int main(int argc, char *argv[])
     ectrl.toggle_interactive_mode(true);
     cline.begin();
     cline.next(); // skip the program name
-    while(cline.end() == false) {
+    while(cline.end() == false &&
+	  exit_request_rep == 0) {
       filename = cline.current();
 
       cerr << "Playing file \"" << filename << "\".\n";
@@ -109,6 +122,17 @@ int main(int argc, char *argv[])
 
 void signal_handler(int signum) {
 //    cerr << "Caught an interrupt... moving to next file.\n";
+  if (ptimer_repp != 0) {
+    ptimer_repp->stop();
+    if (ptimer_repp->events_under_lower_bound() > 0) {
+      cerr << endl << "Caught an exception. Exiting..." << endl;
+      exit_request_rep = 1;
+    }
+    ptimer_repp->reset();
+    ptimer_repp->set_lower_bound(lowerlimit_repp);
+    ptimer_repp->start();
+  }
+
   if (ectrl_repp != 0)
     ectrl_repp->quit();
 }
