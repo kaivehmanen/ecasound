@@ -33,6 +33,7 @@ EFFECT_BANDPASS::EFFECT_BANDPASS (CHAIN_OPERATOR::parameter_t centerf, CHAIN_OPE
   /* to avoid accessing uninitialized data */
   width = 1;
   center = 1;
+  C = 1;
 
   set_parameter(1, centerf);
   set_parameter(2, w);
