@@ -16,7 +16,8 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_debug,
     // --
     ec_engine_status,
-    ec_engine_start,
+    ec_engine_launch,
+    ec_engine_halt,
     // --
     ec_cs_add,
     ec_cs_remove,

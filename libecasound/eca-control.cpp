@@ -596,7 +596,8 @@ void ECA_CONTROL::action(int action_id)
   // ---
   // Engine commands
   // ---
-  case ec_engine_start: { engine_start(); break; }
+  case ec_engine_launch: { if (is_engine_started() != true) engine_start(); break; }
+  case ec_engine_halt: { close_engine(); break; }
   case ec_engine_status: { set_last_string(engine_status()); break; }
 
   // ---

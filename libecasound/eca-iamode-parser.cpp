@@ -96,8 +96,9 @@ void ECA_IAMODE_PARSER::register_commands_misc(void)
 
   (*cmd_map_repp)["debug"] = ec_debug;
 
+  (*cmd_map_repp)["engine-launch"] = ec_engine_launch;
+  (*cmd_map_repp)["engine-halt"] = ec_engine_halt;
   (*cmd_map_repp)["engine-status"] = ec_engine_status;
-  (*cmd_map_repp)["engine-start"] = ec_engine_start;
 
   (*cmd_map_repp)["status"] = ec_cs_status;
   (*cmd_map_repp)["st"] = ec_cs_status;
@@ -372,7 +373,8 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id)
 bool ECA_IAMODE_PARSER::action_requires_connected(int id)
 {
   switch(id) {
-  case ec_engine_start:
+  case ec_engine_launch:
+  case ec_engine_halt:
   case ec_start:
   case ec_run:
 
