@@ -521,7 +521,10 @@ int ECA_SESSION::interpret_chainsetup_option (const std::string& argu)
     if (argu.size() > 2 && argu[2] == ':') {
       load_chainsetup(tname);
       if (selected_chainsetup_repp == 0 || 
-	  selected_chainsetup_repp->is_valid() != true) ++errors;
+	  selected_chainsetup_repp->is_valid() != true) {
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-session) Chainsetup loaded from '" + tname + "' is not valid!");
+	++errors;
+      }
       if (errors == 0) connect_chainsetup();
     }
     break;
