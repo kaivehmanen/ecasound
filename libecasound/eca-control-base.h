@@ -123,11 +123,8 @@ class ECA_CONTROL_BASE {
   bool is_selected(void) const;
   bool is_finished(void) const;
   bool is_valid(void) const;
+  bool is_engine_started(void) const;
 
-  /**
-   * Returns true if engine has been started. 
-   */
-  bool is_engine_started(void) const { return(engine_repp != 0); }
   std::string engine_status(void) const;
 
   ECA_CONTROL_BASE (ECA_SESSION* psession);

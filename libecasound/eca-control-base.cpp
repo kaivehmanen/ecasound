@@ -471,6 +471,30 @@ double ECA_CONTROL_BASE::position_in_seconds_exact(void) const
 }
 
 /**
+ * Returns true if engine has been started. 
+ *
+ * Note: when in batch mode, status of notready means that
+ *       engine has exited and is no longer receiving any commands
+ *       and thus false is returned
+ */
+bool ECA_CONTROL_BASE::is_engine_started(void) const
+{
+  bool ret = true;
+
+  if (engine_repp == 0) {
+    ret = false;
+  }
+  else {
+    if (engine_repp->batch_mode() == true &&
+	engine_repp->status() == ECA_ENGINE::engine_status_notready) {
+      ret = false;
+    }
+  }
+  
+  return(ret);
+}
+
+/**
  * Return info about engine status.
  */
 string ECA_CONTROL_BASE::engine_status(void) const

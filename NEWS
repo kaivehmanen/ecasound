@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 210804) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 240804) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -34,6 +34,9 @@ xx082004 (v2.3.4)  -** stable release **-
 	- fixed: errors in ecasound(1) man page and the examples.html;
 	         adding chain operators to multiple chains at once
 		 is not supported
+	- fixed: engine state not fully updated after a 'run' 
+		 command has completed; caused commands such as
+		 'cs-set-position' to fail when used after 'run'
 05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command
