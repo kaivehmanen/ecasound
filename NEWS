@@ -17,6 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
+??032001 (v1.9dev6)
 22032001 (v1.9dev5)
 	- added: eiam - new aliases 'getpos', 'c-set-position',
 		 'aio-set-position', 'aio-getpos'
@@ -35,7 +36,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- fixed: eiam - 'fw' and 'rw' commands didn't work properly
 		 if -z:db was enabled and audio object sample rate
 		 was different than internal sample rate
-	- fixed: eiam - 'ctrl-remove' remove the selected chainop,
+	- fixed: eiam - 'ctrl-remove' removed the selected chainop,
 		 not the controller as it should have
 	- fixed: eiam - seg.fault when using 'cs-edit' to configure
 	         a connected chainsetup
