@@ -1,0 +1,84 @@
+
+ecasound-ruby
+-------------
+
+This is the first part of an ecasound module for Ruby.
+It was written with Ruby 1.8.0 but it should also work with
+Ruby 1.6.8.
+(Someone to prove this?)
+
+The first step was to implement a native control interface like the one for
+Python (ecacontrol.py) which should work by now.
+So if you would like to play with ecasound iam from Ruby:
+
+cp -r ecasound* some_dir/
+cd some_dir
+
+If you dare to install this system-wide (not yet recommended):
+
+ruby setup.rb config
+su -c 'ruby setup.rb install'
+
+An example (cut to my_test.rb)
+-----8<-----------8<---------
+#!/usr/bin/env ruby
+
+require "ecasound"
+
+MY_FILE = "path/to/file.ext"
+
+eci = Ecasound::ControlInterface.new()
+eci.command("ai-add #{MY_FILE}")
+eci.command("ao-add-default")
+
+print eci.command("cs-status"), "\n"
+print eci.command("c-status"), "\n"
+
+eci.command("cs-connect")
+eci.command("start")
+
+while true
+    print "\rPosition: ", eci.command("cs-get-position")
+    if eci.command("engine-status") == "finished"
+        break
+    end
+    sleep(0.2)
+    $stdout.flush()
+end
+
+print "... ready\n"
+-----8<-----------8<---------
+
+chmod u+x my_test.rb
+./my_test.rb
+
+If an error occurs an EcasoundError is raised with a hopefully informative
+message.
+
+Eventually there will be an even more abstract layer which lets you do
+something like:
+
+require "ecasound"
+
+p = Ecasound::Process.new()
+cs = p.new_chainsetup("test1")
+print p.chainsetup_status(), "\n"
+cs.new_chain("bla1")
+p.engine.start()
+chain1 = cs["bla1"]
+chain2 = Ecasound::Chain(p, "bla2")
+ai = cs.new_audio_input("bla.wav")
+ai.attach(chain2)
+...
+
+And in the long run I hope that there will be 'visecas' (visual ecasound) based
+on ecasound-ruby and ruby-gnome2 but I won't talk too loud about that one
+because there's nothing more than a bunch of wild ideas in my head.
+
+Please send questions and possible improvements to ecasound-list@wakkanet.fi.
+I'm not sure whether this list is closed. I'd guess so.
+If unsure go to http://eca.cx/mlists.html to subscribe.
+
+Have fun,
+
+Jan Weil <Jan.Weil@web.de>
