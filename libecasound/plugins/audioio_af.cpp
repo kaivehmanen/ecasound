@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audioio-af.cpp: Interface to SGI audiofile library.
-// Copyright (C) 1999-2001 Kai Vehmanen
+// Copyright (C) 1999-2001,2004 Kai Vehmanen
+//
+// References:
+//     http://www.68k.org/~michael/audiofile/
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

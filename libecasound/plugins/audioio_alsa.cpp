@@ -1,6 +1,10 @@
 // ------------------------------------------------------------------------
 // audioio-alsa.cpp: ALSA 0.9.x PCM input and output.
-// Copyright (C) 1999-2003 Kai Vehmanen, Jeremy Hall 
+// Copyright (C) 1999-2004 Kai Vehmanen, Jeremy Hall 
+//
+// References:
+//     http://alsa-project.org/
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or

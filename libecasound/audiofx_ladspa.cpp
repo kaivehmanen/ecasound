@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audiofx_ladspa.cpp: Wrapper class for LADSPA plugins
-// Copyright (C) 2000-2002 Kai Vehmanen
+// Copyright (C) 2000-2004 Kai Vehmanen
+//
+// References:
+//     http://www.ladspa.org
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
