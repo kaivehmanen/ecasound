@@ -69,7 +69,7 @@ MESSAGE_ITEM& MESSAGE_ITEM::operator<< (unsigned long int n) {
   return (*this);    
 }
 
-#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GLIBC__
+#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GNUG__
 MESSAGE_ITEM& MESSAGE_ITEM::operator<< (long long int n) {
   char ctmp[24];
   snprintf(ctmp, 24, "%lli", n);

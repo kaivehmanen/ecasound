@@ -11,7 +11,7 @@ std::string kvu_numtostr(int n);
 std::string kvu_numtostr(unsigned int n);
 std::string kvu_numtostr(long int n);
 std::string kvu_numtostr(unsigned long int n);
-#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GLIBC__
+#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GNUG__
 std::string kvu_numtostr(long long int n);
 std::string kvu_numtostr(unsigned long long int n);
 #endif
