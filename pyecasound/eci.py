@@ -2,7 +2,7 @@
 # Copyright 2001 Eric S. Tiedemann (est@hyperreal.org)
 # GPLed
 
-import pyeca as _pyeca
+import pyecasound as _pyeca
 import types as _types
 
 class ECIError(Exception):
@@ -52,10 +52,8 @@ class ECI:
                 else:
                     self.e.command(cmd)
             
-        if self.e.error():
-            raise ECIError, '%s: %s' % (self.e.last_error(), cmd)
         t = self.e.last_type()
-        if t == '':
+        if not t or t == '-':
             return None
         elif t == 'S':
             return self.e.last_string_list()
@@ -67,6 +65,8 @@ class ECI:
             return self.e.last_integer()
         elif t == 'li':
             return self.e.last_long_integer()
+	elif t == 'e' or self.e.error():
+	    raise ECIError, '%s: %s' % (self.e.last_error(), cmd)
         else:
             raise ECIError, "unknown return type '%s'!" % t
 
