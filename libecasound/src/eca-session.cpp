@@ -289,10 +289,6 @@ void ECA_SESSION::connect_chainsetup(void) {
 
   ecadebug->msg(1, "Connecting connected chainsetup to engine.");
  
-  while(inslots.size() != 0) inslots.pop_back();
-  while(inslots.size() != connected_chainsetup->inputs.size())
-    inslots.push_back(SAMPLE_BUFFER(connected_chainsetup->buffersize(), SAMPLE_SPECS::channel_count_default));
-
   // --------
   // ensure:
   assert(selected_chainsetup == connected_chainsetup);
@@ -394,25 +390,6 @@ void ECA_SESSION::interpret_chainsetup (const string& argu,
   }
 }
 
-bool ECA_SESSION::is_slave_output(AUDIO_IO* aiod) const {
-  // --------
-  // require:
-  assert(connected_chainsetup != 0);
-  // --------
-
-  if (aiod->is_realtime()) return(false);
-  vector<CHAIN*>::iterator q = connected_chainsetup->chains.begin();
-  while(q != connected_chainsetup->chains.end()) {
-    if ((*q)->output_id == aiod) {
-      if ((*q)->input_id->is_realtime()) {
-	ecadebug->msg(2,"(eca-session) slave output detected: " + (*q)->output_id->label());
-	return(true);
-      }
-    }
-    ++q;
-  }
-  return(false);
-}
 
 void ECA_SESSION::status(EP_STATUS temp) { ep_status = temp; }
 EP_STATUS ECA_SESSION::status(void) const { return(ep_status); }

@@ -36,6 +36,7 @@ void ECA_RESOURCES::set_defaults(void) {
   resource("default-to-interactive-mode","false");
   resource("default-to-raisepriority","false");
   resource("default-to-double-buffering","false");
+  resource("default-double-buffer-size","131072");
   resource("default-to-precise-sample-rates","false");
   resource("resource-directory","/usr/local/share/ecasound");
   resource("resource-file-genosc-envelopes","generic_oscillators");

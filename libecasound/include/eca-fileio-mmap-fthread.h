@@ -30,7 +30,7 @@ class ECASOUND_FIOMMAP_BUFFER {
   vector<unsigned char*> buffers;
   vector<unsigned char*>::size_type locked_buffer;
   map<int,bool> ready_for_fill;
-  vector<int> mmap_length;
+  vector<long int> mmap_length;
 
   long int mmap_low;
   long int mmap_high;

@@ -29,7 +29,6 @@ class ECA_SESSION {
   friend class ECA_CONTROLLER_OBJECTS;
   friend class ECA_CONTROLLER;
   friend class ECA_PROCESSOR;
-  friend void *mthread_process_chains(void* params);
 
  private:
 
@@ -171,17 +170,7 @@ class ECA_SESSION {
   int number_of_connected_chains_to_output(AUDIO_IO* aiod) const {
     return(connected_chainsetup->number_of_connected_chains_to_output(aiod)); }
 
-  bool is_slave_output(AUDIO_IO* aiod) const;
-
  private:
-
-  // ---
-  // Data objects
-  // ---
-  vector<bool> chain_ready_for_submix;
-  vector<pthread_mutex_t*> chain_muts;
-  vector<pthread_cond_t*> chain_conds;
-  vector<SAMPLE_BUFFER> inslots;
 
   // ---
   // Status data

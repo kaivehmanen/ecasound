@@ -225,7 +225,6 @@ long OSSDEVICE::position_in_samples(void) const {
     else {
       ioctl(audio_fd, SNDCTL_DSP_GETOPTR, &info);
     }
-    cerr << "info: " << info.bytes << "\n";
     return(info.bytes / frame_size());
   }
   struct timeval now;

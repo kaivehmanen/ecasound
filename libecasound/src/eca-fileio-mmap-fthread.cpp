@@ -37,6 +37,7 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
+#include "eca-resources.h"
 #include "eca-fileio-mmap-fthread.h"
 
 bool ecasound_fiommap_running = false;
@@ -45,10 +46,14 @@ pthread_cond_t ecasound_fiommap_cond;
 vector<ECASOUND_FIOMMAP_BUFFER*> ecasound_fiommap_buffer;
 map<int,ECASOUND_FIOMMAP_BUFFER*> ecasound_fiommap_buffermap;
 pthread_t ecasound_fiommap_thread;
-const long int ecasound_fiommap_buffersize = 524288;
+long int ecasound_fiommap_buffersize = 131072;
 
 void ecasound_fiommap_register_fd(int fd, long int length) {
   //  cerr << "(eca-fileio-mmap-fthread) register_fd()\n";
+
+  ECA_RESOURCES ecasoundrc;
+  long bsize_temp = atol(ecasoundrc.resource("default-double-buffer-size").c_str());
+  if (bsize_temp > 0) ecasound_fiommap_buffersize = bsize_temp;
 
   if (ecasound_fiommap_running == false) {
     ecasound_fiommap_running = true;
@@ -137,6 +142,7 @@ void ecasound_fiommap_reset(int fd, long fposition) {
 								    MAP_SHARED,
 								    ecasound_fiommap_buffermap[fd]->fd,
 								    ecasound_fiommap_buffermap[fd]->mmap_low);
+  mlock(ecasound_fiommap_buffermap[fd]->buffers[0], ecasound_fiommap_buffermap[fd]->mmap_length[0]);
 
   //  cerr << "(eca-fileio-mmap-fthread) mapping[f] (reset) from " << ecasound_fiommap_buffermap[fd]->mmap_low
   //       << " to " << ecasound_fiommap_buffermap[fd]->mmap_high << " (fd:"

@@ -27,6 +27,7 @@
 
 #include <kvutils.h>
 
+#include "eca-main.h"
 #include "audioio.h"
 #include "samplebuffer.h"
 #include "eca-chain.h"
@@ -35,69 +36,35 @@
 #include "eca-mthreaded-processor.h"
 
 void *mthread_process_chains(void* params) {
-  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);  // other threads can stop this one
+  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL); // other threads can stop this one
   pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
 
-  ECA_SESSION* ecaparams = (ECA_SESSION*)params;
-  
+  ECA_PROCESSOR* ecamain = static_cast<ECA_PROCESSOR*>(params);
+
   ecadebug->control_flow("Submix-thread ready");
   ecadebug->msg(1,"(eca-main) Submix-pid: " + kvu_numtostr(getpid()));
 
-  // ---
-  // Handle general parameters.
-  // ---
-//    getpriority(PRIO_PROCESS, 0);
-//    if (setpriority(PRIO_PROCESS, 0, -10) == -1)
-//    struct sched_param sparam;
-//    sparam.sched_priority = 10;
-//    if (sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
-//      ecadebug->msg("(eca-mthreaded-processor) Unable to change priority.");
-  
-//    MESSAGE_ITEM mtemp;
-//    mtemp << "(eca-mthreaded-processor) Raised submix-thread priority to SCHED_FIFO/10";
-//    mtemp << ", PID: " << (int)getpid() << ".";
-//    ecadebug->msg(1, mtemp.to_string());
- 
+  vector<CHAIN*>* chains = ecamain->chains;
+  vector<AUDIO_IO*>* outputs = ecamain->outputs;
+  SAMPLE_BUFFER* mixslot = &(ecamain->mixslot);
 
-  vector<AUDIO_IO*>* outputs = &(ecaparams->connected_chainsetup->outputs);
-  vector<CHAIN*>* chains = &(ecaparams->connected_chainsetup->chains);
-
-  int chain_count = static_cast<int>(chains->size());
-  int output_count = static_cast<int>(outputs->size());
-
-  int max_channels = 0;
-  vector<int> output_chain_count (output_count);
-  for(int adev_sizet = 0; adev_sizet < output_count; adev_sizet++) {
-    output_chain_count[adev_sizet] =
-      ecaparams->number_of_connected_chains_to_output((*outputs)[adev_sizet]);
-
-    if ((*outputs)[adev_sizet]->channels() > max_channels)
-      max_channels = (*outputs)[adev_sizet]->channels();
-  }
-  SAMPLE_BUFFER mixslot (ecaparams->connected_chainsetup->buffersize(), max_channels);
-
-  vector<bool> chain_locked (output_count);
-
+  vector<bool> chain_locked (ecamain->output_count);
   while(true) {
-    for(int n = 0; n != chain_count;) {
-      pthread_mutex_lock(ecaparams->chain_muts[n]);
+    for(int n = 0; n != ecamain->chain_count;) {
+      pthread_mutex_lock(ecamain->chain_muts[n]);
       chain_locked[n] = true;
-      while(ecaparams->chain_ready_for_submix[n] == false) {
-	pthread_cond_signal(ecaparams->chain_conds[n]);
-	pthread_cond_wait(ecaparams->chain_conds[n],
-			  ecaparams->chain_muts[n]);
+      while(ecamain->chain_ready_for_submix[n] == false) {
+	pthread_cond_signal(ecamain->chain_conds[n]);
+	pthread_cond_wait(ecamain->chain_conds[n], ecamain->chain_muts[n]);
       }
-
       (*chains)[n]->process();
-    
       ++n;
     }
 
-    for(int audioslot_sizet = 0; audioslot_sizet < output_count; audioslot_sizet++) {
-      mixslot.make_silent();
+    for(int audioslot_sizet = 0; audioslot_sizet < ecamain->output_count; audioslot_sizet++) {
+      mixslot->number_of_channels((*outputs)[audioslot_sizet]->channels());
       int count = 0;
-
-      for(int n = 0; n != chain_count; n++) {
+      for(int n = 0; n != ecamain->chain_count; n++) {
 	// --
 	// if chain is already released, skip
 	// --
@@ -108,10 +75,10 @@ void *mthread_process_chains(void* params) {
 	  // skip, if chain is not connected to any output or is
 	  // disabled
 	  // --
-	  ecaparams->chain_ready_for_submix[n] = false;
+	  ecamain->chain_ready_for_submix[n] = false;
 	  chain_locked[n] = false;
-	  pthread_cond_signal(ecaparams->chain_conds[n]);
-	  pthread_mutex_unlock(ecaparams->chain_muts[n]);
+	  pthread_cond_signal(ecamain->chain_conds[n]);
+	  pthread_mutex_unlock(ecamain->chain_muts[n]);
 	  continue;
 	}
 
@@ -119,12 +86,14 @@ void *mthread_process_chains(void* params) {
 	  // --
 	  // output is connected to this chain
 	  // --
-	  if (output_chain_count[audioslot_sizet] == 1) {
+	  if (ecamain->output_chain_count[audioslot_sizet] == 1) {
 	    // --
 	    // there's only one output connected to this chain,
 	    // so we don't need to mix anything
 	    // --
 	    (*outputs)[audioslot_sizet]->write_buffer(&(*chains)[n]->audioslot);
+	    if ((*outputs)[audioslot_sizet]->finished() == true) ecamain->output_finished = true;
+	    break;
 	  }
 	  else {
 	    ++count;
@@ -132,25 +101,25 @@ void *mthread_process_chains(void* params) {
 	      // -- 
 	      // this is the first chain connected to this output
 	      // --
-	      mixslot.copy((*chains)[n]->audioslot); 
-	      mixslot.divide_by(output_chain_count[audioslot_sizet]);
+	      mixslot->copy((*chains)[n]->audioslot);
+	      mixslot->divide_by(ecamain->output_chain_count[audioslot_sizet]);
 	    }
 	    else {
-	      mixslot.add_with_weight((*chains)[n]->audioslot,
-				      output_chain_count[audioslot_sizet]);
-	      if (count == output_chain_count[audioslot_sizet]) {
-		(*outputs)[audioslot_sizet]->write_buffer(&mixslot);
+	      mixslot->add_with_weight((*chains)[n]->audioslot, ecamain->output_chain_count[audioslot_sizet]);
+	      if (count == ecamain->output_chain_count[audioslot_sizet]) {
+		(*outputs)[audioslot_sizet]->write_buffer(mixslot);
+		if ((*outputs)[audioslot_sizet]->finished() == true) ecamain->output_finished = true;
 	      }
 	    }
 	  }
-	  ecaparams->chain_ready_for_submix[n] = false;
+	  ecamain->chain_ready_for_submix[n] = false;
 	  chain_locked[n] = false;
-	  //	  cerr << "rel:" << n << ">";
-	  pthread_cond_signal(ecaparams->chain_conds[n]);
-	  pthread_mutex_unlock(ecaparams->chain_muts[n]);
+	  pthread_cond_signal(ecamain->chain_conds[n]);
+	  pthread_mutex_unlock(ecamain->chain_muts[n]);
 	}
       }
     }
+    ecamain->trigger_outputs();
     pthread_testcancel();
   }
   cerr << "(eca-main/submix) You should never see this message!\n";

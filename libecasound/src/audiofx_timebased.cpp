@@ -98,7 +98,7 @@ void EFFECT_DELAY::init(SAMPLE_BUFFER* insample) {
   l.init(insample);
   r.init(insample);
 
-  buffer.resize(insample->number_of_channels(), vector<SINGLE_BUFFER> (dnum));
+  buffer.resize(2, vector<SINGLE_BUFFER> (dnum));
 }
 
 void EFFECT_DELAY::process(void) {
@@ -205,7 +205,7 @@ void EFFECT_FAKE_STEREO::init(SAMPLE_BUFFER* insample) {
   l.init(insample);
   r.init(insample);
 
-  buffer.resize(insample->number_of_channels());
+  buffer.resize(2);
 }
 
 void EFFECT_FAKE_STEREO::process(void) {
@@ -292,7 +292,7 @@ void EFFECT_REVERB::init(SAMPLE_BUFFER* insample) {
   l.init(insample);
   r.init(insample);
 
-  buffer.resize(insample->number_of_channels());
+  buffer.resize(2);
 }
 
 void EFFECT_REVERB::process(void) {
@@ -328,5 +328,3 @@ void EFFECT_REVERB::process(void) {
     r.next();
   }
 }
-
-

@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-01-28  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* library version 4:0:0 feature freeze
+	* ecasound 1.6.12d10 released
+	
 2000-01-25  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-audio-time.h: added

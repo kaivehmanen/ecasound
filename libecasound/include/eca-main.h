@@ -20,6 +20,8 @@ extern VALUE_QUEUE ecasound_queue;
 
 class ECA_PROCESSOR {
 
+  friend void *mthread_process_chains(void* params);
+
  public:
 
   enum COMMANDS {
@@ -81,6 +83,14 @@ private:
   vector<CHAIN*>* chains;
   vector<long int> input_start_pos;
   vector<long int> output_start_pos;
+
+  // ---
+  // Data objects
+  // ---
+  vector<bool> chain_ready_for_submix;
+  vector<pthread_mutex_t*> chain_muts;
+  vector<pthread_cond_t*> chain_conds;
+  vector<SAMPLE_BUFFER> inslots;
 
   SAMPLE_BUFFER mixslot;
   long int buffersize_rep;
@@ -159,6 +169,8 @@ private:
   void init_connection_to_chainsetup(void) throw(ECA_ERROR*);
   void init_status_variables(void);
   void init_mix_method(void);
+
+  bool is_slave_output(AUDIO_IO* aiod) const;
 
   void inputs_to_chains(void);
   void mix_to_chains(void);

@@ -580,9 +580,10 @@ void SAMPLE_BUFFER::length_in_samples(int len) {
 }
 
 void SAMPLE_BUFFER::number_of_channels(int len) {
-  if (len > number_of_channels()) {
+  if (len > buffer.size()) {
     buffer.resize(len, vector<sample_type> (buffersize_rep,
 					    sample_type(0.0)));
+    ecadebug->msg(1, "(samplebuffer) Increasing channel-count.");    
   }
   channel_count_rep = len;
 }
@@ -602,7 +603,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (long int buffersize, int channels)
     channel_count_rep(channels) {
 
   MESSAGE_ITEM mitem;
-  mitem << "Created a sample_buffer with " << number_of_channels() << " channels";
+  mitem << "Created a sample_buffer with " << buffer.size() << " channels";
   mitem << " that are " << buffersize << " samples long.";
   ecadebug->msg(1, mitem.to_string());
 }

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)    (last edited: 22012000) **
+** ecasound - user visible changes (NEWS)      (last edited: 280100) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -12,17 +12,19 @@ About the version numbers... "vx.y.zRt" :
 
 -----------------------------------------------------------------------
 
-Last officially released version is -*> v1.6.9r9 <*-
+Last officially released version is -*> v1.6.12r10 <*-
 
-??012000 (v1.6.12d10)
+28012000 (v1.6.12r10)  -** public release **-
 	- added: support for s24_le, s24_be, s32_le and s32_be 
 		 sample formats
 	- added: support for ALSA-subdevices (-o:alsa,card,dev,subdev)
 	- added: to ia-mode - 'c-deselect', 'c-select-add'
 	- added: improved multitrack-sync
+        - added: 'default-double-buffer-size' added to .ecasoundrc
 	- changed: ALSA pcm2-devices now opened in nonblock-mode
-	- changed: ecasound can now be compiled in a separate obj-dir
+	- changed: ecasound can now be compiled in a separate obj dir
 	- fixed: bugs in channel routing and output mixing
+	- fixed: delay effects dumped core with mono inputs
 14012000 (v1.6.11d10)
 	- added: -ef4 - 2th-order, 24dB filter which simulates
 	         an analog active RC-lowpass filter - submitted by 

@@ -26,7 +26,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (03.01.2000)
+       (28.01.2000)
        ()
        (Multimedia software)
 
@@ -66,6 +66,10 @@ startdit()
   	dit(default-buffersize) 
   	Sets the size of buffer in samples (must be an exponent of 2).
   	Same as the bf(-b) command line options. Defaults to em(1024).
+
+	dit(default-double-buffer-size = 1048576)
+	Set buffersize for double-buffering (-z:db, see below).
+	Defaults to em(131072).
 
   	dit(default-to-interactive-mode)
   	Whether to always use interactive mode (true or false). Same as the
