@@ -530,6 +530,9 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position(double seconds) {
   DBC_REQUIRE(is_selected());
   // --------
 
+  // FIXME: check whether all audio devices support seeking, 
+  //        raise an error if not (note: see other similar FIXMEs)
+
   if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     if (seconds < 0)
       send_chain_commands_to_engine(ECA_ENGINE::ep_rewind, 
@@ -557,6 +560,9 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position_samples(SAMPLE_SPECS::sampl
   DBC_REQUIRE(is_selected());
   // --------
 
+  // FIXME: check whether all audio devices support seeking, 
+  //        raise an error if not (note: see other similar FIXMEs)
+
   if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     change_chainsetup_position(static_cast<double>(samples) /
 			       selected_chainsetup_repp->samples_per_second());
@@ -579,6 +585,9 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds) {
   DBC_REQUIRE(is_selected());
   // --------
 
+  // FIXME: check whether all audio devices support seeking, 
+  //        raise an error if not (note: see other similar FIXMEs)
+
   if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_setpos, seconds);
   }
@@ -599,6 +608,9 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position_samples(SAMPLE_SPECS::sample_p
   // --------
   DBC_REQUIRE(is_selected());
   // --------
+
+  // FIXME: check whether all audio devices support seeking, 
+  //        raise an error if not (note: see other similar FIXMEs)
 
   if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     set_chainsetup_position(static_cast<double>(samples) /
