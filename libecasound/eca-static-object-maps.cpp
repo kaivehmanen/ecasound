@@ -226,7 +226,8 @@ void ECA_STATIC_OBJECT_MAPS::register_chain_operator_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("etm", "^etm$", new EFFECT_MULTITAP_DELAY());
   objmap->register_object("etp", "^etp$", new EFFECT_PHASER());
   objmap->register_object("etr", "^etr$", new EFFECT_REVERB());
-  objmap->register_object("ev", "^ev$", new EFFECT_ANALYZE());
+  objmap->register_object("ev", "^ev$", new EFFECT_VOLUME_BUCKETS());
+  objmap->register_object("evp", "^evp$", new EFFECT_VOLUME_PEAK());
   objmap->register_object("ezf", "^ezf$", new EFFECT_DCFIND());
   objmap->register_object("ezx", "^ezx$", new EFFECT_DCFIX());
   objmap->register_object("gc", "^gc$", new TIME_CROP_GATE());

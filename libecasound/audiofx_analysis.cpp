@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// audiofx_analysis.cpp: Signal analyzing.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// audiofx_analysis.cpp: Classes for signal analysis
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include <cmath>
 
+#include <kvu_dbc.h>
 #include <kvu_message_item.h>
 #include <kvu_numtostr.h>
 
@@ -28,35 +29,49 @@
 #include "eca-logger.h"
 #include "eca-error.h"
 
+/* 'max-(max/2^15)' */
+const SAMPLE_SPECS::sample_t EFFECT_ANALYSIS::clip_amplitude =
+                                SAMPLE_SPECS::max_amplitude - 
+                                SAMPLE_SPECS::max_amplitude / 16384.0f;
+
+const int EFFECT_VOLUME_BUCKETS::range_count = 16;
+
 EFFECT_ANALYSIS::~EFFECT_ANALYSIS(void)
 {
 }
 
-const int EFFECT_ANALYZE::range_count = 16;
-const SAMPLE_SPECS::sample_t EFFECT_ANALYZE::clip_amplitude = SAMPLE_SPECS::max_amplitude - SAMPLE_SPECS::max_amplitude / 16384.0f; // max-(max/2^15)
 
-EFFECT_ANALYZE::EFFECT_ANALYZE (void) { 
+EFFECT_VOLUME_BUCKETS::EFFECT_VOLUME_BUCKETS (void)
+{
   reset_stats();
   cumulativemode_rep = false;
+  lock_repp = new pthread_mutex_t;
+  int res = pthread_mutex_init(lock_repp, NULL);
+  DBC_CHECK(res == 0);
 }
 
-std::string EFFECT_ANALYZE::status_entry(int range) const {
-  std::string res;
+EFFECT_VOLUME_BUCKETS::~EFFECT_VOLUME_BUCKETS (void)
+{
+  delete lock_repp;
+}
+
+void EFFECT_VOLUME_BUCKETS::status_entry(int range, std::string& otemp) const
+{
+  /* note: is called with 'lock_repp' taken */
+
   for(int n = 0; n < channels(); n++) {
-    res += "\t ";
-    res += kvu_numtostr(ranges[range][n]);
+    otemp += "\t " + kvu_numtostr(ranges[range][n]);
     if (cumulativemode_rep == true) {
-      res += ",";
-      res += kvu_numtostr(100.0f *  
-			  ranges[range][n] / 
-			  num_of_samples[n]) + "%";
-      res += "\t";
+      otemp += ",";
+      otemp += kvu_numtostr(100.0f *  
+			    ranges[range][n] / 
+			    num_of_samples[n], 3) + "%\t";
     }
   }
-  return(res);
 } 
 
-void EFFECT_ANALYZE::reset_stats(void) {
+void EFFECT_VOLUME_BUCKETS::reset_stats(void)
+{
   for(unsigned int nm = 0; nm < ranges.size(); nm++)
     for(unsigned int ch = 0; ch < ranges[nm].size(); ch++)
       ranges[nm][ch] = 0;
@@ -68,38 +83,41 @@ void EFFECT_ANALYZE::reset_stats(void) {
   clipped_pos = clipped_neg = 0;
 }
 
-string EFFECT_ANALYZE::status(void) const {
-  MESSAGE_ITEM otemp;
-  otemp << "(audiofx) -- Amplitude statistics -----------------------------\n";
-  otemp << "Range, pos/neg, count,(%), ch1...n";
-  otemp.setprecision(3);
-  otemp << "\nPos   -1.0 dB: " << status_entry(0);
-  otemp << "\nPos   -2.0 dB: " << status_entry(1);
-  otemp << "\nPos   -4.0 dB: " << status_entry(2);
-  otemp << "\nPos   -8.0 dB: " << status_entry(3);
-  otemp << "\nPos  -16.0 dB: " << status_entry(4);
-  otemp << "\nPos  -32.0 dB: " << status_entry(5);
-  otemp << "\nPos  -64.0 dB: " << status_entry(6);
-  otemp << "\nPos -inf.0 dB: " << status_entry(7);
-  otemp << "\nNeg -inf.0 dB: " << status_entry(8);
-  otemp << "\nNeg  -64.0 dB: " << status_entry(9);
-  otemp << "\nNeg  -32.0 dB: " << status_entry(10);
-  otemp << "\nNeg  -16.0 dB: " << status_entry(11);
-  otemp << "\nNeg   -8.0 dB: " << status_entry(12);
-  otemp << "\nNeg   -4.0 dB: " << status_entry(13);
-  otemp << "\nNeg   -2.0 dB: " << status_entry(14);
-  otemp << "\nNeg   -1.0 dB: " << status_entry(15);
+string EFFECT_VOLUME_BUCKETS::status(void) const
+{
+  int res = pthread_mutex_lock(lock_repp);
+  DBC_CHECK(res == 0);
 
-  otemp.setprecision(5);
-  otemp << "\n(audiofx) Peak amplitude, period: pos=" << max_pos_period << " neg=" << max_neg_period << ".\n";
-  otemp << "(audiofx) Peak amplitude, all   : pos=" << max_pos << " neg=" << max_neg << ".\n";
-  otemp << "(audiofx) Clipped samples, period: pos=" << clipped_pos_period << " neg=" << clipped_neg_period << ".\n";
-  otemp << "(audiofx) Clipped samples, all   : pos=" << clipped_pos << " neg=" << clipped_neg << ".\n";
-  otemp << "(audiofx) Max gain without clipping, all: " << max_multiplier() << ".\n";
+  status_rep = "(audiofx) -- Amplitude statistics -----------------------------\n";
+  status_rep += "Range, pos/neg, count,(%), ch1...n";
+
+  status_rep += "\nPos   -1.0 dB: "; status_entry(0, status_rep);
+  status_rep += "\nPos   -2.0 dB: "; status_entry(1, status_rep);
+  status_rep += "\nPos   -4.0 dB: "; status_entry(2, status_rep);
+  status_rep += "\nPos   -8.0 dB: "; status_entry(3, status_rep);
+  status_rep += "\nPos  -16.0 dB: "; status_entry(4, status_rep);
+  status_rep += "\nPos  -32.0 dB: "; status_entry(5, status_rep);
+  status_rep += "\nPos  -64.0 dB: "; status_entry(6, status_rep);
+  status_rep += "\nPos -inf.0 dB: "; status_entry(7, status_rep);
+  status_rep += "\nNeg -inf.0 dB: "; status_entry(8, status_rep);
+  status_rep += "\nNeg  -64.0 dB: "; status_entry(9, status_rep);
+  status_rep += "\nNeg  -32.0 dB: "; status_entry(10, status_rep);
+  status_rep += "\nNeg  -16.0 dB: "; status_entry(11, status_rep);
+  status_rep += "\nNeg   -8.0 dB: "; status_entry(12, status_rep);
+  status_rep += "\nNeg   -4.0 dB: "; status_entry(13, status_rep);
+  status_rep += "\nNeg   -2.0 dB: "; status_entry(14, status_rep);
+  status_rep += "\nNeg   -1.0 dB: "; status_entry(15, status_rep);
+
+  status_rep += "\n(audiofx) Peak amplitude, period: pos=" + kvu_numtostr(max_pos_period,5) + " neg=" + kvu_numtostr(max_neg_period,5) + ".\n";
+  status_rep += "(audiofx) Peak amplitude, all   : pos=" + kvu_numtostr(max_pos,5) + " neg=" + kvu_numtostr(max_neg,5) + ".\n";
+  status_rep += "(audiofx) Clipped samples, period: pos=" + kvu_numtostr(clipped_pos_period) + " neg=" + kvu_numtostr(clipped_neg_period) + ".\n";
+  status_rep += "(audiofx) Clipped samples, all   : pos=" + kvu_numtostr(clipped_pos) + " neg=" + kvu_numtostr(clipped_neg) + ".\n";
+  status_rep += "(audiofx) Max gain without clipping, all: " + kvu_numtostr(max_multiplier(),5) + ".\n";
+
   if (cumulativemode_rep == true)
-    otemp << "(audiofx) -- End of statistics --------------------------------\n";
+    status_rep += "(audiofx) -- End of statistics --------------------------------\n";
   else
-    otemp << "(audiofx) -- End of statistics (periodical counters reseted) --\n";
+    status_rep += "(audiofx) -- End of statistics (periodical counters reseted) --\n";
 
   if (cumulativemode_rep != true) {
     for(unsigned int nm = 0; nm < ranges.size(); nm++)
@@ -110,11 +128,16 @@ string EFFECT_ANALYZE::status(void) const {
     max_pos_period = max_neg_period = 0.0f;
     clipped_pos_period =  clipped_neg_period = 0;
   }
-  return(otemp.to_string());
+
+  res = pthread_mutex_unlock(lock_repp);
+  DBC_CHECK(res == 0);
+
+  return(status_rep);
 }
 
-void EFFECT_ANALYZE::parameter_description(int param, 
-					   struct PARAM_DESCRIPTION *pd) {
+void EFFECT_VOLUME_BUCKETS::parameter_description(int param, 
+					   struct PARAM_DESCRIPTION *pd)
+{
   switch(param) {
   case 1: 
     pd->default_value = 0;
@@ -144,7 +167,8 @@ void EFFECT_ANALYZE::parameter_description(int param,
   }
 }
 
-void EFFECT_ANALYZE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_VOLUME_BUCKETS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     if (value != 0)
@@ -154,7 +178,8 @@ void EFFECT_ANALYZE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_ANALYZE::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_VOLUME_BUCKETS::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     if (cumulativemode_rep == true) return(1.0);
@@ -165,7 +190,8 @@ CHAIN_OPERATOR::parameter_t EFFECT_ANALYZE::get_parameter(int param) const {
   return(0.0);
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_ANALYZE::max_multiplier(void) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_VOLUME_BUCKETS::max_multiplier(void) const
+{
   parameter_t k;
   SAMPLE_SPECS::sample_t max_peak = max_pos;
   if (max_neg > max_pos) max_peak = max_neg;
@@ -175,67 +201,164 @@ CHAIN_OPERATOR::parameter_t EFFECT_ANALYZE::max_multiplier(void) const {
   return(k);
 }
 
-void EFFECT_ANALYZE::init(SAMPLE_BUFFER* insample) {
+void EFFECT_VOLUME_BUCKETS::init(SAMPLE_BUFFER* insample)
+{
+  int res = pthread_mutex_lock(lock_repp);
+  DBC_CHECK(res == 0);
+
   i.init(insample);
   set_channels(insample->number_of_channels());
   num_of_samples.resize(channels(), 0);
   ranges.resize(range_count, std::vector<unsigned long int> (channels()));
+
+  res = pthread_mutex_unlock(lock_repp);
+  DBC_CHECK(res == 0);
 }
 
-void EFFECT_ANALYZE::process(void) {
+void EFFECT_VOLUME_BUCKETS::process(void)
+{
+  int res = pthread_mutex_trylock(lock_repp);
+  if (res == 0) {
+    i.begin();
+    while(!i.end()) {
+      num_of_samples[i.channel()]++;
+      if (*i.current() >= 0) {
+	if (*i.current() > max_pos) max_pos = *i.current();
+	if (*i.current() > max_pos_period) max_pos_period = *i.current();
+	if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.891f) {
+	  if (*i.current() >= EFFECT_ANALYSIS::clip_amplitude) {
+	    clipped_pos_period++; clipped_pos++;
+	  }
+	  ranges[0][i.channel()]++;  // 0-1dB
+	}
+	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.794f) ranges[1][i.channel()]++;  // 1-2dB
+	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.631f) ranges[2][i.channel()]++; // 2-4dB
+	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.398f) ranges[3][i.channel()]++; // 4-8dB
+	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.158f) ranges[4][i.channel()]++; // 8-16dB
+	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.025f) ranges[5][i.channel()]++; // 16-32dB
+	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.001f) ranges[6][i.channel()]++; // 32-64dB
+	else ranges[7][i.channel()]++; // 64-infdB
+      }
+      else {
+	if (-(*i.current()) > max_neg) max_neg = -(*i.current());
+	if (-(*i.current()) > max_neg_period) max_neg_period = -(*i.current());
+	if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.891f) {
+	  if (*i.current() <= -EFFECT_ANALYSIS::clip_amplitude) {
+	    clipped_neg_period++; clipped_neg++;
+	  }
+	  ranges[15][i.channel()]++;  // 0-1dB
+	}
+	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.794f) ranges[14][i.channel()]++;  // 1-2dB
+	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.631f) ranges[13][i.channel()]++; // 2-4dB
+	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.398f) ranges[12][i.channel()]++; // 4-8dB
+	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.158f) ranges[11][i.channel()]++; // 8-16dB
+	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.025f) ranges[10][i.channel()]++; // 16-32dB
+	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.001f) ranges[9][i.channel()]++; // 32-64dB
+	else ranges[8][i.channel()]++; // 64-infdB
+      }
+      i.next();
+    }
+
+    res = pthread_mutex_unlock(lock_repp);
+    DBC_CHECK(res == 0);
+  } 
+  // else { std::cerr << "(audiofx_analysis) lock taken, skipping process().\n"; }
+}
+
+EFFECT_VOLUME_PEAK::EFFECT_VOLUME_PEAK (void)
+{
+  max_amplitude_repp = 0;
+}
+
+EFFECT_VOLUME_PEAK::~EFFECT_VOLUME_PEAK (void)
+{
+  if (max_amplitude_repp != 0) {
+    delete[] max_amplitude_repp;
+    max_amplitude_repp = 0;
+  }
+}
+
+void EFFECT_VOLUME_PEAK::parameter_description(int param, 
+					       struct PARAM_DESCRIPTION *pd)
+{
+  if (param > 0 && param <= channels()) {
+    pd->default_value = 0;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = true;
+  }
+}
+
+std::string EFFECT_VOLUME_PEAK::parameter_names(void) const
+{
+  string params;
+  for(int n = 0; n < channels(); n++) {
+    params += "peak-amplitude-ch" + kvu_numtostr(n + 1);
+    if (n != channels()) params += ",";
+  }
+  return(params);
+}
+
+void EFFECT_VOLUME_PEAK::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
+}
+
+CHAIN_OPERATOR::parameter_t EFFECT_VOLUME_PEAK::get_parameter(int param) const
+{
+  if (param > 0 && param <= channels()) {
+    parameter_t temp = max_amplitude_repp[param - 1];
+    max_amplitude_repp[param - 1] = 0.0f;
+    return(temp);
+  }
+  return(0.0f);
+}
+
+void EFFECT_VOLUME_PEAK::init(SAMPLE_BUFFER* insample)
+{
+  i.init(insample);
+  if (max_amplitude_repp != 0) {
+    delete[] max_amplitude_repp;
+    max_amplitude_repp = 0;
+  }
+  max_amplitude_repp = new parameter_t [insample->number_of_channels()];
+  set_channels(insample->number_of_channels());
+}
+
+void EFFECT_VOLUME_PEAK::process(void)
+{
   i.begin();
   while(!i.end()) {
-    num_of_samples[i.channel()]++;
-    if (*i.current() >= 0) {
-      if (*i.current() > max_pos) max_pos = *i.current();
-      if (*i.current() > max_pos_period) max_pos_period = *i.current();
-      if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.891f) {
-	if (*i.current() >= clip_amplitude) {
-	  clipped_pos_period++; clipped_pos++;
-	}
-	ranges[0][i.channel()]++;  // 0-1dB
-      }
-      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.794f) ranges[1][i.channel()]++;  // 1-2dB
-      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.631f) ranges[2][i.channel()]++; // 2-4dB
-      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.398f) ranges[3][i.channel()]++; // 4-8dB
-      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.158f) ranges[4][i.channel()]++; // 8-16dB
-      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.025f) ranges[5][i.channel()]++; // 16-32dB
-      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.001f) ranges[6][i.channel()]++; // 32-64dB
-      else ranges[7][i.channel()]++; // 64-infdB
-    }
-    else {
-      if (-(*i.current()) > max_neg) max_neg = -(*i.current());
-      if (-(*i.current()) > max_neg_period) max_neg_period = -(*i.current());
-      if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.891f) {
-	if (*i.current() <= -clip_amplitude) {
-	  clipped_neg_period++; clipped_neg++;
-	}
-	ranges[15][i.channel()]++;  // 0-1dB
-      }
-      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.794f) ranges[14][i.channel()]++;  // 1-2dB
-      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.631f) ranges[13][i.channel()]++; // 2-4dB
-      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.398f) ranges[12][i.channel()]++; // 4-8dB
-      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.158f) ranges[11][i.channel()]++; // 8-16dB
-      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.025f) ranges[10][i.channel()]++; // 16-32dB
-      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.001f) ranges[9][i.channel()]++; // 32-64dB
-      else ranges[8][i.channel()]++; // 64-infdB
+    SAMPLE_SPECS::sample_t abscurrent = std::fabs(*i.current());
+    DBC_CHECK(i.channel() >= 0);
+    DBC_CHECK(i.channel() < channels());
+    if (abscurrent > max_amplitude_repp[i.channel()]) {
+      max_amplitude_repp[i.channel()] = std::fabs(*i.current());
     }
     i.next();
   }
 }
 
-EFFECT_DCFIND::EFFECT_DCFIND (void) { }
-
-string EFFECT_DCFIND::status(void) const {
-    MESSAGE_ITEM mitem;
-    mitem.setprecision(5);
-    mitem << "(audiofx) Optimal value for DC-adjust: ";
-    mitem << get_deltafix(SAMPLE_SPECS::ch_left) << " (left), ";
-    mitem << get_deltafix(SAMPLE_SPECS::ch_right) << " (right).";
-    return(mitem.to_string());
+EFFECT_DCFIND::EFFECT_DCFIND (void)
+{
 }
 
-string EFFECT_DCFIND::parameter_names(void) const {
+string EFFECT_DCFIND::status(void) const
+{
+  MESSAGE_ITEM mitem;
+  mitem.setprecision(5);
+  mitem << "(audiofx) Optimal value for DC-adjust: ";
+  mitem << get_deltafix(SAMPLE_SPECS::ch_left) << " (left), ";
+  mitem << get_deltafix(SAMPLE_SPECS::ch_right) << " (right).";
+  return(mitem.to_string());
+}
+
+string EFFECT_DCFIND::parameter_names(void) const
+{
   std::vector<std::string> t;
   for(int n = 0; n < channels(); n++) {
     t.push_back("result-offset-ch" + kvu_numtostr(n));
@@ -243,7 +366,8 @@ string EFFECT_DCFIND::parameter_names(void) const {
   return(kvu_vector_to_string(t, ","));
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_deltafix(int channel) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_deltafix(int channel) const
+{
   SAMPLE_SPECS::sample_t deltafix;
 
   if (channel >= static_cast<int>(pos_sum.size()) ||
@@ -256,7 +380,8 @@ CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_deltafix(int channel) const {
 }
 
 void EFFECT_DCFIND::parameter_description(int param, 
-					  struct PARAM_DESCRIPTION *pd) {
+					  struct PARAM_DESCRIPTION *pd)
+{
   pd->default_value = 0.0f;
   pd->description = get_parameter_name(param);
   pd->bounded_above = false;
@@ -270,13 +395,17 @@ void EFFECT_DCFIND::parameter_description(int param,
 }
 
 void EFFECT_DCFIND::set_parameter(int param,
-				 CHAIN_OPERATOR::parameter_t value) { }
+				  CHAIN_OPERATOR::parameter_t value)
+{
+}
 
-CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_parameter(int param) const {
+CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_parameter(int param) const
+{
   return(get_deltafix(param));
 }
 
-void EFFECT_DCFIND::init(SAMPLE_BUFFER *insample) {
+void EFFECT_DCFIND::init(SAMPLE_BUFFER *insample)
+{
   i.init(insample);
   set_channels(insample->number_of_channels());
   pos_sum.resize(channels());
@@ -284,7 +413,8 @@ void EFFECT_DCFIND::init(SAMPLE_BUFFER *insample) {
   num_of_samples.resize(channels());
 }
 
-void EFFECT_DCFIND::process(void) {
+void EFFECT_DCFIND::process(void)
+{
   i.begin();
   while(!i.end()) {
     tempval = *i.current();
