@@ -2,6 +2,13 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-04-03  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-controller-objects.h (set_chainsetup_output_mode): added
+	* eca-alsa-dyn.h: removed as obsolete
+	* audiofx_vst.h: added
+	* eca-vst-plugin-map.h: added
+	
 2000-03-27  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-static-object-maps (various): changes in map representation, 

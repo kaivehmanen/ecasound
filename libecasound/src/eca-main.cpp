@@ -530,8 +530,10 @@ void ECA_PROCESSOR::posthandle_control_position(void) {
 	(*inputs)[adev_sizet]->buffersize(buffersize_rep, csetup->sample_rate());
       }
     }
-    else
+    else {
+      stop();
       eparams->status(ep_status_finished);
+    }
   }
 }
 

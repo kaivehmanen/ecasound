@@ -42,8 +42,15 @@ fi
 dnl ---
 dnl Ecasound libs
 dnl ---
-AC_MSG_CHECKING(checking for libecasound)
-AC_CHECK_LIB(ecasound, main,AC_MSG_RESULT(found),AC_MSG_ERROR([** libecasound not installed/found **]))
+if test x$include_debug = xyes; then
+	AC_MSG_CHECKING(checking for libecasound_debug)
+	AC_CHECK_LIB(ecasound_debug, main,AC_MSG_RESULT(found),AC_MSG_ERROR([** libecasound_debug not installed/found **]))
+else
+	AC_MSG_CHECKING(checking for libecasound)
+	AC_CHECK_LIB(ecasound, main,AC_MSG_RESULT(found),AC_MSG_ERROR([** libecasound not installed/found **]))
+fi
+
+AC_CHECK_LIBECASOUND(5)
 
 dnl ---
 dnl POSIX.4 threads

@@ -15,6 +15,7 @@
 
 class AUDIO_IO;
 class QEButtonRow;
+class QLabel;
 
 /**
  * Single audio file
@@ -91,9 +92,19 @@ signals:
   long int marked_area_start(void) const;
 
   /**
-   * Returns selection length in samples
+   * Returns selection end position in samples
    */
-  long int marked_area_length(void) const;
+  long int marked_area_end(void) const;
+
+  /**
+   * Returns visible area start position in samples
+   */
+  long int visible_area_start(void) const;
+
+  /**
+   * Returns visible area end position in samples
+   */
+  long int visible_area_end(void) const;
 
   /**
    * Returns audio file length in samples
@@ -138,7 +149,7 @@ signals:
   /**
    * Close the current file and open a new one
    */
-  void new_file(const string& name);
+  void new_file(const string& name = "");
 
  private:
 
@@ -156,6 +167,7 @@ signals:
 
   void init_layout(void);
   void update_layout(void);
+  void emit_status(void);
 
   long int coord_to_samples(int coord);
   long int blocks_to_samples(long int blocks);
@@ -178,6 +190,7 @@ signals:
 
   vector<vector<QEWaveBlock> > waveblocks;
   vector<QEWaveForm*> waveforms;
+  vector<QLabel*> clabels;
 
   QVBoxLayout* top_layout;
   QEButtonRow* buttonrow;
@@ -186,7 +199,7 @@ signals:
 
   bool eventFilter(QObject *, QEvent *e);
   QSize sizeHint(void) const;
-  bool class_invariant(void) const { return(io_object != 0); }
+  bool class_invariant(void) const { return(filename_rep.empty() == true || io_object != 0); }
 
   QEFile (const string& filename, bool use_wave_cache, bool force_refresh, QWidget *parent = 0, const char *name = 0);
   QEFile (QWidget *parent = 0, const char *name = 0);

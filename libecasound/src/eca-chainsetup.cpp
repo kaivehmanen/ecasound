@@ -431,6 +431,7 @@ void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
 
   CHAIN_OPERATOR* t = create_chain_operator(argu);
   if (t == 0) t = create_ladspa_plugin(argu);
+  if (t == 0) t = create_vst_plugin(argu);
   if (t != 0) add_chain_operator(t);
   else 
     interpret_effect_preset(argu);
@@ -466,6 +467,35 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
     return(cop);
   }
   return(0);
+}
+
+CHAIN_OPERATOR* ECA_CHAINSETUP::create_vst_plugin (const string& argu) {
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  // --------
+
+  MESSAGE_ITEM otemp;
+  CHAIN_OPERATOR* cop = 0;
+  string prefix = get_argument_prefix(argu);
+
+#ifdef FEELING_EXPERIMENTAL
+  cop = dynamic_cast<CHAIN_OPERATOR*>(eca_vst_plugin_map.object(prefix));
+#endif
+  if (cop != 0) {
+    cop->map_parameters();
+    
+    ecadebug->control_flow("Chainsetup/Adding VST-plugin \"" + cop->name() + "\"");
+    otemp << "Setting parameters: ";
+    for(int n = 0; n < cop->number_of_params(); n++) {
+      cop->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
+      otemp << cop->get_parameter_name(n + 1) << " = ";
+      otemp << cop->get_parameter(n + 1);
+      if (n + 1 < cop->number_of_params()) otemp << ", ";
+    }
+    ecadebug->msg(otemp.to_string());
+  }
+  return(cop);
 }
 
 CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {

@@ -1,8 +1,8 @@
 /****************************************************************************
 ** QEFile meta object code from reading C++ file 'qefile.h'
 **
-** Created: Fri Mar 31 13:45:54 2000
-**      by: The Qt Meta Object Compiler ($Revision: 1.5 $)
+** Created: Tue Apr 4 02:32:49 2000
+**      by: The Qt Meta Object Compiler ($Revision: 1.6 $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/

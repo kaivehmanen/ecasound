@@ -39,6 +39,7 @@ experimental=yes)
 if test x$experimental = xyes; then
 AC_DEFINE(FEELING_EXPERIMENTAL)
 fi
+AM_CONDITIONAL(FEELING_EXPERIMENTAL, test x$experimental = xyes)
 
 dnl ---
 dnl Set CXXFLAGS.
@@ -120,6 +121,7 @@ AC_CHECK_LIB(asound,snd_pcm_record_params,
 	AC_MSG_ERROR([ALSA <0.3.1 not supported - update to a newer version or compile with --disable-alsa]))
 AC_CHECK_LIB(asound,snd_pcm_capture_params,AC_DEFINE(ALSALIB_032))
 AC_CHECK_LIB(asound,snd_pcm_channel_params,AC_DEFINE(ALSALIB_050))
+AC_CHECK_LIB(asound,main)
 fi
 
 dnl AM_PATH_ESD(0.2.4,esd_support=yes,esd_support=no)

@@ -38,12 +38,14 @@ public slots:
   void open_file(void);
   void save_event(void);
   void save_as_event(void);
-  void close_file(void);
   void play_event(void);
   void stop_event(void);
   void effect_event(void);
   void copy_event(void);
   void paste_event(void);
+  void cut_event(void);
+
+  void debug_event(void);
 
 private slots:
 
@@ -80,6 +82,7 @@ signals:
   void init_layout(void);
   void prepare_event(void);
   void prepare_temp(void);
+  void remove_temps(void);
   void copy_file(const string& a, const string& b);
   bool temp_file_created(void);
 
@@ -93,14 +96,8 @@ signals:
   string orig_filename_rep;
   string active_filename_rep;
 
-  bool orig_file_exists;
-  bool temp_created;
-
   long int start_pos;
   long int sel_length;
-
-  long int edit_start;
-  long int edit_length;
 
   QEResources ecawaverc;
   vector<QESession*> child_sessions;

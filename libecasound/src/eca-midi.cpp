@@ -28,7 +28,7 @@
 #include <vector>
 
 #ifdef COMPILE_ALSA
-#include "eca-alsa-dyn.h"
+#include <sys/asoundlib.h>
 #endif
 
 #include "eca-resources.h"
@@ -193,14 +193,12 @@ void *update_midi_queues(void *) {
     
     use_alsa = true;
 #ifdef COMPILE_ALSA
-    ::eca_alsa_load_dynamic_support();
-
-    if (::dl_snd_rawmidi_open(&midihandle, card, device, SND_RAWMIDI_OPEN_INPUT) < 0) {
+    if (::snd_rawmidi_open(&midihandle, card, device, SND_RAWMIDI_OPEN_INPUT) < 0) {
       throw(new ECA_ERROR("ECA-MIDI", "unable to open ALSA raw-MIDI device " +
 			erc.resource("midi-device") + "."));
     }
 
-    fd = ::dl_snd_rawmidi_file_descriptor(midihandle);
+    fd = ::snd_rawmidi_file_descriptor(midihandle);
 #else 
     throw(new ECA_ERROR("ECA-MIDI", "Unable to open ALSA raw-MIDI device, because ALSA was disabled during compilation."));
 #endif
@@ -221,7 +219,7 @@ void *update_midi_queues(void *) {
   while(true) {
     if (use_alsa) {
 #ifdef COMPILE_ALSA
-      temp = ::dl_snd_rawmidi_read(midihandle, buf, 1);
+      temp = ::snd_rawmidi_read(midihandle, buf, 1);
 #endif
     }
     else {
@@ -245,8 +243,7 @@ void *update_midi_queues(void *) {
 
   if (use_alsa) {
 #ifdef COMPILE_ALSA
-    ::dl_snd_rawmidi_close(midihandle);
-    ::eca_alsa_unload_dynamic_support();   
+    ::snd_rawmidi_close(midihandle);
 #endif
   }
   else {

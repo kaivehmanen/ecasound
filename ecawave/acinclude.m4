@@ -1,4 +1,45 @@
 ## ------------------------------------------------------------------------
+## Check for correct libecasound version
+## ------------------------------------------------------------------------
+##
+AC_DEFUN(AC_CHECK_LIBECASOUND,
+[
+ecasound_required_interface=$1
+AC_MSG_CHECKING(for libecasound interface version $ecasound_required_interface)
+LIBS="$LIBS -lkvutils"	
+if test x$include_debug = xyes; then
+	LIBS="$LIBS -lecasound_debug"
+else
+	LIBS="$LIBS -lecasound"
+fi
+
+AC_LANG_CPLUSPLUS
+AC_TRY_RUN([
+#include <iostream>
+#include <sys/unistd.h>
+#include <ecasound/eca-version.h>
+
+int main(void)
+{
+  cerr << ecasound_library_version_current << endl;
+  cerr << ecasound_library_version_age << endl;
+
+  if ($ecasound_required_interface <= ecasound_library_version_current &&
+      $ecasound_required_interface >= ecasound_library_version_current -
+				     ecasound_library_version_age)
+	exit(0);
+
+  exit(-1);
+}
+],
+  [AC_MSG_RESULT(found.)],
+  [AC_MSG_RESULT(not present.)
+   AC_MSG_ERROR(Sufficiently new interface version of libecasound not found.)]
+)
+]
+)
+
+## ------------------------------------------------------------------------
 ## Find the meta object compiler in the PATH, in $QTDIR/bin, and some
 ## more usual places
 ## ------------------------------------------------------------------------

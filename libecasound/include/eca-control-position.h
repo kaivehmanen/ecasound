@@ -17,6 +17,10 @@ class ECA_CONTROL_POSITION {
 
  public:
 
+  /**
+   * Sets length in samples. If 'pos' is 0, length 
+   * is unspecified.
+   */
   void length_in_samples(long int pos);
   void length_in_seconds(double pos_in_seconds);
 

@@ -1,8 +1,8 @@
 /****************************************************************************
 ** QESession meta object code from reading C++ file 'qesession.h'
 **
-** Created: Sun Apr 2 19:16:43 2000
-**      by: The Qt Meta Object Compiler ($Revision: 1.6 $)
+** Created: Mon Apr 3 05:12:25 2000
+**      by: The Qt Meta Object Compiler ($Revision: 1.7 $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -77,33 +77,36 @@ void QESession::staticMetaObject()
     typedef void(QESession::*m1_t10)();
     typedef void(QESession::*m1_t11)();
     typedef void(QESession::*m1_t12)();
+    typedef void(QESession::*m1_t13)();
     m1_t0 v1_0 = Q_AMPERSAND QESession::new_session;
     m1_t1 v1_1 = Q_AMPERSAND QESession::new_file;
     m1_t2 v1_2 = Q_AMPERSAND QESession::open_file;
     m1_t3 v1_3 = Q_AMPERSAND QESession::save_event;
     m1_t4 v1_4 = Q_AMPERSAND QESession::save_as_event;
-    m1_t5 v1_5 = Q_AMPERSAND QESession::close_file;
-    m1_t6 v1_6 = Q_AMPERSAND QESession::play_event;
-    m1_t7 v1_7 = Q_AMPERSAND QESession::stop_event;
-    m1_t8 v1_8 = Q_AMPERSAND QESession::effect_event;
-    m1_t9 v1_9 = Q_AMPERSAND QESession::copy_event;
-    m1_t10 v1_10 = Q_AMPERSAND QESession::paste_event;
-    m1_t11 v1_11 = Q_AMPERSAND QESession::position_update;
-    m1_t12 v1_12 = Q_AMPERSAND QESession::update_wave_data;
-    QMetaData *slot_tbl = QMetaObject::new_metadata(13);
+    m1_t5 v1_5 = Q_AMPERSAND QESession::play_event;
+    m1_t6 v1_6 = Q_AMPERSAND QESession::stop_event;
+    m1_t7 v1_7 = Q_AMPERSAND QESession::effect_event;
+    m1_t8 v1_8 = Q_AMPERSAND QESession::copy_event;
+    m1_t9 v1_9 = Q_AMPERSAND QESession::paste_event;
+    m1_t10 v1_10 = Q_AMPERSAND QESession::cut_event;
+    m1_t11 v1_11 = Q_AMPERSAND QESession::debug_event;
+    m1_t12 v1_12 = Q_AMPERSAND QESession::position_update;
+    m1_t13 v1_13 = Q_AMPERSAND QESession::update_wave_data;
+    QMetaData *slot_tbl = QMetaObject::new_metadata(14);
     slot_tbl[0].name = "new_session()";
     slot_tbl[1].name = "new_file()";
     slot_tbl[2].name = "open_file()";
     slot_tbl[3].name = "save_event()";
     slot_tbl[4].name = "save_as_event()";
-    slot_tbl[5].name = "close_file()";
-    slot_tbl[6].name = "play_event()";
-    slot_tbl[7].name = "stop_event()";
-    slot_tbl[8].name = "effect_event()";
-    slot_tbl[9].name = "copy_event()";
-    slot_tbl[10].name = "paste_event()";
-    slot_tbl[11].name = "position_update()";
-    slot_tbl[12].name = "update_wave_data()";
+    slot_tbl[5].name = "play_event()";
+    slot_tbl[6].name = "stop_event()";
+    slot_tbl[7].name = "effect_event()";
+    slot_tbl[8].name = "copy_event()";
+    slot_tbl[9].name = "paste_event()";
+    slot_tbl[10].name = "cut_event()";
+    slot_tbl[11].name = "debug_event()";
+    slot_tbl[12].name = "position_update()";
+    slot_tbl[13].name = "update_wave_data()";
     slot_tbl[0].ptr = *((QMember*)&v1_0);
     slot_tbl[1].ptr = *((QMember*)&v1_1);
     slot_tbl[2].ptr = *((QMember*)&v1_2);
@@ -117,6 +120,7 @@ void QESession::staticMetaObject()
     slot_tbl[10].ptr = *((QMember*)&v1_10);
     slot_tbl[11].ptr = *((QMember*)&v1_11);
     slot_tbl[12].ptr = *((QMember*)&v1_12);
+    slot_tbl[13].ptr = *((QMember*)&v1_13);
     typedef void(QESession::*m2_t0)(const string&);
     m2_t0 v2_0 = Q_AMPERSAND QESession::filename_changed;
     QMetaData *signal_tbl = QMetaObject::new_metadata(1);
@@ -124,7 +128,7 @@ void QESession::staticMetaObject()
     signal_tbl[0].ptr = *((QMember*)&v2_0);
     metaObj = QMetaObject::new_metaobject(
 	"QESession", "QWidget",
-	slot_tbl, 13,
+	slot_tbl, 14,
 	signal_tbl, 1 );
 }
 

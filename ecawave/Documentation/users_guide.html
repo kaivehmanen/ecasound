@@ -3,7 +3,7 @@
 
 
 
-<insert file=ew-makrot.txt>
+<insert file=ew-makrot.txt _ecawave_title="user's guide">
 <insert name=ecawave_headeronly>
 <p>
 <center><h2>ecawave user's guide</h2></center>
@@ -41,29 +41,31 @@
 <dt><a href="users_guide.html#l12">2.2.1: Start &lt;alt-t&gt;</a>
 <dt><a href="users_guide.html#l13">2.2.2: Stop &lt;alt-s&gt;</a>
 <dt><a href="users_guide.html#l14">2.2.3: Effect &lt;alt-e&gt;</a>
+<dt><a href="users_guide.html#l15">2.2.4: Copy &lt;alt-y&gt;</a>
+<dt><a href="users_guide.html#l16">2.2.5: Paste &lt;alt-p&gt;</a>
 </dl><p>
-<dt><h3><a href="users_guide.html#l15">2.3: Waveform view</a></h3>
+<dt><h3><a href="users_guide.html#l17">2.3: Waveform view</a></h3>
 <dl><p>
-<dt><a href="users_guide.html#l16">2.3.1: Zoom in &lt;alt-z&gt;</a>
-<dt><a href="users_guide.html#l17">2.3.2: Zoom out &lt;alt-m&gt;</a>
-<dt><a href="users_guide.html#l18">2.3.3: Unmark &lt;alt-u&gt;</a>
+<dt><a href="users_guide.html#l18">2.3.1: Zoom in &lt;alt-z&gt;</a>
+<dt><a href="users_guide.html#l19">2.3.2: Zoom out &lt;alt-m&gt;</a>
+<dt><a href="users_guide.html#l20">2.3.3: Unmark &lt;alt-u&gt;</a>
 </dl><p>
 </dl><p>
-<dt><h2><a href="users_guide.html#l19">3: Configuration</a></h2>
-<dt><h2><a href="users_guide.html#l20">4: Ecawave internals</a></h2>
+<dt><h2><a href="users_guide.html#l21">3: Configuration</a></h2>
+<dt><h2><a href="users_guide.html#l22">4: Ecawave internals</a></h2>
  
 <p><hr><p><br>
 <p>
 <a name="l1"></a>
 <h2>1: What is ecawave?</h2>
-Ecawave is a simple graphical sound file editor. The user-interface is
+Ecawave is a simple graphical audio file editor. The user-interface is
 based on Qt libraries, while almost all audio functionality is taken 
 directly from ecasound libraries. As ecawave is designed for editing 
 large audio files, all processing is done direct-to-disk. Simple 
 waveform caching is used to speed-up file operations. Ecawave supports 
 all audio file formats and effect algorithms provided by ecasound
-libraries. This includes ALSA and OSS soundcard support, wav, aiff,
-raw, mp3, snd and lots more.
+libraries. This includes ALSA and OSS soundcard support and common 
+file formats like wav, cdr, raw, aiff, mp3, etc.
 <p>
 <a name="l2"></a>
 <h2>2: Ecawave interface</h2>
@@ -126,26 +128,43 @@ Stop processing. Current position is resetted to begin.
 <strong>2.2.3: Effect &lt;alt-e&gt;</strong><p>
 Process marked area with ecasound effects. It's also possible to 
 preview effects before processing.
+<p><a name="l15"></a>
+<strong>2.2.4: Copy &lt;alt-y&gt;</strong><p>
+Copy marked area to ecawave's clipboard.
+<p><a name="l16"></a>
+<strong>2.2.5: Paste &lt;alt-p&gt;</strong><p>
+Paste the contents of ecawave's clipboard into the current file 
+starting from the current position.
 <p>
-<a name="l15"></a>
+<a name="l17"></a>
 <h3>2.3: Waveform view</h3>
-<a name="l16"></a>
+<a name="l18"></a>
 <strong>2.3.1: Zoom in &lt;alt-z&gt;</strong><p>
 Zoom to marked area.
-<p><a name="l17"></a>
+<p><a name="l19"></a>
 <strong>2.3.2: Zoom out &lt;alt-m&gt;</strong><p>
 Zoom out so that the whole file is visible.
-<p><a name="l18"></a>
+<p><a name="l20"></a>
 <strong>2.3.3: Unmark &lt;alt-u&gt;</strong><p>
 Unmark currently marked area.
 <p>
-<a name="l19"></a>
+<a name="l21"></a>
 <h2>3: Configuration</h2>
 The most important configuration files are <em>~/.ecawaverc</em>
-and <em>~/.ecasouncrc</em>. See <a href="http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecasoundrc_manpage.html">ecasoundrc(5)</a> 
-manual page for more info.
+and <em>~/.ecasouncrc</em>. 
+<p>Currently following <em>~/.ecawaverc</em> variables are used:
+<p><dl>
+<p><p></p><dt><strong>default-output</strong><dd>
+  	Output device to use. Defaults to <em>/dev/dsp</em>.
+<p></dl>
+<p><em>~/.ecawaverc</em> uses the same format as <em>~/.ecasoundrc</em>. One line consists of 
+a configuration variable and its value. Variable and value are
+separated with either '=' or ' '. Lines beginning with a "#" are
+ignored (comment lines). 
+<p>Also take a look at, <a href="http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecasoundrc_manpage.html">ecasoundrc(5)</a> 
+manual page.
 <p>
-<a name="l20"></a>
+<a name="l22"></a>
 <h2>4: Ecawave internals</h2>
 Under the hood, ecawave is just another ecasound user-interface. Based
 on what user wants to do, ecawave creates a suitable chainsetup and

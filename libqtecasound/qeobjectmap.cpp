@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// qeobjectinput.cpp: Object map input widget
+// qeobjectmap.cpp: Object map input widget
 // Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -31,16 +31,15 @@
 #include "eca-object.h"
 #include "eca-object-map.h"
 
-#include "qeobjectinput.h"
+#include "qeobjectmap.h"
 
-QEObjectInput::QEObjectInput (ECA_OBJECT_MAP* omap, QWidget *parent, const char *name) 
+QEObjectMap::QEObjectMap (ECA_OBJECT_MAP* omap, QWidget *parent, const char *name) 
   : QEInput(parent, name),
     omap_rep(omap) {
-
   init_layout();
 }
 
-void QEObjectInput::init_layout(void) {
+void QEObjectMap::init_layout(void) {
   QBoxLayout* top = new QVBoxLayout(this);
 
   QGroupBox* objgroup = new QVGroupBox(this, "objgroup");
@@ -55,31 +54,16 @@ void QEObjectInput::init_layout(void) {
   objlist->setSelected(0, true);
   top->addWidget(objgroup);
 
-  top->addSpacing(10);
-
-  QBoxLayout* d = new QHBoxLayout();
-  QGroupBox* descgroup = new QHGroupBox(this, "descgroup");
-  obj_name = new QLabel("Name: ", descgroup, "name1");
-  obj_name = new QLabel("Description: ", descgroup, "desc1");
-  obj_name = new QLabel(" - ", descgroup, "name2");
-  obj_desc = new QLabel(" - ", descgroup, "desc2");
-  d->addWidget(descgroup);
-  top->addLayout(d);
-
   QObject::connect(objlist, SIGNAL(highlighted(int)), this, SLOT(update_object(int)));
 }
 
-void QEObjectInput::update_results(void) { 
-
-}
-
-void QEObjectInput::update_object(int index) {
+void QEObjectMap::update_results(void) {}
+void QEObjectMap::update_object(int index) {
   // --------
   REQUIRE(index >= 0);
   // --------
 
   object_rep = 0;
-
   const map<string,string>& omap = omap_rep->registered_objects();
   int counter = 0;
   map<string,string>::const_iterator p = omap.begin();
@@ -90,15 +74,10 @@ void QEObjectInput::update_object(int index) {
       emit changed();
     }
     ++p;
+    ++counter;
   }
-
-  assert(object_rep != 0);
-
-  obj_name->setText(object_rep->name().c_str());
-  obj_desc->setText(object_rep->description().c_str());
 
   // --------
   ENSURE(object_rep != 0);
   // --------
 }
-

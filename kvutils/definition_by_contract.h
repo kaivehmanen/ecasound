@@ -54,7 +54,7 @@ class DEFINITION_BY_CONTRACT {
 
 #ifdef ENABLE_DBC
 
-  inline void require(bool expr, const char* file, int line) const { if (!expr) throw(new DBC_EXCEPTION("require", file, line)); }
+  inline void require(bool expr, const char* file, int line) const { check_invariant(file, line); if (!expr) throw(new DBC_EXCEPTION("require", file, line)); }
   inline void ensure(bool expr, const char* file, int line) const { if (!expr) throw(new DBC_EXCEPTION("require", file, line)); check_invariant(file, line); }
   inline void check_invariant(const char* file, int line) const { if (!class_invariant()) throw(new DBC_EXCEPTION("class invariant", file, line)); }
 

@@ -34,7 +34,6 @@
 #include "samplebuffer.h"
 #include "audioio-types.h"
 #include "audioio-alsa2.h"
-#include "eca-alsa-dyn.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"
@@ -58,7 +57,7 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) open");
 
-  ::eca_alsa_load_dynamic_support();
+  //  ::eca_alsa_load_dynamic_support();
 
   // -------------------------------------------------------------------
   // Channel initialization
@@ -72,7 +71,7 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   int err;
   if (io_mode() == io_read) {
     pcm_channel = SND_PCM_CHANNEL_CAPTURE;
-    err = ::dl_snd_pcm_open_subdevice(&audio_fd, 
+    err = ::snd_pcm_open_subdevice(&audio_fd, 
 				    card_number, 
 				    device_number,
 				    subdevice_number,
@@ -80,31 +79,31 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
     
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA2", "unable to open ALSA-device for capture; error: " + 
-			  string(dl_snd_strerror(err))));
+			  string(snd_strerror(err))));
     }
   }    
   else if (io_mode() == io_write) {
     pcm_channel = SND_PCM_CHANNEL_PLAYBACK;
-    err = ::dl_snd_pcm_open_subdevice(&audio_fd, 
+    err = ::snd_pcm_open_subdevice(&audio_fd, 
 				    card_number, 
 				    device_number,
 				    subdevice_number,
 				    SND_PCM_OPEN_PLAYBACK | SND_PCM_OPEN_NONBLOCK);
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA2", "unable to open ALSA-device for playback; error: " +  
-			  string(dl_snd_strerror(err))));
+			  string(snd_strerror(err))));
     }
   }
   else if (io_mode() == io_readwrite) {
       throw(new ECA_ERROR("AUDIOIO-ALSA2", "Simultaneous intput/output not supported."));
   }
 
-  ::dl_snd_pcm_nonblock_mode(audio_fd, 0);
+  ::snd_pcm_nonblock_mode(audio_fd, 0);
 
   // -------------------------------------------------------------------
   // Select audio format
 
-  ::dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
+  ::snd_pcm_channel_flush(audio_fd, pcm_channel);
   snd_pcm_format_t pf;
   ::memset(&pf, 0, sizeof(pf));
 
@@ -118,6 +117,8 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
     case ECA_AUDIO_FORMAT::sfmt_s16_be:  { format = SND_PCM_SFMT_S16_BE; break; }
     case ECA_AUDIO_FORMAT::sfmt_s24_le:  { format = SND_PCM_SFMT_S24_LE; break; }
     case ECA_AUDIO_FORMAT::sfmt_s24_be:  { format = SND_PCM_SFMT_S24_BE; break; }
+    case ECA_AUDIO_FORMAT::sfmt_s32_le:  { format = SND_PCM_SFMT_S32_LE; break; }
+    case ECA_AUDIO_FORMAT::sfmt_s32_be:  { format = SND_PCM_SFMT_S32_BE; break; }
       
     default:
       {
@@ -155,15 +156,15 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Channel params
 
-  err = ::dl_snd_pcm_channel_params(audio_fd, &params);
+  err = ::snd_pcm_channel_params(audio_fd, &params);
   if (err < 0) {
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when setting up channel params: " + string(dl_snd_strerror(err))));
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when setting up channel params: " + string(snd_strerror(err))));
   }
 
   struct snd_pcm_channel_setup setup;
   setup.channel = params.channel;
   setup.mode = params.mode;
-  ::dl_snd_pcm_channel_setup(audio_fd, &setup);
+  ::snd_pcm_channel_setup(audio_fd, &setup);
   fragment_size = setup.buf.block.frag_size;
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Fragment size: " +
 		kvu_numtostr(setup.buf.block.frag_size) + ", max: " +
@@ -171,10 +172,10 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
 		kvu_numtostr(setup.buf.block.frags_min) + ", current: " +
 		kvu_numtostr(setup.buf.block.frags) + ".");
 
-//  ::dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
-//  err = ::dl_snd_pcm_channel_prepare(audio_fd, pcm_channel);
+//  ::snd_pcm_channel_flush(audio_fd, pcm_channel);
+//  err = ::snd_pcm_channel_prepare(audio_fd, pcm_channel);
 //  if (err < 0)
-//    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(dl_snd_strerror(err))));
+//    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(snd_strerror(err))));
 
   is_triggered = false;
   is_prepared = false;
@@ -191,12 +192,12 @@ void ALSA_PCM2_DEVICE::stop(void) {
   snd_pcm_channel_status_t status;
   ::memset(&status, 0, sizeof(status));
   status.channel = pcm_channel;
-  ::dl_snd_pcm_channel_status(audio_fd, &status);
+  ::snd_pcm_channel_status(audio_fd, &status);
   underruns += status.underrun;
 
-  int err = ::dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
+  int err = ::snd_pcm_channel_flush(audio_fd, pcm_channel);
   if (err < 0)
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when flushing channel: " + string(dl_snd_strerror(err))));
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when flushing channel: " + string(snd_strerror(err))));
 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Audio device \"" + label() + "\" disabled.");
 
@@ -210,7 +211,7 @@ void ALSA_PCM2_DEVICE::close(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) close");
 
   if (is_triggered == true) stop();
-  ::dl_snd_pcm_close(audio_fd);
+  ::snd_pcm_close(audio_fd);
   toggle_open_state(false);
 
   assert(is_triggered == false);
@@ -223,9 +224,9 @@ void ALSA_PCM2_DEVICE::prepare(void) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) prepare");
 
-  int err = ::dl_snd_pcm_channel_prepare(audio_fd, pcm_channel);
+  int err = ::snd_pcm_channel_prepare(audio_fd, pcm_channel);
   if (err < 0)
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(dl_snd_strerror(err))));
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(snd_strerror(err))));
   is_prepared = true;
 }
 
@@ -240,22 +241,22 @@ void ALSA_PCM2_DEVICE::start(void) {
     snd_pcm_channel_status_t status;
     memset(&status, 0, sizeof(status));
     status.channel = pcm_channel;
-    ::dl_snd_pcm_channel_status(audio_fd, &status);
+    ::snd_pcm_channel_status(audio_fd, &status);
     ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Bytes in output-queue: " + kvu_numtostr(status.count) + ".");
   }
-  ::dl_snd_pcm_channel_go(audio_fd, pcm_channel);
+  ::snd_pcm_channel_go(audio_fd, pcm_channel);
   is_triggered = true;
 }
 
 long int ALSA_PCM2_DEVICE::read_samples(void* target_buffer, 
 					long int samples) {
   assert(samples * frame_size() <= fragment_size);
-  return(::dl_snd_pcm_read(audio_fd, target_buffer, fragment_size) / frame_size());
+  return(::snd_pcm_read(audio_fd, target_buffer, fragment_size) / frame_size());
 }
 
 void ALSA_PCM2_DEVICE::write_samples(void* target_buffer, long int samples) {
   if (samples * frame_size()== fragment_size) {
-    ::dl_snd_pcm_write(audio_fd, target_buffer, fragment_size);
+    ::snd_pcm_write(audio_fd, target_buffer, fragment_size);
   }
   else {
     bool was_triggered = false;
@@ -264,8 +265,8 @@ void ALSA_PCM2_DEVICE::write_samples(void* target_buffer, long int samples) {
     buffersize(samples, samples_per_second());
     open();
     prepare();
-    assert(samples * frame_size() == fragment_size);
-    ::dl_snd_pcm_write(audio_fd, target_buffer, fragment_size);
+    assert(samples * frame_size() <= fragment_size);
+    ::snd_pcm_write(audio_fd, target_buffer, fragment_size);
     if (was_triggered == true) start();
   }
 }
@@ -275,7 +276,7 @@ long ALSA_PCM2_DEVICE::position_in_samples(void) const {
   snd_pcm_channel_status_t status;
   memset(&status, 0, sizeof(status));
   status.channel = pcm_channel;
-  ::dl_snd_pcm_channel_status(audio_fd, &status);
+  ::snd_pcm_channel_status(audio_fd, &status);
   return(status.scount / frame_size());
 }
 
@@ -299,7 +300,7 @@ ALSA_PCM2_DEVICE::~ALSA_PCM2_DEVICE(void) {
     }
   }
 
-  eca_alsa_unload_dynamic_support();
+  //  eca_alsa_unload_dynamic_support();
 }
 
 void ALSA_PCM2_DEVICE::set_parameter(int param, 

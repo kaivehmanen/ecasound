@@ -38,6 +38,10 @@
 
 extern "C" {
 #include "ladspa.h"
+
+#ifdef FEELING_EXPERIMENTAL
+#include "audiofx_vst.h"
+#endif
 }
 
 #include "eca-static-object-maps.h"
@@ -74,11 +78,16 @@ ECA_OBJECT_MAP eca_ladspa_plugin_map;
 ECA_OBJECT_MAP eca_controller_map;
 ECA_PRESET_MAP eca_preset_map;
 
+#ifdef FEELING_EXPERIMENTAL
+ECA_VST_PLUGIN_MAP eca_vst_plugin_map;
+#endif
+
 void register_default_audio_objects(void);
 void register_default_controllers(void);
 void register_default_chainops(void);
 void register_default_presets(void);
 void register_ladspa_plugins(void);
+
 vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR*);
 
 void register_default_objects(void) {

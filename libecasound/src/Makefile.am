@@ -36,6 +36,10 @@ else
 lib_LTLIBRARIES = libecasound.la
 endif
 
+if FEELING_EXPERIMENTAL
+vst_files = AudioEffect.cpp audioeffectx.cpp
+endif
+
 ecasound_audiofx_src =  audiofx.cpp \
 			audiofx_amplitude.cpp \
 			audiofx_compressor.cpp \
@@ -45,7 +49,8 @@ ecasound_audiofx_src =  audiofx.cpp \
 			audiofx_timebased.cpp \
 			audiogate.cpp \
 			audiofx_mixing.cpp \
-			audiofx_ladspa.cpp
+			audiofx_ladspa.cpp \
+			audiofx_vst.cpp
 
 ecasound_audioio_oss_src = audioio-oss.cpp
 
@@ -100,7 +105,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-fileio-stream.cpp \
 			eca-fileio-mmap.cpp \
 			eca-fileio-mmap-fthread.cpp \
-			eca-alsa-dyn.cpp eca-mthreaded-processor.cpp \
+			eca-mthreaded-processor.cpp \
 			eca-static-object-maps.cpp \
 			preset.cpp \
 			file-preset.cpp \
@@ -109,6 +114,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-chainop-map.cpp \
 			eca-controller-map.cpp \
 			eca-preset-map.cpp \
+			eca-vst-plugin-map.cpp \
 			global-preset.cpp
 
 #			eca-audio-object-map.cpp \
@@ -116,10 +122,10 @@ ecasound_general_src = 	eca-chain.cpp \
 #			eca-controller-map.cpp \
 
 
-ecasound_common_src = $(ecasound_audiofx_src) $(ecasound_audioio_src) \
-		      $(ecasound_controller_src) $(ecasound_general_src)
-
-#	              LeakTracer.cc
+ecasound_common_src = 	$(ecasound_audiofx_src) \
+			$(ecasound_audioio_src) \
+		      	$(ecasound_controller_src) \
+			$(ecasound_general_src) $(vst_files)
 
 libecasound_la_SOURCES = $(ecasound_common_src)
 libecasound_debug_la_SOURCES = $(ecasound_common_src)

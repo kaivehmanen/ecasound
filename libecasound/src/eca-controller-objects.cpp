@@ -245,6 +245,13 @@ void ECA_CONTROLLER_OBJECTS::set_chainsetup_processing_length_in_samples(long in
 		 kvu_numtostr(selected_chainsetup_rep->length_in_seconds()) + "\" seconds.");
 }
 
+void ECA_CONTROLLER_OBJECTS::set_chainsetup_output_mode(int output_mode) {
+  // --------
+  REQUIRE(output_mode == AUDIO_IO::io_write || output_mode == AUDIO_IO::io_readwrite);
+  // --------
+  selected_chainsetup_rep->set_output_openmode(output_mode);
+}
+
 void ECA_CONTROLLER_OBJECTS::toggle_chainsetup_looping(void) {
  // --------
   // require:

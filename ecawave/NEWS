@@ -14,9 +14,15 @@ About the version numbers... "vx.yRt" :
 
 Last officially released version is -*> v0.1.0r1 <*-
 
-??022000 (v0.2.0d2)
-	- changed: many internal updates - ecasound version 1.7.x is 
+??042000 (v0.2.0d2)
+	- added: 'copy', 'cut' and 'paste' buttons
+	- added: 'clipboard-file' entry to ecawaverc - defaults to
+	         /tmp/ecawave-clipboard.wav
+	- added: configure checks for correct libecasound version
+	- removed: 'close' button
+	- changed: many internal updates - ecasound version 1.7.x is
 	           now required to run ecawave
+	- fixed: numerous bugs
 28012000 (v0.1.0r1)  -** public release **-
 	- notice: initial release
 	

@@ -9,7 +9,8 @@ ecasound_audiofx_src =  audiofx.h \
 			audiogate.h \
 			audiofx_mixing.h \
 			audiofx_ladspa.h \
-			ladspa.h
+			ladspa.h \
+			audiofx_vst.h
 
 ecasound_audioio_src = 	audioio-cdr.h \
 			audioio-cdr_impl.h \
@@ -58,6 +59,7 @@ ecasound_general_src = 	eca-chain.h \
 			eca-object-map.h \
 			eca-preset-map.h \
 			eca-ladspa-plugin-map.h \
+			eca-vst-plugin-map.h
 			eca-chainop-map.h \
 			eca-controller-map.h \
 			eca-audio-object-map.h \
@@ -81,7 +83,6 @@ ecasound_general_src = 	eca-chain.h \
 			eca-fileio-stream.h \
 			eca-fileio-mmap.h \
 			eca-fileio-mmap-fthread.h \
-			eca-alsa-dyn.h \
 			eca-mthreaded-processor.h \
 			dynamic-parameters.h \
 			dynamic-object.h \
@@ -100,8 +101,12 @@ ecasound_general_src = 	eca-chain.h \
 
 #pkgincludedir_HEADERS = $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_general_src)
 
+if FEELING_EXPERIMENTAL
+vst_files = AEffEditor.hpp AEffect.h aeffectx.h AudioEffect.hpp
+endif
+
 noinst_HEADERS = $(ecasound_audiofx_src) $(ecasound_audioio_src) \
-		 $(ecasound_controller_src) $(ecasound_general_src) 
+		 $(ecasound_controller_src) $(ecasound_general_src) $(vst_files)
 
 install-data-local:
 	$(INSTALL) -d $(pkgincludedir)
@@ -109,5 +114,5 @@ install-data-local:
 	cp 	$(ecasound_audiofx_src) \
 		$(ecasound_audioio_src) \
 		$(ecasound_controller_src) \
-		$(ecasound_general_src) \
+		$(ecasound_general_src) $(vst_files) \
 		$(pkgincludedir)

@@ -51,7 +51,7 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
 
   bool class_invariant(void) { return(ectrl != 0); }
   QEEvent(ECA_CONTROLLER* ctrl);
-  virtual ~QEEvent(void) { }
+  virtual ~QEEvent(void);
 
  protected:
 
@@ -132,6 +132,7 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
 
   bool triggered_rep;
   ECA_CONTROLLER* ectrl;
+  string initialized_cs_rep;
 
  protected:
 

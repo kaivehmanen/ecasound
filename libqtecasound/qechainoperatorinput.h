@@ -1,5 +1,5 @@
-#ifndef _QECHAINOPINPUT_H
-#define _QECHAINOPINPUT_H
+#ifndef _QECHAINOPERATORINPUT_H
+#define _QECHAINOPERATORINPUT_H
 
 #include <vector>
 
@@ -13,29 +13,28 @@
 #include "qeinput.h"
 
 class QLabel;
+class QTabWidget;
+class QEObjectMap;
 
 /**
  * Chain operator input widget
  */
-class QEChainopInput : public QEInput {
+class QEChainOperatorInput : public QEInput {
   Q_OBJECT
  public:
 
-  QEChainopInput (QWidget *parent = 0, const char *name = 0);
-
+  QEChainOperatorInput (QWidget *parent = 0, const char *name = 0);
   CHAIN_OPERATOR* result(void) const { return(chainop_rep); }
 
 public slots:
 
   virtual void update_results(void);
 
-private slots:
-
-  void update_chainop(int index);
-
  private:
 
   CHAIN_OPERATOR* chainop_rep;
+  QTabWidget* maptab_rep;
+  vector<QEObjectMap*> omap_inputs;
   QLabel* cop_desc;
   vector<QLabel*> paramlist;
   vector<QLineEdit*> inputlist; 

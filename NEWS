@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 2600300) **
+** ecasound - user visible changes (NEWS)      (last edited: 040400) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,10 +14,19 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.12r10 <*-
 
-??032000 (v1.7.5d11)
+??042000 (v1.7.5d11)
+	- added: ALSA support for s32_le and s32_be sample formats
+	- removed: dynamic loading of ALSA support - as ALSA is
+		   getting bigger and bigger, maintaining dynamic 
+		   support is has become more and more difficult - 
+		   this means that ALSA support isn't anymore included 
+		   in binary distribution packages - to get native 
+		   ALSA support, you have to compile ecasound from 
+		   sources - of course you can always use ALSA's 
+		   OSS-emulation layer 
 	- changed: pitch-shifter (-ei) improvements - thanks to Arto
 	 	   Hamara for the tips
-	- changed: above improvements also affects normal resampling
+	- changed: above improvements also affect normal resampling
 	- changed: ia-mode commands cop-add, cop-remove and ctrl-add
 		   can now be used with connected chainsetups (add 
 		   effects on-the-fly, etc)

@@ -100,11 +100,11 @@ libqtecasound_general_include = qebuttonrow.h 				qestringdialog.h
 libqtecasound_general_moc = qestringdialog_moc.cpp 				qebuttonrow_moc.cpp			 
 
 
-libqtecasound_inputs_src = qeinput.cpp 				qefilenameinput.cpp 				qeokcancelinput.cpp 				qeaudioformatinput.cpp 				qechainopinput.cpp 				qeobjectinput.cpp
+libqtecasound_inputs_src = qeinput.cpp 				qefilenameinput.cpp 				qeokcancelinput.cpp 				qeaudioformatinput.cpp 				qechainoperatorinput.cpp 				qeobjectmap.cpp
 
-libqtecasound_inputs_include = qeinput.h 				qefilenameinput.h 				qeokcancelinput.h 				qeaudioformatinput.h 				qechainopinput.h 				qeobjectinput.h
+libqtecasound_inputs_include = qeinput.h 				qefilenameinput.h 				qeokcancelinput.h 				qeaudioformatinput.h 				qechainoperatorinput.h 				qeobjectmap.h
 
-libqtecasound_inputs_moc = qeinput_moc.cpp 				qefilenameinput_moc.cpp 				qeokcancelinput_moc.cpp 				qeaudioformatinput_moc.cpp 				qechainopinput_moc.cpp 				qeobjectinput_moc.cpp
+libqtecasound_inputs_moc = qeinput_moc.cpp 				qefilenameinput_moc.cpp 				qeokcancelinput_moc.cpp 				qeaudioformatinput_moc.cpp 				qechainoperatorinput_moc.cpp 				qeobjectmap_moc.cpp
 
 
 libqtecasound_dialogs_src = qedialog.cpp
@@ -138,17 +138,19 @@ LIBS = @LIBS@
 libqtecasound_debug_la_DEPENDENCIES = 
 libqtecasound_debug_la_OBJECTS =  qebuttonrow.lo qestringdialog.lo \
 qestringdialog_moc.lo qebuttonrow_moc.lo qeinput.lo qefilenameinput.lo \
-qeokcancelinput.lo qeaudioformatinput.lo qechainopinput.lo \
-qeobjectinput.lo qeinput_moc.lo qefilenameinput_moc.lo \
-qeokcancelinput_moc.lo qeaudioformatinput_moc.lo qechainopinput_moc.lo \
-qeobjectinput_moc.lo qedialog.lo qedialog_moc.lo
+qeokcancelinput.lo qeaudioformatinput.lo qechainoperatorinput.lo \
+qeobjectmap.lo qeinput_moc.lo qefilenameinput_moc.lo \
+qeokcancelinput_moc.lo qeaudioformatinput_moc.lo \
+qechainoperatorinput_moc.lo qeobjectmap_moc.lo qedialog.lo \
+qedialog_moc.lo
 libqtecasound_la_DEPENDENCIES = 
 libqtecasound_la_OBJECTS =  qebuttonrow.lo qestringdialog.lo \
 qestringdialog_moc.lo qebuttonrow_moc.lo qeinput.lo qefilenameinput.lo \
-qeokcancelinput.lo qeaudioformatinput.lo qechainopinput.lo \
-qeobjectinput.lo qeinput_moc.lo qefilenameinput_moc.lo \
-qeokcancelinput_moc.lo qeaudioformatinput_moc.lo qechainopinput_moc.lo \
-qeobjectinput_moc.lo qedialog.lo qedialog_moc.lo
+qeokcancelinput.lo qeaudioformatinput.lo qechainoperatorinput.lo \
+qeobjectmap.lo qeinput_moc.lo qefilenameinput_moc.lo \
+qeokcancelinput_moc.lo qeaudioformatinput_moc.lo \
+qechainoperatorinput_moc.lo qeobjectmap_moc.lo qedialog.lo \
+qedialog_moc.lo
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -164,12 +166,13 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/qeaudioformatinput.P .deps/qeaudioformatinput_moc.P \
-.deps/qebuttonrow.P .deps/qebuttonrow_moc.P .deps/qechainopinput.P \
-.deps/qechainopinput_moc.P .deps/qedialog.P .deps/qedialog_moc.P \
-.deps/qefilenameinput.P .deps/qefilenameinput_moc.P .deps/qeinput.P \
-.deps/qeinput_moc.P .deps/qeobjectinput.P .deps/qeobjectinput_moc.P \
-.deps/qeokcancelinput.P .deps/qeokcancelinput_moc.P \
-.deps/qestringdialog.P .deps/qestringdialog_moc.P
+.deps/qebuttonrow.P .deps/qebuttonrow_moc.P \
+.deps/qechainoperatorinput.P .deps/qechainoperatorinput_moc.P \
+.deps/qedialog.P .deps/qedialog_moc.P .deps/qefilenameinput.P \
+.deps/qefilenameinput_moc.P .deps/qeinput.P .deps/qeinput_moc.P \
+.deps/qeobjectmap.P .deps/qeobjectmap_moc.P .deps/qeokcancelinput.P \
+.deps/qeokcancelinput_moc.P .deps/qestringdialog.P \
+.deps/qestringdialog_moc.P
 SOURCES = $(libqtecasound_debug_la_SOURCES) $(libqtecasound_la_SOURCES)
 OBJECTS = $(libqtecasound_debug_la_OBJECTS) $(libqtecasound_la_OBJECTS)
 
@@ -444,28 +447,28 @@ dist-hook:
 # general:
 qebuttonrow_moc.cpp: $(srcdir)/qebuttonrow.h
 	$(MOC) -o qebuttonrow_moc.cpp $(srcdir)/qebuttonrow.h
-qestringdialog_moc.cpp: $(srcdir)/qestringdialog.h
-	$(MOC) -o qestringdialog_moc.cpp $(srcdir)/qestringdialog.h
 
 # ---
 # inputs:
-qeinput_moc.cpp: $(srcdir)/qeinput.h
-	$(MOC) -o qeinput_moc.cpp $(srcdir)/qeinput.h
-qefilenameinput_moc.cpp: $(srcdir)/qefilenameinput.h
-	$(MOC) -o qefilenameinput_moc.cpp $(srcdir)/qefilenameinput.h
-qeokcancelinput_moc.cpp: $(srcdir)/qeokcancelinput.h
-	$(MOC) -o qeokcancelinput_moc.cpp $(srcdir)/qeokcancelinput.h
 qeaudioformatinput_moc.cpp: $(srcdir)/qeaudioformatinput.h
 	$(MOC) -o qeaudioformatinput_moc.cpp $(srcdir)/qeaudioformatinput.h
-qechainopinput_moc.cpp: $(srcdir)/qechainopinput.h
-	$(MOC) -o qechainopinput_moc.cpp $(srcdir)/qechainopinput.h
-qeobjectinput_moc.cpp: $(srcdir)/qeobjectinput.h
-	$(MOC) -o qeobjectinput_moc.cpp $(srcdir)/qeobjectinput.h
+qechainoperatorinput_moc.cpp: $(srcdir)/qechainoperatorinput.h
+	$(MOC) -o qechainoperatorinput_moc.cpp $(srcdir)/qechainoperatorinput.h
+qefilenameinput_moc.cpp: $(srcdir)/qefilenameinput.h
+	$(MOC) -o qefilenameinput_moc.cpp $(srcdir)/qefilenameinput.h
+qeinput_moc.cpp: $(srcdir)/qeinput.h
+	$(MOC) -o qeinput_moc.cpp $(srcdir)/qeinput.h
+qeobjectmap_moc.cpp: $(srcdir)/qeobjectmap.h
+	$(MOC) -o qeobjectmap_moc.cpp $(srcdir)/qeobjectmap.h
+qeokcancelinput_moc.cpp: $(srcdir)/qeokcancelinput.h
+	$(MOC) -o qeokcancelinput_moc.cpp $(srcdir)/qeokcancelinput.h
 
 # ---
 # dialogs:
 qedialog_moc.cpp: $(srcdir)/qedialog.h
 	$(MOC) -o qedialog_moc.cpp $(srcdir)/qedialog.h
+qestringdialog_moc.cpp: $(srcdir)/qestringdialog.h
+	$(MOC) -o qestringdialog_moc.cpp $(srcdir)/qestringdialog.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-alsalb.cpp: ALSA (/dev/snd/pcm*) loopback input.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,8 @@
 #include "samplebuffer.h"
 #include "audioio-types.h"
 #include "audioio-alsalb.h"
-#include "eca-alsa-dyn.h"
+
+#include <sys/asoundlib.h>
 
 #include "eca-error.h"
 #include "eca-debug.h"
@@ -79,31 +80,31 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
   //  throw(new ECA_ERROR("AUDIOIO-ALSALB", "support for ALSA versions >0.5.0 not implemented"));
   //#endif
 
-  ::eca_alsa_load_dynamic_support();
+  //  ::eca_alsa_load_dynamic_support();
 
   if (is_open() == true) return;
   int err;
   if (io_mode() == io_read) {
     if (pb_mode) {
-      if ((err = ::dl_snd_pcm_loopback_open(&audio_fd, 
+      if ((err = ::snd_pcm_loopback_open(&audio_fd, 
 					  card_number, 
 					  device_number,
 #ifdef ALSALIB_050
 					  subdevice_number, // subdev
 #endif
 					  SND_PCM_LB_OPEN_PLAYBACK)) < 0) {
-	throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(dl_snd_strerror(err))));
+	throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(snd_strerror(err))));
       }
     }
     else {
-      if ((err = ::dl_snd_pcm_loopback_open(&audio_fd, 
+      if ((err = ::snd_pcm_loopback_open(&audio_fd, 
 					  card_number, 
 					  device_number,
 #ifdef ALSALIB_050
 					  subdevice_number, // subdev
 #endif
 					  SND_PCM_LB_OPEN_CAPTURE)) < 0) {
-	throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(dl_snd_strerror(err))));
+	throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(snd_strerror(err))));
       }
     }
   }    
@@ -114,7 +115,7 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Set blocking mode.
 
-  ::dl_snd_pcm_loopback_block_mode(audio_fd, 1);    // enable block mode
+  ::snd_pcm_loopback_block_mode(audio_fd, 1);    // enable block mode
 
   // -------------------------------------------------------------------
   // Set fragment size.
@@ -139,6 +140,8 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
     case ECA_AUDIO_FORMAT::sfmt_s16_be:  { format = SND_PCM_SFMT_S16_BE; break; }
     case ECA_AUDIO_FORMAT::sfmt_s24_le:  { format = SND_PCM_SFMT_S24_LE; break; }
     case ECA_AUDIO_FORMAT::sfmt_s24_be:  { format = SND_PCM_SFMT_S24_BE; break; }
+    case ECA_AUDIO_FORMAT::sfmt_s32_le:  { format = SND_PCM_SFMT_S32_LE; break; }
+    case ECA_AUDIO_FORMAT::sfmt_s32_be:  { format = SND_PCM_SFMT_S32_BE; break; }
     default: 
       throw(new ECA_ERROR("AUDIOIO-ALSALB", "Unknown sample format!", ECA_ERROR::stop));
     }
@@ -151,9 +154,9 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
 #endif
 
   if (io_mode() == io_read) {
-    err = ::dl_snd_pcm_loopback_format(audio_fd, &loopback_format);
+    err = ::snd_pcm_loopback_format(audio_fd, &loopback_format);
     if (err < 0) {
-    throw(new ECA_ERROR("AUDIOIO-ALSALB", "Error when setting up record parameters: " + string(dl_snd_strerror(err))));
+    throw(new ECA_ERROR("AUDIOIO-ALSALB", "Error when setting up record parameters: " + string(snd_strerror(err))));
     }
   }
   toggle_open_state(true);
@@ -161,7 +164,7 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
 
 void ALSA_LOOPBACK_DEVICE::close(void) {
   if (is_open()) {
-    ::dl_snd_pcm_loopback_close(audio_fd);
+    ::snd_pcm_loopback_close(audio_fd);
   }    
   toggle_open_state(false);
 }
@@ -169,7 +172,7 @@ void ALSA_LOOPBACK_DEVICE::close(void) {
 long int ALSA_LOOPBACK_DEVICE::read_samples(void* target_buffer, 
 					    long int samples) {
 #ifdef ALSALIB_032
-  return(::dl_snd_pcm_loopback_read(audio_fd, target_buffer, frame_size() * samples) / frame_size());
+  return(::snd_pcm_loopback_read(audio_fd, target_buffer, frame_size() * samples) / frame_size());
 #else
   static bool first_time = true;
   if (first_time == true) {
@@ -230,14 +233,14 @@ void *loopback_controller(void* params) {
   callbacks.silence = loopback_callback_silence;
   callbacks.max_buffer_size = callback_buffer_size;
   snd_pcm_loopback_t* handle = reinterpret_cast<snd_pcm_loopback_t*>(params);
-  ::dl_snd_pcm_loopback_read(handle, &callbacks);
+  ::snd_pcm_loopback_read(handle, &callbacks);
 
   return(0);
 }
 
 ALSA_LOOPBACK_DEVICE::~ALSA_LOOPBACK_DEVICE(void) {
   close();
-  ::eca_alsa_unload_dynamic_support();
+  //  ::eca_alsa_unload_dynamic_support();
 }
 
 #ifdef ALSALIB_050

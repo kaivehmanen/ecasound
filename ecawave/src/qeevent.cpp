@@ -34,6 +34,15 @@ QEEvent::QEEvent(ECA_CONTROLLER* ctrl)
 #endif
 }
 
+QEEvent::~QEEvent(void) { 
+  if (ectrl->is_running() == true) ectrl->stop();
+  if (ectrl->is_connected() == true) ectrl->disconnect_chainsetup();
+  if (initialized_cs_rep.empty() != true) {
+    ectrl->select_chainsetup(initialized_cs_rep);
+    if (ectrl->selected_chainsetup() == initialized_cs_rep) ectrl->remove_chainsetup();
+  }
+}
+
 void QEEvent::init(const string& chainsetup, const string& chain) {
   // --------
   REQUIRE(ectrl != 0);
@@ -46,6 +55,11 @@ void QEEvent::init(const string& chainsetup, const string& chain) {
 
   if (ectrl->is_running() == true) ectrl->stop();
   if (ectrl->is_connected() == true) ectrl->disconnect_chainsetup();
+
+  if (initialized_cs_rep.empty() != true) {
+    ectrl->select_chainsetup(initialized_cs_rep);
+    if (ectrl->selected_chainsetup() == initialized_cs_rep) ectrl->remove_chainsetup();
+  }
   if (ectrl->selected_chainsetup() != chainsetup) ectrl->add_chainsetup(chainsetup);
   else {
     ectrl->remove_chainsetup();
@@ -53,9 +67,10 @@ void QEEvent::init(const string& chainsetup, const string& chain) {
   }
   ectrl->clear_chains();
   if (chain != "") ectrl->add_chain(chain);
+  initialized_cs_rep = chainsetup;
 
   // --------
-  ENSURE(ectrl->selected_chainsetup() == chainsetup);
+  ENSURE(ectrl->selected_chainsetup() == initialized_cs_rep);
   // --------
 }
 

@@ -195,22 +195,32 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void set_chainsetup_sample_format(const string& name);
 
   /**
-   * Sets processing length in seconds
+   * Sets processing length in seconds. If 'value' is 0,
+   * length in unspecified.
    *
    * require:
    *  is_selected() == true
-   *  value > 0
+   *  value >= 0
    */
   void set_chainsetup_processing_length_in_seconds(double value);
 
   /**
-   * Sets processing length in samples
+   * Sets processing length in samples. If 'value' is 0,
+   * length in unspecified.
    *
    * require:
    *  is_selected() == true
-   *  value > 0
+   *  value >= 0
    */
   void set_chainsetup_processing_length_in_samples(long int value);
+
+  /**
+   * Sets default open mode for audio outputs.
+   *
+   * require:
+   *  output_mode == AUDIO_IO::io_write || output_mode == AUDIO_IO::io_readwrite
+   */
+  void set_chainsetup_output_mode(int output_mode);
 
   /**
    * Toggles chainsetup looping

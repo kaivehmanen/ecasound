@@ -15,9 +15,7 @@ class QESaveEvent : public QEBlockingEvent {
   bool class_invariant(void) { return(ectrl != 0); }
   QESaveEvent(ECA_CONTROLLER* ctrl,
 	      const string& input,
-	      const string& output,
-	      long int start_pos, 
-	      long int length);
+	      const string& output);
 
  private:
 

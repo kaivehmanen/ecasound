@@ -27,6 +27,7 @@
 #include <qtimer.h>
 #include <qmessagebox.h>
 #include <qprogressdialog.h>
+#include <qaccel.h>
 
 #include <ecasound/eca-session.h>
 #include <ecasound/eca-controller.h>
@@ -45,6 +46,7 @@
 #include "qechainopevent.h"
 #include "qecopyevent.h"
 #include "qepasteevent.h"
+#include "qecutevent.h"
 
 #include "version.h"
 
@@ -88,6 +90,9 @@ QESession::QESession (const string& filename,
   connect( timer, SIGNAL(timeout()), this, SLOT(position_update()));
   timer->start(500, false);
 
+  start_pos = 0;
+  sel_length = 0;
+
   // --------
   ENSURE(file != 0);
   ENSURE(active_filename_rep.empty() == false);
@@ -101,15 +106,20 @@ QESession::~QESession(void) {
     delete nb_event;
   }
 
-  if (state_rep != state_orig_file) {
-    assert(active_filename_rep.empty() != true);
-    remove(active_filename_rep.c_str());
-    remove((active_filename_rep + ".ews").c_str());
-  }
-
+  remove_temps();
+ 
   while(child_sessions.size() > 0) {
     delete child_sessions.back();
     child_sessions.pop_back();
+  }
+}
+
+void QESession::remove_temps(void) {
+  if (state_rep == state_edit_file || 
+      state_rep == state_new_file) {
+    assert(active_filename_rep.empty() != true);
+    remove(active_filename_rep.c_str());
+    remove((active_filename_rep + ".ews").c_str());
   }
 }
 
@@ -138,8 +148,6 @@ void QESession::init_layout(void) {
 		       ALT+Key_F, this, SLOT(new_file()));
   buttonrow->add_button(new QPushButton("(O)pen",buttonrow), 
 		       ALT+Key_O, this, SLOT(open_file()));
-  buttonrow->add_button(new QPushButton("(C)lose",buttonrow), 
-		       ALT+Key_C, this, SLOT(close_file()));
   buttonrow->add_button(new QPushButton("Sa(v)e",buttonrow), 
 		       ALT+Key_V, this, SLOT(save_event()));
   buttonrow->add_button(new QPushButton("Save (a)s",buttonrow), 
@@ -157,10 +165,13 @@ void QESession::init_layout(void) {
   buttonrow2->add_button(new QPushButton("Cop(y)",buttonrow2), ALT+Key_Y,
 			this, SLOT(copy_event()));
   buttonrow2->add_button(new QPushButton("C(u)t",buttonrow2), ALT+Key_U,
-			this, SLOT(new_session()));
+			this, SLOT(cut_event()));
   buttonrow2->add_button(new QPushButton("(P)aste",buttonrow2), ALT+Key_P,
 			this, SLOT(paste_event()));
   vlayout->addWidget(buttonrow2);
+
+  QAccel* a = new QAccel (this);
+  a->connectItem(a->insertItem(ALT+Key_D), this, SLOT(debug_event()));
 
   if (state_rep == state_orig_file) 
     file = new QEFile(active_filename_rep,
@@ -199,6 +210,38 @@ void QESession::init_layout(void) {
 		   SLOT(filename(const string&)));
 }
 
+void QESession::debug_event(void) {
+  cerr << "----------------" << endl;
+  cerr << "- ecawave-debug:" << endl;
+  cerr << "orig_filename_rep: " << orig_filename_rep << endl;;
+  cerr << "active_filename_rep: " << active_filename_rep << endl;;
+
+  cerr << "start_pos: " << start_pos << endl;
+  cerr << "sel_length: " << sel_length << endl;
+
+  cerr << "child_sessions size: " << child_sessions.size() << endl;
+  
+  if (file != 0) cerr << "qefile-filename: " << file->filename() <<
+		   endl;
+  else cerr << "qefile not created." << endl;
+
+  if (refresh_toggle_rep) cerr << "refresh_toggle_rep: true" << endl;
+  else cerr << "refresh_toggle_rep: false" << endl;
+
+  if (wcache_toggle_rep) cerr << "wcache_toggle_rep: true" << endl;
+  else cerr << "wcache_toggle_rep: false" << endl;
+
+  if (direct_mode_rep) cerr << "direct_mode_rep: true" << endl;
+  else cerr << "direct_mode_rep: false" << endl;
+ 
+  if (ectrl == 0) cerr << "ectrl not created." << endl;
+  else {
+    cerr << "ectrl status: " << ectrl->engine_status() << endl;
+    cerr << "ectrl position: " << ectrl->position_in_seconds_exact()
+	 << "sec" << endl;
+  }
+}
+
 void QESession::new_session(void) {
   child_sessions.push_back(new QESession());
   child_sessions.back()->show();
@@ -206,25 +249,22 @@ void QESession::new_session(void) {
 
 void QESession::new_file(void) {
   stop_event();
-  child_sessions.push_back(new QESession("", ECA_AUDIO_FORMAT()));
-  child_sessions.back()->show();
-  child_sessions.back()->setGeometry(x(), y(), width(), height());
-  qApp->setMainWidget(child_sessions.back());
-  close(false);
+  remove_temps();
+  int old_height_hint = file->sizeHint().height();
+  file->new_file();
+  orig_filename_rep = "";
+  active_filename_rep = string(tmpnam(NULL)) + ".wav";
+  state_rep = state_new_file;
+  emit filename_changed(active_filename_rep);
+  resize(width(), height() + file->sizeHint().height() - old_height_hint);
 }
 
-void QESession::close_file(void) {
-  stop_event();
-  child_sessions.push_back(new QESession());
-  child_sessions.back()->show();
-  qApp->setMainWidget(child_sessions.back());
-  close(false);
-}
 
 void QESession::open_file(void) {
   QEOpenFileDialog* fdialog = new QEOpenFileDialog();
   if (fdialog->exec() == QEOpenFileDialog::Accepted) {
     stop_event();
+    remove_temps();
 
     ECA_AUDIO_FORMAT frm (fdialog->result_channels(), 
 			  (long int)fdialog->result_srate(), 
@@ -235,12 +275,14 @@ void QESession::open_file(void) {
     file->toggle_wave_cache(fdialog->result_wave_cache_toggle());
     file->toggle_cache_refresh(fdialog->result_cache_refresh_toggle());
     direct_mode_rep = fdialog->result_direct_mode_toggle();
+    int old_height_hint = file->sizeHint().height();
+    remove_temps();
     file->new_file(fdialog->result_filename());
     state_rep = state_orig_file;
     orig_filename_rep = file->filename();
     active_filename_rep = orig_filename_rep;
     emit filename_changed(orig_filename_rep);
-    updateGeometry();
+    resize(width(), height() + file->sizeHint().height() - old_height_hint);
   }
 }
 
@@ -249,18 +291,18 @@ void QESession::prepare_event(void) {
   REQUIRE(file != 0);
   // --------
 
+  start_pos = 0;
+  sel_length = 0;
   if (file->is_valid() == true) {
     if (file->is_marked() == true) {
-      cerr << "hep!";
       start_pos = file->marked_area_start();
-      sel_length = file->marked_area_length();
+      sel_length = file->marked_area_end() - file->marked_area_start(); 
     }
     else {
       start_pos = file->current_position();
       sel_length = file->length();
     }
     
-    cerr << "Event-range: " << start_pos << " len " << sel_length << ".\n";
     if (start_pos > file->length() ||
 	start_pos < 0) {
       start_pos = 0;
@@ -269,10 +311,6 @@ void QESession::prepare_event(void) {
 	start_pos + sel_length > file->length()) {
       sel_length = file->length() - start_pos;
     }
-  }
-  else {
-    start_pos = 0;
-    sel_length = 0;
   }
 
   // --------
@@ -291,17 +329,10 @@ void QESession::effect_event(void) {
 
   QEChainopEvent* p = new QEChainopEvent(ectrl, active_filename_rep, active_filename_rep,
 					 start_pos, sel_length);
-  if (start_pos < edit_start) edit_start = start_pos;
-  if (sel_length > edit_length) edit_length = sel_length;
 
   QObject::connect(p, SIGNAL(finished()), this, SLOT(update_wave_data()));
   p->show();
   nb_event = p;
-
-  // --------
-  // ensure:
-  assert(temp_created == true);
-  // --------
 }
 
 void QESession::update_wave_data(void) {
@@ -311,9 +342,13 @@ void QESession::update_wave_data(void) {
   // --------
 
   if (file != 0) {
+    if (file->filename() != active_filename_rep) {
+      file->new_file(active_filename_rep);
+      state_rep = state_new_file;
+    }
     file->update_wave_form_data();
   }
-
+  
   if (state_rep != state_orig_file) {
     statusbar->toggle_editing(true);
   }
@@ -348,8 +383,11 @@ void QESession::prepare_temp(void) {
       state_rep = state_invalid;
     }
     else {
-      state_rep = state_edit_file;
       active_filename_rep = temp;
+      int old_height_hint = file->sizeHint().height();
+      file->new_file(active_filename_rep);
+      state_rep = state_edit_file;
+      resize(width(), height() + file->sizeHint().height() - old_height_hint);
     }
   }
 }
@@ -380,8 +418,8 @@ void QESession::save_event(void) {
   if (state_rep == state_new_file) save_as_event();
   else {
     stop_event();
-    QESaveEvent* p = new QESaveEvent(ectrl, active_filename_rep, orig_filename_rep, edit_start, edit_length);
-    if (p->is_valid() == true) p->start();
+    QESaveEvent p (ectrl, active_filename_rep, orig_filename_rep);
+    if (p.is_valid() == true) p.start();
   }
 }
 
@@ -390,11 +428,9 @@ void QESession::save_as_event(void) {
   if (fdialog->exec() == QESaveFileDialog::Accepted) {
     stop_event();
 
-    QESaveEvent* p;
-    p = new QESaveEvent(ectrl, active_filename_rep, fdialog->result_filename(), 0, file->length());
-
-    if (p->is_valid() == true) {
-      p->start();
+    QESaveEvent p (ectrl, active_filename_rep, fdialog->result_filename());
+    if (p.is_valid() == true) {
+      p.start();
     }
   }
 }
@@ -404,11 +440,10 @@ void QESession::copy_event(void) {
   prepare_event();
   if (file->is_valid() == false) return;
 
-  QECopyEvent* p;
-  p = new QECopyEvent(ectrl, active_filename_rep, ecawaverc.resource("clipboard-file"), start_pos, sel_length);
+  QECopyEvent p (ectrl, active_filename_rep, ecawaverc.resource("clipboard-file"), start_pos, sel_length);
   
-  if (p->is_valid() == true) {
-    p->start();
+  if (p.is_valid() == true) {
+    p.start();
   }
 }
 
@@ -417,29 +452,34 @@ void QESession::paste_event(void) {
   prepare_event();
   prepare_temp();
   if (state_rep == state_invalid) return;
+  assert(state_rep != state_orig_file);
 
-  string to_file = active_filename_rep;
-  if (state_rep == state_orig_file) {
-    string temp = string(tmpnam(NULL)) + ".wav";
-    state_rep = state_edit_file;
-    active_filename_rep = temp;
-    edit_start = start_pos;
-    edit_length = sel_length;
+  QEPasteEvent p (ectrl, 
+		  ecawaverc.resource("clipboard-file"),
+		  active_filename_rep, 
+		  start_pos);
+  if (p.is_valid() == true) {
+    p.start();
+    update_wave_data();
   }
+}
 
-  QEPasteEvent* p;
-  p = new QEPasteEvent(ectrl, 
-		       ecawaverc.resource("clipboard-file"),
-		       active_filename_rep, 
-		       start_pos);
-  if (p->is_valid() == true) {
-    p->start();
-    if (file->is_valid() == true) update_wave_data();
-    else {
-      file->new_file(active_filename_rep);
-      state_rep = state_edit_file;
-      updateGeometry();
-    }
+void QESession::cut_event(void) { 
+  stop_event();
+  prepare_event();
+  prepare_temp();
+  if (state_rep == state_invalid) return;
+  assert(state_rep != state_orig_file);
+
+  QECutEvent p (ectrl, 
+		active_filename_rep,
+		ecawaverc.resource("clipboard-file"),
+		start_pos,
+		sel_length);
+  if (p.is_valid() == true) {
+    p.start();
+    file->unmark();
+    update_wave_data();
   }
 }
 

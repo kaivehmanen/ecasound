@@ -59,8 +59,7 @@ void QEChainopEvent::restart(long int start_pos, long int length) {
 
 void QEChainopEvent::preview(void) {
   mode = preview_mode;
-  init("chainopevent");
-  ectrl->add_chain("default");
+  init("chainopevent-preview", "default");
   set_input(input_rep);
   set_input_position(start_pos_rep);
   set_length(length_rep);
@@ -68,15 +67,17 @@ void QEChainopEvent::preview(void) {
   ectrl->add_default_output();
   if (copinput != 0) {
     copinput->update_results();
-    ectrl->add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(copinput->result()->clone()));
+    OPERATOR* c = dynamic_cast<OPERATOR*>(copinput->result());
+    c = c->clone();
+    ectrl->add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(c));
+    // parametrien asetus!!!
   }
   start();
 }
 
 void QEChainopEvent::process(void) {
   mode = process_mode;
-  init("chainopevent");
-  ectrl->add_chain("default");
+  init("chainopevent-process", "default");
   set_input(input_rep);
   set_input_position(start_pos_rep);
   set_length(length_rep);
@@ -86,7 +87,10 @@ void QEChainopEvent::process(void) {
   
   if (copinput != 0) {
       copinput->update_results();
-      ectrl->add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(copinput->result()->clone()));
+      OPERATOR* c = dynamic_cast<OPERATOR*>(copinput->result());
+      c = c->clone();
+      ectrl->add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(c));
+    // parametrien asetus!!!
   }
   blocking_start();
   emit finished();
@@ -97,7 +101,7 @@ void QEChainopEvent::process(void) {
 void QEChainopEvent::init_layout(void) {
   QBoxLayout* top = new QVBoxLayout(this);
 
-  copinput = new QEChainopInput(this); 
+  copinput = new QEChainOperatorInput(this); 
   top->addWidget(copinput);
 
   top->addSpacing(10);

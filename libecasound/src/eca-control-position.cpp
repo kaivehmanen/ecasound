@@ -30,6 +30,7 @@ ECA_CONTROL_POSITION::ECA_CONTROL_POSITION(long int srate) {
 void ECA_CONTROL_POSITION::length_in_samples(long pos) { 
   length_rep = pos;
   length_set_rep = true;
+  if (pos == 0) length_set_rep = false;
 }
 
 void ECA_CONTROL_POSITION::change_position(double  samples) {

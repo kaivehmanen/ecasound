@@ -14,14 +14,6 @@ class QEDialog : public QDialog {
  public:
 
   QEDialog (QWidget *parent = 0, const char *name = 0);
-
- protected:
-
-  void add_input(QEInput* input) { }
-  void add_inputs(vector<QEInput*> inputs) { }
-  void set_okcancel_input(QEOkCancelInput* okcancel) { }
-
-  void init_inputs(void);
 };
 
 #endif

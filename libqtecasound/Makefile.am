@@ -36,20 +36,20 @@ libqtecasound_inputs_src = 	qeinput.cpp \
 				qefilenameinput.cpp \
 				qeokcancelinput.cpp \
 				qeaudioformatinput.cpp \
-				qechainopinput.cpp \
-				qeobjectinput.cpp
+				qechainoperatorinput.cpp \
+				qeobjectmap.cpp
 libqtecasound_inputs_include = 	qeinput.h \
 				qefilenameinput.h \
 				qeokcancelinput.h \
 				qeaudioformatinput.h \
-				qechainopinput.h \
-				qeobjectinput.h
+				qechainoperatorinput.h \
+				qeobjectmap.h
 libqtecasound_inputs_moc = 	qeinput_moc.cpp \
 				qefilenameinput_moc.cpp \
 				qeokcancelinput_moc.cpp \
 				qeaudioformatinput_moc.cpp \
-				qechainopinput_moc.cpp \
-				qeobjectinput_moc.cpp
+				qechainoperatorinput_moc.cpp \
+				qeobjectmap_moc.cpp
 
 libqtecasound_dialogs_src = 	qedialog.cpp
 libqtecasound_dialogs_include = qedialog.h
@@ -90,25 +90,25 @@ dist-hook:
 # general:
 qebuttonrow_moc.cpp: $(srcdir)/qebuttonrow.h
 	$(MOC) -o qebuttonrow_moc.cpp $(srcdir)/qebuttonrow.h
-qestringdialog_moc.cpp: $(srcdir)/qestringdialog.h
-	$(MOC) -o qestringdialog_moc.cpp $(srcdir)/qestringdialog.h
 
 # ---
 # inputs:
-qeinput_moc.cpp: $(srcdir)/qeinput.h
-	$(MOC) -o qeinput_moc.cpp $(srcdir)/qeinput.h
-qefilenameinput_moc.cpp: $(srcdir)/qefilenameinput.h
-	$(MOC) -o qefilenameinput_moc.cpp $(srcdir)/qefilenameinput.h
-qeokcancelinput_moc.cpp: $(srcdir)/qeokcancelinput.h
-	$(MOC) -o qeokcancelinput_moc.cpp $(srcdir)/qeokcancelinput.h
 qeaudioformatinput_moc.cpp: $(srcdir)/qeaudioformatinput.h
 	$(MOC) -o qeaudioformatinput_moc.cpp $(srcdir)/qeaudioformatinput.h
-qechainopinput_moc.cpp: $(srcdir)/qechainopinput.h
-	$(MOC) -o qechainopinput_moc.cpp $(srcdir)/qechainopinput.h
-qeobjectinput_moc.cpp: $(srcdir)/qeobjectinput.h
-	$(MOC) -o qeobjectinput_moc.cpp $(srcdir)/qeobjectinput.h
+qechainoperatorinput_moc.cpp: $(srcdir)/qechainoperatorinput.h
+	$(MOC) -o qechainoperatorinput_moc.cpp $(srcdir)/qechainoperatorinput.h
+qefilenameinput_moc.cpp: $(srcdir)/qefilenameinput.h
+	$(MOC) -o qefilenameinput_moc.cpp $(srcdir)/qefilenameinput.h
+qeinput_moc.cpp: $(srcdir)/qeinput.h
+	$(MOC) -o qeinput_moc.cpp $(srcdir)/qeinput.h
+qeobjectmap_moc.cpp: $(srcdir)/qeobjectmap.h
+	$(MOC) -o qeobjectmap_moc.cpp $(srcdir)/qeobjectmap.h
+qeokcancelinput_moc.cpp: $(srcdir)/qeokcancelinput.h
+	$(MOC) -o qeokcancelinput_moc.cpp $(srcdir)/qeokcancelinput.h
 
 # ---
 # dialogs:
 qedialog_moc.cpp: $(srcdir)/qedialog.h
 	$(MOC) -o qedialog_moc.cpp $(srcdir)/qedialog.h
+qestringdialog_moc.cpp: $(srcdir)/qestringdialog.h
+	$(MOC) -o qestringdialog_moc.cpp $(srcdir)/qestringdialog.h

@@ -7,7 +7,7 @@
 #include <qwidget.h>
 
 #include <ecasound/eca-chainop.h>
-#include <ecasound/qechainopinput.h>
+#include <ecasound/qechainoperatorinput.h>
 
 #include "qenonblockingevent.h"
 
@@ -38,7 +38,7 @@ private:
   string input_rep, output_rep;
   long int start_pos_rep;
   long int length_rep;
-  QEChainopInput* copinput;
+  QEChainOperatorInput* copinput;
 
 public:
 

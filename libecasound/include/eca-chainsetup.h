@@ -125,6 +125,12 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
    */
   CHAIN_OPERATOR* create_ladspa_plugin (const string& argu);
 
+
+  /**
+   * Create a new VST1.0/2.0 plugin
+   */
+  CHAIN_OPERATOR* create_vst_plugin (const string& argu);
+
   /**
    * Handle controller sources and general controllers.
    *

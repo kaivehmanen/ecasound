@@ -23,18 +23,14 @@
 
 QESaveEvent::QESaveEvent(ECA_CONTROLLER* ctrl,
 			 const string& input,
-			 const string& output,
-			 long int start_pos, 
-			 long int length) 
+			 const string& output)
   : QEBlockingEvent(ctrl),
     ectrl(ctrl) {
 
   init("saveevent");
   ectrl->add_chain("default");
   set_input(input);
-  set_input_position(start_pos);
-  set_length(length);
   set_default_audio_format(input);
+  ectrl->set_chainsetup_parameter("-x");
   set_output(output);
-  set_output_position(start_pos);
 }
