@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-oss.cpp: OSS (/dev/dsp) input/output.
-// Copyright (C) 1999-2003 Kai Vehmanen
+// Copyright (C) 1999-2004 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -201,7 +201,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   // Get fragment size.
 
   if (::ioctl(audio_fd, SNDCTL_DSP_GETBLKSIZE, &fragment_size) == -1)
-    throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: general OSS error SNDCTL_DSP_GETBLKSIZE"));
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-oss) Warning! SNDCTL_DSP_GETBLKSIZE ioctl failed. Might affect OSS audio input/output."); 
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-oss) OSS set to use fragment size of " + 
 		   kvu_numtostr(fragment_size) + ".");
