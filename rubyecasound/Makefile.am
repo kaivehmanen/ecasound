@@ -1,21 +1,19 @@
 AUTOMAKE_OPTIONS 		= foreign
 EXTRA_DIST 			= README \
 				  ecasound.rb \
-				  control-interface.rb
+				  stresstest.rb
 
 # ----------------------------------------------------------------------
 # defines
 # ----------------------------------------------------------------------
 
 if ECA_AM_RUBYECASOUND_INSTALL
-rubyecasound_install_list1 = 	$(srcdir)/ecasound.rb \
-				$(srcdir)/control-interface.rb
-rubyecasound_uninstall_list1 =  $(DESTDIR)$(ECA_S_RUBY_SITEDIR)/ecasound.rb \
-				$(DESTDIR)$(ECA_S_RUBY_SITEDIR)/control-interface.rb
+rubyecasound_install_list1 = 	$(srcdir)/ecasound.rb
+rubyecasound_uninstall_list1 =  $(DESTDIR)$(ECA_S_RUBY_SITEDIR)/ecasound.rb
 endif
 
 if ECA_AM_RUBYECASOUND_INSTALL
-TESTS				= 
+TESTS				= stresstest.rb
 endif
 
 # ----------------------------------------------------------------------

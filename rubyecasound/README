@@ -9,15 +9,8 @@ Ruby 1.6.8.
 
 The first step was to implement a native control interface like the one for
 Python (ecacontrol.py) which should work by now.
-So if you would like to play with ecasound iam from Ruby:
-
-cp -r ecasound* some_dir/
-cd some_dir
-
-If you dare to install this system-wide (not yet recommended):
-
-ruby setup.rb config
-su -c 'ruby setup.rb install'
+So for now just copy ecasound.rb somewhere if you would like to play with
+ecasound iam from Ruby.
 
 An example (cut to my_test.rb)
 -----8<-----------8<---------
