@@ -20,12 +20,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <algorithm> /* find() */
 #include <list>
 #include <string>
 
 #include <kvu_dbc.h>
 
 #include "eca-logger-interface.h"
+
+using namespace std;
 
 const static int eca_l_i_default_log_history_len = 5;
 
@@ -55,8 +58,10 @@ void ECA_LOGGER_INTERFACE::msg(ECA_LOGGER::Msg_level_t level, const std::string&
    * could create a loop when the backlog itself is printed */
   if (level != ECA_LOGGER::eiam_return_values &&
       log_history_len_rep > 0) {
-    log_history_rep.push_back(std::string(ECA_LOGGER::level_to_string(level)) +
-			  " [" +  module_name + "]: " + log_message);
+    log_history_rep.push_back(string("[") + ECA_LOGGER::level_to_string(level) + "] ("
+			      + std::string(module_name.begin(), 
+					    find(module_name.begin(), module_name.end(), '.'))
+			      + ") " + log_message);
     if (static_cast<int>(log_history_rep.size()) > log_history_len_rep) {
       log_history_rep.pop_front();
       DBC_CHECK(static_cast<int>(log_history_rep.size()) == log_history_len_rep);
