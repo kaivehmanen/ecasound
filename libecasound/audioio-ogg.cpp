@@ -29,7 +29,7 @@
 
 #include "eca-logger.h"
 
-string OGG_VORBIS_INTERFACE::default_ogg_input_cmd = "ogg123 -d raw --file=%F %f";
+string OGG_VORBIS_INTERFACE::default_ogg_input_cmd = "ogg123 -d raw --file=- %f";
 string OGG_VORBIS_INTERFACE::default_ogg_output_cmd = "oggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -";
 long int OGG_VORBIS_INTERFACE::default_ogg_output_default_bitrate = 128000;
 

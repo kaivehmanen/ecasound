@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 170702) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 230702) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -27,12 +27,17 @@ Last officially released version is -*> v2.0.4 *-
 		   help (--help/-h)
 	- changed: ecasignalview rewritten; segfault bugs fixed,
 		   consumes less cpu-resources, better interface
+	- changed: ecasoundrc - default command for ogg playback
+		   to catch up with the ogg 1.0 release
         - fixed: a long-standing bug in ecaplay that caused it 
 		 to segfault with big playlists
 	- fixed: LADSPA_PATH env.variable not parsed correctly
 	- fixed: floating-point exceptions when run on alpha-linux
 	- fixed: libecasound_tester failed on machines without
 	 	 the LADSPA SDK plugins installed
+	- fixed: ia-mode - ctrl-d didn't exit as it should; this
+		 broke shell scripts that used pipes to communicate
+	         with ecasound
 24062002 (v2.1dev10)
 	- added: -G:mgrtype,optstring switch for setting 
 		 audio object manager level options

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (25.04.2002)
+       (23.07.2002)
        ()
        (Multimedia software)
 
@@ -130,7 +130,7 @@ startdit()
 	dit(ext-cmd-ogg-input)
 	Command for starting ogg input. All output should be directed
 	to standard output. Before execution, "%f" is replaced with 
-	path to the input ogg. Defaults to em(ogg123 -d raw --file=%F %f).
+	path to the input ogg. Defaults to em(ogg123 -d raw --file=- %f).
 
 	dit(ext-cmd-ogg-output)
 	Command for starting ogg output. All input data should be read
