@@ -386,7 +386,7 @@ static void register_internal_audioio_plugin(const string& libdir,
 	  AUDIO_IO* aobj = desc_func();
 	  if (plugin_keyword != 0 && plugin_keyword_regex != 0) {
 	    eca_audio_object_map->register_object(plugin_keyword(), plugin_keyword_regex(), aobj);
-	    //  std::cerr << "Registering audio io type: " << aobj->name()  << "\nType keyword " << plugin_keyword() << ",  regex " << plugin_keyword_regex() << "." << std::endl;
+	    // std::cerr << "Registering audio io type: " << aobj->name()  << "\nType keyword " << plugin_keyword() << ",  regex " << plugin_keyword_regex() << "." << std::endl;
 	  }
 	}
       }
@@ -429,6 +429,7 @@ static void register_internal_audioio_plugins(void) {
   register_internal_audioio_plugin(libdir, "libaudioio_alsa3.so");
   register_internal_audioio_plugin(libdir, "libaudioio_alsa3_pcm.so");
   register_internal_audioio_plugin(libdir, "libaudioio_arts.so");
+  register_internal_audioio_plugin(libdir, "libaudioio_jack.so");
 
   const ECA_OBJECT* aobj = 0;
 

@@ -162,8 +162,8 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
    * changed during processing. This means that audio data must be converted
    * from audio object's format to buffer object's format. SAMPLE_BUFFER 
    * class provides tools for all normal conversion operations. If you need
-   * direct access to object's data, a lower abstaction level should be used
-   * (@see AUDIO_IO_DIRECT).
+   * direct access to object's data, a lower abstraction level should be used
+   * (@see AUDIO_IO_BUFFERED).
    *
    * @see read_samples
    *

@@ -89,12 +89,12 @@ AUDIO_IO_PROXY_SERVER::AUDIO_IO_PROXY_SERVER (void) {
 
   thread_running_rep = false;
 
-  pthread_cond_init(&impl_repp->full_cond_repp, NULL);
-  pthread_mutex_init(&impl_repp->full_mutex_repp, NULL);
-  pthread_cond_init(&impl_repp->stop_cond_repp, NULL);
-  pthread_mutex_init(&impl_repp->stop_mutex_repp, NULL);
-  pthread_cond_init(&impl_repp->flush_cond_repp, NULL);
-  pthread_mutex_init(&impl_repp->flush_mutex_repp, NULL);
+  pthread_cond_init(&impl_repp->full_cond_rep, NULL);
+  pthread_mutex_init(&impl_repp->full_mutex_rep, NULL);
+  pthread_cond_init(&impl_repp->stop_cond_rep, NULL);
+  pthread_mutex_init(&impl_repp->stop_mutex_rep, NULL);
+  pthread_cond_init(&impl_repp->flush_cond_rep, NULL);
+  pthread_mutex_init(&impl_repp->flush_mutex_rep, NULL);
 
   running_rep.set(0);
   full_rep.set(0);
@@ -232,11 +232,11 @@ void AUDIO_IO_PROXY_SERVER::wait_for_full(void) {
     int ret = 0;
     
     full_request_rep.set(1);
-    pthread_mutex_lock(&impl_repp->full_mutex_repp);
-    ret = ::pthread_cond_timedwait(&impl_repp->full_cond_repp, 
-				   &impl_repp->full_mutex_repp,
+    pthread_mutex_lock(&impl_repp->full_mutex_rep);
+    ret = ::pthread_cond_timedwait(&impl_repp->full_cond_rep, 
+				   &impl_repp->full_mutex_rep,
 				   &sleepcount);
-    pthread_mutex_unlock(&impl_repp->full_mutex_repp);
+    pthread_mutex_unlock(&impl_repp->full_mutex_rep);
     full_request_rep.set(0);
     
     if (ret == 0)
@@ -266,12 +266,12 @@ void AUDIO_IO_PROXY_SERVER::wait_for_stop(void) {
   int ret = 0;
 
   if (running_rep.get() == 1) {
-  ::pthread_mutex_lock(&impl_repp->stop_mutex_repp);
-  ret = ::pthread_cond_timedwait(&impl_repp->stop_cond_repp, 
-				 &impl_repp->stop_mutex_repp,
+  ::pthread_mutex_lock(&impl_repp->stop_mutex_rep);
+  ret = ::pthread_cond_timedwait(&impl_repp->stop_cond_rep, 
+				 &impl_repp->stop_mutex_rep,
 				 &sleepcount);
   }
-  pthread_mutex_unlock(&impl_repp->stop_mutex_repp);
+  pthread_mutex_unlock(&impl_repp->stop_mutex_rep);
 
   if (ret == 0)
     ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_stop ok");
@@ -298,11 +298,11 @@ void AUDIO_IO_PROXY_SERVER::wait_for_flush(void) {
     int ret = 0;
     
     if (exit_ok_rep.get() == 0) {
-      pthread_mutex_lock(&impl_repp->flush_mutex_repp);
-      ret = pthread_cond_timedwait(&impl_repp->flush_cond_repp, 
-				   &impl_repp->flush_mutex_repp,
+      pthread_mutex_lock(&impl_repp->flush_mutex_rep);
+      ret = pthread_cond_timedwait(&impl_repp->flush_cond_rep, 
+				   &impl_repp->flush_mutex_rep,
 				 &sleepcount);
-      pthread_mutex_unlock(&impl_repp->flush_mutex_repp);
+      pthread_mutex_unlock(&impl_repp->flush_mutex_rep);
     }
     
     if (ret == 0)
@@ -322,9 +322,9 @@ void AUDIO_IO_PROXY_SERVER::wait_for_flush(void) {
  * are fulls.
  */
 void AUDIO_IO_PROXY_SERVER::signal_full(void) {
-  pthread_mutex_lock(&impl_repp->full_mutex_repp);
-  pthread_cond_broadcast(&impl_repp->full_cond_repp);
-  pthread_mutex_unlock(&impl_repp->full_mutex_repp);
+  pthread_mutex_lock(&impl_repp->full_mutex_rep);
+  pthread_cond_broadcast(&impl_repp->full_cond_rep);
+  pthread_mutex_unlock(&impl_repp->full_mutex_rep);
 }
 
 /**
@@ -333,9 +333,9 @@ void AUDIO_IO_PROXY_SERVER::signal_full(void) {
  */
 void AUDIO_IO_PROXY_SERVER::signal_stop(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_stop entry");
-  pthread_mutex_lock(&impl_repp->stop_mutex_repp);
-  pthread_cond_broadcast(&impl_repp->stop_cond_repp);
-  pthread_mutex_unlock(&impl_repp->stop_mutex_repp);
+  pthread_mutex_lock(&impl_repp->stop_mutex_rep);
+  pthread_cond_broadcast(&impl_repp->stop_cond_rep);
+  pthread_mutex_unlock(&impl_repp->stop_mutex_rep);
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_stop ok");
 }
 
@@ -345,9 +345,9 @@ void AUDIO_IO_PROXY_SERVER::signal_stop(void) {
  */
 void AUDIO_IO_PROXY_SERVER::signal_flush(void) {
   //  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_flush");
-  pthread_mutex_lock(&impl_repp->flush_mutex_repp);
-  pthread_cond_broadcast(&impl_repp->flush_cond_repp);
-  pthread_mutex_unlock(&impl_repp->flush_mutex_repp);
+  pthread_mutex_lock(&impl_repp->flush_mutex_rep);
+  pthread_cond_broadcast(&impl_repp->flush_cond_rep);
+  pthread_mutex_unlock(&impl_repp->flush_mutex_rep);
 }
 
 

@@ -373,6 +373,23 @@ if test x$arts_support = xyes; then
 AC_DEFINE(COMPILE_ARTS)
 fi                                     
 
+dnl --
+dnl JACK support
+dnl --
+AC_ARG_WITH(jack,
+  [  --with-jack=DIR	Compile against JACK installed in DIR],
+  [
+    jack_libraries=$withval/lib
+    jack_headers=$withval/include
+    jack_support=yes
+  ])
+AM_CONDITIONAL(COMPILE_JACK, test x$jack_support = xyes)
+if test x$jack_support = xyes; then
+  AC_DEFINE(COMPILE_JACK)
+fi
+AC_SUBST(jack_libs)
+AC_SUBST(jack_headers)
+
 dnl ------------------------------------------------------------------
 
 dnl --
@@ -640,6 +657,11 @@ if test x$arts_support = xyes ; then
 else
 	echo "aRts support		no"
 fi
+if test x$jack_support = xyes ; then
+	echo "JACK support		yes"
+else
+	echo "JACK support		no"
+fi
 if test x$enable_sysreadline = xyes ; then
 	echo "Use system readline	yes"
 else
@@ -652,6 +674,10 @@ echo "Directory prefix:		"$prefix
 if test x$compile_pyecasound = xyes ; then
 	echo "Python include dir:		"$eca_python_incdir
 	echo "Python module dir:		"$eca_python_modules
+fi
+if test x$jack_support = xyes ; then
+	echo "JACK headers:		        "$jack_headers
+	echo "JACK libraries:		        "$jack_libraries
 fi
 if test x$enable_sysreadline = xyes ; then
   	echo "readline includes:		"$readline_includes

@@ -7,20 +7,37 @@ AUTOMAKE_OPTIONS = foreign
 if COMPILE_ARTS
 arts_libs = `artsc-config --libs`
 arts_cflags = `artsc-config --cflags`
+arts_target = libaudioio_arts.la
 else
-arts_libs =
-arts_cflags =
+arts_target =
 endif
 
 if COMPILE_ALSA
 alsa_libs = -lasound
+else
 endif
 
 if COMPILE_AF
 af_libs = -laudiofile
+af_target = libaudioio_af.la
+else
+af_target = 
 endif
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils $(arts_cflags)
+if COMPILE_JACK
+jack_libs = -L$(jack_libraries) -ljack
+jack_cflags = -I$(jack_headers)
+jack_target = libaudioio_jack.la
+else
+jack_target =
+endif
+
+INCLUDES =	-I$(srcdir) \
+		-I$(top_srcdir) \
+		-I$(top_srcdir)/libecasound \
+		-I$(top_srcdir)/kvutils \
+		$(arts_cflags) \
+		$(jack_cflags)
 libdir = ${exec_prefix}/lib/ecasound-plugins
 
 # ----------------------------------------------------------------------
@@ -35,7 +52,8 @@ plugin_includes = 	\
 			audioio_alsa2_plugin.h \
 			audioio_alsa3.h \
 			audioio_alsa3_pcm.h \
-			audioio_arts.h
+			audioio_arts.h \
+			audioio_jack.h
 
 noinst_HEADERS = $(plugin_includes)
 
@@ -43,14 +61,15 @@ noinst_HEADERS = $(plugin_includes)
 # source files
 # ----------------------------------------------------------------------
 
-lib_LTLIBRARIES = 	libaudioio_af.la \
+lib_LTLIBRARIES = 	$(af_target) \
 			libaudioio_alsa.la \
 			libaudioio_alsalb.la \
 			libaudioio_alsa2.la \
 			libaudioio_alsa2_plugin.la \
 			libaudioio_alsa3.la \
 			libaudioio_alsa3_pcm.la \
-			libaudioio_arts.la
+			$(arts_target) \
+			$(jack_target)
 
 libaudioio_af_la_SOURCES	     	= audioio_af.cpp
 libaudioio_alsa_la_SOURCES	     	= audioio_alsa.cpp
@@ -60,6 +79,7 @@ libaudioio_alsa2_plugin_la_SOURCES 	= audioio_alsa2_plugin.cpp
 libaudioio_alsa3_la_SOURCES		= audioio_alsa3.cpp audioio_alsa3_hw.cpp
 libaudioio_alsa3_pcm_la_SOURCES		= audioio_alsa3.cpp audioio_alsa3_pcm.cpp
 libaudioio_arts_la_SOURCES	        = audioio_arts.cpp
+libaudioio_jack_la_SOURCES	        = audioio_jack.cpp
 
 libaudioio_af_la_LIBADD	     		= $(af_libs)
 libaudioio_alsa_la_LIBADD	     	= $(alsa_libs)
@@ -69,6 +89,7 @@ libaudioio_alsa2_plugin_la_LIBADD 	= $(alsa_libs)
 libaudioio_alsa3_la_LIBADD		= $(alsa_libs)
 libaudioio_alsa3_pcm_la_LIBADD		= $(alsa_libs)
 libaudioio_arts_la_LIBADD		= 
+libaudioio_jack_la_LIBADD		= $(jack_libs)
 
 libaudioio_af_la_LDFLAGS	     	= -avoid-version -export-dynamic
 libaudioio_alsa_la_LDFLAGS	     	= -avoid-version -export-dynamic
@@ -78,6 +99,7 @@ libaudioio_alsa2_plugin_la_LDFLAGS 	= -avoid-version -export-dynamic
 libaudioio_alsa3_la_LDFLAGS		= -avoid-version -export-dynamic
 libaudioio_alsa3_pcm_la_LDFLAGS		= -avoid-version -export-dynamic
 libaudioio_arts_la_LDFLAGS	        = -avoid-version -export-dynamic $(arts_libs)
+libaudioio_jack_la_LDFLAGS	        = -avoid-version -export-dynamic $(jack_libs)
 
 # ----------------------------------------------------------------------
 # separate rules for compiling non-libtool plugins

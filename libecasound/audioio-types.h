@@ -149,6 +149,9 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    * calling program can't handle data at the speed of the 
    * source device. Write_buffer() calls are blocked if necessary.
    *
+   * Note! For output devices, at least one buffer of data 
+   *       must have been written before issuing start()!
+   *
    * require:
    *  is_running() != true
    *  is_prepared() == true 

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 121201) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 151201) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -25,6 +25,8 @@ Last officially released version is -*> v2.0.3 *-
 		 individual values can be overridden in 
 		 ~/.ecasoundrc
 	- added: bitrate (kbps) params to mp3 and ogg outputs
+	- added: initial JACK support; enable by giving
+		 --with-jack=install_prefix configure option
 	- removed: ecasoundrc - 'user-resource-directory' tag 
                    removed; user-specific preset/oscillator 
 		   definition directory hardcoded to be
