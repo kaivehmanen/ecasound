@@ -393,13 +393,20 @@ long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer,
     realsamples = ::snd_pcm_readi(audio_fd_repp, target_buffer,
 				 fragment_size_rep);
     if (realsamples < 0) {
-      if (ignore_xruns() == true) {
-	handle_xrun_capture();
-	realsamples = ::snd_pcm_readi(audio_fd_repp, target_buffer,
-				     fragment_size_rep);
+      if (realsamples == -EPIPE) {
+	if (ignore_xruns() == true) {
+	  handle_xrun_capture();
+	  realsamples = ::snd_pcm_readi(audio_fd_repp, target_buffer,
+					fragment_size_rep);
+	}
+	else {
+	  cerr << "(audioio-alsa3) Overrun! Stopping operation!" << endl;
+	  stop();
+	  close();
+	}
       }
       else {
-	cerr << "(audioio-alsa3) Underrun! Stopping operation!" << endl;
+	cerr << "(audioio-alsa3) Read error! Stopping operation." << endl;
 	stop();
 	close();
       }
@@ -413,12 +420,19 @@ long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer,
     }
     realsamples = ::snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), fragment_size_rep);
     if (realsamples < 0) {
-      if (ignore_xruns() == true) {
-	handle_xrun_capture();
-	realsamples = ::snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), fragment_size_rep);
+      if (realsamples == -EPIPE) {
+	if (ignore_xruns() == true) {
+	  handle_xrun_capture();
+	  realsamples = ::snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), fragment_size_rep);
+	}
+	else {
+	  cerr << "(audioio-alsa3) Overrun! Stopping operation!" << endl;
+	  stop();
+	  close();
+	}
       }
       else {
-	cerr << "(audioio-alsa3) Underrun! Stopping operation!" << endl;
+	cerr << "(audioio-alsa3) Read error! Stopping operation." << endl;
 	stop();
 	close();
       }
@@ -442,18 +456,24 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
     start();
   }
   if (interleaved_channels() == true) {
-    if (::snd_pcm_writei(audio_fd_repp, target_buffer,
-			samples) < 0) {
-      if (ignore_xruns() == true) {
-	handle_xrun_playback();
-	if (::snd_pcm_writei(audio_fd_repp, target_buffer,
-			    samples) < 0) 
-	  cerr << "(audioio-alsa3) Xrun handling failed!" << endl;
-	trigger_request_rep = true;
-	stop();
+    long int count = ::snd_pcm_writei(audio_fd_repp, target_buffer, samples);
+    if (count < 0) {
+      if (count == -EPIPE) {
+	if (ignore_xruns() == true) {
+	  handle_xrun_playback();
+	  if (::snd_pcm_writei(audio_fd_repp, target_buffer,
+			       samples) < 0) 
+	    cerr << "(audioio-alsa3) Xrun handling failed!" << endl;
+	  trigger_request_rep = true;
+	}
+	else {
+	  cerr << "(audioio-alsa3) Underrun! Stopping operation!" << endl;
+	  stop();
+	  close();
+	}
       }
       else {
-	cerr << "(audioio-alsa3) Underrun! Stopping operation!" << endl;
+	cerr << "(audioio-alsa3) Write  error! Stopping operation." << endl;
 	stop();
 	close();
       }
@@ -467,18 +487,26 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
       ptr_to_channel += samples * frame_size();
 //        cerr << "Advancing pointer count to " << reinterpret_cast<void*>(ptr_to_channel) << endl;
     }
-    if (::snd_pcm_writen(audio_fd_repp,
-		     reinterpret_cast<void**>(nbufs_repp),
-		     samples) < 0) {
-      if (ignore_xruns() == true) {
-	handle_xrun_playback();
-	::snd_pcm_writen(audio_fd_repp,
-			 reinterpret_cast<void**>(nbufs_repp),
-			 samples);
-	trigger_request_rep = true;
+    long int count =  ::snd_pcm_writen(audio_fd_repp,
+				       reinterpret_cast<void**>(nbufs_repp), 
+				       samples);
+    if (count < 0) {
+      if (count == -EPIPE) {
+	if (ignore_xruns() == true) {
+	  handle_xrun_playback();
+	  ::snd_pcm_writen(audio_fd_repp,
+			   reinterpret_cast<void**>(nbufs_repp),
+			   samples);
+	  trigger_request_rep = true;
+	}
+	else {
+	  cerr << "(audioio-alsa3) Underrun! Stopping operation!" << endl;
+	  stop();
+	  close();
+	}
       }
       else {
-	cerr << "(audioio-alsa3) Underrun! Stopping operation!" << endl;
+	cerr << "(audioio-alsa3) Write  error! Stopping operation." << endl;
 	stop();
 	close();
       }
