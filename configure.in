@@ -122,8 +122,10 @@ case "$host" in
 	       ;;
 esac
 
+AC_LANG_C
 AC_SEARCH_LIBS(pthread_create, pthread c_r, [],
 		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **]))
+AC_LANG_CPLUSPLUS
 
 dnl ------------------------------------------------------------------
 
