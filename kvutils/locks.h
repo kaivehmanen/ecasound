@@ -15,7 +15,7 @@ class ATOMIC_INTEGER {
 
  public:
 
-  int read(void) const {
+  int get(void) const {
     int temp;
     pthread_mutex_lock(&mutex_rep);
     temp = value_rep;
@@ -23,15 +23,39 @@ class ATOMIC_INTEGER {
     return(temp);
   }
 
-  void write(int value) {
+  void set(int value) {
     pthread_mutex_lock(&mutex_rep);
     value_rep = value;
     pthread_mutex_unlock(&mutex_rep);
   }
 
+  void add(int value) {
+    pthread_mutex_lock(&mutex_rep);
+    value_rep += value;
+    pthread_mutex_unlock(&mutex_rep);
+  }
+
+  void subtract(int value) {
+    pthread_mutex_lock(&mutex_rep);
+    value_rep -= value;
+    pthread_mutex_unlock(&mutex_rep);
+  }
+
+  void increment(void) {
+    pthread_mutex_lock(&mutex_rep);
+    ++value_rep;
+    pthread_mutex_unlock(&mutex_rep);
+  }
+
+  void decrement(void) {
+    pthread_mutex_lock(&mutex_rep);
+    --value_rep;
+    pthread_mutex_unlock(&mutex_rep);
+  }
+
   ATOMIC_INTEGER(int value) {
     pthread_mutex_init(&mutex_rep, NULL);
-    write(value);
+    set(value);
   }
  
   ~ATOMIC_INTEGER(void) {
