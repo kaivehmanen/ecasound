@@ -49,7 +49,8 @@ AUDIO_IO_JACK::AUDIO_IO_JACK (void) {
 }
 
 AUDIO_IO_JACK::~AUDIO_IO_JACK(void) { 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) destructor");
+  // ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) destructor");
+  if (is_open() == true) close();
 }
 
 AUDIO_IO_MANAGER* AUDIO_IO_JACK::create_object_manager(void) const {
@@ -116,17 +117,26 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
   }
 
   toggle_open_state(true);
+
+  // ---
+  DBC_ENSURE(is_open() == true);
+  // ---
 }
 
 void AUDIO_IO_JACK::close(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) close");
 
-  if (jackmgr_rep != 0) {
-    jackmgr_rep->unregister_jack_ports(myid_rep);
-    jackmgr_rep->close(myid_rep);
+  if (is_open() == true) {
+    if (jackmgr_rep != 0) {
+      jackmgr_rep->unregister_jack_ports(myid_rep);
+      jackmgr_rep->close(myid_rep);
+    }
+    toggle_open_state(false);
   }
 
-  toggle_open_state(false);
+  // ---
+  DBC_ENSURE(is_open() != true);
+  // ---
 }
 
 long int AUDIO_IO_JACK::read_samples(void* target_buffer, long int samples) {
@@ -160,6 +170,10 @@ void AUDIO_IO_JACK::stop(void) {
   if (jackmgr_rep != 0 && was_running == true) {
     jackmgr_rep->stop(myid_rep);
   }
+
+  // ---
+  DBC_ENSURE(is_running() != true);
+  // ---
 }
 
 void AUDIO_IO_JACK::start(void) { 
@@ -171,6 +185,9 @@ void AUDIO_IO_JACK::start(void) {
     jackmgr_rep->start(myid_rep);
   }
 
+  // ---
+  DBC_ENSURE(is_running() == true || jackmgr_rep == 0);
+  // ---
 }
 
 void AUDIO_IO_JACK::prepare(void) {

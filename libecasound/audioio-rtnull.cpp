@@ -42,7 +42,7 @@ void REALTIME_NULL::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
 }
 
 void REALTIME_NULL::close(void) {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) close");
+  // ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) close");
   toggle_open_state(false);
 }
 

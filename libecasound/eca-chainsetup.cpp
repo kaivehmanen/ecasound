@@ -163,13 +163,6 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
     *q = 0;
   }
 
-  /* delete aio manager objects */
-  for(vector<AUDIO_IO_MANAGER*>::iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio manager \"" + (*q)->name() + "\".");
-    delete *q;
-    *q = 0;
-  }
-
   /* delete all actual audio input objects except loop devices; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = inputs_direct_rep.begin(); q != inputs_direct_rep.end(); q++) {
     if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) { 
@@ -203,6 +196,13 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
     ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting loop device \"" + q->second->label() + "\".");
     delete q->second;
     q->second = 0;
+  }
+
+  /* delete aio manager objects */
+  for(vector<AUDIO_IO_MANAGER*>::iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
+    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio manager \"" + (*q)->name() + "\".");
+    delete *q;
+    *q = 0;
   }
 
   /* take the garbage out */

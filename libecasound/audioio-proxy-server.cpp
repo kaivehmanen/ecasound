@@ -237,7 +237,7 @@ void AUDIO_IO_PROXY_SERVER::wait_for_full(void) {
     pthread_mutex_unlock(&impl_repp->full_mutex_rep);
     full_request_rep.set(0);
 
-    if (ret < 0) {
+    if (ret != 0) {
       if (ret == -ETIMEDOUT)
 	ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_full failed; timeout");
       else
@@ -269,7 +269,7 @@ void AUDIO_IO_PROXY_SERVER::wait_for_stop(void) {
   }
   pthread_mutex_unlock(&impl_repp->stop_mutex_rep);
 
-  if (ret < 0) {
+  if (ret != 0) {
     if (ret == -ETIMEDOUT)
       ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_stop failed; timeout");
     else
@@ -299,7 +299,7 @@ void AUDIO_IO_PROXY_SERVER::wait_for_flush(void) {
       pthread_mutex_unlock(&impl_repp->flush_mutex_rep);
     }
   
-    if (ret < 0) {
+    if (ret != 0) {
       if (ret == -ETIMEDOUT)
 	ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_flush failed; timeout");
       else

@@ -73,12 +73,22 @@ int main(int argc, char *argv[])
   sigemptyset(&es_handler.sa_mask);
   es_handler.sa_flags = 0;
 
+  struct sigaction ign_handler;
+  ign_handler.sa_handler = SIG_IGN;
+  sigemptyset(&ign_handler.sa_mask);
+  ign_handler.sa_flags = 0;
+
+  /* handle the follwing signals explicitly */
   sigaction(SIGTERM, &es_handler, 0);
   sigaction(SIGINT, &es_handler, 0);
   sigaction(SIGQUIT, &es_handler, 0);
   sigaction(SIGABRT, &es_handler, 0);
+  
+  /* ignore the following signals */
+  sigaction(SIGHUP, &ign_handler, 0);
+  sigaction(SIGPIPE, &ign_handler, 0);
 
-  try { /* FIXME: remove this at some point */
+  try { /* FIXME: remove this at some point; ecasound shoult not leak exceptions anymore */
 
     COMMAND_LINE cline (argc, argv);
     parse_command_line(cline);
@@ -124,20 +134,20 @@ int main(int argc, char *argv[])
     }
     catch(ECA_ERROR& e) {
       /* problems with ECA_SESSION constructor (...parsing 'cline' options) */
-      cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+      std::cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
       clean_exit(127);
     }
 
   }
   catch(...) {
-    cerr << "---\nCaught an unknown exception! (1)\n";
-    cerr << "This is a severe programming error that should be reported!\n";
+    std::cerr << "---\nCaught an unknown exception! (1)\n";
+    std::cerr << "This is a severe programming error that should be reported!\n";
     global_error_no = 1;
   }
 
   ecadebug->flush();
 
-//    cerr << "Normal exit..." << endl;
+  // std::cerr << "Normal exit..." << endl;
 
   clean_exit(global_error_no);
 }
@@ -178,7 +188,7 @@ void parse_command_line(COMMAND_LINE& cline) {
  * called.
  */
 void clean_exit(int n) {
-//    cerr << "Clean exit..." << endl;
+  // std::cerr << "Clean exit..." << endl;
   ecadebug->flush();
   if (global_control_deleted == false) {
     global_control_deleted = true;
@@ -209,7 +219,7 @@ void clean_exit(int n) {
  * Signal handling call back.
  */
 void signal_handler(int signum) {
-//    cerr << "<-- Caught a signal... cleaning up." << endl << endl;
+  // std::cerr << "<-- Caught a signal... cleaning up." << endl << endl;
   clean_exit(128);
 }
 
@@ -252,13 +262,13 @@ void start_iactive(ECA_SESSION* param) {
 	ctrl->print_last_error();
 	ctrl->print_last_value();
 	if (cmd == "quit" || cmd == "q") {
-	  cerr << "---\nExiting...\n";
+	  std::cerr << "---\nExiting...\n";
 	  break;
 	}
       }
       catch(...) {
-	cerr << "---\nCaught an unknown exception! (2)\n";
-	cerr << "This is a severe programming error that should be reported!\n";
+	std::cerr << "---\nCaught an unknown exception! (2)\n";
+	std::cerr << "This is a severe programming error that should be reported!\n";
 	global_error_no = 1;
       }
     }
@@ -288,14 +298,14 @@ void start_iactive_readline(ECA_SESSION* param) {
 	ctrl->print_last_error();
 	ctrl->print_last_value();
 	if (str == "quit" || str == "q") {
-	  cerr << "---\nExiting...\n";
+	  std::cerr << "---\nExiting...\n";
 	  free(cmd); cmd = 0;
 	  break;
 	}
       }
       catch(...) {
-	cerr << "---\nCaught an unknown exception! (3)\n";
-	cerr << "This is a severe programming error that should be reported!\n";
+	std::cerr << "---\nCaught an unknown exception! (3)\n";
+	std::cerr << "This is a severe programming error that should be reported!\n";
 	global_error_no = 1;
       }
       if (cmd != 0) {
@@ -361,26 +371,26 @@ char* ecasound_command_generator (char* text, int state) {
       list_index = 0;
       p = map_ref.begin();
       len = strlen (text);
-      //      cerr << "First:" << p->first << ",";
+      // std::cerr << "First:" << p->first << ",";
   }
   // Return the next name which partially matches from the command list
   while (p != map_ref.end()) {
       cmd = p->first;
       list_index++;
-      //      cerr << "Cmd:" << cmd << " (" << list_index << "),";
+      //  std::cerr << "Cmd:" << cmd << " (" << list_index << "),";
       ++p;
       if (p != map_ref.end()) {
-	//	cerr << text << " = " << cmd << "\n";
+	// std::cerr << text << " = " << cmd << "\n";
 	//	if (cmd.compare(text, 0, len) == cmd.size() - len) {
 	string hyphenstr = string_search_and_replace(text, '_', '-');
 	if (strncmp(hyphenstr.c_str(), cmd.c_str(), len) == 0) {
-  	  //	  cerr << "Len: " << len << " - compare returns: " << cmd.compare(text, 0, len) << ".\n";
+  	  // std::cerr << "Len: " << len << " - compare returns: " << cmd.compare(text, 0, len) << ".\n";
 	  return(strdup(cmd.c_str()));
 	}
       }
       //      cmd.find_first_of(text, 0, len) != string::npos)
   }
-  //  cerr << "NULL";
+  // std::cerr << "NULL";
   // no names matched, return null
   return ((char *)0);
 }

@@ -90,6 +90,7 @@ public:
 
 private:
 
+  void set_node_connection(jack_node_t* node, bool connect);
   void connect_node(jack_node_t* node);
   void disconnect_node(jack_node_t* node);
 
@@ -116,6 +117,7 @@ private:
 
   bool active_rep;
   bool open_rep;
+  bool shutdown_request_rep;
 
   int node_callback_counter_rep;
  
@@ -128,7 +130,8 @@ private:
 
   std::vector<jack_port_data_t> inports_rep;
   std::vector<jack_port_data_t> outports_rep;
-  
+
+  long int samplerate_rep;
   long int cb_nframes_rep;
   long int cb_allocated_frames_rep;
 };
