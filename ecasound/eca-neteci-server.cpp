@@ -473,7 +473,7 @@ void ECA_NETECI_SERVER::handle_eci_command(const string& cmd, struct ecasound_ne
   retstr += " ";
 
   /* 5. add return value */
-  retstr += "\r\n\r\n";
+  retstr += "\r\n\r\n"; /* FIXME: why two? */
   retstr += retvalue;
   
   res = pthread_mutex_unlock(state_repp->lock);
