@@ -303,31 +303,30 @@ void make_human(int length, unsigned int *min, unsigned char *sec) {
 } 
 
 void print_help(char *name) { 
-  printf("Usage: %s [-ahtsfmbcru] FILE1 [FILE2] [FILEn]\n 
-       -h      Prints this usage message.  (help)
-       -a[:]bits,channels,rate     Changes the format assumed by default 
-                                   for headerless data.  (adjust)
-       -t      Prints the summed length of all the files processed.  (total)
-                 (Ignored if with -s) 
-       -s      Enables script mode: One info type per file per line.   (script)
-                 (Defaults to length in secs.) 
-       -f      With -s will return the format string as info, alone it will 
-               add it to the main display.  (format)
-           -b  If -s and -f are enabled with this the info printed will be 
-              the sample's bitwidth.  (bits)
-           -c  If -s and -f are enabled with this the info printed will be 
-               the channel count.  (channel count)
-           -r  If -s and -f are enabled with this the info printed will be 
-               the sampling rate.  (rate)
-       -m      Will print human computable time as in main display but in 
-               batch fashion.  (minutes)
-                 (Only with -s)
-       -u      This batchmode option returns the length of specified files 
-               in samples. (Smallest Unit)
-               (This information is worthless if you don't know the sampling 
-                rate of the file.) (Only with -s)
-   (Note that out of context options will be ignored.)\n\n",
-         name);
+  printf("Usage: %s [-ahtsfmbcru] FILE1 [FILE2] [FILEn]\n "
+       "\t-h      Prints this usage message.  (help)\n"
+       "\t-a[:]bits,channels,rate     Changes the format assumed by default \n"
+       "\t                            for headerless data.  (adjust)\n"
+       "\t-t      Prints the summed length of all the files processed.  (total)\n"
+       "\t        (Ignored if with -s) \n"
+       "\t-s      Enables script mode: One info type per file per line.   (script)\n"
+       "\t        (Defaults to length in secs.) \n"
+       "\t-f      With -s will return the format string as info, alone it will \n"
+       "\t        add it to the main display.  (format)\n"
+       "\t    -b  If -s and -f are enabled with this the info printed will be \n"
+       "\t        the sample's bitwidth.  (bits)\n"
+       "\t    -c  If -s and -f are enabled with this the info printed will be \n"
+       "\t        the channel count.  (channel count)\n"
+       "\t    -r  If -s and -f are enabled with this the info printed will be \n"
+       "\t        the sampling rate.  (rate)\n"
+       "\t-m      Will print human computable time as in main display but in \n"
+       "\t        batch fashion.  (minutes)\n"
+       "\t        (Only with -s)\n"
+       "\t-u      This batchmode option returns the length of specified files \n"
+       "\t        in samples. (Smallest Unit)\n"
+       "\t        (This information is worthless if you don't know the sampling \n"
+       "\t        rate of the file.) (Only with -s)\n"
+       "(Note that out of context options will be ignored.)\n\n", name);
 }
 
 void print_usage(char *name) {
