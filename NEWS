@@ -21,12 +21,12 @@ Last officially released version is -*> v2.0.3 *-
 	- note: major changes to effect preset system which 
 		break some old preset definitions
 	- edi-entries: edi-3
-	- added: ecasound-config - --ldflags and --prefix for 
+	- added: ecasound-config - --ldflags and --prefix
 	- added: engine profiling info (printed to stderr)
 	- added: -z:multitrack, -z:nomultitrack for forced enabling
 		 and disabling of multitrack-mode
 	- added: variable-like preset parameters; it's now possible
-		 to bind one preset parameter to multiple chainops
+		 to bind one preset parameter to multiple chainops'
 		 parameters (control multiple settings with one
 		 parameter)
 	- added: support for describing preset parameters (edi-3)
