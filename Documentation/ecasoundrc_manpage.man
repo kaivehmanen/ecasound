@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "02\&.03\&.2001" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "06\&.03\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -24,7 +24,7 @@ are separated with either \'=\' or \' \'\&. Lines beginning with a
 .IP 
 .IP "midi-device" 
 MIDI-device\&. If the device name is given in \fIrawmidi,/dev/midi*\fP 
-format, OSS/Linux os OSS/Lite drivers are used\&. 
+format, OSS/Linux or OSS/Lite drivers are used\&. 
 Device \fIrawmidi,/dev/snd/midiCxDy\fP opens an ALSA raw-MIDI 
 device with card number \'x\' and device number \'y\'\&. 
 See ecasound(5) man page (the \'-Md option) for more info\&.
@@ -55,10 +55,10 @@ that support it\&. Defaults to \fIfalse\fP\&.
 .IP 
 .IP "default-to-precise-sample-rates" 
 Whether to ignore sample rate differences (and possibly avoid 
-resampling)\&. Curretly only affects OSS-devices\&. Defaults to \fIfalse\fP\&.
+resampling)\&. Currently only affects OSS-devices\&. Defaults to \fIfalse\fP\&.
 .IP 
 .IP "resource-directory" 
-Directory for ecasound configuration files\&. 
+Directory for global ecasound configuration files\&. 
 Defaults to \fI{prefix-dir}/share/ecasound\fP\&.
 .IP 
 .IP "resource-file-genosc-envelopes" 
@@ -68,6 +68,14 @@ resource directory\&. Defaults to \fIgeneric_oscillators\fP\&.
 .IP "resource-file-effect-presets" 
 Configuration file for effect presets\&. Is located in the 
 resource directory\&. Defaults to \fIeffect_presets\fP\&.
+.IP 
+.IP "user-resource-directory" 
+Directory for user-specific ecasound configuration files\&.
+If this directory exists, ecasound will search for 
+filenames defined assigned to global resources (specified 
+with resource-file-*)\&. Defaults to \fI~/ecasound-config\fP\&.
+.IP 
+Defaults to \fI{prefix-dir}/share/ecasound\fP\&.
 .IP 
 .IP "internal-plugin-directory" 
 Directory containing ecasound\'s internal plugins\&. Defaults to \fI{prefix-dir}/lib/ecasound-plugins\fP\&.

@@ -1,858 +1,497 @@
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-NNAAMMEE
-       ecasound-iam - ecasound interactive mode
-
-SSYYNNOOPPSSIISS
-DDEESSCCRRIIPPTTIIOONN
-       Ecasound  library  contains  an  interpreter  module  that
-       understands a set of commands aimed at controlling various
-       library services.  This is called the ecasound interactive
-       mode (EIAM). All programs linked to ecasound  library  can
-       use this facility.
-
-       A special case of EIAM use is ecasound's control interface
-       (ECI), which is a small library providing easy  access  to
-       the  EIAM  commands from outside libecasound. When issuing
-       EIAM commands using ECI, it's possible that commands  also
-       return information. Currently supported return value types
-       are: strings [s], list of strings [S], integers [i],  long
-       integers  [li] and floating-point numbers [f]. These defi-
-       nitions are used throughout this document.  Commands  that
-       do not return anything are marked with [-].
-
-
-GGEENNEERRAALL
-       quit, q
-              Quit  ecasound session. What this means in practice
-              depends on the client  (library  throws  an  excep-
-              tion). _[_-_]
-
-
-       start, t
-              Processing is started (play). _[_-_]
-
-
-       stop, s
-              Stop processing. _[_-_]
-
-
-       run    Like  'start'  but  blocks until processing is fin-
-              ished. _[_-_]
-
-
-       debug 'debug-level'
-              Set  debug  level  to  'debug-level'.  Notice  that
-              client programs can reimplement the debug routines.
-              _[_-_]
-
-
-       help', 'h'
-              Help! _[_-_]
-
-
-
-GGLLOOBBAALL
-
-
-
-
-                            14.02.2001                          1
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-       rewind 'time-in-seconds', rw 'time-in-seconds'
-              Rewind the current  position  by  'time-in-seconds'
-              seconds. _[_-_]
-
-
-       forward 'time-in-seconds', fw 'ttime-in-seconds'
-              The  current position is forwarded by 'time-in-sec-
-              onds' seconds. _[_-_]
-
-
-       setpos 'time-in-seconds', set-position 'time-in-seconds'
-              Sets the current position to 'time-in-seconds' sec-
-              onds from the _[_-_] beginning.
-
-
-       get-position
-              Returns the current position in seconds. _[_f_]
-
-
-       get-position
-              Returns   the  chainsetup  length  in  seconds  (if
-              known). _[_f_]
-
-
-       status, st
-              General status info. _[_s_]
-
-
-       engine-status
-              Returns a string describing the engine status (run-
-              ning, stopped, finished, error, not ready). _[_s_]
-
-
-
-DDIIRREECCTT AARRGGUUMMEENNTTSS
-       One powerful feature of interactive-mode is that it under-
-       stands ecasound's command-line syntax  directly.  This  is
-       often  the  easiest  way  to  add  effects  and files. For
-       instance, command "-efb:400,200"  means  that  a  bandpass
-       filter  is  added  to  the  currently selected chainsetup-
-       chains combination, with initial  parameters  400  (center
-       frequency) and 200 (width in Hz).
-
-
-CCHHAAIINNSSEETTUUPPSS
-       Chainsetup  is  the central data object. All other objects
-       (inputs, outputs,  chains,  etc)  are  connected  to  some
-       chainsetup. There can be many chainsetups but only one can
-       be  connected.  Similarly  only  one  chainsetup  can   be
-       selected.  If  not otherwise specified operations are done
-       on the selected chainsetup. Some operations  also  require
-       that selected chainsetup is not connected.
-
-
-
-
-
-                            14.02.2001                          2
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-       cs-add 'name'
-              Adds  a  new chainsetup with name 'name'. 'name' is
-              now the selected chainsetup. _[_-_]
-
-
-       cs-remove
-              Removes currently selected chainsetup. _[_-_]
-
-
-       cs-select 'name'
-              Selects chainsetup 'name'. _[_-_]
-
-
-       cs-index-select 'cs_index'
-              Selects a chainsetup based on a short index string.
-              Chainsetup  names  can be rather long. This command
-              can be used  to  avoid  typing  these  long  names.
-              'cs_index'  format  is  "c<number>".  You can get a
-              list of all chainsetups (and  their  indexes)  with
-              the 'cs-status' command. _[_-_]
-
-
-       cs-selected
-              Returns  the name of currently selected chainsetup.
-              _[_s_]
-
-
-       cs-load 'filename'
-              Adds a new  chainsetup  by  loading  it  from  file
-              'filename'.   'filename' is now the selected chain-
-              setup. _[_-_]
-
-
-       cs-save
-              Saves the currently selected chainsetup to file. If
-              chainsetup  was  loaded from a file, the saved ver-
-              sion will replace the original. If it doesn't  have
-              a   default   filename,   it's   saved  to  "chain-
-              setup_name.ecs". _[_-_]
-
-
-       cs-save-as 'filename'
-              Saves currently selected chainsetup to file  'file-
-              name'. _[_-_]
-
-
-       cs-edit
-              Currently  selected chainsetup is saved to a tempo-
-              rary file. This file is loaded to an external  edi-
-              tor  (see ecasoundrc(5)). After editing, the chain-
-              setup is loaded back to ecasound. _[_-_]
-
-
-
-
-
-
-                            14.02.2001                          3
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-       cs-is-valid
-              Whether  currently  selected  chainsetup  is  valid
-              (=can be connected)? _[_i_]
-
-
-       cs-connect
-              Connect  currently  selected  chainsetup to engine.
-              Only one chainsetup can be connected at a time. _[_-_]
-
-
-       cs-disconnect
-              Disconnect currently connected chainsetup. _[_-_]
-
-
-       cs-connected
-              Returns the name of currently connected chainsetup.
-              _[_s_]
-
-
-       cs-length 'seconds'
-              Set processing time in seconds (doesn't have to  be
-              an integer value). _[_-_]
-
-
-       cs-loop
-              Enable looping. When processing is finished, engine
-              will start again from the initial position. _[_-_]
-
-
-       cs-set Interpret general chainsetup  parameters  like  for
-              example  "-b"  (buffersize),  "-m"  (mixmode), "-n"
-              (name), etc.  See ecasound(1) for more info. _[_-_]
-
-
-       cs-format 'bits,channels,sample_rate'
-              Set the default  sample  parameters  for  currently
-              selected  chainsetup.  For example cd-quality audio
-              would be "16,2,44100". This does the same  as  com-
-              mand-line argument "-f" (see ecasound(1)). _[_-_]
-
-
-       cs-status, cs
-              Print status info about all chainsetups. _[_s_]
-
-
-
-CCHHAAIINNSS
-       Chain is a simple signal flow abstraction. Every chain has
-       one input and one output. All chain  operators  and  their
-       controllers  are  attached to chains. Chains can be muted,
-       unmuted and be bypassed.  If  not  otherwise  stated,  all
-       operations are done to currently selected chainsetup.
-
-
-
-
-
-                            14.02.2001                          4
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-       c-add 'cname1,...,cnameN'
-              Adds  a  set  of chains. Added chains are automati-
-              cally selected. _[_-_]
-
-
-       c-select 'cname1,...,cnameN'
-              Selects chains. Other chains are automatically des-
-              elected. _[_-_]
-
-
-       c-deselect 'cname1,...,cnameN'
-              Deselects chains. _[_-_]
-
-
-       c-select-all
-              Selects all chains. _[_-_]
-
-
-       c-select-add 'cname1,...,cnameN'
-              Selects more chains. _[_-_]
-
-
-       c-selected
-              Returns a list of selected chains. _[_S_]
-
-
-       c-list Returns a list of all chains. _[_S_]
-
-
-       c-remove
-              Removes selected chains. _[_-_]
-
-
-       c-clear
-              Clear  selected chains by removing all chain opera-
-              tors and controllers.  Doesn't  change  how  chains
-              are connected to inputs and outputs. _[_-_]
-
-
-       c-name 'new_name'
-              Renames  the  selected  chain. When using this com-
-              mand, only one chain must selected. _[_-_]
-
-
-       c-muting
-              Toggle chain muting. When chain is muted, all  data
-              that goes through is muted. _[_-_]
-
-
-       c-bypass
-              Toggle  chain  bypassing.  When  chain is bypassed,
-              sample data is passed through untouched. _[_-_]
-
-
-
-
-
-                            14.02.2001                          5
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-       c-forward 'time_in_seconds', c-fw 'time_in_seconds'
-              Inputs and outputs connected to selected chains are
-              forwarded by 'time-in-seconds' seconds. Time should
-              be given as a floating point value  (eg.  0.001  is
-              the same as 1ms). If audio objecst are connected to
-              multiple selected chains, they  will  be  forwarded
-              multiple times. _[_-_]
-
-
-       c-rewind 'time_in_seconds', c-rw 'time_in_seconds'
-              Inputs and outputs connected to selected chains are
-              rewinded by 'time-in-seconds' seconds. Time  should
-              be  given  as  a floating point value (eg. 0.001 is
-              the same as 1ms). If audio objecst are connected to
-              multiple  selected  chains,  they will be forwarded
-              multiple times. _[_-_]
-
-
-       c-setpos 'time_in_seconds'
-              Set position of all inputs and outputs connected to
-              selected chains to 'time_in_seconds'. _[_-_]
-
-
-       c-status
-              Print status info about all chains. _[_s_]
-
-
-
-AAUUDDIIOO IINNPPUUTT//OOUUTTPPUUTT OOBBJJEECCTTSS
-       If  not  otherwise stated, all operations are done to cur-
-       rently selected chainsetup.
-
-
-
-       aio-add-input 'input_format_string'
-              Adds a new input object. See ecasound(1)  man  page
-              for  more  info  about  the  argument  format ('-i'
-              option). _[_-_]
-
-
-       aio-add-output 'output_format_string'
-              Adds a new output object. See ecasound(1) man  page
-              for  more  info  about  the  argument  format ('-o'
-              option). If argument is omitted, a  default  output
-              device is added (see ecasoundrc(5)). _[_-_]
-
-
-       aio-select 'aobject_name'
-              Selects  an  audio object. 'aobject_name' refers to
-              the string  used  when  creating  the  object  (see
-              above).  Note!  All input object names are required
-              to be unique. Similarly all output names need to be
-              unique. However, it's possible that the same object
-              name exists both as an input and as an  output.  If
-
-
-
-                            14.02.2001                          6
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-              this  is the case, only the last matching object is
-              selected ( normally this is the output). _[_-_]
-
-
-       aio-select-input 'aobject_name'
-              Selects an audio input. _[_-_]
-
-
-       aio-select-output 'aobject_name'
-              Selects an audio output. _[_-_]
-
-
-       aio-index-select 'aobject_index'
-              Select some audio object based  on  a  short  index
-              string.  Especially  file names can be rather long.
-              This command can be used to avoid typing these long
-              names when selecting audio objects. 'aobject_index'
-              format is  "i<number>"  for  inputs  and  similarly
-              "o<number>" for outputs.  You can get a list of all
-              audio objects and their indexes with the  'aio-sta-
-              tus' and 'aio-list' commands. _[_-_]
-
-
-       aio-selected
-              Returns  the  name  of the currently selected audio
-              object. _[_r_]
-
-
-       aio-attach
-              Attaches the currently selected audio object to all
-              selected chains. _[_-_]
-
-
-       aio-remove
-              Removes  the  currently  selected audio object from
-              the chainsetup. _[_-_]
-
-
-       aio-status
-              Audio  object  status  (index  strings,   position,
-              length, etc). _[_s_]
-
-
-       aio-forward 'time_in_seconds', aio-fw 'time_in_seconds'
-              Selected audio object is forwarded by 'time-in-sec-
-              onds' seconds.  Time should be given as a  floating
-              point value (eg. 0.001 is the same as 1ms). _[_-_]
-
-
-       aio-rewind 'time_in_seconds', aio-rw 'time_in_seconds'
-              Selected  audio object is rewinded by 'time-in-sec-
-              onds' seconds.  Time should be given as a  floating
-              point value (eg. 0.001 is the same as 1ms). _[_-_]
-
-
-
-
-                            14.02.2001                          7
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-       aio-setpos 'time_in_seconds'
-              Set audio object position to 'time_in_seconds'. _[_-_]
-
-
-       aio-get-position
-              Returns the audio object position in seconds. _[_f_]
-
-
-       aio-get-length
-              Returns the audio object length in seconds. _[_f_]
-
-
-       aio-wave-edit
-              The currently selected audio object is loaded  into
-              an external wave editor (see ecasoundrc(5)). _[_-_]
-
-
-       aio-register
-              Prints a list of registered audio object types. _[_s_]
-
-
-       aio-input-list
-              **not implemented** Returns a  list  of  all  input
-              objects. _[_S_]
-
-
-       aio-output-list
-              **not  implemented**  Returns  a list of all output
-              objects. _[_S_]
-
-
-
-CCHHAAIINN OOPPEERRAATTOORRSS
-       Chain operators are used to  process  and  analyze  sample
-       data.   They  are  attached  to  chains.  If not otherwise
-       stated, currently selected chainsetup and chain are  used.
-       Also, 'chainop_id' and 'param_id' are used to select chain
-       operators and their  parameters.  First  valid  value  for
-       these parameters is 1.
-
-
-       cop-add 'cop_format_string'
-              Adds  a  new  chain  operator.  Argument  format is
-              "-<id_string>:par1,...,parN". In addition to normal
-              chain  operators, this commmand can also be used to
-              add effect presets and various  plugins.  See  eca-
-              sound(1) man page for more info. _[_-_]
-
-
-       cop-select 'param_id'
-              Selects a chain operator. _[_-_]
-
-
-
-
-
-
-                            14.02.2001                          8
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-       cop-remove
-              Removes the selected chain operator. _[_-_]
-
-
-       cop-set 'chainop_id, param_id, value'
-              Changes the value of a single chain operator param-
-              eter. Unlike other chain  operator  commands,  this
-              can also be used during processing. _[_-_]
-
-
-       copp-select 'param_id'
-              Selects a chain operator parameter. _[_-_]
-
-
-       copp-set 'value'
-              Sets the selected parameter value to 'value'. _[_-_]
-
-
-       copp-get
-              Returns the selected parameter value. _[_f_]
-
-
-       cop-status
-              Returns info about chain operator status. _[_s_]
-
-
-       cop-list
-              **not  implemented**  Returns  a  list of all chain
-              operators attached to the currently selected chain.
-              _[_S_]
-
-
-       cop-register
-              Prints a list of registered chain operators. _[_s_]
-
-
-       preset-register
-              Prints a list of registered effect presets. _[_s_]
-
-
-       ladspa-register
-              Prints a list of registered LADSPA-plugins. _[_s_]
-
-
-CCOONNTTRROOLLLLEERRSS
-       Controllers  are used to control individual chain operator
-       parameters.  They are attached to chains. If not otherwise
-       stated, currently selected chainsetup and chains are used.
-
-
-       cop-add-controller 'copc_format_string'
-              Adds a new controller and attach  it  to  currently
-              selected   chain   operator.   Argument  format  is
-              "-<id_string>:<param_id>,<range_low>,
-
-
-
-                            14.02.2001                          9
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-              <range_high>,par1,...,parN".   See  ecasound(1) man
-              page for more info. _[_-_]
-
-
-       cop-select-controller 'param_id'
-              Selects a controller. _[_-_]
-
-
-       cop-remove-controller
-              Removes the selected controller. _[_-_]
-
-
-       ctrl-status
-              Returns info about controller status. _[_s_]
-
-
-       ctrl-list
-              **not implemented** Returns  a  list  of  all  con-
-              trollers  attached to the currently selected chain.
-              _[_S_]
-
-
-       ctrl-register
-              Prints a list of registered controllers. _[_s_]
-
-
-
-OOBBJJEECCTT MMAAPPSS
-       Object maps are a central repositories for  commonly  used
-       objects.   When  object  is registered to a map, a regular
-       expression is attached to it. When object map  receives  a
-       request  for  a new object, it goes through all registered
-       regular expressions, and returns an object attached to the
-       matching  expression.  Object maps can also provide a list
-       of all registered objects.
-
-
-       map-aio-list
-              **not  implemented**  Returns  a  list  of  regular
-              expressions matching registered audio object types.
-              _[_S_].
-
-
-       map-aio-device-list
-              **not  implemented**  Returns  a  list  of  regular
-              expressions   matching  registered  realtime  audio
-              object types. _[_S_].
-
-
-       map-aio-type 'regexp'
-              **not implemented** Returns the type name  handling
-              regular expression 'regexp'. _[_s_].
-
-
-
-
-
-                            14.02.2001                         10
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-       map-cop-list
-              **not  implemented**  Returns  a  list  of  regular
-              expressions (chainop prefixes) matching  registered
-              chain operator types types. _[_S_].
-
-
-       map-cop-type 'regexp'
-              **not  implemented** Returns the type name handling
-              regular expression 'regexp'. _[_s_].
-
-
-       map-ctrl-list
-              **not  implemented**  Returns  a  list  of  regular
-              expressions  (controller  prefixes) matching regis-
-              tered controller types types. _[_S_].
-
-
-       map-ctrl-type 'regexp'
-              **not implemented** Returns the type name  handling
-              regular expression 'regexp'. _[_s_].
-
-
-       map-preset-list
-              **not  implemented**  Returns  a  list  of  regular
-              expressions (preset names) matching available oper-
-              ator presets. _[_S_].
-
-
-       map-ladspa-list
-              **not  implemented**  Returns  a  list  of  regular
-              expressions (LADSPA  unique  id  numbers)  matching
-              registered LADSPA plugins. _[_S_].
-
-
-
-DDUUMMPP CCOOMMMMAANNDDSS
-       The  following dump commands are not meant for normal use.
-       Their primary purpose is to provide an  easy  way  to  get
-       internal state information from libecasound. All dump com-
-       mands output a single line with syntax "key value" to  the
-       selected output stream (defaults to stdout).
-
-
-       dump-target 'filename'
-              Set target stream for dumping. _[_-_]
-
-
-       dump-status
-              Dumps  engine  status - 'running', 'stopped', 'fin-
-              ished' or 'notready'. _[_-_]
-
-
-       dump-position
-              Dumps the global position. Printed in seconds using
-
-
-
-                            14.02.2001                         11
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-              a floating-point representation. _[_-_]
-
-
-       dump-length
-              Dumps  the  overall  processing  length. Printed in
-              seconds using a floating-point representation. _[_-_]
-
-
-       dump-cs-status
-              Dumps status  string  for  the  currently  selected
-              chainsetup  -  'connected',  'selected' or an empty
-              string. _[_-_]
-
-
-       dump-c-selected
-              Dumps the name of currently selected chain. _[_-_]
-
-
-       dump-aio-selected
-              Dumps label of currently selected audio object.  If
-              no object is selected, dumps an empty string. _[_-_]
-
-
-       dump-aio-position
-              Dumps position of currently selected audio objects.
-              Printed in seconds, using a  floating-point  repre-
-              sentation. _[_-_]
-
-
-       dump-aio-length
-              Dumps  length  of  currently selected audio object.
-              Printed in seconds, using a  floating-point  repre-
-              sentation. _[_-_]
-
-
-       dump-aio-open-state
-              Dumps  audio  object  state  info. Either 'open' or
-              'closed'. _[_-_]
-
-
-       dump-cop-value 'chainop,param'
-              Dumps chain operator parameter value. 'chainop' and
-              'param'  are  operator  and  parameter index values
-              (1...n). _[_-_]
-
-
-SSEEEE AALLSSOO
-              ecasound(1), qtecasound  (1),  ecatools  (1),  eca-
-              soundrc(5)
-
-
-AAUUTTHHOORR
-              Kai Vehmanen, <kaiv@wakkanet.fi>
-
-
-
-
-                            14.02.2001                         12
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            14.02.2001                         13
-
-
+.TH "ecasound-iam" "1" "14\&.02\&.2001" "" "Multimedia software" 
+.PP 
+.SH "NAME" 
+ecasound-iam \- ecasound interactive mode
+.SH "SYNOPSIS" 
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+Ecasound library contains an interpreter module that understands 
+a set of commands aimed at controlling various library services\&. 
+This is called the ecasound interactive mode (EIAM)\&. All programs 
+linked to ecasound library can use this facility\&.
+.PP 
+A special case of EIAM use is ecasound\'s control interface (ECI), 
+which is a small library providing easy access to the EIAM 
+commands from outside libecasound\&. When issuing EIAM commands using 
+ECI, it\'s possible that commands also return information\&. Currently
+supported return value types are: strings [s], list of strings [S],
+integers [i], long integers [li] and floating-point numbers [f]\&. These
+definitions are used throughout this document\&. Commands that do not
+return anything are marked with [-]\&.
+.PP 
+.SH "GENERAL" 
+.IP "quit, q" 
+Quit ecasound session\&. What this means in practice depends on the 
+client (library throws an exception)\&. \fI[-]\fP
+.IP 
+.IP "start, t" 
+Processing is started (play)\&. \fI[-]\fP
+.IP 
+.IP "stop, s" 
+Stop processing\&. \fI[-]\fP
+.IP 
+.IP "run" 
+Like \'start\' but blocks until processing is finished\&. \fI[-]\fP
+.IP 
+.IP "debug \'debug-level\'" 
+Set debug level to \'debug-level\'\&. Notice that client programs can
+reimplement the debug routines\&. \fI[-]\fP
+.PP 
+.IP "help\', \'h\'" 
+Help! \fI[-]\fP
+.PP 
+.IP 
+.SH "GLOBAL" 
+.IP 
+.PP 
+.IP "rewind \'time-in-seconds\', rw \'time-in-seconds\'" 
+Rewind the current position by \'time-in-seconds\' seconds\&. \fI[-]\fP
+.PP 
+.IP "forward \'time-in-seconds\', fw \'ttime-in-seconds\'" 
+The current position is forwarded by \'time-in-seconds\' seconds\&. \fI[-]\fP
+.PP 
+.IP "setpos \'time-in-seconds\', set-position \'time-in-seconds\'" 
+Sets the current position to \'time-in-seconds\' seconds from the \fI[-]\fP
+beginning\&.
+.PP 
+.IP "get-position" 
+Returns the current position in seconds\&. \fI[f]\fP
+.PP 
+.IP "get-position" 
+Returns the chainsetup length in seconds (if known)\&. \fI[f]\fP
+.PP 
+.IP "status, st" 
+General status info\&. \fI[s]\fP
+.PP 
+.IP "engine-status" 
+Returns a string describing the engine status (running, stopped,
+finished, error, not ready)\&. \fI[s]\fP
+.PP 
+.IP 
+.SH "DIRECT ARGUMENTS" 
+One powerful feature of interactive-mode is that it
+understands ecasound\'s command-line syntax directly\&. This 
+is often the easiest way to add effects and files\&. For instance,
+command "-efb:400,200" means that a bandpass filter is added 
+to the currently selected chainsetup-chains combination, with
+initial parameters 400 (center frequency) and 200 (width in Hz)\&.
+.IP 
+.SH "CHAINSETUPS" 
+Chainsetup is the central data object\&. All other objects (inputs,
+outputs, chains, etc) are connected to some chainsetup\&. There can be 
+many chainsetups but only one can be connected\&. Similarly only
+one chainsetup can be selected\&. If not otherwise specified operations 
+are done on the selected chainsetup\&. Some operations also require
+that selected chainsetup is not connected\&.
+.IP 
+.IP "cs-add \'name\'" 
+Adds a new chainsetup with name \'name\'\&. \'name\' is now 
+the selected chainsetup\&. \fI[-]\fP
+.PP 
+.IP "cs-remove" 
+Removes currently selected chainsetup\&. \fI[-]\fP
+.PP 
+.IP "cs-select \'name\'" 
+Selects chainsetup \'name\'\&. \fI[-]\fP
+.PP 
+.IP "cs-index-select \'cs_index\'" 
+Selects a chainsetup based on a short index string\&. Chainsetup names
+can be rather long\&. This command can be used to avoid typing
+these long names\&. \'cs_index\' format is "c<number>"\&. You can get 
+a list of all chainsetups (and their indexes) with the \'cs-status\'
+command\&. \fI[-]\fP
+.PP 
+.IP "cs-selected" 
+Returns the name of currently selected chainsetup\&. \fI[s]\fP
+.PP 
+.IP "cs-load \'filename\'" 
+Adds a new chainsetup by loading it from file \'filename\'\&. 
+\'filename\' is now the selected chainsetup\&. \fI[-]\fP
+.PP 
+.IP "cs-save" 
+Saves the currently selected chainsetup to file\&. If chainsetup was loaded
+from a file, the saved version will replace the original\&. If it doesn\'t 
+have a default filename, it\'s saved to "chainsetup_name\&.ecs"\&. \fI[-]\fP
+.PP 
+.IP "cs-save-as \'filename\'" 
+Saves currently selected chainsetup to file \'filename\'\&. \fI[-]\fP
+.PP 
+.IP "cs-edit" 
+Currently selected chainsetup is saved to a temporary file\&. This
+file is loaded to an external editor (see ecasoundrc(5))\&. After
+editing, the chainsetup is loaded back to ecasound\&. \fI[-]\fP
+.PP 
+.IP "cs-is-valid" 
+Whether currently selected chainsetup is valid (=can be connected)? \fI[i]\fP
+.PP 
+.IP "cs-connect" 
+Connect currently selected chainsetup to engine\&. Only one chainsetup
+can be connected at a time\&. \fI[-]\fP
+.PP 
+.IP "cs-disconnect" 
+Disconnect currently connected chainsetup\&. \fI[-]\fP
+.PP 
+.IP "cs-connected" 
+Returns the name of currently connected chainsetup\&. \fI[s]\fP
+.PP 
+.IP "cs-length \'seconds\'" 
+Set processing time in seconds (doesn\'t have to be an integer 
+value)\&. \fI[-]\fP
+.PP 
+.IP "cs-loop" 
+Enable looping\&. When processing is finished, engine will start 
+again from the initial position\&. \fI[-]\fP
+.PP 
+.IP "cs-set" 
+Interpret general chainsetup parameters like for example
+"-b" (buffersize), "-m" (mixmode), "-n" (name), etc\&. 
+See ecasound(1) for more info\&. \fI[-]\fP
+.PP 
+.IP "cs-format \'bits,channels,sample_rate\'" 
+Set the default sample parameters for currently selected chainsetup\&. 
+For example cd-quality audio would be "16,2,44100"\&. This does the
+same as command-line argument "-f" (see ecasound(1))\&. \fI[-]\fP
+.PP 
+.IP "cs-status, cs" 
+Print status info about all chainsetups\&. \fI[s]\fP
+.PP 
+.IP 
+.SH "CHAINS" 
+Chain is a simple signal flow abstraction\&. Every chain has one input
+and one output\&. All chain operators and their controllers are attached
+to chains\&. Chains can be muted, unmuted and be bypassed\&. If not 
+otherwise stated, all operations are done to currently selected
+chainsetup\&.
+.IP 
+.IP "c-add \'cname1,\&.\&.\&.,cnameN\'" 
+Adds a set of chains\&. Added chains are automatically selected\&. \fI[-]\fP
+.PP 
+.IP "c-select \'cname1,\&.\&.\&.,cnameN\'" 
+Selects chains\&. Other chains are automatically deselected\&. \fI[-]\fP
+.PP 
+.IP "c-deselect \'cname1,\&.\&.\&.,cnameN\'" 
+Deselects chains\&. \fI[-]\fP
+.PP 
+.IP "c-select-all" 
+Selects all chains\&. \fI[-]\fP
+.PP 
+.IP "c-select-add \'cname1,\&.\&.\&.,cnameN\'" 
+Selects more chains\&. \fI[-]\fP
+.PP 
+.IP "c-selected" 
+Returns a list of selected chains\&. \fI[S]\fP
+.PP 
+.IP "c-list" 
+Returns a list of all chains\&. \fI[S]\fP
+.PP 
+.IP "c-remove" 
+Removes selected chains\&. \fI[-]\fP
+.PP 
+.IP "c-clear" 
+Clear selected chains by removing all chain operators and controllers\&.
+Doesn\'t change how chains are connected to inputs and outputs\&. \fI[-]\fP
+.PP 
+.IP "c-name \'new_name\'" 
+Renames the selected chain\&. When using this command, only one chain must
+selected\&. \fI[-]\fP
+.PP 
+.IP "c-muting" 
+Toggle chain muting\&. When chain is muted, all data that goes through
+is muted\&. \fI[-]\fP
+.PP 
+.IP "c-bypass" 
+Toggle chain bypassing\&. When chain is bypassed, sample data is passed 
+through untouched\&. \fI[-]\fP
+.PP 
+.IP "c-forward \'time_in_seconds\', c-fw \'time_in_seconds\'" 
+Inputs and outputs connected to selected chains are forwarded 
+by \'time-in-seconds\' seconds\&. Time should be given as a floating 
+point value (eg\&. 0\&.001 is the same as 1ms)\&. If audio objecst are
+connected to multiple selected chains, they will be forwarded multiple
+times\&. \fI[-]\fP
+.PP 
+.IP "c-rewind \'time_in_seconds\', c-rw \'time_in_seconds\'" 
+Inputs and outputs connected to selected chains are rewinded by
+\'time-in-seconds\' seconds\&. Time should be given as a floating 
+point value (eg\&. 0\&.001 is the same as 1ms)\&. If audio objecst are
+connected to multiple selected chains, they will be forwarded multiple
+times\&. \fI[-]\fP
+.PP 
+.IP "c-setpos \'time_in_seconds\'" 
+Set position of all inputs and outputs connected to selected chains to
+\'time_in_seconds\'\&. \fI[-]\fP
+.PP 
+.IP "c-status" 
+Print status info about all chains\&. \fI[s]\fP
+.PP 
+.IP 
+.SH "AUDIO INPUT/OUTPUT OBJECTS" 
+If not otherwise stated, all operations are done to currently selected
+chainsetup\&.
+.IP 
+.PP 
+.IP "aio-add-input \'input_format_string\'" 
+Adds a new input object\&. See ecasound(1) man page for more info about 
+the argument format (\'-i\' option)\&. \fI[-]\fP
+.PP 
+.IP "aio-add-output \'output_format_string\'" 
+Adds a new output object\&. See ecasound(1) man page for more info about 
+the argument format (\'-o\' option)\&. If argument is omitted, 
+a default output device is added (see ecasoundrc(5))\&. \fI[-]\fP
+.PP 
+.IP "aio-select \'aobject_name\'" 
+Selects an audio object\&. \'aobject_name\' refers to the string
+used when creating the object (see above)\&. Note! All input
+object names are required to be unique\&. Similarly all output
+names need to be unique\&. However, it\'s possible that the same
+object name exists both as an input and as an output\&. If this
+is the case, only the last matching object is selected (
+normally this is the output)\&. \fI[-]\fP
+.PP 
+.IP "aio-select-input \'aobject_name\'" 
+Selects an audio input\&. \fI[-]\fP
+.PP 
+.IP "aio-select-output \'aobject_name\'" 
+Selects an audio output\&. \fI[-]\fP
+.PP 
+.IP "aio-index-select \'aobject_index\'" 
+Select some audio object based on a short index string\&. Especially file
+names can be rather long\&. This command can be used to avoid typing
+these long names when selecting audio objects\&. \'aobject_index\' format
+is "i<number>" for inputs and similarly "o<number>" for outputs\&. 
+You can get a list of all audio objects and their indexes with the
+\'aio-status\' and \'aio-list\' commands\&. \fI[-]\fP
+.PP 
+.IP "aio-selected" 
+Returns the name of the currently selected audio object\&. \fI[r]\fP
+.PP 
+.IP "aio-attach" 
+Attaches the currently selected audio object to all selected chains\&. \fI[-]\fP
+.PP 
+.IP "aio-remove" 
+Removes the currently selected audio object from the chainsetup\&. \fI[-]\fP
+.PP 
+.IP "aio-status" 
+Audio object status (index strings, position, length, etc)\&. \fI[s]\fP
+.PP 
+.IP "aio-forward \'time_in_seconds\', aio-fw \'time_in_seconds\'" 
+Selected audio object is forwarded by \'time-in-seconds\' seconds\&. 
+Time should be given as a floating point value (eg\&. 0\&.001 is the 
+same as 1ms)\&. \fI[-]\fP
+.PP 
+.IP "aio-rewind \'time_in_seconds\', aio-rw \'time_in_seconds\'" 
+Selected audio object is rewinded by \'time-in-seconds\' seconds\&. 
+Time should be given as a floating point value (eg\&. 0\&.001 is the 
+same as 1ms)\&. \fI[-]\fP
+.PP 
+.IP "aio-setpos \'time_in_seconds\'" 
+Set audio object position to \'time_in_seconds\'\&. \fI[-]\fP
+.PP 
+.IP "aio-get-position" 
+Returns the audio object position in seconds\&. \fI[f]\fP
+.PP 
+.IP "aio-get-length" 
+Returns the audio object length in seconds\&. \fI[f]\fP
+.PP 
+.IP "aio-wave-edit" 
+The currently selected audio object is loaded into an external
+wave editor (see ecasoundrc(5))\&. \fI[-]\fP
+.PP 
+.IP "aio-register" 
+Prints a list of registered audio object types\&. \fI[s]\fP
+.PP 
+.IP "aio-input-list" 
+**not implemented**
+Returns a list of all input objects\&. \fI[S]\fP
+.PP 
+.IP "aio-output-list" 
+**not implemented**
+Returns a list of all output objects\&. \fI[S]\fP
+.PP 
+.IP 
+.SH "CHAIN OPERATORS" 
+Chain operators are used to process and analyze sample data\&.
+They are attached to chains\&. If not otherwise stated,
+currently selected chainsetup and chain are used\&. Also, 
+\'chainop_id\' and \'param_id\' are used to select chain operators 
+and their parameters\&. First valid value for these parameters 
+is 1\&.
+.IP 
+.IP "cop-add \'cop_format_string\'" 
+Adds a new chain operator\&. Argument format is
+"-<id_string>:par1,\&.\&.\&.,parN"\&. In addition to normal chain operators, 
+this commmand can also be used to add effect presets and various 
+plugins\&. See ecasound(1) man page for more info\&. \fI[-]\fP
+.PP 
+.IP "cop-select \'param_id\'" 
+Selects a chain operator\&. \fI[-]\fP
+.PP 
+.IP "cop-remove" 
+Removes the selected chain operator\&. \fI[-]\fP
+.PP 
+.IP "cop-set \'chainop_id, param_id, value\'" 
+Changes the value of a single chain operator parameter\&. Unlike other
+chain operator commands, this can also be used during processing\&. \fI[-]\fP
+.PP 
+.IP "copp-select \'param_id\'" 
+Selects a chain operator parameter\&. \fI[-]\fP
+.PP 
+.IP "copp-set \'value\'" 
+Sets the selected parameter value to \'value\'\&. \fI[-]\fP
+.PP 
+.IP "copp-get" 
+Returns the selected parameter value\&. \fI[f]\fP
+.PP 
+.IP "cop-status" 
+Returns info about chain operator status\&. \fI[s]\fP
+.PP 
+.IP "cop-list" 
+**not implemented**
+Returns a list of all chain operators attached to the currently
+selected chain\&. \fI[S]\fP
+.PP 
+.IP "cop-register" 
+Prints a list of registered chain operators\&. \fI[s]\fP
+.PP 
+.IP "preset-register" 
+Prints a list of registered effect presets\&. \fI[s]\fP
+.PP 
+.IP "ladspa-register" 
+Prints a list of registered LADSPA-plugins\&. \fI[s]\fP
+.IP 
+.SH "CONTROLLERS" 
+Controllers are used to control individual chain operator parameters\&.
+They are attached to chains\&. If not otherwise stated, currently 
+selected chainsetup and chains are used\&. 
+.IP 
+.IP "cop-add-controller \'copc_format_string\'" 
+Adds a new controller and attach it to currently selected chain 
+operator\&. Argument format is "-<id_string>:<param_id>,<range_low>,
+<range_high>,par1,\&.\&.\&.,parN"\&.  See ecasound(1) man page for more 
+info\&. \fI[-]\fP
+.IP 
+.IP "cop-select-controller \'param_id\'" 
+Selects a controller\&. \fI[-]\fP
+.IP 
+.IP "cop-remove-controller" 
+Removes the selected controller\&. \fI[-]\fP
+.IP 
+.IP "ctrl-status" 
+Returns info about controller status\&. \fI[s]\fP
+.IP 
+.IP "ctrl-list" 
+**not implemented**
+Returns a list of all controllers attached to the currently
+selected chain\&. \fI[S]\fP
+.IP 
+.IP "ctrl-register" 
+Prints a list of registered controllers\&. \fI[s]\fP
+.IP 
+.IP 
+.SH "OBJECT MAPS" 
+Object maps are a central repositories for commonly used objects\&.
+When object is registered to a map, a regular expression is attached 
+to it\&. When object map receives a request for a new object, it 
+goes through all registered regular expressions, and returns an 
+object attached to the matching expression\&. Object maps can also provide
+a list of all registered objects\&. 
+.IP 
+.IP "map-aio-list" 
+**not implemented**
+Returns a list of regular expressions matching 
+registered audio object types\&. \fI[S]\fP\&.
+.IP 
+.IP "map-aio-device-list" 
+**not implemented**
+Returns a list of regular expressions matching
+registered realtime audio object types\&. \fI[S]\fP\&.
+.IP 
+.IP "map-aio-type \'regexp\'" 
+**not implemented**
+Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
+.IP 
+.IP "map-cop-list" 
+**not implemented**
+Returns a list of regular expressions (chainop prefixes) matching 
+registered chain operator types types\&. \fI[S]\fP\&.
+.IP 
+.IP "map-cop-type \'regexp\'" 
+**not implemented**
+Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
+.IP 
+.IP "map-ctrl-list" 
+**not implemented**
+Returns a list of regular expressions (controller prefixes) matching 
+registered controller types types\&. \fI[S]\fP\&.
+.IP 
+.IP "map-ctrl-type \'regexp\'" 
+**not implemented**
+Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
+.IP 
+.IP "map-preset-list" 
+**not implemented**
+Returns a list of regular expressions (preset names) matching
+available operator presets\&. \fI[S]\fP\&.
+.IP 
+.IP "map-ladspa-list" 
+**not implemented**
+Returns a list of regular expressions (LADSPA unique id numbers) matching
+registered LADSPA plugins\&. \fI[S]\fP\&.
+.IP 
+.IP 
+.SH "DUMP COMMANDS" 
+The following dump commands are not meant for normal use\&. 
+Their primary purpose is to provide an easy way to get 
+internal state information from libecasound\&. All dump
+commands output a single line with syntax "key value"
+to the selected output stream (defaults to stdout)\&. 
+.IP 
+.IP "dump-target \'filename\'" 
+Set target stream for dumping\&. \fI[-]\fP
+.IP 
+.IP "dump-status" 
+Dumps engine status - \'running\', \'stopped\', \'finished\' or \'notready\'\&. \fI[-]\fP
+.IP 
+.IP "dump-position" 
+Dumps the global position\&. Printed in seconds using a floating-point 
+representation\&. \fI[-]\fP
+.IP 
+.IP "dump-length" 
+Dumps the overall processing length\&. Printed in seconds using a floating-point 
+representation\&. \fI[-]\fP
+.IP 
+.IP "dump-cs-status" 
+Dumps status string for the currently selected chainsetup - \'connected\', 
+\'selected\' or an empty string\&. \fI[-]\fP
+.IP 
+.IP "dump-c-selected" 
+Dumps the name of currently selected chain\&. \fI[-]\fP
+.IP 
+.IP "dump-aio-selected" 
+Dumps label of currently selected audio object\&. If no object is
+selected, dumps an empty string\&. \fI[-]\fP
+.IP 
+.IP "dump-aio-position" 
+Dumps position of currently selected audio objects\&. Printed in
+seconds, using a floating-point representation\&. \fI[-]\fP
+.IP 
+.IP "dump-aio-length" 
+Dumps length of currently selected audio object\&. Printed in seconds,
+using a floating-point representation\&. \fI[-]\fP
+.IP 
+.IP "dump-aio-open-state" 
+Dumps audio object state info\&. Either \'open\' or \'closed\'\&. \fI[-]\fP
+.IP 
+.IP "dump-cop-value \'chainop,param\'" 
+Dumps chain operator parameter value\&. \'chainop\' and \'param\' are 
+operator and parameter index values (1\&.\&.\&.n)\&. \fI[-]\fP
+.IP 
+.SH "SEE ALSO" 
+.IP 
+ecasound(1), qtecasound (1), ecatools (1), ecasoundrc(5)
+.IP 
+.SH "AUTHOR" 
+.IP 
+Kai Vehmanen, <kaiv@wakkanet\&.fi>
+.IP 

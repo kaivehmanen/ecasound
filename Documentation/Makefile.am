@@ -37,13 +37,13 @@ docs: ecasound.1 ecasound_manpage.html \
 # Man pages
 
 ecasound.1: ecasound_manpage.man
-	groff -man -Tascii ecasound_manpage.man >ecasound.1
+	cp ecasound_manpage.man ecasound.1
 ecatools.1: ecatools_manpage.man
-	groff -man -Tascii ecatools_manpage.man >ecatools.1
+	cp ecatools_manpage.man ecatools.1
 ecasound-iam.1: ecasound-iam_manpage.man
-	groff -man -Tascii ecasound-iam_manpage.man >ecasound-iam.1
+	cp ecasound-iam_manpage.man ecasound-iam.1
 ecasoundrc.5: ecasoundrc_manpage.man
-	groff -man -Tascii ecasoundrc_manpage.man >ecasoundrc.5
+	cp ecasoundrc_manpage.man ecasoundrc.5
 
 ecasound_manpage.man: ecasound_manpage.yo
 	yodl2man ecasound_manpage.yo

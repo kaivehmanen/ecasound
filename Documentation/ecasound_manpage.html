@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>19.02.2001</h2>
+<h2>06.03.2001</h2>
 
 
     
@@ -58,6 +58,8 @@ line is important!
 Starts ecasound in interactive mode. In interactive mode you can
 control ecasound with simple commands ("start", "stop", "pause",
 etc.). See <a href="ecasound-iam_manpage.html">ecasound-iam(1)</a>.
+<p><p></p><dt><strong>-C</strong><dd>
+Disables ecasound's interactive mode (see '-c').
 <p><p></p><dt><strong>-d:debug_level</strong><dd>
 Set the debug level to 'debug_level'. This a bitmasked value, 
 that defaults to 3. See ECA_DEBUG class documentation for 
@@ -118,20 +120,25 @@ the correct mode automatically.
 Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
 ecasound doesn't have root priviledges. Beware! This gives better 
 performance, but can cause total lock-ups if something goes wrong.
-The 'sched_priority' can be omitted (0=emitted). If given, 
+The 'sched_priority' can be omitted (0=omitted). If given, 
 this is the static priority to the highest priority ecasound thread.
 Other ecasound threads run with priority 'sched_priority-1...n'.
+Value '-1' can be used to disable raised-priority mode.
 <p><p></p><dt><strong>-x</strong><dd>
-Truncate outputs. If this is _not_ set, ecasound opens all outputs 
-- if format allows it - in readwrite mode (-&gt; prevents truncation).
+Truncate outputs. All output object are opened in overwrite mode. 
+Any existing files will be truncated.
+<p><p></p><dt><strong>-X</strong><dd>
+Open outputs for updating. Ecasound opens all outputs - if target
+format allows it - in readwrite mode.
 <p><p></p><dt><strong>-z:feature</strong><dd>
-Enable 'feature'. '-z:db,dbsize' enables double-buffering for audio 
+Enable 'feature'. Most features can be disabled using notation 
+<em>-z:nofeatures</em>. '-z:db,dbsize' enables double-buffering for audio 
 objects that support it (dbzise=0 for default, otherwise buffer
 size in sample frames). '-z:nodb' disables double-buffering. 
-'-z:nointbuf' prevents realtime devices from doing extra internal
-buffering. This setting can reduce latency times in some
-situations. With '-z:xruns', processing will be halted if an
-under/overrun occurs. '-z:psr' enables the <em>precise-sample-rates</em> 
+'-z:intbuf' and '-z:nointbuf' control whether extra internal buffering 
+is allowed for realtime devices. Disabling this can reduce 
+latency times in some situations. With '-z:xruns', processing will be 
+halted if an under/overrun occurs. '-z:psr' enables the <em>precise-sample-rates</em> 
 mode for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>.
 <p></dl>
 <p>

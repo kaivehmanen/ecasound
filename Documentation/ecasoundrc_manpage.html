@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>02.03.2001</h2>
+<h2>06.03.2001</h2>
 
 
     
@@ -48,7 +48,7 @@
 <p><dl>
 <p><p></p><dt><strong>midi-device</strong><dd>
   	MIDI-device. If the device name is given in <em>rawmidi,/dev/midi*</em> 
-	format, OSS/Linux os OSS/Lite drivers are used. 
+	format, OSS/Linux or OSS/Lite drivers are used. 
 	Device <em>rawmidi,/dev/snd/midiCxDy</em> opens an ALSA raw-MIDI 
 	device with card number 'x' and device number 'y'. 
 	See ecasound(5) man page (the '-Md option) for more info.
@@ -72,9 +72,9 @@
 	that support it. Defaults to <em>false</em>.
 <p><p></p><dt><strong>default-to-precise-sample-rates</strong><dd> 
 	Whether to ignore sample rate differences (and possibly avoid 
-	resampling). Curretly only affects OSS-devices. Defaults to <em>false</em>.
+	resampling). Currently only affects OSS-devices. Defaults to <em>false</em>.
 <p><p></p><dt><strong>resource-directory</strong><dd> 
-  	Directory for ecasound configuration files. 
+  	Directory for global ecasound configuration files. 
   	Defaults to <em>{prefix-dir}/share/ecasound</em>.
 <p><p></p><dt><strong>resource-file-genosc-envelopes</strong><dd> 
   	Configuration file for generic oscillators. Is located in the 
@@ -82,6 +82,12 @@
 <p><p></p><dt><strong>resource-file-effect-presets</strong><dd>
   	Configuration file for effect presets. Is located in the 
   	resource directory. Defaults to <em>effect_presets</em>.
+<p><p></p><dt><strong>user-resource-directory</strong><dd>
+  	Directory for user-specific ecasound configuration files.
+	If this directory exists, ecasound will search for 
+	filenames defined assigned to global resources (specified 
+	with resource-file-*). Defaults to <em>~/ecasound-config</em>.
+<p>Defaults to <em>{prefix-dir}/share/ecasound</em>.
 <p><p></p><dt><strong>internal-plugin-directory</strong><dd>
 	Directory containing ecasound's internal plugins. Defaults to <em>{prefix-dir}/lib/ecasound-plugins</em>.
 <p><p></p><dt><strong>ladspa-plugin-directory</strong><dd>

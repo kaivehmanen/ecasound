@@ -1,198 +1,129 @@
-
-
-
-ecasoundrc(5)          Multimedia software          ecasoundrc(5)
-
-
-NNAAMMEE
-       ecasoundrc - ecasound rcfile
-
-
-SSYYNNOOPPSSIISS
-       $HOME/.ecasoundrc
-
-
-DDEESSCCRRIIPPTTIIOONN
-       eeccaassoouunnddrrcc  is  the  main configuration file for ecasound.
-       If it doesn't exist, ecasound creates it with default val-
-       ues. If it exists, all name-value pairs are read. When you
-       quit ecasound, eeccaassoouunnddrrcc is rewritten if resource  values
-       have been modified.
-
-       The format is quite simple. One line consists of a config-
-       uration variable and its value.  Variable  and  value  are
-       separated  with  either '=' or ' '. Lines beginning with a
-       "#" are ignored (comment lines).
-
-
-VVAARRIIAABBLLEESS
-       midi-device
-              MIDI-device.  If  the  device  name  is  given   in
-              _r_a_w_m_i_d_i_,_/_d_e_v_/_m_i_d_i_*  format,  OSS/Linux  os OSS/Lite
-              drivers are used.  Device _r_a_w_m_i_d_i_,_/_d_e_v_/_s_n_d_/_m_i_d_i_C_x_D_y
-              opens  an ALSA raw-MIDI device with card number 'x'
-              and device number 'y'.  See  ecasound(5)  man  page
-              (the  '-Md  option)  for  more  info.   Defaults to
-              _r_a_w_m_i_d_i_,_/_d_e_v_/_m_i_d_i.
-
-
-       default-output
-              Output device to use. Defaults to _/_d_e_v_/_d_s_p.
-
-
-       default-buffersize
-              Sets the size of buffer  in  samples  (must  be  an
-              exponent  of  2).   Same  as  the  --bb  command line
-              options. Defaults to _1_0_2_4.
-
-
-       default-double-buffer-size
-              Set buffersize  for  double-buffering  (-z:db,  see
-              below).  Defaults to _1_0_0_0_0_0.
-
-
-       default-to-interactive-mode
-              Whether  to  always  use  interactive mode (true or
-              false). Same as the the  --cc  command  line  option.
-              Defaults to _f_a_l_s_e.
-
-
-
-
-
-
-                            02.03.2001                          1
-
-
-
-
-
-ecasoundrc(5)          Multimedia software          ecasoundrc(5)
-
-
-       default-to-raisepriority
-              Whether  to  always raise runtime priority (true or
-              false). Same as the the  --rr  command  line  option.
-              Defaults to _f_a_l_s_e.
-
-
-       default-to-double-buffering
-              Whether  to  used  advanced  double-buffering  with
-              audio inputs that support it. Defaults to _f_a_l_s_e.
-
-
-       default-to-precise-sample-rates
-              Whether to ignore sample rate differences (and pos-
-              sibly avoid resampling). Curretly only affects OSS-
-              devices. Defaults to _f_a_l_s_e.
-
-
-       resource-directory
-              Directory   for   ecasound   configuration   files.
-              Defaults to _{_p_r_e_f_i_x_-_d_i_r_}_/_s_h_a_r_e_/_e_c_a_s_o_u_n_d.
-
-
-       resource-file-genosc-envelopes
-              Configuration  file  for  generic  oscillators.  Is
-              located in  the  resource  directory.  Defaults  to
-              _g_e_n_e_r_i_c___o_s_c_i_l_l_a_t_o_r_s.
-
-
-       resource-file-effect-presets
-              Configuration  file  for effect presets. Is located
-              in the resource directory. Defaults to  _e_f_f_e_c_t___p_r_e_-
-              _s_e_t_s.
-
-
-       internal-plugin-directory
-              Directory  containing  ecasound's internal plugins.
-              Defaults to _{_p_r_e_f_i_x_-_d_i_r_}_/_l_i_b_/_e_c_a_s_o_u_n_d_-_p_l_u_g_i_n_s.
-
-
-       ladspa-plugin-directory
-              Directory   containing   LADPSA   effect   plugins.
-              Defaults  to  _{_p_r_e_f_i_x_-_d_i_r_}_/_l_i_b_/_l_a_d_s_p_a.  If environ-
-              ment variable _L_A_D_S_P_A___P_A_T_H exists, directories spec-
-              ified in it are automatically searched for plugins.
-
-
-       ext-text-editor
-              If _e_x_t_-_t_e_x_t_-_e_d_i_t_o_r_-_u_s_e_-_g_e_t_e_n_v is _f_a_l_s_e or  "EDITOR"
-              is  null,  value of this field is used. Defaults to
-              _p_i_c_o.
-
-
-       ext-text-editor-use-getenv
-              Should ecasound try to query  environment  variable
-
-
-
-                            02.03.2001                          2
-
-
-
-
-
-ecasoundrc(5)          Multimedia software          ecasoundrc(5)
-
-
-              "EDITOR".  Defaults to _t_r_u_e.
-
-
-       ext-wave-editor
-              Command line for executing an external wave editor.
-              Defaults to _s_n_d.
-
-
-       ext-mp3-input-cmd
-              Command for starting mp3 input. All  output  should
-              be  directed  to standard output. Before execution,
-              "%f" is replaced with path to  the  input  mp3.  If
-              exists,  "%o"  is replaced with the start offset in
-              mp3 frames. Defaults to _m_p_g_1_2_3 _-_-_s_t_e_r_e_o _-_r _-_b _0  _-_q
-              _-_s _-_k _%_o _%_f.
-
-
-       ext-mp3-output-cmd
-              Command  for  starting  mp3  output. All input data
-              should be read from standard input.  Before  execu-
-              tion, "%f" is replaced with path to the output mp3.
-              Defaults to _l_a_m_e _-_b _1_2_8 _-_x _-_S _- _%_f.
-
-
-       ext-mikmod-cmd
-              Command for starting mikmod  input.  Before  execu-
-              tion,  "%f" is replaced with file path, and %s with
-              select sample rate. Defaults to _m_i_k_m_o_d _-_d _s_t_d_o_u_t _-_o
-              _1_6_s _-_q _-_f _%_s _-_p _0 _-_-_n_o_l_o_o_p_s _%_f.
-
-
-       ext-timidity-cmd
-              Command  for starting timidity++ input. Before exe-
-              cution, "%f" is replaced with file  path.  Defaults
-              to _t_i_m_i_d_i_t_y _-_O_r _-_o _- _%_f.
-
-
-
-SSEEEE AALLSSOO
-       ecasound(1), qtecasound (1), ecatools (1), ecasound-iam(1)
-
-
-AAUUTTHHOORR
-       Kai Vehmanen, <kaiv@wakkanet.fi>
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            02.03.2001                          3
-
-
+.TH "ecasoundrc" "5" "06\&.03\&.2001" "" "Multimedia software" 
+.PP 
+.SH "NAME" 
+ecasoundrc \- ecasound rcfile
+.PP 
+.SH "SYNOPSIS" 
+$HOME/\&.ecasoundrc
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+\fBecasoundrc\fP is the main configuration file for ecasound\&. 
+If it doesn\'t exist, ecasound creates it with default 
+values\&. If it exists, all name-value pairs are read\&. When 
+you quit ecasound, \fBecasoundrc\fP is rewritten if resource
+values have been modified\&.
+.PP 
+The format is quite simple\&. One line consists of 
+a configuration variable and its value\&. Variable and value 
+are separated with either \'=\' or \' \'\&. Lines beginning with a
+"#" are ignored (comment lines)\&. 
+.PP 
+.SH "VARIABLES" 
+.PP 
+.IP 
+.IP "midi-device" 
+MIDI-device\&. If the device name is given in \fIrawmidi,/dev/midi*\fP 
+format, OSS/Linux or OSS/Lite drivers are used\&. 
+Device \fIrawmidi,/dev/snd/midiCxDy\fP opens an ALSA raw-MIDI 
+device with card number \'x\' and device number \'y\'\&. 
+See ecasound(5) man page (the \'-Md option) for more info\&.
+Defaults to \fIrawmidi,/dev/midi\fP\&.
+.IP 
+.IP "default-output" 
+Output device to use\&. Defaults to \fI/dev/dsp\fP\&.
+.IP 
+.IP "default-buffersize" 
+Sets the size of buffer in samples (must be an exponent of 2)\&.
+Same as the \fB-b\fP command line options\&. Defaults to \fI1024\fP\&.
+.IP 
+.IP "default-double-buffer-size" 
+Set buffersize for double-buffering (-z:db, see below)\&.
+Defaults to \fI100000\fP\&.
+.IP 
+.IP "default-to-interactive-mode" 
+Whether to always use interactive mode (true or false)\&. Same as the
+the \fB-c\fP command line option\&. Defaults to \fIfalse\fP\&. 
+.IP 
+.IP "default-to-raisepriority" 
+Whether to always raise runtime priority (true or false)\&. Same as the
+the \fB-r\fP command line option\&. Defaults to \fIfalse\fP\&.
+.IP 
+.IP "default-to-double-buffering" 
+Whether to used advanced double-buffering with audio inputs
+that support it\&. Defaults to \fIfalse\fP\&.
+.IP 
+.IP "default-to-precise-sample-rates" 
+Whether to ignore sample rate differences (and possibly avoid 
+resampling)\&. Currently only affects OSS-devices\&. Defaults to \fIfalse\fP\&.
+.IP 
+.IP "resource-directory" 
+Directory for global ecasound configuration files\&. 
+Defaults to \fI{prefix-dir}/share/ecasound\fP\&.
+.IP 
+.IP "resource-file-genosc-envelopes" 
+Configuration file for generic oscillators\&. Is located in the 
+resource directory\&. Defaults to \fIgeneric_oscillators\fP\&.
+.IP 
+.IP "resource-file-effect-presets" 
+Configuration file for effect presets\&. Is located in the 
+resource directory\&. Defaults to \fIeffect_presets\fP\&.
+.IP 
+.IP "user-resource-directory" 
+Directory for user-specific ecasound configuration files\&.
+If this directory exists, ecasound will search for 
+filenames defined assigned to global resources (specified 
+with resource-file-*)\&. Defaults to \fI~/ecasound-config\fP\&.
+.IP 
+Defaults to \fI{prefix-dir}/share/ecasound\fP\&.
+.IP 
+.IP "internal-plugin-directory" 
+Directory containing ecasound\'s internal plugins\&. Defaults to \fI{prefix-dir}/lib/ecasound-plugins\fP\&.
+.IP 
+.IP "ladspa-plugin-directory" 
+Directory containing LADPSA effect plugins\&. Defaults to \fI{prefix-dir}/lib/ladspa\fP\&.
+If environment variable \fILADSPA_PATH\fP exists, directories
+specified in it are automatically searched for plugins\&.
+.IP 
+.IP "ext-text-editor" 
+If \fIext-text-editor-use-getenv\fP is \fIfalse\fP or "EDITOR" 
+is null, value of this field is used\&. Defaults to \fIpico\fP\&.
+.IP 
+.IP "ext-text-editor-use-getenv" 
+Should ecasound try to query environment variable "EDITOR"\&.
+Defaults to \fItrue\fP\&.
+.IP 
+.IP "ext-wave-editor" 
+Command line for executing an external wave editor\&. Defaults
+to \fIsnd\fP\&.
+.IP 
+.IP "ext-mp3-input-cmd" 
+Command for starting mp3 input\&. All output should be directed
+to standard output\&. Before execution, "%f" is replaced with 
+path to the input mp3\&. If exists, "%o" is replaced with 
+the start offset in mp3 frames\&. Defaults to \fImpg123 --stereo -r -b 0 -q -s -k %o %f\fP\&.
+.IP 
+.IP "ext-mp3-output-cmd" 
+Command for starting mp3 output\&. All input data should be read
+from standard input\&. Before execution, "%f" is replaced with 
+path to the output mp3\&. Defaults to \fIlame -b 128 -x -S - %f\fP\&.
+.IP 
+.IP "ext-mikmod-cmd" 
+Command for starting mikmod input\&. Before execution, "%f" is replaced with 
+file path, and %s with select sample rate\&. Defaults to 
+\fImikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f\fP\&.
+.IP 
+.IP "ext-timidity-cmd" 
+Command for starting timidity++ input\&. Before execution, "%f"
+is replaced with file path\&. Defaults to 
+\fItimidity -Or -o - %f\fP\&.
+.IP 
+.PP 
+.SH "SEE ALSO" 
+.PP 
+ecasound(1), qtecasound (1), ecatools (1), ecasound-iam(1)
+.PP 
+.SH "AUTHOR" 
+.PP 
+Kai Vehmanen, <kaiv@wakkanet\&.fi>
+.PP 

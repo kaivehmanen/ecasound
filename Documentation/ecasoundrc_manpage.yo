@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (02.03.2001)
+       (06.03.2001)
        ()
        (Multimedia software)
 
@@ -41,7 +41,7 @@ startdit()
 
 	dit(midi-device)
   	MIDI-device. If the device name is given in em(rawmidi,/dev/midi*) 
-	format, OSS/Linux os OSS/Lite drivers are used. 
+	format, OSS/Linux or OSS/Lite drivers are used. 
 	Device em(rawmidi,/dev/snd/midiCxDy) opens an ALSA raw-MIDI 
 	device with card number 'x' and device number 'y'. 
 	See ecasound(5) man page (the '-Md option) for more info.
@@ -72,10 +72,10 @@ startdit()
 
 	dit(default-to-precise-sample-rates) 
 	Whether to ignore sample rate differences (and possibly avoid 
-	resampling). Curretly only affects OSS-devices. Defaults to em(false).
+	resampling). Currently only affects OSS-devices. Defaults to em(false).
 
   	dit(resource-directory) 
-  	Directory for ecasound configuration files. 
+  	Directory for global ecasound configuration files. 
   	Defaults to em({prefix-dir}/share/ecasound).
 
   	dit(resource-file-genosc-envelopes) 
@@ -85,6 +85,14 @@ startdit()
   	dit(resource-file-effect-presets)
   	Configuration file for effect presets. Is located in the 
   	resource directory. Defaults to em(effect_presets).
+
+  	dit(user-resource-directory)
+  	Directory for user-specific ecasound configuration files.
+	If this directory exists, ecasound will search for 
+	filenames defined assigned to global resources (specified 
+	with resource-file-*). Defaults to em(~/ecasound-config).
+	
+  	Defaults to em({prefix-dir}/share/ecasound).
 
 	dit(internal-plugin-directory)
 	Directory containing ecasound's internal plugins. Defaults to em({prefix-dir}/lib/ecasound-plugins).
