@@ -26,7 +26,7 @@ AC_ARG_ENABLE(jack,
 AM_CONDITIONAL(ECA_AM_COMPILE_JACK, test x$jack_support = xyes)
 
 if test x$jack_support = xyes; then
-    ECA_S_JACK_LIBS="${ECA_S_JACK_LIBS} -ljack -lrt"
+    ECA_S_JACK_LIBS="${ECA_S_JACK_LIBS} -ljack ${eca_platform_system_audio}"
     AC_DEFINE(ECA_COMPILE_JACK)
 fi                                     
 
