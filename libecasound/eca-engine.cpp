@@ -188,9 +188,7 @@ ECA_ENGINE::~ECA_ENGINE(void)
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) ECA_ENGINE destructor!");
 
   if (csetup_repp != 0) {
-    if (is_prepared() == true) {
-      driver_repp->exit();
-    }
+    driver_repp->exit();
     cleanup();
   }
   
