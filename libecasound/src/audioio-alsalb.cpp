@@ -105,8 +105,9 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
     case ECA_AUDIO_FORMAT::sfmt_s16_be:  { format = SND_PCM_SFMT_S16_BE; break; }
     case ECA_AUDIO_FORMAT::sfmt_s24_le:  { format = SND_PCM_SFMT_S24_LE; break; }
     case ECA_AUDIO_FORMAT::sfmt_s24_be:  { format = SND_PCM_SFMT_S24_BE; break; }
-    default: format = ECA_AUDIO_FORMAT::default_sample_format;
-  }
+    default: 
+      throw(new ECA_ERROR("AUDIOIO-ALSALB", "Unknown sample format!", ECA_ERROR::stop));
+    }
 
   pf.rate = samples_per_second();
 #ifdef ALSALIB_032

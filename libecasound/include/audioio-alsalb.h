@@ -46,6 +46,8 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
   void stop(void) { }
   void start(void) { }
 
+  long position_in_samples(void) const { return(0); }
+
   ALSA_LOOPBACK_DEVICE (int card, int device, const SIMODE mode, const
 		ECA_AUDIO_FORMAT& form, long int buffersize,
 		bool playback_mode = true);

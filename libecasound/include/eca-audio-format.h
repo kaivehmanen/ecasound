@@ -2,7 +2,6 @@
 #define _ECA_AUDIO_FORMAT_H
 
 #include <string>
-#include <config.h>
 
 class ECA_ERROR;
 
@@ -45,17 +44,6 @@ class ECA_AUDIO_FORMAT {
     sfmt_f64_le,
     sfmt_f64_be
   };    
-
-  static const int default_channels = 2;
-  static const SAMPLE_FORMAT default_sample_format = sfmt_s16_le;
-  static const long int default_samples_per_second = 44100;
-  static const bool default_interleaving = false;
-
-#ifdef WORDS_BIGENDIAN
-  static const bool host_littleendian = false;
-#else
-  static const bool host_littleendian = true;
-#endif
 
   /**
    * Frame size in bytes (sample size * channels)
@@ -141,5 +129,7 @@ class ECA_AUDIO_FORMAT {
   int align_rep;            // the size of one sample value in bytes
   SAMPLE_FORMAT sfmt_rep;
 };
+
+extern const ECA_AUDIO_FORMAT default_ecasound_audio_format;
 
 #endif

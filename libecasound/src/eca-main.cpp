@@ -109,9 +109,9 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR*) {
     throw(new ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, no chainsetup connected!"));
   }
 
-  inputs = eparams->inputs;
-  outputs = eparams->outputs;
-  chains = eparams->chains;
+  inputs = &(csetup->inputs);
+  outputs = &(csetup->outputs);
+  chains = &(csetup->chains);
 
   if (inputs == 0 ||
       inputs->size() == 0 ||
@@ -135,12 +135,12 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR*) {
       (*inputs)[adev_sizet]->position_in_samples();
     input_chain_count[adev_sizet] =
       eparams->number_of_connected_chains_to_input((*inputs)[adev_sizet]);
-    ecadebug->msg(4, "Input \"" + (*inputs)[adev_sizet]->label() +
-                     ": start position " +
-		     kvu_numtostr(input_start_pos[adev_sizet]) +
-		     ", number of connected chain " +
-		     kvu_numtostr(input_chain_count[adev_sizet]) +
-		     " .\n");
+//      ecadebug->msg(4, "Input \"" + (*inputs)[adev_sizet]->label() +
+//                       ": start position " +
+//  		     kvu_numtostr(input_start_pos[adev_sizet]) +
+//  		     ", number of connected chain " +
+//  		     kvu_numtostr(input_chain_count[adev_sizet]) +
+//  		     " .\n");
   }
 
   output_start_pos.resize(output_count);
@@ -155,12 +155,12 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR*) {
 
     output_chain_count[adev_sizet] =
       eparams->number_of_connected_chains_to_output((*outputs)[adev_sizet]);
-    ecadebug->msg(4, "Output \"" + (*outputs)[adev_sizet]->label() +
-                     ": start position " +
-		     kvu_numtostr(output_start_pos[adev_sizet]) +
-		     ", number of connected chain " +
-		     kvu_numtostr(output_chain_count[adev_sizet]) +
-		     " .\n");
+//      ecadebug->msg(4, "Output \"" + (*outputs)[adev_sizet]->label() +
+//                       ": start position " +
+//  		     kvu_numtostr(output_start_pos[adev_sizet]) +
+//  		     ", number of connected chain " +
+//  		     kvu_numtostr(output_chain_count[adev_sizet]) +
+//  		     " .\n");
     (*outputs)[adev_sizet]->buffersize(buffersize_rep, SAMPLE_BUFFER::sample_rate);
   }
 
@@ -516,6 +516,7 @@ void ECA_PROCESSOR::start(void) {
   ecadebug->msg(1, "(eca-main) Start");
 
   if (eparams->multitrack_mode == true) {
+    assert(csetup->mixmode() != ECA_CHAINSETUP::ep_mm_mthreaded);
     multitrack_sync();
     for (int adev_sizet = 0; adev_sizet != output_count; adev_sizet++)
       (*outputs)[adev_sizet]->start();
@@ -523,7 +524,6 @@ void ECA_PROCESSOR::start(void) {
       (*inputs)[adev_sizet]->start();
   }
   else {
-    assert(csetup->mixmode() != ECA_CHAINSETUP::ep_mm_mthreaded);
     for (int adev_sizet = 0; adev_sizet != input_count; adev_sizet++)
       (*inputs)[adev_sizet]->start();
     trigger_outputs_request = true;

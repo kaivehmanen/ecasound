@@ -27,7 +27,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   // --
   // Set length
   // --
-  virtual length_in_samples(long pos);
+  virtual void length_in_samples(long pos);
   void length_in_seconds(int pos_in_seconds);
   void length_in_seconds(double pos_in_seconds);
 

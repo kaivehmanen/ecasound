@@ -222,6 +222,14 @@ void ALSA_PCM2_DEVICE::write_samples(void* target_buffer, long int samples) {
   dl_snd_pcm_write(audio_fd, target_buffer, frame_size() * samples);
 }
 
+long ALSA_PCM2_DEVICE::position_in_samples(void) const {
+  snd_pcm_channel_status_t status;
+  memset(&status, 0, sizeof(status));
+  status.channel = pcm_channel;
+  dl_snd_pcm_channel_status(audio_fd, &status);
+  return(status.scount / frame_size());
+}
+
 ALSA_PCM2_DEVICE::~ALSA_PCM2_DEVICE(void) { 
   close(); 
 

@@ -96,7 +96,7 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*) {
       // No parameters, let's give some help.
       interpret_general_option("-h");
     }
-    if (!is_selected_chainsetup_connected() || inputs->size() == 0) {
+    if (!is_selected_chainsetup_connected()) {
       // Still no inputs? If not in interactive mode, there really isn't
       // anything left to do.
       throw(new ECA_ERROR("ECA_SESSION","Nothing to do!"));
@@ -288,13 +288,9 @@ void ECA_SESSION::connect_chainsetup(void) {
   connected_chainsetup->enable();
 
   ecadebug->msg(1, "Connecting connected chainsetup to engine.");
-
-  inputs = &(connected_chainsetup->inputs);
-  outputs = &(connected_chainsetup->outputs);
-  chains = &(connected_chainsetup->chains);
-  
+ 
   while(inslots.size() != 0) inslots.pop_back();
-  while(inslots.size() != inputs->size())
+  while(inslots.size() != connected_chainsetup->inputs.size())
     inslots.push_back(SAMPLE_BUFFER(connected_chainsetup->buffersize(), SAMPLE_SPECS::channel_count_default));
 
   // --------
@@ -313,10 +309,6 @@ void ECA_SESSION::disconnect_chainsetup(void) {
 
   connected_chainsetup->disable();
   connected_chainsetup = 0;
-
-  inputs = 0;
-  outputs = 0;
-  chains = 0;
 
   // --------
   // ensure:
@@ -409,8 +401,8 @@ bool ECA_SESSION::is_slave_output(AUDIO_IO* aiod) const {
   // --------
 
   if (aiod->is_realtime()) return(false);
-  vector<CHAIN*>::iterator q = chains->begin();
-  while(q != chains->end()) {
+  vector<CHAIN*>::iterator q = connected_chainsetup->chains.begin();
+  while(q != connected_chainsetup->chains.end()) {
     if ((*q)->output_id == aiod) {
       if ((*q)->input_id->is_realtime()) {
 	ecadebug->msg(2,"(eca-session) slave output detected: " + (*q)->output_id->label());

@@ -47,6 +47,8 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   void stop(void);
   void start(void) throw(ECA_ERROR*);
 
+  long position_in_samples(void) const { return(0); }
+
   OSSDEVICE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& form, long int buffersize, bool precise_sample_rates = false);
   ~OSSDEVICE(void);
   OSSDEVICE* clone(void) { return new OSSDEVICE(*this); }

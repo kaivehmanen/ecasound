@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-mthreaded-processor.cpp: External functions for multithreaded 
 //                              processing.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,8 +59,8 @@ void *mthread_process_chains(void* params) {
 //    ecadebug->msg(1, mtemp.to_string());
  
 
-  vector<AUDIO_IO*>* outputs = ecaparams->outputs;
-  vector<CHAIN*>* chains = ecaparams->chains;
+  vector<AUDIO_IO*>* outputs = &(ecaparams->connected_chainsetup->outputs);
+  vector<CHAIN*>* chains = &(ecaparams->connected_chainsetup->chains);
 
   int chain_count = static_cast<int>(chains->size());
   int output_count = static_cast<int>(outputs->size());

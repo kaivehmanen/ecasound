@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-audio-format.cpp: Class for representing audio format parameters
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <config.h>
 #include "eca-audio-format.h"
 #include "eca-error.h"
 
+static const ECA_AUDIO_FORMAT default_ecasound_audio_format (2, 
+							     44100, 
+							     ECA_AUDIO_FORMAT::sfmt_s16_le,
+							     false);
 ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT (int ch, 
 				    long int srate, 
 				    SAMPLE_FORMAT format, 
@@ -31,10 +36,10 @@ ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT (int ch,
 }
 
 ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT (void) { 
-  set_channels(default_channels);
-  set_samples_per_second(default_samples_per_second);
-  set_sample_format(default_sample_format);
-  toggle_interleaved_channels(default_interleaving);
+  set_channels(default_ecasound_audio_format.channels());
+  set_samples_per_second(default_ecasound_audio_format.samples_per_second());
+  set_sample_format(default_ecasound_audio_format.sample_format());
+  toggle_interleaved_channels(default_ecasound_audio_format.interleaved_channels());
 }
 
 ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT (const ECA_AUDIO_FORMAT& x) {
@@ -92,16 +97,19 @@ void ECA_AUDIO_FORMAT::set_sample_format(SAMPLE_FORMAT v) throw(ECA_ERROR*) {
 void ECA_AUDIO_FORMAT::convert_to_host_byte_order(void) {
   switch(sfmt_rep) 
     {
-    case sfmt_s16: { sfmt_rep = (host_littleendian == true) ?
-		       sfmt_s16_le : sfmt_s16_be; break; }
-    case sfmt_s24: { sfmt_rep = (host_littleendian == true) ?
-		       sfmt_s24_le : sfmt_s24_be; break; }
-    case sfmt_s32: { sfmt_rep = (host_littleendian == true) ?
-		       sfmt_s32_le : sfmt_s32_be; break; }
-    case sfmt_f32: { sfmt_rep = (host_littleendian == true) ?
-		       sfmt_f32_le : sfmt_f32_be; break; }
-    case sfmt_f64: { sfmt_rep = (host_littleendian == true) ?
-		       sfmt_f64_le : sfmt_f64_be; break; }
+#ifdef WORDS_BIGENDIAN
+    case sfmt_s16: { sfmt_rep = sfmt_s16_be; break; }
+    case sfmt_s24: { sfmt_rep = sfmt_s24_be; break; }
+    case sfmt_s32: { sfmt_rep = sfmt_s32_be; break; }
+    case sfmt_f32: { sfmt_rep = sfmt_f32_be; break; }
+    case sfmt_f64: { sfmt_rep = sfmt_f64_be; break; }
+#else
+    case sfmt_s16: { sfmt_rep = sfmt_s16_le; break; }
+    case sfmt_s24: { sfmt_rep = sfmt_s24_le; break; }
+    case sfmt_s32: { sfmt_rep = sfmt_s32_le; break; }
+    case sfmt_f32: { sfmt_rep = sfmt_f32_le; break; }
+    case sfmt_f64: { sfmt_rep = sfmt_f64_le; break; }
+#endif
     default: { }
     }
 }

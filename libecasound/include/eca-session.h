@@ -181,15 +181,7 @@ class ECA_SESSION {
   vector<bool> chain_ready_for_submix;
   vector<pthread_mutex_t*> chain_muts;
   vector<pthread_cond_t*> chain_conds;
-
   vector<SAMPLE_BUFFER> inslots;
-
-  // ---
-  // Pointers to connected chainsetup
-  // ---
-  vector<AUDIO_IO*>* inputs;
-  vector<AUDIO_IO*>* outputs;
-  vector<CHAIN*>* chains;
 
   // ---
   // Status data

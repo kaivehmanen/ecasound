@@ -21,6 +21,8 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
 
   long int latency(void) const;
 
+  long position_in_samples(void) const { return(0); }
+
   REALTIME_NULL(const string& name = "realtime null",
 		SIMODE mode = si_read,
 		const ECA_AUDIO_FORMAT& fmt = ECA_AUDIO_FORMAT(),

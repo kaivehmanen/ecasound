@@ -241,6 +241,23 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
   dl_snd_pcm_write(audio_fd, target_buffer, frame_size() * samples);
 }
 
+long ALSA_PCM_DEVICE::position_in_samples(void) const {
+  if (io_mode() != si_read) {
+    snd_pcm_playback_status_t pb_status;
+    dl_snd_pcm_playback_status(audio_fd, &pb_status);
+    return(pb_status.scount / frame_size());    
+  }
+#ifdef ALSALIB_031
+  snd_pcm_record_status_t ca_status;
+#else
+  snd_pcm_capture_status_t ca_status;
+#endif
+  dl_snd_pcm_capture_status(audio_fd, &ca_status);
+  return(ca_status.scount / frame_size());
+}
+
+
+
 ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) { 
   close(); 
 
