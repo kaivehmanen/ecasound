@@ -1,6 +1,6 @@
 dnl ---
 dnl acinclude.m4 for ecasound
-dnl last modified: 20030807-4
+dnl last modified: 20030811-5
 dnl ---
 
 ## ------------------------------------------------------------------------
@@ -45,6 +45,7 @@ AC_TRY_LINK(
 	int *a = (void*)&jack_transport_query;
 	int *b = (void*)&jack_transport_start;
 	int *c = (void*)&jack_transport_stop;
+	int *d = (void*)&jack_transport_locate;
 	t.frame = 0;
 	t.valid = 0;
 	return 0;
