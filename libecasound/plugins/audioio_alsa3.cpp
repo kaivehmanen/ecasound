@@ -205,19 +205,22 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   //  params.stop_mode = SND_PCM_STOP_ROLLOVER; // SND_PCM_STOP_STOP
 
   // -------------------------------------------------------------------
+  // Fetch stream info (2nd time, now getting frame size info)
+  pcm_params_info_rep.req.format.format = format;
+  pcm_params_info_rep.req.format.channels = channels();
+  pcm_params_info_rep.req_mask = SND_PCM_PARAMS_FORMAT | SND_PCM_PARAMS_CHANNELS;
+  err = ::snd_pcm_params_info(audio_fd_repp, &pcm_params_info_rep);
+  if (err < 0)
+    throw(new ECA_ERROR("AUDIOIO-ALSA3", "Error when querying stream info: " + string(snd_strerror(err))));
+
+  // -------------------------------------------------------------------
   // Set fragment size.
 
-  // FIXME: for some reason, min/max_fragment_size doesn't work with
-  // current ALSA 0.6.x CVS snapshot
+  if (buffersize() < pcm_params_info_rep.min_fragment_size ||
+      buffersize() > pcm_params_info_rep.max_fragment_size) 
+    throw(new ECA_ERROR("AUDIOIO-ALSA3", "buffersize " +
+			kvu_numtostr(buffersize()) + " is out of range!", ECA_ERROR::stop));
   // <--
-  //   cerr << "Min-frag-s: " << pcm_params_info_rep.min_fragment_size
-  //        << ", max-frag-s:"  << pcm_params_info_rep.min_fragment_size << endl;
-  //  if (buffersize() < pcm_params_info_rep.min_fragment_size ||
-  //      buffersize() > pcm_params_info_rep.max_fragment_size) 
-  //    throw(new ECA_ERROR("AUDIOIO-ALSA3", "buffersize " +
-  //			kvu_numtostr(buffersize()) + " is out of range!", ECA_ERROR::stop));
-  // <--
-  
   params.buffer_size = pcm_params_info_rep.buffer_size;
   params.frag_size = buffersize();
   params.frames_xrun_max = ~0U;
@@ -225,11 +228,12 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 
   // -------------------------------------------------------------------
   // Stream params
-
   err = ::snd_pcm_params(audio_fd_repp, &params);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Error when setting up stream params: " + string(snd_strerror(err))));
 
+  // -------------------------------------------------------------------
+  // Fetch the current pcm-setup and print out some debug info
   struct snd_pcm_setup setup;
   setup.mode = params.mode;
   ::snd_pcm_setup(audio_fd_repp, &setup);
@@ -332,8 +336,8 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
     ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
   }
   else {
-    if (samples * frame_size() < pcm_params_info_rep.min_fragment_size ||
-	samples * frame_size() > pcm_params_info_rep.max_fragment_size) {
+    if (samples < pcm_params_info_rep.min_fragment_size ||
+	samples > pcm_params_info_rep.max_fragment_size) {
       if (is_triggered_rep) stop();
       return; 
     }
@@ -344,7 +348,7 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
     open();
     prepare();
     assert(samples <= fragment_size_rep);
-    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep * frame_size());
+    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
     if (was_triggered == true) start();
   }
 }
