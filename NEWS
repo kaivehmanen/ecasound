@@ -50,7 +50,7 @@ xx022005 (v2.3.6)  -** stable release **-
 		 or srate changes on the fly, but at least it now fails 
 		 gracefully
 	- fixed: always pass filename (%f) as one parameter to the 
-		 external apps; fixes bug present in 2.3.3 and 2.3.4 
+		 external apps; fixes bug present in 2.3.4 and 2.3.5 
 		 releases which broke handling spaces in filenames; 
 		 affected all file formats handled via external tools 
 		 (ogg/mp3/flac/m4a/...); also a separate bug in handling
