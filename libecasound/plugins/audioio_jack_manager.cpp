@@ -903,6 +903,7 @@ std::string AUDIO_IO_JACK_MANAGER::get_parameter(int param) const
  */
 void AUDIO_IO_JACK_MANAGER::initial_seek(void)
 {
+#if ECA_JACK_TRANSPORT_API >= 3
   jack_transport_state_t jackstate;
   jack_position_t jackpos;
 
@@ -914,6 +915,7 @@ void AUDIO_IO_JACK_MANAGER::initial_seek(void)
        mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send_receive)) {
     jack_transport_locate(client_repp, engine_repp->current_position_in_samples());
   }
+#endif
 }
 
 /**
