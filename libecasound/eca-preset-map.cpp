@@ -96,7 +96,7 @@ const ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword) const {
 
     if (find(objlist.begin(), objlist.end(), keyword) == objlist.end()) {
       try {
-	PRESET* obj = dynamic_cast<const PRESET*>(new GLOBAL_PRESET(keyword));
+	PRESET* obj = dynamic_cast<PRESET*>(new GLOBAL_PRESET(keyword));
 	if (obj != 0) {
 	  const_cast<ECA_PRESET_MAP*>(this)->register_object(keyword, "^" + keyword + "$", obj);
 	  retobj = obj;
