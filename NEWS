@@ -17,13 +17,13 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.4 *-
 
-??052002 (v2.1dev8)
+13052002 (v2.1dev8)
 	- edi-entries: edi-13, edi-18, edi-21, edi-22
 	- added: reverse audio object type; see the ecasound(1) 
 		 man page for better documentation
 	- added: pyecasound - if python version is 2.2 or higher, 
 		 pyeca.py sets custom dlopen flags before importing
-	         the actual pyecasound python module; this makes 
+	         the actual pyecasound python module; this makes it
 		 possible to access ecasound's plugins (ALSA, JACK,
 	         libaudiofile) from python ECI apps
 	- added: ecasoundrc - 'default-audio-format'; same syntax
@@ -76,7 +76,7 @@ Last officially released version is -*> v2.0.4 *-
 		   soundcard behaviour much more accurately
 	- changed: numerous portability improvements to the 
 	           autoconf scripts
-	- changed: new rpm-spec file in; libraries are now located
+	- changed: new rpm-spec file; libraries are now located
 	 	   in separate rpm-packages
 	- changed: ecasound-config renamed to libecasoundX-config
 	- changed: ecasoundc-config renamed to libecasoundcX-config
@@ -103,8 +103,8 @@ Last officially released version is -*> v2.0.4 *-
 	- fixed: sometimes an incorrect length-field was written to 
 		 newly created wav-files 
 	- fixed: problems with using ewf-files with doublebuffering
-	- fixed: loop devices didn't work; resulted in explicit 
-		 exception errors
+	- fixed: loop devices didn't work; resulted in 'explicit 
+		 exception' errors
 	- fixed: configure failed if neither ncurses nor termcap
 		 was installed
 	- fixed: compile failed if ALSA was not installed (even

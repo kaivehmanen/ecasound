@@ -30,7 +30,7 @@
 #include "eca-logger.h"
 
 /* Debug controller source values */ 
-#define DEBUG_CONTROLLERS
+// #define DEBUG_CONTROLLERS
 
 #ifdef DEBUG_CONTROLLERS
 #define DEBUG_CTRL_STATEMENT(x) x

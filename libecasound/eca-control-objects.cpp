@@ -1611,7 +1611,8 @@ void ECA_CONTROL_OBJECTS::set_audio_object_position_samples(SAMPLE_SPECS::sample
  *  connected_chainsetup() != selected_chainsetup()
  *  selected_audio_object_repp != 0
  */
-void ECA_CONTROL_OBJECTS::wave_edit_audio_object(void) {
+void ECA_CONTROL_OBJECTS::wave_edit_audio_object(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
