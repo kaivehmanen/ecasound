@@ -181,7 +181,7 @@ class ECA_IAMODE_PARSER {
   bool action_requires_selected_audio_input(int id);
   bool action_requires_selected_audio_output(int id);
 
-  ECA_IAMODE_PARSER(void) { register_commands(); }
+  ECA_IAMODE_PARSER(void);
   virtual ~ECA_IAMODE_PARSER(void);
   
  private:

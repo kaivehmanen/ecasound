@@ -29,6 +29,11 @@
 
 std::map<std::string,int> ECA_IAMODE_PARSER::cmd_map_rep;
 
+ECA_IAMODE_PARSER::ECA_IAMODE_PARSER(void)
+{ 
+  register_commands(); 
+}
+
 ECA_IAMODE_PARSER::~ECA_IAMODE_PARSER(void) { }
 
 std::vector<std::string> ECA_IAMODE_PARSER::registered_commands_list(void) {
