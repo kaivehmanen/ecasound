@@ -39,9 +39,9 @@ xx.xx.2001 no history information
 -----------------------------------------------------------------------
 [ Section: Bugs, problems ]
 
-(edi-1)	Initial reverb-spike with the -ete reverb.
+(edi-1): Initial reverb-spike with the -ete reverb.
 	- submitted: Anthony Paul Van Groningen, 04.01.2001
-(edi-13) Possible bug in forked-stream module (mp3,ogg), which 
+(edi-13): Possible bug in forked-stream module (mp3,ogg), which 
 	 causes ecawave crashes.
 	- submitted: kaiv, 17.08.2001
 (edi-25): Distortion with multitap delay -etm if delay length changes
@@ -51,25 +51,25 @@ xx.xx.2001 no history information
 -----------------------------------------------------------------------
 [ Section: Enhancements, new features ]
 
-(edi-4) 14bit MIDI-CCs controller source.
+(edi-4): 14bit MIDI-CCs controller source.
 	- submitted: kaiv, 17.08.2001
-(edi-5) Threshold parameter to -eca.
+(edi-5): Threshold parameter to -eca.
 	- submitted: ecasound-list daemon :), 2001
-(edi-7) Adding a 'loop x times' option to the ewf file format.
+(edi-7): Adding a 'loop x times' option to the ewf file format.
 	- submitted: nolan_d, 09.07.2001
-(edi-9) Adding and removing audio and chainop objects on-the-fly. 
+(edi-9): Adding and removing audio and chainop objects on-the-fly. 
 	- submitted: jhalttun, xx.06.2001
-(edi-14) Making ALSA the default output device with a compile 
-	time options. 
+(edi-14): Making ALSA the default output device with a compile 
+	  time options. 
 	- submitted: Patrick Shirkey, 18.8.2001
-(edi-16) More flexible system for assigning controllers of 
-        controllers (-kx).
+(edi-16): More flexible system for assigning controllers of 
+          controllers (-kx).
 	- submitted: jhalttun, 02.09.2001
-(edi-19) Separate file format for multitrack setups (.emt).
+(edi-19): Separate file format for multitrack setups (.emt).
 	- submitted: kaiv, 18.10.2001
-(edi-20) Ewf-v2 format.
+(edi-20): Ewf-v2 format.
 	- submitted: kaiv, 26.11.2001
-(edi-22) Engine iteration from  outside sources
+(edi-22): Engine iteration from  outside sources
         - submitted: kaiv, 22.02.2002
 (edi-23): Extending the max_buffers audio i/o parameter
 	- submitted: kaiv, 22.02.2002
@@ -79,43 +79,43 @@ xx.xx.2001 no history information
 -----------------------------------------------------------------------
 [ Section: Closed items ]
 
-(edi-2)	Possibility to specify audio object's type instead of using 
-	filename extensions.
+(edi-2): Possibility to specify audio object's type instead of using 
+	 filename extensions.
 	- submitted: Toby Shepard, 13.07.2001
 	- done: kaiv, 06.10.2001, to ecasound 2.1dev0
-(edi-3) Extra parameters for effect presets describing its parameters, 
-	author, etc
+(edi-3): Extra parameters for effect presets describing its parameters, 
+	 author, etc
 	- submitted: kaiv, 17.08.2001
 	- done: kaiv, 20.10.2001
-(edi-6) 100% transparent implementation of -z:db system.
+(edi-6): 100% transparent implementation of -z:db system.
 	- submitted: smassy, xx.06.2001
 	- first version: kaiv, 03.10.2001, 2.1 CVS-tree
 	- done: 06.10.2001, ecasound 2.1dev0
-(edi-8) EIAM parser doesn't handle white-space properly (for instance
-	"ai-add Filename with whitespace").
+(edi-8): EIAM parser doesn't handle white-space properly (for instance
+	 "ai-add Filename with whitespace").
 	- submitted: smassy, 8.5.2001
 	- done; junichi; 22.12.2001, ecasound 2.1dev6
-(edi-10) Adding ecalength to ecatools package.
+(edi-10): Adding ecalength to ecatools package.
 	- submitted: kaiv, xx.07.2001
 	- done: kaiv, 06.10.2001, to ecasound 2.1dev0
-(edi-11) Hierarchy-based config file system. 
+(edi-11): Hierarchy-based config file system. 
 	- submitted: kaiv, xx.07.2001
 	- done: kaiv, 06.12.2001, ecasound 2.1dev6
-(edi-12) Conversions problems with non-interleaved, s32_le streams.
+(edi-12): Conversions problems with non-interleaved, s32_le streams.
 	- submitted: jhall, 16.7.2001
 	- done: kaiv, 16.1.2002, ecasound 2.1dev7
-(edi-15) More intelligent system for selecting buffering modes 
-        and sizes for optimal out-of-the-box performance.
+(edi-15): More intelligent system for selecting buffering modes 
+          and sizes for optimal out-of-the-box performance.
 	- submitted: kaiv, 09.08.2001
 	- first	version: kaiv, 05.10.2001, 2.1 CVS-tree
 	- done: kaiv, 06.10.2001, ecasound 2.1dev0
-(edi-17) Add bitrate parameter to mp3 objects.
+(edi-17): Add bitrate parameter to mp3 objects.
 	- submitted: 30.09.2001, William Goldsmith
 	- done: 06.12.2001, Kai Vehmanen
-(edi-18) Intelligent system for setting the internal sample rate.
+(edi-18): Intelligent system for setting the internal sample rate.
 	- submitted: smassy, 17.10.2001
 	- done: kaiv, 31.01.2002
-(edi-21) Review of object position functionality
+(edi-21): Review of object position functionality
 	- submitted: kaiv, 31.01.2002
 	- done: kaiv, 01.02.2002
 

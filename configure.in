@@ -48,6 +48,17 @@ CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math -fstrict-aliasing -funroll-loops
 CFLAGS="$CXXFLAGS"
 
 dnl ---
+dnl Check pthread support
+dnl ---
+
+dnl switch to C while testing for pthread support
+AC_LANG_C
+AC_SEARCH_LIBS(pthread_create, pthread c_r, [],
+		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **]))
+dnl switch back to C++
+AC_LANG_CPLUSPLUS
+
+dnl ---
 dnl Sets up some operating system specific options for POSIX threads
 dnl
 dnl modifies: CXXFLAGS, CFLAGS
@@ -507,17 +518,6 @@ AC_CHECK_LIB(asound,snd_pcm_delay,,
 fi
 
 dnl ------------------------------------------------------------------
-
-dnl ---
-dnl Check pthread support
-dnl ---
-
-dnl switch to C while testing for pthread support
-AC_LANG_C
-AC_SEARCH_LIBS(pthread_create, pthread c_r, [],
-		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **]))
-dnl switch back to C++
-AC_LANG_CPLUSPLUS
 
 dnl ------------------------------------------------------------------
 
