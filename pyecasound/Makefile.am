@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS 		= foreign
-EXTRA_DIST 			= eci.py pyeca.py ecacontrol.py
+EXTRA_DIST 			= eci.py pyeca.py ecacontrol.py test1_stresstest.py
 
 # ----------------------------------------------------------------------
 # defines
