@@ -4,10 +4,6 @@
     using ecasound's engine.  
 
     Limitations:  
-    - You will get a "read error" (or -1) when trying to query a file that 
-      has space in it, that's because there's no way right now to tell 
-      ecasound about a file with white spaces in its name through the IAM. 
-      Hey, it's unix here after all, underscores are here to stay.
     - It will only work correctly if the audio file is at a sampling rate  
       of 44100 hz, unless the file is a wave file; for other formats such 
       as .au, .raw and .cdr that have a sr other than 44100 the format needs 
@@ -16,14 +12,15 @@
       unfortunately ecasound currently seems unable to parse this information 
       correctly. :(
     - It is not foolproof, feeding it with something other than an audio  
-      file WILL result in ugly things being spewed back.  (A bit better)
+    file WILL result in ugly things being spewed back.  
+         (A bit better)
     - A thousand more that I haven't thought of.  
 
     Please post back any improvement you make; I can be reached at:  
     observer@colba.net  
 
     note: Compile it with:  
-    gcc -Wall -lecasoundc -o ecalength ecalength.c  
+    gcc -Wall `ecasoundc-config --libs` -lstdc++ -o ecalength ecalength.c  
 
 *    updated: Thu May 10 15:56:18 EDT 2001
 - Now works with the new ai/ao scheme.
@@ -44,13 +41,15 @@
   comment it a bit.
 - Tried to catch wrong switches a bit better.
 - Only print full help message when no other message is being spewed.
+*    updated: Sun Jan  6 14:37:02 EST 2002
+- Woo! Ecasound's internals now support quoting, had to take advantage of this.
 
 */ 
 
 #include <stdio.h> 
 #include <unistd.h> 
 #include <string.h>
-#include "ecasoundc.h"
+#include <ecasound/ecasoundc.h> 
 
 #define FALSE          0 
 #define TRUE           1 
@@ -72,7 +71,7 @@ struct options {
 };
 
 int main(int argc, char *argv[]) { 
-  char cmd[500], fstring[16], status = 0, curopt, *optstr = "ftsmhbcra:u"; 
+  char cmd[512], fstring[16], status = 0, curopt, *optstr = "ftsmhbcra:u"; 
   unsigned char sec; 
   float curfilelength, totlength = 0; 
   unsigned int min, curarg; 
@@ -133,7 +132,7 @@ int main(int argc, char *argv[]) {
       * if script options have been set. I assume it's fine to spit to stdout 
       * here. */ 
       /* Local string where we store naughty switches. */
-      char badopts[20] = "\0";
+      char badopts[10] = "\0";
       
       /* Off we go. */
       if (opts.format) { strcat(badopts, "f"); }
@@ -201,11 +200,11 @@ int main(int argc, char *argv[]) {
   while(curarg < argc) { 
     if ((file = fopen(argv[curarg], "r")) != NULL) { 
       fclose(file); 
-      sprintf(cmd, "ai-add %s", argv[curarg]); 
+      sprintf(cmd, "ai-add \"%s\"", argv[curarg]); 
       eci_command(cmd); 
       eci_command("cs-connect"); 
       if (strlen(eci_last_error()) == 0) {
-        sprintf(cmd, "ai-select %s", argv[curarg]); 
+        sprintf(cmd, "ai-select \"%s\"", argv[curarg]); 
         eci_command(cmd); 
         eci_command("ai-get-length"); 
         curfilelength = eci_last_float(); 
