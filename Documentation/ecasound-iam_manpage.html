@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>12.12.2004</h2>
+<h2>14.12.2004</h2>
 
 
     
@@ -33,12 +33,13 @@ A special case of EIAM use is ecasound's control interface (ECI),
 which is a small library providing easy access to the EIAM 
 commands from outside of libecasound. When issuing EIAM commands using 
 ECI, it's possible that commands also return information. Currently
-supported return value types are: string [s], list of strings [S],
-integer [i], long integer [li] and floating-point number [f]. These
-definitions are used throughout this document. Commands that return
-nothing (void) are marked with [-]. Additionally, return type [e]
-marks an error condition. When an EIAM results in an error, a error 
-string explaining the condition is returned.
+supported return value types are: string [s], list of strings [S] 
+(elements separated by commas; escaped if necessary), integer [i], 
+long integer [li] and floating-point number [f]. These definitions are 
+used throughout this document. Commands that return nothing (void) are 
+marked with [-]. Additionally, return type [e] marks an error condition. 
+When an EIAM results in an error, a error string explaining the 
+condition is returned.
 <p><h2>Realtime commands</h2>
     
 It's not possible to use all EIAM commands to modify and control 

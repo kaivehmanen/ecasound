@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (12.12.2004)
+       (14.12.2004)
        ()
        (Multimedia software)
 
@@ -253,7 +253,7 @@ dit(ALSA devices)
 When using ALSA drivers, instead of a device filename, you need to
 use the following option syntax: bf(-i[:]alsa,pcm_device_name).
 
-dit(ALSA direct-gw and plugin access)
+dit(ALSA direct-hw and plugin access)
 It's also possible to use a specific card and device combination
 using the following notation: bf(-i[:]alsahw,card_number,device_number,subdevice_number).
 Another option is the ALSA PCM plugin layer. It works just like 
