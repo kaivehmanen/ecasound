@@ -12,7 +12,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (07022001)
+       (26022001)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -193,11 +193,12 @@ enddit()
 COMMENT(----------------------------------------------------------------)
 subsect(Versioning)
 All ecasound releases have a distinct version number. To emphasize the
-difference between stable and development releases, devel versions are 
-marked with 'devXX'. For instance, you could have development 
-releases 0.1dev1, 0.1dev2 and 0.1dev3. When the development reaches 
-a stable status, 0.1 is be released. After this, a new development 
-series will start (0.2dev1, and so on).
+difference between stable and development releases, stable versions
+have an even, and devel versions have an odd minor version number. In
+addition, devel versions are marked with 'devXX'. For instance, you
+could have development releases 0.1dev1, 0.1dev2 and 0.1dev3. When the 
+development reaches a stable status, 0.2 is released. After this, a
+new development series will start (0.3dev1, and so on).
 
 Separation between development and stable releases is very important,
 because it affects library versioning. The idea is that all library

@@ -5,11 +5,13 @@
 About the version numbers... "vX.Y[.Z][devT]" :
 
   X = major version  - the overall development status
-  Y = minor version  - represents a set of planned features (see TODO)
+  Y = minor version  - represents a set of planned features (see TODO);
+		       an even number means stable while odd marks 
+		       development releases
   Z = revision       - small changes to major.minor version (optional)
 		
-  devT = dev-release - development releases leading to the stable
-		       release X.Y[.Z]
+  devT = dev-release - development releases leading to the next stable
+		       version
 
 -----------------------------------------------------------------------
 
@@ -20,6 +22,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 		   'rawmidi' specifies the type while 'device_name' 
 	  	   refers to a file/device name
 	- fixed: MIDI-thread hang when exiting ecasound 
+	- fixed: various ewf-related fixes
 14022001 (v1.9dev2)
 	- added: -z:nointbuf - minimize the use of internal buffering
 	         done by rt-devices

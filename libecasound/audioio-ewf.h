@@ -31,7 +31,8 @@ class EWFFILE : public AUDIO_IO {
   bool child_active;
 
   RESOURCE_FILE ewf_rc;
-    
+
+  void dump_child_debug(void);    
   void read_ewf_data(void) throw(ECA_ERROR&);
   void write_ewf_data(void);
   void init_default_child(void) throw(ECA_ERROR&);

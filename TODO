@@ -13,14 +13,19 @@
 
 2.x series:
 
-- MIDI-subsystem updates [some of the specs ready]
-- aim is to make the 2.x releases binary-compatible
+- MIDI-subsystem updates [party implemented]
+- aim is to make the 2.0.x releases binary-compatible
+
+2.2 (2.1devX series):
 
 -----------------------------------------------------------------------
 
 [ Bugs to be fixed ]
 
-- commas confuse file name handling [ecatools]
+- commas confuse file name handling (ecatools)
+- initial reverb-spike when using -ete
+- problems with certain ewf-file setups
+- ecasound crashes if /dev/midi points to an invalid rawmidi device
 
 -----------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-*** Ecasound - Known bugs                                           ***
+*** Ecasound - Known bugs/features                                  ***
 -----------------------------------------------------------------------
 
 - ecasound crashes if /dev/midi points to an invalid rawmidi device
