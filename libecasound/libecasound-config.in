@@ -32,10 +32,10 @@ do
 	  flags="$flags $prefix"
 	  ;;
     --libs)
-	  flags="$flags -L$libdir -lecasound -lkvutils"
+	  flags="$flags -L$libdir -lecasound -lkvutils @ECA_S_EXTRA_LIBS@"
 	  ;;
     --libs_debug)
-	  flags="$flags -L$libdir -lecasound_debug -lkvutils_debug"
+	  flags="$flags -L$libdir -lecasound_debug -lkvutils_debug @ECA_S_EXTRA_LIBS@"
 	  ;;
     --ldflags)
 	  case "$libdir" in
@@ -45,7 +45,7 @@ do
 	  esac
 	  ;;
     --cflags)
-	  flags="$flags -I$includedir/libecasound -I$includedir/kvutils"
+	  flags="$flags -I$includedir/libecasound -I$includedir/kvutils @ECA_S_EXTRA_CFLAGS@"
 	  ;;
     --version)
 	  echo @VERSION@

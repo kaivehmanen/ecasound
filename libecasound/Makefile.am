@@ -23,24 +23,12 @@ check_PROGRAMS = libecasound_tester
 # if ECA_AM_ALL_STATIC
 # FIXME: always link ecasound-plugins statically
 if ECA_AM_DEBUG_MODE
-eca_libadd =  	$(top_builddir)/libecasound/plugins/libecasound_plugins_debug.la \
-		$(ECA_S_JACK_LIBS) \
-		$(ECA_S_SAMPLERATE_LIBS)
+eca_libadd =  	$(top_builddir)/libecasound/plugins/libecasound_plugins_debug.la $(ECA_S_EXTRA_LIBS)
 else
-eca_libadd =  	$(top_builddir)/libecasound/plugins/libecasound_plugins.la \
-		$(ECA_S_JACK_LIBS) \
-		$(ECA_S_SAMPLERATE_LIBS)
+eca_libadd =  	$(top_builddir)/libecasound/plugins/libecasound_plugins.la $(ECA_S_EXTRA_LIBS)
 endif
 
 eca_ldflags = -version-info @LIBECASOUND_VERSION@:0:@LIBECASOUND_VERSION_AGE@
-
-#if ECA_AM_DEBUG_MODE
-#libecasound_tester_libs =	$(top_builddir)/libecasound/.libs/libecasound@LIBECASOUND_VERSION@_debug.a \
-#				$(top_builddir)/kvutils/.libs/libkvutils@LIBKVUTILS_VERSION@_debug.a
-#else
-#libecasound_tester_libs =  	$(top_builddir)/libecasound/.libs/libecasound@LIBECASOUND_VERSION@.a \
-#				$(top_builddir)/kvutils/.libs/libkvutils@LIBKVUTILS_VERSION@.a
-#endif
 
 if ECA_AM_DEBUG_MODE
 libecasound_tester_libs =	$(top_builddir)/libecasound/libecasound_debug.la \
@@ -59,8 +47,7 @@ endif
 
 INCLUDES = 	-I$(srcdir) \
 		-I$(top_srcdir)/kvutils \
-		$(ECA_S_JACK_INCLUDES) \
-		$(ECA_S_SAMPLERATE_INCLUDES)
+		$(ECA_S_EXTRA_CPPFLAGS)
 
 # ----------------------------------------------------------------------
 # header files
@@ -334,15 +321,15 @@ libecasound_tester_src = \
 
 libecasound_la_SOURCES = $(ecasound_common1_src) $(ecasound_common2_src)
 libecasound_debug_la_SOURCES = $(ecasound_common1_src) $(ecasound_common2_src)
-libecasound_la_CFLAGS = $(eca_cxxflags)
+#libecasound_la_CFLAGS =  $(AM_CFLAGS)
 libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags) -static
 libecasound_la_LIBADD = $(eca_libadd)
-libecasound_debug_la_CFLAGS = $(libecasound_la_CFLAGS)
+#libecasound_debug_la_CFLAGS = $(libecasound_la_CFLAGS)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
 libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
 
 libecasound_tester_SOURCES = $(libecasound_tester_src)
-libecasound_tester_CFLAGS = $(eca_cxxflags)
+#libecasound_tester_CFLAGS =  $(AM_CFLAGS)
 libecasound_tester_LDADD = $(libecasound_tester_libs)
 
 # ---------------------------------------------------------------------

@@ -7,8 +7,6 @@ AUTOMAKE_OPTIONS = foreign
 #common_clags = -DECA_ENABLE_AUDIOIO_PLUGINS
 
 if ECA_AM_COMPILE_ARTS
-arts_libs = ${ECA_S_ARTSC_LIBS}
-arts_cflags = ${ECA_S_ARTSC_CFLAGS}
 arts_src    = audioio_arts.cpp
 arts_target = libaudioio_arts.la
 else
@@ -16,7 +14,6 @@ arts_target =
 endif
 
 if ECA_AM_COMPILE_ALSA
-alsa_libs = -lasound
 alsa_target = libaudioio_alsa.la \
 	      libaudioio_alsa_named.la
 alsa_src    = audioio_alsa.cpp audioio_alsa_named.cpp
@@ -25,7 +22,6 @@ alsa_target =
 endif
 
 if ECA_AM_COMPILE_AUDIOFILE
-af_libs = -laudiofile
 af_target = libaudioio_af.la
 af_src = audioio_af.cpp
 else
@@ -33,7 +29,6 @@ af_target =
 endif
 
 if ECA_AM_COMPILE_SNDFILE
-sndfile_libs = -lsndfile
 sndfile_target = libaudioio_sndfile.la
 sndfile_src = audioio_sndfile.cpp
 else
@@ -51,10 +46,9 @@ INCLUDES =	-I$(srcdir) \
 		-I$(top_srcdir) \
 		-I$(top_srcdir)/libecasound \
 		-I$(top_srcdir)/kvutils \
-		$(arts_cflags) \
-		$(ECA_S_JACK_INCLUDES)
+		$(ECA_S_EXTRA_CPPFLAGS)
 
-#libdir = 	${exec_prefix}/lib/libecasound@LIBECASOUND_VERSION@-plugins
+#libdir = 	$(exec_prefix)/lib/libecasound@LIBECASOUND_VERSION@-plugins
 
 # ----------------------------------------------------------------------
 # header files
@@ -93,35 +87,13 @@ plugin_cond_sources = 	$(af_src) \
 
 libecasound_plugins_la_SOURCES          = audioio_dummy.cpp $(plugin_cond_sources)
 EXTRA_libecasound_plugins_la_SOURCES    = $(plugin_cond_sources)
-libecasound_plugins_la_LIBADD		= $(af_libs) $(alsa_libs) $(arts_libs) $(sndfile_libs) $(ECA_S_JACK_LIBS)
+libecasound_plugins_la_LIBADD		= $(ECA_S_EXTRA_LIBS)
 libecasound_plugins_la_LDFLAGS 		= -static
 
 libecasound_plugins_debug_la_SOURCES	= $(libecasound_plugins_la_SOURCES)
 EXTRA_libecasound_plugins_debug_la_SOURCES = $(EXTRA_libecasound_plugins_la_SOURCES)
 libecasound_plugins_debug_la_LIBADD	= $(libecasound_plugins_la_LIBADD)
 libecasound_plugins_debug_la_LDFLAGS	= $(libecasound_plugins_la_LDFLAGS)
-
-# ----------------------------------------------------------------------
-# old rules for separate linking of plugins
-# ----------------------------------------------------------------------
-
-#libaudioio_af_la_SOURCES	     	= audioio_af.cpp
-#libaudioio_alsa_la_SOURCES	     	= audioio_alsa.cpp audioio_alsa_hw.cpp
-#libaudioio_alsa_named_la_SOURCES	= audioio_alsa.cpp audioio_alsa_named.cpp
-#libaudioio_arts_la_SOURCES	        = audioio_arts.cpp
-#libaudioio_jack_la_SOURCES	        = audioio_jack.cpp audioio_jack_manager.cpp
-
-#libaudioio_af_la_LIBADD	     	= $(af_libs)
-#libaudioio_alsa_la_LIBADD	     	= $(alsa_libs)
-#libaudioio_alsa_named_la_LIBADD	= $(alsa_libs)
-#libaudioio_arts_la_LIBADD		= 
-#libaudioio_jack_la_LIBADD		= 
-
-#libaudioio_af_la_LDFLAGS	     	= -avoid-version -export-dynamic
-#libaudioio_alsa_la_LDFLAGS	     	= -avoid-version -export-dynamic
-#libaudioio_alsa_named_la_LDFLAGS     	= -avoid-version -export-dynamic
-#libaudioio_arts_la_LDFLAGS	        = -avoid-version -export-dynamic $(arts_libs)
-#libaudioio_jack_la_LDFLAGS	        = -avoid-version -export-dynamic $(jack_libs)
 
 # ----------------------------------------------------------------------
 # separate rules for compiling non-libtool plugins
