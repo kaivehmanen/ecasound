@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 131200) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 090100) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,7 +14,7 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??122000 (v1.8.6d15)
+??012001 (v1.8.6d15)
 	- added: eiam-cmds; set-position, get-position, get-length, 
 		 cs-connected, cs-selected, engine-status, c-list,
 		 aio-get-position, aio-get-length, aio-selected,
@@ -53,6 +53,9 @@ Last officially released version is -*> v1.8.2r14 <*-
 	         ecasound object weren't properly destructed causing
 		 all kinds of weird behavious (especially with wav-
 		 files) - [smassy]
+	- fixed: more FreeBSD 4.x related fixes [beaupran]
+	- fixed: ogg vorbis output fixes [nolan_d]
+	- fixed: gcc 2.96 (RH7.0) related fixes [swharris]
 07122000 (v1.8.5d15)
 	- added: tremolo effect (-eemt) [rcs]
 	- added: -z:db; i/o double buffering layer is back! - 
