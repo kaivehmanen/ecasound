@@ -53,7 +53,8 @@ void MIDI_SERVER::io_thread(void) {
   
   ecadebug->msg(ECA_DEBUG::user_objects, "(midi-server) Hey, in the I/O loop!");
   while(true) {
-    if (running_rep.get() == 0) {
+    if (running_rep.get() == 0 ||
+	clients_rep[0]->is_open() != true) {
       usleep(50000);
       if (exit_request_rep.get() == 1) break;
       continue;
