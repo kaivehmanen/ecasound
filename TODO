@@ -6,14 +6,14 @@
 
 1.8.x series:
 
-- embedded effect preset parameters [specs ready]
-- internal plugin support [done]
+- embedded effect preset parameters [done!]
+- internal plugin support [done!]
 - MIDI-subsystem updates [specs ready]
 
 2.x series (1.x -> 2.x requirements):
 
-- central libecasound APIs ready for general use
-- users's and programmer's guide cover all ecasound basics
+- central libecasound APIs ready for general use [getting close]
+- users's and programmer's guide cover all ecasound basics [done!]
 
 -----------------------------------------------------------------------
 
@@ -31,8 +31,8 @@
 - make separate xxx-list and xxx-status commands (a pure list, and a more
   verbose xxx-status command) [ia-mode]
 - add threshold parameter to -eca
-- embedded effect preset parameters ("-p[fn]:string,par1,...,parN")
-- metronome signal
+- embedded effect preset parameters ("-p[fn]:string,par1,...,parN") [done! 1.8.x]
+- metronome signal [done! 1.8.x]
 - better MIDI-support (separate MIDI input/output objects) [under work]
   
 -----------------------------------------------------------------------
@@ -77,9 +77,10 @@ Other ares:
 
 [ Help - developer in trouble ]
 
-- does ecasound compile on FreeBSD/Irix/Solaris/etc system, what
-  versions?
+- ecasound compiles on Solaris 2.6 and FreeBSD 4.1, what about other
+  versions; how about Irix, other BSDs?
 - how current ecasound versions work with old gcc packages (2.7.x
   and older)?
 - ... and old libc-versions (2.x and 5.x)?
-- ecasound compiles out-of-the-box on Redhat 6.x system, what about other distros?
+- ecasound compiles out-of-the-box on Redhat 6.x and PLD Linux
+  systems, what about other distros?

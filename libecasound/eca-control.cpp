@@ -57,6 +57,9 @@ void ECA_CONTROL::command(const string& cmd) throw(ECA_ERROR&) {
   if (p != cmds.end()) {
     if (*p == "") return;
     if (ECA_IAMODE_PARSER::cmd_map_rep.find(string_search_and_replace(*p, '_', '-')) == ECA_IAMODE_PARSER::cmd_map_rep.end()) {
+      // ---
+      // *p is not recognized as a iamode command
+      // ---
       if (p->size() > 0 && (*p)[0] == '-') {
 	direct_command(cmd);
       }

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 211000) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 011100) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,7 +14,11 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??102000 (v1.8.4d15)
+??112000 (v1.8.4d15)
+	- added: pulse gate (-eemp); can be used to generate a
+	         metronome signal [rcs]
+	- added: support for preset parameters - see file 
+                 'effect_presets' for examples [artham]
 	- added: support for MIDI files using Timidity++
 	- added: input and output of Ogg Vorbis files (.ogg) using 
 		 ogg123 and vorbize

@@ -222,8 +222,8 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
     params.xfer_mode = SND_PCM_XFER_INTERLEAVED;
   else
     params.xfer_mode = SND_PCM_XFER_NONINTERLEAVED;
-  params.xrun_mode = SND_PCM_XRUN_FRAGMENT; /* FIXME: _NONE? */
-  params.ready_mode = SND_PCM_READY_FRAGMENT; /* FIXME: _NONE? */
+  params.xrun_mode = SND_PCM_XRUN_ASAP; /* FIXME: _FRAGMENT? */
+  params.ready_mode = SND_PCM_READY_ASAP; /* FIXME: _FRAGMENT? */
 //    params.xrun_act = SND_PCM_XRUN_ACT_RESTART;
 
   // -------------------------------------------------------------------

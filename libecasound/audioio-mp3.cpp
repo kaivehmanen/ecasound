@@ -141,7 +141,7 @@ void MP3FILE::get_mp3_params(const string& fname) throw(SETUP_ERROR&) {
   ecadebug->msg(ECA_DEBUG::user_objects,m.to_string());
   
   set_channels((newlayer.mode() == Layer::MPG_MD_MONO) ? 1 : 2);
-  set_samples_per_second(bsecond / channels() / 2);
+  set_samples_per_second(bsecond / 2 / 2); // mpg123 always outputs 16bit stereo
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 }
 

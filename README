@@ -162,12 +162,13 @@ Kai Vehmanen -	mailto:kaiv@wakkanet.fi
 Barton-Davis, Paul - For the work his done for linux audio
 Beaupre, Antoine - Patches for FreeBSD compatibility. [beaupran]
 Campbell, Ross - Tips concerning Solaris. [rcampbel]
+Coker, Rob - Pulse gate (-eemp) code. [rcs]
 Dyson, John S. - Wrote the original advanced compressor (-eca) code.
 Endersz, Viktor - For sending me the adv.compressor source code!
 Eure, Ian and Junichi Uekawa  - For creating ecasound debian packages [ieure,juekawa]
 Fendt, Stefan - Original code for reverb (-ete) and RC-lowpass filter (-ef4).
 Hall, Jeremy - Extensive testing, ALSA 0.6.x support, many design ideas [jhall]
-Hamara, Arto - Ecasound logo(s), bug fixes and lots of great ideas! [artham]
+Hamara, Arto - Ecasound logo(s), preset params, various bug fixes! [artham]
 Lavallée, Marc - Rpm-spec for Mandrake.
 Laydier, Antoine - layer.cpp (interprets mp3 headers) [SMF]
 Petit, Bertrand - Helped with POSIX-compatibility issues.

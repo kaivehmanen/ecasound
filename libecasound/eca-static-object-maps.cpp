@@ -35,6 +35,7 @@
 #include "audiofx.h"
 #include "audiofx_amplitude.h"
 #include "audiofx_analysis.h"
+#include "audiofx_envelope_modulation.h"
 #include "audiofx_filter.h"
 #include "audiofx_rcfilter.h"
 #include "audiofx_reverb.h"
@@ -183,6 +184,8 @@ void register_default_chainops(void) {
   eca_chain_operator_map.register_object("efl", new EFFECT_LOWPASS());
   eca_chain_operator_map.register_object("efr", new EFFECT_BANDREJECT());
   eca_chain_operator_map.register_object("efs", new EFFECT_RESONATOR());
+  eca_chain_operator_map.register_object("eemb", new EFFECT_PULSE_GATE_BPM());
+  eca_chain_operator_map.register_object("eemp", new EFFECT_PULSE_GATE());
   eca_chain_operator_map.register_object("ei", new EFFECT_PITCH_SHIFT());
   eca_chain_operator_map.register_object("enm", new EFFECT_NOISEGATE());
   eca_chain_operator_map.register_object("epp", new EFFECT_NORMAL_PAN());

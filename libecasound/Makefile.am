@@ -46,6 +46,7 @@ ecasound_audiofx_include =  \
 			audiofx_amplitude.h \
 			audiofx_compressor.h \
 			audiofx_analysis.h \
+			audiofx_envelope_modulation.h \
 			audiofx_filter.h \
 			audiofx_rcfilter.h \
 			audiofx_reverb.h \
@@ -161,6 +162,7 @@ ecasound_audiofx_src =  audiofx.cpp \
 			audiofx_amplitude.cpp \
 			audiofx_compressor.cpp \
 			audiofx_analysis.cpp \
+			audiofx_envelope_modulation.cpp \
 			audiofx_filter.cpp \
 			audiofx_rcfilter.cpp \
 			audiofx_reverb.cpp \

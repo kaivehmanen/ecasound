@@ -2,6 +2,14 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-11-01  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* audiofx_envelope_modulation.h (): EFFECT_PULSE_GATE_BPM added
+	
+2000-10-29  Rob Coker <rcs@birch.net>
+
+	* audiofx_envelope_modulation.h (): file added
+	
 2000-10-21  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-mthreaded-processor.h (): file removed
