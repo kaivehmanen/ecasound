@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20021105-4
+dnl last modified: 20021128-5
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -23,7 +23,7 @@ echo "------------------------------------------------------------------"
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 2.2.0-pre6)
+AM_INIT_AUTOMAKE(ecasound, 2.2.0-rc1)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
