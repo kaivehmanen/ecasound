@@ -26,10 +26,6 @@ Input/output devices:
 - type override for audio objects
 - automatic handling of mono mp3s
 - mp3 bitrate as a command-line parameter
-- more efficient interleaving of multichannel inputs/outputs
-	- "-i:ileave,mchannel-file.wav,1" - only reads the 1st channel
-	- "-i:ileave,mchannel-file.wav,2" - only reads the 2nd channel
-	- and so on... the same with outputs
 
 Interactive-mode:
 
@@ -46,20 +42,6 @@ Effects, routing, dsp routines:
 Ecatools:
 
 - commas confuse file name handling
-
------------------------------------------------------------------------
-
-[ Help - developer in trouble ]
-
-- does ecasound work with ALSA-supported multichannel cards
-  (Hammerfall, MidiMan, etc)?
-- does ecasound compile on FreeBSD/Irix/Solaris/etc system, what
-  versions?
-- how current ecasound versions work with old gcc packages (2.7.x
-  and older)?
-- ... and old libc-versions (2.x and 5.x)?
-- ecasound compiles out-of-the-box on Redhat 6.x system, what about
-  other distros?
   
 -----------------------------------------------------------------------
 
@@ -67,10 +49,15 @@ Ecatools:
 
 Input/output devices:
 
+- internal support for mp3 encoding and decoding (libmpg123 + libmp3lame)
 - SMPTE time-code
 - metronome signal
 - integration to some synth engine - for instance Csound, aRts, 
   Quasimodo, Bacterium, ...
+- more efficient interleaving of multichannel inputs/outputs
+	- "-i:ileave,mchannel-file.wav,1" - only reads the 1st channel
+	- "-i:ileave,mchannel-file.wav,2" - only reads the 2nd channel
+	- and so on... the same with outputs
 
 Effects, routing, dsp routines:
 
@@ -88,3 +75,17 @@ Misc:
 
 - smart mixing / dithering
 - better MIDI-support
+
+-----------------------------------------------------------------------
+
+[ Help - developer in trouble ]
+
+- does ecasound work with ALSA-supported multichannel cards
+  (Hammerfall, MidiMan, etc)?
+- does ecasound compile on FreeBSD/Irix/Solaris/etc system, what
+  versions?
+- how current ecasound versions work with old gcc packages (2.7.x
+  and older)?
+- ... and old libc-versions (2.x and 5.x)?
+- ecasound compiles out-of-the-box on Redhat 6.x system, what about
+  other distros?

@@ -63,7 +63,7 @@ To compile qtecasound, you also need...:
 - qt 2.x development environment
 
 -----------------------------------------------------------------------
- Installing 
+ Installing
 -----------------------------------------------------------------------
 
 First of all, you should first try to use the binary-rpm release.
@@ -75,7 +75,7 @@ instructions. To compile from rpm source packages, "rpm --rebuild
 ecasound-x.y.xRt.src.rpm".
 
 -----------------------------------------------------------------------
- Documentation 
+ Documentation
 -----------------------------------------------------------------------
 
 Ecasound documentation is updated whenever new features are added 

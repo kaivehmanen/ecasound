@@ -26,24 +26,37 @@ htmlcommand(
 
 manpage(ecatools)
        (1)
-       (21.05.2000)
+       (07.06.2000)
        ()
        (Multimedia software)
 
 manpagename(ecatools)(audio processing utils based on ecasound)
 
 manpagesynopsis()
+bf(ecaplay) file1 [ file2,...,fileN ]
+
+bf(ecaconvert) .extension file1 [ file2,...,fileN ]
+
 bf(ecafixdc) file1 [ file2,...,fileN ]
 
 bf(ecanormalize) file1 [ file2,...,fileN ]
-
-bf(ecaplay) file1 [ file2,...,fileN ]
 
 manpagedescription()
 
 Ecatools are simple command line utils that do various audio
 processing tasks. Most of them support batch processing. They all
 use the ecasound engine (libecasound).
+
+bf(ECAPLAY)
+
+A simple command-line tool that plays input files using the
+default output specified in em(~/.ecasoundrc).
+
+bf(ECACONVERT)
+
+A tool for converting a set of files to a common target format.
+This target format is given as the first command line
+argument, and its syntax is em(.ext).
 
 bf(ECAFIXDC)
 
@@ -54,11 +67,6 @@ bf(ECANORMALIZE)
 A simple command-line tool for normalizing sample volume. 
 Finds out how much input file can be amplified without clipping
 and, if necessary, does the amplification.
-
-bf(ECAPLAY)
-
-A simple command-line tool that plays input files using the
-default output specified in em(~/.ecasoundrc).
 
 manpagefiles()
 

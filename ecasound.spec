@@ -3,10 +3,10 @@ Prefix: /usr/local
 Packager: Kai Vehmanen <kaiv@wakkanet.fi>
 Distribution: Red Hat Contrib
 Name: ecasound
-Version: 1.7.8r12
+Version: 1.8.0d13
 Release: 1
 Copyright: GPL
-Source: http://ecasound.seul.org/download/ecasound-1.7.8r12.tar.gz
+Source: http://ecasound.seul.org/download/ecasound-1.8.0d13.tar.gz
 
 Summary: ecasound - multitrack audio processing tool
 Group: Applications/Sound
@@ -45,7 +45,7 @@ Requires: ecasound
 Qt-based X-interface to ecasound.
 
 %prep
-%setup -n ecasound-1.7.8r12
+%setup -n ecasound-1.8.0d13
 %build
 ./configure --prefix=$RPM_BUILD_ROOT%prefix --disable-static $extra_params
 make
@@ -67,6 +67,7 @@ make strip-shared-libs
 %doc /usr/local/man/man1/ecasound-iam.1
 %doc /usr/local/man/man5/ecasoundrc.5
 /usr/local/bin/ecasound
+/usr/local/bin/ecaconvert
 /usr/local/bin/ecafixdc
 /usr/local/bin/ecanormalize
 /usr/local/bin/ecaplay
@@ -85,6 +86,9 @@ make strip-shared-libs
 /usr/local/lib/libqtecasound.*
 
 %changelog
+* Wed Jun 07 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- ecaconvert added to the package.
+
 * Mon Jun 05 2000 Kai Vehmanen <kaiv@wakkanet.fi>
 - Renamed ecatools programs.
 

@@ -1,5 +1,5 @@
-#ifndef _ECA_QTMAIN_H
-#define _ECA_QTMAIN_H
+#ifndef INCLUDED_QE_MAIN_H
+#define INCLUDED_QE_MAIN_H
 
 #include "eca-session.h"
 

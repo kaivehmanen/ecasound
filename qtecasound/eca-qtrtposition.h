@@ -1,5 +1,5 @@
-#ifndef _ECA_QT_RTPOSITION_H
-#define _ECA_QT_RTPOSITION_H
+#ifndef INCLUDED_QE_RTPOSITION_H
+#define INCLUDED_QE_RTPOSITION_H
 
 #include <qslider.h>
 
@@ -7,11 +7,9 @@ class QERuntimePosition : public QSlider
 {
   Q_OBJECT
 public:
-  QERuntimePosition (double length, QWidget *parent=0, const char *name=0);
+  QERuntimePosition (double length, QWidget *parent = 0, const char *name = 0);
   
-  //  void set_value(double value);      // between 0 and 'max'
-
-  bool does_widget_have_control(void);
+  bool does_widget_have_control(void) const;
 
 public slots:
 
@@ -28,16 +26,11 @@ signals:
 
     void position_changed_from_widget(double new_pos);
 
- protected:
-
-  //  void	timerEvent( QTimerEvent * );
-  //  void paintEvent( QPaintEvent * );
-
  private:
 
-    bool widget_control;
-    int last_normally_changed;
-    double totallen, position;
+    bool widget_control_rep;
+    int last_normally_changed_rep;
+    double totallen_rep, position_rep;
 };
 
 #endif

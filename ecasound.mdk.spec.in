@@ -76,6 +76,7 @@ make prefix=$RPM_BUILD_ROOT%prefix strip-shared-libs
 %doc /usr/man/man1/ecasound-iam.1
 %doc /usr/man/man5/ecasoundrc.5
 /usr/bin/ecasound
+/usr/bin/ecaconvert
 /usr/bin/ecafixdc
 /usr/bin/ecanormalize
 /usr/bin/ecaplay
@@ -94,6 +95,9 @@ make prefix=$RPM_BUILD_ROOT%prefix strip-shared-libs
 /usr/lib/libqtecasound.*
 
 %changelog
+* Wed Jun 07 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- ecaconvert added to the package.
+
 * Mon Jun 05 2000 Kai Vehmanen <kaiv@wakkanet.fi>
 - Renamed ecatools programs.
 

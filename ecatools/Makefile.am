@@ -14,11 +14,13 @@ INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils \
 if INCLUDE_DEBUG
 bin_PROGRAMS = ecanormalize_debug \
 	       ecafixdc_debug \
-	       ecaplay_debug
+	       ecaplay_debug \
+	       ecaconvert_debug
 else
 bin_PROGRAMS = ecanormalize \
 	       ecafixdc \
-	       ecaplay
+	       ecaplay \
+	       ecaconvert
 endif
 
 ecanormalize_SOURCES = ecatools_normalize.cpp \
@@ -35,6 +37,10 @@ ecaplay_SOURCES = ecatools_play.cpp \
 			ecatools_play.h
 ecaplay_LDADD = $(libecasound_path)
 
+ecaconvert_SOURCES = ecatools_convert.cpp \
+			ecatools_convert.h
+ecaconvert_LDADD = $(libecasound_path)
+
 ecanormalize_debug_SOURCES = $(ecanormalize_SOURCES)
 ecanormalize_debug_LDADD = $(ecanormalize_LDADD)
 
@@ -43,3 +49,6 @@ ecafixdc_debug_LDADD = $(ecafixdc_LDADD)
 
 ecaplay_debug_SOURCES = $(ecaplay_SOURCES)
 ecaplay_debug_LDADD = $(ecaplay_LDADD)
+
+ecaconvert_debug_SOURCES = $(ecaconvert_SOURCES)
+ecaconvert_debug_LDADD = $(ecaconvert_LDADD)

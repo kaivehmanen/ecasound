@@ -1,5 +1,5 @@
-#ifndef _ECA_QT_CHAINSETUP_H
-#define _ECA_QT_CHAINSETUP_H
+#ifndef INCLUDED_QE_CHAINSETUP_H
+#define INCLUDED_QE_CHAINSETUP_H
 
 #include <vector>
 
@@ -14,7 +14,7 @@ class QEButtonRow;
 class QEChain;
 
 /**
- * Qt widget representing a ecasound chainsetup.
+ * Qt widget representing an ecasound chainsetup.
  */
 class QEChainsetup : public QWidget
 {
@@ -23,24 +23,19 @@ public:
   QEChainsetup (ECA_CONTROLLER* econtrol, QWidget *parent=0, const char *name=0);
   
 public slots:
- void update_filesetuplist(bool clean);
- void update_chainsetuplist(void);
- void update_chainsetuplist_clean(void);
+ void update_chain_list(void);
+ void update_chain_list_clean(void);
+
  // --
  void button_add_file(void);
  void button_remove_file(void);
- void button_chainselect(void);
- void init_waveedit(void);
+ void button_select_chain(void);
+/*   void init_wave_edit(void); */
  // --
- void init_chainview(void);
- void init_chainview(QListViewItem*);
  void button_add_chain(void);
  void button_remove_chain(void);
  void button_chain_muting(void);
  void button_chain_bypass(void);
- // --
- void close_session(void);
- void child_closed(void);
 
 private slots:
   void not_implemented(void);
@@ -55,40 +50,25 @@ protected:
 
  private:
 
-  void update_filesetup (const vector<AUDIO_IO*>& flist);
-  void update_filesetup_clean (const vector<AUDIO_IO*>& flist);
-
-  bool is_filesetup_highlighted(void) const;
-  void select_highlighted_filesetup(void);
   bool is_chain_highlighted(void) const;
   void select_highlighted_chain(void);
 
-  void init_filesetuplist(void);
-  void init_chainsetuplist(void);
+  void init_chain_list(void);
+  void init_buttons(void);
 
-  void init_gen_buttons(void);
-  void init_file_buttons(void);
-  void init_chain_buttons(void);
+  QBoxLayout* top_layout_repp;
+  QEButtonRow* buttons_repp;
 
-  QBoxLayout* topLayout;
-  QEButtonRow* gen_buttons;
-  QEButtonRow* file_buttons;
-  QEButtonRow* chain_buttons;
+  ECA_CONTROLLER* ctrl_repp;
 
-  ECA_CONTROLLER* ctrl_rep;
-  QListView* filesetupview;
-  QListView* chainsetupview;
-  QEChain* child_chain;
+  QListView* chain_list_repp;
 
-  QListViewItem* newitem;
-  vector<AUDIO_IO*>::size_type aiod_sizet;
-
-  QString current_dir;
-  QString cs_namestring;
-  QString cs_modestring, cs_posstring, cs_statusstring;
-  QString cs_chainstring;
-  QString cs_rtstring;
-  QString cs_format;
+  QString current_dir_rep;
+  QString cs_namestring_rep;
+  QString cs_modestring_rep, cs_posstring_rep, cs_statusstring_rep;
+  QString cs_chainstring_rep;
+  QString cs_rtstring_rep;
+  QString cs_format_rep;
 };
 
 #endif

@@ -15,8 +15,10 @@ About the version numbers... "vx.y.zRt" :
 Last officially released version is -*> v1.7.8r12 <*-
 
 ??062000 (v1.8.0d13)
+	- added: ecaconvert - a new ecatools app; converts a set of 
+		 files to target file format
 	- changed: major changes in source tree organization
-	- fixed: stdin, stdout and '-' were all broken
+	- fixed: stdin, stdout and '-' were all more or less broken
 05062000 (v1.7.8r12)  -** public release **-
 	- added: files 'TODO' and 'ecasound.mdk.spec'
 	- added: support for LADSPA_PATH env.variable

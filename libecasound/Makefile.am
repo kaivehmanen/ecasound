@@ -71,6 +71,7 @@ ecasound_audioio_src = 	audioio-cdr.h \
 			audioio-types.h \
 			audioio-alsa2.h \
 			audioio-alsa2-plugin.h \
+			audioio-alsa3.h \
 			audioio-loop.h
 
 ecasound_controller_src = \
@@ -170,6 +171,7 @@ ecasound_audioio_oss_src = audioio-oss.cpp
 ecasound_audioio_alsa_src = 	audioio-alsa.cpp \
 				audioio-alsa2.cpp \
 				audioio-alsa2-plugin.cpp \
+				audioio-alsa3.cpp \
 				audioio-alsalb.cpp
 
 ecasound_audioio_src = 	audioio-cdr.cpp \

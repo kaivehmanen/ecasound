@@ -1,5 +1,5 @@
-#ifndef _QTDEBUG_IF_H
-#define _QTDEBUG_IF_H
+#ifndef INCLUDED_QTDEBUG_IF_H
+#define INCLUDED_QTDEBUG_IF_H
 
 #include <string>
 #include <iostream.h>
@@ -25,9 +25,3 @@ extern QTDEBUG_IF qtdebug_if;
 extern COMMAND_QUEUE qtdebug_queue;
 
 #endif
-
-
-
-
-
-

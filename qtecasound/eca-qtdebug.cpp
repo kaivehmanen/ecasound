@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// eca-qtdebug.cpp: qt debug widget
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// eca-qtdebug.cpp: Qt debug widget for ecasound
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,48 +30,47 @@
 #include "qtdebug_if.h"
 #include "eca-qtdebug.h"
 
-QEDebug::QEDebug( QWidget *parent, const char *name) 
+QEDebug::QEDebug( QWidget *parent, const char *name)
         : QWidget( parent, name )
 {
   startTimer(10);
 
-  tview = new QTextView(this, "tview");
+  tview_repp = new QTextView(this, "tview");
 }
 
 QSize QEDebug::sizeHint(void) const {
   return(QSize(600,200));
 }
 
-void QEDebug::timerEvent( QTimerEvent * ) {
+void QEDebug::timerEvent(QTimerEvent *) {
   if (qtdebug_queue.cmds_available() == true) {
     string s = qtdebug_queue.front();
     qtdebug_queue.pop_front();
     QString temp (s.c_str());
     temp.replace(QRegExp("\n"), "<br>");
-    t += temp;
-    t += "<br>";
+    t_rep += temp;
+    t_rep += "<br>";
     unsigned int n = 0;
-    for(; n < t.length(); n++) {
-      if (t[n] == '<') {
-	for(; t[n] != '>'; ++n) {
-	  if (n == t.length()) {
-	    t += "<";
+    for(; n < t_rep.length(); n++) {
+      if (t_rep[n] == '<') {
+	for(; t_rep[n] != '>'; ++n) {
+	  if (n == t_rep.length()) {
+	    t_rep += "<";
 	    break;
 	  }
 	}
       }
-      if (t.length() - n < 4096) break;
+      if (t_rep.length() - n < 4096) break;
     }
     if (n > 0) {
-      t.remove(0, n + 1);
+      t_rep.remove(0, n + 1);
     }
-    tview->setTextFormat(Qt::RichText);
-    tview->setText("<qt>" + t + "</qt>");
-    tview->verticalScrollBar()->setValue(tview->verticalScrollBar()->maxValue());
-    //    tview->ensureVisible(0, tview->height(), 0, 0);
+    tview_repp->setTextFormat(Qt::RichText);
+    tview_repp->setText("<qt>" + t_rep + "</qt>");
+    tview_repp->verticalScrollBar()->setValue(tview_repp->verticalScrollBar()->maxValue());
   }
 }
 
 void QEDebug::resizeEvent( QResizeEvent * ) {
-  tview->resize(width(), height());
+  tview_repp->resize(width(), height());
 }

@@ -67,6 +67,7 @@ make strip-shared-libs
 %doc /usr/local/man/man1/ecasound-iam.1
 %doc /usr/local/man/man5/ecasoundrc.5
 /usr/local/bin/ecasound
+/usr/local/bin/ecaconvert
 /usr/local/bin/ecafixdc
 /usr/local/bin/ecanormalize
 /usr/local/bin/ecaplay
@@ -85,6 +86,9 @@ make strip-shared-libs
 /usr/local/lib/libqtecasound.*
 
 %changelog
+* Wed Jun 07 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- ecaconvert added to the package.
+
 * Mon Jun 05 2000 Kai Vehmanen <kaiv@wakkanet.fi>
 - Renamed ecatools programs.
 

@@ -43,4 +43,3 @@ QTDEBUG_IF::~QTDEBUG_IF(void) {
     }
   }
 }
-

@@ -38,17 +38,16 @@
 #include "qebuttonrow.h"
 
 #include "eca-version.h"
-#include "eca-session.h"
 #include "eca-controller.h"
-#include "eca-qtsession.h"
+#include "eca-qtchainsetup.h"
 #include "eca-qtmain.h"
 #include "eca-qtrtposition.h"
 #include "eca-qtdebug.h"
 #include "eca-qtdebugtab.h"
 #include "eca-qtinte.h"
 
-QEInterface::QEInterface(ECA_CONTROLLER* control, const ECA_SESSION* session, QWidget *parent, const char *name )
-        : QWidget( parent, name ), ctrl(control), ecaparams(session)
+QEInterface::QEInterface(ECA_CONTROLLER* control, QWidget *parent, const char *name)
+  : QWidget(parent, name), ctrl_repp(control)
 {
   setCaption("qtecasound - control panel");
   qApp->setMainWidget(this);
@@ -69,7 +68,7 @@ void QEInterface::init_layout(void) {
   QBoxLayout* bottomrow = new QHBoxLayout();
 
   init_buttons();
-  topLayout->addWidget(buttonrow);
+  topLayout->addWidget(buttonrow_repp);
   topLayout->addLayout(qtbuttons,0);
   topLayout->addLayout(textinput,0);
   topLayout->addLayout(tabwidget,1);
@@ -83,13 +82,12 @@ void QEInterface::init_layout(void) {
 
 void QEInterface::init_bottomrow(QBoxLayout* bottomrow) {
   init_statusbar();
-  bottomrow->addWidget(statusbar, 2, 0);
+  bottomrow->addWidget(statusbar_repp, 2, 0);
 }
 
 void QEInterface::init_statusbar(void) {
-  statusbar = new QStatusBar(this, "qsbar");
-
-  statusbar->message(string("qtecasound v" + ecasound_library_version + " ready.").c_str()); 
+  statusbar_repp = new QStatusBar(this, "qsbar");
+  statusbar_repp->message(string("qtecasound v" + ecasound_library_version + " ready.").c_str()); 
 
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()), this, SLOT(update_statusbar()));
@@ -98,12 +96,12 @@ void QEInterface::init_statusbar(void) {
 
 void QEInterface::update_statusbar(void) {
   static string last_epstatus;
-  string new_epstatus = ctrl->engine_status();
+  string new_epstatus = ctrl_repp->engine_status();
 
   if (new_epstatus == last_epstatus) return;
   else last_epstatus = new_epstatus;
 
-  statusbar->message(string("qtecasound v" + ecasound_library_version
+  statusbar_repp->message(string("qtecasound v" + ecasound_library_version
 			    + " . (C) 1997-2000 Kai Vehmanen . engine status: [" +
 			    last_epstatus + "]").c_str()); 
 }
@@ -114,16 +112,16 @@ void QEInterface::init_tabwidget(QBoxLayout* layout) {
   QEDebugTab* debugtab = new QEDebugTab(this, this, "debugtab");
   qtab->addTab(debugtab, "Engine o&utput");
 
-  session_rep = new QESession(ctrl, ecaparams, this, "qesession");
-  qtab->addTab(session_rep, "Session setu&p");
+  session_repp = new QEChainsetup(ctrl_repp, this, "qechainsetup");
+  qtab->addTab(session_repp, "Session setu&p");
   layout->addWidget(qtab,1,0);
 }
 
 void QEInterface::init_runtimebar(QBoxLayout* buttons) {
-  rpos = new QERuntimePosition(ctrl->length_in_seconds_exact(),
+  rpos_repp = new QERuntimePosition(ctrl_repp->length_in_seconds_exact(),
 			       this, "rpos");
-  buttons->addWidget( rpos, 10, 0 );
-  connect( rpos, SIGNAL(position_changed_from_widget(double)), this, SLOT(emsg_setpos(double)));
+  buttons->addWidget( rpos_repp, 10, 0 );
+  connect( rpos_repp, SIGNAL(position_changed_from_widget(double)), this, SLOT(emsg_setpos(double)));
 
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()), this, SLOT(update_runtimebar()));
@@ -131,35 +129,35 @@ void QEInterface::init_runtimebar(QBoxLayout* buttons) {
 }
 
 void QEInterface::update_runtimebar(void) {
-  if (rpos->does_widget_have_control() == false) {
-    rpos->position_in_seconds(ctrl->position_in_seconds_exact());
-    rpos->length_in_seconds(ctrl->length_in_seconds_exact());
+  if (rpos_repp->does_widget_have_control() == false) {
+    rpos_repp->position_in_seconds(ctrl_repp->position_in_seconds_exact());
+    rpos_repp->length_in_seconds(ctrl_repp->length_in_seconds_exact());
   }
 }
 
 void QEInterface::init_buttons(void) {
-  buttonrow = new QEButtonRow(this, "buttonrow");
-  buttonrow->add_button(new QPushButton("(B)egin",buttonrow), 
+  buttonrow_repp = new QEButtonRow(this, "buttonrow");
+  buttonrow_repp->add_button(new QPushButton("(B)egin",buttonrow_repp), 
 			ALT+Key_B,
 			this, SLOT(emsg_rw_begin()));
 
-  buttonrow->add_button(new QPushButton("Rew (<)",buttonrow), 
+  buttonrow_repp->add_button(new QPushButton("Rew (<)",buttonrow_repp), 
 			Key_Less,
 			this, SLOT(emsg_rewind()));
 
-  buttonrow->add_button(new QPushButton("S(t)art",buttonrow), 
+  buttonrow_repp->add_button(new QPushButton("S(t)art",buttonrow_repp), 
 			ALT+Key_T,
 			this, SLOT(emsg_start()));
 
-  buttonrow->add_button(new QPushButton("(S)top",buttonrow), 
+  buttonrow_repp->add_button(new QPushButton("(S)top",buttonrow_repp), 
 			ALT+Key_S,
 			this, SLOT(emsg_stop()));
 
-  buttonrow->add_button(new QPushButton("Fw (>)",buttonrow), 
+  buttonrow_repp->add_button(new QPushButton("Fw (>)",buttonrow_repp), 
 			SHIFT+Key_Greater,
 			this, SLOT(emsg_forward()));
 
-  buttonrow->add_button(new QPushButton("(Q)uit",buttonrow), 
+  buttonrow_repp->add_button(new QPushButton("(Q)uit",buttonrow_repp), 
 			ALT+Key_Q,
 			qApp, SLOT(closeAllWindows()));
 
@@ -170,24 +168,24 @@ void QEInterface::init_textinput(QBoxLayout* textinput) {
   QLabel* tekstiinfo = new QLabel("qtecasound CL(I) ('h' for help): ", this, "tekstiinfo");
   textinput->addWidget( tekstiinfo, 5);
   
-  tekstirivi = new QLineEdit(this, "tekstirivi");
-  textinput->addWidget( tekstirivi, 10);
+  tekstirivi_repp = new QLineEdit(this, "tekstirivi");
+  textinput->addWidget( tekstirivi_repp, 10);
 
   QAccel* accel = new QAccel(this);
-  accel->connectItem(accel->insertItem(ALT+Key_I), tekstirivi, SLOT(setFocus()));
+  accel->connectItem(accel->insertItem(ALT+Key_I), tekstirivi_repp, SLOT(setFocus()));
   
-  connect(tekstirivi, SIGNAL(returnPressed ()), this, SLOT(emsg_general()) );
-  connect(this, SIGNAL(clear_textinput()), tekstirivi, SLOT(clear()) );
+  connect(tekstirivi_repp, SIGNAL(returnPressed ()), this, SLOT(emsg_general()) );
+  connect(this, SIGNAL(clear_textinput()), tekstirivi_repp, SLOT(clear()) );
 }
 
 void QEInterface::emsg_general(void) {
-  string s (tekstirivi->text());
+  string s (tekstirivi_repp->text());
   if (s == "q" || s == "quit") {
     qApp->closeAllWindows();
   }
   else {
     try {
-      ctrl->command(s);
+      ctrl_repp->command(s);
     }
     catch(ECA_ERROR* e) {
       if (e->error_action() != ECA_ERROR::stop) {
@@ -207,21 +205,21 @@ void QEInterface::emsg_general(void) {
 }
 
 void QEInterface::emsg_quit(void) {  }
-void QEInterface::emsg_stop(void) { ctrl->command("s"); }
-void QEInterface::emsg_start(void) { ctrl->command("t"); }
-void QEInterface::emsg_rw_begin(void) { ctrl->command("setpos 0"); }
-void QEInterface::emsg_forward(void) { ctrl->command("fw 5"); }
-void QEInterface::emsg_rewind(void) { ctrl->command("rw 5"); }
-void QEInterface::emsg_status(void) { ctrl->command("st"); }
-void QEInterface::emsg_csstatus(void) { ctrl->command("cs-status"); }
-void QEInterface::emsg_ctrlstatus(void) { ctrl->command("ctrl-status"); }
-void QEInterface::emsg_estatus(void) { ctrl->command("es"); }
-void QEInterface::emsg_fstatus(void) { ctrl->command("fs"); }
-void QEInterface::emsg_cstatus(void) { ctrl->command("cs"); }
-void QEInterface::emsg_exec(void) { ctrl->start(); }
+void QEInterface::emsg_stop(void) { ctrl_repp->command("s"); }
+void QEInterface::emsg_start(void) { ctrl_repp->command("t"); }
+void QEInterface::emsg_rw_begin(void) { ctrl_repp->command("setpos 0"); }
+void QEInterface::emsg_forward(void) { ctrl_repp->command("fw 5"); }
+void QEInterface::emsg_rewind(void) { ctrl_repp->command("rw 5"); }
+void QEInterface::emsg_status(void) { ctrl_repp->command("st"); }
+void QEInterface::emsg_csstatus(void) { ctrl_repp->command("cs-status"); }
+void QEInterface::emsg_ctrlstatus(void) { ctrl_repp->command("ctrl-status"); }
+void QEInterface::emsg_estatus(void) { ctrl_repp->command("es"); }
+void QEInterface::emsg_fstatus(void) { ctrl_repp->command("fs"); }
+void QEInterface::emsg_cstatus(void) { ctrl_repp->command("cs"); }
+void QEInterface::emsg_exec(void) { ctrl_repp->start(); }
 void QEInterface::emsg_setpos(double pos_seconds) {
-  ctrl->command("setpos " + kvu_numtostr(pos_seconds));
-  rpos->control_back_to_parent();
+  ctrl_repp->command("setpos " + kvu_numtostr(pos_seconds));
+  rpos_repp->control_back_to_parent();
 }
 
 void QEInterface::not_implemented(void) {

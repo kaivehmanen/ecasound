@@ -1,5 +1,5 @@
-#ifndef INCLUDED_ECA_QTINTE_H
-#define INCLUDED_ECA_QTINTE_H
+#ifndef INCLUDED_QE_INTE_H
+#define INCLUDED_QE_INTE_H
 
 #include <qapplication.h>
 #include <qwidget.h>
@@ -11,7 +11,7 @@
 #include "eca-controller.h"
 
 class QERuntimePosition;
-class QESession;
+class QEChainsetup;
 class QEButtonRow;
 
 class QEInterface : public QWidget
@@ -51,13 +51,13 @@ signals:
   void focus_to_session();
 
 private:
-  QLineEdit* tekstirivi;
-  QStatusBar* statusbar;
-  QEButtonRow* buttonrow;
-  QERuntimePosition* rpos;
-  QESession* session_rep;
+  QLineEdit* tekstirivi_repp;
+  QStatusBar* statusbar_repp;
+  QEButtonRow* buttonrow_repp;
+  QERuntimePosition* rpos_repp;
+  QEChainsetup* session_repp;
 
-  ECA_CONTROLLER* ctrl_rep;
+  ECA_CONTROLLER* ctrl_repp;
 
   void init_layout(void);
   void init_statusbar(void);

@@ -27,13 +27,13 @@
 
 #include "eca-qtrtposition.h"
 
-QERuntimePosition::QERuntimePosition (double length, QWidget *parent, const char
-				      *name) :
-QSlider(QSlider::Horizontal, parent, name)
+QERuntimePosition::QERuntimePosition (double length, 
+				      QWidget *parent, 
+				      const char *name) :
+  QSlider(QSlider::Horizontal, parent, name) 
 {
   length_in_seconds(length);
-  widget_control = false;
-  //  setBackgroundColor("white");
+  widget_control_rep = false;
   setTickmarks(QSlider::Both);
   setRange(0, 1000);
   setTickInterval(500);
@@ -43,47 +43,35 @@ QSlider(QSlider::Horizontal, parent, name)
 }
 
 void QERuntimePosition::length_in_seconds(double seconds) {
-  totallen = seconds;
-  //  setRange(1,(int)ceil(totallen));
+  totallen_rep = seconds;
 }
 
 void QERuntimePosition::position_in_seconds(double seconds) {
-  if (widget_control) {
+  if (widget_control_rep) {
     //    cerr << "Widget still has control, can't change position...\n";
     return;
   }
-  if (seconds < totallen) 
-    position = seconds;
+  if (seconds < totallen_rep) 
+    position_rep = seconds;
 
-  last_normally_changed = (int)floor(position * 1000.0 / totallen);
-  setValue(last_normally_changed);
-
-  //  repaint();
+  last_normally_changed_rep = (int)floor(position_rep * 1000.0 / totallen_rep);
+  setValue(last_normally_changed_rep);
 }
 
-bool QERuntimePosition::does_widget_have_control(void) {
-  return(widget_control);
+bool QERuntimePosition::does_widget_have_control(void) const {
+  return(widget_control_rep);
 }
 
 void QERuntimePosition::control_back_to_parent(void) {
-  //  cerr << "Control back to parent.\n";
-  widget_control = false;
+  widget_control_rep = false;
 }
 
 void QERuntimePosition::change_position_from_widget(void) {
-  if (value() == last_normally_changed) {
-    widget_control = false;
+  if (value() == last_normally_changed_rep) {
+    widget_control_rep = false;
     return;
   }
-  //  cerr << "User touching my goddam slider! :)\n";
-  emit position_changed_from_widget(value() / 1000.0 * totallen);
+  emit position_changed_from_widget(value() / 1000.0 * totallen_rep);
 }
 
-void QERuntimePosition::mouse_active(void) { widget_control = true;  }
-
-
-
-
-
-
-
+void QERuntimePosition::mouse_active(void) { widget_control_rep = true;  }

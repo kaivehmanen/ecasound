@@ -60,28 +60,14 @@ POST_UNINSTALL = :
 host_alias = @host_alias@
 host_triplet = @host@
 ACLOCAL = @ACLOCAL@
-AS = @AS@
 AUTOCONF = @AUTOCONF@
 AUTOMAKE = @AUTOMAKE@
 CC = @CC@
 CPP = @CPP@
 CXX = @CXX@
-DLLTOOL = @DLLTOOL@
 GNUM4 = @GNUM4@
-LD = @LD@
 LIBTOOL = @LIBTOOL@
-LN_S = @LN_S@
-MAKEINFO = @MAKEINFO@
-MOC = @MOC@
-NM = @NM@
-OBJDUMP = @OBJDUMP@
-PACKAGE = @PACKAGE@
-QT_INCLUDES = @QT_INCLUDES@
-QT_LDFLAGS = @QT_LDFLAGS@
 RANLIB = @RANLIB@
-VERSION = @VERSION@
-qt_includes = @qt_includes@
-qt_libraries = @qt_libraries@
 @INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
 @INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
 @INCLUDE_DEBUG_TRUE@libecasound_path = -L$(top_builddir)/kvutils -L$(top_builddir)/kvutils/.libs -lkvutils $(top_builddir)/libecasound/libecasound_debug.la
@@ -89,8 +75,8 @@ qt_libraries = @qt_libraries@
 
 INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils 			-I$(top_srcdir)/libecasound
 
-@INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecanormalize_debug 	       ecafixdc_debug 	       ecaplay_debug
-@INCLUDE_DEBUG_FALSE@bin_PROGRAMS = ecanormalize 	       ecafixdc 	       ecaplay
+@INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecanormalize_debug 	       ecafixdc_debug 	       ecaplay_debug 	       ecaconvert_debug
+@INCLUDE_DEBUG_FALSE@bin_PROGRAMS = ecanormalize 	       ecafixdc 	       ecaplay 	       ecaconvert
 
 ecanormalize_SOURCES = ecatools_normalize.cpp 	 		     ecatools_normalize.h
 
@@ -105,6 +91,10 @@ ecaplay_SOURCES = ecatools_play.cpp 			ecatools_play.h
 
 ecaplay_LDADD = $(libecasound_path)
 
+ecaconvert_SOURCES = ecatools_convert.cpp 			ecatools_convert.h
+
+ecaconvert_LDADD = $(libecasound_path)
+
 ecanormalize_debug_SOURCES = $(ecanormalize_SOURCES)
 ecanormalize_debug_LDADD = $(ecanormalize_LDADD)
 
@@ -113,6 +103,9 @@ ecafixdc_debug_LDADD = $(ecafixdc_LDADD)
 
 ecaplay_debug_SOURCES = $(ecaplay_SOURCES)
 ecaplay_debug_LDADD = $(ecaplay_LDADD)
+
+ecaconvert_debug_SOURCES = $(ecaconvert_SOURCES)
+ecaconvert_debug_LDADD = $(ecaconvert_LDADD)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -141,6 +134,12 @@ ecaplay_debug_OBJECTS =  ecatools_play.o
 @INCLUDE_DEBUG_FALSE@ecaplay_debug_DEPENDENCIES =  \
 @INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/libecasound.la
 ecaplay_debug_LDFLAGS = 
+ecaconvert_debug_OBJECTS =  ecatools_convert.o
+@INCLUDE_DEBUG_TRUE@ecaconvert_debug_DEPENDENCIES =  \
+@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/libecasound_debug.la
+@INCLUDE_DEBUG_FALSE@ecaconvert_debug_DEPENDENCIES =  \
+@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/libecasound.la
+ecaconvert_debug_LDFLAGS = 
 ecanormalize_OBJECTS =  ecatools_normalize.o
 @INCLUDE_DEBUG_TRUE@ecanormalize_DEPENDENCIES =  \
 @INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/libecasound_debug.la
@@ -159,6 +158,12 @@ ecaplay_OBJECTS =  ecatools_play.o
 @INCLUDE_DEBUG_FALSE@ecaplay_DEPENDENCIES =  \
 @INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/libecasound.la
 ecaplay_LDFLAGS = 
+ecaconvert_OBJECTS =  ecatools_convert.o
+@INCLUDE_DEBUG_TRUE@ecaconvert_DEPENDENCIES =  \
+@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/libecasound_debug.la
+@INCLUDE_DEBUG_FALSE@ecaconvert_DEPENDENCIES =  \
+@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/libecasound.la
+ecaconvert_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -172,14 +177,17 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  Makefile.am Makefile.in
 
 
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-DEP_FILES =  .deps/ecatools_fixdc.P .deps/ecatools_normalize.P \
-.deps/ecatools_play.P
-SOURCES = $(ecanormalize_debug_SOURCES) $(ecafixdc_debug_SOURCES) $(ecaplay_debug_SOURCES) $(ecanormalize_SOURCES) $(ecafixdc_SOURCES) $(ecaplay_SOURCES)
-OBJECTS = $(ecanormalize_debug_OBJECTS) $(ecafixdc_debug_OBJECTS) $(ecaplay_debug_OBJECTS) $(ecanormalize_OBJECTS) $(ecafixdc_OBJECTS) $(ecaplay_OBJECTS)
+DEP_FILES =  .deps/ecatools_convert.P .deps/ecatools_fixdc.P \
+.deps/ecatools_normalize.P .deps/ecatools_play.P
+SOURCES = $(ecanormalize_debug_SOURCES) $(ecafixdc_debug_SOURCES) $(ecaplay_debug_SOURCES) $(ecaconvert_debug_SOURCES) $(ecanormalize_SOURCES) $(ecafixdc_SOURCES) $(ecaplay_SOURCES) $(ecaconvert_SOURCES)
+OBJECTS = $(ecanormalize_debug_OBJECTS) $(ecafixdc_debug_OBJECTS) $(ecaplay_debug_OBJECTS) $(ecaconvert_debug_OBJECTS) $(ecanormalize_OBJECTS) $(ecafixdc_OBJECTS) $(ecaplay_OBJECTS) $(ecaconvert_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -261,6 +269,10 @@ ecaplay_debug: $(ecaplay_debug_OBJECTS) $(ecaplay_debug_DEPENDENCIES)
 	@rm -f ecaplay_debug
 	$(CXXLINK) $(ecaplay_debug_LDFLAGS) $(ecaplay_debug_OBJECTS) $(ecaplay_debug_LDADD) $(LIBS)
 
+ecaconvert_debug: $(ecaconvert_debug_OBJECTS) $(ecaconvert_debug_DEPENDENCIES)
+	@rm -f ecaconvert_debug
+	$(CXXLINK) $(ecaconvert_debug_LDFLAGS) $(ecaconvert_debug_OBJECTS) $(ecaconvert_debug_LDADD) $(LIBS)
+
 ecanormalize: $(ecanormalize_OBJECTS) $(ecanormalize_DEPENDENCIES)
 	@rm -f ecanormalize
 	$(CXXLINK) $(ecanormalize_LDFLAGS) $(ecanormalize_OBJECTS) $(ecanormalize_LDADD) $(LIBS)
@@ -272,6 +284,10 @@ ecafixdc: $(ecafixdc_OBJECTS) $(ecafixdc_DEPENDENCIES)
 ecaplay: $(ecaplay_OBJECTS) $(ecaplay_DEPENDENCIES)
 	@rm -f ecaplay
 	$(CXXLINK) $(ecaplay_LDFLAGS) $(ecaplay_OBJECTS) $(ecaplay_LDADD) $(LIBS)
+
+ecaconvert: $(ecaconvert_OBJECTS) $(ecaconvert_DEPENDENCIES)
+	@rm -f ecaconvert
+	$(CXXLINK) $(ecaconvert_LDFLAGS) $(ecaconvert_OBJECTS) $(ecaconvert_LDADD) $(LIBS)
 .cpp.o:
 	$(CXXCOMPILE) -c $<
 .cpp.lo:

@@ -25,21 +25,21 @@ class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
 
  private:
 
-  snd_pcm_t *audio_fd;
+  snd_pcm_t *audio_fd_repp;
 
-  int card_number, device_number;
-  int pcm_mode, pcm_channel;
+  int card_number_rep, device_number_rep;
+  int pcm_mode_rep, pcm_channel_rep;
 
-  long int bytes_read;
+  long int bytes_read_rep;
 
-  long underruns, overruns;
+  long underruns_rep, overruns_rep;
 
-  bool is_triggered;
-  bool is_prepared;
+  bool is_triggered_rep;
+  bool is_prepared_rep;
   
  public:
 
-  virtual string name(void) const { return("ALSA PCM-v1 device"); }
+  virtual string name(void) const { return("ALSA PCM device"); }
   virtual string description(void) const { return("ALSA PCM devices. Library versions 0.4.x and older."); }
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }

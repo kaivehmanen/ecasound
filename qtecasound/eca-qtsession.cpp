@@ -352,7 +352,7 @@ void QESession::button_open_chainsetup(void) {
     if (child_csetup != 0) {
       child_csetup->close(true);
     }
-    child_csetup = new QEChainsetup(ctrl, ctrl->get_chainsetup());
+    child_csetup = new QEChainsetup(ctrl);
     child_csetup->show();
     connect(child_csetup, SIGNAL(widget_closed()), this, SLOT(child_setup_closed()));
   }

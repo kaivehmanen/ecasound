@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
     global_pointer_to_ecaparams = param;  // used only for signal handling! 
 
     ECA_CONTROLLER* ctrl = new ECA_CONTROLLER (param);
-    QEInterface w (ctrl, param);
+    QEInterface w (ctrl);
     QObject::connect( &w, SIGNAL(is_finished()), &a, SLOT(quit()));
     QObject::connect( &a, SIGNAL( lastWindowClosed() ), &a, SLOT( quit() ) );
     a.setMainWidget(&w);

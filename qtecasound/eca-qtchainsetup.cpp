@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// eca-qtchainsetup: Qt widget representing a ecasound chainsetup.
+// eca-qtchainsetup: Qt widget representing an ecasound chainsetup.
 // Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -42,177 +42,115 @@
 #include "eca-qtiodevdialog.h"
 #include "eca-qtchainselectdialog.h"
 
-QEChainsetup::QEChainsetup (ECA_CONTROLLER* econtrol, 
+QEChainsetup::QEChainsetup (ECA_CONTROLLER* econtrol,
 			    QWidget *parent,
 			    const char *name) 
-  : ctrl_rep(econtrol)
+  : ctrl_repp(econtrol)
 {
   startTimer(1000);
 
-  child_chain = 0;
-  current_dir = "";
-  string caption = "qtecasound - chainsetup: " + csetup->name();
-  setCaption(caption.c_str());
+  top_layout_repp = new QVBoxLayout( this );
+  init_chain_list();
+  init_buttons();
+  top_layout_repp->addWidget(buttons_repp);
 
-  topLayout = new QVBoxLayout( this );
-
-  init_filesetuplist();
-  init_chainsetuplist();
-  init_gen_buttons();
-  init_file_buttons();
-  init_chain_buttons();
-
-  topLayout->addWidget(gen_buttons);
-  topLayout->addWidget(file_buttons);
-  topLayout->addWidget(filesetupview);
-  topLayout->addWidget(chain_buttons);
-  topLayout->addWidget(chainsetupview);
-
-  QObject::connect( chainsetupview,
-		    SIGNAL(doubleClicked(QListViewItem*)), 
-		    this, SLOT(init_chainview(QListViewItem*)));
-  QObject::connect( chainsetupview,
-		    SIGNAL(returnPressed(QListViewItem*)), 
-		    this, SLOT(init_chainview(QListViewItem*)));
+  QObject::connect(chain_list_repp,
+		   SIGNAL(doubleClicked(QListViewItem*)), 
+		   this, 
+		   SLOT(init_chainview(QListViewItem*)));
+  QObject::connect(chain_list_repp,
+		   SIGNAL(returnPressed(QListViewItem*)), 
+		   this, 
+		   SLOT(init_chainview(QListViewItem*)));
 }
 
 void QEChainsetup::closeEvent(QCloseEvent *e) {
-  if (child_chain != 0) {
-    child_chain->close(true);
-  }
   emit widget_closed();
   e->accept();
 }
-
-void QEChainsetup::close_session(void) { }
 
 void QEChainsetup::not_implemented(void) {
   QMessageBox* mbox = new QMessageBox(this, "mbox");
   mbox->information(this, "qtecasound", "This feature is not implemented...",0);
 }
 
-void QEChainsetup::init_chainview(void) {
-  QListViewItem* item = chainsetupview->selectedItem();
-  if (item == 0) item = chainsetupview->currentItem();
-  init_chainview(chainsetupview->selectedItem());
-}
+void QEChainsetup::init_chain_list(void) {
+  QListViewItem* item = chain_list_repp->selectedItem();
+  if (item == 0) item = chain_list_repp->currentItem();
 
-void QEChainsetup::init_chainview(QListViewItem* item) {
   // temporarily removed
   not_implemented();
   return;
-
-  if (item != 0) {
-    const CHAIN* chain =
-      chainsetup->get_chain_with_name(item->text(0).latin1());
-    if (chain != 0) {
-      if (child_chain != 0) {
-	child_chain->close(true);
-      }
-      child_chain = new QEChain(ctrl_rep, chain);
-      child_chain->show();
-      connect(child_chain, SIGNAL(widget_closed()), this, SLOT(child_closed()));
-    }
-  }
-  else
-    QMessageBox::information(this, "qtecasound", "No chain selected!",0);
 }
 
-void QEChainsetup::child_closed(void) { child_chain = 0; }
+void QEChainsetup::init_buttons(void) { 
+  buttons_repp = new QEButtonRow(this, "chain_buttonrow");
 
-void QEChainsetup::init_gen_buttons(void) {
-  gen_buttons = new QEButtonRow(this, "genbuttonrow");
-  gen_buttons->add_button(new QPushButton("Control (p)anel",gen_buttons), 
-		      ALT+Key_P,
-		      reinterpret_cast<QEInterface*>(qApp->mainWidget()), 
-		      SLOT(get_focus()));
-
-  gen_buttons->add_button(new QPushButton("Focus to (f)iles",gen_buttons), 
-		      ALT+Key_F,
-		      filesetupview,
-		      SLOT(setFocus()));
-
-  gen_buttons->add_button(new QPushButton("Focus (t)o chains",gen_buttons), 
-		      ALT+Key_T,
-		      chainsetupview,
-		      SLOT(setFocus()));
-
-  gen_buttons->add_button(new QPushButton("(C)lose",gen_buttons), 
-		      ALT+Key_C,
-		      this,
-		      SLOT(close()));
-}
-
-
-void QEChainsetup::init_file_buttons(void) { 
-  file_buttons = new QEButtonRow(this, "filebuttonrow");
-  file_buttons->add_button(new QPushButton("(A)dd",file_buttons), 
-		      ALT+Key_A,
-		      this,
-		      SLOT(button_add_file()));
-
-  file_buttons->add_button(new QPushButton("(R)emove from setup",file_buttons), 
-		      ALT+Key_R,
-		      this,
-		      SLOT(button_remove_file()));
-
-  file_buttons->add_button(new QPushButton("Attach to chain(s)",file_buttons), 
-		      ALT+Key_S,
-		      this,
-		      SLOT(button_chainselect()));
-
-  file_buttons->add_button(new QPushButton("(W)ave form edit",file_buttons), 
-		      ALT+Key_W,
-		      this,
-		      SLOT(init_waveedit()));
-
-}
-
-void QEChainsetup::init_chain_buttons(void) { 
-  chain_buttons = new QEButtonRow(this, "chainbuttonrow");
-  chain_buttons->add_button(new QPushButton("(N)ew chain",chain_buttons), 
+  buttons_repp->add_button(new QPushButton("(N)ew chain",buttons_repp), 
 		      ALT+Key_N,
 		      this,
 		      SLOT(button_add_chain()));
 
-  chain_buttons->add_button(new QPushButton("Remo(v)e chain",chain_buttons), 
+  buttons_repp->add_button(new QPushButton("Remo(v)e chain",buttons_repp), 
 		      ALT+Key_V,
 		      this,
 		      SLOT(button_remove_chain()));
 
-  chain_buttons->add_button(new QPushButton("(M)uting",chain_buttons), 
+  buttons_repp->add_button(new QPushButton("(M)uting",buttons_repp), 
 		      ALT+Key_M,
 		      this,
 		      SLOT(button_chain_muting()));
 
-  chain_buttons->add_button(new QPushButton("(B)ypass",chain_buttons), 
+  buttons_repp->add_button(new QPushButton("(B)ypass",buttons_repp), 
 		      ALT+Key_B,
 		      this,
 		      SLOT(button_chain_bypass()));
 
-  chain_buttons->add_button(new QPushButton("(O)pen",chain_buttons), 
+  buttons_repp->add_button(new QPushButton("(O)pen",buttons_repp), 
 		      ALT+Key_O,
 		      this,
-		      SLOT(init_chainview()));
+		      SLOT(init_chain_list()));
+
+  buttons_repp->add_button(new QPushButton("(A)dd",buttons_repp), 
+		      ALT+Key_A,
+		      this,
+		      SLOT(button_add_file()));
+
+  buttons_repp->add_button(new QPushButton("(R)emove from setup",buttons_repp), 
+		      ALT+Key_R,
+		      this,
+		      SLOT(button_remove_file()));
+
+  buttons_repp->add_button(new QPushButton("Attach to chain(s)",buttons_repp), 
+		      ALT+Key_S,
+		      this,
+		      SLOT(button_select_chain()));
+
+//    buttons_repp->add_button(new QPushButton("(W)ave form edit",buttons_repp), 
+//  		      ALT+Key_W,
+//  		      this,
+//  		      SLOT(init_wave_edit()));
 }
  
 void QEChainsetup::button_add_chain(void) { 
   QEStringDialog* sdialog = new QEStringDialog("Chain name: ", this);
   if (sdialog->exec() == QEStringDialog::Accepted) {
-    ctrl->select_chainsetup(chainsetup->name());
-    if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
-    ctrl->add_chain(sdialog->result_string().latin1());
-    update_chainsetuplist();
-    update_chainsetuplist_clean();
+    // !!!
+    // FIXME
+    ctrl_repp->select_chainsetup("command-line-setup");
+    if (ctrl_repp->is_connected()) ctrl_repp->disconnect_chainsetup();
+    ctrl_repp->add_chain(sdialog->result_string().latin1());
+    update_chain_list();
+    update_chain_list_clean();
   }
 }
 
 void QEChainsetup::button_remove_chain(void) { 
   if (is_chain_highlighted()) {
     select_highlighted_chain();
-    ctrl->select_chainsetup(chainsetup->name());
-    if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
-    ctrl->remove_chains();
+    ctrl_repp->select_chainsetup(chainsetup->name());
+    if (ctrl_repp->is_connected()) ctrl_repp->disconnect_chainsetup();
+    ctrl_repp->remove_chains();
     update_chainsetuplist_clean();
   }
   else
@@ -222,8 +160,8 @@ void QEChainsetup::button_remove_chain(void) {
 void QEChainsetup::button_chain_muting(void) {
   if (is_chain_highlighted()) {
     select_highlighted_chain();
-    if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
-    ctrl->toggle_chain_muting();
+    if (ctrl_repp->is_connected()) ctrl_repp->disconnect_chainsetup();
+    ctrl_repp->toggle_chain_muting();
     update_chainsetuplist();
   }
   else
@@ -233,8 +171,8 @@ void QEChainsetup::button_chain_muting(void) {
 void QEChainsetup::button_chain_bypass(void) {
   if (is_chain_highlighted()) {
     select_highlighted_chain();
-    if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
-    ctrl->toggle_chain_bypass();
+    if (ctrl_repp->is_connected()) ctrl_repp->disconnect_chainsetup();
+    ctrl_repp->toggle_chain_bypass();
     update_chainsetuplist();
   }
   else
@@ -252,8 +190,8 @@ void QEChainsetup::select_highlighted_filesetup(void) {
   QListViewItem* item = filesetupview->selectedItem();
   if (item == 0) item = filesetupview->currentItem();
   if (item != 0) {
-    ctrl->select_chainsetup(chainsetup->name());
-    ctrl->select_audio_object(item->text(0).latin1());
+    ctrl_repp->select_chainsetup(chainsetup->name());
+    ctrl_repp->select_audio_object(item->text(0).latin1());
   }
 }
 
@@ -268,9 +206,9 @@ void QEChainsetup::select_highlighted_chain(void) {
   QListViewItem* item = chainsetupview->selectedItem();
   if (item == 0) item = chainsetupview->currentItem();
   if (item != 0) {
-    ctrl->select_chainsetup(chainsetup->name());
+    ctrl_repp->select_chainsetup(chainsetup->name());
     vector<string> t (1, string(item->text(0).latin1()));
-    ctrl->select_chains(t);
+    ctrl_repp->select_chains(t);
   }
 }
 
@@ -301,7 +239,7 @@ void QEChainsetup::update_filesetuplist (bool clean) {
     update_filesetup_clean(chainsetup->outputs);
   }
   else {
-    if (ctrl->is_connected() == true) {
+    if (ctrl_repp->is_connected() == true) {
       update_filesetup(chainsetup->inputs);    
       update_filesetup(chainsetup->outputs);
     }
@@ -315,14 +253,14 @@ void QEChainsetup::update_filesetup_clean (const vector<AUDIO_IO*>& flist) {
     cs_chainstring = ""; 
     if (flist[aiod_sizet]->io_mode() == AUDIO_IO::io_read) {
       cs_modestring = "input"; 
-      cs_chainstring = ctrl->attached_chains_input(flist[aiod_sizet]).c_str();
+      cs_chainstring = ctrl_repp->attached_chains_input(flist[aiod_sizet]).c_str();
     }
     else {
       cs_modestring = "output"; 
-      cs_chainstring = ctrl->attached_chains_output(flist[aiod_sizet]).c_str();
+      cs_chainstring = ctrl_repp->attached_chains_output(flist[aiod_sizet]).c_str();
     }
 
-    if (ctrl->selected_chainsetup() != chainsetup->name()) {
+    if (ctrl_repp->selected_chainsetup() != chainsetup->name()) {
 	cs_posstring = "- / - ";
 	cs_statusstring = "not open";
     }
@@ -373,7 +311,7 @@ void QEChainsetup::update_filesetup (const vector<AUDIO_IO*>& flist) {
     }
     if (newitem == 0) continue;
 
-    if (ctrl->selected_chainsetup() != chainsetup->name()) {
+    if (ctrl_repp->selected_chainsetup() != chainsetup->name()) {
 	cs_posstring = "- / - ";
 	cs_statusstring = "not open";
     }
@@ -436,7 +374,7 @@ void QEChainsetup::update_chainsetuplist_clean(void) {
 }
 
 void QEChainsetup::update_chainsetuplist () {
-  if (!ctrl->is_connected()) return;
+  if (!ctrl_repp->is_connected()) return;
 
   vector<CHAIN*>::const_iterator p = chainsetup->chains.begin();
   while(p != chainsetup->chains.end()) {
@@ -470,14 +408,14 @@ void QEChainsetup::update_chainsetuplist () {
 void QEChainsetup::button_add_file(void) { 
   QEIodevDialog* fdialog = new QEIodevDialog(chainsetup, this, "addfile");
   if (fdialog->exec() == QEIodevDialog::Accepted) {
-    if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
-    ctrl->set_default_audio_format(fdialog->result_audio_format());
-    ctrl->select_chains(fdialog->result_chains());
+    if (ctrl_repp->is_connected()) ctrl_repp->disconnect_chainsetup();
+    ctrl_repp->set_default_audio_format(fdialog->result_audio_format());
+    ctrl_repp->select_chains(fdialog->result_chains());
 
     if (fdialog->result_direction() == QEIodevDialog::input)
-      ctrl->add_audio_input(fdialog->result_filename());
+      ctrl_repp->add_audio_input(fdialog->result_filename());
     else
-      ctrl->add_audio_output(fdialog->result_filename());
+      ctrl_repp->add_audio_output(fdialog->result_filename());
 
     update_filesetuplist(true);
     update_chainsetuplist_clean();
@@ -487,11 +425,11 @@ void QEChainsetup::button_add_file(void) {
 void QEChainsetup::button_remove_file(void) { 
   if (is_filesetup_highlighted()) {
     select_highlighted_filesetup();
-    if (ctrl->is_connected()) {
-      ctrl->disconnect_chainsetup();
+    if (ctrl_repp->is_connected()) {
+      ctrl_repp->disconnect_chainsetup();
     }
-    if (ctrl->get_audio_object() != 0) {
-      ctrl->remove_audio_object();
+    if (ctrl_repp->get_audio_object() != 0) {
+      ctrl_repp->remove_audio_object();
     }
     update_filesetuplist(true);
   }
@@ -506,12 +444,12 @@ void QEChainsetup::button_chainselect(void) {
     string name = string(item->text(0).latin1());
 
     QEChainselectDialog* cdialog = new QEChainselectDialog(chainsetup, this, "chainselect");
-    if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
-    cdialog->set_chains(ctrl->attached_chains(name));
+    if (ctrl_repp->is_connected()) ctrl_repp->disconnect_chainsetup();
+    cdialog->set_chains(ctrl_repp->attached_chains(name));
     if (cdialog->exec() == QEChainselectDialog::Accepted) {
-      ctrl->select_chains(cdialog->result_chains());
-      ctrl->select_audio_object(name);
-      ctrl->attach_audio_object();
+      ctrl_repp->select_chains(cdialog->result_chains());
+      ctrl_repp->select_audio_object(name);
+      ctrl_repp->attach_audio_object();
       update_filesetuplist(true);
     }
   }
@@ -521,9 +459,9 @@ void QEChainsetup::button_chainselect(void) {
 
 void QEChainsetup::init_waveedit(void) {
   if (is_filesetup_highlighted()) {
-    if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
+    if (ctrl_repp->is_connected()) ctrl_repp->disconnect_chainsetup();
     select_highlighted_filesetup();
-    ctrl->wave_edit_audio_object();
+    ctrl_repp->wave_edit_audio_object();
     update_filesetuplist(true);
   }
   else

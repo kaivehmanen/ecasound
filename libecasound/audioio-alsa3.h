@@ -1,5 +1,5 @@
-#ifndef INCLUDED_AUDIOIO_ALSA2_H
-#define INCLUDED_AUDIOIO_ALSA2_H
+#ifndef INCLUDED_AUDIOIO_ALSA3_H
+#define INCLUDED_AUDIOIO_ALSA3_H
 
 #include <string>
 #include <sys/time.h>
@@ -11,36 +11,37 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef ALSALIB_050
+
+#ifdef ALSALIB_060
 #include <sys/asoundlib.h>
 
 #include "samplebuffer.h"
 #include "audioio-types.h"
 
 /**
- * Class for handling ALSA PCM-devices (Advanced Linux Sound Architecture).
- * @author Kai Vehmanen
+ * Class for handling ALSA pcm-devices (Advanced Linux Sound Architecture).
  */
 class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
 
   snd_pcm_t *audio_fd_repp;
-  snd_pcm_channel_info_t pcm_info_rep;
+  snd_pcm_stream_info_t pcm_info_rep;
 
   long int fragment_size_rep;
  
   int card_number_rep, device_number_rep, subdevice_number_rep;
-  int pcm_mode_rep, pcm_channel_rep;
+  int pcm_mode_rep, pcm_stream_rep;
 
   long int bytes_read_rep;
   long underruns_rep, overruns_rep;
 
   bool is_triggered_rep;
   bool is_prepared_rep;
+  bool using_plugin_rep;
 
  public:
 
-  virtual string name(void) const { return("ALSA PCM-v2 device"); }
-  virtual string description(void) const { return("ALSA PCM-v2 devices. Library version 0.5.x."); }
+  virtual string name(void) const { return("ALSA PCM device"); }
+  virtual string description(void) const { return("ALSA PCM devices. Library versions 0.6.x and newer."); }
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
   virtual string parameter_names(void) const { return("label,card,device,subdevice"); }
@@ -72,5 +73,5 @@ class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
   ALSA_PCM_DEVICE& operator=(const ALSA_PCM_DEVICE& x) { return *this; }
 };
 
-#endif // ALSALIB_050
+#endif // ALSALIB_060
 #endif
