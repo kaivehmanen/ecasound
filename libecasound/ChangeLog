@@ -1,3 +1,22 @@
+2004-12-12  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-audio-format.h (format_string): Function signature changed;
+	no longer throws an exception.
+
+	* sample-specs.h: SAMPLE_SPECS::is_system_littleendian removed as
+	obsolete.
+
+	* eca-chainsetup.cpp (is_valid_for_connection): Function signature 
+	changed, added an argument.
+
+2004-12-11  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-logger-interface.cpp (set_backlog_length): Added. 
+	* eca-logger-interface.cpp (backlog): Added. 
+	* eca-logger.h (level_to_string): Added.
+	* eca-engine-driver.h (exec): Signature changed.
+        * library interface version to 14:0:0
+
 2004-12-09  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* sample-ops_impl.h: Added, not part of the public interface.

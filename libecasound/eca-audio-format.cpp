@@ -2,6 +2,9 @@
 // eca-audio-format.cpp: Class for representing audio format parameters
 // Copyright (C) 1999-2002,2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 2
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -52,10 +55,10 @@ ECA_AUDIO_FORMAT::~ECA_AUDIO_FORMAT(void)
 
 ECA_AUDIO_FORMAT ECA_AUDIO_FORMAT::audio_format(void) const
 {
-  return(ECA_AUDIO_FORMAT(channels(),
+  return ECA_AUDIO_FORMAT(channels(),
 			  samples_per_second(),
 			  sample_format(),
-			  interleaved_channels()));
+			  interleaved_channels());
 }
 
 ECA_AUDIO_FORMAT::Sample_format ECA_AUDIO_FORMAT::sample_format(void) const
@@ -65,7 +68,7 @@ ECA_AUDIO_FORMAT::Sample_format ECA_AUDIO_FORMAT::sample_format(void) const
     format = string_to_sample_format(format_string());
   }
   catch(...) {}
-  return(format);
+  return format;
 }
 
 /**
@@ -199,7 +202,7 @@ void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format sfmt) t
 
 int ECA_AUDIO_FORMAT::bits(void) const
 {
-  return(align_rep * 8);
+  return align_rep * 8;
 }
 
 void ECA_AUDIO_FORMAT::set_channels(int v)
@@ -239,7 +242,7 @@ ECA_AUDIO_FORMAT::Sample_format ECA_AUDIO_FORMAT::string_to_sample_format(const 
 		      + str + "\"."));
   }
 
-  return(sfmt);
+  return sfmt;
 }
 
 void ECA_AUDIO_FORMAT::set_sample_format_string(const std::string& f_str) throw(ECA_ERROR&)
@@ -289,7 +292,7 @@ void ECA_AUDIO_FORMAT::set_sample_coding(ECA_AUDIO_FORMAT::Sample_coding v)
   set_sample_format_string(format_string());
 }
 
-string ECA_AUDIO_FORMAT::format_string(void) const throw(ECA_ERROR&)
+string ECA_AUDIO_FORMAT::format_string(void) const
 {
   std::string format;
   if (align_rep > 0) {
@@ -321,5 +324,5 @@ string ECA_AUDIO_FORMAT::format_string(void) const throw(ECA_ERROR&)
     format = "none";
   }
 
-  return(format);
+  return format;
 }

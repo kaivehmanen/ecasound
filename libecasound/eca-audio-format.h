@@ -139,7 +139,7 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
    *
    * @see set_sample_format
    */
-  std::string format_string(void) const throw(ECA_ERROR&);
+  std::string format_string(void) const;
 
   /*@}*/
 

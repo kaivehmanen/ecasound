@@ -62,9 +62,6 @@ namespace SAMPLE_SPECS {
 
   static const channel_t ch_left = 0;
   static const channel_t ch_right = 1;
-
-  /* FIXME: obsolete field, remove on next interface change */
-  static const bool is_system_littleendian = true;
 }
 
 #endif
