@@ -45,7 +45,7 @@ ecafixdc_SOURCES = ecatools_fixdc.cpp \
 			 ecatools_fixdc.h
 ecafixdc_LDADD = $(libecasound_path)
 
-ecalength_SOURCES = ecalength.c
+ecalength_SOURCES = ecalength.cpp
 ecalength_LDADD = $(libecasound_path) $(libecasoundc_path)
 
 ecanormalize_SOURCES = ecatools_normalize.cpp \

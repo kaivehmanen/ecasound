@@ -20,7 +20,9 @@
     observer@colba.net  
 
     note: Compile it with:  
-    gcc -Wall `ecasoundc-config --libs` -lstdc++ -o ecalength ecalength.c  
+    c++ -Wall `libecasoundc2-config --cflags` -o ecalength ecalength.cpp \
+              `libecasoundc2-config --ldflags` \
+              `libecasoundc2-config --libs` \
 
 *    updated: Thu May 10 15:56:18 EDT 2001
 - Now works with the new ai/ao scheme.
@@ -43,7 +45,9 @@
 - Only print full help message when no other message is being spewed.
 *    updated: Sun Jan  6 14:37:02 EST 2002
 - Woo! Ecasound's internals now support quoting, had to take advantage of this.
-
+*    updated: Mon Apr 29 02:41:13 EEST 2002
+- Renamed to ecalength.cpp to avoid troubles with linking ecalength 
+  against uninstalled libecasoundc.
 */ 
 
 #include <stdio.h> 
