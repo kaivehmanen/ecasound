@@ -68,6 +68,13 @@ class GENERIC_CONTROLLER : public CONTROLLER_SOURCE {
 
   /*@}*/
 
+  /** @name Functions implemented from ECA_AUDIO_POSITION */
+  /*@{*/
+
+  virtual void seek_position(void);
+
+  /*@}*/
+
   /** @name Public functions  */
   /*@{*/
 

@@ -148,7 +148,7 @@ chains as you want.
 <ol>
 <p>
 <li> ecasound -i somefile.wav -o /dev/dsp -ef3:800,1.5,0.9 -kos:1,400,4200,0.2,0 -kos:2,0.1,1.5,0.15,0 
-<li> ecasound -i somefile.wav -o /dev/dsp -ef3:800,1.5,0.9 -km:1,400,4200,74,0 -km:2,0.1,1.5,71,0  
+<li> ecasound -i somefile.wav -o /dev/dsp -ef3:800,1.5,0.9 -km:1,400,4200,74,1 -km:2,0.1,1.5,71,1
 </p><p>
 The first example uses two sine oscillators
 (<i>-kos:parameter,range_low,range_high,speed_in_Hz,initial_phase</i>)
@@ -174,7 +174,7 @@ the frequency of the first oscillator.
 </p><p>
 <li>ecasound -i file.wav -o /dev/dsp -ef3:1000,1.0,1.0 -kos:1,500,2000,1,0 \<br>
 				 -kos:2,0.2,1.0,0.5,0  \<br>
-				 -kx -km:1,0.1,1.5,2,0
+				 -kx -km:1,0.1,1.5,2,1
 </p><p>
 Ok, let's get real whacky. Here a 1Hz sine oscillator is assigned to
 the cutoff frequency, while other controller is controlling resonance.

@@ -111,6 +111,21 @@ void GENERIC_CONTROLLER::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
   ECA_SAMPLERATE_AWARE::set_samples_per_second(v);
 }
 
+/**
+ * Reimplemented from ECA_AUDIO_POSITION.
+ */
+void GENERIC_CONTROLLER::seek_position(void)
+{
+  /* Note! called on each iteration from CHAIN::controller_update() */
+
+  DEBUG_CTRL_STATEMENT(std::cerr << "(generic-controller) seek position, to pos " 
+		       << kvu_numtostr(position_in_seconds()) << ".\n");
+
+  if (source != 0) {
+    source->seek_position_in_samples(position_in_samples());
+  }
+}
+
 void GENERIC_CONTROLLER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
 {
   switch (param) {

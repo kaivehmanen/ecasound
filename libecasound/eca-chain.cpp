@@ -531,10 +531,14 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels)
 
   int init_channels = in_channels_rep;
   audioslot_repp->number_of_channels(init_channels);
-  for(int p = 0; p != static_cast<int>(chainops_rep.size()); p++) {
+  for(size_t p = 0; p != chainops_rep.size(); p++) {
     chainops_rep[p]->init(audioslot_repp);
     init_channels = chainops_rep[p]->output_channels(init_channels);
     audioslot_repp->number_of_channels(init_channels);
+  }
+
+  for(size_t p = 0; p != gcontrollers_rep.size(); p++) {
+    gcontrollers_rep[p]->init();
   }
 
   refresh_parameters();
@@ -605,8 +609,8 @@ void CHAIN::controller_update(void)
   for(size_t n = 0; n < gcontrollers_rep.size(); n++) {
     DEBUG_CTRL_STATEMENT(GENERIC_CONTROLLER* ptr = gcontrollers_rep[n]);
 
-    gcontrollers_rep[n]->seek_position_in_samples_advance(audioslot_repp->length_in_samples());
     gcontrollers_rep[n]->value();
+    gcontrollers_rep[n]->seek_position_in_samples_advance(audioslot_repp->length_in_samples());
 
     DEBUG_CTRL_STATEMENT(std::cerr << "trace: " << ptr->name());
     DEBUG_CTRL_STATEMENT(std::cerr << "; value " << ptr->source_pointer()->value() << "." << std::endl);
@@ -777,17 +781,6 @@ void CHAIN::seek_position(void)
 		kvu_numtostr(position_in_seconds()) + ".");
 
   for(size_t p = 0; p != gcontrollers_rep.size(); p++) {
-    CONTROLLER_SOURCE* src = gcontrollers_rep[p]->source_pointer();
-    if (src != 0) {
-      ECA_AUDIO_POSITION* apos = dynamic_cast<ECA_AUDIO_POSITION*>(src);
-      if (apos != 0) {
-	apos->seek_position_in_samples(position_in_samples());
-	ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		      "(eca-chain) seek position, ctrl-src '" +
-		      src->name() +
-		      "' to pos " + 
-		      kvu_numtostr(apos->position_in_seconds()) + ".");
-      }
-    }
+    gcontrollers_rep[p]->seek_position_in_samples(position_in_samples());
   }
 }

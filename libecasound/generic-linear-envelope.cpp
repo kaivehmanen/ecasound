@@ -24,6 +24,15 @@
 #include "generic-linear-envelope.h"
 #include "eca-logger.h"
 
+/* Debug controller source values */ 
+// #define DEBUG_CONTROLLERS
+
+#ifdef DEBUG_CONTROLLERS
+#define DEBUG_CTRL_STATEMENT(x) x
+#else
+#define DEBUG_CTRL_STATEMENT(x) ((void)0)
+#endif
+
 GENERIC_LINEAR_ENVELOPE::GENERIC_LINEAR_ENVELOPE(void)
 {
   pos_rep.resize(1);
@@ -59,13 +68,20 @@ CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::value(void)
 		(pos_rep[curstage+1] - pos_rep[curstage]));
     }
   }
+
+  DEBUG_CTRL_STATEMENT(std::cerr << "generic-linear-envelope: type '"
+		       << name() << "', pos_sec " 
+		       << position_in_seconds_exact() 
+		       << ", curpos " << curpos
+		       << ", curval " << curval
+		       << ", curstage " << curstage << "." << std::endl);
   
   return(curval);
 } 
 
 void GENERIC_LINEAR_ENVELOPE::init(void)
 {
-  curval = 0.0;
+  curval = 0.0f;
   curstage = -1;
   
   ECA_LOG_MSG(ECA_LOGGER::info, "(generic-linear-envelope) Envelope created.");
@@ -115,7 +131,7 @@ CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::get_parameter(int param)
   default:
     int pointnum = param/2 - 1;
     if (pointnum >= static_cast<int>(pos_rep.size())) {
-      return 0.0;
+      return 0.0f;
     }
     
     if (param % 2 == 0)

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 051102) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 061102) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -31,6 +31,11 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: cleanup of curses/ncurses detection in configure.in;
 		 this also fixes ecasound compilation on mandrake9.x
 		 systems
+	- fixed: controller source positions were not always updated
+	         when global chainsetup position was changed
+	- fixed: controllers weren't properly initialized before use;
+		 this bug caused real harm only to -klg objects; 
+		 only the first defined -klg worked as expected
 31102002 (v2.2.0-pre4)
 	- edi-entries: edi-27, edi-28, edi-29, edi-30
 	- added: eiam - commands 'map-cop-list', 'map-ctrl-list', 
