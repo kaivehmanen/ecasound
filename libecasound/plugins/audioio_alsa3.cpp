@@ -33,7 +33,7 @@
 #endif
 
 #ifdef ALSALIB_060
-#include <sys/asoundlib.h>
+#include <alsa/asoundlib.h>
 
 #include "samplebuffer.h"
 #include "audioio-types.h"

@@ -20,7 +20,7 @@
 #include "eca-version.h"
 
 #ifdef ALSALIB_060
-#include <sys/asoundlib.h>
+#include <alsa/asoundlib.h>
 #endif
 
 using namespace std;
