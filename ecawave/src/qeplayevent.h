@@ -14,14 +14,18 @@ class QEPlayEvent : public QENonblockingEvent {
 
  public:
 
-  void restart(long int start_pos, long int length) { }
-
+  const ECA_CONTROLLER* controller(void) const { return(ectrl); }
   bool class_invariant(void) { return(ectrl != 0); }
+
   QEPlayEvent(ECA_CONTROLLER* ctrl,
 	      const string& input,
 	      const string& output,
 	      long int start_pos, 
 	      long int length);
+
+ private:
+
+  ECA_CONTROLLER* ectrl;
 };
 
 #endif

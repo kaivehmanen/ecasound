@@ -7,7 +7,7 @@ AC_CONFIG_SUBDIRS(kvutils readline-4.0)
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 1.7.3d11)
+AM_INIT_AUTOMAKE(ecasound, 1.7.4d11)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---

@@ -305,7 +305,7 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 docs: ecasound.1 qtecasound.1 ecasound_manpage.html qtecasound_manpage.html \
       ecasoundrc_manpage.html ecasoundrc.5 ecasound_faq.txt \
       ecatools.1 ecatools_manpage.man ecatools_manpage.html \
-      ecasound_faq.html uguide pguide ecasound-iam_manpage.html \
+      ecasound_faq.html ecasound-iam_manpage.html \
       ecasound-iam.1
 
 # ---------------------------------------------------------------------

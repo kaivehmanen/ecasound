@@ -91,16 +91,22 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map["aio-rewind"] = ec_aio_rewind;
   cmd_map["aio-setpos"] = ec_aio_setpos;
   cmd_map["aio-wave-edit"] = ec_aio_wave_edit;
+  cmd_map["aio-register"] = ec_aio_register;
 
   cmd_map["cop-add"] = ec_cop_add;
   cmd_map["cop-remove"] = ec_cop_remove;
   cmd_map["cop-select"] = ec_cop_select;
   cmd_map["cop-set"] = ec_cop_set;
   cmd_map["cop-status"] = ec_cop_status;
+  cmd_map["cop-register"] = ec_cop_register;
+
+  cmd_map["preset-register"] = ec_preset_register;
+  cmd_map["ladspa-register"] = ec_ladspa_register;
 
   cmd_map["ctrl-add"] = ec_ctrl_add;
   cmd_map["ctrl-remove"] = ec_ctrl_remove;
   cmd_map["ctrl-status"] = ec_ctrl_status;
+  cmd_map["ctrl-register"] = ec_ctrl_register;
 
   cmd_map["status"] = ec_st_general;
   cmd_map["st"] = ec_st_general;

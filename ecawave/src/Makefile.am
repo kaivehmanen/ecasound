@@ -23,6 +23,9 @@ ecawave_src_files = 	ecawave.cpp \
 			qewaveform.cpp \
 			qestatusbar.cpp \
 			qeevent.cpp \
+			qeblockingevent.cpp \
+			qenonblockingevent.cpp \
+			qeinterfaceevent.cpp \
 			qeplayevent.cpp \
 			qesaveevent.cpp \
 			qeprocessevent.cpp \
@@ -49,6 +52,9 @@ ecawave_include_files = ecawave.h \
 			qewaveform.h \
 			qestatusbar.h \
 			qeevent.h \
+			qeblockingevent.h \
+			qenonblockingevent.h \
+			qeinterfaceevent.h \
 			qeplayevent.h \
 			qesaveevent.h \
 			qeprocessevent.h \

@@ -66,6 +66,12 @@ class ECA_CONTROLLER : public ECA_CONTROLLER_DUMP,
    */
   string controller_status(void) const;
 
+  void aio_register(void) const; 
+  void cop_register(void) const; 
+  void preset_register(void) const; 
+  void ladspa_register(void) const; 
+  void ctrl_register(void) const; 
+
   ECA_CONTROLLER (ECA_SESSION* psession);
   virtual ~ECA_CONTROLLER (void) { }
 };

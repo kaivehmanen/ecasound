@@ -41,7 +41,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>19.03.2000</h2>
+<h2>20.03.2000</h2>
 
 
     
@@ -247,6 +247,8 @@ Set audio object position to 'time_in_seconds'.
 <p><p></p><dt><strong>aio-wave-edit</strong><dd> 
 Currently selected audio object is loaded into an external
 wave editor (see ecasoundrc(5)).
+<p><p></p><dt><strong>aio-register</strong><dd>
+Prints a list of registered audio objects.
 <p></dl>
 <p><h2>CHAIN OPERATORS</h2>
     
@@ -268,6 +270,12 @@ Change the value of a single chain operator parameter. Unlike other
 chain operator commands, this can also be used during processing.
 <p><p></p><dt><strong>cop-status</strong><dd> 
 Info about chain operator status.
+<p><p></p><dt><strong>cop-register</strong><dd>
+Prints a list of registered chain operators.
+<p><p></p><dt><strong>preset-register</strong><dd>
+Prints a list of registered effect presets.
+<p><p></p><dt><strong>ladspa-register</strong><dd>
+Prints a list of registered LADSPA-plugins.
 </dl>
 <p><h2>CONTROLLERS</h2>
     
@@ -284,7 +292,9 @@ Remove the controller that is attached to the currently selected chain
 operator.
 <p><p></p><dt><strong>ctrl-status</strong><dd> 
 Info about controller status.
-</dl>
+<p><p></p><dt><strong>ctrl-register</strong><dd>
+Prints a list of registered controllers.
+<p></dl>
 <p><h2>DUMP COMMANDS</h2>
     
 The following dump commands are not meant for normal use. 

@@ -24,21 +24,42 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
   /**
    * Current position in samples
    */
-  long int position(void) const = 0;
+  virtual long int position(void) const { return(controller()->position_in_samples()); }
 
   /**
    * Returns processing length in samples
    */
-  long int length(void) const = 0;
+  virtual long int length(void) const { return(controller()->length_in_samples()); }
 
-  QEEvent(void);
-  virtual ~QEEvent(void);
+  /**
+   * Returns name of current input as a formatted string
+   */
+  const string& input_name(void) const { return(input_object->label()); }
+
+  /**
+   * Returns name of current output as a formatted string
+   */
+  const string& output_name(void) const { return(output_object->label()); }
+
+  bool class_invariant(void) { return(ectrl != 0); }
+  QEEvent(ECA_CONTROLLER* ctrl);
+  virtual ~QEEvent(void) { }
 
  protected:
 
-  const ECA_CONTROLLER* controller(void) const = 0;
+  /**
+   * Initializes chainsetup for processing
+   *
+   * require:
+   *  ectrl != 0
+   * ensure:
+   *  ectrl->selected_chainsetup() == chainsetup
+   */
+  void init(const string& chainsetup);
 
-  void process(bool blocking);
+  /**
+   * Toggles whether event has been started
+   */
   void toggle_triggered_state(bool v) { triggered_rep = v; }
 
   /**
@@ -71,19 +92,12 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
    */
   void set_length(long int pos);
 
-  /**
-   * Returns name of current input as a formatted string
-   */
-  const string& input_name(void) const { return(input_object->label()); }
-
-  /**
-   * Returns name of current output as a formatted string
-   */
-  const string& output_name(void) const { return(output_object->label()); }
-
  private:
 
   bool triggered_rep;
+
+ protected:
+
   AUDIO_IO* input_object;
   AUDIO_IO* output_object;
 };

@@ -34,6 +34,7 @@ vector<string> RESOURCE_FILE::keywords(void) const {
   ifstream fin (res_file.c_str());
   if (!fin) return(keys);
 
+  bool over = false;
   string line, first;
   while(getline(fin,line)) {
     if (line.size() > 0 && line[0] == '#') continue;
@@ -44,8 +45,10 @@ vector<string> RESOURCE_FILE::keywords(void) const {
 
     first = string(line, 0, n);
     first = remove_surrounding_spaces(first);
-    
-    keys.push_back(first);
+
+    if (over == false) keys.push_back(first);
+    if (line[line.size() - 1] == '\\') over = true;
+    else over = false;
   }
   return(keys);
 }

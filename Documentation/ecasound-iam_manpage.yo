@@ -30,7 +30,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (19.03.2000)
+       (20.03.2000)
        ()
        (Multimedia software)
 
@@ -294,6 +294,9 @@ dit(aio-wave-edit)
 Currently selected audio object is loaded into an external
 wave editor (see ecasoundrc(5)).
 
+dit(aio-register)
+Prints a list of registered audio objects.
+
 enddit()
 
 manpagesection(CHAIN OPERATORS)
@@ -319,6 +322,15 @@ chain operator commands, this can also be used during processing.
 
 dit(cop-status) 
 Info about chain operator status.
+
+dit(cop-register)
+Prints a list of registered chain operators.
+
+dit(preset-register)
+Prints a list of registered effect presets.
+
+dit(ladspa-register)
+Prints a list of registered LADSPA-plugins.
 enddit()
 
 manpagesection(CONTROLLERS)
@@ -338,6 +350,10 @@ operator.
 
 dit(ctrl-status) 
 Info about controller status.
+
+dit(ctrl-register)
+Prints a list of registered controllers.
+
 enddit()
 
 manpagesection(DUMP COMMANDS)

@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "19\&.03\&.2000" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "20\&.03\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -250,6 +250,9 @@ Set audio object position to \'time_in_seconds\'\&.
 Currently selected audio object is loaded into an external
 wave editor (see ecasoundrc(5))\&.
 .PP 
+.IP "aio-register" 
+Prints a list of registered audio objects\&.
+.PP 
 .IP 
 .SH "CHAIN OPERATORS" 
 Chain operators are used to process and analyze sample data\&.
@@ -273,6 +276,15 @@ chain operator commands, this can also be used during processing\&.
 .PP 
 .IP "cop-status" 
 Info about chain operator status\&.
+.PP 
+.IP "cop-register" 
+Prints a list of registered chain operators\&.
+.PP 
+.IP "preset-register" 
+Prints a list of registered effect presets\&.
+.PP 
+.IP "ladspa-register" 
+Prints a list of registered LADSPA-plugins\&.
 .IP 
 .SH "CONTROLLERS" 
 Controllers are used to control individual chain operator parameters\&.
@@ -291,6 +303,10 @@ operator\&.
 .IP 
 .IP "ctrl-status" 
 Info about controller status\&.
+.IP 
+.IP "ctrl-register" 
+Prints a list of registered controllers\&.
+.IP 
 .IP 
 .SH "DUMP COMMANDS" 
 The following dump commands are not meant for normal use\&. 

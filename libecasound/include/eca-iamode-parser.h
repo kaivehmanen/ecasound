@@ -80,16 +80,22 @@ class ECA_IAMODE_PARSER {
     ec_aio_rewind,
     ec_aio_setpos,
     ec_aio_wave_edit,
+    ec_aio_register,
     // --
     ec_cop_add,
     ec_cop_remove,
     ec_cop_select,  // not implemented
     ec_cop_set,
     ec_cop_status,
+    ec_cop_register,
+    // --
+    ec_ladspa_register,
+    ec_preset_register,
     // --
     ec_ctrl_add,
     ec_ctrl_remove, // not implemented
     ec_ctrl_status,
+    ec_ctrl_register,
     // --
     ec_dump_target,
     ec_dump_status,

@@ -36,6 +36,9 @@
 #include "generic-controller.h"
 #include "eca-chainop.h"
 
+#include "audiofx_ladspa.h"
+#include "eca-static-object-maps.h"
+
 #include "eca-error.h"
 #include "eca-debug.h"
 
@@ -300,6 +303,7 @@ void ECA_CONTROLLER::action(int action_id,
       break; 
     }
   case ec_aio_wave_edit: { wave_edit_audio_object(); break; }
+  case ec_aio_register: { aio_register(); break; }
 
     // ---
     // Chain operators
@@ -340,6 +344,10 @@ void ECA_CONTROLLER::action(int action_id,
       ecadebug->msg(chain_operator_status()); 
       break; 
     }
+  case ec_cop_register: { cop_register(); break; }
+
+  case ec_preset_register: { preset_register(); break; }
+  case ec_ladspa_register: { ladspa_register(); break; }
 
     // ---
     // Controllers
@@ -351,6 +359,7 @@ void ECA_CONTROLLER::action(int action_id,
       ecadebug->msg(controller_status()); 
       break; 
     }
+  case ec_ctrl_register: { ctrl_register(); break; }
 
     // ---
     // Changing position
@@ -629,4 +638,104 @@ string ECA_CONTROLLER::aio_status(void) const {
   }
 
   return(st_info_string);
+}
+
+void ECA_CONTROLLER::aio_register(void) const { 
+  ecadebug->control_flow("Registered audio objects");
+  const map<string,string>& kmap = eca_audio_object_map.registered_objects();
+  int count = 1;
+  map<string,string>::const_iterator p = kmap.begin();
+  while(p != kmap.end()) {
+    string temp;
+    AUDIO_IO* q = eca_audio_object_map.object(p->second);
+    q->map_parameters();
+    int params = q->number_of_params();
+    for(int n = 1; n < params; n++) {
+      if (n == 1) temp += "\n\t--> ";
+      temp += q->get_parameter_name(n + 1);
+      if (n + 1 < params) temp += ",";
+    }
+    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + ", keyword \"" + p->second
+		  + "\"."  + temp);
+    ++count;
+    ++p;
+  }
+}
+
+void ECA_CONTROLLER::cop_register(void) const { 
+  ecadebug->control_flow("Registered chain operators");
+  const map<string,string>& kmap = eca_chain_operator_map.registered_objects();
+  map<string,string>::const_iterator p = kmap.begin();
+  int count = 1;
+  while(p != kmap.end()) {
+    string temp;
+    CHAIN_OPERATOR* q = eca_chain_operator_map.object(p->second);
+    q->map_parameters();
+    int params = q->number_of_params();
+    for(int n = 0; n < params; n++) {
+      if (n == 0) temp += ":";
+      temp += q->get_parameter_name(n + 1);
+      if (n + 1 < params) temp += ",";
+    }
+
+    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + " -" + p->second
+		  + temp);
+    ++count;
+    ++p;
+  }
+}
+
+void ECA_CONTROLLER::preset_register(void) const { 
+  ecadebug->control_flow("Registered effect presets");
+  const map<string,string>& kmap = eca_preset_map.registered_objects();
+  map<string,string>::const_iterator p = kmap.begin();
+  int count = 1;
+  while(p != kmap.end()) {
+    ecadebug->msg(kvu_numtostr(count) + ". " + p->first);
+    ++count;
+    ++p;
+  }
+}
+
+void ECA_CONTROLLER::ladspa_register(void) const { 
+  ecadebug->control_flow("Registered LADSPA plugins");
+  const map<string,string>& kmap = eca_ladspa_plugin_map.registered_objects();
+  map<string,string>::const_iterator p = kmap.begin();
+  int count = 1;
+  while(p != kmap.end()) {
+    string temp = "\n\t-el:" + p->second + ",";
+    EFFECT_LADSPA* q = eca_ladspa_plugin_map.object(p->second);
+    q->map_parameters();
+    int params = q->number_of_params();
+    for(int n = 0; n < params; n++) {
+      temp += "\"" + q->get_parameter_name(n + 1) + "\"";
+      if (n + 1 < params) temp += ",";
+    }
+
+    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + temp);
+    ++count;
+    ++p;
+  }
+}
+
+void ECA_CONTROLLER::ctrl_register(void) const { 
+  ecadebug->control_flow("Registered controllers");
+  const map<string,string>& kmap = eca_controller_map.registered_objects();
+  map<string,string>::const_iterator p = kmap.begin();
+  int count = 1;
+  while(p != kmap.end()) {
+    string temp;
+    GENERIC_CONTROLLER* q = eca_controller_map.object(p->second);
+    q->map_parameters();
+    int params = q->number_of_params();
+    for(int n = 0; n < params; n++) {
+      if (n == 0) temp += ":";
+      temp += q->get_parameter_name(n + 1);
+      if (n + 1 < params) temp += ",";
+    }
+    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + " -" + p->second
+		  + temp);
+    ++count;
+    ++p;
+  }
 }
