@@ -31,6 +31,7 @@ ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 31.10.2002 - Few section layout bugs fixed.
 \item 30.10.2002 - Added JACK documentation, minor layout changes.
 \item 17.10.2002 - Updated ecasound overview.
 \item 17.07.2002 - Added documentation for ecasignalview.
@@ -389,8 +390,8 @@ ecasignalview alsa,default null
 
 To monitor the input signal you can either use the soundcard's
 analog (or in some case, digital) monitoring functions by 
-enabling line/mic-in monitoring using \em{alsamixer} (ALSA),
-\em{aumix} (OSS) or some other mixer application. Other option is to
+enabling line/mic-in monitoring using \emph{alsamixer} (ALSA),
+\emph{aumix} (OSS) or some other mixer application. Other option is to
 use ecasignalview to do the monitoring. In this case the correct
 command is:
 
@@ -679,12 +680,12 @@ If compiled with JACK support enabled (the ``--with-jack'' configure
 option), ecasound can be used with JACK, both for input and output
 as well as transport control.
 
-\section{Basic Input and Output}
+\subsection{Basic Input and Output}
 
 Let's start with how to play a file using ecasound and JACK:
 
 \begin{verbatim}
-ecasound -i foo.wav -o jack\_alsa
+ecasound -i foo.wav -o jack_alsa
 \end{verbatim}
 
 This will create a separate JACK output port for each channel
@@ -693,8 +694,8 @@ the ALSA PCM output ports in the JACK server. The connections
 are as follows:
 
 \begin{verbatim}
-\item ``ecasound:out\_1    -->       alsa_pcm:playback\_1''
-\item ``ecasound:out\_2    -->       alsa_pcm:playback\_2''
+ecasound:out_1    -->       alsa_pcm:playback_1
+ecasound:out_2    -->       alsa_pcm:playback_2
 \end{verbatim}
 
 To record a file, you'd issue:
@@ -710,18 +711,18 @@ by the JACK server, the channel count is the only configurable
 parameter. You can use another ``-f:x,y,z'' before ``-o foo.wav''
 if you want to write the file in a different format.
 
-\section{More Advanced Port Creation}
+\subsection{More Advanced Port Creation}
 
 Ecasound also offers the following altenative ways 
 to create input and output ports:
 
 \begin{verbatim}
 ecasound -i foo.wav -o jack
-ecasound -i foo.wav -o jack_auto,remote\_client
+ecasound -i foo.wav -o jack_auto,remote_client
 ecasound -i foo.wav -o jack_generic,local_portprefix
-ecasound -i jack                           -o foo.wav
-ecasound -i jack_auto,remove\_client       -o foo.wav
-ecasound -i jack_generic,local\_portprefix -o foo.wav
+ecasound -i jack                          -o foo.wav
+ecasound -i jack_auto,remove_client       -o foo.wav
+ecasound -i jack_generic,local_portprefix -o foo.wav
 \end{verbatim}
 
 ``jack'' and ``jack\_auto'' both create a set of input
@@ -735,7 +736,7 @@ If you want to create ports with a custom port name
 (ie. not ``in\_X'' or ``out\_X''), you can use 
 ``jack\_generic''.
 
-\section{Transport Control}
+\subsection{Transport Control}
 
 Transport controls are functions like ``start'', ``stop'', ``seek'', 
 etc that are commonly available in audio application that 
@@ -748,7 +749,7 @@ in master and slave modes.
 To use ecasound as a transport master:
 
 \begin{verbatim}
-ecasound -c -i null -o jack -G:jack,eca\_master,master
+ecasound -c -i null -o jack -G:jack,eca_master,master
 \end{verbatim}
 
 To use transport control in ecasound, you have to have at least
@@ -771,7 +772,7 @@ After giving an initial ``start'' to ecasound, you should
 now be able to use other JACK apps to control ecasound's
 playback of ``foo.wav''.
 
-\section{Troubleshooting}
+\subsection{Troubleshooting}
 
 Ecasound v2.2 and earlier don't have the capability to change
 the engine buffersize and sampling rate dynamically during 
