@@ -18,6 +18,7 @@
 // ------------------------------------------------------------------------
 
 #include "audioio.h"
+#include "midiio.h"
 #include "eca-static-object-maps.h"
 #include "eca-audio-object-map.h"
 #include "eca-object-factory.h"
@@ -42,4 +43,23 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg) {
     }
   }
   return(main_file);
+}
+
+MIDI_IO* ECA_OBJECT_FACTORY::create_midi_device(const string& arg) {
+  assert(arg.empty() != true);
+ 
+  ::register_default_objects();
+  string fname = get_argument_number(1, arg);
+
+  MIDI_IO* device = 0;
+  device = dynamic_cast<MIDI_IO*>(eca_midi_device_map.object(fname));
+
+  if (device != 0) {
+    device = device->new_expr();
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-object-factory) Object \"" + arg + "\" created, type \"" + device->name() + "\". Has " + kvu_numtostr(device->number_of_params()) + " parameter(s).");
+    for(int n = 0; n < device->number_of_params(); n++) {
+      device->set_parameter(n + 1, get_argument_number(n + 1, arg));
+    }
+  }
+  return(device);
 }

@@ -104,7 +104,13 @@ int main(int argc, char *argv[])
     
     ECA_SESSION session (cline);
     global_pointer_to_ecasession = &session; // used only for signal handling!
-    if (session.is_interactive()) start_iactive_readline(&session);
+    if (session.is_interactive()) {
+#if defined USE_NCURSES || defined USE_TERMCAP
+      start_iactive_readline(&session);
+#else
+      start_iactive(&session);
+#endif
+    }
     else {
       if (session.is_selected_chainsetup_connected() == true) {
 	ECA_PROCESSOR epros (&session);
@@ -191,14 +197,14 @@ void signal_handler(int signum) {
 void print_header(ostream* dostream) {
   *dostream << "****************************************************************************\n";
   *dostream << "*";
-#ifdef USE_NCURSES
+#if defined USE_NCURSES || defined USE_TERMCAP
   if (dostream == &cout) {
     setupterm((char *)0, 1, (int *)0);
     putp(tigetstr("bold"));
   }
 #endif
-  *dostream << "               ecasound v" << ecasound_library_version << " (C) 1997-2001 Kai Vehmanen              ";
-#ifdef USE_NCURSES
+  *dostream << "               ecasound v" << ecasound_library_version << " (C) 1997-2001 Kai Vehmanen                ";
+#if defined USE_NCURSES || defined USE_TERMCAP
   if (dostream == &cout) {
     putp(tigetstr("sgr0"));
   }
@@ -216,13 +222,21 @@ void start_iactive(ECA_SESSION* param) {
       if (cmd.size() > 0) {
 	try { 
 	  ctrl.command(cmd);
-	  if (cmd == "quit" || cmd == "q") break;
+	  ctrl.print_last_error();
+	  ctrl.print_last_value();
+	  if (cmd == "quit" || cmd == "q") {
+	    cerr << "---\nExiting...\n";
+	    break;
+	  }
 	}
 	catch(ECA_ERROR& e) {
 	  cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+	  if (e.error_action() == ECA_ERROR::stop) {
+	    break;
+	  }
 	}
       }
-      cout << "ecasound ('h' for help)>\n";
+      cout << "ecasound ('h' for help)> ";
     }
     while(getline(cin,cmd));
   }
@@ -231,6 +245,7 @@ void start_iactive(ECA_SESSION* param) {
   }
 }
 
+#if defined USE_NCURSES || defined USE_TERMCAP
 void start_iactive_readline(ECA_SESSION* param) {
   ECA_CONTROL ctrl(param);
 
@@ -347,3 +362,4 @@ char* ecasound_command_generator (char* text, int state) {
   // no names matched, return null
   return ((char *)0);
 }
+#endif // defined USE_NCURSES || defined USE_TERMCAP

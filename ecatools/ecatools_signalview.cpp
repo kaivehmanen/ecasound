@@ -152,21 +152,29 @@ int main(int argc, char *argv[])
 
     }
 
+#if defined USE_NCURSES || defined USE_TERMCAP
     initscr();
     erase();
     move(0,0);
     refresh();
+#endif
 
     ectrl.start();
     while(true) {
       usleep(rate_msec * 1000);
+#if defined USE_NCURSES || defined USE_TERMCAP
       erase();
       move(0,0);
       refresh();
       printw("%s", cop.status().c_str());
       refresh();
+#else
+      cout << cop.status() << endl;
+#endif
     }
+#if defined USE_NCURSES || defined USE_TERMCAP
     endwin();
+#endif
   }
   catch(ECA_ERROR& e) {
     cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
@@ -195,6 +203,8 @@ void print_usage(void) {
 
 void signal_handler(int signum) {
   cerr << "Unexpected interrupt... cleaning up.\n";
+#if defined USE_NCURSES || defined USE_TERMCAP
   endwin();
+#endif
   exit(1);
 }

@@ -1,5 +1,5 @@
-#ifndef _ECA_DEBUG_H
-#define _ECA_DEBUG_H
+#ifndef INCLUDE_ECA_DEBUG_H
+#define INCLUDE_ECA_DEBUG_H
 
 #include <string>
 

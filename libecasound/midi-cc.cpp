@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // midi-cc.cpp: Interface to MIDI continuous controllers
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999,2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,17 +21,32 @@
 
 #include <kvutils/message_item.h>
 
-#include "eca-midi.h"
+//  #include "eca-midi.h"
+#include "midi-client.h"
+#include "midi-server.h"
 #include "midi-cc.h"
 
 #include "eca-debug.h"
 
 CONTROLLER_SOURCE::parameter_type MIDI_CONTROLLER::value(void) {
-  if (midi_in_queue.update_controller_value()) {
-    value_rep =
-      static_cast<double>(midi_in_queue.last_controller_value(static_cast<int>(channel), static_cast<int>(controller)));
-    value_rep /= 127.0;
+//    if (midi_in_queue.update_controller_value()) {
+//      value_rep =
+//        static_cast<double>(midi_in_queue.last_controller_value(static_cast<int>(channel), static_cast<int>(controller)));
+//      value_rep /= 127.0;
+//    }
+  if (trace_request_rep == true) {
+    if (server() != 0) {
+      server()->add_controller_trace(channel, 
+				     controller);
+    }
+    else {
+      cerr << "(midi-cc) Warning! No MIDI-server found!" << endl;
+    }
+    trace_request_rep = false;
   }
+  value_rep =
+    static_cast<double>(server()->last_controller_value(channel, controller));
+  value_rep /= 127.0;
   return(value_rep);
 }
 
@@ -39,16 +54,19 @@ MIDI_CONTROLLER::MIDI_CONTROLLER(int controller_number,
 				 int midi_channel) 
   : controller(controller_number), 
     channel(midi_channel),
-    value_rep(0.0) { }
+    value_rep(0.0),
+    trace_request_rep(false) 
+{ }
 
 void MIDI_CONTROLLER::init(CONTROLLER_SOURCE::parameter_type phasestep) {
-    init_midi_queues();
+//      init_midi_queues();
 
     MESSAGE_ITEM otemp;
     otemp << "(midi-cc) MIDI-controller initialized using controller ";
     otemp.setprecision(0);
     otemp << controller << " and channel " << channel << ".";
     ecadebug->msg(0, otemp.to_string());
+
 }
 
 void MIDI_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_type value) {
@@ -60,6 +78,7 @@ void MIDI_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_type
     channel = static_cast<int>(value);
     break;
   }
+  trace_request_rep = true;
 }
 
 CONTROLLER_SOURCE::parameter_type MIDI_CONTROLLER::get_parameter(int param) const { 

@@ -19,6 +19,10 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- added: -z:nointbuf - minimize the use of internal buffering
 	         done by rt-devices
 	- added: -z:xruns - stop processing if an xrun occurs
+	- added: '--disable-ncurses' configure switch; ncurses/termcap
+		 is still required during compiling, but with this,
+		 ncurses/termcap is ignored during linking
+	- added: -Md:device option for specifying MIDI-devices
 	- fixed: severe bugs with -km (midi-routines)
 07022001 (v1.9dev1)
 	- notice: new version numbering scheme

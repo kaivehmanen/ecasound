@@ -65,6 +65,7 @@ private:
   bool trigger_outputs_request_rep;
   bool processing_range_set_rep;
   bool use_double_buffering_rep;
+  bool use_midi_rep;
   bool input_not_finished_rep;
   bool output_finished_rep;
   

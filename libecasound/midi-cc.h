@@ -1,17 +1,20 @@
-#ifndef _MIDI_CC_H
-#define _MIDI_CC_H
+#ifndef INCLUDE_MIDI_CC_H
+#define INCLUDE_MIDI_CC_H
 
 #include <string>
 
 #include "ctrl-source.h"
+#include "midi-client.h"
 
 /**
  * Interface to MIDI continuous controllers
  */
-class MIDI_CONTROLLER : public CONTROLLER_SOURCE {
+class MIDI_CONTROLLER : public CONTROLLER_SOURCE,
+			public MIDI_CLIENT {
     
-  double controller, channel;
+  int controller, channel;
   parameter_type value_rep;
+  bool trace_request_rep;
 
  public:
 

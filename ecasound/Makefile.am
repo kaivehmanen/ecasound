@@ -12,7 +12,9 @@ endif
 
 if USE_NCURSES
 termcap_library = -lncurses
-else
+endif
+
+if USE_TERMCAP
 termcap_library = -ltermcap
 endif
 

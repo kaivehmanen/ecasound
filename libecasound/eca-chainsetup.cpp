@@ -46,6 +46,9 @@
 #include "eca-chainop-map.h"
 #include "eca-controller-map.h"
 
+#include "midiio.h"
+#include "midi-client.h"
+
 #include "eca-object-factory.h"
 #include "eca-chainsetup-position.h"
 #include "eca-audio-objects.h"
@@ -144,6 +147,7 @@ void ECA_CHAINSETUP::set_defaults(void) {
   set_output_openmode(AUDIO_IO::io_readwrite);
 
   ECA_RESOURCES ecaresources;
+  set_default_midi_device(ecaresources.resource("midi-device"));
   set_buffersize(atoi(ecaresources.resource("default-buffersize").c_str()));
   set_sample_rate(atol(ecaresources.resource("default-samplerate").c_str()));
   toggle_double_buffering(ecaresources.boolean_resource("default-to-double-buffering"));
@@ -191,6 +195,12 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
 	if ((*q)->is_open() == false) (*q)->open();
 	audio_object_info(*q);
       }
+
+      for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
+	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Opening midi device \"" + (*q)->label() + "\".");
+	(*q)->toggle_nonblocking_mode(true);
+	if ((*q)->is_open() == false) (*q)->open();
+      }
     }
     is_enabled_rep = true;
   }
@@ -224,6 +234,11 @@ void ECA_CHAINSETUP::disable(void) {
     for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
       (*q)->close();
+    }
+
+    for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing midi device \"" + (*q)->label() + "\".");
+      if ((*q)->is_open() == true) (*q)->close();
     }
 
     is_enabled_rep = false;
@@ -304,6 +319,7 @@ void ECA_CHAINSETUP::interpret_object_option (const string& arg) throw(ECA_ERROR
   interpret_chains(arg);
   if (istatus_rep == false) interpret_audio_format(arg);
   if (istatus_rep == false) interpret_audioio_device(arg);
+  if (istatus_rep == false) interpret_midi_device(arg);
   if (istatus_rep == false) interpret_chain_operator(arg);
   if (istatus_rep == false) interpret_controller(arg);
 }
@@ -742,6 +758,53 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
 }
 
 /**
+ * Handles MIDI-IO devices.
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ */
+void ECA_CHAINSETUP::interpret_midi_device (const string& argu) { 
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  REQUIRE(istatus_rep == false);
+  // --------
+ 
+  string tname = get_argument_number(1, argu);
+  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-audio-objects) adding MIDI-device \"" + tname + "\".");
+
+  bool match = true;
+  if (argu.size() < 2) return;
+  switch(argu[1]) {
+  case 'M':
+    {
+      if (argu.size() < 3) return;
+      if (argu[2] == 'd') {
+	ecadebug->msg(ECA_DEBUG::system_objects, "Eca-audio-objects/Parsing MIDI-device");
+	MIDI_IO* mdev = 0;
+	mdev = ECA_OBJECT_FACTORY::create_midi_device(tname);
+	if (mdev != 0) {
+	  if ((mdev->supported_io_modes() & MIDI_IO::io_readwrite) == MIDI_IO::io_readwrite) {
+	    mdev->io_mode(MIDI_IO::io_readwrite);
+	    add_midi_device(mdev);
+	  }
+	  else {
+	    ecadebug->msg(ECA_DEBUG::info, "Warning! I/O-mode 'io_readwrite' not supported by " + mdev->name());
+	  }
+	}
+      }
+      break;
+    }
+    
+  default: { match = false; }
+  }
+  if (match == true) istatus_rep = true;
+
+  return;
+}
+
+/**
  * Handle chain operator options (chain operators, presets 
  * and plugins)
  *
@@ -894,6 +957,12 @@ void ECA_CHAINSETUP::interpret_controller (const string& argu) {
 
   GENERIC_CONTROLLER* t = create_controller(argu);
   if (t != 0) {
+    MIDI_CLIENT* p = dynamic_cast<MIDI_CLIENT*>(t->source_pointer());
+    if (p != 0) {
+      if (midi_devices.size() == 0) 
+	interpret_midi_device("-Md:" + default_midi_device());
+      p->register_server(&midi_server_rep);
+    }
     add_controller(t);
     istatus_rep = true;
   }

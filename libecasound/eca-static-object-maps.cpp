@@ -78,6 +78,8 @@ extern "C" {
 #include "audioio-null.h"
 #include "audioio-rtnull.h"
 
+#include "midiio-raw.h"
+
 #include "eca-resources.h"
 #include "eca-error.h"
 
@@ -88,6 +90,7 @@ ECA_OBJECT_MAP eca_chain_operator_map;
 ECA_OBJECT_MAP eca_ladspa_plugin_map;
 ECA_OBJECT_MAP eca_ladspa_plugin_id_map;
 ECA_OBJECT_MAP eca_controller_map;
+ECA_OBJECT_MAP eca_midi_device_map;
 ECA_PRESET_MAP eca_preset_map;
 
 #ifdef FEELING_EXPERIMENTAL
@@ -100,6 +103,7 @@ void register_default_chainops(void);
 void register_default_presets(void);
 void register_ladspa_plugins(void);
 void register_internal_plugins(void);
+void register_default_midi_devices(void);
 
 vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR&);
 
@@ -111,6 +115,7 @@ void register_default_objects(void) {
   register_default_controllers();
   register_default_chainops();
   register_default_audio_objects();
+  register_default_midi_devices();
   register_internal_plugins();
   register_ladspa_plugins();
 }
@@ -348,6 +353,10 @@ void register_internal_plugins(void) {
     eca_audio_device_map.register_object("^arts$", aobj);
 #endif
   }
+}
+
+void register_default_midi_devices(void) {
+  eca_midi_device_map.register_object("/dev/midi[0-9]*", new MIDI_IO_RAW());
 }
 
 void register_ladspa_plugins(void) {

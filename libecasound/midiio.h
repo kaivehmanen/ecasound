@@ -1,0 +1,172 @@
+#ifndef INCLUDED_MIDIIO_H
+#define INCLUDED_MIDIIO_H
+
+#include <string>
+
+#include "dynamic-object.h"
+
+/**
+ * Virtual base for all MIDI I/O classes.
+ *
+ *  - type definitions
+ *
+ *  - attributes
+ *
+ *  - configuration (setting and getting configuration parameters)
+ *
+ *  - functionality (control and runtime information)
+ *
+ *  - runtime information
+ *
+ *  - constructors and destructors
+ *
+ * @author Kai Vehmanen
+ */
+class MIDI_IO : public DYNAMIC_OBJECT<string> {
+
+ public:
+
+  // ===================================================================
+  // Type definitions
+
+  /**
+   * Input/Output mode
+   *
+   * @see io_mode()
+   *
+   * io_read
+   *
+   * Object is opened for input. If opening a file, 
+   * it must exist.
+   *
+   * io_write
+   *
+   * Object is opened for output. If opening a file and
+   * and output exists, it is first truncated.
+   * 
+   * io_readwrite
+   *
+   * Object is opened for both reading and writing. If
+   * opening a file, a new file is created if needed. 
+   * When switching from read to write or vica versa,
+   * position should be reset before using the device.
+   **/
+  enum Io_mode { io_read = 1, io_write = 2, io_readwrite = 4 };
+
+  // ===================================================================
+  // Attributes
+
+  virtual int supported_io_modes(void) const;
+  virtual bool supports_nonblocking_mode(void) const;
+  
+  // ===================================================================
+  // Configuration (setting and getting configuration parameters)
+
+  int io_mode(void) const;
+  const string& label(void) const;
+
+  void io_mode(int mode);
+  void label(const string& id_label);
+  void toggle_nonblocking_mode(bool value);
+
+  virtual string parameter_names(void) const { return("label"); }
+  virtual void set_parameter(int param, string value);
+  virtual string get_parameter(int param) const;
+
+  // ===================================================================
+  // Functionality (control and runtime information)
+
+ public:
+
+  /**
+   * Low-level routine for reading MIDI bytes. Number of read bytes
+   * is returned. This must be implemented by all subclasses.
+   */
+  virtual long int read_bytes(void* target_buffer, long int bytes) = 0;
+
+  /**
+   * Low-level routine for writing MIDI bytes. Number of bytes written
+   * is returned. This must be implemented by all subclasses.
+   */
+  virtual long int write_bytes(void* target_buffer, long int bytes) = 0;
+
+  /**
+   * Opens the MIDI object (possibly in exclusive mode).
+   * This routine is meant for opening files and devices,
+   * loading libraries, etc. 
+   *
+   * ensure:
+   *  readable() == true || writable() == true
+   */
+  virtual void open(void) = 0;
+
+  /**
+   * Closes the MIDI object. After calling this routine, 
+   * all resources (ie. soundcard) must be freed
+   * (they can be used by other processes).
+   *
+   * ensure:
+   *  readable() != true
+   *  writable() != true
+   */
+  virtual void close(void) = 0;
+
+  // ===================================================================
+  // Runtime information
+
+  /**
+   * If supports_nonblocking_mode() == true, this function returns 
+   * valid file descriptor that can be used as an argument to 
+   * standard "select()" and "poll()" system calls.
+   *
+   * require:
+   *  supports_nonblocking_mode() == true
+   */
+  virtual int file_descriptor(void) const { return(-1); }
+
+  /**
+   * Has device been opened (with open())?
+   */
+  bool is_open(void) const { return(open_rep); }
+
+  /**
+   * Whether all data has been processed? If opened in mode 'io_read', 
+   * this means that end of stream has been reached. If opened in 
+   * 'io_write' or 'io_readwrite' modes, finished status usually
+   * means that an error has occured (no space left, etc). After 
+   * finished() has returned 'true', further calls to read() 
+   * and/or write() won't process any data.
+   */
+  virtual bool finished(void) const = 0;
+
+  virtual bool nonblocking_mode(void) const;
+  virtual bool readable(void) const;
+  virtual bool writable(void) const;
+
+ protected:
+
+  void toggle_open_state(bool value);
+
+  // ===================================================================
+  // Constructors and destructors
+
+ public:
+
+  virtual MIDI_IO* clone(void) = 0;
+  virtual MIDI_IO* new_expr(void) = 0;
+  virtual ~MIDI_IO(void);
+  MIDI_IO(const string& name = "unknown",
+	  int mode = io_read);
+
+ private:
+  
+  int io_mode_rep;
+  string id_label_rep;
+
+  bool nonblocking_rep;
+  bool readable_rep;
+  bool writable_rep;
+  bool open_rep;
+};
+
+#endif

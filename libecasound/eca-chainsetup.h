@@ -53,6 +53,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
   void interpret_controller (const string& arg);
   void interpret_effect_preset (const string& arg);
   void interpret_audioio_device (const string& argu) throw(ECA_ERROR&);
+  void interpret_midi_device (const string& arg);
 
  public:
 

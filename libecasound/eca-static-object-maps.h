@@ -20,6 +20,7 @@ extern ECA_OBJECT_MAP eca_chain_operator_map;
 extern ECA_OBJECT_MAP eca_ladspa_plugin_map;
 extern ECA_OBJECT_MAP eca_ladspa_plugin_id_map;
 extern ECA_OBJECT_MAP eca_controller_map;
+extern ECA_OBJECT_MAP eca_midi_device_map;
 extern ECA_PRESET_MAP eca_preset_map;
 
 #ifdef FEELING_EXPERIMENTAL

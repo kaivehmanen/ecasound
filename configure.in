@@ -140,9 +140,17 @@ AC_SEARCH_LIBS(nanosleep, posix4)
 AC_SEARCH_LIBS(sched_setscheduler, posix4)
 AC_CHECK_LIB(m, sin)
 AC_CHECK_LIB(dl, dlopen)
+
+
+dnl ---
+dnl Check for ncurses/termcap
+dnl ---
 AC_CHECK_LIB(ncurses, main, termcap_library=ncurses,
 	AC_CHECK_LIB(termcap, main, termcap_library=termcap,
 		AC_MSG_ERROR([** neither termcap nor ncurses library is installed (needed by the console mode user interface) **])))
+AC_ARG_ENABLE(ncurses,
+[  --disable-ncurses	  	Disable ncurses (default = no)],
+termcap_library=none)
 AM_CONDITIONAL(USE_NCURSES, test $termcap_library = ncurses)
 AM_CONDITIONAL(USE_TERMCAP, test $termcap_library = termcap)
 if test x$termcap_library = xtermcap; then
@@ -483,7 +491,7 @@ fi
 if test x$termcap_library = xncurses; then
 	echo "Termcap:		ncurses"
 fi
-if test x$termcap_library = x; then
+if test x$termcap_library = xnone; then
 	echo "Termcap:		none"
 fi
 

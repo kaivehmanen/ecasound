@@ -7,8 +7,10 @@
 
 #include <kvutils/definition_by_contract.h>
 #include "eca-audio-format.h"
+#include "midi-server.h"
 #include "eca-error.h"
 
+class MIDI_IO;
 class AUDIO_IO;
 class LOOP_DEVICE;
 class CHAIN;
@@ -29,6 +31,7 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   long int double_buffer_size_rep;
   int output_openmode_rep;
   long int buffersize_rep;
+  string default_midi_device_rep;
 
   map<int,LOOP_DEVICE*> loop_map;
 
@@ -53,6 +56,7 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   string inputs_to_string(void) const;
   string outputs_to_string(void) const;
   string chains_to_string(void) const;
+  string midi_to_string(void) const;
   string audioio_to_string(const AUDIO_IO* aiod, const string& direction) const;
 
  public:
@@ -82,6 +86,9 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   void toggle_chain_muting(void);
   void toggle_chain_bypass(void);
 
+  void add_midi_device(MIDI_IO* mididev);
+  void remove_midi_device(const string& name);
+
   const vector<string>& selected_chains(void) const { return(selected_chainids); }
   unsigned int first_selected_chain(void) const; 
   vector<string> chain_names(void) const;
@@ -102,6 +109,8 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   vector<AUDIO_IO*> inputs;
   vector<AUDIO_IO*> outputs;
   vector<CHAIN*> chains;
+  vector<MIDI_IO*> midi_devices;
+  MIDI_SERVER midi_server_rep;
 
   // ---
   // Protected data objects
@@ -117,6 +126,7 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   void set_output_openmode(int value) { output_openmode_rep = value; }
   void set_buffersize(long int value) { buffersize_rep = value; }
   void set_default_audio_format(ECA_AUDIO_FORMAT& value) { default_audio_format_rep = value; }
+  void set_default_midi_device(const string& name) { default_midi_device_rep = name; }
 
   bool double_buffering(void) const { return(double_buffering_rep); }
   long int double_buffer_size(void) const { return(double_buffer_size_rep); }
@@ -125,6 +135,7 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   bool max_buffers(void) const { return(max_buffers_rep); }
   long int buffersize(void) const { return(buffersize_rep); }
   const ECA_AUDIO_FORMAT& default_audio_format(void) const { return(default_audio_format_rep); }
+  const string& default_midi_device(void) const { return(default_midi_device_rep); }
   int output_openmode(void) const { return(output_openmode_rep); }
   bool is_valid(void) const;
 

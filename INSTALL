@@ -88,6 +88,11 @@ Ecasound specific options
 `--disable-pyecasound'
 	Disable compilation of pyecasound.
 
+`--disable-ncurses'
+	Don't link against ncurses (known bug: even if this is 
+	specified, you're still required to have a working
+	ncurses/termcap installation to compile)
+
 Compilers and Options
 =====================
 

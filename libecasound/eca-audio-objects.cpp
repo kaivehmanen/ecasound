@@ -32,6 +32,7 @@
 #include "audioio.h"
 #include "audioio-loop.h"
 #include "audioio-null.h"
+#include "midiio.h"
 #include "eca-static-object-maps.h"
 
 #include "eca-chain.h"
@@ -483,6 +484,55 @@ void ECA_AUDIO_OBJECTS::remove_audio_output(const string& label) {
     }
     ++ci;
   }
+}
+
+/**
+ * Add a new MIDI-device object.
+ *
+ * require:
+ *   mididev != 0
+ *
+ * ensure:
+ *   midi_devices.size() > 0
+ */
+void ECA_AUDIO_OBJECTS::add_midi_device(MIDI_IO* mididev) {
+  // --------
+  REQUIRE(mididev != 0);
+  // --------
+
+  midi_devices.push_back(mididev);
+  midi_server_rep.register_client(mididev);
+
+  // --------
+  ENSURE(midi_devices.size() > 0);
+  // --------
+}
+
+/**
+ * Remove an MIDI-device by the name 'mdev_name'.
+ */
+void ECA_AUDIO_OBJECTS::remove_midi_device(const string& mdev_name) {
+  for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
+    if (mdev_name == (*q)->label()) {
+      delete *q;
+      midi_devices.erase(q);
+      break;
+    }
+  }
+}
+
+string ECA_AUDIO_OBJECTS::midi_to_string(void) const { 
+  MESSAGE_ITEM t; 
+  t.setprecision(3);
+
+  vector<MIDI_IO*>::size_type p = 0;
+  while (p < midi_devices.size()) {
+    t << "-Md:" << midi_devices[p]->name() << " ";
+    ++p;
+    if (p < chains.size()) t << "\n";
+  }
+
+  return(t.to_string());
 }
 
 string ECA_AUDIO_OBJECTS::inputs_to_string(void) const { 

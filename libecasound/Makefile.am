@@ -82,6 +82,12 @@ ecasound_audioio_include = 	\
 			audioio-proxy-buffer.h \
 			audioio-buffered-proxy.h
 
+ecasound_midi_include =	\
+			midi-server.h \
+			midi-client.h \
+			midiio.h \
+			midiio-raw.h
+
 ecasound_controller_include = \
 			generic-controller.h \
 			ctrl-source.h \
@@ -145,15 +151,19 @@ ecasound_general_include = 	\
 			preset.h \
 			file-preset.h \
 			global-preset.h \
-			plugin-paths.h
+			plugin-paths.h \
+			midiio.h
 
 if FEELING_EXPERIMENTAL
 vst_header_files = AEffEditor.hpp AEffect.h aeffectx.h AudioEffect.hpp
 endif
 
-noinst_HEADERS = $(ecasound_audiofx_include) $(ecasound_audioio_include) \
-		 $(ecasound_controller_include) $(ecasound_general_include) $(vst_header_files)
-
+noinst_HEADERS = 	$(ecasound_audiofx_include) \
+			$(ecasound_audioio_include) \
+			$(ecasound_midi_include) \
+		 	$(ecasound_controller_include) \
+			$(ecasound_general_include) \
+			$(vst_header_files)
 
 # ----------------------------------------------------------------------
 # source files
@@ -198,6 +208,12 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-proxy-buffer.cpp \
 			audioio-buffered-proxy.cpp \
 			$(ecasound_audioio_oss_src)
+
+ecasound_midi_src =	\
+			midi-server.cpp \
+			midi-client.cpp \
+			midiio.cpp \
+			midiio-raw.cpp
 
 ecasound_controller_src = \
 			generic-controller.cpp \
@@ -249,6 +265,7 @@ ecasound_general_src = 	eca-chain.cpp \
 
 ecasound_common_src = 	$(ecasound_audiofx_src) \
 			$(ecasound_audioio_src) \
+			$(ecasound_midi_src) \
 		      	$(ecasound_controller_src) \
 			$(ecasound_general_src) $(vst_src_files)
 

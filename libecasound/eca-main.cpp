@@ -77,6 +77,10 @@ ECA_PROCESSOR::~ECA_PROCESSOR(void) {
     while(pserver_rep.is_running() != true) usleep(50000);
   }
 
+  if (use_midi_rep == true) {
+    csetup_repp->midi_server_rep.stop();
+  }
+
   vector<AUDIO_IO_BUFFERED_PROXY*>::iterator p = proxies_rep.begin();
   while(p != proxies_rep.end()) {
     delete *p;
@@ -131,6 +135,7 @@ void ECA_PROCESSOR::init(void) {
 }
 
 void ECA_PROCESSOR::init_variables(void) {
+  use_midi_rep = false;
   max_channels_rep = 0;
   continue_request_rep = false;
   end_request_rep = false;
@@ -148,6 +153,7 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) {
   }
 
   init_pserver();
+  if (csetup_repp->midi_devices.size() > 0) use_midi_rep = true;
   create_sorted_input_map();
   create_sorted_output_map();
   init_inputs(); // input-output order is important here (sync fix)
@@ -410,6 +416,11 @@ void ECA_PROCESSOR::exec(void) {
     pserver_rep.start();
     ecadebug->msg(ECA_DEBUG::info, "(eca-main) Prefilling i/o buffers.");
     while(pserver_rep.is_full() != true) usleep(50000);
+  }
+
+  if (use_midi_rep == true) {
+    csetup_repp->midi_server_rep.start();
+    ecadebug->msg(ECA_DEBUG::info, "(eca-main) Starting MIDI-server.");
   }
 
   switch(mixmode_rep) {
