@@ -214,7 +214,7 @@ const char* eci_impl_get_ecasound_path(void);
 void eci_impl_los_list_add_item(struct eci_los_list** i, char* stmp, int len);
 void eci_impl_los_list_alloc_item(struct eci_los_list **ptr);
 void eci_impl_los_list_clear(struct eci_los_list **ptr);
-void eci_impl_read_return_value(struct eci_internal* eci_rep);
+void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout);
 void eci_impl_set_last_los_value(struct eci_parser* parser);
 void eci_impl_set_last_values(struct eci_parser* parser);
 void eci_impl_update_state(struct eci_parser* eci_rep, char c);
@@ -321,7 +321,7 @@ eci_handle_t eci_init_r(void)
 	eci_rep->commands_counter_rep ++;
       
 	/* check that exec() succeeded */
-	eci_impl_read_return_value(eci_rep);
+	eci_impl_read_return_value(eci_rep, ECI_READ_TIMEOUT_MS);
 	if (eci_rep->commands_counter_rep != eci_rep->parser_repp->last_counter_rep) {
 	  ECI_DEBUG_3("(ecasoundc_sa) exec() of %s FAILED (%d=%d)!\n", ecasound_exec, eci_rep->commands_counter_rep, eci_rep->parser_repp->last_counter_rep);
 	  free(eci_rep->parser_repp);
@@ -391,29 +391,36 @@ void eci_command(const char* command) { eci_command_r(static_eci_rep, command); 
 void eci_command_r(eci_handle_t ptr, const char* command)
 {
   struct eci_internal* eci_rep = (struct eci_internal*)ptr;
+  int timeout = ECI_READ_TIMEOUT_MS;
 
   eci_impl_check_handle(eci_rep);
 
-  ECI_DEBUG_1("\n(ecasoundc_sa) writing command '%s'.\n", command);
+  /* ECI_DEBUG_1("\n(ecasoundc_sa) writing command '%s'.\n", command); */
 
   eci_impl_clean_last_values(eci_rep->parser_repp);
 
   write(eci_rep->cmd_write_fd_rep, command, strlen(command));
   write(eci_rep->cmd_write_fd_rep, "\n", 1);
-  eci_rep->commands_counter_rep++;
 
+  /* 'run' is the only blocking function */
+  if (strncmp(command, "run", 3) != 0) {
+    timeout = -1;
+  }
+
+  eci_rep->commands_counter_rep++;
+    
   if (eci_rep->commands_counter_rep - 1 !=
       eci_rep->parser_repp->last_counter_rep) {
     ECI_DEBUG_2("(ecasoundc_sa) sync error; cmd=%d lastv=%d.\n", 
 		eci_rep->commands_counter_rep,
 		eci_rep->parser_repp->last_counter_rep);
   }
-
+  
   if (eci_rep->commands_counter_rep >=
       eci_rep->parser_repp->last_counter_rep) {
-    eci_impl_read_return_value(eci_rep);
+    eci_impl_read_return_value(eci_rep, timeout);
   }
-
+  
   if (eci_rep->commands_counter_rep >
       eci_rep->parser_repp->last_counter_rep) {
     fprintf(stderr, "%s", eci_str_sync_lost);
@@ -742,7 +749,7 @@ void eci_impl_los_list_clear(struct eci_los_list **ptr)
   *ptr = NULL;
 }
 
-void eci_impl_read_return_value(struct eci_internal* eci_rep)
+void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout)
 {
   char* raw_buffer = eci_rep->raw_buffer_repp;
   int attempts = 0;
@@ -751,7 +758,7 @@ void eci_impl_read_return_value(struct eci_internal* eci_rep)
 	 eci_rep->parser_repp->last_counter_rep);
 
   while(attempts < ECI_MAX_RESYNC_ATTEMPTS) {
-    int res = eci_impl_fd_read(eci_rep->cmd_read_fd_rep, raw_buffer, ECI_MAX_PARSER_BUF_SIZE-1, 2000);
+    int res = eci_impl_fd_read(eci_rep->cmd_read_fd_rep, raw_buffer, ECI_MAX_PARSER_BUF_SIZE-1, timeout);
     if (res > 0) {
       int n;
 
@@ -799,11 +806,11 @@ void eci_impl_set_last_los_value(struct eci_parser* parser)
   assert(parser != 0);
   assert(parser->state_rep == ECI_STATE_COMMON_LF_3);
 
-  ECI_DEBUG_1("(ecasoundc_sa) parsing a list '%s'\n", parser->buffer_repp);
+  /* ECI_DEBUG_2("(ecasoundc_sa) parsing a list '%s' (count=%d)\n", parser->buffer_repp, parser->buffer_current_rep); */
 
   eci_impl_los_list_clear(i);
 
-  for(n = 0; n < parser->buffer_current_rep; n++) {
+  for(n = 0; n < parser->buffer_current_rep && n < parser->msgsize_rep; n++) {
     char c = parser->buffer_repp[n];
 
     if (c == '\"') {
@@ -986,6 +993,9 @@ void eci_impl_update_state(struct eci_parser* parser, char c)
 
 	parser->buffer_repp[parser->buffer_current_rep] = 0;
 
+	/* handle empty content */
+	if (parser->msgsize_rep == 0) parser->buffer_repp[0] = 0;
+
 #if 0
 	ECI_DEBUG_2("(ecasoundc_sa) found content, loglevel=%d, msgsize=%d", parser->loglevel_rep, parser->msgsize_rep);
 	if (parser->state_msg_rep == ECI_STATE_MSG_GEN)
@@ -1029,7 +1039,7 @@ void eci_impl_update_state(struct eci_parser* parser, char c)
     case ECI_STATE_COMMON_LF_3:
       if (c == 0x0a) {
 	if (parser->state_msg_rep == ECI_STATE_MSG_RETURN) {
-	  ECI_DEBUG_1("(ecasoundc_sa) rettype-content validated: <<< %s >>>\n", parser->buffer_repp);
+	  /* ECI_DEBUG_1("(ecasoundc_sa) rettype-content validated: <<< %s >>>\n", parser->buffer_repp); */
 	  eci_impl_set_last_values(parser);
 	  parser->last_counter_rep++;
 	}
@@ -1054,6 +1064,9 @@ void eci_impl_update_state(struct eci_parser* parser, char c)
     } /* end of switch() */
 
   if (parser->token_phase_rep == ECI_TOKEN_PHASE_READING) {
+    if (parser->buffer_current_rep >= parser->msgsize_rep) {
+      /* ECI_DEBUG_2("\n(ecasoundc_sa) WARNING! Content size exceeded; cur=%d, msgsize=%d.\n\n", parser->buffer_current_rep, parser->msgsize_rep); */
+    }
     msg_buffer[parser->buffer_current_rep] = c;
     if (++parser->buffer_current_rep == ECI_MAX_PARSER_BUF_SIZE) {
       fprintf(stderr, "\n(ecasoundc_sa) WARNING! Parsing buffer overflowed!\n\n");

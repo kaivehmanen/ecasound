@@ -223,13 +223,13 @@ static int eci_test_5(void)
   if (handle == NULL) { ECA_TEST_FAIL(1, "init failed"); }
 
   eci_command_r(handle, "cs-remove");
-  /* eci_command_r(handle, "cs-add test_cs"); */
+  eci_command_r(handle, "cs-status");
   eci_command_r(handle, "cs-list");
   count = eci_last_string_list_count_r(handle);
-  fprintf(stderr, "count=%d name=%s.\n", count, eci_last_string_list_item_r(handle, 0));
   if (count != 0) { ECA_TEST_FAIL(1, "cs-list count not zero"); }
 
   eci_command_r(handle, "cs-add test_cs2");
+  eci_command_r(handle, "cs-list");
   count = eci_last_string_list_count_r(handle);
   if (count != 1) { ECA_TEST_FAIL(2, "cs-list count not one"); }
 
