@@ -46,6 +46,7 @@ endif
 #       with stripping libraries.
 
 INCLUDES = 	-I$(srcdir) \
+		-I$(top_srcdir) \
 		-I$(top_srcdir)/kvutils \
 		$(ECA_S_EXTRA_CPPFLAGS)
 
@@ -338,6 +339,9 @@ libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
 libecasound_tester_SOURCES = $(libecasound_tester_src)
 #libecasound_tester_CFLAGS =  $(AM_CFLAGS)
 libecasound_tester_LDADD = $(libecasound_tester_libs)
+
+# Pass pkgdatadir to CPPFLAGS
+AM_CPPFLAGS += "-DECA_PKGDATADIR=\"${pkgdatadir}\""
 
 # ---------------------------------------------------------------------
 # Install targets - note! we don't install $ecasound_extra_include

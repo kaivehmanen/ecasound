@@ -39,8 +39,7 @@ using std::string;
 ECA_RESOURCES::ECA_RESOURCES(void) 
   : resources_found_rep(true)
 {
-  string ecasound_datadir (ECA_DATADIR);
-  string ecasound_resource_path = ecasound_datadir + "/ecasound";
+  string ecasound_resource_path (ECA_PKGDATADIR);
 
   globalrc_repp = new RESOURCE_FILE();
   globalrc_repp->resource_file(ecasound_resource_path + "/ecasoundrc");
