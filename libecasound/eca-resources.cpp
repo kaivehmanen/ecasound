@@ -50,8 +50,11 @@ void ECA_RESOURCES::set_defaults(void) {
   if (resource("ext-mp3-input-cmd") == "") resource("ext-mp3-input-cmd","mpg123 -b 0 -q -s -k %o %f");
   if (resource("ext-mp3-output-cmd") == "") resource("ext-mp3-output-cmd", "lame -b 128 -x -S - %f");
 
+  if (resource("ext-ogg-input-cmd") == "") resource("ext-ogg-input-cmd","ogg123 -d wav -o file:%F %f");
+  if (resource("ext-ogg-output-cmd") == "") resource("ext-ogg-output-cmd", "vorbize --raw --write=%f");
+
   if (resource("ext-mikmod-cmd") == "") resource("ext-mikmod-cmd","mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f");
-  if (resource("ext-timidity-cmd") == "") resource("ext-timidity-cmd", "timidity -Or -o - %f");
+  if (resource("ext-timidity-cmd") == "") resource("ext-timidity-cmd", "timidity -Or1S  -s %s -o - %f");
 
   if (resource("internal-plugin-directory") == "") resource("internal-plugin-directory", ecasound_plugin_path);
   if (resource("ladspa-plugin-directory") == "") resource("ladspa-plugin-directory", ecasound_ladspa_path);

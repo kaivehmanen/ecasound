@@ -7,7 +7,9 @@
 #include "audioio-forked-stream.h"
 
 /**
- * Interface class for Timidity++ input. Uses FIFO pipes.
+ * Interface for MIDI-to-audio converters that support i/o using 
+ * standard streams. By default, Timidity++ is used.
+ *
  * @author Kai Vehmanen
  */
 class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
@@ -35,8 +37,10 @@ class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
   
  public:
 
-  virtual string name(void) const { return("MIDI file input using Timidity++."); }
+  virtual string name(void) const { return("MIDI-to-audio stream"); }
+  virtual string description(void) const { return("Interface for MIDI->audio converters that support i/o using standard streams."); }
   virtual int supported_io_modes(void) const { return(io_read); }
+  virtual bool supports_seeking(void) const { return(false); }
 
   virtual void open(void);
   virtual void close(void);

@@ -26,7 +26,7 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-string TIMIDITY_INTERFACE::default_timidity_cmd = "timidity -Or -o - %f";
+string TIMIDITY_INTERFACE::default_timidity_cmd = "timidity -Or1S  -s %s -o - %f";
 
 void TIMIDITY_INTERFACE::set_timidity_cmd(const string& value) { TIMIDITY_INTERFACE::default_timidity_cmd = value; }
 
@@ -37,7 +37,10 @@ TIMIDITY_INTERFACE::TIMIDITY_INTERFACE(const string& name) {
 
 TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void) { close(); }
 
-void TIMIDITY_INTERFACE::open(void) { toggle_open_state(false); }
+void TIMIDITY_INTERFACE::open(void) { 
+  set_channels(2);
+  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
+}
 
 void TIMIDITY_INTERFACE::close(void) {
   if (io_mode() == io_read) {
@@ -76,7 +79,12 @@ void TIMIDITY_INTERFACE::kill_timidity(void) {
 
 void TIMIDITY_INTERFACE::fork_timidity(void) throw(ECA_ERROR&) {
   if (!is_open()) {
-    fork_child_for_read(TIMIDITY_INTERFACE::default_timidity_cmd, label());
+    set_fork_command(TIMIDITY_INTERFACE::default_timidity_cmd);
+    set_fork_file_name(label());
+    set_fork_bits(bits());
+    set_fork_channels(channels());
+    set_fork_sample_rate(samples_per_second());
+    fork_child_for_read();
     if (child_fork_succeeded() != true) {
       throw(ECA_ERROR("AUDIOIO-TIMIDITY","Can't start Timidity++-thread! Check that 'timidity' is installed properly."));
     }
