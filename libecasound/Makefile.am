@@ -127,7 +127,6 @@ ecasound_general_include = 	\
 			eca-session.h \
 			eca-resources.h \
 			resource-file.h \
-			generic-controller.h \
 			layer.h \
 			eca-static-object-maps.h \
 			eca-object-map.h \
@@ -164,8 +163,7 @@ ecasound_general_include = 	\
 			preset.h \
 			preset_impl.h \
 			file-preset.h \
-			global-preset.h \
-			midiio.h
+			global-preset.h
 
 ecasound_extra_include = \
 			ladspa.h
