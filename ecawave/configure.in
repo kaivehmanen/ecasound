@@ -68,8 +68,8 @@ AC_STDC_HEADERS
 dnl ---
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl ---
-AC_C_CONST
-AC_C_INLINE
+dnl AC_C_CONST
+dnl AC_C_INLINE
 
 dnl ---
 dnl Check for qt
