@@ -27,6 +27,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+23.04.2002 - edi-26 opened
 24.02.2002 - edi-13 closed
 22.02.2002 - edi-22, edi-23, edi-24 and edi-25 opened
 22.02.2002 - edi-template.txt updated
@@ -73,6 +74,8 @@ xx.xx.2001 no history information
 	- submitted: kaiv, 22.02.2002
 (edi-24): Resample audio object
         - submitted: kaiv, 22.02.2002
+(edi-26): Logarithmic linear envelopes
+        - submitted: jhall, 23.04.2002
 
 -----------------------------------------------------------------------
 [ Section: Closed items ]

@@ -1,0 +1,18 @@
+------------------------------------------------------------------------
+Status: OPEN/CLOSED
+
+(edi-26): Logarithmic linear envelopes
+        - submitted: jhall, 23.04.2002
+
+------------------------------------------------------------------------
+Details:
+
+------------------------------------------------------------------------
+
+[kaiv on ecasound-list, 23.04.2002]
+
+Implementation should be quite straightforward. You should start from
+ecasound/libecasound/linear-envelope.cpp (log-envelope.cpp), and just
+rewrite the value() member function. Similarly with the two-stage
+envelope.
+
