@@ -22,9 +22,10 @@ Details:
     - EIAM commands for selecting the ecasound return value
       syntax -> either normal (current) or one matching the
       the NetECI wire-syntax
-- todo-list
+- arlready-done-list
     - new EIAM commands are needed to make it possible to 
       parse return values
+- todo-list
 
 ------------------------------------------------------------------------
 [kaiv on ecasound-list, 28.09.2002]
@@ -53,5 +54,131 @@ implementation. For instance, a Python ECI implementation could be
 written totally in Python.  This means that no extension modules would
 need to installed. Just a Python interpreter and the ecasound executable
 and that's it!
+
+------------------------------------------------------------------------
+[kaiv on ecasound-list, 01.10.2002]
+
+One of the best alternatives I've come up with so far is reusing the
+NetECI protocol wire format:
+
+---
+[1. int-output-eci]
+
+There would be a new ecasound command for enabling 
+a parser-friendly output mode (for instance 'int-output-eci').
+
+---
+[2. well-formed stdout messages]
+
+Once 'int-output-eci' is issued, all output from libecasound 
+to stdout will adhere to the following format:
+
+"<loglevel> <msg-size><crlf><msg><crlf><crlf>"
+
+Different types of messages already all have a different loglevel
+associacated with them. For instance when setting ecasound's debug level
+(with -d:x), you're actually setting a mask specifying which loglevels to
+pass through.
+
+Example: "16 10\r\nMy message". Ie. "My message" (length=10) was sent with
+loglevel 16.
+
+---
+[3. the ECI loglevel]
+
+One loglevel would be allocated to command return values. These messages 
+would adhere to the following format, which is an extension of the 
+message format in the NetECI protocol:
+
+"<ECI-loglevel> <status-code> <return-type> <msg-size><crlf><msg><crlf><crlf>"
+
+Example (response to 'c-selected'): "64 100 s 7\r\ndefault\r\n\r\n". Ie.  
+the response was "default" (length=7), response type s=string, status
+100=ok and it was sent with loglevel 64.
+
+...
+
+With this new output mode, it should be quite easy to reliably parse
+ecasound's output. Just issue a command and then read log messages until
+you encounter the next message with eci-loglevel. The msg 'status-code'
+will indicate whether the command succeeded or not. 'return-type' and
+'msg-size' will help in parsing the actual message contents (and to find
+the next well-formed message).
+
+In addition to making parsing easier, the line-feeds (crlf) also serve as
+a mechanism to recover from errors (parser receives an invalid message and
+does not know where the next message starts ==> search for an empty line
+to find a possible new well-formed message).
+
+------------------------------------------------------------------------
+[kaiv on ecasound-list, 02.10.2002]
+
+1. Enabling the well-formed mode
+
+The new log message mode can be enabled with the new 
+"int-output-mode-wellformed" EIAM command.
+
+2. Syntax of well-format log messages
+
+I've added the below documentation to Ecasound Programmer's Guide:
+
+--cut--
+By issuing the EIAM command ``int-output-mode-wellformed'', 
+ecasound will start printing all messages using the following
+format:
+
+<message> = <loglevel><sp><msgsize>(<genmsg> | <returnmsg>)
+
+<loglevel> = <integer>      ; loglevel number
+<msgsize = <integer>        ; size of content in octets
+<genmsg> = <contentblock>   ; generic log message
+<returnmsg> = <sp><returntype><contentblock>
+                            ; EIAM return value message
+<contentblock> = <crlf><content><crlf><crlf>
+                            ; actual content of the message
+<returntype> = ``i'' | ``li'' | ``f'' | ``s'' | ``S'' | ``e''
+                            ; type of the return value (see ECI/EIAM docs)
+<content> = *<octet>        ; zero or more octets of message content
+
+<sp> = 0x20                 ; space
+<octet> = 0x00-0xff         ; 8bits of data
+<crlf> = <cr><lf>           ; new line 
+<cr> = 0x0d                 ; carriage return
+<lf> = 0x0a                 ; line feed
+<integer> = +<digit>        ; one or more digits
+<digit> = 0x30-0x39         ; digits 0-9
+--cut--
+
+3. Loglevel for ECI/EIAM return values 
+
+I've assigned value 256 (0x100) for the return value messages. As an
+example:
+
+--cut--
+ecasound ('h' for help)> int-output-mode-wellformed 
+ecasound ('h' for help)> cs-is-valid 
+256 1 i
+1
+
+ecasound ('h' for help)> cs-selected
+256 18 s
+command-line-setup
+
+--cut--
+
+256 = loglevel for the return-type messages
+1 = length of content is 1 octet
+i = return value is an integer
+1 = the content (boolean one, ie. cs-is-valid returned true)
+<crlf> = an empty line ends the message
+... and so on.
+
+That's about it I think. Now it should be possible to write a native,
+standalone ECI implementation in any language that supports launching
+external apps (ie. forking) and using pipes to communicate with the
+executed process.
+
+PS If this turns out to work ok, I might also add this functionality
+   to the 2.x tree (-> 2.0.5 release).
 
 ------------------------------------------------------------------------
