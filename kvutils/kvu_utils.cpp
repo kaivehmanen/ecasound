@@ -221,18 +221,19 @@ vector<int> kvu_string_to_int_vector(const string& str,
  * replaced with 'to' characters.
  */
 vector<string> kvu_vector_search_and_replace(const vector<string>& str_vector, 
-					     const string::value_type from,
-					     const string::value_type to)
+					     const string& from,
+					     const string& to)
 {
   vector<string> vstmp;
   vector<string>::const_iterator p = str_vector.begin();
   while(p != str_vector.end()) {
-    if (find(p->begin(), p->end(), ',') != p->end()) {
-      vstmp.push_back(kvu_string_search_and_replace(*p, from, to));
+    string tmp (*p);
+    size_t pos = 0;
+    while((pos = tmp.find(from, pos)) != string::npos) {
+      tmp.replace(pos, from.size(), to);
+      pos += (to.size() > from.size() ? to.size() : from.size());
     }
-    else { 
-      vstmp.push_back(*p);
-    }
+    vstmp.push_back(tmp);
     ++p;
   }
   return vstmp;
