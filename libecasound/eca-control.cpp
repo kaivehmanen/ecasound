@@ -417,7 +417,7 @@ void ECA_CONTROL::action(int action_id)
       }
       break;
     }
-  case ec_c_mute: { toggle_chain_muting(); break; }
+  case ec_c_muting: { toggle_chain_muting(); break; }
   case ec_c_bypass: { toggle_chain_bypass(); break; }
   case ec_c_status: 
     { 

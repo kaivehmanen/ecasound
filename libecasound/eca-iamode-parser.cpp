@@ -177,7 +177,8 @@ void ECA_IAMODE_PARSER::register_commands_c(void) {
   (*cmd_map_repp)["c-select-add"] = ec_c_select_add;
   (*cmd_map_repp)["c-clear"] = ec_c_clear;
   (*cmd_map_repp)["c-rename"] = ec_c_rename;
-  (*cmd_map_repp)["c-mute"] = ec_c_mute;
+  (*cmd_map_repp)["c-muting"] = ec_c_muting;
+  (*cmd_map_repp)["c-mute"] = ec_c_muting;
   (*cmd_map_repp)["c-bypass"] = ec_c_bypass;
   (*cmd_map_repp)["c-status"] = ec_c_status;
 }
@@ -396,7 +397,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_c_remove:
   case ec_c_clear:
   case ec_c_rename:
-  case ec_c_mute:
+  case ec_c_muting:
   case ec_c_bypass:
   case ec_c_status:
   case ec_c_list:

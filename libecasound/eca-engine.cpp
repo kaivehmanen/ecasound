@@ -295,8 +295,8 @@ void ECA_ENGINE::wait_for_stop(int timeout)
   int ret = kvu_pthread_timed_wait(&impl_repp->ecasound_stop_mutex_repp, 
 				   &impl_repp->ecasound_stop_cond_repp, 
 				   timeout);
-  ECA_LOG_MSG(ECA_LOGGER::info, 
-	      kvu_pthread_timed_wait_result(ret, "(eca_main) wait_for_stop"));
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+	      kvu_pthread_timed_wait_result(ret, "(eca-engine) wait_for_stop"));
 }
 
 /**
@@ -1010,7 +1010,7 @@ void ECA_ENGINE::interpret_queue(void)
     // Section/chain (en/dis)abling commands.
     // ---
     case ep_c_select: {	csetup_repp->active_chain_index_rep = static_cast<size_t>(item.second); break; }
-    case ep_c_mute: { chain_muting(); break; }
+    case ep_c_muting: { chain_muting(); break; }
     case ep_c_bypass: { chain_processing(); break; }
 
     // ---

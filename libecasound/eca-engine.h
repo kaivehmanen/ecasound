@@ -89,7 +89,7 @@ class ECA_ENGINE {
     ep_debug,
     ep_exit,
     // --
-    ep_c_mute,
+    ep_c_muting,
     ep_c_bypass,
     ep_c_select,
     // --

@@ -58,7 +58,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_c_deselect,
     ec_c_clear,
     ec_c_rename,
-    ec_c_mute,
+    ec_c_muting,
     ec_c_bypass,
     ec_c_status,
     // --

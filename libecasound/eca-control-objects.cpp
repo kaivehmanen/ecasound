@@ -1079,7 +1079,7 @@ void ECA_CONTROL_OBJECTS::toggle_chain_muting(void) {
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
   if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
-    send_chain_commands_to_engine(ECA_ENGINE::ep_c_mute, 0.0);
+    send_chain_commands_to_engine(ECA_ENGINE::ep_c_muting, 0.0);
   } 
   else {
     selected_chainsetup_repp->toggle_chain_muting();
