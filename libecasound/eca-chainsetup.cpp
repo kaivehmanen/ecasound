@@ -271,7 +271,8 @@ void ECA_CHAINSETUP::set_defaults(void)
   set_default_midi_device(ecaresources.resource("midi-device"));
 
   string aformat_temp = ecaresources.resource("default-audio-format");
-  cparser_rep.interpret_object_option("-f:" + aformat_temp);
+  if (aformat_temp.size() > 0)
+    cparser_rep.interpret_object_option("-f:" + aformat_temp);
   set_samples_per_second(default_audio_format().samples_per_second());
 
   toggle_precise_sample_rates(ecaresources.boolean_resource("default-to-precise-sample-rates"));
