@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 030203) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 150203) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??022003 (v2.2.1)  -** stable release **-
+15022003 (v2.2.1)  -** stable release **-
 	- added: sane default param hints for chainops: -ec, -etd,
 		 -ete, -etf, -etl, -etm, -etp, -etr and -epp
 	- added: if configured with JACK-support, ecasound will
@@ -30,6 +30,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 use the highest available resampling quality; 
 		 currently only has an effect if libsamplerate 
 		 support is enabled
+	- added: alternative UNIX signal handling for platforms that
+		 don't provide sigwait() (cygwin is one)
 	- changed: ecasoundrc - ladspa-plugin-directory can contain 
 		   multiple directories, separated by colons; this
 		   change was done to avoid any confusion with 
@@ -50,6 +52,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: rounding errors fixed in the resample object
 	- fixed: terminal was not properly resetted after a ctrl-c
 		 in interactive mode
+	- fixed: handle /dev/dsp drivers that don't support 
+		 DSP_GETCAPS (cygwin is one)
+	- fixed: don't link with rpath if target prefix is /usr [juekawa]
+	- fixed: -kl2 didn't work at all in some circumstances
 09012003 (v2.2.0)  -** stable release **-
 	- edi-entries: edi-1 closed
 	- changed: ecasound.el updated to version 0.8.1 [mlang]

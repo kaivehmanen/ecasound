@@ -25,7 +25,7 @@ list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 -----------------------------------------------------------------------
 [ Help - developer in trouble ]
 
-- ecasound compiles on FreeBSD (4.7) and Solaris (2.6-2.8), how about
-  other UNIX platforms (other BSDs, OS X, IRIX, AIX)?
+- ecasound compiles on FreeBSD (4.7), Solaris (2.6-2.8) and Cygwin;
+  how about other UNIX platforms (other BSDs, OS X, IRIX, AIX)?
 - ecasound compiles out-of-the-box on Redhat (6-8) and PLD Linux
   systems, what about other Linux distros?
