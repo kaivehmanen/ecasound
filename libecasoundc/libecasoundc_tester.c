@@ -18,7 +18,7 @@
  * ------------------------------------------------------------------------ */
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h>  /* ANSI-C: atoi(), ... */
 #include <string.h>
 #include "ecasoundc.h"
 /* #include "eca-control-interface.h" */
@@ -37,14 +37,15 @@
  */
 
 #ifdef VERBOSE
-#define ECA_TEST_ENTRY()   do { printf("\n%s:%d - Test started", __FILE__, __LINE__); } while(0)
-#define ECA_TEST_SUCCESS() do { printf("\n%s:%d - Test passed\n", __FILE__, __LINE__); return 0; } while(0)
+#define ECA_TEST_ENTRY()   do { printf("\n%s:%d - Test started\n", __FILE__, __LINE__); } while(0)
+#define ECA_TEST_SUCCESS() do { printf("%s:%d - Test passed\n", __FILE__, __LINE__); return 0; } while(0)
 #define ECA_TEST_FAIL(x,y) do { printf("\n%s:%d - Test failed: \"%s\"\n", __FILE__, __LINE__, y); return x; } while(0)
-#define ECA_TEST_CASE()    do { printf("."); fflush(stdout); } while(0)
+#define ECA_TEST_NOTE(x)   do { printf("%s:%d - %s\n", __FILE__, __LINE__, x); fflush(stdout); } while(0)
 #else
 #define ECA_TEST_ENTRY()   ((void) 0)
 #define ECA_TEST_SUCCESS() return 0
 #define ECA_TEST_FAIL(x,y) return x
+#define ECA_TEST_NOTE(x)   ((void) 0)
 #endif
 
 /* --------------------------------------------------------------------- 
@@ -88,10 +89,22 @@ int main(int argc, char *argv[])
   putenv("ECASOUND=../ecasound/ecasound_debug");
 #endif
 
-  for(n = 0; eci_funcs[n] != NULL; n++) {
-    int ret = eci_funcs[n]();
-    if (ret != 0) {
-      ++failed;
+  if (argc > 1) {
+    /* run just a single test */
+    size_t m = atoi(argv[1]);
+    if (m > 0 && m < (sizeof(eci_funcs) / sizeof(eci_test_t))) {
+      if (eci_funcs[m - 1]() != 0) {
+	++failed;
+      }
+    }
+  }
+  else {
+    /* run all tests */
+    for(n = 0; eci_funcs[n] != NULL; n++) {
+      int ret = eci_funcs[n]();
+      if (ret != 0) {
+	++failed;
+      }
     }
   }
 
