@@ -81,7 +81,7 @@ std::vector<std::string> COMMAND_LINE::combine(const std::vector<std::string>& s
       continue;
     }
     if ((*p)[0] == '-') {
-      if (find(p->begin(), p->end(), ':') == p->end()) {
+      if (std::find(p->begin(), p->end(), ':') == p->end()) {
 	first = *p;
 	++p;
 	if (p == source.end()) {

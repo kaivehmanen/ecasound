@@ -24,7 +24,9 @@
 #ifdef ECA_USE_ASM_ATOMIC
 #include <asm/atomic.h>
 #else
+#ifdef __GNUC__
 #warning "locks.h: ECA_USE_ASM_ATOMIC not defined!"
+#endif
 #endif
 
 #include <pthread.h>

@@ -23,6 +23,7 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include <errno.h>
+#include <assert.h>
 
 #include "value_queue.h"
 

@@ -26,6 +26,7 @@
 #include <sys/time.h> /* gettimeofday() */
 #include <unistd.h>
 #include <ctype.h> /* isspace(), toupper() */
+#include <assert.h>
 
 #include "kvutils.h"
 
