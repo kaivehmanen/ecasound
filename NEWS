@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 120800) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 200800) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -22,15 +22,19 @@ Last officially released version is -*> v1.7.9r13 <*-
   		 /usr/local/lib/ecasound-plugins; see also
 	         ecasoundrc(5) man page for related entries
 	- added: new ecasound-plugin rpm package
-	- remove: support for native ALSA rawmidi temporarily removed
+	- removed: support for native ALSA rawmidi temporarily removed
 	          (while waiting, use ALSA's OSS-emulation)
+	- removed: all qt-related stuff - now in a separate package
 	- changed: aRts support enabled by default
 	- changed: small change in licensing - see the file COPYING.Qt
 	- changed: behaviour of -ete effects wet-% parameter
+	- changed: default location for internal plugins now 
+		   (prefixdir)/lib/ecasound/plugins
 	- fixed: system readline related fixes (wrobell)
 	- fixed: few ewf output fixes
 	- fixed: compile problems with ALSA 0.5.x
 	- fixed: ecatools hang if interactive-mode enabled by default
+	- fixed: ALSA 0.6.x support working again
 25062000 (v1.8.0d14)
 	- added: ecaconvert - a new ecatools app; converts a set of 
 		 files to target file format

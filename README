@@ -14,10 +14,9 @@ open-source audio packages, like for instance ALSA, OSS, mpg123, lame,
 libaudiofile and MikMod, are directly supported. One of the advantages 
 of ecasound's chain-based design is that effects can easily be 
 combined both in series and in parallel. Oscillators and MIDI-CCs 
-can be used for controlling effect parameters. Included user-interfaces 
-are ecasound - a versatile console mode interface, qtecasound - 
-a Qt-based X-interface and various command-line utils suitable for 
-batch processing.
+can be used for controlling effect parameters. In addition to the 
+default console-based user-interface, various GUI-based apps are
+available.
 
 -----------------------------------------------------------------------
  Why?
@@ -54,14 +53,6 @@ To compile ecasound, you also need...:
   (STL and exceptions need to be supported)
 - GNU make, automake and autoconf packages
 
-To run qtecasound, you need...:
-
-- qt 2.x development environment and runtime libraries
-
-To compile qtecasound, you also need...:
-
-- qt 2.x development environment
-
 -----------------------------------------------------------------------
  Installing
 -----------------------------------------------------------------------
@@ -87,7 +78,6 @@ up-to-date.
 - programmer's guide
 - man pages
 	- ecasound(1)
-	- qtecasound(1)
 	- ecatools(1)
 	- ecasound-iam(1)
 	- ecasoundrc(5)
@@ -124,7 +114,7 @@ web front-end: http://www.wakkanet.fi/~kaiv/ecasound/mlists.html
 -----------------------------------------------------------------------
 
 Ecasound home site
-- http://www.ecasound.cx
+- http://www.eca.cx/ecasound
 
 Distribution packages
 - http://ecasound.seul.org/download/
@@ -202,8 +192,5 @@ GNU General Public License (see the file 'COPYING').
 
 This program is distributed without any warranty. See the file 
 'COPYING' for details. 
-
-As an exception to GPL, you are allowed to link qtecasound and 
-libqtecasound with Qt libraries. See the file 'COPYING.Qt' for details.
 
 =======================================================================

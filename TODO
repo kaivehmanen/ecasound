@@ -6,7 +6,6 @@
 
 1.8.x series:
 
-- qtecasound - major improvements
 - embedded effect preset parameters
 - internal plugin support
 - new effects - Schroeder reverb
@@ -14,7 +13,6 @@
 2.x series (1.x -> 2.x requirements):
 
 - central libecasound APIs ready for general use
-- usable qtecasound (see features.html)
 - users's and programmer's guide cover all ecasound basics
 
 -----------------------------------------------------------------------
@@ -24,6 +22,7 @@
 Input/output devices:
 
 - ALSA 0.6.x support [--> update: already in CVS]
+- mpeglib support
 - ogg vorbis plugin
 - internal plugins (this makes it possible to support ALSA, aRts, etc 
   audio objects requiring external libraries to be conditionally
@@ -43,8 +42,6 @@ Effects, routing, dsp routines:
 - better reverbs [--> update: -ete added to 1.7.8r12] 
 - embedded effect preset parameters
 	- "-p[fn]:string,par1,...,parN"
-- qtecasound - chain-setup tab
-- qtecasound - debug-window to be always visible
 	
 Ecatools:
 

@@ -21,10 +21,9 @@ open-source audio packages, like for instance ALSA, OSS, mpg123, lame,
 libaudiofile and MikMod, are directly supported. One of the advantages 
 of ecasound's chain-based design is that effects can easily be 
 combined both in series and in parallel. Oscillators and MIDI-CCs 
-can be used for controlling effect parameters. Included user-interfaces 
-are ecasound - a versatile console mode interface, qtecasound - 
-a Qt-based X-interface and various command-line utils suitable for 
-batch processing.
+can be used for controlling effect parameters. In addition to the 
+default console-based user-interface, various GUI-based apps are
+available.
 
 %package devel
 Summary: Ecasound - Library header files
@@ -35,14 +34,6 @@ Requires: ecasound
 Headers files needed for compiling other programs against
 ecasound libraries. This is package is not required for installing 
 other ecasound RPMs.
-
-%package qt
-Summary: Qt-based user-interface to ecasound
-Group: X11/Applications/Sound
-Requires: ecasound
-
-%description qt
-Qt-based X-interface to ecasound.
 
 %package plugins
 Summary: Additional ecasound plugins (ALSA, Audiofile, aRts).
@@ -72,7 +63,6 @@ make strip-shared-libs
 %doc NEWS README INSTALL BUGS Documentation
 %doc /usr/local/man/man1/ecasound.1
 %doc /usr/local/man/man1/ecatools.1
-%doc /usr/local/man/man1/qtecasound.1
 %doc /usr/local/man/man1/ecasound-iam.1
 %doc /usr/local/man/man5/ecasoundrc.5
 /usr/local/bin/ecasound
@@ -89,16 +79,14 @@ make strip-shared-libs
 /usr/local/include/ecasound
 /usr/local/include/kvutils
 
-%files qt
-%defattr(-, root, root)
-/usr/local/bin/qtecasound
-/usr/local/lib/libqtecasound.*
-
 %files plugins
 %defattr(-, root, root)
-/usr/local/lib/ecasound-plugins
+/usr/local/lib/ecasound/plugins
 
 %changelog
+* Sun Aug 20 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- All Qt-related stuff removed.
+
 * Wed Jul 06 2000 Kai Vehmanen <kaiv@wakkanet.fi>
 - Added the -plugins package.
 

@@ -1,9 +1,9 @@
-EXTRA_DIST = BUGS NEWS TODO FAQ COPYING.Qt generic_oscillators effect_presets ecasound.spec ecasound.mdk.spec ecasound.pld.spec
+EXTRA_DIST = BUGS NEWS TODO FAQ generic_oscillators effect_presets ecasound.spec ecasound.mdk.spec ecasound.pld.spec
 
 if SYSTEM_READLINE
-SUBDIRS = kvutils libecasound ecasound libqtecasound qtecasound ecatools Documentation
+SUBDIRS = kvutils libecasound ecasound ecatools Documentation
 else
-SUBDIRS = kvutils readline-4.0 libecasound ecasound libqtecasound qtecasound ecatools Documentation
+SUBDIRS = kvutils readline-4.0 libecasound ecasound ecatools Documentation
 endif
 AUTOMAKE_OPTIONS = foreign
 
@@ -21,11 +21,9 @@ install-data-local:
 delete-static-libs:
 	rm -f $(DESTDIR)$(libdir)/libkvutils.a
 	rm -f $(DESTDIR)$(libdir)/libecasound.a
-	rm -f $(DESTDIR)$(libdir)/libqtecasound.a
 
 strip-shared-libs:
 	strip $(DESTDIR)$(libdir)/libecasound.so
-	strip $(DESTDIR)$(libdir)/libqtecasound.so
 	strip $(DESTDIR)$(libdir)/libkvutils.so
 
 redhat-rpm: ecasound.spec dist
@@ -43,5 +41,4 @@ copy-to-seul:
 	cp -v /usr/src/redhat/SOURCES/$(PACKAGE)-$(VERSION).tar.gz /opt/http/ecasound.seul/
 	cp -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
 	cp -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-devel-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
-	cp -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-qt-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
 	cp -v /usr/src/redhat/SRPMS/$(PACKAGE)-$(VERSION)-$(RELEASE).src.rpm /opt/http/ecasound.seul/
