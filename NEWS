@@ -16,14 +16,14 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ??102002 (v2.2.0-pre4)
-	- edi-entries: edi-30
+	- edi-entries: edi-28, edi-30
 	- added: eiam - commands 'map-cop-list', 'map-ctrl-list', 
 		 'map-ladspa-list' and 'map-preset-list'; see 
 		 ecasound-iam(1) man page for details
 	- added: eiam - 'ao-add-default' command
 	- added: ecicpp_tester, a unit test program for C++ ECI
 	- changed: libecasoundc now LGPL licensed
-	- changed: edi-30; ecaplay, ecaconvert, ecafixdc and 
+	- changed: edi-30 done; ecaplay, ecaconvert, ecafixdc and 
 	 	   ecanormalize rewritten using the new standalone
 	 	   ECI api
 	- changed: reimplemented the C++ ECI interface on top of 
@@ -31,6 +31,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: implementation level improvements to db, ewf, 
 		   resample, reverse and typeselect audio object 
 		   types
+	- changed: edi-28 done; ECI standalone the only ECI 
+	           implementation
 	- fixed: libecasoundc return value sync problem; return
 		 value for command wasn't returned until command n+1 
 		 was issued
