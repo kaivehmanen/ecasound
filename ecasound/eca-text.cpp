@@ -153,8 +153,6 @@ int main(int argc, char *argv[])
 
   ecadebug->flush();
 
-  std::cerr << "Normal exit..." << std::endl;
-
   ecasound_clean_exit(ecasound_error_no);
 }
 
@@ -278,7 +276,7 @@ void ecasound_clean_exit(int n) {
   // std::cerr << "Clean exit..." << std::endl;
   ecadebug->flush();
 
-  std::cerr << "Killing control..." << std::endl;
+  // std::cerr << "Killing control..." << std::endl;
   if (ecasound_pointer_to_ecacontrol != 0) {
     delete ecasound_pointer_to_ecacontrol;
     ecasound_pointer_to_ecacontrol = 0;
@@ -289,7 +287,7 @@ void ecasound_clean_exit(int n) {
     ecasound_pointer_to_ecasession = 0;
   }
   
-  std::cerr << "Exit..." << std::endl;
+  // std::cerr << "Exit..." << std::endl;
   exit(n);
 }
 
@@ -298,7 +296,7 @@ void* ecasound_watchdog_thread(void *)
   sigset_t signalset;
   int signalno;
 
-  std::cerr << "Watchdog-thread created, pid=" << getpid() << "." << std::endl;
+  // std::cerr << "Watchdog-thread created, pid=" << getpid() << "." << std::endl;
 
   sigemptyset(&signalset);
 
