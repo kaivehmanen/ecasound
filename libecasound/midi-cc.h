@@ -12,10 +12,6 @@
 class MIDI_CONTROLLER : public CONTROLLER_SOURCE,
 			public MIDI_CLIENT {
     
-  int controller, channel;
-  parameter_t value_rep;
-  bool trace_request_rep;
-
  public:
 
   virtual void init(void);
@@ -30,6 +26,13 @@ class MIDI_CONTROLLER : public CONTROLLER_SOURCE,
   MIDI_CONTROLLER* clone(void) const { return new MIDI_CONTROLLER(*this); }
   MIDI_CONTROLLER* new_expr(void) const { return new MIDI_CONTROLLER(); }
   MIDI_CONTROLLER(int controller_number = 0, int midi_channel = 0);
+
+  private:
+
+  int controller_rep, channel_rep;
+  parameter_t value_rep;
+  bool trace_request_rep;
+
 };
 
 #endif

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>29.04.2002</h2>
+<h2>16.06.2002</h2>
 
 
     
@@ -159,7 +159,10 @@ EIAM command.
 <p>See <a href="users_guide/users_guide.html">ecasound user's guide</a> for 
 more detailed documentation.
 <p><dl>
-<p></p><dt><strong>-f:sample_format,channel,sample-rate,interleaving</strong><dd>
+<p></p><dt><strong>-G:mgrtype,optstring</strong><dd>
+Sets options for audio object manager type 'mgrtype'. 
+For available options, see "OBJECT TYPE SPECIFIC NOTES" below.
+<p><p></p><dt><strong>-f:sample_format,channel,sample-rate,interleaving</strong><dd>
 Sets default sampling parameters. These are used for all following
 input and output files or until another -f is specified. If no -f
 option is present, ecasound uses s16_le/2ch/44100/interleaved as the 
@@ -229,6 +232,14 @@ communicate with JACK servers. <strong>-o jack_alsa,myport</strong>,
 <strong>-jack_mono,alsa_pcm:out_X,myport</strong> and <strong>-o jack_generic,myport</strong>
 are all valid JACK output definitions. Similar syntax can be used
 to create JACK inputs.
+<p>Additionally global JACK options can be set using 
+<strong>-G:jack,client_name,operation_mode</strong>. 'client_name' 
+is the name used when registering ecasound to the JACK system. 
+If 'operation_mode' is "streaming" (the default), ecasound
+will ignore any transport state changes in the JACK-system,
+in mode "master" it will act as the JACK timebase master 
+while in mode "slave" ecasound lets JACK control both the 
+transport state and current location.
 <p><p></p><dt><strong>Loop device</strong><dd> 
 Loop devices make it possible to route data between chains.
 Option syntax is <strong>-[io][:]loop,id_number</strong>. If you add a loop 
@@ -544,8 +555,13 @@ All 'posX' parameters are given as seconds (from start of the stream).
 MIDI continuous controller (control change messages). 
 Messages on the MIDI-channel 'channel' that are coming from
 controller number 'controller' are used as the controller
-source. The MIDI-device is specified in ./ecasoundrc (see 
-<em>ecasoundrc(5)</em>). Defaults to <em>/dev/midi</em>.
+source. As recommended by the MIDI-specification, channel
+numbering goes from 1 to 16. Possible controller numbers 
+are values from 0 to 127. The MIDI-device where bytes
+are read from can be specified using <em>-Md</em> option. 
+Otherwise the default MIDI-device is used as specified in 
+<em>~ecasound/ecasoundrc</em> (see <em>ecasoundrc(5)</em>). 
+Defaults to <em>/dev/midi</em>.
 <p><p></p><dt><strong>-ksv:fx-param,start-value,end-value,stamp-id,rms-toggle</strong><dd>
 Volume analyze controller. Analyzes the audio stored in 
 stamp 'stamp-id' (see '-eS:id' docs), and creates

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (18.05.2002)
+       (16.06.2002)
        ()
        (Multimedia software)
 
@@ -670,8 +670,13 @@ dit(-km:fx-param,start-value,end-value,controller,channel)
 MIDI continuous controller (control change messages). 
 Messages on the MIDI-channel 'channel' that are coming from
 controller number 'controller' are used as the controller
-source. The MIDI-device is specified in ./ecasoundrc (see 
-em(ecasoundrc(5))). Defaults to em(/dev/midi).
+source. As recommended by the MIDI-specification, channel
+numbering goes from 1 to 16. Possible controller numbers 
+are values from 0 to 127. The MIDI-device where bytes
+are read from can be specified using em(-Md) option. 
+Otherwise the default MIDI-device is used as specified in 
+em(~ecasound/ecasoundrc) (see em(ecasoundrc(5))). 
+Defaults to em(/dev/midi).
 
 dit(-ksv:fx-param,start-value,end-value,stamp-id,rms-toggle)
 Volume analyze controller. Analyzes the audio stored in 

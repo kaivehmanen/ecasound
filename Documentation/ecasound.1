@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "29\&.04\&.2002" "" "Multimedia software" 
+.TH "ecasound" "1" "16\&.06\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -149,6 +149,10 @@ EIAM command\&.
 See ecasound user\'s guide for 
 more detailed documentation\&.
 .PP 
+.IP "-G:mgrtype,optstring" 
+Sets options for audio object manager type \'mgrtype\'\&. 
+For available options, see "OBJECT TYPE SPECIFIC NOTES" below\&.
+.IP 
 .IP "-f:sample_format,channel,sample-rate,interleaving" 
 Sets default sampling parameters\&. These are used for all following
 input and output files or until another -f is specified\&. If no -f
@@ -229,6 +233,15 @@ communicate with JACK servers\&. \fB-o jack_alsa,myport\fP,
 \fB-jack_mono,alsa_pcm:out_X,myport\fP and \fB-o jack_generic,myport\fP
 are all valid JACK output definitions\&. Similar syntax can be used
 to create JACK inputs\&.
+.IP 
+Additionally global JACK options can be set using 
+\fB-G:jack,client_name,operation_mode\fP\&. \'client_name\' 
+is the name used when registering ecasound to the JACK system\&. 
+If \'operation_mode\' is "streaming" (the default), ecasound
+will ignore any transport state changes in the JACK-system,
+in mode "master" it will act as the JACK timebase master 
+while in mode "slave" ecasound lets JACK control both the 
+transport state and current location\&.
 .IP 
 .IP "Loop device" 
 Loop devices make it possible to route data between chains\&.
@@ -602,8 +615,13 @@ All \'posX\' parameters are given as seconds (from start of the stream)\&.
 MIDI continuous controller (control change messages)\&. 
 Messages on the MIDI-channel \'channel\' that are coming from
 controller number \'controller\' are used as the controller
-source\&. The MIDI-device is specified in \&./ecasoundrc (see 
-\fIecasoundrc(5)\fP)\&. Defaults to \fI/dev/midi\fP\&.
+source\&. As recommended by the MIDI-specification, channel
+numbering goes from 1 to 16\&. Possible controller numbers 
+are values from 0 to 127\&. The MIDI-device where bytes
+are read from can be specified using \fI-Md\fP option\&. 
+Otherwise the default MIDI-device is used as specified in 
+\fI~ecasound/ecasoundrc\fP (see \fIecasoundrc(5)\fP)\&. 
+Defaults to \fI/dev/midi\fP\&.
 .IP 
 .IP "-ksv:fx-param,start-value,end-value,stamp-id,rms-toggle" 
 Volume analyze controller\&. Analyzes the audio stored in 

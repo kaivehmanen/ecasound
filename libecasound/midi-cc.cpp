@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // midi-cc.cpp: Interface to MIDI continuous controllers
-// Copyright (C) 1999,2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999,2001-2002 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,15 +31,10 @@
 
 CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(void)
 {
-  // if (midi_in_queue.update_controller_value()) {
-  //   value_rep =
-  //     static_cast<double>(midi_in_queue.last_controller_value(static_cast<int>(channel), static_cast<int>(controller)));
-  //   value_rep /= 127.0;
-  // }
   if (trace_request_rep == true) {
     if (server() != 0) {
-      server()->add_controller_trace(channel, 
-				     controller);
+      server()->add_controller_trace(channel_rep, 
+				     controller_rep);
     }
     else {
       std::cerr << "(midi-cc) Warning! No MIDI-server found!" << std::endl;
@@ -48,7 +43,7 @@ CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(void)
   }
   if (server() != 0)
     value_rep =
-      static_cast<double>(server()->last_controller_value(channel, controller));
+      static_cast<double>(server()->last_controller_value(channel_rep, controller));
       
   value_rep /= 127.0;
   return(value_rep);
@@ -56,8 +51,8 @@ CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(void)
 
 MIDI_CONTROLLER::MIDI_CONTROLLER(int controller_number, 
 				 int midi_channel) 
-  : controller(controller_number), 
-    channel(midi_channel),
+  : controller_rep(controller_number), 
+    channel_rep(midi_channel),
     value_rep(0.0),
     trace_request_rep(false) 
 {
@@ -76,10 +71,23 @@ void MIDI_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_t va
 {
   switch (param) {
   case 1: 
-    controller = static_cast<int>(value);
+    controller_rep = static_cast<int>(value);
+    if (controller_rep < 0 ||
+	controller_rep > 127) {
+      contorller_rep = 1;
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "(midi-cc) Controller number must be a number between 0 and 127. Defaulting to controller 0");
+    }
     break;
   case 2: 
-    channel = static_cast<int>(value);
+    channel_rep = static_cast<int>(value);
+    if (channel < 1 ||
+	channel > 16) {
+      channel = 1;
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "(midi-cc) MIDI-channel must be a number between 1 and 16. Defaulting to channel 1.");
+    }
+    --channel_rep; /* map from 1...16 -> 0...15 */
     break;
   }
   trace_request_rep = true;
@@ -89,9 +97,10 @@ CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(static_cast<parameter_t>(controller));
+    return(static_cast<parameter_t>(controller_rep));
   case 2: 
-    return(static_cast<parameter_t>(channel));
+    /* map from 0...15 -> 1...16 */
+    return(static_cast<parameter_t>(channel_rep + 1));
   }
   return(0.0);
 }
