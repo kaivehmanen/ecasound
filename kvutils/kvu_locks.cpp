@@ -39,7 +39,7 @@
 
 ATOMIC_INTEGER::ATOMIC_INTEGER(int value)
 {
-#ifdef USE_ASM_ATOMIC
+#ifdef ECA_USE_ASM_ATOMIC
   atomic_t* ptr = new atomic_t;
   value_repp = reinterpret_cast<void*>(ptr);
   atomic_set(ptr, value);
@@ -53,19 +53,20 @@ ATOMIC_INTEGER::ATOMIC_INTEGER(int value)
  
 ATOMIC_INTEGER::~ATOMIC_INTEGER(void)
 {
-#ifdef USE_ASM_ATOMIC
+#ifdef ECA_USE_ASM_ATOMIC
   atomic_t* ptr = reinterpret_cast<atomic_t*>(value_repp);
   delete ptr;
 #else
   pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
   pthread_mutex_destroy(mutex);
+  delete mutex;
 #endif
 }
 
 
 int ATOMIC_INTEGER::get(void) const
 {
-#ifdef USE_ASM_ATOMIC
+#ifdef ECA_USE_ASM_ATOMIC
   return(atomic_read(reinterpret_cast<atomic_t*>(value_repp)));
 #else
   int temp;
@@ -79,7 +80,7 @@ int ATOMIC_INTEGER::get(void) const
 
 void ATOMIC_INTEGER::set(int value)
 {
-#ifdef USE_ASM_ATOMIC
+#ifdef ECA_USE_ASM_ATOMIC
   atomic_set(reinterpret_cast<atomic_t*>(value_repp), value);
 #else
   pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
@@ -91,7 +92,7 @@ void ATOMIC_INTEGER::set(int value)
 
 void ATOMIC_INTEGER::add(int value)
 {
-#ifdef USE_ASM_ATOMIC
+#ifdef ECA_USE_ASM_ATOMIC
   atomic_add(value, reinterpret_cast<atomic_t*>(value_repp));
 #else
   pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
@@ -103,7 +104,7 @@ void ATOMIC_INTEGER::add(int value)
 
 void ATOMIC_INTEGER::subtract(int value)
 {
-#ifdef USE_ASM_ATOMIC
+#ifdef ECA_USE_ASM_ATOMIC
   atomic_sub(value, reinterpret_cast<atomic_t*>(value_repp));
 #else
   pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
@@ -115,7 +116,7 @@ void ATOMIC_INTEGER::subtract(int value)
 
 void ATOMIC_INTEGER::increment(void)
 {
-#ifdef USE_ASM_ATOMIC
+#ifdef ECA_USE_ASM_ATOMIC
   atomic_inc(reinterpret_cast<atomic_t*>(value_repp));
 #else
   pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
@@ -127,7 +128,7 @@ void ATOMIC_INTEGER::increment(void)
 
 void ATOMIC_INTEGER::decrement(void)
 {
-#ifdef USE_ASM_ATOMIC
+#ifdef ECA_USE_ASM_ATOMIC
   atomic_dec(reinterpret_cast<atomic_t*>(value_repp));
 #else
   pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
