@@ -19,7 +19,9 @@
 
 #include <iostream>
 #include <vector>
+
 #include <cmath>
+#include <cstring> /* memcpy */
 
 #include <sys/types.h>
 
@@ -39,8 +41,6 @@
 #define DEBUG_RESAMPLING_STATEMENT(x) ((void)0)
 #endif
 
-using std::vector;
-
 /**
  * Constructs a new sample buffer object.
  */
@@ -50,16 +50,20 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels, sr
     sample_rate_rep(sample_rate),
     reserved_samples_rep(buffersize) 
 {
+  // ---
+  DBC_REQUIRE(buffersize >= 0);
+  DBC_REQUIRE(channels >= 0);
+  DBC_REQUIRE(sample_rate >= 0);
+  // ---
 
   impl_repp = new SAMPLE_BUFFER_impl;
 
   buffer.resize(channels);
   for(size_t n = 0; n < buffer.size(); n++) {
     buffer[n] = new sample_t [reserved_samples_rep];
-    for(buf_size_t m = 0; m < reserved_samples_rep; m++) {
-      buffer[n][m] = SAMPLE_SPECS::silent_value;
-    }
   }
+  make_silent();
+
   impl_repp->old_buffer_repp = 0;
  
   ecadebug->msg(ECA_DEBUG::system_objects, 
@@ -67,6 +71,11 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels, sr
 		kvu_numtostr(buffer.size()) + ", length-samples: " +
 		kvu_numtostr(buffersize_rep) + ", sample rate: " +
 		kvu_numtostr(sample_rate_rep) + ".");
+
+  // ---
+  DBC_ENSURE(buffer.size() == channel_count_rep);
+  DBC_ENSURE(buffersize_rep == reserved_samples_rep);
+  // ---
 }
 
 /**
@@ -88,7 +97,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
 
   for(size_t n = 0; n < buffer.size(); n++) {
     buffer[n] = new sample_t [reserved_samples_rep];
-    memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_t));
+    std::memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_t));
   }
 
   impl_repp->old_buffer_repp = 0;
@@ -98,6 +107,11 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
 		kvu_numtostr(buffer.size()) + ", length-samples: " +
 		kvu_numtostr(buffersize_rep) + ", sample rate: " +
 		kvu_numtostr(sample_rate_rep) + ".");
+
+  // ---
+  DBC_ENSURE(buffer.size() == channel_count_rep);
+  DBC_ENSURE(buffersize_rep == reserved_samples_rep);
+  // ---
 }
 
 /**
@@ -134,11 +148,16 @@ SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x) {
     sample_rate_rep = x.sample_rate_rep;
 
     for(size_t n = 0; n < buffer.size(); n++) {
-      memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_t));
+      std::memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_t));
     }
   }
 
   return *this;
+
+  // ---
+  DBC_ENSURE(buffer.size() == channel_count_rep);
+  DBC_ENSURE(buffersize_rep == reserved_samples_rep);
+  // ---
 }
 
 /**
@@ -1127,7 +1146,7 @@ void SAMPLE_BUFFER::resample_nofilter(srate_size_t from,
   DBC_CHECK(impl_repp->old_buffer_repp != 0);
 
   for(int c = 0; c < channel_count_rep; c++) {
-    memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));
+    std::memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));
 
     DBC_CHECK(buffersize_rep <= reserved_samples_rep);
     
@@ -1179,7 +1198,7 @@ void SAMPLE_BUFFER::resample_with_memory(srate_size_t from,
   impl_repp->resample_memory_rep.resize(channel_count_rep);
 
   for(int c = 0; c < channel_count_rep; c++) {
-    memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));
+    std::memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));
 
     DBC_CHECK(buffersize_rep <= reserved_samples_rep);
     
