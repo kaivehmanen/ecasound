@@ -314,6 +314,12 @@ void AUDIO_IO::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
   ECA_AUDIO_POSITION::set_samples_per_second(v);
 }
 
+void AUDIO_IO::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
+{
+  ECA_AUDIO_FORMAT::set_audio_format(f_str);
+  ECA_AUDIO_POSITION::set_samples_per_second(f_str.samples_per_second());
+}
+
 void AUDIO_IO::seek_position(void)
 {
   ecadebug->msg(ECA_DEBUG::user_objects,

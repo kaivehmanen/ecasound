@@ -126,6 +126,7 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
 
   virtual void set_channels(SAMPLE_SPECS::channel_t v);
   virtual void set_sample_format(Sample_format v) throw(ECA_ERROR&);
+  virtual void set_audio_format(const ECA_AUDIO_FORMAT& f_str);
   virtual void toggle_interleaved_channels(bool v);
   
   /*@}*/
@@ -147,8 +148,6 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
    * can be omitted if applicable. 
    */
   void set_sample_format_string(const std::string& f_str) throw(ECA_ERROR&);
-
-  void set_audio_format(const ECA_AUDIO_FORMAT& f_str);
 
   /*@}*/
 

@@ -29,6 +29,7 @@
 #include <kvutils/value_queue.h>
 #include <kvutils/temporary_file_directory.h>
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils/kvutils.h> /* get_argument_number() */
 
 #include "eca-engine.h"
 #include "eca-session.h"
@@ -325,8 +326,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
 }
 
 /**
- * Sets processing length in seconds. If 'value' is 0,
- * length in unspecified.
+ * Sets processing length in seconds.
  *
  * require:
  *  is_selected() == true
@@ -1308,7 +1308,7 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const std::string& filename) {
   selected_audio_input_repp = 0;
   selected_chainsetup_repp->interpret_object_option("-i:" + filename);
   if (selected_chainsetup_repp->interpret_result() == true) {
-    select_audio_input(filename);
+    select_audio_input(get_argument_number(1, filename));
     ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
   }
   else {
@@ -1336,7 +1336,7 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const std::string& filename) {
   selected_audio_output_repp = 0;
   selected_chainsetup_repp->interpret_object_option("-o:" + filename);
   if (selected_chainsetup_repp->interpret_result() == true) {
-    select_audio_output(filename);
+    select_audio_output(get_argument_number(1, filename));
     ecadebug->msg("(eca-controller) Added audio output \"" + filename +
 		  "\".");
   } else {

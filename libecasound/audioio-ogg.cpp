@@ -69,7 +69,7 @@ void OGG_VORBIS_INTERFACE::close(void)
       triggered_rep = false;
   }
 
-  AUDIO_IO::open();
+  AUDIO_IO::close();
 }
 
 long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int samples)
@@ -130,6 +130,7 @@ void OGG_VORBIS_INTERFACE::seek_position(void) {
     clean_child();
     triggered_rep = false;
   }
+  set_position_in_samples(0);
 }
 
 void OGG_VORBIS_INTERFACE::set_parameter(int param, string value)

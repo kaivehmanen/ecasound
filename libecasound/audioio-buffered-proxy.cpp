@@ -48,30 +48,32 @@ AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver
 		child_repp->label() +
 		".");
 
-  if (child_repp->is_open() == true) {
-    // just in case the child object has already been configured
-    fetch_child_data();
-  }
+  // just in case the child object has already been configured
+  fetch_child_data();
 }
 
 /**
  * Copy attributes from the proxied (child) object.
  */
 void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
-  if (child_repp->io_mode() == AUDIO_IO::io_read) 
-    pbuffer_repp->io_mode_rep = AUDIO_IO::io_read;
-  else
-    pbuffer_repp->io_mode_rep = AUDIO_IO::io_write;
+  if (pbuffer_repp != 0) {
+    if (child_repp->io_mode() == AUDIO_IO::io_read) 
+      pbuffer_repp->io_mode_rep = AUDIO_IO::io_read;
+    else
+      pbuffer_repp->io_mode_rep = AUDIO_IO::io_write;
+  }
 
   set_audio_format(child_repp->audio_format());
-
   set_position_in_samples(child_repp->position_in_samples());
   
   int channels = child_repp->channels();
   int buffersize = child_repp->buffersize();
-  for(unsigned int n = 0; n < pbuffer_repp->sbufs_rep.size(); n++) {
-    pbuffer_repp->sbufs_rep[n]->number_of_channels(channels);
-    pbuffer_repp->sbufs_rep[n]->length_in_samples(buffersize);
+
+  if (pbuffer_repp != 0) {
+    for(unsigned int n = 0; n < pbuffer_repp->sbufs_rep.size(); n++) {
+      pbuffer_repp->sbufs_rep[n]->number_of_channels(channels);
+      pbuffer_repp->sbufs_rep[n]->length_in_samples(buffersize);
+    }
   }
 }
 

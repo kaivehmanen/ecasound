@@ -89,6 +89,7 @@ void TIMIDITY_INTERFACE::seek_position(void)
       kill_timidity();
     }
   }
+  set_position_in_samples(0);
 }
 
 void TIMIDITY_INTERFACE::kill_timidity(void)

@@ -300,7 +300,8 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
 
   SAMPLE_SPECS::sample_rate_t samples_per_second(void) const;
   virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
-
+  virtual void set_audio_format(const ECA_AUDIO_FORMAT& f_str);
+  
   /*@}*/
 
   /** @name Functions implemented from ECA_AUDIO_POSITION */

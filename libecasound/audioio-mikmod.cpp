@@ -85,6 +85,7 @@ void MIKMOD_INTERFACE::seek_position(void)
       kill_mikmod();
     }
   }
+  set_position_in_samples(0);
 }
 
 void MIKMOD_INTERFACE::kill_mikmod(void) {
