@@ -54,8 +54,7 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
   virtual void start(void);
   virtual void stop(void);
 
-  // FIXME: get port-specific latency from JACK_MANAGER
-  virtual long int latency(void) const { return(io_mode() == io_read ? 0 : buffersize()); }
+  virtual long int latency(void) const;
   virtual long int prefill_space(void) const { return(0); }
 
   /*@}*/

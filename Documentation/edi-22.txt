@@ -26,7 +26,7 @@ Details:
      - one-shot/batch operation; once finished state is 
        reached, engine is exited (exec() returns)
         
-- problems
+- areas that need attention
     - how to handle multitrack-sync
         - we need to discard input data; amount 
 	  equals to jack's output latency
@@ -40,24 +40,22 @@ Details:
 	  same for outputs; this could be avoided, but 
           would require complex logic in the engine 
 	  code (not at least in the first version)
-	  
     - various start and stop scenarios:
         - jackd shutdown
         - client timeout
         - chainsetup is finished (all inputs are, or some
           output is, finished)
-
-- todo-list 
-    - multitrack sync, see above [started]
-    - removing additional caching object from ECA_ENGINE [started]
-    - allowing driver objects to change sample rate and
-      buffersize (!)
     - the state-change problem [done]
         - case: stop command from ECA_CONTROL (engine-thread context)
 	- case: csetup becomes finished (callback context)
 	- case: csetup errors occurs (callback context) 
 	- case: jackd shut down (callback context)
     - prefilling of rt-outputs [done]
+
+- todo-list 
+    - multitrack sync, see above [done]
+    - allowing driver objects to change sample rate and
+      buffersize (!)
 
 ------------------------------------------------------------------------
 - Kai Vehmanen on jackit-devel, 23.02.2002

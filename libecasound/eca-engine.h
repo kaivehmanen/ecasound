@@ -137,6 +137,9 @@ class ECA_ENGINE {
   void start_operation(void);
   void stop_operation(void);
 
+  void update_cache_chain_connections(void);
+  void update_cache_latency_values(void);
+
   bool is_active(void) const;
   bool batch_mode(void) const { return(batchmode_enabled_rep); }
 
@@ -280,9 +283,7 @@ private:
   void init_chains(void);
   void cleanup(void);
 
-  void update_cache_chain_connections(void);
-  void update_cache_latency_values(void);
-  void update_cache_object_lists(void);
+  void create_cache_object_lists(void);
 
   void init_profiling(void);
   void dump_profile_info(void);

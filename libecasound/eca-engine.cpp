@@ -760,7 +760,7 @@ void ECA_ENGINE::start_realtime_objects(void)
   for (unsigned int n = 0; n < realtime_outputs_rep.size(); n++) {
     if (realtime_outputs_rep[n]->prefill_space() > 0) {
       DBC_CHECK(prefill_blocks_constant <= realtime_outputs_rep[n]->prefill_space());
-      for (int m = 0; m < prefill_blocks_constant; m++) {
+      for (int m = 0; m < prefill_threshold_rep; m++) {
 	realtime_outputs_rep[n]->write_buffer(mixslot_repp);
       }
     }
@@ -972,8 +972,8 @@ void ECA_ENGINE::init_connection_to_chainsetup(void)
   init_servers();
   init_processing_length();
   init_chains();
+  create_cache_object_lists();
   update_cache_chain_connections();
-  update_cache_object_lists();
   update_cache_latency_values();
 }
 
@@ -1138,6 +1138,12 @@ void ECA_ENGINE::update_cache_latency_values(void)
 			"(eca-engine) Warning! Latency mismatch between input objects!");
 	}
       }
+
+      ECA_LOG_MSG(ECA_LOGGER::user_objects,
+		  "(eca-engine) Input latency for '" +
+		  realtime_inputs_rep[n]->name() + 
+		  "' is " + kvu_numtostr(in_latency) + ".");
+
     }
     
     long int out_latency = -1;
@@ -1157,11 +1163,15 @@ void ECA_ENGINE::update_cache_latency_values(void)
 			"(eca-engine) Warning! Latency mismatch between output objects!");
 	}
       }
+
+      ECA_LOG_MSG(ECA_LOGGER::user_objects,
+		  "(eca-engine) Output latency for '" +
+		  realtime_outputs_rep[n]->name() + 
+		  "' is " + kvu_numtostr(out_latency) + ".");
     }
 
     recording_offset_rep = (out_latency > in_latency ? 
-			    out_latency - in_latency :
-			    in_latency - out_latency);
+			    out_latency : in_latency);
     
     if (recording_offset_rep % buffersize()) {
       ECA_LOG_MSG(ECA_LOGGER::info, 
@@ -1182,7 +1192,7 @@ void ECA_ENGINE::update_cache_latency_values(void)
  * Assigns input and output objects in lists of realtime
  * and nonrealtime objects.
  */
-void ECA_ENGINE::update_cache_object_lists(void)
+void ECA_ENGINE::create_cache_object_lists(void)
 {
   for(unsigned int n = 0; n < inputs_repp->size(); n++) {
     if (AUDIO_IO_DEVICE::is_realtime_object((*inputs_repp)[n]) == true) {
@@ -1300,7 +1310,9 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
   for(size_t outputnum = 0; outputnum < outputs_repp->size(); outputnum++) {
     if (skip_realtime_target_outputs == true) {
       if (csetup_repp->is_realtime_target_output(outputnum) == true) {
-	// cerr << "(eca-engine) Skipping rt-target output " << (*outputs_repp)[outputnum]->label() << "." << endl;
+	ECA_LOG_MSG(ECA_LOGGER::system_objects,
+		    "(eca-engine) Skipping rt-target output " +
+		    (*outputs_repp)[outputnum]->label() + ".");
 	continue;
       }
     }

@@ -197,6 +197,11 @@ void AUDIO_IO_JACK::stop(void)
   AUDIO_IO_DEVICE::stop();
 }
 
+long int AUDIO_IO_JACK::latency(void) const
+{
+  return(jackmgr_rep == 0 ? 0 : jackmgr_rep->client_latency(myid_rep));
+}
+
 std::string AUDIO_IO_JACK::parameter_names(void) const
 { 
   if (label() == "jack_alsa")

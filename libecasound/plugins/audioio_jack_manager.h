@@ -34,9 +34,9 @@ class AUDIO_IO_JACK_MANAGER : public AUDIO_IO_MANAGER,
 
  public:
 
-  friend int eca_jack_process(nframes_t nframes, void *arg);
-  friend int eca_jack_bufsize (nframes_t nframes, void *arg);
-  friend int eca_jack_srate (nframes_t nframes, void *arg);
+  friend int eca_jack_process(jack_nframes_t nframes, void *arg);
+  friend int eca_jack_bufsize (jack_nframes_t nframes, void *arg);
+  friend int eca_jack_srate (jack_nframes_t nframes, void *arg);
   friend void eca_jack_shutdown (void *arg);
 
   static const int instance_limit;
@@ -56,7 +56,8 @@ public:
     jack_port_t* jackport;
     string autoconnect;
     bool autoconnect_addprefix;
-    sample_t* cb_buffer;
+    jack_nframes_t total_latency;
+    jack_default_audio_sample_t* cb_buffer;
   } jack_port_data_t;
 
  public:
@@ -98,6 +99,8 @@ public:
   void unregister_jack_ports(int client_id);
   void auto_connect_jack_port(int client_id, int portnum, const string& portname);
 
+  long int client_latency(int client_id);
+
   void open(int client_id);
   void close(int client_id);
   
@@ -113,6 +116,8 @@ public:
   /*@}*/
 
 private:
+
+  static void get_total_port_latency(jack_client_t* client, jack_port_data_t* ports);
 
   void open_connection(void);
   void close_connection(void);
