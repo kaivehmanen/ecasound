@@ -1,3 +1,9 @@
+2004-10-23  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* eca-control-base.h (set_float_to_string_precision): Added to protected API.
+	* eca-control-base.h (float_to_string_precision): Added to public API.
+	* eca-control-base.h (set_float_to_string_precision_rep): Added to protected API.
+
 2004-07-13  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* audioio-aac.h: Added.

@@ -36,11 +36,11 @@ void ECA_CONTROL_DUMP::dump_status(void) {
 }
 
 void ECA_CONTROL_DUMP::dump_position(void) { 
-  dump("dump-position", kvu_numtostr(ctrl_repp->position_in_seconds_exact()));
+  dump("dump-position", kvu_numtostr(ctrl_repp->position_in_seconds_exact(), ctrl_repp->float_to_string_precision()));
 }
 
 void ECA_CONTROL_DUMP::dump_length(void) { 
-  dump("dump-length", kvu_numtostr(ctrl_repp->length_in_seconds_exact()));
+  dump("dump-length", kvu_numtostr(ctrl_repp->length_in_seconds_exact(), ctrl_repp->float_to_string_precision()));
 }
 
 void ECA_CONTROL_DUMP::dump_chainsetup_status(void) { 
@@ -82,7 +82,7 @@ void ECA_CONTROL_DUMP::dump_selected_audio_output(void) {
 void ECA_CONTROL_DUMP::dump_audio_input_position(void) { 
   const AUDIO_IO* t = ctrl_repp->get_audio_input();
   if (t != 0) {
-    dump("dump-ai-position", kvu_numtostr(t->position_in_seconds_exact()));
+    dump("dump-ai-position", kvu_numtostr(t->position_in_seconds_exact(), ctrl_repp->float_to_string_precision()));
   }
   else
     dump("dump-ai-position", "");
@@ -91,7 +91,7 @@ void ECA_CONTROL_DUMP::dump_audio_input_position(void) {
 void ECA_CONTROL_DUMP::dump_audio_output_position(void) { 
   const AUDIO_IO* t = ctrl_repp->get_audio_output();
   if (t != 0) {
-    dump("dump-ao-position", kvu_numtostr(t->position_in_seconds_exact()));
+    dump("dump-ao-position", kvu_numtostr(t->position_in_seconds_exact(), ctrl_repp->float_to_string_precision()));
   }
   else
     dump("dump-ao-position", "");
@@ -100,7 +100,7 @@ void ECA_CONTROL_DUMP::dump_audio_output_position(void) {
 void ECA_CONTROL_DUMP::dump_audio_input_length(void) { 
   const AUDIO_IO* t = ctrl_repp->get_audio_input();
   if (t != 0) {
-    dump("dump-ai-length", kvu_numtostr(t->length_in_seconds_exact()));
+    dump("dump-ai-length", kvu_numtostr(t->length_in_seconds_exact(), ctrl_repp->float_to_string_precision()));
   }
   else
     dump("dump-ai-length", "");
@@ -109,7 +109,7 @@ void ECA_CONTROL_DUMP::dump_audio_input_length(void) {
 void ECA_CONTROL_DUMP::dump_audio_output_length(void) { 
   const AUDIO_IO* t = ctrl_repp->get_audio_output();
   if (t != 0) {
-    dump("dump-ao-length", kvu_numtostr(t->length_in_seconds_exact()));
+    dump("dump-ao-length", kvu_numtostr(t->length_in_seconds_exact(), ctrl_repp->float_to_string_precision()));
   }
   else
     dump("dump-ao-length", "");
@@ -143,7 +143,7 @@ void ECA_CONTROL_DUMP::dump_chain_operator_value(int chainop, int param) {
   ctrl_repp->select_chain_operator(chainop);
   const CHAIN_OPERATOR* t = ctrl_repp->get_chain_operator();
   if (t != 0) {
-    dump("dump-cop-value", kvu_numtostr(t->get_parameter(param)));
+    dump("dump-cop-value", kvu_numtostr(t->get_parameter(param), ctrl_repp->float_to_string_precision()));
   }
   else
     dump("dump-cop-value", "");

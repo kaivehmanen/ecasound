@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-iamode-parser.cpp: Class that handles registering and querying 
 //                        interactive mode commands.
-// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -108,6 +108,8 @@ void ECA_IAMODE_PARSER::register_commands_misc(void)
 
   (*cmd_map_repp)["int-cmd-list"] = ec_int_cmd_list;
   (*cmd_map_repp)["int-output-mode-wellformed"] = ec_int_output_mode_wellformed;
+  (*cmd_map_repp)["int-set-float-to-string-precision"] = ec_int_set_float_to_string_precision;
+
   (*cmd_map_repp)["int-version-string"] = ec_int_version_string;
   (*cmd_map_repp)["int-version-lib-current"] = ec_int_version_lib_current;
   (*cmd_map_repp)["int-version-lib-revision"] = ec_int_version_lib_revision;
@@ -359,6 +361,8 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id)
 
   case ec_ctrl_add:
   case ec_ctrl_select:
+
+  case ec_int_set_float_to_string_precision:
 
   case ec_dump_target:
   case ec_dump_cop_value:

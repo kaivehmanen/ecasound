@@ -1,6 +1,8 @@
 #ifndef INCLUDED_ECA_CONTROL_BASE_H
 #define INCLUDED_ECA_CONTROL_BASE_H
 
+#include <string>
+
 #include <pthread.h>
 
 #include <kvu_locks.h>
@@ -27,6 +29,7 @@ class ECA_CONTROL_BASE {
   bool req_batchmode_rep;
   pthread_t th_cqueue_rep;
   ATOMIC_INTEGER engine_exited_rep;
+  int float_to_string_precision_rep;
 
   static void* start_normal_thread(void *ptr);
 
@@ -36,6 +39,8 @@ class ECA_CONTROL_BASE {
  protected:
 
   void close_engine(void);
+  void set_float_to_string_precision(int precision);
+  std::string float_to_string(double n) const;
 
   ECA_ENGINE* engine_repp;
   ECA_SESSION* session_repp;
@@ -113,6 +118,8 @@ class ECA_CONTROL_BASE {
    * Get resource values from ~/.ecasoundrc
    */
   std::string resource_value(const std::string& key) const;
+
+  int float_to_string_precision(void) const { return(float_to_string_precision_rep); }
 
   // -------------------------------------------------------------------
   // Session status

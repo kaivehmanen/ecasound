@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-control-base.cpp: Base class providing basic functionality
 //                       for controlling the ecasound library
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@ ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession)
   selected_chainsetup_repp = psession->selected_chainsetup_repp;
   engine_repp = 0;
   engine_exited_rep.set(0);
+  float_to_string_precision_rep = 3;
 }
 
 ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void)
@@ -644,4 +645,13 @@ void ECA_CONTROL_BASE::clear_last_values(void)
   last_f_rep = 0.0f;
   last_error_rep = "";
   last_type_rep = "-";
+}
+
+void ECA_CONTROL_BASE::set_float_to_string_precision(int precision)
+{
+  float_to_string_precision_rep = precision;
+}
+std::string ECA_CONTROL_BASE::float_to_string(double n) const
+{
+  return(kvu_numtostr(n, float_to_string_precision_rep));
 }

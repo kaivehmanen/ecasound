@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control.cpp: Class for controlling the whole ecasound library
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -610,6 +610,7 @@ void ECA_CONTROL::action(int action_id)
     wellformed_mode_rep = true;
     break; 
   }
+  case ec_int_set_float_to_string_precision: { set_float_to_string_precision(atoi((action_args_rep[0]).c_str())); break; }
   case ec_int_version_string: { set_last_string(ecasound_library_version); break; }
   case ec_int_version_lib_current: { set_last_integer(ecasound_library_version_current); break; }
   case ec_int_version_lib_revision: { set_last_integer(ecasound_library_version_revision); break; }
@@ -679,7 +680,7 @@ string ECA_CONTROL::last_value_to_string(void)
   else if (type == "li")
     result = kvu_numtostr(last_long_integer());
   else if (type == "f")
-    result = kvu_numtostr(last_float(), 3);
+    result = ECA_CONTROL_BASE::float_to_string(last_float());
 
   return(result);
 }
@@ -799,7 +800,7 @@ string ECA_CONTROL::chain_operator_status(void) const
 	msg << "[" << n + 1 << "] ";
 	msg << cop->get_parameter_name(n + 1);
 	msg << " ";
-	msg << kvu_numtostr(cop->get_parameter(n + 1));
+	msg << ECA_CONTROL_BASE::float_to_string(cop->get_parameter(n + 1));
 	if (n + 1 < cop->number_of_params()) msg <<  ", ";
       }
       st_info_string = cop->status();
@@ -837,7 +838,7 @@ string ECA_CONTROL::controller_status(void) const
 	mitem << "\n\t\t[" << n + 1 << "] ";
 	mitem << gtrl->get_parameter_name(n + 1);
 	mitem << " ";
-	mitem << kvu_numtostr(gtrl->get_parameter(n + 1));
+	mitem << ECA_CONTROL_BASE::float_to_string(gtrl->get_parameter(n + 1));
 	if (n + 1 < gtrl->number_of_params()) mitem <<  ", ";
       }
       st_info_string = gtrl->status();
@@ -1116,15 +1117,15 @@ void ECA_CONTROL::operator_descriptions_helper(const ECA_OBJECT_MAP& arg, string
 	/* 5.2 description */
 	*result += "," + kvu_string_search_and_replace(pd.description, ',', '_');
 	/* 5.3 default value */
-	*result += "," + kvu_numtostr(pd.default_value);
+	*result += "," + ECA_CONTROL_BASE::float_to_string(pd.default_value);
 	/* 5.4 is bounded above (1=yes, 0=no) */
 	*result += ",above=" + kvu_numtostr(static_cast<int>(pd.bounded_above));
 	/* 5.5 upper bound */
-	*result += ",upper=" + kvu_numtostr(pd.upper_bound);
+	*result += ",upper=" + ECA_CONTROL_BASE::float_to_string(pd.upper_bound);
 	/* 5.6 is bounded below (1=yes, 0=no) */
 	*result += ",below=" + kvu_numtostr(static_cast<int>(pd.bounded_below));
 	/* 5.7 lower bound */
-	*result += ",lower=" + kvu_numtostr(pd.lower_bound);
+	*result += ",lower=" + ECA_CONTROL_BASE::float_to_string(pd.lower_bound);
 	/* 5.8. is toggled (1=yes, 0=no) */
 	*result += "," + kvu_numtostr(static_cast<int>(pd.toggled));
 	/* 5.9. is integer value (1=yes, 0=no) */

@@ -7,7 +7,7 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{18112003}
+\date{23102004}
 \begin{document}
 
 \maketitle
@@ -32,6 +32,8 @@ Ecasound version.
 \chapter{Document history}
 
 \begin{itemize}
+\item 23.10.2004 - Added section ``EIAM commands'' that covers adding
+                   new EIAM commands.
 \item 18.11.2003 - Typo fixes. Updated documentation to reflect the new
                    naming convention (ecasound refers to the binary,
 		   Ecasound refers to the whole package).
@@ -894,6 +896,25 @@ Plugin API). See \texttt{LAD mailing list web site} for
 more info about LADSPA. Other useful sites are 
 \texttt{LADSPA home page} and
 \texttt{LADSPA documentation}.
+
+% ----------------------------------------------------------------------
+\section{EIAM commands}
+
+Adding a new interactive mode commands requires changes to the
+following files:
+
+\begin{itemize}
+\item  libecasound/eca-iamode-parser\_impl.h: Unique id for the new command
+       has to be added to enum \em{Commands}.
+\item  libecasound/eca-iamode-parser.cpp: The new command must be added
+       to the appropriate register\_commands\_*() function.
+\item  libecasound/eca-iamode-parser.cpp: The new command must be added
+       to the appropriate action\_requires\_*() sets.
+\item  libecasound/eca-control.cpp: The actual implementation of the
+       new command.
+\item  Documentation/ecasound-iam\_manpage.yo: Documentation must be
+       added.
+\end{itemize}
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------

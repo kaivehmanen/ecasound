@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 101004) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 241004) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -23,7 +23,12 @@ xx102004 (v2.3.4)  -** stable release **-
 		 utils; new options to ecasoundrc
 	- added: optional 3rd parameter to 'sndfile' for specifying 
 		 audio file format (see ecasound(1)) [jesse]
+	- added: documentation on adding new EIAM commands to the
+	         programmer's guide
+	- added: eaim - new 'int-set-float-to-string-precision' command
 	- changed: set srate for mp3 input based on mp3 header
+	- changed: increased precision of floating point return values
+		   in the C ECI implementation
 	- fixed: multitrack offset was calculated incorrectly for
 		 ALSA devices which limit buffer period count to 2
 	- fixed: bugs in .wav, .cdr, JACK code, and in internal sample 
@@ -44,6 +49,8 @@ xx102004 (v2.3.4)  -** stable release **-
 		 to 4-byte ALSA formats S24_LE/_BE; now mapped
 		 to the correct 3-byte S24_3LE/_3BE formats
 	- fixed: bug in C ECI impl that caused sync-loss errors [jesse]
+	- fixed: ECI session corruption after processing a 'long int' 
+		 return value [jesse]
 05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command
