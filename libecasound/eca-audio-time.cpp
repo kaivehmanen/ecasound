@@ -25,22 +25,33 @@
 
 #include "eca-audio-time.h"
 
-ECA_AUDIO_TIME::ECA_AUDIO_TIME(SAMPLE_SPECS::sample_pos_t samples, SAMPLE_SPECS::sample_rate_t sample_rate) {
+ECA_AUDIO_TIME::ECA_AUDIO_TIME(SAMPLE_SPECS::sample_pos_t samples, 
+			       SAMPLE_SPECS::sample_rate_t sample_rate)
+{
   set_samples_per_second(sample_rate);
   set_samples(samples);
 }
 
-ECA_AUDIO_TIME::ECA_AUDIO_TIME(double time_in_seconds) {
+ECA_AUDIO_TIME::ECA_AUDIO_TIME(double time_in_seconds)
+{
   set_seconds(time_in_seconds);
 }
 
-ECA_AUDIO_TIME::ECA_AUDIO_TIME(format_type type, const std::string& time) {
+ECA_AUDIO_TIME::ECA_AUDIO_TIME(format_type type, 
+			       const std::string& time)
+{
   set(type, time);
 }
 
-ECA_AUDIO_TIME::ECA_AUDIO_TIME(void) : samples_rep(0), sample_rate_rep(44100) { }
+ECA_AUDIO_TIME::ECA_AUDIO_TIME(void) : samples_rep(0),
+				       sample_rate_rep(44100)
+{
+}
 
-void ECA_AUDIO_TIME::set(format_type type, const std::string& time) {
+void ECA_AUDIO_TIME::set(format_type type, const std::string& time)
+{
+  /* FIXME: not implemented! */
+
   switch(type) 
     {
     case format_hour_min_sec: { }
@@ -52,14 +63,18 @@ void ECA_AUDIO_TIME::set(format_type type, const std::string& time) {
     }
 }
 
-void ECA_AUDIO_TIME::set_seconds(double seconds) {
+void ECA_AUDIO_TIME::set_seconds(double seconds)
+{
   samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(seconds * sample_rate_rep);
 }
 
 void ECA_AUDIO_TIME::set_samples(SAMPLE_SPECS::sample_pos_t samples) { samples_rep = samples; } 
 void ECA_AUDIO_TIME::set_samples_per_second(SAMPLE_SPECS::sample_rate_t srate)  { sample_rate_rep = srate; } 
   
-std::string ECA_AUDIO_TIME::to_string(format_type type) const {
+std::string ECA_AUDIO_TIME::to_string(format_type type) const
+{
+  /* FIXME: not implemented */
+
   switch(type) 
     {
     case format_hour_min_sec: 
@@ -78,7 +93,8 @@ std::string ECA_AUDIO_TIME::to_string(format_type type) const {
   return("");
 }
 
-double ECA_AUDIO_TIME::seconds(void) const {
+double ECA_AUDIO_TIME::seconds(void) const
+{
   return(static_cast<double>(samples_rep) / sample_rate_rep);
 }
 
