@@ -14,7 +14,7 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??092000 (v1.8.3d15)
+26092000 (v1.8.3d15)
 	- changed: code for parsing command-line arguments rewritten; 
 		   now reports about invalid arguments
 	- changed: default precision when printing time in seconds 

@@ -30,7 +30,7 @@
 
 int ARTS_INTERFACE::ref_rep = 0;
 
-ARTS_INTERFACE::ARTS_INTERFACE(const string& name) throw(ECA_ERROR*)
+ARTS_INTERFACE::ARTS_INTERFACE(const string& name)
 {
   label(name);
 }
