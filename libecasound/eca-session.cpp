@@ -273,8 +273,12 @@ void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&) {
     disconnect_chainsetup();
   }
 
+  /** 
+   * enable() throws an exception if it wasn't possibly
+   * to open/activate all input and output objects 
+   */
+  selected_chainsetup_repp->enable();
   connected_chainsetup_repp = selected_chainsetup_repp;
-  connected_chainsetup_repp->enable();
 
   ecadebug->msg(ECA_DEBUG::system_objects, "Connecting connected chainsetup to engine.");
  

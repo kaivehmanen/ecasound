@@ -414,10 +414,14 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
     set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
     no_errors = false;
   }
+  if (is_connected() != true) {
+    set_last_error("ECA-CONTROL-OBJECTS: Connecting chainsetup failed.");
+    no_errors = false;
+  }
 
   // --------
   // ensure:
-  assert(is_connected() || (last_error().size() > 0 && no_errors != true));
+  assert(is_connected() || no_errors != true);
   // --------
 }
 

@@ -1002,8 +1002,10 @@ SAMPLE_BUFFER_BASE<T>::~SAMPLE_BUFFER_BASE (void) {
   for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
     delete[] buffer[n];
   }
-  if (old_buffer_repp != 0) 
+  if (old_buffer_repp != 0) {
     delete[] old_buffer_repp;
+    old_buffer_repp = 0;
+  }
 }
 
 template<class T>
@@ -1059,3 +1061,4 @@ SAMPLE_BUFFER_BASE<T>::SAMPLE_BUFFER_BASE (const SAMPLE_BUFFER_BASE<T>& x)
 		kvu_numtostr(buffersize_rep) + ", sample rate: " +
 		kvu_numtostr(sample_rate_rep) + ".");
 }
+

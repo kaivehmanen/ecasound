@@ -192,8 +192,13 @@ void ECA_CONTROL::action(int action_id) {
     }
     else {
       set_last_error("Warning! No chainsetup connected. Trying to connect currently selected chainsetup.");
-      if (is_valid() == true) connect_chainsetup();
-      else return;
+      if (is_valid() == true) {
+	connect_chainsetup();
+      }
+      if (is_connected() != true) {
+	set_last_error("Warning! Selected chainsetup cannot be connected. Can't perform requested action.");
+	return;
+      }
     }
   }
   else if (selected_chainsetup() == connected_chainsetup() &&

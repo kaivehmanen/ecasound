@@ -178,7 +178,7 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
       for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
 	(*q)->buffersize(buffersize(), sample_rate());
 	if ((*q)->is_open() == false) (*q)->open();
-	audio_object_info(*q);      
+	audio_object_info(*q);
       }
     }
     is_enabled_rep = true;
@@ -188,6 +188,7 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
 		    string("Enabling chainsetup: ")
 		    + e.message()));
   }
+  catch(...) { throw; }
 
   // --------
   ENSURE(is_enabled() == true);
@@ -409,6 +410,10 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
 	ecadebug->msg("(eca-chainsetup) Using double-buffer of " + 
 		      kvu_numtostr(double_buffer_size()) + " sample frames.");
 	toggle_double_buffering(true);
+      }
+      else if (get_argument_number(1, argu) == "nodb") {
+	ecadebug->msg("(eca-chainsetup) Double-buffering disabled.");
+	toggle_double_buffering(false);
       }
       else if (get_argument_number(1, argu) == "psr") {
 	ecadebug->msg("(eca-chainsetup) Using precise-sample-rates with OSS audio devices.");

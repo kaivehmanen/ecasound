@@ -54,7 +54,9 @@
 #include "textdebug.h"
 #include "eca-text.h"
 
-ECA_SESSION* global_pointer_to_ecaparams = 0; 
+ECA_PROCESSOR* global_pointer_to_ecaprocessor = 0; 
+bool global_processor_deleted = false;
+ECA_SESSION* global_pointer_to_ecasession = 0; 
 bool global_session_deleted = false;
 TEXTDEBUG textdebug;
 
@@ -77,7 +79,7 @@ int main(int argc, char *argv[])
   sigaction(SIGABRT, &es_handler, 0);
 
   try {
-    COMMAND_LINE cline = COMMAND_LINE (argc, argv);
+    COMMAND_LINE cline (argc, argv);
     parse_command_line(cline);
 
     bool debug_to_cerr = true;
@@ -100,11 +102,13 @@ int main(int argc, char *argv[])
 	print_header(&cout);
     }
     
-    global_pointer_to_ecaparams = new ECA_SESSION(cline); // used only for signal handling!
-    if (global_pointer_to_ecaparams->is_interactive()) start_iactive_readline(global_pointer_to_ecaparams);
+    ECA_SESSION session (cline);
+    global_pointer_to_ecasession = &session; // used only for signal handling!
+    if (session.is_interactive()) start_iactive_readline(&session);
     else {
-      if (global_pointer_to_ecaparams->is_selected_chainsetup_connected() == true) {
-	ECA_PROCESSOR epros (global_pointer_to_ecaparams);
+      if (session.is_selected_chainsetup_connected() == true) {
+	ECA_PROCESSOR epros (&session);
+	global_pointer_to_ecaprocessor = &epros;
 	epros.exec();
       }
     }
@@ -129,22 +133,6 @@ int main(int argc, char *argv[])
     cerr << "---\nCaught an unknown exception!\n";
   }
 
-  try {
-    if (global_session_deleted == false) {
-      global_session_deleted = true;
-      if (global_pointer_to_ecaparams != 0) {
-	delete global_pointer_to_ecaparams;
-	global_pointer_to_ecaparams = 0;
-      }
-    }
-  }
-  catch(ECA_ERROR& e) {
-    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
-  }
-  catch(...) {
-    cerr << "---\nCaught an unknown exception!\n";
-  }
-  //  ecaparams->~ECA_SESSION();
   ecadebug->flush();
     
   return(0); // everything ok!
@@ -177,13 +165,20 @@ void parse_command_line(COMMAND_LINE& cline) {
 }
 
 void clean_exit(int n) {
+  ecadebug->flush();
+  if (global_processor_deleted == false) {
+    global_processor_deleted = true;
+    if (global_pointer_to_ecaprocessor != 0) {
+      global_pointer_to_ecaprocessor->~ECA_PROCESSOR();
+      global_pointer_to_ecaprocessor = 0;
+    }
+  }
   if (global_session_deleted == false) {
     global_session_deleted = true;
-    if (global_pointer_to_ecaparams != 0) {
-      delete global_pointer_to_ecaparams;
-      global_pointer_to_ecaparams = 0;
+    if (global_pointer_to_ecasession != 0) {
+      global_pointer_to_ecasession->~ECA_SESSION();
+      global_pointer_to_ecasession = 0;
     }
-      
   }
   exit(n);
 }
@@ -254,14 +249,14 @@ void start_iactive_readline(ECA_SESSION* param) {
 	if (str == "quit" || str == "q") {
 	  cerr << "---\nExiting...\n";
 	  free(cmd);
-	  clean_exit(0);
+	  break;
 	}
       }
       catch(ECA_ERROR& e) {
 	cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
 	if (e.error_action() == ECA_ERROR::stop) {
 	  free(cmd);
-	  clean_exit(0);
+	  break;
 	}
       }
       catch(...) {
@@ -272,6 +267,7 @@ void start_iactive_readline(ECA_SESSION* param) {
     }
   }
   while(cmd != 0);
+  return;
 }
 
 /* **************************************************************** */

@@ -297,7 +297,8 @@ bool ECA_CONTROL_BASE::is_valid(void) const {
  */
 bool ECA_CONTROL_BASE::is_connected(void) const {
   if (session_repp->connected_chainsetup_repp == 0) return(false);
-  return(session_repp->connected_chainsetup_repp->is_valid());
+  return(session_repp->connected_chainsetup_repp->is_valid() &&
+	 session_repp->connected_chainsetup_repp->is_enabled());
 }
 
 /**
