@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 010504) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 020504) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,12 +13,13 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-xx052004 (v2.3.3)  -** stable release **-
+02052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command
 	- added: special-case value of '-1' to 'cs-set-length' or
 		 '-t:xxx' will set the chainsetup length according
 		 to the longest input object
+	- added: ECI guide - a new section on ecasound.el [mlang]
 	- changed: lots of typo fixes and other corrections to 
 	           the user's guide [ericdr]
 	- changed: minor configure.in cleanup relating to handling
@@ -27,7 +28,8 @@ xx052004 (v2.3.3)  -** stable release **-
 		 libsndfile older than 1.0.0 is detected, sndfile 
 		 support is disabled altogether
 	- fixed: bug in ECI C impl that could cause segfaults [mewe]
-	- fixed: signal handling bugs in ecasignalview [mewe]
+	- fixed: signal handling bugs in ecasignalview and ECI C
+	         impl [mewe]
 	- fixed: bug in ecasound(1) caused man to not show the
 		 last three pages
 	- fixed: bug in the daemon-mode (NetECI) protocol parser
@@ -35,6 +37,9 @@ xx052004 (v2.3.3)  -** stable release **-
 		 to fail
 	- fixed: 'libecasound-config --libs' did not list all 
 		 external libraries used
+	- fixed: assign default param-names to effect presets 
+	- fixed: preset parameters were not saved by 'cs-save' and
+		 'cs-save-as'
 06122003 (v2.3.2)  -** stable release **-
 	- edi-entries: edi-33 closed
 	- added: support for libsndfile; enabled if libsndfile is
