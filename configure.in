@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20030530-19
+dnl last modified: 20030530-20
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -523,7 +523,9 @@ AC_ARG_WITH(python-modules,
 
 if test "X$with_python_modules" = "X"
 then
-    if test x${python_install_prefix} != x${ecaprefix} ; then
+    if test x${python_install_prefix} != x${ecaprefix} -a \
+            x${ecaprefix} != x/usr -a \
+	    x${ecaprefix} != x/usr/local ; then
         pyecasound_support=none
 	AC_MSG_RESULT([none])
 	if test x$PYTHONPATH != xnone; then
