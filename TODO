@@ -63,9 +63,8 @@ Effects, routing, dsp routines:
 
 - "audio stamp" chainops that store the bypassing signal; this 
   signal can be later fed into controllers and other points 
-  in the pro
-- feeding audio into controllers
-- gates which truncate the input signal instread of muting it
+  in the pro [done! 1.8.6- ]
+- gates which truncate the input signal instread of muting it  [done! 1.8.6- ]
 - generic envelope followers
 - more effects (for instance, a Schroeder reverb)
 

@@ -159,7 +159,7 @@ Kai Vehmanen -	mailto:kaiv@wakkanet.fi
  Contributors / credits / thanks to 
 -----------------------------------------------------------------------
 
-Barton-Davis, Paul - Has probably written more code (and mails) about Linux audio than anyone else! :)
+Barton-Davis, Paul - Has probably written more Linux audio related code (and mails) than anyone else! :)
 Beaupre, Antoine - Patches for FreeBSD compatibility. [beaupran]
 Campbell, Ross - Tips concerning Solaris. [rcampbel]
 Coker, Rob - Pulse gate (-eemp) code. [rcs]
@@ -193,7 +193,7 @@ WakkaNet Oy - For hosting ecasound web site.
  Licensing/distribution policy
 -----------------------------------------------------------------------
 
-Copyright (C) 1997-2000 Kai Vehmanen
+Copyright (C) 1997-2001 Kai Vehmanen
 
 Ecasound is freely distributable according to the terms of the 
 GNU General Public License (see the file 'COPYING').
