@@ -9,7 +9,6 @@
 
 #include <pthread.h>
 #include <kvutils/locks.h>
-#include <kvutils/definition_by_contract.h>
 #include "midiio.h"
 
 /**
@@ -27,7 +26,7 @@ class MIDI_HANDLER {
  *
  * @author Kai Vehmanen
  */
-class MIDI_SERVER : public DEFINITION_BY_CONTRACT {
+class MIDI_SERVER {
 
   friend void* start_midi_server_io_thread(void *ptr);
 

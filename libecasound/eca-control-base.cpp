@@ -30,6 +30,7 @@
 
 #include <kvutils/value_queue.h>
 #include <kvutils/message_item.h>
+#include <kvutils/dbc.h>
 
 #include "eca-main.h"
 #include "eca-session.h"
@@ -244,16 +245,8 @@ void ECA_CONTROL_BASE::start_engine(void) {
  * Routine used for launching the engine.
  */
 void ECA_CONTROL_BASE::run_engine(void) {
-  try {
-    ECA_PROCESSOR epros (session_repp);
-    epros.exec();
-  }
-  catch(ECA_ERROR& e) {
-    cerr << "---\n(eca-controller) ERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
-  }
-  catch(...) {
-    cerr << "---\n(eca-controller) Caught an unknown exception!\n";
-  }
+  ECA_PROCESSOR epros (session_repp);
+  epros.exec();
 }
 
 /**
@@ -323,7 +316,7 @@ bool ECA_CONTROL_BASE::is_finished(void) const {
  */
 long ECA_CONTROL_BASE::length_in_samples(void) const { 
   // --------
-  REQUIRE(is_selected());
+  DBC_REQUIRE(is_selected());
   // --------
 
   return(selected_chainsetup_repp->length_in_samples());
@@ -336,7 +329,7 @@ long ECA_CONTROL_BASE::length_in_samples(void) const {
  */
 double ECA_CONTROL_BASE::length_in_seconds_exact(void) const { 
   // --------
-  REQUIRE(is_selected());
+  DBC_REQUIRE(is_selected());
   // --------
 
   return(selected_chainsetup_repp->length_in_seconds_exact());
@@ -349,7 +342,7 @@ double ECA_CONTROL_BASE::length_in_seconds_exact(void) const {
  */
 long ECA_CONTROL_BASE::position_in_samples(void) const { 
   // --------
-  REQUIRE(is_selected());
+  DBC_REQUIRE(is_selected());
   // --------
 
   return(selected_chainsetup_repp->position_in_samples());
@@ -362,7 +355,7 @@ long ECA_CONTROL_BASE::position_in_samples(void) const {
  */
 double ECA_CONTROL_BASE::position_in_seconds_exact(void) const {
   // --------
-  REQUIRE(is_selected());
+  DBC_REQUIRE(is_selected());
   // --------
 
   return(selected_chainsetup_repp->position_in_seconds_exact());
@@ -408,7 +401,7 @@ string ECA_CONTROL_BASE::engine_status(void) const {
  */
 string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
   // --------
-  REQUIRE(is_selected() == true);
+  DBC_REQUIRE(is_selected() == true);
   // --------
 
   vector<string> t = session_repp->get_attached_chains_to_input(aiod);
@@ -430,7 +423,7 @@ string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
  */
 string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
   // --------
-  REQUIRE(is_selected() == true);
+  DBC_REQUIRE(is_selected() == true);
   // --------
 
   vector<string> t = session_repp->get_attached_chains_to_output(aiod);
@@ -452,7 +445,7 @@ string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
  */
 vector<string> ECA_CONTROL_BASE::attached_chains(const string& filename) const {
   // --------
-  REQUIRE(is_selected() == true);
+  DBC_REQUIRE(is_selected() == true);
   // --------
 
   return(selected_chainsetup_repp->get_attached_chains_to_iodev(filename));

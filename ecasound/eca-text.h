@@ -1,5 +1,5 @@
-#ifndef _ECA_TEXT_H
-#define _ECA_TEXT_H
+#ifndef INCLUDED_ECA_TEXT_H
+#define INCLUDED_ECA_TEXT_H
 
 #include <string>
 #include <algorithm>

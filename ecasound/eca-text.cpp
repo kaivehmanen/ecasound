@@ -58,6 +58,9 @@ static ECA_PROCESSOR* global_pointer_to_ecaprocessor = 0;
 static bool global_processor_deleted = false;
 static ECA_SESSION* global_pointer_to_ecasession = 0; 
 static bool global_session_deleted = false;
+static ECA_CONTROL* global_pointer_to_ecacontrol = 0; 
+static bool global_control_deleted = false;
+
 TEXTDEBUG textdebug;
 static int global_error_no = 0;
 
@@ -68,10 +71,6 @@ int main(int argc, char *argv[])
   struct sigaction es_handler;
   es_handler.sa_handler = signal_handler;
   sigemptyset(&es_handler.sa_mask);
-//    sigaddset(&es_handler.sa_mask, SIGTERM);
-//    sigaddset(&es_handler.sa_mask, SIGINT);
-//    sigaddset(&es_handler.sa_mask, SIGQUIT);
-//    sigaddset(&es_handler.sa_mask, SIGABRT);
   es_handler.sa_flags = 0;
 
   sigaction(SIGTERM, &es_handler, 0);
@@ -79,7 +78,8 @@ int main(int argc, char *argv[])
   sigaction(SIGQUIT, &es_handler, 0);
   sigaction(SIGABRT, &es_handler, 0);
 
-  try {
+  try { /* FIXME: remove this at some point */
+
     COMMAND_LINE cline (argc, argv);
     parse_command_line(cline);
 
@@ -102,51 +102,49 @@ int main(int argc, char *argv[])
       else
 	print_header(&cout);
     }
-    
-    ECA_SESSION session (cline);
-    global_pointer_to_ecasession = &session; // used only for signal handling!
-    if (session.is_interactive()) {
+
+    try {
+      ECA_SESSION* session = new ECA_SESSION(cline);
+
+      global_pointer_to_ecasession = session; // used only for signal handling!
+      if (session->is_interactive()) {
 #if defined USE_NCURSES || defined USE_TERMCAP
-      start_iactive_readline(&session);
+	start_iactive_readline(session);
 #else
-      start_iactive(&session);
+	start_iactive(session);
 #endif
-    }
-    else {
-      if (session.is_selected_chainsetup_connected() == true) {
-	ECA_PROCESSOR epros (&session);
-	global_pointer_to_ecaprocessor = &epros;
-	epros.exec();
+      }
+      else {
+	if (session->is_selected_chainsetup_connected() == true) {
+	  ECA_PROCESSOR* epros = new ECA_PROCESSOR(session);
+	  global_pointer_to_ecaprocessor = epros;
+	  epros->exec();
+	}
       }
     }
-  }
-  catch(ECA_ERROR& e) {
-    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
-    global_error_no = 1;
-  }
-  catch(DBC_EXCEPTION& e) { 
-    cerr << "Failed condition \"" 
-	 << e.type_repp 
-         << ": " 
-         << e.expression_repp
-	 << "\": file " 
-	 << e.file_repp 
-	 << ", line " 
-	 << e.line_rep 
-	 << "." 
-	 << endl;
-    clean_exit(127);
+    catch(ECA_ERROR& e) {
+      /* problems with ECA_SESSION constructor (...parsing 'cline' options) */
+      cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+      clean_exit(127);
+    }
+
   }
   catch(...) {
-    cerr << "---\nCaught an unknown exception!\n";
-    global_error_no = 2;
+    cerr << "---\nCaught an unknown exception! (1)\n";
+    cerr << "This is a severe programming error that should be reported!\n";
+    global_error_no = 1;
   }
 
   ecadebug->flush();
-    
-  return(global_error_no);
+
+  cerr << "Normal exit..." << endl;
+
+  clean_exit(global_error_no);
 }
 
+/**
+ * Parses the command lines options in 'cline'.
+ */
 void parse_command_line(COMMAND_LINE& cline) {
   if (cline.size() < 2) {
     // No parameters, let's give some help.
@@ -173,8 +171,23 @@ void parse_command_line(COMMAND_LINE& cline) {
   }
 }
 
+/**
+ * Exits ecasound. Before calling the final exit system
+ * call, all static global resources are freed. This
+ * is done to ensure that destructors are properly 
+ * called.
+ */
 void clean_exit(int n) {
+  cerr << "Clean exit..." << endl;
   ecadebug->flush();
+  if (global_control_deleted == false) {
+    global_control_deleted = true;
+    if (global_pointer_to_ecacontrol != 0) {
+      global_pointer_to_ecacontrol->~ECA_CONTROL();
+      global_pointer_to_ecacontrol = 0;
+    }
+  }
+
   if (global_processor_deleted == false) {
     global_processor_deleted = true;
     if (global_pointer_to_ecaprocessor != 0) {
@@ -192,11 +205,17 @@ void clean_exit(int n) {
   exit(n);
 }
 
+/**
+ * Signal handling call back.
+ */
 void signal_handler(int signum) {
-//    cerr << "<-- Caught a signal... cleaning up." << endl << endl;
+  cerr << "<-- Caught a signal... cleaning up." << endl << endl;
   clean_exit(128);
 }
 
+/**
+ * Prints the ecasound banner.
+ */
 void print_header(ostream* dostream) {
   *dostream << "****************************************************************************\n";
   *dostream << "*";
@@ -218,80 +237,74 @@ void print_header(ostream* dostream) {
   *dostream << "****************************************************************************\n";
 }
 
+/**
+ * Ecasound interactive mode without ncurses.
+ */
 void start_iactive(ECA_SESSION* param) {
-  ECA_CONTROL ctrl(param);
+  ECA_CONTROL* ctrl = new ECA_CONTROL(param);
+  global_pointer_to_ecacontrol = ctrl;
 
   string cmd;
-  try {
-    do {
-      if (cmd.size() > 0) {
-	try { 
-	  ctrl.command(cmd);
-	  ctrl.print_last_error();
-	  ctrl.print_last_value();
-	  if (cmd == "quit" || cmd == "q") {
-	    cerr << "---\nExiting...\n";
-	    break;
-	  }
-	}
-	catch(ECA_ERROR& e) {
-	  cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
-	  if (e.error_action() == ECA_ERROR::stop) {
-	    break;
-	  }
-	  global_error_no = 3;
+  do {
+    if (cmd.size() > 0) {
+      try {  /* FIXME: remove this at some point */
+	ctrl->command(cmd);
+	ctrl->print_last_error();
+	ctrl->print_last_value();
+	if (cmd == "quit" || cmd == "q") {
+	  cerr << "---\nExiting...\n";
+	  break;
 	}
       }
-      cout << "ecasound ('h' for help)> ";
+      catch(...) {
+	cerr << "---\nCaught an unknown exception! (2)\n";
+	cerr << "This is a severe programming error that should be reported!\n";
+	global_error_no = 1;
+      }
     }
-    while(getline(cin,cmd));
+    cout << "ecasound ('h' for help)> ";
   }
-  catch(...) {
-    cerr << "---\nCaught an unknown exception!\n";
-    global_error_no = 4;
-  }
+  while(getline(cin,cmd));
 }
 
 #if defined USE_NCURSES || defined USE_TERMCAP
+/**
+ * Ecasound interactive mode with ncurses.
+ */
 void start_iactive_readline(ECA_SESSION* param) {
-  ECA_CONTROL ctrl(param);
+  ECA_CONTROL* ctrl = new ECA_CONTROL(param);
+  global_pointer_to_ecacontrol = ctrl;
 
-  char* cmd;
+  char* cmd = 0;
   init_readline_support();
   do {
     cmd = readline("ecasound ('h' for help)> ");
     //      cmd = readline();
     if (cmd != 0) {
       add_history(cmd);
-      try {
+      try {  /* FIXME: remove this at some point */
 	string str (cmd);
-	ctrl.command(str);
-	ctrl.print_last_error();
-	ctrl.print_last_value();
+	ctrl->command(str);
+	ctrl->print_last_error();
+	ctrl->print_last_value();
 	if (str == "quit" || str == "q") {
 	  cerr << "---\nExiting...\n";
-	  free(cmd);
-	  break;
-	}
-      }
-      catch(ECA_ERROR& e) {
-	cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
-	if (e.error_action() == ECA_ERROR::stop) {
-	  free(cmd);
-	  global_error_no = 5;
+	  free(cmd); cmd = 0;
 	  break;
 	}
       }
       catch(...) {
-	free(cmd);
-	global_error_no = 6;
-	throw;
+	cerr << "---\nCaught an unknown exception! (3)\n";
+	cerr << "This is a severe programming error that should be reported!\n";
+	global_error_no = 1;
       }
-      free(cmd);
+      if (cmd != 0) {
+	free(cmd);
+      }
+
     }
   }
   while(cmd != 0);
-  return;
 }
 
 /* **************************************************************** */

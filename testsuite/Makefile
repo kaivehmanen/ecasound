@@ -1,9 +1,12 @@
-ECAFLAGS=-I../libecasound -I../libecasoundc -D_REENTRANT -g -Wall -Wstrict-prototypes -DVERBOSE
-ECALINK=-L../libecasound/.libs -lecasound_debug -L../libecasoundc/.libs -lecasoundc_debug
+ECAFLAGS=-I/usr/local/eca/include -I../libecasound -I../libecasoundc -D_REENTRANT -g -Wall -Wstrict-prototypes -DVERBOSE
+ECALINK=-L../libecasound/.libs -lecasound_debug \
+	-L../libecasoundc/.libs -lecasoundc_debug \
+	-L../kvutils/.libs -lkvutils
 
 CXXFLAGS += $(ECAFLAGS)
 CFLAGS += $(ECAFLAGS)
 LDFLAGS += $(ECALINK)
+CXX=c++
 
 COMMON_SRC = 		ecatestsuite.h
 GENERATED_FILES = 	ecatestlist.txt

@@ -168,8 +168,13 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
 
   /**
    * Opens the audio object (possibly in exclusive mode).
-   * This routine is meant for opening files and devices,
-   * loading libraries, etc. 
+   * This routine is used for initializing external connections 
+   * (opening files or devices, loading shared libraries, 
+   * opening IPC connections). As it's impossible to know in 
+   * advance what might happen, open() may throw an 
+   * exception.  This way it becomes possible to provide 
+   * more verbose information about the problem that caused 
+   * open() to fail.
    *
    * At this point the various audio parameters are used
    * for the first time. Unless locked_audio_format() is 'true', 
@@ -180,7 +185,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * exception (see above).
    *
    * ensure:
-   *  readable() == true || writable() == true
+   *  readable() == true || writable() == true || is_open() != true
    */
   virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) = 0;
 

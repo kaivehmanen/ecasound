@@ -114,7 +114,7 @@ void register_internal_plugins(void);
 void register_default_midi_devices(void);
 
 #ifdef HAVE_LADSPA_H
-vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR&);
+vector<EFFECT_LADSPA*> create_plugins(const string& fname);
 #endif
 
 void register_default_objects(void) {
@@ -431,7 +431,7 @@ void register_ladspa_plugins(void) {
 	  if (entry_name.size() > 0 && entry_name[0] != '.')
 	    ladspa_plugins = create_plugins(*p + "/" + entry_name);
 	}
-	catch(ECA_ERROR& e) { ecadebug->msg(ECA_DEBUG::user_objects, e.error_message()); }
+	catch(ECA_ERROR& e) {  }
 	for(unsigned int n = 0; n < ladspa_plugins.size(); n++) {
 	  eca_ladspa_plugin_map->register_object(ladspa_plugins[n]->unique(), ladspa_plugins[n]);
 	  eca_ladspa_plugin_id_map->register_object(kvu_numtostr(ladspa_plugins[n]->unique_number()), ladspa_plugins[n]);
@@ -443,31 +443,38 @@ void register_ladspa_plugins(void) {
   }
 }
 
-vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR&) { 
+vector<EFFECT_LADSPA*> create_plugins(const string& fname) { 
   vector<EFFECT_LADSPA*> plugins;
 
   void *plugin_handle = dlopen(fname.c_str(), RTLD_NOW);
-  if (plugin_handle == 0) 
-    throw(ECA_ERROR("ECA_STATIC_OBJECT_MAPS", string("Unable to open plugin file \"") + fname + "\"."));
-
-  LADSPA_Descriptor_Function desc_func;
-  
-  desc_func = (LADSPA_Descriptor_Function)dlsym(plugin_handle, "ladspa_descriptor");
-  if (desc_func == 0)
-    throw(ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable find plugin LADSPA-descriptor."));
-
-  const LADSPA_Descriptor *plugin_desc = 0;
-  for (int i = 0;; i++) {
-    plugin_desc = desc_func(i);
-    if (plugin_desc == 0) break;
-    try {
-      plugins.push_back(new EFFECT_LADSPA(plugin_desc));
+  if (plugin_handle != 0) {
+    LADSPA_Descriptor_Function desc_func;
+    
+    desc_func = (LADSPA_Descriptor_Function)dlsym(plugin_handle, "ladspa_descriptor");
+    if (desc_func != 0) {
+      const LADSPA_Descriptor *plugin_desc = 0;
+      for (int i = 0;; i++) {
+	plugin_desc = desc_func(i);
+	if (plugin_desc == 0) break;
+	try {
+	  plugins.push_back(new EFFECT_LADSPA(plugin_desc));
+	}
+	catch (ECA_ERROR&) { }
+	plugin_desc = 0;
+      }
     }
-    catch (ECA_ERROR&) { }
-    plugin_desc = 0;
+    else { 
+      ecadebug->msg(ECA_DEBUG::user_objects,
+		    string("(eca-static-object-maps) ") + 
+		    "Unable find plugin LADSPA-descriptor.");
+    }
   }
-
-  //  if (plugin_handle != 0) dlclose(plugin_handle);
+  else {
+    ecadebug->msg(ECA_DEBUG::user_objects,
+		  string("(eca-static-object-maps) ") + 
+		  "Unable to open plugin file \"" + fname + "\".");
+  }
+  
   return(plugins);
 }
 #endif /* HAVE_LADSPA_H */

@@ -2,7 +2,6 @@
 #define INCLUDED_ECA_CONTROL_BASE_H
 
 #include <pthread.h>
-#include <kvutils/definition_by_contract.h>
 
 #include "audioio.h"
 #include "eca-chain.h"
@@ -17,7 +16,7 @@ class ECA_CHAINSETUP;
  * ecasound library.
  * @author Kai Vehmanen
  */
-class ECA_CONTROL_BASE : public DEFINITION_BY_CONTRACT {
+class ECA_CONTROL_BASE {
 
  private:
 

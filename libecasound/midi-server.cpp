@@ -24,6 +24,8 @@
 #include <signal.h>
 
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils/dbc.h>
+
 #include "midi-parser.h"
 #include "midi-server.h"
 #include "eca-debug.h"
@@ -143,7 +145,7 @@ void MIDI_SERVER::start(void) {
   if (is_midi_sync_send_enabled() == true) send_midi_start();
 
   // --------
-  ENSURE(is_running() == true);
+  DBC_ENSURE(is_running() == true);
   // --------
 }
 
@@ -202,7 +204,7 @@ void MIDI_SERVER::enable(void) {
   }
 
   // --------
-  ENSURE(is_enabled() == true);
+  DBC_ENSURE(is_enabled() == true);
   // --------  
 }
 
@@ -223,7 +225,7 @@ bool MIDI_SERVER::is_enabled(void) const { return(thread_running_rep); }
  */
 void MIDI_SERVER::disable(void) {
   // --------
-  REQUIRE(is_enabled() == true);
+  DBC_REQUIRE(is_enabled() == true);
   // --------
 
   ecadebug->msg(ECA_DEBUG::user_objects, "(midi-server) disabling");
@@ -235,8 +237,8 @@ void MIDI_SERVER::disable(void) {
   thread_running_rep = false;
 
   // --------
-  ENSURE(is_running() != true);
-  ENSURE(is_enabled() != true);
+  DBC_ENSURE(is_running() != true);
+  DBC_ENSURE(is_enabled() != true);
   // --------
 }
 
@@ -325,7 +327,7 @@ void MIDI_SERVER::remove_mmc_send_id(int id) {
  */
 void MIDI_SERVER::send_midi_bytes(int dev_id, unsigned char* buf, int bytes) {
   // --------
-  REQUIRE(is_enabled() == true);
+  DBC_REQUIRE(is_enabled() == true);
   // --------
   
   if (clients_rep[dev_id - 1]->is_open() == true) {

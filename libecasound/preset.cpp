@@ -22,6 +22,8 @@
 #include <string>
 
 #include <kvutils.h>
+#include <kvutils/dbc.h>
+
 #include "eca-chain.h"
 #include "eca-chainop.h"
 #include "generic-controller.h"
@@ -68,7 +70,7 @@ PRESET::~PRESET(void) {
 
 void PRESET::parse(const string& formatted_string) {
   // --------
-  REQUIRE(formatted_string.empty() == false);
+  DBC_REQUIRE(formatted_string.empty() == false);
   // --------
 
   parse_string_rep = formatted_string;
@@ -143,7 +145,7 @@ void PRESET::parse(const string& formatted_string) {
   parsed_rep = true;
 
   // --------
-  ENSURE(is_parsed() == true);
+  DBC_ENSURE(is_parsed() == true);
   // --------
 }
 

@@ -92,7 +92,10 @@ ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
   }
 }
 
-bool ECA_AUDIO_OBJECTS::is_valid(void) const {
+/**
+ * Checks whether chainsetup is valid for connecting.
+ */
+bool ECA_AUDIO_OBJECTS::is_valid_for_connection(void) const {
   if (inputs.size() == 0) {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) No inputs in the current chainsetup.");
     return(false);
@@ -120,7 +123,7 @@ bool ECA_AUDIO_OBJECTS::is_valid(void) const {
  */
 AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_input(const string& argu) {
   // --------
-  REQUIRE(argu.empty() != true);
+  DBC_REQUIRE(argu.empty() != true);
   // --------
 
   LOOP_DEVICE* p = 0;
@@ -148,7 +151,7 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_input(const string& argu) {
  */
 AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_output(const string& argu) {
   // --------
-  REQUIRE(argu.empty() != true);
+  DBC_REQUIRE(argu.empty() != true);
   // --------
 
   LOOP_DEVICE* p = 0;
@@ -180,8 +183,8 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_output(const string& argu) {
  */
 void ECA_AUDIO_OBJECTS::add_default_chain(void) {
   // --------
-  REQUIRE(buffersize() >= 0);
-  REQUIRE(chains.size() == 0);
+  DBC_REQUIRE(buffersize() >= 0);
+  DBC_REQUIRE(chains.size() == 0);
   // --------
 
   chains.push_back(new CHAIN());
@@ -190,8 +193,8 @@ void ECA_AUDIO_OBJECTS::add_default_chain(void) {
   selected_chainids.push_back("default");
 
   // --------
-  ENSURE(chains.back()->name() == "default");
-  ENSURE(selected_chainids.back() == "default");
+  DBC_ENSURE(chains.back()->name() == "default");
+  DBC_ENSURE(selected_chainids.back() == "default");
   // --------  
 }
 
@@ -419,8 +422,8 @@ vector<string> ECA_AUDIO_OBJECTS::get_attached_chains_to_iodev(const
  */
 void ECA_AUDIO_OBJECTS::add_input(AUDIO_IO* aio) {
   // --------
-  REQUIRE(aio != 0);
-  REQUIRE(chains.size() > 0);
+  DBC_REQUIRE(aio != 0);
+  DBC_REQUIRE(chains.size() > 0);
   // --------
 
   inputs.push_back(aio);
@@ -428,7 +431,7 @@ void ECA_AUDIO_OBJECTS::add_input(AUDIO_IO* aio) {
   attach_input_to_selected_chains(aio);
 
   // --------
-  ENSURE(inputs.size() > 0);
+  DBC_ENSURE(inputs.size() > 0);
   // --------
 }
 
@@ -443,8 +446,8 @@ void ECA_AUDIO_OBJECTS::add_input(AUDIO_IO* aio) {
  */
 void ECA_AUDIO_OBJECTS::add_output(AUDIO_IO* aiod) {
   // --------
-  REQUIRE(aiod != 0);
-  REQUIRE(chains.size() > 0);
+  DBC_REQUIRE(aiod != 0);
+  DBC_REQUIRE(chains.size() > 0);
   // --------
 
   outputs.push_back(aiod);
@@ -452,7 +455,7 @@ void ECA_AUDIO_OBJECTS::add_output(AUDIO_IO* aiod) {
   attach_output_to_selected_chains(aiod);
 
   // --------
-  ENSURE(outputs.size() > 0);
+  DBC_ENSURE(outputs.size() > 0);
   // --------
 }
 
@@ -464,7 +467,7 @@ void ECA_AUDIO_OBJECTS::add_output(AUDIO_IO* aiod) {
  */
 void ECA_AUDIO_OBJECTS::audio_object_info(const AUDIO_IO* aio) const {
   // --------
-  REQUIRE(aio != 0);
+  DBC_REQUIRE(aio != 0);
   // --------
 
   string temp = "(eca-audio-objects) Audio object \"" + aio->label();
@@ -522,14 +525,14 @@ void ECA_AUDIO_OBJECTS::remove_audio_output(const string& label) {
  */
 void ECA_AUDIO_OBJECTS::add_midi_device(MIDI_IO* mididev) {
   // --------
-  REQUIRE(mididev != 0);
+  DBC_REQUIRE(mididev != 0);
   // --------
 
   midi_devices.push_back(mididev);
   midi_server_rep.register_client(mididev);
 
   // --------
-  ENSURE(midi_devices.size() > 0);
+  DBC_ENSURE(midi_devices.size() > 0);
   // --------
 }
 
@@ -661,7 +664,7 @@ const CHAIN* ECA_AUDIO_OBJECTS::get_chain_with_name(const string& name) const {
 
 void ECA_AUDIO_OBJECTS::attach_input_to_selected_chains(const AUDIO_IO* obj) {
     // --------
-  REQUIRE(obj != 0);
+  DBC_REQUIRE(obj != 0);
   // --------
   string temp;
   vector<AUDIO_IO*>::size_type c = 0;
@@ -690,7 +693,7 @@ void ECA_AUDIO_OBJECTS::attach_input_to_selected_chains(const AUDIO_IO* obj) {
 
 void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const AUDIO_IO* obj) {
     // --------
-  REQUIRE(obj != 0);
+  DBC_REQUIRE(obj != 0);
   // --------
 
   string temp;

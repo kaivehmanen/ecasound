@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: A class representing a group of chains and their
 //                     configuration.
-// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,7 +61,12 @@
 #include "eca-chainsetup.h"
 
 /**
- * Construct from a command line object.
+ * Construct from a command line object. 
+ * 
+ * If any invalid options are passed us argument, 
+ * interpret_result() will be 'true', and 
+ * interpret_result_verbose() contains more detailed 
+ * error description.
  *
  * ensure:
  *   buffersize != 0
@@ -92,7 +97,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
   add_default_output();
 
   // --------
-  ENSURE(buffersize() != 0);
+  DBC_ENSURE(buffersize() != 0);
   // --------
 }
 
@@ -109,12 +114,17 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(void)
   set_defaults();
 
   // --------
-  ENSURE(buffersize() != 0);
+  DBC_ENSURE(buffersize() != 0);
   // --------
 }
 
 /**
  * Construct from a chainsetup file. ff 'fromfile' is
+ * 
+ * If any invalid options are passed us argument, 
+ * interpret_result() will be 'true', and 
+ * interpret_result_verbose() contains more detailed 
+ * error description.
  *
  * ensure:
  *   buffersize != 0
@@ -131,10 +141,17 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file)
   add_default_output();
 
   // --------
-  ENSURE(buffersize() != 0);
+  DBC_ENSURE(buffersize() != 0);
   // --------
 }
 
+/**
+ * Tests whether chainsetup is in a valid state.
+ */
+bool ECA_CHAINSETUP::is_valid(void) const {
+  // FIXME: waiting for a better implementation...
+  return(is_valid_for_connection());
+}
 
 /**
  * Sets default values.
@@ -222,7 +239,7 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
   catch(...) { throw; }
 
   // --------
-  ENSURE(is_enabled() == true);
+  DBC_ENSURE(is_enabled() == true);
   // --------
 }
 
@@ -256,7 +273,7 @@ void ECA_CHAINSETUP::disable(void) {
   }
 
   // --------
-  ENSURE(is_enabled() == false);
+  DBC_ENSURE(is_enabled() == false);
   // --------
 }
 
@@ -313,6 +330,49 @@ void ECA_CHAINSETUP::preprocess_options(vector<string>& opts) {
 }
 
 /**
+ * Resets the interpretation logic.
+ *
+ * ensure:
+ *  interpret_status() != true
+ */
+void ECA_CHAINSETUP::interpret_entry(void) {
+  istatus_rep = false;
+  interpret_set_result(true, "");
+
+  DBC_ENSURE(interpret_match_found() != true);
+}
+
+/**
+ * Exits the interpretation logic.
+ *
+ * ensure:
+ *  interpret_result() == true && interpret_result_verbose() == "" ||
+ *  interpret_result() == false && interpret_result_verbose() != ""
+ */
+void ECA_CHAINSETUP::interpret_exit(const string& arg) {
+  if (istatus_rep != true) {
+    /* option 'arg' was not found */
+    interpret_set_result(false, string("Interpreting option \"") +
+			 arg + 
+			 "\" failed.");
+  }
+  else {
+    /* option 'arg' was found, but incorrect */
+    if (interpret_result() != true) {
+      if (interpret_result_verbose() == "") {
+	interpret_set_result(false, string("Interpreting option \"") +
+			     arg + 
+			     "\" failed.");
+      }
+      /* else -> otherwise error code is already set */
+    }
+  }
+
+  DBC_ENSURE(interpret_result() == true && interpret_result_verbose() == "" ||
+	     interpret_result() == false && interpret_result_verbose() != "");
+}
+
+/**
  * Interprets one option. This is the most generic variant of
  * the interpretation routines; both global and object specific
  * options are handled.
@@ -322,12 +382,17 @@ void ECA_CHAINSETUP::preprocess_options(vector<string>& opts) {
  *  argu[0] == '-'
  * 
  * ensure:
- *  (option succesfully interpreted && interpretation_result() ==  true) ||
- *  (unknown or invalid option && interpretation_result() == false)
+ *  (option succesfully interpreted && interpret_result() ==  true) ||
+ *  (unknown or invalid option && interpret_result() != true)
  */
-void ECA_CHAINSETUP::interpret_option (const string& arg) throw(ECA_ERROR&) {
+void ECA_CHAINSETUP::interpret_option (const string& arg) {
+  interpret_entry();
+
+  istatus_rep = false;
   interpret_global_option(arg);
-  if (istatus_rep == false) interpret_object_option(arg);
+  if (istatus_rep != true) interpret_object_option(arg);
+
+  interpret_exit(arg);
 }
 
 /**
@@ -343,11 +408,14 @@ void ECA_CHAINSETUP::interpret_option (const string& arg) throw(ECA_ERROR&) {
  *  (unknown or invalid option && interpretation_result() == false)
  */
 void ECA_CHAINSETUP::interpret_global_option (const string& arg) {
-  istatus_rep = false;
+  interpret_entry();
+
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting global option \"" + arg + "\".");
   if (istatus_rep == false) interpret_general_option(arg);
   if (istatus_rep == false) interpret_processing_control(arg);
   if (istatus_rep == false) interpret_chains(arg);
+
+  interpret_exit(arg);
 }
 
 /**
@@ -362,8 +430,9 @@ void ECA_CHAINSETUP::interpret_global_option (const string& arg) {
  *  (option succesfully interpreted && interpretation_result() ==  true) ||
  *  (unknown or invalid option && interpretation_result() == false)
  */
-void ECA_CHAINSETUP::interpret_object_option (const string& arg) throw(ECA_ERROR&) {
-  istatus_rep = false;
+void ECA_CHAINSETUP::interpret_object_option (const string& arg) {
+  interpret_entry();
+
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting object option \"" + arg + "\".");
   interpret_chains(arg);
   if (istatus_rep == false) interpret_audio_format(arg);
@@ -371,35 +440,75 @@ void ECA_CHAINSETUP::interpret_object_option (const string& arg) throw(ECA_ERROR
   if (istatus_rep == false) interpret_midi_device(arg);
   if (istatus_rep == false) interpret_chain_operator(arg);
   if (istatus_rep == false) interpret_controller(arg);
+
+  interpret_exit(arg);
 }
 
 /**
  * Interpret a vector of options.
  */
-void ECA_CHAINSETUP::interpret_options(vector<string>& opts) throw(ECA_ERROR&) {
+void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
+  int optcount = static_cast<int>(opts.size());
+  int global_matches = 0;
+  int other_matches = 0;
+
+  interpret_set_result(true, ""); /* if opts.size() == 0 */
+
+  /*
+   * phase1: parse global options only */
+
   vector<string>::iterator p = opts.begin();
   p = opts.begin();
   while(p != opts.end()) {
     interpret_global_option(*p);
+    if (interpret_match_found() == true) global_matches++;
     ++p;
   }
 
   if (chains.size() == 0) add_default_chain();
 
+  /* 
+   * phase2: parse all options, including processing
+   *         the global options again */
+
   p = opts.begin();
   while(p != opts.end()) {
     interpret_object_option(*p);
-    if (interpretation_status() == false) {
+    if (interpret_match_found() == true) {
+      other_matches++;
+      if (interpret_result() != true) {
+	/* invalid option format */
+	break;
+      }
+    }
+    else {
       int dlevel = ecadebug->get_debug_level(); /* hack to avoid printing the same info
 						   multiple times */
       ecadebug->disable();
       interpret_global_option(*p);
       ecadebug->set_debug_level(dlevel);
-      if (interpretation_status() == false) {
-	throw(ECA_ERROR("ECA-CHAINSETUP", "Invalid argument, unable to parse: '" + *p + "'"));
+      if (interpret_match_found() != true) {
+	interpret_set_result(false, string("Invalid argument, unable to parse: '") + *p + "'");
+	break;
+      }
+      else {
+	if (interpret_result() != true) {
+	  /* invalid option format */
+	  break;
+	}
       }
     }
     ++p;
+  }
+
+  if (other_matches + global_matches != optcount) {
+    ecadebug->msg(string("(eca-chainsetup) Warning! While parsing options, only ") + 
+		  kvu_numtostr(other_matches) +
+		  "+" +
+		  kvu_numtostr(global_matches) +
+		  " matches were found; expected " +
+		  kvu_numtostr(optcount) +
+		  " options.");
   }
 }
 
@@ -413,9 +522,9 @@ void ECA_CHAINSETUP::interpret_options(vector<string>& opts) throw(ECA_ERROR&) {
  */
 void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
-  REQUIRE(istatus_rep == false);
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(istatus_rep == false);
   // --------
 
   bool match = true;
@@ -539,9 +648,9 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
  */
 void ECA_CHAINSETUP::interpret_processing_control (const string& argu) {
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
-  REQUIRE(istatus_rep == false);
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(istatus_rep == false);
   // --------
 
   bool match = true;
@@ -586,9 +695,9 @@ void ECA_CHAINSETUP::interpret_processing_control (const string& argu) {
  */
 void ECA_CHAINSETUP::interpret_chains (const string& argu) {
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
-  REQUIRE(istatus_rep == false);
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(istatus_rep == false);
   // --------
 
   bool match = true;
@@ -628,9 +737,9 @@ void ECA_CHAINSETUP::interpret_chains (const string& argu) {
  */
 void ECA_CHAINSETUP::interpret_audio_format (const string& argu) {
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
-  REQUIRE(istatus_rep == false);
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(istatus_rep == false);
   // --------
 
   bool match = true;
@@ -669,9 +778,9 @@ void ECA_CHAINSETUP::interpret_audio_format (const string& argu) {
  */
 void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
-  REQUIRE(istatus_rep == false);
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(istatus_rep == false);
   // --------
 
   bool match = true;
@@ -733,11 +842,11 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
  *  argu.size() > 0
  *  argu[0] == '-'
  */
-void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERROR&) { 
+void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) { 
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
-  REQUIRE(istatus_rep == false);
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(istatus_rep == false);
   // --------
  
   string tname = get_argument_number(1, argu);
@@ -755,15 +864,17 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
       if (last_audio_object != 0) {
 	if ((last_audio_object->supported_io_modes() &
 	    AUDIO_IO::io_read) != AUDIO_IO::io_read) {
-	  throw(ECA_ERROR("ECA-CHAINSETUP", "I/O-mode 'io_read' not supported by " + last_audio_object->name()));
+	  interpret_set_result(false, string("(eca-chainsetup) I/O-mode 'io_read' not supported by ") + last_audio_object->name());
 	}
-	last_audio_object->io_mode(AUDIO_IO::io_read);
-	last_audio_object->set_audio_format(default_audio_format_rep);
-	add_input(last_audio_object);
+	else {
+	  last_audio_object->io_mode(AUDIO_IO::io_read);
+	  last_audio_object->set_audio_format(default_audio_format_rep);
+	  add_input(last_audio_object);
+	}
       }
       else {
-	throw(ECA_ERROR("ECA-CHAINSETUP", "Format of input " +
-			    tname + " not recognized."));
+	interpret_set_result(false, string("(eca-chainsetup) Format of input ") +
+			     tname + " not recognized.");
       }
       break;
     }
@@ -783,16 +894,17 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
 	}
 	if ((last_audio_object->supported_io_modes() &
 	    mode_tmp != mode_tmp)) {
-	    throw(ECA_ERROR("ECA-CHAINSETUP", "I/O-mode 'io_write' not supported by " + last_audio_object->name()));
+	  interpret_set_result(false, string("(eca-chainsetup) I/O-mode 'io_write' not supported by ") + last_audio_object->name());
 	}
-      
-	last_audio_object->io_mode(mode_tmp);
-	last_audio_object->set_audio_format(default_audio_format_rep);
-	add_output(last_audio_object);
+	else {
+	  last_audio_object->io_mode(mode_tmp);
+	  last_audio_object->set_audio_format(default_audio_format_rep);
+	  add_output(last_audio_object);
+	}
       }
       else {
-	throw(ECA_ERROR("ECA-CHAINSETUP", "Format of output " +
-			    tname + " not recognized."));
+	interpret_set_result(false, string("(eca-chainsetup) Format of output ") +
+			     tname + " not recognized.");
       }
       break;
     }
@@ -821,8 +933,6 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
   default: { match = false; }
   }
   if (match == true) istatus_rep = true;
-
-  return;
 }
 
 /**
@@ -834,9 +944,9 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
  */
 void ECA_CHAINSETUP::interpret_midi_device (const string& argu) { 
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
-  REQUIRE(istatus_rep == false);
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(istatus_rep == false);
   // --------
  
   bool match = true;
@@ -942,9 +1052,9 @@ void ECA_CHAINSETUP::interpret_midi_device (const string& argu) {
  */
 void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
-  REQUIRE(istatus_rep == false);
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(istatus_rep == false);
   // --------
 
   CHAIN_OPERATOR* t = create_chain_operator(argu);
@@ -967,8 +1077,8 @@ void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
  */
 CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
   // --------
 
 #ifdef HAVE_LADSPA_H
@@ -1007,8 +1117,8 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
  */
 CHAIN_OPERATOR* ECA_CHAINSETUP::create_vst_plugin (const string& argu) {
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
   // --------
 
   MESSAGE_ITEM otemp;
@@ -1042,8 +1152,8 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_vst_plugin (const string& argu) {
  */
 CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
   // --------
 
   string prefix = get_argument_prefix(argu);
@@ -1079,9 +1189,9 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
  */
 void ECA_CHAINSETUP::interpret_controller (const string& argu) {
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
-  REQUIRE(istatus_rep == false);
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(istatus_rep == false);
   // --------
 
   GENERIC_CONTROLLER* t = create_controller(argu);
@@ -1107,8 +1217,8 @@ void ECA_CHAINSETUP::interpret_controller (const string& argu) {
  */
 GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
   // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
   // --------
 
   if (argu.size() > 0 && argu[0] != '-') return(0);
@@ -1168,7 +1278,7 @@ void ECA_CHAINSETUP::set_target_to_controller(void) {
  */
 void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
   // --------
-  REQUIRE(csrc != 0);
+  DBC_REQUIRE(csrc != 0);
   // --------
 
   AUDIO_STAMP_CLIENT* p = dynamic_cast<AUDIO_STAMP_CLIENT*>(csrc->source_pointer());
@@ -1198,12 +1308,11 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
  */
 void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   // --------
-  REQUIRE(cotmp != 0);
+  DBC_REQUIRE(cotmp != 0);
   // --------
   
   AUDIO_STAMP* p = dynamic_cast<AUDIO_STAMP*>(cotmp);
   if (p != 0) {
-//      cerr << "Found a stamp!" << endl;
     stamp_server_rep.register_stamp(p);
   }
   vector<string> schains = selected_chains();
@@ -1270,15 +1379,15 @@ void ECA_CHAINSETUP::save_to_file(const string& filename) throw(ECA_ERROR&) {
     throw(ECA_ERROR("ECA_CHAINSETUP", "Couldn't open setup save file: \"" +
   			filename + "\".", ECA_ERROR::retry));
   }
-
-  fout << options_general << "\n";
-  fout << midi_to_string() << "\n";
-  fout << inputs_to_string() << "\n";
-  fout << outputs_to_string() << "\n";
-  fout << chains_to_string() << "\n";
-  fout.close();
-
-  setup_filename_rep = filename;
+  else {
+    fout << options_general << "\n";
+    fout << midi_to_string() << "\n";
+    fout << inputs_to_string() << "\n";
+    fout << outputs_to_string() << "\n";
+    fout << chains_to_string() << "\n";
+    fout.close();
+    setup_filename_rep = filename;
+  }
 }
 
 void ECA_CHAINSETUP::update_option_strings(void) {

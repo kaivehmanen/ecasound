@@ -4,8 +4,6 @@
 #include <string>
 #include <map>
 
-#include <kvutils/definition_by_contract.h>
-
 #include "eca-chainop.h"
 #include "eca-chain.h"
 #include "sample-specs.h"
@@ -20,8 +18,7 @@ class AUDIO_IO;
  * @author Arto Hamara
  * @author Kai Vehmanen
  */
-class PRESET : public CHAIN_OPERATOR,
-	       public DEFINITION_BY_CONTRACT {
+class PRESET : public CHAIN_OPERATOR {
 
  private:
 

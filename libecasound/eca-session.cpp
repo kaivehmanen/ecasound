@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-session.cpp: Ecasound runtime setup and parameters.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <string>
 #include <cstring>
 #include <algorithm>
@@ -30,8 +26,13 @@
 #include <pthread.h>
 #include <sys/mman.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <kvutils/com_line.h>
 #include <kvutils/message_item.h>
+#include <kvutils/dbc.h>
 
 #include "eca-resources.h"
 #include "eca-version.h"
@@ -53,6 +54,10 @@
 #include "eca-comhelp.h"
 #include "eca-session.h"
 #include "eca-chainsetup.h"
+
+#ifdef USE_CXX_STD_NAMESPACE
+using namespace std;
+#endif
 
 ECA_SESSION::ECA_SESSION(void) {
   set_defaults();
@@ -87,17 +92,14 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
 
   if (chainsetups_rep.size() == 0) {
     ECA_CHAINSETUP* comline_setup = new ECA_CHAINSETUP(options);
-    try {
-      //      select_chainsetup(comline_setup->name());
-      add_chainsetup(comline_setup);
-      if (selected_chainsetup_repp->is_valid()) connect_chainsetup();
+    if (comline_setup->interpret_result() != true) {
+      string temp = comline_setup->interpret_result_verbose();
+      delete comline_setup;
+      throw(ECA_ERROR("ECA-SESSION", temp));
     }
-    catch (ECA_ERROR& e) {
-      if (iactive_rep) {
-	if (e.error_action() != ECA_ERROR::retry) throw;
-      }
-      else
-	throw;
+    else {
+      add_chainsetup(comline_setup); /* ownership object transfered */
+      if (selected_chainsetup_repp->is_valid()) connect_chainsetup();
     }
   }
 }
@@ -142,10 +144,20 @@ void ECA_SESSION::set_defaults(void) {
   multitrack_mode_rep = false;
 }
 
+/**
+ * Add a new chainsetup
+ *
+ * require:
+ *  name.empty() != true
+ *
+ * ensure:
+ *  selected_chainsetup->name() == name ||
+ *  chainsetup_names().size() has not changed
+ */
 void ECA_SESSION::add_chainsetup(const string& name) {
   // --------
   // require:
-  assert(name != "");
+  DBC_REQUIRE(name != "");
   // --------
 
   ECA_CHAINSETUP* newsetup = new ECA_CHAINSETUP;
@@ -154,14 +166,27 @@ void ECA_SESSION::add_chainsetup(const string& name) {
 
   // --------
   // ensure:
-  assert(selected_chainsetup_repp->name() == name);
+  DBC_ENSURE(selected_chainsetup_repp->name() == name);
   // --------
 }
 
-void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) throw(ECA_ERROR&) {
+/**
+ * Add a new chainsetup. Ownership of the object given as argument
+ * is passed along the call. If a chainsetup with the same name already
+ * exists, the call will fail and the chainsetup given as argument
+ * is deleted.
+ *
+ * require:
+ *  comline_setup != 0
+ *
+ * ensure:
+ *  selected_chainsetup == comline_setup ||
+ *  comline_setup == 0
+ */
+void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) {
   // --------
   // require:
-  assert(comline_setup != 0);
+  DBC_REQUIRE(comline_setup != 0);
   // --------
   int old_size = chainsetups_rep.size();
 
@@ -169,8 +194,11 @@ void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) throw(ECA_ERROR&
   while(p != chainsetups_rep.end()) {
     if ((*p)->name() == comline_setup->name()) {
       delete comline_setup;
-      throw(ECA_ERROR("ECA-SESSION","Chainsetup \"" + (*p)->name() + 
-			  "\" already exists.", ECA_ERROR::retry));
+      comline_setup = 0;
+      ecadebug->msg(ECA_DEBUG::system_objects, 
+		    string("ECA-SESSION","Unable to add chainsetup \"") + 
+		    (*p)->name() + 
+		    "\"; chainsetup with the same name already exists.");
     }
     ++p;
   }
@@ -180,15 +208,24 @@ void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) throw(ECA_ERROR&
 
   // --------
   // ensure:
-  assert(selected_chainsetup_repp == comline_setup);
-  assert(static_cast<int>(chainsetups_rep.size()) == old_size + 1);
+  DBC_ENSURE(selected_chainsetup_repp == comline_setup);
+  DBC_ENSURE(static_cast<int>(chainsetups_rep.size()) == old_size + 1);
   // --------
 }
 
+/**
+ * Removes selected chainsetup
+ *
+ * require:
+ *  connected_chainsetup != selected_chainsetup
+ *
+ * ensure:
+ *  selected_chainsetup == 0
+ */
 void ECA_SESSION::remove_chainsetup(void) {
   // --------
   // require:
-  assert(connected_chainsetup_repp != selected_chainsetup_repp);
+  DBC_REQUIRE(connected_chainsetup_repp != selected_chainsetup_repp);
   // --------
 
   vector<ECA_CHAINSETUP*>::iterator p = chainsetups_rep.begin();
@@ -204,14 +241,14 @@ void ECA_SESSION::remove_chainsetup(void) {
 
   // --------
   // ensure:
-  assert(selected_chainsetup_repp == 0);
+  DBC_ENSURE(selected_chainsetup_repp == 0);
   // --------
 }
 
 void ECA_SESSION::select_chainsetup(const string& name) {
   // --------
   // require:
-  assert(name.empty() != true);
+  DBC_REQUIRE(name.empty() != true);
   // --------
 
   selected_chainsetup_repp = 0;
@@ -227,7 +264,7 @@ void ECA_SESSION::select_chainsetup(const string& name) {
 
   // --------
   // ensure:
-  assert(selected_chainsetup_repp == 0 ||
+  DBC_ENSURE(selected_chainsetup_repp == 0 ||
 	 selected_chainsetup_repp->name() == name);
   // --------
 }
@@ -235,7 +272,7 @@ void ECA_SESSION::select_chainsetup(const string& name) {
 void ECA_SESSION::save_chainsetup(void) throw(ECA_ERROR&) {
   // --------
   // require:
-  assert(selected_chainsetup_repp != 0);
+  DBC_REQUIRE(selected_chainsetup_repp != 0);
   // --------
 
   selected_chainsetup_repp->save();
@@ -244,34 +281,40 @@ void ECA_SESSION::save_chainsetup(void) throw(ECA_ERROR&) {
 void ECA_SESSION::save_chainsetup(const string& filename) throw(ECA_ERROR&) {
   // --------
   // require:
-  assert(selected_chainsetup_repp != 0 && filename.empty() != true);
+  DBC_REQUIRE(selected_chainsetup_repp != 0 && filename.empty() != true);
   // --------
 
   selected_chainsetup_repp->save_to_file(filename);
 }
 
-void ECA_SESSION::load_chainsetup(const string& filename) throw(ECA_ERROR&) {
+/**
+ * Load a chainsetup from file (ecs). If operation fails,
+ * selected_chainsetup_repp == 0, ie. no chainsetup 
+ * selected.
+ */
+void ECA_SESSION::load_chainsetup(const string& filename) {
   // --------
-  // require:
-  assert(filename.empty() != true);
+  DBC_REQUIRE(filename.empty() != true);
   // --------
 
   ECA_CHAINSETUP* new_setup = new ECA_CHAINSETUP(filename);
   add_chainsetup(new_setup);
-
-  selected_chainsetup_repp = new_setup;
-
+  if (new_setup != 0) /* adding chainsetup ok */
+    selected_chainsetup_repp = new_setup;
+  else
+    selected_chainsetup_repp = 0;
+  
   // --------
   // ensure:
-  assert(selected_chainsetup_repp->filename() == filename);
+  DBC_ENSURE(selected_chainsetup_repp->filename() == filename);
   // --------
 }
 
 void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&) {
   // --------
   // require:
-  assert(selected_chainsetup_repp != 0);
-  assert(selected_chainsetup_repp->is_valid());
+  DBC_REQUIRE(selected_chainsetup_repp != 0);
+  DBC_REQUIRE(selected_chainsetup_repp->is_valid());
   // --------
 
   if (selected_chainsetup_repp == connected_chainsetup_repp) return;
@@ -291,14 +334,14 @@ void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&) {
  
   // --------
   // ensure:
-  assert(selected_chainsetup_repp == connected_chainsetup_repp);
+  DBC_ENSURE(selected_chainsetup_repp == connected_chainsetup_repp);
   // --------
 }
 
 void ECA_SESSION::disconnect_chainsetup(void) {
   // --------
   // require:
-  assert(connected_chainsetup_repp != 0);
+  DBC_REQUIRE(connected_chainsetup_repp != 0);
   // --------
 
   ecadebug->msg(ECA_DEBUG::system_objects, "Disconnecting selected setup from engine.");
@@ -308,7 +351,7 @@ void ECA_SESSION::disconnect_chainsetup(void) {
 
   // --------
   // ensure:
-  assert(connected_chainsetup_repp == 0);
+  DBC_ENSURE(connected_chainsetup_repp == 0);
   // --------
 }
 

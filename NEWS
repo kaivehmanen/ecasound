@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 180801) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 190801) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -18,7 +18,17 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.2 *-
 
 ??0?2001 (v2.1.0)
+	- added: more recent config.guess and config.sub to 
+	         the dist package  [juekawa]
 	- changed: library version changed to 8.0.0
+	- changed: use of kvutils/definition_by_contract 
+		   dropped; more lightweight kvutils/dbc.h
+		   will be used from now on
+	- changed: more strict option parsing; now a warning
+	  	   is printed if an unknown options is seen,
+		   error occurs if a known option has 
+		   invalid or incorrect parameters
+	- fixed: gcc3.x fixes to ALSA 0.5.x plugin [juekawa]
 ??0?2001 (v2.0.3)  -** stable release **-
 	- added: more recent config.guess and config.sub to 
 	         the dist package  [juekawa]

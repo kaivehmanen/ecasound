@@ -12,7 +12,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (26022001)
+       (19082001)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -74,7 +74,7 @@ directly support pre/postconditions, I've simulated them using
 the class DEFINITION_BY_CONTRACT from kvutils package and with 
 standard assert() calls.
 
-subsubsect(Routine side effects) 
+subsubsect(Routine side effects)
 I try to make a clear distinction between routines that 
 have side-effects (=methods, processors, modifiers; routines that
 change object's state) and const routines (=functions, observers).
@@ -96,13 +96,30 @@ observers, not both. So when using ecasound APIs, you first perform an
 action (modifying function), and then afterwards check what happened
 (using an observer function).
 
-Secondly, C++ exceptions are used in ecasound. Exception based error
+subsubsect(Exceptions)
+C++ exceptions are used in ecasound. Exception based error
 handling has its problems, but in some cases it is clearly the best
 option. Using exceptions for anything other than pure exception
 handling is to be avoided at all cost. And when exceptions are used,
 their use must be specified in function prototypes. This is important,
-as clients need to know what exceptions can be thrown. All in all, use 
-of exceptions should be carefully planned.
+as clients need to know what exceptions can be thrown. All in all, 
+use of exceptions should be carefully planned.
+
+A list of specific cases where exceptions are used follows:
+startdit()
+dit(AUDIO_IO - open())
+This method is used for initializing external connections (opening
+files or devices, loading shared libraries, opening IPC connections). 
+It's impossibly to no in advance what might happen. It many cases it
+is also useful to get more verbose information about the problem 
+that caused open() to fail. Throwing an exception is an excellent way
+to achieve this.
+
+dit(ECA_CHAINSETUP - enable())
+dit(ECA_CHAINSETUP - load_from_file(), save() and save_to_file())
+dit(ECA_SESSION - constructor)
+
+enddit()
 
 COMMENT(----------------------------------------------------------------)
 subsect(Coding style)
@@ -313,8 +330,9 @@ dit(running) - processing
 dit(stopped) - processing hasn't been started or it has been stopped
 before completion
 dit(finished) - processing has been completed
-
+dit(error) - an error has occured during prosessing
 enddit()
+
 enddit()
 
 COMMENT(----------------------------------------------------------------)

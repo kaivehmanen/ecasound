@@ -66,38 +66,9 @@ class ECA_SESSION {
   // Function for handling chainsetups
   // ---
 
-  /**
-   * Add a new chainsetup
-   *
-   * require:
-   *  comline_setup != 0
-   *
-   * ensure:
-   *  selected_chainsetup == comline_setup
-   */
-  void add_chainsetup(ECA_CHAINSETUP* comline_setup) throw(ECA_ERROR&);
-
-  /**
-   * Remove selected chainsetup
-   *
-   * require:
-   *  connected_chainsetup != selected_chainsetup
-   *
-   * ensure:
-   *  selected_chainsetup == 0
-   */
-  void remove_chainsetup(void);
-
-  /**
-   * Add a new chainsetup
-   *
-   * require:
-   *  name.empty() != true
-   *
-   * ensure:
-   *  selected_chainsetup->name() == name
-   */
   void add_chainsetup(const string& name);
+  void add_chainsetup(ECA_CHAINSETUP* comline_setup);
+  void remove_chainsetup(void);
 
   /**
    * Select chainsetup with name 'name'
@@ -137,7 +108,7 @@ class ECA_SESSION {
    * ensure:
    *  selected_chainsetup->filename() == filename
    */
-  void load_chainsetup(const string& filename) throw(ECA_ERROR&);
+  void load_chainsetup(const string& filename);
 
   /**
    * Connect selected chainsetup

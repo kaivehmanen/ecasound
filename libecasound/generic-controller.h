@@ -1,7 +1,5 @@
-#ifndef _GENERIC_CONTROLLER_H
-#define _GENERIC_CONTROLLER_H
-
-#include <kvutils/definition_by_contract.h>
+#ifndef INCLUDED_GENERIC_CONTROLLER_H
+#define INCLUDED_GENERIC_CONTROLLER_H
 
 #include "ctrl-source.h"
 #include "eca-operator.h"
@@ -11,8 +9,7 @@
  * to objects supporting dynamic parameter control (classes 
  * which inherit DYNAMIC_PARAMETERS).
  */
-class GENERIC_CONTROLLER : public OPERATOR,
-			   public DEFINITION_BY_CONTRACT {
+class GENERIC_CONTROLLER : public OPERATOR {
 
   OPERATOR* target;
   CONTROLLER_SOURCE* source;

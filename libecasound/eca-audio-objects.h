@@ -5,10 +5,9 @@
 #include <map>
 #include <string>
 
-#include <kvutils/definition_by_contract.h>
+#include <kvutils/dbc.h>
 #include "eca-audio-format.h"
 #include "midi-server.h"
-#include "eca-error.h"
 
 class MIDI_IO;
 class AUDIO_IO;
@@ -20,7 +19,7 @@ class CHAIN;
  * outputs and chains. Not meant for general use.
  * @author Kai Vehmanen
  */
-class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
+class ECA_AUDIO_OBJECTS {
 
  private:
 
@@ -139,10 +138,10 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   const ECA_AUDIO_FORMAT& default_audio_format(void) const { return(default_audio_format_rep); }
   const string& default_midi_device(void) const { return(default_midi_device_rep); }
   int output_openmode(void) const { return(output_openmode_rep); }
-  bool is_valid(void) const;
+  bool is_valid_for_connection(void) const;
 
   ECA_AUDIO_OBJECTS(void);
-  virtual ~ECA_AUDIO_OBJECTS(void);
+  ~ECA_AUDIO_OBJECTS(void);
 };
 
 #endif

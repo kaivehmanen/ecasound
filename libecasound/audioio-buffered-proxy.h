@@ -4,7 +4,6 @@
 #include <string>
 #include <iostream>
 
-#include <kvutils/definition_by_contract.h>
 #include "audioio.h"
 #include "samplebuffer.h"
 #include "audioio-proxy-server.h"
@@ -16,8 +15,7 @@
  * proxy objects.
  * @author Kai Vehmanen
  */
-class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO,
-				protected DEFINITION_BY_CONTRACT {
+class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
 
   AUDIO_IO_PROXY_SERVER* pserver_repp;
   AUDIO_IO_PROXY_BUFFER* pbuffer_repp;

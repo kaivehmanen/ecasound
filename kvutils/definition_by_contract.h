@@ -23,6 +23,8 @@
 /**
  * Exception that is thrown when some contract fails
  *
+ * Note! Obsolete - not used anymore
+ *
  * @author Kai Vehmanen
  */
 class DBC_EXCEPTION { 
@@ -42,6 +44,8 @@ class DBC_EXCEPTION {
  * classes. Features include routine preconditions, postconditions 
  * and virtual class invariants. Checks are only performed, when
  * ENABLE_DBC is defined.
+ *
+ * Note! Obsolete - not used anymore
  *
  * @author Kai Vehmanen
  */

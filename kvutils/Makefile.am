@@ -25,7 +25,8 @@ kvutil_headers = 	kvutils.h \
 			object_queue.h \
 			locks.h \
 			procedure_timer.h \
-			temporary_file_directory.h
+			temporary_file_directory.h \
+			dbc.h
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
 libkvutils_la_LDFLAGS = -version-info 2:0:0

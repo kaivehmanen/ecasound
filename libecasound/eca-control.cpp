@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control.cpp: Class for controlling the whole ecasound library
-// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@
 #include "eca-version.h"
 #include "eca-error.h"
 #include "eca-debug.h"
+
 
 ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession) 
   : ECA_CONTROL_OBJECTS(psession),
@@ -174,12 +175,14 @@ void ECA_CONTROL::action(int action_id) {
     set_last_error("Can't perform requested action; argument omitted.");
     return;
   }
-  else if (get_audio_input() == 0 &&
+  else if (is_selected() == true &&
+	   get_audio_input() == 0 &&
 	   action_requires_selected_audio_input(action_id)) {
     set_last_error("Can't perform requested action; no audio input selected.");
     return;
   }
-  else if (get_audio_output() == 0 &&
+  else if (is_selected() == true && 
+	   get_audio_output() == 0 &&
 	   action_requires_selected_audio_output(action_id)) {
     set_last_error("Can't perform requested action; no audio output selected.");
     return;
@@ -226,11 +229,9 @@ void ECA_CONTROL::action(int action_id) {
     // ---
   case ec_direct_option: 
     {
-      try {
-	selected_chainsetup_repp->interpret_options(action_args_rep);
-      }
-      catch(ECA_ERROR& e) {
-	set_last_error("[" + e.error_section() + "] : \"" + e.error_message() + "\"");
+      selected_chainsetup_repp->interpret_options(action_args_rep);
+      if (selected_chainsetup_repp->interpret_result() != true) {
+	set_last_error(selected_chainsetup_repp->interpret_result_verbose());
       }
       break;
     }

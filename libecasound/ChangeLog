@@ -5,6 +5,19 @@
 2001-08-19  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* library version changed to 8:0:0
+	* eca-session.h (add_chainsetup): doesn't throw exceptions anymore
+	* eca-audio-objects.h (class): no longer inherits DEFINITION_BY_CONTRACT 
+	* eca-audio-objects.h (desctructor): changed from virtual to non-virtual
+	* eca-audio-objects.h (is_valid): renamed to is_valid_for_connection()
+	* eca-chainsetup.h (interpret_*): don't throw exceptions anymore
+	* eca-static-objects-maps (create_plugins): doesn't throw
+	exceptions anymore
+	* eca-session.h (constructor): will throw an exception if fails
+	* eca-control-base.h (class): no longer inherits DEFINITION_BY_CONTRACT
+	* audioio-buffered-proxy.h (class): no longer inherits DEFINITION_BY_CONTRACT
+	* midi-server.h (class): no longer inherits DEFINITION_BY_CONTRACT
+	* generic-controller.h (class): no longer inherits DEFINITION_BY_CONTRACT
+	* preset.h (class): no longer inherits DEFINITION_BY_CONTRACT
 	
 2001-05-02  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 

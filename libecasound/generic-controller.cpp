@@ -21,6 +21,7 @@
 #include <string>
 
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils/dbc.h>
 
 #include "generic-controller.h"
 #include "eca-chainop.h"
@@ -29,7 +30,7 @@
 
 void GENERIC_CONTROLLER::process(void) {
   // --------
-  REQUIRE(is_valid() == true);
+  DBC_REQUIRE(is_valid() == true);
   // --------
 
   new_value = (source->value() * (rangehigh - rangelow)) + rangelow;
