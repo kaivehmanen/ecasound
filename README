@@ -19,7 +19,7 @@ in the package.
  Why?
 -----------------------------------------------------------------------
 
-I've programmed ecasound for my own recording purposes. The first 
+I've written ecasound for my own recording purposes. The first 
 versions ran under IBM Os/2. I used them for finalizing my analog 
 4-track recordings. My 4-track was a nice tool, but it had its limits.
 So eventually I started to use Windows-based multitrack software. I
@@ -74,13 +74,13 @@ Optional when compiling ecasound:
  Installing
 -----------------------------------------------------------------------
 
-First of all, you should first try to use the binary-rpm release.
+First of all, you should first try to use a binary rpm package.
 It's probably the easiest and the most straigthforward way to 
 install this software. 
 
 If you need to compile ecasound, the file 'INSTALL' contains detailed 
 instructions. To compile from rpm source packages, "rpm --rebuild 
-ecasound-x.y.xRt.src.rpm".
+ecasound-x.y.x.src.rpm".
 
 -----------------------------------------------------------------------
  Documentation
