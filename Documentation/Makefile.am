@@ -19,7 +19,7 @@ DISTFILES = 	Makefile.am \
 	    	ecasound_manpage.yo \
 		ecasoundrc.5 \
 		ecasoundrc_manpage.html \
-	    	ecasoundrc_manpage.yo 
+	    	ecasoundrc_manpage.yo \
 	    	ecasound-iam.1 \
 	    	ecasound-iam_manpage.html \
 	    	ecasound-iam_manpage.yo \

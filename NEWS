@@ -28,7 +28,7 @@ Last officially released version is -*> v2.0.3 *-
 	         to '-o:alsa,default')
 	- added: special case for mapping "ecasound file.ecs"
 		 to "ecasound -s:file.ecs"
-	- added: first implementation of edi-6; the -z:db
+	- added: implementation of edi-6; the -z:db
 		 is now completely transparent to other 
 		 parts of ecasound
 	- added: eiam - new commands: cs-set-position-samples,
@@ -76,6 +76,7 @@ Last officially released version is -*> v2.0.3 *-
 	- fixed: seg.fault if opening wav/raw files for 
 		 output failed for some reason (access
 		 denied, etc)
+	- fixed: non-zero defaults for -r:x and -z:db,y [smassy]
 ????2001 (v2.0.4)  -** stable release **-
 	- note! see ecasound-2.0 branch; this NEWS section 
 		will updated later

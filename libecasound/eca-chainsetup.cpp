@@ -239,6 +239,8 @@ void ECA_CHAINSETUP::set_defaults(void) {
 
   set_output_openmode(AUDIO_IO::io_readwrite);
 
+  
+
   ECA_RESOURCES ecaresources;
   set_default_midi_device(ecaresources.resource("midi-device"));
   set_sample_rate(atol(ecaresources.resource("default-samplerate").c_str()));
