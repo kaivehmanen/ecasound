@@ -459,7 +459,7 @@ void ECA_CHAINSETUP_PARSER::interpret_processing_control (const string& argu)
       case 'l': 
 	{
 	  csetup_repp->toggle_looping(true);
-	  if (csetup_repp->length_set() != true)
+	  if (csetup_repp->max_length_set() != true)
 	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Looping enabled. Length of input objects will be used to set the loop point.");
 	  else
 	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Looping enabled.");

@@ -971,7 +971,7 @@ void ECA_ENGINE::prehandle_control_position(void)
   if (csetup_repp->max_length_set() == true &&
       csetup_repp->is_over_max_length() == true) {
     int buffer_remain = csetup_repp->position_in_samples() -
-                        csetup_repp->length_in_samples();
+                        csetup_repp->max_length_in_samples();
     for(unsigned int adev_sizet = 0; adev_sizet < non_realtime_inputs_rep.size(); adev_sizet++) {
       non_realtime_inputs_rep[adev_sizet]->set_buffersize(buffer_remain);
     }
@@ -979,7 +979,7 @@ void ECA_ENGINE::prehandle_control_position(void)
 }
 
 /**
- * If we've processed all the data that was request, stop or rewind. 
+ * If we've processed all the data that was requested, stop or rewind. 
  * Also resets buffersize to its default value. If finished
  * state is reached, engine status is set to 
  * 'ECA_ENGINE::engine_status_finished'.
@@ -989,6 +989,7 @@ void ECA_ENGINE::posthandle_control_position(void)
   if (csetup_repp->max_length_set() == true &&
       csetup_repp->is_over_max_length() == true) {
     if (csetup_repp->looping_enabled() == true) {
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) loop point reached");
       inputs_not_finished_rep = 1;
       csetup_repp->seek_position_in_samples(0);
       for(unsigned int adev_sizet = 0; adev_sizet < non_realtime_inputs_rep.size(); adev_sizet++) {
