@@ -15,7 +15,18 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA
+//
+// ------------------------------------------------------------------------
+// History: 
+//
+// 2002-12-04 Hans-Georg Fischer
+//     - Fixed a bug in initializing the delay line, which cause
+//       unwanted audible noise at start of processing. 
+// 2000-06-06 Kai Vehmanen
+//     - Initial version. Based on Stefan M. Fendt's reverb 
+//       code.
 // ------------------------------------------------------------------------
 
 #include <cstdlib>
@@ -64,6 +75,8 @@ void ADVANCED_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value
   if (param == 1 || param == 2) {
     std::vector<CHANNEL_DATA>::iterator p = cdata.begin();
     while(p != cdata.end()) {
+      p->oldvalue=0.0;
+      p->lpvalue=0.0;
       p->dpos[0] = static_cast<long int>(roomsize_rep * samples_per_second() / 333);
       p->mul[0] = 0.035;
       p->bufferpos_rep = 0;
@@ -81,6 +94,8 @@ void ADVANCED_REVERB::init(SAMPLE_BUFFER *insample) {
   cdata.resize(insample->number_of_channels());
   std::vector<CHANNEL_DATA>::iterator p = cdata.begin();
   while(p != cdata.end()) {
+    p->oldvalue=0.0;
+    p->lpvalue=0.0;
     p->dpos[0] = static_cast<long int>(roomsize_rep * samples_per_second() / 333);
     p->mul[0] = 0.035;
     p->bufferpos_rep = 0;
