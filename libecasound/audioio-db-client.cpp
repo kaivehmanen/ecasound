@@ -143,6 +143,10 @@ void AUDIO_IO_DB_CLIENT::read_buffer(SAMPLE_BUFFER* sbuf)
     }
     else {
       xruns_rep++;
+
+      /* FIXME: replace the below with a non-blocking solution; 
+       *        for example return silence if the db-server can't keep up */
+
       std::cerr << "(audioio-db-client) Warning! Underrun in reading from \"" 
 		<< child()->label() 
 		<< "\". Trying to recover." << std::endl;
@@ -182,6 +186,10 @@ void AUDIO_IO_DB_CLIENT::write_buffer(SAMPLE_BUFFER* sbuf)
     if (pbuffer_repp->finished_rep.get() == 1) finished_rep = true;
     else {
       xruns_rep++;
+
+      /* FIXME: replace the below with a non-blocking solution; 
+       *        for example return silence if the db-server can't keep up */
+
       std::cerr << "(audioio-db-client) Warning! Overrun in writing to \"" 
 		<< child()->label() 
 		<< "\". Trying to recover." << std::endl;
@@ -227,8 +235,6 @@ void AUDIO_IO_DB_CLIENT::seek_position(void)
     pserver_repp->wait_for_full();
     DBC_CHECK(pserver_repp->is_running() == true);
   }
-
-  AUDIO_IO_PROXY::seek_position();
 }
 
 /**
