@@ -99,8 +99,7 @@ ecasound_controller_include = \
 			linear-envelope.h \
 			two-stage-linear-envelope.h \
 			stamp-ctrl.h \
-	 		generic-linear-envelope.h \
-			generic-linear-envelope.cpp
+	 		generic-linear-envelope.h
 
 ecasound_general_include = 	\
 			eca-chain.h \
@@ -220,7 +219,8 @@ ecasound_controller_src = \
 			osc-sine.cpp \
 			linear-envelope.cpp \
 			two-stage-linear-envelope.cpp \
-			stamp-ctrl.cpp
+			stamp-ctrl.cpp \
+			generic-linear-envelope.cpp
 
 ecasound_general_src = 	eca-chain.cpp \
 			eca-main.cpp \

@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "09\&.04\&.2001" "" "Multimedia software" 
+.TH "ecasound" "1" "25\&.04\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -544,6 +544,8 @@ Generic oscillator\&. Frequency \'freq\' Hz, mode either \'0\' for
 static values or \'1\' for linear interpolation\&. \'point-pairs\'
 specifies the number of \'posN\' - \'valueN\' pairs to include\&.
 \'start-value\' and \'end-value\' are used as border values\&.
+All \'posN\' and \'valueN\' must be between 0\&.0 and 1\&.0\&. Also, 
+for all \'posN´ values \'pos1 < pos2 < \&.\&.\&. < posN\' must be true\&.
 .IP 
 .IP "-kf:fx-param,start-value,end-value,freq,mode,genosc-number" 
 Generic oscillator\&. \'genosc_number\' is the number of the 
@@ -561,6 +563,12 @@ Two-stage linear envelope, a more versatile tool for doing fade-ins
 and fade-outs\&. Stays at \'start_value\' for \'1st_stage_length\' seconds
 and then linearly changes towards \'end_value\' during
 \'2nd_stage_length\' seconds\&.
+.IP 
+.IP "-klg:fx-param,start-value,end-value,point_count,pos1,value1,\&.\&.\&.,posN,valueN" 
+Generic linear envelope\&. This controller source can be 
+used to map custom envelopes to chain operator parameters\&. 
+All \'posX\' parameters are given as seconds (from start of the stream)\&.
+\'valueX\' parameters  must be in the range [0,1]\&.
 .IP 
 .IP "-km:fx-param,start-value,end-value,controller,channel" 
 MIDI continuous controller (control change messages)\&. 

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>09.04.2001</h2>
+<h2>25.04.2001</h2>
 
 
     
@@ -492,6 +492,8 @@ Generic oscillator. Frequency 'freq' Hz, mode either '0' for
 static values or '1' for linear interpolation. 'point-pairs'
 specifies the number of 'posN' - 'valueN' pairs to include.
 'start-value' and 'end-value' are used as border values.
+All 'posN' and 'valueN' must be between 0.0 and 1.0. Also, 
+for all 'posN´ values 'pos1 &lt; pos2 &lt; ... &lt; posN' must be true.
 <p><p></p><dt><strong>-kf:fx-param,start-value,end-value,freq,mode,genosc-number</strong><dd>
 Generic oscillator. 'genosc_number' is the number of the 
 oscillator preset to be loaded. Mode is either '0' for
@@ -506,6 +508,11 @@ Two-stage linear envelope, a more versatile tool for doing fade-ins
 and fade-outs. Stays at 'start_value' for '1st_stage_length' seconds
 and then linearly changes towards 'end_value' during
 '2nd_stage_length' seconds.
+<p><p></p><dt><strong>-klg:fx-param,start-value,end-value,point_count,pos1,value1,...,posN,valueN</strong><dd>
+Generic linear envelope. This controller source can be 
+used to map custom envelopes to chain operator parameters. 
+All 'posX' parameters are given as seconds (from start of the stream).
+'valueX' parameters  must be in the range [0,1].
 <p><p></p><dt><strong>-km:fx-param,start-value,end-value,controller,channel</strong><dd>
 MIDI continuous controller (control change messages). 
 Messages on the MIDI-channel 'channel' that are coming from

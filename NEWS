@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 240401) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 250401) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,6 +17,10 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
+??042001 (v1.9dev7)
+	- added: -klg - a generic linear envelope; a controller source
+		 that can be used to map custom envelopes to chain 
+		 operator parameters [artham]
 24042001 (v1.9dev6)
 	- added: eiam - cs-setpos, cs-set-position; aliases for setpos
 	- added: eiam - cs-getpos, cs-get-position; aliases for getpos

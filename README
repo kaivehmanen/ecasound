@@ -170,7 +170,8 @@ Eure, Ian and Junichi Uekawa  - For creating ecasound debian packages [ieure,jue
 Fendt, Stefan - Original code for reverb (-ete) and RC-lowpass filter (-ef4).
 Hall, Jeremy - Extensive testing, ALSA 0.6.x support, many design ideas [jhall]
 Halttunen, Janne - Helped in developing the EIAM, and specifically the new ECI concept.
-Hamara, Arto - Ecasound logo(s), preset params, various bug fixes! [artham]
+Hamara, Arto - Ecasound logo(s), preset params, general linear
+	       envelope support, various bug fixes! [artham]
 Harris, Steve - Gcc 2.96 (RH7.0) testing and fixes. [swharris]
 Lavallée, Marc - Rpm-spec for Mandrake.
 Laydier, Antoine - layer.cpp (interprets mp3 headers) [SMF]
