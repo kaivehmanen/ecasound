@@ -648,13 +648,19 @@ string CHAIN::to_string(void) const
     fpreset = 0;
     fpreset = dynamic_cast<FILE_PRESET*>(chainops_rep[q]);
     if (fpreset != 0) {
-      t << "-pf:" << fpreset->filename() << " ";
+      t << "-pf:" << fpreset->filename();
+      if (fpreset->number_of_params() > 0) t << ",";
+      t << operator_parameters_to_string(fpreset);
+      t << " ";
     }
     else {
       gpreset = 0;
       gpreset = dynamic_cast<GLOBAL_PRESET*>(chainops_rep[q]);
       if (gpreset != 0) {
-	t << "-pn:" << gpreset->name() << " ";
+	t << "-pn:" << gpreset->name();
+	if (gpreset->number_of_params() > 0) t << ",";
+	t << operator_parameters_to_string(gpreset);
+	t << " ";
       }
       else {
         t << chain_operator_to_string(chainops_rep[q]) << " ";
@@ -667,6 +673,10 @@ string CHAIN::to_string(void) const
   return(t.to_string());
 }
 
+/**
+ * Makes an EOS-compatible option describing the current state
+ * of chain operator 'gctrl'.
+ */
 string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const
 {
   MESSAGE_ITEM t;
@@ -700,10 +710,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const
 #endif
   // --<
 
-  for(int n = 0; n < chainop->number_of_params(); n++) {
-    t << chainop->get_parameter(n + 1);
-    if (n + 1 < chainop->number_of_params()) t << ",";
-  }
+  t << operator_parameters_to_string(chainop);
 
   std::vector<GENERIC_CONTROLLER*>::size_type p = 0;
   while (p < gcontrollers_rep.size()) {
@@ -716,6 +723,10 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const
   return(t.to_string());
 }
 
+/**
+ * Makes an EOS-compatible option describing the current state
+ * of controller object 'gctrl'.
+ */
 string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const
 {
   MESSAGE_ITEM t;
@@ -731,10 +742,7 @@ string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const
 
   t << "-" << idstring;
   t << ":";
-  for(int n = 0; n < gctrl->number_of_params(); n++) {
-    t << gctrl->get_parameter(n + 1);
-    if (n + 1 < gctrl->number_of_params()) t << ",";
-  }
+  t << operator_parameters_to_string(gctrl);
 
   std::vector<GENERIC_CONTROLLER*>::size_type p = 0;
   while (p < gcontrollers_rep.size()) {
@@ -743,6 +751,22 @@ string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const
     }
     ++p;
   } 
+
+  return(t.to_string());
+}
+
+/**
+ * Makes an EOS-compatible, comma-separated list of parameter 
+ * values for chain operator 'chainop'.
+ */
+string CHAIN::operator_parameters_to_string(const OPERATOR* chainop) const
+{
+  MESSAGE_ITEM t;
+  
+  for(int n = 0; n < chainop->number_of_params(); n++) {
+    t << chainop->get_parameter(n + 1);
+    if (n + 1 < chainop->number_of_params()) t << ",";
+  }
 
   return(t.to_string());
 }
