@@ -110,6 +110,7 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   /*@{*/
 
   void print_last_value(void);
+  std::string last_value_to_string(void);
 
   /*@}*/
 

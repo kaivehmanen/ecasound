@@ -23,6 +23,8 @@ public:
   virtual void do_msg(ECA_LOGGER::Msg_level_t level, const std::string& module_name, const std::string& log_message);
   virtual void do_flush(void);
   virtual void do_log_level_changed(void);
+
+  static std::string ECA_LOGGER_WELLFORMED::create_wellformed_message(ECA_LOGGER::Msg_level_t  level, const std::string& message);
 };
 
 #endif /* INCLUDE_ECA_LOGGER_WELLFORMED_H */

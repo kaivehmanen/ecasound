@@ -36,6 +36,7 @@
 
 #include <eca-control.h>
 #include <eca-logger.h>
+#include <eca-logger-wellformed.h>
 
 #include "ecasound.h"
 #include "eca-neteci-server.h"
@@ -65,7 +66,8 @@ ECA_NETECI_SERVER::ECA_NETECI_SERVER(struct ecasound_state* state)
   : state_repp(state),
     srvfd_rep(-1),
     server_listening_rep(false),
-    unix_sockets_rep(false)
+    unix_sockets_rep(false),
+    cleanup_request_rep(false)
 {
 }
 
@@ -197,7 +199,7 @@ void ECA_NETECI_SERVER::close_server_socket(void)
   DBC_REQUIRE(srvfd_rep > 0);
   DBC_REQUIRE(server_listening_rep == true);
 
-  NETECI_DEBUG(cout << "(eca-neteci-server) closing socket " << kvu_numtostr(srvfd_rep) << "." << endl);
+  NETECI_DEBUG(cerr << "(eca-neteci-server) closing socket " << kvu_numtostr(srvfd_rep) << "." << endl);
   close(srvfd_rep);
   srvfd_rep = -1;
   server_listening_rep = false;
@@ -224,12 +226,12 @@ void ECA_NETECI_SERVER::listen_for_events(void)
    * - return to poll
    */
   while(state_repp->exit_request == 0) {
-    // NETECI_DEBUG(cout << "(eca-neteci-server) checking for events" << endl);
+    // NETECI_DEBUG(cerr << "(eca-neteci-server) checking for events" << endl);
     check_for_events(5000);
   }
 
   if (state_repp->exit_request != 0) {
-    NETECI_DEBUG(cout << "(eca-neteci-server) exit_request received" << endl);
+    NETECI_DEBUG(cerr << "(eca-neteci-server) exit_request received" << endl);
   }
 }
 
@@ -277,10 +279,13 @@ void ECA_NETECI_SERVER::check_for_events(int timeout)
 	       ufds[n].revents == POLLNVAL) {
 	/* 3. error, remove client */
 	remove_client(*p);
-	p = clients_rep.end();
       }
       if (p != clients_rep.end()) ++p;
     }
+  }
+
+  if (cleanup_request_rep == true) {
+    clean_removed_clients();
   }
 
   delete[] ufds;
@@ -321,10 +326,10 @@ void ECA_NETECI_SERVER::handle_connection(int fd)
 
 
   if (connfd >= 0) {
-    NETECI_DEBUG(cout << "(eca-neteci-server) incoming connection accepted" << endl);
+    NETECI_DEBUG(cerr << "(eca-neteci-server) incoming connection accepted" << endl);
     struct ecasound_neteci_server_client* client = new struct ecasound_neteci_server_client; /* add a new client */
     client->fd = connfd; 
-    client->buffer = new char (32); 
+    client->buffer = new char [32]; 
     client->buffer_length = 32;
     client->buffer_current_ptr = 0;
     client->peername = peername;
@@ -340,7 +345,7 @@ void ECA_NETECI_SERVER::handle_client_messages(struct ecasound_neteci_server_cli
   char* buf[128];
   int connfd = client->fd;
 
-  NETECI_DEBUG(cout << "(eca-neteci-server) handle_client_messages for fd " 
+  NETECI_DEBUG(cerr << "(eca-neteci-server) handle_client_messages for fd " 
 	       << connfd << endl);
 
   ssize_t c = kvu_fd_read(connfd, buf, 128, 5000);
@@ -354,7 +359,7 @@ void ECA_NETECI_SERVER::handle_client_messages(struct ecasound_neteci_server_cli
   }
   else {
     /* read() <= 0 */
-    NETECI_DEBUG(cout << "(eca-neteci-server) read error, removing client-fd " << connfd << "." << endl);
+    NETECI_DEBUG(cerr << "(eca-neteci-server) read error, removing client-fd " << connfd << "." << endl);
     remove_client(client);
   }
 }
@@ -369,7 +374,7 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
   DBC_DECLARE(int old_client_ptr = client->buffer_current_ptr);
   DBC_DECLARE(unsigned int old_cmd_queue_size = parsed_cmd_queue_rep.size());
 
-  NETECI_DEBUG(cout << "(eca-neteci-server) parse incoming data; "
+  NETECI_DEBUG(cerr << "(eca-neteci-server) parse incoming data; "
 	       << bytes << " bytes. Buffer length is " 
 	       << client->buffer_length << endl);
   
@@ -380,17 +385,17 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
       client->buffer_current_ptr = 0;
     }
     else {
-      NETECI_DEBUG(cout << "(eca-neteci-server) copying '" << buffer[n] << "'\n");
+      NETECI_DEBUG(cerr << "(eca-neteci-server) copying '" << buffer[n] << "'\n");
       client->buffer[client->buffer_current_ptr] = buffer[n];
       if (client->buffer_current_ptr > 0 &&
 	  client->buffer[client->buffer_current_ptr] == '\n' &&
 	  client->buffer[client->buffer_current_ptr - 1] == '\r') {
 
 	string cmd (client->buffer, client->buffer_current_ptr);
-	NETECI_DEBUG(cout << "(eca-neteci-server) storing command " << cmd << endl);
+	NETECI_DEBUG(cerr << "(eca-neteci-server) storing command " << cmd << endl);
 	parsed_cmd_queue_rep.push_back(cmd);
 
-	NETECI_DEBUG(cout << "(eca-neteci-server) copying " 
+	NETECI_DEBUG(cerr << "(eca-neteci-server) copying " 
 		     << client->buffer_length - client->buffer_current_ptr - 1
 		     << " bytes from " << client->buffer_current_ptr + 1 
 		     << " to the beginning of the buffer."
@@ -409,7 +414,7 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
 	client->buffer_current_ptr = 0;
       }
       else {
-	// NETECI_DEBUG(cout << "(eca-neteci-server) crlf not found, index=" << index << ", n=" << n << "cur_ptr=" << client->buffer_current_ptr << ".\n");
+	// NETECI_DEBUG(cerr << "(eca-neteci-server) crlf not found, index=" << index << ", n=" << n << "cur_ptr=" << client->buffer_current_ptr << ".\n");
 	client->buffer_current_ptr++;
       }
     }
@@ -421,67 +426,26 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
 
 void ECA_NETECI_SERVER::handle_eci_command(const string& cmd, struct ecasound_neteci_server_client* client)
 {
-  string retstr;
   ECA_CONTROL* ctrl = state_repp->control;
 
-  NETECI_DEBUG(cout << "(eca-neteci-server) handle eci command: " << cmd << endl);
+  NETECI_DEBUG(cerr << "(eca-neteci-server) handle eci command: " << cmd << endl);
 
   int res = pthread_mutex_lock(state_repp->lock);
   DBC_CHECK(res == 0);
 
   DBC_CHECK(ctrl != 0);
   ctrl->command(cmd);
-  
-  /* 1. status code */
-  if (ctrl->last_error().size() > 0) {
-    retstr += "400";
-  }
-  else {
-    retstr += "100";
-  }
-  retstr += " ";
 
-  /* 2. return value type */
-  retstr += ctrl->last_type();
-  retstr += " ";
+  string strtosend =
+    ECA_LOGGER_WELLFORMED::create_wellformed_message(ECA_LOGGER::eiam_return_values,
+						     ctrl->last_type() + " " + ctrl->last_value_to_string());
 
-  /* 3. create return value */
-  string retvalue;
-  switch(ctrl->last_type()[0])
-    {
-    case 'f':
-      retvalue = kvu_numtostr(ctrl->last_float(),9);
-      break;
-    case 'i': /* "li" */
-      retvalue = kvu_numtostr(ctrl->last_integer());
-      break;
-    case 'l':
-      retvalue = kvu_numtostr(ctrl->last_long_integer());
-      break;
-    case 's':
-      retvalue = ctrl->last_string();
-      break;
-    case 'S':
-      retvalue = kvu_vector_to_string(ctrl->last_string_list(), ",");
-      break;
-    default:
-      DBC_CHECK(false);
-    }
-
-  /* 4. return size */
-  retstr += kvu_numtostr(retvalue.size());
-  retstr += " ";
-
-  /* 5. add return value */
-  retstr += "\r\n\r\n"; /* FIXME: why two? */
-  retstr += retvalue;
-  
   res = pthread_mutex_unlock(state_repp->lock);
   DBC_CHECK(res == 0);
 
-  int bytes_to_send = retstr.size();
+  int bytes_to_send = strtosend.size();
   while(bytes_to_send > 0) {
-    int ret = kvu_fd_write(client->fd, retstr.c_str(), retstr.size(), 5000);
+    int ret = kvu_fd_write(client->fd, strtosend.c_str(), strtosend.size(), 5000);
     if (ret < 0) {
       cerr << "(eca-neteci-server) error in kvu_fd_write(), removing client.\n";
       remove_client(client);
@@ -503,11 +467,9 @@ void ECA_NETECI_SERVER::handle_eci_command(const string& cmd, struct ecasound_ne
  */
 void ECA_NETECI_SERVER::remove_client(struct ecasound_neteci_server_client* client)
 {
-  DBC_DECLARE(size_t oldsize = clients_rep.size());
-
   NETECI_DEBUG(std::cout << "(eca-neteci-server) removing client." << std::endl);
 
-  if (client->fd > 0) {
+  if (client != 0 && client->fd > 0) {
     ECA_LOG_MSG(ECA_LOGGER::info, 
 		"(eca-neteci-server) Closing connection " +
 		client->peername + ".");
@@ -515,9 +477,7 @@ void ECA_NETECI_SERVER::remove_client(struct ecasound_neteci_server_client* clie
     client->fd = -1;
   }
 
-  clean_removed_clients();
-  
-  DBC_ENSURE(clients_rep.size() == oldsize - 1);
+  cleanup_request_rep = true;
 }
 
 /**
@@ -530,21 +490,32 @@ void ECA_NETECI_SERVER::clean_removed_clients(void)
   DBC_DECLARE(size_t oldsize = clients_rep.size());
   DBC_DECLARE(size_t counter = 0);
 
-  NETECI_DEBUG(std::cout << "(eca-neteci-server) cleaning removed clients." << std::endl);
+  NETECI_DEBUG(std::cerr << "(eca-neteci-server) cleaning removed clients." << std::endl);
 
-  std::list<struct ecasound_neteci_server_client*>::iterator p = clients_rep.begin();
+  list<struct ecasound_neteci_server_client*>::iterator p = clients_rep.begin();
   while(p != clients_rep.end()) {
-    if ((*p)->fd == -1) {
-      delete (*p)->buffer;
+    NETECI_DEBUG(std::cerr << "(eca-neteci-server) checking for delete, client " << *p << std::endl);
+    if (*p != 0 && (*p)->fd == -1) {
+      if ((*p)->buffer != 0) {
+	delete[] (*p)->buffer;
+	(*p)->buffer = 0;
+      }
+      std::list<struct ecasound_neteci_server_client*>::iterator q = p;
+      ++q;
+      NETECI_DEBUG(std::cerr << "(eca-neteci-server) deleting client " << *p << std::endl);
       delete *p;
+      NETECI_DEBUG(std::cerr << "(eca-neteci-server) erasing client " << *p << std::endl);
+      *p = 0;
       clients_rep.erase(p);
-      p = clients_rep.begin();
+      p = q;
       DBC_DECLARE(++counter);
     }
     else {
       ++p;
     }
   }
+  
+  cleanup_request_rep = false;
 
   DBC_ENSURE(clients_rep.size() == oldsize - counter);
 }

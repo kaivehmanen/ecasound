@@ -225,7 +225,7 @@ void ecasound_launch_daemon(struct ecasound_state* state)
 			   ECA_NETECI_SERVER::launch_server_thread, 
 			   reinterpret_cast<void*>(state->eciserver));
   if (res != 0) {
-    cerr << "ecasound: Warning! Unable to create watchdog thread." << endl;
+    cerr << "ecasound: Warning! Unable to create daemon thread." << endl;
     delete state->daemon_thread;  state->daemon_thread = 0;
     delete state->lock;  state->lock = 0;
     delete state->eciserver; state->eciserver = 0;
@@ -321,7 +321,7 @@ void ecasound_parse_command_line(struct ecasound_state* state,
       }
 
       else if (cline.current() == "-C") {
-	state->interactive_mode = true;
+	state->interactive_mode = false;
       }
 
       else if (cline.current() == "-D") {
@@ -330,6 +330,7 @@ void ecasound_parse_command_line(struct ecasound_state* state,
       
       else if (cline.current() == "--daemon") {
 	state->daemon_mode = true;
+	state->interactive_mode = true;
       }
 
       else if (cline.current() == "-h" ||

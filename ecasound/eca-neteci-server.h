@@ -70,6 +70,7 @@ class ECA_NETECI_SERVER {
   int srvfd_rep;
   bool server_listening_rep;
   bool unix_sockets_rep;
+  bool cleanup_request_rep;
 
 };
 

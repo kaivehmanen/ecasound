@@ -655,16 +655,13 @@ void ECA_CONTROL::action(int action_id)
   }
 }
 
-void ECA_CONTROL::print_last_value(void)
+string ECA_CONTROL::last_value_to_string(void)
 {
   string type = last_type();
   string result;
 
   if (type == "e") {
-    if (wellformed_mode_rep != true) 
-      result = "(eca-control) ERROR: " + last_error();
-    else
-      result = last_error();
+    result = last_error();
   }
   else if (type == "s")
     result = last_string();
@@ -676,7 +673,21 @@ void ECA_CONTROL::print_last_value(void)
     result = kvu_numtostr(last_long_integer());
   else if (type == "f")
     result = kvu_numtostr(last_float(), 3);
-   
+
+  return(result);
+}
+
+void ECA_CONTROL::print_last_value(void)
+{
+  string type = last_type();
+  string result;
+
+  if (type == "e") {
+    result += "(eca-control) ERROR: ";
+  }
+
+  result += last_value_to_string();
+
   if (wellformed_mode_rep != true) {
     if (result.size() > 0) {
       ECA_LOG_MSG(ECA_LOGGER::eiam_return_values, result);

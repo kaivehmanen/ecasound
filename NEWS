@@ -44,6 +44,11 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   details
 	- changed: ecasound JACK transport master mode now follows
 		   the new pending-timebase model 
+	- changed: the NetECI protocol replaced with the ECI 
+		   standalone protocol defined in ecasound 
+		   programmer's guide
+	- changed: major updates to ecamonitor; moved back 
+	           to ecasound/ecamonitor
 	- fixed: libecasoundc return value sync problem; return
 		 value for command wasn't returned until command n+1 
 		 was issued

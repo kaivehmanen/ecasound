@@ -25,6 +25,9 @@ import socket
 import string
 import time
 
+ecamonitor_remote_host = "localhost"
+ecamonitor_remote_port = 2868
+
 # TODO:
 #  - add a ecamonitor.1 man page
 #  - add possibility to specify a port number
@@ -46,7 +49,7 @@ def connect_to_server():
     while 1:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect(("localhost", 2868))
+            s.connect((ecamonitor_remote_host, ecamonitor_remote_port))
             s.setblocking(1)
             return(s)
         
@@ -138,13 +141,16 @@ def main():
                 pad.addstr(0, 0, "ecamonitor v20021031-4", curses.A_BOLD)
 
                 if s == None:
-                    pad.addstr(2, 0, "Connection lost. Trying to reconnect to server.\n")
+                    pad.addstr(2, 0, "No connection. Trying to connect to " + ecamonitor_remote_host + ":" + str(ecamonitor_remote_port) + ".\n")
                     pad.refresh(0, 0, 0, 0, stdscr.getmaxyx()[0], stdscr.getmaxyx()[1])
                     s = connect_to_server()
-                    stdscr.addstr(3, 0, "Connection established.\n")
-                    pad.refresh(0, 0, 0, 0, stdscr.getmaxyx()[0], stdscr.getmaxyx()[1])                    
-
-                pad.addstr("\n\n------------------------------------------------------------")
+                    pad.addstr(3, 0, "Connection established.\n")
+                    pad.refresh(0, 0, 0, 0, stdscr.getmaxyx()[0], stdscr.getmaxyx()[1])
+                    pad.addstr(1, 0, "")
+                else:
+                    pad.addstr("\n")
+                    
+                pad.addstr("\n------------------------------------------------------------")
                 pad.addstr("\nEngine status: ")
                 pad.addstr((issue_eiam_command(s, 'engine-status')[1]), curses.A_BOLD)
                 pad.addstr("\nSelected chainsetup: ")
@@ -189,14 +195,18 @@ def main():
             except curses.error:
                 pass
                 
-            except Exception, e:
-                if e[0] == 32 or e[0] == 111:
+            except socket.error, e:
+                if e[0] == 32 or e[0] == 104 or e[0] == 111:
                     s = None
                     pass
 		else:
                     curses.endwin()
                     print "Exception!" , e
 		    raise
+
+            except KeyboardInterrupt:
+                break
+                
            
     finally:
         if s != None:
