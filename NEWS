@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 160305) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 210305) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -18,12 +18,13 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		and 1.9
 	- added: ecaplay - better error reporting, feature to reset
 		 output device audio parameters for each new input 
-		 file, support for ECAPLAY_OUTPUT_DEVINCE environment
+		 file, support for ECAPLAY_OUTPUT_DEVICE environment
 		 variable; see ecatools(1) for more info
+	- added: playlist mode to ecaplay
 	- changed: moved definitions from acconfig.h to configure.in;
 		   gets rid of the AC_DEFINE warnings produced by
 		   recent versions of autoheader
-	- changed: Ecasound Programmer's Guide converted from latex
+	- changed: Ecasound Programmer's Guide converted from LaTeX
 		   to ascii/rst
 	- changed: various small improvements to all ecatools and 
 		   the related manpages
@@ -33,6 +34,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 the new parser is designed to better handle garbage
 		 and unknown frame types in mp3 files [juliand,kaiv] 
 	- fixed: compile errors with egcs-2.91.66
+	- fixed: current position of the time crop gate (-gc) was 
+		 incorrecly increased [alexey]
 12032005 (v2.4.0)  -** stable release **-
 	- edi-entries: edi-40 progress
 	- added: support for having commas in arguments by escaping 
