@@ -45,13 +45,21 @@ Additional ecasound plugins (ALSA, Audiofile, aRts).
 %prep
 %setup -n ecasound-@VERSION@
 %build
-./configure --prefix=$RPM_BUILD_ROOT%prefix --disable-static $extra_params
+./configure --prefix=%{prefix} --disable-static $extra_params
 make
 
 %install
-make install
-make delete-static-libs
-make strip-shared-libs
+make DESTDIR="$RPM_BUILD_ROOT" install
+make DESTDIR="$RPM_BUILD_ROOT" delete-static-libs
+make DESTDIR="$RPM_BUILD_ROOT" strip-shared-libs
+
+%post
+if ! grep %{prefix}/lib /etc/ld.so.conf > /dev/null ; then
+  echo "%{prefix}/lib" >> /etc/ld.so.conf
+fi
+/sbin/ldconfig
+
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(-, root, root)
@@ -66,8 +74,8 @@ make strip-shared-libs
 /usr/local/bin/ecanormalize
 /usr/local/bin/ecaplay
 /usr/local/bin/ecasound-config
-/usr/local/lib/ecasound/libecasound.*
-/usr/local/lib/ecasound/libkvutils.*
+/usr/local/lib/libecasound.*
+/usr/local/lib/libkvutils.*
 %config /usr/local/share/ecasound
 
 %files devel
@@ -77,12 +85,15 @@ make strip-shared-libs
 
 %files plugins
 %defattr(-, root, root)
-/usr/local/lib/ecasound/plugins
+/usr/local/lib/ecasound-plugins
 
 %changelog
-* Sun Aug 30 2000 Kai Vehmanen <kaiv@wakkanet.fi>
-- Libraries moved to /usr/local/lib/ecasound. 'ecasound-config'
-  script added.
+* Thu Aug 31 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- Added /etc/ld.so.conf modification script.
+- Added DESTDIR to %install.
+
+* Wed Aug 30 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- 'ecasound-config' script added.
 
 * Sun Aug 20 2000 Kai Vehmanen <kaiv@wakkanet.fi>
 - All Qt-related stuff removed.

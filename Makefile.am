@@ -17,12 +17,12 @@ install-data-local:
 	if [ ! -f $(DESTDIR)$(datadir)/ecasound/effect_presets ]; then $(INSTALL_DATA) effect_presets $(DESTDIR)$(datadir)/ecasound/effect_presets; fi
 
 delete-static-libs:
-	rm -f $(DESTDIR)$(exec_prefix)/lib/ecasound/libkvutils.a
-	rm -f $(DESTDIR)$(exec_prefix)/lib/ecasound/libecasound.a
+	rm -f $(DESTDIR)$(prefix)/lib/libkvutils.a
+	rm -f $(DESTDIR)$(prefix)/lib/libecasound.a
 
 strip-shared-libs:
-	strip $(DESTDIR)$(exec_prefix)/lib/ecasound/libecasound.so
-	strip $(DESTDIR)$(exec_prefix)/lib/ecasound/libkvutils.so
+	strip $(DESTDIR)$(prefix)/lib/libecasound.so
+	strip $(DESTDIR)$(prefix)/lib/libkvutils.so
 
 redhat-rpm: ecasound.spec dist
 	cp -fv $(PACKAGE)-$(VERSION).tar.gz /usr/src/redhat/SOURCES/
@@ -38,5 +38,6 @@ dist-build-rpm: ecasound.spec dist
 copy-to-seul:
 	cp -v /usr/src/redhat/SOURCES/$(PACKAGE)-$(VERSION).tar.gz /opt/http/ecasound.seul/
 	cp -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
+	cp -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-plugins-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
 	cp -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-devel-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
 	cp -v /usr/src/redhat/SRPMS/$(PACKAGE)-$(VERSION)-$(RELEASE).src.rpm /opt/http/ecasound.seul/

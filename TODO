@@ -8,6 +8,7 @@
 
 - embedded effect preset parameters
 - internal plugin support
+- MIDI-subsystem updates
 
 2.x series (1.x -> 2.x requirements):
 
@@ -26,10 +27,6 @@
 [ Upcoming features - implemented as soon as possible ]
 
 - comments in ecs (chainsetup) files
-- ALSA 0.6.x support [--> update: already in CVS]
-- internal plugins (this makes it possible to support ALSA, aRts, etc 
-  audio objects requiring external libraries to be conditionally
-  loaded ==> only one binary-RPM needed)
 - type override for audio objects
 - mp3 bitrate as a command-line parameter
 - make separate xxx-list and xxx-status commands (a pure list, and a more
@@ -43,9 +40,9 @@
 
 Input/output devices:
 
+- metronome signal
 - internal support for mp3 encoding and decoding (libmpg123 + libmp3lame)
 - SMPTE time-code
-- metronome signal
 - integration to some synth engine - for instance Csound, aRts, 
   Quasimodo, Bacterium, ...
 - more efficient interleaving of multichannel inputs/outputs

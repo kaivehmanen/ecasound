@@ -33,6 +33,15 @@ Headers files needed for compiling other programs against
 ecasound libraries. This is package is not required for installing 
 other ecasound RPMs.
 
+%package plugins
+Summary: Additional ecasound plugins (ALSA, Audiofile, aRts).
+Group: Applications/Sound
+AutoReqProv: no
+Requires: ecasound
+
+%description plugins
+Additional ecasound plugins (ALSA, Audiofile, aRts).
+
 %prep
 %setup -n ecasound-@VERSION@
 %build
@@ -40,9 +49,9 @@ other ecasound RPMs.
 make
 
 %install
-make prefix=$RPM_BUILD_ROOT%prefix install
-make prefix=$RPM_BUILD_ROOT%prefix delete-static-libs
-make prefix=$RPM_BUILD_ROOT%prefix strip-shared-libs
+make DESTDIR=$RPM_BUILD_ROOT%prefix install
+make DESTDIR=$RPM_BUILD_ROOT%prefix delete-static-libs
+make DESTDIR=$RPM_BUILD_ROOT%prefix strip-shared-libs
 
 %files
 %defattr(-, root, root)
@@ -57,8 +66,8 @@ make prefix=$RPM_BUILD_ROOT%prefix strip-shared-libs
 /usr/bin/ecanormalize
 /usr/bin/ecaplay
 /usr/bin/ecasound-config
-/usr/lib/ecasound/libecasound.*
-/usr/lib/ecasound/libkvutils.*
+/usr/lib/libecasound.*
+/usr/lib/libkvutils.*
 %config /usr/share/ecasound
 
 %files devel
@@ -66,11 +75,18 @@ make prefix=$RPM_BUILD_ROOT%prefix strip-shared-libs
 /usr/include/ecasound
 /usr/include/kvutils
 
+%files plugins
+%defattr(-, root, root)
+/usr/lib/ecasound-plugins
+
 %changelog
-* Sun Aug 30 2000 Kai Vehmanen <kaiv@wakkanet.fi>
-- Libraries moved to /usr/local/lib/ecasound. 'ecasound-config'
-  script added.
+* Thu Aug 31 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- 'ecasound-config' script added.
 - All Qt-related stuff removed.
+- Added DESTDIR to %install.
+
+* Wed Jul 06 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- Added the -plugins package.
 
 * Wed Jun 07 2000 Kai Vehmanen <kaiv@wakkanet.fi>
 - ecaconvert added to the package.

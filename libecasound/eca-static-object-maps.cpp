@@ -22,6 +22,7 @@
 #include <dlfcn.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <cstdlib>
 #include <string>
 #include <algorithm>
@@ -218,8 +219,14 @@ static AUDIO_IO* register_internal_plugin(const string& libdir,
 void register_internal_plugins(void) {
   ECA_RESOURCES ecarc;
   string libdir = ecarc.resource("internal-plugin-directory");
-  AUDIO_IO* aobj;
 
+  struct stat fbuf;
+  if (stat(libdir.c_str(), &fbuf) < 0) {
+    ecadebug->msg(ECA_DEBUG::info, "(eca-static-object-maps) Internal-plugin directory not found. Check your ~/.ecasoundrc!");
+    return;
+  }
+
+  AUDIO_IO* aobj;
 #ifdef COMPILE_AF
   aobj = register_internal_plugin(libdir, "libaudioio_af.so");
   if (aobj != 0) {

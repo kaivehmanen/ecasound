@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 270800) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 310800) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,24 +14,21 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.7.9r13 <*-
 
-30082000 (v1.8.1d14)
+01092000 (v1.8.1d14)
 	- notice: all qt-related stuff put to separate packages
 	- added: support for internal plugins; modules using external 
 		 libraries (ALSA, aRts, libaudiofile, etc) are now 
   	         dynamically loaded on runtime (no unnecessary 
                  dependencies); installed by default to 
-  		 /usr/local/lib/ecasound/plugins; see also
+  		 (prefixdir)/lib/ecasound-plugins; see also
 	         ecasoundrc(5) man page for related entries
 	- added: new ecasound-plugins rpm package
 	- added: mp3 channel-count and sampling rate from mp3 header
+	- added: notifies user if internal-plugin directory isn't found
 	- removed: support for native ALSA rawmidi temporarily removed
 	          (while waiting, use ALSA's OSS-emulation)
 	- changed: aRts support enabled by default
 	- changed: behaviour of -ete effect's wet-% parameter
-	- changed: default location for internal plugins now 
-		   (prefixdir)/lib/ecasound/plugins
-	- changed: default location for libraries now 
-		   (exec_prefix)/lib/ecasound
 	- fixed: system readline related fixes (wrobell)
 	- fixed: ewf - crashed if looping was enabled and 
 	         'start-position' > 'length'

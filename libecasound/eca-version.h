@@ -1,7 +1,5 @@
-#ifndef _ECA_VERSION_H
-#define _ECA_VERSION_H
-
-#include <string>
+#ifndef INCLUDED_ECA_VERSION_H
+#define INCLUDED_ECA_VERSION_H
 
 /**
  * Ecasound library version as a formatted string.
@@ -18,7 +16,7 @@
  *
  * Rt = 'dx'  	     - development version
  */
-extern const string ecasound_library_version;
+extern const char* ecasound_library_version;
 
 /**
  * Ecasound library libtool version number (current:revision:age)
