@@ -59,6 +59,7 @@ SNDFILE_INTERFACE::SNDFILE_INTERFACE (const string& name)
 {
   finished_rep = false;
   snd_repp = 0;
+  closing_rep = false;
   set_label(name);
 }
 
@@ -224,12 +225,15 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 void SNDFILE_INTERFACE::close(void)
 {
   if (is_open() == true) {
-    if (snd_repp != 0) {
+    DBC_CHECK(closing_rep != true);
+    if (snd_repp != 0 && closing_rep != true) {
+      closing_rep = true;
       sf_close(snd_repp);
       snd_repp = 0;
     }
   }
   AUDIO_IO::close();
+  closing_rep = false;
 }
 
 bool SNDFILE_INTERFACE::finished(void) const

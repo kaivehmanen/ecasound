@@ -90,6 +90,7 @@ private:
   SNDFILE* snd_repp;
   long samples_read;
   bool finished_rep;
+  bool closing_rep;
 
   void open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::SETUP_ERROR&);
 
