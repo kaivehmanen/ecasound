@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>27.04.2003</h2>
+<h2>13.08.2003</h2>
 
 
     
@@ -74,7 +74,7 @@ be connected at a time, you can switch between them on-the-fly.
 <p><p></p><dt><strong>--daemon</strong><dd>
 Enable ecasound's daemon mode. If this option is given,
 ecasound will allow clients to connect to the running 
-ecasound session using using a TCP/IP network connection.
+ecasound session using a TCP/IP network connection.
 The clients can both observe and control the session. 
 <p><em>Warning!</em> As there is no access control implemented,
 be sure to block ecasound's port in your firewall 
@@ -248,12 +248,13 @@ any automatic connections, there are <strong>jack</strong> and
 <p>Additionally global JACK options can be set using 
 <strong>-G:jack,client_name,operation_mode</strong>. 'client_name' 
 is the name used when registering ecasound to the JACK system. 
-If 'operation_mode' is "streaming" (the default), ecasound
-will ignore any transport state changes in the JACK-system,
-in mode "master" it will act as the JACK timebase master 
-while in mode "slave" ecasound lets JACK control both the 
-transport state and current location.
-<p>FIXME: 2.3.0 provides new transport mode names
+If 'operation_mode' is "notransport",  ecasound will ignore 
+any transport state changes in the JACK-system; in mode 
+"send" (the default) it will send all start, stop and 
+position-change events to other JACK clients; in 
+mode "recv" ecasound will follow JACK start, stop and 
+position-change events; and mode "sendrecv" which is 
+a combination of the two previous modes.
 <p>More details about ecasound's JACK support can be found
 from ecasound user's guide.
 <p><p></p><dt><strong>Loop device</strong><dd> 

@@ -6,7 +6,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{30102002}
+\date{13082003}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,8 @@ ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 13.08.2003 - Updated documentation concerning JACK transport 
+                   functions.
 \item 31.10.2002 - Few section layout bugs fixed.
 \item 30.10.2002 - Added JACK documentation, minor layout changes.
 \item 17.10.2002 - Updated ecasound overview.
@@ -721,7 +723,7 @@ ecasound -i foo.wav -o jack
 ecasound -i foo.wav -o jack_auto,remote_client
 ecasound -i foo.wav -o jack_generic,local_portprefix
 ecasound -i jack                          -o foo.wav
-ecasound -i jack_auto,remove_client       -o foo.wav
+ecasound -i jack_auto,remote_client       -o foo.wav
 ecasound -i jack_generic,local_portprefix -o foo.wav
 \end{verbatim}
 
@@ -743,19 +745,20 @@ etc that are commonly available in audio application that
 maintain some kind of current position. JACK's transport
 control interface allows controlling the transport state
 of the all apps connected to one JACK server from a single
-application. Ecasound can support this functionality both
-in master and slave modes.
+application. Ecasound can support this functionality in
+four different modes (``notransport'', ``send'', ``recv'' 
+and ``sendrecv'').
 
-% FIXME: fix to new transprot modes
-To use ecasound as a transport master:
+By default ecasound will send all local transport events
+to other JACK clients:
 
 \begin{verbatim}
-ecasound -c -i null -o jack -G:jack,eca_master,master
+ecasound -c -i null -o jack
 \end{verbatim}
 
 To use transport control in ecasound, you have to have at least
 one publish input or output JACK port. Here we publish
-one null output port. After giving the initial ``start'' command
+one null output port. After giving the initial ``engine-start'' command
 in ecasound interactive mode, you are now able to use
 further EIAM commands to control all other JACK apps connected
 to the same server. Commands like 
@@ -763,15 +766,22 @@ to the same server. Commands like
 affect other apps.
 
 By default, ecasound doesn't react to outside transport 
-control. To use ecasound as a JACK transport slave:
+control. To enable this:
 
 \begin{verbatim}
-ecasound -c -i foo.wav -o jack_alsa,out -G:jack,eca_slave,slave
+ecasound -c -i foo.wav -o jack_alsa -G:jack,eca_slave,recv
 \end{verbatim}
                                                                
-After giving an initial ``start'' to ecasound, you should
+After giving an initial ``engine-start'' to ecasound, you should
 now be able to use other JACK apps to control ecasound's
-playback of ``foo.wav''.
+playback of ``foo.wav''. 
+
+To combine external control with the ability to control 
+the transport from ecasound's user-interface:
+
+\begin{verbatim}
+ecasound -c -i foo.wav -o jack_alsa -G:jack,eca_slave,sendrecv
+\end{verbatim}
 
 \subsection{Troubleshooting}
 
