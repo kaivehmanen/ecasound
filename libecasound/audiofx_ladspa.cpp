@@ -21,7 +21,6 @@
 #include <config.h>
 #endif
 
-#include <assert.h>
 #include <dlfcn.h>
 #include <kvu_utils.h>
 #include <kvu_dbc.h>
@@ -67,15 +66,11 @@ EFFECT_LADSPA* EFFECT_LADSPA::clone(void) const
   return(result);
 }
 
-void EFFECT_LADSPA::init_ports(void) {
+void EFFECT_LADSPA::init_ports(void)
+{
   port_count_rep = plugin_desc->PortCount;
   in_audio_ports = 0;
   out_audio_ports = 0;
-
-  /* if srate not set, use 44.1kHz (used only for calculating
-   * param hint values */
-  SAMPLE_SPECS::sample_rate_t srate = samples_per_second();
-  if (srate <= 0) { srate = 44100; }
 
   for(unsigned long m = 0; m < port_count_rep; m++) {
     if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
@@ -85,141 +80,176 @@ void EFFECT_LADSPA::init_ports(void) {
 	++out_audio_ports;
     }
 
-    /** 
-     * LADSPA API doesn't specify how to initialize control
-     * ports to sane initial values, so here we try to 
-     * make a educated guess based on the lower (lowb) and
-     * upper (upperb) bounds:
-     *
-     * 1) lowb == x and upperb == n/a
-     *    a) x < 0, initval = 0
-     *    b) x >= 0, initval = x
-     * 2) lowb == n/a and upperb == x
-     *    a) x > 0, initval = 0
-     *    b) x <= 0, initval = x
-     * 3) lowb == x and upperb == y 
-     *    a) x < 0 and y > 0, initval = 0
-     *    b) x < 0 and y < 0, initval = y
-     *    c) x > 0 and y > 0, initval = x
-     * 4) lowb == n/a and upperb == n/a, initval = 1
-     */
-    if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) ==
-	LADSPA_PORT_CONTROL) {
-      parameter_t init_value, lowb, upperb;
+    if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) == LADSPA_PORT_CONTROL) {
 
-      if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
-	lowb = plugin_desc->PortRangeHints[m].LowerBound * srate;
-      else
-	lowb = plugin_desc->PortRangeHints[m].LowerBound;
+      struct PARAM_DESCRIPTION pd; 
+      parse_parameter_hint_information(m, params.size(), &pd);
 
-      if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
-	upperb = plugin_desc->PortRangeHints[m].UpperBound * srate;
-      else
-	upperb = plugin_desc->PortRangeHints[m].UpperBound;
-
-      /* case 1 */
-      if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortRangeHints[m].HintDescriptor) &&
-	  !LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor)) {
-
-	if (lowb < 0) init_value = 0.0f;
-	else init_value = lowb;
-      }
-
-      /* case 2 */
-      else if (!LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortRangeHints[m].HintDescriptor) &&
-	       LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor)) {
-
-	if (upperb > 0) init_value = 0.0f;
-	else init_value = upperb;
-      }
-
-      /* case 3 */
-      else if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortRangeHints[m].HintDescriptor) &&
-	       LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor)) {
-
-	if (lowb < 0 && upperb > 0) init_value = 0.0f;
-	else if (lowb < 0 && upperb < 0) init_value = upperb;
-	else init_value = lowb;
-      }
-
-      /* case 4 */
-      else {
-	assert(!LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortRangeHints[m].HintDescriptor) &&
-	       !LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor));
-
-	if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
-	  init_value = srate;
-	else
-	  init_value = 1.0f;
-      }
-
-      params.push_back(init_value);
+      params.push_back(pd.default_value);
+      param_descs_rep.push_back(pd);
       if (params.size() > 1) param_names_rep += ",";
       param_names_rep += kvu_string_search_and_replace(string(plugin_desc->PortNames[m]), ',', ' ');;
     }
   }
 }
 
-void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_LADSPA::parse_parameter_hint_information(int portnum, int paramnum, struct PARAM_DESCRIPTION *pd)
 {
-  int ctrl_port_n = 0; 
+  LADSPA_PortRangeHintDescriptor hintdescriptor = plugin_desc->PortRangeHints[portnum].HintDescriptor;
 
   /* if srate not set, use 44.1kHz (used only for calculating
    * param hint values */
   SAMPLE_SPECS::sample_rate_t srate = samples_per_second();
+  /* FIXME: this is just ugly! */
   if (srate <= 0) { srate = 44100; }
+  
+  /** 
+   * For LADSPA v1.1, parameter hint information is 
+   * used as advertised by the plugin. LADSPA v1.0 
+   * API doesn't specify how to initialize control
+   * ports to sane initial values, so we just try to 
+   * make an educated guess based on the lower and
+   * upper bounds.
+   *
+   * 1) v1.1 hint information available
+   * 2) lowb == x and upperb == n/a
+   *    a) x < 0, initval = 0
+   *    b) x >= 0, initval = x
+   * 3) lowb == n/a and upperb == x
+   *    a) x > 0, initval = 0
+   *    b) x <= 0, initval = x
+   * 4) lowb == x and upperb == y 
+   *    a) x < 0 and y > 0, initval = 0
+   *    b) x < 0 and y < 0, initval = y
+   *    c) x > 0 and y > 0, initval = x
+   * 5) lowb == n/a and upperb == n/a, initval = 1
+   */
 
-  for(unsigned long m = 0; m < port_count_rep; m++) {
-    if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) == LADSPA_PORT_CONTROL) {
-      ++ctrl_port_n;
-      if (ctrl_port_n == param) {
-	pd->default_value = 1;
-	pd->description = get_parameter_name(param);
+  /* parameter name */
+  pd->description = get_parameter_name(paramnum);
 
-	if (LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor)) {
-	  pd->bounded_above = true;
-	  if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
-	    pd->upper_bound = plugin_desc->PortRangeHints[m].UpperBound * srate;
-	  else
-	    pd->upper_bound = plugin_desc->PortRangeHints[m].UpperBound;
-	}
-	else
-	  pd->bounded_above = false;
+  /* upper and lower bounds */
+  if (LADSPA_IS_HINT_BOUNDED_BELOW(hintdescriptor)) {
+    pd->bounded_below = true;
 
-	if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortRangeHints[m].HintDescriptor)) {
-	  pd->bounded_below = true;
-	  if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
-	    pd->lower_bound = plugin_desc->PortRangeHints[m].LowerBound * samples_per_second();
-	  else
-	    pd->lower_bound = plugin_desc->PortRangeHints[m].LowerBound;
-	}
-	else 
-	  pd->bounded_below = false;
+    if (LADSPA_IS_HINT_SAMPLE_RATE(hintdescriptor)) 
+      pd->lower_bound = plugin_desc->PortRangeHints[portnum].LowerBound * srate;
+    else
+      pd->lower_bound = plugin_desc->PortRangeHints[portnum].LowerBound;
+  }
+  else {
+    pd->bounded_below = false;
+  }
 
-	if (LADSPA_IS_HINT_TOGGLED(plugin_desc->PortRangeHints[m].HintDescriptor))
-	  pd->toggled = true;
-	else
-	  pd->toggled = false;
+  if (LADSPA_IS_HINT_BOUNDED_ABOVE(hintdescriptor)) {
+    pd->bounded_above = true;
 
-	if (LADSPA_IS_HINT_INTEGER(plugin_desc->PortRangeHints[m].HintDescriptor)) {
-	  pd->integer = true;
-	}
-	else {
-	  pd->integer = false;
-	}
+    if (LADSPA_IS_HINT_SAMPLE_RATE(hintdescriptor)) 
+      pd->upper_bound = plugin_desc->PortRangeHints[portnum].UpperBound * srate;
+    else
+      pd->upper_bound = plugin_desc->PortRangeHints[portnum].UpperBound;
+  }
+  else {
+    pd->bounded_above = false;
+  }
 
-	if (LADSPA_IS_HINT_LOGARITHMIC(plugin_desc->PortRangeHints[m].HintDescriptor))
-	  pd->logarithmic = true;
-	else
-	  pd->logarithmic = false;
-
-	if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_OUTPUT) == LADSPA_PORT_CONTROL)
-	  pd->output = true;
-	else
-	  pd->output = false;
-      }
+  /* defaults - case 1 */
+  if (LADSPA_IS_HINT_HAS_DEFAULT(hintdescriptor)) {
+    if (LADSPA_IS_HINT_DEFAULT_MINIMUM(hintdescriptor)) {
+      pd->default_value = pd->lower_bound;
+    }
+    else if (LADSPA_IS_HINT_DEFAULT_LOW(hintdescriptor)) {
+      pd->default_value = pd->lower_bound * 0.75f + pd->upper_bound * 0.25f;
+    }
+    else if (LADSPA_IS_HINT_DEFAULT_MIDDLE(hintdescriptor)) {
+      pd->default_value = pd->lower_bound * 0.50f + pd->upper_bound * 0.50f;
+    }
+    else if (LADSPA_IS_HINT_DEFAULT_HIGH(hintdescriptor)) {
+      pd->default_value = pd->lower_bound * 0.25f + pd->upper_bound * 0.75f;
+    }
+    else if (LADSPA_IS_HINT_DEFAULT_MAXIMUM(hintdescriptor)) {
+      pd->default_value = pd->upper_bound;
+    }
+    else if (LADSPA_IS_HINT_DEFAULT_0(hintdescriptor)) {
+      pd->default_value = 0.0f;
+    }
+    else if (LADSPA_IS_HINT_DEFAULT_1(hintdescriptor)) {
+      pd->default_value = 1.0f;
+    }
+    else if (LADSPA_IS_HINT_DEFAULT_100(hintdescriptor)) {
+      pd->default_value = 100.0f;
+    }
+    else if (LADSPA_IS_HINT_DEFAULT_440(hintdescriptor)) {
+      pd->default_value = 440.0f;
+    }
+    else {
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "(audiofx_ladspa) No LADSPA hint info found for plugin '" + name_rep + "'.");
     }
   }
+
+  /* defaults - case 2 */
+  else if (LADSPA_IS_HINT_BOUNDED_BELOW(hintdescriptor) &&
+	   !LADSPA_IS_HINT_BOUNDED_ABOVE(hintdescriptor)) {
+
+    if (pd->lower_bound < 0) pd->default_value = 0.0f;
+    else pd->default_value = pd->lower_bound;
+  }
+
+  /* defaults - case 3 */
+  else if (!LADSPA_IS_HINT_BOUNDED_BELOW(hintdescriptor) &&
+	   LADSPA_IS_HINT_BOUNDED_ABOVE(hintdescriptor)) {
+
+    if (pd->upper_bound > 0) pd->default_value = 0.0f;
+    else pd->default_value = pd->upper_bound;
+  }
+
+  /* defaults - case 4 */
+  else if (LADSPA_IS_HINT_BOUNDED_BELOW(hintdescriptor) &&
+	   LADSPA_IS_HINT_BOUNDED_ABOVE(hintdescriptor)) {
+
+    if (pd->lower_bound < 0 && pd->upper_bound > 0) pd->default_value = 0.0f;
+    else if (pd->lower_bound < 0 && pd->upper_bound < 0) pd->default_value = pd->upper_bound;
+    else pd->default_value = pd->lower_bound;
+  }
+
+  /* defaults - case 5 */
+  else {
+    DBC_CHECK(!LADSPA_IS_HINT_BOUNDED_BELOW(hintdescriptor) &&
+	      !LADSPA_IS_HINT_BOUNDED_ABOVE(hintdescriptor));
+
+    if (LADSPA_IS_HINT_SAMPLE_RATE(hintdescriptor)) 
+      pd->default_value = srate;
+    else
+      pd->default_value = 1.0f;
+  }
+
+  if (LADSPA_IS_HINT_TOGGLED(hintdescriptor))
+    pd->toggled = true;
+  else
+    pd->toggled = false;
+  
+  if (LADSPA_IS_HINT_INTEGER(hintdescriptor))
+    pd->integer = true;
+  else
+    pd->integer = false;
+  
+  if (LADSPA_IS_HINT_LOGARITHMIC(hintdescriptor))
+    pd->logarithmic = true;
+  else
+    pd->logarithmic = false;
+
+  if ((plugin_desc->PortDescriptors[portnum] & LADSPA_PORT_OUTPUT) == LADSPA_PORT_CONTROL)
+    pd->output = true;
+  else
+    pd->output = false;
+}
+
+void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
+  DBC_CHECK(param >= 0);
+  DBC_CHECK(param <= static_cast<int>(param_descs_rep.size()));
+  *pd = param_descs_rep[param - 1];
 }
 
 void EFFECT_LADSPA::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)

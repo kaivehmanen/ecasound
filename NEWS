@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 230702) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 300702) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -20,6 +20,9 @@ Last officially released version is -*> v2.0.4 *-
 ??072002 (v2.1dev11)
 	- added: configure-check for socket libraries
 	- added: -evp - volume peak watcher operator
+	- added: initial support for LADSPA v1.1 API for plugin 
+		 parameter defaults (as used in swh-0.2.8 plugin 
+		 set); updated ladspa.h included in the source tree
 	- changed: rewrite of all user-interface code that's
 		   in the ecasound-x.y.z/ecasound directory
 	- changed: added chainop and controller parameter 

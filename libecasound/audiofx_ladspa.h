@@ -74,8 +74,10 @@ private:
   long unique_number_rep;
   std::string name_rep, unique_rep, param_names_rep;
   std::vector<LADSPA_Data> params;
+  std::vector<struct PARAM_DESCRIPTION> param_descs_rep;
 
   void init_ports(void);
+  void parse_parameter_hint_information(int portnum, int paramnum, struct PARAM_DESCRIPTION *pd);
 };
 
 #endif
