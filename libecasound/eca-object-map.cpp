@@ -20,6 +20,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <sys/types.h>
 #include <regex.h>
 
 #include "eca-object-map.h"
