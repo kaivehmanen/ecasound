@@ -11,6 +11,11 @@ the file 'Documentation/examples.html'.
  Included files
 -----------------------------------------------------------------------
 
-- None at the moment.
+- example programs from the "Ecasound Control Interface Documentation"
+	- ecadoc_example.c [C]
+	- ecadoc_example.cpp [C++]
+	- ecadoc_example.py [Python]
+- Python scripts 
+	- normalize.py
 
 =======================================================================
