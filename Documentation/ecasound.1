@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "17\&.07\&.2002" "" "Multimedia software" 
+.TH "ecasound" "1" "22\&.08\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -256,6 +256,14 @@ a null audio device is created\&. This is useful if you just want
 to analyze sample data without writing it to a file\&. There\'s 
 also a realtime variant, "rtnull", which behaves just like "null" 
 objects, except all i/o is done at realtime speed\&.
+.IP 
+.IP "Resample - access object of different sample rates" 
+Object type \'resample\' can be used to resample audio 
+object\'s audio data to match the sampling rate used
+in the active chainsetup\&. For example, 
+\fBecasound -f:16,2,44100 -i resample,22050,foo\&.wav -o /dev/dsp\fP,
+will resample file from 22\&.05kHz to 44\&.1kHz and write the
+result to the soundcard device\&.
 .IP 
 .IP "Reverse - process audio data backwards" 
 Object type \'reverse\' can be used to reverse audio 

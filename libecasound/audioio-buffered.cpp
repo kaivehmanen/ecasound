@@ -68,8 +68,6 @@ void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf)
   DBC_REQUIRE(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
   // --------
 
-  set_buffersize(sbuf->length_in_samples());
-
   if (interleaved_channels() == true) {
     sbuf->import_interleaved(iobuf_uchar_repp,
 			     read_samples(iobuf_uchar_repp, buffersize_rep),

@@ -13,6 +13,7 @@ Details:
 - solution ideas 
     - usage: -i resample,to_freq,audio_object 
     - example: -i resample,22050,foo.wav
+    - or alternatively: -f:16,2,22050 -i resample,foo.wav
 - open issues
     - what algorithm to use? maybe use a better algorithms
       taken for instance from sox...

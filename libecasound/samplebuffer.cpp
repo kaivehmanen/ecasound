@@ -42,14 +42,6 @@
 #define DEBUG_RESAMPLING_STATEMENT(x) ((void)0)
 #endif
 
-#if 0
-  static const sample_t s16_to_st_constant = ((1 << 15) / max_amplitude);
-  static const sample_t s24_to_st_constant = ((1 << 23) / max_amplitude);
-  static const sample_t s32_to_st_constant = ((1 << 30) / max_amplitude);
-  static const sample_t u8_to_st_delta = (1 << 7);
-  static const sample_t u8_to_st_constant = (max_amplitude / (1 << 7));
-#endif
-
 /**
  * Constructs a new sample buffer object.
  */
@@ -434,17 +426,17 @@ void SAMPLE_BUFFER::export_helper(unsigned char* obuffer,
     {
       int32_t s32temp = eca_sample_convert_float_to_s32(value);
       
-      if (value < 0) {
-	DBC_CHECK(value >= -1.0f);
-	// 	    s32temp = (int32_t)(sample_t)(value * (SAMPLE_SPECS::s32_to_st_constant - 0) - 0.5);
-	DBC_CHECK(s32temp < 0);
-	 if (!(s32temp < 0)) { std::cerr << "s32temp=" << s32temp << ", value=" << value << ".\n"; }
-      }
-      else {
-	DBC_CHECK(value <= 1.0f);
-	// 	    s32temp = (int32_t)(sample_t)(value * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
-	DBC_CHECK(s32temp >= 0);
-      }
+      //       if (value < 0) {
+      // 	DBC_CHECK(value >= -1.0f);
+      // 	    s32temp = (int32_t)(sample_t)(value * (SAMPLE_SPECS::s32_to_st_constant - 0) - 0.5);
+      // 	DBC_CHECK(s32temp < 0);
+      // 	 if (!(s32temp < 0)) { std::cerr << "s32temp=" << s32temp << ", value=" << value << ".\n"; }
+      //       }
+      //       else {
+      // 	DBC_CHECK(value <= 1.0f);
+      // 	    s32temp = (int32_t)(sample_t)(value * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
+      // 	DBC_CHECK(s32temp >= 0);
+      //       }
       
       obuffer[(*optr)++] = (unsigned char)(s32temp & 0xff);
       obuffer[(*optr)++] = (unsigned char)((s32temp >> 8) & 0xff);

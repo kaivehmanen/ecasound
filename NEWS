@@ -17,7 +17,10 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.4 *-
 
-28082002 (v2.1dev11)
+??092002 (v2.1dev12)
+	- edi-entries: edi-24
+	- added: edi-24; initial support for the resample audio object
+22082002 (v2.1dev11)
 	- added: configure-check for socket libraries
 	- added: -evp - volume peak watcher operator
 	- added: initial support for LADSPA v1.1 API for plugin 

@@ -23,7 +23,7 @@ echo "------------------------------------------------------------------"
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 2.1dev11)
+AM_INIT_AUTOMAKE(ecasound, 2.1dev12)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
