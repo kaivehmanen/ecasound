@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 030301) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 060301) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -24,6 +24,10 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- fixed: mpg123 instances weren't always properly cleaned
 	- fixed: loop-device code wasn't working
 	- fixed: more ewf-fixes
+	- fixed: removal of static object maps might cure some
+		 C++ compatibility problems (no user-visible changes) 
+	- fixed: if connected, trying to remove the last chainsetup
+		 failed (possible core dump if debug disabled)
 02032001 (v1.9dev3)
 	- added: ecaplay - ctrl-c skips to the next file
 	- changed: -Md syntax to '-Md:rawmidi,device_name', where
