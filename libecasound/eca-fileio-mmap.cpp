@@ -26,7 +26,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "eca-error.h"
 #include "eca-fileio.h"
 #include "eca-fileio-mmap.h"
 #include "eca-fileio-mmap-fthread.h"
@@ -34,16 +33,12 @@
 ECA_FILE_IO_MMAP::~ECA_FILE_IO_MMAP(void) { }
 
 void ECA_FILE_IO_MMAP::open_file(const string& fname, 
-			    const string& fmode,
-			    bool handle_errors) throw(ECA_ERROR&)
+				 const string& fmode)
 { 
   if (fmode == "rb") {
     f1 = ::open(fname.c_str(), O_RDWR);
     if (!f1) {
-      if (handle_errors) {
-	throw(ECA_ERROR("ECA-FILEIO", "unable to open file " + fname +
-			    " in mode \"" + fmode + "\".", ECA_ERROR::retry));
-      }
+      file_ready = false;
       mode_rep = "";
     }
     else {
@@ -57,10 +52,7 @@ void ECA_FILE_IO_MMAP::open_file(const string& fname,
     }
   }
   else {
-    if (handle_errors) {
-      throw(ECA_ERROR("ECA-FILEIO", "unable to open file " + fname +
-			    " in mode \"" + fmode + "\".", ECA_ERROR::retry));
-    }
+    file_ready = false;
   }
 }
 

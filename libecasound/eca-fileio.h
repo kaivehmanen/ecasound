@@ -1,25 +1,26 @@
-#ifndef _FILEIO_H
-#define _FILEIO_H
+#ifndef INCLUDED_FILEIO_H
+#define INCLUDED_FILEIO_H
+
+#include <string>
 
 /**
- * File input/output interface with buffering
+ * Interface for blocking file input/output with buffering
  */
 class ECA_FILE_IO {
  public:
 
-  // --
+  // -----
   // Open/close routines
-  // ---
-  virtual void open_file(const string& fname, 
-			 const string& fmode, 
-			 bool handle_errors = true) = 0;
+
+  virtual void open_file(const string& fname,
+			 const string& fmode) = 0;
   virtual void open_stdin(void) = 0;
   virtual void open_stdout(void) = 0;
   virtual void close_file(void) = 0;
 
-  // --
+  // ----
   // Normal file operations
-  // ---
+
   virtual void read_to_buffer(void* obuf, long int bytes) = 0;
   virtual void write_from_buffer(void* obuf, long int bytes) = 0;
 
@@ -29,9 +30,9 @@ class ECA_FILE_IO {
   virtual long int get_file_position(void) const = 0;
   virtual long int get_file_length(void) const = 0;
 
-  // --
+  // -----
   // Status
-  // ---
+
   virtual bool is_file_ready(void) const = 0;
   virtual bool is_file_error(void) const = 0;
   virtual long int file_bytes_processed(void) const = 0;
@@ -41,13 +42,3 @@ class ECA_FILE_IO {
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-

@@ -32,7 +32,7 @@ class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
   void seek_position_in_samples(long pos);
   TIMIDITY_INTERFACE& operator=(const TIMIDITY_INTERFACE& x) { return *this; }
 
-  void fork_timidity(void) throw(ECA_ERROR&);
+  void fork_timidity(void);
   void kill_timidity(void);
   
  public:

@@ -28,7 +28,6 @@
 #include "eca-debug.h"
 
 REALTIME_NULL::REALTIME_NULL(const string& name) {
-  is_triggered = false;
   //cerr << "delay " << buffer_delay.tv_sec << "sec.\n";
   //cerr << "delay " << buffer_delay.tv_usec << "usec.\n";
 }
@@ -44,27 +43,30 @@ void REALTIME_NULL::close(void) {
   toggle_open_state(false);
 }
 
-void REALTIME_NULL::start(void) {
+void REALTIME_NULL::prepare(void) {
   if (io_mode() == io_read) {
-    if (is_triggered == false) {
-      buffer_fill.tv_sec = 0; 
-      buffer_fill.tv_usec = 0;
-      ::gettimeofday(&access_time, NULL);
-      ::gettimeofday(&start_time, NULL);
-      is_triggered = true;
-    }
+    buffer_fill.tv_sec = 0; 
+    buffer_fill.tv_usec = 0;
+    ::gettimeofday(&access_time, NULL);
+    ::gettimeofday(&start_time, NULL);
+    toggle_prepared_state(true);
   }
 }
 
-void REALTIME_NULL::stop(void) { 
-  if (is_triggered == true) {
-    is_triggered = false;
+void REALTIME_NULL::start(void) {
+  if (io_mode() == io_read) {
+    toggle_running_state(true);
   }
+}
+
+void REALTIME_NULL::stop(void) {
+    toggle_running_state(false);
+    toggle_prepared_state(false);
 }
 
 long int REALTIME_NULL::read_samples(void* target_buffer, 
 				     long int samples) {
-  assert(is_triggered == true);
+  assert(is_running() == true);
 
   struct timeval d,n;
   ::gettimeofday(&d, NULL);
@@ -120,12 +122,12 @@ long int REALTIME_NULL::read_samples(void* target_buffer,
 
 void REALTIME_NULL::write_samples(void* target_buffer, long int
 				  samples) { 
-  if (is_triggered == false) {
+  if (is_running() != true) {
     ::gettimeofday(&start_time, NULL);
     ::gettimeofday(&access_time, NULL);
     buffer_fill.tv_sec = 0; 
     buffer_fill.tv_usec = 0;
-    is_triggered = true;
+    toggle_running_state(true);
   }
   else {
     struct timeval d,n;
@@ -183,7 +185,7 @@ long int REALTIME_NULL::latency(void) const {
 }
 
 long REALTIME_NULL::position_in_samples(void) const { 
-  if (is_triggered == false) return(0);
+  if (is_running() != true) return(0);
   struct timeval now;
   ::gettimeofday(&now, NULL);
   double time = now.tv_sec * 1000000.0 + now.tv_usec -

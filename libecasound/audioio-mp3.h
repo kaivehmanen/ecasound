@@ -33,14 +33,14 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   long int bytes_rep;
   int fd_rep;
   
-  void get_mp3_params(const string& fname) throw(ECA_ERROR&);
+  void get_mp3_params(const string& fname) throw(SETUP_ERROR&);
   
   //  MP3FILE(const MP3FILE& x) { }
   MP3FILE& operator=(const MP3FILE& x) { return *this; }
 
-  void fork_mpg123(void) throw(ECA_ERROR&);
+  void fork_mpg123(void);
   void kill_mpg123(void);
-  void fork_lame(void) throw(ECA_ERROR&);
+  void fork_lame(void);
   void kill_lame(void);
   
  public:
@@ -49,7 +49,7 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   virtual string description(void) const { return("Interface for mp3 decoders and encoders that support input/output using standard streams."); }
   virtual bool locked_audio_format(void) const { return(true); }
 
-  virtual void open(void);
+  virtual void open(void) throw(SETUP_ERROR&);
   virtual void close(void);
   
   virtual long int read_samples(void* target_buffer, long int samples);

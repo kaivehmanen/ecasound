@@ -683,7 +683,6 @@ void ECA_CONTROL::aio_register(void) const {
   while(p != kmap.end()) {
     string temp;
     AUDIO_IO* q = ECA_AUDIO_OBJECT_MAP::object(p->first, false);
-    q->map_parameters();
     int params = q->number_of_params();
     if (params > 0) {
       temp += " (params: ";
@@ -708,7 +707,6 @@ void ECA_CONTROL::cop_register(void) const {
   while(p != kmap.end()) {
     string temp;
     CHAIN_OPERATOR* q = ECA_CHAIN_OPERATOR_MAP::object(p->first);
-    q->map_parameters();
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
       if (n == 0) temp += ":";
@@ -743,7 +741,6 @@ void ECA_CONTROL::ladspa_register(void) const {
   while(p != kmap.end()) {
     string temp = "\n\t-el:" + p->second + ",";
     EFFECT_LADSPA* q = ECA_LADSPA_PLUGIN_MAP::object(p->first);
-    q->map_parameters();
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
       temp += "\"" + q->get_parameter_name(n + 1) + "\"";
@@ -764,7 +761,6 @@ void ECA_CONTROL::ctrl_register(void) const {
   while(p != kmap.end()) {
     string temp;
     GENERIC_CONTROLLER* q = ECA_CONTROLLER_MAP::object(p->first);
-    q->map_parameters();
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
       if (n == 0) temp += ":";

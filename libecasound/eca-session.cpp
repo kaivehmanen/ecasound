@@ -243,7 +243,7 @@ void ECA_SESSION::load_chainsetup(const string& filename) throw(ECA_ERROR&) {
   // --------
 }
 
-void ECA_SESSION::connect_chainsetup(void) {
+void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&) {
   // --------
   // require:
   assert(selected_chainsetup_repp != 0);

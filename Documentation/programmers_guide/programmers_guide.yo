@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (07102000)
+       (11102000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -92,6 +92,23 @@ you can give -100.0% to the amplifier effect. This of course
 results in inverted sample data. I think this a reasonable 
 approach. After all, ecasound is supposed to be a tool for creative
 work and experimenting. It's not meant for e-commerce. ;)
+
+subsubsect(Error handling)
+Two specific things worth mentioning: First, the standard UNIX-style 
+error handling, where functions performing actions return an integer 
+value, is em(not) used in ecasound. As described in the above section 
+em(Routine side effects), all routines are either modifiers or
+observers, not both. So when using ecasound APIs, you first perform an
+action (modifying function), and then afterwards check what happened
+(using an observer function).
+
+Secondly, C++ exceptions are used in ecasound. Exception based error
+handling has its problems, but in some cases it is clearly the best
+option. Using exceptions for anything other than pure exception
+handling is to be avoided at all cost. And when exceptions are used,
+their use must be specified in function prototypes. This is important,
+as clients need to know what exceptions can be thrown. All in all, use 
+of exceptions should be carefully planned.
 
 COMMENT(----------------------------------------------------------------)
 subsect(Coding style)
@@ -203,7 +220,7 @@ subsect(Signal flow)
 This is simple. A group of inputs is routed to a group of chains.
 Audio data is processed in the chains and afterwards routed to 
 a group of outputs. Using internal loop devices, it' also possible to 
-route signals from one chain to another. It's also possibleto assign
+route signals from one chain to another. It's also possible to assign
 inputs and outputs to multiple chains.
 
 COMMENT(----------------------------------------------------------------)
@@ -434,6 +451,24 @@ COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
 
 sect(Adding new features and components?)
+
+COMMENT(----------------------------------------------------------------)
+subsect(Audio objects)
+To implement a new audio object type, you must first select which 
+top-level class to derive from. Usually this is either AUDIO_IO
+(the top-level class), AUDIO_IO_BUFFERED (a more low level interface)
+or AUDIO_IO_DEVICE (realtime devices).
+
+The second step is to implement the various virtual functions declared
+in the parent classes. These functions can be divided into four
+categories: 1) attributes (describes the object and its capabilities), 
+2) configuration (routines used for setting up the object), 3) main 
+functionality (open, close, input, output, etc) and 4) runtime
+information (status info).
+
+Adding the new object to ecasound is much like adding a new effect
+(see the next section). Basicly you just add it to the makefiles and
+then register it to the appropriate object map (see below).
 
 COMMENT(----------------------------------------------------------------)
 subsect(Effects and other chain operators)

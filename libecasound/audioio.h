@@ -61,7 +61,8 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   enum Io_mode { io_read = 1, io_write = 2, io_readwrite = 4 };
 
   class SETUP_ERROR {
-    enum Type {
+   public:
+    enum Error_type {
       sample_format,    /* unsupported sample format */
       channels,         /* unsupported channel count */
       sample_rate,      /* unsupported sample_rate */
@@ -73,13 +74,12 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
       unexpected        /* unexpected/unknown error */
     };
     
-   public:
      const string& message(void) const;
-     Type type(void) const;
-     SETUP_ERROR(Type type, const string& message);
+     Error_type type(void) const;
+     SETUP_ERROR(Error_type type, const string& message);
 
    private:
-     Type type_rep;
+     Error_type type_rep;
      string message_rep;
   };
 
@@ -181,7 +181,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * ensure:
    *  readable() == true || writable() == true
    */
-  virtual void open(void) throw(SETUP_ERROR) = 0;
+  virtual void open(void) throw(SETUP_ERROR&) = 0;
 
   /**
    * Close audio object. After calling this routine, 

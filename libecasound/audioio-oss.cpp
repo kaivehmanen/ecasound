@@ -40,33 +40,32 @@ OSSDEVICE::OSSDEVICE(const string& name,
 		     bool precise_sample_rates) 
 {
   label(name);
-  is_triggered = false;
   precise_srate_mode = precise_sample_rates;
 }
 
-void OSSDEVICE::open(void) throw(ECA_ERROR&) {
+void OSSDEVICE::open(void) throw(SETUP_ERROR&) {
   if (is_open() == true) return;
   if (io_mode() == io_read) {
     if ((audio_fd = ::open(label().c_str(), O_RDONLY, 0)) == -1) {
-      throw(ECA_ERROR("AUDIOIO-OSS", "unable to open OSS-device to O_RDONLY"));
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-OSS: unable to open OSS-device to O_RDONLY"));
     }
   }
   else if (io_mode() == io_write) {
     if ((audio_fd = ::open(label().c_str(), O_WRONLY, 0)) == -1) {
       // Opening device failed
       perror("(eca-oss)");
-      throw(ECA_ERROR("AUDIOIO-OSS", "unable to open OSS-device to O_WRONLY, " + label() + "."));
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-OSS: unable to open OSS-device to O_RWONLY"));
     }
   }
   else {
-      throw(ECA_ERROR("AUDIOIO-OSS", "Simultanious intput/output not supported."));
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-OSS: Simultanious intput/output not supported."));
   }
 
   // -------------------------------------------------------------------
   // Check capabilities
 
   if (ioctl(audio_fd, SNDCTL_DSP_GETCAPS, &oss_caps) == -1)
-    throw(ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_GETCAPS"));
+    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-OSS: OSS-device doesn't support SNDCTL_DSP_GETCAPS"));
 
   // -------------------------------------------------------------------
   // Set triggering 
@@ -76,12 +75,12 @@ void OSSDEVICE::open(void) throw(ECA_ERROR&) {
     if (io_mode() == io_read) {
       int enable_bits = ~PCM_ENABLE_INPUT; // This disables recording
       if (::ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
-	throw(ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
+	throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-OSS: OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
     }      
     else if (io_mode() == io_write) {
       int enable_bits = ~PCM_ENABLE_OUTPUT; // This disables playback
       if (::ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
-	throw(ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
+	throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-OSS: OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
     }
   }
   else {
@@ -93,7 +92,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR&) {
   // Set fragment size.
 
   if (buffersize() == 0) 
-    throw(ECA_ERROR("AUDIOIO-OSS", "Buffersize() is 0!"));
+    throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: Buffersize() is 0!"));
     
   int fragsize, fragtotal = 16;
   unsigned short int fr_size, fr_count = 0x7fff; // 0x7fff = not limited
@@ -110,7 +109,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR&) {
   fragsize = ((fr_count << 16) | fr_size);
     
   if (::ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &fragsize)==-1)
-    throw(ECA_ERROR("AUDIOIO-OSS", "general OSS-error SNDCTL_DSP_SETFRAGMENT"));
+    throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: general OSS-error SNDCTL_DSP_SETFRAGMENT"));
 
   ecadebug->msg(ECA_DEBUG::user_objects, "set OSS fragment size to (2^x) " +
 		   kvu_numtostr(fr_size) + ".");
@@ -128,15 +127,15 @@ void OSSDEVICE::open(void) throw(ECA_ERROR&) {
 
     default:
       {
-	throw(ECA_ERROR("AUDIOIO-OSS", "audio format not supported (1)"));
+	throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-OSS: audio format not supported (1)"));
       }
     }
 
   int f = format;
   if (::ioctl(audio_fd, SNDCTL_DSP_SETFMT, &f)==-1)
-    throw(ECA_ERROR("AUDIOIO-OSS", "audio format not supported (2)"));
+    throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-OSS: audio format not supported (2)"));
   if (f != format)
-    throw(ECA_ERROR("AUDIOIO-OSS", "audio format not supported (3)"));
+    throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-OSS: audio format not supported (2)"));
 
   // -------------------------------------------------------------------
   // Select number of channels
@@ -152,18 +151,18 @@ void OSSDEVICE::open(void) throw(ECA_ERROR&) {
     ecadebug->msg("(audioio-oss) Warning! Error when setting sample rate."); 
 
   if (stereo != t)
-    throw(ECA_ERROR("AUDIOIO-OSS", "audio format not supported SNDCTL_DSP_STEREO"));        
+    throw(SETUP_ERROR(SETUP_ERROR::channels, "AUDIOIO-OSS: audio format not supported SNDCTL_DSP_STEREO"));
 
   // -------------------------------------------------------------------
   // Select sample rate
   // ---
   int speed = samples_per_second();
   if (::ioctl(audio_fd, SNDCTL_DSP_SPEED, &speed) == -1)
-    throw(ECA_ERROR("AUDIOIO-OSS", "audio format not supported SNDCTL_DSP_SPEED"));
+    throw(SETUP_ERROR(SETUP_ERROR::sample_rate, "AUDIOIO-OSS: audio format not supported SNDCTL_DSP_SPEED"));
   
   if (speed != samples_per_second()) {
     if (precise_srate_mode) {
-      throw(ECA_ERROR("AUDIOIO-OSS", "Requested sample rate is not supported. Audio device suggests sample rate of " + kvu_numtostr(speed) + ". Disable precise-sample-rate mode to ignore the difference."));
+      throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-OSS: Requested sample rate is not supported. Audio device suggests sample rate of " + kvu_numtostr(speed) + ". Disable precise-sample-rate mode to ignore the difference."));
     }
     else {
       ecadebug->msg("(audioio-oss) Warning! Requested sample rate is not supported. Ignoring the the difference between requested (" + kvu_numtostr(samples_per_second()) + ") and suggested (" + kvu_numtostr(speed) + ") sample rates."); 
@@ -174,7 +173,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR&) {
   // Get fragment size.
 
   if (::ioctl(audio_fd, SNDCTL_DSP_GETBLKSIZE, &fragment_size) == -1)
-    throw(ECA_ERROR("AUDIOIO-OSS", "general OSS error SNDCTL_DSP_GETBLKSIZE"));
+    throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: general OSS error SNDCTL_DSP_GETBLKSIZE"));
 
   ecadebug->msg(ECA_DEBUG::user_objects, "OSS set to use fragment size of " + 
 		   kvu_numtostr(fragment_size) + ".");
@@ -183,37 +182,32 @@ void OSSDEVICE::open(void) throw(ECA_ERROR&) {
 }
 
 void OSSDEVICE::stop(void) {
+  AUDIO_IO_DEVICE::stop();
   ::ioctl(audio_fd, SNDCTL_DSP_POST, 0);
   ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" disabled.");
-  is_triggered = false;
-  //  if (is_open()) close_device();
 }
 
-void OSSDEVICE::close(void) throw(ECA_ERROR&) {
+void OSSDEVICE::close(void) {
   if (is_open()) { 
     toggle_open_state(false);
-    if (::close(audio_fd) == -1) 
-      throw(ECA_ERROR("AUDIOIO-OSS", "error while closing OSS device"));
+    ::close(audio_fd);
   }
 }
 
-void OSSDEVICE::start(void) throw(ECA_ERROR&) {
-  if (is_triggered == false) {
-    ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" started.");
-    if ((oss_caps & DSP_CAP_TRIGGER) == DSP_CAP_TRIGGER) {
-      int enable_bits;
-      if (io_mode() == io_read) enable_bits = PCM_ENABLE_INPUT;
-      else if (io_mode() == io_write) enable_bits = PCM_ENABLE_OUTPUT;
-      if (::ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
-        throw(ECA_ERROR("AUDIOIO-OSS", "general OSS-error SNDCTL_DSP_SETTRIGGER"));
-    }   
-    gettimeofday(&start_time, NULL);
-    is_triggered = true;
-  }
+void OSSDEVICE::start(void) {
+  AUDIO_IO_DEVICE::start();
+  ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" started.");
+  if ((oss_caps & DSP_CAP_TRIGGER) == DSP_CAP_TRIGGER) {
+    int enable_bits;
+    if (io_mode() == io_read) enable_bits = PCM_ENABLE_INPUT;
+    else if (io_mode() == io_write) enable_bits = PCM_ENABLE_OUTPUT;
+      ::ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits);
+  }   
+  gettimeofday(&start_time, NULL);
 }
 
 long OSSDEVICE::position_in_samples(void) const { 
-  if (is_triggered == false) return(0);
+  if (is_running() != true) return(0);
   if ((oss_caps & DSP_CAP_REALTIME) == DSP_CAP_REALTIME) {
     count_info info;
     info.bytes = 0;

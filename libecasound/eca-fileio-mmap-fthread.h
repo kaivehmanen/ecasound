@@ -7,6 +7,8 @@
 #include <sys/mman.h>
 #include <sys/types.h>
 
+#include "eca-error.h"
+
 #ifndef MAP_FAILED
 #define MAP_FAILED	((__ptr_t) -1)
 #endif

@@ -36,7 +36,6 @@
 #include "samplebuffer.h"
 #include "audioio.h"
 
-#include "eca-error.h"
 #include "eca-debug.h"
 
 FILE* audioio_mp3_pipe;
@@ -54,7 +53,7 @@ MP3FILE::MP3FILE(const string& name) {
 
 MP3FILE::~MP3FILE(void) { close(); }
 
-void MP3FILE::open(void) { 
+void MP3FILE::open(void) throw(SETUP_ERROR&) { 
   if (io_mode() == io_read) {
     get_mp3_params(label());
   }
@@ -73,9 +72,13 @@ void MP3FILE::close(void) {
 long int MP3FILE::read_samples(void* target_buffer, long int samples) {
   if (is_open() == false) fork_mpg123();
   bytes_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
-  if (bytes_rep < samples * frame_size() || bytes_rep == 0) finished_rep = true;
+  if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
+    if (position_in_samples() == 0) 
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-mp3) Can't start process \"" + MP3FILE::default_mp3_input_cmd + "\". Please check your ~/.ecasoundrc.");
+    finished_rep = true;
+  }
   else finished_rep = false;
-
+  
   return(bytes_rep / frame_size());
 }
 
@@ -86,7 +89,11 @@ void MP3FILE::write_samples(void* target_buffer, long int samples) {
   }
   else {
     bytes_rep = ::write(fd_rep, target_buffer, frame_size() * samples);
-    if (bytes_rep < frame_size() * samples || bytes_rep == 0) finished_rep = true;
+    if (bytes_rep < frame_size() * samples || bytes_rep == 0) {
+      if (position_in_samples() == 0) 
+	ecadebug->msg(ECA_DEBUG::info, "(audioio-mp3) Can't start process \"" + MP3FILE::default_mp3_output_cmd + "\". Please check your ~/.ecasoundrc.");
+      finished_rep = true;
+    }
     else finished_rep = false;
   }
 }
@@ -103,14 +110,17 @@ void MP3FILE::seek_position(void) {
   }
 }
 
-void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR&) {
+void MP3FILE::get_mp3_params(const string& fname) throw(SETUP_ERROR&) {
   Layer newlayer;
-  newlayer.get(fname.c_str());
+
+  if (newlayer.get(fname.c_str()) != true) {
+    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-CDR: Can't open " + label() + " for reading."));
+  }
 
   struct stat buf;
   ::stat(fname.c_str(), &buf);
   double fsize = (double)buf.st_size;
-
+  
   double bitrate = ((double)newlayer.bitrate() * 1000.0);
   double bsecond = (double)bytes_per_second();
   MESSAGE_ITEM m;
@@ -123,13 +133,13 @@ void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR&) {
   
   if (bitrate == 0 ||
       length_in_samples() < 0) length_in_samples(0);
-
+  
   m << "Setting MP3 length_value: " << length_in_seconds() << "\n.";
   pcm_rep = newlayer.pcmPerFrame();
-
+  
   m << "MP3 pcm value: " << pcm_rep << ".";
   ecadebug->msg(ECA_DEBUG::user_objects,m.to_string());
-
+  
   set_channels((newlayer.mode() == Layer::MPG_MD_MONO) ? 1 : 2);
   set_samples_per_second(bsecond / channels() / 2);
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
@@ -142,7 +152,7 @@ void MP3FILE::kill_mpg123(void) {
   }
 }
 
-void MP3FILE::fork_mpg123(void) throw(ECA_ERROR&) {
+void MP3FILE::fork_mpg123(void) {
   if (!is_open()) {
     string cmd = MP3FILE::default_mp3_input_cmd;
     if (cmd.find("%o") != string::npos) {
@@ -152,11 +162,10 @@ void MP3FILE::fork_mpg123(void) throw(ECA_ERROR&) {
     set_fork_command(cmd);
     set_fork_file_name(label());
     fork_child_for_read();
-    if (child_fork_succeeded() != true) {
-      throw(ECA_ERROR("ECA-MP3","Can't start mpg123-thread! Check that 'mpg123' is installed properly."));
+    if (child_fork_succeeded() == true) {
+      fd_rep = file_descriptor();
+      toggle_open_state(true);
     }
-    fd_rep = file_descriptor();
-    toggle_open_state(true);
   }
 }
 
@@ -168,16 +177,15 @@ void MP3FILE::kill_lame(void) {
   }
 }
 
-void MP3FILE::fork_lame(void) throw(ECA_ERROR&) {
+void MP3FILE::fork_lame(void) {
   if (!is_open()) {
     ecadebug->msg("(audioio-mp3) Starting to encode " + label() + " with lame.");
     set_fork_command(MP3FILE::default_mp3_output_cmd);
     set_fork_file_name(label());
     fork_child_for_write();
-    if (child_fork_succeeded() != true) {
-      throw(ECA_ERROR("AUDIOIO-MP3","Can't start lame-thread! Check that 'lame' is installed properly."));
+    if (child_fork_succeeded() == true) {
+      fd_rep = file_descriptor();
+      toggle_open_state(true);
     }
-    fd_rep = file_descriptor();
-    toggle_open_state(true);
   }
 }

@@ -49,13 +49,14 @@ ECA_CONTROL_OBJECTS::ECA_CONTROL_OBJECTS (ECA_SESSION* psession)
  *  name != ""
  *
  * ensure:
- *  selected_chainsetup() == name
+ *  selected_chainsetup() == name || no_errors != true
  */
 void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name) {
   // --------
   REQUIRE(name != "");
   // --------
 
+  bool no_errors = true;
   try {
     session_repp->add_chainsetup(name);
     select_chainsetup(name);
@@ -63,10 +64,11 @@ void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name) {
   }
   catch(ECA_ERROR& e) {
     cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    no_errors = false;
   }
 
   // --------
-  ENSURE(selected_chainsetup() == name);
+  ENSURE(selected_chainsetup() == name || no_errors != true);
   // --------
 }
 
@@ -389,7 +391,7 @@ void ECA_CONTROL_OBJECTS::toggle_chainsetup_looping(void) {
  *  is_valid() == true
  *
  * ensure:
- *  is_connected() == true
+ *  is_connected() == true || no_errors != true
  */
 void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
   // --------
@@ -398,15 +400,22 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
   assert(is_valid());
   // --------
 
+  bool no_errors = true;
   if (is_connected() == true) {
     disconnect_chainsetup();
   }
-  session_repp->connect_chainsetup();
-  ecadebug->msg("(eca-controller) Connected chainsetup:  \"" + connected_chainsetup() + "\".");
+  try {
+    session_repp->connect_chainsetup();
+    ecadebug->msg("(eca-controller) Connected chainsetup:  \"" + connected_chainsetup() + "\".");
+  }
+  catch(ECA_ERROR& e) {
+    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    no_errors = false;
+  }
 
   // --------
   // ensure:
-  assert(is_connected());
+  assert(is_connected() || no_errors != true);
   // --------
 }
 
@@ -1144,7 +1153,12 @@ ECA_AUDIO_FORMAT ECA_CONTROL_OBJECTS::get_audio_format(void) {
   bool was_open = true;
   if (selected_audio_object_repp->is_open() == false) {
     was_open = false;
-    selected_audio_object_repp->open();
+    try {
+      selected_audio_object_repp->open();
+    }
+    catch(AUDIO_IO::SETUP_ERROR&) { 
+      // FIXME: what to do here?
+    }
   }
   ECA_AUDIO_FORMAT t (selected_audio_object_repp->channels(), 
 		      selected_audio_object_repp->samples_per_second(), 

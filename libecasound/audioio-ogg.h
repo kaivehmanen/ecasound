@@ -34,9 +34,9 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   int fd_rep;
   FILE* f1_rep;
   
-  void fork_ogg123(void) throw(ECA_ERROR&);
+  void fork_ogg123(void);
   void kill_ogg123(void);
-  void fork_vorbize(void) throw(ECA_ERROR&);
+  void fork_vorbize(void);
   void kill_vorbize(void);
   
  public:

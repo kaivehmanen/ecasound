@@ -148,25 +148,32 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
  * chain operators if necessary.
  * 
  * ensure:
- *   is_enabled() == false
+ *   is_enabled() == true
  */
-void ECA_CHAINSETUP::enable(void) {
-  if (is_enabled_rep == false) {
-    ecadebug->control_flow("Chainsetup/Enabling audio inputs");
-    for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
-      (*q)->buffersize(buffersize(), sample_rate());
-      if ((*q)->is_open() == false) (*q)->open();
-      audio_object_info(*q);
+void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
+  try {
+    if (is_enabled_rep == false) {
+      ecadebug->control_flow("Chainsetup/Enabling audio inputs");
+      for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
+	(*q)->buffersize(buffersize(), sample_rate());
+	if ((*q)->is_open() == false) (*q)->open();
+	audio_object_info(*q);
     }
-    
-    ecadebug->control_flow("Chainsetup/Enabling audio outputs");
-    for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
-      (*q)->buffersize(buffersize(), sample_rate());
-      if ((*q)->is_open() == false) (*q)->open();
-      audio_object_info(*q);      
+      
+      ecadebug->control_flow("Chainsetup/Enabling audio outputs");
+      for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
+	(*q)->buffersize(buffersize(), sample_rate());
+	if ((*q)->is_open() == false) (*q)->open();
+	audio_object_info(*q);      
+      }
     }
+    is_enabled_rep = true;
   }
-  is_enabled_rep = true;
+  catch(AUDIO_IO::SETUP_ERROR& e) {
+    throw(ECA_ERROR("ECA-CHAINSETUP", 
+		    string("Enabling chainsetup: ")
+		    + e.message()));
+  }
 
   // --------
   ENSURE(is_enabled() == true);
@@ -718,7 +725,6 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
 
     if (cop != 0) {
       cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
-      cop->map_parameters();
 
       ecadebug->control_flow("Chainsetup/Adding LADSPA-plugin \"" +
 			     cop->name() + "\"");
@@ -753,7 +759,6 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_vst_plugin (const string& argu) {
   cop = dynamic_cast<CHAIN_OPERATOR*>(eca_vst_plugin_map.object(prefix));
 #endif
   if (cop != 0) {
-    cop->map_parameters();
     
     ecadebug->control_flow("Chainsetup/Adding VST-plugin \"" + cop->name() + "\"");
     otemp << "Setting parameters: ";
@@ -787,7 +792,6 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
   CHAIN_OPERATOR* cop = ECA_CHAIN_OPERATOR_MAP::object(prefix);
   if (cop != 0) {
     cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
-    cop->map_parameters();
 
     ecadebug->control_flow("Chainsetup/Adding chain operator \"" +
 			   cop->name() + "\"");
@@ -853,7 +857,6 @@ GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
   GENERIC_CONTROLLER* gcontroller = ECA_CONTROLLER_MAP::object(prefix);
   if (gcontroller != 0) {
     gcontroller = gcontroller->clone();
-    gcontroller->map_parameters();
 
     ecadebug->control_flow("Chainsetup/Adding controller source \"" +  gcontroller->name() + "\"");
 

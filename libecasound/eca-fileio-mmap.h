@@ -1,5 +1,5 @@
-#ifndef _FILEIO_MMAP_H
-#define _FILEIO_MMAP_H
+#ifndef INCLUDED_FILEIO_MMAP_H
+#define INCLUDED_FILEIO_MMAP_H
 
 #include <sys/types.h>
 
@@ -35,8 +35,7 @@ class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
   // Open/close routines
   // ---
   void open_file(const string& fname, 
-		 const string& fmode, 
-		 bool handle_errors = true) throw(ECA_ERROR&);
+		 const string& fmode);
   void open_stdin(void) { }
   void open_stdout(void) { }
   void close_file(void);

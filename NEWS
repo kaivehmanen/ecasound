@@ -36,6 +36,9 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 paths of effects presets and LADSPA plugins [juekawa]
 	- fixed: invalid/non-existant files caused problems for all
 		 utils in ecatools package
+	- fixed: sync-related ALSA 0.6.x fixes
+	- fixed: better handling of mp3, ogg, timidity and mikmod
+		 related errors
 26092000 (v1.8.3d15)
 	- changed: code for parsing command-line arguments rewritten; 
 		   now reports about invalid arguments

@@ -39,7 +39,7 @@ EWFFILE::~EWFFILE(void) {
   delete child;
 }
 
-void EWFFILE::open(void) throw(ECA_ERROR&) {
+void EWFFILE::open(void) throw(SETUP_ERROR&) {
   child_active = false;
 
   ewf_rc.resource_file(label());
@@ -47,7 +47,7 @@ void EWFFILE::open(void) throw(ECA_ERROR&) {
 
   child = ECA_OBJECT_FACTORY::create_audio_object(child_name_rep);
   if (child == 0) 
-    throw(ECA_ERROR("AUDIOIO-EWF", "Couldn't open child object.",ECA_ERROR::retry));
+    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-EWF: Couldn't open child object."));
 
   ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: Opening ewf-child:" + child->label() + ".");
 

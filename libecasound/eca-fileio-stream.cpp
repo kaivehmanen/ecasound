@@ -24,20 +24,14 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
-#include "eca-error.h"
 #include "eca-fileio.h"
 #include "eca-fileio-stream.h"
 
 void ECA_FILE_IO_STREAM::open_file(const string& fname, 
-			    const string& fmode,
-			    bool handle_errors) throw(ECA_ERROR&)
+				   const string& fmode)
 { 
   f1 = ::fopen(fname.c_str(), fmode.c_str());
   if (!f1) {
-    if (handle_errors) {
-      throw(ECA_ERROR("ECA-FILEIO", "unable to open file " + fname +
-			  " in mode \"" + fmode + "\".", ECA_ERROR::retry));
-    }
     mode_rep = "";
   }
   else {
@@ -74,7 +68,8 @@ void ECA_FILE_IO_STREAM::write_from_buffer(void* obuf, long int bytes) {
 long int ECA_FILE_IO_STREAM::file_bytes_processed(void) const { return(bytes_rep); }
 
 bool ECA_FILE_IO_STREAM::is_file_ready(void) const { 
-  if (::feof(f1) ||
+  if (mode_rep == "" ||
+      ::feof(f1) ||
       ::ferror(f1)) return(false);
   return(true);
 }

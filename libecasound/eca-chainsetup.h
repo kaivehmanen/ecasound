@@ -57,7 +57,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
   void set_name(const string& str) { setup_name_rep = str; }
   void set_filename(const string& str) { setup_filename_rep = str; }
 
-  void enable(void);
+  void enable(void) throw(ECA_ERROR&);
   void disable(void);
 
   CHAIN_OPERATOR* create_chain_operator (const string& arg);

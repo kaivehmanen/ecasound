@@ -25,7 +25,6 @@
 
 #include "audioio-ogg.h"
 
-#include "eca-error.h"
 #include "eca-debug.h"
 
 string OGG_VORBIS_INTERFACE::default_ogg_input_cmd = "ogg123 -d wav -o file:%F %f";
@@ -57,14 +56,19 @@ void OGG_VORBIS_INTERFACE::close(void) {
 }
 
 long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int samples) {
-  if (is_open() != true) fork_ogg123();
-  if (wait_for_child() != true) {
-    finished_rep = true;
-    return(0);
+  if (is_open() != true) {
+    fork_ogg123();
+    if (feof(f1_rep) || ferror(f1_rep)) {
+      finished_rep = true;
+      return(0);
+    }
   }
   bytes_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
-  if (bytes_rep < samples * frame_size() || bytes_rep == 0)
+  if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
+    if (position_in_samples() == 0) 
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-ogg) Can't start process \"" + OGG_VORBIS_INTERFACE::default_ogg_input_cmd + "\". Please check your ~/.ecasoundrc.");
     finished_rep = true;
+  }
   else 
     finished_rep = false;
 
@@ -104,19 +108,18 @@ void OGG_VORBIS_INTERFACE::kill_ogg123(void) {
   }
 }
 
-void OGG_VORBIS_INTERFACE::fork_ogg123(void) throw(ECA_ERROR&) {
+void OGG_VORBIS_INTERFACE::fork_ogg123(void) {
   if (!is_open()) {
     ecadebug->msg(ECA_DEBUG::user_objects, OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
     set_fork_command(OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
     set_fork_file_name(label());
     set_fork_pipe_name();
     fork_child_for_read();
-    if (child_fork_succeeded() != true) {
-      throw(ECA_ERROR("ECA-OGG","Can't start ogg123-thread! Check that 'ogg123' is installed properly."));
+    if (child_fork_succeeded() == true) {
+      fd_rep = file_descriptor();
+      f1_rep = fdopen(fd_rep, "r");
+      toggle_open_state(true);
     }
-    fd_rep = file_descriptor();
-    f1_rep = fdopen(fd_rep, "r");
-    toggle_open_state(true);
   }
 }
 
@@ -128,16 +131,19 @@ void OGG_VORBIS_INTERFACE::kill_vorbize(void) {
   }
 }
 
-void OGG_VORBIS_INTERFACE::fork_vorbize(void) throw(ECA_ERROR&) {
+void OGG_VORBIS_INTERFACE::fork_vorbize(void) {
   if (!is_open()) {
     ecadebug->msg("(audioio-ogg) Starting to encode " + label() + " with vorbize.");
-    set_fork_command(OGG_VORBIS_INTERFACE::default_ogg_output_cmd);
+    string command_rep = OGG_VORBIS_INTERFACE::default_ogg_output_cmd;
+    if (command_rep.find("%f") != string::npos) {
+      command_rep.replace(command_rep.find("%f"), 2, label());
+    }
+    set_fork_command(command_rep);
     set_fork_file_name(label());
     fork_child_for_write();
-    if (child_fork_succeeded() != true) {
-      throw(ECA_ERROR("AUDIOIO-OGG","Can't start vorbize-thread! Check that 'vorbize' is installed properly."));
+    if (child_fork_succeeded() == true) {
+      fd_rep = file_descriptor();
+      toggle_open_state(true);
     }
-    fd_rep = file_descriptor();
-    toggle_open_state(true);
   }
 }

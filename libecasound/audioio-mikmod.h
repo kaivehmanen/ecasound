@@ -31,7 +31,7 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
   void seek_position_in_samples(long pos);
   MIKMOD_INTERFACE& operator=(const MIKMOD_INTERFACE& x) { return *this; }
 
-  void fork_mikmod(void) throw(ECA_ERROR&);
+  void fork_mikmod(void);
   void kill_mikmod(void);
   
  public:

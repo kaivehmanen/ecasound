@@ -121,9 +121,9 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
 	  ++p;
 	}
 	args[p] = 0;
-	execvp(temp[0].c_str(), const_cast<char**>(args));
+	int res = execvp(temp[0].c_str(), const_cast<char**>(args));
 	::close(1);
-	exit(0);
+	exit(res);
 	cerr << "You shouldn't see this!\n";
       }
       else if (pid_of_child_rep > 0) { 
@@ -132,7 +132,10 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
 	// ---
 	::close(fpipes[1]);
 	fd_rep = fpipes[0];
-	last_fork_rep = true;
+	if (wait_for_child() == true)
+	  last_fork_rep = true;
+	else
+	  last_fork_rep = false;
       }
     }
   }
@@ -160,18 +163,28 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
       ++p;
     }
     args[p] = 0;
-    execvp(temp[0].c_str(), const_cast<char**>(args));
-    exit(0);
+    int res = execvp(temp[0].c_str(), const_cast<char**>(args));
+    if (res < 0) {
+      /**
+       * If execvp failed, make sure that the other end of 
+       * the pipe doesn't block forever.
+       */
+      int fd = ::open(tmpfile_repp, O_WRONLY);
+      ::close(fd);
+    }
+    
+    exit(res);
     cerr << "You shouldn't see this!\n";
   }
   else if (pid_of_child_rep > 0) { 
     // ---
     // parent
     // ---
-    fd_rep = ::open(tmpfile_repp, O_RDONLY);
-    if (fd_rep > 0) {
+    fd_rep = 0;
+    if (wait_for_child() == true)
+      fd_rep = ::open(tmpfile_repp, O_RDONLY);
+    if (fd_rep > 0)
       last_fork_rep = true;
-    }
   }
 }
 
@@ -197,13 +210,17 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
       // = new char* [temp.size() + 1];
       vector<string>::size_type p = 0;
       while(p < temp.size()) {
-	args[p] = temp[p].c_str();
+	if (temp[p] == "%f") 
+	  args[p] = object_rep.c_str();
+	else
+	  args[p] = temp[p].c_str();
+
 	++p;
       }
       args[p] = 0;
-      execvp(temp[0].c_str(), const_cast<char**>(args));
+      int res = execvp(temp[0].c_str(), const_cast<char**>(args));
       ::close(0);
-      exit(0);
+      exit(res);
       cerr << "You shouln't see this!\n";
     }
     else if (pid_of_child_rep > 0) { 
@@ -212,7 +229,10 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
       // ---
       ::close(fpipes[0]);
       fd_rep = fpipes[1];
-      last_fork_rep = true;
+      if (wait_for_child() == true)
+	last_fork_rep = true;
+      else
+	last_fork_rep = false;
     }
   }
 }
@@ -227,7 +247,7 @@ void AUDIO_IO_FORKED_STREAM::clean_child(void) {
 }
 
 bool AUDIO_IO_FORKED_STREAM::wait_for_child(void) const {
-  if (waitpid(pid_of_child_rep, 0, WNOHANG) < 0)
+  if (waitpid(pid_of_child_rep, 0, WNOHANG) != 0)
     return false;
 
   return true;

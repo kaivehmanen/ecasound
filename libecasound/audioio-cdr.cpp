@@ -28,8 +28,6 @@
 #include "samplebuffer.h"
 #include "audioio-types.h"
 #include "audioio-cdr.h"
-
-#include "eca-error.h"
 #include "eca-debug.h"
 
 CDRFILE::CDRFILE(const string& name) {
@@ -61,7 +59,7 @@ void CDRFILE::format_query(void) {
   // -------
 }
 
-void CDRFILE::open(void) throw(ECA_ERROR&) { 
+void CDRFILE::open(void) throw(SETUP_ERROR&) { 
   // --------
   // require:
   assert(!is_open());
@@ -72,7 +70,7 @@ void CDRFILE::open(void) throw(ECA_ERROR&) {
     {
       fobject = ::fopen(label().c_str(),"rb");
       if (!fobject)
-	throw(ECA_ERROR("AUDIOIO-CDR", "Can't open " + label() + " for reading."));
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-CDR: Can't open " + label() + " for reading."));
       set_length_in_bytes();
       break;
     }
@@ -80,7 +78,7 @@ void CDRFILE::open(void) throw(ECA_ERROR&) {
     {
       fobject = ::fopen(label().c_str(),"wb");
       if (!fobject) 
-	throw(ECA_ERROR("AUDIOIO-CDR","Can't open " + label() + " for writing."));
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-CDR: Can't open " + label() + " for writing."));
       break;
     }
   case io_readwrite:
@@ -89,7 +87,7 @@ void CDRFILE::open(void) throw(ECA_ERROR&) {
       if (!fobject) {
 	fobject = ::fopen(label().c_str(),"w+b");
 	if (!fobject)
-	  throw(ECA_ERROR("AUDIOIO-CDR","Can't open " + label() + " for read-wre."));
+	  throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-CDR: Can't open " + label() + " for read&write."));
       }
       set_length_in_bytes();
       break;

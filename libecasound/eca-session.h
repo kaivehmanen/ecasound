@@ -147,7 +147,7 @@ class ECA_SESSION {
    * ensure:
    *  selected_chainsetup == connected_chainsetup
    */
-  void connect_chainsetup(void);
+  void connect_chainsetup(void) throw(ECA_ERROR&);
 
   /**
    * Disconnect connected chainsetup

@@ -1,5 +1,5 @@
-#ifndef _FILEIO_STREAM_H
-#define _FILEIO_STREAM_H
+#ifndef INCLUDED_FILEIO_STREAM_H
+#define INCLUDED_FILEIO_STREAM_H
 
 #include "eca-fileio.h"
 
@@ -23,8 +23,7 @@ class ECA_FILE_IO_STREAM : public ECA_FILE_IO {
   // Open/close routines
   // ---
   void open_file(const string& fname, 
-		 const string& fmode, 
-		 bool handle_errors = true) throw(ECA_ERROR&);
+		 const string& fmode);
   void open_stdin(void);
   void open_stdout(void);
   void close_file(void);

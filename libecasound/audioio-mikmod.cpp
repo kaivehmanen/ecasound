@@ -23,7 +23,6 @@
 #include <kvutils/kvu_numtostr.h>
 
 #include "audioio-mikmod.h"
-#include "eca-error.h"
 #include "eca-debug.h"
 
 string MIKMOD_INTERFACE::default_mikmod_cmd = "mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f";
@@ -48,12 +47,12 @@ void MIKMOD_INTERFACE::close(void) {
 
 long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {
   if (is_open() == false) fork_mikmod();
-  if (wait_for_child() != true) {
-    finished_rep = true;
-    return(0);
-  }
   bytes_read_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
-  if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) finished_rep = true;
+  if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
+    if (position_in_samples() == 0) 
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-mikmod) Can't start process \"" + MIKMOD_INTERFACE::default_mikmod_cmd + "\". Please check your ~/.ecasoundrc.");
+    finished_rep = true;
+  }
   else finished_rep = false;
   return(bytes_read_rep / frame_size());
 }
@@ -74,16 +73,15 @@ void MIKMOD_INTERFACE::kill_mikmod(void) {
   }
 }
 
-void MIKMOD_INTERFACE::fork_mikmod(void) throw(ECA_ERROR&) {
+void MIKMOD_INTERFACE::fork_mikmod(void) {
   if (!is_open()) {
     set_fork_command(MIKMOD_INTERFACE::default_mikmod_cmd);
     set_fork_file_name(label());
     set_fork_sample_rate(samples_per_second());
     fork_child_for_read();
-    if (child_fork_succeeded() != true) {
-      throw(ECA_ERROR("AUDIOIO-MIKMOD","Can't start mikmod-thread! Check that 'mikmod' is installed properly."));
+    if (child_fork_succeeded() == true) {
+      fd_rep = file_descriptor();
+      toggle_open_state(true);
     }
-    fd_rep = file_descriptor();
-    toggle_open_state(true);
   }
 }

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-af.cpp: Interface to SGI audiofile library.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name) {
   label(name);
 }
 
-void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR&) {
+void AUDIOFILE_INTERFACE::format_query(void) throw(SETUP_ERROR&) {
   // --------
   // require:
   assert(!is_open());
@@ -53,8 +53,8 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR&) {
   if (io_mode() == io_read) {
     afhandle = ::afOpenFile(label().c_str(), "r", NULL);
     if (afhandle == AF_NULL_FILEHANDLE) {
-      throw(ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
-			  + "\" using libaudiofile."));
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-AF: Can't open file \"" + label()
+			+ "\" using libaudiofile."));
     }
     else {
       set_samples_per_second((long int)::afGetRate(afhandle, AF_DEFAULT_TRACK));
@@ -87,7 +87,7 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR&) {
   // -------
 }
 
-void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR&) {
+void AUDIOFILE_INTERFACE::open(void) throw(SETUP_ERROR&) {
 
   switch(io_mode()) {
   case io_read:
@@ -97,7 +97,7 @@ void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR&) {
 
       afhandle = ::afOpenFile(label().c_str(), "r", NULL);
       if (afhandle == AF_NULL_FILEHANDLE) {
-	throw(ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-AF: Can't open file \"" + label()
 			    + "\" using libaudiofile."));
       }
       break;
@@ -142,14 +142,14 @@ void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR&) {
 
       afhandle = ::afOpenFile(label().c_str(), "w", fsetup);
       if (afhandle == AF_NULL_FILEHANDLE) 
-	throw(ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
-			    + "\" using libaudiofile."));
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-AF: Can't open file \"" + label()
+			  + "\" using libaudiofile."));
      break;
     }
   
   case io_readwrite:
     {
-      throw(ECA_ERROR("AUDIOIO-AF", "Simultaneous intput/ouput not supported."));
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-AF: Simultaneous intput/ouput not supported."));
     }
   }
 

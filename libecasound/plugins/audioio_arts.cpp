@@ -22,7 +22,6 @@
 #endif
 
 #include "audioio-types.h"
-#include "eca-error.h"
 #include "eca-debug.h"
 
 #ifdef COMPILE_ARTS
@@ -35,14 +34,14 @@ ARTS_INTERFACE::ARTS_INTERFACE(const string& name)
   label(name);
 }
 
-void ARTS_INTERFACE::open(void) throw(ECA_ERROR&)
+void ARTS_INTERFACE::open(void) throw(SETUP_ERROR&)
 {
   if (is_open() == true) return;
 
   if (ref_rep == 0) {
     int err = ::arts_init();
     if (err < 0) {
-      throw(ECA_ERROR("AUDIOIO-ARTS", "unable to connect to aRts server: " + string(arts_error_text(err))));
+      throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ARTS: unable to connect to aRts server: " + string(arts_error_text(err))));
     }
   }
   ++ref_rep;
@@ -54,7 +53,7 @@ void ARTS_INTERFACE::open(void) throw(ECA_ERROR&)
     stream_rep = ::arts_play_stream(samples_per_second(), bits(), channels(), "ecasound-output");
   }
   else {
-      throw(ECA_ERROR("AUDIOIO-ARTS", "Simultanious intput/output not supported."));
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-ARTS: Simultanious input/output not supported."));
   }
 
   ::arts_stream_set(stream_rep, ARTS_P_BUFFER_SIZE, buffersize() * frame_size());
@@ -63,14 +62,20 @@ void ARTS_INTERFACE::open(void) throw(ECA_ERROR&)
   toggle_open_state(true);
 }
 
-void ARTS_INTERFACE::stop(void) { }
+void ARTS_INTERFACE::stop(void) { 
+  AUDIO_IO_DEVICE::stop();
+}
+
 void ARTS_INTERFACE::close(void)
 {
   toggle_open_state(false);
   ::arts_close_stream(stream_rep);
 }
 
-void ARTS_INTERFACE::start(void) { }
+void ARTS_INTERFACE::start(void) { 
+  AUDIO_IO_DEVICE::start();
+}
+
 long ARTS_INTERFACE::position_in_samples(void) const { return(samples_rep); }
 long int ARTS_INTERFACE::read_samples(void* target_buffer, 
 				      long int samples) 
@@ -98,4 +103,3 @@ ARTS_INTERFACE::~ARTS_INTERFACE(void)
 }
 
 #endif // COMPILE_ARTS
-

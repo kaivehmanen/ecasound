@@ -2,6 +2,21 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-10-10  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* dynamic-parameters.h (): now inherits DEFINITION_BY_CONTRACT
+	* dynamic-parameters.h (default_parameter_range,is_toggle): moved
+	to OPERATOR
+	* dynamic-parameters.h (map_parameters, get_parameter_id): removed
+	* dynamic-parameters.h (get_parameter_name): changed prototype
+	
+2000-10-10  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* audioio-types.h (AUDIO_IO_DEVICE): is_running(), is_prepared(),
+	toggle_running_state() and toggle_prepared_state() added
+	* eca-chainsetup.h (enable): changed exception specification
+	* eca-session.h (connect_chainsetup): changed exception specification
+	
 2000-10-08  Kai Vehmanen <kaiv@wakkanet.fi>
 	
 	* eca-version.h (): added version numbering as C defines

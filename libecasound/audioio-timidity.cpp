@@ -23,7 +23,6 @@
 #include <kvutils/kvu_numtostr.h>
 
 #include "audioio-timidity.h"
-#include "eca-error.h"
 #include "eca-debug.h"
 
 string TIMIDITY_INTERFACE::default_timidity_cmd = "timidity -Or1S  -s %s -o - %f";
@@ -50,13 +49,19 @@ void TIMIDITY_INTERFACE::close(void) {
 }
 
 long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, long int samples) {
-  if (is_open() == false) fork_timidity();
-  if (wait_for_child() != true) {
-    finished_rep = true;
-    return(0);
+  if (is_open() == false) {
+    fork_timidity();
+    if (wait_for_child() != true) {
+      finished_rep = true;
+      return(0);
+    }
   }
   bytes_read_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
-  if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) finished_rep = true;
+  if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
+    if (position_in_samples() == 0) 
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-timidity) Can't start process \"" + TIMIDITY_INTERFACE::default_timidity_cmd + "\". Please check your ~/.ecasoundrc.");
+    finished_rep = true;
+  }
   else finished_rep = false;
   return(bytes_read_rep / frame_size());
 }
@@ -77,7 +82,7 @@ void TIMIDITY_INTERFACE::kill_timidity(void) {
   }
 }
 
-void TIMIDITY_INTERFACE::fork_timidity(void) throw(ECA_ERROR&) {
+void TIMIDITY_INTERFACE::fork_timidity(void) {
   if (!is_open()) {
     set_fork_command(TIMIDITY_INTERFACE::default_timidity_cmd);
     set_fork_file_name(label());
@@ -85,10 +90,9 @@ void TIMIDITY_INTERFACE::fork_timidity(void) throw(ECA_ERROR&) {
     set_fork_channels(channels());
     set_fork_sample_rate(samples_per_second());
     fork_child_for_read();
-    if (child_fork_succeeded() != true) {
-      throw(ECA_ERROR("AUDIOIO-TIMIDITY","Can't start Timidity++-thread! Check that 'timidity' is installed properly."));
+    if (child_fork_succeeded() == true) {
+      fd_rep = file_descriptor();
+      toggle_open_state(true);
     }
-    fd_rep = file_descriptor();
-    toggle_open_state(true);
   }
 }

@@ -35,7 +35,6 @@
 #include <kvutils.h>
 
 #include "eca-debug.h"
-#include "eca-error.h"
 
 #include "eca-resources.h"
 #include "eca-fileio-mmap-fthread.h"

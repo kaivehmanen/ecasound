@@ -26,8 +26,6 @@
 #include "audiofx_filter.h"
 
 EFFECT_BANDPASS::EFFECT_BANDPASS (CHAIN_OPERATOR::parameter_type centerf, CHAIN_OPERATOR::parameter_type w) {
-  // map_parameters();
-
   set_parameter(1, centerf);
   set_parameter(2, w);
 }
@@ -65,8 +63,6 @@ CHAIN_OPERATOR::parameter_type EFFECT_BANDPASS::get_parameter(int param) const {
 
 EFFECT_BANDREJECT::EFFECT_BANDREJECT (CHAIN_OPERATOR::parameter_type centerf, CHAIN_OPERATOR::parameter_type w) 
 {
-  // map_parameters();
-
   set_parameter(1, centerf);
   set_parameter(2, w);
 }
@@ -315,8 +311,6 @@ EFFECT_INVERSE_COMB_FILTER::EFFECT_INVERSE_COMB_FILTER (int delay_in_samples, CH
   // delay in number of samples
   // circle radius
   //
-  // map_parameters();
-
   set_parameter(1, (CHAIN_OPERATOR::parameter_type)delay_in_samples);
   set_parameter(2, radius);
 }

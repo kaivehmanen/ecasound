@@ -36,7 +36,6 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   int oss_caps;
   struct timeval start_time;
   
-  bool is_triggered;
   bool precise_srate_mode;
   
  public:
@@ -46,15 +45,14 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
 
-  virtual void open(void) throw(ECA_ERROR&);
-  virtual void close(void) throw(ECA_ERROR&);
+  virtual void open(void) throw(SETUP_ERROR&);
+  virtual void close(void);
   
   virtual long int read_samples(void* target_buffer, long int samples);
   virtual void write_samples(void* target_buffer, long int samples);
 
   virtual void stop(void);
-  virtual void start(void) throw(ECA_ERROR&);
-  virtual void prepare(void) { }
+  virtual void start(void);
 
   virtual long position_in_samples(void) const;
 

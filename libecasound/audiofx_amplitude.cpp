@@ -189,8 +189,6 @@ void EFFECT_LIMITER::process(void) {
 }
 
 EFFECT_COMPRESS::EFFECT_COMPRESS (parameter_type compress_rate, parameter_type thold) {
-  // map_parameters();
-
   set_parameter(1, compress_rate);
   set_parameter(2, thold);
 

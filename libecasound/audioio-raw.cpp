@@ -68,6 +68,9 @@ void RAWFILE::open(void) {
 	if (double_buffering_rep) fio_repp = new ECA_FILE_IO_MMAP();
 	else fio_repp = new ECA_FILE_IO_STREAM();
 	fio_repp->open_file(label(),"rb");
+	if (fio_repp->is_file_ready() != true) {
+	  throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-RAW: Couldn't open file " + label() + " for reading."));
+	}
       }
       break;
     }
@@ -80,6 +83,9 @@ void RAWFILE::open(void) {
       }
       else {
 	fio_repp->open_file(label(),"wb");
+	if (fio_repp->is_file_ready() != true) {
+	  throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-RAW: Couldn't open file " + label() + " for writing."));
+	}
       }
       break;
     }
@@ -91,9 +97,12 @@ void RAWFILE::open(void) {
 	fio_repp->open_stdout();
       }
       else {
-	fio_repp->open_file(label(),"r+b", false);
+	fio_repp->open_file(label(),"r+b");
 	if (fio_repp->file_mode() == "") {
-	  fio_repp->open_file(label(),"w+b", true);
+	  fio_repp->open_file(label(),"w+b");
+	  if (fio_repp->is_file_ready() != true) {
+	    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-RAW: Couldn't open file " + label() + " for read&write."));
+	  }
 	}
       }
     }

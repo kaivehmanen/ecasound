@@ -20,7 +20,7 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
 
   virtual void stop(void);
   virtual void start(void);
-  virtual void prepare(void) { }
+  virtual void prepare(void);
 
   virtual long int latency(void) const;
 
@@ -33,7 +33,6 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
 
  private:
 
-  bool is_triggered;
   struct timeval start_time;
   struct timeval access_time;
   struct timeval buffer_delay;

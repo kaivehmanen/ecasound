@@ -117,6 +117,12 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   extend_position();
 }
 
+AUDIO_IO_DEVICE::AUDIO_IO_DEVICE(void) 
+  : is_running_rep(false),
+    is_prepared_rep(false) { }
+
+AUDIO_IO_DEVICE::~AUDIO_IO_DEVICE(void) { }
+
 string AUDIO_IO_DEVICE::status(void) const {
   MESSAGE_ITEM mitem;
 

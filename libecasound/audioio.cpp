@@ -29,9 +29,9 @@
 #include "eca-debug.h"
 
 const string& AUDIO_IO::SETUP_ERROR::message(void) const { return(message_rep); }
-AUDIO_IO::SETUP_ERROR::Type AUDIO_IO::SETUP_ERROR::type(void) const { return(type_rep); }
-AUDIO_IO::SETUP_ERROR::SETUP_ERROR(AUDIO_IO::SETUP_ERROR::Type type, const
-				   string& message) 
+AUDIO_IO::SETUP_ERROR::Error_type AUDIO_IO::SETUP_ERROR::type(void) const { return(type_rep); }
+AUDIO_IO::SETUP_ERROR::SETUP_ERROR(AUDIO_IO::SETUP_ERROR::Error_type type, 
+				   const string& message) 
   : type_rep(type), message_rep(message) { }
 
 

@@ -77,7 +77,7 @@ class EWFFILE : public AUDIO_IO {
   virtual void write_buffer(SAMPLE_BUFFER* sbuf);
 
   void seek_position(void);
-  void open(void) throw(ECA_ERROR&);
+  void open(void) throw(SETUP_ERROR&);
   void close(void);
  
   EWFFILE* clone(void) { cerr << "Not implemented!" << endl; return this; }

@@ -44,7 +44,7 @@ ALSA_PCM_DEVICE_032::ALSA_PCM_DEVICE_032 (int card,
   overruns_rep = underruns_rep = 0;
 }
 
-void ALSA_PCM_DEVICE_032::open(void) throw(ECA_ERROR&) {
+void ALSA_PCM_DEVICE_032::open(void) throw(SETUP_ERROR&) {
   if (is_open() == true) return;
 
   int err;
@@ -54,7 +54,7 @@ void ALSA_PCM_DEVICE_032::open(void) throw(ECA_ERROR&) {
 			 device_number_rep,
 			 SND_PCM_OPEN_CAPTURE);
     if (err != 0) {
-      throw(ECA_ERROR("AUDIOIO-ALSA", "unable to open ALSA-device for recording; error: " + string(snd_strerror(err))));
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-ALSA: unable to open ALSA-device for recording; error: " + string(snd_strerror(err))));
     }
   }    
   else if (io_mode() == io_write) {
@@ -63,14 +63,14 @@ void ALSA_PCM_DEVICE_032::open(void) throw(ECA_ERROR&) {
 			  device_number_rep,
 			  SND_PCM_OPEN_PLAYBACK);
     if (err != 0) {
-      throw(ECA_ERROR("AUDIOIO-ALSA", "unable to open ALSA-device for playback; error: " +  string(snd_strerror(err))));
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-ALSA: unable to open ALSA-device for playback; error: " + string(snd_strerror(err))));
     }
     // ---
     // output triggering
     ::snd_pcm_playback_pause(audio_fd_repp, 1);
   }
   else if (io_mode() == io_readwrite) {
-      throw(ECA_ERROR("AUDIOIO-ALSA", "Simultaneous intput/ouput not supported."));
+    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-ALSA: Simultaneous intput/ouput not supported."));
   }
 
   // -------------------------------------------------------------------
@@ -82,7 +82,7 @@ void ALSA_PCM_DEVICE_032::open(void) throw(ECA_ERROR&) {
   // Set fragment size.
 
   if (buffersize() == 0) 
-    throw(ECA_ERROR("AUDIOIO-ALSA", "buffersize() is 0!", ECA_ERROR::stop));
+    throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-ALSA: buffersize() is 0!"));
     
   if (io_mode() == io_read) {
     snd_pcm_capture_info_t pcm_info;
@@ -91,7 +91,7 @@ void ALSA_PCM_DEVICE_032::open(void) throw(ECA_ERROR&) {
     memset(&pp, 0, sizeof(pp));
 
     if (buffersize() * frame_size() > (int)pcm_info.buffer_size) 
-      throw(ECA_ERROR("AUDIOIO-ALSA", "Buffer size too big, can't setup fragments."));
+      throw(SETUP_ERROR(SETUP_ERROR::buffersize, "Buffer size too big, can't setup fragments."));
 
     pp.fragment_size = buffersize() * frame_size();
     pp.fragments_min = 1;
@@ -99,7 +99,7 @@ void ALSA_PCM_DEVICE_032::open(void) throw(ECA_ERROR&) {
     err = ::snd_pcm_capture_params(audio_fd_repp, &pp);
 
     if (err < 0) {
-      throw(ECA_ERROR("AUDIOIO-ALSA", "Error when setting up buffer fragments: " + string(snd_strerror(err))));
+      throw(SETUP_ERROR(SETUP_ERROR::buffersize, "Error, can't setup fragments."));
     }
   }
   else {
@@ -116,7 +116,7 @@ void ALSA_PCM_DEVICE_032::open(void) throw(ECA_ERROR&) {
     
     err = ::snd_pcm_playback_params(audio_fd_repp, &pp);
     if (err < 0) {
-      throw(ECA_ERROR("AUDIOIO-ALSA", "Error when setting up buffer fragments: " + string(snd_strerror(err))));
+      throw(SETUP_ERROR(SETUP_ERROR::buffersize, "Error when setting up buffer fragments: " + string(snd_strerror(err))));
     }
   }
 
@@ -140,7 +140,7 @@ void ALSA_PCM_DEVICE_032::open(void) throw(ECA_ERROR&) {
       
     default:
       {
-	throw(ECA_ERROR("AUDIOIO-ALSA", "Error when setting audio format not supported (1)"));
+	throw(SETUP_ERROR(SETUP_ERROR::sample_format, "Error when setting audio format not supported (1)"));
       }
     }
 
@@ -152,14 +152,14 @@ void ALSA_PCM_DEVICE_032::open(void) throw(ECA_ERROR&) {
     ::snd_pcm_capture_time(audio_fd_repp, 1);
     err = ::snd_pcm_capture_format(audio_fd_repp, &pf);
     if (err < 0) {
-      throw(ECA_ERROR("AUDIOIO-ALSA", "Error when setting up record parameters: " + string(snd_strerror(err))));
+      throw(SETUP_ERROR(SETUP_ERROR::sample_format, "Error when setting record parameters: " + string(snd_strerror(err))));
     }
   }
   else {
     ::snd_pcm_playback_time(audio_fd_repp, 1);
     err = ::snd_pcm_playback_format(audio_fd_repp, &pf);
     if (err < 0) {
-      throw(ECA_ERROR("AUDIOIO-ALSA", "Error when setting up playback parameters: " + string(snd_strerror(err))));
+      throw(SETUP_ERROR(SETUP_ERROR::sample_format, "Error when setting playback parameters: " + string(snd_strerror(err))));
     }
   }
 
@@ -169,6 +169,7 @@ void ALSA_PCM_DEVICE_032::open(void) throw(ECA_ERROR&) {
 }
 
 void ALSA_PCM_DEVICE_032::stop(void) {
+  AUDIO_IO_DEVICE::stop();
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) Audio device \"" + label() + "\" disabled.");
   if (io_mode() == io_write) {
     ::snd_pcm_playback_pause(audio_fd_repp, 1);
@@ -199,6 +200,7 @@ void ALSA_PCM_DEVICE_032::close(void) {
 }
 
 void ALSA_PCM_DEVICE_032::start(void) {
+  AUDIO_IO_DEVICE::start();
   if (is_open() == false) {
     open();
   }

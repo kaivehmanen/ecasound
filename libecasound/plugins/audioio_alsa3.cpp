@@ -53,7 +53,7 @@ ALSA_PCM_DEVICE_06X::ALSA_PCM_DEVICE_06X (int card,
   overruns_rep = underruns_rep = 0;
 }
 
-void ALSA_PCM_DEVICE_06X::open(void) throw(ECA_ERROR&) {
+void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
   assert(is_open() == false);
   assert(is_triggered_rep == false);
 
@@ -92,10 +92,10 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(ECA_ERROR&) {
     
     if (err < 0) {
       if (using_plugin_rep)
-	throw(ECA_ERROR("AUDIOIO-ALSA3", "Unable to open ALSA-plugin-device for capture; error: " + 
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-ALSA3: Unable to open ALSA-plugin-device for capture; error: " + 
 			    string(snd_strerror(err))));
       else
-	throw(ECA_ERROR("AUDIOIO-ALSA3", "Unable to open ALSA-device for capture; error: " + 
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-ALSA3: Unable to open ALSA-device for capture; error: " + 
 			    string(snd_strerror(err))));
     }
   }    
@@ -118,19 +118,19 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(ECA_ERROR&) {
 
     if (err < 0) {
       if (using_plugin_rep)
-	throw(ECA_ERROR("AUDIOIO-ALSA3", "Unable to open ALSA-plugin-device for playback; error: " +  
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-ALSA3: Unable to open ALSA-plugin-device for playback; error: " +  
 			    string(snd_strerror(err))));
       else
-	throw(ECA_ERROR("AUDIOIO-ALSA3", "Unable to open ALSA-device for playback; error: " +  
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-ALSA3: Unable to open ALSA-device for playback; error: " +  
 			    string(snd_strerror(err))));
     }
   }
   else if (io_mode() == io_readwrite) {
-    throw(ECA_ERROR("AUDIOIO-ALSA3", "Simultaneous input/output not supported."));
+    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-ALSA3: Simultaneous input/output not supported."));
   }
 
   // -------------------------------------------------------------------
-  // Sets non-blocking mode 
+  // Sets blocking mode
   ::snd_pcm_nonblock(audio_fd_repp, 0);
 
   // -------------------------------------------------------------------
@@ -153,8 +153,7 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(ECA_ERROR&) {
 
   if (channels() > 1 &&
       (pcm_params_info_rep.flags & SND_PCM_INFO_INTERLEAVED) != SND_PCM_INFO_INTERLEAVED)
-    throw(ECA_ERROR("AUDIOIO-ALSA3", "device can't handle interleaved streams!", ECA_ERROR::stop));
-//    pf.interleave = 1;
+    throw(SETUP_ERROR(SETUP_ERROR::channels, "AUDIOIO-ALSA3: device can't handle interleaved streams!"));
 
   int format;
   switch(sample_format()) 
@@ -170,34 +169,30 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(ECA_ERROR&) {
       
     default:
       {
-	throw(ECA_ERROR("AUDIOIO-ALSA3", "Error when setting audio format not supported (1)"));
+	throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-ALSA3: Error when setting audio format not supported (1)"));
       }
     }
 
   unsigned int format_mask = (1 << format);
   if ((pcm_params_info_rep.formats & format_mask) != format_mask)
-    throw(ECA_ERROR("AUDIOIO-ALSA3", "Selected sample format not supported by the device!", ECA_ERROR::stop));
+    throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-ALSA3: Selected sample format not supported by the device!"));
   pf.sfmt = format;
 
   if (static_cast<unsigned int>(samples_per_second()) < pcm_params_info_rep.min_rate ||
       static_cast<unsigned int>(samples_per_second()) > pcm_params_info_rep.max_rate)
-    throw(ECA_ERROR("AUDIOIO-ALSA3", "Sample rate " +
-			kvu_numtostr(samples_per_second()) + " is out of range!", ECA_ERROR::stop));
+    throw(SETUP_ERROR(SETUP_ERROR::sample_rate, "AUDIOIO-ALSA3: Sample rate " +
+			kvu_numtostr(samples_per_second()) + " is out of range!"));
   pf.rate = samples_per_second();
 
   if (static_cast<unsigned int>(channels()) < pcm_params_info_rep.min_channels ||
       static_cast<unsigned int>(channels()) > pcm_params_info_rep.max_channels)
-    throw(ECA_ERROR("AUDIOIO-ALSA3", "Channel count " +
-			kvu_numtostr(channels()) + " is out of range!", ECA_ERROR::stop));
+    throw(SETUP_ERROR(SETUP_ERROR::channels, "AUDIOIO-ALSA3: Channel count " +
+			kvu_numtostr(channels()) + " is out of range!"));
   pf.channels = channels();
 
   ::memcpy(&params.format, &pf, sizeof(pf));
 
-  if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK)
-    params.start_mode = SND_PCM_START_EXPLICIT;
-  else
-    params.start_mode = SND_PCM_START_DATA;
-
+  params.start_mode = SND_PCM_START_EXPLICIT;
   params.xfer_mode = SND_PCM_XFER_INTERLEAVED;
   params.xrun_mode = SND_PCM_XRUN_FRAGMENT;
   params.xrun_act = SND_PCM_XRUN_ACT_RESTART;
@@ -209,15 +204,15 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(ECA_ERROR&) {
   pcm_params_info_rep.req_mask = SND_PCM_PARAMS_SFMT | SND_PCM_PARAMS_CHANNELS;
   err = ::snd_pcm_params_info(audio_fd_repp, &pcm_params_info_rep);
   if (err < 0)
-    throw(ECA_ERROR("AUDIOIO-ALSA3", "Error when querying stream info: " + string(snd_strerror(err))));
+    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA3: Error when querying stream info: " + string(snd_strerror(err))));
 
   // -------------------------------------------------------------------
   // Set fragment size.
 
   if (static_cast<unsigned int>(buffersize()) < pcm_params_info_rep.min_fragment_size ||
       static_cast<unsigned int>(buffersize()) > pcm_params_info_rep.max_fragment_size) 
-    throw(ECA_ERROR("AUDIOIO-ALSA3", "buffersize " +
-			kvu_numtostr(buffersize()) + " is out of range!", ECA_ERROR::stop));
+    throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-ALSA3: buffersize " +
+			kvu_numtostr(buffersize()) + " is out of range!"));
   // <--
   params.buffer_size = pcm_params_info_rep.buffer_size;
   params.frag_size = buffersize();
@@ -230,7 +225,7 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(ECA_ERROR&) {
   // Stream params
   err = ::snd_pcm_params(audio_fd_repp, &params);
   if (err < 0)
-    throw(ECA_ERROR("AUDIOIO-ALSA3", "Error when setting up stream params: " + string(snd_strerror(err))));
+    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA3: Error when setting up stream params: " + string(snd_strerror(err))));
 
   // -------------------------------------------------------------------
   // Fetch the current pcm-setup and print out some debug info
@@ -255,6 +250,7 @@ void ALSA_PCM_DEVICE_06X::stop(void) {
   assert(is_open() == true);
   assert(is_prepared_rep == true);
 
+  AUDIO_IO_DEVICE::stop();
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) stop");
 
   snd_pcm_status_t status;
@@ -265,9 +261,7 @@ void ALSA_PCM_DEVICE_06X::stop(void) {
   else if (pcm_stream_rep == SND_PCM_STREAM_CAPTURE)
     overruns_rep += status.xruns;
 
-  int err = ::snd_pcm_stop(audio_fd_repp);
-  if (err < 0)
-    throw(ECA_ERROR("AUDIOIO-ALSA3", "Error when flushing stream: " + string(snd_strerror(err))));
+  ::snd_pcm_stop(audio_fd_repp);
   
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Audio device \"" + label() + "\" disabled.");
   
@@ -292,11 +286,12 @@ void ALSA_PCM_DEVICE_06X::prepare(void) {
   assert(is_open() == true);
   assert(is_prepared_rep == false);
 
+  AUDIO_IO_DEVICE::prepare();
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) prepare");
 
   int err = ::snd_pcm_prepare(audio_fd_repp);
   if (err < 0)
-    throw(ECA_ERROR("AUDIOIO-ALSA3", "Error when preparing stream: " + string(snd_strerror(err))));
+    ecadebug->msg(ECA_DEBUG::info, "AUDIOIO-ALSA3: Error when preparing stream: " + string(snd_strerror(err)));
   is_prepared_rep = true;
 }
 
@@ -305,10 +300,9 @@ void ALSA_PCM_DEVICE_06X::start(void) {
   assert(is_open() == true);
   assert(is_prepared_rep == true);
 
+  AUDIO_IO_DEVICE::start();
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) start");
-
-  if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK)
-    ::snd_pcm_start(audio_fd_repp);
+  ::snd_pcm_start(audio_fd_repp);
   is_triggered_rep = true;
 }
 
@@ -336,6 +330,10 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
     ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
   }
   else {
+    /**
+     * We need to adjust the fragment size, because ALSA requires 
+     * i/o to happen exactly one fragment at a time.
+     */
     if (static_cast<size_t>(samples) < pcm_params_info_rep.min_fragment_size ||
 	static_cast<size_t>(samples) > pcm_params_info_rep.max_fragment_size) {
       if (is_triggered_rep) stop();

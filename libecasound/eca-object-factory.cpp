@@ -36,7 +36,6 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg) {
 
   if (main_file != 0) {
     main_file = main_file->new_expr();
-    main_file->map_parameters();
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-object-factory) Object \"" + arg + "\" created, type \"" + main_file->name() + "\". Has " + kvu_numtostr(main_file->number_of_params()) + " parameter(s).");
     for(int n = 0; n < main_file->number_of_params(); n++) {
       main_file->set_parameter(n + 1, get_argument_number(n + 1, arg));

@@ -56,7 +56,6 @@ Input/output devices:
   Quasimodo, Bacterium, ...
 - mpeglib support
 
-
 Effects, routing, dsp routines:
 
 - generic envelope followers

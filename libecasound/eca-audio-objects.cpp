@@ -123,7 +123,6 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_input(const string& argu) {
     int id = atoi(get_argument_number(2, argu).c_str());
     p = new LOOP_DEVICE(id);
     if (loop_map.find(id) == loop_map.end()) { 
-      p->map_parameters();
       loop_map[id] = p;
     }
     else
@@ -152,7 +151,6 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_output(const string& argu) {
     int id = atoi(get_argument_number(2, argu).c_str());
     p = new LOOP_DEVICE(id);
     if (loop_map.find(id) == loop_map.end()) { 
-      p->map_parameters();
       loop_map[id] = p;
     }
     else
