@@ -26,9 +26,9 @@ else
 lib_LTLIBRARIES = libecasoundc.la
 endif
 
-TESTS = libecasoundc_tester
+TESTS = libecasoundc_tester ecicpp_tester
 
-check_PROGRAMS = libecasoundc_tester
+check_PROGRAMS = $(TESTS)
 
 # ----------------------------------------------------------------------
 # header files
@@ -58,7 +58,10 @@ libecasoundc_debug_la_LIBADD =
 libecasoundc_debug_la_LDFLAGS = $(libecasoundc_la_LDFLAGS)
 
 libecasoundc_tester_SOURCES = libecasoundc_tester.c
-libecasoundc_tester_LDFLAGS = libecasoundc.la
+libecasoundc_tester_LDFLAGS = $(lib_LTLIBRARIES) -static
+
+ecicpp_tester_SOURCES = ecicpp_tester.cpp
+ecicpp_tester_LDFLAGS = $(lib_LTLIBRARIES) -static
 
 # ---------------------------------------------------------------------
 # Install targets

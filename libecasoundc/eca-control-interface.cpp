@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <iostream>
 #include <ecasoundc.h>
 
 #include "eca-control-interface.h"
@@ -57,8 +58,11 @@ void ECA_CONTROL_INTERFACE::command_float_arg(const string& cmd, double arg)
 const vector<string>& ECA_CONTROL_INTERFACE::last_string_list(void) const
 {
   strlist_rep.clear();
-  for(int n = 0; n < eci_last_string_list_count_r(eci_repp); n++) {
-    strlist_rep.push_back(string(eci_last_string_list_item_r(eci_repp, n + 1)));
+  int count = eci_last_string_list_count_r(eci_repp);
+  for(int n = 0; n < count; n++) {
+    const char* next = eci_last_string_list_item_r(eci_repp, n);
+    assert(next != NULL);
+    strlist_rep.push_back(string(next));
   }
   
   return(strlist_rep);

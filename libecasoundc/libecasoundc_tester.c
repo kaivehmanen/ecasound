@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// libecasound_tester.cpp: Runs a set of ECI C unit tests.
+// libecasound_tester.c: Runs a set of ECI C unit tests.
 // Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ecasoundc.h"
+/* #include "eca-control-interface.h" */
 
 /* FIXME: cannot be run on a clean-build as ecasound is not yet
  *        installed */
@@ -61,6 +62,7 @@ static int eci_test_2(void);
 static int eci_test_3(void);
 static int eci_test_4(void);
 static int eci_test_5(void);
+/* static int eci_test_6(void); */
 
 static eci_test_t eci_funcs[] = { 
   eci_test_1, 
@@ -68,6 +70,7 @@ static eci_test_t eci_funcs[] = {
   eci_test_3, 
   eci_test_4, 
   eci_test_5, 
+  /* eci_test_6,  */
   NULL 
 };
 
@@ -241,3 +244,32 @@ static int eci_test_5(void)
   
   ECA_TEST_SUCCESS();
 }
+
+#if 0
+static int eci_test_6(void)
+{
+  ECA_CONTROL_INTERFACE handle;
+  int count;
+
+  ECA_TEST_ENTRY();
+
+  if (handle == NULL) { ECA_TEST_FAIL(1, "init failed"); }
+
+  handle.command("cs-remove");
+  handle.command("cs-status");
+  handle.command( "cs-list");
+  count = handle.last_string_list().size();
+  if (count != 0) { ECA_TEST_FAIL(1, "cs-list count not zero"); }
+
+  handle.command("cs-add test_cs2");
+  handle.command("cs-list");
+  count = handle.last_string_list().size;
+  if (count != 1) { ECA_TEST_FAIL(2, "cs-list count not one"); }
+
+  if (handle.last_string_list()[0] != "test_cs2") {
+    ECA_TEST_FAIL(3, "cs name does not match");
+  }
+
+  ECA_TEST_SUCCESS();
+}
+#endif
