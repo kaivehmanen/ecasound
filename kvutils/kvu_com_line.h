@@ -26,17 +26,17 @@ public:
      * Sets the first argument active. This is usually program's
      * name.
      */
-    void begin(void) { current_rep = 0; }
+    void begin(void) const { current_rep = 0; }
 
     /**
      * Moves to the next argument.
      */
-    void next(void) { ++current_rep; }
+    void next(void) const { ++current_rep; }
 
     /**
      * Moves to the previous argument.
      */
-    void previous(void) { --current_rep; }
+    void previous(void) const { --current_rep; }
 
     /** 
      * Returns true if we've past the last argument.
@@ -81,6 +81,7 @@ public:
 
     COMMAND_LINE(int argc, char *argv[]);
     COMMAND_LINE(const std::vector<std::string>& params);
+    COMMAND_LINE(void);
 };
 
 #endif

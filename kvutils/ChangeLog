@@ -1,6 +1,9 @@
------------------------------------------------------------------------
-*** libkvutils - changes and additions to the public interfaces     ***
------------------------------------------------------------------------
+2002-06-28  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* kvu_com_line.cpp (COMMAND_LINE): iterators
+	functions to const members
+	* kvu_com_line.cpp (COMMAND_LINE): added 
+	constructor that takes 'void' as its argument
 
 2002-04-29  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	

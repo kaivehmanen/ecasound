@@ -2,6 +2,7 @@
 aclocal
 libtoolize --force
 automake
+autoheader
 autoconf
 ./configure $@ || exit 1
 make
