@@ -77,7 +77,8 @@ struct options {
 };
 
 int main(int argc, char *argv[]) { 
-  char cmd[512], fstring[16], status = 0, curopt, *optstr = "ftsmhbcra:u"; 
+  char cmd[512], fstring[16], status = 0, *optstr = "ftsmhbcra:u"; 
+  int curopt;
   unsigned char sec; 
   float curfilelength, totlength = 0; 
   unsigned int min, curarg; 
