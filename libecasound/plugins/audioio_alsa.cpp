@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-alsa.cpp: ALSA 0.9.x PCM input and output.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi),
-//                         Jeremy Hall (jhall@uu.net)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi),
+//                         Jeremy Hall (jhall@maoz.com)
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -253,14 +253,14 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
   }
 
   /* 7. sets period size (period = one fragment) */
-  err = snd_pcm_hw_params_set_period_size(audio_fd_repp, 
-					  pcm_hw_params_repp,
-					  buffersize(), 
-					  0);
+  err = snd_pcm_hw_params_set_period_size_near(audio_fd_repp, 
+					       pcm_hw_params_repp,
+					       buffersize(), 
+					       0);
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-ALSA: buffersize " +
 				 kvu_numtostr(buffersize()) + " is out of range!"));
 
-  /* 7. sets buffer size */
+  /* 8. sets buffer size */
   if (max_buffers() == true) {
     err = snd_pcm_hw_params_set_buffer_size_near(audio_fd_repp, 
 						 pcm_hw_params_repp,
@@ -276,21 +276,24 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
 				   "AUDIOIO-ALSA: Error when setting up hwparams/btime (2): " + string(snd_strerror(err))));
   }
    
-  /* 8. print debug information */
-  unsigned int value = snd_pcm_hw_params_get_buffer_time(pcm_hw_params_repp, 0);
+  /* 9. print debug information */
+  unsigned int value = snd_pcm_hw_params_get_period_time(pcm_hw_params_repp, 0);
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(value) + " usecs.");
+  
+  period_size_rep = snd_pcm_hw_params_get_period_size(pcm_hw_params_repp, 0);
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(value) + " frames.");
+  if (period_size_rep != static_cast<unsigned int>(buffersize())) {
+    ECA_LOG_MSG(ECA_LOGGER::info, 
+		"(audioio-alsa) Warning! Period-size differs from current client buffersize.");
+  }
+  
+  value = snd_pcm_hw_params_get_buffer_time(pcm_hw_params_repp, 0);
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(value) + " usecs.");
 
-  value = snd_pcm_hw_params_get_buffer_size(pcm_hw_params_repp);
+  buffer_size_rep = snd_pcm_hw_params_get_buffer_size(pcm_hw_params_repp);
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(value) + " frames.");
-  buffercount_rep = value / buffersize();
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) total latency is " + kvu_numtostr(latency()) + " frames.");
 
-  value = snd_pcm_hw_params_get_period_time(pcm_hw_params_repp, 0);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(value) + " usecs.");
-
-  value = snd_pcm_hw_params_get_period_size(pcm_hw_params_repp, 0);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(value) + " frames.");
-  DBC_CHECK(value == static_cast<unsigned int>(buffersize()));
 
   /* 9. all set, now active hw params */
   err = snd_pcm_hw_params(audio_fd_repp, pcm_hw_params_repp);
@@ -309,7 +312,7 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_sw_params(void) {
         won't start until a explicit snd_pcm_start() is issued */
   int err = snd_pcm_sw_params_set_start_threshold(audio_fd_repp, 
 						  pcm_sw_params_repp,
-						  buffersize() * 1024);
+						  buffer_size_rep * 2);
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA: Error when setting up pcm_sw_params/start_threshold: " + string(snd_strerror(err))));
   
   /* 3. set align to one frame (like the OSS-emulation layer) */
@@ -384,13 +387,13 @@ long int AUDIO_IO_ALSA_PCM::read_samples(void* target_buffer,
 
   if (interleaved_channels() == true) {
     realsamples = snd_pcm_readi(audio_fd_repp, target_buffer,
-				 buffersize());
+				buffersize());
     if (realsamples < 0) {
       if (realsamples == -EPIPE) {
 	if (ignore_xruns() == true) {
 	  handle_xrun_capture();
 	  realsamples = snd_pcm_readi(audio_fd_repp, target_buffer,
-					buffersize());
+				      buffersize());
 	  if (realsamples < 0) realsamples = 0;
 	}
 	else {

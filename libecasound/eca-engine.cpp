@@ -455,6 +455,7 @@ void ECA_ENGINE::update_engine_state(void)
       finished_rep != true) {
     if (is_running() == true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) all inputs finished - stop");
+      // FIXME: this is still wrong, command() is not fully rt-safe
       // we are not allowed to call request_stop here
       // request_stop();
       command(ECA_ENGINE::ep_stop, 0.0f);
@@ -468,6 +469,7 @@ void ECA_ENGINE::update_engine_state(void)
   if (status() == ECA_ENGINE::engine_status_error) {
     if (is_running() == true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) output error - stop");
+      // FIXME: this is still wrong, command() is not fully rt-safe
       // we are not allowed to call request_stop here
       // request_stop();
       command(ECA_ENGINE::ep_stop, 0.0f);
@@ -850,8 +852,19 @@ void ECA_ENGINE::prepare_realtime_objects(void)
   mixslot_repp->make_silent();
   for (unsigned int n = 0; n < realtime_outputs_rep.size(); n++) {
     if (realtime_outputs_rep[n]->prefill_space() > 0) {
-      DBC_CHECK(prefill_blocks_constant <= realtime_outputs_rep[n]->prefill_space());
+      if (realtime_outputs_rep[n]->prefill_space() < 
+	  prefill_threshold_rep * buffersize()) {
 
+	ECA_LOG_MSG(ECA_LOGGER::user_objects,
+		    "(eca-engine) audio output '" + 
+		    realtime_outputs_rep[n]->name() + 
+		    "' only offers " +
+		    kvu_numtostr(realtime_outputs_rep[n]->prefill_space()) +
+		    " frames of prefill space. Decreasing amount of prefill.");
+	
+	prefill_threshold_rep = realtime_outputs_rep[n]->prefill_space() / buffersize();
+      }
+      
       ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		  "(eca-engine) prefilling rt-outputs with " +
 		  kvu_numtostr(prefill_threshold_rep) +

@@ -361,9 +361,9 @@ static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
 	/* note: we use seek-ahead to give time for the disk
 	   i/o subsystem to catch up for the next round, seek-ahead 
 	   must be re-initialized if...
-	     a) seek-ahead target not set
-	     b) previous seek-ahead target set
-	     c) tranport position rewinded (current seek-ahead target
+	     a) seek-ahead target not set,
+	     b) we have missed the current seek-ahead target, or
+	     c) transport position has been rewinded (current seek-ahead target
 	        too far in the fututre)
 	*/
 

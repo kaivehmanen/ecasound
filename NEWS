@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 270203) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 040303) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -18,11 +18,15 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	         filename has a url-prefix
 	- changed: ecasound.el updated to 0.8.2, lots of small
 		   changes, see ecasound.el for details [mlang]
+	- changed: alsa-0.9 - better support for pcm devices such as 
+		   dmix which have strict period size constraints
 	- fixed: libecasound sample conversion unit test failed when 
 		 compiled with gcc-2.91.66 on certain platforms
 	- fixed: compile failed on systems that don't have nanosleep()
 	- fixed: subtle bug in -kl and -kl2 (and possibly others) 
 		 with fade lengths under 1s
+	- fixed: alsa-0.9 - prevent ecasound from prefilling too 
+		 much data to output devices 
 15022003 (v2.2.1)  -** stable release **-
 	- added: sane default param hints for chainops: -ec, -etd,
 		 -ete, -etf, -etl, -etm, -etp, -etr and -epp

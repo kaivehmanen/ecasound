@@ -31,7 +31,7 @@ class AUDIO_IO_ALSA_PCM : public AUDIO_IO_DEVICE {
   AUDIO_IO_ALSA_PCM* new_expr(void) const { return new AUDIO_IO_ALSA_PCM(); }
 
   virtual string name(void) const { return("ALSA PCM device"); }
-  virtual string description(void) const { return("ALSA PCM devices. Library versions 0.6.x and newer."); }
+  virtual string description(void) const { return("ALSA PCM devices. Alsa-lib versions 0.9.0 and newer."); }
 
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;
@@ -59,10 +59,9 @@ class AUDIO_IO_ALSA_PCM : public AUDIO_IO_DEVICE {
 
   virtual long int delay(void) const;
   virtual long int latency(void) const { return(buffersize()); }
-  virtual long int prefill_space(void) const { if (io_mode() != io_read) return(buffersize() * buffercount_rep); else return(0); }
+  virtual long int prefill_space(void) const { if (io_mode() != io_read) return(buffer_size_rep); else return(0); }
 
   /*@}*/
-
  
 private:
 
@@ -86,12 +85,11 @@ private:
   snd_pcm_hw_params_t* pcm_hw_params_repp;
   snd_pcm_sw_params_t* pcm_sw_params_repp;
 
-  int buffercount_rep;
+  snd_pcm_uframes_t period_size_rep; /**< current period size return by alsa-lib */
+  snd_pcm_uframes_t buffer_size_rep; /**< current buffer size return by alsa-lib */
  
   int card_number_rep, device_number_rep, subdevice_number_rep;
-  int pcm_mode_rep;
 
-  long int bytes_read_rep;
   long underruns_rep, overruns_rep;
   unsigned char **nbufs_repp;
 
