@@ -16,7 +16,7 @@ and MIDI-CCs. A versatile console mode user-interface is included
 in the package.
 
 Primary platform for running Ecasound is Linux. Ecasound also
-works on many other UNIX-derived systems such as FreeBSD and Solaris. 
+works on many UNIX-derived systems such as FreeBSD and Solaris. 
 Limited support for Windows is available through Cygwin.
 
 -----------------------------------------------------------------------
@@ -217,7 +217,7 @@ of test cases to verify that all basic features are working. I also
 use the latest versions for my own work. But other than that, there
 is no guarantee that Ecasound won't eat your data. On the other hand,
 as Ecasound is free software, you have the possibility to review
-and test Ecasound code, perform tests, and fix any bugs you might find. 
+Ecasound's source code, perform tests, and fix any bugs you might find. 
 The more people there are that do this, the more stable Ecasound 
 will eventually become! So join the fun! :)
 
