@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-oss.cpp: OSS (/dev/dsp) input/output.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -83,8 +83,10 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   // -------------------------------------------------------------------
   // Check capabilities
 
-  if (ioctl(audio_fd, SNDCTL_DSP_GETCAPS, &oss_caps) == -1)
-    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-OSS: OSS-device doesn't support SNDCTL_DSP_GETCAPS"));
+  if (ioctl(audio_fd, SNDCTL_DSP_GETCAPS, &oss_caps) == -1) {
+    oss_caps = 0;
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-oss) Warning! OSS-device doesn't support SNDCTL_DSP_GETCAPS."); 
+  }
 
   // -------------------------------------------------------------------
   // Set triggering 
