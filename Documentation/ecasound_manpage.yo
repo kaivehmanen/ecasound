@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (14.07.2004)
+       (21.08.2004)
        ()
        (Multimedia software)
 
@@ -106,11 +106,13 @@ bf(GENERAL CHAINSETUP OPTIONS)
 startdit()
 
 dit(-a:chainname1, chainname2, ...)
-Selects active signal chains. All effects, inputs and outputs following
+Selects active signal chains. All inputs and outputs following
 this '-a' option are assigned to selected chains (until a new -a
-option is specified). If no -a option has been given, chain 'default' is 
-used instead. Chain name 'all' is also reserved and means that all chains
-are selected. By giving multiple -a options, you can control to which 
+option is specified). When adding effects, controllers and other
+chain operators, only one chain can be selected at a time. If no -a option 
+has been given, chain 'default' is used instead when adding objects. 
+Chain name 'all' is also reserved. It will cause all existing chains
+to be selected. By giving multiple -a options, you can control to which 
 chains effects, inputs and outputs are assigned to. Look at the bf(EXAMPLES)
 section for more detailed info about the usage of this option.
 

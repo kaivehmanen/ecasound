@@ -302,24 +302,28 @@ to one output, which this time is the soundcard (/dev/dsp). That's
 all.
 </p>
 <p>
-<li> ecasound -c -r -b:2048 \<br>
+<li> ecasound -c -r \<br>
 <ul>
-     -a:1,5 -i drums.wav -ea:200 \<br>
-     -a:2,6 -i synth-background.wav -epp:40 -ea:120 \<br>
-     -a:3,7 -i bass-guitar_take-2.ewf -ea:75 \<br>
-     -a:4,8 -i brass-house-lead.wav -epp:60 -ea:50 \<br>
-     -a:1,2,3,4 -o /dev/dsp \<br>
-     -a:5,6,7,8 -o current_mix.wav
+     -a:1 -i drums.wav -ea:200 \<br>
+     -a:2 -i synth-background.wav -epp:40 -ea:120 \<br>
+     -a:3 -i bass-guitar_take-2.ewf -ea:75 \<br>
+     -a:4 -i brass-house-lead.wav -epp:60 -ea:50 \<br>
+     -a:1,2,3,4 -o loop,1 \<br>
+     -a:5,6 -i loop,1 \<br>
+     -a:5 -o /dev/dsp \<br>
+     -a:6 -o current-mix.wav<br>
 </ul></li>
 </p>
 <p>
 This second example is more complex. The same inputs are used, but
 this time effects (amplify '-ea:mix_percent' and normal
-pan '-epp:left_right_balance') are also used. First four chains are
-assigned to the soundcard output as in the first example, but now we
-also have another set of chains that are assigned to a WAVE file
-<i>current_mix.wav</i>. In this example, runtime priority is also
-risen with '-r'. A bigger buffersize is also used.
+pan '-epp:left_right_balance') are also used. Additionally we want
+to route the full mix to both the soundcard and to a file. We can
+accomplish this by using a virtual loop device. Here the first four 
+chains are routed to a loop device 'loop,1', which again feeds the 
+audio to both the soundcard '/dev/dsp' and to a WAVE file 
+'current-mix.wav'. In this example, runtime priority is also
+risen with '-r' (requires root privileges).
 </p>
 </ol>
 

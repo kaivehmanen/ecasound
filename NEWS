@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 190804) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 210804) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -31,6 +31,9 @@ xx082004 (v2.3.4)  -** stable release **-
 		 ecasoundrc(5)
 	- fixed: build failed on MacOSX/freebsd because of undefined 	
 		 mlockall and related defines
+	- fixed: errors in ecasound(1) man page and the examples.html;
+	         adding chain operators to multiple chains at once
+		 is not supported
 05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>01.05.2004</h2>
+<h2>19.08.2004</h2>
 
 
     
@@ -322,7 +322,10 @@ is 1.
 Adds a new chain operator. Argument format is
 "-&lt;id_string&gt;:par1,...,parN". In addition to normal chain operators, 
 this commmand can also be used to add effect presets and various 
-plugins. See ecasound(1) man page for more info. <em>[-]</em>
+plugins. Note; it is not possible to add operators to multiple
+chains at once. In other words only one chain should be selected
+when issuing 'cop-add'. See ecasound(1) man page for more 
+info. <em>[-]</em>
 <p><p></p><dt><strong>cop-remove</strong><dd> 
 Removes the selected chain operator. <em>[-]</em>
 <p><p></p><dt><strong>cop-list</strong><dd>

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (01.05.2004)
+       (19.08.2004)
        ()
        (Multimedia software)
 
@@ -394,7 +394,10 @@ dit(cop-add 'cop_format_string')
 Adds a new chain operator. Argument format is
 "-<id_string>:par1,...,parN". In addition to normal chain operators, 
 this commmand can also be used to add effect presets and various 
-plugins. See ecasound(1) man page for more info. em([-])
+plugins. Note; it is not possible to add operators to multiple
+chains at once. In other words only one chain should be selected
+when issuing 'cop-add'. See ecasound(1) man page for more 
+info. em([-])
 
 dit(cop-remove) 
 Removes the selected chain operator. em([-])
