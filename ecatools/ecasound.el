@@ -658,7 +658,6 @@ Argument STRING is the string originally received and inserted into the buffer."
             (message "No help available")))))))
   (throw 'pcompleted t))
 
-.
 ;;; ECI --- The Ecasound Control Interface
 
 (defgroup eci nil
@@ -1483,7 +1482,6 @@ The \"value\" in this case is the list of chain operator parameters."
     (insert-char ?\| 1)
     (insert-char ?\  (- size value 1))))
 
-.
 ;;; Ecasound .ewf major mode
 
 (defgroup ecasound-ewf nil
