@@ -389,7 +389,8 @@ long int AUDIO_IO_ALSA_PCM::read_samples(void* target_buffer,
     realsamples = snd_pcm_readi(audio_fd_repp, target_buffer,
 				buffersize());
     if (realsamples < 0) {
-      if (realsamples == -EPIPE) {
+      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state */
+      if (realsamples == -EPIPE || realsamples == -EIO) {
 	if (ignore_xruns() == true) {
 	  handle_xrun_capture();
 	  realsamples = snd_pcm_readi(audio_fd_repp, target_buffer,
@@ -403,7 +404,7 @@ long int AUDIO_IO_ALSA_PCM::read_samples(void* target_buffer,
 	}
       }
       else {
-	cerr << "(audioio-alsa) Read error! Stopping operation." << endl;
+	cerr << "(audioio-alsa) Read error (" << realsamples << ")! Stopping operation." << endl;
 	stop();
 	close();
       }
@@ -417,7 +418,8 @@ long int AUDIO_IO_ALSA_PCM::read_samples(void* target_buffer,
     }
     realsamples = snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), buffersize());
     if (realsamples < 0) {
-      if (realsamples == -EPIPE) {
+      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state */
+      if (realsamples == -EPIPE || realsamples == -EIO) {
 	if (ignore_xruns() == true) {
 	  handle_xrun_capture();
 	  realsamples = snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), buffersize());
