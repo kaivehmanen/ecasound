@@ -389,11 +389,11 @@ bool ECA_CHAINSETUP::is_valid_for_connection(bool verbose) const
       if ((*q)->is_valid() == false) {
 	result = false;
 	if (verbose) ECA_LOG_MSG(ECA_LOGGER::info, 
-				 "Unable to connect: Chain \"" + name() + 
+				 "Unable to connect: Chain \"" + (*q)->name() + 
 				 "\" is not valid. Following errors were detected:");
 	if (verbose && id == -1) {
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
-		      "Chain \"" + name() + "\" is not connected to any input. "
+		      "Chain \"" + (*q)->name() + "\" is not connected to any input. "
 		      "All chains must have exactly one valid input. (2.1-NO-CHAIN-INPUT)");
 	}
       }
@@ -405,7 +405,7 @@ bool ECA_CHAINSETUP::is_valid_for_connection(bool verbose) const
       if (verbose && (*q)->is_valid() == false) {
 	if (id == -1) {
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
-		      "Chain \"" + name() + "\" is not connected to any output. "
+		      "Chain \"" + (*q)->name() + "\" is not connected to any output. "
 		      "All chains must have exactly one valid output. (2.2-NO-CHAIN-OUTPUT)");
 	}
       }
