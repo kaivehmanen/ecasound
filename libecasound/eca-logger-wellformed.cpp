@@ -53,39 +53,42 @@ void ECA_LOGGER_WELLFORMED::do_msg(ECA_LOGGER::Msg_level_t level, const string& 
   string::const_iterator p = log_message.begin();
   size_t msglen = log_message.size();
 
-  /* 1. loglevel */
-  cout << kvu_numtostr(static_cast<int>(level));
+  if (is_log_level_set(level) == true) {
 
-  /* 2. space */
-  cout << " ";
-
-  if (level == ECA_LOGGER::eiam_return_values) {
-    while(p != log_message.end()) {
-      msglen--;
-      if (isspace(*p) != 0) {
-	rettype = string(log_message.begin(), p);
-	p++; /* skip space to reach start of actual msg */
-	break;
-      }
-      ++p;
-    }
-  }
-
-  /* 3. message size */
-  cout << kvu_numtostr(msglen);
-
-  if (level == ECA_LOGGER::eiam_return_values) {
-    /* 4. space */
+    /* 1. loglevel */
+    cout << kvu_numtostr(static_cast<int>(level));
+    
+    /* 2. space */
     cout << " ";
-
-    /* 5. return type */
-    cout << rettype;
+    
+    if (level == ECA_LOGGER::eiam_return_values) {
+      while(p != log_message.end()) {
+	msglen--;
+	if (isspace(*p) != 0) {
+	  rettype = string(log_message.begin(), p);
+	  p++; /* skip space to reach start of actual msg */
+	  break;
+	}
+	++p;
+      }
+    }
+    
+    /* 3. message size */
+    cout << kvu_numtostr(msglen);
+    
+    if (level == ECA_LOGGER::eiam_return_values) {
+      /* 4. space */
+      cout << " ";
+      
+      /* 5. return type */
+      cout << rettype;
+    }
+    
+    /* 6. contentblock */
+    cout << "\r\n";
+    cout << string(p,log_message.end()); 
+    cout << "\r\n\r\n";
   }
-
-  /* 6. contentblock */
-  cout << "\r\n";
-  cout << string(p,log_message.end()); 
-  cout << "\r\n\r\n";
 }
 
 void ECA_LOGGER_WELLFORMED::do_flush(void) 
