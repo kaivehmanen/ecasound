@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-text.cpp: Console-mode user-interface to ecasound.
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -251,7 +251,7 @@ void ecasound_parse_command_line(COMMAND_LINE& cline) {
   while(cline.end() == false) {
     if (cline.current() == "--version") {
       std::cout << "ecasound v" << ecasound_library_version << std::endl;
-      std::cout << "Copyright (C) 1997-2001 Kai Vehmanen" << std::endl;
+      std::cout << "Copyright (C) 1997-2002 Kai Vehmanen" << std::endl;
       std::cout << "Ecasound comes with ABSOLUTELY NO WARRANTY." << std::endl;
       std::cout << "You may redistribute copies of ecasound under the terms of the GNU" << std::endl;
       std::cout << "General Public License. For more information about these matters, see" << std::endl; 
@@ -362,7 +362,7 @@ void ecasound_print_header(std::ostream* dostream) {
 #endif
   *dostream << "               ecasound v" 
 	    << ecasound_library_version
-	    << " (C) 1997-2001 Kai Vehmanen                 ";
+	    << " (C) 1997-2002 Kai Vehmanen                 ";
 #if defined USE_NCURSES || defined USE_TERMCAP
   if (dostream == &std::cout) {
     putp(tigetstr("sgr0"));

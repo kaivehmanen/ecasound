@@ -149,4 +149,3 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   position_in_samples_advance(sbuf->length_in_samples());
   extend_position();
 }
-

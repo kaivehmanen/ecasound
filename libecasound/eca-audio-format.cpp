@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-audio-format.cpp: Class for representing audio format parameters
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,6 +52,8 @@ ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT (const ECA_AUDIO_FORMAT& x) {
   toggle_interleaved_channels(x.ileaved_rep);
 }
 
+ECA_AUDIO_FORMAT::~ECA_AUDIO_FORMAT (void) { }
+
 ECA_AUDIO_FORMAT& ECA_AUDIO_FORMAT::operator=(const ECA_AUDIO_FORMAT& x) {
   if (this != &x) {
     set_channels(x.channels_rep);
@@ -77,6 +79,7 @@ void ECA_AUDIO_FORMAT::set_audio_format(const ECA_AUDIO_FORMAT& f) {
 }
 
 void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format v) throw(ECA_ERROR&) {
+  Sample_format old_value = sfmt_rep;
   sfmt_rep = v;
   convert_to_host_byte_order();
   switch(sfmt_rep) 
@@ -109,6 +112,8 @@ void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format v) thro
 
     default: { throw(ECA_ERROR("ECA_AUDIO_FORMAT","Audio format not support!")); }
     }
+
+  sample_format_changed(old_value);
 }
 
 void ECA_AUDIO_FORMAT::convert_to_host_byte_order(void) {
@@ -143,9 +148,23 @@ int ECA_AUDIO_FORMAT::bits(void) const {
     }
 }
 
-void ECA_AUDIO_FORMAT::set_samples_per_second(long int v) { srate_rep = v; }
-void ECA_AUDIO_FORMAT::set_channels(int v) { channels_rep = v; }
-void ECA_AUDIO_FORMAT::toggle_interleaved_channels(bool v) { ileaved_rep = v; }
+void ECA_AUDIO_FORMAT::set_samples_per_second(long int v) {
+  long int old_value = srate_rep;
+  srate_rep = v;
+  samples_per_second_changed(old_value);
+}
+
+void ECA_AUDIO_FORMAT::set_channels(int v) {
+  int old_value = channels_rep;
+  channels_rep = v; 
+  channels_changed(old_value);
+}
+
+void ECA_AUDIO_FORMAT::toggle_interleaved_channels(bool v) {
+  bool old_value;
+  ileaved_rep = v; 
+  interleaved_channels_changed(old_value);
+}
 
 void ECA_AUDIO_FORMAT::set_sample_format(const std::string& f_str) throw(ECA_ERROR&) {
   if (f_str == "u8") sfmt_rep = sfmt_u8;

@@ -19,7 +19,11 @@
  * - representation of individual sample
  */
 class ECA_AUDIO_FORMAT {
+
  public:
+
+  /** @name Public type definitions and constants */
+  /*@{*/
 
   enum Sample_format {
     sfmt_u8,
@@ -46,13 +50,33 @@ class ECA_AUDIO_FORMAT {
     sfmt_f64_be
   };    
 
+  /*@}*/
+
+ public:
+
+  /*@}*/
+
+  /** @name Constructors and destructors */
+  /*@{*/
+
+  ECA_AUDIO_FORMAT (int ch, long int srate, Sample_format format, bool ileaved = false);
+  ECA_AUDIO_FORMAT (const ECA_AUDIO_FORMAT& x);
+  ECA_AUDIO_FORMAT& operator=(const ECA_AUDIO_FORMAT& x);
+  ECA_AUDIO_FORMAT (void);
+  virtual ~ECA_AUDIO_FORMAT (void);
+
+  /*@}*/
+
+  /** @name Public functions for getting audio format information */
+  /*@{*/
+
   /**
-   * Frame size in bytes (sample size * channels)
+   * Returns frame size in bytes (sample size * channels)
    */
   int frame_size(void) const { return(align_rep * channels_rep); }
 
   /**
-   * Sample size in bytes (size of individual sample value)
+   * Returns sample size in bytes (size of individual sample value)
    */
   int sample_size(void) const { return(align_rep); }
 
@@ -64,22 +88,24 @@ class ECA_AUDIO_FORMAT {
   int bits(void) const;
   
   /**
-   * Sample format specification. See @ref Sample_format
+   * Returns sample format specification. See @ref Sample_format
    */
   Sample_format sample_format(void) const { return(sfmt_rep); }
 
   /**
-   * Sampling rate in samples per second.
+   * Returns sampling rate in samples per second.
+   * Note! Sometimes also called frames_per_second().
    */
   SAMPLE_SPECS::sample_rate_t samples_per_second(void) const { return(srate_rep); }
 
   /**
-   * Sampling rate in bytes per second (data transfer rate)
+   * Returns sampling rate in bytes per second (data transfer 
+   * rate).
    */
   int bytes_per_second(void) const { return(srate_rep * align_rep * channels_rep); }
 
   /** 
-   * Number of channels
+   * Returns number of channels.
    */
   SAMPLE_SPECS::channel_t channels(void) const { return(channels_rep); }
 
@@ -93,9 +119,21 @@ class ECA_AUDIO_FORMAT {
    */
   ECA_AUDIO_FORMAT audio_format(void) const;
 
+  /**
+   * Return the current sample format as a formatted std::string.
+   *
+   * @see set_sample_format
+   */
+  std::string format_string(void) const throw(ECA_ERROR&);
+
+  /*@}*/
+
+  /** @name Public functions for setting audio format information */
+  /*@{*/
+
   void set_channels(SAMPLE_SPECS::channel_t v);
   void set_sample_format(Sample_format v) throw(ECA_ERROR&);
-  void set_samples_per_second(long int v);
+  void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
   void toggle_interleaved_channels(bool v);
 
   /**
@@ -114,21 +152,23 @@ class ECA_AUDIO_FORMAT {
   void set_sample_format(const std::string& f_str) throw(ECA_ERROR&);
 
   /**
-   * Set audio format
+   * Sets audio format to that of 'f_str'.
    */
   void set_audio_format(const ECA_AUDIO_FORMAT& f_str);
 
-  /**
-   * Return the current sample format as a formatted std::string.
-   *
-   * @see set_sample_format
-   */
-  std::string format_string(void) const throw(ECA_ERROR&);
+  /*@}*/
 
-  ECA_AUDIO_FORMAT (int ch, long int srate, Sample_format format, bool ileaved = false);
-  ECA_AUDIO_FORMAT (const ECA_AUDIO_FORMAT& x);
-  ECA_AUDIO_FORMAT& operator=(const ECA_AUDIO_FORMAT& x);
-  ECA_AUDIO_FORMAT (void);
+ protected:
+
+  /** @name Protected virtual functions to notify about changes */
+  /*@{*/
+
+  virtual void channels_changed(SAMPLE_SPECS::channel_t old_value) { }
+  virtual void sample_format_changed(Sample_format old_value) { }
+  virtual void samples_per_second_changed(SAMPLE_SPECS::sample_rate_t old_value) { }
+  virtual void interleaved_channels_changed(bool old_value) { }
+
+  /*@}*/
 
  private:
 

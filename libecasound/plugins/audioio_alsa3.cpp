@@ -24,17 +24,17 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include <kvutils/dbc.h>
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils.h>
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
 #ifdef ALSALIB_060
 #include <alsa/asoundlib.h>
+
+#include <kvutils/dbc.h>
+#include <kvutils/message_item.h>
+#include <kvutils/kvu_numtostr.h>
+#include <kvutils.h>
 
 #include "samplebuffer.h"
 #include "audioio-device.h"
@@ -178,8 +178,7 @@ void ALSA_PCM_DEVICE_06X::set_audio_format_params(void) {
     }
 }
 
-void ALSA_PCM_DEVICE_06X::print_pcm_info(void) {
-}
+void ALSA_PCM_DEVICE_06X::print_pcm_info(void) { }
 
 void ALSA_PCM_DEVICE_06X::fill_and_set_hw_params(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) fill_and_set_hw_params");
@@ -417,7 +416,7 @@ long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer,
     unsigned char* ptr_to_channel = reinterpret_cast<unsigned char*>(target_buffer);
     for (int channel = 0; channel < channels(); channel++) {
       nbufs_repp[channel] = ptr_to_channel;
-      ptr_to_channel += samples * bits() / 8;
+      ptr_to_channel += samples * sample_size();
     }
     realsamples = snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), buffersize());
     if (realsamples < 0) {
@@ -512,8 +511,8 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
     for (int channel = 0; channel < channels(); channel++) {
       nbufs_repp[channel] = ptr_to_channel;
       // std::cerr << "Pointer to channel " << channel << ": " << reinterpret_cast<void*>(nbufs_repp[channel]) << std::endl;
-      ptr_to_channel += samples * bits() / 8;
-      // std::cerr << "Advancing pointer count by " << samples * bits() / 8 << " to " << reinterpret_cast<void*>(ptr_to_channel) << std::endl;
+      ptr_to_channel += samples * sample_size();
+      // std::cerr << "Advancing pointer count by " << samples * sample_size() << " to " << reinterpret_cast<void*>(ptr_to_channel) << std::endl;
     }
     long int count =  snd_pcm_writen(audio_fd_repp,
 				       reinterpret_cast<void**>(nbufs_repp), 

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-proxy-server.cpp: Audio i/o engine serving proxy clients.
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,9 +34,6 @@
 #include "eca-debug.h"
 #include "audioio-proxy-server.h"
 #include "audioio-proxy-server_impl.h"
-
-using std::cerr;
-using std::endl;
 
 // --
 // Select features
@@ -527,27 +524,27 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
   }
   flush();
   exit_ok_rep.set(1);
-//    cerr << "Exiting proxy server thread." << endl;
+  // std::cerr << "Exiting proxy server thread." << std::endl;
 }
 
 void AUDIO_IO_PROXY_SERVER::dump_profile_counters(void) {
   if (impl_repp->profile_not_full_anymore_rep > 0) {
-    std::cerr << "(audioio-proxy-server) *** profile begin ***" << endl;
-    std::cerr << "Profile_full_rep: " << impl_repp->profile_full_rep << endl;
-    std::cerr << "Profile_no_processing_rep: " << impl_repp->profile_no_processing_rep << endl;
-    std::cerr << "Profile_not_full_anymore_rep: " << impl_repp->profile_not_full_anymore_rep << endl;
-    std::cerr << "Profile_processing_rep: " << impl_repp->profile_processing_rep << endl;
-    std::cerr << "Profile_read_xrun_danger_rep: " << impl_repp->profile_read_xrun_danger_rep << endl;
-    std::cerr << "Profile_write_xrun_danger_rep: " << impl_repp->profile_write_xrun_danger_rep << endl;
-    std::cerr << "Profile_rounds_total_rep: " << impl_repp->profile_rounds_total_rep << endl;
+    std::cerr << "(audioio-proxy-server) *** profile begin ***" << std::endl;
+    std::cerr << "Profile_full_rep: " << impl_repp->profile_full_rep << std::endl;
+    std::cerr << "Profile_no_processing_rep: " << impl_repp->profile_no_processing_rep << std::endl;
+    std::cerr << "Profile_not_full_anymore_rep: " << impl_repp->profile_not_full_anymore_rep << std::endl;
+    std::cerr << "Profile_processing_rep: " << impl_repp->profile_processing_rep << std::endl;
+    std::cerr << "Profile_read_xrun_danger_rep: " << impl_repp->profile_read_xrun_danger_rep << std::endl;
+    std::cerr << "Profile_write_xrun_danger_rep: " << impl_repp->profile_write_xrun_danger_rep << std::endl;
+    std::cerr << "Profile_rounds_total_rep: " << impl_repp->profile_rounds_total_rep << std::endl;
     std::cerr << "Fastest/slowest/average loop time: ";
     std::cerr << kvu_numtostr(impl_repp->looptimer_rep.min_duration_seconds() * 1000, 1);
     std::cerr << "/";
     std::cerr << kvu_numtostr(impl_repp->looptimer_rep.max_duration_seconds() * 1000, 1);
     std::cerr << "/";
     std::cerr << kvu_numtostr(impl_repp->looptimer_rep.average_duration_seconds() * 1000, 1);
-    std::cerr << " msec." << endl;
-    std::cerr << "(audioio-proxy-server) *** profile end   ***" << endl;
+    std::cerr << " msec." << std::endl;
+    std::cerr << "(audioio-proxy-server) *** profile end   ***" << std::endl;
   }
 }
 

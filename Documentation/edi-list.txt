@@ -29,8 +29,6 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 
 (edi-1)	Initial reverb-spike with the -ete reverb.
 	submitted: Anthony Paul Van Groningen, 04.01.2001
-(edi-12) Conversions problems with non-interleaved, s32_le streams.
-	- submitted: jhall, 16.7.2001
 (edi-13) Possible bug in forked-stream module (mp3,ogg), which 
 	 causes ecawave crashes.
 	- submitted: kaiv, 17.08.2001
@@ -84,6 +82,9 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-11) Hierarchy-based config file system. 
 	- submitted: kaiv, xx.07.2001
 	- done: kaiv, 06.12.2001, ecasound 2.1dev6
+(edi-12) Conversions problems with non-interleaved, s32_le streams.
+	- submitted: jhall, 16.7.2001
+	- done: kaiv, 16.1.2002, ecasound 2.1dev7
 (edi-15) More intelligent system for selecting buffering modes 
         and sizes for optimal out-of-the-box performance.
 	- submitted: kaiv, 09.08.2001

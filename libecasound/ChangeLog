@@ -2,6 +2,15 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2002-01-24  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-audio-format.h (channels_changed): added
+	* eca-audio-format.h (sample_format_changed): added
+	* eca-audio-format.h (samples_per_second_changed): added
+	* eca-audio-format.h (interleaved_channels_changed): added
+	* eca-audio-position.h (extend_position): moved from public 
+	to protected scope
+
 2001-12-22  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* samplebuffer.h (copy_from_buffer): renamed to export_interleaved()
@@ -9,8 +18,7 @@
 	* samplebuffer.h (copy_to_buffer): renamed to import_interleaved()
 	* samplebuffer.h (copy_to_buffer_vector): renamed to import_noninterleaved()
 	* samplebuffer.h (reserve_length_in_samples,reserve_channels): added
-	* samplebuffer.h (assign-operator,copy-constructor): moved to private
-	access scope
+	* samplebuffer.h (assign-operator,copy-constructor): moved to private access scope
         * samplebuffer.h (set_rt_lock): added
 	* samplebuffer.h (get_pointer_reflock,release_pointer_reflock): added
 	
