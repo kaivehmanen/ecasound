@@ -20,7 +20,7 @@ Details:
 	- ...when issuing EIAM commands
 
 - todo-list
-    - return explanation on why chainsetup is considered to be valid
+    - return explanation on why chainsetup is not considered to be valid
         - ECA_CONTROL::check_action_preconditions() (case 5)
 	- ECA_CONTROL::action() -> cs_connect
 	- ECA_CONTROL::action() -> reconnect after case-switch

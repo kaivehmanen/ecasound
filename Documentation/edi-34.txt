@@ -7,7 +7,7 @@ Status: OPEN
 ------------------------------------------------------------------------
 Details:
 
-- ecasound has detailed informations about all operators 
+- ecasound has detailed information about all operators 
     - audio objects
     - chain operators
     - LADSPA plugins
