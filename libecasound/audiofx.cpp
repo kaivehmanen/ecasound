@@ -29,5 +29,19 @@ EFFECT_BASE::~EFFECT_BASE(void) { }
 long int EFFECT_BASE::samples_per_second(void) const { return(srate_rep); }
 int EFFECT_BASE::channels(void) const { return(channels_rep); }
 
-void EFFECT_BASE::set_samples_per_second(long int v) { srate_rep = v; }
+void EFFECT_BASE::set_samples_per_second(long int v) { 
+  if (samples_per_second() != v) {
+    vector<parameter_type> old_values (number_of_params());
+    for(int n = 0; n < number_of_params(); n++) {
+      old_values[n] = get_parameter(n + 1);
+    }
+    srate_rep = v;
+    for(int n = 0; n < number_of_params(); n++) {
+      set_parameter(n + 1, old_values[n]);
+    }
+  }
+  else
+    srate_rep = v;
+}
+
 void EFFECT_BASE::set_channels(int v) { channels_rep = v; }

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 030601) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 040601) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.0 *-
 
-??052001 (v2.0.1)
+??062001 (v2.0.1)
 	- added: ecasoundrc - default-to-internal-buffering; select
 		 the default between -z:intbuf and -z:nointbuf
 	- changed: completely rewritten mp3 header parsing; should 
@@ -35,7 +35,9 @@ Last officially released version is -*> v2.0.0 *-
 		 and 'ctrl-add' crashed ecasound
 	- fixed: bug in closing .raw files [smassy]
 	- fixed: eiam - cop-inxed-select renamed to cop-index-select
-	- fixed: bugs in loop device channel handling [smassy]
+	- fixed: bugs in loop device channel handling
+	- fixed: changing internal sample rate caused problems to 
+		 the noise gate effect (-enm)
 02052001 (v2.0.0)  -** stable release **-
 	- added: -klg - a generic linear envelope; a controller source
 		 that can be used to map custom envelopes to chain 
