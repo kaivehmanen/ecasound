@@ -187,13 +187,16 @@ private:
 
   int open_clients_rep;
   int last_node_id_rep;
-  int trace_position_count_rep;
 
   list<eca_jack_node_t*> node_list_rep;
   vector<eca_jack_port_data_t*> inports_rep;
   vector<eca_jack_port_data_t*> outports_rep;
   jack_transport_info_t transport_info_rep;
 
+  int jackslave_seekahead_rep;
+  long int jackslave_seekahead_target_rep;
+  int jackslave_engine_ok_rep;
+  
   ECA_ENGINE* engine_repp;
   jack_client_t *client_repp;
   string jackname_rep;

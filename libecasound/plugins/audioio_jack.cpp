@@ -169,6 +169,7 @@ bool AUDIO_IO_JACK::finished(void) const
 long int AUDIO_IO_JACK::read_samples(void* target_buffer, long int samples)
 {
   if (jackmgr_rep != 0) {
+    DBC_CHECK(samples == jackmgr_rep->buffersize());
     long int res = jackmgr_rep->read_samples(myid_rep, target_buffer, samples);
     return(res);
   }
@@ -181,7 +182,7 @@ void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples)
   /* FIXME: case where samples!=buffersize() not handled */
 
   if (jackmgr_rep != 0) {
-    DBC_CHECK(samples == jackmgr_rep->buffersize());
+    DBC_CHECK(samples <= jackmgr_rep->buffersize());
     
     jackmgr_rep->write_samples(myid_rep, target_buffer, samples);
   }

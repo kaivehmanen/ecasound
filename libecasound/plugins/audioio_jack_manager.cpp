@@ -30,6 +30,7 @@
 #include <kvu_threads.h>
 
 #include "eca-engine.h"
+#include "eca-chainsetup.h"
 #include "eca-logger.h"
 
 /**
@@ -173,7 +174,7 @@ static void eca_jack_process_engine_iteration(jack_nframes_t nframes, void* arg)
     // DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine_iter_in");
   
     /* 2. execute one engine iteration */
-    current->engine_repp->engine_iteration();
+    current->engine_repp->engine_iteration(); 
     
     // DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine_iter_out");
     
@@ -229,15 +230,27 @@ static void eca_jack_process_timebase_master(jack_nframes_t nframes, void *arg)
 
   /* 1. engine is running; update transport and run engine */
   if (current->is_running() == true) {
+    /* 1.1 first iteration */
+    if (current->transport_info_rep.state == JackTransportStopped) {
+      current->transport_info_rep.position = current->engine_repp->current_position_in_samples();
+
+    }
+    /* 1.2 normal running operation */
+    else {
+      current->transport_info_rep.position = 
+	current->engine_repp->current_position_in_samples() + nframes;
+
+      /* execute one engine iteration */
+      eca_jack_process_engine_iteration(nframes, current);
+    }
+
+    DBC_CHECK(current->transport_info_rep.position ==
+	      current->engine_repp->current_position_in_samples());
+
     current->transport_info_rep.state = JackTransportRolling;
-    current->transport_info_rep.position = 
-      current->engine_repp->current_position_in_samples() + nframes;
-    // DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process(): setting transport position to " << current->transport_info_rep.position << "." << endl);
     current->transport_info_rep.valid = static_cast<jack_transport_bits_t>(JackTransportState | JackTransportPosition);
     jack_set_transport_info(current->client_repp, &current->transport_info_rep);
-    
-    /* execute one engine iteration */
-    eca_jack_process_engine_iteration(nframes, current);
+    // DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process(): set transport position to " << current->transport_info_rep.position << "." << endl);
   }
   /* 2. engine is not running; update transport and mute */
   else {
@@ -256,79 +269,118 @@ static void eca_jack_process_timebase_master(jack_nframes_t nframes, void *arg)
 static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
 {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
-  bool need_mute = false;
+  bool need_mute = true;
 
   current->transport_info_rep.valid = static_cast<jack_transport_bits_t>(JackTransportState | JackTransportPosition);
   jack_get_transport_info(current->client_repp, &current->transport_info_rep);
 
-  DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process_timebase_slave(): engine curpos=" << 
-			current->engine_repp->current_position_in_samples() << 
-			", JACK curpos=" << 
-			current->transport_info_rep.position << "!" << endl);
+  SAMPLE_SPECS::sample_pos_t enginepos = current->engine_repp->current_position_in_samples();
 
-  /* 1. transport stopped */
-  if (current->transport_info_rep.state == JackTransportStopped) {
-    DEBUG_CFLOW_STATEMENT(cerr << "JACK stopped" << endl);
+  /* 1. engine locked for editing, do not touch! */
+  if (current->engine_repp->is_locked_for_editing() == true) {
+    DEBUG_CFLOW_STATEMENT(cerr << "current->engine_repp->is_locked_for_editing() == true\n");
+  }
+
+  /* 2. transport stopped */
+  else if (current->transport_info_rep.state == JackTransportStopped) {
+
+    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): JACK stopped" << endl);
     if (current->is_running() == true) {
       // DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process(): running" << endl);
       current->engine_repp->command(ECA_ENGINE::ep_stop, 0.0f);
-      need_mute = true;
+      current->engine_repp->command(ECA_ENGINE::ep_prepare, 0.0f);
+    }
+
+    int seekoffset = current->jackslave_seekahead_rep;
+    if (current->engine_repp->is_prepared() == true) seekoffset = 1;
+
+    /* prepare for the next start by seeking to the correct position */
+    if (enginepos != current->transport_info_rep.position + 
+	             seekoffset * current->buffersize()) {
+      current->jackslave_seekahead_target_rep = current->transport_info_rep.position +
+	                                        seekoffset * current->buffersize();
+      current->engine_repp->command(ECA_ENGINE::ep_setpos_live_samples, 
+				    current->jackslave_seekahead_target_rep);
     }
   }
 
-  /* 2. transport rolling; run engine if ready */
+  /* 3. transport rolling (or looping, both states are fine to us) */
   else {
     if (current->is_running() != true) {
-      if ((current->engine_repp->status() !=
-	   ECA_ENGINE::engine_status_finished) || 
-	  (current->transport_info_rep.position < 
-	   current->engine_repp->current_position_in_samples())) {
-	current->engine_repp->command(ECA_ENGINE::ep_start, 0.0f);
-	current->engine_repp->command(ECA_ENGINE::ep_setpos_live_samples, 
-				      current->transport_info_rep.position + current->buffersize());
-      }
-      need_mute = true;
-    }
-    else {
-      SAMPLE_SPECS::sample_pos_t enginepos = current->engine_repp->current_position_in_samples();
-      if (enginepos == current->transport_info_rep.position) {
-	DEBUG_CFLOW_STATEMENT(cerr << "JACK running; correct position");
-	/* execute engine iteration */
-	eca_jack_process_engine_iteration(nframes, current);
-	current->trace_position_count_rep = 0;
-      }
-      else {
-	DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine curpos '" << 
-			      current->engine_repp->current_position_in_samples() << 
-			      "' doesn't match JACK curpos '" << 
-			      current->transport_info_rep.position << "'!" << endl);
-	
-	if ((enginepos < current->transport_info_rep.position + current->buffersize() && 
-	     enginepos - 8 * current->buffersize() < current->transport_info_rep.position) ||
-	    current->trace_position_count_rep > 8) {
-	  /* engine position incorrect; request seek to new pos */
-	  /* note: we seek 8 periods ahead to give time for the disk
-	     i/o subsystem to catch up */
-	  current->engine_repp->command(ECA_ENGINE::ep_setpos_live_samples, 
-					current->transport_info_rep.position + 8 * current->buffersize());
-	  DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process(): setpos request sent; seeking to "
-				<< current->transport_info_rep.position + 8 * current->buffersize() << endl);
-	  if (current->trace_position_count_rep > 8) current->trace_position_count_rep = 0;
+
+      /* transport rolling: engine not started; start it now */
+      if (current->engine_repp->status() != ECA_ENGINE::engine_status_finished &&
+	  (current->transport_info_rep.position <=
+	   current->engine_repp->connected_chainsetup()->length_in_samples())) {
+	if (current->engine_repp->is_prepared() == true) {
+	  current->engine_repp->start_operation();
+	  DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): Starting engine (direct)\n");
 	}
 	else {
-	  /* engine is already seeking to a new pos */
-	  DEBUG_CFLOW_STATEMENT(cerr << endl 
-				<< "eca_jack_process(): seek to new pos underway; " 
-				<< current->transport_info_rep.position
-				<< " is tcurpos." <<  endl);
-	  need_mute = true;
+	  current->engine_repp->command(ECA_ENGINE::ep_start, 0.0f);
+	  DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): Starting engine (cmdpipe)\n");
 	}
-	++current->trace_position_count_rep;
-	if (current->trace_position_count_rep > 8) {
-	  ECA_LOG_MSG(ECA_LOGGER::info,
-		      "audioio_jack_manager(): warning! cannot keep up with JACK position changes!");
+      }
+    }
+
+    if (enginepos == current->transport_info_rep.position) {
+      DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): JACK running; correct position\n");
+      /* execute engine iteration */
+      eca_jack_process_engine_iteration(nframes, current);
+      current->jackslave_seekahead_target_rep = -1;
+      need_mute = false;
+    }
+    else {
+      DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process_timebase_slave():  engine curpos '" << 
+			    current->engine_repp->current_position_in_samples() << 
+			    "' doesn't match JACK curpos '" << 
+			    current->transport_info_rep.position << "'!" << endl);
+
+      if (current->transport_info_rep.position >=
+	  current->engine_repp->connected_chainsetup()->length_in_samples()) {
+	DEBUG_CFLOW_STATEMENT(cerr << endl <<
+			      "eca_jack_process_timebase_slave(): over max length" << endl);
+	current->engine_repp->command(ECA_ENGINE::ep_stop, 0.0f);
+      }
+      else if (current->jackslave_seekahead_target_rep == -1 ||
+	       current->jackslave_seekahead_target_rep < 
+	       static_cast<long int>(current->transport_info_rep.position + current->buffersize()) ||
+	       current->jackslave_seekahead_target_rep - current->jackslave_seekahead_rep * current->buffersize() >
+	       static_cast<long int>(current->transport_info_rep.position + current->buffersize())) {
+
+	/* note: we use seek-ahead to give time for the disk
+	   i/o subsystem to catch up for the next round, seek-ahead 
+	   must be re-initialized if...
+	     a) seek-ahead target not set
+	     b) previous seek-ahead target set
+	     c) tranport position rewinded (current seek-ahead target
+	        too far in the fututre)
+	*/
+
+	if (current->jackslave_seekahead_target_rep != -1) {
+	  /* previous seek has failed; try again with a longer look-ahead */
+	  current->jackslave_seekahead_rep = 
+	    (current->jackslave_seekahead_rep < (65536 / current->buffersize()) ?
+	     current->jackslave_seekahead_rep + 1 : (65536 / current->buffersize()));
+	  DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process(): seek-ahead request failed; increasing seek-ahead to "
+				<< current->jackslave_seekahead_rep << endl);
+
 	}
 
+	current->jackslave_seekahead_target_rep = current->transport_info_rep.position + 
+	                                          current->jackslave_seekahead_rep * current->buffersize();
+
+	current->engine_repp->command(ECA_ENGINE::ep_setpos_live_samples, 
+				      current->jackslave_seekahead_target_rep);
+	DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process(): seek-ahead request sent; seeking to "
+			      << current->jackslave_seekahead_target_rep << endl);
+      }
+      else {
+	/* engine is already seeking to a new pos */
+	DEBUG_CFLOW_STATEMENT(cerr << endl 
+			      << "eca_jack_process_timebase_slave():  seek to new pos underway; " 
+			      << current->transport_info_rep.position
+			      << " is transport-curpos." <<  endl);
       }
     }
   }
@@ -432,6 +484,8 @@ AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
   activated_rep = false;
 
   last_node_id_rep = 1;
+  jackslave_seekahead_rep = 2;
+  jackslave_seekahead_target_rep = -1;
   jackname_rep = "ecasound";
 
   pthread_cond_init(&exit_cond_rep, NULL);
@@ -660,7 +714,10 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
   exit_request_rep = false;
 
   activate_server_connection();
-
+  if (is_connection_active() != true) {
+    signal_exit();
+  }
+  
   while(true) {
 
     DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: wait for commands" << endl);
@@ -700,7 +757,9 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
     }
   }
 
-  deactivate_server_connection();
+  if (is_connection_active() == true) {
+    deactivate_server_connection();
+  }
 
   /* signal exit() that we are done */
   signal_exit();
@@ -751,7 +810,6 @@ void AUDIO_IO_JACK_MANAGER::stop(void)
  * Activates connection to server.
  *
  * @pre is_connection_active() != true
- * @post is_connection_active() == true
  */
 void AUDIO_IO_JACK_MANAGER::activate_server_connection(void)
 {
@@ -759,26 +817,21 @@ void AUDIO_IO_JACK_MANAGER::activate_server_connection(void)
   DBC_REQUIRE(is_connection_active() != true);
   // --
 
-  engine_repp->prepare_operation();
-  if (mode_rep == AUDIO_IO_JACK_MANAGER::Slave) {
-    engine_repp->start_operation();
-  }
+  if (engine_repp->is_prepared() != true) engine_repp->prepare_operation();
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_activate()");
   if (jack_activate (client_repp)) {
     ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot active client!");
+    activated_rep = false;
   }
-
-  connect_all_nodes();
+  else {
+    connect_all_nodes();
   
-  /* update port-specific latency values */
-  engine_repp->update_cache_latency_values();
+    /* update port-specific latency values */
+    engine_repp->update_cache_latency_values();
 
-  activated_rep = true;
-
-  // --
-  DBC_ENSURE(is_connection_active() == true);
-  // --
+    activated_rep = true;
+  }
 }
 
 /**
@@ -797,12 +850,14 @@ void AUDIO_IO_JACK_MANAGER::deactivate_server_connection(void)
   DBC_REQUIRE(is_connection_active() == true);
   // --
 
-  /* disconnect all clients */
-  disconnect_all_nodes();
+  if (shutdown_request_rep != true) {
+    /* disconnect all clients */
+    disconnect_all_nodes();
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_deactivate() ");
-  if (jack_deactivate (client_repp)) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot deactive client!");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_deactivate() ");
+    if (jack_deactivate (client_repp)) {
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot deactive client!");
+    }
   }
  
   if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
@@ -829,6 +884,7 @@ void AUDIO_IO_JACK_MANAGER::exit(void)
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver exit");
 
   exit_request_rep = true;
+  if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
 }
 
 /**
@@ -1121,7 +1177,6 @@ SAMPLE_SPECS::sample_rate_t AUDIO_IO_JACK_MANAGER::samples_per_second(void) cons
 
 long int AUDIO_IO_JACK_MANAGER::read_samples(int client_id, void* target_buffer, long int samples)
 {
-  DBC_CHECK(samples == buffersize_rep);
   // DEBUG_CFLOW_STATEMENT(cerr << endl << "read_samples:" << client_id);
 
   jack_default_audio_sample_t* ptr = 
@@ -1186,6 +1241,7 @@ void AUDIO_IO_JACK_MANAGER::open_server_connection(void)
     /* FIXME: add better control of allocated memory */
     cb_allocated_frames_rep = buffersize_rep = static_cast<long int>(jack_get_buffer_size(client_repp));
     shutdown_request_rep = false;
+    jackslave_seekahead_rep = 4096 / buffersize_rep + 1;
 
     /* set callbacks */
     jack_set_process_callback(client_repp, eca_jack_process, static_cast<void*>(this));
@@ -1235,7 +1291,12 @@ void AUDIO_IO_JACK_MANAGER::close_server_connection(void)
   // FIXME: add proper unregistration
   // iterate over cids: unregister_jack_ports()
 
-  jack_client_close (client_repp);
+  if (shutdown_request_rep != true) {
+    jack_client_close (client_repp);
+  }
+  else {
+    shutdown_request_rep = false;
+  }
 
   open_rep = false;
 
@@ -1248,6 +1309,7 @@ void AUDIO_IO_JACK_MANAGER::close_server_connection(void)
 
   // --
   DBC_ENSURE(is_open() != true);
+  DBC_REQUIRE(shutdown_request_rep != true);
   // --
 }
 
@@ -1301,8 +1363,7 @@ void AUDIO_IO_JACK_MANAGER::set_node_connection(eca_jack_node_t* node, bool conn
 	else {
 	  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
 	  /* don't call jack_disconnect() if engine has shut down */
-	  if (shutdown_request_rep != true &&
-	      jack_disconnect(client_repp, 
+	  if (jack_disconnect(client_repp, 
 			      fromport->c_str(),
 			      toport->c_str())) {
 	    ECA_LOG_MSG(ECA_LOGGER::info, 

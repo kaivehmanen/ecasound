@@ -154,6 +154,11 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
 
   ECA_CONTROL_OBJECTS (ECA_SESSION* psession);
   ~ECA_CONTROL_OBJECTS (void) { }
+
+private:
+
+  bool cond_stop_for_editing(void);
+  void cond_start_after_editing(bool was_running);
 };
 
 #endif

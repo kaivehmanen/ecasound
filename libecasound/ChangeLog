@@ -1,3 +1,15 @@
+2003-02-03  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* eca-engine.h (is_locked_for_editing): Added.
+
+	* eca-engine.h (ECA_ENGINE::Engine_command): Added 
+	enums 'ep_edit_lock' and 'ep_edit_unlock'.
+
+2003-02-02  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* eca-engine.h (ECA_ENGINE::Engine_command): Added 
+	enum 'ep_prepare'.
+
 2003-01-30  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* samplebuffer.cpp (resample_get_quality): added

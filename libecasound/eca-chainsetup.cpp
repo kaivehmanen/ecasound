@@ -1985,7 +1985,7 @@ void ECA_CHAINSETUP::interpret_object_option (const string& arg)
   // --------
   // FIXME: this requirement is broken by eca-control.h (for 
   //        adding effects on-the-fly, just stopping the engine)
-  DBC_REQUIRE(is_enabled() != true);
+  // DBC_REQUIRE(is_enabled() != true);
   // --------
 
   cparser_rep.interpret_object_option(arg);

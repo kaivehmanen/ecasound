@@ -84,6 +84,7 @@ class ECA_ENGINE {
    * Commands used in ECA_ENGINE<->ECA_CONTROL communication.
    */
   enum Engine_command {
+    ep_prepare,
     ep_start,
     ep_stop,
     ep_debug,
@@ -100,7 +101,10 @@ class ECA_ENGINE {
     ep_rewind,
     ep_forward,
     ep_setpos,
-    ep_setpos_live_samples
+    ep_setpos_live_samples,
+    // --
+    ep_edit_lock,
+    ep_edit_unlock
   };
   typedef enum Engine_command Engine_command_t;
 
@@ -146,6 +150,7 @@ class ECA_ENGINE {
   bool is_prepared(void) const;
   bool is_running(void) const;
   bool batch_mode(void) const { return(batchmode_enabled_rep); }
+  bool is_locked_for_editing(void) const { return(edit_lock_rep); }
 
   SAMPLE_SPECS::sample_pos_t current_position_in_samples(void) const;
   double current_position_in_seconds_exact(void) const;
@@ -176,6 +181,7 @@ private:
   bool running_rep;
   bool was_running_rep;
   bool driver_local;
+  bool edit_lock_rep;
 
   bool finished_rep;
   int outputs_finished_rep;
