@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 161202) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 080103) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -15,13 +15,27 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-xx122002 (v2.2.0-rc2)
+??012003 (v2.2.0)  -** stable release **-
 	- edi-entries: edi-1 closed
 	- changed: ecasound.el updated to version 0.8.1 [mlang]
+	- changed: more user-friednly errormsg when trying to open
+	           a nonexistent ogg/mid/mod file
+	- changed: eiam - all instances of 'c-mute' in code and docs
+		   changed to 'c-muting', although now officially 
+		   deprecated, 'c-mute' will continue to work as 
+	    	   an alias to 'c-muting'
 	- fixed: edi-1 - crackle at start of processing with -ete
 	         removed [hgfischer]
 	- fixed: various small fixes to remove uncalled for
 		 dbc warnings
+	- fixed: -b:0 caused a segfault
+	- fixed: compile error with gcc-2.95.4 concerning eca-curses.cpp 
+		 and the 'erase' symbol
+	- fixed: compile error with freebsd-4.7 concerning 
+		 eca-chainsetup.cpp/eca-fileio-stream.cpp and 
+		 the header file 'sys/mman.h'
+	- fixed: resample audio object set the child srate incorrectly
+		 for mp3 and headerless audio files 
 28112002 (v2.2.0-rc1)
 	- edi-entries: edi-35 added
 	- fixed: more curses fixes
@@ -597,9 +611,6 @@ xx122002 (v2.2.0-rc2)
 		 output failed for some reason (access
 		 denied, etc)
 	- fixed: non-zero defaults for -r:x and -z:db,y [smassy]
-????2002 (v2.0.5)  -** stable release **-
-	- note! see ecasound-2.0 branch; this NEWS section 
-		will updated later
 16012002 (v2.0.4)  -** stable release **-
 	- edi-entries: edi-12
 	- added: docs - Documentation/manpages.html

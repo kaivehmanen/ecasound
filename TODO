@@ -19,7 +19,7 @@ list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 
 2.2 (2.1devX series):
 
-- JACK and ALSA 0.9.x support [mostly done]
+- JACK and ALSA 0.9.x support [done]
 - cleanup of samplerate and audio position related
   code (edi-18, edi-21) [done!]
 
@@ -30,7 +30,7 @@ list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 -----------------------------------------------------------------------
 [ Help - developer in trouble ]
 
-- ecasound compiles on FreeBSD 4.2 and Solaris 2.6-2.8, how about
+- ecasound compiles on FreeBSD (4.7) and Solaris (2.6-2.8), how about
   other UNIX platforms (other BSDs, OS X, IRIX, AIX)?
-- ecasound compiles out-of-the-box on Redhat 6.x and PLD Linux
+- ecasound compiles out-of-the-box on Redhat (6-8) and PLD Linux
   systems, what about other Linux distros?
