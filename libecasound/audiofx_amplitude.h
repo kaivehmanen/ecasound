@@ -25,7 +25,7 @@ class EFFECT_AMPLITUDE : public EFFECT_BASE {
  */
 class EFFECT_AMPLIFY: public EFFECT_AMPLITUDE {
 
-  parameter_t kerroin;
+  parameter_t gain;
   SAMPLE_ITERATOR i;
 
  public:
@@ -52,7 +52,7 @@ class EFFECT_AMPLIFY: public EFFECT_AMPLITUDE {
  */
 class EFFECT_AMPLIFY_CLIPCOUNT : public EFFECT_AMPLITUDE {
 
-  parameter_t kerroin;
+  parameter_t gain;
   int nm, num_of_clipped, maxnum_of_clipped;
   SAMPLE_ITERATOR i;
 
@@ -79,7 +79,7 @@ class EFFECT_AMPLIFY_CLIPCOUNT : public EFFECT_AMPLITUDE {
  */
 class EFFECT_AMPLIFY_CHANNEL: public EFFECT_AMPLITUDE {
 
-  parameter_t kerroin;
+  parameter_t gain;
   int channel_rep;
   SAMPLE_ITERATOR_CHANNEL i;
 
@@ -176,7 +176,7 @@ class EFFECT_NOISEGATE : public EFFECT_AMPLITUDE {
   std::vector<parameter_t> attack_lask;
   std::vector<parameter_t> hold_lask;
   std::vector<parameter_t> release_lask;
-  std::vector<parameter_t> kerroin;
+  std::vector<parameter_t> gain;
 
   enum { ng_waiting, ng_attacking, ng_active, ng_holding, ng_releasing };
 
@@ -217,7 +217,7 @@ private:
   SAMPLE_ITERATOR_CHANNEL i;
 
   parameter_t right_percent_rep;
-  parameter_t l_kerroin, r_kerroin;
+  parameter_t l_gain, r_gain;
   
 public:
 

@@ -43,7 +43,7 @@ EFFECT_AMPLIFY::~EFFECT_AMPLIFY(void)
 void EFFECT_AMPLIFY::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1: 
-    kerroin = value / 100.0;
+    gain = value / 100.0;
     break;
   }
 }
@@ -51,7 +51,7 @@ void EFFECT_AMPLIFY::set_parameter(int param, parameter_t value) {
 CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(kerroin * 100.0);
+    return(gain * 100.0);
   }
   return(0.0);
 }
@@ -66,7 +66,7 @@ void EFFECT_AMPLIFY::init(SAMPLE_BUFFER* sbuf) { i.init(sbuf); }
 void EFFECT_AMPLIFY::process(void) {
   i.begin();
   while(!i.end()) {
-    *i.current() = *i.current() *  kerroin;
+    *i.current() = *i.current() *  gain;
     i.next();
   }
 }
@@ -80,7 +80,7 @@ EFFECT_AMPLIFY_CLIPCOUNT::EFFECT_AMPLIFY_CLIPCOUNT (parameter_t multiplier_perce
 void EFFECT_AMPLIFY_CLIPCOUNT::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1: 
-    kerroin = value / 100.0;
+    gain = value / 100.0;
     break;
   case 2:
     maxnum_of_clipped = (int)value;
@@ -91,7 +91,7 @@ void EFFECT_AMPLIFY_CLIPCOUNT::set_parameter(int param, parameter_t value) {
 CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CLIPCOUNT::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(kerroin * 100.0);
+    return(gain * 100.0);
   case 2:
     return(maxnum_of_clipped);
   }
@@ -103,7 +103,7 @@ void EFFECT_AMPLIFY_CLIPCOUNT::init(SAMPLE_BUFFER* sbuf) { i.init(sbuf); }
 void EFFECT_AMPLIFY_CLIPCOUNT::process(void) {
   i.begin();
   while(!i.end()) {
-    *i.current() = *i.current() *  kerroin;
+    *i.current() = *i.current() *  gain;
     if (*i.current() > SAMPLE_SPECS::impl_max_value ||
 	*i.current() < SAMPLE_SPECS::impl_min_value) {
       num_of_clipped++;
@@ -137,7 +137,7 @@ EFFECT_AMPLIFY_CHANNEL::EFFECT_AMPLIFY_CHANNEL (parameter_t multiplier_percent, 
 void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_t value) {
   switch (param) {
     case 1: 
-      kerroin = value / 100.0;
+      gain = value / 100.0;
       break;
       
     case 2: 
@@ -152,7 +152,7 @@ void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_t value) {
 CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CHANNEL::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(kerroin * 100.0);
+    return(gain * 100.0);
 
   case 2: 
     return(static_cast<parameter_t>(channel_rep + 1));
@@ -181,7 +181,7 @@ void EFFECT_AMPLIFY_CHANNEL::init(SAMPLE_BUFFER *insample) { i.init(insample); }
 void EFFECT_AMPLIFY_CHANNEL::process(void) {
   i.begin(channel_rep);
   while(!i.end()) {
-    *i.current() = *i.current() * kerroin;
+    *i.current() = *i.current() * gain;
     i.next();
   }
 }
@@ -378,7 +378,7 @@ void EFFECT_NOISEGATE::init(SAMPLE_BUFFER *insample) {
   attack_lask.resize(insample->number_of_channels());
   hold_lask.resize(insample->number_of_channels());
   release_lask.resize(insample->number_of_channels());
-  kerroin.resize(insample->number_of_channels());
+  gain.resize(insample->number_of_channels());
 
   ng_status.resize(insample->number_of_channels(), int(ng_waiting));
 }
@@ -416,14 +416,14 @@ void EFFECT_NOISEGATE::process(void) {
 	{
 	  if (below) {
 	    attack_lask[i.channel()]++;
-	    kerroin[i.channel()] = (1.0 - (attack_lask[i.channel()] / atime));
+	    gain[i.channel()] = (1.0 - (attack_lask[i.channel()] / atime));
 	    if (attack_lask[i.channel()] >= atime) {
 	      attack_lask[i.channel()] = 0.0;
 	      ng_status[i.channel()] = ng_active;
-	      kerroin[i.channel()] = 0.0;
+	      gain[i.channel()] = 0.0;
 	      ECA_LOG_MSG(ECA_LOGGER::user_objects,"(audiofx) noisegate - from attack to active");
 	    }
-	    *i.current() = *i.current() * kerroin[i.channel()];
+	    *i.current() = *i.current() * gain[i.channel()];
 	  }
 	  else {
 	    attack_lask[i.channel()] = 0;
@@ -469,13 +469,13 @@ void EFFECT_NOISEGATE::process(void) {
 	// ---
 	{
 	  release_lask[i.channel()]++;
-	  kerroin[i.channel()] = release_lask[i.channel()] / rtime;
+	  gain[i.channel()] = release_lask[i.channel()] / rtime;
 	  if (release_lask[i.channel()] >= rtime) {
 	    release_lask[i.channel()] = 0.0;
 	    ng_status[i.channel()] = ng_waiting;
 	    ECA_LOG_MSG(ECA_LOGGER::user_objects,"(audiofx) noisegate - from releasing to waiting");
 	  }
-	  *i.current() = *i.current() * kerroin[i.channel()];
+	  *i.current() = *i.current() * gain[i.channel()];
 	  break;
 	}
       }
@@ -493,15 +493,15 @@ void EFFECT_NORMAL_PAN::set_parameter(int param, parameter_t value) {
   case 1: 
     right_percent_rep = value;
     if (value == 50.0) {
-      l_kerroin = r_kerroin = 1.0;
+      l_gain = r_gain = 1.0;
     }
     else if (value < 50.0) {
-      l_kerroin = 1.0;
-      r_kerroin = value / 50.0;
+      l_gain = 1.0;
+      r_gain = value / 50.0;
     }
     else if (value > 50.0) {
-      r_kerroin = 1.0;
-      l_kerroin = (100.0 - value) / 50.0;
+      r_gain = 1.0;
+      l_gain = (100.0 - value) / 50.0;
     }
     break;
   }
@@ -536,13 +536,13 @@ void EFFECT_NORMAL_PAN::init(SAMPLE_BUFFER *insample) { i.init(insample); }
 void EFFECT_NORMAL_PAN::process(void) {
   i.begin(0);
   while(!i.end()) {
-    *i.current() = *i.current() * l_kerroin;
+    *i.current() = *i.current() * l_gain;
     i.next();
   }
 
   i.begin(1);
   while(!i.end()) {
-    *i.current() = *i.current() * r_kerroin;
+    *i.current() = *i.current() * r_gain;
     i.next();
   }
 }
