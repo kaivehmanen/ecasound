@@ -3,8 +3,8 @@
 
 #include <string>
 #include <kvutils/definition_by_contract.h>
-#include "ecasound/audioio.h"
-#include "ecasound/samplebuffer.h"
+#include "audioio.h"
+#include "samplebuffer.h"
 #include "audioio-proxy-server.h"
 
 /**
