@@ -20,6 +20,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 '-t:xxx' will set the chainsetup length according
 		 to the longest input object
 	- added: ECI guide - a new section on ecasound.el [mlang]
+	- added: ecasoundrc - a new special-case value 'auto' to 
+		 the 'default-output' setting; 'auto' is also the
+	 	 new default ecasoundrc value; see ecasoundrc(5)
+		 for details
 	- changed: lots of typo fixes and other corrections to 
 	           the user's guide [ericdr]
 	- changed: minor configure.in cleanup relating to handling

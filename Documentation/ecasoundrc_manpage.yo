@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (18.04.2004)
+       (02.05.2004)
        ()
        (Multimedia software)
 
@@ -47,7 +47,12 @@ startdit()
 	Defaults to em(rawmidi,/dev/midi).
 
   	dit(default-output)
-  	Output device to use. Defaults to em(/dev/dsp).
+  	Output device to use by default. If a chainsetup with zero
+  	outputs, but with one or more inputs, is connected, a default output
+	is added and all the chains are connected to it. If the special-case
+	value 'auto' is specified, ecasound will try to auto-detect 
+	a suitable device (JACK -> ALSA -> OSS -> rtnull). 
+	Defaults to em(auto).
 
   	dit(default-audio-format)
   	Default values for sample format, channel count, sampling rate
