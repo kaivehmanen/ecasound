@@ -363,7 +363,7 @@ long int WAVEFILE::read_samples(void* target_buffer, long int samples)
 {
   // --------
   // require:
-  assert(samples > 0);
+  assert(samples >= 0);
   assert(target_buffer != 0);
   // --------
   fio_repp->read_to_buffer(target_buffer, frame_size() * samples);

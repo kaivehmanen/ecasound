@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing an abstract audio signal chain.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -261,13 +261,13 @@ string CHAIN::controller_name(void) const {
  *
  * require:
  *  selected_chainop_number > 0 && selected_chainop_number <= number_of_chain_operators() &&
- *  selected_chainop_parameter > 0
+ *  selected_chain_operator_parameter() > 0
  */
 void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_type value) {
   // --------
   // require:
   assert(selected_chainop_number_rep > 0 && selected_chainop_number_rep <= number_of_chain_operators());
-  assert(selected_chainop_parameter_rep > 0);
+  assert(selected_chain_operator_parameter() > 0);
   // --------
   selected_chainop_repp->set_parameter(selected_chainop_parameter_rep, value);
 }

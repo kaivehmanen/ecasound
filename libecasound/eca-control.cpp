@@ -932,7 +932,7 @@ void ECA_CONTROL::ctrl_register(void) {
       if (n + 1 < params) temp += ",";
     }
     result += "\n";
-    result += kvu_numtostr(count) + ". " + p->first + " -" + p->second + temp;
+    result += kvu_numtostr(count) + ". " + p->first + " - " + p->second + temp;
     ++count;
     ++p;
   }

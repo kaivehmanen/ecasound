@@ -1908,7 +1908,8 @@ void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(CHAIN_OPERATOR::parameter
       session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_copp_value, value);
     }
     else {
-      selected_chainsetup_repp->chains[p]->set_parameter(value);
+      if (selected_chainsetup_repp->chains[p]->selected_chain_operator_parameter() > 0)
+	selected_chainsetup_repp->chains[p]->set_parameter(value);
     }
   }
 }
@@ -1931,7 +1932,8 @@ CHAIN_OPERATOR::parameter_type ECA_CONTROL_OBJECTS::get_chain_operator_parameter
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    return(selected_chainsetup_repp->chains[p]->get_parameter());
+    if (selected_chainsetup_repp->chains[p]->selected_chain_operator_parameter() > 0)
+      return(selected_chainsetup_repp->chains[p]->get_parameter());
   }
   return(0.0f);
 }

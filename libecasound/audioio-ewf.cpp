@@ -153,8 +153,10 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	                  - child_offset_rep.samples()
 	                  - child_length_rep.samples();
 	//  	dump_child_debug();
-	assert(tail < sbuf->length_in_samples());
-	child->seek_position_in_samples(child_start_pos_rep.samples() + tail);
+	if (position_in_samples() > 
+	    child_offset_rep.samples() + child_length_rep.samples()) tail = buffersize();
+	assert(tail <= sbuf->length_in_samples() || tail == buffersize());
+	child->seek_position_in_samples(child_start_pos_rep.samples());
 	long int save_bsize = child->buffersize();
 	child->buffersize(tail, child->samples_per_second());
 	child->read_buffer(&tmp_buffer);

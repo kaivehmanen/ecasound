@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 250401) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 260401) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -21,6 +21,11 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- added: -klg - a generic linear envelope; a controller source
 		 that can be used to map custom envelopes to chain 
 		 operator parameters [artham]
+	- fixed: segfaults when trying to access non-existing preset
+		 parameters
+	- fixed: segfault if tried to copp-get without first
+		 selecting a parameter with copp-select
+	- fixed: few bugs in ewf looping routines
 24042001 (v1.9dev6)
 	- added: eiam - cs-setpos, cs-set-position; aliases for setpos
 	- added: eiam - cs-getpos, cs-get-position; aliases for getpos

@@ -110,7 +110,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_range(const SAMPLE_BUFFER_BASE<T>& x,
   int c_count = (channel_count_rep <= x.channel_count_rep) ? channel_count_rep : x.channel_count_rep;
   long int t = to_pos;
 
-  assert(start_pos < end_pos);
+  assert(start_pos <= end_pos);
   assert(to_pos < length_in_samples());
 
   if (start_pos >= x.length_in_samples()) start_pos = x.length_in_samples();
