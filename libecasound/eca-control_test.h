@@ -56,34 +56,39 @@ void ECA_CONTROL_TEST::do_run(void)
 
 void ECA_CONTROL_TEST::do_run_chainsetup_creation(void)
 {
-  ECA_SESSION esession;
-  ECA_CONTROL ectrl (&esession);
+  ECA_SESSION *esession = new ECA_SESSION();
+  ECA_CONTROL *ectrl = new ECA_CONTROL(esession);
+
   int iterations = 127;
+  long int test = 5000000;
 
   for(int i = 0; i < iterations; i++) {
     cerr << "libecasound_tester: do_run_chainsetup_creation() iteration " 
 	 << i + 1 << " of " << iterations << "." << endl;
 
-    ectrl.add_chainsetup("default");
-    if (ectrl.is_selected() != true) ECA_TEST_FAILURE("Chainsetup creation failed.");
-    ectrl.add_chain("default");
-    if (ectrl.selected_chains().size() != 1 ||
-	ectrl.selected_chains()[0] != "default") ECA_TEST_FAILURE("Chain addition failed.");
-    ectrl.add_audio_input("null");
-    ectrl.add_audio_output("null");
-    ectrl.add_chain_operator("-ea:100");
-    if (ectrl.selected_chain_operator() < 0 ||
-	ectrl.selected_chain_operator() > 1) ECA_TEST_FAILURE("Chain operator addition failed.");
-    ectrl.connect_chainsetup();
-    if (ectrl.is_connected() != true) ECA_TEST_FAILURE("Chainsetup connection failed.");
-    ectrl.start();
-    kvu_sleep(0, 10000000); /* 1ms */
-    if (ectrl.is_running() != true) ECA_TEST_FAILURE("Chainsetup start failed.");
-    ectrl.stop_on_condition();
-    if (ectrl.is_running() == true) ECA_TEST_FAILURE("Chainsetup stop failed.");
-    ectrl.disconnect_chainsetup();
-    if (ectrl.is_connected() == true) ECA_TEST_FAILURE("Chainsetup disconnection failed.");
-    ectrl.remove_chainsetup();
-    if (ectrl.chainsetup_names().size() > 0) ECA_TEST_FAILURE("Chainsetup removal failed.");
+    ectrl->add_chainsetup("default");
+    if (ectrl->is_selected() != true) ECA_TEST_FAILURE("Chainsetup creation failed.");
+    ectrl->add_chain("default");
+    if (ectrl->selected_chains().size() != 1 ||
+	ectrl->selected_chains()[0] != "default") ECA_TEST_FAILURE("Chain addition failed.");
+    ectrl->add_audio_input("null");
+    ectrl->add_audio_output("null");
+    ectrl->add_chain_operator("-ea:100");
+    if (ectrl->selected_chain_operator() < 0 ||
+	ectrl->selected_chain_operator() > 1) ECA_TEST_FAILURE("Chain operator addition failed.");
+    ectrl->connect_chainsetup();
+    if (ectrl->is_connected() != true) ECA_TEST_FAILURE("Chainsetup connection failed.");
+    ectrl->start();
+    kvu_sleep(0, 100000000); /* 100ms */
+    if (ectrl->is_running() != true) ECA_TEST_FAILURE("Chainsetup start failed.");
+    ectrl->stop_on_condition();
+    if (ectrl->is_running() == true) ECA_TEST_FAILURE("Chainsetup stop failed.");
+    ectrl->disconnect_chainsetup();
+    if (ectrl->is_connected() == true) ECA_TEST_FAILURE("Chainsetup disconnection failed.");
+    ectrl->remove_chainsetup();
+    if (ectrl->chainsetup_names().size() > 0) ECA_TEST_FAILURE("Chainsetup removal failed.");
   }
+
+  delete ectrl;
+  delete esession;
 }

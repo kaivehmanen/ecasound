@@ -56,8 +56,11 @@ void ECA_CHAINSETUP_POSITION::set_max_length_in_seconds(double pos_in_seconds)
 
 void ECA_CHAINSETUP_POSITION::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_value)
 {
-  double ratio (new_value);
-  ratio /= samples_per_second();
-  set_max_length_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(max_length_in_samples() * ratio));
+  if (max_length_set() == true) {
+    double ratio (new_value);
+    ratio /= samples_per_second();
+    set_max_length_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(max_length_in_samples() * ratio));
+  }
+   
   ECA_AUDIO_POSITION::set_samples_per_second(new_value);
 }
