@@ -648,7 +648,6 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 
   bool match = true;
   bool print_error = false;
-  bool print_error_iomode = false;
   if (argu.size() < 2) return;
   switch(argu[1]) {
   case 'i':
@@ -822,6 +821,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 	      if ((mdev->supported_io_modes() & MIDI_IO::io_readwrite) == MIDI_IO::io_readwrite) {
 		mdev->io_mode(MIDI_IO::io_readwrite);
 		csetup_repp->add_midi_device(mdev);
+		csetup_repp->midi_server_needed_rep = true;
 	      }
 	      else {
 		ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) MIDI-config: Warning! I/O-mode 'io_readwrite' not supported by " + mdev->name());
@@ -843,6 +843,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 			    kvu_numtostr(id) +
 			    "\".");
 	      csetup_repp->midi_server_repp->set_mmc_receive_id(id);
+	      csetup_repp->midi_server_needed_rep = true;
 	      break;
 	    }
 	  
@@ -855,6 +856,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 			    kvu_numtostr(id) +
 			    "\".");
 	      csetup_repp->midi_server_repp->add_mmc_send_id(id);
+	      csetup_repp->midi_server_needed_rep = true;
 	      break;
 	    }
 	  }
@@ -870,6 +872,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 	      // FIXME: not implemented
 	      ECA_LOG_MSG(ECA_LOGGER::info, 
 			    "(eca-chainsetup-parser) MIDI-config: Receiving MIDI-sync.");
+	      csetup_repp->midi_server_needed_rep = true;
 	      csetup_repp->midi_server_repp->toggle_midi_sync_receive(true);
 	      break;
 	    }
@@ -880,6 +883,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 	      ECA_LOG_MSG(ECA_LOGGER::info, 
 			    "(eca-chainsetup-parser) MIDI-config: Sending MIDI-sync.");
 	      csetup_repp->midi_server_repp->toggle_midi_sync_send(true);
+	      csetup_repp->midi_server_needed_rep = true;
 	      break;
 	    }
 	  }
@@ -949,8 +953,7 @@ void ECA_CHAINSETUP_PARSER::interpret_controller (const string& argu)
     if (t != 0) {
       MIDI_CLIENT* p = dynamic_cast<MIDI_CLIENT*>(t->source_pointer());
       if (p != 0) {
-	if (csetup_repp->midi_devices.size() == 0) 
-	  interpret_midi_device("-Md:" + csetup_repp->default_midi_device());
+	csetup_repp->midi_server_needed_rep = true;
 	p->register_server(csetup_repp->midi_server_repp);
       }
       csetup_repp->add_controller(t);

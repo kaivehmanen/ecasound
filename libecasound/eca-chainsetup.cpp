@@ -114,6 +114,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
     /* do not add default if there were parsing errors as
      * it might hide real problems */
     add_default_output();
+    add_default_midi_device();
   }
 }
 
@@ -288,6 +289,7 @@ void ECA_CHAINSETUP::set_defaults(void)
   multitrack_mode_rep = false;
   multitrack_mode_override_rep = false;
   memory_locked_rep = false;
+  midi_server_needed_rep = false;
   is_locked_rep = false;
   active_chain_index_rep = 0;
   active_chainop_index_rep = 0;
@@ -2226,6 +2228,21 @@ void ECA_CHAINSETUP::add_default_output(void)
     select_all_chains();
     ECA_RESOURCES ecaresources;
     interpret_object_option(string("-o:" + ecaresources.resource("default-output")));
+  }
+}
+
+/**
+ * If chainsetup has objects that need MIDI services, 
+ * but no MIDI-devices defined, a default MIDI-device is
+ * added.
+ * 
+ * @pre is_enabled() != true
+ */
+void ECA_CHAINSETUP::add_default_midi_device(void)
+{
+  if (midi_server_needed_rep == true &&
+      midi_devices.size() == 0) {
+    cparser_rep.interpret_object_option("-Md:" + default_midi_device());
   }
 }
 

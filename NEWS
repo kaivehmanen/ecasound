@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 080803) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 130803) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -53,6 +53,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 source channels
 	- fixed: some chainsetup parsing errors were totally ignored 
 		 and not reported to the user
+	- fixed: eiam - output of map-* commands was broken in 
+		 certain locales (for example "fi_FI")
+	- fixed: without at least one '-Md' or one '-km' option 
+		 specified, MIDI-services did not work
 27042003 (v2.2.3)  -** stable release **-
 	- added: support for both -0.64 and 0.65- JACK versions; 
 		 transport functionality is only enabled with the 

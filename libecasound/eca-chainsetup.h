@@ -126,6 +126,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   void add_midi_device(MIDI_IO* mididev);
   void remove_midi_device(const string& name);
+  void add_default_midi_device(void);
 
   /*@}*/
 
@@ -280,6 +281,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   bool multitrack_mode_rep;
   bool multitrack_mode_override_rep;
   bool memory_locked_rep;
+  bool midi_server_needed_rep;
   int active_chain_index_rep;
   int active_chainop_index_rep;
   int active_chainop_param_index_rep;

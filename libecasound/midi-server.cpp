@@ -403,7 +403,9 @@ void MIDI_SERVER::send_mmc_command(unsigned int cmd)
  */
 void MIDI_SERVER::send_mmc_start(void)
 { 
-  send_mmc_command(0x02); 
+  /* FIXME: should this be 0x03 (deferred play)? */
+  // send_mmc_command(0x02); 
+  send_mmc_command(0x03); 
 }
 
 /**
