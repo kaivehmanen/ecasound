@@ -174,7 +174,10 @@ ecasound_extra_include = \
 ecasound_test_framework_include = \
 			eca-test-repository.h \
 			eca-test-case.h \
-			eca-object-factory_test.h
+			eca-chainsetup_test.h \
+			eca-object-factory_test.h \
+			audioio_test.h \
+			audioio-device_test.h
 
 # VST-support:
 #			eca-vst-plugin-map.h
