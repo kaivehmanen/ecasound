@@ -22,6 +22,10 @@ Last officially released version is -*> v2.0.0 *-
 		 when changing or setting processing position
 	- fixed: bugs in assigning LADSPA plugin audio ports to 
 	  	 ecasound chain channels
+	- fixed: configure script failed if arts was installed 
+	  	 without the devel files (arts-devel) 
+	- fixed: bug in the MIDI-server code caused core dumps in
+		 certain situations
 02052001 (v2.0.0)  -** stable release **-
 	- added: -klg - a generic linear envelope; a controller source
 		 that can be used to map custom envelopes to chain 

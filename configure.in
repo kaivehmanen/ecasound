@@ -277,9 +277,12 @@ fi
 dnl --
 dnl aRts support
 dnl --
-AC_CHECK_LIB(artsc,main,arts_support=yes,arts_support=no)
+dnl FIXME: should really check for 'arts-config' script
+dnl --
+AC_CHECK_HEADER(artsc/artsc.h,arts_support=yes,arts_support=no)
+AC_CHECK_LIB(artsc,main,,arts_support=no)
 AC_ARG_ENABLE(arts,
-[  --disable-audiofile		  Disable libaudiofile (default = no)],
+[  --disable-arts		  Disable aRts support (default = no)],
 arts_support=no)
 AM_CONDITIONAL(COMPILE_ARTS, test x$arts_support = xyes) 
 if test x$arts_support = xyes; then
