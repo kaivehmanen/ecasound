@@ -733,9 +733,13 @@ void ECA_PROCESSOR::start(void) {
       cerr << "(eca-main) Aborting! Negative multitrack-sync; problems with hardware?" << endl;
       exit(-1);
     }
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) sync fix: " + kvu_numtostr(sync_fix));
-    for (unsigned int adev_sizet = 0; adev_sizet != non_realtime_outputs_rep.size(); adev_sizet++) {
-      non_realtime_outputs_rep[adev_sizet]->seek_position_in_samples_advance(sync_fix);
+    // FIXME: add a better fix later; now just make sure that no
+    // seeking is done when -z:db is enabled
+    if (csetup_repp->double_buffering() != true) {
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) sync fix: " + kvu_numtostr(sync_fix));
+      for (unsigned int adev_sizet = 0; adev_sizet != non_realtime_outputs_rep.size(); adev_sizet++) {
+	non_realtime_outputs_rep[adev_sizet]->seek_position_in_samples_advance(sync_fix);
+      }
     }
   }
   else {
