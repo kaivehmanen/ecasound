@@ -118,17 +118,13 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
       jackmgr_rep->register_jack_ports(myid_rep, channels(), my_out_portname);
     }
 
-    if (label() != "jack_generic" && label() != "jack") {
+    /* - make automatic connections */
+
+    if (label() == "jack_alsa") {
       string in_aconn_portprefix, out_aconn_portprefix;
 
-      if (label() == "jack_alsa") {
-	in_aconn_portprefix = "alsa_pcm:capture_";
-	out_aconn_portprefix = "alsa_pcm:playback_";
-      }
-      else if (label() == "jack_auto") {
-	in_aconn_portprefix = secondparam_rep + ":out_";
-	out_aconn_portprefix = secondparam_rep + ":in_";
-      }
+      in_aconn_portprefix = "alsa_pcm:capture_";
+      out_aconn_portprefix = "alsa_pcm:playback_";
       
       for(int n = 0; n < channels(); n++) {
 	if (io_mode() == AUDIO_IO::io_read) {
@@ -138,6 +134,9 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 	  jackmgr_rep->auto_connect_jack_port(myid_rep, n + 1, out_aconn_portprefix + kvu_numtostr(n + 1));
 	}
       }
+    }
+    else if (label() == "jack_auto") {
+      jackmgr_rep->auto_connect_jack_port_client(myid_rep, secondparam_rep, channels());
     }
   }
 

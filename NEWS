@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 270303) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 020403) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -20,11 +20,20 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: by default python version of ECI is used; the C 
 		   python module for ECI, pyecasound, is only compiled
 		   if --enable-pyecasound is specified
+	- changed: jack_auto,dstclient input/output object now 
+		   automatically connects to matching ports of JACK
+		   dstclient (no longer requires dstclient to have
+		   in_X/out_X port names)
 	- fixed: yet another fix for creating temporary files in
                  ecanormalize and ecafixdc; now both LOGNAME and USER
 		 are checked for a valid user name
 	- fixed: prefer usleep over nanosleep on cygwin; avoids 
 		 the excessive-cpu-usage problem
+	- fixed: work-around for a bug in the pcm plugin of ALSA 0.9.1
+		 and earlier that caused recording to stop to 
+		 an audio i/o error
+	- fixed: inconsistencies in how configure --disable/enable-feat
+		 options were handled
 18032003 (v2.2.2)  -** stable release **-
 	- edi-entries: edi-35 and edi-36 added
 	- added: ecacontrol.py - a native python implementation of 

@@ -76,6 +76,8 @@ static void eca_jack_process_profile_post(void);
 static int eca_jack_srate (jack_nframes_t nframes, void *arg);
 static void eca_jack_shutdown (void *arg);
 
+static std::string eca_get_jack_port_item(const char **ports, int item);
+
 #include "audioio_jack_manager.h"
 
 using std::cerr;
@@ -948,6 +950,61 @@ void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port(int client_id, int portnum, c
   while(p != node->ports.end()) {
     if (n == portnum) {
       (*p)->autoconnect_string = portname;
+      break;
+    }
+    ++n;
+    ++p;
+  }
+}
+
+static std::string eca_get_jack_port_item(const char **ports, int item)
+{
+  int n = 0;
+  while(ports != 0 && ports[n] != 0) {
+    if (n + 1 == item) return(string(ports[n]));
+    n++;
+  }
+  return string("");
+}
+
+/**
+ * Sets up automatic port connections to matching ports of
+ * client 'dst'.
+ *
+ * @pre list<int> l = get_object_list(); std::count(l.begin(), l.end(), client_id) == 1
+ * @pre is_open() == true
+ @ @pre portnum > 0
+ */
+void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port_client(int client_id, const string& dst, int channels)
+{
+  // ---
+  DBC_DECLARE(list<int> ol = get_object_list());
+  DBC_REQUIRE(std::count(ol.begin(), ol.end(), client_id) == 1);
+  DBC_REQUIRE(is_open() == true);
+  DBC_REQUIRE(channels > 0);
+  // ---
+
+  const char** ports;
+  
+  eca_jack_node_t* node = get_node(client_id);
+  list<eca_jack_port_data*>::const_iterator p = node->ports.begin();
+  int n = 1;
+  while(p != node->ports.end()) {
+    if (n <= channels) {
+      ports = 0;
+      if (node->aobj->io_mode() == AUDIO_IO::io_read) {
+	ports = jack_get_ports (client_repp, dst.c_str(), NULL, JackPortIsOutput);
+      }
+      else {
+	ports = jack_get_ports (client_repp, dst.c_str(), NULL, JackPortIsInput);
+      }
+      (*p)->autoconnect_string = eca_get_jack_port_item(ports, n);
+      ECA_LOG_MSG(ECA_LOGGER::user_objects,
+		  "(audioio-jack-manager) Making autoconnection to terminal port: " + 
+		  (*p)->autoconnect_string);
+      if (ports != NULL) free(ports);
+    }
+    else {
       break;
     }
     ++n;

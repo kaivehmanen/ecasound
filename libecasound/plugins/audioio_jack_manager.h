@@ -94,7 +94,7 @@ public:
 
   virtual string name(void) const { return("jack"); }
   virtual string description(void) const { return("JACK object manager"); }
-
+ 
   /*@}*/
 
   /** @name Function reimplemented from DYNAMIC_PARAMETERS */
@@ -131,6 +131,7 @@ public:
   void register_jack_ports(int client_id, int ports, const string& portprefix);
   void unregister_jack_ports(int client_id);
   void auto_connect_jack_port(int client_id, int portnum, const string& portname);
+  void auto_connect_jack_port_client(int client_id, const string& dst, int channels);
 
   long int client_latency(int client_id);
 
