@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 050501) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 030601) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -18,6 +18,8 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.0 *-
 
 ??052001 (v2.0.1)
+	- changed: completely rewritten mp3 header parsing; should 
+		   fix most of the compatibility problems
 	- fixed: disk buffers weren't properly flushed in -z:db mode 
 		 when changing or setting processing position
 	- fixed: bugs in assigning LADSPA plugin audio ports to 
@@ -27,6 +29,10 @@ Last officially released version is -*> v2.0.0 *-
 	- fixed: bug in the MIDI-server code caused core dumps in
 		 certain situations
 	- fixed: bug in querying -klg parameter status
+	- fixed: eiam - giving certain invalid arguments to 'cop-add'
+		 and 'ctrl-add' crashed ecasound
+	- fixed: bug in closing .raw files [smassy]
+	- fixed: eiam - cop-inxed-select renamed to cop-index-select
 02052001 (v2.0.0)  -** stable release **-
 	- added: -klg - a generic linear envelope; a controller source
 		 that can be used to map custom envelopes to chain 
