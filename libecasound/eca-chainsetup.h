@@ -149,6 +149,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   int output_openmode(void) const { return(output_openmode_rep); }
   Buffering_mode_t buffering_mode(void) const { return(buffering_mode_rep); }
   bool is_valid_for_connection(void) const;
+  bool multitrack_mode(void) const { return(multitrack_mode_rep); }
 
   /*@}*/
 

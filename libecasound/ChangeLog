@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2002-03-13  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-chainsetup.h (multitrack_mode): added
+
 2002-03-11  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
         * eca-chainsetup.h (set_mixmode, mixmode): removed

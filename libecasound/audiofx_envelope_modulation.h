@@ -70,6 +70,14 @@ class EFFECT_PULSE_GATE_BPM : public EFFECT_ENV_MOD {
   virtual ~EFFECT_PULSE_GATE_BPM(void);
   EFFECT_PULSE_GATE_BPM* clone(void) const { return new EFFECT_PULSE_GATE_BPM(*this); }
   EFFECT_PULSE_GATE_BPM* new_expr(void) const { return new EFFECT_PULSE_GATE_BPM(); }
+
+  /** @name Protected virtual functions to notify about changes 
+   *        (Reimplemented from ECA_RESAMPLE_AWARE) */
+  /*@{*/
+
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
+
+  /*@}*/
 };
 
 /**

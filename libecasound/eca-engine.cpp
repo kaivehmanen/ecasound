@@ -1120,52 +1120,53 @@ void ECA_ENGINE::update_cache_chain_connections(void)
  */
 void ECA_ENGINE::update_cache_latency_values(void)
 {
-  long int in_latency = -1;
-  for(unsigned int n = 0; n < realtime_inputs_rep.size(); n++) {
-    if (in_latency == -1) {
-      in_latency = realtime_inputs_rep[n]->latency();
-    }
-    else {
-      if (in_latency != realtime_inputs_rep[n]->latency()) {
-	ecadebug->msg(ECA_DEBUG::info, 
-		      "(eca-engine) Warning! Latency mismatch between input objects!");
+  if (csetup_repp->multitrack_mode() == true) {
+    long int in_latency = -1;
+    for(unsigned int n = 0; n < realtime_inputs_rep.size(); n++) {
+      if (in_latency == -1) {
+	in_latency = realtime_inputs_rep[n]->latency();
+      }
+      else {
+	if (in_latency != realtime_inputs_rep[n]->latency()) {
+	  ecadebug->msg(ECA_DEBUG::info, 
+			"(eca-engine) Warning! Latency mismatch between input objects!");
+	}
       }
     }
-  }
-
-  long int out_latency = -1;
-  for(unsigned int n = 0; n < realtime_outputs_rep.size(); n++) {
-    if (out_latency == -1) {
-      if (realtime_outputs_rep[n]->prefill_space() > 0)
-	out_latency = prefill_threshold_rep * buffersize() + realtime_outputs_rep[n]->latency();
-      else
-	out_latency = realtime_outputs_rep[n]->latency();
-    }
-    else {
-      if (realtime_outputs_rep[n]->prefill_space() > 0 && 
-	  out_latency != prefill_threshold_rep * buffersize() + realtime_outputs_rep[n]->latency() || 
-	  realtime_outputs_rep[n]->prefill_space() > 0 &&
-	  out_latency != realtime_outputs_rep[n]->latency()) {
-	ecadebug->msg(ECA_DEBUG::info, 
-		      "(eca-engine) Warning! Latency mismatch between output objects!");
+    
+    long int out_latency = -1;
+    for(unsigned int n = 0; n < realtime_outputs_rep.size(); n++) {
+      if (out_latency == -1) {
+	if (realtime_outputs_rep[n]->prefill_space() > 0)
+	  out_latency = prefill_threshold_rep * buffersize() + realtime_outputs_rep[n]->latency();
+	else
+	  out_latency = realtime_outputs_rep[n]->latency();
+      }
+      else {
+	if (realtime_outputs_rep[n]->prefill_space() > 0 && 
+	    out_latency != prefill_threshold_rep * buffersize() + realtime_outputs_rep[n]->latency() || 
+	    realtime_outputs_rep[n]->prefill_space() > 0 &&
+	    out_latency != realtime_outputs_rep[n]->latency()) {
+	  ecadebug->msg(ECA_DEBUG::info, 
+			"(eca-engine) Warning! Latency mismatch between output objects!");
+	}
       }
     }
+
+    recording_offset_rep = (out_latency > in_latency ? 
+			    out_latency - in_latency :
+			    in_latency - out_latency);
+    
+    if (recording_offset_rep % buffersize()) {
+      ecadebug->msg(ECA_DEBUG::info, 
+		    "(eca-engine) Warning! Recording offset not divisible with chainsetup buffersize.");
+    }
+    
+    ecadebug->msg(ECA_DEBUG::user_objects,
+		  "(eca-engine) recording offset is " +
+		  kvu_numtostr(recording_offset_rep) +
+		  	" samples.");
   }
-
-  recording_offset_rep = (out_latency > in_latency ? 
-			  out_latency - in_latency :
-			  in_latency - out_latency);
-
-  if (recording_offset_rep % buffersize()) {
-    ecadebug->msg(ECA_DEBUG::info, 
-		  "(eca-engine) Warning! Recording offset not divisible with chainsetup buffersize.");
-  }
-
-  ecadebug->msg(ECA_DEBUG::user_objects,
-		"(eca-engine) recording offset is " +
-		kvu_numtostr(recording_offset_rep) +
-		" samples.");
-		     
 }
 
 /**

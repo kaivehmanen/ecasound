@@ -322,7 +322,7 @@ void* ecasound_watchdog_thread(void *)
   /* block until a signal received */
   sigwait(&signalset, &signalno);
   
-  std::cerr << "Ecasound watchdog-thread received signal " << signalno << ". Exiting.." << std::endl << std::endl;
+  std::cerr << "Ecasound watchdog-thread received signal " << signalno << ". Exiting.." << std::endl;
 
   ecasound_clean_exit(ecasound_return_signal);
 

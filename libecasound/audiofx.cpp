@@ -18,10 +18,12 @@
 // ------------------------------------------------------------------------
 
 #include <kvutils/dbc.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "sample-specs.h"
 #include "samplebuffer.h"
 #include "audiofx.h"
+#include "eca-debug.h"
 
 EFFECT_BASE::EFFECT_BASE(void)
   : channels_rep(0) 
@@ -34,6 +36,11 @@ EFFECT_BASE::~EFFECT_BASE(void)
 
 void EFFECT_BASE::init(SAMPLE_BUFFER* sbuf)
 {
+  ecadebug->msg(ECA_DEBUG::user_objects,
+		"(audiofx) Init w/ samplerate " +
+		kvu_numtostr(samples_per_second()) + " for object " +
+		name() + ".");
+
   set_channels(sbuf->number_of_channels());
 
   DBC_CHECK(channels() > 0);
@@ -46,6 +53,12 @@ int EFFECT_BASE::channels(void) const {
 
 void EFFECT_BASE::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_rate)
 {
+  ecadebug->msg(ECA_DEBUG::user_objects,
+		"(audiofx) Setting samplerate to " +
+		kvu_numtostr(new_rate) + " for object " +
+		name() + ". Old value " +
+		kvu_numtostr(samples_per_second()) + ".");
+
   if (samples_per_second() != new_rate) {
     std::vector<parameter_t> old_values (number_of_params());
     for(int n = 0; n < number_of_params(); n++) {

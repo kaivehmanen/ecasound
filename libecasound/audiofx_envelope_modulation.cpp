@@ -44,7 +44,8 @@ EFFECT_PULSE_GATE::~EFFECT_PULSE_GATE(void)
 {
 }
 
-void EFFECT_PULSE_GATE::set_parameter(int param, parameter_t value) {
+void EFFECT_PULSE_GATE::set_parameter(int param, parameter_t value)
+{
   switch (param) {
   case 1: 
     if (value > 0)
@@ -73,7 +74,8 @@ void EFFECT_PULSE_GATE::set_parameter(int param, parameter_t value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_PULSE_GATE::get_parameter(int param) const {
+CHAIN_OPERATOR::parameter_t EFFECT_PULSE_GATE::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(1.0/period);
@@ -85,14 +87,16 @@ CHAIN_OPERATOR::parameter_t EFFECT_PULSE_GATE::get_parameter(int param) const {
   return(0.0);
 }
 
-void EFFECT_PULSE_GATE::init(SAMPLE_BUFFER* sbuf) { 
+void EFFECT_PULSE_GATE::init(SAMPLE_BUFFER* sbuf)
+{ 
   i.init(sbuf); 
-  set_samples_per_second(samples_per_second());
   set_channels(sbuf->number_of_channels());
   incrTime = 1.0/samples_per_second();
+  EFFECT_ENV_MOD::init(sbuf);
 }
 
-void EFFECT_PULSE_GATE::process(void) {
+void EFFECT_PULSE_GATE::process(void)
+{
   i.begin(); // iterate through all samples, one sample-frame at a
              // time (interleaved)
   while(!i.end()) {
@@ -122,7 +126,8 @@ EFFECT_PULSE_GATE_BPM::~EFFECT_PULSE_GATE_BPM(void)
 {
 }
 
-void EFFECT_PULSE_GATE_BPM::set_parameter(int param, parameter_t value) {
+void EFFECT_PULSE_GATE_BPM::set_parameter(int param, parameter_t value)
+{
   switch (param) {
   case 1: 
     pulsegate_rep.set_parameter(1, value / 60.0);
@@ -145,8 +150,19 @@ CHAIN_OPERATOR::parameter_t EFFECT_PULSE_GATE_BPM::get_parameter(int param) cons
   return(0.0);
 }
 
-void EFFECT_PULSE_GATE_BPM::init(SAMPLE_BUFFER* sbuf) { pulsegate_rep.init(sbuf); }
+void EFFECT_PULSE_GATE_BPM::init(SAMPLE_BUFFER* sbuf)
+{ 
+  pulsegate_rep.init(sbuf); 
+  EFFECT_ENV_MOD::init(sbuf);
+}
+
 void EFFECT_PULSE_GATE_BPM::process(void) { pulsegate_rep.process(); }
+
+void EFFECT_PULSE_GATE_BPM::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
+{
+  pulsegate_rep.set_samples_per_second(v);
+  EFFECT_ENV_MOD::set_samples_per_second(v);
+}
 
 EFFECT_TREMOLO::EFFECT_TREMOLO (parameter_t freq_bpm,
 				parameter_t depth_percent)
@@ -160,7 +176,8 @@ EFFECT_TREMOLO::~EFFECT_TREMOLO(void)
 {
 }
 
-void EFFECT_TREMOLO::set_parameter(int param, parameter_t value) {
+void EFFECT_TREMOLO::set_parameter(int param, parameter_t value)
+{
   switch (param) {
   case 1:
     if (value > 0)
@@ -180,7 +197,8 @@ void EFFECT_TREMOLO::set_parameter(int param, parameter_t value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_TREMOLO::get_parameter(int param) const {
+CHAIN_OPERATOR::parameter_t EFFECT_TREMOLO::get_parameter(int param) const
+{
   switch (param) {
   case 1:
     return freq*120;
@@ -192,14 +210,16 @@ CHAIN_OPERATOR::parameter_t EFFECT_TREMOLO::get_parameter(int param) const {
   return(0.0);
 }
 
-void EFFECT_TREMOLO::init(SAMPLE_BUFFER* sbuf) {
+void EFFECT_TREMOLO::init(SAMPLE_BUFFER* sbuf)
+{
   i.init(sbuf);
-  set_samples_per_second(samples_per_second());
   set_channels(sbuf->number_of_channels());
   incrTime = 1.0/samples_per_second();
+  EFFECT_ENV_MOD::init(sbuf);
 }
 
-void EFFECT_TREMOLO::process(void) {
+void EFFECT_TREMOLO::process(void)
+{
   i.begin(); // iterate through all samples, one sample-frame at a
              // time (interleaved)
   while(!i.end())

@@ -33,15 +33,15 @@ public:
 
   /*@}*/
 
-  /** @name Protected virtual functions to notify about changes 
+ public:
+
+  /** @name Public virtual functions to notify about changes 
    *        (Reimplemented from ECA_RESAMPLE_AWARE) */
   /*@{*/
 
   virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
 
   /*@}*/
-
- public:
 
   /** @name Public virtual functions for initialization
    *        (Reimplemented from CHAIN_OPERATOR) */

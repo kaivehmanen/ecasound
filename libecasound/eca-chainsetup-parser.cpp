@@ -344,7 +344,7 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
   case 's':
     {
       if (argu.size() > 2 && argu[2] == 'r') {
-	ecadebug->msg("(eca-chainsetup-parser) Option '-sr' is obsolete. Use syntax '-f:sfmt,bits,srate,ileaving' instead.");
+	ecadebug->msg("(eca-chainsetup-parser) Option '-sr' is obsolete. Use syntax '-f:sfmt,channels,srate,ileaving' instead.");
       }
       break;
     }

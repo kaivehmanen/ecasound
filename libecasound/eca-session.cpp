@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-session.cpp: Ecasound runtime setup and parameters.
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -181,7 +181,6 @@ void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) {
   chainsetups_rep.push_back(comline_setup);
 
   // --------
-  // ensure:
   DBC_ENSURE(selected_chainsetup_repp == comline_setup);
   DBC_ENSURE(static_cast<int>(chainsetups_rep.size()) == old_size + 1);
   // --------
@@ -214,7 +213,6 @@ void ECA_SESSION::remove_chainsetup(void) {
   }
 
   // --------
-  // ensure:
   DBC_ENSURE(selected_chainsetup_repp == 0);
   // --------
 }
@@ -237,9 +235,8 @@ void ECA_SESSION::select_chainsetup(const std::string& name) {
   }
 
   // --------
-  // ensure:
   DBC_ENSURE(selected_chainsetup_repp == 0 ||
-	 selected_chainsetup_repp->name() == name);
+	     selected_chainsetup_repp->name() == name);
   // --------
 }
 
@@ -279,8 +276,7 @@ void ECA_SESSION::load_chainsetup(const std::string& filename) {
     selected_chainsetup_repp = 0;
   
   // --------
-  // ensure:
-  DBC_ENSURE(selected_chainsetup_repp->filename() == filename);
+  DBC_ENSURE(selected_chainsetup_repp != 0 && selected_chainsetup_repp->filename() == filename);
   // --------
 }
 
