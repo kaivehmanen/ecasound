@@ -43,6 +43,8 @@
 #include "audioio-types.h"
 #include "audiofx_ladspa.h"
 
+#include "eca-object-map.h"
+#include "eca-preset-map.h"
 #include "eca-static-object-maps.h"
 
 #include "midiio.h"

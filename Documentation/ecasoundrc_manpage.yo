@@ -89,11 +89,9 @@ startdit()
   	dit(user-resource-directory)
   	Directory for user-specific ecasound configuration files.
 	If this directory exists, ecasound will search for 
-	filenames defined assigned to global resources (specified 
+	filenames assigned to global resources (specified 
 	with resource-file-*). Defaults to em(~/ecasound-config).
 	
-  	Defaults to em({prefix-dir}/share/ecasound).
-
 	dit(internal-plugin-directory)
 	Directory containing ecasound's internal plugins. Defaults to em({prefix-dir}/lib/ecasound-plugins).
 

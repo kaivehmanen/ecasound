@@ -69,7 +69,7 @@ ECA_OBJECT* ECA_OBJECT_MAP::object(const string& keyword, bool use_regexp) const
   ECA_OBJECT* object = 0;
   while(p != object_map.end()) {
     if (use_regexp == true) {
-      regcomp(&preg, p->first.c_str(), REG_NOSUB);
+      regcomp(&preg, p->first.c_str(), REG_NOSUB | REG_ICASE);
       if (regexec(&preg, keyword.c_str(), 0, 0, 0) == 0) {
 	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-object-map) match: " + p->first + "-" + keyword);
 	object = p->second;

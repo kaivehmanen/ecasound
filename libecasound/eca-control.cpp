@@ -38,8 +38,11 @@
 #include "eca-chainop.h"
 
 #include "audiofx_ladspa.h"
-#include "eca-object-factory.h"
+
+#include "eca-object-map.h"
+#include "eca-preset-map.h"
 #include "eca-static-object-maps.h"
+#include "eca-object-factory.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"

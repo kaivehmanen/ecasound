@@ -31,6 +31,7 @@
 #include "file-preset.h"
 #include "global-preset.h"
 #include "audiofx_ladspa.h"
+#include "eca-object-map.h"
 #include "eca-static-object-maps.h"
 #include "eca-chain.h"
 #include "eca-chainop.h"

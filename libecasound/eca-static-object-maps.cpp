@@ -53,7 +53,6 @@ extern "C" {
 #endif
 }
 
-#include "eca-static-object-maps.h"
 #include "generic-controller.h"
 #include "ctrl-source.h"
 #include "midi-cc.h"
@@ -79,6 +78,10 @@ extern "C" {
 #include "audioio-rtnull.h"
 
 #include "midiio-raw.h"
+
+#include "eca-object-map.h"
+#include "eca-preset-map.h"
+#include "eca-static-object-maps.h"
 
 #include "eca-resources.h"
 #include "eca-error.h"

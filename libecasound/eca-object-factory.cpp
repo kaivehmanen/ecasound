@@ -24,7 +24,10 @@
 #include "audiofx_ladspa.h"
 #include "generic-controller.h"
 #include "eca-static-object-maps.h"
+#include "eca-object-map.h"
 #include "eca-object-factory.h"
+
+// FIXME: add checks for uninitialized object maps (map == 0)
 
 /**
  * Return the first effect that matches with 'keyword'

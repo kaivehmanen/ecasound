@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??032001 (v1.9dev4)
+06032001 (v1.9dev4)
 	- added: -C - disable interactive mode; reverse op. for -c
 	- added: -X - open outputs for updateing; rev.op. for -x
 	- added: -r:-1 to disabled raised-priority mode		
@@ -29,6 +29,9 @@ Last officially released version is -*> v1.8.2r14 <*-
 		   given using the new 'type,device' syntax; defaults
 		   to 'rawmidi,/dev/midi'
 	- changed: man pages are now distributed in nroff 'man' format
+	- changed: audio object regexps are now case insensitive - 
+		   for instance both file.mp3 and file.MP3 are now
+		   recognized as mp3 files
 	- fixed: mpg123 instances weren't always properly cleaned
 	- fixed: loop-device code wasn't working
 	- fixed: more ewf-fixes
