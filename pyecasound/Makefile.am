@@ -36,11 +36,13 @@ noinst_HEADERS 			= $(pyecasound_includes)
 if COMPILE_PYECASOUND
 noinst_LTLIBRARIES 		= libpyecasound.la
 #lib_LTLIBRARIES 		= libpyecasound.la
+endif
 
 libpyecasound_la_SOURCES	= pyecasound.cpp
 libpyecasound_la_LIBADD		= $(ecasound_libs) $(kvutils_libs)
 libpyecasound_la_LDFLAGS 	= -avoid-version -export-dynamic -Wl,--rpath -Wl,${prefix}/lib
 
+if COMPILE_PYECASOUND
 all: libpyecasound.so
 
 libpyecasound.so: pyecasound.o
