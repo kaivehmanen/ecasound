@@ -26,7 +26,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (06.10.2000)
+       (17.10.2000)
        ()
        (Multimedia software)
 
@@ -165,12 +165,12 @@ See url(ecasound user's guide)(users_guide/users_guide.html) for
 more detailed documentation.
 
 startdit()
-dit(-f:sample_format,channel,sample-rate)
+dit(-f:sample_format,channel,sample-rate,interleaving)
 Set default sampling parameters. These are used for all following
 input and output files or until another -f is specified. If no -f
-option is present, ecasound uses s16_le/2ch/44100 as the default
-value. Some audio objects may override this altogether (for instance, 
-RIFF WAVE inputs and outputs).
+option is present, ecasound uses s16_le/2ch/44100/interleaved as the 
+default value. Some audio objects may override this altogether (for 
+instance, RIFF WAVE inputs and outputs).
 
 Sample format is given as a a formatted string. The first letter is 
 either "u", "s" and "f" (unsigned, signed, floating point). The 
@@ -180,6 +180,9 @@ little endian, "_le" is added to the end. Similarly if big endian,
 Currently supported formats are "u8" (same as "8"), "s16_le" (same 
 as "16"), "s16_be", "s24_le", "s24_be", "s32_le", "s32_be", "f32_le" 
 and "f32_be".
+
+The 4th parameter 'interleaving' should either be 'i' (default) for
+interleaved stream format, or 'n' for noninterleaved.
 
 dit(-y:seconds)
 Set starting position for last specified input/output. If 
