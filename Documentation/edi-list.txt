@@ -27,6 +27,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+22.08.2002 - edi-24 closed
 17.05.2002 - edi-22 closed
 23.04.2002 - edi-26 opened
 24.02.2002 - edi-13 closed
@@ -71,8 +72,6 @@ xx.xx.2001 no history information
 	- submitted: kaiv, 26.11.2001
 (edi-23): Extending the max_buffers audio i/o parameter
 	- submitted: kaiv, 22.02.2002
-(edi-24): Resample audio object
-        - submitted: kaiv, 22.02.2002
 (edi-26): Logarithmic linear envelopes
         - submitted: jhall, 23.04.2002
 
@@ -125,5 +124,8 @@ xx.xx.2001 no history information
 (edi-22): Engine iteration from  outside sources
         - submitted: kaiv, 22.02.2002
 	- closed: kaiv, 17.05.2002
+(edi-24): Resample audio object
+         - submitted: kaiv, 22.02.2002
+	 - implemented: kaiv, 22.08.2002, 2.1dev12
 
 -----------------------------------------------------------------------
