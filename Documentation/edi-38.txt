@@ -1,0 +1,30 @@
+------------------------------------------------------------------------
+Status: FROZEN
+
+(edi-38): Initial EIAM commands upon connecting a chainsetup.
+         - submitted: kaiv, 20.08.2003
+         - frozen: kaiv, 20.08.2003
+
+------------------------------------------------------------------------
+Reasons for the frozen status:
+
+- nice idea, but overlaps numerous existing mechanisms (ECI, -y, 
+  ewf), while at the same time doesn't provide any functionality 
+  that is not implementable by other means
+- if someone comes up with a good use-case, we should considering
+  opening this item again
+
+------------------------------------------------------------------------
+Details:
+
+- new option to add chainsetup-specific initial EIAM commands
+- for example: '-U "ai-setpos 10"'
+- commands are executed immediately before connecting the chainsetup
+  to the engine
+- multiple commands can be given
+- use-cases:
+    - replacing the -y option
+    - replacing some of the .ewf functionality
+    - possibility to save initial commands in chainsetup files (.ecs)
+
+------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------
-Status: OPEN/CLOSED
+Status: OPEN/CLOSED/FROZEN
 
 (edi-xxx): Short description of the item. This should be no more 
 	   than a few lines. 

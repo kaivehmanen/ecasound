@@ -1,11 +1,16 @@
 ------------------------------------------------------------------------
-Status: OPEN
+Status: FROZEN
 
 (edi-19) Separate file format for multitrack setups (.emt).
 	- submitted: kaiv, 18.10.2001
+	- frozen: kaiv, 20.08.2003
 
 ------------------------------------------------------------------------
-Details:
+Reason for the frozen status:
+
+- there's already too many alternatives on how to use ecasound; a new
+  file format would jus add confusion and bloat (even though the idea
+  itself is not a bad one)
 
 ------------------------------------------------------------------------
 - kaiv, 18.10.2001
@@ -267,3 +272,5 @@ select the appropriate one.
 Here comes again the problem of identifiers that I spoke of earlier, in 
 this way, how would the front-end app know which chain is which?
 --cut--
+
+------------------------------------------------------------------------

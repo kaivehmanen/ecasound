@@ -27,6 +27,8 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+20.08.2003 - edi-4, edi-19 and edi-35 frozen, edi-38 added and frozen
+	     immediately, edi-39 added
 17.03.2003 - edi-36 and edi-37 added
 07.12.2002 - edi-1 closed
 16.11.2002 - edi-35 added
@@ -59,8 +61,6 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ Section: Enhancements, new features ]
 
-(edi-4): 14bit MIDI-CCs controller source.
-	- submitted: kaiv, 17.08.2001
 (edi-5): Threshold parameter to -eca.
 	- submitted: ecasound-list daemon :), 2001
 (edi-7): Adding a 'loop x times' option to the ewf file format.
@@ -73,8 +73,6 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-16): More flexible system for assigning controllers of 
           controllers (-kx).
 	- submitted: jhalttun, 02.09.2001
-(edi-19): Separate file format for multitrack setups (.emt).
-	- submitted: kaiv, 18.10.2001
 (edi-20): Ewf-v2 format.
 	- submitted: kaiv, 26.11.2001
 (edi-23): Extending the max_buffers audio i/o parameter
@@ -89,12 +87,27 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	 - submitted: kaiv, 29.10.2002
 (edi-34): Better checks for parsing operator arguments.
 	 - submitted: jhalttun, 28.10.2002
-(edi-35): JACK support to ecasound's interactive mode (EIAM)
-	 - submitted: kaiv, 16.11.2002
 (edi-36): Addition of position markers.
 	 - submitted: julien, 17.03.2003
 (edi-37): Porting Steve Harris' dither code from JACK to ecasound
          - submitted: jhall, 17.03.2003
+(edi-39): Timestamped EIAM commands.
+         - submitted: kaiv, 20.08.2003
+
+-----------------------------------------------------------------------
+[ Section: Frozen ]
+
+(edi-4): 14bit MIDI-CCs controller source.
+	- submitted: kaiv, 17.08.2001
+(edi-19): Separate file format for multitrack setups (.emt).
+	- submitted: kaiv, 18.10.2001
+	- frozen: kaiv, 20.08.2003	
+(edi-35): JACK support to ecasound's interactive mode (EIAM)
+	 - submitted: kaiv, 16.11.2002
+         - frozen: kaiv, 20.08.2003
+(edi-38): Initial EIAM commands upon connecting a chainsetup.
+         - submitted: kaiv, 20.08.2003
+         - frozen: kaiv, 20.08.2003
 
 -----------------------------------------------------------------------
 [ Section: Closed items ]

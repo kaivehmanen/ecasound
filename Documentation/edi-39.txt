@@ -1,0 +1,24 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-39): Timestamped EIAM commands.
+         - submitted: kaiv, 20.08.2003
+
+------------------------------------------------------------------------
+Details:
+
+- rationale; why should this item be implemented?
+    - lots of flexibility to mixing
+
+- reasons agains
+    - partly overlapping controller sourced
+    - timestamping might be more easy to use for adding non-regular
+      param-change events to the mix
+
+- possible limitation
+    - without adding a completely new event system, timestamping 
+      granularity will be limited to buffersize (-b:x)
+    - for accurate timestamping; only rt-capable EIAM commands
+      can be used
+
+------------------------------------------------------------------------

@@ -1,8 +1,17 @@
 ------------------------------------------------------------------------
-Status: OPEN
+Status: FROZEN
 
 (edi-35): JACK support to ecasound's interactive mode (EIAM)
 	 - submitted: kaiv, 16.11.2002
+         - frozen: kaiv, 20.08.2003
+
+------------------------------------------------------------------------
+Reasons for the frozen status:
+
+- duplicated effort with projects like 'qjackconnect',
+  'jackd_plumbing', 'jackctl', and various others
+  implementing good set of features (especially client and port name
+  completion is not a trivial job)
 
 ------------------------------------------------------------------------
 Details:
