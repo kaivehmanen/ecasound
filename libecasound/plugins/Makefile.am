@@ -14,7 +14,10 @@ endif
 
 if ECA_AM_COMPILE_ALSA
 alsa_libs = -lasound
+alsa_target = libaudioio_alsa.la \
+	      libaudioio_alsa_named.la
 else
+alsa_target = 
 endif
 
 if ECA_AM_COMPILE_AUDIOFILE
@@ -60,8 +63,7 @@ noinst_HEADERS = $(plugin_includes)
 # ----------------------------------------------------------------------
 
 lib_LTLIBRARIES = 	$(af_target) \
-			libaudioio_alsa.la \
-			libaudioio_alsa_named.la \
+                        $(alsa_target) \
 			$(arts_target) \
 			$(jack_target)
 
