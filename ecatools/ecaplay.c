@@ -20,7 +20,11 @@
 
 /**
  * TODO:
- * - handle filenames that contain commas
+ * - random start switch (both for cmdline and playlist modes)
+ * - skip files switch does not work in playlist mode
+ * - handle filenames that contain commas (backslash-escape 
+ *   automatically, but avoid double-espaces -> user already
+ *   escaped the commas)
  * - write some notes about locking issues
  */
 
