@@ -31,7 +31,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: implementation level improvements to db, ewf, 
 		   resample, reverse and typeselect audio object 
 		   types
-	- changed: edi-27 done; ECI standalone now the only ECI 
+	- changed: edi-28 done; ECI standalone now the only ECI 
 	           implementation
 	- changed: ecasound now uses the new JACK (0.40.0 and newer) 
 	           ALSA PCM port names (alsa_pcm:capture_X and 
