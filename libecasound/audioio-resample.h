@@ -73,9 +73,6 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
   virtual bool supports_seeking(void) const { return(true); }
   virtual bool finite_length_stream(void) const { return(true); }
 
-  virtual void set_buffersize(long int samples) { buffersize_rep =  samples; /* child_buffersize_rep = static_cast<long  int>(buffersize() * (1.0f / psfactor_rep)); */  }
-  virtual long int buffersize(void) const { return(buffersize_rep); }
-
   virtual void read_buffer(SAMPLE_BUFFER* sbuf);
   virtual void write_buffer(SAMPLE_BUFFER* sbuf);
 
@@ -91,7 +88,6 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
   mutable std::vector<std::string> params_rep;
   bool init_rep;
   SAMPLE_SPECS::sample_rate_t child_srate_rep;
-  long int buffersize_rep;
   long int child_buffersize_rep;
   float psfactor_rep;
 
