@@ -3,8 +3,8 @@
 
 
 
-<insert file=../es-makrot.txt>
-<insert name=ecasound_indexbar>
+<insert file="../es-makrot.txt" />
+<insert name="ecasound_indexbar" />
 
 <p>
 <hr>
@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>21.10.2001</h2>
+<h2>29.10.2001</h2>
 
 
     
@@ -85,8 +85,6 @@ Help! <em>[-]</em>
 Returns a string describing the engine status (running, stopped,
 finished, error, not ready). See also <em>cs-status</em>. <em>[s]</em>
 <p></dl>
-<p><h2>DIRECT ARGUMENTS</h2>
-    
 <p><h2>CHAINSETUPS</h2>
     
 Chainsetup is the central data object. All other objects (inputs,
@@ -185,7 +183,9 @@ For instance, command "cs-option -efb:400,200" means that
 a bandpass filter is added to the currently selected 
 chain, with initial parameters 400 (center frequency) 
 and 200 (width in Hz).
-<p></dl>
+<p>Note! EIAM implicitly interprets all strings beginning 
+with a '-' as "cs-option string".
+</dl>
 <p><h2>CHAINS</h2>
     
 Chain is a simple signal flow abstraction. Every chain has one input
@@ -381,36 +381,60 @@ Prints a list of registered controllers. <em>[s]</em>
 <p></dl>
 <p><h2>OBJECT MAPS</h2>
     
-Object maps are a central repositories for commonly used objects.
-When object is registered to a map, a regular expression is attached 
-to it. When object map receives a request for a new object, it 
-goes through all registered regular expressions, and returns an 
-object attached to the matching expression. Object maps can also provide
-a list of all registered objects. 
+Object maps are central repositories for commonly used objects.
+Their main purpose is to add flexibility to handling different 
+object types - especially to handling dynamic addition and removal
+of whole object types.
 <p><p></p><dt><strong>map-aio-list</strong><dd> **not implemented**
-Returns a list of regular expressions matching 
-registered audio object types. <em>[S]</em>.
+Returns a list of all audio object type keywords 
+registered to the object maps. <em>[S]</em>.
 <p><p></p><dt><strong>map-aio-device-list</strong><dd> **not implemented**
-Returns a list of regular expressions matching
-registered realtime audio object types. <em>[S]</em>.
-<p><p></p><dt><strong>map-aio-type 'regexp'</strong><dd> **not implemented**
-Returns the type name handling regular expression 'regexp'. <em>[s]</em>.
+Returns a list of all audio object type keywords 
+registered to the object maps. <em>[S]</em>.
+<p><p></p><dt><strong>map-aio-name 'keyword'</strong><dd> **not implemented**
+Returns the type name that matches 'keyword'. <em>[s]</em>.
+<p><p></p><dt><strong>map-aio-regex 'keyword'</strong><dd> **not implemented**
+Returns the regular expression that is mapped to 'keyword'. <em>[s]</em>.
 <p><p></p><dt><strong>map-cop-list</strong><dd> **not implemented**
-Returns a list of regular expressions (chainop prefixes) matching 
-registered chain operator types types. <em>[S]</em>.
+Returns a list of all chain operator type keywords 
+registered to the object maps. <em>[S]</em>.
 <p><p></p><dt><strong>map-cop-type 'regexp'</strong><dd> **not implemented**
 Returns the type name handling regular expression 'regexp'. <em>[s]</em>.
+<p><p></p><dt><strong>map-cop-description 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-cop-param-names 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-cop-param-defaults 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-cop-param-ubounds 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-cop-param-lbounds 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-cop-param-toggles 'keyword'</strong><dd> **not implemented**
 <p><p></p><dt><strong>map-ctrl-list</strong><dd> **not implemented**
-Returns a list of regular expressions (controller prefixes) matching 
-registered controller types types. <em>[S]</em>.
+Returns a list of all controller type keywords 
+registered to the object maps. <em>[S]</em>.
 <p><p></p><dt><strong>map-ctrl-type 'regexp'</strong><dd> **not implemented**
 Returns the type name handling regular expression 'regexp'. <em>[s]</em>.
+<p><p></p><dt><strong>map-ctrl-description 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-ctrl-param-names 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-ctrl-param-defaults 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-ctrl-param-ubounds 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-ctrl-param-lbounds 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-ctrl-param-toggles 'keyword'</strong><dd> **not implemented**
 <p><p></p><dt><strong>map-preset-list</strong><dd> **not implemented**
-Returns a list of regular expressions (preset names) matching
-available operator presets. <em>[S]</em>.
+Returns a list of all preset type keywords 
+registered to the object maps. <em>[S]</em>.
+<p><p></p><dt><strong>map-preset-description 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-preset-param-names 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-preset-param-defaults 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-preset-param-ubounds 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-preset-param-lbounds 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-preset-param-toggles 'keyword'</strong><dd> **not implemented**
 <p><p></p><dt><strong>map-ladspa-list</strong><dd> **not implemented**
-Returns a list of regular expressions (LADSPA unique id numbers) matching
-registered LADSPA plugins. <em>[S]</em>.
+Returns a list of all LADSPA plugin keywords 
+registered to the object maps. <em>[S]</em>.
+<p><p></p><dt><strong>map-ladspa-description 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-ladspa-param-names 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-ladspa-param-defaults 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-ladspa-param-ubounds 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-ladspa-param-lbounds 'keyword'</strong><dd> **not implemented**
+<p></p><dt><strong>map-ladspa-param-toggles 'keyword'</strong><dd> **not implemented**
 <p></dl>
 <p><h2>INTERNAL COMMANDS</h2>
     
@@ -475,10 +499,10 @@ Dumps chain operator parameter value. 'chainop' and 'param' are
 operator and parameter index values (1...n). <em>[-]</em>
 <p><h2>SEE ALSO</h2>
     
-<p>ecasound(1), qtecasound (1), ecatools (1), ecasoundrc(5)
+<p>ecasound(1), ecatools (1), ecasoundrc(5)
 <p><h2>AUTHOR</h2>
     
-<p>Kai Vehmanen, &lt;<a href="mailto:kaiv@wakkanet.fi"><em>kaiv@wakkanet.fi</em></a>&gt;
-<p><insert name=ecasound_tail>
+<p>Kai Vehmanen, &lt;<a href="mailto:kai.vehmanen@wakkanet.fi"><em>kai.vehmanen@wakkanet.fi</em></a>&gt;
+<p><insert name="ecasound_tail" />
 </body>
 </html>

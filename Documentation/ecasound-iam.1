@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "21\&.10\&.2001" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "29\&.10\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -64,8 +64,6 @@ Help! \fI[-]\fP
 Returns a string describing the engine status (running, stopped,
 finished, error, not ready)\&. See also \fIcs-status\fP\&. \fI[s]\fP
 .PP 
-.IP 
-.SH "DIRECT ARGUMENTS" 
 .IP 
 .SH "CHAINSETUPS" 
 Chainsetup is the central data object\&. All other objects (inputs,
@@ -193,6 +191,8 @@ a bandpass filter is added to the currently selected
 chain, with initial parameters 400 (center frequency) 
 and 200 (width in Hz)\&.
 .PP 
+Note! EIAM implicitly interprets all strings beginning 
+with a \'-\' as "cs-option string"\&.
 .IP 
 .SH "CHAINS" 
 Chain is a simple signal flow abstraction\&. Every chain has one input
@@ -444,54 +444,108 @@ Prints a list of registered controllers\&. \fI[s]\fP
 .IP 
 .IP 
 .SH "OBJECT MAPS" 
-Object maps are a central repositories for commonly used objects\&.
-When object is registered to a map, a regular expression is attached 
-to it\&. When object map receives a request for a new object, it 
-goes through all registered regular expressions, and returns an 
-object attached to the matching expression\&. Object maps can also provide
-a list of all registered objects\&. 
+Object maps are central repositories for commonly used objects\&.
+Their main purpose is to add flexibility to handling different 
+object types - especially to handling dynamic addition and removal
+of whole object types\&.
 .IP 
 .IP "map-aio-list" 
 **not implemented**
-Returns a list of regular expressions matching 
-registered audio object types\&. \fI[S]\fP\&.
+Returns a list of all audio object type keywords 
+registered to the object maps\&. \fI[S]\fP\&.
 .IP 
 .IP "map-aio-device-list" 
 **not implemented**
-Returns a list of regular expressions matching
-registered realtime audio object types\&. \fI[S]\fP\&.
+Returns a list of all audio object type keywords 
+registered to the object maps\&. \fI[S]\fP\&.
 .IP 
-.IP "map-aio-type \'regexp\'" 
+.IP "map-aio-name \'keyword\'" 
 **not implemented**
-Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
+Returns the type name that matches \'keyword\'\&. \fI[s]\fP\&.
+.IP 
+.IP "map-aio-regex \'keyword\'" 
+**not implemented**
+Returns the regular expression that is mapped to \'keyword\'\&. \fI[s]\fP\&.
 .IP 
 .IP "map-cop-list" 
 **not implemented**
-Returns a list of regular expressions (chainop prefixes) matching 
-registered chain operator types types\&. \fI[S]\fP\&.
+Returns a list of all chain operator type keywords 
+registered to the object maps\&. \fI[S]\fP\&.
 .IP 
 .IP "map-cop-type \'regexp\'" 
 **not implemented**
 Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
 .IP 
+.IP "map-cop-description \'keyword\'" 
+**not implemented**
+.IP "map-cop-param-names \'keyword\'" 
+**not implemented**
+.IP "map-cop-param-defaults \'keyword\'" 
+**not implemented**
+.IP "map-cop-param-ubounds \'keyword\'" 
+**not implemented**
+.IP "map-cop-param-lbounds \'keyword\'" 
+**not implemented**
+.IP "map-cop-param-toggles \'keyword\'" 
+**not implemented**
+.IP 
 .IP "map-ctrl-list" 
 **not implemented**
-Returns a list of regular expressions (controller prefixes) matching 
-registered controller types types\&. \fI[S]\fP\&.
+Returns a list of all controller type keywords 
+registered to the object maps\&. \fI[S]\fP\&.
 .IP 
 .IP "map-ctrl-type \'regexp\'" 
 **not implemented**
 Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
 .IP 
+.IP "map-ctrl-description \'keyword\'" 
+**not implemented**
+.IP "map-ctrl-param-names \'keyword\'" 
+**not implemented**
+.IP "map-ctrl-param-defaults \'keyword\'" 
+**not implemented**
+.IP "map-ctrl-param-ubounds \'keyword\'" 
+**not implemented**
+.IP "map-ctrl-param-lbounds \'keyword\'" 
+**not implemented**
+.IP "map-ctrl-param-toggles \'keyword\'" 
+**not implemented**
+.IP 
 .IP "map-preset-list" 
 **not implemented**
-Returns a list of regular expressions (preset names) matching
-available operator presets\&. \fI[S]\fP\&.
+Returns a list of all preset type keywords 
+registered to the object maps\&. \fI[S]\fP\&.
+.IP 
+.IP "map-preset-description \'keyword\'" 
+**not implemented**
+.IP "map-preset-param-names \'keyword\'" 
+**not implemented**
+.IP "map-preset-param-defaults \'keyword\'" 
+**not implemented**
+.IP "map-preset-param-ubounds \'keyword\'" 
+**not implemented**
+.IP "map-preset-param-lbounds \'keyword\'" 
+**not implemented**
+.IP "map-preset-param-toggles \'keyword\'" 
+**not implemented**
 .IP 
 .IP "map-ladspa-list" 
 **not implemented**
-Returns a list of regular expressions (LADSPA unique id numbers) matching
-registered LADSPA plugins\&. \fI[S]\fP\&.
+Returns a list of all LADSPA plugin keywords 
+registered to the object maps\&. \fI[S]\fP\&.
+.IP 
+.IP "map-ladspa-description \'keyword\'" 
+**not implemented**
+.IP "map-ladspa-param-names \'keyword\'" 
+**not implemented**
+.IP "map-ladspa-param-defaults \'keyword\'" 
+**not implemented**
+.IP "map-ladspa-param-ubounds \'keyword\'" 
+**not implemented**
+.IP "map-ladspa-param-lbounds \'keyword\'" 
+**not implemented**
+.IP "map-ladspa-param-toggles \'keyword\'" 
+**not implemented**
 .IP 
 .IP 
 .SH "INTERNAL COMMANDS" 
@@ -577,9 +631,9 @@ operator and parameter index values (1\&.\&.\&.n)\&. \fI[-]\fP
 .IP 
 .SH "SEE ALSO" 
 .IP 
-ecasound(1), qtecasound (1), ecatools (1), ecasoundrc(5)
+ecasound(1), ecatools (1), ecasoundrc(5)
 .IP 
 .SH "AUTHOR" 
 .IP 
-Kai Vehmanen, <kaiv@wakkanet\&.fi>
+Kai Vehmanen, <kai\&.vehmanen@wakkanet\&.fi>
 .IP 

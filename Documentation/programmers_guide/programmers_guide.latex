@@ -427,7 +427,7 @@ be registered at runtime with the \emph{attach\_debug\_object()} call
 
 \subsubsection{Object maps}
 Object maps are central repositories for commonly used objects.
-Their main purpose is to add flexibilty to handling different 
+Their main purpose is to add flexibility to handling different 
 object types - especially to handling dynamic addition and removal
 of whole object types. They provide the following services:
 

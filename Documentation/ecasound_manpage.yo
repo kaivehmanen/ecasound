@@ -1,8 +1,8 @@
 mailto(kai.vehmanen@wakkanet.fi)
 
 htmlcommand(
-<insert file=../es-makrot.txt>
-<insert name=ecasound_indexbar>
+<insert file="../es-makrot.txt" />
+<insert name="ecasound_indexbar" />
 
 <p>
 <hr>
@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (18.10.2001)
+       (29.10.2001)
        ()
        (Multimedia software)
 
@@ -712,6 +712,6 @@ manpagebugs()
 
 manpageauthor()
 
-	Kai Vehmanen, <email(kaiv@wakkanet.fi)>
+	Kai Vehmanen, <email(kai.vehmanen@wakkanet.fi)>
 
-htmlcommand(<insert name=ecasound_tail>)
+htmlcommand(<insert name="ecasound_tail" />)
