@@ -284,6 +284,7 @@ void ecasound_main_loop(struct ecasound_state* state)
 	if (cmd == "quit" || cmd == "q") {
 	  state->console->print("---\necasound: Exiting...");
 	  state->exit_request = 1;
+	  ECA_LOGGER::instance().flush();
 	}
       }
     }
