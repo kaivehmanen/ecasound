@@ -2,9 +2,10 @@
 #define INCLUDED_AUDIOIO_PROXY_SERVER_H
 
 #include <map>
-#include <pthread.h>
 #include "audioio.h"
 #include "audioio-proxy-buffer.h"
+
+class AUDIO_IO_PROXY_SERVER_impl;
 
 /**
  * Audio i/o engine. Meant for serving all proxied audio
@@ -25,13 +26,8 @@ class AUDIO_IO_PROXY_SERVER {
   std::vector<AUDIO_IO*> clients_rep;
   std::map<AUDIO_IO*, int> client_map_rep;
 
-  pthread_t io_thread_rep;
-  pthread_cond_t* full_cond_repp;
-  pthread_mutex_t* full_mutex_repp;
-  pthread_cond_t* stop_cond_repp;
-  pthread_mutex_t* stop_mutex_repp;
-  pthread_cond_t* flush_cond_repp;
-  pthread_mutex_t* flush_mutex_repp;
+  AUDIO_IO_PROXY_SERVER_impl* impl_repp;
+
   bool thread_running_rep;
 
   ATOMIC_INTEGER exit_ok_rep;
@@ -45,15 +41,6 @@ class AUDIO_IO_PROXY_SERVER {
   long int buffersize_rep;
   long int samplerate_rep;
   int schedpriority_rep;
-
-  size_t profile_not_full_anymore_rep;
-  size_t profile_pauses_rep;
-  size_t profile_full_and_active_rep;
-  size_t profile_full_signaled_rep;
-  size_t profile_not_full_rep;
-  size_t profile_read_xrun_danger_rep;
-  size_t profile_write_xrun_danger_rep;
-  size_t profile_rounds_total_rep;
 
   AUDIO_IO_PROXY_SERVER& operator=(const AUDIO_IO_PROXY_SERVER& x) { return *this; }
   AUDIO_IO_PROXY_SERVER (const AUDIO_IO_PROXY_SERVER& x) { }

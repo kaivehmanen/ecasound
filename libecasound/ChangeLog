@@ -2,6 +2,17 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-10-11  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-chainsetup-bufparams.h (number_of_set): added
+	* eca-chainsetup.h (has_nonrealtime_objects): added
+	
+2001-10-10  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* midiio.h (file_descriptor): renamed to poll_descriptor
+	* audioio.h (poll_descriptor): added
+	* eca-debug (detach_debug_object): added
+	
 2001-10-06  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-main.h (all): renamed to eca-engine.h

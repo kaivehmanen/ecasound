@@ -6,13 +6,9 @@
 #include <map>
 #include <list>
 
-#include "eca-chainsetup-bufparams.h"
 #include "eca-chainsetup-position.h"
 #include "eca-chainsetup-parser.h"
 #include "eca-error.h"
-#include "audio-stamp.h"
-#include "midi-server.h"
-#include "audioio-buffered-proxy.h"
 
 class CONTROLLER_SOURCE;
 class CHAIN_OPERATOR;
@@ -21,6 +17,10 @@ class AUDIO_IO;
 class MIDI_IO;
 class LOOP_DEVICE;
 class CHAIN;
+class AUDIO_IO_PROXY_SERVER;
+class MIDI_SERVER;
+class ECA_CHAINSETUP_BUFPARAMS;
+class ECA_CHAINSETUP_impl;
 
 /**
  * Class representing an ecasound chainsetup object.
@@ -130,14 +130,14 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void toggle_precise_sample_rates(bool value) { precise_sample_rates_rep = value; }
   void toggle_ignore_xruns(bool v) { ignore_xruns_rep = v; }
   void set_output_openmode(int value) { output_openmode_rep = value; }
-  void set_default_audio_format(ECA_AUDIO_FORMAT& value) { default_audio_format_rep = value; }
+  void set_default_audio_format(ECA_AUDIO_FORMAT& value);
   void set_default_midi_device(const string& name) { default_midi_device_rep = name; }
   void set_mixmode(Mix_mode_t value) { mixmode_rep = value; }
   void set_buffering_mode(Buffering_mode_t value);
 
   bool precise_sample_rates(void) const { return(precise_sample_rates_rep); }
   bool ignore_xruns(void) const { return(ignore_xruns_rep); }
-  const ECA_AUDIO_FORMAT& default_audio_format(void) const { return(default_audio_format_rep); }
+  const ECA_AUDIO_FORMAT& default_audio_format(void) const;
   const string& default_midi_device(void) const { return(default_midi_device_rep); }
   int output_openmode(void) const { return(output_openmode_rep); }
   Mix_mode_t mixmode(void) const { return(mixmode_rep); }
@@ -149,19 +149,19 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /** @name Functions for overriding current buffering mode parameters */
   /*@{*/
 
-  void set_buffersize(long int value) { bmode_override_rep.set_buffersize(value); }
-  void toggle_raised_priority(bool value) { bmode_override_rep.toggle_raised_priority(value); }
-  void set_sched_priority(int value) { bmode_override_rep.set_sched_priority(value); }
-  void toggle_double_buffering(bool value) { bmode_override_rep.toggle_double_buffering(value); }
-  void set_double_buffer_size(long int v) { bmode_override_rep.set_double_buffer_size(v); }
-  void toggle_max_buffers(bool v) { bmode_override_rep.toggle_max_buffers(v); }
+  void set_buffersize(long int value);
+  void toggle_raised_priority(bool value);
+  void set_sched_priority(int value);
+  void toggle_double_buffering(bool value);
+  void set_double_buffer_size(long int v);
+  void toggle_max_buffers(bool v);
 
-  long int buffersize(void) const { return(bmode_active_rep.buffersize()); }
-  bool raised_priority(void) const { return(bmode_active_rep.raised_priority()); }
-  int sched_priority(void) const { return(bmode_active_rep.sched_priority()); }
-  bool double_buffering(void) const { return(bmode_active_rep.double_buffering()); }
-  long int double_buffer_size(void) const { return(bmode_active_rep.double_buffer_size()); }
-  bool max_buffers(void) const { return(bmode_active_rep.max_buffers()); }
+  long int buffersize(void) const;
+  bool raised_priority(void) const;
+  int sched_priority(void) const;
+  bool double_buffering(void) const;
+  long int double_buffer_size(void) const;
+  bool max_buffers(void) const;
 
   /*@}*/
 
@@ -194,6 +194,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   bool is_enabled(void) const { return(is_enabled_rep); }
   bool is_valid(void) const;
   bool has_realtime_objects(void) const;
+  bool has_nonrealtime_objects(void) const;
 
   /*@}*/
 
@@ -228,6 +229,9 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /** @name Configuration data (settings and values)  */
   /*@{*/
+  
+  ECA_CHAINSETUP_impl* impl_repp;
+  ECA_CHAINSETUP_PARSER cparser_rep;
 
   bool precise_sample_rates_rep;
   bool ignore_xruns_rep;
@@ -235,7 +239,6 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   int output_openmode_rep;
   long int double_buffer_size_rep;
   string default_midi_device_rep;
-  ECA_AUDIO_FORMAT default_audio_format_rep;
 
   /*@}*/
 
@@ -267,21 +270,11 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   vector<MIDI_IO*> midi_devices;
   list<AUDIO_IO*> aobj_garbage_rep;
 
+  AUDIO_IO_PROXY_SERVER* pserver_repp;
+  MIDI_SERVER* midi_server_repp;
+
   /*@}*/
 
-  /** @name Aggregate objects */
-  /*@{*/
-
-  AUDIO_STAMP_SERVER stamp_server_rep;
-  ECA_CHAINSETUP_PARSER cparser_rep;
-  AUDIO_IO_PROXY_SERVER pserver_rep;
-  MIDI_SERVER midi_server_rep;
-
-  ECA_CHAINSETUP_BUFPARAMS bmode_active_rep;
-  ECA_CHAINSETUP_BUFPARAMS bmode_override_rep;
-  ECA_CHAINSETUP_BUFPARAMS bmode_nonrt_rep;
-  ECA_CHAINSETUP_BUFPARAMS bmode_rt_rep;
-  ECA_CHAINSETUP_BUFPARAMS bmode_rtlowlatency_rep;
 
   /** @name Functions for handling audio objects */
   /*@{*/
@@ -317,6 +310,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /** @name Private helper functions */
   /*@{*/
 
+  const ECA_CHAINSETUP_BUFPARAMS& active_buffering_parameters(void) const;
+  const ECA_CHAINSETUP_BUFPARAMS& override_buffering_parameters(void) const;
   vector<string> get_attached_chains_to_input(AUDIO_IO* aiod) const;
   vector<string> get_attached_chains_to_output(AUDIO_IO* aiod) const;
   int number_of_attached_chains_to_input(AUDIO_IO* aiod) const;

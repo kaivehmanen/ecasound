@@ -21,6 +21,7 @@ class ECA_CHAINSETUP_BUFPARAMS {
   void toggle_max_buffers(bool v);
 
   bool are_all_set(void) const;
+  int number_of_set(void) const;
 
   long int buffersize(void) const { return(buffersize_rep); }
   bool raised_priority(void) const { return(raisedpriority_rep); }

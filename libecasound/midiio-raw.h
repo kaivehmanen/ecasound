@@ -23,7 +23,7 @@ class MIDI_IO_RAW : public MIDI_IO {
   virtual std::string name(void) const { return("Raw MIDI"); }
   virtual int supported_io_modes(void) const { return(io_read | io_write | io_readwrite); }
   virtual bool supports_nonblocking_mode(void) const { return(true); }
-  virtual int file_descriptor(void) const { return(fd_rep); }
+  virtual int poll_descriptor(void) const { return(fd_rep); }
   virtual std::string parameter_names(void) const { return("label,device_name"); }
 
   virtual void set_parameter(int param, std::string value);

@@ -33,15 +33,17 @@
 #include <kvutils/kvu_numtostr.h>
 
 #include "samplebuffer.h"
-#include "eca-chain.h"
-#include "eca-session.h"
-#include "eca-chainop.h"
 #include "audioio.h"
 #include "audioio-types.h"
 #include "audioio-buffered-proxy.h"
+#include "midi-server.h"
+#include "eca-chain.h"
+#include "eca-session.h"
+#include "eca-chainop.h"
 #include "eca-error.h"
 #include "eca-debug.h"
 #include "eca-engine.h"
+#include "eca-engine_impl.h"
 
 /**
  * Class constructor. A pointer to an ECA_SESSION 
@@ -67,6 +69,8 @@ ECA_ENGINE::ECA_ENGINE(ECA_SESSION* arg)
   // --
 
   ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) Engine/Initializing");
+
+  impl_repp = new ECA_ENGINE_impl;
 
   init_variables();
   init_connection_to_chainsetup();
@@ -96,8 +100,7 @@ ECA_ENGINE::~ECA_ENGINE(void) {
     }
   }
 
-  delete ecasound_stop_cond_repp;
-  delete ecasound_stop_mutex_repp;
+  delete impl_repp;
 
   set_status(ECA_ENGINE::engine_status_notready);
  
@@ -120,7 +123,7 @@ void ECA_ENGINE::exec(void) {
   DBC_REQUIRE(session_repp->get_connected_chainsetup()->is_enabled() == true);
   // --
 
-  switch(mixmode_rep) {
+  switch(impl_repp->mixmode_rep) {
   case ECA_CHAINSETUP::ep_mm_simple:
     {
       exec_simple_iactive();
@@ -160,7 +163,7 @@ void ECA_ENGINE::exec(void) {
  * processed in the server's main loop. 
  */
 void ECA_ENGINE::command(Engine_command_t cmd, double arg) {
-  command_queue_rep.push_back(static_cast<int>(cmd),arg);
+  impl_repp->command_queue_rep.push_back(static_cast<int>(cmd),arg);
 }
 
 void ECA_ENGINE::set_status(ECA_ENGINE::Engine_status_t state) { 
@@ -185,11 +188,11 @@ void ECA_ENGINE::wait_for_stop(int timeout) {
   sleepcount.tv_sec = now.tv_sec + timeout;
   sleepcount.tv_nsec = now.tv_usec * 1000;
 
-  pthread_mutex_lock(ecasound_stop_mutex_repp);
-  int ret = pthread_cond_timedwait(ecasound_stop_cond_repp, 
-				     ecasound_stop_mutex_repp, 
-				     &sleepcount);
-  pthread_mutex_unlock(ecasound_stop_mutex_repp);
+  pthread_mutex_lock(&impl_repp->ecasound_stop_mutex_repp);
+  int ret = pthread_cond_timedwait(&impl_repp->ecasound_stop_cond_repp, 
+				   &impl_repp->ecasound_stop_mutex_repp, 
+				    &sleepcount);
+  pthread_mutex_unlock(&impl_repp->ecasound_stop_mutex_repp);
 
   if (ret == 0)
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Stop signal ok");
@@ -206,10 +209,10 @@ void ECA_ENGINE::wait_for_stop(int timeout) {
  * @see wait_for_stop()
  */
 void ECA_ENGINE::signal_stop(void) {
-  pthread_mutex_lock(ecasound_stop_mutex_repp);
+  pthread_mutex_lock(&impl_repp->ecasound_stop_mutex_repp);
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Signaling stop");
-  pthread_cond_broadcast(ecasound_stop_cond_repp);
-  pthread_mutex_unlock(ecasound_stop_mutex_repp);
+  pthread_cond_broadcast(&impl_repp->ecasound_stop_cond_repp);
+  pthread_mutex_unlock(&impl_repp->ecasound_stop_mutex_repp);
 }
 
 /**
@@ -225,14 +228,8 @@ void ECA_ENGINE::init_variables(void) {
   rt_running_rep = false;
   trigger_counter_rep = 0;
 
-  // --
-  // Locks and mutexes
-
-  ecasound_stop_cond_repp = new pthread_cond_t;
-  ecasound_stop_mutex_repp = new pthread_mutex_t;
-
-  pthread_cond_init(ecasound_stop_cond_repp, NULL);
-  pthread_mutex_init(ecasound_stop_mutex_repp, NULL);
+  pthread_cond_init(&impl_repp->ecasound_stop_cond_repp, NULL);
+  pthread_mutex_init(&impl_repp->ecasound_stop_mutex_repp, NULL);
 }
 
 /**
@@ -274,7 +271,7 @@ void ECA_ENGINE::init_servers(void) {
   if (csetup_repp->midi_devices.size() > 0) {
     use_midi_rep = true;
     ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Initializing MIDI-server.");
-    csetup_repp->midi_server_rep.init();
+    csetup_repp->midi_server_repp->init();
   }
 }
 
@@ -463,25 +460,25 @@ void ECA_ENGINE::init_multitrack_mode(void) {
  * Called from class constructor.
  */
 void ECA_ENGINE::init_mix_method(void) { 
-  mixmode_rep = csetup_repp->mixmode();
+  impl_repp->mixmode_rep = csetup_repp->mixmode();
 
   if (csetup_repp->multitrack_mode_rep == true)  {
-    mixmode_rep = ECA_CHAINSETUP::ep_mm_normal;
+    impl_repp->mixmode_rep = ECA_CHAINSETUP::ep_mm_normal;
   }
 
-  if (mixmode_rep == ECA_CHAINSETUP::ep_mm_auto) {
+  if (impl_repp->mixmode_rep == ECA_CHAINSETUP::ep_mm_auto) {
     if (chains_repp->size() == 1 &&
 	inputs_repp->size() == 1 &&
 	outputs_repp->size() == 1)
-      mixmode_rep = ECA_CHAINSETUP::ep_mm_simple;
+      impl_repp->mixmode_rep = ECA_CHAINSETUP::ep_mm_simple;
     else 
-      mixmode_rep = ECA_CHAINSETUP::ep_mm_normal;
+      impl_repp->mixmode_rep = ECA_CHAINSETUP::ep_mm_normal;
   }
-  else if (mixmode_rep == ECA_CHAINSETUP::ep_mm_simple &&
+  else if (impl_repp->mixmode_rep == ECA_CHAINSETUP::ep_mm_simple &&
 	   (chains_repp->size() > 1 ||
 	    inputs_repp->size() > 1 ||
 	    outputs_repp->size() > 1)) {
-    mixmode_rep = ECA_CHAINSETUP::ep_mm_normal;
+    impl_repp->mixmode_rep = ECA_CHAINSETUP::ep_mm_normal;
     ecadebug->msg("(eca-engine) Warning! Setup too complex for simple mixmode.");
   }
 }
@@ -538,7 +535,7 @@ void ECA_ENGINE::update_engine_state(void) {
   if (end_request_rep != true &&
       session_repp->iactive_rep == true) {
     if (status() != ECA_ENGINE::engine_status_running) {
-      command_queue_rep.poll(1, 0);
+      impl_repp->command_queue_rep.poll(1, 0);
       continue_request_rep = true;
     }
     else 
@@ -547,8 +544,8 @@ void ECA_ENGINE::update_engine_state(void) {
 }
 
 void ECA_ENGINE::interpret_queue(void) {
-  while(command_queue_rep.is_empty() != true) {
-    std::pair<int,double> item = command_queue_rep.front();
+  while(impl_repp->command_queue_rep.is_empty() != true) {
+    std::pair<int,double> item = impl_repp->command_queue_rep.front();
 //      std::cerr << "(eca-engine) ecasound_queue: cmds available; first one is "
 //  	 << item.first << "." << std::endl;
     switch(item.first) {
@@ -557,7 +554,7 @@ void ECA_ENGINE::interpret_queue(void) {
     // ---            
     case ep_exit:
       {
-	while(command_queue_rep.is_empty() == false) command_queue_rep.pop_front();
+	while(impl_repp->command_queue_rep.is_empty() == false) impl_repp->command_queue_rep.pop_front();
 	ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) ecasound_queue: exit!");
 	stop();
 	end_request_rep = true;
@@ -605,7 +602,7 @@ void ECA_ENGINE::interpret_queue(void) {
     case ep_forward: { change_position(item.second); break; }
     case ep_setpos: { set_position(item.second); break; }
     }
-    command_queue_rep.pop_front();
+    impl_repp->command_queue_rep.pop_front();
   }
 }
 
@@ -711,7 +708,7 @@ void ECA_ENGINE::multitrack_start(void) {
   
   // --
   // store time stamp when rt-inputs were started
-  gettimeofday(&multitrack_input_stamp_rep, NULL);
+  gettimeofday(&impl_repp->multitrack_input_stamp_rep, NULL);
   
   // --
   // prefill rt-output buffers before actually startin them
@@ -731,7 +728,7 @@ void ECA_ENGINE::multitrack_start(void) {
   struct timeval now;
   gettimeofday(&now, NULL);
   double time = now.tv_sec * 1000000.0 + now.tv_usec -
-    multitrack_input_stamp_rep.tv_sec * 1000000.0 - multitrack_input_stamp_rep.tv_usec;
+    impl_repp->multitrack_input_stamp_rep.tv_sec * 1000000.0 - impl_repp->multitrack_input_stamp_rep.tv_usec;
   long int sync_fix = static_cast<long>(time * csetup_repp->sample_rate() / 1000000.0);
   sync_fix -= prefill_threshold_rep * buffersize_rep;
   
@@ -1015,24 +1012,24 @@ void ECA_ENGINE::trigger_outputs(void) {
 
 void ECA_ENGINE::start_servers(void) {
   if (use_double_buffering_rep == true) {
-    csetup_repp->pserver_rep.start();
+    csetup_repp->pserver_repp->start();
     ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Prefilling i/o buffers.");
-    csetup_repp->pserver_rep.wait_for_full();
+    csetup_repp->pserver_repp->wait_for_full();
   }
   
   if (use_midi_rep == true) {
-    csetup_repp->midi_server_rep.start();
+    csetup_repp->midi_server_repp->start();
   }
 }
 
 void ECA_ENGINE::stop_servers(void) { 
   if (use_double_buffering_rep == true) {
-    csetup_repp->pserver_rep.stop();
-    csetup_repp->pserver_rep.wait_for_stop();
+    csetup_repp->pserver_repp->stop();
+    csetup_repp->pserver_repp->wait_for_stop();
   }
 
   if (use_midi_rep == true) {
-    csetup_repp->midi_server_rep.stop();
+    csetup_repp->midi_server_repp->stop();
   }
 }
 
@@ -1065,7 +1062,7 @@ void ECA_ENGINE::set_position(double seconds) {
 
   csetup_repp->set_position_exact(seconds);
   csetup_repp->seek_position();
-  if (csetup_repp->double_buffering() == true) csetup_repp->pserver_rep.flush();
+  if (csetup_repp->double_buffering() == true) csetup_repp->pserver_repp->flush();
 
   conditional_start();
 }
@@ -1097,7 +1094,7 @@ void ECA_ENGINE::change_position(double seconds) {
 
   csetup_repp->change_position_exact(seconds);
   csetup_repp->seek_position();
-  if (csetup_repp->double_buffering() == true) csetup_repp->pserver_rep.flush();
+  if (csetup_repp->double_buffering() == true) csetup_repp->pserver_repp->flush();
 
   conditional_start();
 }

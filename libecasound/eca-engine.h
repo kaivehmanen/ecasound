@@ -3,22 +3,17 @@
 
 #include <vector>
 #include <string>
-#include <ctime>
-#include <pthread.h>
-#include <unistd.h>
-#include <sys/time.h>
-
-#include <kvutils/value_queue.h>
 
 #include "samplebuffer.h"
-#include "eca-chainsetup.h"
 
 class AUDIO_IO;
 class AUDIO_IO_DEVICE;
 class ECA_SESSION;
+class ECA_CHAINSETUP;
 class CHAIN;
 class CHAIN_OPERATOR;
 class AUDIO_IO_BUFFERED_PROXY;
+class ECA_ENGINE_impl;
 
 /**
  * Main processing engine
@@ -110,10 +105,9 @@ private:
   static const long int prefill_threshold_constant = 4096;
   static const int prefill_blocks_constant = 3;
 
-  long int prefill_threshold_rep;
+  ECA_ENGINE_impl* impl_repp;
 
-  pthread_cond_t *ecasound_stop_cond_repp;
-  pthread_mutex_t *ecasound_stop_mutex_repp;
+  long int prefill_threshold_rep;
 
   bool was_running_rep;
   bool rt_running_rep;
@@ -126,10 +120,7 @@ private:
   int outputs_finished_rep;
   int inputs_not_finished_rep;
 
-  VALUE_QUEUE command_queue_rep;
-  
   int trigger_counter_rep;
-  struct timeval multitrack_input_stamp_rep;
 
   /*@}*/
 
@@ -141,6 +132,14 @@ private:
   std::vector<CHAIN*>* chains_repp;
   std::vector<AUDIO_IO*>* inputs_repp;
   std::vector<AUDIO_IO*>* outputs_repp;
+
+  /*@}*/
+
+  /** @name Audio data buffers */
+  /*@{*/
+
+  SAMPLE_BUFFER mixslot_rep;
+  std::vector<SAMPLE_BUFFER> cslots_rep;
 
   /*@}*/
 
@@ -175,17 +174,7 @@ private:
   int chain_count_rep;
   int max_channels_rep;
   long int buffersize_rep;
-
   Engine_status_t engine_status_rep;
-  ECA_CHAINSETUP::Mix_mode mixmode_rep;
-
-  /*@}*/
-
-  /** @name Audio data buffers */
-  /*@{*/
-
-  SAMPLE_BUFFER mixslot_rep;
-  std::vector<SAMPLE_BUFFER> cslots_rep;
 
   /*@}*/
 

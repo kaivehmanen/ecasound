@@ -65,6 +65,7 @@ using std::vector;
 using std::list;
 
 #include "eca-chainsetup.h"
+#include "eca-chainsetup_impl.h"
 
 /**
  * Construct from a vector of options.
@@ -79,6 +80,8 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
     cparser_rep(this) {
 
   ecadebug->control_flow("Chainsetup created (opts)");
+
+  impl_repp = new ECA_CHAINSETUP_impl;
 
   setup_name_rep = "command-line-setup";
   setup_filename_rep = "";
@@ -101,6 +104,9 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(void)
     cparser_rep(this) {
 
   ecadebug->control_flow("Chainsetup created (empty)");
+
+  impl_repp = new ECA_CHAINSETUP_impl;
+
   setup_name_rep = "";
   set_defaults();
 }
@@ -120,6 +126,9 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file)
     cparser_rep(this) {
 
   ecadebug->control_flow("Chainsetup created (file)");
+
+  impl_repp = new ECA_CHAINSETUP_impl;
+
   setup_name_rep = "";
   set_defaults();
   vector<string> options;
@@ -194,6 +203,8 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
     delete *q;
     *q = 0;
   }
+  
+  delete impl_repp;
 }
 
 /**
@@ -216,6 +227,9 @@ void ECA_CHAINSETUP::set_defaults(void) {
 
   precise_sample_rates_rep = false;
   ignore_xruns_rep = true;
+
+  pserver_repp = &impl_repp->pserver_rep;
+  midi_server_repp = &impl_repp->midi_server_rep;
 
   if (kvu_check_for_mlockall() == true && 
       kvu_check_for_sched_fifo() == true) {
@@ -246,9 +260,9 @@ void ECA_CHAINSETUP::set_defaults(void) {
   set_sample_rate(atol(ecaresources.resource("default-samplerate").c_str()));
   toggle_precise_sample_rates(ecaresources.boolean_resource("default-to-precise-sample-rates"));
 
-  bmode_nonrt_rep.set_all(ecaresources.resource("bmode-defaults-nonrt"));
-  bmode_rt_rep.set_all(ecaresources.resource("bmode-defaults-rt"));
-  bmode_rtlowlatency_rep.set_all(ecaresources.resource("bmode-defaults-rtlowlatency"));
+  impl_repp->bmode_nonrt_rep.set_all(ecaresources.resource("bmode-defaults-nonrt"));
+  impl_repp->bmode_rt_rep.set_all(ecaresources.resource("bmode-defaults-rt"));
+  impl_repp->bmode_rtlowlatency_rep.set_all(ecaresources.resource("bmode-defaults-rtlowlatency"));
 }
 
 /**
@@ -318,19 +332,19 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void) {
   switch(active_buffering_mode_rep) 
     {
     case ECA_CHAINSETUP::cs_bmode_nonrt: { 
-      bmode_active_rep = bmode_nonrt_rep;
+      impl_repp->bmode_active_rep = impl_repp->bmode_nonrt_rep;
       ecadebug->msg(ECA_DEBUG::info, 
 		    "(eca-chainsetup) 'nonrt' buffering mode selected.");
       break; 
     }
     case ECA_CHAINSETUP::cs_bmode_rt: { 
-      bmode_active_rep = bmode_rt_rep;
+      impl_repp->bmode_active_rep = impl_repp->bmode_rt_rep;
       ecadebug->msg(ECA_DEBUG::info, 
 		    "(eca-chainsetup) 'rt' buffering mode selected.");
       break; 
     }
     case ECA_CHAINSETUP::cs_bmode_rtlowlatency: { 
-      bmode_active_rep = bmode_rtlowlatency_rep;
+      impl_repp->bmode_active_rep = impl_repp->bmode_rtlowlatency_rep;
       ecadebug->msg(ECA_DEBUG::info, 
 		    "(eca-chainsetup) 'rtlowlatency' buffering mode selected.");
       break;
@@ -341,24 +355,22 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void) {
   /* if any overridden values, use them to replace
    * selected default values
    */
-  if (bmode_override_rep.is_set_buffersize() == true)
-    bmode_active_rep.set_buffersize(bmode_override_rep.buffersize());
-  if (bmode_override_rep.is_set_raised_priority() == true)
-    bmode_active_rep.toggle_raised_priority(bmode_override_rep.raised_priority());
-  if (bmode_override_rep.is_set_sched_priority() == true)
-    bmode_active_rep.set_sched_priority(bmode_override_rep.sched_priority());
-  if (bmode_override_rep.is_set_double_buffering() == true)
-    bmode_active_rep.toggle_double_buffering(bmode_override_rep.double_buffering());
-  if (bmode_override_rep.is_set_double_buffer_size() == true)
-    bmode_active_rep.set_double_buffer_size(bmode_override_rep.double_buffer_size());
-  if (bmode_override_rep.is_set_max_buffers() == true)
-    bmode_active_rep.toggle_max_buffers(bmode_override_rep.max_buffers());
+  if (impl_repp->bmode_override_rep.is_set_buffersize() == true)
+    impl_repp->bmode_active_rep.set_buffersize(impl_repp->bmode_override_rep.buffersize());
+  if (impl_repp->bmode_override_rep.is_set_raised_priority() == true)
+    impl_repp->bmode_active_rep.toggle_raised_priority(impl_repp->bmode_override_rep.raised_priority());
+  if (impl_repp->bmode_override_rep.is_set_sched_priority() == true)
+    impl_repp->bmode_active_rep.set_sched_priority(impl_repp->bmode_override_rep.sched_priority());
+  if (impl_repp->bmode_override_rep.is_set_double_buffering() == true)
+    impl_repp->bmode_active_rep.toggle_double_buffering(impl_repp->bmode_override_rep.double_buffering());
+  if (impl_repp->bmode_override_rep.is_set_double_buffer_size() == true)
+    impl_repp->bmode_active_rep.set_double_buffer_size(impl_repp->bmode_override_rep.double_buffer_size());
+  if (impl_repp->bmode_override_rep.is_set_max_buffers() == true)
+    impl_repp->bmode_active_rep.toggle_max_buffers(impl_repp->bmode_override_rep.max_buffers());
 
   ecadebug->msg(ECA_DEBUG::system_objects,
 		"(eca-chainsetup) Set buffering parameters to: \n--cut--" +
-		bmode_active_rep.to_string() +"\n--cut--");
-
-  enable_active_buffering_mode();
+		impl_repp->bmode_active_rep.to_string() +"\n--cut--");
 }
 
 /**
@@ -376,33 +388,37 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void) {
   }
 
   /* if necessary, switch between different proxy and direct modes */
-  if (proxy_clients_rep > 0 && double_buffering() != true) {
-    ecadebug->msg(ECA_DEBUG::system_objects,
-		  "(eca-chainsetup) Switching to direct mode.");
-    switch_to_direct_mode();
-  }
-  else if (double_buffering() == true) {
+  if (double_buffering() == true) {
     if (has_realtime_objects() != true) {
       ecadebug->msg(ECA_DEBUG::system_objects,
 		    "(eca-chainsetup) No realtime objects; switching to direct mode.");
       switch_to_direct_mode();
+      impl_repp->bmode_active_rep.toggle_double_buffering(false);
+    }
+    else if (has_nonrealtime_objects() != true) {
+      ecadebug->msg(ECA_DEBUG::system_objects,
+		    "(eca-chainsetup) Only realtime objects; switching to direct mode.");
+      switch_to_direct_mode();
+      impl_repp->bmode_active_rep.toggle_double_buffering(false);
     }
     else if (proxy_clients_rep == 0) {
       ecadebug->msg(ECA_DEBUG::system_objects,
 		    "(eca-chainsetup) Switching to proxy mode.");
       switch_to_proxy_mode();
     }
+
+    impl_repp->pserver_rep.set_buffer_defaults(double_buffer_size() / buffersize(), 
+					       buffersize(),
+					       sample_rate());
+    impl_repp->pserver_rep.set_schedpriority(sched_priority() - 1);
   }
   else {
-    ecadebug->msg(ECA_DEBUG::system_objects,
-		  "(eca-chainsetup) Hahaa, I guessed right. No need to switch.");
-  }
-
-  if (double_buffering() == true) {
-    pserver_rep.set_buffer_defaults(double_buffer_size() / buffersize(), 
-				    buffersize(),
-				    sample_rate());
-    pserver_rep.set_schedpriority(sched_priority() - 1);
+    /* double_buffering() != true */
+    if (proxy_clients_rep > 0) {
+      ecadebug->msg(ECA_DEBUG::system_objects,
+		    "(eca-chainsetup) Switching to direct mode.");
+      switch_to_direct_mode();
+    }
   }
 }
 
@@ -652,6 +668,14 @@ void ECA_CHAINSETUP::toggle_chain_bypass(void) {
   }
 }
 
+const ECA_CHAINSETUP_BUFPARAMS& ECA_CHAINSETUP::active_buffering_parameters(void) const {
+  return(impl_repp->bmode_active_rep);
+}
+
+const ECA_CHAINSETUP_BUFPARAMS& ECA_CHAINSETUP::override_buffering_parameters(void) const {
+  return(impl_repp->bmode_override_rep);
+}
+
 vector<string> ECA_CHAINSETUP::chain_names(void) const {
   vector<string> result;
   vector<CHAIN*>::const_iterator p = chains.begin();
@@ -818,6 +842,18 @@ bool ECA_CHAINSETUP::has_realtime_objects(void) const {
 }
 
 /**
+ * Returns true if the connected chainsetup contains at least
+ * one nonrealtime audio input or output.
+ */
+bool ECA_CHAINSETUP::has_nonrealtime_objects(void) const {
+  if (static_cast<int>(inputs_direct_rep.size() + outputs_direct_rep.size()) >
+      number_of_realtime_inputs() + number_of_realtime_outputs())
+    return(true);
+  
+  return(false);
+}
+
+/**
  * Returns number of realtime audio input objects.
  */
 int ECA_CHAINSETUP::number_of_realtime_inputs(void) const {
@@ -849,7 +885,7 @@ AUDIO_IO* ECA_CHAINSETUP::add_audio_object_helper(AUDIO_IO* aio) {
   AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(aio);
   if (p == 0) {
     /* not a realtime device */
-    retobj = new AUDIO_IO_BUFFERED_PROXY(&pserver_rep, aio, false);
+    retobj = new AUDIO_IO_BUFFERED_PROXY(&impl_repp->pserver_rep, aio, false);
     ++proxy_clients_rep;
   }
   return(retobj);
@@ -1041,7 +1077,7 @@ void ECA_CHAINSETUP::add_midi_device(MIDI_IO* mididev) {
   // --------
 
   midi_devices.push_back(mididev);
-  midi_server_rep.register_client(mididev);
+  impl_repp->midi_server_rep.register_client(mididev);
 
   // --------
   DBC_ENSURE(midi_devices.size() > 0);
@@ -1194,8 +1230,8 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
 	audio_object_info(*q);
       }
 
-      if (midi_server_rep.is_enabled() != true &&
-	  midi_devices.size() > 0) midi_server_rep.enable();
+      if (impl_repp->midi_server_rep.is_enabled() != true &&
+	  midi_devices.size() > 0) impl_repp->midi_server_rep.enable();
 
       for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
 	(*q)->toggle_nonblocking_mode(true);
@@ -1249,7 +1285,7 @@ void ECA_CHAINSETUP::disable(void) {
       (*q)->close();
     }
 
-    if (midi_server_rep.is_enabled() == true) midi_server_rep.disable();
+    if (impl_repp->midi_server_rep.is_enabled() == true) impl_repp->midi_server_rep.disable();
     for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing midi device \"" + (*q)->label() + "\".");
       if ((*q)->is_open() == true) (*q)->close();
@@ -1353,6 +1389,50 @@ void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
   cparser_rep.interpret_options(opts);
 }
 
+void ECA_CHAINSETUP::set_buffersize(long int value) { 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) overriding buffersize.");
+  impl_repp->bmode_override_rep.set_buffersize(value); 
+}
+
+void ECA_CHAINSETUP::toggle_raised_priority(bool value) { 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) overriding raised priority.");
+  impl_repp->bmode_override_rep.toggle_raised_priority(value); 
+}
+
+void ECA_CHAINSETUP::set_sched_priority(int value) { 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) sched_priority.");
+  impl_repp->bmode_override_rep.set_sched_priority(value); 
+}
+
+void ECA_CHAINSETUP::toggle_double_buffering(bool value) { 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) overriding doublebuffering.");
+  impl_repp->bmode_override_rep.toggle_double_buffering(value); 
+}
+
+void ECA_CHAINSETUP::set_double_buffer_size(long int v) { 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) overriding db-size.");
+  impl_repp->bmode_override_rep.set_double_buffer_size(v); 
+}
+
+void ECA_CHAINSETUP::toggle_max_buffers(bool v) { 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) overriding max_buffers.");
+  impl_repp->bmode_override_rep.toggle_max_buffers(v); 
+}
+
+long int ECA_CHAINSETUP::buffersize(void) const { return(impl_repp->bmode_active_rep.buffersize()); }
+bool ECA_CHAINSETUP::raised_priority(void) const { return(impl_repp->bmode_active_rep.raised_priority()); }
+int ECA_CHAINSETUP::sched_priority(void) const { return(impl_repp->bmode_active_rep.sched_priority()); }
+bool ECA_CHAINSETUP::double_buffering(void) const { return(impl_repp->bmode_active_rep.double_buffering()); }
+long int ECA_CHAINSETUP::double_buffer_size(void) const { return(impl_repp->bmode_active_rep.double_buffer_size()); }
+bool ECA_CHAINSETUP::max_buffers(void) const { return(impl_repp->bmode_active_rep.max_buffers()); }
+
+void ECA_CHAINSETUP::set_default_audio_format(ECA_AUDIO_FORMAT& value) { 
+  impl_repp->default_audio_format_rep = value; 
+}
+
+const ECA_AUDIO_FORMAT& ECA_CHAINSETUP::default_audio_format(void) const { 
+  return(impl_repp->default_audio_format_rep); 
+}
 
 /**
  * Select controllers as targets for parameter control
@@ -1384,7 +1464,7 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
 
   AUDIO_STAMP_CLIENT* p = dynamic_cast<AUDIO_STAMP_CLIENT*>(csrc->source_pointer());
   if (p != 0) {
-    p->register_server(&stamp_server_rep);
+    p->register_server(&impl_repp->stamp_server_rep);
   }
 
   csrc->init((double)buffersize() / sample_rate());
@@ -1416,7 +1496,7 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   
   AUDIO_STAMP* p = dynamic_cast<AUDIO_STAMP*>(cotmp);
   if (p != 0) {
-    stamp_server_rep.register_stamp(p);
+    impl_repp->stamp_server_rep.register_stamp(p);
   }
   vector<string> schains = selected_chains();
   for(vector<string>::const_iterator p = schains.begin(); p != schains.end(); p++) {

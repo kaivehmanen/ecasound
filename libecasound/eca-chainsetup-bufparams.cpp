@@ -46,6 +46,22 @@ void ECA_CHAINSETUP_BUFPARAMS::set_all(const string& paramstr) {
   toggle_max_buffers(get_argument_number(6, paramstr) == "true");
 }
 
+/**
+ * Returns number of distinct set parameters.
+ */
+int ECA_CHAINSETUP_BUFPARAMS::number_of_set(void) const {
+  int res = 0;
+
+  if (set_buffersize_rep == true) res++;
+  if (set_raisedpriority_rep == true) res++;
+  if (set_sched_priority_rep == true) res++;
+  if (set_double_buffering_rep == true) res++;
+  if (set_double_buffer_size_rep == true) res++;
+  if (set_max_buffers_rep == true) res++;
+
+  return(res);
+}
+
 string ECA_CHAINSETUP_BUFPARAMS::to_string(void) const {
   string result;
   result += "\nbuffersize: ";

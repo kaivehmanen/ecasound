@@ -10,7 +10,7 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{06102001}
+\date{10102001}
 \begin{document}
 
 \maketitle
@@ -143,6 +143,24 @@ Qt-style is used when naming classes (class QELevelMeter), otherwise
 same as above.
 \end{description}
 
+\subsubsection{Private classes}
+Some classes are divided into public and private parts. This is
+done to make it easier to maintain binary-level compatibility 
+between library versions, and to get rid of header file 
+dependecies. 
+
+Private classes have a \emph{\_impl} postfix in their name. They
+are usually stored into separate files which also use the
+\emph{\_impl} notation.
+
+For instance the ECA_ENGINE class (eca-engine.h) has
+a private class ECA_ENGINE_impl (eca-engine_impl.h). 
+Access to ECA_ENGINE_impl is only allowed to ECA_ENGINE 
+member functions. In addition, the private header file 
+(eca-engine_impl.h) is only included from the ECA_ENGINE 
+implementation file (eca-engine.cpp). This allows us to 
+add new data members to ECA_ENGINE_impl without breaking 
+the binary interface.
 
 \subsection{Physical level organization}
 Ecasound libraries and applications are divided into \emph{distribution 

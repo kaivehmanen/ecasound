@@ -66,7 +66,7 @@ void MIDI_SERVER::io_thread(void) {
 
     assert(clients_rep.size() > 0);
     assert(clients_rep[0]->supports_nonblocking_mode() == true);
-    int fd = clients_rep[0]->file_descriptor();
+    int fd = clients_rep[0]->poll_descriptor();
 
     FD_ZERO(&fds);
     FD_SET(fd, &fds);
@@ -333,8 +333,11 @@ void MIDI_SERVER::send_midi_bytes(int dev_id, unsigned char* buf, int bytes) {
   if (clients_rep[dev_id - 1]->is_open() == true) {
     assert(static_cast<int>(clients_rep.size()) >= dev_id);
     assert(clients_rep[dev_id - 1]->supports_nonblocking_mode() == true);
-    int fd = clients_rep[dev_id - 1]->file_descriptor();
-    
+
+    int fd = clients_rep[dev_id - 1]->poll_descriptor();
+
+    // FIXME:: should use MIDI_IO::write_bytes() instead,
+    //         poll_descriptor is only meant for poll() and select()
     int err = ::write(fd, buf, bytes);
     assert(err == bytes);
   }

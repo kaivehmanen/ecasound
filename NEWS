@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 091001) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 101001) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -20,7 +20,14 @@ Last officially released version is -*> v2.0.3 *-
 ??102001 (v2.1dev2)
 	- added: ecaplay - -k, -d and -h options, see 'man ecaplay'
 	- changed: tuned prefill-parameters for double-buffering
+	- changed: when saving chainsetups, if no parameters 
+	           are overridden, buffermode definition (-B) is
+		   saved instead of individual parameters
+	- fixed: -r option wasn't saved to chainsetups (used
+		 to be a session-level option)
 	- fixed: typeselect problems when used for outputs
+	- fixed: system lockups with -B:rtlowlatency and 
+		 rt-object-only chainsetup
 09102001 (v2.1dev1)
 	- added: chainsetup parser prints a warning if an unknown
 	         buffering mode is given to -B:mode 

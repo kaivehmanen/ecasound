@@ -231,6 +231,13 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   /*@{*/
 
   /**
+   * Returns a file descriptor id suitable for poll() and 
+   * select() system calls. If polling is not supported,
+   * returns value of '-1'.
+   */
+  virtual int poll_descriptor(void) const { return(-1); }
+
+  /**
    * Effectively this is meant for implementing nonblocking 
    * input and output with devices supporting it. If supports_nonblocking_mode() 
    * == true, this function can be used to check how many samples are 

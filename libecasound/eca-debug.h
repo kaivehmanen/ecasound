@@ -61,6 +61,7 @@ public:
 };
 
 void attach_debug_object(ECA_DEBUG* newdebug);
+void detach_debug_object(void);
 
 extern ECA_DEBUG* ecadebug;
 

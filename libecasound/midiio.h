@@ -26,8 +26,8 @@ class MIDI_IO : public DYNAMIC_OBJECT<std::string> {
 
  public:
 
-  // ===================================================================
-  // Type definitions
+  /** @name Public type definitions and constants */
+  /*@{*/
 
   /**
    * Input/Output mode
@@ -53,15 +53,35 @@ class MIDI_IO : public DYNAMIC_OBJECT<std::string> {
    **/
   enum Io_mode { io_read = 1, io_write = 2, io_readwrite = 4 };
 
-  // ===================================================================
-  // Attributes
+  /*@}*/
+
+ public:
+
+  /** @name Constructors and destructors */
+  /*@{*/
+
+  virtual MIDI_IO* clone(void) = 0;
+  virtual MIDI_IO* new_expr(void) = 0;
+  virtual ~MIDI_IO(void);
+  MIDI_IO(const std::string& name = "unknown",
+	  int mode = io_read);
+
+  /*@}*/
+
+  /** @name Attribute functions */
+  /*@{*/
 
   virtual int supported_io_modes(void) const;
   virtual bool supports_nonblocking_mode(void) const;
-  
-  // ===================================================================
-  // Configuration (setting and getting configuration parameters)
 
+  /*@}*/
+
+  /** @name Configuration 
+   * 
+   * For setting and getting configuration parameters.
+   */
+  /*@{*/
+  
   int io_mode(void) const;
   const std::string& label(void) const;
 
@@ -73,8 +93,10 @@ class MIDI_IO : public DYNAMIC_OBJECT<std::string> {
   virtual void set_parameter(int param, std::string value);
   virtual std::string get_parameter(int param) const;
 
-  // ===================================================================
-  // Functionality (control and runtime information)
+  /*@}*/
+
+  /** @name Main functionality */
+  /*@{*/
 
  public:
 
@@ -111,20 +133,17 @@ class MIDI_IO : public DYNAMIC_OBJECT<std::string> {
    */
   virtual void close(void) = 0;
 
-  // ===================================================================
-  // Runtime information
+  /*@}*/
+
+  /** @name Runtime information */
+  /*@{*/
 
   /**
-   * If supports_nonblocking_mode() == true, this function returns 
-   * valid file descriptor that can be used as an argument to 
-   * standard "select()" and "poll()" system calls.
-   *
-   * FIXME: how about blocking behaviour?
-   *
-   * require:
-   *  supports_nonblocking_mode() == true
+   * Returns a file descriptor id suitable for poll() and 
+   * select() system calls. If polling is not supported,
+   * returns value of '-1'.
    */
-  virtual int file_descriptor(void) const { return(-1); }
+  virtual int poll_descriptor(void) const { return(-1); }
 
   /**
    * Has device been opened (with open())?
@@ -145,20 +164,11 @@ class MIDI_IO : public DYNAMIC_OBJECT<std::string> {
   virtual bool readable(void) const;
   virtual bool writable(void) const;
 
+  /*@}*/
+
  protected:
 
   void toggle_open_state(bool value);
-
-  // ===================================================================
-  // Constructors and destructors
-
- public:
-
-  virtual MIDI_IO* clone(void) = 0;
-  virtual MIDI_IO* new_expr(void) = 0;
-  virtual ~MIDI_IO(void);
-  MIDI_IO(const std::string& name = "unknown",
-	  int mode = io_read);
 
  private:
   

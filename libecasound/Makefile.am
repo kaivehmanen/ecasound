@@ -77,6 +77,7 @@ ecasound_audioio_include = 	\
 			audioio-forked-stream.h \
 			audioio-timidity.h \
 			audioio-proxy-server.h \
+			audioio-proxy-server_impl.h \
 			audioio-proxy-buffer.h \
 			audioio-buffered-proxy.h \
 			audioio-typeselect.h
@@ -109,6 +110,7 @@ ecasound_general_include = 	\
 			eca-debug.h \
 			eca-comhelp.h \
 			eca-engine.h \
+			eca-engine_impl.h \
 			eca-session.h \
 			eca-resources.h \
 			resource-file.h \
@@ -125,6 +127,7 @@ ecasound_general_include = 	\
 			eca-version.h \
 			eca-object-factory.h \
 			eca-chainsetup.h \
+			eca-chainsetup_impl.h \
 			eca-chainsetup-bufparams.h \
 			eca-chainsetup-parser.h \
 			eca-chainsetup-position.h \

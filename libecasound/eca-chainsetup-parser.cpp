@@ -22,11 +22,14 @@
 
 #include <kvutils/dbc.h> /* DBC_* */
 #include <kvutils/message_item.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "audioio.h"
 #include "file-preset.h"
 #include "global-preset.h"
+#include "midiio.h"
 #include "midi-client.h"
+#include "midi-server.h"
 #include "generic-controller.h"
 
 #include "eca-object-factory.h"
@@ -36,6 +39,7 @@
 
 #include "eca-chainsetup.h"
 #include "eca-chainsetup-parser.h"
+#include "eca-chainsetup-bufparams.h"
 
 ECA_CHAINSETUP_PARSER::ECA_CHAINSETUP_PARSER(ECA_CHAINSETUP* csetup) 
   : csetup_repp(csetup), 
@@ -272,9 +276,10 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
   switch(argu[1]) {
   case 'b':
     {
-      csetup_repp->set_buffersize(atoi(get_argument_number(1, argu).c_str()));
+      int bsize = atoi(get_argument_number(1, argu).c_str());
+      csetup_repp->set_buffersize(bsize);
       MESSAGE_ITEM mitemb;
-      mitemb << "(eca-chainsetup-parser) Setting buffersize to (samples) " << csetup_repp->buffersize() << ".";
+      mitemb << "(eca-chainsetup-parser) Setting buffersize to (samples) " << bsize << ".";
       ecadebug->msg(mitemb.to_string()); 
       break;
     }
@@ -345,8 +350,8 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
       else {
 	if (prio == 0) prio = 50;
 	csetup_repp->set_sched_priority(prio);
-	ecadebug->msg("(eca-chainseup) Raised-priority mode enabled. (prio:" + 
-		      kvu_numtostr(csetup_repp->sched_priority()) + ")");
+	ecadebug->msg("(eca-chainsetup) Raised-priority mode enabled. (prio:" + 
+		      kvu_numtostr(prio) + ")");
 	csetup_repp->toggle_raised_priority(true);
       }
       break;
@@ -646,7 +651,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu) {
 	else {
 	  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
 	  last_audio_object_repp->io_mode(AUDIO_IO::io_read);
-	  last_audio_object_repp->set_audio_format(csetup_repp->default_audio_format_rep);
+	  last_audio_object_repp->set_audio_format(csetup_repp->default_audio_format());
 	  csetup_repp->add_input(last_audio_object_repp);
 	}
       }
@@ -677,7 +682,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu) {
 	else {
 	  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
 	  last_audio_object_repp->io_mode(mode_tmp);
-	  last_audio_object_repp->set_audio_format(csetup_repp->default_audio_format_rep);
+	  last_audio_object_repp->set_audio_format(csetup_repp->default_audio_format());
 	  csetup_repp->add_output(last_audio_object_repp);
 	}
       }
@@ -764,7 +769,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu) {
 			    "(eca-chainsetup-parser) MIDI-config: Receiving MMC messages with id  \"" + 
 			    kvu_numtostr(id) +
 			    "\".");
-	      csetup_repp->midi_server_rep.set_mmc_receive_id(id);
+	      csetup_repp->midi_server_repp->set_mmc_receive_id(id);
 	      break;
 	    }
 	  
@@ -776,7 +781,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu) {
 			    "(eca-chainsetup-parser) MIDI-config: Adding MMC-send to device id \"" + 
 			    kvu_numtostr(id) +
 			    "\".");
-	      csetup_repp->midi_server_rep.add_mmc_send_id(id);
+	      csetup_repp->midi_server_repp->add_mmc_send_id(id);
 	      break;
 	    }
 	  }
@@ -792,7 +797,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu) {
 	      // FIXME: not implemented
 	      ecadebug->msg(ECA_DEBUG::info, 
 			    "(eca-chainsetup-parser) MIDI-config: Receiving MIDI-sync.");
-	      csetup_repp->midi_server_rep.toggle_midi_sync_receive(true);
+	      csetup_repp->midi_server_repp->toggle_midi_sync_receive(true);
 	      break;
 	    }
 	  
@@ -801,7 +806,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu) {
 	      // FIXME: not implemented
 	      ecadebug->msg(ECA_DEBUG::info, 
 			    "(eca-chainsetup-parser) MIDI-config: Sending MIDI-sync.");
-	      csetup_repp->midi_server_rep.toggle_midi_sync_send(true);
+	      csetup_repp->midi_server_repp->toggle_midi_sync_send(true);
 	      break;
 	    }
 	  }
@@ -872,7 +877,7 @@ void ECA_CHAINSETUP_PARSER::interpret_controller (const std::string& argu) {
       if (p != 0) {
 	if (csetup_repp->midi_devices.size() == 0) 
 	  interpret_midi_device("-Md:" + csetup_repp->default_midi_device());
-	p->register_server(&csetup_repp->midi_server_rep);
+	p->register_server(csetup_repp->midi_server_repp);
       }
       csetup_repp->add_controller(t);
       istatus_rep = true;
@@ -883,7 +888,54 @@ void ECA_CHAINSETUP_PARSER::interpret_controller (const std::string& argu) {
 std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const {
   MESSAGE_ITEM t;
 
-  t << "-b:" << csetup_repp->buffersize();
+  int setparams = csetup_repp->override_buffering_parameters().number_of_set();
+  ecadebug->msg(ECA_DEBUG::system_objects, 
+		"eca-chainsetup-parser) genopts tostring - " + kvu_numtostr(setparams) +
+		" overridden parameters.");
+
+  if (csetup_repp->active_buffering_parameters().number_of_set() > 0) {
+    t << "-b:" << csetup_repp->buffersize();
+    
+    if (csetup_repp->raised_priority() == true)
+      t << " -r:" << csetup_repp->sched_priority();
+    else
+      t << " -r:-1";
+
+    if (csetup_repp->max_buffers() == true) 
+      t << " -z:intbuf";
+    else
+      t << " -z:nointbuf";
+    
+    if (csetup_repp->double_buffering() == true) 
+      t << " -z:db," << csetup_repp->double_buffer_size();
+    else
+      t << " -z:nodb";
+  }
+  else {
+    switch(csetup_repp->active_buffering_mode_rep) 
+      {
+      case ECA_CHAINSETUP::cs_bmode_nonrt: 
+	{
+	  t << " -B:nonrt";
+	  break; 
+	}
+      case ECA_CHAINSETUP::cs_bmode_rt: 
+	{ 
+	  t << " -B:rt";
+	  break; 
+	}
+      case ECA_CHAINSETUP::cs_bmode_rtlowlatency: 
+	{ 
+	  t << " -B:rt";
+	  break;
+	}
+      default: 
+	{ 
+	  t << " -B:auto";
+	}
+      }
+  }
+
   t << " -sr:" << csetup_repp->sample_rate();
 
   t << " -n:" << csetup_repp->name();
@@ -905,20 +957,12 @@ std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const {
   else
     t << " -X";
 
-  if (csetup_repp->max_buffers() == true) 
-    t << " -z:intbuf";
-  else
-    t << " -z:nointbuf";
 
   if (csetup_repp->ignore_xruns() == true) 
     t << " -z:noxruns";
   else
     t << " -z:xruns";
 
-  if (csetup_repp->double_buffering() == true) 
-    t << " -z:db," << csetup_repp->double_buffer_size();
-  else
-    t << " -z:nodb";
 
   if (csetup_repp->precise_sample_rates() == true) 
     t << " -z:psr";

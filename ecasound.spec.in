@@ -5,7 +5,7 @@
 
 Buildroot: /tmp/ecasound-build
 Prefix: /usr/local
-Packager: Kai Vehmanen <kaiv@wakkanet.fi>
+Packager: Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 Distribution: Red Hat Contrib
 Name: ecasound
 Version: @VERSION@

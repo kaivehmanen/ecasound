@@ -28,8 +28,9 @@
 #include <kvutils/dbc.h>
 
 #include "sample-specs.h"
-#include "audioio-proxy-server.h"
 #include "eca-debug.h"
+#include "audioio-proxy-server.h"
+#include "audioio-proxy-server_impl.h"
 
 // --
 // Select features
@@ -79,21 +80,16 @@ AUDIO_IO_PROXY_SERVER::AUDIO_IO_PROXY_SERVER (void) {
   buffersize_rep = buffersize_default;
   samplerate_rep = SAMPLE_SPECS::sample_rate_default;
 
+  impl_repp = new AUDIO_IO_PROXY_SERVER_impl;
+
   thread_running_rep = false;
 
-  full_cond_repp = new pthread_cond_t;
-  full_mutex_repp = new pthread_mutex_t;
-  stop_cond_repp = new pthread_cond_t;
-  stop_mutex_repp = new pthread_mutex_t;
-  flush_cond_repp = new pthread_cond_t;
-  flush_mutex_repp = new pthread_mutex_t;
-
-  pthread_cond_init(full_cond_repp, NULL);
-  pthread_mutex_init(full_mutex_repp, NULL);
-  pthread_cond_init(stop_cond_repp, NULL);
-  pthread_mutex_init(stop_mutex_repp, NULL);
-  pthread_cond_init(flush_cond_repp, NULL);
-  pthread_mutex_init(flush_mutex_repp, NULL);
+  pthread_cond_init(&impl_repp->full_cond_repp, NULL);
+  pthread_mutex_init(&impl_repp->full_mutex_repp, NULL);
+  pthread_cond_init(&impl_repp->stop_cond_repp, NULL);
+  pthread_mutex_init(&impl_repp->stop_mutex_repp, NULL);
+  pthread_cond_init(&impl_repp->flush_cond_repp, NULL);
+  pthread_mutex_init(&impl_repp->flush_mutex_repp, NULL);
 
   running_rep.set(0);
   full_rep.set(0);
@@ -102,14 +98,13 @@ AUDIO_IO_PROXY_SERVER::AUDIO_IO_PROXY_SERVER (void) {
   exit_request_rep.set(0);
   exit_ok_rep.set(0);
 
-  profile_not_full_anymore_rep = 0;
-  profile_pauses_rep = 0;
-  profile_full_and_active_rep = 0;
-  profile_full_signaled_rep = 0;
-  profile_not_full_rep = 0;
-  profile_read_xrun_danger_rep = 0;
-  profile_write_xrun_danger_rep = 0;
-  profile_rounds_total_rep = 0;
+  impl_repp->profile_sleep_rep = 0;
+  impl_repp->profile_no_processing_rep = 0;
+  impl_repp->profile_not_full_anymore_rep = 0;
+  impl_repp->profile_processing_rep = 0;
+  impl_repp->profile_read_xrun_danger_rep = 0;
+  impl_repp->profile_write_xrun_danger_rep = 0;
+  impl_repp->profile_rounds_total_rep = 0;
 }
 
 /**
@@ -121,18 +116,13 @@ AUDIO_IO_PROXY_SERVER::~AUDIO_IO_PROXY_SERVER(void) {
   exit_request_rep.set(1);
   exit_ok_rep.set(0);
   if (thread_running_rep == true) {
-    ::pthread_join(io_thread_rep, 0);
+    ::pthread_join(impl_repp->io_thread_rep, 0);
   }
   for(unsigned int p = 0; p < buffers_rep.size(); p++) {
     delete buffers_rep[p];
   }
 
-  delete full_cond_repp;
-  delete full_mutex_repp;
-  delete stop_cond_repp;
-  delete stop_mutex_repp;
-  delete flush_cond_repp;
-  delete flush_mutex_repp;
+  delete impl_repp;
 
 #ifdef PROXY_PROFILING
   dump_profile_counters();
@@ -145,7 +135,7 @@ AUDIO_IO_PROXY_SERVER::~AUDIO_IO_PROXY_SERVER(void) {
 void AUDIO_IO_PROXY_SERVER::start(void) { 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) start");
   if (thread_running_rep != true) {
-    int ret = pthread_create(&io_thread_rep,
+    int ret = pthread_create(&impl_repp->io_thread_rep,
 			     0,
 			     start_proxy_server_io_thread,
 			     static_cast<void *>(this));
@@ -209,27 +199,33 @@ bool AUDIO_IO_PROXY_SERVER::is_full(void) const {
 void AUDIO_IO_PROXY_SERVER::wait_for_full(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_full entry");
 
-  struct timeval now;
-  gettimeofday(&now, 0);
-  struct timespec sleepcount;
-  sleepcount.tv_sec = now.tv_sec + 5;
-  sleepcount.tv_nsec = now.tv_usec * 1000;
-  int ret = 0;
-
-  full_request_rep.set(1);
-  pthread_mutex_lock(full_mutex_repp);
-  ret = ::pthread_cond_timedwait(full_cond_repp, 
-				 full_mutex_repp,
-				 &sleepcount);
-  pthread_mutex_unlock(full_mutex_repp);
-  full_request_rep.set(0);
-
-  if (ret == 0)
-    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_full ok");
-  else if (ret == -ETIMEDOUT)
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_full failed; timeout");
-  else
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_full failed");
+  if (is_running() == true &&
+      clients_rep.size() > 0) {
+    struct timeval now;
+    gettimeofday(&now, 0);
+    struct timespec sleepcount;
+    sleepcount.tv_sec = now.tv_sec + 5;
+    sleepcount.tv_nsec = now.tv_usec * 1000;
+    int ret = 0;
+    
+    full_request_rep.set(1);
+    pthread_mutex_lock(&impl_repp->full_mutex_repp);
+    ret = ::pthread_cond_timedwait(&impl_repp->full_cond_repp, 
+				   &impl_repp->full_mutex_repp,
+				   &sleepcount);
+    pthread_mutex_unlock(&impl_repp->full_mutex_repp);
+    full_request_rep.set(0);
+    
+    if (ret == 0)
+      ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_full ok");
+    else if (ret == -ETIMEDOUT)
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_full failed; timeout");
+    else
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_full failed");
+  }
+  else {
+    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_full failed; not running");
+  }
 }
 
 /**
@@ -247,12 +243,12 @@ void AUDIO_IO_PROXY_SERVER::wait_for_stop(void) {
   int ret = 0;
 
   if (running_rep.get() == 1) {
-  ::pthread_mutex_lock(stop_mutex_repp);
-  ret = ::pthread_cond_timedwait(stop_cond_repp, 
-				 stop_mutex_repp,
+  ::pthread_mutex_lock(&impl_repp->stop_mutex_repp);
+  ret = ::pthread_cond_timedwait(&impl_repp->stop_cond_repp, 
+				 &impl_repp->stop_mutex_repp,
 				 &sleepcount);
   }
-  pthread_mutex_unlock(stop_mutex_repp);
+  pthread_mutex_unlock(&impl_repp->stop_mutex_repp);
 
   if (ret == 0)
     ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_stop ok");
@@ -270,27 +266,32 @@ void AUDIO_IO_PROXY_SERVER::wait_for_stop(void) {
 void AUDIO_IO_PROXY_SERVER::wait_for_flush(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_flush entry");
 
-  struct timeval now;
-  gettimeofday(&now, 0);
-  struct timespec sleepcount;
-  sleepcount.tv_sec = now.tv_sec + 5;
-  sleepcount.tv_nsec = now.tv_usec * 1000;
-  int ret = 0;
-
-  if (exit_ok_rep.get() == 0) {
-    pthread_mutex_lock(flush_mutex_repp);
-    ret = pthread_cond_timedwait(flush_cond_repp, 
-				 flush_mutex_repp,
+  if (is_running() == true) {
+    struct timeval now;
+    gettimeofday(&now, 0);
+    struct timespec sleepcount;
+    sleepcount.tv_sec = now.tv_sec + 5;
+    sleepcount.tv_nsec = now.tv_usec * 1000;
+    int ret = 0;
+    
+    if (exit_ok_rep.get() == 0) {
+      pthread_mutex_lock(&impl_repp->flush_mutex_repp);
+      ret = pthread_cond_timedwait(&impl_repp->flush_cond_repp, 
+				   &impl_repp->flush_mutex_repp,
 				 &sleepcount);
-    pthread_mutex_unlock(flush_mutex_repp);
+      pthread_mutex_unlock(&impl_repp->flush_mutex_repp);
+    }
+    
+    if (ret == 0)
+      ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_flush ok");
+    else if (ret == -ETIMEDOUT)
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_flush failed; timeout");
+    else
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_flush failed");
   }
-
-  if (ret == 0)
-    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_flush ok");
-  else if (ret == -ETIMEDOUT)
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_flush failed; timeout");
-  else
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_flush failed");
+  else {
+    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_flush failed; not running");
+  }
 }
 
 /**
@@ -298,9 +299,9 @@ void AUDIO_IO_PROXY_SERVER::wait_for_flush(void) {
  * are fulls.
  */
 void AUDIO_IO_PROXY_SERVER::signal_full(void) {
-  pthread_mutex_lock(full_mutex_repp);
-  pthread_cond_broadcast(full_cond_repp);
-  pthread_mutex_unlock(full_mutex_repp);
+  pthread_mutex_lock(&impl_repp->full_mutex_repp);
+  pthread_cond_broadcast(&impl_repp->full_cond_repp);
+  pthread_mutex_unlock(&impl_repp->full_mutex_repp);
 }
 
 /**
@@ -309,9 +310,9 @@ void AUDIO_IO_PROXY_SERVER::signal_full(void) {
  */
 void AUDIO_IO_PROXY_SERVER::signal_stop(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_stop entry");
-  pthread_mutex_lock(stop_mutex_repp);
-  pthread_cond_broadcast(stop_cond_repp);
-  pthread_mutex_unlock(stop_mutex_repp);
+  pthread_mutex_lock(&impl_repp->stop_mutex_repp);
+  pthread_cond_broadcast(&impl_repp->stop_cond_repp);
+  pthread_mutex_unlock(&impl_repp->stop_mutex_repp);
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_stop ok");
 }
 
@@ -321,9 +322,9 @@ void AUDIO_IO_PROXY_SERVER::signal_stop(void) {
  */
 void AUDIO_IO_PROXY_SERVER::signal_flush(void) {
   //  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_flush");
-  pthread_mutex_lock(flush_mutex_repp);
-  pthread_cond_broadcast(flush_cond_repp);
-  pthread_mutex_unlock(flush_mutex_repp);
+  pthread_mutex_lock(&impl_repp->flush_mutex_repp);
+  pthread_cond_broadcast(&impl_repp->flush_cond_repp);
+  pthread_mutex_unlock(&impl_repp->flush_mutex_repp);
 }
 
 
@@ -403,7 +404,7 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audio_io_proxy_server) Hey, in the I/O loop!");
 
   int processed = 0;
-  int full_rounds = 0;
+  int passive_rounds = 0;
   while(true) {
     if (running_rep.get() == 0) {
       usleep(50000);
@@ -411,15 +412,21 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
       continue;
     }
 
-    PROXY_PROFILING_INC(profile_rounds_total_rep);
+    PROXY_PROFILING_INC(impl_repp->profile_rounds_total_rep);
 
     processed = 0;
+
+    int min_free_space = buffercount_rep;
 
     for(unsigned int p = 0; p < clients_rep.size(); p++) {
       if (clients_rep[p] == 0 ||
 	  buffers_rep[p]->finished_rep.get()) continue;
+
+      int free_space = 0;
+
       if (buffers_rep[p]->io_mode_rep == AUDIO_IO::io_read) {
-	if (buffers_rep[p]->write_space() > 0) {
+	free_space = buffers_rep[p]->write_space();
+	if (free_space > 0) {
 
 	  clients_rep[p]->read_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->writeptr_rep.get()]);
 	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
@@ -427,13 +434,14 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 	  ++processed;
 
 	  PROXY_PROFILING_STATEMENT( if (buffers_rep[p]->write_space() > 16) { )
-	  PROXY_PROFILING_INC(profile_read_xrun_danger_rep);
+	  PROXY_PROFILING_INC(impl_repp->profile_read_xrun_danger_rep);
 	  PROXY_PROFILING_STATEMENT( } )
 
 	}
       }
       else {
-	if (buffers_rep[p]->read_space() > 0) {
+	free_space = buffers_rep[p]->read_space();
+	if (free_space > 0) {
 
 	  clients_rep[p]->write_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
 	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
@@ -441,11 +449,14 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 	  ++processed;
 
 	  PROXY_PROFILING_STATEMENT( if (buffers_rep[p]->read_space() < 16) { )
-	  PROXY_PROFILING_INC(profile_write_xrun_danger_rep);
+	  PROXY_PROFILING_INC(impl_repp->profile_write_xrun_danger_rep);
 	  PROXY_PROFILING_STATEMENT( } )
 
 	}
       }
+
+      if (free_space < min_free_space) min_free_space = free_space;
+
     }
 
     if (stop_request_rep.get() == 1) {
@@ -454,38 +465,35 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
       signal_stop();
     }
 
-    if (processed == 0) full_rounds++;
-    else full_rounds = 0;
-			 
-    if (full_rep.get() == 1) {
-      if (processed != 0 || full_request_rep.get() != 0) {
-	/* case 1 - active iteration; there was free space in buffers */
-	full_rep.set(0);
-	PROXY_PROFILING_INC(profile_not_full_anymore_rep);
-      }
-      else if (processed == 0 && full_rounds > 4) {
-	/* case 2 - no room in buffers -> wait for a moment */
-	PROXY_PROFILING_INC(profile_pauses_rep);
+    if (min_free_space == 0) passive_rounds++;
+    else passive_rounds = 0;
+
+    if (processed == 0) {
+      if (passive_rounds > 4) {
+	/* case 1: nothing processed during x rounds ==> full, sleep */
+	PROXY_PROFILING_INC(impl_repp->profile_sleep_rep);
+	full_rep.set(1);
+	signal_full();
 	struct timespec sleepcount;
 	sleepcount.tv_sec = 0;
 	sleepcount.tv_nsec = 10000000; /* 10ms */
 	::nanosleep(&sleepcount, 0);
       }
-      else 
-	PROXY_PROFILING_INC(profile_full_and_active_rep);
+      else {
+	/* case 2: nothing processed ==> do nothing */
+	PROXY_PROFILING_INC(impl_repp->profile_no_processing_rep);
+      }
     }
     else {
-      if (full_rounds > 16) {
-	/* case 3 - buffers have become full, or someone is waiting
-	 *          for a signal_full() */
-	full_rep.set(1);
-	//  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_full entry");
-	signal_full();
-	//  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_full ok");
-	PROXY_PROFILING_INC(profile_full_signaled_rep);
+      if (min_free_space > 4) {
+	/* case 3: something processed; room in the buffers ==> not full */
+	PROXY_PROFILING_INC(impl_repp->profile_not_full_anymore_rep);
+	full_rep.set(0);
       }
-      else
-	PROXY_PROFILING_INC(profile_not_full_rep);
+      else {
+	/* case 4: something processed; business as usual */
+	PROXY_PROFILING_INC(impl_repp->profile_processing_rep);
+      }
     }
   }
   flush();
@@ -494,16 +502,15 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 }
 
 void AUDIO_IO_PROXY_SERVER::dump_profile_counters(void) {
-  if (profile_not_full_anymore_rep > 0) {
+  if (impl_repp->profile_not_full_anymore_rep > 0) {
     std::cerr << "(audioio-proxy-server) *** profile begin ***" << endl;
-    std::cerr << "profile_not_full_anymore_rep: " << profile_not_full_anymore_rep << endl;
-    std::cerr << "profile_pauses_rep: " << profile_pauses_rep << endl;
-    std::cerr << "profile_full_and_active_rep: " << profile_full_and_active_rep << endl;
-    std::cerr << "profile_full_signaled_rep: " << profile_full_signaled_rep << endl;
-    std::cerr << "profile_not_full_rep: " << profile_not_full_rep << endl; 
-    std::cerr << "profile_read_xrun_danger_rep: " << profile_read_xrun_danger_rep << endl;
-    std::cerr << "profile_write_xrun_danger_rep: " << profile_write_xrun_danger_rep << endl;
-    std::cerr << "profile_rounds_total_rep: " << profile_rounds_total_rep << endl;
+    std::cerr << "impl_repp->profile_sleep_rep: " << impl_repp->profile_sleep_rep << endl;
+    std::cerr << "impl_repp->profile_no_processing_rep: " << impl_repp->profile_no_processing_rep << endl;
+    std::cerr << "impl_repp->profile_not_full_anymore_rep: " << impl_repp->profile_not_full_anymore_rep << endl;
+    std::cerr << "impl_repp->profile_processing_rep: " << impl_repp->profile_no_processing_rep << endl;
+    std::cerr << "impl_repp->profile_read_xrun_danger_rep: " << impl_repp->profile_read_xrun_danger_rep << endl;
+    std::cerr << "impl_repp->profile_write_xrun_danger_rep: " << impl_repp->profile_write_xrun_danger_rep << endl;
+    std::cerr << "impl_repp->profile_rounds_total_rep: " << impl_repp->profile_rounds_total_rep << endl;
     std::cerr << "(audioio-proxy-server) *** profile end   ***" << endl;
   }
 }
