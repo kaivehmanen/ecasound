@@ -83,9 +83,9 @@ int main(int argc, char *argv[])
   int n, failed = 0;
   
 #if NDEBUG
-  setenv("ECASOUND", "../ecasound/ecasound", 0);
+  putenv("ECASOUND=../ecasound/ecasound");
 #else
-  setenv("ECASOUND", "../ecasound/ecasound_debug", 0);
+  putenv("ECASOUND=../ecasound/ecasound_debug");
 #endif
 
   for(n = 0; eci_funcs[n] != NULL; n++) {
