@@ -16,6 +16,7 @@
 
 #ifdef COMPILE_OSS
 #include <sys/soundcard.h>
+#endif
 
 /**
  * Class for handling Open Sound System -devices (OSS/Linux 
@@ -70,4 +71,3 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 };
 
 #endif
-#endif // COMPILE_OSS

@@ -682,15 +682,18 @@ void ECA_CONTROL::aio_register(void) const {
   map<string,string>::const_iterator p = kmap.begin();
   while(p != kmap.end()) {
     string temp;
-    AUDIO_IO* q = ECA_AUDIO_OBJECT_MAP::object(p->second);
+    AUDIO_IO* q = ECA_AUDIO_OBJECT_MAP::object(p->first, false);
     q->map_parameters();
     int params = q->number_of_params();
-    for(int n = 1; n < params; n++) {
-      if (n == 1) temp += "\n\t";
-      temp += q->get_parameter_name(n + 1);
-      if (n + 1 < params) temp += ",";
+    if (params > 0) {
+      temp += " (params: ";
+      for(int n = 0; n < params; n++) {
+	temp += q->get_parameter_name(n + 1);
+	if (n + 1 < params) temp += ",";
+      }
+      temp += ")";
     }
-    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + ", keyword \"" + p->second
+    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + ", handled by \"" + p->second
 		  + "\"."  + temp);
     ++count;
     ++p;
@@ -704,7 +707,7 @@ void ECA_CONTROL::cop_register(void) const {
   int count = 1;
   while(p != kmap.end()) {
     string temp;
-    CHAIN_OPERATOR* q = ECA_CHAIN_OPERATOR_MAP::object(p->second);
+    CHAIN_OPERATOR* q = ECA_CHAIN_OPERATOR_MAP::object(p->first);
     q->map_parameters();
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
@@ -713,7 +716,7 @@ void ECA_CONTROL::cop_register(void) const {
       if (n + 1 < params) temp += ",";
     }
 
-    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + " -" + p->second
+    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + " - " + p->second
 		  + temp);
     ++count;
     ++p;
@@ -739,7 +742,7 @@ void ECA_CONTROL::ladspa_register(void) const {
   int count = 1;
   while(p != kmap.end()) {
     string temp = "\n\t-el:" + p->second + ",";
-    EFFECT_LADSPA* q = ECA_LADSPA_PLUGIN_MAP::object(p->second);
+    EFFECT_LADSPA* q = ECA_LADSPA_PLUGIN_MAP::object(p->first);
     q->map_parameters();
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
@@ -760,7 +763,7 @@ void ECA_CONTROL::ctrl_register(void) const {
   int count = 1;
   while(p != kmap.end()) {
     string temp;
-    GENERIC_CONTROLLER* q = ECA_CONTROLLER_MAP::object(p->second);
+    GENERIC_CONTROLLER* q = ECA_CONTROLLER_MAP::object(p->first);
     q->map_parameters();
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {

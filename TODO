@@ -6,9 +6,9 @@
 
 1.8.x series:
 
-- embedded effect preset parameters
-- internal plugin support
-- MIDI-subsystem updates
+- embedded effect preset parameters [specs ready]
+- internal plugin support [done]
+- MIDI-subsystem updates [specs ready]
 
 2.x series (1.x -> 2.x requirements):
 
@@ -33,6 +33,7 @@
 - add threshold parameter to -eca
 - embedded effect preset parameters ("-p[fn]:string,par1,...,parN")
 - metronome signal
+- better MIDI-support (separate MIDI input/output objects) [under work]
   
 -----------------------------------------------------------------------
 
@@ -40,26 +41,26 @@
 
 Input/output devices:
 
+- wrapper objects for triggering file input/output based on volume
+  level or timers
 - type override for audio objects
-- internal support for mp3 encoding and decoding (libmpg123 + libmp3lame)
-- SMPTE time-code
-- integration to some synth engine - for instance Csound, aRts, 
-  Quasimodo, Bacterium, ...
+- shorten support
+- wrapper object for using effects as audio inputs/outputs
 - more efficient interleaving of multichannel inputs/outputs
 	- "-i:ileave,mchannel-file.wav,1" - only reads the 1st channel
 	- "-i:ileave,mchannel-file.wav,2" - only reads the 2nd channel
 	- and so on... the same with outputs
+- internal support for mp3 encoding and decoding (libmpg123 + libmp3lame)
+- SMPTE time-code
+- integration to some synth engine - for instance Csound, aRts, 
+  Quasimodo, Bacterium, ...
 - mpeglib support
-- ogg vorbis plugin
-- shorten support
-- timidity++
-- wrapper objects for triggering file input/output based on volume
-  level or timers
+
 
 Effects, routing, dsp routines:
 
 - generic envelope followers
-- Schroeder reverb
+- more effects (for instance, a Schroeder reverb)
 
 Interactive-mode:
 
@@ -76,7 +77,6 @@ Library-interface:
 Misc:
 
 - smart mixing / dithering
-- better MIDI-support (separate MIDI input/output objects)
 - few safety checks to ecatools
 
 -----------------------------------------------------------------------

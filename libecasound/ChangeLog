@@ -2,6 +2,12 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-10-08  Kai Vehmanen <kaiv@wakkanet.fi>
+	
+	* eca-version.h (): added version numbering as C defines
+	* audioio-plugin.h (audio_io_interface_version): added
+	* eca-object-map.h (object): added a second argument; affects
+	
 2000-10-07  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-error.h (all): classes made non-virtual, many other big changes
@@ -9,7 +15,9 @@
 	default_mikmod_args combined into default_mikmod_cmd)
 	* audioio-timidity.h (all): a new file
 	* audioio.h (all): various changes and code cleanups
-			
+	* audioio-forked-stream.h (all): new file
+	other object map classes
+				
 2000-09-24  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* audiofx_timebased.h (EFFECT_MODULATING_DELAY): constructor

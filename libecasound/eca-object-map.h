@@ -27,26 +27,28 @@ class ECA_OBJECT_MAP {
  public:
 
   /**
-   * Register a new effect.
+   * Registers a new object-regexp pair. Map object won't take care
+   * of deleting the registered objects.
    */
-  virtual void register_object(const string& keyword, ECA_OBJECT* object);
+  virtual void register_object(const string& regexpr, ECA_OBJECT* object);
 
   /**
-   * List of registered objects ('object name'-'keyword' map).
+   * List of registered objects ('regexpr'-'object name' map).
    */
   virtual const map<string,string>& registered_objects(void) const;
 
   /**
-   * Return the first object that matches with 'keyword'
+   * Returns the first object that matches the expression 'expr'.
+   * If 'use_regexp' is true, regex matching is used.
    */
-  virtual ECA_OBJECT* object(const string& keyword) const;
+  virtual ECA_OBJECT* object(const string& expr, bool use_regexp = true) const;
 
   /**
-   * Return the matching keyword for 'object'.
+   * Returns the matching keyword for 'object'.
    */
   virtual string object_identifier(const ECA_OBJECT* object) const;
 
-  virtual ~ECA_OBJECT_MAP (void) { }
+  virtual ~ECA_OBJECT_MAP (void);
 };
 
 #endif

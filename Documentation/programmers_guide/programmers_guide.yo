@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (06102000)
+       (07102000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -53,8 +53,8 @@ subsubsect(Data hiding)
 This OO-feature deserves to be mentioned separately. Whenever 
 possible, I always try to hide the actual data representation. 
 This allows you to make local implementation changes without
-affecting parts of the code base. One thing I've especially tried 
-to avoid is excessive use of pointer magic.
+affecting other parts of the code base. One thing I've especially 
+tried to avoid is excessive use of pointer magic.
 
 subsubsect(Design by contract) 
 Design by contract means that when you write a new routine,
@@ -304,12 +304,63 @@ sampling rate and system endianess are all specified in
 
 subsubsubsect(DEBUG)
 Virtual interface class for the debugging subsystem. Ecasound engine 
-sends all debug messages to this class. The actual implementation of
-this class can be done in many ways. For example in the console mode
-version of ecasound, TEXTDEBUG class is used to implement the DEBUG
+sends all debug messages to an instance of this class. The actual 
+implementation can be done in many ways. For example in the console mode
+user-interface  of ecasound, TEXTDEBUG class is used to implement the DEBUG
 interface. It sends all messages that have a suitable debug 
 level to the standard output stream. On the other hand, in qtecasound 
-DEBUG is implemented using a Qt widget.
+DEBUG is implemented using a Qt widget. New DEBUG implementations can
+be registered at runtime with the em(attach_debug_object()) call
+(declared in eca-debug.h).
+
+COMMENT(----------------------------------------------------------------)
+subsubsect(Object maps)
+Object maps are a central repositories for commonly used objects.
+When object is registered to a map, a regular expression is attached 
+to it. When object map receives a request for a new object, it 
+goes through all registered regular expressions, and returns an 
+object attached to the matching expression. Object maps can also provide
+a list of all registered objects. 
+
+This system may sound a bit complex, but in practise it is quite
+simple and makes a lot of things more easier. For instance, when
+adding new object types to the library, you only have to add a call
+which registers the new object; no need to modify any other part of 
+the library. It also makes it possible to add new types at runtime. For
+instance, an application linked against libecasound might add its own
+custom object types on startup. All parts of libecasound can use the
+custom objects, although they are not part of library itself.
+
+All objects defined in libecasound are registered in the file
+em(eca-static-object-maps.cpp).
+
+subsubsubsect(ECA_OBJECT)
+A virtual base class that represents one object. All classes deriving 
+from ECA_OBJECT can be registered to object maps.
+
+subsubsubsect(ECA_OBJECT_MAP)
+This is the basic object map implementation. It offers map services
+for ECA_OBJECT objects.
+
+subsubsubsect(ECA_PRESET_MAP)
+Special class that inherits from ECA_OBJECT_MAP. This class is used
+for mapping instances of class PRESET.
+
+subsubsubsect(ECA_AUDIO_OBJECT_MAP)
+A convenience class for mapping AUDIO_IO objects. Handles the casting 
+between ECA_OBJECT<->AUDIO_IO.
+
+subsubsubsect(ECA_CHAIN_OPERATOR_MAP)
+A convenience class for mapping CHAIN_OPERATOR objects. Handles the casting 
+between ECA_OBJECT<->CHAIN_OPERATOR.
+
+subsubsubsect(ECA_CONTROLLER_MAP)
+A convenience class for mapping GENERIC_CONTROLLER objects. Handles the casting 
+between ECA_OBJECT<->GENERIC_CONTROLLER.
+
+subsubsubsect(ECA_LADSPA_PLUGIN_MAP)
+A convenience class for mapping EFFECT_LADSPA objects. Handles the casting 
+between ECA_OBJECT<->EFFECT_LADSPA.
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -323,8 +374,10 @@ own programs. You can fork ecasound, pipe commands to ecasound's
 interactive mode or you can create chainsetup (.ecs) files and load
 them to ecasound. You'll be able to do practically anything. The only 
 real problem is getting information from ecasound. You'll have to
-parse ecasound's ascii output if you want to do this. And in some
-situations, performance might be an issue.
+parse ecasound's ascii output if you want to do this. To make this 
+a bit easier, ecasound offers the dump-* commands. These print
+configration and status info as formatted text strings (easier to
+parse than normal output).
 
 COMMENT(----------------------------------------------------------------)
 subsect(Controller class interface)
@@ -345,9 +398,10 @@ ctrl.start(); // starts processing in another thread (doesn't block)
 )
 
 If you don't want to use threads, you can do as above, but use
-ECA_PROCESSOR directly to do the actual processing. This way the
-processing is done without additional threads. Here's a short 
-sample:
+ECA_PROCESSOR directly to do the actual processing. In other words, 
+you only use ECA_CONTROL for setting up a ECA_SESSION object. This 
+way the processing is done without additional threads. Here's a 
+short sample:
 
 verb(
 --cut--
@@ -387,7 +441,7 @@ Write a new class that inherits from CHAIN_OPERATOR or any of its
 successors. Implement the necessary routines (init, set/get_parameter, 
 process and a default constructor) and add your source files to
 libecasound's makefiles. Then all that's left to do is to add your
-effect to em(libecasound/src/eca-static-object-maps.cpp),
+effect to em(libecasound/eca-static-object-maps.cpp),
 em(register_default_objects()). Now the new effect can be used just 
 like any other ecasound effect (parameters control, effect presets, etc).
 
@@ -400,34 +454,36 @@ though, there are some differences:
 
 Input/output:
 startit()
-it() audio objects can be opened for reading, writing or read&writing
-it() effects get a buffer which they operate
+it() audio objects can be opened for reading writing or read&write
+it() effects are modeless
+it() audio objects read from, or write to a buffer
+it() effects get a buffer which they operate (in-place processing)
 endit()
 
 Audio format:
 startit()
-it() audio objects can have a distinct audio format (sample rate, bits,
-  channels)
+it() audio objects have a distinct audio format (sample rate, bits,
+     channels)
 it() effects should be capable of accepting audio data in any format
-  (this is usually easy as ecasound converts all input data to its
-  internal format)
+     (this is usually easy as ecasound converts all input data to its
+     internal format)
 endit()
 
 Control:
 startit()
-it() audio objects can be prepared, started and stopped
+it() audio objects can be opened, closed, prepared, started and stopped
 it() effects don't have a running state
 endit()
 
 Position:
 startit()
-it() audio objects store length and position
+it() audio objects have length and position attributes
 it() effects just process buffers and don't know about their position
 endit()
 
-A good example of this similarity is LADSPA oscillator plugins.
-Although they are effects, you can easily use them as audio inputs by
-specifying:
+A good example of the similarity between the two types are LADSPA
+oscillator plugins. Although they are effects, you can easily use them 
+as audio inputs by specifying:
 
 verb(
 "ecasound -i null -o /dev/dsp -el:sine_fcac,440,1"

@@ -20,31 +20,44 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <regex.h>
 
 #include "eca-object-map.h"
 #include "eca-debug.h"
 
+// FIXME: add regex support
+
 void ECA_OBJECT_MAP::register_object(const string& keyword, ECA_OBJECT* object) {
   object_map[keyword] = object;
-  object_keyword_map[object->name()] = keyword;
+  object_keyword_map[keyword] = object->name();
 }
 
 const map<string,string>& ECA_OBJECT_MAP::registered_objects(void) const {
   return(object_keyword_map);
 }
 
-ECA_OBJECT* ECA_OBJECT_MAP::object(const string& keyword) const {
+ECA_OBJECT* ECA_OBJECT_MAP::object(const string& keyword, bool use_regexp) const {
   map<string,ECA_OBJECT*>::const_iterator p = object_map.begin();
+  regex_t preg;
+  ECA_OBJECT* object = 0;
   while(p != object_map.end()) {
-    if ((p->first.size() > 0 && keyword.find(p->first) != string::npos && 
-	 (p->first[0] == '.' || p->first[0] == '/')) || 
-	p->first == keyword) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(e-a-o-m) match: " + p->first + "-" + keyword);
-      return(p->second);
+    if (use_regexp == true) {
+      regcomp(&preg, p->first.c_str(), REG_NOSUB);
+      if (regexec(&preg, keyword.c_str(), 0, 0, 0) == 0) {
+	//      if ((p->first.size() > 0 && keyword.find(p->first) != string::npos && 
+	//  	 (p->first[0] == '.' || p->first[0] == '/')) || 
+	//  	p->first == keyword) {
+	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-object-map) match: " + p->first + "-" + keyword);
+	object = p->second;
+      }
+      regfree(&preg);
+    }
+    else if (p->first == keyword) {
+      object = p->second;
     }
     ++p;
   }
-  return(0);
+  return(object);
 }
 
 string ECA_OBJECT_MAP::object_identifier(const ECA_OBJECT* object) const {
@@ -57,3 +70,5 @@ string ECA_OBJECT_MAP::object_identifier(const ECA_OBJECT* object) const {
   }
   return("");
 }
+
+ECA_OBJECT_MAP::~ECA_OBJECT_MAP (void) { }

@@ -30,6 +30,7 @@
 #include <algorithm>
 
 #include <kvutils/kvu_numtostr.h>
+#include "eca-version.h"
 #include "eca-chainop.h"
 #include "audiofx.h"
 #include "audiofx_amplitude.h"
@@ -110,58 +111,58 @@ void register_default_objects(void) {
 }
 
 void register_default_audio_objects(void) {
-  eca_audio_object_map.register_object(".wav", new WAVEFILE());
-  eca_audio_object_map.register_object(".ewf", new EWFFILE());
-  eca_audio_object_map.register_object(".cdr", new CDRFILE());
+  eca_audio_object_map.register_object("\\.wav$", new WAVEFILE());
+  eca_audio_object_map.register_object("\\.ewf$", new EWFFILE());
+  eca_audio_object_map.register_object("\\.cdr$", new CDRFILE());
 
   AUDIO_IO* raw = new RAWFILE();
-  eca_audio_object_map.register_object(".raw", raw);
+  eca_audio_object_map.register_object("\\.raw$", raw);
 
   AUDIO_IO* mp3 = new MP3FILE();
-  eca_audio_object_map.register_object(".mp3", mp3);
-  eca_audio_object_map.register_object(".mp2", mp3);
+  eca_audio_object_map.register_object("\\.mp3$", mp3);
+  eca_audio_object_map.register_object("\\.mp2$", mp3);
 
   AUDIO_IO* ogg = new OGG_VORBIS_INTERFACE();
-  eca_audio_object_map.register_object(".ogg", ogg);
+  eca_audio_object_map.register_object("\\.ogg$", ogg);
 
   AUDIO_IO* mikmod = new MIKMOD_INTERFACE();
-  eca_audio_object_map.register_object(".669", mikmod);
-  eca_audio_object_map.register_object(".amf", mikmod);
-  eca_audio_object_map.register_object(".dsm", mikmod);
-  eca_audio_object_map.register_object(".far", mikmod);
-  eca_audio_object_map.register_object(".gdm", mikmod);
-  eca_audio_object_map.register_object(".imf", mikmod);
-  eca_audio_object_map.register_object(".it", mikmod);
-  eca_audio_object_map.register_object(".m15", mikmod);
-  eca_audio_object_map.register_object(".med", mikmod);
-  eca_audio_object_map.register_object(".mod", mikmod);
-  eca_audio_object_map.register_object(".mtm", mikmod);
-  eca_audio_object_map.register_object(".s3m", mikmod);
-  eca_audio_object_map.register_object(".stm", mikmod);
-  eca_audio_object_map.register_object(".stx", mikmod);
-  eca_audio_object_map.register_object(".ult", mikmod);
-  eca_audio_object_map.register_object(".uni", mikmod);
-  eca_audio_object_map.register_object(".xm", mikmod);
+  eca_audio_object_map.register_object("\\.669$", mikmod);
+  eca_audio_object_map.register_object("\\.amf$", mikmod);
+  eca_audio_object_map.register_object("\\.dsm$", mikmod);
+  eca_audio_object_map.register_object("\\.far$", mikmod);
+  eca_audio_object_map.register_object("\\.gdm$", mikmod);
+  eca_audio_object_map.register_object("\\.imf$", mikmod);
+  eca_audio_object_map.register_object("\\.it$", mikmod);
+  eca_audio_object_map.register_object("\\.m15$", mikmod);
+  eca_audio_object_map.register_object("\\.ed$", mikmod);
+  eca_audio_object_map.register_object("\\.mod$", mikmod);
+  eca_audio_object_map.register_object("\\.mtm$", mikmod);
+  eca_audio_object_map.register_object("\\.s3m$", mikmod);
+  eca_audio_object_map.register_object("\\.stm$", mikmod);
+  eca_audio_object_map.register_object("\\.stx$", mikmod);
+  eca_audio_object_map.register_object("\\.ult$", mikmod);
+  eca_audio_object_map.register_object("\\.uni$", mikmod);
+  eca_audio_object_map.register_object("\\.xm$", mikmod);
 
   AUDIO_IO* timidity = new TIMIDITY_INTERFACE();
-  eca_audio_object_map.register_object(".mid", timidity);
-  eca_audio_object_map.register_object(".midi", timidity);
+  eca_audio_object_map.register_object("\\.mid$", timidity);
+  eca_audio_object_map.register_object("\\.midi$", timidity);
 
   AUDIO_IO* device = 0;  
 #ifdef COMPILE_OSS
   device = new OSSDEVICE();
-  eca_audio_object_map.register_object("/dev/dsp", device);
-  eca_audio_device_map.register_object("/dev/dsp", device);
+  eca_audio_object_map.register_object("/dev/dsp[0-9]*", device);
+  eca_audio_device_map.register_object("/dev/dsp[0-9]*", device);
 #endif
 
   device = new REALTIME_NULL();
-  eca_audio_object_map.register_object("rtnull", device);
-  eca_audio_device_map.register_object("rtnull", device);
+  eca_audio_object_map.register_object("^rtnull$", device);
+  eca_audio_device_map.register_object("^rtnull$", device);
 
-  eca_audio_object_map.register_object("-", raw);
-  eca_audio_object_map.register_object("stdin", raw);
-  eca_audio_object_map.register_object("stdout", raw);
-  eca_audio_object_map.register_object("null", new NULLFILE());
+  eca_audio_object_map.register_object("^-$", raw);
+  eca_audio_object_map.register_object("^stdin$", raw);
+  eca_audio_object_map.register_object("^stdout$", raw);
+  eca_audio_object_map.register_object("^null$", new NULLFILE());
 }
 
 void register_default_chainops(void) {
@@ -218,9 +219,30 @@ static AUDIO_IO* register_internal_plugin(const string& libdir,
   audio_io_descriptor desc_func = 0;
   void *plugin_handle = dlopen(file.c_str(), RTLD_NOW);
   if (plugin_handle != 0) {
-    desc_func = (audio_io_descriptor)dlsym(plugin_handle, "audio_io_descriptor");
-    if (desc_func != 0) {
-      return(desc_func());
+    audio_io_interface_version plugin_version;
+    plugin_version = (audio_io_interface_version)dlsym(plugin_handle, "audio_io_interface_version");
+    if (plugin_version != 0) {
+      int version = plugin_version();
+      if (version < ecasound_library_version_current -
+	  ecasound_library_version_age ||
+	  version > ecasound_library_version_current) {
+	ecadebug->msg(ECA_DEBUG::info, 
+		      "(eca-static-object-maps) Opening internal plugin file \"" + 
+		      file + 
+		      "\" failed. Plugin version " + 
+		      kvu_numtostr(version) +
+		      " doesn't match libecasound version " +
+		      kvu_numtostr(ecasound_library_version_current) + "." +
+		      kvu_numtostr(ecasound_library_version_revision) + "." +
+		      kvu_numtostr(ecasound_library_version_age) + ".");
+	return(0);
+      }
+      else {
+	desc_func = (audio_io_descriptor)dlsym(plugin_handle, "audio_io_descriptor");
+	if (desc_func != 0) {
+	  return(desc_func());
+	}
+      }
     }
   }
   if (plugin_handle == 0 ||
@@ -232,7 +254,7 @@ static AUDIO_IO* register_internal_plugin(const string& libdir,
 		  dlerror() +
 		  "\"");
   }
-
+    
   return(0);
 }
 
@@ -250,69 +272,69 @@ void register_internal_plugins(void) {
   aobj = register_internal_plugin(libdir, "libaudioio_af.so");
   if (aobj != 0) {
 #ifdef COMPILE_AF
-    eca_audio_object_map.register_object(".aif", aobj);
-    eca_audio_object_map.register_object(".au", aobj);
-    eca_audio_object_map.register_object(".snd", aobj);
+    eca_audio_object_map.register_object("\\.aif*", aobj);
+    eca_audio_object_map.register_object("\\.au$", aobj);
+    eca_audio_object_map.register_object("\\.snd$", aobj);
 #endif
   }
 
   aobj = register_internal_plugin(libdir, "libaudioio_alsa.so");
   if (aobj != 0) {
-    eca_audio_object_map.register_object("alsa_03", aobj);
-    eca_audio_device_map.register_object("alsa_03", aobj);
+    eca_audio_object_map.register_object("^alsa_03$", aobj);
+    eca_audio_device_map.register_object("^alsa_03$", aobj);
 #ifdef ALSALIB_032
-    eca_audio_object_map.register_object("alsa", aobj);
-    eca_audio_device_map.register_object("alsa", aobj);
+    eca_audio_object_map.register_object("^alsa$", aobj);
+    eca_audio_device_map.register_object("^alsa$", aobj);
 #endif
   }
 
   aobj = register_internal_plugin(libdir, "libaudioio_alsalb.so");
   if (aobj != 0) {
 #if (defined ALSALIB_032 || defined ALSALIB_050)
-    eca_audio_object_map.register_object("alsalb", aobj);
-    eca_audio_device_map.register_object("alsalb", aobj);
+    eca_audio_object_map.register_object("^alsalb$", aobj);
+    eca_audio_device_map.register_object("^alsalb$", aobj);
 #endif
   }
 
   aobj = register_internal_plugin(libdir, "libaudioio_alsa2_plugin.so");
   if (aobj != 0) {
-    eca_audio_object_map.register_object("alsaplugin_05", aobj);
-    eca_audio_device_map.register_object("alsaplugin_05", aobj);
+    eca_audio_object_map.register_object("^alsaplugin_05$", aobj);
+    eca_audio_device_map.register_object("^alsaplugin_05$", aobj);
 #ifdef ALSALIB_050
-    eca_audio_object_map.register_object("alsaplugin", aobj);
-    eca_audio_device_map.register_object("alsaplugin", aobj);
+    eca_audio_object_map.register_object("^alsaplugin$", aobj);
+    eca_audio_device_map.register_object("^alsaplugin$", aobj);
 #endif
   }
 
   aobj = register_internal_plugin(libdir, "libaudioio_alsa2.so");
   if (aobj != 0) {
-    eca_audio_object_map.register_object("alsa_05", aobj);
-    eca_audio_device_map.register_object("alsa_05", aobj);
+    eca_audio_object_map.register_object("^alsa_05$", aobj);
+    eca_audio_device_map.register_object("^alsa_05$", aobj);
 #ifdef ALSALIB_050
-    eca_audio_object_map.register_object("alsa", aobj);
-    eca_audio_device_map.register_object("alsa", aobj);
+    eca_audio_object_map.register_object("^alsa$", aobj);
+    eca_audio_device_map.register_object("^alsa$", aobj);
 #endif
   }
 
   aobj = register_internal_plugin(libdir, "libaudioio_alsa3.so");
   if (aobj != 0) {
-    eca_audio_object_map.register_object("alsa_06", aobj);
-    eca_audio_device_map.register_object("alsa_06", aobj);
-    eca_audio_object_map.register_object("alsaplugin_06", aobj);
-    eca_audio_device_map.register_object("alsaplugin_06", aobj);
+    eca_audio_object_map.register_object("^alsa_06$", aobj);
+    eca_audio_device_map.register_object("^alsa_06$", aobj);
+    eca_audio_object_map.register_object("^alsaplugin_06$", aobj);
+    eca_audio_device_map.register_object("^alsaplugin_06$", aobj);
 #ifdef ALSALIB_060
-    eca_audio_object_map.register_object("alsa", aobj);
-    eca_audio_device_map.register_object("alsa", aobj);
-    eca_audio_object_map.register_object("alsaplugin", aobj);
-    eca_audio_device_map.register_object("alsaplugin", aobj);
+    eca_audio_object_map.register_object("^alsa$", aobj);
+    eca_audio_device_map.register_object("^alsa$", aobj);
+    eca_audio_object_map.register_object("^alsaplugin$", aobj);
+    eca_audio_device_map.register_object("^alsaplugin$", aobj);
 #endif
   }
 
   aobj = register_internal_plugin(libdir, "libaudioio_arts.so");
   if (aobj != 0) {
 #ifdef COMPILE_ARTS
-    eca_audio_object_map.register_object("arts", aobj);
-    eca_audio_device_map.register_object("arts", aobj);
+    eca_audio_object_map.register_object("^arts$", aobj);
+    eca_audio_device_map.register_object("^arts$", aobj);
 #endif
   }
 }

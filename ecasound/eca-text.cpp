@@ -164,13 +164,11 @@ void parse_command_line(COMMAND_LINE& cline) {
 }
 
 void signal_handler(int signum) {
-  cerr << "Unexpected interrupt... cleaning up.\n";
+  cerr << "Caught a signal... cleaning up.\n";
   if (global_session_deleted == false) {
     global_session_deleted = true;
     if (global_pointer_to_ecaparams != 0) delete global_pointer_to_ecaparams;
   }
-  //  delete global_pointer_to_ecaparams;
-  //  global_pointer_to_ecaparams->~ECAPARAMS();
   remove(ecasound_lockfile.c_str());
   exit(0);
 }

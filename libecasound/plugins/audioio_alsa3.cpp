@@ -41,7 +41,7 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-ALSA_PCM_DEVICE::ALSA_PCM_DEVICE (int card, 
+ALSA_PCM_DEVICE_06X::ALSA_PCM_DEVICE_06X (int card, 
 				  int device, 
 				  int subdevice) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) construct");
@@ -53,7 +53,7 @@ ALSA_PCM_DEVICE::ALSA_PCM_DEVICE (int card,
   overruns_rep = underruns_rep = 0;
 }
 
-void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR&) {
+void ALSA_PCM_DEVICE_06X::open(void) throw(ECA_ERROR&) {
   assert(is_open() == false);
   assert(is_triggered_rep == false);
 
@@ -250,7 +250,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR&) {
   toggle_open_state(true);
 }
 
-void ALSA_PCM_DEVICE::stop(void) {
+void ALSA_PCM_DEVICE_06X::stop(void) {
   assert(is_triggered_rep == true);
   assert(is_open() == true);
   assert(is_prepared_rep == true);
@@ -275,7 +275,7 @@ void ALSA_PCM_DEVICE::stop(void) {
   is_prepared_rep = false;
 }
 
-void ALSA_PCM_DEVICE::close(void) {
+void ALSA_PCM_DEVICE_06X::close(void) {
   assert(is_open() == true);
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) close");
@@ -287,7 +287,7 @@ void ALSA_PCM_DEVICE::close(void) {
   assert(is_triggered_rep == false);
 }
 
-void ALSA_PCM_DEVICE::prepare(void) {
+void ALSA_PCM_DEVICE_06X::prepare(void) {
   assert(is_triggered_rep == false);
   assert(is_open() == true);
   assert(is_prepared_rep == false);
@@ -300,7 +300,7 @@ void ALSA_PCM_DEVICE::prepare(void) {
   is_prepared_rep = true;
 }
 
-void ALSA_PCM_DEVICE::start(void) {
+void ALSA_PCM_DEVICE_06X::start(void) {
   assert(is_triggered_rep == false);
   assert(is_open() == true);
   assert(is_prepared_rep == true);
@@ -312,13 +312,13 @@ void ALSA_PCM_DEVICE::start(void) {
   is_triggered_rep = true;
 }
 
-long int ALSA_PCM_DEVICE::read_samples(void* target_buffer, 
+long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer, 
 					long int samples) {
   assert(samples <= fragment_size_rep);
   return(::snd_pcm_read(audio_fd_repp, target_buffer, fragment_size_rep));
 }
 
-void ALSA_PCM_DEVICE::print_status_debug(void) {
+void ALSA_PCM_DEVICE_06X::print_status_debug(void) {
   snd_pcm_status_t status;
   memset(&status, 0, sizeof(status));
   ::snd_pcm_status(audio_fd_repp, &status);
@@ -331,7 +331,7 @@ void ALSA_PCM_DEVICE::print_status_debug(void) {
   print_time_stamp();
 }
 
-void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
+void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
   if (samples == fragment_size_rep) {
     ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
   }
@@ -353,7 +353,7 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
   }
 }
 
-long ALSA_PCM_DEVICE::position_in_samples(void) const {
+long ALSA_PCM_DEVICE_06X::position_in_samples(void) const {
   if (is_triggered_rep == false) return(0);
   snd_pcm_status_t status;
   memset(&status, 0, sizeof(status));
@@ -361,7 +361,7 @@ long ALSA_PCM_DEVICE::position_in_samples(void) const {
   return (status.appl_ptr);
 }
 
-ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) { 
+ALSA_PCM_DEVICE_06X::~ALSA_PCM_DEVICE_06X(void) { 
   if (is_open() == true) close(); 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) destruct");
 
@@ -381,7 +381,7 @@ ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) {
   }
 }
 
-void ALSA_PCM_DEVICE::set_parameter(int param, 
+void ALSA_PCM_DEVICE_06X::set_parameter(int param, 
 				     string value) {
   switch (param) {
   case 1: 
@@ -402,7 +402,7 @@ void ALSA_PCM_DEVICE::set_parameter(int param,
   }
 }
 
-string ALSA_PCM_DEVICE::get_parameter(int param) const {
+string ALSA_PCM_DEVICE_06X::get_parameter(int param) const {
   switch (param) {
   case 1: 
     return(label());

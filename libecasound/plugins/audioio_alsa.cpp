@@ -36,7 +36,7 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-ALSA_PCM_DEVICE::ALSA_PCM_DEVICE (int card, 
+ALSA_PCM_DEVICE_032::ALSA_PCM_DEVICE_032 (int card, 
 				  int device) {
   card_number_rep = card;
   device_number_rep = device;
@@ -44,7 +44,7 @@ ALSA_PCM_DEVICE::ALSA_PCM_DEVICE (int card,
   overruns_rep = underruns_rep = 0;
 }
 
-void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR&) {
+void ALSA_PCM_DEVICE_032::open(void) throw(ECA_ERROR&) {
   if (is_open() == true) return;
 
   int err;
@@ -168,7 +168,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR&) {
   toggle_open_state(true);
 }
 
-void ALSA_PCM_DEVICE::stop(void) {
+void ALSA_PCM_DEVICE_032::stop(void) {
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) Audio device \"" + label() + "\" disabled.");
   if (io_mode() == io_write) {
     ::snd_pcm_playback_pause(audio_fd_repp, 1);
@@ -179,7 +179,7 @@ void ALSA_PCM_DEVICE::stop(void) {
   is_triggered_rep = false;
 }
 
-void ALSA_PCM_DEVICE::close(void) {
+void ALSA_PCM_DEVICE_032::close(void) {
   if (is_open()) {
     if (io_mode() != io_read) {
       snd_pcm_playback_status_t pb_status;
@@ -198,7 +198,7 @@ void ALSA_PCM_DEVICE::close(void) {
   toggle_open_state(false);
 }
 
-void ALSA_PCM_DEVICE::start(void) {
+void ALSA_PCM_DEVICE_032::start(void) {
   if (is_open() == false) {
     open();
   }
@@ -216,16 +216,16 @@ void ALSA_PCM_DEVICE::start(void) {
   }
 }
 
-long int ALSA_PCM_DEVICE::read_samples(void* target_buffer, 
+long int ALSA_PCM_DEVICE_032::read_samples(void* target_buffer, 
 				 long int samples) {
   return(::snd_pcm_read(audio_fd_repp, target_buffer, frame_size() * samples) / frame_size());
 }
 
-void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
+void ALSA_PCM_DEVICE_032::write_samples(void* target_buffer, long int samples) {
   ::snd_pcm_write(audio_fd_repp, target_buffer, frame_size() * samples);
 }
 
-long ALSA_PCM_DEVICE::position_in_samples(void) const {
+long ALSA_PCM_DEVICE_032::position_in_samples(void) const {
   if (is_triggered_rep == false) return(0);
   if (io_mode() != io_read) {
     snd_pcm_playback_status_t pb_status;
@@ -240,7 +240,7 @@ long ALSA_PCM_DEVICE::position_in_samples(void) const {
     //  return(ca_status.scount / frame_size());
 }
 
-ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) { 
+ALSA_PCM_DEVICE_032::~ALSA_PCM_DEVICE_032(void) { 
   close(); 
 
   if (io_mode() != io_read) {
@@ -260,7 +260,7 @@ ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) {
   //  eca_alsa_unload_dynamic_support();
 }
 
-void ALSA_PCM_DEVICE::set_parameter(int param, 
+void ALSA_PCM_DEVICE_032::set_parameter(int param, 
 				     string value) {
   switch (param) {
   case 1: 
@@ -277,7 +277,7 @@ void ALSA_PCM_DEVICE::set_parameter(int param,
   }
 }
 
-string ALSA_PCM_DEVICE::get_parameter(int param) const {
+string ALSA_PCM_DEVICE_032::get_parameter(int param) const {
   switch (param) {
   case 1: 
     return(label());

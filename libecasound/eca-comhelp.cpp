@@ -12,7 +12,7 @@ const char* ecasound_parameter_help_rep =
 "     -b:buffersize            size of sample buffer in samples \n"
 "     -m:mixmode               mixmode\n"
 "     -n:name                  set chainsetup name\n"
-"     -r                       raise runtime prioritary\n"
+"     -r                       raise runtime priority\n"
 "     -sr:sample_rate          set internal sample rate\n"
 "     -x                       truncate outputs\n"
 "     -z:feature               enable feature 'feature'\n"

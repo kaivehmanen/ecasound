@@ -17,12 +17,13 @@
 #endif
 
 #include "samplebuffer.h"
+#include "eca-version.h"
 
 /**
  * Class for handling ALSA-devices (Advanced Linux Sound Architecture).
  * @author Kai Vehmanen
  */
-class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
+class ALSA_PCM_DEVICE_032 : public AUDIO_IO_DEVICE {
 
  private:
 
@@ -63,20 +64,20 @@ class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;
 
-  ALSA_PCM_DEVICE (int card = 0, int device = 0);
-  ~ALSA_PCM_DEVICE(void);
-  ALSA_PCM_DEVICE* clone(void) { cerr << "Not implemented!" << endl; return this; }
-  ALSA_PCM_DEVICE* new_expr(void) { return new ALSA_PCM_DEVICE(); }
+  ALSA_PCM_DEVICE_032 (int card = 0, int device = 0);
+  ~ALSA_PCM_DEVICE_032(void);
+  ALSA_PCM_DEVICE_032* clone(void) { cerr << "Not implemented!" << endl; return this; }
+  ALSA_PCM_DEVICE_032* new_expr(void) { return new ALSA_PCM_DEVICE_032(); }
   
  private:
   
-  ALSA_PCM_DEVICE (const ALSA_PCM_DEVICE& x) { }
-  ALSA_PCM_DEVICE& operator=(const ALSA_PCM_DEVICE& x) { return *this; }
+  ALSA_PCM_DEVICE_032 (const ALSA_PCM_DEVICE_032& x) { }
+  ALSA_PCM_DEVICE_032& operator=(const ALSA_PCM_DEVICE_032& x) { return *this; }
 };
 
 extern "C" {
-AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_PCM_DEVICE()); }
+AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_PCM_DEVICE_032()); }
+int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
 };
 
 #endif
-

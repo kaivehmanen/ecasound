@@ -31,8 +31,8 @@ const map<string,string>& ECA_AUDIO_OBJECT_MAP::registered_objects(void) {
   return(eca_audio_object_map.registered_objects());
 }
 
-AUDIO_IO* ECA_AUDIO_OBJECT_MAP::object(const string& keyword) {
-  return(dynamic_cast<AUDIO_IO*>(eca_audio_object_map.object(keyword)));
+AUDIO_IO* ECA_AUDIO_OBJECT_MAP::object(const string& keyword, bool use_regex) {
+  return(dynamic_cast<AUDIO_IO*>(eca_audio_object_map.object(keyword, use_regex)));
 }
 
 string ECA_AUDIO_OBJECT_MAP::object_identifier(const AUDIO_IO* object) {

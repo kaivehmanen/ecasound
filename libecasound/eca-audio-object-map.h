@@ -26,9 +26,10 @@ class ECA_AUDIO_OBJECT_MAP {
   static const map<string,string>& registered_objects(void);
 
   /**
-   * Return the first object that matches with 'keyword'
+   * Return the first object that matches with 'keyword'. If 
+   * 'use_regex', regular expression matching is used.
    */
-  static AUDIO_IO* object(const string& keyword);
+  static AUDIO_IO* object(const string& keyword, bool use_regex = true);
 
   /**
    * Return the matching keyword for 'object'.

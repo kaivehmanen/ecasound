@@ -7,6 +7,7 @@
 
 #include "audioio-types.h"
 #include "samplebuffer.h"
+#include "eca-version.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -66,6 +67,7 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
 
 extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new AUDIOFILE_INTERFACE()); }
+int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
 };
 
 #endif

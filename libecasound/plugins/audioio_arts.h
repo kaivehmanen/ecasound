@@ -12,6 +12,8 @@ extern "C" {
 }
 #endif
 
+#include "eca-version.h"
+
 /**
  * Interface for communicating with aRts/MCOP.
  * @author Kai Vehmanen
@@ -54,6 +56,7 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
 
 extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new ARTS_INTERFACE()); }
+int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
 };
 
 #endif

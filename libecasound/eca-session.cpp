@@ -316,6 +316,7 @@ bool ECA_SESSION::is_session_option(const string& arg) const {
   case 'c':
   case 'd':
   case 'h':
+  case 'q':
   case 'r':
   case 's': 
     return(true);
@@ -360,6 +361,10 @@ void ECA_SESSION::interpret_general_option (const string& argu) {
     }
   case 'h':      // help!
     cout << ecasound_parameter_help();
+    break;
+
+  case 'q':
+    ecadebug->disable();
     break;
 
   case 'r':

@@ -43,14 +43,14 @@ ECA_PRESET_MAP::ECA_PRESET_MAP(void) {
 void ECA_PRESET_MAP::register_object(const string& keyword,
 				     PRESET* object) {
   object_map[keyword] = object;
-  object_keyword_map[object->name()] = keyword;
+  object_keyword_map[keyword] = object->name();
 }
 
 const map<string,string>& ECA_PRESET_MAP::registered_objects(void) const {
   return(object_keyword_map);
 }
 
-ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword) const {
+ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword, bool use_regex) const {
   map<string, PRESET*>::const_iterator p = object_map.begin();
   while(p != object_map.end()) {
     if (p->first == keyword) 
@@ -69,3 +69,5 @@ string ECA_PRESET_MAP::object_identifier(const PRESET* object) const {
   assert(object != 0);
   return(object->name());
 }
+
+ECA_PRESET_MAP::~ECA_PRESET_MAP (void) { }

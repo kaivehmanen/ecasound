@@ -14,13 +14,14 @@
 #endif
 
 #ifdef ALSALIB_050
-
 extern "C" {
 #include <sys/asoundlib.h>
 }
+#endif
 
 #include "samplebuffer.h"
 #include "audioio-types.h"
+#include "eca-version.h"
 
 /**
  * Class for handling ALSA pcm2-devices using the pcm-plugin API.
@@ -28,8 +29,10 @@ extern "C" {
  */
 class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
 
+#ifdef ALSALIB_050
   snd_pcm_t *audio_fd_repp;
   snd_pcm_channel_info_t pcm_info_rep;
+#endif
 
   long int fragment_size_rep;
   int card_number_rep, device_number_rep, subdevice_number_rep;
@@ -77,7 +80,7 @@ class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
 
 extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_PCM2_PLUGIN_DEVICE()); }
+int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
 };
 
-#endif // ALSALIB_050
 #endif

@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "27\&.08\&.2000" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "07\&.10\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -58,7 +58,7 @@ resampling)\&. Curretly only affects OSS-devices\&. Defaults to \fIfalse\fP\&.
 .IP 
 .IP "resource-directory" 
 Directory for ecasound configuration files\&. 
-Defaults to \fI/usr/local/share/ecasound\fP\&.
+Defaults to \fI{prefix-dir}/share/ecasound\fP\&.
 .IP 
 .IP "resource-file-genosc-envelopes" 
 Configuration file for generic oscillators\&. Is located in the 
@@ -69,10 +69,10 @@ Configuration file for effect presets\&. Is located in the
 resource directory\&. Defaults to \fIeffect_presets\fP\&.
 .IP 
 .IP "internal-plugin-directory" 
-Directory containing ecasound\'s internal plugins\&. Defaults to \fI(prefix-dir)/lib/ecasound-plugins\fP\&.
+Directory containing ecasound\'s internal plugins\&. Defaults to \fI{prefix-dir}/lib/ecasound-plugins\fP\&.
 .IP 
 .IP "ladspa-plugin-directory" 
-Directory containing LADPSA effect plugins\&. Defaults to \fI/usr/local/lib/ladspa\fP\&.
+Directory containing LADPSA effect plugins\&. Defaults to \fI{prefix-dir}/lib/ladspa\fP\&.
 If environment variable \fILADSPA_PATH\fP exists, directories
 specified in it are automatically searched for plugins\&.
 .IP 
@@ -99,11 +99,15 @@ Command for starting mp3 output\&. All input data should be read
 from standard input\&. Before execution, "%f" is replaced with 
 path to the output mp3\&. Defaults to \fIlame -b 128 -x -S - %f\fP\&.
 .IP 
-.IP "ext-mikmod-path" 
-Path to mikmod\&. Defaults to \fImikmod\fP\&.
+.IP "ext-mikmod-cmd" 
+Command for starting mikmod input\&. Before execution, "%f" is replaced with 
+file path, and %s with select sample rate\&. Defaults to 
+\fImikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f\fP\&.
 .IP 
-.IP "ext-mikmod-args" 
-Additional options that are passed to mikmod\&. Defaults to \fI"-p 0 --noloops"\fP\&.
+.IP "ext-timidity-cmd" 
+Command for starting timidity++ input\&. Before execution, "%f"
+is replaced with file path\&. Defaults to 
+\fItimidity -Or -o - %f\fP\&.
 .IP 
 .PP 
 .SH "SEE ALSO" 
