@@ -686,6 +686,7 @@ void ECA_CHAINSETUP::add_chain_helper(const string& name)
 {
   chains.push_back(new CHAIN());
   chains.back()->name(name);
+  chains.back()->set_samples_per_second(samples_per_second());
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Chain \"" + name + "\" created.");
 }
 
