@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-proxy-buffer.cpp: Buffer used between proxy server and client
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -11,6 +11,7 @@
 #include "samplebuffer.h"
 
 class AUDIO_IO;
+class GENERIC_CONTROLLER;
 
 /**
  * Class for representing effect presets
@@ -29,6 +30,7 @@ class PRESET : public CHAIN_OPERATOR {
   std::vector<std::string> param_names;
   std::vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > param_objects;
   std::vector<int> param_arg_indices;
+  std::vector<GENERIC_CONTROLLER*> gctrls_rep;
   bool parsed_rep;
   std::string parse_string_rep;
   std::string name_rep;

@@ -27,6 +27,7 @@
 #include "eca-chain.h"
 #include "eca-chainop.h"
 #include "generic-controller.h"
+#include "eca-object-factory.h"
 #include "samplebuffer.h"
 #include "eca-debug.h"
 #include "eca-error.h"
@@ -111,11 +112,10 @@ void PRESET::parse(const std::string& formatted_string) {
 
     DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* object = 0;
 
-    ECA_CHAINSETUP csetup;
     cop = 0;
-    cop = csetup.create_chain_operator(ps);
-    if (cop == 0) cop = csetup.create_ladspa_plugin(ps);
-    if (cop == 0) cop = csetup.create_vst_plugin(ps);
+    cop = ECA_OBJECT_FACTORY::create_chain_operator(ps);
+    if (cop == 0) cop = ECA_OBJECT_FACTORY::create_ladspa_plugin(ps);
+    if (cop == 0) cop = ECA_OBJECT_FACTORY::create_vst_plugin(ps);
     if (cop != 0) {
       chains.back()->add_chain_operator(cop);
       chains.back()->selected_chain_operator_as_target();
@@ -125,9 +125,9 @@ void PRESET::parse(const std::string& formatted_string) {
       if (get_argument_prefix(ps) == "kx") 
 	chains.back()->selected_controller_as_target();
       else {
-	gctrl = 0;
-	gctrl = csetup.create_controller(ps);
+	gctrl = ECA_OBJECT_FACTORY::create_controller(ps);
 	if (gctrl != 0) {
+	  gctrls_rep.push_back(gctrl);
 	  chains.back()->add_controller(gctrl);
 	}
         object = gctrl;
@@ -177,12 +177,16 @@ CHAIN_OPERATOR::parameter_type PRESET::get_parameter(int param) const {
 void PRESET::init(SAMPLE_BUFFER *insample) {  
   first_buffer = insample;
   chains[0]->init(first_buffer, first_buffer->number_of_channels(), first_buffer->number_of_channels());
-  for(int q = 1; q < static_cast<int>(chains.size()); q++) {
-    assert(q - 1 < static_cast<int>(buffers.size()));
+  for(size_t q = 1; q < chains.size(); q++) {
+    assert(q - 1 < buffers.size());
     buffers[q - 1]->length_in_samples(first_buffer->length_in_samples());
     buffers[q - 1]->number_of_channels(first_buffer->number_of_channels());
     buffers[q - 1]->sample_rate(first_buffer->sample_rate());
     chains[q]->init(buffers[q - 1], first_buffer->number_of_channels(), first_buffer->number_of_channels());
+  }
+
+  for(size_t n = 0; n < gctrls_rep.size(); n++) {
+    gctrls_rep[n]->init((double)first_buffer->length_in_samples() / first_buffer->sample_rate());
   }
 }
 

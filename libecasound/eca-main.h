@@ -10,13 +10,13 @@
 
 #include "samplebuffer.h"
 #include "eca-chainsetup.h"
-#include "audioio-buffered-proxy.h"
 
 class AUDIO_IO;
 class AUDIO_IO_DEVICE;
 class ECA_SESSION;
 class CHAIN;
 class CHAIN_OPERATOR;
+class AUDIO_IO_BUFFERED_PROXY;
 
 /**
  * Main processing engine
@@ -24,6 +24,9 @@ class CHAIN_OPERATOR;
 class ECA_PROCESSOR {
 
  public:
+
+  // --
+  // type definitions and constants
 
   enum COMMANDS {
     ep_start,
@@ -54,7 +57,18 @@ class ECA_PROCESSOR {
     ep_setpos
   };
 
+  // --
+  // public functions
+
+  void exec(void);
+
+  ECA_PROCESSOR(ECA_SESSION* eparam);
+  ~ECA_PROCESSOR(void);
+
 private:
+
+  // --
+  // private data and functions
 
   ECA_SESSION* eparams_repp;
 
@@ -110,7 +124,6 @@ private:
   std::vector<AUDIO_IO*> proxy_inputs_rep;
   // - pointers to proxy output objects (if used, assigned to r_inputs)
   std::vector<AUDIO_IO*> proxy_outputs_rep;
-  std::vector<AUDIO_IO_BUFFERED_PROXY*> proxies_rep;
 
   // ---
   // Data objects
@@ -120,7 +133,6 @@ private:
   std::vector<int> input_chain_count_rep;
   std::vector<int> output_chain_count_rep;
 
-  AUDIO_IO_PROXY_SERVER pserver_rep;
   SAMPLE_BUFFER mixslot_rep;
   std::vector<SAMPLE_BUFFER> cslots_rep;
 
@@ -203,11 +215,8 @@ private:
   void init_inputs(void);
   void init_outputs(void);
   void init_chains(void);
-  void create_sorted_input_map(void);
-  void create_sorted_output_map(void);
-
-  bool is_slave_output(AUDIO_IO* aiod) const;
-  bool has_realtime_objects(void) const;
+  void init_sorted_input_map(void);
+  void init_sorted_output_map(void);
 
   void inputs_to_chains(void);
   void mix_to_chains(void);
@@ -225,18 +234,6 @@ private:
   typedef std::vector<CHAIN*>::const_iterator chain_ci;
   typedef std::vector<CHAIN*>::iterator chain_i;
   typedef std::vector<CHAIN_OPERATOR*>::const_iterator chainop_ci;
-
- public:
-
-  void exec(void);
-  void init(void);
-  void init(ECA_SESSION* eparam);
-
-  ECA_PROCESSOR(void);
-  ECA_PROCESSOR(ECA_SESSION* eparam);
-  ~ECA_PROCESSOR(void);
-
- private:
 
   ECA_PROCESSOR& operator=(const ECA_PROCESSOR& x) { return *this; }
 };

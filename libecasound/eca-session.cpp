@@ -157,7 +157,6 @@ void ECA_SESSION::set_defaults(void) {
  */
 void ECA_SESSION::add_chainsetup(const std::string& name) {
   // --------
-  // require:
   DBC_REQUIRE(name != "");
   // --------
 
@@ -166,7 +165,6 @@ void ECA_SESSION::add_chainsetup(const std::string& name) {
   add_chainsetup(newsetup);
 
   // --------
-  // ensure:
   DBC_ENSURE(selected_chainsetup_repp->name() == name);
   // --------
 }
@@ -186,11 +184,10 @@ void ECA_SESSION::add_chainsetup(const std::string& name) {
  */
 void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) {
   // --------
-  // require:
   DBC_REQUIRE(comline_setup != 0);
+  DBC_DECLARE(int old_size = chainsetups_rep.size());
   // --------
-  int old_size = chainsetups_rep.size();
-
+  
   std::vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups_rep.begin();
   while(p != chainsetups_rep.end()) {
     if ((*p)->name() == comline_setup->name()) {

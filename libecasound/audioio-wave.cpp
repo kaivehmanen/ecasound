@@ -123,6 +123,9 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
       }
       else {
 	fio_repp->open_file(label(), "w+b");
+	if (fio_repp->is_file_ready() != true) 
+	  throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Couldn't open file " + label() + " for read&write."));
+
 	write_riff_header();
 	write_riff_fmt();
 	write_riff_datablock();

@@ -17,13 +17,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <kvutils/dbc.h>
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils/message_item.h>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
 #include "audioio.h"
+#include "audioio-loop.h"
 #include "midiio.h"
 #include "audiofx_ladspa.h"
 #include "generic-controller.h"
@@ -131,4 +134,236 @@ MIDI_IO* ECA_OBJECT_FACTORY::create_midi_device(const std::string& arg) {
     }
   }
   return(device);
+}
+
+/**
+ * Create a new loop input object.
+ *
+ * @param arg a formatted string describing an loop object, see ecasound 
+ *            manuals for detailed info
+ * @return the created object or 0 if an invalid format string was given 
+ *         as the argument
+ *
+ * @pre argu.empty() != true
+ */
+AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_input(const std::string& argu,
+						 std::map<int,LOOP_DEVICE*>* loop_map) {
+  // --------
+  DBC_REQUIRE(argu.empty() != true);
+  // --------
+
+  LOOP_DEVICE* p = 0;
+  string tname = get_argument_number(1, argu);
+  if (tname.find("loop") != string::npos) {
+    int id = atoi(get_argument_number(2, argu).c_str());
+    p = new LOOP_DEVICE(id);
+    if (loop_map->find(id) == loop_map->end()) { 
+      (*loop_map)[id] = p;
+    }
+    else
+      p = (*loop_map)[id];
+
+    p->register_input();
+  }
+  
+  return(p);
+}
+
+/**
+ * Create a new loop output object.
+ *
+ * @param arg a formatted string describing an loop object, see ecasound 
+ *            manuals for detailed info
+ * @return the created object or 0 if an invalid format string was given 
+ *         as the argument
+ *
+ * @pre argu.empty() != true
+ */
+AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_output(const std::string& argu,
+						 std::map<int,LOOP_DEVICE*>* loop_map) {
+  // --------
+  DBC_REQUIRE(argu.empty() != true);
+  // --------
+
+  LOOP_DEVICE* p = 0;
+  string tname = get_argument_number(1, argu);
+  if (tname.find("loop") != string::npos) {
+    int id = atoi(get_argument_number(2, argu).c_str());
+    p = new LOOP_DEVICE(id);
+    if (loop_map->find(id) == loop_map->end()) { 
+      (*loop_map)[id] = p;
+    }
+    else
+      p = (*loop_map)[id];
+
+    p->register_output();
+  }
+  
+  return(p);
+}
+
+/**
+ * Creates a new LADSPA plugin.
+ *
+ * @param arg a formatted string describing an LADSPA object, see ecasound 
+ *            manuals for detailed info
+ * @return the created object or 0 if an invalid format string was given 
+ *         as the argument
+ *
+ * @pre argu.size() > 0
+ * @pre argu[0] == '-'
+ */
+CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const std::string& argu) {
+  // --------
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  // --------
+
+#ifdef HAVE_LADSPA_H
+  MESSAGE_ITEM otemp;
+  CHAIN_OPERATOR* cop = 0;
+ std::string prefix = get_argument_prefix(argu);
+  if (prefix == "el" || prefix == "eli") {
+ std::string unique = get_argument_number(1, argu);
+    if (prefix == "el") 
+      cop = ECA_OBJECT_FACTORY::ladspa_map_object(unique);
+    else 
+      cop = ECA_OBJECT_FACTORY::ladspa_map_object(atol(unique.c_str()));
+
+    if (cop != 0) {
+      cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
+
+      ecadebug->control_flow("Adding LADSPA-plugin \"" +
+			     cop->name() + "\"");
+      otemp << "Setting parameters: ";
+      for(int n = 0; n < cop->number_of_params(); n++) {
+	cop->set_parameter(n + 1, atof(get_argument_number(n + 2, argu).c_str()));
+	otemp << cop->get_parameter_name(n + 1) << " = ";
+	otemp << cop->get_parameter(n + 1);
+	if (n + 1 < cop->number_of_params()) otemp << ", ";
+      }
+      ecadebug->msg(otemp.to_string());
+    }
+    return(cop);
+  }
+#endif /* HAVE_LADSPA_H */
+  return(0);
+}
+
+/**
+ * Creates a new VST1.0/2.0 plugin.
+ *
+ * Notes: VST support is currently not used 
+ *        because of licensing problems 
+ *        (distribution of VST-headers is not
+ *        allowed).
+ */
+CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const std::string& argu) {
+  // --------
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  // --------
+
+  MESSAGE_ITEM otemp;
+  CHAIN_OPERATOR* cop = 0;
+  std::string prefix = get_argument_prefix(argu);
+
+#ifdef FEELING_EXPERIMENTAL
+  cop = dynamic_cast<CHAIN_OPERATOR*>(eca_vst_plugin_map.object(prefix));
+#endif
+  if (cop != 0) {
+    
+    ecadebug->control_flow("Adding VST-plugin \"" + cop->name() + "\"");
+    otemp << "Setting parameters: ";
+    for(int n = 0; n < cop->number_of_params(); n++) {
+      cop->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
+      otemp << cop->get_parameter_name(n + 1) << " = ";
+      otemp << cop->get_parameter(n + 1);
+      if (n + 1 < cop->number_of_params()) otemp << ", ";
+    }
+    ecadebug->msg(otemp.to_string());
+  }
+  return(cop);
+}
+
+/**
+ * Creates a new chain operator object.
+ *
+ * @param arg a formatted string describing an chain operator object, see ecasound 
+ *            manuals for detailed info
+ * @return the created object or 0 if an invalid format string was given 
+ *         as the argument
+ *
+ * @pre argu.size() > 0
+ * @pre argu[0] == '-'
+ */
+CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const std::string& argu) {
+  // --------
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  // --------
+
+  string prefix = get_argument_prefix(argu);
+
+  MESSAGE_ITEM otemp;
+  CHAIN_OPERATOR* cop = ECA_OBJECT_FACTORY::chain_operator_map_object(prefix);
+  if (cop != 0) {
+    cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
+
+    ecadebug->control_flow("Adding chain operator \"" +
+			   cop->name() + "\"");
+    //    otemp << "(eca-chainsetup) Adding effect " << cop->name();
+    otemp << "Setting parameters: ";
+    for(int n = 0; n < cop->number_of_params(); n++) {
+      cop->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
+      otemp << cop->get_parameter_name(n + 1) << " = ";
+      otemp << cop->get_parameter(n +1);
+      if (n + 1 < cop->number_of_params()) otemp << ", ";
+    }
+    ecadebug->msg(otemp.to_string());
+    return(cop);
+  }
+  return(0);
+}
+
+/**
+ * Creates a new generic controller object.
+ *
+ * @param arg a formatted string describing an generic controller object, see ecasound 
+ *            manuals for detailed info
+ * @return the created object or 0 if an invalid format string was given 
+ *         as the argument
+ *
+ * @pre argu.size() > 0
+ * @pre argu[0] == '-'
+ */
+GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const std::string& argu) {
+  // --------
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  // --------
+
+  if (argu.size() > 0 && argu[0] != '-') return(0);
+  string prefix = get_argument_prefix(argu);
+
+  GENERIC_CONTROLLER* gcontroller = ECA_OBJECT_FACTORY::controller_map_object(prefix);
+  if (gcontroller != 0) {
+    gcontroller = gcontroller->clone();
+
+    ecadebug->control_flow("Chainsetup/Adding controller source \"" +  gcontroller->name() + "\"");
+
+    MESSAGE_ITEM otemp;
+    otemp << "Setting parameters: ";
+    int numparams = gcontroller->number_of_params();
+    for(int n = 0; n < numparams; n++) {
+      gcontroller->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
+      otemp << gcontroller->get_parameter_name(n + 1) << " = ";
+      otemp << gcontroller->get_parameter(n +1);
+      numparams = gcontroller->number_of_params(); // in case 'n_o_p()' varies
+      if (n + 1 < numparams) otemp << ", ";
+    }
+    ecadebug->msg(otemp.to_string());
+    return(gcontroller);
+  }
+  return(0);
 }

@@ -72,7 +72,6 @@ class EWFFILE : public AUDIO_IO {
 
   virtual void buffersize(long int samples, long int sample_rate) { if (child != 0) child->buffersize(samples, sample_rate); }
   virtual long int buffersize(void) const { if (child != 0) return(child->buffersize()); return(0); }
-  virtual void buffersize_changed(void) { if (child != 0) child->buffersize(buffersize(), samples_per_second()); }
 
   virtual void read_buffer(SAMPLE_BUFFER* sbuf);
   virtual void write_buffer(SAMPLE_BUFFER* sbuf);

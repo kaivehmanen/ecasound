@@ -124,6 +124,7 @@ ecasound_general_include = 	\
 			eca-version.h \
 			eca-object-factory.h \
 			eca-chainsetup.h \
+			eca-chainsetup-parser.h \
 			eca-chainsetup-position.h \
 			eca-control.h \
 			eca-control-base.h \
@@ -139,7 +140,6 @@ ecasound_general_include = 	\
 			dynamic-object.h \
 			eca-object.h \
 			eca-operator.h \
-			eca-audio-objects.h \
 			eca-audio-format.h \
 			eca-audio-time.h \
 			preset.h \
@@ -235,15 +235,15 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-operator.cpp \
 			eca-object-factory.cpp \
 			eca-chainsetup.cpp \
+			eca-chainsetup-parser.cpp \
+			eca-chainsetup-position.cpp \
 			eca-control.cpp \
 			eca-control-base.cpp \
 			eca-control-objects.cpp \
 			eca-control-dump.cpp \
 			eca-iamode-parser.cpp \
 			eca-control-interface.cpp \
-			eca-chainsetup-position.cpp \
 			eca-audio-position.cpp \
-			eca-audio-objects.cpp \
 			eca-audio-format.cpp \
 			eca-audio-time.cpp \
 			eca-fileio-stream.cpp \

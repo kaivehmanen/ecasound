@@ -18,7 +18,7 @@ class OPERATOR;
 class CHAIN {
 
   friend class ECA_PROCESSOR;
-  friend class ECA_AUDIO_OBJECTS;
+  friend class ECA_CHAINSETUP;
   friend class ECA_CONTROL;
   friend class ECA_CONTROL_OBJECTS;
   friend void *mthread_process_chains(void* params);

@@ -5,6 +5,9 @@
 #include <string>
 #include <kvutils/kvutils.h>
 
+using std::string;
+using std::vector;
+
 /**
  * Virtual template class that provides a system for dynamically 
  * controlling a set of parameters. Supports getting and setting
@@ -29,13 +32,13 @@ class DYNAMIC_PARAMETERS {
    * @param id parameter id number
    * 
    */
-  std::string get_parameter_name(int id) const { return(get_argument_number(id, parameter_names())); }
+  string get_parameter_name(int id) const { return(get_argument_number(id, parameter_names())); }
 
   /**
    * A comma-separated list of parameters names. Derived classes 
    * must implement this.
    */
-  virtual std::string parameter_names(void) const = 0;
+  virtual string parameter_names(void) const = 0;
 
   /**
    * Sets the parameter value. Implementations should be able to

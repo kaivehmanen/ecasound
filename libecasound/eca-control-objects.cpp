@@ -25,6 +25,7 @@
 #include <pthread.h>
 #include <stdlib.h> /* getenv() */
 
+#include <kvutils/dbc.h> /* DBC_* */
 #include <kvutils/value_queue.h>
 #include <kvutils/temporary_file_directory.h>
 

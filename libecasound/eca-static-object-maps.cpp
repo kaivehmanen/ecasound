@@ -331,6 +331,13 @@ static AUDIO_IO* register_internal_plugin(const std::string& libdir,
   return(0);
 }
 
+/**
+ * Registers internal audio plugins to the object
+ * maps.
+ *
+ * FIXME: add support for custom regexp+object
+ *        plugins
+ */
 void register_internal_plugins(void) {
   ECA_RESOURCES ecarc;
   std::string libdir = ecarc.resource("internal-plugin-directory");

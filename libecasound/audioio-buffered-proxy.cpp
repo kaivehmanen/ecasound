@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-buffered-proxy.cpp: Proxy class providing additional layer
 //                             of buffering instances of class AUDIO_IO.
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,17 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <unistd.h>
-#include <signal.h>
+#include <unistd.h> /* open(), close() */
 
+#include "eca-debug.h"
 #include "audioio-buffered-proxy.h"
 
 /**
  * Constructor. The given client object is registered to 
  * the given proxy server as a client object.
+ *
+ * Ownership of 'aobject' is transfered to this proxy
+ * object.
  */
 AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver, 
 						  AUDIO_IO* aobject) 
@@ -37,8 +40,18 @@ AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver
   xruns_rep = 0;
   finished_rep = false;
 
-  // just in case the child object has already been configured
-  fetch_child_data();
+  std::cerr << "Here!" << child_repp << "." << endl;
+  if (false) {
+    ecadebug->msg(ECA_DEBUG::user_objects, 
+		  std::string("(audioio-buffered-proxy) Proxy created for ") +
+		  child_repp->label() +
+		  ".");
+  }
+
+  if (child_repp->is_open() == true) {
+    // just in case the child object has already been configured
+    fetch_child_data();
+  }
 }
 
 /**
@@ -66,6 +79,9 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
  */
 AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void) {
   pserver_repp->unregister_client(child_repp);
+  delete child_repp;
+  child_repp = 0;
+
   if (xruns_rep > 0) 
     std::cerr << "(audioio-buffered-proxy) There were total " << xruns_rep << " xruns." << std::endl;
 }
@@ -79,13 +95,6 @@ AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void) {
  * and/or write_buffer() won't process any data.
  */
 bool AUDIO_IO_BUFFERED_PROXY::finished(void) const { return(finished_rep); }
-
-/**
- * Length of the proxied object.
- */
-long AUDIO_IO_BUFFERED_PROXY::length_in_samples(void) const { 
-  return(child_repp->length_in_samples());
-}
 
 /**
  * Reads samples to buffer pointed by 'sbuf'. If necessary, the target 
@@ -106,10 +115,14 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
   else {
     if (pbuffer_repp->finished_rep.get() == 1) finished_rep = true;
     else {
-      finished_rep = false;
       xruns_rep++;
-      std::cerr << "Underrun! Exiting!" << std::endl;
-      exit(0);
+      pserver_repp->wait_for_full(); 
+      if (pbuffer_repp->read_space() > 0) {
+	this->read_buffer(sbuf);
+      }
+      else {
+	std::cerr << "(audioio-buffered-proxy) Serious trouble with the disk-io subsystem! (1)" << std::endl;
+      }
     }
   }
 }
@@ -128,10 +141,14 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
   else {
     if (pbuffer_repp->finished_rep.get() == 1) finished_rep = true;
     else {
-      finished_rep = false;
       xruns_rep++;
-      std::cerr << "Overrun! Exiting" << std::endl;
-      exit(0);
+      pserver_repp->wait_for_full(); 
+      if (pbuffer_repp->write_space() > 0) {
+	this->write_buffer(sbuf);
+      }
+      else {
+	std::cerr << "(audioio-buffered-proxy) Serious trouble with the disk-io subsystem! (2)" << std::endl;
+      }
     }
   }
 }
@@ -144,14 +161,16 @@ void AUDIO_IO_BUFFERED_PROXY::seek_position(void) {
   if (pserver_repp->is_running() == true) {
     was_running = true;
     pserver_repp->stop();
-    while(pserver_repp->is_running() != true) usleep(50000);
+    pserver_repp->wait_for_stop();
+    //  while(pserver_repp->is_running() != true) usleep(50000);
   }
   child_repp->seek_position_in_samples(position_in_samples());
+  pserver_repp->wait_for_stop();
   finished_rep = false;
-  pbuffer_repp->reset();
   if (was_running == true) {
     pserver_repp->start();
-    while(pserver_repp->is_full() != true) usleep(50000);
+    pserver_repp->wait_for_full();
+    //  while(pserver_repp->is_full() != true) usleep(50000);
   }
 }
 
@@ -161,7 +180,9 @@ void AUDIO_IO_BUFFERED_PROXY::seek_position(void) {
  * loading libraries, etc. 
  */
 void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) { 
-  child_repp->open();
+  if (child_repp->is_open() != true) {
+    child_repp->open();
+  }
   fetch_child_data();
 }
 
