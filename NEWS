@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 220100) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 070200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,7 +14,7 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??012001 (v1.8.6d15)
+??022001 (v1.8.6d15)
 	- added: eiam-cmds; set-position, get-position, get-length, 
 		 cs-connected, cs-selected, engine-status, c-list,
 		 aio-get-position, aio-get-length, aio-selected,
@@ -49,6 +49,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- changed: 'ecasound-config --flags' now prints includedir
 		   instead of includedir/ecasound
 	- changed: updated ALSA 0.6.x support to match CVS-20010122
+	- changed: a better implementation of MIDI i/o routines
 	- fixed: "-x -i file.ext" style cmd-line arg sequences weren't
 		parsed correctly [jhall]
 	- fixed: ECI - command_float_arg() was broken (all languages)
