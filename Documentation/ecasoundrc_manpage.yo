@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (05.12.2000)
+       (02.03.2001)
        ()
        (Multimedia software)
 
@@ -40,11 +40,12 @@ manpagesection(VARIABLES)
 startdit()
 
 	dit(midi-device)
-  	MIDI-device. If the device name is given in em(/dev/midi*) 
+  	MIDI-device. If the device name is given in em(rawmidi,/dev/midi*) 
 	format, OSS/Linux os OSS/Lite drivers are used. 
-	Device em(/dev/snd/midiCxDy) opens an ALSA raw-MIDI 
+	Device em(rawmidi,/dev/snd/midiCxDy) opens an ALSA raw-MIDI 
 	device with card number 'x' and device number 'y'. 
-	Defaults to em(/dev/midi).
+	See ecasound(5) man page (the '-Md option) for more info.
+	Defaults to em(rawmidi,/dev/midi).
 
   	dit(default-output)
   	Output device to use. Defaults to em(/dev/dsp).

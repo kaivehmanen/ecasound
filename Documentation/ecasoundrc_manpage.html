@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>05.12.2000</h2>
+<h2>02.03.2001</h2>
 
 
     
@@ -47,11 +47,12 @@
     
 <p><dl>
 <p><p></p><dt><strong>midi-device</strong><dd>
-  	MIDI-device. If the device name is given in <em>/dev/midi*</em> 
+  	MIDI-device. If the device name is given in <em>rawmidi,/dev/midi*</em> 
 	format, OSS/Linux os OSS/Lite drivers are used. 
-	Device <em>/dev/snd/midiCxDy</em> opens an ALSA raw-MIDI 
+	Device <em>rawmidi,/dev/snd/midiCxDy</em> opens an ALSA raw-MIDI 
 	device with card number 'x' and device number 'y'. 
-	Defaults to <em>/dev/midi</em>.
+	See ecasound(5) man page (the '-Md option) for more info.
+	Defaults to <em>rawmidi,/dev/midi</em>.
 <p><p></p><dt><strong>default-output</strong><dd>
   	Output device to use. Defaults to <em>/dev/dsp</em>.
 <p><p></p><dt><strong>default-buffersize</strong><dd> 

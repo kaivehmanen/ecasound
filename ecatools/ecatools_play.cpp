@@ -42,7 +42,8 @@ int main(int argc, char *argv[])
   ecadebug->disable();
 #else
   ecadebug->set_debug_level(ECA_DEBUG::info |
-    			    ECA_DEBUG::module_flow);
+    			    ECA_DEBUG::module_flow |
+    			    ECA_DEBUG::user_objects);
 #endif
 
   struct sigaction es_handler_int;

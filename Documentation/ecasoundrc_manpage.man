@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "05\&.12\&.2000" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "02\&.03\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -23,11 +23,12 @@ are separated with either \'=\' or \' \'\&. Lines beginning with a
 .PP 
 .IP 
 .IP "midi-device" 
-MIDI-device\&. If the device name is given in \fI/dev/midi*\fP 
+MIDI-device\&. If the device name is given in \fIrawmidi,/dev/midi*\fP 
 format, OSS/Linux os OSS/Lite drivers are used\&. 
-Device \fI/dev/snd/midiCxDy\fP opens an ALSA raw-MIDI 
+Device \fIrawmidi,/dev/snd/midiCxDy\fP opens an ALSA raw-MIDI 
 device with card number \'x\' and device number \'y\'\&. 
-Defaults to \fI/dev/midi\fP\&.
+See ecasound(5) man page (the \'-Md option) for more info\&.
+Defaults to \fIrawmidi,/dev/midi\fP\&.
 .IP 
 .IP "default-output" 
 Output device to use\&. Defaults to \fI/dev/dsp\fP\&.
