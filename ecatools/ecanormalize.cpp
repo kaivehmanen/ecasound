@@ -81,6 +81,15 @@ int main(int argc, char *argv[])
   sigaction(SIGQUIT, &es_handler, 0);
   sigaction(SIGABRT, &es_handler, 0);
 
+  struct sigaction ign_handler;
+  ign_handler.sa_handler = SIG_IGN;
+  sigemptyset(&ign_handler.sa_mask);
+  ign_handler.sa_flags = 0;
+
+  /* ignore the following signals */
+  sigaction(SIGPIPE, &ign_handler, 0);
+  sigaction(SIGFPE, &ign_handler, 0);
+
   COMMAND_LINE cline = COMMAND_LINE (argc, argv);
 
   if (cline.size() < 2) {

@@ -306,6 +306,7 @@ static void setup_signal_handling(void)
 
   /* ignore the following signals */
   sigaction(SIGPIPE, &ign_handler, 0);
+  sigaction(SIGFPE, &ign_handler, 0);
 }
 
 static void signal_handler(int signum)
