@@ -142,8 +142,8 @@ class SAMPLE_BUFFER_BASE {
 			long int srate) throw(ECA_ERROR&);
 
   /**
-   * Same as 'copy_from_buffer()', but 'source' data is 
-   * assumed be in non-interleaved format.
+   * Same as 'copy_from_buffer()', but 'target' data is 
+   * written in non-interleaved format.
    *
    * ensure:
    *  channels == channel_count_rep

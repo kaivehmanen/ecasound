@@ -845,6 +845,9 @@ void SAMPLE_BUFFER_BASE<T>::resample_nofilter(long int from,
   long int old_buffer_size = buffersize_rep;
   buffersize_rep = static_cast<long int>(step * buffersize_rep);
 
+  if (old_buffer_repp == 0) 
+    old_buffer_repp = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
+
   for(int c = 0; c < channel_count_rep; c++) {
     memcpy(old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_type));
 
@@ -891,6 +894,9 @@ void SAMPLE_BUFFER_BASE<T>::resample_with_memory(long int from,
   long int old_buffer_size = buffersize_rep;
   buffersize_rep = static_cast<long int>(step * buffersize_rep);
   resample_memory_rep.resize(channel_count_rep, SAMPLE_SPECS::silent_value);
+
+  if (old_buffer_repp == 0) 
+    old_buffer_repp = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
 
   for(int c = 0; c < channel_count_rep; c++) {
     memcpy(old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_type));
@@ -963,8 +969,10 @@ void SAMPLE_BUFFER_BASE<T>::resize(long int buffersize) {
       delete[] buffer[n];
       buffer[n] = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
     }
-    delete[] old_buffer_repp;
-    old_buffer_repp = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
+    if (old_buffer_repp != 0) {
+      delete[] old_buffer_repp;
+      old_buffer_repp = 0;
+    }
   }
   buffersize_rep = buffersize;
 }
@@ -980,7 +988,7 @@ SAMPLE_BUFFER_BASE<T>::SAMPLE_BUFFER_BASE (long int buffersize, int channels, lo
   for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
     buffer[n] = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
   }
-  old_buffer_repp = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
+  old_buffer_repp = 0;
  
   ecadebug->msg(ECA_DEBUG::system_objects, 
 		"(samplebuffer<>) Buffer created, channels: " +
@@ -994,7 +1002,8 @@ SAMPLE_BUFFER_BASE<T>::~SAMPLE_BUFFER_BASE (void) {
   for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
     delete[] buffer[n];
   }
-  delete[] old_buffer_repp;
+  if (old_buffer_repp != 0) 
+    delete[] old_buffer_repp;
 }
 
 template<class T>
@@ -1008,12 +1017,14 @@ SAMPLE_BUFFER_BASE<T>& SAMPLE_BUFFER_BASE<T>::operator=(const SAMPLE_BUFFER_BASE
     if (x.buffersize_rep > reserved_bytes_rep) {
       reserved_bytes_rep = x.buffersize_rep;
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) delete[] buffer[n];
-      delete[] old_buffer_repp;
+      if (old_buffer_repp != 0) {
+	delete[] old_buffer_repp;
+	old_buffer_repp = 0;
+      }
       buffer.resize(x.buffer.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
 	buffer[n] = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
       }
-      old_buffer_repp = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
     }
     buffersize_rep = x.buffersize_rep;
     channel_count_rep = x.channel_count_rep;
@@ -1039,7 +1050,7 @@ SAMPLE_BUFFER_BASE<T>::SAMPLE_BUFFER_BASE (const SAMPLE_BUFFER_BASE<T>& x)
     buffer[n] = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
     memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_type));
   }
-  old_buffer_repp = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
+  old_buffer_repp = 0;
 
   ecadebug->msg(ECA_DEBUG::system_objects, 
 		"(samplebuffer<>) Buffer copy-constructed, channels: " +
