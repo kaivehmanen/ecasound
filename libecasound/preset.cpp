@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // preset.cpp: Class for representing effect presets
-// Copyright (C) 2000,2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 // Copyright (C) 2001 Arto Hamara (artham@utu.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -32,29 +32,25 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 #include "preset.h"
+#include "preset_impl.h"
+
+using std::string;
+using std::vector;
+using std::cerr;
+using std::endl;
 
 PRESET::PRESET(void) {
-  parsed_rep = false;
+  impl_repp = new PRESET_impl();
+  impl_repp->parsed_rep = false;
 }
 
-PRESET::PRESET(const std::string& formatted_string) {
+PRESET::PRESET(const string& formatted_string) {
+  impl_repp = new PRESET_impl();
   parse(formatted_string);
 }
 
-PRESET* PRESET::clone(void) {
-  std::vector<parameter_type> param_values;
-  for(int n = 0; n < number_of_params(); n++) {
-    param_values.push_back(get_parameter(n + 1));
-  }
-  PRESET* preset = new PRESET(parse_string_rep);
-  for(int n = 0; n < preset->number_of_params(); n++) {
-    preset->set_parameter(n + 1, param_values[n]);
-  }
-  return(preset);
-}
-
 PRESET::~PRESET(void) {
-  std::vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
+  vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
   while(p != buffers.end()) {
     if (p != buffers.begin()) delete *p; // first buffer points to an
                                          // outside buffer -> not
@@ -62,91 +58,372 @@ PRESET::~PRESET(void) {
     ++p;
   }
 
-  std::vector<CHAIN*>::iterator q = chains.begin();
+  vector<CHAIN*>::iterator q = chains.begin();
   while(q != chains.end()) {
     delete *q;
     ++q;
   }
+
+  for(size_t n = 0; n < impl_repp->pardesclist_rep.size(); n++) {
+    delete impl_repp->pardesclist_rep[n];
+    impl_repp->pardesclist_rep[n] = 0;
+  }
+
+  // NOTE: chainops and controllers are deleted in CHAIN::~CHAIN()
+
+  delete impl_repp;
+  impl_repp = 0;
 }
 
-void PRESET::parse(const std::string& formatted_string) {
+PRESET* PRESET::clone(void) {
+  vector<parameter_type> param_values;
+  for(int n = 0; n < number_of_params(); n++) {
+    param_values.push_back(get_parameter(n + 1));
+  }
+  PRESET* preset = new PRESET(impl_repp->parse_string_rep);
+  for(int n = 0; n < preset->number_of_params(); n++) {
+    preset->set_parameter(n + 1, param_values[n]);
+  }
+  return(preset);
+}
+
+PRESET* PRESET::new_expr(void) { 
+  return(new PRESET(impl_repp->parse_string_rep)); 
+}
+
+string PRESET::name(void) const { 
+  return(impl_repp->name_rep); 
+}
+
+string PRESET::description(void) const { 
+  return(impl_repp->description_rep); 
+}
+
+void PRESET::set_name(const string& v) { 
+  impl_repp->name_rep = v;
+}
+
+/**
+ * Whether preset data has been parsed
+ */
+bool PRESET::is_parsed(void) const { 
+  return(impl_repp->parsed_rep); 
+}
+
+void PRESET::parameter_description(int param, struct PARAM_DESCRIPTION *pd) {
+  if (param > 0 && param <= static_cast<int>(impl_repp->pardesclist_rep.size()))
+    *pd = *impl_repp->pardesclist_rep[param - 1];
+}
+
+/**
+ * Parse preset data from the formatted string given 
+ * as argument.
+ *
+ * require:
+ *  formatted_string.empty() == false
+ * ensure:
+ *  is_parsed() == true
+ */
+void PRESET::parse(const string& formatted_string) {
   // --------
   DBC_REQUIRE(formatted_string.empty() == false);
   // --------
 
-  parse_string_rep = formatted_string;
+  impl_repp->parse_string_rep = formatted_string;
   chains.clear();
   chains.push_back(new CHAIN());
 
-  CHAIN_OPERATOR *cop;
-  GENERIC_CONTROLLER* gctrl;
-
-  int param_index = 0;
-  std::vector<std::string> tokens = string_to_words(formatted_string);
-  std::vector<std::string>::const_iterator p = tokens.begin();
+  // FIXME: add support for quotes (ie. "one token with space" style)
+  vector<string> tokens = string_to_words(formatted_string);
+  vector<string>::const_iterator p = tokens.begin();
   while(p != tokens.end()) {
     ecadebug->msg(ECA_DEBUG::user_objects, "Parsing: " + *p + ".");
+
+    /* case 1: new chain */
     if (*p == "|") {
       add_chain();
-      ++p;
-      continue;
     }
 
-    // Parse for parameters.
-    std::vector<int> arg_numbers;
-//      cerr << "*p = " << *p << endl;
-//      cerr << "get_number_of_arguments(*p) = " << get_number_of_arguments(*p) << endl; 
-    std::vector<std::string> ps_parts(get_number_of_arguments(*p));
-    for(int i = 1; i <= get_number_of_arguments(*p); i++) {
-        ecadebug->msg(ECA_DEBUG::system_objects, "  COP-argument "+get_argument_number(i, *p)+".");
-        if(get_argument_number(i, *p)[0] == '%') {
-            param_names.push_back(get_argument_number(i, *p).substr(1));
-            arg_numbers.push_back(i);
-            ps_parts[i-1] = "0.0";
-            param_index++;
-        } else {
-            ps_parts[i-1] = get_argument_number(i, *p);
-        }
+    /* case 2: preset specific option */
+    else if (is_preset_option(*p) == true) {
+      parse_preset_option(*p);
     }
-    string ps = "-" + get_argument_prefix(*p) + ":" + vector_to_string(ps_parts, ",");
 
-    DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* object = 0;
-
-    cop = 0;
-    cop = ECA_OBJECT_FACTORY::create_chain_operator(ps);
-    if (cop == 0) cop = ECA_OBJECT_FACTORY::create_ladspa_plugin(ps);
-    if (cop == 0) cop = ECA_OBJECT_FACTORY::create_vst_plugin(ps);
-    if (cop != 0) {
-      chains.back()->add_chain_operator(cop);
-      chains.back()->selected_chain_operator_as_target();
-      object = cop;
-    }
+    /* case 3: ecasound cop option */
     else {
-      if (get_argument_prefix(ps) == "kx") 
-	chains.back()->selected_controller_as_target();
-      else {
-	gctrl = ECA_OBJECT_FACTORY::create_controller(ps);
-	if (gctrl != 0) {
-	  gctrls_rep.push_back(gctrl);
-	  chains.back()->add_controller(gctrl);
-	}
-        object = gctrl;
-      }
-    }
-
-    for(int i = 0; i < static_cast<int>(arg_numbers.size()); i++) {
-        param_objects.push_back(object);
-	param_arg_indices.push_back(arg_numbers[i]);
+      parse_operator_option(*p);
     }
 
     ++p;
   }
 
-  parsed_rep = true;
+  impl_repp->parsed_rep = true;
 
   // --------
   DBC_ENSURE(is_parsed() == true);
   // --------
+}
+
+bool PRESET::is_preset_option(const string& arg) const {
+  if (arg.size() < 2 ||
+      arg[0] != '-') return(false);
+
+  switch(arg[1]) {
+  case 'p':
+    {
+      if (arg.size() < 3) return(false);
+      switch(arg[2]) {
+      case 'd':
+      case 'p':
+	return(true);
+	
+      default: { }
+      }
+    }
+  default: { }
+  }
+  return(false);
+}
+
+void PRESET::parse_preset_option(const string& arg) {
+  if (arg.size() < 2) return;
+  if (arg[0] != '-') return;
+  switch(arg[1]) {
+  case 'p':
+    {
+      if (arg.size() < 3) return;
+      switch(arg[2]) {
+      case 'd':
+	{
+	  /* -pd:preset_description */
+	  impl_repp->description_rep = get_argument_number(1, arg);
+	  break;
+	}
+
+      case 'p': 
+	{
+	  if (arg.size() < 4) return;
+	  switch(arg[3]) {
+	  case 'd': 
+	    {
+	      /* -ppd:x,y,z (param default values) */
+	      set_preset_defaults(get_arguments(arg));
+	      break;
+	    }
+
+	  case 'n': 
+	    {
+	      /* -ppn:x,y,z (param names) */
+	      set_preset_param_names(get_arguments(arg));
+	      break;
+	    }
+
+	  case 'l': 
+	    {
+	      /* -ppl:x,y,z (param lower bounds) */
+	      set_preset_lower_bounds(get_arguments(arg));
+	      break;
+	    }
+
+	  case 'u':
+	    {
+	      /* -ppu:x,y,z (param upper bounds) */
+	      set_preset_upper_bounds(get_arguments(arg));
+	      break;
+	    }
+
+	  case 't':
+	    {
+	      /* -ppt:x,y,z (param toggle) */
+	      set_preset_toggles(get_arguments(arg));
+	      break;
+	    }
+	    
+	  default: 
+	    { 
+	      ecadebug->msg("(preset) Unknown preset option (1) " + arg + ".");
+	      break; 
+	    }
+	  }
+
+	  break; /* -pp */
+	}
+
+      default: { ecadebug->msg("(preset) Unknown preset option (2) " + arg + "."); break; }
+	
+      }
+
+      break; /* -p */
+ 
+    }
+
+  default: { ecadebug->msg("(preset) Unknown preset option (3) " + arg + "."); break; }
+    
+  }
+}
+
+void PRESET::extend_pardesc_vector(int number) {
+  while (static_cast<int>(impl_repp->pardesclist_rep.size()) < number) {
+    DBC_DECLARE(size_t oldsize = impl_repp->pardesclist_rep.size());
+    impl_repp->pardesclist_rep.push_back(new OPERATOR::PARAM_DESCRIPTION());
+    //  cerr << "(preset) adding pardesclist_rep item." << endl;
+    DBC_CHECK(impl_repp->pardesclist_rep.size() == oldsize + 1);
+  }
+}
+
+void PRESET::set_preset_defaults(const vector<string>& args) {
+  extend_pardesc_vector(args.size());
+  for(size_t n = 0; n < args.size(); n++) {
+    if (args[n].size() > 0 && args[n][0] == '-') continue;
+    impl_repp->pardesclist_rep[n]->default_value = atof(args[n].c_str());
+    set_parameter(n + 1, impl_repp->pardesclist_rep[n]->default_value);
+    //  cerr << "(preset) setting default for " << n << " to " << impl_repp->pardesclist_rep[n]->default_value << "." << endl;
+  }
+}
+
+void PRESET::set_preset_param_names(const vector<string>& args) {
+  impl_repp->preset_param_names_rep.resize(args.size());
+  for(size_t n = 0; n < args.size(); n++) {
+    impl_repp->preset_param_names_rep[n] = args[n];
+    //  cerr << "(preset) setting param name for " << n << " to " << impl_repp->preset_param_names_rep[n] << "." << endl;
+  }
+}
+
+void PRESET::set_preset_lower_bounds(const vector<string>& args) {
+  extend_pardesc_vector(args.size());
+  for(size_t n = 0; n < args.size(); n++) {
+    if (args[n].size() > 0 && args[n][0] == '-') {
+      impl_repp->pardesclist_rep[n]->bounded_below = false;
+    }
+    else {
+      impl_repp->pardesclist_rep[n]->bounded_below = true;
+      impl_repp->pardesclist_rep[n]->lower_bound = atof(args[n].c_str());
+      //  cerr << "(preset) setting lowbound for " << n << " to " << impl_repp->pardesclist_rep[n]->lower_bound << "." << endl;
+    }
+  }
+}
+
+void PRESET::set_preset_upper_bounds(const vector<string>& args) {
+  extend_pardesc_vector(args.size());
+  for(size_t n = 0; n < args.size(); n++) {
+    if (args[n].size() > 0 && args[n][0] == '-') {
+      impl_repp->pardesclist_rep[n]->bounded_above = false;
+    }
+    else {
+      impl_repp->pardesclist_rep[n]->bounded_above = true;
+      impl_repp->pardesclist_rep[n]->upper_bound = atof(args[n].c_str());
+      //  cerr << "(preset) setting upperbound for " << n << " to " << impl_repp->pardesclist_rep[n]->upper_bound << "." << endl;
+    }
+  }
+}
+
+void PRESET::set_preset_toggles(const vector<string>& args) {
+  extend_pardesc_vector(args.size());
+  for(size_t n = 0; n < args.size(); n++) {
+
+    impl_repp->pardesclist_rep[n]->integer = false;
+    impl_repp->pardesclist_rep[n]->output = false;
+    impl_repp->pardesclist_rep[n]->logarithmic = false;
+    impl_repp->pardesclist_rep[n]->toggled = false;
+
+    // FIXME: add the missing toggle-code
+
+    if (args[n] == "integer") {
+      impl_repp->pardesclist_rep[n]->integer = true;
+      //  cerr << "(preset) setting toggle integer for " << n << " to " << impl_repp->pardesclist_rep[n]->integer << "." << endl;
+    }
+  }
+}
+
+void PRESET::parse_operator_option(const string& arg) {
+  CHAIN_OPERATOR *cop;
+  GENERIC_CONTROLLER* gctrl;
+
+  /* phase 1: parse for cop definitions -eabc:1.0,%param1,2.0 */
+  vector<int> arg_indices;
+  vector<int> arg_slave_indices;
+  vector<string> ps_parts(get_number_of_arguments(arg));
+  for(int i = 0; i < get_number_of_arguments(arg); i++) {
+    string onearg = get_argument_number(i + 1, arg);
+    if(onearg.size() > 0 && onearg[0] == '%') {
+
+      // FIXME: what if %xxx options are given in the "wrong" order?
+
+      size_t preset_index = atoi(get_argument_number(i + 1, arg).substr(1).c_str());
+      if (preset_index <= arg_indices.size()) {
+	preset_index = arg_indices.size() + 1;
+      }
+      arg_indices.push_back(preset_index);
+      arg_slave_indices.push_back(i + 1);
+      ps_parts[i] = "0.0";
+    } 
+    else {
+      ps_parts[i] = onearg;
+    }
+  }
+
+  DBC_CHECK(arg_indices.size() == arg_slave_indices.size());
+
+  /* phase 2: 'ps' is set to -eabc:1.0,2.0,2.0 (no %-params) */
+  string ps = "-" + get_argument_prefix(arg) + ":" + vector_to_string(ps_parts, ",");
+  //  cerr << "Creating object from '" << ps << "'."  << endl;
+
+  /* phase 3: create an object using 'ps' */
+  DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* object = 0;
+  cop = 0;
+  cop = ECA_OBJECT_FACTORY::create_chain_operator(ps);
+  if (cop == 0) cop = ECA_OBJECT_FACTORY::create_ladspa_plugin(ps);
+  if (cop == 0) cop = ECA_OBJECT_FACTORY::create_vst_plugin(ps);
+  if (cop != 0) {
+    chains.back()->add_chain_operator(cop);
+    chains.back()->selected_chain_operator_as_target();
+    object = cop;
+  }
+  else {
+    if (get_argument_prefix(ps) == "kx") 
+      chains.back()->selected_controller_as_target();
+    else {
+      gctrl = ECA_OBJECT_FACTORY::create_controller(ps);
+      if (gctrl != 0) {
+	impl_repp->gctrls_rep.push_back(gctrl);
+	chains.back()->add_controller(gctrl);
+      }
+      object = gctrl;
+    }
+  }
+
+  /* phase 4: create an object using 'ps' */
+  if (object != 0) {
+    for(int i = 0; i < static_cast<int>(arg_indices.size()); i++) {
+
+      // NOTE: there's a one-to-many connection between 
+      //       presets parameters and 'object-param' pairs
+      //       (ie. one preset-parameter is stored to one
+      //       place (preset_param_values_rep), but can control 
+      //       multiple object params (param_objects and 
+      //       param_indices)
+
+      impl_repp->preset_param_values_rep.push_back(0.0f);
+      size_t preset_index = arg_indices[i];
+
+      // NOTE: for instance for LADSPA plugins -el:label,par1,par2 
+      //       number_of_args is 3, but number_of_params is 2!
+      int slave_index = arg_slave_indices[i];
+      slave_index -= get_number_of_arguments(arg) - cop->number_of_params();
+
+      if (preset_index > impl_repp->slave_param_objects_rep.size()) {
+	impl_repp->slave_param_objects_rep.resize(preset_index);
+	impl_repp->slave_param_indices_rep.resize(preset_index);
+      }
+
+      impl_repp->slave_param_objects_rep[preset_index - 1].push_back(object);
+      impl_repp->slave_param_indices_rep[preset_index - 1].push_back(slave_index);
+
+      //  cerr << "Linking preset parameter " << preset_index << " to object '" << impl_repp->slave_param_objects_rep[preset_index - 1].back()->name()  << "', and its parameter '" << impl_repp->slave_param_objects_rep[preset_index -	1].back()->get_parameter_name(impl_repp->slave_param_indices_rep[preset_index - 1].back()) << "'." << endl;
+      
+      DBC_CHECK(impl_repp->slave_param_objects_rep.size() == impl_repp->slave_param_indices_rep.size());
+    }
+  }
 }
 
 void PRESET::add_chain(void) {
@@ -155,49 +432,66 @@ void PRESET::add_chain(void) {
 }
 
 
-std::string PRESET::parameter_names(void) const {
-  return vector_to_string(param_names, ",");
+string PRESET::parameter_names(void) const {
+  return vector_to_string(impl_repp->preset_param_names_rep, ",");
 }
 
 void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
-  if (param > 0 && param <= static_cast<int>(param_objects.size())) {
-    assert(param_objects.size() == param_arg_indices.size());
-    param_objects[param-1]->set_parameter(param_arg_indices[param-1], value);
+  if (param > 0 && param <= static_cast<int>(impl_repp->slave_param_objects_rep.size())) {
+    for(size_t n = 0; n < impl_repp->slave_param_objects_rep[param - 1].size(); n++) {
+      DBC_CHECK(impl_repp->slave_param_indices_rep.size() > param - 1);
+      DBC_CHECK(impl_repp->slave_param_indices_rep[param - 1].size() > n);
+      int index = impl_repp->slave_param_indices_rep[param - 1][n];
+      //  cerr << "Setting preset " << name() << " param " << param << " (" << impl_repp->slave_param_objects_rep[param-1][n]->get_parameter_name(param) << "), of object " << impl_repp->slave_param_objects_rep[param-1][n]->name() << ", with index number " << index << ", to value " << value << "." << endl;
+      impl_repp->slave_param_objects_rep[param-1][n]->set_parameter(index, value);
+    }
   }
 }
 
 CHAIN_OPERATOR::parameter_type PRESET::get_parameter(int param) const { 
-  if (param > 0 && param <= static_cast<int>(param_objects.size())) {
-    assert(param_objects.size() == param_arg_indices.size());
-    return param_objects[param-1]->get_parameter(param_arg_indices[param-1]);
+  if (param > 0 && param <= static_cast<int>(impl_repp->slave_param_objects_rep.size())) {
+    DBC_CHECK(impl_repp->slave_param_objects_rep.size() == impl_repp->preset_param_values_rep.size());
+    DBC_CHECK(impl_repp->slave_param_indices_rep.size() > param - 1);
+    DBC_CHECK(impl_repp->slave_param_indices_rep[param - 1].size() > 0);
+
+    int index = impl_repp->slave_param_indices_rep[param - 1][0];
+
+    DBC_CHECK(index > 0);
+
+    //  cerr << "Getting preset " << name() << " param " << param << ", index number " << index cerr << " with value " << impl_repp->slave_param_objects_rep[param-1][0]->get_parameter(index) << "." << endl;
+
+    return(impl_repp->slave_param_objects_rep[param-1][0]->get_parameter(index));
   }
   return(0.0f);
 }
 
-void PRESET::init(SAMPLE_BUFFER *insample) {  
+void PRESET::init(SAMPLE_BUFFER *insample) {
   first_buffer = insample;
   chains[0]->init(first_buffer, first_buffer->number_of_channels(), first_buffer->number_of_channels());
   for(size_t q = 1; q < chains.size(); q++) {
-    assert(q - 1 < buffers.size());
+    DBC_CHECK(q - 1 < buffers.size());
     buffers[q - 1]->length_in_samples(first_buffer->length_in_samples());
     buffers[q - 1]->number_of_channels(first_buffer->number_of_channels());
     buffers[q - 1]->sample_rate(first_buffer->sample_rate());
-    chains[q]->init(buffers[q - 1], first_buffer->number_of_channels(), first_buffer->number_of_channels());
+    chains[q]->init(buffers[q - 1], 
+			       first_buffer->number_of_channels(), 
+			       first_buffer->number_of_channels());
   }
 
-  for(size_t n = 0; n < gctrls_rep.size(); n++) {
-    gctrls_rep[n]->init((double)first_buffer->length_in_samples() / first_buffer->sample_rate());
+  for(size_t n = 0; n < impl_repp->gctrls_rep.size(); n++) {
+    impl_repp->gctrls_rep[n]->init(static_cast<double>(first_buffer->length_in_samples()) / 
+				   first_buffer->sample_rate());
   }
 }
 
 void PRESET::process(void) {
-  std::vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
+  vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
   while(p != buffers.end()) {
     (*p)->copy(*first_buffer);
     ++p;
   }
 
-  std::vector<CHAIN*>::iterator q = chains.begin();
+  vector<CHAIN*>::iterator q = chains.begin();
   while(q != chains.end()) {
     (*q)->process();
     ++q;

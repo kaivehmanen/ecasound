@@ -2,17 +2,12 @@
 #define INCLUDED_PRESET_H
 
 #include <string>
-#include <map>
 
-#include "eca-chainop.h"
-#include "eca-chain.h"
-#include "sample-specs.h"
+class PRESET_impl;
+class CHAIN;
+
 #include "samplebuffer.h"
-
-using std::string;
-
-class AUDIO_IO;
-class GENERIC_CONTROLLER;
+#include "eca-chainop.h"
 
 /**
  * Class for representing effect presets
@@ -22,62 +17,53 @@ class GENERIC_CONTROLLER;
  */
 class PRESET : public CHAIN_OPERATOR {
 
- private:
-
-  SAMPLE_BUFFER* first_buffer;
-
-  std::vector<SAMPLE_BUFFER*> buffers;
-  std::vector<CHAIN*> chains;
-  std::vector<std::string> param_names;
-  std::vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > param_objects;
-  std::vector<int> param_arg_indices;
-  std::vector<GENERIC_CONTROLLER*> gctrls_rep;
-  bool parsed_rep;
-  std::string parse_string_rep;
-  std::string name_rep;
-
-  void add_chain(void);
-  PRESET& operator=(const PRESET& x) { return *this; }
-  PRESET(const PRESET& x) { }
-
  public:
-
-  virtual PRESET* clone(void);
-  virtual PRESET* new_expr(void) { return(new PRESET(parse_string_rep)); }
-  virtual ~PRESET (void);
-
-  string name(void) const { return(name_rep); }
-  void set_name(const std::string& v) { name_rep = v; }
-
-  /**
-   * Connect input to chain
-   */
-  void connect_input(AUDIO_IO* input);
-
-  virtual void init(SAMPLE_BUFFER* sbuf);
-  virtual void process(void);
-  virtual string parameter_names(void) const;
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
-
-  /**
-   * Parse preset data from the formatted string given 
-   * as argument.
-   *
-   * require:
-   *  formatted_string.empty() == false
-   * ensure:
-   *  is_parsed() == true
-   */
-  void parse(const std::string& formatted_string);
-  
-  /**
-   * Whether preset data has been parsed
-   */
-  bool is_parsed(void) const { return(parsed_rep); }
 
   PRESET(void);
   PRESET(const std::string& formatted_string);
+
+  virtual PRESET* clone(void);
+  virtual PRESET* new_expr(void);
+  virtual ~PRESET (void);
+
+  virtual std::string name(void) const;
+  virtual std::string description(void) const;
+
+  void set_name(const std::string& v);
+
+  virtual void init(SAMPLE_BUFFER* sbuf);
+  virtual void process(void);
+  virtual std::string parameter_names(void) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
+
+  void parse(const std::string& formatted_string);
+  
+  bool is_parsed(void) const;
+
+ private:
+
+  PRESET_impl* impl_repp;
+  SAMPLE_BUFFER* first_buffer;
+  std::vector<SAMPLE_BUFFER*> buffers;
+  std::vector<CHAIN*> chains;
+
+  bool is_preset_option(const std::string& arg) const;
+  void add_chain(void);
+  void extend_pardesc_vector(int number);
+  void parse_preset_option(const std::string& arg);
+  void parse_operator_option(const std::string& arg);
+  void set_preset_defaults(const std::vector<std::string>& args);
+  void set_preset_param_names(const vector<string>& args);
+  void set_preset_lower_bounds(const std::vector<std::string>& args);
+  void set_preset_upper_bounds(const std::vector<std::string>& args);
+  void set_preset_toggles(const std::vector<std::string>& args);
+
+  PRESET& operator=(const PRESET& x) { return *this; }
+  PRESET(const PRESET& x) { }
 };
 
 #endif
+
+

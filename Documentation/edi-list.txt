@@ -41,9 +41,6 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ Enhancements, new features ]
 
-(edi-3) Extra parameters for effect presets describing its parameters, 
-	author, etc
-	- submitted: kaiv, 17.08.2001
 (edi-4) 14bit MIDI-CCs controller source.
 	- submitted: kaiv, 17.08.2001
 (edi-5) Threshold parameter to -eca.
@@ -74,6 +71,10 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	filename extensions.
 	- submitted: Toby Shepard, 13.07.2001
 	- done: kaiv, 06.10.2001, to ecasound 2.1dev0
+(edi-3) Extra parameters for effect presets describing its parameters, 
+	author, etc
+	- submitted: kaiv, 17.08.2001
+	- done: kaiv, 20.10.2001
 (edi-6) 100% transparent implementation of -z:db system.
 	- submitted: smassy, xx.06.2001
 	- first version: kaiv, 03.10.2001, 2.1 CVS-tree

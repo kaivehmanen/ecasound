@@ -205,13 +205,16 @@ void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *p
 }
 
 void EFFECT_LADSPA::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
-  if (param > 0 && param < static_cast<int>(params.size() + 1)) {
+  
+  if (param > 0 && (param - 1 < static_cast<int>(params.size()))) {
+    //  cerr << "ladspa: setting param " << param << " to " << value << "." << endl;
     params[param - 1] = value;
   }
 }
 
 CHAIN_OPERATOR::parameter_type EFFECT_LADSPA::get_parameter(int param) const { 
-  if (param > 0 && param < static_cast<int>(params.size() + 1)) {
+  if (param > 0 && (param - 1 < static_cast<int>(params.size()))) {
+    //  cerr << "ladspa: getting param " << param << " with value " << params[param - 1] << "." << endl;
     return(params[param - 1]);
   }
   return(0.0);

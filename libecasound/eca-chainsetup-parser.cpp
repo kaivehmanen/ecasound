@@ -31,6 +31,7 @@
 #include "midi-client.h"
 #include "midi-server.h"
 #include "generic-controller.h"
+#include "eca-chain.h"
 
 #include "eca-object-factory.h"
 #include "eca-object-map.h"

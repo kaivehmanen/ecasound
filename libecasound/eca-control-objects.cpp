@@ -1686,7 +1686,7 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(const std::string& chainop_params) 
     }
   }
 
-  if (was_running == true)
+  if (is_engine_started() == true && was_running == true)
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 
@@ -1720,7 +1720,7 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(CHAIN_OPERATOR* cotmp) {
 
   selected_chainsetup_repp->add_chain_operator(cotmp);
 
-  if (was_running == true)
+  if (is_engine_started() == true && was_running == true)
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 
@@ -1819,7 +1819,7 @@ void ECA_CONTROL_OBJECTS::remove_chain_operator(void) {
   if (p < selected_chainsetup_repp->chains.size())
     selected_chainsetup_repp->chains[p]->remove_chain_operator();
 
-  if (was_running == true)
+  if (is_engine_started() == true && was_running == true)
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 
@@ -1840,7 +1840,8 @@ void ECA_CONTROL_OBJECTS::select_chain_operator(int chainop_id) {
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (selected_chainsetup() == connected_chainsetup()) {
+    if (is_engine_started() == true &&
+	selected_chainsetup() == connected_chainsetup()) {
       engine_repp->command(ECA_ENGINE::ep_c_select, p);
       engine_repp->command(ECA_ENGINE::ep_cop_select, chainop_id);
     }
@@ -1901,7 +1902,8 @@ void ECA_CONTROL_OBJECTS::select_chain_operator_parameter(int param) {
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (selected_chainsetup() == connected_chainsetup()) {
+    if (is_engine_started() == true && 
+	selected_chainsetup() == connected_chainsetup()) {
       engine_repp->command(ECA_ENGINE::ep_copp_select, param);
     }
     else {
@@ -1930,7 +1932,8 @@ void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(CHAIN_OPERATOR::parameter
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (selected_chainsetup() == connected_chainsetup()) {
+    if (is_engine_started() == true && 
+	selected_chainsetup() == connected_chainsetup()) {
       engine_repp->command(ECA_ENGINE::ep_copp_value, value);
     }
     else {
@@ -2014,7 +2017,7 @@ void ECA_CONTROL_OBJECTS::add_controller(const std::string& gcontrol_params) {
       }
   }
 
-  if (was_running == true)
+  if (is_engine_started() == true && was_running == true)
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 
@@ -2045,7 +2048,7 @@ void ECA_CONTROL_OBJECTS::select_controller(int controller_id) {
     selected_chainsetup_repp->chains[p]->select_controller(controller_id);
   }
   
-  if (was_running == true)
+  if (is_engine_started() == true && was_running == true)
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 
@@ -2076,7 +2079,7 @@ void ECA_CONTROL_OBJECTS::remove_controller(void) {
     selected_chainsetup_repp->chains[p]->remove_controller();
   }
 
-  if (was_running == true)
+  if (is_engine_started() == true && was_running == true)
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 

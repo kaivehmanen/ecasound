@@ -25,8 +25,14 @@ inverse_comb = -efi:8,0.999
 lowpass = -efl:300
 rejectband = -efr:1500,1000
 resonator = -efs:1500,1000
-two_filters = -efl:800 -ea:%lowgain | -efh:800 -ea:%highgain
-two_filters_pareq = -efl:%lowfrew -ea:%lowgain | -efh:%highfreq -ea:%highgain
+two_filters = -efl:800 -ea:%1 | -efh:800 -ea:%2 \
+	 	-pd:Parallel_highpass_and_lowpass_filters \
+		-ppl:0,0 -ppu:1000,- \
+		-ppd:100,100 -ppn:lowgain,highgain
+two_filters_pareq = -efl:%1 -ea:%2 | \
+		    -efh:%3 -ea:%4 \
+		    -ppn:lowfreq,lowgain,highfreq,highgain \
+		    -ppd:200,100,2000,100
 #
 # ======
 # Compression/dynamics
@@ -60,6 +66,9 @@ reverb4 = -pn:reverb1 -pn:reverb2
 # Delays 
 delay1 = -etd:200,0,3,60
 delay2 = -etm:200,3,60
+wicked_dub = -etm:500,1,90 -epp:100 -kos:1,0,100,0.3,0.5 | \
+	     -etm:333,1,90 -epp:0 -kos:1,0,100,0.8,0 | \
+	     -ea:90
 # Phase effects
 flanger1 = -etl:2,20,50,0.5
 chorus1 = -etc:2,20,50,0.5
@@ -93,16 +102,16 @@ dali = -ei:100 -kos:1,85,105,.5,0 -kx -kos:4,.1,2,.1 \
 # Results of spending an hour messing around.
 #
 # The is a classic auto-wah
-aw = -efl:0 -kos:1,500,5500,%speed,0
+aw = -efl:0 -kos:1,500,5500,%1,0 -ppn:speed -ppd:0.5
 # This is the same thing except it takes all important parameters from its
 # command.
-aw_custom = -efl:0 -kos:1,%low,%high,%speed,0
+aw_custom = -efl:0 -kos:1,%1,%2,%3,0 -ppn:low,high,speed -ppd:100,8000,0.5
 # Now the autowah again but with the triangular osc which gives a sharper
 # movement. It really depends of what you're playing, can sound as good as it
 # can sound bad. That's the joy of autowahs.
-aw_tri = -efl:0 -kf:1,500,5500,%speed,1,0
+aw_tri = -efl:0 -kf:1,500,5500,%1,1,0 -ppn:speed -ppd:0.5
 # Now once again we define another version with more definable params.
-aw_tri_custom = -efl:0 -kf:1,%low,%high,%speed,1,0
+aw_tri_custom = -efl:0 -kf:1,%low,%high,%1,1,0 -ppn:speed -ppd:0.5
 #
 # Experimental stuff:
 # I was trying to have a wah reacting to the volume, it doesn't work very
@@ -122,8 +131,25 @@ metronome = -el:sine_fcac,880,1 -eemb:%bpm,10 -efl:2000
 # Variable pan 
 variable_pan = -epp:0 -kf:1,0,100,0.2,0
 chipmunk_mix = -ei:400 -efl:400 -kos:1,400,10000,2,0
-parchip = -ei:%pitch -efl:400 -kos:1,400,10000,%modfreq,0
-filtertest = -efl:%filter
-paralmadness = -efb:0,2000 -kos:1,1,3000,%freq1,0 -ea:150 | \
-	       -efb:0,2000 -kos:1,3000,5000,%freq2,0 -ea:150 | \
-	       -efh:0 -kos:1,3000,5000,%freq3,0 -ea:200
+parchip = -ei:%1 -efl:400 -kos:1,400,10000,%2,0 \
+	  -ppn:pitch,modfreq -ppd:100,0.5
+filtertest = -efl:%1 -ea:100 | \
+	     -efh:%2 -ea:100 | \
+	     -ea:100 -ppd:100 -ppn:freq1,freq2
+paralmadness = -efb:0,2000 -kos:1,1,3000,%1,0 -ea:150 | \
+	       -efb:0,2000 -kos:1,3000,5000,%2,0 -ea:150 | \
+	       -efh:0 -kos:1,3000,5000,%3,0 -ea:200 \
+	       -ppn:freq1,freq2,freq3 -ppd:0.2,0.2,0.2
+oscillator_test = -eli:1205,%1,0 -ea:%2 \
+		   -pd:Oscillator_test \
+		   -ppn:freq,gain1 \
+		   -ppd:200,100 \
+		   -ppl:1,0 -ppu:1300,1000 \
+		   -ppt:-,-
+oscillator_stack = -el:analogueOsc,%1,%2 -ea:%4 | \
+		   -el:analogueOsc,%1,%3 -ea:%5 \
+	 	   -pd:Stack_of_analogue_oscillators \
+		   -ppn:freq,osctype1,osctype2,gain1,gain2 \
+		   -ppd:200,0,0,100,100 \
+		   -ppl:1,0,0,0,0 -ppu:1300,3,3,1000,1000 \
+		   -ppt:-,integer,integer,-

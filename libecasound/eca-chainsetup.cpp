@@ -40,6 +40,7 @@
 
 #include "generic-controller.h"
 #include "eca-chainop.h"
+#include "eca-chain.h"
 
 #include "audioio.h"
 #include "audioio-types.h"
