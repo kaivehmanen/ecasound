@@ -75,11 +75,19 @@ CONTROLLER_SOURCE::parameter_t GENERIC_CONTROLLER::value(void)
 string GENERIC_CONTROLLER::status(void) const
 {
   if (is_valid() == true) {
+    double value = -1.0f;
+
+    /* if srate is invalud, controller values 
+     * might not be valid */
+    if (samples_per_second() > 0) {
+      value = source->value();
+    }
+
     return("Source \"" + source->name() + 
 	   "\" connected to target \"" +
 	   target->name() + "\"." +
 	   " Current source value is " + 
-	   kvu_numtostr(source->value()) + 
+	   kvu_numtostr(value) + 
 	   " and target " + 
 	   kvu_numtostr(target->get_parameter(param_id_rep)) + ".");
   }
@@ -126,20 +134,20 @@ void GENERIC_CONTROLLER::seek_position(void)
   }
 }
 
-void GENERIC_CONTROLLER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+void GENERIC_CONTROLLER::set_parameter(int param, CHAIN_OPERATOR::parameter_t v)
 {
   switch (param) {
   case 1: 
-    param_id_rep = static_cast<int>(value);
+    param_id_rep = static_cast<int>(v);
     break;
   case 2: 
-    rangelow_rep = value;
+    rangelow_rep = v;
     break;
   case 3: 
-    rangehigh_rep = value;
+    rangehigh_rep = v;
     break;
   default:
-    source->set_parameter(param - 3, value);
+    source->set_parameter(param - 3, v);
   }
 }
 

@@ -54,17 +54,17 @@ void SINE_OSCILLATOR::init(void)
   ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
 }
 
-void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value)
+void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t v)
 {
   switch (param) {
   case 1: 
-    frequency(value);
+    frequency(v);
     L = 1.0 / frequency();   // length of one wave in seconds
     phasemod = 2.0 * M_PI / L; 
     break;
 
   case 2: 
-    phase_offset(static_cast<double>(value * M_PI));
+    phase_offset(static_cast<double>(v * M_PI));
     phase = phase_offset();
     break;
   }
