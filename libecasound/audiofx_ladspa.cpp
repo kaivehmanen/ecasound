@@ -75,21 +75,75 @@ void EFFECT_LADSPA::init_ports(void) {
       else
 	++out_audio_ports;
     }
+
+    /** 
+     * LADSPA API doesn't specify how to initialize control
+     * ports to sane initial values, so here we try to 
+     * make a educated guess based on the lower (lowb) and
+     * upper (upperb) bounds:
+     *
+     * 1) lowb == x and upperb == n/a
+     *    a) x < 0, initval = 0
+     *    b) x >= 0, initval = x
+     * 2) lowb == n/a and upperb == x
+     *    a) x > 0, initval = 0
+     *    b) x <= 0, initval = x
+     * 3) lowb == x and upperb == y 
+     *    a) x < 0 and y > 0, initval = 0
+     *    b) x < 0 and y < 0, initval = y
+     *    c) x > 0 and y > 0, initval = x
+     * 4) lowb == n/a and upperb == n/a, initval = 1
+     */
     if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) ==
 	LADSPA_PORT_CONTROL) {
-      parameter_type init_value = 1.0f;
-      if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m])) {
-	if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
-	  init_value = plugin_desc->PortRangeHints[m].LowerBound * samples_per_second();
-	else
-	  init_value = plugin_desc->PortRangeHints[m].LowerBound;
+      parameter_type init_value, lowb, upperb;
+
+      if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+	lowb = plugin_desc->PortRangeHints[m].LowerBound * samples_per_second();
+      else
+	lowb = plugin_desc->PortRangeHints[m].LowerBound;
+
+      if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+	upperb = plugin_desc->PortRangeHints[m].UpperBound * samples_per_second();
+      else
+	upperb = plugin_desc->PortRangeHints[m].UpperBound;
+
+      /* case 1 */
+      if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m]) &&
+	  !LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m])) {
+
+	if (lowb < 0) init_value = 0.0f;
+	else init_value = lowb;
       }
-      else if (LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m])) {
-	if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
-	  init_value = plugin_desc->PortRangeHints[m].UpperBound * samples_per_second();
-	else
-	  init_value = plugin_desc->PortRangeHints[m].UpperBound;
+
+      /* case 2 */
+      else if (!LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m]) &&
+	       LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m])) {
+
+	if (upperb > 0) init_value = 0.0f;
+	else init_value = upperb;
       }
+
+      /* case 3 */
+      else if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m]) &&
+	       LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m])) {
+
+	if (lowb < 0 && upperb > 0) init_value = 0.0f;
+	else if (lowb < 0 && upperb < 0) init_value = upperb;
+	else init_value = lowb;
+      }
+
+      /* case 4 */
+      else {
+	assert(!LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m]) &&
+	       !LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m]));
+
+	if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+	  init_value = samples_per_second();
+	else
+	  init_value = 1.0f;
+      }
+
       params.push_back(init_value);
       if (params.size() > 1) param_names_rep += ",";
       param_names_rep += string_search_and_replace(string(plugin_desc->PortNames[m]), ',', ' ');;

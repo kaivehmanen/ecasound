@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 240601) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 250601) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -23,6 +23,8 @@ Last officially released version is -*> v2.0.1 *-
 	- changed: improved configure checks for python include 
 		   and library directories
 	- changed: -tl now works without -t
+	- changed: new algorithm for selecting initial param 
+		   values for LADSPA plugins
 	- fixed: selecting a non-existant chainsetup could crash 
 		 ecasound
 	- fixed: --enable-audiofile actually disabled the use of 
