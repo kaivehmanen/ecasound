@@ -1,0 +1,53 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-28): Extending the EIAM command set to allow writing standalone ECI 
+	  implementations.
+         - submitted: kaiv, 29.09.2002
+
+------------------------------------------------------------------------
+Details:
+
+- rationale
+    - currently all ECI implementations depend on libecasound (either
+      or directly or indirectly) and are thus susceptible to 
+      library versioning conflicts
+    - a standalone implementation would not depend on ecasound 
+      libraries in any way, which again would greatly improve 
+      user-friendliness of ECI apps (easier installation, fewer 
+      problems with libraries, etc, etc)
+- list of goals/requirements that should be reached
+    - a reference standalone ECI implementation in some language
+- todo-list
+    - new EIAM commands are needed to make it possible to 
+      parse return values
+
+------------------------------------------------------------------------
+[kaiv on ecasound-list, 28.09.2002]
+
+Tkeca-0.2.1, which btw is a really usable app, uses ecasound by forking
+the console interface on the background and then piping commands and
+replies via stdin and stdout.
+
+Compared to using ECI or directly linking against libecasound, this
+approach has the huge benefit of complete independence from ecasound 
+libraries. In practice, just by renaming the ecasound executable (or 
+changing PATH), I can select between ecasound 2.0.4 and 2.1dev12 (CVS). 
+Tkeca-0.2.1 works nicely with both versions! 
+
+Now what if all ECI apps would use the same mechanism? This could be 
+achieved by making a new C-implementation of the ECI API, which would do:
+
+- fork "ecasound -c" to the background 
+- pass ECI commands to the ecasound instance via its stdin
+- read the return codes from ecasound's stdout, parse them and
+  pass them to the ECI app
+
+... that's about it. The C++, Python, Perl and PHP ECI implementations
+could either use the C implementation or alternatively provide their own
+implementation. For instance, a Python ECI implementation could be
+written totally in Python.  This means that no extension modules would
+need to installed. Just a Python interpreter and the ecasound executable
+and that's it!
+
+------------------------------------------------------------------------

@@ -1,0 +1,103 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-27): NetECI - network interface for controlling ecasound operation.
+         - submitted: kaiv, 28.06.2002
+
+------------------------------------------------------------------------
+Details:
+
+- rationale
+    - current ecasound frontends are not good at giving real-time
+      status information; using separate monitor clients could
+      solve this problem
+- list of goals/requirements that should be reached
+    - to allow control of an ecasound session from multiple 
+      indepedent client instances
+    - functionality available to clients equivalent to 
+      the ECI API
+- todo-list
+
+------------------------------------------------------------------------
+[kaiv on ecasound-list, 28.06.2002]
+
+1. NetECI
+
+NetECI is a slightly modified version of the ECI API that allows
+applications to communicate with remote ecasound sessions. The
+basic use-case is:
+
+(machine-1)                    (machine-3)
+'NetECI App A'  <-- TCP/IP --> 'ecasound -c --daemon'
+                                    ^
+(machine-2)                         |
+'NetECI App B'  <-- TCP/IP ---------|
+
+2. ECI vs NetECI
+
+The only required API change is extending the init function. So instead of
+'eci_init(void)' you'd have 'neteci_init(const char* hostname, int port)'.
+The NetECI library will handle all the network communication. App using
+NetECI can just issue EIAM commands as usual and not worry about the
+implementation details.
+
+3. Protocol 
+
+NetECI is really just a RPC-version (remote procedure call, or
+remote-invocation (RMI) for you java-men) of ECI. I could use any of the
+numerous available RPC mechanisms (Sun's RPC, CORBA, SOAP, KDE's DCOP,
+GNOME's Bonobo, XML-RPC, etc, etc) for the implementation, but I'm pretty
+certain won't.  Instead the protocol will be a straightforward, text-based
+protocol using TCP/IP or UNIX-sockets. I can once again reuse the EIAM
+parser code in libecasound and use it this time as a protocol parser. This
+way there's really not that much new code for me to write.
+
+One interesting thing is that it will be quite easy to write a native
+implementation of the NetECI client side in perl, python, C, java, etc.
+You just need to handle the TCP/IP communication with the ecasound daemon
+and that's it, no need to link against libecasound or install glue-code
+like pyeca. Of course, using the C++ NetECI implementation would still be
+possible, too.
+
+The protocol itself will probably be a request-response system, where the 
+request format is:
+
+--cut--
+<eiam-command> <arg1,...,argN><crlf>
+--cut--
+
+... and the response:
+
+--cut--
+<return-code> <type> <return-value>
+--cut--
+
+So extremely simple. One possible problem is bandwidth usage, so I don't 
+want to make the protocol overly complex. Any comments?
+
+------------------------------------------------------------------------
+[kaiv on ecasound-list, 30.06.2002]
+
+First version of the NetECI daemon code is now in the CVS.
+There's also a simple client program written in python 
+in the examples directory (netecimonitor.py). To test it out:
+
+[console 1]
+ecasound -c --daemon -i foo.wav -o alsa -ea:100 -kl:1,80,120,0.2
+
+[console 2]
+cd ecasound/examples
+./netecimonitor.py
+
+You should get a status screen of ecasound operation that is updated once 
+a second. You can exit and restart the ecasound instance and
+netecimonitor will try to reconnect automatically to the new server 
+instance. If you run ecasound without --daemon, everything works like 
+before.
+
+NetECI binds to the TCP port 2868 and is able to handle multiple clients
+at the same time. While it does work, the server currently crashes once in
+a while for some unknown reason. I suspect there're problems in the
+multithread locking code.
+
+------------------------------------------------------------------------
