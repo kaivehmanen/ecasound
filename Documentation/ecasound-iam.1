@@ -91,18 +91,21 @@ the selected chainsetup\&. \fI[-]\fP
 .IP "cs-remove" 
 Removes currently selected chainsetup\&. \fI[-]\fP
 .PP 
+.IP "cs-list" 
+Returns a list of all chainsetups\&. \fI[S]\fP
+.PP 
 .IP "cs-select \'name\'" 
 Selects chainsetup \'name\'\&. \fI[-]\fP
 .PP 
 .IP "cs-selected" 
 Returns the name of currently selected chainsetup\&. \fI[s]\fP
 .PP 
-.IP "cs-index-select \'cs_index\'" 
+.IP "cs-index-select \'cs_index\', cs-iselect \'cs_index\'" 
 Selects a chainsetup based on a short index string\&. Chainsetup names
 can be rather long\&. This command can be used to avoid typing
-these long names\&. \'cs_index\' format is "c<number>"\&. You can get 
-a list of all chainsetups (and their indexes) with the \'cs-status\'
-command\&. \fI[-]\fP
+these long names\&. \'cs_index\' is an integer value, where \'1\' refers to 
+the first audio input/output\&. You can use \'cs-list\' and \'cs-status\' 
+to get a full list of currently available chainsetups\&. \fI[-]\fP
 .PP 
 .IP "cs-load \'filename\'" 
 Adds a new chainsetup by loading it from file \'filename\'\&. 
@@ -188,11 +191,20 @@ chainsetup\&.
 .IP "c-add \'cname1,\&.\&.\&.,cnameN\'" 
 Adds a set of chains\&. Added chains are automatically selected\&. \fI[-]\fP
 .PP 
+.IP "c-remove" 
+Removes selected chains\&. \fI[-]\fP
+.PP 
+.IP "c-list" 
+Returns a list of all chains\&. \fI[S]\fP
+.PP 
 .IP "c-select \'cname1,\&.\&.\&.,cnameN\'" 
 Selects chains\&. Other chains are automatically deselected\&. \fI[-]\fP
 .PP 
-.IP "c-deselect \'cname1,\&.\&.\&.,cnameN\'" 
-Deselects chains\&. \fI[-]\fP
+.IP "c-index-select \'index1,\&.\&.\&.,indexN\', c-iselect \'index1,\&.\&.\&.,indexN\'" 
+Selects a set of chains based on the list of indixes\&. Each index is
+an integer value, where \'1\' refers to the first chain\&. You can use 
+\'c-list\' and \'c-status\' to get a full list of currently available 
+chains\&. \fI[-]\fP
 .PP 
 .IP "c-select-all" 
 Selects all chains\&. \fI[-]\fP
@@ -200,20 +212,17 @@ Selects all chains\&. \fI[-]\fP
 .IP "c-select-add \'cname1,\&.\&.\&.,cnameN\'" 
 Selects more chains\&. \fI[-]\fP
 .PP 
+.IP "c-deselect \'cname1,\&.\&.\&.,cnameN\'" 
+Deselects chains\&. \fI[-]\fP
+.PP 
 .IP "c-selected" 
 Returns a list of selected chains\&. \fI[S]\fP
-.PP 
-.IP "c-list" 
-Returns a list of all chains\&. \fI[S]\fP
-.PP 
-.IP "c-remove" 
-Removes selected chains\&. \fI[-]\fP
 .PP 
 .IP "c-clear" 
 Clear selected chains by removing all chain operators and controllers\&.
 Doesn\'t change how chains are connected to inputs and outputs\&. \fI[-]\fP
 .PP 
-.IP "c-name \'new_name\'" 
+.IP "c-set-name \'new_name\'" 
 Renames the selected chain\&. When using this command, only one chain must
 selected\&. \fI[-]\fP
 .PP 
@@ -269,7 +278,7 @@ object names are required to be unique\&. Similarly all output
 names need to be unique\&. However, it\'s possible that the same
 object name exists both as an input and as an output\&. \fI[-]\fP
 .PP 
-.IP "ai-index-select \'aobject_index\', ao-index-select \'aobject_index\'" 
+.IP "ai-index-select \'aobject_index\', ai-iselect \'aobject_index\', ao-index-select \'aobject_index\', ao-iselect \'aobject_index\'" 
 Select some audio object based on a short index string\&. Especially file
 names can be rather long\&. This command can be used to avoid typing
 these long names when selecting audio objects\&. \'aobject_index\' is
@@ -310,7 +319,6 @@ The currently selected audio object is loaded into an external
 wave editor (see ecasoundrc(5))\&. \fI[-]\fP
 .PP 
 .IP "ai-list, ao-list" 
-**not implemented**
 Returns a list of all input/output objects\&. \fI[S]\fP
 .PP 
 .IP "aio-register" 

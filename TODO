@@ -51,7 +51,6 @@ Input/output devices:
 - wrapper objects for triggering file input/output based on volume
   level or timers
 - type override for audio objects
-- shorten support
 - wrapper object for using effects as audio inputs/outputs
 - more efficient interleaving of multichannel inputs/outputs
 	- "-i:ileave,mchannel-file.wav,1" - only reads the 1st channel
@@ -59,9 +58,13 @@ Input/output devices:
 	- and so on... the same with outputs
 - internal support for mp3 encoding and decoding (libmpg123 + libmp3lame)
 - SMPTE time-code
+- integration to some MIDI-sequencer engine - ttrk, TSE3, etc
+- support for Ardour's audio file (EDL-based)
+- support for various audio server frameworks; AES, CSL, aRts, NAS, etc
+- shorten support
 - integration to some synth engine - for instance Csound, aRts, 
   Quasimodo, Bacterium, ...
-- mpeglib support
+
 
 Effects, routing, dsp routines:
 

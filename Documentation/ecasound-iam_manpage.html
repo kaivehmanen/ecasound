@@ -109,16 +109,18 @@ Adds a new chainsetup with name 'name'. 'name' is now
 the selected chainsetup. <em>[-]</em>
 <p><p></p><dt><strong>cs-remove</strong><dd> 
 Removes currently selected chainsetup. <em>[-]</em>
+<p><p></p><dt><strong>cs-list</strong><dd>
+Returns a list of all chainsetups. <em>[S]</em>
 <p><p></p><dt><strong>cs-select 'name'</strong><dd>
 Selects chainsetup 'name'. <em>[-]</em>
 <p><p></p><dt><strong>cs-selected</strong><dd>
 Returns the name of currently selected chainsetup. <em>[s]</em>
-<p><p></p><dt><strong>cs-index-select 'cs_index'</strong><dd>
+<p><p></p><dt><strong>cs-index-select 'cs_index', cs-iselect 'cs_index'</strong><dd>
 Selects a chainsetup based on a short index string. Chainsetup names
 can be rather long. This command can be used to avoid typing
-these long names. 'cs_index' format is "c&lt;number&gt;". You can get 
-a list of all chainsetups (and their indexes) with the 'cs-status'
-command. <em>[-]</em>
+these long names. 'cs_index' is an integer value, where '1' refers to 
+the first audio input/output. You can use 'cs-list' and 'cs-status' 
+to get a full list of currently available chainsetups. <em>[-]</em>
 <p><p></p><dt><strong>cs-load 'filename'</strong><dd>
 Adds a new chainsetup by loading it from file 'filename'. 
 'filename' is now the selected chainsetup. <em>[-]</em>
@@ -185,24 +187,29 @@ chainsetup.
 <p><dl>
 <p></p><dt><strong>c-add 'cname1,...,cnameN'</strong><dd> 
 Adds a set of chains. Added chains are automatically selected. <em>[-]</em>
+<p><p></p><dt><strong>c-remove</strong><dd>
+Removes selected chains. <em>[-]</em>
+<p><p></p><dt><strong>c-list</strong><dd>
+Returns a list of all chains. <em>[S]</em>
 <p><p></p><dt><strong>c-select 'cname1,...,cnameN'</strong><dd>
 Selects chains. Other chains are automatically deselected. <em>[-]</em>
-<p><p></p><dt><strong>c-deselect 'cname1,...,cnameN'</strong><dd>
-Deselects chains. <em>[-]</em>
+<p><p></p><dt><strong>c-index-select 'index1,...,indexN', c-iselect 'index1,...,indexN'</strong><dd>
+Selects a set of chains based on the list of indixes. Each index is
+an integer value, where '1' refers to the first chain. You can use 
+'c-list' and 'c-status' to get a full list of currently available 
+chains. <em>[-]</em>
 <p><p></p><dt><strong>c-select-all</strong><dd>
 Selects all chains. <em>[-]</em>
 <p><p></p><dt><strong>c-select-add 'cname1,...,cnameN'</strong><dd>
 Selects more chains. <em>[-]</em>
+<p><p></p><dt><strong>c-deselect 'cname1,...,cnameN'</strong><dd>
+Deselects chains. <em>[-]</em>
 <p><p></p><dt><strong>c-selected</strong><dd>
 Returns a list of selected chains. <em>[S]</em>
-<p><p></p><dt><strong>c-list</strong><dd>
-Returns a list of all chains. <em>[S]</em>
-<p><p></p><dt><strong>c-remove</strong><dd>
-Removes selected chains. <em>[-]</em>
 <p><p></p><dt><strong>c-clear</strong><dd>
 Clear selected chains by removing all chain operators and controllers.
 Doesn't change how chains are connected to inputs and outputs. <em>[-]</em>
-<p><p></p><dt><strong>c-name 'new_name'</strong><dd>
+<p><p></p><dt><strong>c-set-name 'new_name'</strong><dd>
 Renames the selected chain. When using this command, only one chain must
 selected. <em>[-]</em>
 <p><p></p><dt><strong>c-muting</strong><dd>
@@ -248,7 +255,7 @@ used when creating the object (see above). Note! All input
 object names are required to be unique. Similarly all output
 names need to be unique. However, it's possible that the same
 object name exists both as an input and as an output. <em>[-]</em>
-<p><p></p><dt><strong>ai-index-select 'aobject_index', ao-index-select 'aobject_index'</strong><dd>
+<p><p></p><dt><strong>ai-index-select 'aobject_index', ai-iselect 'aobject_index', ao-index-select 'aobject_index', ao-iselect 'aobject_index'</strong><dd>
 Select some audio object based on a short index string. Especially file
 names can be rather long. This command can be used to avoid typing
 these long names when selecting audio objects. 'aobject_index' is
@@ -278,7 +285,7 @@ Returns the audio object length in seconds. <em>[f]</em>
 <p><p></p><dt><strong>ai-wave-edit, ao-wave-edit</strong><dd> 
 The currently selected audio object is loaded into an external
 wave editor (see ecasoundrc(5)). <em>[-]</em>
-<p><p></p><dt><strong>ai-list, ao-list</strong><dd> **not implemented**
+<p><p></p><dt><strong>ai-list, ao-list</strong><dd>
 Returns a list of all input/output objects. <em>[S]</em>
 <p><p></p><dt><strong>aio-register</strong><dd>
 Prints a list of registered audio object types. <em>[s]</em>

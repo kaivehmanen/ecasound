@@ -1,5 +1,5 @@
-#ifndef _KVUTILS_H
-#define _KVUTILS_H
+#ifndef INCLUDED_KVUTILS_H
+#define INCLUDED_KVUTILS_H
 
 #include <vector>
 #include <string>
@@ -23,6 +23,14 @@ vector<string> string_to_words(const string& s);
  * @param separator character to be used for separating items
  */
 vector<string> string_to_vector(const string& str, const string::value_type separator);
+
+/**
+ * Converts a string to a vector of integers.
+ *
+ * @param str string to be converted
+ * @param separator character to be used for separating items
+ */
+vector<int> string_to_int_vector(const string& str, const string::value_type separator);
 
 /**
  * Return a new string, where all 'from' characters are

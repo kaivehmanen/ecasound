@@ -72,6 +72,8 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   void add_default_chain(void);
   void add_input(AUDIO_IO* aiod);
   void add_output(AUDIO_IO* aiod);
+  vector<string> audio_input_names(void) const;
+  vector<string> audio_output_names(void) const;
   void remove_audio_input(const string& label);
   void remove_audio_output(const string& label);
   void attach_input_to_selected_chains(const AUDIO_IO* obj);

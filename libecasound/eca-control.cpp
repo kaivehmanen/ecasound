@@ -29,6 +29,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#include <kvutils.h> /* string_to_vector(), string_to_int_vector() */
 #include <kvutils/value_queue.h>
 #include <kvutils/message_item.h>
 
@@ -265,17 +266,12 @@ void ECA_CONTROL::action(int action_id) {
       break;
     }
   case ec_cs_remove: { remove_chainsetup(); break; }
+  case ec_cs_list: { set_last_string_list(chainsetup_names()); break; }
   case ec_cs_select: { select_chainsetup(action_args_rep[0]); break; }
   case ec_cs_selected: { set_last_string(selected_chainsetup()); break; }
-  case ec_cs_list: { set_last_string_list(chainsetup_names()); break; }
   case ec_cs_index_select: { 
     if (action_args_rep[0].empty() != true) {
-      if (action_args_rep[0][0] != 'c') {
-	set_last_error("Invalid chainsetup index.");
-      }
-      else {
-	select_chainsetup_by_index(action_args_rep[0]);
-      }
+      select_chainsetup_by_index(atoi(action_args_rep[0].c_str()));
     }
     break; 
   }
@@ -325,8 +321,11 @@ void ECA_CONTROL::action(int action_id) {
   // Chains
   // ---
   case ec_c_add: { add_chains(string_to_vector(action_args_rep[0], ',')); break; }
+  case ec_c_remove: { remove_chains(); break; }
+  case ec_c_list: { set_last_string_list(chain_names()); break; }
   case ec_c_select: { select_chains(string_to_vector(action_args_rep[0], ',')); break; }
   case ec_c_selected: { set_last_string_list(selected_chains()); break; }
+  case ec_c_index_select: { select_chains_by_index(string_to_int_vector(action_args_rep[0], ',')); break; }
   case ec_c_deselect: { deselect_chains(string_to_vector(action_args_rep[0], ',')); break; }
   case ec_c_select_add: 
     { 
@@ -335,9 +334,8 @@ void ECA_CONTROL::action(int action_id) {
       break; 
     }
   case ec_c_select_all: { select_all_chains(); break; }
-  case ec_c_remove: { remove_chains(); break; }
   case ec_c_clear: { clear_chains(); break; }
-  case ec_c_name: 
+  case ec_c_rename: 
     { 
       if (selected_chains().size() != 1) {
 	set_last_error("When renaming chains, only one chain canbe selected.");
@@ -370,7 +368,6 @@ void ECA_CONTROL::action(int action_id) {
       set_last_string(chain_status()); 
       break; 
     }
-  case ec_c_list: { set_last_string_list(chain_names()); break; }
 
     // ---
     // Actions common to audio inputs and outputs
@@ -389,6 +386,8 @@ void ECA_CONTROL::action(int action_id) {
     // Audio input objects
     // ---
   case ec_ai_add: { add_audio_input(action_args_rep[0]); break; }
+  case ec_ai_remove: { remove_audio_input(); break; }
+  case ec_ai_list: { set_last_string_list(audio_input_names()); break; }
   case ec_ai_select: { select_audio_input(action_args_rep[0]); break; }
   case ec_ai_selected: { set_last_string(get_audio_input()->label()); break; }
   case ec_ai_index_select: { 
@@ -398,8 +397,6 @@ void ECA_CONTROL::action(int action_id) {
     break; 
   }
   case ec_ai_attach: { attach_audio_input(); break; }
-  case ec_ai_remove: { remove_audio_input(); break; }
-
   case ec_ai_forward: 
     { 
       audio_input_as_selected();
@@ -421,6 +418,8 @@ void ECA_CONTROL::action(int action_id) {
     // Audio output objects
     // ---
   case ec_ao_add: { if (action_args_rep.size() == 0) add_default_output(); else add_audio_output(action_args_rep[0]); break; }
+  case ec_ao_remove: { remove_audio_output(); break; }
+  case ec_ao_list: { set_last_string_list(audio_output_names()); break; }
   case ec_ao_select: { select_audio_output(action_args_rep[0]); break; }
   case ec_ao_selected: { set_last_string(get_audio_output()->label()); break; }
   case ec_ao_index_select: { 
@@ -430,7 +429,6 @@ void ECA_CONTROL::action(int action_id) {
     break; 
   }
   case ec_ao_attach: { attach_audio_output(); break; }
-  case ec_ao_remove: { remove_audio_output(); break; }
   case ec_ao_forward: 
     { 
       audio_output_as_selected();
@@ -620,7 +618,7 @@ string ECA_CONTROL::chainsetup_status(void) const {
   int index = 0;
   string result;
   while(cs_citer != session_repp->chainsetups_rep.end()) {
-    result += "Chainsetup (c"  + kvu_numtostr(++index) + ") \"";
+    result += "Chainsetup ("  + kvu_numtostr(++index) + ") \"";
     result += (*cs_citer)->name() + "\" ";
     if ((*cs_citer)->name() == selected_chainsetup()) result += "[selected] ";
     if ((*cs_citer)->name() == connected_chainsetup()) result += "[connected] ";

@@ -34,9 +34,9 @@ class ECA_IAMODE_PARSER {
     // --
     ec_cs_add,
     ec_cs_remove,
+    ec_cs_list,
     ec_cs_select,
     ec_cs_selected,
-    ec_cs_list,
     ec_cs_index_select,
     ec_cs_load,
     ec_cs_save,
@@ -58,28 +58,29 @@ class ECA_IAMODE_PARSER {
     ec_cs_loop,
     // --
     ec_c_add,
+    ec_c_remove,
+    ec_c_list,
     ec_c_select,
     ec_c_selected,
     ec_c_select_all,
     ec_c_select_add,
     ec_c_index_select,
     ec_c_deselect,
-    ec_c_remove,
     ec_c_clear,
-    ec_c_name,
+    ec_c_rename,
     ec_c_mute,
     ec_c_bypass,
     ec_c_forward,
     ec_c_rewind,
     ec_c_setpos,
     ec_c_status,
-    ec_c_list,
     // --
     ec_aio_register,
     ec_aio_status,
     // --
     ec_ai_add,
     ec_ai_remove,
+    ec_ai_list,
     ec_ai_select,
     ec_ai_selected,
     ec_ai_index_select,
@@ -94,6 +95,7 @@ class ECA_IAMODE_PARSER {
     // --
     ec_ao_add,
     ec_ao_remove,
+    ec_ao_list,
     ec_ao_select,
     ec_ao_selected,
     ec_ao_index_select,
@@ -108,11 +110,15 @@ class ECA_IAMODE_PARSER {
     // --
     ec_cop_add,
     ec_cop_remove,
+    ec_cop_list,      /* FIXME: not implemented */
     ec_cop_select,
+    ec_cop_selected,  /* FIXME: not implemented */
     ec_cop_set,
     ec_cop_status,
     ec_cop_register,
+    ec_copp_list,     /* FIXME: not implemented */
     ec_copp_select,
+    ec_copp_selected, /* FIXME: not implemented */
     ec_copp_set,
     ec_copp_get,
     // --
@@ -121,9 +127,16 @@ class ECA_IAMODE_PARSER {
     // --
     ec_ctrl_add,
     ec_ctrl_remove,
+    ec_ctrl_list,     /* FIXME: not implemented */
     ec_ctrl_select,
+    ec_ctrl_selected, /* FIXME: not implemented */
     ec_ctrl_status,
     ec_ctrl_register,
+    ec_ctrlp_list,     /* FIXME: not implemented */
+    ec_ctrlp_select,   /* FIXME: not implemented */
+    ec_ctrlp_selected, /* FIXME: not implemented */
+    ec_ctrlp_set,      /* FIXME: not implemented */
+    ec_ctrlp_get,      /* FIXME: not implemented */
     // --
     ec_int_cmd_list,
     ec_int_version_string,

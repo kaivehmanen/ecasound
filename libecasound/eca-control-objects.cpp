@@ -187,26 +187,17 @@ void ECA_CONTROL_OBJECTS::select_chainsetup(const string& name) {
 }
 
 /**
- * Selects chainsetup by index (see chainsetup_status())
+ * Selects a chainsetup by index.
  *
- * @param name chainsetup name 
+ * @param index_number an integer identifier 
  *
  * require:
- *  index.empty() != true
- *  index[0] == 'c'
- *
- * ensure:
- *  selected_chainsetup_rep == 0
+ *  index_number > 0
  */
-void ECA_CONTROL_OBJECTS::select_chainsetup_by_index(const string& index) { 
+void ECA_CONTROL_OBJECTS::select_chainsetup_by_index(int index_number) { 
   // --------
-  // require:
-  assert(index.empty() != true);
-  assert(index[0] == 'c');
+  REQUIRE(index_number > 0);
   // --------
-
-  int index_number = ::atoi(string(index.begin() + 1,
-				 index.end()).c_str());
 
   for(vector<ECA_CHAINSETUP*>::size_type p = 0; 
       p != session_repp->chainsetups_rep.size();
@@ -743,7 +734,39 @@ void ECA_CONTROL_OBJECTS::remove_chains(void) {
 }
 
 /**
- * Selects a chains (currently selected chainsetup)
+ * Selects a set of chains using index numbers. Previously 
+ * selected chains are first all deselected.
+ * 
+ *
+ * @param index_numbers set of integer identifiers
+ *
+ * require:
+ *   is_selected() == true
+ */
+void ECA_CONTROL_OBJECTS::select_chains_by_index(const vector<int>& index_numbers) { 
+  // --------
+  REQUIRE(is_selected() == true);
+  // --------
+
+  vector<string> selchains;
+  for(vector<CHAIN*>::size_type p = 0; 
+      p != selected_chainsetup_repp->chains.size();
+      p++) {
+    for(vector<int>::size_type q = 0;
+	q != index_numbers.size();
+	q++) {
+      if (index_numbers[q] == static_cast<int>(p + 1)) {
+	selchains.push_back(selected_chainsetup_repp->chains[p]->name());
+	break;
+      }
+    }
+  }
+  select_chains(selchains);
+}
+
+/**
+ * Selects a chains (currently selected chainsetup). Previously 
+ * selected chains are first all deselected.
  *
  * require:
  *   is_selected() == true
@@ -768,7 +791,8 @@ void ECA_CONTROL_OBJECTS::select_chain(const string& chain) {
 
 
 /**
- * Selects chains (currently selected chainsetup)
+ * Selects chains (currently selected chainsetup). Previously 
+ * selected chains are first all deselected.
  *
  * @param chains vector of chain names
  *
@@ -1367,6 +1391,32 @@ void ECA_CONTROL_OBJECTS::add_default_output(void) {
   // --------
   add_audio_output(session_repp->ecaresources.resource("default-output"));
   ecadebug->msg("(eca-controller) Added default output to selected chains.");
+}
+
+/**
+ * Gets a vector of all audio input names.
+ *
+ * require:
+ *  is_selected() == true
+ */
+vector<string> ECA_CONTROL_OBJECTS::audio_input_names(void) const {
+  // --------
+  REQUIRE(is_selected() == true);
+  // --------
+  return(selected_chainsetup_repp->audio_input_names());
+}
+
+/**
+ * Gets a vector of all audio output names.
+ *
+ * require:
+ *  is_selected() == true
+ */
+vector<string> ECA_CONTROL_OBJECTS::audio_output_names(void) const {
+  // --------
+  REQUIRE(is_selected() == true);
+  // --------
+  return(selected_chainsetup_repp->audio_output_names());
 }
 
 /** 

@@ -2,6 +2,11 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2001-04-23  Kai Vehmanen <kaiv@wakkanet.fi>	
+	
+	* kvutils.h (string_to_int_vector): added
+
+	
 2001-03-22  Kai Vehmanen <kaiv@wakkanet.fi>
 	
 	* temporary_file_directory.h (all): added

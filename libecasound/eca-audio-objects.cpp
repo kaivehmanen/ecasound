@@ -306,6 +306,28 @@ vector<string> ECA_AUDIO_OBJECTS::chain_names(void) const {
   return(result);
 }
 
+vector<string> ECA_AUDIO_OBJECTS::audio_input_names(void) const {
+  vector<string> result;
+  vector<AUDIO_IO*>::const_iterator p = inputs.begin();
+  while(p != inputs.end()) {
+    result.push_back((*p)->label());
+    ++p;
+  }
+  return(result);
+}
+
+vector<string> ECA_AUDIO_OBJECTS::audio_output_names(void) const {
+  vector<string> result;
+  vector<AUDIO_IO*>::const_iterator p = outputs.begin();
+  while(p != outputs.end()) {
+    result.push_back((*p)->label());
+    ++p;
+  }
+  return(result);
+}
+
+
+
 vector<string>
 ECA_AUDIO_OBJECTS::get_attached_chains_to_input(AUDIO_IO* aiod) const{ 
   vector<string> res;

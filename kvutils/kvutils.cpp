@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvutils.cpp: Misc helper routines
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <sys/time.h>
+#include <sys/time.h> /* gettimeofday() */
 #include <unistd.h>
+#include <stdlib.h> /* atoi() */
 
 #include <string>
 #include <vector>
@@ -62,6 +63,26 @@ vector<string> string_to_vector(const string& str, const
   }
   if (stmp.size() > 0)
     vec.push_back(stmp);
+
+  return(vec);
+}
+
+vector<int> string_to_int_vector(const string& str, 
+				 const string::value_type separator) {
+  vector<int> vec;
+  string stmp = "";
+
+  for(string::const_iterator p = str.begin(); p != str.end(); p++) {
+    if (*p != separator)
+      stmp += *p;
+    else {
+      if (stmp == "") continue;
+      vec.push_back(atoi(stmp.c_str()));
+      stmp = "";
+    }
+  }
+  if (stmp.size() > 0)
+    vec.push_back(atoi(stmp.c_str()));
 
   return(vec);
 }

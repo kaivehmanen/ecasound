@@ -37,6 +37,10 @@
 	* eca-control-objects.h (forward_audio_object): moved to protected scope
 	* eca-control-objects.h (set_audio_object_position): moved to protected scope
 	* eca-control-objects.h (wave_edit_audio_object): moved to protected scope	
+	* eca-control-objects.h (select_chainsetup_by_index): argument type changed
+	* eca-control-objects.h (select_chains_by_index): added
+	* eca-control-objects.h (audio_input_names,audio_output_names): added
+	* eca-audio-objects.h (audio_input_names,audio_output_names): added
 	
 2001-04-09  Kai Vehmanen <kaiv@wakkanet.fi>
 

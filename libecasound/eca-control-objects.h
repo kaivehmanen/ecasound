@@ -39,7 +39,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void load_chainsetup(const string& filename);
   void save_chainsetup(const string& filename);
   void select_chainsetup(const string& name);
-  void select_chainsetup_by_index(const string& index);
+  void select_chainsetup_by_index(int index);
   void edit_chainsetup(void);
   void connect_chainsetup(void);
   void disconnect_chainsetup(void);
@@ -72,6 +72,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void add_chains(const string& names);
   void add_chains(const vector<string>& names);
   void remove_chains(void);
+  void select_chains_by_index(const vector<int>& index_numbers);
   void select_chain(const string& chain);
   void select_chains(const vector<string>& chains);
   void deselect_chains(const vector<string>& chains);
@@ -95,21 +96,26 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   // -------------------------------------------------------------------
 
   void add_audio_input(const string& filename);
+  void remove_audio_input(void);
+  void attach_audio_input(void);
+  void select_audio_input(const string& name);
+  void select_audio_input_by_index(int index);
+
   void add_audio_output(const string& filename);
   void add_default_output(void);
-  void remove_audio_input(void);
   void remove_audio_output(void);
-  void attach_audio_input(void);
   void attach_audio_output(void);
-  void select_audio_input(const string& name);
   void select_audio_output(const string& name);
-  void select_audio_input_by_index(int index);
   void select_audio_output_by_index(int index);
   void set_default_audio_format(const string& sfrm, int channels, long int srate, bool interleaving);
   void set_default_audio_format(const ECA_AUDIO_FORMAT& format);
 
-  AUDIO_IO* get_audio_output(void) const;
   AUDIO_IO* get_audio_input(void) const;
+  vector<string> audio_input_names(void) const;
+
+  AUDIO_IO* get_audio_output(void) const;
+  vector<string> audio_output_names(void) const;
+
   ECA_AUDIO_FORMAT get_audio_format(AUDIO_IO* aobj) const;
 
   // -------------------------------------------------------------------
