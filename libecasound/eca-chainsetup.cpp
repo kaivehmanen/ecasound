@@ -1152,7 +1152,6 @@ void ECA_CHAINSETUP::add_input(AUDIO_IO* aio) {
   aio->set_io_mode(AUDIO_IO::io_read);
   aio->set_audio_format(default_audio_format());
   aio->set_buffersize(buffersize());
-  aio->set_samples_per_second(samples_per_second());
   
   register_audio_object_to_manager(aio);
   AUDIO_IO* layerobj = add_audio_object_helper(aio);
@@ -1194,7 +1193,6 @@ void ECA_CHAINSETUP::add_output(AUDIO_IO* aio, bool truncate) {
 
   aio->set_audio_format(default_audio_format());
   aio->set_buffersize(buffersize());
-  aio->set_samples_per_second(samples_per_second());
   if (truncate == true) 
     aio->set_io_mode(AUDIO_IO::io_write);
   else
