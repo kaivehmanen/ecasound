@@ -33,6 +33,7 @@ AC_PROG_CPP
 AC_PROG_MAKE_SET
 dnl AC_PROG_RANLIB
 AC_PROG_INSTALL
+AC_CHECK_CXX_NAMESPACE_SUPPORT
 
 dnl ------------------------------------------------------------------
 
@@ -141,7 +142,6 @@ AC_SEARCH_LIBS(nanosleep, posix4)
 AC_SEARCH_LIBS(sched_setscheduler, posix4)
 AC_CHECK_LIB(m, sin)
 AC_CHECK_LIB(dl, dlopen)
-
 
 dnl ---
 dnl Check for ncurses/termcap

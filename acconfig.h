@@ -50,3 +50,5 @@
 /* use locking primitives found in asm/atomic.h */
 #undef USE_ASM_ATOMIC
 
+/* use C++ std namespace */
+#undef USE_CXX_STD_NAMESPACE

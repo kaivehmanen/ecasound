@@ -51,7 +51,7 @@ using std::string;
 int main(void)
 {	
 	string s ("foo");
- 	std::vector v;
+ 	std::vector<string> v;
 	return(0);
 }
 ],
