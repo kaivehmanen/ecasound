@@ -61,5 +61,5 @@ install-data-local:
 # Uninstall targets
 uninstall-local:
 	cd $(DESTDIR)$(includedir)/kvutils && \
-	rm -f   $(kvutil_headers)
-	rmdir   $(DESTDIR)$(includedir)/kvutils
+	rm -f $(kvutil_headers)
+	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(includedir)/kvutils
