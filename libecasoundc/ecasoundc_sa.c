@@ -6,6 +6,7 @@
 /* FIXME: change to LGPL...? */
 /* FIXME: add check for big sync-error -> ecasound probably 
  *        died so better to give an error */
+/* FIXME: add check for msgsize errors */
 /* FIXME: get rid of the static string lengths (C... blaah ;)) */
 /* FIXME: add documentation for ECASOUND envvar */
 /* FIXME: add proper signal handling */
@@ -495,7 +496,7 @@ const char* eci_last_string_list_item_r(eci_handle_t ptr, int n)
   for(i = eci_rep->parser_repp->last_los_repp;  
       i != NULL; 
       i = i->next_repp) {
-    if (++count == n) {
+    if (count++ == n) {
       return i->data_repp;
     }
   }
@@ -682,6 +683,11 @@ void eci_impl_los_list_add_item(struct eci_los_list** headptr, char* stmp, int l
 {
   struct eci_los_list* i = *headptr;
   struct eci_los_list* prev = NULL;
+  
+  if (len >= ECI_MAX_STRING_SIZE) {
+    fprintf(stderr, "(ecasoundc_sa) WARNING! String list buffer overflowed!\n\n");
+    len = ECI_MAX_STRING_SIZE - 1;
+  }
 
   stmp[len] = 0;
   /* ECI_DEBUG_1("(ecasoundc_sa) adding item '%s' to los list\n", stmp); */
@@ -692,7 +698,7 @@ void eci_impl_los_list_add_item(struct eci_los_list** headptr, char* stmp, int l
       if (prev != NULL) prev->next_repp = i;
       if (*headptr == NULL) *headptr = i;
 
-      memcpy(i->data_repp, stmp, len);
+      memcpy(i->data_repp, stmp, len + 1);
       /* ECI_DEBUG_1("(ecasoundc_sa) copied %d bytes to %p.\n", len, i->data_repp); */
 
       break;
@@ -817,7 +823,6 @@ void eci_impl_set_last_los_value(struct eci_parser* parser)
   if (m > 0) {
     eci_impl_los_list_add_item(i, stmp, m);
   }
-
 
   /* delete tmp char-buffer */
   free(stmp);
