@@ -66,6 +66,7 @@ extern "C" {
 #include "audioio-oss.h"
 #include "audioio-ewf.h"
 #include "audioio-mp3.h"
+#include "audioio-ogg.h"
 #include "audioio-mikmod.h"
 #include "audioio-timidity.h"
 #include "audioio-raw.h"
@@ -119,6 +120,9 @@ void register_default_audio_objects(void) {
   AUDIO_IO* mp3 = new MP3FILE();
   eca_audio_object_map.register_object(".mp3", mp3);
   eca_audio_object_map.register_object(".mp2", mp3);
+
+  AUDIO_IO* ogg = new OGG_VORBIS_INTERFACE();
+  eca_audio_object_map.register_object(".ogg", ogg);
 
   AUDIO_IO* mikmod = new MIKMOD_INTERFACE();
   eca_audio_object_map.register_object(".669", mikmod);

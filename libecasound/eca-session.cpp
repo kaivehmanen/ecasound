@@ -39,6 +39,7 @@
 #include "audioio-mp3.h"
 #include "audioio-mikmod.h"
 #include "audioio-timidity.h"
+#include "audioio-ogg.h"
 
 #include "osc-gen.h"
 
@@ -111,6 +112,8 @@ void ECA_SESSION::set_defaults(void) {
   MP3FILE::set_mp3_output_cmd(ecaresources.resource("ext-mp3-output-cmd"));
   MIKMOD_INTERFACE::set_mikmod_cmd(ecaresources.resource("ext-mikmod-cmd"));
   TIMIDITY_INTERFACE::set_timidity_cmd(ecaresources.resource("ext-timidity-cmd"));
+  OGG_VORBIS_INTERFACE::set_ogg_input_cmd(ecaresources.resource("ext-ogg-input-cmd"));
+  OGG_VORBIS_INTERFACE::set_ogg_output_cmd(ecaresources.resource("ext-ogg-output-cmd"));
 
   multitrack_mode_rep = false;
 }
