@@ -2,6 +2,7 @@
 #define INCLUDED_AUDIOIO_CDR_H
 
 #include <string>
+#include <cstdio>
 #include <iostream>
 #include "samplebuffer.h"
 

@@ -64,6 +64,12 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-14) Making ALSA the default output device with a compile 
 	 time options. 
 	 submitted: Patrick Shirkey, 18.8.2001
+(edi-15) More intelligent system for selecting buffering modes 
+         and sizes for optimal out-of-the-box performance.
+	 submitted: kaiv, 09.08.2001
+(edi-16) More flexible system for assigning controllers of 
+         controllers (-kx).
+	 submitted: jhalttun, 02.09.2001
 
 -----------------------------------------------------------------------
 [ Closed items ]

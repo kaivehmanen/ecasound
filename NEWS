@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 080901) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 100901) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -33,6 +33,7 @@ Last officially released version is -*> v2.0.2 *-
 	- changed: use of libstdc++ namespace now explicitly
 		   marked using the 'std::' prefix [rpolton]
 	- fixed: gcc3.x fixes to ALSA 0.5.x plugin [juekawa]
+	- fixed: problems with ALSA 0.9beta7 (dlopen() issue)
 ??0?2001 (v2.0.3)  -** stable release **-
 	- added: more recent config.guess and config.sub to 
 	         the dist package  [juekawa]

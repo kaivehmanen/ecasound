@@ -1,6 +1,7 @@
 #ifndef INCLUDED_FILEIO_STREAM_H
 #define INCLUDED_FILEIO_STREAM_H
 
+#include <cstdio>
 #include "eca-fileio.h"
 
 /**

@@ -2,6 +2,7 @@
 #define INCLUDED_AUDIOIO_MP3_H
 
 #include <string>
+#include <cstdio>
 #include "audioio-types.h"
 #include "samplebuffer.h"
 #include "audioio-forked-stream.h"

@@ -23,6 +23,7 @@
 #include <cstring>
 #include <iostream>
 #include <cstring>
+#include <cstdio>
 
 #include <sys/stat.h>
 #include <sys/types.h>
