@@ -683,6 +683,7 @@ if test x$enable_sysreadline = xyes ; then
   	echo "readline includes:		"$readline_includes
 fi  
 
-echo "-----------------------------------------------------------------"
+echo "-------------------------------------------------------------------"
 echo "Type 'make' to compile the package and 'make install' to install."
-echo "-----------------------------------------------------------------"
+echo "Remember to use GNU Make, often installed as 'gmake'.
+echo "-------------------------------------------------------------------"
