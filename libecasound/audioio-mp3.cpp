@@ -118,7 +118,11 @@ void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR*) {
   m << "MP3 length_value: " << newlayer.length() << "\n.";
   m << "bsecond: " << bsecond << "\n.";
   m << "bitrate: " << bitrate << "\n.";
-  length_in_samples((long)ceil(8.0 * fsize / bitrate * bsecond / frame_size()));
+  if (bitrate != 0)
+    length_in_samples((long)ceil(8.0 * fsize / bitrate * bsecond / frame_size()));
+  
+  if (bitrate == 0 ||
+      length_in_samples() < 0) length_in_samples(0);
 
   m << "Setting MP3 length_value: " << length_in_seconds() << "\n.";
   pcm_rep = newlayer.pcmPerFrame();

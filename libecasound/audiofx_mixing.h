@@ -30,9 +30,9 @@ private:
 
 public:
 
-  string name(void) const { return("Channel copy"); }
-
-  string parameter_names(void) const { return("from-channel,to-channel"); }
+  virtual string name(void) const { return("Channel copy"); }
+  virtual string parameter_names(void) const { return("from-channel,to-channel"); }
+  virtual pair<parameter_type,parameter_type> default_parameter_range(int param) const { return(make_pair(1.0,0.0)); }
 
   int output_channels(int i_channels) const;
 
@@ -66,9 +66,9 @@ private:
 
 public:
 
-  string name(void) const { return("Mix to channel"); }
-
-  string parameter_names(void) const { return("to-channel"); }
+  virtual string name(void) const { return("Mix to channel"); }
+  virtual string parameter_names(void) const { return("to-channel"); }
+  virtual pair<parameter_type,parameter_type> default_parameter_range(int param) const { return(make_pair(1.0,0.0)); }
 
   int output_channels(int i_channels) const;
 

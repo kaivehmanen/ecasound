@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-09-24  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* audiofx_timebased.h (EFFECT_MODULATING_DELAY): constructor
+	parameters changed
+	
 2000-09-17  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* library version changed to 7:0:0

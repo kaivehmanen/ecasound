@@ -227,7 +227,7 @@ public:
 
   EFFECT_INVERSE_COMB_FILTER* clone(void)  { return new EFFECT_INVERSE_COMB_FILTER(*this); }  
   EFFECT_INVERSE_COMB_FILTER* new_expr(void)  { return new EFFECT_INVERSE_COMB_FILTER(); }
-  EFFECT_INVERSE_COMB_FILTER (int delay_in_samples = 0, parameter_type constant = 1.0);
+  EFFECT_INVERSE_COMB_FILTER (int delay_in_samples = 10, parameter_type constant = 1.0);
 };
 
 /**
@@ -256,7 +256,7 @@ public:
 
   EFFECT_LOWPASS* clone(void)  { return new EFFECT_LOWPASS(*this); }  
   EFFECT_LOWPASS* new_expr(void)  { return new EFFECT_LOWPASS(); }
-  EFFECT_LOWPASS (parameter_type cutoff = 0.0);
+  EFFECT_LOWPASS (parameter_type cutoff = 1000.0);
 };
 
 /**

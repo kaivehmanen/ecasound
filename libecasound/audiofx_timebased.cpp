@@ -441,6 +441,17 @@ void EFFECT_REVERB::process(void) {
   }
 }
 
+EFFECT_MODULATING_DELAY::EFFECT_MODULATING_DELAY(CHAIN_OPERATOR::parameter_type delay_time, 
+						 CHAIN_OPERATOR::parameter_type feedback_percent,
+						 long int vartime_in_samples,
+						 CHAIN_OPERATOR::parameter_type lfo_freq)
+{
+  set_parameter(1, delay_time);
+  set_parameter(2, feedback_percent);
+  set_parameter(3, vartime_in_samples);
+  set_parameter(4, lfo_freq);
+}
+
 CHAIN_OPERATOR::parameter_type EFFECT_MODULATING_DELAY::get_parameter(int param) const { 
   switch (param) {
   case 1: 

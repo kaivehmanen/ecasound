@@ -69,7 +69,7 @@ string ECA_AUDIO_TIME::to_string(format_type type) const {
       {
 	return("");
       }
-    case format_seconds: { return(kvu_numtostr(seconds())); }
+    case format_seconds: { return(kvu_numtostr(seconds(), 3)); }
     case format_samples: { return(kvu_numtostr(samples_rep)); }
 
     default: { }

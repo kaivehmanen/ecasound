@@ -177,7 +177,10 @@ class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
   virtual void set_parameter(int param, parameter_type value);
 
   virtual void init(SAMPLE_BUFFER* insample);
-  EFFECT_MODULATING_DELAY(void) : dtime_msec(1000), feedback(50.0), vartime(10), lfo(0.01) { }
+  EFFECT_MODULATING_DELAY(parameter_type delay_time = 2.0,
+			  parameter_type feedback_percent = 20.0,
+			  long int vartime_in_samples = 50,
+			  parameter_type lfo_freq = 0.4);
 };
 
 /**

@@ -418,7 +418,7 @@ void ECA_CHAINSETUP::interpret_processing_control (const string& argu) {
 	{
 	  length_in_seconds(atof(get_argument_number(1, argu).c_str()));
 	  ecadebug->msg("(eca-chainsetup) Set processing time to "
-			+ kvu_numtostr(length_in_seconds()) + ".");
+			+ kvu_numtostr(length_in_seconds_exact()) + ".");
 	  break;
 	}
 	
@@ -662,6 +662,8 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
   default: { match = false; }
   }
   if (match == true) istatus_rep = true;
+
+  return;
 }
 
 /**
@@ -944,7 +946,8 @@ void ECA_CHAINSETUP::add_default_output(void) {
     // No -o[:] options specified; let's use the default output
     select_all_chains();
     ECA_RESOURCES ecaresources;
-    interpret_audioio_device("-o:" +  ecaresources.resource("default-output"));
+    istatus_rep = false;
+    interpret_audioio_device(string("-o:" + ecaresources.resource("default-output")));
   }
 }
 
