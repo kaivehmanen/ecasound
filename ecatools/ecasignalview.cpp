@@ -308,7 +308,7 @@ void ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci, vector<struct ecasv_chann
     ecasv_update_chstats(chstats, n, value);
 
     ecasv_create_bar((*chstats)[n].drawn_peak, ecasv_bar_length_const, ecasv_bar_buffer);
-    mvprintw(ecasv_header_height_const+n, 0, "Ch-%d: %s| %.5f       %ld\n", 
+    mvprintw(ecasv_header_height_const+n, 0, "Ch-%02d: %s| %.5f       %ld\n", 
 	     n + 1, ecasv_bar_buffer, (*chstats)[n].max_peak, (*chstats)[n].clipped_samples);
   }
   move(ecasv_header_height_const + 2 + ecasv_chcount, 0);

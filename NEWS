@@ -19,6 +19,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		       a new status for items that probably won't be
 		       ever implemented
 	- note: verified to compile ok with gcc-3.3
+	- note: verified to work with python-2.3
 	- added: eaim - command 'engine-launch' to inialize engine
 		 without starting actual processing, and 'engine-halt'
 		 for halting it without disconnecting; useful with
