@@ -21,6 +21,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 'map-ladspa-list' and 'map-preset-list'; see 
 		 ecasound-iam(1) man page for details
 	- added: eiam - 'ao-add-default' command
+	- added: ecicpp_tester, a unit test program for C++ ECI
 	- changed: libecasoundc now LGPL licensed
 	- changed: edi-30; ecaplay rewritten using the new standalone
 	 	   ECI api

@@ -162,6 +162,7 @@ ecasound_general_include = 	\
 			eca-control-objects.h \
 			eca-control-dump.h \
 			eca-iamode-parser.h \
+			eca-iamode-parser_impl.h \
 			eca-audio-position.h \
 			eca-fileio.h  \
 			eca-fileio-stream.h \
