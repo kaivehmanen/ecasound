@@ -25,6 +25,8 @@ inverse_comb = -efi:8,0.999
 lowpass = -efl:300
 rejectband = -efr:1500,1000
 resonator = -efs:1500,1000
+two_filters = -efl:800 -ea:%lowgain | -efh:800 -ea:%highgain
+two_filters_pareq = -efl:%lowfrew -ea:%lowgain | -efh:%highfreq -ea:%highgain
 #
 # ======
 # Compression/dynamics
