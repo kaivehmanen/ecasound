@@ -1,6 +1,6 @@
 dnl ---
 dnl acinclude.m4 for ecasound
-dnl last modified: 20030811-5
+dnl last modified: 20040421-7
 dnl ---
 
 ## ------------------------------------------------------------------------
@@ -81,7 +81,7 @@ AC_SUBST(ECA_S_JACK_INCLUDES)
 ## 
 ## version: 2
 ##
-## modifies: CXXFLAGS, CFLAGS
+## modifies: AM_CXXFLAGS, AM_CFLAGS
 ## defines: enable_largefile
 ## ------------------------------------------------------------------------
 ##
@@ -99,8 +99,8 @@ AC_ARG_WITH(largefile,
 if test "x$enable_largefile" = "xyes"; then
   # AC_DEFINE(_FILE_OFFSET_BITS, 64)
   # AC_DEFINE(_LARGEFILE_SOURCE)
-  CXXFLAGS="$CXXFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
-  CFLAGS="$CFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
+  AM_CXXFLAGS="$AM_CXXFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
+  AM_CFLAGS="$AM_CFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
   AC_MSG_RESULT(yes.)
 else
   AC_MSG_RESULT(no.)
