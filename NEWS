@@ -14,7 +14,7 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.7.9r13 <*-
 
-??082000 (v1.8.1d14)
+30082000 (v1.8.1d14)
 	- notice: all qt-related stuff put to separate packages
 	- added: support for internal plugins; modules using external 
 		 libraries (ALSA, aRts, libaudiofile, etc) are now 
