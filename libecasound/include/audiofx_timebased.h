@@ -51,6 +51,7 @@ class EFFECT_DELAY : public EFFECT_TIME_BASED {
 
   void init(SAMPLE_BUFFER* insample);
   void process(void);
+  int output_channels(int i_channels) const { return(2); }
 
   parameter_type get_delta_in_samples(void) { return(dnum * dtime); }
 
@@ -78,6 +79,7 @@ class EFFECT_FAKE_STEREO : public EFFECT_TIME_BASED {
 
   void init(SAMPLE_BUFFER* insample);
   void process(void);
+  int output_channels(int i_channels) const { return(2); }
 
   EFFECT_FAKE_STEREO* clone(void)  { return new EFFECT_FAKE_STEREO(*this); }
   EFFECT_FAKE_STEREO (parameter_type delay_time = 0.0);
@@ -107,6 +109,7 @@ class EFFECT_REVERB : public EFFECT_TIME_BASED {
 
   void init(SAMPLE_BUFFER* insample);
   void process(void);
+  int output_channels(int i_channels) const { return(2); }
 
   parameter_type get_delta_in_samples(void) { return(dtime); }
 

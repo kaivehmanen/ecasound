@@ -11,7 +11,6 @@ class ECA_RESOURCES : public RESOURCE_FILE {
  public:
 
   void set_defaults(void);
-  bool boolean_resource(const string& tag);
 
   ECA_RESOURCES(void);
 };

@@ -205,8 +205,7 @@ void EFFECT_FAKE_STEREO::init(SAMPLE_BUFFER* insample) {
   l.init(insample);
   r.init(insample);
 
-  //  buffer.resize(insample->number_of_channels());
-  buffer.resize(2);
+  buffer.resize(insample->number_of_channels());
 }
 
 void EFFECT_FAKE_STEREO::process(void) {

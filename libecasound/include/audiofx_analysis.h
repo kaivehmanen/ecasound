@@ -29,11 +29,11 @@ class EFFECT_ANALYSIS : public EFFECT_BASE {
  */
 class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
 
-  vector<unsigned long int> num_of_samples; // number of samples processed
-  vector<vector<unsigned long int> > ranges;
+  mutable vector<unsigned long int> num_of_samples; // number of samples processed
+  mutable vector<vector<unsigned long int> > ranges;
   static const int range_count = 16;
 
-  parameter_type max;
+  mutable parameter_type max;
   SAMPLE_ITERATOR_CHANNELS i;
   
  public:
@@ -44,7 +44,7 @@ class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
 
   void init(SAMPLE_BUFFER *insample);
   void process(void);
-  string status(void);
+  string status(void) const;
   
   EFFECT_ANALYZE* clone(void)  { return new EFFECT_ANALYZE(*this); }
   EFFECT_ANALYZE (void);
@@ -67,13 +67,13 @@ private:
 
 public:
 
-  parameter_type get_deltafix(int channel);
+  parameter_type get_deltafix(int channel) const;
     
   string name(void) const { return("DC-Find"); }
 
   void init(SAMPLE_BUFFER *insample);
   void process(void);
-  string status(void);
+  string status(void) const;
 
   EFFECT_DCFIND* clone(void)  { return new EFFECT_DCFIND(*this); }
   EFFECT_DCFIND (void);

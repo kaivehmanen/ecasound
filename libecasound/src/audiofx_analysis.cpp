@@ -29,7 +29,7 @@
 
 EFFECT_ANALYZE::EFFECT_ANALYZE (void) { max = 0; }
 
-string EFFECT_ANALYZE::status(void) {
+string EFFECT_ANALYZE::status(void) const {
   MESSAGE_ITEM otemp;
   otemp << "(audiofx) -- Printing volume statistics --\n";
   for(int nm = 0; nm < range_count; nm++) {
@@ -106,7 +106,7 @@ void EFFECT_ANALYZE::process(void) {
 
 EFFECT_DCFIND::EFFECT_DCFIND (void) { }
 
-string EFFECT_DCFIND::status(void) {
+string EFFECT_DCFIND::status(void) const {
     MESSAGE_ITEM mitem;
     mitem.setprecision(5);
     mitem << "(audiofx) Optimal value for DC-adjust: ";
@@ -115,7 +115,7 @@ string EFFECT_DCFIND::status(void) {
     return(mitem.to_string());
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_DCFIND::get_deltafix(int channel) { 
+DYNAMIC_PARAMETERS::parameter_type EFFECT_DCFIND::get_deltafix(int channel) const { 
   SAMPLE_SPECS::sample_type deltafix;
 
   if (pos_sum[channel] > neg_sum[channel]) deltafix = -(pos_sum[channel] - neg_sum[channel]) / num_of_samples[channel];

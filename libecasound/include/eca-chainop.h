@@ -30,7 +30,7 @@ class CHAIN_OPERATOR : public DYNAMIC_OBJECT {
    * Optional status info.
    * @param single_sample pointer to a single sample
    */
-  virtual string status(void) { return(""); }
+  virtual string status(void) const { return(""); }
 
   /** 
    * If sample buffer used for initializing has 'i_channels' audio 
@@ -38,7 +38,7 @@ class CHAIN_OPERATOR : public DYNAMIC_OBJECT {
    * produced. Must be reimplemented if channel count changes 
    * during processing.
    */
-  virtual int output_channels(int i_channels) { return(i_channels); }
+  virtual int output_channels(int i_channels) const { return(i_channels); }
 
   /**
    * Virtual method that clones the current object and returns 

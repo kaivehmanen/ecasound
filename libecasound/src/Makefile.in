@@ -108,7 +108,7 @@ ecasound_audioio_src = audioio-cdr.cpp 			audioio-ewf.cpp 			audioio-mp3.cpp 			
 ecasound_controller_src =  	generic-controller.cpp 	midi-cc.cpp 	osc-gen.cpp 	osc-sine.cpp 	linear-envelope.cpp
 
 
-ecasound_general_src = eca-chain.cpp 			eca-main.cpp 			eca-midi.cpp 			eca-session.cpp 			eca-resources.cpp 			resource-file.cpp 			eca-comhelp.cpp 			eca-debug.cpp 			layer.cpp 			samplebuffer_iterators.cpp 			samplebuffer.cpp 			eca-version.cpp  			eca-chainsetup.cpp 			eca-controller.cpp 			eca-controller-base.cpp 			eca-controller-objects.cpp 			eca-iamode-parser.cpp 			eca-control-position.cpp 			eca-audio-position.cpp 			eca-audio-objects.cpp 			eca-audio-format.cpp 			eca-fileio-stream.cpp 			eca-fileio-mmap.cpp 			eca-fileio-mmap-fthread.cpp 			eca-alsa-dyn.cpp eca-mthreaded-processor.cpp 			eca-chainop-map.cpp eca-controller-map.cpp
+ecasound_general_src = eca-chain.cpp 			eca-main.cpp 			eca-midi.cpp 			eca-session.cpp 			eca-resources.cpp 			resource-file.cpp 			eca-comhelp.cpp 			eca-debug.cpp 			layer.cpp 			samplebuffer_iterators.cpp 			samplebuffer.cpp 			eca-version.cpp  			eca-chainsetup.cpp 			eca-controller.cpp 			eca-controller-base.cpp 			eca-controller-objects.cpp 			eca-iamode-parser.cpp 			eca-control-position.cpp 			eca-audio-position.cpp 			eca-audio-objects.cpp 			eca-audio-format.cpp 			eca-audio-time.cpp 			eca-fileio-stream.cpp 			eca-fileio-mmap.cpp 			eca-fileio-mmap-fthread.cpp 			eca-alsa-dyn.cpp eca-mthreaded-processor.cpp 			eca-chainop-map.cpp eca-controller-map.cpp
 
 
 ecasound_common_src = $(ecasound_audiofx_src) $(ecasound_audioio_src) 		      $(ecasound_controller_src) $(ecasound_general_src)
@@ -151,9 +151,9 @@ eca-debug.lo layer.lo samplebuffer_iterators.lo samplebuffer.lo \
 eca-version.lo eca-chainsetup.lo eca-controller.lo \
 eca-controller-base.lo eca-controller-objects.lo eca-iamode-parser.lo \
 eca-control-position.lo eca-audio-position.lo eca-audio-objects.lo \
-eca-audio-format.lo eca-fileio-stream.lo eca-fileio-mmap.lo \
-eca-fileio-mmap-fthread.lo eca-alsa-dyn.lo eca-mthreaded-processor.lo \
-eca-chainop-map.lo eca-controller-map.lo
+eca-audio-format.lo eca-audio-time.lo eca-fileio-stream.lo \
+eca-fileio-mmap.lo eca-fileio-mmap-fthread.lo eca-alsa-dyn.lo \
+eca-mthreaded-processor.lo eca-chainop-map.lo eca-controller-map.lo
 @COMPILE_AF_FALSE@libecasound_la_DEPENDENCIES = 
 @COMPILE_AF_TRUE@libecasound_la_DEPENDENCIES = 
 libecasound_la_OBJECTS =  audiofx.lo audiofx_amplitude.lo \
@@ -169,9 +169,9 @@ eca-debug.lo layer.lo samplebuffer_iterators.lo samplebuffer.lo \
 eca-version.lo eca-chainsetup.lo eca-controller.lo \
 eca-controller-base.lo eca-controller-objects.lo eca-iamode-parser.lo \
 eca-control-position.lo eca-audio-position.lo eca-audio-objects.lo \
-eca-audio-format.lo eca-fileio-stream.lo eca-fileio-mmap.lo \
-eca-fileio-mmap-fthread.lo eca-alsa-dyn.lo eca-mthreaded-processor.lo \
-eca-chainop-map.lo eca-controller-map.lo
+eca-audio-format.lo eca-audio-time.lo eca-fileio-stream.lo \
+eca-fileio-mmap.lo eca-fileio-mmap-fthread.lo eca-alsa-dyn.lo \
+eca-mthreaded-processor.lo eca-chainop-map.lo eca-controller-map.lo
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -193,11 +193,11 @@ DEP_FILES =  .deps/audiofx.P .deps/audiofx_amplitude.P \
 .deps/audioio-mp3.P .deps/audioio-oss.P .deps/audioio-raw.P \
 .deps/audioio-rtnull.P .deps/audioio-types.P .deps/audioio-wave.P \
 .deps/audioio.P .deps/eca-alsa-dyn.P .deps/eca-audio-format.P \
-.deps/eca-audio-objects.P .deps/eca-audio-position.P .deps/eca-chain.P \
-.deps/eca-chainop-map.P .deps/eca-chainsetup.P .deps/eca-comhelp.P \
-.deps/eca-control-position.P .deps/eca-controller-base.P \
-.deps/eca-controller-map.P .deps/eca-controller-objects.P \
-.deps/eca-controller.P .deps/eca-debug.P \
+.deps/eca-audio-objects.P .deps/eca-audio-position.P \
+.deps/eca-audio-time.P .deps/eca-chain.P .deps/eca-chainop-map.P \
+.deps/eca-chainsetup.P .deps/eca-comhelp.P .deps/eca-control-position.P \
+.deps/eca-controller-base.P .deps/eca-controller-map.P \
+.deps/eca-controller-objects.P .deps/eca-controller.P .deps/eca-debug.P \
 .deps/eca-fileio-mmap-fthread.P .deps/eca-fileio-mmap.P \
 .deps/eca-fileio-stream.P .deps/eca-iamode-parser.P .deps/eca-main.P \
 .deps/eca-midi.P .deps/eca-mthreaded-processor.P .deps/eca-resources.P \

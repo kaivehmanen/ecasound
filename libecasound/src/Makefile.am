@@ -92,6 +92,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-audio-position.cpp \
 			eca-audio-objects.cpp \
 			eca-audio-format.cpp \
+			eca-audio-time.cpp \
 			eca-fileio-stream.cpp \
 			eca-fileio-mmap.cpp \
 			eca-fileio-mmap-fthread.cpp \

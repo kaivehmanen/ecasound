@@ -2,6 +2,12 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-01-25  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-audio-time.h: added
+	* eca-chainop.h (status): changed to const
+	* eca-chainop.h (output_channels): changed to const
+	
 2000-01-22  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-controller-base.h (is_finished): added

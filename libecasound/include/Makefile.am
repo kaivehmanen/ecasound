@@ -73,7 +73,8 @@ ecasound_general_src = 	eca-chain.h \
 			dynamic-object.h \
 			samplebuffer_iterators.h \
 			eca-audio-objects.h \
-			eca-audio-format.h
+			eca-audio-format.h \
+			eca-audio-time.h
 
 #pkgincludedir_HEADERS = $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_general_src)
 

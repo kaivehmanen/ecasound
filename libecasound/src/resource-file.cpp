@@ -33,6 +33,11 @@ RESOURCE_FILE::~RESOURCE_FILE(void) {
        loaded_resource_values != rcmap.size())) save();
 }
 
+bool RESOURCE_FILE::boolean_resource(const string& tag) {
+  if (resource(tag) == "true") return(true);
+  return(false);
+}
+
 void RESOURCE_FILE::load(void) {
   ifstream fin (res_file.c_str());
 

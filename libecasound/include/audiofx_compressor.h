@@ -93,6 +93,7 @@ class ADVANCED_COMPRESSOR : public EFFECT_AMPLITUDE {
 
   void init(SAMPLE_BUFFER *insample);
   void process(void);
+  int output_channels(int i_channels) const { return(2); }
 
   ADVANCED_COMPRESSOR* clone(void)  { return new ADVANCED_COMPRESSOR(*this); }
   ADVANCED_COMPRESSOR (double peak_limit, double release_time, double cfrate, double crate);

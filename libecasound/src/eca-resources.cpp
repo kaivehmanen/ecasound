@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca_resources.cpp: User settings (~/.ecasoundrc)
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,11 +26,6 @@
 ECA_RESOURCES::ECA_RESOURCES(void) { 
   set_resource_file(string(getenv("HOME")) + "/" + ".ecasoundrc");
   set_defaults(); 
-}
-
-bool ECA_RESOURCES::boolean_resource(const string& tag) {
-  if (resource(tag) == "true") return(true);
-  return(false);
 }
 
 void ECA_RESOURCES::set_defaults(void) {

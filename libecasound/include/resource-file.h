@@ -31,6 +31,8 @@ class RESOURCE_FILE {
   const string& resource(const string& tag);
   void resource(const string& tag, const string& value);
 
+  bool boolean_resource(const string& tag);
+
   RESOURCE_FILE(void) : changed_rep(false), use_equal_sign(true), loaded_resource_values(-1) { }
   ~RESOURCE_FILE(void);
 };
