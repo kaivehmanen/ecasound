@@ -52,9 +52,11 @@ EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&) 
 	LADSPA_PORT_CONTROL) {
       params.push_back(1.0);
       if (params.size() > 1) param_names_rep += ",";
-      param_names_rep += string(plugin_desc->PortNames[m]);
+      param_names_rep += string_search_and_replace(string(plugin_desc->PortNames[m]), ',', ' ');;
     }
   }
+//    cerr << "Plugin " << label_rep << " (" << unique_number_rep << "): "
+//         << param_names_rep << "." << endl;
 }
 
 EFFECT_LADSPA::~EFFECT_LADSPA (void) {

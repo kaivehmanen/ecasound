@@ -47,6 +47,8 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- fixed: input problems (easily triggered by using -sr)
 		 with .mp3, .mid and mikmod modules
 	- fixed: c-setpos didn't work if chainsetup wasn't connected
+	- fixed: commas in descriptions of LADSPA plugin parameters
+		 confused ecasound, and usually ended up crashing
 07112000 (v1.8.4d15)
 	- added: pulse gate (-eemp); can be used to generate a
 	         metronome signal [rcs]
