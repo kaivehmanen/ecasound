@@ -10,7 +10,7 @@ class ECA_CHAINSETUP_impl {
 
  public:
 
-  friend ECA_CHAINSETUP;
+  friend class ECA_CHAINSETUP;
 
  private:
 

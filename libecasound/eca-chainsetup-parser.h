@@ -1,6 +1,9 @@
 #ifndef INCLUDED_ECA_CHAINSETUP_PARSER_H
 #define INCLUDED_ECA_CHAINSETUP_PARSER_H
 
+#include <vector>
+#include <string>
+
 class ECA_CHAINSETUP;
 class AUDIO_IO;
 
@@ -34,7 +37,7 @@ class ECA_CHAINSETUP_PARSER {
   void interpret_option(const std::string& arg);
   void interpret_global_option(const std::string& arg);
   void interpret_object_option(const std::string& arg);
-  void interpret_options(vector<string>& opts);
+  void interpret_options(std::vector<std::string>& opts);
 
   void reset_interpret_status(void);
   void preprocess_options(std::vector<std::string>& opts) const;
@@ -76,7 +79,7 @@ class ECA_CHAINSETUP_PARSER {
   AUDIO_IO* last_audio_object_repp;
   bool istatus_rep; /* whether we have found an option match? */
   bool interpret_result_rep; /* whether we found an option match with correct format? */
-  string interpret_result_verbose_rep;
+  std::string interpret_result_verbose_rep;
 
 };
 

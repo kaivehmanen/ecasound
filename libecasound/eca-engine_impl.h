@@ -17,7 +17,7 @@
  */
 class ECA_ENGINE_impl {
 
-  friend ECA_ENGINE;
+  friend class ECA_ENGINE;
 
  private:
 

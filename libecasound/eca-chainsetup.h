@@ -63,8 +63,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /*@{*/
 
   ECA_CHAINSETUP(void);
-  ECA_CHAINSETUP(const vector<string>& options);
-  ECA_CHAINSETUP(const string& setup_file);
+  ECA_CHAINSETUP(const std::vector<std::string>& options);
+  ECA_CHAINSETUP(const std::string& setup_file);
   virtual ~ECA_CHAINSETUP(void);
 
   /*@}*/
@@ -75,15 +75,15 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void add_input(AUDIO_IO* aiod);
   void add_output(AUDIO_IO* aiod);
   void add_default_output(void);
-  void remove_audio_input(const string& label);
-  void remove_audio_output(const string& label);
+  void remove_audio_input(const std::string& label);
+  void remove_audio_output(const std::string& label);
   void attach_input_to_selected_chains(const AUDIO_IO* obj);
   void attach_output_to_selected_chains(const AUDIO_IO* obj);
   void audio_object_info(const AUDIO_IO* aio) const;
   bool ok_audio_object(const AUDIO_IO* aobj) const;
   bool is_realtime_target_output(int output_id) const;
-  vector<string> audio_input_names(void) const;
-  vector<string> audio_output_names(void) const;
+  std::vector<std::string> audio_input_names(void) const;
+  std::vector<std::string> audio_output_names(void) const;
 
   /*@}*/
 
@@ -91,20 +91,20 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /*@{*/
 
   void add_default_chain(void);
-  void add_new_chains(const vector<string>& newchains);
+  void add_new_chains(const std::vector<std::string>& newchains);
   void remove_chains(void);
-  void select_chains(const vector<string>& chains) { selected_chainids = chains; }
+  void select_chains(const std::vector<std::string>& chains) { selected_chainids = chains; }
   void select_all_chains(void);
   void clear_chains(void);
-  void rename_chain(const string& name);
+  void rename_chain(const std::string& name);
   void toggle_chain_muting(void);
   void toggle_chain_bypass(void);
 
-  const vector<string>& selected_chains(void) const { return(selected_chainids); }
+  const std::vector<std::string>& selected_chains(void) const { return(selected_chainids); }
   unsigned int first_selected_chain(void) const; 
-  vector<string> chain_names(void) const;
-  vector<string> get_attached_chains_to_iodev(const string& filename) const;
-  const CHAIN* get_chain_with_name(const string& name) const;
+  std::vector<std::string> chain_names(void) const;
+  std::vector<std::string> get_attached_chains_to_iodev(const std::string& filename) const;
+  const CHAIN* get_chain_with_name(const std::string& name) const;
 
   /*@}*/
 
@@ -112,7 +112,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /*@{*/
 
   void add_midi_device(MIDI_IO* mididev);
-  void remove_midi_device(const string& name);
+  void remove_midi_device(const std::string& name);
 
   /*@}*/
 
@@ -132,14 +132,14 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void toggle_ignore_xruns(bool v) { ignore_xruns_rep = v; }
   void set_output_openmode(int value) { output_openmode_rep = value; }
   void set_default_audio_format(ECA_AUDIO_FORMAT& value);
-  void set_default_midi_device(const string& name) { default_midi_device_rep = name; }
+  void set_default_midi_device(const std::string& name) { default_midi_device_rep = name; }
   void set_mixmode(Mix_mode_t value) { mixmode_rep = value; }
   void set_buffering_mode(Buffering_mode_t value);
 
   bool precise_sample_rates(void) const { return(precise_sample_rates_rep); }
   bool ignore_xruns(void) const { return(ignore_xruns_rep); }
   const ECA_AUDIO_FORMAT& default_audio_format(void) const;
-  const string& default_midi_device(void) const { return(default_midi_device_rep); }
+  const std::string& default_midi_device(void) const { return(default_midi_device_rep); }
   int output_openmode(void) const { return(output_openmode_rep); }
   Mix_mode_t mixmode(void) const { return(mixmode_rep); }
   Buffering_mode_t buffering_mode(void) const { return(buffering_mode_rep); }
@@ -169,13 +169,13 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /** @name Functions that modify current state  */
   /*@{*/
 
-  void set_name(const string& str) { setup_name_rep = str; }
-  void set_filename(const string& str) { setup_filename_rep = str; }
+  void set_name(const std::string& str) { setup_name_rep = str; }
+  void set_filename(const std::string& str) { setup_filename_rep = str; }
   void enable(void) throw(ECA_ERROR&);
   void disable(void);
 
-  const string& name(void) const { return(setup_name_rep); }
-  const string& filename(void) const { return(setup_filename_rep); }
+  const std::string& name(void) const { return(setup_name_rep); }
+  const std::string& filename(void) const { return(setup_filename_rep); }
 
   /*@}*/
 
@@ -197,11 +197,11 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   bool is_valid(void) const;
   bool has_realtime_objects(void) const;
   bool has_nonrealtime_objects(void) const;
-  string options_to_string(void) const;
+  std::string options_to_string(void) const;
 
   /*@}*/
 
-  /** @name Functions for string->state conversions */
+  /** @name Functions for std::string->state conversions */
   /*@{*/
 
   /**
@@ -211,20 +211,20 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
    * @result true if options interpreted succesfully, otherwise false
    */
   bool interpret_result(void) const { return(cparser_rep.interpret_result()); }
-  const string& interpret_result_verbose(void) const { return(cparser_rep.interpret_result_verbose()); }
+  const std::string& interpret_result_verbose(void) const { return(cparser_rep.interpret_result_verbose()); }
 
-  void interpret_option(const string& arg);
-  void interpret_global_option(const string& arg);
-  void interpret_object_option(const string& arg);
-  void interpret_options(vector<string>& opts);
+  void interpret_option(const std::string& arg);
+  void interpret_global_option(const std::string& arg);
+  void interpret_object_option(const std::string& arg);
+  void interpret_options(std::vector<std::string>& opts);
 
   /*@}*/
 
-  /** @name Functions for string<->state conversions */
+  /** @name Functions for std::string<->state conversions */
   /*@{*/
 
   void save(void) throw(ECA_ERROR&);
-  void save_to_file(const string& filename) throw(ECA_ERROR&);
+  void save_to_file(const std::string& filename) throw(ECA_ERROR&);
 
  private:
 
@@ -241,7 +241,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   bool rtcaps_rep;
   int output_openmode_rep;
   long int double_buffer_size_rep;
-  string default_midi_device_rep;
+  std::string default_midi_device_rep;
 
   /*@}*/
 
@@ -257,23 +257,23 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   int active_chainop_index_rep;
   int active_chainop_param_index_rep;
   int proxy_clients_rep;
-  string setup_name_rep;
-  string setup_filename_rep;
-  vector<string> selected_chainids;
+  std::string setup_name_rep;
+  std::string setup_filename_rep;
+  std::vector<std::string> selected_chainids;
   std::map<int,LOOP_DEVICE*> loop_map;
-  vector<double> input_start_pos;
-  vector<double> output_start_pos;
+  std::vector<double> input_start_pos;
+  std::vector<double> output_start_pos;
   Mix_mode_t mixmode_rep;
   Buffering_mode_t buffering_mode_rep;
   Buffering_mode_t active_buffering_mode_rep;
 
-  vector<AUDIO_IO*> inputs;
-  vector<AUDIO_IO*> inputs_direct_rep;
-  vector<AUDIO_IO*> outputs;
-  vector<AUDIO_IO*> outputs_direct_rep;
-  vector<CHAIN*> chains;
-  vector<MIDI_IO*> midi_devices;
-  list<AUDIO_IO*> aobj_garbage_rep;
+  std::vector<AUDIO_IO*> inputs;
+  std::vector<AUDIO_IO*> inputs_direct_rep;
+  std::vector<AUDIO_IO*> outputs;
+  std::vector<AUDIO_IO*> outputs_direct_rep;
+  std::vector<CHAIN*> chains;
+  std::vector<MIDI_IO*> midi_devices;
+  std::list<AUDIO_IO*> aobj_garbage_rep;
 
   AUDIO_IO_PROXY_SERVER* pserver_repp;
   MIDI_SERVER* midi_server_repp;
@@ -290,7 +290,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /** @name Functions for state<->string conversions */
   /*@{*/
 
-  void load_from_file(const string& filename, vector<string>& opts) const throw(ECA_ERROR&);
+  void load_from_file(const std::string& filename, std::vector<std::string>& opts) const throw(ECA_ERROR&);
 
   /*@}*/
 
@@ -320,12 +320,12 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   const ECA_CHAINSETUP_BUFPARAMS& active_buffering_parameters(void) const;
   const ECA_CHAINSETUP_BUFPARAMS& override_buffering_parameters(void) const;
-  vector<string> get_attached_chains_to_input(AUDIO_IO* aiod) const;
-  vector<string> get_attached_chains_to_output(AUDIO_IO* aiod) const;
+  std::vector<std::string> get_attached_chains_to_input(AUDIO_IO* aiod) const;
+  std::vector<std::string> get_attached_chains_to_output(AUDIO_IO* aiod) const;
   int number_of_attached_chains_to_input(AUDIO_IO* aiod) const;
   int number_of_attached_chains_to_output(AUDIO_IO* aiod) const;
-  bool ok_audio_object_helper(const AUDIO_IO* aobj, const vector<AUDIO_IO*>& aobjs) const;
-  void add_chain_helper(const string& name);
+  bool ok_audio_object_helper(const AUDIO_IO* aobj, const std::vector<AUDIO_IO*>& aobjs) const;
+  void add_chain_helper(const std::string& name);
 
   /*@}*/
 

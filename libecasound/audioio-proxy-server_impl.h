@@ -8,7 +8,7 @@ class AUDIO_IO_PROXY_SERVER_impl {
 
  public:
 
-  friend AUDIO_IO_PROXY_SERVER;
+  friend class AUDIO_IO_PROXY_SERVER;
 
  private:
 
