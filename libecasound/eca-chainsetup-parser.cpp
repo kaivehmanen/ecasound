@@ -190,7 +190,7 @@ void ECA_CHAINSETUP_PARSER::interpret_options(std::vector<string>& opts)
 
   if (other_matches + global_matches != optcount) {
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		string("Warning! Only ") + 
+		string("WARNING: Only ") + 
 		kvu_numtostr(other_matches) +
 		"+" +
 		kvu_numtostr(global_matches) +
@@ -730,7 +730,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 
       if (last_audio_add_vector_repp == 0) {
 	ECA_LOG_MSG(ECA_LOGGER::info, 
-		    "Error! Non-existant last audio object.");
+		    "ERROR: Non-existant last audio object.");
       }
       else {
 	AUDIO_IO* last_object = (*last_audio_add_vector_repp).back();
@@ -839,7 +839,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 		csetup_repp->midi_server_needed_rep = true;
 	      }
 	      else {
-		ECA_LOG_MSG(ECA_LOGGER::info, "MIDI-config: Warning! I/O-mode 'io_readwrite' not supported by " + mdev->name());
+		ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: I/O-mode 'io_readwrite' not supported by MIDI-device " + mdev->name());
 	      }
 	    }
 	    break;

@@ -307,7 +307,7 @@ void ECA_CONTROL_BASE::start_engine_sub(bool batchmode)
 				   start_normal_thread, 
 				   static_cast<void *>(this));
   if (retcode_rep != 0) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Unable to create a new thread for engine.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Unable to create a new thread for engine.");
     delete engine_repp;
     engine_repp = 0;
   }
@@ -344,7 +344,7 @@ void ECA_CONTROL_BASE::close_engine(void)
     engine_exited_rep.set(0);
   }
   else {
-    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Problems while shutting down the engine!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Problems while shutting down the engine!");
   }
 
   // ---

@@ -148,7 +148,7 @@ void AUDIO_IO_DB_CLIENT::read_buffer(SAMPLE_BUFFER* sbuf)
       xruns_rep++;
       sbuf->length_in_samples(0);
 
-      std::cerr << "(audioio-db-client) Warning! Underrun in reading from \"" 
+      std::cerr << "(audioio-db-client) WARNING: Underrun in reading from \"" 
 		<< child()->label() 
 		<< "\". Trying to recover." << std::endl;
     }
@@ -178,7 +178,7 @@ void AUDIO_IO_DB_CLIENT::write_buffer(SAMPLE_BUFFER* sbuf)
       /* NOTE: not always rt-safe, but it's better to break rt-safety than
        *       to lose recorded data */
 
-      std::cerr << "(audioio-db-client) Warning! Overrun in writing to \"" 
+      std::cerr << "(audioio-db-client) WARNING: Overrun in writing to \"" 
 		<< child()->label() 
 		<< "\". Trying to recover." << std::endl;
 

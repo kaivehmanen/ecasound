@@ -249,7 +249,7 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
       action_ok = false;
     }
     else {
-      ECA_LOG_MSG(ECA_LOGGER::info, "Warning! No chainsetup selected. Connected chainsetup will be selected.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: No chainsetup selected. Connected chainsetup will be selected.");
       select_chainsetup(connected_chainsetup());
     }
   }
@@ -262,7 +262,7 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
     }
     else {
       if (is_valid() == true) {
-	ECA_LOG_MSG(ECA_LOGGER::info, "Warning! No chainsetup connected. Trying to connect currently selected chainsetup.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: No chainsetup connected. Trying to connect currently selected chainsetup.");
 	connect_chainsetup();
       }
       if (is_connected() != true) {
@@ -276,7 +276,7 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
    *         but selected chainsetup is also connected */
   else if (selected_chainsetup() == connected_chainsetup() &&
 	   action_requires_selected_not_connected(action_id)) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! This operation requires that chainsetup is disconnected. Temporarily disconnecting...");
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: This operation requires that chainsetup is disconnected. Temporarily disconnecting...");
     if (is_running()) action_restart = true;
     disconnect_chainsetup();
     action_reconnect = true;
@@ -286,7 +286,7 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
 void ECA_CONTROL::action(int action_id, 
 			 const vector<string>& args) 
 {
-  ECA_LOG_MSG(ECA_LOGGER::info, "Warning: ECA_CONTROL::action() method is obsolete.\n");
+  ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: ECA_CONTROL::action() method is obsolete.\n");
   clear_action_arguments();
   set_action_argument(kvu_vector_to_string(args, " "));
   action(action_id);

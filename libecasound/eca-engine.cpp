@@ -265,7 +265,7 @@ void ECA_ENGINE::exec(bool batch_mode)
   if (res < 0) {
     ++driver_errors_rep;
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		"Warning! Engine has raised an error! "
+		"WARNING: Engine has raised an error! "
 		"Possible causes: connection lost to system services, unable to adapt "
 		"to changes in operating environment, etc.");
   }
@@ -275,7 +275,7 @@ void ECA_ENGINE::exec(bool batch_mode)
   signal_exit();
 
   if (outputs_finished_rep > 0) 
-    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! An output object has raised an error! "
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: An output object has raised an error! "
 		"Possible causes: Out of disk space, permission denied, unable to launch external "
 		"applications needed in procesing, etc.");
 
@@ -1362,7 +1362,7 @@ void ECA_ENGINE::update_cache_latency_values(void)
       else {
 	if (in_latency != realtime_inputs_rep[n]->latency()) {
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
-			"Warning! Latency mismatch between input objects!");
+			"WARNING: Latency mismatch between input objects!");
 	}
       }
 
@@ -1392,7 +1392,7 @@ void ECA_ENGINE::update_cache_latency_values(void)
 	    realtime_outputs_rep[n]->prefill_space() == 0 &&
 	    out_latency != realtime_outputs_rep[n]->latency()) {
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
-			"Warning! Latency mismatch between output objects!");
+			"WARNING: Latency mismatch between output objects!");
 	}
       }
 
@@ -1407,7 +1407,7 @@ void ECA_ENGINE::update_cache_latency_values(void)
     
     if (recording_offset_rep % buffersize()) {
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		    "Warning! Recording offset not divisible with chainsetup buffersize.");
+		    "WARNING: Recording offset not divisible with chainsetup buffersize.");
     }
     
     ECA_LOG_MSG(ECA_LOGGER::user_objects,

@@ -83,7 +83,7 @@ void ECA_OBJECT_MAP::register_object(const string& keyword, const string& expr, 
   if (expr_to_keyword(keyword) != keyword &&
       object != 0) {
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "Warning! Keyword " + keyword + 
+		  "WARNING: Keyword " + keyword + 
 		  " doesn't match to regex " + expr + 
 		  " for object '" + object->name() + 
 		  "' (" + expr_to_keyword(expr) + ").");

@@ -221,7 +221,7 @@ void MIDI_SERVER::enable(void)
 #endif
     }
 #else
-	ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Functions to query scheduler settings not available!");
+	ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Functions to query scheduler settings not available!");
 #endif
     thread_running_rep = true;
   }

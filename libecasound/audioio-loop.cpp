@@ -110,7 +110,7 @@ void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer)
 
     if (writes_rep > registered_outputs_rep) {
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "Warning! Multiple writes without reads!");
+		  "WARNING: Multiple writes without reads!");
     }
   }
   /* empty 'buffer' */

@@ -278,7 +278,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
     tempfile_dir_rep.reserve_directory(tmpdir);
   }
   if (tempfile_dir_rep.is_valid() != true) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Unable to create temporary directory \"" + tmpdir + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Unable to create temporary directory \"" + tmpdir + "\".");
     return;
   }
   string filename = tempfile_dir_rep.create_filename("cs-edit-tmp", ".ecs");

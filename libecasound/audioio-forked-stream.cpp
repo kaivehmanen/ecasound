@@ -61,7 +61,7 @@ static int afs_run_exec(const string& command, const string& filename)
   vector<string> temp = kvu_string_to_tokens_quoted(command);
   if (static_cast<int>(temp.size()) > afs_max_exec_args) {
     temp.resize(afs_max_exec_args);
-    ECA_LOG_MSG(ECA_LOGGER::info, "Warning: too many arguments for external application, truncating.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: too many arguments for external application, truncating.");
   }
   const char* args[afs_max_exec_args];
   vector<string>::size_type p = 0;
@@ -121,7 +121,7 @@ void AUDIO_IO_FORKED_STREAM::init_temp_directory(void)
     tempfile_dir_rep.reserve_directory(tmpdir);
   }
   if (tempfile_dir_rep.is_valid() != true) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Unable to create temporary directory \"" + tmpdir + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Unable to create temporary directory \"" + tmpdir + "\".");
   }
 }
 
@@ -328,7 +328,7 @@ void AUDIO_IO_FORKED_STREAM::clean_child(void)
       pid_of_child_rep = 0;
     }
     else {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Warning! Parent-pid changed!");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "WARNING: Parent-pid changed!");
     }
   }
   if (fd_rep > 0) ::close(fd_rep);

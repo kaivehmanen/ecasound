@@ -299,7 +299,7 @@ void ECA_CHAINSETUP::set_defaults(void)
   ECA_RESOURCES ecaresources;
   if (ecaresources.has_any() != true) {
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		"Warning! Unable to read global resources. May result in incorrect behaviour.");
+		"WARNING: Unable to read global resources. May result in incorrect behaviour.");
   }
   
   set_default_midi_device(ecaresources.resource("midi-device"));
@@ -417,14 +417,14 @@ bool ECA_CHAINSETUP::is_valid_for_connection(bool verbose) const
       for(int n = 0; n < static_cast<int>(inputs.size()); n++) {
 	if (std::find(conn_inputs.begin(), conn_inputs.end(), n) == conn_inputs.end()) {
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
-		      "Warning: Input \"" + inputs[n]->label() + "\" is not connected to any chain. (3.1-DISCON-INPUT)");
+		      "WARNING: Input \"" + inputs[n]->label() + "\" is not connected to any chain. (3.1-DISCON-INPUT)");
 	}
       }
       
       for(int n = 0; n < static_cast<int>(outputs.size()); n++) {
 	if (std::find(conn_outputs.begin(), conn_outputs.end(), n) == conn_outputs.end()) {
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
-		      "Warning: Output \"" + outputs[n]->label() + "\" is not connected to any chain. (3.2-DISCON-OUTPUT)");
+		      "WARNING: Output \"" + outputs[n]->label() + "\" is not connected to any chain. (3.2-DISCON-OUTPUT)");
 	}
       }
     }
@@ -599,7 +599,7 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void)
     }
     else {
       ECA_LOG_MSG(ECA_LOGGER::info,
-		    "Warning! Buffersize set to 0.");
+		    "WARNING: Buffersize set to 0.");
       impl_repp->pserver_rep.set_buffer_defaults(0, 0);
     }
   }
@@ -672,7 +672,7 @@ void ECA_CHAINSETUP::lock_all_memory(void)
 {
 #ifdef HAVE_MLOCKALL
   if (::mlockall (MCL_CURRENT|MCL_FUTURE)) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Couldn't lock all memory!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Couldn't lock all memory!");
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::system_objects, "Memory locked!");
@@ -691,7 +691,7 @@ void ECA_CHAINSETUP::unlock_all_memory(void)
 #ifdef HAVE_MUNLOCKALL
   if (memory_locked_rep == true) {
     if (::munlockall()) {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Warning! Couldn't unlock all memory!");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "WARNING: Couldn't unlock all memory!");
     }
     else 
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "Memory unlocked!");
