@@ -300,7 +300,12 @@ void ECA_CONTROL::action(int action_id) {
     set_last_string(chainsetup_status()); 
     break; 
   }
-  case ec_cs_length: 
+  case ec_cs_rewind: { change_chainsetup_position(-first_argument_as_number()); break; }
+  case ec_cs_forward: { change_chainsetup_position(first_argument_as_number()); break; }
+  case ec_cs_set_position: { set_chainsetup_position(first_argument_as_number()); break; }
+  case ec_cs_get_position: { set_last_float(position_in_seconds_exact()); break; }
+  case ec_cs_get_length: { set_last_float(length_in_seconds_exact()); break; }
+  case ec_cs_set_length: 
     { 
       set_chainsetup_processing_length_in_seconds(first_argument_as_number()); 
       break; 
@@ -457,24 +462,6 @@ void ECA_CONTROL::action(int action_id) {
       break; 
     }
   case ec_ctrl_register: { ctrl_register(); break; }
-
-    // ---
-    // Changing position
-    // ---
-  case ec_rewind: {
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_rewind, first_argument_as_number());
-    break;
-  }
-  case ec_forward: {
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_forward, first_argument_as_number());
-    break;
-  }
-  case ec_setpos: {
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_setpos, first_argument_as_number());
-    break;
-  }
-  case ec_get_position: { set_last_float(position_in_seconds_exact()); break; }
-  case ec_get_length: { set_last_float(length_in_seconds_exact()); break; }
 
   // ---
   // Session status

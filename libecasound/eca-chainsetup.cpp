@@ -259,6 +259,44 @@ void ECA_CHAINSETUP::disable(void) {
 }
 
 /**
+ * Changes the chainsetup position relatively to the current position. 
+ */
+void ECA_CHAINSETUP::change_position_exact(double seconds) { 
+  ECA_CHAINSETUP_POSITION::change_position_exact(seconds); // change the global cs position
+
+  vector<AUDIO_IO*>::iterator q = inputs.begin();
+  while(q != inputs.end()) {
+    (*q)->seek_position_in_seconds(seconds + (*q)->position_in_seconds_exact());
+    ++q;
+  }
+
+  q = outputs.begin();
+  while(q != outputs.end()) {
+    (*q)->seek_position_in_seconds(seconds + (*q)->position_in_seconds_exact());
+    ++q;
+  }
+}
+
+/**
+ * Sets the chainsetup position.
+ */
+void ECA_CHAINSETUP::set_position_exact(double seconds) {
+  ECA_CHAINSETUP_POSITION::set_position_exact(seconds); // set the global cs position
+
+  vector<AUDIO_IO*>::iterator q = inputs.begin();
+  while(q != inputs.end()) {
+    (*q)->seek_position_in_seconds(seconds);
+    ++q;
+  }
+
+  q = outputs.begin();
+  while(q != outputs.end()) {
+    (*q)->seek_position_in_seconds(seconds);
+    ++q;
+  }
+}
+
+/**
  * Preprocesses a set of options.
  * 
  * ensure:

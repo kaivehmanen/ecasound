@@ -63,6 +63,9 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
   void enable(void) throw(ECA_ERROR&);
   void disable(void);
 
+  void change_position_exact(double seconds);
+  void set_position_exact(double seconds);
+
   CHAIN_OPERATOR* create_chain_operator (const string& arg);
   CHAIN_OPERATOR* create_ladspa_plugin (const string& arg);
   CHAIN_OPERATOR* create_vst_plugin (const string& arg);

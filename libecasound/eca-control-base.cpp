@@ -331,33 +331,60 @@ bool ECA_CONTROL_BASE::is_finished(void) const {
 	 session_repp->status() == ECA_SESSION::ep_status_error); 
 } 
 
+/**
+ * Returns the length of the selected chainsetup (in samples).
+ *
+ * require:
+ *  is_selected() == true
+ */
 long ECA_CONTROL_BASE::length_in_samples(void) const { 
-  if (is_connected() == true)
-      return session_repp->connected_chainsetup_repp->length_in_samples(); 
-  else
-    return(0);
+  // --------
+  REQUIRE(is_selected());
+  // --------
+
+  return(selected_chainsetup_repp->length_in_samples());
 }
 
+/**
+ * Returns the length of the selected chainsetup (in seconds).
+ *
+ * require:
+ *  is_selected() == true
+ */
 double ECA_CONTROL_BASE::length_in_seconds_exact(void) const { 
-  if (is_connected() == true) {
-      return session_repp->connected_chainsetup_repp->length_in_seconds_exact(); 
-  }
-  else
-    return(0.0);
+  // --------
+  REQUIRE(is_selected());
+  // --------
+
+  return(selected_chainsetup_repp->length_in_seconds_exact());
 }
 
+/**
+ * Returns the current position of the selected chainsetup (in samples).
+ *
+ * require:
+ *  is_selected() == true
+ */
 long ECA_CONTROL_BASE::position_in_samples(void) const { 
-  if (is_connected() == true)
-      return session_repp->connected_chainsetup_repp->position_in_samples(); 
-  else
-    return(0);
+  // --------
+  REQUIRE(is_selected());
+  // --------
+
+  return(selected_chainsetup_repp->position_in_samples());
 }
+
+/**
+ * Returns the current position of the selected chainsetup (in seconds).
+ *
+ * require:
+ *  is_selected() == true
+ */
 double ECA_CONTROL_BASE::position_in_seconds_exact(void) const {
-  if (is_connected() == true) {
-      return session_repp->connected_chainsetup_repp->position_in_seconds_exact(); 
-  }
-  else
-    return(0.0);
+  // --------
+  REQUIRE(is_selected());
+  // --------
+
+  return(selected_chainsetup_repp->position_in_seconds_exact());
 }
 
 /**

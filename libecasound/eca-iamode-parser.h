@@ -32,12 +32,6 @@ class ECA_IAMODE_PARSER {
     ec_st_general,
     ec_engine_status,
     // --
-    ec_rewind,
-    ec_forward,
-    ec_setpos,
-    ec_get_position,
-    ec_get_length,
-    // --
     ec_cs_add,
     ec_cs_remove,
     ec_cs_select,
@@ -55,7 +49,12 @@ class ECA_IAMODE_PARSER {
     ec_cs_set,
     ec_cs_format,
     ec_cs_status,
-    ec_cs_length,
+    ec_cs_rewind,
+    ec_cs_forward,
+    ec_cs_set_position,
+    ec_cs_get_position,
+    ec_cs_get_length,
+    ec_cs_set_length,
     ec_cs_loop,
     // --
     ec_c_add,

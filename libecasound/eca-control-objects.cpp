@@ -342,7 +342,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_seconds(double val
   assert(connected_chainsetup() != selected_chainsetup());
   // --------
   selected_chainsetup_repp->length_in_seconds(value);
-  ecadebug->msg("(eca-controller) Set processing length to \"" + kvu_numtostr(value) + "\" seconds.");
+  ecadebug->msg("(eca-controller) Set chainsetup processing length to \"" + kvu_numtostr(value) + "\" seconds.");
 }
 
 /**
@@ -360,7 +360,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_samples(long int v
   assert(connected_chainsetup() != selected_chainsetup());
   // --------
   selected_chainsetup_repp->length_in_samples(value);
-  ecadebug->msg("(eca-controller) Set processing length to \"" + 
+  ecadebug->msg("(eca-controller) Set chainsetup processing length to \"" + 
 		 kvu_numtostr(selected_chainsetup_repp->length_in_seconds_exact()) + "\" seconds.");
 }
 
@@ -477,6 +477,52 @@ void ECA_CONTROL_OBJECTS::disconnect_chainsetup(void) {
   // ensure:
   assert(connected_chainsetup() == "");
   // --------
+}
+
+/**
+ * Changes the chainsetup position relatively to the current position. 
+ * Behaves differently depending on whether the selected
+ * chainsetup is connected or not.
+ *
+ * require:
+ *  is_selected() == true
+ */
+void ECA_CONTROL_OBJECTS::change_chainsetup_position(double seconds) { 
+  // --------
+  REQUIRE(is_selected());
+  // --------
+
+  if (connected_chainsetup() == selected_chainsetup()) {
+    if (seconds < 0)
+      send_chain_commands_to_engine(ECA_PROCESSOR::ep_rewind, 
+				    -seconds);
+    else
+      send_chain_commands_to_engine(ECA_PROCESSOR::ep_forward,
+				    seconds);
+  }
+  else {
+    selected_chainsetup_repp->change_position_exact(seconds);
+  }
+}
+
+/**
+ * Sets the chainsetup position. Behaves differently depending on 
+ * whether the selected chainsetup is connected or not.
+ *
+ * require:
+ *  is_selected() == true
+ */
+void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds) {
+  // --------
+  REQUIRE(is_selected());
+  // --------
+
+  if (connected_chainsetup() == selected_chainsetup()) {
+    send_chain_commands_to_engine(ECA_PROCESSOR::ep_setpos, seconds);
+  }
+  else {
+    selected_chainsetup_repp->set_position_exact(seconds);
+  }
 }
 
 /**

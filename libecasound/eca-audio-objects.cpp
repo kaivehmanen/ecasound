@@ -112,7 +112,6 @@ bool ECA_AUDIO_OBJECTS::is_valid(void) const {
   return(true);
 }
 
-
 /**
  * Create a new loop input object
  *

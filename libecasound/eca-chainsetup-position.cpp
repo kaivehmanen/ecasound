@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup-position.cpp: Global chainsetup position
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,8 +34,12 @@ void ECA_CHAINSETUP_POSITION::length_in_samples(long pos) {
   if (pos == 0) length_set_rep = false;
 }
 
-void ECA_CHAINSETUP_POSITION::change_position(double  samples) {
- change_position(static_cast<long>(samples * srate_rep));
+void ECA_CHAINSETUP_POSITION::change_position_exact(double seconds) {
+ change_position(static_cast<long>(seconds * srate_rep));
+}
+
+void ECA_CHAINSETUP_POSITION::set_position_exact(double seconds) {
+ set_position(static_cast<long>(seconds * srate_rep));
 }
 
 void ECA_CHAINSETUP_POSITION::length_in_seconds(double pos_in_seconds) { 

@@ -73,7 +73,23 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["cs-format"] = ec_cs_format;
   cmd_map_rep["cs-status"] = ec_cs_status;
   cmd_map_rep["cs-list"] = ec_cs_list;
-  cmd_map_rep["cs-length"] = ec_cs_length;
+  cmd_map_rep["cs-rewind"] = ec_cs_rewind;
+  cmd_map_rep["rewind"] = ec_cs_rewind;
+  cmd_map_rep["rw"] = ec_cs_rewind;
+  cmd_map_rep["cs-forward"] = ec_cs_forward;
+  cmd_map_rep["forward"] = ec_cs_forward;
+  cmd_map_rep["fw"] = ec_cs_forward;
+  cmd_map_rep["cs-setpos"] = ec_cs_set_position;
+  cmd_map_rep["cs-set-position"] = ec_cs_set_position;
+  cmd_map_rep["setpos"] = ec_cs_set_position;
+  cmd_map_rep["set-position"] = ec_cs_set_position;
+  cmd_map_rep["cs-getpos"] = ec_cs_get_position;
+  cmd_map_rep["cs-get-position"] = ec_cs_get_position;
+  cmd_map_rep["getpos"] = ec_cs_get_position;
+  cmd_map_rep["get-position"] = ec_cs_get_position;
+  cmd_map_rep["cs-get-length"] = ec_cs_get_length;
+  cmd_map_rep["get-length"] = ec_cs_get_length;
+  cmd_map_rep["cs-set-length"] = ec_cs_set_length;
   cmd_map_rep["cs-loop"] = ec_cs_loop;
 
   cmd_map_rep["c-add"] = ec_c_add;
@@ -146,16 +162,6 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["x"] = ec_cop_status;
   cmd_map_rep["fs"] = ec_aio_status;
 
-  cmd_map_rep["rewind"] = ec_rewind;
-  cmd_map_rep["rw"] = ec_rewind;
-  cmd_map_rep["forward"] = ec_forward;
-  cmd_map_rep["fw"] = ec_forward;
-  cmd_map_rep["setpos"] = ec_setpos;
-  cmd_map_rep["set-position"] = ec_setpos;
-  cmd_map_rep["getpos"] = ec_get_position;
-  cmd_map_rep["get-position"] = ec_get_position;
-  cmd_map_rep["get-length"] = ec_get_length;
-
   cmd_map_rep["int-cmd-list"] = ec_int_cmd_list;
   cmd_map_rep["int-version-string"] = ec_int_version_string;
   cmd_map_rep["int-version-lib-current"] = ec_int_version_lib_current;
@@ -186,7 +192,10 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_cs_save_as: 
   case ec_cs_set:
   case ec_cs_format:
-  case ec_cs_length:
+  case ec_cs_set_length:
+  case ec_cs_rewind:
+  case ec_cs_forward:
+  case ec_cs_set_position:
   case ec_c_add:
   case ec_c_select:
   case ec_c_deselect:
@@ -210,9 +219,6 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_copp_set:
   case ec_ctrl_add:
   case ec_ctrl_select:
-  case ec_rewind:
-  case ec_forward:
-  case ec_setpos:
   case ec_dump_target:
   case ec_dump_cop_value:
 
@@ -228,12 +234,9 @@ bool ECA_IAMODE_PARSER::action_requires_connected(int id) {
   switch(id) {
   case ec_start:
   case ec_run:
-  case ec_setpos:
   case ec_cs_disconnect:
   case ec_c_forward:
   case ec_c_rewind: 
-  case ec_rewind:
-  case ec_forward:
 
     return(true);
     
@@ -253,7 +256,12 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_cs_save_as: 
   case ec_cs_connect: 
   case ec_cs_set:
-  case ec_cs_length:
+  case ec_cs_rewind:
+  case ec_cs_forward:
+  case ec_cs_set_position:
+  case ec_cs_get_position:
+  case ec_cs_get_length:
+  case ec_cs_set_length:
   case ec_cs_loop:
   case ec_c_remove:
   case ec_c_clear:
@@ -303,7 +311,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
   switch(id) {
   case ec_direct_option:
   case ec_cs_remove:
-  case ec_cs_length:
+  case ec_cs_set_length:
   case ec_cs_loop:
   case ec_cs_set:
   case ec_c_add:

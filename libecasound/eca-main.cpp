@@ -515,11 +515,12 @@ void ECA_PROCESSOR::exec_normal_iactive(void) {
 void ECA_PROCESSOR::set_position(double seconds) {
   conditional_stop();
 
-  csetup_repp->set_position(seconds * csetup_repp->sample_rate());
+  csetup_repp->set_position_exact(seconds);
 
-  for (unsigned int adev_sizet = 0; adev_sizet != non_realtime_objects_rep.size(); adev_sizet++) {
-    non_realtime_objects_rep[adev_sizet]->seek_position_in_seconds(seconds);
-  }
+//  obsolete: the below code fragment is moved to ECA_AUDIO_OBJECTS
+//  for (unsigned int adev_sizet = 0; adev_sizet != non_realtime_objects_rep.size(); adev_sizet++) {
+//    non_realtime_objects_rep[adev_sizet]->seek_position_in_seconds(seconds);
+//  }
 
   conditional_start();
 }
@@ -541,12 +542,13 @@ void ECA_PROCESSOR::set_position_chain(double seconds) {
 void ECA_PROCESSOR::change_position(double seconds) {
   conditional_stop();
 
-  csetup_repp->change_position(seconds);
+  csetup_repp->change_position_exact(seconds);
 
-  for (unsigned int adev_sizet = 0; adev_sizet != non_realtime_objects_rep.size(); adev_sizet++) {
-    non_realtime_objects_rep[adev_sizet]->seek_position_in_seconds(non_realtime_objects_rep[adev_sizet]->position_in_seconds_exact()
-                                           + seconds);
-  }
+//  obsolete: the below code fragment is moved to ECA_AUDIO_OBJECTS
+//    for (unsigned int adev_sizet = 0; adev_sizet != non_realtime_objects_rep.size(); adev_sizet++) {
+//      non_realtime_objects_rep[adev_sizet]->seek_position_in_seconds(non_realtime_objects_rep[adev_sizet]->position_in_seconds_exact()
+//                                             + seconds);
+//    }
 
   conditional_start();
 }

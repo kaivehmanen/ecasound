@@ -26,8 +26,9 @@ class ECA_CHAINSETUP_POSITION {
 
   void set_sample_rate(long int srate) { srate_rep = srate; }
   inline void change_position(long int  samples) { curpos_rep += samples; }
-  void change_position(double  samples);
+  void change_position_exact(double seconds);
   void set_position(long int samples) { curpos_rep = samples; }
+  void set_position_exact(double seconds);
 
   void toggle_looping(bool v) { looping_rep = v; }
 
@@ -47,5 +48,3 @@ class ECA_CHAINSETUP_POSITION {
 };
 
 #endif
-
-

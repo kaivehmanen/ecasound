@@ -32,12 +32,15 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void select_chainsetup_by_index(const string& index);
   void edit_chainsetup(void);
   void connect_chainsetup(void);
+  void disconnect_chainsetup(void);
 
   string selected_chainsetup(void) const;
   string connected_chainsetup(void) const;
 
-  void disconnect_chainsetup(void);
+  void change_chainsetup_position(double seconds);
+  void set_chainsetup_position(double seconds);
 
+  double chainsetup_position(double seconds) const;
   ECA_CHAINSETUP* get_chainsetup(void) const;
   ECA_CHAINSETUP* get_chainsetup_filename(const string& filename) const;
   vector<string> chainsetup_names(void) const;

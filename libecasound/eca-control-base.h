@@ -89,7 +89,7 @@ class ECA_CONTROL_BASE : public DEFINITION_BY_CONTRACT {
   vector<string> attached_chains(const string& name) const;
 
   // -------------------------------------------------------------------
-  // Session info / position and length of connected chainsetup
+  // Session info / position and length of selected chainsetup
   // -------------------------------------------------------------------
 
   long length_in_samples(void) const;
