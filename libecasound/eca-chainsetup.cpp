@@ -162,6 +162,9 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
   ECA_LOG_MSG(ECA_LOGGER::system_objects,"ECA_CHAINSETUP destructor!");
 
   DBC_CHECK(is_locked() != true);
+  if (is_enabled() == true) {
+    disable();
+  }
   DBC_CHECK(is_enabled() != true);
 
   /* delete chain objects */
