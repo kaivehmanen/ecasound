@@ -54,9 +54,9 @@ class DEFINITION_BY_CONTRACT {
 
 #ifdef ENABLE_DBC
 
-  inline void require(bool expr, const char* file, int line) { if (!expr) throw(new DBC_EXCEPTION("require", file, line)); }
-  inline void ensure(bool expr, const char* file, int line)  { if (!expr) throw(new DBC_EXCEPTION("require", file, line)); check_invariant(file, line); }
-  inline void check_invariant(const char* file, int line) { if (!class_invariant()) throw(new DBC_EXCEPTION("class invariant", file, line)); }
+  inline void require(bool expr, const char* file, int line) const { if (!expr) throw(new DBC_EXCEPTION("require", file, line)); }
+  inline void ensure(bool expr, const char* file, int line) const { if (!expr) throw(new DBC_EXCEPTION("require", file, line)); check_invariant(file, line); }
+  inline void check_invariant(const char* file, int line) const { if (!class_invariant()) throw(new DBC_EXCEPTION("class invariant", file, line)); }
 
 #define REQUIRE(expr)							      \
    (expr) ? static_cast<void>(0) :	(require (false,__FILE__, __LINE__))
@@ -67,13 +67,13 @@ class DEFINITION_BY_CONTRACT {
 #define REQUIRE(expr)		((void) 0)
 #define ENSURE(expr)		((void) 0)
 
-  inline void require(bool expr, const char* file, int line) { }
-  inline void ensure(bool expr, const char* file, int line) { }
-  inline void check_invariant(const char* file, int line) { }
+  inline void require(bool expr, const char* file, int line) const { }
+  inline void ensure(bool expr, const char* file, int line) const { }
+  inline void check_invariant(const char* file, int line) const { }
 
 #endif
 
-  virtual bool class_invariant(void) { return(true); }
+  virtual bool class_invariant(void) const { return(true); }
 
   DEFINITION_BY_CONTRACT(void) { }
 };

@@ -62,6 +62,7 @@ void EFFECT_DELAY::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type v
 	while(q != p->end()) {
 	  if (q->size() > dtime) {
 	    q->resize(dtime);
+	    laskuri = dtime;
 	  }
 	  ++q;
 	}
@@ -190,8 +191,10 @@ void EFFECT_FAKE_STEREO::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_
     dtime = value * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate / 1000;
     vector<deque<SAMPLE_BUFFER::sample_type> >::iterator p = buffer.begin();
     while(p != buffer.end()) {
-      if (p->size() > dtime) 
+      if (p->size() > dtime) {
 	p->resize(dtime);
+	laskuri = dtime;
+      }
       ++p;
     }
     break;
@@ -266,8 +269,10 @@ void EFFECT_REVERB::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type 
       dtime = value * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate / 1000;
       vector<deque<SAMPLE_BUFFER::sample_type> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
-	if (p->size() > dtime) 
+	if (p->size() > dtime) {
 	  p->resize(dtime);
+	  laskuri = dtime;
+	}
 	++p;
       }
       break;

@@ -215,21 +215,21 @@ all.
 </p><p>
 <li> ecasound -c -r -b:2048 \<br>
 <ul>
-     -a:1 -i drums.wav -ea:200 \<br>
-     -a:2 -i synth-background.wav -epp:40 -ea:120 \<br>
-     -a:3 -i bass-guitar_take-2.ewf -ea:75 \<br>
-     -a:4 -i brass-house-lead.wav -epp:60 -ea:50 \<br>
-     -a:all -o /dev/dsp \<br>
-     -a:all -o current_mix.wav
+     -a:1,5 -i drums.wav -ea:200 \<br>
+     -a:2,6 -i synth-background.wav -epp:40 -ea:120 \<br>
+     -a:3,7 -i bass-guitar_take-2.ewf -ea:75 \<br>
+     -a:4,8 -i brass-house-lead.wav -epp:60 -ea:50 \<br>
+     -a:1,2,3,4 -o /dev/dsp \<br>
+     -a:5,6,7,8 -o current_mix.wav
 </ul>
 </p><p>
 This second example is more complex. The same inputs are used, but
 this time effects (amplify <i>-ea:mix_percent</i> and normal
-pan <i>-epp:left_right_balance</i>) are also used. All chains are
-assigned to the soundcard output as in the first example, but now all
-chains are also assigned to a WAVE file <i>current_mix.wav</i>. In
-this example, runtime priority is also risen with <i>-r</i>. 
-A bigger buffersize is also used.
+pan <i>-epp:left_right_balance</i>) are also used. First four chains are
+assigned to the soundcard output as in the first example, but now we
+also have another set of chains that are assigned to a WAVE file
+<i>current_mix.wav</i>. In this example, runtime priority is also
+risen with <i>-r</i>. A bigger buffersize is also used.
 </p>
 </ol>
 <!-- ###  new section ### -->

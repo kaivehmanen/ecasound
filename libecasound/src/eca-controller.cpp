@@ -667,9 +667,7 @@ void ECA_CONTROLLER::start(bool ignore_lock) {
 //    sleepcount.tv_nsec = 0;
 //    int count = 0;
 //    while(session_rep->status() != ep_status_running) {
-//      //    usleep(++usleep_count);
 //      ++count;
-//      //    sched_yield();
 //      nanosleep(&sleepcount, NULL);
 //      if (session_rep->status() == ep_status_finished) break;
 //      if (count > 5000) {
@@ -700,7 +698,6 @@ void ECA_CONTROLLER::stop(void) {
 //    while(session_rep->status() == ep_status_running) {
 //      //    usleep(++usleep_count); 
 //      ++count;
-//      //    sched_yield();
 //      nanosleep(&sleepcount, NULL);
 //      if (count > 5000) {
 //        throw(new ECA_ERROR("ECA_CONTROLLER", "stop() failed, engine is not responding...", ECA_ERROR::stop));
@@ -766,21 +763,18 @@ void ECA_CONTROLLER::start_engine(bool ignore_lock) {
 void ECA_CONTROLLER::close_engine(void) {
   if (!engine_started) return;
   ecasound_queue.push_back(ECA_PROCESSOR::ep_exit, 0.0);
-  ifstream fin(ecasound_lockfile.c_str());
-  while(fin) {
-    fin.close();
-    ecadebug->msg(1, "(eca-controller) Waiting for the processing thread...");
-    //    usleep(1000);
-    struct timespec sleepcount;
-    sleepcount.tv_sec = 1;
-    sleepcount.tv_nsec = 0;
-    //    sched_yield();
-    nanosleep(&sleepcount, NULL);
-    fin.open(ecasound_lockfile.c_str());
-  }
-  while(ecasound_queue.is_empty() == false) ecasound_queue.pop_front();
+//    ifstream fin(ecasound_lockfile.c_str());
+//    while(fin) {
+//      fin.close();
+//      ecadebug->msg(1, "(eca-controller) Waiting for the processing thread...");
+//      struct timespec sleepcount;
+//      sleepcount.tv_sec = 1;
+//      sleepcount.tv_nsec = 0;
+//      nanosleep(&sleepcount, NULL);
+//      fin.open(ecasound_lockfile.c_str());
+//    }
+//    while(ecasound_queue.is_empty() == false) ecasound_queue.pop_front();
   engine_started = false;
-  //  fin.close();
 
   // --------
   // ensure:

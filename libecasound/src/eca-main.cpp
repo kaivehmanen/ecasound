@@ -603,6 +603,10 @@ void ECA_PROCESSOR::interpret_queue(void) {
 	ecadebug->msg(2,"(eca-main) ecasound_queue: exit!");
 	stop();
 	end_request = true;
+	while(ecasound_queue.is_empty() == false) {
+	  ecasound_queue.pop_front();
+	  return;
+	}
 	break;
       }
     case ep_start: { start(); break; }
