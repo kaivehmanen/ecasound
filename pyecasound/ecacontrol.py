@@ -109,8 +109,12 @@ class ECA_CONTROL_INTERFACE:
 ##	    I.cleanup()             # exit previous ecasound session cleanly
 	   
 	global _ecasound
+
+        ecasound_binary = os.getenv("ECASOUND","")
+        if ecasound_binary == '':
+            ecasound_binary = 'ecasound'
 	
-	_ecasound.append(Popen3('ecasound -c -D', 1, 0))
+	_ecasound.append(Popen3(ecasound_binary + ' -c -D', 1, 0))
 	
 	I.eca=_ecasound[-1]
 	

@@ -1,6 +1,6 @@
------------------------------------------------------------------------
-*** ecasound - changes and additions to libpyecasound interface     ***
------------------------------------------------------------------------
+2003-03-18  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* ecacontrol.py: support for ECASOUND environment variable
 
 2003-03-11  Janne Halttunen <jhalttun@pp.htv.fi>
 
