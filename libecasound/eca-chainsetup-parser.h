@@ -77,6 +77,7 @@ class ECA_CHAINSETUP_PARSER {
   
   ECA_CHAINSETUP* csetup_repp;
 
+  std::vector<AUDIO_IO*>* last_audio_add_vector_repp;
   AUDIO_IO* last_audio_object_repp;
   bool istatus_rep; /* whether we have found an option match? */
   bool interpret_result_rep; /* whether we found an option match with correct format? */

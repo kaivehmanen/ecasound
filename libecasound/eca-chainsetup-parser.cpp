@@ -46,7 +46,7 @@ using std::string;
 
 ECA_CHAINSETUP_PARSER::ECA_CHAINSETUP_PARSER(ECA_CHAINSETUP* csetup) 
   : csetup_repp(csetup), 
-    last_audio_object_repp(0) 
+    last_audio_add_vector_repp(0) 
 {
 }
 
@@ -647,17 +647,18 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
   switch(argu[1]) {
   case 'i':
     {
-      last_audio_object_repp = ECA_OBJECT_FACTORY::create_audio_object(argu);
-      if (last_audio_object_repp == 0) 
-	last_audio_object_repp = ECA_OBJECT_FACTORY::create_loop_input(argu, &csetup_repp->loop_map);
-      if (last_audio_object_repp != 0) {
-	if ((last_audio_object_repp->supported_io_modes() &
+      AUDIO_IO* audio_input = ECA_OBJECT_FACTORY::create_audio_object(argu);
+      if (audio_input == 0) 
+	audio_input = ECA_OBJECT_FACTORY::create_loop_input(argu, &csetup_repp->loop_map);
+      if (audio_input != 0) {
+	if ((audio_input->supported_io_modes() &
 	     AUDIO_IO::io_read) != AUDIO_IO::io_read) {
-	  interpret_set_result(false, string("(eca-chainsetup-parser) I/O-mode 'io_read' not supported by ") + last_audio_object_repp->name());
+	  interpret_set_result(false, string("(eca-chainsetup-parser) I/O-mode 'io_read' not supported by ") + audio_input->name());
 	}
 	else {
 	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
-	  csetup_repp->add_input(last_audio_object_repp);
+	  csetup_repp->add_input(audio_input);
+	  last_audio_add_vector_repp = &csetup_repp->inputs; /* for -y parsing */
 	}
       }
       else {
@@ -670,25 +671,26 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 
   case 'o':
     {
-      last_audio_object_repp = ECA_OBJECT_FACTORY::create_audio_object(argu);
+      AUDIO_IO* audio_output = ECA_OBJECT_FACTORY::create_audio_object(argu);
 	
-      if (last_audio_object_repp == 0) last_audio_object_repp = ECA_OBJECT_FACTORY::create_loop_output(argu, &csetup_repp->loop_map);
-      if (last_audio_object_repp != 0) {
+      if (audio_output == 0) audio_output = ECA_OBJECT_FACTORY::create_loop_output(argu, &csetup_repp->loop_map);
+      if (audio_output != 0) {
 	bool truncate = false;
 	int mode_tmp = csetup_repp->output_openmode();
 	if (mode_tmp == AUDIO_IO::io_readwrite) {
-	  if ((last_audio_object_repp->supported_io_modes() &
+	  if ((audio_output->supported_io_modes() &
 	      AUDIO_IO::io_readwrite) != AUDIO_IO::io_readwrite) {
 	    mode_tmp = AUDIO_IO::io_write;
 	    truncate = true;
 	  }
 	}
-	if ((last_audio_object_repp->supported_io_modes() & mode_tmp != mode_tmp)) {
-	  interpret_set_result(false, string("(eca-chainsetup-parser) I/O-mode 'io_write' not supported by ") + last_audio_object_repp->name());
+	if ((audio_output->supported_io_modes() & mode_tmp != mode_tmp)) {
+	  interpret_set_result(false, string("(eca-chainsetup-parser) I/O-mode 'io_write' not supported by ") + audio_output->name());
 	}
 	else {
 	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
-	  csetup_repp->add_output(last_audio_object_repp, truncate);
+	  csetup_repp->add_output(audio_output, truncate);
+	  last_audio_add_vector_repp = &csetup_repp->outputs; /* for -y parsing */
 	}
       }
       else {
@@ -701,23 +703,29 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 
   case 'y':
     {
-      if (last_audio_object_repp == 0)
-	ECA_LOG_MSG(ECA_LOGGER::info, "Error! No audio object defined.");
-
-      last_audio_object_repp->seek_position_in_seconds(atof(kvu_get_argument_number(1, argu).c_str()));
-      if (last_audio_object_repp->io_mode() == AUDIO_IO::io_read) {
-	csetup_repp->input_start_pos[csetup_repp->input_start_pos.size() - 1] = last_audio_object_repp->position_in_seconds_exact();
+      if (last_audio_add_vector_repp == 0) {
+	ECA_LOG_MSG(ECA_LOGGER::info, 
+		    "Error! Non-existant last audio object.");
       }
       else {
-	csetup_repp->output_start_pos[csetup_repp->output_start_pos.size() - 1] = last_audio_object_repp->position_in_seconds_exact();
-      }
+	AUDIO_IO* last_object = (*last_audio_add_vector_repp).back();
 
-      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Set starting position for audio object \""
-		  + last_audio_object_repp->label() 
-		  + "\": "
-		  + kvu_numtostr(last_audio_object_repp->position_in_seconds_exact()) 
-		  + " seconds.");
-      break;
+	last_object->seek_position_in_seconds(atof(kvu_get_argument_number(1, argu).c_str()));
+
+	if (last_object->io_mode() == AUDIO_IO::io_read) {
+	  csetup_repp->input_start_pos[csetup_repp->input_start_pos.size() - 1] = last_object->position_in_seconds_exact();
+	}
+	else {
+	  csetup_repp->output_start_pos[csetup_repp->output_start_pos.size() - 1] = last_object->position_in_seconds_exact();
+	}
+
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Set starting position for audio object \""
+		    + last_object->label() 
+		    + "\": "
+		    + kvu_numtostr(last_object->position_in_seconds_exact()) 
+		    + " seconds.");
+	break;
+      }
     }
 
   default: { match = false; }

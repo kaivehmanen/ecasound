@@ -22,6 +22,7 @@
 #include <unistd.h> /* open(), close() */
 
 #include <kvu_dbc.h>
+#include <kvu_numtostr.h>
 
 #include "samplebuffer.h"
 #include "eca-logger.h"
@@ -206,7 +207,9 @@ void AUDIO_IO_DB_CLIENT::write_buffer(SAMPLE_BUFFER* sbuf)
  */
 void AUDIO_IO_DB_CLIENT::seek_position(void)
 { 
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-db-client) seek " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      "(audioio-db-client) seek " + label() + 
+	      " to pos " + kvu_numtostr(position_in_seconds_exact()) + ".");
   bool was_running = false;
   if (pserver_repp->is_running() == true) {
     was_running = true;
