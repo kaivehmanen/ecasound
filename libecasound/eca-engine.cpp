@@ -31,6 +31,7 @@
 
 #include <kvutils/dbc.h>
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils/procedure_timer.h>
 
 #include "samplebuffer.h"
 #include "audioio.h"
@@ -76,6 +77,7 @@ ECA_ENGINE::ECA_ENGINE(ECA_SESSION* arg)
   init_connection_to_chainsetup();
   init_multitrack_mode();
   init_mix_method();
+  init_profiling();
 
   // --
   DBC_ENSURE(status() == ECA_ENGINE::engine_status_stopped);
@@ -99,6 +101,8 @@ ECA_ENGINE::~ECA_ENGINE(void) {
       }
     }
   }
+
+  dump_profile_info();
 
   delete impl_repp;
 
@@ -218,6 +222,47 @@ void ECA_ENGINE::signal_stop(void) {
 /**
  * Called only from class constructor.
  */
+void ECA_ENGINE::init_profiling(void) {
+  impl_repp->looptimer_low_rep = static_cast<double>(buffersize_rep) / csetup_repp->sample_rate();
+  impl_repp->looptimer_mid_rep = static_cast<double>(buffersize_rep * 2) / csetup_repp->sample_rate();
+  impl_repp->looptimer_high_rep = static_cast<double>(buffersize_rep) * prefill_threshold_rep / csetup_repp->sample_rate();
+
+  impl_repp->looptimer_rep.set_lower_bound_seconds(impl_repp->looptimer_low_rep);
+  impl_repp->looptimer_rep.set_upper_bound_seconds(impl_repp->looptimer_high_rep);
+  impl_repp->looptimer_range_rep.set_lower_bound_seconds(impl_repp->looptimer_mid_rep);
+  impl_repp->looptimer_range_rep.set_upper_bound_seconds(impl_repp->looptimer_mid_rep);
+}
+
+/**
+ * Prints  profiling information to stderr.
+ */
+void ECA_ENGINE::dump_profile_info(void) {
+  long int slower_than_rt = impl_repp->looptimer_rep.event_count() -
+                            impl_repp->looptimer_rep.events_under_lower_bound() -
+                            impl_repp->looptimer_rep.events_over_upper_bound();
+
+  std::cerr << "(eca-engine) *** profile begin ***" << endl;
+  std::cerr << "Total loops: " << kvu_numtostr(impl_repp->looptimer_rep.event_count()) << endl;
+  std::cerr << "Loops faster than realtime: "  << kvu_numtostr(impl_repp->looptimer_rep.events_under_lower_bound());
+  std::cerr << " (<" << kvu_numtostr(impl_repp->looptimer_low_rep * 1000, 1) << " msec)" << endl;
+  std::cerr << "Loops slower than realtime: "  << kvu_numtostr(slower_than_rt);
+  std::cerr << " (>=" << kvu_numtostr(impl_repp->looptimer_low_rep * 1000, 1) << " msec)" << endl;
+  std::cerr << "Loops slower than realtime: "  << kvu_numtostr(impl_repp->looptimer_range_rep.events_over_upper_bound());
+  std::cerr << " (>" << kvu_numtostr(impl_repp->looptimer_mid_rep * 1000, 1) << " msec)" << endl;
+  std::cerr << "Loops exceeding all buffering: " << kvu_numtostr(impl_repp->looptimer_rep.events_over_upper_bound());
+  std::cerr << " (>" << kvu_numtostr(impl_repp->looptimer_high_rep * 1000, 1) << " msec)" << endl;
+  std::cerr << "Fastest loop: " << kvu_numtostr(impl_repp->looptimer_rep.min_duration_seconds() * 1000, 1);
+  std::cerr << " msec." << endl;
+  std::cerr << "Slowest loop: " << kvu_numtostr(impl_repp->looptimer_rep.max_duration_seconds() * 1000, 1);
+  std::cerr << " msec." << endl;
+  std::cerr << "Average loop time: " << kvu_numtostr(impl_repp->looptimer_rep.average_duration_seconds() * 1000, 1);
+  std::cerr << " msec." << endl;
+  std::cerr << "(eca-engine) *** profile end   ***" << endl;
+}
+
+/**
+ * Called only from class constructor.
+ */
 void ECA_ENGINE::init_variables(void) {
   set_status(ECA_ENGINE::engine_status_stopped);
   buffersize_rep = session_repp->connected_chainsetup_repp->buffersize();
@@ -244,10 +289,20 @@ void ECA_ENGINE::init_connection_to_chainsetup(void) {
     exit(-1);
   }
 
+  prefill_threshold_rep = 0;
+
   if (csetup_repp->max_buffers() == true) 
     prefill_threshold_rep = ECA_ENGINE::prefill_threshold_constant / buffersize_rep;
-  else 
+
+  if (prefill_threshold_rep < ECA_ENGINE::prefill_blocks_constant) 
     prefill_threshold_rep = ECA_ENGINE::prefill_blocks_constant;
+  
+  ecadebug->msg(ECA_DEBUG::system_objects,
+		"(eca-engine) Prefill loops: " +
+		kvu_numtostr(prefill_threshold_rep) +
+		" (blocksize " +
+		kvu_numtostr(buffersize_rep) +
+		").");
 
   init_servers();
   init_sorted_input_map();
@@ -662,7 +717,7 @@ void ECA_ENGINE::start(void) {
     if (::sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Unable to change scheduling policy!");
     else 
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Using realtime-scheduling (SCHED_FIFO).");
+      ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Using realtime-scheduling (SCHED_FIFO).");
   }
 
   // ---
@@ -807,6 +862,8 @@ void ECA_ENGINE::exec_simple_iactive(void) {
     if (end_request_rep) break;
     if (continue_request_rep) continue;
 
+    if (rt_running_rep == true) { impl_repp->looptimer_rep.start(); impl_repp->looptimer_range_rep.start(); }
+
     // --
     // read from inputs to chain '0'
     inputs_not_finished_rep = 0;
@@ -822,6 +879,9 @@ void ECA_ENGINE::exec_simple_iactive(void) {
     // mix to outputs
     (*outputs_repp)[0]->write_buffer(&mixslot_rep);
     if ((*outputs_repp)[0]->finished() == true) outputs_finished_rep++;
+
+    if (rt_running_rep == true) { impl_repp->looptimer_rep.stop(); impl_repp->looptimer_range_rep.stop(); }
+
     trigger_outputs();
     posthandle_control_position();
   }
@@ -848,6 +908,8 @@ void ECA_ENGINE::exec_normal_iactive(void) {
     if (end_request_rep) break;
     if (continue_request_rep) continue;
 
+    if (rt_running_rep == true) { impl_repp->looptimer_rep.start(); impl_repp->looptimer_range_rep.start(); }
+
     // --
     // inputs -> chains -> outputs
     inputs_not_finished_rep = 0;
@@ -855,8 +917,12 @@ void ECA_ENGINE::exec_normal_iactive(void) {
     inputs_to_chains(false);
     process_chains();
     mix_to_outputs(false);
+
+    if (rt_running_rep == true) { impl_repp->looptimer_rep.stop(); impl_repp->looptimer_range_rep.stop(); }
+
     trigger_outputs();
     posthandle_control_position();
+
   }
 }
 

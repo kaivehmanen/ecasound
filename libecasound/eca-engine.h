@@ -102,7 +102,7 @@ private:
    * Number of sample-frames of data is prefilled to 
    * rt-outputs before starting processing.
    */
-  static const long int prefill_threshold_constant = 4096;
+  static const long int prefill_threshold_constant = 8192;
   static const int prefill_blocks_constant = 3;
 
   ECA_ENGINE_impl* impl_repp;
@@ -270,6 +270,8 @@ private:
   void init_chains(void);
   void init_sorted_input_map(void);
   void init_sorted_output_map(void);
+  void init_profiling(void);
+  void dump_profile_info(void);
 
   /*@}*/
 

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (12.10.2001)
+       (14.10.2001)
        ()
        (Multimedia software)
 
@@ -114,7 +114,7 @@ format allows it - in readwrite mode.
 
 dit(-z:feature)
 Enables 'feature'. Most features can be disabled using notation 
-em(-z:nofeatures). '-z:db,dbsize' enables double-buffering for audio 
+em(-z:nofeature). '-z:db,dbsize' enables double-buffering for audio 
 objects that support it (dbzise=0 for default, otherwise buffer
 size in sample frames). '-z:nodb' disables double-buffering. 
 '-z:intbuf' and '-z:nointbuf' control whether extra internal buffering 
@@ -157,6 +157,10 @@ The 'sched_priority' can be omitted (0=omitted). If given,
 this is the static priority to the highest priority ecasound thread.
 Other ecasound threads run with priority 'sched_priority-1...n'.
 Value '-1' can be used to disable raised-priority mode.
+
+dit(-z:feature)
+Relevant features are -z:db,xxx (-z:nodb) and -z:intbuf (-z:nointbuf).
+See section em(General chainsetup options) for details.
 
 enddit()
 

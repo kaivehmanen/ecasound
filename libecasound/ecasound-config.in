@@ -6,8 +6,10 @@ usage()
 cat << EOH
 
 options:
+	[--prefix]
 	[--libs]
 	[--libs_debug]
+	[--ldflags]
 	[--cflags]
 	[--version]
 EOH
@@ -24,11 +26,17 @@ flags=""
 while test $# -gt 0
 do
   case $1 in
+    --prefix)
+	  flags="$flags $prefix"
+	  ;;
     --libs)
 	  flags="$flags -L$libdir -lecasound -lkvutils"
 	  ;;
     --libs_debug)
 	  flags="$flags -L$libdir -lecasound_debug -lkvutils"
+	  ;;
+    --ldflags)
+	  flags="$flags -Wl,--rpath -Wl,$libdir"
 	  ;;
     --cflags)
 	  flags="$flags -I$includedir"

@@ -19,7 +19,7 @@ class AUDIO_IO_PROXY_SERVER_impl {
   pthread_cond_t flush_cond_repp;
   pthread_mutex_t flush_mutex_repp;
 
-  size_t profile_sleep_rep;
+  size_t profile_full_rep;
   size_t profile_no_processing_rep;
   size_t profile_not_full_anymore_rep;
   size_t profile_processing_rep;

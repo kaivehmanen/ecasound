@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecatools)
        (1)
-       (06.10.2001)
+       (14.10.2001)
        ()
        (Multimedia software)
 
@@ -22,7 +22,9 @@ manpagesynopsis()
 bf(ecaconvert) .extension file1 [ file2,...,fileN ]
 
 bf(ecafixdc) file1 [ file2,...,fileN ]
+
 bf(ecalength) file1 [ file2,...,fileN ]
+
 bf(ecanormalize) file1 [ file2,...,fileN ]
 
 bf(ecaplay) [-dhk] file1 [ file2,...,fileN ]
@@ -65,7 +67,7 @@ If you want to abort playing immediately instead of skipping to the
 next file, press Ctrl-C twice in short succession (around one
 second).
 
-startdit(Options)
+startdit()
 dit(-d:debuglevel)
 Set libecasound debug level. See ecasound(1).
 

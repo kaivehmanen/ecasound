@@ -98,7 +98,7 @@ AUDIO_IO_PROXY_SERVER::AUDIO_IO_PROXY_SERVER (void) {
   exit_request_rep.set(0);
   exit_ok_rep.set(0);
 
-  impl_repp->profile_sleep_rep = 0;
+  impl_repp->profile_full_rep = 0;
   impl_repp->profile_no_processing_rep = 0;
   impl_repp->profile_not_full_anymore_rep = 0;
   impl_repp->profile_processing_rep = 0;
@@ -407,9 +407,19 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
   int passive_rounds = 0;
   bool one_time_full = false;
 
+  /* set idle timeout to 10% of total buffersize */
+  struct timespec sleepcount; /* was: 100ms */
+  sleepcount.tv_sec = 0; 
+  sleepcount.tv_nsec = buffersize_rep * buffercount_rep * 1000 / samplerate_rep / 10 * 1000000;
+  
+  ecadebug->msg(ECA_DEBUG::system_objects, 
+		"(audio_io_proxy_server) Using idle timeout of " +
+		kvu_numtostr(sleepcount.tv_nsec) + 
+		" nsecs.");
+
   while(true) {
     if (running_rep.get() == 0) {
-      usleep(50000);
+      nanosleep(&sleepcount, 0);
       if (exit_request_rep.get() == 1) break;
       continue;
     }
@@ -473,19 +483,16 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
     if (processed == 0) {
       if (passive_rounds > 1) {
 	/* case 1: nothing processed during x rounds ==> full, sleep */
-	PROXY_PROFILING_INC(impl_repp->profile_sleep_rep);
+	PROXY_PROFILING_INC(impl_repp->profile_full_rep);
 	full_rep.set(1);
 	signal_full();
 	if (one_time_full != true) one_time_full = true;
-	struct timespec sleepcount;
-	sleepcount.tv_sec = 0;
-	sleepcount.tv_nsec = 100000000; /* 100ms */
-	::nanosleep(&sleepcount, 0);
       }
       else {
-	/* case 2: nothing processed ==> do nothing */
+	/* case 2: nothing processed ==> sleep */
 	PROXY_PROFILING_INC(impl_repp->profile_no_processing_rep);
       }
+      nanosleep(&sleepcount, 0);
     }
     else {
       if (min_free_space > 4) {
@@ -507,13 +514,13 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 void AUDIO_IO_PROXY_SERVER::dump_profile_counters(void) {
   if (impl_repp->profile_not_full_anymore_rep > 0) {
     std::cerr << "(audioio-proxy-server) *** profile begin ***" << endl;
-    std::cerr << "impl_repp->profile_sleep_rep: " << impl_repp->profile_sleep_rep << endl;
-    std::cerr << "impl_repp->profile_no_processing_rep: " << impl_repp->profile_no_processing_rep << endl;
-    std::cerr << "impl_repp->profile_not_full_anymore_rep: " << impl_repp->profile_not_full_anymore_rep << endl;
-    std::cerr << "impl_repp->profile_processing_rep: " << impl_repp->profile_processing_rep << endl;
-    std::cerr << "impl_repp->profile_read_xrun_danger_rep: " << impl_repp->profile_read_xrun_danger_rep << endl;
-    std::cerr << "impl_repp->profile_write_xrun_danger_rep: " << impl_repp->profile_write_xrun_danger_rep << endl;
-    std::cerr << "impl_repp->profile_rounds_total_rep: " << impl_repp->profile_rounds_total_rep << endl;
+    std::cerr << "profile_full_rep: " << impl_repp->profile_full_rep << endl;
+    std::cerr << "profile_no_processing_rep: " << impl_repp->profile_no_processing_rep << endl;
+    std::cerr << "profile_not_full_anymore_rep: " << impl_repp->profile_not_full_anymore_rep << endl;
+    std::cerr << "profile_processing_rep: " << impl_repp->profile_processing_rep << endl;
+    std::cerr << "profile_read_xrun_danger_rep: " << impl_repp->profile_read_xrun_danger_rep << endl;
+    std::cerr << "profile_write_xrun_danger_rep: " << impl_repp->profile_write_xrun_danger_rep << endl;
+    std::cerr << "profile_rounds_total_rep: " << impl_repp->profile_rounds_total_rep << endl;
     std::cerr << "(audioio-proxy-server) *** profile end   ***" << endl;
   }
 }

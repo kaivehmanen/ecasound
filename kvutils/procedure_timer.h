@@ -15,7 +15,9 @@ class PROCEDURE_TIMER {
 
  public:
   void set_upper_bound(const struct timeval *);
+  void set_upper_bound_seconds(double secs);
   void set_lower_bound(const struct timeval *);
+  void set_lower_bound_seconds(double secs);
   
   void start(void);
   void stop(void);

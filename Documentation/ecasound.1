@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "12\&.10\&.2001" "" "Multimedia software" 
+.TH "ecasound" "1" "14\&.10\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -94,7 +94,7 @@ format allows it - in readwrite mode\&.
 .IP 
 .IP "-z:feature" 
 Enables \'feature\'\&. Most features can be disabled using notation 
-\fI-z:nofeatures\fP\&. \'-z:db,dbsize\' enables double-buffering for audio 
+\fI-z:nofeature\fP\&. \'-z:db,dbsize\' enables double-buffering for audio 
 objects that support it (dbzise=0 for default, otherwise buffer
 size in sample frames)\&. \'-z:nodb\' disables double-buffering\&. 
 \'-z:intbuf\' and \'-z:nointbuf\' control whether extra internal buffering 
@@ -134,6 +134,10 @@ The \'sched_priority\' can be omitted (0=omitted)\&. If given,
 this is the static priority to the highest priority ecasound thread\&.
 Other ecasound threads run with priority \'sched_priority-1\&.\&.\&.n\'\&.
 Value \'-1\' can be used to disable raised-priority mode\&.
+.IP 
+.IP "-z:feature" 
+Relevant features are -z:db,xxx (-z:nodb) and -z:intbuf (-z:nointbuf)\&.
+See section \fIGeneral chainsetup options\fP for details\&.
 .IP 
 .PP 
 \fBPROCESSING CONTROL\fP

@@ -21,10 +21,11 @@ class ECA_ENGINE_impl {
 
  private:
 
-
-  PROCEDURE_TIMER looptimer_faster_than_rt_rep;
-  PROCEDURE_TIMER looptimer_slower_than_rt_rep;
-  PROCEDURE_TIMER looptimer_exceeds_buffering_rep;
+  PROCEDURE_TIMER looptimer_rep;
+  PROCEDURE_TIMER looptimer_range_rep;
+  double looptimer_low_rep;
+  double looptimer_mid_rep;
+  double looptimer_high_rep;
 
   VALUE_QUEUE command_queue_rep;
 

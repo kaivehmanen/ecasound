@@ -2,6 +2,11 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2001-10-15  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
+
+	* procudure_timer.h (set_upper_bound_seconds,
+	set_lower_bound_seconds): added
+	
 2001-10-09  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* locks.h (all): made function member of ATOMIC_INTEGER 

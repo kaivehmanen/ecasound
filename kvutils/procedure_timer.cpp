@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <cmath>
 #include "kvu_numtostr.h"
 #include "procedure_timer.h"
 
@@ -63,8 +64,22 @@ void PROCEDURE_TIMER::set_upper_bound(const struct timeval *p) {
   memcpy(&upper_bound_rep, p, sizeof(struct timeval));
 }
 
+void PROCEDURE_TIMER::set_upper_bound_seconds(double secs) {
+  struct timeval buf;
+  buf.tv_sec = static_cast<time_t>(floor(secs));
+  buf.tv_usec = static_cast<time_t>(1000000.0f * (secs - static_cast<double>(buf.tv_sec)));
+  set_upper_bound(&buf);
+}
+
 void PROCEDURE_TIMER::set_lower_bound(const struct timeval *p) {
   memcpy(&lower_bound_rep, p, sizeof(struct timeval));
+}
+
+void PROCEDURE_TIMER::set_lower_bound_seconds(double secs) {
+  struct timeval buf;
+  buf.tv_sec = static_cast<time_t>(floor(secs));
+  buf.tv_usec = static_cast<time_t>(1000000.0f * (secs - static_cast<double>(buf.tv_sec)));
+  set_lower_bound(&buf);
 }
 
 void PROCEDURE_TIMER::start(void) {

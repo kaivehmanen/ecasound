@@ -388,7 +388,7 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
 	if (bufs == 0) bufs = 100000;
 	csetup_repp->set_double_buffer_size(bufs);
 	ecadebug->msg("(eca-chainsetup-parser) Using double-buffer of " + 
-		      kvu_numtostr(csetup_repp->double_buffer_size()) + " sample frames.");
+		      kvu_numtostr(bufs) + " sample frames.");
 	csetup_repp->toggle_double_buffering(true);
       }
       else if (get_argument_number(1, argu) == "nodb") {

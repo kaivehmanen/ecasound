@@ -310,12 +310,14 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void) {
   }
   else if (buffering_mode() == ECA_CHAINSETUP::cs_bmode_auto) {
     if (has_realtime_objects() == true) {
-      if (rtcaps_rep != true || 
-	  (number_of_chain_operators() == 0 &&
-	   (number_of_realtime_inputs() == 0 || 
-	    number_of_realtime_outputs() == 0))) {
+      if (rtcaps_rep != true) {
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
 	toggle_raised_priority(false);
+      }
+      else if (number_of_chain_operators() == 0 &&
+	       (number_of_realtime_inputs() == 0 || 
+		number_of_realtime_outputs() == 0)) {
+	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
       }
       else {
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rtlowlatency;
