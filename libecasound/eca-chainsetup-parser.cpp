@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup-parser.cpp: Functionality for parsing chainsetup 
 //                            option syntax.
-// Copyright (C) 2001-2004 Kai Vehmanen
+// Copyright (C) 2001-2005 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -296,10 +296,15 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
   case 'b':
     {
       int bsize = atoi(kvu_get_argument_number(1, argu).c_str());
-      csetup_repp->set_buffersize(bsize);
-      MESSAGE_ITEM mitemb;
-      mitemb << "Setting buffersize to (samples) " << bsize << ".";
-      ECA_LOG_MSG(ECA_LOGGER::info, mitemb.to_string()); 
+      if (bsize > 0) {
+	csetup_repp->set_buffersize(bsize);
+	MESSAGE_ITEM mitemb;
+	mitemb << "Setting buffersize to (samples) " << bsize << ".";
+	ECA_LOG_MSG(ECA_LOGGER::info, mitemb.to_string()); 
+      }
+      else {
+	ECA_LOG_MSG(ECA_LOGGER::info, "Invalid buffersize given; using default value.");
+      }
       break;
     }
 
