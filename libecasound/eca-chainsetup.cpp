@@ -86,7 +86,8 @@ const string ECA_CHAINSETUP::default_bmode_rtlowlatency_const = "256,true,50,tru
  * error description.
  */
 ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts) 
-  : cparser_rep(this) 
+  : cparser_rep(this),
+    is_enabled_rep(false)
 {
 
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup created (cmdline)");
@@ -112,7 +113,8 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
  * @post buffersize != 0
  */
 ECA_CHAINSETUP::ECA_CHAINSETUP(void) 
-  : cparser_rep(this)
+  : cparser_rep(this),
+    is_enabled_rep(false)
 {
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup created (empty)");
 
@@ -133,7 +135,8 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(void)
  * @post buffersize != 0
  */
 ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file) 
-  : cparser_rep(this)
+  : cparser_rep(this),
+    is_enabled_rep(false)
 {
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup created (file)");
 
@@ -265,7 +268,6 @@ void ECA_CHAINSETUP::set_defaults(void)
     rtcaps_rep = false;
 
   proxy_clients_rep = 0;
-  is_enabled_rep = false;
   multitrack_mode_rep = false;
   multitrack_mode_override_rep = false;
   memory_locked_rep = false;
@@ -1240,7 +1242,6 @@ void ECA_CHAINSETUP::remove_audio_object_helper(AUDIO_IO* aio)
  * ECA_CHAINSETUP.
  *
  * @pre aiod != 0
- * @pre chains.size() > 0 
  * @pre is_enabled() != true
  * @post inputs.size() == old(inputs.size() + 1
  */
@@ -1248,7 +1249,6 @@ void ECA_CHAINSETUP::add_input(AUDIO_IO* aio)
 {
   // --------
   DBC_REQUIRE(aio != 0);
-  DBC_REQUIRE(chains.size() > 0);
   DBC_REQUIRE(is_enabled() != true);
   DBC_DECLARE(size_t old_inputs_size = inputs.size());
   // --------
@@ -1283,7 +1283,6 @@ void ECA_CHAINSETUP::add_input(AUDIO_IO* aio)
  * ECA_CHAINSETUP.
  *
  * @pre aiod != 0
- * @pre chains.size() > 0
  * @pre is_enabled() != true
  * @post outputs.size() == outputs_direct_rep.size()
  */
@@ -1292,7 +1291,6 @@ void ECA_CHAINSETUP::add_output(AUDIO_IO* aio, bool truncate)
   // --------
   DBC_REQUIRE(aio != 0);
   DBC_REQUIRE(is_enabled() != true);
-  DBC_REQUIRE(chains.size() > 0);
   DBC_DECLARE(size_t old_outputs_size = outputs.size());
   // --------
 
