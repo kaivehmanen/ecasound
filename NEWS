@@ -26,6 +26,7 @@ Last officially released version is -*> v2.0.0 *-
 	  	 without the devel files (arts-devel) 
 	- fixed: bug in the MIDI-server code caused core dumps in
 		 certain situations
+	- fixed: bug in querying -klg parameter status
 02052001 (v2.0.0)  -** stable release **-
 	- added: -klg - a generic linear envelope; a controller source
 		 that can be used to map custom envelopes to chain 

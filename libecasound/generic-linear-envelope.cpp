@@ -92,7 +92,7 @@ void GENERIC_LINEAR_ENVELOPE::set_parameter(int param, parameter_type value) {
             break;
         default:
             int pointnum = param/2 - 1;
-            if (param%2 == 0)
+            if (param % 2 == 0)
                 pos_rep[pointnum] = value;
             else
                 val_rep[pointnum] = value;
@@ -110,7 +110,7 @@ CONTROLLER_SOURCE::parameter_type GENERIC_LINEAR_ENVELOPE::get_parameter(int par
                 return 0.0;
             }
 
-            if (param&2 == 0)
+            if (param % 2 == 0)
                 return pos_rep[pointnum];
             else
                 return val_rep[pointnum];
