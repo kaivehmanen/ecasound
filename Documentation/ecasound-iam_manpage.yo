@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (14.02.2001)
+       (19.03.2001)
        ()
        (Multimedia software)
 
@@ -75,10 +75,10 @@ dit(setpos 'time-in-seconds', set-position 'time-in-seconds')
 Sets the current position to 'time-in-seconds' seconds from the em([-])
 beginning.
 
-dit(get-position)
+dit(getpos, get-position)
 Returns the current position in seconds. em([f])
 
-dit(get-position)
+dit(get-length)
 Returns the chainsetup length in seconds (if known). em([f])
  
 dit(status, st)
@@ -117,15 +117,15 @@ Removes currently selected chainsetup. em([-])
 dit(cs-select 'name')
 Selects chainsetup 'name'. em([-])
 
+dit(cs-selected)
+Returns the name of currently selected chainsetup. em([s])
+
 dit(cs-index-select 'cs_index')
 Selects a chainsetup based on a short index string. Chainsetup names
 can be rather long. This command can be used to avoid typing
 these long names. 'cs_index' format is "c<number>". You can get 
 a list of all chainsetups (and their indexes) with the 'cs-status'
 command. em([-])
-
-dit(cs-selected)
-Returns the name of currently selected chainsetup. em([s])
 
 dit(cs-load 'filename')
 Adds a new chainsetup by loading it from file 'filename'. 
@@ -242,7 +242,7 @@ point value (eg. 0.001 is the same as 1ms). If audio objecst are
 connected to multiple selected chains, they will be forwarded multiple
 times. em([-])
 
-dit(c-setpos 'time_in_seconds')
+dit(c-setpos 'time_in_seconds', c-set-position 'time_in_seconds')
 Set position of all inputs and outputs connected to selected chains to
 'time_in_seconds'. em([-])
 
@@ -290,7 +290,7 @@ You can get a list of all audio objects and their indexes with the
 'aio-status' and 'aio-list' commands. em([-])
 
 dit(aio-selected)
-Returns the name of the currently selected audio object. em([r])
+Returns the name of the currently selected audio object. em([s])
 
 dit(aio-attach)
 Attaches the currently selected audio object to all selected chains. em([-])
@@ -311,10 +311,10 @@ Selected audio object is rewinded by 'time-in-seconds' seconds.
 Time should be given as a floating point value (eg. 0.001 is the 
 same as 1ms). em([-])
 
-dit(aio-setpos 'time_in_seconds')
+dit(aio-setpos 'time_in_seconds', aio-set-position 'time_in_seconds')
 Set audio object position to 'time_in_seconds'. em([-])
 
-dit(aio-get-position)
+dit(aio-getpos, aio-get-position)
 Returns the audio object position in seconds. em([f])
 
 dit(aio-get-length)
@@ -353,6 +353,9 @@ plugins. See ecasound(1) man page for more info. em([-])
 dit(cop-select 'param_id')
 Selects a chain operator. em([-])
 
+dit(cop-selected) **not implemented**
+Returns the index number of currently selected chain operator. em([i])
+
 dit(cop-remove) 
 Removes the selected chain operator. em([-])
 
@@ -362,6 +365,9 @@ chain operator commands, this can also be used during processing. em([-])
 
 dit(copp-select 'param_id')
 Selects a chain operator parameter. em([-])
+
+dit(copp-selected) **not implemented**
+Returns the index number of currently selected chain operator parameter. em([i])
 
 dit(copp-set 'value')
 Sets the selected parameter value to 'value'. em([-])
@@ -391,16 +397,19 @@ Controllers are used to control individual chain operator parameters.
 They are attached to chains. If not otherwise stated, currently 
 selected chainsetup and chains are used. 
 
-dit(cop-add-controller 'copc_format_string')
+dit(ctrl-add 'copc_format_string')
 Adds a new controller and attach it to currently selected chain 
 operator. Argument format is "-<id_string>:<param_id>,<range_low>,
 <range_high>,par1,...,parN".  See ecasound(1) man page for more 
 info. em([-])
 
-dit(cop-select-controller 'param_id')
+dit(ctrl-select 'param_id')
 Selects a controller. em([-])
 
-dit(cop-remove-controller)
+dit(ctrl-selected) **not implemented**
+Returns the index number of currently selected controller. em([i])
+
+dit(ctrl-remove)
 Removes the selected controller. em([-])
 
 dit(ctrl-status) 

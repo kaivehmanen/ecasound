@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "14\&.02\&.2001" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "19\&.03\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -55,10 +55,10 @@ The current position is forwarded by \'time-in-seconds\' seconds\&. \fI[-]\fP
 Sets the current position to \'time-in-seconds\' seconds from the \fI[-]\fP
 beginning\&.
 .PP 
-.IP "get-position" 
+.IP "getpos, get-position" 
 Returns the current position in seconds\&. \fI[f]\fP
 .PP 
-.IP "get-position" 
+.IP "get-length" 
 Returns the chainsetup length in seconds (if known)\&. \fI[f]\fP
 .PP 
 .IP "status, st" 
@@ -95,15 +95,15 @@ Removes currently selected chainsetup\&. \fI[-]\fP
 .IP "cs-select \'name\'" 
 Selects chainsetup \'name\'\&. \fI[-]\fP
 .PP 
+.IP "cs-selected" 
+Returns the name of currently selected chainsetup\&. \fI[s]\fP
+.PP 
 .IP "cs-index-select \'cs_index\'" 
 Selects a chainsetup based on a short index string\&. Chainsetup names
 can be rather long\&. This command can be used to avoid typing
 these long names\&. \'cs_index\' format is "c<number>"\&. You can get 
 a list of all chainsetups (and their indexes) with the \'cs-status\'
 command\&. \fI[-]\fP
-.PP 
-.IP "cs-selected" 
-Returns the name of currently selected chainsetup\&. \fI[s]\fP
 .PP 
 .IP "cs-load \'filename\'" 
 Adds a new chainsetup by loading it from file \'filename\'\&. 
@@ -218,7 +218,7 @@ point value (eg\&. 0\&.001 is the same as 1ms)\&. If audio objecst are
 connected to multiple selected chains, they will be forwarded multiple
 times\&. \fI[-]\fP
 .PP 
-.IP "c-setpos \'time_in_seconds\'" 
+.IP "c-setpos \'time_in_seconds\', c-set-position \'time_in_seconds\'" 
 Set position of all inputs and outputs connected to selected chains to
 \'time_in_seconds\'\&. \fI[-]\fP
 .PP 
@@ -264,7 +264,7 @@ You can get a list of all audio objects and their indexes with the
 \'aio-status\' and \'aio-list\' commands\&. \fI[-]\fP
 .PP 
 .IP "aio-selected" 
-Returns the name of the currently selected audio object\&. \fI[r]\fP
+Returns the name of the currently selected audio object\&. \fI[s]\fP
 .PP 
 .IP "aio-attach" 
 Attaches the currently selected audio object to all selected chains\&. \fI[-]\fP
@@ -285,10 +285,10 @@ Selected audio object is rewinded by \'time-in-seconds\' seconds\&.
 Time should be given as a floating point value (eg\&. 0\&.001 is the 
 same as 1ms)\&. \fI[-]\fP
 .PP 
-.IP "aio-setpos \'time_in_seconds\'" 
+.IP "aio-setpos \'time_in_seconds\', aio-set-position \'time_in_seconds\'" 
 Set audio object position to \'time_in_seconds\'\&. \fI[-]\fP
 .PP 
-.IP "aio-get-position" 
+.IP "aio-getpos, aio-get-position" 
 Returns the audio object position in seconds\&. \fI[f]\fP
 .PP 
 .IP "aio-get-length" 
@@ -327,6 +327,10 @@ plugins\&. See ecasound(1) man page for more info\&. \fI[-]\fP
 .IP "cop-select \'param_id\'" 
 Selects a chain operator\&. \fI[-]\fP
 .PP 
+.IP "cop-selected" 
+**not implemented**
+Returns the index number of currently selected chain operator\&. \fI[i]\fP
+.PP 
 .IP "cop-remove" 
 Removes the selected chain operator\&. \fI[-]\fP
 .PP 
@@ -336,6 +340,10 @@ chain operator commands, this can also be used during processing\&. \fI[-]\fP
 .PP 
 .IP "copp-select \'param_id\'" 
 Selects a chain operator parameter\&. \fI[-]\fP
+.PP 
+.IP "copp-selected" 
+**not implemented**
+Returns the index number of currently selected chain operator parameter\&. \fI[i]\fP
 .PP 
 .IP "copp-set \'value\'" 
 Sets the selected parameter value to \'value\'\&. \fI[-]\fP
@@ -365,16 +373,20 @@ Controllers are used to control individual chain operator parameters\&.
 They are attached to chains\&. If not otherwise stated, currently 
 selected chainsetup and chains are used\&. 
 .IP 
-.IP "cop-add-controller \'copc_format_string\'" 
+.IP "ctrl-add \'copc_format_string\'" 
 Adds a new controller and attach it to currently selected chain 
 operator\&. Argument format is "-<id_string>:<param_id>,<range_low>,
 <range_high>,par1,\&.\&.\&.,parN"\&.  See ecasound(1) man page for more 
 info\&. \fI[-]\fP
 .IP 
-.IP "cop-select-controller \'param_id\'" 
+.IP "ctrl-select \'param_id\'" 
 Selects a controller\&. \fI[-]\fP
 .IP 
-.IP "cop-remove-controller" 
+.IP "ctrl-selected" 
+**not implemented**
+Returns the index number of currently selected controller\&. \fI[i]\fP
+.IP 
+.IP "ctrl-remove" 
 Removes the selected controller\&. \fI[-]\fP
 .IP 
 .IP "ctrl-status" 

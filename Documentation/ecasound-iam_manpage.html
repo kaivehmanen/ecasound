@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>14.02.2001</h2>
+<h2>19.03.2001</h2>
 
 
     
@@ -74,9 +74,9 @@ The current position is forwarded by 'time-in-seconds' seconds. <em>[-]</em>
 <p><p></p><dt><strong>setpos 'time-in-seconds', set-position 'time-in-seconds'</strong><dd>
 Sets the current position to 'time-in-seconds' seconds from the <em>[-]</em>
 beginning.
-<p><p></p><dt><strong>get-position</strong><dd>
+<p><p></p><dt><strong>getpos, get-position</strong><dd>
 Returns the current position in seconds. <em>[f]</em>
-<p><p></p><dt><strong>get-position</strong><dd>
+<p><p></p><dt><strong>get-length</strong><dd>
 Returns the chainsetup length in seconds (if known). <em>[f]</em>
 <p><p></p><dt><strong>status, st</strong><dd>
 General status info. <em>[s]</em>
@@ -108,14 +108,14 @@ the selected chainsetup. <em>[-]</em>
 Removes currently selected chainsetup. <em>[-]</em>
 <p><p></p><dt><strong>cs-select 'name'</strong><dd>
 Selects chainsetup 'name'. <em>[-]</em>
+<p><p></p><dt><strong>cs-selected</strong><dd>
+Returns the name of currently selected chainsetup. <em>[s]</em>
 <p><p></p><dt><strong>cs-index-select 'cs_index'</strong><dd>
 Selects a chainsetup based on a short index string. Chainsetup names
 can be rather long. This command can be used to avoid typing
 these long names. 'cs_index' format is "c&lt;number&gt;". You can get 
 a list of all chainsetups (and their indexes) with the 'cs-status'
 command. <em>[-]</em>
-<p><p></p><dt><strong>cs-selected</strong><dd>
-Returns the name of currently selected chainsetup. <em>[s]</em>
 <p><p></p><dt><strong>cs-load 'filename'</strong><dd>
 Adds a new chainsetup by loading it from file 'filename'. 
 'filename' is now the selected chainsetup. <em>[-]</em>
@@ -203,7 +203,7 @@ Inputs and outputs connected to selected chains are rewinded by
 point value (eg. 0.001 is the same as 1ms). If audio objecst are
 connected to multiple selected chains, they will be forwarded multiple
 times. <em>[-]</em>
-<p><p></p><dt><strong>c-setpos 'time_in_seconds'</strong><dd>
+<p><p></p><dt><strong>c-setpos 'time_in_seconds', c-set-position 'time_in_seconds'</strong><dd>
 Set position of all inputs and outputs connected to selected chains to
 'time_in_seconds'. <em>[-]</em>
 <p><p></p><dt><strong>c-status</strong><dd>
@@ -241,7 +241,7 @@ is "i&lt;number&gt;" for inputs and similarly "o&lt;number&gt;" for outputs.
 You can get a list of all audio objects and their indexes with the
 'aio-status' and 'aio-list' commands. <em>[-]</em>
 <p><p></p><dt><strong>aio-selected</strong><dd>
-Returns the name of the currently selected audio object. <em>[r]</em>
+Returns the name of the currently selected audio object. <em>[s]</em>
 <p><p></p><dt><strong>aio-attach</strong><dd>
 Attaches the currently selected audio object to all selected chains. <em>[-]</em>
 <p><p></p><dt><strong>aio-remove</strong><dd>
@@ -256,9 +256,9 @@ same as 1ms). <em>[-]</em>
 Selected audio object is rewinded by 'time-in-seconds' seconds. 
 Time should be given as a floating point value (eg. 0.001 is the 
 same as 1ms). <em>[-]</em>
-<p><p></p><dt><strong>aio-setpos 'time_in_seconds'</strong><dd>
+<p><p></p><dt><strong>aio-setpos 'time_in_seconds', aio-set-position 'time_in_seconds'</strong><dd>
 Set audio object position to 'time_in_seconds'. <em>[-]</em>
-<p><p></p><dt><strong>aio-get-position</strong><dd>
+<p><p></p><dt><strong>aio-getpos, aio-get-position</strong><dd>
 Returns the audio object position in seconds. <em>[f]</em>
 <p><p></p><dt><strong>aio-get-length</strong><dd>
 Returns the audio object length in seconds. <em>[f]</em>
@@ -288,6 +288,8 @@ this commmand can also be used to add effect presets and various
 plugins. See ecasound(1) man page for more info. <em>[-]</em>
 <p><p></p><dt><strong>cop-select 'param_id'</strong><dd>
 Selects a chain operator. <em>[-]</em>
+<p><p></p><dt><strong>cop-selected</strong><dd> **not implemented**
+Returns the index number of currently selected chain operator. <em>[i]</em>
 <p><p></p><dt><strong>cop-remove</strong><dd> 
 Removes the selected chain operator. <em>[-]</em>
 <p><p></p><dt><strong>cop-set 'chainop_id, param_id, value'</strong><dd>
@@ -295,6 +297,8 @@ Changes the value of a single chain operator parameter. Unlike other
 chain operator commands, this can also be used during processing. <em>[-]</em>
 <p><p></p><dt><strong>copp-select 'param_id'</strong><dd>
 Selects a chain operator parameter. <em>[-]</em>
+<p><p></p><dt><strong>copp-selected</strong><dd> **not implemented**
+Returns the index number of currently selected chain operator parameter. <em>[i]</em>
 <p><p></p><dt><strong>copp-set 'value'</strong><dd>
 Sets the selected parameter value to 'value'. <em>[-]</em>
 <p><p></p><dt><strong>copp-get</strong><dd>
@@ -316,14 +320,16 @@ Prints a list of registered LADSPA-plugins. <em>[s]</em>
 Controllers are used to control individual chain operator parameters.
 They are attached to chains. If not otherwise stated, currently 
 selected chainsetup and chains are used. 
-<p><p></p><dt><strong>cop-add-controller 'copc_format_string'</strong><dd>
+<p><p></p><dt><strong>ctrl-add 'copc_format_string'</strong><dd>
 Adds a new controller and attach it to currently selected chain 
 operator. Argument format is "-&lt;id_string&gt;:&lt;param_id&gt;,&lt;range_low&gt;,
 &lt;range_high&gt;,par1,...,parN".  See ecasound(1) man page for more 
 info. <em>[-]</em>
-<p><p></p><dt><strong>cop-select-controller 'param_id'</strong><dd>
+<p><p></p><dt><strong>ctrl-select 'param_id'</strong><dd>
 Selects a controller. <em>[-]</em>
-<p><p></p><dt><strong>cop-remove-controller</strong><dd>
+<p><p></p><dt><strong>ctrl-selected</strong><dd> **not implemented**
+Returns the index number of currently selected controller. <em>[i]</em>
+<p><p></p><dt><strong>ctrl-remove</strong><dd>
 Removes the selected controller. <em>[-]</em>
 <p><p></p><dt><strong>ctrl-status</strong><dd> 
 Returns info about controller status. <em>[s]</em>
