@@ -40,6 +40,9 @@ Last officially released version is -*> v2.0.4 *-
 		 types were broken in 2.1dev11
 	- fixed: removing audio inputs and outputs didn't work
 		 as specified
+	- fixed: bugs in multitrack-mode operation; processing
+		 would stop once all input objects were
+		 finished
 22082002 (v2.1dev11)
 	- added: configure-check for socket libraries
 	- added: -evp - volume peak watcher operator
