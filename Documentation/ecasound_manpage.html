@@ -62,7 +62,7 @@ some verbosity, while <em>-ddd</em> results in very detailed
 output.
 <p><p></p><dt><strong>-d:debug_level</strong><dd>
 Set the debug level mask to 'debug_level'. This a bitmasked value, 
-that defaults to 3. See ECA_LOGGER class documentation for 
+that defaults to 263. See ECA_LOGGER class documentation for 
 more detailed info about various debug_level values.
 <p><p></p><dt><strong>-D</strong><dd>
 Print all debug information to stderr (unbuffered, plain output
@@ -126,8 +126,11 @@ is allowed for realtime devices. Disabling this can reduce
 latency times in some situations. With '-z:xruns', processing will be 
 halted if an under/overrun occurs. '-z:multitrack' and
 'z:nomultitrack' can be used to force ecasound to enable or disable
-multitrack-mode. '-z:psr' enables the <em>precise-sample-rates</em> 
-mode for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>.
+multitrack-mode. In rare cases you may want to explicitly specify 
+the recording offset with '-z:multitrack,offset-in-samples'. The
+offset is the amount of samples skipped when recording from 
+real-time inputs. '-z:psr' enables the <em>precise-sample-rates</em> mode 
+for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>.
 <p></dl>
 <p>
 <strong>CHAINSETUP BUFFERING AND PERFORMANCE OPTIONS</strong>

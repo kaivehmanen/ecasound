@@ -57,7 +57,7 @@ output.
 
 dit(-d:debug_level)
 Set the debug level mask to 'debug_level'. This a bitmasked value, 
-that defaults to 3. See ECA_LOGGER class documentation for 
+that defaults to 263. See ECA_LOGGER class documentation for 
 more detailed info about various debug_level values.
 
 dit(-D)
@@ -137,8 +137,11 @@ is allowed for realtime devices. Disabling this can reduce
 latency times in some situations. With '-z:xruns', processing will be 
 halted if an under/overrun occurs. '-z:multitrack' and
 'z:nomultitrack' can be used to force ecasound to enable or disable
-multitrack-mode. '-z:psr' enables the em(precise-sample-rates) 
-mode for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html).
+multitrack-mode. In rare cases you may want to explicitly specify 
+the recording offset with '-z:multitrack,offset-in-samples'. The
+offset is the amount of samples skipped when recording from 
+real-time inputs. '-z:psr' enables the em(precise-sample-rates) mode 
+for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html).
 
 enddit()
 
