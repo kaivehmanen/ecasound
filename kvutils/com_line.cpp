@@ -93,8 +93,8 @@ vector<string> COMMAND_LINE::combine(const vector<string>& source) {
 	  result.push_back(first);
 	}
 	else {
+	  --p;
 	  result.push_back(first);
-	  result.push_back(*p);
 	}
       }
       else 
