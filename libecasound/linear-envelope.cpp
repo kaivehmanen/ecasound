@@ -46,7 +46,7 @@ void LINEAR_ENVELOPE::init(void)
   MESSAGE_ITEM otemp;
   otemp << "(linear-envelope) Fade-in enveloped initialized; length ";
   otemp.setprecision(3);
-  otemp << length_in_seconds();
+  otemp << length_in_seconds_exact();
   otemp << " seconds.";
   ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
 }
@@ -66,7 +66,7 @@ CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::get_parameter(int param) const
 {
   switch (param) {
   case 1:
-    return(length_in_seconds());
+    return(length_in_seconds_exact());
   }
   return(0.0);
 }
