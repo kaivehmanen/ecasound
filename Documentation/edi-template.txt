@@ -3,13 +3,16 @@ Status: OPEN/CLOSED
 
 (edi-xxx): Short description of the item. This should be no more 
 	   than a few lines. 
-	   - submitted: who submitted, date
-	   - action: what happened, who and when
+         - submitted: who submitted, date
+         - action: what happened, who and when
 ------------------------------------------------------------------------
 Details:
 
-- more detailed description
+- rationale; why should this item be implemented?
+- list of goals/requirements that should be reached
+- description of problem/idea with background info
 - solution ideas 
+- list of critical points (possibly problems, difficult use cases)
 - todo-lists (work left to be done)
 - this section should be edited to match the current 
   situation

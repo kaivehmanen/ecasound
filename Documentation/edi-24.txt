@@ -1,0 +1,21 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-24): Resample audio object
+         - submitted: kaiv, 22.02.2002
+
+------------------------------------------------------------------------
+Details:
+
+- rationale
+    - to replace the old implicit resampling feature that
+      was present in 2.1dev7 and earlier
+- solution ideas 
+    - usage: -i resample,to_freq,audio_object 
+    - example: -i resample,22050,foo.wav
+- open issues
+    - what algorithm to use? maybe use a better algorithms
+      taken for instance from sox...
+
+------------------------------------------------------------------------
+

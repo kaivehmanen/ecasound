@@ -1,0 +1,20 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-25): Distortion with multitap delay -etm if delay length changes
+	  dynamically.
+         - submitted: rjpoelstra, 27.01.2002
+
+------------------------------------------------------------------------
+Details:
+
+------------------------------------------------------------------------
+- Remco Poelstra, Sun, 27 Jan 2002 (ecasound-list):
+
+On 2002.01.27 17:23 Kai Vehmanen wrote:
+> ecasound -a:1,2 -i foo.wav \
+>        -a:1 -ea:-100 \
+>        -a:2 -etd:0,0,1,100 -kos:1,0.05,5,0.1,0 \
+>        -a:1,2 -o /dev/dsp
+
+Cool, thanks for the examples. But why does this last example crisp?

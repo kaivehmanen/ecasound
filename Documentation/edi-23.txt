@@ -1,0 +1,32 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-23): Extending the max_buffers audio i/o parameter
+	 - submitted: kaiv, 22.02.2002
+
+------------------------------------------------------------------------
+Details:
+
+- rationale
+    - currently use of hw-level buffering for realtime 
+      can be controlled by a toggle option max_buffers
+    - this is too limited for many situations
+
+- goal
+    - to replace max_buffers with the concept of 
+      buffer_count in AUDIO_IO_DEVICE interface
+    - extending the command-line syntx
+    - make it possible for user to select between 
+      1) maximum bufferin, 2) minumum (= 3 buffers) 
+      or 3) exact buffer count 
+
+- solution ideas 
+    - -z:intbuf and -z:nointbuf (still before)
+    - -z:bufcount,X (use X buffers of -b:Y frames)
+    - similar notation in buffering profile handling
+
+- list of critical points (possibly problems, difficult use cases)
+    - if -z:intbuf is specified, how many period should 
+      engine use for prefilling...?
+
+------------------------------------------------------------------------

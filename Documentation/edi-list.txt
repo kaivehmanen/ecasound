@@ -25,21 +25,36 @@ list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 Note! See README for a list of defined developer tags (kaiv -> me).
 
 -----------------------------------------------------------------------
-[ Bugs, problems ]
+[ History (newest first) ]
+
+22.02.2002 - edi-22, edi-23, edi-24 and edi-25 opened
+22.02.2002 - edi-template.txt updated
+01.02.2002 - edi-12 closed
+31.01.2002 - edi-12 opened
+31.01.2002 - edi-18 closed
+12.01.2002 - edi-12 closed
+
+xx.xx.2001 no history information
+
+-----------------------------------------------------------------------
+[ Section: Bugs, problems ]
 
 (edi-1)	Initial reverb-spike with the -ete reverb.
 	submitted: Anthony Paul Van Groningen, 04.01.2001
 (edi-13) Possible bug in forked-stream module (mp3,ogg), which 
 	 causes ecawave crashes.
 	- submitted: kaiv, 17.08.2001
+(edi-25): Distortion with multitap delay -etm if delay length changes
+	  dynamically.
+        - submitted: rjpoelstra, 27.01.2002
 
 -----------------------------------------------------------------------
-[ Enhancements, new features ]
+[ Section: Enhancements, new features ]
 
 (edi-4) 14bit MIDI-CCs controller source.
 	- submitted: kaiv, 17.08.2001
 (edi-5) Threshold parameter to -eca.
-	- submitted: ecasound-list daemon :)
+	- submitted: ecasound-list daemon :), 2001
 (edi-7) Adding a 'loop x times' option to the ewf file format.
 	- submitted: nolan_d, 09.07.2001
 (edi-9) Adding and removing audio and chainop objects on-the-fly. 
@@ -54,9 +69,15 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	- submitted: kaiv, 18.10.2001
 (edi-20) Ewf-v2 format.
 	- submitted: kaiv, 26.11.2001
+(edi-22) Engine iteration from  outside sources
+	- submitted: kaiv, 22.02.2002
+(edi-23): Extending the max_buffers audio i/o parameter
+	 - submitted: kaiv, 22.02.2002
+(edi-24): Resample audio object
+         - submitted: kaiv, 22.02.2002
 
 -----------------------------------------------------------------------
-[ Closed items ]
+[ Section: Closed items ]
 
 (edi-2)	Possibility to specify audio object's type instead of using 
 	filename extensions.

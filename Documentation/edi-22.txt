@@ -1,0 +1,45 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-22) Engine iteration from  outside sources
+	- submitted: kaiv, 22.02.2002
+
+------------------------------------------------------------------------
+Details:
+
+- goal: to make it possible to run ecasound's engine, loop at 
+        at a time, from external sources such as JACK 
+        client process() callback
+
+- engine public functionality
+     - is created to operate on a chainsetup (chainsetup
+       is tied to the engine when engine is created, so 
+       reinitialization with a different chainsetup 
+       object is not possible)
+     - accepting and reacting to incoming commands 
+       (COMMAND_QUEUE)
+     - engine is launched by issuing the exec() member
+       function which blocks until engine operation
+       stops
+
+- engine control flow
+     - start: 
+     - stop/driver:
+     - stop/cqueue:
+
+- engine modes
+     - one-shot operation; once finished state is 
+       reached, engine is exited (exec() returns)
+        
+- problems
+    - how to handle multitrack-sync
+        - we need to discard input data; amount 
+	  equals to jack's output latency
+	  
+    - various start and stop scenarios:
+        - jackd shutdown
+        - client timeout
+        - chainsetup is finished (all inputs are, or some
+          output is, finished)
+
+------------------------------------------------------------------------
