@@ -62,11 +62,13 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   ~AUDIOFILE_INTERFACE(void);
 };
 
+#ifdef ECA_ENABLE_AUDIOIO_PLUGINS
 extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new AUDIOFILE_INTERFACE()); }
 int audio_io_interface_version(void);
 const char* audio_io_keyword(void);
 const char* audio_io_keyword_regex(void);
 };
+#endif
 
 #endif

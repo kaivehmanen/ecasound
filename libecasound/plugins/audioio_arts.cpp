@@ -21,14 +21,20 @@
 #include "eca-logger.h"
 #include "eca-version.h"
 
+extern "C" {
+#include <artsc.h>
+}
+
 #include "audioio_arts.h"
 
+#ifdef ECA_ENABLE_AUDIOIO_PLUGINS
 static const char* audio_io_keyword_const = "arts";
 static const char* audio_io_keyword_regex_const = "^arts$";
 
 const char* audio_io_keyword(void){return(audio_io_keyword_const); }
 const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
 int audio_io_interface_version(void) { return(ecasound_library_version_current); }
+#endif
 
 int ARTS_INTERFACE::ref_rep = 0;
 

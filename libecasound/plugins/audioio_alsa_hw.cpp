@@ -19,6 +19,7 @@
 #include "eca-version.h"
 #include "audioio_alsa.h"
 
+#ifdef ECA_ENABLE_AUDIOIO_PLUGINS
 static const char* audio_io_keyword_const = "alsahw_09";
 static const char* audio_io_keyword_regex_const = "(^alsahw_09$)|(^alsaplugin_09$)";
 
@@ -26,4 +27,4 @@ const char* audio_io_keyword(void){return(audio_io_keyword_const); }
 const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
 AUDIO_IO* audio_io_descriptor(void) { return(new AUDIO_IO_ALSA_PCM()); }
 int audio_io_interface_version(void) { return(ecasound_library_version_current); }
-
+#endif

@@ -4,12 +4,10 @@
 #include <string>
 #include <iostream>
 
-extern "C" {
-#include <artsc.h>
-}
-
 #include "sample-specs.h"
 #include "eca-version.h"
+
+typedef void *arts_stream_t;
 
 /**
  * Interface for communicating with aRts/MCOP.
@@ -66,11 +64,13 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
 
 };
 
+#ifdef ECA_ENABLE_AUDIOIO_PLUGINS
 extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new ARTS_INTERFACE()); }
 int audio_io_interface_version(void);
 const char* audio_io_keyword(void);
 const char* audio_io_keyword_regex(void);
 };
+#endif
 
 #endif
