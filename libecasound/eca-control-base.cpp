@@ -603,7 +603,11 @@ vector<string> ECA_CONTROL_BASE::attached_chains(const string& filename) const
 
 void ECA_CONTROL_BASE::set_last_string(const list<string>& s)
 {
-  last_s_rep.clear();
+  // use resize() instead of clear(); clear() was a late
+  // addition to C++ standard and not supported by all
+  // compilers (for example egcs-2.91.66) 
+  last_s_rep.resize(0);
+
   DBC_CHECK(last_s_rep.size() == 0);
   list<string>::const_iterator p = s.begin();
   while(p != s.end()) {

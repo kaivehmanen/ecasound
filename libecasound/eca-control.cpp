@@ -142,7 +142,11 @@ void ECA_CONTROL::set_action_argument(double v)
 
 void ECA_CONTROL::clear_action_arguments(void)
 {
-  action_args_rep.clear();
+  // use resize() instead of clear(); clear() was a late
+  // addition to C++ standard and not supported by all
+  // compilers (for example egcs-2.91.66) 
+  action_args_rep.resize(0);
+
   action_arg_f_rep = 0.0f;
   action_arg_f_set_rep = false;
 }
