@@ -40,6 +40,15 @@ AUDIO_IO_PROXY_BUFFER::AUDIO_IO_PROXY_BUFFER(int number_of_buffers,
 }
 
 /**
+ * Resets all pointers to their initial state. 
+ */
+void AUDIO_IO_PROXY_BUFFER::reset(void) {
+  readptr_rep.set(0);
+  writeptr_rep.set(0);
+  finished_rep.set(0);
+}
+
+/**
  * Number of sample buffer available for reading.
  */
 int AUDIO_IO_PROXY_BUFFER::read_space(void) {

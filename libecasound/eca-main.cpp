@@ -183,8 +183,8 @@ void ECA_PROCESSOR::init_inputs(void) {
 	proxies_rep.push_back(proxy_client);
 	(*r_inputs)[adev_sizet] = proxy_client;
       }
-      non_realtime_inputs.push_back((*inputs)[adev_sizet]);
-      non_realtime_objects.push_back((*inputs)[adev_sizet]);
+      non_realtime_inputs.push_back((*r_inputs)[adev_sizet]);
+      non_realtime_objects.push_back((*r_inputs)[adev_sizet]);
     }
 
     (*inputs)[adev_sizet]->buffersize(buffersize_rep, csetup->sample_rate());
@@ -193,7 +193,7 @@ void ECA_PROCESSOR::init_inputs(void) {
       max_channels = csetup->inputs[adev_sizet]->channels();
 
     input_start_pos[adev_sizet] = csetup->inputs[adev_sizet]->position_in_samples();
-    (*inputs)[adev_sizet]->seek_position_in_samples(input_start_pos[adev_sizet]);
+    (*r_inputs)[adev_sizet]->seek_position_in_samples(input_start_pos[adev_sizet]);
 
     input_chain_count[adev_sizet] =
       eparams->number_of_connected_chains_to_input(csetup->inputs[adev_sizet]);
@@ -251,8 +251,8 @@ void ECA_PROCESSOR::init_outputs(void) {
 	proxies_rep.push_back(proxy_client);
 	(*r_outputs)[adev_sizet] = proxy_client;
       }
-      non_realtime_outputs.push_back((*outputs)[adev_sizet]);
-      non_realtime_objects.push_back((*outputs)[adev_sizet]);
+      non_realtime_outputs.push_back((*r_outputs)[adev_sizet]);
+      non_realtime_objects.push_back((*r_outputs)[adev_sizet]);
     }
 
     (*outputs)[adev_sizet]->buffersize(buffersize_rep, csetup->sample_rate());
@@ -262,7 +262,7 @@ void ECA_PROCESSOR::init_outputs(void) {
 
     output_start_pos[adev_sizet] =
       csetup->outputs[adev_sizet]->position_in_samples();
-    (*outputs)[adev_sizet]->seek_position_in_samples(output_start_pos[adev_sizet]);
+    (*r_outputs)[adev_sizet]->seek_position_in_samples(output_start_pos[adev_sizet]);
 
     output_chain_count[adev_sizet] =
       eparams->number_of_connected_chains_to_output(csetup->outputs[adev_sizet]);

@@ -63,7 +63,6 @@ long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {
 }
 
 void MIKMOD_INTERFACE::seek_position(void) {
-  if (is_open() == true && triggered_rep != true) return;
   if (is_open() == true) {
     if (io_mode() == io_read) {
       kill_mikmod();

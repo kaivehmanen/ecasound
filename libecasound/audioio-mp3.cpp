@@ -115,7 +115,6 @@ void MP3FILE::write_samples(void* target_buffer, long int samples) {
 }
 
 void MP3FILE::seek_position(void) {
-  if (is_open() == true && triggered_rep != true) return;
   if (is_open() == true) {
     finished_rep = false;
     if (io_mode() == io_read)

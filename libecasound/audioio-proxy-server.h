@@ -47,7 +47,7 @@ class AUDIO_IO_PROXY_SERVER {
 
   void start(void);
   void stop(void);
-  void seek(AUDIO_IO* aobject, long int position_in_samples);
+  void flush(void);
 
   void set_buffer_defaults(int buffers, long int buffersize, long int sample_rate);
   void set_schedpriority(int v) { schedpriority_rep = v; }

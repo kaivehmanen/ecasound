@@ -88,6 +88,10 @@ void AUDIO_IO_PROXY_SERVER::start(void) {
   }
   stop_request_rep.set(0);
   running_rep.set(1);
+  full_rep.set(0);
+  for(unsigned int p = 0; p < clients_rep.size(); p++) {
+    buffers_rep[p]->finished_rep.set(0);
+  }
   ecadebug->msg(ECA_DEBUG::user_objects, "(audio_io_proxy_server) starting processing");
 }
 
@@ -113,11 +117,6 @@ bool AUDIO_IO_PROXY_SERVER::is_running(void) const {
 bool AUDIO_IO_PROXY_SERVER::is_full(void) const { 
   if (full_rep.get() == 0) return(false); 
   return(true);
-}
-
-void AUDIO_IO_PROXY_SERVER::seek(AUDIO_IO* abject, 
-				 long int position_in_samples) { 
-  cerr << "Not implemented!" << endl;
 }
 
 /**
@@ -238,5 +237,32 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
       }
     }
   }
+  flush();
   cerr << "Exiting proxy server thread." << endl;
+}
+
+/**
+ * Flushes all data in the buffers to disk.
+ */
+void AUDIO_IO_PROXY_SERVER::flush(void) {
+  int not_finished = 1;
+  while(not_finished != 0) {
+    not_finished = 0;
+    for(unsigned int p = 0; p < clients_rep.size(); p++) {
+      if (clients_rep[p] == 0 ||
+	  buffers_rep[p]->finished_rep.get()) continue;
+      if (buffers_rep[p]->io_mode_rep != AUDIO_IO::io_read) {
+	if (buffers_rep[p]->read_space() > 0) {
+	  ++not_finished;
+	  cerr << "Flushing buffer " << buffers_rep[p]->readptr_rep.get() << " of client " 
+	       << p << ";";
+	  cerr << " read_space: " << buffers_rep[p]->read_space() << "." << endl;
+	  
+	  clients_rep[p]->write_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
+	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
+	  buffers_rep[p]->advance_read_pointer();
+	}
+      }
+    }
+  }
 }

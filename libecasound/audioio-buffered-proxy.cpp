@@ -110,7 +110,12 @@ void AUDIO_IO_BUFFERED_PROXY::seek_position(void) {
     while(pserver_repp->is_running() != true) usleep(50000);
   }
   child_repp->seek_position_in_samples(position_in_samples());
-  if (was_running == true) pserver_repp->start();
+  finished_rep = false;
+  pbuffer_repp->reset();
+  if (was_running == true) {
+    pserver_repp->start();
+    while(pserver_repp->is_full() != true) usleep(50000);
+  }
 }
 
 void AUDIO_IO_BUFFERED_PROXY::open(void) throw(SETUP_ERROR&) { 

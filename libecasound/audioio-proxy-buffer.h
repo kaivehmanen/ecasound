@@ -18,6 +18,7 @@ class AUDIO_IO_PROXY_BUFFER {
   vector<SAMPLE_BUFFER> sbufs_rep;
   AUDIO_IO::Io_mode io_mode_rep;
 
+  void reset(void);
   int read_space(void);
   int write_space(void);
   void advance_read_pointer(void);
