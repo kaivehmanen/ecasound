@@ -30,8 +30,8 @@
 #ifdef ECA_USE_NCURSES_H
 #include <ncurses.h>
 #include <term.h> /* for setupterm() */
-#elif ECA_USE_NCURSES_CURSES_H
-#include <ncurses/nnurses.h>
+#elif ECA_USE_NCURSES_NCURSES_H
+#include <ncurses/ncurses.h>
 #include <ncurses/term.h> /* for setupterm() */
 #else
 #include <curses.h>

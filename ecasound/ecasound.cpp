@@ -145,6 +145,11 @@ int main(int argc, char *argv[])
     }
   }
 
+  if (state->daemon_mode == true) {
+    /* wait until daemon thread has exited */
+    state->exit_request = 1;
+    pthread_join(*state->daemon_thread, NULL);
+  }
   // cerr << endl << "ecasound: main() exiting..." << endl;
   
   return(state->retval);
@@ -268,7 +273,7 @@ void ecasound_main_loop(struct ecasound_state* state)
 
 	if (cmd == "quit" || cmd == "q") {
 	  state->console->print("---\necasound: Exiting...");
-	  break;
+	  state->exit_request = 1;
 	}
       }
     }

@@ -27,14 +27,15 @@
 #include <eca-logger-interface.h>
 #include "textdebug.h"
 
-#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
-#ifdef ECA_HAVE_NCURSES_CURSES_H
-#include <ncurses/curses.h>
-#include <ncurses/term.h>
-#else
+#ifdef ECA_USE_NCURSES_H
+#include <ncurses.h>
+#include <term.h> /* for setupterm() */
+#elif ECA_USE_NCURSES_NCURSES_H
+#include <ncurses/ncurses.h>
+#include <ncurses/term.h> /* for setupterm() */
+#elif ECA_USE_CURSES_H
 #include <curses.h>
-#include <term.h>
-#endif
+#include <term.h> /* for setupterm() */
 #endif
 
 using namespace std;
@@ -57,7 +58,7 @@ void TEXTDEBUG::do_msg(ECA_LOGGER::Msg_level_t level, const std::string& module_
 {
   if (is_log_level_set(level) == true) {
     if (level == ECA_LOGGER::subsystems) {
-#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
+#if defined(ECA_USE_NCURSES_H) || defined(ECA_USE_NCURSES_NCURSES_H) || defined(ECA_USE_CURSES_H)
       *dostream_repp << "- [ ";
       putp(tigetstr("bold"));
 #endif
@@ -70,7 +71,7 @@ void TEXTDEBUG::do_msg(ECA_LOGGER::Msg_level_t level, const std::string& module_
     *dostream_repp << log_message;
 
     if (level == ECA_LOGGER::subsystems) {
-#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
+#if defined(ECA_USE_NCURSES_H) || defined(ECA_USE_NCURSES_NCURSES_H) || defined(ECA_USE_CURSES_H)
       putp(tigetstr("sgr0"));
       *dostream_repp << " ] ";
 #else
