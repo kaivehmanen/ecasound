@@ -4,7 +4,12 @@
 #include <string>
 #include <cstdio>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#ifdef USE_CXX_STD_NAMESPACE
 using std::string;
+#endif
 
 string kvu_numtostr(char c);
 string kvu_numtostr(unsigned char c);

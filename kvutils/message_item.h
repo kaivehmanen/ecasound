@@ -3,7 +3,12 @@
 
 #include <string>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#ifdef USE_CXX_STD_NAMESPACE
 using std::string;
+#endif
 
 /**
  * A simple version of C++ stringstream

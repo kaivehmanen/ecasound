@@ -5,8 +5,13 @@
 #include <utility>
 #include <deque>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#ifdef USE_CXX_STD_NAMESPACE
 using std::pair;
 using std::deque;
+#endif
 
 /**
  * A thread-safe way to transmit int-double pairs.

@@ -4,8 +4,13 @@
 #include <string>
 #include <vector>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#ifdef USE_CXX_STD_NAMESPACE
 using std::string;
 using std::vector;
+#endif
 
 /**
  * Class representation of command line arguments
