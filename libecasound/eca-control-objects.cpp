@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-objects.cpp: Class for configuring libecasound objects
-// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include <kvu_numtostr.h>
 #include <kvu_utils.h> /* kvu_get_argument_number() */
 
+#include "eca-object-factory.h"
 #include "eca-engine.h"
 #include "eca-session.h"
 #include "eca-chainop.h"
@@ -1397,7 +1398,7 @@ void ECA_CONTROL_OBJECTS::add_default_output(void) {
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
-  add_audio_output(resource_value("default-output"));
+  add_audio_output(ECA_OBJECT_FACTORY::probe_default_output_device());
   ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Added default output to selected chains.");
 }
 

@@ -67,6 +67,13 @@ class ECA_OBJECT_FACTORY {
 
   /*@}*/
 
+  /** @name Functions for creating EOS strings */
+  /*@{*/
+
+  static std::string probe_default_output_device(void);
+
+  /*@}*/
+
   private:
 
   static ECA_OBJECT_MAP* audio_io_rt_map_repp;

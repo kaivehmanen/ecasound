@@ -1,3 +1,7 @@
+2004-05-04  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* eca-object-factory.cpp (probe_default_output_device): Added.
+
 2004-05-02  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* eca-chain.h (operator_params_to_string): Added.

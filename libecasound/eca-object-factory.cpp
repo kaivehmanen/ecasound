@@ -27,6 +27,14 @@
 #include <string>
 #include <pthread.h>
 
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+#ifdef ECA_COMPILE_JACK
+#include <jack/jack.h>
+#endif
+
 #include <kvu_dbc.h>
 #include "kvu_locks.h"
 #include <kvu_numtostr.h>
@@ -41,6 +49,7 @@
 #include "eca-object-map.h"
 #include "eca-preset-map.h"
 #include "eca-object-factory.h"
+#include "eca-resources.h"
 #include "eca-logger.h"
 
 /**
@@ -547,4 +556,75 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu) {
     }
   }
   return(0);
+}
+
+/**
+ * Returns a EOS-compatible string describing the default 
+ * output device. This device is determined based on 
+ * ecasoundrc settings, available resources, 
+ * compile-time options, etc.
+ */
+std::string ECA_OBJECT_FACTORY::probe_default_output_device(void)
+{
+    ECA_RESOURCES ecaresources;
+    string default_output = ecaresources.resource("default-output");
+    bool output_selected = true;
+
+    if (default_output == "auto") {
+      
+      output_selected = false;
+
+#ifdef ECA_COMPILE_JACK
+      /* phase 1: check for JACK */
+
+      int pid = getpid();
+      string cname = "ecasound-autodetect-" + kvu_numtostr(pid);
+
+      bool env_changed = false;
+      char* oldenv = getenv("JACK_NO_START_SERVER");
+      if (oldenv == NULL) {
+	env_changed = true;
+	setenv("JACK_NO_START_SERVER", "yes", 1);
+      }
+      
+      jack_client_t *client = jack_client_new (cname.c_str());
+      if (client != 0) {
+	jack_client_close(client);
+	
+	default_output = "jack_alsa";
+	output_selected = true;
+      }
+      
+      if (env_changed == true) {
+	unsetenv("JACK_NO_START_SERVER");
+      }
+#endif
+      
+      /* phase 2: check for ALSA support */
+      if (output_selected != true) {
+	const ECA_OBJECT *obj = ECA_OBJECT_FACTORY::audio_io_rt_map().object("alsa");
+	if (obj != 0) {
+	  default_output = "alsa,default";
+	  output_selected = true;
+	}
+      }
+      
+      /* phase 3: check for OSS support */
+      if (output_selected != true) {
+	const ECA_OBJECT *obj = ECA_OBJECT_FACTORY::audio_io_rt_map().object("/dev/dsp");
+	if (obj != 0) {
+	  default_output = "/dev/dsp";
+	  output_selected = true;
+	}
+      }
+      
+      /* phase 4: fallback to rtnull */
+      if (output_selected != true) {
+	ECA_LOG_MSG(ECA_LOGGER::info,
+		    "(eca-chainsetup) Warning! No default output available. Using 'rtnull' as a fallback.");
+	  default_output = "rtnull";
+      }
+    }
+
+    return(default_output);
 }
