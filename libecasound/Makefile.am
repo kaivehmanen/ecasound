@@ -55,6 +55,7 @@ ecasound_audioio_include = 	\
 			audioio-buffered.h \
 			audioio-device.h \
 			audioio-plugin.h \
+			audioio-manager.h \
 			audioio-cdr.h \
 			audioio-cdr_impl.h \
 			audioio-ewf.h \
