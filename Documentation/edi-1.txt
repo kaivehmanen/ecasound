@@ -1,0 +1,26 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-1): Initial reverb-spike with the -ete reverb.
+        - submitted: Anthony Paul Van Groningen, 04.01.2001
+
+------------------------------------------------------------------------
+Details:
+
+-----------------------------------------------------------------------
+[Bill Allen on ecasound-list, 9 Jul 2002]
+
+I completely inadvertently found a workaround - a real hack, but it works!                                                                                                                
+In any chain containing -ete:..., include -ef4:0.8,0.5. The parameters of                                                                                                                 
+the -ef4 (low-pass filter) don't seem to matter, so if you use                                                                                                                            
+-ef4:1.0,0.5, then you've got essentially a noop filter (all-pass filter).                                                                                                                
+I tried this trick with the -ef1:5000 and a couple of other filters to no                                                                                                                 
+avail. It only works with -ef4:...! I think this is significant because                                                                                                                   
+Kai's full reply to my original question noted that the author of -ete was                                                                                                                
+Stefan M. Fendt who is also the author of -ef4: according to the ecasound                                                                                                                 
+man page.                                                                                                                                                                                                                                                                                                                                                                           
+
+I just haven't found a better sounding reverb effect that that of -ete.                                                                                                                   
+I've heard good things about freeverb3, but it hasn't worked well for me. 
+
+-----------------------------------------------------------------------
