@@ -511,7 +511,7 @@ void ECA_ENGINE::update_engine_state(void) {
   // --
   // Updates engine status (if necessary).
   if (inputs_not_finished_rep == 0) {
-    if (status() != ECA_ENGINE::engine_status_running)
+    if (status() == ECA_ENGINE::engine_status_running)
       ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) input not finished / stop");
 
     stop();

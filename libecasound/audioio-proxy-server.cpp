@@ -109,6 +109,7 @@ AUDIO_IO_PROXY_SERVER::AUDIO_IO_PROXY_SERVER (void) {
   profile_not_full_rep = 0;
   profile_read_xrun_danger_rep = 0;
   profile_write_xrun_danger_rep = 0;
+  profile_rounds_total_rep = 0;
 }
 
 /**

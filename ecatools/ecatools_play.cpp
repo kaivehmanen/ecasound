@@ -39,6 +39,7 @@ static PROCEDURE_TIMER* ecaplay_ptimer_repp = 0;
 static struct timeval* ecaplay_lowerlimit_repp;
 static int ecaplay_exit_request_rep = 0;
 static int ecaplay_skip_files = 0;
+static int ecaplay_total_files = 0;
 
 static const string ecaplay_version = "20011009";
 
@@ -81,6 +82,8 @@ int main(int argc, char *argv[])
     cline.begin();
     cline.next(); // skip the program name
 
+    ecaplay_total_files = cline.size() - 1;
+    int playing_file = 0;
     while(cline.end() == false &&
 	  ecaplay_exit_request_rep == 0) {
 
@@ -92,13 +95,18 @@ int main(int argc, char *argv[])
 	if (ret != 0) return(ret);
 
 	cline.next();
+	--ecaplay_total_files;
 	continue;
       }
       
       string filename = cline.current();
+      ++playing_file;
 
       if (ecaplay_skip_files == 0) {
-	std::cout << "Playing file '" << filename << "'." << endl; 
+	std::cout << "Playing file '" << filename << "'";
+        std::cout << " (" << playing_file;
+	std::cout << "/" << ecaplay_total_files;
+	std::cout << ")." << endl;
       }
       else {
 	std::cout << "Skipping file '" << filename << "'." << endl;

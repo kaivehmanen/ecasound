@@ -65,7 +65,10 @@ void RAWFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
 	fio_repp->open_stdin();
       }
       else {
-	if (mmaptoggle_rep == "1") fio_repp = new ECA_FILE_IO_MMAP();
+	if (mmaptoggle_rep == "1") {
+	  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) using mmap() mode for file access");
+	  fio_repp = new ECA_FILE_IO_MMAP();
+	}
 	else fio_repp = new ECA_FILE_IO_STREAM();
 	fio_repp->open_file(label(),"rb");
 	if (fio_repp->is_file_ready() != true) {

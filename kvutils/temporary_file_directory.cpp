@@ -102,13 +102,14 @@ void TEMPORARY_FILE_DIRECTORY::check_validity(void) {
 
   if (statbuf.st_uid != geteuid()) {
     valid_rep = false;
-//      cerr << "(kvutils) " << "st_uid doesn't match." << endl;
+    // cerr << "(kvutils) " << "st_uid doesn't match." << endl;
   }
 
-  if (statbuf.st_gid != getegid()) {
-    valid_rep = false;
-//      cerr << "(kvutils) " << "st_gid doesn't match." << endl;
-  }
+  // kaiv, 10.10.2001 - removed as unnecessary
+  //  if (statbuf.st_gid != getegid()) {
+  //    valid_rep = false;
+  //    cerr << "(kvutils) " << "st_gid doesn't match." << endl;
+  //  }
 
   if (!S_ISDIR(statbuf.st_mode)) {
     valid_rep = false;

@@ -76,7 +76,10 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
   switch(io_mode()) {
   case io_read:
     {
-      if (mmaptoggle_rep == "1") fio_repp = new ECA_FILE_IO_MMAP();
+      if (mmaptoggle_rep == "1") {
+	ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) using mmap() mode for file access");
+	fio_repp = new ECA_FILE_IO_MMAP();
+      }
       else  fio_repp = new ECA_FILE_IO_STREAM();
       if (fio_repp == 0) {
 	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Critical error when opening file " + label() + " for reading."));

@@ -17,14 +17,18 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.3 *-
 
+??102001 (v2.1dev2)
+	- added: ecaplay - -k, -d and -h options, see 'man ecaplay'
+	- changed: tuned prefill-parameters for double-buffering
+	- fixed: typeselect problems when used for outputs
 09102001 (v2.1dev1)
-	- added: chainsetup prints a warning if an unknown
+	- added: chainsetup parser prints a warning if an unknown
 	         buffering mode is given to -B:mode 
 	- changed: 'rt' buffering mode is preferred over 
 		   'rtlowlatency' if no chain operators are 
 		   present, and multitrack mode is not active
         - changed: more improvements to double-buffering
-	- fixed: critical bug when running in -B:rwlowlatency 
+	- fixed: critical bug when running in -B:rtlowlatency 
 		 mode (caused system-lockups with ALSA 0.9.x
 		 oss-emulation)
 	- fixed: explicitly specifying -z:nointbuf had no 

@@ -119,6 +119,8 @@ class MIDI_IO : public DYNAMIC_OBJECT<std::string> {
    * valid file descriptor that can be used as an argument to 
    * standard "select()" and "poll()" system calls.
    *
+   * FIXME: how about blocking behaviour?
+   *
    * require:
    *  supports_nonblocking_mode() == true
    */

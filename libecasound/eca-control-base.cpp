@@ -107,10 +107,11 @@ void ECA_CONTROL_BASE::start(void) {
  *
  * @pre is_connected() == true
  * @post is_finished() == true || 
- * @post (processing_started == true && is_running() != true) ||
- * @post (processing_started != true && 
+ *       processing_started == true && is_running() != true ||
+ *       processing_started != true &&
+ *       (is_engine_started() != true ||
  *        is_engine_started() == true &&
- *        engine_repp->status() != ECA_ENGINE::engine_status_stopped)
+ * 	  engine_repp->status() != ECA_ENGINE::engine_status_stopped))
  */
 void ECA_CONTROL_BASE::run(void) {
   // --------
@@ -153,10 +154,11 @@ void ECA_CONTROL_BASE::run(void) {
   ecadebug->control_flow("Controller/Processing finished");
 
   // --------
-  DBC_ENSURE(is_finished() == true || 
-	     (processing_started == true && is_running() != true) ||
-	     (processing_started != true && 
-	      is_engine_started() == true && 
+  DBC_ENSURE(is_finished() == true ||
+	     processing_started == true && is_running() != true ||
+	     processing_started != true &&
+	     (is_engine_started() != true ||
+	      is_engine_started() == true &&
 	      engine_repp->status() != ECA_ENGINE::engine_status_stopped));
   // --------
 }
