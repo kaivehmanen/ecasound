@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 210305) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 270305) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -26,6 +26,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   recent versions of autoheader
 	- changed: Ecasound Programmer's Guide converted from LaTeX
 		   to ascii/rst
+	- changed: awk is used to genered ecasoundrc; allows to 
+		   specify a custom datadir to be used in ecasoundrc
+		   defaults
 	- changed: various small improvements to all ecatools and 
 		   the related manpages
 	- fixed: sources for the aRts plugin were not present in the
@@ -36,6 +39,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: compile errors with egcs-2.91.66
 	- fixed: current position of the time crop gate (-gc) was 
 		 incorrecly increased [alexey]
+	- fixed: compilation failed if building outside srcdir
 12032005 (v2.4.0)  -** stable release **-
 	- edi-entries: edi-40 progress
 	- added: support for having commas in arguments by escaping 

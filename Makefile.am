@@ -1,5 +1,4 @@
-EXTRA_DIST = AUTHORS BUGS COPYING.GPL COPYING.LGPL NEWS TODO ecasound.spec effect_presets generic_oscillators
-
+EXTRA_DIST = AUTHORS BUGS COPYING.GPL COPYING.LGPL NEWS TODO ecasoundrc.in ecasound.spec effect_presets generic_oscillators
 # for automake 1.4/1.5 compatibility
 EXTRA_DIST += depcomp
 
@@ -14,23 +13,22 @@ PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 RELEASE = 1
 
-install-data-local:
-	$(INSTALL) -d $(DESTDIR)$(datadir)/ecasound
-	$(INSTALL_DATA) $(top_builddir)/ecasoundrc $(DESTDIR)$(datadir)/ecasound/ecasoundrc
-	$(INSTALL_DATA) $(top_srcdir)/effect_presets $(DESTDIR)$(datadir)/ecasound/effect_presets
-	$(INSTALL_DATA) $(top_srcdir)/ecatools/ecasound.el $(DESTDIR)$(datadir)/ecasound/ecasound.el
-	$(INSTALL_DATA) $(top_srcdir)/generic_oscillators $(DESTDIR)$(datadir)/ecasound/generic_oscillators
+install-data-local: ecasoundrc
+	$(INSTALL) -d $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(top_builddir)/ecasoundrc $(DESTDIR)$(pkgdatadir)/ecasoundrc
+	$(INSTALL_DATA) $(top_srcdir)/effect_presets $(DESTDIR)$(pkgdatadir)/effect_presets
+	$(INSTALL_DATA) $(top_srcdir)/ecatools/ecasound.el $(DESTDIR)$(pkgdatadir)/ecasound.el
+	$(INSTALL_DATA) $(top_srcdir)/generic_oscillators $(DESTDIR)$(pkgdatadir)/generic_oscillators
 
 uninstall-local:
-	rm -f	$(DESTDIR)$(datadir)/ecasound/effect_presets \
-		$(DESTDIR)$(datadir)/ecasound/ecasound.el \
-		$(DESTDIR)$(datadir)/ecasound/generic_oscillators \
-		$(DESTDIR)$(datadir)/ecasound/ecasoundrc
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(datadir)/ecasound
+	rm -f	$(DESTDIR)$(pkgdatadir)/effect_presets \
+		$(DESTDIR)$(pkgdatadir)/ecasound.el \
+		$(DESTDIR)$(pkgdatadir)/generic_oscillators \
+		$(DESTDIR)$(pkgdatadir)/ecasoundrc
+	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(pkgdatadir)
 
 ecasoundrc: ecasoundrc.in Makefile.am
-	@AWK@ 'sub(/\@VERSION\@/, "$(VERSION)") { } \
-               sub(/\@prefix\@/, "$(prefix)") { } \
-               sub(/\@datadir\@/, "$(datadir)") { } \
-               // { print }' \
-	       $(top_srcdir)/ecasoundrc.in >ecasoundrc
+	sed -e "s%[@]VERSION[@]%$(VERSION)%" \
+            -e "s%[@]prefix[@]%$(prefix)%" \
+            -e "s%[@]pkgdatadir[@]%$(pkgdatadir)%" \
+            < $(top_srcdir)/ecasoundrc.in > ecasoundrc 
