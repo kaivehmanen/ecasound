@@ -68,7 +68,6 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
   int myid_rep;
 
   std::string secondparam_rep;
-  std::string thirdparam_rep;
   SAMPLE_SPECS::sample_pos_t curpos_rep;
 
  private:
