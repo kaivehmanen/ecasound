@@ -28,6 +28,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: the C++ ECI implementation, the 
 		   ECA_CONTROL_INTERFACE class, moved from libecasound
 		   to libecasoundc; now also under LGPL
+	- changed: asm/atomic.h kernel header no longer used
 	- fixed: cleanup of curses/ncurses detection in configure.in;
 		 this also fixes ecasound compilation on mandrake9.x
 		 systems
@@ -36,6 +37,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: controllers weren't properly initialized before use;
 		 this bug caused real harm only to -klg objects; 
 		 only the first defined -klg worked as expected
+	- fixed: increased the max message size in ECI-standalone;
+		 ecasetupedit-0.2.3 caused the parsing buffers to
+		 overflow
 31102002 (v2.2.0-pre4)
 	- edi-entries: edi-27, edi-28, edi-29, edi-30
 	- added: eiam - commands 'map-cop-list', 'map-ctrl-list', 

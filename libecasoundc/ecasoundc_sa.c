@@ -67,13 +67,13 @@
  * Definitions and constants
  */
 
-#define ECI_MAX_PARSER_BUF_SIZE    4096
+#define ECI_MAX_PARSER_BUF_SIZE    65536
 #define ECI_MAX_FLOAT_BUF_SIZE     32
 #define ECI_MAX_RETURN_TYPE_SIZE   4
 #define ECI_MAX_STRING_SIZE        ECI_MAX_PARSER_BUF_SIZE
 #define ECI_MAX_RESYNC_ATTEMPTS    9
 
-#define ECI_READ_TIMEOUT_MS        5000 /* 2000 */
+#define ECI_READ_TIMEOUT_MS        5000
 
 #define ECI_STATE_INIT             0
 #define ECI_STATE_LOGLEVEL         1
@@ -1071,6 +1071,8 @@ void eci_impl_update_state(struct eci_parser* parser, char c)
     msg_buffer[parser->buffer_current_rep] = c;
     if (++parser->buffer_current_rep == ECI_MAX_PARSER_BUF_SIZE) {
       fprintf(stderr, "\n(ecasoundc_sa) WARNING! Parsing buffer overflowed!\n\n");
+      parser->token_phase_rep =  ECI_TOKEN_PHASE_READING;
+      parser->buffer_current_rep = 0;
     }
   }
 }
