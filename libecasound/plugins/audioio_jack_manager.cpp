@@ -69,10 +69,13 @@ static PROCEDURE_TIMER profile_callback_timer;
  */
 
 static int eca_jack_process_callback(jack_nframes_t nframes, void *arg);
-static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t *pos, void *arg);
 
+#if ECA_JACK_TRANSPORT_API >= 3
+static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t *pos, void *arg);
 static void eca_jack_sync_start_seek_to(jack_transport_state_t state, jack_position_t *pos, void *arg);
 static void eca_jack_sync_start_live_seek_to(jack_transport_state_t state, jack_position_t *pos, void *arg);
+#endif
+
 static void eca_jack_process_engine_iteration(jack_nframes_t nframes, void *arg);
 static void eca_jack_process_mute(jack_nframes_t nframes, void* arg);
 static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg);
@@ -104,13 +107,13 @@ using std::vector;
  */
 const int AUDIO_IO_JACK_MANAGER::instance_limit = 8;
 
+#if ECA_JACK_TRANSPORT_API >= 3
 /**
  * JACK sync callback function. Called when someone has 
  * issued a state change request.
  */
 static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t *pos, void *arg)
 {
-#if ECA_JACK_TRANSPORT_API >= 3
   // DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_SYNC: entering...");
 
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
@@ -199,15 +202,15 @@ static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t 
   }
     
   return result;
-#endif
 }
+#endif
 
+#if ECA_JACK_TRANSPORT_API >= 3
 /**
  * Helper function to start seeking to a new position.
  */
 static void eca_jack_sync_start_seek_to(jack_transport_state_t state, jack_position_t *pos, void *arg)
 {
-#if ECA_JACK_TRANSPORT_API >= 3
   // DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_sync_start_seek_to(): entering...");
 
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
@@ -222,9 +225,10 @@ static void eca_jack_sync_start_seek_to(jack_transport_state_t state, jack_posit
   }
 
   current->engine_repp->command(ECA_ENGINE::ep_prepare, 0.0f);
-#endif
 }
+#endif
 
+#if ECA_JACK_TRANSPORT_API >= 3
 /**
  * Helper function to start forced (live-)seeking to a new 
  * position. We have to be prepared to chase the timebase 
@@ -316,6 +320,7 @@ static void eca_jack_sync_start_live_seek_to(jack_transport_state_t state, jack_
     }
   }
 }
+#endif
 
 /**
  * Processes all registered JACK input and output ports.

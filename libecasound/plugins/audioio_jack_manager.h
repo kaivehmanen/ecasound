@@ -34,9 +34,11 @@ class AUDIO_IO_JACK_MANAGER : public AUDIO_IO_MANAGER,
  public:
 
   friend int eca_jack_process_callback(jack_nframes_t nframes, void *arg);
+#if ECA_JACK_TRANSPORT_API >= 3
   friend int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t *pos, void *arg);
   friend void eca_jack_sync_start_seek_to(jack_transport_state_t state, jack_position_t *pos, void *arg);
   friend void eca_jack_sync_start_live_seek_to(jack_transport_state_t state, jack_position_t *pos, void *arg);
+#endif
   friend void eca_jack_process_engine_iteration(jack_nframes_t nframes, void *arg);
   friend void eca_jack_process_mute(jack_nframes_t nframes, void *arg);
   friend void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg);
