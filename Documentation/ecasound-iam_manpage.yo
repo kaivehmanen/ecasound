@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (21.12.2000)
+       (14.02.2001)
        ()
        (Multimedia software)
 
@@ -143,6 +143,9 @@ dit(cs-edit)
 Currently selected chainsetup is saved to a temporary file. This
 file is loaded to an external editor (see ecasoundrc(5)). After
 editing, the chainsetup is loaded back to ecasound. em([-])
+
+dit(cs-is-valid)
+Whether currently selected chainsetup is valid (=can be connected)? em([i])
 
 dit(cs-connect)
 Connect currently selected chainsetup to engine. Only one chainsetup

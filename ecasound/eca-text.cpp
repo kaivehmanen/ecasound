@@ -203,7 +203,7 @@ void print_header(ostream* dostream) {
     putp(tigetstr("bold"));
   }
 #endif
-  *dostream << "               ecasound v" << ecasound_library_version << " (C) 1997-2001 Kai Vehmanen                ";
+  *dostream << "               ecasound v" << ecasound_library_version << " (C) 1997-2001 Kai Vehmanen               ";
 #if defined USE_NCURSES || defined USE_TERMCAP
   if (dostream == &cout) {
     putp(tigetstr("sgr0"));

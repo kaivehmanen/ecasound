@@ -7,7 +7,7 @@ libecasound_path = $(top_builddir)/libecasound/libecasound.la -L$(top_builddir)/
 endif
 
 if USE_NCURSES
-termcap_library = -lncurses
+ncurses_library = -lncurses
 endif
 
 if USE_TERMCAP
@@ -49,7 +49,7 @@ ecaconvert_LDADD = $(libecasound_path)
 
 ecasignalview_SOURCES = ecatools_signalview.cpp \
 	 		     ecatools_signalview.h
-ecasignalview_LDADD =  $(libecasound_path) $(termcap_library)
+ecasignalview_LDADD =  $(libecasound_path) $(termcap_library) $(ncurses_library)
 
 ecanormalize_debug_SOURCES = $(ecanormalize_SOURCES)
 ecanormalize_debug_LDADD = $(ecanormalize_LDADD)

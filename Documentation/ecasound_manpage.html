@@ -51,7 +51,8 @@ batch processing.
     
 <p>Notice that the order of parameters given on the command
 line is important!
-<p><strong>GLOBAL OPTIONS</strong>
+<p>
+<strong>GLOBAL OPTIONS</strong>
 <dl>
 <p><p></p><dt><strong>-c</strong><dd>
 Starts ecasound in interactive mode. In interactive mode you can
@@ -71,7 +72,8 @@ Show this help.
 <p><p></p><dt><strong>--version</strong><dd>
 Print version info.
 <p></dl>
-<p><strong>CHAINSETUP OPTIONS</strong>
+<p>
+<strong>CHAINSETUP OPTIONS</strong>
 <dl>
 <p><p></p><dt><strong>-n:name</strong><dd>
 Set the name of chainsetup to 'name'. If not specified, defaults
@@ -88,7 +90,8 @@ Set internal sampling rate. This can be used to improve
 realtime performance or to avoid resampling. Default is 44100 
 samples per second.
 <p></dl>
-<p><strong>GENERAL</strong>
+<p>
+<strong>GENERAL</strong>
 <dl>
 <p><p></p><dt><strong>-a:chainname1, chainname2, ...</strong><dd>
 Select active signal chains. All effects, inputs and outputs are assigned to
@@ -131,7 +134,8 @@ situations. With '-z:xruns', processing will be halted if an
 under/overrun occurs. '-z:psr' enables the <em>precise-sample-rates</em> 
 mode for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>.
 <p></dl>
-<p><strong>PROCESSING CONTROL</strong>
+<p>
+<strong>PROCESSING CONTROL</strong>
 <dl>
 <p></p><dt><strong>-t:seconds</strong><dd> 
 Set processing time in seconds (doesn't have to be an integer value).
@@ -141,7 +145,8 @@ finished.
 Enable looping. When processing is finished, engine will start 
 again from the initial position.
 <p></dl>
-<p><strong>INPUT/OUTPUT SETUP</strong>
+<p>
+<strong>INPUT/OUTPUT SETUP</strong>
 <p>See <a href="users_guide/users_guide.html">ecasound user's guide</a> for 
 more detailed documentation.
 <p><dl>
@@ -229,7 +234,24 @@ or "stdout" as the file name. Audio data is assumed to be in
 raw/headerless (.raw) format. If you want to use named pipes, 
 create them with the proper file name extension before use.
 <p></dl>
-<p><strong>EFFECT SETUP</strong>
+<p>
+<strong>MIDI SETUP</strong>
+<p><dl>
+<p></p><dt><strong>-Md:device_name</strong><dd>
+Set the active MIDI-device. 'device_name' can be anything that 
+can be accessed using the normal UNIX file operations and 
+produces raw MIDI bytes. Valid devices are for example OSS rawmidi 
+devices (/dev/midi00), named pipes (see mkfifo(1) man page), and
+normal files. If no MIDI-device is specified, the default MIDI-device
+is used (see ecasoundrc(5)).
+<p><p></p><dt><strong>-Mms:device_id</strong><dd>
+Send MMC start and stop to MIDI device-id 'device_id'.
+<p><p></p><dt><strong>-Mss</strong><dd>
+Sends MIDI-sync to the selected MIDI-device. Note! Ecasound will not
+send <em>MIDI-clock</em>, but only <em>start</em> and <em>stop</em> messages.
+<p></dl>
+<p>
+<strong>EFFECT SETUP</strong>
 <p><em>PRESETS</em>
 <p>Ecasound has a powerful effect preset system that allows you create
 new effects by combining basic effects and controllers. See
@@ -445,7 +467,8 @@ If 'value_mode' is 'rms', average RMS volume is used. Otherwise
 peak average is used.  When closed, passing audio buffers are trucated 
 to zero length.
 <p></dl>
-<p><strong>CONTROL ENVELOPE SETUP</strong>
+<p>
+<strong>CONTROL ENVELOPE SETUP</strong>
 <dl>
 <p>Controllers can be used to dynamically change effect parameters
 during processing. All controllers are attached to the selected
@@ -496,7 +519,8 @@ When you specify <em>-kx</em>, the last specified controller
 will be set as the control target. Then you just add
 another controller as usual. 
 </dl>
-<p><strong>INTERACTIVE MODE</strong>
+<p>
+<strong>INTERACTIVE MODE</strong>
 <p>See <em>ecasound-iam(1)</em>.
 <p><h2>FILES</h2>
     

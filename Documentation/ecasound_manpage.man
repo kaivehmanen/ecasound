@@ -236,6 +236,24 @@ raw/headerless (\&.raw) format\&. If you want to use named pipes,
 create them with the proper file name extension before use\&.
 .IP 
 .PP 
+\fBMIDI SETUP\fP
+.PP 
+.IP "-Md:device_name" 
+Set the active MIDI-device\&. \'device_name\' can be anything that 
+can be accessed using the normal UNIX file operations and 
+produces raw MIDI bytes\&. Valid devices are for example OSS rawmidi 
+devices (/dev/midi00), named pipes (see mkfifo(1) man page), and
+normal files\&. If no MIDI-device is specified, the default MIDI-device
+is used (see ecasoundrc(5))\&.
+.IP 
+.IP "-Mms:device_id" 
+Send MMC start and stop to MIDI device-id \'device_id\'\&.
+.IP 
+.IP "-Mss" 
+Sends MIDI-sync to the selected MIDI-device\&. Note! Ecasound will not
+send \fIMIDI-clock\fP, but only \fIstart\fP and \fIstop\fP messages\&.
+.IP 
+.PP 
 \fBEFFECT SETUP\fP
 .PP 
 \fIPRESETS\fP

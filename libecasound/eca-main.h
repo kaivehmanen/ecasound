@@ -192,11 +192,14 @@ private:
    */
   void trigger_outputs(void);
 
+  void start_servers(void);
+  void stop_servers(void);
+
   void init_variables(void);
   void init_connection_to_chainsetup(void);
   void init_multitrack_mode(void);
   void init_mix_method(void);
-  void init_pserver(void);
+  void init_servers(void);
   void init_inputs(void);
   void init_outputs(void);
   void init_chains(void);

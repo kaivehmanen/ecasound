@@ -42,6 +42,7 @@ manpageoptions()
 Notice that the order of parameters given on the command
 line is important!
 
+COMMENT(----------------------------------------------------------------)
 bf(GLOBAL OPTIONS)
 startdit()
 
@@ -70,6 +71,7 @@ Print version info.
 
 enddit()
 
+COMMENT(----------------------------------------------------------------)
 bf(CHAINSETUP OPTIONS)
 startdit()
 
@@ -92,6 +94,7 @@ samples per second.
 
 enddit()
 
+COMMENT(----------------------------------------------------------------)
 bf(GENERAL)
 startdit()
 
@@ -143,6 +146,7 @@ mode for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html).
 
 enddit()
 
+COMMENT(----------------------------------------------------------------)
 bf(PROCESSING CONTROL)
 startdit()
 dit(-t:seconds) 
@@ -156,6 +160,7 @@ again from the initial position.
 
 enddit()
 
+COMMENT(----------------------------------------------------------------)
 bf(INPUT/OUTPUT SETUP)
 
 See url(ecasound user's guide)(users_guide/users_guide.html) for 
@@ -261,6 +266,28 @@ create them with the proper file name extension before use.
  
 enddit()
 
+COMMENT(----------------------------------------------------------------)
+bf(MIDI SETUP)
+
+startdit()
+dit(-Md:device_name)
+Set the active MIDI-device. 'device_name' can be anything that 
+can be accessed using the normal UNIX file operations and 
+produces raw MIDI bytes. Valid devices are for example OSS rawmidi 
+devices (/dev/midi00), named pipes (see mkfifo(1) man page), and
+normal files. If no MIDI-device is specified, the default MIDI-device
+is used (see ecasoundrc(5)).
+
+dit(-Mms:device_id)
+Send MMC start and stop to MIDI device-id 'device_id'.
+
+dit(-Mss)
+Sends MIDI-sync to the selected MIDI-device. Note! Ecasound will not
+send em(MIDI-clock), but only em(start) and em(stop) messages.
+
+enddit()
+
+COMMENT(----------------------------------------------------------------)
 bf(EFFECT SETUP)
 
 em(PRESETS)
@@ -540,6 +567,7 @@ to zero length.
 
 enddit()
 
+COMMENT(----------------------------------------------------------------)
 bf(CONTROL ENVELOPE SETUP)
 startdit()
 
@@ -601,6 +629,7 @@ will be set as the control target. Then you just add
 another controller as usual. 
 enddit()
 
+COMMENT(----------------------------------------------------------------)
 bf(INTERACTIVE MODE)
 
 See em(ecasound-iam(1)).

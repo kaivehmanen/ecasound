@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: A class representing a group of chains and their
 //                     configuration.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -196,6 +196,7 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
 	audio_object_info(*q);
       }
 
+    if (midi_server_rep.is_enabled() != true) midi_server_rep.enable();
       for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
 	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Opening midi device \"" + (*q)->label() + "\".");
 	(*q)->toggle_nonblocking_mode(true);
@@ -236,6 +237,7 @@ void ECA_CHAINSETUP::disable(void) {
       (*q)->close();
     }
 
+    if (midi_server_rep.is_enabled() == true) midi_server_rep.disable();
     for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing midi device \"" + (*q)->label() + "\".");
       if ((*q)->is_open() == true) (*q)->close();
@@ -771,28 +773,87 @@ void ECA_CHAINSETUP::interpret_midi_device (const string& argu) {
   REQUIRE(istatus_rep == false);
   // --------
  
-  string tname = get_argument_number(1, argu);
-  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-audio-objects) adding MIDI-device \"" + tname + "\".");
-
   bool match = true;
   if (argu.size() < 2) return;
   switch(argu[1]) {
   case 'M':
     {
       if (argu.size() < 3) return;
-      if (argu[2] == 'd') {
-	ecadebug->msg(ECA_DEBUG::system_objects, "Eca-audio-objects/Parsing MIDI-device");
-	MIDI_IO* mdev = 0;
-	mdev = ECA_OBJECT_FACTORY::create_midi_device(tname);
-	if (mdev != 0) {
-	  if ((mdev->supported_io_modes() & MIDI_IO::io_readwrite) == MIDI_IO::io_readwrite) {
-	    mdev->io_mode(MIDI_IO::io_readwrite);
-	    add_midi_device(mdev);
+      switch(argu[2]) {
+	case 'd': 
+	  {
+	    string tname = get_argument_number(1, argu);
+	    ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup) MIDI-config: Adding device \"" + tname + "\".");
+	    MIDI_IO* mdev = 0;
+	    mdev = ECA_OBJECT_FACTORY::create_midi_device(tname);
+	    if (mdev != 0) {
+	      if ((mdev->supported_io_modes() & MIDI_IO::io_readwrite) == MIDI_IO::io_readwrite) {
+		mdev->io_mode(MIDI_IO::io_readwrite);
+		add_midi_device(mdev);
+	      }
+	      else {
+		ecadebug->msg(ECA_DEBUG::info, "(eca-chainsetup) MIDI-config: Warning! I/O-mode 'io_readwrite' not supported by " + mdev->name());
+	      }
+	    }
+	    break;
 	  }
-	  else {
-	    ecadebug->msg(ECA_DEBUG::info, "Warning! I/O-mode 'io_readwrite' not supported by " + mdev->name());
+
+      case 'm': 
+	{
+	  if (argu.size() < 4) return;
+	  switch(argu[3]) {
+	  case 'r': 
+	    {
+	      // FIXME: not implemented!
+	      int id = atoi(get_argument_number(1, argu).c_str());
+	      ecadebug->msg(ECA_DEBUG::info, 
+			    "(eca-chainsetup) MIDI-config: Receiving MMC messages with id  \"" + 
+			    kvu_numtostr(id) +
+			    "\".");
+	      midi_server_rep.set_mmc_receive_id(id);
+	      break;
+	    }
+	  
+
+	  case 's': 
+	    {
+	      int id = atoi(get_argument_number(1, argu).c_str());
+	      ecadebug->msg(ECA_DEBUG::info, 
+			    "(eca-chainsetup) MIDI-config: Adding MMC-send to device id \"" + 
+			    kvu_numtostr(id) +
+			    "\".");
+	      midi_server_rep.add_mmc_send_id(id);
+	      break;
+	    }
 	  }
+	  break;
 	}
+
+      case 's': 
+	{
+	  if (argu.size() < 4) return;
+	  switch(argu[3]) {
+	  case 'r': 
+	    {
+	      // FIXME: not implemented
+	      ecadebug->msg(ECA_DEBUG::info, 
+			    "(eca-chainsetup) MIDI-config: Receiving MIDI-sync.");
+	      midi_server_rep.toggle_midi_sync_receive(true);
+	      break;
+	    }
+	  
+	  case 's': 
+	    {
+	      // FIXME: not implemented
+	      ecadebug->msg(ECA_DEBUG::info, 
+			    "(eca-chainsetup) MIDI-config: Sending MIDI-sync.");
+	      midi_server_rep.toggle_midi_sync_send(true);
+	      break;
+	    }
+	  }
+	  break;
+	}
+
       }
       break;
     }

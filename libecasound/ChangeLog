@@ -2,6 +2,12 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-02-14  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* midi-parser.h (all): new module
+	* midi-server.h (various): added
+	* eca-midi.h (all): module dropped
+	
 2001-02-08  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* audioio-types.h (toggle_max_buffers,max_buffers): added

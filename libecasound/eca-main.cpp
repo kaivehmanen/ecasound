@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-main.cpp: Main processing engine
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,10 +40,6 @@
 #include "eca-debug.h"
 #include "eca-main.h"
 
-#include <cstdio>
-#include <fcntl.h>
-static int midi_fd;
-
 ECA_PROCESSOR::ECA_PROCESSOR(ECA_SESSION* params) 
   :  eparams_repp(params),
      mixslot_rep(params->connected_chainsetup_repp->buffersize(), 
@@ -57,10 +53,6 @@ ECA_PROCESSOR::ECA_PROCESSOR(void) : eparams_repp(0) { }
 ECA_PROCESSOR::~ECA_PROCESSOR(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "ECA_PROCESSOR destructor!");
 
-  // --- !!! ---
-  //    close(midi_fd);
-  // --- !!! ---
-
   if (eparams_repp != 0) {
     eparams_repp->status(ECA_SESSION::ep_status_notready);
     stop();
@@ -72,14 +64,7 @@ ECA_PROCESSOR::~ECA_PROCESSOR(void) {
     }
   }
   
-  if (use_double_buffering_rep == true) {
-    pserver_rep.stop();
-    while(pserver_rep.is_running() != true) usleep(50000);
-  }
 
-  if (use_midi_rep == true) {
-    csetup_repp->midi_server_rep.stop();
-  }
 
   vector<AUDIO_IO_BUFFERED_PROXY*>::iterator p = proxies_rep.begin();
   while(p != proxies_rep.end()) {
@@ -124,14 +109,6 @@ void ECA_PROCESSOR::init(void) {
   init_connection_to_chainsetup();
   init_multitrack_mode();
   init_mix_method();
-
-  // --- !!! ---
-  //    midi_fd = ::open("/dev/midi00", O_WRONLY);
-  //    if (midi_fd == -1) {
-  //      cerr << "unable to open OSS raw-MIDI device /dev/dsp." << endl;
-  //      exit(-1);
-  //    }
-  // --- !!! ---
 }
 
 void ECA_PROCESSOR::init_variables(void) {
@@ -152,8 +129,7 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) {
     exit(-1);
   }
 
-  init_pserver();
-  if (csetup_repp->midi_devices.size() > 0) use_midi_rep = true;
+  init_servers();
   create_sorted_input_map();
   create_sorted_output_map();
   init_inputs(); // input-output order is important here (sync fix)
@@ -177,7 +153,7 @@ bool ECA_PROCESSOR::has_realtime_objects(void) const {
   return(false);
 }
 
-void ECA_PROCESSOR::init_pserver(void) {
+void ECA_PROCESSOR::init_servers(void) {
   if (csetup_repp->double_buffering() == true) {
     if (has_realtime_objects() == true) {
       use_double_buffering_rep = true;
@@ -193,6 +169,12 @@ void ECA_PROCESSOR::init_pserver(void) {
   }
   else
     use_double_buffering_rep = false;
+
+  if (csetup_repp->midi_devices.size() > 0) {
+    use_midi_rep = true;
+    ecadebug->msg(ECA_DEBUG::info, "(eca-main) Initializing MIDI-server.");
+    csetup_repp->midi_server_rep.init();
+  }
 }
 
 /**
@@ -412,17 +394,6 @@ void ECA_PROCESSOR::init_mix_method(void) {
 }
 
 void ECA_PROCESSOR::exec(void) {
-  if (use_double_buffering_rep == true) {
-    pserver_rep.start();
-    ecadebug->msg(ECA_DEBUG::info, "(eca-main) Prefilling i/o buffers.");
-    while(pserver_rep.is_full() != true) usleep(50000);
-  }
-
-  if (use_midi_rep == true) {
-    csetup_repp->midi_server_rep.start();
-    ecadebug->msg(ECA_DEBUG::info, "(eca-main) Starting MIDI-server.");
-  }
-
   switch(mixmode_rep) {
   case ECA_CHAINSETUP::ep_mm_simple:
     {
@@ -453,26 +424,14 @@ void ECA_PROCESSOR::exec(void) {
 
 void ECA_PROCESSOR::conditional_start(void) {
   if (was_running_rep == true) {
-    if (use_double_buffering_rep != true) {
       start();
-    }
-    else {
-      pserver_rep.start();
-      while(pserver_rep.is_full() != true) usleep(50000);
-    }
   }
 }
 
 void ECA_PROCESSOR::conditional_stop(void) {
   if (eparams_repp->status() == ECA_SESSION::ep_status_running) {
     was_running_rep = true;
-    if (use_double_buffering_rep != true) {
-      stop();
-    }
-    else {
-      pserver_rep.stop();
-      while(pserver_rep.is_running() != true) usleep(50000);
-    }
+    stop();
   }
   else was_running_rep = false;
 }
@@ -655,6 +614,29 @@ void ECA_PROCESSOR::posthandle_control_position(void) {
   }
 }
 
+void ECA_PROCESSOR::start_servers(void) {
+  if (use_double_buffering_rep == true) {
+    pserver_rep.start();
+    ecadebug->msg(ECA_DEBUG::info, "(eca-main) Prefilling i/o buffers.");
+    while(pserver_rep.is_full() != true) usleep(50000);
+  }
+  
+  if (use_midi_rep == true) {
+    csetup_repp->midi_server_rep.start();
+  }
+}
+
+void ECA_PROCESSOR::stop_servers(void) { 
+  if (use_double_buffering_rep == true) {
+    pserver_rep.stop();
+    while(pserver_rep.is_running() != true) usleep(50000);
+  }
+
+  if (use_midi_rep == true) {
+    csetup_repp->midi_server_rep.stop();
+  }
+}
+
 void ECA_PROCESSOR::stop(void) { 
   if (eparams_repp->status() != ECA_SESSION::ep_status_running && rt_running_rep == false) return;
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Stop");
@@ -664,6 +646,7 @@ void ECA_PROCESSOR::stop(void) {
       realtime_objects_rep[adev_sizet]->stop();
     }
   }
+  stop_servers();
   rt_running_rep = false;
 
   // ---
@@ -701,6 +684,12 @@ void ECA_PROCESSOR::start(void) {
     else 
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Using realtime-scheduling (SCHED_FIFO).");
   }
+
+  // ---
+  // Start servers and devices 
+  // ---
+
+  start_servers();
 
   for (unsigned int adev_sizet = 0; adev_sizet != realtime_objects_rep.size(); adev_sizet++) {
     realtime_objects_rep[adev_sizet]->prepare();

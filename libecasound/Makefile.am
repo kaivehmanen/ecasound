@@ -85,6 +85,7 @@ ecasound_audioio_include = 	\
 ecasound_midi_include =	\
 			midi-server.h \
 			midi-client.h \
+			midi-parser.h \
 			midiio.h \
 			midiio-raw.h
 
@@ -107,7 +108,6 @@ ecasound_general_include = 	\
 			eca-error.h \
 			eca-debug.h \
 			eca-comhelp.h \
-			eca-midi.h \
 			eca-main.h \
 			eca-session.h \
 			eca-resources.h \
@@ -212,6 +212,7 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 ecasound_midi_src =	\
 			midi-server.cpp \
 			midi-client.cpp \
+			midi-parser.cpp \
 			midiio.cpp \
 			midiio-raw.cpp
 
@@ -227,7 +228,6 @@ ecasound_controller_src = \
 
 ecasound_general_src = 	eca-chain.cpp \
 			eca-main.cpp \
-			eca-midi.cpp \
 			eca-session.cpp \
 			eca-resources.cpp \
 			resource-file.cpp \
@@ -282,5 +282,6 @@ install-data-local:
 	cp      $(ecasound_audiofx_include) \
 		$(ecasound_audioio_include) \
 		$(ecasound_controller_include) \
+		$(ecasound_midi_include) \
 		$(ecasound_general_include) \
 		$(DESTDIR)$(pkgincludedir)

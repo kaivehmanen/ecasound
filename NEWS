@@ -15,7 +15,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??022001 (v1.9dev2)
+14022001 (v1.9dev2)
 	- added: -z:nointbuf - minimize the use of internal buffering
 	         done by rt-devices
 	- added: -z:xruns - stop processing if an xrun occurs
@@ -23,11 +23,17 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 is still required during compiling, but with this,
 		 ncurses/termcap is ignored during linking
 	- added: -Md:device option for specifying MIDI-devices
+	- added: -Mms:device_id; send MMC start/stop to MIDI devices
+	- added: -Mss; send MIDI-start/stop (note! MIDI-clock is 
+		 not sent)
 	- added: support for ALSA 0.6.x named pcm-devices; the new
 		 syntax is '-[io]:alsa,pcm_name'; alternatively, 
 	         '-[io]:alsahw,card,dev,subdev' and '-[io]:alsaplugin,
 		 c,d,sd' can also be used; doesn't affect 0.5.x and 
 	         older ALSA plugins
+	- added eiam-cmds; cs-is-valid
+	- changed: support for -z:nointbuf to OSS-devices (/dev/dsp)
+		   and ALSA 0.5.x plugin
 	- fixed: severe bugs with -km (midi-routines)
 07022001 (v1.9dev1)
 	- notice: new version numbering scheme

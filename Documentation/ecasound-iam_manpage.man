@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "21\&.12\&.2000" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "14\&.02\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -121,6 +121,9 @@ Saves currently selected chainsetup to file \'filename\'\&. \fI[-]\fP
 Currently selected chainsetup is saved to a temporary file\&. This
 file is loaded to an external editor (see ecasoundrc(5))\&. After
 editing, the chainsetup is loaded back to ecasound\&. \fI[-]\fP
+.PP 
+.IP "cs-is-valid" 
+Whether currently selected chainsetup is valid (=can be connected)? \fI[i]\fP
 .PP 
 .IP "cs-connect" 
 Connect currently selected chainsetup to engine\&. Only one chainsetup

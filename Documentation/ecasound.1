@@ -364,6 +364,42 @@ ecasound(1)            Multimedia software            ecasound(1)
               with the proper file name extension before use.
 
 
+       MMIIDDII SSEETTUUPP
+
+
+       -Md:device_name
+              Set the active MIDI-device.  'device_name'  can  be
+              anything that can be accessed using the normal UNIX
+              file operations and produces raw MIDI bytes.  Valid
+              devices   are   for  example  OSS  rawmidi  devices
+              (/dev/midi00),  named  pipes  (see  mkfifo(1)   man
+              page), and normal files. If no MIDI-device is spec-
+              ified, the default MIDI-device is  used  (see  eca-
+              soundrc(5)).
+
+
+       -Mms:device_id
+              Send   MMC   start   and  stop  to  MIDI  device-id
+              'device_id'.
+
+
+       -Mss   Sends MIDI-sync to the selected MIDI-device.  Note!
+              Ecasound  will  not send _M_I_D_I_-_c_l_o_c_k, but only _s_t_a_r_t
+              and _s_t_o_p messages.
+
+
+
+
+
+                            14.02.2001                          6
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
        EEFFFFEECCTT SSEETTUUPP
 
        _P_R_E_S_E_T_S
@@ -388,16 +424,6 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        _S_I_G_N_A_L _A_N_A_L_Y_S_I_S
 
-
-
-
-                            14.02.2001                          6
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
 
 
        -ev    Analyze sample data to find out how much the signal
@@ -428,6 +454,18 @@ ecasound(1)            Multimedia software            ecasound(1)
        -eac:amplify-%,channel
               Amplifies  signal of channel 'channel' by amplify-%
               percent. 'channel' ranges from 1...n where n is the
+
+
+
+                            14.02.2001                          7
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
               total number of channels.
 
 
@@ -454,18 +492,6 @@ ecasound(1)            Multimedia software            ecasound(1)
               A more advanced compressor (original  algorithm  by
               John  S.  Dyson).   If you give a value of 0 to any
               parameter, the  default  is  used.   'peak-level-%'
-
-
-
-                            14.02.2001                          7
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
               essentially  specifies how hard the peak limiter is
               pushed.  The default of 69% is good. 'release_time'
               is  given  in  seconds.  This  compressor  is  very
@@ -494,6 +520,18 @@ ecasound(1)            Multimedia software            ecasound(1)
               tude  falls below 'threshold_level_%' percent (100%
               means maximum amplitude), gate is activated. If the
               signal  stays below the threshold for 'th_time' ms,
+
+
+
+                            14.02.2001                          8
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
               it's faded out during the attack phase of  'attack'
               ms.   If  the  signal  raises  above  the  'thresh-
               old_level' and stays there over 'hold' ms the  gate
@@ -522,16 +560,6 @@ ecasound(1)            Multimedia software            ecasound(1)
        _E_N_V_E_L_O_P_E _M_O_D_U_L_A_T_I_O_N
 
 
-
-                            14.02.2001                          8
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
        -eemb:bpm,on-time-msec
               Pulse gate (pulse  frequency  given  as  beats-per-
               minute).
@@ -558,6 +586,18 @@ ecasound(1)            Multimedia software            ecasound(1)
               ter cutoff frequency. 'reso' means resonance.  Usu-
               ally  the best values for resonance are between 1.0
               and 2.0,  but  you  can  use  even  bigger  values.
+
+
+
+                            14.02.2001                          9
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
               'gain'  is  the  overall gain-factor. It's a simple
               multiplier (1.0 is the  normal  level).  With  high
               resonance  values  it often is useful to reduce the
@@ -588,16 +628,6 @@ ecasound(1)            Multimedia software            ecasound(1)
               quency. Width is specified in Hz.
 
 
-
-                            14.02.2001                          9
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
        -efh:cutoff-freq
               Highpass  filter.  Only  frequencies  above   'cut-
               off_freq' are passed through.
@@ -619,6 +649,19 @@ ecasound(1)            Multimedia software            ecasound(1)
        -efr:center-freq,width
               Bandreject filter. 'center_freq' is the center fre-
               quency. Width is specified in Hz.
+
+
+
+
+
+
+                            14.02.2001                         10
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
 
 
        -efs:center-freq,width
@@ -652,18 +695,6 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        -etd:delay-time-msec,surround-mode,number-of-delays,mix-%
               Delay effect. 'delay time' is  the  delay  time  in
-
-
-
-                            14.02.2001                         10
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
               milliseconds.   'surround-mode'  is  a integer with
               following meanings: 0 = normal, 1 = surround,  2  =
               stereo-spread.  'number_of_delays'  should be obvi-
@@ -687,6 +718,18 @@ ecasound(1)            Multimedia software            ecasound(1)
               while a delayed version (with delay of 'delay time'
               milliseconds) is goes to the right.  With  a  delay
               time  of  1-40 milliseconds this adds a stereo-feel
+
+
+
+                            14.02.2001                         11
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
               to mono-signals.
 
 
@@ -717,19 +760,6 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        _L_A_D_S_P_A_-_P_L_U_G_I_N_S
 
-
-
-
-
-                            14.02.2001                         11
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
        -el:plugin_unique_name,param-1,...,param-N
               Ecasound   supports  LADSPA-effect  plugins  (Linux
               Audio Developer's Simple Plugin API).  Plugins  are
@@ -751,6 +781,19 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        GGAATTEE SSEETTUUPP
 
+
+
+
+
+
+
+                            14.02.2001                         12
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
 
 
        -gc:start-time,len
@@ -784,18 +827,6 @@ ecasound(1)            Multimedia software            ecasound(1)
               _p_l_e_s_._h_t_m_l for some more info.
 
 
-
-
-
-                            14.02.2001                         12
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
        -kos:fx-param,start-value,end-value,freq,i-phase
               Sine oscillator with frequency  of  'freq'  Hz  and
               initial phase of 'i_phase' times pi.
@@ -816,6 +847,19 @@ ecasound(1)            Multimedia software            ecasound(1)
               either '0' for static  values  or  '1'  for  linear
               interpolation.  The location for the preset file is
               taken from ./ecasoundrc (see _e_c_a_s_o_u_n_d_r_c_(_5_)).
+
+
+
+
+
+
+                            14.02.2001                         13
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
 
 
        -kl:fx-param,start-value,end-value,time-seconds
@@ -852,16 +896,6 @@ ecasound(1)            Multimedia software            ecasound(1)
               amplitude is used.
 
 
-
-                            14.02.2001                         13
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
        -kx    This  is a special switch that can be used when you
               need to control controller parameters with  another
               controller.   When you specify _-_k_x, the last speci-
@@ -882,6 +916,18 @@ FFIILLEESS
 
        _*_._e_c_p Ecasound Chain Preset files. Used for storing effect
        and chain operator presets. See ecasound user's guide  for
+
+
+
+                            14.02.2001                         14
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
        more better documentation.
 
        _*_._e_w_s  Ecasound  Wave Stats. These files are used to cache
@@ -919,6 +965,26 @@ AAUUTTHHOORR
 
 
 
-                            14.02.2001                         14
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            14.02.2001                         15
 
 
