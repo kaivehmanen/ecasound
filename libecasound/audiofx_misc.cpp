@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_misc.cpp: Miscellanous effect processing routines.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -116,12 +116,21 @@ void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_t va
   switch (param) {
   case 1: 
     double lowlimit = 1.0f / EFFECT_PITCH_SHIFT::resample_low_limit * 100.0f;
+    double highlimit = 2000.0f;
+
     if (value <= lowlimit) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		    "(audiofx_misc) WARNING! Shift-% must be greater than " +
-		    kvu_numtostr(lowlimit) + 
-		    "%! Limiting to the low-limit.");
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "(audiofx_misc) WARNING! Shift-% must be greater than " +
+		  kvu_numtostr(lowlimit) + 
+		  "%! Limiting to the low-limit.");
       pmod_rep = lowlimit;
+    }
+    else if (sbuf_repp != 0 && value > highlimit) {
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "(audiofx_misc) WARNING! Upper limit for shift-% is  " +
+		  kvu_numtostr(highlimit) + 
+		  "%! Limiting value.");
+      pmod_rep = highlimit;
     }
     else {
       pmod_rep = value;
@@ -169,15 +178,15 @@ void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample)
   long int lowlimit = sbuf_repp->length_in_samples() * EFFECT_PITCH_SHIFT::resample_low_limit; 
   sbuf_repp->reserve_length_in_samples(lowlimit);
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"(audiofx) setting resampling lowlimit to " + 
-		kvu_numtostr(lowlimit) + " bytes.");
+	      "(audiofx) setting resampling lowlimit to " + 
+	      kvu_numtostr(lowlimit) + " bytes.");
 
   sbuf_repp->resample_init_memory(samples_per_second(), target_rate_rep);
   sbuf_repp->resample_set_quality(50);
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audiofx) resampling from " +
-		                         kvu_numtostr(samples_per_second()) + 
-		                         " to " + 
-		                         kvu_numtostr(target_rate_rep) + "."); 
+	      kvu_numtostr(samples_per_second()) + 
+	      " to " + 
+	      kvu_numtostr(target_rate_rep) + "."); 
 }
 
 void EFFECT_PITCH_SHIFT::release(void)
