@@ -59,6 +59,7 @@ void MP3FILE::open(void) throw(SETUP_ERROR&) {
   }
   fork_mpg123();
   toggle_open_state(true);
+  triggered_rep = false;
 }
 
 void MP3FILE::close(void) {
@@ -72,6 +73,7 @@ void MP3FILE::close(void) {
 }
 
 long int MP3FILE::read_samples(void* target_buffer, long int samples) {
+  if (triggered_rep != true) triggered_rep = true;
   bytes_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
@@ -84,6 +86,7 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples) {
 }
 
 void MP3FILE::write_samples(void* target_buffer, long int samples) {
+  if (triggered_rep != true) triggered_rep = true;
   if (wait_for_child() != true) {
     finished_rep = true;
   }
@@ -99,6 +102,7 @@ void MP3FILE::write_samples(void* target_buffer, long int samples) {
 }
 
 void MP3FILE::seek_position(void) {
+  if (is_open() == true && triggered_rep != true) return;
   if (is_open() == true) {
     finished_rep = false;
     if (io_mode() == io_read)

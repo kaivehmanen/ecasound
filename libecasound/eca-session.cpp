@@ -55,15 +55,14 @@ ECA_SESSION::ECA_SESSION(void) {
 }
 
 ECA_SESSION::~ECA_SESSION(void) {
-  ecadebug->msg(ECA_DEBUG::system_objects,"ECA_SESSION destructor!");
+//    ecadebug->msg(ECA_DEBUG::system_objects,"ECA_SESSION destructor!");
 
   status(ep_status_notready);
 
   for(vector<ECA_CHAINSETUP*>::iterator q = chainsetups_rep.begin(); q != chainsetups_rep.end(); q++) {
     delete *q;
   }
-
-  ecadebug->control_flow("Closing session");
+//    ecadebug->control_flow("Closing session");
 }
 
 ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {

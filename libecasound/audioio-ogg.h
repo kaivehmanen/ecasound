@@ -29,6 +29,7 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
 
  private:
 
+  bool triggered_rep;
   bool finished_rep;
   long int bytes_rep;
   int fd_rep;

@@ -565,7 +565,7 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
       case 'n': 
 	{
 	  string name = get_argument_number(1,argu);
-	  const map<string,string>& preset_map = eca_preset_map.registered_objects();
+  	  const map<string,string>& preset_map = eca_preset_map.registered_objects(); 
 	  map<string,string>::const_iterator p = preset_map.begin();
 	  while (p != preset_map.end()) {
 	    if (p->first == name) {

@@ -29,6 +29,8 @@ ECA_RESOURCES::ECA_RESOURCES(void) :
   set_defaults(); 
 }
 
+ECA_RESOURCES::~ECA_RESOURCES(void) { }
+
 void ECA_RESOURCES::set_defaults(void) {
   if (has("midi-device") != true) resource("midi-device","/dev/midi");
   if (has("default-output") != true) resource("default-output","/dev/dsp");

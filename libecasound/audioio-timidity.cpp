@@ -43,6 +43,7 @@ void TIMIDITY_INTERFACE::open(void) {
   if (wait_for_child() != true) {
     finished_rep = true;
   }
+  triggered_rep = false;
   toggle_open_state(true);
 }
 
@@ -54,7 +55,8 @@ void TIMIDITY_INTERFACE::close(void) {
 }
 
 long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, long int samples) {
-  bytes_read_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
+  if (triggered_rep != true) triggered_rep = true;
+  bytes_read_rep = ::read(fd_rep, target_buffer, frame_size() * samples);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
       ecadebug->msg(ECA_DEBUG::info, "(audioio-timidity) Can't start process \"" + TIMIDITY_INTERFACE::default_timidity_cmd + "\". Please check your ~/.ecasoundrc.");
@@ -65,6 +67,7 @@ long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, long int samples)
 }
 
 void TIMIDITY_INTERFACE::seek_position(void) {
+  if (is_open() == true && triggered_rep != true) return;
   if (is_open() == true) {
     if (io_mode() == io_read) {
       kill_timidity();

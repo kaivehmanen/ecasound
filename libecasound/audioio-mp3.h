@@ -28,6 +28,7 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
  private:
 
   bool finished_rep;
+  bool triggered_rep;
   int pid_of_child_rep;
   long pcm_rep;
   long int bytes_rep;

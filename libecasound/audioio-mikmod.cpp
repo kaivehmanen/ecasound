@@ -38,6 +38,7 @@ MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void) { close(); }
 
 void MIKMOD_INTERFACE::open(void) { 
   fork_mikmod();
+  triggered_rep = false;
   toggle_open_state(true); 
 }
 
@@ -49,6 +50,7 @@ void MIKMOD_INTERFACE::close(void) {
 }
 
 long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {
+  if (triggered_rep != true) triggered_rep = true;
   bytes_read_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
@@ -60,6 +62,7 @@ long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {
 }
 
 void MIKMOD_INTERFACE::seek_position(void) {
+  if (is_open() == true && triggered_rep != true) return;
   if (is_open() == true) {
     if (io_mode() == io_read) {
       kill_mikmod();

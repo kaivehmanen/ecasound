@@ -67,7 +67,7 @@ class RESOURCE_FILE {
    * filename argument is given.
    */
   RESOURCE_FILE(const string& resource_file = "");
-  ~RESOURCE_FILE(void);
+  virtual ~RESOURCE_FILE(void);
 };
 
 #endif

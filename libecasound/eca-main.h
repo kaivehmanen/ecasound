@@ -1,5 +1,5 @@
-#ifndef _ECA_MAIN_H
-#define _ECA_MAIN_H
+#ifndef INCLUDED_ECA_MAIN_H
+#define INCLUDED_ECA_MAIN_H
 
 #include <vector>
 #include <string>
@@ -10,6 +10,7 @@
 
 #include "samplebuffer.h"
 #include "eca-chainsetup.h"
+#include "audioio-buffered-proxy.h"
 
 class AUDIO_IO;
 class AUDIO_IO_DEVICE;
@@ -25,8 +26,6 @@ extern pthread_mutex_t ecasound_stop_mutex;
  * Main processing engine
  */
 class ECA_PROCESSOR {
-
-  friend void *mthread_process_chains(void* params);
 
  public:
 
@@ -80,19 +79,39 @@ private:
   // Pointers to connected chainsetup
   // ---
   ECA_CHAINSETUP* csetup;
+  // -> pointers to input objects in csetup
   vector<AUDIO_IO*>* inputs;
+  // -> pointers used for read_buffer calls only 
+  //    (only when proxies are used, r_inputs != inputs)
+  vector<AUDIO_IO*>* r_inputs;
+  // -> pointers to input objects in csetup
   vector<AUDIO_IO*>* outputs;
+  // -> pointers used for read_buffer calls only 
+  //    (only when proxies are used, r_outputs != outputs)
+  vector<AUDIO_IO*>* r_outputs;
+  // -> pointers to chain objects in csetup
   vector<CHAIN*>* chains;
 
   // ---
   // Various audio objects groupings
   // ---
-  vector<AUDIO_IO_DEVICE*> realtime_inputs;
+  // - pointers to all realtime inputs
+  vector<AUDIO_IO_DEVICE*> realtime_inputs; 
+  // - pointers to all realtime outputs
   vector<AUDIO_IO_DEVICE*> realtime_outputs;
+  // - pointers to all realtime inputs and outputs
   vector<AUDIO_IO_DEVICE*> realtime_objects;
+  // - pointers to all non_realtime inputs
   vector<AUDIO_IO*> non_realtime_inputs;
+  // - pointers to all non_realtime outputs
   vector<AUDIO_IO*> non_realtime_outputs;
+  // - pointers to all non_realtime inputs and outputs
   vector<AUDIO_IO*> non_realtime_objects;
+  // - pointers to proxy input objects (if used, assigned to r_inputs)
+  vector<AUDIO_IO*> proxy_inputs;
+  // - pointers to proxy output objects (if used, assigned to r_inputs)
+  vector<AUDIO_IO*> proxy_outputs;
+  vector<AUDIO_IO_BUFFERED_PROXY*> proxies_rep;
 
   // ---
   // Data objects
@@ -103,6 +122,7 @@ private:
   vector<int> input_chain_count;
   vector<int> output_chain_count;
 
+  AUDIO_IO_PROXY_SERVER pserver_rep;
   SAMPLE_BUFFER mixslot;
   vector<SAMPLE_BUFFER> cslots;
 

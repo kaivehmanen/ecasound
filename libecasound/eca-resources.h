@@ -13,6 +13,7 @@ class ECA_RESOURCES : public RESOURCE_FILE {
   void set_defaults(void);
 
   ECA_RESOURCES(void);
+  virtual ~ECA_RESOURCES(void);
 };
 
 #endif

@@ -21,39 +21,71 @@ void* start_proxy_server_io_thread(void *ptr) {
 AUDIO_IO_PROXY_SERVER::AUDIO_IO_PROXY_SERVER (void) { 
   buffercount_rep = buffercount_default;
   buffersize_rep = buffersize_default;
+  samplerate_rep = SAMPLE_SPECS::sample_rate_default;
+  thread_running_rep = false;
+  running_rep.set(0);
+  full_rep.set(0);
+  stop_request_rep.set(0);
+  exit_request_rep.set(0);
 }
 
 /**
  * Destructor. Doesn't delete any client objects.
  */
-AUDIO_IO_PROXY_SERVER::~AUDIO_IO_PROXY_SERVER(void) { }
+AUDIO_IO_PROXY_SERVER::~AUDIO_IO_PROXY_SERVER(void) { 
+  stop_request_rep.set(1);
+  exit_request_rep.set(1);
+  if (thread_running_rep == true) {
+    ::pthread_join(io_thread_rep, 0);
+  }
+  for(unsigned int p = 0; p < buffers_rep.size(); p++) {
+    delete buffers_rep[p];
+  }
+}
 
 /**
  * Starts the proxy server.
  */
 void AUDIO_IO_PROXY_SERVER::start(void) { 
-  int ret = pthread_create(&io_thread_rep,
-			   0,
-			   start_proxy_server_io_thread,
-			   static_cast<void *>(this));
-  if (ret != 0) {
-    cerr << "(audio_io_proxy_server) pthread_create failed, exiting" << endl;
-    exit(1);
+  if (thread_running_rep != true) {
+    int ret = pthread_create(&io_thread_rep,
+			     0,
+			     start_proxy_server_io_thread,
+			     static_cast<void *>(this));
+    if (ret != 0) {
+      cerr << "(audio_io_proxy_server) pthread_create failed, exiting" << endl;
+      exit(1);
+    }
+    thread_running_rep = true;
   }
-  running_rep = true;
+  stop_request_rep.set(0);
+  running_rep.set(1);
+  cerr << "(audio_io_proxy_server) starting processing" << endl;
 }
 
 /**
  * Stops the proxy server.
  */
 void AUDIO_IO_PROXY_SERVER::stop(void) { 
-  running_rep = false;
+  stop_request_rep.set(1);
+  cerr << "(audio_io_proxy_server) stopping processing" << endl;
 }
 
 /**
  * Whether the proxy server has been started?
  */
-bool AUDIO_IO_PROXY_SERVER::is_running(void) const { return(running_rep); }
+bool AUDIO_IO_PROXY_SERVER::is_running(void) const { 
+  if (running_rep.get() == 0) return(false); 
+  return(true);
+}
+
+/**
+ * Whether the proxy server buffers are full?
+ */
+bool AUDIO_IO_PROXY_SERVER::is_full(void) const { 
+  if (full_rep.get() == 0) return(false); 
+  return(true);
+}
 
 void AUDIO_IO_PROXY_SERVER::seek(AUDIO_IO* abject, 
 				 long int position_in_samples) { 
@@ -63,9 +95,12 @@ void AUDIO_IO_PROXY_SERVER::seek(AUDIO_IO* abject,
 /**
  * Sets new default values for sample buffers.
  */
-void AUDIO_IO_PROXY_SERVER::set_buffer_defaults(int buffers, long int buffersize) { 
+void AUDIO_IO_PROXY_SERVER::set_buffer_defaults(int buffers, 
+						long int buffersize, 
+						long int sample_rate) { 
   buffercount_rep = buffers;
   buffersize_rep = buffersize;
+  samplerate_rep = sample_rate;
 }
 
 /**
@@ -73,16 +108,16 @@ void AUDIO_IO_PROXY_SERVER::set_buffer_defaults(int buffers, long int buffersize
  */
 void AUDIO_IO_PROXY_SERVER::register_client(AUDIO_IO* aobject) { 
   clients_rep.push_back(aobject);
-  cerr << "Registering a client. Buffer count " 
+  cerr << "Registering client " << clients_rep.size() - 1 << ". Buffer count " 
        << buffercount_rep 
        << ", and size "
        << buffersize_rep
        << "." 
        << endl;
-  buffers_rep.resize(clients_rep.size(), AUDIO_IO_PROXY_BUFFER(buffercount_rep,
-							       buffersize_rep,
-							       SAMPLE_SPECS::channel_count_default,
-							       SAMPLE_SPECS::sample_rate_default));
+  buffers_rep.push_back(new AUDIO_IO_PROXY_BUFFER(buffercount_rep,
+						  buffersize_rep,
+						  SAMPLE_SPECS::channel_count_default,
+						  samplerate_rep));
   client_map_rep[aobject] = clients_rep.size() - 1;
 }
 
@@ -105,45 +140,75 @@ AUDIO_IO_PROXY_BUFFER* AUDIO_IO_PROXY_SERVER::get_client_buffer(AUDIO_IO* aobjec
       clients_rep[client_map_rep[aobject]] == 0)
     return(0);
 
-  return(&buffers_rep[client_map_rep[aobject]]);
+  return(buffers_rep[client_map_rep[aobject]]);
 }
 
 /**
  * Slave thread.
  */
 void AUDIO_IO_PROXY_SERVER::io_thread(void) { 
-  cerr << "Hey, in the I/O loop!" << endl;
+  cerr << "(audio_io_proxy_server) Hey, in the I/O loop!" << endl;
   while(true) {
+//      cerr << "A";
+    if (running_rep.get() == 0) {
+      usleep(50000);
+      if (exit_request_rep.get() == 1) break;
+      continue;
+    }
     int processed = 0;
     for(unsigned int p = 0; p < clients_rep.size(); p++) {
-      if (buffers_rep[p].io_mode_rep == AUDIO_IO::io_read) {
-	if (buffers_rep[p].write_space() > 0) {
-	  clients_rep[p]->read_buffer(&buffers_rep[p].sbufs_rep[buffers_rep[p].writeptr_rep.get()]);
-	  if (buffers_rep[p].write_space() > 16) {
-	    cerr << "Writing buffer " << buffers_rep[p].writeptr_rep.get() << " of client " 
-		 << p << ";";
-	    cerr << " write_space: " << buffers_rep[p].write_space() << "." << endl;
-	  }
-	  buffers_rep[p].advance_write_pointer();
+//        cerr << "B";
+      if (clients_rep[p] == 0 ||
+	  buffers_rep[p]->finished_rep.get()) continue;
+      if (buffers_rep[p]->io_mode_rep == AUDIO_IO::io_read) {
+//  	cerr << "C";
+//  	cerr << "Buffer " << buffers_rep[p] << ":";
+//  	cerr << "Writing buffer " << buffers_rep[p]->writeptr_rep.get() << " of client " 
+//  	     << p << ";";
+//  	cerr << " write_space: " << buffers_rep[p]->write_space() << "." << endl;
+	if (buffers_rep[p]->write_space() > 0) {
+//  	  cerr << "D";
+	  clients_rep[p]->read_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->writeptr_rep.get()]);
+	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
+  	  if (buffers_rep[p]->write_space() > 16) {
+  	    cerr << "Writing buffer " << buffers_rep[p]->writeptr_rep.get() << " of client " 
+  		 << p << ";";
+  	    cerr << " write_space: " << buffers_rep[p]->write_space() << "." << endl;
+  	  }
+	  buffers_rep[p]->advance_write_pointer();
 	  ++processed;
 	}
       }
       else {
-	if (buffers_rep[p].read_space() > 0) {
-	  if (buffers_rep[p].read_space() < 16) {
-	    cerr << "Reading buffer " << buffers_rep[p].readptr_rep.get() << " of client " 
+//  	cerr << "E";
+	if (buffers_rep[p]->read_space() > 0) {
+	  if (buffers_rep[p]->read_space() > 16) {
+	    cerr << "Reading buffer " << buffers_rep[p]->readptr_rep.get() << " of client " 
 		 << p << ";";
-	    cerr << " read_space: " << buffers_rep[p].read_space() << "." << endl;
+	    cerr << " read_space: " << buffers_rep[p]->read_space() << "." << endl;
 	  }
-	  clients_rep[p]->write_buffer(&buffers_rep[p].sbufs_rep[buffers_rep[p].readptr_rep.get()]);
-	  buffers_rep[p].advance_read_pointer();
+	  clients_rep[p]->write_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
+	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
+	  buffers_rep[p]->advance_read_pointer();
 	  ++processed;
 	}
       }
-      ++p;
+    }
+    if (stop_request_rep.get() == 1) {
+      stop_request_rep.set(0);
+      running_rep.set(0);
+    }
+    if (processed != 0) {
+      full_rep.set(0);
+      continue;
+    }
+    else {
+      full_rep.set(1);
     }
     if (processed == 0) {
-      usleep(150);
+      usleep(50000);
     }
+//      cerr << "F";
   }
+  cerr << "Exiting proxy server thread." << endl;
 }

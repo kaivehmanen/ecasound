@@ -73,6 +73,7 @@ void RESOURCE_FILE::load(void) {
       lines_rep.push_back(line);
     }
   }
+  fin.close();
 }
 
 void RESOURCE_FILE::save(void) { 
@@ -87,6 +88,7 @@ void RESOURCE_FILE::save(void) {
       ++p;
     }
   }
+  fout.close();
 }
 
 vector<string> RESOURCE_FILE::keywords(void) const {
@@ -145,5 +147,3 @@ void RESOURCE_FILE::resource(const string& tag, const string& value) {
     lines_rep.push_back(tag + " = " + value + "\n");
   }
 }
-
-

@@ -77,6 +77,9 @@ ecasound_audioio_include = 	\
 			audioio-loop.h \
 			audioio-forked-stream.h \
 			audioio-timidity.h
+			audioio-proxy-server.h \
+			audioio-proxy-buffer.h \
+			audioio-buffered-proxy.h
 
 ecasound_controller_include = \
 			generic-controller.h \
@@ -187,6 +190,9 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-loop.cpp \
 			audioio-forked-stream.cpp \
 			audioio-timidity.cpp \
+			audioio-proxy-server.cpp \
+			audioio-proxy-buffer.cpp \
+			audioio-buffered-proxy.cpp \
 			$(ecasound_audioio_oss_src)
 
 ecasound_controller_src = \

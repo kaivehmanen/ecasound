@@ -46,6 +46,7 @@ void OGG_VORBIS_INTERFACE::open(void) {
   if (feof(f1_rep) || ferror(f1_rep)) {
     finished_rep = true;
   }
+  triggered_rep = false;
   toggle_open_state(true);
 }
 
@@ -60,6 +61,7 @@ void OGG_VORBIS_INTERFACE::close(void) {
 }
 
 long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int samples) {
+  if (triggered_rep != true) triggered_rep = true;
   bytes_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
@@ -73,6 +75,7 @@ long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int sample
 }
 
 void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples) {
+  if (triggered_rep != true) triggered_rep = true;
   if (wait_for_child() != true) {
     finished_rep = true;
   }
@@ -84,6 +87,7 @@ void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples) 
 }
 
 void OGG_VORBIS_INTERFACE::seek_position(void) {
+  if (is_open() == true && triggered_rep != true) return;
   if (is_open() == true) {
     finished_rep = false;
     if (io_mode() == io_read) {

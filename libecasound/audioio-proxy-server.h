@@ -21,13 +21,18 @@ class AUDIO_IO_PROXY_SERVER {
   static const int buffercount_default;
   static const long int buffersize_default;
 
-  vector<AUDIO_IO_PROXY_BUFFER> buffers_rep;
+  vector<AUDIO_IO_PROXY_BUFFER*> buffers_rep;
   vector<AUDIO_IO*> clients_rep;
   map<AUDIO_IO*, int> client_map_rep;
   pthread_t io_thread_rep;
-  bool running_rep;
+  bool thread_running_rep;
+  ATOMIC_INTEGER exit_request_rep;
+  ATOMIC_INTEGER stop_request_rep;
+  ATOMIC_INTEGER running_rep;
+  ATOMIC_INTEGER full_rep;
   int buffercount_rep;
   long int buffersize_rep;
+  long int samplerate_rep;
 
   AUDIO_IO_PROXY_SERVER& operator=(const AUDIO_IO_PROXY_SERVER& x) { return *this; }
   AUDIO_IO_PROXY_SERVER (const AUDIO_IO_PROXY_SERVER& x) { }
@@ -37,12 +42,13 @@ class AUDIO_IO_PROXY_SERVER {
  public:
 
   bool is_running(void) const;
+  bool is_full(void) const;
 
   void start(void);
   void stop(void);
   void seek(AUDIO_IO* aobject, long int position_in_samples);
 
-  void set_buffer_defaults(int buffers, long int buffersize);
+  void set_buffer_defaults(int buffers, long int buffersize, long int sample_rate);
   void register_client(AUDIO_IO* abject);
   void unregister_client(AUDIO_IO* abject);
   AUDIO_IO_PROXY_BUFFER* get_client_buffer(AUDIO_IO* abject);

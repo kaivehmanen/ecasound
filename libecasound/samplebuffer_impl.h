@@ -1014,7 +1014,8 @@ SAMPLE_BUFFER_BASE<T>& SAMPLE_BUFFER_BASE<T>::operator=(const SAMPLE_BUFFER_BASE
   // ---
   
   if (this != &x) {
-    if (x.buffersize_rep > reserved_bytes_rep) {
+    if (x.buffersize_rep > reserved_bytes_rep ||
+	x.buffer.size() != buffer.size()) {
       reserved_bytes_rep = x.buffersize_rep;
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) delete[] buffer[n];
       if (old_buffer_repp != 0) {

@@ -26,8 +26,11 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO,
 
   int xruns_rep;
 
+  void fetch_child_data(void);
+
  public:
 
+  virtual string label(void) const { return(child_repp->label()); }
   virtual string name(void) const { return(child_repp->name()); }
   virtual string description(void) const { return(child_repp->description()); }
 

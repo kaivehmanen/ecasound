@@ -68,6 +68,17 @@ ECA_PROCESSOR::~ECA_PROCESSOR(void) {
       ++q;
     }
   }
+  
+  if (csetup->double_buffering() == true) {
+    pserver_rep.stop();
+    while(pserver_rep.is_running() != true) usleep(50000);
+  }
+
+  vector<AUDIO_IO_BUFFERED_PROXY*>::iterator p = proxies_rep.begin();
+  while(p != proxies_rep.end()) {
+    delete *p;
+    ++p;
+  }
 
   ecadebug->control_flow("Engine/Exiting");
 }
@@ -76,13 +87,15 @@ void ECA_PROCESSOR::init(ECA_SESSION* params) {
   eparams = params;
   mixslot.length_in_samples(eparams->connected_chainsetup_repp->buffersize());
   buffersize_rep = eparams->connected_chainsetup_repp->buffersize();
-
+  
   realtime_inputs.clear();
   realtime_outputs.clear();
   realtime_objects.clear();
   non_realtime_inputs.clear();
   non_realtime_outputs.clear();
   non_realtime_objects.clear();
+  proxy_inputs.clear();
+  proxy_outputs.clear();
 
   chain_ready_for_submix.clear();
   input_start_pos.clear();
@@ -121,6 +134,10 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR&) {
   if (csetup == 0 )
     throw(ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, no chainsetup connected!"));
 
+  pserver_rep.set_buffer_defaults(64, 
+				  buffersize_rep,
+				  csetup->sample_rate());
+
   init_inputs(); // input-output order is important here (sync fix)
   init_outputs();
   init_chains();
@@ -129,7 +146,17 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR&) {
 void ECA_PROCESSOR::init_inputs(void) {
   input_not_finished = true;
 
-  inputs = &(csetup->inputs);
+  if (csetup->double_buffering() != true) {
+    r_inputs = inputs = &(csetup->inputs);
+  }
+  else {
+    for(unsigned int adev_sizet = 0; adev_sizet < csetup->inputs.size(); adev_sizet++) {
+      proxy_inputs.push_back(csetup->inputs[adev_sizet]);
+    }
+    inputs = &(csetup->inputs);
+    r_inputs = &proxy_inputs;
+  }
+
   input_count = static_cast<int>(inputs->size());
 
   if (inputs == 0 || inputs->size() == 0) {
@@ -140,31 +167,39 @@ void ECA_PROCESSOR::init_inputs(void) {
   input_chain_count.resize(input_count);
   long int max_input_length = 0;
   for(int adev_sizet = 0; adev_sizet < input_count; adev_sizet++) {
-    (*inputs)[adev_sizet]->buffersize(buffersize_rep, csetup->sample_rate());
-
-    if ((*inputs)[adev_sizet]->channels() > max_channels)
-      max_channels = (*inputs)[adev_sizet]->channels();
-
     AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>((*inputs)[adev_sizet]);
     if (p != 0) {
       realtime_inputs.push_back(p);
       realtime_objects.push_back(p);
     }
     else {
+      if (csetup->double_buffering() == true) {
+	AUDIO_IO_BUFFERED_PROXY* proxy_client = new AUDIO_IO_BUFFERED_PROXY(&pserver_rep, (*inputs)[adev_sizet]);
+	proxies_rep.push_back(proxy_client);
+	(*r_inputs)[adev_sizet] = proxy_client;
+      }
       non_realtime_inputs.push_back((*inputs)[adev_sizet]);
       non_realtime_objects.push_back((*inputs)[adev_sizet]);
     }
 
-    input_start_pos[adev_sizet] = (*inputs)[adev_sizet]->position_in_samples();
+    (*inputs)[adev_sizet]->buffersize(buffersize_rep, csetup->sample_rate());
+
+    if (csetup->inputs[adev_sizet]->channels() > max_channels)
+      max_channels = csetup->inputs[adev_sizet]->channels();
+
+    input_start_pos[adev_sizet] = csetup->inputs[adev_sizet]->position_in_samples();
+    (*inputs)[adev_sizet]->seek_position_in_samples(input_start_pos[adev_sizet]);
+
     input_chain_count[adev_sizet] =
-      eparams->number_of_connected_chains_to_input((*inputs)[adev_sizet]);
-    if ((*inputs)[adev_sizet]->length_in_samples() > max_input_length)
-      max_input_length = (*inputs)[adev_sizet]->length_in_samples();
+      eparams->number_of_connected_chains_to_input(csetup->inputs[adev_sizet]);
+
+    if (csetup->inputs[adev_sizet]->length_in_samples() > max_input_length)
+      max_input_length = csetup->inputs[adev_sizet]->length_in_samples();
 
     // ---
-    //      ecadebug->msg(ECA_DEBUG::system_objects, "Input \"" + (*inputs)[adev_sizet]->label() +  ": start position " +
-    //  		     kvu_numtostr(input_start_pos[adev_sizet]) +  ", number of connected chain " +
-    //  		     kvu_numtostr(input_chain_count[adev_sizet]) + " .\n");
+    ecadebug->msg(ECA_DEBUG::system_objects, "Input \"" + (*inputs)[adev_sizet]->label() +  "\": start position " +
+		  kvu_numtostr(input_start_pos[adev_sizet]) +  ", number of connected chain " +
+		  kvu_numtostr(input_chain_count[adev_sizet]) + " .\n");
   }
 
   if (csetup->length_set() == false) {
@@ -178,7 +213,17 @@ void ECA_PROCESSOR::init_inputs(void) {
 void ECA_PROCESSOR::init_outputs(void) {
   trigger_outputs_request = false;
 
-  outputs = &(csetup->outputs);
+  if (csetup->double_buffering() != true) {
+    r_outputs = outputs = &(csetup->outputs);
+  }
+  else {
+    for(unsigned int adev_sizet = 0; adev_sizet < csetup->outputs.size(); adev_sizet++) {
+      proxy_outputs.push_back(csetup->outputs[adev_sizet]);
+    }
+    outputs = &(csetup->outputs);
+    r_outputs = &proxy_outputs;
+  }
+
   output_count = static_cast<int>(outputs->size());
 
   if (outputs  == 0 ||
@@ -190,31 +235,37 @@ void ECA_PROCESSOR::init_outputs(void) {
   output_chain_count.resize(output_count);
 
   for(int adev_sizet = 0; adev_sizet < output_count; adev_sizet++) {
-    (*outputs)[adev_sizet]->buffersize(buffersize_rep, csetup->sample_rate());
-
-    if ((*outputs)[adev_sizet]->channels() > max_channels)
-      max_channels = (*outputs)[adev_sizet]->channels();
-		
     AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>((*outputs)[adev_sizet]);
     if (p != 0) {
       realtime_outputs.push_back(p);
       realtime_objects.push_back(p);
     }
     else {
+      if (csetup->double_buffering() == true) {
+	AUDIO_IO_BUFFERED_PROXY* proxy_client = new AUDIO_IO_BUFFERED_PROXY(&pserver_rep, (*outputs)[adev_sizet]);
+	proxies_rep.push_back(proxy_client);
+	(*r_outputs)[adev_sizet] = proxy_client;
+      }
       non_realtime_outputs.push_back((*outputs)[adev_sizet]);
       non_realtime_objects.push_back((*outputs)[adev_sizet]);
     }
 
+    (*outputs)[adev_sizet]->buffersize(buffersize_rep, csetup->sample_rate());
+
+    if (csetup->outputs[adev_sizet]->channels() > max_channels)
+      max_channels = csetup->outputs[adev_sizet]->channels();
+
     output_start_pos[adev_sizet] =
-      (*outputs)[adev_sizet]->position_in_samples();
+      csetup->outputs[adev_sizet]->position_in_samples();
+    (*outputs)[adev_sizet]->seek_position_in_samples(output_start_pos[adev_sizet]);
 
     output_chain_count[adev_sizet] =
-      eparams->number_of_connected_chains_to_output((*outputs)[adev_sizet]);
+      eparams->number_of_connected_chains_to_output(csetup->outputs[adev_sizet]);
 
     // ---
-    //      ecadebug->msg(ECA_DEBUG::system_objects, "Output \"" + (*outputs)[adev_sizet]->label() +  ": start position " +
-    //  		     kvu_numtostr(output_start_pos[adev_sizet]) + ", number of connected chain " +
-    //  		     kvu_numtostr(output_chain_count[adev_sizet]) + " .\n");
+    ecadebug->msg(ECA_DEBUG::system_objects, "Output \"" + (*outputs)[adev_sizet]->label() +  "\": start position " +
+		  kvu_numtostr(output_start_pos[adev_sizet]) + ", number of connected chain " +
+		  kvu_numtostr(output_chain_count[adev_sizet]) + " .\n");
   }
   mixslot.number_of_channels(max_channels);
   mixslot.sample_rate(csetup->sample_rate());
@@ -279,6 +330,12 @@ void ECA_PROCESSOR::init_mix_method(void) {
 }
 
 void ECA_PROCESSOR::exec(void) {
+  if (csetup->double_buffering() == true) {
+    pserver_rep.start();
+    ecadebug->msg(ECA_DEBUG::info, "(eca-main) Prefilling i/o buffers.");
+    while(pserver_rep.is_full() != true) usleep(50000);
+  }
+
   switch(mixmode_rep) {
   case ECA_CHAINSETUP::ep_mm_simple:
     {
@@ -305,13 +362,27 @@ void ECA_PROCESSOR::exec(void) {
 }
 
 void ECA_PROCESSOR::conditional_start(void) {
-  if (was_running == true) start();
+  if (was_running == true) {
+    if (csetup->double_buffering() != true) {
+      start();
+    }
+    else {
+      pserver_rep.start();
+      while(pserver_rep.is_full() != true) usleep(50000);
+    }
+  }
 }
 
 void ECA_PROCESSOR::conditional_stop(void) {
   if (eparams->status() == ECA_SESSION::ep_status_running) {
     was_running = true;
-    stop();
+    if (csetup->double_buffering() != true) {
+      stop();
+    }
+    else {
+      pserver_rep.stop();
+      while(pserver_rep.is_running() != true) usleep(50000);
+    }
   }
   else was_running = false;
 }
@@ -343,10 +414,10 @@ void ECA_PROCESSOR::exec_simple_iactive(void) {
     input_not_finished = false;
 
     prehandle_control_position();
-    (*inputs)[0]->read_buffer(&mixslot);
+    (*r_inputs)[0]->read_buffer(&mixslot);
     if ((*inputs)[0]->finished() == false) input_not_finished = true;
     (*chains)[0]->process();
-    (*outputs)[0]->write_buffer(&mixslot);
+    (*r_outputs)[0]->write_buffer(&mixslot);
     trigger_outputs();
     posthandle_control_position();
     if (eparams->iactive_rep != true &&
@@ -402,6 +473,7 @@ void ECA_PROCESSOR::set_position(double seconds) {
 void ECA_PROCESSOR::set_position_chain(double seconds) {
   conditional_stop();
 
+  // FIXME: doesn't work with double-buffering!
   (*chains)[active_chain_index]->input_id_repp->seek_position_in_seconds(seconds);
   (*chains)[active_chain_index]->output_id_repp->seek_position_in_seconds(seconds);
 
@@ -438,6 +510,7 @@ void ECA_PROCESSOR::rewind_to_start_position(void) {
 void ECA_PROCESSOR::change_position_chain(double seconds) {
   conditional_stop();
 
+  // FIXME: doesn't work with double-buffering!
   (*chains)[active_chain_index]->input_id_repp->seek_position_in_seconds(
 								    (*chains)[active_chain_index]->input_id_repp->position_in_seconds() + seconds);
   (*chains)[active_chain_index]->output_id_repp->seek_position_in_seconds(
@@ -449,6 +522,7 @@ void ECA_PROCESSOR::change_position_chain(double seconds) {
 double ECA_PROCESSOR::current_position(void) const { return(csetup->position_in_seconds_exact()); }
 
 double ECA_PROCESSOR::current_position_chain(void) const {
+  // FIXME: doesn't work with double-buffering!
   return((*chains)[active_chain_index]->input_id_repp->position_in_seconds_exact());
 }
 
@@ -587,13 +661,13 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 
   for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
     if (input_chain_count[audioslot_sizet] > 1) {
-      (*inputs)[audioslot_sizet]->read_buffer(&mixslot);
+      (*r_inputs)[audioslot_sizet]->read_buffer(&mixslot);
       if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
     }
     for (int c = 0; c != chain_count; c++) {
       if ((*inputs)[audioslot_sizet] == (*chains)[c]->input_id_repp) {
 	if (input_chain_count[audioslot_sizet] == 1) {
-	  (*inputs)[audioslot_sizet]->read_buffer(&(cslots[c]));
+	  (*r_inputs)[audioslot_sizet]->read_buffer(&(cslots[c]));
 	  if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
 	  break;
 	}
@@ -628,7 +702,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 
       if ((*chains)[n]->output_id_repp == (*outputs)[audioslot_sizet]) {
 	if (output_chain_count[audioslot_sizet] == 1) {
-	  (*outputs)[audioslot_sizet]->write_buffer(&(cslots[n]));
+	  (*r_outputs)[audioslot_sizet]->write_buffer(&(cslots[n]));
 	  cslots[n].length_in_samples(buffersize_rep);
 	  break;
 	}
@@ -642,7 +716,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 				    output_chain_count[audioslot_sizet]);
 	    
 	    if (count == output_chain_count[audioslot_sizet]) {
-	      (*outputs)[audioslot_sizet]->write_buffer(&mixslot);
+	      (*r_outputs)[audioslot_sizet]->write_buffer(&mixslot);
 	      cslots[n].length_in_samples(buffersize_rep);
 	    }
 	  }
@@ -718,13 +792,13 @@ bool ECA_PROCESSOR::finished(void) {
 void ECA_PROCESSOR::inputs_to_chains(void) {
   for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
     if (input_chain_count[audioslot_sizet] > 1) {
-      (*inputs)[audioslot_sizet]->read_buffer(&mixslot);
+      (*r_inputs)[audioslot_sizet]->read_buffer(&mixslot);
       if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
     }
     for (int c = 0; c != chain_count; c++) {
       if ((*chains)[c]->input_id_repp == (*inputs)[audioslot_sizet]) {
 	if (input_chain_count[audioslot_sizet] == 1) {
-	  (*inputs)[audioslot_sizet]->read_buffer(&(cslots[c]));
+	  (*r_inputs)[audioslot_sizet]->read_buffer(&(cslots[c]));
 	  if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
 	  break;
 	}
@@ -761,7 +835,7 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 	  // there's only one output connected to this chain,
 	  // so we don't need to mix anything
 	  // --
-	  (*outputs)[audioslot_sizet]->write_buffer(&(cslots[n]));
+	  (*r_outputs)[audioslot_sizet]->write_buffer(&(cslots[n]));
 	  cslots[n].length_in_samples(buffersize_rep);
 	  break;
 	}
@@ -780,7 +854,7 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 	  }
 	  
 	  if (count == output_chain_count[audioslot_sizet]) {
-	    (*outputs)[audioslot_sizet]->write_buffer(&mixslot);
+	    (*r_outputs)[audioslot_sizet]->write_buffer(&mixslot);
 	    mixslot.length_in_samples(buffersize_rep);
 	  }
 	}

@@ -25,6 +25,7 @@ class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
 
  private:
 
+  bool triggered_rep;
   bool finished_rep;
   long int bytes_read_rep;
   int fd_rep;
