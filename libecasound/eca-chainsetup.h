@@ -156,7 +156,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   const string& default_midi_device(void) const { return(default_midi_device_rep); }
   int output_openmode(void) const { return(output_openmode_rep); }
   Buffering_mode_t buffering_mode(void) const { return(buffering_mode_rep); }
-  bool is_valid_for_connection(void) const;
+  bool is_valid_for_connection(bool verbose) const;
   bool multitrack_mode(void) const { return(multitrack_mode_rep); }
   long int multitrack_mode_offset(void) const { return(multitrack_mode_offset_rep); } 
 
