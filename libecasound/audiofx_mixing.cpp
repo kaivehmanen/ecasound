@@ -28,7 +28,7 @@ EFFECT_CHANNEL_COPY::EFFECT_CHANNEL_COPY (parameter_type from,
 }
 
 int EFFECT_CHANNEL_COPY::output_channels(int i_channels) const {
-  int c = static_cast<int>(to_channel);
+  int c = static_cast<int>(to_channel > from_channel ? to_channel : from_channel);
   ++c;
   return(c > i_channels ? c : i_channels);
 }
