@@ -1,10 +1,11 @@
 ------------------------------------------------------------------------
-Status: OPEN
+Status: CLOSED
 
 (edi-28): Extending the EIAM command set to allow writing standalone ECI 
 	  implementations.
          - submitted: kaiv, 29.09.2002
 	 - initial implmementation: kaiv, 05.10.2002
+	 - done: kaiv, 29.10.2002
 
 ------------------------------------------------------------------------
 Details:
@@ -35,7 +36,6 @@ Details:
       a type prefix, 2. whether to print empty replies 
       and 3. how to print errors)
     - reference C implementation (libecasoundc)
-- todo-list
     - document the use of ECASOUND environment variable
 
 ------------------------------------------------------------------------

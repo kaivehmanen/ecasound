@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------
-Status: OPEN
+Status: CLOSED
 
 (edi-30): Turning libecasound and libkvutils into static libraries.
          - submitted: kaiv, 08.10.2002
