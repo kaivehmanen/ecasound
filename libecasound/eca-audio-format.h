@@ -134,7 +134,7 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
   /*@{*/
 
   /**
-   * Sets audio format based on the formatted std::string given as 
+   * Sets sample type based on the formatted std::string given as 
    * argument.
    *
    * The first letter is either "u", "s" and "f" (unsigned, 
@@ -146,7 +146,7 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
    * Similarly if big endian, "_be" is added. This postfix
    * can be omitted if applicable. 
    */
-  void set_sample_format(const std::string& f_str) throw(ECA_ERROR&);
+  void set_sample_format_string(const std::string& f_str) throw(ECA_ERROR&);
 
   void set_audio_format(const ECA_AUDIO_FORMAT& f_str);
 

@@ -540,7 +540,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audio_format (const std::string& argu) {
   case 'f':
     {
       ECA_AUDIO_FORMAT active_sinfo;
-      active_sinfo.set_sample_format(get_argument_number(1, argu));
+      active_sinfo.set_sample_format_string(get_argument_number(1, argu));
       active_sinfo.set_channels(atoi(get_argument_number(2, argu).c_str()));
       active_sinfo.set_samples_per_second(atol(get_argument_number(3, argu).c_str()));
       if (get_argument_number(4, argu) == "n")

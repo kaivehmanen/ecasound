@@ -88,7 +88,7 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&)
       //        else
       //  	format += "_le";
 	
-      set_sample_format(format);
+      set_sample_format_string(format);
 
       set_length_in_samples(::afGetFrameCount(afhandle, AF_DEFAULT_TRACK));
       ::afCloseFile(afhandle);

@@ -109,3 +109,17 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf)
   change_position_in_samples(sbuf->length_in_samples());
   extend_position();
 }
+
+void AUDIO_IO_BUFFERED::set_channels(SAMPLE_SPECS::channel_t v)
+{
+  AUDIO_IO::set_channels(v);
+  /* adjust allocated buffers if audio format has changed */
+  set_buffersize(buffersize_rep);
+}
+
+void AUDIO_IO_BUFFERED::set_sample_format(Sample_format v) throw(ECA_ERROR&)
+{
+  AUDIO_IO::set_sample_format(v);
+  /* adjust allocated buffers if audio format has changed */
+  set_buffersize(buffersize_rep);
+}

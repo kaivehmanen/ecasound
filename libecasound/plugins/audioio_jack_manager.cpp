@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio_jack_manager.cpp: Manager for JACK client objects
-// Copyright (C) 2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2001-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -41,6 +41,9 @@ static int eca_jack_bufsize (nframes_t nframes, void *arg);
 static int eca_jack_srate (nframes_t nframes, void *arg);
 static void eca_jack_shutdown (void *arg);
 
+static int timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int seconds);
+static void timed_wait_print_result(int result, const string& tag);
+
 #include "audioio_jack_manager.h"
 
 /**
@@ -50,8 +53,8 @@ static void eca_jack_shutdown (void *arg);
  */
 const int AUDIO_IO_JACK_MANAGER::instance_limit = 8;
 
-static int eca_jack_process(nframes_t nframes, void *arg) {
-
+static int eca_jack_process(nframes_t nframes, void *arg)
+{
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
 
   DBC_CHECK(current->shutdown_request_rep != true);
@@ -79,6 +82,7 @@ static int eca_jack_process(nframes_t nframes, void *arg) {
       current->shutdown_request_rep = true;
     }
     else {
+
       DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "process3 last node -- ");
 
       for(size_t n = 0; n < current->outports_rep.size(); n++) {
@@ -95,12 +99,13 @@ static int eca_jack_process(nframes_t nframes, void *arg) {
   return(0);
 }
 
-static int eca_jack_bufsize (nframes_t nframes, void *arg) {
+static int eca_jack_bufsize (nframes_t nframes, void *arg)
+{
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
   ecadebug->msg(ECA_DEBUG::system_objects, 
 		"(audioio-jack-manager) " +  current->jackname_rep + ": eca_jack_bufsize");
 
-  if (static_cast<long int>(nframes) != current->cb_allocated_frames_rep && 
+  if (static_cast<long int>(nframes) != current->buffersize() && 
       current->active_rep == true) {
     current->signal_token();
     current->shutdown_request_rep = true;
@@ -111,14 +116,15 @@ static int eca_jack_bufsize (nframes_t nframes, void *arg) {
   return(0);
 }
 
-static int eca_jack_srate (nframes_t nframes, void *arg) {
+static int eca_jack_srate (nframes_t nframes, void *arg)
+{
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
 
   ecadebug->msg(ECA_DEBUG::user_objects, 
 		"(audioio-jack-manager) " + current->jackname_rep + 
 		": setting srate to " + kvu_numtostr(nframes));
 
-  if (static_cast<long int>(nframes) != current->samplerate_rep &&
+  if (static_cast<long int>(nframes) != current->srate_rep &&
       current->active_rep == true) {
     current->signal_token();
     current->shutdown_request_rep = true;
@@ -129,7 +135,8 @@ static int eca_jack_srate (nframes_t nframes, void *arg) {
   return(0);
 }
 
-static void eca_jack_shutdown (void *arg) {
+static void eca_jack_shutdown (void *arg)
+{
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
   ecadebug->msg(ECA_DEBUG::user_objects, 
 		"(audioio-jack-manager) " + current->jackname_rep + 
@@ -165,6 +172,7 @@ AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
 
   cb_nframes_rep = 0;
   cb_allocated_frames_rep = 0;
+  buffersize_rep = 0;
 }
 
 AUDIO_IO_JACK_MANAGER::~AUDIO_IO_JACK_MANAGER(void)
@@ -175,8 +183,8 @@ AUDIO_IO_JACK_MANAGER::~AUDIO_IO_JACK_MANAGER(void)
   while(p != objlist_rep.end()) {
     jack_node_t* tmp = jacknodemap_rep[*p];
 
-    if (active_rep == true) stop(*p);
-    if (open_rep == true) close(*p);
+    stop(*p);
+    close(*p);
 
     delete tmp->aobj;
     jacknodemap_rep.erase(*p);
@@ -268,6 +276,14 @@ const std::list<int>& AUDIO_IO_JACK_MANAGER::get_object_list(void) const
   return(objlist_rep);
 }
 
+/**
+ * Unregisters object previously registered with register_object()
+ * from the manager.
+ *
+ * @param id unique identifier for managed objects; @see
+ *        get_object_id
+ *
+ */
 void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
 {
   // ---
@@ -310,14 +326,14 @@ void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
  * (@see AUDIO_IO::io_mode()).
  *
  * @pre std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1
- * @pre open_rep == true
+ * @pre is_open() == true
  @ @pre portnum > 0
  */
 void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port(int client_id, int portnum, const string& portname)
 {
   // ---
   DBC_REQUIRE(std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1);
-  DBC_REQUIRE(open_rep == true);
+  DBC_REQUIRE(is_open() == true);
   DBC_REQUIRE(portnum > 0);
   // ---
 
@@ -346,13 +362,13 @@ void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port(int client_id, int portnum, c
  * where N is 1...max_port.
  *
  * @pre std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1
- * @pre open_rep == true
+ * @pre is_open() == true
  */
 void AUDIO_IO_JACK_MANAGER::register_jack_ports(int client_id, int ports, const std::string& portprefix)
 {
   // ---
   DBC_REQUIRE(std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1);
-  DBC_REQUIRE(open_rep == true);
+  DBC_REQUIRE(is_open() == true);
   // ---
 
   ecadebug->msg(ECA_DEBUG::system_objects, 
@@ -374,7 +390,9 @@ void AUDIO_IO_JACK_MANAGER::register_jack_ports(int client_id, int ports, const 
       inports_rep[last_in_port_rep].jackport = jack_port_register(client_repp, tport.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
       ++last_in_port_rep;
     }
+
     DBC_CHECK(inports_rep.size() == static_cast<size_t>(last_in_port_rep));
+
   }
   else {
     node->first_out_port = last_out_port_rep;
@@ -389,7 +407,9 @@ void AUDIO_IO_JACK_MANAGER::register_jack_ports(int client_id, int ports, const 
       outports_rep[last_out_port_rep].jackport = jack_port_register(client_repp, tport.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
       ++last_out_port_rep;
     }
+
     DBC_CHECK(outports_rep.size() == static_cast<size_t>(last_out_port_rep));
+
   }
   
   // ---
@@ -401,12 +421,14 @@ void AUDIO_IO_JACK_MANAGER::register_jack_ports(int client_id, int ports, const 
  * Unregisters all JACK ports for client 'client_id'.
  *
  * @pre std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1
+ * @pre is_open() == true
  * @post node->in_ports == 0 && node->out_ports == 0
  */
 void AUDIO_IO_JACK_MANAGER::unregister_jack_ports(int client_id)
 {
   // ---
   DBC_REQUIRE(std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1);
+  DBC_REQUIRE(is_open() == true);
   // ---
 
   ecadebug->msg(ECA_DEBUG::system_objects, 
@@ -449,7 +471,7 @@ void AUDIO_IO_JACK_MANAGER::unregister_jack_ports(int client_id)
   // ---
 }
 
-void AUDIO_IO_JACK_MANAGER::open(int client_id, long int buffersize, long int sample_rate)
+void AUDIO_IO_JACK_MANAGER::open(int client_id)
 {
   ecadebug->msg(ECA_DEBUG::system_objects, 
 		"(audioio-jack-manager) open for client " + kvu_numtostr(client_id));
@@ -457,53 +479,10 @@ void AUDIO_IO_JACK_MANAGER::open(int client_id, long int buffersize, long int sa
   DBC_CHECK(shutdown_request_rep != true);
 
   /* only for the first client */
-  if (open_rep != true) {
-    std::string client_name ("ecasound");
-    int n = 0;
-    for(; n < AUDIO_IO_JACK_MANAGER::instance_limit; n++) {
-      client_repp = jack_client_new (client_name.c_str());
-      if (client_repp != 0) break;
-      client_name = "ecasound_" + kvu_numtostr(n + 2);
-    }
-
-    if (n != AUDIO_IO_JACK_MANAGER::instance_limit) {
-      /* set callbacks */
-      jack_set_process_callback(client_repp, eca_jack_process, static_cast<void*>(this));
-      jack_set_buffer_size_callback(client_repp, eca_jack_bufsize, static_cast<void*>(this));
-      jack_set_sample_rate_callback(client_repp, eca_jack_srate, static_cast<void*>(this));
-      jack_on_shutdown(client_repp, eca_jack_shutdown, static_cast<void*>(this));
-      
-      open_rep = true;
-      
-      samplerate_rep = static_cast<long int>(jack_get_sample_rate(client_repp));
-      if (sample_rate != samplerate_rep) {
-	ecadebug->msg(ECA_DEBUG::info, 
-		      "(audioio-jack-manager) Error! Cannot connect open connection! Samplerate " +
-		      kvu_numtostr(sample_rate) + " differs from JACK server's buffersize of " + 
-		      kvu_numtostr(samplerate_rep) + ".");
-	open_rep = false;
-      }
-      else {
-	ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) engine sample rate: " + kvu_numtostr(samplerate_rep));
-      }
-      
-      cb_allocated_frames_rep = static_cast<long int>(jack_get_buffer_size(client_repp));
-      if (buffersize != cb_allocated_frames_rep) {
-	ecadebug->msg(ECA_DEBUG::info, 
-		      "(audioio-jack-manager) Error! Cannot connect open connection! Buffersize " +
-		      kvu_numtostr(buffersize) + " differs from JACK server's buffersize of " + 
-		      kvu_numtostr(cb_allocated_frames_rep) + ".");
-	open_rep = false;	
-      }
-      else {
-      	ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) engine buffersize: " + kvu_numtostr(cb_allocated_frames_rep));      
-      }
-    }
-    else {
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot connect to JACK server!");
-      open_rep = false;
-    }
+  if (is_open() != true) {
+    open_connection();
   }
+  
 }
 
 void AUDIO_IO_JACK_MANAGER::close(int client_id)
@@ -511,52 +490,88 @@ void AUDIO_IO_JACK_MANAGER::close(int client_id)
   ecadebug->msg(ECA_DEBUG::system_objects, 
 		"(audioio-jack-manager) close for client " + kvu_numtostr(client_id));
 
-  /* only for the first client */
-  if (open_rep == true) {
-    open_rep = false;
-
-    // FIXME: add proper unregistration
-    // iterate over cids: unregister_jack_ports()
-
-    // make sure that cb is unlocked
-    signal_completion();
-
-    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_client_close() " + kvu_numtostr(client_id));
-    jack_client_close (client_repp);
+  /* count how many open clients */
+  int open_clients = 0;
+  std::map<int,jack_node_t*>::iterator p = jacknodemap_rep.begin();
+  while(p != jacknodemap_rep.end()) {
+    if (p->second->aobj->is_open() == true) open_clients++;
+    ++p;
   }
+
+  DBC_CHECK(open_clients > 0);
+
+  /* only for the first client */
+  if (open_clients == 1) {
+    if (is_open() == true) close_connection();
+  }
+}
+
+/**
+ * Returns current buffersize in sample frames. 
+ * Always returns 0 if manager is not connected.
+ */
+long int AUDIO_IO_JACK_MANAGER::buffersize(void) const
+{
+  if (is_open() != true) return(0);
+
+  return(buffersize_rep);
+}
+
+/**
+ * Returns the current JACK engine sample rate.
+ * Always returns 0 if manager is not connected.
+ */
+SAMPLE_SPECS::sample_rate_t AUDIO_IO_JACK_MANAGER::samples_per_second(void) const
+{
+  if (is_open() != true) return(0);
+
+  return(srate_rep);
 }
 
 /**
  * Executed from all read_samples() and write_samples() calls.
  */
-void AUDIO_IO_JACK_MANAGER::node_control_entry(void) {
+void AUDIO_IO_JACK_MANAGER::node_control_entry(void)
+{
   if (shutdown_request_rep != true) {
     if (active_rep == true &&
 	active_nodes_rep > 0 && 
 	node_callback_counter_rep == 0) {
+
       DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "entry1");
+
       if (wait_for_token() != true) {
 	ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) token not received from jackd; stopping!");
+	if (is_open() == true) close_connection();
 	shutdown_request_rep = true;
       }
     }
+
     DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "entry2");
+
   }
   else {
+    if (is_open() == true) close_connection();
+
     DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "entry3 - shutdown");
+
   }
 }
 
 /**
  * Executed from all read_samples() and write_samples() calls.
  */
-void AUDIO_IO_JACK_MANAGER::node_control_exit(void) {
+void AUDIO_IO_JACK_MANAGER::node_control_exit(void)
+{
   ++node_callback_counter_rep;
   
   DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "exit1");
+
   if (node_callback_counter_rep == active_nodes_rep) {
     signal_completion();
+
     DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "exit2");
+
     node_callback_counter_rep = 0;
   }
 }
@@ -572,7 +587,9 @@ long int AUDIO_IO_JACK_MANAGER::read_samples(int client_id, void* target_buffer,
   jack_node_t* node = jacknodemap_rep[client_id];
 
   for(int n = node->first_in_port; n < node->first_in_port + node->in_ports; n++) {
+
     DBC_CHECK(n < static_cast<int>(inports_rep.size()));
+
     if (inports_rep[n].cb_buffer != 0) {
       memcpy(ptr, inports_rep[n].cb_buffer, cb_nframes_rep * sizeof(sample_t));
       ptr += cb_nframes_rep;
@@ -595,7 +612,9 @@ void AUDIO_IO_JACK_MANAGER::write_samples(int client_id, void* target_buffer, lo
   jack_node_t* node = jacknodemap_rep[client_id];
 
   for(int n = node->first_out_port; n < node->first_out_port + node->out_ports; n++) {
+
     DBC_CHECK(n < static_cast<int>(outports_rep.size()));
+
     if (outports_rep[n].cb_buffer != 0) {
       memcpy(outports_rep[n].cb_buffer, ptr, writesamples * sizeof(sample_t));
       ptr += writesamples;
@@ -614,7 +633,6 @@ void AUDIO_IO_JACK_MANAGER::start(int client_id)
 
   if (active_rep != true) {
     active_rep = true;
-    shutdown_request_rep = false;
 
     // make sure that cb is unlocked
     signal_completion();
@@ -647,10 +665,92 @@ void AUDIO_IO_JACK_MANAGER::stop(int client_id)
 	ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot deactive client!");
       }
     }
+    else {
+      if (is_open() == true) close_connection();
+    }
   }
 }
 
-void AUDIO_IO_JACK_MANAGER::set_node_connection(jack_node_t* node, bool connect) { 
+/**
+ * Opens connection to the JACK server.
+ *
+ * @pre is_open() != true
+ */
+void AUDIO_IO_JACK_MANAGER::open_connection(void)
+{
+  // --
+  DBC_REQUIRE(is_open() != true);
+  // --
+
+  std::string client_name ("ecasound");
+  int n;
+
+  for(n = 0; n < AUDIO_IO_JACK_MANAGER::instance_limit; n++) {
+    client_repp = jack_client_new (client_name.c_str());
+    if (client_repp != 0) break;
+    client_name = "ecasound_" + kvu_numtostr(n + 2);
+  }
+
+  if (n != AUDIO_IO_JACK_MANAGER::instance_limit) {
+    /* set callbacks */
+    jack_set_process_callback(client_repp, eca_jack_process, static_cast<void*>(this));
+    jack_set_buffer_size_callback(client_repp, eca_jack_bufsize, static_cast<void*>(this));
+    jack_set_sample_rate_callback(client_repp, eca_jack_srate, static_cast<void*>(this));
+    jack_on_shutdown(client_repp, eca_jack_shutdown, static_cast<void*>(this));
+      
+    srate_rep = static_cast<long int>(jack_get_sample_rate(client_repp));
+
+    // FIXME: add better control of allocated memory
+    cb_allocated_frames_rep = buffersize_rep = static_cast<long int>(jack_get_buffer_size(client_repp));
+    
+    shutdown_request_rep = false;
+    open_rep = true;
+  }
+  else {
+    ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot connect to JACK server!");
+    open_rep = false;
+  }
+}
+
+/**
+ * Closes connection to the JACK server.
+ *
+ * @pre is_open() == true
+ * @post is_open() != true
+ */
+void AUDIO_IO_JACK_MANAGER::close_connection(void)
+{
+  // --
+  DBC_REQUIRE(is_open() == true);
+  // --
+
+  // FIXME: add proper unregistration
+  // iterate over cids: unregister_jack_ports()
+
+  // make sure that cb is unlocked
+  signal_completion();
+    
+  jack_client_close (client_repp);
+
+  open_rep = false;
+
+  ecadebug->msg(ECA_DEBUG::info, 
+		"(audioio-jack-manager) Connection closed!");
+
+
+  // --
+  DBC_ENSURE(is_open() != true);
+  // --
+}
+
+/**
+ * Connects ports of node 'node'. 
+ *
+ * @param node pointers to a node object
+ * @param connect whether to connect (true) or disconnect (false)
+ */
+void AUDIO_IO_JACK_MANAGER::set_node_connection(jack_node_t* node, bool connect)
+{
   if (node->aobj->io_mode() == AUDIO_IO::io_read) {
     for(int n = node->first_in_port; n < node->first_in_port + node->in_ports; n++) {
       if (active_rep == true && inports_rep[n].cb_buffer != 0) {
@@ -667,7 +767,9 @@ void AUDIO_IO_JACK_MANAGER::set_node_connection(jack_node_t* node, bool connect)
 	  }
 	  else {
 	    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
-	    if (jack_disconnect(client_repp, 
+	    /* don't call jack_disconnect() if engine has shut down */
+	    if (shutdown_request_rep != true &&
+		jack_disconnect(client_repp, 
 				tport.c_str(),
 				jack_port_name(inports_rep[n].jackport))) {
 	      ecadebug->msg(ECA_DEBUG::info, 
@@ -693,7 +795,9 @@ void AUDIO_IO_JACK_MANAGER::set_node_connection(jack_node_t* node, bool connect)
 	  }
 	  else {
 	    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
-	    if (jack_disconnect(client_repp, 
+	    /* don't call jack_disconnect() if engine has shut down */
+	    if (shutdown_request_rep != true &&
+		jack_disconnect(client_repp, 
 				jack_port_name(outports_rep[n].jackport),
 				tport.c_str())) {
 	      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot disconnect output " + tport);
@@ -710,28 +814,79 @@ void AUDIO_IO_JACK_MANAGER::set_node_connection(jack_node_t* node, bool connect)
     --active_nodes_rep;
 }
 
+/**
+ * Connects ports of node 'node'.
+ *
+ * @see set_node_connection()
+ */
 void AUDIO_IO_JACK_MANAGER::connect_node(jack_node_t* node)
 { 
   if (shutdown_request_rep != true) {
     set_node_connection(node, true);
   }
+  else {
+    if (is_open() == true) close_connection();
+  }
 }
 
+/**
+ * Disconnects ports of node 'node'.
+ *
+ * @see set_node_connection()
+ */
 void AUDIO_IO_JACK_MANAGER::disconnect_node(jack_node_t* node)
 {
-  if (shutdown_request_rep != true) {
-    set_node_connection(node, false);
-  }
+  set_node_connection(node, false);
 }
 
 /**
  * Signals that callback token is received.
  */
-void AUDIO_IO_JACK_MANAGER::signal_token(void) {
+void AUDIO_IO_JACK_MANAGER::signal_token(void)
+{
   pthread_mutex_lock(&token_mutex_rep);
-  token_rep = true;
+  token_received_rep = true;
   pthread_cond_signal(&token_cond_rep);
   pthread_mutex_unlock(&token_mutex_rep);
+}
+
+/**
+ * Waits for condition to occur.
+ *
+ * @return 0 on success, 
+ *         -ETIMEDOUT if timeout occured, 
+ *	   other nonzero value on other errors
+ */
+static int timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int seconds)
+{
+   struct timeval now;
+   gettimeofday(&now, 0);
+   struct timespec sleepcount;
+   sleepcount.tv_sec = now.tv_sec + seconds;
+   sleepcount.tv_nsec = now.tv_usec * 1000;
+   int ret = 0;
+    
+   pthread_mutex_lock(mutex);
+   ret = pthread_cond_timedwait(cond, 
+				mutex,
+				&sleepcount);
+   pthread_mutex_unlock(mutex);
+
+   return(ret);
+}
+
+/**
+ * Prints debug information based on the result 
+ * of timed_wait() call.
+ */
+static void timed_wait_print_result(int result, const string& tag)
+{
+  if (result != 0) {
+    if (result == -ETIMEDOUT)
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) " + tag + " failed; timeout");
+    else
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) " + tag + " failed");
+  }
 }
 
 /**
@@ -740,31 +895,20 @@ void AUDIO_IO_JACK_MANAGER::signal_token(void) {
  * 
  * @return true if token was succesfully received
  */
-bool AUDIO_IO_JACK_MANAGER::wait_for_token(void) {
-  struct timeval now;
-  gettimeofday(&now, 0);
-  struct timespec sleepcount;
-  sleepcount.tv_sec = now.tv_sec + 5;
-  sleepcount.tv_nsec = now.tv_usec * 1000;
+bool AUDIO_IO_JACK_MANAGER::wait_for_token(void)
+{
   int ret = 0;
-  pthread_mutex_lock(&token_mutex_rep);
-  if (token_rep != true) {
-    ret = pthread_cond_timedwait(&token_cond_rep, 
-				 &token_mutex_rep,
-				 &sleepcount);
-    DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "wait_for_token returns:" << ret);
-  }
-  token_rep = false;
-  pthread_mutex_unlock(&token_mutex_rep);
 
-  if (ret != 0) {
-    if (ret == -ETIMEDOUT)
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) wait_for_token failed; timeout");
-    else
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) wait_for_token failed");
-
-    return(false);
+  /* check that signal already hasn't been sent before
+   * going to sleep */
+  if (token_received_rep != true) {
+    ret = timed_wait(&token_mutex_rep, &token_cond_rep, 5);
+    timed_wait_print_result(ret, "wait_for_token");
   }
+
+  token_received_rep = false;
+
+  if (ret != 0) return(false);
 
   return(true);
 }
@@ -773,7 +917,8 @@ bool AUDIO_IO_JACK_MANAGER::wait_for_token(void) {
  * Signals that processing of callback token 
  * has been completed.
  */
-void AUDIO_IO_JACK_MANAGER::signal_completion(void) {
+void AUDIO_IO_JACK_MANAGER::signal_completion(void)
+{
   pthread_mutex_lock(&completion_mutex_rep);
   completion_rep = true;
   pthread_cond_signal(&completion_cond_rep);
@@ -785,30 +930,19 @@ void AUDIO_IO_JACK_MANAGER::signal_completion(void) {
  * 
  * @return true if completion event was succesfully received
  */
-bool AUDIO_IO_JACK_MANAGER::wait_for_completion(void) {
-  struct timeval now;
-  gettimeofday(&now, 0);
-  struct timespec sleepcount;
-  sleepcount.tv_sec = now.tv_sec + 5;
-  sleepcount.tv_nsec = now.tv_usec * 1000;
+bool AUDIO_IO_JACK_MANAGER::wait_for_completion(void)
+{
   int ret = 0;
-  pthread_mutex_lock(&completion_mutex_rep);
-  if (completion_rep != true) {
-    ret = pthread_cond_timedwait(&completion_cond_rep, 
-				 &completion_mutex_rep,
-				 &sleepcount);
-  }
-  completion_rep = false;
-  pthread_mutex_unlock(&completion_mutex_rep);
 
-  if (ret != 0) {
-    if (ret == -ETIMEDOUT)
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) wait_for_completion failed; timeout");
-    else
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) wait_for_completion failed");
-    
-    return(false);
+  /* check that signal already hasn't been sent before
+   * going to sleep */
+  if (completion_rep != true) {
+    ret = timed_wait(&completion_mutex_rep, &completion_cond_rep, 5);
+    timed_wait_print_result(ret, "wait_for_completion");
   }
-  
+
+  completion_rep = false;
+
+  if (ret != 0) return(false);
   return(true);
 }

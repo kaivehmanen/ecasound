@@ -232,7 +232,7 @@ bool AUDIO_IO_PROXY_SERVER::is_full(void) const {
  *         -ETIMEDOUT if timeout occured, 
  *	   other nonzero value on other errors
  */
-int timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int seconds)
+static int timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int seconds)
 {
    struct timeval now;
    gettimeofday(&now, 0);
@@ -254,7 +254,7 @@ int timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int seconds)
  * Prints debug information based on the result 
  * of timed_wait() call.
  */
-void timed_wait_print_result(int result, const string& tag)
+static void timed_wait_print_result(int result, const string& tag)
 {
   if (result != 0) {
     if (result == -ETIMEDOUT)

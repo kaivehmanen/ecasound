@@ -30,6 +30,8 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
   
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
   virtual void close(void);
+
+  virtual bool finished(void) const;
   
   virtual long int read_samples(void* target_buffer, long int samples);
   virtual void write_samples(void* target_buffer, long int samples);

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-jack.cpp: Interface to JACK audio framework
-// Copyright (C) 2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2001,2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -87,10 +87,27 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     }
     if (workstring.size() == 0) workstring = label();
 
-    jackmgr_rep->open(myid_rep, buffersize(), samples_per_second());
+    jackmgr_rep->open(myid_rep);
+
     if (jackmgr_rep->is_open() != true) {
       /* unable to open connection to jackd, exit */
       throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-JACK: Unable to open JACK-client"));
+    }
+
+    if (samples_per_second() != jackmgr_rep->samples_per_second()) {
+      jackmgr_rep->close(myid_rep);
+      throw(SETUP_ERROR(SETUP_ERROR::unexpected, 
+			"AUDIOIO-JACK: Cannot connect open connection! Samplerate " +
+			kvu_numtostr(samples_per_second()) + " differs from JACK server's buffersize of " + 
+			kvu_numtostr(jackmgr_rep->samples_per_second()) + "."));
+    }
+    
+    if (buffersize() != jackmgr_rep->buffersize()) {
+      jackmgr_rep->close(myid_rep);
+      throw(SETUP_ERROR(SETUP_ERROR::unexpected, 
+			"AUDIOIO-JACK: Cannot connect open connection! Buffersize " +
+			kvu_numtostr(buffersize()) + " differs from JACK server's buffersize of " + 
+			kvu_numtostr(jackmgr_rep->buffersize()) + "."));
     }
 
     jackmgr_rep->register_jack_ports(myid_rep, channels(), workstring);
@@ -133,6 +150,16 @@ void AUDIO_IO_JACK::close(void) {
   AUDIO_IO_DEVICE::close();
 }
 
+bool AUDIO_IO_JACK::finished(void) const 
+{
+  if (is_open() != true ||
+      jackmgr_rep == 0 ||
+      jackmgr_rep->is_open() != true)
+    return(true);
+
+  return(false);
+}
+
 long int AUDIO_IO_JACK::read_samples(void* target_buffer, long int samples) {
   if (is_running() == true) {
     if (jackmgr_rep != 0) {
@@ -149,11 +176,10 @@ void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples) {
   if (is_running() == true) {
     if (jackmgr_rep != 0) {
       curpos_rep += samples;
-      return(jackmgr_rep->write_samples(myid_rep, target_buffer, samples));
+      jackmgr_rep->write_samples(myid_rep, target_buffer, samples);
     }
   }
 }
-
 
 void AUDIO_IO_JACK::stop(void) { 
   bool was_running = is_running();

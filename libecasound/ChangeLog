@@ -2,6 +2,12 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2002-02-09  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+        * eca-audio-format.h (set_audio_format): renamed to
+	set_audio_format_string to avoid clashed with virtual
+	overloaded function set_audio_format()
+	
 2002-02-01  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-audio-position.h (length_in_samples): renamed to set_length_in_samples

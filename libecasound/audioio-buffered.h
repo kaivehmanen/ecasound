@@ -13,6 +13,9 @@ class AUDIO_IO_BUFFERED : public AUDIO_IO {
 
  public:
 
+  virtual ~AUDIO_IO_BUFFERED(void);
+  AUDIO_IO_BUFFERED(void);
+
   virtual void read_buffer(SAMPLE_BUFFER* sbuf);
   virtual void write_buffer(SAMPLE_BUFFER* sbuf);
 
@@ -31,8 +34,13 @@ class AUDIO_IO_BUFFERED : public AUDIO_IO {
    */
   virtual void write_samples(void* target_buffer, long int sample_frames) = 0;
 
-  virtual ~AUDIO_IO_BUFFERED(void);
-  AUDIO_IO_BUFFERED(void);
+  /** @name Reimplemented functions from ECA_AUDIO_FORMAT */
+  /*@{*/
+
+  virtual void set_channels(SAMPLE_SPECS::channel_t v);
+  virtual void set_sample_format(Sample_format v) throw(ECA_ERROR&);
+
+  /*@{*/
 
  protected:
 

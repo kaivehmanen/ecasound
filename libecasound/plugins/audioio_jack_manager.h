@@ -9,6 +9,7 @@
 #include <pthread.h>
 #include <jack/jack.h>
 
+#include "sample-specs.h"
 #include "audioio-manager.h"
 #include "audioio_jack.h"
 
@@ -78,7 +79,7 @@ public:
   void unregister_jack_ports(int client_id);
   void auto_connect_jack_port(int client_id, int portnum, const string& portname);
 
-  void open(int client_id, long int buffersize, long int samplerate);
+  void open(int client_id);
   void close(int client_id);
   
   long int read_samples(int client_id, void* target_buffer, long int samples);
@@ -88,10 +89,15 @@ public:
   void start(int client_id);
 
   bool is_open(void) const { return(open_rep); }
+  long int buffersize(void) const;
+  SAMPLE_SPECS::sample_rate_t samples_per_second(void) const;
 
   /*@}*/
 
 private:
+
+  void open_connection(void);
+  void close_connection(void);
 
   void set_node_connection(jack_node_t* node, bool connect);
   void connect_node(jack_node_t* node);
@@ -109,7 +115,7 @@ private:
   pthread_mutex_t token_mutex_rep;
   pthread_cond_t completion_cond_rep;
   pthread_mutex_t completion_mutex_rep;
-  bool token_rep;
+  bool token_received_rep;
   bool completion_rep;
 
   int total_nodes_rep;
@@ -134,7 +140,8 @@ private:
   std::vector<jack_port_data_t> inports_rep;
   std::vector<jack_port_data_t> outports_rep;
 
-  long int samplerate_rep;
+  SAMPLE_SPECS::sample_rate_t srate_rep;
+  long int buffersize_rep;
   long int cb_nframes_rep;
   long int cb_allocated_frames_rep;
 };

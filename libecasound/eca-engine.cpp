@@ -544,21 +544,30 @@ void ECA_ENGINE::conditional_stop(void)
 void ECA_ENGINE::update_engine_state(void)
 {
   // --
-  // Updates engine status (if necessary).
+  // Check whether all inputs have finished
+
   if (inputs_not_finished_rep == 0) {
     if (status() == ECA_ENGINE::engine_status_running) {
       ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) input not finished / stop");
       stop();
-
-      if (outputs_finished_rep > 0)
-	set_status(ECA_ENGINE::engine_status_error);
-      else
-	set_status(ECA_ENGINE::engine_status_finished);
+      set_status(ECA_ENGINE::engine_status_finished);
     }
   }
 
   // --
-  // check whether processing has finished 
+  // Check whether some output has raised an error
+
+  if (outputs_finished_rep > 0) {
+    if (status() == ECA_ENGINE::engine_status_running) {
+      ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) output error / stop");
+      stop();
+      set_status(ECA_ENGINE::engine_status_error);
+    }
+  }
+
+  // --
+  // check whether processing has finished
+
   if (status() == ECA_ENGINE::engine_status_finished ||
       status() == ECA_ENGINE::engine_status_error) {
     if (session_repp->iactive_rep != true) end_request_rep = true;
@@ -566,10 +575,12 @@ void ECA_ENGINE::update_engine_state(void)
 
   // --
   // process the command queue
+
   interpret_queue();
 
   // --
   // if in running state, poll for incoming commands
+
   if (end_request_rep != true &&
       session_repp->iactive_rep == true) {
     if (status() != ECA_ENGINE::engine_status_running) {
