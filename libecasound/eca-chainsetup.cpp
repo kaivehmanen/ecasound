@@ -72,6 +72,11 @@
 using std::cerr;
 using std::endl;
 
+const string ECA_CHAINSETUP::default_audio_format_const = "s16_le,2,44100,i";
+const string ECA_CHAINSETUP::default_bmode_nonrt_const = "1024,true,50,true,100000,true";
+const string ECA_CHAINSETUP::default_bmode_rt_const = "1024,true,50,true,100000,true";
+const string ECA_CHAINSETUP::default_bmode_rtlowlatency_const = "256,true,50,true,100000,false";
+
 /**
  * Construct from a vector of options.
  * 
@@ -272,20 +277,52 @@ void ECA_CHAINSETUP::set_defaults(void)
   set_output_openmode(AUDIO_IO::io_readwrite);
 
   ECA_RESOURCES ecaresources;
+  if (ecaresources.has_any() != true) {
+    ECA_LOG_MSG(ECA_LOGGER::info, 
+		"(eca-chainsetup) Warning! Unable to read global resources. May result in incorrect behaviour.");
+  }
+
+  
   set_default_midi_device(ecaresources.resource("midi-device"));
 
-  string aformat_temp = ecaresources.resource("default-audio-format");
-  if (aformat_temp.size() > 0)
-    cparser_rep.interpret_object_option("-f:" + aformat_temp);
+  string aformat_temp = set_resource_helper(&ecaresources,
+					    string("default-audio-format"), 
+					    ECA_CHAINSETUP::default_audio_format_const);
+  cparser_rep.interpret_object_option("-f:" + aformat_temp);
+
   set_samples_per_second(default_audio_format().samples_per_second());
 
   toggle_precise_sample_rates(ecaresources.boolean_resource("default-to-precise-sample-rates"));
 
-  impl_repp->bmode_nonrt_rep.set_all(ecaresources.resource("bmode-defaults-nonrt"));
-  impl_repp->bmode_rt_rep.set_all(ecaresources.resource("bmode-defaults-rt"));
-  impl_repp->bmode_rtlowlatency_rep.set_all(ecaresources.resource("bmode-defaults-rtlowlatency"));
+  impl_repp->bmode_nonrt_rep.set_all(set_resource_helper(&ecaresources,
+							 string("bmode-defaults-nonrt"),
+							 ECA_CHAINSETUP::default_bmode_nonrt_const));
+  impl_repp->bmode_rt_rep.set_all(set_resource_helper(&ecaresources,
+						      string("bmode-defaults-rt"),
+						      ECA_CHAINSETUP::default_bmode_rt_const));
+  impl_repp->bmode_rtlowlatency_rep.set_all(set_resource_helper(&ecaresources,
+								string("bmode-defaults-rtlowlatency"),
+								ECA_CHAINSETUP::default_bmode_rtlowlatency_const));
 
   impl_repp->bmode_active_rep = impl_repp->bmode_nonrt_rep;
+}
+
+/**
+ * Sets a resource value.
+ *
+ * Only used by ECA_CHAINSETUP::set_defaults.
+ */
+const string& set_resource_helper(const ECA_RESOURCE* ecaresources, const string& tag, const string& alternative)
+{
+  if (ecaresources->has(tag) == true) {
+    return(ecaresources->resource(tag));
+  }
+  else {
+    ECA_LOG_MSG(ECA_LOGGER::system_objects,
+		"(eca-chaisetup) Using hardcoded defaults for '" +
+		tag + "'.");
+    return(alternative);
+  }
 }
 
 /**
@@ -1625,11 +1662,17 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
     is_enabled_rep = true;
   }
   catch(AUDIO_IO::SETUP_ERROR& e) {
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		"(eca-chainsetup) Connecting chainsetup failed, throwing an SETUP_ERROR exception.");
     throw(ECA_ERROR("ECA-CHAINSETUP", 
 		    string("Enabling chainsetup: ")
 		    + e.message()));
   }
-  catch(...) { throw; }
+  catch(...) { 
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		"(eca-chainsetup) Connecting chainsetup failed, throwing a generic exception.");
+    throw; 
+  }
 
   // --------
   DBC_ENSURE(is_enabled() == true);

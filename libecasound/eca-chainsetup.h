@@ -10,20 +10,21 @@
 #include "eca-chainsetup-parser.h"
 #include "eca-error.h"
 
-class CONTROLLER_SOURCE;
-class CHAIN_OPERATOR;
-class GENERIC_CONTROLLER;
 class AUDIO_IO;
 class AUDIO_IO_MANAGER;
-class MIDI_IO;
-class LOOP_DEVICE;
-class CHAIN;
 class AUDIO_IO_PROXY_SERVER;
-class MIDI_SERVER;
+class CHAIN;
+class CHAIN_OPERATOR;
+class CONTROLLER_SOURCE;
 class ECA_AUDIO_FORMAT;
 class ECA_CHAINSETUP_BUFPARAMS;
 class ECA_CHAINSETUP_impl;
 class ECA_ENGINE_DRIVER;
+class ECA_RESOURCE;
+class GENERIC_CONTROLLER;
+class LOOP_DEVICE;
+class MIDI_IO;
+class MIDI_SERVER;
 
 using std::map;
 using std::list;
@@ -61,6 +62,11 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   enum Buffering_mode { cs_bmode_auto, cs_bmode_nonrt, cs_bmode_rt, cs_bmode_rtlowlatency, cs_bmode_none };
 
   typedef enum Buffering_mode Buffering_mode_t;
+
+  static const string default_audio_format_const;
+  static const string default_bmode_nonrt_const;
+  static const string default_bmode_rt_const;
+  static const string default_bmode_rtlowlatency_const;
 
   /*@}*/
 
@@ -366,6 +372,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   static bool ok_audio_object_helper(const AUDIO_IO* aobj, const vector<AUDIO_IO*>& aobjs);
   static void check_object_samplerate(const AUDIO_IO* obj,
 				      SAMPLE_SPECS::sample_rate_t srate) throw(ECA_ERROR&);
+  static const string& set_resource_helper(const ECA_RESOURCE* ecaresources, const string& tag, const string& alternative);
 
   /*@}*/
 

@@ -17,18 +17,19 @@ class ECA_RESOURCES {
   bool boolean_resource(const std::string& tag) const;
 
   bool has(const std::string& tag) const;
+  bool has_any(void) const;
 
   void resource(const std::string& tag, const std::string& value);
-  void set_defaults(void);
 
   ECA_RESOURCES(void);
   ~ECA_RESOURCES(void);
 
  private:
 
-  std::string user_resource_directory_rep;
   RESOURCE_FILE globalrc_rep;
   RESOURCE_FILE userrc_rep;
+  std::string user_resource_directory_rep;
+  bool resources_found_rep;
 };
 
 #endif

@@ -28,19 +28,24 @@
 #include "eca-resources.h"
 #include "eca-version.h"
 
-ECA_RESOURCES::ECA_RESOURCES(void) { 
-  std::string ecasound_prefix (ECA_PREFIX);
-  std::string ecasound_resource_path = ecasound_prefix + "/share/ecasound";
+using std::string;
+
+ECA_RESOURCES::ECA_RESOURCES(void) 
+  : resources_found_rep(true)
+{
+  string ecasound_prefix (ECA_PREFIX);
+  string ecasound_resource_path = ecasound_prefix + "/share/ecasound";
   
   globalrc_rep.resource_file(ecasound_resource_path + "/ecasoundrc");
   globalrc_rep.load();
   if (globalrc_rep.keywords().size() == 0) {
     ECA_LOG_MSG(ECA_LOGGER::info, "(eca-resources) Warning! Global resource file '" + ecasound_resource_path + "/ecasoundrc" + "' not available! Ecasound may not function properly!");
+    resources_found_rep = false;
   }
 
   char* home_dir = getenv("HOME");
   if (home_dir != NULL) {
-    std::string user_ecasoundrc_path = std::string(home_dir) + "/.ecasound";
+    string user_ecasoundrc_path = string(home_dir) + "/.ecasound";
 
     user_resource_directory_rep = user_ecasoundrc_path;
 
@@ -50,11 +55,10 @@ ECA_RESOURCES::ECA_RESOURCES(void) {
       ECA_LOG_MSG(ECA_LOGGER::info, "(eca-resources) Warning! Old resource data found in '" + user_ecasoundrc_path + ". You can reset configuration parameters by removing the old rc-file.");
     }
   }
-
-  set_defaults();
 }
 
-ECA_RESOURCES::~ECA_RESOURCES(void) { 
+ECA_RESOURCES::~ECA_RESOURCES(void)
+{
   if (userrc_rep.is_modified() == true) {
     userrc_rep.resource("ecasound-version", ecasound_library_version);
     userrc_rep.save();
@@ -65,7 +69,8 @@ ECA_RESOURCES::~ECA_RESOURCES(void) {
  * Set resource 'tag' value to 'value'. If value wasn't 
  * previously defined, it's added.
  */
-void ECA_RESOURCES::resource(const std::string& tag, const std::string& value) {
+void ECA_RESOURCES::resource(const string& tag, const string& value)
+{
   userrc_rep.resource(tag, value);
 }
 
@@ -73,7 +78,8 @@ void ECA_RESOURCES::resource(const std::string& tag, const std::string& value) {
  * Returns value of resource 'tag'. Priority is given
  * to user-specified resources over global resources.
  */
-std::string ECA_RESOURCES::resource(const std::string& tag) const {
+string ECA_RESOURCES::resource(const string& tag) const
+{
   if (tag == "user-resource-directory") 
     return(user_resource_directory_rep);
   
@@ -89,7 +95,8 @@ std::string ECA_RESOURCES::resource(const std::string& tag) const {
 /**
  * Returns true if resource 'tag' is 'true', otherwise false
  */
-bool ECA_RESOURCES::boolean_resource(const std::string& tag) const { 
+bool ECA_RESOURCES::boolean_resource(const string& tag) const
+{
   if (userrc_rep.has(tag)) {
     return(userrc_rep.boolean_resource(tag));
   }
@@ -103,16 +110,16 @@ bool ECA_RESOURCES::boolean_resource(const std::string& tag) const {
 /**
  * Whether resource 'tag' is specified in the resource file
  */
-bool ECA_RESOURCES::has(const std::string& tag) const {
+bool ECA_RESOURCES::has(const string& tag) const
+{
   if (globalrc_rep.has(tag) || userrc_rep.has(tag)) return(true);
   return(false);
 }
 
-void ECA_RESOURCES::set_defaults(void)
+/**
+ * Are any resource values available?
+ */
+bool ECA_RESOURCES::has_any(void) const
 {
-  /**
-   * FIXME: defaults now set in '(topsrcdir)/ecasoundrc.in';
-   *        remove this block once the new system has 
-   *        been tested sufficiently
-   */
+  return(resources_found_rep);
 }
