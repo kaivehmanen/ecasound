@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // stamp-ctrl.cpp: Controller sources that analyze audio stamps
 //                 and produce control data.
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

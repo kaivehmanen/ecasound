@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// audioio-ogg.cpp: Interface for ogg vorbis ecoders and encoders.
-// Copyright (C) 2000-2002,2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// audioio-ogg.cpp: Interface for ogg vorbis decoders and encoders.
+// Copyright (C) 2000-2002,2004 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

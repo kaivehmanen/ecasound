@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-control-base.cpp: Base class providing basic functionality
 //                       for controlling the ecasound library
-// Copyright (C) 1999-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2004 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

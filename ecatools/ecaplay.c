@@ -2,7 +2,7 @@
  * ecaplay.c: A simple command-line tool for playing audio files
  *            using the default output device specified in 
  *            "~/.ecasoundrc".
- * Copyright (C) 1999-2002,2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+ * Copyright (C) 1999-2002,2004 Kai Vehmanen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

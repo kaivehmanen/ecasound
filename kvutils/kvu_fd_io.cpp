@@ -2,7 +2,7 @@
 // kvu_fd_io.cpp: Helper functions for reading from, writing to and 
 //                waiting on UNIX file descriptors.
 //
-// Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2002 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

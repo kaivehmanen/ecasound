@@ -1,7 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_rcfilter.cpp: Simulation of an 3rd-order 36dB active RC-lowpass
-// Copyright (C) 2000 Stefan Fendt <stefan@lionfish.ping.de>,
-//                    Kai Vehmanen <kaiv@wakkanet.fi> (C++ version)
+// Copyright (C) 2000 Stefan Fendt, Kai Vehmanen (C++ version)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

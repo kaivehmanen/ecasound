@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-control-dump.cpp: Class for dumping status information to 
 //                       a standard output stream
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // preset.cpp: Class for representing effect presets
-// Copyright (C) 2000-2002,2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
-// Copyright (C) 2001 Arto Hamara (artham@utu.fi)
+// Copyright (C) 2000-2002,2004 Kai Vehmanen
+// Copyright (C) 2001 Arto Hamara
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

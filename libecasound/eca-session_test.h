@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-session_test.h: Unit test for ECA_SESSION
-// Copyright (C) 2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2003 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

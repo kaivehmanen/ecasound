@@ -1,7 +1,7 @@
 Main Author
 ============
 
-Kai Vehmanen - kai.vehmanen_.at._wakkanet.fi - [kaiv]
+Kai Vehmanen [kaiv] (kvehmanen -at- eca -dot- cx)
 
 Code from other Projects
 =========================
@@ -30,11 +30,11 @@ Campbell, Ross [rcampbel]
 	Tips concerning Solaris compatibility.
 Carmack, Michael [karmak]
 	Tips concerning Solaris.
-Chappell, Jesse [jesse]
+Chappell, Jesse [jesse] (jesse -at- essej -dot- net)
 	Improvements to libsndfile support, various bugfixes.
 Claassen, Julien [julien]
 	Ideas for interface development, marketing work.
-Coker, Rob  [rcs]
+Coker, Rob  [rcs] (rcs -at- birch -dot- net)
 	Pulse gate (-eemp) code.
 Darilek, Nolan [nolan_d]
 	Ogg vorbis fixes.
@@ -44,21 +44,21 @@ Eure, Ian [ieure]
 	Work on the ecasound debian packages.
 Ewe, Michael [mewe]
 	Signal handling bugfixes to ecasignalview and the ECI C impl.
-Fendt, Stefan 
+Fendt, Stefan (stefan -at- lionfish -dot- ping -dot- de)
 	Original code for reverb (-ete) and RC-lowpass filter (-ef4).
 Fischer, Hans-Georg [hgfischer]
 	Bug fix that solved edi-1.
-Hall, Jeremy [jhall]
+Hall, Jeremy [jhall] (jhall -at- maoz -dot- com)
 	Extensive testing, ALSA 0.6.x support, many design ideas.
 Halttunen, Janne [jhalttun]
 	Helped in developing the EIAM, and specifically the 
         new ECI concept. Wrote the native Python ECI implementation.
-Hamara, Arto [artham]
+Hamara, Arto [artham] (artham -at- utu -dot- fi)
 	Ecasound logo(s), preset params, general linear
 	envelope support, various bug fixes!
 Harris, Steve [swharris]
 	gcc 2.96 (RH7.0) testing and fixes.
-Jeanneau, Aymeric [ajeanneau]
+Jeanneau, Aymeric [ajeanneau] (ajeanneau -at- cvf -dot- fr)
 	Reentrant libecasoundc (C ECI) implementation.
 Lang, Mario [mlang]
 	Ecasound.el, the ecasound emacs module.
@@ -98,7 +98,7 @@ Uekawa, Junichi [juekawa]
 	Maintains the ecasound debian packages.
 Yee-king, Matt [yeeking]
 	Helped debugging big-endian troubles on PowerPC.
-Weil, Jan [janweil]
+Weil, Jan [janweil] (Jan -dot- Weil -at- web -dot- de)
 	Wrote the Ruby ECI implementation.
 Westbrook, Tim [iondiode]
 	Autoconf 2.5x fixes.

@@ -13,8 +13,8 @@
 /** ------------------------------------------------------------------------
  * ecasoundc.cpp: Standalone C implementation of the 
  *                ecasound control interface
- * Copyright (C) 2000-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
- * Copyright (C) 2001 Aymeric Jeanneau (ajeanneau@cvf.fr)
+ * Copyright (C) 2000-2004 Kai Vehmanen
+ * Copyright (C) 2001 Aymeric Jeanneau
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

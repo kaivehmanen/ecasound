@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // ecatools-fixdc.cpp: A simple command-line tools for fixing DC-offset.
-// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -1,8 +1,7 @@
 // ------------------------------------------------------------------------
 // audiofx_reverb.cpp: Reverb effect
-// Copyright (C) 2000 Stefan Fendt <stefan@lionfish.ping.de>,
-// Copyright (C) 2000,2003 Kai Vehmanen <kai.vehmanen@wakkanet.fi> (C++
-//                         version)
+// Copyright (C) 2000 Stefan Fendt
+// Copyright (C) 2000,2003 Kai Vehmanen (C++ version)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

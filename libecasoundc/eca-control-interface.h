@@ -3,7 +3,7 @@
 
 /** ------------------------------------------------------------------------
  * ecasoundc.h: C++ implementation of the Ecasound Control Interface
- * Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+ * Copyright (C) 2000-2002 Kai Vehmanen
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

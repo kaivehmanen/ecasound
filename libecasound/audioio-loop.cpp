@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-loop.cpp: Audio object that routes data between reads and writes
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -2,7 +2,7 @@
 // audiofx_compressor.cpp: C++ implementation of John S. Dyson's 
 //                         compressor code. If you want the original
 //			   C-sources, mail me. 
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen
 //
 // Copyright for the actual algorithm (compressor2.c):
 // ***************************************************

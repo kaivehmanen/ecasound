@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audiofx_envelope-modulation.cpp: Effects which modify/modulate signal
 //                                  envelope
-// Copyright (C) 2000 Rob Coker, rcs@birch.net
+// Copyright (C) 2000 Rob Coker 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

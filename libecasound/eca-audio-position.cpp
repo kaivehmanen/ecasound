@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-audio-position.cpp: Base class for representing position and length
 //                         of a audio stream.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-iamode-parser.cpp: Class that handles registering and querying 
 //                        interactive mode commands.
-// Copyright (C) 1999-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2004 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

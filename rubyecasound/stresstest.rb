@@ -2,9 +2,9 @@
 
 # -----------------------------------------------------------------------
 # Runs a stress test using the ruby-ecasound ControlInterface
-# Jan Weil <Jan.Weil@web.de>
+# Jan Weil
 # Adapted from original code for ecacontrol.py/pyecasound:
-# Copyright (C) 2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+# Copyright (C) 2003 Kai Vehmanen
 # Licensed under GPL. See the file 'COPYING' for more information.
 # -----------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio_sndfile.cpp: Interface to the sndfile library.
-// Copyright (C) 2003-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
-// Copyright (C) 2004 Jesse Chappell (jesse@essej.net)
+// Copyright (C) 2003-2004 Kai Vehmanen
+// Copyright (C) 2004 Jesse Chappell
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -157,11 +157,11 @@ Ecasound's HTML-documentation (Documentation/examples.html).
  Mailing lists
 -----------------------------------------------------------------------
 
-ecasound-announce@wakkanet.fi:
+ecasound-announce at wakkanet dot fi:
 	A read-only list for announcements concerning Ecasound and 
 	related tools.
 
-ecasound-list@wakkanet.fi:
+ecasound-list at wakkanet dot fi:
 	A general discussion forum for Ecasound and related tools.
 	developers and users. Announcements of new versions, bug 
 	warnings, etc will be posted to this list. If you have
@@ -171,11 +171,11 @@ ecasound-list@wakkanet.fi:
 	browse 	the message archives at
 	http://www.wakkanet.fi/~kaiv/ecasound/ecasound-list/current/ 
 
-ecasound-cvs@wakkanet.fi:
+ecasound-cvs at wakkanet dot fi:
 	A read-only list for reports about Ecasound CVS activity.
 
 You can join the lists by sending subscribe message to
-majordomo@wakkanet.fi. You can also join using the following 
+<majordomo at wakkanet dot fi>. You can also join using the following 
 web front-end: http://eca.cx/mlists.html
 
 -----------------------------------------------------------------------

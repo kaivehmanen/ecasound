@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 291004) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 021104) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,6 +14,11 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ??122004 (v2.3.5)  -** stable release **-
+	- changed: collected all email addresses from source files to 
+		   the AUTHORS file and added some antispam measures
+	- fixed: default to native-python ECI implementation on MacOSX
+	- fixed: link against coreaudio libs if JACK enabled on MacOSX
+	- fixed: ecasignalview compilation bug on Cygwin
 27102004 (v2.3.4)  -** stable release **-
 	- edi-entries: edi-14 and edi-32 closed, edi-40 added
 	- note: verified to compile ok on MacOS X 10.3.2 [smbolton]

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // midi-parser.cpp: Collection of static functions and small stateful 
 //                  machines for parsing MIDI messages.
-// Copyright (C) 2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2001 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

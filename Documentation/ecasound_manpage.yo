@@ -1,4 +1,4 @@
-mailto(kai.vehmanen@wakkanet.fi)
+mailto(kvehmanen -at- eca -dot- cx)
 
 htmlcommand(
 <insert file="../es-makrot.txt" />
@@ -819,6 +819,6 @@ manpagebugs()
 
 manpageauthor()
 
-	Kai Vehmanen, <email(kai.vehmanen |at| wakkanet.fi)>
+	Kai Vehmanen, <email(kvehmanen -at- eca -dot- cx)>
 
 htmlcommand(<insert name="ecasound_tail" />)

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // textdebug.cpp: Implementation of console logging subsystem.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

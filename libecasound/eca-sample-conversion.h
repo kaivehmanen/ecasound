@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-sample-conversion.h: Routines for convering between sample formats.
-// Copyright (C) 2002,2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2002,2003 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -148,7 +148,7 @@ Ecasound specific options
 
 `--enable-pyecasound={c,python,none}'
 	Enable pyecasound and select which implementation to use. 
-	Defaults to 'python'.
+	Default value based on target platform.
 
 `--with-python-includes=DIR'
 	Python include files are located in 'DIR'.

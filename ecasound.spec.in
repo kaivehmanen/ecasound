@@ -12,7 +12,7 @@
 # ---
 # global settings
 
-Packager: 	Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+Packager: 	Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 Distribution: 	www.eca.cx audio software
 
 # allow relocation
@@ -178,14 +178,17 @@ strip --strip-unneeded \
 # changelog
 
 %changelog
-* Wed Aug 20 2003 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+* Wed Nov 03 2004 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
+- spam-protected all email-addresses
+
+* Wed Aug 20 2003 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - added 'AUTHORS' file
 
-* Mon Jan 20 2003 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+* Mon Jan 20 2003 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - added Serial tag to differentiate between 2.2 pre and 
   final releases
 
-* Sat Nov 02 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+* Sat Nov 02 2002 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - ported Fernando Lopez-Lezcano's changes to unify this
   spec file with PlanetCCRMA's ecasound package; see
   http://ccrma-www.stanford.edu/planetccrma/software/soundapps.html
@@ -195,28 +198,28 @@ strip --strip-unneeded \
 - man files are no longer installed as doc files
 - use redhat style mandir location 
 
-* Thu Oct 31 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+* Thu Oct 31 2002 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - minor layout changes
 - added TODO to the package
 - changed to use rpmrc dir variables
 
-* Thu Oct 24 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+* Thu Oct 24 2002 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - added the COPYING files to the package
 
 %changelog
-* Thu Oct 17 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+* Thu Oct 17 2002 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - added the -devel package
 - fixed the build procedure to handle static builds
 
-* Wed Oct 16 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+* Wed Oct 16 2002 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - removed all shared libraries and subpackages containing 
   them
 - ecamonitor binary added to main package
 
-* Sat Oct 05 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+* Sat Oct 05 2002 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - changed libecasoundc versioning back to normal libtool style
 
-* Thu Apr 25 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+* Thu Apr 25 2002 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - libraries put to separate subpackages, interface 
   version numbers code to library names
 - ecasound-config renamed to libecasound-config
@@ -226,57 +229,57 @@ strip --strip-unneeded \
 - 'contrib' directory removed
 - ecasound-plugins subpackage renamed to libecasoundX-plugins
 
-* Mon Oct 01 2001 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+* Mon Oct 01 2001 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - dropped the hardcoded python module path from configure
   argument list
 
-* Wed Jan 17 2001 Kai Vehmanen <kaiv@wakkanet.fi>
+* Wed Jan 17 2001 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - python subpackage config (thanks to wrobell / PLD Linux!)
 
-* Sat Dec 06 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+* Sat Dec 06 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - contrib and examples directories added to docs
 - ecasoundc-config added
 - libecasoundc added (C implementation of ECI)
 - a new package: pyecasound
 
-* Sat Nov 25 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+* Sat Nov 25 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - ecasignalview added to the package.
 
-* Thu Aug 31 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+* Thu Aug 31 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - Added /etc/ld.so.conf modification script.
 - Added DESTDIR to %install.
 
-* Wed Aug 30 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+* Wed Aug 30 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - 'ecasound-config' script added.
 
-* Sun Aug 20 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+* Sun Aug 20 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - All Qt-related stuff removed.
 
-* Wed Jul 06 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+* Wed Jul 06 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - Added the -plugins package.
 
-* Wed Jun 07 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+* Wed Jun 07 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - ecaconvert added to the package.
 
-* Mon Jun 05 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+* Mon Jun 05 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - Renamed ecatools programs.
 
-* Mon Apr 15 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+* Mon Apr 15 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - Removed dynamic linking to ALSA libraries. You 
   can get ALSA support by recompiling the source-RPM
   package.
 
-* Mon Feb 10 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+* Mon Feb 10 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - Added libqtecasound to ecasound-qt.
 
-* Mon Nov 09 1999 Kai Vehmanen <kaiv@wakkanet.fi>
+* Mon Nov 09 1999 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - A complete reorganization. Ecasound distribution is now 
   divided to three RPMs: ecasound, ecasound-qt and ecasound-devel.
 
-* Mon Nov 08 1999 Kai Vehmanen <kaiv@wakkanet.fi>
+* Mon Nov 08 1999 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - As Redhat stopped the RHCN project, so these rpms 
   are again distributed via Redhat's contrib service
 - You can also get these from http://ecasound.seul.org/download
 
-* Sun Aug 15 1999 Kai Vehmanen <kaiv@wakkanet.fi>
+* Sun Aug 15 1999 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - Initial rhcn release.

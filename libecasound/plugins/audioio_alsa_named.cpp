@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio_alsa_named.cpp: ALSA 0.9.x named PCM-device input/output.
-// Copyright (C) 2001-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2001-2002 Kai Vehmanen
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or

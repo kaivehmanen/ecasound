@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_vsp.cpp: Wrapper class for VST1.0/2.0 plugins
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

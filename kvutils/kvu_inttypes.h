@@ -1,7 +1,7 @@
 /**************************************************************************
  * kvu_inttypes.h: Ensure that C99 guaranteed length integer types are
  *                 defined in the current environment
- * Copyright (C) 2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+ * Copyright (C) 2003 Kai Vehmanen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
