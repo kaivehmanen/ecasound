@@ -1032,7 +1032,7 @@ format:
                             ; EIAM return value message
 <contentblock> = <crlf><content><crlf><crlf>
                             ; actual content of the message
-<returntype> = ``i'' | ``li'' | ``f'' | ``s'' | ``S'' | ``e''
+<returntype> = ``i'' | ``li'' | ``f'' | ``s'' | ``S'' | ``e''
                             ; type of the return value (see ECI/EIAM docs)
 <content> = *<octet>        ; zero or more octets of message content
 
