@@ -61,12 +61,17 @@ libecasoundc_debug_la_LIBADD = $(libecasoundc_la_LIBADD)
 libecasoundc_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasoundc_debug_la_LDFLAGS = $(libecasoundc_la_LDFLAGS)
 
-# ----------------------------------------------------------------------
-# hooks
-# ----------------------------------------------------------------------
-
+# ---------------------------------------------------------------------
+# Install targets
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(pkgincludedir)
 	cd $(srcdir) ; \
 	cp      $(ecasoundc_includes) \
 		$(DESTDIR)$(pkgincludedir)
+
+# ---------------------------------------------------------------------
+# Uninstall targets
+uninstall-local:
+	cd $(DESTDIR)$(pkgincludedir) ; \
+	rm -f   $(ecasoundc_includes)
+	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(pkgincludedir)

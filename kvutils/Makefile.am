@@ -38,6 +38,15 @@ DIST_COMMON = 	README \
 
 noinst_HEADERS = $(kvutil_headers)
 
+# ---------------------------------------------------------------------
+# Install targets
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(includedir)/kvutils
 	cd $(srcdir) ; cp  $(kvutil_headers) $(DESTDIR)$(includedir)/kvutils
+
+# ---------------------------------------------------------------------
+# Uninstall targets
+uninstall-local:
+	cd $(DESTDIR)$(includedir)/kvutils ; \
+	rm -f   $(kvutil_headers)
+	rmdir   $(DESTDIR)$(includedir)/kvutils

@@ -40,16 +40,31 @@ To run ecasound, you need...:
 
 - POSIX compliant UNIX system; tested with Linux 2.2.x and 2.4.x, glibc 2.1.x
 - POSIX threads; tested with linuxthreads 0.7 and 0.8 (libpthread, comes with glibc)
+
+Optional when running ecasound:
+
 - for soundcard input/output: OSS, OSS/Lite or ALSA drivers
 - for mp3 support, mpg123 (input) and lame (output) packages
-- for tracker module support, mikmod package
-- for .aiff and .au/.snd support, libaudiofile (SGI audio file) library
+- for tracker module support, MikMod package
+- for .aiff/.au/.snd support, libaudiofile (SGI audio file) library
+- for Ogg Vorbis support, the vorbis-tools package (ogg123 and vorbize)
+- for .mid input support, Timidity++
+- for aRts support, the aRts server package
 
 To compile ecasound, you also need...:
 
 - standard C++ build environment; tested with gcc 2.91.66 and 2.95.2
   (STL and exceptions need to be supported)
 - GNU make, automake and autoconf packages
+
+Optional when compiling ecasound:
+
+- for pyecasound, the Python devel package
+- for curses support, the ncurses devel package
+- for LADSPA support, the LADSPA SDK package
+- for ALSA support, the ALSA devel package
+- for .aiff/.au/.snd support libaudiofile devel package
+- for aRts support, the aRts C-API devel package
 
 -----------------------------------------------------------------------
  Installing

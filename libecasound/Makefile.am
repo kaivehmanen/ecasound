@@ -268,6 +268,8 @@ libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
 libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
 
+# ---------------------------------------------------------------------
+# Install targets
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(pkgincludedir)
 	cd $(srcdir) ; \
@@ -277,3 +279,14 @@ install-data-local:
 		$(ecasound_midi_include) \
 		$(ecasound_general_include) \
 		$(DESTDIR)$(pkgincludedir)
+
+# ---------------------------------------------------------------------
+# Uninstall targets
+uninstall-local:
+	cd $(DESTDIR)$(pkgincludedir) ; \
+	rm -f   $(ecasound_audiofx_include) \
+		$(ecasound_audioio_include) \
+		$(ecasound_controller_include) \
+		$(ecasound_midi_include) \
+		$(ecasound_general_include)
+	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(pkgincludedir)

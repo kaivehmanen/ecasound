@@ -69,11 +69,8 @@ ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void) {
 /**
  * Start the processing engine
  *
- * require:
- *  is_connected() == true
- *
- * ensure:
- *  is_engine_started() == true
+ * @pre is_connected() == true
+ * @post is_engine_started() == true
  */
 void ECA_CONTROL_BASE::start(void) {
   // --------
@@ -106,13 +103,10 @@ void ECA_CONTROL_BASE::start(void) {
  * Start the processing engine and block until 
  * processing is finished.
  *
- * require:
- *  is_connected() == true
- *
- * ensure:
- *  is_finished() == true || 
- *  (processing_started == true && is_running() != true) ||
- *  (processing_started != true && session_repp->status() != ECA_SESSION::ep_status_stopped)
+ * @pre is_connected() == true
+ * @post is_finished() == true || 
+ * @post (processing_started == true && is_running() != true) ||
+ * @post (processing_started != true && session_repp->status() != ECA_SESSION::ep_status_stopped)
  */
 void ECA_CONTROL_BASE::run(void) {
   // --------
@@ -153,11 +147,8 @@ void ECA_CONTROL_BASE::run(void) {
 /**
  * Stops the processing engine.
  *
- * require:
- *  is_engine_started() == true
- *
- * ensure:
- *   is_running() == false
+ * @pre is_engine_started() == true
+ * @post is_running() == false
  */
 void ECA_CONTROL_BASE::stop(void) {
   // --------
@@ -180,11 +171,8 @@ void ECA_CONTROL_BASE::stop(void) {
  * Stop the processing engine using thread-to-thread condition
  * signaling.
  *
- * require:
- *  is_engine_started() == true
- *
- * ensure:
- *   is_running() == false
+ * @pre is_engine_started() == true
+ * @post is_running() == false
  */
 void ECA_CONTROL_BASE::stop_on_condition(void) {
   // --------
@@ -222,8 +210,7 @@ void ECA_CONTROL_BASE::quit(void) { close_engine(); }
 /**
  * Starts the processing engine.
  *
- * require:
- *  is_connected() == true
+ * @pre is_connected() == true
  */
 void ECA_CONTROL_BASE::start_engine(void) {
   // --------
@@ -291,8 +278,7 @@ void ECA_CONTROL_BASE::close_engine(void) {
 /**
  * Is currently selected chainsetup valid?
  *
- * require:
- *  is_selected()
+ * @pre is_selected()
  */
 bool ECA_CONTROL_BASE::is_valid(void) const {
   // --------
@@ -334,8 +320,7 @@ bool ECA_CONTROL_BASE::is_finished(void) const {
 /**
  * Returns the length of the selected chainsetup (in samples).
  *
- * require:
- *  is_selected() == true
+ * @pre is_selected() == true
  */
 long ECA_CONTROL_BASE::length_in_samples(void) const { 
   // --------
@@ -348,8 +333,7 @@ long ECA_CONTROL_BASE::length_in_samples(void) const {
 /**
  * Returns the length of the selected chainsetup (in seconds).
  *
- * require:
- *  is_selected() == true
+ * @pre is_selected() == true
  */
 double ECA_CONTROL_BASE::length_in_seconds_exact(void) const { 
   // --------
@@ -362,8 +346,7 @@ double ECA_CONTROL_BASE::length_in_seconds_exact(void) const {
 /**
  * Returns the current position of the selected chainsetup (in samples).
  *
- * require:
- *  is_selected() == true
+ * @pre is_selected() == true
  */
 long ECA_CONTROL_BASE::position_in_samples(void) const { 
   // --------
@@ -376,8 +359,7 @@ long ECA_CONTROL_BASE::position_in_samples(void) const {
 /**
  * Returns the current position of the selected chainsetup (in seconds).
  *
- * require:
- *  is_selected() == true
+ * @pre is_selected() == true
  */
 double ECA_CONTROL_BASE::position_in_seconds_exact(void) const {
   // --------
@@ -423,8 +405,7 @@ string ECA_CONTROL_BASE::engine_status(void) const {
  * Get a string containing a comma separated list of all chains 
  * attached to input with index 'aiod'. 
  *
- * require:
- *  is_selected() == true
+ * @pre is_selected() == true
  */
 string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
   // --------
@@ -446,8 +427,7 @@ string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
  * Get a string containing a comma separated list of all chains 
  * attached to output with index 'aiod'.
  *
- * require:
- *  is_selected() == true
+ * @pre is_selected() == true
  */
 string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
   // --------
@@ -469,8 +449,7 @@ string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
  * Get a string containing a comma separated list of all chains 
  * attached to audio object with name 'filename'. 
  *
- * require:
- *  is_selected() == true
+ * @pre is_selected() == true
  */
 vector<string> ECA_CONTROL_BASE::attached_chains(const string& filename) const {
   // --------
@@ -483,8 +462,7 @@ vector<string> ECA_CONTROL_BASE::attached_chains(const string& filename) const {
 /**
  * Set the default buffersize (in samples).
  *
- * require:
- *   is_editable() == true
+ * @pre is_editable() == true
  */
 void ECA_CONTROL_BASE::set_buffersize(int bsize) { 
   // --------
@@ -497,8 +475,7 @@ void ECA_CONTROL_BASE::set_buffersize(int bsize) {
 /**
  * Toggle whether raised priority mode is enabled or not.
  *
- * require:
- *   is_editable() == true
+ * @pre is_editable() == true
  */
 void ECA_CONTROL_BASE::toggle_raise_priority(bool v) { 
   // --------

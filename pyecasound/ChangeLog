@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libpyecasound interface     ***
 -----------------------------------------------------------------------
 
+2001-04-27  Kai Vehmanen  <kaiv@wakkanet.fi>
+
+	* library version 0:0:0 frozen	
+	
 2000-12-06  Kai Vehmanen  <kaiv@wakkanet.fi>
 
 	* development started; libtool version number 0:0:0 

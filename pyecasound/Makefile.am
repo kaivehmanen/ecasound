@@ -55,3 +55,9 @@ if COMPILE_PYECASOUND
 	$(INSTALL) -d $(DESTDIR)$(libdir)
 	cd $(srcdir) ; cp pyeca.py $(DESTDIR)$(libdir)
 endif
+
+uninstall-local:
+if COMPILE_PYECASOUND
+	rm -f   $(DESTDIR)$(libdir)/pyeca.py
+	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(libdir)
+endif

@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasoundc interface      ***
 -----------------------------------------------------------------------
 
+2001-04-27  Kai Vehmanen  <kaiv@wakkanet.fi>
+
+	* library version 0:0:0 frozen	
+	
 2000-12-12  Kai Vehmanen  <kaiv@wakkanet.fi>
 
 	* ecasoundc.h (eci_error): added

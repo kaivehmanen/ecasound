@@ -16,6 +16,11 @@ install-data-local:
 	if [ ! -f $(DESTDIR)$(datadir)/ecasound/generic_oscillators ]; then $(INSTALL_DATA) generic_oscillators $(DESTDIR)$(datadir)/ecasound/generic_oscillators ; fi
 	if [ ! -f $(DESTDIR)$(datadir)/ecasound/effect_presets ]; then $(INSTALL_DATA) effect_presets $(DESTDIR)$(datadir)/ecasound/effect_presets; fi
 
+uninstall-local:
+	rm -f	$(DESTDIR)$(datadir)/ecasound/generic_oscillators \
+		$(DESTDIR)$(datadir)/ecasound/effect_presets
+	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(datadir)/ecasound
+
 delete-static-libs:
 	rm -f $(DESTDIR)$(prefix)/lib/libkvutils.a
 	rm -f $(DESTDIR)$(prefix)/lib/libecasound.a

@@ -145,6 +145,14 @@ install-data-local:
 	cp $(srcdir)/ecasound_faq.txt ../$(topdir)/FAQ
 
 # ---------------------------------------------------------------------
+# Uninstall targets
+uninstall-local:
+	rm -f $(DESTDIR)$(mandir)/man1/ecasound.1
+	rm -f $(DESTDIR)$(mandir)/man1/ecatools.1
+	rm -f $(DESTDIR)$(mandir)/man1/ecasound-iam.1
+	rm -f $(DESTDIR)$(mandir)/man5/ecasoundrc.5
+
+# ---------------------------------------------------------------------
 # Distdir
 #distdir: $(DISTFILES)
 #	distdir=`cd $(distdir) && pwd`; \
