@@ -27,6 +27,7 @@ struct ecasound_state {
   pthread_t* daemon_thread;
   pthread_mutex_t* lock;
   sig_atomic_t exit_request;
+  sigset_t* signalset;
   int retval;
   int daemon_port;
   bool daemon_mode;
