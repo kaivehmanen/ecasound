@@ -300,7 +300,7 @@ void QEWaveForm::paintEvent(QPaintEvent* e) {
 int QEWaveForm::waveblock_minimum(double from, double step) {
   int f = static_cast<int>(floor(from));
   int s = static_cast<int>(ceil(step));
-  if (f >= static_cast<int>(waveblock->size())) return(0);
+  if (f < 0 || f >= static_cast<int>(waveblock->size())) return(0);
   int minimum = (*waveblock)[f].min;
 
   int n = f;
@@ -316,7 +316,7 @@ int QEWaveForm::waveblock_minimum(double from, double step) {
 int QEWaveForm::waveblock_maximum(double from, double step) {
   int f = static_cast<int>(floor(from));
   int s = static_cast<int>(ceil(step));
-  if (f >= static_cast<int>((*waveblock).size())) return(0);
+  if (f < 0 || f >= static_cast<int>((*waveblock).size())) return(0);
   int maximum = (*waveblock)[f].max;
   
   int n = f;

@@ -30,8 +30,8 @@ Input/output devices:
 
 Interactive-mode:
 
-- make separate x-list and c-status commands (a pure list, and a more
-  XSverbose -status command)
+- make separate xxx-list and xxx-status commands (a pure list, and a more
+  verbose xxx-status command)
 
 Effects, routing, dsp routines:
 
