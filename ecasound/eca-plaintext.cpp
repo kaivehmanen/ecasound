@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-plaintext.cpp: Plaintext implementation of the console user 
 //                    interface.
-// Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2002-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ void ECA_PLAIN_TEXT::print_banner(void)
   *ostream_repp << "*";
   *ostream_repp << "               ecasound v" 
        << ecasound_library_version
-       << " (C) 1997-2002 Kai Vehmanen                 ";
+       << " (C) 1997-2003 Kai Vehmanen                 ";
   *ostream_repp << "\n";
   *ostream_repp << "****************************************************************************\n";
 }

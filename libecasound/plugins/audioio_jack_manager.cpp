@@ -83,8 +83,9 @@ static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg);
 static void eca_jack_process_profile_pre(void);
 static void eca_jack_process_profile_post(void);
 #endif
-static int eca_jack_srate (jack_nframes_t nframes, void *arg);
-static void eca_jack_shutdown (void *arg);
+static int eca_jack_bsize_cb(jack_nframes_t nframes, void *arg);
+static int eca_jack_srate_cb(jack_nframes_t nframes, void *arg);
+static void eca_jack_shutdown_cb(void *arg);
 
 static std::string eca_get_jack_port_item(const char **ports, int item);
 
@@ -595,8 +596,13 @@ static void eca_jack_process_profile_post(void)
 /**
  * Changes current sampling rate. Callback function registered
  * to the JACK framework.
+ *
+ * @param nframes new engine sample rate
+ * @param arg pointer to a client supplied structure
+ *
+ * @return zero on success, non-zero on error
  */
-static int eca_jack_srate (jack_nframes_t nframes, void *arg)
+static int eca_jack_srate_cb(jack_nframes_t nframes, void *arg)
 {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
 
@@ -614,12 +620,40 @@ static int eca_jack_srate (jack_nframes_t nframes, void *arg)
 }
 
 /**
+ * Callback function that is called when the engine 
+ * buffersize changes.
+ *
+ * context: J-level-0
+ *
+ * @param nframes new engine buffer size
+ * @param arg pointer to a client supplied structure
+ *
+ * @return zero on success, non-zero on error
+ */ 
+static int eca_jack_bsize_cb(jack_nframes_t nframes, void *arg)
+{
+  AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      "(audioio-jack-manager) [callback] " + current->jackname_rep + 
+	      ": setting buffersize to " + kvu_numtostr(nframes));
+
+  if (static_cast<long int>(nframes) != current->buffersize()) {
+    current->shutdown_request_rep = true;
+    ECA_LOG_MSG(ECA_LOGGER::info, 
+		"(audioio-jack-manager) Invalid new buffersize, shutting down.");
+  }
+
+  return(0);
+}
+
+/**
  * Shuts down the callback context. Callback function registered
  * to the JACK framework.
  *
  * context: J-level-0
  */
-static void eca_jack_shutdown (void *arg)
+static void eca_jack_shutdown_cb(void *arg)
 {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
@@ -1583,9 +1617,10 @@ void AUDIO_IO_JACK_MANAGER::open_server_connection(void)
 
     /* set callbacks */
     jack_set_process_callback(client_repp, eca_jack_process_callback, static_cast<void*>(this));
-    jack_set_sample_rate_callback(client_repp, eca_jack_srate, static_cast<void*>(this));
-    jack_on_shutdown(client_repp, eca_jack_shutdown, static_cast<void*>(this));
-
+    jack_set_sample_rate_callback(client_repp, eca_jack_srate_cb, static_cast<void*>(this));
+    jack_set_buffer_size_callback(client_repp, eca_jack_bsize_cb, static_cast<void*>(this));
+    jack_on_shutdown(client_repp, eca_jack_shutdown_cb, static_cast<void*>(this));
+    
 #if ECA_JACK_TRANSPORT_API >= 3
     if (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_receive ||
 	mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send_receive) {

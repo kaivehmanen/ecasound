@@ -1,3 +1,7 @@
+2003-08-29  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+        * library interface version 11 frozen
+
 2003-08-26  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* eca-chainsetup.h (multitrack_mode_offset): Added.

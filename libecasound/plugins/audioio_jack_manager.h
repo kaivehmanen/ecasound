@@ -42,9 +42,9 @@ class AUDIO_IO_JACK_MANAGER : public AUDIO_IO_MANAGER,
   friend void eca_jack_process_engine_iteration(jack_nframes_t nframes, void *arg);
   friend void eca_jack_process_mute(jack_nframes_t nframes, void *arg);
   friend void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg);
-  friend int eca_jack_bufsize (jack_nframes_t nframes, void *arg);
-  friend int eca_jack_srate (jack_nframes_t nframes, void *arg);
-  friend void eca_jack_shutdown (void *arg);
+  friend int eca_jack_bsize_cb(jack_nframes_t nframes, void *arg);
+  friend int eca_jack_srate_cb(jack_nframes_t nframes, void *arg);
+  friend void eca_jack_shutdown_cb(void *arg);
 
   static const int instance_limit;
 

@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20030813-21
+dnl last modified: 20030828-22
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -23,7 +23,7 @@ echo "------------------------------------------------------------------"
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 2.2.4)
+AM_INIT_AUTOMAKE(ecasound, 2.3.0)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
@@ -347,6 +347,28 @@ if test x$ARTSC_CONFIG = xnone; then
   arts_support=no
 else
   arts_support=yes
+  ECA_S_ARTSC_CFLAGS="`$ARTSC_CONFIG --cflags`"
+  ECA_S_ARTSC_LIBS="`$ARTSC_CONFIG --libs`"
+fi
+
+if test x$arts_support = xyes; then
+  old_LIBS=$LIBS
+  LIBS="$LIBS $ECA_S_ARTSC_LIBS"
+  old_CFLAGS=$CFLAGS
+  CFLAGS="$CFLAGS $ECA_S_ARTSC_CFLAGS"
+  AC_LANG_C
+  AC_TRY_LINK(
+  [ #include <artsc.h> ],
+  [
+	arts_init();
+	return 0;
+  ],
+  [ ],
+  [ arts_support=no ]
+  )
+  AC_LANG_CPLUSPLUS
+  LIBS=${old_LIBS}
+  CFLAGS=${old_CFLAGS}
 fi
 
 AC_ARG_ENABLE(arts,
@@ -372,9 +394,6 @@ AM_CONDITIONAL(ECA_AM_COMPILE_ARTS, test x$arts_support = xyes)
 if test x$arts_support = xyes; then
     AC_DEFINE(ECA_COMPILE_ARTS)
 fi                                     
-
-ECA_S_ARTSC_CFLAGS="`$ARTSC_CONFIG --cflags`"
-ECA_S_ARTSC_LIBS="`$ARTSC_CONFIG --libs`"
 
 AC_SUBST(ECA_S_ARTSC_CFLAGS)
 AC_SUBST(ECA_S_ARTSC_LIBS)

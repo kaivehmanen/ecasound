@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 260803) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 290803) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??0?2003 (v2.2.4)  -** stable release **-
+29082003 (v2.3.0)  -** stable release **-
 	- edi-entries: edi-4, edi-19 and edi-35 frozen, edi-38 added 
 		       and frozen immediately, edi-39 added; frozen is 
 		       a new status for items that probably won't be
@@ -50,6 +50,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: JACK transport modes redefined; new modes are 
 		   'notransport', 'send', 'recv' and 'sendrecv'
 	- changed: major updates to README file
+	- changed: improved check for aRts; now verifies that linking
+		   against libartcs actually works before enabling 
+  		   the arts plugin
 	- fixed: use of the JACK transport API was never actually 
                  enabled in 2.2.3
 	- fixed: .aiff/.snd/.au input/output was not working at all

@@ -249,7 +249,7 @@ line argument is considered to be an input.
 
 dit(-o[:]output-file-or-device)
 Works in the same way as the -i option. If no outputs are specified,
-the default output device is used (see &tilde;/.ecasoundrc). Note! 
+the default output device is used (see ~/.ecasoundrc). Note! 
 you can't output to module formats supported by MikMod (this should
 be obvious).
 
