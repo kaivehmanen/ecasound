@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>13.12.2000</h2>
+<h2>21.12.2000</h2>
 
 
     
@@ -43,35 +43,36 @@ commands from outside libecasound. When issuing EIAM commands using
 ECI, it's possible that commands also return information. Currently
 supported return value types are: strings [s], list of strings [S],
 integers [i], long integers [li] and floating-point numbers [f]. These
-definitions are used throughout this document.
+definitions are used throughout this document. Commands that do not
+return anything are marked with [-].
 <p><h2>GENERAL</h2>
     
 <dl>
 <p></p><dt><strong>quit, q</strong><dd>
 Quit ecasound session. What this means in practice depends on the 
-client (library throws an exception).
+client (library throws an exception). <em>[-]</em>
 <p><p></p><dt><strong>start, t</strong><dd>
-Processing is started (play).
+Processing is started (play). <em>[-]</em>
 <p><p></p><dt><strong>stop, s</strong><dd>
-Stop processing. 
+Stop processing. <em>[-]</em>
 <p><p></p><dt><strong>run</strong><dd>
-Like 'start' but blocks until processing is finished.
+Like 'start' but blocks until processing is finished. <em>[-]</em>
 <p><p></p><dt><strong>debug 'debug-level'</strong><dd>
 Set debug level to 'debug-level'. Notice that client programs can
-reimplement the debug routines.
+reimplement the debug routines. <em>[-]</em>
 </dl>
 <p><p></p><dt><strong>help', 'h'</strong><dd>
-Help!
+Help! <em>[-]</em>
 <p></dl>
 <p><h2>GLOBAL</h2>
     
 <p><dl>
 <p><p></p><dt><strong>rewind 'time-in-seconds', rw 'time-in-seconds'</strong><dd>
-Rewind the current position by 'time-in-seconds' seconds.
+Rewind the current position by 'time-in-seconds' seconds. <em>[-]</em>
 <p><p></p><dt><strong>forward 'time-in-seconds', fw 'ttime-in-seconds'</strong><dd>
-The current position is forwarded by 'time-in-seconds' seconds.
+The current position is forwarded by 'time-in-seconds' seconds. <em>[-]</em>
 <p><p></p><dt><strong>setpos 'time-in-seconds', set-position 'time-in-seconds'</strong><dd>
-Sets the current position to 'time-in-seconds' seconds from the
+Sets the current position to 'time-in-seconds' seconds from the <em>[-]</em>
 beginning.
 <p><p></p><dt><strong>get-position</strong><dd>
 Returns the current position in seconds. <em>[f]</em>
@@ -102,53 +103,53 @@ that selected chainsetup is not connected.
 <p><dl>
 <p></p><dt><strong>cs-add 'name'</strong><dd>
 Adds a new chainsetup with name 'name'. 'name' is now 
-the selected chainsetup.
+the selected chainsetup. <em>[-]</em>
 <p><p></p><dt><strong>cs-remove</strong><dd> 
-Removes currently selected chainsetup.
+Removes currently selected chainsetup. <em>[-]</em>
 <p><p></p><dt><strong>cs-select 'name'</strong><dd>
-Selects chainsetup 'name'.
+Selects chainsetup 'name'. <em>[-]</em>
 <p><p></p><dt><strong>cs-index-select 'cs_index'</strong><dd>
 Selects a chainsetup based on a short index string. Chainsetup names
 can be rather long. This command can be used to avoid typing
 these long names. 'cs_index' format is "c&lt;number&gt;". You can get 
 a list of all chainsetups (and their indexes) with the 'cs-status'
-command.
+command. <em>[-]</em>
 <p><p></p><dt><strong>cs-selected</strong><dd>
 Returns the name of currently selected chainsetup. <em>[s]</em>
 <p><p></p><dt><strong>cs-load 'filename'</strong><dd>
 Adds a new chainsetup by loading it from file 'filename'. 
-'filename' is now the selected chainsetup.
+'filename' is now the selected chainsetup. <em>[-]</em>
 <p><p></p><dt><strong>cs-save</strong><dd> 
 Saves the currently selected chainsetup to file. If chainsetup was loaded
 from a file, the saved version will replace the original. If it doesn't 
-have a default filename, it's saved to "chainsetup_name.ecs".
+have a default filename, it's saved to "chainsetup_name.ecs". <em>[-]</em>
 <p><p></p><dt><strong>cs-save-as 'filename'</strong><dd>
-Saves currently selected chainsetup to file 'filename'.
+Saves currently selected chainsetup to file 'filename'. <em>[-]</em>
 <p><p></p><dt><strong>cs-edit</strong><dd> 
 Currently selected chainsetup is saved to a temporary file. This
 file is loaded to an external editor (see ecasoundrc(5)). After
-editing, the chainsetup is loaded back to ecasound.
+editing, the chainsetup is loaded back to ecasound. <em>[-]</em>
 <p><p></p><dt><strong>cs-connect</strong><dd>
 Connect currently selected chainsetup to engine. Only one chainsetup
-can be connected at a time.
+can be connected at a time. <em>[-]</em>
 <p><p></p><dt><strong>cs-disconnect</strong><dd>
-Disconnect currently connected chainsetup.
+Disconnect currently connected chainsetup. <em>[-]</em>
 <p><p></p><dt><strong>cs-connected</strong><dd>
 Returns the name of currently connected chainsetup. <em>[s]</em>
 <p><p></p><dt><strong>cs-length 'seconds'</strong><dd>
 Set processing time in seconds (doesn't have to be an integer 
-value).
+value). <em>[-]</em>
 <p><p></p><dt><strong>cs-loop</strong><dd>
 Enable looping. When processing is finished, engine will start 
-again from the initial position.
+again from the initial position. <em>[-]</em>
 <p><p></p><dt><strong>cs-set</strong><dd>
 Interpret general chainsetup parameters like for example
 "-b" (buffersize), "-m" (mixmode), "-n" (name), etc. 
-See ecasound(1) for more info.
+See ecasound(1) for more info. <em>[-]</em>
 <p><p></p><dt><strong>cs-format 'bits,channels,sample_rate'</strong><dd>
 Set the default sample parameters for currently selected chainsetup. 
 For example cd-quality audio would be "16,2,44100". This does the
-same as command-line argument "-f" (see ecasound(1)).
+same as command-line argument "-f" (see ecasound(1)). <em>[-]</em>
 <p><p></p><dt><strong>cs-status, cs</strong><dd>
 Print status info about all chainsetups. <em>[s]</em>
 <p></dl>
@@ -161,47 +162,48 @@ otherwise stated, all operations are done to currently selected
 chainsetup.
 <p><dl>
 <p></p><dt><strong>c-add 'cname1,...,cnameN'</strong><dd> 
-Adds a set of chains. Added chains are automatically selected.
+Adds a set of chains. Added chains are automatically selected. <em>[-]</em>
 <p><p></p><dt><strong>c-select 'cname1,...,cnameN'</strong><dd>
-Selects chains. Other chains are automatically deselected.
+Selects chains. Other chains are automatically deselected. <em>[-]</em>
 <p><p></p><dt><strong>c-deselect 'cname1,...,cnameN'</strong><dd>
-Deselects chains.
+Deselects chains. <em>[-]</em>
 <p><p></p><dt><strong>c-select-all</strong><dd>
-Selects all chains.
+Selects all chains. <em>[-]</em>
 <p><p></p><dt><strong>c-select-add 'cname1,...,cnameN'</strong><dd>
-Selects more chains.
+Selects more chains. <em>[-]</em>
 <p><p></p><dt><strong>c-selected</strong><dd>
 Returns a list of selected chains. <em>[S]</em>
 <p><p></p><dt><strong>c-list</strong><dd>
 Returns a list of all chains. <em>[S]</em>
 <p><p></p><dt><strong>c-remove</strong><dd>
-Removes selected chains.
+Removes selected chains. <em>[-]</em>
 <p><p></p><dt><strong>c-clear</strong><dd>
 Clear selected chains by removing all chain operators and controllers.
-Doesn't change how chains are connected to inputs and outputs.
+Doesn't change how chains are connected to inputs and outputs. <em>[-]</em>
 <p><p></p><dt><strong>c-name 'new_name'</strong><dd>
 Renames the selected chain. When using this command, only one chain must
-selected.
+selected. <em>[-]</em>
 <p><p></p><dt><strong>c-muting</strong><dd>
-Toggle chain muting. When chain is muted, all data that goes through is muted.
+Toggle chain muting. When chain is muted, all data that goes through
+is muted. <em>[-]</em>
 <p><p></p><dt><strong>c-bypass</strong><dd>
 Toggle chain bypassing. When chain is bypassed, sample data is passed 
-through untouched.
+through untouched. <em>[-]</em>
 <p><p></p><dt><strong>c-forward 'time_in_seconds', c-fw 'time_in_seconds'</strong><dd>
 Inputs and outputs connected to selected chains are forwarded 
 by 'time-in-seconds' seconds. Time should be given as a floating 
 point value (eg. 0.001 is the same as 1ms). If audio objecst are
 connected to multiple selected chains, they will be forwarded multiple
-times.
+times. <em>[-]</em>
 <p><p></p><dt><strong>c-rewind 'time_in_seconds', c-rw 'time_in_seconds'</strong><dd>
 Inputs and outputs connected to selected chains are rewinded by
 'time-in-seconds' seconds. Time should be given as a floating 
 point value (eg. 0.001 is the same as 1ms). If audio objecst are
 connected to multiple selected chains, they will be forwarded multiple
-times.
+times. <em>[-]</em>
 <p><p></p><dt><strong>c-setpos 'time_in_seconds'</strong><dd>
 Set position of all inputs and outputs connected to selected chains to
-'time_in_seconds'.
+'time_in_seconds'. <em>[-]</em>
 <p><p></p><dt><strong>c-status</strong><dd>
 Print status info about all chains. <em>[s]</em>
 <p></dl>
@@ -212,11 +214,11 @@ chainsetup.
 <p><dl>
 <p><p></p><dt><strong>aio-add-input 'input_format_string'</strong><dd>
 Adds a new input object. See ecasound(1) man page for more info about 
-the argument format ('-i' option).
+the argument format ('-i' option). <em>[-]</em>
 <p><p></p><dt><strong>aio-add-output 'output_format_string'</strong><dd>
 Adds a new output object. See ecasound(1) man page for more info about 
 the argument format ('-o' option). If argument is omitted, 
-a default output device is added (see ecasoundrc(5)).
+a default output device is added (see ecasoundrc(5)). <em>[-]</em>
 <p><p></p><dt><strong>aio-select 'aobject_name'</strong><dd>
 Selects an audio object. 'aobject_name' refers to the string
 used when creating the object (see above). Note! All input
@@ -224,43 +226,43 @@ object names are required to be unique. Similarly all output
 names need to be unique. However, it's possible that the same
 object name exists both as an input and as an output. If this
 is the case, only the last matching object is selected (
-normally this is the output). 
+normally this is the output). <em>[-]</em>
 <p><p></p><dt><strong>aio-select-input 'aobject_name'</strong><dd>
-Selects an audio input.
+Selects an audio input. <em>[-]</em>
 <p><p></p><dt><strong>aio-select-output 'aobject_name'</strong><dd>
-Selects an audio output.
+Selects an audio output. <em>[-]</em>
 <p><p></p><dt><strong>aio-index-select 'aobject_index'</strong><dd>
 Select some audio object based on a short index string. Especially file
 names can be rather long. This command can be used to avoid typing
 these long names when selecting audio objects. 'aobject_index' format
 is "i&lt;number&gt;" for inputs and similarly "o&lt;number&gt;" for outputs. 
 You can get a list of all audio objects and their indexes with the
-'aio-status' and 'aio-list' commands. 
+'aio-status' and 'aio-list' commands. <em>[-]</em>
 <p><p></p><dt><strong>aio-selected</strong><dd>
 Returns the name of the currently selected audio object. <em>[r]</em>
 <p><p></p><dt><strong>aio-attach</strong><dd>
-Attaches the currently selected audio object to all selected chains.
+Attaches the currently selected audio object to all selected chains. <em>[-]</em>
 <p><p></p><dt><strong>aio-remove</strong><dd>
-Removes the currently selected audio object from the chainsetup.
+Removes the currently selected audio object from the chainsetup. <em>[-]</em>
 <p><p></p><dt><strong>aio-status</strong><dd>
 Audio object status (index strings, position, length, etc). <em>[s]</em>
 <p><p></p><dt><strong>aio-forward 'time_in_seconds', aio-fw 'time_in_seconds'</strong><dd>
 Selected audio object is forwarded by 'time-in-seconds' seconds. 
 Time should be given as a floating point value (eg. 0.001 is the 
-same as 1ms).
+same as 1ms). <em>[-]</em>
 <p><p></p><dt><strong>aio-rewind 'time_in_seconds', aio-rw 'time_in_seconds'</strong><dd>
 Selected audio object is rewinded by 'time-in-seconds' seconds. 
 Time should be given as a floating point value (eg. 0.001 is the 
-same as 1ms).
+same as 1ms). <em>[-]</em>
 <p><p></p><dt><strong>aio-setpos 'time_in_seconds'</strong><dd>
-Set audio object position to 'time_in_seconds'.
+Set audio object position to 'time_in_seconds'. <em>[-]</em>
 <p><p></p><dt><strong>aio-get-position</strong><dd>
 Returns the audio object position in seconds. <em>[f]</em>
 <p><p></p><dt><strong>aio-get-length</strong><dd>
 Returns the audio object length in seconds. <em>[f]</em>
 <p><p></p><dt><strong>aio-wave-edit</strong><dd> 
 The currently selected audio object is loaded into an external
-wave editor (see ecasoundrc(5)).
+wave editor (see ecasoundrc(5)). <em>[-]</em>
 <p><p></p><dt><strong>aio-register</strong><dd>
 Prints a list of registered audio object types. <em>[s]</em>
 <p><p></p><dt><strong>aio-input-list</strong><dd> **not implemented**
@@ -281,18 +283,18 @@ is 1.
 Adds a new chain operator. Argument format is
 "-&lt;id_string&gt;:par1,...,parN". In addition to normal chain operators, 
 this commmand can also be used to add effect presets and various 
-plugins. See ecasound(1) man page for more info.
+plugins. See ecasound(1) man page for more info. <em>[-]</em>
 <p><p></p><dt><strong>cop-select 'param_id'</strong><dd>
-Selects a chain operator.
+Selects a chain operator. <em>[-]</em>
 <p><p></p><dt><strong>cop-remove</strong><dd> 
-Removes the selected chain operator.
+Removes the selected chain operator. <em>[-]</em>
 <p><p></p><dt><strong>cop-set 'chainop_id, param_id, value'</strong><dd>
 Changes the value of a single chain operator parameter. Unlike other
-chain operator commands, this can also be used during processing.
+chain operator commands, this can also be used during processing. <em>[-]</em>
 <p><p></p><dt><strong>copp-select 'param_id'</strong><dd>
-Selects a chain operator parameter.
+Selects a chain operator parameter. <em>[-]</em>
 <p><p></p><dt><strong>copp-set 'value'</strong><dd>
-Sets the selected parameter value to 'value'.
+Sets the selected parameter value to 'value'. <em>[-]</em>
 <p><p></p><dt><strong>copp-get</strong><dd>
 Returns the selected parameter value. <em>[f]</em>
 <p><p></p><dt><strong>cop-status</strong><dd>
@@ -316,11 +318,11 @@ selected chainsetup and chains are used.
 Adds a new controller and attach it to currently selected chain 
 operator. Argument format is "-&lt;id_string&gt;:&lt;param_id&gt;,&lt;range_low&gt;,
 &lt;range_high&gt;,par1,...,parN".  See ecasound(1) man page for more 
-info.
+info. <em>[-]</em>
 <p><p></p><dt><strong>cop-select-controller 'param_id'</strong><dd>
-Selects a controller.
+Selects a controller. <em>[-]</em>
 <p><p></p><dt><strong>cop-remove-controller</strong><dd>
-Removes the selected controller.
+Removes the selected controller. <em>[-]</em>
 <p><p></p><dt><strong>ctrl-status</strong><dd> 
 Returns info about controller status. <em>[s]</em>
 <p><p></p><dt><strong>ctrl-list</strong><dd> **not implemented**
@@ -370,34 +372,34 @@ internal state information from libecasound. All dump
 commands output a single line with syntax "key value"
 to the selected output stream (defaults to stdout). 
 <p><p></p><dt><strong>dump-target 'filename'</strong><dd>
-Set target stream for dumping.
+Set target stream for dumping. <em>[-]</em>
 <p><p></p><dt><strong>dump-status</strong><dd>
-Dumps engine status - 'running', 'stopped', 'finished' or 'notready'.
+Dumps engine status - 'running', 'stopped', 'finished' or 'notready'. <em>[-]</em>
 <p><p></p><dt><strong>dump-position</strong><dd>
 Dumps the global position. Printed in seconds using a floating-point 
-representation.
+representation. <em>[-]</em>
 <p><p></p><dt><strong>dump-length</strong><dd>
 Dumps the overall processing length. Printed in seconds using a floating-point 
-representation.
+representation. <em>[-]</em>
 <p><p></p><dt><strong>dump-cs-status</strong><dd>
 Dumps status string for the currently selected chainsetup - 'connected', 
-'selected' or an empty string.
+'selected' or an empty string. <em>[-]</em>
 <p><p></p><dt><strong>dump-c-selected</strong><dd>
-Dumps the name of currently selected chain.
+Dumps the name of currently selected chain. <em>[-]</em>
 <p><p></p><dt><strong>dump-aio-selected</strong><dd>
 Dumps label of currently selected audio object. If no object is
-selected, dumps an empty string.
+selected, dumps an empty string. <em>[-]</em>
 <p><p></p><dt><strong>dump-aio-position</strong><dd>
 Dumps position of currently selected audio objects. Printed in
-seconds, using a floating-point representation.
+seconds, using a floating-point representation. <em>[-]</em>
 <p><p></p><dt><strong>dump-aio-length</strong><dd>
 Dumps length of currently selected audio object. Printed in seconds,
-using a floating-point representation.
+using a floating-point representation. <em>[-]</em>
 <p><p></p><dt><strong>dump-aio-open-state</strong><dd>
-Dumps audio object state info. Either 'open' or 'closed'.
+Dumps audio object state info. Either 'open' or 'closed'. <em>[-]</em>
 <p><p></p><dt><strong>dump-cop-value 'chainop,param'</strong><dd>
 Dumps chain operator parameter value. 'chainop' and 'param' are 
-operator and parameter index values (1...n).
+operator and parameter index values (1...n). <em>[-]</em>
 <p><h2>SEE ALSO</h2>
     
 <p>ecasound(1), qtecasound (1), ecatools (1), ecasoundrc(5)
