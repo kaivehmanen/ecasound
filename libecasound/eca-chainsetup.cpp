@@ -91,21 +91,35 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
 }
 
 /**
- * Construct from a chainsetup file.
+ * Constructs an empty chainsetup.
  *
  * ensure:
  *   buffersize != 0
  */
-ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file, bool fromfile) 
+ECA_CHAINSETUP::ECA_CHAINSETUP(void) 
   : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default) {
 
   setup_name_rep = "";
-
   set_defaults();
 
-  if (fromfile) load_from_file(setup_file);
-  if (setup_name_rep == "") setup_name_rep = setup_file;
+  // --------
+  ENSURE(buffersize() != 0);
+  // --------
+}
 
+/**
+ * Construct from a chainsetup file. ff 'fromfile' is
+ *
+ * ensure:
+ *   buffersize != 0
+ */
+ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file) 
+  : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default) {
+
+  setup_name_rep = "";
+  set_defaults();
+  load_from_file(setup_file);
+  if (setup_name_rep == "") setup_name_rep = setup_file;
   preprocess_options(options);
   interpret_options(options);
   add_default_output();

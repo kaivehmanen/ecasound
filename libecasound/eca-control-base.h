@@ -132,7 +132,7 @@ class ECA_CONTROL_BASE : public DEFINITION_BY_CONTRACT {
   string engine_status(void) const;
 
   ECA_CONTROL_BASE (ECA_SESSION* psession);
-  virtual ~ECA_CONTROL_BASE (void) { }
+  ~ECA_CONTROL_BASE (void);
 };
 
 #endif

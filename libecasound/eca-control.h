@@ -26,6 +26,7 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   void set_action_argument(const vector<string>& s);
   void set_action_argument(double v);
   void clear_action_arguments(void);
+  double first_argument_as_number(void) const;
 
  public:
 
@@ -106,7 +107,7 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   // -------------------------------------------------------------------
 
   ECA_CONTROL (ECA_SESSION* psession);
-  virtual ~ECA_CONTROL (void);
+  ~ECA_CONTROL (void);
 };
 
 #endif

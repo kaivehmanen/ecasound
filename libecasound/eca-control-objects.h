@@ -123,7 +123,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   // -------------------------------------------------------------------
 
   ECA_CONTROL_OBJECTS (ECA_SESSION* psession);
-  virtual ~ECA_CONTROL_OBJECTS (void) { }
+  ~ECA_CONTROL_OBJECTS (void) { }
 };
 
 #endif

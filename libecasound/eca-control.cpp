@@ -104,6 +104,13 @@ void ECA_CONTROL::clear_action_arguments(void) {
   action_arg_f_set_rep = false;
 }
 
+double ECA_CONTROL::first_argument_as_number(void) const {
+  if (action_arg_f_set_rep == true)
+    return(action_arg_f_rep);
+
+  return(atof(action_args_rep[0].c_str()));
+}
+
 void ECA_CONTROL::command_float_arg(const string& cmd, double arg) {
   clear_action_arguments();
   set_action_argument(arg);
@@ -281,8 +288,7 @@ void ECA_CONTROL::action(int action_id) {
   }
   case ec_cs_length: 
     { 
-      double value = atof((action_args_rep[0]).c_str());
-      set_chainsetup_processing_length_in_seconds(value); 
+      set_chainsetup_processing_length_in_seconds(first_argument_as_number()); 
       break; 
     }
   case ec_cs_loop: { toggle_chainsetup_looping(); break; } 
@@ -317,20 +323,17 @@ void ECA_CONTROL::action(int action_id) {
   case ec_c_bypass: { toggle_chain_bypass(); break; }
   case ec_c_forward: 
     { 
-      double value = atof((action_args_rep[0]).c_str());
-      forward_chains(value); 
+      forward_chains(first_argument_as_number()); 
       break; 
     }
   case ec_c_rewind: 
     { 
-      double value = atof((action_args_rep[0]).c_str());
-      rewind_chains(value); 
+      rewind_chains(first_argument_as_number()); 
       break; 
     }
   case ec_c_setpos: 
     { 
-      double value = atof((action_args_rep[0]).c_str());
-      set_position_chains(value); 
+      set_position_chains(first_argument_as_number()); 
       break; 
     }
   case ec_c_status: 
@@ -371,20 +374,17 @@ void ECA_CONTROL::action(int action_id) {
     }
   case ec_aio_forward: 
     { 
-      double value = atof((action_args_rep[0]).c_str());
-      forward_audio_object(value); 
+      forward_audio_object(first_argument_as_number()); 
       break; 
     }
   case ec_aio_rewind: 
     { 
-      double value = atof((action_args_rep[0]).c_str());
-      rewind_audio_object(value); 
+      rewind_audio_object(first_argument_as_number()); 
       break; 
     }
   case ec_aio_setpos: 
     { 
-      double value = atof((action_args_rep[0]).c_str());
-      set_audio_object_position(value); 
+      set_audio_object_position(first_argument_as_number()); 
       break; 
     }
   case ec_aio_get_position: { set_last_float(get_audio_object()->position().seconds()); break; }
@@ -420,7 +420,7 @@ void ECA_CONTROL::action(int action_id) {
       break; 
     }
   case ec_copp_select: { select_chain_operator_parameter(atoi((action_args_rep[0]).c_str())); break; }
-  case ec_copp_set: { set_chain_operator_parameter(atof((action_args_rep[0]).c_str()));  break; }
+  case ec_copp_set: { set_chain_operator_parameter(first_argument_as_number()); break; }
   case ec_copp_get: { set_last_float(get_chain_operator_parameter()); break; }
 
   case ec_cop_status: 
@@ -452,15 +452,15 @@ void ECA_CONTROL::action(int action_id) {
     // Changing position
     // ---
   case ec_rewind: {
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_rewind, atof(action_args_rep[0].c_str()));
+    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_rewind, first_argument_as_number());
     break;
   }
   case ec_forward: {
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_forward, atof(action_args_rep[0].c_str()));
+    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_forward, first_argument_as_number());
     break;
   }
   case ec_setpos: {
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_setpos, atof(action_args_rep[0].c_str()));
+    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_setpos, first_argument_as_number());
     break;
   }
   case ec_get_position: { set_last_float(position_in_seconds_exact()); break; }

@@ -33,7 +33,7 @@ commands from outside libecasound. When issuing EIAM commands using
 ECI, it's possible that commands also return information. Currently
 supported return value types are: strings [s], list of strings [S],
 integers [i], long integers [li] and floating-point numbers [f]. These
-definitions are used in the following documentation.
+definitions are used throughout this document.
 
 manpagesection(GENERAL)
 startdit()

@@ -34,9 +34,15 @@ class ECA_CONTROL_INTERFACE {
   const string& last_string(void) const;
   double last_float(void) const;
   int last_integer(void) const;
+  bool last_bool(void) const;
   long int last_long_integer(void) const;
   const string& last_error(void) const;
   const string& last_type(void) const;
+
+  /**
+   * Returns last_integer() interpreted as a bool.
+   */
+  bool last_boolean(void) const { return(last_integer() != 0); }
   
   // -------------------------------------------------------------------
   // Events

@@ -138,7 +138,8 @@ void ECA_SESSION::add_chainsetup(const string& name) {
   assert(name != "");
   // --------
 
-  ECA_CHAINSETUP* newsetup = new ECA_CHAINSETUP (name, false);
+  ECA_CHAINSETUP* newsetup = new ECA_CHAINSETUP;
+  newsetup->set_name(name);
   add_chainsetup(newsetup);
 
   // --------
@@ -245,8 +246,7 @@ void ECA_SESSION::load_chainsetup(const string& filename) throw(ECA_ERROR&) {
   assert(filename.empty() != true);
   // --------
 
-  ECA_CHAINSETUP* new_setup = new ECA_CHAINSETUP(filename, 
-						 true);
+  ECA_CHAINSETUP* new_setup = new ECA_CHAINSETUP(filename);
   add_chainsetup(new_setup);
 
   selected_chainsetup_repp = new_setup;

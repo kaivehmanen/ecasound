@@ -28,6 +28,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- removed: eiam-cmds; u, a, cstatus, l, fstatus, estatus
 	- fixed: "-x -i file.ext" style cmd-line arg sequences weren't
 		parsed correctly [jhall]
+	- fixed: ECI - command_float_arg() was broken (all languages)
 07122000 (v1.8.5d15)
 	- added: tremolo effect (-eemt) [rcs]
 	- added: -z:db; i/o double buffering layer is back! - 

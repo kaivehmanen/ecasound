@@ -2,6 +2,14 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-12-09  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-control-base.h (destructor): changed into non-virtual
+	* eca-control-objects.h (destructor): changed into non-virtual
+	* eca-control.h (destructor): changed into non-virtual
+	* eca-control-interface.h (last_boolean): added
+	* eca-chainsetup.h (constructor): new overloaded version added
+	
 2000-12-08  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-control.h (): now inherits ECA_CONTROL_OBJECTS directly

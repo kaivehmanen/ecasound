@@ -108,7 +108,7 @@ void PRESET::parse(const string& formatted_string) {
 
     DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* object = 0;
 
-    ECA_CHAINSETUP csetup ("untitled", false);
+    ECA_CHAINSETUP csetup;
     cop = 0;
     cop = csetup.create_chain_operator(ps);
     if (cop == 0) cop = csetup.create_ladspa_plugin(ps);

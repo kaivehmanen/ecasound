@@ -834,17 +834,13 @@ CHAIN* ECA_CONTROL_OBJECTS::get_chain(void) const {
  * require:
  *  is_selected() == true
  *  connected_chainsetup() != selected_chainsetup()
- *  selected_chains().size() > 0
  */
 void ECA_CONTROL_OBJECTS::clear_chains(void) { 
   // --------
   REQUIRE(is_selected() == true);
-  REQUIRE(selected_chains().size() > 0);
+  REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
-  bool was_running = false;
-  if (selected_chainsetup() == connected_chainsetup() && is_running() == true) { was_running = true; stop_on_condition(); }
   selected_chainsetup_repp->clear_chains();
-  if (was_running == true) session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
 /**
@@ -1536,10 +1532,8 @@ void ECA_CONTROL_OBJECTS::select_chain_operator(int chainop_id) {
       session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_c_select, p);
       session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_cop_select, chainop_id);
     }
-    else {
-      if (chainop_id < static_cast<int>(selected_chainsetup_repp->chains[p]->chainops_rep.size() + 1)) {
-	selected_chainsetup_repp->chains[p]->select_chain_operator(chainop_id);
-      }
+    if (chainop_id < static_cast<int>(selected_chainsetup_repp->chains[p]->chainops_rep.size() + 1)) {
+      selected_chainsetup_repp->chains[p]->select_chain_operator(chainop_id);
     }
   }
 }
@@ -1566,10 +1560,8 @@ void ECA_CONTROL_OBJECTS::select_chain_operator_parameter(int param) {
     if (selected_chainsetup() == connected_chainsetup()) {
       session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_copp_select, param);
     }
-    else {
-      selected_chainsetup_repp->chains[p]->select_chain_operator_parameter(param);
-    }
-  }
+    selected_chainsetup_repp->chains[p]->select_chain_operator_parameter(param);
+  } 
 }
 
 

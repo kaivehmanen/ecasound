@@ -29,12 +29,18 @@
 ECA_CONTROL_INTERFACE::ECA_CONTROL_INTERFACE (void) { 
   session_repp = new ECA_SESSION();
   control_repp = new ECA_CONTROL(session_repp);
+  control_repp->toggle_interactive_mode(true);
 }
 
 /**
  * Desctructor.
  */
 ECA_CONTROL_INTERFACE::~ECA_CONTROL_INTERFACE (void) { 
+  if (control_repp->is_running())
+    control_repp->stop();
+  if (control_repp->is_connected())
+    control_repp->disconnect_chainsetup();
+  control_repp->quit();
   delete session_repp;
   delete control_repp;
 }
@@ -57,6 +63,7 @@ int ECA_CONTROL_INTERFACE::last_integer(void) const { return(control_repp->last_
 long int ECA_CONTROL_INTERFACE::last_long_integer(void) const { return(control_repp->last_long_integer()); }
 const string& ECA_CONTROL_INTERFACE::last_error(void) const { return(control_repp->last_error()); }
 const string& ECA_CONTROL_INTERFACE::last_type(void) const { return(control_repp->last_type()); }
+
 
 bool ECA_CONTROL_INTERFACE::events_available(void) { return(false); }
 void ECA_CONTROL_INTERFACE::next_event(void) { }

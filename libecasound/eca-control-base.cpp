@@ -56,6 +56,10 @@ ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession) {
   engine_started_rep = false;
 }
 
+ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void) {
+  close_engine();
+}
+
 /**
  * Start the processing engine
  *

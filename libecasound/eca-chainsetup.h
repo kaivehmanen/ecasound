@@ -105,8 +105,9 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
   const string& filename(void) const { return(setup_filename_rep); }
   enum Mix_mode mixmode(void) const { return(mixmode_rep); }
 
+  ECA_CHAINSETUP(void);
   ECA_CHAINSETUP(const vector<string>& options);
-  ECA_CHAINSETUP(const string& setup_file, bool fromfile = true);
+  ECA_CHAINSETUP(const string& setup_file);
   virtual ~ECA_CHAINSETUP(void);
 };
 
