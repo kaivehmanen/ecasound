@@ -189,6 +189,8 @@ void ECA_CHAINSETUP_PARSER::reset_interpret_status(void) {
 /**
  * Preprocesses a set of options.
  * 
+ * Notes! See also ECA_SESSION::preprocess_options()
+ * 
  * @post all options valid for interpret_option()
  */
 void ECA_CHAINSETUP_PARSER::preprocess_options(std::vector<std::string>& opts) const {
@@ -198,14 +200,13 @@ void ECA_CHAINSETUP_PARSER::preprocess_options(std::vector<std::string>& opts) c
     /* handle options not starting with an '-' sign */
 
     if (p->size() > 0 && (*p)[0] != '-') {
-      /* hack1: options ending with .ecs as "-s:file.ecs" */
-      string::size_type pos = p->find(".ecs");
-      if (pos + 4 == p->size())
-	*p = "-s:" + *p;
-      
-      /* hack2: rest as "-i:file.ecs" */
-      else
-	*p = "-i:" + *p;
+      /* hack1: rest as "-i:file" */
+      *p = "-i:" + *p;
+      ecadebug->msg("(eca-chainsetup-parser) Note! Interpreting option " +
+		    *p +
+		    " as -i:" +
+		    *p +
+		    ".");
     }
     ++p;
   }

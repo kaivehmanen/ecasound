@@ -399,6 +399,8 @@ bool ECA_SESSION::is_session_option(const std::string& arg) const {
 /**
  * Preprocesses a set of options.
  * 
+ * Notes! See also ECA_CHAINSETUP_PARSER::preprocess_options()
+ *
  * ensure:
  *  all options valid for further processing (all options
  *  must start with a '-' sign)
@@ -410,12 +412,14 @@ void ECA_SESSION::preprocess_options(std::vector<std::string>* opts) {
     if (p->size() > 0 && (*p)[0] != '-') {
       /* hack1: options ending with .ecs as "-s:file.ecs" */
       string::size_type pos = p->find(".ecs");
-      if (pos + 4 == p->size())
+      if (pos + 4 == p->size()) {
+	ecadebug->msg("(eca-chainsetup-parser) Note! Interpreting option " +
+		      *p +
+		      " as -s:" +
+		      *p +
+		      ".");
 	*p = "-s:" + *p;
-      
-      /* hack2: rest as "-i:file.ecs" */
-      else
-	*p = "-i:" + *p;
+      }
     }
     ++p;
   }

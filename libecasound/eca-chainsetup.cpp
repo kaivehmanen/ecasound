@@ -122,7 +122,8 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const std::string& setup_file)
   set_defaults();
   std::vector<std::string> options;
   load_from_file(setup_file, options);
-  if (setup_name_rep == "") setup_name_rep = setup_file;
+  set_filename(setup_file);
+  if (name() == "") set_name(setup_file);
   cparser_rep.preprocess_options(options);
   interpret_options(options);
   add_default_output();
