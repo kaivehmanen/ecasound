@@ -15,6 +15,7 @@ def check_for_test_data_files(filenamestr):
 def run_tests():
     check_for_test_data_files("foo.wav")
     check_for_test_data_files("ecatestlist.txt")
+    check_for_test_data_files("ecasound_test")
     
     file = open("ecatestlist.txt")
     lines = file.readlines()

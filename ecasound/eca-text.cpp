@@ -54,11 +54,12 @@
 #include "textdebug.h"
 #include "eca-text.h"
 
-ECA_PROCESSOR* global_pointer_to_ecaprocessor = 0; 
-bool global_processor_deleted = false;
-ECA_SESSION* global_pointer_to_ecasession = 0; 
-bool global_session_deleted = false;
+static ECA_PROCESSOR* global_pointer_to_ecaprocessor = 0; 
+static bool global_processor_deleted = false;
+static ECA_SESSION* global_pointer_to_ecasession = 0; 
+static bool global_session_deleted = false;
 TEXTDEBUG textdebug;
+static int global_error_no = 0;
 
 void clean_exit(int n);
 
@@ -121,6 +122,7 @@ int main(int argc, char *argv[])
   }
   catch(ECA_ERROR& e) {
     cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    global_error_no = 1;
   }
   catch(DBC_EXCEPTION& e) { 
     cerr << "Failed condition \"" 
@@ -133,15 +135,16 @@ int main(int argc, char *argv[])
 	 << e.line_rep 
 	 << "." 
 	 << endl;
-    clean_exit(-1);
+    clean_exit(127);
   }
   catch(...) {
     cerr << "---\nCaught an unknown exception!\n";
+    global_error_no = 2;
   }
 
   ecadebug->flush();
     
-  return(0); // everything ok!
+  return(global_error_no);
 }
 
 void parse_command_line(COMMAND_LINE& cline) {
@@ -191,7 +194,7 @@ void clean_exit(int n) {
 
 void signal_handler(int signum) {
 //    cerr << "<-- Caught a signal... cleaning up." << endl << endl;
-  clean_exit(0);
+  clean_exit(128);
 }
 
 void print_header(ostream* dostream) {
@@ -236,6 +239,7 @@ void start_iactive(ECA_SESSION* param) {
 	  if (e.error_action() == ECA_ERROR::stop) {
 	    break;
 	  }
+	  global_error_no = 3;
 	}
       }
       cout << "ecasound ('h' for help)> ";
@@ -244,6 +248,7 @@ void start_iactive(ECA_SESSION* param) {
   }
   catch(...) {
     cerr << "---\nCaught an unknown exception!\n";
+    global_error_no = 4;
   }
 }
 
@@ -273,11 +278,13 @@ void start_iactive_readline(ECA_SESSION* param) {
 	cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
 	if (e.error_action() == ECA_ERROR::stop) {
 	  free(cmd);
+	  global_error_no = 5;
 	  break;
 	}
       }
       catch(...) {
 	free(cmd);
+	global_error_no = 6;
 	throw;
       }
       free(cmd);

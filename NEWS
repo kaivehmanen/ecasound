@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 150801) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 170801) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.1 *-
 
-??082001 (v2.0.2)  -** stable release **-
+17082001 (v2.0.2)  -** stable release **-
  	- added: current position tracking to loop devices
 	- added: more verbose xrun info from ALSA 0.9.x devices
 	- added: info about the new perl bindings to ECI API docs
@@ -31,6 +31,7 @@ Last officially released version is -*> v2.0.1 *-
 		   values for LADSPA plugins
 	- changed: update ogg input and output support to
 		   work with ogg vorbis 1.0rc2
+	- changed: changed some of the returned error codes
 	- fixed: selecting a non-existant chainsetup could crash 
 		 ecasound
 	- fixed: --enable-audiofile actually disabled the use of 

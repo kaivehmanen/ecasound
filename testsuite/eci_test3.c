@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     ECA_TEST_FAIL(1, "chainsetup addition or selection failed");
   }
 
-  eci_command("cs-set-length 15");
+  eci_command("cs-set-length 5");
 
   eci_command("c-add 1,2");
   eci_command("c-select-all");

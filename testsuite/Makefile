@@ -7,9 +7,11 @@ LDFLAGS += $(ECALINK)
 
 COMMON_SRC = 		ecatestsuite.h
 GENERATED_FILES = 	ecatestlist.txt
-TARGETS=		eci_test1 \
+TARGETS=		con_test1 \
+			eci_test1 \
 			eci_test2 \
 			eci_test3
+
 
 all: $(TARGETS) create-test-list
 
