@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 200803) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 210803) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,9 +14,14 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ??0?2003 (v2.2.4)  -** stable release **-
+	- edi-entries: edi-4, edi-19 and edi-35 frozen, edi-38 added 
+		       and frozen immediately, edi-39 added; frozen is 
+		       a new status for items that probably won't be
+		       ever implemented
 	- note: verified to compile ok with gcc-3.3
-	- added: eaim - command 'engine-start' to inialize engine
-		 without starting actual processing; useful with
+	- added: eaim - command 'engine-launch' to inialize engine
+		 without starting actual processing, and 'engine-halt'
+		 for halting it without disconnecting; useful with
 		 JACK transport functions
 	- added: separate AUTHORS file; also added to the website
 	- changed: to avoid resampling faults, upper limit of 2000%
