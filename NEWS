@@ -31,7 +31,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: Ecasound Programmer's Guide converted from LaTeX
 		   to ascii/rst
 	- changed: sed is used to generate ecasoundrc at make; allows to 
-		   specify a custom pkgdatadir when running make 
+		   specify a custom pkgdatadir when running make [junichi]
 	- changed: various small improvements to all ecatools and 
 		   the related manpages
 	- fixed: sources for the aRts plugin were not present in the
