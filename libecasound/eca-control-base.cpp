@@ -3,6 +3,9 @@
 //                       for controlling the ecasound library
 // Copyright (C) 1999-2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 3
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -43,6 +46,7 @@
 /**
  * Import namespaces
  */
+using std::list;
 using std::string;
 using std::vector;
 
@@ -63,7 +67,7 @@ void* ECA_CONTROL_BASE::start_normal_thread(void *ptr)
   ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-controller) Engine-thread pid: " + kvu_numtostr(getpid()));
   ECA_CONTROL_BASE* ctrl_base = static_cast<ECA_CONTROL_BASE*>(ptr);
   ctrl_base->run_engine();
-  return(0);
+  return 0;
 }
 
 ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession)
@@ -359,7 +363,9 @@ bool ECA_CONTROL_BASE::is_valid(void) const
   DBC_REQUIRE(is_selected());
   // --------
 
-  return(selected_chainsetup_repp->is_valid());
+  /* use is_valid_for_connection() instead of is_valid() to 
+   * report any detected errors via the logging subsystem */
+  return selected_chainsetup_repp->is_valid_for_connection(true);
 }
 
 /**
@@ -367,20 +373,23 @@ bool ECA_CONTROL_BASE::is_valid(void) const
  */
 bool ECA_CONTROL_BASE::is_connected(void) const
 {
-  if (session_repp->connected_chainsetup_repp == 0) return(false);
-  return(session_repp->connected_chainsetup_repp->is_valid() &&
-	 session_repp->connected_chainsetup_repp->is_enabled());
+  if (session_repp->connected_chainsetup_repp == 0) {
+    return false;
+  }
+
+  return (session_repp->connected_chainsetup_repp->is_valid() &&
+	  session_repp->connected_chainsetup_repp->is_enabled());
 }
 
 /**
  * Returns true if some chainsetup is selected.
  */
-bool ECA_CONTROL_BASE::is_selected(void) const { return(selected_chainsetup_repp != 0); } 
+bool ECA_CONTROL_BASE::is_selected(void) const { return selected_chainsetup_repp != 0; } 
 
 /**
  * Returns true if processing engine is running.
  */
-bool ECA_CONTROL_BASE::is_running(void) const { return(is_engine_started() == true && engine_repp->status() == ECA_ENGINE::engine_status_running); } 
+bool ECA_CONTROL_BASE::is_running(void) const { return (is_engine_started() == true && engine_repp->status() == ECA_ENGINE::engine_status_running); } 
 
 /**
  * Returns true if engine has finished processing. Engine state is 
@@ -388,15 +397,15 @@ bool ECA_CONTROL_BASE::is_running(void) const { return(is_engine_started() == tr
  */
 bool ECA_CONTROL_BASE::is_finished(void) const
 {
-  return(is_engine_started() == true && 
-	 (engine_repp->status() == ECA_ENGINE::engine_status_finished ||
-	  engine_repp->status() == ECA_ENGINE::engine_status_error)); 
+  return (is_engine_started() == true && 
+	  (engine_repp->status() == ECA_ENGINE::engine_status_finished ||
+	   engine_repp->status() == ECA_ENGINE::engine_status_error)); 
 } 
 
 string ECA_CONTROL_BASE::resource_value(const string& key) const
 { 
   ECA_RESOURCES ecarc;
-  return(ecarc.resource(key)); 
+  return ecarc.resource(key); 
 }
 
 /**
@@ -418,7 +427,7 @@ SAMPLE_SPECS::sample_pos_t ECA_CONTROL_BASE::length_in_samples(void) const
     cslen = selected_chainsetup_repp->max_length_in_samples();
   }
 
-  return(cslen);
+  return cslen;
 }
 
 /**
@@ -440,7 +449,7 @@ double ECA_CONTROL_BASE::length_in_seconds_exact(void) const
     cslen = selected_chainsetup_repp->max_length_in_seconds_exact();
   }
 
-  return(cslen);
+  return cslen;
 }
 
 /**
@@ -454,7 +463,7 @@ SAMPLE_SPECS::sample_pos_t ECA_CONTROL_BASE::position_in_samples(void) const
   DBC_REQUIRE(is_selected());
   // --------
 
-  return(selected_chainsetup_repp->position_in_samples());
+  return selected_chainsetup_repp->position_in_samples();
 }
 
 /**
@@ -468,7 +477,7 @@ double ECA_CONTROL_BASE::position_in_seconds_exact(void) const
   DBC_REQUIRE(is_selected());
   // --------
 
-  return(selected_chainsetup_repp->position_in_seconds_exact());
+  return selected_chainsetup_repp->position_in_seconds_exact();
 }
 
 /**
@@ -492,7 +501,7 @@ bool ECA_CONTROL_BASE::is_engine_started(void) const
     }
   }
   
-  return(ret);
+  return ret;
 }
 
 /**
@@ -504,31 +513,31 @@ string ECA_CONTROL_BASE::engine_status(void) const
     switch(engine_repp->status()) {
     case ECA_ENGINE::engine_status_running: 
       {
-	return("running"); 
+	return "running"; 
       }
     case ECA_ENGINE::engine_status_stopped: 
       {
-	return("stopped"); 
+	return "stopped"; 
       }
     case ECA_ENGINE::engine_status_finished:
       {
-	return("finished"); 
+	return "finished"; 
       }
     case ECA_ENGINE::engine_status_error:
       {
-	return("error"); 
+	return "error"; 
       }
     case ECA_ENGINE::engine_status_notready: 
       {
-	return("not ready"); 
+	return "not ready"; 
       }
     default: 
       {
-	return("unknown status"); 
+	return "unknown status"; 
       }
     }
   }
-  return("not started");
+  return "not started";
 }
 
 /**
@@ -551,7 +560,7 @@ string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const
     ++p;
     if (p != t.end()) out += ",";
   }
-  return(out);
+  return out;
 }
 
 /**
@@ -574,7 +583,7 @@ string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const
     ++p;
     if (p != t.end()) out += ",";
   }
-  return(out);
+  return out;
 }
 
 /**
@@ -589,7 +598,20 @@ vector<string> ECA_CONTROL_BASE::attached_chains(const string& filename) const
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  return(selected_chainsetup_repp->get_attached_chains_to_iodev(filename));
+  return selected_chainsetup_repp->get_attached_chains_to_iodev(filename);
+}
+
+void ECA_CONTROL_BASE::set_last_string(const list<string>& s)
+{
+  last_s_rep.clear();
+  DBC_CHECK(last_s_rep.size() == 0);
+  list<string>::const_iterator p = s.begin();
+  while(p != s.end()) {
+    last_s_rep += *p;
+    ++p;
+    if (p != s.end()) last_s_rep += "\n";
+  }
+  last_type_rep = "s";
 }
 
 void ECA_CONTROL_BASE::set_last_string_list(const vector<string>& s)
@@ -628,13 +650,13 @@ void ECA_CONTROL_BASE::set_last_error(const string& s)
   last_type_rep = "e";
 }
 
-const vector<string>& ECA_CONTROL_BASE::last_string_list(void) const { return(last_los_rep); }
-const string& ECA_CONTROL_BASE::last_string(void) const { return(last_s_rep); }
-double ECA_CONTROL_BASE::last_float(void) const { return(last_f_rep); }
-int ECA_CONTROL_BASE::last_integer(void) const { return(last_i_rep); } 
-long int ECA_CONTROL_BASE::last_long_integer(void) const { return(last_li_rep); }
-const string& ECA_CONTROL_BASE::last_error(void) const { return(last_error_rep); }
-const string& ECA_CONTROL_BASE::last_type(void) const { return(last_type_rep); }
+const vector<string>& ECA_CONTROL_BASE::last_string_list(void) const { return last_los_rep; }
+const string& ECA_CONTROL_BASE::last_string(void) const { return last_s_rep; }
+double ECA_CONTROL_BASE::last_float(void) const { return last_f_rep; }
+int ECA_CONTROL_BASE::last_integer(void) const { return last_i_rep; } 
+long int ECA_CONTROL_BASE::last_long_integer(void) const { return last_li_rep; }
+const string& ECA_CONTROL_BASE::last_error(void) const { return last_error_rep; }
+const string& ECA_CONTROL_BASE::last_type(void) const { return last_type_rep; }
 
 void ECA_CONTROL_BASE::clear_last_values(void)
 { 
@@ -653,5 +675,5 @@ void ECA_CONTROL_BASE::set_float_to_string_precision(int precision)
 }
 std::string ECA_CONTROL_BASE::float_to_string(double n) const
 {
-  return(kvu_numtostr(n, float_to_string_precision_rep));
+  return kvu_numtostr(n, float_to_string_precision_rep);
 }

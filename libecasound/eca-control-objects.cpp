@@ -2,6 +2,9 @@
 // eca-control-objects.cpp: Class for configuring libecasound objects
 // Copyright (C) 2000-2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 3
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -69,7 +72,8 @@ ECA_CONTROL_OBJECTS::ECA_CONTROL_OBJECTS (ECA_SESSION* psession)
  * ensure:
  *  selected_chainsetup() == name || (last_error().size() > 0 && no_errors != true)
  */
-void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name) {
+void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name)
+{
   // --------
   DBC_REQUIRE(name != "");
   // --------
@@ -79,10 +83,10 @@ void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name) {
   session_repp->add_chainsetup(name);
   if (static_cast<int>(session_repp->chainsetups_rep.size()) > count) {
     select_chainsetup(name);
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Added a new chainsetup with name \"" + name + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Added a new chainsetup with name \"" + name + "\".");
   }
   else {
-    set_last_error("(eca-contol-objects) Unable to add chainsetup with name \"" + name + "\".");
+    set_last_error("Unable to add chainsetup with name \"" + name + "\".");
     no_errors = false;
   }
 
@@ -103,13 +107,14 @@ void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name) {
  * ensure:
  *  selected_chainsetup.empty() == true
  */
-void ECA_CONTROL_OBJECTS::remove_chainsetup(void) {
+void ECA_CONTROL_OBJECTS::remove_chainsetup(void)
+{
   // --------
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Removing chainsetup:  \"" + selected_chainsetup() + "\".");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Removing chainsetup:  \"" + selected_chainsetup() + "\".");
   session_repp->remove_chainsetup();
   selected_chainsetup_repp = 0;
 
@@ -137,7 +142,7 @@ void ECA_CONTROL_OBJECTS::load_chainsetup(const string& filename)
     DBC_CHECK(selected_chainsetup_repp != 0 &&
 	      selected_chainsetup_repp->filename() == filename ||
 	      selected_chainsetup_repp == 0);
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Loaded chainsetup from file \"" + filename + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Loaded chainsetup from file \"" + filename + "\".");
   }
   catch(ECA_ERROR& e) {
     set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
@@ -164,7 +169,7 @@ void ECA_CONTROL_OBJECTS::save_chainsetup(const string& filename)
     else 
       session_repp->save_chainsetup(filename);
     
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Saved selected chainsetup \"" + selected_chainsetup() + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Saved selected chainsetup \"" + selected_chainsetup() + "\".");
   }
   catch(ECA_ERROR& e) {
     set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
@@ -192,10 +197,10 @@ void ECA_CONTROL_OBJECTS::select_chainsetup(const string& name)
   session_repp->select_chainsetup(name);
   selected_chainsetup_repp = session_repp->selected_chainsetup_repp;
   if (selected_chainsetup_repp == 0) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Chainsetup \"" + name + "\" doesn't exist!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Chainsetup \"" + name + "\" doesn't exist!");
     set_last_error("Chainsetup \"" + name + "\" doesn't exist!");
   }
-  //  else { ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Selected chainsetup:  \"" + selected_chainsetup() + "\"."); }
+  //  else { ECA_LOG_MSG(ECA_LOGGER::info, "Selected chainsetup:  \"" + selected_chainsetup() + "\"."); }
 
   // --------
   DBC_ENSURE(name == selected_chainsetup() ||
@@ -233,9 +238,9 @@ void ECA_CONTROL_OBJECTS::select_chainsetup_by_index(int index_number)
 string ECA_CONTROL_OBJECTS::selected_chainsetup(void) const
 {
  if (selected_chainsetup_repp != 0)
-   return(selected_chainsetup_repp->name());
+   return selected_chainsetup_repp->name();
 
- return("");
+ return "";
 }
 
 /**
@@ -273,7 +278,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
     tempfile_dir_rep.reserve_directory(tmpdir);
   }
   if (tempfile_dir_rep.is_valid() != true) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Warning! Unable to create temporary directory \"" + tmpdir + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Unable to create temporary directory \"" + tmpdir + "\".");
     return;
   }
   string filename = tempfile_dir_rep.create_filename("cs-edit-tmp", ".ecs");
@@ -300,7 +305,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
     editori = resource_value("ext-cmd-text-editor");
 
   if (editori == "") {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Can't edit; no text editor specified/available.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Can't edit; no text editor specified/available.");
   }
 
   // FIXME: we should drop priviledge-level here (at least if root)!
@@ -308,7 +313,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
   int res = ::system(editori.c_str());
 
   if (res == 127 || res == -1) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Can't edit; unable to open file in text editor \"" + string(editori.c_str()) + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Can't edit; unable to open file in text editor \"" + string(editori.c_str()) + "\".");
 
   }
   else {
@@ -340,7 +345,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
 
       /* 6.3 if connecting the modified chainsetup fails */
       if (is_connected() != true) {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Can't connect; edited chainsetup is not valid.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Can't connect; edited chainsetup is not valid.");
       }
       
       /* 6.4 remove the old chainsetup */
@@ -368,7 +373,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_seconds(double val
 
   /* note! here we set the _maximum_ length of the chainsetup */
   selected_chainsetup_repp->set_max_length_in_seconds(value);
-  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Set chainsetup processing length to \"" + kvu_numtostr(value) + "\" seconds.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Set chainsetup processing length to \"" + kvu_numtostr(value) + "\" seconds.");
 }
 
 /**
@@ -388,7 +393,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_samples(SAMPLE_SPE
 
   /* note! here we set the _maximum_ length of the chainsetup */
   selected_chainsetup_repp->set_max_length_in_samples(value);
-  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Set chainsetup processing length to \"" + 
+  ECA_LOG_MSG(ECA_LOGGER::info, "Set chainsetup processing length to \"" + 
 	      kvu_numtostr(selected_chainsetup_repp->max_length_in_seconds_exact()) + "\" seconds.");
 }
 
@@ -398,7 +403,8 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_samples(SAMPLE_SPE
  * require:
  *  output_mode == AUDIO_IO::io_write || output_mode == AUDIO_IO::io_readwrite
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_output_mode(int output_mode) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_output_mode(int output_mode)
+{
   // --------
   DBC_REQUIRE(output_mode == AUDIO_IO::io_write || output_mode == AUDIO_IO::io_readwrite);
   // --------
@@ -410,7 +416,8 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_output_mode(int output_mode) {
  *
  * @pre is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_buffersize(int bsize) { 
+void ECA_CONTROL_OBJECTS::set_chainsetup_buffersize(int bsize)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -423,18 +430,19 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_buffersize(int bsize) {
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::toggle_chainsetup_looping(void) {
+void ECA_CONTROL_OBJECTS::toggle_chainsetup_looping(void)
+{
  // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
   if (selected_chainsetup_repp->looping_enabled()) {
     selected_chainsetup_repp->toggle_looping(false);
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Disabled looping.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Disabled looping.");
   }
   else {
     selected_chainsetup_repp->toggle_looping(true);
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Enabled looping.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Enabled looping.");
   }
 }
 
@@ -452,7 +460,7 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void)
 {
   // --------
   DBC_REQUIRE(is_selected());
-  DBC_REQUIRE(is_valid());
+  DBC_REQUIRE(selected_chainsetup_repp != 0 && selected_chainsetup_repp->is_valid() == true);
   // --------
 
   bool no_errors = true;
@@ -462,7 +470,7 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void)
   }
   try {
     session_repp->connect_chainsetup();
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Connected chainsetup:  \"" + connected_chainsetup() + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Connected chainsetup:  \"" + connected_chainsetup() + "\".");
   }
   catch(ECA_ERROR& e) {
     errmsg = e.error_message();
@@ -481,12 +489,13 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void)
 /**
  * Name of connected chainsetup.
  */
-string ECA_CONTROL_OBJECTS::connected_chainsetup(void) const {
+string ECA_CONTROL_OBJECTS::connected_chainsetup(void) const
+{
   if (session_repp->connected_chainsetup_repp != 0) {
-    return(session_repp->connected_chainsetup_repp->name());
+    return session_repp->connected_chainsetup_repp->name();
   }
 
-  return("");
+  return "";
 }
 
 /**
@@ -509,7 +518,7 @@ void ECA_CONTROL_OBJECTS::disconnect_chainsetup(void)
     close_engine();
   }
 
-  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Disconnecting chainsetup:  \"" + connected_chainsetup() + "\".");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Disconnecting chainsetup:  \"" + connected_chainsetup() + "\".");
   session_repp->disconnect_chainsetup();
 
   // --------
@@ -525,7 +534,8 @@ void ECA_CONTROL_OBJECTS::disconnect_chainsetup(void)
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::change_chainsetup_position(double seconds) { 
+void ECA_CONTROL_OBJECTS::change_chainsetup_position(double seconds)
+{
   // --------
   DBC_REQUIRE(is_selected());
   // --------
@@ -555,7 +565,8 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position(double seconds) {
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::change_chainsetup_position_samples(SAMPLE_SPECS::sample_pos_t samples) {
+void ECA_CONTROL_OBJECTS::change_chainsetup_position_samples(SAMPLE_SPECS::sample_pos_t samples)
+{
   // --------
   DBC_REQUIRE(is_selected());
   // --------
@@ -580,7 +591,8 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position_samples(SAMPLE_SPECS::sampl
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds)
+{
   // --------
   DBC_REQUIRE(is_selected());
   // --------
@@ -604,7 +616,8 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds) {
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_position_samples(SAMPLE_SPECS::sample_pos_t samples) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_position_samples(SAMPLE_SPECS::sample_pos_t samples)
+{
   // --------
   DBC_REQUIRE(is_selected());
   // --------
@@ -624,31 +637,34 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position_samples(SAMPLE_SPECS::sample_p
 /**
  * Gets a vector of al chainsetup names.
  */
-std::vector<string> ECA_CONTROL_OBJECTS::chainsetup_names(void) const {
-  return(session_repp->chainsetup_names());
+std::vector<string> ECA_CONTROL_OBJECTS::chainsetup_names(void) const
+{
+  return session_repp->chainsetup_names();
 }
 
 /**
  * Gets a pointer to selected chainsetup, or 0 if no 
  * chainsetup is selected.
  */
-const ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup(void) const {
-  return(selected_chainsetup_repp);
+const ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup(void) const
+{
+  return selected_chainsetup_repp;
 }
 
 /**
  * Gets a pointer to chainsetup with filename 'filename'.
  */
 const ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup_filename(const string&
-							      filename) const {
+								   filename) const
+{
   std::vector<ECA_CHAINSETUP*>::const_iterator p = session_repp->chainsetups_rep.begin();
   while(p != session_repp->chainsetups_rep.end()) {
     if ((*p)->filename() == filename) {
-      return((*p));
+      return (*p);
     }
     ++p;
     }
-  return(0);
+  return 0;
 }
 
 /**
@@ -656,11 +672,12 @@ const ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup_filename(const string&
  *
  * ®pre is_selected() == true
  */
-int ECA_CONTROL_OBJECTS::chainsetup_buffersize(void) const {
+int ECA_CONTROL_OBJECTS::chainsetup_buffersize(void) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
-  return(selected_chainsetup_repp->buffersize());
+  return selected_chainsetup_repp->buffersize();
 }
 
 /** 
@@ -668,11 +685,12 @@ int ECA_CONTROL_OBJECTS::chainsetup_buffersize(void) const {
  *
  * ®pre is_selected() == true
  */
-const string& ECA_CONTROL_OBJECTS::chainsetup_filename(void) const {
+const string& ECA_CONTROL_OBJECTS::chainsetup_filename(void) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
-  return(selected_chainsetup_repp->filename());
+  return selected_chainsetup_repp->filename();
 }
 
 /**
@@ -682,7 +700,8 @@ const string& ECA_CONTROL_OBJECTS::chainsetup_filename(void) const {
  *  is_selected() == true && 
  *  name.empty() != true
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_filename(const string& name) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_filename(const string& name)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(name.empty() != true);
@@ -697,7 +716,8 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_filename(const string& name) {
  *  is_selected() == true && 
  *  name.empty() != true
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_parameter(const string& name) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_parameter(const string& name)
+{
   // --------
   DBC_REQUIRE(is_selected() == true  && 
 	      name.empty() != true);
@@ -718,7 +738,8 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_parameter(const string& name) {
  *  is_selected() == true && 
  *  name.empty() != true
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_sample_format(const string& name) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_sample_format(const string& name)
+{
   // --------
   DBC_REQUIRE(is_selected() == true  && 
 	 name.empty() != true);
@@ -741,7 +762,8 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_sample_format(const string& name) {
  * ensure:
  *   selected_chains().size() > 0
  */
-void ECA_CONTROL_OBJECTS::add_chain(const string& name) { 
+void ECA_CONTROL_OBJECTS::add_chain(const string& name)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chainsetup() != connected_chainsetup());
@@ -767,7 +789,8 @@ void ECA_CONTROL_OBJECTS::add_chain(const string& name) {
  * ensure:
  *   selected_chains().size() > 0
  */
-void ECA_CONTROL_OBJECTS::add_chains(const string& names) { 
+void ECA_CONTROL_OBJECTS::add_chains(const string& names)
+{ 
   // --------
   DBC_REQUIRE(is_selected() == true &&
 	 is_connected() == false);
@@ -803,7 +826,7 @@ void ECA_CONTROL_OBJECTS::add_chains(const std::vector<string>& new_chains)
   selected_chainsetup_repp->add_new_chains(new_chains);
   selected_chainsetup_repp->select_chains(new_chains);
 
-  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Added chains: " + kvu_vector_to_string(new_chains, ", ") + ".");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Added chains: " + kvu_vector_to_string(new_chains, ", ") + ".");
 
   // --------
   DBC_ENSURE(selected_chains().size() == new_chains.size());
@@ -880,7 +903,8 @@ void ECA_CONTROL_OBJECTS::select_chains_by_index(const std::vector<int>& index_n
  * ensure:
  *   selected_chains().size() == 1
  */
-void ECA_CONTROL_OBJECTS::select_chain(const string& chain) {
+void ECA_CONTROL_OBJECTS::select_chain(const string& chain)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -888,7 +912,7 @@ void ECA_CONTROL_OBJECTS::select_chain(const string& chain) {
   std::vector<string> c (1);
   c[0] = chain;
   selected_chainsetup_repp->select_chains(c);
-  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-controller) Selected chain: " + chain + ".");
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Selected chain: " + chain + ".");
 
   // --------
   DBC_ENSURE(selected_chains().size() == 1);
@@ -908,14 +932,15 @@ void ECA_CONTROL_OBJECTS::select_chain(const string& chain) {
  * ensure:
  *   selected_chains().size() > 0
  */
-void ECA_CONTROL_OBJECTS::select_chains(const std::vector<string>& chains) {
+void ECA_CONTROL_OBJECTS::select_chains(const std::vector<string>& chains)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
 
   selected_chainsetup_repp->select_chains(chains);
 
-  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-controller) Selected chains: " +
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Selected chains: " +
 //  		vector_to_string(chains, ", ") + ".");
 }
 
@@ -927,7 +952,8 @@ void ECA_CONTROL_OBJECTS::select_chains(const std::vector<string>& chains) {
  * require:
  *   is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::deselect_chains(const std::vector<string>& chains) {
+void ECA_CONTROL_OBJECTS::deselect_chains(const std::vector<string>& chains)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -956,14 +982,15 @@ void ECA_CONTROL_OBJECTS::deselect_chains(const std::vector<string>& chains) {
  * require:
  *   is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::select_all_chains(void) {
+void ECA_CONTROL_OBJECTS::select_all_chains(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
 
   selected_chainsetup_repp->select_all_chains();
 
-  //  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Selected chains: " + vector_to_string(selected_chains(), ", ") + ".");
+  //  ECA_LOG_MSG(ECA_LOGGER::info, "Selected chains: " + vector_to_string(selected_chains(), ", ") + ".");
 }
 
 /**
@@ -976,7 +1003,7 @@ const std::vector<string>& ECA_CONTROL_OBJECTS::selected_chains(void) const {
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
-  return(selected_chainsetup_repp->selected_chains());
+  return selected_chainsetup_repp->selected_chains();
 }
 
 /**
@@ -985,11 +1012,12 @@ const std::vector<string>& ECA_CONTROL_OBJECTS::selected_chains(void) const {
  * require:
  *  is_selected() == true
  */
-std::vector<string> ECA_CONTROL_OBJECTS::chain_names(void) const {
+std::vector<string> ECA_CONTROL_OBJECTS::chain_names(void) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
-  return(selected_chainsetup_repp->chain_names());
+  return selected_chainsetup_repp->chain_names();
 }
 
 /**
@@ -999,7 +1027,8 @@ std::vector<string> ECA_CONTROL_OBJECTS::chain_names(void) const {
  *  is_selected() == true
  *  selected_chains().size() == 1
  */
-const CHAIN* ECA_CONTROL_OBJECTS::get_chain(void) const {
+const CHAIN* ECA_CONTROL_OBJECTS::get_chain(void) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() == 1);
@@ -1011,11 +1040,11 @@ const CHAIN* ECA_CONTROL_OBJECTS::get_chain(void) const {
 	p != selected_chainsetup_repp->chains.size();
 	p++) {
       if (selected_chainsetup_repp->chains[p]->name() == *o)
-	return(selected_chainsetup_repp->chains[p]);
+	return selected_chainsetup_repp->chains[p];
     }
     ++o;
   }
-  return(0);
+  return 0;
 }
 
 /**
@@ -1028,7 +1057,8 @@ const CHAIN* ECA_CONTROL_OBJECTS::get_chain(void) const {
  *  is_selected() == true
  *  is_running() != true
  */
-void ECA_CONTROL_OBJECTS::clear_chains(void) { 
+void ECA_CONTROL_OBJECTS::clear_chains(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(is_running() != true);
@@ -1047,7 +1077,8 @@ void ECA_CONTROL_OBJECTS::clear_chains(void) {
  *  connected_chainsetup() != selected_chainsetup()
  *  selected_chains().size() == 1
  */
-void ECA_CONTROL_OBJECTS::rename_chain(const string& name) { 
+void ECA_CONTROL_OBJECTS::rename_chain(const string& name)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -1086,7 +1117,8 @@ void ECA_CONTROL_OBJECTS::send_chain_commands_to_engine(int command, double valu
  *  is_selected() == true
  *  selected_chains().size() > 0
  */
-void ECA_CONTROL_OBJECTS::toggle_chain_muting(void) { 
+void ECA_CONTROL_OBJECTS::toggle_chain_muting(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() > 0);
@@ -1106,7 +1138,8 @@ void ECA_CONTROL_OBJECTS::toggle_chain_muting(void) {
  *  is_selected() == true && is_connected() == true
  *  selected_chains().size() > 0
  */
-void ECA_CONTROL_OBJECTS::toggle_chain_bypass(void) { 
+void ECA_CONTROL_OBJECTS::toggle_chain_bypass(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() > 0);
@@ -1127,7 +1160,8 @@ void ECA_CONTROL_OBJECTS::audio_input_as_selected(void) {
   selected_audio_object_repp = selected_audio_input_repp;
 }
 
-void ECA_CONTROL_OBJECTS::audio_output_as_selected(void) {
+void ECA_CONTROL_OBJECTS::audio_output_as_selected(void)
+{
   /* note, here we check that the pointer is still a valid one */
   if (selected_chainsetup_repp->ok_audio_object(selected_audio_output_repp) != true)
     selected_audio_output_repp = 0;
@@ -1145,7 +1179,8 @@ void ECA_CONTROL_OBJECTS::audio_output_as_selected(void) {
 void ECA_CONTROL_OBJECTS::set_default_audio_format(const string& sfrm,
 						   int channels, 
 						   long int srate,
-						   bool interleaving) {
+						   bool interleaving)
+{
  // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -1174,11 +1209,12 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const string& sfrm,
  *
  *  @pre is_selected() == true
  */
-const ECA_AUDIO_FORMAT& ECA_CONTROL_OBJECTS::default_audio_format(void) const {
+const ECA_AUDIO_FORMAT& ECA_CONTROL_OBJECTS::default_audio_format(void) const
+{
   // --
   DBC_REQUIRE(is_selected() == true);
   // --
-  return(selected_chainsetup_repp->default_audio_format());
+  return selected_chainsetup_repp->default_audio_format();
 }
 
 /**
@@ -1188,7 +1224,8 @@ const ECA_AUDIO_FORMAT& ECA_CONTROL_OBJECTS::default_audio_format(void) const {
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::set_default_audio_format(const ECA_AUDIO_FORMAT& format) {
+void ECA_CONTROL_OBJECTS::set_default_audio_format(const ECA_AUDIO_FORMAT& format)
+{
  // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -1205,7 +1242,8 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const ECA_AUDIO_FORMAT& forma
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::select_audio_input(const string& name) { 
+void ECA_CONTROL_OBJECTS::select_audio_input(const string& name)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -1245,7 +1283,8 @@ void ECA_CONTROL_OBJECTS::select_audio_output(const string& name) {
  * @pre is_selected() == true
  * @pre index_number > 0
  */
-void ECA_CONTROL_OBJECTS::select_audio_input_by_index(int index_number) { 
+void ECA_CONTROL_OBJECTS::select_audio_input_by_index(int index_number)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(index_number > 0);
@@ -1263,7 +1302,8 @@ void ECA_CONTROL_OBJECTS::select_audio_input_by_index(int index_number) {
  * @pre is_selected() == true
  * @pre index_number > 0
  */
-void ECA_CONTROL_OBJECTS::select_audio_output_by_index(int index_number) { 
+void ECA_CONTROL_OBJECTS::select_audio_output_by_index(int index_number)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(index_number > 0);
@@ -1281,7 +1321,8 @@ void ECA_CONTROL_OBJECTS::select_audio_output_by_index(int index_number) {
  * to be opened. Because of this, object argument cannot be given 
  * as a const pointer.
  */
-ECA_AUDIO_FORMAT ECA_CONTROL_OBJECTS::get_audio_format(AUDIO_IO* aobj) const {
+ECA_AUDIO_FORMAT ECA_CONTROL_OBJECTS::get_audio_format(AUDIO_IO* aobj) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(aobj != 0);
@@ -1302,7 +1343,7 @@ ECA_AUDIO_FORMAT ECA_CONTROL_OBJECTS::get_audio_format(AUDIO_IO* aobj) const {
 		      aobj->sample_format(),
 		      aobj->interleaved_channels());
   if (was_open == false) aobj->close();
-  return(t);
+  return t;
 }
 
 /**
@@ -1313,7 +1354,8 @@ ECA_AUDIO_FORMAT ECA_CONTROL_OBJECTS::get_audio_format(AUDIO_IO* aobj) const {
  *  @pre connected_chainsetup() != selected_chainsetup()
  *  @pre selected_audio_object_repp != 0
  */
-void ECA_CONTROL_OBJECTS::set_default_audio_format_to_selected_input(void) {
+void ECA_CONTROL_OBJECTS::set_default_audio_format_to_selected_input(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -1331,7 +1373,8 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format_to_selected_input(void) {
  *  @pre connected_chainsetup() != selected_chainsetup()
  *  @pre selected_audio_object_repp != 0
  */
-void ECA_CONTROL_OBJECTS::set_default_audio_format_to_selected_output(void) {
+void ECA_CONTROL_OBJECTS::set_default_audio_format_to_selected_output(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -1350,7 +1393,8 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format_to_selected_output(void) {
  *   is_selected() == true
  *   connected_chainsetup() != selected_chainsetup()
  */
-void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
+void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename)
+{
   // --------
   DBC_REQUIRE(filename.empty() == false);
   DBC_REQUIRE(is_selected() == true);
@@ -1361,7 +1405,7 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
   selected_chainsetup_repp->interpret_object_option("-i:" + filename);
   if (selected_chainsetup_repp->interpret_result() == true) {
     select_audio_input(kvu_get_argument_number(1, filename));
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Added audio input \"" + filename + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Added audio input \"" + filename + "\".");
   }
   else {
     set_last_error(selected_chainsetup_repp->interpret_result_verbose());
@@ -1378,7 +1422,8 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
  *   is_selected() == true
  *   connected_chainsetup() != selected_chainsetup()
  */
-void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
+void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename)
+{
   // --------
   DBC_REQUIRE(filename.empty() == false);
   DBC_REQUIRE(is_selected() == true);
@@ -1389,7 +1434,7 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
   selected_chainsetup_repp->interpret_object_option("-o:" + filename);
   if (selected_chainsetup_repp->interpret_result() == true) {
     select_audio_output(kvu_get_argument_number(1, filename));
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Added audio output \"" + filename +
+    ECA_LOG_MSG(ECA_LOGGER::info, "Added audio output \"" + filename +
 		"\".");
   } else {
     set_last_error(selected_chainsetup_repp->interpret_result_verbose());
@@ -1404,14 +1449,15 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
  *  is_selected() == true
  *  connected_chainsetup() != selected_chainsetup()
  */
-void ECA_CONTROL_OBJECTS::add_default_output(void) {
+void ECA_CONTROL_OBJECTS::add_default_output(void)
+{
   // --------
   DBC_REQUIRE(selected_chains().size() > 0);
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
   add_audio_output(ECA_OBJECT_FACTORY::probe_default_output_device());
-  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Added default output to selected chains.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Added default output to selected chains.");
 }
 
 /**
@@ -1420,11 +1466,12 @@ void ECA_CONTROL_OBJECTS::add_default_output(void) {
  * require:
  *  is_selected() == true
  */
-std::vector<string> ECA_CONTROL_OBJECTS::audio_input_names(void) const {
+std::vector<string> ECA_CONTROL_OBJECTS::audio_input_names(void) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
-  return(selected_chainsetup_repp->audio_input_names());
+  return selected_chainsetup_repp->audio_input_names();
 }
 
 /**
@@ -1433,11 +1480,12 @@ std::vector<string> ECA_CONTROL_OBJECTS::audio_input_names(void) const {
  * require:
  *  is_selected() == true
  */
-std::vector<string> ECA_CONTROL_OBJECTS::audio_output_names(void) const {
+std::vector<string> ECA_CONTROL_OBJECTS::audio_output_names(void) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
-  return(selected_chainsetup_repp->audio_output_names());
+  return selected_chainsetup_repp->audio_output_names();
 }
 
 /** 
@@ -1447,7 +1495,8 @@ std::vector<string> ECA_CONTROL_OBJECTS::audio_output_names(void) const {
  * require:
  *  is_selected() == true
  */
-const AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_input(void) {
+const AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_input(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -1456,7 +1505,7 @@ const AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_input(void) {
   if (selected_chainsetup_repp->ok_audio_object(selected_audio_input_repp) != true)
     selected_audio_input_repp = 0;
 
-  return(selected_audio_input_repp);
+  return selected_audio_input_repp;
 }
 
 /** 
@@ -1466,7 +1515,8 @@ const AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_input(void) {
  * require:
  *  is_selected() == true
  */
-const AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_output(void) {
+const AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_output(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -1474,7 +1524,7 @@ const AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_output(void) {
   if (selected_chainsetup_repp->ok_audio_object(selected_audio_output_repp) != true)
     selected_audio_output_repp = 0;
 
-  return(selected_audio_output_repp);
+  return selected_audio_output_repp;
 }
 
 /**
@@ -1486,13 +1536,14 @@ const AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_output(void) {
  *
  *  @post selected_audio_input_repp = 0
  */
-void ECA_CONTROL_OBJECTS::remove_audio_input(void) { 
+void ECA_CONTROL_OBJECTS::remove_audio_input(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   DBC_REQUIRE(get_audio_input() != 0);
   // --------
-  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Removing selected audio input \"" + selected_audio_input_repp->label() +
+  ECA_LOG_MSG(ECA_LOGGER::info, "Removing selected audio input \"" + selected_audio_input_repp->label() +
 	      "\" from selected chains.");
   selected_chainsetup_repp->remove_audio_input(selected_audio_input_repp->label());
   selected_audio_input_repp = 0;
@@ -1511,13 +1562,14 @@ void ECA_CONTROL_OBJECTS::remove_audio_input(void) {
  *
  *  @post selected_audio_output_repp = 0
  */
-void ECA_CONTROL_OBJECTS::remove_audio_output(void) { 
+void ECA_CONTROL_OBJECTS::remove_audio_output(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   DBC_REQUIRE(get_audio_output() != 0);
   // --------
-  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Removing selected audio output \"" + selected_audio_output_repp->label() +
+  ECA_LOG_MSG(ECA_LOGGER::info, "Removing selected audio output \"" + selected_audio_output_repp->label() +
 	      "\" from selected chains.");
   selected_chainsetup_repp->remove_audio_output(selected_audio_output_repp->label());
   selected_audio_output_repp = 0;
@@ -1534,7 +1586,8 @@ void ECA_CONTROL_OBJECTS::remove_audio_output(void) {
  * @pre connected_chainsetup() != selected_chainsetup()
  * @pre get_audio_input() != 0
  */
-void ECA_CONTROL_OBJECTS::attach_audio_input(void) {
+void ECA_CONTROL_OBJECTS::attach_audio_input(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -1542,7 +1595,7 @@ void ECA_CONTROL_OBJECTS::attach_audio_input(void) {
   // --------
   selected_chainsetup_repp->attach_input_to_selected_chains(selected_audio_input_repp);
 
-  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Attached audio input \"" + selected_audio_input_repp->label() +
+  ECA_LOG_MSG(ECA_LOGGER::info, "Attached audio input \"" + selected_audio_input_repp->label() +
 	      "\" to selected chains.");
 }
 
@@ -1553,7 +1606,8 @@ void ECA_CONTROL_OBJECTS::attach_audio_input(void) {
  *  @pre connected_chainsetup() != selected_chainsetup()
  *  @pre get_audio_output() != 0
  */
-void ECA_CONTROL_OBJECTS::attach_audio_output(void) {
+void ECA_CONTROL_OBJECTS::attach_audio_output(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -1561,7 +1615,7 @@ void ECA_CONTROL_OBJECTS::attach_audio_output(void) {
   // --------
   selected_chainsetup_repp->attach_output_to_selected_chains(selected_audio_output_repp);
 
-  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Attached audio output \"" + selected_audio_output_repp->label() +
+  ECA_LOG_MSG(ECA_LOGGER::info, "Attached audio output \"" + selected_audio_output_repp->label() +
 	      "\" to selected chains.");
 }
 
@@ -1572,7 +1626,8 @@ void ECA_CONTROL_OBJECTS::attach_audio_output(void) {
  *  @pre connected_chainsetup() != selected_chainsetup()
  *  @pre selected_audio_object_repp != 0
  */
-void ECA_CONTROL_OBJECTS::rewind_audio_object(double seconds) {
+void ECA_CONTROL_OBJECTS::rewind_audio_object(double seconds)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -1588,7 +1643,8 @@ void ECA_CONTROL_OBJECTS::rewind_audio_object(double seconds) {
  *  @pre connected_chainsetup() != selected_chainsetup()
  *  @pre selected_audio_object_repp != 0
  */
-void ECA_CONTROL_OBJECTS::forward_audio_object(double seconds) {
+void ECA_CONTROL_OBJECTS::forward_audio_object(double seconds)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -1605,7 +1661,8 @@ void ECA_CONTROL_OBJECTS::forward_audio_object(double seconds) {
  *  connected_chainsetup() != selected_chainsetup()
  *  selected_audio_object_repp != 0
  */
-void ECA_CONTROL_OBJECTS::set_audio_object_position(double seconds) {
+void ECA_CONTROL_OBJECTS::set_audio_object_position(double seconds)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -1621,7 +1678,8 @@ void ECA_CONTROL_OBJECTS::set_audio_object_position(double seconds) {
  * @pre connected_chainsetup() != selected_chainsetup()
  * @pre selected_audio_object_repp != 0
  */
-void ECA_CONTROL_OBJECTS::set_audio_object_position_samples(SAMPLE_SPECS::sample_pos_t samples) {
+void ECA_CONTROL_OBJECTS::set_audio_object_position_samples(SAMPLE_SPECS::sample_pos_t samples)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -1650,7 +1708,7 @@ void ECA_CONTROL_OBJECTS::wave_edit_audio_object(void)
 
   int res = ::system(string(resource_value("ext-cmd-wave-editor") + " " + name).c_str());
   if (res == 127 || res == -1) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Can't edit; unable to open wave editor \"" 
+    ECA_LOG_MSG(ECA_LOGGER::info, "Can't edit; unable to open wave editor \"" 
 		+ resource_value("x-wave-editor") + "\".");
   }
 }
@@ -1672,7 +1730,7 @@ bool ECA_CONTROL_OBJECTS::cond_stop_for_editing(void)
     stop_on_condition();
   }
 
-  return(was_running);
+  return was_running;
 }
 
 /**
@@ -1697,7 +1755,8 @@ void ECA_CONTROL_OBJECTS::cond_start_after_editing(bool was_running)
  *  is_selected() == true
  *  selected_chains().size() == 1
  */
-void ECA_CONTROL_OBJECTS::add_chain_operator(const string& chainop_params) {
+void ECA_CONTROL_OBJECTS::add_chain_operator(const string& chainop_params)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() == 1);
@@ -1762,9 +1821,9 @@ const CHAIN_OPERATOR* ECA_CONTROL_OBJECTS::get_chain_operator(void) const
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size())
-    return (selected_chainsetup_repp->chains[p]->get_selected_chain_operator());
+    return  selected_chainsetup_repp->chains[p]->get_selected_chain_operator();
 
-  return(0);
+  return 0;
 }
 
 /** 
@@ -1794,7 +1853,7 @@ std::vector<string> ECA_CONTROL_OBJECTS::chain_operator_names(void) const
     }
     selected_chain->select_chain_operator(save_selected_cop);	  
   }
-  return(result);
+  return result;
 }
 
 /** 
@@ -1814,7 +1873,7 @@ int ECA_CONTROL_OBJECTS::selected_chain_operator(void) const
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size())
-    return (selected_chainsetup_repp->chains[p]->selected_chain_operator());
+    return  selected_chainsetup_repp->chains[p]->selected_chain_operator();
 
   return(0);
 }
@@ -1878,7 +1937,7 @@ void ECA_CONTROL_OBJECTS::select_chain_operator(int chainop_id)
  * Returns a list of chain operator parameter names.
  *
  * require:
- *  is_selected() == true
+ *  is_selected  == true
  *  selected_chains().size() == 1
  */
 std::vector<string> ECA_CONTROL_OBJECTS::chain_operator_parameter_names(void) const
@@ -1907,7 +1966,7 @@ std::vector<string> ECA_CONTROL_OBJECTS::chain_operator_parameter_names(void) co
       selected_chain->select_chain_operator_parameter(save_selected_copp);
     }
   }
-  return(result);
+  return result;
 }
 
 /**
@@ -1990,9 +2049,9 @@ CHAIN_OPERATOR::parameter_t ECA_CONTROL_OBJECTS::get_chain_operator_parameter(vo
   if (p < selected_chainsetup_repp->chains.size()) {
     if (selected_chainsetup_repp->chains[p]->selected_chain_operator() > 0 &&
 	selected_chainsetup_repp->chains[p]->selected_chain_operator_parameter() > 0)
-      return(selected_chainsetup_repp->chains[p]->get_parameter());
+      return selected_chainsetup_repp->chains[p]->get_parameter();
   }
-  return(0.0f);
+  return 0.0f;
 }
 
 /**
@@ -2014,9 +2073,9 @@ int ECA_CONTROL_OBJECTS::selected_chain_operator_parameter(void) const
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    return(selected_chainsetup_repp->chains[p]->selected_chain_operator_parameter());
+    return selected_chainsetup_repp->chains[p]->selected_chain_operator_parameter();
   }
-  return(0);
+  return 0;
 }
 
 /**
@@ -2127,7 +2186,7 @@ std::vector<string> ECA_CONTROL_OBJECTS::controller_names(void) const
     }
     selected_chain->select_controller(save_selected_ctrl);
   }
-  return(result);
+  return result;
 }
 
 /** 
@@ -2147,9 +2206,9 @@ const GENERIC_CONTROLLER* ECA_CONTROL_OBJECTS::get_controller(void) const
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size())
-    return (selected_chainsetup_repp->chains[p]->get_selected_controller());
+    return  selected_chainsetup_repp->chains[p]->get_selected_controller();
 
-  return(0);
+  return 0;
 }
 
 /** 
@@ -2169,7 +2228,8 @@ int ECA_CONTROL_OBJECTS::selected_controller(void) const
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size())
-    return (selected_chainsetup_repp->chains[p]->selected_controller());
+    return  selected_chainsetup_repp->chains[p]->selected_controller();
 
-  return(0);
+  return 0;
 }
+

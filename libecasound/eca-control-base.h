@@ -1,7 +1,9 @@
 #ifndef INCLUDED_ECA_CONTROL_BASE_H
 #define INCLUDED_ECA_CONTROL_BASE_H
 
+#include <list>
 #include <string>
+#include <vector>
 
 #include <pthread.h>
 
@@ -76,6 +78,7 @@ class ECA_CONTROL_BASE {
  protected:
 
   void set_last_string_list(const std::vector<std::string>& s);
+  void set_last_string(const std::list<std::string>& s);
   void set_last_string(const std::string& s);
   void set_last_float(double v);
   void set_last_integer(int v);
