@@ -56,6 +56,7 @@ void REALTIME_NULL::start(void) {
       buffer_fill.tv_sec = 0; 
       buffer_fill.tv_usec = 0;
       gettimeofday(&access_time, NULL);
+      gettimeofday(&start_time, NULL);
       is_triggered = true;
     }
   }
@@ -184,6 +185,15 @@ void REALTIME_NULL::write_samples(void* target_buffer, long int
 
 long int REALTIME_NULL::latency(void) const {
   return(buffersize());
+}
+
+long REALTIME_NULL::position_in_samples(void) const { 
+  if (is_triggered == false) return(0);
+  struct timeval now;
+  gettimeofday(&now, NULL);
+  double time = now.tv_sec * 1000000.0 + now.tv_usec -
+    start_time.tv_sec * 1000000.0 - start_time.tv_usec;
+  return(static_cast<long>(time * samples_per_second() / 1000000.0));
 }
 
 REALTIME_NULL::~REALTIME_NULL(void) { close(); }

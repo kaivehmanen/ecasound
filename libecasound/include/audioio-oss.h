@@ -29,9 +29,11 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   audio_buf_info audiobuf;          // soundcard.h
   count_info audioinfo;             // soundcard.h
   fd_set fds;
-  struct timeval tv;
+
   int fragment_size;
   long int bytes_read;
+  int oss_caps;
+  struct timeval start_time;
   
   bool is_triggered;
   bool precise_srate_mode;
@@ -47,7 +49,7 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   void stop(void);
   void start(void) throw(ECA_ERROR*);
 
-  long position_in_samples(void) const { return(0); }
+  long position_in_samples(void) const;
 
   OSSDEVICE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& form, long int buffersize, bool precise_sample_rates = false);
   ~OSSDEVICE(void);

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)    (last edited: 17012000) **
+** ecasound - user visible changes (NEWS)    (last edited: 22012000) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -19,6 +19,7 @@ Last officially released version is -*> v1.6.9r9 <*-
 		 sample formats
 	- added: support for ALSA-subdevices (-o:alsa,card,dev,subdev)
 	- added: to ia-mode - 'c-deselect', 'c-select-add'
+	- added: improved multitrack-sync
 	- changed: ALSA pcm2-devices now opened in nonblock-mode
 	- changed: ecasound can now be compiled in a separate obj-dir
 	- fixed: bugs in channel routing and output mixing

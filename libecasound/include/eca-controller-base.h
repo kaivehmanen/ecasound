@@ -175,6 +175,11 @@ class ECA_CONTROLLER_BASE : public DEFINITION_BY_CONTRACT {
   bool is_selected(void) const;
 
   /**
+   * Returns true if engine has finished processing.
+   */
+  bool is_finished(void) const;
+
+  /**
    * Is currently selected chainsetup valid?
    *
    * require:

@@ -21,9 +21,8 @@ endif
 ecasound_SOURCES = eca-text.cpp eca-text.h textdebug.cpp textdebug.h
 ecasound_debug_SOURCES = $(ecasound_SOURCES)
 
-ecasound_LDADD = \
-		 $(top_builddir)/libecasound/src/libecasound.la \
-		 $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a  \
+ecasound_LDADD = $(top_builddir)/libecasound/src/libecasound.la \
+		 $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a \
                  $(termcap_library) \
 		 -L$(top_builddir)/kvutils \
 		 -L$(top_builddir)/kvutils/.libs -lkvutils

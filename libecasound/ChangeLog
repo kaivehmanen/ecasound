@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-01-22  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-controller-base.h (is_finished): added
+	
 2000-01-15  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* samplebuffer.h (swap_bytes): removed

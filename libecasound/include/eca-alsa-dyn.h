@@ -85,5 +85,15 @@ extern ssize_t (*dl_snd_rawmidi_read)(snd_rawmidi_t *handle, void *buffer, size_
 void eca_alsa_load_dynamic_support(void) throw(ECA_ERROR*);
 void eca_alsa_unload_dynamic_support(void);
 
+/**
+ * Helper class for dynamically loading ALSA library funtions
+ */
+class DYNAMIC_ALSA_SUPPORT {
+
+ public:
+
+  ~DYNAMIC_ALSA_SUPPORT(void) { eca_alsa_unload_dynamic_support(); }
+};
+
 #endif // COMPILE_ALSA
 #endif

@@ -18,7 +18,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   // --
   // Get length
   // --
-  virtual long length_in_samples(void) const { return(length_in_samples_rep); }
+  virtual long length_in_samples(void) const;
   int length_in_seconds(void) const;
   double length_in_seconds_exact(void) const;
 

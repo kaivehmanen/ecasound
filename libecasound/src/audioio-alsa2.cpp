@@ -223,6 +223,7 @@ void ALSA_PCM2_DEVICE::write_samples(void* target_buffer, long int samples) {
 }
 
 long ALSA_PCM2_DEVICE::position_in_samples(void) const {
+  if (is_triggered == false) return(0);
   snd_pcm_channel_status_t status;
   memset(&status, 0, sizeof(status));
   status.channel = pcm_channel;

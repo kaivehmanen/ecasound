@@ -21,7 +21,7 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
 
   long int latency(void) const;
 
-  long position_in_samples(void) const { return(0); }
+  long position_in_samples(void) const;
 
   REALTIME_NULL(const string& name = "realtime null",
 		SIMODE mode = si_read,
@@ -33,6 +33,7 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
  private:
 
   bool is_triggered;
+  struct timeval start_time;
   struct timeval access_time;
   struct timeval buffer_delay;
   struct timeval buffer_fill;

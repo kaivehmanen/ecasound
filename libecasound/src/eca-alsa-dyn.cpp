@@ -30,9 +30,10 @@ void eca_alsa_load_dl_snd_pcm(void);
 void eca_alsa_load_dl_snd_pcm_loopback(void);
 void eca_alsa_load_dl_snd_rawmidi(void);
 
-static void *eca_alsa_dynlib_handle;
+static void *eca_alsa_dynlib_handle = 0;
 static int eca_alsa_client_count = 0;
 static bool eca_alsa_dynlib_initialized = false;
+static DYNAMIC_ALSA_SUPPORT eca_alsa_dynlib_class_handle;
 
 // ---------------------------------------------------------------------
 
@@ -142,7 +143,10 @@ void eca_alsa_unload_dynamic_support(void) {
   
   --eca_alsa_client_count;
 
-  if (eca_alsa_client_count == 0) {
+  if (eca_alsa_client_count < 0 && 
+      eca_alsa_dynlib_handle != 0 &&
+      eca_alsa_dynlib_initialized == true) {
+    // cerr << "(audioio-alsa) Unloading libasound shared library.\n";
     dlclose(eca_alsa_dynlib_handle);
     eca_alsa_dynlib_initialized = false;
   }

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-oss.cpp: OSS (/dev/dsp) input/output.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,12 +52,6 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
     if ((audio_fd = ::open(label().c_str(), O_RDONLY, 0)) == -1) {
       throw(new ECA_ERROR("AUDIOIO-OSS", "unable to open OSS-device to O_RDONLY"));
     }
-
-#ifndef DISABLE_OSS_TRIGGER
-    int enable_bits = ~PCM_ENABLE_INPUT; // This disables recording
-    if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
-      throw(new ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
-#endif    
   }
   else if (io_mode() == si_write) {
     if ((audio_fd = ::open(label().c_str(), O_WRONLY, 0)) == -1) {
@@ -65,16 +59,38 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
       perror("(eca-oss)");
       throw(new ECA_ERROR("AUDIOIO-OSS", "unable to open OSS-device to O_WRONLY, " + label() + "."));
     }
-#ifndef DISABLE_OSS_TRIGGER
-    int enable_bits = ~PCM_ENABLE_OUTPUT; // This disables playback
-    if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
-      throw(new ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
-#endif
   }
   else {
       throw(new ECA_ERROR("AUDIOIO-OSS", "Simultanious intput/output not supported."));
   }
-  
+
+  // -------------------------------------------------------------------
+  // Check capabilities
+
+  if (ioctl(audio_fd, SNDCTL_DSP_GETCAPS, &oss_caps) == -1)
+    throw(new ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_GETCAPS"));
+
+  // -------------------------------------------------------------------
+  // Set triggering 
+
+#ifndef DISABLE_OSS_TRIGGER
+  if (oss_caps & DSP_CAP_TRIGGER == DSP_CAP_TRIGGER) {
+    if (io_mode() == si_read) {
+      int enable_bits = ~PCM_ENABLE_INPUT; // This disables recording
+      if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
+	throw(new ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
+    }      
+    else if (io_mode() == si_write) {
+      int enable_bits = ~PCM_ENABLE_OUTPUT; // This disables playback
+      if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
+	throw(new ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
+    }
+  }
+  else {
+    ecadebug->msg("(audioio-oss) Warning: OSS-device doesn't support SNDCTL_DSP_SETTRIGGER!");
+  }
+#endif
+
   // -------------------------------------------------------------------
   // Set fragment size.
 
@@ -183,25 +199,40 @@ void OSSDEVICE::close(void) throw(ECA_ERROR*) {
   }
 }
 
-//  void OSSDEVICE::rt_ready(void) {
-//    if (is_open() == false) {
-//      open_device();
-//    }    
-//    ecadebug->msg(1, "(audioio-oss) Audio device \"" + label() + "\" ready.");
-//  }
-
 void OSSDEVICE::start(void) throw(ECA_ERROR*) {
   if (is_triggered == false) {
     ecadebug->msg(1,"(audioio-oss) Audio device \"" + label() + "\" started.");
-#ifndef DISABLE_OSS_TRIGGER
-    int enable_bits;
-    if (io_mode() == si_read) enable_bits = PCM_ENABLE_INPUT;
-    else if (io_mode() == si_write) enable_bits = PCM_ENABLE_OUTPUT;
-    if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
+    if (oss_caps & DSP_CAP_TRIGGER == DSP_CAP_TRIGGER) {
+      int enable_bits;
+      if (io_mode() == si_read) enable_bits = PCM_ENABLE_INPUT;
+      else if (io_mode() == si_write) enable_bits = PCM_ENABLE_OUTPUT;
+      if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
         throw(new ECA_ERROR("AUDIOIO-OSS", "general OSS-error SNDCTL_DSP_SETTRIGGER"));
-#endif    
+    }   
+    gettimeofday(&start_time, NULL);
     is_triggered = true;
   }
+}
+
+long OSSDEVICE::position_in_samples(void) const { 
+  if (is_triggered == false) return(0);
+  if (oss_caps & DSP_CAP_REALTIME == DSP_CAP_REALTIME) {
+    count_info info;
+    info.bytes = 0;
+    if (io_mode() == si_read) {
+      ioctl(audio_fd, SNDCTL_DSP_GETIPTR, &info);
+    }
+    else {
+      ioctl(audio_fd, SNDCTL_DSP_GETOPTR, &info);
+    }
+    cerr << "info: " << info.bytes << "\n";
+    return(info.bytes / frame_size());
+  }
+  struct timeval now;
+  gettimeofday(&now, NULL);
+  double time = now.tv_sec * 1000000.0 + now.tv_usec -
+                start_time.tv_sec * 1000000.0 - start_time.tv_usec;
+  return(static_cast<long>(time * samples_per_second() / 1000000.0));
 }
 
 long int OSSDEVICE::read_samples(void* target_buffer, 
@@ -216,6 +247,8 @@ void OSSDEVICE::write_samples(void* target_buffer, long int samples) {
 OSSDEVICE::~OSSDEVICE(void) { close(); }
 
 #endif // COMPILE_OSS
+
+
 
 
 

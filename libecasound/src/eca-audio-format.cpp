@@ -21,10 +21,10 @@
 #include "eca-audio-format.h"
 #include "eca-error.h"
 
-static const ECA_AUDIO_FORMAT default_ecasound_audio_format (2, 
-							     44100, 
-							     ECA_AUDIO_FORMAT::sfmt_s16_le,
-							     false);
+const ECA_AUDIO_FORMAT default_ecasound_audio_format (2, 
+						      44100, 
+						      ECA_AUDIO_FORMAT::sfmt_s16_le,
+						      false);
 ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT (int ch, 
 				    long int srate, 
 				    SAMPLE_FORMAT format, 

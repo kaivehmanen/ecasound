@@ -52,7 +52,7 @@ ALSA_PCM_DEVICE::ALSA_PCM_DEVICE (int card,
   buffersize(bsize, samples_per_second());
 }
 
-void ALSA_PCM_DEVICE::open(void) {
+void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   if (is_open() == true) return;
   int err;
   if (io_mode() == si_read) {
@@ -166,12 +166,14 @@ void ALSA_PCM_DEVICE::open(void) {
   pf.channels = channels();
 
   if (io_mode() == si_read) {
+    dl_snd_pcm_capture_time(audio_fd, 1);
     err = dl_snd_pcm_capture_format(audio_fd, &pf);
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA", "Error when setting up record parameters: " + string(dl_snd_strerror(err))));
     }
   }
   else {
+    dl_snd_pcm_playback_time(audio_fd, 1);
     err = dl_snd_pcm_playback_format(audio_fd, &pf);
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA", "Error when setting up playback parameters: " + string(dl_snd_strerror(err))));
@@ -242,10 +244,12 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
 }
 
 long ALSA_PCM_DEVICE::position_in_samples(void) const {
+  if (is_triggered == false) return(0);
   if (io_mode() != si_read) {
     snd_pcm_playback_status_t pb_status;
     dl_snd_pcm_playback_status(audio_fd, &pb_status);
-    return(pb_status.scount / frame_size());    
+    double time = pb_status.stime.tv_sec * 1000000.0 + pb_status.stime.tv_usec;
+    return(static_cast<long>(time * samples_per_second() / 1000000.0));
   }
 #ifdef ALSALIB_031
   snd_pcm_record_status_t ca_status;
@@ -253,10 +257,10 @@ long ALSA_PCM_DEVICE::position_in_samples(void) const {
   snd_pcm_capture_status_t ca_status;
 #endif
   dl_snd_pcm_capture_status(audio_fd, &ca_status);
-  return(ca_status.scount / frame_size());
+  double time = ca_status.stime.tv_sec * 1000000.0 + ca_status.stime.tv_usec;
+  return(static_cast<long>(time * samples_per_second() / 1000000.0));
+    //  return(ca_status.scount / frame_size());
 }
-
-
 
 ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) { 
   close(); 

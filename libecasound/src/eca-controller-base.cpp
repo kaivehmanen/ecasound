@@ -153,15 +153,9 @@ bool ECA_CONTROLLER_BASE::is_connected(void) const {
   return(session_rep->connected_chainsetup->is_valid());
 }
 
-bool ECA_CONTROLLER_BASE::is_selected(void) const {
-  if (selected_chainsetup_rep == 0) return(false);
-  return(true);
-}
-
-bool ECA_CONTROLLER_BASE::is_running(void) const {
-  if (session_rep->status() == ep_status_running) return(true);
-  else return(false);
-}
+bool ECA_CONTROLLER_BASE::is_selected(void) const { return(selected_chainsetup_rep != 0); } 
+bool ECA_CONTROLLER_BASE::is_running(void) const { return(session_rep->status() == ep_status_running); } 
+bool ECA_CONTROLLER_BASE::is_finished(void) const { return(session_rep->status() == ep_status_finished); } 
 
 long ECA_CONTROLLER_BASE::length_in_samples(void) const { 
   if (is_connected() == true)

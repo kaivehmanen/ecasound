@@ -55,15 +55,18 @@ private:
 
   ECA_SESSION* eparams;
   pthread_t chain_thread;
+  struct timespec sleepcount;
 
-  bool finished_result;
   bool rt_infiles, rt_outfiles;
   bool nonrt_infiles;
   bool nonrt_outfiles;
 
   bool was_running;
   bool end_request;
+  bool continue_request;
   bool trigger_outputs_request;
+  bool output_finished;
+  bool input_not_finished;
 
   size_t active_chain_index;
   size_t active_chainop_index;
@@ -81,6 +84,9 @@ private:
 
   SAMPLE_BUFFER mixslot;
   long int buffersize_rep;
+
+  int input_sync_index;
+  int output_sync_index;
 
   vector<int> input_chain_count;
   vector<int> output_chain_count;
@@ -134,6 +140,8 @@ private:
    * acts accordingly.
    */
   void interpret_queue(void);
+
+  void interactive_loop(void);
 
   /**
    * Performs one processing loop skipping all realtime inputs

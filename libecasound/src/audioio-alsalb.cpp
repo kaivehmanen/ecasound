@@ -60,7 +60,9 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
       if ((err = dl_snd_pcm_loopback_open(&audio_fd, 
 					  card_number, 
 					  device_number,
+#ifdef ALSALIB_050
 					  0, // subdev
+#endif
 					  SND_PCM_LB_OPEN_PLAYBACK)) < 0) {
 	throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(dl_snd_strerror(err))));
       }
@@ -69,7 +71,9 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
       if ((err = dl_snd_pcm_loopback_open(&audio_fd, 
 					  card_number, 
 					  device_number,
+#ifdef ALSALIB_050
 					  0, // subdev
+#endif
 					  SND_PCM_LB_OPEN_CAPTURE)) < 0) {
 	throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(dl_snd_strerror(err))));
       }
@@ -134,7 +138,7 @@ void ALSA_LOOPBACK_DEVICE::close(void) {
 
 long int ALSA_LOOPBACK_DEVICE::read_samples(void* target_buffer, 
 				 long int samples) {
-#ifdef ALSALIB_031
+#ifdef ALSALIB_032
   return(dl_snd_pcm_loopback_read(audio_fd, target_buffer, frame_size() * samples) / frame_size());
 #else
   // not implemented
