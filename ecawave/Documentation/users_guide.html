@@ -1,0 +1,155 @@
+
+
+
+
+
+<insert file=ew-makrot.txt>
+<insert name=ecawave_headeronly>
+<p>
+<center><h2>ecawave user's guide</h2></center>
+</p>
+
+
+
+
+<html><head><link rev="made" href="mailto:kaiv@wakkanet.fi">
+</head>
+<body>
+
+<hr>
+
+<h2>Kai Vehmanen</h2>
+<h2>27012000</h2>
+
+<h1>Table of Contents </h1><p></p>
+<dl><p>
+<dt><h2><a href="users_guide.html#l1">1: What is ecawave?</a></h2>
+<dt><h2><a href="users_guide.html#l2">2: Ecawave interface</a></h2>
+<dl><p>
+<dt><h3><a href="users_guide.html#l3">2.1: Session management</a></h3>
+<dl><p>
+<dt><a href="users_guide.html#l4">2.1.1: New session &lt;alt-n&gt;</a>
+<dt><a href="users_guide.html#l5">2.1.2: New file &lt;alt-f&gt;</a>
+<dt><a href="users_guide.html#l6">2.1.3: Open &lt;alt-o&gt;</a>
+<dt><a href="users_guide.html#l7">2.1.4: Close &lt;alt-c&gt;</a>
+<dt><a href="users_guide.html#l8">2.1.5: Save &lt;alt-v&gt;</a>
+<dt><a href="users_guide.html#l9">2.1.6: Save as &lt;alt-a&gt;</a>
+<dt><a href="users_guide.html#l10">2.1.7: Quit &lt;alt-q&gt;</a>
+</dl><p>
+<dt><h3><a href="users_guide.html#l11">2.2: Processing</a></h3>
+<dl><p>
+<dt><a href="users_guide.html#l12">2.2.1: Start &lt;alt-t&gt;</a>
+<dt><a href="users_guide.html#l13">2.2.2: Stop &lt;alt-s&gt;</a>
+<dt><a href="users_guide.html#l14">2.2.3: Effect &lt;alt-e&gt;</a>
+</dl><p>
+<dt><h3><a href="users_guide.html#l15">2.3: Waveform view</a></h3>
+<dl><p>
+<dt><a href="users_guide.html#l16">2.3.1: Zoom in &lt;alt-z&gt;</a>
+<dt><a href="users_guide.html#l17">2.3.2: Zoom out &lt;alt-m&gt;</a>
+<dt><a href="users_guide.html#l18">2.3.3: Unmark &lt;alt-u&gt;</a>
+</dl><p>
+</dl><p>
+<dt><h2><a href="users_guide.html#l19">3: Configuration</a></h2>
+<dt><h2><a href="users_guide.html#l20">4: Ecawave internals</a></h2>
+ 
+<p><hr><p><br>
+<p>
+<a name="l1"></a>
+<h2>1: What is ecawave?</h2>
+Ecawave is a simple graphical sound file editor. The user-interface is
+based on Qt libraries, while almost all audio functionality is taken 
+directly from ecasound libraries. As ecawave is designed for editing 
+large audio files, all processing is done direct-to-disk. Simple 
+waveform caching is used to speed-up file operations. Ecawave supports 
+all audio file formats and effect algorithms provided by ecasound
+libraries. This includes ALSA and OSS soundcard support, wav, aiff,
+raw, mp3, snd and lots more.
+<p>
+<a name="l2"></a>
+<h2>2: Ecawave interface</h2>
+Ecawave's user-interface is designed to be intuitive to use. There
+are no menubars and no hidden functionality. I guess you could 
+call this WYSIWYCD - what you see is what you can do. You should 
+able to do most tasks using shortcut keys (ALT + key combinations). 
+<p>
+<a name="l3"></a>
+<h3>2.1: Session management</h3>
+<a name="l4"></a>
+<strong>2.1.1: New session &lt;alt-n&gt;</strong><p>
+Opens a new session window.
+<p><a name="l5"></a>
+<strong>2.1.2: New file &lt;alt-f&gt;</strong><p>
+Creates an empty file for editing. **not implemented**
+<p><a name="l6"></a>
+<strong>2.1.3: Open &lt;alt-o&gt;</strong><p>
+Opens a new file replacing currently edited file. Ecawave handles
+files in the same way as ecasound. File type/format is determined from
+file name extension. This may seem a bit clumsy, but it is simple
+and
+it works. As an added bonus, support for new file formats can be added
+seamlessly to ecasound library.
+<p>So most of the time, ecawave doesn't care about file types. As an
+exception, only RIFF wave files (.wav) and raw files (.raw) can 
+be used in <em>direct-mode</em>, in which all processing
+and
+editing is done without temporary files.
+<p>Ecawave also recognizes some formats (like for example raw audio
+files) that require additional audio format info. When you select
+these files, audio format input fields are enabled.
+<p>When opening files, you can also specify whether to use waveform cache
+and whether to do a forced cache-refresh. Cache data is stored in
+separate files - <em>filename + ".ews"</em>.
+<p><a name="l7"></a>
+<strong>2.1.4: Close &lt;alt-c&gt;</strong><p>
+Close currently edited file.
+<p><a name="l8"></a>
+<strong>2.1.5: Save &lt;alt-v&gt;</strong><p>
+Saves the currently edited file. Only needed when file has been
+modified (marked by <em>*</em> in the statusbar).
+<p><a name="l9"></a>
+<strong>2.1.6: Save as &lt;alt-a&gt;</strong><p>
+Save the currently edited file to another file.
+<p><a name="l10"></a>
+<strong>2.1.7: Quit &lt;alt-q&gt;</strong><p>
+Quit ecawave. All temporary files will be deleted.
+<p>
+<a name="l11"></a>
+<h3>2.2: Processing</h3>
+<a name="l12"></a>
+<strong>2.2.1: Start &lt;alt-t&gt;</strong><p>
+Starts processing from current position. If there is a marked area,
+processing will only affect it.
+<p><a name="l13"></a>
+<strong>2.2.2: Stop &lt;alt-s&gt;</strong><p>
+Stop processing. Current position is resetted to begin. 
+<p><a name="l14"></a>
+<strong>2.2.3: Effect &lt;alt-e&gt;</strong><p>
+Process marked area with ecasound effects. It's also possible to 
+preview effects before processing.
+<p>
+<a name="l15"></a>
+<h3>2.3: Waveform view</h3>
+<a name="l16"></a>
+<strong>2.3.1: Zoom in &lt;alt-z&gt;</strong><p>
+Zoom to marked area.
+<p><a name="l17"></a>
+<strong>2.3.2: Zoom out &lt;alt-m&gt;</strong><p>
+Zoom out so that the whole file is visible.
+<p><a name="l18"></a>
+<strong>2.3.3: Unmark &lt;alt-u&gt;</strong><p>
+Unmark currently marked area.
+<p>
+<a name="l19"></a>
+<h2>3: Configuration</h2>
+The most important configuration files are <em>~/.ecawaverc</em>
+and <em>~/.ecasouncrc</em>. See <a href="http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecasoundrc_manpage.html">ecasoundrc(5)</a> 
+manual page for more info.
+<p>
+<a name="l20"></a>
+<h2>4: Ecawave internals</h2>
+Under the hood, ecawave is just another ecasound user-interface. Based
+on what user wants to do, ecawave creates a suitable chainsetup and
+passes it to ecasound. 
+<p><insert name=ecawave_tail>
+</body>
+</html>

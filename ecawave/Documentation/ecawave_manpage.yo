@@ -1,0 +1,47 @@
+mailto(kaiv@wakkanet.fi)
+
+manpage(ecawave)
+       (1)
+       (21.01.2000)
+       ()
+       (Multimedia software)
+
+manpagename(ecawave)(audio file editor based on Qt and ecasound libraries)
+
+manpagesynopsis()
+bf(ecawave) [audio_file.ext]
+
+manpagedescription()
+
+Ecawave is a simple graphical sound file editor. The user-interface is
+based on Qt libraries, while almost all audio functionality is taken 
+directly from ecasound libraries. As ecawave is designed for editing 
+large audio files, all processing is done direct-to-disk. Simple 
+waveform caching is used to speed-up file operations. Ecawave supports 
+all audio file formats and effect algorithms provided by ecasound
+libraries. This includes ALSA and OSS soundcard support, wav, aiff,
+raw, mp3, snd and lots more.
+
+manpagesection(INTERFACE)
+
+Ecawave's user-interface is designed to be intuitive to use. There
+are no menubars and no hidden functionality. I guess you could 
+call this WYSIWYCD - what you see is what you can do. You should 
+able to do most tasks using shortcut keys (ALT + key combinations). 
+
+manpagefiles()
+
+	em(~/.ecawaverc)
+	Ecawave user preferences.
+
+	em(~/.ecasoundrc)
+	Resource file used by libecasound. If the file doesn't exist, it 
+	is created with default values. See ecasoundrc(5) for more info.
+
+manpageseealso()
+
+	ecasound (1), ecawave user's guide
+
+manpageauthor()
+
+	Kai Vehmanen, <email(kaiv@wakkanet.fi)>

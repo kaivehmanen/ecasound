@@ -1,0 +1,2 @@
+- reverb -kaatuu (yhä) mono signaalilla (korjaa libecasoundissa)
+- mahdollisimman paljon require/ensure ehtoja qefile ja qesession tasolle

@@ -1,0 +1,42 @@
+.TH "ecawave" "1" "21\&.01\&.2000" "" "Multimedia software" 
+.PP 
+.SH "NAME" 
+ecawave \- audio file editor based on Qt and ecasound libraries
+.PP 
+.SH "SYNOPSIS" 
+\fBecawave\fP [audio_file\&.ext]
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+Ecawave is a simple graphical sound file editor\&. The user-interface is
+based on Qt libraries, while almost all audio functionality is taken 
+directly from ecasound libraries\&. As ecawave is designed for editing 
+large audio files, all processing is done direct-to-disk\&. Simple 
+waveform caching is used to speed-up file operations\&. Ecawave supports 
+all audio file formats and effect algorithms provided by ecasound
+libraries\&. This includes ALSA and OSS soundcard support, wav, aiff,
+raw, mp3, snd and lots more\&.
+.PP 
+.SH "INTERFACE" 
+.PP 
+Ecawave\'s user-interface is designed to be intuitive to use\&. There
+are no menubars and no hidden functionality\&. I guess you could 
+call this WYSIWYCD - what you see is what you can do\&. You should 
+able to do most tasks using shortcut keys (ALT + key combinations)\&. 
+.PP 
+.SH "FILES" 
+.PP 
+\fI~/\&.ecawaverc\fP
+Ecawave user preferences\&.
+.PP 
+\fI~/\&.ecasoundrc\fP
+Resource file used by libecasound\&. If the file doesn\'t exist, it 
+is created with default values\&. See ecasoundrc(5) for more info\&.
+.PP 
+.SH "SEE ALSO" 
+.PP 
+ecasound (1), ecawave user\'s guide
+.PP 
+.SH "AUTHOR" 
+.PP 
+Kai Vehmanen, <kaiv@wakkanet\&.fi>

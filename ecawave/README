@@ -1,0 +1,104 @@
+=======================================================================
+*** ecawave - README                                                ***
+=======================================================================
+-----------------------------------------------------------------------
+ What is it?
+-----------------------------------------------------------------------
+
+Ecawave is a simple graphical sound file editor. The user-interface is
+based on Qt libraries, while almost all audio functionality is taken 
+directly from ecasound libraries. As ecawave is designed for editing 
+large audio files, all processing is done direct-to-disk. Simple 
+waveform caching is used to speed-up file operations. Ecawave supports 
+all audio file formats and effect algorithms provided by ecasound
+libraries. This includes ALSA and OSS soundcard support, wav, aiff,
+raw, mp3, snd and lots more.
+
+-----------------------------------------------------------------------
+ Installing 
+-----------------------------------------------------------------------
+
+First of all, you should first try to use the binary-rpm release.
+It's probably the easiest and the most straigthforward way to 
+install this software. 
+
+If you need to compile ecawave, the file 'INSTALL' contains detailed 
+instructions.
+
+-----------------------------------------------------------------------
+ Documentation 
+-----------------------------------------------------------------------
+
+Ecawave should be pretty easy and intuitive to use. There is,
+however, some additional documentation: ecawave(1) man page and 
+ecawave user's guide.
+
+-----------------------------------------------------------------------
+ Requirements
+-----------------------------------------------------------------------
+
+To run ecawave, you need...:
+
+- POSIX compliant UNIX system; I use Linux 2.2.x, glibc 2.1.x
+- POSIX threads; I use linuxthreads 0.7 (libpthread, comes with glibc)
+- ecasound libraries
+- qt 2.x runtime libraries
+- for soundcard input/output: OSS, OSS/Lite or ALSA drivers
+- for mp3 support, mpg123 (input) and lame (output) packages
+- for tracker module support, mikmod package
+- for .aiff and .au/.snd support, libaudiofile (SGI audio file) library
+
+To compile ecawave, you also need...:
+
+- ecasound development files
+- qt 2.x development environment
+- standard C++ build environment; I use gcc 2.95.2
+  (STL and exceptions need to be supported)
+- GNU make, automake and autoconf packages
+
+-----------------------------------------------------------------------
+ Web sites
+-----------------------------------------------------------------------
+
+Ecawave home site
+- http://www.wakkanet.fi/ecawave/
+
+Distribution packages
+- http://ecasound.seul.org/download/
+
+Ecasound home site
+- http://www.wakkanet.fi/ecasound/
+
+Ecasound link page (external packages needed by ecasound, etc)
+- http://www.wakkanet.fi/~kaiv/ecasound/links.html
+
+Sculpscape, music edited with ecawave
+- http://www.wakkanet.fi/sculpscape/
+ 
+-----------------------------------------------------------------------
+ Author 
+-----------------------------------------------------------------------
+
+Kai Vehmanen - mailto:kaiv@wakkanet.fi
+
+-----------------------------------------------------------------------
+ Contributors / credits / thanks to 
+-----------------------------------------------------------------------
+
+all LAD members - always a great source of inspiration
+SEUL - for hosting ftp, http and CVS sites
+WakkaNet Oy - for hosting ecawave web site
+
+-----------------------------------------------------------------------
+ Licensing/distribution policy
+-----------------------------------------------------------------------
+
+Copyright (C) 1999-2000 Kai Vehmanen
+
+Ecawave is freely distributable according to the terms of the 
+GNU General Public License (see the file 'COPYING').
+
+This program is distributed without any warranty. See the file 
+'COPYING' for details. 
+
+=======================================================================
