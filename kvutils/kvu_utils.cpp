@@ -389,7 +389,7 @@ int kvu_sleep(long int seconds, long int nanoseconds)
   ret = nanosleep(&len, NULL);
 
 #elif HAVE_USLEEP
-  ret = usleep(second * 1000000 + nanoseconds / 1000);
+  ret = usleep(seconds * 1000000 + nanoseconds / 1000);
 
 #else
   std::cerr << "(libkvutils) kvutils:: warning! neither nanosleep() or usleep() found!" << std::endl;
