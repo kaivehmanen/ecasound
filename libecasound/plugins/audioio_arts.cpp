@@ -48,10 +48,10 @@ void ARTS_INTERFACE::open(void) throw(ECA_ERROR*)
   ++ref_rep;
 
   if (io_mode() == io_read) {
-    stream_rep = ::arts_record_stream(samples_per_second(), channels(), bits(), "ecasound-input");
+    stream_rep = ::arts_record_stream(samples_per_second(), bits(), channels(), "ecasound-input");
   }
   else if (io_mode() == io_write) {
-    stream_rep = ::arts_play_stream(samples_per_second(), channels(), bits(), "ecasound-output");
+    stream_rep = ::arts_play_stream(samples_per_second(), bits(), channels(), "ecasound-output");
   }
   else {
       throw(new ECA_ERROR("AUDIOIO-ARTS", "Simultanious intput/output not supported."));

@@ -74,6 +74,7 @@ Misc:
 
 - smart mixing / dithering
 - better MIDI-support (separate MIDI input/output objects)
+- few safety checks to ecatools
 
 -----------------------------------------------------------------------
 

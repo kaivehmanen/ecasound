@@ -20,6 +20,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- changed: default precision when printing time in seconds 
 		   changed to 3 (msec precision)
 	- fixed: ALSA 0.6.x updates
+	- fixed: few bugs in aRts plugin
 16092000 (v1.8.2r14)  -** public release **-
 	- added: --enable-alsa-rawmidi configure option - this is a 
 		 temporary solution for supporting ALSA rawmidi until
