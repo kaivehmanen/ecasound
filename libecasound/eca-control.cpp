@@ -1066,8 +1066,8 @@ void ECA_CONTROL::operator_descriptions_helper(const ECA_OBJECT_MAP& arg, string
       *result += kvu_string_search_and_replace(*p, ',', '_');
       /* 2. name */
       *result += "," + kvu_string_search_and_replace(q->name(), ',', '_');
-      /* 3. name */
-      *result += "," + kvu_string_search_and_replace(q->name(), ',', '_');
+      /* 3. description */
+      *result += "," + kvu_string_search_and_replace(q->description(), ',', '_');
 
       int params = q->number_of_params();
 
