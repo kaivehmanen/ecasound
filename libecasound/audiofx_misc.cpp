@@ -191,7 +191,8 @@ EFFECT_AUDIO_STAMP::EFFECT_AUDIO_STAMP(const EFFECT_AUDIO_STAMP& arg)
 {
 }
 
-void EFFECT_AUDIO_STAMP::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_AUDIO_STAMP::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     set_id(static_cast<int>(value));
@@ -199,7 +200,8 @@ void EFFECT_AUDIO_STAMP::set_parameter(int param, CHAIN_OPERATOR::parameter_t va
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_AUDIO_STAMP::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_AUDIO_STAMP::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(static_cast<parameter_t>(id()));
@@ -223,7 +225,8 @@ void EFFECT_AUDIO_STAMP::parameter_description(int param, struct PARAM_DESCRIPTI
     }
 }
 
-void EFFECT_AUDIO_STAMP::init(SAMPLE_BUFFER *insample) { 
+void EFFECT_AUDIO_STAMP::init(SAMPLE_BUFFER *insample)
+{
   sbuf_repp = insample;
 }
 
@@ -232,7 +235,8 @@ void EFFECT_AUDIO_STAMP::release(void)
   sbuf_repp = 0;
 }
 
-void EFFECT_AUDIO_STAMP::process(void) {
+void EFFECT_AUDIO_STAMP::process(void)
+{
   store(sbuf_repp);
   // std::cerr << "Storing audio stamp with id " << id() << "." << std::endl;
 }

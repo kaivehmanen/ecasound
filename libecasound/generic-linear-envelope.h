@@ -10,8 +10,7 @@
 /**
  * Generic multi-stage linear envelope
  */
-class GENERIC_LINEAR_ENVELOPE : public CONTROLLER_SOURCE,
-				public ECA_AUDIO_POSITION
+class GENERIC_LINEAR_ENVELOPE : public CONTROLLER_SOURCE
 {
 
 public:
@@ -22,13 +21,12 @@ public:
   GENERIC_LINEAR_ENVELOPE* clone(void) const { return new GENERIC_LINEAR_ENVELOPE(*this); }
   GENERIC_LINEAR_ENVELOPE* new_expr(void) const { return new GENERIC_LINEAR_ENVELOPE(); }
   
-  virtual void init(parameter_t step);
+  virtual void init(void);
+  virtual parameter_t value(void);
   
   virtual std::string parameter_names(void) const;
   virtual void set_parameter(int param, parameter_t value);
   virtual parameter_t get_parameter(int param) const;
-  
-  virtual parameter_t value(void);
 
   virtual std::string name(void) const { return("Generic linear envelope"); }
   

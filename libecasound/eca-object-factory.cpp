@@ -371,13 +371,13 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_output(const string& argu,
  * @pre argu.size() > 0
  * @pre argu[0] == '-'
  */
-CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu) {
+CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
   // --------
 
-#ifdef HAVE_LADSPA_H
   MESSAGE_ITEM otemp;
   const CHAIN_OPERATOR* cop = 0;
   string prefix = kvu_get_argument_prefix(argu);
@@ -392,8 +392,9 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu) {
     if (cop != 0) {
       new_cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
 
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-object-factory) Creating LADSPA-plugin \"" +
-		    new_cop->name() + "\"");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		  "(eca-object-factory) Creating LADSPA-plugin \"" + new_cop->name() + "\"");
+
       otemp << "(eca-object-factory) Setting parameters: ";
       for(int n = 0; n < new_cop->number_of_params(); n++) {
 	new_cop->set_parameter(n + 1, atof(kvu_get_argument_number(n + 2, argu).c_str()));
@@ -405,7 +406,6 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu) {
     }
     return(new_cop);
   }
-#endif /* HAVE_LADSPA_H */
   return(0);
 }
 

@@ -313,7 +313,8 @@ bool ECA_CHAINSETUP::is_valid_for_connection(void) const
   return(true);
 }
 
-void ECA_CHAINSETUP::set_buffering_mode(Buffering_mode_t value) { 
+void ECA_CHAINSETUP::set_buffering_mode(Buffering_mode_t value)
+{
   if (value == ECA_CHAINSETUP::cs_bmode_none)
     buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_auto;
   else
@@ -428,7 +429,7 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void)
  */
 void ECA_CHAINSETUP::enable_active_buffering_mode(void)
 {
-  /* if requested, lock all memory */
+  /* 1. if requested, lock all memory */
   if (raised_priority() == true) {
     lock_all_memory();
   }
@@ -436,7 +437,7 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void)
     unlock_all_memory();
   }
 
-  /* if necessary, switch between different proxy and direct modes */
+  /* 2. if necessary, switch between different proxy and direct modes */
   if (double_buffering() == true) {
     if (has_realtime_objects() != true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,
@@ -468,6 +469,9 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void)
       switch_to_direct_mode();
     }
   }
+
+  /* 3. propagate buffersize value to all dependent objects */
+  /* FIXME: create a system for tracking buffesize aware objs */
 }
 
 void ECA_CHAINSETUP::switch_to_direct_mode(void)
@@ -497,13 +501,15 @@ void ECA_CHAINSETUP::switch_to_direct_mode_helper(vector<AUDIO_IO*>* objs,
   } 
 }
 
-void ECA_CHAINSETUP::switch_to_proxy_mode(void) {
+void ECA_CHAINSETUP::switch_to_proxy_mode(void)
+{
   switch_to_proxy_mode_helper(&inputs, inputs_direct_rep);
   switch_to_proxy_mode_helper(&outputs, outputs_direct_rep);
 }
 
 void ECA_CHAINSETUP::switch_to_proxy_mode_helper(vector<AUDIO_IO*>* objs, 
-						 const vector<AUDIO_IO*>& directobjs) {
+						 const vector<AUDIO_IO*>& directobjs)
+{
   // --
   DBC_CHECK(objs->size() == directobjs.size());
   // --
@@ -787,7 +793,8 @@ vector<string> ECA_CHAINSETUP::audio_input_names(void) const
   return(result);
 }
 
-vector<string> ECA_CHAINSETUP::audio_output_names(void) const {
+vector<string> ECA_CHAINSETUP::audio_output_names(void) const
+{
   vector<string> result;
   vector<AUDIO_IO*>::const_iterator p = outputs.begin();
   while(p != outputs.end()) {
@@ -796,8 +803,6 @@ vector<string> ECA_CHAINSETUP::audio_output_names(void) const {
   }
   return(result);
 }
-
-
 
 vector<string> ECA_CHAINSETUP::get_attached_chains_to_input(AUDIO_IO* aiod) const 
 { 
@@ -865,7 +870,8 @@ int ECA_CHAINSETUP::number_of_attached_chains_to_output(AUDIO_IO* aiod) const
  * In other words all data coming to a rt target
  * output comes from realtime devices.
  */
-bool ECA_CHAINSETUP::is_realtime_target_output(int output_id) const {
+bool ECA_CHAINSETUP::is_realtime_target_output(int output_id) const
+{
   bool result = true;
   bool output_found = false;
   vector<CHAIN*>::const_iterator q = chains.begin();
@@ -910,7 +916,8 @@ vector<string> ECA_CHAINSETUP::get_attached_chains_to_iodev(const string& filena
 /**
  * Returns number of realtime audio input objects.
  */
-int ECA_CHAINSETUP::number_of_chain_operators(void) const {
+int ECA_CHAINSETUP::number_of_chain_operators(void) const
+{
   int cops = 0;
   vector<CHAIN*>::const_iterator q = chains.begin();
   while(q != chains.end()) {
@@ -924,7 +931,8 @@ int ECA_CHAINSETUP::number_of_chain_operators(void) const {
  * Returns true if the connected chainsetup contains at least
  * one realtime audio input or output.
  */
-bool ECA_CHAINSETUP::has_realtime_objects(void) const {
+bool ECA_CHAINSETUP::has_realtime_objects(void) const
+{
   if (number_of_realtime_inputs() > 0 ||
       number_of_realtime_outputs() > 0) 
     return(true);
@@ -936,7 +944,8 @@ bool ECA_CHAINSETUP::has_realtime_objects(void) const {
  * Returns true if the connected chainsetup contains at least
  * one nonrealtime audio input or output.
  */
-bool ECA_CHAINSETUP::has_nonrealtime_objects(void) const {
+bool ECA_CHAINSETUP::has_nonrealtime_objects(void) const
+{
   if (static_cast<int>(inputs_direct_rep.size() + outputs_direct_rep.size()) >
       number_of_realtime_inputs() + number_of_realtime_outputs())
     return(true);
@@ -949,14 +958,16 @@ bool ECA_CHAINSETUP::has_nonrealtime_objects(void) const {
  * options and settings. Syntax is the same as used for
  * saved chainsetup files.
  */
-string ECA_CHAINSETUP::options_to_string(void) const {
+string ECA_CHAINSETUP::options_to_string(void) const
+{
   return(cparser_rep.general_options_to_string());
 }
 
 /**
  * Returns number of realtime audio input objects.
  */
-int ECA_CHAINSETUP::number_of_realtime_inputs(void) const {
+int ECA_CHAINSETUP::number_of_realtime_inputs(void) const
+{
   int res = 0;
   for(size_t n = 0; n < inputs_direct_rep.size(); n++) {
     AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(inputs_direct_rep[n]);
@@ -968,7 +979,8 @@ int ECA_CHAINSETUP::number_of_realtime_inputs(void) const {
 /**
  * Returns number of realtime audio output objects.
  */
-int ECA_CHAINSETUP::number_of_realtime_outputs(void) const {
+int ECA_CHAINSETUP::number_of_realtime_outputs(void) const
+{
   int res = 0;
   for(size_t n = 0; n < outputs_direct_rep.size(); n++) {
     AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(outputs_direct_rep[n]);
@@ -980,14 +992,16 @@ int ECA_CHAINSETUP::number_of_realtime_outputs(void) const {
 /**
  * Returns number of non-realtime audio input objects.
  */
-int ECA_CHAINSETUP::number_of_non_realtime_inputs(void) const {
+int ECA_CHAINSETUP::number_of_non_realtime_inputs(void) const
+{
   return(inputs.size() - number_of_realtime_inputs());
 }
 
 /**
  * Returns number of non-realtime audio input objects.
  */
-int ECA_CHAINSETUP::number_of_non_realtime_outputs(void) const {
+int ECA_CHAINSETUP::number_of_non_realtime_outputs(void) const
+{
   return(outputs.size() - number_of_realtime_outputs());
 }
 
@@ -996,7 +1010,8 @@ int ECA_CHAINSETUP::number_of_non_realtime_outputs(void) const {
  *
  * @return 0 if 'aobj' is not handled by any manager
  */
-AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_manager(AUDIO_IO* aio) const {
+AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_manager(AUDIO_IO* aio) const
+{
   for(vector<AUDIO_IO_MANAGER*>::const_iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
     if ((*q)->get_object_id(aio) != -1) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, 
@@ -1017,7 +1032,8 @@ AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_manager(AUDIO_IO* aio) const 
  *
  * @return 0 if 'aobj' type is not handled by any manager
  */
-AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_type_manager(AUDIO_IO* aio) const {
+AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_type_manager(AUDIO_IO* aio) const
+{
   for(vector<AUDIO_IO_MANAGER*>::const_iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
     if ((*q)->is_managed_type(aio) == true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, 
@@ -1054,7 +1070,8 @@ void ECA_CHAINSETUP::register_engine_driver(AUDIO_IO_MANAGER* amgr)
  * available for object's type, and it can create one,
  * a new manager is created.
  */
-void ECA_CHAINSETUP::register_audio_object_to_manager(AUDIO_IO* aio) {
+void ECA_CHAINSETUP::register_audio_object_to_manager(AUDIO_IO* aio)
+{
   AUDIO_IO_MANAGER* mgr = get_audio_object_type_manager(aio);
   if (mgr == 0) {
     mgr = aio->create_object_manager();
@@ -1079,7 +1096,8 @@ void ECA_CHAINSETUP::register_audio_object_to_manager(AUDIO_IO* aio) {
 /**
  * Unregisters audio object from manager.
  */
-void ECA_CHAINSETUP::unregister_audio_object_from_manager(AUDIO_IO* aio) {
+void ECA_CHAINSETUP::unregister_audio_object_from_manager(AUDIO_IO* aio)
+{
   AUDIO_IO_MANAGER* mgr = get_audio_object_manager(aio);
   if (mgr != 0) {
     int id = mgr->get_object_id(aio);
@@ -1101,7 +1119,8 @@ void ECA_CHAINSETUP::unregister_audio_object_from_manager(AUDIO_IO* aio) {
  * so this is good place to do global operations that
  * apply to both inputs and outputs.
  */
-AUDIO_IO* ECA_CHAINSETUP::add_audio_object_helper(AUDIO_IO* aio) {
+AUDIO_IO* ECA_CHAINSETUP::add_audio_object_helper(AUDIO_IO* aio)
+{
   AUDIO_IO* retobj = aio;
   
   AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(aio);
@@ -1117,7 +1136,8 @@ AUDIO_IO* ECA_CHAINSETUP::add_audio_object_helper(AUDIO_IO* aio) {
 /** 
  * Helper function used by remove_audio_input() and remove_audio_output().
  */
-void ECA_CHAINSETUP::remove_audio_object_helper(AUDIO_IO* aio) {
+void ECA_CHAINSETUP::remove_audio_object_helper(AUDIO_IO* aio)
+{
   AUDIO_IO_BUFFERED_PROXY* p = dynamic_cast<AUDIO_IO_BUFFERED_PROXY*>(aio);
   if (p != 0) {
     /* a proxied object */
@@ -1144,7 +1164,8 @@ void ECA_CHAINSETUP::remove_audio_object_helper(AUDIO_IO* aio) {
  * @pre is_enabled() != true
  * @post inputs.size() == old(inputs.size() + 1
  */
-void ECA_CHAINSETUP::add_input(AUDIO_IO* aio) {
+void ECA_CHAINSETUP::add_input(AUDIO_IO* aio)
+{
   // --------
   DBC_REQUIRE(aio != 0);
   DBC_REQUIRE(chains.size() > 0);
@@ -1186,7 +1207,8 @@ void ECA_CHAINSETUP::add_input(AUDIO_IO* aio) {
  * @pre is_enabled() != true
  * @post outputs.size() == outputs_direct_rep.size()
  */
-void ECA_CHAINSETUP::add_output(AUDIO_IO* aio, bool truncate) {
+void ECA_CHAINSETUP::add_output(AUDIO_IO* aio, bool truncate)
+{
   // --------
   DBC_REQUIRE(aio != 0);
   DBC_REQUIRE(is_enabled() != true);
@@ -1220,7 +1242,8 @@ void ECA_CHAINSETUP::add_output(AUDIO_IO* aio, bool truncate) {
  *
  * @pre is_enabled() != true
  */
-void ECA_CHAINSETUP::remove_audio_input(const string& label) { 
+void ECA_CHAINSETUP::remove_audio_input(const string& label)
+{
   // ---
   DBC_REQUIRE(is_enabled() != true);
   // ---
@@ -1254,7 +1277,8 @@ void ECA_CHAINSETUP::remove_audio_input(const string& label) {
  *
  * @pre is_enabled() != true
  */
-void ECA_CHAINSETUP::remove_audio_output(const string& label) { 
+void ECA_CHAINSETUP::remove_audio_output(const string& label)
+{
   // --------
   DBC_REQUIRE(is_enabled() != true);
   // --------
@@ -1288,7 +1312,8 @@ void ECA_CHAINSETUP::remove_audio_output(const string& label) {
  *
  * @pre aio != 0
  */
-void ECA_CHAINSETUP::audio_object_info(const AUDIO_IO* aio) {
+void ECA_CHAINSETUP::audio_object_info(const AUDIO_IO* aio)
+{
   // --------
   DBC_REQUIRE(aio != 0);
   // --------
@@ -1312,7 +1337,8 @@ void ECA_CHAINSETUP::audio_object_info(const AUDIO_IO* aio) {
  * @pre is_enabled() != true
  * @post midi_devices.size() > 0
  */
-void ECA_CHAINSETUP::add_midi_device(MIDI_IO* mididev) {
+void ECA_CHAINSETUP::add_midi_device(MIDI_IO* mididev)
+{
   // --------
   DBC_REQUIRE(mididev != 0);
   DBC_REQUIRE(is_enabled() != true);
@@ -1346,8 +1372,8 @@ void ECA_CHAINSETUP::remove_midi_device(const string& mdev_name)
   }
 }
 
-
-const CHAIN* ECA_CHAINSETUP::get_chain_with_name(const string& name) const {
+const CHAIN* ECA_CHAINSETUP::get_chain_with_name(const string& name) const
+{
   vector<CHAIN*>::const_iterator p = chains.begin();
   while(p != chains.end()) {
     if ((*p)->name() == name) return(*p);
@@ -1433,7 +1459,8 @@ void ECA_CHAINSETUP::attach_output_to_selected_chains(const AUDIO_IO* obj)
  * Returns true if 'aobj' is a pointer to some input
  * or output object.
  */
-bool ECA_CHAINSETUP::ok_audio_object(const AUDIO_IO* aobj) const {
+bool ECA_CHAINSETUP::ok_audio_object(const AUDIO_IO* aobj) const
+{
   if (ok_audio_object_helper(aobj, inputs) == true ||
       ok_audio_object_helper(aobj, outputs) == true ) return(true);
 
@@ -1442,7 +1469,8 @@ bool ECA_CHAINSETUP::ok_audio_object(const AUDIO_IO* aobj) const {
 }
 
 bool ECA_CHAINSETUP::ok_audio_object_helper(const AUDIO_IO* aobj,
-					    const vector<AUDIO_IO*>& aobjs) {
+					    const vector<AUDIO_IO*>& aobjs)
+{
   for(size_t n = 0; n < aobjs.size(); n++) {
     if (aobjs[n] == aobj) return(true);
   }
@@ -1678,7 +1706,8 @@ void ECA_CHAINSETUP::seek_position(void)
  * @post (option succesfully interpreted && interpret_result() ==  true) ||
  *       (unknown or invalid option && interpret_result() != true)
  */
-void ECA_CHAINSETUP::interpret_option (const string& arg) {
+void ECA_CHAINSETUP::interpret_option (const string& arg)
+{
   // --------
   DBC_REQUIRE(is_enabled() != true);
   // --------
@@ -1696,7 +1725,8 @@ void ECA_CHAINSETUP::interpret_option (const string& arg) {
  * @post (option succesfully interpreted && interpretation_result() ==  true) ||
  *       (unknown or invalid option && interpretation_result() == false)
  */
-void ECA_CHAINSETUP::interpret_global_option (const string& arg) {
+void ECA_CHAINSETUP::interpret_global_option (const string& arg)
+{
   // --------
   DBC_REQUIRE(is_enabled() != true);
   // --------
@@ -1715,7 +1745,8 @@ void ECA_CHAINSETUP::interpret_global_option (const string& arg) {
  * @post (option succesfully interpreted && interpretation_result() ==  true) ||
  *       (unknown or invalid option && interpretation_result() == false)
  */
-void ECA_CHAINSETUP::interpret_object_option (const string& arg) {
+void ECA_CHAINSETUP::interpret_object_option (const string& arg)
+{
   // --------
   // FIXME: this requirement is broken by eca-control.h (for 
   //        adding effects on-the-fly, just stopping the engine)
@@ -1730,7 +1761,8 @@ void ECA_CHAINSETUP::interpret_object_option (const string& arg) {
  *
  * @pre is_enabled() != true
  */
-void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
+void ECA_CHAINSETUP::interpret_options(vector<string>& opts)
+{
   // --------
   DBC_REQUIRE(is_enabled() != true);
   // --------
@@ -1738,7 +1770,8 @@ void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
   cparser_rep.interpret_options(opts);
 }
 
-void ECA_CHAINSETUP::set_buffersize(long int value) { 
+void ECA_CHAINSETUP::set_buffersize(long int value)
+{
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) overriding buffersize.");
   impl_repp->bmode_override_rep.set_buffersize(value); 
 }
@@ -1748,41 +1781,48 @@ void ECA_CHAINSETUP::toggle_raised_priority(bool value) {
   impl_repp->bmode_override_rep.toggle_raised_priority(value); 
 }
 
-void ECA_CHAINSETUP::set_sched_priority(int value) { 
+void ECA_CHAINSETUP::set_sched_priority(int value)
+{
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) sched_priority.");
   impl_repp->bmode_override_rep.set_sched_priority(value); 
 }
 
-void ECA_CHAINSETUP::toggle_double_buffering(bool value) { 
+void ECA_CHAINSETUP::toggle_double_buffering(bool value)
+{
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) overriding doublebuffering.");
   impl_repp->bmode_override_rep.toggle_double_buffering(value); 
 }
 
-void ECA_CHAINSETUP::set_double_buffer_size(long int v) { 
+void ECA_CHAINSETUP::set_double_buffer_size(long int v)
+{
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) overriding db-size.");
   impl_repp->bmode_override_rep.set_double_buffer_size(v); 
 }
 
-void ECA_CHAINSETUP::toggle_max_buffers(bool v) { 
+void ECA_CHAINSETUP::toggle_max_buffers(bool v)
+{
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) overriding max_buffers.");
   impl_repp->bmode_override_rep.toggle_max_buffers(v); 
 }
 
-long int ECA_CHAINSETUP::buffersize(void) const { 
+long int ECA_CHAINSETUP::buffersize(void) const
+{
   if (impl_repp->bmode_override_rep.is_set_buffersize() == true)
     return(impl_repp->bmode_override_rep.buffersize());
   
   return(impl_repp->bmode_active_rep.buffersize()); 
 }
 
-bool ECA_CHAINSETUP::raised_priority(void) const { 
+bool ECA_CHAINSETUP::raised_priority(void) const
+{
   if (impl_repp->bmode_override_rep.is_set_raised_priority() == true)
     return(impl_repp->bmode_override_rep.raised_priority());
 
   return(impl_repp->bmode_active_rep.raised_priority()); 
 }
 
-int ECA_CHAINSETUP::get_sched_priority(void) const { 
+int ECA_CHAINSETUP::get_sched_priority(void) const
+{
   if (impl_repp->bmode_override_rep.is_set_sched_priority() == true)
     return(impl_repp->bmode_override_rep.get_sched_priority());
 
@@ -1855,8 +1895,6 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc)
 
   DBC_CHECK(buffersize() != 0);
   DBC_CHECK(samples_per_second() != 0);
-
-  csrc->init((double)buffersize() / samples_per_second());
 
   vector<string> schains = selected_chains();
   for(vector<string>::const_iterator a = schains.begin(); a != schains.end(); a++) {

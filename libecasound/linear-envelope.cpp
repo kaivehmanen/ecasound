@@ -25,7 +25,6 @@
 #include "eca-logger.h"
 
 LINEAR_ENVELOPE::LINEAR_ENVELOPE(void)
-  : FINITE_ENVELOPE(0)
 {
 } 
 
@@ -35,17 +34,15 @@ LINEAR_ENVELOPE::~LINEAR_ENVELOPE(void)
 
 CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::value(void)
 {
-  change_position_in_seconds(step_length());
+  // change_position_in_seconds(step_length());
   if (position_in_seconds_exact() <= length_in_seconds_exact()) {
     curval = (position_in_seconds_exact() / length_in_seconds_exact());
   }
   return(curval);
 }
 
-void LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_t step)
+void LINEAR_ENVELOPE::init(void)
 {
-  step_length(step);
-
   MESSAGE_ITEM otemp;
   otemp << "(linear-envelope) Fade-in enveloped initialized; length ";
   otemp.setprecision(3);

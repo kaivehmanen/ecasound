@@ -324,13 +324,7 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller)
   DBC_REQUIRE(selected_dynobj_repp != 0);
   // --------
 
-  CONTROLLER_SOURCE* src = gcontroller->source_pointer();
-  if (src != 0) {
-    ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(src);
-    if (srateobj != 0) {
-      srateobj->set_samples_per_second(samples_per_second());
-    }
-  }
+  gcontroller->set_samples_per_second(samples_per_second());
   gcontroller->assign_target(selected_dynobj_repp);
   gcontrollers_rep.push_back(gcontroller);
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chain) " + gcontroller->status());
@@ -611,11 +605,11 @@ void CHAIN::controller_update(void)
   for(size_t n = 0; n < gcontrollers_rep.size(); n++) {
     DEBUG_CTRL_STATEMENT(GENERIC_CONTROLLER* ptr = gcontrollers_rep[n]);
 
-    gcontrollers_rep[n]->process();
+    gcontrollers_rep[n]->seek_position_in_samples_advance(audioslot_repp->length_in_samples());
+    gcontrollers_rep[n]->value();
 
     DEBUG_CTRL_STATEMENT(std::cerr << "trace: " << ptr->name());
-    DEBUG_CTRL_STATEMENT(std::cerr << "; value " << ptr->source_pointer()->value());
-    DEBUG_CTRL_STATEMENT(std::cerr << ", step " << ptr->source_pointer()->step_length() << "." << std::endl);
+    DEBUG_CTRL_STATEMENT(std::cerr << "; value " << ptr->source_pointer()->value() << "." << std::endl);
   }
 }
 
@@ -762,18 +756,14 @@ void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
   }
 
   for(size_t p = 0; p != gcontrollers_rep.size(); p++) {
-    CONTROLLER_SOURCE* src = gcontrollers_rep[p]->source_pointer();
-    ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(src);
-    if (srateobj != 0) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		    "(eca-chain) sample rate change, chain '" +
-		    name() + "' object '" +
-		    src->name() + "' rate " +
-		    kvu_numtostr(v) + ".");
-      srateobj->set_samples_per_second(v);
-    }
+    ECA_LOG_MSG(ECA_LOGGER::user_objects,
+		"(eca-chain) sample rate change, chain '" +
+		name() + "' object '" +
+		gcontrollers_rep[p]->name() + "' rate " +
+		kvu_numtostr(v) + ".");
+    gcontrollers_rep[p]->set_samples_per_second(v);
   }
-    
+      
   ECA_SAMPLERATE_AWARE::set_samples_per_second(v);
 }
 

@@ -18,17 +18,14 @@ class MIDI_CONTROLLER : public CONTROLLER_SOURCE,
 
  public:
 
-  /**
-   * Initialize MIDI-controller (child-thread is spawned)
-   */
-  void init(parameter_t phasestep);
+  virtual void init(void);
+  virtual parameter_t value(void);
 
   std::string parameter_names(void) const { return("controller,channel"); }
   void set_parameter(int param, parameter_t value);
   parameter_t get_parameter(int param) const;
 
   std::string name(void) const {  return("MIDI-Controller"); }
-  parameter_t value(void);
  
   MIDI_CONTROLLER* clone(void) const { return new MIDI_CONTROLLER(*this); }
   MIDI_CONTROLLER* new_expr(void) const { return new MIDI_CONTROLLER(); }

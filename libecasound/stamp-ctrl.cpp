@@ -21,9 +21,12 @@
 #include "samplebuffer_functions.h"
 #include "stamp-ctrl.h"
 
-VOLUME_ANALYZE_CONTROLLER::VOLUME_ANALYZE_CONTROLLER(void) { }
+VOLUME_ANALYZE_CONTROLLER::VOLUME_ANALYZE_CONTROLLER(void)
+{
+}
 
-CONTROLLER_SOURCE::parameter_t VOLUME_ANALYZE_CONTROLLER::value(void) {
+CONTROLLER_SOURCE::parameter_t VOLUME_ANALYZE_CONTROLLER::value(void)
+{
   fetch_stamp(&sbuf_rep);
   parameter_t v = 0.0f;
   if (rms_mode_rep != 0) 
@@ -31,16 +34,16 @@ CONTROLLER_SOURCE::parameter_t VOLUME_ANALYZE_CONTROLLER::value(void) {
   else
     v = SAMPLE_BUFFER_FUNCTIONS::average_amplitude(sbuf_rep);
   if (!(v > 0.0f)) v = 0.0f;
-//    cerr << "(volume-analyze-ctrl) Fetches a sbuf with value " << v  << endl;
+  // cerr << "(volume-analyze-ctrl) Fetches a sbuf with value " << v  << endl;
   return(v);
 }
 
-void VOLUME_ANALYZE_CONTROLLER::init(CONTROLLER_SOURCE::parameter_t step) {
-  step_length(step);
-//    cerr << "(volume-analyze-ctrl) Initialized.";
+void VOLUME_ANALYZE_CONTROLLER::init(void)
+{
 }
 
-void VOLUME_ANALYZE_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
+void VOLUME_ANALYZE_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value)
+{
   switch (param) {
   case 1: 
     set_id(static_cast<int>(value));
@@ -53,7 +56,8 @@ void VOLUME_ANALYZE_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::para
   }
 }
 
-CONTROLLER_SOURCE::parameter_t VOLUME_ANALYZE_CONTROLLER::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_t VOLUME_ANALYZE_CONTROLLER::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(static_cast<parameter_t>(id()));

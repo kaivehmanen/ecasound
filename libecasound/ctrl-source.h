@@ -1,12 +1,15 @@
 #ifndef INCLUDE_CTRL_SOURCE_H
 #define INCLUDE_CTRL_SOURCE_H
 
+#include "eca-audio-position.h"
 #include "eca-operator.h"
 
 /**
- * Base class for all controller sources
+ * Interface class for implementing control data
+ * source objects. 
  */
-class CONTROLLER_SOURCE : public OPERATOR {
+class CONTROLLER_SOURCE : public OPERATOR,
+			  public ECA_AUDIO_POSITION {
 
  public:
 
@@ -15,31 +18,15 @@ class CONTROLLER_SOURCE : public OPERATOR {
   /**
    * Initialize controller source
    */
-  virtual void init(parameter_t step) { step_length(step); }
+  virtual void init(void) = 0;
 
   /**
-   * Return current value and advance by 'phase_step' seconds.
-   * Standard value range is [0,1].
+   * Returns the current value. Standard value range is [0,1].
    */
   virtual parameter_t value(void) = 0; 
 
-  /**
-   * Set step length. Internal clock is advanced by 'step_length'
-   * seconds everytime value() is called.
-   */
-  void step_length(parameter_t v) { step_rep = v; }
-
-  /**
-   * Current phase step
-   */
-  parameter_t step_length(void) const { return(step_rep); }
-
   virtual CONTROLLER_SOURCE* clone(void) const = 0;
   virtual CONTROLLER_SOURCE* new_expr(void) const = 0;
-
- private:
-
-  parameter_t step_rep;
 };
 
 #endif

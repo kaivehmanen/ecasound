@@ -108,7 +108,6 @@ ecasound_controller_include = \
 			osc-gen.h \
 			osc-gen-file.h \
 			osc-sine.h \
-			finite-envelope.h \
 			linear-envelope.h \
 			two-stage-linear-envelope.h \
 			stamp-ctrl.h \

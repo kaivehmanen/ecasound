@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // generic_controller.cpp: General sources for control signals
-// Copyright (C) 1999,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 // ------------------------------------------------------------------------
 
 #include <cmath>
+#include <iostream>
 #include <string>
 
 #include <kvu_numtostr.h>
@@ -28,26 +29,51 @@
 
 #include "eca-logger.h"
 
-void GENERIC_CONTROLLER::process(void) {
+/* Debug controller source values */ 
+#define DEBUG_CONTROLLERS
+
+#ifdef DEBUG_CONTROLLERS
+#define DEBUG_CTRL_STATEMENT(x) x
+#else
+#define DEBUG_CTRL_STATEMENT(x) ((void)0)
+#endif
+
+GENERIC_CONTROLLER::GENERIC_CONTROLLER(CONTROLLER_SOURCE* src, OPERATOR* dobj, int par_id, double range_low, double range_high)
+{
+  source = src;
+  target = dobj;
+  param_id_rep = par_id;
+  rangelow_rep = range_low;
+  rangehigh_rep = range_high;
+}
+
+void GENERIC_CONTROLLER::init(void)
+{ 
+  source->init();
+}
+
+CONTROLLER_SOURCE::parameter_t GENERIC_CONTROLLER::value(void)
+{
   // --------
   DBC_REQUIRE(is_valid() == true);
   // --------
 
-  new_value = (source->value() * (rangehigh - rangelow)) + rangelow;
-  
-  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Setting new parameter value... to " + kvu_numtostr(new_value) + ".");
-  target->set_parameter(param_id, new_value);
+  source->seek_position_in_samples(position_in_samples());
+  double new_value = (source->value() * (rangehigh_rep - rangelow_rep)) + rangelow_rep;
+
+  DEBUG_CTRL_STATEMENT(std::cerr << "generic-controller: type '"
+		       << source->name() << "', pos_sec " 
+		       << position_in_seconds_exact() 
+		       << ", source_value " << source->value() 
+		       << ", scaled_value " << new_value << "." << std::endl);
+
+  target->set_parameter(param_id_rep, new_value);
+
+  return(new_value);
 }
 
-GENERIC_CONTROLLER::GENERIC_CONTROLLER(CONTROLLER_SOURCE* src, OPERATOR* dobj, int par_id, double range_low, double range_high) {
-  source = src;
-  target = dobj;
-  param_id = par_id;
-  rangelow = range_low;
-  rangehigh = range_high;
-}
-
-string GENERIC_CONTROLLER::status(void) const {
+string GENERIC_CONTROLLER::status(void) const
+{
   if (is_valid() == true) {
     return("Source \"" + source->name() + 
 	   "\" connected to target \"" +
@@ -55,37 +81,62 @@ string GENERIC_CONTROLLER::status(void) const {
 	   " Current source value is " + 
 	   kvu_numtostr(source->value()) + 
 	   " and target " + 
-	   kvu_numtostr(target->get_parameter(param_id)) + ".");
+	   kvu_numtostr(target->get_parameter(param_id_rep)) + ".");
   }
   else {
     return("Controller not valid.");
   }
 }
 
-void GENERIC_CONTROLLER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void GENERIC_CONTROLLER::assign_target(OPERATOR* obj)
+{ 
+  target  = obj; 
+}
+
+void GENERIC_CONTROLLER::assign_source(CONTROLLER_SOURCE* obj)
+{ 
+  source = obj;
+  source->set_samples_per_second(samples_per_second());
+}
+
+/**
+ * Reimplemented from ECA_SAMPLERATE_AWARE
+ */
+void GENERIC_CONTROLLER::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
+{
+  if (source != 0) {
+    source->set_samples_per_second(v);
+  }
+  
+  ECA_SAMPLERATE_AWARE::set_samples_per_second(v);
+}
+
+void GENERIC_CONTROLLER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
-    param_number(static_cast<int>(value));
+    param_id_rep = static_cast<int>(value);
     break;
   case 2: 
-    low_range_limit(value);
+    rangelow_rep = value;
     break;
   case 3: 
-    high_range_limit(value);
+    rangehigh_rep = value;
     break;
   default:
     source->set_parameter(param - 3, value);
   }
 }
 
-CHAIN_OPERATOR::parameter_t GENERIC_CONTROLLER::get_parameter(int param) const {
+CHAIN_OPERATOR::parameter_t GENERIC_CONTROLLER::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(static_cast<parameter_t>(param_number()));
+    return(static_cast<parameter_t>(param_id_rep));
   case 2: 
-    return(low_range_limit());
+    return(rangelow_rep);
   case 3: 
-    return(high_range_limit());
+    return(rangehigh_rep);
   default:
     return(source->get_parameter(param - 3));
   }

@@ -18,13 +18,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
-#include <algorithm>
 
-#include <assert.h>
 #include <pthread.h>
 #include <signal.h>
 #include <unistd.h>
@@ -43,6 +39,16 @@
 
 #include "eca-error.h"
 #include "eca-logger.h"
+
+/**
+ * Import namespaces
+ */
+using std::string;
+using std::vector;
+
+/**
+ * Definitions for member functions
+ */
 
 /**
  * Helper function for starting the slave thread.
@@ -217,7 +223,8 @@ void ECA_CONTROL_BASE::stop(void)
  * @pre is_engine_started() == true
  * @post is_running() == false
  */
-void ECA_CONTROL_BASE::stop_on_condition(void) {
+void ECA_CONTROL_BASE::stop_on_condition(void)
+{
   // --------
   DBC_REQUIRE(is_engine_started() == true);
   // --------
@@ -322,10 +329,10 @@ void ECA_CONTROL_BASE::close_engine(void)
  *
  * @pre is_selected()
  */
-bool ECA_CONTROL_BASE::is_valid(void) const {
+bool ECA_CONTROL_BASE::is_valid(void) const
+{
   // --------
-  // require:
-  assert(is_selected());
+  DBC_REQUIRE(is_selected());
   // --------
 
   return(selected_chainsetup_repp->is_valid());
@@ -334,7 +341,8 @@ bool ECA_CONTROL_BASE::is_valid(void) const {
 /**
  * Returns true if active chainsetup exists and is connected.
  */
-bool ECA_CONTROL_BASE::is_connected(void) const {
+bool ECA_CONTROL_BASE::is_connected(void) const
+{
   if (session_repp->connected_chainsetup_repp == 0) return(false);
   return(session_repp->connected_chainsetup_repp->is_valid() &&
 	 session_repp->connected_chainsetup_repp->is_enabled());
@@ -354,13 +362,15 @@ bool ECA_CONTROL_BASE::is_running(void) const { return(is_engine_started() == tr
  * Returns true if engine has finished processing. Engine state is 
  * either "finished" or "error".
  */
-bool ECA_CONTROL_BASE::is_finished(void) const { 
+bool ECA_CONTROL_BASE::is_finished(void) const
+{
   return(is_engine_started() == true && 
 	 (engine_repp->status() == ECA_ENGINE::engine_status_finished ||
 	  engine_repp->status() == ECA_ENGINE::engine_status_error)); 
 } 
 
-std::string ECA_CONTROL_BASE::resource_value(const std::string& key) const { 
+string ECA_CONTROL_BASE::resource_value(const string& key) const
+{ 
   ECA_RESOURCES ecarc;
   return(ecarc.resource(key)); 
 }
@@ -370,7 +380,8 @@ std::string ECA_CONTROL_BASE::resource_value(const std::string& key) const {
  *
  * @pre is_selected() == true
  */
-SAMPLE_SPECS::sample_pos_t ECA_CONTROL_BASE::length_in_samples(void) const { 
+SAMPLE_SPECS::sample_pos_t ECA_CONTROL_BASE::length_in_samples(void) const
+{
   // --------
   DBC_REQUIRE(is_selected());
   // --------
@@ -383,7 +394,8 @@ SAMPLE_SPECS::sample_pos_t ECA_CONTROL_BASE::length_in_samples(void) const {
  *
  * @pre is_selected() == true
  */
-double ECA_CONTROL_BASE::length_in_seconds_exact(void) const { 
+double ECA_CONTROL_BASE::length_in_seconds_exact(void) const
+{
   // --------
   DBC_REQUIRE(is_selected());
   // --------
@@ -396,7 +408,8 @@ double ECA_CONTROL_BASE::length_in_seconds_exact(void) const {
  *
  * @pre is_selected() == true
  */
-SAMPLE_SPECS::sample_pos_t ECA_CONTROL_BASE::position_in_samples(void) const { 
+SAMPLE_SPECS::sample_pos_t ECA_CONTROL_BASE::position_in_samples(void) const
+{
   // --------
   DBC_REQUIRE(is_selected());
   // --------
@@ -409,7 +422,8 @@ SAMPLE_SPECS::sample_pos_t ECA_CONTROL_BASE::position_in_samples(void) const {
  *
  * @pre is_selected() == true
  */
-double ECA_CONTROL_BASE::position_in_seconds_exact(void) const {
+double ECA_CONTROL_BASE::position_in_seconds_exact(void) const
+{
   // --------
   DBC_REQUIRE(is_selected());
   // --------
@@ -420,7 +434,8 @@ double ECA_CONTROL_BASE::position_in_seconds_exact(void) const {
 /**
  * Return info about engine status.
  */
-std::string ECA_CONTROL_BASE::engine_status(void) const {
+string ECA_CONTROL_BASE::engine_status(void) const
+{
   if (is_engine_started() == true) {
     switch(engine_repp->status()) {
     case ECA_ENGINE::engine_status_running: 
@@ -458,14 +473,15 @@ std::string ECA_CONTROL_BASE::engine_status(void) const {
  *
  * @pre is_selected() == true
  */
-std::string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
+string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  std::vector<std::string> t = selected_chainsetup_repp->get_attached_chains_to_input(aiod);
-  std::string out = "";
-  std::vector<std::string>::const_iterator p = t.begin();
+  vector<string> t = selected_chainsetup_repp->get_attached_chains_to_input(aiod);
+  string out = "";
+  vector<string>::const_iterator p = t.begin();
   while(p != t.end()) {
     out += *p;
     ++p;
@@ -480,14 +496,15 @@ std::string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
  *
  * @pre is_selected() == true
  */
-std::string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
+string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  std::vector<std::string> t = selected_chainsetup_repp->get_attached_chains_to_output(aiod);
-  std::string out = "";
-  std::vector<std::string>::const_iterator p = t.begin();
+  vector<string> t = selected_chainsetup_repp->get_attached_chains_to_output(aiod);
+  string out = "";
+  vector<string>::const_iterator p = t.begin();
   while(p != t.end()) {
     out += *p;
     ++p;
@@ -502,7 +519,8 @@ std::string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
  *
  * @pre is_selected() == true
  */
-std::vector<std::string> ECA_CONTROL_BASE::attached_chains(const std::string& filename) const {
+vector<string> ECA_CONTROL_BASE::attached_chains(const string& filename) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -510,44 +528,51 @@ std::vector<std::string> ECA_CONTROL_BASE::attached_chains(const std::string& fi
   return(selected_chainsetup_repp->get_attached_chains_to_iodev(filename));
 }
 
-void ECA_CONTROL_BASE::set_last_string_list(const std::vector<std::string>& s) { 
+void ECA_CONTROL_BASE::set_last_string_list(const vector<string>& s)
+{
   last_los_rep = s; 
   last_type_rep = "S";
 }
 
-void ECA_CONTROL_BASE::set_last_string(const std::string& s) { 
+void ECA_CONTROL_BASE::set_last_string(const string& s)
+{
   last_s_rep = s; 
   last_type_rep = "s";
 }
 
-void ECA_CONTROL_BASE::set_last_float(double v) { 
+void ECA_CONTROL_BASE::set_last_float(double v)
+{
   last_f_rep = v; 
   last_type_rep = "f";
 }
 
-void ECA_CONTROL_BASE::set_last_integer(int v) { 
+void ECA_CONTROL_BASE::set_last_integer(int v)
+{
   last_i_rep = v; 
   last_type_rep = "i";
 }
  
-void ECA_CONTROL_BASE::set_last_long_integer(long int v) { 
+void ECA_CONTROL_BASE::set_last_long_integer(long int v)
+{
   last_li_rep = v; 
   last_type_rep = "li";
 }
 
-void ECA_CONTROL_BASE::set_last_error(const std::string& s) {
+void ECA_CONTROL_BASE::set_last_error(const string& s)
+{
   last_error_rep = s;
 }
 
-const std::vector<std::string>& ECA_CONTROL_BASE::last_string_list(void) const { return(last_los_rep); }
-const std::string& ECA_CONTROL_BASE::last_string(void) const { return(last_s_rep); }
+const vector<string>& ECA_CONTROL_BASE::last_string_list(void) const { return(last_los_rep); }
+const string& ECA_CONTROL_BASE::last_string(void) const { return(last_s_rep); }
 double ECA_CONTROL_BASE::last_float(void) const { return(last_f_rep); }
 int ECA_CONTROL_BASE::last_integer(void) const { return(last_i_rep); } 
 long int ECA_CONTROL_BASE::last_long_integer(void) const { return(last_li_rep); }
-const std::string& ECA_CONTROL_BASE::last_error(void) const { return(last_error_rep); }
-const std::string& ECA_CONTROL_BASE::last_type(void) const { return(last_type_rep); }
+const string& ECA_CONTROL_BASE::last_error(void) const { return(last_error_rep); }
+const string& ECA_CONTROL_BASE::last_type(void) const { return(last_type_rep); }
 
-void ECA_CONTROL_BASE::clear_last_values(void) { 
+void ECA_CONTROL_BASE::clear_last_values(void)
+{ 
   last_los_rep.clear();
   last_s_rep = "";
   last_li_rep = 0;

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-gen-file.cpp: Generic oscillator using envelope presets
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,9 +35,12 @@ GENERIC_OSCILLATOR_FILE::GENERIC_OSCILLATOR_FILE(double freq, int mode)
   set_parameter(2, mode);
 }
 
-GENERIC_OSCILLATOR_FILE::~GENERIC_OSCILLATOR_FILE (void) { }
+GENERIC_OSCILLATOR_FILE::~GENERIC_OSCILLATOR_FILE (void)
+{
+}
 
-void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset) {
+void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset)
+{
   ECA_RESOURCES ecarc;
   ECA_LOG_MSG(ECA_LOGGER::system_objects,"(osc-gen-file) Opening genosc envelope file.");
 
@@ -64,7 +67,8 @@ void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset) {
   }
 }
 
-void GENERIC_OSCILLATOR_FILE::parse_envelope(const std::string& str) {
+void GENERIC_OSCILLATOR_FILE::parse_envelope(const std::string& str)
+{
   std::vector<std::string> tokens = kvu_string_to_words(str);
   if (tokens.size() > 0) {
     set_start_value(atof(tokens[0].c_str()));
@@ -79,7 +83,8 @@ void GENERIC_OSCILLATOR_FILE::parse_envelope(const std::string& str) {
   prepare_envelope();
 }
 
-void GENERIC_OSCILLATOR_FILE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
+void GENERIC_OSCILLATOR_FILE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value)
+{
   switch (param) {
   case 1: 
   case 2: 
@@ -93,7 +98,8 @@ void GENERIC_OSCILLATOR_FILE::set_parameter(int param, CONTROLLER_SOURCE::parame
   }
 }
 
-CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR_FILE::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR_FILE::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
   case 2:

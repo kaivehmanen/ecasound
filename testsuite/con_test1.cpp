@@ -20,8 +20,12 @@ int main(int argc, char *argv[]) {
   eci_execute_test(ecasound_exec + " -i:" + input_file + " -o:null -t:5 2>/dev/null >/dev/null");
   eci_execute_test(ecasound_exec + " -d:255 -z:db -r -z:nointbuf -i:" + input_file + " -o:null -t:5 2>/dev/null >/dev/null");
   eci_execute_test(ecasound_exec + "  -i:" + input_file + " -o:null -t:5 2>/dev/null >/dev/null");
+  eci_execute_test(ecasound_exec + " -a:1 -i " + input_file + " -epp:0 -kf:1,0,100,0.2,0,1 -o null -t:5 2>/dev/null >/dev/null");
+  eci_execute_test(ecasound_exec + " -a:1 -i " + input_file + " -efl:0 -kl:1,400,4000,10  -o null -t:5 2>/dev/null >/dev/null");
+  eci_execute_test(ecasound_exec + " -a:1 -i " + input_file + " -efl:0 -kl2:1,400,4000,5,10  -o null -t:5 2>/dev/null >/dev/null");
+  eci_execute_test(ecasound_exec + " -a:1 -i " + input_file + " -efl:0 -klg:1,400,4000,4,0,0.0,10,1.0,20,0.0,30,1.0  -o null -t:5 2>/dev/null >/dev/null");
+  eci_execute_test(ecasound_exec + " -a:1 -i " + input_file + " -efl:0 -kog:1,400,4000,0.2,1,2,0,1,0.3,1,0.6,0  -o null -t:5 2>/dev/null >/dev/null");
   eci_execute_test(ecasound_exec + " -a:1 -i " + input_file + " -efl:400 -kos:1,200,2000,0.5,0 -o null -t:5 2>/dev/null >/dev/null");
-  eci_execute_test(ecasound_exec + " -a:1 -i " + input_file + " -epp:0 -kf:1,0,100,0.2,0 -o null -t:5 2>/dev/null >/dev/null");
   eci_execute_test(ecasound_exec + " -a:1 -i " + input_file + " -efl:4000.00 -ea:120.00 -efb:2000.00,4000.00 -kl:1.00,200.00,8000.00,50.00 -o null -t:5 2>/dev/null >/dev/null");
   eci_execute_test(ecasound_exec + 
 		   " -f:16,1,44100 -a:bus1 -i rtnull  -eac:0,2 " +  

@@ -23,8 +23,9 @@
 #include "two-stage-linear-envelope.h"
 #include "eca-logger.h"
 
-CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::value(void) {
-  change_position_in_seconds(step_length());
+CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::value(void)
+{
+  // change_position_in_seconds(step_length());
   parameter_t curpos = position_in_seconds_exact();
   if (curpos > first_stage_length_rep) {
     if (curpos <= length_in_seconds_exact()) {
@@ -37,14 +38,14 @@ CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::value(void) {
   return(curval);
 }
 
-TWO_STAGE_LINEAR_ENVELOPE::TWO_STAGE_LINEAR_ENVELOPE(void) {
+TWO_STAGE_LINEAR_ENVELOPE::TWO_STAGE_LINEAR_ENVELOPE(void)
+{
   set_parameter(1, get_parameter(1));
   set_parameter(2, get_parameter(2));
 } 
 
-void TWO_STAGE_LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_t step) {
-  step_length(step);
-
+void TWO_STAGE_LINEAR_ENVELOPE::init(void)
+{
   MESSAGE_ITEM otemp;
   otemp << "(two-stage-linear-envelope) Envelope initialized: ";
   otemp.setprecision(3);
@@ -53,7 +54,8 @@ void TWO_STAGE_LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_t step) {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
 }
 
-void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
+void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value)
+{
   switch (param) {
   case 1:
     {
@@ -74,7 +76,8 @@ void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::para
   }
 }
 
-CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::get_parameter(int param) const {
+CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::get_parameter(int param) const
+{
   switch (param) {
   case 1:
     return(first_stage_length_rep);

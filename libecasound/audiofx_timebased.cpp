@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_timebased.cpp: Routines for time-based effects.
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <string>
 
+#include <kvu_dbc.h>
 #include <kvu_utils.h>
 
 #include "eca-logger.h"
@@ -229,7 +230,7 @@ void EFFECT_MULTITAP_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t
     {
       dtime_msec = value;
       dtime = static_cast<long int>(dtime_msec * (CHAIN_OPERATOR::parameter_t)samples_per_second() / 1000);
-      assert(buffer.size() == filled.size());
+      DBC_CHECK(buffer.size() == filled.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
 	if ((dtime * dnum) > static_cast<int>(buffer[n].size())) {
 	  buffer[n].resize(dtime * dnum);
@@ -246,7 +247,7 @@ void EFFECT_MULTITAP_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t
     {
       if (value != 0.0) dnum = static_cast<long int>(value);
       else dnum = 1;
-      assert(buffer.size() == filled.size());
+      DBC_CHECK(buffer.size() == filled.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
 	if ((dtime * dnum) > static_cast<int>(buffer[n].size())) {
 	  buffer[n].resize(dtime * dnum);
@@ -287,8 +288,8 @@ void EFFECT_MULTITAP_DELAY::process(void) {
       SAMPLE_SPECS::sample_t temp1 = 0.0;
       for(int nm2 = 0; nm2 < dnum; nm2++) {
 	if (filled[n][nm2] == true) {
-	  assert((delay_index[n] + nm2 * dtime) % len >= 0);
-	  assert((delay_index[n] + nm2 * dtime) % len < len);
+	  DBC_CHECK((delay_index[n] + nm2 * dtime) % len >= 0);
+	  DBC_CHECK((delay_index[n] + nm2 * dtime) % len < len);
 	  temp1 += buffer[n][(delay_index[n] + nm2 * dtime) % len];
 	}
       }
@@ -498,8 +499,8 @@ void EFFECT_MODULATING_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter
     {
       dtime_msec = value;
       dtime = static_cast<long int>(dtime_msec * (CHAIN_OPERATOR::parameter_t)samples_per_second() / 1000);
-      assert(buffer.size() == delay_index.size());
-      assert(buffer.size() == filled.size());
+      DBC_CHECK(buffer.size() == delay_index.size());
+      DBC_CHECK(buffer.size() == filled.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
 	if (dtime * 2 > static_cast<long int>(buffer[n].size())) {
 	  buffer[n].resize(dtime * 2);
@@ -524,29 +525,37 @@ void EFFECT_MODULATING_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter
   }
 }
 
-void EFFECT_MODULATING_DELAY::init(SAMPLE_BUFFER* insample) {
+void EFFECT_MODULATING_DELAY::init(SAMPLE_BUFFER* insample)
+{
   i.init(insample);
-  lfo.init(1.0 /
-	   samples_per_second() /
-	   insample->number_of_channels());
-
-  EFFECT_BASE::init(insample);
+  lfo.init();
+  advance_len_rep = insample->length_in_samples();
 
   set_parameter(1, dtime_msec);
+
+  EFFECT_BASE::init(insample);
 
   filled.resize(channels(), false);
   delay_index.resize(channels(), 2 * dtime);
   buffer.resize(channels(), std::vector<SAMPLE_SPECS::sample_t> (2 * dtime));
 }
 
-void EFFECT_FLANGER::process(void) {
+void EFFECT_MODULATING_DELAY::process(void)
+{
+  lfo.seek_position_in_samples_advance(advance_len_rep);
+}
+
+void EFFECT_FLANGER::process(void)
+{
+  EFFECT_MODULATING_DELAY::process();
+
   i.begin();
   while(!i.end()) {
     SAMPLE_SPECS::sample_t temp1 = 0.0;
     parameter_t p = vartime * lfo.value();
     if (filled[i.channel()] == true) {
-      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
-      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
+      DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
+      DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
       temp1 = buffer[i.channel()][(dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2)];
     }
     *i.current() = (*i.current() * (1.0 - feedback)) + (temp1 * feedback);
@@ -561,15 +570,17 @@ void EFFECT_FLANGER::process(void) {
   }
 }
 
-void EFFECT_CHORUS::process(void) {
+void EFFECT_CHORUS::process(void)
+{
+  EFFECT_MODULATING_DELAY::process();
+
   i.begin();
-   
   while(!i.end()) {
     SAMPLE_SPECS::sample_t temp1 = 0.0;
     parameter_t p = vartime * lfo.value();
     if (filled[i.channel()] == true) {
-      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
-      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
+      DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
+      DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
       temp1 = buffer[i.channel()][(dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2)];
     }
     buffer[i.channel()][delay_index[i.channel()]] = *i.current();
@@ -584,19 +595,21 @@ void EFFECT_CHORUS::process(void) {
   }
 }
 
-void EFFECT_PHASER::process(void) {
+void EFFECT_PHASER::process(void)
+{
+  EFFECT_MODULATING_DELAY::process();
+
   i.begin();
-   
   while(!i.end()) {
     SAMPLE_SPECS::sample_t temp1 = 0.0;
     parameter_t p = vartime * lfo.value();
     if (filled[i.channel()] == true) {
-      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
-      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
+      DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
+      DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
       temp1 = buffer[i.channel()][(dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2)];
-//          cerr << "b: "
-//    	   << (delay_index[i.channel()] + static_cast<long int>(p)) % dtime
-//    	   << "," << p << ".\n";
+      //          cerr << "b: "
+      //    	   << (delay_index[i.channel()] + static_cast<long int>(p)) % dtime
+      //    	   << "," << p << ".\n";
     }
     *i.current() = *i.current() * (1.0 - feedback) + (-1.0 * temp1 * feedback);
     buffer[i.channel()][delay_index[i.channel()]] = *i.current();

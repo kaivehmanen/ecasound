@@ -18,18 +18,19 @@ class GENERIC_OSCILLATOR : public OSCILLATOR {
 
  public:
 
-  int mode_rep;
-  double start_value_rep, end_value_rep;
-  double loop_length_rep; // loop length in seconds
-  double loop_pos_rep; // current position in seconds
-  double next_pos_rep;
-  double last_pos_rep;
-  int epairs_rep;
-  int eindex_rep;
-  int pindex_rep;
-  double current_value_rep;
-  std::string param_names_rep;
-  void set_param_count(int n);
+  virtual void init(void);
+  virtual parameter_t value(void);
+
+  virtual std::string parameter_names(void) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
+
+  std::string name(void) const { return("Generic oscillator"); }
+
+  GENERIC_OSCILLATOR* clone(void) const { return new GENERIC_OSCILLATOR(*this); }
+  GENERIC_OSCILLATOR* new_expr(void) const { return new GENERIC_OSCILLATOR(*this); }
+  GENERIC_OSCILLATOR(double freq = 0.0f, int mode = 0);
+  virtual ~GENERIC_OSCILLATOR (void);
 
  protected:
 
@@ -42,24 +43,22 @@ class GENERIC_OSCILLATOR : public OSCILLATOR {
   void update_current_static(void);
   void update_current_linear(void);
 
- public:
+private:
 
-  /**
-   * Initialize generic controller
-   */
-  virtual void init(parameter_t phasestep);
+  void set_param_count(int n);
 
-  virtual std::string parameter_names(void) const;
-  virtual void set_parameter(int param, parameter_t value);
-  virtual parameter_t get_parameter(int param) const;
-
-  virtual parameter_t value(void);
-  std::string name(void) const { return("Generic oscillator"); }
-
-  GENERIC_OSCILLATOR* clone(void) const { return new GENERIC_OSCILLATOR(*this); }
-  GENERIC_OSCILLATOR* new_expr(void) const { return new GENERIC_OSCILLATOR(*this); }
-  GENERIC_OSCILLATOR(double freq = 0.0f, int mode = 0);
-  virtual ~GENERIC_OSCILLATOR (void);
+  int mode_rep;
+  double start_value_rep, end_value_rep;
+  double loop_length_rep; // loop length in seconds
+  double loop_pos_rep; // current position in seconds
+  double next_pos_rep;
+  double last_pos_rep;
+  double last_global_pos_rep;
+  int epairs_rep;
+  int eindex_rep;
+  int pindex_rep;
+  double current_value_rep;
+  std::string param_names_rep;
 };
 
 #endif

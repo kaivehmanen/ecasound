@@ -10,15 +10,6 @@
  */
 class GENERIC_OSCILLATOR_FILE : public GENERIC_OSCILLATOR {
 
- private:
-
-  int preset_rep;
-  void get_oscillator_preset(int preset);
-
- protected:
-
-  void parse_envelope(const std::string& str);
-  
  public:
 
   virtual std::string parameter_names(void) const { return("freq,mode,preset-number"); }
@@ -30,6 +21,15 @@ class GENERIC_OSCILLATOR_FILE : public GENERIC_OSCILLATOR {
   GENERIC_OSCILLATOR_FILE* new_expr(void) const { return new GENERIC_OSCILLATOR_FILE(*this); }
   GENERIC_OSCILLATOR_FILE (double freq = 0.0, int preset_number = 0);
   virtual ~GENERIC_OSCILLATOR_FILE (void);
+
+ protected:
+
+  void parse_envelope(const std::string& str);
+
+ private:
+
+  int preset_rep;
+  void get_oscillator_preset(int preset);
 };
 
 #endif

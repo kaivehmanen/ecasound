@@ -2,6 +2,15 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2002-05-13  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* ctrl-source.h (init): arg dropped
+	* ctrl-source.h (step_length): removed
+	* generic-controller.h (param_number, low_range_limit, high_range_limit): removed
+	* generic-controller.h (all): changed to derive CONTROLLER_SOURCE
+	instead of OPERATOR
+	* finite-envelope.h (all): file removed
+	
 2002-04-29  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-object-factory.h (all): turned into a singleton class

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-gen.cpp: Generic oscillator
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,13 +27,16 @@
 #include "oscillator.h"
 #include "eca-logger.h"
 
-CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::value(void) {
+CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::value(void)
+{
   if (mode_rep == 0)
     update_current_static();
   else
     update_current_linear();
 
-  loop_pos_rep += step_length();
+  loop_pos_rep += position_in_seconds_exact() - last_global_pos_rep;
+  last_global_pos_rep = position_in_seconds_exact();
+
   if (loop_pos_rep > loop_length_rep) {
     loop_pos_rep = 0.0f;
     pindex_rep = 0;
@@ -61,7 +64,8 @@ CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::value(void) {
   return(current_value_rep);
 }
 
-void GENERIC_OSCILLATOR::update_current_static(void) {
+void GENERIC_OSCILLATOR::update_current_static(void)
+{
   if (pindex_rep == 0) {
     current_value_rep = start_value_rep;
   }
@@ -73,7 +77,8 @@ void GENERIC_OSCILLATOR::update_current_static(void) {
   }
 }
 
-void GENERIC_OSCILLATOR::update_current_linear(void) {
+void GENERIC_OSCILLATOR::update_current_linear(void)
+{
   if (pindex_rep == 0) {
     current_value_rep = start_value_rep;
   }
@@ -99,6 +104,7 @@ GENERIC_OSCILLATOR::GENERIC_OSCILLATOR(double freq, int mode)
   loop_length_rep = 0.0f;
   loop_pos_rep = 0.0f;
   next_pos_rep = 0.0f;
+  last_global_pos_rep = 0.0f;
   epairs_rep = 0;
   eindex_rep = 0;
   pindex_rep = 0;
@@ -111,15 +117,17 @@ GENERIC_OSCILLATOR::GENERIC_OSCILLATOR(double freq, int mode)
   // std::cerr << "(osc-gen) construct; params " << parameter_names() << ".\n";
 }
 
-void GENERIC_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_t phasestep) {
-  step_length(phasestep);
-
+void GENERIC_OSCILLATOR::init(void)
+{
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(osc-gen) Generic oscillator init.");
 }
 
-GENERIC_OSCILLATOR::~GENERIC_OSCILLATOR (void) { }
+GENERIC_OSCILLATOR::~GENERIC_OSCILLATOR (void)
+{
+}
 
-void GENERIC_OSCILLATOR::set_param_count(int params) {
+void GENERIC_OSCILLATOR::set_param_count(int params)
+{
   param_names_rep = "freq,mode,pcount,start_val,end_val";
   if (params > 0) {
     for(int n = 0; n < params; n++) {
@@ -132,11 +140,13 @@ void GENERIC_OSCILLATOR::set_param_count(int params) {
   }
 }
 
-std::string GENERIC_OSCILLATOR::parameter_names(void) const { 
+std::string GENERIC_OSCILLATOR::parameter_names(void) const
+{
   return(param_names_rep);
 }
 
-void GENERIC_OSCILLATOR::prepare_envelope(void) {
+void GENERIC_OSCILLATOR::prepare_envelope(void)
+{
   if (ienvelope_rep.size() % 2 == 1)
     ienvelope_rep.resize(ienvelope_rep.size() + 1);
   epairs_rep = (ienvelope_rep.size() / 2);
@@ -147,7 +157,8 @@ void GENERIC_OSCILLATOR::prepare_envelope(void) {
 }
 
 
-void GENERIC_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
+void GENERIC_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value)
+{
   switch (param) {
   case 1: 
     frequency(value);
@@ -189,7 +200,8 @@ void GENERIC_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t
   }
 }
 
-CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::get_parameter(int param) const
+{ 
   switch (param) {
   case 1: 
     return(frequency());

@@ -6,6 +6,8 @@
 
 #include "audiofx.h"
 
+/* prefer already installed LADSPA header over the 
+ * version shipped with ecasound */
 #ifdef HAVE_LADSPA_H
 #include <ladspa.h>
 #else

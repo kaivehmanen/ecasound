@@ -26,22 +26,25 @@
 #include "osc-sine.h"
 #include "eca-logger.h"
 
-CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::value(void) {
+CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::value(void)
+{
   curval = (sin(phase) + 1.0) / 2.0;
-  phase += phasemod * step_length();
+  phase += phasemod * (position_in_seconds_exact() - last_global_pos_rep);
+  last_global_pos_rep = position_in_seconds_exact();
   return(curval);
 }
 
 SINE_OSCILLATOR::SINE_OSCILLATOR (double freq, double initial_phase) :
   OSCILLATOR(freq, initial_phase) {
 
+  last_global_pos_rep = 0.0f;
+
   set_parameter(1, get_parameter(1));
   set_parameter(2, get_parameter(2));
 }
 
-void SINE_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_t phasestep) {
-  step_length(phasestep);
-
+void SINE_OSCILLATOR::init(void)
+{
   MESSAGE_ITEM otemp;
   otemp << "(osc-sine) Sine oscillator created; frequency ";
   otemp.setprecision(3);
@@ -51,7 +54,8 @@ void SINE_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_t phasestep) {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
 }
 
-void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
+void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value)
+{
   switch (param) {
   case 1: 
     frequency(value);
@@ -66,7 +70,8 @@ void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t va
   }
 }
 
-CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(frequency());
@@ -75,7 +80,3 @@ CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::get_parameter(int param) const {
   }
   return(0.0);
 }
-
-
-
-

@@ -29,12 +29,13 @@
 
 #include "eca-logger.h"
 
-CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(void) {
-//    if (midi_in_queue.update_controller_value()) {
-//      value_rep =
-//        static_cast<double>(midi_in_queue.last_controller_value(static_cast<int>(channel), static_cast<int>(controller)));
-//      value_rep /= 127.0;
-//    }
+CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(void)
+{
+  // if (midi_in_queue.update_controller_value()) {
+  //   value_rep =
+  //     static_cast<double>(midi_in_queue.last_controller_value(static_cast<int>(channel), static_cast<int>(controller)));
+  //   value_rep /= 127.0;
+  // }
   if (trace_request_rep == true) {
     if (server() != 0) {
       server()->add_controller_trace(channel, 
@@ -59,20 +60,20 @@ MIDI_CONTROLLER::MIDI_CONTROLLER(int controller_number,
     channel(midi_channel),
     value_rep(0.0),
     trace_request_rep(false) 
-{ }
+{
+}
 
-void MIDI_CONTROLLER::init(CONTROLLER_SOURCE::parameter_t phasestep) {
-//      init_midi_queues();
-
+void MIDI_CONTROLLER::init(void)
+{
     MESSAGE_ITEM otemp;
     otemp << "(midi-cc) MIDI-controller initialized using controller ";
     otemp.setprecision(0);
     otemp << controller << " and channel " << channel << ".";
     ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
-
 }
 
-void MIDI_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
+void MIDI_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value)
+{
   switch (param) {
   case 1: 
     controller = static_cast<int>(value);
@@ -84,7 +85,8 @@ void MIDI_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_t va
   trace_request_rep = true;
 }
 
-CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(static_cast<parameter_t>(controller));

@@ -26,6 +26,11 @@
 
 GENERIC_LINEAR_ENVELOPE::GENERIC_LINEAR_ENVELOPE(void)
 {
+  pos_rep.resize(1);
+  val_rep.resize(1);
+  pos_rep[0] = 1;
+  val_rep[0] = 0;
+  set_param_count(0);
 } 
 
 GENERIC_LINEAR_ENVELOPE::~GENERIC_LINEAR_ENVELOPE(void)
@@ -34,92 +39,88 @@ GENERIC_LINEAR_ENVELOPE::~GENERIC_LINEAR_ENVELOPE(void)
 
 CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::value(void)
 {
-  change_position_in_seconds(step_length());
-
   parameter_t curpos = position_in_seconds_exact();
   if (curpos < pos_rep[0]) {
     curval = val_rep[0];
   } else if (curstage < static_cast<int>(pos_rep.size())-1) {
     if (curpos >= pos_rep[curstage+1]) {
       ++curstage;
-      if( curstage < static_cast<int>(pos_rep.size())-1)
-	curval = ( ( (curpos - pos_rep[curstage]) * val_rep[curstage+1] +
-		     (pos_rep[curstage+1] - curpos) * val_rep[curstage] ) /
-		   (pos_rep[curstage+1] - pos_rep[curstage]) );
-      else
+      if (curstage < static_cast<int>(pos_rep.size())-1) {
+	curval = (((curpos - pos_rep[curstage]) * val_rep[curstage+1] +
+		   (pos_rep[curstage+1] - curpos) * val_rep[curstage]) /
+		   (pos_rep[curstage+1] - pos_rep[curstage]));
+      }
+      else {
 	curval = val_rep.back();
+      }
     } else {
-      curval = ( ( (curpos - pos_rep[curstage]) * val_rep[curstage+1] +
-		   (pos_rep[curstage+1] - curpos) * val_rep[curstage] ) /
-		 (pos_rep[curstage+1] - pos_rep[curstage]) );
+      curval = (((curpos - pos_rep[curstage]) * val_rep[curstage+1] +
+		 (pos_rep[curstage+1] - curpos) * val_rep[curstage]) /
+		(pos_rep[curstage+1] - pos_rep[curstage]));
     }
   }
   
   return(curval);
+} 
+
+void GENERIC_LINEAR_ENVELOPE::init(void)
+{
+  curval = 0.0;
+  curstage = -1;
+  
+  ECA_LOG_MSG(ECA_LOGGER::info, "(generic-linear-envelope) Envelope created.");
 }
 
-void GENERIC_LINEAR_ENVELOPE::init(parameter_t step) {
-    step_length(step);
-
-    curval = 0.0;
-    curstage = -1;
-
-    pos_rep.resize(1);
-    val_rep.resize(1);
-    pos_rep[0] = 1;
-    val_rep[0] = 0;
-
-    set_param_count(0);
-    
-    ECA_LOG_MSG(ECA_LOGGER::info, "(generic-linear-envelope) Envelope created.");
-}
-
-void GENERIC_LINEAR_ENVELOPE::set_param_count(int params) {
+void GENERIC_LINEAR_ENVELOPE::set_param_count(int params)
+{
     param_names_rep = "point_count";
     if (params > 0) {
         for(int n = 0; n < params; ++n) {
             param_names_rep += ",pos";
-            param_names_rep += kvu_numtostr(n*2+1);
+            param_names_rep += kvu_numtostr(n + 1);
             param_names_rep += ",val";
-            param_names_rep += kvu_numtostr(n*2+2);
+            param_names_rep += kvu_numtostr(n + 1);
         }
     }
 }
 
-std::string GENERIC_LINEAR_ENVELOPE::parameter_names(void) const { 
+std::string GENERIC_LINEAR_ENVELOPE::parameter_names(void) const 
+{
     return(param_names_rep);
 }
 
-void GENERIC_LINEAR_ENVELOPE::set_parameter(int param, parameter_t value) {
-    switch(param) {
-        case 1:
-            set_param_count(static_cast<int>(value));
-            pos_rep.resize(static_cast<int>(value));
-            val_rep.resize(static_cast<int>(value));
-            break;
-        default:
-            int pointnum = param/2 - 1;
-            if (param % 2 == 0)
-                pos_rep[pointnum] = value;
-            else
-                val_rep[pointnum] = value;
-    }
+void GENERIC_LINEAR_ENVELOPE::set_parameter(int param, parameter_t value)
+{
+  switch(param) {
+  case 1:
+    set_param_count(static_cast<int>(value));
+    pos_rep.resize(static_cast<int>(value));
+    val_rep.resize(static_cast<int>(value));
+    break;
+  default:
+    int pointnum = param/2 - 1;
+    if (param % 2 == 0)
+      pos_rep[pointnum] = value;
+    else
+      val_rep[pointnum] = value;
+  }
 }
 
-CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::get_parameter(int param) const {
-    switch(param) {
-        case 1:
-            return(static_cast<parameter_t>(number_of_params() - 1));
-            break;
-        default:
-            int pointnum = param/2 - 1;
-            if (pointnum >= static_cast<int>(pos_rep.size())) {
-                return 0.0;
-            }
-
-            if (param % 2 == 0)
-                return pos_rep[pointnum];
-            else
-                return val_rep[pointnum];
+CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::get_parameter(int param) const
+{
+  switch(param) {
+  case 1:
+    return(static_cast<parameter_t>(pos_rep.size()));
+    break;
+  default:
+    int pointnum = param/2 - 1;
+    if (pointnum >= static_cast<int>(pos_rep.size())) {
+      return 0.0;
     }
+    
+    if (param % 2 == 0)
+      return pos_rep[pointnum];
+    else
+      return val_rep[pointnum];
+  }
 }

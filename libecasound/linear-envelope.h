@@ -3,12 +3,12 @@
 
 #include <string>
 
-#include "finite-envelope.h"
+#include "ctrl-source.h"
 
 /**
  * Linear envelope
  */
-class LINEAR_ENVELOPE : public FINITE_ENVELOPE {
+class LINEAR_ENVELOPE : public CONTROLLER_SOURCE {
 
  public:
 
@@ -19,9 +19,9 @@ class LINEAR_ENVELOPE : public FINITE_ENVELOPE {
   LINEAR_ENVELOPE* new_expr(void) const { return new LINEAR_ENVELOPE(*this); }
 
   std::string name(void) const { return("Linear envelope"); }
-  parameter_t value(void);
 
-  void init(parameter_t step);
+  virtual void init(void);
+  virtual parameter_t value(void);
 
   std::string parameter_names(void) const { return("length-sec"); }
   void set_parameter(int param, parameter_t value);

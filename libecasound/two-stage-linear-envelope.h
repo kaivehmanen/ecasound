@@ -3,19 +3,18 @@
 
 #include <string>
 
-#include "finite-envelope.h"
+#include "ctrl-source.h"
 
 /**
  * Two-stage linear envelope
  */
-class TWO_STAGE_LINEAR_ENVELOPE : public FINITE_ENVELOPE {
+class TWO_STAGE_LINEAR_ENVELOPE : public CONTROLLER_SOURCE {
 
  public:
 
   std::string name(void) const { return("Two-stage linear envelope"); }
-  parameter_t value(void);
-
-  void init(parameter_t step);
+  virtual parameter_t value(void);
+  virtual void init(void);
 
   std::string parameter_names(void) const { return("1st-stage-sec,2nd-stage-sec"); }
   void set_parameter(int param, parameter_t value);

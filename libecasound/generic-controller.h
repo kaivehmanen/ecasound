@@ -8,66 +8,87 @@
  * Generic controller class that connects controller sources
  * to objects supporting dynamic parameter control (classes 
  * which inherit DYNAMIC_PARAMETERS).
+ * 
+ * Related design patterns:
+ *     - Decorator (GoF175)
  */
-class GENERIC_CONTROLLER : public OPERATOR {
-
-  OPERATOR* target;
-  CONTROLLER_SOURCE* source;
-
-  int param_id;
-  double rangelow, rangehigh;
-  double new_value;
+class GENERIC_CONTROLLER : public CONTROLLER_SOURCE {
 
  public:
 
-  typedef SAMPLE_SPECS::sample_t parameter_t;
-
-  virtual std::string name(void) const { return(source == 0 ? string("") : source->name()); }
-  std::string status(void) const;
-
-  virtual std::string parameter_names(void) const { return("param-id,range-low,range-high," +  source->parameter_names()); }
-  virtual void set_parameter(int param, parameter_t value);
-  virtual parameter_t get_parameter(int param) const;
-
-  void assign_target(OPERATOR* obj) { target  = obj; }
-  void assign_source(CONTROLLER_SOURCE* obj) { source = obj; }
-
-  CONTROLLER_SOURCE* source_pointer(void) const { return(source); }
-  OPERATOR* target_pointer(void) const { return(target); }
-
-  /**
-   * Initializes the controller source
-   */
-  void init(parameter_t phase_step) { source->init(phase_step); }
-
-  int param_number(void) const { return(param_id); }
-  double low_range_limit(void) const { return(rangelow); }
-  double high_range_limit(void) const { return(rangehigh); }
-
-  bool is_valid(void) const { return(target != 0 && source != 0); }
-  void param_number(int v) { param_id = v; }
-  void low_range_limit(parameter_t v) { rangelow = v; }
-  void high_range_limit(parameter_t v) { rangehigh = v; }
-  
-  /**
-   * Fetch new value from controller source, scale it and
-   * set target parameters.
-   *
-   * require:
-   *  is_valid() == true
-   */
-  void process(void);
-
-  GENERIC_CONTROLLER* clone(void) const { return(0); }
-  GENERIC_CONTROLLER* new_expr(void) const { return(new GENERIC_CONTROLLER(0)); }
+  /** @name Constructors and destructors */
+  /*@{*/
 
   GENERIC_CONTROLLER(CONTROLLER_SOURCE* source,
 		     OPERATOR* dobj = 0, 
 		     int param_id = 0, 
 		     double range_low = 0.0, 
 		     double range_high = 0.0);
+
+  GENERIC_CONTROLLER* clone(void) const { return(0); }
+  GENERIC_CONTROLLER* new_expr(void) const { return(new GENERIC_CONTROLLER(0)); }
+
+  /*@}*/
+
+  /** @name Public functions reimplemented from CONTROLLER_SOURCE */
+  /*@{*/
+
+  virtual void init(void);
+
+  /**
+   * Returns the current value, scale it and
+   * applies it to target objects.
+   *
+   * @pre is_valid() == true
+   */
+  virtual parameter_t value(void);
+
+  /*@}*/
+
+  /** @name Public functions reimplemented from ECA_OBJECT */
+  /*@{*/
+
+  virtual std::string name(void) const { return(source == 0 ? string("") : source->name()); }
+
+  /*@}*/
+
+  /** @name Public functions reimplemented from DYNAMIC_PARAMETERS */
+  /*@{*/
+
+  virtual std::string parameter_names(void) const { return("param-id,range-low,range-high," +  source->parameter_names()); }
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
+
+  /*@}*/
+
+  /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
+  /*@{*/
+
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
+
+  /*@}*/
+
+  /** @name Public functions  */
+  /*@{*/
+
+  bool is_valid(void) const { return(target != 0 && source != 0); }
+  std::string status(void) const;
+
+  void assign_target(OPERATOR* obj);
+  void assign_source(CONTROLLER_SOURCE* obj);
+
+  CONTROLLER_SOURCE* source_pointer(void) const { return(source); }
+  OPERATOR* target_pointer(void) const { return(target); }
+
+  /*@}*/
+ 
+private:
+
+  OPERATOR* target;
+  CONTROLLER_SOURCE* source;
+
+  int param_id_rep;
+  double rangelow_rep, rangehigh_rep;
 };
 
-
 #endif
-

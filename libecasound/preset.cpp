@@ -480,8 +480,7 @@ void PRESET::init(SAMPLE_BUFFER *insample) {
   }
 
   for(size_t n = 0; n < impl_repp->gctrls_rep.size(); n++) {
-    impl_repp->gctrls_rep[n]->init(static_cast<double>(first_buffer->length_in_samples()) / 
-				   samples_per_second());
+    impl_repp->gctrls_rep[n]->init();
   }
 }
 
