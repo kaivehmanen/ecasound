@@ -73,6 +73,8 @@ void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
 	numparams = child_repp->number_of_params(); // in case 'n_o_p()' varies
       }
       
+      child_repp->buffersize(buffersize(), samples_per_second());
+      child_repp->io_mode(io_mode());
       child_repp->open();
       label(child_repp->label());
       
