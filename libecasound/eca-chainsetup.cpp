@@ -1682,26 +1682,38 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
 
       /* 4.1 make sure that all input devices have a common 
        *     sampling rate */
-      SAMPLE_SPECS::sample_rate_t first_srate = 0;
+      SAMPLE_SPECS::sample_rate_t first_locked_srate = 0;
       for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
-	if (q == inputs.begin()) {
-	  first_srate = (*q)->samples_per_second();
+	if (first_locked_srate == 0) {
+	  if ((*q)->locked_audio_format() == true) {
+	    first_locked_srate = (*q)->samples_per_second();
+
+	    /* set chainsetup sampling rate to 'first_srate'. */
+	    set_samples_per_second(first_locked_srate);
+	  }
 	}
 	else {
-	  check_object_samplerate(*q, first_srate);
+	  check_object_samplerate(*q, first_locked_srate);
 	}
       }
-
-      /* 4.2 set chainsetup sampling rate to 'first_srate'. */
-      set_samples_per_second(first_srate);
-   
+  
       /* 5. open output devices */
       for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
 	enable_audio_object_helper(*q);
 	if ((*q)->is_open() != true) { 
 	  throw(ECA_ERROR("ECA-CHAINSETUP", "Open failed without explicit exception!"));
 	}
-	check_object_samplerate(*q, first_srate);
+	if (first_locked_srate == 0) {
+	  if ((*q)->locked_audio_format() == true) {
+	    first_locked_srate = (*q)->samples_per_second();
+
+	    /* set chainsetup sampling rate to 'first_srate'. */
+	    set_samples_per_second(first_locked_srate);
+	  }
+	}
+	else {
+	  check_object_samplerate(*q, first_locked_srate);
+	}
       }
 
       /* 6. enable the MIDI server */
