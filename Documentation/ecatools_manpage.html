@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecatools</h1>
-<h2>09.04.2001</h2>
+<h2>06.10.2001</h2>
 
 
     
@@ -31,16 +31,29 @@
     ecatools - audio processing utils based on ecasound
 <p><h2>SYNOPSIS</h2>
     
-<strong>ecaplay</strong> file1 [ file2,...,fileN ]
-<p><strong>ecaconvert</strong> .extension file1 [ file2,...,fileN ]
+<strong>ecaconvert</strong> .extension file1 [ file2,...,fileN ]
 <p><strong>ecafixdc</strong> file1 [ file2,...,fileN ]
-<p><strong>ecanormalize</strong> file1 [ file2,...,fileN ]
+<strong>ecalength</strong> file1 [ file2,...,fileN ]
+<strong>ecanormalize</strong> file1 [ file2,...,fileN ]
+<p><strong>ecaplay</strong> file1 [ file2,...,fileN ]
 <p><strong>ecasignalview</strong> [ options ] [ input ] [ output ]
 <p><h2>DESCRIPTION</h2>
     
 <p>Ecatools are simple command line utils that do various audio
 processing tasks. Most of them support batch processing. They all
 use the ecasound engine (libecasound).
+<p><strong>ECACONVERT</strong>
+<p>A tool for converting a set of files to a common target format.
+This target format is given as the first command line
+argument, and its syntax is <em>.ext</em>.
+<p><strong>ECAFIXDC</strong>
+<p>A simple command-line tool for fixing DC-offset.
+<p><strong>ECALENGTH</strong>
+<p>See ecalength(1) man page.
+<p><strong>ECANORMALIZE</strong>
+<p>A simple command-line tool for normalizing sample volume. 
+Finds out how much input file can be amplified without clipping
+and, if necessary, does the amplification.
 <p><strong>ECAPLAY</strong>
 <p>A simple command-line tool that plays input files using the
 default output specified in <em>~/.ecasoundrc</em>. Note! You  can abort 
@@ -49,16 +62,6 @@ files, this will stop the current file and begin playing the next one.
 If you want to abort playing immediately instead of skipping to the 
 next file, press Ctrl-C twice in short succession (around one
 second).
-<p><strong>ECACONVERT</strong>
-<p>A tool for converting a set of files to a common target format.
-This target format is given as the first command line
-argument, and its syntax is <em>.ext</em>.
-<p><strong>ECAFIXDC</strong>
-<p>A simple command-line tool for fixing DC-offset.
-<p><strong>ECANORMALIZE</strong>
-<p>A simple command-line tool for normalizing sample volume. 
-Finds out how much input file can be amplified without clipping
-and, if necessary, does the amplification.
 <p><strong>ECASIGNALVIEW</strong>
 <p>Ecasignalview is meant for monitoring signal amplitude and peak 
 statistics. It accepts the following options:
@@ -88,7 +91,7 @@ Specify screen refresh rate in milliseconds.
 	is created with some default values. See ecasoundrc(5).
 <p><h2>SEE ALSO</h2>
     
-<p>ecasound (1), "HTML docs in the Documentation subdirectory"
+<p>ecasound (1), ecalength(1), "HTML docs in the Documentation subdirectory"
 <p><h2>AUTHOR</h2>
     
 <p>Kai Vehmanen, &lt;<a href="mailto:kaiv@wakkanet.fi"><em>kaiv@wakkanet.fi</em></a>&gt;

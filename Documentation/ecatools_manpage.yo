@@ -12,20 +12,20 @@ htmlcommand(
 
 manpage(ecatools)
        (1)
-       (09.04.2001)
+       (06.10.2001)
        ()
        (Multimedia software)
 
 manpagename(ecatools)(audio processing utils based on ecasound)
 
 manpagesynopsis()
-bf(ecaplay) file1 [ file2,...,fileN ]
-
 bf(ecaconvert) .extension file1 [ file2,...,fileN ]
 
 bf(ecafixdc) file1 [ file2,...,fileN ]
-
+bf(ecalength) file1 [ file2,...,fileN ]
 bf(ecanormalize) file1 [ file2,...,fileN ]
+
+bf(ecaplay) file1 [ file2,...,fileN ]
 
 bf(ecasignalview) [ options ] [ input ] [ output ]
 
@@ -34,16 +34,6 @@ manpagedescription()
 Ecatools are simple command line utils that do various audio
 processing tasks. Most of them support batch processing. They all
 use the ecasound engine (libecasound).
-
-bf(ECAPLAY)
-
-A simple command-line tool that plays input files using the
-default output specified in em(~/.ecasoundrc). Note! You  can abort 
-ecaplay at any time by pressing Ctrl-C. If you are playing multiple 
-files, this will stop the current file and begin playing the next one.  
-If you want to abort playing immediately instead of skipping to the 
-next file, press Ctrl-C twice in short succession (around one
-second).
 
 bf(ECACONVERT)
 
@@ -55,11 +45,25 @@ bf(ECAFIXDC)
 
 A simple command-line tool for fixing DC-offset.
 
+bf(ECALENGTH)
+
+See ecalength(1) man page.
+
 bf(ECANORMALIZE)
 
 A simple command-line tool for normalizing sample volume. 
 Finds out how much input file can be amplified without clipping
 and, if necessary, does the amplification.
+
+bf(ECAPLAY)
+
+A simple command-line tool that plays input files using the
+default output specified in em(~/.ecasoundrc). Note! You  can abort 
+ecaplay at any time by pressing Ctrl-C. If you are playing multiple 
+files, this will stop the current file and begin playing the next one.  
+If you want to abort playing immediately instead of skipping to the 
+next file, press Ctrl-C twice in short succession (around one
+second).
 
 bf(ECASIGNALVIEW)
 
@@ -100,7 +104,7 @@ manpagefiles()
 
 manpageseealso()
 
-	ecasound (1), "HTML docs in the Documentation subdirectory"
+	ecasound (1), ecalength(1), "HTML docs in the Documentation subdirectory"
 
 manpageauthor()
 

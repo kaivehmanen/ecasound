@@ -152,7 +152,7 @@ enddit()
 
 manpageseealso()
 
-	ecasound(1), qtecasound (1), ecatools (1), ecasound-iam(1)
+	ecasound(1), ecatools (1), ecasound-iam(1)
 
 manpageauthor()
 

@@ -1,0 +1,88 @@
+mailto(observer@colba.net)
+
+htmlcommand(
+<insert file=../es-makrot.txt>
+<insert name=ecasound_indexbar>
+
+<p>
+<hr>
+<center><h2> ecasound documentation - manual pages </h2></center>
+</p>
+)
+
+manpage(ecalength)
+       (1)
+       (06.10.2001)
+       ()
+       (Multimedia software)
+
+
+manpagename(ecalength)(prints audio file lenght and other information)
+
+manpagesynopsis()
+    bf(ecalength) [-ahtsfmbcr] FILE1 [FILE2] [FILEn]
+
+manpagedescription()
+
+This is ecalength, a few lines of code pompously named so because they  
+let one retrieve the length of an audio file from the command line  
+using ecasound's engine.  
+
+Limitations:  
+startdit()
+dit()- With files without header information (raw files), ecalength will only work 
+      correctly if the audio file is at a sampling rate of 44100 hz.
+      (Addressed with the -a switch.)
+dit() - It is not foolproof, feeding it with something other than an audio  
+        file WILL result in ugly things being spewed back.  
+        (A bit better)
+dit() - A thousand more that I haven't thought of.
+enddit()
+
+manpageoptions()
+
+startdit()
+dit(-h)
+Prints this usage message.  (help)
+
+dit(-a[:]bits,channels,rate)     
+Changes the format assumed by default for headerless data. (adjust)
+
+dit(-t)
+Prints the summed length of all the files processed.  (total)
+(Ignored if with -s) 
+
+dit(-s)
+Enables script mode: One info type per file per line.   (script)
+(Defaults to length in secs.) 
+
+dit(-f)
+With -s will return the format string as info, alone it will 
+add it to the main display.  (format)
+
+dit(-b)
+If -s and -f are enabled with this the info printed will be 
+the sample's bitwidth.  (bits)
+
+dit(-c)
+If -s and -f are enabled with this the info printed will be 
+the channel count.  (channel count)
+
+dit(-r)
+If -s and -f are enabled with this the info printed will be 
+the sampling rate.  (rate)
+
+dit(-m)
+Will print human computable time as in main display but in 
+batch fashion. (minutes) (Only with -s)
+enddit()
+
+manpageseealso()
+
+	ecasound(1), ecatools(1)
+
+manpageauthor()
+
+S.Massy, <email(observer@colba.net)>
+
+htmlcommand(<insert name=ecasound_tail>)
