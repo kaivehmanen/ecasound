@@ -281,7 +281,6 @@ void ECA_NETECI_SERVER::check_for_events(int timeout)
       }
       if (p != clients_rep.end()) ++p;
     }
-    DBC_CHECK(nfds == 1 || p == clients_rep.end());
   }
 
   delete[] ufds;
@@ -515,8 +514,10 @@ void ECA_NETECI_SERVER::remove_client(struct ecasound_neteci_server_client* clie
     close(client->fd);
     client->fd = -1;
   }
+
+  clean_removed_clients();
   
-  DBC_ENSURE(clients_rep.size() == oldsize);
+  DBC_ENSURE(clients_rep.size() == oldsize - 1);
 }
 
 /**
