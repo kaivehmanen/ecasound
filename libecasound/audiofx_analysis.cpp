@@ -20,6 +20,7 @@
 #include <cmath>
 
 #include <kvutils/message_item.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "samplebuffer_iterators.h"
 #include "audiofx_analysis.h"
@@ -27,87 +28,159 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-EFFECT_ANALYZE::EFFECT_ANALYZE (void) { max = 0; }
+EFFECT_ANALYZE::EFFECT_ANALYZE (void) { 
+  reset_stats();
+  cumulativemode_rep = false;
+}
+
+string EFFECT_ANALYZE::status_entry(int range) const {
+  string res;
+  for(int n = 0; n < channels(); n++) {
+    res += "\t ";
+    res += kvu_numtostr(ranges[range][n]);
+    if (cumulativemode_rep == true) {
+      res += ",";
+      res += kvu_numtostr(100.0f *  
+			  ranges[range][n] / 
+			  num_of_samples[n]) + "%";
+      res += "\t";
+    }
+  }
+  return(res);
+} 
+
+void EFFECT_ANALYZE::reset_stats(void) {
+  for(unsigned int nm = 0; nm < ranges.size(); nm++)
+    for(unsigned int ch = 0; ch < ranges[nm].size(); ch++)
+      ranges[nm][ch] = 0;
+  for(unsigned int nm = 0; nm < num_of_samples.size(); nm++)
+    num_of_samples[nm] = 0;
+  max_peak = max_pos = max_neg = 0.0f;
+  max_pos_period = max_neg_period = 0.0f;
+  clipped_pos_period =  clipped_neg_period = 0;
+  clipped_pos = clipped_neg = 0;
+}
 
 string EFFECT_ANALYZE::status(void) const {
   MESSAGE_ITEM otemp;
-  otemp << "(audiofx) -- Printing volume statistics --\n";
-  for(int nm = 0; nm < static_cast<int>(ranges.size()); nm++) {
-    otemp.setprecision(2);
-    otemp << "(audiofx) Vol-range: ";
-    otemp << nm << "\t L: ";
-    assert(SAMPLE_SPECS::ch_left < ranges[nm].size());
-    otemp << ranges[nm][SAMPLE_SPECS::ch_left] << " (";
-    otemp << ((CHAIN_OPERATOR::parameter_type)ranges[nm][SAMPLE_SPECS::ch_left] / (CHAIN_OPERATOR::parameter_type)num_of_samples[SAMPLE_SPECS::ch_left] * 100.0);
-    otemp << ") \t\t";
-    otemp << "R: ";
-    assert(SAMPLE_SPECS::ch_right < ranges[nm].size());
-    otemp << ranges[nm][SAMPLE_SPECS::ch_right] << " (";
-    otemp << ((CHAIN_OPERATOR::parameter_type)ranges[nm][SAMPLE_SPECS::ch_right] / (CHAIN_OPERATOR::parameter_type)num_of_samples[SAMPLE_SPECS::ch_right] * 100.0);
-    otemp << ").\n";
-  
-  }
-  otemp << "(audiofx) -- End of statistics (counters reseted)--\n";
+  otemp << "(audiofx) -- Amplitude statistics -----------------------------\n";
+  otemp << "Range, pos/neg, count,(%), ch1...n";
+  otemp.setprecision(3);
+  otemp << "\nPos   -1.0 dB: " << status_entry(0);
+  otemp << "\nPos   -2.0 dB: " << status_entry(1);
+  otemp << "\nPos   -4.0 dB: " << status_entry(2);
+  otemp << "\nPos   -8.0 dB: " << status_entry(3);
+  otemp << "\nPos  -16.0 dB: " << status_entry(4);
+  otemp << "\nPos  -32.0 dB: " << status_entry(5);
+  otemp << "\nPos  -64.0 dB: " << status_entry(6);
+  otemp << "\nPos -inf.0 dB: " << status_entry(7);
+  otemp << "\nNeg -inf.0 dB: " << status_entry(8);
+  otemp << "\nNeg  -64.0 dB: " << status_entry(9);
+  otemp << "\nNeg  -32.0 dB: " << status_entry(10);
+  otemp << "\nNeg  -16.0 dB: " << status_entry(11);
+  otemp << "\nNeg   -8.0 dB: " << status_entry(12);
+  otemp << "\nNeg   -4.0 dB: " << status_entry(13);
+  otemp << "\nNeg   -2.0 dB: " << status_entry(14);
+  otemp << "\nNeg   -1.0 dB: " << status_entry(15);
+
   otemp.setprecision(5);
-  otemp << "(audiofx) Max amplitude " << max;
-  otemp << "; signal can be amplified by " << max_multiplier() * 100.0;
-  otemp << "%.";
+  otemp << "\n(audiofx) Peak amplitude, period: pos=" << max_pos_period << " neg=" << max_neg_period << ".\n";
+  otemp << "(audiofx) Peak amplitude, all   : pos=" << max_pos << " neg=" << max_neg << ".\n";
+  otemp << "(audiofx) Clipped samples, period: pos=" << clipped_pos_period << " neg=" << clipped_neg_period << ".\n";
+  otemp << "(audiofx) Clipped samples, all   : pos=" << clipped_pos << " neg=" << clipped_neg << ".\n";
+  otemp << "(audiofx) Max gain without clipping, all: " << max_multiplier() << ".\n";
+  if (cumulativemode_rep == true)
+    otemp << "(audiofx) -- End of statistics --------------------------------\n";
+  else
+    otemp << "(audiofx) -- End of statistics (periodical counters reseted) --\n";
 
-  for(int nm = 0; nm < static_cast<int>(ranges.size()); nm++)
-    for(int ch = 0; ch < static_cast<int>(ranges[0].size()); ch++)
-      ranges[nm][ch] = 0;
-  for(int ch = 0; ranges.size() > 0 && ch < static_cast<int>(ranges[0].size()); ch++)
-    num_of_samples[ch] = 0;
-
-  max = 0;
-
+  if (cumulativemode_rep != true) {
+    for(unsigned int nm = 0; nm < ranges.size(); nm++)
+      for(unsigned int ch = 0; ch < ranges[nm].size(); ch++)
+	ranges[nm][ch] = 0;
+    for(unsigned int nm = 0; nm < num_of_samples.size(); nm++)
+      num_of_samples[nm] = 0;
+    max_pos_period = max_neg_period = 0.0f;
+    clipped_pos_period =  clipped_neg_period = 0;
+  }
   return(otemp.to_string());
 }
 
+void EFFECT_ANALYZE::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+  switch (param) {
+  case 1: 
+    if (value != 0)
+      cumulativemode_rep = true;
+    else
+      cumulativemode_rep = false;
+  }
+}
+
+CHAIN_OPERATOR::parameter_type EFFECT_ANALYZE::get_parameter(int param) const { 
+  switch (param) {
+  case 1: 
+    if (cumulativemode_rep == true) return(1.0);
+  }
+  return(0.0);
+}
+
 CHAIN_OPERATOR::parameter_type EFFECT_ANALYZE::max_multiplier(void) const { 
-  CHAIN_OPERATOR::parameter_type kerroin;
+  CHAIN_OPERATOR::parameter_type k;
   
-  if (max != 0.0) kerroin = SAMPLE_SPECS::max_amplitude / max;
-  else kerroin = 0.0;
+  if (max_peak != 0.0) k = SAMPLE_SPECS::max_amplitude / max_peak;
+  else k = 0.0;
 
-  if (kerroin < 1.0) kerroin = 1.0;
+  if (k < 1.0) k = 1.0;
 
-  return(kerroin);
+  return(k);
 }
 
 void EFFECT_ANALYZE::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
-  if (insample->number_of_channels() < 2) {
-    num_of_samples.resize(2, 0);
-    ranges.resize(range_count, vector<unsigned long int> (2));
-  }
-  else {
-    num_of_samples.resize(insample->number_of_channels(), 0);
-    ranges.resize(range_count, vector<unsigned long int> (insample->number_of_channels()));
-  }
+  set_channels(insample->number_of_channels());
+  num_of_samples.resize(channels(), 0);
+  ranges.resize(range_count, vector<unsigned long int> (channels()));
 }
 
 void EFFECT_ANALYZE::process(void) {
   i.begin();
   while(!i.end()) {
-    if (fabs(*i.current() > max)) max = fabs(*i.current());
+    if (fabs(*i.current() > max_peak)) max_peak = fabs(*i.current());
     num_of_samples[i.channel()]++;
-    if (*i.current() <  SAMPLE_SPECS::max_amplitude * -7.0/8.0) ranges[0][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -6.0/8.0) ranges[1][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -5.0/8.0) ranges[2][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -4.0/8.0) ranges[3][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -3.0/8.0) ranges[4][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -2.0/8.0) ranges[5][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -1.0/8.0) ranges[6][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::silent_value) ranges[7][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 1.0/8.0) ranges[8][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 2.0/8.0) ranges[9][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 3.0/8.0) ranges[10][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 4.0/8.0) ranges[11][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 5.0/8.0) ranges[12][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 6.0/8.0) ranges[13][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 7.0/8.0) ranges[14][i.channel()]++;
-    else if (*i.current() < SAMPLE_SPECS::max_amplitude) ranges[15][i.channel()]++;
+    if (*i.current() >= 0) {
+      if (*i.current() > max_pos) max_pos = *i.current();
+      if (*i.current() > max_pos_period) max_pos_period = *i.current();
+      if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.891f) {
+	if (*i.current() >= SAMPLE_SPECS::max_amplitude) {
+	  clipped_pos_period++; clipped_pos++;
+	}
+	ranges[0][i.channel()]++;  // 0-1dB
+      }
+      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.794f) ranges[1][i.channel()]++;  // 1-2dB
+      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.631f) ranges[2][i.channel()]++; // 2-4dB
+      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.398f) ranges[3][i.channel()]++; // 4-8dB
+      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.158f) ranges[4][i.channel()]++; // 8-16dB
+      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.025f) ranges[5][i.channel()]++; // 16-32dB
+      else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.001f) ranges[6][i.channel()]++; // 32-64dB
+      else ranges[7][i.channel()]++; // 64-infdB
+    }
+    else {
+      if (fabs(*i.current()) > max_neg) max_neg = fabs(*i.current());
+      if (fabs(*i.current()) > max_neg_period) max_neg_period = fabs(*i.current());
+      if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.891f) {
+	if (*i.current() <= -SAMPLE_SPECS::max_amplitude) {
+	  clipped_neg_period++; clipped_neg++;
+	}
+	ranges[15][i.channel()]++;  // 0-1dB
+      }
+      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.794f) ranges[14][i.channel()]++;  // 1-2dB
+      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.631f) ranges[13][i.channel()]++; // 2-4dB
+      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.398f) ranges[12][i.channel()]++; // 4-8dB
+      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.158f) ranges[11][i.channel()]++; // 8-16dB
+      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.025f) ranges[10][i.channel()]++; // 16-32dB
+      else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.001f) ranges[9][i.channel()]++; // 32-64dB
+      else ranges[8][i.channel()]++; // 64-infdB
+    }
     i.next();
   }
 }
@@ -126,8 +199,8 @@ string EFFECT_DCFIND::status(void) const {
 CHAIN_OPERATOR::parameter_type EFFECT_DCFIND::get_deltafix(int channel) const { 
   SAMPLE_SPECS::sample_type deltafix;
 
-  if (channel >= pos_sum.size() ||
-      channel >= neg_sum.size()) return(0.0);
+  if (channel >= static_cast<int>(pos_sum.size()) ||
+      channel >= static_cast<int>(neg_sum.size())) return(0.0);
 
   if (pos_sum[channel] > neg_sum[channel]) deltafix = -(pos_sum[channel] - neg_sum[channel]) / num_of_samples[channel];
   else deltafix = (neg_sum[channel] - pos_sum[channel]) / num_of_samples[channel];

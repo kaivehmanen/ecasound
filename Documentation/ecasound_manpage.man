@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "21\&.10\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "22\&.11\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -100,19 +100,23 @@ Force ecasound to use mix mode \'mix_mode\'\&. \'auto\' = automatic (default),
 single-threaded mode\&. In most cases, ecasound is able to find out 
 the correct mode automatically\&.
 .IP 
-.IP "-r" 
+.IP "-r:sched_priority" 
 Use realtime scheduling policy (SCHED_FIFO)\&. This is impossible if 
 ecasound doesn\'t have root priviledges\&. Beware! This gives better 
 performance, but can cause total lock-ups if something goes wrong\&.
+The \'sched_priority\' can be omitted (0=emitted)\&. If given, 
+this is the static priority to the highest priority ecasound thread\&.
+Other ecasound threads run with priority \'sched_priority-1\&.\&.\&.n\'\&.
 .IP 
 .IP "-x" 
 Truncate outputs\&. If this is _not_ set, ecasound opens all outputs 
 - if format allows it - in readwrite mode (-> prevents truncation)\&.
 .IP 
 .IP "-z:feature" 
-Enable \'feature\'\&. \'db\' enables double-buffering for audio objects 
-that support it\&. \'psr\' enables the \fIprecise-sample-rates\fP mode 
-for OSS-devices\&. See ecasoundrc(5)\&. 
+Enable \'feature\'\&. \'-z:db,dbsize\' enables double-buffering for audio 
+objects that support it (dbzise=0 for default, otherwise buffer
+size in sample frames)\&. \'-z:psr\' enables the \fIprecise-sample-rates\fP 
+mode for OSS-devices\&. See ecasoundrc(5)\&. 
 .IP 
 .PP 
 \fBPROCESSING CONTROL\fP
@@ -319,6 +323,18 @@ panning\&.
 .IP "-ezx:left-dc-fix-value,right-dc-fix-value" 
 Adjusts the signal DC by \'dc-fix-value\'\&. Use -ezf to find the
 optimal value\&.
+.IP 
+.PP 
+\fIENVELOPE MODULATION\fP
+.IP 
+.IP "-eemb:bpm,on-time-msec" 
+Pulse gate (pulse frequency given as beats-per-minute)\&.
+.IP 
+.IP "-eemp:freq-Hz,on-time-%" 
+Pulse gate\&.
+.IP 
+.IP "-eemt:bpm,depth-%" 
+Tremolo effect (tremolo speed given as beats-per-minute)\&.
 .IP 
 .PP 
 \fIFILTER EFFECTS\fP

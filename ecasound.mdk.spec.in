@@ -65,6 +65,7 @@ make DESTDIR=$RPM_BUILD_ROOT%prefix strip-shared-libs
 /usr/bin/ecafixdc
 /usr/bin/ecanormalize
 /usr/bin/ecaplay
+/usr/bin/ecasignalview
 /usr/bin/ecasound-config
 /usr/lib/libecasound.*
 /usr/lib/libkvutils.*
@@ -80,6 +81,9 @@ make DESTDIR=$RPM_BUILD_ROOT%prefix strip-shared-libs
 /usr/lib/ecasound-plugins
 
 %changelog
+* Sat Nov 25 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- ecasignalview added to the package.
+
 * Thu Aug 31 2000 Kai Vehmanen <kaiv@wakkanet.fi>
 - 'ecasound-config' script added.
 - All Qt-related stuff removed.

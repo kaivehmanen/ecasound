@@ -6,20 +6,6 @@
 <insert file=../es-makrot.txt>
 <insert name=ecasound_indexbar>
 
-<hr>
-<CENTER><H4><A HREF=index.html>[Index]</A>
-<A HREF=examples.html>[Examples]</A>
-<A HREF=ecasound_faq.html>[FAQ]</A>
-<A HREF=manpages.html>[Man pages]</A>
-<A HREF=users_guide/index.html>[User's guide]</A>
-<A HREF=programmers_guide/index.html>[Programmer's guide]</A>
-<A HREF=doxygen_pages.html>[Source tree]</A>
-<A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home
-page]</A></H4></CENTER>
-<CENTER><H4><A HREF=ecasound_manpage.html>[ecasound(1)]</A>
-<A HREF=ecatools_manpage.html>[ecatools(1)]</A>
-<A HREF=ecasound-iam_manpage.html>[ecasound-iam(1)]</A>
-<A HREF=ecasoundrc_manpage.html>[ecasoundrc(5)]</A></H4></CENTER>
 <p>
 <hr>
 <center><h2> ecasound documentation - manual pages </h2></center>
@@ -37,7 +23,7 @@ page]</A></H4></CENTER>
 <hr>
 
 <h1>ecasound</h1>
-<h2>21.10.2000</h2>
+<h2>22.11.2000</h2>
 
 
     
@@ -126,17 +112,21 @@ Force ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
 'simple' =  only one input/chain/output and 'normal' = normal 
 single-threaded mode. In most cases, ecasound is able to find out 
 the correct mode automatically.
-<p><p></p><dt><strong>-r</strong><dd>
+<p><p></p><dt><strong>-r:sched_priority</strong><dd>
 Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
 ecasound doesn't have root priviledges. Beware! This gives better 
 performance, but can cause total lock-ups if something goes wrong.
+The 'sched_priority' can be omitted (0=emitted). If given, 
+this is the static priority to the highest priority ecasound thread.
+Other ecasound threads run with priority 'sched_priority-1...n'.
 <p><p></p><dt><strong>-x</strong><dd>
 Truncate outputs. If this is _not_ set, ecasound opens all outputs 
 - if format allows it - in readwrite mode (-&gt; prevents truncation).
 <p><p></p><dt><strong>-z:feature</strong><dd>
-Enable 'feature'. 'db' enables double-buffering for audio objects 
-that support it. 'psr' enables the <em>precise-sample-rates</em> mode 
-for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>. 
+Enable 'feature'. '-z:db,dbsize' enables double-buffering for audio 
+objects that support it (dbzise=0 for default, otherwise buffer
+size in sample frames). '-z:psr' enables the <em>precise-sample-rates</em> 
+mode for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>. 
 <p></dl>
 <p><strong>PROCESSING CONTROL</strong>
 <dl>
@@ -310,6 +300,15 @@ panning.
 <p><p></p><dt><strong>-ezx:left-dc-fix-value,right-dc-fix-value</strong><dd>
 Adjusts the signal DC by 'dc-fix-value'. Use -ezf to find the
 optimal value.
+<p></dl>
+<p><em>ENVELOPE MODULATION</em>
+<dl>
+<p><p></p><dt><strong>-eemb:bpm,on-time-msec</strong><dd>
+Pulse gate (pulse frequency given as beats-per-minute).
+<p><p></p><dt><strong>-eemp:freq-Hz,on-time-%</strong><dd>
+Pulse gate.
+<p><p></p><dt><strong>-eemt:bpm,depth-%</strong><dd>
+Tremolo effect (tremolo speed given as beats-per-minute).
 <p></dl>
 <p><em>FILTER EFFECTS</em>
 <dl>

@@ -60,6 +60,7 @@ void OSSDEVICE::open(void) throw(SETUP_ERROR&) {
   else {
       throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-OSS: Simultanious intput/output not supported."));
   }
+  toggle_open_state(true);
 
   // -------------------------------------------------------------------
   // Check capabilities
@@ -178,8 +179,6 @@ void OSSDEVICE::open(void) throw(SETUP_ERROR&) {
 
   ecadebug->msg(ECA_DEBUG::user_objects, "OSS set to use fragment size of " + 
 		   kvu_numtostr(fragment_size) + ".");
-
-  toggle_open_state(true);
 }
 
 void OSSDEVICE::stop(void) {

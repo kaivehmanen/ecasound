@@ -61,7 +61,7 @@ OOPPTTIIOONNSS
 
 
 
-                            21.10.2000                          1
+                            22.11.2000                          1
 
 
 
@@ -127,7 +127,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            21.10.2000                          2
+                            22.11.2000                          2
 
 
 
@@ -152,10 +152,15 @@ ecasound(1)            Multimedia software            ecasound(1)
               find out the correct mode automatically.
 
 
-       -r     Use realtime scheduling policy  (SCHED_FIFO).  This
+       -r:sched_priority
+              Use realtime scheduling policy  (SCHED_FIFO).  This
               is  impossible  if ecasound doesn't have root priv-
               iledges. Beware! This gives better performance, but
-              can cause total lock-ups if something goes wrong.
+              can  cause  total lock-ups if something goes wrong.
+              The 'sched_priority' can be omitted (0=emitted). If
+              given,  this  is the static priority to the highest
+              priority ecasound thread.  Other  ecasound  threads
+              run with priority 'sched_priority-1...n'.
 
 
        -x     Truncate  outputs.  If  this is _not_ set, ecasound
@@ -164,10 +169,11 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -z:feature
-              Enable 'feature'. 'db' enables double-buffering for
-              audio objects that support it.  'psr'  enables  the
-              _p_r_e_c_i_s_e_-_s_a_m_p_l_e_-_r_a_t_e_s mode for OSS-devices. See eca-
-              soundrc(5).
+              Enable  'feature'.  '-z:db,dbsize'  enables double-
+              buffering  for  audio  objects  that   support   it
+              (dbzise=0  for  default,  otherwise  buffer size in
+              sample frames). '-z:psr' enables  the  _p_r_e_c_i_s_e_-_s_a_m_-
+              _p_l_e_-_r_a_t_e_s  mode for OSS-devices. See ecasoundrc(5).
 
 
        PPRROOCCEESSSSIINNGG CCOONNTTRROOLL
@@ -184,16 +190,10 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        IINNPPUUTT//OOUUTTPPUUTT SSEETTUUPP
 
-       See ecasound user's guide for more detailed documentation.
-
-
-       -f:sample_format,channel,sample-rate,interleaving
-              Set default sampling parameters. These are used for
-              all  following  input  and  output  files  or until
 
 
 
-                            21.10.2000                          3
+                            22.11.2000                          3
 
 
 
@@ -202,6 +202,12 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+       See ecasound user's guide for more detailed documentation.
+
+
+       -f:sample_format,channel,sample-rate,interleaving
+              Set default sampling parameters. These are used for
+              all  following  input  and  output  files  or until
               another -f is specified. If no -f  option  is  pre-
               sent, ecasound uses s16_le/2ch/44100/interleaved as
               the default value. Some audio objects may  override
@@ -250,16 +256,10 @@ ecasound(1)            Multimedia software            ecasound(1)
               to be an input.
 
 
-       -o[:]output-file-or-device
-              Works  in the same way as the -i option. If no out-
-              puts are specified, the default  output  device  is
-              used  (see  &tilde;/.ecasoundrc).  Note!  you can't
-              output to module formats supported by MikMod  (this
-              should be obvious) nor to ALSA's loopback device.
 
 
 
-                            21.10.2000                          4
+                            22.11.2000                          4
 
 
 
@@ -267,6 +267,13 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 ecasound(1)            Multimedia software            ecasound(1)
 
+
+       -o[:]output-file-or-device
+              Works  in the same way as the -i option. If no out-
+              puts are specified, the default  output  device  is
+              used  (see  &tilde;/.ecasoundrc).  Note!  you can't
+              output to module formats supported by MikMod  (this
+              should be obvious) nor to ALSA's loopback device.
 
               _O_B_J_E_C_T _T_Y_P_E _S_P_E_C_I_F_I_C _N_O_T_E_S
 
@@ -314,24 +321,24 @@ ecasound(1)            Multimedia software            ecasound(1)
               multiple inputs and outputs.
 
 
-       Null inputs/outputs
-              If  you  specify "null" or "/dev/null" as the input
-              or output, a null audio device is created. This  is
-              useful  if  you  just  want  to analyze sample data
-              without writing it to a file.
 
 
 
 
-
-
-                            21.10.2000                          5
+                            22.11.2000                          5
 
 
 
 
 
 ecasound(1)            Multimedia software            ecasound(1)
+
+
+       Null inputs/outputs
+              If  you  specify "null" or "/dev/null" as the input
+              or output, a null audio device is created. This  is
+              useful  if  you  just  want  to analyze sample data
+              without writing it to a file.
 
 
        System standard streams and named pipes
@@ -382,16 +389,9 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        _G_E_N_E_R_A_L _S_I_G_N_A_L _P_R_O_C_E_S_S_I_N_G _A_L_G_O_R_I_T_H_M_S
 
-       -ea:amplify-%
-              Amplifies signal by amplify-% percent.
 
 
-       -eac:amplify-%,channel
-              Amplifies signal of channel 'channel' by  amplify-%
-
-
-
-                            21.10.2000                          6
+                            22.11.2000                          6
 
 
 
@@ -400,6 +400,12 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+       -ea:amplify-%
+              Amplifies signal by amplify-% percent.
+
+
+       -eac:amplify-%,channel
+              Amplifies signal of channel 'channel' by  amplify-%
               percent. 'channel' ranges from 1...n where n is the
               total number of channels.
 
@@ -448,16 +454,10 @@ ecasound(1)            Multimedia software            ecasound(1)
               the music more intact.
 
 
-       -enm:threshold-level-%,pre-hold-time-msec,attack-time-
-              msec,post- hold-time-msec,release-time-msec
-              Noise gate. Supports multichannel processing  (each
-              channel  processed  separately). When signal ampli-
-              tude falls below 'threshold_level_%' percent  (100%
-              means maximum amplitude), gate is activated. If the
 
 
 
-                            21.10.2000                          7
+                            22.11.2000                          7
 
 
 
@@ -466,6 +466,12 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+       -enm:threshold-level-%,pre-hold-time-msec,attack-time-
+              msec,post- hold-time-msec,release-time-msec
+              Noise gate. Supports multichannel processing  (each
+              channel  processed  separately). When signal ampli-
+              tude falls below 'threshold_level_%' percent  (100%
+              means maximum amplitude), gate is activated. If the
               signal stays below the threshold for 'th_time'  ms,
               it's  faded out during the attack phase of 'attack'
               ms.  If  the  signal  raises  above  the   'thresh-
@@ -492,11 +498,38 @@ ecasound(1)            Multimedia software            ecasound(1)
               to find the optimal value.
 
 
+       _E_N_V_E_L_O_P_E _M_O_D_U_L_A_T_I_O_N
+
+
+       -eemb:bpm,on-time-msec
+              Pulse  gate  (pulse  frequency  given as beats-per-
+              minute).
+
+
+       -eemp:freq-Hz,on-time-%
+              Pulse gate.
+
+
+       -eemt:bpm,depth-%
+              Tremolo effect (tremolo speed given  as  beats-per-
+              minute).
+
+
        _F_I_L_T_E_R _E_F_F_E_C_T_S
 
        -ef1:center_freq, width
               Resonant bandpass filter. 'center_freq' is the cen-
               ter frequency. Width is specified in Hz.
+
+
+
+                            22.11.2000                          8
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
 
 
        -ef3:cutoff_freq, reso, gain
@@ -520,18 +553,6 @@ ecasound(1)            Multimedia software            ecasound(1)
        -efa:delay-samples,feedback-%
               Allpass filter.  Passes  all  frequencies  with  no
               change  in amplitude.  However, at the same time it
-
-
-
-                            21.10.2000                          8
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
               imposes a frequency-dependent phase-shift.
 
 
@@ -564,6 +585,19 @@ ecasound(1)            Multimedia software            ecasound(1)
               off_freq' are passed through.
 
 
+
+
+
+
+                            22.11.2000                          9
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
        -efr:center-freq,width
               Bandreject filter. 'center_freq' is the center fre-
               quency. Width is specified in Hz.
@@ -586,18 +620,6 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        -erm:to-channel
               Mix  all  channels  to  channel  'to_channel'.   If
-
-
-
-                            21.10.2000                          9
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
               'to_channel'  doesn't exist, it is created. Channel
               indexing is started from 1.
 
@@ -629,6 +651,19 @@ ecasound(1)            Multimedia software            ecasound(1)
               nal added to the original signal.
 
 
+
+
+
+
+                            22.11.2000                         10
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
        -etf:delay-time-msec
               Fake-stereo effect. The input signal is  summed  to
               mono. The original signal goes to the left channels
@@ -652,18 +687,6 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        -etp:delay-time-msec,variance-time-samples,feedback-%,lfo-
               freq
-
-
-
-                            21.10.2000                         10
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
               Phaser.
 
 
@@ -696,6 +719,17 @@ ecasound(1)            Multimedia software            ecasound(1)
               unique among all LADSPA plugins.
 
 
+
+
+                            22.11.2000                         11
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
        GGAATTEE SSEETTUUPP
 
 
@@ -718,18 +752,6 @@ ecasound(1)            Multimedia software            ecasound(1)
        CCOONNTTRROOLL EENNVVEELLOOPPEE SSEETTUUPP
 
               Controllers  can  be  used  to  dynamically  change
-
-
-
-                            21.10.2000                         11
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
               effect   parameters  during  processing.  All  con-
               trollers are attached to the selected (=usually the
               last specified effect/controller) effect. The first
@@ -762,6 +784,18 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        -kl2:fx-param,start-value,end-value,1st-stage-length-
               sec,2nd- stage-length-sec
+
+
+
+                            22.11.2000                         12
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
               Two-stage linear envelope, a  more  versatile  tool
               for   doing   fade-ins   and  fade-outs.  Stays  at
               'start_value' for  '1st_stage_length'  seconds  and
@@ -783,18 +817,6 @@ ecasound(1)            Multimedia software            ecasound(1)
               controller.   When you specify _-_k_x, the last speci-
               fied controller will be set as the control  target.
               Then you just add another controller as usual.
-
-
-
-
-                            21.10.2000                         12
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
 
        IINNTTEERRAACCTTIIVVEE MMOODDEE
 
@@ -831,28 +853,6 @@ AAUUTTHHOORR
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            21.10.2000                         13
+                            22.11.2000                         13
 
 

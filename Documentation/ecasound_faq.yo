@@ -4,14 +4,7 @@ htmlcommand(
 <insert file=../es-makrot.txt>
 <insert name=ecasound_indexbar>
 
-<CENTER><H4><A HREF=index.html>[Index]</A>
-<A HREF=examples.html>[Examples]</A>
-<A HREF=ecasound_faq.html>[FAQ]</A>
-<A HREF=manpages.html>[Man pages]</A>
-<A HREF=users_guide/index.html>[User's guide]</A>
-<A HREF=programmers_guide/index.html>[Programmer's guide]</A>
-<A HREF=doxygen_pages.html>[Source tree]</A>
-<A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
+<hr>
 <p>
 <center><h2>Ecasound documentation - Frequently-asked-questions (FAQ)</h2></center>
 </p>

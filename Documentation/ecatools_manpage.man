@@ -1,4 +1,4 @@
-.TH "ecatools" "1" "07\&.06\&.2000" "" "Multimedia software" 
+.TH "ecatools" "1" "25\&.11\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecatools \- audio processing utils based on ecasound
@@ -11,6 +11,8 @@ ecatools \- audio processing utils based on ecasound
 \fBecafixdc\fP file1 [ file2,\&.\&.\&.,fileN ]
 .PP 
 \fBecanormalize\fP file1 [ file2,\&.\&.\&.,fileN ]
+.PP 
+\fBecasignalview\fP [ options ] [ input ] [ output ]
 .PP 
 .SH "DESCRIPTION" 
 .PP 
@@ -39,6 +41,32 @@ A simple command-line tool for normalizing sample volume\&.
 Finds out how much input file can be amplified without clipping
 and, if necessary, does the amplification\&.
 .PP 
+\fBECASIGNALVIEW\fP
+.PP 
+Ecasignalview is meant for monitoring signal amplitude and peak 
+statistics\&. It accepts the following options:
+.PP 
+.IP "input" 
+The first option not starting with with a \'-\' is interpreted 
+as input string\&. This can be a device or a filename\&. All formats
+supported by libecasound are accepted\&. Defaults to \'/dev/dsp\'\&.
+.IP 
+.IP "output" 
+Similarly to input, second option not starting with a \'-\'
+is interpreted as output\&. Defaults to \'null\'\&.
+.IP 
+.IP "-b:buffersize" 
+Buffersize in sample frames\&. Defaults to 128\&.
+.IP 
+.IP "-c" 
+Enable cumulative mode\&. Counters are not resets after refresh\&.
+.IP 
+.IP "-d" 
+Enable debug mode\&.
+.IP 
+.IP "r:rate_msec" 
+Specify screen refresh rate in milliseconds\&.
+.PP 
 .SH "FILES" 
 .PP 
 \fI~/\&.ecasoundrc\fP
@@ -47,8 +75,7 @@ is created with some default values\&. See ecasoundrc(5)\&.
 .PP 
 .SH "SEE ALSO" 
 .PP 
-ecasound (1), "HTML docs in the Documentation subdirectory",
-qtecasound (1)
+ecasound (1), "HTML docs in the Documentation subdirectory"
 .PP 
 .SH "AUTHOR" 
 .PP 

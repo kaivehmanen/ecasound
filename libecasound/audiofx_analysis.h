@@ -29,18 +29,30 @@ class EFFECT_ANALYSIS : public EFFECT_BASE {
  */
 class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
 
-  mutable vector<unsigned long int> num_of_samples; // number of samples processed
-  mutable vector<vector<unsigned long int> > ranges;
   static const int range_count = 16;
 
-  mutable parameter_type max;
+  mutable vector<unsigned long int> num_of_samples; // number of samples processed
+  mutable vector<vector<unsigned long int> > ranges;
+
+  mutable parameter_type max_pos_period, max_neg_period;
+  mutable unsigned long int clipped_pos_period, clipped_neg_period;
+  parameter_type max_peak, max_pos, max_neg;
+  unsigned long int clipped_pos, clipped_neg;
+  bool cumulativemode_rep;
   SAMPLE_ITERATOR_CHANNELS i;
-  
+
+  void reset_stats(void);
+  string status_entry(int range) const;
+
  public:
 
   parameter_type max_multiplier(void) const;
     
   virtual string name(void) const { return("Volume-analyze"); }
+  virtual string parameter_names(void) const { return("cumulative-mode"); }
+
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);

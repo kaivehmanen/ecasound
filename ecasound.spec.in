@@ -73,6 +73,7 @@ fi
 /usr/local/bin/ecafixdc
 /usr/local/bin/ecanormalize
 /usr/local/bin/ecaplay
+/usr/local/bin/ecasignalview
 /usr/local/bin/ecasound-config
 /usr/local/lib/libecasound.*
 /usr/local/lib/libkvutils.*
@@ -88,6 +89,9 @@ fi
 /usr/local/lib/ecasound-plugins
 
 %changelog
+* Sat Nov 25 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- ecasignalview added to the package.
+
 * Thu Aug 31 2000 Kai Vehmanen <kaiv@wakkanet.fi>
 - Added /etc/ld.so.conf modification script.
 - Added DESTDIR to %install.

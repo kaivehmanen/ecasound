@@ -17,6 +17,8 @@ SSYYNNOOPPSSIISS
 
        eeccaannoorrmmaalliizzee file1 [ file2,...,fileN ]
 
+       eeccaassiiggnnaallvviieeww [ options ] [ input ] [ output ]
+
 
 DDEESSCCRRIIPPTTIIOONN
        Ecatools  are  simple  command  line utils that do various
@@ -44,24 +46,22 @@ DDEESSCCRRIIPPTTIIOONN
        Finds  out  how  much  input file can be amplified without
        clipping and, if necessary, does the amplification.
 
+       EECCAASSIIGGNNAALLVVIIEEWW
 
-FFIILLEESS
-       _~_/_._e_c_a_s_o_u_n_d_r_c The default ecasound resource file.  If  the
-       file  doesn't  exist, it is created with some default val-
-       ues. See ecasoundrc(5).
-
-
-SSEEEE AALLSSOO
-       ecasound (1), "HTML docs in  the  Documentation  subdirec-
-       tory", qtecasound (1)
+       Ecasignalview is meant for monitoring signal amplitude and
+       peak statistics. It accepts the following options:
 
 
-AAUUTTHHOORR
-       Kai Vehmanen, <kaiv@wakkanet.fi>
+       input  The  first  option  not starting with with a '-' is
+              interpreted as input string. This can be  a  device
+              or a filename. All formats supported by libecasound
+              are accepted. Defaults to '/dev/dsp'.
 
 
 
-                            07.06.2000                          1
+
+
+                            25.11.2000                          1
 
 
 
@@ -70,6 +70,38 @@ AAUUTTHHOORR
 ecatools(1)            Multimedia software            ecatools(1)
 
 
+       output Similarly to input, second option not starting with
+              a '-' is interpreted as output. Defaults to 'null'.
+
+
+       -b:buffersize
+              Buffersize in sample frames. Defaults to 128.
+
+
+       -c     Enable cumulative mode.  Counters  are  not  resets
+              after refresh.
+
+
+       -d     Enable debug mode.
+
+
+       r:rate_msec
+              Specify screen refresh rate in milliseconds.
+
+
+FFIILLEESS
+       _~_/_._e_c_a_s_o_u_n_d_r_c  The  default ecasound resource file. If the
+       file doesn't exist, it is created with some  default  val-
+       ues. See ecasoundrc(5).
+
+
+SSEEEE AALLSSOO
+       ecasound  (1),  "HTML  docs in the Documentation subdirec-
+       tory"
+
+
+AAUUTTHHOORR
+       Kai Vehmanen, <kaiv@wakkanet.fi>
 
 
 
@@ -95,38 +127,6 @@ ecatools(1)            Multimedia software            ecatools(1)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            07.06.2000                          2
+                            25.11.2000                          2
 
 

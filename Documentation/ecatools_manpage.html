@@ -6,19 +6,6 @@
 <insert file=../es-makrot.txt>
 <insert name=ecasound_indexbar>
 
-<hr>
-<CENTER><H4><A HREF=index.html>[Index]</A>
-<A HREF=examples.html>[Examples]</A>
-<A HREF=ecasound_faq.html>[FAQ]</A>
-<A HREF=manpages.html>[Man pages]</A>
-<A HREF=users_guide/index.html>[User's guide]</A>
-<A HREF=programmers_guide/index.html>[Programmer's guide]</A>
-<A HREF=doxygen_pages.html>[Source tree]</A>
-<A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
-<CENTER><H4><A HREF=ecasound_manpage.html>[ecasound(1)]</A>
-<A HREF=ecatools_manpage.html>[ecatools(1)]</A>
-<A HREF=ecasound-iam_manpage.html>[ecasound-iam(1)]</A>
-<A HREF=ecasoundrc_manpage.html>[ecasoundrc(5)]</A></H4></CENTER>
 <p>
 <hr>
 <center><h2> ecasound documentation - manual pages </h2></center>
@@ -36,7 +23,7 @@
 <hr>
 
 <h1>ecatools</h1>
-<h2>07.06.2000</h2>
+<h2>25.11.2000</h2>
 
 
     
@@ -48,6 +35,7 @@
 <p><strong>ecaconvert</strong> .extension file1 [ file2,...,fileN ]
 <p><strong>ecafixdc</strong> file1 [ file2,...,fileN ]
 <p><strong>ecanormalize</strong> file1 [ file2,...,fileN ]
+<p><strong>ecasignalview</strong> [ options ] [ input ] [ output ]
 <p><h2>DESCRIPTION</h2>
     
 <p>Ecatools are simple command line utils that do various audio
@@ -66,6 +54,26 @@ argument, and its syntax is <em>.ext</em>.
 <p>A simple command-line tool for normalizing sample volume. 
 Finds out how much input file can be amplified without clipping
 and, if necessary, does the amplification.
+<p><strong>ECASIGNALVIEW</strong>
+<p>Ecasignalview is meant for monitoring signal amplitude and peak 
+statistics. It accepts the following options:
+<p><dl>
+<p></p><dt><strong>input</strong><dd>
+The first option not starting with with a '-' is interpreted 
+as input string. This can be a device or a filename. All formats
+supported by libecasound are accepted. Defaults to '/dev/dsp'.
+<p><p></p><dt><strong>output</strong><dd>
+Similarly to input, second option not starting with a '-'
+is interpreted as output. Defaults to 'null'.
+<p><p></p><dt><strong>-b:buffersize</strong><dd>
+Buffersize in sample frames. Defaults to 128.
+<p><p></p><dt><strong>-c</strong><dd>
+Enable cumulative mode. Counters are not resets after refresh.
+<p><p></p><dt><strong>-d</strong><dd>
+Enable debug mode.
+<p><p></p><dt><strong>r:rate_msec</strong><dd>
+Specify screen refresh rate in milliseconds.
+</dl>
 <p><h2>FILES</h2>
     
 <p><em>~/.ecasoundrc</em>
@@ -73,8 +81,7 @@ and, if necessary, does the amplification.
 	is created with some default values. See ecasoundrc(5).
 <p><h2>SEE ALSO</h2>
     
-<p>ecasound (1), "HTML docs in the Documentation subdirectory",
-	qtecasound (1)
+<p>ecasound (1), "HTML docs in the Documentation subdirectory"
 <p><h2>AUTHOR</h2>
     
 <p>Kai Vehmanen, &lt;<a href="mailto:kaiv@wakkanet.fi"><em>kaiv@wakkanet.fi</em></a>&gt;

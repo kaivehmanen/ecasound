@@ -6,14 +6,7 @@
 <insert file=../../es-makrot.txt>
 <insert name=ecasound_subindexbar>
 
-<CENTER><H4><A HREF=../index.html>[Index]</A>
-<A HREF=../examples.html>[Examples]</A>
-<A HREF=../ecasound_faq.html>[FAQ]</A>
-<A HREF=../manpages.html>[Man pages]</A>
-<A HREF=../users_guide/index.html>[User's guide]</A>
-<A HREF=../programmers_guide/index.html>[Programmer's guide]</A>
-<A HREF=../doxygen_pages.html>[Source tree]</A>
-<A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
+<hr>
 <p>
 <center><h2>Ecasound documentation - User's guide</h2></center>
 </p>
@@ -28,7 +21,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>21022000</h2>
+<h2>17092000</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -62,10 +55,9 @@
 <dt><h2><a href="users_guide.html#l20">4: User interfaces</a></h2>
 <dl><p>
 <dt><h3><a href="users_guide.html#l21">4.1: ecasound</a></h3>
-<dt><h3><a href="users_guide.html#l22">4.2: qtecasound</a></h3>
-<dt><h3><a href="users_guide.html#l23">4.3: ecatools</a></h3>
+<dt><h3><a href="users_guide.html#l22">4.2: ecatools</a></h3>
 </dl><p>
-<dt><h2><a href="users_guide.html#l24">5: Documentation</a></h2>
+<dt><h2><a href="users_guide.html#l23">5: Documentation</a></h2>
  
 <p><hr><p><br>
 <p>
@@ -88,15 +80,12 @@ They are also available in HTML-format.
 processing. It can be used for simple tasks like audio playback, 
 recording and format conversions, as well as for multitrack effect 
 processing, mixing, recording and signal recycling. Ecasound supports 
-a wide range of audio inputs, outputs and effect algorithms. Several
-open-source audio packages, like for instance ALSA, OSS, mpg123, lame, 
-libaudiofile and MikMod, are directly supported. One of the advantages 
-of ecasound's chain-based design is that effects can easily be 
-combined both in series and in parallel. Oscillators and MIDI-CCs 
-can be used for controlling effect parameters. Included user-interfaces 
-are ecasound - a versatile console mode interface, qtecasound - 
-a Qt-based X-interface and various command-line utils suitable for 
-batch processing.
+a wide range of audio inputs, outputs and effect algorithms. 
+Effects and audio objects can be combined in various ways, and their
+parameters can be controlled by operator objects like oscillators 
+and MIDI-CCs. As most functionality is located in shared libraries,
+creating alternative user-interfaces is easy. A versatile console mode
+interface is included in the package.
 <p><a name="l4"></a>
 <h3>2.2: History</h3>
 <p>I've programmed ecasound for my own recording purposes. The first 
@@ -133,7 +122,9 @@ Notice that inputs and outputs are not separated in any way.
 <strong>3.1.3: Chain operators and controllers</strong><p>
 Chain operators are used to process and analyze sample data.
 Controllers are used to control individual chain operator parameters.
-Both types of objects are attached to chains.
+Both types of objects are attached to chains. <em>Chain objects</em> refers
+to all objects that can be attached to chains - ie. operators and 
+controllers.
 <p><a name="l10"></a>
 <strong>3.1.4: Chainsetup</strong><p>
 Chainsetup is the central data object. All other objects (inputs,
@@ -230,15 +221,11 @@ ecasound HTML-documentation: <a href="../examples.html">examples.html</a>.
 See <a href="../ecasound_manpage.html">ecasound(1)</a>.
 <p>
 <a name="l22"></a>
-<h3>4.2: qtecasound</h3>
-See <a href="../qtecasound_manpage.html">qtecasound(1)</a>.
-<p>
-<a name="l23"></a>
-<h3>4.3: ecatools</h3>
+<h3>4.2: ecatools</h3>
 See <a href="../ecatools_manpage.html">ecatools(1)</a>.
 <p>
 
-<a name="l24"></a>
+<a name="l23"></a>
 <h2>5: Documentation</h2>
 <p><insert name=ecasound_tail>
 </body>
