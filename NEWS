@@ -32,6 +32,10 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 user's guide and the ecasound faq 
 	- added: better handling of output error conditions (out of
 		 disk space, etc)
+	- added: -eS - audio stamper
+	- added: -ksv - control source that analyzes audio stamp
+  		 volume statistics and creates control data from 
+		 the results
 	- removed: eiam-cmds; u, a, cstatus, l, fstatus, estatus
 	- changed: -kf - 'mode' parameter added
 	- changed: format of the file 'generic_oscillators'

@@ -62,12 +62,13 @@ void clean_exit(int n);
 
 int main(int argc, char *argv[])
 {
-
-  ECA_SESSION* ecaparams = 0;
-
   struct sigaction es_handler;
   es_handler.sa_handler = signal_handler;
   sigemptyset(&es_handler.sa_mask);
+//    sigaddset(&es_handler.sa_mask, SIGTERM);
+//    sigaddset(&es_handler.sa_mask, SIGINT);
+//    sigaddset(&es_handler.sa_mask, SIGQUIT);
+//    sigaddset(&es_handler.sa_mask, SIGABRT);
   es_handler.sa_flags = 0;
 
   sigaction(SIGTERM, &es_handler, 0);
@@ -99,12 +100,11 @@ int main(int argc, char *argv[])
 	print_header(&cout);
     }
     
-    ecaparams = new ECA_SESSION(cline);
-    global_pointer_to_ecaparams = ecaparams;  // used only for signal handling! 
-    if (ecaparams->is_interactive()) start_iactive_readline(ecaparams);
+    global_pointer_to_ecaparams = new ECA_SESSION(cline); // used only for signal handling!
+    if (global_pointer_to_ecaparams->is_interactive()) start_iactive_readline(global_pointer_to_ecaparams);
     else {
-      if (ecaparams->is_selected_chainsetup_connected() == true) {
-	ECA_PROCESSOR epros (ecaparams);
+      if (global_pointer_to_ecaparams->is_selected_chainsetup_connected() == true) {
+	ECA_PROCESSOR epros (global_pointer_to_ecaparams);
 	epros.exec();
       }
     }
@@ -132,7 +132,10 @@ int main(int argc, char *argv[])
   try {
     if (global_session_deleted == false) {
       global_session_deleted = true;
-      if (ecaparams != 0) delete ecaparams;
+      if (global_pointer_to_ecaparams != 0) {
+	delete global_pointer_to_ecaparams;
+	global_pointer_to_ecaparams = 0;
+      }
     }
   }
   catch(ECA_ERROR& e) {
@@ -176,13 +179,17 @@ void parse_command_line(COMMAND_LINE& cline) {
 void clean_exit(int n) {
   if (global_session_deleted == false) {
     global_session_deleted = true;
-    if (global_pointer_to_ecaparams != 0) delete global_pointer_to_ecaparams;
+    if (global_pointer_to_ecaparams != 0) {
+      delete global_pointer_to_ecaparams;
+      global_pointer_to_ecaparams = 0;
+    }
+      
   }
   exit(n);
 }
 
 void signal_handler(int signum) {
-  cerr << "Caught a signal... cleaning up.\n";
+//    cerr << "<-- Caught a signal... cleaning up." << endl << endl;
   clean_exit(0);
 }
 
