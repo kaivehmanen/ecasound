@@ -46,7 +46,7 @@ ecafixdc_SOURCES = ecatools_fixdc.cpp \
 ecafixdc_LDADD = $(libecasound_path)
 
 ecalength_SOURCES = ecalength.cpp
-ecalength_LDADD = $(libecasound_path) $(libecasoundc_path)
+ecalength_LDADD = $(libecasoundc_path) $(libecasound_path)
 
 ecanormalize_SOURCES = ecatools_normalize.cpp \
 	 		     ecatools_normalize.h
@@ -79,4 +79,3 @@ ecaplay_debug_LDADD = $(ecaplay_LDADD)
 
 ecasignalview_debug_SOURCES = $(ecasignalview_SOURCES)
 ecasignalview_debug_LDADD = $(ecasignalview_LDADD)
-
