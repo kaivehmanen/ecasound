@@ -39,8 +39,7 @@ To run ecasound, you need...:
 
 - POSIX compliant UNIX system; tested with various Linux 2.2/2.4 
   and glibc 2.x combinations, FreeBSD 4.x, Solaris 2.8
-- POSIX threads; tested with linuxthreads 0.7 and 0.8 (libpthread, 
-  comes with glibc)
+- POSIX threads support; tested with linuxthreads
 
 Optional when running ecasound:
 
@@ -92,9 +91,10 @@ or old features have been modified. Some things are not documented
 in great detail, but on the other hand, all documentation is kept
 up-to-date.
 
-- user's guide
-- programmer's guide
-- man pages
+- Ecasound User's Guide
+- Ecasound Programmer's Guide
+- Ecasound Control Interface Guide
+- manual pages
 	- ecasound(1)
 	- ecatools(1)
 	- ecasound-iam(1)
@@ -143,8 +143,8 @@ Distribution packages
 Eca projects page (links, apps based on ecasound, etc)
 - http://www.eca.cx
 
-Kelaus Tree, music recorded and mixed with ecasound
-- http://www.wakkanet.fi/kelaus_tree/
+Examples of ecasound in real-life use
+- http://www.eca.cx/ecasound_users.html
 
 -----------------------------------------------------------------------
  About free software development
@@ -156,10 +156,7 @@ succesful free software project has an active userbase behind it. This
 means that your comments, ideas and bug reports are extremely
 important. If something doesn't work, or some feature is missing,
 please mail me about it. Thank you in advance! You can send ecasound
-related mails to me at mailto:k@eca.cx. If you want to see/hear 
-ecasound in action, you can listen to some of my material at 
-	http://www.wakkanet.fi/kelaus_tree  
-All the newer ones are recorded and mixed with ecasound!
+related mails to me at mailto:k@eca.cx.
 
 -----------------------------------------------------------------------
  Stable and development versions

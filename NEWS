@@ -1,23 +1,21 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 161002) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 171002) **
 -----------------------------------------------------------------------
 
-About the version numbers... "vX.Y[.Z][devT]" :
+About the version numbers... "vX.Y[.Z][-extraT]" :
 
   X = major version  - the overall development status
   Y = minor version  - represents a set of planned features (see TODO);
 		       an even number means stable while odd marks 
 		       development releases
   Z = revision       - small changes to major.minor version (optional)
-		
-  devT = dev-release - development releases leading to the next stable
-		       version
+
+  extraT             - beta, pre and rc releases that are in preparation
+		       of major releases (optional)
 
 -----------------------------------------------------------------------
 
-Last officially released version is -*> v2.0.4 *-
-
-??102002 (v2.1dev12)
+17102002 (v2.2.0-pre1)
 	- edi-entries: edi-24, edi-28, edi-29, edi-30
 	- note: libecasound and libkvutils interface version numbers
 		will from now on track API changes instead of ABI
@@ -59,6 +57,7 @@ Last officially released version is -*> v2.0.4 *-
 	         of 'cop-status' and 'ctrl-status'
 	- fixed: loglevel settings were lost when output mode 
 		 was changed
+	- fixed: ecamonitor was missing from the dist package
 22082002 (v2.1dev11)
 	- added: configure-check for socket libraries
 	- added: -evp - volume peak watcher operator
