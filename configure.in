@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20040819-36
+dnl last modified: 20041029-37
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -23,7 +23,7 @@ echo "------------------------------------------------------------------"
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 2.3.4)
+AM_INIT_AUTOMAKE(ecasound, 2.3.5-cvs)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
@@ -68,19 +68,22 @@ dnl Set compiler flags
 dnl
 dnl modifies: AM_CXXFLAGS, AM_CFLAGS
 dnl ---
-EXTRAFLAGS="-D_REENTRANT"
-EXTRAGCCFLAGS="$EXTRAFLAGS -ffast-math -fstrict-aliasing -funroll-loops"
+EXTRACPPFLAGS="-D_REENTRANT"
+EXTRAGCCFLAGS="-ffast-math -fstrict-aliasing -funroll-loops"
 if test x${GXX} = xyes; then
-   AM_CXXFLAGS="$AM_CXXFLAGS $EXTRAFLAGS $EXTRAGCCFLAGS"
+   AM_CXXFLAGS="$AM_CXXFLAGS $EXTRAGCCFLAGS"
 fi
 if test x${GCC} = xyes; then
-   AM_CFLAGS="$AM_CFLAGS $EXTRAFLAGS $EXTRAGCCFLAGS"
+   AM_CFLAGS="$AM_CFLAGS $EXTRAGCCFLAGS"
 fi
+
+AM_CPPFLAGS="$AM_CPPFLAGS $EXTRACPPFLAGS"
 AM_CXXFLAGS="$AM_CXXFLAGS $EXTRADEBUGFLAGS"
 AM_CFLAGS="$AM_CFLAGS $EXTRADEBUGFLAGS"
 
 AC_SUBST(AM_CFLAGS)
 AC_SUBST(AM_CXXFLAGS)
+AC_SUBST(AM_CPPFLAGS)
 AC_SUBST(AM_LDFLAGS)
 
 dnl ------------------------------------------------------------------
@@ -1187,6 +1190,7 @@ echo "-----------------------------------------------------------------"
 echo "Compiler options:"
 echo "AM_CFLAGS:                 $AM_CFLAGS"
 echo "AM_CXXFLAGS:               $AM_CXXFLAGS"
+echo "AM_CPPFLAGS:               $AM_CPPFLAGS"
 echo "AM_LDFLAGS:                $AM_LDFLAGS"
 
 echo "-----------------------------------------------------------------"
