@@ -25,4 +25,4 @@ class TEXTDEBUG : public ECA_LOGGER_INTERFACE {
     std::ostream* stream(void);
 };
 
-#endif
+#endif /* INCLUDED_TEXTDEBUG_H */

@@ -20,7 +20,22 @@ else
 bin_PROGRAMS = ecasound
 endif
 
-ecasound_SOURCES = eca-text.cpp eca-text.h textdebug.cpp textdebug.h
+ecasound_SOURCES = 	ecasound.cpp \
+			eca-console.h \
+			eca-curses.h \
+			eca-curses.cpp \
+			eca-comhelp.cpp \
+			eca-comhelp.h \
+			eca-plaintext.h \
+			eca-plaintext.cpp \
+			textdebug.cpp \
+			textdebug.h
+
+#			eca-text.cpp \
+#			eca-text.h \
+#			eca-iam.cpp \
+#			eca-iam.h \
+
 ecasound_debug_SOURCES = $(ecasound_SOURCES)
 
 if ECA_AM_SYSTEM_READLINE
