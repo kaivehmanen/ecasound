@@ -37,7 +37,7 @@ ecasound_SOURCES = 	ecasound.cpp \
 #			eca-text.cpp \
 #			eca-text.h \
 #			eca-iam.cpp \
-#			eca-iam.h \
+#			eca-iam.h
 
 ecasound_debug_SOURCES = $(ecasound_SOURCES)
 
