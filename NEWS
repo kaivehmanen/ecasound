@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 020504) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 050504) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,16 +13,16 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-02052004 (v2.3.3)  -** stable release **-
+05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command
 	- added: special-case value of '-1' to 'cs-set-length' or
 		 '-t:xxx' will set the chainsetup length according
 		 to the longest input object
 	- added: ECI guide - a new section on ecasound.el [mlang]
-	- added: ecasoundrc - a new special-case value 'auto' to 
-		 the 'default-output' setting; 'auto' is also the
-	 	 new default ecasoundrc value; see ecasoundrc(5)
+	- added: ecasoundrc - a new special-case value 'autodetect' to 
+		 the 'default-output' setting; 'autodetect' is also 
+		 the new default ecasoundrc value; see ecasoundrc(5)
 		 for details
 	- changed: lots of typo fixes and other corrections to 
 	           the user's guide [ericdr]
