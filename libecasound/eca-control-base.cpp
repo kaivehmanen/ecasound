@@ -26,6 +26,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <signal.h>
 
 #include <kvutils/value_queue.h>
 #include <kvutils/message_item.h>
@@ -44,6 +45,11 @@ void* start_normal_thread(void *ptr);
  * Helper function for starting the slave thread.
  */
 void* start_normal_thread(void *ptr) {
+  sigset_t sigset;
+  sigemptyset(&sigset);
+  sigaddset(&sigset, SIGINT);
+  sigprocmask(SIG_BLOCK, &sigset, 0);
+
   ecadebug->msg(ECA_DEBUG::system_objects,"(eca-controller) Engine-thread pid: " + kvu_numtostr(getpid()));
   ECA_CONTROL_BASE* ctrl_base = static_cast<ECA_CONTROL_BASE*>(ptr);
   ctrl_base->run_engine();
@@ -104,7 +110,9 @@ void ECA_CONTROL_BASE::start(void) {
  *  is_connected() == true
  *
  * ensure:
- *  is_finished() == true || (processing_started == true && is_running() != true)
+ *  is_finished() == true || 
+ *  (processing_started == true && is_running() != true) ||
+ *  (processing_started != true && session_repp->status() != ECA_SESSION::ep_status_stopped)
  */
 void ECA_CONTROL_BASE::run(void) {
   // --------
@@ -125,6 +133,7 @@ void ECA_CONTROL_BASE::run(void) {
     ::nanosleep(&sleepcount, NULL);
     if (processing_started != true) {
       if (is_running() == true) processing_started = true;
+      else if (session_repp->status() != ECA_SESSION::ep_status_stopped) break;
     }
     else {
       if (is_running() != true) break;
@@ -135,7 +144,9 @@ void ECA_CONTROL_BASE::run(void) {
 
   // --------
   // ensure:
-  assert(is_finished() == true || (processing_started == true && is_running() != true));
+  assert(is_finished() == true || 
+	 (processing_started == true && is_running() != true) ||
+	 (processing_started != true && session_repp->status() != ECA_SESSION::ep_status_stopped));
   // --------
 }
 

@@ -15,7 +15,6 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
  protected:
 
   AUDIO_IO* selected_audio_object_repp;
-  string selected_audio_object_rep;
 
   void send_chain_commands_to_engine(int command, double value);
 

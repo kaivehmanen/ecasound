@@ -1063,7 +1063,7 @@ void ECA_CONTROL_OBJECTS::select_audio_object(const string& name) {
   assert(is_selected() == true);
   // --------
   select_audio_input(name);
-  select_audio_output(name);
+  if (selected_audio_object_repp == 0) select_audio_output(name);
 }
 
 /**
@@ -1078,6 +1078,7 @@ void ECA_CONTROL_OBJECTS::select_audio_input(const string& name) {
   assert(is_selected() == true);
   // --------
 
+  selected_audio_object_repp = 0;
   vector<AUDIO_IO*>::size_type p = 0;  
   for(p = 0; p != selected_chainsetup_repp->inputs.size(); p++) {
     if (selected_chainsetup_repp->inputs[p]->label() == name) {
@@ -1098,6 +1099,7 @@ void ECA_CONTROL_OBJECTS::select_audio_output(const string& name) {
   assert(is_selected() == true);
   // --------
 
+  selected_audio_object_repp = 0;
   vector<AUDIO_IO*>::size_type p = 0;  
   for(p = 0; p != selected_chainsetup_repp->outputs.size(); p++) {
     if (selected_chainsetup_repp->outputs[p]->label() == name) {
@@ -1122,6 +1124,7 @@ void ECA_CONTROL_OBJECTS::select_audio_object_by_index(const string& index) {
   assert(index[0] == 'i' || index[0] == 'o');
   // --------
 
+  selected_audio_object_repp = 0;
   int index_number = ::atoi(string(index.begin() + 1,
 				 index.end()).c_str());
 
@@ -1194,6 +1197,7 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
   // --------
 
   try {
+    selected_audio_object_repp = 0;
     selected_chainsetup_repp->interpret_object_option("-i:" + filename);
     select_audio_object(filename);
     ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
@@ -1221,6 +1225,7 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
   assert(connected_chainsetup() != selected_chainsetup());
   // --------
   try {
+    selected_audio_object_repp = 0;
     selected_chainsetup_repp->interpret_object_option("-o:" + filename);
     select_audio_object(filename);
     ecadebug->msg("(eca-controller) Added audio output \"" + filename +
@@ -1273,7 +1278,7 @@ AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_object(void) const {
  *  get_audio_object() != 0
  *
  * ensure:
- *  selected_audio_object_rep = 0
+ *  selected_audio_object_repp = 0
  */
 void ECA_CONTROL_OBJECTS::remove_audio_object(void) { 
   // --------

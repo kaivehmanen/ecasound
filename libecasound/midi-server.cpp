@@ -19,6 +19,7 @@
 
 #include <unistd.h>
 #include <sys/time.h>
+#include <signal.h>
 
 #include <kvutils/kvu_numtostr.h>
 #include "midi-parser.h"
@@ -31,6 +32,11 @@ const unsigned int MIDI_SERVER::max_queue_size_rep = 32768;
  * Helper function for starting the slave thread.
  */
 void* start_midi_server_io_thread(void *ptr) {
+  sigset_t sigset;
+  sigemptyset(&sigset);
+  sigaddset(&sigset, SIGINT);
+  sigprocmask(SIG_BLOCK, &sigset, 0);
+
   MIDI_SERVER* mserver =
     static_cast<MIDI_SERVER*>(ptr);
   mserver->io_thread();

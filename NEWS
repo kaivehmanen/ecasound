@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 200201) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 020301) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,12 +17,18 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??022001 (v1.9dev3)
+02032001 (v1.9dev3)
+	- added: ecaplay - ctrl-c skips to the next file
 	- changed: -Md syntax to '-Md:rawmidi,device_name', where
 		   'rawmidi' specifies the type while 'device_name' 
 	  	   refers to a file/device name
 	- fixed: MIDI-thread hang when exiting ecasound 
 	- fixed: various ewf-related fixes
+	- fixed: eiam - rounding errors with 'rw' and'fw' commands
+	- fixed: ecaplay - seg.faults when playing multiple files
+	- fixed: object cleanup was not properly done if ecasound 
+		 received signals while multiple threads were 
+		 running ("pure virtual method called" warnings)
 14022001 (v1.9dev2)
 	- added: -z:nointbuf - minimize the use of internal buffering
 	         done by rt-devices

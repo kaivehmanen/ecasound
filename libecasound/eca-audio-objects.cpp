@@ -64,12 +64,14 @@ ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
   for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting chain \"" + (*q)->name() + "\".");
     delete *q;
+    *q = 0;
   }
   
   for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
     if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
       delete *q;
+      *q = 0;
     }
   }
   //  inputs.resize(0);
@@ -78,6 +80,7 @@ ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
     if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
       delete *q;
+      *q = 0;
     }
   }
   //  outputs.resize(0);
@@ -85,6 +88,7 @@ ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
   for(map<int,LOOP_DEVICE*>::iterator q = loop_map.begin(); q != loop_map.end(); q++) {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting loop device \"" + q->second->label() + "\".");
     delete q->second;
+    q->second = 0;
   }
 }
 

@@ -18,6 +18,8 @@
 // ------------------------------------------------------------------------
 
 #include <unistd.h>
+#include <signal.h>
+
 #include "sample-specs.h"
 #include "audioio-proxy-server.h"
 #include "eca-debug.h"
@@ -29,6 +31,11 @@ const long int AUDIO_IO_PROXY_SERVER::buffersize_default = 1024;
  * Helper function for starting the slave thread.
  */
 void* start_proxy_server_io_thread(void *ptr) {
+  sigset_t sigset;
+  sigemptyset(&sigset);
+  sigaddset(&sigset, SIGINT);
+  sigprocmask(SIG_BLOCK, &sigset, 0);
+
   AUDIO_IO_PROXY_SERVER* pserver =
     static_cast<AUDIO_IO_PROXY_SERVER*>(ptr);
   pserver->io_thread();

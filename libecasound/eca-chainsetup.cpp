@@ -196,7 +196,8 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
 	audio_object_info(*q);
       }
 
-    if (midi_server_rep.is_enabled() != true) midi_server_rep.enable();
+    if (midi_server_rep.is_enabled() != true &&
+	midi_devices.size() > 0) midi_server_rep.enable();
       for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
 	(*q)->toggle_nonblocking_mode(true);
 	if ((*q)->is_open() != true) {
@@ -1028,7 +1029,7 @@ void ECA_CHAINSETUP::interpret_controller (const string& argu) {
     MIDI_CLIENT* p = dynamic_cast<MIDI_CLIENT*>(t->source_pointer());
     if (p != 0) {
       if (midi_devices.size() == 0) 
-	interpret_midi_device("-Md:" + default_midi_device());
+	interpret_midi_device("-Md:rawmidi," + default_midi_device());
       p->register_server(&midi_server_rep);
     }
     add_controller(t);

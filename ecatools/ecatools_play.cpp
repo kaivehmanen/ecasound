@@ -21,6 +21,7 @@
 
 #include <string>
 #include <cstdio>
+#include <signal.h>
 
 #include <kvutils/com_line.h>
 
@@ -33,14 +34,22 @@
 
 #include "ecatools_play.h"
 
+static ECA_CONTROL* ectrl_repp = 0;
+
 int main(int argc, char *argv[])
 {
 #ifdef NDEBUG
   ecadebug->disable();
 #else
   ecadebug->set_debug_level(ECA_DEBUG::info |
-			    ECA_DEBUG::module_flow);
+    			    ECA_DEBUG::module_flow);
 #endif
+
+  struct sigaction es_handler_int;
+  es_handler_int.sa_handler = signal_handler;
+  sigemptyset(&es_handler_int.sa_mask);
+  es_handler_int.sa_flags = 0;
+  sigaction(SIGINT, &es_handler_int, 0);
 
   COMMAND_LINE cline = COMMAND_LINE (argc, argv);
 
@@ -54,10 +63,10 @@ int main(int argc, char *argv[])
 
     ECA_SESSION esession;
     ECA_CONTROL ectrl (&esession);
-    ECA_PROCESSOR emain;
+    ectrl_repp = &ectrl;
     ECA_AUDIO_FORMAT aio_params;
 
-    ectrl.toggle_interactive_mode(false);
+    ectrl.toggle_interactive_mode(true);
     cline.begin();
     cline.next(); // skip the program name
     while(cline.end() == false) {
@@ -81,9 +90,7 @@ int main(int argc, char *argv[])
 	  cerr << "---\nError while playing file " << filename << ". Exiting...\n";
 	  break;
 	}
-	
-	emain.init(&esession);
-	emain.exec();
+	ectrl.run();
 	ectrl.disconnect_chainsetup();
       }
       ectrl.remove_chainsetup();
@@ -99,12 +106,18 @@ int main(int argc, char *argv[])
   return(0);
 }
 
+void signal_handler(int signum) {
+//    cerr << "Caught an interrupt... moving to next file.\n";
+  if (ectrl_repp != 0)
+    ectrl_repp->quit();
+}
+
 void print_usage(void) {
   cerr << "****************************************************************************\n";
   cerr << "* ecatools_play, v" << ecatools_play_version;
   cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
-  cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence \n";
+  cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence \n";
   cerr << "****************************************************************************\n";
 
   cerr << "\nUSAGE: ecatools_play file1 [ file2, ... fileN ]\n\n";

@@ -48,7 +48,9 @@ ECA_PROCESSOR::ECA_PROCESSOR(ECA_SESSION* params)
   init();
 }
 
-ECA_PROCESSOR::ECA_PROCESSOR(void) : eparams_repp(0) { }
+ECA_PROCESSOR::ECA_PROCESSOR(void) : 
+  eparams_repp(0),
+  csetup_repp(0) { }
 
 ECA_PROCESSOR::~ECA_PROCESSOR(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "ECA_PROCESSOR destructor!");
@@ -57,15 +59,15 @@ ECA_PROCESSOR::~ECA_PROCESSOR(void) {
     eparams_repp->status(ECA_SESSION::ep_status_notready);
     stop();
 
-    vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
-    while(q != csetup_repp->chains.end()) {
-      (*q)->disconnect_buffer();
-      ++q;
+    if (csetup_repp != 0) {
+      vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
+      while(q != csetup_repp->chains.end()) {
+	if (*q != 0) (*q)->disconnect_buffer();
+	++q;
+      }
     }
   }
   
-
-
   vector<AUDIO_IO_BUFFERED_PROXY*>::iterator p = proxies_rep.begin();
   while(p != proxies_rep.end()) {
     delete *p;

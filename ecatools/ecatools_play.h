@@ -3,7 +3,8 @@
 
 int main(int argc, char *argv[]);
 void print_usage(void);
+void signal_handler(int signum);
 
-const string ecatools_play_version = "19991114";
+const string ecatools_play_version = "20010301";
 
 #endif

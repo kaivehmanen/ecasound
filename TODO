@@ -6,7 +6,7 @@
 
 1.8.x and 1.9.x series:
 
-- ecasound control interface (ECI) API [implementation phase]
+- ecasound control interface (ECI) API [initial implementation done!]
 - new disk i/o buffering subsystem [done!]
 - embedded effect preset parameters [done!]
 - internal plugin support [done!]
@@ -18,13 +18,17 @@
 
 2.2 (2.1devX series):
 
+- extending the ECI API [not started]
+- more formal description of key libecasound components 
+  (sessions, chainsetups, control interface, ECI, etc) and 
+  their dependencies [not started]
+
 -----------------------------------------------------------------------
 
 [ Bugs to be fixed ]
 
 - commas confuse file name handling (ecatools)
 - initial reverb-spike when using -ete
-- problems with certain ewf-file setups
 - ecasound crashes if /dev/midi points to an invalid rawmidi device
 
 -----------------------------------------------------------------------
