@@ -1669,33 +1669,33 @@ void ECA_CHAINSETUP::save_to_file(const string& filename) throw(ECA_ERROR&) {
   			filename + "\".", ECA_ERROR::retry));
   }
   else {
-    fout << "# ecasound chainsetup file" << endl;
-    fout << endl;
+    fout << "# ecasound chainsetup file" << std::endl;
+    fout << std::endl;
 
-    fout << "# general " << endl;
-    fout << cparser_rep.general_options_to_string() << endl;
-    fout << endl;
+    fout << "# general " << std::endl;
+    fout << cparser_rep.general_options_to_string() << std::endl;
+    fout << std::endl;
 
     string tmpstr = cparser_rep.midi_to_string();
     if (tmpstr.size() > 0) {
-      fout << "# MIDI " << endl;
-      fout << tmpstr << endl;
-      fout << endl;      
+      fout << "# MIDI " << std::endl;
+      fout << tmpstr << std::endl;
+      fout << std::endl;      
     }
 
-    fout << "# audio inputs " << endl;
-    fout << cparser_rep.inputs_to_string() << endl;
-    fout << endl;
+    fout << "# audio inputs " << std::endl;
+    fout << cparser_rep.inputs_to_string() << std::endl;
+    fout << std::endl;
 
-    fout << "# audio outputs " << endl;
-    fout << cparser_rep.outputs_to_string() << endl;
-    fout << endl;
+    fout << "# audio outputs " << std::endl;
+    fout << cparser_rep.outputs_to_string() << std::endl;
+    fout << std::endl;
 
     tmpstr = cparser_rep.chains_to_string();
     if (tmpstr.size() > 0) {
-      fout << "# chain operators and controllers " << endl;
-      fout << tmpstr << endl;
-      fout << endl;      
+      fout << "# chain operators and controllers " << std::endl;
+      fout << tmpstr << std::endl;
+      fout << std::endl;      
     }
 
     fout.close();
