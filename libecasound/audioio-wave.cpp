@@ -33,6 +33,7 @@
 #include <kvutils/kvu_numtostr.h>
 #include <kvutils/dbc.h>
 
+#include "sample-specs.h" /* for system endianess */
 #include "samplebuffer.h"
 #include "audioio-wave.h"
 
@@ -41,9 +42,47 @@
 
 #include "eca-debug.h"
 
+/**
+ * Private macro definitions
+ */
+
 #ifndef UINT32_MAX
 #define UINT32_MAX 4294967295U
 #endif
+
+/**
+ * Private function declarations 
+ */
+
+static uint16_t little_endian_uint16(uint16_t arg);
+static uint32_t little_endian_uint32(uint32_t arg);
+
+/**
+ * Private function definitions
+ */
+
+static uint16_t little_endian_uint16(uint16_t arg)
+{
+  if (SAMPLE_SPECS::is_system_littleendian != true) {
+    return(((arg >> 8) & 0x00ff) | ((arg << 8) & 0xff00));
+  }
+  return(arg);
+}
+
+static uint32_t little_endian_uint32(uint32_t arg)
+{
+  if (SAMPLE_SPECS::is_system_littleendian != true) {
+    return(((arg >> 24) & 0x000000ff) |
+	   ((arg >> 8)  & 0x0000ff00) |
+	   ((arg << 8)  & 0x00ff0000) |
+	   ((arg << 24) & 0xff000000));
+  }
+  return(arg);
+}
+
+/**
+ * Public definitions
+ */
 
 /**
  * Print extra debug information about RIFF header 
@@ -160,11 +199,11 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
   }
 
 
-  if (riff_format_rep.bits > 8 && 
+  if (little_endian_uint16(riff_format_rep.bits) > 8 && 
       format_string()[0] == 'u')
     throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-WAVE: unsigned sample format accepted only with 8bit."));
 
-  if (riff_format_rep.bits > 8 && 
+  if (little_endian_uint16(riff_format_rep.bits) > 8 && 
       format_string().size() > 4 &&
       format_string()[4] == 'b')
     throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-WAVE: bigendian byte-order not supported by RIFF wave files."));
@@ -226,11 +265,11 @@ void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
 
   /* hack for 64bit wav files */
   if (fio_repp->get_file_length() > UINT32_MAX)
-    riff_header_rep.size = UINT32_MAX;
+    riff_header_rep.size = little_endian_uint32(UINT32_MAX);
   else if (fio_repp->get_file_length() > sizeof(riff_header_rep))
-    riff_header_rep.size = fio_repp->get_file_length() - sizeof(riff_header_rep);
+    riff_header_rep.size = little_endian_uint32(fio_repp->get_file_length() - sizeof(riff_header_rep));
   else
-    riff_header_rep.size = 0;
+    riff_header_rep.size = little_endian_uint32(0);
 
   fio_repp->set_file_position(0);
   //  fseek(fobject,0,SEEK_SET);
@@ -241,7 +280,7 @@ void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
       memcmp("WAVE",riff_header_rep.wname,4) != 0)
     throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: invalid RIFF-header"));
 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) Wave data size " + kvu_numtostr(riff_header_rep.size));
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) Wave data size " + kvu_numtostr(little_endian_uint32(riff_header_rep.size)));
 
   fio_repp->set_file_position(savetemp);
 }
@@ -259,34 +298,34 @@ void WAVEFILE::read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&)
     //    fread(&riff_format_rep,1,sizeof(riff_format_rep),fobject);
 
 #ifdef DEBUG_WAVE_HEADER
-    std::cout << "RF: format = " << riff_format_rep.format << std::endl;
-    std::cout << "RF: channels = " << riff_format_rep.channels << std::endl;
-    std::cout << "RF: srate = " << riff_format_rep.srate << std::endl;
-    std::cout << "RF: byte_second = " << riff_format_rep.byte_second << std::endl;
-    std::cout << "RF: align = " << riff_format_rep.align << std::endl;
-    std::cout << "RF: bits = " << riff_format_rep.bits << std::endl;
+    std::cout << "RF: format = " << little_endian_uint16(riff_format_rep.format) << std::endl;
+    std::cout << "RF: channels = " << little_endian_uint16(riff_format_rep.channels) << std::endl;
+    std::cout << "RF: srate = " << little_endian_uint32(riff_format_rep.srate) << std::endl;
+    std::cout << "RF: byte_second = " << little_endian_uint32(riff_format_rep.byte_second) << std::endl;
+    std::cout << "RF: align = " << little_endian_uint16(riff_format_rep.align) << std::endl;
+    std::cout << "RF: bits = " << little_endian_uint16(riff_format_rep.bits) << std::endl;
 #endif
 
-    if (riff_format_rep.format != 1 &&
-	riff_format_rep.format != 3) {
+    if (little_endian_uint16(riff_format_rep.format) != 1 &&
+	little_endian_uint16(riff_format_rep.format) != 3) {
       throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-WAVE: Only WAVE_FORMAT_PCM and WAVE_FORMAT_IEEE_FLOAT are supported."));
     }
     
-    set_samples_per_second(riff_format_rep.srate);
-    set_channels(riff_format_rep.channels);
+    set_samples_per_second(little_endian_uint32(riff_format_rep.srate));
+    set_channels(little_endian_uint16(riff_format_rep.channels));
 
-    if (riff_format_rep.bits == 32) {
-      if (riff_format_rep.format == 3)
+    if (little_endian_uint16(riff_format_rep.bits) == 32) {
+      if (little_endian_uint16(riff_format_rep.format) == 3)
 	set_sample_format(ECA_AUDIO_FORMAT::sfmt_f32_le);
       else
 	set_sample_format(ECA_AUDIO_FORMAT::sfmt_s32_le);
     }
-    else if (riff_format_rep.bits == 24) {
-      if (riff_format_rep.align == channels() * 3) {
+    else if (little_endian_uint16(riff_format_rep.bits) == 24) {
+      if (riff_format_rep.align == little_endian_uint16(channels() * 3)) {
 	/* packet s24 format */
 	set_sample_format(ECA_AUDIO_FORMAT::sfmt_s24_le);
       }
-      else if (riff_format_rep.align == channels() * 4) {
+      else if (riff_format_rep.align == little_endian_uint16(channels() * 4)) {
 	/* unpacked s24 format */
 	set_sample_format(ECA_AUDIO_FORMAT::sfmt_s32_le);
       }
@@ -294,19 +333,19 @@ void WAVEFILE::read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&)
 	throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-WAVE: Invalid 24bit sample format combination."));
       }
     }
-    else if (riff_format_rep.bits == 16)
+    else if (little_endian_uint16(riff_format_rep.bits) == 16)
       set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
-    else if (riff_format_rep.bits == 8)
+    else if (little_endian_uint16(riff_format_rep.bits) == 8)
       set_sample_format(ECA_AUDIO_FORMAT::sfmt_u8);
     else 
       throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-WAVE: Sample format not supported."));
   }
 
-  DBC_CHECK(riff_format_rep.channels == channels());
-  DBC_CHECK(riff_format_rep.bits == bits());
-  DBC_CHECK(riff_format_rep.srate == static_cast<uint32_t>(samples_per_second()));
-  DBC_CHECK(riff_format_rep.byte_second == static_cast<uint32_t>(bytes_per_second()));
-  DBC_CHECK(riff_format_rep.align == frame_size());
+  DBC_CHECK(little_endian_uint16(riff_format_rep.channels) == channels());
+  DBC_CHECK(little_endian_uint16(riff_format_rep.bits) == bits());
+  DBC_CHECK(little_endian_uint32(riff_format_rep.srate) == static_cast<uint32_t>(samples_per_second()));
+  DBC_CHECK(little_endian_uint32(riff_format_rep.byte_second) == static_cast<uint32_t>(bytes_per_second()));
+  DBC_CHECK(little_endian_uint16(riff_format_rep.align) == frame_size());
 
   fio_repp->set_file_position(savetemp);
 }
@@ -319,24 +358,27 @@ void WAVEFILE::write_riff_fmt(void)
 
   fio_repp->set_file_position_end();
 
-  riff_format_rep.channels = channels();
-  riff_format_rep.bits = bits();
-  riff_format_rep.srate = samples_per_second();
-  riff_format_rep.byte_second = bytes_per_second();
-  riff_format_rep.align = frame_size();
+  riff_format_rep.channels = little_endian_uint16(channels());
+  riff_format_rep.bits = little_endian_uint16(bits());
+  riff_format_rep.srate = little_endian_uint32(samples_per_second());
+  riff_format_rep.byte_second = little_endian_uint32(bytes_per_second());
+  riff_format_rep.align = little_endian_uint16(frame_size());
   if (sample_format() == sfmt_f32 ||
       sample_format() == sfmt_f32_le ||
       sample_format() == sfmt_f32_be ||
       sample_format() == sfmt_f64 ||
       sample_format() == sfmt_f64_le ||
-      sample_format() == sfmt_f64_be)
-    riff_format_rep.format = 3;     // WAVE_FORMAT_IEEE_FLOAT 0x0003 (Microsoft IEEE754 range [-1, +1))
-  else
-    riff_format_rep.format = 1;     // WAVE_FORMAT_PCM (0x0001) Microsoft Pulse Code
-                                    // Modulation (PCM) format
+      sample_format() == sfmt_f64_be) {
+    // WAVE_FORMAT_IEEE_FLOAT 0x0003 (Microsoft IEEE754 range [-1, +1))
+    riff_format_rep.format = little_endian_uint16(3);
+  }
+  else {
+    // WAVE_FORMAT_PCM (0x0001) Microsoft Pulse Code Modulation (PCM) format
+    riff_format_rep.format = little_endian_uint16(1);
+  }
 
   memcpy(fblock.sig, "fmt ", 4);
-  fblock.bsize=16;
+  fblock.bsize = little_endian_uint32(16);
 
   fio_repp->write_from_buffer(&fblock, sizeof(fblock));
   fio_repp->write_from_buffer(&riff_format_rep, sizeof(riff_format_rep));
@@ -354,7 +396,7 @@ void WAVEFILE::write_riff_datablock(void)
   fio_repp->set_file_position_end();
 
   memcpy(fblock.sig,"data",4);
-  fblock.bsize = 0;
+  fblock.bsize = little_endian_uint32(0);
   fio_repp->write_from_buffer(&fblock, sizeof(fblock));
   data_start_position_rep = fio_repp->get_file_position();
 }
@@ -374,9 +416,9 @@ void WAVEFILE::update_riff_datablock(void)
 
   /* hack for wav files with length over 2^31 bytes */
   if (fio_repp->get_file_position() - savetemp > UINT32_MAX)
-    fblock.bsize = UINT32_MAX;
+    fblock.bsize = little_endian_uint32(UINT32_MAX);
   else
-    fblock.bsize = fio_repp->get_file_position() - savetemp;
+    fblock.bsize = little_endian_uint32(fio_repp->get_file_position() - savetemp);
 
   savetemp = savetemp - sizeof(fblock);
   if (savetemp > 0) {
