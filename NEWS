@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 060301) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 190301) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,10 +17,21 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
+??032001 (v1.9dev5)
+	- added: eiam - new aliases 'getpos', 'c-set-position',
+		 'aio-set-position', 'aio-getpos'
+	- fixed: mp3 output broken
+	- fixed: more zombie-problems with mpg123, lame, ogg123 
+	         and others
+	- fixed: eiam - 'fw' and 'rw' commands didn't work properly
+		 if -z:db was enabled and audio object sample rate
+		 was different than internal sample rate
+	- fixed: eiam - 'ctrl-remove' remove the selected chainop,
+		 not the controller as it should have
 06032001 (v1.9dev4)
 	- added: -C - disable interactive mode; reverse op. for -c
-	- added: -X - open outputs for updateing; rev.op. for -x
-	- added: -r:-1 to disabled raised-priority mode		
+	- added: -X - open outputs for updating; rev.op. for -x
+	- added: -r:-1 to disable raised-priority mode		
 	- added: -z:nopsr, -z:noxruns and -z:intbuf ; rev.ops for
 		 existing -z options
 	- added: 'user-resource-directory' define to ~/.ecasoundrc;
