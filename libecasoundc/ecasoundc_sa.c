@@ -13,7 +13,7 @@
 /** ------------------------------------------------------------------------
  * ecasoundc.cpp: Standalone C implementation of the 
  *                ecasound control interface
- * Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+ * Copyright (C) 2000-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
  * Copyright (C) 2001 Aymeric Jeanneau (ajeanneau@cvf.fr)
  *
  * This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * -------------------------------------------------------------------------
- * History: 
+ * History of major changes:
  *
  * 2002-10-04 Kai Vehmanen
  *     - Rewritten as a standalone implementation.
@@ -357,6 +357,7 @@ eci_handle_t eci_init_r(void)
       }
       else {
 	write(eci_rep->cmd_write_fd_rep, "debug 256\n", strlen("debug 256\n"));
+	write(eci_rep->cmd_write_fd_rep, "int-set-float-to-string-precision 12\n", strlen("int-set-float-to-string-precision 12\n"));
 	write(eci_rep->cmd_write_fd_rep, "int-output-mode-wellformed\n", strlen("int-output-mode-wellformed\n"));
 	eci_rep->commands_counter_rep ++;
       
@@ -935,7 +936,7 @@ void eci_impl_set_last_values(struct eci_parser* parser)
       break;
 
     case 'l':
-      parser->last_i_rep = atol(parser->buffer_repp);
+      parser->last_li_rep = atol(parser->buffer_repp);
       break;
 
     case 'f':
@@ -1040,7 +1041,7 @@ void eci_impl_update_state(struct eci_parser* parser, char c)
 	int len = (parser->buffer_current_rep < ECI_MAX_RETURN_TYPE_SIZE) ? parser->buffer_current_rep : (ECI_MAX_RETURN_TYPE_SIZE - 1);
 	parser->buffer_repp[parser->buffer_current_rep] = 0;
 	memcpy(parser->last_type_repp, parser->buffer_repp, len);
-	parser->last_type_repp[ECI_MAX_RETURN_TYPE_SIZE - 1] = 0;
+	parser->last_type_repp[len] = 0;
 	
 	/* ECI_DEBUG_2("(ecasoundc_sa) found rettype '%s' (len=%d).\n", parser->last_type_repp, parser->buffer_current_rep); */
 
