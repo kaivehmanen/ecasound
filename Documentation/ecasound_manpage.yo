@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (02.05.2000)
+       (14.05.2000)
        ()
        (Multimedia software)
 
@@ -463,10 +463,12 @@ dit(-el:plugin_unique_name,param-1,...,param-N)
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
 Plugin API). Plugins are located in shared library (.so) files in 
 /usr/local/share/ladspa (configured in ecasoundrc(5)). One shared
-library file can contain multiple plugin objects, but it is guaranteed 
-that every plugin has a unique plugin name. This name is used
-for selecting plugins. See url(LAD home page)(http://audio.netpedia.net/lad) 
-for more info about LADSPA.
+library file can contain multiple plugin objects, but every plugin 
+has a unique plugin name. This name is used for selecting plugins. 
+See url(LAD home page)(http://audio.netpedia.net/lad) for more info 
+about LADSPA. Other useful sites are
+url(LADSPA home page)(http://www.muse.demon.co.uk/ladspa.html) and
+url(LADSPA documentation)(http://www.ffem.org/gdam/ladspa-doc/ladspa.html).
 enddit()
 
 bf(GATE SETUP)

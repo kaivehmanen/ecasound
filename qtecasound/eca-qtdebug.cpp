@@ -50,7 +50,21 @@ void QEDebug::timerEvent( QTimerEvent * ) {
     temp.replace(QRegExp("\n"), "<br>");
     t += temp;
     t += "<br>";
-    if (t.length() > 1024) t = t.right(1024);
+    unsigned int n = 0;
+    for(; n < t.length(); n++) {
+      if (t[n] == '<') {
+	for(; t[n] != '>'; ++n) {
+	  if (n == t.length()) {
+	    t += "<";
+	    break;
+	  }
+	}
+      }
+      if (t.length() - n < 4096) break;
+    }
+    if (n > 0) {
+      t.remove(0, n + 1);
+    }
     tview->setTextFormat(Qt::RichText);
     tview->setText("<qt>" + t + "</qt>");
     tview->verticalScrollBar()->setValue(tview->verticalScrollBar()->maxValue());

@@ -26,7 +26,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (21.02.2000)
+       (06.05.2000)
        ()
        (Multimedia software)
 
@@ -130,7 +130,7 @@ startdit()
 	Additional options that are passed to mikmod. Defaults to em("-p 0 --noloops").
 
 	dit(ladspa-plugin-directory)
-	Directory containing LADPSA effect plugins. Defaults to em(/usr/local/share/ladspa).
+	Directory containing LADPSA effect plugins. Defaults to em(/usr/local/lib/ladspa).
 
 enddit()
 

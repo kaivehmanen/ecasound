@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (20032000)
+       (15052000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -352,5 +352,13 @@ libecasound's makefiles. Then all that's left to do is to add your
 effect to em(libecasound/src/eca-static-object-maps.cpp),
 em(register_default_objects()). Now the new effect can be used just 
 like any other ecasound effect (parameters control, effect presets, etc).
+
+COMMENT(----------------------------------------------------------------)
+subsect(LADSPA plugins)
+Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
+Plugin API). See url(LAD home page)(http://audio.netpedia.net/lad) for 
+more info about LADSPA. Other useful sites are 
+url(LADSPA home page)(http://www.muse.demon.co.uk/ladspa.html) and
+url(LADSPA documentation)(http://www.ffem.org/gdam/ladspa-doc/ladspa.html).
 
 htmlcommand(<insert name=ecasound_tail>)

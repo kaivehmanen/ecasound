@@ -53,15 +53,15 @@ AM_CONDITIONAL(FEELING_EXPERIMENTAL, test x$experimental = xyes)
 dnl ---
 dnl Set CXXFLAGS.
 dnl ---
-CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math -funroll-loops -fstrict-aliasing"
-dnl CXXFLAGS="-O2 -D_REENTRANT -fomit-frame-pointer -finline-functions -ffast-math -funroll-loops -Wall -Wstrict-prototypes -pedantic"
+CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math -fstrict-aliasing -funroll-loops"
+dnl CXXFLAGS="-O2 -D_REENTRANT -fomit-frame-pointer -finline-functions -ffast-math -funroll-loops -Wall -Wstrict-prototypes -pedantic -fstrict-aliasing"
 
 AC_ARG_ENABLE(debug,
 [  --enable-debug		  Enable debugging (default = no)],
 include_debug=yes)
 AM_CONDITIONAL(INCLUDE_DEBUG, test x$include_debug = xyes)
 if test x$include_debug = xyes; then
-CXXFLAGS="-D_REENTRANT -DENABLE_DBC -g -fstrict-aliasing -Wall -Wstrict-prototypes -O2 -ffast-math"
+CXXFLAGS="-D_REENTRANT -DENABLE_DBC -g -Wall -Wstrict-prototypes -O2 -ffast-math"
 dnl LDFLAGS="-pg -pedantic -funroll-loops"
 fi                                     
 
@@ -237,7 +237,6 @@ dnl ---
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl ---
 dnl AC_C_CONST
-AC_C_INLINE
 AC_C_BIGENDIAN
 AC_TYPE_SIZE_T
 
@@ -247,6 +246,7 @@ dnl ---
 AC_OUTPUT([
 Makefile
 ecasound.spec
+ecasound.mdk.spec
 libecasound/Makefile
 libecasound/include/Makefile
 libecasound/src/Makefile

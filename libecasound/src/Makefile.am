@@ -25,8 +25,6 @@ INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils \
 
 #SUBDIRS = kvutils
 #DIST_SUBDIRS = kvutils
-#CXXFLAGS += -D_REENTRANT -fomit-frame-pointer -funroll-all-loops \
-#	   -finline-functions -ffast-math
 
 # you can add here more. This one gets installed 
 
@@ -136,7 +134,7 @@ libecasound_debug_la_SOURCES = $(ecasound_common_src)
 libecasound_la_LIBADD = $(af_libs)  $(alsa_libs) -L$(top_builddir)/kvutils -lkvutils
 libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
 #libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD) -lefence
-libecasound_la_LDFLAGS = --export-dynamic $(eca_ldflags)
+libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
 
 #libecasound_la_LDFLAGS = -release $(VERSION)

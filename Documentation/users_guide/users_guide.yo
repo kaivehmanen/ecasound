@@ -168,6 +168,12 @@ can add a new chain using the pipe characher '|'. '\' sign is
 used to continue preset definition on the next line.
 
 COMMENT(----------------------------------------------------------------)
+subsect(LADSPA plugins)
+Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
+Plugin API). See url(ecasound(1))(../ecasound_manpage.html) for more
+info.
+
+COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
 sect(User interfaces)
 

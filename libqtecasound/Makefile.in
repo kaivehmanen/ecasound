@@ -128,7 +128,7 @@ libqtecasound_la_SOURCES = $(libqtecasound_common_src)
 libqtecasound_debug_la_SOURCES = $(libqtecasound_common_src)
 libqtecasound_la_LIBADD = -L$(top_builddir)/kvutils -lkvutils
 libqtecasound_debug_la_LIBADD = $(libqtecasound_la_LIBADD)
-libqtecasound_la_LDFLAGS = --export-dynamic $(libqtecasound_ldflags)
+libqtecasound_la_LDFLAGS = -export-dynamic $(libqtecasound_ldflags)
 libqtecasound_debug_la_LDFLAGS = $(libqtecasound_la_LDFLAGS)
 
 noinst_HEADERS = $(libqtecasound_common_include)

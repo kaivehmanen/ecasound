@@ -1,4 +1,4 @@
-EXTRA_DIST = BUGS NEWS FAQ generic_oscillators effect_presets ecasound.spec
+EXTRA_DIST = BUGS NEWS TODO FAQ generic_oscillators effect_presets ecasound.spec ecasound.mdk.spec
 
 SUBDIRS = kvutils readline-4.0 libecasound ecasound libqtecasound qtecasound ecatools Documentation
 AUTOMAKE_OPTIONS = foreign

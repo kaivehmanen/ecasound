@@ -94,11 +94,6 @@ void QESession::timerEvent( QTimerEvent * ) {
 
 void QESession::init_buttons(void) {
   buttons = new QEButtonRow(this, "buttonrow");
-  buttons->add_button(new QPushButton("Control (p)anel",buttons), 
-		      ALT+Key_P,
-		      reinterpret_cast<QEInterface*>(qApp->mainWidget()), 
-		      SLOT(get_focus()));
-
   buttons->add_button(new QPushButton("(F)ocus to list",buttons), 
 		      ALT+Key_F,
 		      chainsetupview,
@@ -138,11 +133,6 @@ void QESession::init_buttons(void) {
 		      ALT+Key_E,
 		      this,
 		      SLOT(button_edit_chainsetup()));
-
-  buttons->add_button(new QPushButton("(C)lose",buttons), 
-		      ALT+Key_C,
-		      this,
-		      SLOT(close()));
 }
 
 void QESession::init_chainsetuplist (void) {

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 030500) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 140500) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,6 +14,12 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.7.7r11 <*-
 
+??052000 (v1.7.8d12)
+	- added: files 'TODO' and 'ecasound.mdk.spec'
+	- changed: qtecasound - major layout changes
+	- fixed: qtecasound - bugs in debug output
+	- fixed: some minor bugs in LADSPA support
+	- fixed: compile problems with 2.95.x
 03052000 (v1.7.7r11)  -** public release **-
 	- added: --version and --help command-line options (for GNU 
 		 compliance)

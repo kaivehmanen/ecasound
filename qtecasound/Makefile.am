@@ -23,6 +23,7 @@ bin_PROGRAMS = $(qtecasound_target)
 # qtecasound
 # ---
 ecasound_qt_src = 	eca-qtdebug.cpp \
+			eca-qtdebugtab.cpp \
 			eca-qtinte.cpp \
 			eca-qtlevelmeter.cpp \
 			eca-qtmain.cpp \
@@ -36,6 +37,7 @@ ecasound_qt_src = 	eca-qtdebug.cpp \
 			eca-qtchainselectdialog.cpp
 
 ecasound_qt_includes = 	eca-qtdebug.h \
+			eca-qtdebugtab.h \
 			eca-qtinte.h \
 			eca-qtlevelmeter.h \
 			eca-qtchainselectdialog.h \
@@ -49,6 +51,7 @@ ecasound_qt_includes = 	eca-qtdebug.h \
 			eca-qtsignallevel.h
 
 ecasound_qt_mocs = 	eca-qtdebug_moc.cpp \
+			eca-qtdebugtab_moc.cpp \
 			eca-qtinte_moc.cpp \
 			eca-qtchainselectdialog_moc.cpp \
 			eca-qtiodevdialog_moc.cpp \
@@ -93,6 +96,8 @@ eca-qtinte_moc.cpp: $(srcdir)/eca-qtinte.h
 	$(MOC) -o eca-qtinte_moc.cpp $(srcdir)/eca-qtinte.h
 eca-qtdebug_moc.cpp: $(srcdir)/eca-qtdebug.h
 	$(MOC) -o eca-qtdebug_moc.cpp $(srcdir)/eca-qtdebug.h
+eca-qtdebugtab_moc.cpp: $(srcdir)/eca-qtdebugtab.h
+	$(MOC) -o eca-qtdebugtab_moc.cpp $(srcdir)/eca-qtdebugtab.h
 eca-qtsignallevel_moc.cpp: $(srcdir)/eca-qtsignallevel.h
 	$(MOC) -o eca-qtsignallevel_moc.cpp $(srcdir)/eca-qtsignallevel.h
 eca-qtrtposition_moc.cpp: $(srcdir)/eca-qtrtposition.h

@@ -28,7 +28,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>20032000</h2>
+<h2>15052000</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -83,6 +83,7 @@
 <dt><h2><a href="programmers_guide.html#l33">5: Adding new features and components?</a></h2>
 <dl><p>
 <dt><h3><a href="programmers_guide.html#l34">5.1: Effects and other chain operators</a></h3>
+<dt><h3><a href="programmers_guide.html#l35">5.2: LADSPA plugins</a></h3>
 </dl><p>
  
 <p><hr><p><br>
@@ -406,6 +407,14 @@ libecasound's makefiles. Then all that's left to do is to add your
 effect to <em>libecasound/src/eca-static-object-maps.cpp</em>,
 <em>register_default_objects()</em>. Now the new effect can be used just 
 like any other ecasound effect (parameters control, effect presets, etc).
+<p>
+<a name="l35"></a>
+<h3>5.2: LADSPA plugins</h3>
+Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
+Plugin API). See <a href="http://audio.netpedia.net/lad">LAD home page</a> for 
+more info about LADSPA. Other useful sites are 
+<a href="http://www.muse.demon.co.uk/ladspa.html">LADSPA home page</a> and
+<a href="http://www.ffem.org/gdam/ladspa-doc/ladspa.html">LADSPA documentation</a>.
 <p><insert name=ecasound_tail>
 </body>
 </html>

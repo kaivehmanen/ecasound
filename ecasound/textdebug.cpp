@@ -31,7 +31,8 @@ void TEXTDEBUG::control_flow(const string& part) {
 #else
   *dostream << "- [ " << part << " ] ";
 #endif
-  for (unsigned char n = 0; n < (69 - part.size()); n++) *dostream << "-";
+  if (part.size() < 70)
+    for (unsigned char n = 0; n < (69 - part.size()); n++) *dostream << "-";
   *dostream << "\n";
 }
 

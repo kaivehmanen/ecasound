@@ -31,65 +31,54 @@
 #include <qlabel.h>
 #include <qmessagebox.h>
 #include <qstatusbar.h>
+#include <qtabwidget.h>
 #include <qtimer.h>
 
 #include <kvutils.h>
-
 #include "qebuttonrow.h"
 
 #include "eca-version.h"
-// #include "eca-main.h"
 #include "eca-session.h"
 #include "eca-controller.h"
 #include "eca-qtsession.h"
 #include "eca-qtmain.h"
 #include "eca-qtrtposition.h"
 #include "eca-qtdebug.h"
+#include "eca-qtdebugtab.h"
 #include "eca-qtinte.h"
 
 QEInterface::QEInterface(ECA_CONTROLLER* control, const ECA_SESSION* session, QWidget *parent, const char *name )
         : QWidget( parent, name ), ctrl(control), ecaparams(session)
 {
-  setCaption("qtecasound - control panel (*)");
-  qApp->setMainWidget(this);
-
-  child_setup = 0;
-
-  QBoxLayout* topLayout = new QVBoxLayout( this );
-  QBoxLayout* qtbuttons = new QHBoxLayout();
-  QBoxLayout* textinput = new QHBoxLayout();
-  QBoxLayout* debugout = new QHBoxLayout();
-  QBoxLayout* bottomrow = new QHBoxLayout();
-
-  init_buttons();
-  topLayout->addWidget(buttonrow);
-  topLayout->addLayout(qtbuttons,0);
-  topLayout->addLayout(textinput,0);
-  topLayout->addLayout(debugout,1);
-  topLayout->addLayout(bottomrow,0);
-
-  init_runtimebar(qtbuttons);
-  init_textinput(textinput);
-  init_debugout(debugout);
-  init_bottomrow(bottomrow);
-}
-
-void QEInterface::focusInEvent ( QFocusEvent * ) {
-  repaint( visibleRect() );
-  if ( testWState(WState_AutoMask) )
-    updateMask();
-  setCaption("qtecasound - control panel (*)");
-}
-
-void QEInterface::focusOutEvent ( QFocusEvent * ) {
   setCaption("qtecasound - control panel");
+  qApp->setMainWidget(this);
+  init_layout();
 }
 
 void QEInterface::get_focus(void) {
   raise();
   setActiveWindow();
   setFocus();
-  setCaption("qtecasound - control panel (*)");
+}
+
+void QEInterface::init_layout(void) {
+  QBoxLayout* topLayout = new QVBoxLayout( this );
+  QBoxLayout* qtbuttons = new QHBoxLayout();
+  QBoxLayout* textinput = new QHBoxLayout();
+  QBoxLayout* tabwidget = new QHBoxLayout();
+  QBoxLayout* bottomrow = new QHBoxLayout();
+
+  init_buttons();
+  topLayout->addWidget(buttonrow);
+  topLayout->addLayout(qtbuttons,0);
+  topLayout->addLayout(textinput,0);
+  topLayout->addLayout(tabwidget,1);
+  topLayout->addLayout(bottomrow,0);
+
+  init_tabwidget(tabwidget);
+  init_runtimebar(qtbuttons);
+  init_textinput(textinput);
+  init_bottomrow(bottomrow);
 }
 
 void QEInterface::init_bottomrow(QBoxLayout* bottomrow) {
@@ -119,34 +108,18 @@ void QEInterface::update_statusbar(void) {
 			    last_epstatus + "]").c_str()); 
 }
 
-void QEInterface::init_sessionsetup(void) {
-  if (child_setup != 0) {
-    child_setup->close(true);
-  }
-  child_setup = new QESession(ctrl, ecaparams);
-  child_setup->show();
+void QEInterface::init_tabwidget(QBoxLayout* layout) {
+  QTabWidget* qtab = new QTabWidget(this, "qtab");
 
-  setCaption("qtecasound - control panel");
-  connect(child_setup, SIGNAL(session_closed()), this,
-	  SLOT(sessionsetup_closed()));
-}
+  QEDebugTab* debugtab = new QEDebugTab(this, this, "debugtab");
+  qtab->addTab(debugtab, "Engine o&utput");
 
-void QEInterface::sessionsetup_closed(void) {
-  child_setup = 0;
-}
-
-void QEInterface::init_debugout(QBoxLayout* debugout) {
-  QEDebug* qdebug = new QEDebug(this, "qdebug");
-  debugout->addWidget( qdebug, 1, 0);
+  session_rep = new QESession(ctrl, ecaparams, this, "qesession");
+  qtab->addTab(session_rep, "Session setu&p");
+  layout->addWidget(qtab,1,0);
 }
 
 void QEInterface::init_runtimebar(QBoxLayout* buttons) {
-  QEButtonRow* buttonrow2 = new QEButtonRow(this, "buttonrow2");
-  buttonrow2->add_button(new QPushButton("Session setu(p)",buttonrow2), 
-			 ALT+Key_P,
-			 this, SLOT(init_sessionsetup()));
-  buttons->addWidget( buttonrow2, 5, 0 );
-
   rpos = new QERuntimePosition(ctrl->length_in_seconds_exact(),
 			       this, "rpos");
   buttons->addWidget( rpos, 10, 0 );
@@ -170,8 +143,8 @@ void QEInterface::init_buttons(void) {
 			ALT+Key_B,
 			this, SLOT(emsg_rw_begin()));
 
-  buttonrow->add_button(new QPushButton("(R)ew",buttonrow), 
-			ALT+Key_R,
+  buttonrow->add_button(new QPushButton("Rew (<)",buttonrow), 
+			Key_Less,
 			this, SLOT(emsg_rewind()));
 
   buttonrow->add_button(new QPushButton("S(t)art",buttonrow), 
@@ -182,33 +155,9 @@ void QEInterface::init_buttons(void) {
 			ALT+Key_S,
 			this, SLOT(emsg_stop()));
 
-  buttonrow->add_button(new QPushButton("(F)w",buttonrow), 
-			ALT+Key_F,
+  buttonrow->add_button(new QPushButton("Fw (>)",buttonrow), 
+			SHIFT+Key_Greater,
 			this, SLOT(emsg_forward()));
-
-  buttonrow->add_button(new QPushButton("Stat(u)s",buttonrow), 
-			ALT+Key_U,
-			this, SLOT(emsg_status()));
-
-  buttonrow->add_button(new QPushButton("C(h)ainsetups",buttonrow), 
-			ALT+Key_H,
-			this, SLOT(emsg_csstatus()));
-
-  buttonrow->add_button(new QPushButton("F(X)",buttonrow), 
-			ALT+Key_X,
-			this, SLOT(emsg_estatus()));
-
-  buttonrow->add_button(new QPushButton("(C)trls",buttonrow), 
-			ALT+Key_C,
-			this, SLOT(emsg_ctrlstatus()));
-
-  buttonrow->add_button(new QPushButton("Ch(a)ins",buttonrow), 
-			ALT+Key_A,
-			this, SLOT(emsg_cstatus()));
-
-  buttonrow->add_button(new QPushButton("Fi(l)es",buttonrow), 
-			ALT+Key_L,
-			this, SLOT(emsg_fstatus()));
 
   buttonrow->add_button(new QPushButton("(Q)uit",buttonrow), 
 			ALT+Key_Q,
@@ -255,7 +204,6 @@ void QEInterface::emsg_estatus(void) { ctrl->command("es"); }
 void QEInterface::emsg_fstatus(void) { ctrl->command("fs"); }
 void QEInterface::emsg_cstatus(void) { ctrl->command("cs"); }
 void QEInterface::emsg_exec(void) { ctrl->start(); }
-
 void QEInterface::emsg_setpos(double pos_seconds) {
   ctrl->command("setpos " + kvu_numtostr(pos_seconds));
   rpos->control_back_to_parent();

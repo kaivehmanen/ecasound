@@ -1,0 +1,65 @@
+-----------------------------------------------------------------------
+*** Ecasound - To do list / plans                                   ***
+-----------------------------------------------------------------------
+
+[ Development goals ]
+
+1.7.x series:
+
+- qtecasound - major improvements
+- new libqtecasound package
+- updates to .ewf (ecasound wave format)
+- new effect preset system
+- new effects - filters, allpass filter
+- plugin support (LADSPA)
+
+1.8.x series:
+
+- effect preset parameters
+- new effects - Schroeder reverb
+
+2.x series (1.x -> 2.x requirements):
+
+- libecasound ready for general use
+- easy to use qtecasound (see features.html)
+- users's and programmer's guide cover all essential aspects of 
+  ecasound
+
+-----------------------------------------------------------------------
+
+[ Upcoming features - implemented as soon as possible ]
+
+Input/output devices:
+
+- type override for audio objects
+- automatic handling of mono mp3s
+- mp3 bitrate as a command-line parameter
+
+Effects, routing, dsp routines:
+
+- better reverbs
+- effect preset parameters
+
+-----------------------------------------------------------------------
+
+[ Wish-list - implemented if enough demand ]
+
+Input/output devices:
+
+- SMPTE time-code
+- metronome signal
+- integration to some synth engine - for instance Csound, aRts, 
+  Quasimodo, Bacterium, ...
+
+Effects, routing, dsp routines:
+
+- generic envelope followers
+
+User-interface:
+
+- daemon mode for ecasound
+
+Misc:
+
+- smart mixing / dithering
+- better MIDI-support

@@ -1352,8 +1352,8 @@ CXXFLAGS="-D_REENTRANT -DENABLE_DBC -g -Wall -Wstrict-prototypes -pedantic"
 fi                                     
 
 if test x$include_debug = xyes; then
-	echo $ac_n "checking checking for libecasound_debug""... $ac_c" 1>&6
-echo "configure:1357: checking checking for libecasound_debug" >&5
+	echo $ac_n "checking for libecasound_debug""... $ac_c" 1>&6
+echo "configure:1357: checking for libecasound_debug" >&5
 	echo $ac_n "checking for main in -lecasound_debug""... $ac_c" 1>&6
 echo "configure:1359: checking for main in -lecasound_debug" >&5
 ac_lib_var=`echo ecasound_debug'_'main | sed 'y%./+-%__p_%'`
@@ -1392,8 +1392,8 @@ else
 fi
 
 else
-	echo $ac_n "checking checking for libecasound""... $ac_c" 1>&6
-echo "configure:1397: checking checking for libecasound" >&5
+	echo $ac_n "checking for libecasound""... $ac_c" 1>&6
+echo "configure:1397: checking for libecasound" >&5
 	echo $ac_n "checking for main in -lecasound""... $ac_c" 1>&6
 echo "configure:1399: checking for main in -lecasound" >&5
 ac_lib_var=`echo ecasound'_'main | sed 'y%./+-%__p_%'`

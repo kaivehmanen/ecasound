@@ -10,8 +10,6 @@
 #include "eca-session.h"
 #include "eca-controller.h"
 
-// #include "eca-qtrtposition.h"
-// #include "eca-qtsession.h"
 class QERuntimePosition;
 class QESession;
 class QEButtonRow;
@@ -21,10 +19,6 @@ class QEInterface : public QWidget
   Q_OBJECT
 public:
   QEInterface(ECA_CONTROLLER* control, const ECA_SESSION* session, QWidget *parent=0, const char *name=0 );
-
-protected:
-  void focusInEvent ( QFocusEvent * );
-  void focusOutEvent ( QFocusEvent * );
 
 public slots:
   void emsg_general(void);
@@ -45,11 +39,9 @@ public slots:
   void get_focus(void);
 
 private slots:
-  void init_sessionsetup(void);
   void update_statusbar(void);
   void update_runtimebar(void);
   void not_implemented(void);
-  void sessionsetup_closed(void);
 
 signals:
   void is_finished(void);
@@ -61,24 +53,20 @@ signals:
 private:
   QLineEdit* tekstirivi;
   QStatusBar* statusbar;
-
   QEButtonRow* buttonrow;
-
   QERuntimePosition* rpos;
-  QESession* child_setup;
+  QESession* session_rep;
 
   ECA_CONTROLLER* ctrl;
   const ECA_SESSION* ecaparams;
 
+  void init_layout(void);
   void init_statusbar(void);
   void init_buttons();
+  void init_tabwidget(QBoxLayout* debugout);
   void init_runtimebar(QBoxLayout* buttons);
   void init_bottomrow(QBoxLayout* bottomrow);
   void init_textinput(QBoxLayout* textinput);
-  void init_debugout(QBoxLayout* debugout);
 };
 
 #endif
-
-
-

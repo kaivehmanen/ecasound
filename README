@@ -1,5 +1,5 @@
 =======================================================================
-*** ecasound - README                                               ***
+*** Ecasound - README                                               ***
 =======================================================================
 -----------------------------------------------------------------------
  What is it?
@@ -36,41 +36,6 @@ ecasound for all my music projects. Because of this, I also
 continue to improve and develop ecasound.
 
 -----------------------------------------------------------------------
- Installing 
------------------------------------------------------------------------
-
-First of all, you should first try to use the binary-rpm release.
-It's probably the easiest and the most straigthforward way to 
-install this software. 
-
-If you need to compile ecasound, the file 'INSTALL' contains detailed 
-instructions.
-
------------------------------------------------------------------------
- Documentation 
------------------------------------------------------------------------
-
-Ecasound documentation is updated whenever new features are added 
-or old features have been modified. Some things are not documented
-in great detail, but on the other hand, all documentation is kept
-up-to-date.
-
-- user's guide
-- programmer's guide
-- man pages
-	- ecasound(1)
-	- qtecasound(1)
-	- ecatools(1)
-	- ecasound-iam(1)
-	- ecasoundrc(5)
-- misc HTML-formatted docs
-- command line help
-	- (qt)ecasound -h
-
-Probably the best place to start is the examples section of 
-ecasound HTML-documentation (Documentation/examples.html).
-
------------------------------------------------------------------------
  Requirements
 -----------------------------------------------------------------------
 
@@ -98,23 +63,94 @@ To compile qtecasound, you also need...:
 - qt 2.x development environment
 
 -----------------------------------------------------------------------
+ Installing 
+-----------------------------------------------------------------------
+
+First of all, you should first try to use the binary-rpm release.
+It's probably the easiest and the most straigthforward way to 
+install this software. 
+
+If you need to compile ecasound, the file 'INSTALL' contains detailed 
+instructions. To compile from rpm source packages, "rpm --rebuild 
+ecasound-x.y.xRt.src.rpm".
+
+-----------------------------------------------------------------------
+ Documentation 
+-----------------------------------------------------------------------
+
+Ecasound documentation is updated whenever new features are added 
+or old features have been modified. Some things are not documented
+in great detail, but on the other hand, all documentation is kept
+up-to-date.
+
+- user's guide
+- programmer's guide
+- man pages
+	- ecasound(1)
+	- qtecasound(1)
+	- ecatools(1)
+	- ecasound-iam(1)
+	- ecasoundrc(5)
+- misc HTML-formatted docs
+- command line help
+	- ecasound --help
+
+Probably the best place to start is the examples section of 
+ecasound HTML-documentation (Documentation/examples.html).
+
+-----------------------------------------------------------------------
+ Mailing lists
+-----------------------------------------------------------------------
+
+ecasound-announce@wakkanet.fi:
+	A read-only list for announcements concerning
+	ecasound and ecawave.
+
+ecasound-list@wakkanet.fi:
+	A general discussion forum for ecasound/ecawave
+	developers and users. Announcements of new versions, bug warnings, etc 
+	will be posted to this list. If you have problems compiling,
+	installing or using ecasound/ecawave, this is a good place to ask for
+	help. Reports of working software/hardware combinations are also welcome.
+	You can browse the message archives at
+	http://www.wakkanet.fi/~kaiv/ecasound/ecasound-list/current/ 
+
+You can join the lists by sending subscribe message to
+majordomo@wakkanet.fi. You can also join using the following 
+web front-end: http://www.wakkanet.fi/~kaiv/ecasound/mlists.html
+
+-----------------------------------------------------------------------
  Web sites
 -----------------------------------------------------------------------
 
 Ecasound home site
-- http://www.wakkanet.fi/ecasound/
+- http://www.ecasound.cx
 
 Distribution packages
 - http://ecasound.seul.org/download/
 
-Ecasound link page (external packages needed by ecasound, etc)
-- http://www.wakkanet.fi/~kaiv/ecasound/links.html
+Eca projects page (links, apps based on ecasound, etc)
+- http://www.eca.cx
 
 Sculpscape, music recorded and mixed with ecasound
 - http://www.wakkanet.fi/sculpscape/
 
 -----------------------------------------------------------------------
- About stable and development versions
+ About free software development
+-----------------------------------------------------------------------
+
+You should always keep in mind, that development of free software
+doesn't work in the same way as commercial development. Every
+succesful free software project has an active userbase behind it. This
+means that your comments, ideas and bug reports are extremely
+important. If something doesn't work, or some feature is missing,
+please mail me about it. Thank you in advance! You can send ecasound
+related mails to me at mailto:k@eca.cx. If you want see/hear ecasound
+in action, you can listen to some of my material at Sculpscape. All
+the newer ones are recorded and mixed with ecasound! 
+
+-----------------------------------------------------------------------
+ Stable and development versions
 -----------------------------------------------------------------------
 
 Although publically released versions are called stable, this is not 
@@ -128,7 +164,8 @@ start using it and bugs are found. So join the fun! :)
  Author 
 -----------------------------------------------------------------------
 
-Kai Vehmanen - mailto:kaiv@wakkanet.fi
+Kai Vehmanen -	mailto:kaiv@wakkanet.fi
+		http://www.wakkanet.fi/~kaiv
 
 -----------------------------------------------------------------------
  Contributors / credits / thanks to 
@@ -138,8 +175,9 @@ Barton-Davis, Paul - Quasimodo and Hdr have given me a lot of ideas
 Dyson, John S. - advanced compressor (-eca)
 Endersz, Viktor - for sending me the adv.compressor source code!
 Fendt, Stefan - RC-lowpass filter (-ef4)
-Hall, Jeremy - extensive testing
+Hall, Jeremy - extensive testing, many design ideas
 Hamara, Arto - ecasound logo, lots of great ideas!
+Lavallée, Marc - rpm-spec for Mandrake
 Laydier, Antoine aka SMF - layer.cpp (interprets mp3 headers)
 Petit, Bertrand - helped with POSIX-compatibility issues
 Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!

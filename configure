@@ -1913,7 +1913,7 @@ else
   FEELING_EXPERIMENTAL_FALSE=
 fi
 
-CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math -funroll-loops -fstrict-aliasing"
+CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math"
 
 # Check whether --enable-debug or --disable-debug was given.
 if test "${enable_debug+set}" = set; then
@@ -1931,7 +1931,7 @@ else
   INCLUDE_DEBUG_FALSE=
 fi
 if test x$include_debug = xyes; then
-CXXFLAGS="-D_REENTRANT -DENABLE_DBC -g -fstrict-aliasing -Wall -Wstrict-prototypes -O2 -ffast-math"
+CXXFLAGS="-D_REENTRANT -DENABLE_DBC -g -Wall -Wstrict-prototypes -O2 -ffast-math"
 fi                                     
 
 # Check whether --enable-dbc or --disable-dbc was given.
@@ -3755,6 +3755,7 @@ ac_given_INSTALL="$INSTALL"
 trap 'rm -fr `echo "
 Makefile
 ecasound.spec
+ecasound.mdk.spec
 libecasound/Makefile
 libecasound/include/Makefile
 libecasound/src/Makefile
@@ -3893,6 +3894,7 @@ cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"Makefile
 ecasound.spec
+ecasound.mdk.spec
 libecasound/Makefile
 libecasound/include/Makefile
 libecasound/src/Makefile
