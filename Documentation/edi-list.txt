@@ -1,0 +1,68 @@
+-----------------------------------------------------------------------
+*** Ecasound - List of Ecasound Development Items (edi-xxx)         ***
+-----------------------------------------------------------------------
+
+-----------------------------------------------------------------------
+[ Ecasound Development Items - (edi-x) codes ]
+
+The Ecasound Development Item concept is used for keeping track of 
+bugs, open issues, enhancement proposals, and other similar issues.
+Each new EDI item is given a unique number. The resulting
+tag '(edi-xxx)' can then be used as a reference in mailing list 
+discussions, changelogs, etc. 
+
+To submit a new EDI-item, send a mail the 'ecasound-list' mailing
+list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
+
+-----------------------------------------------------------------------
+[ Format ]
+
+(edi-xxx): Short description of the item. This should be no more 
+	   than a few lines. 
+	   submitted: who submitted, date
+	   action: what happened, who and when
+
+Note! See README for a list of defined developer tags (kaiv -> me).
+
+-----------------------------------------------------------------------
+[ Bugs, problems ]
+
+(edi-1) Initial reverb-spike with the -ete reverb.
+	submitted: Anthony Paul Van Groningen, 04.01.2001
+(edi-8) EIAM parser doesn't handle white-space properly (for instance
+	"ai-add Filename with whitespace".
+	submitted: smassy, 8.5.2001
+(edi-12) Conversions problems with non-interleaved, s32_le streams.
+	 submitted: jhall, 16.7.2001
+
+-----------------------------------------------------------------------
+[ Enhancements, new features ]
+
+(edi-2)	Possibility to specify audio object's type instead of using 
+	filename extensions.
+	submitted: Toby Shepard, 13.07.2001
+(edi-3) Extra parameters for effect presets describing its parameters, 
+	author, etc
+	submitted: kaiv, 17.08.2001
+(edi-4) 14bit MIDI-CCs controller source.
+	submitted: kaiv, 17.08.2001
+(edi-5) Threshold parameter to -eca.
+	submitted: ecasound-list daemon :)
+(edi-6) 100% transparent implementation of -z:db system.
+	submitted: smassy, xx.06.2001
+(edi-7) Adding a 'loop x times' option to the ewf file format.
+	submitted: nolan_d, 09.07.2001
+(edi-9) Adding and removing audio and chainop objects on-the-fly. 
+	submitted: jhalttun, xx.06.2001
+(edi-10) Adding ecalength to ecatools package.
+	 submitted: kaiv, xx.07.2001
+(edi-11) Hierarchy-based config file system. 
+	 submitted: kaiv, xx.07.2001
+
+
+-----------------------------------------------------------------------
+[ Closed items ]
+
+none
+
+-----------------------------------------------------------------------
