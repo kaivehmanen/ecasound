@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-iamode-parser.cpp: Class that handles registering and querying 
 //                        interactive mode commands.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -119,7 +119,8 @@ void ECA_IAMODE_PARSER::register_commands_misc(void)
   (*cmd_map_repp)["map-ctrl-list"] = ec_map_ctrl_list;
 }
 
-void ECA_IAMODE_PARSER::register_commands_cs(void) {
+void ECA_IAMODE_PARSER::register_commands_cs(void)
+{
   (*cmd_map_repp)["cs-add"] = ec_cs_add;
   (*cmd_map_repp)["cs-remove"] = ec_cs_remove;
   (*cmd_map_repp)["cs-list"] = ec_cs_list;
@@ -163,7 +164,8 @@ void ECA_IAMODE_PARSER::register_commands_cs(void) {
   (*cmd_map_repp)["cs-option"] = ec_cs_option;
 }
 
-void ECA_IAMODE_PARSER::register_commands_c(void) {
+void ECA_IAMODE_PARSER::register_commands_c(void)
+{
   (*cmd_map_repp)["c-add"] = ec_c_add;
   (*cmd_map_repp)["c-remove"] = ec_c_remove;
   (*cmd_map_repp)["c-list"] = ec_c_list;
@@ -183,12 +185,14 @@ void ECA_IAMODE_PARSER::register_commands_c(void) {
   (*cmd_map_repp)["c-status"] = ec_c_status;
 }
 
-void ECA_IAMODE_PARSER::register_commands_aio(void) {
+void ECA_IAMODE_PARSER::register_commands_aio(void)
+{
   (*cmd_map_repp)["aio-register"] = ec_aio_register;
   (*cmd_map_repp)["aio-status"] = ec_aio_status;
 }
 
-void ECA_IAMODE_PARSER::register_commands_ai(void) {
+void ECA_IAMODE_PARSER::register_commands_ai(void)
+{
   (*cmd_map_repp)["ai-add"] = ec_ai_add;
   (*cmd_map_repp)["ai-remove"] = ec_ai_remove;
   (*cmd_map_repp)["ai-list"] = ec_ai_list;
@@ -212,7 +216,8 @@ void ECA_IAMODE_PARSER::register_commands_ai(void) {
   (*cmd_map_repp)["ai-wave-edit"] = ec_ai_wave_edit;
 }
 
-void ECA_IAMODE_PARSER::register_commands_ao(void) {
+void ECA_IAMODE_PARSER::register_commands_ao(void)
+{
   (*cmd_map_repp)["ao-add"] = ec_ao_add;
   (*cmd_map_repp)["ao-add-default"] = ec_ao_add_default;
   (*cmd_map_repp)["ao-list"] = ec_ao_list;
@@ -237,7 +242,8 @@ void ECA_IAMODE_PARSER::register_commands_ao(void) {
   (*cmd_map_repp)["ao-wave-edit"] = ec_ao_wave_edit;
 }
 
-void ECA_IAMODE_PARSER::register_commands_cop(void) {
+void ECA_IAMODE_PARSER::register_commands_cop(void)
+{
   (*cmd_map_repp)["cop-add"] = ec_cop_add;
   (*cmd_map_repp)["cop-remove"] = ec_cop_remove;
   (*cmd_map_repp)["cop-list"] = ec_cop_list;
@@ -250,7 +256,8 @@ void ECA_IAMODE_PARSER::register_commands_cop(void) {
   (*cmd_map_repp)["cop-status"] = ec_cop_status;
 }
 
-void ECA_IAMODE_PARSER::register_commands_copp(void) {
+void ECA_IAMODE_PARSER::register_commands_copp(void)
+{
   (*cmd_map_repp)["copp-list"] = ec_copp_list;
   (*cmd_map_repp)["copp-select"] = ec_copp_select;
   (*cmd_map_repp)["copp-index-select"] = ec_copp_select;
@@ -260,7 +267,8 @@ void ECA_IAMODE_PARSER::register_commands_copp(void) {
   (*cmd_map_repp)["copp-get"] = ec_copp_get;
 }
 
-void ECA_IAMODE_PARSER::register_commands_ctrl(void) {
+void ECA_IAMODE_PARSER::register_commands_ctrl(void)
+{
   (*cmd_map_repp)["ctrl-add"] = ec_ctrl_add;
   (*cmd_map_repp)["ctrl-remove"] = ec_ctrl_remove;
   (*cmd_map_repp)["ctrl-list"] = ec_ctrl_list;
@@ -272,7 +280,8 @@ void ECA_IAMODE_PARSER::register_commands_ctrl(void) {
   (*cmd_map_repp)["ctrl-status"] = ec_ctrl_status;
 }
 
-void ECA_IAMODE_PARSER::register_commands_dump(void) {
+void ECA_IAMODE_PARSER::register_commands_dump(void)
+{
   (*cmd_map_repp)["dump-target"] = ec_dump_target;
   (*cmd_map_repp)["dump-status"] = ec_dump_status;
   (*cmd_map_repp)["dump-position"] = ec_dump_position;
@@ -295,7 +304,8 @@ int ECA_IAMODE_PARSER::command_to_action_id(const std::string& cmdstring)
   return((*cmd_map_repp)[cmdstring]);
 }
 
-bool ECA_IAMODE_PARSER::action_requires_params(int id) { 
+bool ECA_IAMODE_PARSER::action_requires_params(int id)
+{
   switch(id) {
   case ec_debug:
 
@@ -357,7 +367,8 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   return(false);
 }
 
-bool ECA_IAMODE_PARSER::action_requires_connected(int id) { 
+bool ECA_IAMODE_PARSER::action_requires_connected(int id)
+{
   switch(id) {
   case ec_start:
   case ec_run:
@@ -371,7 +382,8 @@ bool ECA_IAMODE_PARSER::action_requires_connected(int id) {
   return(false);
 }
 
-bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
+bool ECA_IAMODE_PARSER::action_requires_selected(int id)
+{
   switch(id) {
 
   case ec_cs_remove: 
@@ -442,11 +454,13 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_ao_wave_edit:
 
   case ec_cop_add:
+  case ec_cop_list:
   case ec_cop_select:
   case ec_cop_selected:
   case ec_cop_set:
   case ec_cop_status:
 
+  case ec_copp_list:
   case ec_copp_select:
   case ec_copp_selected:
   case ec_copp_set:
@@ -464,7 +478,8 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   return(false);
 }
 
-bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) { 
+bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id)
+{
   switch(id) {
   case ec_cs_remove:
   case ec_cs_set_length:
@@ -507,7 +522,8 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
 
 }
 
-bool ECA_IAMODE_PARSER::action_requires_selected_audio_input(int id) { 
+bool ECA_IAMODE_PARSER::action_requires_selected_audio_input(int id)
+{
   switch(id) {
   case ec_ai_remove:
   case ec_ai_attach:
@@ -531,7 +547,8 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_input(int id) {
 
 }
 
-bool ECA_IAMODE_PARSER::action_requires_selected_audio_output(int id) { 
+bool ECA_IAMODE_PARSER::action_requires_selected_audio_output(int id)
+{
   switch(id) {
   case ec_ao_remove:
   case ec_ao_attach:
@@ -555,7 +572,8 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_output(int id) {
 
 }
 
-void show_controller_help(void) {
+void show_controller_help(void)
+{
   MESSAGE_ITEM mitem; 
 
   mitem << "\n-------------------------------------------------------------------";

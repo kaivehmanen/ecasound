@@ -1867,28 +1867,32 @@ void ECA_CONTROL_OBJECTS::select_chain_operator(int chainop_id)
  * require:
  *  is_selected() == true
  *  selected_chains().size() == 1
- *  get_chain_operator() != 0
  */
 std::vector<string> ECA_CONTROL_OBJECTS::chain_operator_parameter_names(void) const
 {
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() == 1);
-  DBC_REQUIRE(get_chain_operator() != 0);
   // --------
 
   std::vector<string> result; 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
     CHAIN* selected_chain = selected_chainsetup_repp->chains[p];
-    int save_selected_copp = selected_chain->selected_chain_operator_parameter();
-    for(int n = 0; 
-	n < selected_chain->number_of_chain_operator_parameters();
-	n++) {
-      selected_chain->select_chain_operator_parameter(n + 1);
-      result.push_back(selected_chain->chain_operator_parameter_name());
+
+    if (selected_chain->selected_chain_operator() > 0) {
+
+      int save_selected_copp = selected_chain->selected_chain_operator_parameter();
+
+      for(int n = 0; 
+	  n < selected_chain->number_of_chain_operator_parameters();
+	  n++) {
+	selected_chain->select_chain_operator_parameter(n + 1);
+	result.push_back(selected_chain->chain_operator_parameter_name());
+      }
+
+      selected_chain->select_chain_operator_parameter(save_selected_copp);
     }
-    selected_chain->select_chain_operator_parameter(save_selected_copp);
   }
   return(result);
 }
@@ -1961,7 +1965,6 @@ void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(CHAIN_OPERATOR::parameter
  * require:
  *  is_selected() == true
  *  selected_chains().size() == 1
- *  get_chain_operator() != 0
  */
 CHAIN_OPERATOR::parameter_t ECA_CONTROL_OBJECTS::get_chain_operator_parameter(void) const
 {
