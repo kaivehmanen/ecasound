@@ -890,10 +890,10 @@ std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const {
 
   int setparams = csetup_repp->override_buffering_parameters().number_of_set();
   ecadebug->msg(ECA_DEBUG::system_objects, 
-		"eca-chainsetup-parser) genopts tostring - " + kvu_numtostr(setparams) +
+		"(eca-chainsetup-parser) genopts tostring - " + kvu_numtostr(setparams) +
 		" overridden parameters.");
 
-  if (csetup_repp->active_buffering_parameters().number_of_set() > 0) {
+  if (setparams > 0) {
     t << "-b:" << csetup_repp->buffersize();
     
     if (csetup_repp->raised_priority() == true)
@@ -916,17 +916,17 @@ std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const {
       {
       case ECA_CHAINSETUP::cs_bmode_nonrt: 
 	{
-	  t << " -B:nonrt";
+	  t << "-B:nonrt";
 	  break; 
 	}
       case ECA_CHAINSETUP::cs_bmode_rt: 
 	{ 
-	  t << " -B:rt";
+	  t << "-B:rt";
 	  break; 
 	}
       case ECA_CHAINSETUP::cs_bmode_rtlowlatency: 
 	{ 
-	  t << " -B:rt";
+	  t << "-B:rtlowlatency";
 	  break;
 	}
       default: 
