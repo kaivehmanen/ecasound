@@ -727,12 +727,14 @@ void ECA_ENGINE::request_start(void)
  * This function should only be called from 
  * interpret_queue().
  *
- * @pre status() == engine_status_running
+ * @pre status() == ECA_ENGINE::engine_status_running ||
+ *      status() == ECA_ENGINE::engine_status_finished
  */
 void ECA_ENGINE::request_stop(void)
 { 
   // ---
-  DBC_REQUIRE(status() == engine_status_running);
+  DBC_REQUIRE(status() == engine_status_running ||
+	      status() == engine_status_finished);
   // ---
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-engine) Request stop");
@@ -966,7 +968,10 @@ void ECA_ENGINE::posthandle_control_position(void)
     }
     else {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) posthandle_c_p over_max - stop");
-      request_stop();
+      if (status() == ECA_ENGINE::engine_status_running ||
+	  status() == ECA_ENGINE::engine_status_finished) {
+	request_stop();
+      }
       finished_rep = true;
     }
   }
