@@ -53,7 +53,7 @@ class ATOMIC_INTEGER {
     pthread_mutex_unlock(&mutex_rep);
   }
 
-  ATOMIC_INTEGER(int value) {
+  ATOMIC_INTEGER(int value = 0) {
     pthread_mutex_init(&mutex_rep, NULL);
     set(value);
   }
