@@ -46,6 +46,7 @@
 #include "eca-chainop.h"
 #include "audiofx_ladspa.h"
 #include "preset.h"
+#include "sample-specs.h"
 
 #include "eca-version.h"
 #include "eca-error.h"
@@ -124,6 +125,14 @@ double ECA_CONTROL::first_argument_as_float(void) const {
 
 long int ECA_CONTROL::first_argument_as_long_int(void) const {
   return(atol(action_args_rep[0].c_str()));
+}
+
+SAMPLE_SPECS::sample_t ECA_CONTROL::first_argument_as_samples(void) const {
+#ifdef HAVE_ATOLL
+  return(atoll(action_args_rep[0].c_str()));
+#else
+  return(atol(action_args_rep[0].c_str()));
+#endif
 }
 
 void ECA_CONTROL::command_float_arg(const string& cmd, double arg) {
@@ -305,7 +314,7 @@ void ECA_CONTROL::action(int action_id) {
   case ec_cs_rewind: { change_chainsetup_position(-first_argument_as_float()); break; }
   case ec_cs_forward: { change_chainsetup_position(first_argument_as_float()); break; }
   case ec_cs_set_position: { set_chainsetup_position(first_argument_as_float()); break; }
-  case ec_cs_set_position_samples: { selected_chainsetup_repp->set_position(first_argument_as_long_int()); break; }
+  case ec_cs_set_position_samples: { set_chainsetup_position_samples(first_argument_as_samples()); break; }
   case ec_cs_get_position: { set_last_float(position_in_seconds_exact()); break; }
   case ec_cs_get_position_samples: { set_last_long_integer(selected_chainsetup_repp->position_in_samples()); break; }
   case ec_cs_get_length: { set_last_float(length_in_seconds_exact()); break; }
@@ -317,7 +326,7 @@ void ECA_CONTROL::action(int action_id) {
     }
   case ec_cs_set_length_samples:
     {
-      set_chainsetup_processing_length_in_samples(first_argument_as_float());
+      set_chainsetup_processing_length_in_samples(first_argument_as_samples());
       break;
     }
   case ec_cs_toggle_loop: { toggle_chainsetup_looping(); break; } 

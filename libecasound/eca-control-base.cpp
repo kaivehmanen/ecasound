@@ -502,7 +502,7 @@ void ECA_CONTROL_BASE::set_last_integer(int v) {
   last_type_rep = "i";
 }
  
-void ECA_CONTROL_BASE::set_last_long_integer(int v) { 
+void ECA_CONTROL_BASE::set_last_long_integer(long int v) { 
   last_li_rep = v; 
   last_type_rep = "li";
 }

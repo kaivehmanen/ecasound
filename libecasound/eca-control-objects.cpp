@@ -499,6 +499,30 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position(double seconds) {
   }
   else {
     selected_chainsetup_repp->change_position_exact(seconds);
+    selected_chainsetup_repp->seek_position();
+  }
+}
+
+/**
+ * Changes the chainsetup position in samples relatively to the
+ * current position. Behaves differently depending on whether 
+ * the selected chainsetup is connected or not.
+ *
+ * require:
+ *  is_selected() == true
+ */
+void ECA_CONTROL_OBJECTS::change_chainsetup_position_samples(SAMPLE_SPECS::sample_t samples) {
+  // --------
+  DBC_REQUIRE(is_selected());
+  // --------
+
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
+    change_chainsetup_position(static_cast<double>(samples) /
+			       selected_chainsetup_repp->sample_rate());
+  }
+  else {
+    selected_chainsetup_repp->change_position(samples);
+    selected_chainsetup_repp->seek_position();
   }
 }
 
@@ -519,6 +543,29 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds) {
   }
   else {
     selected_chainsetup_repp->set_position_exact(seconds);
+    selected_chainsetup_repp->seek_position();
+  }
+}
+
+/**
+ * Sets the chainsetup position in samples.. Behaves 
+ * differently depending on whether the selected chainsetup 
+ * is connected or not.
+ *
+ * require:
+ *  is_selected() == true
+ */
+void ECA_CONTROL_OBJECTS::set_chainsetup_position_samples(SAMPLE_SPECS::sample_t samples) {
+  // --------
+  DBC_REQUIRE(is_selected());
+  // --------
+
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
+    set_chainsetup_position(static_cast<double>(samples) /
+			    selected_chainsetup_repp->sample_rate());
+  }
+  else {
+    selected_chainsetup_repp->set_position(samples);
     selected_chainsetup_repp->seek_position();
   }
 }

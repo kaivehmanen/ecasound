@@ -70,7 +70,7 @@ class ECA_CONTROL_BASE {
   void set_last_string(const std::string& s);
   void set_last_float(double v);
   void set_last_integer(int v);
-  void set_last_long_integer(int v);
+  void set_last_long_integer(long int v);
   void set_last_error(const std::string& s);
   void clear_last_values(void);
 
