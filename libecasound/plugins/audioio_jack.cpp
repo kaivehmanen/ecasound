@@ -82,10 +82,10 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
       if (label() == "jack_alsa") {
 	for(int n = 0; n < channels(); n++) {
 	  if (io_mode() == AUDIO_IO::io_read) {
-	    jackmgr_rep->auto_connect_jack_port(myid_rep, n + 1, "alsa:in_" + kvu_numtostr(n + 1));
+	    jackmgr_rep->auto_connect_jack_port(myid_rep, n + 1, "alsa_pcm:in_" + kvu_numtostr(n + 1));
 	  }
 	  else {
-	    jackmgr_rep->auto_connect_jack_port(myid_rep, n + 1, "alsa:out_" + kvu_numtostr(n + 1));
+	    jackmgr_rep->auto_connect_jack_port(myid_rep, n + 1, "alsa_pcm:out_" + kvu_numtostr(n + 1));
 	  }
 	}
       }
