@@ -21,15 +21,15 @@
 # Compression/dynamics (dyn_)
 #
 
-dyn_compress_supersoft = -eca:0.69,0,0.25,0.25 -ea:%1 \
+dyn_compress_supersoft = -eca:69,0,0.25,0.25 -ea:%1 \
 	-pd:Supersoft_compressor -ppn:gain-% -ppd:100 -ppl:0 -ppu:1000
-dyn_compress_soft = -eca:0.69,0,0.25,0.5 -ea:%1 \
+dyn_compress_soft = -eca:69,0,0.25,0.5 -ea:%1 \
 	-pd:Soft_compressor -ppn:gain-% -ppd:100 -ppl:0 -ppu:1000
-dyn_compress_medium = -eca:0.69,0,0.25,1.0 -ea:%1 \
+dyn_compress_medium = -eca:69,0,0.25,1.0 -ea:%1 \
 	-pd:Medium_compressor -ppn:gain-% -ppd:100 -ppl:0 -ppu:1000
-dyn_compress_hard = -eca:0.69,0,0.5,1.0 -ea:%1 \
+dyn_compress_hard = -eca:69,0,0.5,1.0 -ea:%1 \
 	-pd:Hard_compressor -ppn:gain-% -ppd:100 -ppl:0 -ppu:1000
-dyn_compress_infinite = -eca:0.69,0,1.0,1.0 -ea:%1 \
+dyn_compress_infinite = -eca:69,0,1.0,1.0 -ea:%1 \
 	-pd:Infinite_to_one_compressor -ppn:gain-% -ppd:100 -ppl:0 -ppu:1000
 dyn_compress_brutal = -ec:999,10 -ea:%1 \
 	-pd:Ultra_brutal_compressor -ppn:gain-% -ppd:100 -ppl:0 -ppu:1000
