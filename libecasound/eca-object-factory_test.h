@@ -102,8 +102,6 @@ void ECA_OBJECT_FACTORY_TEST::test_map(const ECA_OBJECT_MAP& objmap)
 	ECA_LOG_MSG(ECA_LOGGER::user_objects, "Object type \"" +
 		    obj->name() + "\" succesfully created.");
 
-	std::cerr << "obj_new_expr: " << obj->name() << std::endl;
-
 	T* target = dynamic_cast<T*>(obj->new_expr());
 	test_object_types<T>(obj, target, "new_expr");
 	if (target != 0) delete target;
