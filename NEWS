@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 241004) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 271004) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-xx102004 (v2.3.4)  -** stable release **-
+27102004 (v2.3.4)  -** stable release **-
 	- edi-entries: edi-14 and edi-32 closed, edi-40 added
 	- note: verified to compile ok on MacOS X 10.3.2 [smbolton]
 	- note: verified to compile ok with gcc-3.4.1
@@ -34,23 +34,24 @@ xx102004 (v2.3.4)  -** stable release **-
 	- fixed: bugs in .wav, .cdr, JACK code, and in internal sample 
 		 conversion routines that occur on big-endian 
 		 machines [smbolton]
-	- fixed: ogg input if requested sample-format has non-native
+	- fixed: ogg input failed if requested sample-format had non-native
 		 endianess; new default-cmd for ogg-input, see 
 		 ecasoundrc(5)
 	- fixed: build failed on MacOSX/freebsd because of undefined 	
 		 mlockall and related defines
 	- fixed: errors in ecasound(1) man page and the examples.html;
 	         adding chain operators to multiple chains at once
-		 is not supported
+		 is not supported anymore
 	- fixed: engine state not fully updated after a 'run' 
 		 command has completed; caused commands such as
 		 'cs-set-position' to fail when used after 'run'
 	- fixed: ecasound sample formats s24_le/_be were mapped
 		 to 4-byte ALSA formats S24_LE/_BE; now mapped
 		 to the correct 3-byte S24_3LE/_3BE formats
-	- fixed: bug in C ECI impl that caused sync-loss errors [jesse]
-	- fixed: ECI session corruption after processing a 'long int' 
-		 return value [jesse]
+	- fixed: bug in C ECI impl that caused sync-loss errors between
+		 ECI clients and the engine [jesse]
+	- fixed: ECI session corruption after processing 'long int' 
+		 return values [jesse]
 05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command

@@ -92,6 +92,8 @@ Optional when running Ecasound:
 - for .w64/.aiff/.snd/etc support, libsndfile library
 - for Ogg Vorbis support, the vorbis-tools package (ogg123 and vorbize)
 - for .mid input support, Timidity++
+- for .aac/.m4a/.mp4 file support, the FAAC/FAAD2 tools
+- for .flac support, the FLAC package
 - for aRts support, the aRts server package
 - for higher quality resampling, libsamplerate
 
@@ -157,10 +159,10 @@ Ecasound's HTML-documentation (Documentation/examples.html).
 
 ecasound-announce@wakkanet.fi:
 	A read-only list for announcements concerning Ecasound and 
-	Ecawave.
+	related tools.
 
 ecasound-list@wakkanet.fi:
-	A general discussion forum for Ecasound/Ecawave
+	A general discussion forum for Ecasound and related tools.
 	developers and users. Announcements of new versions, bug 
 	warnings, etc will be posted to this list. If you have
 	problems compiling, installing or using Ecasound/Ecawave, this 
