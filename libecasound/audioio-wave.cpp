@@ -88,7 +88,7 @@ static uint32_t little_endian_uint32(uint32_t arg)
  * Print extra debug information about RIFF header 
  * contents to stdout when opening files.
  */
-// #define DEBUG_WAVE_HEADER
+#define DEBUG_WAVE_HEADER
 
 WAVEFILE::WAVEFILE (const std::string& name)
 {
@@ -205,8 +205,12 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 
   if (little_endian_uint16(riff_format_rep.bits) > 8 && 
       format_string().size() > 4 &&
-      format_string()[4] == 'b')
-    throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-WAVE: bigendian byte-order not supported by RIFF wave files."));
+      format_string()[4] == 'b') {
+    /* force little-endian operation / affects only write-mode */
+    set_sample_format_string(format_string()[0] + kvu_numtostr(bits() + "_le"));
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) forcing little-endian operation (" + format_string() + ")");
+    DBC_CHECK(format_string().size() > 4 && format_string()[4] != 'b');
+  }
 
   AUDIO_IO::open();
 }

@@ -542,7 +542,7 @@ void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERR
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Total length (seconds): " + kvu_numtostr(length_in_seconds()));
 
   /* sample format (this comes from mpg123) */
-  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
+  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16);
 
   /* set pcm per frame value */
   static int bs[4] = {0, 384, 1152, 1152};
