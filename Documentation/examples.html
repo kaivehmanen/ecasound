@@ -172,7 +172,7 @@ always use output to a file.
 </ul></li>
 </p>
 <p>
-Ok, let's do some paraller processing. This time two chains are
+Ok, let's do some parallel processing. This time two chains are
 created and the input file is assigned to both of them. The output
 file is assigned to a special chain called <b>all</b>. '-a:1,2'
 would also work. This way we can use one signal in multiple chains 
@@ -276,10 +276,7 @@ but what's most important, it works in text-mode:</p>
 <p>Basicly this just records from one OSS input, puts the signal through
 an analyze ('-ev') effect and outputs to an OSS output. The secret
 here is that you can get volume statistics with the <u>estatus</u> (or
-<u>es</u>) command in interactive mode. Qtecasound also offers 
-a <u>estatus</u> pushbutton. This way you can adjust the mixer
-settings, check the statistics (after which they're reseted), adjust 
-again, check statistics, ... and so on. Newer ecasound versions (1.8.5
+<u>es</u>) command in interactive mode. Newer ecasound versions (1.8.5
 and newer) come with 'ecasignalview', which is a standalone app that
 can monitor signal level in realtime.
 </p>

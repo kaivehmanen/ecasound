@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "18\&.04\&.2004" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "05\&.05\&.2004" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -30,7 +30,12 @@ See ecasound(5) man page (the \'-Md option) for more info\&.
 Defaults to \fIrawmidi,/dev/midi\fP\&.
 .IP 
 .IP "default-output" 
-Output device to use\&. Defaults to \fI/dev/dsp\fP\&.
+Output device to use by default\&. If a chainsetup with zero
+outputs, but with one or more inputs, is connected, a default output
+is added and all the chains are connected to it\&. If the special-case
+value \'autodetect\' is specified, ecasound will try to auto-detect 
+a suitable device (JACK -> ALSA -> OSS -> rtnull)\&. 
+Defaults to \fIautodetect\fP\&.
 .IP 
 .IP "default-audio-format" 
 Default values for sample format, channel count, sampling rate

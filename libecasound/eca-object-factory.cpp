@@ -570,7 +570,7 @@ std::string ECA_OBJECT_FACTORY::probe_default_output_device(void)
     string default_output = ecaresources.resource("default-output");
     bool output_selected = true;
 
-    if (default_output == "auto") {
+    if (default_output == "autodetect") {
       
       output_selected = false;
 

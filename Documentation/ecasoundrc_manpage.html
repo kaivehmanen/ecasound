@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>18.04.2004</h2>
+<h2>05.05.2004</h2>
 
 
     
@@ -53,7 +53,12 @@
 	See ecasound(5) man page (the '-Md option) for more info.
 	Defaults to <em>rawmidi,/dev/midi</em>.
 <p><p></p><dt><strong>default-output</strong><dd>
-  	Output device to use. Defaults to <em>/dev/dsp</em>.
+  	Output device to use by default. If a chainsetup with zero
+  	outputs, but with one or more inputs, is connected, a default output
+	is added and all the chains are connected to it. If the special-case
+	value 'autodetect' is specified, ecasound will try to auto-detect 
+	a suitable device (JACK -&gt; ALSA -&gt; OSS -&gt; rtnull). 
+	Defaults to <em>autodetect</em>.
 <p><p></p><dt><strong>default-audio-format</strong><dd>
   	Default values for sample format, channel count, sampling rate
   	and channel interleaving. Syntax is the same as used by
