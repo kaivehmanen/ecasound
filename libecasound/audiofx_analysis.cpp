@@ -370,7 +370,8 @@ CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_deltafix(int channel) const
 {
   SAMPLE_SPECS::sample_t deltafix;
 
-  if (channel >= static_cast<int>(pos_sum.size()) ||
+  if (channel < 0 || 
+      channel >= static_cast<int>(pos_sum.size()) ||
       channel >= static_cast<int>(neg_sum.size())) return(0.0);
 
   if (pos_sum[channel] > neg_sum[channel]) deltafix = -(pos_sum[channel] - neg_sum[channel]) / num_of_samples[channel];
@@ -401,7 +402,7 @@ void EFFECT_DCFIND::set_parameter(int param,
 
 CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_parameter(int param) const
 {
-  return(get_deltafix(param));
+  return(get_deltafix(param-1));
 }
 
 void EFFECT_DCFIND::init(SAMPLE_BUFFER *insample)

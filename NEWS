@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 261002) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 291002) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -23,7 +23,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- added: eiam - 'ao-add-default' command
 	- added: ecicpp_tester, a unit test program for C++ ECI
 	- changed: libecasoundc now LGPL licensed
-	- changed: edi-30; ecaplay rewritten using the new standalone
+	- changed: edi-30; ecaplay, ecaconvert, ecafixdc and 
+	 	   ecanormalize rewritten using the new standalone
 	 	   ECI api
 	- changed: reimplemented the C++ ECI interface on top of 
 		   the new standalone C ECI interface
@@ -35,6 +36,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 was issued
 	- fixed: -etc, -etl and -etp crashes if delay parameter 
 		 was set to zero
+	- fixed: -ezf didn't report the dcfic for the right channel 
+		 correctly
 19102002 (v2.2.0-pre3)
 	- fixed: reverted to using old ALSA 0.9 hw-params API,
 		 ecasound agains works with old 0.9beta and 0.9rc 
