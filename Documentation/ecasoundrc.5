@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "17\&.10\&.2002" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "17\&.01\&.2003" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -80,8 +80,9 @@ resource directory\&. Defaults to \fIeffect_presets\fP\&.
 Directory containing LADSPA effect plugins\&. Defaults to \fI{prefix-dir}/lib/ladspa\fP\&.
 If environment variable \fILADSPA_PATH\fP exists, directories
 specified in it are automatically searched for plugins\&.
-Note! unlike the \fILADSPA_PATH\fP variable,
-\'ladspa-plugin-directory\' can only contain one directory\&.
+Note! To match the syntax of the \fILADSPA_PATH\fP environment 
+variable, \'ladspa-plugin-directory\' can contain multiple
+directories, separated by \':\' characters\&.
 .IP 
 .IP "ext-cmd-text-editor" 
 If \fIext-cmd-text-editor-use-getenv\fP is \fIfalse\fP or "EDITOR" 

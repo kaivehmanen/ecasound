@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>17.10.2002</h2>
+<h2>17.01.2003</h2>
 
 
     
@@ -94,8 +94,9 @@
 	Directory containing LADSPA effect plugins. Defaults to <em>{prefix-dir}/lib/ladspa</em>.
 	If environment variable <em>LADSPA_PATH</em> exists, directories
 	specified in it are automatically searched for plugins.
-	Note! unlike the <em>LADSPA_PATH</em> variable,
-	'ladspa-plugin-directory' can only contain one directory.
+	Note! To match the syntax of the <em>LADSPA_PATH</em> environment 
+	variable, 'ladspa-plugin-directory' can contain multiple
+	directories, separated by ':' characters.
 <p><p></p><dt><strong>ext-cmd-text-editor</strong><dd>
 	If <em>ext-cmd-text-editor-use-getenv</em> is <em>false</em> or "EDITOR" 
 	is null, value of this field is used. Defaults to <em>pico</em>.
