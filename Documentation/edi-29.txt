@@ -3,6 +3,7 @@ Status: OPEN
 
 (edi-29): Ecamonitor - ecasound monitor client implemented using NetECI.
          - submitted: kaiv, 29.09.2002
+	 - closed: 07.11.2002
 
 ------------------------------------------------------------------------
 Details:
@@ -14,14 +15,16 @@ Details:
     - ability to monitor (in real-time) at least the following:
         - lists of chains, inputs and outputs of the connected cs
 	- current position and overall length of the connected cs
-	- central cs-params: srate, buffersize, raisedpriority, ...
 	- engine status (running/stopped/finished/notready/error)
 	- list of chainops and ctrls plus their current parameter
 	  values
     - no need to restart if ecasound is restarted; ie. ability to 
       automatically reconnect if connection is lost
+- future work
+    - monitoring central cs-params: srate, buffersize, raisedpriority, ...
+    - MIDI-activity monitoring
+    - monitoring volume levels
 - related EDIs
     - edi-27: NetECI - network interface for controlling ecasound operation.
-- todo-list
 
 ------------------------------------------------------------------------

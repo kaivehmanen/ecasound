@@ -6,7 +6,7 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{17102002}
+\date{07112002}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,7 @@ ecasound version.
 \chapter{Document history}
 
 \begin{itemize}
+\item 07.11.2002 - Added documentation for NetECI.
 \item 25.10.2002 - Added ``Checklist for Audio Object Implementations''.
 \item 17.10.2002 - Added a warning against direct use of libecasound
                    and libkvutils. Using ECI is from now on the 
@@ -925,6 +926,23 @@ Specific tasks ECI is aimed at:
 \item  3. sound services to other apps
 \end{itemize}
 
+% ----------------------------------------------------------------------
+\section{NetECI - {[}various{]}}
+
+NetECI is a network version of the ECI API. When ecasound is
+started in daemon mode (the --daemon option), it creates 
+a server for incoming TCP connections. Client applications
+can connect to this socket and use the connection to 
+control and observe the active session. Multiple clients
+can connect to the same session.
+
+The protocol is identical to one used in ECI. Clients 
+write EIAM commands to the socket, followed by a CRLF pair.
+The server will reply using the well-formed output mode 
+syntax (see \ref{Ecasound Interactive Mode - Well-Formed Output Mode}).
+
+See implementation of \emph{ecamonitor} (part of ecatools), 
+for a working example.
 
 % ----------------------------------------------------------------------
 \section{Libecasound's ECA\_CONTROL class - {[}C++{]}}

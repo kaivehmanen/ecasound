@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecatools)
        (1)
-       (17.07.2002)
+       (06.11.2002)
        ()
        (Multimedia software)
 
@@ -25,6 +25,8 @@ bf(ecafixdc) file1 [ file2,...,fileN ]
 
 bf(ecalength) file1 [ file2,...,fileN ]
 
+bf(ecamonitor) [host][:port]
+
 bf(ecanormalize) file1 [ file2,...,fileN ]
 
 bf(ecaplay) [-dhk] file1 [ file2,...,fileN ]
@@ -35,7 +37,7 @@ manpagedescription()
 
 Ecatools are simple command line utils that do various audio
 processing tasks. Most of them support batch processing. They all
-use the ecasound engine (libecasound).
+use ecasound to do the actual audio processing work.
 
 bf(ECACONVERT)
 
@@ -49,7 +51,27 @@ A simple command-line tool for fixing DC-offset.
 
 bf(ECALENGTH)
 
-See ecalength(1) man page.
+See the separate ecalength(1) man page.
+
+bf(ECAMONITOR)
+
+Ecamonitor is a util program that can be used 
+to monitor an active ecasound session. Ecamonitor 
+is able to show information about the current 
+chainsetup such as list of inputs, outputs, 
+current position, effects, the engine status 
+and numerous other things.
+
+By default ecamonitor will try to connect 
+to IP4 address "localhost", to port "2868". 
+A different address can be specified when 
+starting ecamonitor, for example 
+"ecamonitor foo.mynetwork.com" or
+"ecamonitor foo.mynetwork.com:4500".
+
+To enable inbound connections, ecasound has to be 
+started with the em(--daemon) option. Ecamonitor is 
+implemented in Python using the NetECI API.
 
 bf(ECANORMALIZE)
 
@@ -59,11 +81,11 @@ and, if necessary, does the amplification.
 
 bf(ECAPLAY)
 
-A simple command-line tool that plays input files using the
-default output specified in em(~/.ecasoundrc). Note! You  can abort 
-ecaplay at any time by pressing Ctrl-C. If you are playing multiple 
-files, this will stop the current file and begin playing the next one.  
-If you want to abort playing immediately instead of skipping to the 
+Command-line tool that plays input files using the default output 
+specified in em(~/.ecasoundrc). Note! You can abort ecaplay at any
+time by pressing Ctrl-C. If you are playing multiple files, this will 
+stop the current file and begin playing the next one. If you want 
+to abort playing immediately instead of skipping to the 
 next file, press Ctrl-C twice in short succession (around one
 second).
 
@@ -122,15 +144,13 @@ from "Ecasound User's Guide" (see ''http://www.eca.cx/ecasound
 manpagesection(ENVIRONMENT)
 
         em(ECASOUND)
-	If defined, most ecatools programs will use the 
-	em(ECASOUND) environment as the default path to
-	ecasound executable.
+	Path to the ecasound executable. Affects most ecatools.
 
 manpagefiles()
 
-	em(~/.ecasoundrc)
-	The default ecasound resource file. If the file doesn't exist, it 
-	is created with some default values. See ecasoundrc(5).
+	em(~/.ecasound/ecasoundrc)
+	The default ecasound resource file. See ecasoundrc(5)
+	for details.
 
 manpageseealso()
 

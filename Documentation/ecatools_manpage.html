@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecatools</h1>
-<h2>17.07.2002</h2>
+<h2>06.11.2002</h2>
 
 
     
@@ -34,6 +34,7 @@
 <strong>ecaconvert</strong> .extension file1 [ file2,...,fileN ]
 <p><strong>ecafixdc</strong> file1 [ file2,...,fileN ]
 <p><strong>ecalength</strong> file1 [ file2,...,fileN ]
+<p><strong>ecamonitor</strong> [host][:port]
 <p><strong>ecanormalize</strong> file1 [ file2,...,fileN ]
 <p><strong>ecaplay</strong> [-dhk] file1 [ file2,...,fileN ]
 <p><strong>ecasignalview</strong> [ options ] [ input ] [ output ]
@@ -41,7 +42,7 @@
     
 <p>Ecatools are simple command line utils that do various audio
 processing tasks. Most of them support batch processing. They all
-use the ecasound engine (libecasound).
+use ecasound to do the actual audio processing work.
 <p><strong>ECACONVERT</strong>
 <p>A tool for converting a set of files to a common target format.
 This target format is given as the first command line
@@ -49,17 +50,33 @@ argument, and its syntax is <em>.ext</em>.
 <p><strong>ECAFIXDC</strong>
 <p>A simple command-line tool for fixing DC-offset.
 <p><strong>ECALENGTH</strong>
-<p>See ecalength(1) man page.
+<p>See the separate ecalength(1) man page.
+<p><strong>ECAMONITOR</strong>
+<p>Ecamonitor is a util program that can be used 
+to monitor an active ecasound session. Ecamonitor 
+is able to show information about the current 
+chainsetup such as list of inputs, outputs, 
+current position, effects, the engine status 
+and numerous other things.
+<p>By default ecamonitor will try to connect 
+to IP4 address "localhost", to port "2868". 
+A different address can be specified when 
+starting ecamonitor, for example 
+"ecamonitor foo.mynetwork.com" or
+"ecamonitor foo.mynetwork.com:4500".
+<p>To enable inbound connections, ecasound has to be 
+started with the <em>--daemon</em> option. Ecamonitor is 
+implemented in Python using the NetECI API.
 <p><strong>ECANORMALIZE</strong>
 <p>A simple command-line tool for normalizing sample volume. 
 Finds out how much input file can be amplified without clipping
 and, if necessary, does the amplification.
 <p><strong>ECAPLAY</strong>
-<p>A simple command-line tool that plays input files using the
-default output specified in <em>~/.ecasoundrc</em>. Note! You  can abort 
-ecaplay at any time by pressing Ctrl-C. If you are playing multiple 
-files, this will stop the current file and begin playing the next one.  
-If you want to abort playing immediately instead of skipping to the 
+<p>Command-line tool that plays input files using the default output 
+specified in <em>~/.ecasoundrc</em>. Note! You can abort ecaplay at any
+time by pressing Ctrl-C. If you are playing multiple files, this will 
+stop the current file and begin playing the next one. If you want 
+to abort playing immediately instead of skipping to the 
 next file, press Ctrl-C twice in short succession (around one
 second).
 <p><dl>
@@ -102,14 +119,12 @@ from "Ecasound User's Guide" (see ''http://www.eca.cx/ecasound
 <p><h2>ENVIRONMENT</h2>
     
 <p><em>ECASOUND</em>
-	If defined, most ecatools programs will use the 
-	<em>ECASOUND</em> environment as the default path to
-	ecasound executable.
+	Path to the ecasound executable. Affects most ecatools.
 <p><h2>FILES</h2>
     
-<p><em>~/.ecasoundrc</em>
-	The default ecasound resource file. If the file doesn't exist, it 
-	is created with some default values. See ecasoundrc(5).
+<p><em>~/.ecasound/ecasoundrc</em>
+	The default ecasound resource file. See ecasoundrc(5)
+	for details.
 <p><h2>SEE ALSO</h2>
     
 <p>ecasound (1), ecalength(1), "HTML docs in the Documentation subdirectory"

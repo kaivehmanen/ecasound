@@ -32,6 +32,7 @@ DISTFILES = 	Makefile.am \
 	    	ecalength_manpage.html \
 	    	ecalength_manpage.yo \
 	    	ecaplay.1 \
+	    	ecamonitor.1 \
 	    	ecanormalize.1 \
 	    	ecasignalview.1 \
 	    	examples.html \
@@ -54,6 +55,7 @@ docs_files: 	ecasound.1 ecasound_manpage.html \
 		ecaconvert.1 \
 		ecafixdc.1 \
 		ecalength.1 ecalength_manpage.man ecalength_manpage.html \
+		ecamonitor.1 \
 		ecanormalize.1 \
 		ecaplay.1 \
 		ecasignalview.1 \
@@ -73,6 +75,8 @@ ecafixdc.1: ecatools_manpage.man
 	cp ecatools_manpage.man ecafixdc.1
 ecalength.1: ecalength_manpage.man
 	cp ecalength_manpage.man ecalength.1
+ecamonitor.1: ecatools_manpage.man
+	cp ecatools_manpage.man ecamonitor.1
 ecanormalize.1: ecatools_manpage.man
 	cp ecatools_manpage.man ecanormalize.1
 ecaplay.1: ecatools_manpage.man
@@ -106,6 +110,7 @@ clean-docs:
 		ecaconvert.1 \
 		ecafixdc.1 \
 		ecalength.1 \
+		ecamonitor.1 \
 		ecanormalize.1 \
 		ecaplay.1 \
 		ecasignalview.1 \
@@ -125,6 +130,7 @@ install-data-local:
 	cp $(srcdir)/ecaconvert.1 $(DESTDIR)$(mandir)/man1
 	cp $(srcdir)/ecafixdc.1 $(DESTDIR)$(mandir)/man1
 	cp $(srcdir)/ecalength.1 $(DESTDIR)$(mandir)/man1
+	cp $(srcdir)/ecamonitor.1 $(DESTDIR)$(mandir)/man1
 	cp $(srcdir)/ecanormalize.1 $(DESTDIR)$(mandir)/man1
 	cp $(srcdir)/ecaplay.1 $(DESTDIR)$(mandir)/man1
 	cp $(srcdir)/ecasignalview.1 $(DESTDIR)$(mandir)/man1
@@ -139,6 +145,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(mandir)/man1/ecaconvert.1
 	rm -f $(DESTDIR)$(mandir)/man1/ecafixdc.1
 	rm -f $(DESTDIR)$(mandir)/man1/ecalength.1
+	rm -f $(DESTDIR)$(mandir)/man1/ecamonitor.1
 	rm -f $(DESTDIR)$(mandir)/man1/ecanormalize.1
 	rm -f $(DESTDIR)$(mandir)/man1/ecaplay.1
 	rm -f $(DESTDIR)$(mandir)/man1/ecasignalview.1

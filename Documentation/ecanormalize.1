@@ -1,4 +1,4 @@
-.TH "ecatools" "1" "17\&.07\&.2002" "" "Multimedia software" 
+.TH "ecatools" "1" "06\&.11\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecatools \- audio processing utils based on ecasound
@@ -10,6 +10,8 @@ ecatools \- audio processing utils based on ecasound
 .PP 
 \fBecalength\fP file1 [ file2,\&.\&.\&.,fileN ]
 .PP 
+\fBecamonitor\fP [host][:port]
+.PP 
 \fBecanormalize\fP file1 [ file2,\&.\&.\&.,fileN ]
 .PP 
 \fBecaplay\fP [-dhk] file1 [ file2,\&.\&.\&.,fileN ]
@@ -20,7 +22,7 @@ ecatools \- audio processing utils based on ecasound
 .PP 
 Ecatools are simple command line utils that do various audio
 processing tasks\&. Most of them support batch processing\&. They all
-use the ecasound engine (libecasound)\&.
+use ecasound to do the actual audio processing work\&.
 .PP 
 \fBECACONVERT\fP
 .PP 
@@ -34,7 +36,27 @@ A simple command-line tool for fixing DC-offset\&.
 .PP 
 \fBECALENGTH\fP
 .PP 
-See ecalength(1) man page\&.
+See the separate ecalength(1) man page\&.
+.PP 
+\fBECAMONITOR\fP
+.PP 
+Ecamonitor is a util program that can be used 
+to monitor an active ecasound session\&. Ecamonitor 
+is able to show information about the current 
+chainsetup such as list of inputs, outputs, 
+current position, effects, the engine status 
+and numerous other things\&.
+.PP 
+By default ecamonitor will try to connect 
+to IP4 address "localhost", to port "2868"\&. 
+A different address can be specified when 
+starting ecamonitor, for example 
+"ecamonitor foo\&.mynetwork\&.com" or
+"ecamonitor foo\&.mynetwork\&.com:4500"\&.
+.PP 
+To enable inbound connections, ecasound has to be 
+started with the \fI--daemon\fP option\&. Ecamonitor is 
+implemented in Python using the NetECI API\&.
 .PP 
 \fBECANORMALIZE\fP
 .PP 
@@ -44,11 +66,11 @@ and, if necessary, does the amplification\&.
 .PP 
 \fBECAPLAY\fP
 .PP 
-A simple command-line tool that plays input files using the
-default output specified in \fI~/\&.ecasoundrc\fP\&. Note! You  can abort 
-ecaplay at any time by pressing Ctrl-C\&. If you are playing multiple 
-files, this will stop the current file and begin playing the next one\&.  
-If you want to abort playing immediately instead of skipping to the 
+Command-line tool that plays input files using the default output 
+specified in \fI~/\&.ecasoundrc\fP\&. Note! You can abort ecaplay at any
+time by pressing Ctrl-C\&. If you are playing multiple files, this will 
+stop the current file and begin playing the next one\&. If you want 
+to abort playing immediately instead of skipping to the 
 next file, press Ctrl-C twice in short succession (around one
 second)\&.
 .PP 
@@ -103,15 +125,13 @@ from "Ecasound User\'s Guide" (see \'\'http://www\&.eca\&.cx/ecasound
 .SH "ENVIRONMENT" 
 .PP 
 \fIECASOUND\fP
-If defined, most ecatools programs will use the 
-\fIECASOUND\fP environment as the default path to
-ecasound executable\&.
+Path to the ecasound executable\&. Affects most ecatools\&.
 .PP 
 .SH "FILES" 
 .PP 
-\fI~/\&.ecasoundrc\fP
-The default ecasound resource file\&. If the file doesn\'t exist, it 
-is created with some default values\&. See ecasoundrc(5)\&.
+\fI~/\&.ecasound/ecasoundrc\fP
+The default ecasound resource file\&. See ecasoundrc(5)
+for details\&.
 .PP 
 .SH "SEE ALSO" 
 .PP 

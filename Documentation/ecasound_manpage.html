@@ -65,16 +65,31 @@ Print all debug information to stderr (unbuffered, plain output
 without ncurses).
 <p><p></p><dt><strong>-q</strong><dd>
 Quiet mode, no output. Same as <em>-d:0</em>.
-<p><p></p><dt><strong>--help</strong><dd>
-Show this help.
-<p><p></p><dt><strong>--version</strong><dd>
-Print version info.
 <p><p></p><dt><strong>-s[:]chainsetup-file</strong><dd>
 Create a new chainsetup from file 'chainsetup-file' and add
 it to the current session. Chainsetup can contain inputs, outputs, 
 chains, effects, controllers, etc. A session, on the other hand, 
 contains all the chainsetups. Although only one chainsetup can
 be connected at a time, you can switch between them on-the-fly.
+<p><p></p><dt><strong>--daemon</strong><dd>
+Enable ecasound's daemon mode. If this option is given,
+ecasound will allow clients to connect to the running 
+ecasound session using using a TCP/IP network connection.
+The clients can both observe and control the session. 
+<p><em>Warning!</em> As there is no access control implemented,
+be sure to block ecasound's port in your firewall 
+if the machine running ecasound is connected to 
+a public network! Otherwise anyone can connect to 
+your ecasound sessions.
+<p><p></p><dt><strong>--daemon-port</strong><dd>
+Set the TCP port used by the daemon mode. By default
+ecasound will use port number <em>2868</em>.
+<p><p></p><dt><strong>--nodaemon</strong><dd>
+Disable ecasound's daemon mode. This is the default.
+<p><p></p><dt><strong>--help</strong><dd>
+Show this help.
+<p><p></p><dt><strong>--version</strong><dd>
+Print version info.
 <p></dl>
 <p>
 <strong>GENERAL CHAINSETUP OPTIONS</strong>
