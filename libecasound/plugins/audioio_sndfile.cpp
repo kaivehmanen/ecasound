@@ -148,10 +148,20 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
     // FIXME: add support for more output types
     
-    if (strstr(teksti.c_str(),".w64") != 0) { file_format = SF_FORMAT_W64; }
-    else if (strstr(teksti.c_str(),".voc") != 0) { file_format = SF_FORMAT_VOC; }
-    else if (strstr(teksti.c_str(),".wav") != 0) { file_format = SF_FORMAT_WAV; }
+    if (strstr(teksti.c_str(),".wav") != 0) { file_format = SF_FORMAT_WAV; }
+    else if (strstr(teksti.c_str(),".w64") != 0) { file_format = SF_FORMAT_W64; }
     else if (strstr(teksti.c_str(),".aiff") != 0) { file_format = SF_FORMAT_AIFF; }
+    else if (strstr(teksti.c_str(),".aifc") != 0) { file_format = SF_FORMAT_AIFF; }
+    else if (strstr(teksti.c_str(),".raw") != 0) { file_format = SF_FORMAT_RAW; }
+    else if (strstr(teksti.c_str(),".au") != 0) { file_format = SF_FORMAT_AU; }
+    else if (strstr(teksti.c_str(),".paf") != 0) { file_format = SF_FORMAT_PAF; }
+    else if (strstr(teksti.c_str(),".iff") != 0) { file_format = SF_FORMAT_SVX; }
+    else if (strstr(teksti.c_str(),".svx") != 0) { file_format = SF_FORMAT_SVX; }
+    else if (strstr(teksti.c_str(),".nist") != 0) { file_format = SF_FORMAT_NIST; }
+    else if (strstr(teksti.c_str(),".voc") != 0) { file_format = SF_FORMAT_VOC; }
+    else if (strstr(teksti.c_str(),".xi") != 0) { file_format = SF_FORMAT_XI; }
+    else if (strstr(teksti.c_str(),".pvf") != 0) { file_format = SF_FORMAT_PVF; }
+    else if (strstr(teksti.c_str(),".htk") != 0) { file_format = SF_FORMAT_HTK; }
     else {
       ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Warning! Unknown audio format, using WAV format instead.");
       file_format = SF_FORMAT_WAV;
@@ -192,7 +202,7 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     }
     else {
       ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Using libsndfile to open file \"" +
-		  real_filename + "\" for updating.");
+		  real_filename + "\" for read/write.");
 
       /* io_readwrite */
       snd_repp = sf_open(real_filename.c_str(), SFM_RDWR, &sfinfo);
@@ -213,10 +223,13 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
 void SNDFILE_INTERFACE::close(void)
 {
-  AUDIO_IO::close();
-  if (snd_repp != 0) {
-    sf_close(snd_repp);
+  if (is_open() == true) {
+    if (snd_repp != 0) {
+      sf_close(snd_repp);
+      snd_repp = 0;
+    }
   }
+  AUDIO_IO::close();
 }
 
 bool SNDFILE_INTERFACE::finished(void) const
