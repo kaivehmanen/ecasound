@@ -70,14 +70,14 @@ int main(int argc, char *argv[])
   for(i = 1; i < argc; i++) { res += process_option(argv[i]); }
 
   tracknum += ecaplay_skip;
-  nexttrack = get_track(tracknum, argc, argv);
+  if (tracknum <= argc) {
+    nexttrack = get_track(tracknum, argc, argv);
+  }
 
-  if (res == 0) {
+  if (res == 0 && nexttrack != NULL) {
     setup_signal_handling();
 
-    if (nexttrack != NULL) {
-      set_track_to_chainsetup(&eci, nexttrack);
-    }
+    set_track_to_chainsetup(&eci, nexttrack);
 
     while(nexttrack != NULL) {
       unsigned int timeleft = ECAPLAY_TIMEOUT;
@@ -87,6 +87,7 @@ int main(int argc, char *argv[])
 
 	if (timeleft > 0 && ecaplay_skip_flag > 1) {
 	  fprintf(stderr, "\n(ecaplay) Caught an exception. Exiting...\n");
+	  eci_cleanup_r(eci);
 	  return 0;
 	}
       }
