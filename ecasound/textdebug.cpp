@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // textdebug.cpp: Implementation of console logging subsystem.
-// Copyright (C) 1999-2002,2004 Kai Vehmanen
+// Copyright (C) 1999-2002,2004-2005 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 2
@@ -27,6 +27,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include <eca-logger-interface.h>
 #include <kvu_utils.h>
