@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 050601) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 160601) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,7 +17,15 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.1 *-
 
-05062001 (v2.0.1)
+??062001 (v2.0.2)  -** stable release **-
+	- changed: improved configure checks for python include 
+		   and library directories
+	- changed: -tl now works without -t
+	- fixed: selecting a non-existant chainsetup could crash 
+		 ecasound
+	- fixed: --enable-audiofile actually disabled the use of 
+		 libaudiofile (!)
+05062001 (v2.0.1)  -** stable release **-
 	- added: ecasoundrc - default-to-internal-buffering; select
 		 the default between -z:intbuf and -z:nointbuf
 	- added: alternative C ECI implementation providing reentrant

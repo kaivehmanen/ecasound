@@ -562,7 +562,7 @@ void ECA_CHAINSETUP::interpret_processing_control (const string& argu) {
 	{
 	  toggle_looping(true);
 	  if (length_set() != true)
-	    ecadebug->msg("(eca-chainsetup) Looping enabled, although loop length is not set (-t:time). Looping won't work before it is set properly.");
+	    ecadebug->msg("(eca-chainsetup) Looping enabled. Lenght of input objects will be used to set the loop point.");
 	  else
 	    ecadebug->msg("(eca-chainsetup) Looping enabled.");
 	  break;

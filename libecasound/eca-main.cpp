@@ -298,8 +298,12 @@ void ECA_PROCESSOR::init_inputs(void) {
   }
   
   csetup_repp->set_position(0);
-  if (csetup_repp->length_set() == false) {
-    processing_range_set_rep = false;
+  if (csetup_repp->length_set() != true) {
+    if (csetup_repp->looping_enabled() == true)
+      processing_range_set_rep = true;
+    else
+      processing_range_set_rep = false;
+
     csetup_repp->length_in_samples(max_input_length);
   }
   else
@@ -608,6 +612,7 @@ void ECA_PROCESSOR::posthandle_control_position(void) {
   if (csetup_repp->is_over() == true &&
       processing_range_set_rep == true) {
     if (csetup_repp->looping_enabled() == true) {
+      input_not_finished_rep = true;
       rewind_to_start_position();
       csetup_repp->set_position(0);
       for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {

@@ -225,8 +225,8 @@ void ECA_SESSION::select_chainsetup(const string& name) {
 
   // --------
   // ensure:
-  assert(selected_chainsetup_repp->name() == name ||
-	 selected_chainsetup_repp == 0);
+  assert(selected_chainsetup_repp == 0 ||
+	 selected_chainsetup_repp->name() == name);
   // --------
 }
 

@@ -18,7 +18,7 @@ dnl Init automake
 dnl ---
 dnl -- >                   !!!!!!!!!
 dnl remember to update eca-version.h
-AM_INIT_AUTOMAKE(ecasound, 2.0.1)
+AM_INIT_AUTOMAKE(ecasound, 2.0.2)
 dnl <--                    !!!!!!!!!
 AM_CONFIG_HEADER(config.h)
 
@@ -189,8 +189,25 @@ dnl Audiofile library
 dnl ---
 AC_CHECK_LIB(audiofile,main,af_support=yes,af_support=no)
 AC_ARG_ENABLE(audiofile,
-[  --disable-audiofile		  Disable libaudiofile (default = no)],
-af_support=no)
+  [  --disable-audiofile		  Disable libaudiofile (default = no)],
+  [
+    case "$enableval" in
+      y | yes)
+        AC_MSG_RESULT(yes)
+	af_support=yes
+      ;;
+
+      n | no)
+        AC_MSG_RESULT(no)
+	af_support=no
+      ;;
+        
+      *)
+        AC_MSG_ERROR([Invalid parameter value for --disable-audiofile: $enableval])
+      ;;
+    esac
+ ]
+)
 AM_CONDITIONAL(COMPILE_AF, test x$af_support = xyes) 
 if test x$af_support = xyes; then
 AC_DEFINE(COMPILE_AF)
@@ -375,7 +392,9 @@ if test ! "X$with_python_includes" = "X"
 then
 	python_incdirs=$with_python_includes
 else
-	python_incdirs="/usr/local/include/python2.0 /usr/include/python2.0 /usr/local/include/python1.6 /usr/include/python1.6 /usr/local/include/python1.5 /usr/include/python1.5 /usr/local/include /usr/include"
+	python_incdirs="/usr/local/include/python2.0 /usr/include/python2.0 /usr/local/include/python1.6 /usr/include/python1.6 /usr/local/include/python1.5 /usr/include/python1.5 /usr/local/include /usr/include "
+	python_incdirsmore=`python -c "import sys; print (sys.prefix + '/include/python' + sys.version[[:3]])"`
+	python_incdirs="$python_incdirs $python_incdirsmore"
 fi
 
 for d in $python_incdirs
@@ -400,15 +419,19 @@ fi
 dnl ---
 dnl Python modules
 dnl ---
+AC_MSG_CHECKING([for Python libraries])
 AC_ARG_WITH(python-modules,
 	[  --with-python-modules=DIR install Python modules in DIR])
 
 if test "X$with_python_modules" = "X"
 then
 	pymoddirs="/usr/local/lib/python2.0 /usr/lib/python2.0 /usr/local/lib/python1.6 /usr/lib/python1.6 /usr/local/lib/python1.5 /usr/lib/python1.5 /usr/local/lib /usr/lib"
+	pymoddirsmore=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[[:3]])"`
+	pymoddirs="$pymoddirs $pymoddirsmore"
 else
 	pymoddirs=$with_python_modules
 fi
+AC_MSG_RESULT($pymoddirs)
 
 dnl ---
 dnl a hack to support broken debian python installs
