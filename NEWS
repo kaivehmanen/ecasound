@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 240900) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 260900) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -19,6 +19,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 		   now reports about invalid arguments
 	- changed: default precision when printing time in seconds 
 		   changed to 3 (msec precision)
+	- fixed: ALSA 0.6.x updates
 16092000 (v1.8.2r14)  -** public release **-
 	- added: --enable-alsa-rawmidi configure option - this is a 
 		 temporary solution for supporting ALSA rawmidi until

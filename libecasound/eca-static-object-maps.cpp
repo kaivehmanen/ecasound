@@ -206,15 +206,24 @@ void register_default_presets(void) { }
 static AUDIO_IO* register_internal_plugin(const string& libdir,
 					       const string& filename) {
   string file = libdir + string("/") + filename;
+  audio_io_descriptor desc_func = 0;
   void *plugin_handle = dlopen(file.c_str(), RTLD_NOW);
   if (plugin_handle != 0) {
-    audio_io_descriptor desc_func;
     desc_func = (audio_io_descriptor)dlsym(plugin_handle, "audio_io_descriptor");
     if (desc_func != 0) {
       return(desc_func());
     }
-//      dlclose(plugin_handle);
   }
+  if (plugin_handle == 0 ||
+      desc_func == 0) {
+    ecadebug->msg(ECA_DEBUG::info, 
+		  "(eca-static-object-maps) Opening internal plugin file \"" + 
+		  file + 
+		  "\" failed, because: \"" + 
+		  dlerror() +
+		  "\"");
+  }
+
   return(0);
 }
 

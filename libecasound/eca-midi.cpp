@@ -200,7 +200,11 @@ void *update_midi_queues(void *) {
 			erc.resource("midi-device") + "."));
     }
 
+#ifdef ALSALIB_060
+    fd = ::snd_rawmidi_poll_descriptor(midihandle);
+#else
     fd = ::snd_rawmidi_file_descriptor(midihandle);
+#endif
 #else 
     throw(new ECA_ERROR("ECA-MIDI", "Unable to open ALSA raw-MIDI device, because ALSA was disabled during compilation."));
 #endif

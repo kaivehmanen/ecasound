@@ -48,7 +48,6 @@ ALSA_PCM_DEVICE::ALSA_PCM_DEVICE (int card,
   card_number_rep = card;
   device_number_rep = device;
   subdevice_number_rep = subdevice;
-  pcm_mode_rep = SND_PCM_MODE_FRAGMENT;
   is_triggered_rep = false;
   is_prepared_rep = false;
   overruns_rep = underruns_rep = 0;
@@ -153,9 +152,9 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   ::memset(&pf, 0, sizeof(pf));
 
   if (channels() > 1 &&
-      (pcm_info_rep.flags & SND_PCM_INFO_INTERLEAVE) != SND_PCM_INFO_INTERLEAVE)
+      (pcm_params_info_rep.flags & SND_PCM_INFO_INTERLEAVED) != SND_PCM_INFO_INTERLEAVED)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "device can't handle interleaved streams!", ECA_ERROR::stop));
-  pf.interleave = 1;
+//    pf.interleave = 1;
 
   int format;
   switch(sample_format()) 
@@ -178,37 +177,36 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   unsigned int format_mask = (1 << format);
   if ((pcm_params_info_rep.formats & format_mask) != format_mask)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Selected sample format not supported by the device!", ECA_ERROR::stop));
-  pf.format = format;
+  pf.sfmt = format;
 
-  if (samples_per_second() < pcm_params_info_rep.min_rate ||
-      samples_per_second() > pcm_params_info_rep.max_rate)
+  if (static_cast<unsigned int>(samples_per_second()) < pcm_params_info_rep.min_rate ||
+      static_cast<unsigned int>(samples_per_second()) > pcm_params_info_rep.max_rate)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Sample rate " +
 			kvu_numtostr(samples_per_second()) + " is out of range!", ECA_ERROR::stop));
   pf.rate = samples_per_second();
 
-  if (channels() < pcm_params_info_rep.min_channels ||
-      channels() > pcm_params_info_rep.max_channels)
+  if (static_cast<unsigned int>(channels()) < pcm_params_info_rep.min_channels ||
+      static_cast<unsigned int>(channels()) > pcm_params_info_rep.max_channels)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Channel count " +
 			kvu_numtostr(channels()) + " is out of range!", ECA_ERROR::stop));
   pf.channels = channels();
 
   ::memcpy(&params.format, &pf, sizeof(pf));
 
-  params.mode = pcm_mode_rep;
-
   if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK)
-    params.start_mode = SND_PCM_START_GO;
+    params.start_mode = SND_PCM_START_EXPLICIT;
   else
     params.start_mode = SND_PCM_START_DATA;
 
-  params.xrun_mode = SND_PCM_XRUN_FLUSH;
-  //  params.stop_mode = SND_PCM_STOP_ROLLOVER; // SND_PCM_STOP_STOP
+  params.xfer_mode = SND_PCM_XFER_INTERLEAVED;
+  params.xrun_mode = SND_PCM_XRUN_FRAGMENT;
+  params.xrun_act = SND_PCM_XRUN_ACT_RESTART;
 
   // -------------------------------------------------------------------
   // Fetch stream info (2nd time, now getting frame size info)
-  pcm_params_info_rep.req.format.format = format;
+  pcm_params_info_rep.req.format.sfmt = format;
   pcm_params_info_rep.req.format.channels = channels();
-  pcm_params_info_rep.req_mask = SND_PCM_PARAMS_FORMAT | SND_PCM_PARAMS_CHANNELS;
+  pcm_params_info_rep.req_mask = SND_PCM_PARAMS_SFMT | SND_PCM_PARAMS_CHANNELS;
   err = ::snd_pcm_params_info(audio_fd_repp, &pcm_params_info_rep);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Error when querying stream info: " + string(snd_strerror(err))));
@@ -216,15 +214,17 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Set fragment size.
 
-  if (buffersize() < pcm_params_info_rep.min_fragment_size ||
-      buffersize() > pcm_params_info_rep.max_fragment_size) 
+  if (static_cast<unsigned int>(buffersize()) < pcm_params_info_rep.min_fragment_size ||
+      static_cast<unsigned int>(buffersize()) > pcm_params_info_rep.max_fragment_size) 
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "buffersize " +
 			kvu_numtostr(buffersize()) + " is out of range!", ECA_ERROR::stop));
   // <--
   params.buffer_size = pcm_params_info_rep.buffer_size;
   params.frag_size = buffersize();
-  params.frames_xrun_max = ~0U;
-  params.frames_min = params.frag_size;
+  params.xfer_align = params.frag_size;
+  params.xrun_max = ~0U;
+  params.xfer_min = params.frag_size;
+  params.avail_min = params.frag_size;
 
   // -------------------------------------------------------------------
   // Stream params
@@ -235,14 +235,14 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Fetch the current pcm-setup and print out some debug info
   struct snd_pcm_setup setup;
-  setup.mode = params.mode;
+  setup.xfer_mode = params.xfer_mode;
   ::snd_pcm_setup(audio_fd_repp, &setup);
 
   fragment_size_rep = setup.frag_size;
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Fragment size: " +
 		kvu_numtostr(setup.frag_size) + ", max: " +
-		kvu_numtostr(setup.frames_xrun_max) + ", min: " +
-		kvu_numtostr(setup.frames_min) + ", current: " +
+		kvu_numtostr(setup.xrun_max) + ", min: " +
+		kvu_numtostr(setup.xfer_min) + ", current: " +
 		kvu_numtostr(setup.frags) + ".");
 
   is_triggered_rep = false;
@@ -308,7 +308,7 @@ void ALSA_PCM_DEVICE::start(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) start");
 
   if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK)
-    ::snd_pcm_go(audio_fd_repp);
+    ::snd_pcm_start(audio_fd_repp);
   is_triggered_rep = true;
 }
 
@@ -326,7 +326,7 @@ void ALSA_PCM_DEVICE::print_status_debug(void) {
     underruns_rep += status.xruns;
   else if (pcm_stream_rep == SND_PCM_STREAM_CAPTURE)
     overruns_rep += status.xruns;
-  cerr << "status:" << status.frames_avail << "," << status.frame_io << "," <<
+  cerr << "status:" << status.avail << "," << status.appl_ptr << "," <<
     status.xruns << "," << status.state << " ";
   print_time_stamp();
 }
@@ -336,8 +336,8 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
     ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
   }
   else {
-    if (samples < pcm_params_info_rep.min_fragment_size ||
-	samples > pcm_params_info_rep.max_fragment_size) {
+    if (static_cast<size_t>(samples) < pcm_params_info_rep.min_fragment_size ||
+	static_cast<size_t>(samples) > pcm_params_info_rep.max_fragment_size) {
       if (is_triggered_rep) stop();
       return; 
     }
@@ -358,7 +358,7 @@ long ALSA_PCM_DEVICE::position_in_samples(void) const {
   snd_pcm_status_t status;
   memset(&status, 0, sizeof(status));
   ::snd_pcm_status(audio_fd_repp, &status);
-  return (status.frame_io);
+  return (status.appl_ptr);
 }
 
 ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) { 
