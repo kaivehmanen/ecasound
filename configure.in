@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 07.03.2002
+dnl last modified: 20.04.2002
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -60,7 +60,7 @@ dnl Check pthread support
 dnl ---
 
 dnl ---
-dnl Sets up some operating system specific options for POSIX threads
+dnl Sets up some operating system specific options
 dnl
 dnl modifies: CXXFLAGS, CFLAGS, CPPFLAGS, LIBS
 dnl ---
@@ -80,7 +80,11 @@ case "$host" in
 	*-*-solaris*)
                CPPFLAGS="$CPPFLAGS -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS"
 	       LIBS="$LIBS -lposix4"
-               echo "Setting Solaris compilation options for POSIX threads"
+	       echo "Setting Solaris compilation options for POSIX threads"
+	       if test x$CXX = xCC; then
+		  CXXFLAGS="$CXXFLAGS -instances=semiexplicit"
+		  echo "Disabling Sun Workshop template repository."
+	       fi
                ;;
 	*)
 	       echo "Using generic settings for POSIX thread support."
@@ -616,9 +620,11 @@ dnl ---
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl ---
 
+AC_LANG_C
 dnl AC_C_CONST
 AC_C_BIGENDIAN
 AC_TYPE_SIZE_T
+AC_LANG_CPLUSPLUS
 
 dnl ------------------------------------------------------------------
 
