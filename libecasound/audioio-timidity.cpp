@@ -56,7 +56,8 @@ void TIMIDITY_INTERFACE::close(void) {
 
 long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, long int samples) {
   if (triggered_rep != true) triggered_rep = true;
-  bytes_read_rep = ::read(fd_rep, target_buffer, frame_size() * samples);
+//    bytes_read_rep = ::read(fd_rep, target_buffer, frame_size() * samples);
+  bytes_read_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
       ecadebug->msg(ECA_DEBUG::info, "(audioio-timidity) Can't start process \"" + TIMIDITY_INTERFACE::default_timidity_cmd + "\". Please check your ~/.ecasoundrc.");
@@ -80,22 +81,20 @@ void TIMIDITY_INTERFACE::seek_position(void) {
 }
 
 void TIMIDITY_INTERFACE::kill_timidity(void) {
-  if (is_open()) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-timidity) Killing Timidity++-child with pid " + kvu_numtostr(pid_of_child()) + ".");
-    clean_child();
-  }
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-timidity) Killing Timidity++-child with pid " + kvu_numtostr(pid_of_child()) + ".");
+  clean_child();
 }
 
 void TIMIDITY_INTERFACE::fork_timidity(void) {
-  if (!is_open()) {
-    set_fork_command(TIMIDITY_INTERFACE::default_timidity_cmd);
-    set_fork_file_name(label());
-    set_fork_bits(bits());
-    set_fork_channels(channels());
-    set_fork_sample_rate(samples_per_second());
-    fork_child_for_read();
-    if (child_fork_succeeded() == true) {
-      fd_rep = file_descriptor();
-    }
+  set_fork_command(TIMIDITY_INTERFACE::default_timidity_cmd);
+  set_fork_file_name(label());
+  set_fork_bits(bits());
+  set_fork_channels(channels());
+  set_fork_sample_rate(samples_per_second());
+  fork_child_for_read();
+  if (child_fork_succeeded() == true) {
+    fd_rep = file_descriptor();
+    f1_rep = fdopen(fd_rep, "r");
+    if (f1_rep == 0) finished_rep = true;
   }
 }

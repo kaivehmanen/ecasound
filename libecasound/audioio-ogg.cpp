@@ -43,9 +43,6 @@ OGG_VORBIS_INTERFACE::~OGG_VORBIS_INTERFACE(void) { close(); }
 
 void OGG_VORBIS_INTERFACE::open(void) { 
   fork_ogg123();
-  if (feof(f1_rep) || ferror(f1_rep)) {
-    finished_rep = true;
-  }
   triggered_rep = false;
   toggle_open_state(true);
 }
@@ -99,8 +96,6 @@ void OGG_VORBIS_INTERFACE::seek_position(void) {
   }
   if (io_mode() == io_read) {
     fork_ogg123();
-    if (feof(f1_rep) || ferror(f1_rep))
-      finished_rep = true;
   }
   else
     fork_vorbize();
@@ -115,38 +110,33 @@ void OGG_VORBIS_INTERFACE::kill_ogg123(void) {
 }
 
 void OGG_VORBIS_INTERFACE::fork_ogg123(void) {
-  if (!is_open()) {
-    ecadebug->msg(ECA_DEBUG::user_objects, OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
-    set_fork_command(OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
-    set_fork_file_name(label());
-    set_fork_pipe_name();
-    fork_child_for_read();
-    if (child_fork_succeeded() == true) {
-      fd_rep = file_descriptor();
-      f1_rep = fdopen(fd_rep, "r");
-    }
+  ecadebug->msg(ECA_DEBUG::user_objects, OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
+  set_fork_command(OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
+  set_fork_file_name(label());
+  set_fork_pipe_name();
+  fork_child_for_read();
+  if (child_fork_succeeded() == true) {
+    fd_rep = file_descriptor();
+    f1_rep = fdopen(fd_rep, "r");
+    if (f1_rep == 0) finished_rep = true;
   }
 }
 
 void OGG_VORBIS_INTERFACE::kill_vorbize(void) {
-  if (is_open()) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-ogg) Killing vorbize-child with pid " + kvu_numtostr(pid_of_child()) + ".");
-    clean_child();
-  }
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-ogg) Killing vorbize-child with pid " + kvu_numtostr(pid_of_child()) + ".");
+  clean_child();
 }
 
 void OGG_VORBIS_INTERFACE::fork_vorbize(void) {
-  if (!is_open()) {
-    ecadebug->msg("(audioio-ogg) Starting to encode " + label() + " with vorbize.");
-    string command_rep = OGG_VORBIS_INTERFACE::default_ogg_output_cmd;
-    if (command_rep.find("%f") != string::npos) {
-      command_rep.replace(command_rep.find("%f"), 2, label());
-    }
-    set_fork_command(command_rep);
-    set_fork_file_name(label());
-    fork_child_for_write();
-    if (child_fork_succeeded() == true) {
-      fd_rep = file_descriptor();
-    }
+  ecadebug->msg("(audioio-ogg) Starting to encode " + label() + " with vorbize.");
+  string command_rep = OGG_VORBIS_INTERFACE::default_ogg_output_cmd;
+  if (command_rep.find("%f") != string::npos) {
+    command_rep.replace(command_rep.find("%f"), 2, label());
+  }
+  set_fork_command(command_rep);
+  set_fork_file_name(label());
+  fork_child_for_write();
+  if (child_fork_succeeded() == true) {
+    fd_rep = file_descriptor();
   }
 }

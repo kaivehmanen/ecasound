@@ -28,6 +28,7 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
   bool finished_rep;
   long int bytes_read_rep;
   int fd_rep;
+  FILE* f1_rep;
   
   void seek_position_in_samples(long pos);
   MIKMOD_INTERFACE& operator=(const MIKMOD_INTERFACE& x) { return *this; }
