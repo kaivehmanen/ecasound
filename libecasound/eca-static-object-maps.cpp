@@ -277,6 +277,7 @@ static void register_default_audio_objects(void) {
 #ifdef ECA_COMPILE_OSS
   device = new OSSDEVICE();
   eca_audio_object_map->register_object("/dev/dsp", "/dev/dsp[0-9]*", device);
+  eca_audio_object_map->register_object("/dev/sound/dsp", "/dev/sound/dsp[0-9]*", device);
 #endif
 
   device = new REALTIME_NULL();
