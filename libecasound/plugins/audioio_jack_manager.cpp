@@ -1261,8 +1261,8 @@ void AUDIO_IO_JACK_MANAGER::open_server_connection(void)
       transport_info_rep.valid = static_cast<jack_transport_bits_t>(JackTransportState | JackTransportPosition);
 
       jack_set_transport_info(client_repp, &transport_info_rep);
-#endif
     }
+#endif
 
     open_rep = true;
 

@@ -1,7 +1,62 @@
 dnl ---
 dnl acinclude.m4 for ecasound
-dnl last modified: 29.04.2002
+dnl last modified: 20030326-2
 dnl ---
+
+## ------------------------------------------------------------------------
+## Check for JACK support
+##
+## defines: ECA_AM_COMPILE_JACK, ECA_S_JACK_LIBS, ECA_S_JACK_INCLUDES,
+##          ECA_COMPILE_JACK, ECA_JACK_TRANSPORT_API
+## ------------------------------------------------------------------------
+
+AC_DEFUN(AC_CHECK_JACK,
+[
+AC_CHECK_HEADER(jack/jack.h,jack_support=yes,jack_support=no)
+AC_ARG_WITH(jack,
+	    [  --with-jack=DIR	Compile against JACK installed in DIR],
+	    [
+	        ECA_S_JACK_LIBS="-L${withval}/lib"
+		ECA_S_JACK_INCLUDES="-I${withval}/include"
+		jack_support=yes
+	    ])
+AC_ARG_ENABLE(jack,
+	      [  --disable-jack		  Disable JACK support (default = no)],
+	      jack_support=no)
+AM_CONDITIONAL(ECA_AM_COMPILE_JACK, test x$jack_support = xyes)
+
+if test x$jack_support = xyes; then
+    ECA_S_JACK_LIBS="${ECA_S_JACK_LIBS} -ljack -lrt"
+    AC_DEFINE(ECA_COMPILE_JACK)
+fi                                     
+
+AC_LANG_C
+old_cppflags=$CPPFLAGS
+old_ldflags=$LDFLAGS
+old_INCLUDES=$INCLUDES
+CPPFLAGS="$CPPFLAGS $ECA_S_JACK_INCLUDES"
+LDFLAGS="$LDFLAGS $ECA_S_JACK_LIBS"
+INCLUDES="--host=a.out-i386-linux"
+AC_TRY_LINK(
+[ #include <jack/transport.h> ],
+[
+	jack_transport_info_t t;
+	t.frame = 0;
+	return 0;
+],
+[ ECA_JACK_TRANSPORT_API="2" ],
+[ ECA_JACK_TRANSPORT_API="1" ]
+)
+CPPFLAGS="$old_cppflags"
+LDFLAGS="$old_ldflags"
+INCLUDES="$old_INCLUDES"
+
+echo "Using JACK transport API: " ${ECA_JACK_TRANSPORT_API}
+AC_DEFINE_UNQUOTED(ECA_JACK_TRANSPORT_API, ${ECA_JACK_TRANSPORT_API})
+
+AC_SUBST(ECA_S_JACK_LIBS)
+AC_SUBST(ECA_S_JACK_INCLUDES)
+])
 
 ## ------------------------------------------------------------------------
 ## Check for LFS
