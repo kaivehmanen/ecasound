@@ -2284,6 +2284,8 @@ void ECA_CHAINSETUP::load_from_file(const string& filename,
     if (temp.size() > 0 && temp[0] == '#') {
       continue;
     }
+    // FIXME: we should add quoting when saving the chainsetup or
+    // give on quoting altogether...
     vector<string> words = kvu_string_to_tokens_quoted(temp);
     for(unsigned int n = 0; n < words.size(); n++) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) Adding \"" + words[n] + "\" to options (loaded from \"" + filename + "\".");

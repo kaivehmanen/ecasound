@@ -1074,6 +1074,7 @@ string ECA_CHAINSETUP_PARSER::midi_to_string(void) const
   while (p < csetup_repp->midi_devices.size()) {
     t << "-Md:";
     for(int n = 0; n < csetup_repp->midi_devices[p]->number_of_params(); n++) {
+      // FIXME: should quote/escape possible commas and whitespace
       t << csetup_repp->midi_devices[p]->get_parameter(n + 1);
       if (n + 1 < csetup_repp->midi_devices[p]->number_of_params()) t << ",";
     }
@@ -1168,6 +1169,7 @@ string ECA_CHAINSETUP_PARSER::audioio_to_string(const AUDIO_IO* aiod, const stri
     aiod->channels() << ","  << aiod->samples_per_second();
   t << " -" << direction << ":";
   for(int n = 0; n < aiod->number_of_params(); n++) {
+    // FIXME: should quote/escape possible commas and whitespace
     t << aiod->get_parameter(n + 1);
     if (n + 1 < aiod->number_of_params()) t << ",";
   }

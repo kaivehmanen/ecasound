@@ -243,7 +243,8 @@ ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::midi_device_map(void)
  *
  * @pre arg.empty() != true
  */
-AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg) {
+AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg)
+{
   // --
   DBC_REQUIRE(arg.empty() != true);
   // --
@@ -314,7 +315,8 @@ MIDI_IO* ECA_OBJECT_FACTORY::create_midi_device(const string& arg)
  * @pre argu.empty() != true
  */
 AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_input(const string& argu,
-						 map<int,LOOP_DEVICE*>* loop_map) {
+						map<int,LOOP_DEVICE*>* loop_map)
+{
   // --------
   DBC_REQUIRE(argu.empty() != true);
   // --------
@@ -347,7 +349,8 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_input(const string& argu,
  * @pre argu.empty() != true
  */
 AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_output(const string& argu,
-						 map<int,LOOP_DEVICE*>* loop_map) {
+						 map<int,LOOP_DEVICE*>* loop_map)
+{
   // --------
   DBC_REQUIRE(argu.empty() != true);
   // --------
@@ -432,7 +435,8 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu)
  *        (distribution of VST-headers is not
  *        allowed).
  */
-CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const string& argu) {
+CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -472,7 +476,8 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const string& argu) {
  * @pre argu.size() > 0
  * @pre argu[0] == '-'
  */
-CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const string& argu) {
+CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -515,7 +520,8 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const string& argu) {
  * @pre argu.size() > 0
  * @pre argu[0] == '-'
  */
-GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu) {
+GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
