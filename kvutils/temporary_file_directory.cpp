@@ -43,7 +43,7 @@ TEMPORARY_FILE_DIRECTORY::TEMPORARY_FILE_DIRECTORY(const std::string& dir)
 }
 
 /** 
- * Resevers a new directory. In addition to argument 'dir',
+ * Reserves a new directory. In addition to argument 'dir',
  * UNIX environment variables TMPDIR, TMP are used when 
  * physically creating the directory. If these variables are 
  * not defined, default "/tmp" is used.
@@ -54,7 +54,9 @@ void TEMPORARY_FILE_DIRECTORY::reserve_directory(const std::string& dir) {
   }
 
   tdir_rep = get_directory_prefix() + "/" + dir;
-  
+
+  /* FIXME: add 'unlink(tdir_rep.c_str());' ? */
+
   int result = mkdir(tdir_rep.c_str(), 0700);
   if (result == 0 ||
       errno == EEXIST) {
@@ -64,6 +66,9 @@ void TEMPORARY_FILE_DIRECTORY::reserve_directory(const std::string& dir) {
     }
   }
   else {
+    /* FIXME: should we try something else here? for instance
+     *        selecting 'dir+string(n+1)'?
+     */
 //      cerr << "(kvutils) " << "mkdir(" << tdir_rep << ") failed" << endl;
     valid_rep = false;
   }
