@@ -1,10 +1,8 @@
 #ifndef INCLUDE_ECA_MIDI_H
 #define INCLUDE_ECA_MIDI_H
 
-#define MIDI_IN_QUEUE_SIZE 1024
-
 #include <pthread.h>
-#include <vector>
+#include <deque>
 
 #include "eca-error.h"
 
@@ -15,28 +13,32 @@ void init_midi_queues(void) throw(ECA_ERROR&);
  */
 class MIDI_IN_QUEUE {
 
+public:
+
+  static const unsigned int max_queue_size_rep;
+
 private:
 
   pthread_mutex_t midi_in_lock_rep;     // mutex ensuring exclusive access to MIDI-buffer
   pthread_cond_t midi_in_cond_rep;
   bool midi_in_locked_rep;
 
-  vector<char> buffer;
-  bool right;
+  deque<unsigned char> buffer_rep;
+  int controller_value_rep;
+  unsigned char running_status_rep;
+  int current_ctrl_channel;
 
-  size_t current_put, current_get;
-  size_t bufsize;
-  double controller_value;
-  
-  bool is_status_byte(char byte) const;
-  bool forth_get(void);
+  bool is_voice_category_status_byte(unsigned char byte) const;
+  bool is_system_common_category_status_byte(unsigned char byte) const;
+  bool is_realtime_category_status_byte(unsigned char byte) const;  
+  bool is_status_byte(unsigned char byte) const;
   
  public:
-  
+
   void update_midi_queues(void);
-  void put(char byte);  
-  double last_controller_value(void) const;
-  bool update_controller_value(double controller, double channel);
+  void put(unsigned char byte);  
+  int last_controller_value(void) const;
+  bool update_controller_value(int controller, int channel);
   MIDI_IN_QUEUE(void);
 };
 

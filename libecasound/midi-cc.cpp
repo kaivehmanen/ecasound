@@ -27,8 +27,9 @@
 #include "eca-debug.h"
 
 CONTROLLER_SOURCE::parameter_type MIDI_CONTROLLER::value(void) {
-  if (midi_in_queue.update_controller_value(controller,channel)) {
-    value_rep = midi_in_queue.last_controller_value();
+  if (midi_in_queue.update_controller_value(static_cast<int>(controller),
+					    static_cast<int>(channel))) {
+    value_rep = static_cast<double>(midi_in_queue.last_controller_value());
     value_rep /= 127.0;
   }
   return(value_rep);

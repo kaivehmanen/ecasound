@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-02-06  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-midi.h (various): many type changes
+	
 2000-12-13  Kai Vehmanen <kaiv@wakkanet.fi>
 	
 	* audiofx.h (EFFECT_DCFIX,EFFECT_PITCH_SHIFTER): moved to audiofx.h

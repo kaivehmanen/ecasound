@@ -17,6 +17,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+// ------
+// FIXME: Note! This is code is old, ugly and soon obsolete. :)
+//              Ecasound 1.9.x will offer much better MIDI-subsystem.
+// ------
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -39,6 +44,8 @@
 #include "eca-error.h"
 
 MIDI_IN_QUEUE midi_in_queue;
+
+const unsigned int MIDI_IN_QUEUE::max_queue_size_rep = 32768;
 
 void *start_midi_queues(void *ptr);
 string get_midi_device(void);
@@ -73,86 +80,111 @@ string get_midi_device(void) {
 }
 
 MIDI_IN_QUEUE::MIDI_IN_QUEUE(void) {
-  right = false;
-  current_put = 0;
-  current_get = 0;
-  bufsize = MIDI_IN_QUEUE_SIZE;
-  controller_value = 0.0;
-  buffer = vector<char> (bufsize, char(0));
-
+  controller_value_rep = 0;
+  running_status_rep = 0;
+  current_ctrl_channel = -1;
   ::pthread_mutex_init(&midi_in_lock_rep, 0);
   ::pthread_cond_init(&midi_in_cond_rep, 0);
   midi_in_locked_rep = false;
 }
 
-bool MIDI_IN_QUEUE::is_status_byte(char byte) const {
-  if ((byte & 128) == 128) return(true);
-  else return(false);
+/**
+ * Whether 'byte' belong to Voice Category status messages
+ * (ie. 0x80 to 0xef)?
+ */
+bool MIDI_IN_QUEUE::is_voice_category_status_byte(unsigned char byte) const {
+  if (byte >= 0x80 && byte < 0xf0) return(true);
+  return(false);
 }
 
-void MIDI_IN_QUEUE::put(char byte) {
-  //  cerr << "P:" << current_put << "=" << (int)byte << "\n";
-  buffer[current_put] = byte;
-  current_put++;
-  if (current_put == bufsize) current_put = 0;
+/**
+ * Whether 'byte' belong to System Common Category status messages
+ * (ie. 0xf0 to 0xf7)?
+ */
+bool MIDI_IN_QUEUE::is_system_common_category_status_byte(unsigned char byte) const {
+  if (byte >= 0xf0 && byte < 0xf8) return(true);
+  return(false);
 }
 
-double MIDI_IN_QUEUE::last_controller_value(void) const { 
- return(controller_value); 
+/**
+ * Whether 'byte' belong to Realtime Category status messages
+ * (ie. 0xf8 to 0xff)?
+ */
+bool MIDI_IN_QUEUE::is_realtime_category_status_byte(unsigned char byte) const {
+  if (byte > 0xf7) return(true);
+  return(false);
 }
 
-bool MIDI_IN_QUEUE::update_controller_value(double controller, double channel) {
+/**
+ * Whether 'byte' is a statuus byte (0x80 to 0xff)?
+ */
+bool MIDI_IN_QUEUE::is_status_byte(unsigned char byte) const {
+  if (byte & 0x80) return(true);
+  return(false);
+}
+
+
+/**
+ * Puts a single byte into the MIDI input queue
+ */
+void MIDI_IN_QUEUE::put(unsigned char byte) {
+  buffer_rep.push_back(byte);
+  while(buffer_rep.size() > max_queue_size_rep) {
+//      cerr << "(eca-midi) dropping midi bytes" << endl;
+    buffer_rep.pop_front();
+  }
+}
+
+int MIDI_IN_QUEUE::last_controller_value(void) const {  return(controller_value_rep); }
+
+bool MIDI_IN_QUEUE::update_controller_value(int controller, int channel) {
   ::pthread_mutex_lock(&midi_in_lock_rep);
   while (midi_in_locked_rep == true) pthread_cond_wait(&midi_in_cond_rep,
 						       &midi_in_lock_rep);
   midi_in_locked_rep = true;
 
   bool value_found = false;
-  int value_used = 0;
-  //  cerr << "ucv:" << current_put << "->";
-  for(current_get = current_put;;) {
-    if (is_status_byte(buffer[current_get]) == true) {
-      // ---
-      // check whether control-change status-byte matches
-      // ---
-      if ((buffer[current_get] & (15 << 4)) == (11 << 4)) {
-	if ((buffer[current_get] & 15) == channel) {
-	  right = true;
-	}
-	else {
-	  right = false;
+  int current_ctrl_number = -1;
+
+  while(buffer_rep.size() > 0) {
+    unsigned char byte = buffer_rep.front();
+    buffer_rep.pop_front();
+
+    if (is_status_byte(byte) == true) {
+      if (is_voice_category_status_byte(byte) == true) {
+	running_status_rep = byte;
+	if ((running_status_rep & 0xb0) == 0xb0)
+	  current_ctrl_channel = static_cast<int>((byte & 15));
+      }
+      else if (is_system_common_category_status_byte(byte) == true) 
+	running_status_rep = 0;
+      
+    }
+    else { /* non-status bytes */
+      /** 
+       * Any data bytes are ignored if no running status
+       */
+      if (running_status_rep != 0) {
+
+	/**
+	 * Check for 'controller messages' (status 0xb0 to 0xbf and
+	 * two data bytes)
+	 */
+	if (current_ctrl_channel == channel) {
+	  if (current_ctrl_number == -1) {
+	    current_ctrl_number = static_cast<int>((byte & 15));
+//  	    cerr << endl << "C:" << current_ctrl_number << ".";
+	  }
+	  else {
+	    controller_value_rep = static_cast<int>(byte);
+	    current_ctrl_number = -1;
+	    value_found = true;
+//  	    cerr << endl << "D:" << controller_value_rep << ".";
+	  }
 	}
       }
-      if (!forth_get()) break;
-      continue;
     }
-
-    if (right == true) {
-      // ---
-      // control-change number-byte
-      // ---
-      if (buffer[current_get] != controller) {
-	if (!forth_get()) break;
-	if (!forth_get()) break;
-	continue;                
-      }
-
-      //      cerr << "cc-buffer:" << current_get << "\n";
-      // ---
-      // control-change data-byte
-      // ---
-      if (!forth_get()) break;
-      if (is_status_byte(buffer[current_get])) continue;
-
-      controller_value = (double)buffer[current_get];
-      value_found = true;
-      value_used = current_get;
-    }
-
-    if (!forth_get()) break;
   }
-  //  cerr << current_get << ".\n";
-  //  if (value_found) cerr << "vu:" << value_used << "\n";
 
   midi_in_locked_rep = false;
   ::pthread_cond_signal(&midi_in_cond_rep);
@@ -161,19 +193,10 @@ bool MIDI_IN_QUEUE::update_controller_value(double controller, double channel) {
   return(value_found);
 }
 
-bool MIDI_IN_QUEUE::forth_get(void) {
-  current_get++;
-  if (current_get == current_put - 1) return(false);
-  else if (current_put == 0 && current_get == bufsize) return(false);
-  else if (current_put == 1 && current_get == 1) return(false);
-  if (current_get == bufsize) current_get = 0;
-  return(true);
-};
-
 void MIDI_IN_QUEUE::update_midi_queues(void) {
-  struct timeval tv;
   int fd;
-  char buf[MIDI_IN_QUEUE_SIZE];
+  fd_set fds;
+  unsigned char buf[16];
   int temp;
   string rc_midi_device = get_midi_device();
   bool use_alsa = false;
@@ -200,15 +223,16 @@ void MIDI_IN_QUEUE::update_midi_queues(void) {
       ++p;
     }
     
-    int card = ::atoi(cardstr.c_str());
-    int device = ::atoi(devicestr.c_str());
-    
     use_alsa = true;
 #ifdef COMPILE_ALSA_RAWMIDI
+    int card = ::atoi(cardstr.c_str());
+    int device = ::atoi(devicestr.c_str());
+
     if (::snd_rawmidi_open(&midihandle, card, device, SND_RAWMIDI_OPEN_INPUT) < 0) {
       throw(ECA_ERROR("ECA-MIDI", "unable to open ALSA raw-MIDI device " +
 			rc_midi_device + "."));
     }
+    ::snd_rawmidi_nonblock(&midihandle, 1);
 
 #ifdef ALSALIB_060
     fd = ::snd_rawmidi_poll_descriptor(midihandle);
@@ -220,26 +244,31 @@ void MIDI_IN_QUEUE::update_midi_queues(void) {
 #endif
   }
   else {
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;
-
     fd = ::open(rc_midi_device.c_str(), O_RDONLY);
     if (fd == -1) {
       throw(ECA_ERROR("ECA-MIDI", "unable to open OSS raw-MIDI device " +
 			  rc_midi_device + "."));
     }
+    ::fcntl(fd, F_SETFL, O_NONBLOCK);
   }
 
   ecadebug->control_flow("MIDI-thread ready " + rc_midi_device);
 
   while(true) {
-    if (use_alsa) {
+    FD_ZERO(&fds);
+    FD_SET(fd, &fds);
+
+    int retval = select(fd + 1 , &fds, NULL, NULL, NULL);
+    
+    if (retval) {
+      if (use_alsa) {
 #ifdef COMPILE_ALSA_RAWMIDI
-      temp = ::snd_rawmidi_read(midihandle, buf, 1);
+	temp = ::snd_rawmidi_read(midihandle, buf, 16);
 #endif
-    }
-    else {
-      temp = ::read(fd, buf, 1);
+      }
+      else {
+	temp = ::read(fd, buf, 16);
+      }
     }
 
     ::pthread_mutex_lock(&midi_in_lock_rep);
