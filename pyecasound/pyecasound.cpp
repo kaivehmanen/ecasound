@@ -147,10 +147,9 @@ static PyTypeObject pyeca_control_type = {
 // ********************************************************************/
 
 static PyObject *pyeca_control_new(PyObject *self, PyObject *args) {
-  cerr << "ECI: pyeca_control_new, C++ constructor" << endl;
-  
-  ecadebug->set_debug_level(ECA_DEBUG::info |
-  			    ECA_DEBUG::module_flow);
+//    cerr << "ECI: pyeca_control_new, C++ constructor" << endl;
+//    ecadebug->set_debug_level(ECA_DEBUG::info |
+//    			    ECA_DEBUG::module_flow);
 
   pyeca_control_t *selfp = (pyeca_control_t*) PyObject_NEW(pyeca_control_t, &pyeca_control_type);
   selfp->eci = new ECA_CONTROL_INTERFACE();
@@ -163,7 +162,7 @@ static PyObject* pyeca_getattr(PyObject *self, char *name) {
 }
 
 static void pyeca_control_del(PyObject *self, PyObject *args) {
-  cerr << "ECI: pyeca_control_del, C++ destructor" << endl;
+//    cerr << "ECI: pyeca_control_del, C++ destructor" << endl;
   pyeca_control_t *selfp = (pyeca_control_t*) self;
   delete selfp->eci;
   PyMem_DEL(self);

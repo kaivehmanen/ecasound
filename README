@@ -159,7 +159,7 @@ Kai Vehmanen -	mailto:kaiv@wakkanet.fi
  Contributors / credits / thanks to 
 -----------------------------------------------------------------------
 
-Barton-Davis, Paul - For the work his done for linux audio
+Barton-Davis, Paul - Has probably written more code (and mails) about Linux audio than anyone else! :)
 Beaupre, Antoine - Patches for FreeBSD compatibility. [beaupran]
 Campbell, Ross - Tips concerning Solaris. [rcampbel]
 Coker, Rob - Pulse gate (-eemp) code. [rcs]
@@ -168,9 +168,11 @@ Endersz, Viktor - For sending me the adv.compressor source code!
 Eure, Ian and Junichi Uekawa  - For creating ecasound debian packages [ieure,juekawa]
 Fendt, Stefan - Original code for reverb (-ete) and RC-lowpass filter (-ef4).
 Hall, Jeremy - Extensive testing, ALSA 0.6.x support, many design ideas [jhall]
+Halttunen, Janne - Helped in developing the EIAM, and specifically the new ECI concept.
 Hamara, Arto - Ecasound logo(s), preset params, various bug fixes! [artham]
 Lavallée, Marc - Rpm-spec for Mandrake.
 Laydier, Antoine - layer.cpp (interprets mp3 headers) [SMF]
+Massy, S. - Extensive testing and debugging.
 Petit, Bertrand - Helped with POSIX-compatibility issues.
 Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!
 Wróblewski, Artur - PLD-Linux RPM-specfile, readline and destdir patches. [wrobell]

@@ -43,8 +43,8 @@ void eci_init(void) {
   if (eci_rep.eci != 0)
     delete eci_rep.eci;
 
-  ecadebug->set_debug_level(ECA_DEBUG::info |
-			    ECA_DEBUG::module_flow);
+//    ecadebug->set_debug_level(ECA_DEBUG::info |
+//  			    ECA_DEBUG::module_flow);
 
   if (eci_rep.eci == 0) {
     eci_rep.eci = new ECA_CONTROL_INTERFACE();

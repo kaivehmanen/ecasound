@@ -64,7 +64,7 @@ ECA_PROCESSOR::~ECA_PROCESSOR(void) {
     }
   }
   
-  if (csetup_repp->double_buffering() == true) {
+  if (use_double_buffering_rep == true) {
     pserver_rep.stop();
     while(pserver_rep.is_running() != true) usleep(50000);
   }
@@ -140,11 +140,38 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) {
   init_chains();
 }
 
+/**
+ * Returns true if the connected chainsetup contains at least
+ * one realtime audio input or output.
+ */
+bool ECA_PROCESSOR::has_realtime_objects(void) const {
+  for(unsigned int adev_sizet = 0; adev_sizet < csetup_repp->inputs.size(); adev_sizet++) {
+    AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(csetup_repp->inputs[adev_sizet]);
+    if (p != 0) return(true);
+  }
+  for(unsigned int adev_sizet = 0; adev_sizet < csetup_repp->outputs.size(); adev_sizet++) {
+    AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(csetup_repp->outputs[adev_sizet]);
+    if (p != 0) return(true);
+  }
+  return(false);
+}
+
 void ECA_PROCESSOR::init_pserver(void) {
-  pserver_rep.set_buffer_defaults(csetup_repp->double_buffer_size() / buffersize_rep, 
-				  buffersize_rep,
-				  csetup_repp->sample_rate());
-  pserver_rep.set_schedpriority(eparams_repp->schedpriority_rep - 1);
+  if (csetup_repp->double_buffering() == true) {
+    if (has_realtime_objects() == true) {
+      use_double_buffering_rep = true;
+      pserver_rep.set_buffer_defaults(csetup_repp->double_buffer_size() / buffersize_rep, 
+				      buffersize_rep,
+				      csetup_repp->sample_rate());
+      pserver_rep.set_schedpriority(eparams_repp->schedpriority_rep - 1);
+    }
+    else {
+      ecadebug->msg(ECA_DEBUG::info, "(eca-main) Warning! No realtime objects present, disabling double-buffering.");
+      use_double_buffering_rep = false;
+    }
+  }
+  else
+    use_double_buffering_rep = false;
 }
 
 /**
@@ -152,7 +179,7 @@ void ECA_PROCESSOR::init_pserver(void) {
  * and store pointers to the original objects.
  */
 void ECA_PROCESSOR::create_sorted_input_map(void) {
-  if (csetup_repp->double_buffering() != true) {
+  if (use_double_buffering_rep != true) {
     inputs_repp = csetup_inputs_repp = &(csetup_repp->inputs);
   }
   else {
@@ -176,7 +203,7 @@ void ECA_PROCESSOR::create_sorted_input_map(void) {
       realtime_objects_rep.push_back(p);
     }
     else {
-      if (csetup_repp->double_buffering() == true) {
+      if (use_double_buffering_rep == true) {
 	AUDIO_IO_BUFFERED_PROXY* proxy_client = new AUDIO_IO_BUFFERED_PROXY(&pserver_rep, (*inputs_repp)[adev_sizet]);
 	proxies_rep.push_back(proxy_client);
 	(*inputs_repp)[adev_sizet] = proxy_client;
@@ -193,7 +220,7 @@ void ECA_PROCESSOR::create_sorted_input_map(void) {
  * and store pointers to the original objects.
  */
 void ECA_PROCESSOR::create_sorted_output_map(void) {
-  if (csetup_repp->double_buffering() != true) {
+  if (use_double_buffering_rep != true) {
     outputs_repp = csetup_outputs_repp = &(csetup_repp->outputs);
   }
   else {
@@ -218,7 +245,7 @@ void ECA_PROCESSOR::create_sorted_output_map(void) {
       realtime_objects_rep.push_back(p);
     }
     else {
-      if (csetup_repp->double_buffering() == true) {
+      if (use_double_buffering_rep == true) {
 	AUDIO_IO_BUFFERED_PROXY* proxy_client = new AUDIO_IO_BUFFERED_PROXY(&pserver_rep, (*outputs_repp)[adev_sizet]);
 	proxies_rep.push_back(proxy_client);
 	(*outputs_repp)[adev_sizet] = proxy_client;
@@ -363,7 +390,7 @@ void ECA_PROCESSOR::init_mix_method(void) {
 }
 
 void ECA_PROCESSOR::exec(void) {
-  if (csetup_repp->double_buffering() == true) {
+  if (use_double_buffering_rep == true) {
     pserver_rep.start();
     ecadebug->msg(ECA_DEBUG::info, "(eca-main) Prefilling i/o buffers.");
     while(pserver_rep.is_full() != true) usleep(50000);
@@ -396,7 +423,7 @@ void ECA_PROCESSOR::exec(void) {
 
 void ECA_PROCESSOR::conditional_start(void) {
   if (was_running_rep == true) {
-    if (csetup_repp->double_buffering() != true) {
+    if (use_double_buffering_rep != true) {
       start();
     }
     else {
@@ -409,7 +436,7 @@ void ECA_PROCESSOR::conditional_start(void) {
 void ECA_PROCESSOR::conditional_stop(void) {
   if (eparams_repp->status() == ECA_SESSION::ep_status_running) {
     was_running_rep = true;
-    if (csetup_repp->double_buffering() != true) {
+    if (use_double_buffering_rep != true) {
       stop();
     }
     else {

@@ -1,9 +1,9 @@
 EXTRA_DIST = BUGS NEWS TODO FAQ generic_oscillators effect_presets ecasound.spec
 
 if SYSTEM_READLINE
-SUBDIRS = kvutils libecasound libecasoundc pyecasound ecasound ecatools Documentation
+SUBDIRS = kvutils libecasound libecasoundc pyecasound ecasound ecatools Documentation contrib examples
 else
-SUBDIRS = kvutils readline-4.0 libecasound libecasoundc pyecasound ecasound ecatools Documentation
+SUBDIRS = kvutils readline-4.0 libecasound libecasoundc pyecasound ecasound ecatools Documentation contrib examples
 endif
 AUTOMAKE_OPTIONS = foreign
 
@@ -42,4 +42,3 @@ move-to-seul:
 	mv -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-plugins-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
 	mv -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-devel-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
 	mv -v /usr/src/redhat/SRPMS/$(PACKAGE)-$(VERSION)-$(RELEASE).src.rpm /opt/http/ecasound.seul/
-

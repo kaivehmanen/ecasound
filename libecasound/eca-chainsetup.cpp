@@ -393,7 +393,7 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
 	if (bufs != 0) 
 	  set_double_buffer_size(bufs);
 	ecadebug->msg("(eca-chainsetup) Using double-buffer of " + 
-		      kvu_numtostr(double_buffer_size()) + " sample frames..");
+		      kvu_numtostr(double_buffer_size()) + " sample frames.");
 	toggle_double_buffering(true);
       }
       else if (get_argument_number(1, argu) == "psr") {

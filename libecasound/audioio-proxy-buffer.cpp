@@ -33,10 +33,10 @@ AUDIO_IO_PROXY_BUFFER::AUDIO_IO_PROXY_BUFFER(int number_of_buffers,
 						channels,
 						sample_rate))
 {
-  cerr << "Created a new client buffer with " 
-       << sbufs_rep.size()
-       << " buffers." 
-       << endl;
+//    cerr << "Created a new client buffer with " 
+//         << sbufs_rep.size()
+//         << " buffers." 
+//         << endl;
 }
 
 /**
