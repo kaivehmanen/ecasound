@@ -1,0 +1,9 @@
+-----------------------------------------------------------------------
+*** ecasound - changes and additions to libecasoundc interface      ***
+-----------------------------------------------------------------------
+
+2000-12-06  Kai Vehmanen  <kaiv@wakkanet.fi>
+
+	* development started; libtool version number 0:0:0 
+
+-----------------------------------------------------------------------
