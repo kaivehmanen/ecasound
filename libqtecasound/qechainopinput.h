@@ -7,8 +7,8 @@
 #include <qhbox.h>
 #include <qlineedit.h>
 
-#include <ecasound/eca-static-object-maps.h>
-#include <ecasound/eca-chainop.h>
+#include "eca-static-object-maps.h"
+#include "eca-chainop.h"
 
 #include "qeinput.h"
 

@@ -41,7 +41,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>20.03.2000</h2>
+<h2>27.03.2000</h2>
 
 
     
@@ -261,14 +261,15 @@ is 1.
 <p><dl>
 <p></p><dt><strong>cop-add 'cop_format_string'</strong><dd>
 Add a new chain operator. Argument format is
-"-&lt;id_string&gt;:par1,...,parN". See ecasound(1) man page for more 
-info.
+"-&lt;id_string&gt;:par1,...,parN". In addition to normal chain operators, 
+this commmand can also be used to add effect presets and various 
+plugins. See ecasound(1) man page for more info.
 <p><p></p><dt><strong>cop-remove 'chainop_id'</strong><dd> 
 Remove chain operator.
 <p><p></p><dt><strong>cop-set 'chainop_id, param_id, value'</strong><dd>
 Change the value of a single chain operator parameter. Unlike other
 chain operator commands, this can also be used during processing.
-<p><p></p><dt><strong>cop-status</strong><dd> 
+<p><p></p><dt><strong>cop-status</strong><dd>
 Info about chain operator status.
 <p><p></p><dt><strong>cop-register</strong><dd>
 Prints a list of registered chain operators.

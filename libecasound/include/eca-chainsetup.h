@@ -97,7 +97,8 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
   void interpret_chains (const string& argu);
 
   /**
-   * Handle chain operator options.
+   * Handle chain operator options (chain operators, presets 
+   * and plugins)
    *
    * require:
    *  argu.size() > 0

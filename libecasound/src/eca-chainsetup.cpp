@@ -38,9 +38,11 @@
 #include "global-preset.h"
 
 #include "eca-static-object-maps.h"
+#include "eca-ladspa-plugin-map.h"
+#include "eca-chainop-map.h"
+#include "eca-controller-map.h"
 
 #include "eca-control-position.h"
-//  #include "eca-preset-map.h"
 #include "eca-audio-objects.h"
 
 #include "eca-error.h"
@@ -430,6 +432,8 @@ void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
   CHAIN_OPERATOR* t = create_chain_operator(argu);
   if (t == 0) t = create_ladspa_plugin(argu);
   if (t != 0) add_chain_operator(t);
+  else 
+    interpret_effect_preset(argu);
 }
 
 CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
@@ -443,7 +447,7 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
   string prefix = get_argument_prefix(argu);
   if (prefix == "el") {
     prefix = get_argument_number(1, argu);
-    cop = eca_ladspa_plugin_map.object(prefix);
+    cop = ECA_LADSPA_PLUGIN_MAP::object(prefix);
     if (cop != 0) {
       cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
       cop->map_parameters();
@@ -473,7 +477,7 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
   string prefix = get_argument_prefix(argu);
 
   MESSAGE_ITEM otemp;
-  CHAIN_OPERATOR* cop = eca_chain_operator_map.object(prefix);
+  CHAIN_OPERATOR* cop = ECA_CHAIN_OPERATOR_MAP::object(prefix);
   if (cop != 0) {
     cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
     cop->map_parameters();
@@ -520,7 +524,7 @@ GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
 
   MESSAGE_ITEM otemp;
 
-  GENERIC_CONTROLLER* gcontroller = eca_controller_map.object(prefix);
+  GENERIC_CONTROLLER* gcontroller = ECA_CONTROLLER_MAP::object(prefix);
   if (gcontroller != 0) {
     gcontroller = gcontroller->clone();
     gcontroller->map_parameters();

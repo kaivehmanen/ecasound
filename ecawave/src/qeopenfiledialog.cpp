@@ -89,10 +89,10 @@ void QEOpenFileDialog::format_test(void) {
   AUDIO_IO* p = dynamic_cast<AUDIO_IO*>(eca_audio_object_map.object(result_filename()));
   if (p != 0) {
     if (p->locked_audio_format() == true) {
-      aformat->disable_format();
+      aformat->disable();
     }
     else {
-      aformat->enable_format();
+      aformat->enable();
     }
   
     if ((p->supported_io_modes() & AUDIO_IO::io_readwrite) ==

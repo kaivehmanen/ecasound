@@ -1,8 +1,8 @@
 /****************************************************************************
 ** QEFile meta object code from reading C++ file 'qefile.h'
 **
-** Created: Fri Mar 24 11:31:55 2000
-**      by: The Qt Meta Object Compiler ($Revision: 1.4 $)
+** Created: Fri Mar 31 13:45:54 2000
+**      by: The Qt Meta Object Compiler ($Revision: 1.5 $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -68,7 +68,7 @@ void QEFile::staticMetaObject()
     typedef void(QEFile::*m1_t1)(const ECA_AUDIO_FORMAT&);
     typedef void(QEFile::*m1_t2)(long int);
     typedef void(QEFile::*m1_t3)(long int,long int);
-    typedef void(QEFile::*m1_t4)(int,int);
+    typedef void(QEFile::*m1_t4)(long int,int);
     typedef void(QEFile::*m1_t5)();
     typedef void(QEFile::*m1_t6)();
     typedef void(QEFile::*m1_t7)();
@@ -76,7 +76,7 @@ void QEFile::staticMetaObject()
     m1_t1 v1_1 = Q_AMPERSAND QEFile::set_audio_format;
     m1_t2 v1_2 = Q_AMPERSAND QEFile::current_position;
     m1_t3 v1_3 = Q_AMPERSAND QEFile::visible_area;
-    m1_t4 v1_4 = Q_AMPERSAND QEFile::mark_area_relative;
+    m1_t4 v1_4 = Q_AMPERSAND QEFile::marked_area;
     m1_t5 v1_5 = Q_AMPERSAND QEFile::unmark;
     m1_t6 v1_6 = Q_AMPERSAND QEFile::zoom_to_marked;
     m1_t7 v1_7 = Q_AMPERSAND QEFile::zoom_out;
@@ -85,7 +85,7 @@ void QEFile::staticMetaObject()
     slot_tbl[1].name = "set_audio_format(const ECA_AUDIO_FORMAT&)";
     slot_tbl[2].name = "current_position(long int)";
     slot_tbl[3].name = "visible_area(long int,long int)";
-    slot_tbl[4].name = "mark_area_relative(int,int)";
+    slot_tbl[4].name = "marked_area(long int,int)";
     slot_tbl[5].name = "unmark()";
     slot_tbl[6].name = "zoom_to_marked()";
     slot_tbl[7].name = "zoom_out()";
@@ -97,33 +97,23 @@ void QEFile::staticMetaObject()
     slot_tbl[5].ptr = *((QMember*)&v1_5);
     slot_tbl[6].ptr = *((QMember*)&v1_6);
     slot_tbl[7].ptr = *((QMember*)&v1_7);
-    typedef void(QEFile::*m2_t0)();
-    typedef void(QEFile::*m2_t1)(ECA_AUDIO_TIME);
+    typedef void(QEFile::*m2_t0)(ECA_AUDIO_TIME);
+    typedef void(QEFile::*m2_t1)(ECA_AUDIO_TIME,ECA_AUDIO_TIME);
     typedef void(QEFile::*m2_t2)(ECA_AUDIO_TIME,ECA_AUDIO_TIME);
-    typedef void(QEFile::*m2_t3)(ECA_AUDIO_TIME,ECA_AUDIO_TIME);
-    m2_t0 v2_0 = Q_AMPERSAND QEFile::selection_changed;
-    m2_t1 v2_1 = Q_AMPERSAND QEFile::current_position_changed;
-    m2_t2 v2_2 = Q_AMPERSAND QEFile::visible_area_changed;
-    m2_t3 v2_3 = Q_AMPERSAND QEFile::marked_area_changed;
-    QMetaData *signal_tbl = QMetaObject::new_metadata(4);
-    signal_tbl[0].name = "selection_changed()";
-    signal_tbl[1].name = "current_position_changed(ECA_AUDIO_TIME)";
-    signal_tbl[2].name = "visible_area_changed(ECA_AUDIO_TIME,ECA_AUDIO_TIME)";
-    signal_tbl[3].name = "marked_area_changed(ECA_AUDIO_TIME,ECA_AUDIO_TIME)";
+    m2_t0 v2_0 = Q_AMPERSAND QEFile::current_position_changed;
+    m2_t1 v2_1 = Q_AMPERSAND QEFile::visible_area_changed;
+    m2_t2 v2_2 = Q_AMPERSAND QEFile::marked_area_changed;
+    QMetaData *signal_tbl = QMetaObject::new_metadata(3);
+    signal_tbl[0].name = "current_position_changed(ECA_AUDIO_TIME)";
+    signal_tbl[1].name = "visible_area_changed(ECA_AUDIO_TIME,ECA_AUDIO_TIME)";
+    signal_tbl[2].name = "marked_area_changed(ECA_AUDIO_TIME,ECA_AUDIO_TIME)";
     signal_tbl[0].ptr = *((QMember*)&v2_0);
     signal_tbl[1].ptr = *((QMember*)&v2_1);
     signal_tbl[2].ptr = *((QMember*)&v2_2);
-    signal_tbl[3].ptr = *((QMember*)&v2_3);
     metaObj = QMetaObject::new_metaobject(
 	"QEFile", "QWidget",
 	slot_tbl, 8,
-	signal_tbl, 4 );
-}
-
-// SIGNAL selection_changed
-void QEFile::selection_changed()
-{
-    activate_signal( "selection_changed()" );
+	signal_tbl, 3 );
 }
 
 #include <qobjectdefs.h>

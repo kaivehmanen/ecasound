@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "20\&.03\&.2000" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "27\&.03\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -264,8 +264,9 @@ is 1\&.
 .IP 
 .IP "cop-add \'cop_format_string\'" 
 Add a new chain operator\&. Argument format is
-"-<id_string>:par1,\&.\&.\&.,parN"\&. See ecasound(1) man page for more 
-info\&.
+"-<id_string>:par1,\&.\&.\&.,parN"\&. In addition to normal chain operators, 
+this commmand can also be used to add effect presets and various 
+plugins\&. See ecasound(1) man page for more info\&.
 .PP 
 .IP "cop-remove \'chainop_id\'" 
 Remove chain operator\&.

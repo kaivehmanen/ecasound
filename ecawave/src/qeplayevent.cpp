@@ -30,9 +30,8 @@ QEPlayEvent::QEPlayEvent(ECA_CONTROLLER* ctrl,
     ectrl(ctrl) {
 
   toggle_triggered_state(false);
-  init("playevent");
+  init("playevent", "default");
   ectrl->toggle_interactive_mode(true);
-  ectrl->add_chain("default");
   set_input(input);
   set_input_position(start_pos);
   set_default_audio_format(input);

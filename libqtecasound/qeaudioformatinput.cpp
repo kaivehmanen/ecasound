@@ -57,13 +57,13 @@ void QEAudioFormatInput::init_layout(void) {
   a->connectItem(a->insertItem(ALT+Key_R), srate_input, SLOT(setFocus()));
 }
 
-void QEAudioFormatInput::enable_format(void) {
+void QEAudioFormatInput::enable(void) {
   channel_input->setEnabled(true);
   srate_input->setEnabled(true);
   bits_input->setEnabled(true);
 }
 
-void QEAudioFormatInput::disable_format(void) {
+void QEAudioFormatInput::disable(void) {
   channel_input->setEnabled(false);
   srate_input->setEnabled(false);
   bits_input->setEnabled(false);

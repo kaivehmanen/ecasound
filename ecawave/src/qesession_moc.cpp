@@ -1,8 +1,8 @@
 /****************************************************************************
 ** QESession meta object code from reading C++ file 'qesession.h'
 **
-** Created: Fri Mar 24 11:31:51 2000
-**      by: The Qt Meta Object Compiler ($Revision: 1.5 $)
+** Created: Sun Apr 2 19:16:43 2000
+**      by: The Qt Meta Object Compiler ($Revision: 1.6 $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -87,8 +87,8 @@ void QESession::staticMetaObject()
     m1_t7 v1_7 = Q_AMPERSAND QESession::stop_event;
     m1_t8 v1_8 = Q_AMPERSAND QESession::effect_event;
     m1_t9 v1_9 = Q_AMPERSAND QESession::copy_event;
-    m1_t10 v1_10 = Q_AMPERSAND QESession::position_update;
-    m1_t11 v1_11 = Q_AMPERSAND QESession::selection_update;
+    m1_t10 v1_10 = Q_AMPERSAND QESession::paste_event;
+    m1_t11 v1_11 = Q_AMPERSAND QESession::position_update;
     m1_t12 v1_12 = Q_AMPERSAND QESession::update_wave_data;
     QMetaData *slot_tbl = QMetaObject::new_metadata(13);
     slot_tbl[0].name = "new_session()";
@@ -101,8 +101,8 @@ void QESession::staticMetaObject()
     slot_tbl[7].name = "stop_event()";
     slot_tbl[8].name = "effect_event()";
     slot_tbl[9].name = "copy_event()";
-    slot_tbl[10].name = "position_update()";
-    slot_tbl[11].name = "selection_update()";
+    slot_tbl[10].name = "paste_event()";
+    slot_tbl[11].name = "position_update()";
     slot_tbl[12].name = "update_wave_data()";
     slot_tbl[0].ptr = *((QMember*)&v1_0);
     slot_tbl[1].ptr = *((QMember*)&v1_1);
@@ -117,8 +117,49 @@ void QESession::staticMetaObject()
     slot_tbl[10].ptr = *((QMember*)&v1_10);
     slot_tbl[11].ptr = *((QMember*)&v1_11);
     slot_tbl[12].ptr = *((QMember*)&v1_12);
+    typedef void(QESession::*m2_t0)(const string&);
+    m2_t0 v2_0 = Q_AMPERSAND QESession::filename_changed;
+    QMetaData *signal_tbl = QMetaObject::new_metadata(1);
+    signal_tbl[0].name = "filename_changed(const string&)";
+    signal_tbl[0].ptr = *((QMember*)&v2_0);
     metaObj = QMetaObject::new_metaobject(
 	"QESession", "QWidget",
 	slot_tbl, 13,
-	0, 0 );
+	signal_tbl, 1 );
+}
+
+#include <qobjectdefs.h>
+#include <qsignalslotimp.h>
+
+// SIGNAL filename_changed
+void QESession::filename_changed( const string& t0 )
+{
+    // No builtin function for signal parameter type const string&
+    QConnectionList *clist = receivers("filename_changed(const string&)");
+    if ( !clist || signalsBlocked() )
+	return;
+    typedef void (QObject::*RT0)();
+    typedef RT0 *PRT0;
+    typedef void (QObject::*RT1)(const string&);
+    typedef RT1 *PRT1;
+    RT0 r0;
+    RT1 r1;
+    QConnectionListIt it(*clist);
+    QConnection   *c;
+    QSenderObject *object;
+    while ( (c=it.current()) ) {
+	++it;
+	object = (QSenderObject*)c->object();
+	object->setSender( this );
+	switch ( c->numArgs() ) {
+	    case 0:
+		r0 = *((PRT0)(c->member()));
+		(object->*r0)();
+		break;
+	    case 1:
+		r1 = *((PRT1)(c->member()));
+		(object->*r1)(t0);
+		break;
+	}
+    }
 }

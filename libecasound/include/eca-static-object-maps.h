@@ -1,26 +1,22 @@
 #ifndef _ECA_STATIC_OBJECT_MAPS_H
 #define _ECA_STATIC_OBJECT_MAPS_H
 
-#include "eca-preset-map.h"
-
 #include <string>
 
 #include "eca-object-map.h"
-#include "eca-audio-object-map.h"
-#include "eca-chainop-map.h"
-#include "eca-ladspa-plugin-map.h"
-#include "eca-controller-map.h"
+#include "eca-preset-map.h"
 
 #include "eca-chainop.h"
 #include "ctrl-source.h"
 
-extern ECA_AUDIO_OBJECT_MAP eca_audio_object_map;
-extern ECA_AUDIO_OBJECT_MAP eca_audio_device_map;
-extern ECA_CHAIN_OPERATOR_MAP eca_chain_operator_map;
-extern ECA_LADSPA_PLUGIN_MAP eca_ladspa_plugin_map;
-extern ECA_CONTROLLER_MAP eca_controller_map;
+extern ECA_OBJECT_MAP eca_audio_object_map;
+extern ECA_OBJECT_MAP eca_audio_device_map;
+extern ECA_OBJECT_MAP eca_chain_operator_map;
+extern ECA_OBJECT_MAP eca_ladspa_plugin_map;
+extern ECA_OBJECT_MAP eca_controller_map;
 extern ECA_PRESET_MAP eca_preset_map;
 
 void register_default_objects(void);
 
 #endif
+

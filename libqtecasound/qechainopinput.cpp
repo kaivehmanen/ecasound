@@ -32,10 +32,18 @@
 
 #include "eca-static-object-maps.h"
 
+#include "qeobjectinput.h"
 #include "qechainopinput.h"
+#include "qeoperatorinput.h"
 
 QEChainopInput::QEChainopInput (QWidget *parent, const char *name) 
   : QEInput(parent, name) {
+
+  QBoxLayout* top = new QVBoxLayout(this);
+  QEObjectInput* obinput = new QEObjectInput(&eca_chain_operator_map, this);
+  //  QEOperatorInput* opinput = new QEObjectInput(0, this);
+  top->addWidget(obinput);
+  //  top->addWidget(opinput);  
 
   init_layout();
 }

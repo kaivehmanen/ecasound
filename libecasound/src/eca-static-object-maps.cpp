@@ -67,11 +67,11 @@ extern "C" {
 #include "eca-resources.h"
 #include "eca-error.h"
 
-ECA_AUDIO_OBJECT_MAP eca_audio_object_map;
-ECA_AUDIO_OBJECT_MAP eca_audio_device_map;
-ECA_CHAIN_OPERATOR_MAP eca_chain_operator_map;
-ECA_LADSPA_PLUGIN_MAP eca_ladspa_plugin_map;
-ECA_CONTROLLER_MAP eca_controller_map;
+ECA_OBJECT_MAP eca_audio_object_map;
+ECA_OBJECT_MAP eca_audio_device_map;
+ECA_OBJECT_MAP eca_chain_operator_map;
+ECA_OBJECT_MAP eca_ladspa_plugin_map;
+ECA_OBJECT_MAP eca_controller_map;
 ECA_PRESET_MAP eca_preset_map;
 
 void register_default_audio_objects(void);
@@ -245,7 +245,7 @@ vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR*) {
 
   LADSPA_Descriptor_Function desc_func;
   
-  desc_func = (LADSPA_Descriptor_Function)dlsym(plugin_handle, "descriptor");
+  desc_func = (LADSPA_Descriptor_Function)dlsym(plugin_handle, "ladspa_descriptor");
   if (desc_func == 0)
     throw(new ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable find plugin LADSPA-descriptor."));
 

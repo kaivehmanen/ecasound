@@ -20,20 +20,21 @@
 
 #include "audioio.h"
 #include "eca-audio-object-map.h"
+#include "eca-static-object-maps.h"
 
 void ECA_AUDIO_OBJECT_MAP::register_object(const string& id_string,
 					     AUDIO_IO* object) {
-  omap.register_object(id_string, object);
+  eca_audio_object_map.register_object(id_string, object);
 }
 
-const map<string,string>& ECA_AUDIO_OBJECT_MAP::registered_objects(void) const {
-  return(omap.registered_objects());
+const map<string,string>& ECA_AUDIO_OBJECT_MAP::registered_objects(void) {
+  return(eca_audio_object_map.registered_objects());
 }
 
-AUDIO_IO* ECA_AUDIO_OBJECT_MAP::object(const string& keyword) const {
-  return(dynamic_cast<AUDIO_IO*>(omap.object(keyword)));
+AUDIO_IO* ECA_AUDIO_OBJECT_MAP::object(const string& keyword) {
+  return(dynamic_cast<AUDIO_IO*>(eca_audio_object_map.object(keyword)));
 }
 
-string ECA_AUDIO_OBJECT_MAP::object_identifier(const AUDIO_IO* object) const {
-  return(omap.object_identifier(object));
+string ECA_AUDIO_OBJECT_MAP::object_identifier(const AUDIO_IO* object) {
+  return(eca_audio_object_map.object_identifier(object));
 }

@@ -43,12 +43,16 @@ public slots:
   void stop_event(void);
   void effect_event(void);
   void copy_event(void);
+  void paste_event(void);
 
 private slots:
 
   void position_update(void);
-  void selection_update(void); 
   void update_wave_data(void);
+
+signals:
+
+  void filename_changed(const string& filename);
 
  public:
 
@@ -75,11 +79,21 @@ private slots:
 
   void init_layout(void);
   void prepare_event(void);
+  void prepare_temp(void);
+  void copy_file(const string& a, const string& b);
   bool temp_file_created(void);
+
+  enum { 
+    state_orig_file, // original file open, not edited
+    state_edit_file, // original and temp file open
+    state_new_file,  // no original file, temp file open
+    state_invalid    // unspecified
+  } state_rep;
 
   string orig_filename_rep;
   string active_filename_rep;
 
+  bool orig_file_exists;
   bool temp_created;
 
   long int start_pos;
@@ -110,11 +124,3 @@ private slots:
 };
 
 #endif
-
-
-
-
-
-
-
-

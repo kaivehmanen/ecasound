@@ -1,7 +1,7 @@
 #ifndef _QEAUDIOFORMATDIALOG_H
 #define _QEAUDIOFORMATDIALOG_H
 
-#include <ecasound/eca-audio-format.h>
+#include "eca-audio-format.h"
 #include "qeinput.h"
 
 class QSpinBox;
@@ -20,14 +20,14 @@ class QEAudioFormatInput : public QEInput,
 public slots:
 
   /**
-   * Enables/activates the inputs (user can change)
+   * Enables/activates the inputs
    */
-  void enable_format(void);
+  void enable(void);
 
   /**
    * Disables the inputs (user can't change)
    */
-  void disable_format(void);
+  void disable(void);
 
   /** 
    * Fetch result data from widgets

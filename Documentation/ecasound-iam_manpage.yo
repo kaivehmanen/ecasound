@@ -30,7 +30,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (20.03.2000)
+       (27.03.2000)
        ()
        (Multimedia software)
 
@@ -310,8 +310,9 @@ is 1.
 startdit()
 dit(cop-add 'cop_format_string')
 Add a new chain operator. Argument format is
-"-<id_string>:par1,...,parN". See ecasound(1) man page for more 
-info.
+"-<id_string>:par1,...,parN". In addition to normal chain operators, 
+this commmand can also be used to add effect presets and various 
+plugins. See ecasound(1) man page for more info.
 
 dit(cop-remove 'chainop_id') 
 Remove chain operator.
@@ -320,7 +321,7 @@ dit(cop-set 'chainop_id, param_id, value')
 Change the value of a single chain operator parameter. Unlike other
 chain operator commands, this can also be used during processing.
 
-dit(cop-status) 
+dit(cop-status)
 Info about chain operator status.
 
 dit(cop-register)

@@ -33,8 +33,6 @@ private:
   enum { preview_mode, process_mode, invalid } mode;
 
   void init_layout(void);
-  void create_output(void);
-  void copy_file(const string& a, const string& b);
 
   ECA_CONTROLLER* ectrl;
   string input_rep, output_rep;

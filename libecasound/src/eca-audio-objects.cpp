@@ -31,6 +31,7 @@
 #include "audioio-loop.h"
 #include "audioio-null.h"
 #include "eca-static-object-maps.h"
+#include "eca-audio-object-map.h"
 
 #include "eca-chain.h"
 #include "samplebuffer.h"
@@ -191,7 +192,7 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu) {
   string tname = get_argument_number(1, argu);
 
   AUDIO_IO* main_file = 0;
-  main_file = eca_audio_object_map.object(tname);
+  main_file = ECA_AUDIO_OBJECT_MAP::object(tname);
 
   if (main_file != 0) {
     main_file = main_file->new_expr();

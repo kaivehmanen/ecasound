@@ -5,7 +5,6 @@
 #include <map>
 
 #include "generic-controller.h"
-#include "eca-object-map.h"
 
 /**
  * Dynamic register for controller sources
@@ -14,31 +13,27 @@
  */
 class ECA_CONTROLLER_MAP {
 
-  ECA_OBJECT_MAP omap;
-
  public:
 
   /**
    * Register a new effect.
    */
-  void register_object(const string& id_string, GENERIC_CONTROLLER* object);
+  static void register_object(const string& id_string, GENERIC_CONTROLLER* object);
 
   /**
    * List of registered objects (keywords).
    */
-  const map<string,string>& registered_objects(void) const;
+  static const map<string,string>& registered_objects(void);
 
   /**
    * Return the first object that matches with 'keyword'
    */
-  GENERIC_CONTROLLER* object(const string& keyword) const;
+  static GENERIC_CONTROLLER* object(const string& keyword);
 
   /**
    * Return the matching keyword for 'object'.
    */
-  string object_identifier(const GENERIC_CONTROLLER* object) const;
-
-  virtual ~ECA_CONTROLLER_MAP(void) { }
+  static string object_identifier(const GENERIC_CONTROLLER* object);
 };
 
 #endif

@@ -20,20 +20,21 @@
 #include <string>
 
 #include "eca-chainop-map.h"
+#include "eca-static-object-maps.h"
 
 void ECA_CHAIN_OPERATOR_MAP::register_object(const string& id_string,
 					     CHAIN_OPERATOR* object) {
-  omap.register_object(id_string, object);
+  eca_chain_operator_map.register_object(id_string, object);
 }
 
-const map<string,string>& ECA_CHAIN_OPERATOR_MAP::registered_objects(void) const {
-  return(omap.registered_objects());
+const map<string,string>& ECA_CHAIN_OPERATOR_MAP::registered_objects(void) {
+  return(eca_chain_operator_map.registered_objects());
 }
 
-CHAIN_OPERATOR* ECA_CHAIN_OPERATOR_MAP::object(const string& keyword) const {
-  return(dynamic_cast<CHAIN_OPERATOR*>(omap.object(keyword)));
+CHAIN_OPERATOR* ECA_CHAIN_OPERATOR_MAP::object(const string& keyword) {
+  return(dynamic_cast<CHAIN_OPERATOR*>(eca_chain_operator_map.object(keyword)));
 }
 
-string ECA_CHAIN_OPERATOR_MAP::object_identifier(const CHAIN_OPERATOR* object) const {
-  return(omap.object_identifier(object));
+string ECA_CHAIN_OPERATOR_MAP::object_identifier(const CHAIN_OPERATOR* object) {
+  return(eca_chain_operator_map.object_identifier(object));
 }

@@ -14,6 +14,7 @@
 #include "qewaveform.h"
 
 class AUDIO_IO;
+class QEButtonRow;
 
 /**
  * Single audio file
@@ -26,6 +27,9 @@ class QEFile : public QWidget, public DEFINITION_BY_CONTRACT {
 
 public slots:
 
+  /**
+   * Update the waveform view
+   */
   void update_wave_form_data(void);
 
   /**
@@ -35,10 +39,13 @@ public slots:
 
   void current_position(long int samples);
   void visible_area(long int startpos_samples, long int endpos_samples);
-  void mark_area_relative(int from, int to);
+  void marked_area(long int startpos_samples, int endpos_samples);
 
   /**
-   * Unmark file
+   * Unmark the marked area
+   *
+   * ensure:
+   *  is_marked() == false
    */
   void unmark(void);
 
@@ -54,11 +61,6 @@ public slots:
 
 signals:
   
-  /**
-   * Emitted when marked area is changed
-   */
-  void selection_changed(void);
-
   /**
    * Emitted when current position is changed
    */
@@ -84,9 +86,14 @@ signals:
   long int current_position(void) const;
 
   /**
+   * Returns selection start position in samples
+   */
+  long int marked_area_start(void) const;
+
+  /**
    * Returns selection length in samples
    */
-  long int selection_length(void) const;
+  long int marked_area_length(void) const;
 
   /**
    * Returns audio file length in samples
@@ -104,6 +111,21 @@ signals:
   bool is_valid(void) const;
 
   /**
+   * Whether some area is marked
+   */
+  bool is_marked(void) const;
+
+ /**
+   * Audio format of the current audio object
+   */
+  const ECA_AUDIO_FORMAT& audio_format(void) const { return(aformat); }
+
+  /**
+   * Audio object file name
+   */
+  const string& filename(void) const { return(filename_rep); }
+
+  /**
    * Whether to use wave form cache
    */
   void toggle_wave_cache(bool v) { wcache_toggle_rep = v; }
@@ -113,9 +135,17 @@ signals:
    */
   void toggle_cache_refresh(bool v) { refresh_toggle_rep = v; }
 
-  const string& filename(void) const { return(filename_rep); }
+  /**
+   * Close the current file and open a new one
+   */
+  void new_file(const string& name);
 
  private:
+
+  /**
+   * Set the marked area using relative screen coordinates
+   */
+  void mark_area_relative(int from, int to);
 
   void open_io_object(void);
   void calculate_buffersize(void);
@@ -125,8 +155,11 @@ signals:
   void save_ews_data(bool forced);
 
   void init_layout(void);
+  void update_layout(void);
+
   long int coord_to_samples(int coord);
   long int blocks_to_samples(long int blocks);
+  long int samples_to_blocks(long int samples);
 
   AUDIO_IO* io_object;
   int waveform_count;
@@ -146,20 +179,18 @@ signals:
   vector<vector<QEWaveBlock> > waveblocks;
   vector<QEWaveForm*> waveforms;
 
+  QVBoxLayout* top_layout;
+  QEButtonRow* buttonrow;
+
  public:
 
   bool eventFilter(QObject *, QEvent *e);
   QSize sizeHint(void) const;
-
   bool class_invariant(void) const { return(io_object != 0); }
-  
-  /**
-   * Open a new file and update waveform data
-   */
-  void open(const string& filename);
 
   QEFile (const string& filename, bool use_wave_cache, bool force_refresh, QWidget *parent = 0, const char *name = 0);
-  QEFile (QWidget *parent = 0, const char *name = 0) : QWidget(parent,name) { }
+  QEFile (QWidget *parent = 0, const char *name = 0);
+  ~QEFile(void) { if (io_object != 0) delete io_object; }
 };
 
 #endif

@@ -235,14 +235,10 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
 
   audioslot = sbuf;
 
-  cerr << "a";
-
   in_channels_rep = in_channels;
   out_channels_rep = out_channels;
   if (in_channels == 0) in_channels_rep = input_id->channels();
   if (out_channels == 0) out_channels_rep = output_id->channels();
-
-  cerr << "b";
 
   int init_channels = in_channels_rep;
   audioslot->number_of_channels(init_channels);
@@ -252,13 +248,9 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
     audioslot->number_of_channels(init_channels);
   }
 
-  cerr << "c";
-
   refresh_parameters();
   initialized_rep = true;
   
-  cerr << "d";
-
   // --------
   // ensure:
   assert(is_initialized() == true);

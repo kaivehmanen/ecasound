@@ -22,6 +22,7 @@ public slots:
   void visible_area(ECA_AUDIO_TIME start, ECA_AUDIO_TIME end);
   void marked_area(ECA_AUDIO_TIME start, ECA_AUDIO_TIME end);
   void toggle_editing(bool v) { editing_rep = v; }
+  void filename(const string& name) { filename_rep = name; }
   void update(void);
 
  private:

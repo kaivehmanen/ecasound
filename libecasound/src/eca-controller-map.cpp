@@ -18,20 +18,21 @@
 // ------------------------------------------------------------------------
 
 #include "eca-controller-map.h"
+#include "eca-static-object-maps.h"
 
 void ECA_CONTROLLER_MAP::register_object(const string& id_string,
 					     GENERIC_CONTROLLER* object) {
-  omap.register_object(id_string, object);
+  eca_controller_map.register_object(id_string, object);
 }
 
-const map<string,string>& ECA_CONTROLLER_MAP::registered_objects(void) const {
-  return(omap.registered_objects());
+const map<string,string>& ECA_CONTROLLER_MAP::registered_objects(void)  {
+  return(eca_controller_map.registered_objects());
 }
 
-GENERIC_CONTROLLER* ECA_CONTROLLER_MAP::object(const string& keyword) const {
-  return(dynamic_cast<GENERIC_CONTROLLER*>(omap.object(keyword)));
+GENERIC_CONTROLLER* ECA_CONTROLLER_MAP::object(const string& keyword) {
+  return(dynamic_cast<GENERIC_CONTROLLER*>(eca_controller_map.object(keyword)));
 }
 
-string ECA_CONTROLLER_MAP::object_identifier(const GENERIC_CONTROLLER* object) const {
-  return(omap.object_identifier(object));
+string ECA_CONTROLLER_MAP::object_identifier(const GENERIC_CONTROLLER* object) {
+  return(eca_controller_map.object_identifier(object));
 }

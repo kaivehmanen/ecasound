@@ -13,6 +13,17 @@ public:
 
 public slots:
 
+
+  /**
+   * Enables/activates the inputs
+   */
+  virtual void enable(void) { }
+ 
+  /**
+   * Disables the inputs
+   */
+  virtual void disable(void) { }
+
   /** 
    * Fetch result data from widgets
    */

@@ -14,13 +14,14 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.12r10 <*-
 
-??032000 (v1.7.4d11)
+??032000 (v1.7.5d11)
 	- changed: pitch-shifter (-ei) improvements - thanks to Arto
 	 	   Hamara for the tips
 	- changed: above improvements also affects normal resampling
 	- changed: ia-mode commands cop-add, cop-remove and ctrl-add
 		   can now be used with connected chainsetups (add 
 		   effects on-the-fly, etc)
+	- changed: updated LADSPA support to v1
 24032000 (v1.7.4d11)
 	- added: summary info to configure-script 
 	- changed: upgraded LADSPA support to API v1-rel1

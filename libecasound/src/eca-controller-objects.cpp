@@ -851,8 +851,8 @@ void ECA_CONTROLLER_OBJECTS::add_chain_operator(const string& chainop_params) {
   assert(selected_chains().size() == 1);
   // --------
   bool was_running = false;
-  if (selected_chainsetup() == connected_chainsetup()) {
-    if (is_running() == true) was_running = true;
+  if (selected_chainsetup() == connected_chainsetup() && is_running() == true) {
+    was_running = true;
     stop_on_condition();
   }
 
@@ -871,8 +871,8 @@ void ECA_CONTROLLER_OBJECTS::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   // --------
 
   bool was_running = false;
-  if (selected_chainsetup() == connected_chainsetup()) {
-    if (is_running() == true) was_running = true;
+  if (selected_chainsetup() == connected_chainsetup() && is_running() == true) {
+    was_running = true;
     stop_on_condition();
   }
 
@@ -918,8 +918,8 @@ void ECA_CONTROLLER_OBJECTS::remove_chain_operator(int chainop_id) {
   // --------
 
   bool was_running = false;
-  if (selected_chainsetup() == connected_chainsetup()) {
-    if (is_running() == true) was_running = true;
+  if (selected_chainsetup() == connected_chainsetup() && is_running() == true) {
+    was_running = true;
     stop_on_condition();
   }
   
@@ -932,7 +932,7 @@ void ECA_CONTROLLER_OBJECTS::remove_chain_operator(int chainop_id) {
       if (selected_chainsetup_rep->chains[p]->name() == *o) {
 	selected_chainsetup_rep->chains[p]->select_chain_operator(chainop_id);
 	selected_chainsetup_rep->chains[p]->remove_chain_operator();
-	return;
+	break;
       }
     }
     ++o;
@@ -988,8 +988,8 @@ void ECA_CONTROLLER_OBJECTS::add_controller(const string& gcontrol_params) {
   // --------
 
   bool was_running = false;
-  if (selected_chainsetup() == connected_chainsetup()) {
-    if (is_running() == true) was_running = true;
+  if (selected_chainsetup() == connected_chainsetup() && is_running() == true) {
+    was_running = true;
     stop_on_condition();
   }
 

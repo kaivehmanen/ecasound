@@ -47,7 +47,6 @@ QEFile::QEFile(const string& filename,
 	  filename_rep(filename),
 	  refresh_toggle_rep(force_refresh), 
           wcache_toggle_rep(use_wave_cache) {
-  //  cerr << "F1\n";
   io_object = 0;
   buffersize_rep = 0;
   length_rep = 0;
@@ -55,24 +54,54 @@ QEFile::QEFile(const string& filename,
   sample_rate_rep = 0;
   marking_rep = false;
   waveform_count = 0;
-  open(filename_rep);
-  if (io_object != 0) init_layout();
+
+  open_io_object();
+  calculate_buffersize();
+  update_wave_form_data();
+  init_layout();
+  update_layout();
+
+  // --------
+  ENSURE(buffersize_rep != 0);
+  ENSURE(io_object != 0);
+  ENSURE(sample_rate_rep != 0);
+  ENSURE(channels_rep != 0);
+  ENSURE(top_layout != 0);
+  ENSURE(buttonrow != 0);
+  // --------
 }
 
-void QEFile::open(const string& filename) {
-  //  cerr << "F2\n";
-  filename_rep = filename;
+QEFile::QEFile(QWidget *parent, 
+	       const char *name)
+  : QWidget( parent, name ) {
+
   io_object = 0;
-  unmark();
-  if (filename_rep.empty() == false) open_io_object();
-  if (io_object != 0) {
-    calculate_buffersize();
-    update_wave_form_data();
-  }
+  init_layout();
+
+  // --------
+  ENSURE(top_layout != 0);
+  ENSURE(buttonrow != 0);
+  // --------
+}
+
+void QEFile::new_file(const string& name) {
+  if (io_object != 0) delete io_object;
+  io_object = 0;
+  length_rep = 0;
+  channels_rep = 0;
+  sample_rate_rep = 0;
+  marking_rep = false;
+  waveform_count = 0;
+  
+  filename_rep = name;
+  open_io_object();
+  calculate_buffersize();
+  update_wave_form_data();
+  update_layout();
+  updateGeometry();
 }
 
 bool QEFile::eventFilter(QObject *, QEvent *e) {
-  //  cerr << "F3\n";
   if (e->type() == QEvent::MouseButtonPress) {
     QMouseEvent* me = static_cast<QMouseEvent*>(e);
     for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
@@ -88,7 +117,6 @@ bool QEFile::eventFilter(QObject *, QEvent *e) {
       QMouseEvent* me = static_cast<QMouseEvent*>(e);
       mark_area_relative(last_mouse_xpos, me->x());
       marking_rep = false;
-      emit selection_changed();
     }
     //    cerr << "MouseButtonRelease\n";
     return(true);
@@ -119,15 +147,9 @@ bool QEFile::eventFilter(QObject *, QEvent *e) {
 }
 
 void QEFile::init_layout(void) {
-  // --------
-  REQUIRE(channels_rep > 0);
-  // --------
+  top_layout = new QVBoxLayout(this);
 
-  //  cerr << "F4\n";
-
-  QVBoxLayout* l = new QVBoxLayout(this);
-
-  QEButtonRow* buttonrow = new QEButtonRow(this, "buttonrow");
+  buttonrow = new QEButtonRow(this, "buttonrow");
   buttonrow->add_button(new QPushButton("(Z)oom in",buttonrow), 
 		       ALT+Key_Z,
 		       this, SLOT(zoom_to_marked()));
@@ -137,20 +159,39 @@ void QEFile::init_layout(void) {
   buttonrow->add_button(new QPushButton("(U)nmark",buttonrow), 
 		       ALT+Key_U,
 		       this, SLOT(unmark()));
-  l->addWidget(buttonrow);
+  top_layout->addWidget(buttonrow);
+}
+
+void QEFile::update_layout(void) {
+  // --------
+  REQUIRE(channels_rep > 0);
+  // --------
+
+  cerr << "Channels: " << channels_rep << endl;
 
   QString cinfo = "Channel ";
   for(int n = 0; n < channels_rep; n++) {
-    QEWaveForm* w = new QEWaveForm(n, this);
-    l->addWidget(new QLabel(cinfo + QString::number(n),this));
-    l->addWidget(w);
-    w->installEventFilter(this);
-    waveforms.push_back(w);
+    if (n == static_cast<int>(waveforms.size())) {
+      QEWaveForm* w = new QEWaveForm(n, this);
+      top_layout->addWidget(new QLabel(cinfo + QString::number(n),this));
+      top_layout->addWidget(w);
+      w->installEventFilter(this);
+      w->show();
+      waveforms.push_back(w);
+      cerr << "a: " << n << endl;
+    } 
   }
+  for(int n = channels_rep; n < static_cast<int>(waveforms.size()); n++) {
+    cerr << "b: " << n << endl;
+    waveforms[n]->close();
+  }
+  waveforms.resize(channels_rep);
 
   for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
+    cerr << "c: " << n << endl;
     waveforms[n]->update_wave_blocks(&(waveblocks[n]));
   }
+  updateGeometry();
 
   // --------
   ENSURE(static_cast<int>(waveforms.size()) == channels_rep);
@@ -158,8 +199,6 @@ void QEFile::init_layout(void) {
 }
 
 bool QEFile::is_valid(void) const {
-  //  cerr << "F5\n";
-
   if (io_object == 0 ||
       waveblocks.size() == 0 ||
       waveblocks[0].size() == 0) 
@@ -171,24 +210,31 @@ bool QEFile::is_valid(void) const {
 void QEFile::current_position(long int samples) {
   for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
     waveforms[n]->current_position(waveblocks[n].size() * (static_cast<double>(samples) / length_rep));
-    emit current_position_changed(ECA_AUDIO_TIME(samples, sample_rate_rep));
   }
+  emit current_position_changed(ECA_AUDIO_TIME(samples, sample_rate_rep));
 }
 
 void QEFile::visible_area(long int startpos_samples, long int endpos_samples) {
-  //  cerr << "F6\n";
   for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
     waveforms[n]->visible_area(waveblocks[n].size() *
 			       (static_cast<double>(startpos_samples) /
 				length_rep),
 			       waveblocks[n].size() * (static_cast<double>(endpos_samples) / length_rep));
-    emit visible_area_changed(ECA_AUDIO_TIME(startpos_samples, sample_rate_rep), 
-			      ECA_AUDIO_TIME(endpos_samples, sample_rate_rep));
   }
+  emit visible_area_changed(ECA_AUDIO_TIME(startpos_samples, sample_rate_rep), 
+			    ECA_AUDIO_TIME(endpos_samples, sample_rate_rep));
+}
+
+void QEFile::marked_area(long int startpos_samples, int endpos_samples) {
+  for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
+    waveforms[n]->marked_area_begin(samples_to_blocks(startpos_samples));
+    waveforms[n]->marked_area_end(samples_to_blocks(endpos_samples));
+  }
+  emit marked_area_changed(ECA_AUDIO_TIME(startpos_samples, sample_rate_rep), 
+			   ECA_AUDIO_TIME(endpos_samples, sample_rate_rep));
 }
 
 void QEFile::mark_area_relative(int from, int to) {
-  //  cerr << "F8\n";
   int pos1,pos2;
   if (from > to) {
     pos1 = to;
@@ -231,13 +277,19 @@ long int QEFile::blocks_to_samples(long int blocks) {
   return(static_cast<long int>(length_rep * static_cast<double>(blocks) / waveblocks[0].size()));
 }
 
+long int QEFile::samples_to_blocks(long int samples) {
+  if (waveforms.size() == 0) return(0);
+  return(static_cast<long int>(waveblocks[0].size() * static_cast<double>(samples) / length_rep));
+}
+
 void QEFile::unmark(void) {
   //  cerr << "F9\n";
   for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
     waveforms[n]->toggle_marking(false);
     waveforms[n]->repaint(false);
   }
-  emit selection_changed();
+  emit marked_area_changed(ECA_AUDIO_TIME(0, sample_rate_rep), 
+			   ECA_AUDIO_TIME(0, sample_rate_rep));
 }
 
 void QEFile::zoom_to_marked(void) { 
@@ -259,53 +311,51 @@ void QEFile::zoom_out(void) {
 }
 
 long int QEFile::current_position(void) const {
-  //  cerr << "F12\n";
   if (waveforms.size() == 0) return(0);
-
-  if (waveforms[0]->is_marked() == true) {
-    double pos = waveforms[0]->marked_area_begin();
-    //    cerr << "c_p1:" << length_rep * (pos / waveblocks[0].size()) << ".\n";
-    return(static_cast<long int>(length_rep * (pos / waveblocks[0].size())));
-  }
-  //  cerr << "c:";
-//    cerr << length_rep << ",";
-//    cerr << waveforms[0]->current_position() << ",";
-//    cerr << waveblocks[0].size();
-//    cerr << "c_p2:" << length_rep *
-  //    (static_cast<double>(waveforms[0]->current_position()) / waveblocks[0].size()) << ".\n";
   return(static_cast<long int>(length_rep * (static_cast<double>(waveforms[0]->current_position()) / waveblocks[0].size())));
 }
 
-long int QEFile::selection_length(void) const {
-  //  cerr << "F13\n";
-  if (waveforms.size() == 0) return(length_rep);
+bool QEFile::is_marked(void) const {
+ if (waveforms.size() > 0 &&
+     waveforms[0]->is_marked() == true) 
+   return(true);
+ return(false);
+}  
 
+long int QEFile::marked_area_start(void) const {
+  if (waveforms.size() == 0) return(0);
   if (waveforms[0]->is_marked() == true) {
+    double pos = waveforms[0]->marked_area_begin();
+    return(static_cast<long int>(length_rep * (pos / waveblocks[0].size())));
+  }
+  else 
+    return(current_position());
+}
+
+long int QEFile::marked_area_length(void) const {
+  if (waveforms.size() > 0 && waveforms[0]->is_marked() == true) {
     double pos = waveforms[0]->marked_area_end() -
       waveforms[0]->marked_area_begin();
     return(static_cast<long int>(length_rep * (pos / waveblocks[0].size())));
   }
   else 
-    return(length_rep);
+    return(0);
 }
 
 QSize QEFile::sizeHint(void) const {
-  //  cerr << "F14\n";
-  QSize t; 
-  if (waveforms.size() == 0) {
-    t.setWidth(600);
-    t.setHeight(400);
+  QSize t;
+  if (buttonrow != 0) {
+    t.setWidth(buttonrow->width());
+    t.setHeight(buttonrow->height());
   }
-  else {
-    for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
-      t += waveforms[n]->sizeHint();
-    }
+  for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
+    t += waveforms[n]->sizeHint();
   }
+
   return(t);
 }
 
 void QEFile::open_io_object(void) {
-  //  cerr << "F15\n";
   // --------
   REQUIRE(io_object == 0);
   REQUIRE(filename_rep.empty() == false);
@@ -342,7 +392,6 @@ void QEFile::open_io_object(void) {
 }
 
 void QEFile::update_wave_form_data(void) {
-  //  cerr << "F16\n";
   // --------
   REQUIRE(io_object != 0);
   REQUIRE(buffersize_rep > 0);
@@ -361,9 +410,9 @@ void QEFile::update_wave_form_data(void) {
     long start_pos = 0;
     long end_pos = length_rep;
 
-    if (selection_length() != length_rep) { 
-      start_pos = current_position();
-      end_pos = current_position() + selection_length();
+    if (is_marked() == true) { 
+      start_pos = marked_area_start();
+      end_pos = marked_area_start() + marked_area_length();
     }
 
     QProgressDialog progress ("Analyzing wave data...","Cancel",(int)((end_pos - start_pos) / 1000),0,0,true);
@@ -373,7 +422,9 @@ void QEFile::update_wave_form_data(void) {
     io_object->seek_position_in_samples(start_pos);
     io_object->buffersize(buffersize_rep, io_object->samples_per_second());
 
-    SAMPLE_BUFFER* t = new SAMPLE_BUFFER (buffersize_rep, io_object->channels());
+    SAMPLE_BUFFER* t = new SAMPLE_BUFFER (buffersize_rep, 
+					  io_object->channels(), 
+					  io_object->samples_per_second());
     QEWaveBlock blocktmp;
 
     long int bnum = 0;
@@ -389,11 +440,9 @@ void QEFile::update_wave_form_data(void) {
 
       for(int ch = 0; ch < t->number_of_channels() && ch < io_object->channels(); ch++) {
 	blocktmp.max = (int)(32767.0 * SAMPLE_BUFFER_FUNCTIONS::max_value(*t, ch) / SAMPLE_SPECS::max_amplitude);
-	//	      cerr << blocktmp.max;
-	//	      cerr << "-";
+	//	cerr << blocktmp.max << "-"
 	blocktmp.min = (int)(32767.0 * SAMPLE_BUFFER_FUNCTIONS::min_value(*t, ch) / SAMPLE_SPECS::max_amplitude);
-	//	      cerr << blocktmp.min;
-	//	      cerr << "<br>\n";
+	//	cerr << blocktmp.min << endl;
 	waveblocks[ch].push_back(blocktmp);
       }
     

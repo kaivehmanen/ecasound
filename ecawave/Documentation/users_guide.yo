@@ -1,7 +1,7 @@
 mailto(kaiv@wakkanet.fi)
 
 htmlcommand(
-<insert file=ew-makrot.txt>
+<insert file=ew-makrot.txt _ecawave_title="user's guide">
 <insert name=ecawave_headeronly>
 <p>
 <center><h2>ecawave user's guide</h2></center>
@@ -14,14 +14,14 @@ article()
 
 COMMENT(----------------------------------------------------------------)
 sect(What is ecawave?)
-Ecawave is a simple graphical sound file editor. The user-interface is
+Ecawave is a simple graphical audio file editor. The user-interface is
 based on Qt libraries, while almost all audio functionality is taken 
 directly from ecasound libraries. As ecawave is designed for editing 
 large audio files, all processing is done direct-to-disk. Simple 
 waveform caching is used to speed-up file operations. Ecawave supports 
 all audio file formats and effect algorithms provided by ecasound
-libraries. This includes ALSA and OSS soundcard support, wav, aiff,
-raw, mp3, snd and lots more.
+libraries. This includes ALSA and OSS soundcard support and common 
+file formats like wav, cdr, raw, aiff, mp3, etc.
 
 COMMENT(----------------------------------------------------------------)
 sect(Ecawave interface)
@@ -86,6 +86,13 @@ subsubsect(Effect <alt-e>)
 Process marked area with ecasound effects. It's also possible to 
 preview effects before processing.
 
+subsubsect(Copy <alt-y>)
+Copy marked area to ecawave's clipboard.
+
+subsubsect(Paste <alt-p>)
+Paste the contents of ecawave's clipboard into the current file 
+starting from the current position.
+
 COMMENT(---)
 subsect(Waveform view)
 subsubsect(Zoom in <alt-z>)
@@ -100,8 +107,24 @@ Unmark currently marked area.
 COMMENT(----------------------------------------------------------------)
 sect(Configuration)
 The most important configuration files are em(~/.ecawaverc)
-and em(~/.ecasouncrc). See url(ecasoundrc(5))(http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecasoundrc_manpage.html) 
-manual page for more info.
+and em(~/.ecasouncrc). 
+
+Currently following em(~/.ecawaverc) variables are used:
+
+startdit()
+
+  	dit(default-output)
+  	Output device to use. Defaults to em(/dev/dsp).
+
+enddit()
+
+em(~/.ecawaverc) uses the same format as em(~/.ecasoundrc). One line consists of 
+a configuration variable and its value. Variable and value are
+separated with either '=' or ' '. Lines beginning with a "#" are
+ignored (comment lines). 
+
+Also take a look at, url(ecasoundrc(5))(http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecasoundrc_manpage.html) 
+manual page.
 
 COMMENT(----------------------------------------------------------------)
 sect(Ecawave internals)

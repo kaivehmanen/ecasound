@@ -34,7 +34,7 @@ QEEvent::QEEvent(ECA_CONTROLLER* ctrl)
 #endif
 }
 
-void QEEvent::init(const string& chainsetup) {
+void QEEvent::init(const string& chainsetup, const string& chain) {
   // --------
   REQUIRE(ectrl != 0);
   // --------
@@ -51,6 +51,8 @@ void QEEvent::init(const string& chainsetup) {
     ectrl->remove_chainsetup();
     ectrl->add_chainsetup(chainsetup);
   }
+  ectrl->clear_chains();
+  if (chain != "") ectrl->add_chain(chain);
 
   // --------
   ENSURE(ectrl->selected_chainsetup() == chainsetup);
@@ -80,7 +82,8 @@ void QEEvent::blocking_start(void) {
     while(ectrl->is_finished() == false) {
       nanosleep(&sleepcount, NULL);
       progress.setProgress((int)(ectrl->position_in_seconds_exact() * 10.0));	
-    }      
+    }
+    toggle_triggered_state(false);
   }
   catch(ECA_ERROR* e) {
     cerr << "---\nlibecasound error while processing event: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";

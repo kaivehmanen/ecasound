@@ -26,6 +26,7 @@
 #include <qpushbutton.h>
 #include <qtimer.h>
 #include <qmessagebox.h>
+#include <qprogressdialog.h>
 
 #include <ecasound/eca-session.h>
 #include <ecasound/eca-controller.h>
@@ -43,6 +44,7 @@
 #include "qesaveevent.h"
 #include "qechainopevent.h"
 #include "qecopyevent.h"
+#include "qepasteevent.h"
 
 #include "version.h"
 
@@ -54,14 +56,19 @@ QESession::QESession (const string& filename,
 		      QWidget *parent, 
 		      const char *name)
         : QWidget( parent, name ),
+	  state_rep(state_orig_file),
 	  orig_filename_rep(filename),
+	  file(0),
+	  nb_event(0),
 	  refresh_toggle_rep(force_refresh),
 	  wcache_toggle_rep(use_wave_cache),
           direct_mode_rep(direct_mode) {
-  nb_event = 0;
-  temp_created = false;
 
   active_filename_rep = orig_filename_rep;
+  if (orig_filename_rep.empty() == true) {
+    active_filename_rep = string(tmpnam(NULL)) + ".wav";
+    state_rep = state_new_file;
+  }
 
   esession = new ECA_SESSION();
   ectrl = new ECA_CONTROLLER(esession);
@@ -73,17 +80,17 @@ QESession::QESession (const string& filename,
   auto_ectrl = q;
 
   vlayout = new QVBoxLayout(this);
-  file = 0;
   init_layout();
   assert(file != 0);
   file->set_audio_format(frm);
    
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()), this, SLOT(position_update()));
-  timer->start( 500, false);
+  timer->start(500, false);
 
   // --------
   ENSURE(file != 0);
+  ENSURE(active_filename_rep.empty() == false);
   // --------
 }
 
@@ -94,7 +101,8 @@ QESession::~QESession(void) {
     delete nb_event;
   }
 
-  if (temp_created == true && active_filename_rep.empty() == false) {
+  if (state_rep != state_orig_file) {
+    assert(active_filename_rep.empty() != true);
     remove(active_filename_rep.c_str());
     remove((active_filename_rep + ".ews").c_str());
   }
@@ -151,16 +159,18 @@ void QESession::init_layout(void) {
   buttonrow2->add_button(new QPushButton("C(u)t",buttonrow2), ALT+Key_U,
 			this, SLOT(new_session()));
   buttonrow2->add_button(new QPushButton("(P)aste",buttonrow2), ALT+Key_P,
-			this, SLOT(new_session()));
+			this, SLOT(paste_event()));
   vlayout->addWidget(buttonrow2);
 
-  if (active_filename_rep.empty() == false) file = new QEFile(active_filename_rep,
-							  wcache_toggle_rep,
-							  refresh_toggle_rep, 
-							  this, 
-							  "sessionfile");
-  else file = new QEFile(this, "sessionfile");
-  QObject::connect(file, SIGNAL(selection_changed()), this, SLOT(selection_update()));
+  if (state_rep == state_orig_file) 
+    file = new QEFile(active_filename_rep,
+		      wcache_toggle_rep,
+		      refresh_toggle_rep, 
+		      this, 
+		      "sessionfile");
+  else 
+    file = new QEFile(this, 
+		      "sessionfile");
 
   vlayout->addWidget(file,1);
 
@@ -183,6 +193,10 @@ void QESession::init_layout(void) {
 		   SIGNAL(current_position_changed(ECA_AUDIO_TIME)), 
 		   statusbar,
 		   SLOT(current_position(ECA_AUDIO_TIME)));
+  QObject::connect(this, 
+		   SIGNAL(filename_changed(const string&)), 
+		   statusbar,
+		   SLOT(filename(const string&)));
 }
 
 void QESession::new_session(void) {
@@ -218,15 +232,15 @@ void QESession::open_file(void) {
     if (fdialog->result_bits() == 8)
       frm.set_sample_format(ECA_AUDIO_FORMAT::sfmt_u8);
 
-    child_sessions.push_back(new QESession(fdialog->result_filename(), 
-					   frm,
-					   fdialog->result_wave_cache_toggle(),
-					   fdialog->result_cache_refresh_toggle(),
-					   fdialog->result_direct_mode_toggle()));
-    child_sessions.back()->setGeometry(x(), y(), width(), height());
-    child_sessions.back()->show();
-    qApp->setMainWidget(child_sessions.back());
-    close(false);
+    file->toggle_wave_cache(fdialog->result_wave_cache_toggle());
+    file->toggle_cache_refresh(fdialog->result_cache_refresh_toggle());
+    direct_mode_rep = fdialog->result_direct_mode_toggle();
+    file->new_file(fdialog->result_filename());
+    state_rep = state_orig_file;
+    orig_filename_rep = file->filename();
+    active_filename_rep = orig_filename_rep;
+    emit filename_changed(orig_filename_rep);
+    updateGeometry();
   }
 }
 
@@ -235,25 +249,31 @@ void QESession::prepare_event(void) {
   REQUIRE(file != 0);
   // --------
 
-  if (file->is_valid() == false) {
-    QMessageBox* mbox = new QMessageBox(this, "mbox");
-    mbox->information(this, "ecawave", "Invalid file; unable to continue.",0);
-    return;
+  if (file->is_valid() == true) {
+    if (file->is_marked() == true) {
+      cerr << "hep!";
+      start_pos = file->marked_area_start();
+      sel_length = file->marked_area_length();
+    }
+    else {
+      start_pos = file->current_position();
+      sel_length = file->length();
+    }
+    
+    cerr << "Event-range: " << start_pos << " len " << sel_length << ".\n";
+    if (start_pos > file->length() ||
+	start_pos < 0) {
+      start_pos = 0;
+    }
+    if (sel_length == 0 ||
+	start_pos + sel_length > file->length()) {
+      sel_length = file->length() - start_pos;
+    }
   }
-
-  start_pos = file->current_position();
-  sel_length = file->selection_length();
-
-  cerr << "Event-range: " << start_pos << " len " << sel_length << ".\n";
-  if (start_pos > file->length() ||
-      start_pos < 0) {
+  else {
     start_pos = 0;
+    sel_length = 0;
   }
-  if (sel_length == 0 ||
-      start_pos + sel_length > file->length()) {
-    sel_length = file->length() - start_pos;
-  }
-  //  cerr << "Range2: " << start_pos << " len " << sel_length << ".\n";
 
   // --------
   ENSURE(start_pos >= 0);
@@ -266,22 +286,14 @@ void QESession::effect_event(void) {
   stop_event();
   prepare_event();
   if (file->is_valid() == false) return;
+  prepare_temp();
+  if (state_rep == state_invalid) return;
 
-  QEChainopEvent* p;
-  if (temp_created == false) {
-    string temp = string(tmpnam(NULL)) + ".wav";
-    p = new QEChainopEvent(ectrl, active_filename_rep, temp, start_pos, sel_length);
-    temp_created = true;
-    active_filename_rep = temp;
-    edit_start = start_pos;
-    edit_length = sel_length;
-  }
-  else {
-    p = new QEChainopEvent(ectrl, active_filename_rep, active_filename_rep,
-			   start_pos, sel_length);
-    if (start_pos < edit_start) edit_start = start_pos;
-    if (sel_length > edit_length) edit_length = sel_length;
-  }
+  QEChainopEvent* p = new QEChainopEvent(ectrl, active_filename_rep, active_filename_rep,
+					 start_pos, sel_length);
+  if (start_pos < edit_start) edit_start = start_pos;
+  if (sel_length > edit_length) edit_length = sel_length;
+
   QObject::connect(p, SIGNAL(finished()), this, SLOT(update_wave_data()));
   p->show();
   nb_event = p;
@@ -298,14 +310,11 @@ void QESession::update_wave_data(void) {
   assert(file != 0);
   // --------
 
-  if (active_filename_rep != file->filename()) {
-    file->open(active_filename_rep);
-  }
-  else {
+  if (file != 0) {
     file->update_wave_form_data();
   }
 
-  if (temp_created == true) {
+  if (state_rep != state_orig_file) {
     statusbar->toggle_editing(true);
   }
 }
@@ -317,6 +326,32 @@ bool QESession::temp_file_created(void) {
   stat(active_filename_rep.c_str(), &stattemp2);
   if (stattemp1.st_size != stattemp2.st_size) return(false);
   return(true);
+}
+
+void QESession::prepare_temp(void) {
+  if (state_rep == state_orig_file) {
+    string temp = string(tmpnam(NULL)) + ".wav";
+
+    struct stat stattemp1;
+    struct stat stattemp2;
+    stat(active_filename_rep.c_str(), &stattemp1);
+    stat(temp.c_str(), &stattemp2);
+    if (stattemp1.st_size != stattemp2.st_size) {
+      copy_file(active_filename_rep, temp);
+      copy_file(active_filename_rep + ".ews", temp + ".ews");
+    }
+    stat(active_filename_rep.c_str(), &stattemp1);
+    stat(temp.c_str(), &stattemp2);
+    if (stattemp1.st_size != stattemp2.st_size) {
+      QMessageBox* mbox = new QMessageBox(this, "mbox");
+      mbox->information(this, "ecawave", QString("Error while creating temporary file ") + QString(temp.c_str()),0);
+      state_rep = state_invalid;
+    }
+    else {
+      state_rep = state_edit_file;
+      active_filename_rep = temp;
+    }
+  }
 }
 
 void QESession::play_event(void) { 
@@ -336,18 +371,17 @@ void QESession::play_event(void) {
 }
 
 void QESession::save_event(void) { 
-  if (temp_file_created() == false) {
+  if (state_rep == state_orig_file) {
     QMessageBox* mbox = new QMessageBox(this, "mbox");
     mbox->information(this, "ecawave", "File not modified, save file cancelled.",0);
     return;
   }
 
-  stop_event();
-
-  QESaveEvent* p = new QESaveEvent(ectrl, active_filename_rep, orig_filename_rep, edit_start, edit_length);
-
-  if (p->is_valid() == true) {
-    p->start();
+  if (state_rep == state_new_file) save_as_event();
+  else {
+    stop_event();
+    QESaveEvent* p = new QESaveEvent(ectrl, active_filename_rep, orig_filename_rep, edit_start, edit_length);
+    if (p->is_valid() == true) p->start();
   }
 }
 
@@ -378,6 +412,37 @@ void QESession::copy_event(void) {
   }
 }
 
+void QESession::paste_event(void) { 
+  stop_event();
+  prepare_event();
+  prepare_temp();
+  if (state_rep == state_invalid) return;
+
+  string to_file = active_filename_rep;
+  if (state_rep == state_orig_file) {
+    string temp = string(tmpnam(NULL)) + ".wav";
+    state_rep = state_edit_file;
+    active_filename_rep = temp;
+    edit_start = start_pos;
+    edit_length = sel_length;
+  }
+
+  QEPasteEvent* p;
+  p = new QEPasteEvent(ectrl, 
+		       ecawaverc.resource("clipboard-file"),
+		       active_filename_rep, 
+		       start_pos);
+  if (p->is_valid() == true) {
+    p->start();
+    if (file->is_valid() == true) update_wave_data();
+    else {
+      file->new_file(active_filename_rep);
+      state_rep = state_edit_file;
+      updateGeometry();
+    }
+  }
+}
+
 void QESession::stop_event(void) { 
   if (nb_event != 0) {
     if (ectrl->is_running()) nb_event->stop();
@@ -386,10 +451,31 @@ void QESession::stop_event(void) {
   nb_event = 0;
 }
 
-void QESession::selection_update(void) {
-//    if (event != 0) {
-//      prepare_event();
-//      nb_event->restart(start_pos, sel_length);
-//    }
-}
+void QESession::copy_file(const string& a, const string& b) {
+  FILE *f1, *f2;
+  f1 = fopen(a.c_str(), "r");
+  f2 = fopen(b.c_str(), "w");
+  char buffer[16384];
 
+  if (!f1 || !f2) {
+    QMessageBox* mbox = new QMessageBox(this, "mbox");
+    mbox->information(this, "ecawave", QString("Error while creating temporary file ") + QString(b.c_str()),0);
+    return;
+  }
+
+  fseek(f1, 0, SEEK_END);
+  long int len = ftell(f1);
+  fseek(f1, 0, SEEK_SET);
+
+  QProgressDialog progress ("Creating temporary file for processing...", 0,
+			    (int)(len / 1000), 0, 0, true);
+  progress.setProgress(0);
+  progress.show();
+
+  while(!feof(f1) && !ferror(f2)) {
+    fwrite(buffer, fread(buffer, 1, 16384, f1), 1, f2);
+    progress.setProgress((int)(ftell(f1) / 1000));
+  }
+  fclose(f1);
+  fclose(f2);
+}

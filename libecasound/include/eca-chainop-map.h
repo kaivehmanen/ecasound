@@ -5,7 +5,6 @@
 #include <map>
 
 #include "eca-chainop.h"
-#include "eca-object-map.h"
 
 /**
  * Dynamic register for chain operators and their id-strings
@@ -14,31 +13,27 @@
  */
 class ECA_CHAIN_OPERATOR_MAP {
 
-  ECA_OBJECT_MAP omap;
-
  public:
 
   /**
    * Register a new effect
    */
-  void register_object(const string& id_string, CHAIN_OPERATOR* object);
+  static void register_object(const string& id_string, CHAIN_OPERATOR* object);
 
   /**
    * List of registered effects ('effect name'-'keyword' map).
    */
-  const map<string,string>& registered_objects(void) const;
+  static const map<string,string>& registered_objects(void);
 
   /**
    * Return the first effect that matches with 'keyword'
    */
-  CHAIN_OPERATOR* object(const string& keyword) const;
+  static CHAIN_OPERATOR* object(const string& keyword);
 
   /**
    * Return the matching keyword for 'object'.
    */
-  string object_identifier(const CHAIN_OPERATOR* object) const;
-
-  virtual ~ECA_CHAIN_OPERATOR_MAP(void) { }
+  static string object_identifier(const CHAIN_OPERATOR* object);
 };
 
 #endif

@@ -91,7 +91,7 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
    * ensure:
    *  ectrl->selected_chainsetup() == chainsetup
    */
-  void init(const string& chainsetup);
+  void init(const string& chainsetup, const string& chain = "");
 
   /**
    * Toggles whether event has been started

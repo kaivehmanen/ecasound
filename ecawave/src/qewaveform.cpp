@@ -230,7 +230,8 @@ void QEWaveForm::paintEvent(QPaintEvent* e) {
       // --
       // draw the current pointer
       // --
-      if (current_position_rep >= marked_area_begin_rep &&
+      if (marked_rep == true &&
+	  current_position_rep >= marked_area_begin_rep &&
 	  current_position_rep <= marked_area_end_rep)
 	prev_inside_marked = true;
       else

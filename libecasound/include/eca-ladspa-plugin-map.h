@@ -5,7 +5,7 @@
 #include <map>
 
 #include "audiofx_ladspa.h"
-#include "eca-object-map.h"
+#include "eca-static-object-maps.h"
 
 /**
  * Dynamic register for chain operators and their id-strings
@@ -14,31 +14,27 @@
  */
 class ECA_LADSPA_PLUGIN_MAP {
 
-  ECA_OBJECT_MAP omap;
-
  public:
 
   /**
    * Register a new effect
    */
-  void register_object(const string& id_string, EFFECT_LADSPA* object) { omap.register_object(id_string,object); }
+  static void register_object(const string& id_string, EFFECT_LADSPA* object) { eca_ladspa_plugin_map.register_object(id_string,object); }
 
   /**
    * List of registered effects ('effect name'-'keyword' map).
    */
-  const map<string,string>& registered_objects(void) const { return(omap.registered_objects()); }
+  static const map<string,string>& registered_objects(void) { return(eca_ladspa_plugin_map.registered_objects()); }
 
   /**
    * Return the first effect that matches with 'keyword'
    */
-  EFFECT_LADSPA* object(const string& keyword) const  { return(dynamic_cast<EFFECT_LADSPA*>(omap.object(keyword))); }
+  static EFFECT_LADSPA* object(const string& keyword) { return(dynamic_cast<EFFECT_LADSPA*>(eca_ladspa_plugin_map.object(keyword))); }
 
   /**
    * Return the matching keyword for 'object'.
    */
-  string object_identifier(const EFFECT_LADSPA* object) const { return("el"); }
-
-  virtual ~ECA_LADSPA_PLUGIN_MAP(void) { }
+  static string object_identifier(const EFFECT_LADSPA* object) { return("el"); }
 };
 
 #endif

@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-03-27  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-static-object-maps (various): changes in map representation, 
+	affects all object maps
+	
 2000-03-24  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-version.h (ecasound_library_version_current): added

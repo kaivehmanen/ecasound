@@ -18,9 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include <qaccel.h>
 #include <qlayout.h>
 #include <qlistbox.h>
@@ -77,75 +74,25 @@ void QEChainopEvent::preview(void) {
 }
 
 void QEChainopEvent::process(void) {
-  create_output();
-  if (mode != invalid) {
-    mode = process_mode;
-    init("chainopevent");
-    ectrl->add_chain("default");
-    set_input(input_rep);
-    set_input_position(start_pos_rep);
-    set_length(length_rep);
-    set_default_audio_format(input_rep);
-    set_output(output_rep);
-    set_output_position(start_pos_rep);
-
-    if (copinput != 0) {
+  mode = process_mode;
+  init("chainopevent");
+  ectrl->add_chain("default");
+  set_input(input_rep);
+  set_input_position(start_pos_rep);
+  set_length(length_rep);
+  set_default_audio_format(input_rep);
+  set_output(output_rep);
+  set_output_position(start_pos_rep);
+  
+  if (copinput != 0) {
       copinput->update_results();
       ectrl->add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(copinput->result()->clone()));
-    }
-    blocking_start();
-    emit finished();
-    accept();
   }
+  blocking_start();
+  emit finished();
+  accept();
 }
 
-void QEChainopEvent::create_output(void) {
-  struct stat stattemp1;
-  struct stat stattemp2;
-  stat(input_rep.c_str(), &stattemp1);
-  stat(output_rep.c_str(), &stattemp2);
-  if (stattemp1.st_size != stattemp2.st_size) {
-    copy_file(input_rep, output_rep);
-    copy_file(input_rep + ".ews", output_rep + ".ews");
-  }
-  stat(input_rep.c_str(), &stattemp1);
-  stat(output_rep.c_str(), &stattemp2);
-  if (stattemp1.st_size != stattemp2.st_size) {
-    QMessageBox* mbox = new QMessageBox(this, "mbox");
-    mbox->information(this, "ecawave", QString("Error while creating temporary file ") + QString(output_rep.c_str()),0);
-    mode = invalid;
-  }
-}
-
-void QEChainopEvent::copy_file(const string& a, const string& b) {
-  FILE *f1, *f2;
-  f1 = fopen(a.c_str(), "r");
-  f2 = fopen(b.c_str(), "w");
-  char buffer[16384];
-
-  if (!f1 || !f2) {
-    QMessageBox* mbox = new QMessageBox(this, "mbox");
-    mbox->information(this, "ecawave", QString("Error while creating temporary file ") + QString(output_rep.c_str()),0);
-    mode = invalid;
-    return;
-  }
-
-  fseek(f1, 0, SEEK_END);
-  long int len = ftell(f1);
-  fseek(f1, 0, SEEK_SET);
-
-  QProgressDialog progress ("Creating temporary file for processing...", 0,
-			    (int)(len / 1000), 0, 0, true);
-  progress.setProgress(0);
-  progress.show();
-
-  while(!feof(f1) && !ferror(f2)) {
-    fwrite(buffer, fread(buffer, 1, 16384, f1), 1, f2);
-    progress.setProgress((int)(ftell(f1) / 1000));
-  }
-  fclose(f1);
-  fclose(f2);
-}
 
 void QEChainopEvent::init_layout(void) {
   QBoxLayout* top = new QVBoxLayout(this);

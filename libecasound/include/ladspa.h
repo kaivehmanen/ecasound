@@ -1,9 +1,7 @@
 /* ladspa.h
 
-   Version 1 [provisional release 1].
-
-   Copyright 2000 Richard W.E. Furse, Paul Barton-Davis, Stefan
-   Westerfeld. */
+   Version 1. Copyright 2000 Richard W.E. Furse, Paul Barton-Davis,
+   Stefan Westerfeld. */
 
 #ifndef LADSPA_INCLUDED
 #define LADSPA_INCLUDED
@@ -22,11 +20,12 @@ extern "C" {
    ability to write simple `plugin' audio processors in C/C++ and link
    them dynamically (`plug') into a range of these packages (`hosts').
    It should be possible for any host and any plugin to communicate
-   completely through this interface.
+   completely through this interface. The LADSPA plugin API is free to
+   use.
 
    This API is deliberately short and simple. To achieve compatibility
    with a range of promising Linux sound synthesis packages it
-   attempts to find the `greatest common denominator' in their logical
+   attempts to find the `greatest common divisor' in their logical
    behaviour. Having said this, certain limiting decisions are
    implicit, notably the use of a fixed type (LADSPA_Data) for all
    data transfer and absence of a parameterised `initialisation'
@@ -39,15 +38,15 @@ extern "C" {
    communicated using arrays of LADSPA_Data, allowing a block of audio
    to be processed by the plugin in a single pass. Control data is
    communicated using single LADSPA_Data values. Control data has a
-   single value at the start of a call to the `run()' function, and
-   may be considered to remain this value for its duration. The plugin
-   may assume that all its input and output ports have been connected
-   to the relevant data location (see the `connect_port()' function
-   below) before it is asked to run.
+   single value at the start of a call to the `run()' or `run_adding()'
+   function, and may be considered to remain this value for its
+   duration. The plugin may assume that all its input and output ports
+   have been connected to the relevant data location (see the
+   `connect_port()' function below) before it is asked to run.
 
    Plugins will reside in shared object files suitable for dynamic
    linking by dlopen() and family. The file will provide a number of
-   `plugin types' which can be used to instantiate actual plugins
+   `plugin types' that can be used to instantiate actual plugins
    (sometimes known as `plugin instances') that can be connected
    together to perform tasks.
 
@@ -90,9 +89,9 @@ typedef int LADSPA_Properties;
    satisfy all of the following:
 
    (1) The plugin must not use malloc(), free() or other heap memory
-   management within its run() function. All new memory used in run()
-   must be managed via the stack. These restrictions only apply to the
-   run() function.
+   management within its run() or run_adding() functions. All new
+   memory used in run() must be managed via the stack. These
+   restrictions only apply to the run() function.
 
    (2) The plugin will not attempt to make use of any library
    functions with the exceptions of functions in the ANSI standard C
@@ -102,11 +101,12 @@ typedef int LADSPA_Properties;
    or any other mechanism that might result in process or thread
    blocking.
       
-   (4) The plugin will take an amount of time to execute a run() call
-   approximately of form (A+B*SampleCount) where A and B depend on the
-   machine and host in use. This amount of time may not depend on
-   input signals or plugin state. The host is left the responsibility
-   to perform timings to estimate upper bounds for A and B. */
+   (4) The plugin will take an amount of time to execute a run() or
+   run_adding() call approximately of form (A+B*SampleCount) where A
+   and B depend on the machine and host in use. This amount of time
+   may not depend on input signals or plugin state. The host is left
+   the responsibility to perform timings to estimate upper bounds for
+   A and B. */
 #define LADSPA_PROPERTY_HARD_RT_CAPABLE 0x4
 
 #define LADSPA_IS_REALTIME(x)        ((x) & LADSPA_PROPERTY_REALTIME)
@@ -135,11 +135,11 @@ typedef int LADSPA_PortDescriptor;
 /* Property LADSPA_PORT_OUTPUT indicates that the port is an output. */
 #define LADSPA_PORT_OUTPUT  0x2
 
-/* Property LADSPA_PORT_OUTPUT indicates that the port is a control
+/* Property LADSPA_PORT_CONTROL indicates that the port is a control
    port. */
 #define LADSPA_PORT_CONTROL 0x4
 
-/* Property LADSPA_PORT_OUTPUT indicates that the port is a audio
+/* Property LADSPA_PORT_AUDIO indicates that the port is a audio
    port. */
 #define LADSPA_PORT_AUDIO   0x8
 
@@ -167,7 +167,7 @@ typedef int LADSPA_PortDescriptor;
    Hints are meaningful for all input and output ports but hints for
    input control ports are expected to be particularly useful.
    
-   More hint information is encapsulared in the
+   More hint information is encapsulated in the
    LADSPA_PortRangeHintDescriptor type which is assembled by ORing
    individual hint types together. Hints may require further
    LowerBound and UpperBound information.
@@ -228,7 +228,7 @@ typedef int LADSPA_PortRangeHintDescriptor;
 #define LADSPA_IS_HINT_LOGARITHMIC(x)   ((x) & LADSPA_HINT_LOGARITHMIC)
 #define LADSPA_IS_HINT_INTEGER(x)       ((x) & LADSPA_HINT_INTEGER)
 
-struct LADSPA_PortRangeHint {
+typedef struct _LADSPA_PortRangeHint {
 
   /* Hints about the port. */
   LADSPA_PortRangeHintDescriptor HintDescriptor;
@@ -243,7 +243,7 @@ struct LADSPA_PortRangeHint {
      multiplied by the relevant sample rate. */
   LADSPA_Data UpperBound;
 
-};
+} LADSPA_PortRangeHint;
 
 /*****************************************************************************/
 
@@ -264,7 +264,7 @@ typedef void * LADSPA_Handle;
    number of functions to examine the type, instantiate it, link it to
    buffers and workspaces and to run it. */
 
-struct LADSPA_Descriptor {
+typedef struct _LADSPA_Descriptor { 
 
   /* This numeric identifier indicates the plugin type
      uniquely. Plugin programmers may reserve ranges of IDs from a
@@ -275,8 +275,8 @@ struct LADSPA_Descriptor {
   /* This identifier can be used as a unique, case-sensitive
      identifier for the plugin type within the plugin file. Plugin
      types should be identified by file and label rather than by index
-     or plugin name, which may be changed in new versions. Labels
-     must not contain white space characters. */
+     or plugin name, which may be changed in new plugin
+     versions. Labels must not contain white-space characters. */
   const char * Label;
 
   /* This indicates a number of properties of the plugin. */
@@ -310,7 +310,7 @@ struct LADSPA_Descriptor {
 
   /* This member indicates an array of range hints for each port (see
      above). Valid indices vary from 0 to PortCount-1. */
-  const struct LADSPA_PortRangeHint * PortRangeHints;
+  const LADSPA_PortRangeHint * PortRangeHints;
 
   /* This may be used by the plugin developer to pass any custom
      implementation data into an instantiate call. It must not be used
@@ -328,8 +328,8 @@ struct LADSPA_Descriptor {
 
      Note that instance initialisation should generally occur in
      activate() rather than here. */
-  LADSPA_Handle (*instantiate)(const struct LADSPA_Descriptor * Descriptor,
-                               unsigned long                    SampleRate);
+  LADSPA_Handle (*instantiate)(const struct _LADSPA_Descriptor * Descriptor,
+                               unsigned long                     SampleRate);
 
   /* This member is a function pointer that connects a port on an
      instantiated plugin to a memory location at which a block of data
@@ -337,8 +337,9 @@ struct LADSPA_Descriptor {
      to be an array of LADSPA_Data for audio ports or a single
      LADSPA_Data value for control ports. Memory issues will be
      managed by the host. The plugin must read/write the data at these
-     locations every time run() is called and the data present at the
-     time of this connection call should not be considered meaningful.
+     locations every time run() or run_adding() is called and the data
+     present at the time of this connection call should not be
+     considered meaningful.
 
      connect_port() may be called more than once for a plugin instance
      to allow the host to change the buffers that the plugin is
@@ -346,10 +347,10 @@ struct LADSPA_Descriptor {
      activate() or deactivate() calls.
 
      connect_port() must be called at least once for each port before
-     run() is called. When working with blocks of LADSPA_Data the
-     plugin should pay careful attention to the block size passed to
-     the run function as the block allocated may only just be large
-     enough to contain the block of samples.
+     run() or run_adding() is called. When working with blocks of
+     LADSPA_Data the plugin should pay careful attention to the block
+     size passed to the run function as the block allocated may only
+     just be large enough to contain the block of samples.
 
      Plugin writers should be aware that the host may elect to use the
      same buffer for more than one port and even use the same buffer
@@ -366,16 +367,19 @@ struct LADSPA_Descriptor {
      reinitialise a plugin instance by calling deactivate() and then
      activate(). In this case the plugin instance must reset all state
      information dependent on the history of the plugin instance
-     except for any data locations provided by connect_port(). If
-     there is nothing for activate() to do then the plugin writer may
-     provide a NULL rather than an empty function.
+     except for any data locations provided by connect_port() and any
+     gain set by set_run_adding_gain(). If there is nothing for
+     activate() to do then the plugin writer may provide a NULL rather
+     than an empty function.
 
-     When present, hosts must call this function once before run() is
-     called for the first time. This call should be made as close to
-     the run() call as possible and indicates to real-time plugins
-     that they are now live. activate() may not be called again unless
-     deactivate() is called first. Note that connect_port() may be
-     called before or after a call to activate(). */
+     When present, hosts must call this function once before run() (or
+     run_adding()) is called for the first time. This call should be
+     made as close to the run() call as possible and indicates to
+     real-time plugins that they are now live. Plugins should not rely
+     on a prompt call to run() after activate(). activate() may not be
+     called again unless deactivate() is called first. Note that
+     connect_port() may be called before or after a call to
+     activate(). */
   void (*activate)(LADSPA_Handle Instance);
 
   /* This method is a function pointer that runs an instance of a
@@ -385,24 +389,53 @@ struct LADSPA_Descriptor {
      instance may run.
 
      Note that if an activate() function exists then it must be called
-     before run(). If deactivate() is called for a plugin instance
-     then the plugin instance may not be reused until activate() has
-     been called again.
+     before run() or run_adding(). If deactivate() is called for a
+     plugin instance then the plugin instance may not be reused until
+     activate() has been called again.
 
      If the plugin has the property LADSPA_PROPERTY_HARD_RT_CAPABLE
      then there are various things that the plugin should not do
-     within the run() function (see above). */
+     within the run() or run_adding() functions (see above). */
   void (*run)(LADSPA_Handle Instance,
               unsigned long SampleCount);
+
+  /* This method is a function pointer that runs an instance of a
+     plugin for a block. This has identical behaviour to run() except
+     in the way data is output from the plugin. When run() is used,
+     values are written directly to the memory areas associated with
+     the output ports. However when run_adding() is called, values
+     must be added to the values already present in the memory
+     areas. Furthermore, output values written must be scaled by the
+     current gain set by set_run_adding_gain() (see below) before
+     addition.
+
+     run_adding() is optional. When it is not provided by a plugin,
+     this function pointer must be set to NULL. When it is provided,
+     the function set_run_adding_gain() must be provided also. */
+  void (*run_adding)(LADSPA_Handle Instance,
+		     unsigned long SampleCount);
+
+  /* This method is a function pointer that sets the output gain for
+     use when run_adding() is called (see above). If this function is
+     never called the gain is assumed to default to 1. Gain
+     information should be retained when activate() or deactivate()
+     are called.
+
+     This function should be provided by the plugin if and only if the
+     run_adding() function is provided. When it is absent this
+     function pointer must be set to NULL. */
+  void (*set_run_adding_gain)(LADSPA_Handle Instance,
+			      LADSPA_Data   Gain);
 
   /* This is the counterpart to activate() (see above). If there is
      nothing for deactivate() to do then the plugin writer may provide
      a NULL rather than an empty function.
 
      Hosts must deactivate all activated units after they have been
-     run() for the last time. This call should be made as close to the
-     last run() call as possible and indicates to real-time plugins
-     that they are no longer live. Note that connect_port() may be
+     run() (or run_adding()) for the last time. This call should be
+     made as close to the last run() call as possible and indicates to
+     real-time plugins that they are no longer live. Plugins should
+     not rely on prompt deactivation. Note that connect_port() may be
      called before or after a call to deactivate().
 
      Deactivation is not similar to pausing as the plugin instance
@@ -418,10 +451,7 @@ struct LADSPA_Descriptor {
      is called. */
   void (*cleanup)(LADSPA_Handle Instance);
 
-  /* Reserved area for future expansion. Must be initialised to zero. */
-  char reserved[100];
-
-};
+} LADSPA_Descriptor;
 
 /**********************************************************************/
 
@@ -435,25 +465,25 @@ struct LADSPA_Descriptor {
    colon-separated path indicating directories that should be searched
    (in order) when loading plugin types.
 
-   A plugin programmer must include a function called "descriptor"
-   with the following function prototype within the shared object
-   file. This function will have C-style linkage (if you are using C++
-   this is taken care of by the `extern "C"' clause at the top of the
-   file).
+   A plugin programmer must include a function called
+   "ladspa_descriptor" with the following function prototype within
+   the shared object file. This function will have C-style linkage (if
+   you are using C++ this is taken care of by the `extern "C"' clause
+   at the top of the file).
 
    A host will find the plugin shared object file by one means or
-   another, find the "descriptor" function, call it, and proceed from
-   there.
+   another, find the ladspa_descriptor() function, call it, and
+   proceed from there.
 
    Plugin types are accessed by index (not ID) using values from 0
    upwards. Out of range indexes must result in this function
    returning NULL, so the plugin count can be determined by checking
    for the least index that results in NULL being returned. */
 
-const struct LADSPA_Descriptor * descriptor(unsigned long Index);
+const LADSPA_Descriptor * ladspa_descriptor(unsigned long Index);
 
-/* Datatype corresponding to the descriptor() function. */
-typedef const struct LADSPA_Descriptor * 
+/* Datatype corresponding to the ladspa_descriptor() function. */
+typedef const LADSPA_Descriptor * 
 (*LADSPA_Descriptor_Function)(unsigned long Index);
 
 /**********************************************************************/
