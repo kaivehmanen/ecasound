@@ -37,7 +37,7 @@ class PROCEDURE_TIMER {
  private:
 
   PROCEDURE_TIMER(const PROCEDURE_TIMER& x) { }
-  PROCEDURE_TIMER& operator=(const PROCEDURE_TIMER& x) { }
+  PROCEDURE_TIMER& operator=(const PROCEDURE_TIMER& x) { return *this; }
 
   bool less_than(const struct timeval *i, const struct timeval *ii) const;
   void subtract(struct timeval *i, const struct timeval *ii) const;
