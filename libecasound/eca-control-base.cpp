@@ -80,6 +80,22 @@ ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void)
 }
 
 /**
+ * Initializes the engine
+ *
+ * @pre is_connected() == true
+ * @pre is_engine_started() != true
+ */
+void ECA_CONTROL_BASE::engine_start(void)
+{
+  // --------
+  DBC_REQUIRE(is_connected() == true);
+  DBC_REQUIRE(is_engine_started() != true);
+  // --------
+
+  start_engine_sub(false);
+}
+
+/**
  * Start the processing engine
  *
  * @pre is_connected() == true
@@ -97,7 +113,7 @@ void ECA_CONTROL_BASE::start(void)
 
   if (is_engine_started() != true) {
     /* request_batchmode=false */
-    start_engine(false);
+    start_engine_sub(false);
   }
 
   if (is_engine_started() != true) {
@@ -138,7 +154,7 @@ void ECA_CONTROL_BASE::run(void)
 
   if (is_engine_started() != true) {
     /* request_batchmode=true */
-    start_engine(true);
+    start_engine_sub(true);
   }
 
   if (is_engine_started() != true) {
@@ -261,7 +277,7 @@ void ECA_CONTROL_BASE::quit(void) { close_engine(); }
  * @pre is_connected() == true
  * @pre is_engine_started() != true
  */
-void ECA_CONTROL_BASE::start_engine(bool batchmode)
+void ECA_CONTROL_BASE::start_engine_sub(bool batchmode)
 {
   // --------
   DBC_REQUIRE(is_connected() == true);

@@ -1,3 +1,8 @@
+2003-08-14  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* eca-control-base.h (engine_start): Moved to public
+	scope, signature changed.
+
 2003-08-13  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* eca-chainsetup.cpp (add_default_midi_device): Added.

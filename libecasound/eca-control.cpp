@@ -594,8 +594,9 @@ void ECA_CONTROL::action(int action_id)
   case ec_map_ctrl_list: { ctrl_descriptions(); break; }
 
   // ---
-  // Session status
+  // Engine commands
   // ---
+  case ec_engine_start: { engine_start(); break; }
   case ec_engine_status: { set_last_string(engine_status()); break; }
 
   // ---

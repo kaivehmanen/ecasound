@@ -30,7 +30,7 @@ class ECA_CONTROL_BASE {
 
   static void* start_normal_thread(void *ptr);
 
-  void start_engine(bool batchmode);
+  void start_engine_sub(bool batchmode);
   void run_engine(void);
 
  protected:
@@ -47,6 +47,7 @@ class ECA_CONTROL_BASE {
   // Runtime control
   // -------------------------------------------------------------------
 
+  void engine_start(void);
   void start(void);
   void stop(void);
   void stop_on_condition(void);

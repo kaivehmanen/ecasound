@@ -129,6 +129,7 @@ void ECA_SESSION::set_defaults(void)
   TIMIDITY_INTERFACE::set_timidity_cmd(ecaresources.resource("ext-cmd-timidity"));
   OGG_VORBIS_INTERFACE::set_ogg_input_cmd(ecaresources.resource("ext-cmd-ogg-input"));
   OGG_VORBIS_INTERFACE::set_ogg_output_cmd(ecaresources.resource("ext-cmd-ogg-output"));
+
 }
 
 
