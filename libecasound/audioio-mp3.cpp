@@ -2,12 +2,17 @@
 // audioio-mp3.cpp: Interface for mp3 decoders and encoders that support 
 //                  input/output using standard streams. Defaults to
 //                  mpg123 and lame.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2005 Kai Vehmanen
 // Note! Routines for parsing mp3 header information were taken from XMMS
-//       1.2.5's mpg123 plugin.
+//       1.2.5's mpg123 plugin. Improvements to parsing logic were
+//       contributed by Julian Dobson.
 //
 // Attributes:
 //     eca-style-version: 3
+//
+// References:
+//     http://www.mp3-tech.org/programmer/frame_header.html
+//     http://www.mpg123.de/
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -110,20 +115,24 @@ struct frame
 
 static bool mpg123_head_check(unsigned long head)
 {
-  if ((head & 0xffe00000) != 0xffe00000)
-    return false;
-  if (!((head >> 17) & 3))
-    return false;
-  if (((head >> 12) & 0xf) == 0xf)
-    return false;
-  if (!((head >> 12) & 0xf))
-    return false;
-  if (((head >> 10) & 0x3) == 0x3)
-    return false;
-  if (((head >> 19) & 1) == 1 && ((head >> 17) & 3) == 3 && ((head >> 16) & 1) == 1)
-    return false;
-  if ((head & 0xffff0000) == 0xfffe0000)
-    return false;
+  /* ref: http://www.mp3-tech.org/programmer/frame_header.html */
+
+  /* frame sync must be 0xffe (11bits) */
+  if ((head & 0xffe00000) != 0xffe00000) return false;
+  /* layer must be non-null (2bits) */
+  if (!((head >> 17) & 3)) return false;
+  /* invalid bitrate index: all-ones (4bit) */
+  if (((head >> 12) & 0xf) == 0xf) return false;
+  /* invalid bitrate index: null (4bit) */
+  if (!((head >> 12) & 0xf)) return false;
+  /* invalid srate index: all-ones (2bit) */
+  if (((head >> 10) & 0x3) == 0x3) return false;
+#if 0
+  /* invalid: mpeg2/2.5, layer I, protection bit off */
+  if (((head >> 19) & 1) == 1 && ((head >> 17) & 3) == 3 && ((head >> 16) & 1) == 1) return false;
+  /* - mpeg version 1, CRC protection bit */
+  if ((head & 0xffff0000) == 0xfffe0000) return false;
+#endif
 	
   return true;
 }
@@ -248,78 +257,66 @@ static bool mpg123_decode_header(struct frame *fr, unsigned long newhead)
   return true;
 }
 
+/* not used anymore, kaiv 2005/03 */
+#if 0
 static uint32_t convert_to_header(uint8_t * buf)
 {
 
   return (buf[0] << 24) + (buf[1] << 16) + (buf[2] << 8) + buf[3];
 }
+#endif
 
 static bool mpg123_detect_by_content(const char* filename, struct frame* frp)
 {
   FILE *file;
-  uint8_t tmp[4];
-  uint32_t head;
-  unsigned char *buf;
-  int in_buf, i;
+  uint8_t tmp[4]; /* room for the 32bit head */
+  uint32_t head = 0;
+  bool data_left = true;
+  bool header_found = false;
+  size_t offset = 0;
 
   if((file = std::fopen(filename, "rb")) == NULL) {
-    return false;
+    ECA_LOG_MSG(ECA_LOGGER::info, string("Unable to open file ") + filename + ".");
+    data_left = false;
   }
-  if (std::fread(tmp, 1, 4, file) != 4)
-    goto done;
-  buf = new unsigned char [1024];
-  head = convert_to_header(tmp);
-  while(!mpg123_head_check(head)) {
-    /*
-     * The mpeg-stream can start anywhere in the file,
-     * so we check the entire file
-     */
-    /* Optimize this */
-    in_buf = std::fread(buf, 1, 1024, file);
-    if(in_buf == 0)
-      {
-	delete[] buf;
-	ECA_LOG_MSG(ECA_LOGGER::info, "Mp3 header not found!");
-	goto done;
-      }
-    for (i = 0; i < in_buf; i++)
-      {
-	head <<= 8;
-	head |= buf[i];
-	if(mpg123_head_check(head))
-	  {
-	    std::fseek(file, i+1-in_buf, SEEK_CUR);
-	    break;
-	  }
-      }
-  }
-  delete[] buf;
-  if (mpg123_decode_header(frp, head))
-    {
-      /*
-       * We found something which looks like a MPEG-header.
-       * We check the next frame too, to be sure
-       */
-      if (std::fseek(file, frp->framesize, SEEK_CUR) != 0) {
-	goto done;
-      }
-      if (std::fread(tmp, 1, 4, file) != 4) {
-	goto done;
-      }
-      head = convert_to_header(tmp);
-      if (mpg123_head_check(head) && mpg123_decode_header(frp, head))
-	{
-	  std::fclose(file);
-	  return true;
-	}
+  /* search for headers in the first 262kB of data */
+  while(data_left == true && offset < (1<<18)) {
+    /* octet-by-octet search */
+    if (std::fread(tmp, 1, 1, file) != 1) {
+      ECA_LOG_MSG(ECA_LOGGER::info, "End of mp3 file, no valid header data found.");
+      data_left = false;
+      break;
     }
 
- done:
-  std::fclose(file);
-  ECA_LOG_MSG(ECA_LOGGER::info, "Valid mp3 header not found!");
-  return false;
-}
+    head <<= 8;
+    head |= tmp[0]; 
+    offset += 1;
 
+    if (offset > 3) {
+      /* verify the header and if ok, fetch mp3 parameters and store
+	 them to 'frp' */
+      if (mpg123_head_check(head) && mpg123_decode_header(frp, head)) {
+	if (header_found == true) {
+	  /* two headers found, stop searching */
+	  data_left = false;
+	}
+	else {
+	  /* after the first header is found, skip to the next 
+	     valid frame to verify that the first frame is not 
+	     dummy frame (id3 or something similar) */
+	  if (std::fseek(file, frp->framesize, SEEK_CUR) != 0) {
+	    data_left = false;
+	  }
+	  header_found = true;
+	}
+	ECA_LOG_MSG(ECA_LOGGER::info, "Found mp3 header at offset " + 
+		    kvu_numtostr(static_cast<int>(offset - 4)));
+      }
+    }
+  }
+
+  return header_found;
+}
 
 /***************************************************************
  * MP3FILE specific parts.
