@@ -38,8 +38,8 @@ QEOkCancelInput::QEOkCancelInput (QWidget *parent, const char *name)
   QObject::connect(ok_button_rep, SIGNAL(clicked()), this, SLOT(accept()));
   QObject::connect(cancel_button_rep, SIGNAL(clicked()), this, SLOT(reject()));
 
-  a->connectItem(a->insertItem(ALT+Key_C), this, SLOT(reject()));
-  a->connectItem(a->insertItem(ALT+Key_O), this, SLOT(accept()));
+  a->connectItem(a->insertItem(CTRL+Key_C), this, SLOT(reject()));
+  a->connectItem(a->insertItem(CTRL+Key_O), this, SLOT(accept()));
 }
 
 QSize QEOkCancelInput::sizeHint(void) const { 

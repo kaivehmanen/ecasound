@@ -135,8 +135,8 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   void add_output(AUDIO_IO* aiod);
   void remove_audio_input(const string& label);
   void remove_audio_output(const string& label);
-  void attach_input_to_selected_chains(const string& filename);
-  void attach_output_to_selected_chains(const string& filename);
+  void attach_input_to_selected_chains(const AUDIO_IO* obj);
+  void attach_output_to_selected_chains(const AUDIO_IO* obj);
 
   void add_new_chains(const vector<string>& newchains);
   void remove_chains(void);

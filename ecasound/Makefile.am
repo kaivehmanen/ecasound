@@ -7,7 +7,7 @@ endif
 if SYSTEM_READLINE
 INCLUDES = -I$(readline_includes) -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils
 else
-INCLUDES = -I../readline-4.0 -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils
+INCLUDES = -I$(top_srcdir)/readline-4.0 -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils
 endif
 
 if USE_NCURSES

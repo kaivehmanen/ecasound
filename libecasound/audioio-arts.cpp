@@ -27,20 +27,24 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-ARTS_INTERFACE::ARTS_INTERFACE(const string& name) 
+int ARTS_INTERFACE::ref_rep = 0;
+
+ARTS_INTERFACE::ARTS_INTERFACE(const string& name) throw(ECA_ERROR*)
 {
   label(name);
+  if (ref_rep == 0) {
+    int err = ::arts_init();
+    if (err < 0) {
+      throw(new ECA_ERROR("AUDIOIO-ARTS", "unable to connect to aRts
+    server: " + string(arts_error_text(err))));
+    }
+  }
+  ++ref_rep;
 }
 
 void ARTS_INTERFACE::open(void) throw(ECA_ERROR*)
 {
   if (is_open() == true) return;
-
-  int err = ::arts_init();
-  if (err < 0) {
-    throw(new ECA_ERROR("AUDIOIO-ARTS", "unable to connect to aRts
-    server: " + string(arts_error_text(err))));
-  }
 
   if (io_mode() == io_read) {
     stream_rep = ::arts_record_stream(samples_per_second(), channels(), bits(), "ecasound-input");
@@ -54,6 +58,7 @@ void ARTS_INTERFACE::open(void) throw(ECA_ERROR*)
 
   ::arts_stream_set(stream_rep, ARTS_P_BUFFER_SIZE, buffersize() * frame_size());
   ::arts_stream_set(stream_rep, ARTS_P_BLOCKING, 1);
+  samples_rep = 0;
   toggle_open_state(true);
 }
 
@@ -65,20 +70,30 @@ void ARTS_INTERFACE::close(void)
 }
 
 void ARTS_INTERFACE::start(void) { }
-long ARTS_INTERFACE::position_in_samples(void) const { return(0); }
+long ARTS_INTERFACE::position_in_samples(void) const { return(samples_rep); }
 long int ARTS_INTERFACE::read_samples(void* target_buffer, 
 				      long int samples) 
 {
-  return(::arts_read(stream_rep, target_buffer, frame_size() * samples) / frame_size());
+  long int res = ::arts_read(stream_rep, target_buffer, frame_size() * samples);
+  samples_rep += res;
+  if (res >= 0)
+    return(res / frame_size());
+  else {
+    return(0);
+  }
 }
 
 void ARTS_INTERFACE::write_samples(void* target_buffer, 
 				   long int samples) 
 {
-  ::arts_write(stream_rep, target_buffer, frame_size() * samples);
+  samples_rep += ::arts_write(stream_rep, target_buffer, frame_size() * samples);
 }
 
-ARTS_INTERFACE::~ARTS_INTERFACE(void) { ::arts_free(); }
+ARTS_INTERFACE::~ARTS_INTERFACE(void) 
+{ 
+  --ref_rep;
+  if (ref_rep == 0) ::arts_free();
+}
 
 #endif // COMPILE_ARTS
 

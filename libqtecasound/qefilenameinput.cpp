@@ -55,8 +55,8 @@ void QEFilenameInput::init_layout(void) {
 
   QObject::connect(filenamebrowse, SIGNAL(clicked()), this, SLOT(button_browse()));
 
-  accel->connectItem(accel->insertItem(ALT+Key_B), this, SLOT(button_browse()));
-  accel->connectItem(accel->insertItem(ALT+Key_F), filenameinput, SLOT(setFocus()));
+  accel->connectItem(accel->insertItem(CTRL+Key_B), this, SLOT(button_browse()));
+  accel->connectItem(accel->insertItem(CTRL+Key_F), filenameinput, SLOT(setFocus()));
 }
 
 void QEFilenameInput::button_browse(void) { 

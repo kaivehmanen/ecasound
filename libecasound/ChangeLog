@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-06-27  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* eca-audio-objects.h (attach_input_to_selected_chains,attach_input_to_selected_chains):
+	changed parameter format
+	
 2000-06-18  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* audioio-alsa*.h (all): renamed all ALSA_PCMx_DEVICE classes

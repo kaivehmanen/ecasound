@@ -454,7 +454,7 @@ void ECA_AUDIO_OBJECTS::add_input(AUDIO_IO* aio) {
 
   inputs.push_back(aio);
   input_start_pos.push_back(0);
-  attach_input_to_selected_chains(aio->label());
+  attach_input_to_selected_chains(aio);
 
   // --------
   ENSURE(inputs.size() > 0);
@@ -469,7 +469,7 @@ void ECA_AUDIO_OBJECTS::add_output(AUDIO_IO* aiod) {
 
   outputs.push_back(aiod);
   output_start_pos.push_back(0);
-  attach_output_to_selected_chains(aiod->label());
+  attach_output_to_selected_chains(aiod);
 
   // --------
   ENSURE(outputs.size() > 0);
@@ -620,12 +620,15 @@ const CHAIN* ECA_AUDIO_OBJECTS::get_chain_with_name(const string& name) const {
   return(0);
 }
 
-void ECA_AUDIO_OBJECTS::attach_input_to_selected_chains(const string& filename) {
+void ECA_AUDIO_OBJECTS::attach_input_to_selected_chains(const AUDIO_IO* obj) {
+    // --------
+  REQUIRE(obj != 0);
+  // --------
   string temp;
   vector<AUDIO_IO*>::size_type c = 0;
 
   while (c < inputs.size()) {
-    if (inputs[c]->label() == filename) {
+    if (inputs[c] == obj) {
       for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
 	if ((*q)->input_id_repp == inputs[c]) {
 	  (*q)->disconnect_input();
@@ -646,12 +649,15 @@ void ECA_AUDIO_OBJECTS::attach_input_to_selected_chains(const string& filename) 
   ecadebug->msg(ECA_DEBUG::system_objects, temp);
 }
 
-void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const string& filename) {
+void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const AUDIO_IO* obj) {
+    // --------
+  REQUIRE(obj != 0);
+  // --------
+
   string temp;
   vector<AUDIO_IO*>::size_type c = 0;
-
   while (c < outputs.size()) {
-    if (outputs[c]->label() == filename) {
+    if (outputs[c] == obj) {
       for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
 	if ((*q)->output_id_repp == outputs[c]) {
 	  (*q)->disconnect_output();
@@ -671,3 +677,4 @@ void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const string& filename)
   }
   ecadebug->msg(ECA_DEBUG::system_objects, temp);
 }
+

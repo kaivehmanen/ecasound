@@ -52,9 +52,9 @@ void QEAudioFormatInput::init_layout(void) {
   format->addWidget(sratebox);
 
   QAccel *a = new QAccel(this);
-  a->connectItem(a->insertItem(ALT+Key_A), channel_input, SLOT(setFocus()));
-  a->connectItem(a->insertItem(ALT+Key_I), bits_input, SLOT(setFocus()));
-  a->connectItem(a->insertItem(ALT+Key_R), srate_input, SLOT(setFocus()));
+  a->connectItem(a->insertItem(CTRL+Key_A), channel_input, SLOT(setFocus()));
+  a->connectItem(a->insertItem(CTRL+Key_I), bits_input, SLOT(setFocus()));
+  a->connectItem(a->insertItem(CTRL+Key_R), srate_input, SLOT(setFocus()));
 }
 
 void QEAudioFormatInput::enable(void) {

@@ -21,6 +21,8 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
   ARTS_INTERFACE& operator=(const ARTS_INTERFACE& x) { return *this; }
 
   arts_stream_t stream_rep;
+  long int samples_rep;
+  static int ref_rep;
   
  public:
 

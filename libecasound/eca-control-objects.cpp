@@ -852,9 +852,9 @@ void ECA_CONTROL_OBJECTS::attach_audio_object(void) {
   assert(get_audio_object() != 0);
   // --------
   if (selected_audio_object_repp->io_mode() == AUDIO_IO::io_read) 
-    selected_chainsetup_repp->attach_input_to_selected_chains(selected_audio_object_repp->label());
+    selected_chainsetup_repp->attach_input_to_selected_chains(selected_audio_object_repp);
   else
-    selected_chainsetup_repp->attach_output_to_selected_chains(selected_audio_object_repp->label());
+    selected_chainsetup_repp->attach_output_to_selected_chains(selected_audio_object_repp);
 
   ecadebug->msg("(eca-controller) Attached audio object \"" + selected_audio_object_repp->label() +
 		"\" to selected chains.");

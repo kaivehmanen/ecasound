@@ -35,6 +35,7 @@ redhat-rpm: ecasound.spec dist
 dist-build-rpm: ecasound.spec dist
 	cp -fv $(PACKAGE)-$(VERSION).tar.gz /usr/src/redhat/SOURCES/
 	rm -Rf /tmp/ecasound-build
+	sarep lasound ' ' /usr/local/lib/*.la
 	export extra_params=--disable-alsa ; rpm -ba ecasound.spec
 	rpm --addsign /usr/src/redhat/SRPMS/$(PACKAGE)-$(VERSION)-$(RELEASE).src.rpm
 	rpm --addsign /usr/src/redhat/RPMS/i386/$(PACKAGE)*$(VERSION)-$(RELEASE).i386.rpm
