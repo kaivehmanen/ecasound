@@ -58,9 +58,8 @@ void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   child_offset_rep.set_samples_per_second(child->samples_per_second());
   child_start_pos_rep.set_samples_per_second(child->samples_per_second());
   child_length_rep.set_samples_per_second(child->samples_per_second());
-  if (child_length_rep.samples() == 0) child_length_rep = child->length();
-  if (child_length_rep.samples() + child_start_pos_rep.samples() > child->length_in_samples())
-    child_length_rep.set_samples_per_second(child->length_in_samples() - child_start_pos_rep.samples());
+  if (child_length_rep.samples() == 0)
+    child_length_rep.set_samples(child->length_in_samples() - child_start_pos_rep.samples());
 
   tmp_buffer.number_of_channels(child->channels());
   tmp_buffer.length_in_samples(child->buffersize());
@@ -85,12 +84,12 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
    * child start position: position inside the child-object where
    *                       input is started (data between child
    *                       beginning and child_start_pos is not used)
-   * child lenght:         amount child data that is used beginning 
+   * child length:         amount child data that is used beginning 
    *                       from child's start position
    * child looping:        when child end is reaches, whether to jump 
    *                       back to start position?
    * 
-   * note! all cases (if-else blocks) end to setting new 
+   * note! all cases (if-else blocks) end to setting a new 
    *       position_in_samples value
    */
 
@@ -179,8 +178,11 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	assert(tail >= 0);
 
 	/* mute the extra tail */
-	sbuf->make_silent_range(sbuf->length_in_samples() - tail,
-                                sbuf->length_in_samples());
+	long int startpos = sbuf->length_in_samples() - tail;
+	if (startpos >= 0) {
+	  sbuf->make_silent_range(startpos,
+				  sbuf->length_in_samples());
+	}
 	position_in_samples_advance(sbuf->length_in_samples());
       }
     }
@@ -215,11 +217,13 @@ void EWFFILE::seek_position(void) {
 	(io_mode() != AUDIO_IO::io_read &&
 	 child_active == true)) {
       if (position_in_samples() >= child_offset_rep.samples()) {
-	child->seek_position_in_samples(position_in_samples() - child_offset_rep.samples());
+	child->seek_position_in_samples(position_in_samples() -
+					child_offset_rep.samples() + 
+					child_start_pos_rep.samples());
       }
       else {
 	child_active = false;
-	child->seek_first();
+	child->seek_position_in_samples(child_start_pos_rep.samples());
       }
     }
   }
