@@ -204,6 +204,8 @@ void AUDIO_IO_RESAMPLE::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 
 void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* sbuf)
 {
+  /* FIXME: add temp buffer with preallocated mem area */
+
   // std::cerr << "pre-pre-resample: " << child_buffersize_rep << " samples.\n";
   child()->read_buffer(sbuf);
   /* FIXME: not really rt-safe: */
@@ -216,6 +218,8 @@ void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* sbuf)
 
 void AUDIO_IO_RESAMPLE::write_buffer(SAMPLE_BUFFER* sbuf)
 {
+  /* FIXME: add temp buffer with preallocated mem area */
+
   /* FIXME: not really rt-safe: */
   sbuf->resample_init_memory(samples_per_second(), child_srate_rep);
   sbuf->resample(samples_per_second(), child_srate_rep);
