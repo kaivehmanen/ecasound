@@ -148,6 +148,7 @@ void AAC_FORKED_INTERFACE::write_samples(void* target_buffer, long int samples)
       bytes_rep = 0;
     }
     if (bytes_rep < frame_size() * samples || bytes_rep == 0) {
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-aac) Can't start process \"" + AAC_FORKED_INTERFACE::default_output_cmd + "\". FAAC v1.24 or newer is required. Please check your ~/.ecasound/ecasoundrc.");
       finished_rep = true;
       triggered_rep = false;
     }
