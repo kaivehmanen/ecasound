@@ -2,6 +2,9 @@
 /* Package name */
 #undef PACKAGE
 
+/* Package name */
+#undef ECASOUND_PREFIX_DIR
+
 /* Package version */
 #undef VERSION
 

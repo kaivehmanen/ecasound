@@ -1,4 +1,4 @@
-EXTRA_DIST = ChangeLog plugin-paths.h.in
+EXTRA_DIST = ChangeLog
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = plugins
 
@@ -151,7 +151,6 @@ ecasound_general_include = 	\
 			preset_impl.h \
 			file-preset.h \
 			global-preset.h \
-			plugin-paths.h \
 			midiio.h
 
 ecasound_extra_include = \

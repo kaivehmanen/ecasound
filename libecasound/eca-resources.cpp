@@ -17,6 +17,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string>
 #include <cstdlib>
 
@@ -32,6 +36,12 @@ ECA_RESOURCES::ECA_RESOURCES(void) :
 ECA_RESOURCES::~ECA_RESOURCES(void) { }
 
 void ECA_RESOURCES::set_defaults(void) {
+
+  string ecasound_prefix (ECASOUND_PREFIX_DIR);
+  string ecasound_plugin_path = ecasound_prefix + "/lib/ecasound-plugins";
+  string ecasound_resource_path = ecasound_prefix + "/share/ecasound";
+  string ecasound_ladspa_path = ecasound_prefix + "/lib/ladspa";
+
   if (has("midi-device") != true) resource("midi-device","rawmidi,/dev/midi");
 
   if (has("default-output") != true) resource("default-output","/dev/dsp");
@@ -69,5 +79,4 @@ void ECA_RESOURCES::set_defaults(void) {
 
   if (has("internal-plugin-directory") != true) resource("internal-plugin-directory", ecasound_plugin_path);
   if (has("ladspa-plugin-directory") != true) resource("ladspa-plugin-directory", ecasound_ladspa_path);
-  save();
 }

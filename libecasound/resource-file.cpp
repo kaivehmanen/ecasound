@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // resource-file.cpp: Generic resource file class
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,8 +30,10 @@ RESOURCE_FILE::RESOURCE_FILE(const std::string& resource_file) :
 }
 
 RESOURCE_FILE::~RESOURCE_FILE(void) { 
-// FIXME: dumps core for some reason
-//    if (modified_rep == true) save();
+  if (modified_rep == true) {
+    save();
+    modified_rep = false;
+  }
 }
 
 void RESOURCE_FILE::load(void) { 
@@ -70,8 +72,10 @@ void RESOURCE_FILE::load(void) {
 	  --p;
 	}
       }
-//        cerr << "(resource-file) found key-value pair: " +
-//  	first + " = \"" + second + "\"." << endl;
+
+      // cerr << "(resource-file) found key-value pair: " +
+      // first + " = \"" + second + "\"." << endl;
+
       resmap_rep[first] = second;
       lines_rep.push_back(line);
     }
@@ -86,7 +90,7 @@ void RESOURCE_FILE::save(void) {
     std::vector<std::string>::const_iterator p = lines_rep.begin();
     while(p != lines_rep.end()) {
       if (p->size() > 0) {
-//  	cerr << "Writing line: " << *p << "." << endl;
+	// cerr << "Writing line: " << *p << "." << endl;
 	fout << *p << "\n";
       }
       ++p;
@@ -101,7 +105,7 @@ std::vector<std::string> RESOURCE_FILE::keywords(void) const {
   std::map<std::string,std::string>::const_iterator p;
   p = resmap_rep.begin();
   while(p != resmap_rep.end()) {
-//      cerr << "Adding keyword: " << p->first << "." << endl;
+    // cerr << "Adding keyword: " << p->first << "." << endl;
     keys.push_back(p->first);
     ++p;
   }
@@ -122,7 +126,9 @@ bool RESOURCE_FILE::has(const std::string& tag) const {
 std::string RESOURCE_FILE::resource(const std::string& tag) const {
   if (has(tag) != true)
     return("");
-//    cerr << "Returning resource: " << resmap_rep[tag] << "." << endl;
+
+  // cerr << "Returning resource: " << resmap_rep[tag] << "." << endl;
+
   return(resmap_rep[tag]);
 }
 
@@ -149,7 +155,7 @@ void RESOURCE_FILE::resource(const std::string& tag, const std::string& value) {
   }
 
   if (found != true) {
-    lines_rep.push_back(tag + " = " + value + "\n");
+    lines_rep.push_back(tag + " = " + value);
   }
   modified_rep = true;
 }

@@ -16,6 +16,9 @@
    byte first (like Motorola and SPARC, unlike Intel and VAX).  */
 #undef WORDS_BIGENDIAN
 
+/* Package name */
+#undef ECASOUND_PREFIX_DIR
+
 /* whether to compile libaudiofile support */
 #undef COMPILE_AF
 

@@ -517,6 +517,23 @@ AC_TYPE_SIZE_T
 dnl ------------------------------------------------------------------
 
 dnl ---
+dnl Sets the ecaprefix variable
+dnl ---
+dnl Define ecaprefix depending on wether our user gives us one or not
+if test "x${prefix}" = "xNONE"; then
+  ecaprefix=${ac_default_prefix}
+else
+  ecaprefix=${prefix}
+fi
+
+dnl Set ECASOUND_PREFIX_DIR
+AC_SUBST(ECASOUND_PREFIX_DIR)
+AC_DEFINE_UNQUOTED(ECASOUND_PREFIX_DIR, "${ecaprefix}")
+
+
+dnl ------------------------------------------------------------------
+
+dnl ---
 dnl Create outputs 
 dnl ---
 AC_OUTPUT([
@@ -524,7 +541,6 @@ Makefile
 ecasound.spec
 libecasound/Makefile
 libecasound/ecasound-config
-libecasound/plugin-paths.h
 libecasound/plugins/Makefile
 libecasoundc/Makefile
 libecasoundc/ecasoundc-config
