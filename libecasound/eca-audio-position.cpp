@@ -18,7 +18,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <cmath> /* ceil() */
+#include <cmath>
+#include <math.h> /* ceil() */
 #include "eca-audio-position.h"
 
 ECA_AUDIO_POSITION::ECA_AUDIO_POSITION(void)

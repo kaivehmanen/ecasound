@@ -19,6 +19,7 @@
 // ------------------------------------------------------------------------
 
 #include <cmath>
+#include <math.h> /* floor() */
 #include "kvu_numtostr.h"
 #include "procedure_timer.h"
 

@@ -24,7 +24,6 @@ class ECA_CONTROL_BASE {
 
  private:
 
-  int retcode_rep;
   bool req_batchmode_rep;
   pthread_t th_cqueue_rep;
   ATOMIC_INTEGER engine_exited_rep;

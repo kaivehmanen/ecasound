@@ -34,7 +34,7 @@
 
 #include "locks.h"
 
-ATOMIC_INTEGER::ATOMIC_INTEGER(int value = 0) {
+ATOMIC_INTEGER::ATOMIC_INTEGER(int value) {
 #ifdef USE_ASM_ATOMIC
   atomic_t* ptr = new atomic_t;
   value_repp = reinterpret_cast<void*>(ptr);

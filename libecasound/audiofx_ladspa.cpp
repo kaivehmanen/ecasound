@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <assert.h>
 #include <dlfcn.h>
 #include <kvutils.h>
 #include <kvutils/dbc.h>

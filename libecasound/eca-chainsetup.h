@@ -100,7 +100,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void add_default_chain(void);
   void add_new_chains(const vector<string>& newchains);
   void remove_chains(void);
-  void select_chains(const vector<string>& chains) { selected_chainids = chains; }
+  void select_chains(const vector<string>& chainsarg) { selected_chainids = chainsarg; }
   void select_all_chains(void);
   void clear_chains(void);
   void rename_chain(const string& name);

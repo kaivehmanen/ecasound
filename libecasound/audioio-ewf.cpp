@@ -282,7 +282,7 @@ void EWFFILE::seek_position(void)
 
 void EWFFILE::init_default_child(void) throw(ECA_ERROR&)
 {
-  string::const_iterator e = find(label().begin(), label().end(), '.');
+  string::const_iterator e = std::find(label().begin(), label().end(), '.');
   if (e == label().end()) {
     throw(ECA_ERROR("AUDIOIO-EWF", "Invalid file name; unable to open file.",ECA_ERROR::retry));
   }

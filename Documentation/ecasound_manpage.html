@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>01.02.2002</h2>
+<h2>11.03.2002</h2>
 
 
     
@@ -129,11 +129,6 @@ circumstances (for instance when using oscillator envelopes) small
 buffer sizes will make envelopes act more smoothly. When not processing
 in real-time (all inputs and outputs are normal files), values between
 512 - 4096 often give better results. Default is 1024.
-<p><p></p><dt><strong>-m:mix-mode</strong><dd>
-Forces ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
-'simple' =  only one input/chain/output and 'normal' = normal 
-single-threaded mode. In most cases, ecasound is able to find out 
-the correct mode automatically.
 <p><p></p><dt><strong>-r:sched_priority</strong><dd>
 Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
 ecasound doesn't have root priviledges. Beware! This gives better 
