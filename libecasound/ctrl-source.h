@@ -34,11 +34,8 @@ class CONTROLLER_SOURCE : public OPERATOR {
    */
   parameter_t step_length(void) const { return(step_rep); }
 
-  /**
-   * Virtual method that clones the current object and returns 
-   * a pointer to it. This must be implemented by all subclasses!
-   */
   virtual CONTROLLER_SOURCE* clone(void) const = 0;
+  virtual CONTROLLER_SOURCE* new_expr(void) const = 0;
 
  private:
 

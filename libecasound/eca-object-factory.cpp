@@ -452,12 +452,12 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu) {
   if (gcontroller != 0) {
     new_gcontroller = gcontroller->new_expr();
     if (new_gcontroller != 0) {
-      CONTROLLER_SOURCE* csrc = gcontroller->source_pointer();
-
-      if (csrc != 0) 
-	new_gcontroller->assign_source(csrc);
-      else
-	new_gcontroller->assign_source(0);
+      const CONTROLLER_SOURCE* csource = gcontroller->source_pointer();
+      CONTROLLER_SOURCE* new_csource = 0;
+      if (csource != 0) {
+	new_csource = csource->new_expr();
+      }
+      new_gcontroller->assign_source(new_csource);
 
       ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Creating controller source \"" +  new_gcontroller->name() + "\"");
 
