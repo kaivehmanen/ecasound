@@ -555,7 +555,12 @@ if test x$alsa_support = x; then
 		 alsa_support=yes,
 	         alsa_support=no AC_CHECK_LIB(asound, main, AC_MSG_ERROR([ALSA version older than 0.9.0 not supported - update to a newer version or compile with --disable-alsa])))
 fi
+
 AM_CONDITIONAL(ECA_AM_COMPILE_ALSA, test x$alsa_support = xyes)
+
+if test x$alsa_support = xyes; then
+    AC_DEFINE(ECA_COMPILE_ALSA)
+fi    
 
 dnl ------------------------------------------------------------------
 
