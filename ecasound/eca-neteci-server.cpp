@@ -229,7 +229,7 @@ void ECA_NETECI_SERVER::listen_for_events(void)
    */
   while(state_repp->exit_request == 0) {
     // NETECI_DEBUG(cerr << "(eca-neteci-server) checking for events" << endl);
-    check_for_events(5000);
+    check_for_events(2000);
   }
 
   if (state_repp->exit_request != 0) {
