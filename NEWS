@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 020403) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 030403) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -34,6 +34,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 an audio i/o error
 	- fixed: inconsistencies in how configure --disable/enable-feat
 		 options were handled
+	- fixed: if pyecasound was disabled at build time, make
+		 install target failed in ecasound/pyecasound
 18032003 (v2.2.2)  -** stable release **-
 	- edi-entries: edi-35 and edi-36 added
 	- added: ecacontrol.py - a native python implementation of 
