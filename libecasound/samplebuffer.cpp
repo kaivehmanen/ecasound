@@ -55,7 +55,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels, sr
 
   buffer.resize(channels);
   for(size_t n = 0; n < buffer.size(); n++) {
-    buffer[n] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
+    buffer[n] = new sample_t [reserved_samples_rep];
     for(buf_size_t m = 0; m < reserved_samples_rep; m++) {
       buffer[n][m] = SAMPLE_SPECS::silent_value;
     }
@@ -87,7 +87,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
   buffer.resize(x.buffer.size());
 
   for(size_t n = 0; n < buffer.size(); n++) {
-    buffer[n] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
+    buffer[n] = new sample_t [reserved_samples_rep];
     memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_t));
   }
 
@@ -122,7 +122,7 @@ SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x) {
       buffer.resize(x.buffer.size());
 
       for(size_t n = 0; n < buffer.size(); n++) {
-	buffer[n] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
+	buffer[n] = new sample_t [reserved_samples_rep];
 	for(buf_size_t m = 0; m < reserved_samples_rep; m++) {
 	  buffer[n][m] = SAMPLE_SPECS::silent_value;
 	}
@@ -167,7 +167,7 @@ void SAMPLE_BUFFER::number_of_channels(channel_size_t len)
     size_t old_size = buffer.size();
     buffer.resize(len);
     for(channel_size_t n = old_size; n < len; n++) {
-      buffer[n] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
+      buffer[n] = new sample_t [reserved_samples_rep];
     }
     ecadebug->msg(ECA_DEBUG::system_objects, "(samplebuffer<>) Increasing channel-count (1).");    
   }
@@ -191,7 +191,7 @@ void SAMPLE_BUFFER::resize(buf_size_t buffersize) {
     reserved_samples_rep = buffersize;
     for(size_t n = 0; n < buffer.size(); n++) {
       delete[] buffer[n];
-      buffer[n] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
+      buffer[n] = new sample_t [reserved_samples_rep];
     }
 
     if (impl_repp->old_buffer_repp != 0) {
@@ -1091,18 +1091,19 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
  */
 void SAMPLE_BUFFER::resample_init_memory(srate_size_t from_srate,
 					 srate_size_t to_srate) {
-  double step = static_cast<double>(to_srate) / from_srate;
+  double step = 1.0;
+  if (from_srate != 0) { step = static_cast<double>(to_srate) / from_srate; }
   buf_size_t new_buffer_size = static_cast<buf_size_t>(step * buffersize_rep);
 
   if (impl_repp->old_buffer_repp == 0) 
-    impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep * sizeof(sample_t)];
+    impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep];
 
-  for(int c = 0; c < channel_count_rep; c++) {
+  if (new_buffer_size > reserved_samples_rep) {
+    reserved_samples_rep = new_buffer_size;
 
-    if (new_buffer_size > reserved_samples_rep) {
-      reserved_samples_rep = new_buffer_size;
+    for(int c = 0; c < channel_count_rep; c++) {
       delete[] buffer[c];
-      buffer[c] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
+      buffer[c] = new sample_t [reserved_samples_rep];
     }
   }
 
