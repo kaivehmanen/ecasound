@@ -358,7 +358,7 @@ static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id)
   vector<string> dir_names;
   char* env = std::getenv("LADSPA_PATH");
   if (env != 0) {
-    dir_names = kvu_string_to_vector(string(), ':');
+    dir_names = kvu_string_to_vector(string(env), ':');
   }
 
   ECA_RESOURCES ecarc;
