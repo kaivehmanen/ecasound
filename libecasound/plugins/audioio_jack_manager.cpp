@@ -825,7 +825,7 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 	    jackslave_seekahead_target_rep) {
 	  DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: seek requested to pos=" 
 				<< engine_repp->current_position_in_samples() << "." << endl);
-	  jack_transport_goto_frame(client_repp, engine_repp->current_position_in_samples());
+	  jack_transport_locate(client_repp, engine_repp->current_position_in_samples());
 	}
       }
 #endif
