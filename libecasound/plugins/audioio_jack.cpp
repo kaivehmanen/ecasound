@@ -181,9 +181,9 @@ void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples)
 {
   /* FIXME: case where samples!=buffersize() not handled */
 
-  DBC_CHECK(samples != buffersize());
-
   if (jackmgr_rep != 0) {
+    DBC_CHECK(samples == jackmgr_rep->buffersize());
+    
     jackmgr_rep->write_samples(myid_rep, target_buffer, samples);
   }
 }
