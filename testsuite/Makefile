@@ -5,10 +5,11 @@ CXXFLAGS += $(ECAFLAGS)
 CFLAGS += $(ECAFLAGS)
 LDFLAGS += $(ECALINK)
 
-COMMON_SRC = 	ecatestsuite.h
-TARGETS=	eci_test1 \
-		eci_test2 \
-		eci_test3
+COMMON_SRC = 		ecatestsuite.h
+GENERATED_FILES = 	ecatestlist.txt
+TARGETS=		eci_test1 \
+			eci_test2 \
+			eci_test3
 
 all: $(TARGETS) create-test-list
 
@@ -16,4 +17,4 @@ create-test-list:
 	echo $(TARGETS) > ecatestlist.txt
 
 clean:
-	rm -f $(TARGETS)
+	rm -f $(TARGETS) $(GENERATED_FILES)

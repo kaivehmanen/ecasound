@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
   eci_command("cs-add default");
   eci_command("cs-selected");
   if (memcmp(eci_last_string(), "default", 7) != 0) {
-    ECA_TEST_FAIL(1, "chainsetup count mismatch");
+    ECA_TEST_FAIL(1, "chainsetup addition or selection failed");
   }
 
   eci_command("cs-set-length 15");
@@ -28,8 +28,8 @@ int main(int argc, char *argv[]) {
   eci_command("-i:foo.wav");
   eci_command("-o:null");
   eci_command("cs-connect");
-  eci_command("cs-is-connected");
-  if (eci_last_integer() != 0) {
+  eci_command("cs-connected");
+  if (memcmp(eci_last_string(), "default", 7) != 0) {
     ECA_TEST_FAIL(3, "can't connect chainsetup");
   }
   

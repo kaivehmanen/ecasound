@@ -1,15 +1,36 @@
 #!/usr/bin/python
 
+import sys
 import os
 import string
 
-file = open("ecatestlist.txt")
-lines = file.readlines()
-file.close()
+def check_for_test_data_files(filenamestr):
+    try:
+        file = open(filenamestr)
+        file.close()
+    except IOError:
+        print "Test data file '" + filenamestr + "' not found; can't run tests. See 'README.txt'."
+        sys.exit(1)
 
-for line in lines:
-    testcases = string.split(line)
-    for testcase in testcases:
-        print "Running test " + testcase + ":"
-        os.system("./" + testcase)
+def run_tests():
+    check_for_test_data_files("foo.wav")
+    check_for_test_data_files("ecatestlist.txt")
     
+    file = open("ecatestlist.txt")
+    lines = file.readlines()
+    file.close()
+
+    failed = 0
+    for line in lines:
+        testcases = string.split(line)
+        for testcase in testcases:
+            print "Running test " + testcase + ":"
+            res = os.system("./" + testcase)
+            print ""
+            if res:
+                failed = 1
+    return failed
+
+# main
+sys.exit(run_tests())
+        

@@ -29,9 +29,10 @@ files and device are used:
 /dev/dsp	  - OSS output file
 
 ---
-List of subsystem tags
+List of test categories
 
-[ECI] - Ecasound Control Interface (eci_*)
+ECI - Test cases utilizing the ECI API (Ecasound Control 
+      Interface); (eci_*)
 
 ---
 List of current tests
@@ -39,7 +40,7 @@ List of current tests
 ECI-1 - Initializing the ECI C-interface multiple times.
 ECI-2 - Like ECI-1, but uses re-entrant API functions.
 ECI-3 - Snapshot test for basic ECI C API functionality, where 
-        a simple chainsetup is configured, connected and then
-	executed. Multiple error conditions.
+            a simple chainsetup is configured, connected and then
+	    executed. Multiple error conditions.
 
 -----------------------------------------------------------------------
