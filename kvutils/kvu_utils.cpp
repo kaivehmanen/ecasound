@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// kvu_utils.cpp: Misc helper routines
+// kvu_utils.cpp: Miscellaneous helper routines
 // Copyright (C) 1999-2004 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,9 @@
 
 using namespace std;
 
+static string::const_iterator kvu_priv_find_next_instance(const string& arg, const string::const_iterator& curpos, const string::value_type value);
+static void kvu_priv_strip_escapes(string* const input);
+
 /**
  * Converts a string to a vector of strings (words).
  * Whitespace is used as the separator.
@@ -46,7 +49,7 @@ using namespace std;
  */
 vector<string> kvu_string_to_words(const string& s)
 {
-  return(kvu_string_to_tokens(s));
+  return kvu_string_to_tokens(s);
 }
 
 /**
@@ -70,7 +73,7 @@ vector<string> kvu_string_to_tokens(const string& s)
   if (stmp.size() > 0)
     vec.push_back(stmp);
 
-  return(vec);
+  return vec;
 }
 
 /**
@@ -79,10 +82,11 @@ vector<string> kvu_string_to_tokens(const string& s)
  *
  * Unlike string_to_tokens(), quotes can be used to mark 
  * groups of words as tokens (e.g. "this is one token").
+ * Single-quotes (') are not supported.
  *
  * It's also possible to add individual whitespace
  * characted by escaping them with a backclash (e.g.
- * 'this\ is\ one token\ '). Escaped characters are
+ * 'this\ is\ one\ token\ '). Escaped characters are
  * not considered as possible separators.
  */
 vector<string> kvu_string_to_tokens_quoted(const string& s)
@@ -111,7 +115,7 @@ vector<string> kvu_string_to_tokens_quoted(const string& s)
   if (stmp.size() > 0)
     vec.push_back(stmp);
 
-  return(vec);
+  return vec;
 }
 
 /**
@@ -138,7 +142,7 @@ vector<string> kvu_string_to_vector(const string& str,
   if (stmp.size() > 0)
     vec.push_back(stmp);
 
-  return(vec);
+  return vec;
 }
 
 /**
@@ -165,7 +169,7 @@ vector<int> kvu_string_to_int_vector(const string& str,
   if (stmp.size() > 0)
     vec.push_back(atoi(stmp.c_str()));
 
-  return(vec);
+  return vec;
 }
 
 /**
@@ -188,7 +192,7 @@ string kvu_vector_to_string(const vector<string>& str,
       stmp += separator;
   }
 
-  return(stmp);
+  return stmp;
 }
 
 /**
@@ -205,7 +209,7 @@ string kvu_string_search_and_replace(const string& str,
     else stmp[p] = str[p];
   }
 
-  return(stmp);
+  return stmp;
 }
 
 
@@ -226,7 +230,7 @@ bool kvu_string_icmp(const string& first, const string& second)
   b = kvu_remove_preceding_spaces(b);
   b = kvu_convert_to_uppercase(b);
 
-  return(a == b);
+  return a == b;
 }
 
 /**
@@ -242,7 +246,7 @@ string kvu_remove_trailing_spaces(const string& a)
   for(; p != a.rend(); p++) {
     r = *p + r;
   }
-  return(r);
+  return  r;
 }
 
 /**
@@ -258,7 +262,7 @@ string kvu_remove_preceding_spaces(const string& a)
   for(; p != a.end(); p++) {
     r += *p;
   }
-  return(r);
+  return r;
 }
 
 /**
@@ -269,7 +273,7 @@ string kvu_remove_surrounding_spaces(const string& a)
   string::const_iterator p,q;
   for(p = a.begin(); p != a.end() && *p == ' '; p++);
   for(q = (a.end() - 1); q != a.begin() && *q == ' '; q--);
-  return(string(p,q + 1));
+  return string(p,q + 1);
 }
 
 /**
@@ -279,7 +283,7 @@ string kvu_convert_to_uppercase(const string& a) {
   string r = a;
   for(string::iterator p = r.begin(); p != r.end(); p++)
     *p = toupper(*p);
-  return(r);
+  return r;
 }
 
 /**
@@ -290,7 +294,7 @@ string kvu_convert_to_lowercase(const string& a)
   string r = a;
   for(string::iterator p = r.begin(); p != r.end(); p++)
     *p = tolower(*p);
-  return(r);
+  return r;
 }
 
 /**
@@ -318,6 +322,36 @@ void kvu_to_lowercase(string& a) {
 }
 
 /**
+ * Finds the next instance of character 'value' and returns its
+ * position.
+ * 
+ * All backslash escaped instances of 'value' ("\<value>")
+ * are ignored in the search. Note that general backlash 
+ * escaping is not supported, i.e. "\<character>" is not
+ * interpreted as "<character>".
+ *
+ * @return position of next 'value' or arg.end() if not found
+ */
+static string::const_iterator kvu_priv_find_next_instance(const string& arg, const string::const_iterator& start, const string::value_type value)
+{
+  string::const_iterator curpos = start, ret;
+
+  while(curpos != arg.end()) {
+    ret = find(curpos, arg.end(), value);
+    if (ret != arg.end() && ret != arg.begin()) {
+      string::const_iterator prev = ret - 1;
+      if ((*prev) == '\\') {
+	curpos = ret + 1;
+	continue;
+      }
+    }
+    break;
+  }
+
+  return ret;
+}
+
+/**
  * Returns the nth argument from a formatted string
  *
  * @param number the argument number 
@@ -326,69 +360,34 @@ void kvu_to_lowercase(string& a) {
  * require:
  *  number >= 1
  */
-string kvu_get_argument_number(int number, const string& argu)
+string kvu_get_argument_number(int number, const string& arg)
 {
-    int curnro = 1;
-    string::const_iterator e;
-    string::const_iterator b = find(argu.begin(), argu.end(), ':');
+  string result;
+  vector<string> temp = kvu_get_arguments(arg);
+  if (static_cast<int>(temp.size()) >= number) {
+    result = temp[number - 1];
+  }
+  return result;
+}
 
-    string target;
-
-    if (b == argu.end()) {
-      if (argu.size() > 0) b = argu.begin();
-      else {
-	return("");
-      }
-    }
-    else 
-      ++b;
-
-    // FIXME: should parse escaped commands
-
-    do {
-        e = find(b, argu.end(), ',');
-
-        if (number == curnro) {
-            target = string(b, e);
-            break;
-        }
-        curnro++;
-
-        b = e;
-        ++b;
-    } while( b < argu.end());
-
-    return(target);
+/**
+ * Converts all backslash-commas into commas and returns
+ * the result.
+ */
+static void kvu_priv_strip_escapes(string* const input)
+{
+  size_t pos; 
+  while((pos = input->find("\\,")) != string::npos) {
+    input->replace(pos, 2, ",");
+  }
 }
 
 /** 
- * Returns number of arguments in formatted string 'argu'.
+ * Returns number of arguments in formatted string 'arg'.
  */
-int kvu_get_number_of_arguments(const string& argu)
+int kvu_get_number_of_arguments(const string& arg)
 {
-  int result = 0;
-
-  string::const_iterator b,e; 
-  b = find(argu.begin(), argu.end(), ':');
-
-  if (b == argu.end()) {
-    if (argu.size() > 0) b = argu.begin();
-    else return(0);
-  }
-  else 
-    ++b;
-
-  // FIXME: should parse escaped commands
-
-  for(; b != argu.end(); b++) {
-    e = find(b, argu.end(), ',');
-    if (b != e) {
-      ++result;
-    }
-    if (e == argu.end()) break;
-    b = e;
-  }
-  return(result);
+  return kvu_get_arguments(arg).size();
 }
 
 /**
@@ -398,30 +397,31 @@ int kvu_get_number_of_arguments(const string& argu)
  */
 vector<string> kvu_get_arguments(const string& argu)
 {
-  vector<string> rvalue;
+  vector<string> resvec;
 
   string::const_iterator b = find(argu.begin(), argu.end(), ':');
   string::const_iterator e;
 
   if (b == argu.end()) {
     if (argu.size() > 0) b = argu.begin();
-    else return(rvalue);
+    else return resvec;
   }
   else 
     ++b;
 
-  // FIXME: should parse escaped commands
-
   for(; b != argu.end(); b++) {
-    e = find(b, argu.end(), ',');
+    e = kvu_priv_find_next_instance(argu, b, ',');
     string target = string(b, e);
     if (target.size() > 0) {
-      rvalue.push_back(target);
+      // FIXME: strip backslash-commas (and leave the commas in place)      
+      kvu_priv_strip_escapes(&target);
+      resvec.push_back(target);
     }
     if (e == argu.end()) break;
     b = e;
   }
-  return(rvalue);
+
+  return resvec;
 }
 
 /**
@@ -432,7 +432,7 @@ vector<string> kvu_get_arguments(const string& argu)
  *   argu.find('-') != string::npos
  *
  * ensure:
- *   argu.size() >= 0
+ *   result.size() >= 0
  */
 string kvu_get_argument_prefix(const string& argu)
 {
@@ -446,15 +446,11 @@ string kvu_get_argument_prefix(const string& argu)
   if (b != argu.end()) {
     ++b;
     if (b !=  argu.end()) {
-      return(string(b,e));
+      return string(b,e);
     }
   }
 
-  return("");
-
-  // --------
-  DBC_ENSURE(argu.size() >= 0);
-  // --------
+  return "";
 }
 
 /**
@@ -513,5 +509,5 @@ int kvu_sleep(long int seconds, long int nanoseconds)
   cerr << "(libkvutils) kvutils:: warning! neither nanosleep() or usleep() found!" << endl;
 #endif
 
-  return(ret);
+  return ret;
 }

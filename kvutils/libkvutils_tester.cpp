@@ -109,8 +109,8 @@ static void* kvu_test_1_helper(void* ptr)
       i->set(j);
     }
     j = i->get();
-    if (j > 0) { ECA_TEST_FAIL((void*)3, "kvu_test_1_helper access error (1)"); }
-    if (j < -1) { ECA_TEST_FAIL((void*)3, "kvu_test_1_helper access error (2)"); }
+    if (j > 0) { ECA_TEST_FAIL((void*)1, "kvu_test_1_helper access error (1)"); }
+    if (j < -1) { ECA_TEST_FAIL((void*)1, "kvu_test_1_helper access error (2)"); }
 
     prev = now;
     now = clock();
@@ -153,8 +153,8 @@ static int kvu_test_1(void)
     }
 
     j = i.get();
-    if (j > 0) { ECA_TEST_FAIL(3, "kvu_test_1 access error (3)"); }
-    if (j < -1) { ECA_TEST_FAIL(3, "kvu_test_1 access error (4)"); }
+    if (j > 0) { ECA_TEST_FAIL(1, "kvu_test_1 access error (3)"); }
+    if (j < -1) { ECA_TEST_FAIL(1, "kvu_test_1 access error (4)"); }
 
     prev = now;
     now = clock();
@@ -175,59 +175,93 @@ static int kvu_test_2(void)
 {
   ECA_TEST_ENTRY();
 
+  /* string comparison: */
+
   if (kvu_string_icmp(" foo ", " fOo ") != true) {
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_icmp"); 
   }
 
+  /* vectorization: */
+
   vector<string> vec = kvu_string_to_tokens(" a foo string ");
   if (vec.size() != 3) {
-    ECA_TEST_FAIL(2, "kvu_test_2 kvu_string_to_tokens (1)");
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_to_tokens (1)");
   }
   if (vec[2] != "string") {
-    ECA_TEST_FAIL(3, "kvu_test_2 kvu_string_to_tokens (2)"); 
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_to_tokens (2)"); 
   }
 
   vec = kvu_string_to_tokens_quoted("a foo\\ string");
   if (vec.size() != 2) {
-    ECA_TEST_FAIL(4, "kvu_test_2 kvu_string_to_tokens_quoted (1)");
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_to_tokens_quoted (1)");
   }
   if (vec[1] != "foo string") {
-    ECA_TEST_FAIL(5, "kvu_test_2 kvu_string_to_tokens_quoted (2)"); 
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_to_tokens_quoted (2)"); 
   }
 
-  const string argument ("-efoobarsouNd:arg1,arg2,arg3");
+  vec = kvu_string_to_tokens_quoted("another\\ foo \"with substring\" \\\\slashes");
+  if (vec.size() != 3) {
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_to_tokens_quoted (3)");
+  }
+  if (vec[1] != "with substring") {
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_to_tokens_quoted (4)"); 
+  }
+  if (vec[2] != "\\slashes") {
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_to_tokens_quoted (5)"); 
+  }
+
+  /* de-vectorization: */
+  vector<string> test;
+  test.push_back(" foo");
+  test.push_back("bar ");
+  if (kvu_vector_to_string(test, "") != " foobar ") {
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_vector_to_string (1)"); 
+  }
+
+  /* argument string parsing: */
+
+  const string argument ("-efoobarsouNd:arg1,arg2,arg3,long\\,arg4,arg5,");
 
   if (kvu_get_argument_prefix(argument) != "efoobarsouNd") {
-    ECA_TEST_FAIL(6, "kvu_test_2 kvu_get_argument_prefix"); 
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_argument_prefix"); 
   }
 
-  if (kvu_get_argument_number(3, argument) != "arg3") {
-    ECA_TEST_FAIL(7, "kvu_test_2 kvu_get_argument_number"); 
+  if (kvu_get_argument_number(5, argument) != "arg5") {
+    fprintf(stderr, "vec2: '%s'.\n", kvu_get_argument_number(5, argument).c_str());
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_argument_number (1)"); 
+  }
+
+  /* request for non-existant arg should return an empty string */
+  if (kvu_get_argument_number(6, argument) != "") {
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_argument_number (2)"); 
   }
 
   vec = kvu_get_arguments(argument);
-  if (vec.size() != 3) {
-    ECA_TEST_FAIL(8, "kvu_test_2 kvu_get_arguments (1)"); 
+  if (vec.size() != 5) {
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_arguments (1)"); 
   }
 
-  if (vec[2] != "arg3" || vec[0] != "arg1") {
-    ECA_TEST_FAIL(9, "kvu_test_2 kvu_get_arguments (2)"); 
+  if (vec[2] != "arg3" || vec[0] != "arg1" || vec[3] != "long,arg4") {
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_arguments (2)"); 
   }
 
-  if (kvu_get_number_of_arguments(argument) != 3) {
-    ECA_TEST_FAIL(10, "kvu_test_2 kvu_get_number_of_arguments"); 
+  if (kvu_get_number_of_arguments(argument) != 5) {
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_number_of_arguments"); 
   }
+
+  /* search and replace: */
 
   if (kvu_string_search_and_replace("foo bar", 'f', 'b')
       != "boo bar") {
-    ECA_TEST_FAIL(11, "kvu_test_2 kvu_string_search_and_replace"); 
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_search_and_replace"); 
   }
 
   ECA_TEST_SUCCESS();
 }
 
 /**
- * Tests the floating point to text conversion functions.
+ * Tests the floating point to text conversion functions defined
+ * in kvu_numtostr.h.
  */
 static int kvu_test_3(void)
 {
@@ -246,7 +280,7 @@ static int kvu_test_3(void)
   string barstr = kvu_numtostr(bar, 8);
   if (barstr != "0.12345678") {
     // fprintf(stderr, "bar=%.8f, res=%s.\n", bar, barstr.c_str());
-    ECA_TEST_FAIL(2, "kvu_test_3 kvu_numtostr float"); 
+    ECA_TEST_FAIL(1, "kvu_test_3 kvu_numtostr float"); 
   }
 
   ECA_TEST_SUCCESS();

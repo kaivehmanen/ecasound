@@ -25,9 +25,9 @@ std::string kvu_convert_to_lowercase(const std::string& a);
 void kvu_to_uppercase(std::string& a);
 void kvu_to_lowercase(std::string& a);
 
-std::string kvu_get_argument_number(int number, const std::string& argu);
-std::vector<std::string> kvu_get_arguments(const std::string& argu);
-int kvu_get_number_of_arguments(const std::string& argu);
+std::string kvu_get_argument_number(int number, const std::string& arg);
+std::vector<std::string> kvu_get_arguments(const std::string& arg);
+int kvu_get_number_of_arguments(const std::string& arg);
 std::string kvu_get_argument_prefix(const std::string& argument);
 
 void kvu_print_time_stamp(void);
