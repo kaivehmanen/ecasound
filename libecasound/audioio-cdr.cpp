@@ -29,6 +29,10 @@
 #define ftello std::ftell
 #endif
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <cmath>
 #include <cstdio>
 #include <string>
@@ -36,6 +40,9 @@
 #include <cassert>
 #include <sys/stat.h> /* stat() */
 #include <unistd.h> /* stat() */
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* off_t */
+#endif
 
 #include <kvutils/dbc.h>
 
