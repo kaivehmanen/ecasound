@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (18.04.2004)
+       (01.05.2004)
        ()
        (Multimedia software)
 
@@ -191,7 +191,9 @@ dit(cs-get-length-samples, get-length-samples)
 Returns the chainsetup length in samples (if known). em([li])
 
 dit(cs-set-length 'seconds')
-Sets processing time in seconds (doesn't have to be an integer value). em([-])
+Sets processing time in seconds (doesn't have to be an integer value). 
+A special-case value of '-1' will set the chainsetup length 
+according to the longest input object. em([-])
 
 dit(cs-set-length-samples 'samples')
 Sets processing time in samples. em([-])

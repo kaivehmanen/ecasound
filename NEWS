@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 170404) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 010504) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -16,6 +16,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 xx052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command
+	- added: special-case value of '-1' to 'cs-set-length' or
+		 '-t:xxx' will set the chainsetup length according
+		 to the longest input object
 	- changed: lots of typo fixes and other corrections to 
 	           the user's guide [ericdr]
 	- changed: minor configure.in cleanup relating to handling

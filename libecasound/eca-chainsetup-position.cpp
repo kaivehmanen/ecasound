@@ -42,12 +42,25 @@ double ECA_CHAINSETUP_POSITION::max_length_in_seconds_exact(void) const
   return((double)max_length_in_samples_rep / (double)samples_per_second());
 }
 
+/**
+ * Explicitly sets the chainsetup length (in seconds).
+ *
+ * A special-case value of '-1 * srate' can be used to override 
+ * a previously set chainsetup length. 
+ *
+ * @post ((pos == -1 * samples_per_second()) && (max_length_set() != true)) ||
+ *       (max_length_set() == true)
+ */
 void ECA_CHAINSETUP_POSITION::set_max_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
 {
   max_length_in_samples_rep = pos;
-  max_length_set_rep = true;
+  if (pos != -1 * samples_per_second()) {
+    max_length_set_rep = true;
+  }
+  else {
+    max_length_set_rep = false;
+  }
 }
-
 
 void ECA_CHAINSETUP_POSITION::set_max_length_in_seconds(double pos_in_seconds)
 {

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>18.04.2004</h2>
+<h2>01.05.2004</h2>
 
 
     
@@ -166,7 +166,9 @@ Returns the chainsetup length in seconds (if known). <em>[f]</em>
 <p><p></p><dt><strong>cs-get-length-samples, get-length-samples</strong><dd>
 Returns the chainsetup length in samples (if known). <em>[li]</em>
 <p><p></p><dt><strong>cs-set-length 'seconds'</strong><dd>
-Sets processing time in seconds (doesn't have to be an integer value). <em>[-]</em>
+Sets processing time in seconds (doesn't have to be an integer value). 
+A special-case value of '-1' will set the chainsetup length 
+according to the longest input object. <em>[-]</em>
 <p><p></p><dt><strong>cs-set-length-samples 'samples'</strong><dd>
 Sets processing time in samples. <em>[-]</em>
 <p><p></p><dt><strong>cs-toggle-loop</strong><dd>

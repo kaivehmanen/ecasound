@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (18.04.2004)
+       (01.05.2004)
        ()
        (Multimedia software)
 
@@ -186,7 +186,8 @@ dit(-t:seconds)
 Sets processing time in seconds (doesn't have to be an integer value).
 If processing time isn't set, engine stops when all inputs are 
 finished. This option is equivalent to the 'cs-set-length' EIAM
-command.
+command. A special-case value of '-1' will set the chainsetup length 
+according to the longest input object.
 
 dit(-tl)
 Enables looping. When processing is finished, engine will start 

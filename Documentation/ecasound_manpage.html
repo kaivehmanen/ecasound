@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>18.04.2004</h2>
+<h2>01.05.2004</h2>
 
 
     
@@ -166,7 +166,8 @@ See section <em>General chainsetup options</em> for details.
 Sets processing time in seconds (doesn't have to be an integer value).
 If processing time isn't set, engine stops when all inputs are 
 finished. This option is equivalent to the 'cs-set-length' EIAM
-command.
+command. A special-case value of '-1' will set the chainsetup length 
+according to the longest input object.
 <p><p></p><dt><strong>-tl</strong><dd>
 Enables looping. When processing is finished, engine will start 
 again from beginning. This option is equivalent to the 'cs-loop' 

@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "18\&.04\&.2004" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "01\&.05\&.2004" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -169,7 +169,9 @@ Returns the chainsetup length in seconds (if known)\&. \fI[f]\fP
 Returns the chainsetup length in samples (if known)\&. \fI[li]\fP
 .PP 
 .IP "cs-set-length \'seconds\'" 
-Sets processing time in seconds (doesn\'t have to be an integer value)\&. \fI[-]\fP
+Sets processing time in seconds (doesn\'t have to be an integer value)\&. 
+A special-case value of \'-1\' will set the chainsetup length 
+according to the longest input object\&. \fI[-]\fP
 .PP 
 .IP "cs-set-length-samples \'samples\'" 
 Sets processing time in samples\&. \fI[-]\fP
