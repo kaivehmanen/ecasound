@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??032003 (v2.2.2)  -** stable release **-
+18032003 (v2.2.2)  -** stable release **-
 	- edi-entries: edi-35 and edi-36 added
 	- added: ecacontrol.py - a native python implementation of 
 		 the ECI API [jhalttun]
@@ -44,6 +44,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: use LOGNAME instead of USER for creating temporary 
 		 files for ecanormalize and ecafixdc
 	- fixed: -tl has been broken since 2.2.0-pre5
+	- fixed: copp-list dumped core if no was cop selected
 15022003 (v2.2.1)  -** stable release **-
 	- added: sane default param hints for chainops: -ec, -etd,
 		 -ete, -etf, -etl, -etm, -etp, -etr and -epp
