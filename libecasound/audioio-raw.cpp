@@ -113,9 +113,10 @@ void RAWFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
 }
 
 void RAWFILE::close(void) {
-  if (fio_repp != 0) {
+  if (is_open() && fio_repp != 0) {
     fio_repp->close_file();
     delete fio_repp;
+    fio_repp = 0;
   }
   toggle_open_state(false);
 }

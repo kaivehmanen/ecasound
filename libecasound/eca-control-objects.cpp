@@ -1645,7 +1645,8 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(const string& chainop_params) {
   }
 
   try {
-    selected_chainsetup_repp->interpret_object_option(chainop_params);
+    if (chainop_params[0] == '-')
+      selected_chainsetup_repp->interpret_object_option(chainop_params);
   }
   catch(ECA_ERROR& e) {
     set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
@@ -1984,7 +1985,8 @@ void ECA_CONTROL_OBJECTS::add_controller(const string& gcontrol_params) {
   }
 
   try {
-    selected_chainsetup_repp->interpret_object_option(gcontrol_params);
+    if (gcontrol_params[0] == '-')
+      selected_chainsetup_repp->interpret_object_option(gcontrol_params);
   }
   catch(ECA_ERROR& e) {
     set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
