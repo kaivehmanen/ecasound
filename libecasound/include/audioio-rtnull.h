@@ -18,6 +18,7 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
 
   void stop(void);
   void start(void);
+  void prepare(void) { }
 
   long int latency(void) const;
 

@@ -45,6 +45,7 @@ Last officially released version is -*> v1.6.12r10 <*-
 		 when processing length was not set
 	- fixed: setting processing length didn't work in normal 
 		 passive mixing mode (multiple chains)
+	- fixed: overrun/underrun problem with ALSA 0.5.x
 30012000 (v1.6.13d11)
 	- changed: rtnull reports about over/underruns now
 		   level-4 debug messages

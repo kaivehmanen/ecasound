@@ -53,6 +53,7 @@ ALSA_PCM2_DEVICE::ALSA_PCM2_DEVICE (int card,
   subdevice_number = subdevice;
   pcm_mode = SND_PCM_MODE_BLOCK;
   is_triggered = false;
+  is_prepared = false;
   overruns = underruns = 0;
   eca_alsa_load_dynamic_support();
   buffersize(bsize, samples_per_second());
@@ -65,8 +66,6 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   // Channel initialization
 
   struct snd_pcm_channel_params params;
-  struct snd_pcm_channel_setup setup;
-
   memset(&params, 0, sizeof(params));
 
   // -------------------------------------------------------------------
@@ -140,6 +139,8 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
     params.start_mode = SND_PCM_START_GO;
   params.stop_mode = SND_PCM_STOP_ROLLOVER;
 
+  //  params.stop_mode = SND_PCM_STOP_STOP;
+
   params.mode = pcm_mode;
   params.channel = pcm_channel;
 
@@ -161,56 +162,77 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
     throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when setting up channel params: " + string(dl_snd_strerror(err))));
   }
 
-  dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
-  err = dl_snd_pcm_channel_prepare(audio_fd, pcm_channel);
-  if (err < 0) {
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(dl_snd_strerror(err))));
-  }
+  struct snd_pcm_channel_setup setup;
+  setup.channel = params.channel;
+  setup.mode = params.mode;
+  dl_snd_pcm_channel_setup(audio_fd, &setup);
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Fragment size: " +
+		kvu_numtostr(setup.buf.block.frag_size) + ", max: " +
+		kvu_numtostr(setup.buf.block.frags_max) + ", min: " +
+		kvu_numtostr(setup.buf.block.frags_min) + ", current: " +
+		kvu_numtostr(setup.buf.block.frags) + ".");
+
+//  dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
+//  err = dl_snd_pcm_channel_prepare(audio_fd, pcm_channel);
+//  if (err < 0)
+//    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(dl_snd_strerror(err))));
 
   toggle_open_state(true);
 }
 
 void ALSA_PCM2_DEVICE::stop(void) {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Audio device \"" + label() + "\" disabled.");
+  assert(is_triggered == true);
+  assert(is_open() == true);
+  assert(is_prepared == true);
+
+  snd_pcm_channel_status_t status;
+  memset(&status, 0, sizeof(status));
+  status.channel = pcm_channel;
+  dl_snd_pcm_channel_status(audio_fd, &status);
+  underruns += status.underrun;
+
   int err = dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when flushing channel: " + string(dl_snd_strerror(err))));
 
-  err = dl_snd_pcm_channel_prepare(audio_fd, pcm_channel);
-  if (err < 0)
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(dl_snd_strerror(err))));
-  
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Audio device \"" + label() + "\" disabled.");
+
   is_triggered = false;
+  is_prepared = false;
 }
 
 void ALSA_PCM2_DEVICE::close(void) {
-  if (is_open()) {
+  assert(is_open() == true);
+
+  if (is_triggered == true) stop();
+  dl_snd_pcm_close(audio_fd);
+  toggle_open_state(false);
+}
+
+void ALSA_PCM2_DEVICE::prepare(void) {
+  assert(is_open() == true);
+  assert(is_prepared == false);
+
+  int err = dl_snd_pcm_channel_prepare(audio_fd, pcm_channel);
+  if (err < 0)
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(dl_snd_strerror(err))));
+  is_prepared = true;
+}
+
+void ALSA_PCM2_DEVICE::start(void) {
+  assert(is_triggered == false);
+  assert(is_open() == true);
+  assert(is_prepared == true);
+
+  if (io_mode() == si_write) {
     snd_pcm_channel_status_t status;
     memset(&status, 0, sizeof(status));
     status.channel = pcm_channel;
     dl_snd_pcm_channel_status(audio_fd, &status);
-    underruns += status.underrun;
-    dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
-    dl_snd_pcm_close(audio_fd);
-  }    
-  toggle_open_state(false);
-}
-
-void ALSA_PCM2_DEVICE::start(void) {
-  if (is_open() == false) {
-    open();
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Bytes in output-queue: " + kvu_numtostr(status.count) + ".");
   }
-  if (is_triggered == false) {
-    if (io_mode() == si_write) {
-      snd_pcm_channel_status_t status;
-      memset(&status, 0, sizeof(status));
-      status.channel = pcm_channel;
-      dl_snd_pcm_channel_status(audio_fd, &status);
-      ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Bytes in output-queue: " + kvu_numtostr(status.count) + ".");
-    }
-    dl_snd_pcm_channel_go(audio_fd, pcm_channel);
-    is_triggered = true;
-  }
+  dl_snd_pcm_channel_go(audio_fd, pcm_channel);
+  is_triggered = true;
 }
 
 long int ALSA_PCM2_DEVICE::read_samples(void* target_buffer, 

@@ -45,6 +45,7 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
 
   void stop(void) { }
   void start(void) { }
+  void prepare(void) { }
 
   long position_in_samples(void) const { return(0); }
 

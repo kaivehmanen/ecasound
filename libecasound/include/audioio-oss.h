@@ -48,6 +48,7 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 
   void stop(void);
   void start(void) throw(ECA_ERROR*);
+  void prepare(void) { }
 
   long position_in_samples(void) const;
 

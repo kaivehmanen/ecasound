@@ -522,6 +522,10 @@ void ECA_PROCESSOR::start(void) {
   if (eparams->status() == ep_status_running) return;
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Start");
 
+  for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_objects.size()); adev_sizet++) {
+    realtime_objects[adev_sizet]->prepare();
+  }
+
   if (eparams->multitrack_mode == true) {
     assert(mixmode != ECA_CHAINSETUP::ep_mm_mthreaded);
     multitrack_sync();

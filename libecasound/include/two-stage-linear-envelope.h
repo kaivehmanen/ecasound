@@ -17,7 +17,7 @@ class TWO_STAGE_LINEAR_ENVELOPE : public FINITE_ENVELOPE {
 
   void init(parameter_type step);
 
-  string parameter_names(void) const { return("1st_stage_sec,2nd_stage_sec,midpoint_level_%"); }
+  string parameter_names(void) const { return("1st_stage_sec,2nd_stage_sec"); }
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
 
@@ -27,10 +27,7 @@ class TWO_STAGE_LINEAR_ENVELOPE : public FINITE_ENVELOPE {
   private:
 
   parameter_type first_stage_length_rep, second_stage_length_rep;
-  parameter_type midpoint_value_rep;
   parameter_type curpos, curval;
 };
 
 #endif
-
-

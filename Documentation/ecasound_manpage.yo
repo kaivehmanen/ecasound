@@ -443,15 +443,14 @@ file is taken from ./ecasoundrc (see em(ecasoundrc(5))).
 
 dit(-kl:fx_param,start_value,end_value,time_in_seconds)
 Linear envelope that starts from 'start_value' and linearly 
-increases to 'end_value' during 'time_in_seconds'. Can
+changes to 'end_value' during 'time_in_seconds'. Can
 be used for fadeins and fadeouts.
 
-dit(-kl2:fx_param,start_value,end_value,1st_stage_length,2nd_stage_length,midpoint_value_%)
-Two-stage linear envelope that starts from 'start_value' and linearly 
-increases to the middle value (specified in percents) during 
-'1st_stage_length' seconds. Then it continues to 'end_value' 
-during '2nd_stage_length' seconds. A more versatile for doing
-fade-ins and fade-outs.
+dit(-kl2:fx_param,start_value,end_value,1st_stage_length,2nd_stage_length)
+Two-stage linear envelope, a more versatile tool for doing fade-ins
+and fade-outs. Stays at 'start_value' for '1st_stage_length' seconds
+and then linearly changes towards 'end_value' during
+'2nd_stage_length' seconds.
 
 dit(-km:fx_param,start_value,end_value,controller,channel)
 MIDI continuous controller (control change messages). 

@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-02-11  Kai Vehmanen <kaiv@wakkanet.fi>
+        
+	* audioio-types.h (prepare): added to AUDIO_IO_DEVICE and all 
+	its subclasses
+	
 2000-02-09  Kai Vehmanen <kaiv@wakkanet.fi>
         
 	* eca-debug.h (): class MAINDEBUG renamed to ECA_DEBUG

@@ -122,12 +122,18 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
  public:
 
   /**
-   * Start prosessing sample data. Underruns will occur if the 
-   * calling program can't handle data at the speed of the 
-   * source device. Write_buffer() calls are blocked if necessary.
+   * Prepare device for processing. After this call, device is 
+   * ready for input/output (buffer can be pre-filled).
    *
    * ensure:
    *  (io_mode() == si_read && readable() == true) || writable()
+   */
+  virtual void prepare(void) = 0;
+
+  /**
+   * Start prosessing sample data. Underruns will occur if the 
+   * calling program can't handle data at the speed of the 
+   * source device. Write_buffer() calls are blocked if necessary.
    */
   virtual void start(void) = 0;
 
