@@ -158,56 +158,6 @@ void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu, const stri
   }
 }
 
-int ECA_AUDIO_OBJECTS::get_type_from_extension(const string& filename) const {
-  int typevar = TYPE_UNKNOWN;
-  string teksti = filename;
-  to_lowercase(teksti);
-
-  if (strstr(teksti.c_str(),".wav") != 0) typevar = TYPE_WAVE;
-  else if (strstr(teksti.c_str(),".ewf") != 0) typevar = TYPE_EWF;
-  else if (strstr(teksti.c_str(),".cdr") != 0) typevar = TYPE_CDR;
-  else if (strstr(teksti.c_str(),".raw") != 0) typevar = TYPE_RAWFILE;
-
-  else if (strstr(teksti.c_str(),"/dev/dsp") != 0) typevar = TYPE_OSS;
-  else if (strstr(teksti.c_str(),"alsalb") != 0) typevar = TYPE_ALSALOOPBACK;
-  else if (strstr(teksti.c_str(),"alsa") != 0) typevar = TYPE_ALSA;
-
-  else if (strstr(teksti.c_str(),".mp3") != 0) typevar = TYPE_MP3;
-  else if (strstr(teksti.c_str(),".mp2") != 0) typevar = TYPE_MP3;
-
-  else if (strstr(teksti.c_str(),".669") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".amf") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".dsm") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".far") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".gdm") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".imf") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".it") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".m15") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".med") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".mod") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".mod") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".mtm") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".s3m") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".stm") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".stx") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".ult") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".uni") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".xm") != 0) typevar = TYPE_MIKMOD;
-
-  else if (strstr(teksti.c_str(),"/dev/snd/pcm") != 0) typevar = TYPE_ALSAFILE;
-  else if (strstr(teksti.c_str(),".aif") != 0) typevar = TYPE_AUDIOFILE;
-  else if (strstr(teksti.c_str(),".au") != 0) typevar = TYPE_AUDIOFILE;
-  else if (strstr(teksti.c_str(),".snd") != 0) typevar = TYPE_AUDIOFILE;
-
-
-  else if (teksti == "stdin") typevar = TYPE_STDIN;
-  else if (teksti == "stdout") typevar = TYPE_STDOUT;
-  else if (strstr(teksti.c_str(),"rtnull") != 0) typevar = TYPE_RTNULL;
-  else if (strstr(teksti.c_str(),"null") != 0) typevar = TYPE_NULL;
-
-  return(typevar);
-}
-
 AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu, 
 						 const SIMODE mode, 
 						 const ECA_AUDIO_FORMAT& format,
@@ -790,4 +740,54 @@ void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const string& filename)
     ++c;
   }
   ecadebug->msg(temp);
+}
+
+int ECA_AUDIO_OBJECTS::get_type_from_extension(const string& filename) {
+  int typevar = TYPE_UNKNOWN;
+  string teksti = filename;
+  to_lowercase(teksti);
+
+  if (strstr(teksti.c_str(),".wav") != 0) typevar = TYPE_WAVE;
+  else if (strstr(teksti.c_str(),".ewf") != 0) typevar = TYPE_EWF;
+  else if (strstr(teksti.c_str(),".cdr") != 0) typevar = TYPE_CDR;
+  else if (strstr(teksti.c_str(),".raw") != 0) typevar = TYPE_RAWFILE;
+
+  else if (strstr(teksti.c_str(),"/dev/dsp") != 0) typevar = TYPE_OSS;
+  else if (strstr(teksti.c_str(),"alsalb") != 0) typevar = TYPE_ALSALOOPBACK;
+  else if (strstr(teksti.c_str(),"alsa") != 0) typevar = TYPE_ALSA;
+
+  else if (strstr(teksti.c_str(),".mp3") != 0) typevar = TYPE_MP3;
+  else if (strstr(teksti.c_str(),".mp2") != 0) typevar = TYPE_MP3;
+
+  else if (strstr(teksti.c_str(),".669") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".amf") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".dsm") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".far") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".gdm") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".imf") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".it") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".m15") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".med") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".mod") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".mod") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".mtm") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".s3m") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".stm") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".stx") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".ult") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".uni") != 0) typevar = TYPE_MIKMOD;
+  else if (strstr(teksti.c_str(),".xm") != 0) typevar = TYPE_MIKMOD;
+
+  else if (strstr(teksti.c_str(),"/dev/snd/pcm") != 0) typevar = TYPE_ALSAFILE;
+  else if (strstr(teksti.c_str(),".aif") != 0) typevar = TYPE_AUDIOFILE;
+  else if (strstr(teksti.c_str(),".au") != 0) typevar = TYPE_AUDIOFILE;
+  else if (strstr(teksti.c_str(),".snd") != 0) typevar = TYPE_AUDIOFILE;
+
+
+  else if (teksti == "stdin") typevar = TYPE_STDIN;
+  else if (teksti == "stdout") typevar = TYPE_STDOUT;
+  else if (strstr(teksti.c_str(),"rtnull") != 0) typevar = TYPE_RTNULL;
+  else if (strstr(teksti.c_str(),"null") != 0) typevar = TYPE_NULL;
+
+  return(typevar);
 }

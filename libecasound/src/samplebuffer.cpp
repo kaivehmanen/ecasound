@@ -43,21 +43,6 @@ SAMPLE_BUFFER::sample_type SAMPLE_BUFFER::min_value(int channel) {
   return(*min_element(buffer[channel].begin(), buffer[channel].end()));
 }
 
-void SAMPLE_BUFFER::limit_values(void) {
-  buf_channel_iter_t c = buffer.begin();
-  while(c != buffer.end()) {
-    buf_sample_iter_t s = c->begin();
-    while(s != c->end()) {
-      if ((*s) > impl_max_value)
-	(*s) = impl_max_value;
-      else if ((*s) < impl_min_value) 
-	(*s) = impl_min_value;
-      ++s;
-    }
-    ++c;
-  }
-}
-
 void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 				     ECA_AUDIO_FORMAT::SAMPLE_FORMAT fmt,
 				     int ch,
@@ -259,6 +244,21 @@ void SAMPLE_BUFFER::make_silent(void) {
   }
 }
 
+void SAMPLE_BUFFER::limit_values(void) {
+  buf_channel_iter_t c = buffer.begin();
+  while(c != buffer.end()) {
+    buf_sample_iter_t s = c->begin();
+    while(s != c->end()) {
+      if ((*s) > impl_max_value)
+	(*s) = impl_max_value;
+      else if ((*s) < impl_min_value) 
+	(*s) = impl_min_value;
+      ++s;
+    }
+    ++c;
+  }
+}
+
 void SAMPLE_BUFFER::divide_by(SAMPLE_BUFFER::sample_type dvalue) {
   buf_channel_iter_t buf_iter = buffer.begin();
   while(buf_iter != buffer.end()) {
@@ -293,6 +293,18 @@ void SAMPLE_BUFFER::add_with_weight(const SAMPLE_BUFFER& x, int weight) {
     //    buf_sample_size_t s_count = (buffer[q].size() <= x.buffer[q].size()) ? buffer[q].size() : x.buffer[q].size();
     for(buf_sample_size_t t = 0; t != x.buffer[q].size(); t++) {
       buffer[q][t] += x.buffer[q][t] / weight;
+    }
+  }
+}
+
+void SAMPLE_BUFFER::copy(const SAMPLE_BUFFER& x) {
+  if (x.length_in_samples() >= length_in_samples()) {
+    length_in_samples(x.length_in_samples());
+  }
+  buf_channel_size_t c_count = (number_of_channels() <= x.number_of_channels()) ? number_of_channels() : x.number_of_channels();
+  for(buf_channel_size_t q = 0; q != c_count; q++) {
+    for(buf_sample_size_t t = 0; t != x.buffer[q].size(); t++) {
+      buffer[q][t] = x.buffer[q][t];
     }
   }
 }

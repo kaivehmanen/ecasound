@@ -85,6 +85,8 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-version.cpp  \
 			eca-chainsetup.cpp \
 			eca-controller.cpp \
+			eca-controller-base.cpp \
+			eca-controller-objects.cpp \
 			eca-iamode-parser.cpp \
 			eca-control-position.cpp \
 			eca-audio-position.cpp \

@@ -65,15 +65,18 @@ void *mthread_process_chains(void* params) {
   int chain_count = static_cast<int>(chains->size());
   int output_count = static_cast<int>(outputs->size());
 
+  int max_channels = 0;
   vector<int> output_chain_count (output_count);
   for(int adev_sizet = 0; adev_sizet < output_count; adev_sizet++) {
     output_chain_count[adev_sizet] =
       ecaparams->number_of_connected_chains_to_output((*outputs)[adev_sizet]);
+
+    if ((*outputs)[adev_sizet]->channels() > max_channels)
+      max_channels = (*outputs)[adev_sizet]->channels();
   }
+  SAMPLE_BUFFER mixslot (ecaparams->connected_chainsetup->buffersize(), max_channels);
 
   vector<bool> chain_locked (output_count);
-
-  SAMPLE_BUFFER mixslot (ecaparams->connected_chainsetup->buffersize(), SAMPLE_BUFFER::channel_count_default);
 
   while(true) {
     for(int n = 0; n != chain_count;) {
@@ -86,7 +89,7 @@ void *mthread_process_chains(void* params) {
       }
 
       (*chains)[n]->process();
-      
+    
       ++n;
     }
 
@@ -129,7 +132,7 @@ void *mthread_process_chains(void* params) {
 	      // -- 
 	      // this is the first chain connected to this output
 	      // --
-	      mixslot = (*chains)[n]->audioslot; 
+	      mixslot.copy((*chains)[n]->audioslot); 
 	      mixslot.divide_by(output_chain_count[audioslot_sizet]);
 	    }
 	    else {

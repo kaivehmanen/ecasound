@@ -109,9 +109,25 @@ class SAMPLE_BUFFER {
   // ---
   
   /**
-   * Swap lower and upper bytes (little-endian <-> big-endian)
+   * Channel-wise addition. Buffer length is increased if necessary.
    */
-  unsigned short swapword(unsigned short us) const { return ((us >> 8) | (us << 8)) & 0xffff; }
+  void add(const SAMPLE_BUFFER& x);
+
+  /**
+   * Channel-wise, weighted addition. Before addition every sample is 
+   * multiplied by '1/weight'. Buffer length is increased if necessary.
+   */
+  void add_with_weight(const SAMPLE_BUFFER& x, int weight);
+
+  /**
+   * Channel-wise copy. Buffer length is increased if necessary.
+   */
+  void copy(const SAMPLE_BUFFER& x);
+
+  /**
+   * Divide all samples by 'dvalue'.
+   */
+  void divide_by(sample_type dvalue);
 
   /**
    * Limit all samples to valid values. 
@@ -124,23 +140,7 @@ class SAMPLE_BUFFER {
   void make_silent(void);
 
   /**
-   * Divide all samples by 'dvalue'.
-   */
-  void divide_by(sample_type dvalue);
-
-  /**
-   * Channel-wise addition. Buffer length is increased if necessary.
-   */
-  void add(const SAMPLE_BUFFER& x);
-
-  /**
-   * Channel-wise, weighted addition. Before addition every sample is 
-   * multiplied by '1/weight'. Buffer length is increased if necessary.
-   */
-  void add_with_weight(const SAMPLE_BUFFER& x, int weight);
-
-  /**
-   * Fill buffer from external buffer 'source. 
+   * Fill buffer from external buffer source. 
    * Sample data will be converted to internal sample format 
    * using the given arguments (sample rate, sample format 
    * and endianess).

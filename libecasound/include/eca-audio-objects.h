@@ -80,6 +80,11 @@ class ECA_AUDIO_OBJECTS {
  public:
 
   /**
+   * Recognise file format from the file name.
+   */
+  static int get_type_from_extension (const string& teksti);
+
+  /**
    * Create a new audio object based on given arguments.
    *
    * require:
@@ -87,11 +92,6 @@ class ECA_AUDIO_OBJECTS {
    *  buffersize > 0
    */
   AUDIO_IO* create_audio_object(const string& tname, const SIMODE mode, const ECA_AUDIO_FORMAT& format, long int buffersize_rep) const throw(ECA_ERROR*);
-
-  /**
-   * Recognise file format from the file name.
-   */
-  int get_type_from_extension (const string& teksti) const;
 
   /**
    * Print format and id information

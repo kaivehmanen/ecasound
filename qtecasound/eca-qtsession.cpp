@@ -465,8 +465,10 @@ void QESession::button_open_chainsetup(void) {
     QMessageBox::information(this, "qtecasound", "Can't open! No chainsetup selected.",0);
   }
   else {
+    ctrl->select_chainsetup(item->text(0).latin1());
+    if (ctrl->is_selected() == false) return;
     QEChainsetup* active_csetup = new QEChainsetup(ctrl,
-				     ctrl->get_chainsetup(item->text(0).latin1()));
+				     ctrl->get_chainsetup());
 
     active_csetup->show();
   }

@@ -2,6 +2,15 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-01-15  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* samplebuffer.h (swap_bytes): removed
+	* samplebuffer.h (copy): added
+	* eca-audio-objects (get_type_from_extension): now a static member
+	* eca-controller.h: split into eca-controller.h,
+	eca-controller-base.h and eca-controller-objects.h - only minor
+	changes to ECA_CONTROLLER interface 
+	
 2000-01-13  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* audioio-alsa2.*: added

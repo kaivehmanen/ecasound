@@ -9,12 +9,25 @@ ecasound_audiofx_src =  audiofx.h \
 			audiogate.h \
 			audiofx_mixing.h
 
-ecasound_audioio_src = audioio-cdr.h audioio-cdr_impl.h \
-audioio-ewf.h audioio-mp3.h audioio-mp3_impl.h audioio-wave.h \
-audioio-wave_impl.h audioio.h audioio-af.h audioio-raw.h \
-audioio-oss.h audioio-oss_impl.h audioio-alsalb.h audioio-alsa.h \
-audioio-null.h audioio-rtnull.h audioio-mikmod.h audioio-types.h \
-audioio-alsa2.h
+ecasound_audioio_src = 	audioio-cdr.h \
+			audioio-cdr_impl.h \
+			audioio-ewf.h \
+			audioio-mp3.h \
+			audioio-mp3_impl.h \
+			audioio-wave.h \
+			audioio-wave_impl.h \
+			audioio.h \
+			audioio-af.h \
+			audioio-raw.h \
+			audioio-oss.h \
+			audioio-oss_impl.h \
+			audioio-alsalb.h \
+			audioio-alsa.h \
+			audioio-null.h \
+			audioio-rtnull.h \
+			audioio-mikmod.h \
+			audioio-types.h \
+			audioio-alsa2.h
 
 ecasound_controller_src = \
 	generic-controller.h \
@@ -26,17 +39,42 @@ ecasound_controller_src = \
 	finite-envelope.h \
 	linear-envelope.h
 
-ecasound_general_src = eca-chain.h eca-chainop.h \
-eca-error.h eca-debug.h eca-comhelp.h \
-eca-midi.h  eca-main.h eca-session.h eca-resources.h resource-file.h\
-generic-controller.h layer.h eca-chainop-map.h \
-eca-controller-map.h \
-samplebuffer.h eca-version.h eca-chainsetup.h eca-controller.h \
-eca-iamode-parser.h osc-gen.h midi-cc.h eca-control-position.h eca-audio-position.h \
-eca-fileio.h eca-fileio-stream.h eca-fileio-mmap.h \
-eca-fileio-mmap-fthread.h eca-alsa-dyn.h eca-mthreaded-processor.h \
-dynamic-parameters.h dynamic-object.h samplebuffer_iterators.h \
-eca-audio-objects.h eca-audio-format.h
+ecasound_general_src = 	eca-chain.h \
+			eca-chainop.h \
+			eca-error.h \
+			eca-debug.h \
+			eca-comhelp.h \
+			eca-midi.h \
+			eca-main.h \
+			eca-session.h \
+			eca-resources.h \
+			resource-file.h\
+			generic-controller.h \
+			layer.h \
+			eca-chainop-map.h \
+			eca-controller-map.h \
+			samplebuffer.h \
+			eca-version.h \
+			eca-chainsetup.h \
+			eca-controller.h \
+			eca-controller-base.h \
+			eca-controller-objects.h \
+			eca-iamode-parser.h \
+			osc-gen.h \
+			midi-cc.h \
+			eca-control-position.h \
+			eca-audio-position.h \
+			eca-fileio.h  \
+			eca-fileio-stream.h \
+			eca-fileio-mmap.h \
+			eca-fileio-mmap-fthread.h \
+			eca-alsa-dyn.h \
+			eca-mthreaded-processor.h \
+			dynamic-parameters.h \
+			dynamic-object.h \
+			samplebuffer_iterators.h \
+			eca-audio-objects.h \
+			eca-audio-format.h
 
 #pkgincludedir_HEADERS = $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_general_src)
 

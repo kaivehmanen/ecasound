@@ -25,6 +25,8 @@ enum EP_STATUS { ep_status_running,
 
 class ECA_SESSION {
 
+  friend class ECA_CONTROLLER_BASE;
+  friend class ECA_CONTROLLER_OBJECTS;
   friend class ECA_CONTROLLER;
   friend class ECA_PROCESSOR;
   friend void *mthread_process_chains(void* params);

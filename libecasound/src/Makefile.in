@@ -108,7 +108,7 @@ ecasound_audioio_src = audioio-cdr.cpp 			audioio-ewf.cpp 			audioio-mp3.cpp 			
 ecasound_controller_src =  	generic-controller.cpp 	midi-cc.cpp 	osc-gen.cpp 	osc-sine.cpp 	linear-envelope.cpp
 
 
-ecasound_general_src = eca-chain.cpp 			eca-main.cpp 			eca-midi.cpp 			eca-session.cpp 			eca-resources.cpp 			resource-file.cpp 			eca-comhelp.cpp 			eca-debug.cpp 			layer.cpp 			samplebuffer_iterators.cpp 			samplebuffer.cpp 			eca-version.cpp  			eca-chainsetup.cpp 			eca-controller.cpp 			eca-iamode-parser.cpp 			eca-control-position.cpp 			eca-audio-position.cpp 			eca-audio-objects.cpp 			eca-audio-format.cpp 			eca-fileio-stream.cpp 			eca-fileio-mmap.cpp 			eca-fileio-mmap-fthread.cpp 			eca-alsa-dyn.cpp eca-mthreaded-processor.cpp 			eca-chainop-map.cpp eca-controller-map.cpp
+ecasound_general_src = eca-chain.cpp 			eca-main.cpp 			eca-midi.cpp 			eca-session.cpp 			eca-resources.cpp 			resource-file.cpp 			eca-comhelp.cpp 			eca-debug.cpp 			layer.cpp 			samplebuffer_iterators.cpp 			samplebuffer.cpp 			eca-version.cpp  			eca-chainsetup.cpp 			eca-controller.cpp 			eca-controller-base.cpp 			eca-controller-objects.cpp 			eca-iamode-parser.cpp 			eca-control-position.cpp 			eca-audio-position.cpp 			eca-audio-objects.cpp 			eca-audio-format.cpp 			eca-fileio-stream.cpp 			eca-fileio-mmap.cpp 			eca-fileio-mmap-fthread.cpp 			eca-alsa-dyn.cpp eca-mthreaded-processor.cpp 			eca-chainop-map.cpp eca-controller-map.cpp
 
 
 ecasound_common_src = $(ecasound_audiofx_src) $(ecasound_audioio_src) 		      $(ecasound_controller_src) $(ecasound_general_src) 
@@ -145,7 +145,8 @@ audioio-alsalb.lo generic-controller.lo midi-cc.lo osc-gen.lo \
 osc-sine.lo linear-envelope.lo eca-chain.lo eca-main.lo eca-midi.lo \
 eca-session.lo eca-resources.lo resource-file.lo eca-comhelp.lo \
 eca-debug.lo layer.lo samplebuffer_iterators.lo samplebuffer.lo \
-eca-version.lo eca-chainsetup.lo eca-controller.lo eca-iamode-parser.lo \
+eca-version.lo eca-chainsetup.lo eca-controller.lo \
+eca-controller-base.lo eca-controller-objects.lo eca-iamode-parser.lo \
 eca-control-position.lo eca-audio-position.lo eca-audio-objects.lo \
 eca-audio-format.lo eca-fileio-stream.lo eca-fileio-mmap.lo \
 eca-fileio-mmap-fthread.lo eca-alsa-dyn.lo eca-mthreaded-processor.lo \
@@ -162,7 +163,8 @@ audioio-alsalb.lo generic-controller.lo midi-cc.lo osc-gen.lo \
 osc-sine.lo linear-envelope.lo eca-chain.lo eca-main.lo eca-midi.lo \
 eca-session.lo eca-resources.lo resource-file.lo eca-comhelp.lo \
 eca-debug.lo layer.lo samplebuffer_iterators.lo samplebuffer.lo \
-eca-version.lo eca-chainsetup.lo eca-controller.lo eca-iamode-parser.lo \
+eca-version.lo eca-chainsetup.lo eca-controller.lo \
+eca-controller-base.lo eca-controller-objects.lo eca-iamode-parser.lo \
 eca-control-position.lo eca-audio-position.lo eca-audio-objects.lo \
 eca-audio-format.lo eca-fileio-stream.lo eca-fileio-mmap.lo \
 eca-fileio-mmap-fthread.lo eca-alsa-dyn.lo eca-mthreaded-processor.lo \

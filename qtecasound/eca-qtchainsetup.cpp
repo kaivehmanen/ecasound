@@ -709,7 +709,8 @@ void QEChainsetup::init_waveform(void) {
     name = string(item->text(0).latin1());
     AUDIO_IO* dev = 0;
     ctrl->select_chainsetup(chainsetup->name());
-    dev = ctrl->get_audio_object(name);
+    ctrl->select_audio_object(name);
+    dev = ctrl->get_audio_object();
     if (dev != 0) {
       wform = new QEWaveForm(static_cast<AUDIO_IO_FILE*>(dev));
       if (wform != 0) {

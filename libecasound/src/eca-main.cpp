@@ -62,7 +62,6 @@ void ECA_PROCESSOR::init(ECA_SESSION* params) {
   eparams = params;
   active_chain_index = 0;
   mixslot.length_in_samples(eparams->connected_chainsetup->buffersize());
-  mixslot.number_of_channels(SAMPLE_BUFFER::channel_count_default);
   buffersize_rep = eparams->connected_chainsetup->buffersize();
   init();
 }
@@ -144,9 +143,14 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR*) {
 
   output_start_pos.resize(output_count);
   output_chain_count.resize(output_count);
+  int max_channels = 0;
   for(int adev_sizet = 0; adev_sizet < output_count; adev_sizet++) {
+    if ((*outputs)[adev_sizet]->channels() > max_channels)
+      max_channels = (*outputs)[adev_sizet]->channels();
+								   
     output_start_pos[adev_sizet] =
       (*outputs)[adev_sizet]->position_in_samples();
+
     output_chain_count[adev_sizet] =
       eparams->number_of_connected_chains_to_output((*outputs)[adev_sizet]);
     ecadebug->msg(4, "Output \"" + (*outputs)[adev_sizet]->label() +
@@ -157,6 +161,8 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR*) {
 		     " .\n");
     (*outputs)[adev_sizet]->buffersize(buffersize_rep, SAMPLE_BUFFER::sample_rate);
   }
+
+  mixslot.number_of_channels(max_channels);
 
   eparams->chain_ready_for_submix.resize(chain_count);
   eparams->chain_muts.resize(chain_count);
@@ -587,7 +593,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 	else {
 	  ++count;
 	  if (count == 1) {
-	    mixslot = (*chains)[n]->audioslot; 
+	    mixslot.copy((*chains)[n]->audioslot);
 	  }
 	  else {
 	    mixslot.add_with_weight((*chains)[n]->audioslot,
@@ -752,7 +758,7 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 	    // -- 
 	    // this is the first output connected to this chain
 	    // --
-	    mixslot = (*chains)[n]->audioslot;
+	    mixslot.copy((*chains)[n]->audioslot);
 	    mixslot.divide_by(output_chain_count[audioslot_sizet]);
 	  }
 	  else {
