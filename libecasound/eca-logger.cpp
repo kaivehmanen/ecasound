@@ -17,7 +17,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include "kvu_locks.h"
+#include <kvu_dbc.h>
+#include <kvu_locks.h>
 
 #include "eca-logger-interface.h"
 #include "eca-logger-default.h"
@@ -45,7 +46,7 @@ void ECA_LOGGER::attach_logger(ECA_LOGGER_INTERFACE* logger)
 {
   int oldloglevel = -1;
   if (interface_impl_repp != 0) {
-    interface_impl_repp->get_log_level_bitmask();
+    oldloglevel = interface_impl_repp->get_log_level_bitmask();
   }
   ECA_LOGGER::detach_logger();
   if (ECA_LOGGER::interface_impl_repp == 0) {
@@ -57,6 +58,7 @@ void ECA_LOGGER::attach_logger(ECA_LOGGER_INTERFACE* logger)
       }
     }
   }
+  DBC_ENSURE(ECA_LOGGER::interface_impl_repp == logger);
 }
 
 /**
@@ -71,4 +73,5 @@ void ECA_LOGGER::detach_logger(void)
       ECA_LOGGER::interface_impl_repp = 0;
     }
   }
+  DBC_ENSURE(ECA_LOGGER::interface_impl_repp == 0);
 }
