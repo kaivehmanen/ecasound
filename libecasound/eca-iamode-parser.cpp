@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-iamode-parser.cpp: Class that handles registering and querying 
 //                        interactive mode commands.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -73,8 +73,8 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["cs-connect"] = ec_cs_connect;
   cmd_map_rep["cs-connected"] = ec_cs_connected;
   cmd_map_rep["cs-disconnect"] = ec_cs_disconnect;
-  cmd_map_rep["cs-set"] = ec_cs_set;
-  cmd_map_rep["cs-format"] = ec_cs_format;
+  cmd_map_rep["cs-set-param"] = ec_cs_set_param;
+  cmd_map_rep["cs-set-audio-format"] = ec_cs_set_audio_format;
   cmd_map_rep["cs-status"] = ec_cs_status;
   cmd_map_rep["cs-rewind"] = ec_cs_rewind;
   cmd_map_rep["rewind"] = ec_cs_rewind;
@@ -93,7 +93,7 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["cs-get-length"] = ec_cs_get_length;
   cmd_map_rep["get-length"] = ec_cs_get_length;
   cmd_map_rep["cs-set-length"] = ec_cs_set_length;
-  cmd_map_rep["cs-loop"] = ec_cs_loop;
+  cmd_map_rep["cs-toggle-loop"] = ec_cs_toggle_loop;
 
   cmd_map_rep["c-add"] = ec_c_add;
   cmd_map_rep["c-remove"] = ec_c_remove;
@@ -137,6 +137,7 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["ai-getpos"] = ec_ai_get_position;
   cmd_map_rep["ai-get-position"] = ec_ai_get_position;
   cmd_map_rep["ai-get-length"] = ec_ai_get_length;
+  cmd_map_rep["ai-get-format"] = ec_ai_get_format;
   cmd_map_rep["ai-wave-edit"] = ec_ai_wave_edit;
 
   cmd_map_rep["ao-add"] = ec_ao_add;
@@ -155,26 +156,39 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["ao-getpos"] = ec_ao_get_position;
   cmd_map_rep["ao-get-position"] = ec_ao_get_position;
   cmd_map_rep["ao-get-length"] = ec_ao_get_length;
+  cmd_map_rep["ao-get-format"] = ec_ao_get_format;
   cmd_map_rep["ao-wave-edit"] = ec_ao_wave_edit;
 
   cmd_map_rep["cop-add"] = ec_cop_add;
   cmd_map_rep["cop-remove"] = ec_cop_remove;
-  cmd_map_rep["cop-list"] = ec_cop_status;
+  cmd_map_rep["cop-list"] = ec_cop_list;
   cmd_map_rep["cop-select"] = ec_cop_select;
+  cmd_map_rep["cop-inxed-select"] = ec_cop_select;
+  cmd_map_rep["cop-iselect"] = ec_cop_select;
+  cmd_map_rep["cop-selected"] = ec_cop_selected;
   cmd_map_rep["cop-set"] = ec_cop_set;
   cmd_map_rep["cop-status"] = ec_cop_status;
-  cmd_map_rep["cop-register"] = ec_cop_register;
+
+  cmd_map_rep["copp-list"] = ec_copp_list;
   cmd_map_rep["copp-select"] = ec_copp_select;
+  cmd_map_rep["copp-index-select"] = ec_copp_select;
+  cmd_map_rep["copp-iselect"] = ec_copp_select;
+  cmd_map_rep["copp-selected"] = ec_copp_selected;
   cmd_map_rep["copp-set"] = ec_copp_set;
   cmd_map_rep["copp-get"] = ec_copp_get;
 
-  cmd_map_rep["preset-register"] = ec_preset_register;
-  cmd_map_rep["ladspa-register"] = ec_ladspa_register;
-
   cmd_map_rep["ctrl-add"] = ec_ctrl_add;
   cmd_map_rep["ctrl-remove"] = ec_ctrl_remove;
+  cmd_map_rep["ctrl-list"] = ec_ctrl_list;
   cmd_map_rep["ctrl-select"] = ec_ctrl_select;
+  cmd_map_rep["ctrl-index-select"] = ec_ctrl_select;
+  cmd_map_rep["ctrl-iselect"] = ec_ctrl_select;
+  cmd_map_rep["ctrl-selected"] = ec_ctrl_selected;
   cmd_map_rep["ctrl-status"] = ec_ctrl_status;
+
+  cmd_map_rep["cop-register"] = ec_cop_register;
+  cmd_map_rep["preset-register"] = ec_preset_register;
+  cmd_map_rep["ladspa-register"] = ec_ladspa_register;
   cmd_map_rep["ctrl-register"] = ec_ctrl_register;
 
   cmd_map_rep["engine-status"] = ec_engine_status;
@@ -218,8 +232,8 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_cs_index_select:
   case ec_cs_load: 
   case ec_cs_save_as: 
-  case ec_cs_set:
-  case ec_cs_format:
+  case ec_cs_set_param:
+  case ec_cs_set_audio_format:
   case ec_cs_set_length:
   case ec_cs_rewind:
   case ec_cs_forward:
@@ -294,14 +308,14 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_cs_save: 
   case ec_cs_save_as: 
   case ec_cs_connect: 
-  case ec_cs_set:
+  case ec_cs_set_param:
   case ec_cs_rewind:
   case ec_cs_forward:
   case ec_cs_set_position:
   case ec_cs_get_position:
   case ec_cs_get_length:
   case ec_cs_set_length:
-  case ec_cs_loop:
+  case ec_cs_toggle_loop:
 
   case ec_c_remove:
   case ec_c_clear:
@@ -328,6 +342,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_ai_set_position:
   case ec_ai_get_position:
   case ec_ai_get_length:
+  case ec_ai_get_format:
   case ec_ai_wave_edit:
 
   case ec_ao_add:
@@ -342,18 +357,22 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_ao_set_position:
   case ec_ao_get_position:
   case ec_ao_get_length:
+  case ec_ao_get_format:
   case ec_ao_wave_edit:
 
   case ec_cop_add:
   case ec_cop_select:
+  case ec_cop_selected:
   case ec_cop_set:
   case ec_cop_status:
 
   case ec_copp_select:
+  case ec_copp_selected:
   case ec_copp_set:
 
   case ec_ctrl_add:
   case ec_ctrl_select:
+  case ec_ctrl_selected:
   case ec_ctrl_status:
 
     return(true);
@@ -370,8 +389,8 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
 
   case ec_cs_remove:
   case ec_cs_set_length:
-  case ec_cs_loop:
-  case ec_cs_set:
+  case ec_cs_toggle_loop:
+  case ec_cs_set_param:
 
   case ec_c_add:
   case ec_c_remove:
@@ -413,6 +432,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_input(int id) {
   case ec_ai_selected:
   case ec_ai_get_position:
   case ec_ai_get_length:
+  case ec_ai_get_format:
   case ec_ai_wave_edit:
     return(true);
     
@@ -433,6 +453,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_output(int id) {
   case ec_ao_selected:
   case ec_ao_get_position:
   case ec_ao_get_length:
+  case ec_ao_get_format:
   case ec_ao_wave_edit:
     return(true);
     

@@ -132,9 +132,17 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void select_controller(int ctrl_id);
   void remove_controller(void);
 
+  int selected_chain_operator(void) const;
+  int selected_chain_operator_parameter(void) const;
+  int selected_controller(void) const;
+
   CHAIN_OPERATOR* get_chain_operator(void) const;
   CHAIN_OPERATOR::parameter_type get_chain_operator_parameter(void) const;
   GENERIC_CONTROLLER* get_controller(void) const;
+
+  vector<string> chain_operator_names(void) const;
+  vector<string> chain_operator_parameter_names(void) const;
+  vector<string> controller_names(void) const;
 
   // -------------------------------------------------------------------
   // Constructors and destructors

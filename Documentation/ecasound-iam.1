@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "23\&.04\&.2001" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "24\&.04\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -161,18 +161,18 @@ Returns the chainsetup length in seconds (if known)\&. \fI[f]\fP
 .IP "cs-set-length \'seconds\'" 
 Sets processing time in seconds (doesn\'t have to be an integer value)\&. \fI[-]\fP
 .PP 
-.IP "cs-loop" 
-Enable looping\&. When processing is finished, engine will start 
+.IP "cs-toggle-loop" 
+Toggle looping\&. When processing is finished, engine will start 
 again from the initial position\&. It\'s not always possible to enable looping
 (for instance all inputs and outputs have infinite length and
 chainsetup length is not explicitly set with \'cs-set-length\')\&. \fI[-]\fP
 .PP 
-.IP "cs-set" 
+.IP "cs-set-param" 
 Interpret general chainsetup parameters like for example
 "-b" (buffersize), "-m" (mixmode), "-n" (name), etc\&. 
 See ecasound(1) for more info\&. \fI[-]\fP
 .PP 
-.IP "cs-format \'bits,channels,sample_rate\'" 
+.IP "cs-set-audio-format \'bits,channels,sample_rate\'" 
 Set the default sample parameters for currently selected chainsetup\&. 
 For example cd-quality audio would be "16,2,44100"\&. This does the
 same as command-line argument "-f" (see ecasound(1))\&. \fI[-]\fP
@@ -222,9 +222,9 @@ Returns a list of selected chains\&. \fI[S]\fP
 Clear selected chains by removing all chain operators and controllers\&.
 Doesn\'t change how chains are connected to inputs and outputs\&. \fI[-]\fP
 .PP 
-.IP "c-set-name \'new_name\'" 
-Renames the selected chain\&. When using this command, only one chain must
-selected\&. \fI[-]\fP
+.IP "c-rename \'new_name\'" 
+Renames the selected chain\&. When using this command, exactly one chain must
+be selected\&. \fI[-]\fP
 .PP 
 .IP "c-muting" 
 Toggle chain muting\&. When chain is muted, all data that goes through
@@ -314,6 +314,10 @@ Returns the audio object position in seconds\&. \fI[f]\fP
 .IP "ai-get-length, ao-get-length" 
 Returns the audio object length in seconds\&. \fI[f]\fP
 .PP 
+.IP "ai-get-format, ao-get-format" 
+Returns the audio format of the selected audio input/output as a
+formatted string\&. See documentation for \'-f\' command-line option\&. \fI[s]\fP
+.PP 
 .IP "ai-wave-edit, ao-wave-edit" 
 The currently selected audio object is loaded into an external
 wave editor (see ecasoundrc(5))\&. \fI[-]\fP
@@ -342,25 +346,33 @@ Adds a new chain operator\&. Argument format is
 this commmand can also be used to add effect presets and various 
 plugins\&. See ecasound(1) man page for more info\&. \fI[-]\fP
 .PP 
-.IP "cop-select \'param_id\'" 
+.IP "cop-remove" 
+Removes the selected chain operator\&. \fI[-]\fP
+.PP 
+.IP "cop-list" 
+Returns a list of all chain operators attached to the currently
+selected chain\&. \fI[S]\fP
+.PP 
+.IP "cop-select \'param_id\', cop-index-select \'param_id\', cop-iselect \'param_id\'" 
 Selects a chain operator\&. \fI[-]\fP
 .PP 
 .IP "cop-selected" 
-**not implemented**
 Returns the index number of currently selected chain operator\&. \fI[i]\fP
-.PP 
-.IP "cop-remove" 
-Removes the selected chain operator\&. \fI[-]\fP
 .PP 
 .IP "cop-set \'chainop_id, param_id, value\'" 
 Changes the value of a single chain operator parameter\&. Unlike other
 chain operator commands, this can also be used during processing\&. \fI[-]\fP
 .PP 
-.IP "copp-select \'param_id\'" 
+.IP "cop-status" 
+Returns info about chain operator status\&. \fI[s]\fP
+.PP 
+.IP "copp-list" 
+Returns a list of selected chain operator\'s parameters\&. \fI[S]\fP
+.PP 
+.IP "copp-select \'param_id\', copp-index-select \'param_id\', copp-iselect \'param_id\'" 
 Selects a chain operator parameter\&. \fI[-]\fP
 .PP 
 .IP "copp-selected" 
-**not implemented**
 Returns the index number of currently selected chain operator parameter\&. \fI[i]\fP
 .PP 
 .IP "copp-set \'value\'" 
@@ -368,14 +380,6 @@ Sets the selected parameter value to \'value\'\&. \fI[-]\fP
 .PP 
 .IP "copp-get" 
 Returns the selected parameter value\&. \fI[f]\fP
-.PP 
-.IP "cop-status" 
-Returns info about chain operator status\&. \fI[s]\fP
-.PP 
-.IP "cop-list" 
-**not implemented**
-Returns a list of all chain operators attached to the currently
-selected chain\&. \fI[S]\fP
 .PP 
 .IP "cop-register" 
 Prints a list of registered chain operators\&. \fI[s]\fP
@@ -397,23 +401,21 @@ operator\&. Argument format is "-<id_string>:<param_id>,<range_low>,
 <range_high>,par1,\&.\&.\&.,parN"\&.  See ecasound(1) man page for more 
 info\&. \fI[-]\fP
 .IP 
-.IP "ctrl-select \'param_id\'" 
-Selects a controller\&. \fI[-]\fP
-.IP 
-.IP "ctrl-selected" 
-**not implemented**
-Returns the index number of currently selected controller\&. \fI[i]\fP
-.IP 
 .IP "ctrl-remove" 
 Removes the selected controller\&. \fI[-]\fP
 .IP 
-.IP "ctrl-status" 
-Returns info about controller status\&. \fI[s]\fP
-.IP 
 .IP "ctrl-list" 
-**not implemented**
 Returns a list of all controllers attached to the currently
 selected chain\&. \fI[S]\fP
+.IP 
+.IP "ctrl-select \'param_id\', ctrl-index-select \'param_id\', ctrl-iselect \'param_id\'" 
+Selects a controller\&. \fI[-]\fP
+.IP 
+.IP "ctrl-selected" 
+Returns the index number of currently selected controller\&. \fI[i]\fP
+.IP 
+.IP "ctrl-status" 
+Returns info about controller status\&. \fI[s]\fP
 .IP 
 .IP "ctrl-register" 
 Prints a list of registered controllers\&. \fI[s]\fP

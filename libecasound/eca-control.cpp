@@ -298,8 +298,8 @@ void ECA_CONTROL::action(int action_id) {
     }
   case ec_cs_connected: { set_last_string(connected_chainsetup()); break; }
   case ec_cs_disconnect: { disconnect_chainsetup(); break; }
-  case ec_cs_set: { set_chainsetup_parameter(action_args_rep[0]); break; }
-  case ec_cs_format: { set_chainsetup_sample_format(action_args_rep[0]); break; }
+  case ec_cs_set_param: { set_chainsetup_parameter(action_args_rep[0]); break; }
+  case ec_cs_set_audio_format: { set_chainsetup_sample_format(action_args_rep[0]); break; }
   case ec_cs_status: { 
     ecadebug->control_flow("Controller/Chainsetup status");
     set_last_string(chainsetup_status()); 
@@ -315,7 +315,7 @@ void ECA_CONTROL::action(int action_id) {
       set_chainsetup_processing_length_in_seconds(first_argument_as_number()); 
       break; 
     }
-  case ec_cs_loop: { toggle_chainsetup_looping(); break; } 
+  case ec_cs_toggle_loop: { toggle_chainsetup_looping(); break; } 
 
   // ---
   // Chains
@@ -412,6 +412,14 @@ void ECA_CONTROL::action(int action_id) {
   case ec_ai_set_position: { audio_input_as_selected(); set_audio_object_position(first_argument_as_number()); break; }
   case ec_ai_get_position: { set_last_float(get_audio_input()->position().seconds()); break; }
   case ec_ai_get_length: { set_last_float(get_audio_input()->length().seconds()); break; }
+  case ec_ai_get_format: {
+    set_last_string(get_audio_input()->format_string() + "," +
+		    kvu_numtostr(get_audio_input()->channels()) + "," +
+		    kvu_numtostr(get_audio_input()->samples_per_second())); 
+
+    break; 
+  }
+
   case ec_ai_wave_edit: { audio_input_as_selected(); wave_edit_audio_object(); break; }
 
     // ---
@@ -444,15 +452,22 @@ void ECA_CONTROL::action(int action_id) {
   case ec_ao_set_position: { audio_output_as_selected(); set_audio_object_position(first_argument_as_number()); break; }
   case ec_ao_get_position: { set_last_float(get_audio_output()->position().seconds()); break; }
   case ec_ao_get_length: { set_last_float(get_audio_output()->length().seconds()); break; }
+  case ec_ao_get_format: { 
+    set_last_string(get_audio_output()->format_string() + "," +
+		    kvu_numtostr(get_audio_output()->channels()) + "," +
+		    kvu_numtostr(get_audio_output()->samples_per_second())); 
+    break; 
+  }
   case ec_ao_wave_edit: { audio_output_as_selected(); wave_edit_audio_object(); break; }
 
     // ---
     // Chain operators
     // ---
   case ec_cop_add: { add_chain_operator(action_args_rep[0]); break; }
-  case ec_cop_select: { select_chain_operator(atoi((action_args_rep[0]).c_str())); break; }
   case ec_cop_remove: { remove_chain_operator(); break; }
-    
+  case ec_cop_list: { set_last_string_list(chain_operator_names()); break; }
+  case ec_cop_select: { select_chain_operator(atoi((action_args_rep[0]).c_str())); break; }
+  case ec_cop_selected: { set_last_integer(selected_chain_operator()); break; }
   case ec_cop_set: 
     { 
       vector<string> a = string_to_vector(action_args_rep[0], ',');
@@ -473,33 +488,40 @@ void ECA_CONTROL::action(int action_id) {
 	set_last_error("Chain operator indexing starts from 1.");
       break; 
     }
-  case ec_copp_select: { select_chain_operator_parameter(atoi((action_args_rep[0]).c_str())); break; }
-  case ec_copp_set: { set_chain_operator_parameter(first_argument_as_number()); break; }
-  case ec_copp_get: { set_last_float(get_chain_operator_parameter()); break; }
-
   case ec_cop_status: 
     { 
       ecadebug->control_flow("Chain operator status");
       set_last_string(chain_operator_status()); 
       break; 
     }
-  case ec_cop_register: { cop_register(); break; }
 
-  case ec_preset_register: { preset_register(); break; }
-  case ec_ladspa_register: { ladspa_register(); break; }
+    // ---
+    // Chain operator parameters
+    // ---
+  case ec_copp_list: { set_last_string_list(chain_operator_parameter_names()); break; }
+  case ec_copp_select: { select_chain_operator_parameter(atoi((action_args_rep[0]).c_str())); break; }
+  case ec_copp_selected: { set_last_integer(selected_chain_operator_parameter()); break; }
+  case ec_copp_set: { set_chain_operator_parameter(first_argument_as_number()); break; }
+  case ec_copp_get: { set_last_float(get_chain_operator_parameter()); break; }
 
     // ---
     // Controllers
     // ---
   case ec_ctrl_add: { add_controller(action_args_rep[0]); break; }
+  case ec_ctrl_remove: { remove_controller(); break; }
+  case ec_ctrl_list: { set_last_string_list(controller_names()); break; }
   case ec_ctrl_select: { select_controller(atoi((action_args_rep[0]).c_str())); break; }
-  case ec_ctrl_remove: {  remove_controller(); break; }
+  case ec_ctrl_selected: { set_last_integer(selected_controller()); break; }
   case ec_ctrl_status: 
     { 
       ecadebug->control_flow("Controller status");
       set_last_string(controller_status()); 
       break; 
     }
+
+  case ec_cop_register: { cop_register(); break; }
+  case ec_preset_register: { preset_register(); break; }
+  case ec_ladspa_register: { ladspa_register(); break; }
   case ec_ctrl_register: { ctrl_register(); break; }
 
   // ---

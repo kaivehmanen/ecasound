@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>23.04.2001</h2>
+<h2>24.04.2001</h2>
 
 
     
@@ -161,16 +161,16 @@ Returns the current chainsetup position in seconds. <em>[f]</em>
 Returns the chainsetup length in seconds (if known). <em>[f]</em>
 <p><p></p><dt><strong>cs-set-length 'seconds'</strong><dd>
 Sets processing time in seconds (doesn't have to be an integer value). <em>[-]</em>
-<p><p></p><dt><strong>cs-loop</strong><dd>
-Enable looping. When processing is finished, engine will start 
+<p><p></p><dt><strong>cs-toggle-loop</strong><dd>
+Toggle looping. When processing is finished, engine will start 
 again from the initial position. It's not always possible to enable looping
 (for instance all inputs and outputs have infinite length and
 chainsetup length is not explicitly set with 'cs-set-length'). <em>[-]</em>
-<p><p></p><dt><strong>cs-set</strong><dd>
+<p><p></p><dt><strong>cs-set-param</strong><dd>
 Interpret general chainsetup parameters like for example
 "-b" (buffersize), "-m" (mixmode), "-n" (name), etc. 
 See ecasound(1) for more info. <em>[-]</em>
-<p><p></p><dt><strong>cs-format 'bits,channels,sample_rate'</strong><dd>
+<p><p></p><dt><strong>cs-set-audio-format 'bits,channels,sample_rate'</strong><dd>
 Set the default sample parameters for currently selected chainsetup. 
 For example cd-quality audio would be "16,2,44100". This does the
 same as command-line argument "-f" (see ecasound(1)). <em>[-]</em>
@@ -209,9 +209,9 @@ Returns a list of selected chains. <em>[S]</em>
 <p><p></p><dt><strong>c-clear</strong><dd>
 Clear selected chains by removing all chain operators and controllers.
 Doesn't change how chains are connected to inputs and outputs. <em>[-]</em>
-<p><p></p><dt><strong>c-set-name 'new_name'</strong><dd>
-Renames the selected chain. When using this command, only one chain must
-selected. <em>[-]</em>
+<p><p></p><dt><strong>c-rename 'new_name'</strong><dd>
+Renames the selected chain. When using this command, exactly one chain must
+be selected. <em>[-]</em>
 <p><p></p><dt><strong>c-muting</strong><dd>
 Toggle chain muting. When chain is muted, all data that goes through
 is muted. <em>[-]</em>
@@ -282,6 +282,9 @@ Set audio object position to 'time_in_seconds'. <em>[-]</em>
 Returns the audio object position in seconds. <em>[f]</em>
 <p><p></p><dt><strong>ai-get-length, ao-get-length</strong><dd>
 Returns the audio object length in seconds. <em>[f]</em>
+<p><p></p><dt><strong>ai-get-format, ao-get-format</strong><dd>
+Returns the audio format of the selected audio input/output as a
+formatted string. See documentation for '-f' command-line option. <em>[s]</em>
 <p><p></p><dt><strong>ai-wave-edit, ao-wave-edit</strong><dd> 
 The currently selected audio object is loaded into an external
 wave editor (see ecasoundrc(5)). <em>[-]</em>
@@ -306,28 +309,30 @@ Adds a new chain operator. Argument format is
 "-&lt;id_string&gt;:par1,...,parN". In addition to normal chain operators, 
 this commmand can also be used to add effect presets and various 
 plugins. See ecasound(1) man page for more info. <em>[-]</em>
-<p><p></p><dt><strong>cop-select 'param_id'</strong><dd>
-Selects a chain operator. <em>[-]</em>
-<p><p></p><dt><strong>cop-selected</strong><dd> **not implemented**
-Returns the index number of currently selected chain operator. <em>[i]</em>
 <p><p></p><dt><strong>cop-remove</strong><dd> 
 Removes the selected chain operator. <em>[-]</em>
+<p><p></p><dt><strong>cop-list</strong><dd>
+Returns a list of all chain operators attached to the currently
+selected chain. <em>[S]</em>
+<p><p></p><dt><strong>cop-select 'param_id', cop-index-select 'param_id', cop-iselect 'param_id'</strong><dd>
+Selects a chain operator. <em>[-]</em>
+<p><p></p><dt><strong>cop-selected</strong><dd>
+Returns the index number of currently selected chain operator. <em>[i]</em>
 <p><p></p><dt><strong>cop-set 'chainop_id, param_id, value'</strong><dd>
 Changes the value of a single chain operator parameter. Unlike other
 chain operator commands, this can also be used during processing. <em>[-]</em>
-<p><p></p><dt><strong>copp-select 'param_id'</strong><dd>
+<p><p></p><dt><strong>cop-status</strong><dd>
+Returns info about chain operator status. <em>[s]</em>
+<p><p></p><dt><strong>copp-list</strong><dd>
+Returns a list of selected chain operator's parameters. <em>[S]</em>
+<p><p></p><dt><strong>copp-select 'param_id', copp-index-select 'param_id', copp-iselect 'param_id'</strong><dd>
 Selects a chain operator parameter. <em>[-]</em>
-<p><p></p><dt><strong>copp-selected</strong><dd> **not implemented**
+<p><p></p><dt><strong>copp-selected</strong><dd>
 Returns the index number of currently selected chain operator parameter. <em>[i]</em>
 <p><p></p><dt><strong>copp-set 'value'</strong><dd>
 Sets the selected parameter value to 'value'. <em>[-]</em>
 <p><p></p><dt><strong>copp-get</strong><dd>
 Returns the selected parameter value. <em>[f]</em>
-<p><p></p><dt><strong>cop-status</strong><dd>
-Returns info about chain operator status. <em>[s]</em>
-<p><p></p><dt><strong>cop-list</strong><dd> **not implemented**
-Returns a list of all chain operators attached to the currently
-selected chain. <em>[S]</em>
 <p><p></p><dt><strong>cop-register</strong><dd>
 Prints a list of registered chain operators. <em>[s]</em>
 <p><p></p><dt><strong>preset-register</strong><dd>
@@ -345,17 +350,17 @@ Adds a new controller and attach it to currently selected chain
 operator. Argument format is "-&lt;id_string&gt;:&lt;param_id&gt;,&lt;range_low&gt;,
 &lt;range_high&gt;,par1,...,parN".  See ecasound(1) man page for more 
 info. <em>[-]</em>
-<p><p></p><dt><strong>ctrl-select 'param_id'</strong><dd>
-Selects a controller. <em>[-]</em>
-<p><p></p><dt><strong>ctrl-selected</strong><dd> **not implemented**
-Returns the index number of currently selected controller. <em>[i]</em>
 <p><p></p><dt><strong>ctrl-remove</strong><dd>
 Removes the selected controller. <em>[-]</em>
-<p><p></p><dt><strong>ctrl-status</strong><dd> 
-Returns info about controller status. <em>[s]</em>
-<p><p></p><dt><strong>ctrl-list</strong><dd> **not implemented**
+<p><p></p><dt><strong>ctrl-list</strong><dd>
 Returns a list of all controllers attached to the currently
 selected chain. <em>[S]</em>
+<p><p></p><dt><strong>ctrl-select 'param_id', ctrl-index-select 'param_id', ctrl-iselect 'param_id'</strong><dd>
+Selects a controller. <em>[-]</em>
+<p><p></p><dt><strong>ctrl-selected</strong><dd>
+Returns the index number of currently selected controller. <em>[i]</em>
+<p><p></p><dt><strong>ctrl-status</strong><dd> 
+Returns info about controller status. <em>[s]</em>
 <p><p></p><dt><strong>ctrl-register</strong><dd>
 Prints a list of registered controllers. <em>[s]</em>
 <p></dl>

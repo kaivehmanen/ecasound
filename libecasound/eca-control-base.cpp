@@ -552,4 +552,5 @@ void ECA_CONTROL_BASE::clear_last_values(void) {
   last_i_rep = 0;
   last_f_rep = 0.0f;
   last_error_rep = "";
+  last_type_rep = "";
 }

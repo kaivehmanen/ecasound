@@ -87,7 +87,6 @@ class CHAIN {
   void select_chain_operator(int index);
   void select_chain_operator_parameter(int index);
   void set_parameter(CHAIN_OPERATOR::parameter_type value);
-  CHAIN_OPERATOR::parameter_type get_parameter(void) const;
 
   /**
    * Index of selected chain operator
@@ -95,6 +94,10 @@ class CHAIN {
   int selected_chain_operator(void) const { return(selected_chainop_number_rep); }
   int selected_chain_operator_parameter(void) const { return(selected_chainop_parameter_rep); }
   int number_of_chain_operators(void) const { return(chainops_rep.size()); }
+  int number_of_chain_operator_parameters(void) const;
+  CHAIN_OPERATOR::parameter_type get_parameter(void) const;
+  string chain_operator_name(void) const;
+  string chain_operator_parameter_name(void) const;
 
   void add_controller(GENERIC_CONTROLLER* gcontroller);
   void remove_controller(void);
@@ -107,7 +110,7 @@ class CHAIN {
   int selected_controller(void) const { return(selected_controller_number_rep); }
   int selected_controller_parameter(void) const { return(selected_controller_parameter_rep); }
   int number_of_controllers(void) const { return(gcontrollers_rep.size()); }
-
+  string controller_name(void) const;
   void selected_chain_operator_as_target(void);
 
   void selected_controller_as_target(void);

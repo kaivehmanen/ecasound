@@ -392,7 +392,7 @@ long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer,
   if (interleaved_channels() == true) {
     realsamples = ::snd_pcm_readi(audio_fd_repp, target_buffer,
 				 fragment_size_rep);
-    if (realsamples == -EPIPE) {
+    if (realsamples < 0) {
       if (ignore_xruns() == true) {
 	handle_xrun_capture();
 	realsamples = ::snd_pcm_readi(audio_fd_repp, target_buffer,
@@ -412,7 +412,7 @@ long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer,
       ptr_to_channel += samples * frame_size();
     }
     realsamples = ::snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), fragment_size_rep);
-    if (realsamples == -EPIPE) {
+    if (realsamples < 0) {
       if (ignore_xruns() == true) {
 	handle_xrun_capture();
 	realsamples = ::snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), fragment_size_rep);
@@ -443,11 +443,11 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
   }
   if (interleaved_channels() == true) {
     if (::snd_pcm_writei(audio_fd_repp, target_buffer,
-			samples) == -EPIPE) {
+			samples) < 0) {
       if (ignore_xruns() == true) {
 	handle_xrun_playback();
 	if (::snd_pcm_writei(audio_fd_repp, target_buffer,
-			    samples) == -EPIPE) 
+			    samples) < 0) 
 	  cerr << "(audioio-alsa3) Xrun handling failed!" << endl;
 	trigger_request_rep = true;
 	stop();
@@ -469,7 +469,7 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
     }
     if (::snd_pcm_writen(audio_fd_repp,
 		     reinterpret_cast<void**>(nbufs_repp),
-		     samples) == -EPIPE) {
+		     samples) < 0) {
       if (ignore_xruns() == true) {
 	handle_xrun_playback();
 	::snd_pcm_writen(audio_fd_repp,

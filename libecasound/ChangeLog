@@ -2,6 +2,19 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-04-24  Kai Vehmanen <kaiv@wakkanet.fi>
+	
+	* eca-control-objects.h (selected_chain_operator): added
+	* eca-control-objects.h (selected_chain_operator_parameter): added
+	* eca-control-objects.h (selected_controller): added
+	* eca-control-objects.h (chain_operator_names): added
+	* eca-control-objects.h (chain_operator_parameter_names): added
+	* eca-control-objects.h (controller_names): added
+	* eca-chain.h (chain_operator_name): added
+	* eca-chain.h (chain_operator_parameter_name): added
+	* eca-chain.h (controller_name): added
+	* eca-chain.h (number_of_chain_operator_parameters): added
+		
 2001-04-23  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-iamode-parser.h (action_requires_selected_audio_input): added

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (23.04.2001)
+       (24.04.2001)
        ()
        (Multimedia software)
 
@@ -183,18 +183,18 @@ Returns the chainsetup length in seconds (if known). em([f])
 dit(cs-set-length 'seconds')
 Sets processing time in seconds (doesn't have to be an integer value). em([-])
 
-dit(cs-loop)
-Enable looping. When processing is finished, engine will start 
+dit(cs-toggle-loop)
+Toggle looping. When processing is finished, engine will start 
 again from the initial position. It's not always possible to enable looping
 (for instance all inputs and outputs have infinite length and
 chainsetup length is not explicitly set with 'cs-set-length'). em([-])
 
-dit(cs-set)
+dit(cs-set-param)
 Interpret general chainsetup parameters like for example
 "-b" (buffersize), "-m" (mixmode), "-n" (name), etc. 
 See ecasound(1) for more info. em([-])
 
-dit(cs-format 'bits,channels,sample_rate')
+dit(cs-set-audio-format 'bits,channels,sample_rate')
 Set the default sample parameters for currently selected chainsetup. 
 For example cd-quality audio would be "16,2,44100". This does the
 same as command-line argument "-f" (see ecasound(1)). em([-])
@@ -246,9 +246,9 @@ dit(c-clear)
 Clear selected chains by removing all chain operators and controllers.
 Doesn't change how chains are connected to inputs and outputs. em([-])
 
-dit(c-set-name 'new_name')
-Renames the selected chain. When using this command, only one chain must
-selected. em([-])
+dit(c-rename 'new_name')
+Renames the selected chain. When using this command, exactly one chain must
+be selected. em([-])
 
 dit(c-muting)
 Toggle chain muting. When chain is muted, all data that goes through
@@ -340,6 +340,10 @@ Returns the audio object position in seconds. em([f])
 dit(ai-get-length, ao-get-length)
 Returns the audio object length in seconds. em([f])
 
+dit(ai-get-format, ao-get-format)
+Returns the audio format of the selected audio input/output as a
+formatted string. See documentation for '-f' command-line option. em([s])
+
 dit(ai-wave-edit, ao-wave-edit) 
 The currently selected audio object is loaded into an external
 wave editor (see ecasoundrc(5)). em([-])
@@ -370,23 +374,33 @@ Adds a new chain operator. Argument format is
 this commmand can also be used to add effect presets and various 
 plugins. See ecasound(1) man page for more info. em([-])
 
-dit(cop-select 'param_id')
-Selects a chain operator. em([-])
-
-dit(cop-selected) **not implemented**
-Returns the index number of currently selected chain operator. em([i])
-
 dit(cop-remove) 
 Removes the selected chain operator. em([-])
+
+dit(cop-list)
+Returns a list of all chain operators attached to the currently
+selected chain. em([S])
+
+dit(cop-select 'param_id', cop-index-select 'param_id', cop-iselect 'param_id')
+Selects a chain operator. em([-])
+
+dit(cop-selected)
+Returns the index number of currently selected chain operator. em([i])
 
 dit(cop-set 'chainop_id, param_id, value')
 Changes the value of a single chain operator parameter. Unlike other
 chain operator commands, this can also be used during processing. em([-])
 
-dit(copp-select 'param_id')
+dit(cop-status)
+Returns info about chain operator status. em([s])
+
+dit(copp-list)
+Returns a list of selected chain operator's parameters. em([S])
+
+dit(copp-select 'param_id', copp-index-select 'param_id', copp-iselect 'param_id')
 Selects a chain operator parameter. em([-])
 
-dit(copp-selected) **not implemented**
+dit(copp-selected)
 Returns the index number of currently selected chain operator parameter. em([i])
 
 dit(copp-set 'value')
@@ -394,13 +408,6 @@ Sets the selected parameter value to 'value'. em([-])
 
 dit(copp-get)
 Returns the selected parameter value. em([f])
-
-dit(cop-status)
-Returns info about chain operator status. em([s])
-
-dit(cop-list) **not implemented**
-Returns a list of all chain operators attached to the currently
-selected chain. em([S])
 
 dit(cop-register)
 Prints a list of registered chain operators. em([s])
@@ -423,21 +430,21 @@ operator. Argument format is "-<id_string>:<param_id>,<range_low>,
 <range_high>,par1,...,parN".  See ecasound(1) man page for more 
 info. em([-])
 
-dit(ctrl-select 'param_id')
-Selects a controller. em([-])
-
-dit(ctrl-selected) **not implemented**
-Returns the index number of currently selected controller. em([i])
-
 dit(ctrl-remove)
 Removes the selected controller. em([-])
 
-dit(ctrl-status) 
-Returns info about controller status. em([s])
-
-dit(ctrl-list) **not implemented**
+dit(ctrl-list)
 Returns a list of all controllers attached to the currently
 selected chain. em([S])
+
+dit(ctrl-select 'param_id', ctrl-index-select 'param_id', ctrl-iselect 'param_id')
+Selects a controller. em([-])
+
+dit(ctrl-selected)
+Returns the index number of currently selected controller. em([i])
+
+dit(ctrl-status) 
+Returns info about controller status. em([s])
 
 dit(ctrl-register)
 Prints a list of registered controllers. em([s])

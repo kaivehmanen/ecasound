@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 230401) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 240401) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??042001 (v1.9dev6)
+24042001 (v1.9dev6)
 	- added: eiam - cs-setpos, cs-set-position; aliases for setpos
 	- added: eiam - cs-getpos, cs-get-position; aliases for getpos
 	- added: eiam - cs-rewind and cs-forward; aliases for rewind 
@@ -28,6 +28,15 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- added: MIDI options now properly saved to ecs files
 	- added: eiam - c-index-select, c-iselect, cs-iselect,
 		 cs-list, ai-list, ao-list, ai-iselect, ao-iselect
+	- added: eiam - cop-index-select, cop-iselect as aliases for
+		 cop-select
+	- added: eiam - copp-index-select, copp-iselect as aliases for
+		 copp-select
+	- added: eiam - ctrl-index-select, ctrl-iselect as aliases for
+		 ctrl-select
+	- added: eiam - ai-get-format and ao-get-format
+	- added: eiam - cop-selected, copp-selected and ctrl-selected
+	- added: eiam - cop-list, copp-list, ctrl-list
 	- removed: because of the continuing licensing problems,
 		   ladspa.h was removed; to compile ecasound with 
 		   LADSPA support, the LADSPA SDK has to be installed
@@ -44,6 +53,11 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- changed: eiam - ai-index-select and ao-index-select now 
 		   take an integer parameter
 	- changed: eiam - c-name renamed to c-rename
+	- changed: eiam - cs-set renamed cs-set-param
+	- changed: eiam - cs-format renamed cs-set-audio-format
+	- changed: eiam - cs-loop renamed to cs-toggle-loop
+	- fixed: small bug fix to ALSA 0.9.x support
+	- fixed: eiam - ctrl-remove bug fix, take two :)
 22032001 (v1.9dev5)
 	- added: eiam - new aliases 'getpos', 'c-set-position',
 		 'aio-set-position', 'aio-getpos'

@@ -46,8 +46,8 @@ class ECA_IAMODE_PARSER {
     ec_cs_connect,
     ec_cs_connected,
     ec_cs_disconnect,
-    ec_cs_set,
-    ec_cs_format,
+    ec_cs_set_param,
+    ec_cs_set_audio_format,
     ec_cs_status,
     ec_cs_rewind,
     ec_cs_forward,
@@ -55,7 +55,7 @@ class ECA_IAMODE_PARSER {
     ec_cs_get_position,
     ec_cs_get_length,
     ec_cs_set_length,
-    ec_cs_loop,
+    ec_cs_toggle_loop,
     // --
     ec_c_add,
     ec_c_remove,
@@ -91,6 +91,7 @@ class ECA_IAMODE_PARSER {
     ec_ai_set_position,
     ec_ai_get_position,
     ec_ai_get_length,
+    ec_ai_get_format,
     ec_ai_wave_edit,
     // --
     ec_ao_add,
@@ -106,19 +107,20 @@ class ECA_IAMODE_PARSER {
     ec_ao_set_position,
     ec_ao_get_position,
     ec_ao_get_length,
+    ec_ao_get_format,
     ec_ao_wave_edit,
     // --
     ec_cop_add,
     ec_cop_remove,
-    ec_cop_list,      /* FIXME: not implemented */
+    ec_cop_list,
     ec_cop_select,
-    ec_cop_selected,  /* FIXME: not implemented */
+    ec_cop_selected,
     ec_cop_set,
     ec_cop_status,
     ec_cop_register,
-    ec_copp_list,     /* FIXME: not implemented */
+    ec_copp_list,
     ec_copp_select,
-    ec_copp_selected, /* FIXME: not implemented */
+    ec_copp_selected,
     ec_copp_set,
     ec_copp_get,
     // --
@@ -127,9 +129,9 @@ class ECA_IAMODE_PARSER {
     // --
     ec_ctrl_add,
     ec_ctrl_remove,
-    ec_ctrl_list,     /* FIXME: not implemented */
+    ec_ctrl_list,
     ec_ctrl_select,
-    ec_ctrl_selected, /* FIXME: not implemented */
+    ec_ctrl_selected,
     ec_ctrl_status,
     ec_ctrl_register,
     ec_ctrlp_list,     /* FIXME: not implemented */

@@ -1691,7 +1691,7 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(CHAIN_OPERATOR* cotmp) {
 }
 
 /** 
- * Gets a pointer to the the selected chain operator. If no chain 
+ * Returns a pointer to the the selected chain operator. If no chain 
  * operator is selected, 0 is returned.
  *
  * require:
@@ -1708,6 +1708,58 @@ CHAIN_OPERATOR* ECA_CONTROL_OBJECTS::get_chain_operator(void) const {
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size())
     return (selected_chainsetup_repp->chains[p]->selected_chainop_repp);
+
+  return(0);
+}
+
+/** 
+ * Returns a list of chain operator names.
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ */
+vector<string> ECA_CONTROL_OBJECTS::chain_operator_names(void) const {
+  // --------
+  // require:
+  assert(is_selected() == true);
+  assert(selected_chains().size() == 1);
+  // --------
+
+  vector<string> result; 
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    CHAIN* selected_chain = selected_chainsetup_repp->chains[p];
+    int save_selected_cop = selected_chain->selected_chain_operator();
+    for(int n = 0; 
+	n < selected_chain->number_of_chain_operators();
+	n++) {
+      selected_chain->select_chain_operator(n + 1);
+      result.push_back(selected_chain->chain_operator_name());
+    }
+    selected_chain->select_chain_operator(save_selected_cop);	  
+  }
+  return(result);
+}
+
+/** 
+ * Returns the index of the selected chain operator. If no chain 
+ * operator is selected, 0 is returned.
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ */
+int ECA_CONTROL_OBJECTS::selected_chain_operator(void) const {
+  // --------
+  // require:
+  assert(is_selected() == true);
+  assert(selected_chains().size() == 1);
+  // --------
+
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size())
+    return (selected_chainsetup_repp->chains[p]->selected_chain_operator());
 
   return(0);
 }
@@ -1742,7 +1794,7 @@ void ECA_CONTROL_OBJECTS::remove_chain_operator(void) {
 }
 
 /**
- * Select chain operator
+ * Selects chain operator 'chainop_id'.
  *
  * require:
  *  is_selected() == true
@@ -1771,8 +1823,40 @@ void ECA_CONTROL_OBJECTS::select_chain_operator(int chainop_id) {
   }
 }
 
+/** 
+ * Returns a list of chain operator parameter names.
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ *  get_chain_operator() != 0
+ */
+vector<string> ECA_CONTROL_OBJECTS::chain_operator_parameter_names(void) const {
+  // --------
+  // require:
+  assert(is_selected() == true);
+  assert(selected_chains().size() == 1);
+  assert(get_chain_operator() != 0);
+  // --------
+
+  vector<string> result; 
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    CHAIN* selected_chain = selected_chainsetup_repp->chains[p];
+    int save_selected_copp = selected_chain->selected_chain_operator_parameter();
+    for(int n = 0; 
+	n < selected_chain->number_of_chain_operator_parameters();
+	n++) {
+      selected_chain->select_chain_operator_parameter(n + 1);
+      result.push_back(selected_chain->chain_operator_parameter_name());
+    }
+    selected_chain->select_chain_operator_parameter(save_selected_copp);
+  }
+  return(result);
+}
+
 /**
- * Select chain operator parameter
+ * Selects chain operator parameter 'param'.
  *
  * require:
  *  is_selected() == true
@@ -1850,6 +1934,30 @@ CHAIN_OPERATOR::parameter_type ECA_CONTROL_OBJECTS::get_chain_operator_parameter
     return(selected_chainsetup_repp->chains[p]->get_parameter());
   }
   return(0.0f);
+}
+
+/**
+ * Returns the index number of selected  chain operator parameter.
+ * If no parameter is selected, 0 is returned.
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ *  get_chain_operator() != 0
+ */
+int ECA_CONTROL_OBJECTS::selected_chain_operator_parameter(void) const {
+  // --------
+  // require:
+  assert(is_selected() == true);
+  assert(selected_chains().size() == 1);
+  assert(get_chain_operator() != 0);
+  // --------
+
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    return(selected_chainsetup_repp->chains[p]->selected_chain_operator_parameter());
+  }
+  return(0);
 }
 
 /**
@@ -1949,8 +2057,38 @@ void ECA_CONTROL_OBJECTS::remove_controller(void) {
 }
 
 /** 
- * Gets a pointer to the Nth controller. If controller is not
- * valid, 0 is returned.
+ * Returns a list of controller names.
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ */
+vector<string> ECA_CONTROL_OBJECTS::controller_names(void) const {
+  // --------
+  // require:
+  assert(is_selected() == true);
+  assert(selected_chains().size() == 1);
+  // --------
+
+  vector<string> result; 
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    CHAIN* selected_chain = selected_chainsetup_repp->chains[p];
+    int save_selected_ctrl = selected_chain->selected_controller();
+    for(int n = 0; 
+	n < selected_chain->number_of_controllers();
+	n++) {
+      selected_chain->select_controller(n + 1);
+      result.push_back(selected_chain->controller_name());
+    }
+    selected_chain->select_controller(save_selected_ctrl);
+  }
+  return(result);
+}
+
+/** 
+ * Returns a pointer to the selected controller. If no controller is 
+ * selected, 0 is returned.
  *
  * require:
  *  is_selected() == true
@@ -1965,6 +2103,27 @@ GENERIC_CONTROLLER* ECA_CONTROL_OBJECTS::get_controller(void) const {
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size())
     return (selected_chainsetup_repp->chains[p]->selected_controller_repp);
+
+  return(0);
+}
+
+/** 
+ * Returns the index number of the selected controller. If no controller is
+ * selected, 0 is returned.
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ */
+int ECA_CONTROL_OBJECTS::selected_controller(void) const {
+  // --------
+  REQUIRE(is_selected() == true);
+  REQUIRE(selected_chains().size() == 1);
+  // --------
+
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size())
+    return (selected_chainsetup_repp->chains[p]->selected_controller());
 
   return(0);
 }
