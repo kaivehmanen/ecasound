@@ -178,19 +178,27 @@ var_aw_ksv = -eS:0 -efl:0 -ksv:1,1000,6000,0,1 \
 # Presets using LADSPA plugins (lad_)
 
 lad_hermes = \
--eli:1200,3,%1,0.27,%2,100,%3,40,%4,1.5,1,2,-4,-4,-50,-20,-20,-20,200,1000,3,1,3,5,1500,0.65,0,130,0,5,400,0.8,0,0,-177,1,150,0.9,0.97,30,30,0.025,0.9,0.5,0.05,0.7,0.5,0.1,0.5,0.5,0,20,20 \
-	-pd:hermesFilter -ppn:p1,p2,p3,p4 -ppd:1,1,1,1
+	-eli:1200,3,%1,0.27,%2,100,%3,40,%4,1.5,1,2,-4,-4,-50,-20,-20,-20,200,1000,3,1,3,5,1500,0.65,0,130,0,5,400,0.8,0,0,-177,1,150,0.9,0.97,30,30,0.025,0.9,0.5,0.05,0.7,0.5,0.1,0.5,0.5,0,20,20 \
+	-pd:LADSPA_hermesFilter -ppn:p1,p2,p3,p4 -ppd:1,1,1,1
+lad_sc4 = \
+	-eli:1882,0,40,40,-18,6,6,6,%1,%2 \
+	-pd:LADSPA_SC4_compressor -ppn:output-amplitude-dB,output-gain-reduction-dB \
+	-ppd:0,0 -ppt:-,-
+lad_sc4_rg = \
+	-eli:1882,0,40,40,-18,%1,6,%2,%3,%4 \
+	-pd:LADSPA_SC4_compressor -ppn:ratio,gain-dB,output-amplitude-dB,output-gain-reduction-dB \
+	-ppd:6,3,0,0 -ppl:1,-40 -ppu:20,12 -ppt:-,-,-,-
 lad_metronome = -el:sine_fcac,880,1 -eemb:%1,10 -efl:2000 \
-	-pd:Sineosc_metronome -ppn:bpm -ppd:120 -ppl:1
+	-pd:LADSPA_sineosc_metronome -ppn:bpm -ppd:120 -ppl:1
 lad_oscillator_test = -eli:1205,%1,0 -ea:%2 \
-	-pd:Oscillator_test \
+	-pd:LADSPA_Oscillator_test \
 	-ppn:freq,gain1 \
 	-ppd:200,100 \
 	-ppl:1,0 -ppu:1300,1000 \
 	-ppt:-,-
 lad_oscillator_stack = -el:analogueOsc,%1,%2 -ea:%4 | \
 	-el:analogueOsc,%1,%3 -ea:%5 \
-	-pd:Stack_of_analogue_oscillators \
+	-pd:LADSPA_stack_of_analogue_oscillators \
 	-ppn:freq,osctype1,osctype2,gain1,gain2 \
 	-ppd:200,0,0,100,100 \
 	-ppl:1,0,0,0,0 -ppu:1300,3,3,1000,1000 \
