@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiogate.cpp: Signal gates.
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2005 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ void TIME_CROP_GATE::analyze(SAMPLE_BUFFER* sbuf)
   else 
     close_gate();
 
-  curtime += static_cast<double>(sbuf->length_in_samples() / samples_per_second());
+  curtime += static_cast<double>(sbuf->length_in_samples()) / samples_per_second();
 }
 
 TIME_CROP_GATE::TIME_CROP_GATE (CHAIN_OPERATOR::parameter_t open_at, CHAIN_OPERATOR::parameter_t duration) {
