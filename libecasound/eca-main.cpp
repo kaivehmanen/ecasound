@@ -134,7 +134,7 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR&) {
   if (csetup == 0 )
     throw(ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, no chainsetup connected!"));
 
-  pserver_rep.set_buffer_defaults(64, 
+  pserver_rep.set_buffer_defaults(128, 
 				  buffersize_rep,
 				  csetup->sample_rate());
 

@@ -76,7 +76,7 @@ ecasound_audioio_include = 	\
 			audioio-types.h \
 			audioio-loop.h \
 			audioio-forked-stream.h \
-			audioio-timidity.h
+			audioio-timidity.h \
 			audioio-proxy-server.h \
 			audioio-proxy-buffer.h \
 			audioio-buffered-proxy.h

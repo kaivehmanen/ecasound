@@ -205,9 +205,9 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
     else {
       full_rep.set(1);
     }
-    if (processed == 0) {
-      usleep(50000);
-    }
+//      if (processed == 0) {
+//        usleep(100);
+//      }
 //      cerr << "F";
   }
   cerr << "Exiting proxy server thread." << endl;
