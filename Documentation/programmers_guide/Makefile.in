@@ -93,7 +93,8 @@ qt_includes = @qt_includes@
 qt_libraries = @qt_libraries@
 readline_includes = @readline_includes@
 
-DISTFILES = Makefile.am Makefile.in programmers_guide.yo programmers_guide.html
+DISTFILES = Makefile.am 		Makefile.in 		programmers_guide.yo 		programmers_guide.html 		eci_doc.yo 		eci_doc.html
+
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
@@ -202,6 +203,9 @@ all:
 pguide: programmers_guide.yo
 	yodl2html programmers_guide.yo
 	ln -sf programmers_guide.html index.html
+
+ecidoc: eci_doc.yo
+	yodl2html eci_doc.yo
 
 distclean:
 

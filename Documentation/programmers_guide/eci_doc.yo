@@ -1,0 +1,73 @@
+mailto(kaiv@wakkanet.fi)
+
+htmlcommand(
+<insert file=../../es-makrot.txt>
+<insert name=ecasound_subindexbar>
+
+<hr>
+<p>
+<center><h2>Ecasound Control Interface documentation</h2></center>
+</p>
+)
+
+article()
+       (Kai Vehmanen)
+       (05122000)
+
+COMMENT(----------------------------------------------------------------)
+COMMENT(----------------------------------------------------------------)
+sect(Introduction)
+Idea behind Ecasound Control Interface (ECI) is to take a subset of 
+functionality provided by libecasound, write a simple API for it, and
+port it to various languages. At the moment, at least C++, C and
+Python implementations of the ECI API are available and part of the
+main ecasound distribution. ECI is heavily based on ecasound's
+interactive mode (EIAM), and the services it provides. 
+
+COMMENT(----------------------------------------------------------------)
+COMMENT(----------------------------------------------------------------)
+sect(General)
+
+COMMENT(----------------------------------------------------------------)
+subsect(Concepts)
+
+COMMENT(----------------------------------------------------------------)
+subsect(What's it good for?)
+
+Specific tasks ECI is aimed at:
+
+startit()
+it() 1. automating (scripting in its traditional sense)
+it() 2. frontends (generic / specialized)
+it() 3. sound services to other apps
+endit()
+
+COMMENT(----------------------------------------------------------------)
+subsect(Services and behaviour)
+
+COMMENT(----------------------------------------------------------------)
+subsect(Porting to new environments)
+
+COMMENT(----------------------------------------------------------------)
+COMMENT(----------------------------------------------------------------)
+sect(Implementations)
+
+COMMENT(----------------------------------------------------------------)
+subsect(C++)
+subsubsect(Overview)
+subsubsect(Usage)
+subsubsect(Example)
+
+COMMENT(----------------------------------------------------------------)
+subsect(C)
+subsubsect(Overview)
+subsubsect(Usage)
+subsubsect(Example)
+
+COMMENT(----------------------------------------------------------------)
+subsect(Python)
+subsubsect(Overview)
+subsubsect(Usage)
+subsubsect(Example)
+
+htmlcommand(<insert name=ecasound_tail>)

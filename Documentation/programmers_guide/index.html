@@ -21,7 +21,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>11102000</h2>
+<h2>05122000</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -72,16 +72,21 @@
 </dl><p>
 <dt><h2><a href="programmers_guide.html#l32">4: Using ecasound from other programs</a></h2>
 <dl><p>
-<dt><h3><a href="programmers_guide.html#l33">4.1: Console mode ecasound</a></h3>
-<dt><h3><a href="programmers_guide.html#l34">4.2: Controller class interface</a></h3>
-<dt><h3><a href="programmers_guide.html#l35">4.3: Ecasound classes as building blocks</a></h3>
+<dt><h3><a href="programmers_guide.html#l33">4.1: Console mode ecasound - [all languages]</a></h3>
+<dt><h3><a href="programmers_guide.html#l34">4.2: Ecasound Control Interface - [C++, C, Python]</a></h3>
+<dt><h3><a href="programmers_guide.html#l35">4.3: Libecasound's ECA_CONTROL class - [C++]</a></h3>
+<dt><h3><a href="programmers_guide.html#l36">4.4: Ecasound classes as building blocks - [C++]</a></h3>
 </dl><p>
-<dt><h2><a href="programmers_guide.html#l36">5: Adding new features and components?</a></h2>
+<dt><h2><a href="programmers_guide.html#l37">5: Adding new features and components?</a></h2>
 <dl><p>
-<dt><h3><a href="programmers_guide.html#l37">5.1: Audio objects</a></h3>
-<dt><h3><a href="programmers_guide.html#l38">5.2: Effects and other chain operators</a></h3>
-<dt><h3><a href="programmers_guide.html#l39">5.3: Differences between audio objects and chain operators</a></h3>
-<dt><h3><a href="programmers_guide.html#l40">5.4: LADSPA plugins</a></h3>
+<dt><h3><a href="programmers_guide.html#l38">5.1: Things to remember when writing new C++ classes</a></h3>
+<dl><p>
+<dt><a href="programmers_guide.html#l39">5.1.1: Copy constructor and assignment operator</a>
+</dl><p>
+<dt><h3><a href="programmers_guide.html#l40">5.2: Audio objects</a></h3>
+<dt><h3><a href="programmers_guide.html#l41">5.3: Effects and other chain operators</a></h3>
+<dt><h3><a href="programmers_guide.html#l42">5.4: Differences between audio objects and chain operators</a></h3>
+<dt><h3><a href="programmers_guide.html#l43">5.5: LADSPA plugins</a></h3>
 </dl><p>
  
 <p><hr><p><br>
@@ -131,16 +136,17 @@ responsible for the error. This means that routine mustn't
 check argument validity. This must be done by the caller.
 <p>Routine should also specify, what conditions are true when
 returning to the caller. By doing this, routine ensures that
-it works correctly and calling routine knows what is happening.
+it works correctly and calling routine knows what has been
+done.
 <p>Ideally, these conditions prove that the routine works correctly. 
 The benefits of this approach should be clear. When you call 
 a well-defined routine, a) you know what parameter values it 
-accepts, b) you know what it does to them and c) if errors occur, 
+accepts, b) you know what it does and c) if errors occur, 
 it's easier to pinpoint the faulty routine. In practice this is 
 done by using comments and pre/postconditions. As C++ doesn't 
 directly support pre/postconditions, I've simulated them using
 the class DEFINITION_BY_CONTRACT from kvutils package and with 
-normal assert() calls.
+standard assert() calls.
 <p><a name="l8"></a>
 <strong>2.1.5: Routine side effects</strong><p> 
 I try to make a clear distinction between routines that 
@@ -420,7 +426,7 @@ between ECA_OBJECT&lt;-&gt;EFFECT_LADSPA.
 <h2>4: Using ecasound from other programs</h2>
 <p>
 <a name="l33"></a>
-<h3>4.1: Console mode ecasound</h3>
+<h3>4.1: Console mode ecasound - [all languages]</h3>
 This is the easiest way to take advantage of ecasound features in your
 own programs. You can fork ecasound, pipe commands to ecasound's
 interactive mode or you can create chainsetup (.ecs) files and load
@@ -428,16 +434,33 @@ them to ecasound. You'll be able to do practically anything. The only
 real problem is getting information from ecasound. You'll have to
 parse ecasound's ascii output if you want to do this. To make this 
 a bit easier, ecasound offers the dump-* commands. These print
-configration and status info as formatted text strings (easier to
+configuration and status info as formatted text strings (easier to
 parse than normal output).
 <p>
 <a name="l34"></a>
-<h3>4.2: Controller class interface</h3>
+<h3>4.2: Ecasound Control Interface - [C++, C, Python]</h3>
+<p>Idea behind Ecasound Control Interface (ECI) is to take a subset of 
+functionality provided by libecasound, write a simple API for it, and
+port it to various languages. At the moment, at least C++, C and
+Python implementations of the ECI API are available and part of the
+main ecasound distribution. ECI is heavily based on ecasound's
+interactive mode (EIAM), and the services it provides. 
+<p>Specific tasks ECI is aimed at:
+<p><dl>
+<li > 1. automating (scripting in its traditional sense)
+<li > 2. frontends (generic / specialized)
+<li > 3. sound services to other apps
+</dl>
+<p>
+<a name="l35"></a>
+<h3>4.3: Libecasound's ECA_CONTROL class - [C++]</h3>
 By linking your program to libecasound, you can use the ECA_CONTROL
 class for controlling ecasound. This is a large interface class that
 offers routines for controlling all ecasound features. It's easy
-to use while still powerful. All ecasound interface programs use this 
-class. Here's a few lines of code:
+to use while still powerful. Best examples are the utils in ecatools 
+directory (most of them are just a couple screenfuls of code). Also, 
+qtecasound and ecawave heavily use ECA_CONTROL. Here's a few lines of 
+example code:
 <p><pre>
 
 --cut--
@@ -460,7 +483,7 @@ short sample:
 --cut--
 ECA_SESSION esession;
 ECA_CONTROL ctrl (&amp;esession);
-ctrl.new_chainsetup("default");
+ctrl.add_chainsetup("default");
 [... other setup routines ]
 ECA_PROCESSOR p (&amp;esession);
 p.exec(); // blocks until processing is finished
@@ -469,8 +492,8 @@ p.exec(); // blocks until processing is finished
 </pre>
 
 <p>
-<a name="l35"></a>
-<h3>4.3: Ecasound classes as building blocks</h3>
+<a name="l36"></a>
+<h3>4.4: Ecasound classes as building blocks - [C++]</h3>
 And of course, you can also use individual ecasound classes directly.
 This means more control, but it also means more work. Here's
 another short sample:
@@ -488,11 +511,29 @@ another short sample:
 
 <p>
 
-<p><a name="l36"></a>
+<p><a name="l37"></a>
 <h2>5: Adding new features and components?</h2>
 <p>
-<a name="l37"></a>
-<h3>5.1: Audio objects</h3>
+<a name="l38"></a>
+<h3>5.1: Things to remember when writing new C++ classes</h3>
+<a name="l39"></a>
+<strong>5.1.1: Copy constructor and assignment operator</strong><p>
+Always take a moment to check your copy constructor and the assign 
+operation (=operation()). Basicly you have three alternatives: 
+<dl>
+<li > Trust the automatically created default definitons. If you don't
+have any pointers as data members, this isn't necessarily a bad
+choice at all. At least the compiler remembers to copy all members!
+<p><li > If you have pointers to objects as class data members, you should
+write definitions for both the copy-constructor and the assign
+operation.
+<p><li > If you are lazy, just declare the two functions as null
+functions, and put them in _private_ access scope. At least this way
+nobody will use the functions by accident!
+</dl>
+<p>
+<a name="l40"></a>
+<h3>5.2: Audio objects</h3>
 To implement a new audio object type, you must first select which 
 top-level class to derive from. Usually this is either AUDIO_IO
 (the top-level class), AUDIO_IO_BUFFERED (a more low level interface)
@@ -507,8 +548,8 @@ information (status info).
 (see the next section). Basicly you just add it to the makefiles and
 then register it to the appropriate object map (see below).
 <p>
-<a name="l38"></a>
-<h3>5.2: Effects and other chain operators</h3>
+<a name="l41"></a>
+<h3>5.3: Effects and other chain operators</h3>
 Write a new class that inherits from CHAIN_OPERATOR or any of its
 successors. Implement the necessary routines (init, set/get_parameter, 
 process and a default constructor) and add your source files to
@@ -517,8 +558,8 @@ effect to <em>libecasound/eca-static-object-maps.cpp</em>,
 <em>register_default_objects()</em>. Now the new effect can be used just 
 like any other ecasound effect (parameters control, effect presets, etc).
 <p>
-<a name="l39"></a>
-<h3>5.3: Differences between audio objects and chain operators</h3>
+<a name="l42"></a>
+<h3>5.4: Differences between audio objects and chain operators</h3>
 Design-wise, audio objects and effects (chain operators) aren't that 
 far away from each other. Many audio apps don't separate these
 concepts at all (for instance most UG based synthesizers). In ecasound 
@@ -558,8 +599,8 @@ as audio inputs by specifying:
 </pre>
 
 <p>
-<a name="l40"></a>
-<h3>5.4: LADSPA plugins</h3>
+<a name="l43"></a>
+<h3>5.5: LADSPA plugins</h3>
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
 Plugin API). See <a href="http://www.linuxdj.com/audio/lad">LAD mailing list web site</a> for 
 more info about LADSPA. Other useful sites are 

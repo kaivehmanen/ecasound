@@ -12,7 +12,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (11102000)
+       (05122000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -61,17 +61,18 @@ check argument validity. This must be done by the caller.
 
 Routine should also specify, what conditions are true when
 returning to the caller. By doing this, routine ensures that
-it works correctly and calling routine knows what is happening.
+it works correctly and calling routine knows what has been
+done.
 
 Ideally, these conditions prove that the routine works correctly. 
 The benefits of this approach should be clear. When you call 
 a well-defined routine, a) you know what parameter values it 
-accepts, b) you know what it does to them and c) if errors occur, 
+accepts, b) you know what it does and c) if errors occur, 
 it's easier to pinpoint the faulty routine. In practice this is 
 done by using comments and pre/postconditions. As C++ doesn't 
 directly support pre/postconditions, I've simulated them using
 the class DEFINITION_BY_CONTRACT from kvutils package and with 
-normal assert() calls.
+standard assert() calls.
 
 subsubsect(Routine side effects) 
 I try to make a clear distinction between routines that 
@@ -378,7 +379,7 @@ COMMENT(----------------------------------------------------------------)
 sect(Using ecasound from other programs)
 
 COMMENT(----------------------------------------------------------------)
-subsect(Console mode ecasound)
+subsect(Console mode ecasound - [all languages])
 This is the easiest way to take advantage of ecasound features in your
 own programs. You can fork ecasound, pipe commands to ecasound's
 interactive mode or you can create chainsetup (.ecs) files and load
@@ -386,16 +387,36 @@ them to ecasound. You'll be able to do practically anything. The only
 real problem is getting information from ecasound. You'll have to
 parse ecasound's ascii output if you want to do this. To make this 
 a bit easier, ecasound offers the dump-* commands. These print
-configration and status info as formatted text strings (easier to
+configuration and status info as formatted text strings (easier to
 parse than normal output).
 
 COMMENT(----------------------------------------------------------------)
-subsect(Controller class interface)
+subsect(Ecasound Control Interface - [C++, C, Python])
+
+Idea behind Ecasound Control Interface (ECI) is to take a subset of 
+functionality provided by libecasound, write a simple API for it, and
+port it to various languages. At the moment, at least C++, C and
+Python implementations of the ECI API are available and part of the
+main ecasound distribution. ECI is heavily based on ecasound's
+interactive mode (EIAM), and the services it provides. 
+
+Specific tasks ECI is aimed at:
+
+startit()
+it() 1. automating (scripting in its traditional sense)
+it() 2. frontends (generic / specialized)
+it() 3. sound services to other apps
+endit()
+
+COMMENT(----------------------------------------------------------------)
+subsect(Libecasound's ECA_CONTROL class - [C++])
 By linking your program to libecasound, you can use the ECA_CONTROL
 class for controlling ecasound. This is a large interface class that
 offers routines for controlling all ecasound features. It's easy
-to use while still powerful. All ecasound interface programs use this 
-class. Here's a few lines of code:
+to use while still powerful. Best examples are the utils in ecatools 
+directory (most of them are just a couple screenfuls of code). Also, 
+qtecasound and ecawave heavily use ECA_CONTROL. Here's a few lines of 
+example code:
 
 verb(
 --cut--
@@ -417,7 +438,7 @@ verb(
 --cut--
 ECA_SESSION esession;
 ECA_CONTROL ctrl (&esession);
-ctrl.new_chainsetup("default");
+ctrl.add_chainsetup("default");
 [... other setup routines ]
 ECA_PROCESSOR p (&esession);
 p.exec(); // blocks until processing is finished
@@ -425,7 +446,7 @@ p.exec(); // blocks until processing is finished
 )
 
 COMMENT(----------------------------------------------------------------)
-subsect(Ecasound classes as building blocks)
+subsect(Ecasound classes as building blocks - [C++])
 And of course, you can also use individual ecasound classes directly.
 This means more control, but it also means more work. Here's
 another short sample:
@@ -444,6 +465,25 @@ COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
 
 sect(Adding new features and components?)
+
+COMMENT(----------------------------------------------------------------)
+subsect(Things to remember when writing new C++ classes)
+subsubsect(Copy constructor and assignment operator)
+Always take a moment to check your copy constructor and the assign 
+operation (=operation()). Basicly you have three alternatives: 
+startit()
+it() Trust the automatically created default definitons. If you don't
+have any pointers as data members, this isn't necessarily a bad
+choice at all. At least the compiler remembers to copy all members!
+
+it() If you have pointers to objects as class data members, you should
+write definitions for both the copy-constructor and the assign
+operation.
+
+it() If you are lazy, just declare the two functions as null
+functions, and put them in _private_ access scope. At least this way
+nobody will use the functions by accident!
+endit()
 
 COMMENT(----------------------------------------------------------------)
 subsect(Audio objects)
