@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 270305) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 280305) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -26,9 +26,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   recent versions of autoheader
 	- changed: Ecasound Programmer's Guide converted from LaTeX
 		   to ascii/rst
-	- changed: awk is used to genered ecasoundrc; allows to 
-		   specify a custom datadir to be used in ecasoundrc
-		   defaults
+	- changed: sed is used to generate ecasoundrc; allows to 
+		   specify a custom pkgdatadir when running make 
 	- changed: various small improvements to all ecatools and 
 		   the related manpages
 	- fixed: sources for the aRts plugin were not present in the
@@ -40,6 +39,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: current position of the time crop gate (-gc) was 
 		 incorrecly increased [alexey]
 	- fixed: compilation failed if building outside srcdir
+	- fixed: ECI C impl. did not properly release all file handles
+		 in eci_cleanup(); for example playing thousands of
+		 files with ecaplay would cause the system to run
+		 out of file descriptors (too many open files error)
 12032005 (v2.4.0)  -** stable release **-
 	- edi-entries: edi-40 progress
 	- added: support for having commas in arguments by escaping 

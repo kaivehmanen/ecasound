@@ -46,6 +46,9 @@ Polton, Richard [rpolton]
 	The 250k gcc3.x patch. :)
 Tiedemann, Eric S. [est]
 	Wrote the eci.py interface.
+Uekawa, Junichi [juekawa]
+	Maintainer for Ecasound's Debian package. Improvements to build 
+	system and numerous bugfixes.
 Weil, Jan [janweil] (Jan -dot- Weil -at- web -dot- de)
 	Wrote the Ruby ECI implementation.
 
@@ -103,8 +106,6 @@ Stradling, Rob [robstr]
 	MIDI-MMC bug fixes.
 Tkachenko, Vadim - 
 	Helped to get started with autoconf.
-Uekawa, Junichi [juekawa]
-	Maintains the Ecasound debian packages.
 Yee-king, Matt [yeeking]
 	Helped debugging big-endian troubles on PowerPC.
 Westbrook, Tim [iondiode]

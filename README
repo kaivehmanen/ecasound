@@ -165,7 +165,7 @@ related tools. Announcements of new versions, bug warnings, etc will be
 posted to this list. If you have problems compiling, installing or 
 using Ecasound, this is a good place to ask for help. Reports of 
 working software/hardware combinations are also welcome. You can
-browse the message archives at http://www.eca.cx/ecasound-list/
+browse the message archives at http://eca.cx/ecasound-list/
 
 You can join the lists using the following web front-end: 
 http://eca.cx/mlists.php
@@ -185,18 +185,20 @@ All Ecasound releases will be announced at Freshmeat.
 -----------------------------------------------------------------------
 
 Ecasound home site
-- http://www.eca.cx/ecasound
+- http://eca.cx/ecasound
 
-Distribution packages
-- http://ecasound.seul.org/download/
+Download releases
+- http://ecasound.seul.org/download/    (primary site)
+- http://ecawave.sf.net/download/	(mirror)
+- http://eca.cx/download/		(mirror)
 
 Eca projects page (links, apps based on Ecasound, etc)
-- http://www.eca.cx 
+- http://eca.cx 
 - http://ecasound.seul.org (US mirror)
 - http://ecasound.sourceforge.net (another US mirror)
 
 Examples of real-life Ecasound usage
-- http://www.eca.cx/ecasound_users.html
+- http://eca.cx/ecasound_users.html
 
 -----------------------------------------------------------------------
  About free open-source software (FOSS) development
@@ -241,16 +243,26 @@ See the file 'AUTHORS'.
  Thanks to
 -----------------------------------------------------------------------
 
-DotCX (www.nic.cx) - For providing the 'eca.cx' domain.
-Endersz, Viktor - For sending me the adv.compressor source code!
-LAD members - Always a great source of inspiration! Special thanks
-	      to Paul Davis, who has kept on pushing Linux audio 
-	      forward all these years.
-Philips, Dave - The 'Linux Sound & MIDI' website was the reason
-		why I initially got interested in Linux audio!
-SEUL (www.seul.org) - For hosting Ecasound ftp, http and CVS services.
-SourceForge.net - For hosting Ecasound ftp and http sites.
-Wakkanet Oy (www.wakkanet.fi) - For various hosting services.
+DotCX (www.nic.cx)
+	For providing 'eca.cx' domain free of charge 2000-2004.
+SEUL (www.seul.org)
+	For hosting Ecasound CVS, ftp, and http services since 1999.
+SourceForge.net
+	For hosting Ecasound, Ecawave and Ecamegapedal ftp and 
+	http mirror sites since 1999.
+Wakkanet Oy (www.wakkanet.fi)
+	For various hosting services 1999-2004.
+
+Linux-audio-dev community
+	Always a great source of inspiration! Special thanks
+	to Paul Davis, who has kept on pushing Linux audio 
+	forward all these years.
+
+Endersz, Viktor
+	For sending me the adv.compressor source code!
+Phillips, Dave
+	The 'Linux Sound & MIDI' website was the reason
+	why I initially got interested in Linux audio!
 
 And of course, to all the contributors (see the file 'AUTHORS')
 and to users who have given feedback, ideas and helped with testing!
