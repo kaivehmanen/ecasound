@@ -22,6 +22,9 @@
 #include <string.h>
 #include "ecasoundc.h"
 
+/* FIXME: cannot be run on a clean-build as ecasound is not yet
+ *        installed */
+
 /* --------------------------------------------------------------------- 
  * Options
  */
@@ -73,6 +76,12 @@ static eci_test_t eci_funcs[] = {
 int main(int argc, char *argv[])
 {
   int n, failed = 0;
+  
+#if NDEBUG
+  setenv("ECASOUND", "../ecasound/ecasound", 0);
+#else
+  setenv("ECASOUND", "../ecasound/ecasound_debug", 0);
+#endif
 
   for(n = 0; eci_funcs[n] != NULL; n++) {
     int ret = eci_funcs[n]();
