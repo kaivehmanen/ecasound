@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 051200) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 071200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,7 +14,7 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??122000 (v1.8.5d15)
+07122000 (v1.8.5d15)
 	- added: tremolo effect (-eemt) [rcs]
 	- added: -z:db; i/o double buffering layer is back! - 
 		 after complete rewrite, db-mode now supports all
@@ -37,7 +37,11 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 to the distribution package
 	- added: ecasound control interface documentation added - 
 		 see 'Documentation/programmers_guide/eci_doc.html'
-	- added: eiam - new commands; c-selected, 
+	- added: eiam - new commands; c-selected
+	- added: extended support for parameter descriptions; 
+		 all LADSPA parameter hints now supported
+	- added: support for result paramerers, ie. values resulted
+		 from processing/analyzing
 	- removed: the "LADSPA/" prefix removed from plugin labels
 	- removed: support for underscores in EIAM-commands
 	- changed: more intelligent handling of resource files
@@ -50,6 +54,8 @@ Last officially released version is -*> v1.8.2r14 <*-
 		   are prefilled with two buffers before triggering
 	- changed: Mandrake and PLD Linux RPM-spec files moved into
 		   the new './contrib' directory
+	- changed: -ev and -ezf now report their results as
+		   output parameters (normal chainop params)
 	- fixed: nasty bug in effect preset mapping
 	- fixed: -ei:0 caused problems
 	- fixed: cdr-file endianess (should be _always_ big endian)

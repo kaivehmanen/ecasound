@@ -43,7 +43,7 @@ commands from outside libecasound. When issuing EIAM commands using
 ECI, it's possible that commands also return information. Currently
 supported return value types are: strings [s], list of strings [S],
 integers [i], long integers [li] and floating-point numbers [f]. These
-definions are used in the following documentation.
+definitions are used in the following documentation.
 <p><h2>GENERAL</h2>
     
 <dl>
@@ -159,6 +159,8 @@ Deselect chains.
 Select all chains.
 <p><p></p><dt><strong>c-select-add 'cname1,...,cnameN'</strong><dd>
 Select more chains.
+<p><p></p><dt><strong>c-selected</strong><dd>
+Returns a list of selected chains. <em>[S]</em>
 <p><p></p><dt><strong>c-remove</strong><dd>
 Remove selected chains.
 <p><p></p><dt><strong>c-clear</strong><dd>

@@ -42,10 +42,18 @@ Requires: ecasound
 %description plugins
 Additional ecasound plugins (ALSA, Audiofile, aRts).
 
+%package -n pyecasound
+Summary: Python bindings to ecasound control interface.
+Group: Applications/Sound
+Requires: ecasound
+
+%description -n pyecasound
+Python bindings to ecasound control interface.
+
 %prep
 %setup -n ecasound-@VERSION@
 %build
-./configure --prefix=%{prefix} --disable-static $extra_params
+./configure --prefix=%{prefix} --disable-static --with-python-modules=%{prefix}/lib/python2.0 $extra_params
 make
 
 %install
@@ -63,7 +71,7 @@ fi
 
 %files
 %defattr(-, root, root)
-%doc NEWS README INSTALL BUGS Documentation
+%doc NEWS README INSTALL BUGS Documentation contrib examples
 %doc /usr/local/man/man1/ecasound.1
 %doc /usr/local/man/man1/ecatools.1
 %doc /usr/local/man/man1/ecasound-iam.1
@@ -75,7 +83,9 @@ fi
 /usr/local/bin/ecaplay
 /usr/local/bin/ecasignalview
 /usr/local/bin/ecasound-config
+/usr/local/bin/ecasoundc-config
 /usr/local/lib/libecasound.*
+/usr/local/lib/libecasoundc.*
 /usr/local/lib/libkvutils.*
 %config /usr/local/share/ecasound
 
@@ -88,7 +98,18 @@ fi
 %defattr(-, root, root)
 /usr/local/lib/ecasound-plugins
 
+%files -n pyecasound
+%defattr(-, root, root)
+/usr/local/lib/python2.0/site-packages/pyeca.py
+/usr/local/lib/python2.0/site-packages/libpyecasound.*
+
 %changelog
+* Sat Dec 06 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- contrib and examples directories added to docs
+- ecasoundc-config added
+- libecasoundc added (C implementation of ECI)
+- a new package: pyecasound
+
 * Sat Nov 25 2000 Kai Vehmanen <kaiv@wakkanet.fi>
 - ecasignalview added to the package.
 

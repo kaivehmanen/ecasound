@@ -32,12 +32,12 @@ public:
 
   virtual string name(void) const { return("Channel copy"); }
   virtual string parameter_names(void) const { return("from-channel,to-channel"); }
-  virtual pair<parameter_type,parameter_type> default_parameter_range(int param) const { return(make_pair(1.0,0.0)); }
 
   int output_channels(int i_channels) const;
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
   void init(SAMPLE_BUFFER *insample);
   void process(void);
@@ -68,12 +68,12 @@ public:
 
   virtual string name(void) const { return("Mix to channel"); }
   virtual string parameter_names(void) const { return("to-channel"); }
-  virtual pair<parameter_type,parameter_type> default_parameter_range(int param) const { return(make_pair(1.0,0.0)); }
 
   int output_channels(int i_channels) const;
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
   void init(SAMPLE_BUFFER *insample);
   void process(void);

@@ -33,6 +33,19 @@ int EFFECT_CHANNEL_COPY::output_channels(int i_channels) const {
   return(c > i_channels ? c : i_channels);
 }
 
+void EFFECT_CHANNEL_COPY::parameter_description(int param, struct PARAM_DESCRIPTION *pd) {
+  pd->default_value = 1;
+  pd->description = get_parameter_name(param);
+  pd->bounded_above = false;
+  pd->upper_bound = 0.0f;
+  pd->bounded_below = true;
+  pd->lower_bound = 1.0f;
+  pd->toggled = false;
+  pd->integer = true;
+  pd->logarithmic = false;
+  pd->output = false;
+}
+
 void EFFECT_CHANNEL_COPY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
@@ -81,6 +94,19 @@ int EFFECT_MIX_TO_CHANNEL::output_channels(int i_channels) const {
   int c = static_cast<int>(to_channel);
   ++c;
   return(c > i_channels ? c : i_channels);
+}
+
+void EFFECT_MIX_TO_CHANNEL::parameter_description(int param, struct PARAM_DESCRIPTION *pd) {
+  pd->default_value = 1;
+  pd->description = get_parameter_name(param);
+  pd->bounded_above = false;
+  pd->upper_bound = 0.0f;
+  pd->bounded_below = true;
+  pd->lower_bound = 1.0f;
+  pd->toggled = false;
+  pd->integer = true;
+  pd->logarithmic = false;
+  pd->output = false;
 }
 
 void EFFECT_MIX_TO_CHANNEL::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {

@@ -35,6 +35,7 @@
 RAWFILE::RAWFILE(const string& name) {
   label(name);
   fio_repp = 0;
+  mmaptoggle_rep = "0";
 }
 
 RAWFILE::~RAWFILE(void) { close(); }

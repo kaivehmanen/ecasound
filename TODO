@@ -25,7 +25,6 @@
 [ Bugs to be fixed ]
 
 - commas confuse file name handling [ecatools]
-- cs-save doesn't process -kx options
 
 -----------------------------------------------------------------------
 

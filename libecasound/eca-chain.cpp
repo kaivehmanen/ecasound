@@ -68,6 +68,9 @@ CHAIN::~CHAIN (void) {
   }
 }
 
+/**
+ * Whether chain is in a valid state (= ready for processing)?
+ */
 bool CHAIN::is_valid(void) const {
   if (input_id_repp == 0 ||
       output_id_repp == 0) {
@@ -77,9 +80,41 @@ bool CHAIN::is_valid(void) const {
   return(true);
 }
 
+/**
+ * Connects input to chain
+ */
 void CHAIN::connect_input(AUDIO_IO* input) { input_id_repp = input; }
+
+/**
+ * Connects output to chain
+ */
 void CHAIN::connect_output(AUDIO_IO* output) { output_id_repp = output; }
 
+/**
+ * Disconnects input
+ */
+void CHAIN::disconnect_input(void) { input_id_repp = 0; initialized_rep = false; }
+
+/**
+ * Disconnects output
+ */
+void CHAIN::disconnect_output(void) { output_id_repp = 0; initialized_rep = false; }
+
+/**
+ * Disconnects the sample buffer
+ */
+void CHAIN::disconnect_buffer(void) { audioslot_repp = 0; initialized_rep = false; }
+
+/**
+ * Adds the chain operator to the end of the chain
+ *
+ * require:
+ *  chainop != 0
+ *
+ * ensure:
+ *  selected_chain_operator() == number_of_chain_operators()
+ *  is_processing()
+ */
 void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop) {
   // --------
   // require:
@@ -101,6 +136,17 @@ void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop) {
   // --------
 }
 
+/**
+ * Removes the selected chain operator
+ *
+ * require:
+ *  selected_chain_operator() <= number_of_chain_operators();
+ *  selected_chain_operator() > 0
+ *
+ * ensure:
+ *  (chainsops.size() == 0 && is_processing()) ||
+ *  (chainsops.size() != 0 && !is_processing())
+ */
 void CHAIN::remove_chain_operator(void) {
   // --------
   // require:
@@ -139,6 +185,13 @@ void CHAIN::remove_chain_operator(void) {
   // --------
 }
 
+/**
+ * Removes the selected controller
+ *
+ * require:
+ *  selected_controller() <= number_of_controllers();
+ *  selected_controller() > 0
+ */
 void CHAIN::remove_controller(void) {
   // --------
   // require:
@@ -157,6 +210,16 @@ void CHAIN::remove_controller(void) {
   }
 }
 
+/**
+ * Sets the parameter value (selected chain operator) 
+ *
+ * @param index parameter number
+ * @param value new value
+ *
+ * require:
+ *  selected_chainop_number > 0 && selected_chainop_number <= number_of_chain_operators()
+ *  index > 0
+ */
 void CHAIN::set_parameter(int par_index, CHAIN_OPERATOR::parameter_type value) {
   // --------
   // require:
@@ -166,6 +229,15 @@ void CHAIN::set_parameter(int par_index, CHAIN_OPERATOR::parameter_type value) {
   selected_chainop_repp->set_parameter(par_index, value);
 }
 
+/**
+ * Gets the parameter value (selected chain operator) 
+ *
+ * @param index parameter number
+ *
+ * require:
+ *  index > 0 &&
+ *  selected_chain_operator() != ""
+ */
 CHAIN_OPERATOR::parameter_type CHAIN::get_parameter(int index) const {
   // --------
   // require:
@@ -174,6 +246,13 @@ CHAIN_OPERATOR::parameter_type CHAIN::get_parameter(int index) const {
   return(selected_chainop_repp->get_parameter(index));
 }
 
+/**
+ * Adds a generic controller and assign it to selected dynamic object
+ *
+ * require:
+ *  gcontroller != 0
+ *  selected_dynobj != 0
+ */
 void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller) {
   // --------
   // require:
@@ -187,6 +266,9 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller) {
   selected_controller_number_rep = gcontrollers_rep.size();
 }
 
+/**
+ * Clears chain (removes all chain operators and controllers)
+ */
 void CHAIN::clear(void) {
   for(vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p != chainops_rep.end(); p++) {
     delete *p;
@@ -199,6 +281,15 @@ void CHAIN::clear(void) {
   gcontrollers_rep.resize(0);
 }
 
+/**
+ * Selects a chain operator
+ *
+ * require:
+ *  index > 0
+ *
+ * ensure:
+ *  index == selected_chain_operator()
+ */
 void CHAIN::select_chain_operator(int index) {
   for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops_rep.size()); chainop_sizet++) {
     if (chainop_sizet + 1 == index) {
@@ -208,6 +299,15 @@ void CHAIN::select_chain_operator(int index) {
   }
 }
 
+/**
+ * Select controller
+ *
+ * require:
+ *  index > 0
+ *
+ * ensure:
+ *  index == selected_controller()
+ */
 void CHAIN::select_controller(int index) {
   for(int gcontroller_sizet = 0; gcontroller_sizet != static_cast<int>(gcontrollers_rep.size()); gcontroller_sizet++) {
     if (gcontroller_sizet + 1 == index) {
@@ -217,6 +317,16 @@ void CHAIN::select_controller(int index) {
   }
 }
 
+/**
+ * Use current selected chain operator as 
+ * target for parameters control.
+ *
+ * require:
+ *   selected_chain_operator() != 0
+ *
+ * ensure:
+ *   selected_target() == selected_chain_operator()
+ */
 void CHAIN::selected_chain_operator_as_target(void) {
   // --------
   // require:
@@ -229,6 +339,16 @@ void CHAIN::selected_chain_operator_as_target(void) {
   // --------
 }
 
+/**
+ * Use current selected controller as 
+ * target for parameter control.
+ *
+ * require:
+ *   selected_controller() != 0
+ *
+ * ensure:
+ *   selected_target() == selected_controller()
+ */
 void CHAIN::selected_controller_as_target(void) {
   // --------
   // require:
@@ -241,6 +361,18 @@ void CHAIN::selected_controller_as_target(void) {
   // --------
 }
 
+/**
+ * Prepares chain for processing. All further processing
+ * will be done using the buffer pointer by 'sbuf'.
+ *
+ * require:
+ *  input_id != 0 || in_channels != 0
+ *  output_id != 0 || out_channels != 0
+ *  sbuf != 0
+ *
+ * ensure:
+ *  is_initialized() == true
+ */
 void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
   // --------
   // require:
@@ -272,6 +404,12 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
   // --------
 }
 
+/**
+ * Processes chain data with all chain operators.
+ *
+ * require:
+ *  is_initialized() == true
+ */
 void CHAIN::process(void) {
   // --------
   // require:
@@ -293,12 +431,18 @@ void CHAIN::process(void) {
   }
 }
 
+/**
+ * Calculates/fetches new values for all controllers.
+ */
 void CHAIN::controller_update(void) {
   for(int gcontroller_sizet = 0; gcontroller_sizet < static_cast<int>(gcontrollers_rep.size()); gcontroller_sizet++) {
     gcontrollers_rep[gcontroller_sizet]->process();
   }
 }
 
+/**
+ * Re-initializes all effect parameters.
+ */
 void CHAIN::refresh_parameters(void) {
   for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops_rep.size()); chainop_sizet++) {
     for(int n = 0; n < chainops_rep[chainop_sizet]->number_of_params(); n++) {
@@ -308,6 +452,9 @@ void CHAIN::refresh_parameters(void) {
   }
 }
 
+/**
+ * Converts chain to a formatted string.
+ */
 string CHAIN::to_string(void) const {
   MESSAGE_ITEM t; 
 
@@ -377,6 +524,14 @@ string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const {
     t << gctrl->get_parameter(n + 1);
     if (n + 1 < gctrl->number_of_params()) t << ",";
   }
+
+  vector<GENERIC_CONTROLLER*>::size_type p = 0;
+  while (p < gcontrollers_rep.size()) {
+    if (gctrl == gcontrollers_rep[p]->target_pointer()) {
+      t << " -kx " << controller_to_string(gcontrollers_rep[p]);
+    }
+    ++p;
+  } 
 
   return(t.to_string());
 }

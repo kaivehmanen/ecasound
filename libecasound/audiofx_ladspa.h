@@ -27,6 +27,8 @@ private:
   string label_rep, unique_rep, param_names_rep;
   vector<LADSPA_Data> params;
 
+  void init_ports(void);
+
 public:
 
   virtual string name(void) const { return(label_rep); }
@@ -49,6 +51,7 @@ public:
    */
   long int unique_number(void) const { return(unique_number_rep); }
 
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
 

@@ -263,6 +263,4 @@ void MIDI_IN_QUEUE::update_midi_queues(void) {
   else {
     ::close(fd);
   }
-
-  return(0);
 }

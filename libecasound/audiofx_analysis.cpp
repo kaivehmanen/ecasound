@@ -106,6 +106,37 @@ string EFFECT_ANALYZE::status(void) const {
   return(otemp.to_string());
 }
 
+void EFFECT_ANALYZE::parameter_description(int param, 
+					   struct PARAM_DESCRIPTION *pd) {
+  switch(param) {
+  case 1: 
+    pd->default_value = 0;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = true;
+    pd->upper_bound = 1.0;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = true;
+    pd->integer = true;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+
+  case 2: 
+    pd->default_value = 1.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    pd->upper_bound = 0.0f;
+    pd->bounded_below = false;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = true;
+    break;
+  }
+}
+
 void EFFECT_ANALYZE::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
@@ -120,6 +151,9 @@ CHAIN_OPERATOR::parameter_type EFFECT_ANALYZE::get_parameter(int param) const {
   switch (param) {
   case 1: 
     if (cumulativemode_rep == true) return(1.0);
+    
+  case 2:
+    return(max_multiplier());
   }
   return(0.0);
 }
@@ -194,6 +228,14 @@ string EFFECT_DCFIND::status(void) const {
     return(mitem.to_string());
 }
 
+string EFFECT_DCFIND::parameter_names(void) const {
+  vector<string> t;
+  for(int n = 0; n < channels(); n++) {
+    t.push_back("result-offset-ch" + kvu_numtostr(n));
+  }
+  return(vector_to_string(t, ","));
+}
+
 CHAIN_OPERATOR::parameter_type EFFECT_DCFIND::get_deltafix(int channel) const { 
   SAMPLE_SPECS::sample_type deltafix;
 
@@ -206,12 +248,33 @@ CHAIN_OPERATOR::parameter_type EFFECT_DCFIND::get_deltafix(int channel) const {
   return((CHAIN_OPERATOR::parameter_type)deltafix); 
 }
 
+void EFFECT_DCFIND::parameter_description(int param, 
+					  struct PARAM_DESCRIPTION *pd) {
+  pd->default_value = 0.0f;
+  pd->description = get_parameter_name(param);
+  pd->bounded_above = false;
+  pd->upper_bound = 0.0f;
+  pd->bounded_below = false;
+  pd->lower_bound = 0.0f;
+  pd->toggled = false;
+  pd->integer = false;
+  pd->logarithmic = false;
+  pd->output = true;
+}
+
+void EFFECT_DCFIND::set_parameter(int param,
+				 CHAIN_OPERATOR::parameter_type value) { }
+
+CHAIN_OPERATOR::parameter_type EFFECT_DCFIND::get_parameter(int param) const {
+  return(get_deltafix(param));
+}
+
 void EFFECT_DCFIND::init(SAMPLE_BUFFER *insample) {
   i.init(insample);
-
-  pos_sum.resize(insample->number_of_channels());
-  neg_sum.resize(insample->number_of_channels());
-  num_of_samples.resize(insample->number_of_channels());
+  set_channels(insample->number_of_channels());
+  pos_sum.resize(channels());
+  neg_sum.resize(channels());
+  num_of_samples.resize(channels());
 }
 
 void EFFECT_DCFIND::process(void) {

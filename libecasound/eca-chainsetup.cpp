@@ -859,6 +859,7 @@ void ECA_CHAINSETUP::interpret_controller (const string& argu) {
     add_controller(t);
     istatus_rep = true;
   }
+  if (get_argument_prefix(argu) == "kx") istatus_rep = true;
 }
 
 /**

@@ -79,28 +79,23 @@ dnl CXXFLAGS="-O2 -D_REENTRANT -fomit-frame-pointer -finline-functions -ffast-ma
 dnl ------------------------------------------------------------------
 
 dnl ---
-dnl Set up some operating system specific options
+dnl Set up some operating system specific options for POSIX threads
 dnl ---
 case "$host" in
 	*-*-openbsd*)
                CFLAGS="$CFLAGS -pthread"
-               CPPFLAGS="$CPPFLAGS -D_REENTRANT"
                CXXFLAGS="$CXXFLAGS -pthread"
-               echo "Setting OpenBSD compilation options"
+               echo "Setting OpenBSD compilation options for POSIX threads"
                ;;
 	*-*-freebsd*)
                CFLAGS="$CFLAGS -pthread"
                CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE"
                CXXFLAGS="$CXXFLAGS -pthread"
-               echo "Setting FreeBSD compilation options"
+               echo "Setting FreeBSD compilation options for POSIX threads"
                ;;
 	*-*-solaris*)
-               CPPFLAGS="$CPPFLAGS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS -DPIC -fPIC"
-               echo "Setting Solaris compilation options"
-               ;;
-	*-*-linux*)
-               CPPFLAGS="$CPPFLAGS -fPIC -DPIC -D_REENTRANT"
-               echo "Setting Linux compilation options"
+               CPPFLAGS="$CPPFLAGS -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS"
+               echo "Setting Solaris compilation options for POSIX threads"
                ;;
 esac
 
@@ -449,6 +444,8 @@ kvutils/Makefile
 Documentation/Makefile
 Documentation/users_guide/Makefile
 Documentation/programmers_guide/Makefile
+examples/Makefile
+contrib/Makefile
 ])
 
 # And a short summary 

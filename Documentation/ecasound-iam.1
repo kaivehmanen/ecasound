@@ -21,8 +21,8 @@ DDEESSCCRRIIPPTTIIOONN
        EIAM commands using ECI, it's possible that commands  also
        return information. Currently supported return value types
        are: strings [s], list of strings [S], integers [i],  long
-       integers [li] and floating-point numbers [f]. These defin-
-       ions are used in the following documentation.
+       integers  [li] and floating-point numbers [f]. These defi-
+       nitions are used in the following documentation.
 
 
 GGEENNEERRAALL
@@ -240,6 +240,10 @@ CCHHAAIINNSS
               Select more chains.
 
 
+       c-selected
+              Returns a list of selected chains. _[_S_]
+
+
        c-remove
               Remove selected chains.
 
@@ -252,10 +256,6 @@ CCHHAAIINNSS
 
        c-name 'new_name'
               Rename selected chains. When  using  this  command,
-              only one chain must selected.
-
-
-
 
 
 
@@ -266,6 +266,9 @@ CCHHAAIINNSS
 
 
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
+              only one chain must selected.
 
 
        c-muting
@@ -318,10 +321,7 @@ AAUUDDIIOO IINNPPUUTT//OOUUTTPPUUTT OOBBJJEECCTTSS
               option).
 
 
-       aio-add-output 'output_format_string'
-              Add  a  new output object. See ecasound(1) man page
-              for more  info  about  the  argument  format  ('-o'
-              option).  If  argument is omitted, a default output
+
 
 
 
@@ -334,6 +334,10 @@ AAUUDDIIOO IINNPPUUTT//OOUUTTPPUUTT OOBBJJEECCTTSS
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
+       aio-add-output 'output_format_string'
+              Add  a  new output object. See ecasound(1) man page
+              for more  info  about  the  argument  format  ('-o'
+              option).  If  argument is omitted, a default output
               device is added (see ecasoundrc(5)).
 
 
@@ -384,10 +388,6 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
        aio-rewind 'time_in_seconds', aio-rw 'time_in_seconds'
               Selected audio object is rewinded by  'time-in-sec-
               onds'  seconds.  Time should be given as a floating
-              point value (eg. 0.001 is the same as 1ms).
-
-
-
 
 
 
@@ -398,6 +398,9 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
+              point value (eg. 0.001 is the same as 1ms).
 
 
        aio-setpos 'time_in_seconds'
@@ -451,9 +454,6 @@ CCHHAAIINN OOPPEERRAATTOORRSS
 
        preset-register
               Prints a list of registered effect presets.
-
-
-
 
 
 

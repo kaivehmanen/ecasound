@@ -36,25 +36,8 @@ EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&) 
   label_rep = string(plugin_desc->Name);
   unique_rep = string(plugin_desc->Label);
   unique_number_rep = static_cast<long int>(plugin_desc->UniqueID);
-  port_count_rep = plugin_desc->PortCount;
 
-  in_audio_ports = 0;
-  out_audio_ports = 0;
-
-  for(unsigned long m = 0; m < port_count_rep; m++) {
-    if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
-      if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_INPUT) == LADSPA_PORT_INPUT)
-	++in_audio_ports;
-      else
-	++out_audio_ports;
-    }
-    if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) ==
-	LADSPA_PORT_CONTROL) {
-      params.push_back(1.0);
-      if (params.size() > 1) param_names_rep += ",";
-      param_names_rep += string_search_and_replace(string(plugin_desc->PortNames[m]), ',', ' ');;
-    }
-  }
+  init_ports();
 //    cerr << "Plugin " << label_rep << " (" << unique_number_rep << "): "
 //         << param_names_rep << "." << endl;
 }
@@ -74,6 +57,93 @@ EFFECT_LADSPA* EFFECT_LADSPA::clone(void) {
     result->set_parameter(n + 1, get_parameter(n + 1));
   }
   return(result);
+}
+
+void EFFECT_LADSPA::init_ports(void) {
+  port_count_rep = plugin_desc->PortCount;
+  in_audio_ports = 0;
+  out_audio_ports = 0;
+
+  for(unsigned long m = 0; m < port_count_rep; m++) {
+    if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
+      if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_INPUT) == LADSPA_PORT_INPUT)
+	++in_audio_ports;
+      else
+	++out_audio_ports;
+    }
+    if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) ==
+	LADSPA_PORT_CONTROL) {
+      parameter_type init_value = 1.0f;
+      if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m])) {
+	if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+	  init_value = plugin_desc->PortRangeHints[m].LowerBound * samples_per_second();
+	else
+	  init_value = plugin_desc->PortRangeHints[m].LowerBound;
+      }
+      else if (LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m])) {
+	if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+	  init_value = plugin_desc->PortRangeHints[m].UpperBound * samples_per_second();
+	else
+	  init_value = plugin_desc->PortRangeHints[m].UpperBound;
+      }
+      params.push_back(init_value);
+      if (params.size() > 1) param_names_rep += ",";
+      param_names_rep += string_search_and_replace(string(plugin_desc->PortNames[m]), ',', ' ');;
+    }
+  }
+}
+
+void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *pd) {
+  int ctrl_port_n = 0; 
+  for(unsigned long m = 0; m < port_count_rep; m++) {
+    if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) == LADSPA_PORT_CONTROL) {
+      ++ctrl_port_n;
+      if (ctrl_port_n == param) {
+	pd->default_value = 1;
+	pd->description = get_parameter_name(param);
+
+	if (LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m])) {
+	  pd->bounded_above = true;
+	  if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+	    pd->upper_bound = plugin_desc->PortRangeHints[m].UpperBound * samples_per_second();
+	  else
+	    pd->upper_bound = plugin_desc->PortRangeHints[m].UpperBound;
+	}
+	else
+	  pd->bounded_above = false;
+
+	if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m])) {
+	  pd->bounded_below = true;
+	  if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+	    pd->lower_bound = plugin_desc->PortRangeHints[m].LowerBound * samples_per_second();
+	  else
+	    pd->lower_bound = plugin_desc->PortRangeHints[m].LowerBound;
+	}
+	else 
+	  pd->bounded_below = false;
+
+	if (LADSPA_IS_HINT_TOGGLED(plugin_desc->PortDescriptors[m]))
+	  pd->toggled = true;
+	else
+	  pd->toggled = false;
+
+	if (LADSPA_IS_HINT_INTEGER(plugin_desc->PortDescriptors[m]))
+	  pd->integer = true;
+	else
+	  pd->integer = false;
+
+	if (LADSPA_IS_HINT_LOGARITHMIC(plugin_desc->PortDescriptors[m]))
+	  pd->logarithmic = true;
+	else
+	  pd->logarithmic = false;
+
+	if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_OUTPUT) == LADSPA_PORT_CONTROL)
+	  pd->output = true;
+	else
+	  pd->output = false;
+      }
+    }
+  }
 }
 
 void EFFECT_LADSPA::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
@@ -141,3 +211,4 @@ void EFFECT_LADSPA::process(void) {
   for(unsigned long m = 0; m < plugins.size(); m++)
     plugin_desc->run(plugins[m], buffer->length_in_samples());
 }
+

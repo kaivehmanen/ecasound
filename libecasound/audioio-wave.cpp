@@ -35,6 +35,7 @@
 WAVEFILE::WAVEFILE (const string& name) {
   label(name);
   fio_repp = 0;
+  mmaptoggle_rep = "0";
 }
 
 WAVEFILE::~WAVEFILE(void) {

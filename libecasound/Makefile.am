@@ -215,6 +215,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			layer.cpp \
 			samplebuffer_iterators.cpp \
 			eca-version.cpp  \
+			eca-operator.cpp \
 			eca-object-factory.cpp \
 			eca-chainsetup.cpp \
 			eca-control.cpp \

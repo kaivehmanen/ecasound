@@ -50,8 +50,9 @@ class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
   parameter_type max_multiplier(void) const;
     
   virtual string name(void) const { return("Volume-analyze"); }
-  virtual string parameter_names(void) const { return("cumulative-mode"); }
+  virtual string parameter_names(void) const { return("cumulative-mode,result-max-multiplier"); }
 
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
 
@@ -82,13 +83,18 @@ private:
 public:
 
   parameter_type get_deltafix(int channel) const;
-    
+
   virtual string name(void) const { return("DC-Find"); }
   virtual string description(void) const { return("Calculates the DC-offset."); }
+  virtual string parameter_names(void) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
   virtual string status(void) const;
+
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
   EFFECT_DCFIND* clone(void)  { return new EFFECT_DCFIND(*this); }
   EFFECT_DCFIND* new_expr(void)  { return new EFFECT_DCFIND(); }

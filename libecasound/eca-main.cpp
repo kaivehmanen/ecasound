@@ -860,7 +860,7 @@ void ECA_PROCESSOR::inputs_to_chains(void) {
       if ((*inputs_repp)[audioslot_sizet]->finished() == false) input_not_finished_rep = true;
     }
     for (unsigned int c = 0; c != chains_repp->size(); c++) {
-      if ((*chains_repp)[c]->input_id_repp == (*inputs_repp)[audioslot_sizet]) {
+      if ((*chains_repp)[c]->input_id_repp == (*csetup_inputs_repp)[audioslot_sizet]) {
 	if (input_chain_count_rep[audioslot_sizet] == 1) {
 	  (*inputs_repp)[audioslot_sizet]->read_buffer(&(cslots_rep[c]));
 	  if ((*inputs_repp)[audioslot_sizet]->finished() == false) input_not_finished_rep = true;
