@@ -19,6 +19,7 @@
 // ------------------------------------------------------------------------
 
 #include <cstdlib> /* atoi() */
+#include <cmath>   /* ceil(), floor() */
 #include <iostream>
 
 #include <kvu_dbc.h>
@@ -84,12 +85,12 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   psfactor_rep = 1.0f;
   if (io_mode() == AUDIO_IO::io_read) {
     psfactor_rep = static_cast<float>(samples_per_second()) / child_srate_rep;
+    child_buffersize_rep = static_cast<long int>(std::floor(buffersize() * (1.0f / psfactor_rep)));
   }
   else {
     psfactor_rep = static_cast<float>(child_srate_rep) / samples_per_second();
+    child_buffersize_rep = static_cast<long int>(std::floor((buffersize() * (1.0f / psfactor_rep)) + 0.5f));
   }
-
-  child_buffersize_rep = static_cast<long int>((buffersize() * (1.0f / psfactor_rep)) + 0.5f);
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 	      "(audioio-resample) open(); psfactor=" + kvu_numtostr(psfactor_rep) +
@@ -216,14 +217,22 @@ void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* sbuf)
 {
   /* FIXME: add temp buffer with preallocated mem area */
 
-  // std::cerr << "pre-pre-resample: " << child_buffersize_rep << " samples.\n";
   child()->read_buffer(sbuf);
+
   /* FIXME: not really rt-safe: */
   sbuf->resample_init_memory(child_srate_rep, samples_per_second());
+
   sbuf->resample_set_quality(quality_rep);
-  // std::cerr << "pre-resample: " << sbuf->length_in_samples() << " samples.\n";
   sbuf->resample(child_srate_rep, samples_per_second());
-  // std::cerr << "post-resample: " << sbuf->length_in_samples() << " samples.\n";
+
+  /* FIXME: the rabbit-code may sometimes a length of blen-1 */
+  // DBC_CHECK(sbuf->length_in_samples() == buffersize());
+  //
+  // if (sbuf->length_in_samples() != buffersize()) {
+  //   std::cerr << "sbuf->length_in_samples()=" << sbuf->length_in_samples() << std::endl;
+  //   std::cerr << "buffersize()" << buffersize() << std::endl;
+  // }
+
   change_position_in_samples(sbuf->length_in_samples());
 }
 

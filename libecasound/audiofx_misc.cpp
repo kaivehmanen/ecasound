@@ -164,7 +164,7 @@ void EFFECT_PITCH_SHIFT::parameter_description(int param, struct PARAM_DESCRIPTI
 void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample)
 {
   sbuf_repp = insample;
-  target_rate_rep = static_cast<long int>(samples_per_second() * 100.0 / pmod_rep);
+  target_rate_rep = static_cast<long int>((samples_per_second() * 100.0 / pmod_rep) + 0.5f);
 
   long int lowlimit = sbuf_repp->length_in_samples() * EFFECT_PITCH_SHIFT::resample_low_limit; 
   sbuf_repp->reserve_length_in_samples(lowlimit);

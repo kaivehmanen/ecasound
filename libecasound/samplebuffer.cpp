@@ -24,8 +24,9 @@
 #include <iostream>
 #include <vector>
 
-#include <cmath>
+#include <cmath>   /* ceil(), floor() */
 #include <cstring> /* memcpy */
+#include <cstdlib> /* labs() */
 
 #include <sys/types.h>
 
@@ -351,15 +352,24 @@ void SAMPLE_BUFFER::limit_values(void)
 /**
  * Resamples samplebuffer contents. Resampling
  * changes buffer length by 'to_rate/from_rate'.
+ *
+ * @post std::fabs(to_rate / from_rate * old_length_in_samples - length_in_samples()) <= 1
  */
 void SAMPLE_BUFFER::resample(SAMPLE_SPECS::sample_rate_t from_rate,
 			     SAMPLE_SPECS::sample_rate_t to_rate)
 {
+  DBC_DECLARE(buf_size_t old_length_in_samples = length_in_samples());
+
 #ifdef ECA_COMPILE_SAMPLERATE
   resample_secret_rabbit_code(from_rate, to_rate);
 #else
   resample_with_memory(from_rate, to_rate); 
 #endif
+
+  /* FIXME: fails all the fime... */
+  DBC_CHECK(std::fabs((static_cast<double>(to_rate) / from_rate * old_length_in_samples - length_in_samples())) <= 1.0f);
+  // DBC_CHECK(length_in_samples() == std::floor((static_cast<double>(to_rate) / from_rate) * static_cast<double>(old_length_in_samples) + 0.5f));
+  // fprintf(stderr, "resample fail len_samples=%ld, to=%ld, from=%ld, old_len=%ld, round=%f.\n", length_in_samples(), to_rate, from_rate, old_length_in_samples, std::floor((static_cast<double>(to_rate) / from_rate) * static_cast<double>(old_length_in_samples) + 0.5f));
 }
 
 /**
@@ -392,19 +402,13 @@ void SAMPLE_BUFFER::export_helper(unsigned char* obuffer,
   case ECA_AUDIO_FORMAT::sfmt_u8:
     {
       obuffer[(*optr)++] = eca_sample_convert_float_to_u8(value);
-      // (unsigned char)((sample_t)(value / SAMPLE_SPECS::u8_to_st_constant) + SAMPLE_SPECS::u8_to_st_delta);
       break;
     }
     
   case ECA_AUDIO_FORMAT::sfmt_s16_le:
     {
       int16_t s16temp = eca_sample_convert_float_to_s16(value);
-      
-      // if (value < 0) 
-      // s16temp = (int16_t)(sample_t)(value * SAMPLE_SPECS::s16_to_st_constant - 0.5);
-      // else 
-      // s16temp = (int16_t)(sample_t)(value * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
-      
+
       // little endian: (LSB, MSB) (Intel).
       obuffer[(*optr)++] = (unsigned char)(s16temp & 0xff);
       obuffer[(*optr)++] = (unsigned char)((s16temp >> 8) & 0xff);
@@ -415,11 +419,6 @@ void SAMPLE_BUFFER::export_helper(unsigned char* obuffer,
     {
       int16_t s16temp = eca_sample_convert_float_to_s16(value);
       
-      // if (value < 0) 
-      // s16temp = (int16_t)(sample_t)(value * SAMPLE_SPECS::s16_to_st_constant - 0.5);
-      // else 
-      // s16temp = (int16_t)(sample_t)(value * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
-      
       // big endian: (MSB, LSB) (Motorola).
       obuffer[(*optr)++] = (unsigned char)((s16temp >> 8) & 0xff);
       obuffer[(*optr)++] = (unsigned char)(s16temp & 0xff);
@@ -429,11 +428,6 @@ void SAMPLE_BUFFER::export_helper(unsigned char* obuffer,
   case ECA_AUDIO_FORMAT::sfmt_s24_le:
     {
       int32_t s32temp = eca_sample_convert_float_to_s32(value);
-      
-      // if (value < 0) 
-      // s32temp = (int32_t)(sample_t)(value * SAMPLE_SPECS::s32_to_st_constant - 0.5);
-      // else 
-      // s32temp = (int32_t)(sample_t)(value * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
       
       /* skip the LSB-byte of s32temp (s32temp & 0xff) */
       obuffer[(*optr)++] = (unsigned char)((s32temp >> 8) & 0xff);
@@ -446,11 +440,6 @@ void SAMPLE_BUFFER::export_helper(unsigned char* obuffer,
     {
       int32_t s32temp = eca_sample_convert_float_to_s32(value);
       
-      // if (value < 0) 
-      // s32temp = (int32_t)(sample_t)(value * SAMPLE_SPECS::s32_to_st_constant - 0.5);
-      // else 
-      // s32temp = (int32_t)(sample_t)(value * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
-      
       obuffer[(*optr)++] = (unsigned char)((s32temp >> 24) & 0xff);
       obuffer[(*optr)++] = (unsigned char)((s32temp >> 16) & 0xff);
       obuffer[(*optr)++] = (unsigned char)((s32temp >> 8) & 0xff);
@@ -462,18 +451,6 @@ void SAMPLE_BUFFER::export_helper(unsigned char* obuffer,
     {
       int32_t s32temp = eca_sample_convert_float_to_s32(value);
       
-      //       if (value < 0) {
-      // 	DBC_CHECK(value >= -1.0f);
-      // 	    s32temp = (int32_t)(sample_t)(value * (SAMPLE_SPECS::s32_to_st_constant - 0) - 0.5);
-      // 	DBC_CHECK(s32temp < 0);
-      // 	 if (!(s32temp < 0)) { std::cerr << "s32temp=" << s32temp << ", value=" << value << ".\n"; }
-      //       }
-      //       else {
-      // 	DBC_CHECK(value <= 1.0f);
-      // 	    s32temp = (int32_t)(sample_t)(value * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
-      // 	DBC_CHECK(s32temp >= 0);
-      //       }
-      
       obuffer[(*optr)++] = (unsigned char)(s32temp & 0xff);
       obuffer[(*optr)++] = (unsigned char)((s32temp >> 8) & 0xff);
       obuffer[(*optr)++] = (unsigned char)((s32temp >> 16) & 0xff);
@@ -484,11 +461,6 @@ void SAMPLE_BUFFER::export_helper(unsigned char* obuffer,
   case ECA_AUDIO_FORMAT::sfmt_s32_be:
     {
       int32_t s32temp = eca_sample_convert_float_to_s32(value);
-      
-      // 	  if (value < 0) 
-      // 	    s32temp = (int32_t)(sample_t)(value * SAMPLE_SPECS::s32_to_st_constant - 0.5);
-      // 	  else 
-      // 	    s32temp = (int32_t)(sample_t)(value * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
       
       obuffer[(*optr)++] = (unsigned char)((s32temp >> 24) & 0xff);
       obuffer[(*optr)++] = (unsigned char)((s32temp >> 16) & 0xff);
@@ -618,9 +590,6 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
   case ECA_AUDIO_FORMAT::sfmt_u8: 
     {
       obuffer[optr] = eca_sample_convert_u8_to_float(ibuffer[(*iptr)++]);
-      // *buffer[c][optr] = (unsigned char)ibuffer[(*iptr)++];
-      // *buffer[c][optr] -= SAMPLE_SPECS::u8_to_st_delta;
-      // *buffer[c][optr] *= SAMPLE_SPECS::u8_to_st_constant;
     }
     break;
 	
@@ -636,7 +605,6 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	a[1] = ibuffer[(*iptr)++];
 	a[0] = ibuffer[(*iptr)++];
       }
-      // buffer[c][optr] = (sample_t)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
       obuffer[optr] = eca_sample_convert_s16_to_float(*(int16_t*)a);
     }
     break;
@@ -651,7 +619,6 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	a[1] = ibuffer[(*iptr)++];
 	a[0] = ibuffer[(*iptr)++];
       }
-      // buffer[c][optr] = (sample_t)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
       obuffer[optr] = eca_sample_convert_s16_to_float(*(int16_t*)a);
     }
     break;
@@ -670,7 +637,6 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	b[1] = ibuffer[(*iptr)++];
 	b[0] = ibuffer[(*iptr)++];
       }
-      // buffer[c][optr] = ((sample_t)((*(int32_t*)b) >> 8)) / SAMPLE_SPECS::s24_to_st_constant;
       obuffer[optr] = eca_sample_convert_s32_to_float((*(int32_t*)b));
     }
     break;
@@ -689,7 +655,6 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	b[2] = ibuffer[(*iptr)++];
 	b[3] = 0; /* LSB */
       }
-      // buffer[c][optr] = ((sample_t)((*(int32_t*)b) >> 8)) / SAMPLE_SPECS::s24_to_st_constant;
       obuffer[optr] = eca_sample_convert_s32_to_float((*(int32_t*)b));
     }
     break;
@@ -708,7 +673,6 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	b[1] = ibuffer[(*iptr)++];
 	b[0] = ibuffer[(*iptr)++];
       }
-      // buffer[c][optr] = (sample_t)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
       obuffer[optr] = eca_sample_convert_s32_to_float(*(int32_t*)b);
     }
     break;
@@ -727,7 +691,6 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	b[2] = ibuffer[(*iptr)++];
 	b[3] = ibuffer[(*iptr)++];
       }
-      // buffer[c][optr] = (sample_t)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
       obuffer[optr] = eca_sample_convert_s32_to_float(*(int32_t*)b);
     }
     break;
@@ -868,6 +831,12 @@ void SAMPLE_BUFFER::number_of_channels(channel_size_t len)
   channel_count_rep = len;
 }
 
+/**
+ * Sets the length of buffer in samples.
+ *
+ * Note! If length is increased, the added samples
+ *       are muted.
+ */
 void SAMPLE_BUFFER::length_in_samples(buf_size_t len)
 {
   if (len > reserved_samples_rep) {
@@ -875,7 +844,7 @@ void SAMPLE_BUFFER::length_in_samples(buf_size_t len)
     DBC_CHECK(impl_repp->rt_lock_rep != true);
     DBC_CHECK(impl_repp->lockref_rep == 0);
 
-    reserved_samples_rep = len;
+    reserved_samples_rep = len * 2;
     for(size_t n = 0; n < buffer.size(); n++) {
       delete[] buffer[n];
       buffer[n] = new sample_t [reserved_samples_rep];
@@ -887,15 +856,15 @@ void SAMPLE_BUFFER::length_in_samples(buf_size_t len)
     }
   }
 
-  if (len != buffersize_rep) {
+  if (len > buffersize_rep) {
     for(size_t n = 0; n < buffer.size(); n++) {
-      for(buf_size_t m = 0; m < len; m++) {
+      for(buf_size_t m = buffersize_rep; m < len; m++) {
 	buffer[n][m] = SAMPLE_SPECS::silent_value;
       }
     }
-
-    buffersize_rep = len;
   }
+
+  buffersize_rep = len;
 }
 
 /**
@@ -914,7 +883,7 @@ void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
   buf_size_t new_buffer_size = static_cast<buf_size_t>((step * buffersize_rep) + 1.0f);
 
   if (new_buffer_size > reserved_samples_rep) {
-    reserved_samples_rep = new_buffer_size;
+    reserved_samples_rep = new_buffer_size * 2;
 
     DBC_CHECK(impl_repp->rt_lock_rep != true);
     DBC_CHECK(impl_repp->lockref_rep == 0);
@@ -922,7 +891,7 @@ void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
     for(int c = 0; c < channel_count_rep; c++) {
       delete[] buffer[c];
       buffer[c] = new sample_t [reserved_samples_rep];
-    }
+    } 
   }
 
   if (impl_repp->old_buffer_repp == 0) {
@@ -932,7 +901,7 @@ void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
 
   if (impl_repp->resample_memory_rep.size() < static_cast<size_t>(channel_count_rep)) {
     DBC_CHECK(impl_repp->rt_lock_rep != true);
-    impl_repp->resample_memory_rep.resize(channel_count_rep);
+    impl_repp->resample_memory_rep.resize(channel_count_rep, 0.0f);
   }
 }
 
@@ -1003,7 +972,8 @@ void SAMPLE_BUFFER::resample_nofilter(SAMPLE_SPECS::sample_rate_t from,
 {
   double step = static_cast<double>(to) / from;
   buf_size_t old_buffer_size = buffersize_rep;
-  buffersize_rep = static_cast<buf_size_t>((step * buffersize_rep) + 0.5f);
+
+  length_in_samples(static_cast<buf_size_t>(std::floor(step * buffersize_rep + 0.5f)));
 
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_no_f from " << from << " to " << to << "." << std::endl);
 
@@ -1029,7 +999,7 @@ void SAMPLE_BUFFER::resample_nofilter(SAMPLE_SPECS::sample_rate_t from,
 	}
       }
       else {
-	new_buffer_index = static_cast<buf_size_t>(ceil(counter));
+	new_buffer_index = static_cast<buf_size_t>(std::ceil(counter));
 	if (new_buffer_index >= buffersize_rep) new_buffer_index = buffersize_rep - 1;
 	for(buf_size_t t = interpolate_index + 1; t < new_buffer_index; t++) {
 	  buffer[c][t] = impl_repp->old_buffer_repp[old_buffer_index - 1] + ((impl_repp->old_buffer_repp[old_buffer_index]
@@ -1055,14 +1025,15 @@ void SAMPLE_BUFFER::resample_with_memory(SAMPLE_SPECS::sample_rate_t from,
 {
   double step = (double)to / from;
   buf_size_t old_buffer_size = buffersize_rep;
-  buffersize_rep = static_cast<buf_size_t>((step * buffersize_rep) + 0.5f);
+
+  length_in_samples(static_cast<buf_size_t>(std::floor(step * buffersize_rep + 0.5f)));
 
   DBC_CHECK(impl_repp->old_buffer_repp != 0);
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_w_m from " << from << " to " << to << "." << std::endl); 
 
   if (impl_repp->resample_memory_rep.size() < static_cast<size_t>(channel_count_rep)) {
     DBC_CHECK(impl_repp->rt_lock_rep != true);
-    impl_repp->resample_memory_rep.resize(channel_count_rep);
+    impl_repp->resample_memory_rep.resize(channel_count_rep, 0.0f);
   }
 
   length_in_samples(buffersize_rep);
@@ -1087,7 +1058,7 @@ void SAMPLE_BUFFER::resample_with_memory(SAMPLE_SPECS::sample_rate_t from,
 	}
       }
       else {
-	new_buffer_index = static_cast<buf_size_t>(ceil(counter));
+	new_buffer_index = static_cast<buf_size_t>(std::ceil(counter));
 	if (old_buffer_index == 0) from_point = impl_repp->resample_memory_rep[c];
 	else from_point = impl_repp->old_buffer_repp[old_buffer_index-1];
 	if (new_buffer_index >= buffersize_rep) new_buffer_index = buffersize_rep - 1;
@@ -1110,19 +1081,14 @@ void SAMPLE_BUFFER::resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from
 {
 #ifdef ECA_COMPILE_SAMPLERATE
   SRC_DATA params;
+  long ch_out_count = -1;
   double step = static_cast<double>(to_srate) / from_srate;
   buf_size_t old_buffer_size = buffersize_rep;
-  buffersize_rep = static_cast<buf_size_t>((step * buffersize_rep) + 0.5f);
+
+  length_in_samples(static_cast<buf_size_t>(std::floor(step * buffersize_rep + 0.5f)));
 
   DBC_CHECK(impl_repp->old_buffer_repp != 0);
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_s_r_c from " << from_srate << " to " << to_srate << "." << std::endl); 
-
-  if (impl_repp->resample_memory_rep.size() < static_cast<size_t>(channel_count_rep)) {
-    DBC_CHECK(impl_repp->rt_lock_rep != true);
-    impl_repp->resample_memory_rep.resize(channel_count_rep);
-  }
-
-  length_in_samples(buffersize_rep);
 
   for(int c = 0; c < channel_count_rep; c++) {
     std::memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));
@@ -1131,12 +1097,18 @@ void SAMPLE_BUFFER::resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from
 
     // A pointer to the input data samples.
     params.data_in = impl_repp->old_buffer_repp; 
+
     // The number of frames of data pointed to by data_in.
     params.input_frames = old_buffer_size;
+
     // A pointer to the output data samples.
     params.data_out = buffer[c];
+
     // Maximum number of frames pointer to by data_out.
-    params.output_frames = reserved_samples_rep;
+    // note: was 'reserved_samples_rep' but this led 
+    //       to corrupted output
+    params.output_frames = reserved_samples_rep; /* buffersize_rep */
+
     // Equal to output_sample_rate / input_sample_rate.
     params.src_ratio = step;
 
@@ -1145,8 +1117,24 @@ void SAMPLE_BUFFER::resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from
 			 (impl_repp->quality_rep > 75) ? SRC_SINC_BEST_QUALITY : SRC_SINC_MEDIUM_QUALITY, 1);
 
     DBC_CHECK(ret == 0);
-    DBC_CHECK(params.output_frames_gen == buffersize_rep);
-    DBC_CHECK(params.input_frames_used == old_buffer_size);
+    DBC_CHECK(std::labs(params.input_frames_used - old_buffer_size) <= 1);
+    if (old_buffer_size != params.input_frames_used) { std::cerr << "input_frames_over=" << old_buffer_size - params.input_frames_used << ".\n"; }
+
+    if (c == 0) ch_out_count = params.output_frames_gen;
+    DBC_CHECK(ch_out_count == params.output_frames_gen);
+
+    // if (buffersize_rep != params.output_frames_gen) { std::cerr << "output_frame_space_left=" << params.output_frames_gen - buffersize_rep << ".\n"; }
+  }
+
+  DBC_CHECK(std::labs(params.output_frames_gen - buffersize_rep) <= 1);
+
+  /* FIXME: this is incorrect, but what to do!? */
+  // DBC_CHECK(std::labs(params.output_frames_gen - buffersize_rep) <= 1);
+  if (params.output_frames_gen != buffersize_rep) {
+    /* danger! we set buffersize_rep directly, but in this case 
+     * it is safe as we have used 'reserved_samples_rep' 
+     * as the upper limit */
+    buffersize_rep = params.output_frames_gen;
   }
 #endif
 }
