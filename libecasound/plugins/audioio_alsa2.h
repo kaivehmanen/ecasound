@@ -7,6 +7,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <iostream>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
