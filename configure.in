@@ -429,8 +429,9 @@ dnl ------------------------------------------------------------------
 dnl --
 dnl Autotools and libtool
 dnl --
-
-AM_PROG_LIBTOOL
+AC_LANG_C
+AC_PROG_LIBTOOL
+AC_LANG_CPLUSPLUS
 
 dnl ------------------------------------------------------------------
 

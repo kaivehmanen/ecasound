@@ -285,7 +285,6 @@ void ECA_ENGINE::command(Engine_command_t cmd, double arg)
  */
 void ECA_ENGINE::wait_for_stop(int timeout)
 {
-
   int ret = kvu_pthread_timed_wait(&impl_repp->ecasound_stop_mutex_repp, 
 				   &impl_repp->ecasound_stop_cond_repp, 
 				   timeout);

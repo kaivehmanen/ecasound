@@ -165,7 +165,7 @@ ecasound_extra_include = \
 #			eca-vst-plugin-map.h
 # vst_header_files = AEffEditor.hpp AEffect.h aeffectx.h AudioEffect.hpp
 #			$(vst_header_files)
-#			audiofx_vst.h \
+#			audiofx_vst.h
 
 noinst_HEADERS = 	$(ecasound_audiofx_include) \
 			$(ecasound_audioio_include) \
