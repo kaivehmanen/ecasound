@@ -225,7 +225,7 @@ void *loopback_controller(void* params) {
   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
   pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
   
-  struct snd_pcm_loopback_callbacks_t callbacks;
+  snd_pcm_loopback_callbacks_t callbacks;
   memset(&callbacks, 0, sizeof(callbacks));
   callbacks.data = loopback_callback_data;
   callbacks.position_change = loopback_callback_position_change;

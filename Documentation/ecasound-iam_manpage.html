@@ -212,10 +212,15 @@ Add a new input object. See ecasound(1) man page for more info about
 the argument format ('-i' option).
 <p><p></p><dt><strong>aio-add-output 'output_format_string'</strong><dd>
 Add a new output object. See ecasound(1) man page for more info about 
-the argument format ('-o' option). 
+the argument format ('-o' option). If argument is omitted, 
+a default output device is added (see ecasoundrc(5)).
 <p><p></p><dt><strong>aio-select 'aobject_name'</strong><dd>
 Select some audio object. 'aobject_name' is usually a file name, but
 not always.
+<p><p></p><dt><strong>aio-select-input 'aobject_name'</strong><dd>
+Select some audio input.
+<p><p></p><dt><strong>aio-select-output 'aobject_name'</strong><dd>
+Select some audio output.
 <p><p></p><dt><strong>aio-index-select 'aobject_index'</strong><dd>
 Select some audio object based on short index string. Especially file
 names can be rather long. This command can be used to avoid typing
@@ -313,9 +318,9 @@ Dumps length of currently selected audio object. Printed in seconds,
 using a floating-point representation.
 <p><p></p><dt><strong>dump-aio-open-state</strong><dd>
 Dumps audio object state info. Either 'open' or 'closed'.
-<p><p></p><dt><strong>dump-cop-value 'param'</strong><dd>
-Dumps parameter value of currently selected chain operator. 'param'
-is the parameter index (1...n).
+<p><p></p><dt><strong>dump-cop-value 'chainop,param'</strong><dd>
+Dumps chain operator parameter value. 'chainop' and 'param' are 
+operator and parameter index values (1...n).
 <p><h2>SEE ALSO</h2>
     
 <p>ecasound(1), qtecasound (1), ecatools (1), ecasoundrc(5)

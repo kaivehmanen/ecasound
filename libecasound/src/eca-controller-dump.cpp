@@ -51,7 +51,7 @@ void ECA_CONTROLLER_DUMP::dump_chainsetup_status(void) {
 }
 
 void ECA_CONTROLLER_DUMP::dump_selected_chain(void) { 
-  vector<string>& t = selected_chains();
+  const vector<string>& t = selected_chains();
   if (t.empty() == false) {
     dump("dump-c-selected", vector_to_string(t, ","));
   }

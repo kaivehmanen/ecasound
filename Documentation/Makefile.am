@@ -6,6 +6,7 @@ prefix = @prefix@
 mandir = $(prefix)/man
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
+SUBDIRS = users_guide programmers_guide
 #distdir = ../$(PACKAGE)-$(VERSION)
 #top_distdir = $(distdir)
 # ---------------------------------------------------------------------
@@ -21,7 +22,6 @@ DISTFILES = Makefile.am Makefile.in ecasound.1 qtecasound.1 \
             ecasoundrc.5 ecasound_faq.txt ecasound_faq.html \
 	    ecasound_manpage.yo qtecasound_manpage.yo \
 	    ecasoundrc_manpage.yo ecasound_faq.yo \
-	    users_guide programmers_guide \
 	    examples.html index.html
 
 # ---------------------------------------------------------------------
@@ -74,12 +74,12 @@ ecasound_faq.txt: ecasound_faq.yo
 ecasound_faq.html: ecasound_faq.yo
 	yodl2html ecasound_faq.yo
 
-uguide: users_guide/users_guide.yo
-	cd users_guide ; yodl2html users_guide.yo ; \
-	ln -sf users_guide.html index.html ; cd ..
-pguide: programmers_guide/programmers_guide.yo
-	cd programmers_guide ; yodl2html programmers_guide.yo ; \
-	ln -sf programmers_guide.html index.html ;  cd ..
+# uguide: users_guide/users_guide.yo
+# 	cd users_guide ; yodl2html users_guide.yo ; \
+# 	ln -sf users_guide.html index.html ; cd ..
+# pguide: programmers_guide/programmers_guide.yo
+# 	cd programmers_guide ; yodl2html programmers_guide.yo ; \
+# 	ln -sf programmers_guide.html index.html ;  cd ..
 
 # ---------------------------------------------------------------------
 # kdoc creation @top_srcdir@

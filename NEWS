@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 180300) **
+** ecasound - user visible changes (NEWS)      (last edited: 190300) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,7 +14,8 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.12r10 <*-
 
-??032000 (v1.7.2d11)
+??032000 (v1.7.3d11)
+19032000 (v1.7.2d11)
 	- added: support for ALSA 0.5.x pcm-loopback
 	- added: more effect presets
 	- added: ia-mode - 'aio-select-input' and 'aio-select-output'

@@ -316,12 +316,12 @@ AAUUDDIIOO IINNPPUUTT//OOUUTTPPUUTT OOBBJJEECCTTSS
        aio-add-output 'output_format_string'
               Add  a  new output object. See ecasound(1) man page
               for more  info  about  the  argument  format  ('-o'
-              option).
+              option).  If  argument is omitted, a default output
+              device is added (see ecasoundrc(5)).
 
 
        aio-select 'aobject_name'
               Select some audio object. 'aobject_name' is usually
-              a file name, but not always.
 
 
 
@@ -334,14 +334,25 @@ AAUUDDIIOO IINNPPUUTT//OOUUTTPPUUTT OOBBJJEECCTTSS
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
+              a file name, but not always.
+
+
+       aio-select-input 'aobject_name'
+              Select some audio input.
+
+
+       aio-select-output 'aobject_name'
+              Select some audio output.
+
+
        aio-index-select 'aobject_index'
-              Select some  audio  object  based  on  short  index
-              string.  Especially  file names can be rather long.
+              Select  some  audio  object  based  on  short index
+              string. Especially file names can be  rather  long.
               This command can be used to avoid typing these long
               names when selecting audio objects. 'aobject_index'
-              format is  "i<number>"  for  inputs  and  similarly
+              format  is  "i<number>"  for  inputs  and similarly
               "o<number>" for outputs.  You can get a list of all
-              audio objects and their indexes with the  'aio-sta-
+              audio  objects and their indexes with the 'aio-sta-
               tus' command.
 
 
@@ -355,19 +366,19 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
        aio-status
-              Audio  object  status  (index  strings,   position,
+              Audio   object  status  (index  strings,  position,
               length, etc).
 
 
        aio-forward 'time_in_seconds', aio-fw 'time_in_seconds'
               Selected audio object is forwarded by 'time-in-sec-
-              onds' seconds.  Time should be given as a  floating
+              onds'  seconds.  Time should be given as a floating
               point value (eg. 0.001 is the same as 1ms).
 
 
        aio-rewind 'time_in_seconds', aio-rw 'time_in_seconds'
-              Selected  audio object is rewinded by 'time-in-sec-
-              onds' seconds.  Time should be given as a  floating
+              Selected audio object is rewinded by  'time-in-sec-
+              onds'  seconds.  Time should be given as a floating
               point value (eg. 0.001 is the same as 1ms).
 
 
@@ -376,18 +387,7 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
        aio-wave-edit
-              Currently  selected  audio object is loaded into an
-              external wave editor (see ecasoundrc(5)).
-
-
-
-CCHHAAIINN OOPPEERRAATTOORRSS
-       Chain operators are used to  process  and  analyze  sample
-       data.   They  are  attached  to  chains.  If not otherwise
-       stated, currently selected chainsetup and chains are used.
-       Also, 'chainop_id' and 'param_id' are used to select chain
-       operators and their  parameters.  First  valid  value  for
-       these parameters is 1.
+              Currently selected audio object is loaded  into  an
 
 
 
@@ -400,9 +400,22 @@ CCHHAAIINN OOPPEERRAATTOORRSS
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
+              external wave editor (see ecasoundrc(5)).
+
+
+
+CCHHAAIINN OOPPEERRAATTOORRSS
+       Chain  operators  are  used  to process and analyze sample
+       data.  They are  attached  to  chains.  If  not  otherwise
+       stated, currently selected chainsetup and chains are used.
+       Also, 'chainop_id' and 'param_id' are used to select chain
+       operators  and  their  parameters.  First  valid value for
+       these parameters is 1.
+
+
        cop-add 'cop_format_string'
               Add  a  new  chain  operator.  Argument  format  is
-              "-<id_string>:par1,...,parN". See  ecasound(1)  man
+              "-<id_string>:par1,...,parN".  See  ecasound(1) man
               page for more info.
 
 
@@ -421,39 +434,26 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
 CCOONNTTRROOLLLLEERRSS
-       Controllers  are used to control individual chain operator
+       Controllers are used to control individual chain  operator
        parameters.  They are attached to chains. If not otherwise
        stated, currently selected chainsetup and chains are used.
 
 
        cop-add-controller 'copc_format_string'
-              Add a new controller and  attach  it  to  currently
-              selected   chain   operator.   Argument  format  is
+              Add  a  new  controller  and attach it to currently
+              selected  chain  operator.   Argument   format   is
               "-<id_string>:<param_id>,<range_low>,
-              <range_high>,par1,...,parN".   See  ecasound(1) man
+              <range_high>,par1,...,parN".  See  ecasound(1)  man
               page for more info.
 
 
        cop-remove-controller 'param_id'
-              Remove the controller that is attached to the  cur-
+              Remove  the controller that is attached to the cur-
               rently selected chain operator.
 
 
        ctrl-status
               Info about controller status.
-
-
-DDUUMMPP CCOOMMMMAANNDDSS
-       The  following dump commands are not meant for normal use.
-       Their primary purpose is to provide an  easy  way  to  get
-       internal state information from libecasound. All dump com-
-       mands output a single line with syntax "key value" to  the
-       selected output stream (defaults to stdout).
-
-
-       dump-target 'filename'
-              Set target stream for dumping.
-
 
 
 
@@ -466,8 +466,20 @@ DDUUMMPP CCOOMMMMAANNDDSS
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
+DDUUMMPP CCOOMMMMAANNDDSS
+       The following dump commands are not meant for normal  use.
+       Their  primary  purpose  is  to provide an easy way to get
+       internal state information from libecasound. All dump com-
+       mands  output a single line with syntax "key value" to the
+       selected output stream (defaults to stdout).
+
+
+       dump-target 'filename'
+              Set target stream for dumping.
+
+
        dump-status
-              Dumps  engine  status - 'running', 'stopped', 'fin-
+              Dumps engine status - 'running',  'stopped',  'fin-
               ished' or 'notready'.
 
 
@@ -477,13 +489,13 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
        dump-length
-              Dumps  the  overall  processing  length. Printed in
+              Dumps the overall  processing  length.  Printed  in
               seconds using a floating-point representation.
 
 
        dump-cs-status
-              Dumps status  string  for  the  currently  selected
-              chainsetup  -  'connected',  'selected' or an empty
+              Dumps  status  string  for  the  currently selected
+              chainsetup - 'connected', 'selected'  or  an  empty
               string.
 
 
@@ -492,34 +504,22 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
        dump-aio-selected
-              Dumps label of currently selected audio object.  If
+              Dumps  label of currently selected audio object. If
               no object is selected, dumps an empty string.
 
 
        dump-aio-position
               Dumps position of currently selected audio objects.
-              Printed in seconds, using a  floating-point  repre-
+              Printed  in  seconds, using a floating-point repre-
               sentation.
 
 
        dump-aio-length
-              Dumps  length  of  currently selected audio object.
-              Printed in seconds, using a  floating-point  repre-
+              Dumps length of currently  selected  audio  object.
+              Printed  in  seconds, using a floating-point repre-
               sentation.
 
 
-       dump-aio-open-state
-              Dumps  audio  object  state  info. Either 'open' or
-              'closed'.
-
-
-       dump-cop-value 'param'
-              Dumps parameter value of currently  selected  chain
-              operator. 'param' is the parameter index (1...n).
-
-
-SSEEEE AALLSSOO
-              ecasound(1),    qtecasound   (1),   ecatools   (1),
 
 
 
@@ -532,24 +532,24 @@ SSEEEE AALLSSOO
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
-              ecasoundrc(5)
+       dump-aio-open-state
+              Dumps audio object state  info.  Either  'open'  or
+              'closed'.
+
+
+       dump-cop-value 'chainop,param'
+              Dumps chain operator parameter value. 'chainop' and
+              'param' are operator  and  parameter  index  values
+              (1...n).
+
+
+SSEEEE AALLSSOO
+              ecasound(1),  qtecasound  (1),  ecatools  (1), eca-
+              soundrc(5)
 
 
 AAUUTTHHOORR
               Kai Vehmanen, <kaiv@wakkanet.fi>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
