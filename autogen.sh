@@ -1,5 +1,5 @@
 #!/bin/sh
-libtoolize --copy --force
+libtoolize --copy --automake
 aclocal
 autoheader
 automake --add-missing --copy
