@@ -68,9 +68,10 @@ ECA_CONTROL::~ECA_CONTROL(void) { }
 void ECA_CONTROL::command(const string& cmd) {
   clear_last_values();
   clear_action_arguments();
-  vector<string> cmds = string_to_words(cmd);
+  vector<string> cmds = string_to_tokens_quoted(cmd);
   vector<string>::iterator p = cmds.begin();
   if (p != cmds.end()) {
+
     if (ECA_IAMODE_PARSER::cmd_map_rep.find(*p) == ECA_IAMODE_PARSER::cmd_map_rep.end()) {
       // ---
       // *p is not recognized as a iamode command
@@ -169,7 +170,7 @@ void ECA_CONTROL::chainsetup_option(const string& cmd) {
       set_last_error("When adding controllers, only one chain can be selected.");
   }
   else {
-    set_action_argument(string_to_words(cmd));
+    set_action_argument(string_to_tokens_quoted(cmd));
     action(ec_cs_option);
   }
 }

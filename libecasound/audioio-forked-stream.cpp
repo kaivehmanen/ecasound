@@ -138,7 +138,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
 	::close(fpipes[0]);
 	::close(fpipes[1]);
 	freopen("/dev/null", "w", stderr);
-	std::vector<std::string> temp = string_to_words(command_rep);
+	std::vector<std::string> temp = string_to_tokens_quoted(command_rep);
 	if (temp.size() > 1024) temp.resize(1024);
 	const char* args[1024];
 	// = new char* [temp.size() + 1];
@@ -182,7 +182,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
     // child 
     // ---
     freopen("/dev/null", "w", stderr);
-    std::vector<std::string> temp = string_to_words(command_rep);
+    std::vector<std::string> temp = string_to_tokens_quoted(command_rep);
     if (temp.size() > 1024) temp.resize(1024);
     const char* args[1024];
     std::vector<std::string>::size_type p = 0;
@@ -237,7 +237,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
       ::close(fpipes[0]);
       ::close(fpipes[1]);
       freopen("/dev/null", "w", stderr);
-      std::vector<std::string> temp = string_to_words(command_rep);
+      std::vector<std::string> temp = string_to_tokens_quoted(command_rep);
       if (temp.size() > 1024) temp.resize(1024);
       const char* args[1024];
       // = new char* [temp.size() + 1];

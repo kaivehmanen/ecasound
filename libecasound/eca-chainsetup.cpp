@@ -1744,7 +1744,7 @@ void ECA_CHAINSETUP::load_from_file(const string& filename,
     if (temp.size() > 0 && temp[0] == '#') {
       continue;
     }
-    vector<string> words = string_to_words(temp);
+    vector<string> words = string_to_tokens_quoted(temp);
     for(unsigned int n = 0; n < words.size(); n++) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding \"" + words[n] + "\" to options (loaded from \"" + filename + "\".");
       options.push_back(words[n]);
