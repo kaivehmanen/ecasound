@@ -18,7 +18,7 @@
 % ----------------------------------------------------------------------
 \chapter{Preface}
 
-This document describes Ecasound from user's point of view. In
+This document describes Ecasound from the user's point of view. In
 addition to the actual user/client-programs, all essential Ecasound 
 library concepts and features are also discussed. To avoid duplicating
 documentation, I've used references to other sources whenever suitable. 
@@ -32,6 +32,8 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 18.12.2003 - Many typo fixes and other corrections from Eric 
+                   Rzewnicki.
 \item 18.11.2003 - Typo fixes.
 \item 20.08.2003 - Capitalize Ecasound in all cases where talking
                    about the software package, not the console mode 
@@ -93,7 +95,7 @@ continue to improve and develop Ecasound.
 Audio objects are used to transfer audio from and to Ecasound. 
 Usually audio objects are either files (like wav, mp3 or ogg) 
 or devices (soundcard input/output). There are also some
-special audio object types for transfering data between 
+special audio object types for transferring data between 
 applications.
 
 % ----------------------------------------------------------------------
@@ -107,10 +109,10 @@ to which you can connect audio producers and consumers
 But there are some differences. First it's possible to attach 
 chain operators (usually effects) to chains. This is somewhat like 
 replacing one cable with two, and putting an effect box between 
-them, but with chains it's just easier. Second important difference 
+them, but with chains it's just easier. A second important difference 
 is that chains can transport multiple channels of audio. It's possible
 to attach mono, stereo or 24ch (or bigger) audio feeds to one 
-chain. Also all chain operators can handle these multichannels 
+chain. Also all chain operators can handle these multichannel 
 streams.
 
 In addition to chain operators, chains also have separate
@@ -128,7 +130,7 @@ These controllers are used to control chain operator parameters.
 The typical examples are various oscillators and MIDI continous
 controllers (knobs, sliders, etc found on MIDI-devices).
 
-Both types of objects are attached to chains. Term \emph{chain object} 
+Both types of objects are attached to chains. The term \emph{chain object} 
 refers to all objects that can be attached to chains - ie. 
 operators and controllers.
 
@@ -191,7 +193,7 @@ One very notable feature of the console-mode ecasound
 program is its command-line option syntax. You can 
 do pretty much everything from the command-line.
 
-But it doesn't stop to the console-mode ecasound. In
+But it doesn't end with the console-mode ecasound. In
 fact, interpreting these options is located in
 the main libecasound library, and is very closely tied
 to the interactive mode. 
@@ -228,7 +230,7 @@ to multitrack recording and mixing.
 This flexibility doesn't come for free. It's difficult to describe
 Ecasound's features in a few phrases. Because of this, new users
 are encouraged to start from the \texttt{Examples} page - 
-``Ecasounds web site -> Documentation -> Examples''. It isn't 
+``Ecasound's web site -> Documentation -> Examples''. It isn't 
 a perfect introduction, and definitely not the only way to use 
 Ecasound, but it does give an overall view of what can be done
 with Ecasound, and more importantly, it shows that most tasks are 
@@ -251,7 +253,7 @@ these rules always apply:
       chains and then specifying an input or output (example: 
       ``-a:1,2 -i:file.ext'').
 \item All audio copying and mixing is done channel-wise. If you attach 
-      a 4-channel input and a two-channel output to a chain, chain 
+      a 4-channel input and a two-channel output to a chain, that chain 
       will have 4 channels of audio, but only the first two channels
       will be written to the output file.
 \end{itemize}
@@ -259,15 +261,15 @@ these rules always apply:
 % ----------------------------------------------------------------------
 \section{Chain operators and controllers}
 
-Best place to start is to read through the \texttt{ecasound(1)} man
+The best place to start is to read through the \texttt{ecasound(1)} man
 page, which contains documentation for all native Ecasound 
 chain objects.
 
 % ----------------------------------------------------------------------
 \section{Configuration}
 
-User preferences are stored to \emph{\textasciitilde /.ecasound/ecasoundrc}.
-See \texttt{ecasoundrc(5)} manual page for details.
+User preferences are stored in \emph{\textasciitilde /.ecasound/ecasoundrc}.
+See the \texttt{ecasoundrc(5)} manual page for details.
 
 By default, files for effect presets and oscillator presets are 
 in \emph{/usr/local/share/ecasound}.
@@ -285,14 +287,14 @@ here's a quick list of things to try:
 \begin{itemize}
 \item Tune your disks (see the article)
 \item Enable ecasound's double-buffering system by using the em(-z:db)
-      option [note! this only necessary with Ecasound 2.0.x and older]
-\item If still having problems, run ecasound as root (or with SUID-bit
+      option [note! this is only necessary with Ecasound 2.0.x and older]
+\item If you're still having problems, run ecasound as root (or with SUID-bit
       set) and use ecasound's em(-r) option. This will raise ecasound's
       scheduling priority to realtime (SCHED\_FIFO). [with ecasound 2.1
       and newer, just run ecasound as root and it will take care of
       tuning the settings]
-\item Try increasing ecasound's buffersize with \emph{-b:sample\_frames}
-      options. Something like \emph{-b:4096} should do the trick.
+\item Try increasing ecasound's buffersize with the \emph{-b:sample\_frames}
+      option. Something like \emph{-b:4096} should do the trick.
 \item If all else fails, try the various low-latency kernel patches 
       (again, check the article)
 \end{itemize}
@@ -300,7 +302,7 @@ here's a quick list of things to try:
 \subsection{Can I use multiple soundcards?}
 
 This is possible, but there are some issues you should be aware of. If 
-you try using multiple cheap soundcards to get more simultanious 
+you try using multiple cheap soundcards to get more simultaneous 
 inputs for recording, it's likely that the resulting streams will not
 be in sync. This problem is explained in detail in the Linux
 Audio-Quality HOWTO - ``http://www.linuxdj.com/audio/quality/'',
@@ -310,7 +312,7 @@ section "Notes on Full Duplex Recording, and Other Realtime Issues".
 
 In situations where you need to convert mono
 audio objects to multichannel objects, Ecasound
-can behave in somewhat unexpected manner.
+can behave in a somewhat unexpected manner.
 
 For instance, the correct way to set panning for 
 three individual mono input files, and mix the
@@ -347,7 +349,7 @@ The critical points to notice are:
 \item chains contain mono signal until -erc operator,
       which transforms the chain into a stereo chain
       by copying the data from ch1 to ch2
-\item now -epp works as excepted (sets the stereo balance
+\item now -epp works as expected (sets the stereo balance
       for one input)
 \item chains are mixed to the soundcard device channel-wise
 \end{itemize} 
@@ -397,9 +399,9 @@ ecasignalview alsa,default null
 \end{verbatim}
 
 To monitor the input signal you can either use the soundcard's
-analog (or in some case, digital) monitoring functions by 
+analog (or in some cases, digital) monitoring functions by 
 enabling line/mic-in monitoring using \emph{alsamixer} (ALSA),
-\emph{aumix} (OSS) or some other mixer application. Other option is to
+\emph{aumix} (OSS) or some other mixer application. Another option is to
 use ecasignalview to do the monitoring. In this case the correct
 command is:
 
@@ -437,7 +439,7 @@ See also \ref{JACK Audio Server}.
 
 \subsection{Further Reading}
 
-See \texttt{ecatools(1)} man page for detailed listing of 
+See \texttt{ecatools(1)} man page for a detailed listing of 
 available command-line options.
 
 % ----------------------------------------------------------------------
@@ -482,7 +484,7 @@ adds latency (-b:x -> latency of x frames).
 \subsection{General}
 
 Ecasound wave file (.ewf) is a simple wrapper format for controlling 
-other audio objects. Ewf files are useful for offseting or time-shifting
+other audio objects. Ewf files are useful for offsetting or time-shifting
 audio files (for instance play a short audio clip in the middle of 
 a long multitrack mix), for minimizing diskspace usage during
 multitrack recording (output offsetting ) and looping.
@@ -504,7 +506,7 @@ recognized ewf keywords are:
 
 \subsection{Example of ewf use}
 
-Let's look at an simple example .ewf file:
+Let's look at a simple example .ewf file:
 
 \begin{verbatim} 
 -- test.ewf --
@@ -522,7 +524,7 @@ silent. After that ecasound will start to read data from ``test.wav''.
 But as ``start-position'' is not zero, ecasound will skip the 
 first 2 seconds. After 8 seconds has passed (``offset'' + 
 ``length''), ecasound will loop back to ``start-position''. 
-This looping will continue until user interrupts the operation.
+This looping will continue until the user interrupts the operation.
 
 % ----------------------------------------------------------------------
 \section{Effect presets}
@@ -543,14 +545,14 @@ preset_name = effects controllers | ... | effects controllers
 Effects and controllers are specified using the EOS syntax, 
 the same syntax that is used for parsing command-line options 
 (``-ea:100'', ``-kl:1,0,100,5'', etc). The pipe character is
-used separate parallel chains. 
+used to separate parallel chains. 
 
-Just like in shell scripts, the '\textbackslash' character can
+Just like in shell scripts, the '$\backslash$' character can
 be used to spread definitions across multiple lines.
 
 \subsection{Example of preset use}
 Ecasound effect presets are in fact small Ecasound engines that
-behave just like native effects. Here's an example of 
+behave just like native effects. Here's an example of a 
 multi-chain effect preset:
 
 \begin{verbatim} 
@@ -638,7 +640,7 @@ The threshold gate is used similarly:
 --cut--
  \end{verbatim} 
 
-In the first case, gate is opened when the RMS-volume goes over the ``11.2\%''
+In the first case, the gate is opened when the RMS-volume goes over the ``11.2\%''
 threshold, and closed when RMS-volume falls below ``5\%''. In the second,
 case, both entry and close thresholds are ``5\%'' (peak volume).
 
@@ -651,7 +653,7 @@ the LADSPA web site at ``www.ladspa.org'' for more information.
 
 \subsection{Ecasound is not able to find any LADSPA plugins I have installed!}
 
-Just installing the LADSPA SDK - ``www.ladspa.org)(http://www.ladspa.org''
+Just installing the LADSPA SDK - ``www.ladspa.org''
 - should be enough. The plugins themselves are stored in shared library 
 files (.so). They are usually stored in ``/usr/local/lib/ladspa''. To test 
 whether Ecasound finds the plugins, issue:
@@ -676,7 +678,7 @@ JACK is a low-latency audio server, written primarily for the
 GNU/Linux operating system. It can connect a number of different
 applications to an audio device, as well as allowing them to share
 audio between themselves. Its clients can run in their own processes
-(ie. as normal applications), or can they can run within the JACK
+(ie. as normal applications), or they can run within the JACK
 server (ie. as a ``plugin'').
 
 JACK is different from other audio server efforts in that it has been
@@ -713,7 +715,7 @@ ecasound -f:32,2,44100 -i jack_alsa -o foo.wav
 \end{verbatim}
 
 Here we use ``-f:bits,channels,srate'' to set how many channels 
-to record from the souncard using JACK. As JACK always uses
+to record from the soundcard using JACK. As JACK always uses
 32bit samples, and the sampling rate must match the one used
 by the JACK server, the channel count is the only configurable
 parameter. You can use another ``-f:x,y,z'' before ``-o foo.wav''
@@ -721,7 +723,7 @@ if you want to write the file in a different format.
 
 \subsection{More Advanced Port Creation}
 
-Ecasound also offers the following altenative ways 
+Ecasound also offers the following alternative ways 
 to create input and output ports:
 
 \begin{verbatim}
@@ -736,7 +738,7 @@ ecasound -i jack_generic,local_portprefix -o foo.wav
 ``jack'' and ``jack\_auto'' both create a set of input
 (ecasound:in\_X) and/or output (ecasound:out\_X) ports.
 In the former case, Ecasound doesn't make any implicit
-connections, but in latter case the created ports
+connections, but in the latter case the created ports
 are automatically connected to the matching ports 
 of the specified client (client:in\_X or client:out\_X).
 
@@ -747,10 +749,10 @@ If you want to create ports with a custom port name
 \subsection{Transport Control}
 
 Transport controls are functions like ``start'', ``stop'', ``seek'', 
-etc that are commonly available in audio application that 
+etc, that are commonly available in audio applications that 
 maintain some kind of current position. JACK's transport
 control interface allows controlling the transport state
-of the all apps connected to one JACK server from a single
+of all the apps connected to one JACK server from a single
 application. Ecasound can support this functionality in
 four different modes (``notransport'', ``send'', ``recv'' 
 and ``sendrecv'').
@@ -764,7 +766,7 @@ ecasound -c -i null -o jack
 \end{verbatim}
 
 To use transport control in Ecasound, you have to have at least
-one publish input or output JACK port. Here we publish
+one published input or output JACK port. Here we publish
 one null output port. After giving the initial ``engine-launch'' command
 in Ecasound interactive mode, you are now able to use
 further EIAM commands to control all other JACK apps connected
@@ -792,14 +794,14 @@ ecasound -c -i foo.wav -o jack_alsa -G:jack,eca_slave,sendrecv
 
 \subsection{JACK and Ecasound states}
 
-To have a good understand of the overall system, it's important
-to understand how Ecasound and JACK states related to each other.
+To have a good understanding of the overall system, it's important
+to understand how Ecasound and JACK states relate to each other.
 
-When Ecasound chainsetup is connected (EIAM-command ``cs-connect''),
+When an Ecasound chainsetup is connected (EIAM-command ``cs-connect''),
 a connection is established with the JACK server, and all the 
 JACK ports in that chainsetup are registered to it. 
 Once Ecasound's engine is launched with EIAM-command ``engine-launch'',
-connections (if any specified) are made to the ports of other
+connections (if any are specified) are made to the ports of other
 JACK clients. In this state Ecasound is ready to process
 incoming transport state and position changes.
 
@@ -809,7 +811,7 @@ as a node in the JACK system. When processing is stopped (either
 with ``stop'', or by a transport event), Ecasound's engine is 
 not run.
 
-Any connections (iniated by Ecasound) to other clients, 
+Any connections (initiated by Ecasound) to other clients, 
 are disconnected once ``engine-halt'' is issued and engine
 operation is stopped. Connection to the remote JACK server 
 as well as unregistering any ports is performed when chainsetup 
@@ -825,7 +827,7 @@ will stop processing and halt the engine if needed.
 Ecasound v2.2 and earlier don't have the capability to change
 the engine buffersize and sampling rate dynamically during 
 processing. As a consequence, running Ecasound will fail if
-the currrent values for these parameters do not match to
+the currrent values for these parameters do not match 
 the ones used by the JACK server. In other words, you have
 to correctly set the buffersize (with ``-b:xxx'') and sampling 
 rate (with ``-f:bits,channels,srate'' and possibly using the
@@ -833,12 +835,12 @@ rate (with ``-f:bits,channels,srate'' and possibly using the
 check if communication with JACK does not work.
 
 Future versions of Ecasound will hopefully solve this 
-problem. This issue covered by Ecasound development item 
+problem. This issue is covered by Ecasound development item 
 ``edi-31 - Support for dynamic sampling rate and buffersize changes.''.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\chapter{Miscellanous}
+\chapter{Miscellaneous}
 
 % ----------------------------------------------------------------------
 \section{Security considerations when running with root privileges}
@@ -872,8 +874,8 @@ root):
         chmod 4750 ecasound
 \end{verbatim} 
 
-In other words, ecasound binary is set as suid-root (so it is run with
-root-privileges), but only root and members of the 'ecausers' groups can   
+In other words, the ecasound binary is set as suid-root (so it is run with
+root-privileges), but only root and members of the 'ecausers' group can   
 start it. Now just add all trusted Ecasound users to the group and you are
 set.
 
@@ -881,7 +883,7 @@ The ideal solution would be that ecasound would not need to be run with
 full root-privileges, only with privileges for changing scheduling and
 locking memory. Tommi Ilmonen's (author of the Mustajuuri softsynth)
 ``givertcap'' program solves this very elegantly, but unfortunately it 
-requires a custom kernel patch (at least for now). You can check the 
+requires a custom kernel patch (at least for now). You can check out the 
 program at: 'http://www.tml.hut.fi/~tilmonen/givertcap/'. Ecasound 
 doesn't yet have explicit support for givertcap.
 
