@@ -27,7 +27,7 @@ using std::string;
 /**
  * A variant of the standard pthread_mutex_lock. This routine is
  * originally from Quasimodo CVS-tree, from the libpbd library, Written 
- * by Paul Barton-Davis. This version of the routine adds a second
+ * by Paul Davis. This version of the routine adds a second
  * argument, 'spinlimit' which specifies the number of loops spent
  * spinning, before blocking with the standard pthread_mutex_lock() call.
  */
