@@ -474,7 +474,7 @@ void ECA_CONTROL::action(int action_id) {
     }
   case ec_ao_set_position: { audio_output_as_selected(); set_audio_object_position(first_argument_as_float()); break; }
   case ec_ao_set_position_samples: { audio_output_as_selected(); set_audio_object_position_samples(first_argument_as_long_int()); break; }
-  case ec_ao_get_position: { set_last_long_integer(get_audio_output()->position().seconds()); break; }
+  case ec_ao_get_position: { set_last_float(get_audio_output()->position().seconds()); break; }
   case ec_ao_get_position_samples: { set_last_long_integer(get_audio_output()->position().samples()); break; }
   case ec_ao_get_length: { set_last_float(get_audio_output()->length().seconds()); break; }
   case ec_ao_get_length_samples: { set_last_long_integer(get_audio_output()->length().samples()); break; }
