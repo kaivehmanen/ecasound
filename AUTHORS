@@ -76,6 +76,8 @@ Poulton, Ron [thok]
 	Helped to track down the mysterious chain-bug.
 Sassmannshausen, Ruediger [rsassman]
 	Mp3 filename parsing fixes.
+Sijrier, Remon [remon]
+	Fix to a bug in setting -eca initial values.
 Smith, Richard A.
 	Helped in solving the "gcc 2.95" bug.
 Sousa, Rui

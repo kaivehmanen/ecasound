@@ -134,7 +134,7 @@ void ADVANCED_COMPRESSOR::init_values(void) {
   peakpercent = 100.0f;
   releasetime = 0;
   fratio = 1.0;
-  fratio = 1.0;
+  ratio = 1.0;
 }
 
 ADVANCED_COMPRESSOR::~ADVANCED_COMPRESSOR (void)

@@ -33,6 +33,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: recording failed with a WinTv 401dbx and the btaudio 
 		 OSS driver
 	- fixed: compilation against alsa-lib-1.0.x
+	- fixed: default ratio value incorrectly set for -eca; does
+		 not affect presets using -eca [remon]
 29082003 (v2.3.0)  -** stable release **-
 	- edi-entries: edi-4, edi-19 and edi-35 frozen, edi-38 added 
 		       and frozen immediately, edi-39 added; frozen is 
