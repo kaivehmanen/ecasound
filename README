@@ -206,6 +206,7 @@ Harris, Steve - Gcc 2.96 (RH7.0) testing and fixes. [swharris]
 Jeanneau, Aymeric - Reentrant libecasoundc implementation. [ajeanneau]
 Lavallée, Marc - Rpm-spec for Mandrake.
 Laydier, Antoine - layer.cpp (interprets mp3 headers) [SMF]
+Leake, Tony - PHP ECI extension [tonyleake]
 Massy, S. - Extensive testing and debugging. [smassy]
 Morris, Steve - Ewf-handling fixes. [smorris]
 Petit, Bertrand - Helped with POSIX-compatibility issues.
