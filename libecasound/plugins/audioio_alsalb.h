@@ -64,7 +64,7 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
 
   ALSA_LOOPBACK_DEVICE (int card = 0, int device = 0, bool playback_mode = true);
   ~ALSA_LOOPBACK_DEVICE(void);
-  ALSA_LOOPBACK_DEVICE* clone(void) const { cerr << "Not implemented!" << endl; return this; }
+  ALSA_LOOPBACK_DEVICE* clone(void) const { cerr << "Not implemented!" << endl; return 0; }
   ALSA_LOOPBACK_DEVICE* new_expr(void) const { return new ALSA_LOOPBACK_DEVICE(); }
   
  private:
