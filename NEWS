@@ -14,6 +14,8 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.9r9 <*-
 
+??012000 (v1.6.12d10)
+	- changed: ALSA pcm2-devices now opened in nonblock-mode
 14012000 (v1.6.11d10)
 	- added: -ef4 - 2th-order, 24dB filter which simulates
 	         an analog active RC-lowpass filter - submitted by 

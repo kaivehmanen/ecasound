@@ -51,7 +51,7 @@ instructions.
 -----------------------------------------------------------------------
 
 - user's guide
-- programmers guide
+- programmer's guide
 - man pages
 	- ecasound(1)
 	- qtecasound(1)
@@ -147,7 +147,7 @@ WakkaNet Oy - for hosting ecasound web site
  Licensing/distribution policy
 -----------------------------------------------------------------------
 
-Copyright (C) 1997-1999 Kai Vehmanen
+Copyright (C) 1997-2000 Kai Vehmanen
 
 Ecasound is freely distributable according to the terms of the 
 GNU General Public License (see the file 'COPYING').
