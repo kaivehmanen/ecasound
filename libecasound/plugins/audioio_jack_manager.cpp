@@ -1316,7 +1316,7 @@ void AUDIO_IO_JACK_MANAGER::unregister_jack_ports(int client_id)
   list<eca_jack_port_data_t*>::iterator p = node->ports.begin();
   while(p != node->ports.end()) {
     /* 1. unregister port from JACK */
-    if (open_rep == true) {
+    if (open_rep == true && (*p)->jackport != 0) {
       jack_port_unregister(client_repp, (*p)->jackport);
     }
 
