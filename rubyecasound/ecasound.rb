@@ -122,6 +122,11 @@ class ControlInterface
             
             @ecapipe.write(cmd + "\n")
 
+            # ugly hack but the process gets stuck otherwise -kvehmanen
+            if cmd == "quit"
+                return nil
+            end
+
             response = ""
             begin
                 # TimeoutError is raised unless response is complete
