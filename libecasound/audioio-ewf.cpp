@@ -43,6 +43,7 @@ void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   child_active = false;
 
   ewf_rc.resource_file(label());
+  ewf_rc.load();
   read_ewf_data();
 
   child = ECA_OBJECT_FACTORY::create_audio_object(child_name_rep);
@@ -270,7 +271,9 @@ void EWFFILE::write_ewf_data(void) {
   if (child_looping_rep == true) ewf_rc.resource("looping","true");
   if (io_mode() != AUDIO_IO::io_read) child_length_rep = child->length();    
   if (child_length_rep.samples() != child->length_in_samples()) 
-    ewf_rc.resource("length", kvu_numtostr(child_length_rep.seconds(), 6));
+    ewf_rc.resource("length", kvu_numtostr(child_length_rep.seconds(),  6));
+
+  if (io_mode() != AUDIO_IO::io_read) ewf_rc.save();
 }
 
 void EWFFILE::child_offset(const ECA_AUDIO_TIME& v) { child_offset_rep = v; }
