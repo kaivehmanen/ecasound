@@ -178,7 +178,7 @@ private:
   bool shutdown_request_rep;
   bool exit_request_rep;
 
-  int active_nodes;
+  int open_clients_rep;
   int last_node_id_rep;
 
   list<eca_jack_node_t*> node_list_rep;

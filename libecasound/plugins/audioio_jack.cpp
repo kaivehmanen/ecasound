@@ -105,11 +105,12 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     }
     
     if (buffersize() != jackmgr_rep->buffersize()) {
+      long int jackd_bsize = jackmgr_rep->buffersize();
       jackmgr_rep->close(myid_rep);
       throw(SETUP_ERROR(SETUP_ERROR::unexpected, 
 			"AUDIOIO-JACK: Cannot connect open connection! Buffersize " +
 			kvu_numtostr(buffersize()) + " differs from JACK server's buffersize of " + 
-			kvu_numtostr(jackmgr_rep->buffersize()) + "."));
+			kvu_numtostr(jackd_bsize) + "."));
     }
 
     jackmgr_rep->register_jack_ports(myid_rep, channels(), workstring);
@@ -141,7 +142,8 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   AUDIO_IO_DEVICE::open();
 }
 
-void AUDIO_IO_JACK::close(void) {
+void AUDIO_IO_JACK::close(void)
+{
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) close");
 
   if (jackmgr_rep != 0) {

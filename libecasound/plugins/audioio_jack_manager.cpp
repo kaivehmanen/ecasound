@@ -916,6 +916,8 @@ void AUDIO_IO_JACK_MANAGER::open(int client_id)
   if (is_open() != true) {
     open_connection();
   }
+
+  ++open_clients_rep;
 }
 
 void AUDIO_IO_JACK_MANAGER::close(int client_id)
@@ -923,18 +925,10 @@ void AUDIO_IO_JACK_MANAGER::close(int client_id)
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) close for client " + kvu_numtostr(client_id));
 
-  /* count how many open clients */
-  int open_clients = 0;
-  list<eca_jack_node_t*>::iterator p = node_list_rep.begin();
-  while(p != node_list_rep.end()) {
-    if ((*p)->aobj->is_open() == true) open_clients++;
-    ++p;
-  }
-
-  DBC_CHECK(open_clients > 0);
+  DBC_CHECK(open_clients_rep > 0);
 
   /* only for the last client */
-  if (open_clients == 1) {
+  if (open_clients_rep == 1) {
     if (is_open() == true) close_connection();
   }
 }
