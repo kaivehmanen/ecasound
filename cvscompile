@@ -1,9 +1,4 @@
 #!/bin/bash
-cd kvutils
-automake
-aclocal
-autoconf
-cd ..
 automake
 aclocal
 autoconf

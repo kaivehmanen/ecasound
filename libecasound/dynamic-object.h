@@ -1,5 +1,5 @@
-#ifndef _DYNAMIC_OBJECT_H
-#define _DYNAMIC_OBJECT_H
+#ifndef INCLUDED_DYNAMIC_OBJECT_H
+#define INCLUDED_DYNAMIC_OBJECT_H
 
 #include <string>
 

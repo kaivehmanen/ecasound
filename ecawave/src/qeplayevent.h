@@ -15,7 +15,7 @@ class QEPlayEvent : public QENonblockingEvent {
   virtual long int position_in_samples(void) const;
   virtual bool class_invariant(void) { return(ectrl != 0); }
 
-  QEPlayEvent(ECA_CONTROLLER* ctrl,
+  QEPlayEvent(ECA_CONTROL* ctrl,
 	      const string& input,
 	      const string& output,
 	      long int start_pos, 
@@ -23,7 +23,7 @@ class QEPlayEvent : public QENonblockingEvent {
 
  private:
 
-  ECA_CONTROLLER* ectrl;
+  ECA_CONTROL* ectrl;
   long int start_pos_rep;
 };
 

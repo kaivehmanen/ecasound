@@ -42,18 +42,19 @@
 #include "eca-chainop-map.h"
 #include "eca-controller-map.h"
 
-#include "eca-control-position.h"
+#include "eca-chainsetup-position.h"
 #include "eca-audio-objects.h"
+#include "sample-specs.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"
 #include "eca-chainsetup.h"
 
 ECA_CHAINSETUP::ECA_CHAINSETUP(COMMAND_LINE& cline) 
-  : ECA_CONTROL_POSITION(SAMPLE_SPECS::sample_rate_default) {
+  : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default) {
 
-  setup_name = "command-line-setup";
-  setup_filename = "";
+  setup_name_rep = "command-line-setup";
+  setup_filename_rep = "";
 
   set_defaults();
 
@@ -77,14 +78,14 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(COMMAND_LINE& cline)
 }
 
 ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file, bool fromfile) 
-  : ECA_CONTROL_POSITION(SAMPLE_SPECS::sample_rate_default) {
+  : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default) {
 
-  setup_name = "";
+  setup_name_rep = "";
 
   set_defaults();
 
   if (fromfile) load_from_file(setup_file);
-  if (setup_name == "") setup_name = setup_file;
+  if (setup_name_rep == "") setup_name_rep = setup_file;
 
   interpret_options(options);
 
@@ -247,9 +248,9 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
 
   case 'n':
     {
-      setup_name = get_argument_number(1, argu);
+      setup_name_rep = get_argument_number(1, argu);
       ecadebug->msg("(eca-chainsetup) Setting chainsetup name to \""
-		    + setup_name + "\".");
+		    + setup_name_rep + "\".");
       break;
     }
 
@@ -372,7 +373,7 @@ void ECA_CHAINSETUP::interpret_audio_format (const string& argu) {
       MESSAGE_ITEM ftemp;
       ftemp << "(eca-chainsetup) Set active format to (bits/channels/srate): ";
       ftemp << active_sinfo.format_string() << "/" << (int)active_sinfo.channels() << "/" << active_sinfo.samples_per_second();
-      ecadebug->msg(ftemp.to_string());
+      ecadebug->msg(ECA_DEBUG::user_objects, ftemp.to_string());
       break;
     }
   default: { }
@@ -637,14 +638,14 @@ void ECA_CHAINSETUP::load_from_file(const string& filename) throw(ECA_ERROR*) {
   }
   fin.close();
 
-  setup_filename = filename;
+  setup_filename_rep = filename;
   options = COMMAND_LINE::combine(options);
 }
 
 void ECA_CHAINSETUP::save(void) throw(ECA_ERROR*) { 
-  if (setup_filename.empty() == true)
-    setup_filename = setup_name + ".ecs";
-  save_to_file(setup_filename);
+  if (setup_filename_rep.empty() == true)
+    setup_filename_rep = setup_name_rep + ".ecs";
+  save_to_file(setup_filename_rep);
 }
 
 void ECA_CHAINSETUP::save_to_file(const string& filename) throw(ECA_ERROR*) {
@@ -663,7 +664,7 @@ void ECA_CHAINSETUP::save_to_file(const string& filename) throw(ECA_ERROR*) {
   fout << chains_to_string() << "\n";
   fout.close();
 
-  setup_filename = filename;
+  setup_filename_rep = filename;
 }
 
 void ECA_CHAINSETUP::update_option_strings(void) {
@@ -685,7 +686,7 @@ string ECA_CHAINSETUP::general_options_to_string(void) const {
   t << "-b:" << buffersize();
   t << " -sr:" << sample_rate();
 
-  t << " -n:" << setup_name;
+  t << " -n:" << setup_name_rep;
 
   switch(mixmode()) {
   case ep_mm_simple: {

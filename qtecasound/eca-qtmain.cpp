@@ -28,7 +28,7 @@
 #include "eca-error.h"
 #include "eca-main.h"
 #include "eca-session.h"
-#include "eca-controller.h"
+#include "eca-control.h"
 #include "eca-comhelp.h"
 #include "eca-version.h"
 
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
     param = new ECA_SESSION (cline);
     global_pointer_to_ecaparams = param;  // used only for signal handling! 
 
-    ECA_CONTROLLER* ctrl = new ECA_CONTROLLER (param);
+    ECA_CONTROL* ctrl = new ECA_CONTROL (param);
     QEInterface w (ctrl);
     QObject::connect( &w, SIGNAL(is_finished()), &a, SLOT(quit()));
     QObject::connect( &a, SIGNAL( lastWindowClosed() ), &a, SLOT( quit() ) );

@@ -17,7 +17,7 @@
  */
 class RAWFILE : public AUDIO_IO_BUFFERED {
 
-  ECA_FILE_IO* fio;
+  ECA_FILE_IO* fio_repp;
   bool double_buffering_rep;
 
   RAWFILE(const RAWFILE& x) { }

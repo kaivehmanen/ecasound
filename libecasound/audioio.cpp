@@ -46,11 +46,15 @@ void AUDIO_IO::position(const ECA_AUDIO_TIME& v) {
 
 string AUDIO_IO::format_info(void) const {
   MESSAGE_ITEM otemp;
+  otemp << "(audio-io) ";
 
-  otemp << "(audio-io) Format " << format_string();
-  otemp << ", channels " << channels();
-  otemp << ", srate " << samples_per_second() << ".";
-  
+  if (locked_audio_format() == true && is_open() != true) {
+    otemp << "Using audio format specified in file header data.";
+  } else {
+    otemp << "Format: " << format_string();
+    otemp << ", channels " << channels();
+    otemp << ", srate " << samples_per_second() << ".";
+  }
   return(otemp.to_string());
 }
 
@@ -60,8 +64,16 @@ string AUDIO_IO::status(void) const {
 
   mitem << "position (" << position_in_seconds_exact();
   mitem << "/" << length_in_seconds_exact();
-  mitem << ") seconds.";
+  mitem << ") seconds.\n\t";
   
+  if (is_open() == true) 
+    mitem << "open, ";
+  else 
+    mitem << "closed, ";
+
+  mitem << format_string() << "/" << channels() << "ch/" << samples_per_second();
+  mitem << "Hz, buffer " << buffersize() << ".";
+
   return(mitem.to_string());
 }
 
@@ -74,4 +86,3 @@ string AUDIO_IO::get_parameter(int param) const {
   if (param == 1) return(label());
   return("");
 }
-		      

@@ -35,7 +35,7 @@
 RAWFILE::RAWFILE(const string& name, bool double_buffering) {
   label(name);
   double_buffering_rep = double_buffering;
-  fio = 0;
+  fio_repp = 0;
 }
 
 RAWFILE::~RAWFILE(void) { close(); }
@@ -61,39 +61,39 @@ void RAWFILE::open(void) {
   case io_read:
     {
       if (label() == "stdin" || label().at(0) == '-') {
-	fio = new ECA_FILE_IO_STREAM();
-	fio->open_stdin();
+	fio_repp = new ECA_FILE_IO_STREAM();
+	fio_repp->open_stdin();
       }
       else {
-	if (double_buffering_rep) fio = new ECA_FILE_IO_MMAP();
-	else fio = new ECA_FILE_IO_STREAM();
-	fio->open_file(label(),"rb");
+	if (double_buffering_rep) fio_repp = new ECA_FILE_IO_MMAP();
+	else fio_repp = new ECA_FILE_IO_STREAM();
+	fio_repp->open_file(label(),"rb");
       }
       break;
     }
   case io_write: 
     {
-      fio = new ECA_FILE_IO_STREAM();
+      fio_repp = new ECA_FILE_IO_STREAM();
       if (label() == "stdout" || label().at(0) == '-') {
 	cerr << "(audioio-raw) Outputting to standard output [r].\n";
-	fio->open_stdout();
+	fio_repp->open_stdout();
       }
       else {
-	fio->open_file(label(),"wb");
+	fio_repp->open_file(label(),"wb");
       }
       break;
     }
   case io_readwrite: 
     {
-      fio = new ECA_FILE_IO_STREAM();
+      fio_repp = new ECA_FILE_IO_STREAM();
       if (label() == "stdout" || label().at(0) == '-') {
 	cerr << "(audioio-raw) Outputting to standard output [rw].\n";
-	fio->open_stdout();
+	fio_repp->open_stdout();
       }
       else {
-	fio->open_file(label(),"r+b", false);
-	if (fio->file_mode() == "") {
-	  fio->open_file(label(),"w+b", true);
+	fio_repp->open_file(label(),"r+b", false);
+	if (fio_repp->file_mode() == "") {
+	  fio_repp->open_file(label(),"w+b", true);
 	}
       }
     }
@@ -104,42 +104,42 @@ void RAWFILE::open(void) {
 }
 
 void RAWFILE::close(void) {
-  if (fio != 0) {
-    fio->close_file();
-    delete fio;
+  if (fio_repp != 0) {
+    fio_repp->close_file();
+    delete fio_repp;
   }
   toggle_open_state(false);
 }
 
 bool RAWFILE::finished(void) const {
- if (fio->is_file_error() ||
-     !fio->is_file_ready()) 
+ if (fio_repp->is_file_error() ||
+     !fio_repp->is_file_ready()) 
    return true;
 
  return false;
 }
 
 long int RAWFILE::read_samples(void* target_buffer, long int samples) {
-  fio->read_to_buffer(target_buffer, frame_size() * samples);
-  return(fio->file_bytes_processed() / frame_size());
+  fio_repp->read_to_buffer(target_buffer, frame_size() * samples);
+  return(fio_repp->file_bytes_processed() / frame_size());
 }
 
 void RAWFILE::write_samples(void* target_buffer, long int samples) {
-  fio->write_from_buffer(target_buffer, frame_size() * samples);  
+  fio_repp->write_from_buffer(target_buffer, frame_size() * samples);  
 }
 
 void RAWFILE::seek_position(void) {
   if (is_open()) {
-    fio->set_file_position(position_in_samples() * frame_size());
+    fio_repp->set_file_position(position_in_samples() * frame_size());
   }
 }
 
 void RAWFILE::set_length_in_bytes(void) {
-  long int savetemp = fio->get_file_position();
+  long int savetemp = fio_repp->get_file_position();
 
-  fio->set_file_position_end();
-  length_in_samples(fio->get_file_position() / frame_size());
+  fio_repp->set_file_position_end();
+  length_in_samples(fio_repp->get_file_position() / frame_size());
 
-  fio->set_file_position(savetemp);
+  fio_repp->set_file_position(savetemp);
 }
 

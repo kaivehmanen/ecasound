@@ -19,7 +19,7 @@
 
 #include "qecopyevent.h"
 
-QECopyEvent::QECopyEvent(ECA_CONTROLLER* ctrl,
+QECopyEvent::QECopyEvent(ECA_CONTROL* ctrl,
 			 const string& input,
 			 const string& output,
 			 long int start_pos, 

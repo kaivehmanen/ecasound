@@ -36,6 +36,10 @@ class LOOP_DEVICE : public AUDIO_IO {
   virtual bool finished(void) const { return(true); }
   virtual void seek_position(void) { } 
 
+  virtual string parameter_names(void) const { return("label,id_number"); }
+  virtual void set_parameter(int param, string value);
+  virtual string get_parameter(int param) const;
+
   /**
    * Register a new input client
    */

@@ -26,7 +26,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (21.05.2000)
+       (11.06.2000)
        ()
        (Multimedia software)
 
@@ -111,17 +111,16 @@ startdit()
 	Command line for executing an external wave editor. Defaults
 	to em(snd).
 
-	dit(ext-mpg123-path)
-	Path to mpg123. Defaults to em(mpg123).
+	dit(ext-mp3-input-cmd)
+	Command for starting mp3 input. All output should be directed
+	to standard output. Before execution, "%f" is replaced with 
+	path to the input mp3. If exists, "%o" is replaced with 
+	the start offset in mp3 frames. Defaults to em(mpg123 -b 0 -q -s -k %o %f).
 
-	dit(ext-mpg123-args)
-	Additional options that are passed to mpg123. Defaults to em("-b 0").
-
-	dit(ext-lame-path)
-	Path to lame. Defaults to em(lame).
-
-	dit(ext-lame-args)
-	Additional options that are passed to lame. Defaults to em("-b 128").
+	dit(ext-mp3-output-cmd)
+	Command for starting mp3 output. All input data should be read
+	from standard input. Before execution, "%f" is replaced with 
+	path to the output mp3. Defaults to em(lame -b 128 -x -S - %f).
 
 	dit(ext-mikmod-path)
 	Path to mikmod. Defaults to em(mikmod).

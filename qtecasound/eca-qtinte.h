@@ -8,7 +8,7 @@
 #include <qstatusbar.h>
 
 #include "eca-session.h"
-#include "eca-controller.h"
+#include "eca-control.h"
 
 class QERuntimePosition;
 class QEChainsetup;
@@ -18,7 +18,7 @@ class QEInterface : public QWidget
 {
   Q_OBJECT
 public:
-  QEInterface(ECA_CONTROLLER* control, QWidget *parent=0, const char *name=0);
+  QEInterface(ECA_CONTROL* control, QWidget *parent=0, const char *name=0);
 
 public slots:
   void emsg_general(void);
@@ -57,7 +57,7 @@ private:
   QERuntimePosition* rpos_repp;
   QEChainsetup* session_repp;
 
-  ECA_CONTROLLER* ctrl_repp;
+  ECA_CONTROL* ctrl_repp;
 
   void init_layout(void);
   void init_statusbar(void);

@@ -13,13 +13,13 @@ class QESaveEvent : public QEBlockingEvent {
  public:
 
   bool class_invariant(void) { return(ectrl != 0); }
-  QESaveEvent(ECA_CONTROLLER* ctrl,
+  QESaveEvent(ECA_CONTROL* ctrl,
 	      const string& input,
 	      const string& output);
 
  private:
 
-  ECA_CONTROLLER* ectrl;
+  ECA_CONTROL* ectrl;
 };
 
 #endif

@@ -2,6 +2,19 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-06-11  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* audioio.h (samples_available,supported_io_modes): added
+	* audioio-mp3.h (default cmds): new more generic interface
+	* eca-control*.h (all): files and classes renamed;
+	ECA_CONTROLLER* -> ECA_CONTROL*
+	* eca-chainsetup-position.h (all): file and class renamed;
+	ECA_CONTROLLER_POSITION -> ECA_CHAINSETUP_POSITION
+
+2000-06-10  Jeremy Hall <jhall@uu.net>
+
+	* audioio-alsa3.h (all): added
+	
 2000-06-06  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* library version changed to 6:0:0

@@ -23,7 +23,7 @@
 #include "qeplayevent.h"
 
 
-QEPlayEvent::QEPlayEvent(ECA_CONTROLLER* ctrl,
+QEPlayEvent::QEPlayEvent(ECA_CONTROL* ctrl,
 			 const string& input,
 			 const string& output,
 			 long int start_pos, 

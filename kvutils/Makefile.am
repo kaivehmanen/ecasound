@@ -31,15 +31,9 @@ DIST_COMMON = 	README \
 		INSTALL \
 		Makefile.in \
 		Makefile.am \
-		aclocal.m4 \
-		config.guess \
-		config.sub \
-		configure \
 		configure.in \
 		install-sh \
-		mkinstalldirs \
-		ltconfig \
-		ltmain.sh
+		mkinstalldirs
 
 noinst_HEADERS = $(kvutil_headers)
 

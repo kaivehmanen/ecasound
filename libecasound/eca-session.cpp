@@ -17,7 +17,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
 
 #include <string>
 #include <cstring>
@@ -48,7 +50,6 @@
 
 ECA_SESSION::ECA_SESSION(void) {
   set_defaults();
-  set_scheduling();
 }
 
 ECA_SESSION::~ECA_SESSION(void) {
@@ -84,7 +85,6 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*) {
 	throw;
     }
   }
-  set_scheduling();
 }
 
 void ECA_SESSION::set_defaults(void) {
@@ -103,28 +103,13 @@ void ECA_SESSION::set_defaults(void) {
 
   GENERIC_OSCILLATOR::set_preset_file(ecaresources.resource("resource-directory") + "/" + ecaresources.resource("resource-file-genosc-envelopes"));
 
-  MP3FILE::set_mpg123_path(ecaresources.resource("ext-mpg123-path"));
-  MP3FILE::set_mpg123_args(ecaresources.resource("ext-mpg123-args"));
-
-  MP3FILE::set_lame_path(ecaresources.resource("ext-lame-path"));
-  MP3FILE::set_lame_args(ecaresources.resource("ext-lame-args"));
+  MP3FILE::set_mp3_input_cmd(ecaresources.resource("ext-mp3-input-cmd"));
+  MP3FILE::set_mp3_output_cmd(ecaresources.resource("ext-mp3-output-cmd"));
 
   MIKMOD_INTERFACE::set_mikmod_path(ecaresources.resource("ext-mikmod-path"));
   MIKMOD_INTERFACE::set_mikmod_args(ecaresources.resource("ext-mikmod-args"));
 
   multitrack_mode = false;
-}
-
-void ECA_SESSION::set_scheduling(void) {
-  //  if (raisepriority_rep == true) {
-  //      struct sched_param sparam;
-  //      sparam.sched_priority = 10;
-  
-  //    if (sched_setscheduler(0, SCHED_FIFO, &sparam) == -1) 
-  //      ecadebug->msg("(eca-session) Unable to change scheduling policy!");
-  //    else 
-  //      ecadebug->msg("(eca-session) Using realtime-scheduling (SCHED_FIFO/10).");
-  //  }
 }
 
 void ECA_SESSION::add_chainsetup(const string& name) {

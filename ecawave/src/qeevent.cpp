@@ -23,7 +23,7 @@
 
 #include "qeevent.h"
 
-QEEvent::QEEvent(ECA_CONTROLLER* ctrl) 
+QEEvent::QEEvent(ECA_CONTROL* ctrl) 
   : ectrl(ctrl),
     info_string_rep("Processing...") {
 #ifdef NDEBUG

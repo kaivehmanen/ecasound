@@ -1,5 +1,5 @@
-#ifndef _OPERATOR_H
-#define _OPERATOR_H
+#ifndef INCLUDED_OPERATOR_H
+#define INCLUDED_OPERATOR_H
 
 #include "sample-specs.h"
 #include "dynamic-object.h"

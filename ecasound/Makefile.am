@@ -23,10 +23,8 @@ ecasound_debug_SOURCES = $(ecasound_SOURCES)
 
 ecasound_LDADD = $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a \
                  $(termcap_library) \
-		 $(top_builddir)/libecasound/libecasound.la \
-		 -L$(top_builddir)/kvutils/.libs -lkvutils
+		 $(top_builddir)/libecasound/libecasound.la
 ecasound_debug_LDADD = $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a \
 			$(termcap_library) \
-		 	$(top_builddir)/libecasound/libecasound_debug.la \
-			-L$(top_builddir)/kvutils/.libs -lkvutils
+		 	$(top_builddir)/libecasound/libecasound_debug.la
 

@@ -244,11 +244,3 @@ OSSDEVICE::~OSSDEVICE(void) { close(); }
 
 #endif // COMPILE_OSS
 
-
-
-
-
-
-
-
-

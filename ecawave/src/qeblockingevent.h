@@ -15,7 +15,7 @@ class QEBlockingEvent : public QEEvent {
    */
   virtual void start(void) { blocking_start(); }
 
-  QEBlockingEvent(ECA_CONTROLLER* ctrl) : QEEvent(ctrl) { }
+  QEBlockingEvent(ECA_CONTROL* ctrl) : QEEvent(ctrl) { }
   virtual ~QEBlockingEvent(void) { }
 };
 

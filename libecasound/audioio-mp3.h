@@ -1,40 +1,35 @@
-#ifndef _AUDIOIO_MP3_H
-#define _AUDIOIO_MP3_H
+#ifndef INCLUDED_AUDIOIO_MP3_H
+#define INCLUDED_AUDIOIO_MP3_H
 
 #include <string>
 #include "audioio-types.h"
 #include "samplebuffer.h"
 
 /**
- * Interface class for MP3 input and output. Uses FIFO pipes to communicate 
- * with mpg123 (input) and lame (output).
+ *Interface for mp3 decoders and encoders that support 
+ * input/output using standard streams. Defaults to
+ * mpg123 and lame.
  * @author Kai Vehmanen
  */
 class MP3FILE : public AUDIO_IO_BUFFERED {
 
  private:
   
-  static string default_mpg123_path;
-  static string default_mpg123_args;
-
-  static string default_lame_path;
-  static string default_lame_args;
+  static string default_mp3_input_cmd;
+  static string default_mp3_output_cmd;
 
  public:
 
-  static void set_mpg123_path(const string& value);
-  static void set_mpg123_args(const string& value);
-
-  static void set_lame_path(const string& value);
-  static void set_lame_args(const string& value);
+  static void set_mp3_input_cmd(const string& value);
+  static void set_mp3_output_cmd(const string& value);
 
  private:
 
   bool finished_rep;
-  int pid_of_child;
-  long pcm;
-  long int bytes;
-  int fd;
+  int pid_of_child_rep;
+  long pcm_rep;
+  long int bytes_rep;
+  int fd_rep;
   
   void get_mp3_params(const string& fname) throw(ECA_ERROR*);
   
@@ -67,10 +62,8 @@ class MP3FILE : public AUDIO_IO_BUFFERED {
   MP3FILE (const string& name = "");
   ~MP3FILE(void);
     
-  //    MP3FILE* new_expr(void) { return new MP3FILE(); }
   MP3FILE* clone(void) { return new MP3FILE(*this); }
   MP3FILE* new_expr(void) { return new MP3FILE(*this); }
 };
 
 #endif
-

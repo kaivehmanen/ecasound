@@ -33,7 +33,7 @@
 
 #include "qechainopevent.h"
 
-QEChainopEvent::QEChainopEvent (ECA_CONTROLLER* ctrl, 
+QEChainopEvent::QEChainopEvent (ECA_CONTROL* ctrl, 
 				const string& input,
 				const string& output,
 				long int start_pos, 

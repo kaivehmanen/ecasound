@@ -74,11 +74,14 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    *  io_mode() == si_read || io_mode() == si_readwrite
    *  readable() == true
    *  sbuf != 0
+   *
+   * ensure:
+   *  sbuf->length_in_samples() <= buffersize()
    */
   virtual void read_buffer(SAMPLE_BUFFER* sbuf) = 0;
 
   /**
-   * Write all data from sample buffer pointer by 'sbuf'.
+   * Write all data from sample buffer pointed by 'sbuf'.
    *
    * @see write samples
    *
@@ -88,6 +91,20 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    *  sbuf != 0
    */
   virtual void write_buffer(SAMPLE_BUFFER* sbuf) = 0;
+
+  /**
+   * If supports_buffer_queries() == true, this function can be 
+   * used to check how many samples are available for reading, or 
+   * alternatively, how many samples can be written without 
+   * blocking. Effectively this is meant for implementing nonblocking 
+   * input and output with devices supporting it. Note, you 
+   * should use buffersize() call for setting how many bytes 
+   * read_buffer() will ask from the device.
+   *
+   * require:
+   *  supports_buffer_queries() == true
+   */
+  long int samples_available(void) const { return(0); }
 
   /**
    * Whether all data has been processed? If opened in mode 'si_read', 
@@ -119,16 +136,15 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * (they can be used by other processes).
    *
    * ensure:
-   *  readable() == false
-   *  writable() == false
+   *  readable() != true
+   *  writable() != true
    */
   virtual void close(void) = 0;
 
   // ===================================================================
-  // Parameter handling
-
+  // Parameter handling - see DYNAMIC_PARAMETERS documentation.
+  
   virtual string parameter_names(void) const { return("label"); }
-
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;
 
@@ -144,6 +160,11 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * Returns info about supported I/O modes (bitwise-OR)
    */
   virtual int supported_io_modes(void) const { return(io_read | io_readwrite | io_write); }
+
+  /**
+   * Whether device supports the samples_available() function call.
+   */
+  virtual bool supports_buffer_queries(void) const { return(false); }
 
   /**
    * Whether audio format is locked
@@ -166,14 +187,29 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   string format_info(void) const;
 
   /**
-   * Has device been opened (with open_device())?
+   * Has device been opened (with open())?
    */
   bool is_open(void) const { return(open_rep); }
 
+  /**
+   * If applicable, returns total length of the audio data stored
+   * into current audio object.
+   */
   ECA_AUDIO_TIME length(void) const;
+
+  /**
+   * Returns the current position.
+   */
   ECA_AUDIO_TIME position(void) const;
 
+  /**
+   * Is the audio object reading for reading? 
+   */
   virtual bool readable(void) const { return(is_open() && io_mode() != io_write); }
+
+  /**
+   * Is the audio object reading for writing? 
+   */
   virtual bool writable(void) const { return(is_open() && io_mode() != io_read); }
 
   // --
@@ -183,25 +219,36 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   /**
    * Set object input/output-mode. If the requested mode isn't
    * supported, the nearest supported mode is used. Because 
-   * of this, it's wise to check the mode afterwards.
+   * of this, it's wise to afterwards check whether the requested
+   * mode was accepted.
    *
    * require:
-   *  is_open() == false
+   *  is_open() != true
    */
   void io_mode(int mode) { si_mode_rep = mode; }
 
   /**
    * Set object label
+   *
+   * require:
+   *  is_open() != true
    */
   void label(const string& id_label) { id_label_rep = id_label; }
 
  protected:
 
+  /**
+   * Sets the current position.
+   */
   void position(const ECA_AUDIO_TIME& v);
+
+  /**
+   * Sets the total length of audio object data.
+   */
   void length(const ECA_AUDIO_TIME& v);
 
   /**
-   * Set device state to enabled or disabled.
+   * Sets device's state to enabled or disabled.
    */
   void toggle_open_state(bool value) { open_rep = value; }
 

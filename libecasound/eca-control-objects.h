@@ -1,7 +1,7 @@
-#ifndef _ECA_CONTROLLER_OBJECTS_H
-#define _ECA_CONTROLLER_OBJECTS_H
+#ifndef INCLUDED_ECA_CONTROL_OBJECTS_H
+#define INCLUDED_ECA_CONTROL_OBJECTS_H
 
-#include "eca-controller-base.h"
+#include "eca-control-base.h"
 #include "audioio.h"
 
 class CHAIN_OPERATOR;
@@ -10,13 +10,13 @@ class CHAIN_OPERATOR;
  * Class for configuring ecasound library objects
  * @author Kai Vehmanen
  */
-class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
+class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
 
  protected:
 
-  CHAIN_OPERATOR* selected_chainop_rep;
-  AUDIO_IO* selected_audio_object_rep;
-  string selected_audio_object;
+  CHAIN_OPERATOR* selected_chainop_repp;
+  AUDIO_IO* selected_audio_object_repp;
+  string selected_audio_object_rep;
 
   void send_chain_commands_to_engine(int command, double value);
 
@@ -649,8 +649,8 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    */
   void add_controller(const string& gcontrol_params);
 
-  ECA_CONTROLLER_OBJECTS (ECA_SESSION* psession);
-  virtual ~ECA_CONTROLLER_OBJECTS (void) { }
+  ECA_CONTROL_OBJECTS (ECA_SESSION* psession);
+  virtual ~ECA_CONTROL_OBJECTS (void) { }
 };
 
 #endif

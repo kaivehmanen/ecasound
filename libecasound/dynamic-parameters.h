@@ -1,10 +1,9 @@
-#ifndef _DYNAMIC_PARAMETERS_H
-#define _DYNAMIC_PARAMETERS_H
+#ifndef INCLUDED_DYNAMIC_PARAMETERS_H
+#define INCLUDED_DYNAMIC_PARAMETERS_H
 
 #include <map>
 #include <string>
 #include <utility>
-
 #include <kvutils/kvutils.h>
 
 /**
@@ -21,7 +20,7 @@ class DYNAMIC_PARAMETERS {
   typedef T parameter_type;
 
   /**
-   * Initialize parameters before actual use. Virtual function 
+   * Initializes parameters before actual use. Virtual function 
    * parameter_names() is used for getting a list of parameters.
    */
   void map_parameters(void) {
@@ -34,18 +33,18 @@ class DYNAMIC_PARAMETERS {
   }
 
   /**
-   * Get number of of parameters.
+   * Gets the total number of of parameters.
    */
   int number_of_params(void) const { return(param_map.size()); }
 
   /**
-   * Get parameter id number.
+   * Gets the index number of parameter 'name'.
    * @param name parameter name
    */
   int get_parameter_id(const string& name) { return(param_map[name]); }
 
   /**
-   * Get parameter name. 
+   * Gets name of parameter with index 'id'.
    * @param id parameter id number
    * 
    */
@@ -58,7 +57,7 @@ class DYNAMIC_PARAMETERS {
   virtual string parameter_names(void) const = 0;
 
   /**
-   * Set parameter value. Implementations should be able to
+   * Sets the parameter value. Implementations should be able to
    * handle arbitrary values of 'value'. Argument validity 
    * can be tested by a combination of set_parameter() and 
    * get_parameter() calls. Parameter value is valid, if 
@@ -113,4 +112,3 @@ class DYNAMIC_PARAMETERS {
 };
 
 #endif
-

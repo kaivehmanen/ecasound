@@ -121,7 +121,15 @@ string AUDIO_IO_DEVICE::status(void) const {
   MESSAGE_ITEM mitem;
 
   mitem << "realtime-device, processed ";
-  mitem << position_in_samples() << " samples.";
+  mitem << position_in_samples() << " samples.\n\t";
+  
+  if (is_open() == true) 
+    mitem << "open, ";
+  else 
+    mitem << "closed, ";
+
+  mitem << format_string() << "/" << channels() << "ch/" << samples_per_second();
+  mitem << "Hz, buffer " << buffersize() << ".";
 
   return(mitem.to_string());
 }

@@ -26,7 +26,7 @@
 
 #include <eca-debug.h>
 #include <eca-error.h>
-#include <eca-controller.h>
+#include <eca-control.h>
 #include <eca-main.h>
 #include <eca-session.h>
 #include <eca-version.h>
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     string filename;
 
     ECA_SESSION esession;
-    ECA_CONTROLLER ectrl (&esession);
+    ECA_CONTROL ectrl (&esession);
     ECA_PROCESSOR emain;
     ECA_AUDIO_FORMAT aio_params;
 

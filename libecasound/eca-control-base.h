@@ -1,5 +1,5 @@
-#ifndef _ECA_CONTROLLER_BASE_H
-#define _ECA_CONTROLLER_BASE_H
+#ifndef INCLUDED_ECA_CONTROL_BASE_H
+#define INCLUDED_ECA_CONTROL_BASE_H
 
 #include <pthread.h>
 #include <kvutils/definition_by_contract.h>
@@ -25,18 +25,18 @@ class ECA_CHAINSETUP;
  * ecasound library.
  * @author Kai Vehmanen
  */
-class ECA_CONTROLLER_BASE : public DEFINITION_BY_CONTRACT {
+class ECA_CONTROL_BASE : public DEFINITION_BY_CONTRACT {
 
  private:
 
-  int retcode;
-  pthread_t th_cqueue;
-  bool engine_started;
+  int retcode_rep;
+  pthread_t th_cqueue_rep;
+  bool engine_started_rep;
 
  protected:
 
-  ECA_SESSION* session_rep;
-  ECA_CHAINSETUP* selected_chainsetup_rep;
+  ECA_SESSION* session_repp;
+  ECA_CHAINSETUP* selected_chainsetup_repp;
 
  public:
 
@@ -163,14 +163,14 @@ class ECA_CONTROLLER_BASE : public DEFINITION_BY_CONTRACT {
   /**
    * Get resource values from ~/.ecasoundrc
    */
-  string resource_value(const string& key) const { return session_rep->ecaresources.resource(key); }
+  string resource_value(const string& key) const { return session_repp->ecaresources.resource(key); }
 
   // -------------------------------------------------------------------
   // Modify session
   // -------------------------------------------------------------------
 
-  void toggle_interactive_mode(bool v) { session_rep->iactive = v; } 
-  void toggle_multitrack_mode(bool v) { session_rep->multitrack_mode = v; } 
+  void toggle_interactive_mode(bool v) { session_repp->iactive = v; } 
+  void toggle_multitrack_mode(bool v) { session_repp->multitrack_mode = v; } 
 
   /**
    * Set the default buffersize (in samples).
@@ -223,15 +223,15 @@ class ECA_CONTROLLER_BASE : public DEFINITION_BY_CONTRACT {
   /**
    * Returns true if engine has been started. 
    */
-  bool is_engine_started(void) const { return(engine_started); }
+  bool is_engine_started(void) const { return(engine_started_rep); }
 
   /**
    * Return info about engine status.
    */
   string engine_status(void) const;
 
-  ECA_CONTROLLER_BASE (ECA_SESSION* psession);
-  virtual ~ECA_CONTROLLER_BASE (void) { }
+  ECA_CONTROL_BASE (ECA_SESSION* psession);
+  virtual ~ECA_CONTROL_BASE (void) { }
 };
 
 #endif

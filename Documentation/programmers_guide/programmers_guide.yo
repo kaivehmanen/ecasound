@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (06062000)
+       (11062000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -107,7 +107,7 @@ subsubsect(Package specific)
 startdit()
 dit(libecasound, ecasound, ecatools, libkvutils)
 Class names are all in upper case and words separated with underscores
-(class ECA_CONTROLLER_BASE). .
+(class ECA_CONTROL_BASE). .
 
 dit(libqtecasound, qtecasound, ecawave)
 Qt-style is used when naming classes (class QELevelMeter), otherwise
@@ -184,13 +184,13 @@ A ECA_SESSION object is created with suitable parameters, it is
 passed to a ECA_PROCESSOR object and that is all. Once engine
 is started, it does the processing and exits. 
 
-Another way to do passive processing is to create a ECA_CONTROLLER 
+Another way to do passive processing is to create a ECA_CONTROL 
 object and use it to to access and modify the ECA_SESSION object 
 before passing it to ECA_PROCESSOR.
 
 subsubsect(Interactive operation)
 In interactive mode, everything is done using the interface provided
-by ECA_CONTROLLER. This is when things get complex:
+by ECA_CONTROL. This is when things get complex:
 
 ECA_SESSION object can contain many ECA_CHAINSETUP objects, but
 only one of them can be active. On the other hand it is possible
@@ -198,7 +198,7 @@ that there are no chainsetups. If this is the case, about the
 only thing you can do is to add a new chainsetup. 
 
 When some chainsetup is activated, it can be edited using the
-interface provided by ECA_CONTROLLER. Before actual processing can
+interface provided by ECA_CONTROL. Before actual processing can
 start, the chainsetup must first be connected. Only valid 
 chainsetups (at least one input-output pair connected to the same
 chain) can be connected. 
@@ -245,7 +245,7 @@ a pointer to a ECA_SESSION object, which has all information needed at
 runtime. Processing is started with the exec() member function and
 after that, ECA_PROCESSOR runs on its own. If the interactive mode is
 enabled in ECA_SESSION, ECA_PROCESSOR can be controlled using the
-ECA_CONTROLLER class. It offers a safe way to control ecasound.
+ECA_CONTROL class. It offers a safe way to control ecasound.
 Another way to communicate with ECA_PROCESSOR is to access the
 ECA_SESSION object directly.
 
@@ -254,12 +254,12 @@ ECA_SESSION represents the data used by ecasound. A session contains
 all ECA_CHAINSETUP objects and general runtime settings (iactive-mode,
 debug-level, etc). Only one ECA_CHAINSETUP can be active at a time. To
 make it easier to control how threads access ECA_SESSION, only
-ECA_PROCESSOR and ECA_CONTROLLER classes have direct access to
+ECA_PROCESSOR and ECA_CONTROL classes have direct access to
 ECA_SESSION data and functions. Other classes can only use em(const)
 members of ECA_SESSION. 
 
-subsubsubsect(ECA_CONTROLLER) 
-ECA_CONTROLLER represents the whole public interface offered by 
+subsubsubsect(ECA_CONTROL) 
+ECA_CONTROL represents the whole public interface offered by 
 ecasound library. It also has a simple command interpreter 
 (interactive-mode) that can used for controlling ecasound. 
 
@@ -298,7 +298,7 @@ situations, performance might be an issue.
 
 COMMENT(----------------------------------------------------------------)
 subsect(Controller class interface)
-By linking your program to libecasound, you can use the ECA_CONTROLLER
+By linking your program to libecasound, you can use the ECA_CONTROL
 class for controlling ecasound. This is a large interface class that
 offers routines for controlling all ecasound features. It's easy
 to use while still powerful. All ecasound interface programs use this 
@@ -307,7 +307,7 @@ class. Here's a few lines of code:
 verb(
 --cut--
 ECA_SESSION esession;
-ECA_CONTROLLER ctrl (&esession);
+ECA_CONTROL ctrl (&esession);
 ctrl.new_chainsetup("default");
 [... other setup routines ]
 ctrl.start(); // starts processing in another thread (doesn't block)
@@ -322,7 +322,7 @@ sample:
 verb(
 --cut--
 ECA_SESSION esession;
-ECA_CONTROLLER ctrl (&esession);
+ECA_CONTROL ctrl (&esession);
 ctrl.new_chainsetup("default");
 [... other setup routines ]
 ECA_PROCESSOR p (&esession);

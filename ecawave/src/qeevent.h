@@ -2,7 +2,7 @@
 #define QEEVENT_H
 
 #include <kvutils/definition_by_contract.h>
-#include <ecasound/eca-controller.h>
+#include <ecasound/eca-control.h>
 
 /**
  * Virtual base for processing events
@@ -144,7 +144,7 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
 
   string info_string_rep;
   bool triggered_rep;
-  ECA_CONTROLLER* ectrl;
+  ECA_CONTROL* ectrl;
   string initialized_cs_rep;
 
  protected:

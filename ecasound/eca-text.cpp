@@ -29,7 +29,7 @@
 #include <kvutils/com_line.h>
 
 #include <eca-iamode-parser.h>
-#include <eca-controller.h>
+#include <eca-control.h>
 #include <eca-session.h>
 #include <eca-main.h>
 #include <eca-version.h>
@@ -175,7 +175,7 @@ void print_header(void) {
 }
 
 void start_iactive(ECA_SESSION* param) {
-  ECA_CONTROLLER ctrl(param);
+  ECA_CONTROL ctrl(param);
 
   //  if (ctrl.is_connected()) ctrl.start(true);
 
@@ -204,7 +204,7 @@ void start_iactive(ECA_SESSION* param) {
 }
 
 void start_iactive_readline(ECA_SESSION* param) {
-  ECA_CONTROLLER ctrl(param);
+  ECA_CONTROL ctrl(param);
 
   char* cmd;
   init_readline_support();

@@ -57,7 +57,7 @@ ECA_PROCESSOR::ECA_PROCESSOR(ECA_SESSION* params)
 ECA_PROCESSOR::ECA_PROCESSOR(void) { }
 
 ECA_PROCESSOR::~ECA_PROCESSOR(void) {
-  ecadebug->msg(ECA_DEBUG::system_objects,"ECA_PROCESSOR destructor!");
+  ecadebug->msg(ECA_DEBUG::system_objects, "ECA_PROCESSOR destructor!");
 
   if (eparams != 0) eparams->status(ep_status_notready);
   stop();
@@ -110,18 +110,6 @@ void ECA_PROCESSOR::init(void) {
   init_connection_to_chainsetup();
   init_multitrack_mode();
   init_mix_method();
-
-  // ---
-  // Handle priority
-  // ---
-  if (eparams->raised_priority() == true) {
-    struct sched_param sparam;
-    sparam.sched_priority = 10;
-    if (::sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
-      ecadebug->msg("(eca-main) Unable to change scheduling policy!");
-    else 
-      ecadebug->msg("(eca-main) Using realtime-scheduling (SCHED_FIFO/10).");
-  }
 }
 
 void ECA_PROCESSOR::init_variables(void) {
@@ -365,10 +353,9 @@ void ECA_PROCESSOR::interactive_loop(void) {
   interpret_queue();
   if (end_request) return;
   if (eparams->status() != ep_status_running) {
-    //      sched_yield();
     struct timespec sleepcount;
-    sleepcount.tv_sec = 1;
-    sleepcount.tv_nsec = 0;
+    sleepcount.tv_sec = 0;
+    sleepcount.tv_nsec = 1000;
     nanosleep(&sleepcount, 0);
     continue_request = true;
   }
@@ -568,6 +555,18 @@ void ECA_PROCESSOR::stop(void) {
   }
   rt_running = false;
 
+  // ---
+  // Handle priority
+  // ---
+  if (eparams->raised_priority() == true) {
+    struct sched_param sparam;
+    sparam.sched_priority = 0;
+    if (::sched_setscheduler(0, SCHED_OTHER, &sparam) == -1)
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Unable to change scheduling back to SCHED_OTHER!");
+    else
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Changed back to non-realtime scheduling (SCHED_OTHER/00).");
+  }
+
   eparams->status(ep_status_stopped);
   ::pthread_mutex_lock(&ecasound_stop_mutex);
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Signaling stop-cond");
@@ -578,6 +577,18 @@ void ECA_PROCESSOR::stop(void) {
 void ECA_PROCESSOR::start(void) {
   if (eparams->status() == ep_status_running) return;
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Start");
+
+  // ---
+  // Handle priority
+  // ---
+  if (eparams->raised_priority() == true) {
+    struct sched_param sparam;
+    sparam.sched_priority = 10;
+    if (::sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Unable to change scheduling policy!");
+    else 
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Using realtime-scheduling (SCHED_FIFO/10).");
+  }
 
   for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_objects.size()); adev_sizet++) {
     realtime_objects[adev_sizet]->prepare();
@@ -890,9 +901,9 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
     struct sched_param sparam;
     sparam.sched_priority = 10;
     if (::pthread_setschedparam(chain_thread, SCHED_FIFO, &sparam) != 0)
-      ecadebug->msg("(eca-main) Unable to change scheduling policy (mthread)!");
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Unable to change scheduling policy (mthread)!");
     else 
-      ecadebug->msg("(eca-main) Using realtime-scheduling (SCHED_FIFO/10, mthread).");
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Using realtime-scheduling (SCHED_FIFO/10, mthread).");
   }
 
   vector<SAMPLE_BUFFER> inslots (input_count, SAMPLE_BUFFER(buffersize_rep, max_channels, csetup->sample_rate()));
@@ -952,6 +963,15 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
     throw(new ECA_ERROR("ECA-MAIN", "Unable to create a new thread (mthread_process_chains)."));
   subthread_initialized = true;
 
+  if (sched_getscheduler(0) == SCHED_FIFO) {
+    struct sched_param sparam;
+    sparam.sched_priority = 10;
+    if (::pthread_setschedparam(chain_thread, SCHED_FIFO, &sparam) != 0)
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Unable to change scheduling policy (mthread)!");
+    else 
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Using realtime-scheduling (SCHED_FIFO/10, mthread).");
+  }
+
   vector<SAMPLE_BUFFER> inslots (input_count,
 				 SAMPLE_BUFFER(buffersize_rep,
 					       max_channels, 
@@ -987,4 +1007,3 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
   ::pthread_cancel(chain_thread);
   ::pthread_join(chain_thread,NULL);
 }
-

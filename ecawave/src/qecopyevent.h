@@ -13,7 +13,7 @@ class QECopyEvent : public QEBlockingEvent {
 
  public:
 
-  QECopyEvent(ECA_CONTROLLER* ctrl,
+  QECopyEvent(ECA_CONTROL* ctrl,
 	      const string& input,
 	      const string& output,
 	      long int start_pos, 
@@ -21,7 +21,7 @@ class QECopyEvent : public QEBlockingEvent {
 
  private:
 
-  ECA_CONTROLLER* ectrl;
+  ECA_CONTROL* ectrl;
 };
 
 #endif

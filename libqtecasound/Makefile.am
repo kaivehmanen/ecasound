@@ -10,9 +10,9 @@ INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils \
 		-I$(qt_includes) -I$(all_includes)
 
 if INCLUDE_DEBUG
-libqtecasound_ldflags = -version-info 0:0:0 -lkvutils
+libqtecasound_ldflags = -version-info 0:0:0
 else
-libqtecasound_ldflags = -s -version-info 0:0:0 -lkvutils
+libqtecasound_ldflags = -s -version-info 0:0:0
 endif
 
 if INCLUDE_DEBUG

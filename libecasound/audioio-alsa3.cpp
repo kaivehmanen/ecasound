@@ -145,10 +145,9 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   snd_pcm_format_t pf;
   ::memset(&pf, 0, sizeof(pf));
 
-  if ((pcm_info_rep.flags & SND_PCM_STREAM_INFO_INTERLEAVE) != SND_PCM_STREAM_INFO_INTERLEAVE)
-    throw(new ECA_ERROR("AUDIOIO-ALSA3", "interleaved streams not supported!", ECA_ERROR::stop));
-/* jhall: we support them now, do we recognize this? */
-
+  if (channels() > 1 &&
+      (pcm_info_rep.flags & SND_PCM_STREAM_INFO_INTERLEAVE) != SND_PCM_STREAM_INFO_INTERLEAVE)
+    throw(new ECA_ERROR("AUDIOIO-ALSA3", "device can't handle interleaved streams!", ECA_ERROR::stop));
   pf.interleave = 1;
 
   int format;
@@ -393,7 +392,7 @@ void ALSA_PCM_DEVICE::set_parameter(int param,
 
 string ALSA_PCM_DEVICE::get_parameter(int param) const {
   switch (param) {
-  case 1: #include "audioio-alsa2.h"
+  case 1: 
     return(label());
 
   case 2: 

@@ -66,14 +66,28 @@ POST_UNINSTALL = :
 host_alias = @host_alias@
 host_triplet = @host@
 ACLOCAL = @ACLOCAL@
+AS = @AS@
 AUTOCONF = @AUTOCONF@
 AUTOMAKE = @AUTOMAKE@
 CC = @CC@
 CPP = @CPP@
 CXX = @CXX@
+DLLTOOL = @DLLTOOL@
 GNUM4 = @GNUM4@
+LD = @LD@
 LIBTOOL = @LIBTOOL@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+MOC = @MOC@
+NM = @NM@
+OBJDUMP = @OBJDUMP@
+PACKAGE = @PACKAGE@
+QT_INCLUDES = @QT_INCLUDES@
+QT_LDFLAGS = @QT_LDFLAGS@
 RANLIB = @RANLIB@
+VERSION = @VERSION@
+qt_includes = @qt_includes@
+qt_libraries = @qt_libraries@
 
 DISTFILES = Makefile.am Makefile.in programmers_guide.yo programmers_guide.html
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -81,9 +95,6 @@ CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 DIST_COMMON =  Makefile.am Makefile.in
 
-
-PACKAGE = @PACKAGE@
-VERSION = @VERSION@
 
 TAR = gtar
 GZIP_ENV = --best

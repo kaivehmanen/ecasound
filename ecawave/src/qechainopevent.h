@@ -34,7 +34,7 @@ private:
 
   void init_layout(void);
 
-  ECA_CONTROLLER* ectrl;
+  ECA_CONTROL* ectrl;
   string input_rep, output_rep;
   long int start_pos_rep;
   long int length_rep;
@@ -46,7 +46,7 @@ public:
   virtual void restart(long int start_pos, long int length);
 
   QSize sizeHint(void) const { return(QSize(400,400)); }
-  QEChainopEvent (ECA_CONTROLLER* ctrl, 
+  QEChainopEvent (ECA_CONTROL* ctrl, 
 		  const string& input,
 		  const string& output,
 		  long int start_pos, 

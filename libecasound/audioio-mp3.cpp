@@ -1,6 +1,8 @@
 // ------------------------------------------------------------------------
-// audioio-mp3.cpp: Interface to mpg123 (input) and lame (output).
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// audioio-mp3.cpp: Interface for mp3 decoders and encoders that support 
+//                  input/output using standard streams. Defaults to
+//                  mpg123 and lame.
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,15 +41,11 @@
 
 FILE* audioio_mp3_pipe;
 
-string MP3FILE::default_mpg123_path = "mpg123";
-string MP3FILE::default_mpg123_args = "-b 0";
-string MP3FILE::default_lame_path = "lame";
-string MP3FILE::default_lame_args = "-b 128";
+string MP3FILE::default_mp3_input_cmd = "mpg123 -b 0 -q -s -k %o %f";
+string MP3FILE::default_mp3_output_cmd = "lame -b 128 -x -S - %f";
 
-void MP3FILE::set_mpg123_path(const string& value) { MP3FILE::default_mpg123_path = value; }
-void MP3FILE::set_mpg123_args(const string& value) { MP3FILE::default_mpg123_args = value; }
-void MP3FILE::set_lame_path(const string& value) { MP3FILE::default_lame_path = value; }
-void MP3FILE::set_lame_args(const string& value) { MP3FILE::default_lame_args = value; }
+void MP3FILE::set_mp3_input_cmd(const string& value) { MP3FILE::default_mp3_input_cmd = value; }
+void MP3FILE::set_mp3_output_cmd(const string& value) { MP3FILE::default_mp3_output_cmd = value; }
 
 MP3FILE::MP3FILE(const string& name) {
   label(name);
@@ -74,25 +72,21 @@ void MP3FILE::close(void) {
 
 long int MP3FILE::read_samples(void* target_buffer, long int samples) {
   if (is_open() == false) fork_mpg123();
-//    if (waitpid(-1, 0, WNOHANG) < 0) { 
-//      finished_rep = true;
-//      return(0);
-//    }
-  bytes =  ::read(fd, target_buffer, frame_size() * samples);
-  if (bytes < samples * frame_size() || bytes == 0) finished_rep = true;
+  bytes_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
+  if (bytes_rep < samples * frame_size() || bytes_rep == 0) finished_rep = true;
   else finished_rep = false;
 
-  return(bytes / frame_size());
+  return(bytes_rep / frame_size());
 }
 
 void MP3FILE::write_samples(void* target_buffer, long int samples) {
   if (is_open() == false) fork_lame();
-  if (waitpid(pid_of_child, 0, WNOHANG) < 0) { 
+  if (waitpid(pid_of_child_rep, 0, WNOHANG) < 0) { 
     finished_rep = true;
   }
   else {
-    bytes = ::write(fd, target_buffer, frame_size() * samples);
-    if (bytes < frame_size() * samples || bytes == 0) finished_rep = true;
+    bytes_rep = ::write(fd_rep, target_buffer, frame_size() * samples);
+    if (bytes_rep < frame_size() * samples || bytes_rep == 0) finished_rep = true;
     else finished_rep = false;
   }
 }
@@ -127,18 +121,18 @@ void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR*) {
   length_in_samples((long)ceil(8.0 * fsize / bitrate * bsecond / frame_size()));
 
   m << "Setting MP3 length_value: " << length_in_seconds() << "\n.";
-  pcm = newlayer.pcmPerFrame();
+  pcm_rep = newlayer.pcmPerFrame();
 
-  m << "MP3 pcm value: " << pcm << ".";
+  m << "MP3 pcm value: " << pcm_rep << ".";
   ecadebug->msg(ECA_DEBUG::user_objects,m.to_string());
 }
 
 void MP3FILE::kill_mpg123(void) {
   if (is_open()) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing mpg123-child with pid " + kvu_numtostr(pid_of_child) + ".");
-    kill(pid_of_child, SIGKILL);
-    waitpid(pid_of_child, 0, 0);
-    ::close(fd);
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing mpg123-child with pid " + kvu_numtostr(pid_of_child_rep) + ".");
+    kill(pid_of_child_rep, SIGKILL);
+    waitpid(pid_of_child_rep, 0, 0);
+    ::close(fd_rep);
     toggle_open_state(false);
   }
 }
@@ -146,25 +140,27 @@ void MP3FILE::kill_mpg123(void) {
 void MP3FILE::fork_mpg123(void) throw(ECA_ERROR*) {
   if (!is_open()) {
     
-    string komen = MP3FILE::default_mpg123_path;
-    komen += " ";
-    komen += MP3FILE::default_mpg123_args;
-    komen += " -q -s -k ";
-    komen += kvu_numtostr((long)(position_in_samples() / pcm));
-    komen += " " + label();
-    //    komen += " '" + label() + "' 2>/dev/null";
-    ecadebug->msg(ECA_DEBUG::user_objects,komen);
+    string cmd = MP3FILE::default_mp3_input_cmd;
+    if (cmd.find("%f") != string::npos) {
+      cmd.replace(cmd.find("%f"), 2, label());
+    }
+
+    if (cmd.find("%o") != string::npos) {
+      cmd.replace(cmd.find("%o"), 2, kvu_numtostr((long)(position_in_samples() / pcm_rep)));
+    }
+
+    ecadebug->msg(ECA_DEBUG::user_objects,cmd);
    
     int fpipes[2];
     if (pipe(fpipes) == 0) {
-      pid_of_child = fork();
-      if (pid_of_child == -1) { 
+      pid_of_child_rep = fork();
+      if (pid_of_child_rep == -1) { 
 	// ---
 	// error
 	// ---
 	throw(new ECA_ERROR("ECA-MP3","Can't start mpg123-thread!"));
       }
-      else if (pid_of_child == 0) { 
+      else if (pid_of_child_rep == 0) { 
 	// ---
 	// child 
 	// ---
@@ -173,7 +169,7 @@ void MP3FILE::fork_mpg123(void) throw(ECA_ERROR*) {
 	::close(fpipes[0]);
 	::close(fpipes[1]);
 	freopen("/dev/null", "w", stderr);
-	vector<string> temp = string_to_words(komen);
+	vector<string> temp = string_to_words(cmd);
 	if (temp.size() > 1024) temp.resize(1024);
 	const char* args[1024];
 	// = new char* [temp.size() + 1];
@@ -194,9 +190,9 @@ void MP3FILE::fork_mpg123(void) throw(ECA_ERROR*) {
 	// ---
 	//	fobject = fdopen(fpipes[0], "r");
 	::close(fpipes[1]);
-	fd = fpipes[0];
+	fd_rep = fpipes[0];
 	//	if (fobject == NULL) {
-	ecadebug->msg("(audioio-mp3) Forked mpg123-child with pid " + kvu_numtostr(pid_of_child) + ".");
+	ecadebug->msg("(audioio-mp3) Forked mpg123-child with pid " + kvu_numtostr(pid_of_child_rep) + ".");
 	toggle_open_state(true);
       }
     }
@@ -207,35 +203,35 @@ void MP3FILE::fork_mpg123(void) throw(ECA_ERROR*) {
 
 void MP3FILE::kill_lame(void) {
   if (is_open()) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing lame-child with pid " + kvu_numtostr(pid_of_child) + ".");
-    kill(pid_of_child, SIGKILL);
-    waitpid(pid_of_child, 0, 0);
-    ::close(fd);
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing lame-child with pid " + kvu_numtostr(pid_of_child_rep) + ".");
+    kill(pid_of_child_rep, SIGKILL);
+    waitpid(pid_of_child_rep, 0, 0);
+    ::close(fd_rep);
     toggle_open_state(false);
   }
 }
 
 void MP3FILE::fork_lame(void) throw(ECA_ERROR*) {
   if (!is_open()) {
-    
-    string komen = MP3FILE::default_lame_path;
-    komen += " ";
-    komen += MP3FILE::default_lame_args;
-    komen += " -x -S - " + label();
-    // "'"-  komen << label() << "' 2>/dev/null";
+
+    string cmd = MP3FILE::default_mp3_output_cmd;
+    if (cmd.find("%f") != string::npos) {
+      cmd.replace(cmd.find("%f"), 2, label());
+    }
+  
     ecadebug->msg("(audioio-mp3) Starting to encode " + label() + " with lame.");
-    ecadebug->msg(ECA_DEBUG::user_objects,komen);
+    ecadebug->msg(ECA_DEBUG::user_objects, cmd);
 
     int fpipes[2];
     if (pipe(fpipes) == 0) {
-      pid_of_child = fork();
-      if (pid_of_child == -1) { 
+      pid_of_child_rep = fork();
+      if (pid_of_child_rep == -1) { 
 	// ---
 	// error
 	// ---
 	throw(new ECA_ERROR("ECA-MP3","Can't start lame-child!"));
       }
-      else if (pid_of_child == 0) { 
+      else if (pid_of_child_rep == 0) { 
 	// ---
 	// child 
 	// ---
@@ -244,7 +240,7 @@ void MP3FILE::fork_lame(void) throw(ECA_ERROR*) {
 	::close(fpipes[0]);
 	::close(fpipes[1]);
 	freopen("/dev/null", "w", stderr);
-	vector<string> temp = string_to_words(komen);
+	vector<string> temp = string_to_words(cmd);
 	if (temp.size() > 1024) temp.resize(1024);
 	const char* args[1024];
 	// = new char* [temp.size() + 1];
@@ -264,9 +260,9 @@ void MP3FILE::fork_lame(void) throw(ECA_ERROR*) {
 	// parent
 	// ---
 	::close(fpipes[0]);
-	fd = fpipes[1];
+	fd_rep = fpipes[1];
 
-	ecadebug->msg("(audioio-mp3) Forked lame-child with pid " + kvu_numtostr(pid_of_child) + ".");
+	ecadebug->msg("(audioio-mp3) Forked lame-child with pid " + kvu_numtostr(pid_of_child_rep) + ".");
 	toggle_open_state(true);
       }
     }

@@ -38,7 +38,7 @@
 #include "qebuttonrow.h"
 
 #include "eca-version.h"
-#include "eca-controller.h"
+#include "eca-control.h"
 #include "eca-qtchainsetup.h"
 #include "eca-qtmain.h"
 #include "eca-qtrtposition.h"
@@ -46,7 +46,7 @@
 #include "eca-qtdebugtab.h"
 #include "eca-qtinte.h"
 
-QEInterface::QEInterface(ECA_CONTROLLER* control, QWidget *parent, const char *name)
+QEInterface::QEInterface(ECA_CONTROL* control, QWidget *parent, const char *name)
   : QWidget(parent, name), ctrl_repp(control)
 {
   setCaption("qtecasound - control panel");

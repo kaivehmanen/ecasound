@@ -27,7 +27,7 @@
 #include <samplebuffer.h>
 #include <eca-debug.h>
 #include <eca-error.h>
-#include <eca-controller.h>
+#include <eca-control.h>
 #include <eca-main.h>
 #include <eca-session.h>
 #include <audiofx.h>
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     EFFECT_DCFIX* dcfix = 0;
 
     ECA_SESSION esession;
-    ECA_CONTROLLER ectrl (&esession);
+    ECA_CONTROL ectrl (&esession);
     ECA_PROCESSOR emain;
     ECA_AUDIO_FORMAT aio_params;
 

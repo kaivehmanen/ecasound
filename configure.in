@@ -2,7 +2,7 @@ dnl ---
 dnl Process this file with autoconf to produce a configure script.
 dnl ---
 AC_INIT(libecasound/audiofx.h)
-AC_CONFIG_SUBDIRS(kvutils readline-4.0)
+AC_CONFIG_SUBDIRS(readline-4.0)
 
 dnl ---
 dnl Init automake
@@ -252,6 +252,7 @@ ecasound/Makefile
 libqtecasound/Makefile
 qtecasound/Makefile
 ecatools/Makefile
+kvutils/Makefile
 Documentation/Makefile
 Documentation/users_guide/Makefile
 Documentation/programmers_guide/Makefile

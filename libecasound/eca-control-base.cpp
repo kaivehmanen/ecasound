@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// eca-controller-base.cpp: Base class providing basic functionality
-//                          for controlling the ecasound library
+// eca-control-base.cpp: Base class providing basic functionality
+//                       for controlling the ecasound library
 // Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -33,31 +33,31 @@
 #include "eca-main.h"
 #include "eca-session.h"
 #include "eca-chainsetup.h"
-#include "eca-controller-base.h"
+#include "eca-control-base.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"
 
-string ecasound_lockfile;
+static string ecasound_lockfile;
 
-ECA_CONTROLLER_BASE::ECA_CONTROLLER_BASE (ECA_SESSION* psession) {
-  session_rep = psession;
-  selected_chainsetup_rep = psession->selected_chainsetup;
-  engine_started = false;
+ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession) {
+  session_repp = psession;
+  selected_chainsetup_repp = psession->selected_chainsetup;
+  engine_started_rep = false;
   ::ecasound_lockfile = "/var/lock/ecasound.lck." + kvu_numtostr(getpid());
 }
 
-void ECA_CONTROLLER_BASE::start(bool ignore_lock) {
+void ECA_CONTROL_BASE::start(bool ignore_lock) {
   // --------
   // require:
   assert(is_connected() == true);
   // --------
 
-  if (session_rep->status() == ep_status_running) return;
+  if (session_repp->status() == ep_status_running) return;
   ecadebug->control_flow("Controller/Processing started");
 
   while(::ecasound_queue.is_empty() == false) ::ecasound_queue.pop_front();
-  if (session_rep->status() == ep_status_notready) {
+  if (session_repp->status() == ep_status_notready) {
     start_engine(ignore_lock);
   }
 
@@ -74,13 +74,13 @@ void ECA_CONTROLLER_BASE::start(bool ignore_lock) {
   // --------
 }
 
-void ECA_CONTROLLER_BASE::run(void) {
+void ECA_CONTROL_BASE::run(void) {
   // --------
   // require:
   assert(is_connected() == true);
   // --------
 
-  if (session_rep->status() == ep_status_running) return;
+  if (session_repp->status() == ep_status_running) return;
 
   start(true);
 
@@ -100,13 +100,13 @@ void ECA_CONTROLLER_BASE::run(void) {
   // --------
 }
 
-void ECA_CONTROLLER_BASE::stop(void) {
+void ECA_CONTROL_BASE::stop(void) {
   // --------
   // require:
   assert(is_engine_started() == true);
   // --------
 
-  if (session_rep->status() != ep_status_running) return;
+  if (session_repp->status() != ep_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped");
   ::ecasound_queue.push_back(ECA_PROCESSOR::ep_stop, 0.0);
 
@@ -117,13 +117,13 @@ void ECA_CONTROLLER_BASE::stop(void) {
   // --------
 }
 
-void ECA_CONTROLLER_BASE::stop_on_condition(void) {
+void ECA_CONTROL_BASE::stop_on_condition(void) {
   // --------
   // require:
   assert(is_engine_started() == true);
   // --------
 
-  if (session_rep->status() != ep_status_running) return;
+  if (session_repp->status() != ep_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped");
   ::ecasound_queue.push_back(ECA_PROCESSOR::ep_stop, 0.0);
   struct timeval now;
@@ -142,28 +142,25 @@ void ECA_CONTROLLER_BASE::stop_on_condition(void) {
   // --------
 }
 
-void ECA_CONTROLLER_BASE::quit(void) {
+void ECA_CONTROL_BASE::quit(void) {
   close_engine();
   int n = ECA_QUIT;
   throw(n);
 }
 
-void ECA_CONTROLLER_BASE::start_engine(bool ignore_lock) {
+void ECA_CONTROL_BASE::start_engine(bool ignore_lock) {
   // --------
   // require:
   assert(is_connected() == true);
   // --------
 
-  if (engine_started == true) return;
+  if (engine_started_rep == true) return;
 
   ifstream fin(ecasound_lockfile.c_str());
   if (!fin || ignore_lock) {
     pthread_attr_t th_attr;
     pthread_attr_init(&th_attr);
-    //      pthread_attr_setschedpolicy(&th_attr, SCHED_FIFO);
-    //      pthread_attr_setschedparam(&th_attr, &sparam);
-    //      ecadebug->msg("(eca-controller) Using realtime-scheduling (SCHED_FIFO/10, engine-thread).");
-    start_normal_thread(session_rep, retcode, &th_cqueue, &th_attr);
+    start_normal_thread(session_repp, retcode_rep, &th_cqueue_rep, &th_attr);
   }
   else {
     MESSAGE_ITEM mitem;
@@ -172,7 +169,7 @@ void ECA_CONTROLLER_BASE::start_engine(bool ignore_lock) {
   }
   fin.close();
 
-  engine_started = true;
+  engine_started_rep = true;
 
   // --------
   // ensure:
@@ -180,11 +177,11 @@ void ECA_CONTROLLER_BASE::start_engine(bool ignore_lock) {
   // --------
 }
 
-void ECA_CONTROLLER_BASE::close_engine(void) {
-  if (!engine_started) return;
+void ECA_CONTROL_BASE::close_engine(void) {
+  if (!engine_started_rep) return;
   ::ecasound_queue.push_back(ECA_PROCESSOR::ep_exit, 0.0);
-  ::pthread_join(th_cqueue,NULL);
-  engine_started = false;
+  ::pthread_join(th_cqueue_rep,NULL);
+  engine_started_rep = false;
 
   // --------
   // ensure:
@@ -192,55 +189,55 @@ void ECA_CONTROLLER_BASE::close_engine(void) {
   // --------
 }
 
-bool ECA_CONTROLLER_BASE::is_valid(void) const {
+bool ECA_CONTROL_BASE::is_valid(void) const {
   // --------
   // require:
   assert(is_selected());
   // --------
 
-  return(selected_chainsetup_rep->is_valid());
+  return(selected_chainsetup_repp->is_valid());
 }
 
-bool ECA_CONTROLLER_BASE::is_connected(void) const {
-  if (session_rep->connected_chainsetup == 0) return(false);
-  return(session_rep->connected_chainsetup->is_valid());
+bool ECA_CONTROL_BASE::is_connected(void) const {
+  if (session_repp->connected_chainsetup == 0) return(false);
+  return(session_repp->connected_chainsetup->is_valid());
 }
 
-bool ECA_CONTROLLER_BASE::is_selected(void) const { return(selected_chainsetup_rep != 0); } 
-bool ECA_CONTROLLER_BASE::is_running(void) const { return(session_rep->status() == ep_status_running); } 
-bool ECA_CONTROLLER_BASE::is_finished(void) const { return(session_rep->status() == ep_status_finished); } 
+bool ECA_CONTROL_BASE::is_selected(void) const { return(selected_chainsetup_repp != 0); } 
+bool ECA_CONTROL_BASE::is_running(void) const { return(session_repp->status() == ep_status_running); } 
+bool ECA_CONTROL_BASE::is_finished(void) const { return(session_repp->status() == ep_status_finished); } 
 
-long ECA_CONTROLLER_BASE::length_in_samples(void) const { 
+long ECA_CONTROL_BASE::length_in_samples(void) const { 
   if (is_connected() == true)
-      return session_rep->connected_chainsetup->length_in_samples(); 
+      return session_repp->connected_chainsetup->length_in_samples(); 
   else
     return(0);
 }
 
-double ECA_CONTROLLER_BASE::length_in_seconds_exact(void) const { 
+double ECA_CONTROL_BASE::length_in_seconds_exact(void) const { 
   if (is_connected() == true) {
-      return session_rep->connected_chainsetup->length_in_seconds_exact(); 
+      return session_repp->connected_chainsetup->length_in_seconds_exact(); 
   }
   else
     return(0.0);
 }
 
-long ECA_CONTROLLER_BASE::position_in_samples(void) const { 
+long ECA_CONTROL_BASE::position_in_samples(void) const { 
   if (is_connected() == true)
-      return session_rep->connected_chainsetup->position_in_samples(); 
+      return session_repp->connected_chainsetup->position_in_samples(); 
   else
     return(0);
 }
-double ECA_CONTROLLER_BASE::position_in_seconds_exact(void) const {
+double ECA_CONTROL_BASE::position_in_seconds_exact(void) const {
   if (is_connected() == true) {
-      return session_rep->connected_chainsetup->position_in_seconds_exact(); 
+      return session_repp->connected_chainsetup->position_in_seconds_exact(); 
   }
   else
     return(0.0);
 }
 
-string ECA_CONTROLLER_BASE::engine_status(void) const {
-  switch(session_rep->status()) {
+string ECA_CONTROL_BASE::engine_status(void) const {
+  switch(session_repp->status()) {
   case ep_status_running: 
     {
     return("running"); 
@@ -264,12 +261,12 @@ string ECA_CONTROLLER_BASE::engine_status(void) const {
   }
 }
 
-string ECA_CONTROLLER_BASE::attached_chains_input(AUDIO_IO* aiod) const {
+string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
   // --------
   REQUIRE(is_selected() == true);
   // --------
 
-  vector<string> t = session_rep->get_attached_chains_to_input(aiod);
+  vector<string> t = session_repp->get_attached_chains_to_input(aiod);
   string out = "";
   vector<string>::const_iterator p = t.begin();
   while(p != t.end()) {
@@ -280,12 +277,12 @@ string ECA_CONTROLLER_BASE::attached_chains_input(AUDIO_IO* aiod) const {
   return(out);
 }
 
-string ECA_CONTROLLER_BASE::attached_chains_output(AUDIO_IO* aiod) const {
+string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
   // --------
   REQUIRE(is_selected() == true);
   // --------
 
-  vector<string> t = session_rep->get_attached_chains_to_output(aiod);
+  vector<string> t = session_repp->get_attached_chains_to_output(aiod);
   string out = "";
   vector<string>::const_iterator p = t.begin();
   while(p != t.end()) {
@@ -296,34 +293,34 @@ string ECA_CONTROLLER_BASE::attached_chains_output(AUDIO_IO* aiod) const {
   return(out);
 }
 
-vector<string> ECA_CONTROLLER_BASE::attached_chains(const string& filename) const {
+vector<string> ECA_CONTROL_BASE::attached_chains(const string& filename) const {
   // --------
   REQUIRE(is_selected() == true);
   // --------
 
-  return(selected_chainsetup_rep->get_attached_chains_to_iodev(filename));
+  return(selected_chainsetup_repp->get_attached_chains_to_iodev(filename));
 }
 
-void ECA_CONTROLLER_BASE::set_buffersize(int bsize) { 
+void ECA_CONTROL_BASE::set_buffersize(int bsize) { 
   // --------
   // require:
   assert(is_selected() == true);
   // --------
-  selected_chainsetup_rep->set_buffersize(bsize); 
+  selected_chainsetup_repp->set_buffersize(bsize); 
 }
 
-void ECA_CONTROLLER_BASE::toggle_raise_priority(bool v) { 
+void ECA_CONTROL_BASE::toggle_raise_priority(bool v) { 
   // --------
   // require:
   assert(is_selected() == true);
   // --------
-  session_rep->toggle_raised_priority(v);
+  session_repp->toggle_raised_priority(v);
 }
 
-void start_normal_thread(ECA_SESSION* session, int retcode, pthread_t*
+void start_normal_thread(ECA_SESSION* session, int retcode_rep, pthread_t*
 			 th_ecasound_cqueue, pthread_attr_t* th_attr) {
-  retcode = pthread_create(th_ecasound_cqueue, th_attr, start_normal, (void*)session);
-  if (retcode != 0)
+  retcode_rep = pthread_create(th_ecasound_cqueue, th_attr, start_normal, (void*)session);
+  if (retcode_rep != 0)
     throw(new ECA_ERROR("ECA-CONTROLLER", "Unable to create a new thread (start_normal)."));
 }
 

@@ -12,14 +12,14 @@ class QEPasteEvent : public QEBlockingEvent {
 
  public:
 
-  QEPasteEvent(ECA_CONTROLLER* ctrl,
+  QEPasteEvent(ECA_CONTROL* ctrl,
 	       const string& input,
 	       const string& output,
 	       long int insert_pos); 
 
  private:
 
-  ECA_CONTROLLER* ectrl;
+  ECA_CONTROL* ectrl;
 };
 
 #endif

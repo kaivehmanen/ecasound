@@ -22,7 +22,7 @@
 
 Input/output devices:
 
-- ALSA 0.6.x support
+- ALSA 0.6.x support [--> update: already in CVS]
 - type override for audio objects
 - automatic handling of mono mp3s
 - mp3 bitrate as a command-line parameter
@@ -35,7 +35,7 @@ Effects, routing, dsp routines:
 
 - add threshold parameter to -eca
 - pitch-shifting mono streams doesn't work
-- better reverbs
+- better reverbs [--> update: -ete added to 1.7.8r12] 
 - embedded effect preset parameters
 	- "-p[fn]:string,par1,...,parN"
 	

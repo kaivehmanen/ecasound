@@ -21,7 +21,7 @@
 
 #include "qesaveevent.h"
 
-QESaveEvent::QESaveEvent(ECA_CONTROLLER* ctrl,
+QESaveEvent::QESaveEvent(ECA_CONTROL* ctrl,
 			 const string& input,
 			 const string& output)
   : QEBlockingEvent(ctrl),

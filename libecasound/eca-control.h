@@ -1,8 +1,8 @@
-#ifndef _ECA_CONTROLLER_H
-#define _ECA_CONTROLLER_H
+#ifndef INCLUDED_ECA_CONTROL_H
+#define INCLUDED_ECA_CONTROL_H
 
 #include "eca-iamode-parser.h"
-#include "eca-controller-dump.h"
+#include "eca-control-dump.h"
 
 class CHAIN_OPERATOR;
 
@@ -10,8 +10,8 @@ class CHAIN_OPERATOR;
  * Class for controlling the whole ecasound library
  * @author Kai Vehmanen
  */
-class ECA_CONTROLLER : public ECA_CONTROLLER_DUMP,
-		       public ECA_IAMODE_PARSER {
+class ECA_CONTROL : public ECA_CONTROL_DUMP,
+		    public ECA_IAMODE_PARSER {
 
  private:
 
@@ -76,8 +76,8 @@ class ECA_CONTROLLER : public ECA_CONTROLLER_DUMP,
   void ladspa_register(void) const; 
   void ctrl_register(void) const; 
 
-  ECA_CONTROLLER (ECA_SESSION* psession);
-  virtual ~ECA_CONTROLLER (void) { }
+  ECA_CONTROL (ECA_SESSION* psession);
+  virtual ~ECA_CONTROL (void) { }
 };
 
 #endif

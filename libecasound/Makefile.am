@@ -14,9 +14,9 @@ af_libs = -laudiofile
 endif
 
 if INCLUDE_DEBUG
-eca_ldflags = -version-info 6:0:0 -lkvutils
+eca_ldflags = -version-info 6:0:0
 else
-eca_ldflags = -s -version-info 6:0:0 -lkvutils
+eca_ldflags = -s -version-info 6:0:0
 endif
 
 if INCLUDE_DEBUG
@@ -75,15 +75,15 @@ ecasound_audioio_src = 	audioio-cdr.h \
 			audioio-loop.h
 
 ecasound_controller_src = \
-	generic-controller.h \
-	ctrl-source.h \
-	midi-cc.h \
-	oscillator.h \
-	osc-gen.h \
-	osc-sine.h \
-	finite-envelope.h \
-	linear-envelope.h \
-	two-stage-linear-envelope.h
+			generic-controller.h \
+			ctrl-source.h \
+			midi-cc.h \
+			oscillator.h \
+			osc-gen.h \
+			osc-sine.h \
+			finite-envelope.h \
+			linear-envelope.h \
+			two-stage-linear-envelope.h
 
 ecasound_general_src = 	eca-chain.h \
 			eca-chainop.h \
@@ -112,14 +112,14 @@ ecasound_general_src = 	eca-chain.h \
 			sample-specs.h \
 			eca-version.h \
 			eca-chainsetup.h \
-			eca-controller.h \
-			eca-controller-base.h \
-			eca-controller-objects.h \
-			eca-controller-dump.h \
+			eca-chainsetup-position.h \
+			eca-control.h \
+			eca-control-base.h \
+			eca-control-objects.h \
+			eca-control-dump.h \
 			eca-iamode-parser.h \
 			osc-gen.h \
 			midi-cc.h \
-			eca-control-position.h \
 			eca-audio-position.h \
 			eca-fileio.h  \
 			eca-fileio-stream.h \
@@ -168,11 +168,12 @@ ecasound_audiofx_src =  audiofx.cpp \
 
 ecasound_audioio_oss_src = audioio-oss.cpp
 
-ecasound_audioio_alsa_src = 	audioio-alsa.cpp \
-				audioio-alsa2.cpp \
-				audioio-alsa2-plugin.cpp \
-				audioio-alsa3.cpp \
-				audioio-alsalb.cpp
+ecasound_audioio_alsa_src = \
+			audioio-alsa.cpp \
+			audioio-alsa2.cpp \
+			audioio-alsa2-plugin.cpp \
+			audioio-alsa3.cpp \
+			audioio-alsalb.cpp
 
 ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-ewf.cpp \
@@ -189,12 +190,12 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 			$(ecasound_audioio_alsa_src)
 
 ecasound_controller_src = \
-	generic-controller.cpp \
-	midi-cc.cpp \
-	osc-gen.cpp \
-	osc-sine.cpp \
-	linear-envelope.cpp \
-	two-stage-linear-envelope.cpp
+			generic-controller.cpp \
+			midi-cc.cpp \
+			osc-gen.cpp \
+			osc-sine.cpp \
+			linear-envelope.cpp \
+			two-stage-linear-envelope.cpp
 
 ecasound_general_src = 	eca-chain.cpp \
 			eca-main.cpp \
@@ -208,12 +209,12 @@ ecasound_general_src = 	eca-chain.cpp \
 			samplebuffer_iterators.cpp \
 			eca-version.cpp  \
 			eca-chainsetup.cpp \
-			eca-controller.cpp \
-			eca-controller-base.cpp \
-			eca-controller-objects.cpp \
-			eca-controller-dump.cpp \
+			eca-control.cpp \
+			eca-control-base.cpp \
+			eca-control-objects.cpp \
+			eca-control-dump.cpp \
 			eca-iamode-parser.cpp \
-			eca-control-position.cpp \
+			eca-chainsetup-position.cpp \
 			eca-audio-position.cpp \
 			eca-audio-objects.cpp \
 			eca-audio-format.cpp \
@@ -240,7 +241,8 @@ ecasound_common_src = 	$(ecasound_audiofx_src) \
 
 libecasound_la_SOURCES = $(ecasound_common_src)
 libecasound_debug_la_SOURCES = $(ecasound_common_src)
-libecasound_la_LIBADD = $(af_libs)  $(alsa_libs) -L$(top_builddir)/kvutils -lkvutils
+libecasound_la_LIBADD = $(af_libs)  $(alsa_libs) \
+			-L$(top_builddir)/kvutils -lkvutils
 libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
 libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)

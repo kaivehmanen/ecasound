@@ -1,15 +1,14 @@
-#ifndef _ECA_CONTROLLER_DUMP_H
-#define _ECA_CONTROLLER_DUMP_H
+#ifndef INCLUDED_ECA_CONTROL_DUMP_H
+#define INCLUDED_ECA_CONTROL_DUMP_H
 
-#include "eca-controller-objects.h"
-
+#include "eca-control-objects.h"
 #include <fstream>
 
 /**
  * Class for dumping status information to a standard output stream.
  * @author Kai Vehmanen
  */
-class ECA_CONTROLLER_DUMP : public ECA_CONTROLLER_OBJECTS {
+class ECA_CONTROL_DUMP : public ECA_CONTROL_OBJECTS {
 
  public:
 
@@ -91,29 +90,29 @@ class ECA_CONTROLLER_DUMP : public ECA_CONTROLLER_OBJECTS {
   /** 
    * Set target stream for dumping.
    */
-  void set_dump_target(ostream* target) { dostream = target; internal_rep = false; }
+  void set_dump_target(ostream* target) { dostream_repp = target; internal_rep = false; }
 
   /** 
    * Set target stream for dumping.
    */
-  void set_dump_target(const string& filename) { dostream = new ofstream(filename.c_str()); internal_rep = true; }
+  void set_dump_target(const string& filename) { dostream_repp = new ofstream(filename.c_str()); internal_rep = true; }
 
   /**
    * Class constructor
    */ 
-  ECA_CONTROLLER_DUMP (ECA_SESSION* psession) : ECA_CONTROLLER_OBJECTS(psession), dostream(&cout), internal_rep(false) { }
+  ECA_CONTROL_DUMP (ECA_SESSION* psession) : ECA_CONTROL_OBJECTS(psession), dostream_repp(&cout), internal_rep(false) { }
 
   /**
    * Virtual destructor
    */
-  virtual ~ECA_CONTROLLER_DUMP (void) { if (internal_rep == true) delete dostream; }
+  virtual ~ECA_CONTROL_DUMP (void) { if (internal_rep == true) delete dostream_repp; }
 
  private:
 
-  ostream* dostream;
+  ostream* dostream_repp;
   bool internal_rep;
 
-  void dump(const string& key, const string& value) { *dostream << key << " " << value << endl; }
+  void dump(const string& key, const string& value) { *dostream_repp << key << " " << value << endl; }
 };
 
 #endif

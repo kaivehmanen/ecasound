@@ -1,5 +1,5 @@
-#ifndef _ECA_IAMODE_PARSER_H
-#define _ECA_IAMODE_PARSER_H
+#ifndef INCLUDED_ECA_IAMODE_PARSER_H
+#define INCLUDED_ECA_IAMODE_PARSER_H
 
 #include <map>
 #include <string>
@@ -15,7 +15,7 @@ class ECA_IAMODE_PARSER {
 
  protected:
 
-  static map<string,int> cmd_map;
+  static map<string,int> cmd_map_rep;
   static void register_commands(void);
 
  public:
@@ -113,7 +113,7 @@ class ECA_IAMODE_PARSER {
   /**
    * Parse string mode command and act accordingly.
    */
-  static const map<string,int>& registered_commands(void) { return(cmd_map); }
+  static const map<string,int>& registered_commands(void) { return(cmd_map_rep); }
 
   bool action_requires_params(int id);
   bool action_requires_connected(int id);

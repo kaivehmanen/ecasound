@@ -209,15 +209,6 @@ void ecasound_fiommap_exec_thread(void) throw(ECA_ERROR*) {
   int retcode = ::pthread_create(&::ecasound_fiommap_thread, NULL, ::ecasound_fiommap_process, NULL);
   if (retcode != 0)
     throw(new ECA_ERROR("ECA-FILEIO-MMAP-FTHREAD", "unable to create thread for ::mmap()'ed file-I/O"));
-
-//    if (sched_getscheduler(0) == SCHED_FIFO) {
-//      struct sched_param sparam;
-//      sparam.sched_priority = 10;
-//      if (::pthread_setschedparam(::ecasound_fiommap_thread, SCHED_FIFO, &sparam) != 0)
-//        ecadebug->msg("(eca-fileio-mmap-fthread) Unable to change scheduling policy!");
-//      else 
-//        ecadebug->msg("(eca-fileio-mmap-fthread) Using realtime-scheduling (SCHED_FIFO/10).");
-//    }
 }
 
 void *ecasound_fiommap_process(void *) { 

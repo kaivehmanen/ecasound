@@ -19,7 +19,7 @@
 
 #include "qepasteevent.h"
 
-QEPasteEvent::QEPasteEvent(ECA_CONTROLLER* ctrl,
+QEPasteEvent::QEPasteEvent(ECA_CONTROL* ctrl,
 			   const string& input,
 			   const string& output,
 			   long int start_pos)

@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// eca-controller.cpp: Class for controlling the whole ecasound library
+// eca-control.cpp: Class for controlling the whole ecasound library
 // Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,7 @@
 
 #include "eca-main.h"
 #include "eca-session.h"
-#include "eca-controller.h"
+#include "eca-control.h"
 #include "eca-chainop.h"
 #include "eca-chainsetup.h"
 
@@ -47,16 +47,16 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-ECA_CONTROLLER::ECA_CONTROLLER (ECA_SESSION* psession) 
-  : ECA_CONTROLLER_DUMP(psession) { }
+ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession) 
+  : ECA_CONTROL_DUMP(psession) { }
 
-void ECA_CONTROLLER::command(const string& cmd) throw(ECA_ERROR*) {
+void ECA_CONTROL::command(const string& cmd) throw(ECA_ERROR*) {
   vector<string> cmds = string_to_words(cmd);
 
   vector<string>::iterator p = cmds.begin();
   if (p != cmds.end()) {
     if (*p == "") return;
-    if (ECA_IAMODE_PARSER::cmd_map.find(string_search_and_replace(*p, '_', '-')) == ECA_IAMODE_PARSER::cmd_map.end()) {
+    if (ECA_IAMODE_PARSER::cmd_map_rep.find(string_search_and_replace(*p, '_', '-')) == ECA_IAMODE_PARSER::cmd_map_rep.end()) {
       if (p->size() > 0 && (*p)[0] == '-') {
 	direct_command(cmd);
       }
@@ -65,7 +65,7 @@ void ECA_CONTROLLER::command(const string& cmd) throw(ECA_ERROR*) {
       }
     }
     else {
-      if (ECA_IAMODE_PARSER::cmd_map[string_search_and_replace(*p, '_', '-')] == ec_help) {
+      if (ECA_IAMODE_PARSER::cmd_map_rep[string_search_and_replace(*p, '_', '-')] == ec_help) {
 	show_controller_help();
       }
       else {
@@ -73,17 +73,17 @@ void ECA_CONTROLLER::command(const string& cmd) throw(ECA_ERROR*) {
 	++p;
 	if (p == cmds.end()) {
 	  vector<string> empty;
-	  action(ECA_IAMODE_PARSER::cmd_map[string_search_and_replace(first, '_', '-')], empty);
+	  action(ECA_IAMODE_PARSER::cmd_map_rep[string_search_and_replace(first, '_', '-')], empty);
 	}
 	else {
-	  action(ECA_IAMODE_PARSER::cmd_map[string_search_and_replace(first, '_', '-')], vector<string> (p, cmds.end()));
+	  action(ECA_IAMODE_PARSER::cmd_map_rep[string_search_and_replace(first, '_', '-')], vector<string> (p, cmds.end()));
 	}
       }
     }
   }
 }
 
-void ECA_CONTROLLER::direct_command(const string& cmd) {
+void ECA_CONTROL::direct_command(const string& cmd) {
   string prefix = get_argument_prefix(cmd);
   if (prefix == "el" || prefix == "pn") { // --- LADSPA plugins and presets
     if (selected_chains().size() == 1) 
@@ -107,7 +107,7 @@ void ECA_CONTROLLER::direct_command(const string& cmd) {
     action(ec_direct_option, string_to_words(cmd));
 }
 
-void ECA_CONTROLLER::action(int action_id, 
+void ECA_CONTROL::action(int action_id, 
 			       const vector<string>& args) throw(ECA_ERROR*) {
   bool reconnect = false;
   bool restart = false;
@@ -116,7 +116,7 @@ void ECA_CONTROLLER::action(int action_id,
     ecadebug->msg("(eca-controller) Can't perform requested action; argument omitted.");
     return;
   }
-  else if (selected_audio_object_rep == 0 &&
+  else if (selected_audio_object_repp == 0 &&
       action_requires_selected_audio_object(action_id)) {
     ecadebug->msg("(eca-controller) Can't perform requested action; no audio object selected.");
     return;
@@ -159,7 +159,7 @@ void ECA_CONTROLLER::action(int action_id,
   case ec_direct_option: 
     {
       vector<string> nargs = args;
-      selected_chainsetup_rep->interpret_options(nargs);
+      selected_chainsetup_repp->interpret_options(nargs);
       break;
     }
 
@@ -456,14 +456,14 @@ void ECA_CONTROLLER::action(int action_id,
   }
 }
 
-void ECA_CONTROLLER::print_general_status(void) {
+void ECA_CONTROL::print_general_status(void) {
   MESSAGE_ITEM st_info_string;
 
   if (is_selected()) {
     st_info_string << "Selected chainsetup: " +
                        selected_chainsetup() + "\n";
     st_info_string << "Selected chain(s): ";
-    st_info_string << vector_to_string(selected_chainsetup_rep->selected_chains(),",");
+    st_info_string << vector_to_string(selected_chainsetup_repp->selected_chains(),",");
     st_info_string << "\n";
   }
   else {
@@ -471,20 +471,20 @@ void ECA_CONTROLLER::print_general_status(void) {
   }
 
   st_info_string << "Engine status: \"" << engine_status() << "\"\n";
-  if (session_rep->multitrack_mode) st_info_string << "Multitrack-mode: enabled\n";
-  if (session_rep->multitrack_mode) st_info_string << "Multitrack-mode: enabled\n";
+  if (session_repp->multitrack_mode) st_info_string << "Multitrack-mode: enabled\n";
+  if (session_repp->multitrack_mode) st_info_string << "Multitrack-mode: enabled\n";
   else st_info_string << "Multitrack-mode: disabled\n";
-  if (session_rep->raised_priority()) st_info_string << "Raised-priority mode: enabled\n";
+  if (session_repp->raised_priority()) st_info_string << "Raised-priority mode: enabled\n";
 
   ecadebug->msg(st_info_string.to_string());
 }
 
-string ECA_CONTROLLER::chainsetup_status(void) const { 
-  vector<ECA_CHAINSETUP*>::const_iterator cs_citer = session_rep->chainsetups.begin();
+string ECA_CONTROL::chainsetup_status(void) const { 
+  vector<ECA_CHAINSETUP*>::const_iterator cs_citer = session_repp->chainsetups.begin();
 
   int index = 0;
   string result;
-  while(cs_citer != session_rep->chainsetups.end()) {
+  while(cs_citer != session_repp->chainsetups.end()) {
     result += "Chainsetup (c"  + kvu_numtostr(++index) + ") \"";
     result += (*cs_citer)->name() + "\" ";
     if ((*cs_citer)->name() == selected_chainsetup()) result += "[selected] ";
@@ -509,13 +509,13 @@ string ECA_CONTROLLER::chainsetup_status(void) const {
       result += "\n\tState: \t\t\tnot valid - cannot be connected";
 
     ++cs_citer;
-    if (cs_citer != session_rep->chainsetups.end()) result += "\n";
+    if (cs_citer != session_repp->chainsetups.end()) result += "\n";
   }
 
   return(result);
 }
 
-string ECA_CONTROLLER::chain_status(void) const {
+string ECA_CONTROL::chain_status(void) const {
   // --------
   // require:
   assert(is_selected() == true);
@@ -523,9 +523,9 @@ string ECA_CONTROLLER::chain_status(void) const {
   MESSAGE_ITEM mitem;
   vector<CHAIN*>::const_iterator chain_citer;
   vector<CHAIN_OPERATOR*>::const_iterator chainop_citer;
-  const vector<string>& schains = selected_chainsetup_rep->selected_chains();
+  const vector<string>& schains = selected_chainsetup_repp->selected_chains();
 
-  for(chain_citer = selected_chainsetup_rep->chains.begin(); chain_citer != selected_chainsetup_rep->chains.end();) {
+  for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\" ";
     if ((*chain_citer)->is_muted()) mitem << "[muted] ";
     if ((*chain_citer)->is_processing() == false) mitem << "[bypassed] ";
@@ -536,13 +536,13 @@ string ECA_CONTROLLER::chain_status(void) const {
       if (chainop_citer != (*chain_citer)->chainops.end()) mitem << " -> ";   
     }
     ++chain_citer;
-    if (chain_citer != selected_chainsetup_rep->chains.end()) mitem << "\n";
+    if (chain_citer != selected_chainsetup_repp->chains.end()) mitem << "\n";
   }
 
   return(mitem.to_string());
 }
 
-string ECA_CONTROLLER::chain_operator_status(void) const {
+string ECA_CONTROL::chain_operator_status(void) const {
   // --------
   // require:
   assert(is_selected() == true);
@@ -553,7 +553,7 @@ string ECA_CONTROLLER::chain_operator_status(void) const {
   vector<CHAIN*>::const_iterator chain_citer;
   vector<CHAIN_OPERATOR*>::size_type p;
 
-  for(chain_citer = selected_chainsetup_rep->chains.begin(); chain_citer != selected_chainsetup_rep->chains.end();) {
+  for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\":\n";
     for(p = 0; p < (*chain_citer)->chainops.size(); p++) {
       mitem << "\t" << p + 1 << ". " <<	(*chain_citer)->chainops[p]->name();
@@ -576,7 +576,7 @@ string ECA_CONTROLLER::chain_operator_status(void) const {
   return(mitem.to_string());
 }
 
-string ECA_CONTROLLER::controller_status(void) const {
+string ECA_CONTROL::controller_status(void) const {
   // --------
   // require:
   assert(is_selected() == true);
@@ -587,7 +587,7 @@ string ECA_CONTROLLER::controller_status(void) const {
   vector<CHAIN*>::const_iterator chain_citer;
   vector<GENERIC_CONTROLLER*>::size_type p;
 
-  for(chain_citer = selected_chainsetup_rep->chains.begin(); chain_citer != selected_chainsetup_rep->chains.end();) {
+  for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\":\n";
     for(p = 0; p < (*chain_citer)->gcontrollers.size(); p++) {
       mitem << "\t" << p + 1 << ". " << (*chain_citer)->gcontrollers[p]->name() << ": ";
@@ -609,7 +609,7 @@ string ECA_CONTROLLER::controller_status(void) const {
   return(mitem.to_string());
 }
 
-string ECA_CONTROLLER::aio_status(void) const {
+string ECA_CONTROL::aio_status(void) const {
   // --------
   // require:
   assert(is_selected() == true);
@@ -619,18 +619,18 @@ string ECA_CONTROLLER::aio_status(void) const {
   vector<AUDIO_IO*>::const_iterator adev_citer;
   vector<AUDIO_IO*>::size_type adev_sizet = 0;
 
-  adev_citer = selected_chainsetup_rep->inputs.begin();
+  adev_citer = selected_chainsetup_repp->inputs.begin();
   
-  while(adev_citer != selected_chainsetup_rep->inputs.end()) {
+  while(adev_citer != selected_chainsetup_repp->inputs.end()) {
     st_info_string += "Input (i" + kvu_numtostr(adev_sizet + 1) + "): \"";
     for(int n = 0; n < (*adev_citer)->number_of_params(); n++) {
       st_info_string += (*adev_citer)->get_parameter(n + 1);
       if (n + 1 < (*adev_citer)->number_of_params()) st_info_string += ",";
     }
     st_info_string += "\" - [" + (*adev_citer)->name() + "]";
-    if ((*adev_citer) == selected_audio_object_rep) st_info_string += " [selected]";
+    if ((*adev_citer) == selected_audio_object_repp) st_info_string += " [selected]";
     st_info_string += "\n\tconnected to chains \"";
-    vector<string> temp = selected_chainsetup_rep->get_attached_chains_to_input((selected_chainsetup_rep->inputs)[adev_sizet]);
+    vector<string> temp = selected_chainsetup_repp->get_attached_chains_to_input((selected_chainsetup_repp->inputs)[adev_sizet]);
     vector<string>::const_iterator p = temp.begin();
     while (p != temp.end()) {
       st_info_string += *p; 
@@ -643,17 +643,17 @@ string ECA_CONTROLLER::aio_status(void) const {
   }
 
   adev_sizet = 0;
-  adev_citer = selected_chainsetup_rep->outputs.begin();
-  while(adev_citer != selected_chainsetup_rep->outputs.end()) {
+  adev_citer = selected_chainsetup_repp->outputs.begin();
+  while(adev_citer != selected_chainsetup_repp->outputs.end()) {
     st_info_string += "Output (o" + kvu_numtostr(adev_sizet + 1) + "): \"";
     for(int n = 0; n < (*adev_citer)->number_of_params(); n++) {
       st_info_string += (*adev_citer)->get_parameter(n + 1);
       if (n + 1 < (*adev_citer)->number_of_params()) st_info_string += ",";
     }
     st_info_string += "\" - [" + (*adev_citer)->name() + "]";
-    if ((*adev_citer) == selected_audio_object_rep) st_info_string += " [selected]";
+    if ((*adev_citer) == selected_audio_object_repp) st_info_string += " [selected]";
     st_info_string += "\n\tconnected to chains \"";
-    vector<string> temp = selected_chainsetup_rep->get_attached_chains_to_output((selected_chainsetup_rep->outputs)[adev_sizet]);
+    vector<string> temp = selected_chainsetup_repp->get_attached_chains_to_output((selected_chainsetup_repp->outputs)[adev_sizet]);
     vector<string>::const_iterator p = temp.begin();
     while (p != temp.end()) {
       st_info_string += *p; 
@@ -664,13 +664,13 @@ string ECA_CONTROLLER::aio_status(void) const {
     st_info_string += (*adev_citer)->status();
     ++adev_sizet;
     ++adev_citer;
-    if (adev_sizet < selected_chainsetup_rep->outputs.size()) st_info_string += "\n";
+    if (adev_sizet < selected_chainsetup_repp->outputs.size()) st_info_string += "\n";
   }
 
   return(st_info_string);
 }
 
-void ECA_CONTROLLER::aio_register(void) const { 
+void ECA_CONTROL::aio_register(void) const { 
   ecadebug->control_flow("Registered audio objects");
   const map<string,string>& kmap = ::eca_audio_object_map.registered_objects();
   int count = 1;
@@ -692,7 +692,7 @@ void ECA_CONTROLLER::aio_register(void) const {
   }
 }
 
-void ECA_CONTROLLER::cop_register(void) const { 
+void ECA_CONTROL::cop_register(void) const { 
   ecadebug->control_flow("Registered chain operators");
   const map<string,string>& kmap = ECA_CHAIN_OPERATOR_MAP::registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
@@ -715,7 +715,7 @@ void ECA_CONTROLLER::cop_register(void) const {
   }
 }
 
-void ECA_CONTROLLER::preset_register(void) const { 
+void ECA_CONTROL::preset_register(void) const { 
   ecadebug->control_flow("Registered effect presets");
   const map<string,string>& kmap = ::eca_preset_map.registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
@@ -727,7 +727,7 @@ void ECA_CONTROLLER::preset_register(void) const {
   }
 }
 
-void ECA_CONTROLLER::ladspa_register(void) const { 
+void ECA_CONTROL::ladspa_register(void) const { 
   ecadebug->control_flow("Registered LADSPA plugins");
   const map<string,string>& kmap = ECA_LADSPA_PLUGIN_MAP::registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
@@ -748,7 +748,7 @@ void ECA_CONTROLLER::ladspa_register(void) const {
   }
 }
 
-void ECA_CONTROLLER::ctrl_register(void) const { 
+void ECA_CONTROL::ctrl_register(void) const { 
   ecadebug->control_flow("Registered controllers");
   const map<string,string>& kmap = ECA_CONTROLLER_MAP::registered_objects();
   map<string,string>::const_iterator p = kmap.begin();

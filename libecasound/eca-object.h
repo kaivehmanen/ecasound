@@ -1,5 +1,5 @@
-#ifndef _ECA_OBJECT_H
-#define _ECA_OBJECT_H
+#ifndef INCLUDED_ECA_OBJECT_H
+#define INCLUDED_ECA_OBJECT_H
 
 #include <string>
 

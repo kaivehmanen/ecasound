@@ -119,8 +119,9 @@ void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(ECA_ERROR*) {
   snd_pcm_format_t pf;
   ::memset(&pf, 0, sizeof(pf));
 
-  if ((pcm_info.flags & SND_PCM_CHNINFO_INTERLEAVE) != SND_PCM_CHNINFO_INTERLEAVE)
-    throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "non-interleaved streams not supported!", ECA_ERROR::stop));
+  if (channels() > 1 &&
+      (pcm_info_rep.flags & SND_PCM_STREAM_INFO_INTERLEAVE) != SND_PCM_STREAM_INFO_INTERLEAVE)
+    throw(new ECA_ERROR("AUDIOIO-ALSA3", "device can't handle interleaved streams!", ECA_ERROR::stop));
   pf.interleave = 1;
 
   int format;

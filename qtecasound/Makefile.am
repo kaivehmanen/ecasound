@@ -64,14 +64,10 @@ ecasound_qt_mocs = 	eca-qtdebug_moc.cpp \
 
 qtecasound_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
 qtecasound_debug_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
-qtecasound_LDADD = 	-L$(top_builddir)/kvutils \
-		   	-L$(top_builddir)/kvutils/.libs \
-		   	-lkvutils \
-		   	-L$(qt_libraries) -lqt \
+qtecasound_LDADD = 	-L$(qt_libraries) -lqt \
 		   	$(top_builddir)/libecasound/libecasound.la \
 			$(top_builddir)/libqtecasound/libqtecasound.la
 qtecasound_debug_LDADD =  -L$(top_builddir)/kvutils \
-			  -L$(top_builddir)/kvutils/.libs \
 			  -lkvutils -L$(qt_libraries) -lqt \
 			   $(top_builddir)/libecasound/libecasound_debug.la \
 			   $(top_builddir)/libqtecasound/libqtecasound_debug.la

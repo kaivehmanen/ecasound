@@ -43,12 +43,12 @@ class QENonblockingEvent : public QEEvent {
    */
   virtual long int position_in_samples(void) const;
 
-  QENonblockingEvent(ECA_CONTROLLER* ctrl) : QEEvent(ctrl), ectrl(ctrl) { }
+  QENonblockingEvent(ECA_CONTROL* ctrl) : QEEvent(ctrl), ectrl(ctrl) { }
   virtual ~QENonblockingEvent(void) { }
 
  private:
 
-  ECA_CONTROLLER* ectrl;
+  ECA_CONTROL* ectrl;
 };
 
 #endif

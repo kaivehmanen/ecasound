@@ -22,6 +22,7 @@
 #include <kvutils/kvu_numtostr.h>
 
 #include "samplebuffer.h"
+#include "sample-specs.h"
 #include "audioio-types.h"
 #include "audioio-loop.h"
 
@@ -30,7 +31,11 @@
 
 LOOP_DEVICE::LOOP_DEVICE(int id) 
   :  AUDIO_IO("loop," + kvu_numtostr(id), io_readwrite),
-     id_rep(id) { 
+     id_rep(id),
+     sbuf(buffersize(),
+	  SAMPLE_SPECS::channel_count_default,
+	  SAMPLE_SPECS::sample_rate_default)
+{ 
   registered_inputs_rep = 0;
   writes_rep = 0;
   registered_outputs_rep = 0;
@@ -51,4 +56,28 @@ void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer) {
   sbuf.add_with_weight(*buffer, registered_outputs_rep);
   if (writes_rep == registered_outputs_rep) writes_rep = 0;
   filled_rep = true;
+}
+
+void LOOP_DEVICE::set_parameter(int param, 
+				string value) {
+  switch (param) {
+  case 1: 
+    label(value);
+    break;
+
+  case 2: 
+    id_rep = atoi(value.c_str());
+    break;
+  }
+}
+
+string LOOP_DEVICE::get_parameter(int param) const {
+  switch (param) {
+  case 1: 
+    return(label());
+
+  case 2: 
+    return(kvu_numtostr(id_rep));
+  }
+  return("");
 }

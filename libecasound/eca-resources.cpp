@@ -46,17 +46,11 @@ void ECA_RESOURCES::set_defaults(void) {
   if (resource("ext-text-editor-use-getenv") == "") resource("ext-text-editor-use-getenv","true");
   if (resource("ext-wave-editor") == "") resource("ext-wave-editor","ecawave");
 
-  if (resource("ext-mpg123-path") == "") resource("ext-mpg123-path","mpg123");
-  if (resource("ext-mpg123-args") == "") resource("ext-mpg123-args","-b 0");
-
-  if (resource("ext-lame-path") == "") resource("ext-lame-path","lame");
-  if (resource("ext-lame-args") == "") resource("ext-lame-args","-b 128");
+  if (resource("ext-mp3-input-cmd") == "") resource("ext-mp3-input-cmd","mpg123 -b 0 -q -s -k %o %f");
+  if (resource("ext-mp3-output-cmd") == "") resource("ext-mp3-output-cmd", "lame -b 128 -x -S - %f");
 
   if (resource("ext-mikmod-path") == "") resource("ext-mikmod-path","mikmod");
   if (resource("ext-mikmod-args") == "") resource("ext-mikmod-args","-p 0 --noloops");
 
   if (resource("ladspa-plugin-directory") == "") resource("ladspa-plugin-directory","/usr/local/lib/ladspa");
 }
-
-
-

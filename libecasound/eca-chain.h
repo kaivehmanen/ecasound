@@ -25,8 +25,8 @@ class CHAIN {
   friend class ECA_PROCESSOR;
   friend class ECA_SESSION;
   friend class ECA_AUDIO_OBJECTS;
-  friend class ECA_CONTROLLER;
-  friend class ECA_CONTROLLER_OBJECTS;
+  friend class ECA_CONTROL;
+  friend class ECA_CONTROL_OBJECTS;
   friend void *mthread_process_chains(void* params);
 
  private:

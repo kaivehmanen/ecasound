@@ -1,5 +1,5 @@
-#ifndef _ECA_SESSION_H
-#define _ECA_SESSION_H
+#ifndef INCLUDED_ECA_SESSION_H
+#define INCLUDED_ECA_SESSION_H
 
 #include <vector>
 #include <string>
@@ -28,9 +28,9 @@ enum EP_STATUS { ep_status_running,
  */
 class ECA_SESSION {
 
-  friend class ECA_CONTROLLER_BASE;
-  friend class ECA_CONTROLLER_OBJECTS;
-  friend class ECA_CONTROLLER;
+  friend class ECA_CONTROL_BASE;
+  friend class ECA_CONTROL_OBJECTS;
+  friend class ECA_CONTROL;
   friend class ECA_PROCESSOR;
 
  private:
@@ -51,7 +51,6 @@ class ECA_SESSION {
   // Setup interpretation
   // ---
   void set_defaults(void);
-  void set_scheduling();
   void interpret_general_options(COMMAND_LINE& cline);
   void interpret_general_option (const string& argu);
   void interpret_chainsetup (const string& argu);

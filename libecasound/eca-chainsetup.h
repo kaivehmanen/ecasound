@@ -1,17 +1,13 @@
-#ifndef _ECA_CHAINSETUP_H
-#define _ECA_CHAINSETUP_H
+#ifndef INCLUDED_ECA_CHAINSETUP_H
+#define INCLUDED_ECA_CHAINSETUP_H
 
 #include <vector>
 #include <string>
 #include <map>
 
 #include <kvutils/com_line.h>
-
-#include "eca-control-position.h"
-/*  #include "eca-chainop-map.h" */
-/*  #include "eca-controller-map.h" */
+#include "eca-chainsetup-position.h"
 #include "eca-audio-objects.h"
-
 #include "eca-error.h"
 
 class CONTROLLER_SOURCE;
@@ -22,7 +18,7 @@ class GENERIC_CONTROLLER;
  * Class that represents a single chainsetup.
  * @author Kai Vehmanen
  */
-class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
+class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
 		       public ECA_AUDIO_OBJECTS {
 
  public:
@@ -31,8 +27,8 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
 
  private:
 
-  string setup_name;
-  string setup_filename;
+  string setup_name_rep;
+  string setup_filename_rep;
   bool is_enabled_rep;
   enum EP_MM_MODE mixmode_rep;
 
@@ -52,8 +48,8 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
    */
   void set_defaults (void);
 
-  void set_name(const string& str) { setup_name = str; }
-  void set_filename(const string& str) { setup_filename = str; }
+  void set_name(const string& str) { setup_name_rep = str; }
+  void set_filename(const string& str) { setup_filename_rep = str; }
 
   /**
    * Handle options. 
@@ -218,8 +214,8 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
 
   void set_mixmode(enum EP_MM_MODE value) { mixmode_rep = value; }  
 
-  const string& name(void) const { return(setup_name); }
-  const string& filename(void) const { return(setup_filename); }
+  const string& name(void) const { return(setup_name_rep); }
+  const string& filename(void) const { return(setup_filename_rep); }
   enum EP_MM_MODE mixmode(void) const { return(mixmode_rep); }
 
   /**
