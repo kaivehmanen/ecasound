@@ -1,6 +1,10 @@
 // ------------------------------------------------------------------------
 // audioio_jack_manager.cpp: Manager for JACK client objects
-// Copyright (C) 2001-2003 Kai Vehmanen
+// Copyright (C) 2001-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 2
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -129,8 +133,8 @@ static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t 
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
   int result = 1; /* ready for rolling */
 
-  if (current->exit_request_rep == 1) { 
-    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: after exit!!!" << endl); 
+  if (current->exit_request_rep == 1 || current->shutdown_request_rep == 1) { 
+    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: after exit/shutdown!!!" << endl); 
     return 0;
   }
 
@@ -354,8 +358,13 @@ static int eca_jack_process_callback(jack_nframes_t nframes, void *arg)
 
   PROFILE_CE_STATEMENT(eca_jack_process_profile_pre());
 
-  if (current->exit_request_rep == 1) { 
-    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: after exit!!!" << endl); 
+  if (current->exit_request_rep == 1 || current->shutdown_request_rep == 1) { 
+    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: after shutdown/exit!!!" << endl); 
+    return 0;
+  }
+
+  if (current->engine_repp == 0) {
+    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: after engine destructor!!!" << endl); 
     return 0;
   }
 
@@ -397,7 +406,7 @@ static int eca_jack_process_callback(jack_nframes_t nframes, void *arg)
   
   PROFILE_CE_STATEMENT(eca_jack_process_profile_post());
 
-  return(0);
+  return 0;
 }
 
 /**
@@ -613,10 +622,10 @@ static int eca_jack_srate_cb(jack_nframes_t nframes, void *arg)
   if (static_cast<long int>(nframes) != current->srate_rep) {
     current->shutdown_request_rep = true;
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		"(audioio-jack-manager) Invalid new samplerate, shutting down.");
+		"(audioio-jack-manager) Unable to adapt to the new samplerate received from JACK, shutting down.");
   }
 
-  return(0);
+  return 0;
 }
 
 /**
@@ -642,10 +651,10 @@ static int eca_jack_bsize_cb(jack_nframes_t nframes, void *arg)
     // FIXME: leads into a segfault...?
     current->shutdown_request_rep = true;
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		"(audioio-jack-manager) Invalid new buffersize, shutting down.");
+		"(audioio-jack-manager) Unable to adapt to the new buffersize received from JACK, shutting down.");
   }
 
-  return(0);
+  return 0;
 }
 
 /**
@@ -753,7 +762,7 @@ bool AUDIO_IO_JACK_MANAGER::is_managed_type(const AUDIO_IO* aobj) const
     return(true);
   }
 
-  return(false);
+  return false;
 }
 
 /**
@@ -801,11 +810,11 @@ int AUDIO_IO_JACK_MANAGER::get_object_id(const AUDIO_IO* aobj) const
       ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		  "(audioio-jack-manager) found object id for aobj " +
 		  aobj->name() + ": " + kvu_numtostr((*p)->client_id));
-      return((*p)->client_id);
+      return (*p)->client_id;
     }
     ++p;
   }
-  return(-1);
+  return -1;
 }
 
 /**
@@ -819,7 +828,7 @@ list<int> AUDIO_IO_JACK_MANAGER::get_object_list(void) const
     object_list.push_back((*p)->client_id);
     ++p;
   }
-  return(object_list);
+  return object_list;
 }
 
 /**
@@ -917,22 +926,22 @@ std::string AUDIO_IO_JACK_MANAGER::get_parameter(int param) const
     {
     case 1:
       {
-	return(jackname_rep);
+	return jackname_rep;
       }
 
     case 2: 
       { 
 	switch(mode_rep) {
-	case AUDIO_IO_JACK_MANAGER::Transport_none: return("notransport");
-	case AUDIO_IO_JACK_MANAGER::Transport_receive: return("recv");
-	case AUDIO_IO_JACK_MANAGER::Transport_send: return("send");
-	case AUDIO_IO_JACK_MANAGER::Transport_send_receive: return("sendrecv");
-	default: return("notransport");
+	case AUDIO_IO_JACK_MANAGER::Transport_none: return "notransport";
+	case AUDIO_IO_JACK_MANAGER::Transport_receive: return "recv";
+	case AUDIO_IO_JACK_MANAGER::Transport_send: return "send";
+	case AUDIO_IO_JACK_MANAGER::Transport_send_receive: return "sendrecv";
+	default: return "notransport";
 	}
 	break;
       }
     }
-  return("");
+  return "";
 }
 
 /**
@@ -960,8 +969,10 @@ void AUDIO_IO_JACK_MANAGER::initial_seek(void)
 /**
  * context: E-level-0
  */
-void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
+int AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 {
+  int result = 0;
+
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver exec");
 
   engine_repp = engine;
@@ -1031,6 +1042,7 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
     /* case 3: problems with jack callbacks -> exit */
     if (shutdown_request_rep == true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) problems with JACK callbacks");
+      result = -1;
       break;
     }
   }
@@ -1043,6 +1055,8 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 
   /* signal exit() that we are done */
   signal_exit();
+
+  return result;
 }
 
 /**
@@ -1229,7 +1243,7 @@ AUDIO_IO_JACK_MANAGER::eca_jack_node_t* AUDIO_IO_JACK_MANAGER::get_node(int clie
   DBC_ENSURE(node != 0);
   // --
 
-  return(node);
+  return node;
 }
 
 /**
@@ -1273,7 +1287,7 @@ static std::string eca_get_jack_port_item(const char **ports, int item)
 {
   int n = 0;
   while(ports != 0 && ports[n] != 0) {
-    if (n + 1 == item) return(string(ports[n]));
+    if (n + 1 == item) return string(ports[n]);
     n++;
   }
   return string("");
@@ -1349,7 +1363,7 @@ long int AUDIO_IO_JACK_MANAGER::client_latency(int client_id)
     ++p;
   }
  
-  return(latency);
+  return latency;
 }
 
 /**
@@ -1520,17 +1534,17 @@ void AUDIO_IO_JACK_MANAGER::close(int client_id)
  */
 long int AUDIO_IO_JACK_MANAGER::buffersize(void) const
 {
-  if (is_open() != true) return(0);
+  if (is_open() != true) return 0;
 
-  return(buffersize_rep);
+  return buffersize_rep;
 }
 
 bool AUDIO_IO_JACK_MANAGER::is_running(void) const
 { 
   if (engine_repp != 0) {
-    return(engine_repp->is_running());
+    return engine_repp->is_running();
   }
-  return(false);
+  return false;
 }
 
 /**
@@ -1539,9 +1553,9 @@ bool AUDIO_IO_JACK_MANAGER::is_running(void) const
  */
 SAMPLE_SPECS::sample_rate_t AUDIO_IO_JACK_MANAGER::samples_per_second(void) const
 {
-  if (is_open() != true) return(0);
+  if (is_open() != true) return 0;
 
-  return(srate_rep);
+  return srate_rep;
 }
 
 /**
@@ -1564,7 +1578,7 @@ long int AUDIO_IO_JACK_MANAGER::read_samples(int client_id, void* target_buffer,
     ++p;
   }
 
-  return(buffersize_rep);
+  return buffersize_rep;
 }
 
 /**

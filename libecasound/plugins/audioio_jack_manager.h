@@ -123,7 +123,7 @@ public:
   /** @name Functions reimplemented from ECA_ENGINE_DRIVER */
   /*@{*/
 
-  virtual void exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup);
+  virtual int exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup);
   virtual void start(void);
   virtual void stop(void);
   virtual void exit(void);
