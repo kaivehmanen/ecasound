@@ -85,6 +85,7 @@ extern "C" {
 #include "audioio-null.h"
 #include "audioio-rtnull.h"
 #include "audioio-typeselect.h"
+#include "audioio-reverse.h"
 
 #include "midiio-raw.h"
 
@@ -290,6 +291,7 @@ static void register_default_audio_objects(void) {
   eca_audio_object_map->register_object("stdout", "^stdout$", raw);
   eca_audio_object_map->register_object("null", "^null$", new NULLFILE());
   eca_audio_object_map->register_object("typeselect", "^typeselect$", new AUDIO_IO_TYPESELECT());
+  eca_audio_object_map->register_object("reverse", "^reverse$", new AUDIO_IO_REVERSE());
 }
 
 static void register_default_chainops(void) {

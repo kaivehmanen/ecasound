@@ -59,7 +59,11 @@ void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: Opening ewf-child:" + child->label() + ".");
 
   child->io_mode(io_mode());
+  child->set_audio_format(audio_format());
   child->open();
+  if (child->locked_audio_format() == true) {
+    set_audio_format(child->audio_format());
+  }
 
   child_offset_rep.set_samples_per_second(child->samples_per_second());
   child_start_pos_rep.set_samples_per_second(child->samples_per_second());

@@ -16,25 +16,19 @@ class ECA_CHAINSETUP;
 class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
 		    public ECA_IAMODE_PARSER {
 
- private:
-
-  std::vector<std::string> action_args_rep;
-  double action_arg_f_rep; 
-  bool action_arg_f_set_rep;
-  ECA_CONTROL_DUMP ctrl_dump_rep;
-
-  void action(int action_id);
-  void chainsetup_option(const std::string& cmd);
-  void set_action_argument(const std::vector<std::string>& s);
-  void set_action_argument(double v);
-  void clear_action_arguments(void);
-  double first_argument_as_float(void) const;
-  long int first_argument_as_long_int(void) const;
-  SAMPLE_SPECS::sample_pos_t first_argument_as_samples(void) const;
-
-  std::string chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const;
 
  public:
+
+  /** @name Constructors and dtors */
+  /*@{*/
+
+  ECA_CONTROL (ECA_SESSION* psession);
+  ~ECA_CONTROL (void);
+
+  /*@}*/
+
+  /** @name Public functions for issuing command */
+  /*@{*/
 
   /**
    * Parses a std::string containing set of ecasound interactive mode (EIAM)
@@ -54,10 +48,11 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
    */
   void action(int action_id, const std::vector<std::string>& args);
 
-  // -------------------------------------------------------------------
-  // Session info
-  // -------------------------------------------------------------------
-  
+  /*@}*/
+
+  /** @name Public functions for getting session information */
+  /*@{*/
+
   /**
    * Return info about chainsetups
    */
@@ -99,19 +94,37 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   void ladspa_register(void);
   void ctrl_register(void);
 
-  // -------------------------------------------------------------------
-  // Session info / output to ecadebug
-  // -------------------------------------------------------------------
-  
+  /*@}*/
+
+  /** @name Public functions printing status information */
+  /*@{*/
+
   void print_last_value(void);
   void print_last_error(void);
 
-  // -------------------------------------------------------------------
-  // Constructors and dtors
-  // -------------------------------------------------------------------
+  /*@}*/
 
-  ECA_CONTROL (ECA_SESSION* psession);
-  ~ECA_CONTROL (void);
+ private:
+
+  std::vector<std::string> action_args_rep;
+  double action_arg_f_rep; 
+  bool action_arg_f_set_rep;
+  bool action_ok;
+  bool action_reconnect;
+  bool action_restart;
+  ECA_CONTROL_DUMP ctrl_dump_rep;
+
+  void action(int action_id);
+  void check_action_preconditions(int action_id);
+  void chainsetup_option(const std::string& cmd);
+  void set_action_argument(const std::vector<std::string>& s);
+  void set_action_argument(double v);
+  void clear_action_arguments(void);
+  double first_argument_as_float(void) const;
+  long int first_argument_as_long_int(void) const;
+  SAMPLE_SPECS::sample_pos_t first_argument_as_samples(void) const;
+
+  std::string chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const;
 };
 
 #endif

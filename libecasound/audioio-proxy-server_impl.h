@@ -13,6 +13,8 @@ class AUDIO_IO_PROXY_SERVER_impl {
  private:
 
   pthread_t io_thread_rep;
+  pthread_cond_t data_cond_rep;
+  pthread_mutex_t data_mutex_rep;
   pthread_cond_t full_cond_rep;
   pthread_mutex_t full_mutex_rep;
   pthread_cond_t stop_cond_rep;

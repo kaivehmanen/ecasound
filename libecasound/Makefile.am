@@ -76,7 +76,8 @@ ecasound_audioio_include = 	\
 			audioio-proxy-server_impl.h \
 			audioio-proxy-buffer.h \
 			audioio-buffered-proxy.h \
-			audioio-typeselect.h
+			audioio-typeselect.h \
+			audioio-reverse.h
 
 ecasound_midi_include =	\
 			midi-server.h \
@@ -209,6 +210,7 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-proxy-buffer.cpp \
 			audioio-buffered-proxy.cpp \
 			audioio-typeselect.cpp \
+			audioio-reverse.cpp \
 			$(ecasound_audioio_oss_src)
 
 ecasound_midi_src =	\

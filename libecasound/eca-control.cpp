@@ -61,11 +61,15 @@ using std::endl;
 ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession) 
   : ECA_CONTROL_OBJECTS(psession),
     ctrl_dump_rep(this)
-{ }
+{
+}
 
-ECA_CONTROL::~ECA_CONTROL(void) { }
+ECA_CONTROL::~ECA_CONTROL(void)
+{
+}
 
-void ECA_CONTROL::command(const string& cmd) {
+void ECA_CONTROL::command(const string& cmd)
+{
   clear_last_values();
   clear_action_arguments();
   vector<string> cmds = string_to_tokens_quoted(cmd);
@@ -77,7 +81,7 @@ void ECA_CONTROL::command(const string& cmd) {
       // *p is not recognized as a iamode command
       // ---
       if (p->size() > 0 && (*p)[0] == '-') {
-	//  cerr << "Note! Direct use of EOS-options (-prefix:arg1,...,argN)" << " as iactive-mode commands is considered deprecated. " << "\tUse the notation 'cs-option -prefix:a,b,x' instead." << endl;
+	//  std::cerr << "Note! Direct use of EOS-options (-prefix:arg1,...,argN)" << " as iactive-mode commands is considered deprecated. " << "\tUse the notation 'cs-option -prefix:a,b,x' instead." << std::endl;
 	chainsetup_option(cmd);
       }
       else {
@@ -101,30 +105,35 @@ void ECA_CONTROL::command(const string& cmd) {
   }
 }
 
-void ECA_CONTROL::set_action_argument(const vector<string>& s) {
+void ECA_CONTROL::set_action_argument(const vector<string>& s)
+{
   action_args_rep = s;
   action_arg_f_set_rep = false;
 }
 
-void ECA_CONTROL::set_action_argument(double v) {
+void ECA_CONTROL::set_action_argument(double v)
+{
   action_arg_f_rep = v;
   action_arg_f_set_rep = true;
 }
 
-void ECA_CONTROL::clear_action_arguments(void) {
+void ECA_CONTROL::clear_action_arguments(void)
+{
   action_args_rep.clear();
   action_arg_f_rep = 0.0f;
   action_arg_f_set_rep = false;
 }
 
-double ECA_CONTROL::first_argument_as_float(void) const {
+double ECA_CONTROL::first_argument_as_float(void) const
+{
   if (action_arg_f_set_rep == true)
     return(action_arg_f_rep);
 
   return(atof(action_args_rep[0].c_str()));
 }
 
-long int ECA_CONTROL::first_argument_as_long_int(void) const {
+long int ECA_CONTROL::first_argument_as_long_int(void) const
+{
   return(atol(action_args_rep[0].c_str()));
 }
 
@@ -136,7 +145,8 @@ SAMPLE_SPECS::sample_pos_t ECA_CONTROL::first_argument_as_samples(void) const {
 #endif
 }
 
-void ECA_CONTROL::command_float_arg(const string& cmd, double arg) {
+void ECA_CONTROL::command_float_arg(const string& cmd, double arg)
+{
   clear_action_arguments();
   set_action_argument(arg);
   int action_id = ec_unknown;
@@ -149,7 +159,8 @@ void ECA_CONTROL::command_float_arg(const string& cmd, double arg) {
 /**
  * Interprets an EOS (ecasound optiont syntax) token  (prefixed with '-').
  */
-void ECA_CONTROL::chainsetup_option(const string& cmd) {
+void ECA_CONTROL::chainsetup_option(const string& cmd)
+{
   string prefix = get_argument_prefix(cmd);
   if (prefix == "el" || prefix == "pn") { // --- LADSPA plugins and presets
     if (selected_chains().size() == 1) 
@@ -175,6 +186,79 @@ void ECA_CONTROL::chainsetup_option(const string& cmd) {
   }
 }
 
+/**
+ * Checks action preconditions.
+ *
+ * @return Sets status of private data members 'action_ok', 
+ *         'action_restart', and 'action_reconnect'.
+ */
+void ECA_CONTROL::check_action_preconditions(int action_id)
+{
+  action_ok = true;
+  action_reconnect = false;
+  action_restart = false;
+
+  /* case 1: action requiring arguments, but not arguments available */
+  if (action_arg_f_set_rep == false && 
+      action_args_rep.size() == 0 &&
+      action_requires_params(action_id)) {
+    set_last_error("Can't perform requested action; argument omitted.");
+    action_ok = false;
+  }
+  /* case 2: action requires an audio input, but no input available */
+  else if (get_audio_input() == 0 &&
+	   action_requires_selected_audio_input(action_id)) {
+    set_last_error("Can't perform requested action; no audio input selected.");
+    action_ok = false;
+  }
+  /* case 3: action requires an audio output, but no output available */
+  else if (get_audio_output() == 0 &&
+	   action_requires_selected_audio_output(action_id)) {
+    set_last_error("Can't perform requested action; no audio output selected.");
+    action_ok = false;
+  }
+  /* case 4: action requires a select chainsetup, but none selected */
+  else if (is_selected() == false &&
+	   action_requires_selected(action_id)) {
+    if (!is_connected()) {
+      set_last_error("Can't perform requested action; no chainsetup selected.");
+      action_ok = false;
+    }
+    else {
+      set_last_error("Warning! No chainsetup selected. Connected chainsetup will be selected.");
+      select_chainsetup(connected_chainsetup());
+    }
+  }
+  /* case 5: action requires a connected chainsetup, but none connected */
+  else if (is_connected() == false &&
+      action_requires_connected(action_id)) {
+    if (!is_selected()) {
+      set_last_error("Can't perform requested action; no chainsetup connected.");
+      action_ok = false;
+    }
+    else {
+      set_last_error("Warning! No chainsetup connected. Trying to connect currently selected chainsetup.");
+      if (is_valid() == true) {
+	connect_chainsetup();
+      }
+      if (is_connected() != true) {
+	/* connect_chainsetup() sets last_error() so we just add to it */
+	set_last_error(last_error() + "\nWarning! Selected chainsetup cannot be connected. Can't perform requested action. ");
+	action_ok = false;
+      }
+    }
+  }
+  /* case 6: action can't be performed on a connected setup, 
+   *         but selected chainsetup is also connected */
+  else if (selected_chainsetup() == connected_chainsetup() &&
+	   action_requires_selected_not_connected(action_id)) {
+    set_last_error("Warning! This operation requires that chainsetup is disconnected. Temporarily disconnecting...");
+    if (is_running()) action_restart = true;
+    disconnect_chainsetup();
+    action_reconnect = true;
+  }
+}
+
 void ECA_CONTROL::action(int action_id, 
 			 const vector<string>& args) 
 {
@@ -183,66 +267,14 @@ void ECA_CONTROL::action(int action_id,
   action(action_id);
 }
 
-void ECA_CONTROL::action(int action_id) {
+void ECA_CONTROL::action(int action_id)
+{
   clear_last_values();
-  bool reconnect = false;
-  bool restart = false;
-  if (action_arg_f_set_rep == false && 
-      action_args_rep.size() == 0 &&
-      action_requires_params(action_id)) {
-    set_last_error("Can't perform requested action; argument omitted.");
-    return;
-  }
-  else if (is_selected() == true &&
-	   get_audio_input() == 0 &&
-	   action_requires_selected_audio_input(action_id)) {
-    set_last_error("Can't perform requested action; no audio input selected.");
-    return;
-  }
-  else if (is_selected() == true && 
-	   get_audio_output() == 0 &&
-	   action_requires_selected_audio_output(action_id)) {
-    set_last_error("Can't perform requested action; no audio output selected.");
-    return;
-  }
-  else if (is_selected() == false &&
-      action_requires_selected(action_id)) {
-    if (!is_connected()) {
-      set_last_error("Can't perform requested action; no chainsetup selected.");
-      return;
-    }
-    else {
-      set_last_error("Warning! No chainsetup selected. Connected chainsetup will be selected.");
-      select_chainsetup(connected_chainsetup());
-    }
-  }
-  else if (is_connected() == false &&
-      action_requires_connected(action_id)) {
-    if (!is_selected()) {
-      set_last_error("Can't perform requested action; no chainsetup connected.");
-      return;
-    }
-    else {
-      set_last_error("Warning! No chainsetup connected. Trying to connect currently selected chainsetup.");
-      if (is_valid() == true) {
-	connect_chainsetup();
-      }
-      if (is_connected() != true) {
-	set_last_error("Warning! Selected chainsetup cannot be connected. Can't perform requested action.");
-	return;
-      }
-    }
-  }
-  else if (selected_chainsetup() == connected_chainsetup() &&
-      action_requires_selected_not_connected(action_id)) {
-    set_last_error("Warning! This operation requires that chainsetup is disconnected. Temporarily disconnecting...");
-    if (is_running()) restart = true;
-    disconnect_chainsetup();
-    reconnect = true;
-  }
+  check_action_preconditions(action_id);
+
+  if (action_ok != true) return;
 
   switch(action_id) {
-
   case ec_unknown: { set_last_error("Unknown command!"); break; }
 
     // ---
@@ -590,7 +622,7 @@ void ECA_CONTROL::action(int action_id) {
     }
   } // <-- switch-case
 
-  if (reconnect == true) {
+  if (action_reconnect == true) {
     if (is_selected() == false ||
 	is_valid() == false) {
       set_last_error("Can't reconnect chainsetup.");
@@ -601,7 +633,7 @@ void ECA_CONTROL::action(int action_id) {
 	set_last_error("Can't reconnect chainsetup.");
       }
       else {
-	if (restart == true) start();
+	if (action_restart == true) start();
       }
     }
   }

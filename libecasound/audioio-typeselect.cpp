@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-typeselect.cpp: A proxy class for overriding default keyword
 //                         and filename associations.
-// Copyright (C) 2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2001,2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,14 +37,14 @@ AUDIO_IO_TYPESELECT::AUDIO_IO_TYPESELECT (void) {
 /**
  * Destructor.
  */
-AUDIO_IO_TYPESELECT::~AUDIO_IO_TYPESELECT (void) { 
-
+AUDIO_IO_TYPESELECT::~AUDIO_IO_TYPESELECT (void)
+{
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-typeselect) destructor " + label() + ".");  
   delete child_repp; // either null or the actual child object
 }
 
-void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&) { 
-
+void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
+{
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-typeselect) open " + label() + ".");  
 
   if (init_rep != true) {
@@ -56,34 +56,45 @@ void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
 	tmp = ECA_OBJECT_FACTORY::create_audio_object(type);
       }
     }
+
     if (tmp != 0) {
-      delete child_repp; // the placeholder null object
+      delete child_repp; /* the placeholder null object */
       child_repp = tmp;
 
       int numparams = child_repp->number_of_params();
       for(int n = 0; n < numparams; n++) {
-	//  	cerr << "typeselect: param" << n + 1;
-	//  	cerr << " to " << get_parameter(n + 2) << endl;
 	child_repp->set_parameter(n + 1, get_parameter(n + 3));
 	numparams = child_repp->number_of_params(); // in case 'n_o_p()' varies
       }
-      
-      child_repp->buffersize(buffersize(), samples_per_second());
-      child_repp->io_mode(io_mode());
-      child_repp->open();
-      label(child_repp->label());
-      
-      init_rep = true;
+
+      init_rep = true; /* must be set after dyn. parameters */
     }
   }
+  
+  child_repp->buffersize(buffersize(), samples_per_second());
+  child_repp->io_mode(io_mode());
+  child_repp->set_audio_format(audio_format());
+  child_repp->open();
+  if (child_repp->locked_audio_format() == true) {
+    set_audio_format(child_repp->audio_format());
+  }
+  label(child_repp->label());
+  toggle_open_state(true);
 }
 
-string AUDIO_IO_TYPESELECT::parameter_names(void) const { 
+void AUDIO_IO_TYPESELECT::close(void)
+{ 
+  child_repp->close();
+  toggle_open_state(false);
+}
+
+string AUDIO_IO_TYPESELECT::parameter_names(void) const
+{ 
   return(string("typeselect,format,") + child_repp->parameter_names()); 
 }
 
-void AUDIO_IO_TYPESELECT::set_parameter(int param, string value) { 
-
+void AUDIO_IO_TYPESELECT::set_parameter(int param, string value)
+{ 
   ecadebug->msg(ECA_DEBUG::user_objects, 
 		"(audioio-typeselect) set_parameter "
 		+ label() + ".");  
@@ -100,8 +111,8 @@ void AUDIO_IO_TYPESELECT::set_parameter(int param, string value) {
   }
 }
 
-string AUDIO_IO_TYPESELECT::get_parameter(int param) const {
-
+string AUDIO_IO_TYPESELECT::get_parameter(int param) const
+{
   ecadebug->msg(ECA_DEBUG::user_objects, 
 		"(audioio-typeselect) get_parameter "
 		+ label() + ".");  

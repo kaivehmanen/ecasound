@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-buffered-proxy.cpp: Proxy class providing additional layer
 //                             of buffering instances of class AUDIO_IO.
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -115,12 +115,6 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
     sbuf->copy(*source);
     pbuffer_repp->advance_read_pointer();
     position_in_samples_advance(sbuf->length_in_samples());
-    // FIXME: make the threshold configurable
-    //      if (pbuffer_repp->read_space() < 16) {
-    // //        cerr << "Client read " << pbuffer_repp->readptr_rep.get() << ";";
-    // //        cerr << " read_space: " << pbuffer_repp->read_space() << "." << endl;
-    //        ::sched_yield();
-    //      }
   }
   else {
     if (pbuffer_repp->finished_rep.get() == 1) {
@@ -133,8 +127,9 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
 		    std::string("(audioio-buffered-proxy) Warning! Underrun for ") +
 		    child_repp->label() +
 		    ". Trying to recover.");
-      pserver_repp->wait_for_full(); 
+      pserver_repp->wait_for_data(); 
       if (pbuffer_repp->read_space() > 0) {
+	// std::cerr << "(audioio-buffered-proxy) recursing, read_space: " << pbuffer_repp->read_space() << "." << std::endl;
 	this->read_buffer(sbuf);
       }
       else {
@@ -166,7 +161,7 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
 		    std::string("(audioio-buffered-proxy) Warning! Overrun for ") +
 		    child_repp->label() +
 		    ". Trying to recover.");
-      pserver_repp->wait_for_full(); 
+      pserver_repp->wait_for_data(); 
       if (pbuffer_repp->write_space() > 0) {
 	this->write_buffer(sbuf);
       }

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>21.12.2001</h2>
+<h2>28.01.2002</h2>
 
 
     
@@ -256,6 +256,15 @@ a null audio device is created. This is useful if you just want
 to analyze sample data without writing it to a file. There's 
 also a realtime variant, "rtnull", which behaves just like "null" 
 objects, except all i/o is done at realtime speed.
+<p><p></p><dt><strong>Reverse - process audio data backwards</strong><dd>
+Object type 'reverse' can be used to reverse audio 
+data coming from an audio object. As an example, 
+"ecasound -i reverse,foo.wav -o /dev/dsp" will play 'foo.wav'
+backwards. Reversed output is not supported. 
+Note! Trying to reverse audio object types with really 
+slow seek operation (like mp3), works extremely badly.
+Try converting to an uncompressed format (wav or raw)
+first, and then do reversation.
 <p><p></p><dt><strong>System standard streams and named pipes</strong><dd>
 You can use standard streams (stdin and stdout) by giving "stdin" 
 or "stdout" as the file name. Audio data is assumed to be in

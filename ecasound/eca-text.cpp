@@ -164,6 +164,9 @@ void ecasound_start_passive(ECA_SESSION* param) {
   if (ctrl->is_connected() == true) {
     ctrl->run();
   }
+  else {
+    ctrl->print_last_error();
+  }
 }
 
 /**

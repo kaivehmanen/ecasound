@@ -64,7 +64,7 @@ void WAVEFILE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
 
   fio_repp = new ECA_FILE_IO_STREAM();
   if (fio_repp == 0) {
-    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Critical error when opening file " + label() + " for reading."));
+    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Critical error when opening file \"" + label() + "\" for reading."));
   }
   fio_repp->open_file(label(), "rb");
   if (fio_repp->file_mode() != "") {
@@ -93,11 +93,11 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
       }
       else  fio_repp = new ECA_FILE_IO_STREAM();
       if (fio_repp == 0) {
-	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Critical error when opening file " + label() + " for reading."));
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Critical error when opening file \"" + label() + "\" for reading."));
       }
       fio_repp->open_file(label(), "rb");
       if (fio_repp->is_file_ready() != true) {
-	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Couldn't open file " + label() + " for reading."));
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Couldn't open file \"" + label() + "\" for reading."));
       }
       read_riff_header();
       read_riff_fmt();     // also sets format()
@@ -109,11 +109,11 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
     {
       fio_repp = new ECA_FILE_IO_STREAM();
       if (fio_repp == 0) {
-	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Critical error when opening file " + label() + " for writing."));
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Critical error when opening file \"" + label() + "\" for writing."));
       }
       fio_repp->open_file(label(), "w+b");
       if (fio_repp->is_file_ready() != true) {
-	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Couldn't open file " + label() + " for writing."));
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Couldn't open file \"" + label() + "\" for writing."));
       }
       write_riff_header();
       write_riff_fmt();
@@ -125,7 +125,7 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
     {
       fio_repp = new ECA_FILE_IO_STREAM();
       if (fio_repp == 0) {
-	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Critical error when opening file " + label() + " for read&write."));
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Critical error when opening file \"" + label() + "\" for read&write."));
       }
       fio_repp->open_file(label(), "r+b");
       if (fio_repp->file_mode() != "") {
@@ -136,14 +136,14 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
       else {
 	fio_repp->open_file(label(), "w+b");
 	if (fio_repp->is_file_ready() != true) 
-	  throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Couldn't open file " + label() + " for read&write."));
+	  throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Couldn't open file \"" + label() + "\" for read&write."));
 
 	write_riff_header();
 	write_riff_fmt();
 	write_riff_datablock();
       }
       if (fio_repp->is_file_ready() != true) {
-	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Couldn't open file " + label() + " for read&write."));
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Couldn't open file \"" + label() + "\" for read&write."));
       }
     }
   }

@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2002-01-28  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* audioio-proxy-server.h (wait_for_data): added
+	* audioio-reverse.h (all): added
+	
 2002-01-24  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-audio-format.h (channels_changed): added

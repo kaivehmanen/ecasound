@@ -417,6 +417,7 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
   // --------
 
   bool no_errors = true;
+  string errmsg;
   if (is_connected() == true) {
     disconnect_chainsetup();
   }
@@ -425,11 +426,11 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
     ecadebug->msg("(eca-controller) Connected chainsetup:  \"" + connected_chainsetup() + "\".");
   }
   catch(ECA_ERROR& e) {
-    set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
+    errmsg = e.error_message();
     no_errors = false;
   }
   if (is_connected() != true) {
-    set_last_error("ECA-CONTROL-OBJECTS: Connecting chainsetup failed.");
+    set_last_error(" Connecting chainsetup failed: \"" + errmsg + "\"");
     no_errors = false;
   }
 
