@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 141204) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 161204) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -29,15 +29,17 @@ xx022005 (v2.3.6)  -** stable release **-
 		 log history length; default to 5 items
 	- changed: more helpful messages explain why a chainsetup 
 		   cannot be connected to the engine
-	- changed: EIAM - when returning a list of strings, replace all 
-		   commas with semi-colons in the string items to avoid 
-		   ambiguity in parsing
+	- changed: EIAM - when returning a list of strings, all commas
+		   in list elements are now escaped with backslashes; 
+		   this is done to avoid ambiguity in parsing
 	- changed: new default debug level of 271
 	- changed: new optimized message queue implementation used in
 	           communication between the engine and the interface 
 		   subsystems; solves a few remaining corner cases 
 		   where ecasound could block in real-time critical 
 		   code-paths
+	- changed: better error message if unable to load LADSPA plugin 
+		   with -el/-eli
 	- fixed: correctly interpret EIAM command arguments containing
 	         whitespace (example: "ai-add foo bar.wav")
 	- fixed: denormal problems in filter and delay operators
@@ -53,6 +55,9 @@ xx022005 (v2.3.6)  -** stable release **-
 		 affected all file formats handled via external tools 
 		 (ogg/mp3/flac/m4a/...); also a separate bug in handling
 		 spaces in ogg output filenames was fixed
+	- fixed: occasional bugs with rubyecasound in handling the
+		 EIAM 'quit' command; this also fixes the errors in 
+		 running 'make check' in ecasound/rubyecasound
 12112004 (v2.3.5)  -** stable release **-
 	- note: main website address has changed to www.eca.cx/ecasound
 	- changed: collected all email addresses from source files to 
