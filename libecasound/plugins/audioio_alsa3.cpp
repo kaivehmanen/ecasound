@@ -51,6 +51,7 @@ ALSA_PCM_DEVICE_06X::ALSA_PCM_DEVICE_06X (int card,
   is_triggered_rep = false;
   is_prepared_rep = false;
   overruns_rep = underruns_rep = 0;
+  position_in_samples_rep = 0;
 }
 
 void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
@@ -303,12 +304,15 @@ void ALSA_PCM_DEVICE_06X::start(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) start");
   ::snd_pcm_start(audio_fd_repp);
   is_triggered_rep = true;
+  position_in_samples_rep = 0;
 }
 
 long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer, 
-					long int samples) {
+					   long int samples) {
   assert(samples <= fragment_size_rep);
-  return(::snd_pcm_read(audio_fd_repp, target_buffer, fragment_size_rep));
+  long int realsamples = ::snd_pcm_read(audio_fd_repp, target_buffer, fragment_size_rep);
+  position_in_samples_rep += realsamples;
+  return(realsamples);
 }
 
 void ALSA_PCM_DEVICE_06X::print_status_debug(void) {
@@ -349,18 +353,19 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
     ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
     if (was_triggered == true) start();
   }
+  position_in_samples_rep += samples;
 }
 
 long ALSA_PCM_DEVICE_06X::position_in_samples(void) const {
   if (is_triggered_rep == false) return(0);
-  snd_pcm_status_t status;
-  memset(&status, 0, sizeof(status));
-  ::snd_pcm_status(audio_fd_repp, &status);
-
-  // FIXME: this doesn't work!!!
-  double time = status.tstamp.tv_sec * 1000000.0 + status.tstamp.tv_usec
-    -  status.trigger_time.tv_sec * 1000000.0 - status.trigger_time.tv_usec;
-  return(static_cast<long>(time * samples_per_second() / 1000000.0));
+  ssize_t delay = 0;
+  if (::snd_pcm_delay(audio_fd_repp, &delay) != 0) 
+    delay = 0;
+  
+  if (io_mode() == io_read)
+    return(position_in_samples_rep + delay);
+  
+  return(position_in_samples_rep - delay);
 }
 
 ALSA_PCM_DEVICE_06X::~ALSA_PCM_DEVICE_06X(void) { 

@@ -32,6 +32,7 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
 #endif
 
   long int fragment_size_rep;
+  long int position_in_samples_rep;
  
   int card_number_rep, device_number_rep, subdevice_number_rep;
   int pcm_mode_rep, pcm_stream_rep;
