@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-11-22  Kai Vehmanen <kaiv@wakkanet.fi>
+	
+	* eca-audio-objects (set_double_buffer_size,double_buffer_size): added
+	
 2000-11-19  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* audioio-buffered-proxy.h (all): added

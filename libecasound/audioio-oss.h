@@ -16,6 +16,12 @@
 
 #ifdef COMPILE_OSS
 #include <sys/soundcard.h>
+#ifndef AFMT_S32_LE
+#define AFMT_S32_LE              0x00001000
+#endif
+#ifndef AFMT_S32_BE
+#define AFMT_S32_BE              0x00002000
+#endif
 #endif
 
 /**

@@ -49,6 +49,8 @@ void MP3FILE::set_mp3_output_cmd(const string& value) { MP3FILE::default_mp3_out
 MP3FILE::MP3FILE(const string& name) {
   label(name);
   finished_rep = false;
+  mono_input_rep = false;
+  pcm_rep = 1;
 }
 
 MP3FILE::~MP3FILE(void) { close(); }
@@ -72,9 +74,19 @@ void MP3FILE::close(void) {
   toggle_open_state(false);
 }
 
+void MP3FILE::process_mono_fix(char* target_buffer, long int bytes_rep) {
+  for(long int n = 0; n < bytes_rep;) {
+    target_buffer[n + 2] = target_buffer[n];
+    target_buffer[n + 3] = target_buffer[n + 1];
+    n += 4;
+  }
+}
+
 long int MP3FILE::read_samples(void* target_buffer, long int samples) {
   if (triggered_rep != true) triggered_rep = true;
   bytes_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
+  if (mono_input_rep == true)
+    process_mono_fix(static_cast<char*>(target_buffer), bytes_rep);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
       ecadebug->msg(ECA_DEBUG::info, "(audioio-mp3) Can't start process \"" + MP3FILE::default_mp3_input_cmd + "\". Please check your ~/.ecasoundrc.");
@@ -146,8 +158,13 @@ void MP3FILE::get_mp3_params(const string& fname) throw(SETUP_ERROR&) {
   m << "MP3 pcm value: " << pcm_rep << ".";
   ecadebug->msg(ECA_DEBUG::user_objects,m.to_string());
   
-  set_channels((newlayer.mode() == Layer::MPG_MD_MONO) ? 1 : 2);
-  set_samples_per_second(bsecond / 2 / 2); // mpg123 always outputs 16bit stereo
+  // notice! mpg123 always outputs 16bit stereo
+  mono_input_rep = (newlayer.mode() == Layer::MPG_MD_MONO) ? true : false;
+  set_channels(2); /*  */
+  if (mono_input_rep)
+    set_samples_per_second(bsecond / 8);
+  else
+    set_samples_per_second(bsecond / 4);
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 }
 

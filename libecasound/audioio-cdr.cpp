@@ -31,12 +31,7 @@
 #include "eca-debug.h"
 
 CDRFILE::CDRFILE(const string& name) {
-  
   label(name);
-
-  set_channels(2);
-  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_be);
-  set_samples_per_second(44100);
 }
 
 CDRFILE::~CDRFILE(void) {
@@ -64,6 +59,10 @@ void CDRFILE::open(void) throw(SETUP_ERROR&) {
   // require:
   assert(!is_open());
   // --------
+
+  set_channels(2);
+  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_be);
+  set_samples_per_second(44100);
 
   switch(io_mode()) {
   case io_read:

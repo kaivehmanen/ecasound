@@ -26,7 +26,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (09.11.2000)
+       (22.11.2000)
        ()
        (Multimedia software)
 
@@ -134,19 +134,23 @@ Force ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
 single-threaded mode. In most cases, ecasound is able to find out 
 the correct mode automatically.
 
-dit(-r)
+dit(-r:sched_priority)
 Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
 ecasound doesn't have root priviledges. Beware! This gives better 
 performance, but can cause total lock-ups if something goes wrong.
+The 'sched_priority' can be omitted (0=emitted). If given, 
+this is the static priority to the highest priority ecasound thread.
+Other ecasound threads run with priority 'sched_priority-1...n'.
 
 dit(-x)
 Truncate outputs. If this is _not_ set, ecasound opens all outputs 
 - if format allows it - in readwrite mode (-> prevents truncation).
 
 dit(-z:feature)
-Enable 'feature'. 'db' enables double-buffering for audio objects 
-that support it. 'psr' enables the em(precise-sample-rates) mode 
-for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html). 
+Enable 'feature'. '-z:db,dbsize' enables double-buffering for audio 
+objects that support it (dbzise=0 for default, otherwise buffer
+size in sample frames). '-z:psr' enables the em(precise-sample-rates) 
+mode for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html). 
 
 enddit()
 

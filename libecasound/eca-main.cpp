@@ -134,13 +134,17 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR&) {
   if (csetup == 0 )
     throw(ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, no chainsetup connected!"));
 
-  pserver_rep.set_buffer_defaults(128, 
-				  buffersize_rep,
-				  csetup->sample_rate());
-
+  init_pserver();
   init_inputs(); // input-output order is important here (sync fix)
   init_outputs();
   init_chains();
+}
+
+void ECA_PROCESSOR::init_pserver(void) {
+  pserver_rep.set_buffer_defaults(csetup->double_buffer_size() / buffersize_rep, 
+				  buffersize_rep,
+				  csetup->sample_rate());
+  pserver_rep.set_schedpriority(eparams->schedpriority_rep - 1);
 }
 
 void ECA_PROCESSOR::init_inputs(void) {
@@ -415,7 +419,7 @@ void ECA_PROCESSOR::exec_simple_iactive(void) {
 
     prehandle_control_position();
     (*r_inputs)[0]->read_buffer(&mixslot);
-    if ((*inputs)[0]->finished() == false) input_not_finished = true;
+    if ((*r_inputs)[0]->finished() == false) input_not_finished = true;
     (*chains)[0]->process();
     (*r_outputs)[0]->write_buffer(&mixslot);
     trigger_outputs();
@@ -576,7 +580,7 @@ void ECA_PROCESSOR::stop(void) {
     if (::sched_setscheduler(0, SCHED_OTHER, &sparam) == -1)
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Unable to change scheduling back to SCHED_OTHER!");
     else
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Changed back to non-realtime scheduling (SCHED_OTHER/00).");
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Changed back to non-realtime scheduling SCHED_OTHER.");
   }
 
   eparams->status(ECA_SESSION::ep_status_stopped);
@@ -595,11 +599,11 @@ void ECA_PROCESSOR::start(void) {
   // ---
   if (eparams->raised_priority() == true) {
     struct sched_param sparam;
-    sparam.sched_priority = 10;
+    sparam.sched_priority = eparams->schedpriority_rep;
     if (::sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Unable to change scheduling policy!");
     else 
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Using realtime-scheduling (SCHED_FIFO/10).");
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Using realtime-scheduling (SCHED_FIFO).");
   }
 
   for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_objects.size()); adev_sizet++) {
@@ -662,13 +666,13 @@ void ECA_PROCESSOR::multitrack_sync(void) {
   for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
     if (input_chain_count[audioslot_sizet] > 1) {
       (*r_inputs)[audioslot_sizet]->read_buffer(&mixslot);
-      if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
+      if ((*r_inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
     }
     for (int c = 0; c != chain_count; c++) {
       if ((*inputs)[audioslot_sizet] == (*chains)[c]->input_id_repp) {
 	if (input_chain_count[audioslot_sizet] == 1) {
 	  (*r_inputs)[audioslot_sizet]->read_buffer(&(cslots[c]));
-	  if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
+	  if ((*r_inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
 	  break;
 	}
 	else {
@@ -793,13 +797,13 @@ void ECA_PROCESSOR::inputs_to_chains(void) {
   for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
     if (input_chain_count[audioslot_sizet] > 1) {
       (*r_inputs)[audioslot_sizet]->read_buffer(&mixslot);
-      if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
+      if ((*r_inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
     }
     for (int c = 0; c != chain_count; c++) {
       if ((*chains)[c]->input_id_repp == (*inputs)[audioslot_sizet]) {
 	if (input_chain_count[audioslot_sizet] == 1) {
 	  (*r_inputs)[audioslot_sizet]->read_buffer(&(cslots[c]));
-	  if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
+	  if ((*r_inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
 	  break;
 	}
 	else {

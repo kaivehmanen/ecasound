@@ -52,6 +52,9 @@
 /* Define if you have the getpagesize function.  */
 #undef HAVE_GETPAGESIZE
 
+/* Define if you have the <asm/atomic.h> header file.  */
+#undef HAVE_ASM_ATOMIC_H
+
 /* Define if you have the <dlfcn.h> header file.  */
 #undef HAVE_DLFCN_H
 

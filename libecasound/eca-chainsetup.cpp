@@ -131,8 +131,8 @@ void ECA_CHAINSETUP::set_defaults(void) {
   ECA_RESOURCES ecaresources;
   set_buffersize(atoi(ecaresources.resource("default-buffersize").c_str()));
   set_sample_rate(atol(ecaresources.resource("default-samplerate").c_str()));
-  
   toggle_double_buffering(ecaresources.boolean_resource("default-to-double-buffering"));
+  set_double_buffer_size(atol(ecaresources.resource("default-double-buffer-size").c_str()));
   toggle_precise_sample_rates(ecaresources.boolean_resource("default-to-precise-sample-rates"));
 }
 
@@ -389,7 +389,11 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
   case 'z':
     {
       if (get_argument_number(1, argu) == "db") {
-	ecadebug->msg("(eca-chainsetup) Using double-buffering with all audio inputs that support it.");
+	long int bufs = atol(get_argument_number(2, argu).c_str());
+	if (bufs != 0) 
+	  set_double_buffer_size(bufs);
+	ecadebug->msg("(eca-chainsetup) Using double-buffer of " + 
+		      kvu_numtostr(double_buffer_size()) + " sample frames..");
 	toggle_double_buffering(true);
       }
       else if (get_argument_number(1, argu) == "psr") {
@@ -436,7 +440,10 @@ void ECA_CHAINSETUP::interpret_processing_control (const string& argu) {
       case 'l': 
 	{
 	  toggle_looping(true);
-	  ecadebug->msg("(eca-chainsetup) Looping enabled.");
+	  if (length_set() != true)
+	    ecadebug->msg("(eca-chainsetup) Looping enabled, although loop length is not set (-t:time). Looping won't work before it is set properly.");
+	  else
+	    ecadebug->msg("(eca-chainsetup) Looping enabled.");
 	  break;
 	}
       }
@@ -981,10 +988,16 @@ void ECA_CHAINSETUP::load_from_file(const string& filename) throw(ECA_ERROR&) {
   ifstream fin (filename.c_str());
   if (!fin) throw(ECA_ERROR("ECA_CHAINSETUP", "Couldn't open setup read file: \"" + filename + "\".", ECA_ERROR::retry));
 
-  string temp, another;
-  while(fin >> temp) {
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainseup) Adding \"" + temp + "\" to options (loaded from \"" + filename + "\".");
-    options.push_back(temp);
+  string temp;
+  while(getline(fin,temp)) {
+    if (temp.size() > 0 && temp[0] == '#') {
+      continue;
+    }
+    vector<string> words = string_to_words(temp);
+    for(unsigned int n = 0; n < words.size(); n++) {
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainseup) Adding \"" + words[n] + "\" to options (loaded from \"" + filename + "\".");
+      options.push_back(words[n]);
+    }
   }
   fin.close();
 
@@ -1047,15 +1060,11 @@ string ECA_CHAINSETUP::general_options_to_string(void) const {
      t << " -m:normal";
     break;
   }
-  case ep_mm_mthreaded: {
-    t << " -m:mthreaded";
-    break;
-  }
   default: { }
   }
 
   if (output_openmode() == AUDIO_IO::io_write) t << " -x";
-  if (double_buffering()) t << " -z:db";
+  if (double_buffering()) t << " -z:db," << double_buffer_size();
   if (precise_sample_rates()) t << " -z:psr";
 
   t.setprecision(3);

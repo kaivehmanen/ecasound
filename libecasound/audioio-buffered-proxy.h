@@ -25,6 +25,7 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO,
   AUDIO_IO_BUFFERED_PROXY (const AUDIO_IO_BUFFERED_PROXY& x) { }
 
   int xruns_rep;
+  bool finished_rep;
 
   void fetch_child_data(void);
 

@@ -33,7 +33,9 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   long pcm_rep;
   long int bytes_rep;
   int fd_rep;
+  bool mono_input_rep;
   
+  void process_mono_fix(char* target_buffer, long int bytes_rep);
   void get_mp3_params(const string& fname) throw(SETUP_ERROR&);
   
   //  MP3FILE(const MP3FILE& x) { }

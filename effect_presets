@@ -80,6 +80,12 @@ eq_template2 = -efb:1000,2000 -ea:100 | \
 		-efb:4000,1000 -ea:100
 #
 # ======
+# Contributed / artham
+stretched_tape = -ei:100 -kos:1,93,100,.5,0 -kx -kos:4,.1,1,.1
+molten_tape = -ei:100 -kos:1,85,105,.5,0 -kx -kos:4,.1,2,.1
+dali = -ei:100 -kos:1,85,105,.5,0 -kx -kos:4,.1,2,.1 \
+        -etd:100,1,0,70 -epp:0 -kos:1,20,80,.5,0 -kx -kos:4,.1,2,.1
+# ======
 # Other
 #
 # metronome (requires LADSPA SDK)

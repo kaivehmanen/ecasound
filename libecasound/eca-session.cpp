@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <vector>
 #include <pthread.h>
+#include <sys/mman.h>
 
 #include <kvutils/com_line.h>
 #include <kvutils/message_item.h>
@@ -104,6 +105,7 @@ void ECA_SESSION::set_defaults(void) {
     iactive_rep = true;
   else
     iactive_rep = false;
+  schedpriority_rep = atoi(ecaresources.resource("default-schedpriority").c_str());
 
   GENERIC_OSCILLATOR::set_preset_file(ecaresources.resource("resource-directory") + "/" + ecaresources.resource("resource-file-genosc-envelopes"));
 
@@ -371,8 +373,17 @@ void ECA_SESSION::interpret_general_option (const string& argu) {
 
   case 'r':
     {
-      ecadebug->msg("(eca-session) Raised-priority mode enabled.");
+      int prio = ::atoi(get_argument_number(1, argu).c_str());
+      if (prio != 0) 
+	schedpriority_rep = prio;
+      ecadebug->msg("(eca-session) Raised-priority mode enabled. Locking memory. (prio:" + 
+		    kvu_numtostr(schedpriority_rep) + ")");
       raisepriority_rep = true;
+      if (::mlockall (MCL_CURRENT|MCL_FUTURE)) {
+	ecadebug->msg("(eca-session) Warning! Couldn't lock all memory!");
+      }
+      else 
+	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-session) Memory locked!");
       break;
     }
     

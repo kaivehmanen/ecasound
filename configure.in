@@ -309,7 +309,7 @@ dnl --- AC_CHECK_HEADER(stl.h,,
 dnl ---	AC_MSG_WARN([** C++/STL header files not found! ***]))
 AC_LANG_CPLUSPLUS
 AC_HEADER_TIME
-AC_CHECK_HEADERS(fcntl.h dlfcn.h sys/ioctl.h sys/time.h sys/resource.h sys/stat.h sys/wait.h signal.h sys/types.h sys/mman.h errno.h pthread.h sched.h unistd.h inttypes.h)
+AC_CHECK_HEADERS(fcntl.h dlfcn.h sys/ioctl.h sys/time.h sys/resource.h sys/stat.h sys/wait.h signal.h sys/types.h sys/mman.h errno.h pthread.h sched.h unistd.h inttypes.h asm/atomic.h)
 AC_CHECK_HEADER(map.h,nostlmap=0,nostlmap=1)
 if test "x$nostlmap" = "x1" ; then
 	AC_MSG_ERROR([C++ header files not found! Searched for 'map.h' (STL).])

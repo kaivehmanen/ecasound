@@ -81,12 +81,12 @@ private:
   ECA_CHAINSETUP* csetup;
   // -> pointers to input objects in csetup
   vector<AUDIO_IO*>* inputs;
-  // -> pointers used for read_buffer calls only 
+  // -> pointers used for runtime-i/o calls only 
   //    (only when proxies are used, r_inputs != inputs)
   vector<AUDIO_IO*>* r_inputs;
   // -> pointers to input objects in csetup
   vector<AUDIO_IO*>* outputs;
-  // -> pointers used for read_buffer calls only 
+  // -> pointers used for runtime-i/o calls only 
   //    (only when proxies are used, r_outputs != outputs)
   vector<AUDIO_IO*>* r_outputs;
   // -> pointers to chain objects in csetup
@@ -198,6 +198,7 @@ private:
   void init_connection_to_chainsetup(void) throw(ECA_ERROR&);
   void init_multitrack_mode(void);
   void init_mix_method(void);
+  void init_pserver(void);
   void init_inputs(void);
   void init_outputs(void);
   void init_chains(void);

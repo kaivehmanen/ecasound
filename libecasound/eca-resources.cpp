@@ -38,8 +38,9 @@ void ECA_RESOURCES::set_defaults(void) {
   if (has("default-samplerate") != true) resource("default-samplerate","44100");
   if (has("default-to-interactive-mode") != true) resource("default-to-interactive-mode","false");
   if (has("default-to-raisepriority") != true) resource("default-to-raisepriority","false");
+  if (has("default-schedpriority") != true) resource("default-schedpriority","50");
   if (has("default-to-double-buffering") != true) resource("default-to-double-buffering","false");
-  if (has("default-double-buffer-size") != true) resource("default-double-buffer-size","131072");
+  if (has("default-double-buffer-size") != true) resource("default-double-buffer-size","100000");
   if (has("default-to-precise-sample-rates") != true) resource("default-to-precise-sample-rates","false");
   if (has("resource-directory") != true) resource("resource-directory", ecasound_resource_path);
   if (has("resource-file-genosc-envelopes") != true) resource("resource-file-genosc-envelopes","generic_oscillators");

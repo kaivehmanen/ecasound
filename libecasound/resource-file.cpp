@@ -29,7 +29,10 @@ RESOURCE_FILE::RESOURCE_FILE(const string& resource_file) :
   load();
 }
 
-RESOURCE_FILE::~RESOURCE_FILE(void) { }
+RESOURCE_FILE::~RESOURCE_FILE(void) { 
+// FIXME: dumps core for some reason
+//    if (modified_rep == true) save();
+}
 
 void RESOURCE_FILE::load(void) { 
   lines_rep.resize(0);
@@ -74,6 +77,7 @@ void RESOURCE_FILE::load(void) {
     }
   }
   fin.close();
+  modified_rep = false;
 }
 
 void RESOURCE_FILE::save(void) { 
@@ -89,6 +93,7 @@ void RESOURCE_FILE::save(void) {
     }
   }
   fout.close();
+  modified_rep = false;
 }
 
 vector<string> RESOURCE_FILE::keywords(void) const {
@@ -146,4 +151,5 @@ void RESOURCE_FILE::resource(const string& tag, const string& value) {
   if (found != true) {
     lines_rep.push_back(tag + " = " + value + "\n");
   }
+  modified_rep = true;
 }

@@ -191,6 +191,7 @@ class ECA_SESSION {
   bool multitrack_mode_rep;
   enum ECA_CHAINSETUP::Mix_mode mixmode_rep;
   bool raisepriority_rep;
+  int schedpriority_rep;
 
   // --
   // Public/const routines

@@ -5,6 +5,9 @@
 #include "audioio.h"
 #include "samplebuffer.h"
 
+/**
+ * Buffer used between proxy server and client
+ */
 class AUDIO_IO_PROXY_BUFFER {
 
  public:

@@ -13,6 +13,7 @@ class RESOURCE_FILE {
   string resfile_rep;
   mutable map<string,string> resmap_rep;
   vector<string> lines_rep;
+  bool modified_rep;
 
  public:
 

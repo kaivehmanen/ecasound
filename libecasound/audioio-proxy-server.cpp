@@ -1,6 +1,26 @@
+// ------------------------------------------------------------------------
+// audioio-proxy-server.cpp: Audio i/o engine serving proxy clients.
+// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// ------------------------------------------------------------------------
+
 #include <unistd.h>
 #include "sample-specs.h"
 #include "audioio-proxy-server.h"
+#include "eca-debug.h"
 
 const int AUDIO_IO_PROXY_SERVER::buffercount_default = 32;
 const long int AUDIO_IO_PROXY_SERVER::buffersize_default = 1024;
@@ -53,14 +73,22 @@ void AUDIO_IO_PROXY_SERVER::start(void) {
 			     start_proxy_server_io_thread,
 			     static_cast<void *>(this));
     if (ret != 0) {
-      cerr << "(audio_io_proxy_server) pthread_create failed, exiting" << endl;
+      ecadebug->msg("(audio_io_proxy_server) pthread_create failed, exiting");
       exit(1);
+    }
+    if (sched_getscheduler(0) == SCHED_FIFO) {
+      struct sched_param sparam;
+      sparam.sched_priority = schedpriority_rep;
+      if (::pthread_setschedparam(io_thread_rep, SCHED_FIFO, &sparam) != 0)
+	ecadebug->msg("Unable to change scheduling policy to SCHED_FIFO!");
+      else 
+	ecadebug->msg("Using realtime-scheduling (SCHED_FIFO).");
     }
     thread_running_rep = true;
   }
   stop_request_rep.set(0);
   running_rep.set(1);
-  cerr << "(audio_io_proxy_server) starting processing" << endl;
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audio_io_proxy_server) starting processing");
 }
 
 /**
@@ -68,7 +96,7 @@ void AUDIO_IO_PROXY_SERVER::start(void) {
  */
 void AUDIO_IO_PROXY_SERVER::stop(void) { 
   stop_request_rep.set(1);
-  cerr << "(audio_io_proxy_server) stopping processing" << endl;
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audio_io_proxy_server) stopping processing");
 }
 
 /**
@@ -108,12 +136,14 @@ void AUDIO_IO_PROXY_SERVER::set_buffer_defaults(int buffers,
  */
 void AUDIO_IO_PROXY_SERVER::register_client(AUDIO_IO* aobject) { 
   clients_rep.push_back(aobject);
-  cerr << "Registering client " << clients_rep.size() - 1 << ". Buffer count " 
-       << buffercount_rep 
-       << ", and size "
-       << buffersize_rep
-       << "." 
-       << endl;
+  ecadebug->msg(ECA_DEBUG::user_objects, 
+		"Registering client " +
+		kvu_numtostr(clients_rep.size() - 1) +
+		". Buffer count " +
+		kvu_numtostr(buffercount_rep) +
+		", and size " +
+		kvu_numtostr(buffersize_rep) +
+		".");
   buffers_rep.push_back(new AUDIO_IO_PROXY_BUFFER(buffercount_rep,
 						  buffersize_rep,
 						  SAMPLE_SPECS::channel_count_default,
@@ -147,9 +177,9 @@ AUDIO_IO_PROXY_BUFFER* AUDIO_IO_PROXY_SERVER::get_client_buffer(AUDIO_IO* aobjec
  * Slave thread.
  */
 void AUDIO_IO_PROXY_SERVER::io_thread(void) { 
-  cerr << "(audio_io_proxy_server) Hey, in the I/O loop!" << endl;
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audio_io_proxy_server) Hey, in the I/O loop!");
+  long int sleep_counter = 0;
   while(true) {
-//      cerr << "A";
     if (running_rep.get() == 0) {
       usleep(50000);
       if (exit_request_rep.get() == 1) break;
@@ -157,36 +187,29 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
     }
     int processed = 0;
     for(unsigned int p = 0; p < clients_rep.size(); p++) {
-//        cerr << "B";
       if (clients_rep[p] == 0 ||
 	  buffers_rep[p]->finished_rep.get()) continue;
       if (buffers_rep[p]->io_mode_rep == AUDIO_IO::io_read) {
-//  	cerr << "C";
-//  	cerr << "Buffer " << buffers_rep[p] << ":";
-//  	cerr << "Writing buffer " << buffers_rep[p]->writeptr_rep.get() << " of client " 
-//  	     << p << ";";
-//  	cerr << " write_space: " << buffers_rep[p]->write_space() << "." << endl;
 	if (buffers_rep[p]->write_space() > 0) {
-//  	  cerr << "D";
 	  clients_rep[p]->read_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->writeptr_rep.get()]);
 	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
-  	  if (buffers_rep[p]->write_space() > 16) {
-  	    cerr << "Writing buffer " << buffers_rep[p]->writeptr_rep.get() << " of client " 
-  		 << p << ";";
-  	    cerr << " write_space: " << buffers_rep[p]->write_space() << "." << endl;
-  	  }
+//    	  if (buffers_rep[p]->write_space() > 16) {
+//    	    cerr << "Writing buffer " << buffers_rep[p]->writeptr_rep.get() << " of client " << p << ";";
+//    	    cerr << " write_space: " << buffers_rep[p]->write_space() << ";";
+//  	    cerr << "Sleepcount " << sleep_counter << "." << endl;
+//  	    sleep_counter = 0;
+//    	  }
 	  buffers_rep[p]->advance_write_pointer();
 	  ++processed;
 	}
       }
       else {
-//  	cerr << "E";
 	if (buffers_rep[p]->read_space() > 0) {
-	  if (buffers_rep[p]->read_space() > 16) {
-	    cerr << "Reading buffer " << buffers_rep[p]->readptr_rep.get() << " of client " 
-		 << p << ";";
-	    cerr << " read_space: " << buffers_rep[p]->read_space() << "." << endl;
-	  }
+//  	  if (buffers_rep[p]->read_space() > 16) {
+//  	    cerr << "Reading buffer " << buffers_rep[p]->readptr_rep.get() << " of client " 
+//  		 << p << ";";
+//  	    cerr << " read_space: " << buffers_rep[p]->read_space() << "." << endl;
+//  	  }
 	  clients_rep[p]->write_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
 	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
 	  buffers_rep[p]->advance_read_pointer();
@@ -205,10 +228,15 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
     else {
       full_rep.set(1);
     }
-//      if (processed == 0) {
-//        usleep(100);
-//      }
-//      cerr << "F";
+    if (processed == 0) {
+      ++sleep_counter;
+      if (full_rep.get() == 1) {
+	struct timespec sleepcount;
+	sleepcount.tv_sec = 0;
+	sleepcount.tv_nsec = 100000;
+	::nanosleep(&sleepcount, 0);
+      }
+    }
   }
   cerr << "Exiting proxy server thread." << endl;
 }

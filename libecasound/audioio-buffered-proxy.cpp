@@ -1,4 +1,26 @@
+// ------------------------------------------------------------------------
+// audioio-buffered-proxy.cpp: Proxy class providing additional layer
+//                             of buffering instances of class AUDIO_IO.
+// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// ------------------------------------------------------------------------
+
 #include <unistd.h>
+#include <signal.h>
+
 #include "audioio-buffered-proxy.h"
 
 AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver, 
@@ -6,12 +28,10 @@ AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver
   : pserver_repp(pserver),
     child_repp(aobject) 
 {
-  cerr << "Creating a new client." << endl;
   pserver_repp->register_client(child_repp);
   pbuffer_repp = pserver_repp->get_client_buffer(child_repp);
-  cerr << "Registering aobject " << child_repp << ", got " <<
-    pbuffer_repp << "." << endl;
   xruns_rep = 0;
+  finished_rep = false;
 
   // just in case the child object has already been configured
   fetch_child_data();
@@ -37,10 +57,7 @@ AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void) {
     cerr << "(audioio-buffered-proxy) There were total " << xruns_rep << " xruns." << endl;
 }
 
-bool AUDIO_IO_BUFFERED_PROXY::finished(void) const { 
-  if (pbuffer_repp->finished_rep.get() == 1) return(true);
-  return(false);
-}
+bool AUDIO_IO_BUFFERED_PROXY::finished(void) const { return(finished_rep); }
 
 long AUDIO_IO_BUFFERED_PROXY::length_in_samples(void) const { 
   return(child_repp->length_in_samples());
@@ -51,15 +68,20 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
     sbuf->operator=(pbuffer_repp->sbufs_rep[pbuffer_repp->readptr_rep.get()]);
     pbuffer_repp->advance_read_pointer();
     position_in_samples_advance(sbuf->length_in_samples());
-    if (pbuffer_repp->read_space() < 16) {
-      cerr << "Client read " << pbuffer_repp->readptr_rep.get() << ";";
-      cerr << " read_space: " << pbuffer_repp->read_space() << "." << endl;
-    }
+    // FIXME: make the threshold configurable
+    //      if (pbuffer_repp->read_space() < 16) {
+    // //        cerr << "Client read " << pbuffer_repp->readptr_rep.get() << ";";
+    // //        cerr << " read_space: " << pbuffer_repp->read_space() << "." << endl;
+    //        ::sched_yield();
+    //      }
   }
   else {
-    xruns_rep++;
-    cerr << "Underrun! Exiting!" << endl;
-    exit(0);
+    if (pbuffer_repp->finished_rep.get() == 1) finished_rep = true;
+    else {
+      xruns_rep++;
+      cerr << "Underrun! Exiting!" << endl;
+      exit(0);
+    }
   }
 }
 
@@ -71,9 +93,12 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
     extend_position();
   }
   else {
-    xruns_rep++;
-    cerr << "Overrun! Exiting" << endl;
-    exit(0);
+    if (pbuffer_repp->finished_rep.get() == 1) finished_rep = true;
+    else {
+      xruns_rep++;
+      cerr << "Overrun! Exiting" << endl;
+      exit(0);
+    }
   }
 }
 

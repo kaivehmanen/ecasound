@@ -33,6 +33,7 @@ class AUDIO_IO_PROXY_SERVER {
   int buffercount_rep;
   long int buffersize_rep;
   long int samplerate_rep;
+  int schedpriority_rep;
 
   AUDIO_IO_PROXY_SERVER& operator=(const AUDIO_IO_PROXY_SERVER& x) { return *this; }
   AUDIO_IO_PROXY_SERVER (const AUDIO_IO_PROXY_SERVER& x) { }
@@ -49,6 +50,8 @@ class AUDIO_IO_PROXY_SERVER {
   void seek(AUDIO_IO* aobject, long int position_in_samples);
 
   void set_buffer_defaults(int buffers, long int buffersize, long int sample_rate);
+  void set_schedpriority(int v) { schedpriority_rep = v; }
+
   void register_client(AUDIO_IO* abject);
   void unregister_client(AUDIO_IO* abject);
   AUDIO_IO_PROXY_BUFFER* get_client_buffer(AUDIO_IO* abject);

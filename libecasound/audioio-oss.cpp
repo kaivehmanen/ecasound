@@ -124,7 +124,8 @@ void OSSDEVICE::open(void) throw(SETUP_ERROR&) {
     case ECA_AUDIO_FORMAT::sfmt_s8:     { format = AFMT_S8; break; }
     case ECA_AUDIO_FORMAT::sfmt_s16_le: { format = AFMT_S16_LE; break; }
     case ECA_AUDIO_FORMAT::sfmt_s16_be: { format = AFMT_S16_BE; break; }
-
+    case ECA_AUDIO_FORMAT::sfmt_s32_le: { format = AFMT_S32_LE; break; }
+    case ECA_AUDIO_FORMAT::sfmt_s32_be: { format = AFMT_S32_BE; break; }
     default:
       {
 	throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-OSS: audio format not supported (1)"));
