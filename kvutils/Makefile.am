@@ -38,7 +38,8 @@ kvutil_headers = 	kvu_dbc.h \
 			kvu_temporary_file_directory.h \
 			kvu_threads.h \
 			kvu_utils.h \
-			kvu_value_queue.h
+			kvu_value_queue.h \
+			kvu_inttypes.h
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
 libkvutils_la_LDFLAGS = -version-info @LIBKVUTILS_VERSION@:0:0 -static
