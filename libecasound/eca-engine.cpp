@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-engine.cpp: Main processing engine
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -498,7 +498,11 @@ void ECA_ENGINE::update_engine_state(void)
 }
 
 /**
- * Executes one engine loop iteration.
+ * Executes one engine loop iteration. It is critical
+ * that this function is only called when engine is 
+ * running.
+ *
+ * @pre is_running() == true
  *
  * context: J-level-0
  */
@@ -819,19 +823,22 @@ void ECA_ENGINE::signal_exit(void)
  * Processing is start If and only if processing 
  * previously stopped with conditional_stop().
  *
- * context: E-level-2
+ * context: E-level-3
  */
 void ECA_ENGINE::conditional_start(void)
 {
   if (was_running_rep == true) {
-    request_start();
+    // don't call request_start(), as it would signal that we are 
+    // starting from completely halted state
+    if (is_prepared() != true) prepare_operation();
+    start_operation();
   }
 }
 
 /**
  * Processing is stopped.
  *
- * context: E-level-2
+ * context: E-level-3
  *
  * @see conditional_stop()
  * @see request_stop()
@@ -841,7 +848,9 @@ void ECA_ENGINE::conditional_stop(void)
   if (status() == ECA_ENGINE::engine_status_running) {
     ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) conditional stop");
     was_running_rep = true;
-    request_stop();
+    // don't call request_stop(), as it would signal that we are 
+    // stopping completely (JACK transport stop will be sent  to all)
+    if (is_prepared() == true) stop_operation();
   }
   else was_running_rep = false;
 }
