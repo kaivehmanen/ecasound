@@ -14,6 +14,9 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
+??122000 (v1.8.6d15)
+	- fixed: "-x -i file.ext" style cmd-line arg sequences weren't
+		parsed correctly [jhall]
 07122000 (v1.8.5d15)
 	- added: tremolo effect (-eemt) [rcs]
 	- added: -z:db; i/o double buffering layer is back! - 
