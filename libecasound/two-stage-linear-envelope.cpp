@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <kvu_dbc.h>
 #include <kvu_numtostr.h>
 #include <kvu_message_item.h>
 
@@ -60,12 +61,7 @@ void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::para
   case 1:
     {
       first_stage_length_rep = value;
-      if (samples_per_second() > 0) {
-	set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
-      }
-      else {
-	set_length_in_samples(0);
-      }
+      set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
       set_position_in_samples(0);
       curval = 0.0;
       break;
@@ -73,12 +69,7 @@ void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::para
   case 2:
     {
       second_stage_length_rep = value;
-      if (samples_per_second() > 0) {
-	set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
-      }
-      else {
-	set_length_in_samples(0);
-      }
+      set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
       set_position_in_samples(0);
       curval = 0.0;
       break;

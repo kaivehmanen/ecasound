@@ -62,13 +62,13 @@ void ECA_AUDIO_POSITION::set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
 
 void ECA_AUDIO_POSITION::set_length_in_seconds(int pos_in_seconds)
 {
-  DBC_CHECK(samples_per_second() > 0);
+  DBC_CHECK(samples_per_second() != 0);
   set_length_in_seconds((double)pos_in_seconds); 
 }
 
 void ECA_AUDIO_POSITION::set_length_in_seconds(double pos_in_seconds)
 {
-  DBC_CHECK(samples_per_second() > 0);
+  DBC_CHECK(samples_per_second() != 0);
   set_length_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(pos_in_seconds * samples_per_second()));
 }
 

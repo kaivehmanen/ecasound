@@ -55,7 +55,6 @@ void LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t va
 {
   switch (param) {
   case 1:
-    DBC_CHECK(samples_per_second() > 0);
     set_length_in_seconds(value);
     set_position_in_samples(0);
     curval = 0.0;
