@@ -3,6 +3,8 @@
 
 #include <pthread.h>
 #include <deque>
+#include <map>
+#include <utility>
 
 #include "eca-error.h"
 
@@ -24,9 +26,9 @@ private:
   bool midi_in_locked_rep;
 
   deque<unsigned char> buffer_rep;
-  int controller_value_rep;
+  mutable map<pair<int,int>,int> controller_values_rep;
   unsigned char running_status_rep;
-  int current_ctrl_channel;
+  int current_ctrl_channel_rep;
 
   bool is_voice_category_status_byte(unsigned char byte) const;
   bool is_system_common_category_status_byte(unsigned char byte) const;
@@ -37,8 +39,8 @@ private:
 
   void update_midi_queues(void);
   void put(unsigned char byte);  
-  int last_controller_value(void) const;
-  bool update_controller_value(int controller, int channel);
+  int last_controller_value(int channel, int controller) const;
+  bool update_controller_value(void);
   MIDI_IN_QUEUE(void);
 };
 

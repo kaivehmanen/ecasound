@@ -80,9 +80,8 @@ string get_midi_device(void) {
 }
 
 MIDI_IN_QUEUE::MIDI_IN_QUEUE(void) {
-  controller_value_rep = 0;
   running_status_rep = 0;
-  current_ctrl_channel = -1;
+  current_ctrl_channel_rep = -1;
   ::pthread_mutex_init(&midi_in_lock_rep, 0);
   ::pthread_cond_init(&midi_in_cond_rep, 0);
   midi_in_locked_rep = false;
@@ -135,9 +134,12 @@ void MIDI_IN_QUEUE::put(unsigned char byte) {
   }
 }
 
-int MIDI_IN_QUEUE::last_controller_value(void) const {  return(controller_value_rep); }
+int MIDI_IN_QUEUE::last_controller_value(int channel, int controller) const {  
+  // FIXME: what if not found?
+  return(controller_values_rep[pair<int,int>(channel,controller)]); 
+}
 
-bool MIDI_IN_QUEUE::update_controller_value(int controller, int channel) {
+bool MIDI_IN_QUEUE::update_controller_value(void) {
   ::pthread_mutex_lock(&midi_in_lock_rep);
   while (midi_in_locked_rep == true) pthread_cond_wait(&midi_in_cond_rep,
 						       &midi_in_lock_rep);
@@ -154,10 +156,13 @@ bool MIDI_IN_QUEUE::update_controller_value(int controller, int channel) {
       if (is_voice_category_status_byte(byte) == true) {
 	running_status_rep = byte;
 	if ((running_status_rep & 0xb0) == 0xb0)
-	  current_ctrl_channel = static_cast<int>((byte & 15));
+	  current_ctrl_channel_rep = static_cast<int>((byte & 15));
       }
-      else if (is_system_common_category_status_byte(byte) == true) 
+      else if (is_system_common_category_status_byte(byte) == true) {
+	current_ctrl_channel_rep = -1;
 	running_status_rep = 0;
+
+      }
       
     }
     else { /* non-status bytes */
@@ -170,16 +175,19 @@ bool MIDI_IN_QUEUE::update_controller_value(int controller, int channel) {
 	 * Check for 'controller messages' (status 0xb0 to 0xbf and
 	 * two data bytes)
 	 */
-	if (current_ctrl_channel == channel) {
+	if (current_ctrl_channel_rep != -1) {
 	  if (current_ctrl_number == -1) {
-	    current_ctrl_number = static_cast<int>((byte & 15));
-//  	    cerr << endl << "C:" << current_ctrl_number << ".";
+	    current_ctrl_number = static_cast<int>(byte);
+//    	    cerr << endl << "C:" << current_ctrl_number << ".";
 	  }
 	  else {
-	    controller_value_rep = static_cast<int>(byte);
-	    current_ctrl_number = -1;
+	    controller_values_rep[pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] = static_cast<int>(byte);
 	    value_found = true;
-//  	    cerr << endl << "D:" << controller_value_rep << ".";
+//    	    cerr << endl << "D:" 
+//  		 << controller_values_rep[pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] 
+//  		 << ", ch:" << current_ctrl_channel_rep 
+//  		 << ", ctrl:" << current_ctrl_number << ".";
+	    current_ctrl_number = -1;
 	  }
 	}
       }
