@@ -678,7 +678,7 @@ void AUDIO_IO_JACK_MANAGER::disconnect_node(jack_node_t* node)
 void AUDIO_IO_JACK_MANAGER::signal_token(void) {
   pthread_mutex_lock(&token_mutex_rep);
   token_rep = true;
-  pthread_cond_broadcast(&token_cond_rep);
+  pthread_cond_signal(&token_cond_rep);
   pthread_mutex_unlock(&token_mutex_rep);
 }
 
@@ -724,7 +724,7 @@ bool AUDIO_IO_JACK_MANAGER::wait_for_token(void) {
 void AUDIO_IO_JACK_MANAGER::signal_completion(void) {
   pthread_mutex_lock(&completion_mutex_rep);
   completion_rep = true;
-  pthread_cond_broadcast(&completion_cond_rep);
+  pthread_cond_signal(&completion_cond_rep);
   pthread_mutex_unlock(&completion_mutex_rep);
 }
 
