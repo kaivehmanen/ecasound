@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20030530-20
+dnl last modified: 20030813-21
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -849,7 +849,7 @@ AC_HEADER_TIME
 dnl Note! Header filenames must be on the same line!
 AC_CHECK_HEADERS(dlfcn.h errno.h fcntl.h signal.h unistd.h sys/stat.h sys/time.h sys/types.h sys/wait.h,,
 		 AC_MSG_ERROR([*** not all required header files were found ***]))
-AC_CHECK_HEADERS(inttypes.h ladspa.h sched.h stdint.h sys/mman.h)
+AC_CHECK_HEADERS(inttypes.h locale.h ladspa.h sched.h stdint.h sys/mman.h)
 
 dnl ------------------------------------------------------------------
 
@@ -904,6 +904,7 @@ AC_CHECK_FUNCS(sched_get_priority_max)
 AC_CHECK_FUNCS(sched_getparam)
 AC_CHECK_FUNCS(sched_getscheduler)
 AC_CHECK_FUNCS(sched_setscheduler)
+AC_CHECK_FUNCS(setlocale)
 AC_CHECK_FUNCS(pthread_self)
 AC_CHECK_FUNCS(pthread_getschedparam)
 AC_CHECK_FUNCS(pthread_setschedparam)

@@ -29,6 +29,10 @@
 #include <algorithm>
 #include <unistd.h>
 
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
+
 #include <kvu_utils.h> /* string_to_vector(), string_to_int_vector() */
 #include <kvu_value_queue.h>
 #include <kvu_message_item.h>
@@ -1069,6 +1073,13 @@ void ECA_CONTROL::ctrl_register(void)
  */
 void ECA_CONTROL::operator_descriptions_helper(const ECA_OBJECT_MAP& arg, string* result)
 {
+  /* switch to "C" locale to avoid strange floating point 
+   * presentations that could break the output format
+   * (for example "a,b" insteof of "a.b" */
+#if defined(HAVE_LOCALE_H) && defined(HAVE_SETLOCALE)
+  string old_locale (setlocale(LC_ALL, "C"));
+#endif
+
   const list<string>& objlist = arg.registered_objects();
   list<string>::const_iterator p = objlist.begin();
   int count = 1;
@@ -1100,13 +1111,13 @@ void ECA_CONTROL::operator_descriptions_helper(const ECA_OBJECT_MAP& arg, string
 	/* 5.3 default value */
 	*result += "," + kvu_numtostr(pd.default_value);
 	/* 5.4 is bounded above (1=yes, 0=no) */
-	*result += "," + kvu_numtostr(static_cast<int>(pd.bounded_above));
+	*result += ",above=" + kvu_numtostr(static_cast<int>(pd.bounded_above));
 	/* 5.5 upper bound */
-	*result += "," + kvu_numtostr(pd.upper_bound);
+	*result += ",upper=" + kvu_numtostr(pd.upper_bound);
 	/* 5.6 is bounded below (1=yes, 0=no) */
-	*result += "," + kvu_numtostr(static_cast<int>(pd.bounded_below));
+	*result += ",below=" + kvu_numtostr(static_cast<int>(pd.bounded_below));
 	/* 5.7 lower bound */
-	*result += "," + kvu_numtostr(pd.lower_bound);
+	*result += ",lower=" + kvu_numtostr(pd.lower_bound);
 	/* 5.8. is toggled (1=yes, 0=no) */
 	*result += "," + kvu_numtostr(static_cast<int>(pd.toggled));
 	/* 5.9. is integer value (1=yes, 0=no) */
@@ -1114,13 +1125,18 @@ void ECA_CONTROL::operator_descriptions_helper(const ECA_OBJECT_MAP& arg, string
 	/* 5.10. is logarithmis value (1=yes, 0=no) */
 	*result += "," + kvu_numtostr(static_cast<int>(pd.logarithmic));
 	/* 5.11. is output value (1=yes, 0=no) */
-	*result += "," + kvu_numtostr(static_cast<int>(pd.output));
+	*result += ",output=" + kvu_numtostr(static_cast<int>(pd.output));
       }
       *result += "\n";
       ++count;
     }
     ++p;
   }
+
+  /* see above */
+#if defined(HAVE_LOCALE_H) && defined(HAVE_SETLOCALE)
+  setlocale(LC_ALL, old_locale.c_str());
+#endif
 }
 
 /**
