@@ -42,7 +42,7 @@ int main(void)
 ],
   [AC_MSG_RESULT(found.)],
   [AC_MSG_RESULT(not present.)
-   AC_MSG_ERROR(Sufficiently new interface version of libecasound not found.)]
+   AC_MSG_WARN(*** Warning! An unknown interface version of libecasound found. Trying to compile anyways... ***)]
 )
 ]
 )

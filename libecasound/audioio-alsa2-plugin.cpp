@@ -18,7 +18,6 @@
 // ------------------------------------------------------------------------
 
 #include <config.h>
-#ifdef COMPILE_ALSA
 #ifdef ALSALIB_050
 
 #include <string>
@@ -371,4 +370,3 @@ string ALSA_PCM2_PLUGIN_DEVICE::get_parameter(int param) const {
 }
 
 #endif // ALSALIB_050
-#endif // COMPILE_ALSA

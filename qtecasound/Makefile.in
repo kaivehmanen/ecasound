@@ -85,7 +85,7 @@ qt_libraries = @qt_libraries@
 @INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
 @INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils 		-I$(top_srcdir)/libecasound/include 		-I$(top_srcdir)/libqtecasound 		-I$(qt_includes) 		-I$(all_includes)
+INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils 		-I$(top_srcdir)/libecasound 		-I$(top_srcdir)/libqtecasound 		-I$(qt_includes) 		-I$(all_includes)
 
 @INCLUDE_DEBUG_TRUE@qtecasound_target = qtecasound_debug
 @INCLUDE_DEBUG_FALSE@qtecasound_target = qtecasound
@@ -103,13 +103,10 @@ INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils 		-I$(top_srcdir)/libecasound/inc
 
 @COMPILE_QTECASOUND_TRUE@qtecasound_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
-#qtecasound_LDFLAGS = -s -lstdc++ 
-@COMPILE_QTECASOUND_TRUE@qtecasound_LDADD = -L$(top_builddir)/kvutils 		   	-L$(top_builddir)/kvutils/.libs 		   	-lkvutils 		   	-L$(qt_libraries) -lqt 		   	$(top_builddir)/libecasound/src/libecasound.la 			$(top_builddir)/libqtecasound/libqtecasound.la
-@COMPILE_QTECASOUND_TRUE@qtecasound_debug_LDADD = -L$(top_builddir)/kvutils 			  -L$(top_builddir)/kvutils/.libs 			  -lkvutils -L$(qt_libraries) -lqt 			   $(top_builddir)/libecasound/src/libecasound_debug.la 			   $(top_builddir)/libqtecasound/libqtecasound_debug.la
+@COMPILE_QTECASOUND_TRUE@qtecasound_LDADD = -L$(top_builddir)/kvutils 		   	-L$(top_builddir)/kvutils/.libs 		   	-lkvutils 		   	-L$(qt_libraries) -lqt 		   	$(top_builddir)/libecasound/libecasound.la 			$(top_builddir)/libqtecasound/libqtecasound.la
+@COMPILE_QTECASOUND_TRUE@qtecasound_debug_LDADD = -L$(top_builddir)/kvutils 			  -L$(top_builddir)/kvutils/.libs 			  -lkvutils -L$(qt_libraries) -lqt 			   $(top_builddir)/libecasound/libecasound_debug.la 			   $(top_builddir)/libqtecasound/libqtecasound_debug.la
 @COMPILE_QTECASOUND_TRUE@qtecasound_LDFLAGS = $(all_libraries)
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_LDFLAGS = $(qtecasound_LDFLAGS)
-#qtecasound_LDADD   = -lm -lpthread -lqt $(top_srcdir)/libecasound/src/libecasound.la
-#qtecasound_METASOURCES = USE_AUTOMOC
 
 # qt-moc: 
 
@@ -139,7 +136,7 @@ LIBS = @LIBS@
 @COMPILE_QTECASOUND_TRUE@eca-qtchainsetup_moc.o eca-qtsession_moc.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.o eca-qtrtposition_moc.o
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_DEPENDENCIES =  \
-@COMPILE_QTECASOUND_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la \
+@COMPILE_QTECASOUND_TRUE@$(top_builddir)/libecasound/libecasound_debug.la \
 @COMPILE_QTECASOUND_TRUE@$(top_builddir)/libqtecasound/libqtecasound_debug.la
 @COMPILE_QTECASOUND_TRUE@qtecasound_OBJECTS =  eca-qtdebug.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtdebugtab.o eca-qtinte.o \
@@ -154,7 +151,7 @@ LIBS = @LIBS@
 @COMPILE_QTECASOUND_TRUE@eca-qtchainsetup_moc.o eca-qtsession_moc.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.o eca-qtrtposition_moc.o
 @COMPILE_QTECASOUND_TRUE@qtecasound_DEPENDENCIES =  \
-@COMPILE_QTECASOUND_TRUE@$(top_builddir)/libecasound/src/libecasound.la \
+@COMPILE_QTECASOUND_TRUE@$(top_builddir)/libecasound/libecasound.la \
 @COMPILE_QTECASOUND_TRUE@$(top_builddir)/libqtecasound/libqtecasound.la
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)

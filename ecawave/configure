@@ -1487,7 +1487,7 @@ else
   cat conftest.$ac_ext >&5
   rm -fr conftest*
   echo "$ac_t""not present." 1>&6
-   { echo "configure: error: Sufficiently new interface version of libecasound not found." 1>&2; exit 1; }
+   echo "configure: warning: *** Warning! An unknown interface version of libecasound found. Trying to compile anyways... ***" 1>&2
 
 fi
 rm -fr conftest*

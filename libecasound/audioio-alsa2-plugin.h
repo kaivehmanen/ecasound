@@ -1,5 +1,5 @@
-#ifndef _AUDIOIO_ALSA2_PLUGIN_H
-#define _AUDIOIO_ALSA2_PLUGIN_H
+#ifndef INCLUDED_AUDIOIO_ALSA2_PLUGIN_H
+#define INCLUDED_AUDIOIO_ALSA2_PLUGIN_H
 
 #include <string>
 
@@ -12,7 +12,8 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef COMPILE_ALSA
+
+#ifdef ALSALIB_050
 
 extern "C" {
 #include <sys/asoundlib.h>
@@ -74,5 +75,5 @@ class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
   ALSA_PCM2_PLUGIN_DEVICE& operator=(const ALSA_PCM2_PLUGIN_DEVICE& x) { return *this; }
 };
 
-#endif // COMPILE_ALSA
+#endif // ALSALIB_050
 #endif

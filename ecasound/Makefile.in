@@ -85,7 +85,7 @@ qt_libraries = @qt_libraries@
 @INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
 @INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir)/libecasound/include -I$(top_srcdir)/kvutils
+INCLUDES = -I$(srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils
 @USE_NCURSES_TRUE@termcap_library = -lncurses
 @USE_NCURSES_FALSE@termcap_library = -ltermcap
 @INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecasound_debug
@@ -94,9 +94,9 @@ INCLUDES = -I$(srcdir) -I$(top_srcdir)/libecasound/include -I$(top_srcdir)/kvuti
 ecasound_SOURCES = eca-text.cpp eca-text.h textdebug.cpp textdebug.h
 ecasound_debug_SOURCES = $(ecasound_SOURCES)
 
-ecasound_LDADD = $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a                  $(termcap_library) 		 $(top_builddir)/libecasound/src/libecasound.la 		 -L$(top_builddir)/kvutils/.libs -lkvutils
+ecasound_LDADD = $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a                  $(termcap_library) 		 $(top_builddir)/libecasound/libecasound.la 		 -L$(top_builddir)/kvutils/.libs -lkvutils
 
-ecasound_debug_LDADD = $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a 			$(termcap_library) 		 	$(top_builddir)/libecasound/src/libecasound_debug.la 			-L$(top_builddir)/kvutils/.libs -lkvutils
+ecasound_debug_LDADD = $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a 			$(termcap_library) 		 	$(top_builddir)/libecasound/libecasound_debug.la 			-L$(top_builddir)/kvutils/.libs -lkvutils
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
@@ -112,21 +112,21 @@ ecasound_debug_OBJECTS =  eca-text.o textdebug.o
 @USE_NCURSES_FALSE@ecasound_debug_DEPENDENCIES =  \
 @USE_NCURSES_FALSE@$(top_builddir)/readline-4.0/libreadline.a \
 @USE_NCURSES_FALSE@$(top_builddir)/readline-4.0/libhistory.a \
-@USE_NCURSES_FALSE@$(top_builddir)/libecasound/src/libecasound_debug.la
+@USE_NCURSES_FALSE@$(top_builddir)/libecasound/libecasound_debug.la
 @USE_NCURSES_TRUE@ecasound_debug_DEPENDENCIES =  \
 @USE_NCURSES_TRUE@$(top_builddir)/readline-4.0/libreadline.a \
 @USE_NCURSES_TRUE@$(top_builddir)/readline-4.0/libhistory.a \
-@USE_NCURSES_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
+@USE_NCURSES_TRUE@$(top_builddir)/libecasound/libecasound_debug.la
 ecasound_debug_LDFLAGS = 
 ecasound_OBJECTS =  eca-text.o textdebug.o
 @USE_NCURSES_FALSE@ecasound_DEPENDENCIES =  \
 @USE_NCURSES_FALSE@$(top_builddir)/readline-4.0/libreadline.a \
 @USE_NCURSES_FALSE@$(top_builddir)/readline-4.0/libhistory.a \
-@USE_NCURSES_FALSE@$(top_builddir)/libecasound/src/libecasound.la
+@USE_NCURSES_FALSE@$(top_builddir)/libecasound/libecasound.la
 @USE_NCURSES_TRUE@ecasound_DEPENDENCIES =  \
 @USE_NCURSES_TRUE@$(top_builddir)/readline-4.0/libreadline.a \
 @USE_NCURSES_TRUE@$(top_builddir)/readline-4.0/libhistory.a \
-@USE_NCURSES_TRUE@$(top_builddir)/libecasound/src/libecasound.la
+@USE_NCURSES_TRUE@$(top_builddir)/libecasound/libecasound.la
 ecasound_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -406,11 +406,6 @@ all-redirect all-am all installdirs mostlyclean-generic \
 distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
-#		       -ltermcap
-#			 /usr/lib/libreadline.a /usr/lib/libhistory.a
-#ecasound_debug_LDFLAGS = -lkvutils
-# ecasound_LDADD = -lm -lpthread $(top_srcdir)/libecasound/src/libecasound.la
-# ../kvutils/.libs/libkvutils.a
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -84,10 +84,10 @@ qt_includes = @qt_includes@
 qt_libraries = @qt_libraries@
 @INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
 @INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
-@INCLUDE_DEBUG_TRUE@libecasound_path = -L$(top_builddir)/kvutils -L$(top_builddir)/kvutils/.libs -lkvutils $(top_builddir)/libecasound/src/libecasound_debug.la
-@INCLUDE_DEBUG_FALSE@libecasound_path = -L$(top_builddir)/kvutils -L$(top_builddir)/kvutils/.libs -lkvutils $(top_builddir)/libecasound/src/libecasound.la
+@INCLUDE_DEBUG_TRUE@libecasound_path = -L$(top_builddir)/kvutils -L$(top_builddir)/kvutils/.libs -lkvutils $(top_builddir)/libecasound/libecasound_debug.la
+@INCLUDE_DEBUG_FALSE@libecasound_path = -L$(top_builddir)/kvutils -L$(top_builddir)/kvutils/.libs -lkvutils $(top_builddir)/libecasound/libecasound.la
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils 			-I$(top_srcdir)/libecasound/include 			-I$(top_srcdir)/libecasound/src
+INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils 			-I$(top_srcdir)/libecasound
 
 @INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecanormalize_debug 	       ecafixdc_debug 	       ecaplay_debug
 @INCLUDE_DEBUG_FALSE@bin_PROGRAMS = ecanormalize 	       ecafixdc 	       ecaplay
@@ -125,39 +125,39 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 ecanormalize_debug_OBJECTS =  ecatools_normalize.o
 @INCLUDE_DEBUG_TRUE@ecanormalize_debug_DEPENDENCIES =  \
-@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
+@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/libecasound_debug.la
 @INCLUDE_DEBUG_FALSE@ecanormalize_debug_DEPENDENCIES =  \
-@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
+@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/libecasound.la
 ecanormalize_debug_LDFLAGS = 
 ecafixdc_debug_OBJECTS =  ecatools_fixdc.o
 @INCLUDE_DEBUG_TRUE@ecafixdc_debug_DEPENDENCIES =  \
-@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
+@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/libecasound_debug.la
 @INCLUDE_DEBUG_FALSE@ecafixdc_debug_DEPENDENCIES =  \
-@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
+@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/libecasound.la
 ecafixdc_debug_LDFLAGS = 
 ecaplay_debug_OBJECTS =  ecatools_play.o
 @INCLUDE_DEBUG_TRUE@ecaplay_debug_DEPENDENCIES =  \
-@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
+@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/libecasound_debug.la
 @INCLUDE_DEBUG_FALSE@ecaplay_debug_DEPENDENCIES =  \
-@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
+@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/libecasound.la
 ecaplay_debug_LDFLAGS = 
 ecanormalize_OBJECTS =  ecatools_normalize.o
 @INCLUDE_DEBUG_TRUE@ecanormalize_DEPENDENCIES =  \
-@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
+@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/libecasound_debug.la
 @INCLUDE_DEBUG_FALSE@ecanormalize_DEPENDENCIES =  \
-@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
+@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/libecasound.la
 ecanormalize_LDFLAGS = 
 ecafixdc_OBJECTS =  ecatools_fixdc.o
 @INCLUDE_DEBUG_TRUE@ecafixdc_DEPENDENCIES =  \
-@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
+@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/libecasound_debug.la
 @INCLUDE_DEBUG_FALSE@ecafixdc_DEPENDENCIES =  \
-@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
+@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/libecasound.la
 ecafixdc_LDFLAGS = 
 ecaplay_OBJECTS =  ecatools_play.o
 @INCLUDE_DEBUG_TRUE@ecaplay_DEPENDENCIES =  \
-@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
+@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/libecasound_debug.la
 @INCLUDE_DEBUG_FALSE@ecaplay_DEPENDENCIES =  \
-@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
+@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/libecasound.la
 ecaplay_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
