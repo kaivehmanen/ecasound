@@ -2,7 +2,7 @@
  * ecaplay.c: A simple command-line tool for playing audio files
  *            using the default output device specified in 
  *            "~/.ecasoundrc".
- * Copyright (C) 1999-2002,2004 Kai Vehmanen
+ * Copyright (C) 1999-2002,2004,2005 Kai Vehmanen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,7 +230,7 @@ static void print_usage(FILE* stream)
   fprintf(stream, "General Public License. For more information about these matters, see\n"); 
   fprintf(stream, "the file named COPYING.\n");
 
-  fprintf(stream, "\nUSAGE: ecaplay [-dhk] file1 [ file2, ... fileN ]\n\n");
+  fprintf(stream, "\nUSAGE: ecaplay [-dhko] file1 [ file2, ... fileN ]\n\n");
 }
 
 static int process_option(const char* option)
@@ -253,6 +253,12 @@ static int process_option(const char* option)
 	  }
 	  break;
 	}
+
+      case 'h': 
+	{
+	  print_usage(stdout);
+	  return 1;
+	}
       
       case 'k': 
 	{
@@ -264,12 +270,6 @@ static int process_option(const char* option)
 	  break;
 	}
 	
-      case 'h': 
-	{
-	  print_usage(stdout);
-	  return 1;
-	}
-
       case 'o': 
 	{
 	  const char* output = &option[3];
