@@ -80,11 +80,23 @@ int main(int argc, char *argv[])
     }
 
     while(nexttrack != NULL) {
-      sleep(ECAPLAY_TIMEOUT);
-      if (ecaplay_skip_flag == 0) 
+      unsigned int timeleft = ECAPLAY_TIMEOUT;
+
+      while(timeleft > 0) {
+	timeleft = sleep(timeleft);
+
+	if (timeleft > 0 && ecaplay_skip_flag > 1) {
+	  fprintf(stderr, "\n(ecaplay) Caught an exception. Exiting...\n");
+	  return 0;
+	}
+      }
+
+      if (ecaplay_skip_flag == 0) {
 	eci_command_r(eci, "engine-status");
+      }
+
       if (ecaplay_skip_flag != 0 || strcmp(eci_last_string_r(eci), "running") != 0) {
-	ecaplay_skip_flag = 0;
+	--ecaplay_skip_flag;
 	nexttrack = get_track(++tracknum, argc, argv);
 	if (nexttrack != NULL) {
 	  eci_cleanup_r(eci);
@@ -298,12 +310,5 @@ static void setup_signal_handling(void)
 
 static void signal_handler(int signum)
 {
-  if (ecaplay_skip_flag != 0) {
-    fprintf(stderr, "\n(ecaplay) Caught an exception. Exiting...\n");
-    exit(0);
-  }
-
-  /* fprintf(stderr, "\n(ecaplay) Signal, setting skip flag.\n"); */
-
-  ecaplay_skip_flag = 1;
+  ++ecaplay_skip_flag;
 }
