@@ -28,7 +28,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>06062000</h2>
+<h2>15092000</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -83,7 +83,8 @@
 <dt><h2><a href="programmers_guide.html#l33">5: Adding new features and components?</a></h2>
 <dl><p>
 <dt><h3><a href="programmers_guide.html#l34">5.1: Effects and other chain operators</a></h3>
-<dt><h3><a href="programmers_guide.html#l35">5.2: LADSPA plugins</a></h3>
+<dt><h3><a href="programmers_guide.html#l35">5.2: Differences between audio objects and chain operators</a></h3>
+<dt><h3><a href="programmers_guide.html#l36">5.3: LADSPA plugins</a></h3>
 </dl><p>
  
 <p><hr><p><br>
@@ -172,7 +173,7 @@ have capitalized names (<em>Some_enum</em>).
 <dl>
 <p></p><dt><strong>libecasound, ecasound, ecatools, libkvutils</strong><dd>
 Class names are all in upper case and words separated with underscores
-(class ECA_CONTROLLER_BASE). .
+(class ECA_CONTROL_BASE). This a standard style in Eiffel programming.
 <p><p></p><dt><strong>libqtecasound, qtecasound, ecawave</strong><dd>
 Qt-style is used when naming classes (class QELevelMeter), otherwise
 same as above.
@@ -180,8 +181,13 @@ same as above.
 <p>
 <a name="l13"></a>
 <h3>2.3: Documentation style</h3>
-Javadoc-style class documentation is the preferred style. Here's a few
-specific cases:
+Javadoc-style class documentation is the preferred style.
+Class members can be documented either when they are declared (header
+files), or when they are defined. Especilly when specifying
+complicated interfaces, it's better to put documentation in the
+definition files. This way the header files remain compact and serve 
+better as a reference. 
+<p>Here's a few general documentation guide lines:
 <dl>
 <p></p><dt><strong>Use of 3rd person</strong><dd> 
 "Writes samples to memory." instead of "Write samples to memory."
@@ -198,7 +204,7 @@ controllers connected to the effect.
 <p>
 <a name="l15"></a>
 <h3>3.1: Common use-cases</h3>
-Here's some common cases how ecasound can be used. 
+Here's some common cases how ecasound can be used.
 <p><a name="l16"></a>
 <strong>3.1.1: Simple non-interactive processing</strong><p>
 One input is processed and then written to one output. This includes effect 
@@ -248,19 +254,19 @@ When ecasound is run in passive mode, the program flow is simple.
 A ECA_SESSION object is created with suitable parameters, it is
 passed to a ECA_PROCESSOR object and that is all. Once engine
 is started, it does the processing and exits. 
-<p>Another way to do passive processing is to create a ECA_CONTROLLER 
+<p>Another way to do passive processing is to create a ECA_CONTROL 
 object and use it to to access and modify the ECA_SESSION object 
 before passing it to ECA_PROCESSOR.
 <p><a name="l25"></a>
 <strong>3.3.2: Interactive operation</strong><p>
 In interactive mode, everything is done using the interface provided
-by ECA_CONTROLLER. This is when things get complex:
+by ECA_CONTROL. This is when things get complex:
 <p>ECA_SESSION object can contain many ECA_CHAINSETUP objects, but
 only one of them can be active. On the other hand it is possible
 that there are no chainsetups. If this is the case, about the
 only thing you can do is to add a new chainsetup. 
 <p>When some chainsetup is activated, it can be edited using the
-interface provided by ECA_CONTROLLER. Before actual processing can
+interface provided by ECA_CONTROL. Before actual processing can
 start, the chainsetup must first be connected. Only valid 
 chainsetups (at least one input-output pair connected to the same
 chain) can be connected. 
@@ -300,7 +306,7 @@ a pointer to a ECA_SESSION object, which has all information needed at
 runtime. Processing is started with the exec() member function and
 after that, ECA_PROCESSOR runs on its own. If the interactive mode is
 enabled in ECA_SESSION, ECA_PROCESSOR can be controlled using the
-ECA_CONTROLLER class. It offers a safe way to control ecasound.
+ECA_CONTROL class. It offers a safe way to control ecasound.
 Another way to communicate with ECA_PROCESSOR is to access the
 ECA_SESSION object directly.
 <p><p><strong>ECA_SESSION</strong><br><br> 
@@ -308,11 +314,11 @@ ECA_SESSION represents the data used by ecasound. A session contains
 all ECA_CHAINSETUP objects and general runtime settings (iactive-mode,
 debug-level, etc). Only one ECA_CHAINSETUP can be active at a time. To
 make it easier to control how threads access ECA_SESSION, only
-ECA_PROCESSOR and ECA_CONTROLLER classes have direct access to
+ECA_PROCESSOR and ECA_CONTROL classes have direct access to
 ECA_SESSION data and functions. Other classes can only use <em>const</em>
 members of ECA_SESSION. 
-<p><p><strong>ECA_CONTROLLER</strong><br><br> 
-ECA_CONTROLLER represents the whole public interface offered by 
+<p><p><strong>ECA_CONTROL</strong><br><br> 
+ECA_CONTROL represents the whole public interface offered by 
 ecasound library. It also has a simple command interpreter 
 (interactive-mode) that can used for controlling ecasound. 
 <p>
@@ -322,7 +328,7 @@ ecasound library. It also has a simple command interpreter
 Basic unit for representing sample data. The data type used to 
 represent a single sample, valid value range, channel count, global 
 sampling rate and system endianess are all specified in 
-"samplebuffer.h".
+"samplebuffer.h" and "sample_specs.h".
 <p><p><strong>DEBUG</strong><br><br>
 Virtual interface class for the debugging subsystem. Ecasound engine 
 sends all debug messages to this class. The actual implementation of
@@ -348,7 +354,7 @@ situations, performance might be an issue.
 <p>
 <a name="l31"></a>
 <h3>4.2: Controller class interface</h3>
-By linking your program to libecasound, you can use the ECA_CONTROLLER
+By linking your program to libecasound, you can use the ECA_CONTROL
 class for controlling ecasound. This is a large interface class that
 offers routines for controlling all ecasound features. It's easy
 to use while still powerful. All ecasound interface programs use this 
@@ -357,7 +363,7 @@ class. Here's a few lines of code:
 
 --cut--
 ECA_SESSION esession;
-ECA_CONTROLLER ctrl (&amp;esession);
+ECA_CONTROL ctrl (&amp;esession);
 ctrl.new_chainsetup("default");
 [... other setup routines ]
 ctrl.start(); // starts processing in another thread (doesn't block)
@@ -373,7 +379,7 @@ sample:
 
 --cut--
 ECA_SESSION esession;
-ECA_CONTROLLER ctrl (&amp;esession);
+ECA_CONTROL ctrl (&amp;esession);
 ctrl.new_chainsetup("default");
 [... other setup routines ]
 ECA_PROCESSOR p (&amp;esession);
@@ -416,7 +422,46 @@ effect to <em>libecasound/src/eca-static-object-maps.cpp</em>,
 like any other ecasound effect (parameters control, effect presets, etc).
 <p>
 <a name="l35"></a>
-<h3>5.2: LADSPA plugins</h3>
+<h3>5.2: Differences between audio objects and chain operators</h3>
+Design-wise, audio objects and effects (chain operators) aren't that 
+far away from each other. Many audio apps don't separate these
+concepts at all (for instance most UG based synthesizers). In ecasound 
+though, there are some differences:
+<p>Input/output:
+<dl>
+<li > audio objects can be opened for reading, writing or read&amp;writing
+<li > effects get a buffer which they operate
+</dl>
+<p>Audio format:
+<dl>
+<li > audio objects can have a distinct audio format (sample rate, bits,
+  channels)
+<li > effects should be capable of accepting audio data in any format
+  (this is usually easy as ecasound converts all input data to its
+  internal format)
+</dl>
+<p>Control:
+<dl>
+<li > audio objects can be prepared, started and stopped
+<li > effects don't have a running state
+</dl>
+<p>Position:
+<dl>
+<li > audio objects store length and position
+<li > effects just process buffers and don't know about their position
+</dl>
+<p>A good example of this similarity is LADSPA oscillator plugins.
+Although they are effects, you can easily use them as audio inputs by
+specifying:
+<p><pre>
+
+"ecasound -i null -o /dev/dsp -el:sine_fcac,440,1"
+
+</pre>
+
+<p>
+<a name="l36"></a>
+<h3>5.3: LADSPA plugins</h3>
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
 Plugin API). See <a href="http://audio.netpedia.net/lad">LAD mailing list web site</a> for 
 more info about LADSPA. Other useful sites are 

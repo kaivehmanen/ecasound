@@ -59,9 +59,9 @@ reverb4 = -pn:reverb1 -pn:reverb2
 delay1 = -etd:200,0,3,60
 delay2 = -etm:200,3,60
 # Phase effects
-flanger1 = -etl:10,200,50,0.5
-chorus1 = -etc:10,50,50,0.5
-phaser1 = -etp:10,25,50,0.5
+flanger1 = -etl:2,20,50,0.5
+chorus1 = -etc:2,20,50,0.5
+phaser1 = -etp:2,50,50,0.05
 #
 # ======
 # EQ

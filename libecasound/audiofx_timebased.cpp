@@ -458,10 +458,10 @@ void EFFECT_MODULATING_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter
       assert(buffer.size() == delay_index.size());
       assert(buffer.size() == filled.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
-	if (dtime > static_cast<long int>(buffer[n].size())) {
-	  buffer[n].resize(dtime);
+	if (dtime * 2 > static_cast<long int>(buffer[n].size())) {
+	  buffer[n].resize(dtime * 2);
 	}
-	delay_index[n] = dtime - 1;
+	delay_index[n] = 0;
 	filled[n] = false;
       }
       break;
@@ -491,8 +491,8 @@ void EFFECT_MODULATING_DELAY::init(SAMPLE_BUFFER* insample) {
   set_samples_per_second(insample->sample_rate());
 
   filled.resize(channels(), false);
-  delay_index.resize(channels(), dtime - 1);
-  buffer.resize(channels(), vector<SAMPLE_SPECS::sample_type> (dtime));
+  delay_index.resize(channels(), 2 * dtime);
+  buffer.resize(channels(), vector<SAMPLE_SPECS::sample_type> (2 * dtime));
 }
 
 void EFFECT_FLANGER::process(void) {
@@ -501,19 +501,16 @@ void EFFECT_FLANGER::process(void) {
     SAMPLE_SPECS::sample_type temp1 = 0.0;
     parameter_type p = vartime * lfo.value();
     if (filled[i.channel()] == true) {
-      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime >= 0);
-      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime < static_cast<long int>(buffer[i.channel()].size()));
-      temp1 = buffer[i.channel()][(delay_index[i.channel()] + static_cast<long int>(p)) % dtime];
-//        cerr << "b: "
-//  	   << (delay_index + static_cast<long int>(p)) % dtime
-//  	   << "," << p << ".\n";
+      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
+      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
+      temp1 = buffer[i.channel()][(dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2)];
     }
     *i.current() = (*i.current() * (1.0 - feedback)) + (temp1 * feedback);
     buffer[i.channel()][delay_index[i.channel()]] = *i.current();
 
-    --(delay_index[i.channel()]);
-    if (delay_index[i.channel()] == -1) {
-      delay_index[i.channel()] = dtime - 1;
+    ++(delay_index[i.channel()]);
+    if (delay_index[i.channel()] == 2 * dtime) {
+      delay_index[i.channel()] = 0;
       filled[i.channel()] = true;
     }
     i.next();
@@ -527,16 +524,16 @@ void EFFECT_CHORUS::process(void) {
     SAMPLE_SPECS::sample_type temp1 = 0.0;
     parameter_type p = vartime * lfo.value();
     if (filled[i.channel()] == true) {
-      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime >= 0);
-      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime < static_cast<long int>(buffer[i.channel()].size()));
-      temp1 = buffer[i.channel()][(delay_index[i.channel()] + static_cast<long int>(p)) % dtime];
+      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
+      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
+      temp1 = buffer[i.channel()][(dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2)];
     }
     buffer[i.channel()][delay_index[i.channel()]] = *i.current();
     *i.current() = (*i.current() * (1.0 - feedback)) + (temp1 * feedback);
 
-    --(delay_index[i.channel()]);
-    if (delay_index[i.channel()] == -1) {
-      delay_index[i.channel()] = dtime - 1;
+    ++(delay_index[i.channel()]);
+    if (delay_index[i.channel()] == 2 * dtime) {
+      delay_index[i.channel()] = 0;
       filled[i.channel()] = true;
     }
     i.next();
@@ -550,16 +547,19 @@ void EFFECT_PHASER::process(void) {
     SAMPLE_SPECS::sample_type temp1 = 0.0;
     parameter_type p = vartime * lfo.value();
     if (filled[i.channel()] == true) {
-      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime >= 0);
-      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime < static_cast<long int>(buffer[i.channel()].size()));
-      temp1 = buffer[i.channel()][(delay_index[i.channel()] + static_cast<long int>(p)) % dtime];
+      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
+      assert((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
+      temp1 = buffer[i.channel()][(dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2)];
+//          cerr << "b: "
+//    	   << (delay_index[i.channel()] + static_cast<long int>(p)) % dtime
+//    	   << "," << p << ".\n";
     }
-    *i.current() = (*i.current() + -1.0 * temp1 * feedback) / 2.0;
+    *i.current() = *i.current() * (1.0 - feedback) + (-1.0 * temp1 * feedback);
     buffer[i.channel()][delay_index[i.channel()]] = *i.current();
 
-    --(delay_index[i.channel()]);
-    if (delay_index[i.channel()] == -1) {
-      delay_index[i.channel()] = dtime - 1;
+    ++(delay_index[i.channel()]);
+    if (delay_index[i.channel()] == 2 * dtime) {
+      delay_index[i.channel()] = 0;
       filled[i.channel()] = true;
     }
     i.next();

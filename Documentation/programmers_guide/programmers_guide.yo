@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (04092000)
+       (15092000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -107,7 +107,7 @@ subsubsect(Package specific)
 startdit()
 dit(libecasound, ecasound, ecatools, libkvutils)
 Class names are all in upper case and words separated with underscores
-(class ECA_CONTROL_BASE). .
+(class ECA_CONTROL_BASE). This a standard style in Eiffel programming.
 
 dit(libqtecasound, qtecasound, ecawave)
 Qt-style is used when naming classes (class QELevelMeter), otherwise
@@ -140,7 +140,7 @@ sect(How ecasound works?)
 
 COMMENT(----------------------------------------------------------------)
 subsect(Common use-cases)
-Here's some common cases how ecasound can be used. 
+Here's some common cases how ecasound can be used.
 
 subsubsect(Simple non-interactive processing)
 One input is processed and then written to one output. This includes effect 
@@ -276,7 +276,7 @@ subsubsubsect(SAMPLEBUFFER)
 Basic unit for representing sample data. The data type used to 
 represent a single sample, valid value range, channel count, global 
 sampling rate and system endianess are all specified in 
-"samplebuffer.h".
+"samplebuffer.h" and "sample_specs.h".
 
 subsubsubsect(DEBUG)
 Virtual interface class for the debugging subsystem. Ecasound engine 
@@ -366,6 +366,48 @@ libecasound's makefiles. Then all that's left to do is to add your
 effect to em(libecasound/src/eca-static-object-maps.cpp),
 em(register_default_objects()). Now the new effect can be used just 
 like any other ecasound effect (parameters control, effect presets, etc).
+
+COMMENT(----------------------------------------------------------------)
+subsect(Differences between audio objects and chain operators)
+Design-wise, audio objects and effects (chain operators) aren't that 
+far away from each other. Many audio apps don't separate these
+concepts at all (for instance most UG based synthesizers). In ecasound 
+though, there are some differences:
+
+Input/output:
+startit()
+it() audio objects can be opened for reading, writing or read&writing
+it() effects get a buffer which they operate
+endit()
+
+Audio format:
+startit()
+it() audio objects can have a distinct audio format (sample rate, bits,
+  channels)
+it() effects should be capable of accepting audio data in any format
+  (this is usually easy as ecasound converts all input data to its
+  internal format)
+endit()
+
+Control:
+startit()
+it() audio objects can be prepared, started and stopped
+it() effects don't have a running state
+endit()
+
+Position:
+startit()
+it() audio objects store length and position
+it() effects just process buffers and don't know about their position
+endit()
+
+A good example of this similarity is LADSPA oscillator plugins.
+Although they are effects, you can easily use them as audio inputs by
+specifying:
+
+verb(
+"ecasound -i null -o /dev/dsp -el:sine_fcac,440,1"
+)
 
 COMMENT(----------------------------------------------------------------)
 subsect(LADSPA plugins)
