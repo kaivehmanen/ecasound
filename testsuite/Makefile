@@ -10,7 +10,10 @@ ecasoundc_library=ecasoundc
 ECAFLAGS= -I${srcdir}/libecasound -I${srcdir}/libecasoundc -D_REENTRANT -g -Wall -Wstrict-prototypes -DVERBOSE
 ECALINK=-L${srcdir}/libecasound/.libs -l${ecasound_library} \
 	-L${srcdir}/libecasoundc/.libs -l${ecasoundc_library} \
-	-L${srcdir}/kvutils/.libs -lkvutils
+	-L${srcdir}/kvutils/.libs -lkvutils \
+	-Wl,--rpath -Wl,${srcdir}/libecasound/.libs \
+	-Wl,--rpath -Wl,${srcdir}/libecasoundc/.libs \
+	-Wl,--rpath -Wl,${srcdir}/kvutils/.libs
 
 CXXFLAGS += $(ECAFLAGS)
 CFLAGS += $(ECAFLAGS)
