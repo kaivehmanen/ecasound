@@ -19,7 +19,15 @@ public:
   /** @name Constructors and destructors */
   /*@{*/
 
-  ECA_SAMPLERATE_AWARE (SAMPLE_SPECS::sample_rate_t srate = -1);
+  /**
+   * Construtor.
+   *
+   * Note! The default is set to a very high value (8 * 48kHz)
+   *       to ensure we retain precision when using (sample-count,srate)
+   *       tuples for storing position and length information, even 
+   *       in situations where the actual sample rate is not yet known.
+   */
+  ECA_SAMPLERATE_AWARE (SAMPLE_SPECS::sample_rate_t srate = 384000);
   virtual ~ECA_SAMPLERATE_AWARE(void);
 
   /*@}*/
