@@ -23,8 +23,8 @@ void eci_command_float_arg(const char*, double arg);
  * Getting return values 
  */
 
-int eci_last_list_of_strings_count(void);
-const char* eci_last_list_of_strings_item(int n);
+int eci_last_string_list_count(void);
+const char* eci_last_string_list_item(int n);
 const char* eci_last_string(void);
 double eci_last_float(void);
 int eci_last_integer(void);

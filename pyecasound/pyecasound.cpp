@@ -57,9 +57,9 @@ static PyObject * pyeca_command_float_arg(PyObject* self, PyObject *args) {
   return Py_BuildValue("");
 }
 
-static PyObject * pyeca_last_list_of_strings(PyObject* self, PyObject *args) {
+static PyObject * pyeca_last_string_list(PyObject* self, PyObject *args) {
   pyeca_control_t *selfp = (pyeca_control_t*) self;
-  const vector<string>& vec = selfp->eci->last_list_of_strings();
+  const vector<string>& vec = selfp->eci->last_string_list();
   PyObject *list = Py_BuildValue("[]");
   for(unsigned int n = 0; n < vec.size(); n++) {
     PyList_Append(list, Py_BuildValue("s", vec[n].c_str()));
@@ -109,7 +109,7 @@ static PyObject * pyeca_current_event(PyObject* self, PyObject *args) {
 static struct PyMethodDef pyeca_control_methods[] = {
   { "command",               pyeca_command,                METH_VARARGS},
   { "command_float_arg",     pyeca_command_float_arg,      METH_VARARGS},
-  { "last_list_of_strings",  pyeca_last_list_of_strings,   METH_VARARGS},
+  { "last_string_list",  pyeca_last_string_list,   METH_VARARGS},
   { "last_string",           pyeca_last_string,            METH_VARARGS},
   { "last_float",            pyeca_last_float,             METH_VARARGS},
   { "last_integer",          pyeca_last_integer,           METH_VARARGS},

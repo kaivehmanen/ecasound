@@ -62,7 +62,7 @@ class ECA_CONTROL_BASE : public DEFINITION_BY_CONTRACT {
 
  protected:
 
-  void set_last_list_of_strings(const vector<string>& s);
+  void set_last_string_list(const vector<string>& s);
   void set_last_string(const string& s);
   void set_last_float(double v);
   void set_last_integer(int v);
@@ -72,7 +72,7 @@ class ECA_CONTROL_BASE : public DEFINITION_BY_CONTRACT {
 
  public:
 
-  const vector<string>& last_list_of_strings(void) const;
+  const vector<string>& last_string_list(void) const;
   const string& last_string(void) const;
   double last_float(void) const;
   int last_integer(void) const;

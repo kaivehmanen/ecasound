@@ -1534,6 +1534,8 @@ void ECA_CONTROL_OBJECTS::select_chain_operator(int chainop_id) {
     }
     if (chainop_id < static_cast<int>(selected_chainsetup_repp->chains[p]->chainops_rep.size() + 1)) {
       selected_chainsetup_repp->chains[p]->select_chain_operator(chainop_id);
+      session_repp->active_chain_index_rep = p;
+      session_repp->active_chainop_index_rep = chainop_id;
     }
   }
 }
@@ -1560,7 +1562,11 @@ void ECA_CONTROL_OBJECTS::select_chain_operator_parameter(int param) {
     if (selected_chainsetup() == connected_chainsetup()) {
       session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_copp_select, param);
     }
+    else {
+      session_repp->active_chainop_param_index_rep = param;
+    }
     selected_chainsetup_repp->chains[p]->select_chain_operator_parameter(param);
+
   } 
 }
 

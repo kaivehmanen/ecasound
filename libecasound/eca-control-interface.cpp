@@ -56,7 +56,7 @@ void ECA_CONTROL_INTERFACE::command_float_arg(const string& cmd, double arg) {
   control_repp->command_float_arg(cmd, arg);
 }
 
-const vector<string>& ECA_CONTROL_INTERFACE::last_list_of_strings(void) const { return(control_repp->last_list_of_strings()); }
+const vector<string>& ECA_CONTROL_INTERFACE::last_string_list(void) const { return(control_repp->last_string_list()); }
 const string& ECA_CONTROL_INTERFACE::last_string(void) const { return(control_repp->last_string()); }
 double ECA_CONTROL_INTERFACE::last_float(void) const { return(control_repp->last_float()); }
 int ECA_CONTROL_INTERFACE::last_integer(void) const { return(control_repp->last_integer()); }

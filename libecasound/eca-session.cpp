@@ -100,6 +100,9 @@ void ECA_SESSION::set_defaults(void) {
   status(ep_status_notready);
   connected_chainsetup_repp = 0;
   selected_chainsetup_repp = 0;
+  active_chain_index_rep = 0;
+  active_chainop_index_rep = 0;
+  active_chainop_param_index_rep = 0;
 
   // --
   // Engine locks and mutexes

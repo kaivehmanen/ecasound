@@ -70,10 +70,6 @@ private:
   int trigger_counter_rep;
   struct timeval multitrack_input_stamp_rep;
 
-  size_t active_chain_index_rep;
-  size_t active_chainop_index_rep;
-  size_t active_chainop_param_index_rep;
-
   // ---
   // Pointers to connected chainsetup
   // ---

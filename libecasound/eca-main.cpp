@@ -115,7 +115,6 @@ void ECA_PROCESSOR::init(void) {
 }
 
 void ECA_PROCESSOR::init_variables(void) {
-  active_chain_index_rep = 0;
   max_channels_rep = 0;
   continue_request_rep = false;
   end_request_rep = false;
@@ -533,11 +532,11 @@ void ECA_PROCESSOR::set_position(double seconds) {
 void ECA_PROCESSOR::set_position_chain(double seconds) {
   conditional_stop();
 
-  AUDIO_IO* ptr = (*chains_repp)[active_chain_index_rep]->input_id_repp;
+  AUDIO_IO* ptr = (*chains_repp)[eparams_repp->active_chain_index_rep]->input_id_repp;
   if (csetup_orig_ptr_map_rep.find(ptr) != csetup_orig_ptr_map_rep.end())
     csetup_orig_ptr_map_rep[ptr]->seek_position_in_seconds(seconds);
 
-  ptr = (*chains_repp)[active_chain_index_rep]->output_id_repp;
+  ptr = (*chains_repp)[eparams_repp->active_chain_index_rep]->output_id_repp;
   if (csetup_orig_ptr_map_rep.find(ptr) != csetup_orig_ptr_map_rep.end())
     csetup_orig_ptr_map_rep[ptr]->seek_position_in_seconds(seconds);
 
@@ -574,11 +573,11 @@ void ECA_PROCESSOR::rewind_to_start_position(void) {
 void ECA_PROCESSOR::change_position_chain(double seconds) {
   conditional_stop();
 
-  AUDIO_IO* ptr = (*chains_repp)[active_chain_index_rep]->input_id_repp; 
+  AUDIO_IO* ptr = (*chains_repp)[eparams_repp->active_chain_index_rep]->input_id_repp; 
   if (csetup_orig_ptr_map_rep.find(ptr) != csetup_orig_ptr_map_rep.end())
     csetup_orig_ptr_map_rep[ptr]->seek_position_in_seconds(csetup_orig_ptr_map_rep[ptr]->position_in_seconds() + seconds);
   
-  ptr = (*chains_repp)[active_chain_index_rep]->output_id_repp;
+  ptr = (*chains_repp)[eparams_repp->active_chain_index_rep]->output_id_repp;
   if (csetup_orig_ptr_map_rep.find(ptr) != csetup_orig_ptr_map_rep.end())
     csetup_orig_ptr_map_rep[ptr]->seek_position_in_seconds(csetup_orig_ptr_map_rep[ptr]->position_in_seconds() + seconds);
 
@@ -588,7 +587,7 @@ void ECA_PROCESSOR::change_position_chain(double seconds) {
 double ECA_PROCESSOR::current_position(void) const { return(csetup_repp->position_in_seconds_exact()); }
 
 double ECA_PROCESSOR::current_position_chain(void) const {
-  AUDIO_IO* ptr = (*chains_repp)[active_chain_index_rep]->input_id_repp; 
+  AUDIO_IO* ptr = (*chains_repp)[eparams_repp->active_chain_index_rep]->input_id_repp; 
   if (csetup_orig_ptr_map_rep.find(ptr) != csetup_orig_ptr_map_rep.end())
     return(csetup_orig_ptr_map_rep[ptr]->position_in_seconds_exact());
   return(0.0f);
@@ -813,7 +812,7 @@ void ECA_PROCESSOR::interpret_queue(void) {
     // ---
     // Section/chain (en/dis)abling commands.
     // ---
-    case ep_c_select: {	active_chain_index_rep = static_cast<size_t>(item.second); break; }
+    case ep_c_select: {	eparams_repp->active_chain_index_rep = static_cast<size_t>(item.second); break; }
     case ep_c_mute: { chain_muting(); break; }
     case ep_c_bypass: { chain_processing(); break; }
     case ep_c_rewind: { change_position_chain(- item.second); break; }
@@ -824,21 +823,21 @@ void ECA_PROCESSOR::interpret_queue(void) {
     // Chain operators
     // ---
     case ep_cop_select: { 
-      active_chainop_index_rep =  static_cast<size_t>(item.second);
-      if (active_chainop_index_rep - 1 < (*chains_repp)[active_chain_index_rep]->chainops_rep.size())
-	(*chains_repp)[active_chain_index_rep]->select_chain_operator(active_chainop_index_rep);
+      eparams_repp->active_chainop_index_rep =  static_cast<size_t>(item.second);
+      if (eparams_repp->active_chainop_index_rep - 1 < (*chains_repp)[eparams_repp->active_chain_index_rep]->chainops_rep.size())
+	(*chains_repp)[eparams_repp->active_chain_index_rep]->select_chain_operator(eparams_repp->active_chainop_index_rep);
       else 
-	active_chainop_index_rep = 0;
+	eparams_repp->active_chainop_index_rep = 0;
       break;
     }
     case ep_copp_select: { 
-      active_chainop_param_index_rep = static_cast<size_t>(item.second);
-      (*chains_repp)[active_chain_index_rep]->select_chain_operator_parameter(active_chainop_param_index_rep);
+      eparams_repp->active_chainop_param_index_rep = static_cast<size_t>(item.second);
+      (*chains_repp)[eparams_repp->active_chain_index_rep]->select_chain_operator_parameter(eparams_repp->active_chainop_param_index_rep);
       break;
     }
     case ep_copp_value: { 
       assert(chains_repp != 0);
-      (*chains_repp)[active_chain_index_rep]->set_parameter(item.second);
+      (*chains_repp)[eparams_repp->active_chain_index_rep]->set_parameter(item.second);
       break;
     }
 
@@ -936,17 +935,17 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 }
 
 void ECA_PROCESSOR::chain_muting(void) {
-  if ((*chains_repp)[active_chain_index_rep]->is_muted()) 
-    (*chains_repp)[active_chain_index_rep]->toggle_muting(false);
+  if ((*chains_repp)[eparams_repp->active_chain_index_rep]->is_muted()) 
+    (*chains_repp)[eparams_repp->active_chain_index_rep]->toggle_muting(false);
   else
-    (*chains_repp)[active_chain_index_rep]->toggle_muting(true);
+    (*chains_repp)[eparams_repp->active_chain_index_rep]->toggle_muting(true);
 }
 
 void ECA_PROCESSOR::chain_processing(void) {
-  if ((*chains_repp)[active_chain_index_rep]->is_processing()) 
-    (*chains_repp)[active_chain_index_rep]->toggle_processing(false);
+  if ((*chains_repp)[eparams_repp->active_chain_index_rep]->is_processing()) 
+    (*chains_repp)[eparams_repp->active_chain_index_rep]->toggle_processing(false);
   else
-    (*chains_repp)[active_chain_index_rep]->toggle_processing(true);
+    (*chains_repp)[eparams_repp->active_chain_index_rep]->toggle_processing(true);
 }
 
 /**

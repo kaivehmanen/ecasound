@@ -30,7 +30,7 @@ class ECA_CONTROL_INTERFACE {
   // Getting return values
   // -------------------------------------------------------------------
 
-  const vector<string>& last_list_of_strings(void) const;
+  const vector<string>& last_string_list(void) const;
   const string& last_string(void) const;
   double last_float(void) const;
   int last_integer(void) const;

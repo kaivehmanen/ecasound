@@ -197,6 +197,10 @@ class ECA_SESSION {
   pthread_cond_t *ecasound_stop_cond_repp;
   pthread_mutex_t *ecasound_stop_mutex_repp;
 
+  int active_chain_index_rep;
+  int active_chainop_index_rep;
+  int active_chainop_param_index_rep;
+
   // --
   // Public/const routines
   // --

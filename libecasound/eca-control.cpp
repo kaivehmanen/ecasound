@@ -298,7 +298,7 @@ void ECA_CONTROL::action(int action_id) {
   // ---
   case ec_c_add: { add_chains(string_to_vector(action_args_rep[0], ',')); break; }
   case ec_c_select: { select_chains(string_to_vector(action_args_rep[0], ',')); break; }
-  case ec_c_selected: { set_last_list_of_strings(selected_chains()); break; }
+  case ec_c_selected: { set_last_string_list(selected_chains()); break; }
   case ec_c_deselect: { deselect_chains(string_to_vector(action_args_rep[0], ',')); break; }
   case ec_c_select_add: 
     { 
@@ -342,7 +342,7 @@ void ECA_CONTROL::action(int action_id) {
       set_last_string(chain_status()); 
       break; 
     }
-  case ec_c_list: { set_last_list_of_strings(selected_chains()); break; }
+  case ec_c_list: { set_last_string_list(selected_chains()); break; }
 
     // ---
     // Audio objects
@@ -522,7 +522,7 @@ void ECA_CONTROL::print_last_value(void) {
   if (type == "s") 
     result = last_string();
   else if (type == "S")
-    result = vector_to_string(last_list_of_strings(), ",");
+    result = vector_to_string(last_string_list(), ",");
   else if (type == "i")
     result = kvu_numtostr(last_integer());
   else if (type == "li")

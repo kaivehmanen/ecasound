@@ -87,8 +87,8 @@ void eci_command_float_arg(const char* command, double arg) {
  * Returns the number of strings returned by the 
  * last ECI command.
  */
-int eci_last_list_of_strings_count(void) {
-  return(eci_rep.eci->last_list_of_strings().size());
+int eci_last_string_list_count(void) {
+  return(eci_rep.eci->last_string_list().size());
 }
 
 /**
@@ -96,10 +96,10 @@ int eci_last_list_of_strings_count(void) {
  * strings returned by the last ECI command.
  *
  * require:
- *  n >= 0 && n < eci_last_list_of_strings_count()
+ *  n >= 0 && n < eci_last_string_list_count()
  */
-const char* eci_last_list_of_strings_item(int n) {
-  return(eci_rep.eci->last_list_of_strings()[n].c_str());
+const char* eci_last_string_list_item(int n) {
+  return(eci_rep.eci->last_string_list()[n].c_str());
 }
 
 const char* eci_last_string(void) {

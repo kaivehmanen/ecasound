@@ -225,6 +225,10 @@ void ECA_CONTROL_BASE::start_engine(void) {
     return;
   }
 
+  unsigned int p = session_repp->connected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size())
+    session_repp->active_chain_index_rep = p;
+
   pthread_attr_t th_attr;
   pthread_attr_init(&th_attr);
   int retcode_rep = pthread_create(&th_cqueue_rep,
@@ -457,7 +461,7 @@ void ECA_CONTROL_BASE::toggle_raise_priority(bool v) {
   session_repp->toggle_raised_priority(v);
 }
 
-void ECA_CONTROL_BASE::set_last_list_of_strings(const vector<string>& s) { 
+void ECA_CONTROL_BASE::set_last_string_list(const vector<string>& s) { 
   last_los_rep = s; 
   last_type_rep = "S";
 }
@@ -486,7 +490,7 @@ void ECA_CONTROL_BASE::set_last_error(const string& s) {
   last_error_rep = s;
 }
 
-const vector<string>& ECA_CONTROL_BASE::last_list_of_strings(void) const { return(last_los_rep); }
+const vector<string>& ECA_CONTROL_BASE::last_string_list(void) const { return(last_los_rep); }
 const string& ECA_CONTROL_BASE::last_string(void) const { return(last_s_rep); }
 double ECA_CONTROL_BASE::last_float(void) const { return(last_f_rep); }
 int ECA_CONTROL_BASE::last_integer(void) const { return(last_i_rep); } 
