@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 221204) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 050305) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-xx022005 (v2.3.6)  -** stable release **-
+xx032005 (v2.3.6)  -** stable release **-
 	- edi-entries: edi-40 progress
 	- added: support for having commas in arguments by escaping 
 	 	 them with a backslash (example: "ai-add foo\,bar.wav")
@@ -47,6 +47,8 @@ xx022005 (v2.3.6)  -** stable release **-
 		   code-paths
 	- changed: better error message if unable to load LADSPA plugin 
 		   with -el/-eli
+	- changed: removed hard upper-limit for -ei scale-factor, 
+		   modified both the upper and lower soft limits
 	- fixed: correctly interpret EIAM command arguments containing
 	         whitespace (example: "ai-add foo bar.wav")
 	- fixed: denormal problems in filter and delay operators
@@ -68,6 +70,9 @@ xx022005 (v2.3.6)  -** stable release **-
 	- fixed: serious bugs in resampling between 96000 and 44100/48000 
 		 rates when using libsamplerate; upgraded Ecasound to use
 		 the libsamplerate 'full API'
+	- fixed: options "-b:", "-b" and "-b:0" caused a segfault
+	- fixed: aac/m4a encoder was not stopped properly after 
+		 processing was finished
 12112004 (v2.3.5)  -** stable release **-
 	- note: main website address has changed to www.eca.cx/ecasound
 	- changed: collected all email addresses from source files to 
