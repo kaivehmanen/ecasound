@@ -1,3 +1,4 @@
+// -*- mode: C++; -*-
 #ifndef INCLUDED_KVU_THREADS_H
 #define INCLUDED_KVU_THREADS_H
 

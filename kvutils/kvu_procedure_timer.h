@@ -1,3 +1,4 @@
+// -*- mode: C++; -*-
 #ifndef INCLUDED_KVU_PROCEDURE_TIMER
 #define INCLUDED_KVU_PROCEDURE_TIMER
 

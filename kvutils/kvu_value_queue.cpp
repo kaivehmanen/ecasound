@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvu_value_queue.cpp: A thread-safe way to transmit int-double pairs.
-// Copyright (C) 1999 Kai Vehmanen
+// Copyright (C) 1999,2004 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,16 +27,18 @@
 
 #include "kvu_value_queue.h"
 
+using namespace std;
+
 VALUE_QUEUE::VALUE_QUEUE(void) { 
   pthread_mutex_init(&lock_rep, NULL);
   pthread_cond_init(&cond_rep, NULL);
-  empty_rep = std::pair<int,double>(0, 0.0f);
+  empty_rep = pair<int,double>(0, 0.0f);
 }
 
 void VALUE_QUEUE::push_back(int key, double value) {
   pthread_mutex_lock(&lock_rep);
 
-  cmds_rep.push_back(std::pair<int,double>(key, value));
+  cmds_rep.push_back(pair<int,double>(key, value));
 
   pthread_cond_broadcast(&cond_rep);
   pthread_mutex_unlock(&lock_rep);
@@ -55,7 +57,7 @@ void VALUE_QUEUE::pop_front(void) {
   pthread_mutex_unlock(&lock_rep);
 }    
 
-const std::pair<int,double>& VALUE_QUEUE::front(void) {
+const pair<int,double>& VALUE_QUEUE::front(void) {
   // --------
   // require:
   assert(is_empty() == false);
@@ -63,7 +65,7 @@ const std::pair<int,double>& VALUE_QUEUE::front(void) {
 
   pthread_mutex_lock(&lock_rep);
 
-  const std::pair<int,double>& s = cmds_rep.front();
+  const pair<int,double>& s = cmds_rep.front();
 
   pthread_mutex_unlock(&lock_rep);
   return(s);

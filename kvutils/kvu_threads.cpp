@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvu_threads.cpp: Various pthread related helper functions.
-// Copyright (C) 2002 Kai Vehmanen
+// Copyright (C) 2002,2004 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvu_utils.cpp: Misc helper routines
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2004 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,17 +35,30 @@
 #include "kvu_dbc.h"
 #include "kvu_utils.h"
 
-std::vector<std::string> kvu_string_to_words(const std::string& s)
+using namespace std;
+
+/**
+ * Converts a string to a vector of strings (words).
+ * Whitespace is used as the separator.
+ *
+ * Note! This function is obsolete, use @see string_to_tokens() 
+ *       instead.
+ */
+vector<string> kvu_string_to_words(const string& s)
 {
   return(kvu_string_to_tokens(s));
 }
 
-std::vector<std::string> kvu_string_to_tokens(const std::string& s)
+/**
+ * Converts a string to a vector of token strings.
+ * Whitespace is used as the separator.
+ */
+vector<string> kvu_string_to_tokens(const string& s)
 {
-  std::vector<std::string> vec;
-  std::string stmp = "";
+  vector<string> vec;
+  string stmp = "";
 
-  for(std::string::const_iterator p = s.begin(); p != s.end(); p++) {
+  for(string::const_iterator p = s.begin(); p != s.end(); p++) {
     if (isspace(*p) == 0)
       stmp += *p;
     else {
@@ -60,13 +73,25 @@ std::vector<std::string> kvu_string_to_tokens(const std::string& s)
   return(vec);
 }
 
-std::vector<std::string> kvu_string_to_tokens_quoted(const std::string& s)
+/**
+ * Converts a string to a vector of token strings.
+ * Whitespace is used as the token separator. 
+ *
+ * Unlike string_to_tokens(), quotes can be used to mark 
+ * groups of words as tokens (e.g. "this is one token").
+ *
+ * It's also possible to add individual whitespace
+ * characted by escaping them with a backclash (e.g.
+ * 'this\ is\ one token\ '). Escaped characters are
+ * not considered as possible separators.
+ */
+vector<string> kvu_string_to_tokens_quoted(const string& s)
 {
-  std::vector<std::string> vec;
-  std::string stmp;
+  vector<string> vec;
+  string stmp;
   bool quoteflag = false;
 
-  for(std::string::const_iterator p = s.begin(); p != s.end(); p++) {
+  for(string::const_iterator p = s.begin(); p != s.end(); p++) {
     if (*p == '\"') {
       quoteflag = !quoteflag;
     }
@@ -89,13 +114,19 @@ std::vector<std::string> kvu_string_to_tokens_quoted(const std::string& s)
   return(vec);
 }
 
-std::vector<std::string> kvu_string_to_vector(const std::string& str, 
-					      const std::string::value_type separator)
+/**
+ * Converts a string to a vector of strings.
+ *
+ * @param str string to be converted
+ * @param separator character to be used for separating items
+ */
+vector<string> kvu_string_to_vector(const string& str, 
+				    const string::value_type separator)
 {
-  std::vector<std::string> vec;
-  std::string stmp = "";
+  vector<string> vec;
+  string stmp = "";
 
-  for(std::string::const_iterator p = str.begin(); p != str.end(); p++) {
+  for(string::const_iterator p = str.begin(); p != str.end(); p++) {
     if (*p != separator)
       stmp += *p;
     else {
@@ -110,13 +141,19 @@ std::vector<std::string> kvu_string_to_vector(const std::string& str,
   return(vec);
 }
 
-std::vector<int> kvu_string_to_int_vector(const std::string& str, 
-					  const std::string::value_type separator)
+/**
+ * Converts a string to a vector of integers.
+ *
+ * @param str string to be converted
+ * @param separator character to be used for separating items
+ */
+vector<int> kvu_string_to_int_vector(const string& str, 
+				     const string::value_type separator)
 {
-  std::vector<int> vec;
-  std::string stmp = "";
+  vector<int> vec;
+  string stmp = "";
 
-  for(std::string::const_iterator p = str.begin(); p != str.end(); p++) {
+  for(string::const_iterator p = str.begin(); p != str.end(); p++) {
     if (*p != separator)
       stmp += *p;
     else {
@@ -131,13 +168,19 @@ std::vector<int> kvu_string_to_int_vector(const std::string& str,
   return(vec);
 }
 
-std::string kvu_vector_to_string(const std::vector<std::string>& str, 
-				 const std::string& separator)
+/**
+ * Converts a vector of strings to a single string.
+ *
+ * @param str vector of strings to be converted
+ * @param separator string that is inserted between items
+ */
+string kvu_vector_to_string(const vector<string>& str, 
+			    const string& separator)
 {
 
-  std::string stmp;
+  string stmp;
 
-  std::vector<std::string>::const_iterator p = str.begin();
+  vector<string>::const_iterator p = str.begin();
   while(p != str.end()) {
     stmp += *p;
     ++p;
@@ -148,12 +191,16 @@ std::string kvu_vector_to_string(const std::vector<std::string>& str,
   return(stmp);
 }
 
-std::string kvu_string_search_and_replace(const std::string& str, 
-					  const std::string::value_type from,
-					  const std::string::value_type to)
+/**
+ * Return a new string, where all 'from' characters are
+ * replaced with 'to' characters.
+ */
+string kvu_string_search_and_replace(const string& str, 
+				     const string::value_type from,
+				     const string::value_type to)
 {
-  std::string stmp (str);
-  for(std::vector<std::string>::size_type p = 0; p < str.size(); p++) {
+  string stmp (str);
+  for(vector<string>::size_type p = 0; p < str.size(); p++) {
     if (str[p] == from) stmp[p] = to;
     else stmp[p] = str[p];
   }
@@ -162,10 +209,14 @@ std::string kvu_string_search_and_replace(const std::string& str,
 }
 
 
-bool kvu_string_icmp(const std::string& first, const std::string& second)
+/**
+ * Case-insensitive string compare. Ignores preceding and 
+ * trailing white space.
+ */
+bool kvu_string_icmp(const string& first, const string& second)
 {
-  std::string a = first;
-  std::string b = second;
+  string a = first;
+  string b = second;
 
   a = kvu_remove_trailing_spaces(a);
   a = kvu_remove_preceding_spaces(a);
@@ -178,10 +229,13 @@ bool kvu_string_icmp(const std::string& first, const std::string& second)
   return(a == b);
 }
 
-std::string kvu_remove_trailing_spaces(const std::string& a)
+/**
+ * Removes all trailing white space
+ */
+string kvu_remove_trailing_spaces(const string& a)
 {
-  std::string r = "";
-  std::string::const_reverse_iterator p;
+  string r = "";
+  string::const_reverse_iterator p;
   for(p = a.rbegin(); p != a.rend(); p++) {
     if (*p != ' ') break;
   }
@@ -191,10 +245,13 @@ std::string kvu_remove_trailing_spaces(const std::string& a)
   return(r);
 }
 
-std::string kvu_remove_preceding_spaces(const std::string& a)
+/**
+ * Removes all preciding white space
+ */
+string kvu_remove_preceding_spaces(const string& a)
 {
-  std::string r = "";
-  std::string::const_iterator p;
+  string r = "";
+  string::const_iterator p;
   for(p = a.begin(); p != a.end(); p++) {
     if (*p != ' ') break;
   }
@@ -204,52 +261,78 @@ std::string kvu_remove_preceding_spaces(const std::string& a)
   return(r);
 }
 
-std::string kvu_remove_surrounding_spaces(const std::string& a)
+/**
+ * Removes all surrounding white spaces
+ */
+string kvu_remove_surrounding_spaces(const string& a)
 {
-  std::string::const_iterator p,q;
+  string::const_iterator p,q;
   for(p = a.begin(); p != a.end() && *p == ' '; p++);
   for(q = (a.end() - 1); q != a.begin() && *q == ' '; q--);
-  return(std::string(p,q + 1));
+  return(string(p,q + 1));
 }
 
-std::string kvu_convert_to_uppercase(const std::string& a) { 
-  std::string r = a;
-  for(std::string::iterator p = r.begin(); p != r.end(); p++)
+/**
+ * Converts string to uppercase using toupper(int)
+ */
+string kvu_convert_to_uppercase(const string& a) { 
+  string r = a;
+  for(string::iterator p = r.begin(); p != r.end(); p++)
     *p = toupper(*p);
   return(r);
 }
 
-std::string kvu_convert_to_lowercase(const std::string& a)
+/**
+ * Converts string to lowercase using tolower(int)
+ */
+string kvu_convert_to_lowercase(const string& a)
 { 
-  std::string r = a;
-  for(std::string::iterator p = r.begin(); p != r.end(); p++)
+  string r = a;
+  for(string::iterator p = r.begin(); p != r.end(); p++)
     *p = tolower(*p);
   return(r);
 }
 
-void kvu_to_uppercase(std::string& a) { 
-  std::string::iterator p = a.begin();
+/**
+ * Converts string to uppercase using toupper(int)
+ * Modifies the parameter object.
+ */
+void kvu_to_uppercase(string& a) { 
+  string::iterator p = a.begin();
   while(p != a.end()) {
     *p = toupper(*p);
     ++p;
   }
 }
 
-void kvu_to_lowercase(std::string& a) { 
-  std::string::iterator p = a.begin();
+/**
+ * Converts string to lowercase using tolower(int)
+ * Modifies the parameter object.
+ */
+void kvu_to_lowercase(string& a) { 
+  string::iterator p = a.begin();
   while(p != a.end()) {
     *p = tolower(*p);
     ++p;
   }
 }
 
-std::string kvu_get_argument_number(int number, const std::string& argu)
+/**
+ * Returns the nth argument from a formatted string
+ *
+ * @param number the argument number 
+ * @param argu a formatted string: "something:arg1,arg2,...,argn"
+ *
+ * require:
+ *  number >= 1
+ */
+string kvu_get_argument_number(int number, const string& argu)
 {
     int curnro = 1;
-    std::string::const_iterator e;
-    std::string::const_iterator b = std::find(argu.begin(), argu.end(), ':');
+    string::const_iterator e;
+    string::const_iterator b = find(argu.begin(), argu.end(), ':');
 
-    std::string target;
+    string target;
 
     if (b == argu.end()) {
       if (argu.size() > 0) b = argu.begin();
@@ -260,11 +343,13 @@ std::string kvu_get_argument_number(int number, const std::string& argu)
     else 
       ++b;
 
+    // FIXME: should parse escaped commands
+
     do {
-        e = std::find(b, argu.end(), ',');
+        e = find(b, argu.end(), ',');
 
         if (number == curnro) {
-            target = std::string(b, e);
+            target = string(b, e);
             break;
         }
         curnro++;
@@ -276,12 +361,15 @@ std::string kvu_get_argument_number(int number, const std::string& argu)
     return(target);
 }
 
-int kvu_get_number_of_arguments(const std::string& argu)
+/** 
+ * Returns number of arguments in formatted string 'argu'.
+ */
+int kvu_get_number_of_arguments(const string& argu)
 {
   int result = 0;
 
-  std::string::const_iterator b,e; 
-  b = std::find(argu.begin(), argu.end(), ':');
+  string::const_iterator b,e; 
+  b = find(argu.begin(), argu.end(), ':');
 
   if (b == argu.end()) {
     if (argu.size() > 0) b = argu.begin();
@@ -290,8 +378,10 @@ int kvu_get_number_of_arguments(const std::string& argu)
   else 
     ++b;
 
+  // FIXME: should parse escaped commands
+
   for(; b != argu.end(); b++) {
-    e = std::find(b, argu.end(), ',');
+    e = find(b, argu.end(), ',');
     if (b != e) {
       ++result;
     }
@@ -301,12 +391,17 @@ int kvu_get_number_of_arguments(const std::string& argu)
   return(result);
 }
 
-std::vector<std::string> kvu_get_arguments(const std::string& argu)
+/**
+ * Returns a vector of all arguments from a formatted string
+ *
+ * @param argu a formatted string: "something:arg1,arg2,...,argn"
+ */
+vector<string> kvu_get_arguments(const string& argu)
 {
-  std::vector<std::string> rvalue;
+  vector<string> rvalue;
 
-  std::string::const_iterator b = std::find(argu.begin(), argu.end(), ':');
-  std::string::const_iterator e;
+  string::const_iterator b = find(argu.begin(), argu.end(), ':');
+  string::const_iterator e;
 
   if (b == argu.end()) {
     if (argu.size() > 0) b = argu.begin();
@@ -315,10 +410,11 @@ std::vector<std::string> kvu_get_arguments(const std::string& argu)
   else 
     ++b;
 
+  // FIXME: should parse escaped commands
 
   for(; b != argu.end(); b++) {
-    e = std::find(b, argu.end(), ',');
-    std::string target = std::string(b, e);
+    e = find(b, argu.end(), ',');
+    string target = string(b, e);
     if (target.size() > 0) {
       rvalue.push_back(target);
     }
@@ -328,19 +424,29 @@ std::vector<std::string> kvu_get_arguments(const std::string& argu)
   return(rvalue);
 }
 
-std::string kvu_get_argument_prefix(const std::string& argu)
+/**
+ * Get the prefix part of a string argument
+ * @param argument format used is -prefix:arg1, arg2, ..., argN
+ *
+ * require:
+ *   argu.find('-') != string::npos
+ *
+ * ensure:
+ *   argu.size() >= 0
+ */
+string kvu_get_argument_prefix(const string& argu)
 {
   // --------
-  DBC_REQUIRE(argu.find('-') != std::string::npos);
+  DBC_REQUIRE(argu.find('-') != string::npos);
   // --------
 
-  std::string::const_iterator b = std::find(argu.begin(), argu.end(), '-');
-  std::string::const_iterator e = std::find(argu.begin(), argu.end(), ':');
+  string::const_iterator b = find(argu.begin(), argu.end(), '-');
+  string::const_iterator e = find(argu.begin(), argu.end(), ':');
 
   if (b != argu.end()) {
     ++b;
     if (b !=  argu.end()) {
-      return(std::string(b,e));
+      return(string(b,e));
     }
   }
 
@@ -351,6 +457,9 @@ std::string kvu_get_argument_prefix(const std::string& argu)
   // --------
 }
 
+/**
+ * Prints a time stamp to stderr
+ */
 void kvu_print_time_stamp(void)
 {
   // --
@@ -367,18 +476,27 @@ void kvu_print_time_stamp(void)
 
   ::gettimeofday(&current, 0);
 
-  std::cerr << "(timestamp) " << current.tv_sec << "sec, " <<
+  cerr << "(timestamp) " << current.tv_sec << "sec, " <<
     current.tv_usec << "msec.";
   
   long delta = current.tv_usec;
   delta -= last.tv_usec;
   delta += (current.tv_sec - last.tv_sec) * 1000000;
-  std::cerr << " Delta " << delta << "msec." << std::endl;
+  cerr << " Delta " << delta << "msec." << endl;
 
   last.tv_sec = current.tv_sec;
   last.tv_usec = current.tv_usec;
 }
 
+/**
+ * Put the calling execution context to sleeps for 
+ * 'seconds.nanosecods'.
+ *
+ * Note! If available, implemented using nanosleep().
+ *
+ * @return 0 on success, non-zero if sleep was 
+ *         interrupted for some reason
+ */
 int kvu_sleep(long int seconds, long int nanoseconds)
 {
   int ret = 0;
@@ -392,7 +510,7 @@ int kvu_sleep(long int seconds, long int nanoseconds)
   ret = usleep(seconds * 1000000 + nanoseconds / 1000);
 
 #else
-  std::cerr << "(libkvutils) kvutils:: warning! neither nanosleep() or usleep() found!" << std::endl;
+  cerr << "(libkvutils) kvutils:: warning! neither nanosleep() or usleep() found!" << endl;
 #endif
 
   return(ret);

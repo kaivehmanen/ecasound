@@ -1,3 +1,4 @@
+// -*- mode: C++; -*-
 #ifndef INCLUDED_KVU_MESSAGE_ITEM_H
 #define INCLUDED_KVU_MESSAGE_ITEM_H
 

@@ -1,3 +1,4 @@
+// -*- mode: C++; -*-
 #ifndef INCLUDE_KVU_VALUE_QUEUE_H
 #define INCLUDE_KVU_VALUE_QUEUE_H
 

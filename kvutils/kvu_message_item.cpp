@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvu_message_item.cpp: A simple version of C++ stringstream
-// Copyright (C) 1999,2001 Kai Vehmanen
+// Copyright (C) 1999,2001,2004 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -94,10 +94,3 @@ MESSAGE_ITEM& MESSAGE_ITEM::operator<< (double n) {
   stringtemp += std::string(ctmp);
   return (*this);    
 }
-
-
-
-
-
-
-

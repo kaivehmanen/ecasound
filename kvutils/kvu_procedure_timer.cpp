@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // kvu_procedure_timer.cpp: Procedure timer. Meant for timing and gathering 
 //                          statistics of repeating events.
-// Copyright (C) 2000 Kai Vehmanen
+// Copyright (C) 2000,2004 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -27,6 +27,8 @@
 #include "kvu_numtostr.h"
 #include "kvu_utils.h"
 
+using namespace std;
+
 /* --------------------------------------------------------------------- 
  * Options
  */
@@ -177,7 +179,7 @@ static int kvu_test_2(void)
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_icmp"); 
   }
 
-  std::vector<std::string> vec = kvu_string_to_tokens(" a foo string ");
+  vector<string> vec = kvu_string_to_tokens(" a foo string ");
   if (vec.size() != 3) {
     ECA_TEST_FAIL(2, "kvu_test_2 kvu_string_to_tokens (1)");
   }
@@ -193,7 +195,7 @@ static int kvu_test_2(void)
     ECA_TEST_FAIL(5, "kvu_test_2 kvu_string_to_tokens_quoted (2)"); 
   }
 
-  const std::string argument ("-efoobarsouNd:arg1,arg2,arg3");
+  const string argument ("-efoobarsouNd:arg1,arg2,arg3");
 
   if (kvu_get_argument_prefix(argument) != "efoobarsouNd") {
     ECA_TEST_FAIL(6, "kvu_test_2 kvu_get_argument_prefix"); 
@@ -233,7 +235,7 @@ static int kvu_test_3(void)
 
   /* 17 digits after decimal point */
   double foo = 0.12345678912345678;
-  std::string foostr = kvu_numtostr(foo, 17);
+  string foostr = kvu_numtostr(foo, 17);
   if (foostr != "0.12345678912345678") {
     // fprintf(stderr, "foo=%.17lf, res=%s.\n", foo, foostr.c_str());
     ECA_TEST_FAIL(1, "kvu_test_3 kvu_numtostr double"); 
@@ -241,7 +243,7 @@ static int kvu_test_3(void)
 
   /* 8 digits after decimal point */
   float bar = 0.12345678;
-  std::string barstr = kvu_numtostr(bar, 8);
+  string barstr = kvu_numtostr(bar, 8);
   if (barstr != "0.12345678") {
     // fprintf(stderr, "bar=%.8f, res=%s.\n", bar, barstr.c_str());
     ECA_TEST_FAIL(2, "kvu_test_3 kvu_numtostr float"); 
