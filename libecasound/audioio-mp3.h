@@ -68,8 +68,8 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   long int bytes_rep;
   long int bitrate_rep;
   SAMPLE_SPECS::sample_pos_t last_position_rep;
-  int fd_rep;
-  FILE* f1_rep;
+  int filedes_rep;
+  FILE* filehandle_rep;
   bool mono_input_rep;
   
   void process_mono_fix(char* target_buffer, long int bytes_rep);

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-timidity.cpp: Interface class for Timidity++ input.
-// Copyright (C) 2000,2002,2004 Kai Vehmanen
+// Copyright (C) 2000,2002,2004-2005 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -124,8 +124,10 @@ void TIMIDITY_INTERFACE::fork_timidity(void)
   set_fork_sample_rate(samples_per_second());
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
-    fd_rep = file_descriptor();
-    f1_rep = fdopen(fd_rep, "r"); /* not part of <cstdio> */
+    /* NOTE: the file description will be closed by 
+     *       AUDIO_IO_FORKED_STREAM::clean_child() */
+    filedes_rep = file_descriptor();
+    f1_rep = fdopen(filedes_rep, "r"); /* not part of <cstdio> */
     if (f1_rep == 0) {
       finished_rep = true;
       triggered_rep = false;

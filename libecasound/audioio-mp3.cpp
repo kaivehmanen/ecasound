@@ -327,6 +327,8 @@ MP3FILE::MP3FILE(const std::string& name)
   set_label(name);
   finished_rep = false;
   triggered_rep = false;
+  filedes_rep = -1;
+  filehandle_rep = 0;
   mono_input_rep = false;
   pcm_rep = 1;
   bitrate_rep = MP3FILE::default_output_default_bitrate;
@@ -384,7 +386,7 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples)
     fork_input_process();
   }
 
-  bytes_rep = std::fread(target_buffer, 1, frame_size() * samples, f1_rep);
+  bytes_rep = std::fread(target_buffer, 1, frame_size() * samples, filehandle_rep);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
       ECA_LOG_MSG(ECA_LOGGER::errors, "Can't start process \"" + MP3FILE::default_input_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
@@ -408,7 +410,7 @@ void MP3FILE::write_samples(void* target_buffer, long int samples)
     triggered_rep = false;
   }
   else {
-    bytes_rep = ::write(fd_rep, target_buffer, frame_size() * samples);
+    bytes_rep = ::write(filedes_rep, target_buffer, frame_size() * samples);
     if (bytes_rep < frame_size() * samples || bytes_rep == 0) {
       if (position_in_samples() == 0) 
 	ECA_LOG_MSG(ECA_LOGGER::errors, "Can't start process \"" + MP3FILE::default_output_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
@@ -532,9 +534,11 @@ void MP3FILE::fork_input_process(void)
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
 
-    fd_rep = file_descriptor();
-    f1_rep = fdopen(fd_rep, "r"); /* not part of <cstdio> */
-    if (f1_rep == 0) {
+    /* NOTE: the file description will be closed by 
+     *       AUDIO_IO_FORKED_STREAM::clean_child() */
+    filedes_rep = file_descriptor();
+    filehandle_rep = fdopen(filedes_rep, "r"); /* not part of <cstdio> */
+    if (filehandle_rep == 0) {
       finished_rep = true;
       triggered_rep = false;
     }
@@ -559,6 +563,6 @@ void MP3FILE::fork_output_process(void)
   set_fork_sample_rate(samples_per_second());
   fork_child_for_write();
   if (child_fork_succeeded() == true) {
-    fd_rep = file_descriptor();
+    filedes_rep = file_descriptor();
   }
 }

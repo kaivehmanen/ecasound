@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-faad.cpp: Interface class for FAAC/FAAD AAC encoder/decoder.
-// Copyright (C) 2004 Kai Vehmanen
+// Copyright (C) 2004-2005 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -144,8 +144,8 @@ void AAC_FORKED_INTERFACE::write_samples(void* target_buffer, long int samples)
     triggered_rep = false;
   }
   else {
-    if (fd_rep > 0) {
-      bytes_rep = ::write(fd_rep, target_buffer, frame_size() * samples);
+    if (filedes_rep > 0) {
+      bytes_rep = ::write(filedes_rep, target_buffer, frame_size() * samples);
     }
     else {
       bytes_rep = 0;
@@ -196,8 +196,10 @@ void AAC_FORKED_INTERFACE::fork_input_process(void)
 
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
-    fd_rep = file_descriptor();
-    f1_rep = fdopen(fd_rep, "r"); /* not part of <cstdio> */
+    /* NOTE: the file description will be closed by 
+     *       AUDIO_IO_FORKED_STREAM::clean_child() */
+    filedes_rep = file_descriptor();
+    f1_rep = fdopen(filedes_rep, "r"); /* not part of <cstdio> */
     if (f1_rep == 0) {
       finished_rep = true;
       triggered_rep = false;
@@ -220,9 +222,9 @@ void AAC_FORKED_INTERFACE::fork_output_process(void)
 
   fork_child_for_write();
   if (child_fork_succeeded() == true) {
-    fd_rep = file_descriptor();
+    filedes_rep = file_descriptor();
   }
   else {
-    fd_rep = 0;
+    filedes_rep = 0;
   }
 }

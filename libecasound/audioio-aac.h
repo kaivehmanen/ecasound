@@ -61,7 +61,7 @@ class AAC_FORKED_INTERFACE : public AUDIO_IO_BUFFERED,
   bool triggered_rep;
   bool finished_rep;
   long int bytes_rep;
-  int fd_rep;
+  int filedes_rep;
   FILE* f1_rep;
   
   void fork_input_process(void);

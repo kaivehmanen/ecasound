@@ -64,7 +64,7 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   bool finished_rep;
   long int bytes_rep;
   long int bitrate_rep;
-  int fd_rep;
+  int filedes_rep;
   FILE* f1_rep;
   
   void fork_input_process(void);
