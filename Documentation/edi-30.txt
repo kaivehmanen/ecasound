@@ -4,6 +4,7 @@ Status: OPEN
 (edi-30): Turning libecasound and libkvutils into static libraries.
          - submitted: kaiv, 08.10.2002
 	 - initial implementation: kaiv, 16.10.2002
+	 - done: kaiv, 29.10.2002
 
 ------------------------------------------------------------------------ 
 Details:

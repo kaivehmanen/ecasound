@@ -1,0 +1,28 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-34): Better checks for parsing operator arguments.
+	 - submitted: jhalttun, 28.10.2002
+
+------------------------------------------------------------------------
+Details:
+
+- ecasound has detailed informations about all operators 
+    - audio objects
+    - chain operators
+    - LADSPA plugins
+    - effect presets
+    - controller sources
+- much of this information could be used to implement more 
+  intelligent parameter argument parsing
+    - correct number of parameters
+    - defaults values for those paramaters that are not 
+      given
+    - the type of parameter (boolean, integer, an output
+      or read-only parameter, etc)
+    - a warning if the given value is out of recommended
+      parameter values bounds (lower and upper bounds)
+- implementation location
+    - ecasound/libecasound/eca-object-factory.cpp
+
+------------------------------------------------------------------------

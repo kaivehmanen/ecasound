@@ -27,6 +27,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+29.10.2002 - edi-30 closed, edi-32, edi-33 and edi-34 added
 23.10.2002 - edi-31 added
 15.10.2002 - edi-30 added
 29.09.2002 - edi-27, edi-28 and edi-29 added
@@ -84,10 +85,14 @@ xx.xx.2001 no history information
          - submitted: kaiv, 29.09.2002
 (edi-29): Ecamonitor - ecasound monitor client implemented using NetECI.
          - submitted: kaiv, 29.09.2002
-(edi-30): Turning libecasound and libkvutils into static libraries.
-         - submitted: kaiv, 08.10.2002
 (edi-31): Support for dynamic sampling rate and buffersize changes.
          - submitted: kaiv, 23.10.2002
+(edi-32): FLAC support.
+	 - submitted: nolan_d, 17.10.2002
+(edi-33): Libsndfile support.
+	 - submitted: kaiv, 29.10.2002
+(edi-34): Better checks for parsing operator arguments.
+	 - submitted: jhalttun, 28.10.2002
 
 -----------------------------------------------------------------------
 [ Section: Closed items ]
@@ -141,5 +146,9 @@ xx.xx.2001 no history information
 (edi-24): Resample audio object
          - submitted: kaiv, 22.02.2002
 	 - implemented: kaiv, 22.08.2002, 2.1dev12
+(edi-30): Turning libecasound and libkvutils into static libraries.
+         - submitted: kaiv, 08.10.2002
+	 - initial implementation: kaiv, 16.10.2002
+	 - done: kaiv, 29.10.2002
 
 -----------------------------------------------------------------------
