@@ -48,9 +48,9 @@ pthread_mutex_t ecasound_stop_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 ECA_PROCESSOR::ECA_PROCESSOR(ECA_SESSION* params) 
   :  eparams(params),
-     mixslot(params->connected_chainsetup->buffersize(), 
+     mixslot(params->connected_chainsetup_repp->buffersize(), 
 	     SAMPLE_SPECS::channel_count_default),
-     buffersize_rep(params->connected_chainsetup->buffersize()) {
+     buffersize_rep(params->connected_chainsetup_repp->buffersize()) {
   init();
 }
 
@@ -59,7 +59,7 @@ ECA_PROCESSOR::ECA_PROCESSOR(void) { }
 ECA_PROCESSOR::~ECA_PROCESSOR(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "ECA_PROCESSOR destructor!");
 
-  if (eparams != 0) eparams->status(ep_status_notready);
+  if (eparams != 0) eparams->status(ECA_SESSION::ep_status_notready);
   stop();
 
   vector<CHAIN*>::iterator q = csetup->chains.begin();
@@ -77,8 +77,8 @@ ECA_PROCESSOR::~ECA_PROCESSOR(void) {
 
 void ECA_PROCESSOR::init(ECA_SESSION* params) { 
   eparams = params;
-  mixslot.length_in_samples(eparams->connected_chainsetup->buffersize());
-  buffersize_rep = eparams->connected_chainsetup->buffersize();
+  mixslot.length_in_samples(eparams->connected_chainsetup_repp->buffersize());
+  buffersize_rep = eparams->connected_chainsetup_repp->buffersize();
 
   realtime_inputs.clear();
   realtime_outputs.clear();
@@ -104,7 +104,7 @@ void ECA_PROCESSOR::init(void) {
 
   ecadebug->msg(ECA_DEBUG::system_objects,"Engine/Initializing");
 
-  eparams->status(ep_status_stopped);
+  eparams->status(ECA_SESSION::ep_status_stopped);
 
   init_variables();
   init_connection_to_chainsetup();
@@ -122,7 +122,7 @@ void ECA_PROCESSOR::init_variables(void) {
 }
 
 void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR*) {
-  csetup = eparams->connected_chainsetup;
+  csetup = eparams->connected_chainsetup_repp;
 
   if (csetup == 0 )
     throw(new ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, no chainsetup connected!"));
@@ -264,56 +264,56 @@ void ECA_PROCESSOR::init_multitrack_mode(void) {
       non_realtime_outputs.size() > 0 && 
       chain_count > 1) {
     ecadebug->msg("(eca-main) Multitrack-mode enabled. Changed mixmode to \"normal iactive\"");
-    eparams->multitrack_mode = true;
+    eparams->multitrack_mode_rep = true;
     ecadebug->msg(ECA_DEBUG::system_objects, "Using input " + realtime_inputs[0]->label() + " for multitrack sync.");
     ecadebug->msg(ECA_DEBUG::system_objects, "Using output " + realtime_outputs[0]->label() + " for multitrack sync.");
   }
 }
 
 void ECA_PROCESSOR::init_mix_method(void) { 
-  mixmode = csetup->mixmode();
+  mixmode_rep = csetup->mixmode();
 
-  if (eparams->multitrack_mode == true)  {
-    mixmode = ECA_CHAINSETUP::ep_mm_normal;
+  if (eparams->multitrack_mode_rep == true)  {
+    mixmode_rep = ECA_CHAINSETUP::ep_mm_normal;
   }
 
-  if (mixmode == ECA_CHAINSETUP::ep_mm_auto) {
+  if (mixmode_rep == ECA_CHAINSETUP::ep_mm_auto) {
     if (chain_count == 1 &&
 	input_count == 1 &&
 	output_count == 1)
-      mixmode = ECA_CHAINSETUP::ep_mm_simple;
+      mixmode_rep = ECA_CHAINSETUP::ep_mm_simple;
     else if (csetup->buffersize() > 1024 &&
 	     chain_count > 1)
-      mixmode = ECA_CHAINSETUP::ep_mm_mthreaded;
+      mixmode_rep = ECA_CHAINSETUP::ep_mm_mthreaded;
     else 
-      mixmode = ECA_CHAINSETUP::ep_mm_normal;
+      mixmode_rep = ECA_CHAINSETUP::ep_mm_normal;
   }
-  else if (mixmode == ECA_CHAINSETUP::ep_mm_simple &&
+  else if (mixmode_rep == ECA_CHAINSETUP::ep_mm_simple &&
 	   (chain_count > 1 ||
 	   input_count > 1 ||
 	    output_count > 1)) {
-    mixmode = ECA_CHAINSETUP::ep_mm_normal;
+    mixmode_rep = ECA_CHAINSETUP::ep_mm_normal;
     ecadebug->msg("(eca-main) Warning! Setup too complex for simple mixmode.");
   }
 }
 
 void ECA_PROCESSOR::exec(void) {
-  switch(mixmode) {
+  switch(mixmode_rep) {
   case ECA_CHAINSETUP::ep_mm_simple:
     {
-      if (eparams->iactive) exec_simple_iactive();
+      if (eparams->iactive_rep) exec_simple_iactive();
       else exec_simple_passive();
       break;
     }
   case ECA_CHAINSETUP::ep_mm_normal:
     {
-      if (eparams->iactive) exec_normal_iactive();
+      if (eparams->iactive_rep) exec_normal_iactive();
       else exec_normal_passive();
       break;
     }
   case ECA_CHAINSETUP::ep_mm_mthreaded:
     {
-      if (eparams->iactive) exec_mthreaded_iactive();
+      if (eparams->iactive_rep) exec_mthreaded_iactive();
       else exec_mthreaded_passive();
       break;
     }
@@ -341,7 +341,7 @@ void ECA_PROCESSOR::conditional_start(void) {
 }
 
 void ECA_PROCESSOR::conditional_stop(void) {
-  if (eparams->status() == ep_status_running) {
+  if (eparams->status() == ECA_SESSION::ep_status_running) {
     was_running = true;
     stop();
   }
@@ -352,7 +352,7 @@ void ECA_PROCESSOR::interactive_loop(void) {
   if (finished() == true) stop();
   interpret_queue();
   if (end_request) return;
-  if (eparams->status() != ep_status_running) {
+  if (eparams->status() != ECA_SESSION::ep_status_running) {
     struct timespec sleepcount;
     sleepcount.tv_sec = 0;
     sleepcount.tv_nsec = 1000;
@@ -539,13 +539,13 @@ void ECA_PROCESSOR::posthandle_control_position(void) {
     else {
       stop();
       csetup->set_position(0);
-      eparams->status(ep_status_finished);
+      eparams->status(ECA_SESSION::ep_status_finished);
     }
   }
 }
 
 void ECA_PROCESSOR::stop(void) { 
-  if (eparams->status() != ep_status_running && rt_running == false) return;
+  if (eparams->status() != ECA_SESSION::ep_status_running && rt_running == false) return;
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Stop");
 
   if (rt_running == true) {
@@ -567,7 +567,7 @@ void ECA_PROCESSOR::stop(void) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Changed back to non-realtime scheduling (SCHED_OTHER/00).");
   }
 
-  eparams->status(ep_status_stopped);
+  eparams->status(ECA_SESSION::ep_status_stopped);
   ::pthread_mutex_lock(&ecasound_stop_mutex);
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Signaling stop-cond");
   ::pthread_cond_signal(&ecasound_stop_cond);
@@ -575,7 +575,7 @@ void ECA_PROCESSOR::stop(void) {
 }
 
 void ECA_PROCESSOR::start(void) {
-  if (eparams->status() == ep_status_running) return;
+  if (eparams->status() == ECA_SESSION::ep_status_running) return;
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Start");
 
   // ---
@@ -594,8 +594,8 @@ void ECA_PROCESSOR::start(void) {
     realtime_objects[adev_sizet]->prepare();
   }
 
-  if (eparams->multitrack_mode == true) {
-    assert(mixmode != ECA_CHAINSETUP::ep_mm_mthreaded);
+  if (eparams->multitrack_mode_rep == true) {
+    assert(mixmode_rep != ECA_CHAINSETUP::ep_mm_mthreaded);
     for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_inputs.size()); adev_sizet++)
       realtime_inputs[adev_sizet]->start();
 
@@ -631,7 +631,7 @@ void ECA_PROCESSOR::start(void) {
   }
 
   rt_running = true;
-  eparams->status(ep_status_running);
+  eparams->status(ECA_SESSION::ep_status_running);
 }
 
 void ECA_PROCESSOR::trigger_outputs(void) {
@@ -770,9 +770,9 @@ void ECA_PROCESSOR::interpret_queue(void) {
 
 bool ECA_PROCESSOR::finished(void) {
   if (input_not_finished == true &&
-      eparams->status() != ep_status_finished) return(false);
+      eparams->status() != ECA_SESSION::ep_status_finished) return(false);
 
-  eparams->status(ep_status_finished);
+  eparams->status(ECA_SESSION::ep_status_finished);
   return(true);
 }
 

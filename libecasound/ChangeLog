@@ -2,6 +2,25 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-09-17  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* library version changed to 7:0:0
+	* eca-object-factory.h (): new file
+	* eca-chainop.h (CHAIN_OPERATOR): dropped inheritance of
+	ECA_AUDIO_FORMAT
+	* audiofx.h (set_samples_per_second,samples_per_second): added
+	* audiofx.h (set_channels,channels): added
+	* eca-chainsetup.h (add_default_output): added
+	* eca-chainsetup.h (preprocess_options): added	
+	* eca-chainsetup.h (interpret_option):added	
+	* eca-chainsetup.h (interpret_object_option): added
+	* eca-chainsetup.h (interpret_global_option): added	
+	* eca-chainsetup.h (interpret_*): most interpretation routines
+	moved from public to private scope
+	* various: renamed all enum type names from "ALL_CAPITAL" to 
+	"Starting_capital_only"
+	* eca-audio-objects.h (interpret_audio_object): moved to eca-chainsetup.h
+		
 2000-09-16  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* ecasound 1.8.2r14 released

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 160900) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 170900) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,6 +14,7 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
+??092000 (v1.8.3d15)
 16092000 (v1.8.2r14)  -** public release **-
 	- added: --enable-alsa-rawmidi configure option - this is a 
 		 temporary solution for supporting ALSA rawmidi until

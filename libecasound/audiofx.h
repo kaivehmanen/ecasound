@@ -8,11 +8,24 @@
 
 /**
  * Virtual base for all audio effect classes.
+ *
  * @author Kai Vehmanen
  */
 class EFFECT_BASE : public CHAIN_OPERATOR {
 
- public:
+ private:
+
+  long int srate_rep;
+  int channels_rep;
+
+ protected:
+
+  long int samples_per_second(void) const { return(srate_rep); }
+  int channels(void) const { return(channels_rep); }
+
+  void set_samples_per_second(long int v) { srate_rep = v; }
+  void set_channels(int v) { channels_rep = v; }
+
   virtual ~EFFECT_BASE(void) { }
 };
 

@@ -471,8 +471,8 @@ void ECA_CONTROL::print_general_status(void) {
   }
 
   st_info_string << "Engine status: \"" << engine_status() << "\"\n";
-  if (session_repp->multitrack_mode) st_info_string << "Multitrack-mode: enabled\n";
-  if (session_repp->multitrack_mode) st_info_string << "Multitrack-mode: enabled\n";
+  if (session_repp->multitrack_mode_rep) st_info_string << "Multitrack-mode: enabled\n";
+  if (session_repp->multitrack_mode_rep) st_info_string << "Multitrack-mode: enabled\n";
   else st_info_string << "Multitrack-mode: disabled\n";
   if (session_repp->raised_priority()) st_info_string << "Raised-priority mode: enabled\n";
 
@@ -480,11 +480,11 @@ void ECA_CONTROL::print_general_status(void) {
 }
 
 string ECA_CONTROL::chainsetup_status(void) const { 
-  vector<ECA_CHAINSETUP*>::const_iterator cs_citer = session_repp->chainsetups.begin();
+  vector<ECA_CHAINSETUP*>::const_iterator cs_citer = session_repp->chainsetups_rep.begin();
 
   int index = 0;
   string result;
-  while(cs_citer != session_repp->chainsetups.end()) {
+  while(cs_citer != session_repp->chainsetups_rep.end()) {
     result += "Chainsetup (c"  + kvu_numtostr(++index) + ") \"";
     result += (*cs_citer)->name() + "\" ";
     if ((*cs_citer)->name() == selected_chainsetup()) result += "[selected] ";
@@ -509,7 +509,7 @@ string ECA_CONTROL::chainsetup_status(void) const {
       result += "\n\tState: \t\t\tnot valid - cannot be connected";
 
     ++cs_citer;
-    if (cs_citer != session_repp->chainsetups.end()) result += "\n";
+    if (cs_citer != session_repp->chainsetups_rep.end()) result += "\n";
   }
 
   return(result);

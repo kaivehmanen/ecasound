@@ -126,7 +126,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_range(const SAMPLE_BUFFER_BASE<T>& x,
 
 template<class T>
 void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
-				     ECA_AUDIO_FORMAT::SAMPLE_FORMAT fmt,
+				     ECA_AUDIO_FORMAT::Sample_format fmt,
 				     int ch,
 				     long int srate) throw(ECA_ERROR*) {
   // --------
@@ -301,7 +301,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 template<class T>
 void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 					   long int samples_read,
-					   ECA_AUDIO_FORMAT::SAMPLE_FORMAT fmt,
+					   ECA_AUDIO_FORMAT::Sample_format fmt,
 					   int ch,
 					   long int srate) throw(ECA_ERROR*) {
   // --------

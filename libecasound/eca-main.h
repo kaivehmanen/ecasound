@@ -111,7 +111,7 @@ private:
   vector<SAMPLE_BUFFER> cslots;
 
   long int buffersize_rep;
-  ECA_CHAINSETUP::EP_MM_MODE mixmode;
+  ECA_CHAINSETUP::Mix_mode mixmode_rep;
 
   int input_count, output_count, chain_count, max_channels;
 
@@ -227,9 +227,3 @@ private:
 void *mthread_process_chains(void* ecaparams);
 
 #endif
-
-
-
-
-
-

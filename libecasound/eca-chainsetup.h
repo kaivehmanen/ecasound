@@ -13,6 +13,7 @@
 class CONTROLLER_SOURCE;
 class CHAIN_OPERATOR;
 class GENERIC_CONTROLLER;
+class AUDIO_IO;
 
 /**
  * Class that represents a single chainsetup.
@@ -23,180 +24,69 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
 
  public:
 
-  enum EP_MM_MODE { ep_mm_auto, ep_mm_simple, ep_mm_normal, ep_mm_mthreaded };
+  enum Mix_mode { ep_mm_auto, ep_mm_simple, ep_mm_normal, ep_mm_mthreaded };
 
  private:
 
   string setup_name_rep;
   string setup_filename_rep;
   bool is_enabled_rep;
-  enum EP_MM_MODE mixmode_rep;
+  bool istatus_rep;
+  enum Mix_mode mixmode_rep;
+  AUDIO_IO* last_audio_object;
 
   vector<string> options;
   string options_general;
 
-  // ---
-  // Setup to strings
-  // ---
   void update_option_strings(void);
   string general_options_to_string(void) const;
 
- public:
-
-  /**
-   * Set default values.
-   */
   void set_defaults (void);
+  void preprocess_options(vector<string>& opts);
+
+  void interpret_general_option (const string& arg);
+  void interpret_processing_control (const string& arg);
+  void interpret_audio_format (const string& arg);
+  void interpret_chains (const string& arg);
+  void interpret_chain_operator (const string& arg);
+  void interpret_controller (const string& arg);
+  void interpret_effect_preset (const string& arg);
+  void interpret_audioio_device (const string& argu) throw(ECA_ERROR*);
+
+ public:
 
   void set_name(const string& str) { setup_name_rep = str; }
   void set_filename(const string& str) { setup_filename_rep = str; }
 
-  /**
-   * Handle options. 
-   */
+  void enable(void);
+  void disable(void);
+
+  CHAIN_OPERATOR* create_chain_operator (const string& arg);
+  CHAIN_OPERATOR* create_ladspa_plugin (const string& arg);
+  CHAIN_OPERATOR* create_vst_plugin (const string& arg);
+  GENERIC_CONTROLLER* create_controller (const string& arg);
+
+  void interpret_option(const string& arg);
+  void interpret_global_option(const string& arg);
+  void interpret_object_option(const string& arg);
   void interpret_options(vector<string>& opts);
 
   /**
-   * Handle general options. 
+   * Returns the result of last call to interpret_option(), interpret_global_options() 
+   * or interpret_object_option().
    *
-   * require:
-   *  argu.size() > 0
-   *  argu[0] == '-'
+   * @result true if options interpreted succesfully, otherwise false
    */
-  void interpret_general_option (const string& argu);
-
-  /**
-   * Handle processing control
-   *
-   * require:
-   *  argu.size() > 0
-   *  argu[0] == '-'
-   */
-  void interpret_processing_control (const string& argu);
-
-  /**
-   * Handle chainsetup options.
-   *
-   * require:
-   *  argu.size() > 0
-   *  argu[0] == '-'
-   */
-  void interpret_audio_format (const string& argu);
-
-  /**
-   * Handle chain options.
-   *
-   * require:
-   *  argu.size() > 0
-   *  argu[0] == '-'
-   */
-  void interpret_chains (const string& argu);
-
-  /**
-   * Handle chain operator options (chain operators, presets 
-   * and plugins)
-   *
-   * require:
-   *  argu.size() > 0
-   *  argu[0] == '-'
-   */
-  void interpret_chain_operator (const string& argu);
-
-  /**
-   * Create a new chain operator
-   *
-   * require:
-   *  argu.size() > 0
-   *  argu[0] == '-'
-   */
-  CHAIN_OPERATOR* create_chain_operator (const string& argu);
-
-
-  /**
-   * Create a new LADSPA-plugin
-   *
-   * require:
-   *  argu.size() > 0
-   *  argu[0] == '-'
-   */
-  CHAIN_OPERATOR* create_ladspa_plugin (const string& argu);
-
-
-  /**
-   * Create a new VST1.0/2.0 plugin
-   */
-  CHAIN_OPERATOR* create_vst_plugin (const string& argu);
-
-  /**
-   * Handle controller sources and general controllers.
-   *
-   * require:
-   *  argu.size() > 0
-   *  argu[0] == '-'
-   */
-  void interpret_controller (const string& argu);
-
-  /**
-   * Handle controller sources and general controllers.
-   *
-   * require:
-   *  argu.size() > 0
-   *  argu[0] == '-'
-   */
-  GENERIC_CONTROLLER* create_controller (const string& argu);
-
-  /**
-   * Handle effect preset options.
-   *
-   * require:
-   *  argu.size() > 0
-   *  argu[0] == '-'
-   */
-  void interpret_effect_preset (const string& argu);
-
-  /**
-   * Enable chainsetup. Opens all devices and reinitializes all 
-   * chain operators if necessary.
-   * 
-   * ensure:
-   *   is_enabled() == false
-   */
-  void enable(void);
-
-  /**
-   * Disable chainsetup. Closes all devices. 
-   * 
-   * ensure:
-   *   is_enabled() == false
-   */
-  void disable(void);
+  bool interpretation_status(void) const { return(istatus_rep); }
 
   /**
    * Checks whethers chainsetup is enabled (device ready for use).
    */
   bool is_enabled(void) const { return(is_enabled_rep); }
 
-  /**
-   * Add chain operator to selected chain.
-   *
-   * require:
-   *   cotmp != 0
-   *   selected_chains().size() == 1
-   */
   void add_chain_operator(CHAIN_OPERATOR* cotmp);
-
-  /**
-   * Add general controller to selected chainop.
-   *
-   * require:
-   *   csrc != 0
-   *   selected_chains().size() == 1
-   */
   void add_controller(GENERIC_CONTROLLER* csrc);
-
-  /**
-   * Select controllers as targets for parameter control
-   */
+  void add_default_output(void);
   void set_target_to_controller(void);
 
   // ---
@@ -210,33 +100,14 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
   // Chainsetup info
   // --
 
- public:
-
-  void set_mixmode(enum EP_MM_MODE value) { mixmode_rep = value; }  
+  void set_mixmode(enum Mix_mode value) { mixmode_rep = value; }  
 
   const string& name(void) const { return(setup_name_rep); }
   const string& filename(void) const { return(setup_filename_rep); }
-  enum EP_MM_MODE mixmode(void) const { return(mixmode_rep); }
+  enum Mix_mode mixmode(void) const { return(mixmode_rep); }
 
-  /**
-   * Construct from a command line object.
-   *
-   * ensure:
-   *   buffersize != 0
-   */
   ECA_CHAINSETUP(COMMAND_LINE& cline);
-
-  /**
-   * Construct from a chainsetup file.
-   *
-   * ensure:
-   *   buffersize != 0
-   */
   ECA_CHAINSETUP(const string& setup_file, bool fromfile = true);
-    
-  /**
-   * Destructor
-   */
   virtual ~ECA_CHAINSETUP(void);
 };
 

@@ -6,7 +6,9 @@ AC_INIT(libecasound/audiofx.h)
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 1.8.2r14)
+dnl !!!
+dnl remember to update eca-version.cpp
+AM_INIT_AUTOMAKE(ecasound, 1.8.3d15)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---

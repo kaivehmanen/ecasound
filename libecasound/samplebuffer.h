@@ -111,7 +111,7 @@ class SAMPLE_BUFFER_BASE {
    */
   void copy_to_buffer(unsigned char* source,
 		      long int samples,
-		      ECA_AUDIO_FORMAT::SAMPLE_FORMAT fmt,
+		      ECA_AUDIO_FORMAT::Sample_format fmt,
 		      int ch,
 		      long int srate) throw(ECA_ERROR*);
 
@@ -124,7 +124,7 @@ class SAMPLE_BUFFER_BASE {
    *  channels == channel_count_rep
    */
   void copy_from_buffer(unsigned char* target,
-			ECA_AUDIO_FORMAT::SAMPLE_FORMAT fmt,
+			ECA_AUDIO_FORMAT::Sample_format fmt,
 			int ch,
 			long int srate) throw(ECA_ERROR*);
         

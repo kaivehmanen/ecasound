@@ -19,7 +19,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
 
 #include <string>
 #include <vector>
@@ -35,19 +37,25 @@
 
 #include "eca-chain.h"
 #include "samplebuffer.h"
+#include "eca-resources.h"
 
 #include "eca-debug.h"
 #include "eca-audio-objects.h"
 
+/**
+ * Constructor
+ */
 ECA_AUDIO_OBJECTS::ECA_AUDIO_OBJECTS(void) 
   : 
     double_buffering_rep (false),
     precise_sample_rates_rep (false),
     output_openmode_rep (AUDIO_IO::io_readwrite),
     buffersize_rep(0),
-    last_audio_object(0),
     selected_chainids (0) { }
 
+/**
+ * Destructor
+ */
 ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
   ecadebug->msg(ECA_DEBUG::system_objects,"ECA_AUDIO_OBJECTS destructor!");
 
@@ -98,93 +106,13 @@ bool ECA_AUDIO_OBJECTS::is_valid(void) const {
   return(true);
 }
 
-void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu) throw(ECA_ERROR*) { 
-  // --------
-  REQUIRE(argu.size() > 0);
-  REQUIRE(argu[0] == '-');
-  // --------
- 
-  string tname = get_argument_number(1, argu);
-  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-audio-objects) adding file \"" + tname + "\".");
 
-  if (argu.size() < 2) return;
-  switch(argu[1]) {
-  case 'i':
-    {
-      ecadebug->msg(ECA_DEBUG::system_objects, "Eca-audio-objects/Parsing input");
-      last_audio_object = create_audio_object(argu);
-      if (last_audio_object == 0) 
-	last_audio_object = create_loop_input(argu);
-      if (last_audio_object != 0) {
-	if ((last_audio_object->supported_io_modes() &
-	    AUDIO_IO::io_read) != AUDIO_IO::io_read) {
-	  throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "I/O-mode 'io_read' not supported by " + last_audio_object->name()));
-	}
-	last_audio_object->io_mode(AUDIO_IO::io_read);
-	last_audio_object->set_audio_format(default_audio_format_rep);
-	add_input(last_audio_object);
-      }
-      else {
-	throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "Format of input " +
-			    tname + " not recognized."));
-      }
-      break;
-    }
-
-  case 'o':
-    {
-      ecadebug->msg(ECA_DEBUG::system_objects, "Eca-audio-objects/Parsing output");
-      last_audio_object = create_audio_object(argu);
-      if (last_audio_object == 0) last_audio_object = create_loop_output(argu);
-      if (last_audio_object != 0) {
-	int mode_tmp = output_openmode_rep;
-	if (mode_tmp == AUDIO_IO::io_readwrite) {
-	  if ((last_audio_object->supported_io_modes() &
-	      AUDIO_IO::io_readwrite) != AUDIO_IO::io_readwrite) {
-	    mode_tmp = AUDIO_IO::io_write;
-	  }
-	}
-	if ((last_audio_object->supported_io_modes() &
-	    mode_tmp != mode_tmp)) {
-	    throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "I/O-mode 'io_write' not supported by " + last_audio_object->name()));
-	}
-      
-	last_audio_object->io_mode(mode_tmp);
-	last_audio_object->set_audio_format(default_audio_format_rep);
-	add_output(last_audio_object);
-      }
-      else {
-	throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "Format of output " +
-			    tname + " not recognized."));
-      }
-      break;
-    }
-
-  case 'y':
-    {
-      if (last_audio_object == 0)
-	ecadebug->msg("Error! No audio object defined.");
-
-      last_audio_object->seek_position_in_seconds(atof(get_argument_number(1, argu).c_str()));
-      if (last_audio_object->io_mode() == AUDIO_IO::io_read) {
-	input_start_pos[input_start_pos.size() - 1] = last_audio_object->position_in_seconds_exact();
-      }
-      else {
-	output_start_pos[output_start_pos.size() - 1] = last_audio_object->position_in_seconds_exact();
-      }
-
-      ecadebug->msg("(eca-audio-objects) Set starting position for audio object \""
-		    + last_audio_object->label() 
-		    + "\": "
-		    + kvu_numtostr(last_audio_object->position_in_seconds_exact()) 
-		    + " seconds.");
-      break;
-    }
-
-  default: { }
-  }
-}
-
+/**
+ * Create a new audio object based on the formatted argument string
+ *
+ * require:
+ *  argu.empty() != true
+ */
 AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu) {
   assert(argu.empty() != true);
  
@@ -209,6 +137,12 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu) {
   return(main_file);
 }
 
+/**
+ * Create a new loop input object
+ *
+ * require:
+ *  argu.empty() != true
+ */
 AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_input(const string& argu) {
   // --------
   REQUIRE(argu.empty() != true);
@@ -232,6 +166,12 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_input(const string& argu) {
   return(p);
 }
 
+/**
+ * Create a new loop output object
+ *
+ * require:
+ *  argu.empty() != true
+ */
 AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_output(const string& argu) {
   // --------
   REQUIRE(argu.empty() != true);
@@ -255,6 +195,16 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_output(const string& argu) {
   return(p);
 }
 
+/**
+ * Adds a "default" chain to the setup.
+ *
+ * require:
+ *   buffersize >= 0 && chains.size() == 0
+ *
+ * ensure:
+ *   chains.back()->name() == "default" && 
+ *   active_chainids.back() == "default"
+ */
 void ECA_AUDIO_OBJECTS::add_default_chain(void) {
   // --------
   REQUIRE(buffersize() >= 0);
@@ -445,7 +395,15 @@ vector<string> ECA_AUDIO_OBJECTS::get_attached_chains_to_iodev(const
   return(vector<string> (0));
 }
 
-
+/**
+ * Add a new input object and attach it to selected chains.
+ *
+ * require:
+ *   aiod != 0 && chains.size() > 0
+ *
+ * ensure:
+ *   inputs.size() > 0
+ */
 void ECA_AUDIO_OBJECTS::add_input(AUDIO_IO* aio) {
   // --------
   REQUIRE(aio != 0);
@@ -461,6 +419,15 @@ void ECA_AUDIO_OBJECTS::add_input(AUDIO_IO* aio) {
   // --------
 }
 
+/**
+ * Add a new output object and attach it to selected chains.
+ *
+ * require:
+ *   aiod != 0 && chains.size() > 0
+ *
+ * ensure:
+ *   outputs.size() > 0
+ */
 void ECA_AUDIO_OBJECTS::add_output(AUDIO_IO* aiod) {
   // --------
   REQUIRE(aiod != 0);
@@ -476,6 +443,12 @@ void ECA_AUDIO_OBJECTS::add_output(AUDIO_IO* aiod) {
   // --------
 }
 
+/**
+ * Print format and id information
+ *
+ * require:
+ *   aio != 0
+ */
 void ECA_AUDIO_OBJECTS::audio_object_info(const AUDIO_IO* aio) const {
   // --------
   REQUIRE(aio != 0);
@@ -677,4 +650,3 @@ void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const AUDIO_IO* obj) {
   }
   ecadebug->msg(ECA_DEBUG::system_objects, temp);
 }
-

@@ -1,5 +1,5 @@
-#ifndef _ECA_AUDIO_FORMAT_H
-#define _ECA_AUDIO_FORMAT_H
+#ifndef INCLUDED_ECA_AUDIO_FORMAT_H
+#define INCLUDED_ECA_AUDIO_FORMAT_H
 
 #include <string>
 
@@ -20,7 +20,7 @@ class ECA_ERROR;
 class ECA_AUDIO_FORMAT {
  public:
 
-  enum SAMPLE_FORMAT {
+  enum Sample_format {
     sfmt_u8,
     sfmt_s8,
 
@@ -63,9 +63,9 @@ class ECA_AUDIO_FORMAT {
   int bits(void) const;
   
   /**
-   * Sample format specification. See @ref SAMPLE_FORMAT
+   * Sample format specification. See @ref Sample_format
    */
-  SAMPLE_FORMAT sample_format(void) const { return(sfmt_rep); }
+  Sample_format sample_format(void) const { return(sfmt_rep); }
 
   /**
    * Sampling rate in samples per second.
@@ -93,7 +93,7 @@ class ECA_AUDIO_FORMAT {
   ECA_AUDIO_FORMAT audio_format(void) const;
 
   void set_channels(int v);
-  void set_sample_format(SAMPLE_FORMAT v) throw(ECA_ERROR*);
+  void set_sample_format(Sample_format v) throw(ECA_ERROR*);
   void set_samples_per_second(long int v);
   void toggle_interleaved_channels(bool v);
 
@@ -124,7 +124,7 @@ class ECA_AUDIO_FORMAT {
    */
   string format_string(void) const throw(ECA_ERROR*);
 
-  ECA_AUDIO_FORMAT (int ch, long int srate, SAMPLE_FORMAT format, bool ileaved = false);
+  ECA_AUDIO_FORMAT (int ch, long int srate, Sample_format format, bool ileaved = false);
   ECA_AUDIO_FORMAT (const ECA_AUDIO_FORMAT& x);
   ECA_AUDIO_FORMAT& operator=(const ECA_AUDIO_FORMAT& x);
   ECA_AUDIO_FORMAT (void);
@@ -137,7 +137,7 @@ class ECA_AUDIO_FORMAT {
   int channels_rep;
   long int srate_rep;
   int align_rep;            // the size of one sample value in bytes
-  SAMPLE_FORMAT sfmt_rep;
+  Sample_format sfmt_rep;
 };
 
 extern const ECA_AUDIO_FORMAT default_ecasound_audio_format;

@@ -18,7 +18,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
 
 #include <string>
 #include <cstring>
@@ -37,6 +39,7 @@
 #include "file-preset.h"
 #include "global-preset.h"
 
+#include "audioio.h"
 #include "eca-static-object-maps.h"
 #include "eca-ladspa-plugin-map.h"
 #include "eca-chainop-map.h"
@@ -50,6 +53,12 @@
 #include "eca-debug.h"
 #include "eca-chainsetup.h"
 
+/**
+ * Construct from a command line object.
+ *
+ * ensure:
+ *   buffersize != 0
+ */
 ECA_CHAINSETUP::ECA_CHAINSETUP(COMMAND_LINE& cline) 
   : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default) {
 
@@ -70,13 +79,21 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(COMMAND_LINE& cline)
     cline.next();
   }
 
+  preprocess_options(options);
   interpret_options(options);
+  add_default_output();
 
   // --------
   ENSURE(buffersize() != 0);
   // --------
 }
 
+/**
+ * Construct from a chainsetup file.
+ *
+ * ensure:
+ *   buffersize != 0
+ */
 ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file, bool fromfile) 
   : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default) {
 
@@ -87,7 +104,9 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file, bool fromfile)
   if (fromfile) load_from_file(setup_file);
   if (setup_name_rep == "") setup_name_rep = setup_file;
 
+  preprocess_options(options);
   interpret_options(options);
+  add_default_output();
 
   // --------
   ENSURE(buffersize() != 0);
@@ -95,11 +114,15 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file, bool fromfile)
 }
 
 
+/**
+ * Sets default values.
+ */
 void ECA_CHAINSETUP::set_defaults(void) {
   register_default_objects();
 
   is_enabled_rep = false;
   mixmode_rep = ep_mm_auto;
+  last_audio_object = 0;
 
   set_output_openmode(AUDIO_IO::io_readwrite);
 
@@ -111,10 +134,20 @@ void ECA_CHAINSETUP::set_defaults(void) {
   toggle_precise_sample_rates(ecaresources.boolean_resource("default-to-precise-sample-rates"));
 }
 
+/**
+ * Destructor
+ */
 ECA_CHAINSETUP::~ECA_CHAINSETUP(void) { 
   ecadebug->msg(ECA_DEBUG::system_objects,"ECA_CHAINSETUP destructor!");
 }
 
+/**
+ * Enable chainsetup. Opens all devices and reinitializes all 
+ * chain operators if necessary.
+ * 
+ * ensure:
+ *   is_enabled() == false
+ */
 void ECA_CHAINSETUP::enable(void) {
   if (is_enabled_rep == false) {
     ecadebug->control_flow("Chainsetup/Enabling audio inputs");
@@ -130,9 +163,6 @@ void ECA_CHAINSETUP::enable(void) {
       if ((*q)->is_open() == false) (*q)->open();
       audio_object_info(*q);      
     }
-
-//      for(vector<CHAIN*>::const_iterator q = chains.begin(); q != 
-//  	  chains.end(); q++) {     }
   }
   is_enabled_rep = true;
 
@@ -141,6 +171,12 @@ void ECA_CHAINSETUP::enable(void) {
   // --------
 }
 
+/**
+ * Disable chainsetup. Closes all devices. 
+ * 
+ * ensure:
+ *   is_enabled() == false
+ */
 void ECA_CHAINSETUP::disable(void) {
   update_option_strings();
   if (is_enabled_rep == true) {
@@ -163,56 +199,116 @@ void ECA_CHAINSETUP::disable(void) {
   // --------
 }
 
-void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
+/**
+ * Preprocesses a set of options.
+ * 
+ * ensure:
+ *  all options valid for interpret_option()
+ */
+void ECA_CHAINSETUP::preprocess_options(vector<string>& opts) {
   vector<string>::iterator p = opts.begin();
   while(p != opts.end()) {
     if (p->size() > 0 && (*p)[0] != '-') *p = "-i:" + *p;
     ++p;
   }
+}
 
+/**
+ * Interprets one option. This is the most generic variant of
+ * the interpretation routines; both global and object specific
+ * options are handled.
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ * 
+ * ensure:
+ *  (option succesfully interpreted && interpretation_result() ==  true) ||
+ *  (unknown or invalid option && interpretation_result() == false)
+ */
+void ECA_CHAINSETUP::interpret_option (const string& arg) {
+  interpret_global_option(arg);
+  if (istatus_rep == false) interpret_object_option(arg);
+}
+
+/**
+ * Interprets one option. All non-global options are ignored. Global
+ * options can be interpreted multiple times and in any order.
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ * 
+ * ensure:
+ *  (option succesfully interpreted && interpretation_result() ==  true) ||
+ *  (unknown or invalid option && interpretation_result() == false)
+ */
+void ECA_CHAINSETUP::interpret_global_option (const string& arg) {
+  istatus_rep = false;
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting global option \"" + arg + "\".");
+  if (istatus_rep == false) interpret_general_option(arg);
+  if (istatus_rep == false) interpret_processing_control(arg);
+  if (istatus_rep == false) interpret_chains(arg);
+}
+
+/**
+ * Interprets one option. All options not directly related to 
+ * ecasound objects are ignored.
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ * 
+ * ensure:
+ *  (option succesfully interpreted && interpretation_result() ==  true) ||
+ *  (unknown or invalid option && interpretation_result() == false)
+ */
+void ECA_CHAINSETUP::interpret_object_option (const string& arg) {
+  istatus_rep = false;
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting object option \"" + arg + "\".");
+  interpret_chains(arg);
+  if (istatus_rep == false) interpret_audio_format(arg);
+  if (istatus_rep == false) interpret_audioio_device(arg);
+  if (istatus_rep == false) interpret_chain_operator(arg);
+  if (istatus_rep == false) interpret_controller(arg);
+}
+
+/**
+ * Interpret a vector of options.
+ */
+void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
+  vector<string>::iterator p = opts.begin();
   p = opts.begin();
   while(p != opts.end()) {
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting general option \""
-		  + *p + "\".");
-    interpret_general_option(*p);
-    interpret_processing_control(*p);
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting chain option \""
-		  + *p + "\".");
-    interpret_chains(*p);
+    interpret_global_option(*p);
     ++p;
   }
 
   if (chains.size() == 0) add_default_chain();
-  string temp, another;
 
   p = opts.begin();
   while(p != opts.end()) {
-    temp = *p;
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting setup, with args \""
-		  + temp + "\", \"" + another + "\".");
-    interpret_chains(temp);
-    interpret_audio_format(temp);
-    if (chains.size() == 0) add_default_chain();
-    interpret_audioio_device(temp);
-    interpret_chain_operator(temp);
-    interpret_controller(temp);
+    interpret_object_option(*p);
     ++p;
-  }
-
-  if (inputs.size() > 0 && outputs.size() == 0) {
-    // No -o[:] options specified; let's use the default output
-    select_all_chains();
-    ECA_RESOURCES ecaresources;
-    interpret_audioio_device("-o:" +  ecaresources.resource("default-output"));
   }
 }
 
+/**
+ * Handle general options. 
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ *  istatus_rep == false
+ */
 void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
   // --------
   REQUIRE(argu.size() > 0);
   REQUIRE(argu[0] == '-');
+  REQUIRE(istatus_rep == false);
   // --------
 
+  bool match = true;
   if (argu.size() < 2) return;
   switch(argu[1]) {
   case 'b':
@@ -283,18 +379,28 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
       }
       break;
     }
-  default: { }
+  default: { match = false; }
   }
+  if (match == true) istatus_rep = true;
 }
 
+/**
+ * Handle processing control
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ *  istatus_rep == false
+ */
 void ECA_CHAINSETUP::interpret_processing_control (const string& argu) {
   // --------
   REQUIRE(argu.size() > 0);
   REQUIRE(argu[0] == '-');
+  REQUIRE(istatus_rep == false);
   // --------
 
+  bool match = true;
   if (argu.size() < 2) return;
-
   switch(argu[1]) {
   case 't': 
     { 
@@ -317,18 +423,28 @@ void ECA_CHAINSETUP::interpret_processing_control (const string& argu) {
       }
       break;
     }
-    break;
+  default: { match = false; }
   }
+  if (match == true) istatus_rep = true;
 }
 
+/**
+ * Handle chain options.
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ *  istatus_rep == false
+ */
 void ECA_CHAINSETUP::interpret_chains (const string& argu) {
   // --------
   REQUIRE(argu.size() > 0);
   REQUIRE(argu[0] == '-');
+  REQUIRE(istatus_rep == false);
   // --------
 
+  bool match = true;
   if (argu.size() < 2) return;  
-
   switch(argu[1]) {
   case 'a':
     {
@@ -348,19 +464,29 @@ void ECA_CHAINSETUP::interpret_chains (const string& argu) {
       }
       break;
     }
-  default: { }
+  default: { match = false; }
   }
-  return; // to avoid a internal compiler error
+  if (match == true) istatus_rep = true;
 }
 
+
+/**
+ * Handle chainsetup options.
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ *  istatus_rep == false
+ */
 void ECA_CHAINSETUP::interpret_audio_format (const string& argu) {
   // --------
   REQUIRE(argu.size() > 0);
   REQUIRE(argu[0] == '-');
+  REQUIRE(istatus_rep == false);
   // --------
 
+  bool match = true;
   if (argu.size() < 2) return; 
-
   switch(argu[1]) {
   case 'f':
     {
@@ -376,17 +502,27 @@ void ECA_CHAINSETUP::interpret_audio_format (const string& argu) {
       ecadebug->msg(ECA_DEBUG::user_objects, ftemp.to_string());
       break;
     }
-  default: { }
+  default: { match = false; }
   }
-  return; // to avoid a internal compiler error
+  if (match == true) istatus_rep = true;
 }
 
+/**
+ * Handle effect preset options.
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ *  istatus_rep == false
+ */
 void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
   // --------
   REQUIRE(argu.size() > 0);
   REQUIRE(argu[0] == '-');
+  REQUIRE(istatus_rep == false);
   // --------
 
+  bool match = true;
   if (argu.size() < 2) return;
   switch(argu[1]) {
   case 'p':
@@ -418,14 +554,122 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
       }
       break;
     }
-  default: { }
+  default: { match = false; }
   }
+  if (match == true) istatus_rep = true;
 }
 
+/**
+ * Handle audio-IO-devices and files.
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ */
+void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERROR*) { 
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  REQUIRE(istatus_rep == false);
+  // --------
+ 
+  string tname = get_argument_number(1, argu);
+  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-audio-objects) adding file \"" + tname + "\".");
+
+  bool match = true;
+  if (argu.size() < 2) return;
+  switch(argu[1]) {
+  case 'i':
+    {
+      ecadebug->msg(ECA_DEBUG::system_objects, "Eca-audio-objects/Parsing input");
+      last_audio_object = create_audio_object(argu);
+      if (last_audio_object == 0) 
+	last_audio_object = create_loop_input(argu);
+      if (last_audio_object != 0) {
+	if ((last_audio_object->supported_io_modes() &
+	    AUDIO_IO::io_read) != AUDIO_IO::io_read) {
+	  throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "I/O-mode 'io_read' not supported by " + last_audio_object->name()));
+	}
+	last_audio_object->io_mode(AUDIO_IO::io_read);
+	last_audio_object->set_audio_format(default_audio_format_rep);
+	add_input(last_audio_object);
+      }
+      else {
+	throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "Format of input " +
+			    tname + " not recognized."));
+      }
+      break;
+    }
+
+  case 'o':
+    {
+      ecadebug->msg(ECA_DEBUG::system_objects, "Eca-audio-objects/Parsing output");
+      last_audio_object = create_audio_object(argu);
+      if (last_audio_object == 0) last_audio_object = create_loop_output(argu);
+      if (last_audio_object != 0) {
+	int mode_tmp = output_openmode();
+	if (mode_tmp == AUDIO_IO::io_readwrite) {
+	  if ((last_audio_object->supported_io_modes() &
+	      AUDIO_IO::io_readwrite) != AUDIO_IO::io_readwrite) {
+	    mode_tmp = AUDIO_IO::io_write;
+	  }
+	}
+	if ((last_audio_object->supported_io_modes() &
+	    mode_tmp != mode_tmp)) {
+	    throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "I/O-mode 'io_write' not supported by " + last_audio_object->name()));
+	}
+      
+	last_audio_object->io_mode(mode_tmp);
+	last_audio_object->set_audio_format(default_audio_format_rep);
+	add_output(last_audio_object);
+      }
+      else {
+	throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "Format of output " +
+			    tname + " not recognized."));
+      }
+      break;
+    }
+
+  case 'y':
+    {
+      if (last_audio_object == 0)
+	ecadebug->msg("Error! No audio object defined.");
+
+      last_audio_object->seek_position_in_seconds(atof(get_argument_number(1, argu).c_str()));
+      if (last_audio_object->io_mode() == AUDIO_IO::io_read) {
+	input_start_pos[input_start_pos.size() - 1] = last_audio_object->position_in_seconds_exact();
+      }
+      else {
+	output_start_pos[output_start_pos.size() - 1] = last_audio_object->position_in_seconds_exact();
+      }
+
+      ecadebug->msg("(eca-audio-objects) Set starting position for audio object \""
+		    + last_audio_object->label() 
+		    + "\": "
+		    + kvu_numtostr(last_audio_object->position_in_seconds_exact()) 
+		    + " seconds.");
+      break;
+    }
+
+  default: { match = false; }
+  }
+  if (match == true) istatus_rep = true;
+}
+
+/**
+ * Handle chain operator options (chain operators, presets 
+ * and plugins)
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ *  istatus_rep == false
+ */
 void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
   // --------
   REQUIRE(argu.size() > 0);
   REQUIRE(argu[0] == '-');
+  REQUIRE(istatus_rep == false);
   // --------
 
   CHAIN_OPERATOR* t = create_chain_operator(argu);
@@ -436,6 +680,13 @@ void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
     interpret_effect_preset(argu);
 }
 
+/**
+ * Create a new LADSPA-plugin
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ */
 CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
   // --------
   REQUIRE(argu.size() > 0);
@@ -472,6 +723,9 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
   return(0);
 }
 
+/**
+ * Create a new VST1.0/2.0 plugin
+ */
 CHAIN_OPERATOR* ECA_CHAINSETUP::create_vst_plugin (const string& argu) {
   // --------
   REQUIRE(argu.size() > 0);
@@ -501,6 +755,13 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_vst_plugin (const string& argu) {
   return(cop);
 }
 
+/**
+ * Create a new chain operator
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ */
 CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
   // --------
   REQUIRE(argu.size() > 0);
@@ -531,16 +792,35 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
   return(0);
 }
 
+/**
+ * Handle controller sources and general controllers.
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ *  istatus_rep == false
+ */
 void ECA_CHAINSETUP::interpret_controller (const string& argu) {
   // --------
   REQUIRE(argu.size() > 0);
   REQUIRE(argu[0] == '-');
+  REQUIRE(istatus_rep == false);
   // --------
 
   GENERIC_CONTROLLER* t = create_controller(argu);
-  if (t != 0) add_controller(t);
+  if (t != 0) {
+    add_controller(t);
+    istatus_rep = true;
+  }
 }
 
+/**
+ * Handle controller sources and general controllers.
+ *
+ * require:
+ *  argu.size() > 0
+ *  argu[0] == '-'
+ */
 GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
   // --------
   REQUIRE(argu.size() > 0);
@@ -579,6 +859,9 @@ GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
   return(0);
 }
 
+/**
+ * Select controllers as targets for parameter control
+ */
 void ECA_CHAINSETUP::set_target_to_controller(void) {
   vector<string> schains = selected_chains();
   for(vector<string>::const_iterator a = schains.begin(); a != schains.end(); a++) {
@@ -591,6 +874,13 @@ void ECA_CHAINSETUP::set_target_to_controller(void) {
   }
 }
 
+/**
+ * Add general controller to selected chainop.
+ *
+ * require:
+ *   csrc != 0
+ *   selected_chains().size() == 1
+ */
 void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
   // --------
   REQUIRE(csrc != 0);
@@ -608,6 +898,13 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
   }
 }
 
+/**
+ * Add chain operator to selected chain.
+ *
+ * require:
+ *   cotmp != 0
+ *   selected_chains().size() == 1
+ */
 void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   // --------
   REQUIRE(cotmp != 0);
@@ -624,6 +921,19 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
 	//	(*q)->add_chain_operator(cotmp->clone());
       }
     }
+  }
+}
+
+/**
+ * If chainsetup has inputs, but no outputs, a default output is
+ * added.
+ */
+void ECA_CHAINSETUP::add_default_output(void) {
+  if (inputs.size() > 0 && outputs.size() == 0) {
+    // No -o[:] options specified; let's use the default output
+    select_all_chains();
+    ECA_RESOURCES ecaresources;
+    interpret_audioio_device("-o:" +  ecaresources.resource("default-output"));
   }
 }
 

@@ -6,12 +6,12 @@
 #include <string>
 
 #include <kvutils/definition_by_contract.h>
-
-#include "eca-chain.h"
-#include "audioio.h"
-#include "audioio-loop.h"
-
+#include "eca-audio-format.h"
 #include "eca-error.h"
+
+class AUDIO_IO;
+class LOOP_DEVICE;
+class CHAIN;
 
 /**
  * A specialized container class for representing a group of inputs, 
@@ -26,13 +26,8 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   bool precise_sample_rates_rep;
   int output_openmode_rep;
   long int buffersize_rep;
-  ECA_AUDIO_FORMAT default_audio_format_rep;
 
-  AUDIO_IO* last_audio_object;
   map<int,LOOP_DEVICE*> loop_map;
-
-  vector<double> input_start_pos;
-  vector<double> output_start_pos;
 
   string options_inputs;
   string options_outputs;
@@ -45,6 +40,10 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
 
  protected:
 
+  ECA_AUDIO_FORMAT default_audio_format_rep;
+  vector<double> input_start_pos;
+  vector<double> output_start_pos;
+
   // ---
   // Setup to strings
   // ---
@@ -53,85 +52,19 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   string chains_to_string(void) const;
   string audioio_to_string(const AUDIO_IO* aiod, const string& direction) const;
 
+ public:
+
   // ---
   // Setup helper functions
   // ---
 
- public:
-
-  /**
-   * Create a new audio object based on the formatted argument string
-   *
-   * require:
-   *  argu.empty() != true
-   */
   static AUDIO_IO* create_audio_object(const string& tname);
-
-  /**
-   * Create a new loop input object
-   *
-   * require:
-   *  argu.empty() != true
-   */
   AUDIO_IO* create_loop_input(const string& tname);
-
-  /**
-   * Create a new loop output object
-   *
-   * require:
-   *  argu.empty() != true
-   */
   AUDIO_IO* create_loop_output(const string& tname);
 
-  /**
-   * Print format and id information
-   *
-   * require:
-   *   aio != 0
-   */
   void audio_object_info(const AUDIO_IO* aio) const;
-
-  /**
-   * Adds a "default" chain to the setup.
-   *
-   * require:
-   *   buffersize >= 0 && chains.size() == 0
-   *
-   * ensure:
-   *   chains.back()->name() == "default" && 
-   *   active_chainids.back() == "default"
-   */
   void add_default_chain(void);
-
-  /**
-   * Handle audio-IO-devices and files.
-   *
-   * require:
-   *  argu.size() > 0
-   *  argu[0] == '-'
-   */
-  void interpret_audioio_device (const string& argu) throw(ECA_ERROR*);
-
-  /**
-   * Add a new input object and attach it to selected chains.
-   *
-   * require:
-   *   aiod != 0 && chains.size() > 0
-   *
-   * ensure:
-   *   inputs.size() > 0
-   */
   void add_input(AUDIO_IO* aiod);
-
-  /**
-   * Add a new output object and attach it to selected chains.
-   *
-   * require:
-   *   aiod != 0 && chains.size() > 0
-   *
-   * ensure:
-   *   outputs.size() > 0
-   */
   void add_output(AUDIO_IO* aiod);
   void remove_audio_input(const string& label);
   void remove_audio_output(const string& label);
@@ -142,12 +75,13 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   void remove_chains(void);
   void select_chains(const vector<string>& chains) { selected_chainids = chains; }
   void select_all_chains(void);
-  const vector<string>& selected_chains(void) const { return(selected_chainids); }
-  vector<string> chain_names(void) const;
   void clear_chains(void);
   void rename_chain(const string& name);
   void toggle_chain_muting(void);
   void toggle_chain_bypass(void);
+
+  const vector<string>& selected_chains(void) const { return(selected_chainids); }
+  vector<string> chain_names(void) const;
 
   // ---
   // Status/info functions
@@ -185,14 +119,7 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   int output_openmode(void) const { return(output_openmode_rep); }
   bool is_valid(void) const;
 
-  /**
-   * Constructor
-   */
   ECA_AUDIO_OBJECTS(void);
-
-  /**
-   * Destructor
-   */
   virtual ~ECA_AUDIO_OBJECTS(void);
 };
 

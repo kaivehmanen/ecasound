@@ -17,7 +17,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include "eca-audio-format.h"
 #include "eca-error.h"
 
@@ -27,7 +30,7 @@ const ECA_AUDIO_FORMAT default_ecasound_audio_format (2,
 						      false);
 ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT (int ch, 
 				    long int srate, 
-				    SAMPLE_FORMAT format, 
+				    ECA_AUDIO_FORMAT::Sample_format format, 
 				    bool ileaved) {
   set_channels(ch);
   set_samples_per_second(srate);
@@ -73,7 +76,7 @@ void ECA_AUDIO_FORMAT::set_audio_format(const ECA_AUDIO_FORMAT& f) {
   toggle_interleaved_channels(f.interleaved_channels());
 }
 
-void ECA_AUDIO_FORMAT::set_sample_format(SAMPLE_FORMAT v) throw(ECA_ERROR*) {
+void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format v) throw(ECA_ERROR*) {
   sfmt_rep = v;
   convert_to_host_byte_order();
   switch(sfmt_rep) 

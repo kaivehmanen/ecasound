@@ -9,26 +9,6 @@
 #include "samplebuffer.h"
 #include "eca-fileio.h"
 
-typedef struct {
-    uint16_t format;
-    uint16_t channels;
-    uint32_t srate;
-    uint32_t byte_second;
-    uint16_t align;
-    uint16_t bits;
-} RF;
-
-typedef struct {
-    uint8_t sig[4];
-    uint32_t bsize;
-} RB;
-
-typedef struct {
-    uint8_t id[4];
-    uint32_t size;
-    uint8_t wname[4];
-} RH;
-
 /**
  * Represents a RIFF WAVE -file (wav).
  *
@@ -46,6 +26,30 @@ typedef struct {
  *   in the stantard
  */
 class WAVEFILE : public AUDIO_IO_BUFFERED {
+
+ public:
+
+  typedef struct {
+    uint16_t format;
+    uint16_t channels;
+    uint32_t srate;
+    uint32_t byte_second;
+    uint16_t align;
+    uint16_t bits;
+  } RF;
+
+  typedef struct {
+    uint8_t sig[4];
+    uint32_t bsize;
+  } RB;
+
+  typedef struct {
+    uint8_t id[4];
+    uint32_t size;
+    uint8_t wname[4];
+  } RH;
+
+ private:
 
   ECA_FILE_IO* fio_repp;
 

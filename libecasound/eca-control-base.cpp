@@ -42,22 +42,31 @@ string ecasound_lockfile;
 
 ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession) {
   session_repp = psession;
-  selected_chainsetup_repp = psession->selected_chainsetup;
+  selected_chainsetup_repp = psession->selected_chainsetup_repp;
   engine_started_rep = false;
   ::ecasound_lockfile = "/var/lock/ecasound.lck." + kvu_numtostr(getpid());
 }
 
+/**
+ * Start the processing engine
+ *
+ * require:
+ *  is_connected() == true
+ *
+ * ensure:
+ *  is_engine_started() == true
+ */
 void ECA_CONTROL_BASE::start(bool ignore_lock) {
   // --------
   // require:
   assert(is_connected() == true);
   // --------
 
-  if (session_repp->status() == ep_status_running) return;
+  if (session_repp->status() == ECA_SESSION::ep_status_running) return;
   ecadebug->control_flow("Controller/Processing started");
 
 //    while(::ecasound_queue.is_empty() == false) ::ecasound_queue.pop_front();
-  if (session_repp->status() == ep_status_notready) {
+  if (session_repp->status() == ECA_SESSION::ep_status_notready) {
     start_engine(ignore_lock);
   }
 
@@ -74,13 +83,23 @@ void ECA_CONTROL_BASE::start(bool ignore_lock) {
   // --------
 }
 
+/**
+ * Start the processing engine and block until 
+ * processing is finished.
+ *
+ * require:
+ *  is_connected() == true
+ *
+ * ensure:
+ *  is_finished() == true
+ */
 void ECA_CONTROL_BASE::run(void) {
   // --------
   // require:
   assert(is_connected() == true);
   // --------
 
-  if (session_repp->status() == ep_status_running) return;
+  if (session_repp->status() == ECA_SESSION::ep_status_running) return;
 
   start(true);
 
@@ -100,13 +119,22 @@ void ECA_CONTROL_BASE::run(void) {
   // --------
 }
 
+/**
+ * Stop the processing engine
+ *
+ * require:
+ *  is_engine_started() == true
+ *
+ * ensure:
+ *   is_running() == false
+ */
 void ECA_CONTROL_BASE::stop(void) {
   // --------
   // require:
   assert(is_engine_started() == true);
   // --------
 
-  if (session_repp->status() != ep_status_running) return;
+  if (session_repp->status() != ECA_SESSION::ep_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped");
   ::ecasound_queue.push_back(ECA_PROCESSOR::ep_stop, 0.0);
 
@@ -117,13 +145,23 @@ void ECA_CONTROL_BASE::stop(void) {
   // --------
 }
 
+/**
+ * Stop the processing engine using thread-to-thread condition
+ * signaling.
+ *
+ * require:
+ *  is_engine_started() == true
+ *
+ * ensure:
+ *   is_running() == false
+ */
 void ECA_CONTROL_BASE::stop_on_condition(void) {
   // --------
   // require:
   assert(is_engine_started() == true);
   // --------
 
-  if (session_repp->status() != ep_status_running) return;
+  if (session_repp->status() != ECA_SESSION::ep_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped");
   ::ecasound_queue.push_back(ECA_PROCESSOR::ep_stop, 0.0);
   struct timeval now;
@@ -142,12 +180,24 @@ void ECA_CONTROL_BASE::stop_on_condition(void) {
   // --------
 }
 
+/**
+ * Stop the processing engine and throw an ECA_QUIT exception.
+ */
 void ECA_CONTROL_BASE::quit(void) {
   close_engine();
   int n = ECA_QUIT;
   throw(n);
 }
 
+/**
+ * Start the processing engine
+ *
+ * require:
+ *  is_connected() == true
+ *
+ * ensure:
+ *  is_engine_started() == true
+ */
 void ECA_CONTROL_BASE::start_engine(bool ignore_lock) {
   // --------
   // require:
@@ -177,6 +227,12 @@ void ECA_CONTROL_BASE::start_engine(bool ignore_lock) {
   // --------
 }
 
+/**
+ * Close the processing engine
+ *
+ * ensure:
+ *  is_engine_started() == false
+ */
 void ECA_CONTROL_BASE::close_engine(void) {
   if (!engine_started_rep) return;
   ::ecasound_queue.push_back(ECA_PROCESSOR::ep_exit, 0.0);
@@ -189,6 +245,12 @@ void ECA_CONTROL_BASE::close_engine(void) {
   // --------
 }
 
+/**
+ * Is currently selected chainsetup valid?
+ *
+ * require:
+ *  is_selected()
+ */
 bool ECA_CONTROL_BASE::is_valid(void) const {
   // --------
   // require:
@@ -198,25 +260,39 @@ bool ECA_CONTROL_BASE::is_valid(void) const {
   return(selected_chainsetup_repp->is_valid());
 }
 
+/**
+ * Returns true if active chainsetup exists and is connected.
+ */
 bool ECA_CONTROL_BASE::is_connected(void) const {
-  if (session_repp->connected_chainsetup == 0) return(false);
-  return(session_repp->connected_chainsetup->is_valid());
+  if (session_repp->connected_chainsetup_repp == 0) return(false);
+  return(session_repp->connected_chainsetup_repp->is_valid());
 }
 
+/**
+ * Returns true if some chainsetup is selected.
+ */
 bool ECA_CONTROL_BASE::is_selected(void) const { return(selected_chainsetup_repp != 0); } 
-bool ECA_CONTROL_BASE::is_running(void) const { return(session_repp->status() == ep_status_running); } 
-bool ECA_CONTROL_BASE::is_finished(void) const { return(session_repp->status() == ep_status_finished); } 
+
+/**
+ * Returns true if processing engine is running.
+ */
+bool ECA_CONTROL_BASE::is_running(void) const { return(session_repp->status() == ECA_SESSION::ep_status_running); } 
+
+/**
+ * Returns true if engine has finished processing.
+ */
+bool ECA_CONTROL_BASE::is_finished(void) const { return(session_repp->status() == ECA_SESSION::ep_status_finished); } 
 
 long ECA_CONTROL_BASE::length_in_samples(void) const { 
   if (is_connected() == true)
-      return session_repp->connected_chainsetup->length_in_samples(); 
+      return session_repp->connected_chainsetup_repp->length_in_samples(); 
   else
     return(0);
 }
 
 double ECA_CONTROL_BASE::length_in_seconds_exact(void) const { 
   if (is_connected() == true) {
-      return session_repp->connected_chainsetup->length_in_seconds_exact(); 
+      return session_repp->connected_chainsetup_repp->length_in_seconds_exact(); 
   }
   else
     return(0.0);
@@ -224,33 +300,36 @@ double ECA_CONTROL_BASE::length_in_seconds_exact(void) const {
 
 long ECA_CONTROL_BASE::position_in_samples(void) const { 
   if (is_connected() == true)
-      return session_repp->connected_chainsetup->position_in_samples(); 
+      return session_repp->connected_chainsetup_repp->position_in_samples(); 
   else
     return(0);
 }
 double ECA_CONTROL_BASE::position_in_seconds_exact(void) const {
   if (is_connected() == true) {
-      return session_repp->connected_chainsetup->position_in_seconds_exact(); 
+      return session_repp->connected_chainsetup_repp->position_in_seconds_exact(); 
   }
   else
     return(0.0);
 }
 
+/**
+ * Return info about engine status.
+ */
 string ECA_CONTROL_BASE::engine_status(void) const {
   switch(session_repp->status()) {
-  case ep_status_running: 
+  case ECA_SESSION::ep_status_running: 
     {
     return("running"); 
     }
-  case ep_status_stopped: 
+  case ECA_SESSION::ep_status_stopped: 
     {
     return("stopped"); 
     }
-  case ep_status_finished:
+  case ECA_SESSION::ep_status_finished:
     {
     return("finished"); 
     }
-  case ep_status_notready: 
+  case ECA_SESSION::ep_status_notready: 
     {
     return("not ready"); 
     }
@@ -261,6 +340,13 @@ string ECA_CONTROL_BASE::engine_status(void) const {
   }
 }
 
+/**
+ * Get a string containing a comma separated list of all chains 
+ * attached to input with index 'aiod'. 
+ *
+ * require:
+ *  is_selected() == true
+ */
 string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
   // --------
   REQUIRE(is_selected() == true);
@@ -277,6 +363,13 @@ string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
   return(out);
 }
 
+/**
+ * Get a string containing a comma separated list of all chains 
+ * attached to output with index 'aiod'.
+ *
+ * require:
+ *  is_selected() == true
+ */
 string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
   // --------
   REQUIRE(is_selected() == true);
@@ -293,6 +386,13 @@ string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
   return(out);
 }
 
+/**
+ * Get a string containing a comma separated list of all chains 
+ * attached to audio object with name 'filename'. 
+ *
+ * require:
+ *  is_selected() == true
+ */
 vector<string> ECA_CONTROL_BASE::attached_chains(const string& filename) const {
   // --------
   REQUIRE(is_selected() == true);
@@ -301,6 +401,12 @@ vector<string> ECA_CONTROL_BASE::attached_chains(const string& filename) const {
   return(selected_chainsetup_repp->get_attached_chains_to_iodev(filename));
 }
 
+/**
+ * Set the default buffersize (in samples).
+ *
+ * require:
+ *   is_editable() == true
+ */
 void ECA_CONTROL_BASE::set_buffersize(int bsize) { 
   // --------
   // require:
@@ -309,6 +415,12 @@ void ECA_CONTROL_BASE::set_buffersize(int bsize) {
   selected_chainsetup_repp->set_buffersize(bsize); 
 }
 
+/**
+ * Toggle whether raised priority mode is enabled or not.
+ *
+ * require:
+ *   is_editable() == true
+ */
 void ECA_CONTROL_BASE::toggle_raise_priority(bool v) { 
   // --------
   // require:

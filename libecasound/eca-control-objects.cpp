@@ -40,6 +40,17 @@ ECA_CONTROL_OBJECTS::ECA_CONTROL_OBJECTS (ECA_SESSION* psession)
   selected_audio_object_repp = 0;
 }
 
+/**
+ * Adds a new chainsetup
+ *
+ * @param name chainsetup name 
+ *
+ * require:
+ *  name != ""
+ *
+ * ensure:
+ *  selected_chainsetup() == name
+ */
 void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name) {
   // --------
   REQUIRE(name != "");
@@ -59,6 +70,18 @@ void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name) {
   // --------
 }
 
+/**
+ * Removes chainsetup
+ *
+ * @param name chainsetup name 
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *
+ * ensure:
+ *  selected_chainsetup.empty() == true
+ */
 void ECA_CONTROL_OBJECTS::remove_chainsetup(void) {
   // --------
   REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -74,6 +97,17 @@ void ECA_CONTROL_OBJECTS::remove_chainsetup(void) {
   // --------
 }
 
+/**
+ * Loads chainsetup from file 'filename'.
+ *
+ * @param name chainsetup filename 
+ *
+ * require:
+ *  filename != ""
+ *
+ * ensure:
+ *  filename exists implies loaded chainsetup == selected_chainsetup()
+ */
 void ECA_CONTROL_OBJECTS::load_chainsetup(const string& filename) {
   try {
     session_repp->load_chainsetup(filename);
@@ -85,6 +119,14 @@ void ECA_CONTROL_OBJECTS::load_chainsetup(const string& filename) {
   }
 }
 
+/**
+ * Save selected chainsetup.
+ *
+ * @param filename chainsetup filename (if omitted, previously used filename will be used, if any)
+ *
+ * require:
+ *  selected_chainsetup().empty() != true
+ */
 void ECA_CONTROL_OBJECTS::save_chainsetup(const string& filename) {
   // --------
   // require:
@@ -104,6 +146,18 @@ void ECA_CONTROL_OBJECTS::save_chainsetup(const string& filename) {
   }
 }
 
+/**
+ * Selects chainsetup
+ *
+ * @param name chainsetup name 
+ *
+ * require:
+ *   name != ""
+ *
+ * ensure:
+ *  name == selected_chainsetup() ||
+ *  selected_chainsetup_rep == 0
+ */
 void ECA_CONTROL_OBJECTS::select_chainsetup(const string& name) {
   // --------
   // require:
@@ -111,7 +165,7 @@ void ECA_CONTROL_OBJECTS::select_chainsetup(const string& name) {
   // --------
 
   session_repp->select_chainsetup(name);
-  selected_chainsetup_repp = session_repp->selected_chainsetup;
+  selected_chainsetup_repp = session_repp->selected_chainsetup_repp;
   if (selected_chainsetup_repp != 0)
     ecadebug->msg("(eca-controller) Selected chainsetup:  \"" + selected_chainsetup() + "\".");
   else
@@ -124,6 +178,18 @@ void ECA_CONTROL_OBJECTS::select_chainsetup(const string& name) {
   // --------
 }
 
+/**
+ * Selects chainsetup by index (see chainsetup_status())
+ *
+ * @param name chainsetup name 
+ *
+ * require:
+ *  index.empty() != true
+ *  index[0] == 'c'
+ *
+ * ensure:
+ *  selected_chainsetup_rep == 0
+ */
 void ECA_CONTROL_OBJECTS::select_chainsetup_by_index(const string& index) { 
   // --------
   // require:
@@ -135,15 +201,18 @@ void ECA_CONTROL_OBJECTS::select_chainsetup_by_index(const string& index) {
 				 index.end()).c_str());
 
   for(vector<ECA_CHAINSETUP*>::size_type p = 0; 
-      p != session_repp->chainsetups.size();
+      p != session_repp->chainsetups_rep.size();
       p++) {
     if (index_number == static_cast<int>(p + 1)) {
-      select_chainsetup(session_repp->chainsetups[p]->name());
+      select_chainsetup(session_repp->chainsetups_rep[p]->name());
       break;
     }
   }
 }
 
+/**
+ * Name of currently active chainsetup
+ */
 string ECA_CONTROL_OBJECTS::selected_chainsetup(void) const {
  if (selected_chainsetup_repp != 0)
    return(selected_chainsetup_repp->name());
@@ -151,6 +220,13 @@ string ECA_CONTROL_OBJECTS::selected_chainsetup(void) const {
  return("");
 }
 
+/**
+ * Spawns an external editor for editing selected chainsetup
+ *
+ * require:
+ *  is_selected() 
+ *  connected_chainsetup() != selected_chainsetup()
+ */
 void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
   // --------
   // require:
@@ -233,6 +309,14 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
   }
 }
 
+/**
+ * Sets processing length in seconds. If 'value' is 0,
+ * length in unspecified.
+ *
+ * require:
+ *  is_selected() == true
+ *  value >= 0
+ */
 void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_seconds(double value) {
   // --------
   // require:
@@ -243,6 +327,14 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_seconds(double val
   ecadebug->msg("(eca-controller) Set processing length to \"" + kvu_numtostr(value) + "\" seconds.");
 }
 
+/**
+ * Sets processing length in samples. If 'value' is 0,
+ * length in unspecified.
+ *
+ * require:
+ *  is_selected() == true
+ *  value >= 0
+ */
 void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_samples(long int value) {
   // --------
   // require:
@@ -254,6 +346,12 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_samples(long int v
 		 kvu_numtostr(selected_chainsetup_repp->length_in_seconds_exact()) + "\" seconds.");
 }
 
+/**
+ * Sets default open mode for audio outputs.
+ *
+ * require:
+ *  output_mode == AUDIO_IO::io_write || output_mode == AUDIO_IO::io_readwrite
+ */
 void ECA_CONTROL_OBJECTS::set_chainsetup_output_mode(int output_mode) {
   // --------
   REQUIRE(output_mode == AUDIO_IO::io_write || output_mode == AUDIO_IO::io_readwrite);
@@ -261,6 +359,12 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_output_mode(int output_mode) {
   selected_chainsetup_repp->set_output_openmode(output_mode);
 }
 
+/**
+ * Toggles chainsetup looping
+ *
+ * require:
+ *  is_selected() == true
+ */
 void ECA_CONTROL_OBJECTS::toggle_chainsetup_looping(void) {
  // --------
   // require:
@@ -277,6 +381,16 @@ void ECA_CONTROL_OBJECTS::toggle_chainsetup_looping(void) {
   }
 }
 
+/**
+ * Connects selected chainsetup
+ *
+ * require:
+ *  is_selected() == true
+ *  is_valid() == true
+ *
+ * ensure:
+ *  is_connected() == true
+ */
 void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
   // --------
   // require:
@@ -296,14 +410,26 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
   // --------
 }
 
+/**
+ * Name of connected chainsetup.
+ */
 string ECA_CONTROL_OBJECTS::connected_chainsetup(void) const {
-  if (session_repp->connected_chainsetup != 0) {
-    return(session_repp->connected_chainsetup->name());
+  if (session_repp->connected_chainsetup_repp != 0) {
+    return(session_repp->connected_chainsetup_repp->name());
   }
 
   return("");
 }
 
+/**
+ * Disconnects activate chainsetup
+ *
+ * require:
+ *  is_connected() == true
+ *
+ * ensure:
+ *  connected_chainsetup() == ""
+ */
 void ECA_CONTROL_OBJECTS::disconnect_chainsetup(void) {
   // --------
   // require:
@@ -324,18 +450,28 @@ void ECA_CONTROL_OBJECTS::disconnect_chainsetup(void) {
   // --------
 }
 
+/**
+ * Gets a vector of al chainsetup names.
+ */
 vector<string> ECA_CONTROL_OBJECTS::chainsetup_names(void) const {
   return(session_repp->chainsetup_names());
 }
 
+/**
+ * Gets a pointer to selected chainsetup, or 0 if no 
+ * chainsetup is selected.
+ */
 ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup(void) const {
   return(selected_chainsetup_repp);
 }
 
+/**
+ * Gets a pointer to chainsetup with filename 'filename'.
+ */
 ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup_filename(const string&
 							      filename) const {
-  vector<ECA_CHAINSETUP*>::const_iterator p = session_repp->chainsetups.begin();
-  while(p != session_repp->chainsetups.end()) {
+  vector<ECA_CHAINSETUP*>::const_iterator p = session_repp->chainsetups_rep.begin();
+  while(p != session_repp->chainsetups_rep.end()) {
     if ((*p)->filename() == filename) {
       return((*p));
     }
@@ -344,6 +480,12 @@ ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup_filename(const string&
   return(0);
 }
 
+/** 
+ * Gets chainsetup filename (used by save_chainsetup())
+ *
+ * require:
+ *  is_selected() == true
+ */
 const string& ECA_CONTROL_OBJECTS::chainsetup_filename(void) const {
   // --------
   // require:
@@ -352,6 +494,13 @@ const string& ECA_CONTROL_OBJECTS::chainsetup_filename(void) const {
   return(selected_chainsetup_repp->filename());
 }
 
+/**
+ * Sets chainsetup filename (used by save_chainsetup())
+ *
+ * require:
+ *  is_selected() == true && 
+ *  name.empty() != true
+ */
 void ECA_CONTROL_OBJECTS::set_chainsetup_filename(const string& name) {
   // --------
   // require:
@@ -361,6 +510,13 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_filename(const string& name) {
   selected_chainsetup_repp->set_filename(name);
 }
 
+/**
+ * Sets general chainsetup chainsetup parameter
+ *
+ * require:
+ *  is_selected() == true && 
+ *  name.empty() != true
+ */
 void ECA_CONTROL_OBJECTS::set_chainsetup_parameter(const string& name) {
   // --------
   // require:
@@ -368,9 +524,16 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_parameter(const string& name) {
 	 name.empty() != true);
   // --------
 
-  selected_chainsetup_repp->interpret_general_option(name);
+  selected_chainsetup_repp->interpret_global_option(name);
 }
 
+/**
+ * Sets general chainsetup chainsetup parameter
+ *
+ * require:
+ *  is_selected() == true && 
+ *  name.empty() != true
+ */
 void ECA_CONTROL_OBJECTS::set_chainsetup_sample_format(const string& name) {
   // --------
   // require:
@@ -378,9 +541,20 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_sample_format(const string& name) {
 	 name.empty() != true);
   // --------
 
-  selected_chainsetup_repp->interpret_audio_format("-f:" + name);
+  selected_chainsetup_repp->interpret_object_option("-f:" + name);
 }
 
+/**
+ * Adds a new chain (selected chainsetup). Added chain is automatically
+ * selected.
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  
+ * ensure:
+ *   selected_chains().size() > 0
+ */
 void ECA_CONTROL_OBJECTS::add_chain(const string& name) { 
   // --------
   // require:
@@ -396,6 +570,19 @@ void ECA_CONTROL_OBJECTS::add_chain(const string& name) {
   // --------
 }
 
+/**
+ * Adds new chains (selected chainsetup).  Added chains are automatically
+ * selected.
+ *
+ * @param names comma separated list of chain names
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  
+ * ensure:
+ *   selected_chains().size() > 0
+ */
 void ECA_CONTROL_OBJECTS::add_chains(const string& names) { 
   // --------
   // require:
@@ -411,6 +598,19 @@ void ECA_CONTROL_OBJECTS::add_chains(const string& names) {
   // --------
 }
 
+/**
+ * Adds new chains (selected chainsetup). Added chains are automatically
+ * selected.
+ *
+ * @param namess vector of chain names
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  
+ * ensure:
+ *   selected_chains().size() == names.size()
+ */
 void ECA_CONTROL_OBJECTS::add_chains(const vector<string>& new_chains) { 
   // --------
   // require:
@@ -430,6 +630,17 @@ void ECA_CONTROL_OBJECTS::add_chains(const vector<string>& new_chains) {
   // --------
 }
 
+/**
+ * Removes currently selected chain (selected chainsetup)
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  selected_chains().size() > 0 &&
+ *
+ * ensure:
+ *  selected_chains().size() == 0
+ */
 void ECA_CONTROL_OBJECTS::remove_chains(void) { 
   // --------
   // require:
@@ -448,6 +659,15 @@ void ECA_CONTROL_OBJECTS::remove_chains(void) {
   // --------
 }
 
+/**
+ * Selects a chains (currently selected chainsetup)
+ *
+ * require:
+ *   is_selected() == true
+ *
+ * ensure:
+ *   selected_chains().size() == 1
+ */
 void ECA_CONTROL_OBJECTS::select_chain(const string& chain) {
   // --------
   REQUIRE(is_selected() == true);
@@ -463,6 +683,18 @@ void ECA_CONTROL_OBJECTS::select_chain(const string& chain) {
   // --------
 }
 
+
+/**
+ * Selects chains (currently selected chainsetup)
+ *
+ * @param chains vector of chain names
+ *
+ * require:
+ *   is_selected() == true
+ *
+ * ensure:
+ *   selected_chains().size() > 0
+ */
 void ECA_CONTROL_OBJECTS::select_chains(const vector<string>& chains) {
   // --------
   // require:
@@ -475,6 +707,14 @@ void ECA_CONTROL_OBJECTS::select_chains(const vector<string>& chains) {
 		vector_to_string(chains, ", ") + ".");
 }
 
+/**
+ * Deselects chains (currently selected chainsetup)
+ *
+ * @param chains vector of chain names
+ *
+ * require:
+ *   is_selected() == true
+ */
 void ECA_CONTROL_OBJECTS::deselect_chains(const vector<string>& chains) {
   // --------
   // require:
@@ -499,6 +739,12 @@ void ECA_CONTROL_OBJECTS::deselect_chains(const vector<string>& chains) {
   selected_chainsetup_repp->select_chains(schains);
 }
 
+/**
+ * Selects all chains (currently selected chainsetup)
+ *
+ * require:
+ *   is_selected() == true
+ */
 void ECA_CONTROL_OBJECTS::select_all_chains(void) {
   // --------
   REQUIRE(is_selected() == true);
@@ -510,6 +756,12 @@ void ECA_CONTROL_OBJECTS::select_all_chains(void) {
 		vector_to_string(selected_chains(), ", ") + ".");
 }
 
+/**
+ * Returns a list of selected chains (currently selected chainsetup)
+ *
+ * require:
+ *  is_selected() == true
+ */
 const vector<string>& ECA_CONTROL_OBJECTS::selected_chains(void) const {
   // --------
   REQUIRE(is_selected() == true);
@@ -517,6 +769,12 @@ const vector<string>& ECA_CONTROL_OBJECTS::selected_chains(void) const {
   return(selected_chainsetup_repp->selected_chains());
 }
 
+/**
+ * Gets a vector of all chain names.
+ *
+ * require:
+ *  is_selected() == true
+ */
 vector<string> ECA_CONTROL_OBJECTS::chain_names(void) const {
   // --------
   REQUIRE(is_selected() == true);
@@ -524,6 +782,13 @@ vector<string> ECA_CONTROL_OBJECTS::chain_names(void) const {
   return(selected_chainsetup_repp->chain_names());
 }
 
+/**
+ * Gets a pointer to selected chain, or 0 if no chain is selected.
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ */
 CHAIN* ECA_CONTROL_OBJECTS::get_chain(void) const {
   // --------
   REQUIRE(is_selected() == true);
@@ -543,6 +808,17 @@ CHAIN* ECA_CONTROL_OBJECTS::get_chain(void) const {
   return(0);
 }
 
+/**
+ * Clears all selected chains (all chain operators and controllers
+ * are removed)
+ *
+ * @param name chain name 
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  selected_chains().size() > 0
+ */
 void ECA_CONTROL_OBJECTS::clear_chains(void) { 
   // --------
   REQUIRE(is_selected() == true);
@@ -554,6 +830,17 @@ void ECA_CONTROL_OBJECTS::clear_chains(void) {
   if (was_running == true) ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
+/**
+ * Clears all selected chains (all chain operators and controllers
+ * are removed)
+ *
+ * @param name chain name 
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  selected_chains().size() == 1
+ */
 void ECA_CONTROL_OBJECTS::rename_chain(const string& name) { 
   // --------
   // require:
@@ -582,6 +869,13 @@ void ECA_CONTROL_OBJECTS::send_chain_commands_to_engine(int command, double valu
   }
 }
 
+/**
+ * Toggles whether chain is muted or not
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() > 0
+ */
 void ECA_CONTROL_OBJECTS::toggle_chain_muting(void) { 
   // --------
   // require:
@@ -596,6 +890,13 @@ void ECA_CONTROL_OBJECTS::toggle_chain_muting(void) {
   }
 }
 
+/**
+ * Toggles whether chain operators are enabled or disabled
+ *
+ * require:
+ *  is_selected() == true && is_connected() == true
+ *  selected_chains().size() > 0
+ */
 void ECA_CONTROL_OBJECTS::toggle_chain_bypass(void) { 
   // --------
   // require:
@@ -610,6 +911,13 @@ void ECA_CONTROL_OBJECTS::toggle_chain_bypass(void) {
   }
 }
 
+/**
+ * Rewinds selected chains by 'pos_in_seconds' seconds
+ *
+ * require:
+ *  is_selected() == true && is_connected() == true
+ *  selected_chains().size() > 0
+ */
 void ECA_CONTROL_OBJECTS::rewind_chains(double pos_in_seconds) { 
   // --------
   // require:
@@ -619,6 +927,13 @@ void ECA_CONTROL_OBJECTS::rewind_chains(double pos_in_seconds) {
   send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_rewind, pos_in_seconds);
 }
 
+/**
+ * Forwards selected chains by 'pos_in_seconds' seconds
+ *
+ * require:
+ *  is_selected() == true && is_connected() == true
+ *  selected_chains().size() > 0
+ */
 void ECA_CONTROL_OBJECTS::forward_chains(double pos_in_seconds) { 
   // --------
   // require:
@@ -628,6 +943,13 @@ void ECA_CONTROL_OBJECTS::forward_chains(double pos_in_seconds) {
   send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_forward, pos_in_seconds);
 }
 
+/**
+ * Sets position of selected chains to 'pos_in_seconds' seconds
+ *
+ * require:
+ *  is_selected() == true && is_connected() == true
+ *  selected_chains().size() > 0
+ */
 void ECA_CONTROL_OBJECTS::set_position_chains(double pos_in_seconds) { 
   // --------
   // require:
@@ -655,6 +977,13 @@ void ECA_CONTROL_OBJECTS::set_position_chains(double pos_in_seconds) {
   }
 }
 
+/**
+ * Sets default audio format. This format will be used, when
+ * adding audio inputs and outputs.
+ *
+ * require:
+ *  is_selected() == true
+ */
 void ECA_CONTROL_OBJECTS::set_default_audio_format(const string& sfrm,
 				      int channels, 
 				      long int srate) {
@@ -671,9 +1000,16 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const string& sfrm,
   format += ",";
   format += kvu_numtostr(srate);
 
-  selected_chainsetup_repp->interpret_audio_format(format);
+  selected_chainsetup_repp->interpret_object_option(format);
 }
 
+/**
+ * Sets default audio format. This format will be used, when
+ * adding audio inputs and outputs.
+ *
+ * require:
+ *  is_selected() == true
+ */
 void ECA_CONTROL_OBJECTS::set_default_audio_format(const ECA_AUDIO_FORMAT& format) {
  // --------
   // require:
@@ -685,6 +1021,12 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const ECA_AUDIO_FORMAT& forma
 			   static_cast<long int>(format.samples_per_second()));
 }
 
+/**
+ * Selects an audio object
+ *
+ * require:
+ *  is_selected() == true
+ */
 void ECA_CONTROL_OBJECTS::select_audio_object(const string& name) { 
   // --------
   // require:
@@ -694,6 +1036,12 @@ void ECA_CONTROL_OBJECTS::select_audio_object(const string& name) {
   select_audio_output(name);
 }
 
+/**
+ * Selects an audio input
+ *
+ * require:
+ *  is_selected() == true
+ */
 void ECA_CONTROL_OBJECTS::select_audio_input(const string& name) { 
   // --------
   // require:
@@ -708,6 +1056,12 @@ void ECA_CONTROL_OBJECTS::select_audio_input(const string& name) {
   }
 }
 
+/**
+ * Selects an audio output
+ *
+ * require:
+ *  is_selected() == true
+ */
 void ECA_CONTROL_OBJECTS::select_audio_output(const string& name) { 
   // --------
   // require:
@@ -722,6 +1076,14 @@ void ECA_CONTROL_OBJECTS::select_audio_output(const string& name) {
   }
 }
 
+/**
+ * Selects an audio object by index (see aio_status())
+ *
+ * require:
+ *  is_selected() == true
+ *  index.empty() != true
+ *  index[0] == 'i' || index[0] == 'o'
+ */
 void ECA_CONTROL_OBJECTS::select_audio_object_by_index(const string& index) { 
   // --------
   // require:
@@ -750,6 +1112,15 @@ void ECA_CONTROL_OBJECTS::select_audio_object_by_index(const string& index) {
   }
 }
 
+/**
+ * Gets audio format of currently selected audio object. 
+ * Note! This function is not a const member, because
+ * it will open the targer audio object, if necessary.
+ *
+ * require:
+ *  get_audio_object() != 0
+ *  is_selected() == true
+ */
 ECA_AUDIO_FORMAT ECA_CONTROL_OBJECTS::get_audio_format(void) {
   // --------
   // require:
@@ -770,6 +1141,16 @@ ECA_AUDIO_FORMAT ECA_CONTROL_OBJECTS::get_audio_format(void) {
   return(t);
 }
 
+/** 
+ * Adds a new audio input (file, soundcard device, etc). Input 
+ * is attached to currently selected chains (if any). If 'filename' 
+ * doesn't exist or is otherwise invalid, no input is added.
+ *
+ * require:
+ *   filename.empty() == false
+ *   is_selected() == true
+ *   connected_chainsetup() != selected_chainsetup()
+ */
 void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
   // --------
   REQUIRE(filename.empty() == false);
@@ -778,7 +1159,7 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
   // --------
 
   try {
-    selected_chainsetup_repp->interpret_audioio_device("-i:" + filename);
+    selected_chainsetup_repp->interpret_object_option("-i:" + filename);
     select_audio_object(filename);
     ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
   }
@@ -787,6 +1168,16 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
   }
 }
 
+/** 
+ * Adds a new audio output (file, soundcard device, etc). Output 
+ * is attached to currently selected chains (if any). If 'filename' 
+ * doesn't exist or is otherwise invalid, no input is added.
+ *
+ * require:
+ *   filename.empty() == false
+ *   is_selected() == true
+ *   connected_chainsetup() != selected_chainsetup()
+ */
 void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
   // --------
   // require:
@@ -795,7 +1186,7 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
   assert(connected_chainsetup() != selected_chainsetup());
   // --------
   try {
-    selected_chainsetup_repp->interpret_audioio_device("-o:" + filename);
+    selected_chainsetup_repp->interpret_object_option("-o:" + filename);
     select_audio_object(filename);
     ecadebug->msg("(eca-controller) Added audio output \"" + filename +
 		  "\".");
@@ -805,6 +1196,14 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
   }
 }
 
+/** 
+ * Adds a default output (as defined in ~/.ecasoundrc) and attach
+ * it to currently selected chains.
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ */
 void ECA_CONTROL_OBJECTS::add_default_output(void) {
   // --------
   // require:
@@ -816,6 +1215,13 @@ void ECA_CONTROL_OBJECTS::add_default_output(void) {
   ecadebug->msg("(eca-controller) Added default output to selected chains.");
 }
 
+/** 
+ * Gets a pointer to the currently selected audio object. 
+ * Returns 0 if no audio object is selected.
+ *
+ * require:
+ *  is_selected() == true
+ */
 AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_object(void) const {
   // --------
   REQUIRE(is_selected() == true);
@@ -823,6 +1229,17 @@ AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_object(void) const {
   return(selected_audio_object_repp);
 }
 
+/**
+ * Removes selected audio input/output
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  get_audio_object() != 0
+ *
+ * ensure:
+ *  selected_audio_object_rep = 0
+ */
 void ECA_CONTROL_OBJECTS::remove_audio_object(void) { 
   // --------
   // require:
@@ -844,6 +1261,14 @@ void ECA_CONTROL_OBJECTS::remove_audio_object(void) {
   // --------
 }
 
+/**
+ * Attaches selected audio object to selected chains
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  get_audio_object() != 0
+ */
 void ECA_CONTROL_OBJECTS::attach_audio_object(void) {
   // --------
   // require:
@@ -860,6 +1285,14 @@ void ECA_CONTROL_OBJECTS::attach_audio_object(void) {
 		"\" to selected chains.");
 }
 
+/**
+ * Rewinds selected audio object by 'pos_in_seconds' seconds
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  get_audio_object() != 0
+ */
 void ECA_CONTROL_OBJECTS::rewind_audio_object(double seconds) {
   // --------
   // require:
@@ -870,6 +1303,14 @@ void ECA_CONTROL_OBJECTS::rewind_audio_object(double seconds) {
   selected_audio_object_repp->seek_position_in_seconds(selected_audio_object_repp->position_in_seconds_exact() - seconds);
 }
 
+/**
+ * Forwards selected audio object by 'pos_in_seconds' seconds
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  get_audio_object() != 0
+ */
 void ECA_CONTROL_OBJECTS::forward_audio_object(double seconds) {
   // --------
   // require:
@@ -880,6 +1321,14 @@ void ECA_CONTROL_OBJECTS::forward_audio_object(double seconds) {
   selected_audio_object_repp->seek_position_in_seconds(selected_audio_object_repp->position_in_seconds_exact() + seconds);
 }
 
+/**
+ * Sets position of selected audio object
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  get_audio_object() != 0
+ */
 void ECA_CONTROL_OBJECTS::set_audio_object_position(double seconds) {
   // --------
   // require:
@@ -890,6 +1339,14 @@ void ECA_CONTROL_OBJECTS::set_audio_object_position(double seconds) {
   selected_audio_object_repp->seek_position_in_seconds(seconds);
 }
 
+/**
+ * Spawns an external wave editor for editing selected audio object.
+ *
+ * require:
+ *  is_selected() 
+ *  connected_chainsetup() != selected_chainsetup()
+ *  get_audio_object() != 0
+ */
 void ECA_CONTROL_OBJECTS::wave_edit_audio_object(void) {
   // --------
   // require:
@@ -906,6 +1363,13 @@ void ECA_CONTROL_OBJECTS::wave_edit_audio_object(void) {
   }
 }
 
+/**
+ * Adds a new chain operator
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ */
 void ECA_CONTROL_OBJECTS::add_chain_operator(const string& chainop_params) {
   // --------
   // require:
@@ -918,12 +1382,27 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(const string& chainop_params) {
     stop_on_condition();
   }
 
-  selected_chainsetup_repp->interpret_chain_operator(chainop_params);
+  selected_chainsetup_repp->interpret_object_option(chainop_params);
 
   if (was_running == true)
     ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
+/**
+ * Adds a new chain operator. Pointer given as argument 
+ * will remain to be usable, but notice that it is
+ * _NOT_ thread-safe to use assigned/registered objects 
+ * from client programs. You must be sure that ecasound 
+ * isn't using the same object as you are. The 
+ * easiest way to assure this is to disconnect 
+ * the chainsetup to which object is attached.
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  selected_chains().size() == 1
+ *  cotmp != 0
+ */
 void ECA_CONTROL_OBJECTS::add_chain_operator(CHAIN_OPERATOR* cotmp) { 
   // --------
   // require:
@@ -944,6 +1423,16 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(CHAIN_OPERATOR* cotmp) {
     ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
+/** 
+ * Gets a pointer to the Nth chain operator. If chain 
+ * operator is not valid, 0 is returned.
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  selected_chains().size() == 1
+ *  chainop_id > 0
+ */
 CHAIN_OPERATOR* ECA_CONTROL_OBJECTS::get_chain_operator(int chainop_id) const {
   // --------
   // require:
@@ -971,6 +1460,15 @@ CHAIN_OPERATOR* ECA_CONTROL_OBJECTS::get_chain_operator(int chainop_id) const {
   return(0);
 }
 
+/**
+ * Removes the Nth chain operator
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  selected_chains().size() == 1
+ *  chainop_id > 0
+ */
 void ECA_CONTROL_OBJECTS::remove_chain_operator(int chainop_id) { 
   // --------
   // require:
@@ -1004,7 +1502,15 @@ void ECA_CONTROL_OBJECTS::remove_chain_operator(int chainop_id) {
     ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
-
+/**
+ * Sets chain operator parameter value
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ *  chainop_id > 0
+ *  param > 0
+ */
 void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(int chainop_id,
 						  int param,
 						  CHAIN_OPERATOR::parameter_type value) {
@@ -1042,6 +1548,14 @@ void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(int chainop_id,
   }
 }
 
+/**
+ * Adds a new controller
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  selected_chains().size() > 0
+ */
 void ECA_CONTROL_OBJECTS::add_controller(const string& gcontrol_params) { 
   // --------
   // require:
@@ -1055,12 +1569,21 @@ void ECA_CONTROL_OBJECTS::add_controller(const string& gcontrol_params) {
     stop_on_condition();
   }
 
-  selected_chainsetup_repp->interpret_controller(gcontrol_params);
+  selected_chainsetup_repp->interpret_object_option(gcontrol_params);
 
   if (was_running == true)
     ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
+/**
+ * Removes the Nth controller.
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  selected_chains().size() == 1
+ *  controller_id > 0
+ */
 void ECA_CONTROL_OBJECTS::remove_controller(int controller_id) { 
   // --------
   // require:
@@ -1094,6 +1617,16 @@ void ECA_CONTROL_OBJECTS::remove_controller(int controller_id) {
     ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
+/** 
+ * Gets a pointer to the Nth controller. If controller is not
+ * valid, 0 is returned.
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  selected_chains().size() == 1
+ *  controller_id > 0
+ */
 GENERIC_CONTROLLER* ECA_CONTROL_OBJECTS::get_controller(int controller_id) const {
   // --------
   // require:

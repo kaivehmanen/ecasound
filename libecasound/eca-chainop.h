@@ -1,5 +1,5 @@
-#ifndef _CHAINOP_H
-#define _CHAINOP_H
+#ifndef INCLUDED_CHAINOP_H
+#define INCLUDED_CHAINOP_H
 
 #include <map>
 #include <string>
@@ -12,8 +12,7 @@
  * Virtual base class for chain operators. 
  * @author Kai Vehmanen
  */
-class CHAIN_OPERATOR : public OPERATOR,
-                       public ECA_AUDIO_FORMAT {
+class CHAIN_OPERATOR : public OPERATOR {
 
  public:
 

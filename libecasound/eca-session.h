@@ -16,17 +16,19 @@
 class AUDIO_IO;
 class ECA_CHAIN;
 
-enum EP_STATUS { ep_status_running,
-		 ep_status_stopped, 
-		 ep_status_finished,
-		 ep_status_notready };
-
 #include "eca-chainsetup.h"
 
 /**
  * Ecasound runtime setup and parameters.
  */
 class ECA_SESSION {
+
+ public:
+
+  enum Engine_status { ep_status_running,
+		       ep_status_stopped, 
+		       ep_status_finished,
+		       ep_status_notready };
 
   friend class ECA_CONTROL_BASE;
   friend class ECA_CONTROL_OBJECTS;
@@ -40,12 +42,11 @@ class ECA_SESSION {
   // ---
   // Status data
   // ---
-  EP_STATUS ep_status;
+  Engine_status ep_status_rep;
+  vector<ECA_CHAINSETUP*> chainsetups_rep;
 
-  vector<ECA_CHAINSETUP*> chainsetups;
-
-  ECA_CHAINSETUP* connected_chainsetup;
-  ECA_CHAINSETUP* selected_chainsetup;
+  ECA_CHAINSETUP* connected_chainsetup_repp;
+  ECA_CHAINSETUP* selected_chainsetup_repp;
 
   // ---
   // Setup interpretation
@@ -163,28 +164,28 @@ class ECA_SESSION {
  private:
 
   void update_controller_sources(void);
-  void status(EP_STATUS);
+  void status(Engine_status status);
 
   // ---
   // Status/info functions
   // ---
-  EP_STATUS status(void) const;
+  Engine_status status(void) const;
 
-  vector<string> get_attached_chains_to_input(AUDIO_IO* aiod) const { return(selected_chainsetup->get_attached_chains_to_input(aiod)); }
-  vector<string> get_attached_chains_to_output(AUDIO_IO* aiod) const { return(selected_chainsetup->get_attached_chains_to_output(aiod)); }
+  vector<string> get_attached_chains_to_input(AUDIO_IO* aiod) const { return(selected_chainsetup_repp->get_attached_chains_to_input(aiod)); }
+  vector<string> get_attached_chains_to_output(AUDIO_IO* aiod) const { return(selected_chainsetup_repp->get_attached_chains_to_output(aiod)); }
   int number_of_connected_chains_to_input(AUDIO_IO* aiod) const {
-    return(connected_chainsetup->number_of_attached_chains_to_input(aiod)); }
+    return(connected_chainsetup_repp->number_of_attached_chains_to_input(aiod)); }
   int number_of_connected_chains_to_output(AUDIO_IO* aiod) const {
-    return(connected_chainsetup->number_of_attached_chains_to_output(aiod)); }
+    return(connected_chainsetup_repp->number_of_attached_chains_to_output(aiod)); }
 
  private:
 
   // ---
   // Status data
   // ---
-  bool iactive;          // Should engine use 'cqueue'?
-  bool multitrack_mode;
-  enum ECA_CHAINSETUP::EP_MM_MODE mixmode;
+  bool iactive_rep;          // Should engine use 'cqueue'?
+  bool multitrack_mode_rep;
+  enum ECA_CHAINSETUP::Mix_mode mixmode_rep;
   bool raisepriority_rep;
 
   // --
@@ -192,13 +193,13 @@ class ECA_SESSION {
   // --
  public:
 
-  const vector<ECA_CHAINSETUP*>& get_chainsetups(void) const { return chainsetups; }
-  const ECA_CHAINSETUP* get_selected_chainsetup(void) const { return selected_chainsetup; }
-  const ECA_CHAINSETUP* get_connected_chainsetup(void) const { return connected_chainsetup; }
+  const vector<ECA_CHAINSETUP*>& get_chainsetups(void) const { return chainsetups_rep; }
+  const ECA_CHAINSETUP* get_selected_chainsetup(void) const { return selected_chainsetup_repp; }
+  const ECA_CHAINSETUP* get_connected_chainsetup(void) const { return connected_chainsetup_repp; }
   const ECA_CHAINSETUP* get_chainsetup_with_name(const string& name) const;
-  bool is_selected_chainsetup_connected(void) const { return(selected_chainsetup == connected_chainsetup); }
+  bool is_selected_chainsetup_connected(void) const { return(selected_chainsetup_repp == connected_chainsetup_repp); }
 
-  bool is_interactive(void) const { return iactive; }
+  bool is_interactive(void) const { return iactive_rep; }
 
   bool raised_priority(void) const { return(raisepriority_rep); }
   void toggle_raised_priority(bool value) { raisepriority_rep = value; }
@@ -222,7 +223,3 @@ class ECA_SESSION {
 };
 
 #endif
-
-
-
-
