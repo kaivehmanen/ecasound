@@ -255,13 +255,12 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
   }
   /* case 5: action requires a connected chainsetup, but none connected */
   else if (is_connected() == false &&
-      action_requires_connected(action_id)) {
+	   action_requires_connected(action_id)) {
     if (!is_selected()) {
       set_last_error("Can't perform requested action; no chainsetup connected.");
       action_ok = false;
     }
     else {
-      set_last_error("");
       if (is_valid() == true) {
 	ECA_LOG_MSG(ECA_LOGGER::info, "Warning! No chainsetup connected. Trying to connect currently selected chainsetup.");
 	connect_chainsetup();
