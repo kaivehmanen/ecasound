@@ -2,6 +2,7 @@
 #define INCLUDED_FILEIO_H
 
 #include <string>
+#include <cstdio>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

@@ -17,6 +17,7 @@
 #include <sys/asoundlib.h>
 #endif
 
+#include "sample-specs.h"
 #include "samplebuffer.h"
 
 /**
@@ -56,7 +57,7 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
   virtual void start(void) { }
   virtual void prepare(void) { }
 
-  virtual long position_in_samples(void) const { return(0); }
+  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const { return(0); }
 
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;

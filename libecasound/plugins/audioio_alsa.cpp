@@ -235,7 +235,7 @@ void ALSA_PCM_DEVICE_032::write_samples(void* target_buffer, long int samples) {
   ::snd_pcm_write(audio_fd_repp, target_buffer, frame_size() * samples);
 }
 
-long ALSA_PCM_DEVICE_032::position_in_samples(void) const {
+SAMPLE_SPECS::sample_pos_t ALSA_PCM_DEVICE_032::position_in_samples(void) const {
   if (is_triggered_rep == false) return(0);
   if (io_mode() != io_read) {
     snd_pcm_playback_status_t pb_status;

@@ -16,6 +16,7 @@
 #include <sys/asoundlib.h>
 #endif
 
+#include "sample-specs.h"
 #include "samplebuffer.h"
 
 /**
@@ -57,7 +58,7 @@ class ALSA_PCM_DEVICE_032 : public AUDIO_IO_DEVICE {
   virtual void stop(void);
   virtual void start(void);
 
-  virtual long position_in_samples(void) const;
+  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
 
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;

@@ -20,6 +20,7 @@ extern "C" {
 }
 #endif
 
+#include "sample-specs.h"
 #include "samplebuffer.h"
 #include "audioio-types.h"
 
@@ -61,7 +62,7 @@ class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
   virtual void start(void);
   void prepare(void);
 
-  virtual long position_in_samples(void) const;
+  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
 
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;

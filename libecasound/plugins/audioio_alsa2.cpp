@@ -322,7 +322,7 @@ void ALSA_PCM_DEVICE_05X::write_samples(void* target_buffer, long int samples) {
   }
 }
 
-long ALSA_PCM_DEVICE_05X::position_in_samples(void) const {
+SAMPLE_SPECS::sample_pos_t ALSA_PCM_DEVICE_05X::position_in_samples(void) const {
   if (is_triggered_rep == false) return(0);
   snd_pcm_channel_status_t status;
   memset(&status, 0, sizeof(status));
