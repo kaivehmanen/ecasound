@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20050326-42
+dnl last modified: 20050327-43
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -250,12 +250,9 @@ else
     ecaprefix=${prefix}
 fi
 ECA_S_PREFIX=${ecaprefix}
-ECA_S_DATADIR="`eval echo ${datadir}`"
 
 AC_SUBST(ECA_S_PREFIX)
-AC_SUBST(ECA_S_DATADIR)
 AC_DEFINE_UNQUOTED([ECA_PREFIX], "${ecaprefix}", [Ecasound configure script prefix])
-AC_DEFINE_UNQUOTED([ECA_DATADIR], "${ECA_S_DATADIR}", [Ecasound configure script datadir])
 
 dnl ------------------------------------------------------------------
 
