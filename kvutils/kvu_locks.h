@@ -4,30 +4,51 @@
 #include <pthread.h>
 
 /**
- * Simple class providing atomic read and write access
- * to a single integer value. Implementation may be 
- * based on direct atomic operations or traditional 
+ * Atomic access to single integer values. Implementation
+ * may be based on direct atomic operations or traditional 
  * locking, depending on the underlying platform.
+ *
+ * On supported platforms, atomicity is guaranteed for 
+ * both single- and multiprocessor concurrency. Ordering of 
+ * concurrent reads and writes is however not guaranteed.
+ *
+ * Note! Atomic test-and-modify operations are not provided.
  */
 class ATOMIC_INTEGER {
 
  public:
 
+  /**
+   * Returns the stored integer value.
+   *
+   * Non-blocking.
+   *
+   * Atomic on most platforms. Notable exception 
+   * are Sparc/SMP, S390 and other such systems, where 
+   * even integer read/writes are not atomic.
+   */
   int get(void) const;
+
+  /**
+   * Sets the integer value to 'value'.
+   *
+   * Non-blocking. Atomic on most platforms.
+   *
+   * Atomic on most platforms. Notable exception 
+   * are Sparc/SMP, S390 and other such systems, where 
+   * even integer read/writes are not atomic.
+   */
   void set(int value);
-  void add(int value);
-  void subtract(int value);
-  void increment(void);
-  void decrement(void);
 
   ATOMIC_INTEGER(int value = 0);
   ~ATOMIC_INTEGER(void);
 
  private:
 
-  void* value_repp;
-  mutable void* mutex_repp;
-  int value_rep;
+  volatile int value_rep;
+
+  ATOMIC_INTEGER& operator=(const ATOMIC_INTEGER& v);
+  ATOMIC_INTEGER(const ATOMIC_INTEGER& v);
 };
 
 /**

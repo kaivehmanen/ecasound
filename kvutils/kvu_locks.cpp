@@ -17,125 +17,52 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#ifdef HAVE_CONFIG_H
-#include <config.h> /* for USE_ATOMIC */
-#endif
-
-#ifdef ECA_USE_ASM_ATOMIC
-#include <asm/atomic.h>
-#else
-#ifdef __GNUC__
-#warning "locks.h: ECA_USE_ASM_ATOMIC not defined!"
-#endif
-#endif
-
-#include <iostream> /* FIXME: remove me! */
-
-#include <pthread.h>
-#include <sys/errno.h>
+#include <signal.h>         /* ANSI-C: sig_atomic_t */
+#include <pthread.h>        /* POSIX: threading */
 
 #include "kvu_dbc.h"
 #include "kvu_locks.h"
 
+/* NOTE: This implementation doesn't really guarantee correct
+ *       operation at the moment as I wanted to avoid 
+ *       maintaining primitives for dozens of different 
+ *       platforms.
+ *
+ *       The primary reason for using this class is to 
+ *       mark all code segments where atomic access 
+ *       is required.
+ *
+ * Tested platforms:
+ *   - IA32 single- and multi-processor cases
+ *
+ * Platforms that should work according to specs:
+ *   - Alpha
+ *   - ARM
+ *   - IA64
+ *   - PowerPC
+ * 
+ * Platforms that do _NOT_ work:
+ *   - multi-processor SPARC
+ *   - IBM's S390
+ */
+
 ATOMIC_INTEGER::ATOMIC_INTEGER(int value)
 {
-#ifdef ECA_USE_ASM_ATOMIC
-  atomic_t* ptr = new atomic_t;
-  value_repp = reinterpret_cast<void*>(ptr);
-  atomic_set(ptr, value);
-#else
-  pthread_mutex_t* mutex = new pthread_mutex_t;
-  mutex_repp = reinterpret_cast<void*>(mutex);
-  pthread_mutex_init(mutex, NULL);
-  set(value);
-#endif
-}
- 
-ATOMIC_INTEGER::~ATOMIC_INTEGER(void)
-{
-#ifdef ECA_USE_ASM_ATOMIC
-  atomic_t* ptr = reinterpret_cast<atomic_t*>(value_repp);
-  delete ptr;
-#else
-  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
-  pthread_mutex_destroy(mutex);
-  delete mutex;
-#endif
+  value_rep = value;
 }
 
+ATOMIC_INTEGER::~ATOMIC_INTEGER(void) 
+{
+}
 
 int ATOMIC_INTEGER::get(void) const
 {
-#ifdef ECA_USE_ASM_ATOMIC
-  return(atomic_read(reinterpret_cast<atomic_t*>(value_repp)));
-#else
-  int temp;
-  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
-  pthread_mutex_lock(mutex);
-  temp = value_rep;
-  pthread_mutex_unlock(mutex);
-  return(temp);
-#endif
+  return(value_rep);
 }
 
 void ATOMIC_INTEGER::set(int value)
 {
-#ifdef ECA_USE_ASM_ATOMIC
-  atomic_set(reinterpret_cast<atomic_t*>(value_repp), value);
-#else
-  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
-  pthread_mutex_lock(mutex);
   value_rep = value;
-  pthread_mutex_unlock(mutex);
-#endif
-}
-
-void ATOMIC_INTEGER::add(int value)
-{
-#ifdef ECA_USE_ASM_ATOMIC
-  atomic_add(value, reinterpret_cast<atomic_t*>(value_repp));
-#else
-  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
-  pthread_mutex_lock(mutex);
-  value_rep += value;
-  pthread_mutex_unlock(mutex);
-#endif
-}
-
-void ATOMIC_INTEGER::subtract(int value)
-{
-#ifdef ECA_USE_ASM_ATOMIC
-  atomic_sub(value, reinterpret_cast<atomic_t*>(value_repp));
-#else
-  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
-  pthread_mutex_lock(mutex);
-  value_rep -= value;
-  pthread_mutex_unlock(mutex);
-#endif
-}
-
-void ATOMIC_INTEGER::increment(void)
-{
-#ifdef ECA_USE_ASM_ATOMIC
-  atomic_inc(reinterpret_cast<atomic_t*>(value_repp));
-#else
-  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
-  pthread_mutex_lock(mutex);
-  ++value_rep;
-  pthread_mutex_unlock(mutex);
-#endif
-}
-
-void ATOMIC_INTEGER::decrement(void)
-{
-#ifdef ECA_USE_ASM_ATOMIC
-  atomic_dec(reinterpret_cast<atomic_t*>(value_repp));
-#else
-  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
-  pthread_mutex_lock(mutex);
-  --value_rep;
-  pthread_mutex_unlock(mutex);
-#endif
 }
 
 KVU_GUARD_LOCK::KVU_GUARD_LOCK(pthread_mutex_t* lock_arg)

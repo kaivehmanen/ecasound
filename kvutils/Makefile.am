@@ -10,6 +10,9 @@ else
 lib_LTLIBRARIES = libkvutils.la
 endif
 
+TESTS = libkvutils_tester
+check_PROGRAMS = $(TESTS)
+
 kvutil_sources = 	kvu_com_line.cpp \
 			kvu_fd_io.cpp \
 			kvu_locks.cpp \
@@ -42,6 +45,9 @@ libkvutils_la_LDFLAGS = -version-info @LIBKVUTILS_VERSION@:0:0 -static
 
 libkvutils_debug_la_SOURCES = $(libkvutils_la_SOURCES)
 libkvutils_debug_la_LDFLAGS = $(libkvutils_la_LDFLAGS)
+
+libkvutils_tester_SOURCES = libkvutils_tester.cpp
+libkvutils_tester_LDFLAGS = $(lib_LTLIBRARIES) -static
 
 noinst_HEADERS = $(kvutil_headers)
 
