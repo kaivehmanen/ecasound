@@ -40,17 +40,20 @@ using std::vector;
 using std::cerr;
 using std::endl;
 
-PRESET::PRESET(void) {
+PRESET::PRESET(void)
+{
   impl_repp = new PRESET_impl();
   impl_repp->parsed_rep = false;
 }
 
-PRESET::PRESET(const string& formatted_string) {
+PRESET::PRESET(const string& formatted_string)
+{
   impl_repp = new PRESET_impl();
   parse(formatted_string);
 }
 
-PRESET::~PRESET(void) {
+PRESET::~PRESET(void)
+{
   vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
   while(p != buffers.end()) {
     if (p != buffers.begin()) delete *p; // first buffer points to an
@@ -76,7 +79,8 @@ PRESET::~PRESET(void) {
   impl_repp = 0;
 }
 
-PRESET* PRESET::clone(void) const {
+PRESET* PRESET::clone(void) const
+{ 
   vector<parameter_t> param_values;
   for(int n = 0; n < number_of_params(); n++) {
     param_values.push_back(get_parameter(n + 1));
@@ -88,30 +92,36 @@ PRESET* PRESET::clone(void) const {
   return(preset);
 }
 
-PRESET* PRESET::new_expr(void) const{ 
+PRESET* PRESET::new_expr(void) const
+{
   return(new PRESET(impl_repp->parse_string_rep)); 
 }
 
-string PRESET::name(void) const { 
+string PRESET::name(void) const
+{
   return(impl_repp->name_rep); 
 }
 
-string PRESET::description(void) const { 
+string PRESET::description(void) const
+{
   return(impl_repp->description_rep); 
 }
 
-void PRESET::set_name(const string& v) { 
+void PRESET::set_name(const string& v)
+{
   impl_repp->name_rep = v;
 }
 
 /**
  * Whether preset data has been parsed
  */
-bool PRESET::is_parsed(void) const { 
+bool PRESET::is_parsed(void) const
+{
   return(impl_repp->parsed_rep); 
 }
 
-void PRESET::parameter_description(int param, struct PARAM_DESCRIPTION *pd) {
+void PRESET::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
   if (param > 0 && param <= static_cast<int>(impl_repp->pardesclist_rep.size()))
     *pd = *impl_repp->pardesclist_rep[param - 1];
 }
@@ -125,7 +135,8 @@ void PRESET::parameter_description(int param, struct PARAM_DESCRIPTION *pd) {
  * ensure:
  *  is_parsed() == true
  */
-void PRESET::parse(const string& formatted_string) {
+void PRESET::parse(const string& formatted_string)
+{
   // --------
   DBC_REQUIRE(formatted_string.empty() == false);
   // --------
@@ -165,7 +176,8 @@ void PRESET::parse(const string& formatted_string) {
   // --------
 }
 
-bool PRESET::is_preset_option(const string& arg) const {
+bool PRESET::is_preset_option(const string& arg) const
+{
   if (arg.size() < 2 ||
       arg[0] != '-') return(false);
 
@@ -186,7 +198,8 @@ bool PRESET::is_preset_option(const string& arg) const {
   return(false);
 }
 
-void PRESET::parse_preset_option(const string& arg) {
+void PRESET::parse_preset_option(const string& arg)
+{
   if (arg.size() < 2) return;
   if (arg[0] != '-') return;
   switch(arg[1]) {
@@ -263,7 +276,8 @@ void PRESET::parse_preset_option(const string& arg) {
   }
 }
 
-void PRESET::extend_pardesc_vector(int number) {
+void PRESET::extend_pardesc_vector(int number)
+{
   while (static_cast<int>(impl_repp->pardesclist_rep.size()) < number) {
     DBC_DECLARE(size_t oldsize = impl_repp->pardesclist_rep.size());
     impl_repp->pardesclist_rep.push_back(new OPERATOR::PARAM_DESCRIPTION());
@@ -290,7 +304,8 @@ void PRESET::set_preset_param_names(const vector<string>& args) {
   }
 }
 
-void PRESET::set_preset_lower_bounds(const vector<string>& args) {
+void PRESET::set_preset_lower_bounds(const vector<string>& args)
+{
   extend_pardesc_vector(args.size());
   for(size_t n = 0; n < args.size(); n++) {
     if (args[n].size() > 0 && args[n][0] == '-') {
@@ -304,7 +319,8 @@ void PRESET::set_preset_lower_bounds(const vector<string>& args) {
   }
 }
 
-void PRESET::set_preset_upper_bounds(const vector<string>& args) {
+void PRESET::set_preset_upper_bounds(const vector<string>& args)
+{
   extend_pardesc_vector(args.size());
   for(size_t n = 0; n < args.size(); n++) {
     if (args[n].size() > 0 && args[n][0] == '-') {
@@ -336,7 +352,8 @@ void PRESET::set_preset_toggles(const vector<string>& args) {
   }
 }
 
-void PRESET::parse_operator_option(const string& arg) {
+void PRESET::parse_operator_option(const string& arg)
+{
   CHAIN_OPERATOR *cop;
   GENERIC_CONTROLLER* gctrl;
 
@@ -424,17 +441,20 @@ void PRESET::parse_operator_option(const string& arg) {
   }
 }
 
-void PRESET::add_chain(void) {
+void PRESET::add_chain(void)
+{
   chains.push_back(new CHAIN());
   buffers.push_back(new SAMPLE_BUFFER());
 }
 
 
-string PRESET::parameter_names(void) const {
+string PRESET::parameter_names(void) const
+{
   return kvu_vector_to_string(impl_repp->preset_param_names_rep, ",");
 }
 
-void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   if (param > 0 && param <= static_cast<int>(impl_repp->slave_param_objects_rep.size())) {
     for(size_t n = 0; n < impl_repp->slave_param_objects_rep[param - 1].size(); n++) {
       DBC_CHECK(static_cast<int>(impl_repp->slave_param_indices_rep.size()) > param - 1);
@@ -446,24 +466,25 @@ void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_t PRESET::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t PRESET::get_parameter(int param) const
+{
   if (param > 0 && param <= static_cast<int>(impl_repp->slave_param_objects_rep.size())) {
     DBC_CHECK(static_cast<int>(impl_repp->slave_param_indices_rep.size()) > param - 1);
     DBC_CHECK(impl_repp->slave_param_indices_rep[param - 1].size() > 0);
 
-    int index = impl_repp->slave_param_indices_rep[param - 1][0];
+    if (impl_repp->slave_param_indices_rep[param - 1].size() > 0) {
+      int index = impl_repp->slave_param_indices_rep[param - 1][0];
+      DBC_CHECK(index > 0);
 
-    DBC_CHECK(index > 0);
-
-    //  cerr << "Getting preset " << name() << " param " << param << ", index number " << index cerr << " with value " << impl_repp->slave_param_objects_rep[param-1][0]->get_parameter(index) << "." << endl;
-
-    return(impl_repp->slave_param_objects_rep[param-1][0]->get_parameter(index));
+      //  cerr << "Getting preset " << name() << " param " << param << ", index number " << index cerr << " with value " << impl_repp->slave_param_objects_rep[param-1][0]->get_parameter(index) << "." << endl;
+      return(impl_repp->slave_param_objects_rep[param-1][0]->get_parameter(index));
+    }
   }
   return(0.0f);
 }
 
-void PRESET::init(SAMPLE_BUFFER *insample) {
-
+void PRESET::init(SAMPLE_BUFFER *insample)
+{
   DBC_CHECK(samples_per_second() > 0);
 
   first_buffer = insample;
@@ -484,7 +505,8 @@ void PRESET::init(SAMPLE_BUFFER *insample) {
   }
 }
 
-void PRESET::process(void) {
+void PRESET::process(void)
+{
   vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
   while(p != buffers.end()) {
     (*p)->copy(*first_buffer);
