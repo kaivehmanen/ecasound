@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.4 *-
 
-??072002 (v2.1dev11)
+28082002 (v2.1dev11)
 	- added: configure-check for socket libraries
 	- added: -evp - volume peak watcher operator
 	- added: initial support for LADSPA v1.1 API for plugin 
