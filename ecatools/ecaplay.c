@@ -568,7 +568,7 @@ static int process_option(const char* option)
       case 'p': 
 	{
 	  ecaplay_mode = ECAPLAY_MODE_PL_PLAY;
-	  printf("(ecaplay) Playlist mode selected (location:%s).\n",
+	  printf("(ecaplay) Playlist mode selected (file: %s).\n",
 		 "~/" ECAPLAY_PLAYLIST_BASEDIR "/" ECAPLAY_PLAYLIST_FILE);
 	  break;
 	}
