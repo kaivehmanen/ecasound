@@ -66,6 +66,7 @@ extern "C" {
 #include "linear-envelope.h"
 #include "two-stage-linear-envelope.h"
 #include "stamp-ctrl.h"
+#include "generic-linear-envelope.h"
 
 #include "audioio-plugin.h"
 #include "audioio-types.h"
@@ -270,6 +271,7 @@ void register_default_controllers(void) {
   eca_controller_map->register_object("kog", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR()));
   eca_controller_map->register_object("kl", new GENERIC_CONTROLLER(new LINEAR_ENVELOPE()));
   eca_controller_map->register_object("kl2", new GENERIC_CONTROLLER(new TWO_STAGE_LINEAR_ENVELOPE()));
+  eca_controller_map->register_object("klg", new GENERIC_CONTROLLER(new GENERIC_LINEAR_ENVELOPE()));
   eca_controller_map->register_object("km", new GENERIC_CONTROLLER(new MIDI_CONTROLLER()));
   eca_controller_map->register_object("kos", new GENERIC_CONTROLLER(new SINE_OSCILLATOR()));
   eca_controller_map->register_object("ksv", new GENERIC_CONTROLLER(new VOLUME_ANALYZE_CONTROLLER()));

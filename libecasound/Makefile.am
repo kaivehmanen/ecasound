@@ -98,7 +98,9 @@ ecasound_controller_include = \
 			finite-envelope.h \
 			linear-envelope.h \
 			two-stage-linear-envelope.h \
-			stamp-ctrl.h
+			stamp-ctrl.h \
+	 		generic-linear-envelope.h \
+			generic-linear-envelope.cpp
 
 ecasound_general_include = 	\
 			eca-chain.h \
