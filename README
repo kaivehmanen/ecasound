@@ -201,6 +201,7 @@ Massy, S. - Extensive testing and debugging. [smassy]
 Morris, Steve - Ewf-handling fixes. [smorris]
 Petit, Bertrand - Helped with POSIX-compatibility issues.
 Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!
+Poelstra, Remco - ECI C API bug hunting. [rjpoelstra]
 Poulton, Ron - Helped to track down the mysterious chain-bug. [thok]
 Wróblewski, Artur - PLD-Linux RPM-specfile, readline and destdir patches. [wrobell]
 Sassmannshausen, Ruediger - Mp3 filename parsing fixes. [rsassman]

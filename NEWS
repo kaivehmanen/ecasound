@@ -45,6 +45,7 @@ Last officially released version is -*> v2.0.1 *-
 	- fixed: --disable-oss still required to sys/soundcard.h 
 	         to be present [rob]
 	- fixed: bug in sending MIDI-MMC messages [robstr]
+	- fixed: bug in ecasoundc cleanup routines [rjpoelstra]
 05062001 (v2.0.1)  -** stable release **-
 	- added: ecasoundrc - default-to-internal-buffering; select
 		 the default between -z:intbuf and -z:nointbuf

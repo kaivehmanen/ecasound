@@ -263,7 +263,7 @@ void ECA_CONTROL_BASE::run_engine(void) {
  *  is_engine_started() == false
  */
 void ECA_CONTROL_BASE::close_engine(void) {
-  if (!engine_started_rep) return;
+  if (engine_started_rep != true) return;
   session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_exit, 0.0);
   ::pthread_join(th_cqueue_rep,NULL);
   engine_started_rep = false;

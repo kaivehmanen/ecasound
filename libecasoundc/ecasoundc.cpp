@@ -73,6 +73,7 @@ eci_handle_t eci_init_r(void) {
 void eci_cleanup(void) {
   if (eci_rep.eci != 0)
     delete eci_rep.eci;
+  eci_rep.eci = 0;
 }
 
 /**
