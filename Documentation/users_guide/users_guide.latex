@@ -75,7 +75,7 @@ continue to improve and develop ecasound.
 
 % ----------------------------------------------------------------------
 \subsection{Audio object}
-Audio object are used to transfer audio from and to ecasound. 
+Audio objects are used to transfer audio from and to ecasound. 
 Usually audio objects are either files (like wav, mp3 or ogg) 
 or devices (soundcard input\&output). There are also some
 special audio object types for transfering data between 
@@ -106,7 +106,7 @@ Chain operators are used to process and analyze sample data.
 They can be divided into gates, converters, signal analyzers and 
 to traditional effects like reverbs, delays and filters.
 
-It's also possible to attach special controller objects to chains
+It's also possible to attach special controller objects to chains.
 These controllers are used to control chain operator parameters.
 The typical examples are various oscillators and MIDI continous
 controllers (knobs, sliders, etc found on MIDI-devices).

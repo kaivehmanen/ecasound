@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.3 *-
 
-??122001 (v2.1dev6)
+22122001 (v2.1dev6)
 	- edi-entries: edi-8, edi-11, edi-17
 	- note: review of all samplebuffer-related code; 
 		lots of code-cleanups and minor improvements
