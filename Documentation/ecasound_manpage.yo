@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (25.04.2001)
+       (24.06.2001)
        ()
        (Multimedia software)
 
@@ -408,7 +408,7 @@ enddit()
 em(ENVELOPE MODULATION)
 startdit()
 
-dit(-eemb:bpm,on-time-msec)
+dit(-eemb:bpm,on-time-%)
 Pulse gate (pulse frequency given as beats-per-minute).
 
 dit(-eemp:freq-Hz,on-time-%)

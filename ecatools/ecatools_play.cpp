@@ -100,12 +100,13 @@ int main(int argc, char *argv[])
 	ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	ectrl.add_default_output();
 	ectrl.connect_chainsetup();
-	if (ectrl.is_connected() == false) {
-	  cerr << "---\nError while playing file " << filename << ". Exiting...\n";
-	  break;
+	if (ectrl.is_connected() != true) {
+	  cerr << "---\nError while playing file " << filename << ". Skipping...\n";
 	}
-	ectrl.run();
-	ectrl.disconnect_chainsetup();
+	else {
+	  ectrl.run();
+	  ectrl.disconnect_chainsetup();
+	}
       }
       ectrl.remove_chainsetup();
       cline.next();

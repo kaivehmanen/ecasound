@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 200601) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 240601) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -27,6 +27,13 @@ Last officially released version is -*> v2.0.1 *-
 		 ecasound
 	- fixed: --enable-audiofile actually disabled the use of 
 		 libaudiofile (!)
+	- fixed: ecaplay - if ecaplay is unable to play a file, 
+		 instead of exiting it now skips to the next file
+	- fixed: giving a non-integer number of delays to -etd 
+		 caused  a seg.fault
+	- fixed: eiam - issuing copp-select + copp-get caused
+		 a crash if no cop was selected
+	- fixed: bugs in handling infinite length ewf sources
 05062001 (v2.0.1)  -** stable release **-
 	- added: ecasoundrc - default-to-internal-buffering; select
 		 the default between -z:intbuf and -z:nointbuf

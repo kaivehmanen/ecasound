@@ -112,7 +112,12 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
       // case 4: we're over child start position
       //         (position_in_samples() >= child_offset_rep.samples())
       // ---
-      if (position_in_samples() < child_offset_rep.samples() + child_length_rep.samples()) {
+
+      // FIXME: when proper infinite stream support is in place, replace
+      //        the 'length == 0' hack
+
+      if (child_length_rep.samples() == 0 ||
+	  position_in_samples() < child_offset_rep.samples() + child_length_rep.samples()) {
 	ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-ewf) child-object activated" + label());
 	child_active = true;
 	child->seek_position_in_samples(child_start_pos_rep.samples() +
@@ -131,8 +136,12 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
     // child active
     // ---
   
+  // FIXME: when proper infinite stream support is in place, replace
+  //        the 'length == 0' hack
+
     if (position_in_samples() + buffersize() < 
-	child_offset_rep.samples() + child_length_rep.samples()) {
+	child_offset_rep.samples() + child_length_rep.samples() ||
+	child_length_rep.samples() == 0) {
       // ---
       // case 2: reading child file
       // ---
@@ -291,13 +300,20 @@ void EWFFILE::child_start_position(const ECA_AUDIO_TIME& v) { child_start_pos_re
 void EWFFILE::child_length(const ECA_AUDIO_TIME& v) { child_length_rep = v; }
 
 bool EWFFILE::finished(void) const {
+
+  // FIXME: when proper infinite stream support is in place, replace
+  //        the 'length == 0' hack
+
   if (child->finished() ||
       (child_looping_rep != true &&
+       child_length_rep.samples() != 0 &&
        position_in_samples() > child_offset_rep.samples() + child_length_rep.samples()))
     return(true);
   return(false);
 }
 
 long EWFFILE::length_in_samples(void) const {
+  if (child_looping_rep == true)  return(0);
+
   return(child_offset_rep.samples() + child_length_rep.samples());
 }

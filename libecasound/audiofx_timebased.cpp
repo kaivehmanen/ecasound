@@ -78,7 +78,7 @@ void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value
 
   case 3: 
     {
-      if (value != 0.0) dnum = value;
+      if (value != 0.0) dnum = static_cast<long int>(value);
       else dnum = 1.0;
       vector<vector<SINGLE_BUFFER> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
