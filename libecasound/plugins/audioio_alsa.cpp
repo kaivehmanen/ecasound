@@ -487,7 +487,7 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
     long int count = snd_pcm_writei(audio_fd_repp, target_buffer, samples);
     if (count < 0) {
       /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state */
-      if (count == -EPIPE || count == -EIO) {
+      if (count == -EPIPE || count == -EIO || count == -EINTR) {
 	if (ignore_xruns() == true) {
 	  handle_xrun_playback();
 	  if (snd_pcm_writei(audio_fd_repp, target_buffer, samples) < 0) 
@@ -520,7 +520,7 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
 				       samples);
     if (count < 0) {
       /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state */
-      if (count == -EPIPE || count == -EIO) {
+      if (count == -EPIPE || count == -EIO || count == -EINTR) {
 	if (ignore_xruns() == true) {
 	  handle_xrun_playback();
 	  snd_pcm_writen(audio_fd_repp,
