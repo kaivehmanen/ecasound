@@ -6,7 +6,7 @@
 
 \title{Ecasound Control Interface Guide}
 \author{Kai Vehmanen}
-\date{26102002}
+\date{02112002}
 \begin{document}
 
 \maketitle
@@ -209,7 +209,7 @@ STL vector is used for representing collections of objects
 \item \#include <eca-control-interface.h>
 \item create an instance of the ECA\_CONTROL\_INTERFACE class
       and use its member functions
-\item link you app agains libecasound (-lecasoundc)
+\item link you app agains libecasoundc (-lecasoundc)
 \item compilation example: \emph{c++ -o ecidoc\_example ecidoc\_example.cpp `libecasoundc-config --cflags --libs`}
 \end{enumerate}
 
