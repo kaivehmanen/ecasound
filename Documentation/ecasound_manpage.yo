@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (10.10.2004)
+       (12.12.2004)
        ()
        (Multimedia software)
 
@@ -47,7 +47,7 @@ output.
 
 dit(-d:debug_level)
 Set the debug level mask to 'debug_level'. This a bitmasked value, 
-that defaults to 263. See ECA_LOGGER class documentation for 
+that defaults to 271. See ECA_LOGGER class documentation for 
 more detailed info about various debug_level values.
 
 dit(-D)

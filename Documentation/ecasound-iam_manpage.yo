@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (14.11.2004)
+       (12.12.2004)
        ()
        (Multimedia software)
 
@@ -476,6 +476,10 @@ startdit()
 dit(int-cmd-list)
 Returns a list of all registered EIAM commands. em([S])
 
+dit(int-log-history)
+Returns recent log messages sent by libecasound modules. This
+is a good tool for debugging ECI/EIAM scripts and applications. em([s])
+
 dit(int-output-mode-wellformed)
 Select the well-format output format for log messages. em([-])
 
@@ -483,6 +487,9 @@ dit(int-set-float-to-string-precision)
 Sets precision used in float to text conversions. Note that 
 this can be used to control the precision of float return values 
 for ECI commands. em([-])
+
+dit(int-set-log-history-length)
+Sets the log history length. Defaults to 5 items. em([-])
 
 dit(int-cmd-version-string)
 Returns EIAM parser version string. em([s])

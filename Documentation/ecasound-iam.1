@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "14\&.11\&.2004" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "12\&.12\&.2004" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -455,6 +455,10 @@ are primarily meant for use in scripting and frontends\&.
 .IP "int-cmd-list" 
 Returns a list of all registered EIAM commands\&. \fI[S]\fP
 .IP 
+.IP "int-log-history" 
+Returns recent log messages sent by libecasound modules\&. This
+is a good tool for debugging ECI/EIAM scripts and applications\&. \fI[s]\fP
+.IP 
 .IP "int-output-mode-wellformed" 
 Select the well-format output format for log messages\&. \fI[-]\fP
 .IP 
@@ -462,6 +466,9 @@ Select the well-format output format for log messages\&. \fI[-]\fP
 Sets precision used in float to text conversions\&. Note that 
 this can be used to control the precision of float return values 
 for ECI commands\&. \fI[-]\fP
+.IP 
+.IP "int-set-log-history-length" 
+Sets the log history length\&. Defaults to 5 items\&. \fI[-]\fP
 .IP 
 .IP "int-cmd-version-string" 
 Returns EIAM parser version string\&. \fI[s]\fP
