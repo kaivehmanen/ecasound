@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <signal.h> /* sigaction() */
 
+#include <kvutils/kvu_dbc.h>
 #include <kvutils/kvu_com_line.h>
 #include <kvutils/kvu_procedure_timer.h>
 #include <kvutils/kvu_numtostr.h>
@@ -42,7 +43,7 @@ static int ecaplay_exit_request_rep = 0;
 static int ecaplay_skip_files = 0;
 static int ecaplay_total_files = 0;
 
-static const string ecaplay_version = "20020623";
+static const string ecaplay_version = "20020626";
 
 int process_option(const string& option);
 
@@ -133,7 +134,9 @@ int main(int argc, char *argv[])
 	continue;
       }
 
+      // cerr << "before add_chainsetup.\n";
       ectrl.add_chainsetup("default");
+      // cerr << "after add_chainsetup.\n";
       ectrl.add_chain("default");
       ectrl.add_audio_input(filename);
       if (ectrl.get_audio_input() == 0) {
@@ -159,10 +162,17 @@ int main(int argc, char *argv[])
 	else {
 	  consecutive_errors = 0;
 	  ectrl.run();
+	  DBC_CHECK(ectrl.is_running() != true);
+	  if (ectrl.is_running() == true) ectrl.stop_on_condition();
 	  if (ectrl.is_connected() == true) ectrl.disconnect_chainsetup();
 	}
       }
-      if (ectrl.is_selected()) ectrl.remove_chainsetup();
+      DBC_CHECK(ectrl.is_connected() != true);
+      if (ectrl.is_selected()) {
+	// cerr << "before remove_chainsetup.\n";
+	ectrl.remove_chainsetup();
+	// cerr << "after remove_chainsetup.\n";
+      }
       cline.next();
     }
   }
