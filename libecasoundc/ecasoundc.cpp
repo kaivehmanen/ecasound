@@ -26,74 +26,114 @@
 #include <eca-error.h>
 #include "ecasoundc.h"
 
-static struct ecac_control_internals {
+static struct eci_control_internals {
   ECA_CONTROL_INTERFACE* eci;
-} ecac_rep = { 0 };
+} eci_rep = { 0 };
 
-static int ecac_error_rep;
-static string ecac_error_string_rep;
+/* ---------------------------------------------------------------------
+ * Constructing and destructing                                       
+ */
 
 /**
  * Initializes session. This call clears all status info and
  * prepares ecasound for processing. Can be used to "restart"
  * the library.
  */
-void ecac_init(void) {
-  cerr << "(ecasoundc) ecac_init" << endl;
-  if (ecac_rep.eci != 0)
-    delete ecac_rep.eci;
+void eci_init(void) {
+  if (eci_rep.eci != 0)
+    delete eci_rep.eci;
 
   ecadebug->set_debug_level(ECA_DEBUG::info |
 			    ECA_DEBUG::module_flow);
 
-  if (ecac_rep.eci == 0) {
-    ecac_rep.eci = new ECA_CONTROL_INTERFACE();
+  if (eci_rep.eci == 0) {
+    eci_rep.eci = new ECA_CONTROL_INTERFACE();
   }
 }
 
 /**
  * Frees all resources.
  */
-void ecac_cleanup(void) {
-  cerr << "(ecasoundc) ecac_cleanup" << endl;
-  if (ecac_rep.eci != 0)
-    delete ecac_rep.eci;
+void eci_cleanup(void) {
+  if (eci_rep.eci != 0)
+    delete eci_rep.eci;
 }
+
+/* ---------------------------------------------------------------------
+ * Issuing EIAM commands 
+ */
 
 /**
  * Sends a command to the ecasound engine. See ecasound-iam(5) for
  * more info.
  */
-void ecac_command(const char* command) {
-  cerr << "(ecasoundc) ecac_command" << endl;
-  try {
-    ecac_error_rep = 0;
-    ecac_rep.eci->command(command);
-  }
-  catch(ECA_ERROR& e) {
-    ecac_error_rep = 1;
-    ecac_error_string_rep = e.error_section() + ": \"" + e.error_message();
-    cerr << "(ecasoundc) Error in ecac_command()!" << endl;
-  }
+void eci_command(const char* command) {
+  eci_rep.eci->command(command);
+}
+
+/** 
+ * A specialized version of 'eci_command()' taking a double value
+ * as the 2nd argument.
+ */
+void eci_command_float_arg(const char* command, double arg) {
+  eci_rep.eci->command_float_arg(command, arg);
+}
+
+/* ---------------------------------------------------------------------
+ * Getting return values 
+ */
+
+/**
+ * Returns the number of strings returned by the 
+ * last ECI command.
+ */
+int eci_last_list_of_strings_count(void) {
+  return(eci_rep.eci->last_list_of_strings().size());
 }
 
 /**
- * Boolean value reporting whether error has occured 
- * during last ecasoundc library call.
+ * Returns the nth item of the list containing 
+ * strings returned by the last ECI command.
+ *
+ * require:
+ *  n >= 0 && n < eci_last_list_of_strings_count()
  */
-int ecac_error(void) { return(ecac_error_rep); }
+const char* eci_last_list_of_strings_item(int n) {
+  return(eci_rep.eci->last_list_of_strings()[n].c_str());
+}
+
+const char* eci_last_string(void) {
+  return(eci_rep.eci->last_string().c_str());
+}
+
+double eci_last_float(void) {
+  return(eci_rep.eci->last_float());
+}
+
+int eci_last_integer(void) {
+  return(eci_rep.eci->last_integer());
+}
+
+long int eci_last_long_integer(void) {
+  return(eci_rep.eci->last_long_integer());
+}
 
 /**
  * Returns pointer to a null-terminated string containing 
  * information about the last occured error.
  */
-const char* ecac_error_string(void) {
-  return(ecac_error_string_rep.c_str());
+const char* eci_last_error(void) {
+  return(eci_rep.eci->last_error().c_str());
 }
 
-/**
- * Fills the structure pointed by 'status'. Provides
- * info like "running/stopped", position, active objects,
- * selected options, etc.
+const char* eci_last_type(void) {
+  return(eci_rep.eci->last_type().c_str());
+}
+ 
+/* --------------------------------------------------------------------- 
+ * Events 
  */
-//  void ecac_engine_status(eca_engine_status_t* status);
+
+int eci_events_available(void) { return(0); }
+void eci_next_event(void) { }
+const char* eci_current_event(void) { return(0); }

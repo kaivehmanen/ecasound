@@ -5,18 +5,40 @@
 extern "C" {
 #endif
 
-void ecac_init(void);
-void ecac_cleanup(void);
-  
-void ecac_command(const char* command);
-const char* ecac_error_string(void);
-
-/**
- * Fills the structure pointed by 'status'. Provides
- * info like "running/stopped", position, active objects,
- * selected options, etc.
+/* ---------------------------------------------------------------------
+ * Constructing and destructing                                       
  */
-/*  void eca_engine_status(eca_engine_status_t* status); */
+
+void eci_init(void);
+void eci_cleanup(void);
+ 
+/* ---------------------------------------------------------------------
+ * Issuing EIAM commands 
+ */
+
+void eci_command(const char* cmd);
+void eci_command_float_arg(const char*, double arg);
+
+/* ---------------------------------------------------------------------
+ * Getting return values 
+ */
+
+int eci_last_list_of_strings_count(void);
+const char* eci_last_list_of_strings_item(int n);
+const char* eci_last_string(void);
+double eci_last_float(void);
+int eci_last_integer(void);
+long int eci_last_long_integer(void);
+const char* eci_last_error(void);
+const char* eci_last_type(void);
+ 
+/* --------------------------------------------------------------------- 
+ * Events 
+ */
+
+int eci_events_available(void);
+void eci_next_event(void);
+const char* eci_current_event(void);
 
 #ifdef __cplusplus
 }
