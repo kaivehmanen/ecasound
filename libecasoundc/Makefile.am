@@ -13,12 +13,6 @@ else
 eca_ldflags = -s -version-info @LIBECASOUNDC_VERSION@:0:0
 endif
 
-if ECA_AM_DEBUG_MODE
-INSTALL_STRIP_FLAG =
-else
-INSTALL_STRIP_FLAG = -s
-endif
-
 INCLUDES = -I$(srcdir) -I$(top_srcdir)/libecasound
 
 if ECA_AM_DEBUG_MODE

@@ -26,12 +26,6 @@ endif
 #       also libtool 1.3.2 and older have problems 
 #       with stripping libraries.
 
-if ECA_AM_DEBUG_MODE
-INSTALL_STRIP_FLAG =
-else
-INSTALL_STRIP_FLAG = -s
-endif
-
 INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils
 
 if ECA_AM_DEBUG_MODE
