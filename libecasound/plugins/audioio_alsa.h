@@ -65,7 +65,7 @@ class ALSA_PCM_DEVICE_032 : public AUDIO_IO_DEVICE {
 
   ALSA_PCM_DEVICE_032 (int card = 0, int device = 0);
   ~ALSA_PCM_DEVICE_032(void);
-  ALSA_PCM_DEVICE_032* clone(void) const { cerr << "Not implemented!" << endl; return this; }
+  ALSA_PCM_DEVICE_032* clone(void) const { cerr << "Not implemented!" << endl; return 0; }
   ALSA_PCM_DEVICE_032* new_expr(void) const { return new ALSA_PCM_DEVICE_032(); }
   
  private:
