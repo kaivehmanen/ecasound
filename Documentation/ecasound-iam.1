@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "19\&.03\&.2001" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "20\&.03\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -451,6 +451,25 @@ available operator presets\&. \fI[S]\fP\&.
 Returns a list of regular expressions (LADSPA unique id numbers) matching
 registered LADSPA plugins\&. \fI[S]\fP\&.
 .IP 
+.IP 
+.SH "INTERNAL COMMANDS" 
+Internal commands are not directly aimed at normal use\&. They
+are primarily meant for use in scripting and frontends\&.
+.IP 
+.IP "int-cmd-list" 
+Returns a list of all registered EIAM commands\&. \fI[S]\fP
+.IP 
+.IP "int-cmd-version-string" 
+Returns EIAM parser version string\&. \fI[s]\fP
+.IP 
+.IP "int-cmd-version-lib-current" 
+Returns EIAM library interface version (libtool)\&. \fI[i]\fP
+.IP 
+.IP "int-cmd-version-lib-revision" 
+Returns EIAM library interface revision (libtool)\&. \fI[i]\fP
+.IP 
+.IP "int-cmd-version-lib-age" 
+Returns EIAM library interface age (libtool)\&. \fI[i]\fP
 .IP 
 .SH "DUMP COMMANDS" 
 The following dump commands are not meant for normal use\&. 

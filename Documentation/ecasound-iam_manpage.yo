@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (19.03.2001)
+       (20.03.2001)
        ()
        (Multimedia software)
 
@@ -466,6 +466,25 @@ Returns a list of regular expressions (LADSPA unique id numbers) matching
 registered LADSPA plugins. em([S]).
 
 enddit()
+
+manpagesection(INTERNAL COMMANDS)
+Internal commands are not directly aimed at normal use. They
+are primarily meant for use in scripting and frontends.
+
+dit(int-cmd-list)
+Returns a list of all registered EIAM commands. em([S])
+
+dit(int-cmd-version-string)
+Returns EIAM parser version string. em([s])
+
+dit(int-cmd-version-lib-current)
+Returns EIAM library interface version (libtool). em([i])
+
+dit(int-cmd-version-lib-revision)
+Returns EIAM library interface revision (libtool). em([i])
+
+dit(int-cmd-version-lib-age)
+Returns EIAM library interface age (libtool). em([i])
 
 manpagesection(DUMP COMMANDS)
 The following dump commands are not meant for normal use. 
