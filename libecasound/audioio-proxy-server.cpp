@@ -402,8 +402,8 @@ void AUDIO_IO_PROXY_SERVER::register_client(AUDIO_IO* aobject)
 		kvu_numtostr(clients_rep.size() - 1) +
 		". Buffer count " +
 		kvu_numtostr(buffercount_rep) +
-		", and size " +
-		kvu_numtostr(buffersize_rep) +
+		", sample rate " +
+		kvu_numtostr(samplerate_rep) +
 		".");
   buffers_rep.push_back(new AUDIO_IO_PROXY_BUFFER(buffercount_rep,
 						  buffersize_rep,

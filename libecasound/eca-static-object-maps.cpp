@@ -199,6 +199,7 @@ void ECA_STATIC_OBJECT_MAPS::register_default_objects(void) {
     register_default_chainops();
     register_default_audio_objects();
     register_default_midi_devices();
+
     register_internal_audioio_plugins();
     register_ladspa_plugins();
   }

@@ -33,10 +33,10 @@
 #include "eca-debug.h"
 
 /* Debug resampling operations */ 
-//  #define DEBUG_RESAMPLING
+// #define DEBUG_RESAMPLING
 
 #ifdef DEBUG_RESAMPLING
-#define DEBUG_RESAMPLING_STATEMENT(x) (x)
+#define DEBUG_RESAMPLING_STATEMENT(x) x
 #else
 #define DEBUG_RESAMPLING_STATEMENT(x) ((void)0)
 #endif
@@ -1227,7 +1227,7 @@ void SAMPLE_BUFFER::resample_nofilter(srate_size_t from,
   buf_size_t old_buffer_size = buffersize_rep;
   buffersize_rep = static_cast<buf_size_t>(step * buffersize_rep);
 
-  DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_no_f from " << from << " to " << to << "." std::endl); 
+  DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_no_f from " << from << " to " << to << "." << std::endl);
 
   DBC_CHECK(impl_repp->old_buffer_repp != 0);
 
@@ -1279,7 +1279,7 @@ void SAMPLE_BUFFER::resample_with_memory(srate_size_t from,
   buffersize_rep = static_cast<buf_size_t>(step * buffersize_rep);
 
   DBC_CHECK(impl_repp->old_buffer_repp != 0);
-  DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_w_m from " << from << " to " << to << "." std::endl); 
+  DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_w_m from " << from << " to " << to << "." << std::endl); 
 
   if (impl_repp->resample_memory_rep.size() < static_cast<size_t>(channel_count_rep)) {
     DBC_CHECK(impl_repp->rt_lock_rep != true);

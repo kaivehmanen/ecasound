@@ -14,6 +14,13 @@ else
 eca_ldflags = -s -version-info 8:0:0
 endif
 
+# below not used due to libtool problems
+if INCLUDE_DEBUG
+eca_libadd = $(top_builddir)/kvutils/libkvutils_debug.la
+else
+eca_libadd = $(top_builddir)/kvutils/libkvutils.la
+endif
+
 if INCLUDE_DEBUG
 INSTALL_STRIP_FLAG =
 else
@@ -274,10 +281,10 @@ ecasound_common_src = 	$(ecasound_audiofx_src) \
 
 libecasound_la_SOURCES = $(ecasound_common_src)
 libecasound_debug_la_SOURCES = $(ecasound_common_src)
-libecasound_la_LIBADD =
+libecasound_la_LIBADD = 
 libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
-libecasound_debug_la_LIBADD =
+libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
 
 # ---------------------------------------------------------------------
 # Install targets - note! we don't install $ecasound_extra_include

@@ -206,13 +206,15 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
     action_ok = false;
   }
   /* case 2: action requires an audio input, but no input available */
-  else if (get_audio_input() == 0 &&
+  else if (is_selected() == true &&
+	   get_audio_input() == 0 &&
 	   action_requires_selected_audio_input(action_id)) {
     set_last_error("Can't perform requested action; no audio input selected.");
     action_ok = false;
   }
   /* case 3: action requires an audio output, but no output available */
-  else if (get_audio_output() == 0 &&
+  else if (is_selected() == true &&
+	   get_audio_output() == 0 &&
 	   action_requires_selected_audio_output(action_id)) {
     set_last_error("Can't perform requested action; no audio output selected.");
     action_ok = false;

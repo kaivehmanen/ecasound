@@ -71,8 +71,8 @@ class AUDIO_IO_REVERSE : public AUDIO_IO {
 
   virtual int supported_io_modes(void) const { return(io_read); }
   virtual bool supports_nonblocking_mode(void) const { return(child_repp->supports_nonblocking_mode()); }
-  virtual bool supports_seeking(void) const { return(child_repp->supports_seeking()); }
-  virtual bool finite_length_stream(void) const { return(child_repp->finite_length_stream()); }
+  virtual bool supports_seeking(void) const { return(true); }
+  virtual bool finite_length_stream(void) const { return(true); }
   virtual bool locked_audio_format(void) const { return(child_repp->locked_audio_format()); }
 
   virtual void buffersize(long int samples, long int sample_rate) { child_repp->buffersize(samples, sample_rate); }
