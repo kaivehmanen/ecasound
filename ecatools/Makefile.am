@@ -12,7 +12,7 @@ else
 termcap_library = -ltermcap
 endif
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound
+INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound
 
 
 if INCLUDE_DEBUG
