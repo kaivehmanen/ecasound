@@ -138,12 +138,6 @@ void JACK_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "engine sample rate: " + kvu_numtostr(jack_get_sample_rate(client_repp)));
 
-  /* register one JACK port */
-  if (io_mode() == AUDIO_IO::io_read) 
-    port_repp = jack_port_register(client_repp, jackname_rep.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
-  else
-    port_repp = jack_port_register(client_repp, jackname_rep.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
-
   toggle_open_state(true);
 }
 
@@ -188,8 +182,23 @@ void JACK_INTERFACE::stop(void) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) stop");
 
+  if (io_mode() == AUDIO_IO::io_read) {
+    if (jack_port_disconnect (client_repp, "ALSA I/O:Input 1", jack_port_name(port_repp))) {
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot disconnect to ALSA input 1!");
+    } 
+  }
+  else {
+    if (jack_port_disconnect (client_repp, jack_port_name(port_repp), "ALSA I/O:Output 1")) {
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot disconnect to ALSA output 1!");
+    } 
+  }
+
   if (jack_deactivate (client_repp)) {
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot active client!");
+    ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot deactive client!");
+  }
+
+  if (jack_port_unregister(client_repp, port_repp)) {
+    ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot unregister client!");
   }
 }
 
@@ -197,6 +206,15 @@ void JACK_INTERFACE::start(void) {
   AUDIO_IO_DEVICE::start();
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) start");
+
+  // FIXME: jackd doesn't seem to handle stop-start without
+  //        re-registering the ports... bug or feature?
+
+  /* register one JACK port */
+  if (io_mode() == AUDIO_IO::io_read) 
+    port_repp = jack_port_register(client_repp, jackname_rep.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+  else
+    port_repp = jack_port_register(client_repp, jackname_rep.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
 
   if (jack_activate (client_repp)) {
     ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot active client!");
