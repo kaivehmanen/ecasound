@@ -15,9 +15,9 @@ endif
 # !!!
 # remember to update eca-version.cpp
 if INCLUDE_DEBUG
-eca_ldflags = -version-info 7:0:0
+eca_ldflags = -version-info 8:0:0
 else
-eca_ldflags = -s -version-info 7:0:0
+eca_ldflags = -s -version-info 8:0:0
 endif
 
 if INCLUDE_DEBUG

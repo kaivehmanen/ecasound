@@ -2,19 +2,23 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
-2001-05-02  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-08-19  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* library version changed to 8:0:0
+	
+2001-05-02  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* ecasound 2.0.0 released
 	
-2001-04-27  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-04-27  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* library version 7:0:0 frozen
 		
-2001-04-25  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-04-25  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* generic-linear-envelope.h (all): added
 	
-2001-04-24  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-04-24  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	
 	* eca-control-objects.h (selected_chain_operator): added
 	* eca-control-objects.h (selected_chain_operator_parameter): added
@@ -27,7 +31,7 @@
 	* eca-chain.h (controller_name): added
 	* eca-chain.h (number_of_chain_operator_parameters): added
 		
-2001-04-23  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-04-23  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-iamode-parser.h (action_requires_selected_audio_input): added
 	* eca-iamode-parser.h (action_requires_selected_audio_output): added
@@ -67,22 +71,22 @@
 	* eca-control-objects.h (audio_input_names,audio_output_names): added
 	* eca-audio-objects.h (audio_input_names,audio_output_names): added
 	
-2001-04-09  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-04-09  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-chainsetup-position.h (set_position_exact): added
 	* eca-chainsetup-position.h (change_position_exact): renamed from change_position(double)
 	* eca-chainsetup.h (change_position, set_position): added
 	
-2001-04-08  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-04-08  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-control-objects.h (change_chainsetup_position): added
 	* eca-control-objects.h (set_chainsetup_position): added
 	
-2001-03-20  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-03-20  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-iamode-parser.h (registered_commands_list): added
 	
-2001-03-06  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-03-06  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-audio-format.h (default_ecasound_audio_format): removed
 	* eca-object-map.h (flush): added
@@ -98,17 +102,17 @@
 	* eca-static-object-maps.h (object map objects): changed into pointers
 	* eca-static-object-maps.h (unregister_default_objects): added
 	
-2001-02-19  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-02-19  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* midi-server (register_handler, unregister_handler): added
 	
-2001-02-14  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-02-14  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* midi-parser.h (all): new module
 	* midi-server.h (various): added
 	* eca-midi.h (all): module dropped
 	
-2001-02-08  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-02-08  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audioio-types.h (toggle_max_buffers,max_buffers): added
 	* audioio-types.h (toggle_ignore_xruns,ignore_xruns): added
@@ -124,16 +128,16 @@
 	* eca-object-factory (create_midi_device): added
 	* eca-audio-objects.h (set_default_midi_device,default_midi_device): added
 	
-2001-02-07  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-02-07  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-iamode-parser.h (enum Commands): moved from public to
 	protected scope
 	
-2001-02-06  Kai Vehmanen <kaiv@wakkanet.fi>
+2001-02-06  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-midi.h (various): many type changes
 	
-2000-12-13  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-12-13  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	
 	* audiofx.h (EFFECT_DCFIX,EFFECT_PITCH_SHIFTER): moved to audiofx.h
 	* audiofx_misc.h (EFFECT_AUDIO_STAMP): added
@@ -142,17 +146,17 @@
 	* audio-stamp.h (all): added
 	* generic-controller.h (source_pointer): added
 	
-2000-12-12  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-12-12  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-session.h (Engine_status): 'ep_status_error' added
 	* eca-contol-interface.h (error): added
 
-2000-12-10  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-12-10  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* osc-gen.h (all): completely rewritten
 	* osc-gen-file.h (all): added
 	
-2000-12-09  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-12-09  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-control-base.h (destructor): changed into non-virtual
 	* eca-control-objects.h (destructor): changed into non-virtual
@@ -160,7 +164,7 @@
 	* eca-control-interface.h (last_boolean): added
 	* eca-chainsetup.h (constructor): new overloaded version added
 	
-2000-12-08  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-12-08  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-control.h (): now inherits ECA_CONTROL_OBJECTS directly
 	* eca-contro-dump.h (): dropped inheritance of
@@ -171,12 +175,12 @@
 	layout changes
 	* eca-audio-objects (first_selected_chain): added
 	
-2000-12-07  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-12-07  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-operator.h (is_toggled, default_parameter_range): removed
 	* eca-operator.h (parameter_description): added
 	
-2000-12-05  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-12-05  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	
 	* eca-main.h (ecasound_queue, ecasound_stop_cond, ecasound_stop_mutex): removed from global namespace
 	* eca-control-base.h (ecasound_lockfile): removed from global namespace
@@ -185,21 +189,21 @@
 	* eca-control-base.h (various routines for ECI implementation): added
 	* eca-control.h (print_last_error, print_last_value): added
 	
-2000-11-22  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-11-22  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	
 	* eca-audio-objects.h (set_double_buffer_size,double_buffer_size): added
 	
-2000-11-19  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-11-19  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audioio-buffered-proxy.h (all): added
 	* audioio-proxy-server.h (all): added
 	* audioio-proxy-buffer.h (all): added
 	
-2000-11-17  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-11-17  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* preset.h (copy-constructor): from private to public scope
 	
-2000-11-17  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-11-17  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* resource-file.h (load, save): added
 	
@@ -207,7 +211,7 @@
 
 	* audiofx_envelope_modulation.h (): EFFECT_TREMOLO added
 	
-2000-11-01  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-11-01  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audiofx_envelope_modulation.h (): EFFECT_PULSE_GATE_BPM added
 	
@@ -215,23 +219,23 @@
 
 	* audiofx_envelope_modulation.h (): file added
 	
-2000-10-21  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-10-21  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-mthreaded-processor.h (): file removed
 	* eca-fileio-mmap-fthread.h (): file removed
 	
-2000-10-17  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-10-17  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-control-objects (set_default_audio_format): added parameter 'interleaving'
 	* samplebuffer.h (copy_from_buffer_vector,copy_to_buffer_vector): added
 	* audioio.h (finite_length_stream): added
 	
-2000-10-14  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-10-14  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	
 	* dynamic-parameters.h (): dropped inheritance of
 	DEFINITION_BY_CONTRACT (three days, I changed my mind :))
 	
-2000-10-11  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-10-11  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* dynamic-parameters.h (): now inherits DEFINITION_BY_CONTRACT
 	* dynamic-parameters.h (default_parameter_range,is_toggle): moved
@@ -239,20 +243,20 @@
 	* dynamic-parameters.h (map_parameters, get_parameter_id): removed
 	* dynamic-parameters.h (get_parameter_name): changed prototype
 	
-2000-10-10  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-10-10  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audioio-types.h (AUDIO_IO_DEVICE): is_running(), is_prepared(),
 	toggle_running_state() and toggle_prepared_state() added
 	* eca-chainsetup.h (enable): changed exception specification
 	* eca-session.h (connect_chainsetup): changed exception specification
 	
-2000-10-08  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-10-08  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	
 	* eca-version.h (): added version numbering as C defines
 	* audioio-plugin.h (audio_io_interface_version): added
 	* eca-object-map.h (object): added a second argument; affects
 	
-2000-10-07  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-10-07  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-error.h (all): classes made non-virtual, many other big changes
 	* audioio-mikmod.h (MIKMOD_INTERFACE): default_mikmod_path and 
@@ -262,12 +266,12 @@
 	* audioio-forked-stream.h (all): new file
 	other object map classes
 				
-2000-09-24  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-09-24  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audiofx_timebased.h (EFFECT_MODULATING_DELAY): constructor
 	parameters changed
 	
-2000-09-17  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-09-17  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* library version changed to 7:0:0
 	* eca-object-factory.h (): new file
@@ -289,26 +293,26 @@
 	* eca-chainsetup.h (constructor): removed interaction with
 	COMMAND_LINE objects
 		
-2000-09-16  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-09-16  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* ecasound 1.8.2r14 released
 	* library version 6:0:0 frozen
 
-2000-06-27  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-06-27  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* eca-audio-objects.h (attach_input_to_selected_chains,attach_input_to_selected_chains):
 	changed parameter format
 	
-2000-06-18  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-06-18  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audioio-alsa*.h (all): renamed all ALSA_PCMx_DEVICE classes
 	to ALSA_PCM_DEVICE
 	
-2000-06-12  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-06-12  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-chain.h (connected_input, connected_output): added
 	
-2000-06-11  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-06-11  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* audioio.h (samples_available,supported_io_modes): added
 	* audioio-mp3.h (default cmds): new more generic interface
@@ -327,7 +331,7 @@
 
 	* audioio-alsa3.h (all): added
 	
-2000-06-06  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-06-06  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* library version changed to 6:0:0
 	* development of ecasound 1.8.x started
@@ -335,27 +339,27 @@
 	directory (top-level libecasound dir)
 	* audioio.h (enum Io_type): replaces the unnamed enums
 	
-2000-05-29  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-05-29  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* audiofx_reverb.h: a new file containing more advanced 
 	reverb effects
 	
-2000-05-21  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-05-21  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* library version changed to 6:0:1
 	* audiofx_ladspa.h (unique_number): added
 	* eca-ladspa-plugin-map.h (object, register_object): new
 	overloaded versions
 	
-2000-05-02  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-05-02  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* library version 5:0:0 frozen
 	
-2000-04-26  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-04-26  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-chain.h (selected_target): added
 	
-2000-04-15  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-04-15  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-controller-objects.h (set_default_audio_format): signature
 	changed
@@ -367,25 +371,25 @@
 	* eca-audio-objects.h (get_attached_chains...): renamed from 
 	get_connected_chains...()
 	
-2000-04-14  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-04-14  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audioio-alsa2-plugin.h: added, contains the class
 	ALSA_PCM2_PLUGIN_DEVICE
 	* eca-controller.h (direct_command): private function, added 
 	
-2000-04-03  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-04-03  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-controller-objects.h (set_chainsetup_output_mode): added
 	* eca-alsa-dyn.h: removed as obsolete
 	* audiofx_vst.h: added
 	* eca-vst-plugin-map.h: added
 	
-2000-03-27  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-03-27  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-static-object-maps (various): changes in map representation, 
 	affects all object maps
 	
-2000-03-24  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-03-24  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-version.h (ecasound_library_version_current): added
 	* eca-version.h (ecasound_library_version_revision): added
@@ -394,16 +398,16 @@
 	* eca-version.h (ecasound_version): removed
 	* eca-controller-objects.h (get_audio_format): no longer const
 	
-2000-03-23  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-03-23  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* samplebuffer_functions.h: added
 	* samplebuffer.h: removed all non-template code
 	
-2000-03-22  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-03-22  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* eca-chainsetup.h (combine_options): moved to libkvutils
 	
-2000-03-20  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-03-20  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* eca-static-object-maps.h (eca_ladspa_plugin_map): added
 	* audiofx_ladspa.h: added
@@ -411,49 +415,49 @@
 	* ladspa.h: added
 	* eca-ladspa-plugin-map.h: added
 	
-2000-03-18  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-03-18  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* eca-controller-dump.h (various): added, affects ECA_CONTROLLER,
 	ECA_CONTROLLER_OBJECTS and ECA_IAMODE_PARSER
 	
-2000-03-13  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-03-13  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* eca-operator.h (various): added
 	* eca-object.h (various): added
 		
-2000-03-12  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-03-12  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* dynamic-parameters.h (is_toggle): added
 	* eca-audio-objects.h (audio_object_info): return type changed to void
 	
-2000-03-10  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-03-10  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* eca-object-map.h (various): template parameter is now 
 	the same as DYNAMIC_PARAMETERS<T>::parameter_type
 	* eca-object-map.h (registered_keywords): added
 	
-2000-03-09  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-03-09  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* dynamic-object.h (description): added
 	* audioio.h (locked_audio_format): added
 	
-2000-03-05  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-03-05  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* audioio-types.h (various): major changes in class hiearchy
 	* audioio.h (supported_io_modes): added
 	
-2000-03-03  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-03-03  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* eca-audio-format.h (set_audio_format): renamed from
 	set_sample_format, added a new overloaded version
 	
-2000-03-03  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-03-03  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-audio-objecs (create_loop_input, create_loop_output): added
 	* eca-audio-objecs (create_audio_object): now a static member,
 	removed exceptions
 	
-2000-03-02  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-03-02  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* dynamic-parameters.h (new_expr): added, affects all 
 	subclasses
@@ -465,7 +469,7 @@
 	* eca-static-object-maps.h (various): added
 	* eca-audio-object-map.h (various): added
 	
-2000-02-29  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-29  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* dynamic-parameters.h (various): converted to a class template 
 	* dynamic-objects.h (various): converted to template class,
@@ -478,13 +482,13 @@
 	* dynamic-parameters.h (default_parameter_range): added
 	* dynamic-parameters.h (name): removed
 	
-2000-02-24  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-24  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audiofx_timebased.h (various) EFFECT_MODULATING_DELAY,
 	EFFECT_CHORUS, EFFECT_FLANGE and EFFECT_MULTITAP_DELAY classes 
 	added
 		
-2000-02-23  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-23  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audiofx_filter.h (various): class EFFECT_ALLPASS_FILTER added
 	* audiofx_filter.h (various): class EFFECT_COMB_FILTER added
@@ -496,56 +500,56 @@
 	* audiofx_timebased.h (various): class DELAY interface has
 	changed
 		
-2000-02-22  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-22  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-audio-objects.h (interpret_audioio_device): second parameter
 	omitted
 	
-2000-02-21  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-21  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-chainsetup.h: ECA_RESOURCES removed from constructor
 	parameters
 	* eca-chain.h (init): more arguments
 	
-2000-02-20  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-20  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* preset.h: added
 	* file-preset.h: added
 	* global-preset.h: added
 	* eca-preset-map.h: added
 	
-2000-02-18  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-18  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-chainsetup.h (create_chain_operator, create_controller): added
 	* eca-chain.h (constructor): moved sample buffer objects outside,
 	now chain's just have a pointer to a buffer
 	
-2000-02-15  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-15  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* resource-file.h (keywords): added
 	
-2000-02-14  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-14  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audioio-ewf.h (various): new functionality
 	* resource-file.h (load, save, is_modified, set_modified_state): removed
 	* resource-file.h (set_resource_file, get_resource_file): renamed
 	* eca-controller-base.h (resource_value): return value changed
 	
-2000-02-13  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-13  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audioio.h (various): added support for class ECA_AUDIO_TIME
 	
-2000-02-11  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-11  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
         
 	* audioio-types.h (prepare): added to AUDIO_IO_DEVICE and all 
 	its subclasses
 	
-2000-02-09  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-09  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
         
 	* eca-debug.h (): class MAINDEBUG renamed to ECA_DEBUG
 	* eca-debug.h (): new enums and debug-level specs
 	
-2000-02-08  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-08  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
         
 	* eca-chain.h (select_controller): added 
 	* eca-chain.h (selected_controller): added
@@ -556,44 +560,44 @@
 	* generic-controller.h (status): added
 	* eca-controller.h (controller_status): added
 		
-2000-02-05  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-05  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
         
 	* eca-audio-objects.h (create_audio_object): const removed
 	* eca-controller-base.h (run): added
 	
-2000-02-04  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-02-04  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
         
 	* audioio.h (is_realtime): removed as obsolete
 	* audioio.h (start, stop, latency): moved to audioio-types.h
 	* library version changed to 5:0:0
 	
-2000-01-31  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-01-31  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
         
 	* eca-control-position.h (change_position): added an overloaded
 	version that takes a double argument
 	* library version changed to 5:0:1
 	
-2000-01-29  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-01-29  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* library version 4:0:0 frozen
 	* ecasound 1.6.12r10 released
 
-2000-01-28  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-01-28  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* library version 4:0:0 feature freeze
 	* ecasound 1.6.12d10 released
 	
-2000-01-25  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-01-25  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-audio-time.h: added
 	* eca-chainop.h (status): changed to const
 	* eca-chainop.h (output_channels): changed to const
 	
-2000-01-22  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-01-22  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-controller-base.h (is_finished): added
 	
-2000-01-15  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-01-15  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* samplebuffer.h (swap_bytes): removed
 	* samplebuffer.h (copy): added
@@ -602,7 +606,7 @@
 	eca-controller-base.h and eca-controller-objects.h - only minor
 	changes to ECA_CONTROLLER interface 
 	
-2000-01-13  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-01-13  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audioio-alsa2.*: added
 	* audioio-alsa.*: ALSADEVICE renamed to ALSA_PCM_DEVICE
@@ -621,12 +625,12 @@
 	* audiofx_amplitude.cpp: NOISEGATE_MONO -> NOISEGATE
 	* library version changed to 4:0:0
 	
-1999-12-15  Kai Vehmanen  <kaiv@wakkanet.fi>
+1999-12-15  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* 1.6.9r9 released
 	* library version 3:0:0 frozen
 	
-1999-12-11  Kai Vehmanen  <kaiv@wakkanet.fi>
+1999-12-11  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* dynamic-object.h: added
 	* ctrl_source.h -> ctrl-source.h
@@ -636,7 +640,7 @@
 	GENERIC_CONTROLLER, ECA_OBJECT_MAP, ECA_CHAIN, ECA_CHAINSETUP
 	and so on)
 	
-1999-12-06  Kai Vehmanen  <kaiv@wakkanet.fi>
+1999-12-06  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* ctrl_source.h: controller sources now inheric from 
 	DYNAMIC_PARAMETERS - this required many changes to controller
@@ -647,27 +651,27 @@
 	affects all sub-classes
 	* library version changed to 3:0:0
 	
-1999-12-04  Kai Vehmanen  <kaiv@wakkanet.fi>
+1999-12-04  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* 1.6.8r8 released
 	* library version 2:0:1 frozen
 	* library version changed to 2:0:1
 	
-1999-12-02  Kai Vehmanen  <kaiv@wakkanet.fi>
+1999-12-02  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* eca-controller.h (select_chainsetup_by_index): a new routine
 	
-1999-11-23  Kai Vehmanen  <kaiv@wakkanet.fi>
+1999-11-23  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* 1.6.7r7 released
 	* library version 1:0:0 frozen
 
-1999-11-08  Kai Vehmanen  <kaiv@wakkanet.fi>	
+1999-11-08  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>	
 
 	* major changes in nearly all interfaces
 	* library version changed 1:0:0
 	
-1999-09-14  Kai Vehmanen  <kaiv@wakkanet.fi>
+1999-09-14  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* 1.5.12r6 released
 	* first public release of libecasound; libtool version 

@@ -17,6 +17,8 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.2 *-
 
+??0?2001 (v2.1.0)
+	- changed: library version changed to 8.0.0
 ??0?2001 (v2.0.3)  -** stable release **-
 	- added: more recent config.guess and config.sub to 
 	         the dist package  [juekawa]
