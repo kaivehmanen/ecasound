@@ -1,5 +1,6 @@
 #!/bin/sh
 aclocal
+libtoolize --force
 automake
 autoconf
 ./configure $@ || exit 1
