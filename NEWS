@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 261103) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 271103) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -21,6 +21,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 'sndfile' and 'mikmod'; see ecasound(1) for more
 		 details
 	- added: pyecasound/test2_stresstest.py new test case 
+	- added: initial Ruby ECI impl added; see rubyecasound/README 
+		 for details [janweil]
 	- changed: increased default buffer sizes for 'rtnull' objects 
 		   to avoid too many xrun warnings; warnings are also
 		   no longer printed to stderr - instead a summary 
@@ -37,6 +39,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 in earlier releases are now fixed
 	- fixed: ecasoundc - serious memory leak in handling string 
 		 list return types
+	- fixed: typo in libecasoundc-config usage [koraq]
 19112003 (v2.3.1)  -** stable release **-
 	- added: --disable-effects configure option; build ecasound 
 		 without effect and controller components

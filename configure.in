@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20031117-26
+dnl last modified: 20031127-28
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -653,6 +653,30 @@ AM_CONDITIONAL(ECA_AM_PYECASOUND_INSTALL, test x$pyecasound_support != xnone)
 
 dnl ------------------------------------------------------------------
 
+dnl --
+dnl Checks for rubyecasound
+dnl
+dnl defines: ECA_S_RUBY_SITEDIR, 
+dnl          ECA_AM_RUBYECASOUND_INSTALL
+dnl --
+
+dnl --
+dnl Ruby interpreter and installation prefix
+
+AC_PATH_PROG(RUBYPATH,ruby,none)
+if test x$RUBYPATH = xnone; then
+  rubyecasound_support=yes
+  ECA_S_RUBY_SITEDIR=""
+else
+  rubyecasound_support=yes
+  ECA_S_RUBY_SITEDIR="`ruby -e 'require "rbconfig"; include Config; print CONFIG[["sitedir"]] + "/" + CONFIG[["MAJOR"]] + "." + CONFIG[["MINOR"]]'`"
+fi
+
+AC_SUBST(ECA_S_RUBY_SITEDIR)
+AM_CONDITIONAL(ECA_AM_RUBYECASOUND_INSTALL, test x$rubyecasound_support = xyes)
+
+dnl ------------------------------------------------------------------
+
 echo "------------------------------------------------------------------"
 echo "3. Section: Programs "
 echo "------------------------------------------------------------------"
@@ -1066,6 +1090,7 @@ libecasound/plugins/Makefile
 libecasoundc/Makefile
 libecasoundc/libecasoundc-config
 pyecasound/Makefile
+rubyecasound/Makefile
 ecasound/Makefile
 ecatools/Makefile
 kvutils/Makefile
@@ -1081,108 +1106,116 @@ dnl ---
 
 echo "-----------------------------------------------------------------"
 echo "Following packages are now configured:"
-echo "ecasound: 		yes (ecasound,libecasound,libecasoundc)"
-echo "ecatools: 		yes"
+echo "ecasound:               yes (ecasound,libecasound,libecasoundc)"
+echo "ecatools:               yes"
 if test x$pyecasound_support != xnone ; then
 	if test x$pyecasound_support = xc ; then
-		echo "pyecasound: 		yes (as Python C extension module)"
+		echo "pyecasound:             yes (as Python C extension module)"
 	else
-		echo "pyecasound: 		yes (as native Python module)"
+		echo "pyecasound:             yes (as native Python module)"
 	fi
 else
-	echo "pyecasound: 		no"
+	echo "pyecasound:             no"
 fi
-echo "libkvutils: 		yes"
+if test x$rubyecasound_support = xyes ; then
+	echo "rubyecasound:           yes"
+else
+	echo "rubyecasound:           no"
+fi
+echo "libkvutils:             yes"
 
 echo "-----------------------------------------------------------------"
 echo "Compiler options:"
-echo "CFLAGS                  $CFLAGS"
-echo "CXXFLAGS                $CXXFLAGS"
+echo "CFLAGS:                 $CFLAGS"
+echo "CXXFLAGS:               $CXXFLAGS"
 
 echo "-----------------------------------------------------------------"
 echo "Following features were selected:"
 if test x$include_debug = xyes ; then
-	echo "Debugging info:		yes"
+	echo "Debugging info:         yes"
 else
-	echo "Debugging info:		no"	
+	echo "Debugging info:         no"	
 fi
 if test x$enable_effects_d = xyes ; then
-	echo "Effects enabled: 	yes"
+	echo "Effects enabled:        yes"
 else
-	echo "Effects enabled:	no"	
+	echo "Effects enabled:        no"	
 fi
 if test x$enable_largefile = xyes ; then
-	echo "Largefile support:	yes"
+	echo "Largefile support:      yes"
 else
-	echo "Largefile support:	no"
+	echo "Largefile support:      no"
 fi
 if test x$termcap_library = xtermcap ; then
-	echo "Termcap:		termcap"
+	echo "Termcap:                termcap"
 fi
 if test x$termcap_library = xncurses; then
-	echo "Termcap:		ncurses"
+	echo "Termcap:                ncurses"
 fi
 if test x$termcap_library = xnone; then
-	echo "Termcap:		none"
+	echo "Termcap:                none"
 fi
 if test x$af_support = xyes ; then
-	echo "Libaudiofile:		yes"
+	echo "Libaudiofile:           yes"
 else
-	echo "Libaudiofile:		no"
+	echo "Libaudiofile:           no"
 fi
 if test x$sndfile_support = xyes ; then
-	echo "Libsndfile:		yes"
+	echo "Libsndfile:             yes"
 else
-	echo "Libsndfile:		no"
+	echo "Libsndfile:             no"
 fi
 if test x$alsa_support = xyes ; then
-	echo "ALSA support		yes"
+	echo "ALSA support:           yes"
 else
-	echo "ALSA support		no"
+	echo "ALSA support:           no"
 fi
 if test x$oss_support = xyes ; then
-	echo "OSS support		yes"
+	echo "OSS support:            yes"
 else
-	echo "OSS support		no"
+	echo "OSS support:            no"
 fi
 if test x$arts_support = xyes ; then
-	echo "aRts support		yes"
+	echo "aRts support:           yes"
 else
-	echo "aRts support		no"
+	echo "aRts support:           no"
 fi
 if test x$jack_support = xyes ; then
-	echo "JACK support		yes"
+	echo "JACK support:           yes"
 else
-	echo "JACK support		no"
+	echo "JACK support:           no"
 fi
 if test x$samplerate_support = xyes ; then
-	echo "Libsamplerate support	yes"
+	echo "Libsamplerate support   yes"
 else
-	echo "Libsamplerate support	no"
+	echo "Libsamplerate support   no"
 fi
 if test x$enable_sysreadline = xyes ; then
-	echo "Use system readline	yes"
+	echo "Use system readline     yes"
 else
-	echo "Use system readline	no"
+	echo "Use system readline     no"
 fi
 
 echo "-----------------------------------------------------------------"
 echo "Following directories are used:"
-echo "Directory prefix:    "$ECA_S_PREFIX
+echo "Directory prefix:       "$ECA_S_PREFIX
 if test x$pyecasound_support != xnone ; then
-	echo "Python include dir:	"$ECA_S_PYTHON_INCLUDES
-	echo "Python module dir:	"$ECA_S_PYTHON_MODULES
+	echo "Python include dir:     "$ECA_S_PYTHON_INCLUDES
+	echo "Python module dir:      "$ECA_S_PYTHON_MODULES
+fi
+if test x$rubyecasound_support != xnone ; then
+	echo "Ruby module dir:        "$ECA_S_RUBY_SITEDIR
 fi
 if test x$jack_support = xyes ; then
-	echo "JACK headers:		"$ECA_S_JACK_INCLUDES
-	echo "JACK libs:		"$ECA_S_JACK_LIBS
+	echo "JACK headers:           "$ECA_S_JACK_INCLUDES
+	echo "JACK libs:              "$ECA_S_JACK_LIBS
 fi
 if test x$samplerate_support = xyes ; then
-	echo "Libsamplerate headers:	"$ECA_S_SAMPLERATE_INCLUDES
-	echo "Libsamplerate libs:	"$ECA_S_SAMPLERATE_LIBS
+	echo "Libsamplerate headers:  "$ECA_S_SAMPLERATE_INCLUDES
+	echo "Libsamplerate libs:     "$ECA_S_SAMPLERATE_LIBS
 fi
 if test x$enable_sysreadline = xyes ; then
-  	echo "readline includes:	"$ECA_S_READLINE_INCLUDES
+  	echo "readline includes:      "$ECA_S_READLINE_INCLUDES
 fi  
 
 echo "-------------------------------------------------------------------"

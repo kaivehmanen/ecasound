@@ -4,9 +4,9 @@ EXTRA_DIST = AUTHORS BUGS COPYING.GPL COPYING.LGPL NEWS TODO ecasound.spec effec
 EXTRA_DIST += depcomp
 
 if ECA_AM_SYSTEM_READLINE
-SUBDIRS = kvutils libecasound ecasound libecasoundc pyecasound ecatools Documentation examples
+SUBDIRS = kvutils libecasound ecasound libecasoundc pyecasound rubyecasound ecatools Documentation examples
 else
-SUBDIRS = kvutils readline-4.0 libecasound ecasound libecasoundc pyecasound ecatools Documentation examples
+SUBDIRS = kvutils readline-4.0 libecasound ecasound libecasoundc pyecasound rubyecasound ecatools Documentation examples
 endif
 AUTOMAKE_OPTIONS = foreign
 
