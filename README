@@ -37,7 +37,8 @@ the same name.
 
 Any way you want! :) Personally I say something to the effect of
 "eck-uh-sound". Start from "megasound", and omit pronouncing the 
-'m' at the start, and replace 'g' with a sharper 'uh' sound.
+'m' at the start, and replace 'g' with a sharper 'k' sound, like
+in the word "car".
 
 -----------------------------------------------------------------------
  Why?
@@ -157,7 +158,7 @@ Ecasound's HTML-documentation (Documentation/examples.html).
  Mailing lists
 -----------------------------------------------------------------------
 
-- ecasound-list at wakkanet dot fi:
+- ecasound-list at lists dot sourceforge dot net:
 
 A general discussion forum for developers and users of Ecasound and
 related tools. Announcements of new versions, bug warnings, etc will be 
@@ -192,6 +193,7 @@ Distribution packages
 Eca projects page (links, apps based on Ecasound, etc)
 - http://www.eca.cx 
 - http://ecasound.seul.org (US mirror)
+- http://ecasound.sourceforge.net (another US mirror)
 
 Examples of real-life Ecasound usage
 - http://www.eca.cx/ecasound_users.html
@@ -257,7 +259,7 @@ and to users who have given feedback, ideas and helped with testing!
  Licensing/distribution policy
 -----------------------------------------------------------------------
 
-Copyright (C) 1997-2004 Kai Vehmanen
+Copyright (C) 1997-2005 Kai Vehmanen
 
 Ecasound is freely distributable according to the terms of the 
 GNU General Public License (see the file 'COPYING.GPL').

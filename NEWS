@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 050305) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 120305) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-xx032005 (v2.3.6)  -** stable release **-
+12032005 (v2.4.0)  -** stable release **-
 	- edi-entries: edi-40 progress
 	- added: support for having commas in arguments by escaping 
 	 	 them with a backslash (example: "ai-add foo\,bar.wav")
@@ -49,14 +49,16 @@ xx032005 (v2.3.6)  -** stable release **-
 		   with -el/-eli
 	- changed: removed hard upper-limit for -ei scale-factor, 
 		   modified both the upper and lower soft limits
+	- changed: updated config.guess and config.sub to more recent
+		   versions
 	- fixed: correctly interpret EIAM command arguments containing
 	         whitespace (example: "ai-add foo bar.wav")
 	- fixed: denormal problems in filter and delay operators
 	- fixex: setting radius params of -etc comb filter
-	- fixed: make check target in readline-4.0 subdir
+	- fixed: make check target failed in readline-4.0 subdir
 	- fixed: avoid segfault when receiving a bufsize or srate
-		 changed event from JACK; ecasound cannot change bufsize 
-		 or srate changes on the fly, but at least it now fails 
+		 change event from JACK; ecasound still cannot change 
+		 bufsize or srate on the fly, but at least it now fails 
 		 gracefully
 	- fixed: always pass filename (%f) as one parameter to the 
 		 external apps; fixes bug present in 2.3.4 and 2.3.5 
