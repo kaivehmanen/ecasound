@@ -504,6 +504,8 @@ void WAVEFILE::seek_position(void)
   if (is_open() == true) {
     fio_repp->set_file_position(data_start_position_rep + position_in_samples() * frame_size());
   }
+
+  AUDIO_IO_BUFFERED::seek_position();
 }
 
 void WAVEFILE::set_length_in_bytes(void) {
