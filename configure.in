@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20031004-25
+dnl last modified: 20031117-26
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -495,7 +495,8 @@ dnl defines: ECA_S_PYTHON_INCLUDES, ECA_S_PYTHON_DLMODULES,
 dnl          ECA_AM_PYECASOUND_CEXT, ECA_AM_PYECASOUND_INSTALL
 dnl --
 
-pyecasound_support=python
+dnl default to the C impl if available
+pyecasound_support=c
 
 AC_ARG_ENABLE(pyecasound,
 	      [  --enable-pyecasound 	  Enable compilation of pyecasound (default = python)],

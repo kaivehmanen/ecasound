@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 111103) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 171103) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -21,6 +21,12 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   with the --enable-shared configure option
 	- changed: ecasound.el updated to 0.8.3, lots of small
 		   changes, see ecasound.el for details [mlang]
+	- changed: pyecasound - due to bugs found in the native python
+		   impl, the C ECI impl is again set as the default; 
+		   can be overridden using --enable-pyecasound=IMPL
+	- changed: pyecasound - the native python impl (ecacontrol.py)
+		   now returns an error if communication with the
+                   ecasound process times out
         - fixed: makefile errors when building against system libreadline
         - fixed: processing did not start in the default transport mode
 	  	 with JACK versions 0.80 and older
