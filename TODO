@@ -2,6 +2,7 @@
 *** Ecasound - To do list / plans                                   ***
 -----------------------------------------------------------------------
 
+-----------------------------------------------------------------------
 [ Development goals and current status ]
 
 1.8.x and 1.9.x series:
@@ -13,7 +14,7 @@
 
 2.x series:
 
-- MIDI-subsystem updates [party implemented]
+- MIDI-subsystem updates [partly implemented]
 - aim is to make the 2.0.x releases binary-compatible
 
 2.2 (2.1devX series):
@@ -24,7 +25,6 @@
   their dependencies [not started]
 
 -----------------------------------------------------------------------
-
 [ Bugs to be fixed ]
 
 - commas confuse file name handling (ecatools)
@@ -32,19 +32,18 @@
 - ecasound crashes if /dev/midi points to an invalid rawmidi device
 
 -----------------------------------------------------------------------
-
-[ Upcoming features - implemented as soon as possible ]
+[ Upcoming features - implemented sooner or later ]
 
 - comments in ecs (chainsetup) files [done! 1.8.x]
 - embedded effect preset parameters ("-p[fn]:string,par1,...,parN") [done! 1.8.x]
 - metronome signal [done! 1.8.x]
 - ia-mode: make separate xxx-list and xxx-status commands (a pure list, and a more
-  verbose xxx-status command [ party done - 1.9.x ]
+  verbose xxx-status command [ partly done - 1.9.x ]
 - better MIDI-support (separate MIDI input/output objects) [under work]
+- support for 14bit MIDI-CCs
 - add threshold parameter to -eca
   
 -----------------------------------------------------------------------
-
 [ Wish-list - implemented if enough demand ]
 
 Input/output devices:
@@ -85,7 +84,6 @@ Other areas:
   simulating normal multitrack recording
 
 -----------------------------------------------------------------------
-
 [ Help - developer in trouble ]
 
 - ecasound compiles on Solaris 2.6 and FreeBSD 4.1, what about other

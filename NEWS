@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 190301) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 220301) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,12 +17,18 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??032001 (v1.9dev5)
+22032001 (v1.9dev5)
 	- added: eiam - new aliases 'getpos', 'c-set-position',
 		 'aio-set-position', 'aio-getpos'
 	- added: eiam - 'int-cmd-list', 'int-version-string'.
 		 'int-version-lib-current', 'int-version-lib-revision',
 		 'int-version-lib-age'
+	- added: eiam - added a section about 'realtime commands' 
+		 to ecasound-iam(1) man page
+	- changed: new system for creating temporary files; 
+		   all temps are put into a separate directory;
+		   $TMPDIR and $TMP are used if available, otherwise 
+		   defaults to /tmp
 	- fixed: mp3 output broken
 	- fixed: more zombie-problems with mpg123, lame, ogg123 
 	         and others
@@ -31,6 +37,8 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 was different than internal sample rate
 	- fixed: eiam - 'ctrl-remove' remove the selected chainop,
 		 not the controller as it should have
+	- fixed: eiam - seg.fault when using 'cs-edit' to configure
+	         a connected chainsetup
 06032001 (v1.9dev4)
 	- added: -C - disable interactive mode; reverse op. for -c
 	- added: -X - open outputs for updating; rev.op. for -x

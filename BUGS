@@ -2,8 +2,8 @@
 *** Ecasound - Known bugs/features                                  ***
 -----------------------------------------------------------------------
 
-- the insecure tmpnam() is used for creating tmpfile names
 - ecasound crashes if /dev/midi points to an invalid rawmidi device
+- MIDI-ops like -km can't be used in presets
 - RIFF WAVE files
 	- doesn't preserve extra RIFF-blocks
 - controller sources

@@ -237,7 +237,7 @@ void ECA_CONTROL_BASE::start_engine(void) {
   }
 
   unsigned int p = session_repp->connected_chainsetup_repp->first_selected_chain();
-  if (p < selected_chainsetup_repp->chains.size())
+  if (p < session_repp->connected_chainsetup_repp->chains.size())
     session_repp->active_chain_index_rep = p;
 
   pthread_attr_t th_attr;

@@ -51,11 +51,25 @@ void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const string& filename) {
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_pipe_name(void) {
   if (command_rep.find("%F") != string::npos) {
-    ::tmpnam(tmpfile_repp);
-    ::strcat(tmpfile_repp, ".raw");
-    ::mkfifo(tmpfile_repp, 0755);
-    command_rep.replace(command_rep.find("%F"), 2, string(tmpfile_repp));
-    tmp_file_created_rep = true;
+    init_temp_directory();
+    if (tempfile_dir_rep.is_valid() == true) {
+      tmpfile_repp = tempfile_dir_rep.create_filename("fork-pipe", ".raw");
+      ::mkfifo(tmpfile_repp.c_str(), 0755);
+      command_rep.replace(command_rep.find("%F"), 2, tmpfile_repp);
+      tmp_file_created_rep = true;
+    }
+  }
+}
+
+void AUDIO_IO_FORKED_STREAM::init_temp_directory(void) {
+  string tmpdir ("ecasound-");
+  char* tmp_p = getenv("USER");
+  if (tmp_p != NULL) {
+    tmpdir += string(tmp_p);
+    tempfile_dir_rep.reserve_directory(tmpdir);
+  }
+  if (tempfile_dir_rep.is_valid() != true) {
+    ecadebug->msg("(audioio-forked-stream) Warning! Unable to create temporary directory \"" + tmpdir + "\".");
   }
 }
 
@@ -171,7 +185,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
        * If execvp failed, make sure that the other end of 
        * the pipe doesn't block forever.
        */
-      int fd = ::open(tmpfile_repp, O_WRONLY);
+      int fd = ::open(tmpfile_repp.c_str(), O_WRONLY);
       ::close(fd);
     }
     
@@ -185,7 +199,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
     pid_of_parent_rep = ::getpid();
     fd_rep = 0;
     if (wait_for_child() == true)
-      fd_rep = ::open(tmpfile_repp, O_RDONLY);
+      fd_rep = ::open(tmpfile_repp.c_str(), O_RDONLY);
     if (fd_rep > 0)
       last_fork_rep = true;
   }
@@ -259,7 +273,7 @@ void AUDIO_IO_FORKED_STREAM::clean_child(void) {
   }
   if (fd_rep > 0) ::close(fd_rep);
   if (tmp_file_created_rep == true) {
-    ::remove(tmpfile_repp);
+    ::remove(tmpfile_repp.c_str());
   }
 }
 

@@ -13,7 +13,8 @@ kvutil_sources = 	kvutils.cpp \
 		 	value_queue.cpp \
 			kvu_numtostr.cpp \
 			locks.cpp \
-			procedure_timer.cpp
+			procedure_timer.cpp \
+			temporary_file_directory.cpp
 
 kvutil_headers = 	kvutils.h \
 			message_item.h \
@@ -23,7 +24,8 @@ kvutil_headers = 	kvutils.h \
 			definition_by_contract.h \
 			object_queue.h \
 			locks.h \
-			procedure_timer.h
+			procedure_timer.h \
+			temporary_file_directory.h
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
 libkvutils_la_LDFLAGS = -version-info 2:0:0

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-objects.cpp: Class for configuring libecasound objects
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,10 @@
 #include <vector>
 #include <algorithm>
 #include <pthread.h>
+#include <stdlib.h> /* getenv() */
 
 #include <kvutils/value_queue.h>
+#include <kvutils/temporary_file_directory.h>
 
 #include "eca-main.h"
 #include "eca-session.h"
@@ -245,8 +247,20 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
   }
   string origname = selected_chainsetup_repp->name();
   string origfilename = selected_chainsetup_repp->filename();
-  string filename = string(::tmpnam(NULL));
-  filename += ".ecs";
+
+  TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
+  string tmpdir ("ecasound-");
+  char* tmp_p = getenv("USER");
+  if (tmp_p != NULL) {
+    tmpdir += string(tmp_p);
+    tempfile_dir_rep.reserve_directory(tmpdir);
+  }
+  if (tempfile_dir_rep.is_valid() != true) {
+    ecadebug->msg("(eca-controller) Warning! Unable to create temporary directory \"" + tmpdir + "\".");
+    return;
+  }
+
+  string filename = tempfile_dir_rep.create_filename("cs-edit-tmp", ".ecs");
 
   if (hot_swap == true)
     set_chainsetup_parameter("-n:cs-edit-temp");

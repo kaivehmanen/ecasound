@@ -2,7 +2,7 @@
 #define INCLUDED_AUDIOIO_FORKED_STREAM_H
 
 #include <string>
-#include <cstdio>
+#include <kvutils/temporary_file_directory.h>
 
 /**
  * Helper class providing routines for forking new processes 
@@ -19,11 +19,13 @@ class AUDIO_IO_FORKED_STREAM {
   int pid_of_child_rep;
   int fd_rep;
   bool last_fork_rep;
-  char tmpfile_repp[L_tmpnam];
+  string tmpfile_repp;
   bool tmp_file_created_rep;
   string command_rep;
   string object_rep;
+  TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
 
+  void init_temp_directory(void);
   void fork_child_for_fifo_read(void);
 
  public:

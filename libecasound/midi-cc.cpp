@@ -44,8 +44,10 @@ CONTROLLER_SOURCE::parameter_type MIDI_CONTROLLER::value(void) {
     }
     trace_request_rep = false;
   }
-  value_rep =
-    static_cast<double>(server()->last_controller_value(channel, controller));
+  if (server() != 0)
+    value_rep =
+      static_cast<double>(server()->last_controller_value(channel, controller));
+      
   value_rep /= 127.0;
   return(value_rep);
 }

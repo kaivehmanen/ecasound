@@ -80,12 +80,33 @@ eq_template2 = -efb:1000,2000 -ea:100 | \
 		-efb:4000,1000 -ea:100
 #
 # ======
-# Contributed / artham
+# Contributed / Arto Hamara [artham]
 stretched_tape = -ei:100 -kos:1,93,100,.5,0 -kx -kos:4,.1,1,.1
 molten_tape = -ei:100 -kos:1,85,105,.5,0 -kx -kos:4,.1,2,.1
 dali = -ei:100 -kos:1,85,105,.5,0 -kx -kos:4,.1,2,.1 \
         -etd:100,1,0,70 -epp:0 -kos:1,20,80,.5,0 -kx -kos:4,.1,2,.1
-# 
+#
+# ======
+# Contributed / S.Massy [smassy]
+# Results of spending an hour messing around.
+#
+# The is a classic auto-wah
+aw = -efl:0 -kos:1,500,5500,%speed,0
+# This is the same thing except it takes all important parameters from its
+# command.
+aw_custom = -efl:0 -kos:1,%low,%high,%speed,0
+# Now the autowah again but with the triangular osc which gives a sharper
+# movement. It really depends of what you're playing, can sound as good as it
+# can sound bad. That's the joy of autowahs.
+aw_tri = -efl:0 -kf:1,500,5500,%speed,1,0
+# Now once again we define another version with more definable params.
+aw_tri_custom = -efl:0 -kf:1,%low,%high,%speed,1,0
+#
+# Experimental stuff:
+# I was trying to have a wah reacting to the volume, it doesn't work very
+# well but I still end up with a "to dig up" envelope shaper.
+aw_ksv = -eS:0 -efl:0 -ksv:1,1000,6000,0,1
+#
 # ======
 # Presets using LADSPA plugins
 # hermesFilter

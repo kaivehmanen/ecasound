@@ -2,6 +2,10 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2001-03-22  Kai Vehmanen <kaiv@wakkanet.fi>
+	
+	* temporary_file_directory.h (all): added
+	
 2001-02-19  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* value_queue.h (poll): added
