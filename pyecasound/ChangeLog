@@ -1,6 +1,6 @@
------------------------------------------------------------------------
-*** ecasound - changes and additions to libpyecasound interface     ***
------------------------------------------------------------------------
+2003-02-22  Janne Halttunen <jhalttun@pp.htv.fi>
+
+	* native python ECI implementation
 
 2001-04-27  Kai Vehmanen  <kaiv@wakkanet.fi>
 

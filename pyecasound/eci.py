@@ -1,8 +1,12 @@
+"""
 # eci.ECI -- A higher-level interface to pyeca.
 # Copyright 2001 Eric S. Tiedemann (est@hyperreal.org)
 # GPLed
 
-import pyecasound as _pyeca
+some updates by Janne Halttunen
+"""
+
+import pyeca as _pyeca
 import types as _types
 
 class ECIError(Exception):
@@ -30,8 +34,8 @@ class ECI:
     stringify prettily.
     """
     
-    def __init__(self):
-        self.e = _pyeca.ECA_CONTROL_INTERFACE()
+    def __init__(self, *args):
+        self.e = apply(_pyeca.ECA_CONTROL_INTERFACE, args)
 
     def __call__(self, cmd, f=None):
         if f != None:
@@ -77,7 +81,7 @@ if __name__ == '__main__':
     e = ECI()
 
     # uncomment to raise an error :)
-    # e('foo')
+    #e('foo')
     
     e("""
     cs-add play_chainsetup
