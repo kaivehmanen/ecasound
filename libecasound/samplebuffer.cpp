@@ -577,7 +577,6 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
       else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
 
       SAMPLE_BUFFER::export_helper(target, &osize, stemp, fmt);
-      
     }
   }
   

@@ -4,6 +4,7 @@ default-output = autodetect
 default-audio-format = s16_le,2,44100,i
 default-to-precise-sample-rates = false
 default-to-interactive-mode = false
+default-mix-mode = avg
 bmode-defaults-nonrt = 1024,false,50,false,100000,true
 bmode-defaults-rt = 1024,true,50,true,100000,true
 bmode-defaults-rtlowlatency = 256,true,50,true,100000,false

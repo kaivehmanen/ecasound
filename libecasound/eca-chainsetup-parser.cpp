@@ -378,7 +378,8 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
 
   case 'z':
     {
-      if (kvu_get_argument_number(1, argu) == "db") {
+      string first_arg (kvu_get_argument_number(1, argu));
+      if (first_arg == "db") {
 	long int bufs = atol(kvu_get_argument_number(2, argu).c_str());
 	if (bufs == 0) bufs = 100000;
 	csetup_repp->set_double_buffer_size(bufs);
@@ -386,19 +387,19 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
 		    kvu_numtostr(bufs) + " sample frames.");
 	csetup_repp->toggle_double_buffering(true);
       }
-      else if (kvu_get_argument_number(1, argu) == "nodb") {
+      else if (first_arg == "nodb") {
 	ECA_LOG_MSG(ECA_LOGGER::info, "Double-buffering disabled.");
 	csetup_repp->toggle_double_buffering(false);
       }
-      else if (kvu_get_argument_number(1, argu) == "intbuf") {
+      else if (first_arg == "intbuf") {
 	ECA_LOG_MSG(ECA_LOGGER::info, "Enabling extra buffering on realtime devices.");
 	csetup_repp->toggle_max_buffers(true);
       }
-      else if (kvu_get_argument_number(1, argu) == "nointbuf") {
+      else if (first_arg == "nointbuf") {
 	ECA_LOG_MSG(ECA_LOGGER::info, "Disabling extra buffering on realtime devices.");
 	csetup_repp->toggle_max_buffers(false);
       }
-      else if (kvu_get_argument_number(1, argu) == "multitrack") {
+      else if (first_arg == "multitrack") {
 	ECA_LOG_MSG(ECA_LOGGER::info, "Enabling multitrack-mode (override).");
 	long int samples = -1;
 	if (kvu_get_number_of_arguments(argu) > 1) {
@@ -409,27 +410,37 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
 	csetup_repp->multitrack_mode_override_rep = true;
 	csetup_repp->multitrack_mode_rep = true;
       }
-      else if (kvu_get_argument_number(1, argu) == "nomultitrack") {
+      else if (first_arg == "nomultitrack") {
 	ECA_LOG_MSG(ECA_LOGGER::info, "Disabling multitrack-mode (override).");
 	csetup_repp->multitrack_mode_override_rep = true;
 	csetup_repp->multitrack_mode_offset_rep = 0;
 	csetup_repp->multitrack_mode_rep = false;
       }
-      else if (kvu_get_argument_number(1, argu) == "psr") {
+      else if (first_arg == "psr") {
 	ECA_LOG_MSG(ECA_LOGGER::info, "Enabling precise-sample-rates with OSS audio devices.");
 	csetup_repp->toggle_precise_sample_rates(true);
       }
-      else if (kvu_get_argument_number(1, argu) == "nopsr") {
+      else if (first_arg == "nopsr") {
 	ECA_LOG_MSG(ECA_LOGGER::info, "Disabling precise-sample-rates with OSS audio devices.");
 	csetup_repp->toggle_precise_sample_rates(false);
       }
-      else if (kvu_get_argument_number(1, argu) == "xruns") {
+      else if (first_arg == "xruns") {
 	ECA_LOG_MSG(ECA_LOGGER::info, "Processing is stopped if an xrun occurs.");
 	csetup_repp->toggle_ignore_xruns(false);
       }
-      else if (kvu_get_argument_number(1, argu) == "noxruns") {
+      else if (first_arg == "noxruns") {
 	ECA_LOG_MSG(ECA_LOGGER::info, "Ignoring xruns during processing.");
 	csetup_repp->toggle_ignore_xruns(true);
+      }
+      else if (first_arg == "mixmode") {
+	if (kvu_get_argument_number(2, argu) == "sum") {
+	  ECA_LOG_MSG(ECA_LOGGER::info, "Enabling 'sum' mixmode.");
+	  csetup_repp->set_mix_mode(ECA_CHAINSETUP::cs_mmode_sum);
+	}
+	else {
+	  ECA_LOG_MSG(ECA_LOGGER::info, "Enabling 'avg' mixmode.");
+	  csetup_repp->set_mix_mode(ECA_CHAINSETUP::cs_mmode_avg);
+	}
       }
       break;
     }
@@ -1057,6 +1068,11 @@ string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const
     t << " -z:psr";
   else
     t << " -z:nopsr";
+
+  if (csetup_repp->mix_mode() == ECA_CHAINSETUP::cs_mmode_avg)
+    t << " -z:mixmode,avg";
+  else
+    t << " -z:mixmode,sum";
 
   t.setprecision(3);
   if (csetup_repp->max_length_set()) {

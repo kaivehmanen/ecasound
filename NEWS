@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 211204) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 221204) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -28,8 +28,12 @@ xx022005 (v2.3.6)  -** stable release **-
 	- added: eiam - new 'int-set-log-history-length' command to set
 		 log history length; default to 5 items
 	- added: resample-lq (low-quality) audio object to force using
-		 the internal resampler even though support 
+		 the internal resampler even though support for
 		 libsamplerate is enabled at build time
+	- added: support for sum-mixmode; enabled with -z:mixmode,sum;
+		 the old average mixing is still the default; see
+	 	 ecasound(1)
+	- added: ecasoundrc - 'mix-mode' setting; see ecasoundrc(5)
 	- changed: more helpful messages to explain why a chainsetup 
 		   cannot be connected to the engine
 	- changed: EIAM - when returning a list of strings, all commas

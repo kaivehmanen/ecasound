@@ -303,15 +303,16 @@ void ECA_CHAINSETUP::set_defaults(void)
   }
   
   set_default_midi_device(ecaresources.resource("midi-device"));
-
-  string aformat_temp = set_resource_helper(ecaresources,
-					    "default-audio-format", 
-					    ECA_CHAINSETUP::default_audio_format_const);
-  cparser_rep.interpret_object_option("-f:" + aformat_temp);
-
+  string rc_temp = set_resource_helper(ecaresources,
+				       "default-audio-format", 
+				       ECA_CHAINSETUP::default_audio_format_const);
+  cparser_rep.interpret_object_option("-f:" + rc_temp);
   set_samples_per_second(default_audio_format().samples_per_second());
-
   toggle_precise_sample_rates(ecaresources.boolean_resource("default-to-precise-sample-rates"));
+  rc_temp = set_resource_helper(ecaresources, 
+				"default-mix-mode", 
+				"avg");
+  cparser_rep.interpret_object_option("-z:mixmode," + rc_temp);
 
   impl_repp->bmode_nonrt_rep.set_all(set_resource_helper(ecaresources,
 							 "bmode-defaults-nonrt",

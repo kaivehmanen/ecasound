@@ -1,3 +1,25 @@
+// ------------------------------------------------------------------------
+// eca-chainsetup.h: Class representing an ecasound chainsetup object.
+// Copyright (C) 1999-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// ------------------------------------------------------------------------
+
 #ifndef INCLUDED_ECA_CHAINSETUP_H
 #define INCLUDED_ECA_CHAINSETUP_H
 
@@ -60,8 +82,10 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /*@{*/
 
   enum Buffering_mode { cs_bmode_auto, cs_bmode_nonrt, cs_bmode_rt, cs_bmode_rtlowlatency, cs_bmode_none };
+  enum Mix_mode { cs_mmode_avg, cs_mmode_sum };
 
   typedef enum Buffering_mode Buffering_mode_t;
+  typedef enum Mix_mode Mix_mode_t;
 
   static const string default_audio_format_const;
   static const string default_bmode_nonrt_const;
@@ -97,7 +121,6 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   static void audio_object_info(const AUDIO_IO* aio);
 
-
   /*@}*/
 
   /** @name Functions for handling chains */
@@ -113,7 +136,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void toggle_chain_muting(void);
   void toggle_chain_bypass(void);
 
-  const vector<string>& selected_chains(void) const { return(selected_chainids); }
+  const vector<string>& selected_chains(void) const { return selected_chainids; }
   unsigned int first_selected_chain(void) const; 
   vector<string> chain_names(void) const;
   vector<string> get_attached_chains_to_iodev(const string& filename) const;
@@ -149,16 +172,18 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void set_default_midi_device(const string& name) { default_midi_device_rep = name; }
   void set_buffering_mode(Buffering_mode_t value);
   void set_audio_io_manager_option(const string& mgrname, const string& optionstr);
+  void set_mix_mode(Mix_mode_t value) { mix_mode_rep = value; }
 
-  bool precise_sample_rates(void) const { return(precise_sample_rates_rep); }
-  bool ignore_xruns(void) const { return(ignore_xruns_rep); }
+  bool precise_sample_rates(void) const { return precise_sample_rates_rep; }
+  bool ignore_xruns(void) const { return ignore_xruns_rep; }
   const ECA_AUDIO_FORMAT& default_audio_format(void) const;
-  const string& default_midi_device(void) const { return(default_midi_device_rep); }
-  int output_openmode(void) const { return(output_openmode_rep); }
-  Buffering_mode_t buffering_mode(void) const { return(buffering_mode_rep); }
+  const string& default_midi_device(void) const { return default_midi_device_rep; }
+  int output_openmode(void) const { return output_openmode_rep; }
+  Buffering_mode_t buffering_mode(void) const { return buffering_mode_rep; }
   bool is_valid_for_connection(bool verbose) const;
-  bool multitrack_mode(void) const { return(multitrack_mode_rep); }
-  long int multitrack_mode_offset(void) const { return(multitrack_mode_offset_rep); } 
+  bool multitrack_mode(void) const { return multitrack_mode_rep; }
+  long int multitrack_mode_offset(void) const { return multitrack_mode_offset_rep; } 
+  Mix_mode_t mix_mode(void) const { return mix_mode_rep; }
 
   /*@}*/
 
@@ -189,8 +214,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void enable(void) throw(ECA_ERROR&);
   void disable(void);
 
-  const string& name(void) const { return(setup_name_rep); }
-  const string& filename(void) const { return(setup_filename_rep); }
+  const string& name(void) const { return setup_name_rep; }
+  const string& filename(void) const { return setup_filename_rep; }
 
   /*@}*/
 
@@ -214,14 +239,14 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /**
    * Checks whether chainsetup is enabled (devices ready for use).
    */
-  bool is_enabled(void) const { return(is_enabled_rep); }
+  bool is_enabled(void) const { return is_enabled_rep; }
 
   /** 
    * Checks whether chainsetup is locked by ECA_ENGINE. 
    * If locked, only a limited access to the chainsetup
    * data is allowed.
    */
-  bool is_locked(void) const { return(is_locked_rep); }
+  bool is_locked(void) const { return is_locked_rep; }
 
   bool is_valid(void) const;
   bool has_realtime_objects(void) const;
@@ -239,8 +264,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
    *
    * @result true if options interpreted succesfully, otherwise false
    */
-  bool interpret_result(void) const { return(cparser_rep.interpret_result()); }
-  const string& interpret_result_verbose(void) const { return(cparser_rep.interpret_result_verbose()); }
+  bool interpret_result(void) const { return cparser_rep.interpret_result(); }
+  const string& interpret_result_verbose(void) const { return cparser_rep.interpret_result_verbose(); }
 
   void interpret_option(const string& arg);
   void interpret_global_option(const string& arg);
@@ -299,6 +324,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   Buffering_mode_t buffering_mode_rep;
   Buffering_mode_t active_buffering_mode_rep;
+  Mix_mode_t mix_mode_rep;
 
   vector<AUDIO_IO*> inputs;
   vector<AUDIO_IO*> inputs_direct_rep;

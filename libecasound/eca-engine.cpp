@@ -74,6 +74,13 @@ using std::vector;
 #endif
 
 /**
+ * Prototypes of static functions
+ */
+
+static void mix_to_outputs_divide_helper(const SAMPLE_BUFFER *from, SAMPLE_BUFFER *to, int divide_by, bool first_time);
+static void mix_to_outputs_sum_helper(const SAMPLE_BUFFER *from, SAMPLE_BUFFER *to, bool first_time);
+
+/**
  * Implementations of non-static functions
  */
 
@@ -1561,6 +1568,35 @@ void ECA_ENGINE::process_chains(void)
   }
 }
 
+void mix_to_outputs_divide_helper(const SAMPLE_BUFFER *from, SAMPLE_BUFFER *to, int divide_by, bool first_time)
+{
+  if (first_time == true) {
+    // this is the first output connected to this chain
+    if (from->number_of_channels() < to->number_of_channels()) {
+      to->make_silent();
+    }
+    to->copy(*from);
+    to->divide_by(divide_by);
+  }
+  else {
+    to->add_with_weight(*from, divide_by);
+  }
+}
+
+void mix_to_outputs_sum_helper(const SAMPLE_BUFFER *from, SAMPLE_BUFFER *to, bool first_time)
+{
+  if (first_time == true) {
+    // this is the first output connected to this chain
+    if (from->number_of_channels() < to->number_of_channels()) {
+      to->make_silent();
+    }
+    to->copy(*from);
+  }
+  else {
+    to->add(*from);
+  }
+}
+
 /**
  * context: J-level-1
  */
@@ -1607,21 +1643,12 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
 	}
 	else {
 	  ++count;
-	  if (count == 1) {
-	    // -- 
-	    // this is the first output connected to this chain
-	    // --
-	    if (cslots_rep[n]->number_of_channels() < mixslot_repp->number_of_channels()) {
-	      mixslot_repp->make_silent();
-	    }
-	    mixslot_repp->copy(*cslots_rep[n]);
-	    mixslot_repp->divide_by(output_chain_count_rep[outputnum]);
-	  }
-	  else {
-	    mixslot_repp->add_with_weight(*cslots_rep[n],
-					  output_chain_count_rep[outputnum]);
-	  }
-	  
+
+	  if (csetup_repp->mix_mode() == ECA_CHAINSETUP::cs_mmode_avg) 	  
+	    mix_to_outputs_divide_helper(cslots_rep[n], mixslot_repp, output_chain_count_rep[outputnum], (count == 1));
+ 	  else
+	    mix_to_outputs_sum_helper(cslots_rep[n], mixslot_repp, (count == 1));
+
 	  if (count == output_chain_count_rep[outputnum]) {
 	    (*outputs_repp)[outputnum]->write_buffer(mixslot_repp);
 	    if ((*outputs_repp)[outputnum]->finished() == true) outputs_finished_rep++;

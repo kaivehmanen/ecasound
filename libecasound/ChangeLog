@@ -1,11 +1,14 @@
+2004-12-21  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-chainsetup.h (Mix_mode_t): Added.
+	* eca-chainsetup.h (set_mix_mode, mix_mode): Added.	
+
 2004-12-12  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-audio-format.h (format_string): Function signature changed;
 	no longer throws an exception.
-
 	* sample-specs.h: SAMPLE_SPECS::is_system_littleendian removed as
 	obsolete.
-
 	* eca-chainsetup.cpp (is_valid_for_connection): Function signature 
 	changed, added an argument.
 
@@ -101,9 +104,7 @@
 2003-01-30  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* samplebuffer.cpp (resample_get_quality): added
-
 	* samplebuffer.cpp (resample_set_quality): added
-
 	* library version to 10:0:1
 
 2003-01-07  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
