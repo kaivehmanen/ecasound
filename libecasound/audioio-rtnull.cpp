@@ -68,6 +68,8 @@ long int REALTIME_NULL::read_samples(void* target_buffer,
 				     long int samples) {
   assert(is_running() == true);
 
+  for(int n = 0; n < samples * frame_size(); n++) ((char*)target_buffer)[n] = 0;
+
   struct timeval d,n;
   ::gettimeofday(&d, NULL);
   n.tv_sec = d.tv_sec;

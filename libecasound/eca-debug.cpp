@@ -18,8 +18,8 @@ public:
   DEFAULTDEBUG(void) { }
 };
 
-DEFAULTDEBUG ddebug;
-ECA_DEBUG* ecadebug = &ddebug;
+static DEFAULTDEBUG ecasound_default_debug;
+ECA_DEBUG* ecadebug = &ecasound_default_debug;
 
 void attach_debug_object(ECA_DEBUG* newdebug) {
   ::ecadebug = newdebug;

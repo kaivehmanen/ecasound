@@ -1,20 +1,24 @@
-#ifndef _AUDIOIO_NULL_H
-#define _AUDIOIO_NULL_H
+#ifndef INCLUDED_AUDIOIO_NULL_H
+#define INCLUDED_AUDIOIO_NULL_H
 
 #include "audioio-types.h"
 
 /**
- * Audio object that accepts any audio data. And is incredibly fast. :)
+ * Audio object that endlessly consumes and produces audio data.
+ * And is incredibly fast. :)
  */
 class NULLFILE : public AUDIO_IO_BUFFERED {
  public:
 
-  virtual string name(void) const { return("Null audio file"); }
+  virtual string name(void) const { return("Null audio object"); }
 
   virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) { }
   virtual void close(void) { }
 
-  virtual long int read_samples(void* target_buffer, long int samples) { return(samples); }
+  virtual long int read_samples(void* target_buffer, long int samples) { 
+    for(int n = 0; n < samples * frame_size(); n++) ((char*)target_buffer)[n] = 0;
+    return(samples); 
+  }
   virtual void write_samples(void* target_buffer, long int samples) { }
 
   virtual bool finished(void) const { return(false); }

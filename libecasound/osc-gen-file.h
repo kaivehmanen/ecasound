@@ -10,11 +10,6 @@
  */
 class GENERIC_OSCILLATOR_FILE : public GENERIC_OSCILLATOR {
 
- public:
-
-  static void set_preset_file(const string& fname);
-  static string filename;
-
  private:
 
   int preset_rep;

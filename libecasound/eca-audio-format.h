@@ -140,6 +140,4 @@ class ECA_AUDIO_FORMAT {
   Sample_format sfmt_rep;
 };
 
-extern const ECA_AUDIO_FORMAT default_ecasound_audio_format;
-
 #endif

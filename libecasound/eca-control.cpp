@@ -538,7 +538,7 @@ void ECA_CONTROL::print_last_value(void) {
   else if (type == "li")
     result = kvu_numtostr(last_long_integer());
   else if (type == "f")
-    result = kvu_numtostr(last_float());
+    result = kvu_numtostr(last_float(), 3);
    
   if (result.size() > 0) {
     ecadebug->msg(result);
@@ -597,6 +597,8 @@ string ECA_CONTROL::chainsetup_status(void) const {
     result += "\n\tFlags:\t\t\t";
     if ((*cs_citer)->double_buffering()) result += "D";
     if ((*cs_citer)->precise_sample_rates()) result += "P";
+    // FIXME: some status variables are missing from the output
+    // (-z:xruns, etc)
     if ((*cs_citer)->is_valid()) 
       result += "\n\tState: \t\t\tvalid - can be connected";
     else

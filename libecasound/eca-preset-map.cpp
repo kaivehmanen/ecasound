@@ -28,10 +28,17 @@
 ECA_PRESET_MAP::ECA_PRESET_MAP(void) {
   ECA_RESOURCES ecarc;
   string filename =
+    ecarc.resource("user-resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
+  string global_filename =
     ecarc.resource("resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
 
+  load_preset_file(global_filename);
+  load_preset_file(filename);
+}
+
+void ECA_PRESET_MAP::load_preset_file(const string& fname) {
   RESOURCE_FILE preset_file;
-  preset_file.resource_file(filename);
+  preset_file.resource_file(fname);
   preset_file.load();
   const vector<string>& pmap = preset_file.keywords();
   vector<string>::const_iterator p = pmap.begin();

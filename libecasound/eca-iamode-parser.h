@@ -127,9 +127,6 @@ class ECA_IAMODE_PARSER {
 
  public:
 
-  /**
-   * Parse string mode command and act accordingly.
-   */
   static const map<string,int>& registered_commands(void) { return(cmd_map_rep); }
 
   bool action_requires_params(int id);

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-gen-file.cpp: Generic oscillator using envelope presets
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,12 +24,9 @@
 #include <kvutils/kvutils.h>
 
 #include "resource-file.h"
+#include "eca-resources.h"
 #include "osc-gen-file.h"
 #include "eca-debug.h"
-
-string GENERIC_OSCILLATOR_FILE::filename = "";
-void GENERIC_OSCILLATOR_FILE::set_preset_file(const string& value) { GENERIC_OSCILLATOR_FILE::filename = value; }
-
 
 GENERIC_OSCILLATOR_FILE::GENERIC_OSCILLATOR_FILE(double freq, int mode)
   : GENERIC_OSCILLATOR(freq, mode)
@@ -41,11 +38,25 @@ GENERIC_OSCILLATOR_FILE::GENERIC_OSCILLATOR_FILE(double freq, int mode)
 GENERIC_OSCILLATOR_FILE::~GENERIC_OSCILLATOR_FILE (void) { }
 
 void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset) {
-  RESOURCE_FILE rc (GENERIC_OSCILLATOR_FILE::filename);
+  ECA_RESOURCES ecarc;
+  ecadebug->msg(ECA_DEBUG::system_objects,"(osc-gen-file) Opening genosc envelope file.");
+
+  string user_filename =
+    ecarc.resource("user-resource-directory") + "/" + ecarc.resource("resource-file-genosc-envelopes");
+
   string pname = kvu_numtostr(preset);
-  if (rc.has(pname)) {
-//      cerr << "Loading from file: " << GENERIC_OSCILLATOR_FILE::filename
-//  	 << "." << endl;
+
+  RESOURCE_FILE rc;
+  rc.resource_file(user_filename);
+  rc.load();
+  if (rc.has(pname) != true) {
+    string global_filename =
+      ecarc.resource("resource-directory") + "/" + ecarc.resource("resource-file-genosc-envelopes");
+    rc.resource_file(global_filename);
+    rc.load();
+  }
+
+  if (rc.has(pname) == true) {
     parse_envelope(rc.resource(pname));
   }
   else {

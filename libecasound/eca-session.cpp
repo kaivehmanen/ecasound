@@ -130,8 +130,6 @@ void ECA_SESSION::set_defaults(void) {
     iactive_rep = false;
   schedpriority_rep = atoi(ecaresources.resource("default-schedpriority").c_str());
 
-  GENERIC_OSCILLATOR_FILE::set_preset_file(ecaresources.resource("resource-directory") + "/" + ecaresources.resource("resource-file-genosc-envelopes"));
-
   MP3FILE::set_mp3_input_cmd(ecaresources.resource("ext-mp3-input-cmd"));
   MP3FILE::set_mp3_output_cmd(ecaresources.resource("ext-mp3-output-cmd"));
   MIKMOD_INTERFACE::set_mikmod_cmd(ecaresources.resource("ext-mikmod-cmd"));
@@ -342,6 +340,7 @@ bool ECA_SESSION::is_session_option(const string& arg) const {
 
   switch(arg[1]) {
   case 'c':
+  case 'C':
   case 'D':
   case 'd':
   case 'h':
@@ -375,6 +374,13 @@ void ECA_SESSION::interpret_general_option (const string& argu) {
   if (argu.size() < 2) return;
   if (argu[0] != '-') return;
   switch(argu[1]) {
+  case 'C':
+    {
+      iactive_rep = false;
+      ecadebug->msg("(eca-session) Interactive mode disabled."); 
+      break;
+    }
+
   case 'c':
     {
       iactive_rep = true;
@@ -401,20 +407,26 @@ void ECA_SESSION::interpret_general_option (const string& argu) {
   case 'r':
     {
       int prio = ::atoi(get_argument_number(1, argu).c_str());
-      if (prio != 0) 
-	schedpriority_rep = prio;
-      ecadebug->msg("(eca-session) Raised-priority mode enabled. (prio:" + 
-		    kvu_numtostr(schedpriority_rep) + ")");
-      raisepriority_rep = true;
-#ifdef HAVE_MLOCKALL
-      if (::mlockall (MCL_CURRENT|MCL_FUTURE)) {
-	ecadebug->msg("(eca-session) Warning! Couldn't lock all memory!");
+      if (prio < 0) {
+	ecadebug->msg("(eca-session) Raised-priority mode disabled.");
+	raisepriority_rep = false;
       }
-      else 
-	ecadebug->msg("(eca-session) Memory locked!");
+      else {
+	if (prio != 0) 
+	  schedpriority_rep = prio;
+	ecadebug->msg("(eca-session) Raised-priority mode enabled. (prio:" + 
+		      kvu_numtostr(schedpriority_rep) + ")");
+	raisepriority_rep = true;
+#ifdef HAVE_MLOCKALL
+	if (::mlockall (MCL_CURRENT|MCL_FUTURE)) {
+	  ecadebug->msg("(eca-session) Warning! Couldn't lock all memory!");
+	}
+	else 
+	  ecadebug->msg("(eca-session) Memory locked!");
 #else
-      ecadebug->msg("(eca-session) Memory locking not available.");
+	ecadebug->msg("(eca-session) Memory locking not available.");
 #endif
+      }
       break;
     }
     

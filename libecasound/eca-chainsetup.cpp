@@ -430,8 +430,15 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
 
   case 'x':
     {
-      ecadebug->msg("(eca-chainsetup) Truncating outputs.");
+      ecadebug->msg("(eca-chainsetup) Truncating outputs (overwrite-mode).");
       set_output_openmode(AUDIO_IO::io_write);
+      break;
+    }
+
+  case 'X':
+    {
+      ecadebug->msg("(eca-chainsetup) Updating outputs (rw-mode).");
+      set_output_openmode(AUDIO_IO::io_readwrite);
       break;
     }
 
@@ -449,17 +456,29 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
 	ecadebug->msg("(eca-chainsetup) Double-buffering disabled.");
 	toggle_double_buffering(false);
       }
+      else if (get_argument_number(1, argu) == "intbuf") {
+	ecadebug->msg("(eca-chainsetup) Enabling extra buffering on realtime devices.");
+	toggle_max_buffers(true);
+      }
       else if (get_argument_number(1, argu) == "nointbuf") {
 	ecadebug->msg("(eca-chainsetup) Disabling extra buffering on realtime devices.");
 	toggle_max_buffers(false);
       }
       else if (get_argument_number(1, argu) == "psr") {
-	ecadebug->msg("(eca-chainsetup) Using precise-sample-rates with OSS audio devices.");
+	ecadebug->msg("(eca-chainsetup) Enabling precise-sample-rates with OSS audio devices.");
 	toggle_precise_sample_rates(true);
+      }
+      else if (get_argument_number(1, argu) == "nopsr") {
+	ecadebug->msg("(eca-chainsetup) Disabling precise-sample-rates with OSS audio devices.");
+	toggle_precise_sample_rates(false);
       }
       else if (get_argument_number(1, argu) == "xruns") {
 	ecadebug->msg("(eca-chainsetup) Processing is stopped if an xrun occurs.");
 	toggle_ignore_xruns(false);
+      }
+      else if (get_argument_number(1, argu) == "noxruns") {
+	ecadebug->msg("(eca-chainsetup) Ignoring xruns during processing.");
+	toggle_ignore_xruns(true);
       }
       break;
     }
@@ -1250,9 +1269,30 @@ string ECA_CHAINSETUP::general_options_to_string(void) const {
   default: { }
   }
 
-  if (output_openmode() == AUDIO_IO::io_write) t << " -x";
-  if (double_buffering()) t << " -z:db," << double_buffer_size();
-  if (precise_sample_rates()) t << " -z:psr";
+  if (output_openmode() == AUDIO_IO::io_write) 
+    t << " -x";
+  else
+    t << " -X";
+
+  if (max_buffers() == true) 
+    t << " -z:intbuf";
+  else
+    t << " -z:nointbuf";
+
+  if (ignore_xruns() == true) 
+    t << " -z:noxruns";
+  else
+    t << " -z:xruns";
+
+  if (double_buffering() == true) 
+    t << " -z:db," << double_buffer_size();
+  else
+    t << " -z:nodb";
+
+  if (precise_sample_rates() == true) 
+    t << " -z:psr";
+  else
+    t << " -z:nopsr";
 
   t.setprecision(3);
   if (length_set()) {

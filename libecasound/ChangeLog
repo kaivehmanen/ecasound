@@ -4,6 +4,7 @@
 
 2001-03-06  Kai Vehmanen <kaiv@wakkanet.fi>
 
+	* eca-audio-format.h (default_ecasound_audio_format): removed
 	* eca-object-map.h (flush): added
 	* eca-ladspa-plugin-map.h (all): removed
 	* eca-controller-map.h (all): removed

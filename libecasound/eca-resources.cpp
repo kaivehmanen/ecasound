@@ -45,6 +45,8 @@ void ECA_RESOURCES::set_defaults(void) {
   if (has("resource-directory") != true) resource("resource-directory", ecasound_resource_path);
   if (has("resource-file-genosc-envelopes") != true) resource("resource-file-genosc-envelopes","generic_oscillators");
   if (has("resource-file-effect-presets") != true) resource("resource-file-effect-presets","effect_presets");
+  if (has("user-resource-directory") != true) resource("user-resource-directory", 
+						       string(getenv("HOME")) + "/" + "ecasound-config");
 
   if (has("ext-text-editor") != true) resource("ext-text-editor","pico");
   if (has("ext-text-editor-use-getenv") != true) resource("ext-text-editor-use-getenv","true");

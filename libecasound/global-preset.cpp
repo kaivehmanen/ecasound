@@ -29,18 +29,29 @@ GLOBAL_PRESET::GLOBAL_PRESET(const string& preset_name)
   : preset_name_rep(preset_name) {
   ECA_RESOURCES ecarc;
   ecadebug->msg(ECA_DEBUG::system_objects,"(global-preset) Opening sc-preset file.");
-  string filename =
-    ecarc.resource("resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
 
-  RESOURCE_FILE rc (filename);
+  string user_filename =
+    ecarc.resource("user-resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
+
+  RESOURCE_FILE rc;
+  rc.resource_file(user_filename);
+  rc.load();
   string raw = rc.resource(preset_name);
+  if (raw == "") {
+    string global_filename =
+      ecarc.resource("resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
+    rc.resource_file(global_filename);
+    rc.load();
+    raw = rc.resource(preset_name);
+  }
+
   if (raw != "") {
     parse(raw);
     set_name(preset_name);
   }
   else {
     set_name("empty");
-    throw(ECA_ERROR("GLOBAL_PRESET", "requested preset was not found from " + filename + "."));
+    throw(ECA_ERROR("GLOBAL_PRESET", "requested preset \"" + preset_name + "\" was not found."));
   }
 }
 

@@ -21,6 +21,8 @@ class ECA_PRESET_MAP : public ECA_OBJECT_MAP {
   mutable map<string, PRESET*> object_map;
   mutable map<string,string> object_keyword_map;
 
+  void load_preset_file(const string& fname);
+
  public:
 
   virtual void register_object(const string& id_string, PRESET* object);

@@ -2,7 +2,8 @@
 
 const char* ecasound_parameter_help_rep =
 "USAGE: ecasound [options] \n"
-"     -c                       set interactive mode \n"
+"     -c                       enable interactive mode \n"
+"     -C                       disable interactive mode \n"
 "     -d:debug_level           show debug info \n"
 "     -D                       print all debug info to stderr\n"
 "     -q                       quiet mode, no output \n"
@@ -13,9 +14,10 @@ const char* ecasound_parameter_help_rep =
 "     -b:buffersize            size of sample buffer in samples \n"
 "     -m:mixmode               mixmode\n"
 "     -n:name                  set chainsetup name\n"
-"     -r                       raise runtime priority\n"
+"     -r[:priority]            raise runtime priority\n"
 "     -sr:sample_rate          set internal sample rate\n"
 "     -x                       truncate outputs\n"
+"     -X                       open outputs for update (default)\n"
 "     -z:feature               enable feature 'feature'\n"
 " --- \n"
 "     -t:seconds               processing time in seconds\n"
