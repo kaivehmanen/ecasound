@@ -72,13 +72,13 @@ libaudioio_alsa2_plugin_la_LIBADD 	= $(alsa_libs) $(kvutils_libs)
 libaudioio_alsa3_la_LIBADD		= $(alsa_libs) $(kvutils_libs)
 libaudioio_arts_la_LIBADD		= $(kvutils_libs)
 
-libaudioio_af_la_LDFLAGS	     	= -export-dynamic
-libaudioio_alsa_la_LDFLAGS	     	= -export-dynamic
-libaudioio_alsalb_la_LDFLAGS	     	= -export-dynamic
-libaudioio_alsa2_la_LDFLAGS     	= -export-dynamic
-libaudioio_alsa2_plugin_la_LDFLAGS 	= -export-dynamic
-libaudioio_alsa3_la_LDFLAGS		= -export-dynamic
-libaudioio_arts_la_LDFLAGS	        = -export-dynamic $(arts_libs)
+libaudioio_af_la_LDFLAGS	     	= -avoid-version -export-dynamic
+libaudioio_alsa_la_LDFLAGS	     	= -avoid-version -export-dynamic
+libaudioio_alsalb_la_LDFLAGS	     	= -avoid-version -export-dynamic
+libaudioio_alsa2_la_LDFLAGS     	= -avoid-version -export-dynamic
+libaudioio_alsa2_plugin_la_LDFLAGS 	= -avoid-version -export-dynamic
+libaudioio_alsa3_la_LDFLAGS		= -avoid-version -export-dynamic
+libaudioio_arts_la_LDFLAGS	        = -avoid-version -export-dynamic $(arts_libs)
 
 # ----------------------------------------------------------------------
 # separate rules for compiling non-libtool plugins

@@ -81,7 +81,7 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples) {
 
 void MP3FILE::write_samples(void* target_buffer, long int samples) {
   if (is_open() == false) fork_lame();
-  if (waitpid(pid_of_child_rep, 0, WNOHANG) < 0) { 
+  if (wait_for_child() != true) {
     finished_rep = true;
   }
   else {
@@ -103,7 +103,7 @@ void MP3FILE::seek_position(void) {
   }
 }
 
-void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR*) {
+void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR&) {
   Layer newlayer;
   newlayer.get(fname.c_str());
 
@@ -137,144 +137,43 @@ void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR*) {
 
 void MP3FILE::kill_mpg123(void) {
   if (is_open()) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing mpg123-child with pid " + kvu_numtostr(pid_of_child_rep) + ".");
-    kill(pid_of_child_rep, SIGKILL);
-    waitpid(pid_of_child_rep, 0, 0);
-    ::close(fd_rep);
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing mpg123-child." + kvu_numtostr(pid_of_child()) + ".");    clean_child();
     toggle_open_state(false);
   }
 }
 
-void MP3FILE::fork_mpg123(void) throw(ECA_ERROR*) {
+void MP3FILE::fork_mpg123(void) throw(ECA_ERROR&) {
   if (!is_open()) {
-    
     string cmd = MP3FILE::default_mp3_input_cmd;
-
     if (cmd.find("%o") != string::npos) {
       cmd.replace(cmd.find("%o"), 2, kvu_numtostr((long)(position_in_samples() / pcm_rep)));
     }
-
     ecadebug->msg(ECA_DEBUG::user_objects,cmd);
-   
-    int fpipes[2];
-    if (pipe(fpipes) == 0) {
-      pid_of_child_rep = fork();
-      if (pid_of_child_rep == -1) { 
-	// ---
-	// error
-	// ---
-	throw(new ECA_ERROR("ECA-MP3","Can't start mpg123-thread!"));
-      }
-      else if (pid_of_child_rep == 0) { 
-	// ---
-	// child 
-	// ---
-	::close(1);
-	dup2(fpipes[1], 1);
-	::close(fpipes[0]);
-	::close(fpipes[1]);
-	freopen("/dev/null", "w", stderr);
-	vector<string> temp = string_to_words(cmd);
-	if (temp.size() > 1024) temp.resize(1024);
-	const char* args[1024];
-	// = new char* [temp.size() + 1];
-	vector<string>::size_type p = 0;
-	while(p < temp.size()) {
-	  if (temp[p] == "%f") 
-	    args[p] = label().c_str();
-	  else
-	    args[p] = temp[p].c_str();
-	  ++p;
-	}
-	args[p] = 0;
-	execvp(temp[0].c_str(), const_cast<char**>(args));
-	::close(1);
-	exit(0);
-	cerr << "You shouldn't see this!\n";
-      }
-      else { 
-	// ---
-	// parent
-	// ---
-	//	fobject = fdopen(fpipes[0], "r");
-	::close(fpipes[1]);
-	fd_rep = fpipes[0];
-	//	if (fobject == NULL) {
-	ecadebug->msg("(audioio-mp3) Forked mpg123-child with pid " + kvu_numtostr(pid_of_child_rep) + ".");
-	toggle_open_state(true);
-      }
+    fork_child_for_read(cmd, label());
+    if (child_fork_succeeded() != true) {
+      throw(ECA_ERROR("ECA-MP3","Can't start mpg123-thread! Check that 'mpg123' is installed properly."));
     }
-    else 
-      throw(new ECA_ERROR("ECA-MP3","Can't start mpg123-thread! Check that 'mpg123' is installed properly."));
+    fd_rep = file_descriptor();
+    toggle_open_state(true);
   }
 }
 
 void MP3FILE::kill_lame(void) {
   if (is_open()) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing lame-child with pid " + kvu_numtostr(pid_of_child_rep) + ".");
-    kill(pid_of_child_rep, SIGKILL);
-    waitpid(pid_of_child_rep, 0, 0);
-    ::close(fd_rep);
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing lame-child with pid " + kvu_numtostr(pid_of_child()) + ".");
+    clean_child();
     toggle_open_state(false);
   }
 }
 
-void MP3FILE::fork_lame(void) throw(ECA_ERROR*) {
+void MP3FILE::fork_lame(void) throw(ECA_ERROR&) {
   if (!is_open()) {
-
-    string cmd = MP3FILE::default_mp3_output_cmd;
-    if (cmd.find("%f") != string::npos) {
-      cmd.replace(cmd.find("%f"), 2, label());
-    }
-  
     ecadebug->msg("(audioio-mp3) Starting to encode " + label() + " with lame.");
-    ecadebug->msg(ECA_DEBUG::user_objects, cmd);
-
-    int fpipes[2];
-    if (pipe(fpipes) == 0) {
-      pid_of_child_rep = fork();
-      if (pid_of_child_rep == -1) { 
-	// ---
-	// error
-	// ---
-	throw(new ECA_ERROR("ECA-MP3","Can't start lame-child!"));
-      }
-      else if (pid_of_child_rep == 0) { 
-	// ---
-	// child 
-	// ---
-	::close(0);
-	::dup2(fpipes[0],0);
-	::close(fpipes[0]);
-	::close(fpipes[1]);
-	freopen("/dev/null", "w", stderr);
-	vector<string> temp = string_to_words(cmd);
-	if (temp.size() > 1024) temp.resize(1024);
-	const char* args[1024];
-	// = new char* [temp.size() + 1];
-	vector<string>::size_type p = 0;
-	while(p < temp.size()) {
-	  args[p] = temp[p].c_str();
-	  ++p;
-	}
-	args[p] = 0;
-	execvp(temp[0].c_str(), const_cast<char**>(args));
-	::close(0);
-	exit(0);
-	cerr << "You shouln't see this!\n";
-      }
-      else { 
-	// ---
-	// parent
-	// ---
-	::close(fpipes[0]);
-	fd_rep = fpipes[1];
-
-	ecadebug->msg("(audioio-mp3) Forked lame-child with pid " + kvu_numtostr(pid_of_child_rep) + ".");
-	toggle_open_state(true);
-      }
+    fork_child_for_write(MP3FILE::default_mp3_output_cmd, label());
+    if (child_fork_succeeded() != true) {
+      throw(ECA_ERROR("AUDIOIO-MP3","Can't start lame-thread! Check that 'lame' is installed properly."));
     }
-    else 
-      throw(new ECA_ERROR("ECA-MP3","Can't start lame-child! Check that 'lame' is installed properly."));
+    fd_rep = file_descriptor();
+    toggle_open_state(true);
   }
 }

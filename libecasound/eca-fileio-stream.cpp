@@ -30,12 +30,12 @@
 
 void ECA_FILE_IO_STREAM::open_file(const string& fname, 
 			    const string& fmode,
-			    bool handle_errors) throw(ECA_ERROR*)
+			    bool handle_errors) throw(ECA_ERROR&)
 { 
   f1 = ::fopen(fname.c_str(), fmode.c_str());
   if (!f1) {
     if (handle_errors) {
-      throw(new ECA_ERROR("ECA-FILEIO", "unable to open file " + fname +
+      throw(ECA_ERROR("ECA-FILEIO", "unable to open file " + fname +
 			  " in mode \"" + fmode + "\".", ECA_ERROR::retry));
     }
     mode_rep = "";

@@ -4,6 +4,7 @@
 #include <string>
 #include "audioio-types.h"
 #include "samplebuffer.h"
+#include "audioio-forked-stream.h"
 
 /**
  *Interface for mp3 decoders and encoders that support 
@@ -11,7 +12,8 @@
  * mpg123 and lame.
  * @author Kai Vehmanen
  */
-class MP3FILE : public AUDIO_IO_BUFFERED {
+class MP3FILE : public AUDIO_IO_BUFFERED,
+		protected AUDIO_IO_FORKED_STREAM {
 
  private:
   
@@ -31,14 +33,14 @@ class MP3FILE : public AUDIO_IO_BUFFERED {
   long int bytes_rep;
   int fd_rep;
   
-  void get_mp3_params(const string& fname) throw(ECA_ERROR*);
+  void get_mp3_params(const string& fname) throw(ECA_ERROR&);
   
   //  MP3FILE(const MP3FILE& x) { }
   MP3FILE& operator=(const MP3FILE& x) { return *this; }
 
-  void fork_mpg123(void) throw(ECA_ERROR*);
+  void fork_mpg123(void) throw(ECA_ERROR&);
   void kill_mpg123(void);
-  void fork_lame(void) throw(ECA_ERROR*);
+  void fork_lame(void) throw(ECA_ERROR&);
   void kill_lame(void);
   
  public:

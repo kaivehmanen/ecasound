@@ -128,7 +128,7 @@ template<class T>
 void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 				     ECA_AUDIO_FORMAT::Sample_format fmt,
 				     int ch,
-				     long int srate) throw(ECA_ERROR*) {
+				     long int srate) throw(ECA_ERROR&) {
   // --------
   // require:
   assert(target != 0);
@@ -290,7 +290,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
       
       default: 
 	{ 
-	  throw(new ECA_ERROR("SAMPLEBUFFER", "Unknown sample format! [c_to_b]."));
+	  throw(ECA_ERROR("SAMPLEBUFFER", "Unknown sample format! [c_to_b]."));
    
 	}
       }
@@ -303,7 +303,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 					   long int samples_read,
 					   ECA_AUDIO_FORMAT::Sample_format fmt,
 					   int ch,
-					   long int srate) throw(ECA_ERROR*) {
+					   long int srate) throw(ECA_ERROR&) {
   // --------
   // require:
   assert(samples_read >= 0);
@@ -473,7 +473,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 
       default: 
 	{ 
-	  throw(new ECA_ERROR("SAMPLEBUFFER", "Unknown sample format! [c_to_b]."));
+	  throw(ECA_ERROR("SAMPLEBUFFER", "Unknown sample format! [c_to_b]."));
 	}
       }
     }

@@ -433,7 +433,7 @@ void start_normal_thread(ECA_SESSION* session, int retcode_rep, pthread_t*
 			 th_ecasound_cqueue, pthread_attr_t* th_attr) {
   retcode_rep = pthread_create(th_ecasound_cqueue, th_attr, start_normal, (void*)session);
   if (retcode_rep != 0)
-    throw(new ECA_ERROR("ECA-CONTROLLER", "Unable to create a new thread (start_normal)."));
+    throw(ECA_ERROR("ECA-CONTROLLER", "Unable to create a new thread (start_normal)."));
 }
 
 void* start_normal(void* param) {
@@ -450,8 +450,8 @@ void start_normal(ECA_SESSION* session) {
     ECA_PROCESSOR epros (session);
     epros.exec();
   }
-  catch(ECA_ERROR* e) {
-    cerr << "---\n(eca-controller) ERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  catch(ECA_ERROR& e) {
+    cerr << "---\n(eca-controller) ERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
   catch(...) {
     cerr << "---\n(eca-controller) Caught an unknown exception!\n";

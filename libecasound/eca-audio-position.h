@@ -1,5 +1,5 @@
-#ifndef _ECA_AUDIO_POSITION_H
-#define _ECA_AUDIO_POSITION_H
+#ifndef INCLUDED_ECA_AUDIO_POSITION_H
+#define INCLUDED_ECA_AUDIO_POSITION_H
 
 #include "eca-audio-format.h"
 
@@ -75,7 +75,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   // --
 
   /**
-   * True if current position is beyond the end position is
+   * True if current position is beyond the end position or
    * smaller than zero.
    */
   inline bool out_position(void) const { return((( position_in_samples_rep < 0) &&

@@ -67,6 +67,7 @@ extern "C" {
 #include "audioio-ewf.h"
 #include "audioio-mp3.h"
 #include "audioio-mikmod.h"
+#include "audioio-timidity.h"
 #include "audioio-raw.h"
 #include "audioio-null.h"
 #include "audioio-rtnull.h"
@@ -93,7 +94,7 @@ void register_default_presets(void);
 void register_ladspa_plugins(void);
 void register_internal_plugins(void);
 
-vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR*);
+vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR&);
 
 void register_default_objects(void) {
   static bool defaults_registered = false;
@@ -137,6 +138,10 @@ void register_default_audio_objects(void) {
   eca_audio_object_map.register_object(".ult", mikmod);
   eca_audio_object_map.register_object(".uni", mikmod);
   eca_audio_object_map.register_object(".xm", mikmod);
+
+  AUDIO_IO* timidity = new TIMIDITY_INTERFACE();
+  eca_audio_object_map.register_object(".mid", timidity);
+  eca_audio_object_map.register_object(".midi", timidity);
 
   AUDIO_IO* device = 0;  
 #ifdef COMPILE_OSS
@@ -216,7 +221,7 @@ static AUDIO_IO* register_internal_plugin(const string& libdir,
   }
   if (plugin_handle == 0 ||
       desc_func == 0) {
-    ecadebug->msg(ECA_DEBUG::info, 
+    ecadebug->msg(ECA_DEBUG::user_objects, 
 		  "(eca-static-object-maps) Opening internal plugin file \"" + 
 		  file + 
 		  "\" failed, because: \"" + 
@@ -238,62 +243,74 @@ void register_internal_plugins(void) {
   }
 
   AUDIO_IO* aobj;
-#ifdef COMPILE_AF
   aobj = register_internal_plugin(libdir, "libaudioio_af.so");
   if (aobj != 0) {
+#ifdef COMPILE_AF
     eca_audio_object_map.register_object(".aif", aobj);
     eca_audio_object_map.register_object(".au", aobj);
     eca_audio_object_map.register_object(".snd", aobj);
-  }
 #endif
+  }
 
-#ifdef ALSALIB_032
   aobj = register_internal_plugin(libdir, "libaudioio_alsa.so");
   if (aobj != 0) {
+    eca_audio_object_map.register_object("alsa_03", aobj);
+    eca_audio_device_map.register_object("alsa_03", aobj);
+#ifdef ALSALIB_032
     eca_audio_object_map.register_object("alsa", aobj);
     eca_audio_device_map.register_object("alsa", aobj);
-  }
 #endif
+  }
 
-#if (defined ALSALIB_032 || defined ALSALIB_050)
   aobj = register_internal_plugin(libdir, "libaudioio_alsalb.so");
   if (aobj != 0) {
+#if (defined ALSALIB_032 || defined ALSALIB_050)
     eca_audio_object_map.register_object("alsalb", aobj);
     eca_audio_device_map.register_object("alsalb", aobj);
-  }
 #endif
+  }
 
-#ifdef ALSALIB_050 
   aobj = register_internal_plugin(libdir, "libaudioio_alsa2_plugin.so");
   if (aobj != 0) {
+    eca_audio_object_map.register_object("alsaplugin_05", aobj);
+    eca_audio_device_map.register_object("alsaplugin_05", aobj);
+#ifdef ALSALIB_050
     eca_audio_object_map.register_object("alsaplugin", aobj);
     eca_audio_device_map.register_object("alsaplugin", aobj);
+#endif
   }
 
   aobj = register_internal_plugin(libdir, "libaudioio_alsa2.so");
   if (aobj != 0) {
+    eca_audio_object_map.register_object("alsa_05", aobj);
+    eca_audio_device_map.register_object("alsa_05", aobj);
+#ifdef ALSALIB_050
     eca_audio_object_map.register_object("alsa", aobj);
     eca_audio_device_map.register_object("alsa", aobj);
-  }
 #endif
+  }
 
-#ifdef ALSALIB_060
   aobj = register_internal_plugin(libdir, "libaudioio_alsa3.so");
   if (aobj != 0) {
+    eca_audio_object_map.register_object("alsa_06", aobj);
+    eca_audio_device_map.register_object("alsa_06", aobj);
+    eca_audio_object_map.register_object("alsaplugin_06", aobj);
+    eca_audio_device_map.register_object("alsaplugin_06", aobj);
+#ifdef ALSALIB_060
     eca_audio_object_map.register_object("alsa", aobj);
     eca_audio_device_map.register_object("alsa", aobj);
     eca_audio_object_map.register_object("alsaplugin", aobj);
     eca_audio_device_map.register_object("alsaplugin", aobj);
-  }
 #endif
+  }
 
-#ifdef COMPILE_ARTS
   aobj = register_internal_plugin(libdir, "libaudioio_arts.so");
   if (aobj != 0) {
+#ifdef COMPILE_ARTS
     eca_audio_object_map.register_object("arts", aobj);
     eca_audio_device_map.register_object("arts", aobj);
-  }
 #endif
+  }
 }
 
 void register_ladspa_plugins(void) {
@@ -321,7 +338,7 @@ void register_ladspa_plugins(void) {
 	  if (entry_name.size() > 0 && entry_name[0] != '.')
 	    ladspa_plugins = create_plugins(*p + "/" + entry_name);
 	}
-	catch(ECA_ERROR *e) { cerr << e->error_msg() << endl; }
+	catch(ECA_ERROR& e) { cerr << e.error_message() << endl; }
 	for(unsigned int n = 0; n < ladspa_plugins.size(); n++) {
 	  eca_ladspa_plugin_map.register_object(ladspa_plugins[n]->unique(), ladspa_plugins[n]);
 	  eca_ladspa_plugin_id_map.register_object(kvu_numtostr(ladspa_plugins[n]->unique_number()), ladspa_plugins[n]);
@@ -333,19 +350,19 @@ void register_ladspa_plugins(void) {
   }
 }
 
-vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR*) { 
+vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR&) { 
   vector<EFFECT_LADSPA*> plugins;
 
   void *plugin_handle = dlopen(fname.c_str(), RTLD_NOW);
   if (plugin_handle == 0) 
-    throw(new ECA_ERROR("ECA_STATIC_OBJECT_MAPS", string("Unable to open
+    throw(ECA_ERROR("ECA_STATIC_OBJECT_MAPS", string("Unable to open
  plugin file \"") + fname + "\"."));
 
   LADSPA_Descriptor_Function desc_func;
   
   desc_func = (LADSPA_Descriptor_Function)dlsym(plugin_handle, "ladspa_descriptor");
   if (desc_func == 0)
-    throw(new ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable find plugin LADSPA-descriptor."));
+    throw(ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable find plugin LADSPA-descriptor."));
 
   const LADSPA_Descriptor *plugin_desc = 0;
   for (int i = 0;; i++) {
@@ -354,7 +371,7 @@ vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR*) {
     try {
       plugins.push_back(new EFFECT_LADSPA(plugin_desc));
     }
-    catch (ECA_ERROR*) { }
+    catch (ECA_ERROR&) { }
     plugin_desc = 0;
   }
 

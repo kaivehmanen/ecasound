@@ -32,9 +32,9 @@ class EWFFILE : public AUDIO_IO {
 
   RESOURCE_FILE ewf_rc;
     
-  void read_ewf_data(void) throw(ECA_ERROR*);
+  void read_ewf_data(void) throw(ECA_ERROR&);
   void write_ewf_data(void);
-  void init_default_child(void) throw(ECA_ERROR*);
+  void init_default_child(void) throw(ECA_ERROR&);
   
   EWFFILE& operator=(const EWFFILE& x) { return *this; }
   EWFFILE (const EWFFILE& x) { }
@@ -77,7 +77,7 @@ class EWFFILE : public AUDIO_IO {
   virtual void write_buffer(SAMPLE_BUFFER* sbuf);
 
   void seek_position(void);
-  void open(void) throw(ECA_ERROR*);
+  void open(void) throw(ECA_ERROR&);
   void close(void);
  
   EWFFILE* clone(void) { cerr << "Not implemented!" << endl; return this; }

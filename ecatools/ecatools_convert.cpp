@@ -73,10 +73,18 @@ int main(int argc, char *argv[])
       ectrl.add_chainsetup("default");
       ectrl.add_chain("default");
       ectrl.add_audio_input(filename);
+      if (ectrl.get_audio_object() == 0) {
+	cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+	break;
+      }
       aio_params = ectrl.get_audio_format();
       ectrl.set_default_audio_format(aio_params);
       ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
       ectrl.add_audio_output(filename + extension);
+      if (ectrl.get_audio_object() == 0) {
+	cerr << "---\nError while processing file " << filename + extension << ". Exiting...\n";
+	break;
+      }
       ectrl.connect_chainsetup();
       if (ectrl.is_connected() == false) {
 	cerr << "---\nError while converting file " << filename << ". Exiting...\n";
@@ -92,8 +100,8 @@ int main(int argc, char *argv[])
       cline.next();
     }
   }
-  catch(ECA_ERROR* e) {
-    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  catch(ECA_ERROR& e) {
+    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
   catch(...) {
     cerr << "\nCaught an unknown exception.\n";

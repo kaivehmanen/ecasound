@@ -42,7 +42,7 @@ AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name) {
   label(name);
 }
 
-void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR*) {
+void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR&) {
   // --------
   // require:
   assert(!is_open());
@@ -53,7 +53,7 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR*) {
   if (io_mode() == io_read) {
     afhandle = ::afOpenFile(label().c_str(), "r", NULL);
     if (afhandle == AF_NULL_FILEHANDLE) {
-      throw(new ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
+      throw(ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
 			  + "\" using libaudiofile."));
     }
     else {
@@ -87,7 +87,7 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR*) {
   // -------
 }
 
-void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR*) {
+void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR&) {
 
   switch(io_mode()) {
   case io_read:
@@ -97,7 +97,7 @@ void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR*) {
 
       afhandle = ::afOpenFile(label().c_str(), "r", NULL);
       if (afhandle == AF_NULL_FILEHANDLE) {
-	throw(new ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
+	throw(ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
 			    + "\" using libaudiofile."));
       }
       break;
@@ -142,14 +142,14 @@ void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR*) {
 
       afhandle = ::afOpenFile(label().c_str(), "w", fsetup);
       if (afhandle == AF_NULL_FILEHANDLE) 
-	throw(new ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
+	throw(ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
 			    + "\" using libaudiofile."));
      break;
     }
   
   case io_readwrite:
     {
-      throw(new ECA_ERROR("AUDIOIO-AF", "Simultaneous intput/ouput not supported."));
+      throw(ECA_ERROR("AUDIOIO-AF", "Simultaneous intput/ouput not supported."));
     }
   }
 

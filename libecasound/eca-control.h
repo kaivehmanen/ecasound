@@ -22,12 +22,12 @@ class ECA_CONTROL : public ECA_CONTROL_DUMP,
   /**
    * Parse string mode command and act accordingly.
    */
-  void command(const string& cmd) throw(ECA_ERROR*);
+  void command(const string& cmd) throw(ECA_ERROR&);
  
   /** 
    * See ECA_IAMODE_PARSER
    */
-  void action(int action_id, const vector<string>& args) throw(ECA_ERROR*);
+  void action(int action_id, const vector<string>& args) throw(ECA_ERROR&);
 
   // -------------------------------------------------------------------
   // Session info / output to ecadebug

@@ -39,7 +39,7 @@ void ECA_RESOURCES::set_defaults(void) {
   if (resource("default-to-double-buffering") == "") resource("default-to-double-buffering","false");
   if (resource("default-double-buffer-size") == "") resource("default-double-buffer-size","131072");
   if (resource("default-to-precise-sample-rates") == "") resource("default-to-precise-sample-rates","false");
-  if (resource("resource-directory") == "") resource("resource-directory","/usr/local/share/ecasound");
+  if (resource("resource-directory") == "") resource("resource-directory", ecasound_resource_path);
   if (resource("resource-file-genosc-envelopes") == "") resource("resource-file-genosc-envelopes","generic_oscillators");
   if (resource("resource-file-effect-presets") == "") resource("resource-file-effect-presets","effect_presets");
 
@@ -50,9 +50,9 @@ void ECA_RESOURCES::set_defaults(void) {
   if (resource("ext-mp3-input-cmd") == "") resource("ext-mp3-input-cmd","mpg123 -b 0 -q -s -k %o %f");
   if (resource("ext-mp3-output-cmd") == "") resource("ext-mp3-output-cmd", "lame -b 128 -x -S - %f");
 
-  if (resource("ext-mikmod-path") == "") resource("ext-mikmod-path","mikmod");
-  if (resource("ext-mikmod-args") == "") resource("ext-mikmod-args","-p 0 --noloops");
+  if (resource("ext-mikmod-cmd") == "") resource("ext-mikmod-cmd","mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f");
+  if (resource("ext-timidity-cmd") == "") resource("ext-timidity-cmd", "timidity -Or -o - %f");
 
   if (resource("internal-plugin-directory") == "") resource("internal-plugin-directory", ecasound_plugin_path);
-  if (resource("ladspa-plugin-directory") == "") resource("ladspa-plugin-directory","/usr/local/lib/ladspa");
+  if (resource("ladspa-plugin-directory") == "") resource("ladspa-plugin-directory", ecasound_ladspa_path);
 }

@@ -54,7 +54,7 @@ ALSA_PCM_DEVICE::ALSA_PCM_DEVICE (int card,
   overruns_rep = underruns_rep = 0;
 }
 
-void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
+void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR&) {
   assert(is_open() == false);
   assert(is_triggered_rep == false);
 
@@ -81,7 +81,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 				   SND_PCM_OPEN_CAPTURE | SND_PCM_OPEN_NONBLOCK);
     
     if (err < 0) {
-      throw(new ECA_ERROR("AUDIOIO-ALSA2", "Unable to open ALSA-device for capture; error: " + 
+      throw(ECA_ERROR("AUDIOIO-ALSA2", "Unable to open ALSA-device for capture; error: " + 
 			  string(snd_strerror(err))));
     }
   }    
@@ -93,12 +93,12 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 				   subdevice_number_rep,
 				   SND_PCM_OPEN_PLAYBACK | SND_PCM_OPEN_NONBLOCK);
     if (err < 0) {
-      throw(new ECA_ERROR("AUDIOIO-ALSA2", "Unable to open ALSA-device for playback; error: " +  
+      throw(ECA_ERROR("AUDIOIO-ALSA2", "Unable to open ALSA-device for playback; error: " +  
 			  string(snd_strerror(err))));
     }
   }
   else if (io_mode() == io_readwrite) {
-      throw(new ECA_ERROR("AUDIOIO-ALSA2", "Simultaneous intput/output not supported."));
+      throw(ECA_ERROR("AUDIOIO-ALSA2", "Simultaneous intput/output not supported."));
   }
 
   // -------------------------------------------------------------------
@@ -121,7 +121,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 
   if (channels() > 1 &&
       (pcm_info_rep.flags & SND_PCM_CHNINFO_INTERLEAVE) != SND_PCM_CHNINFO_INTERLEAVE)
-    throw(new ECA_ERROR("AUDIOIO-ALSA3", "device can't handle interleaved streams!", ECA_ERROR::stop));
+    throw(ECA_ERROR("AUDIOIO-ALSA3", "device can't handle interleaved streams!", ECA_ERROR::stop));
 
   pf.interleave = 1;
 
@@ -139,24 +139,24 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
       
     default:
       {
-	throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when setting audio format not supported (1)"));
+	throw(ECA_ERROR("AUDIOIO-ALSA2", "Error when setting audio format not supported (1)"));
       }
     }
 
   unsigned int format_mask = (1 << format);
   if ((pcm_info_rep.formats & format_mask) != format_mask)
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Selected sample format not supported by the device!", ECA_ERROR::stop));
+    throw(ECA_ERROR("AUDIOIO-ALSA2", "Selected sample format not supported by the device!", ECA_ERROR::stop));
   pf.format = format;
 
   if (samples_per_second() < pcm_info_rep.min_rate ||
       samples_per_second() > pcm_info_rep.max_rate)
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Sample rate " +
+    throw(ECA_ERROR("AUDIOIO-ALSA2", "Sample rate " +
 			kvu_numtostr(samples_per_second()) + " is out of range!", ECA_ERROR::stop));
   pf.rate = samples_per_second();
 
   if (channels() < pcm_info_rep.min_voices ||
       channels() > pcm_info_rep.max_voices)
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Channel count " +
+    throw(ECA_ERROR("AUDIOIO-ALSA2", "Channel count " +
 			kvu_numtostr(channels()) + " is out of range!", ECA_ERROR::stop));
   pf.voices = channels();
 
@@ -175,7 +175,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 
   if (buffersize() * frame_size() < pcm_info_rep.min_fragment_size ||
       buffersize() * frame_size() > pcm_info_rep.max_fragment_size) 
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "buffersize " +
+    throw(ECA_ERROR("AUDIOIO-ALSA2", "buffersize " +
 			kvu_numtostr(buffersize()) + " is out of range!", ECA_ERROR::stop));
   
   params.buf.block.frag_size = buffersize() * frame_size();
@@ -187,7 +187,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 
   err = ::snd_pcm_channel_params(audio_fd_repp, &params);
   if (err < 0) {
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when setting up channel params: " + string(snd_strerror(err))));
+    throw(ECA_ERROR("AUDIOIO-ALSA2", "Error when setting up channel params: " + string(snd_strerror(err))));
   }
 
   struct snd_pcm_channel_setup setup;
@@ -222,7 +222,7 @@ void ALSA_PCM_DEVICE::stop(void) {
 
   int err = ::snd_pcm_channel_flush(audio_fd_repp, pcm_channel_rep);
   if (err < 0)
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when flushing channel: " + string(snd_strerror(err))));
+    throw(ECA_ERROR("AUDIOIO-ALSA2", "Error when flushing channel: " + string(snd_strerror(err))));
 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Audio device \"" + label() + "\" disabled.");
 
@@ -251,7 +251,7 @@ void ALSA_PCM_DEVICE::prepare(void) {
 
   int err = ::snd_pcm_channel_prepare(audio_fd_repp, pcm_channel_rep);
   if (err < 0)
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(snd_strerror(err))));
+    throw(ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(snd_strerror(err))));
   is_prepared_rep = true;
 }
 

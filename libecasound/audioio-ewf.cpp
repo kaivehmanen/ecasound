@@ -39,7 +39,7 @@ EWFFILE::~EWFFILE(void) {
   delete child;
 }
 
-void EWFFILE::open(void) throw(ECA_ERROR*) {
+void EWFFILE::open(void) throw(ECA_ERROR&) {
   child_active = false;
 
   ewf_rc.resource_file(label());
@@ -47,7 +47,7 @@ void EWFFILE::open(void) throw(ECA_ERROR*) {
 
   child = ECA_OBJECT_FACTORY::create_audio_object(child_name_rep);
   if (child == 0) 
-    throw(new ECA_ERROR("AUDIOIO-EWF", "Couldn't open child object.",ECA_ERROR::retry));
+    throw(ECA_ERROR("AUDIOIO-EWF", "Couldn't open child object.",ECA_ERROR::retry));
 
   ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: Opening ewf-child:" + child->label() + ".");
 
@@ -224,10 +224,10 @@ void EWFFILE::seek_position(void) {
   }
 }
 
-void EWFFILE::init_default_child(void) throw(ECA_ERROR*) {
+void EWFFILE::init_default_child(void) throw(ECA_ERROR&) {
   string::const_iterator e = find(label().begin(), label().end(), '.');
   if (e == label().end()) {
-    throw(new ECA_ERROR("AUDIOIO-EWF", "Invalid file name; unable to open file.",ECA_ERROR::retry));
+    throw(ECA_ERROR("AUDIOIO-EWF", "Invalid file name; unable to open file.",ECA_ERROR::retry));
   }
 
   child_name_rep = string(label().begin(), e);
@@ -236,7 +236,7 @@ void EWFFILE::init_default_child(void) throw(ECA_ERROR*) {
   ewf_rc.resource("source", child_name_rep);
 }
 
-void EWFFILE::read_ewf_data(void) throw(ECA_ERROR*) {
+void EWFFILE::read_ewf_data(void) throw(ECA_ERROR&) {
   if (ewf_rc.has("source"))
     child_name_rep = ewf_rc.resource("source");
   else 

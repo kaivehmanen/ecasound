@@ -69,7 +69,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
    *  !is_open()
    *  fio == 0
    */
-  void format_query(void) throw(ECA_ERROR*);
+  void format_query(void) throw(ECA_ERROR&);
 
   enum Format_tags {
     unknown		= (0x0000),
@@ -99,7 +99,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
   virtual string name(void) const { return("RIFF wave file"); }
   virtual bool locked_audio_format(void) const { return(true); }
 
-  virtual void open(void) throw(ECA_ERROR*);
+  virtual void open(void) throw(ECA_ERROR&);
   virtual void close(void);
 
   virtual long int read_samples(void* target_buffer, long int samples);
@@ -120,14 +120,14 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
 
   void update(void);        
   void set_length_in_bytes(void);
-  void read_riff_header (void) throw(ECA_ERROR*);
+  void read_riff_header (void) throw(ECA_ERROR&);
   bool next_riff_block(RB *t, unsigned long int *offtmp);
-  void read_riff_fmt(void) throw(ECA_ERROR*);
-  void write_riff_header (void) throw(ECA_ERROR*);
+  void read_riff_fmt(void) throw(ECA_ERROR&);
+  void write_riff_header (void) throw(ECA_ERROR&);
   void write_riff_fmt(void);
   void write_riff_datablock(void);
   void update_riff_datablock(void);
-  void find_riff_datablock (void) throw(ECA_ERROR*);
+  void find_riff_datablock (void) throw(ECA_ERROR&);
   signed long int find_block(const char* fblock);
 };
 

@@ -61,8 +61,8 @@ void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name) {
     select_chainsetup(name);
     ecadebug->msg("(eca-controller) Added a new chainsetup with name \"" + name + "\".");
   }
-  catch(ECA_ERROR* e) {
-    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  catch(ECA_ERROR& e) {
+    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
 
   // --------
@@ -114,8 +114,8 @@ void ECA_CONTROL_OBJECTS::load_chainsetup(const string& filename) {
     select_chainsetup(get_chainsetup_filename(filename)->name());
     ecadebug->msg("(eca-controller) Loaded chainsetup from file \"" + filename + "\".");
   }
-  catch(ECA_ERROR* e) {
-    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  catch(ECA_ERROR& e) {
+    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
 }
 
@@ -141,8 +141,8 @@ void ECA_CONTROL_OBJECTS::save_chainsetup(const string& filename) {
     
   ecadebug->msg("(eca-controller) Saved selected chainsetup \"" + selected_chainsetup() + "\".");
   }
-  catch(ECA_ERROR* e) {
-    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  catch(ECA_ERROR& e) {
+    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
 }
 
@@ -544,8 +544,8 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_sample_format(const string& name) {
   try {
     selected_chainsetup_repp->interpret_object_option("-f:" + name);
   }
-  catch(ECA_ERROR* e) {
-    ecadebug->msg("(eca-control-objects) ERROR: [" + e->error_section() + "] : \"" + e->error_msg() + "\"");
+  catch(ECA_ERROR& e) {
+    ecadebug->msg("(eca-control-objects) ERROR: [" + e.error_section() + "] : \"" + e.error_message() + "\"");
   }
 
 }
@@ -1009,9 +1009,9 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const string& sfrm,
   try {
     selected_chainsetup_repp->interpret_object_option(format);
   }
-  catch(ECA_ERROR* e) {
+  catch(ECA_ERROR& e) {
     ecadebug->msg("(eca-control-objects) ERROR: [" +
-		  e->error_section() + "] : \"" + e->error_msg() + "\"");
+		  e.error_section() + "] : \"" + e.error_message() + "\"");
   }
 
 }
@@ -1176,8 +1176,8 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
     select_audio_object(filename);
     ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
   }
-  catch(ECA_ERROR* e) {
-    ecadebug->msg("(eca-control-objects) ERROR: [" + e->error_section() + "] : \"" + e->error_msg() + "\"");
+  catch(ECA_ERROR& e) {
+    ecadebug->msg("(eca-control-objects) ERROR: [" + e.error_section() + "] : \"" + e.error_message() + "\"");
   }
 }
 
@@ -1204,8 +1204,8 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
     ecadebug->msg("(eca-controller) Added audio output \"" + filename +
 		  "\".");
   }
-  catch(ECA_ERROR* e) {
-    ecadebug->msg("(eca-control-objects) ERROR: [" + e->error_section() + "] : \"" + e->error_msg() + "\"");
+  catch(ECA_ERROR& e) {
+    ecadebug->msg("(eca-control-objects) ERROR: [" + e.error_section() + "] : \"" + e.error_message() + "\"");
   }
 }
 
@@ -1398,9 +1398,9 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(const string& chainop_params) {
   try {
     selected_chainsetup_repp->interpret_object_option(chainop_params);
   }
-  catch(ECA_ERROR* e) {
+  catch(ECA_ERROR& e) {
     ecadebug->msg("(eca-control-objects) ERROR: [" +
-		  e->error_section() + "] : \"" + e->error_msg() + "\"");
+		  e.error_section() + "] : \"" + e.error_message() + "\"");
   }
 
   if (was_running == true)
@@ -1591,8 +1591,8 @@ void ECA_CONTROL_OBJECTS::add_controller(const string& gcontrol_params) {
   try {
     selected_chainsetup_repp->interpret_object_option(gcontrol_params);
   }
-  catch(ECA_ERROR* e) {
-    ecadebug->msg("(eca-control-objects) ERROR: [" + e->error_section() + "] : \"" + e->error_msg() + "\"");
+  catch(ECA_ERROR& e) {
+    ecadebug->msg("(eca-control-objects) ERROR: [" + e.error_section() + "] : \"" + e.error_message() + "\"");
   }
 
   if (was_running == true)

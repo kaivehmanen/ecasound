@@ -228,7 +228,7 @@ void ECA_CHAINSETUP::preprocess_options(vector<string>& opts) {
  *  (option succesfully interpreted && interpretation_result() ==  true) ||
  *  (unknown or invalid option && interpretation_result() == false)
  */
-void ECA_CHAINSETUP::interpret_option (const string& arg) throw(ECA_ERROR*) {
+void ECA_CHAINSETUP::interpret_option (const string& arg) throw(ECA_ERROR&) {
   interpret_global_option(arg);
   if (istatus_rep == false) interpret_object_option(arg);
 }
@@ -265,7 +265,7 @@ void ECA_CHAINSETUP::interpret_global_option (const string& arg) {
  *  (option succesfully interpreted && interpretation_result() ==  true) ||
  *  (unknown or invalid option && interpretation_result() == false)
  */
-void ECA_CHAINSETUP::interpret_object_option (const string& arg) throw(ECA_ERROR*) {
+void ECA_CHAINSETUP::interpret_object_option (const string& arg) throw(ECA_ERROR&) {
   istatus_rep = false;
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting object option \"" + arg + "\".");
   interpret_chains(arg);
@@ -278,7 +278,7 @@ void ECA_CHAINSETUP::interpret_object_option (const string& arg) throw(ECA_ERROR
 /**
  * Interpret a vector of options.
  */
-void ECA_CHAINSETUP::interpret_options(vector<string>& opts) throw(ECA_ERROR*) {
+void ECA_CHAINSETUP::interpret_options(vector<string>& opts) throw(ECA_ERROR&) {
   vector<string>::iterator p = opts.begin();
   p = opts.begin();
   while(p != opts.end()) {
@@ -294,7 +294,7 @@ void ECA_CHAINSETUP::interpret_options(vector<string>& opts) throw(ECA_ERROR*) {
     if (interpretation_status() == false) {
       interpret_global_option(*p);
       if (interpretation_status() == false) {
-	throw(new ECA_ERROR("ECA-CHAINSETUP", "Invalid argument, unable to parse: '" + *p + "'"));
+	throw(ECA_ERROR("ECA-CHAINSETUP", "Invalid argument, unable to parse: '" + *p + "'"));
       }
     }
     ++p;
@@ -574,7 +574,7 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
  *  argu.size() > 0
  *  argu[0] == '-'
  */
-void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERROR*) { 
+void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERROR&) { 
   // --------
   REQUIRE(argu.size() > 0);
   REQUIRE(argu[0] == '-');
@@ -596,14 +596,14 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
       if (last_audio_object != 0) {
 	if ((last_audio_object->supported_io_modes() &
 	    AUDIO_IO::io_read) != AUDIO_IO::io_read) {
-	  throw(new ECA_ERROR("ECA-CHAINSETUP", "I/O-mode 'io_read' not supported by " + last_audio_object->name()));
+	  throw(ECA_ERROR("ECA-CHAINSETUP", "I/O-mode 'io_read' not supported by " + last_audio_object->name()));
 	}
 	last_audio_object->io_mode(AUDIO_IO::io_read);
 	last_audio_object->set_audio_format(default_audio_format_rep);
 	add_input(last_audio_object);
       }
       else {
-	throw(new ECA_ERROR("ECA-CHAINSETUP", "Format of input " +
+	throw(ECA_ERROR("ECA-CHAINSETUP", "Format of input " +
 			    tname + " not recognized."));
       }
       break;
@@ -624,7 +624,7 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
 	}
 	if ((last_audio_object->supported_io_modes() &
 	    mode_tmp != mode_tmp)) {
-	    throw(new ECA_ERROR("ECA-CHAINSETUP", "I/O-mode 'io_write' not supported by " + last_audio_object->name()));
+	    throw(ECA_ERROR("ECA-CHAINSETUP", "I/O-mode 'io_write' not supported by " + last_audio_object->name()));
 	}
       
 	last_audio_object->io_mode(mode_tmp);
@@ -632,7 +632,7 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) throw(ECA_ERR
 	add_output(last_audio_object);
       }
       else {
-	throw(new ECA_ERROR("ECA-CHAINSETUP", "Format of output " +
+	throw(ECA_ERROR("ECA-CHAINSETUP", "Format of output " +
 			    tname + " not recognized."));
       }
       break;
@@ -951,9 +951,9 @@ void ECA_CHAINSETUP::add_default_output(void) {
   }
 }
 
-void ECA_CHAINSETUP::load_from_file(const string& filename) throw(ECA_ERROR*) { 
+void ECA_CHAINSETUP::load_from_file(const string& filename) throw(ECA_ERROR&) { 
   ifstream fin (filename.c_str());
-  if (!fin) throw(new ECA_ERROR("ECA_CHAINSETUP", "Couldn't open setup read file: \"" + filename + "\".", ECA_ERROR::retry));
+  if (!fin) throw(ECA_ERROR("ECA_CHAINSETUP", "Couldn't open setup read file: \"" + filename + "\".", ECA_ERROR::retry));
 
   string temp, another;
   while(fin >> temp) {
@@ -966,19 +966,19 @@ void ECA_CHAINSETUP::load_from_file(const string& filename) throw(ECA_ERROR*) {
   options = COMMAND_LINE::combine(options);
 }
 
-void ECA_CHAINSETUP::save(void) throw(ECA_ERROR*) { 
+void ECA_CHAINSETUP::save(void) throw(ECA_ERROR&) { 
   if (setup_filename_rep.empty() == true)
     setup_filename_rep = setup_name_rep + ".ecs";
   save_to_file(setup_filename_rep);
 }
 
-void ECA_CHAINSETUP::save_to_file(const string& filename) throw(ECA_ERROR*) {
+void ECA_CHAINSETUP::save_to_file(const string& filename) throw(ECA_ERROR&) {
   update_option_strings();
 
   ofstream fout (filename.c_str());
   if (!fout) {
     cerr << "Going to throw an exception...\n";
-    throw(new ECA_ERROR("ECA_CHAINSETUP", "Couldn't open setup save file: \"" +
+    throw(ECA_ERROR("ECA_CHAINSETUP", "Couldn't open setup save file: \"" +
   			filename + "\".", ECA_ERROR::retry));
   }
 

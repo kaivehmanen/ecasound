@@ -29,7 +29,7 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
   string name(void) const { return("aRts client"); }
   string description(void) const { return("aRts client. Audio input and output using aRts server."); }
 
-  virtual void open(void) throw(ECA_ERROR*);
+  virtual void open(void) throw(ECA_ERROR&);
   virtual void close(void);
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }

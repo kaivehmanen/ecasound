@@ -113,7 +113,7 @@ class SAMPLE_BUFFER_BASE {
 		      long int samples,
 		      ECA_AUDIO_FORMAT::Sample_format fmt,
 		      int ch,
-		      long int srate) throw(ECA_ERROR*);
+		      long int srate) throw(ECA_ERROR&);
 
   /**
    * Copy contents of sample buffer to 'target'. Sample data 
@@ -126,7 +126,7 @@ class SAMPLE_BUFFER_BASE {
   void copy_from_buffer(unsigned char* target,
 			ECA_AUDIO_FORMAT::Sample_format fmt,
 			int ch,
-			long int srate) throw(ECA_ERROR*);
+			long int srate) throw(ECA_ERROR&);
         
   // ---
   // Buffer setup

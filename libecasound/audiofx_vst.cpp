@@ -47,16 +47,16 @@ long vst_audiomaster(AEffect *effect,
     }
 }
 
-VST_plugin_descriptor create_vst_plugin(const string& fname) throw(ECA_ERROR*);
+VST_plugin_descriptor create_vst_plugin(const string& fname) throw(ECA_ERROR&);
 
-EFFECT_VST::EFFECT_VST (const string& fname) throw(ECA_ERROR*) {
+EFFECT_VST::EFFECT_VST (const string& fname) throw(ECA_ERROR&) {
   cerr << "here!" << endl;
   library_file_rep = fname;
   master_func = create_vst_plugin(fname);
   vst_handles.push_back(master_func(vst_audiomaster));
 //    if ((vst_handles.back()->flags & effFlagsCanReplacing) !=
 //        effFlagsCanReplacing) 
-//      throw(new ECA_ERROR("AUDIOFX_VST", "Plugin doesn't support process_replacing()."));
+//      throw(ECA_ERROR("AUDIOFX_VST", "Plugin doesn't support process_replacing()."));
 
   label_rep = "VST-plugin";
   unique_rep = kvu_numtostr(vst_handles.back()->uniqueID);
@@ -97,16 +97,16 @@ void EFFECT_VST::process(void) {
   }
 }
 
-VST_plugin_descriptor create_vst_plugin(const string& fname) throw(ECA_ERROR*) { 
+VST_plugin_descriptor create_vst_plugin(const string& fname) throw(ECA_ERROR&) { 
   cerr << "fname: " << fname << endl;
   void *plugin_handle = dlopen(fname.c_str(), RTLD_LAZY);
   if (plugin_handle == 0) 
-    throw(new ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable to open VST plugin file."));
+    throw(ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable to open VST plugin file."));
 
   VST_plugin_descriptor desc_func;
   desc_func = (VST_plugin_descriptor)dlsym(plugin_handle, "main_plugin");
   if (desc_func == 0)
-    throw(new ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable find plugin VST's main_plugin()."));
+    throw(ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable find plugin VST's main_plugin()."));
 
   return(desc_func);
 }

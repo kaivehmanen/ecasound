@@ -50,7 +50,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
   void interpret_chain_operator (const string& arg);
   void interpret_controller (const string& arg);
   void interpret_effect_preset (const string& arg);
-  void interpret_audioio_device (const string& argu) throw(ECA_ERROR*);
+  void interpret_audioio_device (const string& argu) throw(ECA_ERROR&);
 
  public:
 
@@ -65,10 +65,10 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
   CHAIN_OPERATOR* create_vst_plugin (const string& arg);
   GENERIC_CONTROLLER* create_controller (const string& arg);
 
-  void interpret_option(const string& arg) throw(ECA_ERROR*);
+  void interpret_option(const string& arg) throw(ECA_ERROR&);
   void interpret_global_option(const string& arg);
-  void interpret_object_option(const string& arg) throw(ECA_ERROR*);
-  void interpret_options(vector<string>& opts) throw(ECA_ERROR*);
+  void interpret_object_option(const string& arg) throw(ECA_ERROR&);
+  void interpret_options(vector<string>& opts) throw(ECA_ERROR&);
 
   /**
    * Returns the result of last call to interpret_option(), interpret_global_option() 
@@ -91,9 +91,9 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
   // ---
   // Setup load/save functions
   // ---
-  void load_from_file(const string& filename) throw(ECA_ERROR*);
-  void save(void) throw(ECA_ERROR*);
-  void save_to_file(const string& filename) throw(ECA_ERROR*);
+  void load_from_file(const string& filename) throw(ECA_ERROR&);
+  void save(void) throw(ECA_ERROR&);
+  void save_to_file(const string& filename) throw(ECA_ERROR&);
 
   // ---
   // Chainsetup info

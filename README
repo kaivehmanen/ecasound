@@ -159,18 +159,19 @@ Kai Vehmanen -	mailto:kaiv@wakkanet.fi
  Contributors / credits / thanks to 
 -----------------------------------------------------------------------
 
-Barton-Davis, Paul - Quasimodo and Hdr have given me a lot of ideas.
+Barton-Davis, Paul - For the work his done for linux audio
 Dyson, John S. - Wrote the original advanced compressor (-eca) code.
 Endersz, Viktor - For sending me the adv.compressor source code!
+Eure, Ian and Junichi Uekawa  - For creating ecasound debian packages [ieure,juekawa]
 Fendt, Stefan - Original code for reverb (-ete) and RC-lowpass filter (-ef4).
-Hall, Jeremy - Extensive testing, ALSA 0.6.x support, many design ideas.
-Hamara, Arto - Ecasound logo(s), lots of great ideas!
+Hall, Jeremy - Extensive testing, ALSA 0.6.x support, many design ideas [jhall]
+Hamara, Arto - Ecasound logo(s), bug fixes and lots of great ideas! [artham]
 Lavallée, Marc - Rpm-spec for Mandrake.
-Laydier, Antoine aka SMF - layer.cpp (interprets mp3 headers)
+Laydier, Antoine - layer.cpp (interprets mp3 headers) [SMF]
 Petit, Bertrand - Helped with POSIX-compatibility issues.
 Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!
-Wróblewski, Artur - PLD-Linux RPM-specfile, readline and destdir patches.
-Sassmannshausen, Ruediger - Mp3 filename parsing fixes.
+Wróblewski, Artur - PLD-Linux RPM-specfile, readline and destdir patches. [wrobell]
+Sassmannshausen, Ruediger - Mp3 filename parsing fixes. [rsassman]
 Smith, Richard A. - Helped in solving the "gcc 2.95" bug.
 Sousa, Rui - OSS bug fixes.
 Tkachenko, Vadim - Autoconf magic. :)

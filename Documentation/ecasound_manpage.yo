@@ -26,7 +26,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (27.08.2000)
+       (06.10.2000)
        ()
        (Multimedia software)
 
@@ -482,7 +482,7 @@ Plugin API). Plugins are located in shared library (.so) files in
 /usr/local/share/ladspa (configured in ecasoundrc(5)). One shared
 library file can contain multiple plugin objects, but every plugin 
 has a unique plugin name. This name is used for selecting plugins. 
-See url(LAD mailing list web site)(http://audio.netpedia.net/lad) for
+See url(LAD mailing list web site)(http://www.linuxdj.com/audio/lad) for
 more info about LADSPA. Other useful sites are url(LADSPA home
 page)(http://www.ladspa.org) and url(LADSPA
 documentation)(http://www.ffem.org/gdam/ladspa-doc/ladspa.html).

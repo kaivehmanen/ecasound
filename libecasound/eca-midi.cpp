@@ -141,7 +141,7 @@ bool MIDI_IN_QUEUE::forth_get(void) {
   return(true);
 };
 
-void init_midi_queues(void) throw(ECA_ERROR*) {
+void init_midi_queues(void) throw(ECA_ERROR&) {
   static bool ready = false;
 
   if (ready == true) return; 
@@ -153,7 +153,7 @@ void init_midi_queues(void) throw(ECA_ERROR*) {
   pthread_t th_midi;
   int retcode = ::pthread_create(&th_midi, NULL, update_midi_queues, NULL);
   if (retcode != 0)
-    throw(new ECA_ERROR("ECA-MIDI", "unable to create MIDI-thread"));
+    throw(ECA_ERROR("ECA-MIDI", "unable to create MIDI-thread"));
 }
 
 void *update_midi_queues(void *) {
@@ -196,7 +196,7 @@ void *update_midi_queues(void *) {
     use_alsa = true;
 #ifdef COMPILE_ALSA_RAWMIDI
     if (::snd_rawmidi_open(&midihandle, card, device, SND_RAWMIDI_OPEN_INPUT) < 0) {
-      throw(new ECA_ERROR("ECA-MIDI", "unable to open ALSA raw-MIDI device " +
+      throw(ECA_ERROR("ECA-MIDI", "unable to open ALSA raw-MIDI device " +
 			erc.resource("midi-device") + "."));
     }
 
@@ -206,7 +206,7 @@ void *update_midi_queues(void *) {
     fd = ::snd_rawmidi_file_descriptor(midihandle);
 #endif
 #else 
-    throw(new ECA_ERROR("ECA-MIDI", "Unable to open ALSA raw-MIDI device, because ALSA was disabled during compilation."));
+    throw(ECA_ERROR("ECA-MIDI", "Unable to open ALSA raw-MIDI device, because ALSA was disabled during compilation."));
 #endif
   }
   else {
@@ -215,7 +215,7 @@ void *update_midi_queues(void *) {
 
     fd = ::open("/dev/midi", O_RDONLY);
     if (fd == -1) {
-      throw(new ECA_ERROR("ECA-MIDI", "unable to open OSS raw-MIDI device " +
+      throw(ECA_ERROR("ECA-MIDI", "unable to open OSS raw-MIDI device " +
 			  erc.resource("midi-device") + "."));
     }
   }

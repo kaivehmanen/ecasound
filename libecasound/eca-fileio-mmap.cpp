@@ -35,13 +35,13 @@ ECA_FILE_IO_MMAP::~ECA_FILE_IO_MMAP(void) { }
 
 void ECA_FILE_IO_MMAP::open_file(const string& fname, 
 			    const string& fmode,
-			    bool handle_errors) throw(ECA_ERROR*)
+			    bool handle_errors) throw(ECA_ERROR&)
 { 
   if (fmode == "rb") {
     f1 = ::open(fname.c_str(), O_RDWR);
     if (!f1) {
       if (handle_errors) {
-	throw(new ECA_ERROR("ECA-FILEIO", "unable to open file " + fname +
+	throw(ECA_ERROR("ECA-FILEIO", "unable to open file " + fname +
 			    " in mode \"" + fmode + "\".", ECA_ERROR::retry));
       }
       mode_rep = "";
@@ -58,7 +58,7 @@ void ECA_FILE_IO_MMAP::open_file(const string& fname,
   }
   else {
     if (handle_errors) {
-      throw(new ECA_ERROR("ECA-FILEIO", "unable to open file " + fname +
+      throw(ECA_ERROR("ECA-FILEIO", "unable to open file " + fname +
 			    " in mode \"" + fmode + "\".", ECA_ERROR::retry));
     }
   }

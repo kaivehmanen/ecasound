@@ -40,6 +40,6 @@ GLOBAL_PRESET::GLOBAL_PRESET(const string& preset_name)
   }
   else {
     set_name("empty");
-    throw(new ECA_ERROR("GLOBAL_PRESET", "requested preset was not found from " + filename + "."));
+    throw(ECA_ERROR("GLOBAL_PRESET", "requested preset was not found from " + filename + "."));
   }
 }

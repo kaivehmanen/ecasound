@@ -35,14 +35,14 @@ ARTS_INTERFACE::ARTS_INTERFACE(const string& name)
   label(name);
 }
 
-void ARTS_INTERFACE::open(void) throw(ECA_ERROR*)
+void ARTS_INTERFACE::open(void) throw(ECA_ERROR&)
 {
   if (is_open() == true) return;
 
   if (ref_rep == 0) {
     int err = ::arts_init();
     if (err < 0) {
-      throw(new ECA_ERROR("AUDIOIO-ARTS", "unable to connect to aRts server: " + string(arts_error_text(err))));
+      throw(ECA_ERROR("AUDIOIO-ARTS", "unable to connect to aRts server: " + string(arts_error_text(err))));
     }
   }
   ++ref_rep;
@@ -54,7 +54,7 @@ void ARTS_INTERFACE::open(void) throw(ECA_ERROR*)
     stream_rep = ::arts_play_stream(samples_per_second(), bits(), channels(), "ecasound-output");
   }
   else {
-      throw(new ECA_ERROR("AUDIOIO-ARTS", "Simultanious intput/output not supported."));
+      throw(ECA_ERROR("AUDIOIO-ARTS", "Simultanious intput/output not supported."));
   }
 
   ::arts_stream_set(stream_rep, ARTS_P_BUFFER_SIZE, buffersize() * frame_size());

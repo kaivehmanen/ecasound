@@ -99,18 +99,18 @@ int main(int argc, char *argv[])
       }
     }
   }
-  catch(ECA_ERROR* e) {
-    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  catch(ECA_ERROR& e) {
+    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
-  catch(DBC_EXCEPTION* e) { 
+  catch(DBC_EXCEPTION& e) { 
     cerr << "Failed condition \"" 
-	 << e->type_repp 
+	 << e.type_repp 
          << ": " 
-         << e->expression_repp
+         << e.expression_repp
 	 << "\": file " 
-	 << e->file_repp 
+	 << e.file_repp 
 	 << ", line " 
-	 << e->line_rep 
+	 << e.line_rep 
 	 << "." 
 	 << endl;
     exit(1);
@@ -125,8 +125,8 @@ int main(int argc, char *argv[])
       if (ecaparams != 0) delete ecaparams;
     }
   }
-  catch(ECA_ERROR* e) {
-    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  catch(ECA_ERROR& e) {
+    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
   catch(...) {
     cerr << "---\nCaught an unknown exception!\n";
@@ -200,8 +200,8 @@ void start_iactive(ECA_SESSION* param) {
 	try { 
 	  ctrl.command(cmd);
 	}
-	catch(ECA_ERROR* e) {
-	  cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+	catch(ECA_ERROR& e) {
+	  cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
 	}
       }
       cout << "ecasound ('h' for help)>\n";
@@ -237,9 +237,9 @@ void start_iactive_readline(ECA_SESSION* param) {
 	  exit(0);
 	}
       }
-      catch(ECA_ERROR* e) {
-	cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
-	if (e->error_action() == ECA_ERROR::stop) {
+      catch(ECA_ERROR& e) {
+	cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+	if (e.error_action() == ECA_ERROR::stop) {
 	  free(cmd);
 	  exit(0);
 	}

@@ -71,7 +71,7 @@ ALSA_LOOPBACK_DEVICE::ALSA_LOOPBACK_DEVICE (int card,
 #endif
 }
 
-void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
+void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR&) {
   if (is_open() == true) return;
   int err;
   if (io_mode() == io_read) {
@@ -83,7 +83,7 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
 					  subdevice_number, // subdev
 #endif
 					  SND_PCM_LB_OPEN_PLAYBACK)) < 0) {
-	throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(snd_strerror(err))));
+	throw(ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(snd_strerror(err))));
       }
     }
     else {
@@ -94,12 +94,12 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
 					  subdevice_number, // subdev
 #endif
 					  SND_PCM_LB_OPEN_CAPTURE)) < 0) {
-	throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(snd_strerror(err))));
+	throw(ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(snd_strerror(err))));
       }
     }
   }    
   else {
-      throw(new ECA_ERROR("AUDIOIO-ALSALB", "Only readinng support with a loopback device."));
+      throw(ECA_ERROR("AUDIOIO-ALSALB", "Only readinng support with a loopback device."));
   }
   
   // -------------------------------------------------------------------
@@ -112,7 +112,7 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
 
   
   if (buffersize() == 0) 
-    throw(new ECA_ERROR("AUDIOIO-ALSALB", "Buffersize() is 0!", ECA_ERROR::stop));
+    throw(ECA_ERROR("AUDIOIO-ALSALB", "Buffersize() is 0!", ECA_ERROR::stop));
   callback_buffer_size = buffersize() * frame_size();
   
   // -------------------------------------------------------------------
@@ -133,7 +133,7 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
     case ECA_AUDIO_FORMAT::sfmt_s32_le:  { format = SND_PCM_SFMT_S32_LE; break; }
     case ECA_AUDIO_FORMAT::sfmt_s32_be:  { format = SND_PCM_SFMT_S32_BE; break; }
     default: 
-      throw(new ECA_ERROR("AUDIOIO-ALSALB", "Unknown sample format!", ECA_ERROR::stop));
+      throw(ECA_ERROR("AUDIOIO-ALSALB", "Unknown sample format!", ECA_ERROR::stop));
     }
 
   loopback_format.rate = samples_per_second();
@@ -146,7 +146,7 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
   if (io_mode() == io_read) {
     err = ::snd_pcm_loopback_format(audio_fd, &loopback_format);
     if (err < 0) {
-    throw(new ECA_ERROR("AUDIOIO-ALSALB", "Error when setting up record parameters: " + string(snd_strerror(err))));
+    throw(ECA_ERROR("AUDIOIO-ALSALB", "Error when setting up record parameters: " + string(snd_strerror(err))));
     }
   }
   toggle_open_state(true);
@@ -169,7 +169,7 @@ long int ALSA_LOOPBACK_DEVICE::read_samples(void* target_buffer,
     pthread_t loopback_thread;
     int retcode = ::pthread_create(&loopback_thread, NULL, loopback_controller, audio_fd);
     if (retcode != 0)
-      throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to create thread for alsalb"));
+      throw(ECA_ERROR("AUDIOIO-ALSALB", "unable to create thread for alsalb"));
   }
   first_time = false;
 

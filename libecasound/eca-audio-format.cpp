@@ -76,7 +76,7 @@ void ECA_AUDIO_FORMAT::set_audio_format(const ECA_AUDIO_FORMAT& f) {
   toggle_interleaved_channels(f.interleaved_channels());
 }
 
-void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format v) throw(ECA_ERROR*) {
+void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format v) throw(ECA_ERROR&) {
   sfmt_rep = v;
   convert_to_host_byte_order();
   switch(sfmt_rep) 
@@ -107,7 +107,7 @@ void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format v) thro
       align_rep = 8;
       break;
 
-    default: { throw(new ECA_ERROR("ECA_AUDIO_FORMAT","Audio format not support!")); }
+    default: { throw(ECA_ERROR("ECA_AUDIO_FORMAT","Audio format not support!")); }
     }
 }
 
@@ -147,7 +147,7 @@ void ECA_AUDIO_FORMAT::set_samples_per_second(long int v) { srate_rep = v; }
 void ECA_AUDIO_FORMAT::set_channels(int v) { channels_rep = v; }
 void ECA_AUDIO_FORMAT::toggle_interleaved_channels(bool v) { ileaved_rep = v; }
 
-void ECA_AUDIO_FORMAT::set_sample_format(const string& f_str) throw(ECA_ERROR*) {
+void ECA_AUDIO_FORMAT::set_sample_format(const string& f_str) throw(ECA_ERROR&) {
   if (f_str == "u8") sfmt_rep = sfmt_u8;
   else if (f_str == "s16") sfmt_rep = sfmt_s16;
   else if (f_str == "s16_le") sfmt_rep = sfmt_s16_le;
@@ -166,13 +166,13 @@ void ECA_AUDIO_FORMAT::set_sample_format(const string& f_str) throw(ECA_ERROR*) 
   else if (f_str == "24") sfmt_rep = sfmt_s24;
   else if (f_str == "32") sfmt_rep = sfmt_s32;
   else {
-    throw(new ECA_ERROR("ECA_AUDIO_FORMAT", "Unknown sample format \""
+    throw(ECA_ERROR("ECA_AUDIO_FORMAT", "Unknown sample format \""
 			+ f_str + "\"."));
   }
   set_sample_format(sfmt_rep);
 }
 
-string ECA_AUDIO_FORMAT::format_string(void) const throw(ECA_ERROR*) {
+string ECA_AUDIO_FORMAT::format_string(void) const throw(ECA_ERROR&) {
   switch(sfmt_rep) 
     {
     case sfmt_u8: return("u8");
@@ -185,6 +185,6 @@ string ECA_AUDIO_FORMAT::format_string(void) const throw(ECA_ERROR*) {
     case sfmt_s32_be: return("s32_be");
     case sfmt_f32_le: return("f32_le");
     case sfmt_f32_be: return("f32_be");
-    default: { throw(new ECA_ERROR("ECA_AUDIO_FORMAT","Audio format not support!")); }
+    default: { throw(ECA_ERROR("ECA_AUDIO_FORMAT","Audio format not support!")); }
     }
 }

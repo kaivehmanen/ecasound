@@ -27,7 +27,6 @@
 [ Upcoming features - implemented as soon as possible ]
 
 - comments in ecs (chainsetup) files
-- type override for audio objects
 - mp3 bitrate as a command-line parameter
 - make separate xxx-list and xxx-status commands (a pure list, and a more
   verbose xxx-status command) [ia-mode]
@@ -41,6 +40,7 @@
 
 Input/output devices:
 
+- type override for audio objects
 - internal support for mp3 encoding and decoding (libmpg123 + libmp3lame)
 - SMPTE time-code
 - integration to some synth engine - for instance Csound, aRts, 
@@ -52,6 +52,7 @@ Input/output devices:
 - mpeglib support
 - ogg vorbis plugin
 - shorten support
+- timidity++
 - wrapper objects for triggering file input/output based on volume
   level or timers
 

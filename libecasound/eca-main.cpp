@@ -54,24 +54,27 @@ ECA_PROCESSOR::ECA_PROCESSOR(ECA_SESSION* params)
   init();
 }
 
-ECA_PROCESSOR::ECA_PROCESSOR(void) { }
+ECA_PROCESSOR::ECA_PROCESSOR(void) : eparams(0) { }
 
 ECA_PROCESSOR::~ECA_PROCESSOR(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "ECA_PROCESSOR destructor!");
 
-  if (eparams != 0) eparams->status(ECA_SESSION::ep_status_notready);
-  stop();
+  if (eparams != 0) {
+    eparams->status(ECA_SESSION::ep_status_notready);
+    stop();
 
-  vector<CHAIN*>::iterator q = csetup->chains.begin();
-  while(q != csetup->chains.end()) {
-    (*q)->disconnect_buffer();
-    ++q;
+    vector<CHAIN*>::iterator q = csetup->chains.begin();
+    while(q != csetup->chains.end()) {
+      (*q)->disconnect_buffer();
+      ++q;
+    }
   }
 
   if (subthread_initialized == true) {
     ::pthread_cancel(chain_thread);
     ::pthread_join(chain_thread,NULL);
   }
+
   ecadebug->control_flow("Engine/Exiting");
 }
 
@@ -121,11 +124,11 @@ void ECA_PROCESSOR::init_variables(void) {
   rt_running = false;
 }
 
-void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR*) {
+void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR&) {
   csetup = eparams->connected_chainsetup_repp;
 
   if (csetup == 0 )
-    throw(new ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, no chainsetup connected!"));
+    throw(ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, no chainsetup connected!"));
 
   init_inputs(); // input-output order is important here (sync fix)
   init_outputs();
@@ -139,7 +142,7 @@ void ECA_PROCESSOR::init_inputs(void) {
   input_count = static_cast<int>(inputs->size());
 
   if (inputs == 0 || inputs->size() == 0) {
-    throw(new ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, session in corrupted state: no inputs!"));
+    throw(ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, session in corrupted state: no inputs!"));
   }
 
   input_start_pos.resize(input_count);
@@ -189,7 +192,7 @@ void ECA_PROCESSOR::init_outputs(void) {
 
   if (outputs  == 0 ||
       outputs->size() == 0) {
-    throw(new ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, session in corrupted state: no outputs!"));
+    throw(ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, session in corrupted state: no outputs!"));
   }
 
   output_start_pos.resize(output_count);
@@ -232,7 +235,7 @@ void ECA_PROCESSOR::init_chains(void) {
 
   if (chains == 0 ||
       chains->size() == 0) {
-    throw(new ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, session in corrupted state: no chains!"));
+    throw(ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, session in corrupted state: no chains!"));
   }
 
   chain_ready_for_submix.resize(chain_count);
@@ -884,14 +887,14 @@ bool ECA_PROCESSOR::is_slave_output(AUDIO_IO* aiod) const {
   return(false);
 }
 
-void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
+void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR&) {
   for (int c = 0; c != chain_count; c++) 
     (*chains)[c]->init(&(cslots[c]));
 
   ecadebug->control_flow("Engine/Init - mixmode \"multithreaded interactive\"");
   int submix_pid = ::pthread_create(&chain_thread, NULL, ::mthread_process_chains, ((void*)this));
   if (submix_pid != 0)
-    throw(new ECA_ERROR("ECA-MAIN", "Unable to create a new thread (mthread_process_chains)."));
+    throw(ECA_ERROR("ECA-MAIN", "Unable to create a new thread (mthread_process_chains)."));
 
   subthread_initialized = true;
   for (int chain_sizet = 0; chain_sizet < chain_count; chain_sizet++)
@@ -948,7 +951,7 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
   ::pthread_join(chain_thread,NULL);
 }
 
-void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
+void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR&) {
   for (int c = 0; c != chain_count; c++) 
     (*chains)[c]->init(&(cslots[c]));
 
@@ -960,7 +963,7 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
 
   int submix_pid = ::pthread_create(&chain_thread, NULL, mthread_process_chains, ((void*)this));
   if (submix_pid != 0)
-    throw(new ECA_ERROR("ECA-MAIN", "Unable to create a new thread (mthread_process_chains)."));
+    throw(ECA_ERROR("ECA-MAIN", "Unable to create a new thread (mthread_process_chains)."));
   subthread_initialized = true;
 
   if (sched_getscheduler(0) == SCHED_FIFO) {

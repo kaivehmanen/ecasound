@@ -42,7 +42,7 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
   virtual string parameter_names(void) const { return("label,card,device"); }
 #endif
 
-  virtual void open(void) throw(ECA_ERROR*);
+  virtual void open(void) throw(ECA_ERROR&);
   virtual void close(void);
   
   virtual long int read_samples(void* target_buffer, long int samples);

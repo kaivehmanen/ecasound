@@ -2,6 +2,12 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-10-07  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-error.h (all): classes made non-virtual, many other big changes
+	* audioio-mikmod.h (default_mikmod_path and default_mikmod_args
+	combined into default_mikmod_cmd)
+		
 2000-09-24  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* audiofx_timebased.h (EFFECT_MODULATING_DELAY): constructor

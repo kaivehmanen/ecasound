@@ -38,6 +38,7 @@
 #include "audioio.h"
 #include "audioio-mp3.h"
 #include "audioio-mikmod.h"
+#include "audioio-timidity.h"
 
 #include "osc-gen.h"
 
@@ -64,7 +65,7 @@ ECA_SESSION::~ECA_SESSION(void) {
   ecadebug->control_flow("Closing session");
 }
 
-ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*) {
+ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
   set_defaults();
 
   cline.combine();
@@ -80,9 +81,9 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*) {
       add_chainsetup(comline_setup);
       if (selected_chainsetup_repp->is_valid()) connect_chainsetup();
     }
-    catch (ECA_ERROR* e) {
+    catch (ECA_ERROR& e) {
       if (iactive_rep) {
-	if (e->error_action() != ECA_ERROR::retry) throw;
+	if (e.error_action() != ECA_ERROR::retry) throw;
       }
       else
 	throw;
@@ -108,9 +109,8 @@ void ECA_SESSION::set_defaults(void) {
 
   MP3FILE::set_mp3_input_cmd(ecaresources.resource("ext-mp3-input-cmd"));
   MP3FILE::set_mp3_output_cmd(ecaresources.resource("ext-mp3-output-cmd"));
-
-  MIKMOD_INTERFACE::set_mikmod_path(ecaresources.resource("ext-mikmod-path"));
-  MIKMOD_INTERFACE::set_mikmod_args(ecaresources.resource("ext-mikmod-args"));
+  MIKMOD_INTERFACE::set_mikmod_cmd(ecaresources.resource("ext-mikmod-cmd"));
+  TIMIDITY_INTERFACE::set_timidity_cmd(ecaresources.resource("ext-timidity-cmd"));
 
   multitrack_mode_rep = false;
 }
@@ -130,7 +130,7 @@ void ECA_SESSION::add_chainsetup(const string& name) {
   // --------
 }
 
-void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) throw(ECA_ERROR*) {
+void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) throw(ECA_ERROR&) {
   // --------
   // require:
   assert(comline_setup != 0);
@@ -141,7 +141,7 @@ void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) throw(ECA_ERROR*
   while(p != chainsetups_rep.end()) {
     if ((*p)->name() == comline_setup->name()) {
       delete comline_setup;
-      throw(new ECA_ERROR("ECA-SESSION","Chainsetup \"" + (*p)->name() + 
+      throw(ECA_ERROR("ECA-SESSION","Chainsetup \"" + (*p)->name() + 
 			  "\" already exists.", ECA_ERROR::retry));
     }
     ++p;
@@ -204,7 +204,7 @@ void ECA_SESSION::select_chainsetup(const string& name) {
   // --------
 }
 
-void ECA_SESSION::save_chainsetup(void) throw(ECA_ERROR*) {
+void ECA_SESSION::save_chainsetup(void) throw(ECA_ERROR&) {
   // --------
   // require:
   assert(selected_chainsetup_repp != 0);
@@ -213,7 +213,7 @@ void ECA_SESSION::save_chainsetup(void) throw(ECA_ERROR*) {
   selected_chainsetup_repp->save();
 }
 
-void ECA_SESSION::save_chainsetup(const string& filename) throw(ECA_ERROR*) {
+void ECA_SESSION::save_chainsetup(const string& filename) throw(ECA_ERROR&) {
   // --------
   // require:
   assert(selected_chainsetup_repp != 0 && filename.empty() != true);
@@ -222,7 +222,7 @@ void ECA_SESSION::save_chainsetup(const string& filename) throw(ECA_ERROR*) {
   selected_chainsetup_repp->save_to_file(filename);
 }
 
-void ECA_SESSION::load_chainsetup(const string& filename) throw(ECA_ERROR*) {
+void ECA_SESSION::load_chainsetup(const string& filename) throw(ECA_ERROR&) {
   // --------
   // require:
   assert(filename.empty() != true);

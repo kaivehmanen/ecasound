@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (15092000)
+       (06102000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -130,9 +130,33 @@ dit(Use of 3rd person)
 dit(Sentences start with a verb)
 "Writes samples to memory." instead of "Samples are written to memory."
 dit(This instead of the)
-"Get controllers connected to this effect." instead of "Get
-controllers connected to the effect.
+"Get controllers connected to this effect." instead of "Get controllers connected to the effect.
 enddit()
+
+COMMENT(----------------------------------------------------------------)
+subsect(Versioning)
+All ecasound releases have a distinct version number. In addition, 
+every released version is marked either with 'd' (development) 
+or 'r' (stable release). For instance, you could have development 
+releases 0.1d1, 0.2d1 and 0.3d1. When the development reaches a stable 
+status, 0.4r1 will be released. After this, a new development series 
+will start (0.5d2, and so on).
+
+Separation between development and stable releases is very important,
+because it affects library versioning. The idea is that all library
+interfaces are versioned separately with libtool. If during
+development changes are made to the public interfaces, a new interface
+version is created. The new interface version won't be frozen until the 
+next stable version. After this, no changes to the interface (affects
+both at binary and source level) are allowed. If these changes must be 
+made, a new interface version must be created. It's important to note
+that interface compatibility is not guaranteed between development
+releases. So if you are linking apps against development versions of
+ecasound libraries, you must be prepared for interface changes.
+
+All changes in the public interfaces are documented in library
+specific em(ChangeLog) files. These files are usually located in the
+top-level source directory.
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -412,7 +436,7 @@ verb(
 COMMENT(----------------------------------------------------------------)
 subsect(LADSPA plugins)
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
-Plugin API). See url(LAD mailing list web site)(http://audio.netpedia.net/lad) for 
+Plugin API). See url(LAD mailing list web site)(http://www.linuxdj.com/audio/lad) for 
 more info about LADSPA. Other useful sites are 
 url(LADSPA home page)(http://www.ladspa.org) and
 url(LADSPA documentation)(http://www.ffem.org/gdam/ladspa-doc/ladspa.html).

@@ -82,7 +82,7 @@ GENERIC_OSCILLATOR::~GENERIC_OSCILLATOR (void) {
    while(ienvelope.size() > 0) ienvelope.pop_back();
 }
 
-void GENERIC_OSCILLATOR::read_envelope(void) throw(ECA_ERROR*) {
+void GENERIC_OSCILLATOR::read_envelope(void) throw(ECA_ERROR&) {
   preset_found = false;
   linear = false;
   ienvelope.resize(0);
@@ -90,7 +90,7 @@ void GENERIC_OSCILLATOR::read_envelope(void) throw(ECA_ERROR*) {
   ifstream fin (GENERIC_OSCILLATOR::filename.c_str());
 
   if (!fin) {
-    throw(new ECA_ERROR("OSC-GEN", "Unable to open envelope file" +
+    throw(ECA_ERROR("OSC-GEN", "Unable to open envelope file" +
 			GENERIC_OSCILLATOR::filename + " (~/.ecasoundrc)"));
   }
 
@@ -128,7 +128,7 @@ void GENERIC_OSCILLATOR::read_envelope(void) throw(ECA_ERROR*) {
     }
   }
   if (preset_found == false) {
-    throw(new ECA_ERROR("OSC-GEN", "Preset " +
+    throw(ECA_ERROR("OSC-GEN", "Preset " +
 			kvu_numtostr(preset_rep) + " not found from envelope file " + 
 			filename + "."));
   }

@@ -25,7 +25,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (27.08.2000)
+       (07.10.2000)
        ()
        (Multimedia software)
 
@@ -88,7 +88,7 @@ startdit()
 
   	dit(resource-directory) 
   	Directory for ecasound configuration files. 
-  	Defaults to em(/usr/local/share/ecasound).
+  	Defaults to em({prefix-dir}/share/ecasound).
 
   	dit(resource-file-genosc-envelopes) 
   	Configuration file for generic oscillators. Is located in the 
@@ -99,10 +99,10 @@ startdit()
   	resource directory. Defaults to em(effect_presets).
 
 	dit(internal-plugin-directory)
-	Directory containing ecasound's internal plugins. Defaults to em((prefix-dir)/lib/ecasound-plugins).
+	Directory containing ecasound's internal plugins. Defaults to em({prefix-dir}/lib/ecasound-plugins).
 
 	dit(ladspa-plugin-directory)
-	Directory containing LADPSA effect plugins. Defaults to em(/usr/local/lib/ladspa).
+	Directory containing LADPSA effect plugins. Defaults to em({prefix-dir}/lib/ladspa).
 	If environment variable em(LADSPA_PATH) exists, directories
 	specified in it are automatically searched for plugins.
 
@@ -129,11 +129,15 @@ startdit()
 	from standard input. Before execution, "%f" is replaced with 
 	path to the output mp3. Defaults to em(lame -b 128 -x -S - %f).
 
-	dit(ext-mikmod-path)
-	Path to mikmod. Defaults to em(mikmod).
+	dit(ext-mikmod-cmd)
+	Command for starting mikmod input. Before execution, "%f" is replaced with 
+	file path, and %s with select sample rate. Defaults to 
+	em(mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f).
 
-	dit(ext-mikmod-args)
-	Additional options that are passed to mikmod. Defaults to em("-p 0 --noloops").
+	dit(ext-timidity-cmd)
+	Command for starting timidity++ input. Before execution, "%f"
+	is replaced with file path. Defaults to 
+	em(timidity -Or -o - %f).
 
 enddit()
 

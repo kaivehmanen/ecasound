@@ -73,7 +73,7 @@ class ECA_SESSION {
    * ensure:
    *  selected_chainsetup == comline_setup
    */
-  void add_chainsetup(ECA_CHAINSETUP* comline_setup) throw(ECA_ERROR*);
+  void add_chainsetup(ECA_CHAINSETUP* comline_setup) throw(ECA_ERROR&);
 
   /**
    * Remove selected chainsetup
@@ -115,7 +115,7 @@ class ECA_SESSION {
    * require:
    *  selected_chainsetup != 0
    */
-  void save_chainsetup(void) throw(ECA_ERROR*);
+  void save_chainsetup(void) throw(ECA_ERROR&);
 
   /**
    * Save selected chainsetup to file 'filename'
@@ -124,7 +124,7 @@ class ECA_SESSION {
    *  selected_chainsetup != 0 &&
    *  filename.empty() != true
    */
-  void save_chainsetup(const string& filename) throw(ECA_ERROR*);
+  void save_chainsetup(const string& filename) throw(ECA_ERROR&);
 
   /**
    * Load chainsetup from file "filename"
@@ -135,7 +135,7 @@ class ECA_SESSION {
    * ensure:
    *  selected_chainsetup->filename() == filename
    */
-  void load_chainsetup(const string& filename) throw(ECA_ERROR*);
+  void load_chainsetup(const string& filename) throw(ECA_ERROR&);
 
   /**
    * Connect selected chainsetup
@@ -214,7 +214,7 @@ class ECA_SESSION {
   // Constructors and destructors
   // --
   ECA_SESSION(void);
-  ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*);
+  ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&);
   ~ECA_SESSION(void);
 
  private:

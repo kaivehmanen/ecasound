@@ -1,37 +1,36 @@
-#ifndef _AUDIOIO_MIKMOD_H
-#define _AUDIOIO_MIMOD_H
+#ifndef INCLUDED_AUDIOIO_MIKMOD_H
+#define INCLUDED_AUDIOIO_MIKMOD_H
 
 #include <string>
 #include "audioio-types.h"
 #include "samplebuffer.h"
+#include "audioio-forked-stream.h"
 
 /**
  * Interface class for MikMod input. Uses FIFO pipes.
  * @author Kai Vehmanen
  */
-class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED {
+class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
+			 protected AUDIO_IO_FORKED_STREAM {
 
  private:
   
-  static string default_mikmod_path;
-  static string default_mikmod_args;
+  static string default_mikmod_cmd;
 
  public:
 
-  static void set_mikmod_path(const string& value);
-  static void set_mikmod_args(const string& value);
+  static void set_mikmod_cmd(const string& value);
 
  private:
 
   bool finished_rep;
-  int pid_of_child;
-  long int bytes_read;
-  int fd;
+  long int bytes_read_rep;
+  int fd_rep;
   
   void seek_position_in_samples(long pos);
   MIKMOD_INTERFACE& operator=(const MIKMOD_INTERFACE& x) { return *this; }
 
-  void fork_mikmod(void) throw(ECA_ERROR*);
+  void fork_mikmod(void) throw(ECA_ERROR&);
   void kill_mikmod(void);
   
  public:

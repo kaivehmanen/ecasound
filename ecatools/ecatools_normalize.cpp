@@ -89,20 +89,36 @@ int main(int argc, char *argv[])
 	if (m == 0) {
 	  cerr << "Analyzing file \"" << filename << "\".\n";
 	  ectrl.add_audio_input(filename);
+	  if (ectrl.get_audio_object() == 0) {
+	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+	    break;
+	  }
 	  aio_params = ectrl.get_audio_format();
 	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(string(ecatools_normalize_tempfile));
+	  if (ectrl.get_audio_object() == 0) {
+	    cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
+	    break;
+	  }
 
 	  volume = new EFFECT_ANALYZE();
 	  ectrl.add_chain_operator((CHAIN_OPERATOR*)volume);
 	}
 	else {
 	  ectrl.add_audio_input(string(ecatools_normalize_tempfile));
+	  if (ectrl.get_audio_object() == 0) {
+	    cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
+	    break;
+	  }
 	  aio_params = ectrl.get_audio_format();
 	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(filename);
+	  if (ectrl.get_audio_object() == 0) {
+	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+	    break;
+	  }
 	  
 	  amp = new EFFECT_AMPLIFY(multiplier * 100.0);
 	  ectrl.add_chain_operator((CHAIN_OPERATOR*)amp);
@@ -138,8 +154,8 @@ int main(int argc, char *argv[])
       cline.next();
     }
   }
-  catch(ECA_ERROR* e) {
-    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  catch(ECA_ERROR& e) {
+    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
   catch(...) {
     cerr << "\nCaught an unknown exception.\n";

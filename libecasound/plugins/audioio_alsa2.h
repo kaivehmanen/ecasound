@@ -45,7 +45,7 @@ class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
   virtual string parameter_names(void) const { return("label,card,device,subdevice"); }
 
-  virtual void open(void) throw(ECA_ERROR*);
+  virtual void open(void) throw(ECA_ERROR&);
   virtual void close(void);
   
   virtual long int read_samples(void* target_buffer, long int samples);

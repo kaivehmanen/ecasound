@@ -50,7 +50,7 @@
 ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession) 
   : ECA_CONTROL_DUMP(psession) { }
 
-void ECA_CONTROL::command(const string& cmd) throw(ECA_ERROR*) {
+void ECA_CONTROL::command(const string& cmd) throw(ECA_ERROR&) {
   vector<string> cmds = string_to_words(cmd);
 
   vector<string>::iterator p = cmds.begin();
@@ -108,7 +108,7 @@ void ECA_CONTROL::direct_command(const string& cmd) {
 }
 
 void ECA_CONTROL::action(int action_id, 
-			       const vector<string>& args) throw(ECA_ERROR*) {
+			       const vector<string>& args) throw(ECA_ERROR&) {
   bool reconnect = false;
   bool restart = false;
   if (args.empty() == true &&
@@ -162,8 +162,8 @@ void ECA_CONTROL::action(int action_id,
       try {
 	selected_chainsetup_repp->interpret_options(nargs);
       }
-      catch(ECA_ERROR* e) {
-	ecadebug->msg("(eca-control) ERROR: [" + e->error_section() + "] : \"" + e->error_msg() + "\"");
+      catch(ECA_ERROR& e) {
+	ecadebug->msg("(eca-control) ERROR: [" + e.error_section() + "] : \"" + e.error_message() + "\"");
       }
       break;
     }

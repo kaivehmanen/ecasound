@@ -33,7 +33,7 @@ class GENERIC_OSCILLATOR : public OSCILLATOR {
 
   int preset_rep;
 
-  void read_envelope(void) throw(ECA_ERROR*);
+  void read_envelope(void) throw(ECA_ERROR&);
   
  public:
 

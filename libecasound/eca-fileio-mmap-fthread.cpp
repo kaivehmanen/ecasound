@@ -205,10 +205,10 @@ long int ecasound_fiommap_maximum_buffersize(void) {
   return(::ecasound_fiommap_buffersize);
 }
 
-void ecasound_fiommap_exec_thread(void) throw(ECA_ERROR*) {
+void ecasound_fiommap_exec_thread(void) throw(ECA_ERROR&) {
   int retcode = ::pthread_create(&::ecasound_fiommap_thread, NULL, ::ecasound_fiommap_process, NULL);
   if (retcode != 0)
-    throw(new ECA_ERROR("ECA-FILEIO-MMAP-FTHREAD", "unable to create thread for ::mmap()'ed file-I/O"));
+    throw(ECA_ERROR("ECA-FILEIO-MMAP-FTHREAD", "unable to create thread for ::mmap()'ed file-I/O"));
 }
 
 void *ecasound_fiommap_process(void *) { 

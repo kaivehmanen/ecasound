@@ -36,7 +36,7 @@ class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
   // ---
   void open_file(const string& fname, 
 		 const string& fmode, 
-		 bool handle_errors = true) throw(ECA_ERROR*);
+		 bool handle_errors = true) throw(ECA_ERROR&);
   void open_stdin(void) { }
   void open_stdout(void) { }
   void close_file(void);

@@ -93,7 +93,7 @@ class ECA_AUDIO_FORMAT {
   ECA_AUDIO_FORMAT audio_format(void) const;
 
   void set_channels(int v);
-  void set_sample_format(Sample_format v) throw(ECA_ERROR*);
+  void set_sample_format(Sample_format v) throw(ECA_ERROR&);
   void set_samples_per_second(long int v);
   void toggle_interleaved_channels(bool v);
 
@@ -110,7 +110,7 @@ class ECA_AUDIO_FORMAT {
    * Similarly if big endian, "_be" is added. This postfix
    * can be omitted if applicable. 
    */
-  void set_sample_format(const string& f_str) throw(ECA_ERROR*);
+  void set_sample_format(const string& f_str) throw(ECA_ERROR&);
 
   /**
    * Set audio format
@@ -122,7 +122,7 @@ class ECA_AUDIO_FORMAT {
    *
    * @see set_sample_format
    */
-  string format_string(void) const throw(ECA_ERROR*);
+  string format_string(void) const throw(ECA_ERROR&);
 
   ECA_AUDIO_FORMAT (int ch, long int srate, Sample_format format, bool ileaved = false);
   ECA_AUDIO_FORMAT (const ECA_AUDIO_FORMAT& x);

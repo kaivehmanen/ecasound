@@ -61,7 +61,7 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
 
   virtual bool locked_audio_format(void) const { return(true); }
 
-  virtual void open(void) throw(ECA_ERROR*);
+  virtual void open(void) throw(ECA_ERROR&);
   virtual void close(void);
 
   virtual long int read_samples(void* target_buffer, long int samples);

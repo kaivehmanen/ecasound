@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-mikmod.cpp: Interface class for MikMod input. Uses FIFO pipes.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,30 +17,18 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <cmath>
 #include <string>
-#include <cstring>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <signal.h>
-
 #include <unistd.h>
 
-#include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
 
-#include "samplebuffer.h"
-#include "audioio.h"
 #include "audioio-mikmod.h"
-
 #include "eca-error.h"
 #include "eca-debug.h"
 
-string MIKMOD_INTERFACE::default_mikmod_path = "mikmod";
-string MIKMOD_INTERFACE::default_mikmod_args = "-p 0 --noloops";
+string MIKMOD_INTERFACE::default_mikmod_cmd = "mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f";
 
-void MIKMOD_INTERFACE::set_mikmod_path(const string& value) { MIKMOD_INTERFACE::default_mikmod_path = value; }
-void MIKMOD_INTERFACE::set_mikmod_args(const string& value) { MIKMOD_INTERFACE::default_mikmod_args = value; }
+void MIKMOD_INTERFACE::set_mikmod_cmd(const string& value) { MIKMOD_INTERFACE::default_mikmod_cmd = value; }
 
 MIKMOD_INTERFACE::MIKMOD_INTERFACE(const string& name) {
   finished_rep = false;
@@ -49,7 +37,7 @@ MIKMOD_INTERFACE::MIKMOD_INTERFACE(const string& name) {
 
 MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void) { close(); }
 
-void MIKMOD_INTERFACE::open(void) { }
+void MIKMOD_INTERFACE::open(void) { toggle_open_state(false); }
 
 void MIKMOD_INTERFACE::close(void) {
   if (io_mode() == io_read) {
@@ -60,14 +48,14 @@ void MIKMOD_INTERFACE::close(void) {
 
 long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {
   if (is_open() == false) fork_mikmod();
-  if (waitpid(pid_of_child, 0, WNOHANG) < 0) { 
+  if (wait_for_child() != true) {
     finished_rep = true;
     return(0);
   }
-  bytes_read =  ::read(fd, target_buffer, frame_size() * samples);
-  if (bytes_read < samples * frame_size() || bytes_read == 0) finished_rep = true;
+  bytes_read_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
+  if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) finished_rep = true;
   else finished_rep = false;
-  return(bytes_read / frame_size());
+  return(bytes_read_rep / frame_size());
 }
 
 void MIKMOD_INTERFACE::seek_position(void) {
@@ -80,68 +68,24 @@ void MIKMOD_INTERFACE::seek_position(void) {
 
 void MIKMOD_INTERFACE::kill_mikmod(void) {
   if (is_open()) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mikmod) Killing mikmod-child with pid " + kvu_numtostr(pid_of_child) + ".");
-    ::kill(pid_of_child, SIGKILL);
-    ::waitpid(pid_of_child, 0, 0);
-    ::close(fd);
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mikmod) Killing mikmod-child with pid " + kvu_numtostr(pid_of_child()) + ".");
+    clean_child();
     toggle_open_state(false);
   }
 }
 
-void MIKMOD_INTERFACE::fork_mikmod(void) throw(ECA_ERROR*) {
+void MIKMOD_INTERFACE::fork_mikmod(void) throw(ECA_ERROR&) {
   if (!is_open()) {
-    string komen = MIKMOD_INTERFACE::default_mikmod_path;
-    komen += " -d stdout -o 16s -q -f " + 
-                   kvu_numtostr(samples_per_second()) +
-                   + " " + MIKMOD_INTERFACE::default_mikmod_args +
-                   " " + label();
-    ecadebug->msg(ECA_DEBUG::user_objects,komen);
-   
-    int fpipes[2];
-    if (pipe(fpipes) == 0) {
-      pid_of_child = fork();
-      if (pid_of_child == -1) { 
-	// ---
-	// error
-	// ---
-	throw(new ECA_ERROR("AUDIOIO-MIKMOD","Can't start mikmod-child!"));
-      }
-      else if (pid_of_child == 0) { 
-	// ---
-	// child 
-	// ---
-	::close(1);
-	::dup2(fpipes[1], 1);
-	::close(fpipes[0]);
-	::close(fpipes[1]);
-	::freopen("/dev/null", "w", stderr);
-	vector<string> temp = string_to_words(komen);
-	if (temp.size() > 1024) temp.resize(1024);
-	const char* args[1024];
-	// = new char* [temp.size() + 1];
-	vector<string>::size_type p = 0;
-	while(p < temp.size()) {
-	  args[p] = temp[p].c_str();
-	  ++p;
-	}
-	args[p] = 0;
-	::execvp(temp[0].c_str(), const_cast<char**>(args));
-	::close(1);
-	exit(0);
-	cerr << "You shouln't see this!\n";
-      }
-      else { 
-	// ---
-	// parent
-	// ---
-	::close(fpipes[1]);
-	fd = fpipes[0];
-	ecadebug->msg("(audioio-mikmod) Forked mikmod-child with pid " + kvu_numtostr(pid_of_child) + ".");
-	toggle_open_state(true);
-      }
+    string cmd = MIKMOD_INTERFACE::default_mikmod_cmd;
+    ecadebug->msg(ECA_DEBUG::user_objects,cmd);
+    if (cmd.find("%s") != string::npos) {
+      cmd.replace(cmd.find("%s"), 2, kvu_numtostr(samples_per_second()));
     }
-    else 
-      throw(new ECA_ERROR("AUDIOIO-MIKMOD","Can't start mikmod-child! Check that 'mikmod' is installed properly."));
+    fork_child_for_read(cmd, label());
+    if (child_fork_succeeded() != true) {
+      throw(ECA_ERROR("AUDIOIO-MIKMOD","Can't start mikmod-thread! Check that 'mikmod' is installed properly."));
+    }
+    fd_rep = file_descriptor();
+    toggle_open_state(true);
   }
 }
-

@@ -1,10 +1,10 @@
-#ifndef _ECA_ERROR_H
-#define _ECA_ERROR_H
+#ifndef INCLUDED_ECA_ERROR_H
+#define INCLUDED_ECA_ERROR_H
 
 #include <string>
 
 /**
- * Virtual base for ecasound exception objects.
+ * A general exception class for error reporting.
  */
 class ECA_ERROR {
 
@@ -19,28 +19,26 @@ public:
   //         etc), no need to stop the whole program
   // notice = action succeeded but something unusual occured
 
-  enum ACTION { stop, retry, notice };
+  enum Action { stop, retry, notice };
  
 private:
-  string esection;
-  string eerrormsg;
-  
-  ACTION eaction;
+  string esection_rep;
+  string eerrormsg_rep;
+  Action eaction_rep;
 
 public:
 
-  virtual const string& error_section(void) { return(esection); }
-  virtual const string& error_msg(void) { return(eerrormsg); }
-  virtual const ACTION& error_action(void) { return(eaction); }
+  const string& error_section(void) const { return(esection_rep); }
+  const string& error_message(void) const { return(eerrormsg_rep); }
+  const Action& error_action(void) const { return(eaction_rep); }
   
-  ECA_ERROR(const string& section, const string& errormsg, const
-	    ACTION action = ECA_ERROR::retry) {
-    esection = section;
-    eerrormsg = errormsg;
-    eaction = action;
+  ECA_ERROR(const string& section, 
+	    const string& errormsg, 
+	    const Action action = ECA_ERROR::retry) {
+    esection_rep = section;
+    eerrormsg_rep = errormsg;
+    eaction_rep = action;
   }
-  
-  virtual ~ECA_ERROR(void) { }
 };
 
 #endif

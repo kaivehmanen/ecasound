@@ -13,6 +13,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
 #ifdef COMPILE_OSS
 #include <sys/soundcard.h>
 
@@ -44,14 +45,14 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
 
-  virtual void open(void) throw(ECA_ERROR*);
-  virtual void close(void) throw(ECA_ERROR*);
+  virtual void open(void) throw(ECA_ERROR&);
+  virtual void close(void) throw(ECA_ERROR&);
   
   virtual long int read_samples(void* target_buffer, long int samples);
   virtual void write_samples(void* target_buffer, long int samples);
 
   virtual void stop(void);
-  virtual void start(void) throw(ECA_ERROR*);
+  virtual void start(void) throw(ECA_ERROR&);
   virtual void prepare(void) { }
 
   virtual long position_in_samples(void) const;
@@ -68,5 +69,5 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 
 };
 
-#endif // COMPILE_OSS
 #endif
+#endif // COMPILE_OSS

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 300900) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 071000) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,9 +14,22 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-26092000 (v1.8.4d15)
-	- fixed: ncurses fixes (the ever-bold fix)
+06102000 (v1.8.4d15)
+	- added: support for MIDI files using Timidity++
+	- changed: tries to load all internal plugins if even some 
+		   plugins were disabled during compile-time; this 
+		   makes it possible to have multiple version of same
+                   plugin tupe (for instance, plugins for different 
+		   ALSA versions, etc)
+	- changed: ecasoundrc - mikmod-path and -args combined into
+		   more general mikmod-cmd
+	- fixed: ncurses fixes (the ever-bold fix) [artham]
 	- fixed: cs-loop seg.faulted
+	- fixed: stripped libtool version info from plugins [wrobell]
+	- fixed: configure-time relocations didn't affect the default
+		 paths of effects presets and LADSPA plugins [juekawa]
+	- fixed: invalid/non-existant files caused problems for all
+		 utils in ecatools package
 26092000 (v1.8.3d15)
 	- changed: code for parsing command-line arguments rewritten; 
 		   now reports about invalid arguments
@@ -31,8 +44,8 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- fixed: some broken mp3 headers caused ecasound to misinterpret
 		 mp3 sampling rate
 	- fixed: problems when handling mp3 files with white-space in 
-		 the filename (R.Sassmannshausen)
-	- fixed: incorrect riff-wave header bug fixed (A.Hamara)
+		 the filename [rsassman]
+	- fixed: incorrect riff-wave header bug fixed [artham]
 	- fixed: in some cases, controllers weren't parsed correctly
 	- fixed: annoying clicks with phaser, flanger and chorus
 01092000 (v1.8.1d14)
@@ -60,17 +73,15 @@ Last officially released version is -*> v1.8.2r14 <*-
 25062000 (v1.8.0d14)
 	- added: ecaconvert - a new ecatools app; converts a set of 
 		 files to target file format
-	- added: support for ALSA 0.6.x (plugin and direct) - thanks 
-		 to Jeremy Hall for the patch
+	- added: support for ALSA 0.6.x (plugin and direct) [jhall]
 	- added: ia-mode - 'cs-list', 'c-list', 'aio-list',
 		 'cop-list'; nothing new, but some might find these 
 		 a bit more intuitive to use than various status cmds
 	- added: more info about audio object status
 	- added: --enable-sys-readline (compile against already 
-		 installed libreadline)
-	- added: rpm-spec file for PLD-Linux - ecasound.pld.spec
-	- added: support for destdir env.variable - the last three
-		 added features were submitted by wrobell
+		 installed libreadline) [wrobell]
+	- added: rpm-spec file for PLD-Linux - ecasound.pld.spec [wrobell]
+	- added: support for destdir env.variable [wrobell]
 	- added: support for float samples (-f:f32_le and -f:f32_be)
 	- added: support for IEEE754 wav files (float)
 	- added: --enable-arts - use aRts daemon for audio input and
@@ -138,8 +149,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 		   ALSA support, you have to compile ecasound from 
 		   sources - of course you can always use ALSA's 
 		   OSS-emulation layer 
-	- changed: pitch-shifter (-ei) improvements - thanks to Arto
-	 	   Hamara for the tips
+	- changed: pitch-shifter (-ei) improvements [artham]
 	- changed: above improvements also affect normal resampling
 	- changed: ia-mode commands cop-add, cop-remove and ctrl-add
 		   can now be used with connected chainsetups (add 

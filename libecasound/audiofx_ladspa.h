@@ -57,7 +57,7 @@ public:
 
   EFFECT_LADSPA* clone(void);
   EFFECT_LADSPA* new_expr(void)  { return new EFFECT_LADSPA(plugin_desc); }
-  EFFECT_LADSPA (const LADSPA_Descriptor *plugin_desc = 0) throw(ECA_ERROR*);
+  EFFECT_LADSPA (const LADSPA_Descriptor *plugin_desc = 0) throw(ECA_ERROR&);
   ~EFFECT_LADSPA (void);
 
  private:

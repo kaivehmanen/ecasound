@@ -89,10 +89,19 @@ int main(int argc, char *argv[])
 	if (m == 0) {
 	  cerr << "Calculating DC-offset for file \"" << filename << "\".\n";
 	  ectrl.add_audio_input(filename);
+	  if (ectrl.get_audio_object() == 0) {
+	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+	    break;
+	  }
 	  aio_params = ectrl.get_audio_format();
 	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(ecatools_fixdc_tempfile);
+	  if (ectrl.get_audio_object() == 0) {
+	    cerr << "---\nError while processing file " << ecatools_fixdc_tempfile << ". Exiting...\n";
+	    break;
+	  }
+
 
 	  dcfind = new EFFECT_DCFIND();
 	  ectrl.add_chain_operator((CHAIN_OPERATOR*)dcfind);
@@ -103,11 +112,19 @@ int main(int argc, char *argv[])
 	  cerr << ", right: " << dcfix_value[SAMPLE_SPECS::ch_right]
 	       << ").\n";
 	  ectrl.add_audio_input(ecatools_fixdc_tempfile);
+	  if (ectrl.get_audio_object() == 0) {
+	    cerr << "---\nError while processing file " << ecatools_fixdc_tempfile << ". Exiting...\n";
+	    break;
+	  }
 	  aio_params = ectrl.get_audio_format();
 	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.add_audio_output(filename);
+	  if (ectrl.get_audio_object() == 0) {
+	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+	    break;
+	  }
 
 	  dcfix = new EFFECT_DCFIX(dcfix_value[SAMPLE_SPECS::ch_left],
 				   dcfix_value[SAMPLE_SPECS::ch_right]);
@@ -135,8 +152,8 @@ int main(int argc, char *argv[])
       cline.next();
     }
   }
-  catch(ECA_ERROR* e) {
-    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  catch(ECA_ERROR& e) {
+    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
   catch(...) {
     cerr << "\nCaught an unknown exception.\n";

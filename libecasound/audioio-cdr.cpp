@@ -61,7 +61,7 @@ void CDRFILE::format_query(void) {
   // -------
 }
 
-void CDRFILE::open(void) throw(ECA_ERROR*) { 
+void CDRFILE::open(void) throw(ECA_ERROR&) { 
   // --------
   // require:
   assert(!is_open());
@@ -72,7 +72,7 @@ void CDRFILE::open(void) throw(ECA_ERROR*) {
     {
       fobject = ::fopen(label().c_str(),"rb");
       if (!fobject)
-	throw(new ECA_ERROR("AUDIOIO-CDR", "Can't open " + label() + " for reading."));
+	throw(ECA_ERROR("AUDIOIO-CDR", "Can't open " + label() + " for reading."));
       set_length_in_bytes();
       break;
     }
@@ -80,7 +80,7 @@ void CDRFILE::open(void) throw(ECA_ERROR*) {
     {
       fobject = ::fopen(label().c_str(),"wb");
       if (!fobject) 
-	throw(new ECA_ERROR("AUDIOIO-CDR","Can't open " + label() + " for writing."));
+	throw(ECA_ERROR("AUDIOIO-CDR","Can't open " + label() + " for writing."));
       break;
     }
   case io_readwrite:
@@ -89,7 +89,7 @@ void CDRFILE::open(void) throw(ECA_ERROR*) {
       if (!fobject) {
 	fobject = ::fopen(label().c_str(),"w+b");
 	if (!fobject)
-	  throw(new ECA_ERROR("AUDIOIO-CDR","Can't open " + label() + " for read-wre."));
+	  throw(ECA_ERROR("AUDIOIO-CDR","Can't open " + label() + " for read-wre."));
       }
       set_length_in_bytes();
       break;
