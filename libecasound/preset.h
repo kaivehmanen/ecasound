@@ -7,8 +7,9 @@
 #include "eca-chainop.h"
 #include "eca-chain.h"
 #include "sample-specs.h"
-#include "eca-chainsetup.h"
 #include "samplebuffer.h"
+
+using std::string;
 
 class AUDIO_IO;
 class GENERIC_CONTROLLER;

@@ -28,15 +28,17 @@
  * the given proxy server as a client object.
  *
  * Ownership of 'aobject' is transfered to this proxy
- * object.
+ * object if 'transfer_ownership' is true.
  */
 AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver, 
-						  AUDIO_IO* aobject) 
+						  AUDIO_IO* aobject,
+						  bool transfer_ownership) 
   : pserver_repp(pserver),
-    child_repp(aobject) 
+    child_repp(aobject),
+    free_child_rep(transfer_ownership) 
 {
-  pserver_repp->register_client(child_repp);
-  pbuffer_repp = pserver_repp->get_client_buffer(child_repp);
+  label(child_repp->label());
+  pbuffer_repp = 0;
   xruns_rep = 0;
   finished_rep = false;
 
@@ -77,10 +79,15 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
  * server.
  */
 AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void) {
-  pserver_repp->unregister_client(child_repp);
-  delete child_repp;
-  child_repp = 0;
-
+  if (child_repp != 0) {
+    pserver_repp->unregister_client(child_repp);
+  
+    if (free_child_rep == true) {
+      delete child_repp;
+    }
+    child_repp = 0;
+  }
+  
   if (xruns_rep > 0) 
     std::cerr << "(audioio-buffered-proxy) There were total " << xruns_rep << " xruns." << std::endl;
 }
@@ -189,6 +196,10 @@ void AUDIO_IO_BUFFERED_PROXY::seek_position(void) {
 void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) { 
   if (child_repp->is_open() != true) {
     child_repp->open();
+  }
+  if (pbuffer_repp == 0) {
+    pserver_repp->register_client(child_repp);
+    pbuffer_repp = pserver_repp->get_client_buffer(child_repp);
   }
   fetch_child_data();
 }

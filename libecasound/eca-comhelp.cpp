@@ -12,6 +12,7 @@ const char* ecasound_parameter_help_rep =
 "     -s[:]file                load chainsetup from 'file' \n"
 " --- \n"
 "     -b:buffersize            size of sample buffer in samples \n"
+"     -B:mode                  buffering mode\n"
 "     -m:mixmode               mixmode\n"
 "     -n:name                  set chainsetup name\n"
 "     -r[:priority]            raise runtime priority\n"

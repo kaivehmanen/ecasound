@@ -48,7 +48,7 @@ CHAIN::CHAIN (void) {
   muted_rep = false;
   sfx_rep = false;
   initialized_rep = false;
-  input_id_repp = output_id_repp = 0;
+  input_id_rep = output_id_rep = -1;
 
   selected_chainop_repp = 0;
   selected_controller_repp = 0;
@@ -79,8 +79,8 @@ CHAIN::~CHAIN (void) {
  * Whether chain is in a valid state (= ready for processing)?
  */
 bool CHAIN::is_valid(void) const {
-  if (input_id_repp == 0 ||
-      output_id_repp == 0) {
+  if (input_id_rep == -1 ||
+      output_id_rep == -1) {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chain) Chain \"" + name() + "\" not valid.");
     return(false);
   }
@@ -90,22 +90,22 @@ bool CHAIN::is_valid(void) const {
 /**
  * Connects input to chain
  */
-void CHAIN::connect_input(AUDIO_IO* input) { input_id_repp = input; }
+void CHAIN::connect_input(int input) { input_id_rep = input; }
 
 /**
  * Connects output to chain
  */
-void CHAIN::connect_output(AUDIO_IO* output) { output_id_repp = output; }
+void CHAIN::connect_output(int output) { output_id_rep = output; }
 
 /**
  * Disconnects input
  */
-void CHAIN::disconnect_input(void) { input_id_repp = 0; initialized_rep = false; }
+void CHAIN::disconnect_input(void) { input_id_rep = -1; initialized_rep = false; }
 
 /**
  * Disconnects output
  */
-void CHAIN::disconnect_output(void) { output_id_repp = 0; initialized_rep = false; }
+void CHAIN::disconnect_output(void) { output_id_rep = -1; initialized_rep = false; }
 
 /**
  * Disconnects the sample buffer
@@ -486,16 +486,14 @@ void CHAIN::selected_controller_as_target(void) {
 void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
   // --------
   // require:
-  assert(input_id_repp != 0 || in_channels != 0);
-  assert(output_id_repp != 0 || out_channels != 0);
+  assert(in_channels != 0);
+  assert(out_channels != 0);
   // --------
 
   audioslot_repp = sbuf;
 
   in_channels_rep = in_channels;
   out_channels_rep = out_channels;
-  if (in_channels == 0) in_channels_rep = input_id_repp->channels();
-  if (out_channels == 0) out_channels_rep = output_id_repp->channels();
 
   int init_channels = in_channels_rep;
   audioslot_repp->number_of_channels(init_channels);

@@ -1,5 +1,7 @@
 ## ------------------------------------------------------------------------
 ## Check whether atomic locking primitives are defined in asm/atomic.h
+## 
+## version: 1
 ## ------------------------------------------------------------------------
 ##
 AC_DEFUN(AC_HEADER_ASM_ATOMIC,

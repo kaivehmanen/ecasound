@@ -172,6 +172,7 @@ dnl Checks for functions.
 dnl ---
 AC_FUNC_MMAP
 AC_CHECK_FUNCS(mlockall)
+AC_CHECK_FUNCS(munlockall)
 
 dnl ---
 dnl Checks for libraries.

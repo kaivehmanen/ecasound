@@ -8,7 +8,6 @@
 #include "samplebuffer.h"
 #include "eca-debug.h"
 
-class AUDIO_IO;
 class GENERIC_CONTROLLER;
 class OPERATOR;
 
@@ -16,40 +15,11 @@ class OPERATOR;
  * Class representing an abstract audio signal chain.
  */
 class CHAIN {
-
-  friend class ECA_PROCESSOR;
-  friend class ECA_CHAINSETUP;
-  friend class ECA_CONTROL;
-  friend class ECA_CONTROL_OBJECTS;
-  friend void *mthread_process_chains(void* params);
-
- private:
-
-  bool initialized_rep;
-  string chainname_rep;
-  bool muted_rep;
-  bool sfx_rep;
-  int in_channels_rep;
-  int out_channels_rep;
-
-  std::vector<CHAIN_OPERATOR*> chainops_rep;
-  std::vector<GENERIC_CONTROLLER*> gcontrollers_rep;
-
-  CHAIN_OPERATOR* selected_chainop_repp;
-  GENERIC_CONTROLLER* selected_controller_repp;
-  OPERATOR* selected_dynobj_repp;
-
-  int selected_chainop_number_rep;
-  int selected_chainop_parameter_rep;
-  int selected_controller_number_rep;
-  int selected_controller_parameter_rep;
-
-  AUDIO_IO* input_id_repp;
-  AUDIO_IO* output_id_repp;
-
-  SAMPLE_BUFFER* audioslot_repp;
  
  public:
+
+  CHAIN (void);
+  virtual ~CHAIN (void);
 
   bool is_initialized(void) const { return(initialized_rep); }
   bool is_muted(void) const { return(muted_rep); }
@@ -63,23 +33,23 @@ class CHAIN {
 
   bool is_valid(void) const;
 
-  void connect_input(AUDIO_IO* input);
+  void connect_input(int input);
   void disconnect_input(void);
-  void connect_output(AUDIO_IO* output);
+  void connect_output(int output);
   void disconnect_output(void);
   void disconnect_buffer(void);
 
   /**
-   * Returns a const pointer to input connected to this chain. If no input
-   * is connected, 0 is returned.
+   * Returns an id number to input connected to this chain. If no input
+   * is connected, -1 is returned.
    */
-  const AUDIO_IO* connected_input(void) const { return(input_id_repp); }
+  int connected_input(void) const { return(input_id_rep); }
 
   /**
-   * Returns a const pointer to input connected to this chain. If no input
-   * is connected, 0 is returned.
+   * Returns an id number to output connected to this chain. If no input
+   * is connected, -1 is returned.
    */
-  const AUDIO_IO* connected_output(void) const { return(output_id_repp); }
+  int connected_output(void) const { return(output_id_rep); }
 
   void clear(void);
   void add_chain_operator(CHAIN_OPERATOR* chainop);
@@ -98,11 +68,15 @@ class CHAIN {
   CHAIN_OPERATOR::parameter_type get_parameter(void) const;
   string chain_operator_name(void) const;
   string chain_operator_parameter_name(void) const;
+  const CHAIN_OPERATOR* get_chain_operator(int index) const { return(chainops_rep[index]); }
+  const CHAIN_OPERATOR* get_selected_chain_operator(void) const { return(selected_chainop_repp); }
 
   void add_controller(GENERIC_CONTROLLER* gcontroller);
   void remove_controller(void);
   void select_controller(int index);
   void select_controller_parameter(int index);
+  const GENERIC_CONTROLLER* get_controller(int index) const { return(gcontrollers_rep[index]); }
+  const GENERIC_CONTROLLER* get_selected_controller(void) const { return(selected_controller_repp); }
 
   /**
    * Index of selected chain operator
@@ -130,8 +104,32 @@ class CHAIN {
   string chain_operator_to_string(CHAIN_OPERATOR* chainop) const;
   string controller_to_string(GENERIC_CONTROLLER* gctrl) const;
 
-  CHAIN (void);
-  virtual ~CHAIN (void);
+ private:
+
+  bool initialized_rep;
+  string chainname_rep;
+  bool muted_rep;
+  bool sfx_rep;
+  int in_channels_rep;
+  int out_channels_rep;
+
+  std::vector<CHAIN_OPERATOR*> chainops_rep;
+  std::vector<GENERIC_CONTROLLER*> gcontrollers_rep;
+
+  CHAIN_OPERATOR* selected_chainop_repp;
+  GENERIC_CONTROLLER* selected_controller_repp;
+  OPERATOR* selected_dynobj_repp;
+
+  int selected_chainop_number_rep;
+  int selected_chainop_parameter_rep;
+  int selected_controller_number_rep;
+  int selected_controller_parameter_rep;
+
+  int input_id_rep;
+  int output_id_rep;
+
+  SAMPLE_BUFFER* audioslot_repp;
+
 };
 
 #endif

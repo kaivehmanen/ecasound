@@ -24,6 +24,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void rewind_audio_object(double seconds);
   void forward_audio_object(double seconds);
   void set_audio_object_position(double seconds);
+  void set_audio_object_position_samples(long int samples);
   void wave_edit_audio_object(void);
 
   void send_chain_commands_to_engine(int command, double value);
@@ -44,17 +45,18 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void connect_chainsetup(void);
   void disconnect_chainsetup(void);
 
- std::string selected_chainsetup(void) const;
- std::string connected_chainsetup(void) const;
+  std::string selected_chainsetup(void) const;
+  std::string connected_chainsetup(void) const;
 
   void change_chainsetup_position(double seconds);
   void set_chainsetup_position(double seconds);
 
   double chainsetup_position(double seconds) const;
-  ECA_CHAINSETUP* get_chainsetup(void) const;
-  ECA_CHAINSETUP* get_chainsetup_filename(const std::string& filename) const;
+  const ECA_CHAINSETUP* get_chainsetup(void) const;
+  const ECA_CHAINSETUP* get_chainsetup_filename(const std::string& filename) const;
   std::vector<std::string> chainsetup_names(void) const;
   const std::string& chainsetup_filename(void) const;
+  long int chainsetup_buffersize(void) const;
 
   void set_chainsetup_filename(const std::string& name);
   void set_chainsetup_parameter(const std::string& name);
@@ -80,7 +82,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
 
   const std::vector<std::string>& selected_chains(void) const;
   std::vector<std::string> chain_names(void) const;
-  CHAIN* get_chain(void) const;
+  const CHAIN* get_chain(void) const;
 
   void clear_chains(void);
   void rename_chain(const std::string& name);
@@ -109,13 +111,15 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void select_audio_output_by_index(int index);
   void set_default_audio_format(const std::string& sfrm, int channels, long int srate, bool interleaving);
   void set_default_audio_format(const ECA_AUDIO_FORMAT& format);
+  void set_default_audio_format_to_selected(void);
 
-  AUDIO_IO* get_audio_input(void) const;
+  const AUDIO_IO* get_audio_input(void);
   std::vector<std::string> audio_input_names(void) const;
 
-  AUDIO_IO* get_audio_output(void) const;
+  const AUDIO_IO* get_audio_output(void);
   std::vector<std::string> audio_output_names(void) const;
 
+  const ECA_AUDIO_FORMAT& default_audio_format(void) const;
   ECA_AUDIO_FORMAT get_audio_format(AUDIO_IO* aobj) const;
 
   // -------------------------------------------------------------------
@@ -136,9 +140,9 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   int selected_chain_operator_parameter(void) const;
   int selected_controller(void) const;
 
-  CHAIN_OPERATOR* get_chain_operator(void) const;
+  const CHAIN_OPERATOR* get_chain_operator(void) const;
   CHAIN_OPERATOR::parameter_type get_chain_operator_parameter(void) const;
-  GENERIC_CONTROLLER* get_controller(void) const;
+  const GENERIC_CONTROLLER* get_controller(void) const;
 
   std::vector<std::string> chain_operator_names(void) const;
   std::vector<std::string> chain_operator_parameter_names(void) const;

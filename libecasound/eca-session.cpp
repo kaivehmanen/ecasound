@@ -24,7 +24,6 @@
 #include <iostream>
 
 #include <pthread.h>
-#include <sys/mman.h>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -60,6 +59,7 @@ using namespace std;
 #endif
 
 ECA_SESSION::ECA_SESSION(void) {
+  ecadebug->control_flow("Session created (empty)");
   set_defaults();
 }
 
@@ -77,11 +77,12 @@ ECA_SESSION::~ECA_SESSION(void) {
   
   /* delete static object maps */
   unregister_default_objects();
-
-//    ecadebug->control_flow("Closing session");
 }
 
 ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
+
+  ecadebug->control_flow("Session created");
+
   set_defaults();
 
   cline.combine();
@@ -112,9 +113,6 @@ void ECA_SESSION::set_defaults(void) {
   status(ep_status_notready);
   connected_chainsetup_repp = 0;
   selected_chainsetup_repp = 0;
-  active_chain_index_rep = 0;
-  active_chainop_index_rep = 0;
-  active_chainop_param_index_rep = 0;
 
   // --
   // Engine locks and mutexes
@@ -128,22 +126,14 @@ void ECA_SESSION::set_defaults(void) {
   // ---
   // Interpret resources 
 
-  raisepriority_rep = ecaresources.boolean_resource("default-to-raisepriority");
-  if (ecaresources.resource("default-to-interactive-mode") == "true") 
-    iactive_rep = true;
-  else
-    iactive_rep = false;
-  schedpriority_rep = atoi(ecaresources.resource("default-schedpriority").c_str());
-
   MP3FILE::set_mp3_input_cmd(ecaresources.resource("ext-mp3-input-cmd"));
   MP3FILE::set_mp3_output_cmd(ecaresources.resource("ext-mp3-output-cmd"));
   MIKMOD_INTERFACE::set_mikmod_cmd(ecaresources.resource("ext-mikmod-cmd"));
   TIMIDITY_INTERFACE::set_timidity_cmd(ecaresources.resource("ext-timidity-cmd"));
   OGG_VORBIS_INTERFACE::set_ogg_input_cmd(ecaresources.resource("ext-ogg-input-cmd"));
   OGG_VORBIS_INTERFACE::set_ogg_output_cmd(ecaresources.resource("ext-ogg-output-cmd"));
-
-  multitrack_mode_rep = false;
 }
+
 
 /**
  * Add a new chainsetup
@@ -315,6 +305,8 @@ void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&) {
   DBC_REQUIRE(selected_chainsetup_repp->is_valid());
   // --------
 
+  ecadebug->control_flow("Connecting chainsetup");
+
   if (selected_chainsetup_repp == connected_chainsetup_repp) return;
 
   if (connected_chainsetup_repp != 0) {
@@ -328,7 +320,7 @@ void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&) {
   selected_chainsetup_repp->enable();
   connected_chainsetup_repp = selected_chainsetup_repp;
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "Connecting connected chainsetup to engine.");
+  ecadebug->control_flow("Chainsetup connected");
  
   // --------
   // ensure:
@@ -342,7 +334,7 @@ void ECA_SESSION::disconnect_chainsetup(void) {
   DBC_REQUIRE(connected_chainsetup_repp != 0);
   // --------
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "Disconnecting selected setup from engine.");
+  ecadebug->control_flow("Chainsetup disconnected");
 
   connected_chainsetup_repp->disable();
   connected_chainsetup_repp = 0;
@@ -387,7 +379,6 @@ bool ECA_SESSION::is_session_option(const std::string& arg) const {
   case 'd':
   case 'h':
   case 'q':
-  case 'r':
     return(true);
 
   case 's': 
@@ -483,32 +474,6 @@ void ECA_SESSION::interpret_general_option (const std::string& argu) {
     ecadebug->disable();
     break;
 
-  case 'r':
-    {
-      int prio = ::atoi(get_argument_number(1, argu).c_str());
-      if (prio < 0) {
-	ecadebug->msg("(eca-session) Raised-priority mode disabled.");
-	raisepriority_rep = false;
-      }
-      else {
-	if (prio != 0) 
-	  schedpriority_rep = prio;
-	ecadebug->msg("(eca-session) Raised-priority mode enabled. (prio:" + 
-		      kvu_numtostr(schedpriority_rep) + ")");
-	raisepriority_rep = true;
-#ifdef HAVE_MLOCKALL
-	if (::mlockall (MCL_CURRENT|MCL_FUTURE)) {
-	  ecadebug->msg("(eca-session) Warning! Couldn't lock all memory!");
-	}
-	else 
-	  ecadebug->msg("(eca-session) Memory locked!");
-#else
-	ecadebug->msg("(eca-session) Memory locking not available.");
-#endif
-      }
-      break;
-    }
-    
   default: { }
   }
 }

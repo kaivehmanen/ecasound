@@ -35,8 +35,8 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
 
  public:
 
-  // ===================================================================
-  // Type definitions
+  /** @name Public type definitions and constants */
+  /*@{*/
 
   /**
    * Input/Output mode
@@ -85,17 +85,38 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
      string message_rep;
   };
 
-  // ===================================================================
-  // Attributes
+ public:
+
+  /*@}*/
+
+  /** @name Constructors and destructors */
+  /*@{*/
+
+  virtual AUDIO_IO* clone(void) = 0;
+  virtual AUDIO_IO* new_expr(void) = 0;
+  virtual ~AUDIO_IO(void);
+  AUDIO_IO(const string& name = "unknown", 
+	   int mode = io_read, 
+	   const ECA_AUDIO_FORMAT& fmt = ECA_AUDIO_FORMAT());
+
+  /*@}*/
+
+  /** @name Attribute functions */
+  /*@{*/
 
   virtual int supported_io_modes(void) const;
   virtual bool supports_nonblocking_mode(void) const;
   virtual bool supports_seeking(void) const;
   virtual bool finite_length_stream(void) const;
   virtual bool locked_audio_format(void) const;
-  
-  // ===================================================================
-  // Configuration (setting and getting configuration parameters)
+
+  /*@}*/
+
+  /** @name Configuration 
+   * 
+   * For setting and getting configuration parameters.
+   */
+  /*@{*/
 
   /**
    * Sets the sample buffer size in sample frames. Instead of specifying buffer 
@@ -127,10 +148,12 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;
 
-  // ===================================================================
-  // Functionality (control and runtime information)
-
  public:
+
+  /*@}*/
+
+  /** @name Main functionality */
+  /*@{*/
 
   /**
    * Reads samples to buffer pointed by 'sbuf'. If necessary, the target 
@@ -202,8 +225,10 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    */
   virtual void close(void) = 0;
 
-  // ===================================================================
-  // Runtime information
+  /*@}*/
+
+  /** @name Runtime information */
+  /*@{*/
 
   /**
    * Effectively this is meant for implementing nonblocking 
@@ -246,24 +271,14 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   ECA_AUDIO_TIME length(void) const;
   ECA_AUDIO_TIME position(void) const;
 
+  /*@}*/
+
  protected:
 
   void position(const ECA_AUDIO_TIME& v);
   void length(const ECA_AUDIO_TIME& v);
 
   void toggle_open_state(bool value);
-
-  // ===================================================================
-  // Constructors and destructors
-
- public:
-
-  virtual AUDIO_IO* clone(void) = 0;
-  virtual AUDIO_IO* new_expr(void) = 0;
-  virtual ~AUDIO_IO(void);
-  AUDIO_IO(const string& name = "unknown", 
-	   int mode = io_read, 
-	   const ECA_AUDIO_FORMAT& fmt = ECA_AUDIO_FORMAT());
 
  private:
   

@@ -233,9 +233,9 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const std::string& arg
     if (cop != 0) {
       cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
 
-      ecadebug->control_flow("Adding LADSPA-plugin \"" +
-			     cop->name() + "\"");
-      otemp << "Setting parameters: ";
+      ecadebug->msg("(eca-object-factory) Creating LADSPA-plugin \"" +
+		    cop->name() + "\"");
+      otemp << "(eca-object-factory) Setting parameters: ";
       for(int n = 0; n < cop->number_of_params(); n++) {
 	cop->set_parameter(n + 1, atof(get_argument_number(n + 2, argu).c_str()));
 	otemp << cop->get_parameter_name(n + 1) << " = ";
@@ -273,8 +273,8 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const std::string& argu) 
 #endif
   if (cop != 0) {
     
-    ecadebug->control_flow("Adding VST-plugin \"" + cop->name() + "\"");
-    otemp << "Setting parameters: ";
+    ecadebug->msg("(eca-object-factory) Creating VST-plugin \"" + cop->name() + "\"");
+    otemp << "(eca-object-factory) Setting parameters: ";
     for(int n = 0; n < cop->number_of_params(); n++) {
       cop->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
       otemp << cop->get_parameter_name(n + 1) << " = ";
@@ -310,10 +310,10 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const std::string& ar
   if (cop != 0) {
     cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
 
-    ecadebug->control_flow("Adding chain operator \"" +
+    ecadebug->msg("(eca-object-factory) Creating chain operator \"" +
 			   cop->name() + "\"");
     //    otemp << "(eca-chainsetup) Adding effect " << cop->name();
-    otemp << "Setting parameters: ";
+    otemp << "(eca-object-factory) Setting parameters: ";
     for(int n = 0; n < cop->number_of_params(); n++) {
       cop->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
       otemp << cop->get_parameter_name(n + 1) << " = ";
@@ -350,10 +350,10 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const std::string& ar
   if (gcontroller != 0) {
     gcontroller = gcontroller->clone();
 
-    ecadebug->control_flow("Chainsetup/Adding controller source \"" +  gcontroller->name() + "\"");
+    ecadebug->msg("(eca-object-factory) Creating controller source \"" +  gcontroller->name() + "\"");
 
     MESSAGE_ITEM otemp;
-    otemp << "Setting parameters: ";
+    otemp << "(eca-object-factory) Setting parameters: ";
     int numparams = gcontroller->number_of_params();
     for(int n = 0; n < numparams; n++) {
       gcontroller->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));

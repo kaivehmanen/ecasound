@@ -225,7 +225,7 @@ void ECA_CONTROL_BASE::start_engine(void) {
 
   unsigned int p = session_repp->connected_chainsetup_repp->first_selected_chain();
   if (p < session_repp->connected_chainsetup_repp->chains.size())
-    session_repp->active_chain_index_rep = p;
+    session_repp->connected_chainsetup_repp->active_chain_index_rep = p;
 
   pthread_attr_t th_attr;
   pthread_attr_init(&th_attr);
@@ -308,6 +308,11 @@ bool ECA_CONTROL_BASE::is_finished(void) const {
   return(session_repp->status() == ECA_SESSION::ep_status_finished ||
 	 session_repp->status() == ECA_SESSION::ep_status_error); 
 } 
+
+void ECA_CONTROL_BASE::toggle_multitrack_mode(bool v) { 
+  if (selected_chainsetup_repp != 0)
+    selected_chainsetup_repp->multitrack_mode_rep = v; 
+}
 
 /**
  * Returns the length of the selected chainsetup (in samples).
@@ -404,7 +409,7 @@ std::string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  vector<string> t = session_repp->get_attached_chains_to_input(aiod);
+  vector<string> t = selected_chainsetup_repp->get_attached_chains_to_input(aiod);
   string out = "";
   vector<string>::const_iterator p = t.begin();
   while(p != t.end()) {
@@ -426,7 +431,7 @@ std::string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  vector<string> t = session_repp->get_attached_chains_to_output(aiod);
+  vector<string> t = selected_chainsetup_repp->get_attached_chains_to_output(aiod);
   string out = "";
   vector<string>::const_iterator p = t.begin();
   while(p != t.end()) {
@@ -474,7 +479,7 @@ void ECA_CONTROL_BASE::toggle_raise_priority(bool v) {
   // require:
   assert(is_selected() == true);
   // --------
-  session_repp->toggle_raised_priority(v);
+  selected_chainsetup_repp->toggle_raised_priority(v);
 }
 
 void ECA_CONTROL_BASE::set_last_string_list(const std::vector<std::string>& s) { 

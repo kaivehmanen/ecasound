@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca_resources.cpp: User settings (~/.ecasoundrc)
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,16 +33,21 @@ ECA_RESOURCES::~ECA_RESOURCES(void) { }
 
 void ECA_RESOURCES::set_defaults(void) {
   if (has("midi-device") != true) resource("midi-device","rawmidi,/dev/midi");
+
   if (has("default-output") != true) resource("default-output","/dev/dsp");
-  if (has("default-buffersize") != true) resource("default-buffersize","1024");
   if (has("default-samplerate") != true) resource("default-samplerate","44100");
-  if (has("default-to-interactive-mode") != true) resource("default-to-interactive-mode","false");
-  if (has("default-to-raisepriority") != true) resource("default-to-raisepriority","false");
-  if (has("default-schedpriority") != true) resource("default-schedpriority","50");
-  if (has("default-to-double-buffering") != true) resource("default-to-double-buffering","false");
-  if (has("default-double-buffer-size") != true) resource("default-double-buffer-size","100000");
   if (has("default-to-precise-sample-rates") != true) resource("default-to-precise-sample-rates","false");
-  if (has("default-to-max-internal-buffering") != true) resource("default-to-max-internal-buffering","true");
+  if (has("default-to-interactive-mode") != true) resource("default-to-interactive-mode","false");
+
+  /* bmode-defaults: 1) buffersize, 2) raisedprio, 3) schedprio,
+   *                 4) db, 5) db-bufsize, 6) maxintbuf,   */
+  if (has("bmode-defaults-nonrt") != true) 
+    resource("bmode-defaults-nonrt","1024,false,50,false,100000,true");
+  if (has("bmode-defaults-rt") != true) 
+    resource("bmode-defaults-rt","1024,true,50,true,100000,true");
+  if (has("bmode-defaults-rtlowlatency") != true) 
+    resource("bmode-defaults-rtlowlatency","256,true,50,true,100000,false");
+
   if (has("resource-directory") != true) resource("resource-directory", ecasound_resource_path);
   if (has("resource-file-genosc-envelopes") != true) resource("resource-file-genosc-envelopes","generic_oscillators");
   if (has("resource-file-effect-presets") != true) resource("resource-file-effect-presets","effect_presets");

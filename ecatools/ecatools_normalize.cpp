@@ -105,8 +105,8 @@ int main(int argc, char *argv[])
 	    std::cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	    break;
 	  }
-	  aio_params = ectrl.get_audio_format(ectrl.get_audio_input());
-	  ectrl.set_default_audio_format(aio_params);
+	  ectrl.set_default_audio_format_to_selected();
+	  aio_params = ectrl.default_audio_format();
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(string(ecatools_normalize_tempfile));
 	  if (ectrl.get_audio_output() == 0) {
@@ -123,8 +123,8 @@ int main(int argc, char *argv[])
 	    std::cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
 	    break;
 	  }
-	  aio_params = ectrl.get_audio_format(ectrl.get_audio_input());
-	  ectrl.set_default_audio_format(aio_params);
+	  ectrl.set_default_audio_format_to_selected();
+	  aio_params = ectrl.default_audio_format();	  
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(filename);
 	  if (ectrl.get_audio_output() == 0) {

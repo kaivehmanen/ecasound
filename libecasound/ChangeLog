@@ -2,6 +2,28 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-10-05  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+	
+	* eca-chainsetup.h (ok_audio_object): added
+	
+2001-10-04  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-chainsetup.h (set_buffering_mode, buffering_mode): added
+	* eca-session.h (raised_priority, toggle_raised_priority): moved to eca-chainsetup.h
+	* eca-chainsetup.h (sched_priority, set_sched_priority): added
+	* eca-chainsetup-bufparams.h (all): added
+	* eca-chain.h (connect_input,connected_input,connect_output, connected_output): return type changed
+	* eca-session.h (number_of_attached_chains_to_*): removed
+	* eca-session.h (get_attached_chains_to_*): removed
+	* eca-chain.h (get_chain_operator, get_controller): added
+	* eca-chain.h (get_selected_chain_operator, get_selected_controller): added
+	* eca-control-objects.h (get_*): return type changed to const pointers
+	* eca-control-objects.h (set_audio_object_position_samples): added
+	* eca-chainsetup-position.h (seek_position): added
+	* eca-chainsetup.h (seek_position): added
+	* eca-chainsetup.h (change_position_exact, set_position_exactseek_position): removed
+	* eca-control-objects.h (set_default_audio_format_to_selected,default_audio_format,chainsetup_buffersize): added
+	
 2001-10-03  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-main.h (has_realtime_objects): moved to eca-chainsetup.h

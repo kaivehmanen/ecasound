@@ -110,7 +110,7 @@ class ECA_CONTROL_BASE {
   // -------------------------------------------------------------------
 
   void toggle_interactive_mode(bool v) { session_repp->iactive_rep = v; } 
-  void toggle_multitrack_mode(bool v) { session_repp->multitrack_mode_rep = v; } 
+  void toggle_multitrack_mode(bool v);
   void toggle_raise_priority(bool v);
   void set_buffersize(int bsize);
 

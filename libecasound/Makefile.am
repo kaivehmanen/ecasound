@@ -124,6 +124,7 @@ ecasound_general_include = 	\
 			eca-version.h \
 			eca-object-factory.h \
 			eca-chainsetup.h \
+			eca-chainsetup-bufparams.h \
 			eca-chainsetup-parser.h \
 			eca-chainsetup-position.h \
 			eca-control.h \
@@ -235,6 +236,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-operator.cpp \
 			eca-object-factory.cpp \
 			eca-chainsetup.cpp \
+			eca-chainsetup-bufparams.cpp \
 			eca-chainsetup-parser.cpp \
 			eca-chainsetup-position.cpp \
 			eca-control.cpp \

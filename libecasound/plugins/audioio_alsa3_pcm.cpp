@@ -27,7 +27,7 @@
 #endif
 
 #ifdef ALSALIB_060
-#include <sys/asoundlib.h>
+#include <alsa/asoundlib.h>
 
 #include "audioio_alsa3_pcm.h"
 #include "eca-error.h"

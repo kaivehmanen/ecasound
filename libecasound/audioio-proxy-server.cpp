@@ -358,8 +358,8 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
     }
 
     if (full_rep.get() == 1) {
-      if (processed != 0 && prev_processed != 0) {
-	/* case 1 - two active iterations so there seems to be free space in the buffers */
+      if (processed != 0) { /*  && prev_processed != 0 */
+	/* case 1 - active iteration so there seems to be free space in the buffers */
 	full_rep.set(0);
 	PROXY_PROFILING_INC(profile_not_full_set_rep);
       }

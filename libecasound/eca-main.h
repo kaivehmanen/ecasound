@@ -20,14 +20,23 @@ class AUDIO_IO_BUFFERED_PROXY;
 
 /**
  * Main processing engine
+ *
+ * Notes: This class is closely tied to 
+ *        the ECA_SESSION and ECA_CHAINSETUP, 
+ *        which all allow friend-access to all 
+ *        their private data and members to 
+ *        ECA_PROCESSOR.
  */
 class ECA_PROCESSOR {
 
  public:
 
-  // --
-  // type definitions and constants
-
+  /** @name Public type definitions and constants */
+  /*@{*/
+  
+  /**
+   * Commands used in ECA_PROCESSOR<->ECA_CONTROL communication.
+   */
   enum COMMANDS {
     ep_start,
     ep_stop,
@@ -57,18 +66,22 @@ class ECA_PROCESSOR {
     ep_setpos
   };
 
-  // --
-  // public functions
+  /*@}*/
+
+  /** @name Public functions */
+  /*@{*/
 
   void exec(void);
 
   ECA_PROCESSOR(ECA_SESSION* eparam);
   ~ECA_PROCESSOR(void);
 
+  /*@}*/
+
 private:
 
-  // --
-  // private data and functions
+  /** @name Private data and functions */
+  /*@{*/
 
   ECA_SESSION* eparams_repp;
 
@@ -86,60 +99,74 @@ private:
   int trigger_counter_rep;
   struct timeval multitrack_input_stamp_rep;
 
-  // ---
-  // Pointers to connected chainsetup
-  // ---
+  /*@}*/
+
+  /** @name Pointers to connected chainsetup  */
+  /*@{*/
+
   ECA_CHAINSETUP* csetup_repp;
   std::vector<CHAIN*>* chains_repp;
-
-  // -> pointers to input objects
-  //    (when proxies are used, inputsr_inputs != inputs)
   std::vector<AUDIO_IO*>* inputs_repp;
-  std::vector<AUDIO_IO*>* csetup_inputs_repp;
-  
-  // -> pointers to input objects in csetup
-  // -> r_outputs used for runtime-i/o calls
-  //    (only when proxies are used, r_outputs != outputs)
   std::vector<AUDIO_IO*>* outputs_repp;
-  std::vector<AUDIO_IO*>* csetup_outputs_repp;
 
-  mutable std::map<AUDIO_IO*,AUDIO_IO*> csetup_orig_ptr_map_rep;
+  /*@}*/
 
-  // ---
-  // Various audio objects groupings
-  // ---
-  // - pointers to all realtime inputs
+  /** 
+   * @name Various audio object maps.
+   * 
+   * The main purpose of these maps is to make 
+   * it easier to iterate audio objects with 
+   * certain attributes.
+   */
+  /*@{*/
+
   std::vector<AUDIO_IO_DEVICE*> realtime_inputs_rep;
-  // - pointers to all realtime outputs
   std::vector<AUDIO_IO_DEVICE*> realtime_outputs_rep;
-  // - pointers to all realtime inputs and outputs
   std::vector<AUDIO_IO_DEVICE*> realtime_objects_rep;
-  // - pointers to all non_realtime inputs
   std::vector<AUDIO_IO*> non_realtime_inputs_rep;
-  // - pointers to all non_realtime outputs
   std::vector<AUDIO_IO*> non_realtime_outputs_rep;
-  // - pointers to all non_realtime inputs and outputs
   std::vector<AUDIO_IO*> non_realtime_objects_rep;
-  // - pointers to proxy input objects (if used, assigned to r_inputs)
-  std::vector<AUDIO_IO*> proxy_inputs_rep;
-  // - pointers to proxy output objects (if used, assigned to r_inputs)
-  std::vector<AUDIO_IO*> proxy_outputs_rep;
 
-  // ---
-  // Data objects
-  // ---
+  /*@}*/
+
+  /** @name Cache objects for chainsetup and audio 
+   * object information  */
+  /*@{*/
+
   std::vector<int> input_start_pos_rep;
   std::vector<int> output_start_pos_rep;
   std::vector<int> input_chain_count_rep;
   std::vector<int> output_chain_count_rep;
+  int input_count_rep;
+  int output_count_rep;
+  int chain_count_rep;
+  int max_channels_rep;
+  long int buffersize_rep;
+  ECA_CHAINSETUP::Mix_mode mixmode_rep;
+
+  /*@}*/
+
+  /** @name Audio data buffers */
+  /*@{*/
 
   SAMPLE_BUFFER mixslot_rep;
   std::vector<SAMPLE_BUFFER> cslots_rep;
 
-  long int buffersize_rep;
-  ECA_CHAINSETUP::Mix_mode mixmode_rep;
+  /*@}*/
 
-  int input_count_rep, output_count_rep, chain_count_rep, max_channels_rep;
+  /** @name Private functions for transport control  */
+  /*@{*/
+
+  /**
+   * Start processing. If in multitrack-mode, performs the initial 
+   * multitrack-sync phase.
+   */
+  void start(void);
+
+  /**
+   * Stop processing and notifies all devices.
+   */
+  void stop(void);
 
   /**
    * Start processing if it was conditionally stopped
@@ -150,6 +177,27 @@ private:
    * Stop processing (see conditional_start())
    */
   void conditional_stop(void);
+
+  void start_servers(void);
+  void stop_servers(void);
+
+  /**
+   * Performs one processing loop skipping all realtime inputs
+   * and outputs connected to them. The idea is to fill all 
+   * the output buffers before starting to record from realtime 
+   * inputs.
+   */
+  void multitrack_sync(void);
+
+  /**
+   * Trigger all output devices if requested by start()
+   */
+  void trigger_outputs(void);
+
+  /*@}*/
+
+  /** @name Private functions for observing and modifying position  */
+  /*@{*/
 
   double current_position(void) const; // seconds, uses the master_input
   double current_position_chain(void) const; // seconds
@@ -172,17 +220,11 @@ private:
    */
   void posthandle_control_position(void);
 
-  /**
-   * Start processing. If in multitrack-mode, performs the initial 
-   * multitrack-sync phase.
-   */
-  void start(void);
+  /*@}*/
 
-  /**
-   * Stop processing and notifies all devices.
-   */
-  void stop(void);
-    
+  /** @name Private functions for command queue handling  */
+  /*@{*/
+
   /**
    * Interprets the command queue for interactive commands and
    * acts accordingly.
@@ -191,21 +233,10 @@ private:
 
   void interactive_loop(void);
 
-  /**
-   * Performs one processing loop skipping all realtime inputs
-   * and outputs connected to them. The idea is to fill all 
-   * the output buffers before starting to record from realtime 
-   * inputs.
-   */
-  void multitrack_sync(void);
+  /*@}*/
 
-  /**
-   * Trigger all output devices if requested by start()
-   */
-  void trigger_outputs(void);
-
-  void start_servers(void);
-  void stop_servers(void);
+  /** @name Private functions for initial setup  */
+  /*@{*/
 
   void init_variables(void);
   void init_connection_to_chainsetup(void);
@@ -218,16 +249,42 @@ private:
   void init_sorted_input_map(void);
   void init_sorted_output_map(void);
 
+  /*@}*/
+
+  /** @name Private functions for signal routing  */
+  /*@{*/
+
   void inputs_to_chains(void);
   void mix_to_chains(void);
   void mix_to_outputs(void);
 
-  void chain_processing(void);
-  void chain_muting(void);
-  
+  /*@}*/
+
+  /** @name Private functions for processing  */
+  /*@{*/
+
   void exec_normal_iactive(void);
   void exec_simple_iactive(void);
+
+  /*@}*/
+
+  /** @name Private functions for toggling engine features */
+  /*@{*/
+
+  void chain_processing(void);
+  void chain_muting(void);
+
+  /*@}*/
+
+  /** @name Private functions for getting status info */
+  /*@{*/
+
   bool finished(void);
+
+  /*@}*/
+
+  /** @name Private type definitions  */
+  /*@{*/
 
   typedef std::vector<AUDIO_IO*>::const_iterator audio_ci;
   typedef std::vector<SAMPLE_BUFFER>::const_iterator audioslot_ci;
@@ -235,7 +292,14 @@ private:
   typedef std::vector<CHAIN*>::iterator chain_i;
   typedef std::vector<CHAIN_OPERATOR*>::const_iterator chainop_ci;
 
+  /*@}*/
+
+  /** @name Hidden/unimplemented functions */
+  /*@{*/
+
   ECA_PROCESSOR& operator=(const ECA_PROCESSOR& x) { return *this; }
+
+  /*@}*/
 };
 
 #endif

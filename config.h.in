@@ -61,6 +61,9 @@
 /* Define if you have the mlockall function.  */
 #undef HAVE_MLOCKALL
 
+/* Define if you have the munlockall function.  */
+#undef HAVE_MUNLOCKALL
+
 /* Define if you have the <asm/atomic.h> header file.  */
 #undef HAVE_ASM_ATOMIC_H
 

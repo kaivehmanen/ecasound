@@ -1,10 +1,6 @@
 #ifndef INCLUDED_LOCKS_H
 #define INCLUDED_LOCKS_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #ifdef USE_ASM_ATOMIC
 #include <asm/atomic.h>
 #else

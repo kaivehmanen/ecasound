@@ -12,15 +12,18 @@ kvutil_sources = 	kvutils.cpp \
 			com_line.cpp \
 		 	value_queue.cpp \
 			kvu_numtostr.cpp \
+			kvu_rtcaps.cpp \
 			locks.cpp \
 			procedure_timer.cpp \
 			temporary_file_directory.cpp
+
 
 kvutil_headers = 	kvutils.h \
 			message_item.h \
 			com_line.h \
 			value_queue.h \
 			kvu_numtostr.h \
+			kvu_rtcaps.h \
 			definition_by_contract.h \
 			object_queue.h \
 			locks.h \
@@ -29,7 +32,7 @@ kvutil_headers = 	kvutils.h \
 			dbc.h
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
-libkvutils_la_LDFLAGS = -version-info 2:0:0
+libkvutils_la_LDFLAGS = -version-info 3:0:1
 
 DIST_COMMON = 	README \
 		COPYING \

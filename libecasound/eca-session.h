@@ -17,11 +17,13 @@
 
 class AUDIO_IO;
 class ECA_CHAIN;
-
-#include "eca-chainsetup.h"
+class ECA_CHAINSETUP;
 
 /**
  * Ecasound runtime setup and parameters.
+ *
+ * Notes: This class is closely tied to 
+ *        the ECA_PROCESSOR and ECA_CONTROL classes.
  */
 class ECA_SESSION {
 
@@ -33,10 +35,33 @@ class ECA_SESSION {
 		       ep_status_error,
 		       ep_status_notready };
 
+  // --
+  // type definitions and constants
+
   friend class ECA_CONTROL_BASE;
   friend class ECA_CONTROL_OBJECTS;
   friend class ECA_CONTROL;
   friend class ECA_PROCESSOR;
+
+ public:
+
+  // --
+  // Public/const routines
+  // --
+
+  const std::vector<ECA_CHAINSETUP*>& get_chainsetups(void) const { return chainsetups_rep; }
+  const ECA_CHAINSETUP* get_selected_chainsetup(void) const { return selected_chainsetup_repp; }
+  const ECA_CHAINSETUP* get_connected_chainsetup(void) const { return connected_chainsetup_repp; }
+  const ECA_CHAINSETUP* get_chainsetup_with_name(const std::string& name) const;
+  bool is_selected_chainsetup_connected(void) const { return(selected_chainsetup_repp == connected_chainsetup_repp); }
+  bool is_interactive(void) const { return iactive_rep; }
+
+  // --
+  // Constructors and destructors
+  // --
+  ECA_SESSION(void);
+  ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&);
+  ~ECA_SESSION(void);
 
  private:
 
@@ -140,8 +165,6 @@ class ECA_SESSION {
    */
   std::vector<std::string> chainsetup_names(void) const;
 
- private:
-
   void update_controller_sources(void);
   void status(Engine_status status);
 
@@ -150,57 +173,14 @@ class ECA_SESSION {
   // ---
   Engine_status status(void) const;
 
-  std::vector<std::string> get_attached_chains_to_input(AUDIO_IO* aiod) const { return(selected_chainsetup_repp->get_attached_chains_to_input(aiod)); }
-  std::vector<std::string> get_attached_chains_to_output(AUDIO_IO* aiod) const { return(selected_chainsetup_repp->get_attached_chains_to_output(aiod)); }
-  int number_of_connected_chains_to_input(AUDIO_IO* aiod) const {
-    return(connected_chainsetup_repp->number_of_attached_chains_to_input(aiod)); }
-  int number_of_connected_chains_to_output(AUDIO_IO* aiod) const {
-    return(connected_chainsetup_repp->number_of_attached_chains_to_output(aiod)); }
-
- private:
-
   // ---
   // Status data
   // ---
   bool iactive_rep;          // Should engine use 'cqueue'?
-  bool multitrack_mode_rep;
-  enum ECA_CHAINSETUP::Mix_mode mixmode_rep;
-  bool raisepriority_rep;
-  int schedpriority_rep;
+
   VALUE_QUEUE ecasound_queue_rep;
   pthread_cond_t *ecasound_stop_cond_repp;
   pthread_mutex_t *ecasound_stop_mutex_repp;
-
-  int active_chain_index_rep;
-  int active_chainop_index_rep;
-  int active_chainop_param_index_rep;
-
-  // --
-  // Public/const routines
-  // --
- public:
-
-  const std::vector<ECA_CHAINSETUP*>& get_chainsetups(void) const { return chainsetups_rep; }
-  const ECA_CHAINSETUP* get_selected_chainsetup(void) const { return selected_chainsetup_repp; }
-  const ECA_CHAINSETUP* get_connected_chainsetup(void) const { return connected_chainsetup_repp; }
-  const ECA_CHAINSETUP* get_chainsetup_with_name(const std::string& name) const;
-  bool is_selected_chainsetup_connected(void) const { return(selected_chainsetup_repp == connected_chainsetup_repp); }
-
-  bool is_interactive(void) const { return iactive_rep; }
-
-  bool raised_priority(void) const { return(raisepriority_rep); }
-  void toggle_raised_priority(bool value) { raisepriority_rep = value; }
-
- public:
-
-  // --
-  // Constructors and destructors
-  // --
-  ECA_SESSION(void);
-  ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&);
-  ~ECA_SESSION(void);
-
- private:
 
   // --
   // Make sure that objects of this class aren't copy constucted/assigned

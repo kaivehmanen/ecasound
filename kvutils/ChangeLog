@@ -5,6 +5,7 @@
 2001-10-03  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* dbc.h (DBC_DECLARE): added
+	* kvurtcaps.h (all): added
 	
 2001-08-19  Kai Vehmanen <kaiv@wakkanet.fi>
 

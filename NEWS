@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 031001) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 051001) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -18,7 +18,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.3 *-
 
 ??0?2001 (v2.1.0)
-	- edi-entries: edi-6
+	- edi-entries: edi-6, edi-15
 	- added: more recent config.guess and config.sub to 
 	         the dist package  [juekawa]
 	- added: new feedback-% param to -etd effect, doesn't
@@ -31,6 +31,14 @@ Last officially released version is -*> v2.0.3 *-
 	- added: first implementation of edi-6; the -z:db
 		 is now completely transparent to other 
 		 parts of ecasound
+	- added: eiam - new commands: cs-set-position-samples,
+		 cs-get-position-samples, ai-set-position-samples,
+		 ai-get-position-samples, ao-set-position-samples,
+		 ao-get-position-samples
+	- added: edi-15 - '-B' option for selecting default 
+		 buffering mode (see ecasound man page)
+	- added: edi-15 - ecasoundrc bmode-defaults options; 
+		 obsoletes old default-buffersize, etc options
 	- changed: library version changed to 8.0.0
 	- changed: use of kvutils/definition_by_contract 
 		   dropped; more lightweight kvutils/dbc.h
@@ -48,6 +56,7 @@ Last officially released version is -*> v2.0.3 *-
 	- changed: new layout for saved ecs-files
 	- changed: docs - converted ecasound user's and 
 		   programmer's guide from yodl to latex 
+	- changed: shocking changes to startup printouts
 	- fixed: gcc3.x fixes to ALSA 0.5.x plugin [juekawa]
 	- fixed: problems with ALSA 0.9beta7 (dlopen() issue)
 	- fixed: minor samplerated bug with LADSPA plugins

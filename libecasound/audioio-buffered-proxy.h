@@ -26,6 +26,7 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
 
   int xruns_rep;
   bool finished_rep;
+  bool free_child_rep;
 
   void fetch_child_data(void);
 
@@ -35,7 +36,7 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
   // public functions
 
 
-  AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver, AUDIO_IO* aobject); 
+  AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver, AUDIO_IO* aobject, bool transfer_ownership); 
   virtual ~AUDIO_IO_BUFFERED_PROXY(void);
   
   // --

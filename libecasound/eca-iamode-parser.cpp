@@ -84,10 +84,12 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["fw"] = ec_cs_forward;
   cmd_map_rep["cs-setpos"] = ec_cs_set_position;
   cmd_map_rep["cs-set-position"] = ec_cs_set_position;
+  cmd_map_rep["cs-set-position-samples"] = ec_cs_set_position_samples;
   cmd_map_rep["setpos"] = ec_cs_set_position;
   cmd_map_rep["set-position"] = ec_cs_set_position;
   cmd_map_rep["cs-getpos"] = ec_cs_get_position;
   cmd_map_rep["cs-get-position"] = ec_cs_get_position;
+  cmd_map_rep["cs-get-position-samples"] = ec_cs_get_position_samples;
   cmd_map_rep["getpos"] = ec_cs_get_position;
   cmd_map_rep["get-position"] = ec_cs_get_position;
   cmd_map_rep["cs-get-length"] = ec_cs_get_length;
@@ -134,8 +136,10 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["ai-rewind"] = ec_ai_rewind;
   cmd_map_rep["ai-setpos"] = ec_ai_set_position;
   cmd_map_rep["ai-set-position"] = ec_ai_set_position;
+  cmd_map_rep["ai-set-position-samples"] = ec_ai_set_position_samples;
   cmd_map_rep["ai-getpos"] = ec_ai_get_position;
   cmd_map_rep["ai-get-position"] = ec_ai_get_position;
+  cmd_map_rep["ai-get-position-samples"] = ec_ai_get_position_samples;
   cmd_map_rep["ai-get-length"] = ec_ai_get_length;
   cmd_map_rep["ai-get-format"] = ec_ai_get_format;
   cmd_map_rep["ai-wave-edit"] = ec_ai_wave_edit;
@@ -153,8 +157,10 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["ao-rewind"] = ec_ao_rewind;
   cmd_map_rep["ao-setpos"] = ec_ao_set_position;
   cmd_map_rep["ao-set-position"] = ec_ao_set_position;
+  cmd_map_rep["ao-set-position-samples"] = ec_ao_set_position_samples;
   cmd_map_rep["ao-getpos"] = ec_ao_get_position;
   cmd_map_rep["ao-get-position"] = ec_ao_get_position;
+  cmd_map_rep["ao-get-position-samples"] = ec_ao_get_position_samples;
   cmd_map_rep["ao-get-length"] = ec_ao_get_length;
   cmd_map_rep["ao-get-format"] = ec_ao_get_format;
   cmd_map_rep["ao-wave-edit"] = ec_ao_wave_edit;
@@ -255,6 +261,7 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_ai_forward:
   case ec_ai_rewind:
   case ec_ai_set_position:
+  case ec_ai_set_position_samples:
 
   case ec_ao_add:
   case ec_ao_select:
@@ -262,6 +269,7 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_ao_forward:
   case ec_ao_rewind:
   case ec_ao_set_position:
+  case ec_ao_set_position_samples:
 
   case ec_cop_add:
   case ec_cop_select:
@@ -312,7 +320,9 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_cs_rewind:
   case ec_cs_forward:
   case ec_cs_set_position:
+  case ec_cs_set_position_samples:
   case ec_cs_get_position:
+  case ec_cs_get_position_samples:
   case ec_cs_get_length:
   case ec_cs_set_length:
   case ec_cs_toggle_loop:
@@ -340,7 +350,9 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_ai_forward:
   case ec_ai_rewind:
   case ec_ai_set_position:
+  case ec_ai_set_position_samples:
   case ec_ai_get_position:
+  case ec_ai_get_position_samples:
   case ec_ai_get_length:
   case ec_ai_get_format:
   case ec_ai_wave_edit:
@@ -355,7 +367,9 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_ao_forward:
   case ec_ao_rewind:
   case ec_ao_set_position:
+  case ec_ao_set_position_samples:
   case ec_ao_get_position:
+  case ec_ao_get_position_samples:
   case ec_ao_get_length:
   case ec_ao_get_format:
   case ec_ao_wave_edit:
@@ -391,6 +405,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
   case ec_cs_set_length:
   case ec_cs_toggle_loop:
   case ec_cs_set_param:
+  case ec_cs_set_position_samples:
 
   case ec_c_add:
   case ec_c_remove:
@@ -403,6 +418,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
   case ec_ai_forward:
   case ec_ai_rewind:
   case ec_ai_set_position:
+  case ec_ai_set_position_samples:
   case ec_ai_wave_edit:
 
   case ec_ao_add:
@@ -411,6 +427,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
   case ec_ao_forward:
   case ec_ao_rewind:
   case ec_ao_set_position:
+  case ec_ao_set_position_samples:
   case ec_ao_wave_edit:
 
     return(true);
@@ -429,8 +446,10 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_input(int id) {
   case ec_ai_forward:
   case ec_ai_rewind:
   case ec_ai_set_position:
-  case ec_ai_selected:
+  case ec_ai_set_position_samples:
   case ec_ai_get_position:
+  case ec_ai_get_position_samples:
+  case ec_ai_selected:
   case ec_ai_get_length:
   case ec_ai_get_format:
   case ec_ai_wave_edit:
@@ -450,8 +469,10 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_output(int id) {
   case ec_ao_forward:
   case ec_ao_rewind:
   case ec_ao_set_position:
-  case ec_ao_selected:
+  case ec_ao_set_position_samples:
   case ec_ao_get_position:
+  case ec_ao_get_position_samples:
+  case ec_ao_selected:
   case ec_ao_get_length:
   case ec_ao_get_format:
   case ec_ao_wave_edit:

@@ -279,24 +279,46 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
       break;
     }
 
+  case 'B':
+    {
+      std::string temp = get_argument_number(1, argu);
+      if (temp == "auto") {
+	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_auto);
+	ecadebug->msg("(eca-chainsetup-parser) Buffering mode is selected automatically.");
+      }
+      else if (temp == "nonrt") {
+	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_nonrt);
+	ecadebug->msg("(eca-chainsetup-parser) Buffering mode 'nonrt' selected.");
+      }
+      else if (temp == "rt") {
+	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_rt);
+	ecadebug->msg("(eca-chainsetup-parser) Buffering mode 'rt' selected.");
+      }
+      else if (temp == "rtlowlatency") {
+	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_rtlowlatency);
+	ecadebug->msg("(eca-chainsetup-parser) Buffering mode 'rtlowlatency' selected.");
+      }
+      break;
+    }
+
   case 'm':      // mixmode
     {
       std::string temp = get_argument_number(1, argu);
       if (temp == "auto") {
-	csetup_repp->mixmode_rep = ECA_CHAINSETUP::ep_mm_auto;
+	csetup_repp->set_mixmode(ECA_CHAINSETUP::ep_mm_auto);
 	ecadebug->msg("(eca-chainsetup-parser) Mix-mode is selected automatically.");
       }
       else if (temp == "mthreaded") {
 	ecadebug->msg("(eca-chainsetup-parser) Multithreaded mixmode selected.");
-	csetup_repp->mixmode_rep = ECA_CHAINSETUP::ep_mm_mthreaded;
+	csetup_repp->set_mixmode(ECA_CHAINSETUP::ep_mm_mthreaded);
       }
       else if (temp == "simple") {
 	ecadebug->msg("(eca-chainsetup-parser) Simple mixmode selected.");
-	csetup_repp->mixmode_rep = ECA_CHAINSETUP::ep_mm_simple;
+	csetup_repp->set_mixmode(ECA_CHAINSETUP::ep_mm_simple);
       }
       else if (temp == "normal") {
 	ecadebug->msg("(eca-chainsetup-parser) Normal mixmode selected.");
-	csetup_repp->mixmode_rep = ECA_CHAINSETUP::ep_mm_normal;
+	csetup_repp->set_mixmode(ECA_CHAINSETUP::ep_mm_normal);
       }
       break;
     }
@@ -306,6 +328,23 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
       csetup_repp->set_name(get_argument_number(1, argu));
       ecadebug->msg("(eca-chainsetup-parser) Setting chainsetup name to \""
 		    + csetup_repp->name() + "\".");
+      break;
+    }
+
+  case 'r':
+    {
+      int prio = ::atoi(get_argument_number(1, argu).c_str());
+      if (prio < 0) {
+	ecadebug->msg("(eca-chainsetup) Raised-priority mode disabled.");
+	csetup_repp->toggle_raised_priority(false);
+      }
+      else {
+	if (prio != 0) 
+	  csetup_repp->set_sched_priority(prio);
+	ecadebug->msg("(eca-chainseup) Raised-priority mode enabled. (prio:" + 
+		      kvu_numtostr(csetup_repp->sched_priority()) + ")");
+	csetup_repp->toggle_raised_priority(true);
+      }
       break;
     }
 

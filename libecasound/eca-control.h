@@ -26,7 +26,8 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   void set_action_argument(const std::vector<std::string>& s);
   void set_action_argument(double v);
   void clear_action_arguments(void);
-  double first_argument_as_number(void) const;
+  double first_argument_as_float(void) const;
+  long int first_argument_as_long_int(void) const;
 
  public:
 
