@@ -763,6 +763,8 @@ void ECA_CONTROLLER::start_engine(bool ignore_lock) {
 void ECA_CONTROLLER::close_engine(void) {
   if (!engine_started) return;
   ecasound_queue.push_back(ECA_PROCESSOR::ep_exit, 0.0);
+  pthread_join(th_cqueue,NULL);
+
 //    ifstream fin(ecasound_lockfile.c_str());
 //    while(fin) {
 //      fin.close();
@@ -773,7 +775,6 @@ void ECA_CONTROLLER::close_engine(void) {
 //      nanosleep(&sleepcount, NULL);
 //      fin.open(ecasound_lockfile.c_str());
 //    }
-//    while(ecasound_queue.is_empty() == false) ecasound_queue.pop_front();
   engine_started = false;
 
   // --------

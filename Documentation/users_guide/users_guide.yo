@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (131299)
+       (10012000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -75,7 +75,7 @@ subsect(Concepts)
 subsubsect(Chain)
 Chain is a simple signal flow abstraction. Every chain has one input
 and one output. All chain operators and their controllers are attached
-to chains. Chain can be muted, unmuted and it can be bypassed.
+to chains. Chain can be muted and bypassed.
 
 subsubsect(Audio object)
 Audio object is a really generic concept. Practically anything that 

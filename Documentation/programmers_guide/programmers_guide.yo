@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (131299)
+       (10012000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -60,7 +60,7 @@ behaviour as accurately as possible.
 Routine must specify all requirements and assumptions. 
 If the caller violates this specification, routine is not 
 responsible for the error. This means that routine mustn't
-check argument validity. This is must be done by the caller.
+check argument validity. This must be done by the caller.
 
 Routine should also specify, what conditions are true when
 returning to the caller. By doing this, routine ensures that
@@ -248,8 +248,78 @@ COMMENT(----------------------------------------------------------------)
 sect(Using ecasound from other programs)
 
 COMMENT(----------------------------------------------------------------)
+subsect(Console mode ecasound)
+This is the easiest way to take advantage of ecasound features in your
+own programs. You can fork ecasound, pipe commands to ecasound's
+interactive mode or you can create chainsetup (.ecs) files and load
+them to ecasound. You'll be able to do practically anything. The only 
+real problem is getting information from ecasound. You'll have to
+parse ecasound's ascii output if you want to do this. And in some
+situations, performance might be an issue.
+
+COMMENT(----------------------------------------------------------------)
+subsect(Controller class interface)
+By linking your program to libecasound, you can use the ECA_CONTROLLER
+class for controlling ecasound. This is a large interface class that
+offers routines for controlling all ecasound features. It's easy
+to use while still powerful. All ecasound interface programs use this 
+class. Here's a few lines of code:
+
+verb(
+--cut--
+ECA_SESSION esession;
+ECA_CONTROLLER ctrl (&esession);
+ctrl.new_chainsetup("default");
+[... other setup routines ]
+ctrl.start(); // starts processing in another thread (doesn't block)
+--cut--
+)
+
+If you don't want to use threads, you can do as above, but use
+ECA_PROCESSOR directly to do the actual processing. This way the
+processing is done without additional threads. Here's a short 
+sample:
+
+verb(
+--cut--
+ECA_SESSION esession;
+ECA_CONTROLLER ctrl (&esession);
+ctrl.new_chainsetup("default");
+[... other setup routines ]
+ECA_PROCESSOR p (&esession);
+p.exec(); // blocks until processing is finished
+--cut--
+)
+
+COMMENT(----------------------------------------------------------------)
+subsect(Ecasound classes as building blocks)
+And of course, you can also use individual ecasound classes directly.
+This means more control, but it also means more works. Here's
+another short sample:
+
+verb(
+--cut--
+- create a SAMPLE_BUFFER object for storing the samples
+- read samples with an audio I/O object - for example WAVEFILE
+- process sample data with some effect class - for example EFFECT_LOWPASS
+- maybe change the filter frequency with EFFECT_LOWPASS::set_parameter(1, new_value)
+- write samples with an audio I/O object - OSSDEVICE, WAVEFILE, etc.
+--cut--
+)
+
+COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
 
 sect(Adding new features and components?)
+
+COMMENT(----------------------------------------------------------------)
+subsect(Effects and other chain operators)
+Write a new class that inherits from CHAIN_OPERATOR or any of its
+successors. Implement all the necessary routines (init,
+set/get_parameter, process and a default constructor) and add your
+source files to libecasound's makefiles. Then all that's left to do 
+is to add your effect to em(libecasound/src/eca-chainop-map.cpp), 
+em(register_default_objects()). Now the new effect can be used just 
+like any other ecasound effect (parameters control, effect presets, etc).
 
 htmlcommand(<insert name=ecasound_tail>)

@@ -63,6 +63,7 @@ private:
 
   bool was_running;
   bool end_request;
+  bool trigger_outputs_request;
 
   size_t active_chain_index;
   size_t active_chainop_index;
@@ -86,7 +87,14 @@ private:
 
   int input_count, output_count, chain_count;
 
+  /**
+   * Start processing if it was conditionally stopped
+   */
   void conditional_start(void);
+
+  /**
+   * Stop processing (see conditional_start())
+   */
   void conditional_stop(void);
 
   double current_position(void) const; // seconds, uses the master_input
@@ -98,13 +106,47 @@ private:
   void change_position_chain(double seconds);
   void rewind_to_start_position(void);
 
+  /**
+   * Calculates how much data we need to process and sets buffersize 
+   * accordingly.
+   */
   void prehandle_control_position(void);
+
+  /**
+   * If we've processed all the data that was request, stop or rewind. 
+   * Also resets buffersize to its default value.
+   */
   void posthandle_control_position(void);
 
+  /**
+   * Start processing. If in multitrack-mode, performs the initial 
+   * multitrack-sync phase.
+   */
   void start(void);
+
+  /**
+   * Stop processing and notifies all devices.
+   */
   void stop(void);
     
+  /**
+   * Interprets the command queue for interactive commands and
+   * acts accordingly.
+   */
   void interpret_queue(void);
+
+  /**
+   * Performs one processing loop skipping all realtime inputs
+   * and outputs connected to them. The idea is to fill all 
+   * the output buffers before starting to record from realtime 
+   * inputs.
+   */
+  void multitrack_sync(void);
+
+  /**
+   * Trigger all output devices if requested by start()
+   */
+  void trigger_outputs(void);
 
   void init_connection_to_chainsetup(void);
   void init_status_variables(void);
@@ -116,9 +158,7 @@ private:
 
   void chain_processing(void);
   void chain_muting(void);
-
-  void multitrack_sync(void);
-
+  
   void exec_normal_iactive(void);
   void exec_normal_passive(void);
   void exec_simple_iactive(void);
