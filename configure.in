@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20030216-13
+dnl last modified: 20030402-14
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -181,7 +181,23 @@ dnl defines: ECA_FEELING_EXPERIMENTAL, ECA_AM_FEELING_EXPERIMENTAL
 dnl ---
 AC_ARG_ENABLE(experimental,
 	      [  --enable-experimental	  Enable experimental code (default = no)],
-	      experimental=yes)
+	      [
+	      case "$enableval" in
+	        y | yes)
+		  AC_MSG_RESULT(yes)
+		  experimental=yes
+		;;
+
+		n | no)
+		  AC_MSG_RESULT(no)
+		  experimental=no
+		;;
+        
+		*)
+		  AC_MSG_ERROR([Invalid parameter value for --enable-experimental: $enableval])
+		;;
+	      esac
+	      ])
 if test x$experimental = xyes; then
     AC_DEFINE(ECA_FEELING_EXPERIMENTAL)
 fi
@@ -231,7 +247,7 @@ AC_ARG_ENABLE(dbc,
       ;;
         
       *)
-        AC_MSG_ERROR([Invalid parameter value for --disable-dbc: $enableval])
+        AC_MSG_ERROR([Invalid parameter value for --enable-dbc: $enableval])
       ;;
     esac
  ],[
@@ -266,7 +282,23 @@ dnl ---
 AC_CHECK_HEADER(sys/soundcard.h,oss_support=yes,oss_support=no)
 AC_ARG_ENABLE(oss,
               [  --disable-oss		  Disable OSS (default = no)],
-	      oss_support=no)
+	      [
+	      case "$enableval" in
+	        y | yes)
+		  AC_MSG_RESULT(yes)
+		  oss_support=yes
+		;;
+
+		n | no)
+		  AC_MSG_RESULT(no)
+		  oss_support=no
+		;;
+        
+		*)
+		  AC_MSG_ERROR([Invalid parameter value for --enable-oss: $enableval])
+		;;
+	      esac
+	      ])
 AM_CONDITIONAL(ECA_AM_COMPILE_OSS, test x$oss_support = xyes)
 if test x$oss_support = xyes; then
     AC_DEFINE(ECA_COMPILE_OSS)
@@ -279,7 +311,23 @@ dnl defines: ECA_DISABLE_OSS_TRIGGER
 dnl ---
 AC_ARG_ENABLE(osstrigger,
 	      [  --disable-osstrigger 	  Disable the use of OSS trigger functions (default = no)],
-	      osstrigger=yes)
+	      [
+	      case "$enableval" in
+	        y | yes)
+		  AC_MSG_RESULT(yes)
+		  osstrigger=yes
+		;;
+
+		n | no)
+		  AC_MSG_RESULT(no)
+		  osstrigger=no
+		;;
+        
+		*)
+		  AC_MSG_ERROR([Invalid parameter value for --enable-osstrigger: $enableval])
+		;;
+	      esac
+	      ])
 if test x$osstrigger = xyes; then
     AC_DEFINE(ECA_DISABLE_OSS_TRIGGER)
 fi
@@ -301,9 +349,24 @@ fi
 
 AC_ARG_ENABLE(arts,
 	      [  --disable-arts		  Disable aRts support (default = no)],
-	      arts_support=no)
-	      AM_CONDITIONAL(ECA_AM_COMPILE_ARTS, test x$arts_support = xyes) 
+	      [
+	      case "$enableval" in
+	        y | yes)
+		  AC_MSG_RESULT(yes)
+		  arts_support=yes
+		;;
 
+		n | no)
+		  AC_MSG_RESULT(no)
+		  arts_support=no
+		;;
+        
+		*)
+		  AC_MSG_ERROR([Invalid parameter value for --enable-arts: $enableval])
+		;;
+	      esac
+	      ])
+AM_CONDITIONAL(ECA_AM_COMPILE_ARTS, test x$arts_support = xyes) 
 if test x$arts_support = xyes; then
     AC_DEFINE(ECA_COMPILE_ARTS)
 fi                                     
@@ -336,7 +399,23 @@ AC_ARG_WITH(libsamplerate,
 	    ])
 AC_ARG_ENABLE(libsamplerate,
 	      [  --disable-libsamplerate	  Disable libsamplerate support (default = no)],
-	      samplerate_support=no)
+	      [
+	      case "$enableval" in
+	        y | yes)
+		  AC_MSG_RESULT(yes)
+		  samplerate_support=yes
+		;;
+
+		n | no)
+		  AC_MSG_RESULT(no)
+		  samplerate_support=no
+		;;
+        
+		*)
+		  AC_MSG_ERROR([Invalid parameter value for --enable-samplerate: $enableval])
+		;;
+	      esac
+	      ])
 AM_CONDITIONAL(ECA_AM_COMPILE_SAMPLERATE, test x$samplerate_support = xyes)
 
 if test x$samplerate_support = xyes; then
@@ -359,8 +438,24 @@ dnl --
 compile_pyecasound=no
 
 AC_ARG_ENABLE(pyecasound,
-[  --enable-pyecasound 	  Enable compilation of pyecasound (default = no)],
-[  compile_pyecasound=yes ])
+	      [  --enable-pyecasound 	  Enable compilation of pyecasound (default = no)],
+	      [
+	      case "$enableval" in
+	        y | yes)
+		  AC_MSG_RESULT(yes)
+		  compile_pyecasound=yes
+		;;
+
+		n | no)
+		  AC_MSG_RESULT(no)
+		  compile_pyecasound=no
+		;;
+        
+		*)
+		  AC_MSG_ERROR([Invalid parameter value for --enable-pyecasound: $enableval])
+		;;
+	      esac
+	      ])
 
 dnl --
 dnl Python interpreter
@@ -429,9 +524,24 @@ dnl ---
 dnl a hack to support broken debian python installs
 
 AC_ARG_ENABLE(python-force-site-packages,
-       [  --enable-python-force-site-packages force install Python modules into
-site-packages even when it doesn't exist [default=no] ],
-python_force_site_packages=yes)
+	      [  --enable-python-force-site-packages force install Python modules into site-packages even when it doesn't exist [default=no] ],
+	      [
+	      case "$enableval" in
+	        y | yes)
+		  AC_MSG_RESULT(yes)
+		  python_force_site_packages=yes
+		;;
+
+		n | no)
+		  AC_MSG_RESULT(no)
+		  python_force_site_packages=no
+		;;
+        
+		*)
+		  AC_MSG_ERROR([Invalid parameter value for --enable-python-force-site-packages: $enableval])
+		;;
+	      esac
+	      ])
             
 AC_FIND_FILE(lib-dynload,$pymoddirs,ECA_S_PYTHON_MODULES)
 dnl Use site-packages in preference if it is there.
@@ -506,8 +616,24 @@ AC_CHECK_LIB(ncurses, main, termcap_library=ncurses,
 	AC_CHECK_LIB(termcap, main, termcap_library=termcap,
 		termcap_library=none))
 AC_ARG_ENABLE(ncurses,
-	[  --disable-ncurses	  	Disable ncurses (default = no)],
-	termcap_library=none)
+	      [  --disable-ncurses	  	Disable ncurses (default = no)],
+	      [
+	      case "$enableval" in
+	        y | yes)
+		  AC_MSG_RESULT(yes)
+		  termcap_library=yes
+		;;
+
+		n | no)
+		  AC_MSG_RESULT(no)
+		  termcap_library=no
+		;;
+        
+		*)
+		  AC_MSG_ERROR([Invalid parameter value for --enable-ncurses: $enableval])
+		;;
+	      esac
+	      ])
 AM_CONDITIONAL(ECA_AM_USE_NCURSES, test $termcap_library = ncurses)
 AM_CONDITIONAL(ECA_AM_USE_TERMCAP, test $termcap_library = termcap)
 if test x$termcap_library = xtermcap; then
@@ -551,7 +677,7 @@ AC_ARG_ENABLE(audiofile,
       ;;
         
       *)
-        AC_MSG_ERROR([Invalid parameter value for --disable-audiofile: $enableval])
+        AC_MSG_ERROR([Invalid parameter value for --enable-audiofile: $enableval])
       ;;
     esac
  ]
@@ -572,7 +698,23 @@ dnl ---
 
 AC_ARG_ENABLE(alsa,
               [  --disable-alsa		  Disable ALSA (default = no)],
-              alsa_support=no)
+	      [
+	      case "$enableval" in
+	        y | yes)
+		  AC_MSG_RESULT(yes)
+		  alsa_support=yes
+		;;
+
+		n | no)
+		  AC_MSG_RESULT(no)
+		  alsa_support=no
+		;;
+        
+		*)
+		  AC_MSG_ERROR([Invalid parameter value for --enable-alsa: $enableval])
+		;;
+	      esac
+	      ])
 if test x$alsa_support = x; then
     AC_CHECK_LIB(asound, snd_pcm_delay,
 		 alsa_support=yes,
@@ -738,8 +880,24 @@ dnl defines: ECA_STATIC_ONLY, ECA_AM_STATIC_ONLY
 dnl modifies: CXXFLAGS, CFLAGS, LDFLAGS
 dnl ---
 AC_ARG_ENABLE(all-static,
-[  --enable-all-static	  Build only static binaries (default = no)],
-enable_all_static=yes)
+	      [  --enable-all-static	  Build only static binaries (default = no)],
+	      [
+	      case "$enableval" in
+	        y | yes)
+		  AC_MSG_RESULT(yes)
+		  enable_all_static=yes
+		;;
+
+		n | no)
+		  AC_MSG_RESULT(no)
+		  enable_all_static=no
+		;;
+        
+		*)
+		  AC_MSG_ERROR([Invalid parameter value for --enable-all-static: $enableval])
+		;;
+	      esac
+	      ])
 if test x$enable_all_static = xyes; then
     AC_DEFINE(ECA_ALL_STATIC)
     CXXFLAGS="$CXXFLAGS -static"
