@@ -178,7 +178,7 @@ void ECA_CONTROL_BASE::stop(void) {
   if (engine_repp->status() != ECA_ENGINE::engine_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped");
   engine_repp->command(ECA_ENGINE::ep_stop, 0.0);
-
+  
   // --------
   // ensure:
   // assert(is_running() == false); 

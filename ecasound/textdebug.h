@@ -1,19 +1,19 @@
-#ifndef _TEXTDEBUG_H
-#define _TEXTDEBUG_H
+#ifndef INCLUDED_TEXTDEBUG_H
+#define INCLUDED_TEXTDEBUG_H
 
 #include <string>
-#include <iostream.h>
+#include <iostream>
 
 #include <eca-debug.h>
 
 class TEXTDEBUG : public ECA_DEBUG {
 private:
     
-    ostream* dostream;
+    std::ostream* dostream;
     int debug_level;
     
-    void stream(ostream* dos);
-    ostream* stream(void);
+    void stream(std::ostream* dos);
+    std::ostream* stream(void);
     
 public:
 
@@ -28,17 +28,3 @@ public:
 extern TEXTDEBUG textdebug;
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -175,8 +175,7 @@ void ECA_ENGINE::exec(void) {
 }
 
 /**
- * Sends 'cmd' to engines command queue. If 
- * session()->is_interactive() is true, commands are 
+ * Sends 'cmd' to engines command queue. Commands are 
  * processed in the server's main loop. 
  */
 void ECA_ENGINE::command(Engine_command_t cmd, double arg) {
@@ -581,7 +580,7 @@ void ECA_ENGINE::update_engine_state(void) {
 
   // --
   // process the command queue
-  if (session_repp->iactive_rep == true) interpret_queue();
+  interpret_queue();
 
   // --
   // if in running state, poll for incoming commands

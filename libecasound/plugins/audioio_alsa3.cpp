@@ -534,7 +534,7 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
 	}
       }
       else {
-	cerr << "(audioio-alsa3) Write error! Stopping operation." << endl;
+	std::cerr << "(audioio-alsa3) Write error! Stopping operation (" << count << ")." << std::endl;
 	stop();
 	close();
       }

@@ -93,9 +93,9 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
     }
     else {
       add_chainsetup(comline_setup); /* ownership object transfered */
-      if (selected_chainsetup_repp->is_valid()) connect_chainsetup();
-      else 
-	ecadebug->msg("(eca-session) Warning! Unable to create a valid chainsetup from command-line arguments.");
+      if (selected_chainsetup_repp->is_valid() != true) {
+	ecadebug->msg("(eca-session) Note! Unable to create a valid chainsetup from the command-line arguments.");
+      }
     }
   }
 }

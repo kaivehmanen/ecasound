@@ -16,11 +16,11 @@
 #include <term.h>
 #endif
 
-void TEXTDEBUG::stream(ostream* dos) {
+void TEXTDEBUG::stream(std::ostream* dos) {
   dostream = dos;
 }
 
-ostream* TEXTDEBUG::stream(void) { return(dostream); }
+std::ostream* TEXTDEBUG::stream(void) { return(dostream); }
 
 void TEXTDEBUG::flush(void) {
   dostream->flush();
