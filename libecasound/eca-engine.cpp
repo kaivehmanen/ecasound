@@ -1167,6 +1167,9 @@ void ECA_ENGINE::update_cache_latency_values(void)
 		  kvu_numtostr(recording_offset_rep) +
 		  	" samples.");
   }
+  else {
+    recording_offset_rep = 0;
+  }
 }
 
 /**

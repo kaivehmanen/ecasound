@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 130302) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 140302) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.4 *-
 
-??022002 (v2.1dev8)
+??032002 (v2.1dev8)
 	- edi-entries: edi-13, edi-18, edi-21, edi-22
 	- added: reverse audio object type; see the ecasound(1) 
 		 man page for better documentation
@@ -81,7 +81,7 @@ Last officially released version is -*> v2.0.4 *-
 		 without doing a disconnect-connect
 	- fixed: better handling of situations where JACK server
 		 is abruptly shutdown and then restarted
-	- fixed: sometimes an incorrect length-field written to 
+	- fixed: sometimes an incorrect length-field was written to 
 		 newly created wav-files 
 	- fixed: problems with using ewf-files with doublebuffering
 	- fixed: loop devices didn't work; resulted in explicit 
