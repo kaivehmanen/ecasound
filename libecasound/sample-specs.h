@@ -50,11 +50,11 @@ namespace SAMPLE_SPECS {
   static const bool is_system_littleendian = true;
 #endif
 
-  static const sample_t s16_to_st_constant = (32768.0 / max_amplitude); // 2^15
-  static const sample_t s24_to_st_constant = (8388608.0 / max_amplitude); // 2^23
-  static const sample_t s32_to_st_constant = (2147483648.0 / max_amplitude);  // 2^31
-  static const sample_t u8_to_st_delta = 128;
-  static const sample_t u8_to_st_constant = (max_amplitude / 128);
+  static const sample_t s16_to_st_constant = ((1 << 15) / max_amplitude);
+  static const sample_t s24_to_st_constant = ((1 << 23) / max_amplitude);
+  static const sample_t s32_to_st_constant = ((1 << 31) / max_amplitude);
+  static const sample_t u8_to_st_delta = (1 << 7);
+  static const sample_t u8_to_st_constant = (max_amplitude / (1 << 7));
 }
 
 #endif

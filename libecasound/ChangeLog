@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2002-02-13  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-chainop.h (release): added
+	* eca-chain.h (release): added
+
 2002-02-09  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
         * eca-audio-format.h (set_audio_format): renamed to

@@ -97,6 +97,7 @@ class CHAIN : public ECA_AUDIO_POSITION {
   OPERATOR* selected_target(void) const { return(selected_dynobj_repp); }
 
   void init(SAMPLE_BUFFER* sbuf = 0, int in_channels = 0, int out_channels = 0);
+  void release(void);
   void process(void);
   void controller_update(void);
   void refresh_parameters(void);

@@ -163,6 +163,11 @@ void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample)
 		                         kvu_numtostr(target_rate_rep) + "."); 
 }
 
+void EFFECT_PITCH_SHIFT::release(void)
+{
+  sbuf_repp = 0;
+}
+
 void EFFECT_PITCH_SHIFT::process(void)
 {
   sbuf_repp->resample(samples_per_second(), target_rate_rep); 
@@ -220,6 +225,11 @@ void EFFECT_AUDIO_STAMP::parameter_description(int param, struct PARAM_DESCRIPTI
 
 void EFFECT_AUDIO_STAMP::init(SAMPLE_BUFFER *insample) { 
   sbuf_repp = insample;
+}
+
+void EFFECT_AUDIO_STAMP::release(void)
+{
+  sbuf_repp = 0;
 }
 
 void EFFECT_AUDIO_STAMP::process(void) {

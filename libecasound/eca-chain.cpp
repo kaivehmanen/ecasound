@@ -124,7 +124,7 @@ void CHAIN::disconnect_output(void) { output_id_rep = -1; initialized_rep = fals
 /**
  * Disconnects the sample buffer
  */
-void CHAIN::disconnect_buffer(void) { audioslot_repp = 0; initialized_rep = false; }
+void CHAIN::disconnect_buffer(void) { audioslot_repp = 0; initialized_rep = false; release(); }
 
 /**
  * Adds the chain operator to the end of the chain
@@ -557,6 +557,21 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels)
   // --------
   DBC_ENSURE(is_initialized() == true);
   // --------
+}
+
+/** 
+ * Releases all buffers assigned to chain operators.
+ */
+void CHAIN::release(void)
+{
+  for(size_t p = 0; p != chainops_rep.size(); p++) {
+    chainops_rep[p]->release();
+  }
+  initialized_rep = false;
+
+  // ---------
+  DBC_ENSURE(is_initialized() != true);
+  // ---------
 }
 
 /**

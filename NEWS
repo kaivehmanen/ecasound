@@ -52,6 +52,11 @@ Last officially released version is -*> v2.0.4 *-
 	- changed: looping with -tl always loops from the start; 
 		   -y can't be used for offseting loop start 
  		   offset -> use ewf-files instead
+	- changed: s24_le and s24_be sample formats are interpreted
+		   as three-byte values, not as four-byte 
+		   24-in-32bits values as before; to access 
+		   unpacked 24bit data, use s32_le and s32_be
+		   formats instead
 	- fixed: -[io]:alsaplugin,x,y didn't work with latest ALSA
 		 0.9betaX releases
 	- fixed: serious bug in setting up ALSA 0.9.x buffering params

@@ -89,10 +89,11 @@ void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format v) thro
 
     case sfmt_s24_le:
     case sfmt_s24_be:
+      align_rep = 3;
+      break;
 
     case sfmt_s32_le:
     case sfmt_s32_be:
-
     case sfmt_f32_le:
     case sfmt_f32_be:
       align_rep = 4;
@@ -130,15 +131,7 @@ void ECA_AUDIO_FORMAT::convert_to_host_byte_order(void)
 
 int ECA_AUDIO_FORMAT::bits(void) const
 {
-  switch(sfmt_rep) 
-    {
-    case sfmt_s24_le:
-    case sfmt_s24_be:
-      return(24);
-
-    default: 
-      return(align_rep * 8);
-    }
+  return(align_rep * 8);
 }
 
 void ECA_AUDIO_FORMAT::set_channels(int v)

@@ -103,13 +103,15 @@ ECA_ENGINE::~ECA_ENGINE(void)
     if (csetup_repp != 0) {
       vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
       while(q != csetup_repp->chains.end()) {
-	if (*q != 0) (*q)->disconnect_buffer();
+	if (*q != 0) {
+	  (*q)->disconnect_buffer();
+	}
 	++q;
       }
       csetup_repp->toggle_is_in_use(false);
     }
   }
-
+  
   dump_profile_info();
 
   for(size_t n = 0; n < cslots_rep.size(); n++) {

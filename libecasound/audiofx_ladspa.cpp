@@ -47,9 +47,7 @@ EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&)
 
 EFFECT_LADSPA::~EFFECT_LADSPA (void)
 {
-  if (buffer_repp != 0) {
-    buffer_repp->release_pointer_reflock();
-  }
+  release();
   
   if (plugin_desc != 0) {
     for(unsigned int n = 0; n < plugins_rep.size(); n++) {
@@ -247,9 +245,7 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample)
   DBC_CHECK(samples_per_second() > 0);
 
   if (buffer_repp != insample) {
-    if (buffer_repp != 0) {
-      buffer_repp->release_pointer_reflock();
-    }
+    release();
     buffer_repp = insample;
     buffer_repp->get_pointer_reflock();
   }
@@ -329,6 +325,14 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample)
   }
   for(unsigned long m = 0; m < plugins_rep.size(); m++)
     if (plugin_desc->activate != 0) plugin_desc->activate(plugins_rep[m]);
+}
+
+void EFFECT_LADSPA::release(void)
+{
+  if (buffer_repp != 0) {
+    buffer_repp->release_pointer_reflock();
+  }
+  buffer_repp = 0;
 }
 
 void EFFECT_LADSPA::process(void)

@@ -62,6 +62,7 @@ public:
   virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
+  virtual void release(void);
   virtual void process(void);
 
   virtual long int output_samples(long int i_samples);
@@ -93,6 +94,7 @@ class EFFECT_AUDIO_STAMP : public EFFECT_BASE,
   virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
+  virtual void release(void);
   virtual void process(void);
 
   EFFECT_AUDIO_STAMP(void);

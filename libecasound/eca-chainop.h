@@ -24,38 +24,67 @@ class CHAIN_OPERATOR : public OPERATOR {
   virtual ~CHAIN_OPERATOR (void) { }
 
   /**
-   * Prepare chain operator for processing. All following 
-   * calls will use the sample buffer pointed by 'sbuf'.
-   * It's important that buffer parameters are not changed
-   * after this call (especially channel count and sample rate).
+   * Prepares chain operator for processing. 
+   * 
+   * Whenever attributes of the sample buffer pointed 
+   * by 'sbuf' are changed, chain operator should
+   * be reinitialized with a new call to init().
    *
    * @param sbuf pointer to a sample buffer object
+   *
+   * @see release
    */
   virtual void init(SAMPLE_BUFFER* sbuf) = 0;
 
   /**
-   * Process sample data
+   * Releases the buffer that was used to initialize
+   * the chain operator.
+   *
+   * After release(), chain operator is not 
+   * allowed to access the sample buffer given 
+   * to init().
+   * 
+   * @see init()
+   */
+  virtual void release(void) { }
+
+  /**
+   * Processes sample data in the buffer passed
+   * to init().
    */
   virtual void process(void) = 0;
 
   /**
-   * Optional status info.
+   * Returns a string describing chain operator's
+   * current status.
+   *
    * @param single_sample pointer to a single sample
    */
   virtual std::string status(void) const { return(""); }
 
   /** 
-   * If chain operator regularly adds or removes samples from 
-   * the input data stream, this function should be 
-   * reimplemented.
+   * Returns the length of the sample buffer after
+   * a call to process(), if the buffer's original 
+   * length was 'i_samples'.
+   *
+   * This function should be reimplemented by chain 
+   * operator types that add or remove samples 
+   * from the input data stream.
+   *
+   * @see process()
    */
   virtual long int output_samples(long int i_samples) const { return(i_samples); }
 
   /** 
-   * If sample buffer used for initializing has 'i_channels' audio 
-   * channels, this routine returns the number of output channels
-   * produced. Must be reimplemented if channel count changes 
+   * Returns number of channels of the sample buffer
+   * after a call to process(), if the buffer originally
+   * had 'i_channels' channels.
+   *
+   * This function should be reimplemented by chain
+   * operator types that change the channel count
    * during processing.
+   *
+   * @see process()
    */
   virtual int output_channels(int i_channels) const { return(i_channels); }
 };

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-objects.cpp: Class for configuring libecasound objects
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,8 @@
 #include "eca-debug.h"
 
 ECA_CONTROL_OBJECTS::ECA_CONTROL_OBJECTS (ECA_SESSION* psession) 
-  : ECA_CONTROL_BASE(psession) {
+  : ECA_CONTROL_BASE(psession)
+{
   selected_audio_object_repp = 0;
   selected_audio_input_repp = 0;
   selected_audio_output_repp = 0;
@@ -117,7 +118,8 @@ void ECA_CONTROL_OBJECTS::remove_chainsetup(void) {
  * ensure:
  *  filename exists implies loaded chainsetup == selected_chainsetup()
  */
-void ECA_CONTROL_OBJECTS::load_chainsetup(const std::string& filename) {
+void ECA_CONTROL_OBJECTS::load_chainsetup(const std::string& filename)
+{
   try {
     session_repp->load_chainsetup(filename);
     select_chainsetup(get_chainsetup_filename(filename)->name());
@@ -136,7 +138,8 @@ void ECA_CONTROL_OBJECTS::load_chainsetup(const std::string& filename) {
  * require:
  *  selected_chainsetup().empty() != true
  */
-void ECA_CONTROL_OBJECTS::save_chainsetup(const std::string& filename) {
+void ECA_CONTROL_OBJECTS::save_chainsetup(const std::string& filename)
+{
   // --------
   DBC_REQUIRE(selected_chainsetup().empty() != true);
   // --------
@@ -166,7 +169,8 @@ void ECA_CONTROL_OBJECTS::save_chainsetup(const std::string& filename) {
  *  name == selected_chainsetup() ||
  *  selected_chainsetup_rep == 0
  */
-void ECA_CONTROL_OBJECTS::select_chainsetup(const std::string& name) {
+void ECA_CONTROL_OBJECTS::select_chainsetup(const std::string& name)
+{
   // --------
   DBC_REQUIRE(name != "");
   // --------
@@ -193,7 +197,8 @@ void ECA_CONTROL_OBJECTS::select_chainsetup(const std::string& name) {
  * require:
  *  index_number > 0
  */
-void ECA_CONTROL_OBJECTS::select_chainsetup_by_index(int index_number) { 
+void ECA_CONTROL_OBJECTS::select_chainsetup_by_index(int index_number)
+{
   // --------
   DBC_REQUIRE(index_number > 0);
   // --------
@@ -736,17 +741,17 @@ void ECA_CONTROL_OBJECTS::add_chains(const std::string& names) {
  * ensure:
  *   selected_chains().size() == names.size()
  */
-void ECA_CONTROL_OBJECTS::add_chains(const std::vector<std::string>& new_chains) { 
+void ECA_CONTROL_OBJECTS::add_chains(const std::vector<std::string>& new_chains)
+{
   // --------
-  DBC_REQUIRE(is_selected() == true &&
-	 is_connected() == false);
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
 
   selected_chainsetup_repp->add_new_chains(new_chains);
   selected_chainsetup_repp->select_chains(new_chains);
 
-  ecadebug->msg("(eca-controller) Added chains: " +
-		vector_to_string(new_chains, ", ") + ".");
+  ecadebug->msg("(eca-controller) Added chains: " + vector_to_string(new_chains, ", ") + ".");
 
   // --------
   DBC_ENSURE(selected_chains().size() == new_chains.size());
@@ -764,7 +769,8 @@ void ECA_CONTROL_OBJECTS::add_chains(const std::vector<std::string>& new_chains)
  * ensure:
  *  selected_chains().size() == 0
  */
-void ECA_CONTROL_OBJECTS::remove_chains(void) { 
+void ECA_CONTROL_OBJECTS::remove_chains(void)
+{
   // --------
   DBC_REQUIRE(is_selected() == true &&
 	 selected_chains().size() > 0 &&
@@ -790,7 +796,8 @@ void ECA_CONTROL_OBJECTS::remove_chains(void) {
  * require:
  *   is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::select_chains_by_index(const std::vector<int>& index_numbers) { 
+void ECA_CONTROL_OBJECTS::select_chains_by_index(const std::vector<int>& index_numbers)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------

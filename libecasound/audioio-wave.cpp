@@ -45,6 +45,12 @@
 #define UINT32_MAX 4294967295U
 #endif
 
+/**
+ * Print extra debug information about RIFF header 
+ * contents to stdout when opening files.
+ */
+// #define DEBUG_WAVE_HEADER
+
 WAVEFILE::WAVEFILE (const std::string& name)
 {
   set_label(name);
@@ -258,21 +264,42 @@ void WAVEFILE::read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&)
     fio_repp->read_to_buffer(&riff_format_rep, sizeof(riff_format_rep));
     //    fread(&riff_format_rep,1,sizeof(riff_format_rep),fobject);
 
+#ifdef DEBUG_WAVE_HEADER
+    std::cout << "RF: format = " << riff_format_rep.format << std::endl;
+    std::cout << "RF: channels = " << riff_format_rep.channels << std::endl;
+    std::cout << "RF: srate = " << riff_format_rep.srate << std::endl;
+    std::cout << "RF: byte_second = " << riff_format_rep.byte_second << std::endl;
+    std::cout << "RF: align = " << riff_format_rep.align << std::endl;
+    std::cout << "RF: bits = " << riff_format_rep.bits << std::endl;
+#endif
+
     if (riff_format_rep.format != 1 &&
 	riff_format_rep.format != 3) {
       throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-WAVE: Only WAVE_FORMAT_PCM and WAVE_FORMAT_IEEE_FLOAT are supported."));
     }
-
+    
     set_samples_per_second(riff_format_rep.srate);
     set_channels(riff_format_rep.channels);
+
     if (riff_format_rep.bits == 32) {
       if (riff_format_rep.format == 3)
 	set_sample_format(ECA_AUDIO_FORMAT::sfmt_f32_le);
       else
 	set_sample_format(ECA_AUDIO_FORMAT::sfmt_s32_le);
     }
-    else if (riff_format_rep.bits == 24)
-      set_sample_format(ECA_AUDIO_FORMAT::sfmt_s24_le);
+    else if (riff_format_rep.bits == 24) {
+      if (riff_format_rep.align == channels() * 3) {
+	/* packet s24 format */
+	set_sample_format(ECA_AUDIO_FORMAT::sfmt_s24_le);
+      }
+      else if (riff_format_rep.align == channels() * 4) {
+	/* unpacked s24 format */
+	set_sample_format(ECA_AUDIO_FORMAT::sfmt_s32_le);
+      }
+      else {
+	throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-WAVE: Invalid 24bit sample format combination."));
+      }
+    }
     else if (riff_format_rep.bits == 16)
       set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
     else if (riff_format_rep.bits == 8)
@@ -280,6 +307,12 @@ void WAVEFILE::read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&)
     else 
       throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-WAVE: Sample format not supported."));
   }
+
+  DBC_CHECK(riff_format_rep.channels == channels());
+  DBC_CHECK(riff_format_rep.bits == bits());
+  DBC_CHECK(riff_format_rep.srate == samples_per_second());
+  DBC_CHECK(riff_format_rep.byte_second == bytes_per_second());
+  DBC_CHECK(riff_format_rep.align == frame_size());
 
   fio_repp->set_file_position(savetemp);
 }
@@ -338,7 +371,7 @@ void WAVEFILE::update_riff_datablock(void) {
 
   fio_repp->set_file_position_end();
 
-  /* hack for 64bit wav files */
+  /* hack for wav files with length over 2^31 bytes */
   if (fio_repp->get_file_position() - savetemp > UINT32_MAX)
     fblock.bsize = UINT32_MAX;
   else

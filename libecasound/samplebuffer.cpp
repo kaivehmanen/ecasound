@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // samplebuffer.cpp: Class representing a buffer of audio samples.
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -420,16 +420,15 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
 
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
+	  /* skip the LSB-byte of s32temp (s32temp & 0xff) */
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
-	  target[osize++] = 0;
-	
-	  if (s32temp < 0) target[osize - 2] |=  0x80;
+	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);	
+
 	  break;
 	}
       
@@ -437,16 +436,15 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
 
-	  target[osize++] = 0;
+	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
+	  /* skip the LSB-byte of s32temp (s32temp & 0xff) */
 	
-	  if (s32temp < 0) target[osize - 3] |= 0x80;
 	  break;
 	}
       
@@ -588,16 +586,14 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
 
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
+	  /* skip the LSB-byte of s32temp (s32temp & 0xff) */
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
-	  target[osize++] = 0;
-	
-	  if (s32temp < 0) target[osize - 2] |=  0x80;
+	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);	
 
 	  break;
 	}
@@ -606,16 +602,14 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
 
-	  target[osize++] = 0;
+	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
-	
-	  if (s32temp < 0) target[osize - 3] |= 0x80;
+	  /* skip the LSB-byte of s32temp (s32temp & 0xff) */
 
 	  break;
 	}
@@ -754,18 +748,18 @@ void SAMPLE_BUFFER::import_interleaved(unsigned char* source,
       case ECA_AUDIO_FORMAT::sfmt_s24_le:
 	{
 	  if (SAMPLE_SPECS::is_system_littleendian) {
-	    b[0] = source[isize++];
+	    b[0] = 0; /* LSB */
 	    b[1] = source[isize++];
 	    b[2] = source[isize++];
 	    b[3] = source[isize++];
 	  }
 	  else {
-	    b[3] = source[isize++];
+	    b[3] = 0; /* LSB */
 	    b[2] = source[isize++];
 	    b[1] = source[isize++];
 	    b[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_t)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = ((sample_t)((*(int32_t*)b) >> 8)) / SAMPLE_SPECS::s24_to_st_constant;
 	}
 	break;
 
@@ -775,15 +769,15 @@ void SAMPLE_BUFFER::import_interleaved(unsigned char* source,
 	    b[3] = source[isize++];
 	    b[2] = source[isize++];
 	    b[1] = source[isize++];
-	    b[0] = source[isize++];
+	    b[0] = 0; /* LSB */
 	  }
 	  else {
 	    b[0] = source[isize++];
 	    b[1] = source[isize++];
 	    b[2] = source[isize++];
-	    b[3] = source[isize++];
+	    b[3] = 0; /* LSB */
 	  }
-	  buffer[c][osize] = (sample_t)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = ((sample_t)((*(int32_t*)b) >> 8)) / SAMPLE_SPECS::s24_to_st_constant;
 	}
 	break;
 
@@ -935,18 +929,18 @@ void SAMPLE_BUFFER::import_noninterleaved(unsigned char* source,
       case ECA_AUDIO_FORMAT::sfmt_s24_le:
 	{
 	  if (SAMPLE_SPECS::is_system_littleendian) {
-	    b[0] = source[isize++];
+	    b[0] = 0; /* LSB */
 	    b[1] = source[isize++];
 	    b[2] = source[isize++];
 	    b[3] = source[isize++];
 	  }
 	  else {
-	    b[3] = source[isize++];
+	    b[3] = 0; /* LSB */
 	    b[2] = source[isize++];
 	    b[1] = source[isize++];
 	    b[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_t)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = ((sample_t)((*(int32_t*)b) >> 8)) / SAMPLE_SPECS::s24_to_st_constant;
 	}
 	break;
 
@@ -956,15 +950,15 @@ void SAMPLE_BUFFER::import_noninterleaved(unsigned char* source,
 	    b[3] = source[isize++];
 	    b[2] = source[isize++];
 	    b[1] = source[isize++];
-	    b[0] = source[isize++];
+	    b[0] = 0; /* LSB */
 	  }
 	  else {
 	    b[0] = source[isize++];
 	    b[1] = source[isize++];
 	    b[2] = source[isize++];
-	    b[3] = source[isize++];
+	    b[3] = 0; /* LSB */
 	  }
-	  buffer[c][osize] = (sample_t)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = ((sample_t)((*(int32_t*)b) >> 8)) / SAMPLE_SPECS::s24_to_st_constant;
 	}
 	break;
 

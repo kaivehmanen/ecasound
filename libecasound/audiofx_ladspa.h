@@ -51,6 +51,7 @@ public:
   virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
+  virtual void release(void);
   virtual void process(void);
 
  private:

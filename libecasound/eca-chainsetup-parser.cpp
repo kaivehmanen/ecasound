@@ -77,7 +77,8 @@ void ECA_CHAINSETUP_PARSER::interpret_option (const std::string& arg) {
  * @post (option succesfully interpreted && interpretation_result() ==  true) ||
  *       (unknown or invalid option && interpretation_result() == false)
  */
-void ECA_CHAINSETUP_PARSER::interpret_global_option (const std::string& arg) {
+void ECA_CHAINSETUP_PARSER::interpret_global_option (const std::string& arg)
+{
   interpret_entry();
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup-parser) Interpreting global option \"" + arg + "\".");
@@ -98,7 +99,8 @@ void ECA_CHAINSETUP_PARSER::interpret_global_option (const std::string& arg) {
  * @post (option succesfully interpreted && interpretation_result() ==  true) ||
  *       (unknown or invalid option && interpretation_result() == false)
  */
-void ECA_CHAINSETUP_PARSER::interpret_object_option (const std::string& arg) {
+void ECA_CHAINSETUP_PARSER::interpret_object_option (const std::string& arg)
+{
   interpret_entry();
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup-parser) Interpreting object option \"" + arg + "\".");
@@ -115,7 +117,8 @@ void ECA_CHAINSETUP_PARSER::interpret_object_option (const std::string& arg) {
 /**
  * Interpret a vector of options.
  */
-void ECA_CHAINSETUP_PARSER::interpret_options(std::vector<std::string>& opts) {
+void ECA_CHAINSETUP_PARSER::interpret_options(std::vector<std::string>& opts)
+{
   int optcount = static_cast<int>(opts.size());
   int global_matches = 0;
   int other_matches = 0;
@@ -196,7 +199,8 @@ void ECA_CHAINSETUP_PARSER::reset_interpret_status(void) {
  * 
  * @post all options valid for interpret_option()
  */
-void ECA_CHAINSETUP_PARSER::preprocess_options(std::vector<std::string>& opts) const {
+void ECA_CHAINSETUP_PARSER::preprocess_options(std::vector<std::string>& opts) const
+{
   std::vector<std::string>::iterator p = opts.begin();
   while(p != opts.end()) {
 
@@ -220,7 +224,8 @@ void ECA_CHAINSETUP_PARSER::preprocess_options(std::vector<std::string>& opts) c
  *
  * @post interpret_status() != true
  */
-void ECA_CHAINSETUP_PARSER::interpret_entry(void) {
+void ECA_CHAINSETUP_PARSER::interpret_entry(void)
+{
   istatus_rep = false;
   interpret_set_result(true, "");
 
@@ -233,7 +238,8 @@ void ECA_CHAINSETUP_PARSER::interpret_entry(void) {
  * @post interpret_result() == true && interpret_result_verbose() == "" ||
  *       interpret_result() == false && interpret_result_verbose() != ""
  */
-void ECA_CHAINSETUP_PARSER::interpret_exit(const std::string& arg) {
+void ECA_CHAINSETUP_PARSER::interpret_exit(const std::string& arg)
+{
   if (istatus_rep != true) {
     /* option 'arg' was not found */
     interpret_set_result(false, std::string("Interpreting option \"") +
@@ -263,7 +269,8 @@ void ECA_CHAINSETUP_PARSER::interpret_exit(const std::string& arg) {
  * @pre argu[0] == '-'
  * @pre istatus_rep == false
  */
-void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
+void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -440,7 +447,8 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
  * @pre argu[0] == '-'
  * @pre istatus_rep == false
  */
-void ECA_CHAINSETUP_PARSER::interpret_processing_control (const std::string& argu) {
+void ECA_CHAINSETUP_PARSER::interpret_processing_control (const std::string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -486,7 +494,8 @@ void ECA_CHAINSETUP_PARSER::interpret_processing_control (const std::string& arg
  * @pre argu[0] == '-'
  * @pre istatus_rep == false
  */
-void ECA_CHAINSETUP_PARSER::interpret_chains (const std::string& argu) {
+void ECA_CHAINSETUP_PARSER::interpret_chains (const std::string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -527,7 +536,8 @@ void ECA_CHAINSETUP_PARSER::interpret_chains (const std::string& argu) {
  * @pre  argu[0] == '-'
  * @pre istatus_rep == false
  */
-void ECA_CHAINSETUP_PARSER::interpret_audio_format (const std::string& argu) {
+void ECA_CHAINSETUP_PARSER::interpret_audio_format (const std::string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -576,7 +586,8 @@ void ECA_CHAINSETUP_PARSER::interpret_audio_format (const std::string& argu) {
  * @pre argu[0] == '-'
  * @pre istatus_rep == false
  */
-void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const std::string& argu) {
+void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const std::string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -637,7 +648,8 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const std::string& argu) {
  * @pre argu.size() > 0
  * @pre argu[0] == '-'
  */
-void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu) { 
+void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -735,7 +747,8 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu) {
  * @pre argu.size() > 0
  * @pre argu[0] == '-'
  */
-void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu) { 
+void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -842,7 +855,8 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu) {
  * @pre argu[0] == '-'
  * @pre istatus_rep == false
  */
-void ECA_CHAINSETUP_PARSER::interpret_chain_operator (const std::string& argu) {
+void ECA_CHAINSETUP_PARSER::interpret_chain_operator (const std::string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -867,7 +881,8 @@ void ECA_CHAINSETUP_PARSER::interpret_chain_operator (const std::string& argu) {
  * @pre argu[0] == '-'
  * @pre istatus_rep == false
  */
-void ECA_CHAINSETUP_PARSER::interpret_controller (const std::string& argu) {
+void ECA_CHAINSETUP_PARSER::interpret_controller (const std::string& argu)
+{
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -895,7 +910,8 @@ void ECA_CHAINSETUP_PARSER::interpret_controller (const std::string& argu) {
   }
 }
 
-std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const {
+std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const
+{
   MESSAGE_ITEM t;
 
   int setparams = csetup_repp->override_buffering_parameters().number_of_set();
@@ -946,8 +962,6 @@ std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const {
       }
   }
 
-  t << " -sr:" << csetup_repp->samples_per_second();
-
   t << " -n:" << csetup_repp->name();
 
   switch(csetup_repp->mixmode()) {
@@ -990,7 +1004,8 @@ std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const {
   return(t.to_string());
 }
 
-std::string ECA_CHAINSETUP_PARSER::midi_to_string(void) const { 
+std::string ECA_CHAINSETUP_PARSER::midi_to_string(void) const
+{
   MESSAGE_ITEM t;
   t.setprecision(3);
 
@@ -1008,7 +1023,8 @@ std::string ECA_CHAINSETUP_PARSER::midi_to_string(void) const {
   return(t.to_string());
 }
 
-std::string ECA_CHAINSETUP_PARSER::inputs_to_string(void) const { 
+std::string ECA_CHAINSETUP_PARSER::inputs_to_string(void) const
+{
   MESSAGE_ITEM t; 
   t.setprecision(3);
   size_t p = 0;
@@ -1036,7 +1052,8 @@ std::string ECA_CHAINSETUP_PARSER::inputs_to_string(void) const {
   return(t.to_string());
 }
 
-std::string ECA_CHAINSETUP_PARSER::outputs_to_string(void) const { 
+std::string ECA_CHAINSETUP_PARSER::outputs_to_string(void) const
+{
   MESSAGE_ITEM t; 
   t.setprecision(3);
   std::vector<AUDIO_IO*>::size_type p = 0;
@@ -1064,7 +1081,8 @@ std::string ECA_CHAINSETUP_PARSER::outputs_to_string(void) const {
   return(t.to_string());
 }
 
-std::string ECA_CHAINSETUP_PARSER::chains_to_string(void) const { 
+std::string ECA_CHAINSETUP_PARSER::chains_to_string(void) const
+{
   MESSAGE_ITEM t;
 
   std::vector<CHAIN*>::size_type p = 0;
@@ -1081,7 +1099,8 @@ std::string ECA_CHAINSETUP_PARSER::chains_to_string(void) const {
   return(t.to_string());
 }
 
-std::string ECA_CHAINSETUP_PARSER::audioio_to_string(const AUDIO_IO* aiod, const std::string& direction) const {
+std::string ECA_CHAINSETUP_PARSER::audioio_to_string(const AUDIO_IO* aiod, const std::string& direction) const
+{
   MESSAGE_ITEM t;
 
   t << "-f:" << aiod->format_string() << "," <<
