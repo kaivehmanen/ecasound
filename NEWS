@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.1 *-
 
-??062001 (v2.0.2)  -** stable release **-
+??072001 (v2.0.2)  -** stable release **-
  	- added: current position tracking to loop devices
 	- added: more verbose xrun info from ALSA 0.9.x devices
 	- added: info about the new perl bindings to ECI API docs
@@ -42,6 +42,7 @@ Last officially released version is -*> v2.0.1 *-
 	- fixed: bugs in handling infinite length ewf sources
 	- fixed: --disable-oss still required to sys/soundcard.h 
 	         to be present [rob]
+	- fixed: bug in sending MIDI-MMC messages [robs]
 05062001 (v2.0.1)  -** stable release **-
 	- added: ecasoundrc - default-to-internal-buffering; select
 		 the default between -z:intbuf and -z:nointbuf
