@@ -35,6 +35,7 @@ Last officially released version is -*> v2.0.0 *-
 		 and 'ctrl-add' crashed ecasound
 	- fixed: bug in closing .raw files [smassy]
 	- fixed: eiam - cop-inxed-select renamed to cop-index-select
+	- fixed: bugs in loop device channel handling [smassy]
 02052001 (v2.0.0)  -** stable release **-
 	- added: -klg - a generic linear envelope; a controller source
 		 that can be used to map custom envelopes to chain 

@@ -51,7 +51,10 @@ bool LOOP_DEVICE::finished(void) const {
 void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer) {
   if (writes_finished_rep != true) {
     if (filled_rep == false) buffer->make_silent();
-    else *buffer = sbuf;
+    else {
+//        *buffer = sbuf;
+      buffer->copy(sbuf);
+    }
   }
   else {
     finished_rep = true;
