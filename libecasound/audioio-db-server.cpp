@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audioio-db-server.cpp: Audio i/o engine serving db clients.
-// Copyright (C) 2000-2002 Kai Vehmanen
+// Copyright (C) 2000-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,7 +93,7 @@ void* start_db_server_io_thread(void *ptr)
  */
 AUDIO_IO_DB_SERVER::AUDIO_IO_DB_SERVER (void)
 { 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-db-server) constructor");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "constructor");
   buffercount_rep = buffercount_default;
   buffersize_rep = buffersize_default;
 
@@ -129,7 +132,7 @@ AUDIO_IO_DB_SERVER::AUDIO_IO_DB_SERVER (void)
  */
 AUDIO_IO_DB_SERVER::~AUDIO_IO_DB_SERVER(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-db-server) destructor");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "destructor");
   stop_request_rep.set(1);
   exit_request_rep.set(1);
   exit_ok_rep.set(0);
@@ -156,7 +159,7 @@ void AUDIO_IO_DB_SERVER::start(void)
   DBC_REQUIRE(is_running() != true);
   // --
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-db-server) start");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "start");
   if (thread_running_rep != true) {
     int ret = pthread_create(&impl_repp->io_thread_rep,
 			     0,
@@ -180,7 +183,7 @@ void AUDIO_IO_DB_SERVER::start(void)
  */
 void AUDIO_IO_DB_SERVER::stop(void)
 { 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-db-server) stop");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "stop");
   stop_request_rep.set(1);
 }
 
@@ -189,8 +192,8 @@ void AUDIO_IO_DB_SERVER::stop(void)
  */
 bool AUDIO_IO_DB_SERVER::is_running(void) const
 { 
-  if (running_rep.get() == 0) return(false); 
-  return(true);
+  if (running_rep.get() == 0) return false; 
+  return true;
 }
 
 /**
@@ -198,8 +201,8 @@ bool AUDIO_IO_DB_SERVER::is_running(void) const
  */
 bool AUDIO_IO_DB_SERVER::is_full(void) const
 {
-  if (full_rep.get() == 0) return(false); 
-  return(true);
+  if (full_rep.get() == 0) return false; 
+  return true;
 }
 
 /**
@@ -232,7 +235,7 @@ static int timed_wait(pthread_mutex_t* mutex,
 				&sleepcount);
    pthread_mutex_unlock(mutex);
 
-   return(ret);
+   return ret;
 }
 
 /**
@@ -308,7 +311,7 @@ void AUDIO_IO_DB_SERVER::wait_for_full(void)
     timed_wait_print_result(res, "wait_for_full", true);
   }
   else {
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-db-server) wait_for_full failed; not running");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "wait_for_full failed; not running");
   }
 }
 
@@ -339,7 +342,7 @@ void AUDIO_IO_DB_SERVER::wait_for_flush(void)
     }
   }
   else {
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-db-server) wait_for_flush failed; not running");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "wait_for_flush failed; not running");
   }
 }
 
@@ -435,7 +438,7 @@ void AUDIO_IO_DB_SERVER::unregister_client(AUDIO_IO* aobject)
   DBC_REQUIRE(is_running() != true);
   // --
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-db-server) unregister_client " + aobject->name() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "unregister_client " + aobject->name() + ".");
   if (client_map_rep.find(aobject) != client_map_rep.end()) {
     size_t index = client_map_rep[aobject];
     if (index >= 0 && index < clients_rep.size()) {
@@ -444,10 +447,10 @@ void AUDIO_IO_DB_SERVER::unregister_client(AUDIO_IO* aobject)
       buffers_rep[index] = 0;
     }
     else 
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-db-server) unregister_client failed (1)");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "unregister_client failed (1)");
   }
   else 
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-db-server) unregister_client failed (2)");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "unregister_client failed (2)");
       
 }
 
@@ -461,9 +464,9 @@ AUDIO_IO_DB_BUFFER* AUDIO_IO_DB_SERVER::get_client_buffer(AUDIO_IO* aobject)
 {
   if (client_map_rep.find(aobject) == client_map_rep.end() ||
       clients_rep[client_map_rep[aobject]] == 0)
-    return(0);
+    return 0;
 
-  return(buffers_rep[client_map_rep[aobject]]);
+  return buffers_rep[client_map_rep[aobject]];
 }
 
 /**

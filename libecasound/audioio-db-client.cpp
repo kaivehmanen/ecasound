@@ -51,7 +51,7 @@ AUDIO_IO_DB_CLIENT::AUDIO_IO_DB_CLIENT (AUDIO_IO_DB_SERVER *pserver,
   recursing_rep = false;
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		std::string("(audioio-db-client) DB-client created for ") +
+		std::string("DB-client created for ") +
 		child()->label() +
 		".");
 
@@ -207,7 +207,7 @@ void AUDIO_IO_DB_CLIENT::write_buffer(SAMPLE_BUFFER* sbuf)
 void AUDIO_IO_DB_CLIENT::seek_position(void)
 { 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-	      "(audioio-db-client) seek " + label() + 
+	      "seek " + label() + 
 	      " to pos " + kvu_numtostr(position_in_seconds_exact()) + ".");
   bool was_running = false;
   if (pserver_repp->is_running() == true) {
