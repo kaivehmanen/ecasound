@@ -11,11 +11,13 @@ docs: users_guide
 
 users_guide: users_guide.latex
 	latex users_guide.latex
+	dvips -Ppdf -o users_guide.ps users_guide.dvi
+	ps2pdf users_guide.ps ecasound_users_guide.pdf
 	mkdir -p html_uguide
-	latex2html -no_math -html_version 3.2,math -short_index -split 4 -link 5 -dir html_uguide users_guide.latex
+	latex2html -no_math -html_version 3.2,math -short_index -split 2 -link 5 -dir html_uguide users_guide.latex
 
 clean-docs:
-	rm -fv *.log *.toc *.dvi *.aux *.html
+	rm -fv users_guide.log users_guide.toc users_guide.dvi users_guide.aux users_guide.ps users_guide.dvi
 	rm -fv html_uguide/*
 
 distclean:

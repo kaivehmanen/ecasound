@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{report}
 \usepackage[T1]{fontenc}
 \usepackage{html}
 
@@ -15,7 +15,7 @@
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\section{Preface}
+\chapter{Preface}
 
 This document describes how the ecasound and the related libraries
 work, how to use them, how to extend and add features and other 
@@ -28,13 +28,13 @@ ecasound version.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\section{Document history}
+\chapter{Document history}
 
 \begin{itemize}
 \item 17.10.2002 - Added a warning against direct use of libecasound
                    and libkvutils. Using ECI is from now on the 
 		   preferred way of using ecasound as a development
-		   platform.
+		   platform. Rewrote the ``Versioning'' section.
 \item 02.10.2002 - Added the ``Protocols and Interfaces'' chapter.
 \item 29.04.2002 - Added chapter about ``Unit Tests'' \cite{unit_tests}.
 \item 28.04.2002 - Revised namespace policy (see chapter
@@ -53,18 +53,18 @@ ecasound version.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\section{General programming guidelines}
+\chapter{General programming guidelines}
 
 % ----------------------------------------------------------------------
-\subsection{Design and programming}
+\section{Design and programming}
 
-\subsubsection{Open and generic design}
+\subsection{Open and generic design}
 
 Over the years ecasound's core design has been revised many times.
 After rewriting some code sections hundreds of times, you start
 to appreciate genericity. :)
 
-\subsubsection{Object-orientation}
+\subsection{Object-orientation}
 
 Ecasound is written in C++ (as specified in 1997 ANSI/ISO C++ standard). 
 When designing classes and routines, I often use Eiffel language as 
@@ -72,7 +72,7 @@ a reference. At same time overuse of object-orientation is another
 thing to avoid. Object-orientation is a very effective design method, 
 but not the only one. Sometimes other approaches work better.
 
-\subsubsection{Data hiding} 
+\subsection{Data hiding} 
 
 This design principle deserves to be mentioned separately. Whenever 
 possible, the actual data representation and implementation 
@@ -81,7 +81,7 @@ changes without affecting other parts of the code base. It cannot
 be emphasized enough how important this goal is for large software 
 projects like ecasound.
 
-\subsubsection{Design by contract} 
+\subsection{Design by contract} 
 
 Design by contract means that when you write a new routine,
 in addition to the actual code, you also describe routine's 
@@ -111,7 +111,7 @@ As C++ doesn't directly support pre/postconditions, I've simulated
 them using the DEFINITION\_BY\_CONTRACT and DBC tools provided by 
 libkvutils.
 
-\subsubsection{Routine side effects}
+\subsection{Routine side effects}
 
 I try to make a clear distinction between routines that 
 have side-effects (=methods, processors, modifiers; routines that
@@ -124,7 +124,7 @@ is not able, without explicit casting, to obtain a non-const
 reference to that same object (or a portion thereof) from within
 the function body. \cite{Lakos96}
 
-\subsubsection{Sanity checks}
+\subsection{Sanity checks}
 
 Sanity checks are done only to prevent crashes. All effects
 and operators happily accept "insane" parameters. For instance 
@@ -133,7 +133,7 @@ results in inverted sample data. I think this a reasonable
 approach. After all, ecasound is supposed to be a tool for creative
 work and experimenting. It's not meant for e-commerce. ;)
 
-\subsubsection{Error handling}
+\subsection{Error handling}
 
 Two specific things worth mentioning: First, the standard UNIX-style 
 error handling, where functions performing actions return an integer 
@@ -143,7 +143,7 @@ observers, not both. So when using ecasound APIs, you first perform an
 action (modifying function), and then afterwards check what happened
 (using an observer function).
 
-\subsubsection{Exceptions}
+\subsection{Exceptions}
 
 C++ exceptions are used in ecasound. Exception based error
 handling has its problems, but in some cases it is clearly the best
@@ -179,9 +179,9 @@ to achieve this.
 \end{description}
 
 % ----------------------------------------------------------------------
-\subsection{Coding style}
+\section{Coding style}
 
-\subsubsection{Variable and type naming}
+\subsection{Variable and type naming}
 
 Variable names are all lower case and words are separated with
 underscores (int very\_long\_variable\_name\_with\_underscores). Class data
@@ -190,7 +190,7 @@ pointers are marked with \emph{\_repp}. Index-style short variable names
 (\emph{n}, \emph{m}, etc.) are only used in local scopes. Enum types 
 have capitalized names (\emph{Some\_enum}).
 
-\subsubsection{Package specific}
+\subsection{Package specific}
 
 \begin{description}
 \item[libecasound, ecasound, ecatools, libkvutils]
@@ -202,7 +202,7 @@ Qt-style is used when naming classes (class QELevelMeter), otherwise
 same as above.
 \end{description}
 
-\subsubsection{Private classes}
+\subsection{Private classes}
 
 Some classes are divided into public and private parts. This is
 done to make it easier to maintain binary-level compatibility 
@@ -222,7 +222,7 @@ implementation file (eca-engine.cpp). This allows us to
 add new data members to ECA\_ENGINE\_impl without breaking 
 the binary interface.
 
-\subsubsection{Unit tests}
+\subsection{Unit tests}
 \label{unit_tests}
 
 Unit tests are used for verifying that modules work as intended. 
@@ -234,12 +234,12 @@ should be added to ECA\_TEST\_REPOSITORY - see
 ``libecasound/eca-test-repository.cpp''.
 
 % ----------------------------------------------------------------------
-\subsection{Physical level organization}
+\section{Physical level organization}
 
 Ecasound libraries and applications are divided into \emph{distribution 
 packages}, \emph{directories} and \emph{file groups}. 
 
-\subsubsection{Include hierarchies}
+\subsection{Include hierarchies}
 \label{include_hierarchies}
 
 Include statements that are not stricly necessary should be dropped!
@@ -264,20 +264,20 @@ rules follow:
       good to add a comment why this header file is needed.
 \end{itemize}
 
-\subsubsection{Distribution packages}
+\subsection{Distribution packages}
 
 As an example, \emph{ecasound} and \emph{qtecasound} are distributed as separate
 packages. This decision has been made because a) they are clearly 
 independent, b) they have different external dependencies, and c)
 they address different target uses. 
 
-\subsubsection{Directories}
+\subsection{Directories}
 
 It's convenient to organize larger sets of source code into separate
 directories. For instance in ecasound, \emph{libecasound} and
 \emph{ecatools} are in two separate directories.
 
-\subsubsection{File groups}
+\subsection{File groups}
 
 Although files are divided in directories and subdirectories, 
 there's still a need to logically group a set of source files based
@@ -308,7 +308,7 @@ Routines and helper functions for processing audio data buffers.
 You should note that these are just recommendations - there are no
 strict rules on how files should be named.
 
-\subsubsection{C++ std namespace}
+\subsection{C++ std namespace}
 \label{cpp_std_namespace}
 
 The preferred way to access C++ standard library functions is 
@@ -319,7 +319,7 @@ whole std namespace (``using namespace std;'') in the beginning
 of an implementation file.
 
 % ----------------------------------------------------------------------
-\subsection{Documentation style}
+\section{Documentation style}
 
 Javadoc-style class documentation is the preferred style.
 Class members can be documented either when they are declared (header
@@ -339,61 +339,65 @@ Here's a few general documentation guide lines:
 \end{description}
 
 % ----------------------------------------------------------------------
-\subsection{Versioning}
+\section{Versioning}
 
-All ecasound releases have a distinct version number. To emphasize the
-difference between stable and development releases, stable versions
-have an even, and devel versions have an odd minor version number. In
-addition, devel versions are marked with 'devXX'. For instance, you
-could have development releases 0.1dev1, 0.1dev2 and 0.1dev3. When the 
-development reaches a stable status, 0.2 is released. After this, a
-new development series will start (0.3dev1, and so on).
+All ecasound releases have a distinct version number. The
+version number syntax is \emph{x.y[.z][-extraT}, where \emph{x} and
+\emph{y} are the major and minor numbers, and \emph{z} is an optional
+revision number. To test major changes, separate \emph{-preX} or 
+\emph{-rcX} versions can be distributed before the actual new 
+release.
 
-Separation between development and stable releases is very important,
-because it affects library versioning. The idea is that all library
-interfaces are versioned separately with libtool. If during
-development changes are made to the public interfaces, a new interface
-version is created. The new interface version won't be frozen until the 
-next stable version. After this, no changes to the interface (affects
-both at binary and source level) are allowed. If these changes must be 
-made, a new interface version must be created. It's important to note
-that interface compatibility is not guaranteed between development
-releases. So if you are linking apps against development versions of
-ecasound libraries, you must be prepared for interface changes.
+In addition, all ecasound libraries have a separate interface 
+version. The libtool-style \emph{version:revision:age} versioning
+is used. See the libtool documentation for details.
+
+One important thing to note is that the library interface version 
+numbers are tied to the source-code level interfaces, not the binary
+interfaces. Because binary interfaces are not explicitly versioned,
+applications should always statically link against the ecasound 
+libraries. Also, any private source-code interfaces, ie. header
+files with a \emph{\_impl.h} postfix, are not part of the versioned
+public interface. Applications should not rely on these interfaces!
 
 All changes in the public interfaces are documented in library
 specific \emph{ChangeLog} files. These files are usually located in the
-top-level source directory.
+top-level source directory of the versioned library.
+
+One thing to note is that ecasound's versioning practises have 
+changed quite a few times during the project's history. The
+rules described above only apply to ecasound 2.2.0 and newer
+releases.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\section{How ecasound works?}
+\chapter{How ecasound works?}
 
 % ----------------------------------------------------------------------
-\subsection{Example use cases}
+\section{Example use cases}
 
 Here's a fe common use cases how ecasound can be used.
 
-\subsubsection{Simple non-interactive processing}
+\subsection{Simple non-interactive processing}
 
 One input is processed and then written to one output. This includes effect 
 processing, normal sample playback, format conversions, etc.
 
-\subsubsection{Multitrack mixing}
+\subsection{Multitrack mixing}
 
 Multiple inputs are mixed into one output.
 
-\subsubsection{Realtime effect processing}
+\subsection{Realtime effect processing}
 
 There's at least one realtime input and one realtime output.
 Signal is sampled from the realtime input, processed and
 written to the realtime output.
 
-\subsubsection{One-track recording}
+\subsection{One-track recording}
 
 One input is processed and written to one or more outputs.
 
-\subsubsection{Multitrack recording}
+\subsection{Multitrack recording}
 
 The most common situation is that there are two separate
 chains. First one consists of realtime input routed to a
@@ -406,14 +410,14 @@ timing problems. To synchronize these two separate chains,
 ecasound uses a special multitrack mode (which should be
 enabled automatically).
 
-\subsubsection{Recycling a signal through external devices}
+\subsection{Recycling a signal through external devices}
 
 Just like multirack recording. The only difference is
 that realtime input and output are externally
 connected.
 
 % ----------------------------------------------------------------------
-\subsection{Audio signal routing}
+\section{Audio signal routing}
 
 Basic audio flow inside an ecasound chainsetup is as follows: Audio 
 data is routed from input audio objects to a group of chains. In
@@ -431,9 +435,9 @@ the original input data. Similarly with an output object, data from
 multiple chains is mixed together to one output object.
 
 % ----------------------------------------------------------------------
-\subsection{Control flow}
+\section{Control flow}
 
-\subsubsection{Batch operation}
+\subsection{Batch operation}
 
 When ecasound is run in batch mode, the program flow is simple.
 To store the session data, a ECA\_SESSION object is first
@@ -446,7 +450,7 @@ Once a valid chainsetup is ready for processing, batch
 operation is initiated by issuing ECA\_CONTROL::run(). This
 function will block until processing is finished.
 
-\subsubsection{Interactive operation}
+\subsection{Interactive operation}
 
 Interactive operation is similar to batch operation. The 
 important difference is that processing is started with
@@ -469,7 +473,7 @@ started.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\section{Library organization}
+\chapter{Library organization}
 
 The primary source for class documentation is header files.
 A browsable version of header documentation is at
@@ -477,7 +481,7 @@ A browsable version of header documentation is at
 Anyway, let's look at the some central classes.
 
 % ----------------------------------------------------------------------
-\subsection{Interfaces for external use}
+\section{Interfaces for external use}
 
 The following classes of libecasound are designed as
 primary interfaces for external use. The approach 
@@ -485,7 +489,7 @@ is based on the Facade (GoF185) design pattern. The primary
 goals are concentrating functionality, and maintaining 
 a higher level of interface stability.
 
-\subsubsection{ECA\_CONTROL - eca-control.h} 
+\subsection{ECA\_CONTROL - eca-control.h} 
 
 ECA\_CONTROL represents the whole public interface offered by 
 libecasound. The primary purpose of ECA\_CONTROL is to offer a 
@@ -497,18 +501,18 @@ On important part of ECA\_CONTROL is the functionality for
 interpreting EOS (Ecasound Option Syntax) and EAIM (Ecasound 
 Interactive Mode) commands.
 
-\subsubsection{ECA\_CONTROL\_INTERFACE - eca-control-interface.h}
+\subsection{ECA\_CONTROL\_INTERFACE - eca-control-interface.h}
 C++ implementation of the Ecasound Control Interface (ECI) API. See
 section ``Ecasound Control Interface'' for more information.
 
 % ----------------------------------------------------------------------
-\subsection{Core classes}
+\section{Core classes}
 
 This section introduces the core classes, which define the
 central data types and are responsible for the main program
 logic.
 
-\subsubsection{AUDIO\_IO\_PROXY\_SERVER - audioio-proxy-server.h}
+\subsection{AUDIO\_IO\_PROXY\_SERVER - audioio-proxy-server.h}
 
 Implements a audio input/output subsystem that adds
 a second layer of buffering between the main processing 
@@ -518,20 +522,20 @@ Double buffering is needed to guarantee a realtime constrained
 data stream even when dealing with non-realtime objects like
 disk files.
 
-\subsubsection{CHAIN - eca-chain.h}
+\subsection{CHAIN - eca-chain.h}
 
 Class representing one abstract audio signal chain. CHAIN
 objects consist of chain operators, controllers and their
 state information.
 
-\subsubsection{ECA\_CHAINSETUP - eca-chainsetup.h}
+\subsection{ECA\_CHAINSETUP - eca-chainsetup.h}
 
 ECA\_CHAINSETUP is the central class for storing user-visible 
 objects. All inputs, output, chain operator and controller 
 objects belonging to one logical setup are attributes of on
 ECA\_CHAINSETUP object.
 
-\subsubsection{ECA\_ENGINE - eca-engine.h} 
+\subsection{ECA\_ENGINE - eca-engine.h} 
 
 ECA\_ENGINE is the actual processing engine. It is initialized with
 a pointer to a ECA\_CHAINSETUP object, which has all information 
@@ -565,7 +569,7 @@ before completion
 \item[error] - an error has occured during prosessing
 \end{description}
 
-\subsubsection{ECA\_SESSION - eca-session.h}
+\subsection{ECA\_SESSION - eca-session.h}
 
 ECA\_SESSION is an abtraction used to represents a group of
 chainsetups. At any time, only one chainsetup object at a time
@@ -576,18 +580,18 @@ operations are targeted to the selected chainsetup.
 The only public access to ECA\_SESSION objects is 
 through ECA\_CONTROL objects.
 
-\subsubsection{MIDI\_SERVER - midi-server.h}
+\subsection{MIDI\_SERVER - midi-server.h}
 
 Engine that handles all MIDI input and output.
 
-\subsubsection{SAMPLEBUFFER - samplebuffer.h}
+\subsection{SAMPLEBUFFER - samplebuffer.h}
 
 Basic unit for representing blocks of sample data. The data type used 
 to represent single samples, valid value ranges, channel count and system 
 endianess are all specified in "samplebuffer.h" and "sample\_specs.h".
 
 % ----------------------------------------------------------------------
-\subsection{Feature and capability interface classes}
+\section{Feature and capability interface classes}
 
 Many libecasound classes have similar attribute sets and capabilities. 
 To make use of these shared features, most common features have their 
@@ -595,7 +599,7 @@ own virtual base classes. All objects that have a particular feature,
 inherit the same virtual base class. This makes object grouping
 and management easier and less error prone.
 
-\subsubsection{DYNAMIC\_PARAMETERS<T> - dynamic-parameters.h}
+\subsection{DYNAMIC\_PARAMETERS<T> - dynamic-parameters.h}
 
 Implemented by all classes that provide a set of generic parameters
 of type \emph{T}. Parameter can be observed and modified, and they
@@ -604,28 +608,28 @@ description. Number of parameters can vary dynamically. Other
 objects can access these parameters without detailed knowledge of 
 the object itself.
 
-\subsubsection{ECA\_AUDIO\_FORMAT - eca-audio-format.h}
+\subsection{ECA\_AUDIO\_FORMAT - eca-audio-format.h}
 
 Implemented by all classes that have a current audio format that
 can be observed and modified.
 
-\subsubsection{ECA\_AUDIO\_POSITION - eca-audio-position.h}
+\subsection{ECA\_AUDIO\_POSITION - eca-audio-position.h}
 
 Implemented by all classes that need to maintain current audio 
 position and length.
 
-\subsubsection{ECA\_SAMPLERATE\_AWARE - eca-samplerate-aware.h}
+\subsection{ECA\_SAMPLERATE\_AWARE - eca-samplerate-aware.h}
 
 Implemented by all classes that need knowledge of current
 sampling rate.
 
-\subsubsection{MIDI\_CLIENT - midi-client.h}
+\subsection{MIDI\_CLIENT - midi-client.h}
 
 Implemented b all classes that require a connection to 
 an instance of MIDI\_SERVER.
 
 % ----------------------------------------------------------------------
-\subsection{Object interfaces}
+\section{Object interfaces}
 
 Object interfaces define the behaviour for common objects used
 by libecasound. The core classes rarely operate on specific
@@ -635,7 +639,7 @@ interfaces). Object interfaces are usually abstract C++ classes
 don't yet have a concreate implementation, ie. they pure virtual
 functions).
 
-\subsubsection{AUDIO\_IO - audioio.h}
+\subsection{AUDIO\_IO - audioio.h}
 
 Virtual base class for all audio I/O objects. Different types
 of audio objects include files, audio devices, sound 
@@ -647,26 +651,26 @@ buffered i/o). There's also a special AUDIO\_IO\_MANAGER
 interface for managing multiple audio objects of same 
 type inside one chainsetup.
 
-\subsubsection{CHAIN\_OPERATOR - eca-chainop.h}
+\subsection{CHAIN\_OPERATOR - eca-chainop.h}
 
 Virtual base class for chain operators.
 
-\subsubsection{CONTROLLER\_SOURCE - ctrl-source.h}
+\subsection{CONTROLLER\_SOURCE - ctrl-source.h}
 
 Virtual Base class for all controller sources.
 
-\subsubsection{MIDI\_IO - midiio.h}
+\subsection{MIDI\_IO - midiio.h}
 
 Virtual base for objects capable of reading and writing
 raw MIDI data.
 
-\subsubsection{MIDI\_HANDLER - midi-server.h}
+\subsection{MIDI\_HANDLER - midi-server.h}
 
 Virtual base class for objects capable of receiving 
 and processing MIDI data.
 
 % ----------------------------------------------------------------------
-\subsection{Object interface implementations - plugins}
+\section{Object interface implementations - plugins}
 
 Majority of the classes in libecasound fall to this category. They 
 implement the behaviour of some object interface type. As other
@@ -677,9 +681,9 @@ Similarly new object interface implementations can be added without
 modifying the core classes.
 
 % ----------------------------------------------------------------------
-\subsection{Utility classes}
+\section{Utility classes}
 
-\subsubsection{eca-logger.h - ECA\_LOGGER}
+\subsection{eca-logger.h - ECA\_LOGGER}
 
 Singleton class that provides an interface to ecasound's logging 
 subsystem. Libecasound sends all log messages to this interface. 
@@ -695,7 +699,7 @@ runtime with the \emph{ECA\_LOGGER::attach\_logger()} member
 function (declared in eca-logger.h).
 
 % ----------------------------------------------------------------------
-\subsection{Object maps}
+\section{Object maps}
 
 Object maps are central repositories for commonly used objects.
 Their main purpose is to add flexibility to handling different 
@@ -735,24 +739,24 @@ part of library itself.
 All objects defined in libecasound are registered in the file
 \emph{eca-static-object-maps.cpp}.
 
-\subsubsection{eca-object.h - ECA\_OBJECT}
+\subsection{eca-object.h - ECA\_OBJECT}
 
 A virtual base class that represents an ecasound object. All objects
 handled by the object factory must inherit this class.
 
-\subsubsection{eca-object-factory.h - ECA\_OBJECT\_FACTORY}
+\subsection{eca-object-factory.h - ECA\_OBJECT\_FACTORY}
 
 The public interface to ecasound's object maps. All its functions
 are static.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\section{Adding new features and components to ecasound?}
+\chapter{Adding new features and components to ecasound?}
 
 % ----------------------------------------------------------------------
-\subsection{Things to remember when writing new C++ classes}
+\section{Things to remember when writing new C++ classes}
 
-\subsubsection{Copy constructor and assignment operator}
+\subsection{Copy constructor and assignment operator}
 
 Always take a moment to check your copy constructor and the assign 
 operation (=operation()). Basicly you have three alternatives: 
@@ -773,7 +777,7 @@ nobody will use the functions by accident!
 
 
 % ----------------------------------------------------------------------
-\subsection{Audio objects}
+\section{Audio objects}
 
 To implement a new audio object type, you must first select which 
 top-level class to derive from. Usually this is either AUDIO\_IO
@@ -793,7 +797,7 @@ then register it to the appropriate object map (see below).
 
 
 % ----------------------------------------------------------------------
-\subsection{Effects and other chain operators}
+\section{Effects and other chain operators}
 
 Write a new class that inherits from CHAIN\_OPERATOR or any of its
 successors. Implement the necessary routines (init, set/get\_parameter, 
@@ -810,7 +814,7 @@ for more information.
 
 
 % ----------------------------------------------------------------------
-\subsection{Differences between audio objects and chain operators}
+\section{Differences between audio objects and chain operators}
 
 Design-wise, audio objects and effects (chain operators) aren't that 
 far away from each other. Many audio apps don't separate these
@@ -859,7 +863,7 @@ as audio inputs by specifying:
 
 
 % ----------------------------------------------------------------------
-\subsection{LADSPA plugins}
+\section{LADSPA plugins}
 
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
 Plugin API). See \texttt{LAD mailing list web site} for 
@@ -869,10 +873,10 @@ more info about LADSPA. Other useful sites are
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\section{Application development using the ecasound framework}
+\chapter{Application development using the ecasound framework}
 
 % ----------------------------------------------------------------------
-\subsection{Console mode ecasound - {[}all languages{]}}
+\section{Console mode ecasound - {[}all languages{]}}
 
 This is the easiest way to take advantage of ecasound features in your
 own programs. You can fork ecasound, pipe commands to ecasound's
@@ -886,7 +890,7 @@ dump-* commands. These can be used to easily parse configuration and
 status information.
 
 % ----------------------------------------------------------------------
-\subsection{Ecasound Control Interface - {[}C++, C, Python{]}}
+\section{Ecasound Control Interface - {[}C++, C, Python{]}}
 
 Idea behind Ecasound Control Interface (ECI) is to take a subset of 
 functionality provided by libecasound, write a simple API for it, and
@@ -905,7 +909,7 @@ Specific tasks ECI is aimed at:
 
 
 % ----------------------------------------------------------------------
-\subsection{Libecasound's ECA\_CONTROL class - {[}C++{]}}
+\section{Libecasound's ECA\_CONTROL class - {[}C++{]}}
  
 \large{Note}\normalsize! Direct use of libecasound and libkvutils is
 not recommended anymore! Please use the Ecasound Control Interface
@@ -949,7 +953,7 @@ ctrl.run(); // blocks until processing is finished
 
 
 % ----------------------------------------------------------------------
-\subsection{Ecasound classes as building blocks - {[}C++{]}}
+\section{Ecasound classes as building blocks - {[}C++{]}}
 
 \large{Note}\normalsize! Direct use of libecasound and libkvutils is
 not recommended anymore! Please use the Ecasound Control Interface
@@ -971,10 +975,10 @@ another short sample:
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\section{Protocols and Interfaces}
+\chapter{Protocols and Interfaces}
 
 % ----------------------------------------------------------------------
-\subsection{Ecasound Interactive Mode - Well-Formed Output Mode}
+\section{Ecasound Interactive Mode - Well-Formed Output Mode}
 \label{Ecasound Interactive Mode - Well-Formed Output Mode}
 
 By issuing the EIAM command ``int-output-mode-wellformed'', 
@@ -1007,7 +1011,7 @@ format:
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\section{References}
+\chapter{References}
 
 \begin{thebibliography}{10}
  \bibitem[ISO14822]{c++std} 

@@ -709,9 +709,9 @@ See em(ecasound-iam(1)).
  
 manpagefiles()
 
-	em(~/.ecasoundrc)
-	The default ecasound resource file. See url(ecasoundrc(5))(ecasoundrc_manpage.html).
-	man page.
+	em(~/.ecasound)
+	The default directory for ecasound user resource files. 
+	See the url(ecasoundrc(5))(ecasoundrc_manpage.html) man page.
 
 	em(*.ecs) 
 	Ecasound Chainsetup files. Syntax is more or less the
