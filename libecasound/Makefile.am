@@ -320,9 +320,6 @@ libecasound8_debug_la_LIBADD = $(libecasound8_la_LIBADD)
 
 libecasound_tester_SOURCES = $(libecasound_tester_src)
 libecasound_tester_CFLAGS = $(eca_cxxflags)
-libecasound_tester_LDFLAGS = \
-			-Wl,--rpath -Wl,$(top_builddir)/kvutils/.libs \
-			-Wl,--rpath -Wl,$(top_builddir)/libecasound/.libs
 libecasound_tester_LDADD = $(libecasound_tester_libs)
 
 # ---------------------------------------------------------------------
