@@ -382,7 +382,7 @@ void kvu_print_time_stamp(void)
 int kvu_sleep(long int seconds, long int nanoseconds)
 {
   int ret = 0;
-#ifdef HAVE_NANOSLEEP
+#if defined(HAVE_NANOSLEEP) && !defined(__CYGWIN__)
   struct timespec len;
   len.tv_sec = static_cast<time_t>(seconds);
   len.tv_nsec = nanoseconds;
