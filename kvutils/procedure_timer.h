@@ -5,13 +5,6 @@
 #include <unistd.h>
 #include <string>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#ifdef USE_CXX_STD_NAMESPACE
-using std::string;
-#endif
-
 /**
  * Procedure timer. Meant for timing and gathering statistics of 
  * repeating events.

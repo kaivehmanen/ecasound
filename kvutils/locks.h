@@ -7,6 +7,8 @@
 
 #ifdef USE_ASM_ATOMIC
 #include <asm/atomic.h>
+#else
+#warning "locks.h: USE_ASM_ATOMIC not defined!"
 #endif
 #include <pthread.h>
 

@@ -4,13 +4,6 @@
 #include <vector>
 #include <string>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#ifdef USE_CXX_STD_NAMESPACE
-using namespace std;
-#endif
-
 /**
  * Case-insensitive string compare. Ignores preceding and 
  * trailing white space.
@@ -44,8 +37,8 @@ std::vector<int> string_to_int_vector(const std::string& str, const std::string:
  * replaced with 'to' characters.
  */
 std::string string_search_and_replace(const std::string& a, 
-				 const std::string::value_type from,
-				 const std::string::value_type to);
+				      const std::string::value_type from,
+				      const std::string::value_type to);
 
 /**
  * Converts a vector of strings to a single string.
@@ -54,7 +47,7 @@ std::string string_search_and_replace(const std::string& a,
  * @param separator string that is inserted between items
  */
 std::string vector_to_string(const std::vector<std::string>& str, 
-			const std::string& separator);
+			     const std::string& separator);
 
 /**
  * Removes all trailing white space

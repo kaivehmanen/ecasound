@@ -21,16 +21,7 @@
 #define INCLUDED_OBJECT_QUEUE_H
 
 #include <pthread.h>
-#include <string>
 #include <deque>
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#ifdef USE_CXX_STD_NAMESPACE
-using std::string;
-using std::deque;
-#endif
 
 /**
  * Thread-safe way to transmit generic objects (FIFO-queue).
