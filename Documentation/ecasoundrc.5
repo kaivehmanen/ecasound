@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "23\&.07\&.2002" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "17\&.10\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -76,15 +76,12 @@ resource directory\&. Defaults to \fIgeneric_oscillators\fP\&.
 Configuration file for effect presets\&. Is located in the 
 resource directory\&. Defaults to \fIeffect_presets\fP\&.
 .IP 
-.IP "internal-plugin-directory" 
-Directory containing ecasound\'s internal plugins\&.
-Defaults to \fI{prefix-dir}/lib/libecasoundX-plugins\fP,
-where "X" is the library interface version number\&.
-.IP 
 .IP "ladspa-plugin-directory" 
 Directory containing LADSPA effect plugins\&. Defaults to \fI{prefix-dir}/lib/ladspa\fP\&.
 If environment variable \fILADSPA_PATH\fP exists, directories
 specified in it are automatically searched for plugins\&.
+Note! unlike the \fILADSPA_PATH\fP variable,
+\'ladspa-plugin-directory\' can only contain one directory\&.
 .IP 
 .IP "ext-cmd-text-editor" 
 If \fIext-cmd-text-editor-use-getenv\fP is \fIfalse\fP or "EDITOR" 

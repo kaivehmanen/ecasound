@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (16.10.2002)
+       (17.10.2002)
        ()
        (Multimedia software)
 
@@ -97,6 +97,8 @@ startdit()
 	Directory containing LADSPA effect plugins. Defaults to em({prefix-dir}/lib/ladspa).
 	If environment variable em(LADSPA_PATH) exists, directories
 	specified in it are automatically searched for plugins.
+	Note! unlike the em(LADSPA_PATH) variable,
+	'ladspa-plugin-directory' can only contain one directory.
 
 	dit(ext-cmd-text-editor)
 	If em(ext-cmd-text-editor-use-getenv) is em(false) or "EDITOR" 

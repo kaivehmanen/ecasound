@@ -6,7 +6,7 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{02102002}
+\date{17102002}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,10 @@ ecasound version.
 \section{Document history}
 
 \begin{itemize}
+\item 17.10.2002 - Added a warning against direct use of libecasound
+                   and libkvutils. Using ECI is from now on the 
+		   preferred way of using ecasound as a development
+		   platform.
 \item 02.10.2002 - Added the ``Protocols and Interfaces'' chapter.
 \item 29.04.2002 - Added chapter about ``Unit Tests'' \cite{unit_tests}.
 \item 28.04.2002 - Revised namespace policy (see chapter
@@ -876,10 +880,10 @@ interactive mode or you can create chainsetup (.ecs) files and load
 them to ecasound. You'll be able to do practically anything. The only 
 real problem is getting information from ecasound. You'll have to
 parse ecasound's ascii output if you want to do this. To make this 
-a bit easier, ecasound offers the dump-* commands. These print
-configuration and status info as formatted text strings (easier to
-parse than normal output).
-
+a bit easier, ecasound offers the wellformed output mode 
+\ref{Ecasound Interactive Mode - Well-Formed Output Mode} and
+dump-* commands. These can be used to easily parse configuration and 
+status information.
 
 % ----------------------------------------------------------------------
 \subsection{Ecasound Control Interface - {[}C++, C, Python{]}}
@@ -902,6 +906,10 @@ Specific tasks ECI is aimed at:
 
 % ----------------------------------------------------------------------
 \subsection{Libecasound's ECA\_CONTROL class - {[}C++{]}}
+ 
+\large{Note}\normalsize! Direct use of libecasound and libkvutils is
+not recommended anymore! Please use the Ecasound Control Interface
+(ECI) instead.
 
 By linking your program to libecasound, you can use the ECA\_CONTROL
 class for controlling ecasound. This is a large interface class that
@@ -943,7 +951,11 @@ ctrl.run(); // blocks until processing is finished
 % ----------------------------------------------------------------------
 \subsection{Ecasound classes as building blocks - {[}C++{]}}
 
-And of course, you can also use individual ecasound classes directly.
+\large{Note}\normalsize! Direct use of libecasound and libkvutils is
+not recommended anymore! Please use the Ecasound Control Interface
+(ECI) instead.
+ 
+You can also use individual ecasound classes directly.
 This means more control, but it also means more work. Here's
 another short sample:
 
@@ -963,6 +975,7 @@ another short sample:
 
 % ----------------------------------------------------------------------
 \subsection{Ecasound Interactive Mode - Well-Formed Output Mode}
+\label{Ecasound Interactive Mode - Well-Formed Output Mode}
 
 By issuing the EIAM command ``int-output-mode-wellformed'', 
 ecasound will start printing all messages using the following
