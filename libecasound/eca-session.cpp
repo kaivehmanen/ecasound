@@ -85,13 +85,14 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
   set_defaults();
 
   cline.combine();
-  interpret_general_options(cline);
 
-  std::vector<std::string> options;
+  std::vector<std::string> options,csoptions;
   create_chainsetup_options(cline, &options);
+  preprocess_options(&options);
+  interpret_general_options(options,&csoptions);
 
   if (chainsetups_rep.size() == 0) {
-    ECA_CHAINSETUP* comline_setup = new ECA_CHAINSETUP(options);
+    ECA_CHAINSETUP* comline_setup = new ECA_CHAINSETUP(csoptions);
     if (comline_setup->interpret_result() != true) {
       string temp = comline_setup->interpret_result_verbose();
       delete comline_setup;
@@ -370,8 +371,7 @@ void ECA_SESSION::create_chainsetup_options(COMMAND_LINE& cline,
   cline.begin();
   cline.next(); // skip the program name
   while(cline.end() == false) {
-    if (is_session_option(cline.current()) != true)
-      options->push_back(cline.current());
+    options->push_back(cline.current());
     cline.next();
   }
 }
@@ -399,19 +399,52 @@ bool ECA_SESSION::is_session_option(const std::string& arg) const {
   return(false);
 }
 
-void ECA_SESSION::interpret_general_options(COMMAND_LINE& cline) {
-  cline.begin();
-  while(cline.end() == false) {
-    if (cline.current().size() > 0 && cline.current()[0] == '-')
-      interpret_general_option(cline.current());
-    cline.next();
+/**
+ * Preprocesses a set of options.
+ * 
+ * ensure:
+ *  all options valid for further processing (all options
+ *  must start with a '-' sign)
+ */
+void ECA_SESSION::preprocess_options(std::vector<std::string>* opts) {
+  std::vector<std::string>::iterator p = opts->begin();
+  while(p != opts->end()) {
+
+    if (p->size() > 0 && (*p)[0] != '-') {
+      /* hack1: options ending with .ecs as "-s:file.ecs" */
+      string::size_type pos = p->find(".ecs");
+      if (pos + 4 == p->size())
+	*p = "-s:" + *p;
+      
+      /* hack2: rest as "-i:file.ecs" */
+      else
+	*p = "-i:" + *p;
+    }
+    ++p;
+  }
+}
+
+/**
+ * Interprets all session specific options from 'inopts'.
+ * All unprocessed options are copied to 'outopts'. 
+ */
+void ECA_SESSION::interpret_general_options(const std::vector<std::string>& inopts,
+					    std::vector<std::string>* outopts) {
+  std::vector<std::string>::const_iterator p = inopts.begin();
+  while(p != inopts.end()) {
+    if (p->size() > 0 && (*p)[0] == '-')
+      interpret_general_option(*p);
+    ++p;
   }
 
-  cline.begin();
-  while(cline.end() == false) {
-    if (cline.current().size() > 0 && cline.current()[0] == '-')
-      interpret_chainsetup(cline.current());
-    cline.next();
+  p = inopts.begin();
+  while(p != inopts.end()) {
+    if (p->size() > 0 && (*p)[0] == '-')
+      interpret_chainsetup_option(*p);
+
+    if (is_session_option(*p) != true) outopts->push_back(*p);
+
+    ++p;
   }
 }
 
@@ -479,7 +512,7 @@ void ECA_SESSION::interpret_general_option (const std::string& argu) {
   }
 }
 
-void ECA_SESSION::interpret_chainsetup (const std::string& argu) {
+void ECA_SESSION::interpret_chainsetup_option (const std::string& argu) {
   if (argu.size() == 0) return;
   
   string tname = get_argument_number(1, argu);

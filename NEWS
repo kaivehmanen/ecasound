@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 100901) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 230901) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -22,6 +22,11 @@ Last officially released version is -*> v2.0.2 *-
 	         the dist package  [juekawa]
 	- added: new feedback-% param to -etd effect, doesn't
 		 affect old presets using -etd [smassy]
+	- added: ALSA device name 'default' is used if no 
+                 other name is given ('-o:alsa' is equivalent
+	         to '-o:alsa,default')
+	- added: special case for mapping "ecasound file.ecs"
+		 to "ecasound -s:file.ecs"
 	- changed: library version changed to 8.0.0
 	- changed: use of kvutils/definition_by_contract 
 		   dropped; more lightweight kvutils/dbc.h
@@ -34,10 +39,13 @@ Last officially released version is -*> v2.0.2 *-
 		   marked using the 'std::' prefix [rpolton]
 	- fixed: gcc3.x fixes to ALSA 0.5.x plugin [juekawa]
 	- fixed: problems with ALSA 0.9beta7 (dlopen() issue)
+	- fixed: minor samplerated bug with LADSPA plugins
 ??0?2001 (v2.0.3)  -** stable release **-
 	- added: more recent config.guess and config.sub to 
 	         the dist package  [juekawa]
 	- fixed: gcc3.x fixes to ALSA 0.5.x plugin [juekawa]
+	- fixed: problems with ALSA 0.9beta7 (dlopen() issue)
+	- fixed: minor samplerated bug with LADSPA plugins
 17082001 (v2.0.2)  -** stable release **-
  	- added: current position tracking to loop devices
 	- added: more verbose xrun info from ALSA 0.9.x devices

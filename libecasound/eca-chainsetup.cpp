@@ -324,7 +324,19 @@ void ECA_CHAINSETUP::set_position_exact(double seconds) {
 void ECA_CHAINSETUP::preprocess_options(std::vector<std::string>& opts) {
   std::vector<std::string>::iterator p = opts.begin();
   while(p != opts.end()) {
-    if (p->size() > 0 && (*p)[0] != '-') *p = "-i:" + *p;
+
+    /* handle options not starting with an '-' sign */
+
+    if (p->size() > 0 && (*p)[0] != '-') {
+      /* hack1: options ending with .ecs as "-s:file.ecs" */
+      string::size_type pos = p->find(".ecs");
+      if (pos + 4 == p->size())
+	*p = "-s:" + *p;
+      
+      /* hack2: rest as "-i:file.ecs" */
+      else
+	*p = "-i:" + *p;
+    }
     ++p;
   }
 }

@@ -2,6 +2,17 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-09-23  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-chainsetup.h (preprocess_options): removed
+	* eca-session.h (preprocess_options): added
+	* eca-session.h (interpret_general_options,interpret_general_options): changed
+	* eca-session.h (interpret_chainsetup): renamed to interpret_chainsetup_option
+	
+2001-09-20  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* audiofx.h (init): added virtual function implementation
+	
 2001-08-19  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* library version changed to 8:0:0
