@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 281102) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 161202) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -15,6 +15,13 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+xx122002 (v2.2.0-rc2)
+	- edi-entries: edi-1 closed
+	- changed: ecasound.el updated to version 0.8.1 [mlang]
+	- fixed: edi-1 - crackle at start of processing with -ete
+	         removed [hgfischer]
+	- fixed: various small fixes to remove uncalled for
+		 dbc warnings
 28112002 (v2.2.0-rc1)
 	- edi-entries: edi-35 added
 	- fixed: more curses fixes
