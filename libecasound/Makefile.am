@@ -23,9 +23,9 @@ check_PROGRAMS = libecasound_tester
 # if ECA_AM_ALL_STATIC
 # FIXME: always link ecasound-plugins statically
 if ECA_AM_DEBUG_MODE
-eca_libadd = $(top_builddir)/libecasound/plugins/libecasound_plugins_debug.la
+eca_libadd = $(top_builddir)/libecasound/plugins/libecasound_plugins_debug.la $(ECA_S_JACK_LIBS)
 else
-eca_libadd = $(top_builddir)/libecasound/plugins/libecasound_plugins.la
+eca_libadd = $(top_builddir)/libecasound/plugins/libecasound_plugins.la $(ECA_S_JACK_LIBS)
 endif
 
 eca_ldflags = -version-info @LIBECASOUND_VERSION@:0:0
@@ -53,7 +53,7 @@ endif
 #       also libtool 1.3.2 and older have problems 
 #       with stripping libraries.
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils
+INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils $(ECA_S_JACK_INCLUDES)
 
 # ----------------------------------------------------------------------
 # header files

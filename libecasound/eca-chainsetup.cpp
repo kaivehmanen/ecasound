@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: Class representing an ecasound chainsetup object.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,15 +23,20 @@
 
 #include <string>
 #include <cstring>
-#include <algorithm> /* find() */
+#include <algorithm>        /* find() */
 #include <fstream>
 #include <vector>
 #include <list>
 #include <iostream>
 
-#include <unistd.h>
+#include <sys/types.h>      /* POSIX: getpid() */
+#include <unistd.h>         /* POSIX: getpid() */
 #ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h> /* for mlockall() */
+#include <sys/mman.h>       /* POSIX: for mlockall() */
+#endif
+
+#ifdef ECA_COMPILE_JACK
+#include <jack/jack.h>
 #endif
 
 #include <kvu_dbc.h>
@@ -1657,11 +1662,17 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
   try {
     if (is_enabled_rep != true) {
 
-      /* 1. select and enable buffering parameters */
+      /* 1. check that current buffersize is supported by all devices */
+      long int locked_bsize = check_for_locked_buffersize();
+      if (locked_bsize != -1) {
+	set_buffersize(locked_bsize);
+      }
+
+      /* 2. select and enable buffering parameters */
       select_active_buffering_mode();
       enable_active_buffering_mode();
 
-      /* 2. open input devices */
+      /* 3. open input devices */
       for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
 	enable_audio_object_helper(*q);
 	if ((*q)->is_open() != true) { 
@@ -1669,8 +1680,8 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
 	}
       }
 
-      /* 3. make sure that all input devices have a common 
-       *    sampling rate */
+      /* 4.1 make sure that all input devices have a common 
+       *     sampling rate */
       SAMPLE_SPECS::sample_rate_t first_srate = 0;
       for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
 	if (q == inputs.begin()) {
@@ -1681,7 +1692,7 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
 	}
       }
 
-      /* 4. set chainsetup sampling rate to 'first_srate'. */
+      /* 4.2 set chainsetup sampling rate to 'first_srate'. */
       set_samples_per_second(first_srate);
    
       /* 5. open output devices */
@@ -1809,6 +1820,58 @@ void ECA_CHAINSETUP::calculate_processing_length(void)
       set_max_length_in_samples(max_input_length);
     }
   }
+}
+
+/**
+ * Check whether the buffersize is locked to some 
+ * specific value.
+ *
+ * @return -1 if not locked, otherwise the locked
+ *         value
+ */
+long int ECA_CHAINSETUP::check_for_locked_buffersize(void) const
+{
+  long int result = -1;
+#ifdef ECA_COMPILE_JACK
+  int pid = getpid();
+  string cname = "ecasound-ctrl-" + kvu_numtostr(pid);
+  int jackobjs = 0;
+
+  for(size_t n = 0; n < inputs_direct_rep.size(); n++) {
+    if (inputs_direct_rep[n]->name() == "JACK interface") {
+      ++jackobjs;
+      break;
+    }
+  }
+  for(size_t n = 0; jackobjs == 0 && n < outputs_direct_rep.size(); n++) {
+    if (outputs_direct_rep[n]->name() == "JACK interface") ++jackobjs;
+  }
+
+  /* contact jackd only if there is at least one jack audio object 
+   * present */
+  if (jackobjs > 0) {
+    jack_client_t *client = jack_client_new (cname.c_str());
+    if (client != 0) {
+      // xxx = static_cast<long int>(jack_get_sample_rate(client);
+      result = static_cast<long int>(jack_get_buffer_size(client));
+      
+      ECA_LOG_MSG(ECA_LOGGER::user_objects,
+		"(eca-chainsetup) jackd buffersize check returned " +
+		  kvu_numtostr(result) + ".");
+      
+      jack_client_close(client);
+      
+      client = 0;
+    }
+    else {
+      ECA_LOG_MSG(ECA_LOGGER::user_objects,
+		  "(eca-chainsetup) unable to perform jackd buffersize check.");
+    }
+    
+    DBC_CHECK(client == 0);
+  }
+#endif
+  return(result);
 }
 
 /**

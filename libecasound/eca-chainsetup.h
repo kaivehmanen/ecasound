@@ -349,6 +349,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   int number_of_non_realtime_outputs(void) const;
   int number_of_chain_operators(void) const;
   void toggle_locked_state(bool value) { is_locked_rep = value; }
+  long int check_for_locked_buffersize(void) const;
 
   /*@}*/
 
