@@ -72,9 +72,9 @@ void GENERIC_LINEAR_ENVELOPE::set_param_count(int params) {
     if (params > 0) {
         for(int n = 0; n < params; ++n) {
             param_names_rep += ",pos";
-            param_names_rep += n*2+1;
+            param_names_rep += kvu_numtostr(n*2+1);
             param_names_rep += ",val";
-            param_names_rep += n*2+2;
+            param_names_rep += kvu_numtostr(n*2+2);
         }
     }
 }
