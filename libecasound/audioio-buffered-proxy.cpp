@@ -93,8 +93,21 @@ AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void)
     close();
   }
 
-  if (pbuffer_repp != 0) {
+  if (pserver_repp != 0) {
+    bool was_running = false;
+    if (pserver_repp->is_running() == true) {
+      was_running = true;
+      pserver_repp->stop();
+      pserver_repp->wait_for_stop();
+      DBC_CHECK(pserver_repp->is_running() != true);
+    }
+
     pserver_repp->unregister_client(child_repp);
+    pbuffer_repp = 0;
+
+    if (was_running == true) {
+      pserver_repp->start();
+    }
   }
   
   if (free_child_rep == true) {

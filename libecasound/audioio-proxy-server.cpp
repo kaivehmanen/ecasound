@@ -438,8 +438,11 @@ void AUDIO_IO_PROXY_SERVER::unregister_client(AUDIO_IO* aobject)
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-proxy-server) unregister_client " + aobject->name() + ".");
   if (client_map_rep.find(aobject) != client_map_rep.end()) {
     size_t index = client_map_rep[aobject];
-    if (index >= 0 && index < clients_rep.size()) 
+    if (index >= 0 && index < clients_rep.size()) {
       clients_rep[index] = 0;
+      delete buffers_rep[index];
+      buffers_rep[index] = 0;
+    }
     else 
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-proxy-server) unregister_client failed (1)");
   }
@@ -638,7 +641,9 @@ void AUDIO_IO_PROXY_SERVER::flush(void)
     }
   }
   for(unsigned int p = 0; p < buffers_rep.size(); p++) {
-    buffers_rep[p]->reset();
+    if (buffers_rep[p] != 0) {
+      buffers_rep[p]->reset();
+    }
   }
   signal_flush();
 }

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 110602) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 170602) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -37,6 +37,7 @@ Last officially released version is -*> v2.0.4 *-
 		 both with cs-load and after cs-edit
 	- fixed: compiling against readline 4.2 with 
 		 --enable-sys-readline failed
+	- fixed: bugs in the -z:db subsystem caused segfaults
 17052002 (v2.1dev9)
 	- edi-entries: edi-22
 	- changed: optimized disk i/o subsystem (-z:db) performance
