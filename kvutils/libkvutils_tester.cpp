@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // libkvutils_tester.cpp: Runs a set of libkvutils unit tests.
-// Copyright (C) 2002 Kai Vehmanen
+// Copyright (C) 2002 Kai-2004 Vehmanen
+//
+// Attributes:
+//     eca-style-version: 2
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -15,6 +15,9 @@ std::vector<int> kvu_string_to_int_vector(const std::string& str, const std::str
 std::string kvu_string_search_and_replace(const std::string& a, 
 					  const std::string::value_type from,
 					  const std::string::value_type to);
+std::vector<std::string> kvu_vector_search_and_replace(const std::vector<std::string>& str_vector,
+						       const std::string::value_type from,
+						       const std::string::value_type to);
 std::string kvu_vector_to_string(const std::vector<std::string>& str, 
 				 const std::string& separator);
 std::string kvu_remove_trailing_spaces(const std::string& a);

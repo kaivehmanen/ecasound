@@ -2,6 +2,9 @@
 // kvu_utils.cpp: Miscellaneous helper routines
 // Copyright (C) 1999-2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 2
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -21,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <algorithm>
+#include <algorithm> /* find() */
 #include <cstdlib> /* atoi() */
 #include <iostream>
 #include <string>
@@ -173,6 +176,28 @@ vector<int> kvu_string_to_int_vector(const string& str,
 }
 
 /**
+ * Return a new string, where all 'from' characters are
+ * replaced with 'to' characters.
+ */
+vector<string> kvu_vector_search_and_replace(const vector<string>& str_vector, 
+					     const string::value_type from,
+					     const string::value_type to)
+{
+  vector<string> vstmp;
+  vector<string>::const_iterator p = str_vector.begin();
+  while(p != str_vector.end()) {
+    if (find(p->begin(), p->end(), ',') != p->end()) {
+      vstmp.push_back(kvu_string_search_and_replace(*p, from, to));
+    }
+    else { 
+      vstmp.push_back(*p);
+    }
+    ++p;
+  }
+  return vstmp;
+}
+
+/**
  * Converts a vector of strings to a single string.
  *
  * @param str vector of strings to be converted
@@ -211,7 +236,6 @@ string kvu_string_search_and_replace(const string& str,
 
   return stmp;
 }
-
 
 /**
  * Case-insensitive string compare. Ignores preceding and 
@@ -279,7 +303,8 @@ string kvu_remove_surrounding_spaces(const string& a)
 /**
  * Converts string to uppercase using toupper(int)
  */
-string kvu_convert_to_uppercase(const string& a) { 
+string kvu_convert_to_uppercase(const string& a)
+{
   string r = a;
   for(string::iterator p = r.begin(); p != r.end(); p++)
     *p = toupper(*p);
@@ -301,7 +326,8 @@ string kvu_convert_to_lowercase(const string& a)
  * Converts string to uppercase using toupper(int)
  * Modifies the parameter object.
  */
-void kvu_to_uppercase(string& a) { 
+void kvu_to_uppercase(string& a)
+{
   string::iterator p = a.begin();
   while(p != a.end()) {
     *p = toupper(*p);
@@ -313,7 +339,8 @@ void kvu_to_uppercase(string& a) {
  * Converts string to lowercase using tolower(int)
  * Modifies the parameter object.
  */
-void kvu_to_lowercase(string& a) { 
+void kvu_to_lowercase(string& a)
+{
   string::iterator p = a.begin();
   while(p != a.end()) {
     *p = tolower(*p);
