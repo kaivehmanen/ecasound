@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (17.11.2003)
+       (19.11.2003)
        ()
        (Multimedia software)
 
@@ -304,12 +304,30 @@ a combination of the two previous modes.
 More details about ecasound's JACK support can be found
 from ecasound user's guide.
 
+dit(Libaudiofile)
+If libaudiofile support was enabled at compile-time, this
+option allows you to force Ecasound to use libaudiofile 
+for reading/writing a certain audio file. Option syntax 
+is bf(-i:audiofile,foobar.ext) (same for bf(-o)).
+
+dit(Libsndfile)
+If libsndfile support was enabled at compile-time, this
+option allows you to force Ecasound to use libsndfile 
+for reading/writing a certain audio file. Option syntax 
+is bf(-i:sndfile,foobar.ext) (same for bf(-o)).
+
 dit(Loop device) 
 Loop devices make it possible to route data between chains.
 Option syntax is bf(-[io][:]loop,id_number). If you add a loop 
 output with id '1', all data written to this output is routed
 to all loop inputs with id '1'. You can attach the same loop
 device to multiple inputs and outputs.
+
+dit(Mikmod)
+If mikmod support was enabled at compile-time, this
+option allows you to force Ecasound to use Mikmod 
+for reading/writing a certain module file. Option syntax 
+is bf(-i:mikmod,foobar.ext).
 
 dit(Null inputs/outputs)
 If you specify "null" or "/dev/null" as the input or output, 

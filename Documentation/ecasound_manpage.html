@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>17.11.2003</h2>
+<h2>19.11.2003</h2>
 
 
     
@@ -264,12 +264,27 @@ position-change events; and mode "sendrecv" which is
 a combination of the two previous modes.
 <p>More details about ecasound's JACK support can be found
 from ecasound user's guide.
+<p><p></p><dt><strong>Libaudiofile</strong><dd>
+If libaudiofile support was enabled at compile-time, this
+option allows you to force Ecasound to use libaudiofile 
+for reading/writing a certain audio file. Option syntax 
+is <strong>-i:audiofile,foobar.ext</strong> (same for <strong>-o</strong>).
+<p><p></p><dt><strong>Libsndfile</strong><dd>
+If libsndfile support was enabled at compile-time, this
+option allows you to force Ecasound to use libsndfile 
+for reading/writing a certain audio file. Option syntax 
+is <strong>-i:sndfile,foobar.ext</strong> (same for <strong>-o</strong>).
 <p><p></p><dt><strong>Loop device</strong><dd> 
 Loop devices make it possible to route data between chains.
 Option syntax is <strong>-[io][:]loop,id_number</strong>. If you add a loop 
 output with id '1', all data written to this output is routed
 to all loop inputs with id '1'. You can attach the same loop
 device to multiple inputs and outputs.
+<p><p></p><dt><strong>Mikmod</strong><dd>
+If mikmod support was enabled at compile-time, this
+option allows you to force Ecasound to use Mikmod 
+for reading/writing a certain module file. Option syntax 
+is <strong>-i:mikmod,foobar.ext</strong>.
 <p><p></p><dt><strong>Null inputs/outputs</strong><dd>
 If you specify "null" or "/dev/null" as the input or output, 
 a null audio device is created. This is useful if you just want

@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "17\&.11\&.2003" "" "Multimedia software" 
+.TH "ecasound" "1" "19\&.11\&.2003" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -274,12 +274,30 @@ a combination of the two previous modes\&.
 More details about ecasound\'s JACK support can be found
 from ecasound user\'s guide\&.
 .IP 
+.IP "Libaudiofile" 
+If libaudiofile support was enabled at compile-time, this
+option allows you to force Ecasound to use libaudiofile 
+for reading/writing a certain audio file\&. Option syntax 
+is \fB-i:audiofile,foobar\&.ext\fP (same for \fB-o\fP)\&.
+.IP 
+.IP "Libsndfile" 
+If libsndfile support was enabled at compile-time, this
+option allows you to force Ecasound to use libsndfile 
+for reading/writing a certain audio file\&. Option syntax 
+is \fB-i:sndfile,foobar\&.ext\fP (same for \fB-o\fP)\&.
+.IP 
 .IP "Loop device" 
 Loop devices make it possible to route data between chains\&.
 Option syntax is \fB-[io][:]loop,id_number\fP\&. If you add a loop 
 output with id \'1\', all data written to this output is routed
 to all loop inputs with id \'1\'\&. You can attach the same loop
 device to multiple inputs and outputs\&.
+.IP 
+.IP "Mikmod" 
+If mikmod support was enabled at compile-time, this
+option allows you to force Ecasound to use Mikmod 
+for reading/writing a certain module file\&. Option syntax 
+is \fB-i:mikmod,foobar\&.ext\fP\&.
 .IP 
 .IP "Null inputs/outputs" 
 If you specify "null" or "/dev/null" as the input or output, 
