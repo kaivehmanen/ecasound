@@ -15,9 +15,13 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??102002 (v2.2.0-pre2)
+18102002 (v2.2.0-pre2)
 	- fixed: ALSA objects weren't properly registered as audio
 		 object types
+	- fixed: debug level was resetted to 0 after issuing
+		 'int-output-mode-wellformed'
+	- fixed: automake complained about multiple definition
+	 	 of ecasoundc_sa
 17102002 (v2.2.0-pre1)
 	- edi-entries: edi-24, edi-28, edi-29, edi-30
 	- note: libecasound and libkvutils interface version numbers
