@@ -125,7 +125,12 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
     /* 3. transport control processing in "streaming" mode */
     else {
       /* execute one engine iteration */
-      eca_jack_process_engine_iteration(nframes, current);
+      if (current->is_running() == true) {
+	eca_jack_process_engine_iteration(nframes, current);
+      }
+      else {
+	eca_jack_process_mute(nframes, current);
+      }
     }
 
     pthread_mutex_unlock(&current->engine_mod_lock_rep);
