@@ -39,15 +39,18 @@
 #include "eca-debug.h"
 
 ALSA_PCM2_DEVICE::ALSA_PCM2_DEVICE (int card, 
-			int device, 
-			const SIMODE mode, 
-			const ECA_AUDIO_FORMAT& form, 
-			long int bsize)
+				    int device, 
+				    int subdevice, 
+				    const SIMODE mode, 
+				    const ECA_AUDIO_FORMAT& form, 
+				    long int bsize)
   :  AUDIO_IO_DEVICE(string("alsa,") + kvu_numtostr(card) +
-		   string(",") + kvu_numtostr(device) , mode, form)
+		     string(",") + kvu_numtostr(device) +
+		     string(",") + kvu_numtostr(subdevice), mode, form)
 {
   card_number = card;
   device_number = device;
+  subdevice_number = subdevice;
   pcm_mode = SND_PCM_MODE_BLOCK;
   is_triggered = false;
   overruns = underruns = 0;
@@ -72,10 +75,11 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   int err;
   if (io_mode() == si_read) {
     pcm_channel = SND_PCM_CHANNEL_CAPTURE;
-    err = dl_snd_pcm_open(&audio_fd, 
-			  card_number, 
-			  device_number,
-			  SND_PCM_OPEN_CAPTURE | SND_PCM_OPEN_NONBLOCK);
+    err = dl_snd_pcm_open_subdevice(&audio_fd, 
+				    card_number, 
+				    device_number,
+				    subdevice_number,
+				    SND_PCM_OPEN_CAPTURE | SND_PCM_OPEN_NONBLOCK);
     
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA2", "unable to open ALSA-device for capture; error: " + 
@@ -84,10 +88,11 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   }    
   else if (io_mode() == si_write) {
     pcm_channel = SND_PCM_CHANNEL_PLAYBACK;
-    err = dl_snd_pcm_open(&audio_fd, 
-			  card_number, 
-			  device_number,
-			  SND_PCM_OPEN_PLAYBACK | SND_PCM_OPEN_NONBLOCK);
+    err = dl_snd_pcm_open_subdevice(&audio_fd, 
+				    card_number, 
+				    device_number,
+				    subdevice_number,
+				    SND_PCM_OPEN_PLAYBACK | SND_PCM_OPEN_NONBLOCK);
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA2", "unable to open ALSA-device for playback; error: " +  
 			  string(dl_snd_strerror(err))));
@@ -102,6 +107,7 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Select audio format
 
+  dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
   snd_pcm_format_t pf;
   memset(&pf, 0, sizeof(pf));
 
@@ -150,15 +156,17 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Channel params
 
-  dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
   err = dl_snd_pcm_channel_params(audio_fd, &params);
   if (err < 0) {
     throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when setting up channel params: " + string(dl_snd_strerror(err))));
   }
+
+  dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
   err = dl_snd_pcm_channel_prepare(audio_fd, pcm_channel);
   if (err < 0) {
     throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(dl_snd_strerror(err))));
   }
+
   toggle_open_state(true);
 }
 

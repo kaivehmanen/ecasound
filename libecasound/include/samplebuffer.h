@@ -66,7 +66,9 @@ class SAMPLE_BUFFER {
 
  private:
 
-  static const sample_type s16_to_st_constant = (max_amplitude / 32767.0);
+  static const sample_type s16_to_st_constant = (32768.0 / max_amplitude); // 2^15
+  static const sample_type s24_to_st_constant = (8388607.0 / max_amplitude); // 2^23
+  static const sample_type s32_to_st_constant = (2147483647.0 / max_amplitude);  // 2^31
   static const sample_type u8_to_st_delta = 128.0;
   static const sample_type u8_to_st_constant = (max_amplitude / 128.0);
 

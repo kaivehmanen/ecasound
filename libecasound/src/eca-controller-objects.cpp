@@ -661,10 +661,6 @@ void ECA_CONTROLLER_OBJECTS::add_audio_input(const string& filename) {
   selected_chainsetup_rep->interpret_audioio_device("-i", filename);
   select_audio_object(filename);
   ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
-
-  // --------
-  ENSURE(selected_audio_object_rep->label() == filename);
-  // --------
 }
 
 void ECA_CONTROLLER_OBJECTS::add_audio_output(const string& filename) {
@@ -678,10 +674,6 @@ void ECA_CONTROLLER_OBJECTS::add_audio_output(const string& filename) {
   select_audio_object(filename);
   ecadebug->msg("(eca-controller) Added audio output \"" + filename +
 		"\".");
-  // --------
-  // ensure:
-  assert(selected_audio_object_rep->label() == filename);
-  // --------
 }
 
 void ECA_CONTROLLER_OBJECTS::add_default_output(void) {

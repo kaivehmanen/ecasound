@@ -68,9 +68,11 @@ class ECA_AUDIO_FORMAT {
   int sample_size(void) const { return(align_rep); }
 
   /**
-   * How many bits are used to represent one sample value.
+   * How many bits are used to represent one sample value. 
+   * Notice! This isn't necessarily sample_size() / 8. For example,
+   * 24bit samples are represented with 32bit values.
    */
-  int bits(void) const { return(align_rep * 8); }
+  int bits(void) const;
   
   /**
    * Sample format specification. See @ref SAMPLE_FORMAT

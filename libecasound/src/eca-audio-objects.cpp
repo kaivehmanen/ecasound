@@ -239,10 +239,10 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu,
 
 #ifdef ALSALIB_050
       if (mode != si_read)
-	main_file = new ALSA_PCM2_DEVICE (card, device, si_write, format,
+	main_file = new ALSA_PCM2_DEVICE (card, device, -1, si_write, format,
 					  buffersize_arg);
       else
-	main_file = new ALSA_PCM2_DEVICE (card, device, mode, format, buffersize_arg);
+	main_file = new ALSA_PCM2_DEVICE (card, device, -1, mode, format, buffersize_arg);
 #else
       if (mode != si_read)
 	main_file = new ALSA_PCM_DEVICE (card, device, si_write, format,
@@ -274,15 +274,20 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu,
 
   case TYPE_ALSA:
     {
-      int card = atoi(get_argument_number(2, argu).c_str());
-      int device = atoi(get_argument_number(3, argu).c_str());
+      vector<string> temp = get_arguments(argu);
+      int card = 0;
+      int device = 0;
+      int subdevice = -1;
+      if (temp.size() > 1) card = atoi(temp[1].c_str());
+      if (temp.size() > 2) device = atoi(temp[2].c_str());
+      if (temp.size() > 3) subdevice = atoi(temp[3].c_str());
 
 #ifdef ALSALIB_050
       if (mode != si_read)
-	main_file = new ALSA_PCM2_DEVICE (card, device, si_write, format,
+	main_file = new ALSA_PCM2_DEVICE (card, device, subdevice, si_write, format,
 					  buffersize_arg);
       else
-	main_file = new ALSA_PCM2_DEVICE (card, device, mode, format, buffersize_arg);
+	main_file = new ALSA_PCM2_DEVICE (card, device, subdevice, mode, format, buffersize_arg);
 #else
       if (mode != si_read)
 	main_file = new ALSA_PCM_DEVICE (card, device, si_write, format,

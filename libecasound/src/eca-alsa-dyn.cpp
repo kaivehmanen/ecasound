@@ -63,6 +63,7 @@ int (*dl_snd_pcm_capture_params)(snd_pcm_t *handle, snd_pcm_capture_params_t * p
 int (*dl_snd_pcm_capture_status)(snd_pcm_t *handle, snd_pcm_capture_status_t * status);
 int (*dl_snd_pcm_capture_time)(snd_pcm_t *handle, int enable);
 #else 
+int (*dl_snd_pcm_open_subdevice)(snd_pcm_t **,int,int,int,int);
 int (*dl_snd_pcm_nonblock_mode)(snd_pcm_t *handle, int enable);
 int (*dl_snd_pcm_info)(snd_pcm_t *handle, snd_pcm_info_t * info);
 int (*dl_snd_pcm_channel_info)(snd_pcm_t *handle, snd_pcm_channel_info_t * info);
@@ -194,6 +195,8 @@ void eca_alsa_load_dl_snd_pcm(void) {
   dl_snd_pcm_capture_time = 
     (int (*)(snd_pcm_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_capture_time");
 #else
+  dl_snd_pcm_open_subdevice = 
+    (int (*)(snd_pcm_t **, int, int, int, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_open_subdevice");
   dl_snd_pcm_nonblock_mode = 
     (int (*)(snd_pcm_t *handle, int ))dlsym(eca_alsa_dynlib_handle, "snd_pcm_nonblock_mode");
   dl_snd_pcm_info =

@@ -71,8 +71,6 @@ void ECA_AUDIO_FORMAT::set_sample_format(SAMPLE_FORMAT v) throw(ECA_ERROR*) {
 
     case sfmt_s24_le:
     case sfmt_s24_be:
-      align_rep = 3;
-      break;
 
     case sfmt_s32_le:
     case sfmt_s32_be:
@@ -108,6 +106,18 @@ void ECA_AUDIO_FORMAT::convert_to_host_byte_order(void) {
     }
 }
 
+int ECA_AUDIO_FORMAT::bits(void) const {
+  switch(sfmt_rep) 
+    {
+    case sfmt_s24_le:
+    case sfmt_s24_be:
+      return(24);
+
+    default: 
+      return(align_rep * 8);
+    }
+}
+
 void ECA_AUDIO_FORMAT::set_samples_per_second(long int v) { srate_rep = v; }
 void ECA_AUDIO_FORMAT::set_channels(int v) { channels_rep = v; }
 void ECA_AUDIO_FORMAT::toggle_interleaved_channels(bool v) { ileaved_rep = v; }
@@ -117,8 +127,16 @@ void ECA_AUDIO_FORMAT::set_sample_format(const string& f_str) throw(ECA_ERROR*) 
   else if (f_str == "s16") sfmt_rep = sfmt_s16;
   else if (f_str == "s16_le") sfmt_rep = sfmt_s16_le;
   else if (f_str == "s16_be") sfmt_rep = sfmt_s16_be;
+  else if (f_str == "s24") sfmt_rep = sfmt_s24;
+  else if (f_str == "s24_le") sfmt_rep = sfmt_s24_le;
+  else if (f_str == "s24_be") sfmt_rep = sfmt_s24_be;
+  else if (f_str == "s32") sfmt_rep = sfmt_s32;
+  else if (f_str == "s32_le") sfmt_rep = sfmt_s32_le;
+  else if (f_str == "s32_be") sfmt_rep = sfmt_s32_be;
   else if (f_str == "8") sfmt_rep = sfmt_u8;
   else if (f_str == "16") sfmt_rep = sfmt_s16;
+  else if (f_str == "24") sfmt_rep = sfmt_s24;
+  else if (f_str == "32") sfmt_rep = sfmt_s32;
   else {
     throw(new ECA_ERROR("ECA_AUDIO_FORMAT", "Unknown sample format \""
 			+ f_str + "\"."));
@@ -133,8 +151,10 @@ string ECA_AUDIO_FORMAT::format_string(void) const throw(ECA_ERROR*) {
     case sfmt_s8: return("s8");
     case sfmt_s16_le: return("s16_le");
     case sfmt_s16_be: return("s16_be");
+    case sfmt_s24_le: return("s24_le");
+    case sfmt_s24_be: return("s24_be");
+    case sfmt_s32_le: return("s32_le");
+    case sfmt_s32_be: return("s32_be");
     default: { throw(new ECA_ERROR("ECA_AUDIO_FORMAT","Audio format not support!")); }
     }
 }
-
-

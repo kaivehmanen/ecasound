@@ -201,11 +201,20 @@ string get_argument_number(int number, const string& argu) {
 }
 
 vector<string> get_arguments(const string& argu) {
-  string::const_iterator b, e;
   vector<string> rvalue;
 
-  for(b = find(argu.begin(), argu.end(), ':'); b != argu.end();) {
+  string::const_iterator b = find(argu.begin(), argu.end(), ':');
+  string::const_iterator e;
+
+  if (b == argu.end()) {
+    if (argu.size() > 0) b = argu.begin();
+    else return(rvalue);
+  }
+  else 
     ++b;
+
+
+  for(; b != argu.end(); b++) {
     e = find(b, argu.end(), ',');
     string target = string(b, e);
     if (target.size() > 0) {

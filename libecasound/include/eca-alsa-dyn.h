@@ -32,6 +32,7 @@ extern int (*dl_snd_pcm_capture_params)(snd_pcm_t *handle, snd_pcm_capture_param
 extern int (*dl_snd_pcm_capture_status)(snd_pcm_t *handle, snd_pcm_capture_status_t * status);
 extern int (*dl_snd_pcm_capture_time)(snd_pcm_t *handle, int enable);
 #else 
+extern int (*dl_snd_pcm_open_subdevice)(snd_pcm_t **,int,int,int,int);
 extern int (*dl_snd_pcm_nonblock_mode)(snd_pcm_t *handle, int enable);
 extern int (*dl_snd_pcm_info)(snd_pcm_t *handle, snd_pcm_info_t * info);
 extern int (*dl_snd_pcm_channel_info)(snd_pcm_t *handle, snd_pcm_channel_info_t * info);

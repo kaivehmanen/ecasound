@@ -23,7 +23,7 @@ class ALSA_PCM2_DEVICE : public AUDIO_IO_DEVICE {
 
   snd_pcm_t *audio_fd;
 
-  int card_number, device_number;
+  int card_number, device_number, subdevice_number;
   int pcm_mode, pcm_channel;
 
   long int bytes_read;
@@ -43,7 +43,7 @@ class ALSA_PCM2_DEVICE : public AUDIO_IO_DEVICE {
   void stop(void);
   void start(void);
 
-  ALSA_PCM2_DEVICE (int card, int device, const SIMODE mode, const ECA_AUDIO_FORMAT& form, long int buffersize);
+  ALSA_PCM2_DEVICE (int card, int device, int subdevice, const SIMODE mode, const ECA_AUDIO_FORMAT& form, long int buffersize);
   ALSA_PCM2_DEVICE::~ALSA_PCM2_DEVICE(void);
   ALSA_PCM2_DEVICE* clone(void) { return new ALSA_PCM2_DEVICE(*this); }
   

@@ -392,9 +392,6 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    *   filename.empty() == false
    *   is_selected() == true
    *   connected_chainsetup() != selected_chainsetup()
-   *
-   * ensure:
-   *   selected_audio_object_rep->label() == filename
    */
   void add_audio_input(const string& filename);
 
@@ -406,9 +403,6 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    *   filename.empty() == false
    *   is_selected() == true
    *   connected_chainsetup() != selected_chainsetup()
-   *
-   * ensure
-   *   selected_audio_object_rep->label() == filename
    */
   void add_audio_output(const string& filename);
 

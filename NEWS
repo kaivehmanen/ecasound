@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)    (last edited: 14012000) **
+** ecasound - user visible changes (NEWS)    (last edited: 17012000) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -15,7 +15,11 @@ About the version numbers... "vx.y.zRt" :
 Last officially released version is -*> v1.6.9r9 <*-
 
 ??012000 (v1.6.12d10)
+	- added: support for s24_le, s24_be, s32_le and s32_be 
+		 sample formats
+	- added: support for ALSA-subdevices (-o:alsa,card,dev,subdev)
 	- changed: ALSA pcm2-devices now opened in nonblock-mode
+	- fixed: bugs in channel routing and output mixing
 14012000 (v1.6.11d10)
 	- added: -ef4 - 2th-order, 24dB filter which simulates
 	         an analog active RC-lowpass filter - submitted by 

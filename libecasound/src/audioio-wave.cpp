@@ -79,6 +79,16 @@ void WAVEFILE::format_query(void) throw(ECA_ERROR*) {
 
 
 void WAVEFILE::open(void) throw(ECA_ERROR*) {
+
+  if (riff_format.bits > 8 && 
+      format_string()[0] == 'u')
+    throw(new ECA_ERROR("AUDIOIO-WAVE", "unsigned sample format accepted only with 8bit."));
+
+  if (riff_format.bits > 8 && 
+      format_string().size() > 4 &&
+      format_string()[4] == 'b')
+    throw(new ECA_ERROR("AUDIOIO-WAVE", "bigendian byte-order not supported by RIFF wave files."));
+
   switch(io_mode()) {
   case si_read:
     {
@@ -220,14 +230,18 @@ void WAVEFILE::read_riff_fmt(void) throw(ECA_ERROR*)
       //      ecadebug->msg("(audioio-wave) WARNING: wave-format not '1'.");
     }
 
-    set_channels(riff_format.channels);
     set_samples_per_second(riff_format.srate);
-    if (riff_format.bits == 16)
+    set_channels(riff_format.channels);
+    if (riff_format.bits == 32)
+      set_sample_format(ECA_AUDIO_FORMAT::sfmt_s32_le);
+    else if (riff_format.bits == 24)
+      set_sample_format(ECA_AUDIO_FORMAT::sfmt_s24_le);
+    else if (riff_format.bits == 16)
       set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
     else if (riff_format.bits == 8)
       set_sample_format(ECA_AUDIO_FORMAT::sfmt_u8);
     else 
-      throw(new ECA_ERROR("AUDIOIO-WAVE", "Only 8bit and 16bit sample resolution is supported."));
+      throw(new ECA_ERROR("AUDIOIO-WAVE", "Sample format not supported."));
   }
 
   fio->set_file_position(savetemp);
