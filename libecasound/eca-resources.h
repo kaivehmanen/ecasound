@@ -1,5 +1,5 @@
-#ifndef _ECA_RESOURCES_H
-#define _ECA_RESOURCES_H
+#ifndef INCLUDED_ECA_RESOURCES_H
+#define INCLUDED_ECA_RESOURCES_H
 
 #include "resource-file.h"
 
@@ -17,8 +17,3 @@ class ECA_RESOURCES : public RESOURCE_FILE {
 };
 
 #endif
-
-
-
-
-

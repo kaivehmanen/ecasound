@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// procedure_timer.cpp: Class for timing and gathering statistics of 
-//                      repeating events.
+// procedure_timer.cpp: Procedure timer. Meant for timing and gathering 
+//                      statistics of repeating events.
 // Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify

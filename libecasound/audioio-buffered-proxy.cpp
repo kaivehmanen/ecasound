@@ -23,6 +23,10 @@
 
 #include "audioio-buffered-proxy.h"
 
+/**
+ * Constructor. The given client object is registered to 
+ * the given proxy server as a client object.
+ */
 AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver, 
 						  AUDIO_IO* aobject) 
   : pserver_repp(pserver),
@@ -37,6 +41,9 @@ AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver
   fetch_child_data();
 }
 
+/**
+ * Copy attributes from the proxied (child) object.
+ */
 void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
   if (child_repp->io_mode() == AUDIO_IO::io_read) 
     pbuffer_repp->io_mode_rep = AUDIO_IO::io_read;
@@ -51,18 +58,37 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
   }
 }
 
+/**
+ * Desctructor. Unregisters the client from the proxy 
+ * server.
+ */
 AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void) {
   pserver_repp->unregister_client(child_repp);
   if (xruns_rep > 0) 
     cerr << "(audioio-buffered-proxy) There were total " << xruns_rep << " xruns." << endl;
 }
 
+/**
+ * Whether all data has been processed? If opened in mode 'io_read', 
+ * this means that end of stream has been reached. If opened in 
+ * 'io_write' or 'io_readwrite' modes, finished status usually
+ * means that an error has occured (no space left, etc). After 
+ * finished() has returned 'true', further calls to read_buffer() 
+ * and/or write_buffer() won't process any data.
+ */
 bool AUDIO_IO_BUFFERED_PROXY::finished(void) const { return(finished_rep); }
 
+/**
+ * Length of the proxied object.
+ */
 long AUDIO_IO_BUFFERED_PROXY::length_in_samples(void) const { 
   return(child_repp->length_in_samples());
 }
 
+/**
+ * Reads samples to buffer pointed by 'sbuf'. If necessary, the target 
+ * buffer will be resized.
+ */
 void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) { 
   if (pbuffer_repp->read_space() > 0) {
     sbuf->operator=(pbuffer_repp->sbufs_rep[pbuffer_repp->readptr_rep.get()]);
@@ -86,6 +112,10 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
   }
 }
 
+/**
+ * Writes all data from sample buffer pointed by 'sbuf'. Notes
+ * concerning read_buffer() also apply to this routine.
+ */
 void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) { 
   if (pbuffer_repp->write_space() > 0) {
     pbuffer_repp->sbufs_rep[pbuffer_repp->writeptr_rep.get()].operator=(*sbuf);
@@ -104,6 +134,9 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
   }
 }
 
+/**
+ * Seeks to the current position.
+ */
 void AUDIO_IO_BUFFERED_PROXY::seek_position(void) { 
   bool was_running = false;
   if (pserver_repp->is_running() == true) {
@@ -120,11 +153,21 @@ void AUDIO_IO_BUFFERED_PROXY::seek_position(void) {
   }
 }
 
+/**
+ * Opens the child audio object (possibly in exclusive mode).
+ * This routine is meant for opening files and devices,
+ * loading libraries, etc. 
+ */
 void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) { 
   child_repp->open();
   fetch_child_data();
 }
 
+/**
+ * Closes the child audio object. After calling this routine, 
+ * all resources (ie. soundcard) must be freed
+ * (they can be used by other processes).
+ */
 void AUDIO_IO_BUFFERED_PROXY::close(void) { 
   child_repp->close();
 }

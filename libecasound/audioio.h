@@ -131,7 +131,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
  public:
 
   /**
-   * Read samples to buffer pointed by 'sbuf'. If necessary, the target 
+   * Reads samples to buffer pointed by 'sbuf'. If necessary, the target 
    * buffer will be resized.
    *
    * It's important to note that SAMPLE_BUFFER audio format cannot be
@@ -154,7 +154,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   virtual void read_buffer(SAMPLE_BUFFER* sbuf) = 0;
 
   /**
-   * Write all data from sample buffer pointed by 'sbuf'. Notes
+   * Writes all data from sample buffer pointed by 'sbuf'. Notes
    * concerning read_buffer() also apply to this routine.
    *
    * @see write samples
@@ -185,7 +185,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) = 0;
 
   /**
-   * Close audio object. After calling this routine, 
+   * Closes audio object. After calling this routine, 
    * all resources (ie. soundcard) must be freed
    * (they can be used by other processes).
    *
