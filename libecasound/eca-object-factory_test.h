@@ -20,6 +20,7 @@
 #include <cmath> /* std::fabs() */
 #include <iostream>
 #include <string>
+#include <typeinfo> /* typeid() */
 
 #include "kvu_numtostr.h"
 
