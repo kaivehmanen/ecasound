@@ -38,7 +38,7 @@ pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
 
-top_builddir = .
+top_builddir = ..
 
 ACLOCAL = @ACLOCAL@
 AUTOCONF = @AUTOCONF@
@@ -49,7 +49,6 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -82,124 +81,159 @@ RANLIB = @RANLIB@
 VERSION = @VERSION@
 qt_includes = @qt_includes@
 qt_libraries = @qt_libraries@
+@INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
+@INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
 
-EXTRA_DIST = BUGS NEWS FAQ generic_oscillators multichain_effect_presets singlechain_effect_presets
+INCLUDES = -I. -I$(top_srcdir)/libecasound/include -I$(top_srcdir)/kvutils
+@USE_NCURSES_TRUE@termcap_library = -lncurses
+@USE_NCURSES_FALSE@termcap_library = -ltermcap
+@INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecasound_debug
+@INCLUDE_DEBUG_FALSE@bin_PROGRAMS = ecasound
 
-SUBDIRS = kvutils readline-4.0 libecasound ecasound qtecasound ecatools Documentation
-AUTOMAKE_OPTIONS = foreign
-ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+ecasound_SOURCES = eca-text.cpp eca-text.h textdebug.cpp textdebug.h
+ecasound_debug_SOURCES = $(ecasound_SOURCES)
+
+ecasound_LDADD =  		 $(top_srcdir)/libecasound/src/libecasound.la 		 $(top_srcdir)/readline-4.0/libreadline.a $(top_srcdir)/readline-4.0/libhistory.a                   $(termcap_library) 		 -L$(top_srcdir)/kvutils 		 -L$(top_srcdir)/kvutils/.libs -lkvutils
+
+#		 -ltermcap
+#		 -lreadline -lhistory
+ecasound_debug_LDADD = $(top_srcdir)/readline-4.0/libreadline.a $(top_srcdir)/readline-4.0/libhistory.a 		       $(top_srcdir)/libecasound/src/libecasound_debug.la 		       $(termcap_library) 		      -L$(top_srcdir)/kvutils 		      -L$(top_srcdir)/kvutils/.libs -lkvutils
+
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = config.h
+CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
-DIST_COMMON =  README ./stamp-h.in COPYING INSTALL Makefile.am \
-Makefile.in NEWS acconfig.h acinclude.m4 aclocal.m4 config.guess \
-config.h.in config.sub configure configure.in install-sh ltconfig \
-ltmain.sh missing mkinstalldirs
+PROGRAMS =  $(bin_PROGRAMS)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+ecasound_debug_OBJECTS =  eca-text.o textdebug.o
+@USE_NCURSES_FALSE@ecasound_debug_DEPENDENCIES =  \
+@USE_NCURSES_FALSE@$(top_srcdir)/readline-4.0/libreadline.a \
+@USE_NCURSES_FALSE@$(top_srcdir)/readline-4.0/libhistory.a \
+@USE_NCURSES_FALSE@$(top_srcdir)/libecasound/src/libecasound_debug.la
+@USE_NCURSES_TRUE@ecasound_debug_DEPENDENCIES =  \
+@USE_NCURSES_TRUE@$(top_srcdir)/readline-4.0/libreadline.a \
+@USE_NCURSES_TRUE@$(top_srcdir)/readline-4.0/libhistory.a \
+@USE_NCURSES_TRUE@$(top_srcdir)/libecasound/src/libecasound_debug.la
+ecasound_debug_LDFLAGS = 
+ecasound_OBJECTS =  eca-text.o textdebug.o
+@USE_NCURSES_FALSE@ecasound_DEPENDENCIES =  \
+@USE_NCURSES_FALSE@$(top_srcdir)/libecasound/src/libecasound.la \
+@USE_NCURSES_FALSE@$(top_srcdir)/readline-4.0/libreadline.a \
+@USE_NCURSES_FALSE@$(top_srcdir)/readline-4.0/libhistory.a
+@USE_NCURSES_TRUE@ecasound_DEPENDENCIES =  \
+@USE_NCURSES_TRUE@$(top_srcdir)/libecasound/src/libecasound.la \
+@USE_NCURSES_TRUE@$(top_srcdir)/readline-4.0/libreadline.a \
+@USE_NCURSES_TRUE@$(top_srcdir)/readline-4.0/libhistory.a
+ecasound_LDFLAGS = 
+CXXFLAGS = @CXXFLAGS@
+CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
+DIST_COMMON =  Makefile.am Makefile.in
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
+SOURCES = $(ecasound_debug_SOURCES) $(ecasound_SOURCES)
+OBJECTS = $(ecasound_debug_OBJECTS) $(ecasound_OBJECTS)
+
 all: all-redirect
 .SUFFIXES:
+.SUFFIXES: .S .c .cpp .lo .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --foreign --include-deps Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps ecasound/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
-	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
-$(ACLOCAL_M4):  configure.in  acinclude.m4
-	cd $(srcdir) && $(ACLOCAL)
 
-config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
-	$(SHELL) ./config.status --recheck
-$(srcdir)/configure: $(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
-	cd $(srcdir) && $(AUTOCONF)
+mostlyclean-binPROGRAMS:
 
-config.h: stamp-h
-	@if test ! -f $@; then \
-		rm -f stamp-h; \
-		$(MAKE) stamp-h; \
-	else :; fi
-stamp-h: $(srcdir)/config.h.in $(top_builddir)/config.status
-	cd $(top_builddir) \
-	  && CONFIG_FILES= CONFIG_HEADERS=config.h \
-	     $(SHELL) ./config.status
-	@echo timestamp > stamp-h 2> /dev/null
-$(srcdir)/config.h.in: $(srcdir)/stamp-h.in
-	@if test ! -f $@; then \
-		rm -f $(srcdir)/stamp-h.in; \
-		$(MAKE) $(srcdir)/stamp-h.in; \
-	else :; fi
-$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
-	cd $(top_srcdir) && $(AUTOHEADER)
-	@echo timestamp > $(srcdir)/stamp-h.in 2> /dev/null
+clean-binPROGRAMS:
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
-mostlyclean-hdr:
+distclean-binPROGRAMS:
 
-clean-hdr:
+maintainer-clean-binPROGRAMS:
 
-distclean-hdr:
-	-rm -f config.h
-
-maintainer-clean-hdr:
-
-# This directory's subdirectories are mostly independent; you can cd
-# into them and run `make' without going through this Makefile.
-# To change the values of `make' variables: instead of editing Makefiles,
-# (1) if the variable is set in `config.status', edit `config.status'
-#     (which will cause the Makefiles to be regenerated when you run `make');
-# (2) otherwise, pass the desired values on the `make' command line.
-
-@SET_MAKE@
-
-all-recursive install-data-recursive install-exec-recursive \
-installdirs-recursive install-recursive uninstall-recursive  \
-check-recursive installcheck-recursive info-recursive dvi-recursive:
-	@set fnord $(MAKEFLAGS); amf=$$2; \
-	dot_seen=no; \
-	target=`echo $@ | sed s/-recursive//`; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    dot_seen=yes; \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done; \
-	if test "$$dot_seen" = "no"; then \
-	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
-	fi; test -z "$$fail"
-
-mostlyclean-recursive clean-recursive distclean-recursive \
-maintainer-clean-recursive:
-	@set fnord $(MAKEFLAGS); amf=$$2; \
-	dot_seen=no; \
-	rev=''; list='$(SUBDIRS)'; for subdir in $$list; do \
-	  rev="$$subdir $$rev"; \
-	  test "$$subdir" = "." && dot_seen=yes; \
-	done; \
-	test "$$dot_seen" = "no" && rev=". $$rev"; \
-	target=`echo $@ | sed s/-recursive//`; \
-	for subdir in $$rev; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done && test -z "$$fail"
-tags-recursive:
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo " $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	    $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	  else :; fi; \
 	done
+
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	done
+
+.c.o:
+	$(COMPILE) -c $<
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+.c.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+.s.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+.S.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+
+maintainer-clean-libtool:
+
+ecasound_debug: $(ecasound_debug_OBJECTS) $(ecasound_debug_DEPENDENCIES)
+	@rm -f ecasound_debug
+	$(CXXLINK) $(ecasound_debug_LDFLAGS) $(ecasound_debug_OBJECTS) $(ecasound_debug_LDADD) $(LIBS)
+
+ecasound: $(ecasound_OBJECTS) $(ecasound_DEPENDENCIES)
+	@rm -f ecasound
+	$(CXXLINK) $(ecasound_LDFLAGS) $(ecasound_OBJECTS) $(ecasound_LDADD) $(LIBS)
+.cpp.o:
+	$(CXXCOMPILE) -c $<
+.cpp.lo:
+	$(LTCXXCOMPILE) -c $<
 
 tags: TAGS
 
@@ -211,20 +245,15 @@ ID: $(HEADERS) $(SOURCES) $(LISP)
 	here=`pwd` && cd $(srcdir) \
 	  && mkid -f$$here/ID $$unique $(LISP)
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) $(LISP)
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-   if test "$$subdir" = .; then :; else \
-	    test -f $$subdir/TAGS && tags="$$tags -i $$here/$$subdir/TAGS"; \
-   fi; \
-	done; \
 	list='$(SOURCES) $(HEADERS)'; \
 	unique=`for i in $$list; do echo $$i; done | \
 	  awk '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	test -z "$(ETAGS_ARGS)config.h.in$$unique$(LISP)$$tags" \
-	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags config.h.in $$unique $(LISP) -o $$here/TAGS)
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
 
 mostlyclean-tags:
 
@@ -235,44 +264,11 @@ distclean-tags:
 
 maintainer-clean-tags:
 
-distdir = $(PACKAGE)-$(VERSION)
-top_distdir = $(distdir)
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
-# This target untars the dist file and tries a VPATH configuration.  Then
-# it guarantees that the distribution is self-contained by making another
-# tarfile.
-distcheck: dist
-	-rm -rf $(distdir)
-	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
-	mkdir $(distdir)/=build
-	mkdir $(distdir)/=inst
-	dc_install_base=`cd $(distdir)/=inst && pwd`; \
-	cd $(distdir)/=build \
-	  && ../configure --srcdir=.. --prefix=$$dc_install_base \
-	  && $(MAKE) $(AM_MAKEFLAGS) \
-	  && $(MAKE) $(AM_MAKEFLAGS) dvi \
-	  && $(MAKE) $(AM_MAKEFLAGS) check \
-	  && $(MAKE) $(AM_MAKEFLAGS) install \
-	  && $(MAKE) $(AM_MAKEFLAGS) installcheck \
-	  && $(MAKE) $(AM_MAKEFLAGS) dist
-	-rm -rf $(distdir)
-	@banner="$(distdir).tar.gz is ready for distribution"; \
-	dashes=`echo "$$banner" | sed s/./=/g`; \
-	echo "$$dashes"; \
-	echo "$$banner"; \
-	echo "$$dashes"
-dist: distdir
-	-chmod -R a+r $(distdir)
-	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
-	-rm -rf $(distdir)
-dist-all: distdir
-	-chmod -R a+r $(distdir)
-	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
-	-rm -rf $(distdir)
+subdir = ecasound
+
 distdir: $(DISTFILES)
-	-rm -rf $(distdir)
-	mkdir $(distdir)
-	-chmod 777 $(distdir)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -283,44 +279,65 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-	for subdir in $(SUBDIRS); do \
-	  if test "$$subdir" = .; then :; else \
-	    test -d $(distdir)/$$subdir \
-	    || mkdir $(distdir)/$$subdir \
-	    || exit 1; \
-	    chmod 777 $(distdir)/$$subdir; \
-	    (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir=../$(distdir) distdir=../$(distdir)/$$subdir distdir) \
-	      || exit 1; \
-	  fi; \
-	done
+eca-text.o: eca-text.cpp ../kvutils/kvutils.h ../kvutils/message_item.h \
+	../kvutils/com_line.h ../kvutils/command_queue.h \
+	../kvutils/value_queue.h ../kvutils/kvu_numtostr.h \
+	../libecasound/include/eca-iamode-parser.h \
+	../libecasound/include/eca-error.h \
+	../libecasound/include/eca-controller.h \
+	../kvutils/definition_by_contract.h \
+	../libecasound/include/audioio.h \
+	../libecasound/include/eca-audio-position.h \
+	../libecasound/include/eca-audio-format.h ../config.h \
+	../libecasound/include/eca-chain.h \
+	../libecasound/include/eca-debug.h \
+	../libecasound/include/samplebuffer.h \
+	../libecasound/include/eca-chainop.h \
+	../libecasound/include/dynamic-object.h \
+	../libecasound/include/dynamic-parameters.h \
+	../libecasound/include/generic-controller.h \
+	../libecasound/include/ctrl-source.h \
+	../libecasound/include/eca-chainop-map.h \
+	../libecasound/include/eca-controller-map.h \
+	../libecasound/include/eca-session.h \
+	../libecasound/include/eca-resources.h \
+	../libecasound/include/resource-file.h \
+	../libecasound/include/eca-chainsetup.h \
+	../libecasound/include/eca-control-position.h \
+	../libecasound/include/eca-audio-objects.h \
+	../libecasound/include/eca-main.h \
+	../libecasound/include/eca-version.h ../readline-4.0/readline.h \
+	../readline-4.0/rlstdc.h ../readline-4.0/keymaps.h \
+	../readline-4.0/chardefs.h ../readline-4.0/tilde.h \
+	../readline-4.0/history.h textdebug.h eca-text.h
+textdebug.o: textdebug.cpp ../libecasound/include/eca-debug.h \
+	textdebug.h
+
 info-am:
-info: info-recursive
+info: info-am
 dvi-am:
-dvi: dvi-recursive
+dvi: dvi-am
 check-am: all-am
-check: check-recursive
+check: check-am
 installcheck-am:
-installcheck: installcheck-recursive
-all-recursive-am: config.h
-	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+installcheck: installcheck-am
+install-exec-am: install-binPROGRAMS
+install-exec: install-exec-am
 
-install-exec-am:
-install-exec: install-exec-recursive
-
-install-data-am: install-data-local
-install-data: install-data-recursive
+install-data-am:
+install-data: install-data-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-install: install-recursive
-uninstall-am:
-uninstall: uninstall-recursive
-all-am: Makefile config.h
-all-redirect: all-recursive-am
+install: install-am
+uninstall-am: uninstall-binPROGRAMS
+uninstall: uninstall-am
+all-am: Makefile $(PROGRAMS)
+all-redirect: all-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
-installdirs: installdirs-recursive
-installdirs-am:
+installdirs:
+	$(mkinstalldirs)  $(DESTDIR)$(bindir)
 
 
 mostlyclean-generic:
@@ -332,56 +349,49 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-mostlyclean-am:  mostlyclean-hdr mostlyclean-tags mostlyclean-generic
+mostlyclean-am:  mostlyclean-binPROGRAMS mostlyclean-compile \
+		mostlyclean-libtool mostlyclean-tags \
+		mostlyclean-generic
 
-mostlyclean: mostlyclean-recursive
+mostlyclean: mostlyclean-am
 
-clean-am:  clean-hdr clean-tags clean-generic mostlyclean-am
+clean-am:  clean-binPROGRAMS clean-compile clean-libtool clean-tags \
+		clean-generic mostlyclean-am
 
-clean: clean-recursive
+clean: clean-am
 
-distclean-am:  distclean-hdr distclean-tags distclean-generic clean-am
+distclean-am:  distclean-binPROGRAMS distclean-compile distclean-libtool \
+		distclean-tags distclean-generic clean-am
 	-rm -f libtool
 
-distclean: distclean-recursive
-	-rm -f config.status
+distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-hdr maintainer-clean-tags \
-		maintainer-clean-generic distclean-am
+maintainer-clean-am:  maintainer-clean-binPROGRAMS \
+		maintainer-clean-compile maintainer-clean-libtool \
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
-maintainer-clean: maintainer-clean-recursive
-	-rm -f config.status
+maintainer-clean: maintainer-clean-am
 
-.PHONY: mostlyclean-hdr distclean-hdr clean-hdr maintainer-clean-hdr \
-install-data-recursive uninstall-data-recursive install-exec-recursive \
-uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
-all-recursive check-recursive installcheck-recursive info-recursive \
-dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
-maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
+.PHONY: mostlyclean-binPROGRAMS distclean-binPROGRAMS clean-binPROGRAMS \
+maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile mostlyclean-libtool distclean-libtool \
+clean-libtool maintainer-clean-libtool tags mostlyclean-tags \
 distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
-dvi-am dvi check check-am installcheck-am installcheck all-recursive-am \
-install-exec-am install-exec install-data-local install-data-am \
-install-data install-am install uninstall-am uninstall all-redirect \
-all-am all installdirs-am installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-
-install-data-local:
-	$(INSTALL) -d $(datadir)/ecasound
-	if [ ! -f $(datadir)/ecasound/singlechain_effect_presets ]; then $(INSTALL_DATA) singlechain_effect_presets $(datadir)/ecasound/singlechain_effect_presets; fi
-	if [ ! -f $(datadir)/ecasound/multichain_effect_presets ]; then $(INSTALL_DATA) multichain_effect_presets $(datadir)/ecasound/multichain_effect_presets ; fi
-	if [ ! -f $(datadir)/ecasound/generic_oscillators ]; then $(INSTALL_DATA) generic_oscillators $(datadir)/ecasound/generic_oscillators ; fi
-
-delete-static-libs:
-	rm -f $(libdir)/libkvutils.a
-	rm -f $(libdir)/libecasound.a
-
-strip-shared-libs:
-	strip $(libdir)/libecasound.so
-	strip $(libdir)/libkvutils.so
+#		       -ltermcap
+#			 /usr/lib/libreadline.a /usr/lib/libhistory.a
+#ecasound_debug_LDFLAGS = -lkvutils
+# ecasound_LDADD = -lm -lpthread $(top_srcdir)/libecasound/src/libecasound.la
+# ../kvutils/.libs/libkvutils.a
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
