@@ -75,11 +75,13 @@ void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 
   pre_child_open();
   child()->open();
+
+  child_offset_rep.set_samples_per_second_keeptime(child()->samples_per_second());
+  child_start_pos_rep.set_samples_per_second_keeptime(child()->samples_per_second());
+  child_length_rep.set_samples_per_second_keeptime(child()->samples_per_second());
+
   post_child_open();
 
-  child_offset_rep.set_samples_per_second(child()->samples_per_second());
-  child_start_pos_rep.set_samples_per_second(child()->samples_per_second());
-  child_length_rep.set_samples_per_second(child()->samples_per_second());
   if (child_length_rep.samples() == 0)
     child_length_rep.set_samples(child()->length_in_samples() - child_start_pos_rep.samples());
 

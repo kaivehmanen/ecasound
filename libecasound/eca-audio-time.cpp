@@ -68,8 +68,36 @@ void ECA_AUDIO_TIME::set_seconds(double seconds)
   samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(seconds * sample_rate_rep);
 }
 
+/**
+ * Sets the sample count.
+ *
+ * Note, this can change the value of seconds().
+ */
 void ECA_AUDIO_TIME::set_samples(SAMPLE_SPECS::sample_pos_t samples) { samples_rep = samples; } 
-void ECA_AUDIO_TIME::set_samples_per_second(SAMPLE_SPECS::sample_rate_t srate)  { sample_rate_rep = srate; } 
+
+/**
+ * Sets samples per second.
+ *
+ * Note, this can change the value of seconds().
+ */
+void ECA_AUDIO_TIME::set_samples_per_second(SAMPLE_SPECS::sample_rate_t srate)
+{
+  sample_rate_rep = srate;
+} 
+
+/**
+ * Sets samples per second.
+ *
+ * Note, this can change the value of seconds().
+ */
+void ECA_AUDIO_TIME::set_samples_per_second_keeptime(SAMPLE_SPECS::sample_rate_t srate)
+{
+  if (sample_rate_rep != srate) {
+    double time_secs = seconds();
+    set_samples_per_second(srate);
+    set_seconds(time_secs);
+  }
+}
   
 std::string ECA_AUDIO_TIME::to_string(format_type type) const
 {

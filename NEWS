@@ -26,6 +26,12 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: a chain with a short input file could cause a nasty
  		 feedback loop if processed with certain effects 
 		 and mixed with audio from other chains
+	- fixed: ewf length and offset errors with sample rates 
+		 different from default (usually 44.1kHz)
+	- fixed: chainsetup samplerate incorrectly set with some
+	 	 configurations; caused problems with -t:xxx and 
+		 other functions related to chainsetup level position 
+		 and length
 27042003 (v2.2.3)  -** stable release **-
 	- added: support for both -0.64 and 0.65- JACK versions; 
 		 transport functionality is only enabled with the 

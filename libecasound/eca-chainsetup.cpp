@@ -1673,7 +1673,7 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
       select_active_buffering_mode();
       enable_active_buffering_mode();
 
-      /* 3. open input devices */
+      /* 3.1 open input devices */
       for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
 	enable_audio_object_helper(*q);
 	if ((*q)->is_open() != true) { 
@@ -1681,8 +1681,8 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
 	}
       }
 
-      /* 4.1 make sure that all input devices have a common 
-       *     sampling rate */
+      /* 3.2. make sure that all input devices have a common 
+       *      sampling rate */
       SAMPLE_SPECS::sample_rate_t first_locked_srate = 0;
       for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
 	if (first_locked_srate == 0) {
@@ -1697,8 +1697,8 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
 	  check_object_samplerate(*q, first_locked_srate);
 	}
       }
-  
-      /* 5. open output devices */
+
+      /* 4. open output devices */
       for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
 	enable_audio_object_helper(*q);
 	if ((*q)->is_open() != true) { 
@@ -1714,6 +1714,14 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
 	}
 	else {
 	  check_object_samplerate(*q, first_locked_srate);
+	}
+      }
+
+      /* 5. in case there were no objects with locked srates */
+      if (first_locked_srate == 0) {
+	if (inputs.size() > 0) {
+	  /* set chainsetup srate to that of the first input */
+	  set_samples_per_second(inputs[0]->samples_per_second());
 	}
       }
 

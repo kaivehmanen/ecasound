@@ -27,6 +27,7 @@ class ECA_AUDIO_TIME {
   void set_seconds(double seconds);
   void set_samples(SAMPLE_SPECS::sample_pos_t samples);
   void set_samples_per_second(long int srate);
+  void set_samples_per_second_keeptime(long int srate);
     
   std::string to_string(format_type type) const;
   double seconds(void) const;
