@@ -41,19 +41,19 @@ void ECA_FILE_IO_STREAM::open_file(const std::string& fname,
 }
 
 void ECA_FILE_IO_STREAM::open_stdin(void) { 
-  f1 = std::stdin;
+  f1 = stdin;
   mode_rep = "rb";
   standard_mode = true;
 }
 
 void ECA_FILE_IO_STREAM::open_stdout(void) { 
-  f1 = std::stdout;
+  f1 = stdout;
   mode_rep = "wb";
   standard_mode = true;
 }
 
 void ECA_FILE_IO_STREAM::open_stderr(void) { 
-  f1 = std::stderr;
+  f1 = stderr;
   mode_rep = "wb";
   standard_mode = true;
 }

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-cdr.cpp: CDDA/CDR audio file format input/output
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,9 +22,12 @@
 #include <string>
 #include <cstring>
 #include <cassert>
-#include <sys/stat.h>
-#include <unistd.h>
+#include <sys/stat.h> /* stat() */
+#include <unistd.h> /* stat() */
 
+#include <kvutils/dbc.h>
+
+#include "sample-specs.h"
 #include "audioio-types.h"
 #include "audioio-cdr.h"
 #include "eca-debug.h"
@@ -40,8 +43,7 @@ CDRFILE::~CDRFILE(void) {
 
 void CDRFILE::format_query(void) {
   // --------
-  // require:
-  assert(!is_open());
+  DBC_REQUIRE(!is_open());
   // --------
 
   struct stat temp;
@@ -49,15 +51,13 @@ void CDRFILE::format_query(void) {
   length_in_samples(temp.st_size / frame_size());
 
   // -------
-  // ensure:
-  assert(!is_open());
+  DBC_ENSURE(!is_open());
   // -------
 }
 
 void CDRFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) { 
   // --------
-  // require:
-  assert(!is_open());
+  DBC_REQUIRE(!is_open());
   // --------
 
   set_channels(2);
@@ -67,7 +67,7 @@ void CDRFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   switch(io_mode()) {
   case io_read:
     {
-      fobject = ::fopen(label().c_str(),"rb");
+      fobject = std::fopen(label().c_str(),"rb");
       if (!fobject)
 	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-CDR: Can't open " + label() + " for reading."));
       set_length_in_bytes();
@@ -75,16 +75,16 @@ void CDRFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
     }
   case io_write: 
     {
-      fobject = ::fopen(label().c_str(),"wb");
+      fobject = std::fopen(label().c_str(),"wb");
       if (!fobject) 
 	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-CDR: Can't open " + label() + " for writing."));
       break;
     }
   case io_readwrite:
     {
-      fobject = ::fopen(label().c_str(),"r+b");
+      fobject = std::fopen(label().c_str(),"r+b");
       if (!fobject) {
-	fobject = ::fopen(label().c_str(),"w+b");
+	fobject = std::fopen(label().c_str(),"w+b");
 	if (!fobject)
 	  throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-CDR: Can't open " + label() + " for read&write."));
       }
@@ -100,29 +100,31 @@ void CDRFILE::close(void) {
   if (io_mode() != io_read)
     pad_to_sectorsize();
 
-  ::fclose(fobject);
+  std::fclose(fobject);
   toggle_open_state(false);
 }
 
 bool CDRFILE::finished(void) const {
- if (ferror(fobject) ||
-     feof(fobject))
+ if (std::ferror(fobject) ||
+     std::feof(fobject))
    return true;
 
  return false;
 }
 
 long int CDRFILE::read_samples(void* target_buffer, long int samples) {
-  return(::fread(target_buffer, frame_size(), samples, fobject));
+  return(std::fread(target_buffer, frame_size(), samples, fobject));
 }
 
 void CDRFILE::write_samples(void* target_buffer, long int samples) {
-  ::fwrite(target_buffer, frame_size(), samples, fobject);
+  std::fwrite(target_buffer, frame_size(), samples, fobject);
 }
 
 void CDRFILE::seek_position(void) {
-  if (is_open())
-    ::fseek(fobject, position_in_samples() * frame_size(), SEEK_SET);
+  if (is_open()) {
+    fpos_t newpos = position_in_samples() * frame_size();
+    std::fsetpos(fobject, &newpos);
+  }
 }
 
 void CDRFILE::pad_to_sectorsize(void) {
@@ -133,12 +135,18 @@ void CDRFILE::pad_to_sectorsize(void) {
     return;
   }
   for(int n = 0; n < padsamps; n++) ::fputc(0,fobject);
-  assert(::ftell(fobject) %  CDRFILE::sectorsize == 0);
+
+  DBC_DECLARE(fpos_t endpos);
+  DBC_DECLARE(std::fgetpos(fobject, &endpos));
+  DBC_CHECK((endpos %  CDRFILE::sectorsize) == 0);
 }
 
 void CDRFILE::set_length_in_bytes(void) {
-  long int save = ::ftell(fobject);
-  ::fseek(fobject,0,SEEK_END);
-  length_in_samples(ftell(fobject) / frame_size());
-  ::fseek(fobject,save,SEEK_SET);
+  fpos_t save;
+  std::fgetpos(fobject, &save);
+  std::fseek(fobject,0,SEEK_END);
+  fpos_t endpos;
+  std::fgetpos(fobject, &endpos);
+  length_in_samples(endpos / frame_size());
+  std::fsetpos(fobject, &save);
 }
