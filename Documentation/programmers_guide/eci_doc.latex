@@ -5,8 +5,8 @@
 %\bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
 
 \title{Ecasound Control Interface Guide}
-\author{Kai Vehmanen}
-\date{18112003}
+\author{Kai Vehmanen, Brad Bowman, Tony Leake, Jan Weil}
+\date{28112003}
 \begin{document}
 
 \maketitle
@@ -16,19 +16,22 @@
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
 \section{Introduction}
-Idea behind the Ecasound Control Interface (ECI) is to take a subset of 
-functionality provided by libecasound, write a simple API for it, and
-port it to various languages. At the moment, at least C++, C and
-Python implementations of the ECI API are available and part of the
-main Ecasound distribution. ECI is heavily based on ecasound's
-interactive mode (EIAM), and the services it provides. See 
-\texttt{ecasound-iam(1) manual page} for 
-detailed EIAM documentation.
+The idea behind the Ecasound Control Interface (ECI) is to take a subset of 
+functionality provided by libecasound, provide a simple API for it, and
+port it to various languages. At the moment, implementations of the
+ECI API are available for C, C++, elisp, Python and Ruby. These all
+come by default with the Ecasound package. Additional implementations,
+for example for Perl and PHP, are distributed independently. 
+
+ECI is heavily based on Ecasound's interactive mode (EIAM), and the 
+services it provides. See \texttt{ecasound-iam(1) manual page} for 
+a detailed EIAM documentation.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 28.11.2003 - ``Ruby'' section added. Updated the introduction.
 \item 26.11.2003 - Fix filename for the alternative Python API (eci.py).
 \item 18.11.2003 - Typo fixes. Updated documentation to reflect the new
                    naming convention (ecasound refers to the binary,
@@ -50,11 +53,11 @@ detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{General}
 ECI doesn't provide any routines that directly manipulate audio or 
-Ecasound objects. What is does provide is an easy and generic way
-to issue EIAM (Ecasound Inter-Active Mode) commands, access to the
-command return-values and error handling.
+Ecasound objects. What it does provide is an easy and generic way
+to issue EIAM (Ecasound Inter-Active Mode) commands, access the
+command return-values and perform error handling.
 
-This approach has two benefits. First, it's possible to keep the API 
+This approach has two benefits. First, it is possible to keep the API 
 small, and thus make it easier to port ECI to new languages. Secondly,
 it's possible to keep ECI relatively stable. Ecasound itself is a large,
 developing library. New features are added all the time, and from time
@@ -62,7 +65,7 @@ to time, older parts of the library will get rewritten to better suit
 new uses. Now for application developers wanting to take advantage of
 libecasound, these constant changes are very annoying, especially if
 your specific app doesn't need the latest new features. In these
-cases, ECI is the best choice.
+cases, ECI is the best platform for application development.
 
 
 % ----------------------------------------------------------------------
@@ -80,7 +83,7 @@ Specific tasks ECI is aimed at:
 % ----------------------------------------------------------------------
 \subsection{Services and behaviour}
 
-Here's a list of services provided by all ECI implementations:
+Here is a list of services provided by all ECI implementations:
 
 \subsubsection{Actions}
 \begin{description}
@@ -150,8 +153,8 @@ Free all reserved resources.
 \subsection{Porting to new environments}
 Porting ECI to new languages should be easy. All there is to do is 
 to implement the services listed in the previous section to the target
-language. In most cases it's to easist to use the C++ or C ECI 
-as the underlying implementation.
+language. In most cases it's to easiest to use the C++ or C ECI 
+as the underlying implementation to build upon.
 
 
 
@@ -189,8 +192,8 @@ Implementation of the following:
 \subsection{Notes Concerning Standalone ECI Implementations}
 
 The C implementation of ECI is not directly linked against the main 
-Ecasound libraries. Instead, the it launches the ecasound executable 
-on the background and uses command pipes to communicate with it.
+Ecasound libraries. Instead, the ecasound executable is launched
+on the background and command pipes are used to communicate with it.
 
 The launched ecasound executable can be selected by using the
 \emph{ECASOUND} environment variable. If it is not defined,
@@ -522,6 +525,67 @@ printf("Chain operator status: %s", eci_last_string());
 eci_cleanup();
 ?>
 \end{verbatim} 
+
+% ----------------------------------------------------------------------
+\subsection{Ruby}
+\subsubsection{Overview}
+The ecasound package comes with an 'Ecasound' module for Ruby included.
+If ruby is detected during the installation process it is installed
+automatically (assuming you are installing ecasound from source code).
+The module contains the class definition of a native ecasound control interface
+called "ControlInterface".
+
+'Ecasound::ControlInterface' is implemented in a high level manner which means
+that you won't find most of the commands known from libecasoundc like
+last\_string, last\_float, etc.
+Instead of that every call to the instance method "command", which accepts all
+the well known IAM commands, returns ecasound's response in an appropriate type
+automatically.
+If an error occurs, e. g. there's a typo in a command or a file is not found,
+an exception of type EcasoundError is raised.
+
+\subsubsection{Usage}
+\begin{enumerate}
+\item  require 'ecasound'
+\item  create an instance of Ecasound::ControlInterface
+\item  use it's command method to send IAM commands to ecasound
+\item  catch an EcasoundError if necessary
+\end{enumerate}
+
+\subsubsection{Example}
+\begin{verbatim} 
+#!/usr/bin/env ruby
+require "ecasound"
+
+SOME_FILE = "path/to/file.wav"
+
+e = Ecasound::ControlInterface.new()
+e.command("cs-add play_chainsetup")
+e.command("c-add 1st_chain")
+e.command("ai-add #{SOME_FILE}")
+e.command("ao-add /dev/dsp")
+e.command("cop-add -efl:100")
+e.command("cop-select 1")
+e.command("copp-select 1")
+e.command("cs-connect")
+e.command("start")
+
+cutoff_inc = 500.0
+
+loop do
+    sleep(1)
+    break if e.command("engine-status") != "running"
+    break if e.command("get-position") > 15
+    e.command("copp-set #{cutoff_inc + e.command('copp-get')}")
+end
+
+e.command("stop")
+e.command("cs-disconnect")
+
+$stdout << "Chain operator status: " + e.command("cop-status") + "\n"
+\end{verbatim} 
+
+
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
