@@ -81,13 +81,6 @@ void AUDIO_IO_BUFFERED::buffersize(long int samples,
     buffersize_rep = target_samples_rep;
   }
 
-  if (old_bsize != buffersize_rep) {
-    if (is_open()) {
-      close();
-      open();
-    }
-  }
-
   reserve_buffer_space(buffersize_rep * frame_size());
 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) Set buffer size [" +
@@ -115,6 +108,7 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   assert(iobuf_uchar != 0);
   assert(static_cast<long int>(iobuf_size) >= buffersize_rep * frame_size());
   // --------
+  buffersize(sbuf->length_in_samples(), samples_per_second());
   sbuf->copy_from_buffer(iobuf_uchar,
 			 sample_format(),
 			 channels(),

@@ -14,13 +14,15 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.12r10 <*-
 
-??022000 (v1.7.1d11)
+26022000 (v1.7.1d11)
 	- added: a new effect preset system, see user's guide and 
 		 ecasound man page for more info
+	- added: lots of default presets, see file 'effect_presets'
 	- added: an allpass filter (-efa)
 	- added: a comb filter (-efc)
 	- added: a simple pitch shifter (-ei)
 	- added: flanger (-etl), chorus (-etc) and phaser (-etp)
+	- added: a new, faster multi-tap delay (-etm)
 	- removed: old effect preset files and command line options
 	- changed: rewrote the normal compressor (-ec), now takes 
 		   the threshold argument as percents

@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "24\&.02\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "26\&.02\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -361,6 +361,9 @@ Channel indexing is started from 0\&.
 .PP 
 \fITIME-BASED EFFECTS\fP
 .IP 
+.IP "-etc:delay-time-msec,variance-time-samples,feedback-%,lfo-freq" 
+Chorus\&.
+.IP 
 .IP "-etd:delay-time-msec,surround-mode,number-of-delays,mix-%" 
 Delay effect\&. \'delay time\' is the delay time in milliseconds\&.
 \'surround-mode\' is a integer with following meanings: 0 = normal, 
@@ -369,7 +372,14 @@ obvious\&. Beware that large number of delays and huge delay times
 need a lot of CPU power\&. \'mix-%\' determines how much effected (wet)
 signal is mixed to the original\&.
 .IP 
-.IP "-etl:delay-time-msec,feedback-%,lfo-freq" 
+.IP "-etf:delay-time-msec" 
+Fake-stereo effect\&. The input signal is summed to mono\&. The
+original signal goes to the left channels while a delayd 
+version (with delay of \'delay time\' milliseconds) is goes to
+the right\&. With a delay time of 1-40 milliseconds this 
+adds a stereo-feel to mono-signals\&. 
+.IP 
+.IP "-etl:delay-time-msec,variance-time-samples,feedback-%,lfo-freq" 
 Flanger\&.
 .IP 
 .IP "-etm:delay-time-msec,number-of-delays,mix-%" 
@@ -377,18 +387,14 @@ Multitap delay\&. \'delay time\' is the delay time in milliseconds\&.
 \'number_of_delays\' should be obvious\&. \'mix-%\' determines how much 
 effected (wet) signal is mixed to the original\&.
 .IP 
+.IP "-etp:delay-time-msec,variance-time-samples,feedback-%,lfo-freq" 
+Phaser\&.
+.IP 
 .IP "-etr:delay-time,surround-mode,feedback-%" 
 Reverb effect\&. \'delay time\' is the delay time in milliseconds\&.
 If \'surround-mode\' is \'surround\', reverbed signal moves around the
 stereo image\&. \'feedback-%\' determines how much effected (wet)
 signal is fed back to the reverb\&.
-.IP 
-.IP "-etf:delay-time-msec" 
-Fake-stereo effect\&. The input signal is summed to mono\&. The
-original signal goes to the left channels while a delayd 
-version (with delay of \'delay time\' milliseconds) is goes to
-the right\&. With a delay time of 1-40 milliseconds this 
-adds a stereo-feel to mono-signals\&. 
 .IP 
 .PP 
 \fBGATE SETUP\fP

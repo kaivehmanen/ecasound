@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-alsa.cpp: ALSA (/dev/snd/pcm*) input/output.
-// Copyright (C) 1999,2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -243,7 +243,19 @@ long int ALSA_PCM2_DEVICE::read_samples(void* target_buffer,
 }
 
 void ALSA_PCM2_DEVICE::write_samples(void* target_buffer, long int samples) {
-  dl_snd_pcm_write(audio_fd, target_buffer, fragment_size);
+  if (samples == fragment_size) {
+    dl_snd_pcm_write(audio_fd, target_buffer, fragment_size);
+  }
+  else {
+    if (is_triggered == true) stop();
+    close();
+    buffersize(samples, samples_per_second());
+    open();
+    prepare();
+    assert(samples == fragment_size);
+    dl_snd_pcm_write(audio_fd, target_buffer, fragment_size);
+    start();
+  }
 }
 
 long ALSA_PCM2_DEVICE::position_in_samples(void) const {

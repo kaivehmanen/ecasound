@@ -38,7 +38,7 @@ page]</A></H4></CENTER>
 <hr>
 
 <h1>ecasound</h1>
-<h2>24.02.2000</h2>
+<h2>26.02.2000</h2>
 
 
     
@@ -348,6 +348,8 @@ Channel indexing is started from 0.
 <p></dl>
 <p><em>TIME-BASED EFFECTS</em>
 <dl>
+<p><p></p><dt><strong>-etc:delay-time-msec,variance-time-samples,feedback-%,lfo-freq</strong><dd>
+Chorus.
 <p><p></p><dt><strong>-etd:delay-time-msec,surround-mode,number-of-delays,mix-%</strong><dd>
 Delay effect. 'delay time' is the delay time in milliseconds.
 'surround-mode' is a integer with following meanings: 0 = normal, 
@@ -355,23 +357,25 @@ Delay effect. 'delay time' is the delay time in milliseconds.
 obvious. Beware that large number of delays and huge delay times 
 need a lot of CPU power. 'mix-%' determines how much effected (wet)
 signal is mixed to the original.
-<p><p></p><dt><strong>-etl:delay-time-msec,feedback-%,lfo-freq</strong><dd>
-Flanger.
-<p><p></p><dt><strong>-etm:delay-time-msec,number-of-delays,mix-%</strong><dd>
-Multitap delay. 'delay time' is the delay time in milliseconds.
-'number_of_delays' should be obvious. 'mix-%' determines how much 
-effected (wet) signal is mixed to the original.
-<p><p></p><dt><strong>-etr:delay-time,surround-mode,feedback-%</strong><dd>
-Reverb effect. 'delay time' is the delay time in milliseconds.
-If 'surround-mode' is 'surround', reverbed signal moves around the
-stereo image. 'feedback-%' determines how much effected (wet)
-signal is fed back to the reverb.
 <p><p></p><dt><strong>-etf:delay-time-msec</strong><dd>
 Fake-stereo effect. The input signal is summed to mono. The
 original signal goes to the left channels while a delayd 
 version (with delay of 'delay time' milliseconds) is goes to
 the right. With a delay time of 1-40 milliseconds this 
 adds a stereo-feel to mono-signals. 
+<p><p></p><dt><strong>-etl:delay-time-msec,variance-time-samples,feedback-%,lfo-freq</strong><dd>
+Flanger.
+<p><p></p><dt><strong>-etm:delay-time-msec,number-of-delays,mix-%</strong><dd>
+Multitap delay. 'delay time' is the delay time in milliseconds.
+'number_of_delays' should be obvious. 'mix-%' determines how much 
+effected (wet) signal is mixed to the original.
+<p><p></p><dt><strong>-etp:delay-time-msec,variance-time-samples,feedback-%,lfo-freq</strong><dd>
+Phaser.
+<p><p></p><dt><strong>-etr:delay-time,surround-mode,feedback-%</strong><dd>
+Reverb effect. 'delay time' is the delay time in milliseconds.
+If 'surround-mode' is 'surround', reverbed signal moves around the
+stereo image. 'feedback-%' determines how much effected (wet)
+signal is fed back to the reverb.
 <p></dl>
 <p><strong>GATE SETUP</strong>
 <p><dl>
