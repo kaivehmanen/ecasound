@@ -22,33 +22,81 @@
 #include <fstream>
 
 #include <kvutils.h>
-
 #include "resource-file.h"
-#include "eca-debug.h"
+
+RESOURCE_FILE::RESOURCE_FILE(const string& resource_file) :
+  resfile_rep(resource_file) { 
+  load();
+}
 
 RESOURCE_FILE::~RESOURCE_FILE(void) { }
 
+void RESOURCE_FILE::load(void) { 
+  lines_rep.resize(0);
+  ifstream fin (resfile_rep.c_str());
+  if (fin) {
+    string line;
+    string first, second;
+
+    while(getline(fin,line)) {
+      if (line.size() > 0 && line[0] == '#') {
+	lines_rep.push_back(line);
+	continue;
+      }
+
+      string::size_type n = line.find_first_of("=");
+      if (n == string::npos) n = line.find_first_of(" ");
+      if (n == string::npos) {
+	continue;
+      }
+      
+      first = string(line, 0, n);
+      second = string(line, n + 1, string::npos);
+
+      first = remove_surrounding_spaces(first);
+      second = remove_surrounding_spaces(second);
+      string::iterator p = second.end();
+      --p;
+      while (*p == '\\') {
+	second.erase(p);
+	lines_rep.push_back(line);
+	if (getline(fin, line)) {
+	  line = remove_surrounding_spaces(line);
+	  second += line;
+	  p = second.end();
+	  --p;
+	}
+      }
+//        cerr << "(resource-file) found key-value pair: " +
+//  	first + " = \"" + second + "\"." << endl;
+      resmap_rep[first] = second;
+      lines_rep.push_back(line);
+    }
+  }
+}
+
+void RESOURCE_FILE::save(void) { 
+  ofstream fout (resfile_rep.c_str(), ios::out | ios::trunc);
+  if (fout) {
+    vector<string>::const_iterator p = lines_rep.begin();
+    while(p != lines_rep.end()) {
+      if (p->size() > 0) {
+//  	cerr << "Writing line: " << *p << "." << endl;
+	fout << *p << "\n";
+      }
+      ++p;
+    }
+  }
+}
+
 vector<string> RESOURCE_FILE::keywords(void) const {
   vector<string> keys;
-
-  ifstream fin (res_file.c_str());
-  if (!fin) return(keys);
-
-  bool over = false;
-  string line, first;
-  while(getline(fin,line)) {
-    if (line.size() > 0 && line[0] == '#') continue;
-
-    string::size_type n = line.find_first_of("=");
-    if (n == string::npos) n = line.find_first_of(" ");
-    if (n == string::npos) continue;
-
-    first = string(line, 0, n);
-    first = remove_surrounding_spaces(first);
-
-    if (over == false) keys.push_back(first);
-    if (line[line.size() - 1] == '\\') over = true;
-    else over = false;
+  map<string,string>::const_iterator p;
+  p = resmap_rep.begin();
+  while(p != resmap_rep.end()) {
+//      cerr << "Adding keyword: " << p->first << "." << endl;
+    keys.push_back(p->first);
+    ++p;
   }
   return(keys);
 }
@@ -59,86 +107,42 @@ bool RESOURCE_FILE::boolean_resource(const string& tag) const {
 }
 
 bool RESOURCE_FILE::has(const string& tag) const {
-  if (resource(tag) == "") return(false);
+  if (resmap_rep.find(tag) == resmap_rep.end())
+    return(false);
   return(true);
 }
 
 string RESOURCE_FILE::resource(const string& tag) const {
-  ifstream fin (res_file.c_str());
-  if (!fin) return("");
-
-  string line;
-  string first, second;
-
-  while(getline(fin,line)) {
-    if (line.size() > 0 && line[0] == '#') continue;
-
-    string::size_type n = line.find_first_of("=");
-    if (n == string::npos) n = line.find_first_of(" ");
-    if (n == string::npos) continue;
-      
-    first = string(line, 0, n);
-    second = string(line, n + 1, string::npos);
-
-    first = remove_surrounding_spaces(first);
-    second = remove_surrounding_spaces(second);
-    string::iterator p = second.end();
-    --p;
-    while (*p == '\\') {
-      second.erase(p);
-      if (getline(fin, line)) {
-	line = remove_surrounding_spaces(line);
-	second += line;
-	p = second.end();
-	--p;
-      }
-    }
-
-    //    ecadebug->msg(ECA_DEBUG::system_objects, "(resource-file) found key-value pair: " + 
-    //		  first + "-" + second + ".");
-    if (first == tag) return(second);
-  }
-  return("");
+  if (has(tag) != true)
+    return("");
+//    cerr << "Returning resource: " << resmap_rep[tag] << "." << endl;
+  return(resmap_rep[tag]);
 }
 
 void RESOURCE_FILE::resource(const string& tag, const string& value) {
-  vector<string> lines;
+  resmap_rep[tag] = value;
+  
   bool found = false;
-
-  ifstream fin (res_file.c_str());
-  if (fin) {
-    string line, first, second;
-    while(getline(fin,line)) {
-      if (line.size() > 0 && line[0] != '#') {
-	string::size_type n = line.find_first_of("=");
-	if (n == string::npos) n = line.find_first_of(" ");
-	if (n != string::npos) {
-	  first = remove_surrounding_spaces(string(line, 0, n));
-	  second = string(line, n + 1, string::npos);
-
-	  if (first == tag) {
-	    if (found == false) lines.push_back(first + " = " + value);
-	    found = true;
-	  }
-	  else {
-	    lines.push_back(line);
-	  }
+  vector<string>::iterator p;
+  p = lines_rep.begin();
+  while(p != lines_rep.end()) {
+    string line = *p;
+    if (line.size() > 0 && line[0] != '#') {
+      string::size_type n = line.find_first_of("=");
+      if (n == string::npos) n = line.find_first_of(" ");
+      if (n != string::npos) {
+	string first = remove_surrounding_spaces(string(line, 0, n));
+	if (first == tag) {
+	  *p = first + " = " + value;
+	  found = true;
 	}
       }
     }
-    fin.close();
-  }
-
-  ofstream fout (res_file.c_str(), ios::out | ios::trunc);
-  if (!fout) return;
-
-  vector<string>::const_iterator p = lines.begin();
-  while(p != lines.end()) {
-    fout << *p << "\n";
     ++p;
   }
-  if (found == false) {
-    fout << tag << " = " << value << "\n";
+
+  if (found != true) {
+    lines_rep.push_back(tag + " = " + value + "\n");
   }
 }
 

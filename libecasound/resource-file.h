@@ -1,7 +1,8 @@
-#ifndef _RESOURCE_FILE_H
-#define _RESOURCE_FILE_H
+#ifndef INCLUDED_RESOURCE_FILE_H
+#define INCLUDED_RESOURCE_FILE_H
 
 #include <vector>
+#include <map>
 #include <string>
 
 /**
@@ -9,7 +10,9 @@
  */
 class RESOURCE_FILE {
 
-  string res_file;
+  string resfile_rep;
+  mutable map<string,string> resmap_rep;
+  vector<string> lines_rep;
 
  public:
 
@@ -21,12 +24,12 @@ class RESOURCE_FILE {
   /**
    * Returns current resource file name.
    */
-  const string& resource_file(void) const { return(res_file); }
+  const string& resource_file(void) const { return(resfile_rep); }
 
   /**
    * Set resource file name.
    */
-  void resource_file(const string& v) { res_file = v; }
+  void resource_file(const string& v) { resfile_rep = v; }
 
   /**
    * Returns value of resource 'tag'.
@@ -49,12 +52,22 @@ class RESOURCE_FILE {
    */
   bool has(const string& tag) const;
 
-  RESOURCE_FILE(const string& resource_file = "") : res_file(resource_file) { }
+  /**
+   * Load/restore resources from file
+   */
+  void load(void);
+
+  /**
+   * Save/store resources to file saving
+   */
+  void save(void);
+
+  /**
+   * Constructor. Resource values are read, if
+   * filename argument is given.
+   */
+  RESOURCE_FILE(const string& resource_file = "");
   ~RESOURCE_FILE(void);
 };
 
 #endif
-
-
-
-
