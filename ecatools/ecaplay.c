@@ -51,7 +51,7 @@ static void setup_signal_handling(void);
 /** 
  * Global variables
  */
-static const char* ecaplay_version = "20021024-35";
+static const char* ecaplay_version = "20021107-36";
 static int ecaplay_debuglevel = ECAPLAY_EIAM_LOGLEVEL;
 static int ecaplay_skip = 0;
 static const char* ecaplay_output = NULL;
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
       }
 
       if (ecaplay_skip_flag != 0 || strcmp(eci_last_string_r(eci), "running") != 0) {
-	--ecaplay_skip_flag;
+	ecaplay_skip_flag = 0;
 	nexttrack = get_track(++tracknum, argc, argv);
 	if (nexttrack != NULL) {
 	  eci_cleanup_r(eci);
