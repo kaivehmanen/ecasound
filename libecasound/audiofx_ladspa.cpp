@@ -37,6 +37,8 @@ EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&)
       LADSPA_PROPERTY_INPLACE_BROKEN)
     throw(ECA_ERROR("AUDIOFX_LADSPA", "Inplace-broken plugins not supported."));
 
+  /* FIXME: strip linefeeds and other forbidden characters; write down to
+   *        to ECA_OBJECT docs what chars are allowed and what are not... */
   name_rep = string(plugin_desc->Name);
   unique_rep = string(plugin_desc->Label);
   maker_rep = string(plugin_desc->Maker);
