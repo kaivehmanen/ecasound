@@ -81,7 +81,12 @@ EFFECT_PITCH_SHIFT::EFFECT_PITCH_SHIFT (const EFFECT_PITCH_SHIFT& x) {
 void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
-    pmod_rep = value;
+    if (pmod_rep <= 0) {
+      ecadebug->msg(ECA_DEBUG::info, "(audiofx) WARNING! Shift-% must be greater that 0! Using the default 100%.");
+      pmod_rep = 100.0;
+    }
+    else
+      pmod_rep = value;
     break;
   }
 }
