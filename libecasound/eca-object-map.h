@@ -39,7 +39,11 @@ class ECA_OBJECT_MAP {
 
   /**
    * Returns the first object that matches the expression 'expr'.
-   * If 'use_regexp' is true, regex matching is used.
+   * If 'use_regexp' is true, regex matching is used. For practical
+   * reasons a non-const pointer is returned. However, in most 
+   * cases the returned object should be cloned before actual use.
+   * In other words, the returned pointer refers to the object
+   * stored in the object map.
    */
   virtual ECA_OBJECT* object(const string& expr, bool use_regexp = true) const;
 

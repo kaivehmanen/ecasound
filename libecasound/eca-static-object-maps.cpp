@@ -78,6 +78,7 @@ extern "C" {
 #include "eca-resources.h"
 #include "eca-error.h"
 
+// FIXME: get rid of these static objects (make them pointer or something)
 ECA_OBJECT_MAP eca_audio_object_map;
 ECA_OBJECT_MAP eca_audio_device_map;
 ECA_OBJECT_MAP eca_chain_operator_map;
