@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20041114-41
+dnl last modified: 20050326-42
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -243,16 +243,19 @@ dnl
 dnl defines: ECA_PREFIX, ECA_S_PREFIX
 dnl ---
 
-dnl Define ecaprefix depending on wether our user gives us one or not
+dnl Define ecaprefix, prefer user-specified prefix if given
 if test "x${prefix}" = "xNONE"; then
     ecaprefix=${ac_default_prefix}
 else
     ecaprefix=${prefix}
 fi
 ECA_S_PREFIX=${ecaprefix}
+ECA_S_DATADIR="`eval echo ${datadir}`"
 
 AC_SUBST(ECA_S_PREFIX)
+AC_SUBST(ECA_S_DATADIR)
 AC_DEFINE_UNQUOTED([ECA_PREFIX], "${ecaprefix}", [Ecasound configure script prefix])
+AC_DEFINE_UNQUOTED([ECA_DATADIR], "${ECA_S_DATADIR}", [Ecasound configure script datadir])
 
 dnl ------------------------------------------------------------------
 
@@ -1160,7 +1163,6 @@ dnl ---
 AC_OUTPUT([
 Makefile
 ecasound.spec
-ecasoundrc
 libecasound/Makefile
 libecasound/libecasound-config
 libecasound/plugins/Makefile

@@ -27,3 +27,10 @@ uninstall-local:
 		$(DESTDIR)$(datadir)/ecasound/generic_oscillators \
 		$(DESTDIR)$(datadir)/ecasound/ecasoundrc
 	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(datadir)/ecasound
+
+ecasoundrc: ecasoundrc.in Makefile.am
+	@AWK@ 'sub(/\@VERSION\@/, "$(VERSION)") { } \
+               sub(/\@prefix\@/, "$(prefix)") { } \
+               sub(/\@datadir\@/, "$(datadir)") { } \
+               // { print }' \
+	       $(top_srcdir)/ecasoundrc.in >ecasoundrc
