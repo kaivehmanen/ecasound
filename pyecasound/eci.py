@@ -99,7 +99,7 @@ if __name__ == '__main__':
             break
         e("copp-set", cutoff_inc + e("copp-get"))
 
-e("""stop
-     cs-disconnect""")
+    e("""stop
+         cs-disconnect""")
 
 print "Chain operator status: ", e("cop-status")
