@@ -2,6 +2,11 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2000-09-30  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* definition_by_contract.h (all): lots of changed in the public
+	interface
+	
 2000-04-11  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* kvutils.cpp (print_time_stamp): added

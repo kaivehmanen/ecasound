@@ -3,7 +3,7 @@
 #
 # ---------------------------------------------------------------------
 prefix = @prefix@
-mandir = $(prefix)/man
+mandir = @mandir@
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 SUBDIRS = users_guide programmers_guide

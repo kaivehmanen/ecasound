@@ -1653,11 +1653,10 @@ void ECA_CONTROL_OBJECTS::remove_controller(int controller_id) {
  */
 GENERIC_CONTROLLER* ECA_CONTROL_OBJECTS::get_controller(int controller_id) const {
   // --------
-  // require:
-  assert(is_selected() == true);
-  assert(connected_chainsetup() != selected_chainsetup());
-  assert(selected_chains().size() == 1);
-  assert(controller_id > 0);
+  REQUIRE(is_selected() == true);
+  REQUIRE(connected_chainsetup() != selected_chainsetup());
+  REQUIRE(selected_chains().size() == 1);
+  REQUIRE(controller_id > 0);
   // --------
 
   vector<string> schains = selected_chainsetup_repp->selected_chains();

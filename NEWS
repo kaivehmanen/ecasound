@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 260900) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 300900) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,6 +14,9 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
+26092000 (v1.8.4d15)
+	- fixed: ncurses fixes (the ever-bold fix)
+	- fixed: cs-loop seg.faulted
 26092000 (v1.8.3d15)
 	- changed: code for parsing command-line arguments rewritten; 
 		   now reports about invalid arguments

@@ -238,7 +238,7 @@ void ECA_CONTROL::action(int action_id,
       set_chainsetup_processing_length_in_seconds(value); 
       break; 
     }
-  case ec_cs_loop: { toggle_chainsetup_looping(); } 
+  case ec_cs_loop: { toggle_chainsetup_looping(); break; } 
 
   // ---
   // Chains

@@ -33,7 +33,7 @@ void TEXTDEBUG::control_flow(const string& part) {
   *dostream << "- [ ";
   putp(tigetstr("bold"));
   *dostream << part;
-  putp(tigetstr("rmso"));
+  putp(tigetstr("sgr0"));
   *dostream << " ] ";
 #else
   *dostream << "- [ " << part << " ] ";

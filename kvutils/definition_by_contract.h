@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// definition_by_contract.h: Class for simulating design-by-contract
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// definition_by_contract.h: Tools for simulating design-by-contract
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,63 +20,65 @@
 #ifndef INCLUDED_DEFINITION_BY_CONTRACT_H
 #define INCLUDED_DEFINITION_BY_CONTRACT_H
 
-#include <iostream>
-
 /**
- * Exception class that is thrown when some contract 
- * fails
+ * Exception that is thrown when some contract fails
  *
  * @author Kai Vehmanen
  */
 class DBC_EXCEPTION { 
- private:
+ public:
   
-  const char* type_rep;
-  const char* file_rep;
+  const char* type_repp;
+  const char* file_repp;
+  const char* expression_repp;
   int line_rep;
 
- public:
-
-  void print(void) { cerr << "Failed condition \"" << type_rep << "\": file " << file_rep << ", line " << line_rep << ".\n"; }
-  DBC_EXCEPTION(const char* type, const char* file, int line) 
-    : type_rep(type), file_rep(file), line_rep(line) { }
+  DBC_EXCEPTION(const char* type, const char* expr, const char* file, int line) 
+    : type_repp(type), file_repp(file), expression_repp(expr), line_rep(line) { }
 };
 
 /**
- * Tools for simulating programming/design-by-contract in C++ 
+ * Tool for simulating programming/design-by-contract in C++ 
  * classes. Features include routine preconditions, postconditions 
- * and virtual class invariants.
+ * and virtual class invariants. Checks are only performed, when
+ * ENABLE_DBC is defined.
  *
  * @author Kai Vehmanen
  */
 class DEFINITION_BY_CONTRACT {
- public:
 
 #ifdef ENABLE_DBC
-  inline void require(bool expr, const char* file, int line) const { check_invariant(file, line); if (!expr) throw(new DBC_EXCEPTION("require", file, line)); }
-  inline void ensure(bool expr, const char* file, int line) const { if (!expr) throw(new DBC_EXCEPTION("require", file, line)); check_invariant(file, line); }
-  inline void check_invariant(const char* file, int line) const { if (!class_invariant()) throw(new DBC_EXCEPTION("class invariant", file, line)); }
+ protected:
+  
+  inline void require(bool expr, const char* expr_str, const char* file, int line) const {
+    check_invariant(file, line); if (!expr) throw(new DBC_EXCEPTION("require", expr_str, file, line));
+  }
+  inline void ensure(bool expr, const char* expr_str, const char* file, int line) const {
+    if (!expr) throw(new DBC_EXCEPTION("ensure", expr_str, file, line)); check_invariant(file, line);
+  }
+  inline void check_invariant(const char* file, int line) const {
+    if (!class_invariant()) throw(new DBC_EXCEPTION("class invariant", "", file, line));
+  }
 
   virtual bool class_invariant(void) const { return(true); }
+
+ public:
+
   virtual ~DEFINITION_BY_CONTRACT(void) { }
 
 #define REQUIRE(expr)							      \
-   (expr) ? static_cast<void>(0) :	(require (false,__FILE__, __LINE__))
+   (expr) ? static_cast<void>(0) :	(require (false,#expr,__FILE__, __LINE__))
 #define ENSURE(expr)							      \
-   (expr) ? static_cast<void>(0) :	(ensure (false,__FILE__, __LINE__))
+   (expr) ? static_cast<void>(0) :	(ensure (false,#expr,__FILE__, __LINE__))
 
-#else
+#else // --> DBC DISABLED
+
+ public:
 
 #define REQUIRE(expr)		((void) 0)
 #define ENSURE(expr)		((void) 0)
 
-  inline void require(bool expr, const char* file, int line) const { }
-  inline void ensure(bool expr, const char* file, int line) const { }
-  inline void check_invariant(const char* file, int line) const { }
-
-  bool class_invariant(void) const { return(true); }
-  ~DEFINITION_BY_CONTRACT(void) { }
-#endif
+#endif // <-- DBC DISABLED
 };
 
 #endif

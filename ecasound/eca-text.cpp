@@ -102,6 +102,19 @@ int main(int argc, char *argv[])
   catch(ECA_ERROR* e) {
     cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
   }
+  catch(DBC_EXCEPTION* e) { 
+    cerr << "Failed condition \"" 
+	 << e->type_repp 
+         << ": " 
+         << e->expression_repp
+	 << "\": file " 
+	 << e->file_repp 
+	 << ", line " 
+	 << e->line_rep 
+	 << "." 
+	 << endl;
+    exit(1);
+  }
   catch(...) {
     cerr << "---\nCaught an unknown exception!\n";
   }
@@ -114,10 +127,6 @@ int main(int argc, char *argv[])
   }
   catch(ECA_ERROR* e) {
     cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
-  }
-  catch(DBC_EXCEPTION* e) { 
-    e->print();
-    exit(1);
   }
   catch(...) {
     cerr << "---\nCaught an unknown exception!\n";
@@ -175,7 +184,7 @@ void print_header(void) {
 #endif
   cout << "               ecasound v" << ecasound_library_version << " (C) 1997-2000 Kai Vehmanen              ";
 #ifdef USE_NCURSES
-  putp(tigetstr("rmso"));
+  putp(tigetstr("sgr0"));
 #endif
   cout << "*\n";
   cout << "****************************************************************************\n";
@@ -183,8 +192,6 @@ void print_header(void) {
 
 void start_iactive(ECA_SESSION* param) {
   ECA_CONTROL ctrl(param);
-
-  //  if (ctrl.is_connected()) ctrl.start(true);
 
   string cmd;
   try {
@@ -238,9 +245,8 @@ void start_iactive_readline(ECA_SESSION* param) {
 	}
       }
       catch(...) {
-	cerr << "---\nCaught an unknown exception!\n";
 	free(cmd);
-	exit(0);
+	throw;
       }
       free(cmd);
     }

@@ -52,6 +52,8 @@ Input/output devices:
 - mpeglib support
 - ogg vorbis plugin
 - shorten support
+- wrapper objects for triggering file input/output based on volume
+  level or timers
 
 Effects, routing, dsp routines:
 

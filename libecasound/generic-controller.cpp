@@ -29,7 +29,7 @@
 
 void GENERIC_CONTROLLER::process(void) {
   // --------
-  require(is_valid() == true, __FILE__, __LINE__);
+  REQUIRE(is_valid() == true);
   // --------
 
   new_value = (source->value() * (rangehigh - rangelow)) + rangelow;
