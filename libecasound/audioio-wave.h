@@ -140,7 +140,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
   void update(void);        
   void set_length_in_bytes(void);
   void read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&);
-  bool next_riff_block(RB *t, fpos_t *offtmp);
+  bool next_riff_block(RB *t, off_t *offtmp);
   void read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&);
   void write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&);
   void write_riff_fmt(void);
