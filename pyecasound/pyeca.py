@@ -44,9 +44,9 @@ if hasattr(sys, 'version_info'): # attribute available from python 2.0
 	    
 	    from pyecasound import *
 	except:
-	    from ecanative import *		
+	    from ecacontrol import *		
     else:
-	from ecanative import *	
+	from ecacontrol import *	
 else:
-    from ecanative import *
+    from ecacontrol import *
 

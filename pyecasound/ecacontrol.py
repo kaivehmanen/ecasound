@@ -9,14 +9,14 @@ import os
 import signal
 import string
 
-_ecasound=None
+_ecasound=[]
 
 type_override={}
 
 class ECA_CONTROL_INTERFACE:
     
     def __init__(I, verbose=1):
-	"""Instantiates new ECI session
+	"""Instantiate new ECI session
 	
 	verbose: set this false to get rid of startup-messages
 	"""
@@ -53,12 +53,12 @@ class ECA_CONTROL_INTERFACE:
 	return val	    
 
     def _readline(I):
-	return string.strip(_ecasound.fromchild.readline())
+	return string.strip(I.eca.childerr.readline())
 	
     def _read_eca(I):
 	buffer=''
-	while select([_ecasound.fromchild.fileno()],[],[],0)[0]:
-	    buffer=buffer+_ecasound.fromchild.read(1)
+	while select([I.eca.fromchild.fileno()],[],[],0)[0]:
+	    buffer=buffer+I.eca.fromchild.read(1)
 	return buffer
     
     def _parse_response(I):
@@ -66,16 +66,15 @@ class ECA_CONTROL_INTERFACE:
 	while 1:
 	    
 	    s=I._read_eca()
-##	    if s:
-##		print s.strip()
+	    if s:
+		if I.verbose>1:
+		    print s.strip()
 	    tm=tm+s
 	    
-	    try:
-		m=expand_eiam_response(tm)
-		r=parse_eiam_response(tm, m)
+	    m=expand_eiam_response(tm)
+	    r=parse_eiam_response(tm, m)
+	    if r:
 		break
-	    except Exception, e:
-		pass
 
 	if not r:
 	    I._resp['e']='-'	    
@@ -105,14 +104,32 @@ class ECA_CONTROL_INTERFACE:
     
     def initialize(I):
 	"""Reserve resources"""
-	
+		
+##	if _ecasound is not None:
+##	    I.cleanup()             # exit previous ecasound session cleanly
+	   
 	global _ecasound
-	_ecasound=Popen3('ecasound -c', 1, 0)
+	
+	_ecasound.append(Popen3('ecasound -c -D', 1, 0))
+	
+	I.eca=_ecasound[-1]
+	
+	lines=''
+	
+	lines=lines+I._readline()+'\n'
+
+	version=I._readline()
+	    
+	s=string.find(version, 'ecasound v')
+	if float(version[s+10:s+13])>=2.2:
+	    lines=lines+version+'\n'
+	else:
+	    raise RuntimeError('ecasound version 2.2 required!')
+	
+	lines=lines+I._readline()+'\n'
 	
 	if I.verbose:
-	    print I._readline()
-	    print I._readline()
-	    print I._readline()
+	    print lines
 	    print __doc__
 	    print 'by', authors
 	    print '\n(to get rid of this message, pass zero to instance init)'
@@ -123,9 +140,9 @@ class ECA_CONTROL_INTERFACE:
     def cleanup(I):
 	"""Free all reserved resources"""
 	
-	_ecasound.tochild.write('quit\n')
+	I.eca.tochild.write('quit\n')
 
-	os.kill(_ecasound.pid, signal.SIGTERM)
+	os.kill(I.eca.pid, signal.SIGTERM)
 		
 	signal.signal(signal.SIGALRM, handler)
 	signal.alarm(2)
@@ -136,7 +153,7 @@ class ECA_CONTROL_INTERFACE:
 	    pass
 	
 	signal.alarm(0)
-	os.kill(_ecasound.pid, signal.SIGKILL)
+	os.kill(I.eca.pid, signal.SIGKILL)
 	
 	
     def command(I,cmd):
@@ -145,7 +162,7 @@ class ECA_CONTROL_INTERFACE:
 	cmd=string.strip(cmd)
 	if cmd:
 	    I._cmd=cmd
-	    _ecasound.tochild.write(cmd+'\n')
+	    I.eca.tochild.write(cmd+'\n')
 	    return I._parse_response()
 	
     def command_float_arg(I,cmd,f=None):
@@ -158,18 +175,18 @@ class ECA_CONTROL_INTERFACE:
 	if cmd:
 	    I._cmd=cmd
 	    if f:
-	    	_ecasound.tochild.write('%s %f\n' % (cmd,f))
+	    	I.eca.tochild.write('%s %f\n' % (cmd,f))
 	    else:
-	    	_ecasound.tochild.write(cmd+'\n')
+	    	I.eca.tochild.write(cmd+'\n')
 	    return I._parse_response()
 	    
     def error(I):
-	"""Returns true if error has occured during the execution of last EIAM command"""
+	"""Return true if error has occured during the execution of last EIAM command"""
 	
 	if I._type=='e': return 1
 	
     def last_error(I):
-	"""Returns a string describing the last error"""
+	"""Return a string describing the last error"""
 	
 	if I.error():
 	    return I._resp.get('e')
@@ -177,17 +194,17 @@ class ECA_CONTROL_INTERFACE:
 	    return ''
 	
     def last_float(I):
-	"""Returns the last floating-point return value"""
+	"""Return the last floating-point return value"""
 	return I._resp.get('f')
     
     def last_integer(I):
-	"""Returns the last integer return value
+	"""Return the last integer return value
 	
 	This function is also used to return boolean values."""
 	return I._resp.get('i')
     
     def last_long_integer(I):
-	"""Returns the last long integer return value
+	"""Return the last long integer return value
 	
 	Long integers are used to pass values like 'length_in_samples' 
 	and 'length_in_bytes'.  It's implementation specific whether there's 
@@ -195,11 +212,11 @@ class ECA_CONTROL_INTERFACE:
 	return I._resp.get('li')
     
     def last_string(I):
-	"""Returns the last string return value"""
+	"""Return the last string return value"""
 	return I._resp.get('s')
     
     def last_string_list(I):
-	"""Returns the last collection of strings (one or more strings)"""
+	"""Return the last collection of strings (one or more strings)"""
 	return I._resp.get('S')
     
     def last_type(I):
@@ -246,7 +263,7 @@ def parse_eiam_response(st, m=None):
     if not m:
         m = parse.search(st)
 	if not m:
-            raise Exception, 'Regexp failed!'
+	    return ()
 
     if m and len(m.groups()) == 0:
         print "(pyeca) Matching groups failed: %s" % str(m.groups())
@@ -276,14 +293,15 @@ class string_argument(base):
 	return I.eci('%s %s' % (I.cmd,s))
 	
 
-class eci:
-    def __init__(I):
-	I._eci=ECA_CONTROL_INTERFACE(0)
+class EIAM:
+    def __init__(I, verbose=0):
+	I._eci=ECA_CONTROL_INTERFACE(verbose)
 	I._cmds=I._eci('int-cmd-list')
 	
 	for c in I._cmds:
 	    c=string.replace(c, '-', '_')
-	    if string.count(c, 'add'):
+	    if string.count(c, 'add') \
+	    or string.count(c, 'select'):
 		I.__dict__[c]=string_argument(I._eci,c)
 	    else:
 		I.__dict__[c]=base(I._eci,c)

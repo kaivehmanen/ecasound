@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS 		= foreign
-EXTRA_DIST 			= eci.py pyeca.py ecanative.py
+EXTRA_DIST 			= eci.py pyeca.py ecacontrol.py
 
 # ----------------------------------------------------------------------
 # defines
@@ -14,10 +14,10 @@ endif
 if ECA_AM_HAVE_PYTHON
 pyecasound_install_list1 = 	$(srcdir)/eci.py \
 				$(srcdir)/pyeca.py \
-				$(srcdir)/ecanative.py
+				$(srcdir)/ecacontrol.py
 pyecasound_uninstall_list1 =    $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)/eci.py \
 				$(DESTDIR)$(ECA_S_PYTHON_DLMODULES)/pyeca.py \
-				$(DESTDIR)$(ECA_S_PYTHON_DLMODULES)/ecanative.py
+				$(DESTDIR)$(ECA_S_PYTHON_DLMODULES)/ecacontrol.py
 endif
 if ECA_AM_COMPILE_PYECASOUND
 pyecasound_install_list2 = 	pyecasound.so
