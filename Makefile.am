@@ -1,5 +1,8 @@
 EXTRA_DIST = BUGS NEWS TODO generic_oscillators effect_presets ecasound.spec
 
+# for automake 1.4/1.5 compatibility
+EXTRA_DIST += depcomp
+
 if SYSTEM_READLINE
 SUBDIRS = kvutils libecasound libecasoundc pyecasound ecasound ecatools Documentation examples contrib
 else

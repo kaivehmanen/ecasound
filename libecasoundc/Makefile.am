@@ -59,10 +59,9 @@ ecasoundc_src = ecasoundc.cpp
 libecasoundc_la_SOURCES = $(ecasoundc_src)
 libecasoundc_debug_la_SOURCES = $(libecasoundc_la_SOURCES)
 libecasoundc_la_LIBADD = $(ecasound_libs) $(kvutils_libs)
-libecasoundc_debug_la_LIBADD = $(libecasoundc_la_LIBADD)
 libecasoundc_la_LDFLAGS = -export-dynamic $(eca_ldflags)
-libecasoundc_debug_la_LDFLAGS = $(libecasoundc_la_LDFLAGS)
 libecasoundc_debug_la_LIBADD = $(ecasound_libs) $(kvutils_debug_libs)
+libecasoundc_debug_la_LDFLAGS = $(libecasoundc_la_LDFLAGS)
 
 # ---------------------------------------------------------------------
 # Install targets

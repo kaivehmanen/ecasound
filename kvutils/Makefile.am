@@ -40,12 +40,6 @@ libkvutils_la_LDFLAGS = -version-info 3:0:1
 libkvutils_debug_la_SOURCES = $(libkvutils_la_SOURCES)
 libkvutils_debug_la_LDFLAGS = $(libkvutils_la_LDFLAGS)
 
-DIST_COMMON = 	README \
-		COPYING \
-		INSTALL \
-		Makefile.in \
-		Makefile.am
-
 noinst_HEADERS = $(kvutil_headers)
 
 # ---------------------------------------------------------------------

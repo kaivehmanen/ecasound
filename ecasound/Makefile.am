@@ -11,12 +11,14 @@ INCLUDES = -I$(top_srcdir)/readline-4.0 -I$(srcdir) -I$(top_srcdir) -I$(top_srcd
 endif
 
 if USE_NCURSES
-termcap_library = -lncurses
+termcap_library_ncurses = -lncurses
 endif
 
 if USE_TERMCAP
-termcap_library = -ltermcap
+termcap_library_termcap = -ltermcap
 endif
+
+termcap_library = $(termcap_library_ncurses) $(termcap_library_termcap)
 
 if INCLUDE_DEBUG
 bin_PROGRAMS = ecasound_debug
