@@ -703,6 +703,13 @@ void ECA_ENGINE::start(void) {
       ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Using realtime-scheduling (SCHED_FIFO).");
   }
 
+  // --
+  // Reinitialize chains if necessary
+  //
+  for(size_t i = 0; i != chains_repp->size(); i++) {
+    if ((*chains_repp)[i]->is_initialized() != true) (*chains_repp)[i]->init(0, 0, 0);
+  }
+
   // ---
   // Start servers and devices 
   start_servers();

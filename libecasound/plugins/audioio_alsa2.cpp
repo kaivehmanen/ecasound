@@ -44,7 +44,7 @@
 ALSA_PCM_DEVICE_05X::ALSA_PCM_DEVICE_05X (int card, 
 				    int device, 
 				    int subdevice) {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) construct");
+  //  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) construct");
   card_number_rep = card;
   device_number_rep = device;
   subdevice_number_rep = subdevice;

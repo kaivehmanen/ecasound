@@ -7,15 +7,6 @@
 
 #include "eca-object.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#ifdef USE_CXX_STD_NAMESPACE
-using std::map;
-using std::string;
-using std::vector;
-#endif
-
 /**
  * A virtual base for dynamic object maps
  *

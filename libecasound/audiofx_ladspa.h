@@ -33,16 +33,14 @@ private:
   int in_audio_ports;
   int out_audio_ports;
   long unique_number_rep;
-  string label_rep, unique_rep, param_names_rep;
+  string name_rep, unique_rep, param_names_rep;
   vector<LADSPA_Data> params;
 
   void init_ports(void);
 
 public:
 
-  virtual string name(void) const { return(label_rep); }
-  virtual string description(void) const { return("LADSPA plugin."); }
-
+  virtual string name(void) const { return(name_rep); }
   virtual string parameter_names(void) const { return(param_names_rep); }
 
   /**

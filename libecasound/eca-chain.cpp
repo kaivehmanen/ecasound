@@ -27,6 +27,7 @@
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils/dbc.h>
 
 #include "samplebuffer.h"
 #include "generic-controller.h"
@@ -121,25 +122,23 @@ void CHAIN::disconnect_buffer(void) { audioslot_repp = 0; initialized_rep = fals
  * ensure:
  *  selected_chain_operator() == number_of_chain_operators()
  *  is_processing()
+ *  is_initialized() != true
  */
 void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop) {
   // --------
-  // require:
-  assert(chainop != 0);
+  DBC_REQUIRE(chainop != 0);
   // --------
 
   chainops_rep.push_back(chainop);
   selected_chainop_repp = chainop;
   selected_chainop_number_rep = chainops_rep.size();
   sfx_rep = true;
-
-  if (initialized_rep == true) 
-    init(audioslot_repp, in_channels_rep, out_channels_rep);
+  initialized_rep = false;
 
   // --------
-  // ensure:
-  assert(selected_chain_operator() == number_of_chain_operators());
-  assert(is_processing() == true);
+  DBC_ENSURE(selected_chain_operator() == number_of_chain_operators());
+  DBC_ENSURE(is_processing() == true);
+  DBC_ENSURE(is_initialized() != true);
   // --------
 }
 
@@ -152,13 +151,13 @@ void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop) {
  *
  * ensure:
  *  (chainsops.size() == 0 && is_processing()) ||
- *  (chainsops.size() != 0 && !is_processing())
+ *  (chainsops.size() != 0 && !is_processing()) &&
+ *  is_initialized() != true
  */
 void CHAIN::remove_chain_operator(void) {
   // --------
-  // require:
-  assert(selected_chain_operator() > 0);
-  assert(selected_chain_operator() <= number_of_chain_operators());
+  DBC_REQUIRE(selected_chain_operator() > 0);
+  DBC_REQUIRE(selected_chain_operator() <= number_of_chain_operators());
   // --------
 
   int n = 0;
@@ -184,13 +183,12 @@ void CHAIN::remove_chain_operator(void) {
   if (chainops_rep.size() == 0) {
     sfx_rep = false;
   }
-  if (initialized_rep == true) 
-    init(audioslot_repp, in_channels_rep, out_channels_rep);
+  initialized_rep = false; 
 
   // --------
-  // ensure:
-  assert(chainops_rep.size() == 0 && !is_processing() ||
-	 chainops_rep.size() != 0 && is_processing());
+  DBC_ENSURE(chainops_rep.size() == 0 && !is_processing() ||
+	     chainops_rep.size() != 0 && is_processing());
+  DBC_ENSURE(is_initialized() != true);
   // --------
 }
 
@@ -202,8 +200,7 @@ void CHAIN::remove_chain_operator(void) {
  */
 string CHAIN::chain_operator_name(void) const {
   // --------
-  // require:
-  assert(selected_chain_operator() > 0);
+  DBC_REQUIRE(selected_chain_operator() > 0);
   // --------
   return(selected_chainop_repp->name());
 }
@@ -217,9 +214,8 @@ string CHAIN::chain_operator_name(void) const {
  */
 string CHAIN::chain_operator_parameter_name(void) const {
   // --------
-  // require:
-  assert(selected_chain_operator() > 0);
-  assert(selected_chain_operator_parameter() > 0);
+  DBC_REQUIRE(selected_chain_operator() > 0);
+  DBC_REQUIRE(selected_chain_operator_parameter() > 0);
   // --------
   return(selected_chainop_repp->get_parameter_name(selected_chain_operator_parameter()));
 }
@@ -233,8 +229,7 @@ string CHAIN::chain_operator_parameter_name(void) const {
  */
 int CHAIN::number_of_chain_operator_parameters(void) const {
   // --------
-  // require:
-  assert(selected_chain_operator() > 0);
+  DBC_REQUIRE(selected_chain_operator() > 0);
   // --------
   return(selected_chainop_repp->number_of_params());
 }
@@ -247,8 +242,7 @@ int CHAIN::number_of_chain_operator_parameters(void) const {
  */
 string CHAIN::controller_name(void) const {
   // --------
-  // require:
-  assert(selected_controller() > 0);
+  DBC_REQUIRE(selected_controller() > 0);
   // --------
   return(selected_controller_repp->name());
 }
@@ -265,9 +259,8 @@ string CHAIN::controller_name(void) const {
  */
 void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_type value) {
   // --------
-  // require:
-  assert(selected_chainop_number_rep > 0 && selected_chainop_number_rep <= number_of_chain_operators());
-  assert(selected_chain_operator_parameter() > 0);
+  DBC_REQUIRE(selected_chainop_number_rep > 0 && selected_chainop_number_rep <= number_of_chain_operators());
+  DBC_REQUIRE(selected_chain_operator_parameter() > 0);
   // --------
   selected_chainop_repp->set_parameter(selected_chainop_parameter_rep, value);
 }
@@ -283,9 +276,8 @@ void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_type value) {
  */
 CHAIN_OPERATOR::parameter_type CHAIN::get_parameter(void) const {
   // --------
-  // require:
-  assert(selected_chain_operator_parameter() > 0);
-  assert(selected_chain_operator() != 0);
+  DBC_REQUIRE(selected_chain_operator_parameter() > 0);
+  DBC_REQUIRE(selected_chain_operator() != 0);
   // --------
   return(selected_chainop_repp->get_parameter(selected_chainop_parameter_rep));
 }
@@ -299,9 +291,8 @@ CHAIN_OPERATOR::parameter_type CHAIN::get_parameter(void) const {
  */
 void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller) {
   // --------
-  // require:
-  assert(gcontroller != 0);
-  assert(selected_dynobj_repp != 0);
+  DBC_REQUIRE(gcontroller != 0);
+  DBC_REQUIRE(selected_dynobj_repp != 0);
   // --------
   gcontroller->assign_target(selected_dynobj_repp);
   gcontrollers_rep.push_back(gcontroller);
@@ -319,9 +310,8 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller) {
  */
 void CHAIN::remove_controller(void) {
   // --------
-  // require:
-  assert(selected_controller() > 0);
-  assert(selected_controller() <= number_of_controllers());
+  DBC_REQUIRE(selected_controller() > 0);
+  DBC_REQUIRE(selected_controller() <= number_of_controllers());
   // --------
 
   int n = 0;
@@ -344,13 +334,18 @@ void CHAIN::remove_controller(void) {
 void CHAIN::clear(void) {
   for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p != chainops_rep.end(); p++) {
     delete *p;
+    *p = 0;
   }
   chainops_rep.resize(0);
   for(std::vector<GENERIC_CONTROLLER*>::iterator p = gcontrollers_rep.begin(); p !=
 	gcontrollers_rep.end(); p++) {
     delete *p;
+    *p = 0;
   }
   gcontrollers_rep.resize(0);
+
+  initialized_rep = false;
+  sfx_rep = false;
 }
 
 /**
@@ -439,13 +434,11 @@ void CHAIN::select_controller_parameter(int index) {
  */
 void CHAIN::selected_chain_operator_as_target(void) {
   // --------
-  // require:
-  assert(selected_chainop_repp != 0);
+  DBC_REQUIRE(selected_chainop_repp != 0);
   // --------
   selected_dynobj_repp = selected_chainop_repp;
   // --------
-  // ensure:
-  assert(selected_dynobj_repp == selected_chainop_repp);
+  DBC_ENSURE(selected_dynobj_repp == selected_chainop_repp);
   // --------
 }
 
@@ -461,39 +454,38 @@ void CHAIN::selected_chain_operator_as_target(void) {
  */
 void CHAIN::selected_controller_as_target(void) {
   // --------
-  // require:
-  assert(selected_controller_repp != 0);
+  DBC_REQUIRE(selected_controller_repp != 0);
   // --------
   selected_dynobj_repp = selected_controller_repp;
   // --------
-  // ensure:
-  assert(selected_dynobj_repp == selected_controller_repp);
+  DBC_ENSURE(selected_dynobj_repp == selected_controller_repp);
   // --------
 }
 
 /**
  * Prepares chain for processing. All further processing
  * will be done using the buffer pointer by 'sbuf'.
+ * If all parameters are zero, previously specified 
+ * parameters are used (state re-initialization).
  *
  * require:
  *  input_id != 0 || in_channels != 0
  *  output_id != 0 || out_channels != 0
- *  sbuf != 0
+ *  audioslot_repp != 0 || sbuf != 0
  *
  * ensure:
  *  is_initialized() == true
  */
 void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
   // --------
-  // require:
-  assert(in_channels != 0);
-  assert(out_channels != 0);
+  DBC_REQUIRE(in_channels != 0 || in_channels_rep != 0);
+  DBC_REQUIRE(out_channels != 0 || out_channels_rep != 0);
+  DBC_REQUIRE(sbuf != 0 || audioslot_repp != 0);
   // --------
 
-  audioslot_repp = sbuf;
-
-  in_channels_rep = in_channels;
-  out_channels_rep = out_channels;
+  if (sbuf != 0) audioslot_repp = sbuf;
+  if (in_channels != 0) in_channels_rep = in_channels;
+  if (out_channels != 0) out_channels_rep = out_channels;
 
   int init_channels = in_channels_rep;
   audioslot_repp->number_of_channels(init_channels);
@@ -505,10 +497,19 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
 
   refresh_parameters();
   initialized_rep = true;
+
+  ecadebug->msg(ECA_DEBUG::system_objects, 
+		"(chain) Initialized chain " +
+		name() + 
+		" with " +
+		kvu_numtostr(chainops_rep.size()) +
+		" chainops and " +
+		kvu_numtostr(gcontrollers_rep.size()) +
+		" gcontrollers. Sbuf points to " +
+		kvu_numtostr(reinterpret_cast<long int>(audioslot_repp)) + ".");
   
   // --------
-  // ensure:
-  assert(is_initialized() == true);
+  DBC_ENSURE(is_initialized() == true);
   // --------
 }
 
@@ -520,8 +521,7 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
  */
 void CHAIN::process(void) {
   // --------
-  // require:
-  assert(is_initialized() == true);
+  DBC_REQUIRE(is_initialized() == true);
   // --------
 
   controller_update();

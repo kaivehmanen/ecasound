@@ -223,56 +223,56 @@ void register_default_audio_objects(void) {
 }
 
 void register_default_chainops(void) {
-  eca_chain_operator_map->register_object("eS", new EFFECT_AUDIO_STAMP());
-  eca_chain_operator_map->register_object("ea", new EFFECT_AMPLIFY());
-  eca_chain_operator_map->register_object("eac", new EFFECT_AMPLIFY_CHANNEL());
-  eca_chain_operator_map->register_object("eal", new EFFECT_LIMITER());
-  eca_chain_operator_map->register_object("eaw", new EFFECT_AMPLIFY_CLIPCOUNT());
-  eca_chain_operator_map->register_object("ec", new EFFECT_COMPRESS());
-  eca_chain_operator_map->register_object("eca", new ADVANCED_COMPRESSOR());
-  eca_chain_operator_map->register_object("eemb", new EFFECT_PULSE_GATE_BPM());
-  eca_chain_operator_map->register_object("eemp", new EFFECT_PULSE_GATE());
-  eca_chain_operator_map->register_object("eemt", new EFFECT_TREMOLO());
-  eca_chain_operator_map->register_object("ef1", new EFFECT_RESONANT_BANDPASS());
-  eca_chain_operator_map->register_object("ef3", new EFFECT_RESONANT_LOWPASS());
-  eca_chain_operator_map->register_object("ef4", new EFFECT_RC_LOWPASS_FILTER());
-  eca_chain_operator_map->register_object("efa", new EFFECT_ALLPASS_FILTER());
-  eca_chain_operator_map->register_object("efb", new EFFECT_BANDPASS());
-  eca_chain_operator_map->register_object("efc", new EFFECT_COMB_FILTER());
-  eca_chain_operator_map->register_object("efh", new EFFECT_HIGHPASS());
-  eca_chain_operator_map->register_object("efi", new EFFECT_INVERSE_COMB_FILTER());
-  eca_chain_operator_map->register_object("efl", new EFFECT_LOWPASS());
-  eca_chain_operator_map->register_object("efr", new EFFECT_BANDREJECT());
-  eca_chain_operator_map->register_object("efs", new EFFECT_RESONATOR());
-  eca_chain_operator_map->register_object("ei", new EFFECT_PITCH_SHIFT());
-  eca_chain_operator_map->register_object("enm", new EFFECT_NOISEGATE());
-  eca_chain_operator_map->register_object("epp", new EFFECT_NORMAL_PAN());
-  eca_chain_operator_map->register_object("erc", new EFFECT_CHANNEL_COPY());
-  eca_chain_operator_map->register_object("erm", new EFFECT_MIX_TO_CHANNEL());
-  eca_chain_operator_map->register_object("etc", new EFFECT_CHORUS());
-  eca_chain_operator_map->register_object("etd", new EFFECT_DELAY());
-  eca_chain_operator_map->register_object("ete", new ADVANCED_REVERB());
-  eca_chain_operator_map->register_object("etf", new EFFECT_FAKE_STEREO());
-  eca_chain_operator_map->register_object("etl", new EFFECT_FLANGER());
-  eca_chain_operator_map->register_object("etm", new EFFECT_MULTITAP_DELAY());
-  eca_chain_operator_map->register_object("etp", new EFFECT_PHASER());
-  eca_chain_operator_map->register_object("etr", new EFFECT_REVERB());
-  eca_chain_operator_map->register_object("ev", new EFFECT_ANALYZE());
-  eca_chain_operator_map->register_object("ezf", new EFFECT_DCFIND());
-  eca_chain_operator_map->register_object("ezx", new EFFECT_DCFIX());
-  eca_chain_operator_map->register_object("gc", new TIME_CROP_GATE());
-  eca_chain_operator_map->register_object("ge", new THRESHOLD_GATE());
+  eca_chain_operator_map->register_object("^eS$", new EFFECT_AUDIO_STAMP());
+  eca_chain_operator_map->register_object("^ea$", new EFFECT_AMPLIFY());
+  eca_chain_operator_map->register_object("^eac$", new EFFECT_AMPLIFY_CHANNEL());
+  eca_chain_operator_map->register_object("^eal$", new EFFECT_LIMITER());
+  eca_chain_operator_map->register_object("^eaw$", new EFFECT_AMPLIFY_CLIPCOUNT());
+  eca_chain_operator_map->register_object("^ec$", new EFFECT_COMPRESS());
+  eca_chain_operator_map->register_object("^eca$", new ADVANCED_COMPRESSOR());
+  eca_chain_operator_map->register_object("^eemb$", new EFFECT_PULSE_GATE_BPM());
+  eca_chain_operator_map->register_object("^eemp$", new EFFECT_PULSE_GATE());
+  eca_chain_operator_map->register_object("^eemt$", new EFFECT_TREMOLO());
+  eca_chain_operator_map->register_object("^ef1$", new EFFECT_RESONANT_BANDPASS());
+  eca_chain_operator_map->register_object("^ef3$", new EFFECT_RESONANT_LOWPASS());
+  eca_chain_operator_map->register_object("^ef4$", new EFFECT_RC_LOWPASS_FILTER());
+  eca_chain_operator_map->register_object("^efa$", new EFFECT_ALLPASS_FILTER());
+  eca_chain_operator_map->register_object("^efb$", new EFFECT_BANDPASS());
+  eca_chain_operator_map->register_object("^efc$", new EFFECT_COMB_FILTER());
+  eca_chain_operator_map->register_object("^efh$", new EFFECT_HIGHPASS());
+  eca_chain_operator_map->register_object("^efi$", new EFFECT_INVERSE_COMB_FILTER());
+  eca_chain_operator_map->register_object("^efl$", new EFFECT_LOWPASS());
+  eca_chain_operator_map->register_object("^efr$", new EFFECT_BANDREJECT());
+  eca_chain_operator_map->register_object("^efs$", new EFFECT_RESONATOR());
+  eca_chain_operator_map->register_object("^ei$", new EFFECT_PITCH_SHIFT());
+  eca_chain_operator_map->register_object("^enm$", new EFFECT_NOISEGATE());
+  eca_chain_operator_map->register_object("^epp$", new EFFECT_NORMAL_PAN());
+  eca_chain_operator_map->register_object("^erc$", new EFFECT_CHANNEL_COPY());
+  eca_chain_operator_map->register_object("^erm$", new EFFECT_MIX_TO_CHANNEL());
+  eca_chain_operator_map->register_object("^etc$", new EFFECT_CHORUS());
+  eca_chain_operator_map->register_object("^etd$", new EFFECT_DELAY());
+  eca_chain_operator_map->register_object("^ete$", new ADVANCED_REVERB());
+  eca_chain_operator_map->register_object("^etf$", new EFFECT_FAKE_STEREO());
+  eca_chain_operator_map->register_object("^etl$", new EFFECT_FLANGER());
+  eca_chain_operator_map->register_object("^etm$", new EFFECT_MULTITAP_DELAY());
+  eca_chain_operator_map->register_object("^etp$", new EFFECT_PHASER());
+  eca_chain_operator_map->register_object("^etr$", new EFFECT_REVERB());
+  eca_chain_operator_map->register_object("^ev$", new EFFECT_ANALYZE());
+  eca_chain_operator_map->register_object("^ezf$", new EFFECT_DCFIND());
+  eca_chain_operator_map->register_object("^ezx$", new EFFECT_DCFIX());
+  eca_chain_operator_map->register_object("^gc$", new TIME_CROP_GATE());
+  eca_chain_operator_map->register_object("^ge$", new THRESHOLD_GATE());
 }
 
 void register_default_controllers(void) {
-  eca_controller_map->register_object("kf", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR_FILE()));
-  eca_controller_map->register_object("kog", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR()));
-  eca_controller_map->register_object("kl", new GENERIC_CONTROLLER(new LINEAR_ENVELOPE()));
-  eca_controller_map->register_object("kl2", new GENERIC_CONTROLLER(new TWO_STAGE_LINEAR_ENVELOPE()));
-  eca_controller_map->register_object("klg", new GENERIC_CONTROLLER(new GENERIC_LINEAR_ENVELOPE()));
-  eca_controller_map->register_object("km", new GENERIC_CONTROLLER(new MIDI_CONTROLLER()));
-  eca_controller_map->register_object("kos", new GENERIC_CONTROLLER(new SINE_OSCILLATOR()));
-  eca_controller_map->register_object("ksv", new GENERIC_CONTROLLER(new VOLUME_ANALYZE_CONTROLLER()));
+  eca_controller_map->register_object("^kf$", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR_FILE()));
+  eca_controller_map->register_object("^kog$", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR()));
+  eca_controller_map->register_object("^kl$", new GENERIC_CONTROLLER(new LINEAR_ENVELOPE()));
+  eca_controller_map->register_object("^kl2$", new GENERIC_CONTROLLER(new TWO_STAGE_LINEAR_ENVELOPE()));
+  eca_controller_map->register_object("^klg$", new GENERIC_CONTROLLER(new GENERIC_LINEAR_ENVELOPE()));
+  eca_controller_map->register_object("^km$", new GENERIC_CONTROLLER(new MIDI_CONTROLLER()));
+  eca_controller_map->register_object("^kos$", new GENERIC_CONTROLLER(new SINE_OSCILLATOR()));
+  eca_controller_map->register_object("^ksv$", new GENERIC_CONTROLLER(new VOLUME_ANALYZE_CONTROLLER()));
 }
 
 void register_default_presets(void) { }
@@ -444,7 +444,7 @@ void register_ladspa_plugins(void) {
 	}
 	catch(ECA_ERROR& e) {  }
 	for(unsigned int n = 0; n < ladspa_plugins.size(); n++) {
-	  eca_ladspa_plugin_map->register_object(ladspa_plugins[n]->unique(), ladspa_plugins[n]);
+	  eca_ladspa_plugin_map->register_object("^" + ladspa_plugins[n]->unique() + "$", ladspa_plugins[n]);
 	  eca_ladspa_plugin_id_map->register_object(kvu_numtostr(ladspa_plugins[n]->unique_number()), ladspa_plugins[n]);
 	}
 	entry = readdir(dp);

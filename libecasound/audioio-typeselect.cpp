@@ -28,9 +28,7 @@
  */
 AUDIO_IO_TYPESELECT::AUDIO_IO_TYPESELECT (void) { 
 
-  ecadebug->msg(ECA_DEBUG::user_objects, 
-		"(audioio-typeselect) constructor "
-		+ label() + ".");  
+  //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-typeselect) constructor " + label() + ".");  
 
   child_repp = new NULLFILE("uninitialized");
   init_rep = false;
@@ -41,10 +39,7 @@ AUDIO_IO_TYPESELECT::AUDIO_IO_TYPESELECT (void) {
  */
 AUDIO_IO_TYPESELECT::~AUDIO_IO_TYPESELECT (void) { 
 
-  ecadebug->msg(ECA_DEBUG::user_objects, 
-		"(audioio-typeselect) destructor "
-		+ label() + ".");  
-
+  //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-typeselect) destructor " + label() + ".");  
   delete child_repp; // either null or the actual child object
 }
 

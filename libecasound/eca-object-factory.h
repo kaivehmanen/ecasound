@@ -19,10 +19,10 @@ class ECA_OBJECT_FACTORY {
 
  public:
 
-  static EFFECT_LADSPA* ladspa_map_object(const std::string& keyword);
+  static EFFECT_LADSPA* ladspa_map_object(const std::string& keyword, bool use_regex = true);
   static EFFECT_LADSPA* ladspa_map_object(long int number);
-  static GENERIC_CONTROLLER* controller_map_object(const std::string& keyword);
-  static CHAIN_OPERATOR* chain_operator_map_object(const std::string& keyword);
+  static GENERIC_CONTROLLER* controller_map_object(const std::string& keyword, bool use_regex = true);
+  static CHAIN_OPERATOR* chain_operator_map_object(const std::string& keyword, bool use_regex = true);
   static AUDIO_IO* audio_io_map_object(const std::string& keyword, bool use_regex = true);
 
   static AUDIO_IO* create_audio_object(const std::string& arg);

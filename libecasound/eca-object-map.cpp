@@ -26,6 +26,10 @@
 #include "eca-object-map.h"
 #include "eca-debug.h"
 
+using std::map;
+using std::string;
+using std::vector;
+
 /**
  * Registers a new object-regexp pair. Map object will take care
  * of deleting the registered objects. Notice that it's possible 
@@ -71,12 +75,13 @@ ECA_OBJECT* ECA_OBJECT_MAP::object(const std::string& keyword, bool use_regexp) 
     if (use_regexp == true) {
       regcomp(&preg, p->first.c_str(), REG_NOSUB | REG_ICASE);
       if (regexec(&preg, keyword.c_str(), 0, 0, 0) == 0) {
-	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-object-map) match: " + p->first + "-" + keyword);
+	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-object-map) match (1): " + keyword + " to regexp " + p->first);
 	object = p->second;
       }
       regfree(&preg);
     }
     else if (p->first == keyword) {
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-object-map) match (2): " + keyword + " to " + p->first);
       object = p->second;
     }
     ++p;
@@ -114,13 +119,13 @@ ECA_OBJECT_MAP::~ECA_OBJECT_MAP (void) {
   while(p != object_map.end()) {
     if (p->second != 0) {
       ECA_OBJECT* next_obj = p->second;
-//        std::cerr << "Deleting " << next_obj->name() << "." << std::endl;
+      // std::cerr << "Deleting " << next_obj->name() << "." << std::endl;
       std::map<std::string, ECA_OBJECT*>::iterator q = p;
       ++q;
       while(q != object_map.end()) {
 	if (q->second != 0 &&
 	    q->second == p->second) {
-//  	  std::cerr << "Deleting sub-object with keyword " << q->first << "." << std::endl;
+	  // std::cerr << "Deleting sub-object with keyword " << q->first << "." << std::endl;
 	  q->second = 0;
 	}
 	++q;

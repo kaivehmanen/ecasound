@@ -39,8 +39,8 @@
 /**
  * Return the first effect that matches with 'keyword'
  */
-EFFECT_LADSPA* ECA_OBJECT_FACTORY::ladspa_map_object(const std::string& keyword) { 
-  return(dynamic_cast<EFFECT_LADSPA*>(eca_ladspa_plugin_map->object(keyword))); 
+EFFECT_LADSPA* ECA_OBJECT_FACTORY::ladspa_map_object(const std::string& keyword, bool use_regex = true) { 
+  return(dynamic_cast<EFFECT_LADSPA*>(eca_ladspa_plugin_map->object(keyword, use_regex))); 
 }
 
 /**
@@ -53,15 +53,15 @@ EFFECT_LADSPA* ECA_OBJECT_FACTORY::ladspa_map_object(long int number) {
 /**
  * Return the first controller object that matches with 'keyword'
  */
-GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::controller_map_object(const std::string& keyword) {
-  return(dynamic_cast<GENERIC_CONTROLLER*>(eca_controller_map->object(keyword)));
+GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::controller_map_object(const std::string& keyword, bool use_regex = true) {
+  return(dynamic_cast<GENERIC_CONTROLLER*>(eca_controller_map->object(keyword,use_regex)));
 }
 
 /**
  * Return the first effect that matches with 'keyword'
  */
-CHAIN_OPERATOR* ECA_OBJECT_FACTORY::chain_operator_map_object(const std::string& keyword) {
-  return(dynamic_cast<CHAIN_OPERATOR*>(eca_chain_operator_map->object(keyword)));
+CHAIN_OPERATOR* ECA_OBJECT_FACTORY::chain_operator_map_object(const std::string& keyword, bool use_regex = true) {
+  return(dynamic_cast<CHAIN_OPERATOR*>(eca_chain_operator_map->object(keyword,use_regex)));
 }
 
 /**

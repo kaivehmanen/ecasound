@@ -172,12 +172,11 @@ void ECA_CONTROL_OBJECTS::select_chainsetup(const std::string& name) {
 
   session_repp->select_chainsetup(name);
   selected_chainsetup_repp = session_repp->selected_chainsetup_repp;
-  if (selected_chainsetup_repp != 0)
-    ecadebug->msg("(eca-controller) Selected chainsetup:  \"" + selected_chainsetup() + "\".");
-  else {
+  if (selected_chainsetup_repp == 0) {
     ecadebug->msg("(eca-controller) Chainsetup \"" + name + "\" doesn't exist!");
     set_last_error("Chainsetup \"" + name + "\" doesn't exist!");
   }
+  //  else { ecadebug->msg("(eca-controller) Selected chainsetup:  \"" + selected_chainsetup() + "\"."); }
 
   // --------
   DBC_ENSURE(name == selected_chainsetup() ||
@@ -782,7 +781,7 @@ void ECA_CONTROL_OBJECTS::select_chain(const std::string& chain) {
   std::vector<std::string> c (1);
   c[0] = chain;
   selected_chainsetup_repp->select_chains(c);
-  ecadebug->msg(ECA_DEBUG::user_objects, "(eca-controller) Selected chain: " + chain + ".");
+  //  ecadebug->msg(ECA_DEBUG::user_objects, "(eca-controller) Selected chain: " + chain + ".");
 
   // --------
   DBC_ENSURE(selected_chains().size() == 1);
@@ -809,8 +808,8 @@ void ECA_CONTROL_OBJECTS::select_chains(const std::vector<std::string>& chains) 
 
   selected_chainsetup_repp->select_chains(chains);
 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(eca-controller) Selected chains: " +
-		vector_to_string(chains, ", ") + ".");
+  //  ecadebug->msg(ECA_DEBUG::user_objects, "(eca-controller) Selected chains: " +
+//  		vector_to_string(chains, ", ") + ".");
 }
 
 /**
@@ -832,7 +831,7 @@ void ECA_CONTROL_OBJECTS::deselect_chains(const std::vector<std::string>& chains
     std::vector<std::string>::iterator o = schains.begin();
     while(o != schains.end()) {
       if (*p == *o) {
-	ecadebug->msg("(eca-controller-objects) Deselected chain " + *o  + ".");
+	//  ecadebug->msg("(eca-controller-objects) Deselected chain " + *o  + ".");
 	schains.erase(o);
       }
       else
@@ -857,8 +856,7 @@ void ECA_CONTROL_OBJECTS::select_all_chains(void) {
 
   selected_chainsetup_repp->select_all_chains();
 
-  ecadebug->msg("(eca-controller) Selected chains: " +
-		vector_to_string(selected_chains(), ", ") + ".");
+  //  ecadebug->msg("(eca-controller) Selected chains: " + vector_to_string(selected_chains(), ", ") + ".");
 }
 
 /**

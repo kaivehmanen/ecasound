@@ -851,16 +851,18 @@ void ECA_CONTROL::cop_register(void) {
   int count = 1;
   while(p != kmap.end()) {
     string temp;
-    CHAIN_OPERATOR* q = ECA_OBJECT_FACTORY::chain_operator_map_object(p->first);
-    int params = q->number_of_params();
-    for(int n = 0; n < params; n++) {
-      if (n == 0) temp += ":";
-      temp += q->get_parameter_name(n + 1);
-      if (n + 1 < params) temp += ",";
+    CHAIN_OPERATOR* q = ECA_OBJECT_FACTORY::chain_operator_map_object(p->first, false);
+    if (q != 0) {
+      int params = q->number_of_params();
+      for(int n = 0; n < params; n++) {
+	if (n == 0) temp += ":";
+	temp += q->get_parameter_name(n + 1);
+	if (n + 1 < params) temp += ",";
+      }
+      result += kvu_numtostr(count) + ". " + p->first + " - " + p->second + temp;
+      result += "\n";
+      ++count;
     }
-    result += kvu_numtostr(count) + ". " + p->first + " - " + p->second + temp;
-    result += "\n";
-    ++count;
     ++p;
   }
   set_last_string(result);
@@ -889,17 +891,18 @@ void ECA_CONTROL::ladspa_register(void) {
   int count = 1;
   while(p != kmap.end()) {
     string temp = "\n\t-el:" + p->first + ",";
-    EFFECT_LADSPA* q = ECA_OBJECT_FACTORY::ladspa_map_object(p->first);
-    DBC_CHECK(q != 0);
-    int params = q->number_of_params();
-    for(int n = 0; n < params; n++) {
-      temp += "'" + q->get_parameter_name(n + 1) + "'";
-      if (n + 1 < params) temp += ",";
+    EFFECT_LADSPA* q = ECA_OBJECT_FACTORY::ladspa_map_object(p->first, false);
+    if (q != 0) {
+      int params = q->number_of_params();
+      for(int n = 0; n < params; n++) {
+	temp += "'" + q->get_parameter_name(n + 1) + "'";
+	if (n + 1 < params) temp += ",";
+      }
+      
+      result += "\n";
+      result += kvu_numtostr(count) + ". " + p->second + temp;
+      ++count;
     }
-
-    result += "\n";
-    result += kvu_numtostr(count) + ". " + p->second + temp;
-    ++count;
     ++p;
   }
   set_last_string(result);
@@ -913,16 +916,18 @@ void ECA_CONTROL::ctrl_register(void) {
   int count = 1;
   while(p != kmap.end()) {
     string temp;
-    GENERIC_CONTROLLER* q = ECA_OBJECT_FACTORY::controller_map_object(p->first);
-    int params = q->number_of_params();
-    for(int n = 0; n < params; n++) {
-      if (n == 0) temp += ":";
-      temp += q->get_parameter_name(n + 1);
-      if (n + 1 < params) temp += ",";
+    GENERIC_CONTROLLER* q = ECA_OBJECT_FACTORY::controller_map_object(p->first, false);
+    if (q != 0) {
+      int params = q->number_of_params();
+      for(int n = 0; n < params; n++) {
+	if (n == 0) temp += ":";
+	temp += q->get_parameter_name(n + 1);
+	if (n + 1 < params) temp += ",";
+      }
+      result += "\n";
+      result += kvu_numtostr(count) + ". " + p->first + " - " + p->second + temp;
+      ++count;
     }
-    result += "\n";
-    result += kvu_numtostr(count) + ". " + p->first + " - " + p->second + temp;
-    ++count;
     ++p;
   }
   set_last_string(result);

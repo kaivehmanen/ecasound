@@ -35,13 +35,11 @@ EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&) 
       LADSPA_PROPERTY_INPLACE_BROKEN)
     throw(ECA_ERROR("AUDIOFX_LADSPA", "Inplace-broken plugins not supported."));
 
-  label_rep = string(plugin_desc->Name);
+  name_rep = string(plugin_desc->Name);
   unique_rep = string(plugin_desc->Label);
   unique_number_rep = static_cast<long int>(plugin_desc->UniqueID);
 
   init_ports();
-//    cerr << "Plugin " << label_rep << " (" << unique_number_rep << "): "
-//         << param_names_rep << "." << endl;
 }
 
 EFFECT_LADSPA::~EFFECT_LADSPA (void) {
@@ -226,13 +224,21 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) {
 
   buffer = insample;
 
-// the fancy definition :)
-//    if ((in_audio_ports > 1 &&
-//         in_audio_ports <= channels() &&
-//         out_audio_ports <= channels()) ||
-//        (out_audio_ports > 1 &&
-//         in_audio_ports <= channels() &&
-//         out_audio_ports <= channels())) {}
+  if (plugin_desc != 0) {
+    for(unsigned int n = 0; n < plugins_rep.size(); n++) {
+      if (plugin_desc->deactivate != 0) plugin_desc->deactivate(plugins_rep[n]);
+      plugin_desc->cleanup(plugins_rep[n]);
+    }
+  }
+
+
+// NOTE: the fancy definition :)
+//       if ((in_audio_ports > 1 &&
+//            in_audio_ports <= channels() &&
+//            out_audio_ports <= channels()) ||
+//           (out_audio_ports > 1 &&
+//            in_audio_ports <= channels() &&
+//            out_audio_ports <= channels())) {}
 
   if (in_audio_ports > 1 ||
       out_audio_ports > 1) {

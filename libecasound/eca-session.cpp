@@ -236,7 +236,7 @@ void ECA_SESSION::select_chainsetup(const std::string& name) {
   std::vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups_rep.begin();
   while(p != chainsetups_rep.end()) {
     if ((*p)->name() == name) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-session) Chainsetup \"" + name + "\" selected.");
+      //  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-session) Chainsetup \"" + name + "\" selected.");
       selected_chainsetup_repp = *p;
       break;
     }

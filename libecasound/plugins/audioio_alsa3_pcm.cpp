@@ -39,7 +39,7 @@ int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT);
 };
 
 ALSA_NAMED_PCM_DEVICE_06X::ALSA_NAMED_PCM_DEVICE_06X (void) {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio_alsa3_pcm) construct");
+  //  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio_alsa3_pcm) construct");
 }
 
 ALSA_NAMED_PCM_DEVICE_06X::~ALSA_NAMED_PCM_DEVICE_06X(void) { }

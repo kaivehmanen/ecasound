@@ -95,7 +95,7 @@ class CHAIN {
    */
   OPERATOR* selected_target(void) const { return(selected_dynobj_repp); }
 
-  void init(SAMPLE_BUFFER* sbuf, int in_channels = 0, int out_channels = 0);
+  void init(SAMPLE_BUFFER* sbuf = 0, int in_channels = 0, int out_channels = 0);
   void process(void);
   void controller_update(void);
   void refresh_parameters(void);
