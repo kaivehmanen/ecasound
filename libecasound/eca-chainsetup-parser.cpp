@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup-parser.cpp: Functionality for parsing chainsetup 
 //                            option syntax.
-// Copyright (C) 2001-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2001-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -628,14 +628,9 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const string& argu)
       default: { }
       }
       if (cop != 0) {
-          MESSAGE_ITEM otemp;
           for(int n = 0; n < cop->number_of_params(); n++) {
               cop->set_parameter(n + 1, atof(kvu_get_argument_number(n + 2, argu).c_str()));
-              otemp << cop->get_parameter_name(n + 1) << " = ";
-              otemp << cop->get_parameter(n +1);
-              if (n + 1 < cop->number_of_params()) otemp << ", ";
           }
-          ECA_LOG_MSG(ECA_LOGGER::info, otemp.to_string());
           csetup_repp->add_chain_operator(cop);
       }
       break;
