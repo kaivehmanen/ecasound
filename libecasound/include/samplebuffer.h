@@ -8,6 +8,8 @@
 
 #include "eca-audio-format.h"
 
+class ECA_ERROR;
+
 /**
  * Represents a buffer of samples. The primary goal of this class is to 
  * provide a reasonably efficient implementation while still hiding the
@@ -150,7 +152,7 @@ class SAMPLE_BUFFER {
 		      long int samples,
 		      ECA_AUDIO_FORMAT::SAMPLE_FORMAT fmt,
 		      int ch,
-		      long int srate);
+		      long int srate) throw(ECA_ERROR*);
 
   /**
    * Copy contents of sample buffer to 'target'. Sample data 
@@ -163,7 +165,7 @@ class SAMPLE_BUFFER {
   void copy_from_buffer(unsigned char* target,
 			ECA_AUDIO_FORMAT::SAMPLE_FORMAT fmt,
 			int ch,
-			long int srate);
+			long int srate) throw(ECA_ERROR*);
         
   // ---
   // Info about the audio content 
@@ -197,7 +199,7 @@ class SAMPLE_BUFFER {
   SAMPLE_BUFFER (long int buffersize, int channels);
   SAMPLE_BUFFER (void);
   ~SAMPLE_BUFFER (void);
-  SAMPLE_BUFFER (const SAMPLE_BUFFER& x);
+  SAMPLE_BUFFER (const SAMPLE_BUFFER& x) throw(ECA_ERROR*);
 };
 
 #endif

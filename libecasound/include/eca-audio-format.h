@@ -4,6 +4,8 @@
 #include <string>
 #include <config.h>
 
+class ECA_ERROR;
+
 /**
  * Class that represents audio format parameters. Audio format
  * is based on:
@@ -96,7 +98,7 @@ class ECA_AUDIO_FORMAT {
   bool interleaved_channels(void) const { return(ileaved_rep); }
 
   void set_channels(int v);
-  void set_sample_format(SAMPLE_FORMAT v);
+  void set_sample_format(SAMPLE_FORMAT v) throw(ECA_ERROR*);
   void set_samples_per_second(long int v);
   void toggle_interleaved_channels(bool v);
 
@@ -113,14 +115,14 @@ class ECA_AUDIO_FORMAT {
    * Similarly if big endian, "_be" is added. This postfix
    * can be omitted if applicable. 
    */
-  void set_sample_format(const string& f_str);
+  void set_sample_format(const string& f_str) throw(ECA_ERROR*);
 
   /**
    * Return the current sample format as a formatted string.
    *
    * @see set_sample_format
    */
-  string format_string(void) const;
+  string format_string(void) const throw(ECA_ERROR*);
 
   ECA_AUDIO_FORMAT (int ch, long int srate, SAMPLE_FORMAT format, bool ileaved = false);
   ECA_AUDIO_FORMAT (const ECA_AUDIO_FORMAT& x);

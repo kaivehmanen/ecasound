@@ -51,7 +51,7 @@ ALSADEVICE::ALSADEVICE (int card,
   buffersize(bsize, samples_per_second());
 }
 
-void ALSADEVICE::open(void) {
+void ALSADEVICE::open(void) throw(ECA_ERROR*) {
   if (is_open() == true) return;
   int err;
   if (io_mode() == si_read) {

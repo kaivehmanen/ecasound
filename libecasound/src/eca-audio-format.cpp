@@ -54,7 +54,7 @@ ECA_AUDIO_FORMAT& ECA_AUDIO_FORMAT::operator=(const ECA_AUDIO_FORMAT& x) {
   }
 }
 
-void ECA_AUDIO_FORMAT::set_sample_format(SAMPLE_FORMAT v) {
+void ECA_AUDIO_FORMAT::set_sample_format(SAMPLE_FORMAT v) throw(ECA_ERROR*) {
   sfmt_rep = v;
   convert_to_host_byte_order();
   switch(sfmt_rep) 
@@ -112,7 +112,7 @@ void ECA_AUDIO_FORMAT::set_samples_per_second(long int v) { srate_rep = v; }
 void ECA_AUDIO_FORMAT::set_channels(int v) { channels_rep = v; }
 void ECA_AUDIO_FORMAT::toggle_interleaved_channels(bool v) { ileaved_rep = v; }
 
-void ECA_AUDIO_FORMAT::set_sample_format(const string& f_str) {
+void ECA_AUDIO_FORMAT::set_sample_format(const string& f_str) throw(ECA_ERROR*) {
   if (f_str == "u8") sfmt_rep = sfmt_u8;
   else if (f_str == "s16") sfmt_rep = sfmt_s16;
   else if (f_str == "s16_le") sfmt_rep = sfmt_s16_le;
@@ -126,7 +126,7 @@ void ECA_AUDIO_FORMAT::set_sample_format(const string& f_str) {
   set_sample_format(sfmt_rep);
 }
 
-string ECA_AUDIO_FORMAT::format_string(void) const {
+string ECA_AUDIO_FORMAT::format_string(void) const throw(ECA_ERROR*) {
   switch(sfmt_rep) 
     {
     case sfmt_u8: return("u8");

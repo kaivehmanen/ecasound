@@ -36,11 +36,11 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_FILE {
    * ensure:
    *  !is_open()
    */
-  void format_query(void);
+  void format_query(void) throw(ECA_ERROR*);
   
  public:
   
-  void open(void);
+  void open(void) throw(ECA_ERROR*);
   void close(void);
   
   long int read_samples(void* target_buffer, long int samples);

@@ -102,7 +102,7 @@ void ECA_PROCESSOR::init(void) {
   }
 }
 
-void ECA_PROCESSOR::init_connection_to_chainsetup(void) {
+void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR*) {
   csetup = eparams->connected_chainsetup;
 
   if (csetup == 0 ) {
@@ -783,7 +783,7 @@ void ECA_PROCESSOR::chain_processing(void) {
     (*chains)[active_chain_index]->toggle_processing(true);
 }
 
-void ECA_PROCESSOR::exec_mthreaded_iactive(void) {
+void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
 
   ecadebug->control_flow("Engine/Mixmode \"multithreaded interactive\" selected");
   stop();
@@ -849,7 +849,7 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) {
   pthread_join(chain_thread,NULL);
 }
 
-void ECA_PROCESSOR::exec_mthreaded_passive(void) {
+void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
 
   ecadebug->control_flow("Engine/Mixmode \"multithreaded passive\" selected");
   start();

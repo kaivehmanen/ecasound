@@ -40,7 +40,7 @@ class ALSADEVICE : public AUDIO_IO_DEVICE {
   
  public:
 
-  void open(void);
+  void open(void) throw(ECA_ERROR*);
   void close(void);
   
   long int read_samples(void* target_buffer, long int samples);

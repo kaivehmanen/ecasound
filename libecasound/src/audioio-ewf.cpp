@@ -32,7 +32,7 @@
 #include "eca-debug.h"
   
 EWFFILE::EWFFILE (const string& name, const SIMODE mode, const
-		  ECA_AUDIO_FORMAT& fmt) 
+		  ECA_AUDIO_FORMAT& fmt) throw(ECA_ERROR*) 
   :  AUDIO_IO(name, mode, fmt), ewfname(name) {
   // ---
   // Prepare data file (.wav) for processing.

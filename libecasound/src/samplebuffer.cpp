@@ -61,7 +61,7 @@ void SAMPLE_BUFFER::limit_values(void) {
 void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 				     ECA_AUDIO_FORMAT::SAMPLE_FORMAT fmt,
 				     int ch,
-				     long int srate) {
+				     long int srate) throw(ECA_ERROR*) {
   // --------
   // require:
   assert(target != 0);
@@ -160,7 +160,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 				   long int samples_read,
 				   ECA_AUDIO_FORMAT::SAMPLE_FORMAT fmt,
 				   int ch,
-				   long int srate) {
+				   long int srate) throw(ECA_ERROR*) {
   // --------
   // require:
   assert(samples_read >= 0);
@@ -476,10 +476,10 @@ SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x) {
   }
 }
 
-SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x) :
-  buffer(x.buffer), 
-  buffersize_rep(x.buffersize_rep),
-  channel_count_rep(x.channel_count_rep)
+SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x) throw(ECA_ERROR*)
+  : buffer(x.buffer), 
+    buffersize_rep(x.buffersize_rep),
+    channel_count_rep(x.channel_count_rep) 
 {
   // ---
   // For better performance, doesn't copy IO-buffers.

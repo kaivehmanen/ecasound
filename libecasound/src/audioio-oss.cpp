@@ -46,7 +46,7 @@ OSSDEVICE::OSSDEVICE(const string& name,
   precise_srate_mode = precise_sample_rates;
 }
 
-void OSSDEVICE::open(void) {
+void OSSDEVICE::open(void) throw(ECA_ERROR*) {
   if (is_open() == true) return;
   if (io_mode() == si_read) {
     if ((audio_fd = ::open(label().c_str(), O_RDONLY, 0)) == -1) {
@@ -175,7 +175,7 @@ void OSSDEVICE::stop(void) {
   //  if (is_open()) close_device();
 }
 
-void OSSDEVICE::close(void) {
+void OSSDEVICE::close(void) throw(ECA_ERROR*) {
   if (is_open()) { 
     toggle_open_state(false);
     if (::close(audio_fd) == -1) 
@@ -190,7 +190,7 @@ void OSSDEVICE::close(void) {
 //    ecadebug->msg(1, "(audioio-oss) Audio device \"" + label() + "\" ready.");
 //  }
 
-void OSSDEVICE::start(void) {
+void OSSDEVICE::start(void) throw(ECA_ERROR*) {
   if (is_triggered == false) {
     ecadebug->msg(1,"(audioio-oss) Audio device \"" + label() + "\" started.");
 #ifndef DISABLE_OSS_TRIGGER

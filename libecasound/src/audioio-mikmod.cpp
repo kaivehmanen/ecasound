@@ -90,7 +90,7 @@ void MIKMOD_INTERFACE::kill_mikmod(void) {
   }
 }
 
-void MIKMOD_INTERFACE::fork_mikmod(void) {
+void MIKMOD_INTERFACE::fork_mikmod(void) throw(ECA_ERROR*) {
   if (!is_open()) {
     string komen = MIKMOD_INTERFACE::default_mikmod_path;
     komen += " -d stdout -o 16s -q -f " + 

@@ -17,7 +17,7 @@ unsigned char* ecasound_fiommap_active_buffer(int fd);
 long int ecasound_fiommap_active_buffersize(int fd);
 long int ecasound_fiommap_maximum_buffersize(void);
 void ecasound_fiommap_next_buffer(int fd);
-void ecasound_fiommap_exec_thread(void); 
+void ecasound_fiommap_exec_thread(void) throw(ECA_ERROR*); 
 void *ecasound_fiommap_process(void *);
 void ecasound_fiommap_clean(void*);
 

@@ -6,7 +6,9 @@
 #include <pthread.h>
 #include <vector>
 
-void init_midi_queues(void);
+class ECA_ERROR;
+
+void init_midi_queues(void) throw(ECA_ERROR*);
 void *update_midi_queues(void *);
 
 class MIDI_IN_QUEUE {
@@ -38,8 +40,3 @@ extern MIDI_IN_QUEUE midi_in_queue;
 extern pthread_mutex_t midi_in_lock;     // mutex ensuring exclusive access to MIDI-buffer
 
 #endif
-
-
-
-
-

@@ -98,7 +98,7 @@ ssize_t (*dl_snd_rawmidi_read)(snd_rawmidi_t *handle, void *buffer, size_t size)
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
 
-void eca_alsa_load_dynamic_support(void) {
+void eca_alsa_load_dynamic_support(void) throw(ECA_ERROR*) {
   ++eca_alsa_client_count;
 
   if (eca_alsa_dynlib_initialized == true) return; 

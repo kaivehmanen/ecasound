@@ -35,7 +35,7 @@ ECA_FILE_IO_MMAP::~ECA_FILE_IO_MMAP(void) { }
 
 void ECA_FILE_IO_MMAP::open_file(const string& fname, 
 			    const string& fmode,
-			    bool handle_errors)
+			    bool handle_errors) throw(ECA_ERROR*)
 { 
   if (fmode == "rb") {
     f1 = open(fname.c_str(), O_RDWR);

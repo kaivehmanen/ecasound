@@ -38,14 +38,14 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   
  public:
 
-  void open(void);
-  void close(void);
+  void open(void) throw(ECA_ERROR*);
+  void close(void) throw(ECA_ERROR*);
   
   long int read_samples(void* target_buffer, long int samples);
   void write_samples(void* target_buffer, long int samples);
 
   void stop(void);
-  void start(void);
+  void start(void) throw(ECA_ERROR*);
 
   OSSDEVICE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& form, long int buffersize, bool precise_sample_rates = false);
   ~OSSDEVICE(void);

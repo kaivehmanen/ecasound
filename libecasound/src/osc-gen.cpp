@@ -81,7 +81,7 @@ GENERIC_OSCILLATOR::~GENERIC_OSCILLATOR (void) {
    while(ienvelope.size() > 0) ienvelope.pop_back();
 }
 
-void GENERIC_OSCILLATOR::read_envelope(void) {
+void GENERIC_OSCILLATOR::read_envelope(void) throw(ECA_ERROR*) {
   preset_found = false;
   linear = false;
   ienvelope.resize(0);

@@ -128,7 +128,7 @@ bool MIDI_IN_QUEUE::forth_get(void) {
   return(true);
 };
 
-void init_midi_queues(void) {
+void init_midi_queues(void) throw(ECA_ERROR*) {
   static bool ready = false;
 
   if (ready == true) return; 

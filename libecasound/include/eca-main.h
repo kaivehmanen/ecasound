@@ -148,7 +148,7 @@ private:
    */
   void trigger_outputs(void);
 
-  void init_connection_to_chainsetup(void);
+  void init_connection_to_chainsetup(void) throw(ECA_ERROR*);
   void init_status_variables(void);
   void init_mix_method(void);
 
@@ -163,8 +163,8 @@ private:
   void exec_normal_passive(void);
   void exec_simple_iactive(void);
   void exec_simple_passive(void);
-  void exec_mthreaded_iactive(void);
-  void exec_mthreaded_passive(void);
+  void exec_mthreaded_iactive(void) throw(ECA_ERROR*);
+  void exec_mthreaded_passive(void) throw(ECA_ERROR*);
   bool finished(void);
 
   typedef vector<AUDIO_IO*>::const_iterator audio_ci;

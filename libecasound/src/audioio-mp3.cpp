@@ -108,7 +108,7 @@ void MP3FILE::seek_position(void) {
   }
 }
 
-void MP3FILE::get_mp3_params(const string& fname) {
+void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR*) {
   Layer newlayer;
   FILE *temp;
   temp = fopen(fname.c_str(),"r");
@@ -144,7 +144,7 @@ void MP3FILE::kill_mpg123(void) {
   }
 }
 
-void MP3FILE::fork_mpg123(void) {
+void MP3FILE::fork_mpg123(void) throw(ECA_ERROR*) {
   if (!is_open()) {
     
     string komen = MP3FILE::default_mpg123_path;
@@ -215,7 +215,7 @@ void MP3FILE::kill_lame(void) {
   }
 }
 
-void MP3FILE::fork_lame(void) {
+void MP3FILE::fork_lame(void) throw(ECA_ERROR*) {
   if (!is_open()) {
     
     string komen = MP3FILE::default_lame_path;

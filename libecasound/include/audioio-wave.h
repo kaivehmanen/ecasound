@@ -63,11 +63,11 @@ class WAVEFILE : public AUDIO_IO_FILE {
    *  !is_open()
    *  fio == 0
    */
-  void format_query(void);
+  void format_query(void) throw(ECA_ERROR*);
     
  public:
 
-  void open(void);
+  void open(void) throw(ECA_ERROR*);
   void close(void);
 
   long int read_samples(void* target_buffer, long int samples);
@@ -90,14 +90,14 @@ class WAVEFILE : public AUDIO_IO_FILE {
 
   void update(void);        
   void set_length_in_bytes(void);
-  void read_riff_header (void);
+  void read_riff_header (void) throw(ECA_ERROR*);
   bool next_riff_block(RB *t, unsigned long int *offtmp);
-  void read_riff_fmt(void);
-  void write_riff_header (void);
+  void read_riff_fmt(void) throw(ECA_ERROR*);
+  void write_riff_header (void) throw(ECA_ERROR*);
   void write_riff_fmt(void);
   void write_riff_datablock(void);
   void update_riff_datablock(void);
-  void find_riff_datablock (void);
+  void find_riff_datablock (void) throw(ECA_ERROR*);
   signed long int find_block(const char* fblock);
 };
 

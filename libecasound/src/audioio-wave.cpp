@@ -48,7 +48,7 @@ WAVEFILE::~WAVEFILE(void) {
   close();
 }
 
-void WAVEFILE::format_query(void) {
+void WAVEFILE::format_query(void) throw(ECA_ERROR*) {
   // --------
   // require:
   assert(!is_open());
@@ -78,7 +78,7 @@ void WAVEFILE::format_query(void) {
 }
 
 
-void WAVEFILE::open(void) {
+void WAVEFILE::open(void) throw(ECA_ERROR*) {
   switch(io_mode()) {
   case si_read:
     {
@@ -150,14 +150,14 @@ void WAVEFILE::update (void) {
   }
 }
 
-void WAVEFILE::find_riff_datablock (void) {
+void WAVEFILE::find_riff_datablock (void) throw(ECA_ERROR*) {
   if (find_block("data")==-1) {
     throw(new ECA_ERROR("AUDIOIO-WAVE", "no RIFF data block found", ECA_ERROR::retry));
   }
   data_start_position = fio->get_file_position();
 }
 
-void WAVEFILE::read_riff_header (void) {
+void WAVEFILE::read_riff_header (void) throw(ECA_ERROR*) {
   ecadebug->msg(5, "(program flow: read_riff_header())");
    
   fio->read_to_buffer(&riff_header, sizeof(riff_header));
@@ -169,7 +169,7 @@ void WAVEFILE::read_riff_header (void) {
   }
 }
 
-void WAVEFILE::write_riff_header (void) {
+void WAVEFILE::write_riff_header (void) throw(ECA_ERROR*) {
   ecadebug->msg(5, "(program flow: write_riff_header())");
 
   long int savetemp = fio->get_file_position();
@@ -203,7 +203,7 @@ void WAVEFILE::write_riff_header (void) {
   fio->set_file_position(savetemp);
 }
 
-void WAVEFILE::read_riff_fmt(void)
+void WAVEFILE::read_riff_fmt(void) throw(ECA_ERROR*)
 {
   ecadebug->msg(5, "(program flow: read_riff_fmt())");
 

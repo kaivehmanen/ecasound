@@ -62,7 +62,7 @@ void CDRFILE::format_query(void) {
   // -------
 }
 
-void CDRFILE::open(void) { 
+void CDRFILE::open(void) throw(ECA_ERROR*) { 
   switch(io_mode()) {
   case si_read:
     {

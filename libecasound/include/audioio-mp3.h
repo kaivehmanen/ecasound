@@ -39,14 +39,14 @@ class MP3FILE : public AUDIO_IO_FILE {
   
   void seek_position_in_samples(long pos);
   long int length_in_bytes(void) const;
-  void get_mp3_params(const string& fname);
+  void get_mp3_params(const string& fname) throw(ECA_ERROR*);
   
   //  MP3FILE(const MP3FILE& x) { }
   MP3FILE& operator=(const MP3FILE& x) { return *this; }
 
-  void fork_mpg123(void);
+  void fork_mpg123(void) throw(ECA_ERROR*);
   void kill_mpg123(void);
-  void fork_lame(void);
+  void fork_lame(void) throw(ECA_ERROR*);
   void kill_lame(void);
   
  public:

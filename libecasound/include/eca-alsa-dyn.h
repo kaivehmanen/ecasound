@@ -6,6 +6,8 @@
 
 #include <sys/asoundlib.h>
 
+class ECA_ERROR;
+
 extern const char* (*dl_snd_strerror)(int);
 
 extern int (*dl_snd_pcm_open)(snd_pcm_t **,int,int,int);
@@ -65,7 +67,7 @@ extern ssize_t (*dl_snd_rawmidi_read)(snd_rawmidi_t *handle, void *buffer, size_
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
 
-void eca_alsa_load_dynamic_support(void);
+void eca_alsa_load_dynamic_support(void) throw(ECA_ERROR*);
 void eca_alsa_unload_dynamic_support(void);
 
 #endif // COMPILE_ALSA

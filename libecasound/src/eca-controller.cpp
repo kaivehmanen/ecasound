@@ -694,6 +694,7 @@ void ECA_CONTROLLER::start(bool ignore_lock) {
   if (session_rep->status() == ep_status_running) return;
   ecadebug->control_flow("Controller/Processing started");
 
+  while(ecasound_queue.is_empty() == false) ecasound_queue.pop_front();
   if (session_rep->status() == ep_status_notready) {
     start_engine(ignore_lock);
   }

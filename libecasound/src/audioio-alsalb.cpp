@@ -52,7 +52,7 @@ ALSALBDEVICE::ALSALBDEVICE (int card,
   eca_alsa_load_dynamic_support();
 }
 
-void ALSALBDEVICE::open(void) {
+void ALSALBDEVICE::open(void) throw(ECA_ERROR*) {
   if (is_open() == true) return;
   int err;
   if (io_mode() == si_read) {

@@ -55,7 +55,7 @@ class EWFFILE : public AUDIO_IO {
   EWFFILE* clone(void) { return new EWFFILE(*this); }
   EWFFILE (const string& name, 
 	   const SIMODE mode, 
-	   const ECA_AUDIO_FORMAT& form);
+	   const ECA_AUDIO_FORMAT& form) throw(ECA_ERROR*);
   ~EWFFILE(void);
 };
 

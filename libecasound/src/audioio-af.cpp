@@ -48,7 +48,7 @@ AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name,
   finished_rep = false;
 }
 
-void AUDIOFILE_INTERFACE::format_query(void) {
+void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR*) {
   // --------
   // require:
   assert(!is_open());
@@ -93,7 +93,7 @@ void AUDIOFILE_INTERFACE::format_query(void) {
   // -------
 }
 
-void AUDIOFILE_INTERFACE::open(void) {
+void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR*) {
 
   switch(io_mode()) {
   case si_read:
