@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (19.08.2004)
+       (25.09.2004)
        ()
        (Multimedia software)
 
@@ -34,8 +34,8 @@ commands from outside of libecasound. When issuing EIAM commands using
 ECI, it's possible that commands also return information. Currently
 supported return value types are: string [s], list of strings [S],
 integer [i], long integer [li] and floating-point number [f]. These
-definitions are used throughout this document. Commands that do not
-return anything are marked with [-]. Additionally, return type [e]
+definitions are used throughout this document. Commands that return
+nothing (void) are marked with [-]. Additionally, return type [e]
 marks an error condition. When an EIAM results in an error, a error 
 string explaining the condition is returned.
 

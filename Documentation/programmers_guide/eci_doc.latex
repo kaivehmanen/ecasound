@@ -32,6 +32,8 @@ a detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 25.09.2004 - Updated the ``Return values'' section based on feedback
+                   from Adam Linson.
 \item 02.05.2004 - ``Emacs'' section added (written by Mario Lang).
 \item 28.11.2003 - ``Ruby'' section added  (written by Jan Weil).
                    Updated the introduction.
@@ -103,7 +105,9 @@ string -> float conversion, which would lead to lost precision.
 \subsubsection{Return values}
 Each EIAM command has exactly one return value type. After a command
 has been issued, only one last\_type() functions returns a non-empty 
-value. Not all EIAM commands return a value (return type is void).
+value. For example, last\_float() only returns a valid value if 
+\emph{last\_type() == 'f'} holds true. Not all EIAM commands return 
+a value (return type is void).
 
 \begin{description}
 \item[last\_string()]
