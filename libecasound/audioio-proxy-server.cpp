@@ -511,11 +511,12 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void)
 	if (free_space > 0) {
 	  /* room available, so we can read at least one buffer of data */
 
-	  clients_rep[p]->read_buffer(buffers_rep[p]->sbufs_rep[buffers_rep[p]->writeptr_rep.get()]);
-	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
-	  buffers_rep[p]->advance_write_pointer();
-
-	  ++processed;
+	  if (clients_rep[p]->finished() != true) {
+	    clients_rep[p]->read_buffer(buffers_rep[p]->sbufs_rep[buffers_rep[p]->writeptr_rep.get()]);
+	    if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
+	    buffers_rep[p]->advance_write_pointer();
+	    ++processed;
+	  }
 
 #ifdef PROXY_PROFILING
 	  if (buffers_rep[p]->write_space() > 16 && one_time_full == true) {
@@ -530,10 +531,12 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void)
 	if (free_space > 0) {
 	  /* room available, so we can write at least one buffer of data */
 
-	  clients_rep[p]->write_buffer(buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
-	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
-	  buffers_rep[p]->advance_read_pointer();
-	  ++processed;
+	  if (clients_rep[p]->finished() != true) {
+	    clients_rep[p]->write_buffer(buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
+	    if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
+	    buffers_rep[p]->advance_read_pointer();
+	    ++processed;
+	  }
 
 #ifdef PROXY_PROFILING
 	  if (buffers_rep[p]->read_space() < 16  && one_time_full == true) {
@@ -555,7 +558,7 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void)
       signal_stop();
     }
     else {
-      if (min_free_space == 0) passive_rounds++;
+      if (processed == 0) passive_rounds++;
       else passive_rounds = 0;
 
       if (processed == 0) {
