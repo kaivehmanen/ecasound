@@ -12,6 +12,7 @@ Contents
 2.4: What file format should I use for mixing and recording? 
 2.5: Ecasound won't accept my chainsetup file/options! What's wrong with it? 
 2.6: I get occasional audio dropouts during operation? How to get rid of them? 
+2.7: Can I use multiple soundcards? 
 
 1: Compiling
 
@@ -116,3 +117,13 @@ o If still having problems, run ecasound as root (or with SUID-bit
 o Try to increase ecasound's buffersize with -b:sample_frames
     options. Something like -b:4096 should do the trick.
 o If all else fails, try the various low-latency kernel patches.
+
+2.7: Can I use multiple soundcards?
+
+This is possible, but there are some issues you should be aware of. If 
+you try using multiple cheap soundcards to get more simultanious 
+inputs for recording, it's likely that the resulting streams will not
+be in sync. This problem is explained in detail in the Linux
+Audio-Quality HOWTO -
+www.linuxdj.com/audio/quality/,
+section "Notes on Full Duplex Recording, and Other Realtime Issues".

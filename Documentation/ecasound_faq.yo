@@ -127,5 +127,16 @@ it()Try to increase ecasound's buffersize with em(-b:sample_frames)
 it()If all else fails, try the various low-latency kernel patches.
 endit()
 
+
+COMMENT(----------------------------------------------------------------)
+subsect(Can I use multiple soundcards?)
+This is possible, but there are some issues you should be aware of. If 
+you try using multiple cheap soundcards to get more simultanious 
+inputs for recording, it's likely that the resulting streams will not
+be in sync. This problem is explained in detail in the Linux
+Audio-Quality HOWTO -
+url(www.linuxdj.com/audio/quality/)(http://www.linuxdj.com/audio/quality/),
+section "Notes on Full Duplex Recording, and Other Realtime Issues".
+
 htmlcommand(<insert name=ecasound_tail>)
 

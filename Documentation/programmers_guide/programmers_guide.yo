@@ -129,7 +129,7 @@ COMMENT(----------------------------------------------------------------)
 subsect(Documentation style)
 Javadoc-style class documentation is the preferred style.
 Class members can be documented either when they are declared (header
-files), or when they are defined. Especilly when specifying
+files), or when they are defined. Especially when specifying
 complicated interfaces, it's better to put documentation in the
 definition files. This way the header files remain compact and serve 
 better as a reference. 
