@@ -44,6 +44,7 @@ ecasound_audiofx_src =  audiofx.cpp \
 			audiofx_analysis.cpp \
 			audiofx_filter.cpp \
 			audiofx_rcfilter.cpp \
+			audiofx_reverb.cpp \
 			audiofx_timebased.cpp \
 			audiogate.cpp \
 			audiofx_mixing.cpp \

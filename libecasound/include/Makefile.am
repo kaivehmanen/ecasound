@@ -5,6 +5,7 @@ ecasound_audiofx_src =  audiofx.h \
 			audiofx_analysis.h \
 			audiofx_filter.h \
 			audiofx_rcfilter.h \
+			audiofx_reverb.h \
 			audiofx_timebased.h \
 			audiogate.h \
 			audiofx_mixing.h \

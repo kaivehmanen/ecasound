@@ -53,6 +53,7 @@ const char* ecasound_parameter_help_rep =
 "     -erm:params              mix all channels to channel 'target' \n"
 "     -epp:params              normal pan\n"
 "     -etc:params              chorus\n"
+"     -ete:params              advanced reverb\n"
 "     -etd:params              delay\n"
 "     -etm:params              multitap delay\n"
 "     -etf:params              fake stereo\n"

@@ -33,6 +33,7 @@
 #include "audiofx_analysis.h"
 #include "audiofx_filter.h"
 #include "audiofx_rcfilter.h"
+#include "audiofx_reverb.h"
 #include "audiofx_mixing.h"
 #include "audiofx_timebased.h"
 #include "audiogate.h"
@@ -203,6 +204,7 @@ void register_default_chainops(void) {
   eca_chain_operator_map.register_object("erm", new EFFECT_MIX_TO_CHANNEL());
   eca_chain_operator_map.register_object("etc", new EFFECT_CHORUS());
   eca_chain_operator_map.register_object("etd", new EFFECT_DELAY());
+  eca_chain_operator_map.register_object("ete", new ADVANCED_REVERB());
   eca_chain_operator_map.register_object("etf", new EFFECT_FAKE_STEREO());
   eca_chain_operator_map.register_object("etl", new EFFECT_FLANGER());
   eca_chain_operator_map.register_object("etm", new EFFECT_MULTITAP_DELAY());

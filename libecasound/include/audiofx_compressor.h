@@ -2,7 +2,6 @@
 #define _AUDIOFX_COMPRESSOR_H
 
 #include <vector>
-
 #include "audiofx_amplitude.h"
 
 /**
