@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup-position.cpp: Global chainsetup position
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,4 +52,12 @@ void ECA_CHAINSETUP_POSITION::set_max_length_in_samples(SAMPLE_SPECS::sample_pos
 void ECA_CHAINSETUP_POSITION::set_max_length_in_seconds(double pos_in_seconds)
 {
   set_max_length_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(pos_in_seconds * samples_per_second()));
+}
+
+void ECA_CHAINSETUP_POSITION::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_value)
+{
+  double ratio (new_value);
+  ratio /= samples_per_second();
+  set_max_length_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(max_length_in_samples() * ratio));
+  ECA_AUDIO_POSITION::set_samples_per_second(new_value);
 }

@@ -37,6 +37,13 @@ class ECA_CHAINSETUP_POSITION : public ECA_AUDIO_POSITION {
 
   /*@}*/
 
+  /** @name Functions reimplemented from ECA_SAMPLERATE_AWARE */
+  /*@{*/
+
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_value);
+
+  /*@}*/
+
  protected:
 
   /** @name Protected functions for controlling looping */
