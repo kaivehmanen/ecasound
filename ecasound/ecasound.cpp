@@ -55,6 +55,7 @@ struct ecasound_state {
   sig_atomic_t exit_request;
   int retval;
   bool daemon_mode;
+  bool cerr_output_only_mode;
   bool interactive_mode;
   bool quiet_mode;
 };
@@ -63,7 +64,6 @@ struct ecasound_state {
  * Static/private function definitions
  */
 
-static void ecasound_atexit_cleanup(void);
 static void ecasound_create_eca_objects(struct ecasound_state* state, COMMAND_LINE& cline);
 static void ecasound_launch_daemon(struct ecasound_state* state);
 static void ecasound_main_loop(struct ecasound_state* state);
@@ -73,7 +73,11 @@ void ecasound_parse_command_line(struct ecasound_state* state,
 static void ecasound_print_usage(void);
 static void ecasound_print_version_banner(void);
 static void ecasound_setup_signals(struct ecasound_state* state);
-static void* ecasound_watchdog_thread(void* arg);
+
+extern "C" {
+  static void ecasound_atexit_cleanup(void);
+  static void* ecasound_watchdog_thread(void* arg); 
+}
 
 static struct ecasound_state ecasound_state_global = 
   { 0,        /* ECA_CONSOLE* */
@@ -83,6 +87,7 @@ static struct ecasound_state ecasound_state_global =
     0,        /* sig_wait_t */
     0,        /* return value */
     false,    /* daemon mode */
+    false,    /* cerr-output-only mode */
     false,    /* interactive mode */
     false     /* quiet mode */
   };
@@ -97,7 +102,6 @@ using namespace std;
  */
 int main(int argc, char *argv[])
 {
-  /* FIXME: store a global pointer for cleanup */
   struct ecasound_state* state = &ecasound_state_global;
 
   /* 1. setup signals and watchdog thread */
@@ -113,7 +117,8 @@ int main(int argc, char *argv[])
   if (state->retval == 0) {
    
 #if defined(ECA_USE_NCURSES) || defined (ECA_USE_TERMCAP)
-    if (state->quiet_mode != true) {
+    if (state->quiet_mode != true &&
+	state->cerr_output_only_mode != true) {
       state->console = new ECA_CURSES();
       state->logger = new TEXTDEBUG();
       ECA_LOGGER::attach_logger(state->logger);
@@ -121,7 +126,8 @@ int main(int argc, char *argv[])
     else 
 #endif
       {
-	state->console = new ECA_PLAIN_TEXT();
+	ostream* ostr = (state->cerr_output_only_mode == true) ? &cerr : &cout;
+	state->console = new ECA_PLAIN_TEXT(ostr);
       }
     
     /* 4. print banner */
@@ -292,8 +298,7 @@ void ecasound_parse_command_line(struct ecasound_state* state,
       }
 
       else if (cline.current() == "-D") {
-	/* FIXME: todo */
-	// state->cerr_output_only = true;
+	state->cerr_output_only_mode = true;
       }
       
       else if (cline.current() == "--daemon") {
@@ -405,4 +410,7 @@ void* ecasound_watchdog_thread(void* arg)
   // cerr << endl << "ecasound: watchdog-thread exiting..." << endl;
 
   exit(state->retval);
+
+  /* to keep the compilers happy; never actually executed */
+  return(0);
 }

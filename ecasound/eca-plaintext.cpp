@@ -27,30 +27,35 @@
 
 using namespace std;
 
+ECA_PLAIN_TEXT::ECA_PLAIN_TEXT(std::ostream* ostr)
+{
+  ostream_repp = ostr;
+}
+
 ECA_PLAIN_TEXT::~ECA_PLAIN_TEXT(void)
 {
 }
 
 void ECA_PLAIN_TEXT::print(const std::string& msg)
 {
-  cout << msg << endl;
+  *ostream_repp << msg << endl;
 }
 
 void ECA_PLAIN_TEXT::print_banner(void)
 {
-  cout << "****************************************************************************\n";
-  cout << "*";
-  cout << "               ecasound v" 
+  *ostream_repp << "****************************************************************************\n";
+  *ostream_repp << "*";
+  *ostream_repp << "               ecasound v" 
        << ecasound_library_version
        << " (C) 1997-2002 Kai Vehmanen                 ";
-  cout << "\n";
-  cout << "****************************************************************************\n";
+  *ostream_repp << "\n";
+  *ostream_repp << "****************************************************************************\n";
 }
 
 void ECA_PLAIN_TEXT::read_command(const string& prompt)
 {
-  cout << prompt;
-  cout.flush();
+  *ostream_repp << prompt;
+  ostream_repp->flush();
   getline(cin, last_cmd_rep);
 }
 

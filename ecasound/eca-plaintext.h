@@ -1,6 +1,8 @@
 #ifndef INCLUDED_ECA_PLAINTEXT_H
 #define INCLUDED_ECA_PLAINTEXT_H
 
+#include <iostream>
+
 #include <string>
 #include "eca-console.h"
 
@@ -13,6 +15,11 @@
 class ECA_PLAIN_TEXT : public ECA_CONSOLE {
 
  public:
+
+  /**
+   * Constructor.
+   */
+  ECA_PLAIN_TEXT(std::ostream* ostr);
 
   /**
    * Virtual destructor.
@@ -44,6 +51,7 @@ class ECA_PLAIN_TEXT : public ECA_CONSOLE {
  private:
 
   std::string last_cmd_rep;
+  std::ostream* ostream_repp;
 };
 
 #endif /* INCLUDED_ECA_PLAIN_TEXT_H */
