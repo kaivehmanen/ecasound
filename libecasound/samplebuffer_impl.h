@@ -167,7 +167,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
 	  else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
-	  int16_t s16temp = (int16_t)(sample_type)(stemp * SAMPLE_SPECS::s16_to_st_constant);
+	  int16_t s16temp = (int16_t)(sample_type)(stemp * SAMPLE_SPECS::s16_to_st_constant + 0.5) - 1;
 	  // --- for debugging signal flow
 	  // if (isize == 0) 
 	  //  printf("converted to s16 %d (hex:%x)", s16temp, (unsigned short int)s16temp);
@@ -188,7 +188,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
 	  else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
-	  int16_t s16temp = (int16_t)(sample_type)(stemp * SAMPLE_SPECS::s16_to_st_constant);
+	  int16_t s16temp = (int16_t)(sample_type)(stemp * SAMPLE_SPECS::s16_to_st_constant + 0.5) - 1;
 
 	  // --- for debugging signal flow
 	  // if (isize == 0) 
@@ -210,7 +210,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
 	  else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
-	  int32_t s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s24_to_st_constant);
+	  int32_t s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s24_to_st_constant + 0.5) - 1;
 
 	  target[osize++] = (unsigned char)(s32temp & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
@@ -232,7 +232,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
 	  else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
-	  int32_t s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s24_to_st_constant);
+	  int32_t s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s24_to_st_constant + 0.5) - 1;
 
 	  target[osize++] = 0;
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
@@ -250,7 +250,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
 	  else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
-	  int32_t s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s32_to_st_constant);
+	  int32_t s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s32_to_st_constant + 0.5) - 1;
 
 	  target[osize++] = (unsigned char)(s32temp & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
@@ -266,7 +266,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
 	  else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
-	  int32_t s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s32_to_st_constant);
+	  int32_t s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s32_to_st_constant + 0.5) - 1;
 
 	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
@@ -373,7 +373,6 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
       {
 	for(int c = 0; c < ch; c++) {
 	  if (SAMPLE_SPECS::is_system_littleendian) {
-	    //	    if (osize == 0) cerr << "sisään:" << (*(int32_t*)(source+isize)) << "|\n";
 	    b[0] = source[isize++];
 	    b[1] = source[isize++];
 	    b[2] = source[isize++];
@@ -386,7 +385,6 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 	    b[0] = source[isize++];
 	  }
 	  buffer[c][osize] = (sample_type)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
-	  //	  if (osize == 0) cerr << "sisään3:" << buffer[c][osize] << "|\n";
 	}
       }
       break;

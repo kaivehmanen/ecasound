@@ -26,18 +26,13 @@ public:
 public slots:
  void update_chain_list(void);
  void update_chain_list_clean(void);
-
- // --
- void button_add_file(void);
- void button_remove_file(void);
-/*   void init_wave_edit(void); */
  // --
  void button_add_chain(void);
  void button_remove_chain(void);
  void button_chain_muting(void);
  void button_chain_bypass(void);
 
-  void select_chains();
+ void select_chains();
 
 private slots:
  void not_implemented(void);

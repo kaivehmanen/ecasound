@@ -433,7 +433,7 @@ void QEFile::open_io_object(void) {
 
 void QEFile::update_wave_form_data(void) {
   if (io_object == 0 ||
-      buffersize_rep > 0) return;
+      buffersize_rep == 0) return;
 
   io_object->open();
   if (length_rep != io_object->length_in_samples()) length_rep = io_object->length_in_samples();
