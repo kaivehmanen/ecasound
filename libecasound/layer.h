@@ -1,6 +1,7 @@
 /* layer.h
 
-  Created by SMF aka Antoine Laydier (laydier@usa.net)
+  Created by SMF aka Antoine Laydier <laydier@usa.net>.
+  Minor modifications by Kai Vehmanen <k@eca.cx>.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -46,6 +47,7 @@ class Layer {
   unsigned int sfreq(void);
   unsigned long length(void);
   unsigned int pcmPerFrame(void);
+  int mode(void);
   bool get(const char* filename);
 
   static const char * mode_names[5];
@@ -66,21 +68,21 @@ class Layer {
   static const int MPG_MD_MS_I;
  
  private:
-  int version;
-  int lay;
-  int error_protection;
-  int bitrate_index;
-  int sampling_frequency;
-  int padding;
-  int extension;
-  int mode;
-  int mode_ext;
-  int copyright;
-  int original;
-  int emphasis;
-  int stereo;
-  unsigned int pcm;
-  unsigned long fileSize;
+  int version_rep;
+  int lay_rep;
+  int error_protection_rep;
+  int bitrate_index_rep;
+  int sampling_frequency_rep;
+  int padding_rep;
+  int extension_rep;
+  int mode_rep;
+  int mode_ext_rep;
+  int copyright_rep;
+  int original_rep;
+  int emphasis_rep;
+  int stereo_rep;
+  unsigned int pcm_rep;
+  unsigned long fileSize_rep;
 };
 
 #endif

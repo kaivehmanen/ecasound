@@ -8,7 +8,6 @@
 
 - embedded effect preset parameters
 - internal plugin support
-- new effects - Schroeder reverb
 
 2.x series (1.x -> 2.x requirements):
 
@@ -17,35 +16,26 @@
 
 -----------------------------------------------------------------------
 
-[ Upcoming features/fixes - implemented as soon as possible ]
+[ Bugs to be fixed ]
 
-Input/output devices:
+- commas confuse file name handling [ecatools]
+- cs-save doesn't process -kx options
 
+-----------------------------------------------------------------------
+
+[ Upcoming features - implemented as soon as possible ]
+
+- comments in ecs (chainsetup) files
 - ALSA 0.6.x support [--> update: already in CVS]
-- mpeglib support
-- ogg vorbis plugin
 - internal plugins (this makes it possible to support ALSA, aRts, etc 
   audio objects requiring external libraries to be conditionally
   loaded ==> only one binary-RPM needed)
 - type override for audio objects
-- automatic handling of mono mp3s
 - mp3 bitrate as a command-line parameter
-
-Interactive-mode:
-
 - make separate xxx-list and xxx-status commands (a pure list, and a more
-  verbose xxx-status command)
-
-Effects, routing, dsp routines:
-
+  verbose xxx-status command) [ia-mode]
 - add threshold parameter to -eca
-- better reverbs [--> update: -ete added to 1.7.8r12] 
-- embedded effect preset parameters
-	- "-p[fn]:string,par1,...,parN"
-	
-Ecatools:
-
-- commas confuse file name handling
+- embedded effect preset parameters ("-p[fn]:string,par1,...,parN")
   
 -----------------------------------------------------------------------
 
@@ -62,10 +52,13 @@ Input/output devices:
 	- "-i:ileave,mchannel-file.wav,1" - only reads the 1st channel
 	- "-i:ileave,mchannel-file.wav,2" - only reads the 2nd channel
 	- and so on... the same with outputs
+- mpeglib support
+- ogg vorbis plugin
 
 Effects, routing, dsp routines:
 
 - generic envelope followers
+- Schroeder reverb
 
 Interactive-mode:
 

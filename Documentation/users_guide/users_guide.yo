@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (14052000)
+       (27082000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -183,10 +183,6 @@ ecasound HTML-documentation: url(examples.html)(../examples.html).
 COMMENT(----------------------------------------------------------------)
 subsect(ecasound)
 See url(ecasound(1))(../ecasound_manpage.html).
-
-COMMENT(----------------------------------------------------------------)
-subsect(qtecasound)
-See url(qtecasound(1))(../qtecasound_manpage.html).
 
 COMMENT(----------------------------------------------------------------)
 subsect(ecatools)

@@ -14,7 +14,6 @@ htmlcommand(
 <A HREF=doxygen_pages.html>[Source tree]</A>
 <A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
 <CENTER><H4><A HREF=ecasound_manpage.html>[ecasound(1)]</A>
-<A HREF=qtecasound_manpage.html>[qtecasound(1)]</A>
 <A HREF=ecatools_manpage.html>[ecatools(1)]</A>
 <A HREF=ecasound-iam_manpage.html>[ecasound-iam(1)]</A>
 <A HREF=ecasoundrc_manpage.html>[ecasoundrc(5)]</A></H4></CENTER>

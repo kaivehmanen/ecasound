@@ -1,6 +1,7 @@
 /* layer.cpp
 
-  Created by SMF aka Antoine Laydier (laydier@usa.net)
+  Created by SMF aka Antoine Laydier <laydier@usa.net>.
+  Minor modifications by Kai Vehmanen <k@eca.cx>.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -72,16 +73,17 @@ const unsigned int Layer::s_freq[3][4] =
   {11025, 8000, 8000, 0}
 };
 
-const char * Layer::mode_name(void) {  return (Layer::mode_names[mode]); }
-const char * Layer::layer_name(void) {  return (Layer::layer_names[lay - 1]); }
-const char * Layer::version_name(void) {  return (Layer::version_names[version]); }
-const char * Layer::version_num(void) {  return (Layer::version_nums[version]); }
+const char * Layer::mode_name(void) {  return (Layer::mode_names[mode_rep]); }
+const char * Layer::layer_name(void) {  return (Layer::layer_names[lay_rep - 1]); }
+const char * Layer::version_name(void) {  return (Layer::version_names[version_rep]); }
+const char * Layer::version_num(void) {  return (Layer::version_nums[version_rep]); }
+int Layer::mode(void) { return(mode_rep); }
 unsigned int Layer::bitrate(void) 
-  { return (Layer::bitrates[version][lay - 1][bitrate_index]); }
+  { return (Layer::bitrates[version_rep][lay_rep - 1][bitrate_index_rep]); }
 unsigned int Layer::sfreq(void)
-  {  return (Layer::s_freq[version][sampling_frequency]); }
-unsigned long Layer::length(void) { return  bitrate() ? (fileSize / (unsigned long)bitrate() /125) : 0; }
-unsigned int Layer::pcmPerFrame(void) { return pcm; }
+  {  return (Layer::s_freq[version_rep][sampling_frequency_rep]); }
+unsigned long Layer::length(void) { return  bitrate() ? (fileSize_rep / (unsigned long)bitrate() /125) : 0; }
+unsigned int Layer::pcmPerFrame(void) { return pcm_rep; }
 
 bool Layer::get(const char* filename)
 {
@@ -97,7 +99,7 @@ bool Layer::get(const char* filename)
  // around FILE* compatibility issues, k@eca.cx 
 
   stat(filename, &buf);
-  fileSize = (unsigned long)buf.st_size;
+  fileSize_rep = (unsigned long)buf.st_size;
 
   /* Theoretically reading 1024 instead of just 4 means a performance hit
    * if we transfer over net filesystems... However, no filesystem I know
@@ -129,42 +131,42 @@ bool Layer::get(const char* filename)
   } else {
     switch ((buffer[1] >> 3 & 0x3)) {
     case 3:
-      version = 0;
+      version_rep = 0;
       break;
     case 2:
-      version = 1;
+      version_rep = 1;
       break;
     case 0:
-      version = 2;
+      version_rep = 2;
       break;
     default:
       delete[] buff;
       return (false);
     }
-    lay = 4 - ((buffer[1] >> 1) & 0x3);
-    error_protection = !(buffer[1] & 0x1);
-    bitrate_index = (buffer[2] >> 4) & 0x0F;
-    sampling_frequency = (buffer[2] >> 2) & 0x3;
-    padding = (buffer[2] >> 1) & 0x01;
-    extension = buffer[2] & 0x01;
-    mode = (buffer[3] >> 6) & 0x3;
-    mode_ext = (buffer[3] >> 4) & 0x03;
-    copyright = (buffer[3] >> 3) & 0x01;
-    original = (buffer[3] >> 2) & 0x1;
-    emphasis = (buffer[3]) & 0x3;
-    stereo = (mode == Layer::MPG_MD_MONO) ? 1 : 2;
+    lay_rep = 4 - ((buffer[1] >> 1) & 0x3);
+    error_protection_rep = !(buffer[1] & 0x1);
+    bitrate_index_rep = (buffer[2] >> 4) & 0x0F;
+    sampling_frequency_rep = (buffer[2] >> 2) & 0x3;
+    padding_rep = (buffer[2] >> 1) & 0x01;
+    extension_rep = buffer[2] & 0x01;
+    mode_rep = (buffer[3] >> 6) & 0x3;
+    mode_ext_rep = (buffer[3] >> 4) & 0x03;
+    copyright_rep = (buffer[3] >> 3) & 0x01;
+    original_rep = (buffer[3] >> 2) & 0x1;
+    emphasis_rep = (buffer[3]) & 0x3;
+    stereo_rep = (mode_rep == Layer::MPG_MD_MONO) ? 1 : 2;
 
     // Added by Cp
-    pcm= 32;
-    if( lay == 3 ){
-      pcm*= 18;
-      if( version == 0 )
-        pcm*= 2;
+    pcm_rep = 32;
+    if (lay_rep == 3) {
+      pcm_rep *= 18;
+      if (version_rep == 0)
+        pcm_rep *= 2;
     }
     else{
-      pcm*= 12;
-      if( lay == 2 )
-        pcm*= 3;
+      pcm_rep *= 12;
+      if (lay_rep == 2)
+        pcm_rep *= 3;
     }
 
     delete[] buff;

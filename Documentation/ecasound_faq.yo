@@ -41,7 +41,7 @@ gives you a lot of info. Sometimes however, this is not enough. For
 debugging purposes, you should compile a separate debug version of 
 ecasound. You can do this with "make distclean ; ./configure --enable-debug 
 ; make install". This produces a new set of executables and libraries 
-(libecasound_debug.so, ecasound_debug, qtecasound_debug, etc). Notice
+(libecasound_debug.so, ecasound_debug, etc). Notice
 that these are em(considerably slower) than normal optimized
 versions. To summarize, if ecasound acts weirdly, try to reproduce 
 the behaviour with _debug versions. This way all assertions are
@@ -56,30 +56,7 @@ with proper version numbers).
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
-sect(Installing)
-
-COMMENT(----------------------------------------------------------------)
-subsect(Is installing Qt 2.x going to break KDE 1.x and other apps using Qt 1.xx?)
-You can install the Qt 2.x runtime libs and still run apps using the
-older Qt versions (like KDE). If you compile KDE/Qt programs yourself, 
-you can choose between Qt 1.x and 2.x by changing the symbolic link 
-"libqt.so". If it points to libqt.so.1, the program is linked to 1.x 
-libs and to 2.x libs if it points to libqt.so.2.
-
-See url(this ecasound-list message)(http://www.wakkanet.fi/~kaiv/ecasound/ecasound-list/199909/0073.html)
-for more info.
-
-And of course you can just use the text-mode version of ecasound.
-It can do most things that the X-version (qtecasound) can do.
-
-COMMENT(----------------------------------------------------------------)
-subsect(Does qtecasound require KDE to be installed?)
-No. In addition to the Qt runtime libraries, qtecasound only 
-requires the normal X libraries. In other words it should run
-under any window manager. And most likely it will also stay 
-this way. I might do a KDE/some-other specific version, but
-I'd still support the generic version. After all, ecasound isn't
-actually aimed at the masses... 
+COMMENT(sect(Installing))
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -100,8 +77,7 @@ you haven't installed ecasound to the default location, replace
 work, use "ldd /usr/local/bin/ecasound/" to see what library ecasound 
 tries to use. 
 
-Same applies to other libraries used by ecasound (libkvutils, libqt, 
-libaudiofile, etc).
+Same applies to other libraries used by ecasound (libkvutils, libaudiofile, etc).
 
 COMMENT(----------------------------------------------------------------)
 subsect(How do I use the parameter xxx?)

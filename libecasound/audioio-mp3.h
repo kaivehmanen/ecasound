@@ -45,6 +45,7 @@ class MP3FILE : public AUDIO_IO_BUFFERED {
 
   virtual string name(void) const { return("MP3 file"); }
   virtual string description(void) const { return("Wrapper object that reads mp3s using mpg123 and writes them using lame."); }
+  virtual bool locked_audio_format(void) const { return(true); }
 
   virtual void open(void);
   virtual void close(void);

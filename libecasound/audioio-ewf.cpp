@@ -55,10 +55,12 @@ void EWFFILE::open(void) throw(ECA_ERROR*) {
   child->io_mode(io_mode());
   child->open();
 
-  if (child_length_rep.samples() == 0) child_length_rep = child->length();
   child_offset_rep.set_samples_per_second(child->samples_per_second());
   child_start_pos_rep.set_samples_per_second(child->samples_per_second());
   child_length_rep.set_samples_per_second(child->samples_per_second());
+  if (child_length_rep.samples() == 0) child_length_rep = child->length();
+  if (child_length_rep.samples() + child_start_pos_rep.samples() > child->length_in_samples())
+    child_length_rep.set_samples_per_second(child->length_in_samples() - child_start_pos_rep.samples());
 
   tmp_buffer.number_of_channels(child->channels());
   tmp_buffer.length_in_samples(child->buffersize());
@@ -76,18 +78,20 @@ void EWFFILE::close(void) {
 
 void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
   if (child_active == true) {
-//      cerr << "Pre:\n";
+//      cerr << "Loop-pre/child_active:\n";
 //      cerr << "Position: " << position_in_samples() << ", ";
 //      cerr << "sbuf-length: " << sbuf->length_in_samples() << ", ";
 //      cerr << "child-pos: " << child->position_in_samples() << ", ";
 //      cerr << "child-offset: " << child_offset_rep.samples() << ", ";
-//      cerr << "child-length(): " << child_length_rep.samples() << ".\n";
+//      cerr << "child-startpos: " << child_start_pos_rep.samples() << ", ";
+//      cerr << "child-length: " << child_length_rep.samples() << ".\n";
 
     if (position_in_samples() + sbuf->length_in_samples() < 
-	child_offset_rep.samples() + child_length_rep.samples() - child_start_pos_rep.samples()) {
+	child_offset_rep.samples() + child_length_rep.samples()) { //  - child_start_pos_rep.samples()
 	// ---
 	// case 1: reading child file
 	// ---
+//        cerr << "Looping-case 1:\n";
       child->read_buffer(sbuf);
       position_in_samples_advance(sbuf->length_in_samples());
     }
@@ -100,12 +104,12 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	// case 2a: we're looping
 	// ---
 	ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-ewf) looping child-object" + label());
-//    	cerr << "Looping-pre:\n";
-//    	cerr << "Position: " << position_in_samples() << ", ";
-//    	cerr << "child: " << child->position_in_samples() << ".\n";
-//    	cerr << "child-len: " << child_length_rep.samples() << ".\n";
+//      	cerr << "Looping-case 2a:\n";
+//      	cerr << "Position: " << position_in_samples() << ", ";
+//      	cerr << "child: " << child->position_in_samples() << ".\n";
+//      	cerr << "child-len: " << child_length_rep.samples() << ".\n";
 	child->read_buffer(sbuf);
- 	long int extra = child->position_in_samples() - child_length_rep.samples();
+ 	long int extra = child->position_in_samples() - child_length_rep.samples() - child_start_pos_rep.samples();
 	assert(extra < sbuf->length_in_samples());
 	child->seek_position_in_samples(child_start_pos_rep.samples() + extra);
 	position_in_samples(child_offset_rep.samples() + 
@@ -129,7 +133,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	// ---
 	// case 2b: no looping
 	// ---
-//  	cerr << "Looping-pre2:\n";
+//    	cerr << "Looping-case 2b:\n";
 //  	cerr << "Position: " << position_in_samples() << ", ";
 //  	cerr << "child: " << child->position_in_samples() << ".\n";
 	child_active = false;
@@ -167,12 +171,14 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
       // ---
       // case 3: child file start has not been reached
       // ---
+//        cerr << "Looping-case 3:\n";
       sbuf->make_silent();      
     } 
     else {
       // ---
       // case 4: we're over child start position
       // ---
+//        cerr << "Looping-case 4:\n";
       if (position_in_samples() < child_offset_rep.samples() + child_length_rep.samples()) {
 	ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-ewf) child-object activated" + label());
 	child_active = true;

@@ -125,6 +125,10 @@ void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR*) {
 
   m << "MP3 pcm value: " << pcm_rep << ".";
   ecadebug->msg(ECA_DEBUG::user_objects,m.to_string());
+
+  set_samples_per_second(newlayer.sfreq());
+  set_channels((newlayer.mode() == Layer::MPG_MD_MONO) ? 1 : 2);
+  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 }
 
 void MP3FILE::kill_mpg123(void) {

@@ -15,7 +15,6 @@ htmlcommand(
 <A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home
 page]</A></H4></CENTER>
 <CENTER><H4><A HREF=ecasound_manpage.html>[ecasound(1)]</A>
-<A HREF=qtecasound_manpage.html>[qtecasound(1)]</A>
 <A HREF=ecatools_manpage.html>[ecatools(1)]</A>
 <A HREF=ecasound-iam_manpage.html>[ecasound-iam(1)]</A>
 <A HREF=ecasoundrc_manpage.html>[ecasoundrc(5)]</A></H4></CENTER>
@@ -27,7 +26,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (25.06.2000)
+       (27.08.2000)
        ()
        (Multimedia software)
 
@@ -579,7 +578,6 @@ manpagefiles()
 
 manpageseealso()
 
-	url(qtecasound(1))(qtecasound_manpage.html),
 	url(ecatools(1))(ecatools_manpage.html), 
 	url(ecasound-iam(1))(ecasound-iam_manpage.html)
 	url(ecasoundrc(5))(ecasoundrc_manpage.html), 
