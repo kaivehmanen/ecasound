@@ -116,6 +116,19 @@ class SAMPLE_BUFFER_BASE {
 		      long int srate) throw(ECA_ERROR&);
 
   /**
+   * Same as 'copy_to_buffer()', but 'source' data is 
+   * assumed be in non-interleaved format.
+   *
+   * ensure:
+   *  channels == channel_count_rep
+   */
+  void copy_to_buffer_vector(unsigned char* source,
+			     long int samples,
+			     ECA_AUDIO_FORMAT::Sample_format fmt,
+			     int ch,
+			     long int srate) throw(ECA_ERROR&);
+
+  /**
    * Copy contents of sample buffer to 'target'. Sample data 
    * will be converted according to the given arguments
    * (sample rate, sample format and endianess).
@@ -127,6 +140,19 @@ class SAMPLE_BUFFER_BASE {
 			ECA_AUDIO_FORMAT::Sample_format fmt,
 			int ch,
 			long int srate) throw(ECA_ERROR&);
+
+  /**
+   * Same as 'copy_from_buffer()', but 'source' data is 
+   * assumed be in non-interleaved format.
+   *
+   * ensure:
+   *  channels == channel_count_rep
+   */
+  void copy_from_buffer_vector(unsigned char* target,
+			       ECA_AUDIO_FORMAT::Sample_format fmt,
+			       int ch,
+			       long int srate) throw(ECA_ERROR&);
+  
         
   // ---
   // Buffer setup

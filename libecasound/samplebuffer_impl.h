@@ -299,6 +299,180 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 }
 
 template<class T>
+void SAMPLE_BUFFER_BASE<T>::copy_from_buffer_vector(unsigned char* target,
+						    ECA_AUDIO_FORMAT::Sample_format fmt,
+						    int ch,
+						    long int srate) throw(ECA_ERROR&) {
+  // --------
+  // require:
+  assert(target != 0);
+  assert(ch > 0);
+  assert(srate > 0);
+  // --------
+
+  if (ch != channel_count_rep) number_of_channels(ch);
+  if (srate != sample_rate_rep) resample_to(srate);
+
+  assert(ch == channel_count_rep);
+
+  long int osize = 0;
+  for(int c = 0; c < ch; c++) {
+    for(long int isize = 0; isize < buffersize_rep; isize++) {
+      sample_type stemp = buffer[c][isize];
+      if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
+      else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
+      
+      switch (fmt) {
+      case ECA_AUDIO_FORMAT::sfmt_u8:
+	{
+	  // --- for debugging signal flow
+	  //	  printf("(c %u)(isize %u)(osize %u) converting %.2f, \n",
+	  //		   c, isize, osize, buffer[c][isize]);
+	  target[osize++] = (unsigned
+			     char)((sample_type)(stemp / SAMPLE_SPECS::u8_to_st_constant) + SAMPLE_SPECS::u8_to_st_delta);
+	  // --- for debugging signal flow
+	  //	  printf("converted to u8 %u (hex:%x)\n", target[osize-1], target[osize-1]);
+	  break;
+	}
+      
+      case ECA_AUDIO_FORMAT::sfmt_s16_le:
+	{
+	  int16_t s16temp;
+	  if (stemp < 0) 
+	    s16temp = (int16_t)(sample_type)(stemp * SAMPLE_SPECS::s16_to_st_constant - 0.5);
+	  else 
+	    s16temp = (int16_t)(sample_type)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
+	
+	  // --- for debugging signal flow
+	  // if (isize == 0) 
+	  //  printf("converted to s16 %d (hex:%x)", s16temp, (unsigned short int)s16temp);
+	  // ------------------------------
+	  
+	  // little endian: (LSB, MSB) (Intel).
+	  // big endian: (MSB, LSB) (Motorola).
+	
+	  target[osize++] = (unsigned char)(s16temp & 0xff);
+	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	  break;
+	}
+      
+      case ECA_AUDIO_FORMAT::sfmt_s16_be:
+	{
+	  int16_t s16temp;
+	  if (stemp < 0) 
+	    s16temp = (int16_t)(sample_type)(stemp * SAMPLE_SPECS::s16_to_st_constant - 0.5);
+	  else 
+	    s16temp = (int16_t)(sample_type)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
+	
+	  // little endian: (LSB, MSB) (Intel).
+	  // big endian: (MSB, LSB) (Motorola).
+	  // ---
+	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	  target[osize++] = (unsigned char)(s16temp & 0xff);
+	  break;
+	}
+      
+      case ECA_AUDIO_FORMAT::sfmt_s24_le:
+	{
+	  int32_t s32temp;
+	  if (stemp < 0) 
+	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
+	  else 
+	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
+
+	  target[osize++] = (unsigned char)(s32temp & 0xff);
+	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	  target[osize++] = 0;
+	
+	  if (s32temp < 0) target[osize - 2] |=  0x80;
+	  //    	  if (osize == 4) printf("neg.target: %x:%x:%x:%x.\n",target[osize-4],
+	  //    				 target[osize-3],
+	  //    				 target[osize-2],
+	  //    				 target[osize-1])
+	  break;
+	}
+      
+      case ECA_AUDIO_FORMAT::sfmt_s24_be:
+	{
+	  int32_t s32temp;
+	  if (stemp < 0) 
+	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
+	  else 
+	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
+
+	  target[osize++] = 0;
+	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	  target[osize++] = (unsigned char)(s32temp & 0xff);
+	
+	  if (s32temp < 0) target[osize - 3] |= 0x80;
+	  break;
+	}
+      
+      case ECA_AUDIO_FORMAT::sfmt_s32_le:
+	{
+	  int32_t s32temp;
+	  if (stemp < 0) 
+	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
+	  else 
+	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
+	
+	  target[osize++] = (unsigned char)(s32temp & 0xff);
+	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+	  break;
+	}
+      
+      case ECA_AUDIO_FORMAT::sfmt_s32_be:
+	{
+	  int32_t s32temp;
+	  if (stemp < 0) 
+	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
+	  else 
+	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
+  
+	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	  target[osize++] = (unsigned char)(s32temp & 0xff);
+	  break;
+	}
+   
+      case ECA_AUDIO_FORMAT::sfmt_f32_le:
+	{
+	  union { int32_t i; float f; } f32temp;
+	  f32temp.f = (float)stemp;
+	  target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	  target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	  target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	  target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	  break;
+	}
+
+      case ECA_AUDIO_FORMAT::sfmt_f32_be:
+	{
+	  union { int32_t i; float f; } f32temp;
+	  f32temp.f = (float)stemp;
+	  target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	  target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	  target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	  target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	  break;
+	}
+      
+      default: 
+	{ 
+	  throw(ECA_ERROR("SAMPLEBUFFER", "Unknown sample format! [c_to_b]."));
+   
+	}
+      }
+    }
+  }
+}
+
+template<class T>
 void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 					   long int samples_read,
 					   ECA_AUDIO_FORMAT::Sample_format fmt,
@@ -324,6 +498,189 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 
   for(long int osize = 0; osize < buffersize_rep; osize++) {
     for(int c = 0; c < ch; c++) {
+      switch (fmt) {
+      case ECA_AUDIO_FORMAT::sfmt_u8: 
+	{
+	  buffer[c][osize] = (unsigned char)source[isize++];
+	  buffer[c][osize] -= SAMPLE_SPECS::u8_to_st_delta;
+	  buffer[c][osize] *= SAMPLE_SPECS::u8_to_st_constant;
+	}
+	break;
+	
+      case ECA_AUDIO_FORMAT::sfmt_s16_le:
+	{
+	  // little endian: (LSB, MSB) (Intel)
+	  // big endian: (MSB, LSB) (Motorola)
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    a[0] = source[isize++];
+	    a[1] = source[isize++];
+	  }
+	  else {
+	    a[1] = source[isize++];
+	    a[0] = source[isize++];
+	  }
+	  buffer[c][osize] = (sample_type)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
+	}
+	break;
+
+      case ECA_AUDIO_FORMAT::sfmt_s16_be:
+	{
+	  if (!SAMPLE_SPECS::is_system_littleendian) {
+	    a[0] = source[isize++];
+	    a[1] = source[isize++];
+	  }
+	  else {
+	    a[1] = source[isize++];
+	    a[0] = source[isize++];
+	  }
+	  buffer[c][osize] = (sample_type)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
+	}
+	break;
+
+      case ECA_AUDIO_FORMAT::sfmt_s24_le:
+	{
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    b[0] = source[isize++];
+	    b[1] = source[isize++];
+	    b[2] = source[isize++];
+	    b[3] = source[isize++];
+	  }
+	  else {
+	    b[3] = source[isize++];
+	    b[2] = source[isize++];
+	    b[1] = source[isize++];
+	    b[0] = source[isize++];
+	  }
+	  buffer[c][osize] = (sample_type)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
+	}
+	break;
+
+      case ECA_AUDIO_FORMAT::sfmt_s24_be:
+	{
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    b[3] = source[isize++];
+	    b[2] = source[isize++];
+	    b[1] = source[isize++];
+	    b[0] = source[isize++];
+	  }
+	  else {
+	    b[0] = source[isize++];
+	    b[1] = source[isize++];
+	    b[2] = source[isize++];
+	    b[3] = source[isize++];
+	  }
+	  buffer[c][osize] = (sample_type)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
+	}
+	break;
+
+      case ECA_AUDIO_FORMAT::sfmt_s32_le:
+	{
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    b[0] = source[isize++];
+	    b[1] = source[isize++];
+	    b[2] = source[isize++];
+	    b[3] = source[isize++];
+	  }
+	  else {
+	    b[3] = source[isize++];
+	    b[2] = source[isize++];
+	    b[1] = source[isize++];
+	    b[0] = source[isize++];
+	  }
+	  buffer[c][osize] = (sample_type)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
+	}
+	break;
+
+      case ECA_AUDIO_FORMAT::sfmt_s32_be:
+	{
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    b[3] = source[isize++];
+	    b[2] = source[isize++];
+	    b[1] = source[isize++];
+	    b[0] = source[isize++];
+	  }
+	  else {
+	    b[0] = source[isize++];
+	    b[1] = source[isize++];
+	    b[2] = source[isize++];
+	    b[3] = source[isize++];
+	  }
+	  buffer[c][osize] = (sample_type)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
+	}
+	break;
+
+      case ECA_AUDIO_FORMAT::sfmt_f32_le:
+	{
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    b[0] = source[isize++];
+	    b[1] = source[isize++];
+	    b[2] = source[isize++];
+	    b[3] = source[isize++];
+	  }
+	  else {
+	    b[3] = source[isize++];
+	    b[2] = source[isize++];
+	    b[1] = source[isize++];
+	    b[0] = source[isize++];
+	  }
+	  buffer[c][osize] = (sample_type)(*(float*)b);
+	}
+	break;
+
+      case ECA_AUDIO_FORMAT::sfmt_f32_be:
+	{
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    b[3] = source[isize++];
+	    b[2] = source[isize++];
+	    b[1] = source[isize++];
+	    b[0] = source[isize++];
+	  }
+	  else {
+	    b[0] = source[isize++];
+	    b[1] = source[isize++];
+	    b[2] = source[isize++];
+	    b[3] = source[isize++];
+	  }
+	  buffer[c][osize] = (sample_type)(*(float*)b);
+	}
+	break;
+
+      default: 
+	{ 
+	  throw(ECA_ERROR("SAMPLEBUFFER", "Unknown sample format! [c_to_b]."));
+	}
+      }
+    }
+  }
+  if (srate != sample_rate_rep) resample_from(srate);
+}
+
+template<class T>
+void SAMPLE_BUFFER_BASE<T>::copy_to_buffer_vector(unsigned char* source,
+						  long int samples_read,
+						  ECA_AUDIO_FORMAT::Sample_format fmt,
+						  int ch,
+						  long int srate) throw(ECA_ERROR&) {
+  // --------
+  // require:
+  assert(samples_read >= 0);
+  assert(source != 0);
+  assert(ch > 0);
+  assert(srate > 0);
+  // --------
+
+  if (ch != channel_count_rep) number_of_channels(ch);
+  if (buffersize_rep != samples_read) resize(samples_read);
+
+  assert(ch == channel_count_rep);
+  assert(buffersize_rep == samples_read);
+
+  unsigned char a[2];
+  unsigned char b[4];
+
+  long int isize = 0;
+  for(int c = 0; c < ch; c++) {
+    for(long int osize = 0; osize < buffersize_rep; osize++) {
       switch (fmt) {
       case ECA_AUDIO_FORMAT::sfmt_u8: 
 	{

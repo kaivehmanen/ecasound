@@ -52,6 +52,7 @@ ALSA_PCM_DEVICE_06X::ALSA_PCM_DEVICE_06X (int card,
   is_prepared_rep = false;
   overruns_rep = underruns_rep = 0;
   position_in_samples_rep = 0;
+  nbufs_repp = 0;
 }
 
 void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
@@ -150,10 +151,20 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
   snd_pcm_format_t pf;
   ::memset(&pf, 0, sizeof(pf));
 
-  if (channels() > 1 &&
-      (pcm_params_info_rep.flags & SND_PCM_INFO_INTERLEAVED) != SND_PCM_INFO_INTERLEAVED)
-    throw(SETUP_ERROR(SETUP_ERROR::channels, "AUDIOIO-ALSA3: device can't handle interleaved streams!"));
+  if ((pcm_params_info_rep.flags & SND_PCM_INFO_INTERLEAVED) == SND_PCM_INFO_INTERLEAVED)
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Device supports interleaved stream format.");
+  if ((pcm_params_info_rep.flags & SND_PCM_INFO_NONINTERLEAVED) == SND_PCM_INFO_NONINTERLEAVED)
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Device supports noninterleaved stream format.");
 
+  toggle_interleaved_channels(true);
+  if (channels() > 1 &&
+      (pcm_params_info_rep.flags & SND_PCM_INFO_INTERLEAVED) != SND_PCM_INFO_INTERLEAVED) {
+    toggle_interleaved_channels(false);
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Using noninterleaved stream format.");
+  }
+  else 
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Using interleaved stream format.");
+  
   int format;
   switch(sample_format()) 
     {
@@ -173,7 +184,7 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
     }
 
   unsigned int format_mask = (1 << format);
-  if ((pcm_params_info_rep.formats & format_mask) != format_mask)
+  if ((pcm_params_info_rep.formats & format_mask) != format_mask) 
     throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-ALSA3: Selected sample format not supported by the device!"));
   pf.sfmt = format;
 
@@ -182,17 +193,27 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
     throw(SETUP_ERROR(SETUP_ERROR::sample_rate, "AUDIOIO-ALSA3: Sample rate " +
 			kvu_numtostr(samples_per_second()) + " is out of range!"));
   pf.rate = samples_per_second();
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Supported sample rates; min: " + kvu_numtostr(pcm_params_info_rep.min_rate) + ", max: " + kvu_numtostr(pcm_params_info_rep.max_rate) + ".");
 
   if (static_cast<unsigned int>(channels()) < pcm_params_info_rep.min_channels ||
       static_cast<unsigned int>(channels()) > pcm_params_info_rep.max_channels)
     throw(SETUP_ERROR(SETUP_ERROR::channels, "AUDIOIO-ALSA3: Channel count " +
 			kvu_numtostr(channels()) + " is out of range!"));
   pf.channels = channels();
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Supported channel counts; min: " + kvu_numtostr(pcm_params_info_rep.min_channels) + ", max: " + kvu_numtostr(pcm_params_info_rep.max_channels) + ".");
+  
+  if (interleaved_channels() != true) {
+    if (nbufs_repp == 0)
+      nbufs_repp = new unsigned char* [channels()];
+  }
 
   ::memcpy(&params.format, &pf, sizeof(pf));
 
   params.start_mode = SND_PCM_START_EXPLICIT;
-  params.xfer_mode = SND_PCM_XFER_INTERLEAVED;
+  if (interleaved_channels() == true) 
+    params.xfer_mode = SND_PCM_XFER_INTERLEAVED;
+  else
+    params.xfer_mode = SND_PCM_XFER_NONINTERLEAVED;
   params.xrun_mode = SND_PCM_XRUN_FRAGMENT;
 //    params.xrun_act = SND_PCM_XRUN_ACT_RESTART;
 
@@ -212,6 +233,9 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
       static_cast<unsigned int>(buffersize()) > pcm_params_info_rep.max_fragment_size) 
     throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-ALSA3: buffersize " +
 			kvu_numtostr(buffersize()) + " is out of range!"));
+
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Supported fragment sizes; min: " + kvu_numtostr(pcm_params_info_rep.min_fragment_size) + ", max: " + kvu_numtostr(pcm_params_info_rep.max_fragment_size) + ".");
+
   // <--
   params.buffer_size = pcm_params_info_rep.buffer_size;
   params.frag_size = buffersize();
@@ -310,7 +334,17 @@ void ALSA_PCM_DEVICE_06X::start(void) {
 long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer, 
 					   long int samples) {
   assert(samples <= fragment_size_rep);
-  long int realsamples = ::snd_pcm_read(audio_fd_repp, target_buffer, fragment_size_rep);
+  long int realsamples = 0;
+  if (interleaved_channels() == true)
+    realsamples = ::snd_pcm_read(audio_fd_repp, target_buffer, fragment_size_rep);
+  else {
+    unsigned char* ptr_to_channel = reinterpret_cast<unsigned char*>(target_buffer);
+    for (int channel = 0; channel < channels(); channel++) {
+      nbufs_repp[channel] = ptr_to_channel;
+      ptr_to_channel += samples * frame_size();
+    }
+    realsamples = ::snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), fragment_size_rep);
+  }
   position_in_samples_rep += realsamples;
   return(realsamples);
 }
@@ -331,7 +365,18 @@ void ALSA_PCM_DEVICE_06X::print_status_debug(void) {
 
 void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
   if (samples == fragment_size_rep) {
-    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
+    if (interleaved_channels() == true) 
+      ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
+    else {
+      unsigned char* ptr_to_channel = reinterpret_cast<unsigned char*>(target_buffer);
+      for (int channel = 0; channel < channels(); channel++) {
+	nbufs_repp[channel] = ptr_to_channel;
+	cerr << "Pointer to channel " << channel << ": " << reinterpret_cast<void*>(nbufs_repp[channel]) << endl;
+	ptr_to_channel += samples * frame_size();
+	cerr << "Advancing pointer count to " << reinterpret_cast<void*>(ptr_to_channel) << endl;
+      }
+      ::snd_pcm_writen(audio_fd_repp, reinterpret_cast<void**>(nbufs_repp), fragment_size_rep);
+    }
   }
   else {
     /**
@@ -386,6 +431,8 @@ ALSA_PCM_DEVICE_06X::~ALSA_PCM_DEVICE_06X(void) {
       cerr << ", there were " << overruns_rep << " overruns.\n";
     }
   }
+  if (nbufs_repp != 0)
+    delete nbufs_repp;
 }
 
 void ALSA_PCM_DEVICE_06X::set_parameter(int param, 

@@ -39,6 +39,7 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
 
   long int bytes_read_rep;
   long underruns_rep, overruns_rep;
+  unsigned char **nbufs_repp;
 
   bool is_triggered_rep;
   bool is_prepared_rep;

@@ -1000,8 +1000,9 @@ void ECA_CONTROL_OBJECTS::set_position_chains(double pos_in_seconds) {
  *  is_selected() == true
  */
 void ECA_CONTROL_OBJECTS::set_default_audio_format(const string& sfrm,
-				      int channels, 
-				      long int srate) {
+						   int channels, 
+						   long int srate,
+						   bool interleaving) {
  // --------
   // require:
   assert(is_selected() == true);
@@ -1014,6 +1015,11 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const string& sfrm,
   format += kvu_numtostr(channels);
   format += ",";
   format += kvu_numtostr(srate);
+  format += ",";
+  if (interleaving == true) 
+    format += "i";
+  else
+    format += "n";
 
   try {
     selected_chainsetup_repp->interpret_object_option(format);
@@ -1040,7 +1046,8 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const ECA_AUDIO_FORMAT& forma
 
   set_default_audio_format(format.format_string(), 
 			   static_cast<int>(format.channels()), 
-			   static_cast<long int>(format.samples_per_second()));
+			   static_cast<long int>(format.samples_per_second()),
+			   format.interleaved_channels());
 }
 
 /**

@@ -94,7 +94,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void select_audio_input(const string& name);
   void select_audio_output(const string& name);
   void select_audio_object_by_index(const string& name);
-  void set_default_audio_format(const string& sfrm, int channels, long int srate);
+  void set_default_audio_format(const string& sfrm, int channels, long int srate, bool interleaving);
   void set_default_audio_format(const ECA_AUDIO_FORMAT& format);
 
   AUDIO_IO* get_audio_object(void) const;

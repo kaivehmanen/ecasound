@@ -509,6 +509,10 @@ void ECA_CHAINSETUP::interpret_audio_format (const string& argu) {
       active_sinfo.set_sample_format(get_argument_number(1, argu));
       active_sinfo.set_channels(atoi(get_argument_number(2, argu).c_str()));
       active_sinfo.set_samples_per_second(atol(get_argument_number(3, argu).c_str()));
+      if (get_argument_number(4, argu) == "n")
+	active_sinfo.toggle_interleaved_channels(false);
+      else
+	active_sinfo.toggle_interleaved_channels(true);
       set_default_audio_format(active_sinfo);
       
       MESSAGE_ITEM ftemp;

@@ -3,7 +3,9 @@
 -----------------------------------------------------------------------
 
 2000-10-17  Kai Vehmanen <kaiv@wakkanet.fi>
-	
+
+	* eca-control-objects (set_default_audio_format): added parameter 'interleaving'
+	* samplebuffer.h (copy_from_buffer_vector,copy_to_buffer_vector): added
 	* audioio.h (finite_length_stream): added
 	
 2000-10-14  Kai Vehmanen <kaiv@wakkanet.fi>

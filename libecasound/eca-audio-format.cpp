@@ -27,7 +27,7 @@
 const ECA_AUDIO_FORMAT default_ecasound_audio_format (2, 
 						      44100, 
 						      ECA_AUDIO_FORMAT::sfmt_s16_le,
-						      false);
+						      true);
 ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT (int ch, 
 				    long int srate, 
 				    ECA_AUDIO_FORMAT::Sample_format format, 

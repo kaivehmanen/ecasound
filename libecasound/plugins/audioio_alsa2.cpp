@@ -120,9 +120,10 @@ void ALSA_PCM_DEVICE_05X::open(void) throw(SETUP_ERROR&) {
   ::memset(&pf, 0, sizeof(pf));
 
   if (channels() > 1 &&
-      (pcm_info_rep.flags & SND_PCM_CHNINFO_INTERLEAVE) != SND_PCM_CHNINFO_INTERLEAVE)
+      (pcm_info_rep.flags & SND_PCM_CHNINFO_INTERLEAVE) != SND_PCM_CHNINFO_INTERLEAVE) {
     throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-ALSA2: device can't handle interleaved streams!"));
-
+  }
+  toggle_interleaved_channels(true);
   pf.interleave = 1;
 
   int format;

@@ -93,11 +93,18 @@ void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf) {
   assert(iobuf_uchar_repp != 0);
   assert(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
   // --------
-  sbuf->copy_to_buffer(iobuf_uchar_repp,
-		       read_samples(iobuf_uchar_repp, buffersize_rep),
-		       sample_format(),
-		       channels(),
-		       samples_per_second());
+  if (interleaved_channels() == true)
+    sbuf->copy_to_buffer(iobuf_uchar_repp,
+			 read_samples(iobuf_uchar_repp, buffersize_rep),
+			 sample_format(),
+			 channels(),
+			 samples_per_second());
+  else
+    sbuf->copy_to_buffer_vector(iobuf_uchar_repp,
+			 read_samples(iobuf_uchar_repp, buffersize_rep),
+			 sample_format(),
+			 channels(),
+			 samples_per_second());
   position_in_samples_advance(sbuf->length_in_samples());
 }
 
@@ -108,10 +115,16 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   assert(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
   // --------
   if (buffersize_rep != sbuf->length_in_samples()) buffersize(sbuf->length_in_samples(), samples_per_second());
-  sbuf->copy_from_buffer(iobuf_uchar_repp,
-			 sample_format(),
-			 channels(),
-			 samples_per_second());
+  if (interleaved_channels() == true)
+    sbuf->copy_from_buffer(iobuf_uchar_repp,
+			   sample_format(),
+			   channels(),
+			   samples_per_second());
+  else
+    sbuf->copy_from_buffer_vector(iobuf_uchar_repp,
+				  sample_format(),
+				  channels(),
+				  samples_per_second());
   write_samples(iobuf_uchar_repp, sbuf->length_in_samples());
   position_in_samples_advance(sbuf->length_in_samples());
   extend_position();
