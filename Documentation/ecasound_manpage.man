@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "14\&.02\&.2001" "" "Multimedia software" 
+.TH "ecasound" "1" "19\&.02\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -238,7 +238,7 @@ create them with the proper file name extension before use\&.
 .PP 
 \fBMIDI SETUP\fP
 .PP 
-.IP "-Md:device_name" 
+.IP "-Md:rawmidi,device_name" 
 Set the active MIDI-device\&. \'device_name\' can be anything that 
 can be accessed using the normal UNIX file operations and 
 produces raw MIDI bytes\&. Valid devices are for example OSS rawmidi 

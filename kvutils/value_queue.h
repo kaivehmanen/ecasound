@@ -13,20 +13,20 @@ class VALUE_QUEUE {
     
  private:
 
-  mutable pthread_mutex_t lock;     // mutex ensuring exclusive access to buffer
-  mutable pthread_cond_t cond;
-  mutable bool locked_rep;
+  mutable pthread_mutex_t lock_rep;     // mutex ensuring exclusive access to buffer
+  mutable pthread_cond_t cond_rep;
 
-  deque<pair<int,double> > cmds;
+  pair<int,double> empty_rep;
+  deque<pair<int,double> > cmds_rep;
 
 public:
   /**
-   * Add a new item to the end of the queue.
+   * Adds a new item to the end of the queue.
    */
   void push_back(int key, double value);
 
   /**
-   * Remove the first item.
+   * Removes the first item.
    *
    * require:
    *   is_empty() == false
@@ -34,12 +34,18 @@ public:
   void pop_front(void);
 
   /**
-   * Return the first item.
+   * Returns the first item.
    *
    * require:
    *   is_empty() == false
    */
   const pair<int,double>& front(void);
+
+  /**
+   * Blocks until 'is_empty() != true'. 'timeout_sec' and
+   * 'timeout_usec' specify the upper time limit for blocking.
+   */
+  void poll(int timeout_sec, long int timeout_usec);
 
   /**
    * Is queue empty?

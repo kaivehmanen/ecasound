@@ -65,7 +65,7 @@ void MIDI_CONTROLLER::init(CONTROLLER_SOURCE::parameter_type phasestep) {
     otemp << "(midi-cc) MIDI-controller initialized using controller ";
     otemp.setprecision(0);
     otemp << controller << " and channel " << channel << ".";
-    ecadebug->msg(0, otemp.to_string());
+    ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
 
 }
 

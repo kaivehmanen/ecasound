@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (14.02.2001)
+       (19.02.2001)
        ()
        (Multimedia software)
 
@@ -270,7 +270,7 @@ COMMENT(----------------------------------------------------------------)
 bf(MIDI SETUP)
 
 startdit()
-dit(-Md:device_name)
+dit(-Md:rawmidi,device_name)
 Set the active MIDI-device. 'device_name' can be anything that 
 can be accessed using the normal UNIX file operations and 
 produces raw MIDI bytes. Valid devices are for example OSS rawmidi 

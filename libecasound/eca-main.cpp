@@ -441,10 +441,11 @@ void ECA_PROCESSOR::interactive_loop(void) {
   if (eparams_repp->iactive_rep == true) interpret_queue();
   if (end_request_rep) return;
   if (eparams_repp->status() != ECA_SESSION::ep_status_running) {
-    struct timespec sleepcount;
-    sleepcount.tv_sec = 0;
-    sleepcount.tv_nsec = 1000;
-    nanosleep(&sleepcount, 0);
+//      struct timespec sleepcount;
+//      sleepcount.tv_sec = 0;
+//      sleepcount.tv_nsec = 1000;
+//      nanosleep(&sleepcount, 0);
+    eparams_repp->ecasound_queue_rep.poll(1, 0);
     continue_request_rep = true;
   }
   else 

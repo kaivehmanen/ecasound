@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 140200) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 200201) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -15,6 +15,11 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
+??022001 (v1.9dev3)
+	- changed: -Md syntax to '-Md:rawmidi,device_name', where
+		   'rawmidi' specifies the type while 'device_name' 
+	  	   refers to a file/device name
+	- fixed: MIDI-thread hang when exiting ecasound 
 14022001 (v1.9dev2)
 	- added: -z:nointbuf - minimize the use of internal buffering
 	         done by rt-devices

@@ -198,9 +198,16 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
 
     if (midi_server_rep.is_enabled() != true) midi_server_rep.enable();
       for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
-	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Opening midi device \"" + (*q)->label() + "\".");
 	(*q)->toggle_nonblocking_mode(true);
-	if ((*q)->is_open() == false) (*q)->open();
+	if ((*q)->is_open() != true) {
+	  (*q)->open();
+	  if ((*q)->is_open() != true) {
+	    throw(ECA_ERROR("ECA-CHAINSETUP", 
+			    string("Unable to open MIDI-device: ") +
+			    (*q)->label() +
+			    "."));
+	  }
+	}
       }
     }
     is_enabled_rep = true;
@@ -785,7 +792,7 @@ void ECA_CHAINSETUP::interpret_midi_device (const string& argu) {
 	    string tname = get_argument_number(1, argu);
 	    ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup) MIDI-config: Adding device \"" + tname + "\".");
 	    MIDI_IO* mdev = 0;
-	    mdev = ECA_OBJECT_FACTORY::create_midi_device(tname);
+	    mdev = ECA_OBJECT_FACTORY::create_midi_device(argu);
 	    if (mdev != 0) {
 	      if ((mdev->supported_io_modes() & MIDI_IO::io_readwrite) == MIDI_IO::io_readwrite) {
 		mdev->io_mode(MIDI_IO::io_readwrite);

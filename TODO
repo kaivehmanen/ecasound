@@ -14,7 +14,7 @@
 2.x series:
 
 - MIDI-subsystem updates [some of the specs ready]
-- aim to make the 2.x series release binary-compatible
+- aim is to make the 2.x releases binary-compatible
 
 -----------------------------------------------------------------------
 
@@ -30,7 +30,7 @@
 - embedded effect preset parameters ("-p[fn]:string,par1,...,parN") [done! 1.8.x]
 - metronome signal [done! 1.8.x]
 - ia-mode: make separate xxx-list and xxx-status commands (a pure list, and a more
-  verbose xxx-status command
+  verbose xxx-status command [ party done - 1.9.x ]
 - better MIDI-support (separate MIDI input/output objects) [under work]
 - add threshold parameter to -eca
   

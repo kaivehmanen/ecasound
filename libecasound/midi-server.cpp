@@ -43,6 +43,7 @@ void MIDI_SERVER::io_thread(void) {
   fd_set fds;
   unsigned char buf[3];
   int temp;
+  struct timeval tv;
   
   ecadebug->msg(ECA_DEBUG::user_objects, "(midi-server) Hey, in the I/O loop!");
   while(true) {
@@ -59,7 +60,9 @@ void MIDI_SERVER::io_thread(void) {
     FD_ZERO(&fds);
     FD_SET(fd, &fds);
 
-    int retval = select(fd + 1 , &fds, NULL, NULL, NULL);
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;
+    int retval = select(fd + 1 , &fds, NULL, NULL, &tv);
     
     if (retval) {
       temp = ::read(fd, buf, 1);
@@ -76,6 +79,10 @@ void MIDI_SERVER::io_thread(void) {
 	while(buffer_rep.size() > max_queue_size_rep) {
 	  cerr << "(eca-midi) dropping midi bytes" << endl;
 	  buffer_rep.pop_front();
+	}
+	for(int m = 0; m < handlers_rep.size(); m++) {
+	  MIDI_HANDLER* p = handlers_rep[m];
+	  if (p != 0) p->insert(buf[n]);
 	}
       }
       parse_receive_queue();
@@ -254,6 +261,31 @@ void MIDI_SERVER::unregister_client(MIDI_IO* mobject) {
 }
 
 /**
+ * Registers a new MIDI-handler. The server will send 
+ * all received MIDI-data to the handler.
+ */
+void MIDI_SERVER::register_handler(MIDI_HANDLER* object) { 
+  handlers_rep.push_back(object);
+  ecadebug->msg(ECA_DEBUG::user_objects, 
+		"Registering handler " +
+		kvu_numtostr(handlers_rep.size() - 1) +
+		".");
+}
+
+/**
+ * Unregisters the handler object given as the argument. No
+ * resources are freed during this call.
+ */
+void MIDI_SERVER::unregister_handler(MIDI_HANDLER* object) { 
+  for(unsigned int n = 0; n < handlers_rep.size(); n++) {
+    if (handlers_rep[n] == object) {
+      handlers_rep[n] = 0;
+      break;
+    }
+  }
+}
+
+/**
  * Adds a new client to which MMC-messages are sent
  * during processing. 
  *
@@ -407,16 +439,16 @@ void MIDI_SERVER::parse_receive_queue(void) {
 	if (current_ctrl_channel_rep != -1) {
 	  if (current_ctrl_number == -1) {
 	    current_ctrl_number = static_cast<int>(byte);
-//      	    cerr << endl << "C:" << current_ctrl_number << ".";
+//        	    cerr << endl << "C:" << current_ctrl_number << ".";
 	  }
 	  else {
 	    if (controller_values_rep.find(pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)) 
 		!= controller_values_rep.end()) {
 	      controller_values_rep[pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] = static_cast<int>(byte);
-//    	      cerr << endl << "(midi-server) Value:" 
-//    		   << controller_values_rep[pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] 
-//    		   << ", ch:" << current_ctrl_channel_rep 
-//    		   << ", ctrl:" << current_ctrl_number << ".";
+//      	      cerr << endl << "(midi-server) Value:" 
+//      		   << controller_values_rep[pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] 
+//      		   << ", ch:" << current_ctrl_channel_rep 
+//      		   << ", ctrl:" << current_ctrl_number << ".";
 	    }
 //  	    else {
 //  	      cerr << endl << "E:" << " found an entry we are not following..." << endl;

@@ -27,7 +27,7 @@ const char* ecasound_parameter_help_rep =
 "     -o[:]outfile             specify a new outfile (assigned to active chains)\n"
 "     -y:seconds               set start position for last specified input/output\n"
 " --- \n"
-"     -Md:midi_device          set MIDI-device\n"
+"     -Md:rawmidi,midi_device  set MIDI-device\n"
 "     -Mms:device_id           send MMC start/stop\n"
 "     -Mss                     send MIDI start/stop\n"
 " --- \n"

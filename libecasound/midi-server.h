@@ -13,6 +13,16 @@
 #include "midiio.h"
 
 /**
+ * Interface class for specifying custom MIDI-handlers.
+ */
+class MIDI_HANDLER {
+
+ public:
+  
+  virtual void insert(unsigned char byte) = 0;
+};
+
+/**
  * MIDI i/o engine.
  *
  * @author Kai Vehmanen
@@ -38,6 +48,7 @@ class MIDI_SERVER : public DEFINITION_BY_CONTRACT {
   vector<MIDI_IO*> clients_rep;
   bool midi_sync_send_rep;
   bool midi_sync_receive_rep;
+  vector<MIDI_HANDLER*> handlers_rep;
 
   pthread_t io_thread_rep;
   bool thread_running_rep;
@@ -75,6 +86,9 @@ class MIDI_SERVER : public DEFINITION_BY_CONTRACT {
 
   void register_client(MIDI_IO* mobject);
   void unregister_client(MIDI_IO* mobject);
+
+  void register_handler(MIDI_HANDLER* handler);
+  void unregister_handler(MIDI_HANDLER* handler);
 
   void add_mmc_send_id(int id);
   void remove_mmc_send_id(int id);

@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-02-19  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* midi-server (register_handler, unregister_handler): added
+	
 2001-02-14  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* midi-parser.h (all): new module

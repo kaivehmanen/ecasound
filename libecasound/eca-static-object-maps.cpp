@@ -366,7 +366,7 @@ void register_internal_plugins(void) {
 }
 
 void register_default_midi_devices(void) {
-  eca_midi_device_map.register_object("/dev/midi[0-9]*", new MIDI_IO_RAW());
+  eca_midi_device_map.register_object("^rawmidi$", new MIDI_IO_RAW());
 }
 
 void register_ladspa_plugins(void) {

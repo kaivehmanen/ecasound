@@ -2,6 +2,10 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2001-02-19  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* value_queue.h (poll): added
+		
 2000-11-18  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* procedure_timer.h (all): added

@@ -25,7 +25,7 @@
 
 #include "eca-debug.h"
 
-MIDI_IO_RAW::MIDI_IO_RAW(const string& name) { label(name); }
+MIDI_IO_RAW::MIDI_IO_RAW(const string& name) { label("rawmidi"); device_name_rep = name; }
 
 MIDI_IO_RAW::~MIDI_IO_RAW(void) { if (is_open()) close(); }
 
@@ -50,8 +50,9 @@ void MIDI_IO_RAW::open(void) {
     }
   }
   if (nonblocking_mode() == true) flags |= O_NONBLOCK;
-  
-  fd_rep = ::open(label().c_str(), flags);
+
+  ecadebug->msg(ECA_DEBUG::system_objects, "(midio-raw) Opening midi device \"" + device_name_rep + "\".");
+  fd_rep = ::open(device_name_rep.c_str(), flags);
   if (fd_rep < 0) {
     toggle_open_state(false);
   }
@@ -81,4 +82,28 @@ long int MIDI_IO_RAW::write_bytes(void* target_buffer, long int bytes) {
   if (res >= 0) return(res);
   finished_rep = true;
   return(0);
+}
+
+void MIDI_IO_RAW::set_parameter(int param, 
+				string value) {
+  switch (param) {
+  case 1: 
+    label(value);
+    break;
+
+  case 2: 
+    device_name_rep = value;
+    break;
+  }
+}
+
+string MIDI_IO_RAW::get_parameter(int param) const {
+  switch (param) {
+  case 1: 
+    return(label());
+
+  case 2: 
+    return(device_name_rep);
+  }
+  return("");
 }

@@ -294,3 +294,4 @@ string ALSA_PCM_DEVICE_032::get_parameter(int param) const {
 }
 
 #endif // ALSALIB_032
+

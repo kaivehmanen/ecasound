@@ -19,28 +19,26 @@
 
 #include <string>
 #include <deque>
+#include <unistd.h>
 #include <pthread.h>
+#include <sys/time.h>
+#include <errno.h>
 
 #include "value_queue.h"
 
 VALUE_QUEUE::VALUE_QUEUE(void) { 
-  pthread_mutex_init(&lock, NULL);
-  pthread_cond_init(&cond, NULL);
-  locked_rep = false;
+  pthread_mutex_init(&lock_rep, NULL);
+  pthread_cond_init(&cond_rep, NULL);
+  empty_rep = pair<int,double>(0, 0.0f);
 }
 
 void VALUE_QUEUE::push_back(int key, double value) {
-  pthread_mutex_lock(&lock);
-  while (locked_rep == true) {
-    pthread_cond_wait(&cond, &lock);
-  }
-  locked_rep = true;
+  pthread_mutex_lock(&lock_rep);
 
-  cmds.push_back(pair<int,double>(key, value));
+  cmds_rep.push_back(pair<int,double>(key, value));
 
-  locked_rep = false;
-  pthread_cond_broadcast(&cond);
-  pthread_mutex_unlock(&lock);
+  pthread_cond_broadcast(&cond_rep);
+  pthread_mutex_unlock(&lock_rep);
 }
 
 void VALUE_QUEUE::pop_front(void) {
@@ -49,17 +47,11 @@ void VALUE_QUEUE::pop_front(void) {
   assert(is_empty() == false);
   // --------
 
-  pthread_mutex_lock(&lock);
-  while (locked_rep == true) {
-    pthread_cond_wait(&cond, &lock);
-  }
-  locked_rep = true;
+  pthread_mutex_lock(&lock_rep);
 
-  cmds.pop_front();
+  cmds_rep.pop_front();
 
-  locked_rep = false;
-  pthread_cond_broadcast(&cond);
-  pthread_mutex_unlock(&lock);
+  pthread_mutex_unlock(&lock_rep);
 }    
 
 const pair<int,double>& VALUE_QUEUE::front(void) {
@@ -68,32 +60,38 @@ const pair<int,double>& VALUE_QUEUE::front(void) {
   assert(is_empty() == false);
   // --------
 
-  pthread_mutex_lock(&lock);
-  while (locked_rep == true) {
-    pthread_cond_wait(&cond, &lock);
-  }
-  locked_rep = true;
+  pthread_mutex_lock(&lock_rep);
 
-  const pair<int,double>& s = cmds.front();
+  const pair<int,double>& s = cmds_rep.front();
 
-  locked_rep = false;
-  pthread_cond_broadcast(&cond);
-  pthread_mutex_unlock(&lock);
+  pthread_mutex_unlock(&lock_rep);
   return(s);
 }
 
-bool VALUE_QUEUE::is_empty(void) const {
-  pthread_mutex_lock(&lock);
-  while (locked_rep == true) {
-    pthread_cond_wait(&cond, &lock);
-  }
-  locked_rep = true;
-  
-  bool result = cmds.empty(); 
+void VALUE_QUEUE::poll(int timeout_sec,
+		       long int timeout_usec) {
+  struct timeval now;
+  struct timespec timeout;
+  int retcode;
 
-  locked_rep = false;
-  pthread_cond_broadcast(&cond);
-  pthread_mutex_unlock(&lock);
+  pthread_mutex_lock(&lock_rep);
+  gettimeofday(&now, 0);
+  timeout.tv_sec = now.tv_sec + timeout_sec;
+  timeout.tv_nsec = now.tv_usec * 1000 + timeout_usec * 1000;
+  retcode = 0;
+  while (cmds_rep.empty() == true && retcode != ETIMEDOUT) {
+    retcode = pthread_cond_timedwait(&cond_rep, &lock_rep, &timeout);
+  }
+  pthread_mutex_unlock(&lock_rep);
+  return;
+}
+
+bool VALUE_QUEUE::is_empty(void) const {
+  pthread_mutex_lock(&lock_rep);
+  
+  bool result = cmds_rep.empty(); 
+
+  pthread_mutex_unlock(&lock_rep);
 
   return(result);
 }

@@ -25,6 +25,7 @@
 #include <string>
 #include <cstring>
 #include <cstdio>
+#include <errno.h>
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
@@ -47,14 +48,18 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   if (is_open() == true) return;
   if (io_mode() == io_read) {
     if ((audio_fd = ::open(label().c_str(), O_RDONLY, 0)) == -1) {
-      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-OSS: unable to open OSS-device to O_RDONLY"));
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, 
+			"AUDIOIO-OSS: unable to open OSS-device to O_RDONLY (" +
+			  kvu_numtostr(errno) + ")"));
     }
   }
   else if (io_mode() == io_write) {
     if ((audio_fd = ::open(label().c_str(), O_WRONLY, 0)) == -1) {
       // Opening device failed
       perror("(eca-oss)");
-      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-OSS: unable to open OSS-device to O_RWONLY"));
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, 
+			"AUDIOIO-OSS: unable to open OSS-device to O_RWONLY (" +
+ 			  kvu_numtostr(errno) + ")"));
     }
   }
   else {
@@ -76,12 +81,16 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
     if (io_mode() == io_read) {
       int enable_bits = ~PCM_ENABLE_INPUT; // This disables recording
       if (::ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
-	throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-OSS: OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
+	throw(SETUP_ERROR(SETUP_ERROR::unexpected, 
+			  "AUDIOIO-OSS:  OSS-device doesn't support SNDCTL_DSP_SETTRIGGER (" +
+			  kvu_numtostr(errno) + ")"));
     }      
     else if (io_mode() == io_write) {
       int enable_bits = ~PCM_ENABLE_OUTPUT; // This disables playback
       if (::ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
-	throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-OSS: OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
+	throw(SETUP_ERROR(SETUP_ERROR::unexpected, 
+			  "AUDIOIO-OSS: OSS-device doesn't support SNDCTL_DSP_SETTRIGGER (" +
+			  kvu_numtostr(errno) + ")"));
     }
   }
   else {
