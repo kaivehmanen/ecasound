@@ -3,6 +3,7 @@ Status: OPEN
 
 (edi-1): Initial reverb-spike with the -ete reverb.
         - submitted: Anthony Paul Van Groningen, 04.01.2001
+	- fixed: Hans-Georg Fischer, 07.12.2002
 
 ------------------------------------------------------------------------
 Details:

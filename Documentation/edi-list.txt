@@ -27,6 +27,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+07.12.2002 - edi-1 closed
 16.11.2002 - edi-35 added
 07.11.2002 - edi-29 closed
 31.10.2002 - edi-27 closed
@@ -50,8 +51,6 @@ xx.xx.2001 no history information
 -----------------------------------------------------------------------
 [ Section: Bugs, problems ]
 
-(edi-1): Initial reverb-spike with the -ete reverb.
-	- submitted: Anthony Paul Van Groningen, 04.01.2001
 (edi-25): Distortion with multitap delay -etm if delay length changes
 	  dynamically.
         - submitted: rjpoelstra, 27.01.2002
@@ -95,6 +94,9 @@ xx.xx.2001 no history information
 -----------------------------------------------------------------------
 [ Section: Closed items ]
 
+(edi-1): Initial reverb-spike with the -ete reverb.
+	- submitted: Anthony Paul Van Groningen, 04.01.2001
+	- fixed: Hans-Georg Fischer, 07.12.2002
 (edi-2): Possibility to specify audio object's type instead of using 
 	 filename extensions.
 	- submitted: Toby Shepard, 13.07.2001
