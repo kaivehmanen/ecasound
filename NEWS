@@ -13,6 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+xx082004 (v2.3.4)  -** stable release **-
 05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command
