@@ -113,20 +113,20 @@ void MP3FILE::write_samples(void* target_buffer, long int samples) {
 }
 
 void MP3FILE::seek_position(void) {
-  if (is_open() == true) {
-    finished_rep = false;
-    if (io_mode() == io_read)
-      kill_mpg123();
-    else
-      kill_lame();
+  if (last_position_rep != position_in_samples()) {
+    if (is_open() == true) {
+      finished_rep = false;
+      if (io_mode() == io_read)
+	kill_mpg123();
+      else
+	kill_lame();
+
+      if (io_mode() == io_read)
+	fork_mpg123(); 
+      else
+	fork_lame();
+    }
   }
-//    cerr << "Just killed mpg123." << endl;
-  if (io_mode() == io_read) {
-//      cerr << "Forking mpg123." << endl;
-    fork_mpg123(); 
-  }
-  else
-    fork_lame();
 }
 
 void MP3FILE::get_mp3_params(const string& fname) throw(AUDIO_IO::SETUP_ERROR&) {
@@ -176,6 +176,7 @@ void MP3FILE::fork_mpg123(void) {
   if (cmd.find("%o") != string::npos) {
     cmd.replace(cmd.find("%o"), 2, kvu_numtostr((long)(position_in_samples() / pcm_rep)));
   }
+  last_position_rep = position_in_samples();
   ecadebug->msg(ECA_DEBUG::user_objects,cmd);
   set_fork_command(cmd);
   set_fork_file_name(label());

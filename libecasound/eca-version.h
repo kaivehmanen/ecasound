@@ -24,7 +24,7 @@ extern const long int ecasound_library_version_current;
 extern const long int ecasound_library_version_revision;
 extern const long int ecasound_library_version_age;
 
-#define ECASOUND_LIBRARY_VERSION             "1.9dev3"
+#define ECASOUND_LIBRARY_VERSION             "1.9dev4"
 #define ECASOUND_LIBRARY_VERSION_CURRENT     7
 #define ECASOUND_LIBRARY_VERSION_REVISION    0
 #define ECASOUND_LIBRARY_VERSION_AGE         0

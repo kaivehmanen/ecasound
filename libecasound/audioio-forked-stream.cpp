@@ -238,8 +238,10 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
 }
 
 void AUDIO_IO_FORKED_STREAM::clean_child(void) {
-  kill(pid_of_child_rep, SIGKILL);
-  waitpid(pid_of_child_rep, 0, 0);
+  if (pid_of_child_rep > 0) {
+    kill(pid_of_child_rep, SIGTERM);
+    waitpid(pid_of_child_rep, 0, 0);
+  }
   ::close(fd_rep);
   if (tmp_file_created_rep == true) {
     ::remove(tmpfile_repp);
