@@ -2,7 +2,8 @@
 #define _ECA_DEBUG_H
 
 #include <qwidget.h>
-#include <qmultilinedit.h>
+#include <qtextview.h>
+#include <qstring.h>
 
 class QEDebug : public QWidget
 {
@@ -11,17 +12,13 @@ public:
   QEDebug( QWidget *parent=0, const char *name=0 );
   QSize sizeHint(void) const;
 
-signals:
-  void append(const QString&);
-
 protected:
   void	timerEvent( QTimerEvent * );
   void resizeEvent( QResizeEvent * );
 
-
 private:
-  QMultiLineEdit* mle;  
+  QString t;
+  QTextView* tview;
 };
 
 #endif
-

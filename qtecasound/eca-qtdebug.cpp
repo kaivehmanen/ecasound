@@ -20,30 +20,22 @@
 #include <string>
 
 #include <qwidget.h>
-#include <qmultilinedit.h>
 #include <qfont.h>
 #include <qstring.h>
+#include <qtextview.h>
+#include <qregexp.h>
 
 #include <kvutils.h>
 
 #include "qtdebug_if.h"
 #include "eca-qtdebug.h"
 
-QEDebug::QEDebug( QWidget *parent=0, const char *name) 
+QEDebug::QEDebug( QWidget *parent, const char *name) 
         : QWidget( parent, name )
 {
   startTimer(10);
 
-  //  setMinimumSize(100, 100);
-  //  setMaximumSize(600, 600);
-
-  mle = new QMultiLineEdit(this, "mle");
-  mle->setAutoUpdate(true);
-  mle->setFixedVisibleLines(1000);
-  mle->setMinimumSize(width(), height());
-
-  connect(this, SIGNAL(append(const QString&)), mle, SLOT(append(const QString&)) );
-  mle->setReadOnly(true);
+  tview = new QTextView(this, "tview");
 }
 
 QSize QEDebug::sizeHint(void) const {
@@ -53,30 +45,19 @@ QSize QEDebug::sizeHint(void) const {
 void QEDebug::timerEvent( QTimerEvent * ) {
   if (qtdebug_queue.cmds_available() == true) {
     string s = qtdebug_queue.front();
-    //    debug(s.c_str());
     qtdebug_queue.pop_front();
-    string t = "";
-
-    QFont somefont;
-    for(string::const_iterator p = s.begin(); p != s.end(); p++) {
-      if (*p == '\e') {
-	while(*p != 'm') ++p;
-      }
-      else if (*p == '\n') {
-	emit append(t.c_str());
-	mle->setCursorPosition (mle->numLines(), 0);
-	t = "";
-      }
-      else if ((int)*p < 33)
-	t += ' ';
-      else 
-	t += *p;
-    }
-    emit append(QString(t.c_str()));
-    mle->setCursorPosition (mle->numLines(), 0);
+    QString temp (s.c_str());
+    temp.replace(QRegExp("\n"), "<br>");
+    t += temp;
+    t += "<br>";
+    if (t.length() > 1024) t = t.right(1024);
+    tview->setTextFormat(Qt::RichText);
+    tview->setText("<qt>" + t + "</qt>");
+    tview->verticalScrollBar()->setValue(tview->verticalScrollBar()->maxValue());
+    //    tview->ensureVisible(0, tview->height(), 0, 0);
   }
 }
 
 void QEDebug::resizeEvent( QResizeEvent * ) {
-  mle->resize(width(), height());
+  tview->resize(width(), height());
 }

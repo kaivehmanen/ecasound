@@ -54,16 +54,15 @@ void SINE_OSCILLATOR::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_typ
   switch (param) {
   case 1: 
     frequency(value);
+    L = 1.0 / frequency();   // length of one wave in seconds
+    phasemod = 2.0 * M_PI / L; 
     break;
 
   case 2: 
     phase_offset(static_cast<double>(value * M_PI));
+    phase = phase_offset();
     break;
   }
-
-  L = 1.0 / frequency();   // length of one wave in seconds
-  phase = phase_offset();
-  phasemod = 2.0 * M_PI / L; 
 }
 
 DYNAMIC_PARAMETERS::parameter_type SINE_OSCILLATOR::get_parameter(int param) const { 

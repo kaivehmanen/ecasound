@@ -35,7 +35,7 @@ void QTDEBUG_IF::set_debug_level(int level) {
 void QTDEBUG_IF::control_flow(const string& part) {
   if (is_enabled() == false) return; 
    MESSAGE_ITEM m;
-   m << "[[1m " << part << "[0m ] ";
+   m << "--- [ <b> " << part << "</b> ] ---";
    //   for (unsigned char n = 0; n < (69 - part.size()); n++)
    //     m << '-';
    qtdebug_queue.push_back(m.to_string());

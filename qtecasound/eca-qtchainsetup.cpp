@@ -131,13 +131,13 @@ void QEChainsetup::init_gen_buttons(void) {
 		      filesetupview,
 		      SLOT(setFocus()));
 
-  gen_buttons->add_button(new QPushButton("Focus to (c)hains",gen_buttons), 
-		      ALT+Key_C,
+  gen_buttons->add_button(new QPushButton("Focus (t)o chains",gen_buttons), 
+		      ALT+Key_T,
 		      chainsetupview,
 		      SLOT(setFocus()));
 
-  gen_buttons->add_button(new QPushButton("(Q)uit",gen_buttons), 
-		      ALT+Key_Q,
+  gen_buttons->add_button(new QPushButton("(C)lose",gen_buttons), 
+		      ALT+Key_C,
 		      this,
 		      SLOT(close()));
 }
@@ -174,8 +174,8 @@ void QEChainsetup::init_chain_buttons(void) {
 		      this,
 		      SLOT(button_add_chain()));
 
-  chain_buttons->add_button(new QPushButton("(D)elete chain",chain_buttons), 
-		      ALT+Key_D,
+  chain_buttons->add_button(new QPushButton("Remo(v)e chain",chain_buttons), 
+		      ALT+Key_V,
 		      this,
 		      SLOT(button_remove_chain()));
 

@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (07.02.2000)
+       (08.02.2000)
        ()
        (Multimedia software)
 
@@ -458,6 +458,12 @@ controller number 'controller' are used as the controller
 source. The MIDI-device is specified in ./ecasoundrc (see 
 em(ecasoundrc(5))). Defaults to em(/dev/midi).
 
+dit(-kx)
+This is a special switch that can be used when you need
+to control controller parameters with another controller. 
+When you specify em(-kx), the last specified controller 
+will be set as the control target. Then you just add
+another controller as usual. 
 enddit()
 
 bf(INTERACTIVE MODE)

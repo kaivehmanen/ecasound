@@ -127,13 +127,13 @@ void QESession::init_buttons(void) {
 		      this,
 		      SLOT(button_save()));
 
-  buttons->add_button(new QPushButton("(D)elete",buttons), 
-		      ALT+Key_D,
+  buttons->add_button(new QPushButton("(R)emove",buttons), 
+		      ALT+Key_R,
 		      this,
 		      SLOT(button_del()));
 
-  buttons->add_button(new QPushButton("Dis/(c)onnect",buttons), 
-		      ALT+Key_C,
+  buttons->add_button(new QPushButton("(D)is/connect",buttons), 
+		      ALT+Key_D,
 		      this,
 		      SLOT(button_toggle_connected()));
 
@@ -147,8 +147,8 @@ void QESession::init_buttons(void) {
 		      this,
 		      SLOT(button_edit_chainsetup()));
 
-  buttons->add_button(new QPushButton("(Q)uit",buttons), 
-		      ALT+Key_Q,
+  buttons->add_button(new QPushButton("(C)lose",buttons), 
+		      ALT+Key_C,
 		      this,
 		      SLOT(close()));
 }

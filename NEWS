@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 080200) **
+** ecasound - user visible changes (NEWS)      (last edited: 090200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -25,12 +25,15 @@ Last officially released version is -*> v1.6.12r10 <*-
 		 controller parameters with other controllers
 	- added: ia-mode command "ctrl-status" (controller status)
 	- added: qtecasound - controller status pushbutton
+	- added: qtecasound - a nicer looking debug-window
 	- removed: qtecasound - waveform view
 	- changed: ecawave is now the default ext. wave-editor
 	- changed: all shortcuts are now alt+key combinations
-	- changed: ia-mode commands "cop-add-controller" to
-		   "ctrl-add" and "cop-remove-controller" to
+	- changed: renamed ia-mode commands "cop-add-controller" 
+		   to "ctrl-add" and "cop-remove-controller" to
 		   "ctrl-remove"
+	- changed: qtecasound - some renamed pushbuttons and 
+		   reassigned shortcut keys
 	- fixed: qtecasound - position slider wasn't working
 	- fixed: instead of just outputting raw ANSI-codes, 
 		 standard ncurses routines are now used

@@ -523,7 +523,7 @@ string ECA_CONTROLLER::controller_status(void) const {
     for(p = 0; p < (*chain_citer)->gcontrollers.size(); p++) {
       mitem << "\t" << p + 1 << ". " << (*chain_citer)->gcontrollers[p]->name() << ": ";
       for(int n = 0; n < (*chain_citer)->gcontrollers[p]->number_of_params(); n++) {
-	mitem << "[" << n + 1 << "] ";
+	mitem << "\n\t\t[" << n + 1 << "] ";
 	mitem << (*chain_citer)->gcontrollers[p]->get_parameter_name(n + 1);
 	mitem << " ";
 	mitem << kvu_numtostr((*chain_citer)->gcontrollers[p]->get_parameter(n + 1));
@@ -531,7 +531,7 @@ string ECA_CONTROLLER::controller_status(void) const {
       }
       st_info_string = (*chain_citer)->gcontrollers[p]->status();
       if (st_info_string.empty() == false) {
-	mitem << "\n\tStatus info:\n\t" << st_info_string;
+	mitem << "\n\t -- Status info: " << st_info_string;
       }
       if (p < (*chain_citer)->gcontrollers.size()) mitem << "\n";
     }

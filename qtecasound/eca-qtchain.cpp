@@ -93,8 +93,8 @@ void QEChain::init_buttons(void) {
 		      this,
 		      SLOT(not_implemented()));
 
-  buttons->add_button(new QPushButton("(Q)uit",buttons), 
-		      ALT+Key_Q,
+  buttons->add_button(new QPushButton("(C)lose",buttons), 
+		      ALT+Key_C,
 		      this,
 		      SLOT(close()));
 }
