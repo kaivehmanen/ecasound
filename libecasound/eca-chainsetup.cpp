@@ -551,11 +551,14 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
   case 'p':
     {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting preset \"" + argu + "\".");
+      CHAIN_OPERATOR* cop = 0;
+
       if (argu.size() < 3) return;  
       switch(argu[2]) {
       case 'f':
 	{
-	  add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(get_argument_number(1,argu))));
+//  	  add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(get_argument_number(1,argu))));
+          cop = dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(get_argument_number(1,argu)));
 	  break;
 	}
 
@@ -566,7 +569,8 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
 	  map<string,string>::const_iterator p = preset_map.begin();
 	  while (p != preset_map.end()) {
 	    if (p->first == name) {
-	      add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new GLOBAL_PRESET(name)));
+//	      add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new GLOBAL_PRESET(name)));
+	      cop = dynamic_cast<CHAIN_OPERATOR*>(new GLOBAL_PRESET(name));
 	    }
 	    ++p;
 	  }
@@ -574,6 +578,17 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
 	}
 	
       default: { }
+      }
+      if (cop != 0) {
+          MESSAGE_ITEM otemp;
+          for(int n = 0; n < cop->number_of_params(); n++) {
+              cop->set_parameter(n + 1, atof(get_argument_number(n + 2, argu).c_str()));
+              otemp << cop->get_parameter_name(n + 1) << " = ";
+              otemp << cop->get_parameter(n +1);
+              if (n + 1 < cop->number_of_params()) otemp << ", ";
+          }
+          ecadebug->msg(otemp.to_string());          
+          add_chain_operator(cop);
       }
       break;
     }

@@ -1,7 +1,8 @@
-#ifndef _PRESET_H
-#define _PRESET_H
+#ifndef INCLUDED_PRESET_H
+#define INCLUDED_PRESET_H
 
 #include <string>
+#include <map>
 
 #include <kvutils/definition_by_contract.h>
 
@@ -16,6 +17,7 @@ class AUDIO_IO;
 /**
  * Class for representing effect presets
  *
+ * @author Arto Hamara
  * @author Kai Vehmanen
  */
 class PRESET : public CHAIN_OPERATOR,
@@ -28,8 +30,15 @@ class PRESET : public CHAIN_OPERATOR,
   vector<SAMPLE_BUFFER*> buffers;
   vector<CHAIN*> chains;
 
-  vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > param_objects;
-  vector<int> param_numbers;
+  //vector< pair<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>*, int> > param_objects;
+  //map<string, int> param_names; // maps parameter names to indexes
+  vector< string > param_names;
+  vector< DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > param_objects;
+  vector< int > param_arg_indices;
+
+
+/*    vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > param_objects; */
+/*    vector<int> param_numbers; */
 
   ECA_CHAINSETUP csetup;
 
@@ -59,7 +68,7 @@ class PRESET : public CHAIN_OPERATOR,
 
   virtual void init(SAMPLE_BUFFER* sbuf);
   virtual void process(void);
-  virtual string parameter_names(void) const { return(""); }
+  virtual string parameter_names(void) const;
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
 

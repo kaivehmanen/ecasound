@@ -70,6 +70,7 @@ void PRESET::parse(const string& formatted_string) {
   CHAIN_OPERATOR *cop;
   GENERIC_CONTROLLER* gctrl;
 
+  int param_index = 0;
   vector<string> tokens = string_to_words(formatted_string);
   vector<string>::const_iterator p = tokens.begin();
   while(p != tokens.end()) {
@@ -79,23 +80,58 @@ void PRESET::parse(const string& formatted_string) {
       ++p;
       continue;
     }
+
+    // Parse for parameters.
+    vector<int> arg_numbers;
+//      cerr << "*p = " << *p << endl;
+//      cerr << "get_number_of_arguments(*p) = " << get_number_of_arguments(*p) << endl; 
+    vector<string> ps_parts(get_number_of_arguments(*p));
+    for(int i = 1; i <= get_number_of_arguments(*p); i++) {
+        ecadebug->msg(ECA_DEBUG::system_objects, "  COP-argument "+get_argument_number(i, *p)+".");
+        if(get_argument_number(i, *p)[0] == '%') {
+            param_names.push_back(get_argument_number(i, *p).substr(1));
+            arg_numbers.push_back(i);
+            ps_parts[i-1] = "0.0";
+            param_index++;
+        } else {
+            ps_parts[i-1] = get_argument_number(i, *p);
+        }
+    }
+    string ps = "-" + get_argument_prefix(*p) + ":" + vector_to_string(ps_parts, ",");
+    //ps += ps_parts[0];
+    //for(int i = 1; i < ps_parts.size(); i++)
+    //    ps += "," + ps_parts[i];
+//      cerr << "ps = " << ps << endl;
+
+    DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* object = 0;
+
     cop = 0;
-    cop = csetup.create_chain_operator(*p);
+    cop = csetup.create_chain_operator(ps);
+    if (cop == 0) cop = csetup.create_ladspa_plugin(ps);
+    if (cop == 0) cop = csetup.create_vst_plugin(ps);
     if (cop != 0) {
       chains.back()->add_chain_operator(cop);
       chains.back()->selected_chain_operator_as_target();
+      object = cop;
     }
     else {
-      if (get_argument_prefix(*p) == "kx") 
+      if (get_argument_prefix(ps) == "kx") 
 	chains.back()->selected_controller_as_target();
       else {
 	gctrl = 0;
-	gctrl = csetup.create_controller(*p);
+	gctrl = csetup.create_controller(ps);
 	if (gctrl != 0) {
 	  chains.back()->add_controller(gctrl);
 	}
+        object = gctrl;
       }
     }
+
+    for(int i = 0; i < static_cast<int>(arg_numbers.size()); i++) {
+        param_objects.push_back(object);
+	param_arg_indices.push_back(arg_numbers[i]);
+    }
+
     ++p;
   }
 
@@ -111,20 +147,17 @@ void PRESET::add_chain(void) {
   buffers.push_back(new SAMPLE_BUFFER());
 }
 
-void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
-  switch (param) {
-  case 1: 
 
-    break;
-  }
+string PRESET::parameter_names(void) const {
+  return vector_to_string(param_names, ",");
+}
+
+void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+    param_objects[param-1]->set_parameter(param_arg_indices[param-1], value);
 }
 
 CHAIN_OPERATOR::parameter_type PRESET::get_parameter(int param) const { 
-  switch (param) {
-  case 1: 
-    return(0.0);
-  }
-  return(0.0);
+    return param_objects[param-1]->get_parameter(param_arg_indices[param-1]);
 }
 
 void PRESET::init(SAMPLE_BUFFER *insample) {  
