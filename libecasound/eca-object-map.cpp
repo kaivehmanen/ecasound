@@ -25,7 +25,7 @@
 #include <regex.h>
 
 #include "eca-object-map.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 using std::map;
 using std::string;
@@ -49,7 +49,7 @@ void ECA_OBJECT_MAP::register_object(const string& keyword, const string& expr, 
 
   if (expr_to_keyword(keyword) != keyword &&
       object != 0) {
-    ecadebug->msg(ECA_DEBUG::info, 
+    ECA_LOG_MSG(ECA_LOGGER::info, 
 		  "(eca-object-map) Warning! Keyword " + keyword + 
 		  " doesn't match to regex " + expr + 
 		  " for object '" + object->name() + 
@@ -127,7 +127,7 @@ string ECA_OBJECT_MAP::expr_to_keyword(const string& expr) const {
   while(p != object_expr_map.end()) {
     regcomp(&preg, p->second.c_str(), REG_EXTENDED | REG_NOSUB | REG_ICASE);
     if (regexec(&preg, expr.c_str(), 0, 0, 0) == 0) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-object-map) match (1): " + expr + " to regexp " + p->second);
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-object-map) match (1): " + expr + " to regexp " + p->second);
       result = p->first;
       regfree(&preg);
       break;

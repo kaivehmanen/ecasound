@@ -24,7 +24,7 @@
 
 #include "oscillator.h"
 #include "osc-sine.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::value(void) {
   curval = (sin(phase) + 1.0) / 2.0;
@@ -48,7 +48,7 @@ void SINE_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_t phasestep) {
   otemp << frequency();
   otemp << " and initial phase of "; 
   otemp << phase_offset() << ".";
-  ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
 }
 
 void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {

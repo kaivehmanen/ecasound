@@ -22,7 +22,7 @@
 #include <kvu_message_item.h>
 
 #include "generic-linear-envelope.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 GENERIC_LINEAR_ENVELOPE::GENERIC_LINEAR_ENVELOPE(void)
 {
@@ -71,7 +71,7 @@ void GENERIC_LINEAR_ENVELOPE::init(parameter_t step) {
 
     set_param_count(0);
     
-    ecadebug->msg("(generic-linear-envelope) Envelope created.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(generic-linear-envelope) Envelope created.");
 }
 
 void GENERIC_LINEAR_ENVELOPE::set_param_count(int params) {

@@ -31,7 +31,7 @@
 #include <kvutils/kvu_utils.h>
 #include <kvutils/kvu_numtostr.h>
 
-#include <eca-debug.h>
+#include <eca-logger.h>
 #include <eca-error.h>
 #include <eca-control.h>
 #include <eca-engine.h>
@@ -118,11 +118,14 @@ int main(int argc, char *argv[])
 
   parse_command_line(argc,argv);
 
-  if (enable_debug)
-    ecadebug->set_debug_level(ECA_DEBUG::info |
-			      ECA_DEBUG::module_flow);
-  else
-    ecadebug->disable();
+  if (enable_debug) {
+    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
+    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
+    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
+  }
+  else {
+    ECA_LOGGER::instance().disable();
+  }
 
   try {
     ECA_SESSION esession;

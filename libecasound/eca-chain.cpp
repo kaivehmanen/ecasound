@@ -43,7 +43,7 @@
 #include "eca-chainop.h"
 
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 /* Debug controller source values */ 
 // #define DEBUG_CONTROLLERS
@@ -56,7 +56,7 @@
 
 CHAIN::CHAIN (void)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(chain) constuctor: CHAIN");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(chain) constuctor: CHAIN");
   muted_rep = false;
   sfx_rep = false;
   initialized_rep = false;
@@ -74,11 +74,11 @@ CHAIN::CHAIN (void)
 
 CHAIN::~CHAIN (void)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects,"CHAIN destructor!");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,"CHAIN destructor!");
 
   for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
 	chainops_rep.end(); p++) {
-    ecadebug->msg((*p)->status());
+    ECA_LOG_MSG(ECA_LOGGER::info, (*p)->status());
     delete *p;
   }
 
@@ -95,7 +95,7 @@ bool CHAIN::is_valid(void) const
 {
   if (input_id_rep == -1 ||
       output_id_rep == -1) {
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chain) Chain \"" + name() + "\" not valid.");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chain) Chain \"" + name() + "\" not valid.");
     return(false);
   }
   return(true);
@@ -331,7 +331,7 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller)
   }
   gcontroller->assign_target(selected_dynobj_repp);
   gcontrollers_rep.push_back(gcontroller);
-  ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chain) " + gcontroller->status());
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chain) " + gcontroller->status());
   selected_controller_repp = gcontroller;
   selected_controller_number_rep = gcontrollers_rep.size();
 }
@@ -544,7 +544,7 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels)
   refresh_parameters();
   initialized_rep = true;
 
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(chain) Initialized chain " +
 		name() + 
 		" with " +
@@ -726,7 +726,7 @@ void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
     CHAIN_OPERATOR* temp = chainops_rep[p];
     ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(temp);
     if (srateobj != 0) {
-      ecadebug->msg(ECA_DEBUG::user_objects,
+      ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		    "(eca-chain) sample rate change, chain '" +
 		    name() + "' object '" +
 		    temp->name() + "' rate " +
@@ -739,7 +739,7 @@ void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
     CONTROLLER_SOURCE* src = gcontrollers_rep[p]->source_pointer();
     ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(src);
     if (srateobj != 0) {
-      ecadebug->msg(ECA_DEBUG::user_objects,
+      ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		    "(eca-chain) sample rate change, chain '" +
 		    name() + "' object '" +
 		    src->name() + "' rate " +
@@ -756,7 +756,7 @@ void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
  */
 void CHAIN::seek_position(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects,
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		"(eca-chain) seek position, to pos " +
 		kvu_numtostr(position_in_seconds()) + ".");
 
@@ -766,7 +766,7 @@ void CHAIN::seek_position(void)
       ECA_AUDIO_POSITION* apos = dynamic_cast<ECA_AUDIO_POSITION*>(src);
       if (apos != 0) {
 	apos->seek_position_in_samples(position_in_samples());
-	ecadebug->msg(ECA_DEBUG::user_objects,
+	ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		      "(eca-chain) seek position, ctrl-src '" +
 		      src->name() +
 		      "' to pos " + 

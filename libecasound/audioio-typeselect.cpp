@@ -18,7 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-object-factory.h"
 #include "audioio-null.h"
 #include "audioio-typeselect.h"
@@ -28,7 +28,7 @@
  */
 AUDIO_IO_TYPESELECT::AUDIO_IO_TYPESELECT (void) { 
 
-  //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-typeselect) constructor " + label() + ".");  
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-typeselect) constructor " + label() + ".");  
 
   child_repp = new NULLFILE("uninitialized");
   init_rep = false;
@@ -39,13 +39,13 @@ AUDIO_IO_TYPESELECT::AUDIO_IO_TYPESELECT (void) {
  */
 AUDIO_IO_TYPESELECT::~AUDIO_IO_TYPESELECT (void)
 {
-  //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-typeselect) destructor " + label() + ".");  
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-typeselect) destructor " + label() + ".");  
   delete child_repp; // either null or the actual child object
 }
 
 void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-typeselect) open " + label() + ".");  
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-typeselect) open " + label() + ".");  
 
   if (init_rep != true) {
     AUDIO_IO* tmp = 0;
@@ -97,7 +97,7 @@ string AUDIO_IO_TYPESELECT::parameter_names(void) const
 
 void AUDIO_IO_TYPESELECT::set_parameter(int param, string value)
 { 
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-typeselect) set_parameter "
 		+ label() + ".");  
 
@@ -115,7 +115,7 @@ void AUDIO_IO_TYPESELECT::set_parameter(int param, string value)
 
 string AUDIO_IO_TYPESELECT::get_parameter(int param) const
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-typeselect) get_parameter "
 		+ label() + ".");  
 

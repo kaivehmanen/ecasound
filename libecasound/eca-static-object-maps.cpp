@@ -90,7 +90,7 @@ extern "C" {
 #include "eca-static-object-maps.h"
 
 #include "eca-resources.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-error.h"
 
 using std::cerr;
@@ -366,7 +366,7 @@ static void register_internal_audioio_plugin(const string& libdir,
       if (version < ecasound_library_version_current -
 	  ecasound_library_version_age ||
 	  version > ecasound_library_version_current) {
-	ecadebug->msg(ECA_DEBUG::info, 
+	ECA_LOG_MSG(ECA_LOGGER::info, 
 		      "(eca-static-object-maps) Opening internal plugin file \"" + 
 		      file + 
 		      "\" failed. Plugin version " + 
@@ -404,7 +404,7 @@ static void register_internal_audioio_plugin(const string& libdir,
       plugin_keyword == 0 ||
       plugin_keyword_regex == 0 ||
       desc_func == 0) {
-    ecadebug->msg(ECA_DEBUG::user_objects, 
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		  "(eca-static-object-maps) Opening internal plugin file \"" + 
 		  file + "\" failed.");
   }
@@ -420,7 +420,7 @@ static void register_internal_audioio_plugins(void) {
 
   struct stat fbuf;
   if (stat(libdir.c_str(), &fbuf) < 0) {
-    ecadebug->msg(ECA_DEBUG::info, "(eca-static-object-maps) Internal-plugin directory not found. Check your ~/.ecasoundrc!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-static-object-maps) Internal-plugin directory not found. Check your ~/.ecasoundrc!");
     return;
   }
 
@@ -508,13 +508,13 @@ vector<EFFECT_LADSPA*> create_plugins(const string& fname) {
       }
     }
     else { 
-      ecadebug->msg(ECA_DEBUG::user_objects,
+      ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		    string("(eca-static-object-maps) ") + 
 		    "Unable find plugin LADSPA-descriptor.");
     }
   }
   else {
-    ecadebug->msg(ECA_DEBUG::user_objects,
+    ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		  string("(eca-static-object-maps) ") + 
 		  "Unable to open plugin file \"" + fname + "\".");
   }

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// file_preset.cpp: File based effect preset
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// eca-logger.cpp: A logging subsystem implemented as a singleton class
+// Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,30 +17,37 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <kvu_utils.h>
-
-#include "resource-file.h"
+#include "eca-logger-interface.h"
+#include "eca-logger-default.h"
 #include "eca-logger.h"
-#include "eca-error.h"
-#include "file-preset.h"
 
-FILE_PRESET::FILE_PRESET(const std::string& file_name) {
-  RESOURCE_FILE pfile (file_name);
-  std::string pname = "empty";
-  if (pfile.keywords().size() > 0) pname = pfile.keywords()[0];
-  set_name(pname);
-  set_filename(file_name);
-  parse(pfile.resource(pname));
+ECA_LOGGER_INTERFACE* ECA_LOGGER::interface_impl_repp = 0;
+
+ECA_LOGGER_INTERFACE& ECA_LOGGER::instance(void)
+{
+  // FIXME: add support for multithreaded access 
+  //        using double-checked locking pattern 
+  //        and pthread mutex objects
+
+  if (interface_impl_repp == 0) {
+    interface_impl_repp = new ECA_LOGGER_DEFAULT();
+  }
+  return(*interface_impl_repp);
 }
 
-FILE_PRESET* FILE_PRESET::clone(void) const {
-  std::vector<parameter_t> param_values;
-  for(int n = 0; n < number_of_params(); n++) {
-    param_values.push_back(get_parameter(n + 1));
+void ECA_LOGGER::attach_logger(ECA_LOGGER_INTERFACE* logger)
+{
+  ECA_LOGGER::detach_logger();
+  interface_impl_repp = logger;
+}
+
+/**
+ * Detaches the current logger implementation.
+ */
+void ECA_LOGGER::detach_logger(void)
+{
+  if (ECA_LOGGER::interface_impl_repp != 0) {
+    delete interface_impl_repp;
+    interface_impl_repp = 0;
   }
-  FILE_PRESET* preset = new FILE_PRESET(filename());
-  for(int n = 0; n < preset->number_of_params(); n++) {
-    preset->set_parameter(n + 1, param_values[n]);
-  }
-  return(preset);
 }

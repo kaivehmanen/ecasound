@@ -34,6 +34,7 @@
 #include "generic-controller.h"
 #include "eca-chain.h"
 
+#include "eca-logger.h"
 #include "eca-object-factory.h"
 #include "eca-preset-map.h"
 
@@ -82,7 +83,7 @@ void ECA_CHAINSETUP_PARSER::interpret_global_option (const std::string& arg)
 {
   interpret_entry();
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup-parser) Interpreting global option \"" + arg + "\".");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup-parser) Interpreting global option \"" + arg + "\".");
   if (istatus_rep == false) interpret_general_option(arg);
   if (istatus_rep == false) interpret_processing_control(arg);
   if (istatus_rep == false) interpret_chains(arg);
@@ -104,7 +105,7 @@ void ECA_CHAINSETUP_PARSER::interpret_object_option (const std::string& arg)
 {
   interpret_entry();
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup-parser) Interpreting object option \"" + arg + "\".");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup-parser) Interpreting object option \"" + arg + "\".");
   interpret_chains(arg);
   if (istatus_rep == false) interpret_audio_format(arg);
   if (istatus_rep == false) interpret_audioio_device(arg);
@@ -159,11 +160,11 @@ void ECA_CHAINSETUP_PARSER::interpret_options(std::vector<std::string>& opts)
       }
     }
     else {
-      int dlevel = ecadebug->get_debug_level(); /* hack to avoid printing the same info
-						   multiple times */
-      ecadebug->disable();
+      /* hack to avoid printing the same info multiple times */
+      int dlevel = ECA_LOGGER::instance().get_log_level_bitmask();
+      ECA_LOGGER::instance().disable();
       interpret_global_option(*p);
-      ecadebug->set_debug_level(dlevel);
+      ECA_LOGGER::instance().set_log_level_bitmask(dlevel);
       if (interpret_match_found() != true) {
 	interpret_set_result(false, std::string("Invalid argument, unable to parse: '") + *p + "'");
 	break;
@@ -179,13 +180,14 @@ void ECA_CHAINSETUP_PARSER::interpret_options(std::vector<std::string>& opts)
   }
 
   if (other_matches + global_matches != optcount) {
-    ecadebug->msg(std::string("(eca-chainsetup-parser) Warning! Only ") + 
-		  kvu_numtostr(other_matches) +
-		  "+" +
-		  kvu_numtostr(global_matches) +
-		  " of the expected " +
-		  kvu_numtostr(optcount) +
-		  " parameters were recognized succesfully.");
+    ECA_LOG_MSG(ECA_LOGGER::info, 
+		std::string("(eca-chainsetup-parser) Warning! Only ") + 
+		kvu_numtostr(other_matches) +
+		"+" +
+		kvu_numtostr(global_matches) +
+		" of the expected " +
+		kvu_numtostr(optcount) +
+		" parameters were recognized succesfully.");
   }
 }
 
@@ -209,7 +211,7 @@ void ECA_CHAINSETUP_PARSER::preprocess_options(std::vector<std::string>& opts) c
 
     if (p->size() > 0 && (*p)[0] != '-') {
       /* hack1: rest as "-i:file" */
-      ecadebug->msg("(eca-chainsetup-parser) Note! Interpreting option " +
+      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Note! Interpreting option " +
 		    *p +
 		    " as -i:" +
 		    *p +
@@ -287,7 +289,7 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
       csetup_repp->set_buffersize(bsize);
       MESSAGE_ITEM mitemb;
       mitemb << "(eca-chainsetup-parser) Setting buffersize to (samples) " << bsize << ".";
-      ecadebug->msg(mitemb.to_string()); 
+      ECA_LOG_MSG(ECA_LOGGER::info, mitemb.to_string()); 
       break;
     }
 
@@ -296,23 +298,23 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
       std::string temp = kvu_get_argument_number(1, argu);
       if (temp == "auto") {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_auto);
-	ecadebug->msg("(eca-chainsetup-parser) Buffering mode is selected automatically.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Buffering mode is selected automatically.");
       }
       else if (temp == "nonrt") {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_nonrt);
-	ecadebug->msg("(eca-chainsetup-parser) Buffering mode 'nonrt' selected.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Buffering mode 'nonrt' selected.");
       }
       else if (temp == "rt") {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_rt);
-	ecadebug->msg("(eca-chainsetup-parser) Buffering mode 'rt' selected.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Buffering mode 'rt' selected.");
       }
       else if (temp == "rtlowlatency") {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_rtlowlatency);
-	ecadebug->msg("(eca-chainsetup-parser) Buffering mode 'rtlowlatency' selected.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Buffering mode 'rtlowlatency' selected.");
       }
       else {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_auto);
-	ecadebug->msg("(eca-chainsetup-parser) Unknown buffering mode; 'auto' mode is used instead.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Unknown buffering mode; 'auto' mode is used instead.");
       }
       break;
     }
@@ -320,8 +322,8 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
   case 'n':
     {
       csetup_repp->set_name(kvu_get_argument_number(1, argu));
-      ecadebug->msg("(eca-chainsetup-parser) Setting chainsetup name to \""
-		    + csetup_repp->name() + "\".");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Setting chainsetup name to \""
+		  + csetup_repp->name() + "\".");
       break;
     }
 
@@ -329,13 +331,13 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
     {
       int prio = ::atoi(kvu_get_argument_number(1, argu).c_str());
       if (prio < 0) {
-	ecadebug->msg("(eca-chainsetup) Raised-priority mode disabled.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup) Raised-priority mode disabled.");
 	csetup_repp->toggle_raised_priority(false);
       }
       else {
 	if (prio == 0) prio = 50;
 	csetup_repp->set_sched_priority(prio);
-	ecadebug->msg("(eca-chainsetup) Raised-priority mode enabled. (prio:" + 
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup) Raised-priority mode enabled. (prio:" + 
 		      kvu_numtostr(prio) + ")");
 	csetup_repp->toggle_raised_priority(true);
       }
@@ -345,21 +347,21 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
   case 's':
     {
       if (argu.size() > 2 && argu[2] == 'r') {
-	ecadebug->msg("(eca-chainsetup-parser) Option '-sr' is obsolete. Use syntax '-f:sfmt,channels,srate,ileaving' instead.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Option '-sr' is obsolete. Use syntax '-f:sfmt,channels,srate,ileaving' instead.");
       }
       break;
     }
 
   case 'x':
     {
-      ecadebug->msg("(eca-chainsetup-parser) Truncating outputs (overwrite-mode).");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Truncating outputs (overwrite-mode).");
       csetup_repp->set_output_openmode(AUDIO_IO::io_write);
       break;
     }
 
   case 'X':
     {
-      ecadebug->msg("(eca-chainsetup-parser) Updating outputs (rw-mode).");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Updating outputs (rw-mode).");
       csetup_repp->set_output_openmode(AUDIO_IO::io_readwrite);
       break;
     }
@@ -370,46 +372,46 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
 	long int bufs = atol(kvu_get_argument_number(2, argu).c_str());
 	if (bufs == 0) bufs = 100000;
 	csetup_repp->set_double_buffer_size(bufs);
-	ecadebug->msg("(eca-chainsetup-parser) Using double-buffer of " + 
-		      kvu_numtostr(bufs) + " sample frames.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Using double-buffer of " + 
+		    kvu_numtostr(bufs) + " sample frames.");
 	csetup_repp->toggle_double_buffering(true);
       }
       else if (kvu_get_argument_number(1, argu) == "nodb") {
-	ecadebug->msg("(eca-chainsetup-parser) Double-buffering disabled.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Double-buffering disabled.");
 	csetup_repp->toggle_double_buffering(false);
       }
       else if (kvu_get_argument_number(1, argu) == "intbuf") {
-	ecadebug->msg("(eca-chainsetup-parser) Enabling extra buffering on realtime devices.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Enabling extra buffering on realtime devices.");
 	csetup_repp->toggle_max_buffers(true);
       }
       else if (kvu_get_argument_number(1, argu) == "nointbuf") {
-	ecadebug->msg("(eca-chainsetup-parser) Disabling extra buffering on realtime devices.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Disabling extra buffering on realtime devices.");
 	csetup_repp->toggle_max_buffers(false);
       }
       else if (kvu_get_argument_number(1, argu) == "multitrack") {
-	ecadebug->msg("(eca-chainsetup-parser) Enabling multitrack-mode (override).");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Enabling multitrack-mode (override).");
 	csetup_repp->multitrack_mode_override_rep = true;
 	csetup_repp->multitrack_mode_rep = true;
       }
       else if (kvu_get_argument_number(1, argu) == "nomultitrack") {
-	ecadebug->msg("(eca-chainsetup-parser) Disabling multitrack-mode (override).");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Disabling multitrack-mode (override).");
 	csetup_repp->multitrack_mode_override_rep = true;
 	csetup_repp->multitrack_mode_rep = false;
       }
       else if (kvu_get_argument_number(1, argu) == "psr") {
-	ecadebug->msg("(eca-chainsetup-parser) Enabling precise-sample-rates with OSS audio devices.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Enabling precise-sample-rates with OSS audio devices.");
 	csetup_repp->toggle_precise_sample_rates(true);
       }
       else if (kvu_get_argument_number(1, argu) == "nopsr") {
-	ecadebug->msg("(eca-chainsetup-parser) Disabling precise-sample-rates with OSS audio devices.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Disabling precise-sample-rates with OSS audio devices.");
 	csetup_repp->toggle_precise_sample_rates(false);
       }
       else if (kvu_get_argument_number(1, argu) == "xruns") {
-	ecadebug->msg("(eca-chainsetup-parser) Processing is stopped if an xrun occurs.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Processing is stopped if an xrun occurs.");
 	csetup_repp->toggle_ignore_xruns(false);
       }
       else if (kvu_get_argument_number(1, argu) == "noxruns") {
-	ecadebug->msg("(eca-chainsetup-parser) Ignoring xruns during processing.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Ignoring xruns during processing.");
 	csetup_repp->toggle_ignore_xruns(true);
       }
       break;
@@ -444,8 +446,8 @@ void ECA_CHAINSETUP_PARSER::interpret_processing_control (const std::string& arg
       case ':': 
 	{
 	  csetup_repp->set_length_in_seconds(atof(kvu_get_argument_number(1, argu).c_str()));
-	  ecadebug->msg("(eca-chainsetup-parser) Set processing time to "
-			+ kvu_numtostr(csetup_repp->length_in_seconds_exact()) + ".");
+	  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Set processing time to "
+		      + kvu_numtostr(csetup_repp->length_in_seconds_exact()) + ".");
 	  break;
 	}
 	
@@ -453,9 +455,9 @@ void ECA_CHAINSETUP_PARSER::interpret_processing_control (const std::string& arg
 	{
 	  csetup_repp->toggle_looping(true);
 	  if (csetup_repp->length_set() != true)
-	    ecadebug->msg("(eca-chainsetup-parser) Looping enabled. Lenght of input objects will be used to set the loop point.");
+	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Looping enabled. Lenght of input objects will be used to set the loop point.");
 	  else
-	    ecadebug->msg("(eca-chainsetup-parser) Looping enabled.");
+	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Looping enabled.");
 	  break;
 	}
       }
@@ -489,7 +491,7 @@ void ECA_CHAINSETUP_PARSER::interpret_chains (const std::string& argu)
       std::vector<std::string> schains = kvu_get_arguments(argu);
       if (std::find(schains.begin(), schains.end(), "all") != schains.end()) {
 	csetup_repp->select_all_chains();
-	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup-parser) Selected all chains.");
+	ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup-parser) Selected all chains.");
       }
       else {
 	csetup_repp->select_chains(schains);
@@ -498,7 +500,7 @@ void ECA_CHAINSETUP_PARSER::interpret_chains (const std::string& argu)
 	mtempa << "(eca-chainsetup-parser) Selected chain ids: ";
 	for (std::vector<std::string>::const_iterator p = schains.begin(); p !=
 	       schains.end(); p++) { mtempa << *p << " "; }
-	ecadebug->msg(ECA_DEBUG::system_objects, mtempa.to_string());
+	ECA_LOG_MSG(ECA_LOGGER::system_objects, mtempa.to_string());
       }
       break;
     }
@@ -550,7 +552,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audio_format (const std::string& argu)
       else { 
 	ftemp << "/n";
       }
-      ecadebug->msg(ECA_DEBUG::user_objects, ftemp.to_string());
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, ftemp.to_string());
       break;
     }
   default: { match = false; }
@@ -578,7 +580,7 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const std::string& argu)
   switch(argu[1]) {
   case 'p':
     {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup-parser) Interpreting preset \"" + argu + "\".");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup-parser) Interpreting preset \"" + argu + "\".");
       CHAIN_OPERATOR* cop = 0;
 
       if (argu.size() < 3) return;  
@@ -611,7 +613,7 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const std::string& argu)
               otemp << cop->get_parameter(n +1);
               if (n + 1 < cop->number_of_params()) otemp << ", ";
           }
-          ecadebug->msg(otemp.to_string());
+          ECA_LOG_MSG(ECA_LOGGER::info, otemp.to_string());
           csetup_repp->add_chain_operator(cop);
       }
       break;
@@ -651,7 +653,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu)
 	  interpret_set_result(false, std::string("(eca-chainsetup-parser) I/O-mode 'io_read' not supported by ") + last_audio_object_repp->name());
 	}
 	else {
-	  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
+	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
 	  csetup_repp->add_input(last_audio_object_repp);
 	}
       }
@@ -680,7 +682,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu)
 	  interpret_set_result(false, std::string("(eca-chainsetup-parser) I/O-mode 'io_write' not supported by ") + last_audio_object_repp->name());
 	}
 	else {
-	  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
+	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
 	  csetup_repp->add_output(last_audio_object_repp, truncate);
 	}
       }
@@ -694,7 +696,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu)
   case 'y':
     {
       if (last_audio_object_repp == 0)
-	ecadebug->msg("Error! No audio object defined.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Error! No audio object defined.");
 
       last_audio_object_repp->seek_position_in_seconds(atof(kvu_get_argument_number(1, argu).c_str()));
       if (last_audio_object_repp->io_mode() == AUDIO_IO::io_read) {
@@ -704,11 +706,11 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu)
 	csetup_repp->output_start_pos[csetup_repp->output_start_pos.size() - 1] = last_audio_object_repp->position_in_seconds_exact();
       }
 
-      ecadebug->msg("(eca-chainsetup-parser) Set starting position for audio object \""
-		    + last_audio_object_repp->label() 
-		    + "\": "
-		    + kvu_numtostr(last_audio_object_repp->position_in_seconds_exact()) 
-		    + " seconds.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Set starting position for audio object \""
+		  + last_audio_object_repp->label() 
+		  + "\": "
+		  + kvu_numtostr(last_audio_object_repp->position_in_seconds_exact()) 
+		  + " seconds.");
       break;
     }
 
@@ -741,7 +743,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu)
 	case 'd': 
 	  {
 	    std::string tname = kvu_get_argument_number(1, argu);
-	    ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) MIDI-config: Adding device \"" + tname + "\".");
+	    ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-chainsetup-parser) MIDI-config: Adding device \"" + tname + "\".");
 	    MIDI_IO* mdev = 0;
 	    mdev = ECA_OBJECT_FACTORY::create_midi_device(argu);
 	    if (mdev != 0) {
@@ -750,7 +752,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu)
 		csetup_repp->add_midi_device(mdev);
 	      }
 	      else {
-		ecadebug->msg(ECA_DEBUG::info, "(eca-chainsetup-parser) MIDI-config: Warning! I/O-mode 'io_readwrite' not supported by " + mdev->name());
+		ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) MIDI-config: Warning! I/O-mode 'io_readwrite' not supported by " + mdev->name());
 	      }
 	    }
 	    break;
@@ -764,7 +766,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu)
 	    {
 	      // FIXME: not implemented!
 	      int id = atoi(kvu_get_argument_number(1, argu).c_str());
-	      ecadebug->msg(ECA_DEBUG::info, 
+	      ECA_LOG_MSG(ECA_LOGGER::info, 
 			    "(eca-chainsetup-parser) MIDI-config: Receiving MMC messages with id  \"" + 
 			    kvu_numtostr(id) +
 			    "\".");
@@ -776,7 +778,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu)
 	  case 's': 
 	    {
 	      int id = atoi(kvu_get_argument_number(1, argu).c_str());
-	      ecadebug->msg(ECA_DEBUG::info, 
+	      ECA_LOG_MSG(ECA_LOGGER::info, 
 			    "(eca-chainsetup-parser) MIDI-config: Adding MMC-send to device id \"" + 
 			    kvu_numtostr(id) +
 			    "\".");
@@ -794,7 +796,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu)
 	  case 'r': 
 	    {
 	      // FIXME: not implemented
-	      ecadebug->msg(ECA_DEBUG::info, 
+	      ECA_LOG_MSG(ECA_LOGGER::info, 
 			    "(eca-chainsetup-parser) MIDI-config: Receiving MIDI-sync.");
 	      csetup_repp->midi_server_repp->toggle_midi_sync_receive(true);
 	      break;
@@ -803,7 +805,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu)
 	  case 's': 
 	    {
 	      // FIXME: not implemented
-	      ecadebug->msg(ECA_DEBUG::info, 
+	      ECA_LOG_MSG(ECA_LOGGER::info, 
 			    "(eca-chainsetup-parser) MIDI-config: Sending MIDI-sync.");
 	      csetup_repp->midi_server_repp->toggle_midi_sync_send(true);
 	      break;
@@ -868,7 +870,7 @@ void ECA_CHAINSETUP_PARSER::interpret_controller (const std::string& argu)
   std::string prefix = kvu_get_argument_prefix(argu);
   if (prefix == "kx") {
     csetup_repp->set_target_to_controller();
-    ecadebug->msg(ECA_DEBUG::system_objects, "Selected controllers as parameter control targets.");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Selected controllers as parameter control targets.");
     istatus_rep = true;
   }
   else {
@@ -891,7 +893,7 @@ std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const
   MESSAGE_ITEM t;
 
   int setparams = csetup_repp->override_buffering_parameters().number_of_set();
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(eca-chainsetup-parser) genopts tostring - " + kvu_numtostr(setparams) +
 		" overridden parameters.");
 

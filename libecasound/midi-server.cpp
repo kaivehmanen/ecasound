@@ -35,7 +35,7 @@
 
 #include "midi-parser.h"
 #include "midi-server.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 const unsigned int MIDI_SERVER::max_queue_size_rep = 32768;
 
@@ -62,7 +62,7 @@ void MIDI_SERVER::io_thread(void) {
   unsigned char buf[3];
   struct timeval tv;
   
-  ecadebug->msg(ECA_DEBUG::user_objects, "(midi-server) Hey, in the I/O loop!");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(midi-server) Hey, in the I/O loop!");
   while(true) {
     if (running_rep.get() == 0 ||
 	clients_rep[0]->is_open() != true) {
@@ -115,7 +115,7 @@ void MIDI_SERVER::io_thread(void) {
       running_rep.set(0);
     }
   }
-  ecadebug->msg(ECA_DEBUG::system_objects, "(midi-server) exiting MIDI-server thread");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(midi-server) exiting MIDI-server thread");
 }
 
 /**
@@ -147,7 +147,7 @@ MIDI_SERVER::~MIDI_SERVER(void) {
 void MIDI_SERVER::start(void) { 
   stop_request_rep.set(0);
   running_rep.set(1);
-  ecadebug->msg(ECA_DEBUG::user_objects, "(midi-server) starting processing");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(midi-server) starting processing");
   send_mmc_start();
   if (is_midi_sync_send_enabled() == true) send_midi_start();
 
@@ -163,7 +163,7 @@ void MIDI_SERVER::start(void) {
  */
 void MIDI_SERVER::stop(void) { 
   stop_request_rep.set(1);
-  ecadebug->msg(ECA_DEBUG::user_objects, "(midi-server) stopping processing");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(midi-server) stopping processing");
   send_mmc_stop();
   if (is_midi_sync_send_enabled() == true) send_midi_stop();
 }
@@ -190,13 +190,13 @@ void MIDI_SERVER::enable(void) {
   stop_request_rep.set(0);
   exit_request_rep.set(0);
   if (thread_running_rep != true) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(midi-server) enabling");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(midi-server) enabling");
     int ret = pthread_create(&io_thread_rep,
 			     0,
 			     start_midi_server_io_thread,
 			     static_cast<void *>(this));
     if (ret != 0) {
-      ecadebug->msg("(midi-server) pthread_create failed, exiting");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(midi-server) pthread_create failed, exiting");
       exit(1);
     }
 #ifdef HAVE_SCHED_GETSCHEDULER
@@ -204,12 +204,12 @@ void MIDI_SERVER::enable(void) {
       struct sched_param sparam;
       sparam.sched_priority = schedpriority_rep;
       if (::pthread_setschedparam(io_thread_rep, SCHED_FIFO, &sparam) != 0)
-	ecadebug->msg("Unable to change scheduling policy to SCHED_FIFO!");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Unable to change scheduling policy to SCHED_FIFO!");
       else 
-	ecadebug->msg("Using realtime-scheduling (SCHED_FIFO).");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Using realtime-scheduling (SCHED_FIFO).");
     }
 #else
-	ecadebug->msg("Warning! sched_getscheduler() not available!");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Warning! sched_getscheduler() not available!");
 #endif
     thread_running_rep = true;
   }
@@ -239,7 +239,7 @@ void MIDI_SERVER::disable(void) {
   DBC_REQUIRE(is_enabled() == true);
   // --------
 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(midi-server) disabling");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(midi-server) disabling");
   stop_request_rep.set(1);
   exit_request_rep.set(1);
   if (thread_running_rep == true) {
@@ -267,7 +267,7 @@ bool MIDI_SERVER::is_running(void) const {
  */
 void MIDI_SERVER::register_client(MIDI_IO* mobject) { 
   clients_rep.push_back(mobject);
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"Registering client " +
 		kvu_numtostr(clients_rep.size() - 1) +
 		".");
@@ -292,7 +292,7 @@ void MIDI_SERVER::unregister_client(MIDI_IO* mobject) {
  */
 void MIDI_SERVER::register_handler(MIDI_HANDLER* object) { 
   handlers_rep.push_back(object);
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"Registering handler " +
 		kvu_numtostr(handlers_rep.size() - 1) +
 		".");

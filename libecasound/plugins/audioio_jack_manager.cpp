@@ -30,7 +30,7 @@
 #include <kvu_threads.h>
 
 #include "eca-engine.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 /**
  * Enable and disable features
@@ -177,12 +177,12 @@ static int eca_jack_process(nframes_t nframes, void *arg)
 static int eca_jack_bufsize (nframes_t nframes, void *arg)
 {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) [callback] " +  current->jackname_rep + ": eca_jack_bufsize");
 
   if (static_cast<long int>(nframes) != current->buffersize_rep) {
     current->shutdown_request_rep = true;
-    ecadebug->msg(ECA_DEBUG::info, 
+    ECA_LOG_MSG(ECA_LOGGER::info, 
 		  "(audioio-jack-manager) Invalid new buffersize, shutting down.");
   }
   
@@ -193,13 +193,13 @@ static int eca_jack_srate (nframes_t nframes, void *arg)
 {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
 
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-jack-manager) [callback] " + current->jackname_rep + 
 		": setting srate to " + kvu_numtostr(nframes));
 
   if (static_cast<long int>(nframes) != current->srate_rep) {
     current->shutdown_request_rep = true;
-    ecadebug->msg(ECA_DEBUG::info, 
+    ECA_LOG_MSG(ECA_LOGGER::info, 
 		  "(audioio-jack-manager) Invalid new samplerate, shutting down.");
   }
 
@@ -209,7 +209,7 @@ static int eca_jack_srate (nframes_t nframes, void *arg)
 static void eca_jack_shutdown (void *arg)
 {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-jack-manager) " + current->jackname_rep + 
 		": [callback] jackd shutdown, stopping processing");
   current->shutdown_request_rep = true;
@@ -221,7 +221,7 @@ static void eca_jack_shutdown (void *arg)
 
 AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) constructor");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) constructor");
 
   total_nodes_rep = 0;
   active_nodes_rep = 0;
@@ -245,7 +245,7 @@ AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
 
 AUDIO_IO_JACK_MANAGER::~AUDIO_IO_JACK_MANAGER(void)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) destructor");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) destructor");
 
   list<int>::iterator p = objlist_rep.begin();
   while(p != objlist_rep.end()) {
@@ -295,7 +295,7 @@ void AUDIO_IO_JACK_MANAGER::register_object(AUDIO_IO* aobj)
   DBC_REQUIRE(is_managed_type(aobj) == true);
   // ---
 
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) register object " + aobj->label());  
 
   objlist_rep.push_back(last_id_rep);
@@ -327,7 +327,7 @@ int AUDIO_IO_JACK_MANAGER::get_object_id(const AUDIO_IO* aobj) const
   map<int,jack_node_t*>::const_iterator p = jacknodemap_rep.begin();
   while(p != jacknodemap_rep.end()) {
     if (p->second->origptr == aobj) {
-      ecadebug->msg(ECA_DEBUG::system_objects, 
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		    "(audioio-jack-manager) found object id for aobj " +
 		    aobj->name() + ": " + kvu_numtostr(p->first));
       return(p->first);
@@ -357,7 +357,7 @@ void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
   DBC_DECLARE(int old_total_nodes = total_nodes_rep);
   // ---
 
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) unregister object ");
 
   objlist_rep.remove(id);
@@ -365,7 +365,7 @@ void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
   map<int,jack_node_t*>::iterator p = jacknodemap_rep.begin();
   while(p != jacknodemap_rep.end()) {
     if (p->first == id) {
-      ecadebug->msg(ECA_DEBUG::system_objects,
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,
 		    "(audioio-jack-manager) removing object " + p->second->aobj->label());
       p->second->aobj->set_manager(0, -1);
 
@@ -386,7 +386,7 @@ void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
 
 void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) driver exec");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver exec");
 
   engine_repp = engine;
 
@@ -404,7 +404,7 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 
     /* case 1: external exit request */
     if (exit_request_rep == true) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) exit request in exec");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) exit request in exec");
       if (is_connection_active() == true) stop_connection();
       break;
     }
@@ -412,7 +412,7 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
     /* case 2: external stop request */
     if (stop_request_rep == true) {
       stop_request_rep = false;
-      ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) stop request in exec");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) stop request in exec");
       if (is_connection_active() == true) stop_connection();
     }
 
@@ -422,14 +422,14 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 	engine->batch_mode() == true) {
 
       /* batch operation finished (or error occured) */
-      ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) batch finished in exec");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) batch finished in exec");
       if (is_connection_active() == true) stop_connection();
       break;
     }
 
     /* case 4: problems with jack callbacks -> exit */
     if (shutdown_request_rep == true) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) problems with JACK callbacks");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) problems with JACK callbacks");
       if (is_connection_active() == true) stop_connection();
       break;
     }
@@ -451,14 +451,14 @@ void AUDIO_IO_JACK_MANAGER::start(void)
   DBC_REQUIRE(is_connection_active() != true);
   // --
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) driver start");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver start");
 
   /* prepare chainsetup for callbacks */
   engine_repp->start_operation();
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_activate()");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_activate()");
   if (jack_activate (client_repp)) {
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot active client!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot active client!");
   }
 
   /* connect all clients */
@@ -473,7 +473,7 @@ void AUDIO_IO_JACK_MANAGER::start(void)
 
 void AUDIO_IO_JACK_MANAGER::stop(bool blocking)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) driver stop");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver stop");
 
   stop_request_rep = true;
 
@@ -507,9 +507,9 @@ void AUDIO_IO_JACK_MANAGER::stop_connection(void)
     ++p;
   }
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_deactivate() ");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_deactivate() ");
   if (jack_deactivate (client_repp)) {
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot deactive client!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot deactive client!");
   }
  
   if (engine_repp->is_active() == true) engine_repp->stop_operation();
@@ -523,7 +523,7 @@ void AUDIO_IO_JACK_MANAGER::stop_connection(void)
 
 void AUDIO_IO_JACK_MANAGER::exit(bool blocking)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) driver exit");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver exit");
 
   exit_request_rep = true;
 
@@ -551,7 +551,7 @@ void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port(int client_id, int portnum, c
   DBC_REQUIRE(portnum > 0);
   // ---
 
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) auto-connect jack ports for client " + kvu_numtostr(client_id));
 
   jack_node_t* node = jacknodemap_rep[client_id];
@@ -585,7 +585,7 @@ void AUDIO_IO_JACK_MANAGER::register_jack_ports(int client_id, int ports, const 
   DBC_REQUIRE(is_open() == true);
   // ---
 
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) register jack ports for client " + kvu_numtostr(client_id));
 
   jack_node_t* node = jacknodemap_rep[client_id];
@@ -643,7 +643,7 @@ void AUDIO_IO_JACK_MANAGER::unregister_jack_ports(int client_id)
   DBC_REQUIRE(is_open() == true);
   // ---
 
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) unregister all jack ports for client " + kvu_numtostr(client_id));
 
   /* FIXME: last_in_port_rep and last_out_port_rep
@@ -685,7 +685,7 @@ void AUDIO_IO_JACK_MANAGER::unregister_jack_ports(int client_id)
 
 void AUDIO_IO_JACK_MANAGER::open(int client_id)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) open for client " + kvu_numtostr(client_id));
 
   DBC_CHECK(shutdown_request_rep != true);
@@ -698,7 +698,7 @@ void AUDIO_IO_JACK_MANAGER::open(int client_id)
 
 void AUDIO_IO_JACK_MANAGER::close(int client_id)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) close for client " + kvu_numtostr(client_id));
 
   /* count how many open clients */
@@ -822,7 +822,7 @@ void AUDIO_IO_JACK_MANAGER::open_connection(void)
 
   }
   else {
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot connect to JACK server!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot connect to JACK server!");
     open_rep = false;
   }
 }
@@ -846,7 +846,7 @@ void AUDIO_IO_JACK_MANAGER::close_connection(void)
 
   open_rep = false;
 
-  ecadebug->msg(ECA_DEBUG::info, 
+  ECA_LOG_MSG(ECA_LOGGER::info, 
 		"(audioio-jack-manager) Connection closed!");
 
 #ifdef PROFILE_CALLBACK_EXECUTION
@@ -872,22 +872,22 @@ void AUDIO_IO_JACK_MANAGER::set_node_connection(jack_node_t* node, bool connect)
 	string tport = inports_rep[n].autoconnect;
 	if (tport.size() > 0) {
 	  if (connect == true) {
-	    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_port_connect() ");
+	    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_port_connect() ");
 	    if (jack_connect (client_repp,
 			      tport.c_str(), 
 			      jack_port_name(inports_rep[n].jackport))) {
-	      ecadebug->msg(ECA_DEBUG::info, 
+	      ECA_LOG_MSG(ECA_LOGGER::info, 
 			    "(audioio-jack-manager) Error! Cannot connect input " + tport);
 	    }
 	  }
 	  else {
-	    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
+	    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
 	    /* don't call jack_disconnect() if engine has shut down */
 	    if (shutdown_request_rep != true &&
 		jack_disconnect(client_repp, 
 				tport.c_str(),
 				jack_port_name(inports_rep[n].jackport))) {
-	      ecadebug->msg(ECA_DEBUG::info, 
+	      ECA_LOG_MSG(ECA_LOGGER::info, 
 			    "(audioio-jack-manager) Error! Cannot disconnect input " + tport);
 	    }
 	  }
@@ -901,21 +901,21 @@ void AUDIO_IO_JACK_MANAGER::set_node_connection(jack_node_t* node, bool connect)
 	string tport = outports_rep[n].autoconnect;
 	if (tport.size() > 0) {
 	  if (connect == true) {
-	    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_port_connect()");
+	    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_port_connect()");
 	    if (jack_connect(client_repp, 
 			     jack_port_name(outports_rep[n].jackport), 
 			     tport.c_str())) {
-	      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot connect output " + tport);
+	      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot connect output " + tport);
 	    }
 	  }
 	  else {
-	    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
+	    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
 	    /* don't call jack_disconnect() if engine has shut down */
 	    if (shutdown_request_rep != true &&
 		jack_disconnect(client_repp, 
 				jack_port_name(outports_rep[n].jackport),
 				tport.c_str())) {
-	      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot disconnect output " + tport);
+	      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot disconnect output " + tport);
 	    }
 	  }
 	}
@@ -972,7 +972,7 @@ void AUDIO_IO_JACK_MANAGER::signal_exit(void)
 void AUDIO_IO_JACK_MANAGER::wait_for_exit(void)
 {
   int ret = kvu_pthread_timed_wait(&exit_mutex_rep, &exit_cond_rep, 5);
-  ecadebug->msg(ECA_DEBUG::info, 
+  ECA_LOG_MSG(ECA_LOGGER::info, 
 		kvu_pthread_timed_wait_result(ret, "(audioio_jack_manager) wait_for_exit"));
 }
 
@@ -995,6 +995,6 @@ void AUDIO_IO_JACK_MANAGER::signal_stop(void)
 void AUDIO_IO_JACK_MANAGER::wait_for_stop(void)
 {
   int ret = kvu_pthread_timed_wait(&stop_mutex_rep, &stop_cond_rep, 5);
-  ecadebug->msg(ECA_DEBUG::info, 
+  ECA_LOG_MSG(ECA_LOGGER::info, 
 		kvu_pthread_timed_wait_result(ret, "(audioio_jack_manager) wait_for_stop"));
 }

@@ -32,7 +32,7 @@
 #include "audioio-ewf.h"
 
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 using std::cerr;
 using std::endl;
@@ -63,7 +63,7 @@ void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   if (child == 0) 
     throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-EWF: Couldn't open child object."));
 
-  ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: Opening ewf-child:" + child->label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "AUDIOIO-EWF: Opening ewf-child:" + child->label() + ".");
 
   child->set_buffersize(buffersize());
   child->set_io_mode(io_mode());
@@ -147,7 +147,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
 
       if (child_length_rep.samples() == 0 ||
 	  position_in_samples() < child_offset_rep.samples() + child_length_rep.samples()) {
-	ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-ewf) child-object activated" + label());
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-ewf) child-object activated" + label());
 	child_active = true;
 	child->seek_position_in_samples(child_start_pos_rep.samples() +
 					position_in_samples()
@@ -253,7 +253,7 @@ void EWFFILE::write_buffer(SAMPLE_BUFFER* sbuf)
     child_offset_rep.set_samples(position_in_samples());
     MESSAGE_ITEM m;
     m << "(audioio-ewf) found child_offset_rep " << child_offset_rep.seconds() << ".";
-    ecadebug->msg(ECA_DEBUG::user_objects, m.to_string());
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, m.to_string());
   }
   
   child->write_buffer(sbuf);

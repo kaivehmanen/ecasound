@@ -26,7 +26,7 @@
 
 #include "audioio_alsa_named.h"
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-version.h"
 
 static const char* audio_io_keyword_const = "alsa_09";

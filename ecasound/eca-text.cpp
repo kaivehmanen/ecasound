@@ -39,7 +39,7 @@
 #include <eca-control.h>
 #include <eca-session.h>
 #include <eca-version.h>
-#include <eca-debug.h>
+#include <eca-logger.h>
 #include <eca-error.h>
 #include <eca-comhelp.h>
 
@@ -75,7 +75,7 @@ static const int ecasound_return_unknown_exception = 2;
 
 static ECA_CONTROL* ecasound_pointer_to_ecacontrol = 0;
 static ECA_SESSION* ecasound_pointer_to_ecasession = 0;
-static TEXTDEBUG ecasound_textdebug;
+static TEXTDEBUG* ecasound_textdebug = 0;
 static int ecasound_error_no = 0;
 
 /**
@@ -108,16 +108,18 @@ int main(int argc, char *argv[])
     bool debug_to_cerr = true;
     if (cline.has("-D") != true) {
       debug_to_cerr = false;
-      attach_debug_object(&ecasound_textdebug);  
+      ecasound_textdebug = new TEXTDEBUG();
+      ECA_LOGGER::attach_logger(ecasound_textdebug);
     }
-    ecadebug->set_debug_level(ECA_DEBUG::info |
-			      ECA_DEBUG::module_flow);
+    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
+    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
+    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
 
     if (cline.has("-o:stdout") ||
 	cline.has("stdout") || 
 	cline.has("-d:0") || 
 	cline.has('q'))
-      ecadebug->disable();
+      ECA_LOGGER::instance().disable();
     else {
       if (debug_to_cerr == true)
 	ecasound_print_header(&std::cerr);
@@ -155,7 +157,7 @@ int main(int argc, char *argv[])
     ecasound_error_no = ecasound_return_unknown_exception;
   }
 
-  ecadebug->flush();
+  ECA_LOGGER::instance().flush();
 
   ecasound_clean_exit(ecasound_error_no);
 }
@@ -287,7 +289,7 @@ void ecasound_parse_command_line(COMMAND_LINE& cline)
 void ecasound_clean_exit(int n)
 {
   // std::cerr << "Clean exit..." << std::endl;
-  ecadebug->flush();
+  ECA_LOGGER::instance().flush();
 
   // std::cerr << "Killing control..." << std::endl;
   if (ecasound_pointer_to_ecacontrol != 0) {
@@ -299,7 +301,7 @@ void ecasound_clean_exit(int n)
     delete ecasound_pointer_to_ecasession;
     ecasound_pointer_to_ecasession = 0;
   }
-  
+
   // std::cerr << "Exit..." << std::endl;
   exit(n);
 }

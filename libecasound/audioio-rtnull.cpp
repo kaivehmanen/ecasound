@@ -29,7 +29,7 @@
 #include "audioio-rtnull.h"
 
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 using std::cerr;
 using std::endl;
@@ -93,7 +93,7 @@ REALTIME_NULL::~REALTIME_NULL(void)
 
 void REALTIME_NULL::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) open");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-rtnull) open");
 
   double t = static_cast<double>(buffersize()) / samples_per_second();
 
@@ -117,7 +117,7 @@ void REALTIME_NULL::close(void)
 
 void REALTIME_NULL::prepare(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) prepare");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-rtnull) prepare");
 
   timerclear(&data_processed_rep);
 
@@ -126,7 +126,7 @@ void REALTIME_NULL::prepare(void)
 
 void REALTIME_NULL::start(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) start");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-rtnull) start");
 
   gettimeofday(&start_time_rep, NULL);
 
@@ -135,7 +135,7 @@ void REALTIME_NULL::start(void)
 
 void REALTIME_NULL::stop(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) stop");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-rtnull) stop");
 
   AUDIO_IO_DEVICE::stop();
 }

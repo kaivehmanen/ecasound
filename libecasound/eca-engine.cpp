@@ -44,7 +44,7 @@
 #include "eca-chain.h"
 #include "eca-chainop.h"
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-engine.h"
 #include "eca-engine_impl.h"
 
@@ -153,7 +153,7 @@ ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup)
   DBC_REQUIRE(csetup->is_enabled() == true);
   // --
 
-  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) Engine/Initializing");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) Engine/Initializing");
 
   csetup_repp->toggle_locked_state(true);
 
@@ -177,7 +177,7 @@ ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup)
  */
 ECA_ENGINE::~ECA_ENGINE(void)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) ECA_ENGINE destructor!");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) ECA_ENGINE destructor!");
 
   if (csetup_repp != 0) {
     if (is_active() == true) {
@@ -200,7 +200,7 @@ ECA_ENGINE::~ECA_ENGINE(void)
   delete mixslot_repp;
   delete impl_repp;
 
-  ecadebug->control_flow("Engine exiting");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Engine exiting");
 }
 
 /**
@@ -236,7 +236,7 @@ void ECA_ENGINE::exec(bool batch_mode)
 
   batchmode_enabled_rep = batch_mode;
 
-  ecadebug->control_flow("Engine init - Driver start");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Engine init - Driver start");
 
   driver_repp->exec(this, csetup_repp);
 
@@ -245,7 +245,7 @@ void ECA_ENGINE::exec(bool batch_mode)
   signal_exit();
 
   if (outputs_finished_rep > 0) 
-    ecadebug->msg("(eca-engine) Warning! An output object has raised an error! Out of disk space, permission denied, etc?");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Warning! An output object has raised an error! Out of disk space, permission denied, etc?");
 
   DBC_CHECK(status() == ECA_ENGINE::engine_status_stopped ||
 	    status() == ECA_ENGINE::engine_status_finished ||
@@ -253,7 +253,7 @@ void ECA_ENGINE::exec(bool batch_mode)
 
   cleanup();
 
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(eca-engine) Engine state when finishing: " + 
 		kvu_numtostr(static_cast<int>(status())));
 
@@ -289,8 +289,8 @@ void ECA_ENGINE::wait_for_stop(int timeout)
   int ret = kvu_pthread_timed_wait(&impl_repp->ecasound_stop_mutex_repp, 
 				   &impl_repp->ecasound_stop_cond_repp, 
 				   timeout);
-  ecadebug->msg(ECA_DEBUG::info, 
-		kvu_pthread_timed_wait_result(ret, "(eca_main) wait_for_stop"));
+  ECA_LOG_MSG(ECA_LOGGER::info, 
+	      kvu_pthread_timed_wait_result(ret, "(eca_main) wait_for_stop"));
 }
 
 /**
@@ -306,8 +306,8 @@ void ECA_ENGINE::wait_for_exit(int timeout)
   int ret = kvu_pthread_timed_wait(&impl_repp->ecasound_exit_mutex_repp, 
 				   &impl_repp->ecasound_exit_cond_repp, 
 				   timeout);
-  ecadebug->msg(ECA_DEBUG::info, 
-		kvu_pthread_timed_wait_result(ret, "(eca_main) wait_for_exit"));
+  ECA_LOG_MSG(ECA_LOGGER::info, 
+	      kvu_pthread_timed_wait_result(ret, "(eca_main) wait_for_exit"));
 }
 
 /**********************************************************************
@@ -429,7 +429,7 @@ void ECA_ENGINE::update_engine_state(void)
       outputs_finished_rep == 0 && 
       finished_rep != true) {
     if (is_active() == true) {
-      ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) all inputs finished - stop");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) all inputs finished - stop");
       request_stop();
     }
     finished_rep = true;
@@ -440,7 +440,7 @@ void ECA_ENGINE::update_engine_state(void)
 
   if (status() == ECA_ENGINE::engine_status_error) {
     if (is_active() == true) {
-      ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) output error - stop");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) output error - stop");
       request_stop();
     }
   }
@@ -507,9 +507,9 @@ void ECA_ENGINE::start_operation(void)
     struct sched_param sparam;
     sparam.sched_priority = csetup_repp->get_sched_priority();
     if (::sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Unable to change scheduling policy!");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Unable to change scheduling policy!");
     else 
-      ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Using realtime-scheduling (SCHED_FIFO).");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Using realtime-scheduling (SCHED_FIFO).");
   }
 
   /* 3. reinitialize chains if necessary */
@@ -571,9 +571,9 @@ void ECA_ENGINE::stop_operation(void)
     struct sched_param sparam;
     sparam.sched_priority = 0;
     if (::sched_setscheduler(0, SCHED_OTHER, &sparam) == -1)
-      ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Unable to change scheduling back to SCHED_OTHER!");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Unable to change scheduling back to SCHED_OTHER!");
     else
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Changed back to non-realtime scheduling SCHED_OTHER.");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Changed back to non-realtime scheduling SCHED_OTHER.");
   }
 
   /* release chainsetup lock */
@@ -642,7 +642,7 @@ void ECA_ENGINE::request_start(void)
   DBC_REQUIRE(status() != engine_status_running);
   // ---
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Request start");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Request start");
 
   // --
   // start the driver
@@ -663,7 +663,7 @@ void ECA_ENGINE::request_stop(void)
   DBC_REQUIRE(status() == engine_status_running);
   // ---
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Request stop");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Request stop");
 
   driver_repp->stop(false);
 }
@@ -677,7 +677,7 @@ void ECA_ENGINE::request_stop(void)
 void ECA_ENGINE::signal_stop(void)
 {
   pthread_mutex_lock(&impl_repp->ecasound_stop_mutex_repp);
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Signaling stop");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Signaling stop");
   pthread_cond_broadcast(&impl_repp->ecasound_stop_cond_repp);
   pthread_mutex_unlock(&impl_repp->ecasound_stop_mutex_repp);
 }
@@ -691,7 +691,7 @@ void ECA_ENGINE::signal_stop(void)
 void ECA_ENGINE::signal_exit(void)
 {
   pthread_mutex_lock(&impl_repp->ecasound_exit_mutex_repp);
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Signaling exit");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Signaling exit");
   pthread_cond_broadcast(&impl_repp->ecasound_exit_cond_repp);
   pthread_mutex_unlock(&impl_repp->ecasound_exit_mutex_repp);
 }
@@ -716,7 +716,7 @@ void ECA_ENGINE::conditional_start(void)
 void ECA_ENGINE::conditional_stop(void)
 {
   if (status() == ECA_ENGINE::engine_status_running) {
-    ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) conditional stop");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) conditional stop");
     was_running_rep = true;
     request_stop();
   }
@@ -727,9 +727,9 @@ void ECA_ENGINE::start_servers(void)
 {
   if (csetup_repp->double_buffering() == true) {
     csetup_repp->pserver_repp->start();
-    ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Prefilling i/o buffers.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Prefilling i/o buffers.");
     csetup_repp->pserver_repp->wait_for_full();
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-engine) i/o buffers prefilled.");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-engine) i/o buffers prefilled.");
   }
   
   if (use_midi_rep == true) {
@@ -780,7 +780,7 @@ void ECA_ENGINE::reset_realtime_devices(void)
 {
   for (size_t n = 0; n < realtime_objects_rep.size(); n++) {
     if (realtime_objects_rep[n]->is_open() == true) {
-      ecadebug->msg(ECA_DEBUG::user_objects, 
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		    "(eca-engine) Reseting rt-object " + 
 		    realtime_objects_rep[n]->label());
       realtime_objects_rep[n]->close();
@@ -864,7 +864,7 @@ void ECA_ENGINE::posthandle_control_position(void)
       }
     }
     else {
-      ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) posthandle_c_p - stop");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) posthandle_c_p - stop");
       request_stop();
       finished_rep = true;
     }
@@ -892,7 +892,7 @@ void ECA_ENGINE::interpret_queue(void)
     case ep_exit:
       {
 	while(impl_repp->command_queue_rep.is_empty() == false) impl_repp->command_queue_rep.pop_front();
-	ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) ecasound_queue: exit!");
+	ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) ecasound_queue: exit!");
 	driver_repp->exit(false);
 	return;
       }
@@ -1006,7 +1006,7 @@ void ECA_ENGINE::init_prefill(void)
   if (prefill_threshold_rep < ECA_ENGINE::prefill_blocks_constant)
     prefill_threshold_rep = ECA_ENGINE::prefill_blocks_constant;
   
-  ecadebug->msg(ECA_DEBUG::system_objects,
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,
 		"(eca-engine) Prefill loops: " +
 		kvu_numtostr(prefill_threshold_rep) +
 		" (blocksize " + 
@@ -1021,7 +1021,7 @@ void ECA_ENGINE::init_servers(void)
 {
   if (csetup_repp->midi_devices.size() > 0) {
     use_midi_rep = true;
-    ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Initializing MIDI-server.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Initializing MIDI-server.");
     csetup_repp->midi_server_repp->init();
   }
 }
@@ -1135,7 +1135,7 @@ void ECA_ENGINE::update_cache_latency_values(void)
       }
       else {
 	if (in_latency != realtime_inputs_rep[n]->latency()) {
-	  ecadebug->msg(ECA_DEBUG::info, 
+	  ECA_LOG_MSG(ECA_LOGGER::info, 
 			"(eca-engine) Warning! Latency mismatch between input objects!");
 	}
       }
@@ -1154,7 +1154,7 @@ void ECA_ENGINE::update_cache_latency_values(void)
 	    out_latency != prefill_threshold_rep * buffersize() + realtime_outputs_rep[n]->latency() || 
 	    realtime_outputs_rep[n]->prefill_space() > 0 &&
 	    out_latency != realtime_outputs_rep[n]->latency()) {
-	  ecadebug->msg(ECA_DEBUG::info, 
+	  ECA_LOG_MSG(ECA_LOGGER::info, 
 			"(eca-engine) Warning! Latency mismatch between output objects!");
 	}
       }
@@ -1165,11 +1165,11 @@ void ECA_ENGINE::update_cache_latency_values(void)
 			    in_latency - out_latency);
     
     if (recording_offset_rep % buffersize()) {
-      ecadebug->msg(ECA_DEBUG::info, 
+      ECA_LOG_MSG(ECA_LOGGER::info, 
 		    "(eca-engine) Warning! Recording offset not divisible with chainsetup buffersize.");
     }
     
-    ecadebug->msg(ECA_DEBUG::user_objects,
+    ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		  "(eca-engine) recording offset is " +
 		  kvu_numtostr(recording_offset_rep) +
 		  	" samples.");

@@ -38,7 +38,7 @@
 #include "eca-object-map.h"
 #include "eca-preset-map.h"
 #include "eca-object-factory.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 using std::list;
 using std::map;
@@ -193,7 +193,7 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg) {
   AUDIO_IO* new_file = 0;
   if (main_file != 0) {
     new_file = main_file->new_expr();
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Object \"" + arg + "\" created, type \"" + new_file->name() + "\". Has " + kvu_numtostr(new_file->number_of_params()) + " parameter(s).");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-object-factory) Object \"" + arg + "\" created, type \"" + new_file->name() + "\". Has " + kvu_numtostr(new_file->number_of_params()) + " parameter(s).");
     for(int n = 0; n < new_file->number_of_params(); n++) {
       new_file->set_parameter(n + 1, kvu_get_argument_number(n + 1, arg));
     }
@@ -226,7 +226,7 @@ MIDI_IO* ECA_OBJECT_FACTORY::create_midi_device(const string& arg) {
   MIDI_IO* new_device = 0;
   if (device != 0) {
     new_device = device->new_expr();
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Object \"" + arg + "\" created, type \"" + new_device->name() + "\". Has " + kvu_numtostr(new_device->number_of_params()) + " parameter(s).");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-object-factory) Object \"" + arg + "\" created, type \"" + new_device->name() + "\". Has " + kvu_numtostr(new_device->number_of_params()) + " parameter(s).");
     for(int n = 0; n < new_device->number_of_params(); n++) {
       new_device->set_parameter(n + 1, kvu_get_argument_number(n + 1, arg));
     }
@@ -332,7 +332,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu) {
     if (cop != 0) {
       new_cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
 
-      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Creating LADSPA-plugin \"" +
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-object-factory) Creating LADSPA-plugin \"" +
 		    new_cop->name() + "\"");
       otemp << "(eca-object-factory) Setting parameters: ";
       for(int n = 0; n < new_cop->number_of_params(); n++) {
@@ -341,7 +341,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu) {
 	otemp << new_cop->get_parameter(n + 1);
 	if (n + 1 < new_cop->number_of_params()) otemp << ", ";
       }
-      ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
     }
     return(new_cop);
   }
@@ -373,7 +373,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const string& argu) {
   CHAIN_OPERATOR* new_cop = 0;
   if (cop != 0) {
     
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Creating VST-plugin \"" + new_cop->name() + "\"");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-object-factory) Creating VST-plugin \"" + new_cop->name() + "\"");
     otemp << "(eca-object-factory) Setting parameters: ";
     for(int n = 0; n < new_cop->number_of_params(); n++) {
       new_cop->set_parameter(n + 1, atof(kvu_get_argument_number(n + 1, argu).c_str()));
@@ -381,7 +381,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const string& argu) {
       otemp << new_cop->get_parameter(n + 1);
       if (n + 1 < new_cop->number_of_params()) otemp << ", ";
     }
-    ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
   }
   return(new_cop);
 }
@@ -411,7 +411,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const string& argu) {
   if (cop != 0) {
     new_cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
 
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Creating chain operator \"" +
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-object-factory) Creating chain operator \"" +
 		  new_cop->name() + "\"");
     //    otemp << "(eca-chainsetup) Adding effect " << new_cop->name();
     otemp << "(eca-object-factory) Setting parameters: ";
@@ -421,7 +421,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const string& argu) {
       otemp << new_cop->get_parameter(n +1);
       if (n + 1 < new_cop->number_of_params()) otemp << ", ";
     }
-    ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
     return(new_cop);
   }
   return(0);
@@ -459,7 +459,7 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu) {
       }
       new_gcontroller->assign_source(new_csource);
 
-      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Creating controller source \"" +  new_gcontroller->name() + "\"");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-object-factory) Creating controller source \"" +  new_gcontroller->name() + "\"");
 
       MESSAGE_ITEM otemp;
       otemp << "(eca-object-factory) Setting parameters: ";
@@ -471,7 +471,7 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu) {
 	numparams = new_gcontroller->number_of_params(); // in case 'n_o_p()' varies
 	if (n + 1 < numparams) otemp << ", ";
       }
-      ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
 
       return(new_gcontroller);
     }

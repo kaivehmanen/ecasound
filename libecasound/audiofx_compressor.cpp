@@ -46,7 +46,7 @@
 
 #include "audiofx_amplitude.h"
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 ADVANCED_COMPRESSOR::ADVANCED_COMPRESSOR (double peak_limit, double release_time, double cfrate,
 					  double crate) 
@@ -67,7 +67,7 @@ ADVANCED_COMPRESSOR::ADVANCED_COMPRESSOR (double peak_limit, double release_time
   otemp << " release time " << release_time;
   otemp << " cfrate " << fastgaincompressionratio;
   otemp << " crate " << compressionratio << ".";
-  ecadebug->msg(otemp.to_string());
+  ECA_LOG_MSG(ECA_LOGGER::info, otemp.to_string());
 }
 
 void ADVANCED_COMPRESSOR::init_values(void) {
@@ -109,7 +109,7 @@ void ADVANCED_COMPRESSOR::init_values(void) {
   rlevelsq1 = 0;
   compress = 1;
   ndelay = (int)(1.0 / rlevelsq0ffilter);
-  //  ecadebug->msg(ECA_DEBUG::user_objects, "(audiofx_compressor) Number of delays : " +
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audiofx_compressor) Number of delays : " +
   //	       kvu_numtostr(ndelay) + ".");
 
   rightdelay.resize(ndelay);

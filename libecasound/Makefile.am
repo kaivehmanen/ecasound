@@ -108,7 +108,9 @@ ecasound_general_include = 	\
 			eca-chain.h \
 			eca-chainop.h \
 			eca-error.h \
-			eca-debug.h \
+			eca-logger.h \
+			eca-logger-default.h \
+			eca-logger-interface.h \
 			eca-comhelp.h \
 			eca-engine.h \
 			eca-engine-driver.h \
@@ -249,7 +251,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-resources.cpp \
 			resource-file.cpp \
 			eca-comhelp.cpp \
-			eca-debug.cpp \
+			eca-logger.cpp \
 			layer.cpp \
 			samplebuffer_iterators.cpp \
 			eca-version.cpp  \

@@ -28,7 +28,7 @@
 #include "audioio-buffered.h"
 #include "audioio-raw.h"
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 RAWFILE::RAWFILE(const std::string& name)
 {
@@ -61,7 +61,7 @@ void RAWFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
       }
       else {
 	if (mmaptoggle_rep == "1") {
-	  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) using mmap() mode for file access");
+	  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) using mmap() mode for file access");
 	  fio_repp = new ECA_FILE_IO_MMAP();
 	}
 	else fio_repp = new ECA_FILE_IO_STREAM();

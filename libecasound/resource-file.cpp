@@ -23,7 +23,7 @@
 
 #include <kvu_utils.h>
 #include "resource-file.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 RESOURCE_FILE::RESOURCE_FILE(const std::string& resource_file) :
   resfile_rep(resource_file) { 
@@ -34,7 +34,7 @@ RESOURCE_FILE::~RESOURCE_FILE(void) {
 }
 
 void RESOURCE_FILE::load(void) { 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(resource-file) Loading file " + resfile_rep + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(resource-file) Loading file " + resfile_rep + ".");
   lines_rep.resize(0);
   std::ifstream fin (resfile_rep.c_str());
   if (fin) {
@@ -83,7 +83,7 @@ void RESOURCE_FILE::load(void) {
 }
 
 void RESOURCE_FILE::save(void) { 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(resource-file) Saving file " + resfile_rep + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(resource-file) Saving file " + resfile_rep + ".");
   std::ofstream fout (resfile_rep.c_str(), std::ios::out | std::ios::trunc);
   if (fout) {
     std::vector<std::string>::const_iterator p = lines_rep.begin();

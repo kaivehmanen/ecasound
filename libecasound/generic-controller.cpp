@@ -26,7 +26,7 @@
 #include "generic-controller.h"
 #include "eca-chainop.h"
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 void GENERIC_CONTROLLER::process(void) {
   // --------
@@ -35,7 +35,7 @@ void GENERIC_CONTROLLER::process(void) {
 
   new_value = (source->value() * (rangehigh - rangelow)) + rangelow;
   
-  //  ecadebug->msg(ECA_DEBUG::user_objects, "Setting new parameter value... to " + kvu_numtostr(new_value) + ".");
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Setting new parameter value... to " + kvu_numtostr(new_value) + ".");
   target->set_parameter(param_id, new_value);
 }
 

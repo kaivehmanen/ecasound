@@ -63,7 +63,7 @@
 #include "sample-specs.h"
 
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 #include "eca-chainsetup.h"
 #include "eca-chainsetup_impl.h"
@@ -83,7 +83,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
   : cparser_rep(this) 
 {
 
-  ecadebug->control_flow("Chainsetup created (cmdline)");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup created (cmdline)");
 
   impl_repp = new ECA_CHAINSETUP_impl;
 
@@ -108,7 +108,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
 ECA_CHAINSETUP::ECA_CHAINSETUP(void) 
   : cparser_rep(this)
 {
-  ecadebug->control_flow("Chainsetup created (empty)");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup created (empty)");
 
   impl_repp = new ECA_CHAINSETUP_impl;
 
@@ -129,7 +129,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(void)
 ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file) 
   : cparser_rep(this)
 {
-  ecadebug->control_flow("Chainsetup created (file)");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup created (file)");
 
   impl_repp = new ECA_CHAINSETUP_impl;
 
@@ -149,11 +149,11 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file)
  */
 ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
 { 
-  ecadebug->msg(ECA_DEBUG::system_objects,"ECA_CHAINSETUP destructor!");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,"ECA_CHAINSETUP destructor!");
 
   /* delete chain objects */
   for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting chain \"" + (*q)->name() + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting chain \"" + (*q)->name() + "\".");
     delete *q;
     *q = 0;
   }
@@ -161,7 +161,7 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
   /* take the garbage out (must be done before deleting input 
    * and output objects) */
   for(list<AUDIO_IO*>::iterator q = aobj_garbage_rep.begin(); q != aobj_garbage_rep.end(); q++) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting garbage audio object \"" + (*q)->label() + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting garbage audio object \"" + (*q)->label() + "\".");
     delete *q;
     *q = 0;
   }
@@ -169,7 +169,7 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
   /* delete input proxy objects; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
     if (dynamic_cast<AUDIO_IO_BUFFERED_PROXY*>(*q) != 0) {
-      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio proxy \"" + (*q)->label() + "\".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting audio proxy \"" + (*q)->label() + "\".");
       delete *q;
     }
     *q = 0;
@@ -178,7 +178,7 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
   /* delete all actual audio input objects except loop devices; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = inputs_direct_rep.begin(); q != inputs_direct_rep.end(); q++) {
     if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) { 
-      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio object \"" + (*q)->label() + "\".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting audio object \"" + (*q)->label() + "\".");
       delete *q;
     }
     *q = 0;
@@ -187,7 +187,7 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
   /* delete output proxy objects; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
     if (dynamic_cast<AUDIO_IO_BUFFERED_PROXY*>(*q) != 0) {
-      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio proxy \"" + (*q)->label() + "\".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting audio proxy \"" + (*q)->label() + "\".");
       delete *q;
     }
     *q = 0;
@@ -197,7 +197,7 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
   for(vector<AUDIO_IO*>::iterator q = outputs_direct_rep.begin(); q != outputs_direct_rep.end(); q++) {
     // trouble with dynamic_cast with libecasoundc apps like ecalength?
     if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) { 
-      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio object \"" + (*q)->label() + "\".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting audio object \"" + (*q)->label() + "\".");
       delete *q;
       *q = 0;
     }
@@ -205,14 +205,14 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
 
   /* delete loop objects */
   for(map<int,LOOP_DEVICE*>::iterator q = loop_map.begin(); q != loop_map.end(); q++) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting loop device \"" + q->second->label() + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting loop device \"" + q->second->label() + "\".");
     delete q->second;
     q->second = 0;
   }
 
   /* delete aio manager objects */
   for(vector<AUDIO_IO_MANAGER*>::iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio manager \"" + (*q)->name() + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting audio manager \"" + (*q)->name() + "\".");
     delete *q;
     *q = 0;
   }
@@ -250,7 +250,7 @@ void ECA_CHAINSETUP::set_defaults(void)
   if (kvu_check_for_mlockall() == true && 
       kvu_check_for_sched_fifo() == true) {
     rtcaps_rep = true;
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Rtcaps detected.");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) Rtcaps detected.");
   }
   else 
     rtcaps_rep = false;
@@ -294,15 +294,15 @@ void ECA_CHAINSETUP::set_defaults(void)
 bool ECA_CHAINSETUP::is_valid_for_connection(void) const 
 {
   if (inputs.size() == 0) {
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) No inputs in the current chainsetup.");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) No inputs in the current chainsetup.");
     return(false);
   }
   if (outputs.size() == 0) {
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) No outputs in the current chainsetup.");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) No outputs in the current chainsetup.");
     return(false);
   }
   if (chains.size() == 0) {
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) No chains in the current chainsetup.");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) No chains in the current chainsetup.");
     return(false);
   }
   for(vector<CHAIN*>::const_iterator q = chains.begin(); q != chains.end();
@@ -342,7 +342,7 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void)
 	number_of_non_realtime_inputs() > 0 && 
 	number_of_non_realtime_outputs() > 0 &&
 	chains.size() > 1))) {
-    ecadebug->msg("(eca-chainsetup) Multitrack-mode enabled.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup) Multitrack-mode enabled.");
     multitrack_mode_rep = true;
   }
   else
@@ -357,14 +357,14 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void)
       /* case 1: a multitrack setup */
       if (multitrack_mode_rep == true) {
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
-	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection case-1");
+	ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) bmode-selection case-1");
       }
 
       /* case 2: rt-objects without priviledges for rt-scheduling */
       else if (rtcaps_rep != true) {
 	toggle_raised_priority(false);
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
-	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection case-2");
+	ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) bmode-selection case-2");
       }
 
       /* case 3: no chain operators and "one-way rt-operation" */
@@ -372,51 +372,51 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void)
 	       (number_of_realtime_inputs() == 0 || 
 		number_of_realtime_outputs() == 0)) {
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
-	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection case-3");
+	ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) bmode-selection case-3");
       }
 
       /* case 4: default for rt-setups */
       else {
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rtlowlatency;
-	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection case-4");
+	ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) bmode-selection case-4");
       }
     }
     else { 
       /* case 5: no rt-objects */
       active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_nonrt;
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection case-5");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) bmode-selection case-5");
     }
   }
   else {
     /* user has explicitly selected the buffering mode */
     active_buffering_mode_rep = buffering_mode();
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection explicit");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) bmode-selection explicit");
   }
   
   switch(active_buffering_mode_rep) 
     {
     case ECA_CHAINSETUP::cs_bmode_nonrt: { 
       impl_repp->bmode_active_rep = impl_repp->bmode_nonrt_rep;
-      ecadebug->msg(ECA_DEBUG::info, 
+      ECA_LOG_MSG(ECA_LOGGER::info, 
 		    "(eca-chainsetup) 'nonrt' buffering mode selected.");
       break; 
     }
     case ECA_CHAINSETUP::cs_bmode_rt: { 
       impl_repp->bmode_active_rep = impl_repp->bmode_rt_rep;
-      ecadebug->msg(ECA_DEBUG::info, 
+      ECA_LOG_MSG(ECA_LOGGER::info, 
 		    "(eca-chainsetup) 'rt' buffering mode selected.");
       break; 
     }
     case ECA_CHAINSETUP::cs_bmode_rtlowlatency: { 
       impl_repp->bmode_active_rep = impl_repp->bmode_rtlowlatency_rep;
-      ecadebug->msg(ECA_DEBUG::info, 
+      ECA_LOG_MSG(ECA_LOGGER::info, 
 		    "(eca-chainsetup) 'rtlowlatency' buffering mode selected.");
       break;
     }
     default: { /* error! */ }
     }
 
-  ecadebug->msg(ECA_DEBUG::system_objects,
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,
 		"(eca-chainsetup) Set buffering parameters to: \n--cut--" +
 		impl_repp->bmode_active_rep.to_string() +"\n--cut--");
 }
@@ -439,19 +439,19 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void)
   /* if necessary, switch between different proxy and direct modes */
   if (double_buffering() == true) {
     if (has_realtime_objects() != true) {
-      ecadebug->msg(ECA_DEBUG::system_objects,
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,
 		    "(eca-chainsetup) No realtime objects; switching to direct mode.");
       switch_to_direct_mode();
       impl_repp->bmode_active_rep.toggle_double_buffering(false);
     }
     else if (has_nonrealtime_objects() != true) {
-      ecadebug->msg(ECA_DEBUG::system_objects,
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,
 		    "(eca-chainsetup) Only realtime objects; switching to direct mode.");
       switch_to_direct_mode();
       impl_repp->bmode_active_rep.toggle_double_buffering(false);
     }
     else if (proxy_clients_rep == 0) {
-      ecadebug->msg(ECA_DEBUG::system_objects,
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,
 		    "(eca-chainsetup) Switching to proxy mode.");
       switch_to_proxy_mode();
     }
@@ -463,7 +463,7 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void)
   else {
     /* double_buffering() != true */
     if (proxy_clients_rep > 0) {
-      ecadebug->msg(ECA_DEBUG::system_objects,
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,
 		    "(eca-chainsetup) Switching to direct mode.");
       switch_to_direct_mode();
     }
@@ -524,14 +524,14 @@ void ECA_CHAINSETUP::lock_all_memory(void)
 {
 #ifdef HAVE_MLOCKALL
   if (::mlockall (MCL_CURRENT|MCL_FUTURE)) {
-    ecadebug->msg("(eca-chainsetup) Warning! Couldn't lock all memory!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup) Warning! Couldn't lock all memory!");
   }
   else {
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Memory locked!");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) Memory locked!");
     memory_locked_rep = true;
   }
 #else
-  ecadebug->msg("(eca-chainsetup) Memory locking not available.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup) Memory locking not available.");
 #endif
 }
 
@@ -543,15 +543,15 @@ void ECA_CHAINSETUP::unlock_all_memory(void)
 #ifdef HAVE_MUNLOCKALL
   if (memory_locked_rep == true) {
     if (::munlockall()) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Warning! Couldn't unlock all memory!");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) Warning! Couldn't unlock all memory!");
     }
     else 
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Memory unlocked!");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) Memory unlocked!");
     memory_locked_rep = false;
   }
 #else
   memory_locked_rep = false;
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Memory unlocking not available.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) Memory unlocking not available.");
 #endif
 }
 
@@ -607,7 +607,7 @@ void ECA_CHAINSETUP::add_chain_helper(const string& name)
 {
   chains.push_back(new CHAIN());
   chains.back()->name(name);
-  ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Chain \"" + name + "\" created.");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Chain \"" + name + "\" created.");
 }
 
 /**
@@ -880,7 +880,7 @@ bool ECA_CHAINSETUP::is_realtime_target_output(int output_id) const {
     ++q;
   }
   if (output_found == true && result == true) 
-    ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup) slave output detected: " + outputs[output_id]->label());
+    ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-chainsetup) slave output detected: " + outputs[output_id]->label());
   else
     result = false;
 
@@ -999,7 +999,7 @@ int ECA_CHAINSETUP::number_of_non_realtime_outputs(void) const {
 AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_manager(AUDIO_IO* aio) const {
   for(vector<AUDIO_IO_MANAGER*>::const_iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
     if ((*q)->get_object_id(aio) != -1) {
-      ecadebug->msg(ECA_DEBUG::system_objects, 
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		    "(eca-chainsetup) Found object manager '" +
 		    (*q)->name() + 
 		    "' for aio '" +
@@ -1020,7 +1020,7 @@ AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_manager(AUDIO_IO* aio) const 
 AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_type_manager(AUDIO_IO* aio) const {
   for(vector<AUDIO_IO_MANAGER*>::const_iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
     if ((*q)->is_managed_type(aio) == true) {
-      ecadebug->msg(ECA_DEBUG::system_objects, 
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		    "(eca-chainsetup) Found object manager '" +
 		    (*q)->name() + 
 		    "' for aio type '" +
@@ -1042,7 +1042,7 @@ void ECA_CHAINSETUP::register_engine_driver(AUDIO_IO_MANAGER* amgr)
 
   if (driver != 0) {
     engine_driver_repp = driver;
-    ecadebug->msg(ECA_DEBUG::system_objects, 
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		  "(eca-chainsetup) Registered audio i/o manager '" +
 		  amgr->name() +
 		  "' as the current engine driver.");
@@ -1059,7 +1059,7 @@ void ECA_CHAINSETUP::register_audio_object_to_manager(AUDIO_IO* aio) {
   if (mgr == 0) {
     mgr = aio->create_object_manager();
     if (mgr != 0) {
-      ecadebug->msg(ECA_DEBUG::system_objects, 
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		    "(eca-chainsetup) Creating object manager '" +
 		    mgr->name() + 
 		    "' for aio '" +
@@ -1084,7 +1084,7 @@ void ECA_CHAINSETUP::unregister_audio_object_from_manager(AUDIO_IO* aio) {
   if (mgr != 0) {
     int id = mgr->get_object_id(aio);
     if (id != -1) {
-      ecadebug->msg(ECA_DEBUG::system_objects, 
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		    "(eca-chainsetup) Unregistering object '" +
 		    aio->name() + 
 		    "' from manager '" +
@@ -1227,7 +1227,7 @@ void ECA_CHAINSETUP::remove_audio_input(const string& label) {
 
   for(size_t n = 0; n < inputs.size(); n++) {
     if (inputs[n]->label() == label) {
-      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Removing input " + label + ".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Removing input " + label + ".");
 
       remove_audio_object_helper(inputs[n]);
 
@@ -1261,7 +1261,7 @@ void ECA_CHAINSETUP::remove_audio_output(const string& label) {
 
   for(size_t n = 0; n < outputs.size(); n++) {
     if (outputs[n]->label() == label) {
-      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Removing output " + label + ".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Removing output " + label + ".");
 
       remove_audio_object_helper(outputs[n]);
 
@@ -1301,7 +1301,7 @@ void ECA_CHAINSETUP::audio_object_info(const AUDIO_IO* aio) {
   temp += "\".\n";
   temp += aio->format_info();
 
-  ecadebug->msg(temp);
+  ECA_LOG_MSG(ECA_LOGGER::info, temp);
 }
 
 
@@ -1390,7 +1390,7 @@ void ECA_CHAINSETUP::attach_input_to_selected_chains(const AUDIO_IO* obj)
     }
     ++c;
   }
-  ecadebug->msg(ECA_DEBUG::system_objects, temp);
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, temp);
 }
 
 /**
@@ -1426,7 +1426,7 @@ void ECA_CHAINSETUP::attach_output_to_selected_chains(const AUDIO_IO* obj)
     }
     ++c;
   }
-  ecadebug->msg(ECA_DEBUG::system_objects, temp);
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, temp);
 }
 
 /**
@@ -1586,20 +1586,20 @@ void ECA_CHAINSETUP::disable(void)
   // --------
 
   if (is_enabled_rep == true) {
-    ecadebug->msg(ECA_DEBUG::system_objects, "Closing chainsetup \"" + name() + "\"");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Closing chainsetup \"" + name() + "\"");
     for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
       if ((*q)->is_open() == true) (*q)->close();
     }
     
     for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
       if ((*q)->is_open() == true) (*q)->close();
     }
 
     if (impl_repp->midi_server_rep.is_enabled() == true) impl_repp->midi_server_rep.disable();
     for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing midi device \"" + (*q)->label() + "\".");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) Closing midi device \"" + (*q)->label() + "\".");
       if ((*q)->is_open() == true) (*q)->close();
     }
 
@@ -1619,7 +1619,7 @@ void ECA_CHAINSETUP::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_valu
   /* not necessarily a problem */
   DBC_CHECK(is_locked() != true);
 
-  ecadebug->msg(ECA_DEBUG::user_objects,
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		"(eca-chainsetup) sample rate change, chainsetup " +
 		name() +
 		" to rate " + 
@@ -1645,7 +1645,7 @@ void ECA_CHAINSETUP::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_valu
  */
 void ECA_CHAINSETUP::seek_position(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects,
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		"(eca-chainsetup) seek position, chainsetup '" +
 		name() +
 		"' to pos in sec " + 
@@ -1739,32 +1739,32 @@ void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
 }
 
 void ECA_CHAINSETUP::set_buffersize(long int value) { 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) overriding buffersize.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) overriding buffersize.");
   impl_repp->bmode_override_rep.set_buffersize(value); 
 }
 
 void ECA_CHAINSETUP::toggle_raised_priority(bool value) { 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) overriding raised priority.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) overriding raised priority.");
   impl_repp->bmode_override_rep.toggle_raised_priority(value); 
 }
 
 void ECA_CHAINSETUP::set_sched_priority(int value) { 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) sched_priority.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) sched_priority.");
   impl_repp->bmode_override_rep.set_sched_priority(value); 
 }
 
 void ECA_CHAINSETUP::toggle_double_buffering(bool value) { 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) overriding doublebuffering.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) overriding doublebuffering.");
   impl_repp->bmode_override_rep.toggle_double_buffering(value); 
 }
 
 void ECA_CHAINSETUP::set_double_buffer_size(long int v) { 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) overriding db-size.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) overriding db-size.");
   impl_repp->bmode_override_rep.set_double_buffer_size(v); 
 }
 
 void ECA_CHAINSETUP::toggle_max_buffers(bool v) { 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) overriding max_buffers.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) overriding max_buffers.");
   impl_repp->bmode_override_rep.toggle_max_buffers(v); 
 }
 
@@ -1893,7 +1893,7 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp)
   for(vector<string>::const_iterator p = schains.begin(); p != schains.end(); p++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*p == (*q)->name()) {
-	ecadebug->msg(ECA_DEBUG::system_objects, "Adding chainop to chain " + (*q)->name() + ".");
+	ECA_LOG_MSG(ECA_LOGGER::system_objects, "Adding chainop to chain " + (*q)->name() + ".");
 	(*q)->add_chain_operator(cotmp);
 	(*q)->selected_chain_operator_as_target();
 	return;
@@ -1945,7 +1945,7 @@ void ECA_CHAINSETUP::load_from_file(const string& filename,
     }
     vector<string> words = kvu_string_to_tokens_quoted(temp);
     for(unsigned int n = 0; n < words.size(); n++) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding \"" + words[n] + "\" to options (loaded from \"" + filename + "\".");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) Adding \"" + words[n] + "\" to options (loaded from \"" + filename + "\".");
       options.push_back(words[n]);
     }
   }

@@ -25,7 +25,7 @@
 
 #include "osc-gen.h"
 #include "oscillator.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::value(void) {
   if (mode_rep == 0)
@@ -114,7 +114,7 @@ GENERIC_OSCILLATOR::GENERIC_OSCILLATOR(double freq, int mode)
 void GENERIC_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_t phasestep) {
   step_length(phasestep);
 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(osc-gen) Generic oscillator init.");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(osc-gen) Generic oscillator init.");
 }
 
 GENERIC_OSCILLATOR::~GENERIC_OSCILLATOR (void) { }

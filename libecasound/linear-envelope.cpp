@@ -22,7 +22,7 @@
 #include <kvu_message_item.h>
 
 #include "linear-envelope.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 LINEAR_ENVELOPE::LINEAR_ENVELOPE(void)
   : FINITE_ENVELOPE(0)
@@ -51,7 +51,7 @@ void LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_t step)
   otemp.setprecision(3);
   otemp << length_in_seconds();
   otemp << " seconds.";
-  ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
 }
 
 void LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value)

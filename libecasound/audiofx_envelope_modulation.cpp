@@ -25,7 +25,7 @@
 #include "samplebuffer_iterators.h"
 #include "audiofx_envelope_modulation.h"
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-error.h"
 
 EFFECT_ENV_MOD::~EFFECT_ENV_MOD(void)
@@ -56,7 +56,7 @@ void EFFECT_PULSE_GATE::set_parameter(int param, parameter_t value)
       {
 	MESSAGE_ITEM otemp;
 	otemp << "(audiofx_envelope_modulation) WARNING! Frequency must be greater than 0! ";
-	ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
       }
     break;
   case 2:
@@ -68,7 +68,7 @@ void EFFECT_PULSE_GATE::set_parameter(int param, parameter_t value)
       {
 	MESSAGE_ITEM otemp;
 	otemp << "(audiofx_envelope_modulation) WARNING! on time must be between 0 and 100 inclusive! ";
-	ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
       }
     break;
   }
@@ -188,7 +188,7 @@ void EFFECT_TREMOLO::set_parameter(int param, parameter_t value)
       {
 	MESSAGE_ITEM otemp;
 	otemp << "(audiofx_envelope_modulation) WARNING! bpm must be greater than 0! ";
-	ecadebug->msg(otemp.to_string());
+	ECA_LOG_MSG(ECA_LOGGER::info, otemp.to_string());
       }
     break;
   case 2:

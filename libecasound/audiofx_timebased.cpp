@@ -22,7 +22,7 @@
 
 #include <kvu_utils.h>
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 #include "samplebuffer_iterators.h"
 #include "audiofx_timebased.h"

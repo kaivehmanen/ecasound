@@ -23,7 +23,7 @@
 
 #include <eca-control-interface.h>
 #include <eca-error.h>
-#include <eca-debug.h>
+#include <eca-logger.h>
 #include <Python.h>
 
 #include "pyecasound.h"
@@ -156,8 +156,9 @@ static PyTypeObject pyeca_control_type = {
 
 static PyObject *pyeca_control_new(PyObject *self, PyObject *args) {
 //    cerr << "ECI: pyeca_control_new, C++ constructor" << endl;
-//    ecadebug->set_debug_level(ECA_DEBUG::info |
-//    			    ECA_DEBUG::module_flow);
+//    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
+//    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
+//    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems,
 
   pyeca_control_t *selfp = (pyeca_control_t*) PyObject_NEW(pyeca_control_t, &pyeca_control_type);
   selfp->eci = new ECA_CONTROL_INTERFACE();

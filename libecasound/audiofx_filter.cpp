@@ -22,7 +22,7 @@
 #include <kvu_utils.h>
 
 #include "samplebuffer_iterators.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "audiofx_filter.h"
 
 EFFECT_FILTER::~EFFECT_FILTER(void)

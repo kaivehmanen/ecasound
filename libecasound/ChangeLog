@@ -2,6 +2,13 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2002-04-28  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-logger.h (all): added
+	* eca-logger-interface.h (all): added
+	* eca-logger-default.h (all): added
+	* eca-debug.h (all): removed, replaced by eca-logger.h
+
 2002-04-25  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* library version number added to library name; current

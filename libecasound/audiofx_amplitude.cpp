@@ -24,7 +24,7 @@
 #include "samplebuffer_iterators.h"
 #include "audiofx_amplitude.h"
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-error.h"
 
 EFFECT_AMPLITUDE::~EFFECT_AMPLITUDE(void)
@@ -120,7 +120,7 @@ void EFFECT_AMPLIFY_CLIPCOUNT::process(void) {
     otemp << "(audiofx_amplitude) WARNING! Signal is clipping! ";
     otemp << num_of_clipped;
     otemp << " consecutive clipped samples.";
-    ecadebug->msg(otemp.to_string());
+    ECA_LOG_MSG(ECA_LOGGER::info, otemp.to_string());
   }
 }
 
@@ -400,7 +400,7 @@ void EFFECT_NOISEGATE::process(void) {
 	    if (th_time_lask[i.channel()] >= th_time) {
 	      th_time_lask[i.channel()] = 0.0;
 	      ng_status[i.channel()] = ng_attacking;
-	      ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from waiting to attacking");
+	      ECA_LOG_MSG(ECA_LOGGER::user_objects,"(audiofx) noisegate - from waiting to attacking");
 	    }
 	  }
 	  else {
@@ -421,14 +421,14 @@ void EFFECT_NOISEGATE::process(void) {
 	      attack_lask[i.channel()] = 0.0;
 	      ng_status[i.channel()] = ng_active;
 	      kerroin[i.channel()] = 0.0;
-	      ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from attack to active");
+	      ECA_LOG_MSG(ECA_LOGGER::user_objects,"(audiofx) noisegate - from attack to active");
 	    }
 	    *i.current() = *i.current() * kerroin[i.channel()];
 	  }
 	  else {
 	    attack_lask[i.channel()] = 0;
 	    ng_status[i.channel()] = ng_waiting;
-	    ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from attack to waiting");
+	    ECA_LOG_MSG(ECA_LOGGER::user_objects,"(audiofx) noisegate - from attack to waiting");
 	  }
 	  break;
 	}
@@ -440,7 +440,7 @@ void EFFECT_NOISEGATE::process(void) {
 	{
 	  if (below == false) {
 	    ng_status[i.channel()] = ng_holding;
-	    ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from active to holding");
+	    ECA_LOG_MSG(ECA_LOGGER::user_objects,"(audiofx) noisegate - from active to holding");
 	  }
 	  *i.current() = *i.current() * 0.0;
 	  break;
@@ -456,7 +456,7 @@ void EFFECT_NOISEGATE::process(void) {
 	    if (hold_lask[i.channel()] >= htime) {
 	      hold_lask[i.channel()] = 0.0;
 	      ng_status[i.channel()] = ng_releasing;
-	      ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from holding to release");
+	      ECA_LOG_MSG(ECA_LOGGER::user_objects,"(audiofx) noisegate - from holding to release");
 	    }
 	  }
 	  *i.current() = *i.current() * 0.0;
@@ -473,7 +473,7 @@ void EFFECT_NOISEGATE::process(void) {
 	  if (release_lask[i.channel()] >= rtime) {
 	    release_lask[i.channel()] = 0.0;
 	    ng_status[i.channel()] = ng_waiting;
-	    ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from releasing to waiting");
+	    ECA_LOG_MSG(ECA_LOGGER::user_objects,"(audiofx) noisegate - from releasing to waiting");
 	  }
 	  *i.current() = *i.current() * kerroin[i.channel()];
 	  break;

@@ -37,7 +37,7 @@
 
 #include "eca-version.h"
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 using std::cerr;
 using std::endl;
@@ -61,7 +61,7 @@ AUDIO_IO_ALSA_PCM::AUDIO_IO_ALSA_PCM (int card,
 				      int subdevice) 
   : AUDIO_IO_DEVICE()
 {
-  // ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) construct");
+  // ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) construct");
   card_number_rep = card;
   device_number_rep = device;
   subdevice_number_rep = subdevice;
@@ -118,7 +118,7 @@ void AUDIO_IO_ALSA_PCM::deallocate_structs(void)
 
 void AUDIO_IO_ALSA_PCM::open_device(void)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) open");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) open");
 
   // -------------------------------------------------------------------
   // Device name initialization
@@ -164,7 +164,7 @@ void AUDIO_IO_ALSA_PCM::open_device(void)
 
 void AUDIO_IO_ALSA_PCM::set_audio_format_params(void)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) set_audio_format_params");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) set_audio_format_params");
   format_rep = SND_PCM_FORMAT_LAST;
   switch(sample_format()) 
     {
@@ -190,7 +190,7 @@ void AUDIO_IO_ALSA_PCM::print_pcm_info(void)
 
 void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) fill_and_set_hw_params");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) fill_and_set_hw_params");
 
   /* 1. create one param combination */
   int err = snd_pcm_hw_params_any(audio_fd_repp, pcm_hw_params_repp);
@@ -198,9 +198,9 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
   
   /* 2. set interleaving mode */
   if (interleaved_channels() == true)
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) Using interleaved stream format.");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) Using interleaved stream format.");
   else
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) Using noninterleaved stream format.");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) Using noninterleaved stream format.");
 
   if (interleaved_channels() == true)
     err = snd_pcm_hw_params_set_access(audio_fd_repp, pcm_hw_params_repp,
@@ -267,18 +267,18 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
    
   /* 8. print debug information */
   unsigned int value = snd_pcm_hw_params_get_buffer_time(pcm_hw_params_repp, 0);
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(value) + " usecs.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(value) + " usecs.");
 
   value = snd_pcm_hw_params_get_buffer_size(pcm_hw_params_repp);
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(value) + " frames.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(value) + " frames.");
   buffercount_rep = value / buffersize();
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) total latency is " + kvu_numtostr(latency()) + " frames.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) total latency is " + kvu_numtostr(latency()) + " frames.");
 
   value = snd_pcm_hw_params_get_period_time(pcm_hw_params_repp, 0);
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(value) + " usecs.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(value) + " usecs.");
 
   value = snd_pcm_hw_params_get_period_size(pcm_hw_params_repp, 0);
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(value) + " frames.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(value) + " frames.");
   DBC_CHECK(value == static_cast<unsigned int>(buffersize()));
 
   /* 9. all set, now active hw params */
@@ -289,7 +289,7 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
 }
 
 void AUDIO_IO_ALSA_PCM::fill_and_set_sw_params(void) {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) fill_and_set_sw_params");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) fill_and_set_sw_params");
 
   /* 1. get current params */
   snd_pcm_sw_params_current(audio_fd_repp, pcm_sw_params_repp);
@@ -328,14 +328,14 @@ void AUDIO_IO_ALSA_PCM::stop(void)
   snd_pcm_drop(audio_fd_repp); /* non-blocking */
   // snd_pcm_drain(audio_fd_repp); /* blocking */
   
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) stop - " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) stop - " + label() + ".");
 
   AUDIO_IO_DEVICE::stop();
 }
 
 void AUDIO_IO_ALSA_PCM::close(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) close - " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) close - " + label() + ".");
 
   if (is_prepared() == true && is_running() == true) stop();
   snd_pcm_close(audio_fd_repp);
@@ -345,18 +345,18 @@ void AUDIO_IO_ALSA_PCM::close(void)
 
 void AUDIO_IO_ALSA_PCM::prepare(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) prepare - " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) prepare - " + label() + ".");
 
   int err = snd_pcm_prepare(audio_fd_repp);
   if (err < 0)
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-alsa) Error when preparing stream: " + string(snd_strerror(err)));
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-alsa) Error when preparing stream: " + string(snd_strerror(err)));
 
   AUDIO_IO_DEVICE::prepare();
 }
 
 void AUDIO_IO_ALSA_PCM::start(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) start - " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) start - " + label() + ".");
   snd_pcm_start(audio_fd_repp);
 
   AUDIO_IO_DEVICE::start();
@@ -456,7 +456,7 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_capture(void)
     }
   }
   else {
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-alsa) snd_pcm_status() failed!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-alsa) snd_pcm_status() failed!");
   }
 }
 
@@ -555,7 +555,7 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
     }
   }
   else {
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-alsa) snd_pcm_status() failed!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-alsa) snd_pcm_status() failed!");
   }
 }
 

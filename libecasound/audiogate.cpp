@@ -22,7 +22,7 @@
 #include "samplebuffer.h"
 #include "samplebuffer_functions.h"
 #include "audiogate.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 GATE_BASE::~GATE_BASE(void)
 {
@@ -59,9 +59,9 @@ TIME_CROP_GATE::TIME_CROP_GATE (CHAIN_OPERATOR::parameter_t open_at, CHAIN_OPERA
   etime = btime + duration;
   curtime = 0.0;
   
-  ecadebug->msg("(audiogate) Time crop gate created; opens at " +
-		kvu_numtostr(btime) + " seconds and stays open for " +
-		kvu_numtostr(duration) + " seconds.\n");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(audiogate) Time crop gate created; opens at " +
+	      kvu_numtostr(btime) + " seconds and stays open for " +
+	      kvu_numtostr(duration) + " seconds.\n");
 }
 
 CHAIN_OPERATOR::parameter_t TIME_CROP_GATE::get_parameter(int param) const 
@@ -99,14 +99,14 @@ THRESHOLD_GATE::THRESHOLD_GATE (CHAIN_OPERATOR::parameter_t threshold_openlevel,
   is_opened = is_closed = false;
 
   if (rms) {
-    ecadebug->msg("(audiogate) Threshold gate created; open threshold " +
-		  kvu_numtostr(openlevel * 100) + "%, close threshold " +
-		  kvu_numtostr(closelevel * 100) + "%, using RMS volume.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audiogate) Threshold gate created; open threshold " +
+		kvu_numtostr(openlevel * 100) + "%, close threshold " +
+		kvu_numtostr(closelevel * 100) + "%, using RMS volume.");
   }
   else {
-    ecadebug->msg("(audiogate) Threshold gate created; open threshold " +
-		  kvu_numtostr(openlevel * 100) + "%, close threshold " +
-		  kvu_numtostr(closelevel * 100) + "%, using peak volume.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audiogate) Threshold gate created; open threshold " +
+		kvu_numtostr(openlevel * 100) + "%, close threshold " +
+		kvu_numtostr(closelevel * 100) + "%, using peak volume.");
   }
 }
 
@@ -119,14 +119,14 @@ void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf)
   if (is_opened == false) {
     if (avolume > openlevel) { 
       open_gate();
-      ecadebug->msg(ECA_DEBUG::user_objects, "(audiogate) Threshold gate opened.");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audiogate) Threshold gate opened.");
       is_opened = true;
     }
   }
   else if (is_closed == false) {
     if (avolume < closelevel) { 
       close_gate();
-      ecadebug->msg(ECA_DEBUG::user_objects, "(audiogate) Threshold gate closed.");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audiogate) Threshold gate closed.");
       is_closed = true;
     }
   }

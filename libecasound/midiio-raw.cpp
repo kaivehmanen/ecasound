@@ -23,7 +23,7 @@
 #include <unistd.h>
 #include "midiio-raw.h"
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 MIDI_IO_RAW::MIDI_IO_RAW(const std::string& name) { label("rawmidi"); device_name_rep = name; }
 
@@ -51,7 +51,7 @@ void MIDI_IO_RAW::open(void) {
   }
   if (nonblocking_mode() == true) flags |= O_NONBLOCK;
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(midio-raw) Opening midi device \"" + device_name_rep + "\".");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(midio-raw) Opening midi device \"" + device_name_rep + "\".");
   fd_rep = ::open(device_name_rep.c_str(), flags);
   if (fd_rep < 0) {
     toggle_open_state(false);

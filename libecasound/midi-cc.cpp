@@ -27,7 +27,7 @@
 #include "midi-server.h"
 #include "midi-cc.h"
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(void) {
 //    if (midi_in_queue.update_controller_value()) {
@@ -68,7 +68,7 @@ void MIDI_CONTROLLER::init(CONTROLLER_SOURCE::parameter_t phasestep) {
     otemp << "(midi-cc) MIDI-controller initialized using controller ";
     otemp.setprecision(0);
     otemp << controller << " and channel " << channel << ".";
-    ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
 
 }
 

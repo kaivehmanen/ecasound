@@ -23,7 +23,7 @@
 #include <kvu_numtostr.h>
 
 #include "audioio-mikmod.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 string MIKMOD_INTERFACE::default_mikmod_cmd = "mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f";
 
@@ -70,7 +70,7 @@ long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {
   bytes_read_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-mikmod) Can't start process \"" + MIKMOD_INTERFACE::default_mikmod_cmd + "\". Please check your ~/.ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-mikmod) Can't start process \"" + MIKMOD_INTERFACE::default_mikmod_cmd + "\". Please check your ~/.ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }
@@ -89,7 +89,7 @@ void MIKMOD_INTERFACE::seek_position(void)
 }
 
 void MIKMOD_INTERFACE::kill_mikmod(void) {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mikmod) Cleaning mikmod-child with pid " + kvu_numtostr(pid_of_child()) + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mikmod) Cleaning mikmod-child with pid " + kvu_numtostr(pid_of_child()) + ".");
   clean_child();
   triggered_rep = false;
 }

@@ -23,7 +23,7 @@
 #include <kvu_numtostr.h>
 
 #include "audioio-timidity.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 string TIMIDITY_INTERFACE::default_timidity_cmd = "timidity -Or1S -id -s %s -o - %f";
 
@@ -74,7 +74,7 @@ long int TIMIDITY_INTERFACE::read_samples(void* target_buffer,
   bytes_read_rep = std::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-timidity) Can't start process \"" + TIMIDITY_INTERFACE::default_timidity_cmd + "\". Please check your ~/.ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-timidity) Can't start process \"" + TIMIDITY_INTERFACE::default_timidity_cmd + "\". Please check your ~/.ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }
@@ -94,7 +94,7 @@ void TIMIDITY_INTERFACE::seek_position(void)
 
 void TIMIDITY_INTERFACE::kill_timidity(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-timidity) Cleaning Timidity++-child with pid " + kvu_numtostr(pid_of_child()) + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-timidity) Cleaning Timidity++-child with pid " + kvu_numtostr(pid_of_child()) + ".");
   clean_child();
   triggered_rep = false;
 }

@@ -25,7 +25,7 @@
 #include "samplebuffer_iterators.h"
 #include "audiofx_analysis.h"
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-error.h"
 
 EFFECT_ANALYSIS::~EFFECT_ANALYSIS(void)

@@ -26,7 +26,7 @@
 
 #include "eca-error.h"
 #include "audioio.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 const string& AUDIO_IO::SETUP_ERROR::message(void) const { return(message_rep); }
 AUDIO_IO::SETUP_ERROR::Error_type AUDIO_IO::SETUP_ERROR::type(void) const { return(type_rep); }
@@ -322,7 +322,7 @@ void AUDIO_IO::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
 
 void AUDIO_IO::seek_position(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects,
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		"(audioio) seek position, aobj '" +
 		label() +
 		"' to pos in sec " + 

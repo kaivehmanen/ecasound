@@ -23,7 +23,7 @@
 #include "sample-specs.h"
 #include "samplebuffer.h"
 #include "audiofx.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 EFFECT_BASE::EFFECT_BASE(void)
   : channels_rep(0) 
@@ -36,7 +36,7 @@ EFFECT_BASE::~EFFECT_BASE(void)
 
 void EFFECT_BASE::init(SAMPLE_BUFFER* sbuf)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects,
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		"(audiofx) Init w/ samplerate " +
 		kvu_numtostr(samples_per_second()) + " for object " +
 		name() + ".");
@@ -53,7 +53,7 @@ int EFFECT_BASE::channels(void) const {
 
 void EFFECT_BASE::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_rate)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects,
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		"(audiofx) Setting samplerate to " +
 		kvu_numtostr(new_rate) + " for object " +
 		name() + ". Old value " +

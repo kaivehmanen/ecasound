@@ -50,7 +50,7 @@
 
 #include "eca-version.h"
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 using std::string;
 using std::list;
@@ -286,7 +286,7 @@ void ECA_CONTROL::action(int action_id)
   case ec_start: 
     { 
       if (is_running() != true) start();
-      // ecadebug->msg("(eca-control) Can't perform requested action; no chainsetup connected.");
+      // ECA_LOG_MSG(ECA_LOGGER::info, "(eca-control) Can't perform requested action; no chainsetup connected.");
       break; 
     }
   case ec_stop: { if (is_running() == true) stop(); break; }
@@ -294,7 +294,7 @@ void ECA_CONTROL::action(int action_id)
   case ec_debug:
     {
       int level = atoi((action_args_rep[0]).c_str());
-      ecadebug->set_debug_level(level);
+      ECA_LOGGER::instance().set_log_level_bitmask(level);
       set_last_string("Debug level set to " + kvu_numtostr(level) + ".");
       break;
     }
@@ -644,13 +644,13 @@ void ECA_CONTROL::print_last_value(void) {
     result = kvu_numtostr(last_float(), 3);
    
   if (result.size() > 0) {
-    ecadebug->msg(result);
+    ECA_LOG_MSG(ECA_LOGGER::info, result);
   }
 }
 
 void ECA_CONTROL::print_last_error(void) {
   if (last_error().size() > 0) {
-    ecadebug->msg("(eca-control) ERROR: " + last_error());
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-control) ERROR: " + last_error());
   }
 }
 
@@ -674,7 +674,7 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
 }
 
 string ECA_CONTROL::chainsetup_status(void) const { 
-  ecadebug->msg("### Chainsetup status ###");
+  ECA_LOG_MSG(ECA_LOGGER::info, "### Chainsetup status ###");
 
   vector<ECA_CHAINSETUP*>::const_iterator cs_citer = session_repp->chainsetups_rep.begin();
   int index = 0;
@@ -698,8 +698,8 @@ string ECA_CONTROL::chain_status(void) const {
   DBC_REQUIRE(is_selected() == true);
   // --------
   
-  ecadebug->msg("### Chain status (chainsetup '" +
-		selected_chainsetup() + "') ###");
+  ECA_LOG_MSG(ECA_LOGGER::info, "### Chain status (chainsetup '" +
+	      selected_chainsetup() + "') ###");
   
   MESSAGE_ITEM mitem;
   vector<CHAIN*>::const_iterator chain_citer;
@@ -726,8 +726,8 @@ string ECA_CONTROL::chain_operator_status(void) const {
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  ecadebug->msg("### Chain operator status (chainsetup '" +
-		selected_chainsetup() + "') ###");
+  ECA_LOG_MSG(ECA_LOGGER::info, "### Chain operator status (chainsetup '" +
+	      selected_chainsetup() + "') ###");
 
   MESSAGE_ITEM msg;
   string st_info_string;
@@ -761,8 +761,8 @@ string ECA_CONTROL::controller_status(void) const {
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  ecadebug->msg("### Controller status (chainsetup '" +
-		selected_chainsetup() + "') ###");
+  ECA_LOG_MSG(ECA_LOGGER::info, "### Controller status (chainsetup '" +
+	      selected_chainsetup() + "') ###");
 
   MESSAGE_ITEM mitem;
   string st_info_string;
@@ -795,7 +795,7 @@ string ECA_CONTROL::aio_status(void) const {
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  ecadebug->msg("### Audio input/output status (chainsetup '" +
+  ECA_LOG_MSG(ECA_LOGGER::info, "### Audio input/output status (chainsetup '" +
 		selected_chainsetup() + "') ###");
 
   string st_info_string;
@@ -850,7 +850,7 @@ string ECA_CONTROL::aio_status(void) const {
 }
 
 void ECA_CONTROL::aio_register(void) { 
-  ecadebug->msg("Registered audio objects:\n");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Registered audio objects:\n");
   string result;
   const list<string>& objlist = ECA_OBJECT_FACTORY::audio_io_list();
   list<string>::const_iterator p = objlist.begin();
@@ -885,7 +885,7 @@ void ECA_CONTROL::aio_register(void) {
 }
 
 void ECA_CONTROL::cop_register(void) { 
-  ecadebug->msg("Registered chain operators:\n");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Registered chain operators:\n");
   string result;
   const list<string>& objlist = ECA_OBJECT_FACTORY::chain_operator_list();
   list<string>::const_iterator p = objlist.begin();
@@ -910,7 +910,7 @@ void ECA_CONTROL::cop_register(void) {
 }
 
 void ECA_CONTROL::preset_register(void) { 
-  ecadebug->msg("Registered effect presets:\n");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Registered effect presets:\n");
   string result;
   const list<string>& objlist = ECA_OBJECT_FACTORY::preset_list();
   list<string>::const_iterator p = objlist.begin();
@@ -937,7 +937,7 @@ void ECA_CONTROL::preset_register(void) {
 }
 
 void ECA_CONTROL::ladspa_register(void) { 
-  ecadebug->msg("Registered LADSPA plugins:\n");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Registered LADSPA plugins:\n");
   string result;
   const list<string>& objlist = ECA_OBJECT_FACTORY::ladspa_list();
   list<string>::const_iterator p = objlist.begin();
@@ -963,7 +963,7 @@ void ECA_CONTROL::ladspa_register(void) {
 }
 
 void ECA_CONTROL::ctrl_register(void) { 
-  ecadebug->msg("Registered controllers:\n");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Registered controllers:\n");
   string result;
   const list<string>& objlist = ECA_OBJECT_FACTORY::controller_list();
   list<string>::const_iterator p = objlist.begin();

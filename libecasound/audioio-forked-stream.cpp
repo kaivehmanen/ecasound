@@ -35,7 +35,7 @@
 #include <kvu_numtostr.h>
 #include <kvu_utils.h>
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "audioio-forked-stream.h"
 
 /**
@@ -76,7 +76,7 @@ void AUDIO_IO_FORKED_STREAM::init_temp_directory(void) {
     tempfile_dir_rep.reserve_directory(tmpdir);
   }
   if (tempfile_dir_rep.is_valid() != true) {
-    ecadebug->msg("(audioio-forked-stream) Warning! Unable to create temporary directory \"" + tmpdir + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-forked-stream) Warning! Unable to create temporary directory \"" + tmpdir + "\".");
   }
 }
 
@@ -284,7 +284,7 @@ void AUDIO_IO_FORKED_STREAM::clean_child(void) {
       pid_of_child_rep = 0;
     }
     else {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-forked-stream) Warning! Parent-pid changed!");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-forked-stream) Warning! Parent-pid changed!");
     }
   }
   if (fd_rep > 0) ::close(fd_rep);

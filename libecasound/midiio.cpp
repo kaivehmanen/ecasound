@@ -23,7 +23,7 @@
 #include "midiio.h"
 #include "samplebuffer.h"
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 // ===================================================================
 // Attributes

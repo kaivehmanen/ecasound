@@ -30,7 +30,7 @@
 #include "generic-controller.h"
 #include "eca-object-factory.h"
 #include "samplebuffer.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-error.h"
 #include "preset.h"
 #include "preset_impl.h"
@@ -138,7 +138,7 @@ void PRESET::parse(const string& formatted_string) {
   vector<string> tokens = kvu_string_to_words(formatted_string);
   vector<string>::const_iterator p = tokens.begin();
   while(p != tokens.end()) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "Parsing: " + *p + ".");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Parsing: " + *p + ".");
 
     /* case 1: new chain */
     if (*p == "|") {
@@ -242,7 +242,7 @@ void PRESET::parse_preset_option(const string& arg) {
 	    
 	  default: 
 	    { 
-	      ecadebug->msg("(preset) Unknown preset option (1) " + arg + ".");
+	      ECA_LOG_MSG(ECA_LOGGER::info, "(preset) Unknown preset option (1) " + arg + ".");
 	      break; 
 	    }
 	  }
@@ -250,7 +250,7 @@ void PRESET::parse_preset_option(const string& arg) {
 	  break; /* -pp */
 	}
 
-      default: { ecadebug->msg("(preset) Unknown preset option (2) " + arg + "."); break; }
+      default: { ECA_LOG_MSG(ECA_LOGGER::info, "(preset) Unknown preset option (2) " + arg + "."); break; }
 	
       }
 
@@ -258,7 +258,7 @@ void PRESET::parse_preset_option(const string& arg) {
  
     }
 
-  default: { ecadebug->msg("(preset) Unknown preset option (3) " + arg + "."); break; }
+  default: { ECA_LOG_MSG(ECA_LOGGER::info, "(preset) Unknown preset option (3) " + arg + "."); break; }
     
   }
 }

@@ -6,7 +6,7 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{28.042002}
+\date{28042002}
 \begin{document}
 
 \maketitle
@@ -31,7 +31,10 @@ ecasound version.
 \section{Document history}
 
 \begin{itemize}
-\item 28.04.2002 - Revised namespace policy; see chapter \ref{cpp_std_namespace}
+\item 28.04.2002 - Revised namespace policy (see chapter
+                   \ref{cpp_std_namespace}), replaced references to
+		   the obsolete ECA_DEBUG with a description
+		   of the new ECA_LOGGER subsystem.
 \item 27.02.2002 - Rewrote the ``Control flows'' chapter according 
                    to the structural changes made in 2.1dev8. Added
 		   a ``References'' section.
@@ -659,18 +662,20 @@ modifying the core classes.
 % ----------------------------------------------------------------------
 \subsection{Utility classes}
 
-\subsubsection{eca-debug.h - ECA\_DEBUG}
+\subsubsection{eca-logger.h - ECA\_LOGGER}
 
-Virtual interface class for ecasound's debugging subsystem. The
-ecasound library sends all debug messages to an instance of this
-class. The actual implementation can be done in many ways. For example 
+Singleton class that provides an interface to ecasound's logging 
+subsystem. Libecasound sends all log messages to this interface. 
+The actual logger implementation can be done in many ways. For example 
 in the console mode user-interface of ecasound, TEXTDEBUG class 
-implements the ECA\_DEBUG interface. It sends all messages that have 
-a suitable debug level to the console's standard output. On the other 
-hand, in qtecasound, ECA\_DEBUG is implemented using a Qt widget. 
+implements the ECA\_LOGGER\_INTERFACE class interface. It sends all 
+messages that have a suitable debug level to the console's standard 
+output. On the other hand, in qtecasound, ECA\_LOGGER\_INTERFACE is 
+implemented using a Qt widget.
 
-New ECA\_DEBUG implementations can be registered at runtime with 
-the \emph{attach\_debug\_object()} call (declared in eca-debug.h).
+New ECA\_LOGGER\_INTERFACE implementations can be registered at
+runtime with the \emph{ECA_LOGGER::attach\_logger()} member
+function (declared in eca-logger.h).
 
 % ----------------------------------------------------------------------
 \subsection{Object maps}
@@ -944,8 +949,19 @@ another short sample:
 \section{References}
 
 \begin{thebibliography}{10}
- \bibitem{Lakos96} Large-Scale C++ Software Design, Lakos96
-    % - C++ Programming Language, 3rd ed. [Stroustrup]
+ \bibitem[ISO14822]{c++std} 
+   ISO/IEC 14882 - Programming language C++
+
+ \bibitem[Lakos96]{Lakos96} 
+   Lakos, John: Large-Scale C++ Software Design, Addison Wesley, 1996
+
+ \bibitem[Larman01]{Larman01} 
+   Larman, Craig: Applying UML and Patterns, 2nd ed., Prentice Hall, 2001
+
+ \bibitem[Stroustrup97]{Stroustrup97} 
+   Stroustrup, Bjarne: C++ Programming Language, 3rd edition, Addison Wesley, 1997
+
+    % - Modern C++ Design 
     % - Design Patterns and Contracts [xxx]
     % - http://www.bell-labs.com/~cope/Patterns/C++Report/IdiomGeometry/IdiomGeometry-1.html
     % - esimerkkejä fyysisen organisaation suunnittelusta

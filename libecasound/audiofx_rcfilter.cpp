@@ -22,7 +22,7 @@
 #include <kvu_utils.h>
 
 #include "samplebuffer_iterators.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "audiofx_rcfilter.h"
 
 EFFECT_RC_LOWPASS_FILTER::EFFECT_RC_LOWPASS_FILTER (CHAIN_OPERATOR::parameter_t cutoff, 

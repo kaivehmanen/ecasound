@@ -24,7 +24,7 @@
 #include <kvutils/kvu_com_line.h>
 #include <kvutils/kvu_numtostr.h>
 
-#include <eca-debug.h>
+#include <eca-logger.h>
 #include <eca-error.h>
 #include <eca-control.h>
 #include <eca-engine.h>
@@ -38,10 +38,11 @@ static const string ecatools_play_version = "20011009";
 int main(int argc, char *argv[])
 {
 #ifdef NDEBUG
-  ecadebug->disable();
+  ECA_LOGGER::instance().disable();
 #else
-  ecadebug->set_debug_level(ECA_DEBUG::info |
-			    ECA_DEBUG::module_flow);
+  ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
+  ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
+  ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
 #endif
 
   COMMAND_LINE cline = COMMAND_LINE (argc, argv);

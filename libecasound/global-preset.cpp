@@ -21,14 +21,14 @@
 
 #include "resource-file.h"
 #include "eca-resources.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-error.h"
 #include "global-preset.h"
 
 GLOBAL_PRESET::GLOBAL_PRESET(const std::string& preset_name) 
   : preset_name_rep(preset_name) {
   ECA_RESOURCES ecarc;
-  ecadebug->msg(ECA_DEBUG::system_objects,"(global-preset) Opening sc-preset file.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(global-preset) Opening sc-preset file.");
 
   std::string user_filename =
     ecarc.resource("user-resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");

@@ -28,7 +28,7 @@
 #include "audioio-loop.h"
 
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 using std::string;
 
@@ -97,7 +97,7 @@ void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer)
     filled_rep = true;
 
     if (writes_rep > registered_outputs_rep) {
-      ecadebug->msg(ECA_DEBUG::info, 
+      ECA_LOG_MSG(ECA_LOGGER::info, 
 		    "(audioio-loop) Warning! Multiple writes without reads!");
     }
   }

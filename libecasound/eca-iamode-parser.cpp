@@ -25,7 +25,7 @@
 #include <kvu_message_item.h>
 
 #include "eca-iamode-parser.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 std::map<std::string,int> ECA_IAMODE_PARSER::cmd_map_rep;
 
@@ -543,5 +543,5 @@ void show_controller_help(void) {
   mitem << "\n--- see ecasound-iam(1) manual page for more info -----------------\n";
   //  mitem << "\n'chain chainname', 'c chainname' - Enable/disable the the chain 'chainname'";
  
-  ecadebug->msg(mitem.to_string());
+  ECA_LOG_MSG(ECA_LOGGER::info, mitem.to_string());
 }

@@ -21,7 +21,7 @@
 #include <unistd.h> /* open(), close() */
 
 #include "samplebuffer.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "audioio-buffered-proxy.h"
 
 /**
@@ -43,7 +43,7 @@ AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver
   xruns_rep = 0;
   finished_rep = false;
 
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		std::string("(audioio-buffered-proxy) Proxy created for ") +
 		child_repp->label() +
 		".");
@@ -82,7 +82,7 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
  * server.
  */
 AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void) {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) destructor " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-buffered-proxy) destructor " + label() + ".");
 
   if (is_open() == true) {
     close();
@@ -182,7 +182,7 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
  */
 void AUDIO_IO_BUFFERED_PROXY::seek_position(void)
 { 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) seek " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-buffered-proxy) seek " + label() + ".");
   bool was_running = false;
   if (pserver_repp->is_running() == true) {
     was_running = true;
@@ -219,7 +219,7 @@ void AUDIO_IO_BUFFERED_PROXY::set_length_in_samples(SAMPLE_SPECS::sample_pos_t p
  * loading libraries, etc. 
  */
 void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) { 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) open " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-buffered-proxy) open " + label() + ".");
 
   if (child_repp->is_open() != true) {
     child_repp->open();
@@ -239,7 +239,7 @@ void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
  * (they can be used by other processes).
  */
 void AUDIO_IO_BUFFERED_PROXY::close(void) { 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) close " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-buffered-proxy) close " + label() + ".");
 
   if (child_repp->is_open() == true) child_repp->close();
 

@@ -35,7 +35,7 @@
 
 #include <kvu_dbc.h>
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-fileio.h"
 #include "eca-fileio-stream.h"
 
@@ -147,7 +147,7 @@ void ECA_FILE_IO_STREAM::set_file_position(off_t newpos)
       // std::cerr << "(eca-fileio-stream) fw-seeking from " << seekpos << " to " << seekpos+seekstep << std::endl;
       int res = std::fseek(f1, seekstep, whence);
       if (res != 0) {
-	  ecadebug->msg(ECA_DEBUG::info, "(eca-fileio-stream) fseek() error! (lfs).");
+	  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-fileio-stream) fseek() error! (lfs).");
 	  curpos_rep = 0;
 	  std::fseek(f1, 0, SEEK_SET);
 	  break;
@@ -174,7 +174,7 @@ void ECA_FILE_IO_STREAM::set_file_position_end(void)
   if (standard_mode == false) {
     int res = std::fseek(f1, 0, SEEK_END);
     if (res != 0) {
-      ecadebug->msg(ECA_DEBUG::info, "(eca-fileio-stream) fseek() error! (seek_end).");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-fileio-stream) fseek() error! (seek_end).");
     }
     else {
       curpos_rep = get_file_length();

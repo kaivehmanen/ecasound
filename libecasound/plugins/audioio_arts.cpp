@@ -18,7 +18,7 @@
 // ------------------------------------------------------------------------
 
 #include "audioio-device.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-version.h"
 
 #include "audioio_arts.h"

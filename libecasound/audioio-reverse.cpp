@@ -25,7 +25,7 @@
 
 #include "audioio-null.h"
 #include "audioio-reverse.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-object-factory.h"
 #include "samplebuffer.h"
 
@@ -51,7 +51,7 @@ AUDIO_IO_REVERSE::~AUDIO_IO_REVERSE (void)
 
 void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-reverse) open " + label() + ".");  
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-reverse) open " + label() + ".");  
 
   if (io_mode() != AUDIO_IO::io_read) {
       throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-REVERSE: Reversed writing not supported!"));
@@ -122,7 +122,7 @@ string AUDIO_IO_REVERSE::parameter_names(void) const
 void AUDIO_IO_REVERSE::set_parameter(int param, string value)
 {
 
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-reverse) set_parameter " + label() + ".");  
 
   /* total of n+1 params, where n is number of childobj params */
@@ -140,7 +140,7 @@ void AUDIO_IO_REVERSE::set_parameter(int param, string value)
 string AUDIO_IO_REVERSE::get_parameter(int param) const
 {
 
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-reverse) get_parameter " + label() + ".");
 
   if (param > 0 && param < static_cast<int>(params_rep.size()) + 1) {
@@ -156,7 +156,7 @@ string AUDIO_IO_REVERSE::get_parameter(int param) const
 void AUDIO_IO_REVERSE::seek_position(void)
 {
   finished_rep = false;
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-reverse) seek_position " + kvu_numtostr(position_in_samples()) + ".");
 }
 

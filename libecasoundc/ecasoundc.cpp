@@ -23,7 +23,7 @@
 // ------------------------------------------------------------------------
 
 #include <eca-control-interface.h>
-#include <eca-debug.h>
+#include <eca-logger.h>
 #include <eca-error.h>
 #include "ecasoundc.h"
 
@@ -46,8 +46,9 @@ void eci_init(void) {
   if (eci_rep.eci != 0)
     delete eci_rep.eci;
 
-//    ecadebug->set_debug_level(ECA_DEBUG::info |
-//  			    ECA_DEBUG::module_flow);
+  // ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
+  // ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
+  // ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
 
   if (eci_rep.eci == 0) {
     eci_rep.eci = new ECA_CONTROL_INTERFACE();

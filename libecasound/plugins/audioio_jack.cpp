@@ -25,7 +25,7 @@
 
 #include "audioio.h"
 #include "eca-version.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 #include "audioio_jack.h"
 #include "audioio_jack_manager.h"
@@ -40,7 +40,7 @@ int audio_io_interface_version(void) { return(ecasound_library_version_current);
 
 AUDIO_IO_JACK::AUDIO_IO_JACK (void)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) constructor");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) constructor");
   
   jackmgr_rep = 0;
   myid_rep = 0;
@@ -64,7 +64,7 @@ AUDIO_IO_MANAGER* AUDIO_IO_JACK::create_object_manager(void) const
 void AUDIO_IO_JACK::set_manager(AUDIO_IO_JACK_MANAGER* mgr, int id)
 {
   string mgrname = (mgr == 0 ? mgr->name() : "null");
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack) setting manager to " + mgr->name());
   jackmgr_rep = mgr;
   myid_rep = id;
@@ -72,7 +72,7 @@ void AUDIO_IO_JACK::set_manager(AUDIO_IO_JACK_MANAGER* mgr, int id)
 
 void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) open");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) open");
 
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_f32_le);
   toggle_interleaved_channels(false);
@@ -142,7 +142,7 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 }
 
 void AUDIO_IO_JACK::close(void) {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) close");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) close");
 
   if (jackmgr_rep != 0) {
     jackmgr_rep->unregister_jack_ports(myid_rep);
@@ -181,19 +181,19 @@ void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples)
 
 void AUDIO_IO_JACK::prepare(void)
 {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) prepare / " + label());
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) prepare / " + label());
   AUDIO_IO_DEVICE::prepare();
 }
 
 void AUDIO_IO_JACK::start(void)
 { 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) start / " + label());
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) start / " + label());
   AUDIO_IO_DEVICE::start();
 }
 
 void AUDIO_IO_JACK::stop(void)
 { 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) stop / " + label());
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) stop / " + label());
   AUDIO_IO_DEVICE::stop();
 }
 

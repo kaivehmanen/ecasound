@@ -26,7 +26,7 @@
 #include "samplebuffer_iterators.h"
 #include "eca-operator.h"
 #include "audiofx_misc.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 #include "eca-error.h"
 
 EFFECT_DCFIX::EFFECT_DCFIX (CHAIN_OPERATOR::parameter_t delta_left,
@@ -101,7 +101,7 @@ void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_t va
   case 1: 
     double lowlimit = 1.0f / EFFECT_PITCH_SHIFT::resample_low_limit * 100.0f;
     if (value <= lowlimit) {
-      ecadebug->msg(ECA_DEBUG::user_objects, 
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		    "(audiofx_misc) WARNING! Shift-% must be greater than " +
 		    kvu_numtostr(lowlimit) + 
 		    "%! Limiting to the low-limit.");
@@ -152,12 +152,12 @@ void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample)
 
   long int lowlimit = sbuf_repp->length_in_samples() * EFFECT_PITCH_SHIFT::resample_low_limit; 
   sbuf_repp->reserve_length_in_samples(lowlimit);
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audiofx) setting resampling lowlimit to " + 
 		kvu_numtostr(lowlimit) + " bytes.");
 
   sbuf_repp->resample_init_memory(samples_per_second(), target_rate_rep);
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audiofx) resampling from " +
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audiofx) resampling from " +
 		                         kvu_numtostr(samples_per_second()) + 
 		                         " to " + 
 		                         kvu_numtostr(target_rate_rep) + "."); 

@@ -27,7 +27,7 @@
 
 #include "audioio-ogg.h"
 
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 string OGG_VORBIS_INTERFACE::default_ogg_input_cmd = "ogg123 -d raw --file=%F %f";
 string OGG_VORBIS_INTERFACE::default_ogg_output_cmd = "oggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -";
@@ -64,7 +64,7 @@ void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 void OGG_VORBIS_INTERFACE::close(void)
 {
   if (pid_of_child() > 0) {
-      ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
       clean_child();
       triggered_rep = false;
   }
@@ -88,7 +88,7 @@ long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int sample
 
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-ogg) Can't start process \"" + OGG_VORBIS_INTERFACE::default_ogg_input_cmd + "\". Please check your ~/.ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-ogg) Can't start process \"" + OGG_VORBIS_INTERFACE::default_ogg_input_cmd + "\". Please check your ~/.ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }
@@ -126,7 +126,7 @@ void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples)
 
 void OGG_VORBIS_INTERFACE::seek_position(void) {
   if (pid_of_child() > 0) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-ogg) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-ogg) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
     clean_child();
     triggered_rep = false;
   }
@@ -164,7 +164,7 @@ string OGG_VORBIS_INTERFACE::get_parameter(int param) const
 
 void OGG_VORBIS_INTERFACE::fork_ogg_input(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
   set_fork_command(OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
   set_fork_file_name(label());
   set_fork_pipe_name();
@@ -183,7 +183,7 @@ void OGG_VORBIS_INTERFACE::fork_ogg_input(void)
 
 void OGG_VORBIS_INTERFACE::fork_ogg_output(void)
 {
-  ecadebug->msg("(audioio-ogg) Starting to encode " + label() + " with vorbize.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-ogg) Starting to encode " + label() + " with vorbize.");
   string command_rep = OGG_VORBIS_INTERFACE::default_ogg_output_cmd;
   if (command_rep.find("%f") != string::npos) {
     command_rep.replace(command_rep.find("%f"), 2, label());

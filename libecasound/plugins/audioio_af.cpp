@@ -34,7 +34,7 @@
 #include "samplebuffer.h"
 #include "eca-version.h"
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 static const char* audio_io_keyword_const = "audiofile_aiff_au_snd";
 static const char* audio_io_keyword_regex_const = "(aif*$)|(au$)|(snd$)";
@@ -108,8 +108,8 @@ void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   switch(io_mode()) {
   case io_read:
     {
-      ecadebug->msg("(audioio-af) Using audiofile library to open file \"" +
-		    label() + "\" for reading.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-af) Using audiofile library to open file \"" +
+		  label() + "\" for reading.");
 
       afhandle = ::afOpenFile(label().c_str(), "r", NULL);
       if (afhandle == AF_NULL_FILEHANDLE) {
@@ -120,7 +120,7 @@ void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     }
   case io_write:
     {
-      ecadebug->msg("(audioio-af) Using audiofile library to open file \"" +
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-af) Using audiofile library to open file \"" +
 		    label() + "\" for writing.");
 
       AFfilesetup fsetup;
@@ -137,7 +137,7 @@ void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
       else if (strstr(teksti.c_str(),".au") != 0) { file_format = AF_FILE_NEXTSND; }
       else if (strstr(teksti.c_str(),".snd") != 0) { file_format = AF_FILE_NEXTSND; }
       else {
-	ecadebug->msg("(audioio-af) Warning! Unknown audio format, using raw format instead.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-af) Warning! Unknown audio format, using raw format instead.");
 	file_format = AF_FILE_RAWDATA;
       }
       ::afInitFileFormat(fsetup, file_format);
@@ -189,7 +189,7 @@ void AUDIOFILE_INTERFACE::close(void)
 
 void AUDIOFILE_INTERFACE::debug_print_type(void) {
   int temp = ::afGetFileFormat(afhandle, 0);
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-af) afFileformat: " + kvu_numtostr(temp) + "."); 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-af) afFileformat: " + kvu_numtostr(temp) + "."); 
 }
 
 bool AUDIOFILE_INTERFACE::finished(void) const

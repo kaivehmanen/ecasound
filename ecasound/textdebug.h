@@ -4,27 +4,25 @@
 #include <string>
 #include <iostream>
 
-#include <eca-debug.h>
+#include <eca-logger-interface.h>
 
-class TEXTDEBUG : public ECA_DEBUG {
-private:
-    
-    std::ostream* dostream;
-    int debug_level;
+class TEXTDEBUG : public ECA_LOGGER_INTERFACE {
+   
+ public:
+
+    virtual void do_msg(ECA_LOGGER::Msg_level_t level, const std::string& module_name, const std::string& log_message);
+    virtual void do_flush(void);
+    virtual void do_log_level_changed(void) { }
+
+    TEXTDEBUG(void);
+    virtual ~TEXTDEBUG(void);
+
+ private:
+
+    std::ostream* dostream_repp;
     
     void stream(std::ostream* dos);
     std::ostream* stream(void);
-    
-public:
-
-    void flush(void);
-    void control_flow(const std::string& part);
-    void msg(int level, const std::string& infoarg);
-
-    TEXTDEBUG(void);
-    ~TEXTDEBUG(void);
 };
-
-extern TEXTDEBUG textdebug;
 
 #endif

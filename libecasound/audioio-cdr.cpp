@@ -39,7 +39,7 @@ typedef long int off_t;
 
 #include "sample-specs.h"
 #include "audioio-cdr.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 CDRFILE::CDRFILE(const std::string& name)
 {
@@ -136,7 +136,7 @@ void CDRFILE::seek_position(void) {
       // std::cerr << "(audioio-cdr) fw-seeking from " << seekpos << " to " << seekpos+seekstep << std::endl;
       int res = std::fseek(fobject, seekstep, whence);
       if (res != 0) {
-	  ecadebug->msg(ECA_DEBUG::info, "(audioio-cdr) fseek() error! (lfs).");
+	  ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-cdr) fseek() error! (lfs).");
 	  curpos_rep = 0;
 	  std::fseek(fobject, 0, SEEK_SET);
 	  break;

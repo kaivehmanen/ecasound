@@ -42,7 +42,7 @@
 #include "eca-resources.h"
 
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 /**
  * Helper function for starting the slave thread.
@@ -54,7 +54,7 @@ void* ECA_CONTROL_BASE::start_normal_thread(void *ptr)
   sigaddset(&sigset, SIGINT);
   sigprocmask(SIG_BLOCK, &sigset, 0);
 
-  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-controller) Engine-thread pid: " + kvu_numtostr(getpid()));
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-controller) Engine-thread pid: " + kvu_numtostr(getpid()));
   ECA_CONTROL_BASE* ctrl_base = static_cast<ECA_CONTROL_BASE*>(ptr);
   ctrl_base->run_engine();
   return(0);
@@ -87,14 +87,14 @@ void ECA_CONTROL_BASE::start(void)
   DBC_REQUIRE(is_running() != true);
   // --------
 
-  ecadebug->control_flow("Controller/Processing started");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Processing started");
 
   if (is_engine_started() != true) {
     start_engine(false);
   }
 
   if (is_engine_started() != true) {
-    ecadebug->msg("(eca-controller) Can't start processing: couldn't start engine.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Can't start processing: couldn't start engine.");
     return;
   }  
 
@@ -125,7 +125,7 @@ void ECA_CONTROL_BASE::run(void)
   DBC_REQUIRE(is_running() != true);
   // --------
 
-  ecadebug->control_flow("Controller/Starting batch processing");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Starting batch processing");
 
   bool processing_started = false;
 
@@ -134,7 +134,7 @@ void ECA_CONTROL_BASE::run(void)
   }
 
   if (is_engine_started() != true) {
-    ecadebug->msg("(eca-control-base) Can't start processing: couldn't start the engine. (2)");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-control-base) Can't start processing: couldn't start the engine. (2)");
   } 
   else { 
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
@@ -154,7 +154,7 @@ void ECA_CONTROL_BASE::run(void)
 	else if (is_engine_started() == true) {
 	  if (engine_repp->status() != ECA_ENGINE::engine_status_stopped) {
 	    /* not running, so status() is either 'not_ready' or 'error' */
-	    ecadebug->msg("(eca-control-base) Can't start processing: engine startup failed. (3)");
+	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-control-base) Can't start processing: engine startup failed. (3)");
 	    break;
 	  }
 	}
@@ -174,7 +174,7 @@ void ECA_CONTROL_BASE::run(void)
     }
   }    
 
-  ecadebug->control_flow("Controller/Batch processing finished");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Batch processing finished");
 
   // --------
   DBC_ENSURE(is_finished() == true ||
@@ -200,7 +200,7 @@ void ECA_CONTROL_BASE::stop(void)
   DBC_REQUIRE(is_running() == true);
   // --------
 
-  ecadebug->control_flow("Controller/Processing stopped");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Processing stopped");
   engine_repp->command(ECA_ENGINE::ep_stop, 0.0);
   
   // --------
@@ -223,9 +223,9 @@ void ECA_CONTROL_BASE::stop_on_condition(void) {
   // --------
 
   if (engine_repp->status() != ECA_ENGINE::engine_status_running) return;
-  ecadebug->control_flow("Controller/Processing stopped (cond)");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Processing stopped (cond)");
   engine_repp->command(ECA_ENGINE::ep_stop, 0.0);
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-controller-base) Received stop-cond");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-controller-base) Received stop-cond");
 
   // --
   // blocks until engine has stopped (or 5 sec has passed);
@@ -272,7 +272,7 @@ void ECA_CONTROL_BASE::start_engine(bool batchmode)
 				   start_normal_thread, 
 				   static_cast<void *>(this));
   if (retcode_rep != 0) {
-    ecadebug->msg(ECA_DEBUG::info, "Warning! Unable to create a new thread for engine.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Unable to create a new thread for engine.");
     delete engine_repp;
     engine_repp = 0;
   }
@@ -309,7 +309,7 @@ void ECA_CONTROL_BASE::close_engine(void)
     engine_exited_rep.set(0);
   }
   else {
-    ecadebug->msg(ECA_DEBUG::info, "Warning! Problems while shutting down the engine!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Problems while shutting down the engine!");
   }
 
   // ---

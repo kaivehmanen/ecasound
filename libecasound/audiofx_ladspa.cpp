@@ -29,7 +29,7 @@
 #include "samplebuffer.h"
 #include "audiofx_ladspa.h"
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&)
 {
@@ -301,7 +301,7 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample)
     }
   }
 
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audiofx_ladspa) Instantiated " +
 		kvu_numtostr(plugins_rep.size()) + 
 		" LADSPA plugin(s), each with " + 

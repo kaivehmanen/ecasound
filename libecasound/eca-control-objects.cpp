@@ -38,7 +38,7 @@
 #include "eca-control-objects.h"
 
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 ECA_CONTROL_OBJECTS::ECA_CONTROL_OBJECTS (ECA_SESSION* psession) 
   : ECA_CONTROL_BASE(psession)
@@ -69,7 +69,7 @@ void ECA_CONTROL_OBJECTS::add_chainsetup(const std::string& name) {
   session_repp->add_chainsetup(name);
   if (static_cast<int>(session_repp->chainsetups_rep.size()) > count) {
     select_chainsetup(name);
-    ecadebug->msg("(eca-controller) Added a new chainsetup with name \"" + name + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Added a new chainsetup with name \"" + name + "\".");
   }
   else {
     set_last_error("(eca-contol-objects) Unable to add chainsetup with name \"" + name + "\".");
@@ -99,7 +99,7 @@ void ECA_CONTROL_OBJECTS::remove_chainsetup(void) {
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  ecadebug->msg("(eca-controller) Removing chainsetup:  \"" + selected_chainsetup() + "\".");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Removing chainsetup:  \"" + selected_chainsetup() + "\".");
   session_repp->remove_chainsetup();
   selected_chainsetup_repp = 0;
 
@@ -124,7 +124,7 @@ void ECA_CONTROL_OBJECTS::load_chainsetup(const std::string& filename)
   try {
     session_repp->load_chainsetup(filename);
     select_chainsetup(get_chainsetup_filename(filename)->name());
-    ecadebug->msg("(eca-controller) Loaded chainsetup from file \"" + filename + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Loaded chainsetup from file \"" + filename + "\".");
   }
   catch(ECA_ERROR& e) {
     set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
@@ -151,7 +151,7 @@ void ECA_CONTROL_OBJECTS::save_chainsetup(const std::string& filename)
     else 
       session_repp->save_chainsetup(filename);
     
-    ecadebug->msg("(eca-controller) Saved selected chainsetup \"" + selected_chainsetup() + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Saved selected chainsetup \"" + selected_chainsetup() + "\".");
   }
   catch(ECA_ERROR& e) {
     set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
@@ -179,10 +179,10 @@ void ECA_CONTROL_OBJECTS::select_chainsetup(const std::string& name)
   session_repp->select_chainsetup(name);
   selected_chainsetup_repp = session_repp->selected_chainsetup_repp;
   if (selected_chainsetup_repp == 0) {
-    ecadebug->msg("(eca-controller) Chainsetup \"" + name + "\" doesn't exist!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Chainsetup \"" + name + "\" doesn't exist!");
     set_last_error("Chainsetup \"" + name + "\" doesn't exist!");
   }
-  //  else { ecadebug->msg("(eca-controller) Selected chainsetup:  \"" + selected_chainsetup() + "\"."); }
+  //  else { ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Selected chainsetup:  \"" + selected_chainsetup() + "\"."); }
 
   // --------
   DBC_ENSURE(name == selected_chainsetup() ||
@@ -253,7 +253,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
     tempfile_dir_rep.reserve_directory(tmpdir);
   }
   if (tempfile_dir_rep.is_valid() != true) {
-    ecadebug->msg("(eca-controller) Warning! Unable to create temporary directory \"" + tmpdir + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Warning! Unable to create temporary directory \"" + tmpdir + "\".");
     return;
   }
 
@@ -279,7 +279,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
     editori = resource_value("ext-text-editor");
 
   if (editori == "") {
-    ecadebug->msg("(eca-controller) Can't edit; no text editor specified/available.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Can't edit; no text editor specified/available.");
   }
 
   // FIXME: we should drop priviledge-level here (at least if root)!
@@ -287,7 +287,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
   int res = ::system(editori.c_str());
 
   if (res == 127 || res == -1) {
-    ecadebug->msg("(eca-controller) Can't edit; unable to open file in text editor \"" + std::string(editori.c_str()) + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Can't edit; unable to open file in text editor \"" + std::string(editori.c_str()) + "\".");
 
   }
   else {
@@ -301,7 +301,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
       select_chainsetup("cs-edit-temp");
       if (origfilename.empty() == false) set_chainsetup_filename(origfilename);
       if (is_valid() == false) {
-	ecadebug->msg("(eca-controller) Can't connect; edited chainsetup not valid.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Can't connect; edited chainsetup not valid.");
 	select_chainsetup(origname);
 	connect_chainsetup();
 	set_chainsetup_position(pos);
@@ -344,7 +344,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_seconds(double val
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
   selected_chainsetup_repp->set_length_in_seconds(value);
-  ecadebug->msg("(eca-controller) Set chainsetup processing length to \"" + kvu_numtostr(value) + "\" seconds.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Set chainsetup processing length to \"" + kvu_numtostr(value) + "\" seconds.");
 }
 
 /**
@@ -361,8 +361,8 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_samples(SAMPLE_SPE
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
   selected_chainsetup_repp->set_length_in_samples(value);
-  ecadebug->msg("(eca-controller) Set chainsetup processing length to \"" + 
-		 kvu_numtostr(selected_chainsetup_repp->length_in_seconds_exact()) + "\" seconds.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Set chainsetup processing length to \"" + 
+	      kvu_numtostr(selected_chainsetup_repp->length_in_seconds_exact()) + "\" seconds.");
 }
 
 /**
@@ -403,11 +403,11 @@ void ECA_CONTROL_OBJECTS::toggle_chainsetup_looping(void) {
   // --------
   if (selected_chainsetup_repp->looping_enabled()) {
     selected_chainsetup_repp->toggle_looping(false);
-    ecadebug->msg("(eca-controller) Disabled looping.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Disabled looping.");
   }
   else {
     selected_chainsetup_repp->toggle_looping(true);
-    ecadebug->msg("(eca-controller) Enabled looping.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Enabled looping.");
   }
 }
 
@@ -434,7 +434,7 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
   }
   try {
     session_repp->connect_chainsetup();
-    ecadebug->msg("(eca-controller) Connected chainsetup:  \"" + connected_chainsetup() + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Connected chainsetup:  \"" + connected_chainsetup() + "\".");
   }
   catch(ECA_ERROR& e) {
     errmsg = e.error_message();
@@ -480,7 +480,7 @@ void ECA_CONTROL_OBJECTS::disconnect_chainsetup(void) {
     close_engine();
   }
 
-  ecadebug->msg("(eca-controller) Disconnecting chainsetup:  \"" + connected_chainsetup() + "\".");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Disconnecting chainsetup:  \"" + connected_chainsetup() + "\".");
   session_repp->disconnect_chainsetup();
 
   // --------
@@ -757,7 +757,7 @@ void ECA_CONTROL_OBJECTS::add_chains(const std::vector<std::string>& new_chains)
   selected_chainsetup_repp->add_new_chains(new_chains);
   selected_chainsetup_repp->select_chains(new_chains);
 
-  ecadebug->msg("(eca-controller) Added chains: " + kvu_vector_to_string(new_chains, ", ") + ".");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Added chains: " + kvu_vector_to_string(new_chains, ", ") + ".");
 
   // --------
   DBC_ENSURE(selected_chains().size() == new_chains.size());
@@ -785,7 +785,7 @@ void ECA_CONTROL_OBJECTS::remove_chains(void)
 
   selected_chainsetup_repp->remove_chains();
 
-  ecadebug->msg("(eca-controlled) Removed selected chains.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controlled) Removed selected chains.");
 
   // --------
   DBC_ENSURE(selected_chains().size() == 0);
@@ -842,7 +842,7 @@ void ECA_CONTROL_OBJECTS::select_chain(const std::string& chain) {
   std::vector<std::string> c (1);
   c[0] = chain;
   selected_chainsetup_repp->select_chains(c);
-  //  ecadebug->msg(ECA_DEBUG::user_objects, "(eca-controller) Selected chain: " + chain + ".");
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-controller) Selected chain: " + chain + ".");
 
   // --------
   DBC_ENSURE(selected_chains().size() == 1);
@@ -869,7 +869,7 @@ void ECA_CONTROL_OBJECTS::select_chains(const std::vector<std::string>& chains) 
 
   selected_chainsetup_repp->select_chains(chains);
 
-  //  ecadebug->msg(ECA_DEBUG::user_objects, "(eca-controller) Selected chains: " +
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-controller) Selected chains: " +
 //  		vector_to_string(chains, ", ") + ".");
 }
 
@@ -892,7 +892,7 @@ void ECA_CONTROL_OBJECTS::deselect_chains(const std::vector<std::string>& chains
     std::vector<std::string>::iterator o = schains.begin();
     while(o != schains.end()) {
       if (*p == *o) {
-	//  ecadebug->msg("(eca-controller-objects) Deselected chain " + *o  + ".");
+	//  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller-objects) Deselected chain " + *o  + ".");
 	schains.erase(o);
       }
       else
@@ -917,7 +917,7 @@ void ECA_CONTROL_OBJECTS::select_all_chains(void) {
 
   selected_chainsetup_repp->select_all_chains();
 
-  //  ecadebug->msg("(eca-controller) Selected chains: " + vector_to_string(selected_chains(), ", ") + ".");
+  //  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Selected chains: " + vector_to_string(selected_chains(), ", ") + ".");
 }
 
 /**
@@ -1315,7 +1315,7 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const std::string& filename) {
   selected_chainsetup_repp->interpret_object_option("-i:" + filename);
   if (selected_chainsetup_repp->interpret_result() == true) {
     select_audio_input(kvu_get_argument_number(1, filename));
-    ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Added audio input \"" + filename + "\".");
   }
   else {
     set_last_error(selected_chainsetup_repp->interpret_result_verbose());
@@ -1343,8 +1343,8 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const std::string& filename) {
   selected_chainsetup_repp->interpret_object_option("-o:" + filename);
   if (selected_chainsetup_repp->interpret_result() == true) {
     select_audio_output(kvu_get_argument_number(1, filename));
-    ecadebug->msg("(eca-controller) Added audio output \"" + filename +
-		  "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Added audio output \"" + filename +
+		"\".");
   } else {
     set_last_error(selected_chainsetup_repp->interpret_result_verbose());
   }
@@ -1365,7 +1365,7 @@ void ECA_CONTROL_OBJECTS::add_default_output(void) {
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
   add_audio_output(resource_value("default-output"));
-  ecadebug->msg("(eca-controller) Added default output to selected chains.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Added default output to selected chains.");
 }
 
 /**
@@ -1446,8 +1446,8 @@ void ECA_CONTROL_OBJECTS::remove_audio_input(void) {
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   DBC_REQUIRE(get_audio_input() != 0);
   // --------
-  ecadebug->msg("(eca-controller) Removing selected audio input \"" + selected_audio_input_repp->label() +
-		"\" from selected chains.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Removing selected audio input \"" + selected_audio_input_repp->label() +
+	      "\" from selected chains.");
   selected_chainsetup_repp->remove_audio_input(selected_audio_input_repp->label());
   selected_audio_input_repp = 0;
 
@@ -1471,8 +1471,8 @@ void ECA_CONTROL_OBJECTS::remove_audio_output(void) {
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   DBC_REQUIRE(get_audio_output() != 0);
   // --------
-  ecadebug->msg("(eca-controller) Removing selected audio output \"" + selected_audio_output_repp->label() +
-		"\" from selected chains.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Removing selected audio output \"" + selected_audio_output_repp->label() +
+	      "\" from selected chains.");
   selected_chainsetup_repp->remove_audio_output(selected_audio_output_repp->label());
   selected_audio_output_repp = 0;
 
@@ -1496,8 +1496,8 @@ void ECA_CONTROL_OBJECTS::attach_audio_input(void) {
   // --------
   selected_chainsetup_repp->attach_input_to_selected_chains(selected_audio_input_repp);
 
-  ecadebug->msg("(eca-controller) Attached audio input \"" + selected_audio_input_repp->label() +
-		"\" to selected chains.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Attached audio input \"" + selected_audio_input_repp->label() +
+	      "\" to selected chains.");
 }
 
 /**
@@ -1515,8 +1515,8 @@ void ECA_CONTROL_OBJECTS::attach_audio_output(void) {
   // --------
   selected_chainsetup_repp->attach_output_to_selected_chains(selected_audio_output_repp);
 
-  ecadebug->msg("(eca-controller) Attached audio output \"" + selected_audio_output_repp->label() +
-		"\" to selected chains.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Attached audio output \"" + selected_audio_output_repp->label() +
+	      "\" to selected chains.");
 }
 
 /**
@@ -1603,8 +1603,8 @@ void ECA_CONTROL_OBJECTS::wave_edit_audio_object(void) {
 
   int res = ::system(std::string(resource_value("ext-wave-editor") + " " + name).c_str());
   if (res == 127 || res == -1) {
-    ecadebug->msg("(eca-controller) Can't edit; unable to open wave editor \"" 
-		  + resource_value("x-wave-editor") + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Can't edit; unable to open wave editor \"" 
+		+ resource_value("x-wave-editor") + "\".");
   }
 }
 

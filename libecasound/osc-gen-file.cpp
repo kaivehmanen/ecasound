@@ -26,7 +26,7 @@
 #include "resource-file.h"
 #include "eca-resources.h"
 #include "osc-gen-file.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 GENERIC_OSCILLATOR_FILE::GENERIC_OSCILLATOR_FILE(double freq, int mode)
   : GENERIC_OSCILLATOR(freq, mode)
@@ -39,7 +39,7 @@ GENERIC_OSCILLATOR_FILE::~GENERIC_OSCILLATOR_FILE (void) { }
 
 void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset) {
   ECA_RESOURCES ecarc;
-  ecadebug->msg(ECA_DEBUG::system_objects,"(osc-gen-file) Opening genosc envelope file.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(osc-gen-file) Opening genosc envelope file.");
 
   std::string user_filename =
     ecarc.resource("user-resource-directory") + "/" + ecarc.resource("resource-file-genosc-envelopes");
@@ -60,7 +60,7 @@ void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset) {
     parse_envelope(rc.resource(pname));
   }
   else {
-    ecadebug->msg("(eca-gen-file) Error! Oscillator preset " + pname + " not found!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-gen-file) Error! Oscillator preset " + pname + " not found!");
   }
 }
 

@@ -21,7 +21,7 @@
 #include <kvu_message_item.h>
 
 #include "two-stage-linear-envelope.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::value(void) {
   change_position_in_seconds(step_length());
@@ -50,7 +50,7 @@ void TWO_STAGE_LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_t step) {
   otemp.setprecision(3);
   otemp << "1." << get_parameter(1);
   otemp << "- 2." << get_parameter(2);
-  ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
 }
 
 void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {

@@ -47,7 +47,8 @@
 
 #include "eca-object-factory.h"
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
+#include "eca-logger.h"
 #include "eca-comhelp.h"
 #include "eca-session.h"
 #include "eca-chainsetup.h"
@@ -56,12 +57,12 @@ using std::string;
 using std::vector;
 
 ECA_SESSION::ECA_SESSION(void) {
-  ecadebug->control_flow("Session created (empty)");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Session created (empty)");
   set_defaults();
 }
 
 ECA_SESSION::~ECA_SESSION(void) {
-  // ecadebug->msg(ECA_DEBUG::system_objects,"ECA_SESSION destructor!");
+  // ECA_LOG_MSG(ECA_LOGGER::system_objects,"ECA_SESSION destructor!");
 
   for(std::vector<ECA_CHAINSETUP*>::iterator q = chainsetups_rep.begin(); q != chainsetups_rep.end(); q++) {
     delete *q;
@@ -73,7 +74,7 @@ ECA_SESSION::~ECA_SESSION(void) {
 
 ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
 
-  ecadebug->control_flow("Session created");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Session created");
 
   set_defaults();
 
@@ -94,7 +95,7 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
     else {
       add_chainsetup(comline_setup); /* ownership object transfered */
       if (selected_chainsetup_repp->is_valid() != true) {
-	ecadebug->msg("(eca-session) Note! Unable to create a valid chainsetup from the command-line arguments.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-session) Note! Unable to create a valid chainsetup from the command-line arguments.");
       }
     }
   }
@@ -169,7 +170,7 @@ void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) {
     if ((*p)->name() == comline_setup->name()) {
       delete comline_setup;
       comline_setup = 0;
-      ecadebug->msg(ECA_DEBUG::system_objects, 
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		    string("ECA-SESSION","Unable to add chainsetup \"") + 
 		    (*p)->name() + 
 		    "\"; chainsetup with the same name already exists.");
@@ -227,7 +228,7 @@ void ECA_SESSION::select_chainsetup(const std::string& name) {
   std::vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups_rep.begin();
   while(p != chainsetups_rep.end()) {
     if ((*p)->name() == name) {
-      //  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-session) Chainsetup \"" + name + "\" selected.");
+      //  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-session) Chainsetup \"" + name + "\" selected.");
       selected_chainsetup_repp = *p;
       break;
     }
@@ -287,7 +288,7 @@ void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&) {
   DBC_REQUIRE(selected_chainsetup_repp->is_valid());
   // --------
 
-  ecadebug->control_flow("Connecting chainsetup");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Connecting chainsetup");
 
   if (selected_chainsetup_repp == connected_chainsetup_repp) return;
 
@@ -302,7 +303,7 @@ void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&) {
   selected_chainsetup_repp->enable();
   connected_chainsetup_repp = selected_chainsetup_repp;
 
-  ecadebug->control_flow("Chainsetup connected");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup connected");
  
   // --------
   // ensure:
@@ -319,7 +320,7 @@ void ECA_SESSION::disconnect_chainsetup(void) {
   connected_chainsetup_repp->disable();
   connected_chainsetup_repp = 0;
 
-  ecadebug->control_flow("Chainsetup disconnected");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup disconnected");
 
   // --------
   // ensure:
@@ -386,11 +387,11 @@ void ECA_SESSION::preprocess_options(std::vector<std::string>* opts) {
       /* hack1: options ending with .ecs as "-s:file.ecs" */
       string::size_type pos = p->find(".ecs");
       if (pos + 4 == p->size()) {
-	ecadebug->msg("(eca-chainsetup-parser) Note! Interpreting option " +
-		      *p +
-		      " as -s:" +
-		      *p +
-		      ".");
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Note! Interpreting option " +
+		    *p +
+		    " as -s:" +
+		    *p +
+		    ".");
 	*p = "-s:" + *p;
       }
     }
@@ -425,22 +426,23 @@ void ECA_SESSION::interpret_general_options(const std::vector<std::string>& inop
 void ECA_SESSION::interpret_general_option (const std::string& argu) {
   if (argu.size() < 2) return;
   if (argu[0] != '-') return;
+
   switch(argu[1]) {
   case 'd':
     {
-      ecadebug->set_debug_level(atoi(kvu_get_argument_number(1, argu).c_str()));
+      ECA_LOGGER::instance().set_log_level_bitmask(atoi(kvu_get_argument_number(1, argu).c_str()));
       MESSAGE_ITEM mtempd;
-      mtempd << "(eca-session) Set debug level to: " << ecadebug->get_debug_level();
-      ecadebug->msg(mtempd.to_string());
+      mtempd << "(eca-session) Set debug level to: " << ECA_LOGGER::instance().get_log_level_bitmask();
+      ECA_LOG_MSG(ECA_LOGGER::info, mtempd.to_string());
       break;
     }
 
-  case 'h':      // help!
+  case 'h': // help!
     std::cout << ecasound_parameter_help();
     break;
 
   case 'q':
-    ecadebug->disable();
+    ECA_LOGGER::instance().disable();
     break;
 
   default: { }
@@ -464,4 +466,3 @@ void ECA_SESSION::interpret_chainsetup_option (const std::string& argu) {
   default: { }
   }
 }
-

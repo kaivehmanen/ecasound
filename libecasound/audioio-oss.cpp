@@ -34,7 +34,7 @@
 #include "audioio-oss.h"
 
 #include "eca-error.h"
-#include "eca-debug.h"
+#include "eca-logger.h"
 
 OSSDEVICE::OSSDEVICE(const std::string& name,
 		     bool precise_sample_rates) 
@@ -101,7 +101,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
     }
   }
   else {
-    ecadebug->msg("(audioio-oss) Warning: OSS-device doesn't support SNDCTL_DSP_SETTRIGGER!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-oss) Warning: OSS-device doesn't support SNDCTL_DSP_SETTRIGGER!");
   }
 #endif
 
@@ -116,7 +116,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   else
     fragment_count = 3;
     
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-oss) Setting OSS fragment size according to " + kvu_numtostr(buffersize()) + ".");
 
   // fr_size == 4  -> the minimum fragment size: 2^4 = 16 bytes
@@ -129,7 +129,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   if (::ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &fragsize)==-1)
     throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: general OSS-error SNDCTL_DSP_SETFRAGMENT"));
 
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-oss) set OSS fragment size to (2^x) " +
 		kvu_numtostr(fr_size) + ".");
     
@@ -168,7 +168,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 
   int t = stereo;
   if (::ioctl(audio_fd, SNDCTL_DSP_STEREO, &t)==-1)
-    ecadebug->msg("(audioio-oss) Warning! Error when setting sample rate."); 
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-oss) Warning! Error when setting sample rate."); 
 
   if (stereo != t)
     throw(SETUP_ERROR(SETUP_ERROR::channels, "AUDIOIO-OSS: audio format not supported SNDCTL_DSP_STEREO"));
@@ -185,7 +185,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
       throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-OSS: Requested sample rate is not supported. Audio device suggests sample rate of " + kvu_numtostr(speed) + ". Disable precise-sample-rate mode to ignore the difference."));
     }
     else {
-      ecadebug->msg("(audioio-oss) Warning! Requested sample rate is not supported. Ignoring the the difference between requested (" + kvu_numtostr(samples_per_second()) + ") and suggested (" + kvu_numtostr(speed) + ") sample rates."); 
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-oss) Warning! Requested sample rate is not supported. Ignoring the the difference between requested (" + kvu_numtostr(samples_per_second()) + ") and suggested (" + kvu_numtostr(speed) + ") sample rates."); 
     }
   }
 
@@ -195,7 +195,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   if (::ioctl(audio_fd, SNDCTL_DSP_GETBLKSIZE, &fragment_size) == -1)
     throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: general OSS error SNDCTL_DSP_GETBLKSIZE"));
 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-oss) OSS set to use fragment size of " + 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-oss) OSS set to use fragment size of " + 
 		   kvu_numtostr(fragment_size) + ".");
 
   /* SNDCTL_DSP_GET[IO]PTR report offset since device was opened */
@@ -210,7 +210,7 @@ void OSSDEVICE::stop(void)
   //        won't work properly (see OSS adv.prog.guide)
 
   ::ioctl(audio_fd, SNDCTL_DSP_POST, 0);
-  ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" disabled.");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,"(audioio-oss) Audio device \"" + label() + "\" disabled.");
 
   AUDIO_IO_DEVICE::stop();
 }
@@ -224,7 +224,7 @@ void OSSDEVICE::close(void)
 
 void OSSDEVICE::start(void)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" started.");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,"(audioio-oss) Audio device \"" + label() + "\" started.");
 #ifndef ECA_DISABLE_OSS_TRIGGER
   if ((oss_caps & DSP_CAP_TRIGGER) == DSP_CAP_TRIGGER) {
     int enable_bits;

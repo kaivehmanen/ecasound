@@ -6,7 +6,6 @@
 
 #include "eca-chainop.h"
 #include "eca-audio-position.h"
-#include "eca-debug.h"
 
 class GENERIC_CONTROLLER;
 class OPERATOR;

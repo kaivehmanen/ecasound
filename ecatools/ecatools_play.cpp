@@ -27,7 +27,7 @@
 #include <kvutils/kvu_procedure_timer.h>
 #include <kvutils/kvu_numtostr.h>
 
-#include <eca-debug.h>
+#include <eca-logger.h>
 #include <eca-error.h>
 #include <eca-control.h>
 #include <eca-session.h>
@@ -48,8 +48,11 @@ int process_option(const string& option);
 
 int main(int argc, char *argv[])
 {
-  ecadebug->disable();
-  // ecadebug->set_debug_level(15);
+  ECA_LOGGER::instance().disable();
+
+  // ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
+  // ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
+  // ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
 
   struct sigaction es_handler_int;
   es_handler_int.sa_handler = signal_handler;
@@ -209,7 +212,7 @@ int process_option(const string& option) {
     case 'd': 
       {
 	int debuglevel = atoi(kvu_get_argument_number(1,option).c_str());
-	ecadebug->set_debug_level(debuglevel);
+	ECA_LOGGER::instance().set_log_level_bitmask(debuglevel);
 	break;
       }
       

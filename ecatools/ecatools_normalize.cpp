@@ -27,7 +27,7 @@
 #include <kvutils/kvu_temporary_file_directory.h>
 #include <kvutils/kvu_numtostr.h>
 
-#include <eca-debug.h>
+#include <eca-logger.h>
 #include <eca-error.h>
 #include <eca-control.h>
 #include <eca-engine.h>
@@ -42,10 +42,11 @@
 int main(int argc, char *argv[])
 {
 #ifdef NDEBUG
-  ecadebug->disable();
+  ECA_LOGGER::instance().disable();
 #else
-  ecadebug->set_debug_level(ECA_DEBUG::info |
-			    ECA_DEBUG::module_flow);
+  ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
+  ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
+  ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
 #endif
 
   struct sigaction es_handler;
