@@ -15,7 +15,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 ??012003 (v2.2.1)  -** stable release **-
 	- added: sane default param hints for chainops: -ec, -etd,
-		 -ete, -etf, -etl, -etm, -etp, -etr
+		 -ete, -etf, -etl, -etm, -etp, -etr and -epp
 	- changed: ecasoundrc - ladspa-plugin-directory can contain 
 		   multiple directories, separated by colons; this
 		   change was done to avoid any confusion with 
