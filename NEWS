@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 121104) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 091204) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,8 +14,13 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 xx022005 (v2.3.6)  -** stable release **-
+	- added: support for having commas in arguments by escaping 
+	 	 them with a backslash (example: "ai-add foo\,bar.wav")
 	- fixed: correctly interpret EIAM command arguments containing
-	         whitespace (for example: "ai-add foo bar.wav")
+	         whitespace (example: "ai-add foo bar.wav")
+	- fixed: denormal problems in filter and delay operators
+	- fixex: setting radius params of -etc comb filter
+	- fixed: make check target in readline-4.0 subdir
 12112004 (v2.3.5)  -** stable release **-
 	- note: main website address has changed to www.eca.cx/ecasound
 	- changed: collected all email addresses from source files to 
