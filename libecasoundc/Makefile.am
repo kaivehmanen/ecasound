@@ -58,10 +58,10 @@ libecasoundc_debug_la_LIBADD =
 libecasoundc_debug_la_LDFLAGS = $(libecasoundc_la_LDFLAGS)
 
 libecasoundc_tester_SOURCES = libecasoundc_tester.c
-libecasoundc_tester_LDFLAGS = $(lib_LTLIBRARIES)
+libecasoundc_tester_LDADD = $(lib_LTLIBRARIES)
 
 ecicpp_tester_SOURCES = ecicpp_tester.cpp
-ecicpp_tester_LDFLAGS = $(lib_LTLIBRARIES)
+ecicpp_tester_LDADD = $(lib_LTLIBRARIES)
 
 # ---------------------------------------------------------------------
 # Install targets

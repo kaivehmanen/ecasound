@@ -48,7 +48,8 @@ libkvutils_debug_la_SOURCES = $(libkvutils_la_SOURCES)
 libkvutils_debug_la_LDFLAGS = $(libkvutils_la_LDFLAGS)
 
 libkvutils_tester_SOURCES = libkvutils_tester.cpp
-libkvutils_tester_LDFLAGS = $(lib_LTLIBRARIES) -static
+libkvutils_tester_LDFLAGS = -static
+libkvutils_tester_LDADD = $(lib_LTLIBRARIES)
 
 noinst_HEADERS = $(kvutil_headers)
 
