@@ -220,7 +220,7 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
 #ifdef ECA_COMPILE_SNDFILE
   AUDIO_IO* sndfile = new SNDFILE_INTERFACE();
   /* 1. register types supported by libsndfile */
-  string sf_types ("(^sndfile$)|(w64$)|(vox$)|(paf$)|(iff$)|(nist$)|($mat[45])|(nist$)|(xi$)|(htk$)");
+  string sf_types ("(^sndfile$)|(w64$)|(voc$)|(paf$)|(iff$)|(nist$)|($mat[45])|(nist$)|(xi$)|(htk$)");
   string af_types ("(^audiofile$)");
   sf_types += string("|") + common_types;
 
