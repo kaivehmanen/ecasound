@@ -6,8 +6,8 @@
 %\bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
 
 \title{Ecasound Control Interface Guide}
-\author{Kai Vehmanen, Brad Bowman, Tony Leake, Jan Weil}
-\date{28112003}
+\author{Kai Vehmanen, Brad Bowman, Tony Leake, Jan Weil, Mario Lang}
+\date{02052004}
 \begin{document}
 
 \maketitle
@@ -32,7 +32,9 @@ a detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
-\item 28.11.2003 - ``Ruby'' section added. Updated the introduction.
+\item 02.05.2004 - ``Emacs'' section added (written by Mario Lang).
+\item 28.11.2003 - ``Ruby'' section added  (written by Jan Weil).
+                   Updated the introduction.
 \item 26.11.2003 - Fix filename for the alternative Python API (eci.py).
 \item 18.11.2003 - Typo fixes. Updated documentation to reflect the new
                    naming convention (ecasound refers to the binary,
@@ -42,7 +44,7 @@ a detailed EIAM documentation.
                    section. Added compilation examples.
 \item 06.10.2002 - Added ``Application development'' section.
 \item 05.10.2002 - Changed the libecasoundc link path.
-\item 29.09.2002 - ``PHP'' section added.
+\item 29.09.2002 - ``PHP'' section added (written by Tony Leake).
 \item 25.04.2002 - Changed headers path from ``<ecasoundc/file.h>'' to 
                    ``<file.h>'' and added library version number to 
                    link instructions.
@@ -264,8 +266,6 @@ int main(int argc, char *argv[])
  
 \end{verbatim} 
 
-
-
 % ----------------------------------------------------------------------
 \subsection{C}
 \subsubsection{Overview}
@@ -340,7 +340,84 @@ int main(int argc, char *argv[])
  
 \end{verbatim} 
 
+% ----------------------------------------------------------------------
+\subsection{Emacs}
+\subsubsection{Overview}
+The Ecasound package comes with an 'Ecasound' library for Emacs included.
+ecasound.el is a implementation of the ECI API for Emacs, as well
+as an interactive interface to Ecasound sessions implemented
+on top of that.  Simply use "M-x ecasound RET" to fire up an
+interactive Ecasound session.
 
+All Emacs Lisp ECI functions are prefixed with ``eci\-''.
+'ecasound.el' is implemented in a high level manner which means
+that you won't find most of the commands known from libecasoundc like
+last\_string, last\_float, etc.
+Instead of that every call to function "eci-command", which accepts all
+the well known IAM commands, returns ecasound's response in an appropriate type
+automatically.
+If an error occurs, e. g. there's a typo in a command or a file is not found,
+the function returns ``nil''.  In all other cases, either an automatically
+converted Lisp value is returned, or ``t'' in the case where there was no
+particular value returned.
+
+Additionally, most of the available IAM commands have their own Emacs Lisp
+function including documentation and possibly a parameter list.  All these
+functions are interactive, so you can use them in ecasound-iam-mode simply
+by invoking them via M-x or by pressing an assigned key combination.
+Emacs will prompt you for the required parameters, providing completion
+wherever possible.
+
+As a convention, "eci-command" and its variants do take a buffer or process
+as an optional last argument.  If this is ``nil'', the current
+buffer is assumed to be the ecasound session refered to by this call.
+This makes it possible to use several ECI sessions concurrently, dispatching
+on the buffer or process in use.
+
+\subsubsection{Usage}
+\begin{enumerate}
+\item  make ecasound.el available in your ``load-path''
+\item  (require 'ecasound)
+\item  create a buffer with an associated Ecasound session (``eci-init'')
+\item  use ``eci\-'' functions with the new buffer
+\end{enumerate}
+
+\subsubsection{Example}
+\begin{verbatim} 
+(require 'ecasound)
+
+(defun example (file &optional cutoff-increment session)
+  (unless cutoff-increment (setq cutoff-increment 500.0))
+  (with-current-buffer (or session (eci-init))
+    (eci-cs-add "play_chainsetup")
+    (eci-c-add "1st_chain")
+    (eci-ai-add file)
+    (eci-ao-add "/dev/dsp")
+    (eci-cop-add "-efl:100")
+    (eci-cop-select 1)
+    (eci-copp-select 1)
+    (eci-cs-connect)
+    (eci-start)
+    (sit-for 1)
+    (while (and (string= (eci-engine-status) "running")
+                (<= (eci-get-position) 15))
+      (eci-copp-set (+ cutoff-increment (eci-copp-get)))
+      (sit-for 1))
+    (eci-command "stop")
+    (when (eci-cs-disconnect)
+      (destructuring-bind
+	  ((cop n1 (copp n2 val)))
+	  (cdr (assoc "1st_chain" (eci-cop-status)))
+	(message "%s %s is now %f" cop copp val)))))
+\end{verbatim} 
+
+NOTE: function ``eci-cop-status'' is actually a very high level function
+which already converts the returned information to a nested list
+structure.
+
+For more complex examples of the Emacs Lisp ECI implementation, see function
+``eci-example'', ``ecasound-normalize'' and ``ecasound-signalview'' in
+ecasound.el.
 
 % ----------------------------------------------------------------------
 \subsection{Python}
@@ -395,8 +472,6 @@ e.command("cop-status")
 print "Chain operator status: ", e.last_string()
  
 \end{verbatim} 
-
-
 
 % ----------------------------------------------------------------------
 \subsection{Perl}
@@ -453,7 +528,6 @@ print "Chain operator status: ", eci("cop-status");
 This PHP extension provides bindings to the Ecasound
 control interface.  It is useful both for scripting Ecasound
 and for writing graphical audio applications with PHP Gtk.
-
 
 The PHP Ecasound extension was written by Tony Leake. At the moment this module 
 is not distributed with Ecasound. The latest version and example scripts, are 
@@ -530,7 +604,7 @@ eci_cleanup();
 % ----------------------------------------------------------------------
 \subsection{Ruby}
 \subsubsection{Overview}
-The ecasound package comes with an 'Ecasound' module for Ruby included.
+The Ecasound package comes with an 'Ecasound' module for Ruby included.
 If ruby is detected during the installation process it is installed
 automatically (assuming you are installing ecasound from source code).
 The module contains the class definition of a native ecasound control interface
@@ -584,9 +658,7 @@ e.command("stop")
 e.command("cs-disconnect")
 
 $stdout << "Chain operator status: " + e.command("cop-status") + "\n"
-\end{verbatim} 
-
-
+\end{verbatim}
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
