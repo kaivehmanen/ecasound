@@ -31,6 +31,7 @@ int eci_last_integer(void);
 long int eci_last_long_integer(void);
 const char* eci_last_error(void);
 const char* eci_last_type(void);
+int eci_error(void);
  
 /* --------------------------------------------------------------------- 
  * Events 

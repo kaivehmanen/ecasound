@@ -38,6 +38,7 @@ class ECA_CONTROL_INTERFACE {
   long int last_long_integer(void) const;
   const string& last_error(void) const;
   const string& last_type(void) const;
+  bool error(void) const;
 
   /**
    * Returns last_integer() interpreted as a bool.

@@ -1,5 +1,5 @@
-#ifndef _AUDIO_GATE_H
-#define _AUDIO_GATE_H
+#ifndef INCLUDED_AUDIO_GATE_H
+#define INCLUDED_AUDIO_GATE_H
 
 #include "eca-chainop.h"
 #include "samplebuffer.h"

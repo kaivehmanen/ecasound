@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "10\&.12\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "12\&.12\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -472,14 +472,16 @@ LADSPA plugins\&.
 .IP 
 .IP "-gc:start-time,len" 
 Time crop gate\&. Initially gate is closed\&. After \'start-time\' seconds
-has elapsed, gate opens and remains open for \'len\' seconds\&.
+has elapsed, gate opens and remains open for \'len\' seconds\&. When
+closed, passing audio buffers are trucated to zero length\&.
 .IP 
 .IP "-ge:open-threshold-%, close-thold-%,volume-mode" 
 Threshold gate\&. Initially gate is closed\&. It is opened when volume 
 goes over \'othreshold\' percent\&. After this, if volume drops below 
 \'cthold\' percent, gate is closed and won\'t be opened again\&. 
 If \'value_mode\' is \'rms\', average RMS volume is used\&. Otherwise
-peak average is used\&. 
+peak average is used\&.  When closed, passing audio buffers are trucated 
+to zero length\&.
 .IP 
 .PP 
 \fBCONTROL ENVELOPE SETUP\fP

@@ -21,7 +21,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>10122000</h2>
+<h2>12122000</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -147,7 +147,10 @@ between integers and long integers.
 <p><a name="l7"></a>
 <strong>2.2.3: Errors</strong><p>
 <dl>
-<p></p><dt><strong>last_error()</strong><dd>
+<p></p><dt><strong>error()</strong><dd>
+Returns true (!= 0) if error has occured during the execution 
+of last EIAM command. Other returns false (= 0).
+<p><p></p><dt><strong>last_error()</strong><dd>
 Returns a string describing the last error. If the last EIAM command
 was executed succesfully, last_error() returns an empty string.
 <p></dl>

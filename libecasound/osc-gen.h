@@ -33,6 +33,7 @@ class GENERIC_OSCILLATOR : public OSCILLATOR {
 
  protected:
 
+  // FIXME: replace this with a function: void set_point(int n);
   vector<double> ienvelope_rep;
 
   void set_start_value(double v) { start_value_rep = v; }

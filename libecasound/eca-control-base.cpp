@@ -311,9 +311,13 @@ bool ECA_CONTROL_BASE::is_selected(void) const { return(selected_chainsetup_repp
 bool ECA_CONTROL_BASE::is_running(void) const { return(session_repp->status() == ECA_SESSION::ep_status_running); } 
 
 /**
- * Returns true if engine has finished processing.
+ * Returns true if engine has finished processing. Engine state is 
+ * either "finished" or "error".
  */
-bool ECA_CONTROL_BASE::is_finished(void) const { return(session_repp->status() == ECA_SESSION::ep_status_finished); } 
+bool ECA_CONTROL_BASE::is_finished(void) const { 
+  return(session_repp->status() == ECA_SESSION::ep_status_finished ||
+	 session_repp->status() == ECA_SESSION::ep_status_error); 
+} 
 
 long ECA_CONTROL_BASE::length_in_samples(void) const { 
   if (is_connected() == true)
@@ -360,6 +364,10 @@ string ECA_CONTROL_BASE::engine_status(void) const {
   case ECA_SESSION::ep_status_finished:
     {
     return("finished"); 
+    }
+  case ECA_SESSION::ep_status_error:
+    {
+    return("error"); 
     }
   case ECA_SESSION::ep_status_notready: 
     {

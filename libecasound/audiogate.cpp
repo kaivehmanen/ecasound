@@ -26,7 +26,8 @@
 void GATE_BASE::process(void) {
   analyze(target);
   if (is_open() == false) {
-    target->make_silent();
+//      target->make_silent();
+    target->length_in_samples(0);
   }
 }
 

@@ -64,6 +64,10 @@ long int ECA_CONTROL_INTERFACE::last_long_integer(void) const { return(control_r
 const string& ECA_CONTROL_INTERFACE::last_error(void) const { return(control_repp->last_error()); }
 const string& ECA_CONTROL_INTERFACE::last_type(void) const { return(control_repp->last_type()); }
 
+bool ECA_CONTROL_INTERFACE::error(void) const {
+  if (control_repp->last_error().size() > 0) return(true);
+  return(false);
+}
 
 bool ECA_CONTROL_INTERFACE::events_available(void) { return(false); }
 void ECA_CONTROL_INTERFACE::next_event(void) { }

@@ -129,6 +129,14 @@ const char* eci_last_error(void) {
 const char* eci_last_type(void) {
   return(eci_rep.eci->last_type().c_str());
 }
+
+/**
+ * Whether an error has occured?
+ */
+int eci_error(void) { 
+  if (eci_rep.eci->error()) return(1);
+  return(0);
+}
  
 /* --------------------------------------------------------------------- 
  * Events 

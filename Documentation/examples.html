@@ -319,6 +319,36 @@ is that realtime input and output are externally connected.
 </p>
 </ol>
 
+<!-- ###  new section ### -->
+<a name=presets><p><b>Presets and LADSPA effect plugins</b></p></a>
+<ol>
+<p>
+<li> ecasound -i null -o /dev/dsp -el:sine_fcac,440,1
+</p><p>
+This produces a 440Hz sine tone (great for tuning your instruments!).
+For the above to work, LADSPA SDK needs to be installed (see 
+<a href="http://www.ladspa.org">www.ladspa.org</a>).
+</p>
+
+<p>
+<li> ecasound -i:null -o:/dev/dsp -el:sine_fcac,880,1 -eemb:120,10
+-efl:2000
+</p><p>
+This results in audible metrome signal with tempo of 120BPM. Now 
+the syntax might look a bit difficult for everyday use. Luckily
+ecasound's preset system will help in this situation. You can get the
+same exact result with:
+</p>
+<p>
+<li> ecasound -i:null -o:/dev/dsp -pn:metronome,120
+</p>
+<p>
+See the file 'effect_presets' for a list of available effect
+presets. By default, location of this file is '/usr/local/share/ecasound/effect_presets'.
+</p>
+
+</ol>
+
 <!-- ###  end ### -->
 <insert name=ecasound_tail>
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>

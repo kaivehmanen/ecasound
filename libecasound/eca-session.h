@@ -30,6 +30,7 @@ class ECA_SESSION {
   enum Engine_status { ep_status_running,
 		       ep_status_stopped, 
 		       ep_status_finished,
+		       ep_status_error,
 		       ep_status_notready };
 
   friend class ECA_CONTROL_BASE;

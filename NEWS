@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 101200) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 121200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -22,16 +22,23 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 copp-set, copp-get
 	- added: eiam command return type documentation to
 	 	 ecasound-iam man page
-	- added: ecasound detect all eiam return types and
-		 automatically prints their values after eiam commands
+	- added: ecasounds detect all eiam return types and
+		 automatically prints their values after commands
 		 are issued
 	- added: example code (under ./examples) - ecidoc_example.c, 
 		 ecidoc_example.cpp, ecidoc_example.py, normalize.py
 	- added: -kog - a new generic oscillator
+	- added: lots of new documentation - check the examples page,
+		 user's guide and the ecasound faq 
 	- removed: eiam-cmds; u, a, cstatus, l, fstatus, estatus
 	- changed: -kf - 'mode' parameter added
 	- changed: format of the file 'generic_oscillators'
 	- changed: ECI - last_list_of_strings() to last_string_list()
+	- changed: way gate operators functions; instead of muting 
+		   the chain, they now truncate the passing buffers -
+		   in future, amplify+controller (-ea + -k)
+		   combinations can be used in the same manner as the
+		   old gate operators
 	- fixed: "-x -i file.ext" style cmd-line arg sequences weren't
 		parsed correctly [jhall]
 	- fixed: ECI - command_float_arg() was broken (all languages)
@@ -63,6 +70,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 all LADSPA parameter hints now supported
 	- added: support for result paramerers, ie. values resulted
 		 from processing/analyzing
+	- added: ECI - error() added
 	- removed: the "LADSPA/" prefix removed from plugin labels
 	- removed: support for underscores in EIAM-commands
 	- changed: more intelligent handling of resource files

@@ -1,6 +1,7 @@
-#ifndef _SAMPLEBUFFER_FUNCTIONS_H
-#define _SAMPLEBUFFER_FUNCTIONS_H
+#ifndef INCLUDED_SAMPLEBUFFER_FUNCTIONS_H
+#define INCLUDED_SAMPLEBUFFER_FUNCTIONS_H
 
+#include <cmath>
 #include "samplebuffer.h"
 
 /**

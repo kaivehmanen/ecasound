@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>10.12.2000</h2>
+<h2>12.12.2000</h2>
 
 
     
@@ -423,13 +423,15 @@ LADSPA plugins.
 <p><dl>
 <p><p></p><dt><strong>-gc:start-time,len</strong><dd>
 Time crop gate. Initially gate is closed. After 'start-time' seconds
-has elapsed, gate opens and remains open for 'len' seconds.
+has elapsed, gate opens and remains open for 'len' seconds. When
+closed, passing audio buffers are trucated to zero length.
 <p><p></p><dt><strong>-ge:open-threshold-%, close-thold-%,volume-mode</strong><dd>
 Threshold gate. Initially gate is closed. It is opened when volume 
 goes over 'othreshold' percent. After this, if volume drops below 
 'cthold' percent, gate is closed and won't be opened again. 
 If 'value_mode' is 'rms', average RMS volume is used. Otherwise
-peak average is used. 
+peak average is used.  When closed, passing audio buffers are trucated 
+to zero length.
 <p></dl>
 <p><strong>CONTROL ENVELOPE SETUP</strong>
 <dl>

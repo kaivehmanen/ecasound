@@ -12,7 +12,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (10122000)
+       (12122000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -103,6 +103,10 @@ enddit()
 
 subsubsect(Errors)
 startdit()
+dit(error())
+Returns true (!= 0) if error has occured during the execution 
+of last EIAM command. Otherwise returns false (= 0).
+
 dit(last_error())
 Returns a string describing the last error. If the last EIAM command
 was executed succesfully, last_error() returns an empty string.

@@ -10,6 +10,8 @@ Contents
 2.2: How do I use the parameter xxx? 
 2.3: Ecasound isn't doing anything but it still seems to hog all CPU-time 
 2.4: What file format should I use for mixing and recording? 
+2.5: Ecasound won't accept my chainsetup file/options! What's wrong with it? 
+2.6: I get occasional audio dropouts during operation? How to get rid of them? 
 
 1: Compiling
 
@@ -83,3 +85,34 @@ with the -r command line option or by specifying
 You should always use .raw or .wav. By doing this, you will probably
 get better performance as these formats are internally supported by 
 ecasound.
+
+2.5: Ecasound won't accept my chainsetup file/options! What's wrong with it?
+
+Be sure to check the following rules:
+
+o Every chain has exactly _one_ input and _one_ output.
+o All inputs and outputs must be connected to some chain.
+o For every input/output, there must be exactly _one_
+    input/output specification (example specification: '-i:file.ext').
+o All routing from/to chains is based on selecting a set of chains
+    and then specifying an input or output (example: '-a:1,2 -i:file.ext').
+o All audio copying and mixing is done channel-wise. If you attach 
+    a 4-channel input and a two-channel output to a chain, chain 
+    will have 4 channels of audio, but only the first two channels
+    will be written to the output file.
+
+2.6: I get occasional audio dropouts during operation? How to get rid of them?
+
+Here's a
+link 
+to a very good article written by Dave Phillips on Linux low-latency
+issues. And if in a hurry, here's a quick list of the things to try:
+
+o Tune your disks (see the article)
+o Enable ecasound's double-buffering system by using the -z:db option
+o If still having problems, run ecasound as root (or with SUID-bit
+    set) and use ecasound's -r option. This will raise ecasound's
+    scheduling priority to realtime (SCHED_FIFO).
+o Try to increase ecasound's buffersize with -b:sample_frames
+    options. Something like -b:4096 should do the trick.
+o If all else fails, try the various low-latency kernel patches.

@@ -92,6 +92,13 @@ static PyObject * pyeca_last_error(PyObject* self, PyObject *args) {
   return Py_BuildValue("s", selfp->eci->last_error().c_str());
 }
 
+static PyObject * pyeca_error(PyObject* self, PyObject *args) {
+  pyeca_control_t *selfp = (pyeca_control_t*) self;
+  if (selfp->eci->error())
+    return Py_BuildValue("i", 1);
+  return Py_BuildValue("i", 0);
+}
+
 static PyObject * pyeca_last_type(PyObject* self, PyObject *args) {
   pyeca_control_t *selfp = (pyeca_control_t*) self;
   return Py_BuildValue("s", selfp->eci->last_type().c_str());
@@ -116,6 +123,7 @@ static struct PyMethodDef pyeca_control_methods[] = {
   { "last_long_integer",     pyeca_last_long_integer,      METH_VARARGS},
   { "last_error",            pyeca_last_error,             METH_VARARGS},
   { "last_type",             pyeca_last_type,              METH_VARARGS},
+  { "error",                 pyeca_error,                  METH_VARARGS},
   { "events_available",      pyeca_events_available,       METH_VARARGS},
   { "next_event",            pyeca_next_event,             METH_VARARGS},
   { "current_event",         pyeca_current_event,          METH_VARARGS},

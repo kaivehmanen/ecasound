@@ -60,7 +60,7 @@ void ECA_CONTROL::command(const string& cmd) {
   vector<string> cmds = string_to_words(cmd);
   vector<string>::iterator p = cmds.begin();
   if (p != cmds.end()) {
-    if (ECA_IAMODE_PARSER::cmd_map_rep.find(string_search_and_replace(*p, '_', '-')) == ECA_IAMODE_PARSER::cmd_map_rep.end()) {
+    if (ECA_IAMODE_PARSER::cmd_map_rep.find(*p) == ECA_IAMODE_PARSER::cmd_map_rep.end()) {
       // ---
       // *p is not recognized as a iamode command
       // ---
