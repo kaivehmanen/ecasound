@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // ecatools-normalize.cpp: A simple command-line tools for normalizing
 //                         sample volume.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -95,6 +95,7 @@ int main(int argc, char *argv[])
     TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
     string tmpdir ("ecatools-");
     char* tmp_p = getenv("LOGNAME");
+    if (tmp_p == NULL) tmp_p = getenv("USER");
     if (tmp_p != NULL) {
       tmpdir += string(tmp_p);
       tempfile_dir_rep.reserve_directory(tmpdir);
