@@ -871,18 +871,13 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 
     DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: wakes up; commands available" << endl);
 
-    /* case 1: external exit request */
-    if (exit_request_rep == true) {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) exit request in exec");
-      break;
-    }
-
     /* we must take the lock to ensure that 
      * process callback does not run at the same time */
     SAMPLE_SPECS::sample_pos_t enginepos = engine_repp->current_position_in_samples();
     pthread_mutex_lock(&engine_mod_lock_rep);
     engine_repp->check_command_queue();
-    if (enginepos != engine_repp->current_position_in_samples()) {
+    if (exit_request_rep != true &&
+	enginepos != engine_repp->current_position_in_samples()) {
       /* seek requested */
 #if ECA_JACK_TRANSPORT_API >= 3
       if (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send ||
@@ -899,6 +894,12 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
     pthread_mutex_unlock(&engine_mod_lock_rep);
 
     DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: check_commands finished" << endl);
+
+    /* case 1: external exit request */
+    if (exit_request_rep == true) {
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) exit request in exec");
+      break;
+    }
 
     /* case 2: engine finished and in batch mode -> exit */
     if ((engine_repp->status() == ECA_ENGINE::engine_status_finished ||
@@ -1066,12 +1067,12 @@ void AUDIO_IO_JACK_MANAGER::deactivate_server_connection(void)
  *
  * context: Can be called at the same time with
  *          JACK callbacks, so proper locking 
- *          must be ensured.
+ *          must be ensured (caller must hold
+ *          lock against the callbacks).
  */
 void AUDIO_IO_JACK_MANAGER::exit(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver exit");
-
   exit_request_rep = true;
   if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
 }
