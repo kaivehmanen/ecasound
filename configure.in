@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20.04.2002
+dnl last modified: 28.04.2002
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -66,7 +66,6 @@ dnl Set compiler flags
 dnl
 dnl modifies: CXXFLAGS, CFLAGS
 dnl ---
-dnl "-O2 -D_REENTRANT -DNDEBUG -ffast-math -fstrict-aliasing -funroll-loops"
 EXTRAFLAGS="-D_REENTRANT"
 EXTRAGCCFLAGS="$EXTRAFLAGS -ffast-math -fstrict-aliasing -funroll-loops"
 if test x${GXX} = xyes; then
@@ -76,9 +75,7 @@ if test x${GCC} = xyes; then
    CFLAGS="$CFLAGS $EXTRAFLAGS $EXTRAGCCFLAGS"
 fi
 
-dnl ---
-dnl Check pthread support
-dnl ---
+dnl ------------------------------------------------------------------
 
 dnl ---
 dnl Sets up some operating system specific options
@@ -111,6 +108,12 @@ case "$host" in
 	       echo "Using generic settings for POSIX thread support."
 	       ;;
 esac
+
+dnl ------------------------------------------------------------------
+
+dnl ---
+dnl Check pthread support
+dnl ---
 
 dnl switch to C while testing for pthread support
 AC_LANG_C

@@ -6,7 +6,7 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{27022002}
+\date{28.042002}
 \begin{document}
 
 \maketitle
@@ -31,12 +31,13 @@ ecasound version.
 \section{Document history}
 
 \begin{itemize}
+\item 28.04.2002 - Revised namespace policy; see chapter \ref{cpp_std_namespace}
 \item 27.02.2002 - Rewrote the ``Control flows'' chapter according 
                    to the structural changes made in 2.1dev8. Added
 		   a ``References'' section.
 \item 31.01.2002 - Reorganization of document structure. New chapter 
                    about ``Library organization''.
-\item 19.12.2001 - Added chapter 3.3.1 about include hierarchies.
+\item 19.12.2001 - Added chapter \ref{include_hierarchies} about include hierarchies.
 \item 28.10.2001 - Lots of changes to the ``Object maps'' chapter.
 \item 21.10.2001 - Added this history section.
 \end{itemize}
@@ -219,6 +220,7 @@ Ecasound libraries and applications are divided into \emph{distribution
 packages}, \emph{directories} and \emph{file groups}. 
 
 \subsubsection{Include hierarchies}
+\label{include_hierarchies}
 
 Include statements that are not stricly necessary should be dropped!
 Not only do they cause unwanted dependencies, they also create more
@@ -287,13 +289,14 @@ You should note that these are just recommendations - there are no
 strict rules on how files should be named.
 
 \subsubsection{C++ std namespace}
+\label{cpp_std_namespace}
 
 The preferred way to access C++ standard library functions is 
-to define a \emph{using} declaration for each function and type 
-used (for instance ``using std::string''. If a service is only 
-used once or twice, an explicit ``std::'' selector should be 
-used. Importing the whole std namespace (``using namespace std;'') 
-is not recommmended.
+to use explicit namespace selectors (``std::string'') in public 
+headers files, and \emph{using} declarations in the implementation 
+parts (``using std::string''). It's also possible to import the 
+whole std namespace (``using namespace std;'') in the beginning
+of an implementation file.
 
 % ----------------------------------------------------------------------
 \subsection{Documentation style}

@@ -1,9 +1,3 @@
-if ECA_AM_DEBUG_MODE
-INSTALL_STRIP_FLAG =
-else
-INSTALL_STRIP_FLAG = -s
-endif
-
 if ECA_AM_SYSTEM_READLINE
 INCLUDES = -I$(ECA_S_READLINE_INCLUDES) -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils
 else

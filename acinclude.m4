@@ -76,7 +76,7 @@ int main(void)
 ## ------------------------------------------------------------------------
 ## Check whether namespaces are supported.
 ##
-## version: 2
+## version: 3
 ##
 ## defines: ECA_USE_CXX_STD_NAMESPACE
 ## ------------------------------------------------------------------------
@@ -107,6 +107,7 @@ int main(void)
 ],
 [
 	AC_MSG_RESULT(no.)
+	AC_MSG_WARN([C++ compiler has problems with namespaces. Build process can fail because of this.])
 ]
 ,
 [
