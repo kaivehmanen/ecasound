@@ -77,10 +77,10 @@ qt_libraries = /usr/lib/qt/lib
 prefix = /usr/local
 mandir = $(prefix)/man
 PACKAGE = ecawave
-VERSION = 0.1   
+VERSION = 0.1.0r1   
 # ---------------------------------------------------------------------
 # Files going into distribution:
-DISTFILES = Makefile.am Makefile.in ecawave.1 	    ecawave_manpage.man 	    ecawave_manpage.html 	    users_guide.html
+DISTFILES = Makefile.am 		Makefile.in 		ecawave.1 	    	ecawave_manpage.man 		ecawave_manpage.html 		ecawave_manpage.yo 	    	users_guide.yo 	    	users_guide.html
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
@@ -183,12 +183,17 @@ all-redirect all-am all installdirs mostlyclean-generic \
 distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
+
 # ---------------------------------------------------------------------
 all: docs
 
 distclean:
 
-docs: ecawave.1 ecawave_manpage.html users_guide.html kdoc
+docs: 	ecawave.1 \
+	ecawave_manpage.man \
+	ecawave_manpage.html \
+	users_guide.yo \
+	users_guide.html
 
 # ---------------------------------------------------------------------
 # Man pages

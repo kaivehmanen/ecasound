@@ -137,6 +137,19 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
+DEP_FILES =  .deps/ecawave.P .deps/qeacceptinput.P \
+.deps/qeacceptinput_moc.P .deps/qeaudioformatinput.P \
+.deps/qeaudioformatinput_moc.P .deps/qebuttonrow.P \
+.deps/qebuttonrow_moc.P .deps/qechainopevent.P \
+.deps/qechainopevent_moc.P .deps/qechainopinput.P \
+.deps/qechainopinput_moc.P .deps/qeevent.P .deps/qefile.P \
+.deps/qefile_moc.P .deps/qefilenameinput.P .deps/qefilenameinput_moc.P \
+.deps/qeopenfiledialog.P .deps/qeopenfiledialog_moc.P \
+.deps/qeplayevent.P .deps/qeprocessevent.P .deps/qesaveevent.P \
+.deps/qesavefiledialog.P .deps/qesavefiledialog_moc.P .deps/qesession.P \
+.deps/qesession_moc.P .deps/qestatusbar.P .deps/qestatusbar_moc.P \
+.deps/qewaveform.P .deps/qewaveform_moc.P .deps/resources.P \
+.deps/version.P
 SOURCES = $(ecawave_debug_SOURCES) $(ecawave_SOURCES)
 OBJECTS = $(ecawave_debug_OBJECTS) $(ecawave_OBJECTS)
 
@@ -144,9 +157,9 @@ all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .S .c .cpp .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps src/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
@@ -175,9 +188,6 @@ uninstall-binPROGRAMS:
 	list='$(bin_PROGRAMS)'; for p in $$list; do \
 	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	done
-
-.c.o:
-	$(COMPILE) -c $<
 
 .s.o:
 	$(COMPILE) -c $<
@@ -239,6 +249,11 @@ distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 subdir = src
 
 distdir: $(DISTFILES)
+	here=`cd $(top_builddir) && pwd`; \
+	top_distdir=`cd $(top_distdir) && pwd`; \
+	distdir=`cd $(distdir) && pwd`; \
+	cd $(top_srcdir) \
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu src/Makefile
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -249,63 +264,57 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-ecawave.o: ecawave.cpp qesession.h resources.h
-qeacceptinput_moc.o: qeacceptinput_moc.cpp qeacceptinput.h
-qeacceptinput.o: qeacceptinput.cpp qeacceptinput.h
-qeaudioformatinput_moc.o: qeaudioformatinput_moc.cpp \
-	qeaudioformatinput.h
-qeaudioformatinput.o: qeaudioformatinput.cpp qeaudioformatinput.h
-qechainopdialog_moc.o: qechainopdialog_moc.cpp qechainopdialog.h \
-	../config.h
-qechainopdialog.o: qechainopdialog.cpp qechainopdialog.h ../config.h \
-	qeacceptinput.h
-qechainopevent_moc.o: qechainopevent_moc.cpp qechainopevent.h \
-	../config.h qechainopinput.h qeprocessevent.h qeevent.h
-qechainopevent.o: qechainopevent.cpp qechainopevent.h ../config.h \
-	qechainopinput.h qeprocessevent.h qeevent.h
-qechainopinput_moc.o: qechainopinput_moc.cpp qechainopinput.h \
-	../config.h
-qechainopinput.o: qechainopinput.cpp qechainopinput.h ../config.h
-qecopyevent.o: qecopyevent.cpp qeevent.h ../config.h qecopyevent.h
-qedialog_moc.o: qedialog_moc.cpp
-qedialog.o: qedialog.cpp qedialog.h
-qeevent.o: qeevent.cpp qeevent.h ../config.h
-qefiledialog_moc.o: qefiledialog_moc.cpp
-qefiledialog.o: qefiledialog.cpp qeformatdialog.h qefiledialog.h
-qefile_moc.o: qefile_moc.cpp qefile.h qewaveform.h
-qefilenameinput_moc.o: qefilenameinput_moc.cpp qefilenameinput.h
-qefilenameinput.o: qefilenameinput.cpp qefilenameinput.h
-qefile.o: qefile.cpp ../config.h qefile.h qewaveform.h qebuttonrow.h
-qeformatdialog_moc.o: qeformatdialog_moc.cpp
-qeformatdialog.o: qeformatdialog.cpp qeformatdialog.h
-qeopenfiledialog_moc.o: qeopenfiledialog_moc.cpp qeopenfiledialog.h \
-	qeacceptinput.h qeaudioformatinput.h qefilenameinput.h
-qeopenfiledialog.o: qeopenfiledialog.cpp ../config.h qeopenfiledialog.h \
-	qeacceptinput.h qeaudioformatinput.h qefilenameinput.h
-qeplayevent.o: qeplayevent.cpp qeplayevent.h qeevent.h ../config.h
-qeprocessevent.o: qeprocessevent.cpp ../config.h qeevent.h \
-	qeprocessevent.h
-qerangedevent.o: qerangedevent.cpp ../config.h qeevent.h qeplayevent.h \
-	qerangedevent.h
-qesaveevent.o: qesaveevent.cpp qesaveevent.h qeevent.h ../config.h
-qesavefiledialog_moc.o: qesavefiledialog_moc.cpp qesavefiledialog.h \
-	qeacceptinput.h qefilenameinput.h
-qesavefiledialog.o: qesavefiledialog.cpp ../config.h qesavefiledialog.h \
-	qeacceptinput.h qefilenameinput.h
-qesession_moc.o: qesession_moc.cpp qesession.h resources.h
-qesession.o: qesession.cpp ../config.h qefile.h qewaveform.h \
-	qeopenfiledialog.h qeacceptinput.h qeaudioformatinput.h \
-	qefilenameinput.h qesavefiledialog.h qesession.h resources.h \
-	qebuttonrow.h qestatusbar.h qeevent.h qeplayevent.h \
-	qesaveevent.h qechainopevent.h qechainopinput.h \
-	qeprocessevent.h version.h
-qestatusbar_moc.o: qestatusbar_moc.cpp qestatusbar.h
-qestatusbar.o: qestatusbar.cpp ../config.h qestatusbar.h version.h
-qewaveform_moc.o: qewaveform_moc.cpp qewaveform.h
-qewaveform.o: qewaveform.cpp qewaveform.h
-resources.o: resources.cpp resources.h
-version.o: version.cpp ../config.h version.h
 
+DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
+
+-include $(DEP_FILES)
+
+mostlyclean-depend:
+
+clean-depend:
+
+distclean-depend:
+	-rm -rf .deps
+
+maintainer-clean-depend:
+
+%.o: %.c
+	@echo '$(COMPILE) -c $<'; \
+	$(COMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.c
+	@echo '$(LTCOMPILE) -c $<'; \
+	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
+
+%.o: %.cpp
+	@echo '$(CXXCOMPILE) -c $<'; \
+	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.cpp
+	@echo '$(LTCXXCOMPILE) -c $<'; \
+	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
 info-am:
 info: info-am
 dvi-am:
@@ -343,23 +352,24 @@ distclean-generic:
 
 maintainer-clean-generic:
 mostlyclean-am:  mostlyclean-binPROGRAMS mostlyclean-compile \
-		mostlyclean-tags mostlyclean-generic
+		mostlyclean-tags mostlyclean-depend mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
-clean-am:  clean-binPROGRAMS clean-compile clean-tags clean-generic \
-		mostlyclean-am
+clean-am:  clean-binPROGRAMS clean-compile clean-tags clean-depend \
+		clean-generic mostlyclean-am
 
 clean: clean-am
 
 distclean-am:  distclean-binPROGRAMS distclean-compile distclean-tags \
-		distclean-generic clean-am
+		distclean-depend distclean-generic clean-am
 
 distclean: distclean-am
 
 maintainer-clean-am:  maintainer-clean-binPROGRAMS \
 		maintainer-clean-compile maintainer-clean-tags \
-		maintainer-clean-generic distclean-am
+		maintainer-clean-depend maintainer-clean-generic \
+		distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
@@ -369,12 +379,13 @@ maintainer-clean: maintainer-clean-am
 maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
 mostlyclean-compile distclean-compile clean-compile \
 maintainer-clean-compile tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
-check-am installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+clean-tags maintainer-clean-tags distdir mostlyclean-depend \
+distclean-depend clean-depend maintainer-clean-depend info-am info \
+dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
 # ------
