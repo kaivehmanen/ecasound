@@ -24,15 +24,9 @@
 #include <unistd.h>
 #include <errno.h>
 
-#define ALSA_PCM_NEW_HW_PARAMS_API
+/* note! kaiv, note to myself: you saved the hwparams change 
+   'add_hwparams.patch' :)  */
 #include <alsa/asoundlib.h>
-
-/* if older than 0.9.0, or a 0.9.0-xxx prelease older than 0.9.0rc3 */
-#if SND_LIB_VERSION < 2304 || (SND_LIB_VERSION == 2304 && SND_LIB_EXTRAVER < 100003)
-
-#warning "Not compiling ALSA PCM support. alsa-lib version 0.9rc3 or newer required."
-
-#else
 
 #include <kvu_dbc.h>
 #include <kvu_message_item.h>
@@ -221,30 +215,33 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
 
   if (interleaved_channels() == true)
     err = snd_pcm_hw_params_set_access(audio_fd_repp, pcm_hw_params_repp,
-					 SND_PCM_ACCESS_RW_INTERLEAVED);
+					 SND_PCM_ACCESS_RW_INTERLEAVED
+					 );
   else
     err = snd_pcm_hw_params_set_access(audio_fd_repp, pcm_hw_params_repp,
-					 SND_PCM_ACCESS_RW_NONINTERLEAVED);
+					 SND_PCM_ACCESS_RW_NONINTERLEAVED
+					);
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA: Error when setting up hwparams/access: " + string(snd_strerror(err))));
 
   /* 3. set sample format */
   err = snd_pcm_hw_params_set_format(audio_fd_repp, 
 				     pcm_hw_params_repp, 
-				     format_rep);
+				     format_rep
+				     );
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-ALSA: Audio format not supported."));
 
   /* 4. set channel count */
   err = snd_pcm_hw_params_set_channels(audio_fd_repp, 
 					 pcm_hw_params_repp, 
-					 channels());
+					 channels()
+					 );
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::channels, "AUDIOIO-ALSA: Channel count " +
 				 kvu_numtostr(channels()) + " is out of range!"));
 
   /* 5. set sampling rate */
-  unsigned int ratereq = samples_per_second();
   err = snd_pcm_hw_params_set_rate_near(audio_fd_repp, 
 					  pcm_hw_params_repp,
-					  &ratereq, 
+					  samples_per_second(), 
 					  0);
   if (err < 0)   throw(SETUP_ERROR(SETUP_ERROR::sample_rate, "AUDIOIO-ALSA: Sample rate " +
 				   kvu_numtostr(samples_per_second()) + " is out of range!"));
@@ -265,39 +262,35 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
 
   /* 7. sets buffer size */
   if (max_buffers() == true) {
-    snd_pcm_uframes_t bufferreq = buffersize() * 1024;
     err = snd_pcm_hw_params_set_buffer_size_near(audio_fd_repp, 
 						 pcm_hw_params_repp,
-						 &bufferreq);
+						 buffersize() * 1024);
     if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected,
 				   "AUDIOIO-ALSA: Error when setting up hwparams/btime (1): " + string(snd_strerror(err))));
   }
   else {
-    snd_pcm_uframes_t bufferreq = buffersize() * 3;
     err = snd_pcm_hw_params_set_buffer_size_near(audio_fd_repp, 
 						 pcm_hw_params_repp,
-						 &bufferreq);
+						 3 * buffersize());
     if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected,
 				   "AUDIOIO-ALSA: Error when setting up hwparams/btime (2): " + string(snd_strerror(err))));
   }
    
   /* 8. print debug information */
-  unsigned int value;
-  snd_pcm_hw_params_get_buffer_time(pcm_hw_params_repp, &value, 0);
+  unsigned int value = snd_pcm_hw_params_get_buffer_time(pcm_hw_params_repp, 0);
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(value) + " usecs.");
 
-  snd_pcm_uframes_t fvalue;
-  value = snd_pcm_hw_params_get_buffer_size(pcm_hw_params_repp, &fvalue);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(fvalue) + " frames.");
-  buffercount_rep = fvalue / buffersize();
+  value = snd_pcm_hw_params_get_buffer_size(pcm_hw_params_repp);
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(value) + " frames.");
+  buffercount_rep = value / buffersize();
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) total latency is " + kvu_numtostr(latency()) + " frames.");
 
-  snd_pcm_hw_params_get_period_time(pcm_hw_params_repp, &value, 0);
+  value = snd_pcm_hw_params_get_period_time(pcm_hw_params_repp, 0);
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(value) + " usecs.");
 
-  snd_pcm_hw_params_get_period_size(pcm_hw_params_repp, &fvalue, 0);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(fvalue) + " frames.");
-  DBC_CHECK(fvalue == static_cast<unsigned int>(buffersize()));
+  value = snd_pcm_hw_params_get_period_size(pcm_hw_params_repp, 0);
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(value) + " frames.");
+  DBC_CHECK(value == static_cast<unsigned int>(buffersize()));
 
   /* 9. all set, now active hw params */
   err = snd_pcm_hw_params(audio_fd_repp, pcm_hw_params_repp);
@@ -657,5 +650,3 @@ void AUDIO_IO_ALSA_PCM::set_pcm_device_name(const string& n)
   else
     pcm_device_name_rep = default_pcm_device_rep;
 }
-
-#endif /* supported SND_LIB_VERSION */

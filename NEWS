@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 181002) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 191002) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -15,6 +15,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+19102002 (v2.2.0-pre3)
+	- fixed: reverted to using old ALSA 0.9 hw-params API,
+		 ecasound agains works with old 0.9beta and 0.9rc 
+		 ALSA versions
 18102002 (v2.2.0-pre2)
 	- fixed: ALSA objects weren't properly registered as audio
 		 object types
