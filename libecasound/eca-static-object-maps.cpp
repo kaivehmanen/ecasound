@@ -221,7 +221,7 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
 #ifdef ECA_ENABLE_AUDIOIO_PLUGINS
   eca_import_internal_audioio_plugin(objmap, "libaudioio_af.so");
 #else
-#ifdef ECA_COMPILE_AUDIOFILLE
+#ifdef ECA_COMPILE_AUDIOFILE
   AUDIO_IO* af = new AUDIOFILE_INTERFACE();
   objmap->register_object("audiofile_aiff_au_snd", "(aif*$)|(au$)|(snd$)", af);
 #endif

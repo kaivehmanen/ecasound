@@ -20,6 +20,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   libsamplerate
 	- fixed: use of the JACK transport API was never actually 
                  enabled in 2.2.3
+	- fixed: .aiff/.snd/.au input/output was not working at all
+  	 	 due to a typo in source code
 27042003 (v2.2.3)  -** stable release **-
 	- added: support for both -0.64 and 0.65- JACK versions; 
 		 transport functionality is only enabled with the 
