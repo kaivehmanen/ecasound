@@ -7,7 +7,7 @@ cat << EOH
 
 options:
 	[--libs]
-	[--debuglibs]
+	[--libs_debug]
 	[--cflags]
 	[--version]
 EOH
