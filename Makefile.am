@@ -1,6 +1,4 @@
 EXTRA_DIST = AUTHORS BUGS COPYING.GPL COPYING.LGPL NEWS TODO ecasoundrc.in ecasound.spec effect_presets generic_oscillators
-# for automake 1.4/1.5 compatibility
-EXTRA_DIST += depcomp
 
 if ECA_AM_SYSTEM_READLINE
 SUBDIRS = kvutils libecasound ecasound libecasoundc pyecasound rubyecasound ecatools Documentation examples

@@ -14,8 +14,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ??032005 (v2.4.1)  -** stable release **-
-	- note: verified to work with automake versions 1.5, 1.6 
-		and 1.9
+	- note: verified to work with automake versions 1.6 and 1.9;
+		automake 1.5 and older, as well as autoconf versions
+	        older than 2.50, are no longer supported; these
+		changes only affect users of Ecasound CVS checkouts
 	- added: ecaplay - better error reporting, feature to reset
 		 output device audio parameters for each new input 
 		 file, support for ECAPLAY_OUTPUT_DEVICE environment
