@@ -20,7 +20,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef COMPILE_OSS
 
 #include <string>
 #include <cstring>
@@ -83,7 +82,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   // -------------------------------------------------------------------
   // Set triggering 
 
-#ifndef DISABLE_OSS_TRIGGER
+#ifndef ECA_DISABLE_OSS_TRIGGER
   if ((oss_caps & DSP_CAP_TRIGGER) == DSP_CAP_TRIGGER) {
     if (io_mode() == io_read) {
       int enable_bits = ~PCM_ENABLE_INPUT; // This disables recording
@@ -225,12 +224,14 @@ void OSSDEVICE::close(void)
 void OSSDEVICE::start(void)
 {
   ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" started.");
+#ifndef ECA_DISABLE_OSS_TRIGGER
   if ((oss_caps & DSP_CAP_TRIGGER) == DSP_CAP_TRIGGER) {
     int enable_bits;
     if (io_mode() == io_read) enable_bits = PCM_ENABLE_INPUT;
     else if (io_mode() == io_write) enable_bits = PCM_ENABLE_OUTPUT;
       ::ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits);
   }   
+#endif
   gettimeofday(&start_time, NULL);
 
   AUDIO_IO_DEVICE::start();
@@ -267,6 +268,3 @@ void OSSDEVICE::write_samples(void* target_buffer, long int samples)
 {
   ::write(audio_fd, target_buffer, frame_size() * samples);
 }
-
-
-#endif // COMPILE_OSS

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 190202) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 240202) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -48,7 +48,7 @@ Last officially released version is -*> v2.0.4 *-
 		   to pyecasound.so
 	- changed: programmer's guide updated; added a new chapter
 		   about library organization
-	- changed: small user's guide updatex
+	- changed: small user's guide update
 	- changed: looping with -tl always loops from the start; 
 		   -y can't be used for offseting loop start 
  		   offset -> use ewf-files instead
@@ -57,6 +57,7 @@ Last officially released version is -*> v2.0.4 *-
 		   24-in-32bits values as before; to access 
 		   unpacked 24bit data, use s32_le and s32_be
 		   formats instead
+	- changed: configure.in cleanup
 	- fixed: -[io]:alsaplugin,x,y didn't work with latest ALSA
 		 0.9betaX releases
 	- fixed: serious bug in setting up ALSA 0.9.x buffering params
@@ -74,6 +75,8 @@ Last officially released version is -*> v2.0.4 *-
 	- fixed: sometimes an incorrect length-field written to 
 		 newly created wav-files 
 	- fixed: problems with using ewf-files with doublebuffering
+	- fixed: loop devices didn't work; resulted in explicit 
+		 exception errors
 16012002 (v2.1dev7)
 	- edi-entries: edi-12
 	- added: a watchdog thread that handles thread cleanup; 

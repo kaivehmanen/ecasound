@@ -37,6 +37,7 @@ const char* ecasound_parameter_help_rep =
 "     -pf:preset.eep           insert the first preset from file 'preset.eep'\n"
 "     -pn:preset_name          insert a preset 'preset_name'\n"
 " --- \n"
+"     -eS:params               audio stamp\n"
 "     -ea:params               amplify\n"
 "     -eac:params              channel amplify\n"
 "     -eaw:params              amplify with clip-control\n"

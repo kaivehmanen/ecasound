@@ -4,29 +4,29 @@ AUTOMAKE_OPTIONS = foreign
 # defines
 # ----------------------------------------------------------------------
 
-if COMPILE_ARTS
-arts_libs = `artsc-config --libs`
-arts_cflags = `artsc-config --cflags`
+if ECA_AM_COMPILE_ARTS
+arts_libs = ${ECA_S_ARTSC_LIBS}
+arts_cflags = ${ECA_S_ARTSC_CFLAGS}
 arts_target = libaudioio_arts.la
 else
 arts_target =
 endif
 
-if COMPILE_ALSA
+if ECA_AM_COMPILE_ALSA
 alsa_libs = -lasound
 else
 endif
 
-if COMPILE_AF
+if ECA_AM_COMPILE_AUDIOFILE
 af_libs = -laudiofile
 af_target = libaudioio_af.la
 else
 af_target = 
 endif
 
-if COMPILE_JACK
-jack_libs = -L$(jack_libraries) -ljack
-jack_cflags = -I$(jack_headers)
+if ECA_AM_COMPILE_JACK
+jack_libs = -L$(ECA_S_JACK_LIBS) -ljack
+jack_cflags = -I$(ECA_S_JACK_INCLUDES)
 jack_target = libaudioio_jack.la
 else
 jack_target =
@@ -38,6 +38,7 @@ INCLUDES =	-I$(srcdir) \
 		-I$(top_srcdir)/kvutils \
 		$(arts_cflags) \
 		$(jack_cflags)
+
 libdir = ${exec_prefix}/lib/ecasound-plugins
 
 # ----------------------------------------------------------------------
@@ -74,7 +75,7 @@ libaudioio_af_la_LIBADD	     		= $(af_libs)
 libaudioio_alsa_la_LIBADD	     	= $(alsa_libs)
 libaudioio_alsa_named_la_LIBADD	     	= $(alsa_libs)
 libaudioio_arts_la_LIBADD		= 
-libaudioio_jack_la_LIBADD		= $(jack_libs)
+libaudioio_jack_la_LIBADD		= 
 
 libaudioio_af_la_LDFLAGS	     	= -avoid-version -export-dynamic
 libaudioio_alsa_la_LDFLAGS	     	= -avoid-version -export-dynamic

@@ -40,7 +40,7 @@ xx.xx.2001 no history information
 [ Section: Bugs, problems ]
 
 (edi-1)	Initial reverb-spike with the -ete reverb.
-	submitted: Anthony Paul Van Groningen, 04.01.2001
+	- submitted: Anthony Paul Van Groningen, 04.01.2001
 (edi-13) Possible bug in forked-stream module (mp3,ogg), which 
 	 causes ecawave crashes.
 	- submitted: kaiv, 17.08.2001
@@ -70,11 +70,11 @@ xx.xx.2001 no history information
 (edi-20) Ewf-v2 format.
 	- submitted: kaiv, 26.11.2001
 (edi-22) Engine iteration from  outside sources
-	- submitted: kaiv, 22.02.2002
+        - submitted: kaiv, 22.02.2002
 (edi-23): Extending the max_buffers audio i/o parameter
-	 - submitted: kaiv, 22.02.2002
+	- submitted: kaiv, 22.02.2002
 (edi-24): Resample audio object
-         - submitted: kaiv, 22.02.2002
+        - submitted: kaiv, 22.02.2002
 
 -----------------------------------------------------------------------
 [ Section: Closed items ]

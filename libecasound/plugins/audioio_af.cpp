@@ -17,9 +17,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <config.h>
-#ifdef COMPILE_AF
-
 #include <algorithm>
 #include <string>
 #include <iostream.h>
@@ -222,5 +219,3 @@ void AUDIOFILE_INTERFACE::seek_position(void)
   ::afSeekFrame(afhandle, AF_DEFAULT_TRACK, position_in_samples());
   finished_rep = false;
 }
-
-#endif

@@ -1,57 +1,37 @@
+/** 
+ * acconfig.h for ecasound
+ * last modified: 24.02.2002
+ */
 
 /* Package name */
 #undef PACKAGE
 
-/* Package name */
-#undef ECASOUND_PREFIX_DIR
-
 /* Package version */
 #undef VERSION
 
-/* whether to compile libaudiofile support */
-#undef COMPILE_AF
-
-/* whether ALSA lib version is 0.3.2 or newer */
-#undef ALSALIB_032
-
-/* whether ALSA lib version is 0.5.0 or newer */
-#undef ALSALIB_050
-
-/* whether ALSA lib version is 0.6.0 or newer */
-#undef ALSALIB_060
-
-/* whether to compile ALSA rawmidi input/output */
-#undef COMPILE_ALSA_RAWMIDI
-
-/* whether to compile ESD input/output */
-#undef COMPILE_ESD
-
-/* whether to compile OSS input/output */
-#undef COMPILE_OSS
-
-/* whether to compile aRts input/output */
-#undef COMPILE_ARTS
-
-/* whether to compile JACK plugin */
-#undef COMPILE_JACK
-
-/* whether to use trigger OSS trigger functions */
-#undef DISABLE_OSS_TRIGGER
-
-/* well, are you? :) */
-#undef FEELING_EXPERIMENTAL
-
-/* whether to compile ecatools_testbench */
-#undef COMPILE_TESTBENCH
+/* Ecasound configure script prefix */
+#undef ECA_PREFIX
 
 /* use libncurses for termcap info */
-#undef USE_NCURSES
+#undef ECA_USE_NCURSES
+
+/* ncurses headers are installed in ncurses subdir <ncurses/curses.h> */
+#undef ECA_HAVE_NCURSES_CURSES_H
 
 /* use libtermcap for termcap info */
-#undef USE_TERMCAP
+#undef ECA_USE_TERMCAP
+
+/* whether to compile OSS input/output */
+#undef ECA_COMPILE_OSS
+
+/* whether to use trigger OSS trigger functions */
+#undef ECA_DISABLE_OSS_TRIGGER
+
+/* well, are you? :) */
+#undef ECA_FEELING_EXPERIMENTAL
 
 /* use locking primitives found in asm/atomic.h */
-#undef USE_ASM_ATOMIC
+#undef ECA_USE_ASM_ATOMIC
 
 /* use C++ std namespace */
-#undef USE_CXX_STD_NAMESPACE
+#undef ECA_USE_CXX_STD_NAMESPACE

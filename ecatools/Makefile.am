@@ -1,4 +1,4 @@
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 INSTALL_STRIP_FLAG =
 libecasound_path = $(top_builddir)/libecasound/libecasound_debug.la $(top_builddir)/kvutils/libkvutils_debug.la
 libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc_debug.la
@@ -8,18 +8,18 @@ libecasound_path = $(top_builddir)/libecasound/libecasound.la $(top_builddir)/kv
 libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc.la
 endif
 
-if USE_NCURSES
+if ECA_AM_USE_NCURSES
 ncurses_library = -lncurses
 endif
 
-if USE_TERMCAP
+if ECA_AM_USE_TERMCAP
 termcap_library = -ltermcap
 endif
 
 INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound -I$(top_srcdir)/libecasoundc
 
 
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 bin_PROGRAMS = 	ecaconvert_debug \
 		ecafixdc_debug \
 	        ecalength_debug \

@@ -29,7 +29,7 @@
 #include "eca-version.h"
 
 ECA_RESOURCES::ECA_RESOURCES(void) { 
-  std::string ecasound_prefix (ECASOUND_PREFIX_DIR);
+  std::string ecasound_prefix (ECA_PREFIX);
   std::string ecasound_resource_path = ecasound_prefix + "/share/ecasound";
   
   globalrc_rep.resource_file(ecasound_resource_path + "/ecasoundrc");

@@ -7,13 +7,13 @@ AUTOMAKE_OPTIONS = foreign
 
 # !!!
 # remember to update eca-version.cpp
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 eca_ldflags = -version-info 1:0:1
 else
 eca_ldflags = -s -version-info 1:0:1
 endif
 
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 INSTALL_STRIP_FLAG =
 else
 INSTALL_STRIP_FLAG = -s
@@ -21,7 +21,7 @@ endif
 
 INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound
 
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 lib_LTLIBRARIES = libecasoundc_debug.la
 else
 lib_LTLIBRARIES = libecasoundc.la

@@ -8,7 +8,6 @@
 #include "audioio-buffered.h"
 #include "samplebuffer.h"
 
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -22,9 +21,7 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   long samples_read;
   bool finished_rep;
 
-#ifdef COMPILE_AF
   AFfilehandle afhandle;
-#endif /* COMPILE_AF */
 
   AUDIOFILE_INTERFACE& operator=(const AUDIOFILE_INTERFACE& x) {
     return *this; }

@@ -10,17 +10,11 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "sample-specs.h"
 #include "samplebuffer.h"
 #include "audioio-device.h"
 
-#ifdef ALSALIB_060
 #include <alsa/asoundlib.h>
-#endif
 
 using namespace std;
 
@@ -29,13 +23,11 @@ using namespace std;
  */
 class AUDIO_IO_ALSA_PCM : public AUDIO_IO_DEVICE {
 
-#ifdef ALSALIB_060
   snd_pcm_t *audio_fd_repp;
   snd_pcm_stream_t pcm_stream_rep;
   snd_pcm_format_t format_rep;
   snd_pcm_hw_params_t* pcm_hw_params_repp;
   snd_pcm_sw_params_t* pcm_sw_params_repp;
-#endif
 
   SAMPLE_SPECS::sample_pos_t position_in_samples_rep;
  

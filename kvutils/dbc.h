@@ -1,6 +1,6 @@
 /**************************************************************************
- * dbc.h: Tools for simulating design-by-contract
- * Copyright (C) 2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+ * dbc.h: Design-by-contract framework for C and C++
+ * Copyright (C) 2001,2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

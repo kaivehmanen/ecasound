@@ -43,3 +43,95 @@ Details:
           output is, finished)
 
 ------------------------------------------------------------------------
+- Kai Vehmanen on jackit-devel, 23.02.2002
+
+Subject: Re: [Jackit-devel] dealing with capture latency in a JACK system
+
+Answering to an older message...
+
+On Fri, 11 Jan 2002, Paul Davis wrote:
+
+> we can't start capturing data from the audio interface until a certain
+> amount of time has passed after the onset of transport motion - that
+> time corresponds to the playback latency of the audio interface. this
+> is because before that time, audio playback from ardour will not be
+> audible, and thus any data arriving from the audio interface matches a
+> point in time before the matching, pre-existing audio was heard.
+
+If nothing else, it's this issue that will force me to redesign ecasound's
+engine operation for JACK-type systems.
+
+Currently ecasound's multitrack-sync is based on running the top-level 
+graph for a few rounds with realtime objects disabled. In other words we 
+are prefilling realtime outputs with valid audio data (unlike jackd, which 
+prefills the buffers with silence). 
+
+Once prefill phase is over, all realtime objects are triggered. We 
+don't need to care about capture latency, as recording was started 
+exactly at the same time as the first prefilled frame was outputted by 
+soundcard-hw. This has proven to work extremely well with different types 
+of realtime objects (no need to rely on querying latency information).
+
+But prefilling a JACK output port is not possible, so it seems I have to 
+rewrite the whole mechanism. :( 
+
+> however, moving to JACK (or any other form of callback driven system,
+> i think) removes the notion of "audio interface capture latency". all
+> we have are ports, and the ports that we are capturing from may have
+> varying latency. here, "latency" means the time between data being
+[...]
+> however, notice that in terms of real world practice, since nothing
+> can be heard without passing through a physical audio interface first,
+> all ports are subject to *at least* the latency of those on the
+> physical audio interface client. this means that if we have a software
+> synth that we are recording on track 1, despite the zero latency
+> between audio synthesis by the synth and its receipt by ardour, its
+> still not OK to capture the sound until enough time has passed that
+> the sound has made it out to some kind of loudspeaker or
+> headphones. otherwise, we are recording sound that doesn't correspond
+> to what the user/musician can hear.
+
+How is this handled at the moment (for instance in ardour)? We already 
+have jack_get_latency() and jack_set_latency(), but as you describe above, 
+these are not enough for generic multitrack sync. 
+
+I noticed that there's a jack_get_total_latency() implemented in engine.c, 
+but it's not available to the clients. Is this something you've intended 
+to do, but have not had time to finish?
+
+Let's take an example:
+
+ecasound -a:mon -i jack_mono,softsynth:in,in -o solo_guitar.wav \
+         -a:rec -i dr_rhythm.wav -o jack_mono,fxrack:out,out
+
+Then we have connections:
+
+alsa_pcm:in_1           -> softsynth_pcm:in
+softsynth_pcm:out       -> ecasound_1:in
+ecasound_1:out          -> fxrack:in
+fxrack:out              -> alsa_pcm:out_1
+
+Port latencies are:
+
+alsa_pcm:in_1   = x (period size) * y (period count)
+alsa_pcm:out_1  = x * y
+softsynth:in    = 2*x
+softsynth:out   = 2*x
+ecasound_1:in   = 0
+ecasound_1:out  = 0
+fxrack:in       = x
+fxrack:out      = x
+
+Now to make sure the recorded 'solo_guitar.wav' audio is correctly
+synced to 'dr_rhythm.wav', ecasound needs to know both the total latency 
+of 'softsynth:in' and 'fxrack:out'.
+
+In the above scenario, the total output latency of 'softsynth:in' is x*y+x
+frames. So ecasound needs to ignore the first x*y+x recorded samples. And
+as the total latency of 'softsynth:in' is x*y+2x, ecasounds has to ignore
+yet x frames more of captured data until it starts to write to 
+'solo_guitar.wav'.
+
+Does this seem correct to you?
+
+------------------------------------------------------------------------

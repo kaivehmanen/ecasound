@@ -1,26 +1,26 @@
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 INSTALL_STRIP_FLAG =
 else
 INSTALL_STRIP_FLAG = -s
 endif
 
-if SYSTEM_READLINE
-INCLUDES = -I$(readline_includes) -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils
+if ECA_AM_SYSTEM_READLINE
+INCLUDES = -I$(ECA_S_READLINE_INCLUDES) -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils
 else
 INCLUDES = -I$(top_srcdir)/readline-4.0 -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils
 endif
 
-if USE_NCURSES
+if ECA_AM_USE_NCURSES
 termcap_library_ncurses = -lncurses
 endif
 
-if USE_TERMCAP
+if ECA_AM_USE_TERMCAP
 termcap_library_termcap = -ltermcap
 endif
 
 termcap_library = $(termcap_library_ncurses) $(termcap_library_termcap)
 
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 bin_PROGRAMS = ecasound_debug
 else
 bin_PROGRAMS = ecasound
@@ -29,7 +29,7 @@ endif
 ecasound_SOURCES = eca-text.cpp eca-text.h textdebug.cpp textdebug.h
 ecasound_debug_SOURCES = $(ecasound_SOURCES)
 
-if SYSTEM_READLINE
+if ECA_AM_SYSTEM_READLINE
 ecasound_LDADD = $(termcap_library) \
 		$(top_builddir)/libecasound/libecasound.la \
 		$(top_builddir)/kvutils/libkvutils.la

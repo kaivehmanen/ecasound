@@ -5,26 +5,26 @@ EXTRA_DIST 			= eci.py pyeca.py
 # defines
 # ----------------------------------------------------------------------
 
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound_debug
 else
 ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound
 endif
 
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 kvutils_libs                    = -L$(top_builddir)/kvutils/.libs -lkvutils_debug
 else
 kvutils_libs 			= -L$(top_builddir)/kvutils/.libs -lkvutils
 endif
 
 # difficult from RPM point-of-view
-# libdir = $(eca_python_dlmodules)
-# datadir = $(eca_python_modules)
+# libdir = $(ECA_S_PYTHON_DLMODULES)
+# datadir = $(ECA_S_PYTHON_MODULES)
 # libdir = $(prefix)/lib/site-lisp
 
 INCLUDES 			= -I$(srcdir) -I$(top_srcdir) \
 				-I$(top_srcdir)/libecasound \
-				-I$(eca_python_incdir)
+				-I$(ECA_S_PYTHON_INCLUDES)
 
 # ----------------------------------------------------------------------
 # header files
@@ -37,7 +37,7 @@ noinst_HEADERS 			= $(pyecasound_includes)
 # source files
 # ----------------------------------------------------------------------
 
-if COMPILE_PYECASOUND
+if ECA_AM_COMPILE_PYECASOUND
 noinst_LTLIBRARIES 		= libpyecasound.la
 endif
 
@@ -45,7 +45,7 @@ libpyecasound_la_SOURCES	= pyecasound.cpp
 libpyecasound_la_LIBADD		= $(ecasound_libs) $(kvutils_libs)
 libpyecasound_la_LDFLAGS 	= -avoid-version -export-dynamic -Wl,--rpath -Wl,${prefix}/lib
 
-if COMPILE_PYECASOUND
+if ECA_AM_COMPILE_PYECASOUND
 all: pyecasound.so
 
 pyecasound.so: pyecasound.o
@@ -56,28 +56,28 @@ endif
 # hooks
 # ----------------------------------------------------------------------
 
-if COMPILE_PYECASOUND
+if ECA_AM_COMPILE_PYECASOUND
 CLEANFILES=pyecasound.so
 endif
 
-if COMPILE_PYECASOUND
+if ECA_AM_COMPILE_PYECASOUND
 install-exec-hook: pyecasound.so
-	$(INSTALL) -d $(DESTDIR)$(eca_python_dlmodules)
-	$(INSTALL) pyecasound.so pyeca.py $(DESTDIR)$(eca_python_dlmodules)
+	$(INSTALL) -d $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
+	$(INSTALL) pyecasound.so pyeca.py $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
 else
 install-exec-hook:
 endif
 
 install-data-hook:
-if COMPILE_PYECASOUND
-	$(INSTALL) -d $(DESTDIR)$(eca_python_dlmodules)
-	cd $(srcdir) ; cp eci.py $(DESTDIR)$(eca_python_dlmodules)
+if ECA_AM_COMPILE_PYECASOUND
+	$(INSTALL) -d $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
+	cd $(srcdir) ; cp eci.py $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
 endif
 
 uninstall-local:
-if COMPILE_PYECASOUND
-	rm -f   $(DESTDIR)$(eca_python_dlmodules)/eci.py
-	rm -f   $(DESTDIR)$(eca_python_dlmodules)/pyeca.py
-	rm -f 	$(DESTDIR)$(eca_python_dlmodules)/pyecasound.so
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(eca_python_dlmodules)
+if ECA_AM_COMPILE_PYECASOUND
+	rm -f   $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)/eci.py
+	rm -f   $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)/pyeca.py
+	rm -f 	$(DESTDIR)$(ECA_S_PYTHON_DLMODULES)/pyecasound.so
+	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
 endif

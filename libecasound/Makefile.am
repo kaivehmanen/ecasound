@@ -8,20 +8,20 @@ SUBDIRS = plugins
 
 # !!!
 # remember to update eca-version.cpp
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 eca_ldflags = -version-info 8:0:0
 else
 eca_ldflags = -s -version-info 8:0:0
 endif
 
 # below not used due to libtool problems
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 eca_libadd = $(top_builddir)/kvutils/libkvutils_debug.la
 else
 eca_libadd = $(top_builddir)/kvutils/libkvutils.la
 endif
 
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 INSTALL_STRIP_FLAG =
 else
 INSTALL_STRIP_FLAG = -s
@@ -29,7 +29,7 @@ endif
 
 INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils
 
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 lib_LTLIBRARIES = libecasound_debug.la
 else
 lib_LTLIBRARIES = libecasound.la
@@ -198,7 +198,12 @@ ecasound_audiofx_src =  audiofx.cpp \
 			audiofx_ladspa.cpp \
 			audio-stamp.cpp
 
+
+if ECA_AM_COMPILE_OSS
 ecasound_audioio_oss_src = audioio-oss.cpp
+else
+ecasound_audioio_oss_src = 
+endif
 
 ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-ewf.cpp \

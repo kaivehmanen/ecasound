@@ -1,44 +1,383 @@
 dnl ---
-dnl Ecasound configure.in
+dnl configure.in for ecasound
+dnl last modified: 24.02.2002
+dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
-dnl other packages (Alsaplayer, ALSA, SIP, PyQt, kpackage, etc, etc).
+dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
+dnl kpackage, etc, etc).
 dnl ---
 
 dnl ------------------------------------------------------------------
 
 dnl ---
-dnl Process this file with autoconf to produce a configure script.
+dnl Initialize autoconf
 dnl ---
 AC_INIT(libecasound/audiofx.h)
 
 dnl ------------------------------------------------------------------
 
+echo "------------------------------------------------------------------"
+echo "1. Section: Basic setup"
+echo "------------------------------------------------------------------"
+
 dnl ---
 dnl Init automake
 dnl ---
-dnl -- >                   !!!!!!!!!
+dnl                        !!!!!!!!!
 dnl remember to update eca-version.h
 AM_INIT_AUTOMAKE(ecasound, 2.1dev8)
-dnl <--                    !!!!!!!!!
+dnl                        !!!!!!!!!
 AM_CONFIG_HEADER(config.h)
 
 dnl ------------------------------------------------------------------
 
-dnl ---
-dnl Checks for programs.
-dnl ---
+dnl --
+dnl Initialize default flags
+dnl --
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CPP
-AC_PROG_MAKE_SET
-dnl AC_PROG_RANLIB
-AC_PROG_INSTALL
+AC_LANG_CPLUSPLUS
+
+dnl ---
+dnl Set compiler flags
+dnl
+dnl defines: CXXFLAGS, CFLAGS
+dnl ---
+CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math -fstrict-aliasing -funroll-loops"
+CFLAGS="$CXXFLAGS"
+
+dnl ---
+dnl Sets up some operating system specific options for POSIX threads
+dnl
+dnl modifies: CXXFLAGS, CFLAGS
+dnl ---
+
+case "$host" in
+	*-*-openbsd*)
+               CFLAGS="$CFLAGS -pthread"
+               CXXFLAGS="$CXXFLAGS -pthread"
+               echo "Setting OpenBSD compilation options for POSIX threads"
+               ;;
+	*-*-freebsd*)
+               CFLAGS="$CFLAGS -pthread"
+               CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE"
+               CXXFLAGS="$CXXFLAGS -pthread"
+               echo "Setting FreeBSD compilation options for POSIX threads"
+               ;;
+	*-*-solaris*)
+               CPPFLAGS="$CPPFLAGS -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS"
+               echo "Setting Solaris compilation options for POSIX threads"
+               ;;
+	*)
+	       echo "Using generic settings for POSIX thread support."
+	       ;;
+esac
+
+echo "------------------------------------------------------------------"
+echo "2. Section: Options for the configure script"
+echo "------------------------------------------------------------------"
+
+dnl ------------------------------------------------------------------
+
+dnl ---
+dnl Check whether to enable debugging
+dnl
+dnl defines: ECA_AM_DEBUG_MODE, CXXFLAGS, CFLAGS
+dnl ---
+
+AC_MSG_CHECKING(whether to enable debugging)
+AC_ARG_ENABLE(debug,
+[  --enable-debug		Enable debugging (default = no)],
+  [
+    case "$enableval" in
+      y | yes)
+        AC_MSG_RESULT(yes)
+	include_debug=yes
+      ;;
+
+      n | no)
+        AC_MSG_RESULT(no)
+	include_debug=no
+      ;;
+        
+      *)
+        AC_MSG_ERROR([Invalid parameter value for --enable-debug: $enableval])
+      ;;
+    esac
+ ]
+
+)
+AM_CONDITIONAL(ECA_AM_DEBUG_MODE, test x$include_debug = xyes)
+if test x$include_debug = xyes; then
+CXXFLAGS="-D_REENTRANT -g -Wall -Wstrict-prototypes -ffast-math"
+CFLAGS="$CXXFLAGS"
+fi                                     
+
+dnl ------------------------------------------------------------------
+
+dnl ---
+dnl Check for experimental mode
+dnl
+dnl defines: ECA_FEELING_EXPERIMENTAL, ECA_AM_FEELING_EXPERIMENTAL
+dnl ---
+AC_ARG_ENABLE(experimental,
+[  --enable-experimental	  Enable experimental code (default = no)],
+experimental=yes)
+if test x$experimental = xyes; then
+AC_DEFINE(ECA_FEELING_EXPERIMENTAL)
+fi
+AM_CONDITIONAL(ECA_AM_FEELING_EXPERIMENTAL, test x$experimental = xyes)
+
+dnl ------------------------------------------------------------------
+
+dnl ---
+dnl Sets the ecasound prefix variable
+dnl
+dnl defines: ECA_PREFIX, ECA_S_PREFIX
+dnl ---
+
+dnl Define ecaprefix depending on wether our user gives us one or not
+if test "x${prefix}" = "xNONE"; then
+  ecaprefix=${ac_default_prefix}
+else
+  ecaprefix=${prefix}
+fi
+ECA_S_PREFIX=${ecaprefix}
+
+AC_SUBST(ECA_S_PREFIX)
+AC_DEFINE_UNQUOTED(ECA_PREFIX, "${ecaprefix}")
+
+dnl ------------------------------------------------------------------
+
+dnl ---
+dnl Check whether to enable design-by-contract assertations
+dnl
+dnl modifies: CXXFLAGS, CFLAGS
+dnl ---
+
+AC_MSG_CHECKING(whether to check design-by-contract assertions)
+enable_dbc_d=yes
+AC_ARG_ENABLE(dbc,
+[  --disable-dbc 		  Don't check design-by-contract assertions (default = check)],
+  [
+    case "$enableval" in
+      y | yes)
+        AC_MSG_RESULT(yes)
+	enable_dbc_d=yes
+      ;;
+
+      n | no)
+        AC_MSG_RESULT(no)
+	enable_dbc_d=no
+      ;;
+        
+      *)
+        AC_MSG_ERROR([Invalid parameter value for --disable-dbc: $enableval])
+      ;;
+    esac
+ ],[
+    AC_MSG_RESULT(yes)
+ ]
+)
+if test x$enable_dbc_d = xyes; then
+CXXFLAGS="$CXXFLAGS -DENABLE_DBC"
+CFLAGS="$CFLAGS -DENABLE_DBC"
+fi                                     
+
+dnl ------------------------------------------------------------------
+
+dnl ---
+dnl Check for LFS (--with-largefile)
+dnl
+dnl modifies: CXXFLAGS, CFLAGS
+dnl ---
+AC_CHECK_LARGEFILE
+
+dnl ------------------------------------------------------------------
+
+
+dnl ------------------------------------------------------------------
+
+dnl ---
+dnl Check for OSS driver support
+dnl
+dnl defines: ECA_COMPILE_OSS, ECA_AM_COMPILE_OSS
+dnl ---
+
+AC_CHECK_HEADER(sys/soundcard.h,oss_support=yes,oss_support=no)
+AC_ARG_ENABLE(oss,
+[  --disable-oss		  Disable OSS (default = no)],
+oss_support=no)
+AM_CONDITIONAL(ECA_AM_COMPILE_OSS, test x$oss_support = xyes)
+if test x$oss_support = xyes; then
+AC_DEFINE(ECA_COMPILE_OSS)
+fi                                     
+
+dnl ---
+dnl Disabling OSS trigger functions
+dnl
+dnl defines: ECA_DISABLE_OSS_TRIGGER
+dnl ---
+AC_ARG_ENABLE(osstrigger,
+[  --disable-osstrigger 	  Disable the use of OSS trigger functions (default = no)],
+osstrigger=yes)
+if test x$osstrigger = xyes; then
+AC_DEFINE(ECA_DISABLE_OSS_TRIGGER)
+fi
+
+dnl ------------------------------------------------------------------
+
+dnl --
+dnl Check for aRts support
+dnl
+dnl defines: ECA_AM_COMPILE_ARTS, ECA_S_ARTSC_CFLAGS, ECA_S_ARTSC_LIBS
+dnl --
+AC_PATH_PROG(ARTSC_CONFIG,artsc-config,none)
+if test x$ARTSC_CONFIG = xnone; then
+  arts_support=no
+else
+  arts_support=yes
+fi
+
+AC_ARG_ENABLE(arts,
+[  --disable-arts		  Disable aRts support (default = no)],
+arts_support=no)
+AM_CONDITIONAL(ECA_AM_COMPILE_ARTS, test x$arts_support = xyes) 
+
+ECA_S_ARTSC_CFLAGS="`$ARTSC_CONFIG --cflags`"
+ECA_S_ARTSC_LIBS="`$ARTSC_CONFIG --libs`"
+
+AC_SUBST(ECA_S_ARTSC_CFLAGS)
+AC_SUBST(ECA_S_ARTSC_LIBS)
+
+dnl ------------------------------------------------------------------
+
+dnl --
+dnl Check for JACK support
+dnl
+dnl defines: ECA_AM_COMPILE_JACK, ECA_S_JACK_LIBS, ECA_S_JACK_INCLUDES
+dnl --
+AC_ARG_WITH(jack,
+  [  --with-jack=DIR	Compile against JACK installed in DIR],
+  [
+    ECA_S_JACK_LIBS=$withval/lib
+    ECA_S_JACK_INCLUDES=$withval/include
+    jack_support=yes
+  ])
+
+AM_CONDITIONAL(ECA_AM_COMPILE_JACK, test x$jack_support = xyes)
+
+AC_SUBST(ECA_S_JACK_LIBS)
+AC_SUBST(ECA_S_JACK_INCLUDES)
+
+dnl ------------------------------------------------------------------
+
+dnl --
+dnl Checks for pyecasound
+dnl
+dnl defines: ECA_S_PYTHON_INCLUDES, ECA_S_PYTHON_DLMODULES, 
+dnl          ECA_AM_COMPILE_PYECASOUND
+dnl --
+
+compile_pyecasound=yes
+
+dnl --
+dnl Python header files
+
+ECA_S_PYTHON_INCLUDES=
+AC_MSG_CHECKING([for Python include files])
+
+AC_ARG_WITH(python-includes, [  --with-python-includes=DIR  Python include files are in DIR])
+if test ! "X$with_python_includes" = "X"
+then
+	python_incdirs=$with_python_includes
+else
+	python_incdirs="/usr/local/include /usr/include"
+	dnl -- Double-brackets to espace the real brackets
+	python_incdirsmore=`python -c "import sys; print (sys.prefix + '/include/python' + sys.version[[:3]])"`
+	python_incdirs="$python_incdirs $python_incdirsmore"
+fi
+
+for d in $python_incdirs
+do
+	if test -r $d/Python.h
+	then
+		ECA_S_PYTHON_INCLUDES=$d
+		break
+	fi
+done
+
+AC_SUBST(ECA_S_PYTHON_INCLUDES)
+if test "X$ECA_S_PYTHON_INCLUDES" = "X"
+then
+	AC_MSG_WARN([Python.h not found])
+	compile_pyecasound=no
+else
+	AC_MSG_RESULT($eca_python_incdir)
+	compile_pyecasound=yes
+fi
+
+dnl --
+dnl Python modules
+
+AC_MSG_CHECKING([for Python libraries])
+AC_ARG_WITH(python-modules,
+	[  --with-python-modules=DIR install Python modules in DIR])
+
+if test "X$with_python_modules" = "X"
+then
+	pymoddirs="/usr/local/lib /usr/lib"
+	dnl -- Double-brackets to espace the real brackets
+	pymoddirsmore=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[[:3]])"`
+	pymoddirs="$pymoddirs $pymoddirsmore"
+else
+	pymoddirs=$with_python_modules
+fi
+AC_MSG_RESULT($pymoddirs)
+
+dnl ---
+dnl a hack to support broken debian python installs
+
+AC_ARG_ENABLE(python-force-site-packages,
+       [  --enable-python-force-site-packages force install Python modules into
+site-packages even when it doesn't exist [default=no] ],
+python_force_site_packages=yes)
+            
+AC_FIND_FILE(lib-dynload,$pymoddirs,ECA_S_PYTHON_MODULES)
+dnl Use site-packages in preference if it is there.
+if test -d $ECA_S_PYTHON_MODULES/site-packages -o "X$python_force_site_packages" = "Xyes"
+then
+	ECA_S_PYTHON_MODULES=$ECA_S_PYTHON_MODULES/site-packages
+	ECA_S_PYTHON_DLMODULES=$ECA_S_PYTHON_MODULES
+else
+	ECA_S_PYTHON_DLMODULES=$ECA_S_PYTHON_MODULES/lib-dynload
+fi
+AC_SUBST(ECA_S_PYTHON_MODULES)
+AC_SUBST(ECA_S_PYTHON_DLMODULES)
+
+AC_ARG_ENABLE(pyecasound,
+[  --disable-pyecasound 	  Disable compilation of pyecasound (default = no)],
+[  compile_pyecasound=no ])
+
+dnl if test x$disable_pyecasound = xyes ; then compile_pyecasound=no ; fi
+AM_CONDITIONAL(ECA_AM_COMPILE_PYECASOUND, test x$compile_pyecasound = xyes)
+
+dnl ------------------------------------------------------------------
+
+echo "------------------------------------------------------------------"
+echo "3. Section: Programs "
+echo "------------------------------------------------------------------"
+
+dnl ------------------------------------------------------------------
+
 AC_CHECK_CXX_NAMESPACE_SUPPORT
 
 dnl ------------------------------------------------------------------
 
 dnl --
 dnl Autotools and libtool
+dnl --
 
 AM_PROG_LIBTOOL
 AC_PATH_PROG(LIBTOOL,libtool,none)
@@ -73,130 +412,14 @@ fi
 
 dnl ------------------------------------------------------------------
 
-dnl ---
-dnl Sets experimental
-dnl ---
-AC_ARG_ENABLE(experimental,
-[  --enable-experimental	  Enable experimental code (default = no)],
-experimental=yes)
-if test x$experimental = xyes; then
-AC_DEFINE(FEELING_EXPERIMENTAL)
-fi
-AM_CONDITIONAL(FEELING_EXPERIMENTAL, test x$experimental = xyes)
-
-dnl ------------------------------------------------------------------
+echo "------------------------------------------------------------------"
+echo "4. Section: Libraries"
+echo "------------------------------------------------------------------"
 
 dnl ---
-dnl Set CXXFLAGS.
+dnl Check system libraries
 dnl ---
-CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math -fstrict-aliasing -funroll-loops"
-CFLAGS="$CXXFLAGS"
-dnl --- CXXFLAGS="-O2 -D_REENTRANT -fomit-frame-pointer -finline-functions -ffast-math -funroll-loops -Wall -Wstrict-prototypes -pedantic -fstrict-aliasing"
 
-dnl ------------------------------------------------------------------
-
-AC_MSG_CHECKING(whether to enable debugging)
-AC_ARG_ENABLE(debug,
-[  --enable-debug		Enable debugging (default = no)],
-  [
-    case "$enableval" in
-      y | yes)
-        AC_MSG_RESULT(yes)
-	include_debug=yes
-      ;;
-
-      n | no)
-        AC_MSG_RESULT(no)
-	include_debug=no
-      ;;
-        
-      *)
-        AC_MSG_ERROR([Invalid parameter value for --enable-debug: $enableval])
-      ;;
-    esac
- ]
-
-)
-AM_CONDITIONAL(INCLUDE_DEBUG, test x$include_debug = xyes)
-if test x$include_debug = xyes; then
-CXXFLAGS="-D_REENTRANT -g -Wall -Wstrict-prototypes -ffast-math"
-CFLAGS="$CXXFLAGS"
-dnl CXXFLAGS="-D_REENTRANT -g -Wall -Wstrict-prototypes -ffast-math"
-dnl LDFLAGS="-pg -pedantic -funroll-loops"
-fi                                     
-
-AC_MSG_CHECKING(whether to check design-by-contract assertions)
-enable_dbc_d=yes
-AC_ARG_ENABLE(dbc,
-[  --disable-dbc 		  Don't check design-by-contract assertions (default = check)],
-  [
-    case "$enableval" in
-      y | yes)
-        AC_MSG_RESULT(yes)
-	enable_dbc_d=yes
-      ;;
-
-      n | no)
-        AC_MSG_RESULT(no)
-	enable_dbc_d=no
-      ;;
-        
-      *)
-        AC_MSG_ERROR([Invalid parameter value for --disable-dbc: $enableval])
-      ;;
-    esac
- ],[
-    AC_MSG_RESULT(yes)
- ]
-)
-if test x$enable_dbc_d = xyes; then
-CXXFLAGS="$CXXFLAGS -DENABLE_DBC"
-fi                                     
-
-dnl ------------------------------------------------------------------
-
-dnl ---
-dnl Set up some operating system specific options for POSIX threads
-dnl ---
-case "$host" in
-	*-*-openbsd*)
-               CFLAGS="$CFLAGS -pthread"
-               CXXFLAGS="$CXXFLAGS -pthread"
-               echo "Setting OpenBSD compilation options for POSIX threads"
-               ;;
-	*-*-freebsd*)
-               CFLAGS="$CFLAGS -pthread"
-               CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE"
-               CXXFLAGS="$CXXFLAGS -pthread"
-               echo "Setting FreeBSD compilation options for POSIX threads"
-               ;;
-	*-*-solaris*)
-               CPPFLAGS="$CPPFLAGS -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS"
-               echo "Setting Solaris compilation options for POSIX threads"
-               ;;
-	*)
-	       echo "Using generic settings for POSIX thread support."
-	       ;;
-esac
-
-AC_LANG_C
-AC_SEARCH_LIBS(pthread_create, pthread c_r, [],
-		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **]))
-AC_LANG_CPLUSPLUS
-
-dnl ------------------------------------------------------------------
-
-dnl ---
-dnl Checks for functions.
-dnl ---
-AC_FUNC_MMAP
-AC_CHECK_FUNCS(mlockall)
-AC_CHECK_FUNCS(munlockall)
-AC_CHECK_FUNCS(atoll)
-
-dnl ---
-dnl Checks for libraries.
-dnl ---
 AC_SEARCH_LIBS(nanosleep, rt)
 AC_SEARCH_LIBS(sched_setscheduler, rt)
 AC_SEARCH_LIBS(nanosleep, posix4)
@@ -204,8 +427,13 @@ AC_SEARCH_LIBS(sched_setscheduler, posix4)
 AC_CHECK_LIB(m, sin)
 AC_CHECK_LIB(dl, dlopen)
 
+dnl ------------------------------------------------------------------
+
 dnl ---
-dnl Check for ncurses/termcap
+dnl Checks for ncurses/termcap
+dnl
+dnl defines: ECA_AM_USE_NCURSES, ECA_AM_USE_TERMCAP, ECA_USE_NCURSES,
+dnl          ECA_USE_TERMCAP, ECA_HAVE_NCURSES_CURSES_H
 dnl ---
 AC_CHECK_LIB(ncurses, main, termcap_library=ncurses,
 	AC_CHECK_LIB(termcap, main, termcap_library=termcap,
@@ -213,45 +441,29 @@ AC_CHECK_LIB(ncurses, main, termcap_library=ncurses,
 AC_ARG_ENABLE(ncurses,
 [  --disable-ncurses	  	Disable ncurses (default = no)],
 termcap_library=none)
-AM_CONDITIONAL(USE_NCURSES, test $termcap_library = ncurses)
-AM_CONDITIONAL(USE_TERMCAP, test $termcap_library = termcap)
+AM_CONDITIONAL(ECA_AM_USE_NCURSES, test $termcap_library = ncurses)
+AM_CONDITIONAL(ECA_AM_USE_TERMCAP, test $termcap_library = termcap)
 if test x$termcap_library = xtermcap; then
-	AC_DEFINE(USE_TERMCAP)
+	AC_DEFINE(ECA_USE_TERMCAP)
 fi
 if test x$termcap_library = xncurses; then
 	AC_CHECK_HEADER(curses.h,
                [AC_CHECK_HEADER(term.h,, [AC_MSG_ERROR([*** curses headers not installed ***])])],
                        [AC_CHECK_HEADER(ncurses/curses.h, [ 
                                 AC_CHECK_HEADER(ncurses/term.h,, AC_MSG_ERROR([*** curses headers not installed ***]))
-                                CXXFLAGS="-DHAVE_NCURSES_CURSES_H $CXXFLAGS"
+					AC_DEFINE(ECA_HAVE_NCURSES_CURSES_H)
                                         ],
                                        AC_MSG_ERROR([*** curses headers not installed ***]))]
         )
-	AC_DEFINE(USE_NCURSES)
+	AC_DEFINE(ECA_USE_NCURSES)
 fi
 
 dnl ------------------------------------------------------------------
 
 dnl ---
-dnl Check for already installed libkvutils
-dnl ---
-AC_CHECK_LIB(kvutils,main,kvutils_installed=yes,kvutils_installed=no)
-AM_CONDITIONAL(KVUTILS_INSTALLED, test x$kvutils_installed = xyes)
-
-dnl ------------------------------------------------------------------
-
-dnl ---
-dnl Atomic locking operations in asm/atomic.h
-dnl ---
-AC_HEADER_ASM_ATOMIC
-
-dnl ---
-dnl Check for LFS (--with-largefile)
-dnl ---
-AC_CHECK_LARGEFILE
-
-dnl ---
 dnl Audiofile library
+dnl 
+dnl defines: ECA_AM_COMPILE_AUDIOFILE
 dnl ---
 AC_CHECK_LIB(audiofile,main,af_support=yes,af_support=no)
 AC_ARG_ENABLE(audiofile,
@@ -274,124 +486,57 @@ AC_ARG_ENABLE(audiofile,
     esac
  ]
 )
-AM_CONDITIONAL(COMPILE_AF, test x$af_support = xyes) 
-if test x$af_support = xyes; then
-AC_DEFINE(COMPILE_AF)
-fi                                     
+AM_CONDITIONAL(ECA_AM_COMPILE_AUDIOFILE, test x$af_support = xyes) 
+
+dnl ------------------------------------------------------------------
 
 dnl ---
-dnl Audio drivers
+dnl Check for ALSA driver support
+dnl
+dnl defines: ECA_AM_COMPILE_ALSA
 dnl ---
+
 AC_CHECK_LIB(asound,main,alsa_support=yes,alsa_support=no)
 AC_ARG_ENABLE(alsa,
 [  --disable-alsa		  Disable ALSA (default = no)],
 alsa_support=no)
-AM_CONDITIONAL(COMPILE_ALSA, test x$alsa_support = xyes)
+AM_CONDITIONAL(ECA_AM_COMPILE_ALSA, test x$alsa_support = xyes)
 if test x$alsa_support = xyes; then
-AC_CHECK_LIB(asound,snd_pcm_delay,AC_DEFINE(ALSALIB_060),
+AC_CHECK_LIB(asound,snd_pcm_delay,,
 	AC_MSG_ERROR([ALSA version older than 0.9.0 not supported - update to a newer version or compile with --disable-alsa]))
 fi
 
-dnl ---
-dnl ALSA raw-midi support
-dnl ---
-AC_MSG_CHECKING(whether to include direct support for ALSA rawmidi interface)
-AC_ARG_ENABLE(alsa_rawmidi,
-  [  --enable-alsa-rawmidi		enable ALSA raw midi support (default=no)],
-  [
-    case "$enableval" in
-      y | yes)
-        AC_MSG_RESULT(yes)
-        alsa_rawmidi_support=yes 
-      ;;
-
-      n | no)
-        AC_MSG_RESULT(no)
-        alsa_rawmidi_support=no
-      ;;
-        
-      *)
-        AC_MSG_ERROR([Invalid parameter value for --enable-alsa-rawmidi: $enableval])
-      ;;
-    esac
-  ],
-  [
-    AC_MSG_RESULT(no)
-	alsa_rawmidi_support=no
-  ]
-)
-
-AM_CONDITIONAL(COMPILE_ALSA_RAWMIDI, test x$alsa_rawmidi_support = xyes)
-if test x$alsa_rawmidi_support = xyes; then
-	AC_CHECK_LIB(asound, snd_rawmidi_open)
-	AC_DEFINE(COMPILE_ALSA_RAWMIDI)
-fi
-
-dnl AM_PATH_ESD(0.2.4,esd_support=yes,esd_support=no)
-dnl AC_ARG_ENABLE(esd,
-dnl [  --disable-esd		  Disable ESD (default = no)],
-dnl esd_support=no)
-dnl AM_CONDITIONAL(COMPILE_ESD, test x$esd_support = xyes) 
-dnl if test x$esd_support = xyes; then
-dnl AC_DEFINE(COMPILE_ESD)
-dnl fi                                     
-
-AC_CHECK_HEADER(sys/soundcard.h,oss_support=yes,oss_support=no)
-AC_ARG_ENABLE(oss,
-[  --disable-oss		  Disable OSS (default = no)],
-oss_support=no)
-AM_CONDITIONAL(COMPILE_OSS, test x$oss_support = xyes) 
-if test x$oss_support = xyes; then
-AC_DEFINE(COMPILE_OSS)
-fi                                     
+dnl ------------------------------------------------------------------
 
 dnl ---
-dnl Disabling OSS trigger functions
+dnl Check pthread support
 dnl ---
-AC_ARG_ENABLE(osstrigger,
-[  --disable-osstrigger 	  Disable the use of OSS trigger functions (default = no)],
-osstrigger=yes)
-if test x$osstrigger = xyes; then
-AC_DEFINE(DISABLE_OSS_TRIGGER)
-fi
 
-dnl --
-dnl aRts support
-dnl --
-dnl FIXME: should really check for 'arts-config' script
-dnl --
-AC_CHECK_HEADER(artsc/artsc.h,arts_support=yes,arts_support=no)
-AC_CHECK_LIB(artsc,main,arts_null_check=yes,arts_support=no)
-AC_ARG_ENABLE(arts,
-[  --disable-arts		  Disable aRts support (default = no)],
-arts_support=no)
-AM_CONDITIONAL(COMPILE_ARTS, test x$arts_support = xyes) 
-if test x$arts_support = xyes; then
-AC_DEFINE(COMPILE_ARTS)
-fi                                     
+dnl switch to C while testing for pthread support
+AC_LANG_C
+AC_SEARCH_LIBS(pthread_create, pthread c_r, [],
+		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **]))
+dnl switch back to C++
+AC_LANG_CPLUSPLUS
 
-dnl --
-dnl JACK support
-dnl --
-AC_ARG_WITH(jack,
-  [  --with-jack=DIR	Compile against JACK installed in DIR],
-  [
-    jack_libraries=$withval/lib
-    jack_headers=$withval/include
-    jack_support=yes
-  ])
-AM_CONDITIONAL(COMPILE_JACK, test x$jack_support = xyes)
-if test x$jack_support = xyes; then
-  AC_DEFINE(COMPILE_JACK)
-fi
-AC_SUBST(jack_libraries)
-AC_SUBST(jack_headers)
+dnl ------------------------------------------------------------------
+
+dnl ---
+dnl Check for already installed libkvutils
+dnl
+dnl defines: ECA_AM_KVUTILS_INSTALLED
+dnl ---
+AC_CHECK_LIB(kvutils,main,kvutils_installed=yes,kvutils_installed=no)
+AM_CONDITIONAL(ECA_AM_KVUTILS_INSTALLED, test x$kvutils_installed = xyes)
 
 dnl ------------------------------------------------------------------
 
 dnl --
-dnl readline library
+dnl Check whether to use an already installed readline library
+dnl
+dnl defines: ECA_AM_SYSTEM_READLINE, ECA_S_READLINE_INCLUDES
 dnl --
+
 AC_MSG_CHECKING(whether to build with system readline)
 AC_ARG_ENABLE(sys_readline,
   [  --enable-sys-readline		compile with system readline (default=no)],
@@ -418,15 +563,14 @@ AC_ARG_ENABLE(sys_readline,
   ]
 )
 
-dnl
 dnl Check for readline.h or readline/readline.h (same with history.h)
 dnl and for readline and history libraries
-dnl
-AM_CONDITIONAL(SYSTEM_READLINE, test x$enable_sysreadline = xyes)
+
+AM_CONDITIONAL(ECA_AM_SYSTEM_READLINE, test x$enable_sysreadline = xyes)
 if test x$enable_sysreadline = xyes; then
-  AC_CHECK_HEADER(readline.h, readline_includes=/usr/include, 
+  AC_CHECK_HEADER(readline.h, ECA_S_READLINE_INCLUDES=/usr/include, 
     [AC_CHECK_HEADER(readline/readline.h,
-		     readline_includes=/usr/include/readline,
+		     ECA_S_READLINE_INCLUDES=/usr/include/readline,
        [AC_MSG_ERROR([*** readline headers not installed ***])])])
   AC_CHECK_HEADER(history.h,,
      [AC_CHECK_HEADER(readline/history.h,,
@@ -434,19 +578,32 @@ if test x$enable_sysreadline = xyes; then
 
   AC_CHECK_LIB(readline, main,, AC_MSG_ERROR([*** readline support not installed ***]))
   AC_CHECK_LIB(history, main,, AC_MSG_ERROR([*** readline history support not installed ***]))
-  AC_SUBST(readline_includes)
+  AC_SUBST(ECA_S_READLINE_INCLUDES)
 else
   AC_CONFIG_SUBDIRS(readline-4.0)
 fi
 
 dnl ------------------------------------------------------------------
 
+echo "------------------------------------------------------------------"
+echo "5. Section: Headers"
+echo "------------------------------------------------------------------"
+
 dnl ---
-dnl Checks for header files.
+dnl Atomic locking operations in asm/atomic.h
+dnl ---
+AC_HEADER_ASM_ATOMIC
+
+dnl ------------------------------------------------------------------
+
+dnl ---
+dnl Checks for system header files.
 dnl ---
 AC_HEADER_TIME
 dnl Note! Header filenames must be on the same line!
 AC_CHECK_HEADERS(fcntl.h dlfcn.h sys/ioctl.h sys/time.h sys/resource.h sys/stat.h sys/wait.h signal.h sys/types.h sys/mman.h errno.h sched.h unistd.h inttypes.h stdint.h inttypes.h asm/atomic.h ladspa.h)
+
+dnl ------------------------------------------------------------------
 
 dnl ---
 dnl C++ specific checks
@@ -463,120 +620,42 @@ fi
 
 dnl ------------------------------------------------------------------
 
-compile_pyecasound=yes
-
-dnl ---
-dnl Python header files
-dnl ---
-eca_python_incdir=
-AC_MSG_CHECKING([for Python include files])
-
-AC_ARG_WITH(python-includes, [  --with-python-includes=DIR  Python include files are in DIR])
-if test ! "X$with_python_includes" = "X"
-then
-	python_incdirs=$with_python_includes
-else
-	python_incdirs="/usr/local/include /usr/include"
-	dnl -- Double-brackets to espace the real brackets
-	python_incdirsmore=`python -c "import sys; print (sys.prefix + '/include/python' + sys.version[[:3]])"`
-	python_incdirs="$python_incdirs $python_incdirsmore"
-fi
-
-for d in $python_incdirs
-do
-	if test -r $d/Python.h
-	then
-		eca_python_incdir=$d
-		break
-	fi
-done
-
-AC_SUBST(eca_python_incdir)
-if test "X$eca_python_incdir" = "X"
-then
-	AC_MSG_WARN([Python.h not found])
-	compile_pyecasound=no
-else
-	AC_MSG_RESULT($eca_python_incdir)
-	compile_pyecasound=yes
-fi
-
-dnl ---
-dnl Python modules
-dnl ---
-AC_MSG_CHECKING([for Python libraries])
-AC_ARG_WITH(python-modules,
-	[  --with-python-modules=DIR install Python modules in DIR])
-
-if test "X$with_python_modules" = "X"
-then
-	pymoddirs="/usr/local/lib /usr/lib"
-	dnl -- Double-brackets to espace the real brackets
-	pymoddirsmore=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[[:3]])"`
-	pymoddirs="$pymoddirs $pymoddirsmore"
-else
-	pymoddirs=$with_python_modules
-fi
-AC_MSG_RESULT($pymoddirs)
-
-dnl ---
-dnl a hack to support broken debian python installs
-dnl ---
-AC_ARG_ENABLE(python-force-site-packages,
-       [  --enable-python-force-site-packages force install Python modules into
-site-packages even when it doesn't exist [default=no] ],
-python_force_site_packages=yes)
-            
-AC_FIND_FILE(lib-dynload,$pymoddirs,eca_python_modules)
-dnl Use site-packages in preference if it is there.
-if test -d $eca_python_modules/site-packages -o "X$python_force_site_packages" = "Xyes"
-then
-	eca_python_modules=$eca_python_modules/site-packages
-	eca_python_dlmodules=$eca_python_modules
-else
-	eca_python_dlmodules=$eca_python_modules/lib-dynload
-fi
-AC_SUBST(eca_python_modules)
-AC_SUBST(eca_python_dlmodules)
-
-AC_ARG_ENABLE(pyecasound,
-[  --disable-pyecasound 	  Disable compilation of pyecasound (default = no)],
-[  compile_pyecasound=no ])
-
-dnl if test x$disable_pyecasound = xyes ; then compile_pyecasound=no ; fi
-AM_CONDITIONAL(COMPILE_PYECASOUND, test x$compile_pyecasound = xyes)
-
-dnl ------------------------------------------------------------------
+echo "------------------------------------------------------------------"
+echo "6. Section: Typedefs and structures"
+echo "------------------------------------------------------------------"
 
 dnl ---
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl ---
+
 dnl AC_C_CONST
 AC_C_BIGENDIAN
 AC_TYPE_SIZE_T
 
 dnl ------------------------------------------------------------------
 
-dnl ---
-dnl Sets the ecaprefix variable
-dnl ---
-dnl Define ecaprefix depending on wether our user gives us one or not
-if test "x${prefix}" = "xNONE"; then
-  ecaprefix=${ac_default_prefix}
-else
-  ecaprefix=${prefix}
-fi
+echo "------------------------------------------------------------------"
+echo "7. Section: Functions"
+echo "------------------------------------------------------------------"
 
-dnl Set ECASOUND_PREFIX_DIR
-AC_SUBST(ECASOUND_PREFIX_DIR)
-AC_DEFINE_UNQUOTED(ECASOUND_PREFIX_DIR, "${ecaprefix}")
-
+dnl ---
+dnl Checks for functions.
+dnl ---
+AC_FUNC_MMAP
+AC_CHECK_FUNCS(mlockall)
+AC_CHECK_FUNCS(munlockall)
+AC_CHECK_FUNCS(atoll)
 
 dnl ------------------------------------------------------------------
 
+echo "------------------------------------------------------------------"
+echo "8. Section: Output"
+echo "------------------------------------------------------------------"
+
 dnl ---
-dnl Create outputs 
+dnl Create output files
 dnl ---
+
 AC_OUTPUT([
 Makefile
 ecasound.spec
@@ -597,7 +676,10 @@ examples/Makefile
 contrib/Makefile
 ])
 
-# And a short summary 
+dnl ---
+dnl Print summary of the configured options
+dnl ---
+
 echo "-----------------------------------------------------------------"
 echo "Following packages are now configured:"
 echo "ecasound: 		yes (ecasound,libecasound,libecasoundc)"
@@ -637,12 +719,6 @@ else
 	echo "ALSA support		no"
 fi
 
-if test x$alsa_rawmidi_support = xyes ; then
-	echo "ALSA rawmidi support	yes"
-else
-	echo "ALSA rawmidi support	no"
-fi
-
 if test x$oss_support = xyes ; then
 	echo "OSS support		yes"
 else
@@ -666,20 +742,24 @@ fi
 
 echo "-----------------------------------------------------------------"
 echo "Following directories are used:"
-echo "Directory prefix:		"$prefix
+echo "Directory prefix:    "$ECA_S_PREFIX
 if test x$compile_pyecasound = xyes ; then
-	echo "Python include dir:		"$eca_python_incdir
-	echo "Python module dir:		"$eca_python_modules
+	echo "Python include dir:	"$ECA_S_PYTHON_INCLUDES
+	echo "Python module dir:	"$ECA_S_PYTHON_MODULES
 fi
 if test x$jack_support = xyes ; then
-	echo "JACK headers:		        "$jack_headers
-	echo "JACK libraries:		        "$jack_libraries
+	echo "JACK headers:		"$ECA_S_JACK_INCLUDES
+	echo "JACK libraries:		"$ECA_S_JACK_LIBS
 fi
 if test x$enable_sysreadline = xyes ; then
-  	echo "readline includes:		"$readline_includes
+  	echo "readline includes:	"$ECA_S_READLINE_INCLUDES
 fi  
 
 echo "-------------------------------------------------------------------"
 echo "Type 'make' to compile the package and 'make install' to install."
 echo "Remember to use GNU Make, often installed as 'gmake'."
 echo "-------------------------------------------------------------------"
+
+dnl ------------------------------------------------------------------
+dnl X. Section: End
+dnl ------------------------------------------------------------------

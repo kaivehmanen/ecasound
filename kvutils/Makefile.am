@@ -4,7 +4,7 @@ AUTOMAKE_OPTIONS = foreign
 # Makefile.am for building libkvutils.a
 # ---
 
-if INCLUDE_DEBUG
+if ECA_AM_DEBUG_MODE
 lib_LTLIBRARIES = libkvutils_debug.la
 else
 lib_LTLIBRARIES = libkvutils.la

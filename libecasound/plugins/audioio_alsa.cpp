@@ -24,11 +24,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifdef ALSALIB_060
 #include <alsa/asoundlib.h>
 
 #include <kvutils/dbc.h>
@@ -644,5 +639,3 @@ void AUDIO_IO_ALSA_PCM::set_pcm_device_name(const string& n)
   else
     pcm_device_name_rep = default_pcm_device_rep;
 }
-
-#endif /* ALSALIB_060 */

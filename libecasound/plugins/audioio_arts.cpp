@@ -17,15 +17,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "audioio-device.h"
 #include "eca-debug.h"
 #include "eca-version.h"
 
-#ifdef COMPILE_ARTS
 #include "audioio_arts.h"
 
 static const char* audio_io_keyword_const = "arts";
@@ -121,5 +116,3 @@ void ARTS_INTERFACE::write_samples(void* target_buffer,
 {
   samples_rep += ::arts_write(stream_rep, target_buffer, frame_size() * samples);
 }
-
-#endif // COMPILE_ARTS

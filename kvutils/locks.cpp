@@ -21,10 +21,10 @@
 #include <config.h> /* for USE_ATOMIC */
 #endif
 
-#ifdef USE_ASM_ATOMIC
+#ifdef ECA_USE_ASM_ATOMIC
 #include <asm/atomic.h>
 #else
-#warning "locks.h: USE_ASM_ATOMIC not defined!"
+#warning "locks.h: ECA_USE_ASM_ATOMIC not defined!"
 #endif
 
 #include <pthread.h>

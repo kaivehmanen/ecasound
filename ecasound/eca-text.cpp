@@ -44,7 +44,7 @@
 #include <eca-error.h>
 #include <eca-comhelp.h>
 
-#ifdef HAVE_NCURSES_CURSES_H
+#ifdef ECA_HAVE_NCURSES_CURSES_H
 #include <ncurses/curses.h>
 #include <ncurses/term.h>
 #else
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
       ECA_SESSION* session = new ECA_SESSION(cline);
       ecasound_pointer_to_ecasession = session; // used only for signal handling!
       if (session->is_interactive() == true) {
-#if defined USE_NCURSES || defined USE_TERMCAP
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
 	ecasound_start_iactive_readline(session);
 #else
 	ecasound_start_iactive(session);
@@ -199,7 +199,7 @@ void ecasound_start_iactive(ECA_SESSION* param) {
   while(getline(std::cin,cmd));
 }
 
-#if defined USE_NCURSES || defined USE_TERMCAP
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
 /**
  * Ecasound interactive mode with ncurses.
  */
@@ -357,7 +357,7 @@ void ecasound_setup_signals(void) {
 void ecasound_print_header(std::ostream* dostream) {
   *dostream << "****************************************************************************\n";
   *dostream << "*";
-#if defined USE_NCURSES || defined USE_TERMCAP
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
   if (dostream == &std::cout) {
     setupterm((char *)0, 1, (int *)0);
     putp(tigetstr("bold"));
@@ -366,7 +366,7 @@ void ecasound_print_header(std::ostream* dostream) {
   *dostream << "               ecasound v" 
 	    << ecasound_library_version
 	    << " (C) 1997-2002 Kai Vehmanen                 ";
-#if defined USE_NCURSES || defined USE_TERMCAP
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
   if (dostream == &std::cout) {
     putp(tigetstr("sgr0"));
   }
@@ -451,4 +451,4 @@ char* ecasound_command_generator (char* text, int state) {
   return ((char *)0);
 }
 
-#endif /* defined USE_NCURSES || defined USE_TERMCAP */
+#endif /* defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP */

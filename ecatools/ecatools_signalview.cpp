@@ -41,7 +41,7 @@
 #include <audioio.h>
 #include <eca-version.h>
 
-#ifdef HAVE_NCURSES_CURSES_H
+#ifdef ECA_HAVE_NCURSES_CURSES_H
 #include <ncurses/curses.h>
 #include <ncurses/term.h>
 #else
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
 
     }
 
-#if defined USE_NCURSES || defined USE_TERMCAP
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
     initscr();
     erase();
     move(0,0);
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
     ectrl.start();
     while(true) {
       usleep(rate_msec * 1000);
-#if defined USE_NCURSES || defined USE_TERMCAP
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
       erase();
       move(0,0);
       refresh();
@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
       std::cout << cop.status() << std::endl;
 #endif
     }
-#if defined USE_NCURSES || defined USE_TERMCAP
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
     endwin();
 #endif
   }
@@ -209,7 +209,7 @@ void print_usage(void) {
 
 void signal_handler(int signum) {
   std::cerr << "Unexpected interrupt... cleaning up.\n";
-#if defined USE_NCURSES || defined USE_TERMCAP
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
   endwin();
 #endif
   exit(1);

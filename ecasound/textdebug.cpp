@@ -8,7 +8,7 @@
 #include <eca-debug.h>
 #include "textdebug.h"
 
-#ifdef HAVE_NCURSES_CURSES_H
+#ifdef ECA_HAVE_NCURSES_CURSES_H
 #include <ncurses/curses.h>
 #include <ncurses/term.h>
 #else
@@ -29,7 +29,7 @@ void TEXTDEBUG::flush(void) {
 void TEXTDEBUG::control_flow(const std::string& part) {
   if ((get_debug_level() & ECA_DEBUG::module_flow) != ECA_DEBUG::module_flow) return;
 
-#ifdef USE_NCURSES
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
   *dostream << "- [ ";
   putp(tigetstr("bold"));
   *dostream << part;

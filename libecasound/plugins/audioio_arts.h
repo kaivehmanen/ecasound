@@ -3,15 +3,10 @@
 
 #include <string>
 #include <iostream>
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
-#ifdef COMPILE_ARTS
 extern "C" {
 #include <artsc.h>
 }
-#endif
 
 #include "sample-specs.h"
 #include "eca-version.h"
@@ -25,9 +20,8 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
   ARTS_INTERFACE(const ARTS_INTERFACE& x) { }
   ARTS_INTERFACE& operator=(const ARTS_INTERFACE& x) { return *this; }
 
-#ifdef COMPILE_ARTS
   arts_stream_t stream_rep;
-#endif
+
   SAMPLE_SPECS::sample_pos_t samples_rep;
   static int ref_rep;
   

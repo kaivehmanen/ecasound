@@ -46,16 +46,9 @@
 #include "audiofx_timebased.h"
 #include "audiogate.h"
 
-extern "C" {
-#ifdef HAVE_LADSPA_H
-#include <ladspa.h>
-#else
-#include "ladspa.h"
-#endif
-}
 #include "audiofx_ladspa.h"
 
-#ifdef FEELING_EXPERIMENTAL
+#ifdef ECA_FEELING_EXPERIMENTAL
 extern "C" {
 #include "audiofx_vst.h"
 }
@@ -75,7 +68,9 @@ extern "C" {
 #include "audioio-plugin.h"
 #include "audioio-cdr.h"
 #include "audioio-wave.h"
+#ifdef ECA_COMPILE_OSS
 #include "audioio-oss.h"
+#endif
 #include "audioio-ewf.h"
 #include "audioio-mp3.h"
 #include "audioio-ogg.h"
@@ -279,7 +274,7 @@ static void register_default_audio_objects(void) {
   eca_audio_object_map->register_object("midi", "midi$", timidity);
 
   AUDIO_IO* device = 0;  
-#ifdef COMPILE_OSS
+#ifdef ECA_COMPILE_OSS
   device = new OSSDEVICE();
   eca_audio_object_map->register_object("/dev/dsp", "/dev/dsp[0-9]*", device);
 #endif
@@ -435,7 +430,6 @@ static void register_internal_audioio_plugins(void) {
 
   const ECA_OBJECT* aobj = 0;
 
-#ifdef ALSALIB_060
   aobj = eca_audio_object_map->object("alsahw_09");
   if (aobj != 0) {
     eca_audio_object_map->register_object("alsahw", "^alsahw$", const_cast<ECA_OBJECT*>(aobj));
@@ -446,9 +440,6 @@ static void register_internal_audioio_plugins(void) {
   if (aobj != 0) {
     eca_audio_object_map->register_object("alsa", "^alsa$", const_cast<ECA_OBJECT*>(aobj));
   }
-  else 
-    ecadebug->msg(ECA_DEBUG::info, "(eca-static-objects-map) Unable to load the ecasound ALSA 0.9.x plugin!");
-#endif
 }
 
 static void register_default_midi_devices(void) {
