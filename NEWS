@@ -21,6 +21,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: ecaplay - accept filenames containing whitespace
 	- fixed: ecafixdc - don't process files that have zero 
 	         dc-offset
+	- fixed: compilation fix for solaris+gcc combo
 07112002 (v2.2.0-pre5)
 	- edi-entries: edi-29 closed
 	- added: ecasound emacs interface, ecasound.el, is now 

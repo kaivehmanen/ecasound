@@ -97,9 +97,10 @@ case "$host" in
                ;;
 	*-*-solaris*)
                CPPFLAGS="$CPPFLAGS -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS"
-	       LIBS="$LIBS -lposix4 -mt -lpthread"
+	       LIBS="$LIBS -lposix4 -lpthread"
 	       echo "Setting Solaris compilation options for POSIX threads"
 	       if test x$CXX = xCC; then
+	          LIBS="$LIBS -mt"
 		  CXXFLAGS="$CXXFLAGS -instances=static"
 		  echo "Sun Workshop C++ compiler detected. Enabling static template instantation."
 	       fi
