@@ -1041,6 +1041,8 @@ void ECA_CHAINSETUP::remove_audio_input(const string& label) {
 
   for(size_t n = 0; n < inputs.size(); n++) {
     if (inputs[n]->label() == label) {
+      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Removing input " + label + ".");
+
       remove_audio_object_helper(inputs[n]);
 
       vector<CHAIN*>::iterator q = chains.begin();
@@ -1049,10 +1051,8 @@ void ECA_CHAINSETUP::remove_audio_input(const string& label) {
 	++q;
       }
 
-      delete inputs[n];
+      delete inputs_direct_rep[n];
       inputs[n] = inputs_direct_rep[n] = new NULLFILE("null");
-
-      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Removing input " + label + ".");
     }
   }
 
@@ -1073,6 +1073,8 @@ void ECA_CHAINSETUP::remove_audio_output(const string& label) {
 
   for(size_t n = 0; n < outputs.size(); n++) {
     if (outputs[n]->label() == label) {
+      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Removing output " + label + ".");
+
       remove_audio_object_helper(outputs[n]);
 
       vector<CHAIN*>::iterator q = chains.begin();
@@ -1081,10 +1083,8 @@ void ECA_CHAINSETUP::remove_audio_output(const string& label) {
 	++q;
       }
 
-      delete outputs[n];
+      delete outputs_direct_rep[n];
       outputs[n] = outputs_direct_rep[n] = new NULLFILE("null");
-
-      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Removing output " + label + ".");
     }
   }
 
