@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audioio-wave.cpp: RIFF WAVE audio file input/output.
-// Copyright (C) 1999-2003 Kai Vehmanen
+// Copyright (C) 1999-2003,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,20 +73,20 @@ static uint32_t little_endian_uint32(uint32_t arg);
 static uint16_t little_endian_uint16(uint16_t arg)
 {
   if (is_system_littleendian != true) {
-    return(((arg >> 8) & 0x00ff) | ((arg << 8) & 0xff00));
+    return ((arg >> 8) & 0x00ff) | ((arg << 8) & 0xff00);
   }
-  return(arg);
+  return arg;
 }
 
 static uint32_t little_endian_uint32(uint32_t arg)
 {
   if (is_system_littleendian != true) {
-    return(((arg >> 24) & 0x000000ff) |
+    return ((arg >> 24) & 0x000000ff) |
 	   ((arg >> 8)  & 0x0000ff00) |
 	   ((arg << 8)  & 0x00ff0000) |
-	   ((arg << 24) & 0xff000000));
+	   ((arg << 24) & 0xff000000);
   }
-  return(arg);
+  return arg;
 }
 
 /**
@@ -116,7 +119,7 @@ WAVEFILE* WAVEFILE::clone(void) const
   for(int n = 0; n < number_of_params(); n++) {
     target->set_parameter(n + 1, get_parameter(n + 1));
   }
-  return(target);
+  return target;
 }
 
 void WAVEFILE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&)
@@ -153,7 +156,7 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
   case io_read:
     {
       if (mmaptoggle_rep == "1") {
-	ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) using mmap() mode for file access");
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, "using mmap() mode for file access");
 	fio_repp = new ECA_FILE_IO_MMAP();
       }
       else  fio_repp = new ECA_FILE_IO_STREAM();
@@ -223,7 +226,7 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
       format_string()[4] == 'b') {
     /* force little-endian operation / affects only write-mode */
     set_sample_format_string(format_string()[0] + kvu_numtostr(bits()) + "_le");
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) forcing little-endian operation (" + format_string() + ")");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "forcing little-endian operation (" + format_string() + ")");
     DBC_CHECK(format_string().size() > 4 && format_string()[4] != 'b');
   }
 
@@ -232,7 +235,7 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 
 void WAVEFILE::close(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects,"(audioio-wave) Closing file " + label());
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,"Closing file " + label());
   if (is_open() == true && fio_repp != 0) {
     update();
     fio_repp->close_file();
@@ -262,7 +265,7 @@ void WAVEFILE::find_riff_datablock (void) throw(AUDIO_IO::SETUP_ERROR&)
 
 void WAVEFILE::read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) 
 {
-  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) read_riff_header()");
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "read_riff_header()");
    
   fio_repp->read_to_buffer(&riff_header_rep, sizeof(riff_header_rep));
 
@@ -275,7 +278,7 @@ void WAVEFILE::read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
 
 void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) 
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) write_riff_header()");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "write_riff_header()");
 
   off_t savetemp = fio_repp->get_file_position();
     
@@ -299,14 +302,14 @@ void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
       memcmp("WAVE",riff_header_rep.wname,4) != 0)
     throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: invalid RIFF-header (write)"));
 
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) Wave data size " + kvu_numtostr(little_endian_uint32(riff_header_rep.size)));
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Wave data size " + kvu_numtostr(little_endian_uint32(riff_header_rep.size)));
 
   fio_repp->set_file_position(savetemp);
 }
 
 void WAVEFILE::read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) read_riff_fmt()");
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "read_riff_fmt()");
 
   off_t savetemp = fio_repp->get_file_position();    
 
@@ -371,7 +374,7 @@ void WAVEFILE::read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&)
 
 void WAVEFILE::write_riff_fmt(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) write_riff_fmt()");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "write_riff_fmt()");
 
   RB fblock;
 
@@ -396,16 +399,16 @@ void WAVEFILE::write_riff_fmt(void)
 
   fio_repp->write_from_buffer(&fblock, sizeof(fblock));
   fio_repp->write_from_buffer(&riff_format_rep, sizeof(riff_format_rep));
-  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) Wrote RIFF format header.");
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Wrote RIFF format header.");
 }
 
 void WAVEFILE::write_riff_datablock(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) write_riff_datablock()");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "write_riff_datablock()");
 
   RB fblock;
 
-  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) write_riff_datablock()");
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "write_riff_datablock()");
     
   fio_repp->set_file_position_end();
 
@@ -417,7 +420,7 @@ void WAVEFILE::write_riff_datablock(void)
 
 void WAVEFILE::update_riff_datablock(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) update_riff_datablock()");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "update_riff_datablock()");
 
   RB fblock;
     
@@ -443,38 +446,40 @@ void WAVEFILE::update_riff_datablock(void)
 
 bool WAVEFILE::next_riff_block(RB *t, off_t *offtmp)
 {
-  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) next_riff_block()");
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "next_riff_block()");
 
   fio_repp->read_to_buffer(t, sizeof(RB));
   if (fio_repp->file_bytes_processed() != sizeof(RB)) {
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) invalid RIFF block!");
-    return(false);
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "invalid RIFF block!");
+    return false;
   }
     
-  if (!fio_repp->is_file_ready()) return(false);
+  if (!fio_repp->is_file_ready()) return false;
   *offtmp = little_endian_uint32(t->bsize) + fio_repp->get_file_position();
-  return (true);
+  return true;
 }
 
-bool WAVEFILE::find_block(const char* fblock) {
+bool WAVEFILE::find_block(const char* fblock)
+{
   off_t offset;
   RB block;
 
-  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) find_block(): " + string(fblock,4));
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "find_block(): " + string(fblock,4));
     
   fio_repp->set_file_position(sizeof(riff_header_rep));
   while(next_riff_block(&block,&offset)) {
-    // ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) found RIFF-block ");
+    // ECA_LOG_MSG(ECA_LOGGER::user_objects, "found RIFF-block ");
     if (memcmp(block.sig,fblock,4) == 0) {
-      return(true);
+      return true;
     }
     fio_repp->set_file_position(offset);
   }
 
-  return(false);
+  return false;
 }
 
-bool WAVEFILE::finished(void) const {
+bool WAVEFILE::finished(void) const
+{
  if (fio_repp->is_file_error() ||
      !fio_repp->is_file_ready()) 
    return true;
@@ -489,10 +494,11 @@ long int WAVEFILE::read_samples(void* target_buffer, long int samples)
   DBC_REQUIRE(target_buffer != 0);
   // --------
   fio_repp->read_to_buffer(target_buffer, frame_size() * samples);
-  return(fio_repp->file_bytes_processed() / frame_size());
+  return fio_repp->file_bytes_processed() / frame_size();
 }
 
-void WAVEFILE::write_samples(void* target_buffer, long int samples) {
+void WAVEFILE::write_samples(void* target_buffer, long int samples)
+{
   // --------
   DBC_REQUIRE(samples >= 0);
   DBC_REQUIRE(target_buffer != 0);
@@ -509,7 +515,8 @@ void WAVEFILE::seek_position(void)
   AUDIO_IO_BUFFERED::seek_position();
 }
 
-void WAVEFILE::set_length_in_bytes(void) {
+void WAVEFILE::set_length_in_bytes(void)
+{
   off_t savetemp = fio_repp->get_file_position();
 
   find_block("data");
@@ -519,7 +526,7 @@ void WAVEFILE::set_length_in_bytes(void) {
   off_t datalen = fio_repp->get_file_position() - datastart;
   set_length_in_samples(datalen / frame_size());
   MESSAGE_ITEM mitem;
-  mitem << "(audioio-wave) data length " << datalen << " bytes.";
+  mitem << "data length " << datalen << " bytes.";
   ECA_LOG_MSG(ECA_LOGGER::user_objects, mitem.to_string());
 
   fio_repp->set_file_position(savetemp);
@@ -543,10 +550,10 @@ string WAVEFILE::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(label());
+    return label();
 
   case 2: 
-    return(mmaptoggle_rep);
+    return mmaptoggle_rep;
   }
-  return("");
+  return "";
 }
