@@ -37,22 +37,24 @@ endif
 
 # --
 
-ecaconvert_SOURCES = ecaconvert.cpp
+noinst_HEADERS = ecicpp_helpers.h
+
+ecaconvert_SOURCES = ecaconvert.cpp ecicpp_helpers.cpp
 ecaconvert_LDADD = $(libecasoundc_path) $(libkvutils_path)
 
-ecafixdc_SOURCES = ecafixdc.cpp
+ecafixdc_SOURCES = ecafixdc.cpp ecicpp_helpers.cpp
 ecafixdc_LDADD = $(libecasoundc_path) $(libkvutils_path)
 
 ecalength_SOURCES = ecalength.c
 ecalength_LDADD = $(libecasoundc_path)
 
-ecanormalize_SOURCES = ecanormalize.cpp
+ecanormalize_SOURCES = ecanormalize.cpp ecicpp_helpers.cpp
 ecanormalize_LDADD = $(libecasoundc_path) $(libkvutils_path)
 
 ecaplay_SOURCES = ecaplay.c
 ecaplay_LDADD = $(libecasoundc_path)
 
-ecasignalview_SOURCES = ecasignalview.cpp
+ecasignalview_SOURCES = ecasignalview.cpp ecicpp_helpers.cpp
 ecasignalview_LDADD =  $(libecasoundc_path) $(libkvutils_path) $(termcap_library) $(ncurses_library)
 
 # --

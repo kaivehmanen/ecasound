@@ -39,6 +39,8 @@
 
 #include <eca-control-interface.h>
 
+#include "ecicpp_helpers.h"
+
 #if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
 #ifdef ECA_HAVE_NCURSES_CURSES_H
 #include <ncurses/curses.h>
@@ -128,30 +130,16 @@ int main(int argc, char *argv[])
   if (ecasv_format_string.size() > 0) {
     eci.command("cs-set-audio-format " + ecasv_format_string);
   }
+  
+  string format;
+  if (ecicpp_add_input(&eci, ecasv_input, &format) < 0) return -1;
 
-  eci.command("ai-add " + ecasv_input);
-  eci.command("ai-list");
-  if (eci.last_string_list().size() == 0) {
-    cerr << eci.last_error() << endl;
-    cerr << "---\nError while opening input " << ecasv_input << ". Exiting...\n";
-    return -1;
-  }  
-
-  eci.command("ai-get-format");
-  string format = eci.last_string();
   cout << "Using audio format -f:" << format << "\n";
-  std::vector<std::string> tokens = kvu_string_to_vector(format, ',');
-  assert(tokens.size() >= 3);
-  ecasv_chcount = atoi(tokens[1].c_str());
+
+  ecasv_chcount = ecicpp_format_channels(format);
   cout << "Setting up " << ecasv_chcount << " separate channels for analysis." << endl;
   
-  eci.command("ao-add " + ecasv_output);
-  eci.command("ao-list");
-  if (eci.last_string_list().size() == 0) {
-    cerr << eci.last_error() << endl;
-    cerr << "---\nError while opening output " << ecasv_input << ". Exiting...\n";
-    return -1;
-  }  
+  if (ecicpp_add_output(&eci, ecasv_output, format) < 0) return -1;
   
   ecasv_eci_repp = &eci;
 

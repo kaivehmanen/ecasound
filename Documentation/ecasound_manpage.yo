@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (24.10.2002)
+       (29.10.2002)
        ()
        (Multimedia software)
 
@@ -250,15 +250,18 @@ See url(ecasound user's guide)(users_guide/users_guide.html) for more
 detailed information.
 
 dit(JACK input/outputs)
-Jack is a low-latency audio server that can connect a number of out of
-process apps. It is different from other audio server efforts in that
+JACK is a low-latency audio server that can be used to connect
+multiple independent audio application to each other.
+It is different from other audio server efforts in that
 it has been designed from the ground up to be suitable for low-latency
-professional audio work. Ecasound provides multiple ways to
-communicate with JACK servers. bf(-o jack_alsa,myport),
-bf(-jack_multi,alsa_pcm:out,myport), 
-bf(-jack_mono,alsa_pcm:out_X,myport) and bf(-o jack_generic,myport)
-are all valid JACK output definitions. Similar syntax can be used
-to create JACK inputs.
+professional audio work. 
+
+Ecasound provides multiple ways to communicate with JACK servers. To
+directly input or output to soundcard, use bf(-i jack_alsa) and bf(-o
+jack_alsa). To communicate with other apps, use
+bf(jack_auto,remote_clientname). To just create ports without making
+any automatic connections, there are bf(jack) and
+bf(jack_generic,local_portprefix).
 
 Additionally global JACK options can be set using 
 bf(-G:jack,client_name,operation_mode). 'client_name' 
@@ -268,6 +271,9 @@ will ignore any transport state changes in the JACK-system,
 in mode "master" it will act as the JACK timebase master 
 while in mode "slave" ecasound lets JACK control both the 
 transport state and current location.
+
+More details about ecasound's JACK support can be found
+from ecasound user's guide.
 
 dit(Loop device) 
 Loop devices make it possible to route data between chains.
@@ -447,9 +453,10 @@ two channels. When 'right-%' is 0, only signal on the left
 (1st) channel is passed through. Similarly if it is '100', 
 only right (2nd) channel is let through.
 
-dit(-ezx:left-dc-fix-value,right-dc-fix-value)
-Adjusts the signal DC by 'dc-fix-value'. Use -ezf to find the
-optimal value.
+dit(-ezx:channel-count,delta-ch1,...,delta-chN)
+Adjusts the signal DC by 'delta-chX', where X is the 
+channel number. Use -ezf to find the optimal delta 
+values.
  
 enddit()
 

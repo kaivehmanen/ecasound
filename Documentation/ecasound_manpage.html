@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>24.10.2002</h2>
+<h2>29.10.2002</h2>
 
 
     
@@ -219,15 +219,17 @@ A simple wrapper class for handling other audio objects.
 See <a href="users_guide/users_guide.html">ecasound user's guide</a> for more 
 detailed information.
 <p><p></p><dt><strong>JACK input/outputs</strong><dd>
-Jack is a low-latency audio server that can connect a number of out of
-process apps. It is different from other audio server efforts in that
+JACK is a low-latency audio server that can be used to connect
+multiple independent audio application to each other.
+It is different from other audio server efforts in that
 it has been designed from the ground up to be suitable for low-latency
-professional audio work. Ecasound provides multiple ways to
-communicate with JACK servers. <strong>-o jack_alsa,myport</strong>,
-<strong>-jack_multi,alsa_pcm:out,myport</strong>, 
-<strong>-jack_mono,alsa_pcm:out_X,myport</strong> and <strong>-o jack_generic,myport</strong>
-are all valid JACK output definitions. Similar syntax can be used
-to create JACK inputs.
+professional audio work. 
+<p>Ecasound provides multiple ways to communicate with JACK servers. To
+directly input or output to soundcard, use <strong>-i jack_alsa</strong> and <strong>-o
+jack_alsa</strong>. To communicate with other apps, use
+<strong>jack_auto,remote_clientname</strong>. To just create ports without making
+any automatic connections, there are <strong>jack</strong> and
+<strong>jack_generic,local_portprefix</strong>.
 <p>Additionally global JACK options can be set using 
 <strong>-G:jack,client_name,operation_mode</strong>. 'client_name' 
 is the name used when registering ecasound to the JACK system. 
@@ -236,6 +238,8 @@ will ignore any transport state changes in the JACK-system,
 in mode "master" it will act as the JACK timebase master 
 while in mode "slave" ecasound lets JACK control both the 
 transport state and current location.
+<p>More details about ecasound's JACK support can be found
+from ecasound user's guide.
 <p><p></p><dt><strong>Loop device</strong><dd> 
 Loop devices make it possible to route data between chains.
 Option syntax is <strong>-[io][:]loop,id_number</strong>. If you add a loop 
@@ -379,9 +383,10 @@ Stereo panner. Changes the relative balance between the first
 two channels. When 'right-%' is 0, only signal on the left 
 (1st) channel is passed through. Similarly if it is '100', 
 only right (2nd) channel is let through.
-<p><p></p><dt><strong>-ezx:left-dc-fix-value,right-dc-fix-value</strong><dd>
-Adjusts the signal DC by 'dc-fix-value'. Use -ezf to find the
-optimal value.
+<p><p></p><dt><strong>-ezx:channel-count,delta-ch1,...,delta-chN</strong><dd>
+Adjusts the signal DC by 'delta-chX', where X is the 
+channel number. Use -ezf to find the optimal delta 
+values.
 <p></dl>
 <p><em>ENVELOPE MODULATION</em>
 <dl>

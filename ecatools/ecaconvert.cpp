@@ -27,6 +27,8 @@
 
 #include <eca-control-interface.h>
 
+#include "ecicpp_helpers.h"
+
 /**
  * Function declarations
  */
@@ -39,7 +41,7 @@ using std::cout;
 using std::endl;
 using std::string;
 
-static const string ecatools_play_version = "20021028-16";
+static const string ecatools_play_version = "20021030-17";
 
 int main(int argc, char *argv[])
 {
@@ -71,28 +73,14 @@ int main(int argc, char *argv[])
     
     eci.command("cs-add default");
     eci.command("c-add default");
+
+    string format;
+    if (ecicpp_add_input(&eci, filename, &format) < 0) break;
     
-    eci.command("ai-add " + filename);
-    eci.command("ai-list");
-    if (eci.last_string_list().size() != 1) {
-      cerr << eci.last_error() << endl;
-      cerr << "---\nError while processing file " << filename << ". Exiting...\n";
-      break;
-    }
-    
-    eci.command("ai-get-format");
-    string format = eci.last_string();
     cout << "Using audio format -f:" << format << "\n";
-    eci.command("cs-set-audio-format " +  format);
-    
-    eci.command("ao-add " + filename + extension);
-    eci.command("ao-list");
-    if (eci.last_string_list().size() != 1) {
-      cerr << eci.last_error() << endl;
-      cerr << "---\nError while processing file " << filename + extension << ". Exiting...\n";
-      break;
-    }
-    
+
+    if (ecicpp_add_output(&eci, filename + extension, format) < 0) break;
+
     eci.command("cs-connect");
     eci.command("cs-connected");
     if (eci.last_string() != "default") {

@@ -21,6 +21,8 @@
 #include <iostream>
 #include <string>
 
+#include <cassert>
+
 #include <eca-version.h>
 
 #include "eca-plaintext.h"
@@ -54,9 +56,19 @@ void ECA_PLAIN_TEXT::print_banner(void)
 
 void ECA_PLAIN_TEXT::read_command(const string& prompt)
 {
-  *ostream_repp << prompt;
-  ostream_repp->flush();
-  getline(cin, last_cmd_rep);
+  if (ostream_repp->good() == true) {
+    *ostream_repp << prompt;
+    ostream_repp->flush();
+    if (cin.good() == true) {
+      getline(cin, last_cmd_rep);
+    }
+    else {
+      last_cmd_rep = "q";
+    }
+  }
+  else {
+    last_cmd_rep = "q";
+  }
 }
 
 const string& ECA_PLAIN_TEXT::last_command(void) const

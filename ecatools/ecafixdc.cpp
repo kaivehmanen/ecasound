@@ -33,13 +33,21 @@
 
 #include <eca-control-interface.h>
 
+#include "ecicpp_helpers.h"
+
+using std::cerr;
+using std::cout;
+using std::endl;
+using std::string;
+
 /**
  * Function declarations
  */
 
 int main(int argc, char *argv[]);
-void print_usage(void);
-void signal_handler(int signum);
+
+static void ecafixdc_print_usage(void);
+static void ecafixdc_signal_handler(int signum);
 
 /**
  * Definitions and options 
@@ -49,12 +57,7 @@ void signal_handler(int signum);
 #define ECAFIXDC_PHASE_PROCESSING 1
 #define ECAFIXDC_PHASE_MAX        2
 
-using std::cerr;
-using std::cout;
-using std::endl;
-using std::string;
-
-static const string ecatools_fixdc_version = "20021028-28";
+static const string ecatools_fixdc_version = "20021030-29";
 static string ecatools_fixdc_tempfile;
 
 /**
@@ -64,7 +67,7 @@ static string ecatools_fixdc_tempfile;
 int main(int argc, char *argv[])
 {
   struct sigaction es_handler;
-  es_handler.sa_handler = signal_handler;
+  es_handler.sa_handler = ecafixdc_signal_handler;
   sigemptyset(&es_handler.sa_mask);
   es_handler.sa_flags = 0;
 
@@ -76,7 +79,7 @@ int main(int argc, char *argv[])
   COMMAND_LINE cline = COMMAND_LINE (argc, argv);
 
   if (cline.size() < 2) {
-    print_usage();
+    ecafixdc_print_usage();
     return(1);
   }
 
@@ -113,34 +116,18 @@ int main(int argc, char *argv[])
 
       if (m == ECAFIXDC_PHASE_ANALYSIS) {
 	cout << "Calculating DC-offset for file \"" << filename << "\".\n";
+	
+	string format;
+	if (ecicpp_add_input(&eci, filename, &format) < 0) break;
 
-	eci.command("ai-add " + filename);
-	eci.command("ai-list");
-	if (eci.last_string_list().size() != 1) {
-	  cerr << eci.last_error() << endl;
-	  cerr << "---\nError while processing file " << filename << ". Exiting...\n";
-	  break;
-	}
-
-	eci.command("ai-get-format");
-	string format = eci.last_string();
 	cout << "Using audio format -f:" << format << "\n";
-	eci.command("cs-set-audio-format " +  format);
-	std::vector<std::string> tokens = kvu_string_to_vector(format, ',');
-	assert(tokens.size() >= 3);
-	chcount = atoi(tokens[1].c_str());
+
+	chcount = ecicpp_format_channels(format);
 	dcfix_values.resize(chcount);
 	cout << "Setting up " << chcount << " separate channels for analysis." << endl;
 
 	cout << "Opening temp file \"" << ecatools_fixdc_tempfile << "\".\n";
-
-	eci.command("ao-add " + ecatools_fixdc_tempfile);
-	eci.command("ao-list");
-	if (eci.last_string_list().size() != 1) {
-	  cerr << eci.last_error() << endl;
-	  cerr << "---\nError while processing file " << ecatools_fixdc_tempfile << ". Exiting...\n";
-	  break;
-	}
+	if (ecicpp_add_output(&eci, ecatools_fixdc_tempfile, format) < 0) break;
 
 	eci.command("cop-add -ezf");
 	eci.command("cop-list");
@@ -152,37 +139,21 @@ int main(int argc, char *argv[])
       }
       else {
 	// FIXME: list all channels (remember to fix audiofx_misc.cpp dcfix)
-	cout << "Fixing DC-offset \"" << filename << "\"";
-	cout << " (left: " << kvu_numtostr(dcfix_values[0]);
-	cout << ", right: " << kvu_numtostr(dcfix_values[1]) << ").\n";
+	cout << "Fixing DC-offset \"" << filename << ".\n";
 
-	eci.command("ai-add " + ecatools_fixdc_tempfile);
-	eci.command("ai-list");
-	if (eci.last_string_list().size() != 1) {
-	  cerr << eci.last_error() << endl;
-	  cerr << "---\nError while processing file " << ecatools_fixdc_tempfile << ". Exiting...\n";
-	  break;
-	}
-
-	eci.command("ai-get-format");
-	string format = eci.last_string();
+	string format;
+	if (ecicpp_add_input(&eci, ecatools_fixdc_tempfile, &format) < 0) break;
+ 
 	cout << "Using audio format -f:" << format << "\n";
-	eci.command("cs-set-audio-format " +  format);
 
-	eci.command("ao-add " + filename);
-	eci.command("ao-list");
-	if (eci.last_string_list().size() != 1) {
-	  cerr << eci.last_error() << endl;
-	  cerr << "---\nError while processing file " << filename << ". Exiting...\n";
-	  break;
-	}
+	if (ecicpp_add_output(&eci, filename, format) < 0) break;
 
 	string dcfixstr;
 	for(int n = 0; n < chcount; n++) {
 	  dcfixstr += kvu_numtostr(dcfix_values[n]) + ",";
 	}
 
-	eci.command("cop-add -ezx:" + dcfixstr);
+	eci.command("cop-add -ezx:" + kvu_numtostr(chcount) + "," + dcfixstr);
 	eci.command("cop-list");
 	if (eci.last_string_list().size() != 1) {
 	  cerr << eci.last_error() << endl;
@@ -213,7 +184,7 @@ int main(int argc, char *argv[])
 	  eci.command("copp-get");
 	  dcfix_values[nm] = eci.last_float();
 	  cout << "DC-offset for channel " << nm + 1 << " is " <<
-	    dcfix_values[nm] << "." << endl;
+	    kvu_numtostr(dcfix_values[nm], 4) << "." << endl;
 	}
       }
 
@@ -232,7 +203,7 @@ int main(int argc, char *argv[])
   return(0);
 }
 
-void print_usage(void)
+static void ecafixdc_print_usage(void)
 {
   std::cerr << "****************************************************************************\n";
   std::cerr << "* ecafixdc, v" << ecatools_fixdc_version << "\n";
@@ -242,7 +213,7 @@ void print_usage(void)
   std::cerr << "\nUSAGE: ecafixdc file1 [ file2, ... fileN ]\n\n";
 }
 
-void signal_handler(int signum)
+static void ecafixdc_signal_handler(int signum)
 {
   std::cerr << "Unexpected interrupt... cleaning up.\n";
   remove(ecatools_fixdc_tempfile.c_str());

@@ -15,14 +15,14 @@ class EFFECT_DCFIX : public EFFECT_BASE {
 
 private:
 
-  SAMPLE_SPECS::sample_t deltafix_rep[2];
+  std::vector<parameter_t> deltafixes_rep;
   SAMPLE_ITERATOR_CHANNEL i_rep;
 
 public:
 
   virtual std::string name(void) const { return("DC-Fix"); }
   virtual std::string description(void) const { return("Adjusts DC-offset."); }
-  virtual std::string parameter_names(void) const { return("delta-value-left,delta-value-right"); }
+  virtual std::string parameter_names(void) const;
   virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
 
   virtual void set_parameter(int param, parameter_t value);
@@ -34,7 +34,7 @@ public:
   EFFECT_DCFIX* clone(void) const { return new EFFECT_DCFIX(*this); }
   EFFECT_DCFIX* new_expr(void) const { return new EFFECT_DCFIX(); }
   EFFECT_DCFIX (const EFFECT_DCFIX& x);
-  EFFECT_DCFIX (parameter_t delta_left = 0.0, parameter_t delta_right = 0.0);
+  EFFECT_DCFIX (void);
 };
 
 /**

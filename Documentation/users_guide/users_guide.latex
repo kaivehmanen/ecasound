@@ -6,7 +6,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{17102002}
+\date{30102002}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,7 @@ ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 30.10.2002 - Added JACK documentation, minor layout changes.
 \item 17.10.2002 - Updated ecasound overview.
 \item 17.07.2002 - Added documentation for ecasignalview.
 \item 18.05.2002 - Fixed a few typos.
@@ -248,12 +249,14 @@ these rules always apply:
 
 % ----------------------------------------------------------------------
 \section{Chain operators and controllers}
+
 Best place to start is to read through the \texttt{ecasound(1)} man
 page, which contains documentation for all native ecasound 
 chain objects.
 
 % ----------------------------------------------------------------------
 \section{Configuration}
+
 User preferences are stored to \emph{\textasciitilde /.ecasound/ecasoundrc}.
 See \texttt{ecasoundrc(5)} manual page for details.
 
@@ -264,6 +267,7 @@ in \emph{/usr/local/share/ecasound}.
 \section{Common problems}
 
 \subsection{I get occasional audio dropouts during operation? How to get rid of them?}
+
 Check ``http://www.oreillynet.com/pub/a/linux/2000/11/17/low\_latency.html''
 where you'll find a very good article written by Dave Phillips on
 Linux low-latency issues. If you are in a hurry (or desperate :)),
@@ -285,6 +289,7 @@ here's a quick list of things to try:
 \end{itemize}
 
 \subsection{Can I use multiple soundcards?}
+
 This is possible, but there are some issues you should be aware of. If 
 you try using multiple cheap soundcards to get more simultanious 
 inputs for recording, it's likely that the resulting streams will not
@@ -293,6 +298,7 @@ Audio-Quality HOWTO - ``http://www.linuxdj.com/audio/quality/'',
 section "Notes on Full Duplex Recording, and Other Realtime Issues".
 
 \subsection{Problems with panning mono files}
+
 In situations where you need to convert mono
 audio objects to multichannel objects, ecasound
 can behave in somewhat unexpected manner.
@@ -413,11 +419,12 @@ ecasignalview -f:s32,10,96000,i /dev/dsp null
 
 \subsection{Monitoring Non-realtime Sources}
 
-% FIXME: add text
+\emph{FIXME: to be written...}
 
 \subsection{Use with JACK}
 
-% FIXME: add text
+\emph{FIXME: to be written...}
+\ref{JACK Audio Server}
 
 \subsection{Further Reading}
 
@@ -454,7 +461,7 @@ ecasound -a:1 -i:some.mp3 -o:loop,1
          -a:3 -i:loop,1 -o /dev/dsp -ea:200
 --cut--
 
-\end{verbatim} 
+\end{verbatim}
 
 Both inputs are eventually routed to chain "3", where a -ea:200 is
 applied to the signal. This does have one downside, loop device
@@ -464,6 +471,7 @@ adds latency (-b:x -> latency of x frames).
 \section{Ecasound wave files - the .ewf format}
 
 \subsection{General}
+
 Ecasound wave file (.ewf) is a simple wrapper format for controlling 
 other audio objects. Ewf files are useful for offseting or time-shifting
 audio files (for instance play a short audio clip in the middle of 
@@ -471,6 +479,7 @@ a long multitrack mix), for minimizing diskspace usage during
 multitrack recording (output offsetting ) and looping.
 
 \subsection{File format}
+
 Ewf-files are stored in ascii format. The syntax is based on ``key=value''
 pairs. The same syntax is used with ecasound resource files. See
 \texttt{ecasoundrc(5)} man page for detailed info. Currently
@@ -485,6 +494,7 @@ recognized ewf keywords are:
 \end{itemize}
 
 \subsection{Example of ewf use}
+
 Let's look at an simple example .ewf file:
 
 \begin{verbatim} 
@@ -648,6 +658,134 @@ should recompile after installing the LADSPA SDK.
 Also, check Dave Phillips' great
 article on Oreillynet - 
 ``http://www.oreillynet.com/pub/a/linux/2001/02/02/ladspa.html''.
+
+% ----------------------------------------------------------------------
+\section{JACK Audio Server}
+\label{JACK Audio Server}
+
+JACK is a low-latency audio server, written primarily for the
+GNU/Linux operating system. It can connect a number of different
+applications to an audio device, as well as allowing them to share
+audio between themselves. Its clients can run in their own processes
+(ie. as normal applications), or can they can run within the JACK
+server (ie. as a ``plugin'').
+
+JACK is different from other audio server efforts in that it has been
+designed from the ground up to be suitable for professional audio
+work. This means that it focuses on two key areas: synchronous
+execution of all clients, and low latency operation. 
+
+If compiled with JACK support enabled (the ``--with-jack'' configure
+option), ecasound can be used with JACK, both for input and output
+as well as transport control.
+
+\section{Basic Input and Output}
+
+Let's start with how to play a file using ecasound and JACK:
+
+\begin{verbatim}
+ecasound -i foo.wav -o jack\_alsa
+\end{verbatim}
+
+This will create a separate JACK output port for each channel
+of foo.wav, and automatically connect these ecasound ports to
+the ALSA PCM output ports in the JACK server. The connections
+are as follows:
+
+\begin{verbatim}
+\item ``ecasound:out\_1    -->       alsa_pcm:playback\_1''
+\item ``ecasound:out\_2    -->       alsa_pcm:playback\_2''
+\end{verbatim}
+
+To record a file, you'd issue:
+
+\begin{verbatim}
+ecasound -f:32,2,44100 -i jack_alsa -o foo.wav
+\end{verbatim}
+
+Here we use ``-f:bits,channels,srate'' to set how many channels 
+to record from the souncard using JACK. As JACK always uses
+32bit samples, and the sampling rate must match the one used
+by the JACK server, the channel count is the only configurable
+parameter. You can use another ``-f:x,y,z'' before ``-o foo.wav''
+if you want to write the file in a different format.
+
+\section{More Advanced Port Creation}
+
+Ecasound also offers the following altenative ways 
+to create input and output ports:
+
+\begin{verbatim}
+ecasound -i foo.wav -o jack
+ecasound -i foo.wav -o jack_auto,remote\_client
+ecasound -i foo.wav -o jack_generic,local_portprefix
+ecasound -i jack                           -o foo.wav
+ecasound -i jack_auto,remove\_client       -o foo.wav
+ecasound -i jack_generic,local\_portprefix -o foo.wav
+\end{verbatim}
+
+``jack'' and ``jack\_auto'' both create a set of input
+(ecasound:in\_X) and/or output (ecasound:out\_X) ports.
+In the former case, ecasound doesn't make any implicit
+connections, but in latter case the created ports
+are automatically connected to the matching ports 
+of the specified client (client:in\_X or client:out\_X).
+
+If you want to create ports with a custom port name
+(ie. not ``in\_X'' or ``out\_X''), you can use 
+``jack\_generic''.
+
+\section{Transport Control}
+
+Transport controls are functions like ``start'', ``stop'', ``seek'', 
+etc that are commonly available in audio application that 
+maintain some kind of current position. JACK's transport
+control interface allows controlling the transport state
+of the all apps connected to one JACK server from a single
+application. Ecasound can support this functionality both
+in master and slave modes.
+
+To use ecasound as a transport master:
+
+\begin{verbatim}
+ecasound -c -i null -o jack -G:jack,eca\_master,master
+\end{verbatim}
+
+To use transport control in ecasound, you have to have at least
+one publish input or output JACK port. Here we publish
+one null output port. After giving the initial ``start'' command
+in ecasound interactive mode, you are now able to use
+further EIAM commands to control all other JACK apps connected
+to the same server. Commands like 
+``stop'', ``setpos 20'', ``rw 10'', ``fw 10'', and so should
+affect other apps.
+
+By default, ecasound doesn't react to outside transport 
+control. To use ecasound as a JACK transport slave:
+
+\begin{verbatim}
+ecasound -c -i foo.wav -o jack_alsa,out -G:jack,eca_slave,slave
+\end{verbatim}
+                                                               
+After giving an initial ``start'' to ecasound, you should
+now be able to use other JACK apps to control ecasound's
+playback of ``foo.wav''.
+
+\section{Troubleshooting}
+
+Ecasound v2.2 and earlier don't have the capability to change
+the engine buffersize and sampling rate dynamically during 
+processing. As a consequence, running ecasound will fail if
+the currrent values for these parameters do not match to
+the ones used by the JACK server. In other words, you have
+to correctly set the buffersize (with ``-b:xxx'') and sampling 
+rate (with ``-f:bits,channels,srate'' and possibly using the
+\emph{resample} audio object). This is the first thing to
+check if communication with JACK does not work.
+
+Future versions of ecasound will hopefully solve this 
+problem. This issue covered by ecasound development item 
+``edi-31 - Support for dynamic sampling rate and buffersize changes.''.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------

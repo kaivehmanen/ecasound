@@ -1081,7 +1081,7 @@ void ECA_CONTROL::operator_descriptions_helper(const ECA_OBJECT_MAP& arg, string
 	q->parameter_description(n + 1, &pd);
 
 	/* 5.1 name of param */
-	*result += "," + q->get_parameter_name(n + 1);
+	*result += "," + kvu_string_search_and_replace(q->get_parameter_name(n + 1), ',', '_');
 	/* 5.2 description */
 	*result += "," + kvu_string_search_and_replace(pd.description, ',', '_');
 	/* 5.3 default value */

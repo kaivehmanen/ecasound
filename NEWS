@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 291002) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 301002) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -33,13 +33,29 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   types
 	- changed: edi-28 done; ECI standalone the only ECI 
 	           implementation
+	- changed: ecasound now uses the new JACK (0.40.0 and newer) 
+	           ALSA PCM port names
+	- changed: number of channels must be given as the first
+	           parameter to -ezx; this was needed to implement
+		   true multichannel support
+	- changed: syntax used for JACK inputs/outputs, see 
+		   ecasound(1) and ecasound user's guide for 
+		   details
+	- changed: ecasound JACK transport master mode now follows
+		   the new pending-timebase model 
 	- fixed: libecasoundc return value sync problem; return
 		 value for command wasn't returned until command n+1 
 		 was issued
 	- fixed: -etc, -etl and -etp crashes if delay parameter 
 		 was set to zero
-	- fixed: -ezf didn't report the dcfic for the right channel 
-		 correctly
+	- fixed: -ezf didn't report the correct dcfic for the 
+		 first channel
+	- fixed: LADSPA param descriptions were incorrectly 
+		 parsed
+	- fixed: ecasound ended up in cpu-intensive loop if 
+	         the standard input suddenly disappeared in 
+		 the -D output mode; this happens every now 
+		 and then with ECI apps
 19102002 (v2.2.0-pre3)
 	- fixed: reverted to using old ALSA 0.9 hw-params API,
 		 ecasound agains works with old 0.9beta and 0.9rc 

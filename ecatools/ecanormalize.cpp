@@ -30,13 +30,7 @@
 
 #include <eca-control-interface.h>
 
-/**
- * Function declarations
- */
-
-int main(int argc, char *argv[]);
-void print_usage(void);
-void signal_handler(int signum);
+#include "ecicpp_helpers.h"
 
 /**
  * Definitions and options 
@@ -47,13 +41,21 @@ using std::cout;
 using std::endl;
 using std::string;
 
+/**
+ * Function declarations
+ */
+
+int main(int argc, char *argv[]);
+
+static void ecanormalize_print_usage(void);
+static void ecanormalize_signal_handler(int signum);
+
 /** 
  * Global variables
  */
 
-static const string ecatools_normalize_version = "20021028-25";
+static const string ecatools_normalize_version = "20021030-26";
 static string ecatools_normalize_tempfile;
-
 
 /**
  * Function definitions
@@ -62,7 +64,7 @@ static string ecatools_normalize_tempfile;
 int main(int argc, char *argv[])
 {
   struct sigaction es_handler;
-  es_handler.sa_handler = signal_handler;
+  es_handler.sa_handler = ecanormalize_signal_handler;
   sigemptyset(&es_handler.sa_mask);
   es_handler.sa_flags = 0;
 
@@ -74,7 +76,7 @@ int main(int argc, char *argv[])
   COMMAND_LINE cline = COMMAND_LINE (argc, argv);
 
   if (cline.size() < 2) {
-    print_usage();
+    ecanormalize_print_usage();
     return(1);
   }
 
@@ -109,28 +111,13 @@ int main(int argc, char *argv[])
 	eci.command("c-add default");
 	if (m == 0) {
 	  cout << "Analyzing file \"" << filename << "\".\n";
-	  eci.command("ai-add " + filename);
-	  eci.command("ai-list");
-	  if (eci.last_string_list().size() == 0) {
-	    cerr << eci.last_error() << endl;
-	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
-	    break;
-	  }
 
-	  eci.command("ai-get-format");
-	  string format = eci.last_string();
+	  string format;
+	  if (ecicpp_add_input(&eci, filename, &format) < 0) break;
 	  cout << "Using audio format -f:" << format << "\n";
-	  eci.command("cs-set-audio-format " +  format);
 
 	  cout << "Opening temp file \"" << ecatools_normalize_tempfile << "\".\n";
-
-	  eci.command("ao-add " + ecatools_normalize_tempfile);
-	  eci.command("ao-list");
-	  if (eci.last_string_list().size() != 1) {
-	    cerr << eci.last_error() << endl;
-	    cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
-	    break;
-	  }
+	  if (ecicpp_add_output(&eci, ecatools_normalize_tempfile, format) < 0) break;
 
 	  eci.command("cop-add -ev");
 	  eci.command("cop-list");
@@ -141,26 +128,11 @@ int main(int argc, char *argv[])
 	  }
 	}
 	else {
-	  eci.command("ai-add " + string(ecatools_normalize_tempfile));
-	  eci.command("ai-list");
-	  if (eci.last_string_list().size() != 1) {
-	    cerr << eci.last_error() << endl;
-	    cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
- 	    break;
-	  }
-
-	  eci.command("ai-get-format");
-	  string format = eci.last_string();
+	  string format;
+	  if (ecicpp_add_input(&eci, ecatools_normalize_tempfile, &format) < 0) break;
 	  cout << "Using audio format -f:" << format << "\n";
-	  eci.command("cs-set-audio-format " +  format);
 
-	  eci.command("ao-add " + filename);
-	  eci.command("ao-list");
-	  if (eci.last_string_list().size() != 1) {
-	    cerr << eci.last_error() << endl;
-	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
-	    break;
-	  }
+	  if (ecicpp_add_output(&eci, filename, format) < 0) break;
 
 	  eci.command("cop-add -ea:" + kvu_numtostr(multiplier * 100.0f));
 	  eci.command("cop-list");
@@ -225,7 +197,7 @@ int main(int argc, char *argv[])
   return(0);
 }
 
-void print_usage(void) 
+static void ecanormalize_print_usage(void) 
 {
   cerr << "****************************************************************************\n";
   cerr << "* [1mecanormalize, v" << ecatools_normalize_version << "\n";
@@ -235,7 +207,7 @@ void print_usage(void)
   cerr << "\nUSAGE: ecanormalize file1 [ file2, ... fileN ]\n\n";
 }
 
-void signal_handler(int signum)
+static void ecanormalize_signal_handler(int signum)
 {
   cerr << "Unexpected interrupt... cleaning up.\n";
   remove(ecatools_normalize_tempfile.c_str());

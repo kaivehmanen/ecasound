@@ -246,7 +246,8 @@ static void eca_jack_process_timebase_master(jack_nframes_t nframes, void *arg)
   /* 1. engine is running; update transport and run engine */
   if (current->is_running() == true) {
     current->transport_info_rep.state = JackTransportRolling;
-    current->transport_info_rep.position = current->engine_repp->current_position_in_samples();
+    current->transport_info_rep.position = 
+      current->engine_repp->current_position_in_samples() + nframes;
     // DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process(): setting transport position to " << current->transport_info_rep.position << "." << endl);
     current->transport_info_rep.valid = static_cast<jack_transport_bits_t>(JackTransportState | JackTransportPosition);
     jack_set_transport_info(current->client_repp, &current->transport_info_rep);

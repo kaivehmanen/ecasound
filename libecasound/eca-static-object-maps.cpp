@@ -159,7 +159,7 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_rt_objects(ECA_OBJECT_MAP* objmap
 
 #ifdef ECA_COMPILE_JACK
   device = new AUDIO_IO_JACK();
-  objmap->register_object("jack_generic", "(^jack_alsa$)|(^jack_mono$)|(^jack_multi$)|(^jack_generic$)", device);
+  objmap->register_object("jack", "(^jack$)|(^jack_alsa$)|(^jack_auto$)|(^jack_generic$)", device);
 #endif
 #endif /* ECA_ENABLE_AUDIOIO_PLUGINS */
 

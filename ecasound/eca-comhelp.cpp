@@ -97,7 +97,7 @@ static const char* ecasound_parameter_help_rep =
 "                              analyze/maximize volume\n"
 "     -evp:peak-ch1,peak-chN   peak amplitude watcher\n"
 "     -ezf                     find optimal value for DC-offset adjustment\n"
-"     -ezx:delta-value-left,delta-value-right ...\n"
+"     -ezx:channel-count,delta-ch1,...,delta-chN\n"
 "                              adjust DC-offset\n"
 " --- \n"
 "     -gc:open-at-sec,duration-sec ...\n"

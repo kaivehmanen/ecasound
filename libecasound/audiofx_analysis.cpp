@@ -361,7 +361,7 @@ string EFFECT_DCFIND::parameter_names(void) const
 {
   std::vector<std::string> t;
   for(int n = 0; n < channels(); n++) {
-    t.push_back("result-offset-ch" + kvu_numtostr(n));
+    t.push_back("result-offset-ch" + kvu_numtostr(n + 1));
   }
   return(kvu_vector_to_string(t, ","));
 }

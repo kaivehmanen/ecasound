@@ -83,7 +83,7 @@ void EFFECT_LADSPA::init_ports(void)
     if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) == LADSPA_PORT_CONTROL) {
 
       struct PARAM_DESCRIPTION pd; 
-      parse_parameter_hint_information(m, params.size(), &pd);
+      parse_parameter_hint_information(m, params.size() + 1, &pd);
 
       params.push_back(pd.default_value);
       param_descs_rep.push_back(pd);

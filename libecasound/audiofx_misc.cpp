@@ -22,6 +22,7 @@
 
 #include <kvu_dbc.h>
 #include <kvu_numtostr.h>
+#include <kvu_utils.h>
 
 #include "samplebuffer_iterators.h"
 #include "eca-operator.h"
@@ -29,43 +30,51 @@
 #include "eca-logger.h"
 #include "eca-error.h"
 
-EFFECT_DCFIX::EFFECT_DCFIX (CHAIN_OPERATOR::parameter_t delta_left,
-			    CHAIN_OPERATOR::parameter_t delta_right)
+EFFECT_DCFIX::EFFECT_DCFIX (void)
 {
-
-  deltafix_rep[0] = delta_left;
-  deltafix_rep[1] = delta_right;
 }
 
 EFFECT_DCFIX::EFFECT_DCFIX (const EFFECT_DCFIX& x)
 {
-  for(int nm = 0; nm < 2; nm++) {
-    deltafix_rep[nm] = x.deltafix_rep[nm];
-  }
+  deltafixes_rep = x.deltafixes_rep;
   i_rep = x.i_rep;
 }
 
 void EFFECT_DCFIX::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
 {
-  switch (param) {
-  case 1: 
-    deltafix_rep[0] = value;
-    break;
-  case 2: 
-    deltafix_rep[1] = value;
-    break;
+  if (param == 1) {
+    deltafixes_rep.resize(static_cast<int>(value));
+  }
+  else if (param > 1 && param - 2 < static_cast<int>(deltafixes_rep.size())) {
+    deltafixes_rep[param - 2] = value;
   }
 }
 
 CHAIN_OPERATOR::parameter_t EFFECT_DCFIX::get_parameter(int param) const
 {
-  switch (param) {
-  case 1: 
-    return(deltafix_rep[0]);
-  case 2: 
-    return(deltafix_rep[1]);
+  parameter_t result = 0.0f;
+
+  if (param == 1) {
+    result = static_cast<parameter_t>(deltafixes_rep.size());
   }
-  return(0.0);
+  else if (param > 1 && param - 2 < static_cast<int>(deltafixes_rep.size())) {
+    result = deltafixes_rep[param - 2];
+  }
+
+  return(result);
+}
+
+string EFFECT_DCFIX::parameter_names(void) const
+{
+  std::vector<std::string> t;
+
+  t.push_back("channel-count");
+
+  for(int n = 0; n < static_cast<int>(deltafixes_rep.size()); n++) {
+    t.push_back("delta-ch" + kvu_numtostr(n + 1));
+  }
+
+  return(kvu_vector_to_string(t, ","));
 }
 
 void EFFECT_DCFIX::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
@@ -73,14 +82,21 @@ void EFFECT_DCFIX::parameter_description(int param, struct PARAM_DESCRIPTION *pd
   OPERATOR::parameter_description(param, pd);
 }
 
-void EFFECT_DCFIX::init(SAMPLE_BUFFER *insample) { i_rep.init(insample); }
+void EFFECT_DCFIX::init(SAMPLE_BUFFER *insample)
+{
+  i_rep.init(insample);
+  set_channels(insample->number_of_channels());
+  if (channels() > static_cast<int>(deltafixes_rep.size())) {
+    deltafixes_rep.resize(channels());
+  }
+}
 
 void EFFECT_DCFIX::process(void)
 {
-  for(int n = 0; n < 2; n++) {
+  for(int n = 0; n < channels(); n++) {
     i_rep.begin(n);
     while(!i_rep.end()) {
-      *i_rep.current() = *i_rep.current() + deltafix_rep[n];
+      *i_rep.current() = *i_rep.current() + deltafixes_rep[n];
       i_rep.next();
     }
   }
