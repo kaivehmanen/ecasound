@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 080103) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 090103) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -15,7 +15,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??012003 (v2.2.0)  -** stable release **-
+09012003 (v2.2.0)  -** stable release **-
 	- edi-entries: edi-1 closed
 	- changed: ecasound.el updated to version 0.8.1 [mlang]
 	- changed: more user-friednly errormsg when trying to open
