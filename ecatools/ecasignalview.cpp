@@ -271,7 +271,7 @@ void ecasv_output_init(void)
     erase();
 
     mvprintw(0, 0, "******************************************************\n");
-    mvprintw(1, 0, "* ecasignalview v%s (C) 1999-2002 Kai Vehmanen  \n", ecatools_signalview_version.c_str());
+    mvprintw(1, 0, "* ecasignalview v%s (C) 1999-2005 Kai Vehmanen  \n", ecatools_signalview_version.c_str());
     mvprintw(2, 0, "******************************************************\n\n");
 
     mvprintw(4, 0, "input=\"%s\"\noutput=\"%s\"\naudio_format=\"%s\", refresh_rate_ms='%ld', buffersize='%ld'\n", 
@@ -376,7 +376,7 @@ void ecasv_print_usage(void)
 {
   cerr << "****************************************************************************\n";
   cerr << "* ecasignalview, v" << ecatools_signalview_version << " (" << VERSION << ")\n";
-  cerr << "* (C) 1999-2004 Kai Vehmanen, released under GPL licence\n";
+  cerr << "* (C) 1999-2005 Kai Vehmanen, released under GPL licence\n";
   cerr << "****************************************************************************\n";
 
   cerr << "\nUSAGE: ecasignalview [options] [input] [output] \n";
