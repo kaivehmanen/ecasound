@@ -21,6 +21,7 @@ bin_PROGRAMS = ecasound
 endif
 
 bin_SCRIPTS = ecamonitor
+EXTRA_DIST = ecamonitor
 
 ecasound_SOURCES = 	ecasound.cpp \
 			ecasound.h \
