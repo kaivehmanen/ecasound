@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20040421-33
+dnl last modified: 20040421-34
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -76,6 +76,8 @@ fi
 if test x${GCC} = xyes; then
    AM_CFLAGS="$AM_CFLAGS $EXTRAFLAGS $EXTRAGCCFLAGS"
 fi
+AM_CXXFLAGS="$AM_CXXFLAGS $EXTRADEBUGFLAGS"
+AM_CFLAGS="$AM_CFLAGS $EXTRADEBUGFLAGS"
 
 AC_SUBST(AM_CFLAGS)
 AC_SUBST(AM_CXXFLAGS)
@@ -481,7 +483,7 @@ AM_CONDITIONAL(ECA_AM_COMPILE_SAMPLERATE, test x$samplerate_support = xyes)
 if test x$samplerate_support = xyes; then
     ECA_S_EXTRA_CPPFLAGS="${ECA_S_EXTRA_CPPFLAGS} ${ECA_SAMPLERATE_INCLUDES}"
     ECA_SAMPLERATE_LIBS="${ECA_SAMPLERATE_LIBS} -lsamplerate"
-    ECA_S_EXTRA_LIBS="${ECA_S_EXTRA_LIBS} ECA_SAMPLERATE_LIBS"
+    ECA_S_EXTRA_LIBS="${ECA_S_EXTRA_LIBS} ${ECA_SAMPLERATE_LIBS}"
     AC_DEFINE(ECA_COMPILE_SAMPLERATE)
 fi                                     
 
