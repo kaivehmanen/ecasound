@@ -1,6 +1,7 @@
------------------------------------------------------------------------
-*** ecasound - changes and additions to libecasound interface       ***
------------------------------------------------------------------------
+2002-06-23  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* eca-resources.h: removed ECA_RESOURCES::set_default()
+	* eca-resources.h: ECA_RESOURCES::has_any() added
 
 2002-05-18  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
