@@ -383,7 +383,9 @@ void SAMPLE_BUFFER::limit_values(void)
 void SAMPLE_BUFFER::resample(SAMPLE_SPECS::sample_rate_t from_rate,
 			     SAMPLE_SPECS::sample_rate_t to_rate)
 {
+#ifndef ECA_COMPILE_SAMPLERATE
   DBC_DECLARE(buf_size_t old_length_in_samples = length_in_samples());
+#endif
 
 #ifdef ECA_COMPILE_SAMPLERATE
   if (impl_repp->quality_rep > 5) {
@@ -396,7 +398,10 @@ void SAMPLE_BUFFER::resample(SAMPLE_SPECS::sample_rate_t from_rate,
       resample_with_memory(from_rate, to_rate); 
     }
 
+#ifndef ECA_COMPILE_SAMPLERATE
+  /* with libsamplerate, the output sample count can vary from call to call */
   DBC_CHECK((static_cast<double>(to_rate) / from_rate * old_length_in_samples - length_in_samples()) >= -1);
+#endif
 }
 
 /**
@@ -1177,8 +1182,12 @@ void SAMPLE_BUFFER::resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from
     params.src_ratio = step;
     params.end_of_input = 0;
 
+    // update the step
+    int ret = src_set_ratio(impl_repp->src_state_rep[c], step);
+    DBC_CHECK(ret == 0);
+
     // Perform the sample rate conversion
-    int ret = src_process(impl_repp->src_state_rep[c], &params);
+    ret = src_process(impl_repp->src_state_rep[c], &params);
     DBC_CHECK(ret == 0);
     DBC_CHECK(std::labs(params.input_frames_used - old_buffer_size) == 0);
 #ifdef ECA_DEBUG_MODE
