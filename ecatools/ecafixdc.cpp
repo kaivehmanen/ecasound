@@ -21,11 +21,11 @@
 #include <string>
 #include <vector>
 #include <cstdio>
-#include <cassert>
 
 #include <signal.h>
 #include <stdlib.h>
 
+#include <kvutils/kvu_dbc.h>
 #include <kvutils/kvu_com_line.h>
 #include <kvutils/kvu_temporary_file_directory.h>
 #include <kvutils/kvu_numtostr.h>
@@ -172,19 +172,30 @@ int main(int argc, char *argv[])
 	eci.command("run");
       }
 
+      cout << "Processing finished.\n";
+
       if (m == ECAFIXDC_PHASE_ANALYSIS) {
-	assert(static_cast<int>(dcfix_values.size()) >= chcount);
+	DBC_CHECK(static_cast<int>(dcfix_values.size()) >= chcount);
+	double maxoffset = 0.0f;
 	for(int nm = 0; nm < chcount; nm++) {
 	  eci.command("cop-select 1");
 	  eci.command("copp-select " + kvu_numtostr(nm + 1));
 	  eci.command("copp-get");
 	  dcfix_values[nm] = eci.last_float();
+	  if (fabs(dcfix_values[nm]) > maxoffset) maxoffset = fabs(dcfix_values[nm]); 
 	  cout << "DC-offset for channel " << nm + 1 << " is " <<
 	    kvu_numtostr(dcfix_values[nm], 4) << "." << endl;
 	}
-      }
 
-      cout << "Processing finished.\n";
+	if (maxoffset <= 0.0f) {
+	  cout << "File \"" << filename << "\" has no DC-offset. Skipping.";
+
+	  eci.command("cs-disconnect");
+	  eci.command("cs-select default");
+	  eci.command("cs-remove");
+	  break;
+	}
+      }
 
       eci.command("cs-disconnect");
       eci.command("cs-select default");

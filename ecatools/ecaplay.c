@@ -111,8 +111,6 @@ int main(int argc, char *argv[])
   
     fprintf(stderr, "exiting...\n");
   
-    eci_command_r(eci, "stop");
-    eci_command_r(eci, "cs-disconnect");
     eci_cleanup_r(eci);
   }
 
@@ -121,9 +119,10 @@ int main(int argc, char *argv[])
 
 static void add_track_to_chainsetup(eci_handle_t eci, const char* nexttrack)
 {
-  char* tmpbuf = tmpbuf = malloc(strlen("ai-add ") + strlen(nexttrack));
+  size_t len = strlen("ai-add '") + strlen(nexttrack) + strlen("'") + 1;
+  char* tmpbuf = malloc(len);
   assert(tmpbuf != NULL);
-  snprintf(tmpbuf, 8 + strlen(nexttrack), "ai-add %s", nexttrack);
+  snprintf(tmpbuf, len, "ai-add \"%s\"", nexttrack);
   eci_command_r(eci, tmpbuf);
 
   /* check that add succeeded */

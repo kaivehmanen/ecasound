@@ -50,6 +50,14 @@ int main(int argc, char *argv[]);
 static void ecanormalize_print_usage(void);
 static void ecanormalize_signal_handler(int signum);
 
+/**
+ * Definitions and options 
+ */
+
+#define ECANORMALIZE_PHASE_ANALYSIS   0
+#define ECANORMALIZE_PHASE_PROCESSING 1
+#define ECANORMALIZE_PHASE_MAX        2
+
 /** 
  * Global variables
  */
@@ -105,11 +113,11 @@ int main(int argc, char *argv[])
     while(cline.end() == false) {
       filename = cline.current();
 
-      for(int m = 0; m < 2; m++) {
+      for(int m = 0; m < ECANORMALIZE_PHASE_MAX; m++) {
 
 	eci.command("cs-add default");
 	eci.command("c-add default");
-	if (m == 0) {
+	if (m == ECANORMALIZE_PHASE_ANALYSIS) {
 	  cout << "Analyzing file \"" << filename << "\".\n";
 
 	  string format;
@@ -153,7 +161,9 @@ int main(int argc, char *argv[])
 	  eci.command("run");
 	}
 
-	if (m == 0) {
+	cout << "Processing finished.\n";
+
+	if (m == ECANORMALIZE_PHASE_ANALYSIS) {
 	  eci.command("cop-select 1");
 	  eci.command("copp-select 2"); /* 2nd param of -ev, first one
 	                                 * sets the mode */
@@ -172,8 +182,6 @@ int main(int argc, char *argv[])
 	    cout << multiplier * 100.0 << ").\n";
 	  }
 	}
-
-	cout << "Processing finished.\n";
 
 	eci.command("cs-disconnect");
 	eci.command("cs-select default");

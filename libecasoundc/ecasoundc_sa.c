@@ -71,6 +71,7 @@
 #define ECI_MAX_RETURN_TYPE_SIZE   4
 #define ECI_MAX_STRING_SIZE        ECI_MAX_PARSER_BUF_SIZE
 #define ECI_MAX_RESYNC_ATTEMPTS    9
+#define ECI_MAX_LAST_COMMAND_SIZE  64
 
 #define ECI_READ_TIMEOUT_MS        5000
 
@@ -156,6 +157,7 @@ struct eci_internal {
   int cmd_read_fd_rep;
   int cmd_write_fd_rep;
 
+  char last_command_repp[ECI_MAX_LAST_COMMAND_SIZE];
   int commands_counter_rep;
 
   struct eci_parser* parser_repp;
@@ -212,6 +214,7 @@ const char* eci_str_sync_lost =
 
 void eci_impl_check_handle(struct eci_internal* eci_rep);
 void eci_impl_clean_last_values(struct eci_parser* parser);
+void eci_impl_dump_parser_state(eci_handle_t ptr, const char* message);
 ssize_t eci_impl_fd_read(int fd, void *buf, size_t count, int timeout);
 const char* eci_impl_get_ecasound_path(void);
 void eci_impl_los_list_add_item(struct eci_los_list** i, char* stmp, int len);
@@ -401,6 +404,8 @@ void eci_command_r(eci_handle_t ptr, const char* command)
   ECI_DEBUG_2("\n(ecasoundc_sa) writing command '%s' (cmd-counter=%d).\n", 
 	      command, eci_rep->commands_counter_rep + 1);
 
+  memcpy(eci_rep->last_command_repp, command, ECI_MAX_LAST_COMMAND_SIZE);
+
   eci_impl_clean_last_values(eci_rep->parser_repp);
 
   write(eci_rep->cmd_write_fd_rep, command, strlen(command));
@@ -416,9 +421,7 @@ void eci_command_r(eci_handle_t ptr, const char* command)
     
   if (eci_rep->commands_counter_rep - 1 !=
       eci_rep->parser_repp->last_counter_rep) {
-    ECI_DEBUG_2("(ecasoundc_sa) sync error; cmd=%d lastv=%d.\n", 
-		eci_rep->commands_counter_rep,
-		eci_rep->parser_repp->last_counter_rep);
+    eci_impl_dump_parser_state(ptr, "sync error");
   }
   
   if (eci_rep->commands_counter_rep >=
@@ -652,6 +655,19 @@ void eci_impl_clean_last_values(struct eci_parser* parser)
   memset(parser->last_error_repp, 0, ECI_MAX_STRING_SIZE);
 }
 
+void eci_impl_dump_parser_state(eci_handle_t ptr, const char* message)
+{
+  struct eci_internal* eci_rep = (struct eci_internal*)ptr;
+
+  fprintf(stderr, "\n(ecasoundc_sa) Error='%s', cmd='%s' last_error='%s' cmd_cnt=%d last_cnt=%d.\n", 
+	  message,
+	  eci_rep->last_command_repp,
+	  eci_last_error_r(ptr),
+	  eci_rep->commands_counter_rep,
+	  eci_rep->parser_repp->last_counter_rep);
+}
+
+
 /**
  * Attempts to read up to 'count' bytes from file descriptor 'fd' 
  * into the buffer starting at 'buf'. If no data is available
@@ -796,7 +812,7 @@ void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout)
 
   if (eci_rep->commands_counter_rep !=
       eci_rep->parser_repp->last_counter_rep) {
-    ECI_DEBUG("\n(ecasoundc_sa) Warning! read() error!\n");
+    eci_impl_dump_parser_state(eci_rep, "read() error");
   }
 }
 
