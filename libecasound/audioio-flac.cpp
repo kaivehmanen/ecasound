@@ -66,6 +66,14 @@ void FLAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
    *        to generate RIFF wave to a named pipe and parse the header...?
    */
 
+  /* flac tools do not support packed 24bit samples, use 
+   * 32bit format instead */
+  if (bits() == 24) {
+    enum Sample_endianess t = sample_endianess();
+    set_sample_format(ECA_AUDIO_FORMAT::sfmt_s32);
+    set_sample_endianess(t);
+  }
+ 
   if (io_mode() == io_read) {
     struct stat buf;
     int ret = ::stat(label().c_str(), &buf);
@@ -229,7 +237,14 @@ void FLAC_FORKED_INTERFACE::fork_output_process(void)
   set_fork_command(command);
   set_fork_file_name(label());
 
-  set_fork_bits(bits());
+  int bitcount = bits();
+  if (bitcount == 32) {
+    /* flac uses 24-in-32bit format, but you have to give 
+     * number of used bits for --bps=xxx */
+    bitcount = 24;
+  }
+
+  set_fork_bits(bitcount);
   set_fork_channels(channels());
   set_fork_sample_rate(samples_per_second());
 
