@@ -29,6 +29,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   ECA_CONTROL_INTERFACE class, moved from libecasound
 		   to libecasoundc; now also under LGPL
 	- changed: asm/atomic.h kernel header no longer used
+	- changed: ecaplay - improved ctrl-c handling
 	- fixed: cleanup of curses/ncurses detection in configure.in;
 		 this also fixes ecasound compilation on mandrake9.x
 		 systems
