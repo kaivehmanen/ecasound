@@ -36,9 +36,48 @@ Details:
   formats).
 --cut--
 
+------------------------------------------------------------------------
 - kaiv, 24.01.2002
   - should be placed to ECA_CHAINSETUP::enable() (after input
     and output init)
   - ECA_ENGINE takes caref of initializing chains, so it's 
     not a problem
   - issue a warning if -sr was not given and resampling results
+
+------------------------------------------------------------------------
+- kaiv, 29.01.2002
+
+--cut--
+What if we just removed implicit resampling altogether?  My reasoning
+behind this is:
+
+- current resampling is not high-quality (mostly just causes
+  bad pr for ecasound) 
+- for any kind of realtime work, resampling should _not_
+  be used (wastes cpu-resource for no good reason)
+- only real use for resampling is file format conversions
+- by removing the "resampling_needed()" check we
+  make the common code path a little bit faster (although
+  not much) and cleaner
+- we avoid problems with unexpected resampling
+
+As a result you could not execute a chainsetup, where sampling rate of
+one or more objects differs from engine's sampling rate.
+
+If this was done, implementation of 'edi-18' would be reduced to:
+
+- find the common sampling rate between audio objects
+- if found: set engine's rate to it
+- else: print an error message
+
+This would also make the -sr option obsolete.
+
+For cases where resampling is needed, a new audio object type could be
+added - something like:
+
+ecasound -f:16,2,44100 -i resample,22050hz_file.wav,44100 -o output.wav
+
+As a bonus, as now resampling would be a special-case operation, we are   
+not limited to light resampling algorithms. In practise we could use a    
+much more high-quality (=cpu-heavy) alternative (if someone has the time  
+to do it).

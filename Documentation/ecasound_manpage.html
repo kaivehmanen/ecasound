@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>28.01.2002</h2>
+<h2>29.01.2002</h2>
 
 
     
@@ -240,8 +240,8 @@ process apps. It is different from other audio server efforts in that
 it has been designed from the ground up to be suitable for low-latency
 professional audio work. Ecasound provides multiple ways to
 communicate with JACK servers. <strong>-o jack_alsa,myport</strong>,
--<strong>jack_multi,alsa_pcm:out,myport</strong>, 
--<strong>jack_mono,alsa_pcm:out_X,myport</strong> and -<strong>-o jack_generic,myport</strong>
+<strong>-jack_multi,alsa_pcm:out,myport</strong>, 
+<strong>-jack_mono,alsa_pcm:out_X,myport</strong> and <strong>-o jack_generic,myport</strong>
 are all valid JACK output definitions. Similar syntax can be used
 to create JACK inputs.
 <p><p></p><dt><strong>Loop device</strong><dd> 
@@ -372,11 +372,10 @@ and stays there over 'hold' ms the gate is released during
 <p><p></p><dt><strong>-ei:pitch-shift-%</strong><dd>
 Pitch shifter. Modifies audio pitch by altering its length.
 <p><p></p><dt><strong>-epp:right-%</strong><dd>
-Normal pan effect. Balance value of 0 means to pan signal fully
-left and 100 fully right. If the panned signal is
-a stereo signal, left and right channels aren't mixed together.
-Use the -erm and -erc effects to force conversion to mono before 
-panning.
+Stereo panner. Changes the relative balance between the first
+two channels. When 'right-%' is 0, only signal on the left 
+(1st) channel is passed through. Similarly if it is '100', 
+only right (2nd) channel is let through.
 <p><p></p><dt><strong>-ezx:left-dc-fix-value,right-dc-fix-value</strong><dd>
 Adjusts the signal DC by 'dc-fix-value'. Use -ezf to find the
 optimal value.

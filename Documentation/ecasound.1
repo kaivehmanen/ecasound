@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "28\&.01\&.2002" "" "Multimedia software" 
+.TH "ecasound" "1" "29\&.01\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -243,8 +243,8 @@ process apps\&. It is different from other audio server efforts in that
 it has been designed from the ground up to be suitable for low-latency
 professional audio work\&. Ecasound provides multiple ways to
 communicate with JACK servers\&. \fB-o jack_alsa,myport\fP,
--\fBjack_multi,alsa_pcm:out,myport\fP, 
--\fBjack_mono,alsa_pcm:out_X,myport\fP and -\fB-o jack_generic,myport\fP
+\fB-jack_multi,alsa_pcm:out,myport\fP, 
+\fB-jack_mono,alsa_pcm:out_X,myport\fP and \fB-o jack_generic,myport\fP
 are all valid JACK output definitions\&. Similar syntax can be used
 to create JACK inputs\&.
 .IP 
@@ -398,11 +398,10 @@ and stays there over \'hold\' ms the gate is released during
 Pitch shifter\&. Modifies audio pitch by altering its length\&.
 .IP 
 .IP "-epp:right-%" 
-Normal pan effect\&. Balance value of 0 means to pan signal fully
-left and 100 fully right\&. If the panned signal is
-a stereo signal, left and right channels aren\'t mixed together\&.
-Use the -erm and -erc effects to force conversion to mono before 
-panning\&.
+Stereo panner\&. Changes the relative balance between the first
+two channels\&. When \'right-%\' is 0, only signal on the left 
+(1st) channel is passed through\&. Similarly if it is \'100\', 
+only right (2nd) channel is let through\&.
 .IP 
 .IP "-ezx:left-dc-fix-value,right-dc-fix-value" 
 Adjusts the signal DC by \'dc-fix-value\'\&. Use -ezf to find the
