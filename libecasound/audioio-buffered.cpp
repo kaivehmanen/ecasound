@@ -82,7 +82,7 @@ void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf)
 				sample_format(),
 				channels());
   }
-  position_in_samples_advance(sbuf->length_in_samples());
+  change_position_in_samples(sbuf->length_in_samples());
 }
 
 void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf)
@@ -106,6 +106,6 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf)
   }
 
   write_samples(iobuf_uchar_repp, sbuf->length_in_samples());
-  position_in_samples_advance(sbuf->length_in_samples());
+  change_position_in_samples(sbuf->length_in_samples());
   extend_position();
 }

@@ -2,13 +2,12 @@
 #define INCLUDED_ECA_AUDIO_POSITION_H
 
 #include "sample-specs.h"
-#include "eca-audio-format.h"
+#include "eca-samplerate-aware.h"
 
 /**
  * Position cursor for a finite length audio stream
  */
-class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
-
+class ECA_AUDIO_POSITION : public ECA_SAMPLERATE_AWARE {
 
  public:
 
@@ -16,7 +15,6 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   /*@{*/
 
   ECA_AUDIO_POSITION(void);
-  ECA_AUDIO_POSITION(const ECA_AUDIO_FORMAT& fmt);
   virtual ~ECA_AUDIO_POSITION(void);
 
   /*@}*/
@@ -28,6 +26,8 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   int length_in_seconds(void) const;
   double length_in_seconds_exact(void) const;
 
+  bool length_set(void) const { return(length_set_rep); }
+
   /*@}*/
 
  protected:
@@ -35,13 +35,13 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   /** @name Protected functions for setting length */
   /*@{*/
 
-  virtual void length_in_samples(SAMPLE_SPECS::sample_pos_t pos);
-  void length_in_seconds(int pos_in_seconds);
-  void length_in_seconds(double pos_in_seconds);
+  virtual void set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos);
+  void set_length_in_seconds(int pos_in_seconds);
+  void set_length_in_seconds(double pos_in_seconds);
 
   /**
-   * If current position is beyond the end position, 
-   * set end position according to current positin.
+   * If current position is beyond the current total
+   * length, sets length according to the current position.
    *
    * ensure:
    *  position_in_samples() == length_in_samples()
@@ -66,35 +66,28 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
 
  protected:
 
-  /** @name Protected functions for setting length */
+  /** @name Protected functions for setting position (without action) */
   /*@{*/
 
-  virtual void position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
-  void position_in_samples_advance(SAMPLE_SPECS::sample_pos_t pos);
-  void position_in_seconds(int pos_in_seconds);
-  void position_in_seconds(double pos_in_seconds);
+  virtual void set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
+  void set_position_in_seconds(int pos_in_seconds);
+  void set_position_in_seconds(double pos_in_seconds);
+  void change_position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
+  void change_position_in_seconds(double pos_in_seconds);
 
   /*@}*/
 
  public:
 
-  /** @name Public functions for seeking to new positions */
+  /** @name Public functions for setting position (with action) */
   /*@{*/
-
-  /**
-   * Seek to current position. It's guaranteed that current position
-   * is valid (between [0,length_in_samples()]).
-   *
-   * require:
-   *  out_position() != true
-   */
-  virtual void seek_position(void) = 0;
 
   void seek_position_in_samples(SAMPLE_SPECS::sample_pos_t pos_in_samples);
   void seek_position_in_samples_advance(SAMPLE_SPECS::sample_pos_t pos_in_samples);
   void seek_position_in_seconds(double pos_in_seconds);
   void seek_first(void);
   void seek_last(void);
+  virtual void seek_position(void) { }
 
   /*@}*/
 
@@ -124,6 +117,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
 
   SAMPLE_SPECS::sample_pos_t position_in_samples_rep;
   SAMPLE_SPECS::sample_pos_t length_in_samples_rep;
+  bool length_set_rep;
 
 };
 

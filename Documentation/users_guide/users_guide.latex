@@ -6,7 +6,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{19122001}
+\date{01022002}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,7 @@ ecasound version.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 01.02.2001 - Updated the ``Current position'' section.
 \item 21.10.2001 - Added this history section. Document was 
       restructured and all major chapters reviewed.
 \item 21.10.2001 - Added material from the ecasound FAQ.
@@ -139,13 +140,9 @@ See \texttt{ecasound(1)} man page for details.
 % ----------------------------------------------------------------------
 \subsection{Current position}
 Information about current position is only stored for audio 
-objects and chainsetups. When you change position of a chain, 
-you're actually changing the position of audio objects connected 
-to that chain. Also, when you change chainsetup position,
-all chains (= all audio objects attached to them) are affected.
-
-On the other hand, positions of different audio objects can 
-be changed independently. Same applies to chainsetup objects.
+objects and chainsetups. When you change chainsetup position,
+all audio objects are affected. On the other hand, positions 
+of different audio objects can be changed independently.
 
 % ----------------------------------------------------------------------
 \subsection{Ecasound Control Interface - ECI}

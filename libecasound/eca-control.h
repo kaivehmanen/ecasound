@@ -11,6 +11,9 @@ class ECA_CHAINSETUP;
 
 /**
  * Class for controlling the whole ecasound library
+ *
+ * Related design patters: Facade (GoF185)
+ *
  * @author Kai Vehmanen
  */
 class ECA_CONTROL : public ECA_CONTROL_OBJECTS,

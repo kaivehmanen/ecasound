@@ -20,6 +20,10 @@
 #include "samplebuffer_iterators.h"
 #include "audiofx_mixing.h"
 
+EFFECT_MIXING::~EFFECT_MIXING(void)
+{
+}
+
 EFFECT_CHANNEL_COPY::EFFECT_CHANNEL_COPY (parameter_t from, 
 					  parameter_t to) {
 

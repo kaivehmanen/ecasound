@@ -90,7 +90,7 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&)
 	
       set_sample_format(format);
 
-      length_in_samples(::afGetFrameCount(afhandle, AF_DEFAULT_TRACK));
+      set_length_in_samples(::afGetFrameCount(afhandle, AF_DEFAULT_TRACK));
       ::afCloseFile(afhandle);
     }
   }

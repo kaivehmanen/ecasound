@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing an abstract audio signal chain.
-// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,7 +54,8 @@
 #define DEBUG_CTRL_STATEMENT(x) ((void)0)
 #endif
 
-CHAIN::CHAIN (void) {
+CHAIN::CHAIN (void)
+{
   ecadebug->msg(ECA_DEBUG::system_objects, "(chain) constuctor: CHAIN");
   muted_rep = false;
   sfx_rep = false;
@@ -71,7 +72,8 @@ CHAIN::CHAIN (void) {
   selected_controller_parameter_rep = 0;
 }
 
-CHAIN::~CHAIN (void) { 
+CHAIN::~CHAIN (void)
+{
   ecadebug->msg(ECA_DEBUG::system_objects,"CHAIN destructor!");
 
   for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
@@ -89,7 +91,8 @@ CHAIN::~CHAIN (void) {
 /**
  * Whether chain is in a valid state (= ready for processing)?
  */
-bool CHAIN::is_valid(void) const {
+bool CHAIN::is_valid(void) const
+{
   if (input_id_rep == -1 ||
       output_id_rep == -1) {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chain) Chain \"" + name() + "\" not valid.");
@@ -134,7 +137,8 @@ void CHAIN::disconnect_buffer(void) { audioslot_repp = 0; initialized_rep = fals
  *  is_processing()
  *  is_initialized() != true
  */
-void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop) {
+void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop)
+{
   // --------
   DBC_REQUIRE(chainop != 0);
   // --------
@@ -169,7 +173,8 @@ void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop) {
  *  (chainsops.size() != 0 && !is_processing()) &&
  *  is_initialized() != true
  */
-void CHAIN::remove_chain_operator(void) {
+void CHAIN::remove_chain_operator(void)
+{
   // --------
   DBC_REQUIRE(selected_chain_operator() > 0);
   DBC_REQUIRE(selected_chain_operator() <= number_of_chain_operators());
@@ -213,7 +218,8 @@ void CHAIN::remove_chain_operator(void) {
  * require:
   *  selected_chain_operator() != 0
  */
-string CHAIN::chain_operator_name(void) const {
+string CHAIN::chain_operator_name(void) const
+{
   // --------
   DBC_REQUIRE(selected_chain_operator() > 0);
   // --------
@@ -227,7 +233,8 @@ string CHAIN::chain_operator_name(void) const {
   *  selected_chain_operator() != 0
   *  selected_chain_operator_parameter() != 0
  */
-string CHAIN::chain_operator_parameter_name(void) const {
+string CHAIN::chain_operator_parameter_name(void) const
+{
   // --------
   DBC_REQUIRE(selected_chain_operator() > 0);
   DBC_REQUIRE(selected_chain_operator_parameter() > 0);
@@ -242,7 +249,8 @@ string CHAIN::chain_operator_parameter_name(void) const {
  * require:
  *  selected_chain_operator() != 0
  */
-int CHAIN::number_of_chain_operator_parameters(void) const {
+int CHAIN::number_of_chain_operator_parameters(void) const
+{
   // --------
   DBC_REQUIRE(selected_chain_operator() > 0);
   // --------
@@ -255,7 +263,8 @@ int CHAIN::number_of_chain_operator_parameters(void) const {
  * require:
  *  selected_controller() != 0
  */
-string CHAIN::controller_name(void) const {
+string CHAIN::controller_name(void) const
+{
   // --------
   DBC_REQUIRE(selected_controller() > 0);
   // --------
@@ -272,7 +281,8 @@ string CHAIN::controller_name(void) const {
  *  selected_chainop_number > 0 && selected_chainop_number <= number_of_chain_operators() &&
  *  selected_chain_operator_parameter() > 0
  */
-void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_t value) {
+void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_t value)
+{
   // --------
   DBC_REQUIRE(selected_chainop_number_rep > 0 && selected_chainop_number_rep <= number_of_chain_operators());
   DBC_REQUIRE(selected_chain_operator_parameter() > 0);
@@ -289,7 +299,8 @@ void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_t value) {
  *  selected_chain_operator_parameter() > 0 &&
  *  selected_chain_operator() != 0
  */
-CHAIN_OPERATOR::parameter_t CHAIN::get_parameter(void) const {
+CHAIN_OPERATOR::parameter_t CHAIN::get_parameter(void) const
+{
   // --------
   DBC_REQUIRE(selected_chain_operator_parameter() > 0);
   DBC_REQUIRE(selected_chain_operator() != 0);
@@ -304,15 +315,19 @@ CHAIN_OPERATOR::parameter_t CHAIN::get_parameter(void) const {
  *  gcontroller != 0
  *  selected_dynobj != 0
  */
-void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller) {
+void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller)
+{
   // --------
   DBC_REQUIRE(gcontroller != 0);
   DBC_REQUIRE(selected_dynobj_repp != 0);
   // --------
 
-  ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(gcontroller);
-  if (srateobj != 0) {
-    srateobj->set_samples_per_second(samples_per_second());
+  CONTROLLER_SOURCE* src = gcontroller->source_pointer();
+  if (src != 0) {
+    ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(src);
+    if (srateobj != 0) {
+      srateobj->set_samples_per_second(samples_per_second());
+    }
   }
   gcontroller->assign_target(selected_dynobj_repp);
   gcontrollers_rep.push_back(gcontroller);
@@ -328,7 +343,8 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller) {
  *  selected_controller() <= number_of_controllers();
  *  selected_controller() > 0
  */
-void CHAIN::remove_controller(void) {
+void CHAIN::remove_controller(void)
+{
   // --------
   DBC_REQUIRE(selected_controller() > 0);
   DBC_REQUIRE(selected_controller() <= number_of_controllers());
@@ -351,7 +367,8 @@ void CHAIN::remove_controller(void) {
 /**
  * Clears chain (removes all chain operators and controllers)
  */
-void CHAIN::clear(void) {
+void CHAIN::clear(void)
+{
   for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p != chainops_rep.end(); p++) {
     delete *p;
     *p = 0;
@@ -379,7 +396,8 @@ void CHAIN::clear(void) {
  *  index == selected_chain_operator() || 
  *  selected_chain_operator() == 0
  */
-void CHAIN::select_chain_operator(int index) {
+void CHAIN::select_chain_operator(int index)
+{
   selected_chainop_repp = 0;
   selected_chainop_number_rep = 0;
   for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops_rep.size()); chainop_sizet++) {
@@ -401,7 +419,8 @@ void CHAIN::select_chain_operator(int index) {
  * ensure:
  *  index == selected_chain_operator_parameter()
  */
-void CHAIN::select_chain_operator_parameter(int index) {
+void CHAIN::select_chain_operator_parameter(int index)
+{
   selected_chainop_parameter_rep = index;
 }
 
@@ -416,7 +435,8 @@ void CHAIN::select_chain_operator_parameter(int index) {
  *  index == selected_controller() ||
  *  selected_controller() == 0
  */
-void CHAIN::select_controller(int index) {
+void CHAIN::select_controller(int index)
+{
   selected_controller_repp = 0;
   selected_controller_number_rep = 0;
   for(int gcontroller_sizet = 0; gcontroller_sizet != static_cast<int>(gcontrollers_rep.size()); gcontroller_sizet++) {
@@ -438,7 +458,8 @@ void CHAIN::select_controller(int index) {
  * ensure:
  *  index == selected_controller_parameter()
  */
-void CHAIN::select_controller_parameter(int index) {
+void CHAIN::select_controller_parameter(int index)
+{
   selected_controller_parameter_rep = index;
 }
 
@@ -452,7 +473,8 @@ void CHAIN::select_controller_parameter(int index) {
  * ensure:
  *   selected_target() == selected_chain_operator()
  */
-void CHAIN::selected_chain_operator_as_target(void) {
+void CHAIN::selected_chain_operator_as_target(void)
+{
   // --------
   DBC_REQUIRE(selected_chainop_repp != 0);
   // --------
@@ -472,7 +494,8 @@ void CHAIN::selected_chain_operator_as_target(void) {
  * ensure:
  *   selected_target() == selected_controller()
  */
-void CHAIN::selected_controller_as_target(void) {
+void CHAIN::selected_controller_as_target(void)
+{
   // --------
   DBC_REQUIRE(selected_controller_repp != 0);
   // --------
@@ -496,7 +519,8 @@ void CHAIN::selected_controller_as_target(void) {
  * ensure:
  *  is_initialized() == true
  */
-void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
+void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels)
+{
   // --------
   DBC_REQUIRE(in_channels != 0 || in_channels_rep != 0);
   DBC_REQUIRE(out_channels != 0 || out_channels_rep != 0);
@@ -541,7 +565,8 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
  * require:
  *  is_initialized() == true
  */
-void CHAIN::process(void) {
+void CHAIN::process(void)
+{
   // --------
   DBC_REQUIRE(is_initialized() == true);
   // --------
@@ -564,7 +589,8 @@ void CHAIN::process(void) {
 /**
  * Calculates/fetches new values for all controllers.
  */
-void CHAIN::controller_update(void) {
+void CHAIN::controller_update(void)
+{
   for(size_t n = 0; n < gcontrollers_rep.size(); n++) {
     DEBUG_CTRL_STATEMENT(GENERIC_CONTROLLER* ptr = gcontrollers_rep[n]);
 
@@ -579,7 +605,8 @@ void CHAIN::controller_update(void) {
 /**
  * Re-initializes all effect parameters.
  */
-void CHAIN::refresh_parameters(void) {
+void CHAIN::refresh_parameters(void)
+{
   for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops_rep.size()); chainop_sizet++) {
     for(int n = 0; n < chainops_rep[chainop_sizet]->number_of_params(); n++) {
       chainops_rep[chainop_sizet]->set_parameter(n + 1, 
@@ -591,7 +618,8 @@ void CHAIN::refresh_parameters(void) {
 /**
  * Converts chain to a formatted string.
  */
-string CHAIN::to_string(void) const {
+string CHAIN::to_string(void) const
+{
   MESSAGE_ITEM t; 
 
   FILE_PRESET* fpreset;
@@ -620,7 +648,8 @@ string CHAIN::to_string(void) const {
   return(t.to_string());
 }
 
-string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
+string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const
+{
   MESSAGE_ITEM t;
   
   // >--
@@ -652,7 +681,8 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
   return(t.to_string());
 }
 
-string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const {
+string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const
+{
   MESSAGE_ITEM t; 
   t << "-" << ECA_OBJECT_FACTORY::object_identifier(gctrl);
   t << ":";
@@ -672,6 +702,9 @@ string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const {
   return(t.to_string());
 }
 
+/**
+ * Reimplemented from ECA_SAMPLERATE_AWARE
+ */
 void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 {
   for(size_t p = 0; p != chainops_rep.size(); p++) {
@@ -679,15 +712,51 @@ void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
     ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(temp);
     if (srateobj != 0) {
       ecadebug->msg(ECA_DEBUG::user_objects,
-		    "(eca-chain) sample rate change, chain " +
-		    name() +
-		    " object " + 
-		    temp->name() + 
-		    " rate " + 
+		    "(eca-chain) sample rate change, chain '" +
+		    name() + "' object '" +
+		    temp->name() + "' rate " +
+		    kvu_numtostr(v) + ".");
+      srateobj->set_samples_per_second(v);
+    }
+  }
+
+  for(size_t p = 0; p != gcontrollers_rep.size(); p++) {
+    CONTROLLER_SOURCE* src = gcontrollers_rep[p]->source_pointer();
+    ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(src);
+    if (srateobj != 0) {
+      ecadebug->msg(ECA_DEBUG::user_objects,
+		    "(eca-chain) sample rate change, chain '" +
+		    name() + "' object '" +
+		    src->name() + "' rate " +
 		    kvu_numtostr(v) + ".");
       srateobj->set_samples_per_second(v);
     }
   }
     
   ECA_SAMPLERATE_AWARE::set_samples_per_second(v);
+}
+
+/**
+ * Reimplemented from ECA_AUDIO_POSITION.
+ */
+void CHAIN::seek_position(void)
+{
+  ecadebug->msg(ECA_DEBUG::user_objects,
+		"(eca-chain) seek position, to pos " +
+		kvu_numtostr(position_in_seconds()) + ".");
+
+  for(size_t p = 0; p != gcontrollers_rep.size(); p++) {
+    CONTROLLER_SOURCE* src = gcontrollers_rep[p]->source_pointer();
+    if (src != 0) {
+      ECA_AUDIO_POSITION* apos = dynamic_cast<ECA_AUDIO_POSITION*>(src);
+      if (apos != 0) {
+	apos->seek_position_in_samples(position_in_samples());
+	ecadebug->msg(ECA_DEBUG::user_objects,
+		      "(eca-chain) seek position, ctrl-src '" +
+		      src->name() +
+		      "' to pos " + 
+		      kvu_numtostr(apos->position_in_seconds()) + ".");
+      }
+    }
+  }
 }

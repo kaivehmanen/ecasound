@@ -410,8 +410,9 @@ void WAVEFILE::write_samples(void* target_buffer, long int samples) {
   fio_repp->write_from_buffer(target_buffer, frame_size() * samples);
 }
 
-void WAVEFILE::seek_position(void) {
-  if (is_open()) {
+void WAVEFILE::seek_position(void)
+{
+  if (is_open() == true) {
     fio_repp->set_file_position(data_start_position_rep + position_in_samples() * frame_size());
   }
 }
@@ -424,7 +425,7 @@ void WAVEFILE::set_length_in_bytes(void) {
 
   fio_repp->set_file_position_end();
   off_t datalen = fio_repp->get_file_position() - datastart;
-  length_in_samples(datalen / frame_size());
+  set_length_in_samples(datalen / frame_size());
   MESSAGE_ITEM mitem;
   mitem << "(audioio-wave) data length " << datalen << " bytes.";
   ecadebug->msg(ECA_DEBUG::user_objects, mitem.to_string());

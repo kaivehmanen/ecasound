@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // generic-linear-envelope.cpp: Generic linear envelope
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 // Copyright (C) 2001 Arto Hamara (artham@utu.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
@@ -24,36 +24,43 @@
 #include "generic-linear-envelope.h"
 #include "eca-debug.h"
 
-CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::value(void) {
-    curpos += step_length();
+GENERIC_LINEAR_ENVELOPE::GENERIC_LINEAR_ENVELOPE(void)
+{
+} 
 
-    if (curpos < pos_rep[0]) {
-        curval = val_rep[0];
-    } else if (curstage < static_cast<int>(pos_rep.size())-1) {
-        if (curpos >= pos_rep[curstage+1]) {
-            ++curstage;
-            if( curstage < static_cast<int>(pos_rep.size())-1)
-                curval = ( ( (curpos - pos_rep[curstage]) * val_rep[curstage+1] +
-                             (pos_rep[curstage+1] - curpos) * val_rep[curstage] ) /
-                           (pos_rep[curstage+1] - pos_rep[curstage]) );
-            else
-                curval = val_rep.back();
-        } else {
-            curval = ( ( (curpos - pos_rep[curstage]) * val_rep[curstage+1] +
-                         (pos_rep[curstage+1] - curpos) * val_rep[curstage] ) /
-                       (pos_rep[curstage+1] - pos_rep[curstage]) );
-        }
+GENERIC_LINEAR_ENVELOPE::~GENERIC_LINEAR_ENVELOPE(void)
+{
+} 
+
+CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::value(void)
+{
+  change_position_in_seconds(step_length());
+
+  parameter_t curpos = position_in_seconds_exact();
+  if (curpos < pos_rep[0]) {
+    curval = val_rep[0];
+  } else if (curstage < static_cast<int>(pos_rep.size())-1) {
+    if (curpos >= pos_rep[curstage+1]) {
+      ++curstage;
+      if( curstage < static_cast<int>(pos_rep.size())-1)
+	curval = ( ( (curpos - pos_rep[curstage]) * val_rep[curstage+1] +
+		     (pos_rep[curstage+1] - curpos) * val_rep[curstage] ) /
+		   (pos_rep[curstage+1] - pos_rep[curstage]) );
+      else
+	curval = val_rep.back();
+    } else {
+      curval = ( ( (curpos - pos_rep[curstage]) * val_rep[curstage+1] +
+		   (pos_rep[curstage+1] - curpos) * val_rep[curstage] ) /
+		 (pos_rep[curstage+1] - pos_rep[curstage]) );
     }
-   
-    return(curval);
+  }
+  
+  return(curval);
 }
-
-GENERIC_LINEAR_ENVELOPE::GENERIC_LINEAR_ENVELOPE(void) { } 
 
 void GENERIC_LINEAR_ENVELOPE::init(parameter_t step) {
     step_length(step);
 
-    curpos = 0.0;
     curval = 0.0;
     curstage = -1;
 

@@ -23,21 +23,13 @@ class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
 
   static void set_timidity_cmd(const std::string& value);
 
- private:
-
-  bool triggered_rep;
-  bool finished_rep;
-  long int bytes_read_rep;
-  int fd_rep;
-  FILE* f1_rep;
-  
-  void seek_position_in_samples(long pos);
-  TIMIDITY_INTERFACE& operator=(const TIMIDITY_INTERFACE& x) { return *this; }
-
-  void fork_timidity(void);
-  void kill_timidity(void);
-  
  public:
+
+  TIMIDITY_INTERFACE (const std::string& name = "");
+  virtual ~TIMIDITY_INTERFACE(void);
+    
+  virtual TIMIDITY_INTERFACE* clone(void) const { return new TIMIDITY_INTERFACE(*this); }
+  virtual TIMIDITY_INTERFACE* new_expr(void) const { return new TIMIDITY_INTERFACE(); }
 
   virtual std::string name(void) const { return("MIDI-to-audio stream"); }
   virtual std::string description(void) const { return("Interface for MIDI->audio converters that support i/o using standard streams."); }
@@ -53,11 +45,19 @@ class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
   virtual bool finished(void) const { return(finished_rep); }
   virtual void seek_position(void);
  
-  TIMIDITY_INTERFACE (const std::string& name = "");
-  ~TIMIDITY_INTERFACE(void);
-    
-  TIMIDITY_INTERFACE* clone(void) const { return new TIMIDITY_INTERFACE(*this); }
-  TIMIDITY_INTERFACE* new_expr(void) const { return new TIMIDITY_INTERFACE(); }
+ private:
+
+  bool triggered_rep;
+  bool finished_rep;
+  long int bytes_read_rep;
+  int fd_rep;
+  FILE* f1_rep;
+  
+  void seek_position_in_samples(long pos);
+  TIMIDITY_INTERFACE& operator=(const TIMIDITY_INTERFACE& x) { return *this; }
+
+  void fork_timidity(void);
+  void kill_timidity(void);
 };
 
 #endif

@@ -73,9 +73,6 @@ class ECA_IAMODE_PARSER {
     ec_c_rename,
     ec_c_mute,
     ec_c_bypass,
-    ec_c_forward,
-    ec_c_rewind,
-    ec_c_setpos,
     ec_c_status,
     // --
     ec_aio_register,

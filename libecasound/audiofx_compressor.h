@@ -17,6 +17,31 @@ class ADVANCED_COMPRESSOR : public EFFECT_AMPLITUDE {
  static const int NFILT = 12;
  static const int NEFILT = 17;
 
+ public:
+
+  ADVANCED_COMPRESSOR (void) 
+    : rlevelsqn(ADVANCED_COMPRESSOR::NFILT), 
+      rlevelsqe(ADVANCED_COMPRESSOR::NEFILT) {
+    init_values();
+    //    map_parameters();
+  }
+  
+  virtual ~ADVANCED_COMPRESSOR (void);
+
+  virtual std::string name(void) const { return("Advanced compressor"); }
+  virtual std::string parameter_names(void) const { return("peak-limit-%,release-time-sec,fast-crate,overall-crate"); }
+
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
+
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
+  virtual int output_channels(int i_channels) const { return(2); }
+
+  ADVANCED_COMPRESSOR* clone(void) const { return new ADVANCED_COMPRESSOR(*this); }
+  ADVANCED_COMPRESSOR* new_expr(void) const { return new ADVANCED_COMPRESSOR(); }
+  ADVANCED_COMPRESSOR (double peak_limit, double release_time, double cfrate, double crate);
+
  private:
 
   double rlevelsq0, rlevelsq1;
@@ -81,30 +106,6 @@ class ADVANCED_COMPRESSOR : public EFFECT_AMPLITUDE {
   void init_values(void);
   double hardlimit(double value, double knee, double limit);
 
- public:
-
-  virtual std::string name(void) const { return("Advanced compressor"); }
-  virtual std::string parameter_names(void) const { return("peak-limit-%,release-time-sec,fast-crate,overall-crate"); }
-
-  virtual void set_parameter(int param, parameter_t value);
-  virtual parameter_t get_parameter(int param) const;
-
-  virtual void init(SAMPLE_BUFFER *insample);
-  virtual void process(void);
-  virtual int output_channels(int i_channels) const { return(2); }
-
-  ADVANCED_COMPRESSOR* clone(void) const { return new ADVANCED_COMPRESSOR(*this); }
-  ADVANCED_COMPRESSOR* new_expr(void) const { return new ADVANCED_COMPRESSOR(); }
-  ADVANCED_COMPRESSOR (double peak_limit, double release_time, double cfrate, double crate);
-
-  ADVANCED_COMPRESSOR (void) 
-    : rlevelsqn(ADVANCED_COMPRESSOR::NFILT), 
-      rlevelsqe(ADVANCED_COMPRESSOR::NEFILT) {
-    init_values();
-    //    map_parameters();
-  }
-  
-  ~ADVANCED_COMPRESSOR (void) { }
 };
 
 #endif

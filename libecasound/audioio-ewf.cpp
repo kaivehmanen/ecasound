@@ -138,7 +138,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	sbuf->make_silent();
       }
     }
-    position_in_samples_advance(sbuf->length_in_samples());
+    change_position_in_samples(sbuf->length_in_samples());
   }
   else {
     // ---
@@ -155,7 +155,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
       // case 2: reading child file
       // ---
       child->read_buffer(sbuf);
-      position_in_samples_advance(sbuf->length_in_samples());
+      change_position_in_samples(sbuf->length_in_samples());
     }
     else {
       // ---
@@ -190,8 +190,8 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 			 tmp_buffer.length_in_samples(), 
 			 sbuf->length_in_samples() - tail);
 	
-	position_in_samples(child_offset_rep.samples() + 
-			    child->position_in_samples() - child_start_pos_rep.samples());
+	set_position_in_samples(child_offset_rep.samples() + 
+				child->position_in_samples() - child_start_pos_rep.samples());
       }
       else {
 	// ---
@@ -211,7 +211,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	  sbuf->make_silent_range(startpos,
 				  sbuf->length_in_samples());
 	}
-	position_in_samples_advance(sbuf->length_in_samples());
+	change_position_in_samples(sbuf->length_in_samples());
       }
     }
   }
@@ -235,12 +235,13 @@ void EWFFILE::write_buffer(SAMPLE_BUFFER* sbuf) {
   }
   
   child->write_buffer(sbuf);
-  position_in_samples_advance(sbuf->length_in_samples());
+  change_position_in_samples(sbuf->length_in_samples());
   extend_position();
 }
 
-void EWFFILE::seek_position(void) {
-  if (is_open()) {
+void EWFFILE::seek_position(void)
+{
+  if (is_open() == true) {
     if (io_mode() == AUDIO_IO::io_read ||
 	(io_mode() != AUDIO_IO::io_read &&
 	 child_active == true)) {

@@ -116,7 +116,7 @@ void CDRFILE::write_samples(void* target_buffer, long int samples) {
 
 void CDRFILE::seek_position(void) {
   DBC_CHECK(curpos_rep >= 0);
-  if (is_open()) {
+  if (is_open() == true) {
     off_t curpos_rep = position_in_samples() * frame_size();
 /* fseeko doesn't seem to work with glibc 2.1.x */
 #if _LARGEFILE_SOURCE
@@ -164,5 +164,5 @@ void CDRFILE::pad_to_sectorsize(void) {
 void CDRFILE::set_length_in_bytes(void) {
   struct stat temp;
   stat(label().c_str(), &temp);
-  length_in_samples(temp.st_size / frame_size());
+  set_length_in_samples(temp.st_size / frame_size());
 }

@@ -1,12 +1,8 @@
 #ifndef INCLUDED_DYNAMIC_PARAMETERS_H
 #define INCLUDED_DYNAMIC_PARAMETERS_H
 
-#include <vector>
 #include <string>
 #include <kvutils/kvutils.h>
-
-using std::string;
-using std::vector;
 
 /**
  * Virtual template class that provides a system for dynamically 
@@ -21,6 +17,10 @@ class DYNAMIC_PARAMETERS {
  public:
 
   typedef T parameter_t;
+
+ public:
+
+  virtual ~DYNAMIC_PARAMETERS (void) { }
 
   /**
    * Gets the total number of of parameters.
@@ -58,8 +58,6 @@ class DYNAMIC_PARAMETERS {
    * @param param parameter id, require: param > 0
    */
   virtual T get_parameter(int param) const = 0;
-
-  virtual ~DYNAMIC_PARAMETERS (void) { }
 };
 
 #endif

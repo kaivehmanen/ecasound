@@ -28,6 +28,10 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
+EFFECT_ANALYSIS::~EFFECT_ANALYSIS(void)
+{
+}
+
 EFFECT_ANALYZE::EFFECT_ANALYZE (void) { 
   reset_stats();
   cumulativemode_rep = false;

@@ -456,7 +456,7 @@ void ECA_CHAINSETUP_PARSER::interpret_processing_control (const std::string& arg
       switch(argu[2]) {
       case ':': 
 	{
-	  csetup_repp->length_in_seconds(atof(get_argument_number(1, argu).c_str()));
+	  csetup_repp->set_length_in_seconds(atof(get_argument_number(1, argu).c_str()));
 	  ecadebug->msg("(eca-chainsetup-parser) Set processing time to "
 			+ kvu_numtostr(csetup_repp->length_in_seconds_exact()) + ".");
 	  break;

@@ -17,15 +17,13 @@
  */
 class RAWFILE : public AUDIO_IO_BUFFERED {
 
-  ECA_FILE_IO* fio_repp;
-  std::string mmaptoggle_rep;
-
-  RAWFILE(const RAWFILE& x) { }
-  RAWFILE& operator=(const RAWFILE& x) { return *this; }
-
-  void set_length_in_bytes(void);
-
  public:
+
+  RAWFILE (const std::string& name = "");
+  virtual ~RAWFILE(void);
+    
+  virtual RAWFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl;  return 0; }    
+  virtual RAWFILE* new_expr(void) const { return new RAWFILE(); }    
 
   virtual std::string name(void) const { return("Raw audio file"); }
   virtual std::string parameter_names(void) const { return("label,toggle_mmap"); }
@@ -42,11 +40,15 @@ class RAWFILE : public AUDIO_IO_BUFFERED {
   virtual void set_parameter(int param, std::string value);
   virtual std::string get_parameter(int param) const;
 
-  RAWFILE (const std::string& name = "");
-  ~RAWFILE(void);
-    
-  RAWFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl;  return 0; }    
-  RAWFILE* new_expr(void) const { return new RAWFILE(); }    
+private:
+
+  ECA_FILE_IO* fio_repp;
+  std::string mmaptoggle_rep;
+
+  RAWFILE(const RAWFILE& x) { }
+  RAWFILE& operator=(const RAWFILE& x) { return *this; }
+
+  void set_length_in_bytes(void);
 };
 
 #endif

@@ -20,15 +20,13 @@ long vst_audiomaster(AEffect *effect, long opcode, long index, long value, void 
  */
 class EFFECT_VST : public EFFECT_BASE {
 
-private:
-
-  SAMPLE_BUFFER* buffer;
-
-  VST_plugin_descriptor master_func;
-  std::vector<AEffect*> vst_handles;
-  std::string label_rep, unique_rep, param_names_rep, library_file_rep;
-
 public:
+
+  EFFECT_VST (const std::string& fname) throw(ECA_ERROR&);
+  virtual ~EFFECT_VST (void);
+
+  EFFECT_VST* clone(void)  { return new EFFECT_VST(library_file_rep); }
+  EFFECT_VST* new_expr(void)  { return new EFFECT_VST(library_file_rep); }
 
   virtual virtual std::string name(void) const { return("VST/" + label_rep); }
   virtual std::string description(void) const { return("Wrapper for VST-plugins."); }
@@ -42,15 +40,18 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_VST* clone(void)  { return new EFFECT_VST(library_file_rep); }
-  EFFECT_VST* new_expr(void)  { return new EFFECT_VST(library_file_rep); }
-  EFFECT_VST (const std::string& fname) throw(ECA_ERROR&);
-  ~EFFECT_VST (void);
-
  private:
 
   EFFECT_VST (const EFFECT_VST& x) { }
   EFFECT_VST& operator=(const EFFECT_VST& x) { return *this; }
+
+private:
+
+  SAMPLE_BUFFER* buffer;
+
+  VST_plugin_descriptor master_func;
+  std::vector<AEffect*> vst_handles;
+  std::string label_rep, unique_rep, param_names_rep, library_file_rep;
 };
 
 #endif // experimental

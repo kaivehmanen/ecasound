@@ -15,6 +15,10 @@
  * object details. Object maps make it possible to 
  * hide these details completely, and in one place.
  *
+ * Related design patterns:
+ *     - Prototype (GoF117)
+ *     - Factory Method (GoF107)
+ *
  * @author Kai Vehmanen
  */
 class ECA_OBJECT_MAP {

@@ -173,8 +173,8 @@ command.
 
 dit(-tl)
 Enables looping. When processing is finished, engine will start 
-again from the initial position. This option is equivalent to the 
-'cs-loop' EIAM command.
+again from beginning. This option is equivalent to the 'cs-loop' 
+EIAM command.
 
 enddit()
 

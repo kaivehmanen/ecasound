@@ -149,12 +149,6 @@ void ECA_IAMODE_PARSER::register_commands_c(void) {
   cmd_map_rep["c-rename"] = ec_c_rename;
   cmd_map_rep["c-mute"] = ec_c_mute;
   cmd_map_rep["c-bypass"] = ec_c_bypass;
-  cmd_map_rep["c-forward"] = ec_c_forward;
-  cmd_map_rep["c-fw"] = ec_c_forward;
-  cmd_map_rep["c-rewind"] = ec_c_rewind;
-  cmd_map_rep["c-rw"] = ec_c_rewind;
-  cmd_map_rep["c-setpos"] = ec_c_setpos;
-  cmd_map_rep["c-set-position"] = ec_c_setpos;
   cmd_map_rep["c-status"] = ec_c_status;
 }
 
@@ -288,9 +282,6 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_c_deselect:
   case ec_c_select_add:
   case ec_c_rename:
-  case ec_c_forward: 
-  case ec_c_rewind: 
-  case ec_c_setpos:
 
   case ec_ai_add:
   case ec_ai_select:
@@ -371,9 +362,6 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_c_rename:
   case ec_c_mute:
   case ec_c_bypass:
-  case ec_c_forward: 
-  case ec_c_rewind: 
-  case ec_c_setpos:
   case ec_c_status:
   case ec_c_list:
 

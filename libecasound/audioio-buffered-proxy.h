@@ -14,22 +14,13 @@ class SAMPLE_BUFFER;
  * to instances of class AUDIO_IO. Buffering is handled
  * by a separate i/o engine thread, which is common to all
  * proxy objects.
+ *
+ * Related design patterns:
+ *     - Proxy (GoF207
+ *
  * @author Kai Vehmanen
  */
 class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
-
-  AUDIO_IO_PROXY_SERVER* pserver_repp;
-  AUDIO_IO_PROXY_BUFFER* pbuffer_repp;
-  AUDIO_IO* child_repp;
-
-  AUDIO_IO_BUFFERED_PROXY& operator=(const AUDIO_IO_BUFFERED_PROXY& x) { return *this; }
-  AUDIO_IO_BUFFERED_PROXY (const AUDIO_IO_BUFFERED_PROXY& x) { }
-
-  int xruns_rep;
-  bool finished_rep;
-  bool free_child_rep;
-
-  void fetch_child_data(void);
 
  public:
 
@@ -69,13 +60,11 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
   /** @name Reimplemented functions from ECA_AUDIO_POSITION */
   /*@{*/
 
+  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const { return(child_repp->position_in_samples()); }
   virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const { return(child_repp->length_in_samples()); }
+  virtual void set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
+  virtual void set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos);
   virtual void seek_position(void);
-  /* -- not reimplemented 
-   * virtual void length_in_samples(long pos) { return(child_repp->length_in_samples(pos); }
-   * virtual long position_in_samples(void) const { return(child_repp->position_in_samples()); }
-   * virtual void position_in_samples(long pos) { child_repp->position_in_samples(pos); }
-   */
 
   /*@}*/
 
@@ -109,6 +98,21 @@ protected:
   virtual bool class_invariant(void) const { return(child_repp != 0); }
 
   /*@}*/
+
+  private:
+
+  AUDIO_IO_PROXY_SERVER* pserver_repp;
+  AUDIO_IO_PROXY_BUFFER* pbuffer_repp;
+  AUDIO_IO* child_repp;
+
+  AUDIO_IO_BUFFERED_PROXY& operator=(const AUDIO_IO_BUFFERED_PROXY& x) { return *this; }
+  AUDIO_IO_BUFFERED_PROXY (const AUDIO_IO_BUFFERED_PROXY& x) { }
+
+  int xruns_rep;
+  bool finished_rep;
+  bool free_child_rep;
+
+  void fetch_child_data(void);
 };
 
 #endif

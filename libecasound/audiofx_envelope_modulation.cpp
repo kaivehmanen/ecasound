@@ -28,11 +28,20 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
+EFFECT_ENV_MOD::~EFFECT_ENV_MOD(void)
+{
+}
+
 EFFECT_PULSE_GATE::EFFECT_PULSE_GATE (parameter_t freq_Hz,
-				      parameter_t onTime_percent) {
+				      parameter_t onTime_percent)
+{
   set_parameter(1, freq_Hz);
   set_parameter(2, onTime_percent);
   currentTime = 0.0;
+}
+
+EFFECT_PULSE_GATE::~EFFECT_PULSE_GATE(void)
+{
 }
 
 void EFFECT_PULSE_GATE::set_parameter(int param, parameter_t value) {
@@ -103,9 +112,14 @@ void EFFECT_PULSE_GATE::process(void) {
 }
 
 EFFECT_PULSE_GATE_BPM::EFFECT_PULSE_GATE_BPM (parameter_t bpm,
-					      parameter_t ontime_percent) {
+					      parameter_t ontime_percent)
+{
   set_parameter(1, bpm);
   set_parameter(2, ontime_percent);
+}
+
+EFFECT_PULSE_GATE_BPM::~EFFECT_PULSE_GATE_BPM(void)
+{
 }
 
 void EFFECT_PULSE_GATE_BPM::set_parameter(int param, parameter_t value) {
@@ -135,10 +149,15 @@ void EFFECT_PULSE_GATE_BPM::init(SAMPLE_BUFFER* sbuf) { pulsegate_rep.init(sbuf)
 void EFFECT_PULSE_GATE_BPM::process(void) { pulsegate_rep.process(); }
 
 EFFECT_TREMOLO::EFFECT_TREMOLO (parameter_t freq_bpm,
-				      parameter_t depth_percent) {
+				parameter_t depth_percent)
+{
   set_parameter(1, freq_bpm);
   set_parameter(2, depth_percent);
   currentTime = 0.0;
+}
+
+EFFECT_TREMOLO::~EFFECT_TREMOLO(void)
+{
 }
 
 void EFFECT_TREMOLO::set_parameter(int param, parameter_t value) {

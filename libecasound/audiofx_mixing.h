@@ -14,7 +14,7 @@ class EFFECT_MIXING : public EFFECT_BASE {
  public:
   typedef std::vector<parameter_t>::size_type ch_type;
 
-  virtual ~EFFECT_MIXING(void) { }
+  virtual ~EFFECT_MIXING(void);
 };
 
 /**

@@ -14,7 +14,7 @@
 class EFFECT_AMPLITUDE : public EFFECT_BASE {
 
  public:
-  virtual ~EFFECT_AMPLITUDE(void) { }
+  virtual ~EFFECT_AMPLITUDE(void);
 };
 
 #include "audiofx_compressor.h"
@@ -41,7 +41,7 @@ class EFFECT_AMPLIFY: public EFFECT_AMPLITUDE {
   virtual void process(void);
 
   EFFECT_AMPLIFY (parameter_t multiplier_percent = 100.0);
-  virtual ~EFFECT_AMPLIFY(void) { }
+  virtual ~EFFECT_AMPLIFY(void);
   EFFECT_AMPLIFY* clone(void) const { return new EFFECT_AMPLIFY(*this); }
   EFFECT_AMPLIFY* new_expr(void) const { return new EFFECT_AMPLIFY(); }
 };
@@ -122,7 +122,7 @@ class EFFECT_LIMITER: public EFFECT_AMPLITUDE {
   virtual void process(void);
 
   EFFECT_LIMITER (parameter_t multiplier_percent = 100.0);
-  virtual ~EFFECT_LIMITER(void) { }
+  virtual ~EFFECT_LIMITER(void);
   EFFECT_LIMITER* clone(void) const { return new EFFECT_LIMITER(*this); }
   EFFECT_LIMITER* new_expr(void) const { return new EFFECT_LIMITER(); }
 };

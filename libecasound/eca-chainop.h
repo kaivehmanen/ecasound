@@ -19,6 +19,11 @@ class CHAIN_OPERATOR : public OPERATOR {
  public:
 
   /**
+   * Virtual destructor.
+   */
+  virtual ~CHAIN_OPERATOR (void) { }
+
+  /**
    * Prepare chain operator for processing. All following 
    * calls will use the sample buffer pointed by 'sbuf'.
    * It's important that buffer parameters are not changed
@@ -53,11 +58,6 @@ class CHAIN_OPERATOR : public OPERATOR {
    * during processing.
    */
   virtual int output_channels(int i_channels) const { return(i_channels); }
-
-  /**
-   * Virtual destructor.
-   */
-  virtual ~CHAIN_OPERATOR (void) { }
 };
 
 #endif

@@ -65,7 +65,7 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
 
   set_audio_format(child_repp->audio_format());
 
-  position_in_samples(child_repp->position_in_samples());
+  set_position_in_samples(child_repp->position_in_samples());
   
   int channels = child_repp->channels();
   int buffersize = child_repp->buffersize();
@@ -114,7 +114,7 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
     sbuf->number_of_channels(source->number_of_channels());
     sbuf->copy(*source);
     pbuffer_repp->advance_read_pointer();
-    position_in_samples_advance(sbuf->length_in_samples());
+    change_position_in_samples(sbuf->length_in_samples());
   }
   else {
     if (pbuffer_repp->finished_rep.get() == 1) {
@@ -150,7 +150,7 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
     target->number_of_channels(sbuf->number_of_channels());
     target->copy(*sbuf);
     pbuffer_repp->advance_write_pointer();
-    position_in_samples_advance(sbuf->length_in_samples());
+    change_position_in_samples(sbuf->length_in_samples());
     extend_position();
   }
   else {
@@ -175,7 +175,8 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
 /**
  * Seeks to the current position.
  */
-void AUDIO_IO_BUFFERED_PROXY::seek_position(void) { 
+void AUDIO_IO_BUFFERED_PROXY::seek_position(void)
+{ 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) seek " + label() + ".");
   bool was_running = false;
   if (pserver_repp->is_running() == true) {
@@ -192,6 +193,19 @@ void AUDIO_IO_BUFFERED_PROXY::seek_position(void) {
     pserver_repp->wait_for_full();
     //  while(pserver_repp->is_full() != true) usleep(50000);
   }
+}
+
+void AUDIO_IO_BUFFERED_PROXY::set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos)
+{
+  /* only way to update the current position */
+  child_repp->seek_position_in_samples(pos);
+  AUDIO_IO::set_position_in_samples(pos);
+}
+
+void AUDIO_IO_BUFFERED_PROXY::set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
+{
+  // child_repp->set_length_in_samples(pos);
+  AUDIO_IO::set_length_in_samples(pos);
 }
 
 /**

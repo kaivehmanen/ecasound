@@ -14,6 +14,9 @@ class AUDIO_IO;
  * provide a communication platform for inter-object 
  * communication, and tracking of objects.
  *
+ * Related design patterns:
+ *     - Mediator (GoF273)
+ *
  * @author Kai Vehmanen
  */
 class AUDIO_IO_MANAGER {

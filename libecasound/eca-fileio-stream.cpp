@@ -39,6 +39,11 @@
 #include "eca-fileio.h"
 #include "eca-fileio-stream.h"
 
+ECA_FILE_IO_STREAM::~ECA_FILE_IO_STREAM(void)
+{ 
+  if (mode_rep != "") close_file(); 
+}
+
 void ECA_FILE_IO_STREAM::open_file(const std::string& fname, 
 				   const std::string& fmode)
 { 

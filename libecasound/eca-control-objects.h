@@ -91,10 +91,6 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void rename_chain(const std::string& name);
   void toggle_chain_muting(void);
   void toggle_chain_bypass(void);
-  void rewind_chains(double pos_in_seconds);
-  void forward_chains(double pos_in_seconds);
-  void set_position_chains(double pos_in_seconds);
-  void change_position_chains(double change_in_seconds);
 
   // -------------------------------------------------------------------
   // Audio-devices  (active chainsetup is edited)

@@ -1,30 +1,44 @@
 ------------------------------------------------------------------------
-Status: OPEN
+Status: CLOSED
 
 (edi-21) Review of object position functionality
 	- submitted: kaiv, 31.01.2002
+	- done: kaiv, 01.02.2002
 
 ------------------------------------------------------------------------
 Details:
 
 - goals 
   - find out which objects contain audio position and length 
-    information
+    information [done!]
   - determine how different objects behave when position (or length)
     is set in different situations (chainsetup connected/disconnect, 
-    with/without engine running)
+    with/without engine running) [done!]
   - add concept of current position to controller objects (to 
     make for example fade-ins work even if chainsetup position 
-    is changed during operation)
+    is changed during operation) [done!]
   - make sure all ECI commands work correctly in all 
-    situations described above
-  - update documentation
+    situations described above [done!]
+  - update documentation [done!]
 - technical details
   - separate ECA_AUDIO_POSITION from ECA_AUDIO_FORMAT; make 
-    both of them inherit ECA_SAMPLERATE_AWARE
-  - implement ECA_CHAINSETUP position using ECA_AUDIO_POSITION
+    both of them inherit ECA_SAMPLERATE_AWARE [done!
+  - implement ECA_CHAINSETUP_POSITION using ECA_AUDIO_POSITION [done!]
 - open issues
+  - what's the role of ECA_AUDIO_TIME? [=> separate concrete class]
   - should new functionality (locations, alternative position
-    representations) be added to ECA_AUDIO_POSITION
+    representations) be added to ECA_AUDIO_POSITION? [=> maybe, 
+    now it involves much less work than before]
+- changelog
+  - added: edi-21 implemented; a much improved framework 
+	   for handling audio position information is now
+ 	   in place; -kl, -kl2 and -klg are now position 
+	   aware - changing chainsetup position also affects
+	   controller sources
+  - removed: ia-mode - 'c-rewind', 'c-forward' and 
+	     'c-setpos'
+  - changed: looping with -tl always loops from the start; 
+	     -y can't be used for offseting loop start 
+ 	     offset -> use ewf-files instead
 
 ------------------------------------------------------------------------

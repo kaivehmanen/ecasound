@@ -15,7 +15,7 @@
 class EFFECT_FILTER : public EFFECT_BASE {
 
  public:
-  virtual ~EFFECT_FILTER(void) { }
+  virtual ~EFFECT_FILTER(void);
 };
 
 /**

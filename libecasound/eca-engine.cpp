@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-engine.cpp: Main processing engine
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,7 +67,8 @@ using std::vector;
  */
 ECA_ENGINE::ECA_ENGINE(ECA_SESSION* arg) 
   : session_repp(arg),
-    mixslot_repp(0) {
+    mixslot_repp(0)
+{
   // --
   DBC_REQUIRE(arg != 0);
   DBC_REQUIRE(arg->get_connected_chainsetup() != 0);
@@ -92,7 +93,8 @@ ECA_ENGINE::ECA_ENGINE(ECA_SESSION* arg)
 /**
  * Class destructor.
  */
-ECA_ENGINE::~ECA_ENGINE(void) {
+ECA_ENGINE::~ECA_ENGINE(void)
+{
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) ECA_ENGINE destructor!");
 
   if (session_repp != 0) {
@@ -132,7 +134,8 @@ ECA_ENGINE::~ECA_ENGINE(void) {
  *       status() == ECA_ENGINE::engine_status_finished ||
  *	 status() == ECA_ENGINE::engine_status_error
  */
-void ECA_ENGINE::exec(void) {
+void ECA_ENGINE::exec(void)
+{
   // --
   DBC_REQUIRE(session_repp->get_connected_chainsetup() != 0);
   DBC_REQUIRE(session_repp->get_connected_chainsetup()->is_enabled() == true);
@@ -176,15 +179,18 @@ void ECA_ENGINE::exec(void) {
  * Sends 'cmd' to engines command queue. Commands are 
  * processed in the server's main loop. 
  */
-void ECA_ENGINE::command(Engine_command_t cmd, double arg) {
+void ECA_ENGINE::command(Engine_command_t cmd, double arg)
+{
   impl_repp->command_queue_rep.push_back(static_cast<int>(cmd),arg);
 }
 
-void ECA_ENGINE::set_status(ECA_ENGINE::Engine_status_t state) { 
+void ECA_ENGINE::set_status(ECA_ENGINE::Engine_status_t state) 
+{ 
   engine_status_rep = state; 
 }
 
-ECA_ENGINE::Engine_status_t ECA_ENGINE::status(void) const { 
+ECA_ENGINE::Engine_status_t ECA_ENGINE::status(void) const
+{ 
   return(engine_status_rep); 
 }
 
@@ -195,7 +201,8 @@ ECA_ENGINE::Engine_status_t ECA_ENGINE::status(void) const {
  * 
  * @see signal_stop()
  */
-void ECA_ENGINE::wait_for_stop(int timeout) {
+void ECA_ENGINE::wait_for_stop(int timeout)
+{
   struct timeval now;
   gettimeofday(&now, 0);
   struct timespec sleepcount;
@@ -222,7 +229,8 @@ void ECA_ENGINE::wait_for_stop(int timeout) {
  * 
  * @see wait_for_stop()
  */
-void ECA_ENGINE::signal_stop(void) {
+void ECA_ENGINE::signal_stop(void)
+{
   pthread_mutex_lock(&impl_repp->ecasound_stop_mutex_repp);
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Signaling stop");
   pthread_cond_broadcast(&impl_repp->ecasound_stop_cond_repp);
@@ -232,7 +240,8 @@ void ECA_ENGINE::signal_stop(void) {
 /**
  * Called only from class constructor.
  */
-void ECA_ENGINE::init_profiling(void) {
+void ECA_ENGINE::init_profiling(void)
+{
   impl_repp->looptimer_low_rep = static_cast<double>(buffersize_rep) / csetup_repp->samples_per_second();
   impl_repp->looptimer_mid_rep = static_cast<double>(buffersize_rep * 2) / csetup_repp->samples_per_second();
   impl_repp->looptimer_high_rep = static_cast<double>(buffersize_rep) * prefill_threshold_rep / csetup_repp->samples_per_second();
@@ -246,7 +255,8 @@ void ECA_ENGINE::init_profiling(void) {
 /**
  * Prints  profiling information to stderr.
  */
-void ECA_ENGINE::dump_profile_info(void) {
+void ECA_ENGINE::dump_profile_info(void)
+{
   long int slower_than_rt = impl_repp->looptimer_rep.event_count() -
                             impl_repp->looptimer_rep.events_under_lower_bound() -
                             impl_repp->looptimer_rep.events_over_upper_bound();
@@ -274,7 +284,8 @@ void ECA_ENGINE::dump_profile_info(void) {
 /**
  * Called only from class constructor.
  */
-void ECA_ENGINE::init_variables(void) {
+void ECA_ENGINE::init_variables(void)
+{
   set_status(ECA_ENGINE::engine_status_stopped);
   buffersize_rep = session_repp->connected_chainsetup_repp->buffersize();
   use_midi_rep = false;
@@ -291,7 +302,8 @@ void ECA_ENGINE::init_variables(void) {
 /**
  * Called only from class constructor.
  */
-void ECA_ENGINE::init_connection_to_chainsetup(void) {
+void ECA_ENGINE::init_connection_to_chainsetup(void)
+{
   csetup_repp = session_repp->connected_chainsetup_repp;
 
   if (csetup_repp == 0 ) {
@@ -327,7 +339,8 @@ void ECA_ENGINE::init_connection_to_chainsetup(void) {
  * 
  * Called only from init_connection_to_chainsetup().
  */
-void ECA_ENGINE::init_servers(void) {
+void ECA_ENGINE::init_servers(void)
+{
   if (csetup_repp->double_buffering() == true) {
     use_double_buffering_rep = true;
   }
@@ -347,7 +360,8 @@ void ECA_ENGINE::init_servers(void) {
  * 
  * Called only from init_connection_to_chainsetup().
  */
-void ECA_ENGINE::init_sorted_input_map(void) {
+void ECA_ENGINE::init_sorted_input_map(void)
+{
   inputs_repp = &(csetup_repp->inputs);
 
   if (inputs_repp == 0 || inputs_repp->size() == 0) {
@@ -375,7 +389,8 @@ void ECA_ENGINE::init_sorted_input_map(void) {
  *
  * Called only from init_connection_to_chainsetup().
  */
-void ECA_ENGINE::init_sorted_output_map(void) {
+void ECA_ENGINE::init_sorted_output_map(void)
+{
   outputs_repp =  &(csetup_repp->outputs);
 
   if (outputs_repp  == 0 ||
@@ -399,97 +414,67 @@ void ECA_ENGINE::init_sorted_output_map(void) {
 }
 
 /**
- * Init all input objects by setting buffersize, sample
- * rate and channel count parameters. Also store the 
- * input start positions.
+ * Collects necessary information from input
+ * objects to initialized related engine variables.
  *
  * Called only from init_connection_to_chainsetup().
  */
-void ECA_ENGINE::init_inputs(void) {
+void ECA_ENGINE::init_inputs(void)
+{
   inputs_not_finished_rep = 0;
-
-  input_start_pos_rep.resize(inputs_repp->size());
   input_chain_count_rep.resize(inputs_repp->size());
   long int max_input_length = 0;
   for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
-    (*inputs_repp)[adev_sizet]->set_buffersize(buffersize_rep);
-
     if (csetup_repp->inputs[adev_sizet]->channels() > max_channels_rep)
       max_channels_rep = csetup_repp->inputs[adev_sizet]->channels();
 
-    input_start_pos_rep[adev_sizet] = csetup_repp->inputs[adev_sizet]->position_in_samples();
-    (*inputs_repp)[adev_sizet]->seek_position_in_samples(input_start_pos_rep[adev_sizet]);
-
     input_chain_count_rep[adev_sizet] =
       csetup_repp->number_of_attached_chains_to_input(csetup_repp->inputs[adev_sizet]);
-
+    
     if (csetup_repp->inputs[adev_sizet]->length_in_samples() > max_input_length)
       max_input_length = csetup_repp->inputs[adev_sizet]->length_in_samples();
-
-    // ---
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Input \"" +
-		  (*inputs_repp)[adev_sizet]->label() +  
-		  "\": start position " +
-		  kvu_numtostr(input_start_pos_rep[adev_sizet]) +  
-		  ", number of connected chain " +
-		  kvu_numtostr(input_chain_count_rep[adev_sizet]) + " .");
   }
   
-  csetup_repp->set_position(0);
   if (csetup_repp->length_set() != true) {
     if (csetup_repp->looping_enabled() == true)
       processing_range_set_rep = true;
     else
       processing_range_set_rep = false;
-
-    csetup_repp->length_in_samples(max_input_length);
+    
+    csetup_repp->set_length_in_samples(max_input_length);
   }
   else
     processing_range_set_rep = true;
 }
 
 /**
- * Init all output objects by setting buffersize, sample
- * rate and channel count parameters. Also store the 
- * output start positions.
+ * Collects necessary information from output
+ * objects to initialized related engine variables.
  *
  * Called only from init_connection_to_chainsetup().
  */
-void ECA_ENGINE::init_outputs(void) {
+void ECA_ENGINE::init_outputs(void)
+{
   trigger_outputs_request_rep = false;
   outputs_finished_rep = 0;
-
-  output_start_pos_rep.resize(outputs_repp->size());
   output_chain_count_rep.resize(outputs_repp->size());
 
   for(unsigned int adev_sizet = 0; adev_sizet < outputs_repp->size(); adev_sizet++) {
-    (*outputs_repp)[adev_sizet]->set_buffersize(buffersize_rep);
-
     if (csetup_repp->outputs[adev_sizet]->channels() > max_channels_rep)
       max_channels_rep = csetup_repp->outputs[adev_sizet]->channels();
     
-    output_start_pos_rep[adev_sizet] =
-      csetup_repp->outputs[adev_sizet]->position_in_samples();
-    (*outputs_repp)[adev_sizet]->seek_position_in_samples(output_start_pos_rep[adev_sizet]);
-
     output_chain_count_rep[adev_sizet] =
       csetup_repp->number_of_attached_chains_to_output(csetup_repp->outputs[adev_sizet]);
-
-    // ---
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Output \"" +
-		  (*outputs_repp)[adev_sizet]->label() +  
-		  "\": start position " +
-		  kvu_numtostr(output_start_pos_rep[adev_sizet]) + 
-		  ", number of connected chain " +
-		  kvu_numtostr(output_chain_count_rep[adev_sizet]) + " .");
   }
+
   mixslot_repp->number_of_channels(max_channels_rep);
 }
 
 /**
  * Called only from init_connection_to_chainsetup().
  */
-void ECA_ENGINE::init_chains(void) {
+void ECA_ENGINE::init_chains(void)
+{
   chains_repp = &(csetup_repp->chains);
 
   if (chains_repp == 0 ||
@@ -500,6 +485,7 @@ void ECA_ENGINE::init_chains(void) {
   }
 
   cslots_rep.resize(chains_repp->size());
+
   for(size_t n = 0; n < cslots_rep.size(); n++) {
     cslots_rep[n] = new SAMPLE_BUFFER(buffersize_rep, max_channels_rep);
   }
@@ -508,7 +494,8 @@ void ECA_ENGINE::init_chains(void) {
 /**
  * Called from class constructor.
  */
-void ECA_ENGINE::init_mix_method(void) { 
+void ECA_ENGINE::init_mix_method(void)
+{ 
   impl_repp->mixmode_rep = csetup_repp->mixmode();
 
   if (csetup_repp->multitrack_mode_rep == true)  {
@@ -533,13 +520,15 @@ void ECA_ENGINE::init_mix_method(void) {
 }
 
 
-void ECA_ENGINE::conditional_start(void) {
+void ECA_ENGINE::conditional_start(void)
+{
   if (was_running_rep == true) {
       start();
   }
 }
 
-void ECA_ENGINE::conditional_stop(void) {
+void ECA_ENGINE::conditional_stop(void)
+{
   if (status() == ECA_ENGINE::engine_status_running) {
     ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) conditional stop");
     was_running_rep = true;
@@ -552,8 +541,8 @@ void ECA_ENGINE::conditional_stop(void) {
  * Checks for incoming messages and controls
  * internal state flags. 
  */
-void ECA_ENGINE::update_engine_state(void) {
-  
+void ECA_ENGINE::update_engine_state(void)
+{
   // --
   // Updates engine status (if necessary).
   if (inputs_not_finished_rep == 0) {
@@ -592,7 +581,8 @@ void ECA_ENGINE::update_engine_state(void) {
   }
 }
 
-void ECA_ENGINE::interpret_queue(void) {
+void ECA_ENGINE::interpret_queue(void)
+{
   while(impl_repp->command_queue_rep.is_empty() != true) {
     std::pair<int,double> item = impl_repp->command_queue_rep.front();
 //      cerr << "(eca-engine) ecasound_queue: cmds available; first one is "
@@ -618,9 +608,6 @@ void ECA_ENGINE::interpret_queue(void) {
     case ep_c_select: {	csetup_repp->active_chain_index_rep = static_cast<size_t>(item.second); break; }
     case ep_c_mute: { chain_muting(); break; }
     case ep_c_bypass: { chain_processing(); break; }
-    case ep_c_rewind: { change_position_chain(- item.second); break; }
-    case ep_c_forward: { change_position_chain(item.second); break; }
-    case ep_c_setpos: { set_position_chain(item.second); break; }
 
     // ---
     // Chain operators
@@ -655,7 +642,8 @@ void ECA_ENGINE::interpret_queue(void) {
   }
 }
 
-void ECA_ENGINE::stop(void) { 
+void ECA_ENGINE::stop(void)
+{ 
   // --
   // as an exception, stop() will be performed even 
   // though status is not running anymore iff 
@@ -706,7 +694,8 @@ void ECA_ENGINE::stop(void) {
   signal_stop();
 }
 
-void ECA_ENGINE::start(void) {
+void ECA_ENGINE::start(void)
+{
   if (status() == ECA_ENGINE::engine_status_running) return;
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Start");
   outputs_finished_rep = 0;
@@ -773,7 +762,8 @@ void ECA_ENGINE::start(void) {
   csetup_repp->toggle_is_in_use(true);
 }
 
-void ECA_ENGINE::multitrack_start(void) {
+void ECA_ENGINE::multitrack_start(void)
+{
 
   // --
   // prefill rt-output buffers before actually startin them
@@ -848,7 +838,8 @@ void ECA_ENGINE::multitrack_start(void) {
  * Performs a close-open cycle for all realtime 
  * devices.
  */
-void ECA_ENGINE::reset_realtime_devices(void) {
+void ECA_ENGINE::reset_realtime_devices(void)
+{
   for (size_t n = 0; n < realtime_objects_rep.size(); n++) {
     if (realtime_objects_rep[n]->is_open() == true) {
       ecadebug->msg(ECA_DEBUG::user_objects, 
@@ -862,11 +853,11 @@ void ECA_ENGINE::reset_realtime_devices(void) {
   }  
 }
 
-
 /**
  * The main engine loop for 'simple' mix-mode.
  */
-void ECA_ENGINE::exec_simple_iactive(void) {
+void ECA_ENGINE::exec_simple_iactive(void)
+{
   int inch = (*inputs_repp)[(*chains_repp)[0]->connected_input()]->channels();
   int outch = (*outputs_repp)[(*chains_repp)[0]->connected_output()]->channels();
   (*chains_repp)[0]->init(mixslot_repp, inch, outch);
@@ -909,7 +900,8 @@ void ECA_ENGINE::exec_simple_iactive(void) {
 /**
  * The main engine loop for 'normal' mix-mode.
  */
-void ECA_ENGINE::exec_normal_iactive(void) {
+void ECA_ENGINE::exec_normal_iactive(void)
+{
   ecadebug->control_flow("Engine init - mixmode \"normal\"");
 
   for (unsigned int c = 0; c != chains_repp->size(); c++) {
@@ -950,13 +942,15 @@ void ECA_ENGINE::exec_normal_iactive(void) {
  * which are not rt-targets. The idea is to prefill all 
  * the output buffers before starting actual recording.
  */
-void ECA_ENGINE::multitrack_sync(void) {
+void ECA_ENGINE::multitrack_sync(void)
+{
   inputs_to_chains(true);
   process_chains();
   mix_to_outputs(true);
 }
 
-void ECA_ENGINE::process_chains(void) {
+void ECA_ENGINE::process_chains(void)
+{
   chain_i chain_iter = chains_repp->begin();
   while(chain_iter != chains_repp->end()) {
     (*chain_iter)->process();
@@ -964,7 +958,8 @@ void ECA_ENGINE::process_chains(void) {
   }
 }
 
-void ECA_ENGINE::inputs_to_chains(bool skip_realtime_inputs) {
+void ECA_ENGINE::inputs_to_chains(bool skip_realtime_inputs)
+{
   for(size_t inputnum = 0; inputnum < inputs_repp->size(); inputnum++) {
 
     if (skip_realtime_inputs == true) {
@@ -999,7 +994,8 @@ void ECA_ENGINE::inputs_to_chains(bool skip_realtime_inputs) {
   }
 }
 
-void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
+void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
+{
   for(size_t outputnum = 0; outputnum < outputs_repp->size(); outputnum++) {
     if (skip_realtime_target_outputs == true) {
       if (csetup_repp->is_realtime_target_output(outputnum) == true) {
@@ -1061,8 +1057,9 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
   } 
 }
 
-void ECA_ENGINE::prehandle_control_position(void) {
-  csetup_repp->change_position(buffersize_rep);
+void ECA_ENGINE::prehandle_control_position(void)
+{
+  csetup_repp->change_position_in_samples(buffersize_rep);
   if (csetup_repp->is_over() == true &&
       processing_range_set_rep == true) {
     int buffer_remain = csetup_repp->position_in_samples() -
@@ -1073,13 +1070,13 @@ void ECA_ENGINE::prehandle_control_position(void) {
   }
 }
 
-void ECA_ENGINE::posthandle_control_position(void) {
+void ECA_ENGINE::posthandle_control_position(void)
+{
   if (csetup_repp->is_over() == true &&
       processing_range_set_rep == true) {
     if (csetup_repp->looping_enabled() == true) {
       inputs_not_finished_rep = 1;
-      rewind_to_start_position();
-      csetup_repp->set_position(0);
+      csetup_repp->seek_position_in_samples(0);
       for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
 	(*inputs_repp)[adev_sizet]->set_buffersize(buffersize_rep);
       }
@@ -1087,13 +1084,14 @@ void ECA_ENGINE::posthandle_control_position(void) {
     else {
       ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) posthandle_c_p / stop");
       stop();
-      csetup_repp->set_position(0);
+      csetup_repp->seek_position_in_samples(0);
       set_status(ECA_ENGINE::engine_status_finished);
     }
   }
 }
 
-void ECA_ENGINE::trigger_outputs(void) {
+void ECA_ENGINE::trigger_outputs(void)
+{
   if (trigger_outputs_request_rep == true) {
     ++trigger_counter_rep;
     if (trigger_counter_rep == prefill_threshold_rep) {
@@ -1106,7 +1104,8 @@ void ECA_ENGINE::trigger_outputs(void) {
   }
 }
 
-void ECA_ENGINE::start_servers(void) {
+void ECA_ENGINE::start_servers(void)
+{
   if (use_double_buffering_rep == true) {
     csetup_repp->pserver_repp->start();
     ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Prefilling i/o buffers.");
@@ -1118,7 +1117,8 @@ void ECA_ENGINE::start_servers(void) {
   }
 }
 
-void ECA_ENGINE::stop_servers(void) { 
+void ECA_ENGINE::stop_servers(void)
+{ 
   if (use_double_buffering_rep == true) {
     csetup_repp->pserver_repp->stop();
     csetup_repp->pserver_repp->wait_for_stop();
@@ -1129,14 +1129,16 @@ void ECA_ENGINE::stop_servers(void) {
   }
 }
 
-void ECA_ENGINE::chain_muting(void) {
+void ECA_ENGINE::chain_muting(void)
+{
   if ((*chains_repp)[csetup_repp->active_chain_index_rep]->is_muted()) 
     (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_muting(false);
   else
     (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_muting(true);
 }
 
-void ECA_ENGINE::chain_processing(void) {
+void ECA_ENGINE::chain_processing(void)
+{
   if ((*chains_repp)[csetup_repp->active_chain_index_rep]->is_processing()) 
     (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_processing(false);
   else
@@ -1147,87 +1149,28 @@ void ECA_ENGINE::chain_processing(void) {
  * Seeks to position 'seconds'. Affects all input and 
  * outputs objects, and the chainsetup object position.
  */
-void ECA_ENGINE::set_position(double seconds) {
+void ECA_ENGINE::set_position(double seconds)
+{
   conditional_stop();
-
-  csetup_repp->set_position_exact(seconds);
-  csetup_repp->seek_position();
-  if (csetup_repp->double_buffering() == true) csetup_repp->pserver_repp->flush();
-
+  csetup_repp->seek_position_in_seconds(seconds);
   conditional_start();
 }
 
 /**
- * Seeks to position 'seconds'. Affects all input and 
- * outputs objects, but not the chainsetup object position.
- */
-void ECA_ENGINE::set_position_chain(double seconds) {
-  conditional_stop();
-
-  int id = (*chains_repp)[csetup_repp->active_chain_index_rep]->connected_input();
-  AUDIO_IO* ptr = (*inputs_repp)[id];
-  ptr->seek_position_in_seconds(seconds);
-
-  id = (*chains_repp)[csetup_repp->active_chain_index_rep]->connected_output();
-  ptr = (*outputs_repp)[id];
-  ptr->seek_position_in_seconds(seconds);
-
-  conditional_start();
-}
-
-/**
- * Seeks to position 'seconds'. Affects all input and 
+ * Seeks to position 'current+seconds'. Affects all input and 
  * outputs objects, and the chainsetup object position.
  */
-void ECA_ENGINE::change_position(double seconds) {
+void ECA_ENGINE::change_position(double seconds)
+{
   conditional_stop();
-
-  csetup_repp->change_position_exact(seconds);
-  csetup_repp->seek_position();
-  if (csetup_repp->double_buffering() == true) csetup_repp->pserver_repp->flush();
-
-  conditional_start();
-}
-
-/**
- * Seeks to begin position. Affects all input and 
- * outputs objects, but not the chainsetup object position.
- */
-void ECA_ENGINE::rewind_to_start_position(void) {
-  conditional_stop();
-
-  for (unsigned int adev_sizet = 0; adev_sizet != inputs_repp->size(); adev_sizet++) {
-    (*inputs_repp)[adev_sizet]->seek_position_in_samples(input_start_pos_rep[adev_sizet]);
-  }
-
-  for (unsigned int adev_sizet = 0; adev_sizet != outputs_repp->size(); adev_sizet++) {
-    (*outputs_repp)[adev_sizet]->seek_position_in_samples(output_start_pos_rep[adev_sizet]);
-  }
-
-  conditional_start();
-}
-
-/**
- * Seeks to position 'now+seconds'. Affects all input and 
- * outputs objects, but not the chainsetup object position.
- */
-void ECA_ENGINE::change_position_chain(double seconds) {
-  conditional_stop();
-
-  int id = (*chains_repp)[csetup_repp->active_chain_index_rep]->connected_input();
-  AUDIO_IO* ptr = (*inputs_repp)[id]; 
-  ptr->seek_position_in_seconds(ptr->position_in_seconds_exact() + seconds);
-  
-  id = (*chains_repp)[csetup_repp->active_chain_index_rep]->connected_output();
-  ptr = (*outputs_repp)[id];
-  ptr->seek_position_in_seconds(ptr->position_in_seconds_exact() + seconds);
-
+  csetup_repp->seek_position_in_seconds(csetup_repp->position_in_seconds() + seconds);
   conditional_start();
 }
 
 double ECA_ENGINE::current_position(void) const { return(csetup_repp->position_in_seconds_exact()); }
 
-double ECA_ENGINE::current_position_chain(void) const {
+double ECA_ENGINE::current_position_chain(void) const
+{
   AUDIO_IO* ptr = (*inputs_repp)[(*chains_repp)[csetup_repp->active_chain_index_rep]->connected_input()]; 
     return(ptr->position_in_seconds_exact());
   return(0.0f);

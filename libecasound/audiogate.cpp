@@ -24,6 +24,10 @@
 #include "audiogate.h"
 #include "eca-debug.h"
 
+GATE_BASE::~GATE_BASE(void)
+{
+}
+
 void GATE_BASE::process(void)
 {
   analyze(target);

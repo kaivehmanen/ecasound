@@ -27,19 +27,13 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   static void set_ogg_output_cmd(const std::string& value);
   static long int default_ogg_output_default_bitrate;
 
- private:
-
-  bool triggered_rep;
-  bool finished_rep;
-  long int bytes_rep;
-  long int bitrate_rep;
-  int fd_rep;
-  FILE* f1_rep;
-  
-  void fork_ogg_input(void);
-  void fork_ogg_output(void);
-  
  public:
+
+  OGG_VORBIS_INTERFACE (const std::string& name = "");
+  virtual ~OGG_VORBIS_INTERFACE(void);
+    
+  virtual OGG_VORBIS_INTERFACE* clone(void) const { return new OGG_VORBIS_INTERFACE(*this); }
+  virtual OGG_VORBIS_INTERFACE* new_expr(void) const { return new OGG_VORBIS_INTERFACE(*this); }
 
   virtual std::string name(void) const { return("Ogg Vorbis stream"); }
   virtual std::string description(void) const { return("Interface for ogg decoders and encoders that support i/o using standard streams."); }
@@ -65,11 +59,17 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   // Realtime related functions
   // --
   
-  OGG_VORBIS_INTERFACE (const std::string& name = "");
-  ~OGG_VORBIS_INTERFACE(void);
-    
-  OGG_VORBIS_INTERFACE* clone(void) const { return new OGG_VORBIS_INTERFACE(*this); }
-  OGG_VORBIS_INTERFACE* new_expr(void) const { return new OGG_VORBIS_INTERFACE(*this); }
+ private:
+
+  bool triggered_rep;
+  bool finished_rep;
+  long int bytes_rep;
+  long int bitrate_rep;
+  int fd_rep;
+  FILE* f1_rep;
+  
+  void fork_ogg_input(void);
+  void fork_ogg_output(void);
 };
 
 #endif

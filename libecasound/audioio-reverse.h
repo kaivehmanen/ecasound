@@ -13,6 +13,10 @@ class SAMPLE_BUFFER;
  * A proxy class that reverts the child 
  * object's data.
  *
+ *
+ * Related design patterns:
+ *     - Proxy (GoF207
+ *
  * @author Kai Vehmanen
  */
 class AUDIO_IO_REVERSE : public AUDIO_IO {
@@ -55,13 +59,13 @@ class AUDIO_IO_REVERSE : public AUDIO_IO {
   /** @name Reimplemented functions from ECA_AUDIO_POSITION */
   /*@{*/
 
-  virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const { return(child_repp->length_in_samples()); }
   virtual void seek_position(void);
-  
+
   /* -- not reimplemented 
-   * virtual void length_in_samples(long pos) 
-   * virtual void position_in_samples(long pos) 
-   * virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const
+   * virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const { return(child_repp->position_in_samples()); }
+   * virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const { return(); }
+   * virtual void set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos);
+   * virtual void set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
    */
 
   /*@}*/

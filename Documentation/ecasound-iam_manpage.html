@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>29.10.2001</h2>
+<h2>01.02.2002</h2>
 
 
     
@@ -52,8 +52,8 @@ return anything are marked with [-].
 It's not possible to use all EIAM commands to modify and control 
 objects that belong to a connected chainsetup. Commands that
 do support this are: 'start', 'stop', 'setpos', 'rewind', 'forward',
-'c-select', 'c-mute', 'c-bypass', 'c-rewind', 'c-forward', 'c-setpos', 
-'cop-select', 'copp-select' and 'copp-value'.
+'c-select', 'c-mute', 'c-bypass', 'cop-select', 'copp-select' 
+and 'copp-value'.
 <p>Another set of commands are those which can be used with connected
 chainsetups, but not without an audible break. These are: 'cop-add', 
 'cop-remove', 'ctrl-add', 'ctrl-select', 'ctrl-remove'
@@ -227,21 +227,6 @@ is muted. <em>[-]</em>
 <p><p></p><dt><strong>c-bypass</strong><dd>
 Toggle chain bypassing. When chain is bypassed, sample data is passed 
 through untouched. <em>[-]</em>
-<p><p></p><dt><strong>c-forward 'time_in_seconds', c-fw 'time_in_seconds'</strong><dd>
-Inputs and outputs connected to selected chains are forwarded 
-by 'time-in-seconds' seconds. Time should be given as a floating 
-point value (eg. 0.001 is the same as 1ms). If audio objecst are
-connected to multiple selected chains, they will be forwarded multiple
-times. <em>[-]</em>
-<p><p></p><dt><strong>c-rewind 'time_in_seconds', c-rw 'time_in_seconds'</strong><dd>
-Inputs and outputs connected to selected chains are rewinded by
-'time-in-seconds' seconds. Time should be given as a floating 
-point value (eg. 0.001 is the same as 1ms). If audio objecst are
-connected to multiple selected chains, they will be forwarded multiple
-times. <em>[-]</em>
-<p><p></p><dt><strong>c-setpos 'time_in_seconds', c-set-position 'time_in_seconds'</strong><dd>
-Set position of all inputs and outputs connected to selected chains to
-'time_in_seconds'. <em>[-]</em>
 <p><p></p><dt><strong>c-status, cs</strong><dd>
 Print status info about all chains. <em>[s]</em>
 <p></dl>

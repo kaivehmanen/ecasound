@@ -1,10 +1,13 @@
-#ifndef _SAMPLEBUFFER_ITERATORS_H
-#define _SAMPLEBUFFER_ITERATORS_H
+#ifndef INCLUDED_SAMPLEBUFFER_ITERATORS_H
+#define INCLUDED_SAMPLEBUFFER_ITERATORS_H
 
 #include "samplebuffer.h"
 
 /**
  * Iterate through all samples. No specific order.
+ *
+ * Related design patterns:
+ *     - Iterator (GoF257)
  */
 class SAMPLE_ITERATOR {
 
@@ -47,6 +50,9 @@ class SAMPLE_ITERATOR {
  *
  * Notice! This iterator can be used to add extra
  * channels to the sample data.
+ *
+ * Related design patterns:
+ *     - Iterator (GoF257)
  */
 class SAMPLE_ITERATOR_CHANNEL {
 
@@ -89,6 +95,9 @@ class SAMPLE_ITERATOR_CHANNEL {
 
 /**
  * Iterate through all samples, one channel at a time.
+ *
+ * Related design patterns:
+ *     - Iterator (GoF257)
  */
 class SAMPLE_ITERATOR_CHANNELS {
 
@@ -133,6 +142,9 @@ class SAMPLE_ITERATOR_CHANNELS {
 
 /**
  * Iterate through all samples, one sample frame (interleaved) at a time.
+ *
+ * Related design patterns:
+ *     - Iterator (GoF257)
  */
 class SAMPLE_ITERATOR_INTERLEAVED {
 

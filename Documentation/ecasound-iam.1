@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "29\&.10\&.2001" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "01\&.02\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -25,8 +25,8 @@ return anything are marked with [-]\&.
 It\'s not possible to use all EIAM commands to modify and control 
 objects that belong to a connected chainsetup\&. Commands that
 do support this are: \'start\', \'stop\', \'setpos\', \'rewind\', \'forward\',
-\'c-select\', \'c-mute\', \'c-bypass\', \'c-rewind\', \'c-forward\', \'c-setpos\', 
-\'cop-select\', \'copp-select\' and \'copp-value\'\&.
+\'c-select\', \'c-mute\', \'c-bypass\', \'cop-select\', \'copp-select\' 
+and \'copp-value\'\&.
 .PP 
 Another set of commands are those which can be used with connected
 chainsetups, but not without an audible break\&. These are: \'cop-add\', 
@@ -246,24 +246,6 @@ is muted\&. \fI[-]\fP
 .IP "c-bypass" 
 Toggle chain bypassing\&. When chain is bypassed, sample data is passed 
 through untouched\&. \fI[-]\fP
-.PP 
-.IP "c-forward \'time_in_seconds\', c-fw \'time_in_seconds\'" 
-Inputs and outputs connected to selected chains are forwarded 
-by \'time-in-seconds\' seconds\&. Time should be given as a floating 
-point value (eg\&. 0\&.001 is the same as 1ms)\&. If audio objecst are
-connected to multiple selected chains, they will be forwarded multiple
-times\&. \fI[-]\fP
-.PP 
-.IP "c-rewind \'time_in_seconds\', c-rw \'time_in_seconds\'" 
-Inputs and outputs connected to selected chains are rewinded by
-\'time-in-seconds\' seconds\&. Time should be given as a floating 
-point value (eg\&. 0\&.001 is the same as 1ms)\&. If audio objecst are
-connected to multiple selected chains, they will be forwarded multiple
-times\&. \fI[-]\fP
-.PP 
-.IP "c-setpos \'time_in_seconds\', c-set-position \'time_in_seconds\'" 
-Set position of all inputs and outputs connected to selected chains to
-\'time_in_seconds\'\&. \fI[-]\fP
 .PP 
 .IP "c-status, cs" 
 Print status info about all chains\&. \fI[s]\fP

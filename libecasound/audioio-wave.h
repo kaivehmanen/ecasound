@@ -107,6 +107,12 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
     
  public:
 
+  WAVEFILE (const std::string& name = "");
+  virtual ~WAVEFILE(void);
+
+  virtual WAVEFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  virtual WAVEFILE* new_expr(void) const { return new WAVEFILE(); }
+
   virtual std::string name(void) const { return("RIFF wave file"); }
   virtual bool locked_audio_format(void) const { return(true); }
   virtual std::string parameter_names(void) const { return("label,toggle_mmap"); }
@@ -122,11 +128,6 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
 
   virtual void set_parameter(int param, std::string value);
   virtual std::string get_parameter(int param) const;
-
-  WAVEFILE (const std::string& name = "");
-  ~WAVEFILE(void);
-  WAVEFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
-  WAVEFILE* new_expr(void) const { return new WAVEFILE(); }
 
  private:
 

@@ -32,7 +32,7 @@ public:
   virtual void analyze(SAMPLE_BUFFER* sbuf) = 0;
 
   virtual GATE_BASE* clone(void) const = 0;   
-  virtual ~GATE_BASE(void) { }
+  virtual ~GATE_BASE(void);
 
   GATE_BASE(void) { close_gate(); }
 };

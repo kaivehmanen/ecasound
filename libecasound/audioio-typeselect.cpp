@@ -129,3 +129,16 @@ string AUDIO_IO_TYPESELECT::get_parameter(int param) const
 
   return(""); 
 }
+
+void AUDIO_IO_TYPESELECT::set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos)
+{
+  /* only way to update the current position */
+  child_repp->seek_position_in_samples(pos);
+  AUDIO_IO::set_position_in_samples(pos);
+}
+
+void AUDIO_IO_TYPESELECT::set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
+{
+  // child_repp->set_length_in_samples(pos);
+  AUDIO_IO::set_length_in_samples(pos);
+}

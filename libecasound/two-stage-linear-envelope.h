@@ -28,7 +28,7 @@ class TWO_STAGE_LINEAR_ENVELOPE : public FINITE_ENVELOPE {
   private:
 
   parameter_t first_stage_length_rep, second_stage_length_rep;
-  parameter_t curpos, curval;
+  parameter_t curval;
 };
 
 #endif

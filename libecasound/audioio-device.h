@@ -150,16 +150,21 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
 
   virtual bool finished(void) const { return(is_open() == false); }
 
-  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const = 0;
-
   virtual std::string status(void) const;
 
   /*@}*/
-  
+
+  /** @name Reimplemented functions from ECA_AUDIO_POSITION */
+  /*@{*/
+
+  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const = 0;
+
   /**
    * Seeking is impossible with realtime devices.
    */
   virtual void seek_position(void) { }
+
+  /*@}*/
 
  private:
   

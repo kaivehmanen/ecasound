@@ -20,7 +20,7 @@ class EFFECT_ANALYSIS : public EFFECT_BASE {
 
   virtual std::string parameter_names(void) const { return(""); }
 
-  virtual ~EFFECT_ANALYSIS(void) { }
+  virtual ~EFFECT_ANALYSIS(void);
 };
 
 /**

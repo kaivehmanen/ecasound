@@ -12,13 +12,13 @@
  */
 class MIDI_IO_RAW : public MIDI_IO {
 
- private:
-
-  int fd_rep;
-  bool finished_rep;
-  std::string device_name_rep;
-
  public:
+
+  MIDI_IO_RAW (const std::string& name = "");
+  virtual ~MIDI_IO_RAW(void);
+    
+  virtual MIDI_IO_RAW* clone(void) const { return(new MIDI_IO_RAW(*this)); }
+  virtual MIDI_IO_RAW* new_expr(void) const { return new MIDI_IO_RAW(); }    
 
   virtual std::string name(void) const { return("Raw MIDI"); }
   virtual int supported_io_modes(void) const { return(io_read | io_write | io_readwrite); }
@@ -37,11 +37,11 @@ class MIDI_IO_RAW : public MIDI_IO {
 
   virtual bool finished(void) const;
 
-  MIDI_IO_RAW (const std::string& name = "");
-  ~MIDI_IO_RAW(void);
-    
-  MIDI_IO_RAW* clone(void) const { return(new MIDI_IO_RAW(*this)); }
-  MIDI_IO_RAW* new_expr(void) const { return new MIDI_IO_RAW(); }    
+ private:
+
+  int fd_rep;
+  bool finished_rep;
+  std::string device_name_rep;
 };
 
 #endif

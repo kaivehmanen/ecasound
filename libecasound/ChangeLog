@@ -2,6 +2,20 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2002-02-01  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-audio-position.h (length_in_samples): renamed to set_length_in_samples
+	* eca-audio-position.h (position_in_samples): renamed to set_position_in_samples
+	* eca-audio-position.h (position_in_seconds): renamed to set_position_in_seconds
+	* eca-audio-position.h (position_in_samples_advance): renamed to change_position_in_samples
+	* eca-chainsetup-position.h (): changed to inherit ECA_AUDIO_POSITION
+	* eca-chain.h (): changed to inherit ECA_AUDIO_POSITION
+	* finite-envelope.h (): changed to inherit ECA_AUDIO_POSITION
+	* eca-control-objects.h (rewind_chains): removed
+	* eca-control-objects.h (forward_chains): removed
+	* eca-control-objects.h (set_position_chains): removed
+	* eca-control-objects.h (change_position_chains): removed
+		
 2002-01-31  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* samplebuffer.h (constructor): srate param removed
@@ -31,6 +45,9 @@
 	* sample-specs.h (channel_count_default, sample_rate_default):
 	removed
 	* eca-chain.h (): added inheritance of ECA_SAMPLERATE_AWARE
+	* eca-audio-position.h (): added direct inheritance of  ECA_SAMPLERATE_AWARE
+	* audioio.h (): added inheritance of both ECA_AUDIO_POSITION and 
+	ECA_AUDIO_FORMAT
 	
 2002-01-28  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 

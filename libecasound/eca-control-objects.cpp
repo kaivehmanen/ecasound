@@ -332,7 +332,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_seconds(double val
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
-  selected_chainsetup_repp->length_in_seconds(value);
+  selected_chainsetup_repp->set_length_in_seconds(value);
   ecadebug->msg("(eca-controller) Set chainsetup processing length to \"" + kvu_numtostr(value) + "\" seconds.");
 }
 
@@ -349,7 +349,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_samples(SAMPLE_SPE
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
-  selected_chainsetup_repp->length_in_samples(value);
+  selected_chainsetup_repp->set_length_in_samples(value);
   ecadebug->msg("(eca-controller) Set chainsetup processing length to \"" + 
 		 kvu_numtostr(selected_chainsetup_repp->length_in_seconds_exact()) + "\" seconds.");
 }
@@ -499,8 +499,8 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position(double seconds) {
 				    seconds);
   }
   else {
-    selected_chainsetup_repp->change_position_exact(seconds);
-    selected_chainsetup_repp->seek_position();
+    selected_chainsetup_repp->seek_position_in_seconds(selected_chainsetup_repp->position_in_seconds()
+						       + seconds );
   }
 }
 
@@ -522,8 +522,8 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position_samples(SAMPLE_SPECS::sampl
 			       selected_chainsetup_repp->samples_per_second());
   }
   else {
-    selected_chainsetup_repp->change_position(samples);
-    selected_chainsetup_repp->seek_position();
+    selected_chainsetup_repp->seek_position_in_samples(selected_chainsetup_repp->position_in_samples()
+						       + samples );
   }
 }
 
@@ -543,8 +543,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_setpos, seconds);
   }
   else {
-    selected_chainsetup_repp->set_position_exact(seconds);
-    selected_chainsetup_repp->seek_position();
+    selected_chainsetup_repp->seek_position_in_seconds(seconds);
   }
 }
 
@@ -566,8 +565,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position_samples(SAMPLE_SPECS::sample_p
 			    selected_chainsetup_repp->samples_per_second());
   }
   else {
-    selected_chainsetup_repp->set_position(samples);
-    selected_chainsetup_repp->seek_position();
+    selected_chainsetup_repp->seek_position_in_samples(samples);
   }
 }
 
@@ -1059,118 +1057,6 @@ void ECA_CONTROL_OBJECTS::toggle_chain_bypass(void) {
   }
   else {
     selected_chainsetup_repp->toggle_chain_bypass();
-  }
-}
-
-/**
- * Rewinds selected chains by 'pos_in_seconds' seconds
- *
- * require:
- *  is_selected() == true && is_connected() == true
- *  selected_chains().size() > 0
- */
-void ECA_CONTROL_OBJECTS::rewind_chains(double pos_in_seconds) { 
-  // --------
-  DBC_REQUIRE(is_selected() == true);
-  DBC_REQUIRE(selected_chains().size() > 0);
-  // --------
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
-    send_chain_commands_to_engine(ECA_ENGINE::ep_c_rewind, pos_in_seconds);
-  }
-  else {
-    change_position_chains(-pos_in_seconds);
-  }
-}
-
-/**
- * Forwards selected chains by 'pos_in_seconds' seconds
- *
- * require:
- *  is_selected() == true && is_connected() == true
- *  selected_chains().size() > 0
- */
-void ECA_CONTROL_OBJECTS::forward_chains(double pos_in_seconds) { 
-  // --------
-  DBC_REQUIRE(is_selected() == true);
-  DBC_REQUIRE(selected_chains().size() > 0);
-  // --------
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
-    send_chain_commands_to_engine(ECA_ENGINE::ep_c_forward, pos_in_seconds);
-  }
-  else {
-    change_position_chains(pos_in_seconds);
-  }
-
-}
-
-/**
- * Change the relative position of selected chains by 
- * 'pos_in_seconds' seconds. Affects all inputs and outputs
- * connected to these chains.
- *
- * require:
- *  is_selected() == true
- *  selected_chains().size() > 0
- */
-void ECA_CONTROL_OBJECTS::change_position_chains(double change_in_seconds) { 
-  // --------
-  DBC_REQUIRE(is_selected() == true);
-  DBC_REQUIRE(selected_chains().size() > 0);
-  // --------
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
-    send_chain_commands_to_engine(ECA_ENGINE::ep_c_setpos, change_in_seconds);
-  }
-  else {
-    const std::vector<std::string>& schains = selected_chainsetup_repp->selected_chains();
-    std::vector<std::string>::const_iterator o = schains.begin();
-    while(o != schains.end()) {
-      for(std::vector<CHAIN*>::size_type p = 0; 
-	  p != selected_chainsetup_repp->chains.size();
-	  p++) {
-	if (selected_chainsetup_repp->chains[p]->name() == *o) {
-	  double previous = selected_chainsetup_repp->inputs[selected_chainsetup_repp->chains[p]->connected_input()]->position_in_seconds_exact();
-	  selected_chainsetup_repp->inputs[selected_chainsetup_repp->chains[p]->connected_input()]->seek_position_in_seconds(previous + change_in_seconds);
-	  previous = selected_chainsetup_repp->outputs[selected_chainsetup_repp->chains[p]->connected_output()]->position_in_seconds_exact();
-	  selected_chainsetup_repp->outputs[selected_chainsetup_repp->chains[p]->connected_output()]->seek_position_in_seconds(previous + change_in_seconds);
-	  break;
-	}
-      }
-      ++o;
-    }
-  }
-}
-
-/**
- * Sets position of selected chains to 'pos_in_seconds' seconds.
- * Affects all inputs and outputs connected to these chains.
- *
- * require:
- *  is_selected() == true
- *  selected_chains().size() > 0
- */
-void ECA_CONTROL_OBJECTS::set_position_chains(double pos_in_seconds) { 
-  // --------
-  DBC_REQUIRE(is_selected() == true);
-  DBC_REQUIRE(selected_chains().size() > 0);
-  // --------
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
-    send_chain_commands_to_engine(ECA_ENGINE::ep_c_setpos, pos_in_seconds);
-  }
-  else {
-    const std::vector<std::string>& schains = selected_chainsetup_repp->selected_chains();
-    std::vector<std::string>::const_iterator o = schains.begin();
-    while(o != schains.end()) {
-      for(std::vector<CHAIN*>::size_type p = 0; 
-	  p != selected_chainsetup_repp->chains.size();
-	  p++) {
-	if (selected_chainsetup_repp->chains[p]->name() == *o) {
-	  selected_chainsetup_repp->inputs[selected_chainsetup_repp->chains[p]->connected_input()]->seek_position_in_seconds(pos_in_seconds);
-	  selected_chainsetup_repp->outputs[selected_chainsetup_repp->chains[p]->connected_output()]->seek_position_in_seconds(pos_in_seconds);
-	break;
-	}
-      }
-      ++o;
-    }
   }
 }
 

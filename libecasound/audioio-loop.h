@@ -9,18 +9,14 @@
  */
 class LOOP_DEVICE : public AUDIO_IO {
 
-  int id_rep;
-  int writes_rep;
-  int registered_inputs_rep;
-  int registered_outputs_rep;
-  int empty_rounds_rep;
-
-  bool finished_rep;
-  bool filled_rep;
-    
-  SAMPLE_BUFFER sbuf;
-
  public:
+
+  LOOP_DEVICE(int id);
+  LOOP_DEVICE(void) { }
+  virtual ~LOOP_DEVICE(void);
+
+  virtual LOOP_DEVICE* clone(void) const { return 0; }
+  virtual LOOP_DEVICE* new_expr(void) const { return new LOOP_DEVICE(); }
 
   virtual std::string name(void) const { return("Internal loop device"); }
   virtual std::string description(void) const { return("Loop device that routes data from output to input."); }
@@ -53,11 +49,18 @@ class LOOP_DEVICE : public AUDIO_IO {
 
   int id(void) const { return(id_rep); }
 
-  LOOP_DEVICE(int id);
-  LOOP_DEVICE(void) { }
-  ~LOOP_DEVICE(void) { }
-  LOOP_DEVICE* clone(void) const { return 0; }
-  LOOP_DEVICE* new_expr(void) const { return new LOOP_DEVICE(); }
+private:
+
+  int id_rep;
+  int writes_rep;
+  int registered_inputs_rep;
+  int registered_outputs_rep;
+  int empty_rounds_rep;
+
+  bool finished_rep;
+  bool filled_rep;
+    
+  SAMPLE_BUFFER sbuf;
 };
 
 #endif

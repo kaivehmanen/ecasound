@@ -13,7 +13,7 @@
 class EFFECT_ENV_MOD : public EFFECT_BASE {
 
  public:
-  virtual ~EFFECT_ENV_MOD(void) { }
+  virtual ~EFFECT_ENV_MOD(void);
 };
 
 /**
@@ -40,7 +40,7 @@ class EFFECT_PULSE_GATE: public EFFECT_ENV_MOD {
   virtual void process(void);
 
   EFFECT_PULSE_GATE (parameter_t freq_Hz = 1.0, parameter_t onTime_percent = 50.0);
-  virtual ~EFFECT_PULSE_GATE(void) { }
+  virtual ~EFFECT_PULSE_GATE(void);
   EFFECT_PULSE_GATE* clone(void) const { return new EFFECT_PULSE_GATE(*this); }
   EFFECT_PULSE_GATE* new_expr(void) const { return new EFFECT_PULSE_GATE(); }
 };
@@ -67,7 +67,7 @@ class EFFECT_PULSE_GATE_BPM : public EFFECT_ENV_MOD {
   virtual void process(void);
 
   EFFECT_PULSE_GATE_BPM (parameter_t bpm = 120.0, parameter_t ontime_percent = 5.0);
-  virtual ~EFFECT_PULSE_GATE_BPM(void) { }
+  virtual ~EFFECT_PULSE_GATE_BPM(void);
   EFFECT_PULSE_GATE_BPM* clone(void) const { return new EFFECT_PULSE_GATE_BPM(*this); }
   EFFECT_PULSE_GATE_BPM* new_expr(void) const { return new EFFECT_PULSE_GATE_BPM(); }
 };
@@ -96,7 +96,7 @@ class EFFECT_TREMOLO: public EFFECT_ENV_MOD {
   virtual void process(void);
 
   EFFECT_TREMOLO (parameter_t freq_bpm = 60.0, parameter_t depth_percent = 100.0);
-  virtual ~EFFECT_TREMOLO(void) { }
+  virtual ~EFFECT_TREMOLO(void);
   EFFECT_TREMOLO* clone(void) const { return new EFFECT_TREMOLO(*this); }
   EFFECT_TREMOLO* new_expr(void) const { return new EFFECT_TREMOLO(); }
 };

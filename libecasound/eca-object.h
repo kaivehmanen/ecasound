@@ -14,6 +14,8 @@ class ECA_OBJECT {
 
  public:
 
+  virtual ~ECA_OBJECT (void) { }
+
   /**
    * Object name used to identify the object type. In most 
    * cases, object name is same for all class instances.
@@ -26,8 +28,6 @@ class ECA_OBJECT {
    * and unformatted.
    */
   virtual std::string description(void) const { return(name()); }
-
-  virtual ~ECA_OBJECT (void) { }
 };
 
 #endif

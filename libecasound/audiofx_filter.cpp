@@ -25,6 +25,10 @@
 #include "eca-debug.h"
 #include "audiofx_filter.h"
 
+EFFECT_FILTER::~EFFECT_FILTER(void)
+{
+}
+
 EFFECT_BANDPASS::EFFECT_BANDPASS (CHAIN_OPERATOR::parameter_t centerf, CHAIN_OPERATOR::parameter_t w) {
   set_parameter(1, centerf);
   set_parameter(2, w);

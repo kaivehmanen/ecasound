@@ -26,30 +26,14 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   static void set_mp3_input_cmd(const std::string& value);
   static void set_mp3_output_cmd(const std::string& value);
   static long int default_mp3_output_default_bitrate;
-
- private:
-
-  bool finished_rep;
-  bool triggered_rep;
-  int pid_of_child_rep;
-  long pcm_rep;
-  long int bytes_rep;
-  long int bitrate_rep;
-  SAMPLE_SPECS::sample_pos_t last_position_rep;
-  int fd_rep;
-  FILE* f1_rep;
-  bool mono_input_rep;
-  
-  void process_mono_fix(char* target_buffer, long int bytes_rep);
-  void get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERROR&);
-  
-  //  MP3FILE(const MP3FILE& x) { }
-  MP3FILE& operator=(const MP3FILE& x) { return *this; }
-
-  void fork_mp3_input(void);
-  void fork_mp3_output(void);
-  
+ 
  public:
+
+  MP3FILE (const std::string& name = "");
+  virtual ~MP3FILE(void);
+    
+  virtual MP3FILE* clone(void) const { return new MP3FILE(*this); }
+  virtual MP3FILE* new_expr(void) const { return new MP3FILE(*this); }
 
   virtual std::string name(void) const { return("Mp3 stream"); }
   virtual std::string description(void) const { return("Interface for mp3 decoders and encoders that support input/output using standard streams."); }
@@ -75,11 +59,27 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   // Realtime related functions
   // --
   
-  MP3FILE (const std::string& name = "");
-  ~MP3FILE(void);
-    
-  MP3FILE* clone(void) const { return new MP3FILE(*this); }
-  MP3FILE* new_expr(void) const { return new MP3FILE(*this); }
+ private:
+
+  bool finished_rep;
+  bool triggered_rep;
+  int pid_of_child_rep;
+  long pcm_rep;
+  long int bytes_rep;
+  long int bitrate_rep;
+  SAMPLE_SPECS::sample_pos_t last_position_rep;
+  int fd_rep;
+  FILE* f1_rep;
+  bool mono_input_rep;
+  
+  void process_mono_fix(char* target_buffer, long int bytes_rep);
+  void get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERROR&);
+  
+  //  MP3FILE(const MP3FILE& x) { }
+  MP3FILE& operator=(const MP3FILE& x) { return *this; }
+
+  void fork_mp3_input(void);
+  void fork_mp3_output(void);
 };
 
 #endif

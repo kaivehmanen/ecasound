@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // two-stage-linear-envelope.cpp: Two-stage linear envelope
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,9 +24,10 @@
 #include "eca-debug.h"
 
 CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::value(void) {
-  curpos += step_length();
+  change_position_in_seconds(step_length());
+  parameter_t curpos = position_in_seconds_exact();
   if (curpos > first_stage_length_rep) {
-    if (curpos <= length_in_seconds()) {
+    if (curpos <= length_in_seconds_exact()) {
       curval = ((curpos - first_stage_length_rep) /
 		second_stage_length_rep);
     }
@@ -57,16 +58,16 @@ void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::para
   case 1:
     {
       first_stage_length_rep = value;
-      length_in_seconds(first_stage_length_rep + second_stage_length_rep);
-      curpos = 0.0;
+      set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
+      set_position_in_samples(0);
       curval = 0.0;
       break;
     }
   case 2:
     {
       second_stage_length_rep = value;
-      length_in_seconds(first_stage_length_rep + second_stage_length_rep);
-      curpos = 0.0;
+      set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
+      set_position_in_samples(0);
       curval = 0.0;
       break;
     }

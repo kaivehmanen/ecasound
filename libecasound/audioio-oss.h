@@ -30,20 +30,12 @@
  */
 class OSSDEVICE : public AUDIO_IO_DEVICE {
 
-  int audio_fd;
-  
-  audio_buf_info audiobuf;          // soundcard.h
-  count_info audioinfo;             // soundcard.h
-  fd_set fds;
-
-  int fragment_size;
-  long int bytes_read;
-  int oss_caps;
-  struct timeval start_time;
-  
-  bool precise_srate_mode;
-  
  public:
+
+  OSSDEVICE (const std::string& name = "/dev/dsp", bool precise_sample_rates = false);
+  virtual ~OSSDEVICE(void);
+  virtual OSSDEVICE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  virtual OSSDEVICE* new_expr(void) const { return new OSSDEVICE(); }
 
   virtual std::string name(void) const { return("OSS soundcard device"); }
   virtual std::string description(void) const { return("Open Sound System -devices (OSS/Linux and OSS/Free)."); }
@@ -61,16 +53,23 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 
   virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
 
-  OSSDEVICE (const std::string& name = "/dev/dsp", bool precise_sample_rates = false);
-  ~OSSDEVICE(void);
-  OSSDEVICE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
-  OSSDEVICE* new_expr(void) const { return new OSSDEVICE(); }
-
  private:
   
   OSSDEVICE(const OSSDEVICE& x) { }
   OSSDEVICE& operator=(const OSSDEVICE& x) { return *this; }    
 
+  int audio_fd;
+  
+  audio_buf_info audiobuf;          // soundcard.h
+  count_info audioinfo;             // soundcard.h
+  fd_set fds;
+
+  int fragment_size;
+  long int bytes_read;
+  int oss_caps;
+  struct timeval start_time;
+  
+  bool precise_srate_mode;
 };
 
 #endif /* COMPILE_OSS */

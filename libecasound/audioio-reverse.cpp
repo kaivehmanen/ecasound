@@ -97,6 +97,7 @@ void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     set_audio_format(child_repp->audio_format());
   }
   set_label(child_repp->label());
+  set_length_in_samples(child_repp->length_in_samples());
 
   AUDIO_IO::open();
 }
@@ -181,7 +182,7 @@ void AUDIO_IO_REVERSE::read_buffer(SAMPLE_BUFFER* sbuf)
     DBC_CHECK(buffersize() == tempbuf_repp->length_in_samples());
   }
   curpos += tempbuf_repp->length_in_samples();
-  position_in_samples(curpos);
+  set_position_in_samples(curpos);
 
   /* phase 2: copy the data reversed from tempbuf
    *          to sbuf */

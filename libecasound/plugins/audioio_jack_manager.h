@@ -17,6 +17,9 @@ class AUDIO_IO;
 /**
  * Manager class for JACK client objects.
  *
+ * Related design patterns:
+ *     - Mediator (GoF273)
+ *
  * @author Kai Vehmanen
  */
 class AUDIO_IO_JACK_MANAGER : public AUDIO_IO_MANAGER {

@@ -12,6 +12,8 @@
 class ECA_FILE_IO {
  public:
 
+  virtual ~ECA_FILE_IO(void) { }
+
   // -----
   // Open/close routines
 
@@ -42,7 +44,6 @@ class ECA_FILE_IO {
   virtual off_t file_bytes_processed(void) const = 0;
   virtual const std::string& file_mode(void) const = 0;
 
-  virtual ~ECA_FILE_IO(void) { }
 };
 
 #endif

@@ -19,6 +19,42 @@ typedef char* caddr_t;
  */
 class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
 
+ public:
+
+  ECA_FILE_IO_MMAP(void);
+  virtual ~ECA_FILE_IO_MMAP(void);
+
+  // --
+  // Open/close routines
+  // ---
+  virtual void open_file(const std::string& fname, const std::string& fmode);
+  virtual void open_stdin(void) { }
+  virtual void open_stdout(void) { }
+  virtual void open_stderr(void) { }
+  virtual void close_file(void);
+
+  // --
+  // Normal file operations
+  // ---
+  virtual void read_to_buffer(void* obuf, off_t bytes);
+  virtual void write_from_buffer(void* obuf, off_t bytes);
+
+  virtual void set_file_position(off_t newpos) { set_file_position(newpos,true); }
+  virtual void set_file_position(off_t newpos, bool seek);
+  virtual void set_file_position_advance(off_t fw);
+  virtual void set_file_position_end(void);
+  virtual off_t get_file_position(void) const;
+  virtual off_t get_file_length(void) const;
+
+  // --
+  // Status
+  // ---
+  virtual bool is_file_ready(void) const;
+  virtual bool is_file_error(void) const;
+  virtual bool is_file_ended(void) const;
+  virtual off_t file_bytes_processed(void) const;
+  virtual const std::string& file_mode(void) const { return(mode_rep); }
+
  private:
 
   int fd_rep;
@@ -31,43 +67,6 @@ class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
   bool file_ended_rep;
   std::string mode_rep;
   std::string fname_rep;
-   
- public:
-
-
-  // --
-  // Open/close routines
-  // ---
-  void open_file(const std::string& fname, const std::string& fmode);
-  void open_stdin(void) { }
-  void open_stdout(void) { }
-  void open_stderr(void) { }
-  void close_file(void);
-
-  // --
-  // Normal file operations
-  // ---
-  void read_to_buffer(void* obuf, off_t bytes);
-  void write_from_buffer(void* obuf, off_t bytes);
-
-  void set_file_position(off_t newpos) { set_file_position(newpos,true); }
-  void set_file_position(off_t newpos, bool seek);
-  void set_file_position_advance(off_t fw);
-  void set_file_position_end(void);
-  off_t get_file_position(void) const;
-  off_t get_file_length(void) const;
-
-  // --
-  // Status
-  // ---
-  bool is_file_ready(void) const;
-  bool is_file_error(void) const;
-  bool is_file_ended(void) const;
-  off_t file_bytes_processed(void) const;
-  const std::string& file_mode(void) const { return(mode_rep); }
-
-  ECA_FILE_IO_MMAP(void);
-  ~ECA_FILE_IO_MMAP(void);
 };
 
 #endif

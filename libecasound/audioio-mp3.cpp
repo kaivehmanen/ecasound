@@ -394,6 +394,7 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples)
     if (position_in_samples() == 0) 
       ecadebug->msg(ECA_DEBUG::info, "(audioio-mp3) Can't start process \"" + MP3FILE::default_mp3_input_cmd + "\". Please check your ~/.ecasoundrc.");
     finished_rep = true;
+    triggered_rep = false;
   }
   else finished_rep = false;
   
@@ -409,6 +410,7 @@ void MP3FILE::write_samples(void* target_buffer, long int samples)
 
   if (wait_for_child() != true) {
     finished_rep = true;
+    triggered_rep = false;
   }
   else {
     bytes_rep = ::write(fd_rep, target_buffer, frame_size() * samples);
@@ -533,7 +535,7 @@ void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERR
   long int numframes =  static_cast<long int>((fsize / mpg123_compute_bpf(&fr)));
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Total length (frames): " + kvu_numtostr(numframes));
   double tpf = mpg123_compute_tpf(&fr);
-  length_in_seconds(tpf * numframes);
+  set_length_in_seconds(tpf * numframes);
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Total length (seconds): " + kvu_numtostr(length_in_seconds()));
 
   /* sample format (this comes from mpg123) */
@@ -571,7 +573,10 @@ void MP3FILE::fork_mp3_input(void) {
 
     fd_rep = file_descriptor();
     f1_rep = fdopen(fd_rep, "r"); /* not part of <cstdio> */
-    if (f1_rep == 0) finished_rep = true;
+    if (f1_rep == 0) {
+      finished_rep = true;
+      triggered_rep = false;
+    }
   }
 
 // for ecawave mp3 bug debugging:

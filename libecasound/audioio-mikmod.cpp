@@ -69,12 +69,14 @@ long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {
     if (position_in_samples() == 0) 
       ecadebug->msg(ECA_DEBUG::info, "(audioio-mikmod) Can't start process \"" + MIKMOD_INTERFACE::default_mikmod_cmd + "\". Please check your ~/.ecasoundrc.");
     finished_rep = true;
+    triggered_rep = false;
   }
   else finished_rep = false;
   return(bytes_read_rep / frame_size());
 }
 
-void MIKMOD_INTERFACE::seek_position(void) {
+void MIKMOD_INTERFACE::seek_position(void)
+{
   if (triggered_rep == true) {
     if (io_mode() == io_read) {
       kill_mikmod();
@@ -96,6 +98,9 @@ void MIKMOD_INTERFACE::fork_mikmod(void) {
   if (child_fork_succeeded() == true) {
     fd_rep = file_descriptor();
     f1_rep = fdopen(fd_rep, "r"); /* not part of <cstdio> */
-    if (f1_rep == 0) finished_rep = true;
+    if (f1_rep == 0) {
+      finished_rep = true;
+      triggered_rep = false;
+    }
   }
 }

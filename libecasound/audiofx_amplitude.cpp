@@ -27,8 +27,17 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-EFFECT_AMPLIFY::EFFECT_AMPLIFY (parameter_t multiplier_percent) {
+EFFECT_AMPLITUDE::~EFFECT_AMPLITUDE(void)
+{
+}
+
+EFFECT_AMPLIFY::EFFECT_AMPLIFY (parameter_t multiplier_percent)
+{
   set_parameter(1, multiplier_percent);
+}
+
+EFFECT_AMPLIFY::~EFFECT_AMPLIFY(void)
+{
 }
 
 void EFFECT_AMPLIFY::set_parameter(int param, parameter_t value) {
@@ -177,8 +186,13 @@ void EFFECT_AMPLIFY_CHANNEL::process(void) {
   }
 }
 
-EFFECT_LIMITER::EFFECT_LIMITER (parameter_t limiting_percent) {
+EFFECT_LIMITER::EFFECT_LIMITER (parameter_t limiting_percent)
+{
   set_parameter(1, limiting_percent);
+}
+
+EFFECT_LIMITER::~EFFECT_LIMITER(void)
+{
 }
 
 void EFFECT_LIMITER::set_parameter(int param, parameter_t value) {

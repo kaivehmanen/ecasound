@@ -21,22 +21,14 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
  public:
 
   static void set_mikmod_cmd(const std::string& value);
-
- private:
-
-  bool triggered_rep;
-  bool finished_rep;
-  long int bytes_read_rep;
-  int fd_rep;
-  FILE* f1_rep;
-  
-  void seek_position_in_samples(long pos);
-  MIKMOD_INTERFACE& operator=(const MIKMOD_INTERFACE& x) { return *this; }
-
-  void fork_mikmod(void);
-  void kill_mikmod(void);
-  
+ 
  public:
+
+  MIKMOD_INTERFACE (const std::string& name = "");
+  virtual ~MIKMOD_INTERFACE(void);
+    
+  virtual MIKMOD_INTERFACE* clone(void) const { return new MIKMOD_INTERFACE(*this); }
+  virtual MIKMOD_INTERFACE* new_expr(void) const { return new MIKMOD_INTERFACE(); }
 
   virtual std::string name(void) const { return("MikMod tracker module"); }
   virtual std::string description(void) const { return("Interface for module players that support i/o using standard streams."); }
@@ -52,12 +44,21 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
 
   virtual bool finished(void) const { return(finished_rep); }
   virtual void seek_position(void);
- 
-  MIKMOD_INTERFACE (const std::string& name = "");
-  ~MIKMOD_INTERFACE(void);
-    
-  MIKMOD_INTERFACE* clone(void) const { return new MIKMOD_INTERFACE(*this); }
-  MIKMOD_INTERFACE* new_expr(void) const { return new MIKMOD_INTERFACE(); }
+
+
+ private:
+
+  bool triggered_rep;
+  bool finished_rep;
+  long int bytes_read_rep;
+  int fd_rep;
+  FILE* f1_rep;
+  
+  void seek_position_in_samples(long pos);
+  MIKMOD_INTERFACE& operator=(const MIKMOD_INTERFACE& x) { return *this; }
+
+  void fork_mikmod(void);
+  void kill_mikmod(void);
 };
 
 #endif

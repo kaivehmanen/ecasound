@@ -404,21 +404,6 @@ void ECA_CONTROL::action(int action_id)
     }
   case ec_c_mute: { toggle_chain_muting(); break; }
   case ec_c_bypass: { toggle_chain_bypass(); break; }
-  case ec_c_forward: 
-    { 
-      forward_chains(first_argument_as_float()); 
-      break; 
-    }
-  case ec_c_rewind: 
-    { 
-      rewind_chains(first_argument_as_float()); 
-      break; 
-    }
-  case ec_c_setpos: 
-    { 
-      set_position_chains(first_argument_as_float()); 
-      break; 
-    }
   case ec_c_status: 
     { 
       set_last_string(chain_status()); 

@@ -189,7 +189,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /*@}*/
 
-  /** @name Functions implemented from ECA_CHAINSETUP_POSITION */
+  /** @name Functions implemented from ECA_AUDIO_POSITION */
   /*@{*/
 
   virtual void seek_position(void);
@@ -340,6 +340,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   int number_of_attached_chains_to_input(AUDIO_IO* aiod) const;
   int number_of_attached_chains_to_output(AUDIO_IO* aiod) const;
   void add_chain_helper(const std::string& name);
+  void enable_audio_object_helper(AUDIO_IO* aobj) const;
 
   /*@}*/
 

@@ -130,6 +130,10 @@ void ADVANCED_COMPRESSOR::init_values(void) {
     rlevelsqe[i] = 0.0;
 }
 
+ADVANCED_COMPRESSOR::~ADVANCED_COMPRESSOR (void)
+{
+}
+
 void ADVANCED_COMPRESSOR::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
 
   //  cerr << "Param: " << param << ", value: " << value << ".\n";

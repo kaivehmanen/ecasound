@@ -22,6 +22,7 @@
 
 #include <kvutils/dbc.h>
 #include <kvutils/message_item.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "eca-error.h"
 #include "audioio.h"
@@ -33,6 +34,27 @@ AUDIO_IO::SETUP_ERROR::SETUP_ERROR(AUDIO_IO::SETUP_ERROR::Error_type type,
 				   const std::string& message) 
   : type_rep(type), message_rep(message) { }
 
+
+// ===================================================================
+// Constructors and destructors
+
+AUDIO_IO::~AUDIO_IO(void)
+{
+  if (is_open() == true) {
+    close();
+  }
+  DBC_CHECK(is_open() != true);
+}
+
+AUDIO_IO::AUDIO_IO(const std::string& name, 
+		   int mode)
+{
+  set_label(name);
+  set_io_mode(mode);
+ 
+  nonblocking_rep = false; 
+  open_rep = false;
+}
 
 // ===================================================================
 // Attributes
@@ -235,7 +257,7 @@ bool AUDIO_IO::writable(void) const { return(is_open() && io_mode() != io_read);
  */
 void AUDIO_IO::length(const ECA_AUDIO_TIME& v)
 {
-  length_in_samples(v.samples());
+  set_length_in_samples(v.samples());
 }
 
 /**
@@ -243,7 +265,7 @@ void AUDIO_IO::length(const ECA_AUDIO_TIME& v)
  */
 void AUDIO_IO::position(const ECA_AUDIO_TIME& v)
 {
-  position_in_samples(v.samples());
+  set_position_in_samples(v.samples());
 }
 
 /**
@@ -277,25 +299,32 @@ string AUDIO_IO::status(void) const {
   return(mitem.to_string());
 }
 
-// ===================================================================
-// Constructors and destructors
-
-AUDIO_IO::~AUDIO_IO(void)
+/**
+ * Overrides the non-virtaul function 
+ * ECA_SAMPLERATE_AWARE::samples_per_second(), that is 
+ * present (through inheritance) in both ECA_AUDIO_FORMAT
+ * and ECA_AUDIO_POSITION.
+ */
+SAMPLE_SPECS::sample_rate_t AUDIO_IO::samples_per_second(void) const
 {
-  if (is_open() == true) {
-    close();
-  }
-  DBC_CHECK(is_open() != true);
+  DBC_CHECK(ECA_AUDIO_FORMAT::samples_per_second() == 
+	    ECA_AUDIO_POSITION::samples_per_second());
+  return(ECA_AUDIO_FORMAT::samples_per_second());
 }
 
-AUDIO_IO::AUDIO_IO(const std::string& name, 
-		   int mode)
+void AUDIO_IO::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 {
-  set_label(name);
-  set_io_mode(mode);
- 
-  position_in_samples(0);
+  ECA_AUDIO_FORMAT::set_samples_per_second(v);
+  ECA_AUDIO_POSITION::set_samples_per_second(v);
+}
 
-  nonblocking_rep = false; 
-  open_rep = false;
+void AUDIO_IO::seek_position(void)
+{
+  ecadebug->msg(ECA_DEBUG::user_objects,
+		"(audioio) seek position, aobj '" +
+		label() +
+		"' to pos in sec " + 
+		kvu_numtostr(position_in_seconds()) + ".");
+
+  ECA_AUDIO_POSITION::seek_position();
 }

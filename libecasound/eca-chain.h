@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "eca-chainop.h"
-#include "eca-samplerate-aware.h"
+#include "eca-audio-position.h"
 #include "eca-debug.h"
 
 class GENERIC_CONTROLLER;
@@ -15,7 +15,7 @@ class SAMPLE_BUFFER;
 /**
  * Class representing an abstract audio signal chain.
  */
-class CHAIN : public ECA_SAMPLERATE_AWARE {
+class CHAIN : public ECA_AUDIO_POSITION {
  
  public:
 
@@ -105,10 +105,17 @@ class CHAIN : public ECA_SAMPLERATE_AWARE {
   std::string chain_operator_to_string(CHAIN_OPERATOR* chainop) const;
   std::string controller_to_string(GENERIC_CONTROLLER* gctrl) const;
 
-  /** @name Public virtual functions for setting audio format information */
+  /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
   /*@{*/
 
   virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
+
+  /*@}*/
+
+  /** @name Functions implemented from ECA_AUDIO_POSITION */
+  /*@{*/
+
+  virtual void seek_position(void);
 
   /*@}*/
 

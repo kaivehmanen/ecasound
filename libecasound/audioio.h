@@ -5,6 +5,7 @@
 
 #include "eca-audio-position.h"
 #include "eca-audio-time.h"
+#include "eca-audio-format.h"
 #include "dynamic-object.h"
 
 class SAMPLE_BUFFER;
@@ -32,6 +33,7 @@ class AUDIO_IO_MANAGER;
  * @author Kai Vehmanen
  */
 class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
+                 public ECA_AUDIO_FORMAT,
 		 public ECA_AUDIO_POSITION {
 
  public:
@@ -289,6 +291,22 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
 
   ECA_AUDIO_TIME length(void) const;
   ECA_AUDIO_TIME position(void) const;
+
+  /*@}*/
+
+  /** @name Functions overridden and reimplemented from 
+   *        ECA_AUDIO_POSITION and ECA_AUDIO_FORMAT */
+  /*@{*/
+
+  SAMPLE_SPECS::sample_rate_t samples_per_second(void) const;
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
+
+  /*@}*/
+
+  /** @name Functions implemented from ECA_AUDIO_POSITION */
+  /*@{*/
+
+  virtual void seek_position(void);
 
   /*@}*/
 

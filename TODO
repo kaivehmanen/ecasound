@@ -15,80 +15,22 @@ To submit a new EDI-item, send a mail the 'ecasound-list' mailing
 list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 
 -----------------------------------------------------------------------
-[ Development goals and current status ]
-
-2.x series:
-
-- aim is to make the 2.0.x releases binary-compatible
+[ Active development areas ]
 
 2.2 (2.1devX series):
 
-- extending the ECI API [not started]
-- more formal description of key libecasound components 
-  (sessions, chainsetups, control interface, ECI, etc) and 
-  their dependencies [not started]
+- JACK and ALSA 0.9.x support [mostly done]
+- cleanup of samplerate and audio position related
+  code (edi-18, edi-21) [done!]
 
------------------------------------------------------------------------
-[ Bugs to be fixed ]
+2.0:
 
-- commas confuse file name handling (ecatools)
-- (edi-1): initial reverb-spike when using -ete
-- ecasound crashes if /dev/midi points to an invalid rawmidi device
-
------------------------------------------------------------------------
-[ Upcoming features - implemented sooner or later ]
-
-- ia-mode: make separate xxx-list and xxx-status commands (a pure list, and a more
-  verbose xxx-status command [ partly done - 1.9.x ]
-- better MIDI-support (separate MIDI input/output objects) [under work]
-- (edi-4): support for 14bit MIDI-CCs
-- (edi-5): add threshold parameter to -eca
-  
------------------------------------------------------------------------
-[ Wish-list - implemented if enough demand ]
-
-Input/output devices:
-
-- wrapper objects for triggering file input/output based on volume
-  level or timers
-- (edi-2): type override for audio objects [done - 2.1dev2]
-- wrapper object for using effects as audio inputs/outputs
-- more efficient interleaving of multichannel inputs/outputs
-	- "-i:ileave,mchannel-file.wav,1" - only reads the 1st channel
-	- "-i:ileave,mchannel-file.wav,2" - only reads the 2nd channel
-	- and so on... the same with outputs
-- internal support for mp3 encoding and decoding (libmpg123 + libmp3lame)
-- SMPTE time-code
-- integration to some MIDI-sequencer engine - ttrk, TSE3, etc
-- support for Ardour's audio file (EDL-based)
-- support for various audio server frameworks; AES, CSL, aRts, NAS, etc
-- shorten support
-- integration to some synth engine - for instance Csound, aRts, 
-  Quasimodo, Bacterium, ...
-
-Effects, routing, dsp routines:
-
-- generic envelope followers
-- more effects (for instance, a Schroeder reverb)
-
-User-interfaces:
-
-- daemon mode for ecasound (ecad, ecasoundd)
-
-Other areas:
-
-- interactive mode: cs-copy 'chainsetupname' (duplicate chainsetup)
-- smart mixing / dithering
-- ecaduplex; tool for testing full-duplex performance, maybe
-  simulating normal multitrack recording
+- stable, only critical bug fixes
 
 -----------------------------------------------------------------------
 [ Help - developer in trouble ]
 
 - ecasound compiles on Solaris 2.6 and FreeBSD 4.2, what about other
   versions; how about Irix, other BSDs?
-- how current ecasound versions work with old gcc packages (2.7.x
-  and older)?
-- ... and old libc-versions (2.x and 5.x)?
 - ecasound compiles out-of-the-box on Redhat 6.x and PLD Linux
   systems, what about other distros?

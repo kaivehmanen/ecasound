@@ -12,6 +12,12 @@ class LINEAR_ENVELOPE : public FINITE_ENVELOPE {
 
  public:
 
+  LINEAR_ENVELOPE(void);
+  virtual ~LINEAR_ENVELOPE(void);
+
+  LINEAR_ENVELOPE* clone(void) const { return new LINEAR_ENVELOPE(*this); }
+  LINEAR_ENVELOPE* new_expr(void) const { return new LINEAR_ENVELOPE(*this); }
+
   std::string name(void) const { return("Linear envelope"); }
   parameter_t value(void);
 
@@ -21,13 +27,9 @@ class LINEAR_ENVELOPE : public FINITE_ENVELOPE {
   void set_parameter(int param, parameter_t value);
   parameter_t get_parameter(int param) const;
 
-  LINEAR_ENVELOPE(parameter_t time_in_seconds = 0.0); 
-  LINEAR_ENVELOPE* clone(void) const { return new LINEAR_ENVELOPE(*this); }
-  LINEAR_ENVELOPE* new_expr(void) const { return new LINEAR_ENVELOPE(*this); }
-
   private:
 
-  parameter_t curpos, curval;
+  parameter_t curval;
 };
 
 #endif

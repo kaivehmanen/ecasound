@@ -56,9 +56,6 @@ class ECA_ENGINE {
     // --
     ep_c_mute,
     ep_c_bypass,
-    ep_c_forward,
-    ep_c_rewind,
-    ep_c_setpos,
     ep_c_select,
     // --
     ep_cop_select,
@@ -163,8 +160,6 @@ private:
    * object information  */
   /*@{*/
 
-  std::vector<int> input_start_pos_rep;
-  std::vector<int> output_start_pos_rep;
   std::vector<int> input_chain_count_rep;
   std::vector<int> output_chain_count_rep;
   int input_count_rep;
@@ -222,11 +217,8 @@ private:
   double current_position(void) const; // seconds, uses the master_input
   double current_position_chain(void) const; // seconds
   void set_position(double seconds);
-  void set_position_chain(double seconds);
   void set_position(int seconds) { set_position((double)seconds); }
   void change_position(double seconds);
-  void change_position_chain(double seconds);
-  void rewind_to_start_position(void);
 
   /**
    * Calculates how much data we need to process and sets buffersize 

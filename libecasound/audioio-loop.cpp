@@ -45,6 +45,10 @@ LOOP_DEVICE::LOOP_DEVICE(int id)
   empty_rounds_rep = 0;
 }
 
+LOOP_DEVICE::~LOOP_DEVICE(void)
+{
+}
+
 bool LOOP_DEVICE::finished(void) const
 {
   return(finished_rep);
@@ -77,7 +81,7 @@ void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer)
 
   /* first write after an read (or reset) */
   if (writes_rep == 1) {
-    position_in_samples_advance(buffer->length_in_samples());
+    change_position_in_samples(buffer->length_in_samples());
     extend_position();
     sbuf.number_of_channels(channels());
     sbuf.make_silent();

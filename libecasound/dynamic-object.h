@@ -1,14 +1,15 @@
 #ifndef INCLUDED_DYNAMIC_OBJECT_H
 #define INCLUDED_DYNAMIC_OBJECT_H
 
-#include <string>
-
 #include "dynamic-parameters.h"
 #include "eca-object.h"
 
 /**
  * Virtual class for objects supporting dynamic parameter
  * control.
+ *
+ * Related design patterns:
+ *     - Factory Method / Virtual Constructor (GoF107)
  *
  * @author Kai Vehmanen
  */
@@ -17,6 +18,8 @@ class DYNAMIC_OBJECT : public DYNAMIC_PARAMETERS<T>,
                        public ECA_OBJECT {
 
  public:
+
+  virtual ~DYNAMIC_OBJECT (void) { }
 
   /**
    * Virtual method that clones the current object and returns 
@@ -29,8 +32,6 @@ class DYNAMIC_OBJECT : public DYNAMIC_PARAMETERS<T>,
    * This must be implemented by all subclasses!
    */
   virtual DYNAMIC_OBJECT<T>* new_expr(void) const = 0;
-
-  virtual ~DYNAMIC_OBJECT (void) { }
 };
 
 #endif

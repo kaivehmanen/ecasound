@@ -23,12 +23,7 @@
 
 ECA_AUDIO_POSITION::ECA_AUDIO_POSITION(void)
 {
-  position_in_samples_rep = 0;
-  length_in_samples_rep = 0;
-}
-
-ECA_AUDIO_POSITION::ECA_AUDIO_POSITION(const ECA_AUDIO_FORMAT& fmt) : ECA_AUDIO_FORMAT(fmt)
-{
+  length_set_rep = false;
   position_in_samples_rep = 0;
   length_in_samples_rep = 0;
 }
@@ -53,19 +48,20 @@ double ECA_AUDIO_POSITION::length_in_seconds_exact(void) const
   return((double)length_in_samples() / (double)samples_per_second());  
 }
 
-void ECA_AUDIO_POSITION::length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
+void ECA_AUDIO_POSITION::set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
 {
   length_in_samples_rep = pos;
+  length_set_rep = true;
 }
 
-void ECA_AUDIO_POSITION::length_in_seconds(int pos_in_seconds)
+void ECA_AUDIO_POSITION::set_length_in_seconds(int pos_in_seconds)
 {
-  length_in_seconds((double)pos_in_seconds); 
+  set_length_in_seconds((double)pos_in_seconds); 
 }
 
-void ECA_AUDIO_POSITION::length_in_seconds(double pos_in_seconds)
+void ECA_AUDIO_POSITION::set_length_in_seconds(double pos_in_seconds)
 {
-  length_in_samples(pos_in_seconds * samples_per_second());  
+  set_length_in_samples(pos_in_seconds * samples_per_second());  
 }
 
 SAMPLE_SPECS::sample_pos_t ECA_AUDIO_POSITION::position_in_samples(void) const
@@ -84,7 +80,7 @@ double ECA_AUDIO_POSITION::position_in_seconds_exact(void) const
   return((double)position_in_samples() / (double)samples_per_second()); 
 }
 
-void ECA_AUDIO_POSITION::position_in_samples(SAMPLE_SPECS::sample_pos_t pos)
+void ECA_AUDIO_POSITION::set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos)
 {
   position_in_samples_rep = pos;
   if (position_in_samples_rep < 0) {
@@ -92,19 +88,24 @@ void ECA_AUDIO_POSITION::position_in_samples(SAMPLE_SPECS::sample_pos_t pos)
   }
 }
 
-void ECA_AUDIO_POSITION::position_in_samples_advance(SAMPLE_SPECS::sample_pos_t pos)
+void ECA_AUDIO_POSITION::change_position_in_samples(SAMPLE_SPECS::sample_pos_t pos)
 {
   position_in_samples_rep += pos;
 }
 
-void ECA_AUDIO_POSITION::position_in_seconds(int pos_in_seconds)
+void ECA_AUDIO_POSITION::change_position_in_seconds(double pos_in_seconds)
 {
-  position_in_seconds((double)pos_in_seconds); 
+  change_position_in_samples(pos_in_seconds * samples_per_second());
 }
 
-void ECA_AUDIO_POSITION::position_in_seconds(double pos_in_seconds)
+void ECA_AUDIO_POSITION::set_position_in_seconds(int pos_in_seconds)
 {
-  position_in_samples(pos_in_seconds * samples_per_second());
+  set_position_in_seconds((double)pos_in_seconds); 
+}
+
+void ECA_AUDIO_POSITION::set_position_in_seconds(double pos_in_seconds)
+{
+  set_position_in_samples(pos_in_seconds * samples_per_second());
 }
 
 void ECA_AUDIO_POSITION::seek_first(void)
@@ -118,7 +119,7 @@ void ECA_AUDIO_POSITION::seek_last(void) {
 
 void ECA_AUDIO_POSITION::seek_position_in_samples(SAMPLE_SPECS::sample_pos_t pos_in_samples)
 {
-  position_in_samples(pos_in_samples);
+  set_position_in_samples(pos_in_samples);
   seek_position();
 }
 
@@ -136,7 +137,9 @@ void ECA_AUDIO_POSITION::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_
 {
   double ratio (new_value);
   ratio /= samples_per_second();
-  position_in_samples(position_in_samples() * ratio);
-  length_in_samples(length_in_samples() * ratio);
+  set_position_in_samples(position_in_samples() * ratio);
+  if (length_set() == true) {
+    set_length_in_samples(length_in_samples() * ratio);
+  }
   ECA_SAMPLERATE_AWARE::set_samples_per_second(new_value);
 }

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 310102) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 010202) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -18,7 +18,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.4 *-
 
 ??022002 (v2.1dev8)
-	- edi-entries: edi-18
+	- edi-entries: edi-18, edi-21
 	- added: reverse audio object type; see the ecasound(1) 
 		 man page for better documentation
 	- added: pyecasound - if python version is 2.2 or higher, 
@@ -31,14 +31,27 @@ Last officially released version is -*> v2.0.4 *-
 	- added: edi-18 implemented; engine samplerate is now
 		 set automatically - if object sample rates don't
 	         match, an error is printed
+	- added: edi-21 implemented; a much improved framework 
+		 for handling audio position information is now
+  		 in place; -kl, -kl2 and -klg are now position 
+		 aware - changing chainsetup position also affects
+	   	 controller sources
 	- removed: support for old ALSA driver versions 0.3.x, 
  		   0.4.x and 0.5.x
 	- removed: ecasoundrc - 'default-samplerate'
 	- removed: -sr option; not needed anymore
+	- removed: ia-mode - 'c-rewind', 'c-forward' and 
+		   'c-setpos'
 	- changed: JACK support updated to match JACK's 28/Jan/02
 		   CVS-tree
 	- changed: pyecasound - module libpyecasound.so renamed 
 		   to pyecasound.so
+	- changed: programmer's guide updated; added a new chapter
+		   about library organization
+	- changed: small user's guide updatex
+	- changed: looping with -tl always loops from the start; 
+		   -y can't be used for offseting loop start 
+ 		   offset -> use ewf-files instead
 	- fixed: -[io]:alsaplugin,x,y didn't work with latest ALSA
 		 0.9betaX releases
 	- fixed: serious bug in setting up ALSA 0.9.x buffering params
@@ -48,6 +61,9 @@ Last officially released version is -*> v2.0.4 *-
 		 device multiple times caused a seg.fault
 	- fixed: ECI apps dumped core when executing their first
 		 command
+	- fixed: after mp3/ogg/mikmod/timidity objects had reached
+		 finished state, playback couldn't be started 
+		 without doing a disconnect-connect
 16012002 (v2.1dev7)
 	- edi-entries: edi-12
 	- added: a watchdog thread that handles thread cleanup; 

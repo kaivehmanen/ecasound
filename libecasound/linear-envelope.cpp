@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // linear-envelope.cpp: Linear envelope
-// Copyright (C) 1999,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,26 +17,33 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <kvutils/dbc.h>
 #include <kvutils/kvu_numtostr.h>
 #include <kvutils/message_item.h>
 
 #include "linear-envelope.h"
 #include "eca-debug.h"
 
-CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::value(void) {
-  curpos += step_length();
-  if (curpos <= length_in_seconds()) {
-    curval = (curpos / length_in_seconds());
+LINEAR_ENVELOPE::LINEAR_ENVELOPE(void)
+  : FINITE_ENVELOPE(0)
+{
+} 
+
+LINEAR_ENVELOPE::~LINEAR_ENVELOPE(void)
+{
+}
+
+CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::value(void)
+{
+  change_position_in_seconds(step_length());
+  if (position_in_seconds_exact() <= length_in_seconds_exact()) {
+    curval = (position_in_seconds_exact() / length_in_seconds_exact());
   }
   return(curval);
 }
 
-LINEAR_ENVELOPE::LINEAR_ENVELOPE(CONTROLLER_SOURCE::parameter_t time_in_seconds)
-  : FINITE_ENVELOPE(time_in_seconds) {
-  set_parameter(1, get_parameter(1));
-} 
-
-void LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_t step) {
+void LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_t step)
+{
   step_length(step);
 
   MESSAGE_ITEM otemp;
@@ -47,17 +54,20 @@ void LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_t step) {
   ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
 }
 
-void LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
+void LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value)
+{
   switch (param) {
   case 1:
-    length_in_seconds(value);
-    curpos = 0.0;
+    DBC_CHECK(samples_per_second() > 0);
+    set_length_in_seconds(value);
+    set_position_in_samples(0);
     curval = 0.0;
     break;
   }
 }
 
-CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::get_parameter(int param) const {
+CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::get_parameter(int param) const
+{
   switch (param) {
   case 1:
     return(length_in_seconds());
