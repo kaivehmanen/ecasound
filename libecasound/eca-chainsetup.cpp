@@ -312,7 +312,7 @@ void ECA_CHAINSETUP::set_defaults(void)
  *
  * Only used by ECA_CHAINSETUP::set_defaults.
  */
-string set_resource_helper(const ECA_RESOURCES& ecaresources, const string& tag, const string& alternative)
+string ECA_CHAINSETUP::set_resource_helper(const ECA_RESOURCES& ecaresources, const string& tag, const string& alternative)
 {
   if (ecaresources.has(tag) == true) {
     return(ecaresources.resource(tag));

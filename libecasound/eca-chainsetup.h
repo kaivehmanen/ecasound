@@ -372,7 +372,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   static bool ok_audio_object_helper(const AUDIO_IO* aobj, const vector<AUDIO_IO*>& aobjs);
   static void check_object_samplerate(const AUDIO_IO* obj,
 				      SAMPLE_SPECS::sample_rate_t srate) throw(ECA_ERROR&);
-  static const string set_resource_helper(const ECA_RESOURCES& ecaresources, const string& tag, const string& alternative);
+  static string set_resource_helper(const ECA_RESOURCES& ecaresources, const string& tag, const string& alternative);
 
   /*@}*/
 
