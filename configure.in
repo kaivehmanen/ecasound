@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20021016-3
+dnl last modified: 20021105-4
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -641,11 +641,6 @@ echo "------------------------------------------------------------------"
 echo "5. Section: Headers"
 echo "------------------------------------------------------------------"
 
-dnl ---
-dnl Atomic locking operations in asm/atomic.h
-dnl ---
-AC_HEADER_ASM_ATOMIC
-
 dnl ------------------------------------------------------------------
 
 dnl ---
@@ -655,7 +650,7 @@ AC_HEADER_TIME
 dnl Note! Header filenames must be on the same line!
 AC_CHECK_HEADERS(dlfcn.h errno.h fcntl.h signal.h unistd.h sys/stat.h sys/time.h sys/types.h sys/wait.h,,
 		 AC_MSG_ERROR([*** not all required header files were found ***]))
-AC_CHECK_HEADERS(inttypes.h ladspa.h sched.h stdint.h asm/atomic.h sys/mman.h)
+AC_CHECK_HEADERS(inttypes.h ladspa.h sched.h stdint.h sys/mman.h)
 
 dnl ------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 /** 
  * acconfig.h for ecasound
- * last modified: 20021101-3
+ * last modified: 20021104-4
  */
 
 /* Package name */
@@ -53,9 +53,6 @@
 
 /* whether to disable all use of shared libs */
 #undef ECA_ALL_STATIC
-
-/* use locking primitives found in asm/atomic.h */
-#undef ECA_USE_ASM_ATOMIC
 
 /* use C++ std namespace */
 #undef ECA_USE_CXX_STD_NAMESPACE

@@ -35,45 +35,6 @@ fi
 ])
 
 ## ------------------------------------------------------------------------
-## Check whether atomic locking primitives are defined in asm/atomic.h
-## 
-## version: 2
-##
-## defines: ECA_USE_ASM_ATOMIC
-## ------------------------------------------------------------------------
-##
-AC_DEFUN(AC_HEADER_ASM_ATOMIC,
-[
-AC_MSG_CHECKING(whether atomic locking primitives are defined in asm/atomic.h)
-
-AC_LANG_CPLUSPLUS
-AC_TRY_RUN([
-#include <asm/atomic.h>
-
-int main(void)
-{	
-	atomic_t i;
-   	atomic_read(&i);
-   	atomic_set(&i, 0);
-	atomic_add(0, &i);
-	atomic_sub(0, &i);
-    	atomic_inc(&i);
-    	atomic_dec(&i);
-  	return(0);
-}
-],
-[ 	AC_MSG_RESULT(yes.)
-	AC_DEFINE(ECA_USE_ASM_ATOMIC)
-],
-[
-	AC_MSG_RESULT(not found.)
-],
-[
-	AC_MSG_RESULT(not found.)
-]
-)])
-
-## ------------------------------------------------------------------------
 ## Check whether namespaces are supported.
 ##
 ## version: 3
