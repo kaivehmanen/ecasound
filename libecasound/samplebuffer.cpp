@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // samplebuffer.cpp: Class representing a buffer of audio samples.
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -385,12 +385,18 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	    s16temp = (int16_t)(sample_t)(stemp * SAMPLE_SPECS::s16_to_st_constant - 0.5);
 	  else 
 	    s16temp = (int16_t)(sample_t)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
-  
+	
 	  // little endian: (LSB, MSB) (Intel).
 	  // big endian: (MSB, LSB) (Motorola).
 	
-	  target[osize++] = (unsigned char)(s16temp & 0xff);
-	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    target[osize++] = (unsigned char)(s16temp & 0xff);
+	    target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s16temp & 0xff);
+	  }
 	  break;
 	}
       
@@ -405,8 +411,14 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	  // little endian: (LSB, MSB) (Intel).
 	  // big endian: (MSB, LSB) (Motorola).
 	  // ---
-	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)(s16temp & 0xff);
+	  if (SAMPLE_SPECS::is_system_littleendian) {	
+	    target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s16temp & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)(s16temp & 0xff);
+	    target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	  }
 	  break;
 	}
       
@@ -418,12 +430,21 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	  else 
 	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
 
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
-	  target[osize++] = 0;
+	  if (SAMPLE_SPECS::is_system_littleendian) {	
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = 0;
+	  } 
+	  else {
+	    target[osize++] = 0;
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	  }
 	
 	  if (s32temp < 0) target[osize - 2] |=  0x80;
+
 	  break;
 	}
       
@@ -435,12 +456,21 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	  else 
 	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
 
-	  target[osize++] = 0;
-	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
-	
+	  if (SAMPLE_SPECS::is_system_littleendian) {	
+	    target[osize++] = 0;
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = 0;
+	  }
+
 	  if (s32temp < 0) target[osize - 3] |= 0x80;
+
 	  break;
 	}
       
@@ -451,11 +481,19 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
 	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
-	
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+
+	  if (SAMPLE_SPECS::is_system_littleendian) {	
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	  }
 	  break;
 	}
       
@@ -467,10 +505,18 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	  else 
 	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
   
-	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+	  }
 	  break;
 	}
    
@@ -478,10 +524,18 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	{
 	  union { int32_t i; float f; } f32temp;
 	  f32temp.f = (float)stemp;
-	  target[osize++] = (unsigned char)(f32temp.i & 0xff);
-	  target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
-	  target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
-	  target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	  }
 	  break;
 	}
 
@@ -489,17 +543,25 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	{
 	  union { int32_t i; float f; } f32temp;
 	  f32temp.f = (float)stemp;
-	  target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
-	  target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
-	  target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
-	  target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	  }
 	  break;
 	}
       
       default: 
 	{ 
-	  ecadebug->msg(ECA_DEBUG::info, "(samplebuffer) Unknown sample format! [1].");
-   	}
+	  ecadebug->msg(ECA_DEBUG::info, "(samplebuffer) Unknown sample format! [2].");
+	}
       }
     }
   }
@@ -561,8 +623,14 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	  // little endian: (LSB, MSB) (Intel).
 	  // big endian: (MSB, LSB) (Motorola).
 	
-	  target[osize++] = (unsigned char)(s16temp & 0xff);
-	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    target[osize++] = (unsigned char)(s16temp & 0xff);
+	    target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s16temp & 0xff);
+	  }
 	  break;
 	}
       
@@ -577,8 +645,14 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	  // little endian: (LSB, MSB) (Intel).
 	  // big endian: (MSB, LSB) (Motorola).
 	  // ---
-	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)(s16temp & 0xff);
+	  if (SAMPLE_SPECS::is_system_littleendian) {	
+	    target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s16temp & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)(s16temp & 0xff);
+	    target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	  }
 	  break;
 	}
       
@@ -590,10 +664,18 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	  else 
 	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
 
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
-	  target[osize++] = 0;
+	  if (SAMPLE_SPECS::is_system_littleendian) {	
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = 0;
+	  } 
+	  else {
+	    target[osize++] = 0;
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	  }
 	
 	  if (s32temp < 0) target[osize - 2] |=  0x80;
 
@@ -608,11 +690,19 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	  else 
 	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
 
-	  target[osize++] = 0;
-	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
-	
+	  if (SAMPLE_SPECS::is_system_littleendian) {	
+	    target[osize++] = 0;
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = 0;
+	  }
+
 	  if (s32temp < 0) target[osize - 3] |= 0x80;
 
 	  break;
@@ -625,11 +715,19 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
 	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
-	
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+
+	  if (SAMPLE_SPECS::is_system_littleendian) {	
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	  }
 	  break;
 	}
       
@@ -641,10 +739,18 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	  else 
 	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
   
-	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
-	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
-	  target[osize++] = (unsigned char)(s32temp & 0xff);
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)(s32temp & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+	  }
 	  break;
 	}
    
@@ -652,10 +758,18 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	{
 	  union { int32_t i; float f; } f32temp;
 	  f32temp.f = (float)stemp;
-	  target[osize++] = (unsigned char)(f32temp.i & 0xff);
-	  target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
-	  target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
-	  target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	  }
 	  break;
 	}
 
@@ -663,10 +777,18 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	{
 	  union { int32_t i; float f; } f32temp;
 	  f32temp.f = (float)stemp;
-	  target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
-	  target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
-	  target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
-	  target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	    target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	  }
+	  else {
+	    target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	    target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	  }
 	  break;
 	}
       
