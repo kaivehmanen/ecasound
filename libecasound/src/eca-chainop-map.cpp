@@ -68,10 +68,12 @@ void ECA_CHAIN_OPERATOR_MAP::register_default_objects(void) {
   register_object("epp", new EFFECT_NORMAL_PAN());
   register_object("erc", new EFFECT_CHANNEL_COPY());
   register_object("erm", new EFFECT_MIX_TO_CHANNEL());
+  register_object("etc", new EFFECT_CHORUS());
   register_object("etd", new EFFECT_DELAY());
   register_object("etf", new EFFECT_FAKE_STEREO());
   register_object("etl", new EFFECT_FLANGER());
   register_object("etm", new EFFECT_MULTITAP_DELAY());
+  register_object("etp", new EFFECT_PHASER());
   register_object("etr", new EFFECT_REVERB());
   register_object("ev", new EFFECT_ANALYZE());
   register_object("ezf", new EFFECT_DCFIND());

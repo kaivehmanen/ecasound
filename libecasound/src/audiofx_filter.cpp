@@ -190,6 +190,11 @@ void EFFECT_ALLPASS_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::paramet
   switch (param) {
   case 1: 
     D = value;
+//    assert(inbuf.size() == outbuf.size());
+    for(int n = 0; n < static_cast<int>(inbuf.size()); n++) {
+      if (inbuf[n].size() > D) inbuf[n].resize(D);
+//      if (outbuf[n].size() > D) inbuf[n].resize(D);
+    }
     break;
   case 2: 
     feedback_gain = value / 100.0;
@@ -214,7 +219,7 @@ void EFFECT_ALLPASS_FILTER::init(SAMPLE_BUFFER* insample) {
   set_samples_per_second(insample->sample_rate());
 
   inbuf.resize(insample->number_of_channels());
-  outbuf.resize(insample->number_of_channels());
+//  outbuf.resize(insample->number_of_channels());
 }
 
 void EFFECT_ALLPASS_FILTER::process(void) {
@@ -222,17 +227,23 @@ void EFFECT_ALLPASS_FILTER::process(void) {
   while(!i.end()) {
     if (inbuf[i.channel()].size() >= D) {
       inbuf[i.channel()].push_back(*i.current());
+//      *i.current() = -feedback_gain * (*i.current()) +
+//	             inbuf[i.channel()].front() +
+//	             feedback_gain * outbuf[i.channel()].front();
       *i.current() = -feedback_gain * (*i.current()) +
-	             inbuf[i.channel()].front() +
-	             feedback_gain * outbuf[i.channel()].front();
-      outbuf[i.channel()].push_back(*i.current());
+	             (feedback_gain * inbuf[i.channel()].front() +
+		     *i.current()) * 
+		     (1.0 - feedback_gain * feedback_gain);
+//	             feedback_gain * outbuf[i.channel()].front();
+//      outbuf[i.channel()].push_back(*i.current());
 
       inbuf[i.channel()].pop_front();
-      outbuf[i.channel()].pop_front();
+//      outbuf[i.channel()].pop_front();
     } 
     else {
       inbuf[i.channel()].push_back(*i.current());
-      outbuf[i.channel()].push_back(*i.current());
+      *i.current() = *i.current() * (1.0 - feedback_gain);
+//      outbuf[i.channel()].push_back(*i.current());
     }
     i.next();
   }
@@ -246,8 +257,18 @@ EFFECT_COMB_FILTER::EFFECT_COMB_FILTER (int delay_in_samples, DYNAMIC_PARAMETERS
 void EFFECT_COMB_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
   switch (param) {
   case 1: 
-    C = value;
-    break;
+    {
+      C = value;
+      vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
+      while(p != buffer.end()) {
+	if (p->size() > C) {
+	  p->resize(C);
+	}
+	++p;
+	break;
+      }
+    }
+
   case 2: 
     D = value;
     break;
@@ -271,13 +292,12 @@ void EFFECT_COMB_FILTER::init(SAMPLE_BUFFER* insample) {
   set_samples_per_second(insample->sample_rate());
 
   buffer.resize(insample->number_of_channels());
-  laskuri.resize(insample->number_of_channels(), parameter_type(0.0));
 }
 
 void EFFECT_COMB_FILTER::process(void) {
   i.begin();
   while(!i.end()) {
-    if (laskuri[i.channel()] >= C && buffer[i.channel()].size() > 0) {
+    if (buffer[i.channel()].size() >= C) {
       *i.current() = (*i.current())  + (pow(D, C) *
 					buffer[i.channel()].front());
       buffer[i.channel()].push_back(*i.current());
@@ -285,7 +305,6 @@ void EFFECT_COMB_FILTER::process(void) {
     } 
     else {
       buffer[i.channel()].push_back(*i.current());
-      laskuri[i.channel()]++;
     }
     i.next();
   }

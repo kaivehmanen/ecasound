@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 240200) **
+** ecasound - user visible changes (NEWS)      (last edited: 260200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -20,7 +20,7 @@ Last officially released version is -*> v1.6.12r10 <*-
 	- added: an allpass filter (-efa)
 	- added: a comb filter (-efc)
 	- added: a simple pitch shifter (-ei)
-	- added: a flanger (-etl)
+	- added: flanger (-etl), chorus (-etc) and phaser (-etp)
 	- removed: old effect preset files and command line options
 	- changed: rewrote the normal compressor (-ec), now takes 
 		   the threshold argument as percents

@@ -412,6 +412,9 @@ enddit()
 em(TIME-BASED EFFECTS)
 startdit()
 
+dit(-etc:delay-time-msec,variance-time-samples,feedback-%,lfo-freq)
+Chorus.
+
 dit(-etd:delay-time-msec,surround-mode,number-of-delays,mix-%)
 Delay effect. 'delay time' is the delay time in milliseconds.
 'surround-mode' is a integer with following meanings: 0 = normal, 

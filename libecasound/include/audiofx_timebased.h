@@ -6,6 +6,7 @@
 #include <string>
 
 #include "audiofx.h"
+#include "audiofx_filter.h"
 #include "osc-sine.h"
 
 typedef deque<SAMPLE_SPECS::sample_type> SINGLE_BUFFER;
@@ -63,14 +64,15 @@ class EFFECT_MULTITAP_DELAY : public EFFECT_TIME_BASED {
 
  private:
 
-  SAMPLE_ITERATOR_CHANNELS i;
+  SAMPLE_ITERATOR_INTERLEAVED i;
 
   parameter_type surround;
   parameter_type mix;
 
-  long int dtime, dnum, delay_index;
+  long int dtime, dnum;
 
-  vector<bool> filled;
+  vector<long int> delay_index;
+  vector<vector<bool> > filled;
   vector<vector<SAMPLE_SPECS::sample_type> > buffer;
 
  public:
@@ -149,29 +151,71 @@ class EFFECT_REVERB : public EFFECT_TIME_BASED {
 };
 
 /*
- * Flanger
+ * Base class for modulating delay effects
  */
-class EFFECT_FLANGER : public EFFECT_TIME_BASED {
+class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
+
+ protected:
 
   vector<vector<SAMPLE_SPECS::sample_type> > buffer;
   SAMPLE_ITERATOR_CHANNELS i;
   SINE_OSCILLATOR lfo;
   parameter_type feedback, vartime;
-  long int delay_index, dtime;
-  bool filled;
+  long int dtime;
+  vector<long int> delay_index;
+  vector<bool> filled;
+
+ public:
+
+  parameter_type get_parameter(int param) const;
+  void set_parameter(int param, parameter_type value);
+
+  void init(SAMPLE_BUFFER* insample);
+};
+
+/*
+ * Flanger
+ */
+class EFFECT_FLANGER : public EFFECT_MODULATING_DELAY {
 
  public:
 
   string name(void) const { return("Flanger"); }
   string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
 
-  parameter_type get_parameter(int param) const;
-  void set_parameter(int param, parameter_type value);
-
-  void init(SAMPLE_BUFFER* insample);
   void process(void);
 
   EFFECT_FLANGER* clone(void)  { return new EFFECT_FLANGER(*this); }
+};
+
+/*
+ * Chorus
+ */
+class EFFECT_CHORUS : public EFFECT_MODULATING_DELAY {
+
+ public:
+
+  string name(void) const { return("Chorus"); }
+  string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
+
+  void process(void);
+
+  EFFECT_CHORUS* clone(void)  { return new EFFECT_CHORUS(*this); }
+};
+
+/*
+ * Phaser
+ */
+class EFFECT_PHASER : public EFFECT_MODULATING_DELAY {
+
+ public:
+
+  string name(void) const { return("Phaser"); }
+  string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
+
+  void process(void);
+
+  EFFECT_PHASER* clone(void)  { return new EFFECT_PHASER(*this); }
 };
 
 #endif

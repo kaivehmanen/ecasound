@@ -207,8 +207,10 @@ void EFFECT_MULTITAP_DELAY::set_parameter(int param, DYNAMIC_PARAMETERS::paramet
 	if ((dtime * dnum) > static_cast<int>(buffer[n].size())) {
 	  buffer[n].resize(dtime * dnum);
 	}
-	delay_index = dtime * dnum - 1;
-	filled[n] = false;
+	delay_index[n] = dtime * dnum - 1;
+	for(int m = 0; m < static_cast<int>(filled[n].size()); m++) {
+	  filled[n][m] = false;
+	}
       }
       break;
     }
@@ -222,9 +224,11 @@ void EFFECT_MULTITAP_DELAY::set_parameter(int param, DYNAMIC_PARAMETERS::paramet
 	if ((dtime * dnum) > static_cast<int>(buffer[n].size())) {
 	  buffer[n].resize(dtime * dnum);
 	}
-	filled[n] = false;
+	for(int m = 0; m < static_cast<int>(filled[n].size()); m++) {
+	  filled[n][m] = false;
+	}
+	delay_index[n] = dtime * dnum - 1;
       }
-      delay_index = dtime * dnum - 1;
       break;
     }
 
@@ -240,33 +244,34 @@ void EFFECT_MULTITAP_DELAY::init(SAMPLE_BUFFER* insample) {
   set_channels(insample->number_of_channels());
   set_samples_per_second(insample->sample_rate());
 
-  delay_index = dtime * dnum - 1;
-
-  filled.resize(channels(), bool (false));
+  delay_index.resize(channels(), dtime * dnum - 1);
+  filled.resize(channels(), vector<bool> (dnum, false));
   buffer.resize(channels(), vector<SAMPLE_SPECS::sample_type> (dtime *
 							       dnum));
 }
 
 void EFFECT_MULTITAP_DELAY::process(void) {
   long int len = dtime * dnum;
+
   i.begin();
   while(!i.end()) {
-    SAMPLE_SPECS::sample_type temp1 = 0.0;
-    for(int nm2 = 0; nm2 < dnum; nm2++) {
-      if (filled[nm2] == true) {
-	assert((delay_index + nm2 * dtime) % len >= 0);
-	assert((delay_index + nm2 * dtime) % len < len);
-	temp1 += buffer[i.channel()][(delay_index + nm2 * dtime) % len];
-      }
-    }
-    buffer[i.channel()][delay_index] = *i.current();
-    *i.current() = (*i.current() * (1.0 - mix)) + (temp1 * mix / dnum);
-    if (i.channel() + 1 == channels()) {
-      --delay_index;
+    for(int n = 0; n < channels(); n++) {
+      SAMPLE_SPECS::sample_type temp1 = 0.0;
       for(int nm2 = 0; nm2 < dnum; nm2++) {
-	if (delay_index < len - dtime * nm2) filled[nm2] = true;
+	if (filled[n][nm2] == true) {
+	  assert((delay_index[n] + nm2 * dtime) % len >= 0);
+	  assert((delay_index[n] + nm2 * dtime) % len < len);
+	  temp1 += buffer[n][(delay_index[n] + nm2 * dtime) % len];
+	}
       }
-      if (delay_index == -1) delay_index = len - 1;
+      buffer[n][delay_index[n]] = *i.current(n);
+      *i.current(n) = (*i.current(n) * (1.0 - mix)) + (temp1 * mix / dnum);
+    
+      --(delay_index[n]);
+      for(int nm2 = 0; nm2 < dnum; nm2++) {
+	if (delay_index[n] < len - dtime * nm2) filled[n][nm2] = true;
+      }
+      if (delay_index[n] == -1) delay_index[n] = len - 1;
     }
     i.next();
   }
@@ -428,7 +433,7 @@ void EFFECT_REVERB::process(void) {
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_FLANGER::get_parameter(int param) const { 
+DYNAMIC_PARAMETERS::parameter_type EFFECT_MODULATING_DELAY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(dtime / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * 1000.0);
@@ -445,20 +450,20 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_FLANGER::get_parameter(int param) cons
   return(0.0);
 }
 
-void EFFECT_FLANGER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_MODULATING_DELAY::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
   switch (param) {
   case 1:
     {
       dtime = static_cast<long int>(value * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() / 1000);
-      vector<vector<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
-      while(p != buffer.end()) {
-	if (dtime > static_cast<long int>(p->size())) {
-	  p->resize(dtime);
+      assert(buffer.size() == delay_index.size());
+      assert(buffer.size() == filled.size());
+      for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
+	if (dtime > static_cast<long int>(buffer[n].size())) {
+	  buffer[n].resize(dtime);
 	}
-	++p;
+	delay_index[n] = dtime - 1;
+	filled[n] = false;
       }
-      delay_index = dtime - 1;
-      filled = false;
       break;
     }
 
@@ -476,41 +481,86 @@ void EFFECT_FLANGER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type
   }
 }
 
-void EFFECT_FLANGER::init(SAMPLE_BUFFER* insample) {
+void EFFECT_MODULATING_DELAY::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
   lfo.init(1.0 /
-	   insample->sample_rate());
+	   insample->sample_rate() /
+	   insample->number_of_channels());
 
   set_channels(insample->number_of_channels());
   set_samples_per_second(insample->sample_rate());
-  delay_index = dtime - 1;
-  filled = false;
 
+  filled.resize(channels(), false);
+  delay_index.resize(channels(), dtime - 1);
   buffer.resize(channels(), vector<SAMPLE_SPECS::sample_type> (dtime));
 }
 
 void EFFECT_FLANGER::process(void) {
   i.begin();
-  parameter_type p = vartime * lfo.value();
   while(!i.end()) {
     SAMPLE_SPECS::sample_type temp1 = 0.0;
-    if (filled == true) {
-      assert((delay_index + static_cast<long int>(p)) % dtime >= 0);
-      assert((delay_index + static_cast<long int>(p)) % dtime < static_cast<long int>(buffer[i.channel()].size()));
-      temp1 = buffer[i.channel()][(delay_index + static_cast<long int>(p)) % dtime];
+    parameter_type p = vartime * lfo.value();
+    if (filled[i.channel()] == true) {
+      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime >= 0);
+      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime < static_cast<long int>(buffer[i.channel()].size()));
+      temp1 = buffer[i.channel()][(delay_index[i.channel()] + static_cast<long int>(p)) % dtime];
 //        cerr << "b: "
 //  	   << (delay_index + static_cast<long int>(p)) % dtime
 //  	   << "," << p << ".\n";
     }
     *i.current() = (*i.current() * (1.0 - feedback)) + (temp1 * feedback);
-    buffer[i.channel()][delay_index] = *i.current();
-    if (i.channel() + 1 == channels()) {
-      p = vartime * lfo.value();
-      --delay_index;
-      if (delay_index == -1) {
-	delay_index = dtime - 1;
-	filled = true;
-      }
+    buffer[i.channel()][delay_index[i.channel()]] = *i.current();
+
+    --(delay_index[i.channel()]);
+    if (delay_index[i.channel()] == -1) {
+      delay_index[i.channel()] = dtime - 1;
+      filled[i.channel()] = true;
+    }
+    i.next();
+  }
+}
+
+void EFFECT_CHORUS::process(void) {
+  i.begin();
+   
+  while(!i.end()) {
+    SAMPLE_SPECS::sample_type temp1 = 0.0;
+    parameter_type p = vartime * lfo.value();
+    if (filled[i.channel()] == true) {
+      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime >= 0);
+      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime < static_cast<long int>(buffer[i.channel()].size()));
+      temp1 = buffer[i.channel()][(delay_index[i.channel()] + static_cast<long int>(p)) % dtime];
+    }
+    buffer[i.channel()][delay_index[i.channel()]] = *i.current();
+    *i.current() = (*i.current() * (1.0 - feedback)) + (temp1 * feedback);
+
+    --(delay_index[i.channel()]);
+    if (delay_index[i.channel()] == -1) {
+      delay_index[i.channel()] = dtime - 1;
+      filled[i.channel()] = true;
+    }
+    i.next();
+  }
+}
+
+void EFFECT_PHASER::process(void) {
+  i.begin();
+   
+  while(!i.end()) {
+    SAMPLE_SPECS::sample_type temp1 = 0.0;
+    parameter_type p = vartime * lfo.value();
+    if (filled[i.channel()] == true) {
+      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime >= 0);
+      assert((delay_index[i.channel()] + static_cast<long int>(p)) % dtime < static_cast<long int>(buffer[i.channel()].size()));
+      temp1 = buffer[i.channel()][(delay_index[i.channel()] + static_cast<long int>(p)) % dtime];
+    }
+    *i.current() = (*i.current() + -1.0 * temp1 * feedback) / 2.0;
+    buffer[i.channel()][delay_index[i.channel()]] = *i.current();
+
+    --(delay_index[i.channel()]);
+    if (delay_index[i.channel()] == -1) {
+      delay_index[i.channel()] = dtime - 1;
+      filled[i.channel()] = true;
     }
     i.next();
   }

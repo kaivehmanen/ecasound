@@ -2,6 +2,12 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-02-24  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* audiofx_timebased.h (various) EFFECT_MODULATING_DELAY,
+	EFFECT_CHORUS, EFFECT_FLANGE and EFFECT_MULTITAP_DELAY classes 
+	added
+		
 2000-02-23  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* audiofx_filter.h (various): class EFFECT_ALLPASS_FILTER added

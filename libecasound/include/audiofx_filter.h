@@ -154,7 +154,6 @@ class EFFECT_ALLPASS_FILTER : public EFFECT_FILTER {
 public:
 
   string name(void) const { return("Allpass filter"); }
-
   string parameter_names(void) const { return("delay-samples,feedback-%"); }
 
   void set_parameter(int param, parameter_type value);
@@ -176,7 +175,6 @@ public:
  */
 class EFFECT_COMB_FILTER : public EFFECT_FILTER {
 
-  vector<parameter_type> laskuri;
   vector<deque<SAMPLE_SPECS::sample_type> > buffer;
   vector<SAMPLE_SPECS::sample_type> temp;
   SAMPLE_ITERATOR_CHANNELS i;
@@ -187,7 +185,6 @@ class EFFECT_COMB_FILTER : public EFFECT_FILTER {
 public:
 
   string name(void) const { return("Comb filter"); }
-
   string parameter_names(void) const { return("delay-samples,radius"); }
 
   void set_parameter(int param, parameter_type value);
