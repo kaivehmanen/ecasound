@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // ecasound.cpp: Console mode user interface to ecasound.
-// Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2002,2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -152,6 +152,7 @@ int main(int argc, char *argv[])
     state->exit_request = 1;
     pthread_join(*state->daemon_thread, NULL);
   }
+
   // cerr << endl << "ecasound: main() exiting..." << endl;
   
   return(state->retval);
@@ -281,6 +282,8 @@ void ecasound_main_loop(struct ecasound_state* state)
     }
   }
   else {
+    /* non-interactive mode */
+
     if (state->daemon_mode == true) {
       int res = pthread_mutex_lock(state->lock);
       DBC_CHECK(res == 0);
@@ -453,12 +456,7 @@ void* ecasound_watchdog_thread(void* arg)
 
   state->exit_request = 1;
   
-  // cerr << endl << "ecasound: watchdog-thread received signal " << signalno << ". Cleaning up..." << endl;
-
-  /* give time for the console interface thread to die gracefully */
-  sleep(1);
-
-  // cerr << endl << "ecasound: watchdog-thread exiting..." << endl;
+  cerr << endl << "(ecasound-watchdog) Received signal " << signalno << ". Cleaning up and exiting..." << endl;
 
   exit(state->retval);
 
