@@ -42,7 +42,7 @@ bin_SCRIPTS = ecasound-config
 
 ecasound_audiofx_include =  \
 			audiofx.h \
-			audiofx_impl.h \
+			audiofx_misc.h \
 			audiofx_amplitude.h \
 			audiofx_compressor.h \
 			audiofx_analysis.h \
@@ -55,7 +55,8 @@ ecasound_audiofx_include =  \
 			audiofx_mixing.h \
 			audiofx_ladspa.h \
 			ladspa.h \
-			audiofx_vst.h
+			audiofx_vst.h \
+			audio-stamp.h
 
 ecasound_audioio_include = 	\
 			audioio-plugin.h \
@@ -91,7 +92,8 @@ ecasound_controller_include = \
 			osc-sine.h \
 			finite-envelope.h \
 			linear-envelope.h \
-			two-stage-linear-envelope.h
+			two-stage-linear-envelope.h \
+			stamp-ctrl.h
 
 ecasound_general_include = 	\
 			eca-chain.h \
@@ -162,6 +164,7 @@ vst_src_files = AudioEffect.cpp audioeffectx.cpp
 endif
 
 ecasound_audiofx_src =  audiofx.cpp \
+			audiofx_misc.cpp \
 			audiofx_amplitude.cpp \
 			audiofx_compressor.cpp \
 			audiofx_analysis.cpp \
@@ -173,7 +176,8 @@ ecasound_audiofx_src =  audiofx.cpp \
 			audiogate.cpp \
 			audiofx_mixing.cpp \
 			audiofx_ladspa.cpp \
-			audiofx_vst.cpp
+			audiofx_vst.cpp \
+			audio-stamp.cpp
 
 ecasound_audioio_oss_src = audioio-oss.cpp
 
@@ -202,7 +206,8 @@ ecasound_controller_src = \
 			osc-gen-file.cpp \
 			osc-sine.cpp \
 			linear-envelope.cpp \
-			two-stage-linear-envelope.cpp
+			two-stage-linear-envelope.cpp \
+			stamp-ctrl.cpp
 
 ecasound_general_src = 	eca-chain.cpp \
 			eca-main.cpp \
