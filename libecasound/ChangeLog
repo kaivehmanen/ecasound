@@ -2,6 +2,20 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-11-19  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* audioio-buffered-proxy.h (all): added
+	* audioio-proxy-server.h (all): added
+	* audioio-proxy-buffer.h (all): added
+	
+2000-11-17  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* preset.h (copy-constructor): from private to public scope
+	
+2000-11-17  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* resource-file.h (load, save): added
+	
 2000-11-09  Rob Coker <rcs@birch.net>
 
 	* audiofx_envelope_modulation.h (): EFFECT_TREMOLO added
