@@ -42,10 +42,12 @@ libpyecasound_la_SOURCES	= pyecasound.cpp
 libpyecasound_la_LIBADD		= $(ecasound_libs) $(kvutils_libs)
 libpyecasound_la_LDFLAGS 	= -avoid-version -export-dynamic -Wl,--rpath -Wl,${prefix}/lib
 
+if COMPILE_PYECASOUND
 all: libpyecasound.so
 
 libpyecasound.so: pyecasound.o
 	$(CXX) -o libpyecasound.so pyecasound.o -shared -nostartfiles  $(libpyecasound_la_LDFLAGS) $(ecasound_libs) $(kvutils_libs)
+endif
 
 # ----------------------------------------------------------------------
 # hooks
