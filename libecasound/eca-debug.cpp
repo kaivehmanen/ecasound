@@ -8,7 +8,7 @@ public:
 
   void control_flow(const string& part) { 
     if ((get_debug_level() & ECA_DEBUG::module_flow) != ECA_DEBUG::module_flow) return;
-    cerr << part << "\n";
+    cerr << "[* " << part << " *]" << endl;
   }
   void msg(int level, const string& info) { 
     if ((get_debug_level() & level) != level) return;

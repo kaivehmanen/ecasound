@@ -113,8 +113,8 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
     fr_count = 3;
     
   MESSAGE_ITEM m;
-  m << "Setting OSS fragment size according to buffersize() " << buffersize() << ".\n";
-  m << "Setting OSS fragment size to " << buffersize() * frame_size() << ".";
+  m << "(audioio-oss) Setting OSS fragment size according to buffersize() " << buffersize() << ".\n";
+  m << "(audioio-oss) Setting OSS fragment size to " << buffersize() * frame_size() << ".";
   ecadebug->msg(ECA_DEBUG::user_objects, m.to_string());
 
   // fr_size == 4  -> the minimum fragment size: 2^4 = 16 bytes
@@ -126,7 +126,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   if (::ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &fragsize)==-1)
     throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: general OSS-error SNDCTL_DSP_SETFRAGMENT"));
 
-  ecadebug->msg(ECA_DEBUG::user_objects, "set OSS fragment size to (2^x) " +
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-oss) set OSS fragment size to (2^x) " +
 		   kvu_numtostr(fr_size) + ".");
     
   // -------------------------------------------------------------------
@@ -191,7 +191,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   if (::ioctl(audio_fd, SNDCTL_DSP_GETBLKSIZE, &fragment_size) == -1)
     throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: general OSS error SNDCTL_DSP_GETBLKSIZE"));
 
-  ecadebug->msg(ECA_DEBUG::user_objects, "OSS set to use fragment size of " + 
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-oss) OSS set to use fragment size of " + 
 		   kvu_numtostr(fragment_size) + ".");
 }
 

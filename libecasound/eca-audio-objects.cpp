@@ -529,6 +529,8 @@ string ECA_AUDIO_OBJECTS::midi_to_string(void) const {
   MESSAGE_ITEM t; 
   t.setprecision(3);
 
+  // FIXME: don't use name() fro saving, but use a set of 
+  //        set_/get_param calls like with audioio objs
   vector<MIDI_IO*>::size_type p = 0;
   while (p < midi_devices.size()) {
     t << "-Md:" << midi_devices[p]->name() << " ";

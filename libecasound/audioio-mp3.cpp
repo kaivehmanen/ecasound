@@ -148,20 +148,20 @@ void MP3FILE::get_mp3_params(const string& fname) throw(AUDIO_IO::SETUP_ERROR&) 
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 
   MESSAGE_ITEM m;
-  m << "(audioio-mp3) mp3 file size: " << fsize << "\n.";
-  m << "(audioio-mp3) mp3 length value: " << newlayer.length() << "\n.";
-  m << "(audioio-mp3) sfreq: " << sfreq << "\n.";
-  m << "(audioio-mp3) bitrate: " << bitrate << "\n.";
+  m << "(audioio-mp3) mp3 file size: " << fsize << "\n";
+  m << "(audioio-mp3) mp3 length value: " << newlayer.length() << "\n";
+  m << "(audioio-mp3) sfreq: " << sfreq << "\n";
+  m << "(audioio-mp3) bitrate: " << bitrate << "\n";
   if (bitrate != 0)
     length_in_samples((long)ceil(8.0 * fsize / bitrate * bytes_per_second() / frame_size()));
   
   if (bitrate == 0 ||
       length_in_samples() < 0) length_in_samples(0);
   
-  m << "(audioio-mp3) setting MP3 length_value: " << length_in_seconds() << "\n.";
+  m << "(audioio-mp3) setting MP3 length_value: " << length_in_seconds() << "\n";
   pcm_rep = newlayer.pcmPerFrame();
   
-  m << "(audioio-mp3) MP3 pcm value: " << pcm_rep << ".";
+  m << "(audioio-mp3) MP3 pcm value: " << pcm_rep;
   ecadebug->msg(ECA_DEBUG::user_objects,m.to_string());
 }
 
@@ -171,7 +171,7 @@ void MP3FILE::fork_mp3_input(void) {
     cmd.replace(cmd.find("%o"), 2, kvu_numtostr((long)(position_in_samples() / pcm_rep)));
   }
   last_position_rep = position_in_samples();
-  ecadebug->msg(ECA_DEBUG::user_objects,cmd);
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) " + cmd);
   set_fork_command(cmd);
   set_fork_file_name(label());
   set_fork_sample_rate(samples_per_second());

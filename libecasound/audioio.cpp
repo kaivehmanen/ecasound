@@ -103,7 +103,7 @@ int AUDIO_IO::io_mode(void) const { return(io_mode_rep); }
 void AUDIO_IO::io_mode(int mode) { io_mode_rep = mode; }
 
 /**
- * Set object label
+ * Sets object label. Label is used to identify the object.
  *
  * require:
  *  is_open() != true
@@ -120,7 +120,9 @@ void AUDIO_IO::toggle_nonblocking_mode(bool value) { nonblocking_rep =
 						       value; }
 
 /**
- * The device name (usually set to device/file name).
+ * Returns the current label. Label can be used for object
+ * identification (although not necessarily unique among all
+ * objects). Device and file names are typical label values.
  */
 const string& AUDIO_IO::label(void) const { return(id_label_rep); }
 
