@@ -18,6 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <vector>
 #include <string>
 #include <cstring>
@@ -128,6 +132,12 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
   else {
     int fpipes[2];
     if (pipe(fpipes) == 0) {
+#ifdef HAVE_SIGPROCMASK
+      sigset_t oldset, newset;
+      sigemptyset(&newset);
+      sigaddset(&newset, SIGTERM);
+      sigprocmask(SIG_UNBLOCK, &newset, &oldset);
+#endif
       pid_of_child_rep = fork();
       if (pid_of_child_rep == 0) { 
 	// ---
@@ -160,6 +170,9 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
 	// ---
 	// parent
 	// ---
+#ifdef HAVE_SIGPROCMASK
+	sigprocmask(SIG_SETMASK, &oldset, 0);
+#endif
 	pid_of_parent_rep = ::getpid();
 	::close(fpipes[1]);
 	fd_rep = fpipes[0];
@@ -176,6 +189,12 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
   last_fork_rep = false;
   fd_rep = 0;
 
+#ifdef HAVE_SIGPROCMASK
+  sigset_t oldset, newset;
+  sigemptyset(&newset);
+  sigaddset(&newset, SIGTERM);
+  sigprocmask(SIG_UNBLOCK, &newset, &oldset);
+#endif
   pid_of_child_rep = fork();
   if (pid_of_child_rep == 0) { 
     // ---
@@ -212,6 +231,9 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
     // ---
     // parent
     // ---
+#ifdef HAVE_SIGPROCMASK
+    sigprocmask(SIG_SETMASK, &oldset, 0);
+#endif
     pid_of_parent_rep = ::getpid();
     fd_rep = 0;
     if (wait_for_child() == true)
@@ -227,6 +249,12 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
   
   int fpipes[2];
   if (pipe(fpipes) == 0) {
+#ifdef HAVE_SIGPROCMASK
+    sigset_t oldset, newset;
+    sigemptyset(&newset);
+    sigaddset(&newset, SIGTERM);
+    sigprocmask(SIG_UNBLOCK, &newset, &oldset);
+#endif
     pid_of_child_rep = fork();
     if (pid_of_child_rep == 0) { 
       // ---
@@ -260,6 +288,9 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
       // ---
       // parent
       // ---
+#ifdef HAVE_SIGPROCMASK
+      sigprocmask(SIG_SETMASK, &oldset, 0);
+#endif
       pid_of_parent_rep = ::getpid();
       ::close(fpipes[0]);
       fd_rep = fpipes[1];
