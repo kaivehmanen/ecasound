@@ -28,8 +28,12 @@ public:
   DEFAULTDEBUG(void) { }
 };
 
-static const DEFAULTDEBUG ecasound_default_debug;
-static ECA_DEBUG* ecadebug = &ecasound_default_debug;
+static DEFAULTDEBUG ecasound_default_debug;
+
+/**
+ * Public object for libecasound modules
+ */
+ECA_DEBUG* ecadebug = &ecasound_default_debug;
 
 void attach_debug_object(ECA_DEBUG* newdebug) {
   ecadebug = newdebug;
@@ -38,4 +42,3 @@ void attach_debug_object(ECA_DEBUG* newdebug) {
 void detach_debug_object(void) {
   ecadebug = &ecasound_default_debug;
 }
-

@@ -405,6 +405,8 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 
   int processed = 0;
   int passive_rounds = 0;
+  bool one_time_full = false;
+
   while(true) {
     if (running_rep.get() == 0) {
       usleep(50000);
@@ -433,7 +435,7 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 	  buffers_rep[p]->advance_write_pointer();
 	  ++processed;
 
-	  PROXY_PROFILING_STATEMENT( if (buffers_rep[p]->write_space() > 16) { )
+	  PROXY_PROFILING_STATEMENT( if (buffers_rep[p]->write_space() > 16 && one_time_full == true) { )
 	  PROXY_PROFILING_INC(impl_repp->profile_read_xrun_danger_rep);
 	  PROXY_PROFILING_STATEMENT( } )
 
@@ -448,7 +450,7 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 	  buffers_rep[p]->advance_read_pointer();
 	  ++processed;
 
-	  PROXY_PROFILING_STATEMENT( if (buffers_rep[p]->read_space() < 16) { )
+	  PROXY_PROFILING_STATEMENT( if (buffers_rep[p]->read_space() < 16  && one_time_full == true) { )
 	  PROXY_PROFILING_INC(impl_repp->profile_write_xrun_danger_rep);
 	  PROXY_PROFILING_STATEMENT( } )
 
@@ -469,14 +471,15 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
     else passive_rounds = 0;
 
     if (processed == 0) {
-      if (passive_rounds > 4) {
+      if (passive_rounds > 2) {
 	/* case 1: nothing processed during x rounds ==> full, sleep */
 	PROXY_PROFILING_INC(impl_repp->profile_sleep_rep);
 	full_rep.set(1);
 	signal_full();
+	if (one_time_full != true) one_time_full = true;
 	struct timespec sleepcount;
 	sleepcount.tv_sec = 0;
-	sleepcount.tv_nsec = 10000000; /* 10ms */
+	sleepcount.tv_nsec = 100000000; /* 100ms */
 	::nanosleep(&sleepcount, 0);
       }
       else {
@@ -507,7 +510,7 @@ void AUDIO_IO_PROXY_SERVER::dump_profile_counters(void) {
     std::cerr << "impl_repp->profile_sleep_rep: " << impl_repp->profile_sleep_rep << endl;
     std::cerr << "impl_repp->profile_no_processing_rep: " << impl_repp->profile_no_processing_rep << endl;
     std::cerr << "impl_repp->profile_not_full_anymore_rep: " << impl_repp->profile_not_full_anymore_rep << endl;
-    std::cerr << "impl_repp->profile_processing_rep: " << impl_repp->profile_no_processing_rep << endl;
+    std::cerr << "impl_repp->profile_processing_rep: " << impl_repp->profile_processing_rep << endl;
     std::cerr << "impl_repp->profile_read_xrun_danger_rep: " << impl_repp->profile_read_xrun_danger_rep << endl;
     std::cerr << "impl_repp->profile_write_xrun_danger_rep: " << impl_repp->profile_write_xrun_danger_rep << endl;
     std::cerr << "impl_repp->profile_rounds_total_rep: " << impl_repp->profile_rounds_total_rep << endl;
