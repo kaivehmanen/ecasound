@@ -57,9 +57,11 @@ if COMPILE_PYECASOUND
 CLEANFILES=libpyecasound.so
 endif
 
-install-exec-hook: libpyecasound.so
 if COMPILE_PYECASOUND
+install-exec-hook: libpyecasound.so
 	$(INSTALL) libpyecasound.so $(DESTDIR)$(eca_python_dlmodules)/libpyecasound.so
+else
+install-exec-hook:
 endif
 
 install-data-hook:
