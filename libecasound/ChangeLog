@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-06-12  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-chain.h (connected_input, connected_output): added
+	
 2000-06-11  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* audioio.h (samples_available,supported_io_modes): added
@@ -10,6 +14,12 @@
 	ECA_CONTROLLER* -> ECA_CONTROL*
 	* eca-chainsetup-position.h (all): file and class renamed;
 	ECA_CONTROLLER_POSITION -> ECA_CHAINSETUP_POSITION
+	* eca-control-objects.h (chainsetup_names,chain_names): added
+	* eca-control-objects.h (get_controller, remove_controller): added
+	* eca-control-objects.h (get_chain,select_chain): added
+	* eca-session.h (chainsetup_names): added
+	* eca-audio-objects.h (chain_names): added
+	* eca-chain.h (remove_controller): added
 
 2000-06-10  Jeremy Hall <jhall@uu.net>
 

@@ -70,7 +70,7 @@ void *mthread_process_chains(void* params) {
 	// --
 	if (chain_locked[n] == false) continue; 
 	
-	if ((*chains)[n]->output_id == 0) {
+	if ((*chains)[n]->output_id_repp == 0) {
 	  // --
 	  // skip, if chain is not connected to any output or is
 	  // disabled
@@ -82,7 +82,7 @@ void *mthread_process_chains(void* params) {
 	  continue;
 	}
 
-	if ((*chains)[n]->output_id == (*outputs)[audioslot_sizet]) {
+	if ((*chains)[n]->output_id_repp == (*outputs)[audioslot_sizet]) {
 	  // --
 	  // output is connected to this chain
 	  // --

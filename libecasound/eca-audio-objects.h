@@ -1,5 +1,5 @@
-#ifndef _ECA_AUDIO_OBJECTS_H
-#define _ECA_AUDIO_OBJECTS_H
+#ifndef INCLUDED_ECA_AUDIO_OBJECTS_H
+#define INCLUDED_ECA_AUDIO_OBJECTS_H
 
 #include <vector>
 #include <map>
@@ -52,7 +52,6 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   string outputs_to_string(void) const;
   string chains_to_string(void) const;
   string audioio_to_string(const AUDIO_IO* aiod, const string& direction) const;
-
 
   // ---
   // Setup helper functions
@@ -144,6 +143,7 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   void select_chains(const vector<string>& chains) { selected_chainids = chains; }
   void select_all_chains(void);
   const vector<string>& selected_chains(void) const { return(selected_chainids); }
+  vector<string> chain_names(void) const;
   void clear_chains(void);
   void rename_chain(const string& name);
   void toggle_chain_muting(void);

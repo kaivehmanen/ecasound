@@ -25,42 +25,41 @@ bin_PROGRAMS = $(qtecasound_target)
 ecasound_qt_src = 	eca-qtdebug.cpp \
 			eca-qtdebugtab.cpp \
 			eca-qtinte.cpp \
-			eca-qtlevelmeter.cpp \
 			eca-qtmain.cpp \
-			eca-qtrtposition.cpp \
-			eca-qtsignallevel.cpp \
 			qtdebug_if.cpp \
-			eca-qtsession.cpp \
-			eca-qtchainsetup.cpp \
-			eca-qtchain.cpp \
-			eca-qtiodevdialog.cpp \
-			eca-qtchainselectdialog.cpp
+			eca-qtrtposition.cpp \
+			eca-qtchainsetup.cpp
+# 			eca-qtlevelmeter.cpp \
+# 			eca-qtsignallevel.cpp \
+# 			eca-qtsession.cpp \
+# 			eca-qtchain.cpp \
+# 			eca-qtiodevdialog.cpp \
+# 			eca-qtchainselectdialog.cpp
 
 ecasound_qt_includes = 	eca-qtdebug.h \
 			eca-qtdebugtab.h \
 			eca-qtinte.h \
-			eca-qtlevelmeter.h \
-			eca-qtchainselectdialog.h \
-			eca-qtiodevdialog.h \
-			eca-qtchain.h \
 		 	eca-qtchainsetup.h \
-			eca-qtsession.h  \
 			qtdebug_if.h \
 			eca-qtrtposition.h \
-			eca-qtmain.h \
-			eca-qtsignallevel.h
+			eca-qtmain.h
+# 			eca-qtsession.h  \
+# 			eca-qtlevelmeter.h \
+# 			eca-qtchainselectdialog.h \
+# 			eca-qtiodevdialog.h \
+# 			eca-qtchain.h \
+# 			eca-qtsignallevel.h
 
 ecasound_qt_mocs = 	eca-qtdebug_moc.cpp \
 			eca-qtdebugtab_moc.cpp \
 			eca-qtinte_moc.cpp \
-			eca-qtchainselectdialog_moc.cpp \
-			eca-qtiodevdialog_moc.cpp \
-			eca-qtchain_moc.cpp \
 			eca-qtchainsetup_moc.cpp \
-			eca-qtsession_moc.cpp \
-			eca-qtsignallevel_moc.cpp \
 			eca-qtrtposition_moc.cpp
-
+# 			eca-qtsession_moc.cpp \
+# 			eca-qtsignallevel_moc.cpp \
+# 			eca-qtiodevdialog_moc.cpp \
+# 			eca-qtchainselectdialog_moc.cpp \
+# 			eca-qtchain_moc.cpp \
 
 qtecasound_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
 qtecasound_debug_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)

@@ -14,7 +14,6 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
 
  protected:
 
-  CHAIN_OPERATOR* selected_chainop_repp;
   AUDIO_IO* selected_audio_object_repp;
   string selected_audio_object_rep;
 
@@ -147,10 +146,8 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void disconnect_chainsetup(void);
 
   /**
-   * Gets a pointer to selected chainsetup
-   *
-   * require:
-   *  is_selected() == true
+   * Gets a pointer to selected chainsetup, or 0 if no 
+   * chainsetup is selected.
    */
   ECA_CHAINSETUP* get_chainsetup(void) const;
 
@@ -158,6 +155,11 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
    * Gets a pointer to chainsetup with filename 'filename'.
    */
   ECA_CHAINSETUP* get_chainsetup_filename(const string& filename) const;
+
+  /**
+   * Gets a vector of al chainsetup names.
+   */
+  vector<string> chainsetup_names(void) const;
 
   /** 
    * Gets chainsetup filename (used by save_chainsetup())
@@ -291,6 +293,17 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void remove_chains(void);
 
   /**
+   * Selects a chains (currently selected chainsetup)
+   *
+   * require:
+   *   is_selected() == true
+   *
+   * ensure:
+   *   selected_chains().size() == 1
+   */
+  void select_chain(const string& chain);
+
+  /**
    * Selects chains (currently selected chainsetup)
    *
    * @param chains vector of chain names
@@ -328,6 +341,23 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
    *  is_selected() == true
    */
   const vector<string>& selected_chains(void) const;
+
+  /**
+   * Gets a vector of all chain names.
+   *
+   * require:
+   *  is_selected() == true
+   */
+  vector<string> chain_names(void) const;
+
+  /**
+   * Gets a pointer to selected chain, or 0 if no chain is selected.
+   *
+   * require:
+   *  is_selected() == true
+   *  selected_chains().size() == 1
+   */
+  CHAIN* get_chain(void) const;
 
   /**
    * Clears all selected chains (all chain operators and controllers
@@ -604,7 +634,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void add_chain_operator(CHAIN_OPERATOR* cotmp);
 
   /** 
-   * Gets a const pointer to the Nth chain operator. If chain 
+   * Gets a pointer to the Nth chain operator. If chain 
    * operator is not valid, 0 is returned.
    *
    * require:
@@ -648,6 +678,29 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
    *  selected_chains().size() > 0
    */
   void add_controller(const string& gcontrol_params);
+
+  /** 
+   * Gets a pointer to the Nth controller. If controller is not
+   * valid, 0 is returned.
+   *
+   * require:
+   *  is_selected() == true
+   *  connected_chainsetup() != selected_chainsetup()
+   *  selected_chains().size() == 1
+   *  controller_id > 0
+   */
+  GENERIC_CONTROLLER* get_controller(int controller_id) const;
+
+  /**
+   * Removes the Nth controller.
+   *
+   * require:
+   *  is_selected() == true
+   *  connected_chainsetup() != selected_chainsetup()
+   *  selected_chains().size() == 1
+   *  controller_id > 0
+   */
+  void remove_controller(int controler_id);
 
   ECA_CONTROL_OBJECTS (ECA_SESSION* psession);
   virtual ~ECA_CONTROL_OBJECTS (void) { }

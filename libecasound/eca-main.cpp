@@ -464,8 +464,8 @@ void ECA_PROCESSOR::set_position(double seconds) {
 void ECA_PROCESSOR::set_position_chain(double seconds) {
   conditional_stop();
 
-  (*chains)[active_chain_index]->input_id->seek_position_in_seconds(seconds);
-  (*chains)[active_chain_index]->output_id->seek_position_in_seconds(seconds);
+  (*chains)[active_chain_index]->input_id_repp->seek_position_in_seconds(seconds);
+  (*chains)[active_chain_index]->output_id_repp->seek_position_in_seconds(seconds);
 
   conditional_start();
 }
@@ -500,10 +500,10 @@ void ECA_PROCESSOR::rewind_to_start_position(void) {
 void ECA_PROCESSOR::change_position_chain(double seconds) {
   conditional_stop();
 
-  (*chains)[active_chain_index]->input_id->seek_position_in_seconds(
-								    (*chains)[active_chain_index]->input_id->position_in_seconds() + seconds);
-  (*chains)[active_chain_index]->output_id->seek_position_in_seconds(
-								     (*chains)[active_chain_index]->output_id->position_in_seconds() + seconds);
+  (*chains)[active_chain_index]->input_id_repp->seek_position_in_seconds(
+								    (*chains)[active_chain_index]->input_id_repp->position_in_seconds() + seconds);
+  (*chains)[active_chain_index]->output_id_repp->seek_position_in_seconds(
+								     (*chains)[active_chain_index]->output_id_repp->position_in_seconds() + seconds);
   
   conditional_start();
 }
@@ -511,7 +511,7 @@ void ECA_PROCESSOR::change_position_chain(double seconds) {
 double ECA_PROCESSOR::current_position(void) const { return(csetup->position_in_seconds_exact()); }
 
 double ECA_PROCESSOR::current_position_chain(void) const {
-  return((*chains)[active_chain_index]->input_id->position_in_seconds_exact());
+  return((*chains)[active_chain_index]->input_id_repp->position_in_seconds_exact());
 }
 
 void ECA_PROCESSOR::prehandle_control_position(void) {
@@ -654,7 +654,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
       if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
     }
     for (int c = 0; c != chain_count; c++) {
-      if ((*inputs)[audioslot_sizet] == (*chains)[c]->input_id) {
+      if ((*inputs)[audioslot_sizet] == (*chains)[c]->input_id_repp) {
 	if (input_chain_count[audioslot_sizet] == 1) {
 	  (*inputs)[audioslot_sizet]->read_buffer(&(cslots[c]));
 	  if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
@@ -685,11 +685,11 @@ void ECA_PROCESSOR::multitrack_sync(void) {
     int count = 0;
     
     for(int n = 0; n != chain_count; n++) {
-      if ((*chains)[n]->output_id == 0) {
+      if ((*chains)[n]->output_id_repp == 0) {
 	continue;
       }
 
-      if ((*chains)[n]->output_id == (*outputs)[audioslot_sizet]) {
+      if ((*chains)[n]->output_id_repp == (*outputs)[audioslot_sizet]) {
 	if (output_chain_count[audioslot_sizet] == 1) {
 	  (*outputs)[audioslot_sizet]->write_buffer(&(cslots[n]));
 	  break;
@@ -750,7 +750,7 @@ void ECA_PROCESSOR::interpret_queue(void) {
     case ep_copp_select: { active_chainop_param_index = static_cast<size_t>(item.second); break; }
     case ep_copp_value: { 
       assert(chains != 0);
-      if (active_chainop_index - 1 < (*chains)[active_chain_index]->chainops.size()) {
+      if (active_chainop_index - 1 < (*chains)[active_chain_index]->chainops_rep.size()) {
 	(*chains)[active_chain_index]->select_chain_operator(active_chainop_index);
 	(*chains)[active_chain_index]->set_parameter(active_chainop_param_index, item.second);
       }
@@ -783,7 +783,7 @@ void ECA_PROCESSOR::inputs_to_chains(void) {
       if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
     }
     for (int c = 0; c != chain_count; c++) {
-      if ((*chains)[c]->input_id == (*inputs)[audioslot_sizet]) {
+      if ((*chains)[c]->input_id_repp == (*inputs)[audioslot_sizet]) {
 	if (input_chain_count[audioslot_sizet] == 1) {
 	  (*inputs)[audioslot_sizet]->read_buffer(&(cslots[c]));
 	  if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
@@ -806,14 +806,14 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
       // --
       // if chain is already released, skip
       // --
-      if ((*chains)[n]->output_id == 0) {
+      if ((*chains)[n]->output_id_repp == 0) {
 	// --
 	// skip, if chain is not connected
 	// --
 	continue;
       }
 
-      if ((*chains)[n]->output_id == (*outputs)[audioslot_sizet]) {
+      if ((*chains)[n]->output_id_repp == (*outputs)[audioslot_sizet]) {
 	// --
 	// output is connected to this chain
 	// --
@@ -872,10 +872,10 @@ bool ECA_PROCESSOR::is_slave_output(AUDIO_IO* aiod) const {
   if (p != 0) return(false);
   vector<CHAIN*>::iterator q = csetup->chains.begin();
   while(q != csetup->chains.end()) {
-    if ((*q)->output_id == aiod) {
-      p = dynamic_cast<AUDIO_IO_DEVICE*>((*q)->input_id);
+    if ((*q)->output_id_repp == aiod) {
+      p = dynamic_cast<AUDIO_IO_DEVICE*>((*q)->input_id_repp);
       if (p != 0) {
-	ecadebug->msg(ECA_DEBUG::system_objects,"(eca-main) slave output detected: " + (*q)->output_id->label());
+	ecadebug->msg(ECA_DEBUG::system_objects,"(eca-main) slave output detected: " + (*q)->output_id_repp->label());
 	return(true);
       }
     }
@@ -921,7 +921,7 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
     }
     
     for(int chain_sizet = 0; chain_sizet != chain_count; chain_sizet++) {
-      if ((*chains)[chain_sizet]->output_id == 0) {
+      if ((*chains)[chain_sizet]->output_id_repp == 0) {
 	cslots[chain_sizet].make_silent();
 	continue;
       }
@@ -933,7 +933,7 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
       }
 
       for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
-	if ((*chains)[chain_sizet]->input_id == (*inputs)[audioslot_sizet]) {
+	if ((*chains)[chain_sizet]->input_id_repp == (*inputs)[audioslot_sizet]) {
 	  cslots[chain_sizet].operator=(inslots[audioslot_sizet]);
 	}
       }
@@ -993,7 +993,7 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
       }
 
       for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
-	if ((*chains)[chain_sizet]->input_id == (*inputs)[audioslot_sizet]) {
+	if ((*chains)[chain_sizet]->input_id_repp == (*inputs)[audioslot_sizet]) {
 	  cslots[chain_sizet].operator=(inslots[audioslot_sizet]);
 	}
       }

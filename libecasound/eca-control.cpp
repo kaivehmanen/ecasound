@@ -530,10 +530,10 @@ string ECA_CONTROL::chain_status(void) const {
     if ((*chain_citer)->is_muted()) mitem << "[muted] ";
     if ((*chain_citer)->is_processing() == false) mitem << "[bypassed] ";
     if (find(schains.begin(), schains.end(), (*chain_citer)->name()) != schains.end()) mitem << "[selected] ";
-    for(chainop_citer = (*chain_citer)->chainops.begin(); chainop_citer != (*chain_citer)->chainops.end();) {
+    for(chainop_citer = (*chain_citer)->chainops_rep.begin(); chainop_citer != (*chain_citer)->chainops_rep.end();) {
       mitem << "\"" << (*chainop_citer)->name() << "\"";
       ++chainop_citer;
-      if (chainop_citer != (*chain_citer)->chainops.end()) mitem << " -> ";   
+      if (chainop_citer != (*chain_citer)->chainops_rep.end()) mitem << " -> ";   
     }
     ++chain_citer;
     if (chain_citer != selected_chainsetup_repp->chains.end()) mitem << "\n";
@@ -555,21 +555,21 @@ string ECA_CONTROL::chain_operator_status(void) const {
 
   for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\":\n";
-    for(p = 0; p < (*chain_citer)->chainops.size(); p++) {
-      mitem << "\t" << p + 1 << ". " <<	(*chain_citer)->chainops[p]->name();
-      for(int n = 0; n < (*chain_citer)->chainops[p]->number_of_params(); n++) {
+    for(p = 0; p < (*chain_citer)->chainops_rep.size(); p++) {
+      mitem << "\t" << p + 1 << ". " <<	(*chain_citer)->chainops_rep[p]->name();
+      for(int n = 0; n < (*chain_citer)->chainops_rep[p]->number_of_params(); n++) {
 	if (n == 0) mitem << ": ";
 	mitem << "[" << n + 1 << "] ";
-	mitem << (*chain_citer)->chainops[p]->get_parameter_name(n + 1);
+	mitem << (*chain_citer)->chainops_rep[p]->get_parameter_name(n + 1);
 	mitem << " ";
-	mitem << kvu_numtostr((*chain_citer)->chainops[p]->get_parameter(n + 1));
-	if (n + 1 < (*chain_citer)->chainops[p]->number_of_params()) mitem <<  ", ";
+	mitem << kvu_numtostr((*chain_citer)->chainops_rep[p]->get_parameter(n + 1));
+	if (n + 1 < (*chain_citer)->chainops_rep[p]->number_of_params()) mitem <<  ", ";
       }
-      st_info_string = (*chain_citer)->chainops[p]->status();
+      st_info_string = (*chain_citer)->chainops_rep[p]->status();
       if (st_info_string.empty() == false) {
 	mitem << "\n\tStatus info:\n" << st_info_string;
       }
-      if (p < (*chain_citer)->chainops.size()) mitem << "\n";
+      if (p < (*chain_citer)->chainops_rep.size()) mitem << "\n";
     }
     ++chain_citer;
   }
@@ -589,20 +589,20 @@ string ECA_CONTROL::controller_status(void) const {
 
   for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\":\n";
-    for(p = 0; p < (*chain_citer)->gcontrollers.size(); p++) {
-      mitem << "\t" << p + 1 << ". " << (*chain_citer)->gcontrollers[p]->name() << ": ";
-      for(int n = 0; n < (*chain_citer)->gcontrollers[p]->number_of_params(); n++) {
+    for(p = 0; p < (*chain_citer)->gcontrollers_rep.size(); p++) {
+      mitem << "\t" << p + 1 << ". " << (*chain_citer)->gcontrollers_rep[p]->name() << ": ";
+      for(int n = 0; n < (*chain_citer)->gcontrollers_rep[p]->number_of_params(); n++) {
 	mitem << "\n\t\t[" << n + 1 << "] ";
-	mitem << (*chain_citer)->gcontrollers[p]->get_parameter_name(n + 1);
+	mitem << (*chain_citer)->gcontrollers_rep[p]->get_parameter_name(n + 1);
 	mitem << " ";
-	mitem << kvu_numtostr((*chain_citer)->gcontrollers[p]->get_parameter(n + 1));
-	if (n + 1 < (*chain_citer)->gcontrollers[p]->number_of_params()) mitem <<  ", ";
+	mitem << kvu_numtostr((*chain_citer)->gcontrollers_rep[p]->get_parameter(n + 1));
+	if (n + 1 < (*chain_citer)->gcontrollers_rep[p]->number_of_params()) mitem <<  ", ";
       }
-      st_info_string = (*chain_citer)->gcontrollers[p]->status();
+      st_info_string = (*chain_citer)->gcontrollers_rep[p]->status();
       if (st_info_string.empty() == false) {
 	mitem << "\n\t -- Status info: " << st_info_string;
       }
-      if (p < (*chain_citer)->gcontrollers.size()) mitem << "\n";
+      if (p < (*chain_citer)->gcontrollers_rep.size()) mitem << "\n";
     }
     ++chain_citer;
   }

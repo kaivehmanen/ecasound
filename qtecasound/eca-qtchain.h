@@ -6,7 +6,7 @@
 #include <qlistview.h>
 
 #include <eca-chain.h>
-#include <eca-controller.h>
+#include <eca-control.h>
 
 class QEButtonRow;
 
@@ -14,7 +14,7 @@ class QEChain : public QWidget
 {
   Q_OBJECT
 public:
-  QEChain (ECA_CONTROLLER* econtrol, const CHAIN* chain, QWidget *parent=0, const char *name=0);
+  QEChain (ECA_CONTROL* econtrol, const CHAIN* chain, QWidget *parent=0, const char *name=0);
   
 public slots:
  void update_chainlist(void);
@@ -38,7 +38,7 @@ protected:
 
   QEButtonRow* buttons;
 
-  ECA_CONTROLLER* ctrl;
+  ECA_CONTROL* ctrl;
   const CHAIN* chain;
 
   QListView* chainview;

@@ -355,13 +355,23 @@ void ECA_AUDIO_OBJECTS::toggle_chain_bypass(void) {
   }
 }
 
+vector<string> ECA_AUDIO_OBJECTS::chain_names(void) const {
+  vector<string> result;
+  vector<CHAIN*>::const_iterator p = chains.begin();
+  while(p != chains.end()) {
+    result.push_back((*p)->name());
+    ++p;
+  }
+  return(result);
+}
+
 vector<string>
 ECA_AUDIO_OBJECTS::get_attached_chains_to_input(AUDIO_IO* aiod) const{ 
   vector<string> res;
   
   vector<CHAIN*>::const_iterator q = chains.begin();
   while(q != chains.end()) {
-    if (aiod == (*q)->input_id) {
+    if (aiod == (*q)->input_id_repp) {
       res.push_back((*q)->name());
     }
     ++q;
@@ -376,7 +386,7 @@ ECA_AUDIO_OBJECTS::get_attached_chains_to_output(AUDIO_IO* aiod) const {
   
   vector<CHAIN*>::const_iterator q = chains.begin();
   while(q != chains.end()) {
-    if (aiod == (*q)->output_id) {
+    if (aiod == (*q)->output_id_repp) {
       res.push_back((*q)->name());
     }
     ++q;
@@ -390,7 +400,7 @@ int ECA_AUDIO_OBJECTS::number_of_attached_chains_to_input(AUDIO_IO* aiod) const 
   
   vector<CHAIN*>::const_iterator q = chains.begin();
   while(q != chains.end()) {
-    if (aiod == (*q)->input_id) {
+    if (aiod == (*q)->input_id_repp) {
       ++count;
     }
     ++q;
@@ -404,7 +414,7 @@ int ECA_AUDIO_OBJECTS::number_of_attached_chains_to_output(AUDIO_IO* aiod) const
   
   vector<CHAIN*>::const_iterator q = chains.begin();
   while(q != chains.end()) {
-    if (aiod == (*q)->output_id) {
+    if (aiod == (*q)->output_id_repp) {
       ++count;
     }
     ++q;
@@ -488,7 +498,7 @@ void ECA_AUDIO_OBJECTS::remove_audio_input(const string& label) {
     if ((*ci)->label() == label) {
       vector<CHAIN*>::iterator q = chains.begin();
       while(q != chains.end()) {
-	if ((*q)->input_id == *ci) (*q)->disconnect_input();
+	if ((*q)->input_id_repp == *ci) (*q)->disconnect_input();
 	++q;
       }
       delete *ci;
@@ -505,7 +515,7 @@ void ECA_AUDIO_OBJECTS::remove_audio_output(const string& label) {
     if ((*ci)->label() == label) {
       vector<CHAIN*>::iterator q = chains.begin();
       while(q != chains.end()) {
-	if ((*q)->output_id == *ci) (*q)->disconnect_output();
+	if ((*q)->output_id_repp == *ci) (*q)->disconnect_output();
 	++q;
       }
       delete *ci;
@@ -617,7 +627,7 @@ void ECA_AUDIO_OBJECTS::attach_input_to_selected_chains(const string& filename) 
   while (c < inputs.size()) {
     if (inputs[c]->label() == filename) {
       for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
-	if ((*q)->input_id == inputs[c]) {
+	if ((*q)->input_id_repp == inputs[c]) {
 	  (*q)->disconnect_input();
 	}
       }
@@ -643,7 +653,7 @@ void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const string& filename)
   while (c < outputs.size()) {
     if (outputs[c]->label() == filename) {
       for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
-	if ((*q)->output_id == outputs[c]) {
+	if ((*q)->output_id_repp == outputs[c]) {
 	  (*q)->disconnect_output();
 	}
       }

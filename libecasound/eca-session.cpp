@@ -278,6 +278,16 @@ void ECA_SESSION::disconnect_chainsetup(void) {
   // --------
 }
 
+vector<string> ECA_SESSION::chainsetup_names(void) const {
+  vector<string> result;
+  vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups.begin();
+  while(p != chainsetups.end()) {
+    result.push_back((*p)->name());
+    ++p;
+  }
+  return(result);
+}
+
 void ECA_SESSION::interpret_general_options(COMMAND_LINE& cline) {
   cline.begin();
   while(cline.end() == false) {

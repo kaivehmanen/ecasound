@@ -155,6 +155,11 @@ class ECA_SESSION {
    */
   void disconnect_chainsetup(void);
 
+  /**
+   * Gets a vector of all chainsetup names.
+   */
+  vector<string> chainsetup_names(void) const;
+
  private:
 
   void update_controller_sources(void);

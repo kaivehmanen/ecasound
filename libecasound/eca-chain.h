@@ -1,21 +1,16 @@
-#ifndef _CHAIN_H
-#define _CHAIN_H
+#ifndef INCLUDED_CHAIN_H
+#define INCLUDED_CHAIN_H
 
 #include <string>
 #include <vector>
 
-#include "eca-debug.h"
-#include "eca-operator.h"
 #include "eca-chainop.h"
 #include "samplebuffer.h"
+#include "eca-debug.h"
 
-/*  #include "eca-chainop.h" */
-/*  #include "eca-chainop-map.h" */
-/*  #include "eca-controller-map.h" */
-
-class GENERIC_CONTROLLER;
 class AUDIO_IO;
-
+class GENERIC_CONTROLLER;
+class OPERATOR;
 
 /**
  * Class representing an abstract audio signal chain.
@@ -23,7 +18,6 @@ class AUDIO_IO;
 class CHAIN {
 
   friend class ECA_PROCESSOR;
-  friend class ECA_SESSION;
   friend class ECA_AUDIO_OBJECTS;
   friend class ECA_CONTROL;
   friend class ECA_CONTROL_OBJECTS;
@@ -32,43 +26,38 @@ class CHAIN {
  private:
 
   bool initialized_rep;
-
-  string chainname;
-
-  bool muted;
-  bool sfx;
-
+  string chainname_rep;
+  bool muted_rep;
+  bool sfx_rep;
   int in_channels_rep;
   int out_channels_rep;
 
-  vector<CHAIN_OPERATOR*> chainops;
-  vector<GENERIC_CONTROLLER*> gcontrollers;
+  vector<CHAIN_OPERATOR*> chainops_rep;
+  vector<GENERIC_CONTROLLER*> gcontrollers_rep;
 
-  CHAIN_OPERATOR* selected_chainop;
-  GENERIC_CONTROLLER* selected_controller_rep;
-  OPERATOR* selected_dynobj;
+  CHAIN_OPERATOR* selected_chainop_repp;
+  GENERIC_CONTROLLER* selected_controller_repp;
+  OPERATOR* selected_dynobj_repp;
 
-  int selected_chainop_number;
-  int selected_controller_number;
+  int selected_chainop_number_rep;
+  int selected_controller_number_rep;
 
-  vector<CHAIN_OPERATOR*>::const_iterator chainop_citer;
+  AUDIO_IO* input_id_repp;
+  AUDIO_IO* output_id_repp;
 
-  AUDIO_IO* input_id;
-  AUDIO_IO* output_id;
-
-  SAMPLE_BUFFER* audioslot;
+  SAMPLE_BUFFER* audioslot_repp;
  
  public:
 
   bool is_initialized(void) const { return(initialized_rep); }
-  bool is_muted(void) const { return(muted); }
-  bool is_processing(void) const { return(sfx); }
+  bool is_muted(void) const { return(muted_rep); }
+  bool is_processing(void) const { return(sfx_rep); }
 
-  void toggle_muting(bool v) { muted = v; }
-  void toggle_processing(bool v) { sfx = v; }
+  void toggle_muting(bool v) { muted_rep = v; }
+  void toggle_processing(bool v) { sfx_rep = v; }
 
-  string name(void) const { return(chainname); }
-  void name(const string& c) { chainname = c; }
+  string name(void) const { return(chainname_rep); }
+  void name(const string& c) { chainname_rep = c; }
 
   /**
    * Whether chain is in a valid state (= ready for processing)?
@@ -81,9 +70,15 @@ class CHAIN {
   void connect_input(AUDIO_IO* input);
 
   /**
+   * Returns a const pointer to input connected to this chain. If no input
+   * is connected, 0 is returned.
+   */
+  const AUDIO_IO* connected_input(void) const { return(input_id_repp); }
+
+  /**
    * Disconnects input
    */
-  void disconnect_input(void) { input_id = 0; initialized_rep = false; }
+  void disconnect_input(void) { input_id_repp = 0; initialized_rep = false; }
 
   /**
    * Connects output to chain
@@ -91,14 +86,20 @@ class CHAIN {
   void connect_output(AUDIO_IO* output);
 
   /**
+   * Returns a const pointer to input connected to this chain. If no input
+   * is connected, 0 is returned.
+   */
+  const AUDIO_IO* connected_output(void) const { return(output_id_repp); }
+
+  /**
    * Disconnects output
    */
-  void disconnect_output(void) { output_id = 0; initialized_rep = false; }
+  void disconnect_output(void) { output_id_repp = 0; initialized_rep = false; }
 
   /**
    * Disconnects the sample buffer
    */
-  void disconnect_buffer(void) { audioslot = 0; initialized_rep = false; }
+  void disconnect_buffer(void) { audioslot_repp = 0; initialized_rep = false; }
 
   /**
    * Clears chain (removes all chain operators and controllers)
@@ -167,9 +168,9 @@ class CHAIN {
   /**
    * Index of selected chain operator
    */
-  int selected_chain_operator(void) const { return(selected_chainop_number); }
+  int selected_chain_operator(void) const { return(selected_chainop_number_rep); }
 
-  int number_of_chain_operators(void) const { return(chainops.size()); }
+  int number_of_chain_operators(void) const { return(chainops_rep.size()); }
 
   /**
    * Adds a generic controller and assign it to selected dynamic object
@@ -180,7 +181,16 @@ class CHAIN {
    */
   void add_controller(GENERIC_CONTROLLER* gcontroller);
 
-  int number_of_controllers(void) const { return(gcontrollers.size()); }
+  /**
+   * Removes the selected controller
+   *
+   * require:
+   *  selected_controller() <= number_of_controllers();
+   *  selected_controller() > 0
+   */
+  void remove_controller(void);
+
+  int number_of_controllers(void) const { return(gcontrollers_rep.size()); }
 
   /**
    * Select controller
@@ -196,7 +206,7 @@ class CHAIN {
   /**
    * Index of selected chain operator
    */
-  int selected_controller(void) const { return(selected_controller_number); }
+  int selected_controller(void) const { return(selected_controller_number_rep); }
 
   /**
    * Use current selected chain operator as 
@@ -226,7 +236,7 @@ class CHAIN {
    * Returns the object that is the current target for 
    * parameter control, or 0 if none selected.
    */
-  OPERATOR* selected_target(void) const { return(selected_dynobj); }
+  OPERATOR* selected_target(void) const { return(selected_dynobj_repp); }
 
   /**
    * Prepares chain for processing. All further processing

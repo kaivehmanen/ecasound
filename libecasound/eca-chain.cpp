@@ -30,11 +30,8 @@
 #include "audioio.h"
 #include "file-preset.h"
 #include "global-preset.h"
-
 #include "audiofx_ladspa.h"
-
 #include "eca-static-object-maps.h"
-
 #include "eca-chain.h"
 #include "eca-chainop.h"
 
@@ -43,45 +40,45 @@
 
 CHAIN::CHAIN (void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(chain) constuctor: CHAIN");
-  muted = false;
-  sfx = false;
+  muted_rep = false;
+  sfx_rep = false;
   initialized_rep = false;
-  input_id = output_id = 0;
+  input_id_repp = output_id_repp = 0;
 
-  selected_chainop = 0;
-  selected_controller_rep = 0;
-  selected_dynobj = 0;
+  selected_chainop_repp = 0;
+  selected_controller_repp = 0;
+  selected_dynobj_repp = 0;
 
-  selected_chainop_number = 0;
-  selected_controller_number = 0;
+  selected_chainop_number_rep = 0;
+  selected_controller_number_rep = 0;
 }
 
 CHAIN::~CHAIN (void) { 
   ecadebug->msg(ECA_DEBUG::system_objects,"CHAIN destructor!");
 
-  for(vector<CHAIN_OPERATOR*>::iterator p = chainops.begin(); p !=
-	chainops.end(); p++) {
+  for(vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
+	chainops_rep.end(); p++) {
     ecadebug->msg((*p)->status());
     delete *p;
   }
 
-  for(vector<GENERIC_CONTROLLER*>::iterator p = gcontrollers.begin(); p !=
-	gcontrollers.end(); p++) {
+  for(vector<GENERIC_CONTROLLER*>::iterator p = gcontrollers_rep.begin(); p !=
+	gcontrollers_rep.end(); p++) {
     delete *p;
   }
 }
 
 bool CHAIN::is_valid(void) const {
-  if (input_id == 0 ||
-      output_id == 0) {
+  if (input_id_repp == 0 ||
+      output_id_repp == 0) {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chain) Chain \"" + name() + "\" not valid.");
     return(false);
   }
   return(true);
 }
 
-void CHAIN::connect_input(AUDIO_IO* input) { input_id = input; }
-void CHAIN::connect_output(AUDIO_IO* output) { output_id = output; }
+void CHAIN::connect_input(AUDIO_IO* input) { input_id_repp = input; }
+void CHAIN::connect_output(AUDIO_IO* output) { output_id_repp = output; }
 
 void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop) {
   // --------
@@ -89,13 +86,13 @@ void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop) {
   assert(chainop != 0);
   // --------
 
-  chainops.push_back(chainop);
-  selected_chainop = chainop;
-  selected_chainop_number = chainops.size();
-  sfx = true;
+  chainops_rep.push_back(chainop);
+  selected_chainop_repp = chainop;
+  selected_chainop_number_rep = chainops_rep.size();
+  sfx_rep = true;
 
   if (initialized_rep == true) 
-    init(audioslot, in_channels_rep, out_channels_rep);
+    init(audioslot_repp, in_channels_rep, out_channels_rep);
 
   // --------
   // ensure:
@@ -112,43 +109,61 @@ void CHAIN::remove_chain_operator(void) {
   // --------
 
   int n = 0;
-  for(vector<CHAIN_OPERATOR*>::iterator p = chainops.begin(); p !=
-	chainops.end(); p++) {
+  for(vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
+	chainops_rep.end(); p++) {
     ++n;
     if (n == selected_chain_operator()) {
-      for(vector<GENERIC_CONTROLLER*>::iterator q = gcontrollers.begin(); q !=
-	    gcontrollers.end(); q++) {
+      for(vector<GENERIC_CONTROLLER*>::iterator q = gcontrollers_rep.begin(); q !=
+	    gcontrollers_rep.end(); q++) {
 	if ((*p) == (*q)->target_pointer()) {
 	  delete *q;
-	  gcontrollers.erase(q);
+	  gcontrollers_rep.erase(q);
 	  break;
 	}
       }
       delete *p;
-      chainops.erase(p);
+      chainops_rep.erase(p);
       break;
     }
   }
-  if (chainops.size() == 0) {
-    sfx = false;
+  if (chainops_rep.size() == 0) {
+    sfx_rep = false;
   }
   if (initialized_rep == true) 
-    init(audioslot, in_channels_rep, out_channels_rep);
+    init(audioslot_repp, in_channels_rep, out_channels_rep);
 
   // --------
   // ensure:
-  assert(chainops.size() == 0 && !is_processing() ||
-	 chainops.size() != 0 && is_processing());
+  assert(chainops_rep.size() == 0 && !is_processing() ||
+	 chainops_rep.size() != 0 && is_processing());
   // --------
+}
+
+void CHAIN::remove_controller(void) {
+  // --------
+  // require:
+  assert(selected_controller() > 0);
+  assert(selected_controller() <= number_of_controllers());
+  // --------
+
+  int n = 0;
+  for(vector<GENERIC_CONTROLLER*>::iterator q = gcontrollers_rep.begin(); q !=
+	gcontrollers_rep.end(); q++) {
+    if (n == selected_controller()) {
+      delete *q;
+      gcontrollers_rep.erase(q);
+      break;
+    }
+  }
 }
 
 void CHAIN::set_parameter(int par_index, CHAIN_OPERATOR::parameter_type value) {
   // --------
   // require:
-  assert(selected_chainop_number > 0 && selected_chainop_number <= number_of_chain_operators());
+  assert(selected_chainop_number_rep > 0 && selected_chainop_number_rep <= number_of_chain_operators());
   assert(par_index > 0);
   // --------
-  selected_chainop->set_parameter(par_index, value);
+  selected_chainop_repp->set_parameter(par_index, value);
 }
 
 CHAIN_OPERATOR::parameter_type CHAIN::get_parameter(int index) const {
@@ -156,48 +171,48 @@ CHAIN_OPERATOR::parameter_type CHAIN::get_parameter(int index) const {
   // require:
   assert(index > 0 && selected_chain_operator() != 0);
   // --------
-  return(selected_chainop->get_parameter(index));
+  return(selected_chainop_repp->get_parameter(index));
 }
 
 void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller) {
   // --------
   // require:
   assert(gcontroller != 0);
-  assert(selected_dynobj != 0);
+  assert(selected_dynobj_repp != 0);
   // --------
-  gcontroller->assign_target(selected_dynobj);
-  gcontrollers.push_back(gcontroller);
+  gcontroller->assign_target(selected_dynobj_repp);
+  gcontrollers_rep.push_back(gcontroller);
   ecadebug->msg("(eca-chain) " + gcontroller->status());
-  selected_controller_rep = gcontroller;
-  selected_controller_number = gcontrollers.size();
+  selected_controller_repp = gcontroller;
+  selected_controller_number_rep = gcontrollers_rep.size();
 }
 
 void CHAIN::clear(void) {
-  for(vector<CHAIN_OPERATOR*>::iterator p = chainops.begin(); p != chainops.end(); p++) {
+  for(vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p != chainops_rep.end(); p++) {
     delete *p;
   }
-  chainops.resize(0);
-  for(vector<GENERIC_CONTROLLER*>::iterator p = gcontrollers.begin(); p !=
-	gcontrollers.end(); p++) {
+  chainops_rep.resize(0);
+  for(vector<GENERIC_CONTROLLER*>::iterator p = gcontrollers_rep.begin(); p !=
+	gcontrollers_rep.end(); p++) {
     delete *p;
   }
-  gcontrollers.resize(0);
+  gcontrollers_rep.resize(0);
 }
 
 void CHAIN::select_chain_operator(int index) {
-  for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops.size()); chainop_sizet++) {
+  for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops_rep.size()); chainop_sizet++) {
     if (chainop_sizet + 1 == index) {
-      selected_chainop = chainops[chainop_sizet];
-      selected_chainop_number = index;
+      selected_chainop_repp = chainops_rep[chainop_sizet];
+      selected_chainop_number_rep = index;
     }
   }
 }
 
 void CHAIN::select_controller(int index) {
-  for(int gcontroller_sizet = 0; gcontroller_sizet != static_cast<int>(gcontrollers.size()); gcontroller_sizet++) {
+  for(int gcontroller_sizet = 0; gcontroller_sizet != static_cast<int>(gcontrollers_rep.size()); gcontroller_sizet++) {
     if (gcontroller_sizet + 1 == index) {
-      selected_controller_rep = gcontrollers[gcontroller_sizet];
-      selected_controller_number = index;
+      selected_controller_repp = gcontrollers_rep[gcontroller_sizet];
+      selected_controller_number_rep = index;
     }
   }
 }
@@ -205,47 +220,47 @@ void CHAIN::select_controller(int index) {
 void CHAIN::selected_chain_operator_as_target(void) {
   // --------
   // require:
-  assert(selected_chainop != 0);
+  assert(selected_chainop_repp != 0);
   // --------
-  selected_dynobj = selected_chainop;
+  selected_dynobj_repp = selected_chainop_repp;
   // --------
   // ensure:
-  assert(selected_dynobj == selected_chainop);
+  assert(selected_dynobj_repp == selected_chainop_repp);
   // --------
 }
 
 void CHAIN::selected_controller_as_target(void) {
   // --------
   // require:
-  assert(selected_controller_rep != 0);
+  assert(selected_controller_repp != 0);
   // --------
-  selected_dynobj = selected_controller_rep;
+  selected_dynobj_repp = selected_controller_repp;
   // --------
   // ensure:
-  assert(selected_dynobj == selected_controller_rep);
+  assert(selected_dynobj_repp == selected_controller_repp);
   // --------
 }
 
 void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
   // --------
   // require:
-  assert(input_id != 0 || in_channels != 0);
-  assert(output_id != 0 || out_channels != 0);
+  assert(input_id_repp != 0 || in_channels != 0);
+  assert(output_id_repp != 0 || out_channels != 0);
   // --------
 
-  audioslot = sbuf;
+  audioslot_repp = sbuf;
 
   in_channels_rep = in_channels;
   out_channels_rep = out_channels;
-  if (in_channels == 0) in_channels_rep = input_id->channels();
-  if (out_channels == 0) out_channels_rep = output_id->channels();
+  if (in_channels == 0) in_channels_rep = input_id_repp->channels();
+  if (out_channels == 0) out_channels_rep = output_id_repp->channels();
 
   int init_channels = in_channels_rep;
-  audioslot->number_of_channels(init_channels);
-  for(int p = 0; p != static_cast<int>(chainops.size()); p++) {
-    chainops[p]->init(audioslot);
-    init_channels = chainops[p]->output_channels(init_channels);
-    audioslot->number_of_channels(init_channels);
+  audioslot_repp->number_of_channels(init_channels);
+  for(int p = 0; p != static_cast<int>(chainops_rep.size()); p++) {
+    chainops_rep[p]->init(audioslot_repp);
+    init_channels = chainops_rep[p]->output_channels(init_channels);
+    audioslot_repp->number_of_channels(init_channels);
   }
 
   refresh_parameters();
@@ -264,31 +279,31 @@ void CHAIN::process(void) {
   // --------
 
   controller_update();
-  if (muted == false) {
-    if (sfx == true) {
-      for(int p = 0; p != static_cast<int>(chainops.size()); p++) {
-	audioslot->number_of_channels(chainops[p]->output_channels(audioslot->number_of_channels()));
-	chainops[p]->process();
+  if (muted_rep == false) {
+    if (sfx_rep == true) {
+      for(int p = 0; p != static_cast<int>(chainops_rep.size()); p++) {
+	audioslot_repp->number_of_channels(chainops_rep[p]->output_channels(audioslot_repp->number_of_channels()));
+	chainops_rep[p]->process();
       }
-      //    audioslot.limit_values();
+      //    audioslot_repp.limit_values();
     }
   }
   else {
-    audioslot->make_silent();
+    audioslot_repp->make_silent();
   }
 }
 
 void CHAIN::controller_update(void) {
-  for(int gcontroller_sizet = 0; gcontroller_sizet < static_cast<int>(gcontrollers.size()); gcontroller_sizet++) {
-    gcontrollers[gcontroller_sizet]->process();
+  for(int gcontroller_sizet = 0; gcontroller_sizet < static_cast<int>(gcontrollers_rep.size()); gcontroller_sizet++) {
+    gcontrollers_rep[gcontroller_sizet]->process();
   }
 }
 
 void CHAIN::refresh_parameters(void) {
-  for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops.size()); chainop_sizet++) {
-    for(int n = 0; n < chainops[chainop_sizet]->number_of_params(); n++) {
-      chainops[chainop_sizet]->set_parameter(n + 1, 
-					       chainops[chainop_sizet]->get_parameter(n + 1));
+  for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops_rep.size()); chainop_sizet++) {
+    for(int n = 0; n < chainops_rep[chainop_sizet]->number_of_params(); n++) {
+      chainops_rep[chainop_sizet]->set_parameter(n + 1, 
+					       chainops_rep[chainop_sizet]->get_parameter(n + 1));
     }
   }
 }
@@ -300,20 +315,20 @@ string CHAIN::to_string(void) const {
   GLOBAL_PRESET* gpreset;
 
   int q = 0;
-  while (q < static_cast<int>(chainops.size())) {
+  while (q < static_cast<int>(chainops_rep.size())) {
     fpreset = 0;
-    fpreset = dynamic_cast<FILE_PRESET*>(chainops[q]);
+    fpreset = dynamic_cast<FILE_PRESET*>(chainops_rep[q]);
     if (fpreset != 0) {
       t << "-pf:" << fpreset->filename() << " ";
     }
     else {
       gpreset = 0;
-      gpreset = dynamic_cast<GLOBAL_PRESET*>(chainops[q]);
+      gpreset = dynamic_cast<GLOBAL_PRESET*>(chainops_rep[q]);
       if (gpreset != 0) {
 	t << "-pn:" << gpreset->name() << " ";
       }
       else {
-        t << chain_operator_to_string(chainops[q]) << " ";
+        t << chain_operator_to_string(chainops_rep[q]) << " ";
       }
     }
     ++q;
@@ -344,9 +359,9 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
   }
 
   vector<GENERIC_CONTROLLER*>::size_type p = 0;
-  while (p < gcontrollers.size()) {
-    if (chainop == gcontrollers[p]->target_pointer()) {
-      t << " " << controller_to_string(gcontrollers[p]);
+  while (p < gcontrollers_rep.size()) {
+    if (chainop == gcontrollers_rep[p]->target_pointer()) {
+      t << " " << controller_to_string(gcontrollers_rep[p]);
     }
     ++p;
   } 
