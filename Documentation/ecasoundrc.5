@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "14\&.07\&.2004" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "05\&.09\&.2004" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -162,7 +162,7 @@ file\&. Defaults to \fIflac -d -c %f\fP\&.
 Command for starting FLAC output\&. Ecasound will write
 samples to standard output\&. All audio parameters are
 configurable\&. Before execution, %f is replaced with path to
-the output ogg, %c, %b and %s with matching audio
+the output flac, %c, %b and %s with matching audio
 format parameters, %I with either \'signed\' or \'unsigned\', and
 %E with either \'little\' or \'big\'\&. Defaults to 
 \fIflac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -\fP\&.

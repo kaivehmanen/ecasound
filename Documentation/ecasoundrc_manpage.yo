@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (14.07.2004)
+       (05.09.2004)
        ()
        (Multimedia software)
 
@@ -179,7 +179,7 @@ startdit()
 	Command for starting FLAC output. Ecasound will write
 	samples to standard output. All audio parameters are
 	configurable. Before execution, %f is replaced with path to
-	the output ogg, %c, %b and %s with matching audio
+	the output flac, %c, %b and %s with matching audio
         format parameters, %I with either 'signed' or 'unsigned', and
 	%E with either 'little' or 'big'. Defaults to 
 	em(flac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -).
