@@ -14,7 +14,7 @@ Details:
 - added: ecasoundrc - 'default-audio-format'; same syntax
 	 as with the -f option; defaults to s16_le,2,44100,i
 - removed: ecasoundrc - 'default-samplerate'
-- removed: -sr option; no needed anymore
+- removed: -sr option; not needed anymore
 
 ------------------------------------------------------------------------
 - S.Massy, 17.10.2001:

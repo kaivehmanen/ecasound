@@ -50,8 +50,6 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-16) More flexible system for assigning controllers of 
         controllers (-kx).
 	- submitted: jhalttun, 02.09.2001
-(edi-18) Intelligent system for setting the internal sample rate.
-	- submitted: smassy, 17.10.2001
 (edi-19) Separate file format for multitrack setups (.emt).
 	- submitted: kaiv, 18.10.2001
 (edi-20) Ewf-v2 format.
@@ -93,5 +91,8 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-17) Add bitrate parameter to mp3 objects.
 	- submitted: 30.09.2001, William Goldsmith
 	- done: 06.12.2001, Kai Vehmanen
+(edi-18) Intelligent system for setting the internal sample rate.
+	- submitted: smassy, 17.10.2001
+	- done: kaiv, 31.01.2002
 
 -----------------------------------------------------------------------

@@ -34,7 +34,7 @@ Last officially released version is -*> v2.0.4 *-
 	- removed: support for old ALSA driver versions 0.3.x, 
  		   0.4.x and 0.5.x
 	- removed: ecasoundrc - 'default-samplerate'
-	- removed: -sr option; no needed anymore
+	- removed: -sr option; not needed anymore
 	- changed: JACK support updated to match JACK's 28/Jan/02
 		   CVS-tree
 	- changed: pyecasound - module libpyecasound.so renamed 
