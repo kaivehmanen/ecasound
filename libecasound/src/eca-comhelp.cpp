@@ -40,6 +40,7 @@ const char* ecasound_parameter_help_rep =
 "     -ef1:center_freq, width  resonant bandpass filter \n"
 "     -ef3:cutoff_freq, reso,  resonant lowpass filter \n"
 "          gain \n"
+"     -ef4:cutoff_freq, reso   resonant lowpass filter (2nd-order,24dB)\n"
 "     -efb:center_freq,width   bandpass filter \n"
 "     -efh:cutoff_freq         highpass filter \n"
 "     -efi:delay_in_sampl,rad  inverse comb filter \n"

@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (03.01.2000)
+       (07.01.2000)
        ()
        (Multimedia software)
 
@@ -319,6 +319,11 @@ resonance are between 1.0 and 2.0, but you can use even bigger values.
 'gain' is the overall gain-factor. It's a simple multiplier (1.0 
 is the normal level). With high resonance values it often is useful 
 to reduce the gain value.
+
+dit(-ef4:cutoff, resonance)
+Resonant lowpass filter (2nd-order, 24dB). Simulates 
+an analog active RC-lowpass design. Cutoff is a value between [0,1],
+while resonance is between [0,infinity). 
 
 dit(-efb:center_freq,width)
 Bandpass filter. 'center_freq' is the center frequency. Width

@@ -23,7 +23,7 @@ RL_LIBRARY_NAME = readline
 srcdir = .
 VPATH = .:..
 topdir = ..
-BUILD_DIR = /opt/p/pr/ecasound/readline-4.0
+BUILD_DIR = /opt/p/pr/ecasound/sound/ecasound/readline-4.0
 
 INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = ${INSTALL}
