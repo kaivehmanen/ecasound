@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>08.09.2001</h2>
+<h2>05.10.2001</h2>
 
 
     
@@ -73,14 +73,6 @@ Quiet mode, no output. Same as <em>-d:0</em>.
 Show this help.
 <p><p></p><dt><strong>--version</strong><dd>
 Print version info.
-<p><p></p><dt><strong>-r:sched_priority</strong><dd>
-Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
-ecasound doesn't have root priviledges. Beware! This gives better 
-performance, but can cause total lock-ups if something goes wrong.
-The 'sched_priority' can be omitted (0=omitted). If given, 
-this is the static priority to the highest priority ecasound thread.
-Other ecasound threads run with priority 'sched_priority-1...n'.
-Value '-1' can be used to disable raised-priority mode.
 <p><p></p><dt><strong>-s[:]chainsetup-file</strong><dd>
 Create a new chainsetup from file 'chainsetup-file' and add
 it to the current session. Chainsetup can contain inputs, outputs, 
@@ -99,20 +91,6 @@ used instead. Chain name 'all' is also reserved and means that all chains
 are selected. By giving multiple -a options, you can control to which 
 chains effects, inputs and outputs are assigned to. Look at the <strong>EXAMPLES</strong>
 section for more detailed info about the usage of this option.
-<p><p></p><dt><strong>-b:buffer size</strong><dd>
-Sets the size of buffer in samples (must be an exponent of 2). This
-is quite an important option. For real-time processing, you should
-set this as low as possible to reduce the processing delay. Some
-machines can handle buffer values as low as 64 and 128. In some
-circumstances (for instance when using oscillator envelopes) small
-buffer sizes will make envelopes act more smoothly. When not processing
-in real-time (all inputs and outputs are normal files), values between
-512 - 4096 often give better results. Default is 1024.
-<p><p></p><dt><strong>-m:mix-mode</strong><dd>
-Forces ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
-'simple' =  only one input/chain/output and 'normal' = normal 
-single-threaded mode. In most cases, ecasound is able to find out 
-the correct mode automatically.
 <p><p></p><dt><strong>-n:name</strong><dd>
 Sets the name of chainsetup to 'name'. If not specified, defaults
 either to "command-line-setup" or to the file name from which
@@ -137,6 +115,35 @@ is allowed for realtime devices. Disabling this can reduce
 latency times in some situations. With '-z:xruns', processing will be 
 halted if an under/overrun occurs. '-z:psr' enables the <em>precise-sample-rates</em> 
 mode for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>.
+<p></dl>
+<p>
+<strong>CHAINSETUP BUFFERING AND PERFORMANCE OPTIONS</strong>
+<dl>
+<p><p></p><dt><strong>-B:buffering_mode</strong><dd>
+Selects the default buffering mode. Mode is one of: 'auto' (default), 
+'nonrt', 'rt', 'rtlowlatency'.
+<p><p></p><dt><strong>-b:buffer size</strong><dd>
+Sets the size of buffer in samples (must be an exponent of 2). This
+is quite an important option. For real-time processing, you should
+set this as low as possible to reduce the processing delay. Some
+machines can handle buffer values as low as 64 and 128. In some
+circumstances (for instance when using oscillator envelopes) small
+buffer sizes will make envelopes act more smoothly. When not processing
+in real-time (all inputs and outputs are normal files), values between
+512 - 4096 often give better results. Default is 1024.
+<p><p></p><dt><strong>-m:mix-mode</strong><dd>
+Forces ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
+'simple' =  only one input/chain/output and 'normal' = normal 
+single-threaded mode. In most cases, ecasound is able to find out 
+the correct mode automatically.
+<p><p></p><dt><strong>-r:sched_priority</strong><dd>
+Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
+ecasound doesn't have root priviledges. Beware! This gives better 
+performance, but can cause total lock-ups if something goes wrong.
+The 'sched_priority' can be omitted (0=omitted). If given, 
+this is the static priority to the highest priority ecasound thread.
+Other ecasound threads run with priority 'sched_priority-1...n'.
+Value '-1' can be used to disable raised-priority mode.
 <p></dl>
 <p>
 <strong>PROCESSING CONTROL</strong>

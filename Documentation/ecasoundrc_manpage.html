@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>28.09.2001</h2>
+<h2>10.05.2001</h2>
 
 
     
@@ -55,30 +55,29 @@
 	Defaults to <em>rawmidi,/dev/midi</em>.
 <p><p></p><dt><strong>default-output</strong><dd>
   	Output device to use. Defaults to <em>/dev/dsp</em>.
-<p><p></p><dt><strong>default-buffersize</strong><dd> 
-  	Sets the size of buffer in samples (must be an exponent of 2).
-  	Same as the <strong>-b</strong> command line options. Defaults to <em>1024</em>.
-<p><p></p><dt><strong>default-double-buffer-size</strong><dd>
-	Set buffersize for double-buffering (-z:db, see below).
-	Defaults to <em>100000</em>.
-<p><p></p><dt><strong>default-to-interactive-mode</strong><dd>
-  	Whether to always use interactive mode (true or false). Same as the
-  	the <strong>-c</strong> command line option. Defaults to <em>false</em>. 
-<p><p></p><dt><strong>default-to-raisepriority</strong><dd> 
-  	Whether to always raise runtime priority (true or false). Same as the
-  	the <strong>-r</strong> command line option. Defaults to <em>false</em>.
-<p><p></p><dt><strong>default-to-double-buffering</strong><dd> 
-	Whether to used advanced double-buffering with audio inputs
-	that support it. Defaults to <em>false</em>.
+<p><p></p><dt><strong>default-samplerate</strong><dd>
+  	Default internal sample-rate used internally by the ecasound engine. Defaults to <em>44100</em>.
 <p><p></p><dt><strong>default-to-precise-sample-rates</strong><dd> 
 	Whether to ignore sample rate differences (and possibly avoid 
 	resampling). Currently only affects OSS-devices. Defaults to <em>false</em>.
-<p><p></p><dt><strong>default-to-max-internal-buffering</strong><dd> 
-	Whether to allow realtime devices to utilize extra internal
-	buffering. Enabling this improves reliability, but at the 
-	same time causes additional latency to the signal processing
-	chain. Can be overridden with -z:intbuf and -z:nointbuf options. 
-	Defaults to <em>true</em>.
+<p><p></p><dt><strong>default-to-interactive-mode</strong><dd>
+  	Whether to always use interactive mode (true or false). Same as the
+  	the <strong>-c</strong> command line option. Defaults to <em>false</em>. 
+<p><p></p><dt><strong>bmode-defaults-nonrt</strong><dd>
+	Selects the default parameters to use with buffering 
+	mode 'nonrt' (other modes are 'rt' and 'rtlowlatency). 
+	Parameters are given as a comma-separated tuple of values:
+	1) buffersize (number,-b), 2) raised priority (true/false,-r), 
+	3) sched_priority (number,-r:X), 4) double buffering
+	(true/false,-z:db), 5) db-bufsize (number,-z:db,X), and
+	6) max intbuf (true/false,-z:intbuf). Defaults to
+	<em>1024,false,50,false,100000,true</em>.
+<p><p></p><dt><strong>bmode-defaults-rt</strong><dd>
+	See 'bmode-defaults-nonrt'. Defaults to 
+	<em>1024,true,50,true,100000,true</em>.
+<p><p></p><dt><strong>bmode-defaults-rtlowlatency</strong><dd>
+	See 'bmode-defaults-nonrt'. Defaults to 
+	<em>256,true,50,true,100000,false</em>.
 <p><p></p><dt><strong>resource-directory</strong><dd> 
   	Directory for global ecasound configuration files. 
   	Defaults to <em>{prefix-dir}/share/ecasound</em>.

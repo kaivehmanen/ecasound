@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>24.04.2001</h2>
+<h2>05.10.2001</h2>
 
 
     
@@ -155,8 +155,14 @@ is also affected. <em>[-]</em>
 Sets the chainsetup position to 'time-in-seconds' seconds from the 
 beginning. Position of all inputs and outputs attached to the selected 
 chainsetup is also affected. <em>[-]</em>
+<p><p></p><dt><strong>cs-set-position-samples 'time-in-samples'</strong><dd>
+Sets the chainsetup position to 'time-in-samples' samples from the 
+beginning. Position of all inputs and outputs attached to the selected 
+chainsetup is also affected. <em>[-]</em>
 <p><p></p><dt><strong>cs-get-position, cs-getpos, getpos, get-position</strong><dd>
 Returns the current chainsetup position in seconds. <em>[f]</em>
+<p><p></p><dt><strong>cs-get-position-samples</strong><dd>
+Returns the current chainsetup position in samples. <em>[li]</em>
 <p><p></p><dt><strong>cs-get-length, get-length</strong><dd>
 Returns the chainsetup length in seconds (if known). <em>[f]</em>
 <p><p></p><dt><strong>cs-set-length 'seconds'</strong><dd>
@@ -278,8 +284,12 @@ Time should be given as a floating point value (eg. 0.001 is the
 same as 1ms). <em>[-]</em>
 <p><p></p><dt><strong>ai-setpos 'time_in_seconds', ai-set-position 'time_in_seconds', ao-setpos 'time_in_seconds', ao-set-position 'time_in_seconds'</strong><dd>
 Set audio object position to 'time_in_seconds'. <em>[-]</em>
+<p><p></p><dt><strong>ai-set-position-samples 'time_in_samples', ao-set-position-samples 'time_in_samples'</strong><dd>
+Set audio object position to 'time_in_samples'. <em>[-]</em>
 <p><p></p><dt><strong>ai-getpos, ai-get-position, ao-getpos, ao-get-position</strong><dd>
 Returns the audio object position in seconds. <em>[f]</em>
+<p><p></p><dt><strong>ai-get-position-samples, ao-get-position-samples</strong><dd>
+Returns the audio object position in samples. <em>[f]</em>
 <p><p></p><dt><strong>ai-get-length, ao-get-length</strong><dd>
 Returns the audio object length in seconds. <em>[f]</em>
 <p><p></p><dt><strong>ai-get-format, ao-get-format</strong><dd>

@@ -68,6 +68,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-15) More intelligent system for selecting buffering modes 
          and sizes for optimal out-of-the-box performance.
 	 submitted: kaiv, 09.08.2001
+	 first version: kaiv, 05.10.2001, 2.1 CVS-tree
 (edi-16) More flexible system for assigning controllers of 
          controllers (-kx).
 	 submitted: jhalttun, 02.09.2001

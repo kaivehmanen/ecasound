@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (08.09.2001)
+       (05.10.2001)
        ()
        (Multimedia software)
 
@@ -72,15 +72,6 @@ Show this help.
 dit(--version)
 Print version info.
 
-dit(-r:sched_priority)
-Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
-ecasound doesn't have root priviledges. Beware! This gives better 
-performance, but can cause total lock-ups if something goes wrong.
-The 'sched_priority' can be omitted (0=omitted). If given, 
-this is the static priority to the highest priority ecasound thread.
-Other ecasound threads run with priority 'sched_priority-1...n'.
-Value '-1' can be used to disable raised-priority mode.
-
 dit(-s[:]chainsetup-file)
 Create a new chainsetup from file 'chainsetup-file' and add
 it to the current session. Chainsetup can contain inputs, outputs, 
@@ -102,22 +93,6 @@ used instead. Chain name 'all' is also reserved and means that all chains
 are selected. By giving multiple -a options, you can control to which 
 chains effects, inputs and outputs are assigned to. Look at the bf(EXAMPLES)
 section for more detailed info about the usage of this option.
-
-dit(-b:buffer size)
-Sets the size of buffer in samples (must be an exponent of 2). This
-is quite an important option. For real-time processing, you should
-set this as low as possible to reduce the processing delay. Some
-machines can handle buffer values as low as 64 and 128. In some
-circumstances (for instance when using oscillator envelopes) small
-buffer sizes will make envelopes act more smoothly. When not processing
-in real-time (all inputs and outputs are normal files), values between
-512 - 4096 often give better results. Default is 1024.
-
-dit(-m:mix-mode)
-Forces ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
-'simple' =  only one input/chain/output and 'normal' = normal 
-single-threaded mode. In most cases, ecasound is able to find out 
-the correct mode automatically.
 
 dit(-n:name)
 Sets the name of chainsetup to 'name'. If not specified, defaults
@@ -149,6 +124,42 @@ halted if an under/overrun occurs. '-z:psr' enables the em(precise-sample-rates)
 mode for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html).
 
 enddit()
+
+COMMENT(----------------------------------------------------------------)
+bf(CHAINSETUP BUFFERING AND PERFORMANCE OPTIONS)
+startdit()
+
+dit(-B:buffering_mode)
+Selects the default buffering mode. Mode is one of: 'auto' (default), 
+'nonrt', 'rt', 'rtlowlatency'.
+
+dit(-b:buffer size)
+Sets the size of buffer in samples (must be an exponent of 2). This
+is quite an important option. For real-time processing, you should
+set this as low as possible to reduce the processing delay. Some
+machines can handle buffer values as low as 64 and 128. In some
+circumstances (for instance when using oscillator envelopes) small
+buffer sizes will make envelopes act more smoothly. When not processing
+in real-time (all inputs and outputs are normal files), values between
+512 - 4096 often give better results. Default is 1024.
+
+dit(-m:mix-mode)
+Forces ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
+'simple' =  only one input/chain/output and 'normal' = normal 
+single-threaded mode. In most cases, ecasound is able to find out 
+the correct mode automatically.
+
+dit(-r:sched_priority)
+Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
+ecasound doesn't have root priviledges. Beware! This gives better 
+performance, but can cause total lock-ups if something goes wrong.
+The 'sched_priority' can be omitted (0=omitted). If given, 
+this is the static priority to the highest priority ecasound thread.
+Other ecasound threads run with priority 'sched_priority-1...n'.
+Value '-1' can be used to disable raised-priority mode.
+
+enddit()
+
 
 COMMENT(----------------------------------------------------------------)
 bf(PROCESSING CONTROL)

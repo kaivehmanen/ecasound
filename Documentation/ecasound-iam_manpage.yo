@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (24.04.2001)
+       (05.10.2001)
        ()
        (Multimedia software)
 
@@ -174,8 +174,16 @@ Sets the chainsetup position to 'time-in-seconds' seconds from the
 beginning. Position of all inputs and outputs attached to the selected 
 chainsetup is also affected. em([-])
 
+dit(cs-set-position-samples 'time-in-samples')
+Sets the chainsetup position to 'time-in-samples' samples from the 
+beginning. Position of all inputs and outputs attached to the selected 
+chainsetup is also affected. em([-])
+
 dit(cs-get-position, cs-getpos, getpos, get-position)
 Returns the current chainsetup position in seconds. em([f])
+
+dit(cs-get-position-samples)
+Returns the current chainsetup position in samples. em([li])
 
 dit(cs-get-length, get-length)
 Returns the chainsetup length in seconds (if known). em([f])
@@ -334,8 +342,14 @@ same as 1ms). em([-])
 dit(ai-setpos 'time_in_seconds', ai-set-position 'time_in_seconds', ao-setpos 'time_in_seconds', ao-set-position 'time_in_seconds')
 Set audio object position to 'time_in_seconds'. em([-])
 
+dit(ai-set-position-samples 'time_in_samples', ao-set-position-samples 'time_in_samples')
+Set audio object position to 'time_in_samples'. em([-])
+
 dit(ai-getpos, ai-get-position, ao-getpos, ao-get-position)
 Returns the audio object position in seconds. em([f])
+
+dit(ai-get-position-samples, ao-get-position-samples)
+Returns the audio object position in samples. em([f])
 
 dit(ai-get-length, ao-get-length)
 Returns the audio object length in seconds. em([f])

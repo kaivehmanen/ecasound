@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (28.09.2001)
+       (10.05.2001)
        ()
        (Multimedia software)
 
@@ -50,36 +50,34 @@ startdit()
   	dit(default-output)
   	Output device to use. Defaults to em(/dev/dsp).
 
-  	dit(default-buffersize) 
-  	Sets the size of buffer in samples (must be an exponent of 2).
-  	Same as the bf(-b) command line options. Defaults to em(1024).
-
-	dit(default-double-buffer-size)
-	Set buffersize for double-buffering (-z:db, see below).
-	Defaults to em(100000).
-
-  	dit(default-to-interactive-mode)
-  	Whether to always use interactive mode (true or false). Same as the
-  	the bf(-c) command line option. Defaults to em(false). 
-
-  	dit(default-to-raisepriority) 
-  	Whether to always raise runtime priority (true or false). Same as the
-  	the bf(-r) command line option. Defaults to em(false).
-
-  	dit(default-to-double-buffering) 
-	Whether to used advanced double-buffering with audio inputs
-	that support it. Defaults to em(false).
+  	dit(default-samplerate)
+  	Default internal sample-rate used internally by the ecasound engine. Defaults to em(44100).
 
 	dit(default-to-precise-sample-rates) 
 	Whether to ignore sample rate differences (and possibly avoid 
 	resampling). Currently only affects OSS-devices. Defaults to em(false).
 
-	dit(default-to-max-internal-buffering) 
-	Whether to allow realtime devices to utilize extra internal
-	buffering. Enabling this improves reliability, but at the 
-	same time causes additional latency to the signal processing
-	chain. Can be overridden with -z:intbuf and -z:nointbuf options. 
-	Defaults to em(true).
+  	dit(default-to-interactive-mode)
+  	Whether to always use interactive mode (true or false). Same as the
+  	the bf(-c) command line option. Defaults to em(false). 
+
+	dit(bmode-defaults-nonrt)
+	Selects the default parameters to use with buffering 
+	mode 'nonrt' (other modes are 'rt' and 'rtlowlatency). 
+	Parameters are given as a comma-separated tuple of values:
+	1) buffersize (number,-b), 2) raised priority (true/false,-r), 
+	3) sched_priority (number,-r:X), 4) double buffering
+	(true/false,-z:db), 5) db-bufsize (number,-z:db,X), and
+	6) max intbuf (true/false,-z:intbuf). Defaults to
+	em(1024,false,50,false,100000,true).
+
+	dit(bmode-defaults-rt)
+	See 'bmode-defaults-nonrt'. Defaults to 
+	em(1024,true,50,true,100000,true).
+
+	dit(bmode-defaults-rtlowlatency)
+	See 'bmode-defaults-nonrt'. Defaults to 
+	em(256,true,50,true,100000,false).
 
   	dit(resource-directory) 
   	Directory for global ecasound configuration files. 
