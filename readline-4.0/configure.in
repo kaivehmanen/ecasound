@@ -13,7 +13,7 @@ AC_CONFIG_HEADER(config.h)
 dnl make sure we are using a recent autoconf version
 AC_PREREQ(2.10)
 
-AC_CONFIG_AUX_DIR(./support)
+AC_CONFIG_AUX_DIR(..)
 
 AC_CANONICAL_HOST
 
@@ -136,7 +136,7 @@ AC_SUBST(LIBVERSION)
 
 AC_SUBST(TERMCAP_LIB)
 
-AC_OUTPUT([Makefile examples/Makefile shlib/Makefile],
+AC_OUTPUT([Makefile],
 [
 # Makefile uses this timestamp file to record whether config.h is up to date.
 echo > stamp-h

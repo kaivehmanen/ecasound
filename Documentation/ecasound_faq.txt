@@ -5,14 +5,11 @@ Contents
 1.1: Errors when compiling audioio-af.cpp 
 1.2: If ecasound crashes - how to compile for debugging? 
 1.3: How to rebuild the source-RPMs with ALSA support? 
-2: Installing 
-2.1: Is installing Qt 2.x going to break KDE 1.x and other apps using Qt 1.xx? 
-2.2: Does qtecasound require KDE to be installed? 
-3: Using 
-3.1: Can't open shared shared libraries 
-3.2: How do I use the parameter xxx? 
-3.3: Ecasound isn't doing anything but it still seems to hog all CPU-time 
-3.4: What file format should I use for mixing and recording? 
+2: Using 
+2.1: Can't open shared shared libraries 
+2.2: How do I use the parameter xxx? 
+2.3: Ecasound isn't doing anything but it still seems to hog all CPU-time 
+2.4: What file format should I use for mixing and recording? 
 
 1: Compiling
 
@@ -34,7 +31,7 @@ gives you a lot of info. Sometimes however, this is not enough. For
 debugging purposes, you should compile a separate debug version of 
 ecasound. You can do this with "make distclean ; ./configure --enable-debug 
 ; make install". This produces a new set of executables and libraries 
-(libecasound_debug.so, ecasound_debug, qtecasound_debug, etc). Notice
+(libecasound_debug.so, ecasound_debug, etc). Notice
 that these are considerably slower than normal optimized
 versions. To summarize, if ecasound acts weirdly, try to reproduce 
 the behaviour with _debug versions. This way all assertions are
@@ -47,34 +44,9 @@ If you have ALSA installed properly, normal rebuild is enough:
 "rpm --rebuild ecasound-x.y.zrt.src.rpm" (replace x, y, z and t 
 with proper version numbers).
 
-2: Installing
+2: Using
 
-2.1: Is installing Qt 2.x going to break KDE 1.x and other apps using Qt 1.xx?
-
-You can install the Qt 2.x runtime libs and still run apps using the
-older Qt versions (like KDE). If you compile KDE/Qt programs yourself, 
-you can choose between Qt 1.x and 2.x by changing the symbolic link 
-"libqt.so". If it points to libqt.so.1, the program is linked to 1.x 
-libs and to 2.x libs if it points to libqt.so.2.
-
-See this ecasound-list message
-for more info.
-
-And of course you can just use the text-mode version of ecasound.
-It can do most things that the X-version (qtecasound) can do.
-
-2.2: Does qtecasound require KDE to be installed?
-
-No. In addition to the Qt runtime libraries, qtecasound only 
-requires the normal X libraries. In other words it should run
-under any window manager. And most likely it will also stay 
-this way. I might do a KDE/some-other specific version, but
-I'd still support the generic version. After all, ecasound isn't
-actually aimed at the masses... 
-
-3: Using
-
-3.1: Can't open shared shared libraries
+2.1: Can't open shared shared libraries
 
 If you get the following error message...
 
@@ -89,10 +61,9 @@ you haven't installed ecasound to the default location, replace
 work, use "ldd /usr/local/bin/ecasound/" to see what library ecasound 
 tries to use. 
 
-Same applies to other libraries used by ecasound (libkvutils, libqt, 
-libaudiofile, etc).
+Same applies to other libraries used by ecasound (libkvutils, libaudiofile, etc).
 
-3.2: How do I use the parameter xxx?
+2.2: How do I use the parameter xxx?
 
 The best place to start is the file examples.html. It can be found
 from www.wakkanet.fi/ecasound
@@ -101,13 +72,13 @@ page. Finally, help given by the -h command line
 option is always up-to-date. If you still don't know what to do, mail me at 
 kaiv@wakkanet.fi. 
 
-3.3: Ecasound isn't doing anything but it still seems to hog all CPU-time
+2.3: Ecasound isn't doing anything but it still seems to hog all CPU-time
 
 You're probably running ecasound in raised-priority mode. It is turned on
 with the -r command line option or by specifying 
 "default-to-raisepriority true" in your ~/.ecasoundrc.
 
-3.4: What file format should I use for mixing and recording?
+2.4: What file format should I use for mixing and recording?
 
 You should always use .raw or .wav. By doing this, you will probably
 get better performance as these formats are internally supported by 

@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "06\&.07\&.2000" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "27\&.08\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile

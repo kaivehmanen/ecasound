@@ -36,17 +36,12 @@
 <dt><h3><a href="ecasound_faq.html#l3">1.2: If ecasound crashes - how to compile for debugging?</a></h3>
 <dt><h3><a href="ecasound_faq.html#l4">1.3: How to rebuild the source-RPMs with ALSA support?</a></h3>
 </dl><p>
-<dt><h2><a href="ecasound_faq.html#l5">2: Installing</a></h2>
+<dt><h2><a href="ecasound_faq.html#l5">2: Using</a></h2>
 <dl><p>
-<dt><h3><a href="ecasound_faq.html#l6">2.1: Is installing Qt 2.x going to break KDE 1.x and other apps using Qt 1.xx?</a></h3>
-<dt><h3><a href="ecasound_faq.html#l7">2.2: Does qtecasound require KDE to be installed?</a></h3>
-</dl><p>
-<dt><h2><a href="ecasound_faq.html#l8">3: Using</a></h2>
-<dl><p>
-<dt><h3><a href="ecasound_faq.html#l9">3.1: Can't open shared shared libraries</a></h3>
-<dt><h3><a href="ecasound_faq.html#l10">3.2: How do I use the parameter xxx?</a></h3>
-<dt><h3><a href="ecasound_faq.html#l11">3.3: Ecasound isn't doing anything but it still seems to hog all CPU-time</a></h3>
-<dt><h3><a href="ecasound_faq.html#l12">3.4: What file format should I use for mixing and recording?</a></h3>
+<dt><h3><a href="ecasound_faq.html#l6">2.1: Can't open shared shared libraries</a></h3>
+<dt><h3><a href="ecasound_faq.html#l7">2.2: How do I use the parameter xxx?</a></h3>
+<dt><h3><a href="ecasound_faq.html#l8">2.3: Ecasound isn't doing anything but it still seems to hog all CPU-time</a></h3>
+<dt><h3><a href="ecasound_faq.html#l9">2.4: What file format should I use for mixing and recording?</a></h3>
 </dl><p>
  
 <p><hr><p><br>
@@ -76,7 +71,7 @@ gives you a lot of info. Sometimes however, this is not enough. For
 debugging purposes, you should compile a separate debug version of 
 ecasound. You can do this with "make distclean ; ./configure --enable-debug 
 ; make install". This produces a new set of executables and libraries 
-(libecasound_debug.so, ecasound_debug, qtecasound_debug, etc). Notice
+(libecasound_debug.so, ecasound_debug, etc). Notice
 that these are <em>considerably slower</em> than normal optimized
 versions. To summarize, if ecasound acts weirdly, try to reproduce 
 the behaviour with _debug versions. This way all assertions are
@@ -90,36 +85,14 @@ If you have ALSA installed properly, normal rebuild is enough:
 with proper version numbers).
 <p>
 
-<a name="l5"></a>
-<h2>2: Installing</h2>
-<p>
-<a name="l6"></a>
-<h3>2.1: Is installing Qt 2.x going to break KDE 1.x and other apps using Qt 1.xx?</h3>
-You can install the Qt 2.x runtime libs and still run apps using the
-older Qt versions (like KDE). If you compile KDE/Qt programs yourself, 
-you can choose between Qt 1.x and 2.x by changing the symbolic link 
-"libqt.so". If it points to libqt.so.1, the program is linked to 1.x 
-libs and to 2.x libs if it points to libqt.so.2.
-<p>See <a href="http://www.wakkanet.fi/~kaiv/ecasound/ecasound-list/199909/0073.html">this ecasound-list message</a>
-for more info.
-<p>And of course you can just use the text-mode version of ecasound.
-It can do most things that the X-version (qtecasound) can do.
-<p>
-<a name="l7"></a>
-<h3>2.2: Does qtecasound require KDE to be installed?</h3>
-No. In addition to the Qt runtime libraries, qtecasound only 
-requires the normal X libraries. In other words it should run
-under any window manager. And most likely it will also stay 
-this way. I might do a KDE/some-other specific version, but
-I'd still support the generic version. After all, ecasound isn't
-actually aimed at the masses... 
+
 <p>
 
-<a name="l8"></a>
-<h2>3: Using</h2>
+<a name="l5"></a>
+<h2>2: Using</h2>
 <p>
-<a name="l9"></a>
-<h3>3.1: Can't open shared shared libraries</h3>
+<a name="l6"></a>
+<h3>2.1: Can't open shared shared libraries</h3>
 If you get the following error message...
 <p><pre>
 --cut--
@@ -133,11 +106,10 @@ you haven't installed ecasound to the default location, replace
 /usr/local/lib with the correct library path. If the it still doesn't
 work, use "ldd /usr/local/bin/ecasound/" to see what library ecasound 
 tries to use. 
-<p>Same applies to other libraries used by ecasound (libkvutils, libqt, 
-libaudiofile, etc).
+<p>Same applies to other libraries used by ecasound (libkvutils, libaudiofile, etc).
 <p>
-<a name="l10"></a>
-<h3>3.2: How do I use the parameter xxx?</h3>
+<a name="l7"></a>
+<h3>2.2: How do I use the parameter xxx?</h3>
 The best place to start is the file <em>examples.html</em>. It can be found
 from <a href="http://www.wakkanet.fi/~kaiv/ecasound/Documentation/examples.html">www.wakkanet.fi/ecasound</a>
 (ecasound home page). Next you should check the <em>ecasound(1)</em> manual
@@ -145,14 +117,14 @@ page. Finally, help given by the <strong>-h</strong> command line
 option is always up-to-date. If you still don't know what to do, mail me at 
 <a href="mailto:kaiv@wakkanet.fi"><em>kaiv@wakkanet.fi</em></a>. 
 <p>
-<a name="l11"></a>
-<h3>3.3: Ecasound isn't doing anything but it still seems to hog all CPU-time</h3>
+<a name="l8"></a>
+<h3>2.3: Ecasound isn't doing anything but it still seems to hog all CPU-time</h3>
 You're probably running ecasound in raised-priority mode. It is turned on
 with the -r command line option or by specifying 
 "default-to-raisepriority true" in your <a href="ecasoundrc_manpage.html">~/.ecasoundrc</a>.
 <p>
-<a name="l12"></a>
-<h3>3.4: What file format should I use for mixing and recording?</h3>
+<a name="l9"></a>
+<h3>2.4: What file format should I use for mixing and recording?</h3>
 You should always use .raw or .wav. By doing this, you will probably
 get better performance as these formats are internally supported by 
 ecasound.

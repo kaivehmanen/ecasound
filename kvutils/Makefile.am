@@ -4,6 +4,7 @@ AUTOMAKE_OPTIONS = foreign
 # Makefile.am for building libkvutils.a
 # ---
 CXXFLAGS+=-D_REENTRANT -s -O2 -ffast-math -I$(srcdir)
+libdir = ${exec_prefix}/lib/ecasound
 
 lib_LTLIBRARIES = libkvutils.la
 

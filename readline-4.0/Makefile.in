@@ -112,7 +112,7 @@ DOCOBJECT = doc/readline.dvi
 DOCSUPPORT = doc/Makefile
 DOCUMENTATION = $(DOCSOURCE) $(DOCOBJECT) $(DOCSUPPORT)
 
-CREATED_MAKEFILES = Makefile doc/Makefile examples/Makefile shlib/Makefile
+CREATED_MAKEFILES = Makefile 
 CREATED_CONFIGURE = config.status config.h config.cache config.log \
 		    stamp-config stamp-h
 CREATED_TAGS = TAGS tags
@@ -165,8 +165,6 @@ $(srcdir)/configure: $(srcdir)/configure.in	## Comment-me-out in distribution
 
 
 shared:	force
-	-test -d shlib || mkdir shlib
-	-( cd shlib ; ${MAKE} ${MFLAGS} all )
 
 documentation: force
 	-test -d doc || mkdir doc
@@ -205,11 +203,9 @@ uninstall:
 	-test -n "$(libdir)" && cd $(libdir) && \
 		${RM} libreadline.a libreadline.old libhistory.a libhistory.old $(SHARED_LIBS)
 
-install-shared: installdirs shared
-	-( cd shlib ; ${MAKE} ${MFLAGS} install )
+install-shared: installdirs
 
 uninstall-shared:
-	-( cd shlib; ${MAKE} ${MFLAGS} uninstall )
 
 TAGS:	force
 	$(ETAGS) $(CSOURCES) $(HSOURCES)
@@ -219,18 +215,12 @@ tags:	force
 
 clean:	force
 	$(RM) $(OBJECTS) $(STATIC_LIBS)
-	-( cd shlib && $(MAKE) $(MFLAGS) $@ )
-	-( cd doc && $(MAKE) $(MFLAGS) $@ )
 	-( cd examples && $(MAKE) $(MFLAGS) $@ )
 
 mostlyclean: clean
-	-( cd shlib && $(MAKE) $(MFLAGS) $@ )
-	-( cd doc && $(MAKE) $(MFLAGS) $@ )
 	-( cd examples && $(MAKE) $(MFLAGS) $@ )
 
 distclean maintainer-clean: clean
-	-( cd shlib && $(MAKE) $(MFLAGS) $@ )
-	-( cd doc && $(MAKE) $(MFLAGS) $@ )
 	-( cd examples && $(MAKE) $(MFLAGS) $@ )
 	$(RM) Makefile
 	$(RM) $(CREATED_CONFIGURE)
@@ -251,7 +241,6 @@ dist:   force
 	@echo gzip $(RL_LIBRARY_NAME)-$(RL_LIBRARY_VERSION).tar
 
 distdir:
-	cp -apv $(srcdir)/{doc,examples,shlib,support} $(distdir)/
 	cp -apv $(DISTFILES) $(distdir)/ 
 
 # Tell versions [3.59,3.63) of GNU make not to export all variables.

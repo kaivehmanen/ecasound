@@ -1,4 +1,4 @@
-# $Revision: 1.1 $, $Date: 2000-06-19 19:13:48 $
+# $Revision: 1.2 $, $Date: 2000-08-29 20:48:57 $
 Summary:       Software package for multitrack audio processing
 Summary(pl):   Oprogramowanie do wielo¶cie¿kowego przetwarzania d¼wiêku
 Name:          ecasound
@@ -10,7 +10,6 @@ Group(pl):     Aplikacje/D¼wiêk
 Source:        http://ecasound.seul.org/download/%{name}-%{version}.tar.gz
 Patch0:        ecasound_sys_readline.patch
 Patch1:        ecasound-DESTDIR.patch
-BuildRequires: qt-devel >= 2.0
 BuildRequires: gcc >= 2.95.2
 BuildRequires: audiofile-devel >= 0.1.7
 BuildRequires: readline-devel
@@ -81,51 +80,6 @@ Group(pl):     Programowanie/Biblioteki
 %description -n libecasound-devel
 %description -l pl -n libecasound-devel
 
-%package -n qtecasound
-Summary:       Ecasound QT frontend
-Summary(pl):   Interfejs graficzny dla programu ecasound
-Group:         Applications/Sound
-Group(pl):     Aplikacje/D¼wiêk
-
-%description -n qtecasound
-This is qtecasound, Qt-based X-interface for ecasound. It is usable
-but isn't yet as powerful as the console mode version. This program
-features:
-- control panel (start, stop, rewind, forward, ...) 
-- session setup (load, save and view chainsetups) 
-- chainsetup view (add, remove, attach and view inputs, outputs and chains;
-  enable/disable chains) 
-- waveform view (supports caching)
-- chain view (chain and effect status) 
-
-%description -n qtecasound -l pl
-N/A
-
-%package -n libqtecasound
-Summary:       Ecasound QT frontend library
-Summary(pl):   Biblioteki interfejsu graficznego programu ecasound
-Group:         Development/Libraries
-Group(pl):     Programowanie/Biblioteki
-
-%description -n libqtecasound
-N/A
-
-%description -l pl -n libqtecasound
-N/A
-
-%package -n libqtecasound-devel
-Summary:       Ecasound QT frontend library headers
-Summary(pl):   Pliki nag³ówkowe bibliotek interfejsu graficznego programu ecasound
-Group:         Development/Libraries
-Group(pl):     Programowanie/Biblioteki
-
-%description -n libqtecasound-devel
-N/A
-
-%description -l pl -n libqtecasound-devel
-N/A
-
-
 %prep
 %setup -q
 %patch0 -p1
@@ -136,7 +90,6 @@ automake
 autoconf
 CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" \
 	%configure --prefix=%{_prefix} \
-    --with-qt-includes=/usr/X11R6/include --with-qt-libraries=/usr/X11R6/lib \
     --enable-sys-readline
 %{__make}
 
@@ -155,6 +108,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755, root, root) %{_bindir}/ecanormalize
 %attr(755, root, root) %{_bindir}/ecaplay
 %attr(755, root, root) %{_bindir}/ecasound
+%attr(755, root, root) %{_bindir}/ecasound-config
 %{_mandir}/man1/eca*
 %{_mandir}/man5/eca*
 
@@ -162,29 +116,14 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644, root, root, 755)
 %dir %{_datadir}/ecasound
 %attr(644, root, root) %{_datadir}/ecasound/*
-%attr(755, root, root) %{_libdir}/libkvutils*.so*
-%attr(755, root, root) %{_libdir}/libecasound*.so*
+%attr(755, root, root) %{_libdir}/ecasound/libkvutils*.so*
+%attr(755, root, root) %{_libdir}/ecasound/libecasound*.so*
 
 %files -n libecasound-devel
 %attr(644, root, root) %{_includedir}/ecasound/[^qe]*
 %attr(644, root, root) %{_includedir}/kvutils/*
-%attr(755, root, root) %{_libdir}/libkvutils.a
-%attr(755, root, root) %{_libdir}/libkvutils.la
-
-%files -n qtecasound
-%defattr(644, root, root, 755)
-%attr(755, root, root) %{_bindir}/qtecasound
-%{_mandir}/man1/qt*
-
-%files -n libqtecasound
-%defattr(644, root, root, 755)
-%attr(755, root, root) %{_libdir}/libqtecasound*.so*
-
-%files -n libqtecasound-devel
-%defattr(644, root, root, 755)
-%attr(644, root, root) %{_includedir}/ecasound/qe*
-%attr(755, root, root) %{_libdir}/libqtecasound*.a
-%attr(755, root, root) %{_libdir}/libqtecasound*.la
+%attr(755, root, root) %{_libdir}/ecasound/libkvutils.a
+%attr(755, root, root) %{_libdir}/ecasound/libkvutils.la
 
 %define date	%(echo `LC_ALL="C" date +"%a %b %d %Y"`)
 %changelog
@@ -192,6 +131,9 @@ rm -rf $RPM_BUILD_ROOT
 All below listed persons can be reached on <cvs_login>@pld.org.pl
 
 $Log: ecasound.pld.spec.in,v $
-Revision 1.1  2000-06-19 19:13:48  kaiv
+Revision 1.2  2000-08-29 20:48:57  kaiv
+A few new files.
+
+Revision 1.1  2000/06/19 19:13:48  kaiv
 -
 

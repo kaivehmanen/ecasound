@@ -7,8 +7,7 @@ libecasound_path = $(top_builddir)/libecasound/libecasound.la -L$(top_builddir)/
 endif
 
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils \
-			-I$(top_srcdir)/libecasound
+INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound
 
 
 if INCLUDE_DEBUG

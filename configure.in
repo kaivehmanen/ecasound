@@ -267,6 +267,7 @@ ecasound.spec
 ecasound.mdk.spec
 ecasound.pld.spec
 libecasound/Makefile
+libecasound/ecasound-config
 libecasound/plugin-paths.h
 libecasound/plugins/Makefile
 ecasound/Makefile

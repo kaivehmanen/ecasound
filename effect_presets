@@ -1,0 +1,87 @@
+# --------------------------------------------------------------------
+# ecasound / effect presets
+# --------------------------------------------------------------------
+#
+# - all lines beginning with a '#' are ignored
+# - preset format:
+#   "preset_name_or_number = <chain-1object> | ... | <chain-N objects>"
+# - you can use '\' sign to split lines
+#
+# --------------------------------------------------------------------
+#
+# ======
+# Filters 
+#
+# A lowpass filter controlled by a sine oscillator 
+filter1 = -ef3:800,1.5,0.9 -kos:1,400,4200,0.2,0
+filter2 = -efl:400 -kos:1,200,2000,0.5,0
+# Filtering
+high_and_low = -efl:400 | -efh:4000 -ea:800
+res_bandpass = -ef1:1500,1000
+res_lowpass = -ef3:800,1.5,0.7
+bandpass = -efb:1500,1000
+highpass = -efh:2000
+inverse_comb = -efi:8,0.999
+lowpass = -efl:300
+rejectband = -efr:1500,1000
+resonator = -efs:1500,1000
+#
+# ======
+# Compression/dynamics
+#
+# Compressor presets
+compress_supersoft = -eca:0.69,0,0.25,0.25
+compress_soft = -eca:0.69,0,0.25,0.5
+compress_medium = -eca:0.69,0,0.25,1.0
+compress_hard = -eca:0.69,0,0.5,1.0
+compress_infinite = -eca:0.69,0,1.0,1.0
+compress_brutal = -ec:999,10
+# 
+# ======
+# Gates
+#
+# Noise gates
+noisegate1 = -enm:18,20,50,50,50
+noisegate_delanalog = -enm:0.20,0.1,1000,50,0
+# Generic gates
+crop_gate = -gc:1,0.5
+threshold_gate = -ge:15,20,1
+#
+# ======
+# Time/delay effects
+#
+# Bathroom reverb
+reverb1 = -etr:40,0,85
+reverb2 = -etr:60,0,70
+reverb3 = -etf:30
+reverb4 = -pn:reverb1 -pn:reverb2
+# Delays 
+delay1 = -etd:200,0,3,60
+delay2 = -etm:200,3,60
+# Phase effects
+flanger1 = -etl:10,200,50,0.5
+chorus1 = -etc:10,50,50,0.5
+phaser1 = -etp:10,25,50,0.5
+#
+# ======
+# EQ
+#
+eq_template = -efb:10,20 -ea:100 | \
+		-efb:40,40 -ea:100 | \
+		-efb:100,80 -ea:100 | \
+		-efb:220,160 -ea:100 | \
+		-efb:460,320 -ea:100 | \
+		-efb:940,640 -ea:100 | \
+		-efb:1900,1280 -ea:100 | \
+		-efb:3800,2520 -ea:100 | \
+		-efb:7620,5120 -ea:100 | \
+		-efb:15300,10240 -ea:100
+eq_template2 = -efb:1000,2000 -ea:100 | \
+		-efb:4000,1000 -ea:100
+#
+# ======
+# Other
+#
+# Variable pan 
+variable_pan = -epp:0 -kf:1,0,100,0.2,0
+chipmunk_mix = -ei:400 -efl:400 -kos:1,400,10000,2,0

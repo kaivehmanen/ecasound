@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "25\&.06\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "27\&.08\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -521,7 +521,6 @@ same as with command-line arguments\&.
 .PP 
 .SH "SEE ALSO" 
 .PP 
-qtecasound(1),
 ecatools(1), 
 ecasound-iam(1)
 ecasoundrc(5), 

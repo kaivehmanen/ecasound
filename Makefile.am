@@ -1,4 +1,4 @@
-EXTRA_DIST = BUGS NEWS TODO FAQ generic_oscillators effect_presets ecasound.spec ecasound.mdk.spec ecasound.pld.spec
+EXTRA_DIST = BUGS NEWS TODO FAQ generic_oscillators effect_presets ecasound.spec
 
 if SYSTEM_READLINE
 SUBDIRS = kvutils libecasound ecasound ecatools Documentation
@@ -15,16 +15,14 @@ install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(datadir)/ecasound
 	if [ ! -f $(DESTDIR)$(datadir)/ecasound/generic_oscillators ]; then $(INSTALL_DATA) generic_oscillators $(DESTDIR)$(datadir)/ecasound/generic_oscillators ; fi
 	if [ ! -f $(DESTDIR)$(datadir)/ecasound/effect_presets ]; then $(INSTALL_DATA) effect_presets $(DESTDIR)$(datadir)/ecasound/effect_presets; fi
-#	if [ ! -f $(datadir)/ecasound/singlechain_effect_presets ]; then $(INSTALL_DATA) singlechain_effect_presets $(datadir)/ecasound/singlechain_effect_presets; fi
-#	if [ ! -f $(datadir)/ecasound/multichain_effect_presets ]; then $(INSTALL_DATA) multichain_effect_presets $(datadir)/ecasound/multichain_effect_presets ; fi
 
 delete-static-libs:
-	rm -f $(DESTDIR)$(libdir)/libkvutils.a
-	rm -f $(DESTDIR)$(libdir)/libecasound.a
+	rm -f $(DESTDIR)$(exec_prefix)/lib/ecasound/libkvutils.a
+	rm -f $(DESTDIR)$(exec_prefix)/lib/ecasound/libecasound.a
 
 strip-shared-libs:
-	strip $(DESTDIR)$(libdir)/libecasound.so
-	strip $(DESTDIR)$(libdir)/libkvutils.so
+	strip $(DESTDIR)$(exec_prefix)/lib/ecasound/libecasound.so
+	strip $(DESTDIR)$(exec_prefix)/lib/ecasound/libkvutils.so
 
 redhat-rpm: ecasound.spec dist
 	cp -fv $(PACKAGE)-$(VERSION).tar.gz /usr/src/redhat/SOURCES/

@@ -32,6 +32,9 @@ else
 lib_LTLIBRARIES = libecasound.la
 endif
 
+libdir = ${exec_prefix}/lib/ecasound
+bin_SCRIPTS = ecasound-config
+
 # ----------------------------------------------------------------------
 # header files
 # ----------------------------------------------------------------------
