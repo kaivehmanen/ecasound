@@ -339,8 +339,8 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
 	csetup_repp->toggle_raised_priority(false);
       }
       else {
-	if (prio != 0) 
-	  csetup_repp->set_sched_priority(prio);
+	if (prio == 0) prio = 50;
+	csetup_repp->set_sched_priority(prio);
 	ecadebug->msg("(eca-chainseup) Raised-priority mode enabled. (prio:" + 
 		      kvu_numtostr(csetup_repp->sched_priority()) + ")");
 	csetup_repp->toggle_raised_priority(true);
@@ -376,8 +376,8 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
     {
       if (get_argument_number(1, argu) == "db") {
 	long int bufs = atol(get_argument_number(2, argu).c_str());
-	if (bufs != 0) 
-	  csetup_repp->set_double_buffer_size(bufs);
+	if (bufs == 0) bufs = 100000;
+	csetup_repp->set_double_buffer_size(bufs);
 	ecadebug->msg("(eca-chainsetup-parser) Using double-buffer of " + 
 		      kvu_numtostr(csetup_repp->double_buffer_size()) + " sample frames.");
 	csetup_repp->toggle_double_buffering(true);
