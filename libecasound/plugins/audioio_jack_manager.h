@@ -211,6 +211,7 @@ private:
   long int cb_allocated_frames_rep;
 
 #if ECA_JACK_TRANSPORT_API >= 2
+  int last_transport_state_rep;
   jack_transport_info_t transport_info_rep;
 #endif
 };

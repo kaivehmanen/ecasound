@@ -32,6 +32,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   this by specifying the python module directory 
 		   explicitly with the --with-python-modules=DIR 
 		   option
+	- changed: updates to JACK transport code
 	- fixed: use of the JACK transport API was never actually 
                  enabled in 2.2.3
 	- fixed: .aiff/.snd/.au input/output was not working at all

@@ -647,6 +647,8 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
   string tname = kvu_get_argument_number(1, argu);
 
   bool match = true;
+  bool print_error = false;
+  bool print_error_iomode = false;
   if (argu.size() < 2) return;
   switch(argu[1]) {
   case 'i':
@@ -659,7 +661,10 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
       if (audio_input != 0) {
 	if ((audio_input->supported_io_modes() &
 	     AUDIO_IO::io_read) != AUDIO_IO::io_read) {
-	  interpret_set_result(false, string("(eca-chainsetup-parser) I/O-mode 'io_read' not supported by ") + audio_input->name());
+	  interpret_set_result(false, 
+			       string("(eca-chainsetup-parser) Audio object '") + 
+			       tname +
+			       "' cannot be opened for input.");
 	}
 	else {
 	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
@@ -668,9 +673,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 	}
       }
       else {
-	interpret_set_result(false, 
-			     string("(eca-chainsetup-parser) Input device or file type ") +
-			     tname + " not recognized.");
+	print_error = true;
       }
       break;
     }
@@ -702,9 +705,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 	}
       }
       else {
-	interpret_set_result(false,
-			     string("(eca-chainsetup-parser) Output device or file type ") +
-			     tname + " not recognized.");
+	print_error = true;
       }
       break;
     }
@@ -729,7 +730,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 	  csetup_repp->output_start_pos[csetup_repp->output_start_pos.size() - 1] = last_object->position_in_seconds_exact();
 	}
 
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Set starting position for audio object \""
+	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Setting starting position for audio object \""
 		    + last_object->label() 
 		    + "\": "
 		    + kvu_numtostr(last_object->position_in_seconds_exact()) 
@@ -740,7 +741,19 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 
   default: { match = false; }
   }
+
   if (match == true) istatus_rep = true;
+
+  if (print_error == true) {
+    interpret_set_result(false, 
+			 string("(eca-chainsetup-parser) Audio object '") +
+			 tname + 
+			 "' does not match any of the known audio device types or "
+			 "file formats. You can check the list of supported "
+			 "audio object types by issuing the command 'aio-register' in "
+			 "ecasound's interactive mode.");
+    
+  }
 }
 
 /**
