@@ -322,7 +322,7 @@ void MIDI_SERVER::send_midi_bytes(int dev_id, unsigned char* buf, int bytes) {
   REQUIRE(is_enabled() == true);
   // --------
   
-  if (client_rep[dev_id - 1]->is_open() == true) {
+  if (clients_rep[dev_id - 1]->is_open() == true) {
     assert(static_cast<int>(clients_rep.size()) >= dev_id);
     assert(clients_rep[dev_id - 1]->supports_nonblocking_mode() == true);
     int fd = clients_rep[dev_id - 1]->file_descriptor();
