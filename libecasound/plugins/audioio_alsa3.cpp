@@ -442,7 +442,7 @@ long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer,
     unsigned char* ptr_to_channel = reinterpret_cast<unsigned char*>(target_buffer);
     for (int channel = 0; channel < channels(); channel++) {
       nbufs_repp[channel] = ptr_to_channel;
-      ptr_to_channel += samples * frame_size();
+      ptr_to_channel += samples * bits() / 8;
     }
     realsamples = snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), fragment_size_rep);
     if (realsamples < 0) {
@@ -553,9 +553,9 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
     unsigned char* ptr_to_channel = reinterpret_cast<unsigned char*>(target_buffer);
     for (int channel = 0; channel < channels(); channel++) {
       nbufs_repp[channel] = ptr_to_channel;
-      // cerr << "Pointer to channel " << channel << ": " << reinterpret_cast<void*>(nbufs_repp[channel]) << endl;
-      ptr_to_channel += samples * frame_size();
-      // cerr << "Advancing pointer count to " << reinterpret_cast<void*>(ptr_to_channel) << endl;
+      // std::cerr << "Pointer to channel " << channel << ": " << reinterpret_cast<void*>(nbufs_repp[channel]) << std::endl;
+      ptr_to_channel += samples * bits() / 8;
+      // std::cerr << "Advancing pointer count by " << samples * bits() / 8 << " to " << reinterpret_cast<void*>(ptr_to_channel) << std::endl;
     }
     long int count =  snd_pcm_writen(audio_fd_repp,
 				       reinterpret_cast<void**>(nbufs_repp), 
