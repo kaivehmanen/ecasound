@@ -3,7 +3,7 @@
 
 #include <string>
 
-class ECA_ERROR;
+#include "eca-error.h"
 
 /**
  * Class that represents audio format parameters. Audio format

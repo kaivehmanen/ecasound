@@ -7,7 +7,7 @@
 
 #include "oscillator.h"
 
-class ECA_ERROR;
+#include "eca-error.h"
 
 /**
  * Generic oscillator

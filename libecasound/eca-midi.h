@@ -6,7 +6,7 @@
 #include <pthread.h>
 #include <vector>
 
-class ECA_ERROR;
+#include "eca-error.h"
 
 void init_midi_queues(void) throw(ECA_ERROR&);
 
