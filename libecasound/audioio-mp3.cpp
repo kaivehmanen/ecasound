@@ -123,9 +123,9 @@ void MP3FILE::seek_position(void) {
     else
       kill_lame();
   }
-  cerr << "Just killed mpg123." << endl;
+//    cerr << "Just killed mpg123." << endl;
   if (io_mode() == io_read) {
-    cerr << "Forking mpg123." << endl;
+//      cerr << "Forking mpg123." << endl;
     fork_mpg123(); 
   }
   else
@@ -187,7 +187,7 @@ void MP3FILE::fork_mpg123(void) {
   set_fork_file_name(label());
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
-    cerr << "Child fork succeeded!" << endl;
+//      cerr << "Child fork succeeded!" << endl;
     fd_rep = file_descriptor();
     f1_rep = fdopen(fd_rep, "r");
     if (f1_rep == 0) finished_rep = true;

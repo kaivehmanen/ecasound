@@ -59,10 +59,13 @@ is interpreted as output\&. Defaults to \'null\'\&.
 Buffersize in sample frames\&. Defaults to 128\&.
 .IP 
 .IP "-c" 
-Enable cumulative mode\&. Counters are not resets after refresh\&.
+Enable cumulative mode\&. Counters are not reseted after refresh\&.
 .IP 
 .IP "-d" 
 Enable debug mode\&.
+.IP 
+.IP "-f:format_string" 
+Specify default audio format\&. See ecasound(1) for details\&.
 .IP 
 .IP "r:rate_msec" 
 Specify screen refresh rate in milliseconds\&.

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-oss.cpp: OSS (/dev/dsp) input/output.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999,2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -209,7 +209,6 @@ void OSSDEVICE::start(void) {
 long OSSDEVICE::position_in_samples(void) const { 
   if (is_running() != true) return(0);
   if ((oss_caps & DSP_CAP_REALTIME) == DSP_CAP_REALTIME) {
-    cerr << "(audioio-oss) cap_realtime" << endl;
     count_info info;
     info.bytes = 0;
     if (io_mode() == io_read) {
@@ -220,7 +219,6 @@ long OSSDEVICE::position_in_samples(void) const {
     }
     return(info.bytes / frame_size());
   }
-  cerr << "(audioio-oss) not cap_realtime" << endl;
   struct timeval now;
   gettimeofday(&now, NULL);
   double time = now.tv_sec * 1000000.0 + now.tv_usec -

@@ -12,7 +12,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (17092000)
+       (26092000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -21,7 +21,7 @@ sect(Preface)
 This document describes ecasound's use from user's point of view. 
 In addition to the actual user/client-programs, all essential ecasound 
 library concepts and features are also discussed. To avoid duplicating
-documentation, I've used referenced to other sources whenever suitable. 
+documentation, I've used references to other sources whenever suitable. 
 For instance, ecasound's man pages are in a very good shape.
 They are also available in HTML-format.
 
@@ -72,12 +72,12 @@ Audio object is a really generic concept. Practically anything that
 is able to produce or receive audio data can be an ecasound audio 
 object. Currently there's support for soundcard drivers/subsystems, 
 various file formats and various types of data-piping.
-Notice that inputs and outputs are not separated in any way. 
+Notice that objects can be used both for input and output.
 
 subsubsect(Chain operators and controllers)
 Chain operators are used to process and analyze sample data.
 Controllers are used to control individual chain operator parameters.
-Both types of objects are attached to chains. em(Chain objects) refers
+Both types of objects are attached to chains. Term em(chain object) refers
 to all objects that can be attached to chains - ie. operators and 
 controllers.
 
@@ -86,9 +86,9 @@ Chainsetup is the central data object. All other objects (inputs,
 outputs, chains, etc) are connected to some chainsetup. There can be 
 many chainsetups but only one can be connected. Similarly only
 one chainsetup can be selected. Chainsetups are also used for
-loading and saving. The format used is identical to the command-line
-syntax used by the console mode user-interface, which makes it 
-easy to edit saved chainsetups. See
+loading and saving state information. The format used is identical to 
+the command-line syntax used by the console mode user-interface, which 
+makes it easy to edit saved chainsetups. See
 url(ecasound(1))(../ecasound_manpage.html) for details.
 
 subsubsect(Concept of current position)
@@ -146,7 +146,7 @@ See url(ecasound(1))(../ecasound_manpage.html).
 
 COMMENT(----------------------------------------------------------------)
 subsect(Effect presets)
-Ecasound has a powerful effect preset system that allows you create
+Ecasound has a powerful effect preset system that allows you to create
 new effects by combining basic effects and controllers.
 
 Presets can be stored into separate files or they can be stored
@@ -156,7 +156,7 @@ the same parsing engine is used):
 verb(preset_name = effects controllers | ... | effects controllers)
 Effects and controllers are specified using the same format as 
 used in command-line parsing (-ea:100, -kl:1,0,100,5, etc). You 
-can add a new chain using the pipe characher '|'. '\' sign is 
+can add a new parallel chain using the pipe characher '|'. '\' sign is 
 used to continue preset definition on the next line.
 
 COMMENT(----------------------------------------------------------------)

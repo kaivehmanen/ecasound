@@ -61,7 +61,7 @@ OOPPTTIIOONNSS
 
 
 
-                            22.11.2000                          1
+                            26.11.2000                          1
 
 
 
@@ -127,7 +127,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            22.11.2000                          2
+                            26.11.2000                          2
 
 
 
@@ -193,7 +193,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            22.11.2000                          3
+                            26.11.2000                          3
 
 
 
@@ -249,17 +249,17 @@ ecasound(1)            Multimedia software            ecasound(1)
               mats supported by the SGI audiofile  library:  AIFF
               (.aiff, .aifc, .aif) and Sun/NeXT audio files (.au,
               .snd). MikMod is also supported (.xm,  .mod,  .s3m,
-              .it,  etc). Supported devices are OSS audio devices
-              (/dev/dsp*), ALSA audio and loopback devices. If no
-              inputs are specified, the first non-option (doesn't
-              start with '-') command line argument is considered
-              to be an input.
+              .it,  etc).  MIDI  files (.mid) are supported using
+              Timidity++. Similarly Ogg Vorbis (.ogg) can be read
+              and   written  if  ogg123  and  vorbize  tools  are
+              installed. Supported realtime devices are OSS audio
+              devices   (/dev/dsp*),   ALSA  audio  and  loopback
+              devices. If no inputs are specified, the first non-
+              option   (doesn't  start  with  '-')  command  line
 
 
 
-
-
-                            22.11.2000                          4
+                            26.11.2000                          4
 
 
 
@@ -268,33 +268,36 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+              argument is considered to be an input.
+
+
        -o[:]output-file-or-device
-              Works  in the same way as the -i option. If no out-
-              puts are specified, the default  output  device  is
-              used  (see  &tilde;/.ecasoundrc).  Note!  you can't
-              output to module formats supported by MikMod  (this
+              Works in the same way as the -i option. If no  out-
+              puts  are  specified,  the default output device is
+              used (see &tilde;/.ecasoundrc).  Note!   you  can't
+              output  to module formats supported by MikMod (this
               should be obvious) nor to ALSA's loopback device.
 
               _O_B_J_E_C_T _T_Y_P_E _S_P_E_C_I_F_I_C _N_O_T_E_S
 
        ALSA devices
-              When  using ALSA drivers, instead of a device file-
-              name, you need to use the following option  syntax:
-              --ii[[::]]aallssaa,,ccaarrdd__nnuummbbeerr,,ddeevviiccee__nnuummbbeerr.   If  you need
+              When using ALSA drivers, instead of a device  file-
+              name,  you need to use the following option syntax:
+              --ii[[::]]aallssaa,,ccaarrdd__nnuummbbeerr,,ddeevviiccee__nnuummbbeerr.  If  you  need
               to       specify       individual       subdevices:
               --ii[[::]]aallssaa,,ccaarrdd__nnuummbbeerr,,ddeevviiccee__nnuummbbeerr,,ssuubbddeevviiccee__nnuumm--
               bbeerr.
 
 
        ALSA pcm-plugin layer
-              Just like normal ALSA devices, but  with  automatic
-              sample  rate  and format conversions. Option syntax
+              Just  like  normal ALSA devices, but with automatic
+              sample rate and format conversions.  Option  syntax
               is --ii[[::]]aallssaapplluuggiinn,,ccaarrdd__nnuummbbeerr,,ddeevviiccee__nnuummbbeerr,,ssuubbddee--
               vviiccee__nnuummbbeerr.
 
 
        ALSA loopback device
-              By  using  the  ALSA  loopback system, you can grab
+              By using the ALSA loopback  system,  you  can  grab
               audio data from any other pcm device. Option syntax
               is     --ii[[::]]aallssaallbb,,ccaarrdd__nnuummbbeerr,,ddeevviiccee__nnuummbbeerr,,ssuubbddee--
               vviiccee__nnuummbbeerr.
@@ -302,30 +305,27 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        aRts input/output
               If enabled at compile-time, ecasound supports audio
-              input  and  output  using aRts audio server. Option
+              input and output using aRts  audio  server.  Option
               syntax is --ii::aarrttss, --oo::aarrttss.
 
 
        Ecasound Wave Files - .ewf
-              A simple wrapper class  for  handling  other  audio
-              objects.    See  ecasound  user's  guide  for  more
+              A  simple  wrapper  class  for handling other audio
+              objects.   See  ecasound  user's  guide  for   more
               detailed information.
 
 
        Loop device
               Loop devices make it possible to route data between
-              chains.   Option  syntax is --[[iioo]][[::]]lloooopp,,iidd__nnuummbbeerr.
-              If you add a loop output  with  id  '1',  all  data
+              chains.  Option syntax  is  --[[iioo]][[::]]lloooopp,,iidd__nnuummbbeerr.
+              If  you  add  a  loop  output with id '1', all data
               written to this output is routed to all loop inputs
               with id '1'. You can attach the same loop device to
               multiple inputs and outputs.
 
 
 
-
-
-
-                            22.11.2000                          5
+                            26.11.2000                          5
 
 
 
@@ -335,10 +335,13 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        Null inputs/outputs
-              If  you  specify "null" or "/dev/null" as the input
-              or output, a null audio device is created. This  is
-              useful  if  you  just  want  to analyze sample data
-              without writing it to a file.
+              If you specify "null" or "/dev/null" as  the  input
+              or  output, a null audio device is created. This is
+              useful if you just  want  to  analyze  sample  data
+              without  writing it to a file. There's also a real-
+              time variant, "rtnull",  which  behaves  just  like
+              "null"  objects, except all i/o is done at realtime
+              speed.
 
 
        System standard streams and named pipes
@@ -387,11 +390,8 @@ ecasound(1)            Multimedia software            ecasound(1)
               use the result as a parameter to -ezx effect.
 
 
-       _G_E_N_E_R_A_L _S_I_G_N_A_L _P_R_O_C_E_S_S_I_N_G _A_L_G_O_R_I_T_H_M_S
 
-
-
-                            22.11.2000                          6
+                            26.11.2000                          6
 
 
 
@@ -399,6 +399,8 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 ecasound(1)            Multimedia software            ecasound(1)
 
+
+       _G_E_N_E_R_A_L _S_I_G_N_A_L _P_R_O_C_E_S_S_I_N_G _A_L_G_O_R_I_T_H_M_S
 
        -ea:amplify-%
               Amplifies signal by amplify-% percent.
@@ -455,9 +457,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-
-
-                            22.11.2000                          7
+                            26.11.2000                          7
 
 
 
@@ -523,7 +523,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            22.11.2000                          8
+                            26.11.2000                          8
 
 
 
@@ -589,7 +589,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            22.11.2000                          9
+                            26.11.2000                          9
 
 
 
@@ -655,7 +655,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            22.11.2000                         10
+                            26.11.2000                         10
 
 
 
@@ -721,7 +721,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            22.11.2000                         11
+                            26.11.2000                         11
 
 
 
@@ -787,7 +787,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            22.11.2000                         12
+                            26.11.2000                         12
 
 
 
@@ -853,6 +853,6 @@ AAUUTTHHOORR
 
 
 
-                            22.11.2000                         13
+                            26.11.2000                         13
 
 

@@ -27,9 +27,6 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
 
 #ifdef ALSALIB_060
   snd_pcm_t *audio_fd_repp;
-  snd_pcm_info_t pcm_info_rep;
-  snd_pcm_hw_info_t pcm_hw_info_rep;
-  snd_pcm_hw_params_t pcm_hw_params_rep;
 #endif
 
   long int fragment_size_rep;

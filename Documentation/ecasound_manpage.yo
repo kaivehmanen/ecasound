@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (22.11.2000)
+       (26.11.2000)
        ()
        (Multimedia software)
 
@@ -193,10 +193,12 @@ audio-cd tracks (.cdr), ecasound ewf-files (.ewf), RAW audio data
 (.raw) and MPEG files (.mp2,.mp3). Also, formats supported by the
 SGI audiofile library: AIFF (.aiff, .aifc, .aif) and Sun/NeXT audio 
 files (.au, .snd). MikMod is also supported (.xm, .mod, .s3m, 
-.it, etc). Supported devices are OSS audio devices (/dev/dsp*),
-ALSA audio and loopback devices. If no inputs are specified, the first 
-non-option (doesn't start with '-') command line argument is
-considered to be an input.
+.it, etc). MIDI files (.mid) are supported using Timidity++. Similarly
+Ogg Vorbis (.ogg) can be read and written if ogg123 and vorbize tools
+are installed. Supported realtime devices are OSS audio devices 
+(/dev/dsp*), ALSA audio and loopback devices. If no inputs are 
+specified, the first non-option (doesn't start with '-') command 
+line argument is considered to be an input.
 
 dit(-o[:]output-file-or-device)
 Works in the same way as the -i option. If no outputs are specified,
@@ -240,7 +242,9 @@ device to multiple inputs and outputs.
 dit(Null inputs/outputs)
 If you specify "null" or "/dev/null" as the input or output, 
 a null audio device is created. This is useful if you just want
-to analyze sample data without writing it to a file.
+to analyze sample data without writing it to a file. There's 
+also a realtime variant, "rtnull", which behaves just like "null" 
+objects, except all i/o is done at realtime speed.
 
 dit(System standard streams and named pipes)
 You can use standard streams (stdin and stdout) by giving "stdin" 

@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "07\&.10\&.2000" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "26\&.11\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -38,7 +38,7 @@ Same as the \fB-b\fP command line options\&. Defaults to \fI1024\fP\&.
 .IP 
 .IP "default-double-buffer-size" 
 Set buffersize for double-buffering (-z:db, see below)\&.
-Defaults to \fI131072\fP\&.
+Defaults to \fI100000\fP\&.
 .IP 
 .IP "default-to-interactive-mode" 
 Whether to always use interactive mode (true or false)\&. Same as the

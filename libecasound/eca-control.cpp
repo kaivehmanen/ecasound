@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control.cpp: Class for controlling the whole ecasound library
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999,2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -479,7 +479,6 @@ void ECA_CONTROL::print_general_status(void) {
   }
 
   st_info_string << "Engine status: \"" << engine_status() << "\"\n";
-  if (session_repp->multitrack_mode_rep) st_info_string << "Multitrack-mode: enabled\n";
   if (session_repp->multitrack_mode_rep) st_info_string << "Multitrack-mode: enabled\n";
   else st_info_string << "Multitrack-mode: disabled\n";
   if (session_repp->raised_priority()) st_info_string << "Raised-priority mode: enabled\n";
