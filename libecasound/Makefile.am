@@ -82,6 +82,12 @@ ecasound_audiofx_include =  \
 			audiofx_ladspa.h \
 			audio-stamp.h
 
+ecasound_preset_include = \
+			preset.h \
+			preset_impl.h \
+			file-preset.h \
+			global-preset.h
+
 ecasound_audioio_include = 	\
 			audioio.h \
 			audioio-buffered.h \
@@ -121,7 +127,6 @@ ecasound_midi_include =	\
 			midiio-raw.h
 
 ecasound_controller_include = \
-			generic-controller.h \
 			ctrl-source.h \
 			midi-cc.h \
 			oscillator.h \
@@ -178,13 +183,10 @@ ecasound_general_include = 	\
 			dynamic-object.h \
 			eca-object.h \
 			eca-operator.h \
+			generic-controller.h \
 			eca-samplerate-aware.h \
 			eca-audio-format.h \
-			eca-audio-time.h \
-			preset.h \
-			preset_impl.h \
-			file-preset.h \
-			global-preset.h
+			eca-audio-time.h
 
 ecasound_extra_include = \
 			ladspa.h
@@ -201,6 +203,7 @@ ecasound_test_framework_include = \
 			audioio-device_test.h
 
 noinst_HEADERS = 	$(ecasound_audiofx_include) \
+			$(ecasound_preset_include) \
 			$(ecasound_audioio_include) \
 			$(ecasound_midi_include) \
 		 	$(ecasound_controller_include) \
@@ -227,13 +230,11 @@ ecasound_audiofx_src =  audiofx.cpp \
 			audiofx_ladspa.cpp \
 			audio-stamp.cpp
 
-if ECA_AM_COMPILE_OSS
-ecasound_audioio_oss_src = audioio-oss.cpp
-else
-ecasound_audioio_oss_src = 
-endif
+ecasound_preset_src =  	global-preset.cpp \
+			preset.cpp \
+			file-preset.cpp
 
-ecasound_audioio_src = 	audioio-cdr.cpp \
+ecasound_audioio1_src = audioio-cdr.cpp \
 			audioio-ewf.cpp \
 			audioio-mp3.cpp \
 			audioio-ogg.cpp \
@@ -253,8 +254,13 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-typeselect.cpp \
 			audioio-resample.cpp \
 			audioio-reverse.cpp \
-			audioio-proxy.cpp \
-			$(ecasound_audioio_oss_src)
+			audioio-proxy.cpp
+
+if ECA_AM_COMPILE_OSS
+ecasound_audioio2_src = audioio-oss.cpp
+else
+ecasound_audioio2_src = 
+endif
 
 ecasound_midi_src =	\
 			midi-server.cpp \
@@ -264,7 +270,6 @@ ecasound_midi_src =	\
 			midiio-raw.cpp
 
 ecasound_controller_src = \
-			generic-controller.cpp \
 			midi-cc.cpp \
 			osc-gen.cpp \
 			osc-gen-file.cpp \
@@ -286,6 +291,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			samplebuffer_iterators.cpp \
 			eca-version.cpp  \
 			eca-operator.cpp \
+			generic-controller.cpp \
 			eca-object-factory.cpp \
 			eca-chainsetup.cpp \
 			eca-chainsetup-bufparams.cpp \
@@ -303,25 +309,29 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-fileio-stream.cpp \
 			eca-fileio-mmap.cpp \
 			eca-static-object-maps.cpp \
-			preset.cpp \
-			file-preset.cpp \
 			eca-object-map.cpp \
-			eca-preset-map.cpp \
-			global-preset.cpp
+			eca-preset-map.cpp
 
-ecasound_common_src = 	$(ecasound_audiofx_src) \
-			$(ecasound_audioio_src) \
+ecasound_common1_src = 	$(ecasound_audioio1_src) \
+			$(ecasound_audioio2_src) \
 			$(ecasound_midi_src) \
-		      	$(ecasound_controller_src) \
 			$(ecasound_general_src)
+
+if ECA_AM_DISABLE_EFFECTS
+ecasound_common2_src = 	
+else
+ecasound_common2_src = 	$(ecasound_audiofx_src) \
+			$(ecasound_preset_src) \
+		      	$(ecasound_controller_src)
+endif
 
 libecasound_tester_src = \
 			libecasound_tester.cpp \
 			eca-test-repository.cpp \
 			eca-test-case.cpp
 
-libecasound_la_SOURCES = $(ecasound_common_src)
-libecasound_debug_la_SOURCES = $(ecasound_common_src)
+libecasound_la_SOURCES = $(ecasound_common1_src) $(ecasound_common2_src)
+libecasound_debug_la_SOURCES = $(ecasound_common1_src) $(ecasound_common2_src)
 libecasound_la_CFLAGS = $(eca_cxxflags)
 libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags) -static
 libecasound_la_LIBADD = $(eca_libadd)

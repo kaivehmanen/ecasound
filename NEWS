@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 030903) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 041003) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,9 +14,14 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ????2003 (v2.3.1)  -** stable release **-
-       - fixed: makefile errors when building against system librealine
-       - fixed: processing did not start in the default transport mode
-		with JACK versions 0.80 and older
+	- added: --disable-effects configure option; build ecasound 
+		 without effect and controller components
+	- changed: libtool is setup to only create object files for
+		   static linkage; you can revert to the old behaviour
+		   with the --enable-shared configure option
+        - fixed: makefile errors when building against system librealine
+        - fixed: processing did not start in the default transport mode
+	  	 with JACK versions 0.80 and older
 29082003 (v2.3.0)  -** stable release **-
 	- edi-entries: edi-4, edi-19 and edi-35 frozen, edi-38 added 
 		       and frozen immediately, edi-39 added; frozen is 

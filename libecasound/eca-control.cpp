@@ -989,6 +989,7 @@ void ECA_CONTROL::preset_register(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::info, "Registered effect presets:\n");
   string result;
+#ifndef ECA_DISABLE_EFFECTS
   const list<string>& objlist = ECA_OBJECT_FACTORY::preset_map().registered_objects();
   list<string>::const_iterator p = objlist.begin();
   int count = 1;
@@ -1010,6 +1011,7 @@ void ECA_CONTROL::preset_register(void)
     }
     ++p;
   }
+#endif
   set_last_string(result);
 }
 
@@ -1017,6 +1019,7 @@ void ECA_CONTROL::ladspa_register(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::info, "Registered LADSPA plugins:\n");
   string result;
+#ifndef ECA_DISABLE_EFFECTS
   const list<string>& objlist = ECA_OBJECT_FACTORY::ladspa_plugin_map().registered_objects();
   list<string>::const_iterator p = objlist.begin();
   int count = 1;
@@ -1037,6 +1040,7 @@ void ECA_CONTROL::ladspa_register(void)
     }
     ++p;
   }
+#endif
   set_last_string(result);
 }
 

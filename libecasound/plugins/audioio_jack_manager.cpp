@@ -639,6 +639,7 @@ static int eca_jack_bsize_cb(jack_nframes_t nframes, void *arg)
 	      ": setting buffersize to " + kvu_numtostr(nframes));
 
   if (static_cast<long int>(nframes) != current->buffersize()) {
+    // FIXME: leads into a segfault...?
     current->shutdown_request_rep = true;
     ECA_LOG_MSG(ECA_LOGGER::info, 
 		"(audioio-jack-manager) Invalid new buffersize, shutting down.");

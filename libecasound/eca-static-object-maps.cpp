@@ -239,6 +239,7 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
 
 void ECA_STATIC_OBJECT_MAPS::register_chain_operator_objects(ECA_OBJECT_MAP* objmap)
 {
+#ifndef ECA_DISABLE_EFFECTS
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "register_chain_operator_objects()");
 
   objmap->register_object("eS", "^eS$", new EFFECT_AUDIO_STAMP());
@@ -281,13 +282,16 @@ void ECA_STATIC_OBJECT_MAPS::register_chain_operator_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("ezx", "^ezx$", new EFFECT_DCFIX());
   objmap->register_object("gc", "^gc$", new TIME_CROP_GATE());
   objmap->register_object("ge", "^ge$", new THRESHOLD_GATE());
+#endif
 }
 
 void ECA_STATIC_OBJECT_MAPS::register_ladspa_plugin_objects(ECA_OBJECT_MAP* objmap)
 {
+#ifndef ECA_DISABLE_EFFECTS
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "register_ladspa_plugin_objects()");
 
   eca_import_ladspa_plugins(objmap, false);
+#endif
 }
 
 void ECA_STATIC_OBJECT_MAPS::register_ladspa_plugin_id_objects(ECA_OBJECT_MAP* objmap)
@@ -305,6 +309,7 @@ void ECA_STATIC_OBJECT_MAPS::register_preset_objects(ECA_PRESET_MAP* objmap)
 
 void ECA_STATIC_OBJECT_MAPS::register_controller_objects(ECA_OBJECT_MAP* objmap)
 {
+#ifndef ECA_DISABLE_EFFECTS
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "register_controller_objects()");
 
   objmap->register_object("kf", "^kf$", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR_FILE()));
@@ -315,6 +320,7 @@ void ECA_STATIC_OBJECT_MAPS::register_controller_objects(ECA_OBJECT_MAP* objmap)
   objmap->register_object("km", "^km$", new GENERIC_CONTROLLER(new MIDI_CONTROLLER()));
   objmap->register_object("kos", "^kos$", new GENERIC_CONTROLLER(new SINE_OSCILLATOR()));
   objmap->register_object("ksv", "^ksv$", new GENERIC_CONTROLLER(new VOLUME_ANALYZE_CONTROLLER()));
+#endif
 }
 
 void ECA_STATIC_OBJECT_MAPS::register_midi_device_objects(ECA_OBJECT_MAP* objmap)
@@ -467,6 +473,7 @@ static vector<EFFECT_LADSPA*> eca_create_ladspa_plugins(const string& fname)
 {
   vector<EFFECT_LADSPA*> plugins;
 
+#ifndef ECA_DISABLE_EFFECTS
   void *plugin_handle = dlopen(fname.c_str(), RTLD_NOW);
   if (plugin_handle != 0) {
     LADSPA_Descriptor_Function desc_func;
@@ -495,6 +502,7 @@ static vector<EFFECT_LADSPA*> eca_create_ladspa_plugins(const string& fname)
 		  string("(eca-static-object-maps) ") + 
 		  "Unable to open plugin file \"" + fname + "\".");
   }
+#endif
   
   return(plugins);
 }

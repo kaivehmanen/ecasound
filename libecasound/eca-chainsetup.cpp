@@ -2166,10 +2166,12 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc)
   DBC_REQUIRE(is_locked() != true);
   // --------
 
+#ifndef ECA_DISABLE_EFFECTS
   AUDIO_STAMP_CLIENT* p = dynamic_cast<AUDIO_STAMP_CLIENT*>(csrc->source_pointer());
   if (p != 0) {
     p->register_server(&impl_repp->stamp_server_rep);
   }
+#endif
 
   DBC_CHECK(buffersize() != 0);
   DBC_CHECK(samples_per_second() != 0);
@@ -2200,10 +2202,12 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp)
   DBC_REQUIRE(is_locked() != true);
   // --------
   
+#ifndef ECA_DISABLE_EFFECTS
   AUDIO_STAMP* p = dynamic_cast<AUDIO_STAMP*>(cotmp);
   if (p != 0) {
     impl_repp->stamp_server_rep.register_stamp(p);
   }
+#endif
 
   vector<string> schains = selected_chains();
   for(vector<string>::const_iterator p = schains.begin(); p != schains.end(); p++) {

@@ -325,9 +325,11 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller)
   // --------
 
   gcontroller->set_samples_per_second(samples_per_second());
+#ifndef ECA_DISABLE_EFFECTS
   gcontroller->assign_target(selected_dynobj_repp);
-  gcontrollers_rep.push_back(gcontroller);
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chain) " + gcontroller->status());
+#endif
+  gcontrollers_rep.push_back(gcontroller);
   selected_controller_repp = gcontroller;
   selected_controller_number_rep = gcontrollers_rep.size();
 }
@@ -642,6 +644,7 @@ string CHAIN::to_string(void) const
 
   int q = 0;
   while (q < static_cast<int>(chainops_rep.size())) {
+#ifndef ECA_DISABLE_EFFECTS
     fpreset = 0;
     fpreset = dynamic_cast<FILE_PRESET*>(chainops_rep[q]);
     if (fpreset != 0) {
@@ -657,6 +660,7 @@ string CHAIN::to_string(void) const
         t << chain_operator_to_string(chainops_rep[q]) << " ";
       }
     }
+#endif
     ++q;
   }
 
@@ -669,6 +673,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const
   
   // >--
   // special handling for LADPSA-plugins
+#ifndef ECA_DISABLE_EFFECTS
   EFFECT_LADSPA* ladspa = dynamic_cast<EFFECT_LADSPA*>(chainop);
   if (ladspa != 0) {
     t << "-eli:" << ladspa->unique_number();
@@ -692,6 +697,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const
     t << "-" << idstring;
     if (chainop->number_of_params() > 0) t << ":";
   }
+#endif
   // --<
 
   for(int n = 0; n < chainop->number_of_params(); n++) {

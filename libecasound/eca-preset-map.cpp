@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-preset-map: Dynamic register for storing effect presets
-// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <algorithm>
 #include <list>
@@ -37,6 +41,7 @@ using std::vector;
 
 ECA_PRESET_MAP::ECA_PRESET_MAP(void)
 {
+#ifndef ECA_DISABLE_EFFECTS
   ECA_RESOURCES ecarc;
 
   string filename =
@@ -47,6 +52,7 @@ ECA_PRESET_MAP::ECA_PRESET_MAP(void)
 
   load_preset_file(global_filename);
   load_preset_file(filename);
+#endif
 }
 
 ECA_PRESET_MAP::~ECA_PRESET_MAP(void)
@@ -105,6 +111,7 @@ const ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword) const
 {
   const PRESET* retobj = 0;
 
+#ifndef ECA_DISABLE_EFFECTS
   if (find(preset_keywords_rep.begin(), preset_keywords_rep.end(), keyword) != preset_keywords_rep.end()) {
     const list<string>& objlist = ECA_OBJECT_MAP::registered_objects();
 
@@ -129,6 +136,7 @@ const ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword) const
     }
   }
   //  else std::cerr << "(eca-preset-map) fail (1); " << keyword << ".\n";
+#endif
 
   return(retobj);
 }

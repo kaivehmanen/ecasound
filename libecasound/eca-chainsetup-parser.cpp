@@ -18,6 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <algorithm> /* find() */
 
 #include <kvu_dbc.h> /* DBC_* */
@@ -601,19 +605,23 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const string& argu)
       switch(argu[2]) {
       case 'f':
 	{
+#ifndef ECA_DISABLE_EFFECTS
 //  	  add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(kvu_get_argument_number(1,argu))));
           cop = dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(kvu_get_argument_number(1,argu)));
+#endif
 	  break;
 	}
 
       case 'n': 
 	{
+#ifndef ECA_DISABLE_EFFECTS
 	  string name = kvu_get_argument_number(1,argu);
 	  const PRESET* preset = dynamic_cast<const PRESET*>(ECA_OBJECT_FACTORY::preset_map().object(name));
 	  if (preset != 0)
 	    cop = dynamic_cast<CHAIN_OPERATOR*>(preset->new_expr());
 	  else
 	    cop = 0;
+#endif
 	  break;
 	}
 	

@@ -592,7 +592,7 @@ void show_controller_help(void)
   mitem << "\n'rewind time-in-seconds', 'rw time-in-seconds' - Rewind";
   mitem << "\n'forward time-in-seconds', 'fw time-in-seconds' - Forward";
   mitem << "\n'setpos time-in-seconds' - Sets the current position to 'time-in-seconds' seconds from the beginning.";
-  mitem << "\n'engine-start' - Initialize and start engine";
+  mitem << "\n'engine-launch' - Initialize and start engine";
   mitem << "\n'engine-status' - Engine status";
   mitem << "\n'cs-status', 'st' - Chainsetup status";
   mitem << "\n'c-status', 'cs' - Chain status";

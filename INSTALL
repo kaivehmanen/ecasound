@@ -96,6 +96,10 @@ Ecasound specific options
 `--disable-dbc'
 	Don't check design-by-contract assertions. Enabled by default.
 
+`--disable-effects'
+	Build ecasound without effect and controller components.
+	Enabled by default.
+
 `--disable-jack'
 	Don't compile JACK client support. See 
 	http://jackit.sf.net for more info about JACK. 

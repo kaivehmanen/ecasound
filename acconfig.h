@@ -1,6 +1,6 @@
 /** 
  * acconfig.h for ecasound
- * last modified: 20030213-7
+ * last modified: 20031003-8
  */
 
 /* Package name */
@@ -68,3 +68,6 @@
 
 /* use C++ std namespace */
 #undef ECA_USE_CXX_STD_NAMESPACE
+
+/* whether to disable all effects */
+#undef ECA_DISABLE_EFFECTS

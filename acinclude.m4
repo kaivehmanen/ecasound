@@ -82,6 +82,7 @@ AC_SUBST(ECA_S_JACK_INCLUDES)
 ## version: 2
 ##
 ## modifies: CXXFLAGS, CFLAGS
+## defines: enable_largefile
 ## ------------------------------------------------------------------------
 ##
 
