@@ -1,11 +1,11 @@
 if INCLUDE_DEBUG
 INSTALL_STRIP_FLAG =
-libecasound_path = $(top_builddir)/libecasound/libecasound_debug.la -L$(top_builddir)/kvutils/.libs -lkvutils_debug
-libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc_debug.la -L$(top_builddir)/kvutils/.libs -lkvutils_debug
+libecasound_path = $(top_builddir)/libecasound/libecasound_debug.la $(top_builddir)/kvutils/libkvutils_debug.la
+libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc_debug.la
 else
 INSTALL_STRIP_FLAG = -s
-libecasound_path = $(top_builddir)/libecasound/libecasound.la -L$(top_builddir)/kvutils/.libs -lkvutils
-libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc.la -L$(top_builddir)/kvutils/.libs -lkvutils
+libecasound_path = $(top_builddir)/libecasound/libecasound.la $(top_builddir)/kvutils/libkvutils.la
+libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc.la
 endif
 
 if USE_NCURSES
@@ -46,7 +46,7 @@ ecafixdc_SOURCES = ecatools_fixdc.cpp \
 ecafixdc_LDADD = $(libecasound_path)
 
 ecalength_SOURCES = ecalength.c
-ecalength_LDADD = $(libecasoundc_path)
+ecalength_LDADD = $(libecasound_path) $(libecasoundc_path) -lstdc++
 
 ecanormalize_SOURCES = ecatools_normalize.cpp \
 	 		     ecatools_normalize.h
