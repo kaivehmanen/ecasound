@@ -1347,8 +1347,13 @@ void ECA_ENGINE::update_cache_latency_values(void)
     long int out_latency = -1;
     for(unsigned int n = 0; n < realtime_outputs_rep.size(); n++) {
       if (out_latency == -1) {
-	if (realtime_outputs_rep[n]->prefill_space() > 0)
-	  out_latency = (prefill_threshold_rep * buffersize()) + realtime_outputs_rep[n]->latency();
+	if (realtime_outputs_rep[n]->prefill_space() > 0) {
+	  long int max_prefill = prefill_threshold_rep * buffersize();
+	  if (max_prefill > realtime_outputs_rep[n]->prefill_space()) {
+	    max_prefill = realtime_outputs_rep[n]->prefill_space();
+	  }
+	  out_latency = max_prefill + realtime_outputs_rep[n]->latency();
+	}
 	else
 	  out_latency = realtime_outputs_rep[n]->latency();
       }

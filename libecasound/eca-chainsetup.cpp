@@ -356,6 +356,8 @@ string ECA_CHAINSETUP::set_resource_helper(const ECA_RESOURCES& ecaresources, co
  */
 bool ECA_CHAINSETUP::is_valid_for_connection(void) const 
 {
+  // FIXME: should return a reason phrase!
+
   if (inputs.size() == 0) {
     ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup) No inputs in the current chainsetup.");
     return(false);
@@ -371,7 +373,9 @@ bool ECA_CHAINSETUP::is_valid_for_connection(void) const
   for(vector<CHAIN*>::const_iterator q = chains.begin(); q != chains.end();
       q++) {
     // debug info printed in CHAIN::is_valid()
-    if ((*q)->is_valid() == false) return(false);
+    if ((*q)->is_valid() == false) {
+      return(false);
+    }
   }
   return(true);
 }
