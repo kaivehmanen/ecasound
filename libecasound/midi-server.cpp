@@ -17,6 +17,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <iostream>
+
 #include <unistd.h>
 #include <sys/time.h>
 #include <signal.h>
@@ -40,6 +42,7 @@ void* start_midi_server_io_thread(void *ptr) {
   MIDI_SERVER* mserver =
     static_cast<MIDI_SERVER*>(ptr);
   mserver->io_thread();
+  return(0);
 }
 
 /**
@@ -90,7 +93,7 @@ void MIDI_SERVER::io_thread(void) {
 	  cerr << "(eca-midi) dropping midi bytes" << endl;
 	  buffer_rep.pop_front();
 	}
-	for(int m = 0; m < handlers_rep.size(); m++) {
+	for(unsigned int m = 0; m < handlers_rep.size(); m++) {
 	  MIDI_HANDLER* p = handlers_rep[m];
 	  if (p != 0) p->insert(buf[n]);
 	}

@@ -25,6 +25,8 @@
 #include <cstring>
 #include <algorithm>
 #include <vector>
+#include <iostream>
+
 #include <pthread.h>
 #include <sys/mman.h>
 

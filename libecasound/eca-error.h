@@ -3,6 +3,8 @@
 
 #include <string>
 
+using std::string;
+
 /**
  * A general exception class for error reporting.
  */

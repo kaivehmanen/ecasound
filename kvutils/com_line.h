@@ -1,8 +1,11 @@
-#ifndef _COM_LINE_H
-#define _COM_LINE_H
+#ifndef INCLUDED_COM_LINE_H
+#define INCLUDED_COM_LINE_H
 
 #include <string>
 #include <vector>
+
+using std::string;
+using std::vector;
 
 /**
  * Class representation of command line arguments

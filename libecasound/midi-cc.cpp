@@ -18,6 +18,7 @@
 // ------------------------------------------------------------------------
 
 #include <string>
+#include <iostream>
 
 #include <kvutils/message_item.h>
 

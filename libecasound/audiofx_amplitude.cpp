@@ -220,7 +220,7 @@ void EFFECT_COMPRESS::set_parameter(int param, parameter_type value) {
 CHAIN_OPERATOR::parameter_type EFFECT_COMPRESS::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return((log (crate)) / (log (2)) * 6.0);
+    return((log (crate)) / (log (2.0f)) * 6.0);
   case 2: 
     return(threshold * 100.0);
   }

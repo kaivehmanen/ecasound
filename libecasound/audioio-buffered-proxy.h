@@ -2,6 +2,8 @@
 #define INCLUDED_AUDIOIO_BUFFERED_PROXY_H
 
 #include <string>
+#include <iostream>
+
 #include <kvutils/definition_by_contract.h>
 #include "audioio.h"
 #include "samplebuffer.h"

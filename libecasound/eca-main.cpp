@@ -873,7 +873,7 @@ void ECA_PROCESSOR::interpret_queue(void) {
     // ---
     case ep_cop_select: { 
       eparams_repp->active_chainop_index_rep =  static_cast<size_t>(item.second);
-      if (eparams_repp->active_chainop_index_rep - 1 < (*chains_repp)[eparams_repp->active_chain_index_rep]->chainops_rep.size())
+      if (eparams_repp->active_chainop_index_rep - 1 < static_cast<int>((*chains_repp)[eparams_repp->active_chain_index_rep]->chainops_rep.size()))
 	(*chains_repp)[eparams_repp->active_chain_index_rep]->select_chain_operator(eparams_repp->active_chainop_index_rep);
       else 
 	eparams_repp->active_chainop_index_rep = 0;

@@ -64,7 +64,6 @@ void AUDIO_IO_BUFFERED::buffersize(long int samples,
 		kvu_numtostr(samples) + "," +
 		kvu_numtostr(sample_rate) + "].");
   
-  long int old_bsize = buffersize_rep;
   if (sample_rate != 0) {
     target_srate_rep = sample_rate;
   }

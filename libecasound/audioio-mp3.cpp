@@ -466,7 +466,7 @@ void MP3FILE::get_mp3_params(const string& fname) throw(AUDIO_IO::SETUP_ERROR&) 
   set_channels(2);
 
   /* temporal length */
-  int numframes =  (fsize / mpg123_compute_bpf(&fr));
+  int numframes =  static_cast<int>((fsize / mpg123_compute_bpf(&fr)));
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Total length (frames): " + kvu_numtostr(numframes));
   double tpf = mpg123_compute_tpf(&fr);
   length_in_seconds(tpf * numframes);

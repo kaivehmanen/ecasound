@@ -1,8 +1,10 @@
-#ifndef _KVU_NUMTOSTR_H
-#define _KVU_NUMTOSTR_H
+#ifndef INCLUDED_KVU_NUMTOSTR_H
+#define INCLUDED_KVU_NUMTOSTR_H
 
 #include <string>
 #include <cstdio>
+
+using std::string;
 
 string kvu_numtostr(char c);
 string kvu_numtostr(unsigned char c);

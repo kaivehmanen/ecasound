@@ -448,8 +448,7 @@ vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR&) {
 
   void *plugin_handle = dlopen(fname.c_str(), RTLD_NOW);
   if (plugin_handle == 0) 
-    throw(ECA_ERROR("ECA_STATIC_OBJECT_MAPS", string("Unable to open
- plugin file \"") + fname + "\"."));
+    throw(ECA_ERROR("ECA_STATIC_OBJECT_MAPS", string("Unable to open plugin file \"") + fname + "\"."));
 
   LADSPA_Descriptor_Function desc_func;
   

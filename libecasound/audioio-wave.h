@@ -2,6 +2,7 @@
 #define INCLUDED_AUDIOIO_WAVE_H
 
 #include <string>
+#include <iostream>
 #include <inttypes.h>
 #include <sys/types.h>
 

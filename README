@@ -53,8 +53,9 @@ Optional when running ecasound:
 
 To compile ecasound, you also need...:
 
-- standard C++ build environment; tested with gcc 2.91.66 and 2.95.2
-  (STL and exceptions need to be supported)
+- standard C++ build environment; tested with egcs 1.1.2, 
+  gcc 2.91.66, gcc 2.95.3 and gcc 3.0 (STL and exceptions 
+  need to be supported)
 - GNU make, automake and autoconf packages
 
 Optional when compiling ecasound:
@@ -183,6 +184,7 @@ Bowman, Brad - Bug hunting. [bowman]
 Campbell, Ross - Tips concerning Solaris. [rcampbel]
 Coker, Rob - Pulse gate (-eemp) code. [rcs]
 Darilek, Nolan - Ogg vorbis fixes. [nolan_d]
+Dye, Rob - OSS compilation fixes. [rob]
 Dyson, John S. - Wrote the original advanced compressor (-eca) code.
 Endersz, Viktor - For sending me the adv.compressor source code!
 Eure, Ian and Junichi Uekawa  - For creating ecasound debian packages [ieure,juekawa]

@@ -5,6 +5,9 @@
 #include <utility>
 #include <deque>
 
+using std::pair;
+using std::deque;
+
 /**
  * A thread-safe way to transmit int-double pairs.
  * @author Kai Vehmanen

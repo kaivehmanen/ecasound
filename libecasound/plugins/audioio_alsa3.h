@@ -2,6 +2,8 @@
 #define INCLUDED_AUDIOIO_ALSA3_H
 
 #include <string>
+#include <iostream>
+
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
@@ -20,6 +22,8 @@
 #ifdef ALSALIB_060
 #include <sys/asoundlib.h>
 #endif
+
+using namespace std;
 
 /**
  * Class for handling ALSA pcm-devices (Advanced Linux Sound Architecture).

@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <fstream>
 #include <vector>
+#include <iostream>
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>

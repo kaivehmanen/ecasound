@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 250601) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 160701) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -20,6 +20,7 @@ Last officially released version is -*> v2.0.1 *-
 ??062001 (v2.0.2)  -** stable release **-
  	- added: current position tracking to loop devices
 	- added: more verbose xrun info from ALSA 0.9.x devices
+	- added: support for gcc 3.0 [juekawa]
 	- changed: improved configure checks for python include 
 		   and library directories
 	- changed: -tl now works without -t
@@ -36,6 +37,8 @@ Last officially released version is -*> v2.0.1 *-
 	- fixed: eiam - issuing copp-select + copp-get caused
 		 a crash if no cop was selected
 	- fixed: bugs in handling infinite length ewf sources
+	- fixed: --disable-oss still required to sys/soundcard.h 
+	         to be present [rob]
 05062001 (v2.0.1)  -** stable release **-
 	- added: ecasoundrc - default-to-internal-buffering; select
 		 the default between -z:intbuf and -z:nointbuf

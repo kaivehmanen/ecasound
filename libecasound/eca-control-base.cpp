@@ -189,10 +189,9 @@ void ECA_CONTROL_BASE::stop_on_condition(void) {
   sleepcount.tv_sec = now.tv_sec + 60;
   sleepcount.tv_nsec = now.tv_usec * 1000;
   ::pthread_mutex_lock(session_repp->ecasound_stop_mutex_repp);
-  int res =
-    ::pthread_cond_timedwait(session_repp->ecasound_stop_cond_repp, 
-			     session_repp->ecasound_stop_mutex_repp, 
-			     &sleepcount);
+  ::pthread_cond_timedwait(session_repp->ecasound_stop_cond_repp, 
+			   session_repp->ecasound_stop_mutex_repp, 
+			   &sleepcount);
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-controller-base) Received stop-cond");
   ::pthread_mutex_unlock(session_repp->ecasound_stop_mutex_repp);
 

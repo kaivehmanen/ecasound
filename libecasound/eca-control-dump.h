@@ -1,7 +1,15 @@
 #ifndef INCLUDED_ECA_CONTROL_DUMP_H
 #define INCLUDED_ECA_CONTROL_DUMP_H
 
+#include <iostream>
 #include <fstream>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#ifdef USE_CXX_STD_NAMESPACE
+using std::cout;
+#endif
+
 
 class ECA_CONTROL;
 

@@ -62,7 +62,7 @@ void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value
 	vector<SINGLE_BUFFER>::iterator q = p->begin();
 	while(q != p->end()) {
 	  if (q->size() > dtime) {
-	    q->resize(dtime);
+	    q->resize(static_cast<unsigned int>(dtime));
 	    laskuri = dtime;
 	  }
 	  ++q;
@@ -82,7 +82,7 @@ void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value
       else dnum = 1.0;
       vector<vector<SINGLE_BUFFER> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
-	p->resize(dnum);
+	p->resize(static_cast<unsigned int>(dnum));
 	++p;
       }
       laskuri = 0;
@@ -103,7 +103,7 @@ void EFFECT_DELAY::init(SAMPLE_BUFFER* insample) {
   set_samples_per_second(insample->sample_rate());
   set_parameter(1, dtime_msec);
 
-  buffer.resize(2, vector<SINGLE_BUFFER> (dnum));
+  buffer.resize(2, vector<SINGLE_BUFFER> (static_cast<unsigned int>(dnum)));
 }
 
 void EFFECT_DELAY::process(void) {
@@ -301,7 +301,7 @@ void EFFECT_FAKE_STEREO::set_parameter(int param, CHAIN_OPERATOR::parameter_type
     vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
     while(p != buffer.end()) {
       if (p->size() > dtime) {
-	p->resize(dtime);
+	p->resize(static_cast<unsigned int>(dtime));
       }
       ++p;
     }
@@ -380,7 +380,7 @@ void EFFECT_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_type valu
       vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
 	if (p->size() > dtime) {
-	  p->resize(dtime);
+	  p->resize(static_cast<unsigned int>(dtime));
 	}
 	++p;
       }

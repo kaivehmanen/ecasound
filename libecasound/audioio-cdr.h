@@ -1,7 +1,8 @@
-#ifndef _AUDIOIO_CDR_H
-#define _AUDIOIO_CDR_H
+#ifndef INCLUDED_AUDIOIO_CDR_H
+#define INCLUDED_AUDIOIO_CDR_H
 
 #include <string>
+#include <iostream>
 #include "samplebuffer.h"
 
 typedef struct {

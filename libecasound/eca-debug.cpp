@@ -1,3 +1,13 @@
+#include <iostream>
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#ifdef USE_CXX_STD_NAMESPACE
+using std::cerr;
+using std::endl;
+#endif
+
 #include "eca-debug.h"
 
 class DEFAULTDEBUG : public ECA_DEBUG {

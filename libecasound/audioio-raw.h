@@ -1,7 +1,8 @@
-#ifndef _AUDIOIO_RAW_H
-#define _AUDIOIO_RAW_H
+#ifndef INCLUDE_AUDIOIO_RAW_H
+#define INCLUDE_AUDIOIO_RAW_H
 
 #include <string>
+#include <iostream>
 
 #include "eca-fileio.h"
 #include "eca-fileio-mmap.h"

@@ -24,7 +24,7 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
 
 #ifdef COMPILE_AF
   AFfilehandle afhandle;
-#endif COMPILE_AF
+#endif /* COMPILE_AF */
 
   AUDIOFILE_INTERFACE& operator=(const AUDIOFILE_INTERFACE& x) {
     return *this; }

@@ -17,6 +17,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <iostream>
+
 #include <unistd.h>
 #include <signal.h>
 
@@ -39,6 +41,8 @@ void* start_proxy_server_io_thread(void *ptr) {
   AUDIO_IO_PROXY_SERVER* pserver =
     static_cast<AUDIO_IO_PROXY_SERVER*>(ptr);
   pserver->io_thread();
+
+  return 0;
 }
 
 

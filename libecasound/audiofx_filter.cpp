@@ -188,7 +188,7 @@ void EFFECT_ALLPASS_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_t
     D = value;
 //    assert(inbuf.size() == outbuf.size());
     for(int n = 0; n < static_cast<int>(inbuf.size()); n++) {
-      if (inbuf[n].size() > D) inbuf[n].resize(D);
+      if (inbuf[n].size() > D) inbuf[n].resize(static_cast<unsigned int>(D));
 //      if (outbuf[n].size() > D) inbuf[n].resize(D);
     }
     break;
@@ -258,7 +258,7 @@ void EFFECT_COMB_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_type
       vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
 	if (p->size() > C) {
-	  p->resize(C);
+	  p->resize(static_cast<unsigned int>(C));
 	}
 	++p;
 	break;
