@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 171002) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 181002) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -15,6 +15,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+??102002 (v2.2.0-pre2)
+	- fixed: ALSA objects weren't properly registered as audio
+		 object types
 17102002 (v2.2.0-pre1)
 	- edi-entries: edi-24, edi-28, edi-29, edi-30
 	- note: libecasound and libkvutils interface version numbers
