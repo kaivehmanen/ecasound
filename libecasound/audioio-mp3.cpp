@@ -338,6 +338,7 @@ MP3FILE::MP3FILE(const std::string& name)
 {
   set_label(name);
   finished_rep = false;
+  triggered_rep = false;
   mono_input_rep = false;
   pcm_rep = 1;
   bitrate_rep = MP3FILE::default_mp3_output_default_bitrate;

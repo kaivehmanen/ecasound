@@ -104,6 +104,7 @@ GENERIC_OSCILLATOR::GENERIC_OSCILLATOR(double freq, int mode)
   loop_length_rep = 0.0f;
   loop_pos_rep = 0.0f;
   next_pos_rep = 0.0f;
+  last_pos_rep = 0.0f;
   last_global_pos_rep = 0.0f;
   epairs_rep = 0;
   eindex_rep = 0;

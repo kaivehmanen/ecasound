@@ -2,7 +2,8 @@
 #define INCLUDED_ECA_RESOURCES_H
 
 #include <string>
-#include "resource-file.h"
+
+class RESOURCE_FILE;
 
 /**
  * Class for representing ecasound user settings stored
@@ -26,8 +27,11 @@ class ECA_RESOURCES {
 
  private:
 
-  RESOURCE_FILE globalrc_rep;
-  RESOURCE_FILE userrc_rep;
+  ECA_RESOURCES(const ECA_RESOURCES&);
+  ECA_RESOURCES& operator=(const ECA_RESOURCES&);
+
+  RESOURCE_FILE* globalrc_repp;
+  RESOURCE_FILE* userrc_repp;
   std::string user_resource_directory_rep;
   bool resources_found_rep;
 };

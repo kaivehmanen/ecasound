@@ -281,7 +281,6 @@ void ECA_CHAINSETUP::set_defaults(void)
     ECA_LOG_MSG(ECA_LOGGER::info, 
 		"(eca-chainsetup) Warning! Unable to read global resources. May result in incorrect behaviour.");
   }
-
   
   set_default_midi_device(ecaresources.resource("midi-device"));
 

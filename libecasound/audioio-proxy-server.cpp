@@ -66,7 +66,7 @@ const long int AUDIO_IO_PROXY_SERVER::buffersize_default = 1024;
 // Initialization of static, global functions
 
 static int timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int usecs);
-static void timed_wait_print_result(int result, const string& tag, bool verbose);
+static void timed_wait_print_result(int result, const char* tag, bool verbose);
 
 /**
  * Helper function for starting the slave thread.
@@ -239,7 +239,7 @@ static int timed_wait(pthread_mutex_t* mutex,
  * Prints debug information based on the result 
  * of timed_wait() call.
  */
-static void timed_wait_print_result(int result, const string& tag, bool verbose)
+static void timed_wait_print_result(int result, const char* tag, bool verbose)
 {
   ECA_LOGGER::Msg_level_t level = ECA_LOGGER::info;
   if (verbose != true)
@@ -247,9 +247,9 @@ static void timed_wait_print_result(int result, const string& tag, bool verbose)
 
   if (result != 0) {
     if (result == -ETIMEDOUT)
-      ECA_LOG_MSG(level, "(audioio-proxy-server) " + tag + " failed; timeout");
+      ECA_LOG_MSG(level, string("(audioio-proxy-server) ") + tag + " failed; timeout");
     else
-      ECA_LOG_MSG(level, "(audioio-proxy-server) " + tag + " failed");
+      ECA_LOG_MSG(level, string("(audioio-proxy-server) ") + tag + " failed");
   }
 }
 

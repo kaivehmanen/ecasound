@@ -147,7 +147,11 @@ void ECA_ENGINE_DEFAULT_DRIVER::exit(void)
  * @post status() == ECA_ENGINE::engine_status_stopped
  */
 ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup) 
-  : csetup_repp(csetup),
+  : prepared_rep(false),
+    running_rep(false),
+    finished_rep(false),
+    outputs_finished_rep(false),
+    csetup_repp(csetup),
     mixslot_repp(0)
 {
   // --
