@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecawave - User-visible changes (NEWS)       (last edited: 250600) **
+** Ecawave - User-visible changes (NEWS)       (last edited: 050700) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.yRt" :
@@ -14,6 +14,8 @@ About the version numbers... "vx.yRt" :
 
 Last officially released version is -*> v0.2.2r2 <*-
 
+??072000 (v0.3.1d3)
+	- changed: small change in licensing - see the file COPYING.Qt
 25062000 (v0.3.0d3)
 	- changed: filename now shown on its own line
 	- changed: small layout changes

@@ -203,4 +203,7 @@ GNU General Public License (see the file 'COPYING').
 This program is distributed without any warranty. See the file 
 'COPYING' for details. 
 
+As an exception to GPL, you are allowed to link qtecasound and 
+libqtecasound with Qt libraries. See the file 'COPYING.Qt' for details.
+
 =======================================================================

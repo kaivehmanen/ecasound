@@ -1,4 +1,4 @@
-EXTRA_DIST = BUGS NEWS TODO FAQ generic_oscillators effect_presets ecasound.spec ecasound.mdk.spec
+EXTRA_DIST = BUGS NEWS TODO FAQ COPYING.Qt generic_oscillators effect_presets ecasound.spec ecasound.mdk.spec ecasound.pld.spec
 
 if SYSTEM_READLINE
 SUBDIRS = kvutils libecasound ecasound libqtecasound qtecasound ecatools Documentation

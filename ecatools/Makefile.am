@@ -1,9 +1,9 @@
 if INCLUDE_DEBUG
 INSTALL_STRIP_FLAG =
-libecasound_path = $(top_builddir)/libecasound/libecasound_debug.la -L$(top_builddir)/kvutils/.libs
+libecasound_path = $(top_builddir)/libecasound/libecasound_debug.la -L$(top_builddir)/kvutils/.libs -lkvutils
 else
 INSTALL_STRIP_FLAG = -s
-libecasound_path = $(top_builddir)/libecasound/libecasound.la -L$(top_builddir)/kvutils/.libs
+libecasound_path = $(top_builddir)/libecasound/libecasound.la -L$(top_builddir)/kvutils/.libs -lkvutils
 endif
 
 

@@ -92,6 +92,14 @@ if test x$termcap_library = xtermcap; then
 	AC_DEFINE(USE_TERMCAP)
 fi
 if test x$termcap_library = xncurses; then
+	AC_CHECK_HEADER(curses.h,
+	 	AC_CHECK_HEADER(term.h,, AC_MSG_ERROR([*** curses headers not installed ***])),
+    	  		AC_CHECK_HEADER(ncurses/curses.h, [ 
+           			AC_CHECK_HEADER(ncurses/term.h,, AC_MSG_ERROR([*** curses headers not installed ***]))
+             			CXXFLAGS="-DHAVE_NCURSES_CURSES_H $CXXFLAGS"
+      	     			],
+      	   			AC_MSG_ERROR([*** curses headers not installed ***]))
+        )
 	AC_DEFINE(USE_NCURSES)
 fi
 
@@ -108,9 +116,6 @@ dnl Check for already installed libkvutils
 dnl ---
 AC_CHECK_LIB(kvutils,main,kvutils_installed=yes,kvutils_installed=no)
 AM_CONDITIONAL(KVUTILS_INSTALLED, test x$kvutils_installed = xyes)
-if test x$kvutils_installed = xyes; then
-	LIBS="$LIBS -lkvutils"
-fi
 
 dnl ---
 dnl Audiofile library

@@ -1,4 +1,4 @@
-EXTRA_DIST = BUGS NEWS ecawave.spec
+EXTRA_DIST = BUGS NEWS COPYING.Qt ecawave.spec
 SUBDIRS = src Documentation
 AUTOMAKE_OPTIONS = foreign
 RELEASE = 1
