@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 121200) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 131200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -30,6 +30,8 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- added: -kog - a new generic oscillator
 	- added: lots of new documentation - check the examples page,
 		 user's guide and the ecasound faq 
+	- added: better handling of output error conditions (out of
+		 disk space, etc)
 	- removed: eiam-cmds; u, a, cstatus, l, fstatus, estatus
 	- changed: -kf - 'mode' parameter added
 	- changed: format of the file 'generic_oscillators'
@@ -42,6 +44,10 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- fixed: "-x -i file.ext" style cmd-line arg sequences weren't
 		parsed correctly [jhall]
 	- fixed: ECI - command_float_arg() was broken (all languages)
+	- fixed: when exiting console-mode ecasound with "quit", 
+	         ecasound object weren't properly destructed causing
+		 all kinds of weird behavious (especially with wav-
+		 files) - [smassy]
 07122000 (v1.8.5d15)
 	- added: tremolo effect (-eemt) [rcs]
 	- added: -z:db; i/o double buffering layer is back! - 

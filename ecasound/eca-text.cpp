@@ -58,6 +58,8 @@ ECA_SESSION* global_pointer_to_ecaparams = 0;
 bool global_session_deleted = false;
 TEXTDEBUG textdebug;
 
+void clean_exit(int n);
+
 int main(int argc, char *argv[])
 {
 
@@ -121,7 +123,7 @@ int main(int argc, char *argv[])
 	 << e.line_rep 
 	 << "." 
 	 << endl;
-    exit(1);
+    clean_exit(-1);
   }
   catch(...) {
     cerr << "---\nCaught an unknown exception!\n";
@@ -149,7 +151,7 @@ void parse_command_line(COMMAND_LINE& cline) {
   if (cline.size() < 2) {
     // No parameters, let's give some help.
     cout << ecasound_parameter_help();
-    exit(0);
+    clean_exit(0);
   }
   
   cline.begin();
@@ -165,19 +167,23 @@ void parse_command_line(COMMAND_LINE& cline) {
     }
     else if (cline.current() == "--help") {
       cout << ecasound_parameter_help();
-      exit(0);
+      clean_exit(0);
     }
     cline.next();
   }
 }
 
-void signal_handler(int signum) {
-  cerr << "Caught a signal... cleaning up.\n";
+void clean_exit(int n) {
   if (global_session_deleted == false) {
     global_session_deleted = true;
     if (global_pointer_to_ecaparams != 0) delete global_pointer_to_ecaparams;
   }
-  exit(0);
+  exit(n);
+}
+
+void signal_handler(int signum) {
+  cerr << "Caught a signal... cleaning up.\n";
+  clean_exit(0);
 }
 
 void print_header(ostream* dostream) {
@@ -241,14 +247,14 @@ void start_iactive_readline(ECA_SESSION* param) {
 	if (str == "quit" || str == "q") {
 	  cerr << "---\nExiting...\n";
 	  free(cmd);
-	  exit(0);
+	  clean_exit(0);
 	}
       }
       catch(ECA_ERROR& e) {
 	cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
 	if (e.error_action() == ECA_ERROR::stop) {
 	  free(cmd);
-	  exit(0);
+	  clean_exit(0);
 	}
       }
       catch(...) {

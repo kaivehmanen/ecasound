@@ -63,9 +63,10 @@ private:
   bool end_request_rep;
   bool continue_request_rep;
   bool trigger_outputs_request_rep;
-  bool input_not_finished_rep;
   bool processing_range_set_rep;
   bool use_double_buffering_rep;
+  bool input_not_finished_rep;
+  bool output_finished_rep;
   
   int trigger_counter_rep;
   struct timeval multitrack_input_stamp_rep;

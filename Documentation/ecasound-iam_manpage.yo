@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (08.12.2000)
+       (13.12.2000)
        ()
        (Multimedia software)
 
@@ -85,7 +85,7 @@ General status info. em([s])
 
 dit(engine-status)
 Returns a string describing the engine status (running, stopped,
-finished, not ready). em([s])
+finished, error, not ready). em([s])
  
 enddit()
 

@@ -172,7 +172,7 @@ Halttunen, Janne - Helped in developing the EIAM, and specifically the new ECI c
 Hamara, Arto - Ecasound logo(s), preset params, various bug fixes! [artham]
 Lavallée, Marc - Rpm-spec for Mandrake.
 Laydier, Antoine - layer.cpp (interprets mp3 headers) [SMF]
-Massy, S. - Extensive testing and debugging.
+Massy, S. - Extensive testing and debugging. [smassy]
 Petit, Bertrand - Helped with POSIX-compatibility issues.
 Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!
 Wróblewski, Artur - PLD-Linux RPM-specfile, readline and destdir patches. [wrobell]

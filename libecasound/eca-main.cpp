@@ -306,6 +306,7 @@ void ECA_PROCESSOR::init_inputs(void) {
  */
 void ECA_PROCESSOR::init_outputs(void) {
   trigger_outputs_request_rep = false;
+  output_finished_rep = false;
 
   output_start_pos_rep.resize(outputs_repp->size());
   output_chain_count_rep.resize(outputs_repp->size());
@@ -412,6 +413,9 @@ void ECA_PROCESSOR::exec(void) {
     }
   }
 
+  if (output_finished_rep == true) 
+    ecadebug->msg("(eca-main) Warning! An output object has raised an error! Out of disk space, permission denied, etc?");
+
   stop();
   vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
   while(q != csetup_repp->chains.end()) {
@@ -477,6 +481,7 @@ void ECA_PROCESSOR::exec_simple_iactive(void) {
     if ((*inputs_repp)[0]->finished() == false) input_not_finished_rep = true;
     (*chains_repp)[0]->process();
     (*outputs_repp)[0]->write_buffer(&mixslot_rep);
+    if ((*outputs_repp)[0]->finished() == true) output_finished_rep = true;
     trigger_outputs();
     posthandle_control_position();
     if (eparams_repp->iactive_rep != true &&
@@ -656,6 +661,7 @@ void ECA_PROCESSOR::stop(void) {
 void ECA_PROCESSOR::start(void) {
   if (eparams_repp->status() == ECA_SESSION::ep_status_running) return;
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Start");
+  output_finished_rep = false;
 
   // ---
   // Handle priority
@@ -765,6 +771,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
       if ((*chains_repp)[n]->output_id_repp == (*csetup_outputs_repp)[audioslot_sizet]) {
 	if (output_chain_count_rep[audioslot_sizet] == 1) {
 	  (*outputs_repp)[audioslot_sizet]->write_buffer(&(cslots_rep[n]));
+	  if ((*outputs_repp)[audioslot_sizet]->finished() == true) output_finished_rep = true;
 	  cslots_rep[n].length_in_samples(buffersize_rep);
 	  break;
 	}
@@ -780,6 +787,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 	    
 	    if (count == output_chain_count_rep[audioslot_sizet]) {
 	      (*outputs_repp)[audioslot_sizet]->write_buffer(&mixslot_rep);
+	      if ((*outputs_repp)[audioslot_sizet]->finished() == true) output_finished_rep = true;
 	      mixslot_rep.length_in_samples(buffersize_rep);
 	    }
 	  }
@@ -854,9 +862,13 @@ void ECA_PROCESSOR::interpret_queue(void) {
 
 bool ECA_PROCESSOR::finished(void) {
   if (input_not_finished_rep == true &&
+      output_finished_rep != true &&
       eparams_repp->status() != ECA_SESSION::ep_status_finished) return(false);
   
-  eparams_repp->status(ECA_SESSION::ep_status_finished);
+  if (output_finished_rep != true)
+    eparams_repp->status(ECA_SESSION::ep_status_finished);
+  else
+    eparams_repp->status(ECA_SESSION::ep_status_error);
   return(true);
 }
 
@@ -907,6 +919,7 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 	  // so we don't need to mix anything
 	  // --
 	  (*outputs_repp)[audioslot_sizet]->write_buffer(&(cslots_rep[n]));
+	  if ((*outputs_repp)[audioslot_sizet]->finished() == true) output_finished_rep = true;
 	  cslots_rep[n].length_in_samples(buffersize_rep);
 	  break;
 	}
@@ -926,6 +939,7 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 	  
 	  if (count == output_chain_count_rep[audioslot_sizet]) {
 	    (*outputs_repp)[audioslot_sizet]->write_buffer(&mixslot_rep);
+	    if ((*outputs_repp)[audioslot_sizet]->finished() == true) output_finished_rep = true;
 	    mixslot_rep.length_in_samples(buffersize_rep);
 	  }
 	}
