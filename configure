@@ -1826,7 +1826,7 @@ EOF
 
 fi
 
-CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math"
+CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math -funroll-loops"
 
 # Check whether --enable-debug or --disable-debug was given.
 if test "${enable_debug+set}" = set; then
@@ -1844,7 +1844,7 @@ else
   INCLUDE_DEBUG_FALSE=
 fi
 if test x$include_debug = xyes; then
-CXXFLAGS="-D_REENTRANT -DENABLE_DBC -g -Wall"
+CXXFLAGS="-D_REENTRANT -DENABLE_DBC -g -Wall -Wstrict-prototypes -pedantic -O0"
 fi                                     
 
 # Check whether --enable-dbc or --disable-dbc was given.

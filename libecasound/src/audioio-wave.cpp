@@ -24,7 +24,6 @@
 #include <kvutils.h>
 
 #include "samplebuffer.h"
-#include "audioio-wave_impl.h"
 #include "audioio-wave.h"
 
 #include "eca-fileio-mmap.h"
@@ -382,3 +381,4 @@ void WAVEFILE::set_length_in_bytes(void) {
 
   fio->set_file_position(savetemp);
 }
+

@@ -44,7 +44,7 @@ class ALSA_PCM2_DEVICE : public AUDIO_IO_DEVICE {
   void start(void);
 
   ALSA_PCM2_DEVICE (int card, int device, int subdevice, const SIMODE mode, const ECA_AUDIO_FORMAT& form, long int buffersize);
-  ALSA_PCM2_DEVICE::~ALSA_PCM2_DEVICE(void);
+  ~ALSA_PCM2_DEVICE(void);
   ALSA_PCM2_DEVICE* clone(void) { return new ALSA_PCM2_DEVICE(*this); }
   
  private:

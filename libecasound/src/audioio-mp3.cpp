@@ -175,7 +175,8 @@ void MP3FILE::fork_mpg123(void) throw(ECA_ERROR*) {
 	::close(fpipes[1]);
 	freopen("/dev/null", "w", stderr);
 	vector<string> temp = string_to_words(komen);
-	const char* args[temp.size() + 1];
+	if (temp.size() > 1024) temp.resize(1024);
+	const char* args[1024];
 	// = new char* [temp.size() + 1];
 	vector<string>::size_type p = 0;
 	while(p < temp.size()) {
@@ -245,7 +246,8 @@ void MP3FILE::fork_lame(void) throw(ECA_ERROR*) {
 	::close(fpipes[1]);
 	freopen("/dev/null", "w", stderr);
 	vector<string> temp = string_to_words(komen);
-	const char* args[temp.size() + 1];
+	if (temp.size() > 1024) temp.resize(1024);
+	const char* args[1024];
 	// = new char* [temp.size() + 1];
 	vector<string>::size_type p = 0;
 	while(p < temp.size()) {

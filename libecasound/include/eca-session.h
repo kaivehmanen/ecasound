@@ -38,10 +38,7 @@ class ECA_SESSION {
   // ---
   // Status data
   // ---
-//  mutable pthread_mutex_t status_lock;
   EP_STATUS ep_status;
-  long master_input_length;
-  int master_input_id;
 
   vector<ECA_CHAINSETUP*> chainsetups;
 
@@ -56,7 +53,6 @@ class ECA_SESSION {
   void interpret_general_options(COMMAND_LINE& cline);
   void interpret_general_option (const string& argu);
   void interpret_chainsetup (const string& argu, const string& toinen);
-  void select_master_input(void);
 
   // ---
   // Function for handling chainsetups
@@ -164,11 +160,6 @@ class ECA_SESSION {
   void status(EP_STATUS);
 
   // ---
-  // Functions for handling master input
-  // ---
-  AUDIO_IO* master_input(void) const { return((*inputs)[master_input_id]); }
-
-  // ---
   // Status/info functions
   // ---
   EP_STATUS status(void) const;
@@ -218,11 +209,6 @@ class ECA_SESSION {
   const ECA_CHAINSETUP* get_connected_chainsetup(void) const { return connected_chainsetup; }
   const ECA_CHAINSETUP* get_chainsetup_with_name(const string& name) const;
   bool is_selected_chainsetup_connected(void) const { return(selected_chainsetup == connected_chainsetup); }
-
-  long length_in_samples(void) const;
-  double length_in_seconds_exact(void) const;
-  long position_in_samples(void) const;
-  double position_in_seconds_exact(void) const;
 
   bool is_interactive(void) const { return iactive; }
 

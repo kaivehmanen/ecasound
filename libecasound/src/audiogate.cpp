@@ -78,9 +78,9 @@ void TIME_CROP_GATE::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type
   }
 }
 
-THRESHOLD_GATE::THRESHOLD_GATE (DYNAMIC_PARAMETERS::parameter_type threshold_openlevel, DYNAMIC_PARAMETERS::parameter_type
-				threshold_closelevel,  bool use_rms =
-				false) {
+THRESHOLD_GATE::THRESHOLD_GATE (DYNAMIC_PARAMETERS::parameter_type threshold_openlevel, 
+				DYNAMIC_PARAMETERS::parameter_type threshold_closelevel,
+				bool use_rms) {
   openlevel = threshold_openlevel / 100.0;
   closelevel = threshold_closelevel / 100.0;
   rms = use_rms;
@@ -101,8 +101,8 @@ THRESHOLD_GATE::THRESHOLD_GATE (DYNAMIC_PARAMETERS::parameter_type threshold_ope
 
 void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf) {
   if (rms == true) avolume = sbuf->average_RMS_volume() /
-		     SAMPLE_BUFFER::max_amplitude;
-  else avolume = sbuf->average_volume() / SAMPLE_BUFFER::max_amplitude;
+		     SAMPLE_SPECS::max_amplitude;
+  else avolume = sbuf->average_volume() / SAMPLE_SPECS::max_amplitude;
 
   if (is_opened == false) {
     if (avolume > openlevel) { 

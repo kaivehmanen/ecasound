@@ -102,16 +102,16 @@ void EFFECT_DELAY::init(SAMPLE_BUFFER* insample) {
 }
 
 void EFFECT_DELAY::process(void) {
-  l.begin(SAMPLE_BUFFER::ch_left);
-  r.begin(SAMPLE_BUFFER::ch_right);
+  l.begin(SAMPLE_SPECS::ch_left);
+  r.begin(SAMPLE_SPECS::ch_right);
 
   while(!l.end() && !r.end()) {
-    SAMPLE_BUFFER::sample_type temp2_left = 0.0;
-    SAMPLE_BUFFER::sample_type temp2_right = 0.0;
+    SAMPLE_SPECS::sample_type temp2_left = 0.0;
+    SAMPLE_SPECS::sample_type temp2_right = 0.0;
 
     for(int nm2 = 0; nm2 < dnum; nm2++) {
-      SAMPLE_BUFFER::sample_type temp_left = 0.0;
-      SAMPLE_BUFFER::sample_type temp_right = 0.0;
+      SAMPLE_SPECS::sample_type temp_left = 0.0;
+      SAMPLE_SPECS::sample_type temp_right = 0.0;
 
       if (laskuri >= dtime * (nm2 + 1)) {
  
@@ -120,8 +120,8 @@ void EFFECT_DELAY::process(void) {
 	  {
 	    // ---
 	    // surround
-	    temp_left = buffer[SAMPLE_BUFFER::ch_left][nm2].front();
-	    temp_right = buffer[SAMPLE_BUFFER::ch_right][nm2].front();
+	    temp_left = buffer[SAMPLE_SPECS::ch_left][nm2].front();
+	    temp_right = buffer[SAMPLE_SPECS::ch_right][nm2].front();
 	    break;
 	  }
 
@@ -129,32 +129,32 @@ void EFFECT_DELAY::process(void) {
 	  {
 	    // ---
 	    // surround
-	    temp_left = buffer[SAMPLE_BUFFER::ch_right][nm2].front();
-	    temp_right = buffer[SAMPLE_BUFFER::ch_left][nm2].front();
+	    temp_left = buffer[SAMPLE_SPECS::ch_right][nm2].front();
+	    temp_right = buffer[SAMPLE_SPECS::ch_left][nm2].front();
 	    break;
 	  }
 	case 2: 
 	  {
 	    if (nm2 % 2 == 0) {
-	      temp_left = (buffer[SAMPLE_BUFFER::ch_left][nm2].front()
+	      temp_left = (buffer[SAMPLE_SPECS::ch_left][nm2].front()
 			   + 
-			   buffer[SAMPLE_BUFFER::ch_right][nm2].front()) / 2.0;
+			   buffer[SAMPLE_SPECS::ch_right][nm2].front()) / 2.0;
 	      temp_right = 0.0;
 	    }
 	    else {
-	      temp_right = (buffer[SAMPLE_BUFFER::ch_left][nm2].front()
+	      temp_right = (buffer[SAMPLE_SPECS::ch_left][nm2].front()
 			   + 
-			   buffer[SAMPLE_BUFFER::ch_right][nm2].front()) / 2.0;
+			   buffer[SAMPLE_SPECS::ch_right][nm2].front()) / 2.0;
 	      temp_left = 0.0;
 	    }
 	    break;
 	}
 	} // switch
-	buffer[SAMPLE_BUFFER::ch_left][nm2].pop_front();
-	buffer[SAMPLE_BUFFER::ch_right][nm2].pop_front();
+	buffer[SAMPLE_SPECS::ch_left][nm2].pop_front();
+	buffer[SAMPLE_SPECS::ch_right][nm2].pop_front();
       }
-      buffer[SAMPLE_BUFFER::ch_left][nm2].push_back(*l.current());
-      buffer[SAMPLE_BUFFER::ch_right][nm2].push_back(*r.current());
+      buffer[SAMPLE_SPECS::ch_left][nm2].push_back(*l.current());
+      buffer[SAMPLE_SPECS::ch_right][nm2].push_back(*r.current());
 
       temp2_left += temp_left / dnum;
       temp2_right += temp_right / dnum;
@@ -189,7 +189,7 @@ void EFFECT_FAKE_STEREO::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_
   switch (param) {
   case 1:
     dtime = value * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate / 1000;
-    vector<deque<SAMPLE_BUFFER::sample_type> >::iterator p = buffer.begin();
+    vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
     while(p != buffer.end()) {
       if (p->size() > dtime) {
 	p->resize(dtime);
@@ -210,28 +210,28 @@ void EFFECT_FAKE_STEREO::init(SAMPLE_BUFFER* insample) {
 }
 
 void EFFECT_FAKE_STEREO::process(void) {
-  l.begin(SAMPLE_BUFFER::ch_left);
-  r.begin(SAMPLE_BUFFER::ch_right);
+  l.begin(SAMPLE_SPECS::ch_left);
+  r.begin(SAMPLE_SPECS::ch_right);
   while(!l.end() && !r.end()) {
-    SAMPLE_BUFFER::sample_type temp_left = 0;
-    SAMPLE_BUFFER::sample_type temp_right = 0;
+    SAMPLE_SPECS::sample_type temp_left = 0;
+    SAMPLE_SPECS::sample_type temp_right = 0;
     if (laskuri >= dtime) {
-      temp_left = buffer[SAMPLE_BUFFER::ch_left].front();
-      temp_right = buffer[SAMPLE_BUFFER::ch_right].front();
+      temp_left = buffer[SAMPLE_SPECS::ch_left].front();
+      temp_right = buffer[SAMPLE_SPECS::ch_right].front();
 
       temp_right = (temp_left + temp_right) / 2.0;
       temp_left = (*l.current() + *r.current()) / 2.0;
 
-      buffer[SAMPLE_BUFFER::ch_left].pop_front();
-      buffer[SAMPLE_BUFFER::ch_right].pop_front();
+      buffer[SAMPLE_SPECS::ch_left].pop_front();
+      buffer[SAMPLE_SPECS::ch_right].pop_front();
     }
     else {
       temp_left = (*l.current() + *r.current()) / 2.0;
       temp_right = 0.0;
       laskuri++;
     }
-    buffer[SAMPLE_BUFFER::ch_left].push_back(*l.current());
-    buffer[SAMPLE_BUFFER::ch_right].push_back(*r.current());
+    buffer[SAMPLE_SPECS::ch_left].push_back(*l.current());
+    buffer[SAMPLE_SPECS::ch_right].push_back(*r.current());
 
     *l.current() = temp_left;
     *r.current() = temp_right;
@@ -268,7 +268,7 @@ void EFFECT_REVERB::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type 
   case 1: 
     {
       dtime = value * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate / 1000;
-      vector<deque<SAMPLE_BUFFER::sample_type> >::iterator p = buffer.begin();
+      vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
 	if (p->size() > dtime) {
 	  p->resize(dtime);
@@ -297,14 +297,14 @@ void EFFECT_REVERB::init(SAMPLE_BUFFER* insample) {
 }
 
 void EFFECT_REVERB::process(void) {
-  l.begin(SAMPLE_BUFFER::ch_left);
-  r.begin(SAMPLE_BUFFER::ch_right);
+  l.begin(SAMPLE_SPECS::ch_left);
+  r.begin(SAMPLE_SPECS::ch_right);
   while(!l.end() && !r.end()) {
-    SAMPLE_BUFFER::sample_type temp_left = 0.0;
-    SAMPLE_BUFFER::sample_type temp_right = 0.0;
+    SAMPLE_SPECS::sample_type temp_left = 0.0;
+    SAMPLE_SPECS::sample_type temp_right = 0.0;
     if (laskuri >= dtime) {
-      temp_left = buffer[SAMPLE_BUFFER::ch_left].front();
-      temp_right = buffer[SAMPLE_BUFFER::ch_right].front();
+      temp_left = buffer[SAMPLE_SPECS::ch_left].front();
+      temp_right = buffer[SAMPLE_SPECS::ch_right].front();
       
       if (surround == 0) {
 	*l.current() = (*l.current() * (1 - feedback)) + (temp_left *  feedback);
@@ -314,16 +314,16 @@ void EFFECT_REVERB::process(void) {
 	*l.current() = (*l.current() * (1 - feedback)) + (temp_right *  feedback);
 	*r.current() = (*r.current() * (1 - feedback)) + (temp_left * feedback);
       }
-      buffer[SAMPLE_BUFFER::ch_left].pop_front();
-      buffer[SAMPLE_BUFFER::ch_right].pop_front();
+      buffer[SAMPLE_SPECS::ch_left].pop_front();
+      buffer[SAMPLE_SPECS::ch_right].pop_front();
     }
     else {
 	*l.current() = (*l.current() * (1 - feedback));
 	*r.current() = (*r.current() * (1 - feedback));
 	laskuri++;
     }
-    buffer[SAMPLE_BUFFER::ch_left].push_back(*l.current());
-    buffer[SAMPLE_BUFFER::ch_right].push_back(*r.current());
+    buffer[SAMPLE_SPECS::ch_left].push_back(*l.current());
+    buffer[SAMPLE_SPECS::ch_right].push_back(*r.current());
 
     l.next();
     r.next();

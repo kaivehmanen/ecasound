@@ -30,7 +30,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (02.12.1999)
+       (17.01.2000)
        ()
        (Multimedia software)
 
@@ -180,10 +180,16 @@ dit(c-add 'cname1,...,cnameN')
 Add chains. Added chains are automatically selected.
 
 dit(c-select 'cname1,...,cnameN')
-Select chains.
+Select chains. Other chains are automatically deselected.
+
+dit(c-deselect 'cname1,...,cnameN')
+Deselect chains.
 
 dit(c-select-all)
 Select all chains.
+
+dit(c-select-add 'cname1,...,cnameN')
+Select more chains.
 
 dit(c-remove)
 Remove selected chains.

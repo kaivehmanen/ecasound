@@ -30,8 +30,10 @@ class ECA_CONTROL_POSITION {
 
   long int length_in_samples(void) const { return(length_rep); }
   long int length_in_seconds(void) const;
+  double length_in_seconds_exact(void) const;
   long int position_in_samples(void) const { return(curpos_rep); }
   long int position_in_seconds(void) const;
+  double position_in_seconds_exact(void) const;
   long int sample_rate(void) const { return(srate_rep); }
   bool length_set(void) const { return(length_set_rep); }
   bool looping_enabled(void) const { return(looping_rep); }

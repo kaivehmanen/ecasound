@@ -49,7 +49,7 @@ class RAWFILE : public AUDIO_IO_FILE {
   void seek_position(void);
 
   RAWFILE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& format, bool double_buffering = false);
-  RAWFILE::~RAWFILE(void);
+  ~RAWFILE(void);
     
   RAWFILE* clone(void) { return new RAWFILE(*this); }    
 };

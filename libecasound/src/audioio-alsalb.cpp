@@ -137,6 +137,7 @@ long int ALSA_LOOPBACK_DEVICE::read_samples(void* target_buffer,
   return(dl_snd_pcm_loopback_read(audio_fd, target_buffer, frame_size() * samples) / frame_size());
 #else
   // not implemented
+  return(0);
 #endif
 }
 

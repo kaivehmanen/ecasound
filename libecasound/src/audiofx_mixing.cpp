@@ -111,7 +111,7 @@ void EFFECT_MIX_TO_CHANNEL::process(void) {
   i.begin();
   t_iter.begin(to_channel);
   while(!t_iter.end() && !i.end()) {
-    sum = SAMPLE_BUFFER::silent_value;
+    sum = SAMPLE_SPECS::silent_value;
     for (int n = 0; n < channels; n++) {
       if (i.end()) break;
       sum += (*i.current(n));

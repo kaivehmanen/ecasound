@@ -39,8 +39,8 @@ class CDRFILE : public AUDIO_IO_FILE {
   unsigned short swapw(unsigned short us) { return ((us >> 8) | (us << 8)) & 0xffff;  }
 
   void swap_bytes(SAMPLE* t) {
-    t->sample[SAMPLE_BUFFER::ch_left] = swapw(t->sample[SAMPLE_BUFFER::ch_left]);
-    t->sample[SAMPLE_BUFFER::ch_right] = swapw(t->sample[SAMPLE_BUFFER::ch_right]);
+    t->sample[SAMPLE_SPECS::ch_left] = swapw(t->sample[SAMPLE_SPECS::ch_left]);
+    t->sample[SAMPLE_SPECS::ch_right] = swapw(t->sample[SAMPLE_SPECS::ch_right]);
   }
   
   /**
@@ -66,7 +66,7 @@ class CDRFILE : public AUDIO_IO_FILE {
   void seek_position(void);
     
   CDRFILE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& format);
-  CDRFILE::~CDRFILE(void);
+  ~CDRFILE(void);
     
   CDRFILE* clone(void) { return new CDRFILE(*this); }    
 };

@@ -49,7 +49,7 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
   ALSA_LOOPBACK_DEVICE (int card, int device, const SIMODE mode, const
 		ECA_AUDIO_FORMAT& form, long int buffersize,
 		bool playback_mode = true);
-  ALSA_LOOPBACK_DEVICE::~ALSA_LOOPBACK_DEVICE(void);
+  ~ALSA_LOOPBACK_DEVICE(void);
   ALSA_LOOPBACK_DEVICE* clone(void) { return new ALSA_LOOPBACK_DEVICE(*this); }
   
  private:

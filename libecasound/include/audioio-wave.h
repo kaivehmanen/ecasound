@@ -80,7 +80,7 @@ class WAVEFILE : public AUDIO_IO_FILE {
 	    const SIMODE mode,
 	    const ECA_AUDIO_FORMAT& form,
 	    bool double_buffering = false);
-  WAVEFILE::~WAVEFILE(void);
+  ~WAVEFILE(void);
   WAVEFILE* clone(void) { return new WAVEFILE(*this); }
 
  private:

@@ -93,7 +93,7 @@ void ADVANCED_COMPRESSOR::init_values(void) {
   /*
    * Level below which gain tracking shuts off
    */
-  floorlevel = SAMPLE_BUFFER::max_amplitude * 0.06;   // was 2000
+  floorlevel = SAMPLE_SPECS::max_amplitude * 0.06;   // was 2000
   //  floorlevel = 2000;
   
   /*
@@ -141,7 +141,7 @@ void ADVANCED_COMPRESSOR::set_parameter(int param, DYNAMIC_PARAMETERS::parameter
       // target level for compression
       // ---
 
-      maxlevel = SAMPLE_BUFFER::max_amplitude * 0.9; // limiter level (was 32000)
+      maxlevel = SAMPLE_SPECS::max_amplitude * 0.9; // limiter level (was 32000)
       //      maxlevel = 32000;
       peakpercent = value;
       if (peakpercent == 0) peakpercent = 69;

@@ -31,11 +31,11 @@ AUDIO_IO_BUFFERED::AUDIO_IO_BUFFERED(const string& name,
 				     const SIMODE mode, 
 				     const ECA_AUDIO_FORMAT& fmt) 
   : AUDIO_IO(name, mode, fmt),
-    iobuf_uchar(0),
-    iobuf_size(0),
     buffersize_rep(0),
     target_srate_rep(0),
-    target_samples_rep(0) { }
+    target_samples_rep(0),
+    iobuf_uchar(0),
+    iobuf_size(0) { }
 
 
 AUDIO_IO_BUFFERED::~AUDIO_IO_BUFFERED(void) { 
@@ -52,6 +52,7 @@ void AUDIO_IO_BUFFERED::reserve_buffer_space(long int bytes) {
       delete[] iobuf_uchar;
       iobuf_uchar = 0;
     }
+    //    cerr << "Reserving " << bytes << " bytes (" << label() << ").\n";
     iobuf_uchar = new unsigned char [bytes];
     iobuf_size = bytes;
   }
@@ -100,7 +101,6 @@ void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf) {
   assert(iobuf_uchar != 0);
   assert(iobuf_size >= buffersize_rep * frame_size());
   // --------
-
   sbuf->copy_to_buffer(iobuf_uchar,
 		       read_samples(iobuf_uchar, buffersize_rep),
 		       sample_format(),

@@ -27,18 +27,18 @@ class EFFECT_BW_FILTER : public EFFECT_FILTER {
 
 private:
   
-  SAMPLE_BUFFER::sample_type outputSample;
+  SAMPLE_SPECS::sample_type outputSample;
   SAMPLE_ITERATOR_CHANNELS i;
 
-  vector<vector<SAMPLE_BUFFER::sample_type> > sin;
-  vector<vector<SAMPLE_BUFFER::sample_type> > sout;
+  vector<vector<SAMPLE_SPECS::sample_type> > sin;
+  vector<vector<SAMPLE_SPECS::sample_type> > sout;
 
   void init_values(void);
 
  protected:
 
-  vector<SAMPLE_BUFFER::sample_type> a;
-  vector<SAMPLE_BUFFER::sample_type> b;
+  vector<SAMPLE_SPECS::sample_type> a;
+  vector<SAMPLE_SPECS::sample_type> b;
    
 public:
 
@@ -149,8 +149,8 @@ public:
 class EFFECT_INVERSE_COMB_FILTER : public EFFECT_FILTER {
 
   vector<parameter_type> laskuri;
-  vector<deque<SAMPLE_BUFFER::sample_type> > buffer;
-  vector<SAMPLE_BUFFER::sample_type> temp;
+  vector<deque<SAMPLE_SPECS::sample_type> > buffer;
+  vector<SAMPLE_SPECS::sample_type> temp;
   SAMPLE_ITERATOR_CHANNELS i;
 
   parameter_type C;
@@ -218,7 +218,7 @@ private:
 
   parameter_type cutOffFreq;
   parameter_type A, B;
-  vector<SAMPLE_BUFFER::sample_type> outhist, tempin, temphist;
+  vector<SAMPLE_SPECS::sample_type> outhist, tempin, temphist;
   SAMPLE_ITERATOR_CHANNELS i;
 
 public:
@@ -244,7 +244,7 @@ class EFFECT_RESONANT_BANDPASS : public EFFECT_FILTER {
 
 private:
 
-  vector<SAMPLE_BUFFER::sample_type> outhist1, outhist2;
+  vector<SAMPLE_SPECS::sample_type> outhist1, outhist2;
   
   parameter_type center;
   parameter_type width;
@@ -279,8 +279,8 @@ class EFFECT_RESONANT_LOWPASS : public EFFECT_FILTER {
 
   SAMPLE_ITERATOR_CHANNELS i;
     
-  vector<SAMPLE_BUFFER::sample_type> outhist0, outhist1, outhist2, outhist3;
-  vector<SAMPLE_BUFFER::sample_type> newhist0, newhist1;
+  vector<SAMPLE_SPECS::sample_type> outhist0, outhist1, outhist2, outhist3;
+  vector<SAMPLE_SPECS::sample_type> newhist0, newhist1;
     
   class TRIPLE_COEFS {
   public:
@@ -339,10 +339,10 @@ private:
   parameter_type center;
   parameter_type width;
 
-  vector<SAMPLE_BUFFER::sample_type> cona;
-  vector<SAMPLE_BUFFER::sample_type> conb;
+  vector<SAMPLE_SPECS::sample_type> cona;
+  vector<SAMPLE_SPECS::sample_type> conb;
 
-  vector<SAMPLE_BUFFER::sample_type> saout0, saout1;
+  vector<SAMPLE_SPECS::sample_type> saout0, saout1;
 
 public:
 

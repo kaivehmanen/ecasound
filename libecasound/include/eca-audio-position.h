@@ -92,7 +92,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
 			       ? position_in_samples_rep : length_in_samples_rep; }
 
   ECA_AUDIO_POSITION(const ECA_AUDIO_FORMAT& fmt);
+  virtual ~ECA_AUDIO_POSITION() { }
 };
 
 #endif
-

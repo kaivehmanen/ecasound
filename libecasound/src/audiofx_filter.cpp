@@ -105,8 +105,8 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_BANDREJECT::get_parameter(int param) c
 void EFFECT_BW_FILTER::init(SAMPLE_BUFFER *insample) {
   i.init(insample);
 
-  sin.resize(insample->number_of_channels(), vector<SAMPLE_BUFFER::sample_type> (2));
-  sout.resize(insample->number_of_channels(), vector<SAMPLE_BUFFER::sample_type> (2));
+  sin.resize(insample->number_of_channels(), vector<SAMPLE_SPECS::sample_type> (2));
+  sout.resize(insample->number_of_channels(), vector<SAMPLE_SPECS::sample_type> (2));
 }
 
 void EFFECT_BW_FILTER::process(void) {

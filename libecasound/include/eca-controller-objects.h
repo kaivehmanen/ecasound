@@ -294,6 +294,16 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void select_chains(const vector<string>& chains);
 
   /**
+   * Deselect chains (currently selected chainsetup)
+   *
+   * @param chains vector of chain names
+   *
+   * require:
+   *   is_selected() == true
+   */
+  void deselect_chains(const vector<string>& chains);
+
+  /**
    * Select all chains (currently selected chainsetup)
    *
    * require:

@@ -65,7 +65,7 @@ class MP3FILE : public AUDIO_IO_FILE {
   // --
   
   MP3FILE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& format);
-  MP3FILE::~MP3FILE(void);
+  ~MP3FILE(void);
     
   //    MP3FILE* new_expr(void) { return new MP3FILE(); }
   MP3FILE* clone(void) { return new MP3FILE(*this); }

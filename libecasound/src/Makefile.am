@@ -99,7 +99,9 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-chainop-map.cpp eca-controller-map.cpp
 
 ecasound_common_src = $(ecasound_audiofx_src) $(ecasound_audioio_src) \
-		      $(ecasound_controller_src) $(ecasound_general_src) 
+		      $(ecasound_controller_src) $(ecasound_general_src)
+
+#	              LeakTracer.cc
 
 libecasound_la_SOURCES = $(ecasound_common_src)
 libecasound_debug_la_SOURCES = $(ecasound_common_src)
@@ -108,6 +110,7 @@ libecasound_debug_la_SOURCES = $(ecasound_common_src)
 #libecasound_la_LIBADD = $(af_libs) $(top_srcdir)/kvutils/libkvutils.la
 libecasound_la_LIBADD = $(af_libs) -L$(top_srcdir)/kvutils -lkvutils
 libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
+#libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD) -lefence
 libecasound_la_LDFLAGS = --export-dynamic $(eca_ldflags)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
 

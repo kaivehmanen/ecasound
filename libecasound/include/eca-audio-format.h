@@ -43,7 +43,7 @@ class ECA_AUDIO_FORMAT {
 
     sfmt_f64, 
     sfmt_f64_le,
-    sfmt_f64_be,
+    sfmt_f64_be
   };    
 
   static const int default_channels = 2;

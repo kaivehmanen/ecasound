@@ -36,12 +36,12 @@ string EFFECT_ANALYZE::status(void) {
     otemp.setprecision(2);
     otemp << "(audiofx) Vol-range: ";
     otemp << nm << "\t L: ";
-    otemp << ranges[nm][SAMPLE_BUFFER::ch_left] << " (";
-    otemp << ((DYNAMIC_PARAMETERS::parameter_type)ranges[nm][SAMPLE_BUFFER::ch_left] / (DYNAMIC_PARAMETERS::parameter_type)num_of_samples[SAMPLE_BUFFER::ch_left] * 100.0);
+    otemp << ranges[nm][SAMPLE_SPECS::ch_left] << " (";
+    otemp << ((DYNAMIC_PARAMETERS::parameter_type)ranges[nm][SAMPLE_SPECS::ch_left] / (DYNAMIC_PARAMETERS::parameter_type)num_of_samples[SAMPLE_SPECS::ch_left] * 100.0);
     otemp << ") \t\t";
     otemp << "R: ";
-    otemp << ranges[nm][SAMPLE_BUFFER::ch_right] << " (";
-    otemp << ((DYNAMIC_PARAMETERS::parameter_type)ranges[nm][SAMPLE_BUFFER::ch_right] / (DYNAMIC_PARAMETERS::parameter_type)num_of_samples[SAMPLE_BUFFER::ch_right] * 100.0);
+    otemp << ranges[nm][SAMPLE_SPECS::ch_right] << " (";
+    otemp << ((DYNAMIC_PARAMETERS::parameter_type)ranges[nm][SAMPLE_SPECS::ch_right] / (DYNAMIC_PARAMETERS::parameter_type)num_of_samples[SAMPLE_SPECS::ch_right] * 100.0);
     otemp << ").\n";
   
   }
@@ -65,7 +65,7 @@ string EFFECT_ANALYZE::status(void) {
 DYNAMIC_PARAMETERS::parameter_type EFFECT_ANALYZE::max_multiplier(void) const { 
   DYNAMIC_PARAMETERS::parameter_type kerroin;
   
-  if (max != 0.0) kerroin = SAMPLE_BUFFER::max_amplitude / max;
+  if (max != 0.0) kerroin = SAMPLE_SPECS::max_amplitude / max;
   else kerroin = 0.0;
 
   if (kerroin < 1.0) kerroin = 1.0;
@@ -84,22 +84,22 @@ void EFFECT_ANALYZE::process(void) {
   while(!i.end()) {
     if (fabs(*i.current() > max)) max = fabs(*i.current());
     num_of_samples[i.channel()]++;
-    if (*i.current() <  SAMPLE_BUFFER::max_amplitude * -7.0/8.0) ranges[0][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * -6.0/8.0) ranges[1][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * -5.0/8.0) ranges[2][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * -4.0/8.0) ranges[3][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * -3.0/8.0) ranges[4][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * -2.0/8.0) ranges[5][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * -1.0/8.0) ranges[6][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::silent_value) ranges[7][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * 1.0/8.0) ranges[8][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * 2.0/8.0) ranges[9][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * 3.0/8.0) ranges[10][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * 4.0/8.0) ranges[11][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * 5.0/8.0) ranges[12][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * 6.0/8.0) ranges[13][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude * 7.0/8.0) ranges[14][i.channel()]++;
-    else if (*i.current() < SAMPLE_BUFFER::max_amplitude) ranges[15][i.channel()]++;
+    if (*i.current() <  SAMPLE_SPECS::max_amplitude * -7.0/8.0) ranges[0][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -6.0/8.0) ranges[1][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -5.0/8.0) ranges[2][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -4.0/8.0) ranges[3][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -3.0/8.0) ranges[4][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -2.0/8.0) ranges[5][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * -1.0/8.0) ranges[6][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::silent_value) ranges[7][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 1.0/8.0) ranges[8][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 2.0/8.0) ranges[9][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 3.0/8.0) ranges[10][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 4.0/8.0) ranges[11][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 5.0/8.0) ranges[12][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 6.0/8.0) ranges[13][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude * 7.0/8.0) ranges[14][i.channel()]++;
+    else if (*i.current() < SAMPLE_SPECS::max_amplitude) ranges[15][i.channel()]++;
     i.next();
   }
 }
@@ -110,13 +110,13 @@ string EFFECT_DCFIND::status(void) {
     MESSAGE_ITEM mitem;
     mitem.setprecision(5);
     mitem << "(audiofx) Optimal value for DC-adjust: ";
-    mitem << get_deltafix(SAMPLE_BUFFER::ch_left) << " (left), ";
-    mitem << get_deltafix(SAMPLE_BUFFER::ch_right) << " (right).";
+    mitem << get_deltafix(SAMPLE_SPECS::ch_left) << " (left), ";
+    mitem << get_deltafix(SAMPLE_SPECS::ch_right) << " (right).";
     return(mitem.to_string());
 }
 
 DYNAMIC_PARAMETERS::parameter_type EFFECT_DCFIND::get_deltafix(int channel) { 
-  SAMPLE_BUFFER::sample_type deltafix;
+  SAMPLE_SPECS::sample_type deltafix;
 
   if (pos_sum[channel] > neg_sum[channel]) deltafix = -(pos_sum[channel] - neg_sum[channel]) / num_of_samples[channel];
   else deltafix = (neg_sum[channel] - pos_sum[channel]) / num_of_samples[channel];
@@ -136,7 +136,7 @@ void EFFECT_DCFIND::process(void) {
   i.begin();
   while(!i.end()) {
     tempval = *i.current();
-    if (tempval > SAMPLE_BUFFER::silent_value)
+    if (tempval > SAMPLE_SPECS::silent_value)
       pos_sum[i.channel()] += tempval;
     else
       neg_sum[i.channel()] += fabs(tempval);

@@ -74,10 +74,10 @@ void EFFECT_RC_LOWPASS_FILTER::process(void) {
     // is dissatisfying ! We should use an Amp-simulation instead to avoid
     // digital clipping ...
 
-    if (output_temp > SAMPLE_BUFFER::impl_max_value)
-      output_temp = SAMPLE_BUFFER::impl_max_value;
-    else if (output_temp < SAMPLE_BUFFER::impl_min_value) 
-      output_temp = SAMPLE_BUFFER::impl_min_value;
+    if (output_temp > SAMPLE_SPECS::impl_max_value)
+      output_temp = SAMPLE_SPECS::impl_max_value;
+    else if (output_temp < SAMPLE_SPECS::impl_min_value) 
+      output_temp = SAMPLE_SPECS::impl_min_value;
 
     // --
     // Ok, this is the first step of the filter. We simulate an simple

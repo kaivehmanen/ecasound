@@ -155,9 +155,9 @@ void eca_alsa_load_dl_snd_pcm(void) {
     (int (*)(snd_pcm_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_close");
   dl_snd_strerror = (const char* (*)(int))dlsym(eca_alsa_dynlib_handle, "snd_strerror");
   dl_snd_pcm_write = 
-    (int (*)(snd_pcm_t *, const void *, size_t))dlsym(eca_alsa_dynlib_handle, "snd_pcm_write");
+    (ssize_t (*)(snd_pcm_t *, const void *, size_t))dlsym(eca_alsa_dynlib_handle, "snd_pcm_write");
   dl_snd_pcm_read = 
-    (int (*)(snd_pcm_t *, const void *, size_t))dlsym(eca_alsa_dynlib_handle, "snd_pcm_read");
+    (ssize_t (*)(snd_pcm_t *, void *, size_t))dlsym(eca_alsa_dynlib_handle, "snd_pcm_read");
 #ifdef ALSALIB_032
   dl_snd_pcm_playback_pause =
     (int (*)(snd_pcm_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_playback_pause");
@@ -244,7 +244,7 @@ void eca_alsa_load_dl_snd_pcm_loopback(void) {
   dl_snd_pcm_loopback_status = 
     (int (*)(snd_pcm_loopback_t *, snd_pcm_loopback_status_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_status");
   dl_snd_pcm_loopback_read = 
-    (int (*)(snd_pcm_loopback_t *, snd_pcm_loopback_callbacks_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_read");
+    (ssize_t (*)(snd_pcm_loopback_t *, snd_pcm_loopback_callbacks_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_read");
 #endif
 }
 

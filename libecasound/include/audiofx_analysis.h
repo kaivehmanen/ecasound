@@ -62,7 +62,7 @@ private:
   vector<parameter_type> neg_sum;
   vector<parameter_type> num_of_samples;
 
-  SAMPLE_BUFFER::sample_type tempval;
+  SAMPLE_SPECS::sample_type tempval;
   SAMPLE_ITERATOR_CHANNELS i;
 
 public:

@@ -15,7 +15,6 @@ ecasound_audioio_src = 	audioio-cdr.h \
 			audioio-mp3.h \
 			audioio-mp3_impl.h \
 			audioio-wave.h \
-			audioio-wave_impl.h \
 			audioio.h \
 			audioio-af.h \
 			audioio-raw.h \

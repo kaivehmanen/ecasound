@@ -47,7 +47,7 @@ class MIKMOD_INTERFACE : public AUDIO_IO_FILE {
   void seek_position(void);
  
   MIKMOD_INTERFACE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& format);
-  MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void);
+  ~MIKMOD_INTERFACE(void);
     
   MIKMOD_INTERFACE* clone(void) { return new MIKMOD_INTERFACE(*this); }
 };

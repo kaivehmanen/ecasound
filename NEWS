@@ -18,6 +18,7 @@ Last officially released version is -*> v1.6.9r9 <*-
 	- added: support for s24_le, s24_be, s32_le and s32_be 
 		 sample formats
 	- added: support for ALSA-subdevices (-o:alsa,card,dev,subdev)
+	- added: to ia-mode - 'c-deselect', 'c-select-add'
 	- changed: ALSA pcm2-devices now opened in nonblock-mode
 	- fixed: bugs in channel routing and output mixing
 14012000 (v1.6.11d10)

@@ -172,7 +172,14 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
 
 void ALSA_PCM2_DEVICE::stop(void) {
   ecadebug->msg(1, "(audioio-alsa2) Audio device \"" + label() + "\" disabled.");
-  if (is_open()) close();
+  int err = dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
+  if (err < 0)
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when flushing channel: " + string(dl_snd_strerror(err))));
+
+  err = dl_snd_pcm_channel_prepare(audio_fd, pcm_channel);
+  if (err < 0)
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when preparing channel: " + string(dl_snd_strerror(err))));
+  
   is_triggered = false;
 }
 

@@ -7,7 +7,7 @@
 
 #include "audiofx.h"
 
-typedef deque<SAMPLE_BUFFER::sample_type> SINGLE_BUFFER;
+typedef deque<SAMPLE_SPECS::sample_type> SINGLE_BUFFER;
 
 /**
  * Base class for time-based effects (delays, reverbs, etc).
@@ -64,7 +64,7 @@ class EFFECT_DELAY : public EFFECT_TIME_BASED {
  */
 class EFFECT_FAKE_STEREO : public EFFECT_TIME_BASED {
 
-  vector<deque<SAMPLE_BUFFER::sample_type> > buffer;
+  vector<deque<SAMPLE_SPECS::sample_type> > buffer;
   SAMPLE_ITERATOR_CHANNEL l,r;
 
  public:
@@ -80,7 +80,7 @@ class EFFECT_FAKE_STEREO : public EFFECT_TIME_BASED {
   void process(void);
 
   EFFECT_FAKE_STEREO* clone(void)  { return new EFFECT_FAKE_STEREO(*this); }
-  EFFECT_FAKE_STEREO::EFFECT_FAKE_STEREO (parameter_type delay_time = 0.0);
+  EFFECT_FAKE_STEREO (parameter_type delay_time = 0.0);
 };
 
 /*
@@ -90,7 +90,7 @@ class EFFECT_REVERB : public EFFECT_TIME_BASED {
 
  private:
     
-  vector<deque<SAMPLE_BUFFER::sample_type>  > buffer;
+  vector<deque<SAMPLE_SPECS::sample_type>  > buffer;
   SAMPLE_ITERATOR_CHANNEL l,r;
 
   parameter_type surround;

@@ -48,7 +48,7 @@ class ECA_PROCESSOR {
     ep_sfx,
     ep_rewind,
     ep_forward,
-    ep_setpos,
+    ep_setpos
   };
 
 private:

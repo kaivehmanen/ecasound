@@ -13,6 +13,8 @@
  */
 class ECA_IAMODE_PARSER {
 
+ protected:
+
   static map<string,int> cmd_map;
   static void register_commands(void);
 
@@ -52,6 +54,8 @@ class ECA_IAMODE_PARSER {
     ec_c_add,
     ec_c_select,
     ec_c_select_all,
+    ec_c_select_add,
+    ec_c_deselect,
     ec_c_remove,
     ec_c_clear,
     ec_c_name,
@@ -80,23 +84,13 @@ class ECA_IAMODE_PARSER {
     ec_cop_set,
     ec_cop_add_controller,
     ec_cop_remove_controller, // not implemented
-    ec_cop_status,
+    ec_cop_status
   };
 
   /**
    * Parse string mode command and act accordingly.
    */
   static const map<string,int>& registered_commands(void) { return(cmd_map); }
-
-  /**
-   * Parse string mode command and act accordingly.
-   */
-  void command(const string& cmd) throw(ECA_ERROR*);
-
-  /** 
-   * Execute actions 'action_id'.
-   */
-  virtual void action(int action_id, const vector<string>& args) = 0;
 
   bool action_requires_params(int id);
   bool action_requires_connected(int id);

@@ -39,8 +39,8 @@ class OSCILLATOR : public CONTROLLER_SOURCE {
   parameter_type phase_offset(void) const { return(phase_value); }  
   parameter_type frequency(void) const { return(freq_value); }
 
-  parameter_type phase_offset(parameter_type v) { phase_value = v; }
-  parameter_type frequency(parameter_type v) { freq_value = v; }
+  void phase_offset(parameter_type v) { phase_value = v; }
+  void frequency(parameter_type v) { freq_value = v; }
 };
 
 #endif

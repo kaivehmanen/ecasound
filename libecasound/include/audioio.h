@@ -166,7 +166,7 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
   /**
    * Estimed processing latency in samples.
    */
-   long int latency(void) const { return(0); }
+  virtual long int latency(void) const { return(0); }
 
   // ===================================================================
   // Status and info

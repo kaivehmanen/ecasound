@@ -97,8 +97,8 @@ int main(int argc, char *argv[])
 	}
 	else {
 	  cerr << "Fixing DC-offset \"" << filename << "\"";
-	  cerr << " (left: " << dcfix_value[SAMPLE_BUFFER::ch_left];
-	  cerr << ", right: " << dcfix_value[SAMPLE_BUFFER::ch_right]
+	  cerr << " (left: " << dcfix_value[SAMPLE_SPECS::ch_left];
+	  cerr << ", right: " << dcfix_value[SAMPLE_SPECS::ch_right]
 	       << ").\n";
 	  ectrl.add_audio_input(ecatools_fixdc_tempfile);
 	  aio_params = ectrl.get_audio_format();
@@ -107,8 +107,8 @@ int main(int argc, char *argv[])
 	  ectrl.set_default_audio_format(&aio_params);
 	  ectrl.add_audio_output(filename);
 
-	  dcfix = new EFFECT_DCFIX(dcfix_value[SAMPLE_BUFFER::ch_left],
-				   dcfix_value[SAMPLE_BUFFER::ch_right]);
+	  dcfix = new EFFECT_DCFIX(dcfix_value[SAMPLE_SPECS::ch_left],
+				   dcfix_value[SAMPLE_SPECS::ch_right]);
 	  ectrl.add_chain_operator((CHAIN_OPERATOR*)dcfix);
 	}
 	ectrl.connect_chainsetup();

@@ -27,7 +27,7 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-EFFECT_AMPLIFY::EFFECT_AMPLIFY (parameter_type multiplier_percent = 100.0) {
+EFFECT_AMPLIFY::EFFECT_AMPLIFY (parameter_type multiplier_percent) {
   set_parameter(1, multiplier_percent);
 }
 
@@ -90,8 +90,8 @@ void EFFECT_AMPLIFY_CLIPCOUNT::process(void) {
   i.begin();
   while(!i.end()) {
     *i.current() = *i.current() *  kerroin;
-    if (*i.current() > SAMPLE_BUFFER::impl_max_value ||
-	*i.current() < SAMPLE_BUFFER::impl_min_value) {
+    if (*i.current() > SAMPLE_SPECS::impl_max_value ||
+	*i.current() < SAMPLE_SPECS::impl_min_value) {
       num_of_clipped++;
     }
     else {
@@ -221,8 +221,8 @@ void EFFECT_COMPRESS::process(void) {
       else
 	new_value = lastin[i.channel()] * delta;
       
-      if (new_value > SAMPLE_BUFFER::impl_max_value) new_value = SAMPLE_BUFFER::impl_max_value;
-      else if (new_value < SAMPLE_BUFFER::impl_min_value) new_value = SAMPLE_BUFFER::impl_min_value;
+      if (new_value > SAMPLE_SPECS::impl_max_value) new_value = SAMPLE_SPECS::impl_max_value;
+      else if (new_value < SAMPLE_SPECS::impl_min_value) new_value = SAMPLE_SPECS::impl_min_value;
       temp[i.channel()] = new_value;
     }
     lastin[i.channel()] = *i.current();
@@ -245,7 +245,7 @@ EFFECT_NOISEGATE::EFFECT_NOISEGATE (parameter_type thlevel_percent, parameter_ty
 void EFFECT_NOISEGATE::set_parameter(int param, parameter_type value) {
   switch (param) {
   case 1: 
-    th_level = SAMPLE_BUFFER::max_amplitude * (value / 100.0);
+    th_level = SAMPLE_SPECS::max_amplitude * (value / 100.0);
     break;
   case 2: 
     th_time = (value * (parameter_type)SAMPLE_BUFFER::sample_rate / 1000.0);
@@ -265,7 +265,7 @@ void EFFECT_NOISEGATE::set_parameter(int param, parameter_type value) {
 DYNAMIC_PARAMETERS::parameter_type EFFECT_NOISEGATE::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(th_level * 100.0 / (parameter_type)SAMPLE_BUFFER::max_amplitude);
+    return(th_level * 100.0 / (parameter_type)SAMPLE_SPECS::max_amplitude);
   case 2: 
     return(th_time * 1000.0 / (parameter_type)SAMPLE_BUFFER::sample_rate);
   case 3: 

@@ -109,7 +109,7 @@ class EFFECT_COMPRESS : public EFFECT_AMPLITUDE {
   parameter_type delta, new_value;
   bool first_time;
 
-  vector<SAMPLE_BUFFER::sample_type> s, temp, lastin, lastout;
+  vector<SAMPLE_SPECS::sample_type> s, temp, lastin, lastout;
 
  public:
 

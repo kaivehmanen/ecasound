@@ -24,7 +24,7 @@ class EFFECT_DCFIX : public EFFECT_BASE {
 
 private:
 
-  SAMPLE_BUFFER::sample_type deltafix[2];
+  SAMPLE_SPECS::sample_type deltafix[2];
   SAMPLE_ITERATOR_CHANNEL i;
 
 public:

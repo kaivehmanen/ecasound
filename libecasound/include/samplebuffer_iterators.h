@@ -11,7 +11,7 @@ class SAMPLE_ITERATOR {
  private:
 
   SAMPLE_BUFFER* target;
-  vector<SAMPLE_BUFFER::sample_type>::size_type index;     // index of the current sample
+  vector<SAMPLE_SPECS::sample_type>::size_type index;     // index of the current sample
   int channel_index;                        // index of current channel
 
  public:
@@ -39,7 +39,7 @@ class SAMPLE_ITERATOR {
   /**
    * Returns a pointer to the current sample.
    */
-  inline SAMPLE_BUFFER::sample_type* current(void) { return(&(target->buffer[channel_index][index])); }
+  inline SAMPLE_SPECS::sample_type* current(void) { return(&(target->buffer[channel_index][index])); }
 };
 
 /**
@@ -53,7 +53,7 @@ class SAMPLE_ITERATOR_CHANNEL {
  private:
 
   SAMPLE_BUFFER* target;
-  vector<SAMPLE_BUFFER::sample_type>::size_type index;     // index of the current sample
+  vector<SAMPLE_SPECS::sample_type>::size_type index;     // index of the current sample
   int channel_index;                        // index of current channel
 
  public:
@@ -84,7 +84,7 @@ class SAMPLE_ITERATOR_CHANNEL {
   /**
    * Returns a pointer to the current sample.
    */
-  inline SAMPLE_BUFFER::sample_type* current(void) { return(&target->buffer[channel_index][index]); }
+  inline SAMPLE_SPECS::sample_type* current(void) { return(&target->buffer[channel_index][index]); }
 };
 
 /**
@@ -95,7 +95,7 @@ class SAMPLE_ITERATOR_CHANNELS {
  private:
 
   SAMPLE_BUFFER* target;
-  vector<SAMPLE_BUFFER::sample_type>::size_type index;     // index of the current sample
+  vector<SAMPLE_SPECS::sample_type>::size_type index;     // index of the current sample
   int channel_index;                        // index of current channel
 
  public:
@@ -123,7 +123,7 @@ class SAMPLE_ITERATOR_CHANNELS {
   /**
    * Returns a pointer to the current sample.
    */
-  inline SAMPLE_BUFFER::sample_type* current(void) { return(&(target->buffer[channel_index][index])); }
+  inline SAMPLE_SPECS::sample_type* current(void) { return(&(target->buffer[channel_index][index])); }
 
   /**
    * Returns current channel index (starting from 0)
@@ -139,7 +139,7 @@ class SAMPLE_ITERATOR_INTERLEAVED {
  private:
 
   SAMPLE_BUFFER* target;
-  vector<SAMPLE_BUFFER::sample_type>::size_type index;     // index of the current sample
+  vector<SAMPLE_SPECS::sample_type>::size_type index;     // index of the current sample
 
  public:
 
@@ -166,7 +166,7 @@ class SAMPLE_ITERATOR_INTERLEAVED {
   /**
    * Returns a pointer to the current sample.
    */
-  inline SAMPLE_BUFFER::sample_type* current(int channel) { return(&target->buffer[channel][index]); }
+  inline SAMPLE_SPECS::sample_type* current(int channel) { return(&target->buffer[channel][index]); }
 };
 
 #endif

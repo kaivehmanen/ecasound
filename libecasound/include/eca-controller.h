@@ -14,7 +14,12 @@ class ECA_CONTROLLER : public ECA_CONTROLLER_OBJECTS,
 		       public ECA_IAMODE_PARSER {
 
  public:
-  
+
+  /**
+   * Parse string mode command and act accordingly.
+   */
+  void command(const string& cmd) throw(ECA_ERROR*);
+ 
   /** 
    * See ECA_IAMODE_PARSER
    */

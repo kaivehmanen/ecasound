@@ -114,6 +114,14 @@ class ECA_CONTROLLER_BASE : public DEFINITION_BY_CONTRACT {
    */
   vector<string> connected_chains(const string& name) const;
 
+  // -------------------------------------------------------------------
+  // Session info / position and length of connected chainsetup
+  // -------------------------------------------------------------------
+
+  long length_in_samples(void) const;
+  double length_in_seconds_exact(void) const;
+  long position_in_samples(void) const;
+  double position_in_seconds_exact(void) const;
 
   // -------------------------------------------------------------------
   // Session info / global resources (~/.ecasoundrc)
@@ -123,15 +131,6 @@ class ECA_CONTROLLER_BASE : public DEFINITION_BY_CONTRACT {
    * Get resource values from ~/.ecasoundrc
    */
   const string& resource_value(const string& key) { return session_rep->ecaresources.resource(key); }
-
-  // -------------------------------------------------------------------
-  // Session info / master input
-  // -------------------------------------------------------------------
-
-  long length_in_samples(void) const { return session_rep->length_in_samples(); }
-  double length_in_seconds_exact(void) const { return session_rep->length_in_seconds_exact(); }
-  long position_in_samples(void) const { return session_rep->position_in_samples(); }
-  double position_in_seconds_exact(void) const { return session_rep->position_in_seconds_exact(); }
 
   // -------------------------------------------------------------------
   // Modify session

@@ -18,7 +18,7 @@ class DYNAMIC_PARAMETERS {
 
  public:
 
-  typedef SAMPLE_BUFFER::sample_type parameter_type;
+  typedef SAMPLE_SPECS::sample_type parameter_type;
 
  private:
 
