@@ -12,24 +12,37 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (05122000)
+       (10122000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
 sect(Introduction)
-Idea behind Ecasound Control Interface (ECI) is to take a subset of 
+Idea behind the Ecasound Control Interface (ECI) is to take a subset of 
 functionality provided by libecasound, write a simple API for it, and
 port it to various languages. At the moment, at least C++, C and
 Python implementations of the ECI API are available and part of the
 main ecasound distribution. ECI is heavily based on ecasound's
-interactive mode (EIAM), and the services it provides. 
+interactive mode (EIAM), and the services it provides. See 
+url(ecasound-iam(1) manual page)(../ecasound-iam_manpage.html) for 
+detailed EIAM documentation.
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
 sect(General)
+ECI doesn't provide any routines that directly manipulate audio or 
+ecasound objects. What is does provide is an easy and generic way
+to issue EIAM (ecasound interactive mode) commands, access to the
+command return-values and error handling.
 
-COMMENT(----------------------------------------------------------------)
-subsect(Concepts)
+This approach has two benefits. First, it's possible to keep the API 
+small, and thus make it easier to port ECI to new languages. Secondly,
+it's possible to keep ECI relatively stable. Ecasound itself is a large,
+developing library. New features are added all the time, and from time
+to time, older parts of the library will get rewritten to better suit
+new uses. Now for application developers wanting to take advantage of
+libecasound, these constant changes are very annoying, especially if
+your specific app doesn't need the latest new features. In these
+cases, ECI is the best choice.
 
 COMMENT(----------------------------------------------------------------)
 subsect(What's it good for?)
@@ -45,29 +58,269 @@ endit()
 COMMENT(----------------------------------------------------------------)
 subsect(Services and behaviour)
 
+Here's a list of services provided by all ECI implementations:
+
+subsubsect(Actions)
+startdit()
+dit(command(string)) 
+Issue an EIAM command.
+
+dit(command_float_arg(string, float))
+Issue an EIAM command. This function can be used instead of
+em(command(string)), if the command in question requires exactly one 
+numerical parameter. This way it's possible to avoid the extra 
+string -> float conversion, which would lead to lost precision.
+enddit()
+
+subsubsect(Return values)
+Each EIAM command has exactly one return value type. After a command
+has been issued, only one last_type() functions returns a non-empty 
+value. Not all EIAM commands return a value (return type is void).
+
+startdit()
+dit(last_string())
+Returns the last string return value.
+
+dit(last_string_list())
+Returns the last collection of strings (one or more strings).
+
+dit(last_float())
+Returns the last floating-point return value. Note! last_float()
+doesn't refer to the C/C++ type 'float'. In most implementations, 
+floats are 64bit values (doubles in C/C++).
+
+dit(last_integer())
+Returns the last integer return value. This function is also 
+used to return boolean values, where non-zero means 'true' 
+and zero 'false'.
+
+dit(last_long_integer())
+Returns the last long integer return value. Long integers are 
+used to pass values like 'length_in_samples' and 'length_in_bytes'.
+It's implementation specific whether there's any real difference
+between integers and long integers.
+enddit()
+
+subsubsect(Errors)
+startdit()
+dit(last_error())
+Returns a string describing the last error. If the last EIAM command
+was executed succesfully, last_error() returns an empty string.
+
+enddit()
+
+subsubsect(Other)
+startdit()
+dit(initialize())
+Reserve resources.
+
+dit(cleanup())
+Free all reserved resources.
+enddit()
+
+
 COMMENT(----------------------------------------------------------------)
 subsect(Porting to new environments)
+Porting ECI to new languages should be easy. All there is to do is 
+to implement the services listed in the previous section to the target
+language. In most cases it's to easist to use the C++ or C ECI 
+as the underlying implementation.
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
 sect(Implementations)
 
 COMMENT(----------------------------------------------------------------)
+subsect(General)
+subsubsect(Overview)
+This section contains overview of how ECI is implemented in the 
+discussed language (eg. as a single class, set of classes, set of
+routines, etc).
+
+subsubsect(Usage)
+A quick tutorial to get you started.
+
+subsubsect(Example)
+Implementation of the following:
+starteit()
+eit() Setup ECI to read audio from file, apply a 100Hz lowpass filter, and 
+      send it to the soundcard (/dev/dsp).
+eit() Every second, check the current position. If the stream has
+      been running for over 15 seconds, exit immediately. Also,
+      every second, increase the lowpass filter's cutoff frequency
+      by 500Hz.
+eit() Stop the stream (if not already finished) and disconnect the 
+      chainsetup. Print chain operator status info.
+endit()
+
+COMMENT(----------------------------------------------------------------)
 subsect(C++)
 subsubsect(Overview)
+C++ implementation is based around the ECA_CONTROL_INTERFACE class.
+STL vector is used for representing collections of objects
+(last_string_list()).
+
 subsubsect(Usage)
+starteit() 
+eit() #include <ecasound/eca-control-interface.h>
+eit() create an instance of the ECA_CONTROL_INTERFACE class
+        and use its member functions
+eit() link you app agains libecasound (-lecasound)
+endeit()
+
 subsubsect(Example)
+verb(
+#include <iostream>
+#include <unistd.h>
+#include <ecasound/eca-control-interface.h>
+
+int main(int argc, char *argv[])
+{
+  double cutoff_inc = 500.0;
+
+  ECA_CONTROL_INTERFACE e;
+  e.command("cs-add play_chainsetup");
+  e.command("c-add 1st_chain");
+  e.command("-i:some_file.wav");
+  e.command("-o:/dev/dsp");
+  e.command("cop-add -efl:100");
+  e.command("cop-select 1");
+  e.command("copp-select 1");
+  e.command("cs-connect");
+  e.command("start");
+  while(1) {
+    sleep(1);
+    e.command("engine-status");
+    if (e.last_string() != "running") break;
+    e.command("get-position");
+    double curpos = e.last_float();
+    if (curpos > 15.0) break;
+    e.command("copp-get");
+    double next_cutoff = cutoff_inc + e.last_float();
+    e.command_float_arg("copp-set", next_cutoff);
+  }
+  
+  e.command("stop");
+  e.command("cs-disconnect");
+  e.command("cop-status");
+  cerr << "Chain operator status: " << e.last_string() << endl;
+
+  return(0);
+}
+)
 
 COMMENT(----------------------------------------------------------------)
 subsect(C)
 subsubsect(Overview)
+All C ECI functions are prefixed with "eci_". When returning string
+values, a const pointer to a null-terminated char array (const char*)
+is returned. It's important to keep in mind that these are "borrowed"
+references. If you need to later use the data, you must copy
+it to application's own buffers.
+
+Returning a list of strings is implemented using two functions: 
+em(eci_last_string_list_count()) returns the number of strings
+available, and em(eci_last_string_list_item(int n)) returns a 
+pointer (const char*) to the string at index em(n).
+
 subsubsect(Usage)
+
+starteit()
+eit() #include <ecasound/ecasoundc.h>
+eit() use the eci_* routines
+eit() link your app against libecasoundc (-lecasoundc)
+endeit()
+
 subsubsect(Example)
+verb(
+#include <stdio.h>
+#include <unistd.h>
+#include <ecasound/ecasoundc.h>
+
+int main(int argc, char *argv[])
+{
+  double cutoff_inc = 500.0;
+
+  eci_init();
+  eci_command("cs-add play_chainsetup");
+  eci_command("c-add 1st_chain");
+  eci_command("-i:some_file.wav");
+  eci_command("-o:/dev/dsp");
+  eci_command("cop-add -efl:100");
+  eci_command("cop-select 1");
+  eci_command("copp-select 1");
+  eci_command("cs-connect");
+  eci_command("start");
+
+  while(1) {
+    double curpos, next_cutoff;
+
+    sleep(1);
+    eci_command("engine-status");
+    if (strcmp(eci_last_string(), "running") != 0) break;
+    eci_command("get-position");
+    curpos = eci_last_float();
+    if (curpos > 15.0) break;
+    eci_command("copp-get");
+    next_cutoff = cutoff_inc + eci_last_float();
+    eci_command_float_arg("copp-set", next_cutoff);
+  }
+  
+  eci_command("stop");
+  eci_command("cs-disconnect");
+  eci_command("cop-status");
+  printf("Chain operator status: %s", eci_last_string());
+  eci_cleanup();
+
+  return(0);
+}
+)
 
 COMMENT(----------------------------------------------------------------)
 subsect(Python)
 subsubsect(Overview)
+Python implementation is based around the ECA_CONTROL_INTERFACE class.
+Lists are used for representing collections of objects.
+
 subsubsect(Usage)
+
+starteit()
+eit() import pyeca
+eit() create an instance of the ECA_CONTROL_INTERFACE class
+      and use its member functions
+eit() python 'yourapp.py' and that's it :) 
+endeit()
+
 subsubsect(Example)
+verb(
+#!/usr/local/bin/python
+import time
+from pyeca import *
+e = ECA_CONTROL_INTERFACE()
+e.command("cs-add play_chainsetup")
+e.command("c-add 1st_chain")
+e.command("-i:some_file.wav")
+e.command("-o:/dev/dsp")
+e.command("cop-add -efl:100")
+e.command("cop-select 1")
+e.command("copp-select 1")
+e.command("cs-connect")
+e.command("start")
+cutoff_inc = 500.0
+while 1:
+    time.sleep(1)
+    e.command("engine-status")
+    if e.last_string() != "running": break
+    e.command("get-position")
+    curpos = e.last_float()
+    if curpos > 15: break
+    e.command("copp-get")
+    next_cutoff = cutoff_inc + e.last_float()
+    e.command_float_arg("copp-set", next_cutoff)
+e.command("stop")
+e.command("cs-disconnect")
+e.command("cop-status")
+print "Chain operator status: ", e.last_string()
+)
 
 htmlcommand(<insert name=ecasound_tail>)
