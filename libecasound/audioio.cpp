@@ -312,6 +312,11 @@ void AUDIO_IO::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 {
   ECA_AUDIO_FORMAT::set_samples_per_second(v);
   ECA_AUDIO_POSITION::set_samples_per_second(v);
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
+		"(audioio) set srate, aobj '" +
+		name() + ":" + label() +
+		"' to " + 
+		kvu_numtostr(v) + ".");
 }
 
 void AUDIO_IO::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
