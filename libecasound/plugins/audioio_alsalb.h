@@ -17,6 +17,7 @@
 #endif
 
 #include "samplebuffer.h"
+#include "eca-version.h"
 
 /**
  * Class for handling ALSA loopback-devices (Advanced Linux Sound Architecture).
