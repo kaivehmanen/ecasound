@@ -64,7 +64,7 @@ std::string kvu_numtostr (unsigned long int n) {
   return(std::string(ctmp));
 }
 
-#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GNUG__
+#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined _LARGEFILE_SOURCE
 std::string kvu_numtostr (long long int n) {
   char ctmp[24];
   snprintf(ctmp, 24, "%lli", n);

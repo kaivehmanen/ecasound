@@ -34,7 +34,7 @@ public:
     MESSAGE_ITEM& operator<< (long int n);
     MESSAGE_ITEM& operator<< (unsigned long n);
 
-#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GNUG__
+#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined _LARGEFILE_SOURCE
     MESSAGE_ITEM& operator<< (long long int n);
     MESSAGE_ITEM& operator<< (unsigned long long int n);
 #endif
