@@ -70,6 +70,10 @@ int main(int argc, char *argv[])
       ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
       ectrl.add_default_output();
       ectrl.connect_chainsetup();
+      if (ectrl.is_connected() == false) {
+	cerr << "---\nError while playing file " << filename << ". Exiting...\n";
+	break;
+      }
       
       emain.init(&esession);
       emain.exec();

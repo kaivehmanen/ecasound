@@ -661,21 +661,21 @@ void ECA_CONTROLLER::start(bool ignore_lock) {
   }  
 
   ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
-  //  long int usleep_count = 5000;
-  struct timespec sleepcount;
-  sleepcount.tv_sec = 1;
-  sleepcount.tv_nsec = 0;
-  int count = 0;
-  while(session_rep->status() != ep_status_running) {
-    //    usleep(++usleep_count);
-    ++count;
-    //    sched_yield();
-    nanosleep(&sleepcount, NULL);
-    if (session_rep->status() == ep_status_finished) break;
-    if (count > 5000) {
-      throw(new ECA_ERROR("ECA_CONTROLLER", "start() failed, engine is not responding...", ECA_ERROR::stop));
-    }
-  }
+
+//    struct timespec sleepcount;
+//    sleepcount.tv_sec = 1;
+//    sleepcount.tv_nsec = 0;
+//    int count = 0;
+//    while(session_rep->status() != ep_status_running) {
+//      //    usleep(++usleep_count);
+//      ++count;
+//      //    sched_yield();
+//      nanosleep(&sleepcount, NULL);
+//      if (session_rep->status() == ep_status_finished) break;
+//      if (count > 5000) {
+//        throw(new ECA_ERROR("ECA_CONTROLLER", "start() failed, engine is not responding...", ECA_ERROR::stop));
+//      }
+//    }
 
   // --------
   // ensure:
@@ -692,24 +692,25 @@ void ECA_CONTROLLER::stop(void) {
   if (session_rep->status() != ep_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped");
   ecasound_queue.push_back(ECA_PROCESSOR::ep_stop, 0.0);
-  //  int usleep_count = 1000;
-  int count = 0;
-  struct timespec sleepcount;
-  sleepcount.tv_sec = 1;
-  sleepcount.tv_nsec = 0;
-  while(session_rep->status() == ep_status_running) {
-    //    usleep(++usleep_count); 
-    ++count;
-    //    sched_yield();
-    nanosleep(&sleepcount, NULL);
-    if (count > 5000) {
-      throw(new ECA_ERROR("ECA_CONTROLLER", "stop() failed, engine is not responding...", ECA_ERROR::stop));
-    }
-  }
+
+//    int count = 0;
+//    struct timespec sleepcount;
+//    sleepcount.tv_sec = 1;
+//    sleepcount.tv_nsec = 0;
+//    while(session_rep->status() == ep_status_running) {
+//      //    usleep(++usleep_count); 
+//      ++count;
+//      //    sched_yield();
+//      nanosleep(&sleepcount, NULL);
+//      if (count > 5000) {
+//        throw(new ECA_ERROR("ECA_CONTROLLER", "stop() failed, engine is not responding...", ECA_ERROR::stop));
+//      }
+//    }
 
   // --------
   // ensure:
-  assert(is_running() == false);
+  // assert(is_running() == false); 
+  // -- there's a small timeout so assertion cannot be checked
   // --------
 }
 

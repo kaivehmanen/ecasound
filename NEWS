@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)    (last edited: 03012000) **
+** ecasound - user visible changes (NEWS)    (last edited: 07012000) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,6 +14,14 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.9r9 <*-
 
+??012000 (v1.6.11d10)
+	- added: -ef4 - 2th-order, 24dB filter which simulates
+	         an analog active RC-lowpass filter - submitted by 
+		 Stefan Fendt
+	- fixed: removed the huge delay in (dis)connecting 
+		 chainsetups
+	- fixed: 'fw', 'rw', 'setpos' crashed if executed without
+		 parameters 
 03012000 (v1.6.10d10)
 	- added: a realtime null audio device 'rtnull' - simulates
 		 soundcard behaviour (warns about over/underruns)

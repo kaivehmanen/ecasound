@@ -180,6 +180,9 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_cop_set:
   case ec_cop_add_controller:
   case ec_cop_remove_controller:
+  case ec_rewind:
+  case ec_forward:
+  case ec_setpos:
 
     return(true);
     

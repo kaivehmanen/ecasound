@@ -7,9 +7,9 @@ af_libs = -laudiofile
 endif
 
 if INCLUDE_DEBUG
-eca_ldflags = -version-info 3:0:0 -lkvutils
+eca_ldflags = -version-info 4:0:0 -lkvutils
 else
-eca_ldflags = -s -version-info 3:0:0 -lkvutils
+eca_ldflags = -s -version-info 4:0:0 -lkvutils
 endif
 
 if INCLUDE_DEBUG
@@ -40,6 +40,7 @@ ecasound_audiofx_src =  audiofx.cpp \
 			audiofx_compressor.cpp \
 			audiofx_analysis.cpp \
 			audiofx_filter.cpp \
+			audiofx_rcfilter.cpp \
 			audiofx_timebased.cpp \
 			audiogate.cpp \
 			audiofx_mixing.cpp

@@ -25,6 +25,7 @@
 #include "audiofx_amplitude.h"
 #include "audiofx_analysis.h"
 #include "audiofx_filter.h"
+#include "audiofx_rcfilter.h"
 #include "audiofx_mixing.h"
 #include "audiofx_timebased.h"
 #include "audiogate.h"
@@ -53,6 +54,7 @@ void ECA_CHAIN_OPERATOR_MAP::register_default_objects(void) {
   register_object("ec", new EFFECT_COMPRESS());
   register_object("ef1", new EFFECT_RESONANT_BANDPASS());
   register_object("ef3", new EFFECT_RESONANT_LOWPASS());
+  register_object("ef4", new EFFECT_RC_LOWPASS_FILTER());
   register_object("efb", new EFFECT_BANDPASS());
   register_object("efh", new EFFECT_HIGHPASS());
   register_object("efi", new EFFECT_INVERSE_COMB_FILTER());

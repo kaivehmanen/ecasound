@@ -85,8 +85,8 @@ qt_libraries = @qt_libraries@
 @COMPILE_ALSA_TRUE@alsa_libs = -lasound
 
 @COMPILE_AF_TRUE@af_libs = -laudiofile
-@INCLUDE_DEBUG_TRUE@eca_ldflags = -version-info 3:0:0 -lkvutils
-@INCLUDE_DEBUG_FALSE@eca_ldflags = -s -version-info 3:0:0 -lkvutils
+@INCLUDE_DEBUG_TRUE@eca_ldflags = -version-info 4:0:0 -lkvutils
+@INCLUDE_DEBUG_FALSE@eca_ldflags = -s -version-info 4:0:0 -lkvutils
 @INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
 @INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
 
@@ -94,7 +94,7 @@ INCLUDES = -I. -I$(top_srcdir) -I$(top_srcdir)/kvutils -I../include
 @INCLUDE_DEBUG_TRUE@lib_LTLIBRARIES = libecasound_debug.la
 @INCLUDE_DEBUG_FALSE@lib_LTLIBRARIES = libecasound.la
 
-ecasound_audiofx_src = audiofx.cpp 			audiofx_amplitude.cpp 			audiofx_compressor.cpp 			audiofx_analysis.cpp 			audiofx_filter.cpp 			audiofx_timebased.cpp 			audiogate.cpp 			audiofx_mixing.cpp
+ecasound_audiofx_src = audiofx.cpp 			audiofx_amplitude.cpp 			audiofx_compressor.cpp 			audiofx_analysis.cpp 			audiofx_filter.cpp 			audiofx_rcfilter.cpp 			audiofx_timebased.cpp 			audiogate.cpp 			audiofx_mixing.cpp
 
 
 ecasound_audioio_oss_src = audioio-oss.cpp
@@ -136,13 +136,13 @@ LIBS = @LIBS@
 @COMPILE_AF_TRUE@libecasound_debug_la_DEPENDENCIES = 
 libecasound_debug_la_OBJECTS =  audiofx.lo audiofx_amplitude.lo \
 audiofx_compressor.lo audiofx_analysis.lo audiofx_filter.lo \
-audiofx_timebased.lo audiogate.lo audiofx_mixing.lo audioio-cdr.lo \
-audioio-ewf.lo audioio-mp3.lo audioio-wave.lo audioio.lo audioio-af.lo \
-audioio-raw.lo audioio-mikmod.lo audioio-rtnull.lo audioio-types.lo \
-audioio-oss.lo audioio-alsa.lo audioio-alsalb.lo generic-controller.lo \
-midi-cc.lo osc-gen.lo osc-sine.lo linear-envelope.lo eca-chain.lo \
-eca-main.lo eca-midi.lo eca-session.lo eca-resources.lo \
-resource-file.lo eca-comhelp.lo eca-debug.lo layer.lo \
+audiofx_rcfilter.lo audiofx_timebased.lo audiogate.lo audiofx_mixing.lo \
+audioio-cdr.lo audioio-ewf.lo audioio-mp3.lo audioio-wave.lo audioio.lo \
+audioio-af.lo audioio-raw.lo audioio-mikmod.lo audioio-rtnull.lo \
+audioio-types.lo audioio-oss.lo audioio-alsa.lo audioio-alsalb.lo \
+generic-controller.lo midi-cc.lo osc-gen.lo osc-sine.lo \
+linear-envelope.lo eca-chain.lo eca-main.lo eca-midi.lo eca-session.lo \
+eca-resources.lo resource-file.lo eca-comhelp.lo eca-debug.lo layer.lo \
 samplebuffer_iterators.lo samplebuffer.lo eca-version.lo \
 eca-chainsetup.lo eca-controller.lo eca-iamode-parser.lo \
 eca-control-position.lo eca-audio-position.lo eca-audio-objects.lo \
@@ -153,13 +153,13 @@ eca-chainop-map.lo eca-controller-map.lo
 @COMPILE_AF_TRUE@libecasound_la_DEPENDENCIES = 
 libecasound_la_OBJECTS =  audiofx.lo audiofx_amplitude.lo \
 audiofx_compressor.lo audiofx_analysis.lo audiofx_filter.lo \
-audiofx_timebased.lo audiogate.lo audiofx_mixing.lo audioio-cdr.lo \
-audioio-ewf.lo audioio-mp3.lo audioio-wave.lo audioio.lo audioio-af.lo \
-audioio-raw.lo audioio-mikmod.lo audioio-rtnull.lo audioio-types.lo \
-audioio-oss.lo audioio-alsa.lo audioio-alsalb.lo generic-controller.lo \
-midi-cc.lo osc-gen.lo osc-sine.lo linear-envelope.lo eca-chain.lo \
-eca-main.lo eca-midi.lo eca-session.lo eca-resources.lo \
-resource-file.lo eca-comhelp.lo eca-debug.lo layer.lo \
+audiofx_rcfilter.lo audiofx_timebased.lo audiogate.lo audiofx_mixing.lo \
+audioio-cdr.lo audioio-ewf.lo audioio-mp3.lo audioio-wave.lo audioio.lo \
+audioio-af.lo audioio-raw.lo audioio-mikmod.lo audioio-rtnull.lo \
+audioio-types.lo audioio-oss.lo audioio-alsa.lo audioio-alsalb.lo \
+generic-controller.lo midi-cc.lo osc-gen.lo osc-sine.lo \
+linear-envelope.lo eca-chain.lo eca-main.lo eca-midi.lo eca-session.lo \
+eca-resources.lo resource-file.lo eca-comhelp.lo eca-debug.lo layer.lo \
 samplebuffer_iterators.lo samplebuffer.lo eca-version.lo \
 eca-chainsetup.lo eca-controller.lo eca-iamode-parser.lo \
 eca-control-position.lo eca-audio-position.lo eca-audio-objects.lo \
@@ -366,6 +366,16 @@ audiofx.lo audiofx.o : audiofx.cpp ../../kvutils/kvutils.h \
 	../include/audiofx.h ../include/eca-chainop.h \
 	../include/dynamic-object.h ../include/dynamic-parameters.h \
 	../include/eca-debug.h ../include/eca-error.h
+audiofx_rcfilter.lo audiofx_rcfilter.o : audiofx_rcfilter.cpp \
+	../../kvutils/kvutils.h ../../kvutils/message_item.h \
+	../../kvutils/com_line.h ../../kvutils/command_queue.h \
+	../../kvutils/value_queue.h ../../kvutils/kvu_numtostr.h \
+	../include/samplebuffer_iterators.h ../include/samplebuffer.h \
+	../../config.h ../include/eca-audio-format.h \
+	../include/eca-debug.h ../include/audiofx_rcfilter.h \
+	../include/audiofx_filter.h ../include/audiofx.h \
+	../include/eca-chainop.h ../include/dynamic-object.h \
+	../include/dynamic-parameters.h
 audiofx_timebased.lo audiofx_timebased.o : audiofx_timebased.cpp \
 	../../kvutils/kvutils.h ../../kvutils/message_item.h \
 	../../kvutils/com_line.h ../../kvutils/command_queue.h \
@@ -532,8 +542,9 @@ eca-chainop-map.lo eca-chainop-map.o : eca-chainop-map.cpp \
 	../include/audiofx.h ../include/samplebuffer_iterators.h \
 	../include/audiofx_amplitude.h ../include/audiofx_compressor.h \
 	../include/audiofx_analysis.h ../include/audiofx_filter.h \
-	../include/audiofx_mixing.h ../include/audiofx_timebased.h \
-	../include/audiogate.h ../include/eca-chainop-map.h
+	../include/audiofx_rcfilter.h ../include/audiofx_mixing.h \
+	../include/audiofx_timebased.h ../include/audiogate.h \
+	../include/eca-chainop-map.h
 eca-chain.lo eca-chain.o : eca-chain.cpp ../../kvutils/kvutils.h \
 	../../kvutils/message_item.h ../../kvutils/com_line.h \
 	../../kvutils/command_queue.h ../../kvutils/value_queue.h \

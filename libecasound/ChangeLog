@@ -2,14 +2,18 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-01-07
+
+	* audiofx_rcfilter.h, audiofx_rcfilter.src: added
+	
 1999-12-21
 
 	* audioio-ewf.h: EWFFILE now directly inherits AUDIO_IO
 	
 1999-12-16
 	
-	* library version changed to 4:0:0 
 	* audiofx_amplitude.cpp: NOISEGATE_MONO -> NOISEGATE
+	* library version changed to 4:0:0
 	
 1999-12-15  Kai Vehmanen  <kaiv@wakkanet.fi>
 

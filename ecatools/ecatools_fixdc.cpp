@@ -112,6 +112,10 @@ int main(int argc, char *argv[])
 	  ectrl.add_chain_operator((CHAIN_OPERATOR*)dcfix);
 	}
 	ectrl.connect_chainsetup();
+	if (ectrl.is_connected() == false) {
+	  cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+	  break;
+	}
   
 	emain.init(&esession);
 	emain.exec();
