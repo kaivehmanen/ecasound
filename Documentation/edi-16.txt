@@ -1,0 +1,44 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-16): More flexible system for assigning controllers of 
+          controllers (-kx).
+        - submitted: jhalttun, 02.09.2001
+
+------------------------------------------------------------------------
+Details:
+
+- see Janne's post below
+
+------------------------------------------------------------------------
+[jhalttune on ecasound-list 11.10.2002]
+
+Hi all,
+
+I am developing a higher level python interface to ecasound.  I have collided
+with the inability to set controllers to an effect after the -kx switch,
+once more.
+
+Consider the following test-code:
+eca=Session()
+ei=eca('ei', 56)  # pitch shifter                                                                                                                                                        
+kl=ei('kl2',0,23, range_high=32) # 2-stage linear envelope
+kl('kl2', 0, range_low=32)
+ei('kl2',1,3, range_high=2) # <-- this can't be done!
+###
+
+I think that imposing on a possible programmer that you can't add 
+controllers to an effect after adding a controller-chain to it is restraining, 
+not to mention hard to implement sanely.
+
+I think that imposing on a possible programmer that you can't add 
+controllers to an effect after adding a controller-chain to it is restraining, 
+not to mention hard to implement sanely.  Ofcourse I could forbid controllers 
+on controllers altogether, but I think this would nullify the advances of 
+having this kind of programming environment somewhat.
+
+So, what if we could have a new special switch, say, -ky?  This would end 
+the controller on controller chain and return focus to previous controller 
+or effect.  What do you think?
+
+------------------------------------------------------------------------
