@@ -22,6 +22,8 @@
 
 #include "kvu_threads.h"
 
+using std::string;
+
 /**
  * A variant of the standard pthread_mutex_lock. This routine is
  * originally from Quasimodo CVS-tree, from the libpbd library, Written 

@@ -39,10 +39,10 @@ ecasoundc_src = ecasoundc.cpp
 # ----------------------------------------------------------------------
 
 libecasoundc2_la_SOURCES = $(ecasoundc_src)
-libecasoundc2_la_LIBADD = -lstdc++
+libecasoundc2_la_LIBADD = 
 libecasoundc2_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasoundc2_debug_la_SOURCES = $(libecasoundc2_la_SOURCES)
-libecasoundc2_debug_la_LIBADD = -lstdc++
+libecasoundc2_debug_la_LIBADD = 
 libecasoundc2_debug_la_LDFLAGS = $(libecasoundc2_la_LDFLAGS)
 
 # ---------------------------------------------------------------------

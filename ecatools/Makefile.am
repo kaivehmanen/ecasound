@@ -1,8 +1,10 @@
 if ECA_AM_DEBUG_MODE
-libecasound_path = $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@_debug.la $(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@_debug.la
+libecasound_path = $(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@_debug.la \
+	 	   $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@_debug.la
 libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc@LIBECASOUNDC_VERSION@_debug.la
 else
-libecasound_path = $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@.la $(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@.la
+libecasound_path = $(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@.la \
+		   $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@.la
 libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc@LIBECASOUNDC_VERSION@.la
 endif
 
