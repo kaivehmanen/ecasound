@@ -27,6 +27,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+13.05.2004 - edi-40 added, edi-14 closed
 28.11.2003 - edi-33 closed
 20.08.2003 - edi-4, edi-19 and edi-35 frozen, edi-38 added and frozen
 	     immediately, edi-39 added
@@ -68,9 +69,6 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	- submitted: nolan_d, 09.07.2001
 (edi-9): Adding and removing audio and chainop objects on-the-fly. 
 	- submitted: jhalttun, xx.06.2001
-(edi-14): Making ALSA the default output device with a compile 
-	  time options. 
-	- submitted: Patrick Shirkey, 18.8.2001
 (edi-16): More flexible system for assigning controllers of 
           controllers (-kx).
 	- submitted: jhalttun, 02.09.2001
@@ -92,12 +90,15 @@ Note! See README for a list of defined developer tags (kaiv -> me).
          - submitted: jhall, 17.03.2003
 (edi-39): Timestamped EIAM commands.
          - submitted: kaiv, 20.08.2003
+(edi-40): Update to error and warning reporting mechanisms.
+         - submitted: kaiv, 13.05.2004
 
 -----------------------------------------------------------------------
 [ Section: Frozen ]
 
 (edi-4): 14bit MIDI-CCs controller source.
 	- submitted: kaiv, 17.08.2001
+	- frozen: kaiv, 20.08.2003
 (edi-19): Separate file format for multitrack setups (.emt).
 	- submitted: kaiv, 18.10.2001
 	- frozen: kaiv, 20.08.2003	
@@ -143,6 +144,10 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	 causes ecawave crashes.
 	- submitted: kaiv, 17.08.2001
 	- fixed: kaiv, 24.02.2002
+(edi-14): Making ALSA the default output device with a compile 
+	  time options. 
+	- submitted: Patrick Shirkey, 18.8.2001
+	- not implemented: kaiv, 12.05.2004 (workaround in 2.3.3)
 (edi-15): More intelligent system for selecting buffering modes 
           and sizes for optimal out-of-the-box performance.
 	- submitted: kaiv, 09.08.2001

@@ -1,0 +1,25 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-40): Update to error and warning reporting mechanisms.
+         - submitted: kaiv, 13.05.2004
+
+------------------------------------------------------------------------
+Details:
+
+- rationale; why should this item be implemented?
+    - in many cases, ecasound does not give a user-understandable
+      explanation on why the operation failed
+    - distinction between errors and warnings is not clear in many
+      places
+
+- list of goals/requirements that should be reached
+    - better error reporting for key places:
+        - ...when adding of user-visible objects
+	- ...when connecting a chainsetup
+	- ...when issuing EIAM commands
+
+- todo-list
+    - ...
+
+------------------------------------------------------------------------
