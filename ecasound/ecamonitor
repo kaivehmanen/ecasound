@@ -29,6 +29,7 @@ import time
 #  - implement signal-level monitoring
 #  - implement MIDI-activity monitoring
 #  - add a ecamonitor.1 man page
+#  - add possibility to specify a port number
 
 def connect_to_server():
     print "ecamonitor: Connecting to remote host."
