@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 250902) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 290902) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -18,9 +18,16 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.4 *-
 
 ??102002 (v2.1dev12)
-	- edi-entries: edi-24
+	- edi-entries: edi-24, edi-29
 	- added: edi-24; resample audio object added
-	- fixed: warnings when closing OSS audio objects
+	- added: edi-29; initial version of ecamonitor
+	- fixed: unnecessary warnings when closing OSS 
+	         audio objects
+	- fixed: unnecessary warnings when adding audio 
+		 objects to a chainsetup with no chains
+	         currently selected
+	- fixed: resample, reverse and typeselect audio objects
+		 types were broken in 2.1dev11
 22082002 (v2.1dev11)
 	- added: configure-check for socket libraries
 	- added: -evp - volume peak watcher operator

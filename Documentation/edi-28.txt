@@ -18,6 +18,10 @@ Details:
       problems with libraries, etc, etc)
 - list of goals/requirements that should be reached
     - a reference standalone ECI implementation in some language
+- ideas
+    - EIAM commands for selecting the ecasound return value
+      syntax -> either normal (current) or one matching the
+      the NetECI wire-syntax
 - todo-list
     - new EIAM commands are needed to make it possible to 
       parse return values
