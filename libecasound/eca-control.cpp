@@ -691,11 +691,10 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
 
 string ECA_CONTROL::chainsetup_status(void) const 
 {
-  ECA_LOG_MSG(ECA_LOGGER::info, "### Chainsetup status ###");
-
   vector<ECA_CHAINSETUP*>::const_iterator cs_citer = session_repp->chainsetups_rep.begin();
   int index = 0;
-  string result;
+  string result ("### Chainsetup status ###\n");
+
   while(cs_citer != session_repp->chainsetups_rep.end()) {
     result += "Chainsetup ("  + kvu_numtostr(++index) + ") \"";
     result += (*cs_citer)->name() + "\" ";
@@ -716,12 +715,12 @@ string ECA_CONTROL::chain_status(void) const
   DBC_REQUIRE(is_selected() == true);
   // --------
   
-  ECA_LOG_MSG(ECA_LOGGER::info, "### Chain status (chainsetup '" +
-	      selected_chainsetup() + "') ###");
-  
   MESSAGE_ITEM mitem;
   vector<CHAIN*>::const_iterator chain_citer;
   const vector<string>& schains = selected_chainsetup_repp->selected_chains();
+  mitem << "### Chain status (chainsetup '" 
+	<< selected_chainsetup()
+	<< "') ###\n";
 
   for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\" ";
@@ -745,12 +744,14 @@ string ECA_CONTROL::chain_operator_status(void) const
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  ECA_LOG_MSG(ECA_LOGGER::info, "### Chain operator status (chainsetup '" +
-	      selected_chainsetup() + "') ###");
-
   MESSAGE_ITEM msg;
   string st_info_string;
   vector<CHAIN*>::const_iterator chain_citer = selected_chainsetup_repp->chains.begin();
+
+  msg << "### Chain operator status (chainsetup '" 
+      << selected_chainsetup() 
+      << "') ###\n";
+
   while(chain_citer != selected_chainsetup_repp->chains.end()) {
     msg << "Chain \"" << (*chain_citer)->name() << "\":\n";
     for(int p = 0; p < (*chain_citer)->number_of_chain_operators(); p++) {
@@ -781,12 +782,14 @@ string ECA_CONTROL::controller_status(void) const
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  ECA_LOG_MSG(ECA_LOGGER::info, "### Controller status (chainsetup '" +
-	      selected_chainsetup() + "') ###");
-
   MESSAGE_ITEM mitem;
   string st_info_string;
   vector<CHAIN*>::const_iterator chain_citer;
+
+  mitem << "### Controller status (chainsetup '"
+	<< selected_chainsetup()
+	<< "') ###\n";
+
   for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\":\n";
     for(int p = 0; p < (*chain_citer)->number_of_controllers(); p++) {
@@ -816,12 +819,13 @@ string ECA_CONTROL::aio_status(void) const
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  ECA_LOG_MSG(ECA_LOGGER::info, "### Audio input/output status (chainsetup '" +
-		selected_chainsetup() + "') ###");
-
   string st_info_string;
   vector<AUDIO_IO*>::size_type adev_sizet = 0;
   vector<AUDIO_IO*>::const_iterator adev_citer = selected_chainsetup_repp->inputs.begin();
+
+  st_info_string += "### Audio input/output status (chainsetup '" +
+    selected_chainsetup() + "') ###\n";
+
   while(adev_citer != selected_chainsetup_repp->inputs.end()) {
     st_info_string += "Input (" + kvu_numtostr(adev_sizet + 1) + "): \"";
     for(int n = 0; n < (*adev_citer)->number_of_params(); n++) {
