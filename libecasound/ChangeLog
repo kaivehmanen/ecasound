@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-02-07  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-iamode-parser.h (enum Commands): moved from public to
+	protected scope
+	
 2001-02-06  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-midi.h (various): many type changes

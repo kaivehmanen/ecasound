@@ -18,8 +18,6 @@ class ECA_IAMODE_PARSER {
   static map<string,int> cmd_map_rep;
   static void register_commands(void);
 
- public:
-  
   enum Commands {
     ec_unknown,
     ec_direct_option,
@@ -44,6 +42,7 @@ class ECA_IAMODE_PARSER {
     ec_cs_remove,
     ec_cs_select,
     ec_cs_selected,
+    ec_cs_list,
     ec_cs_index_select,
     ec_cs_load,
     ec_cs_save,
@@ -124,6 +123,8 @@ class ECA_IAMODE_PARSER {
     ec_dump_aio_open_state,
     ec_dump_cop_value
   };
+
+ public:
 
   /**
    * Parse string mode command and act accordingly.

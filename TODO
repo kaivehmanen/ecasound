@@ -4,21 +4,17 @@
 
 [ Development goals and current status ]
 
-1.8.x series:
+1.8.x and 1.9.x series:
 
 - ecasound control interface (ECI) API [implementation phase]
 - new disk i/o buffering subsystem [done!]
 - embedded effect preset parameters [done!]
 - internal plugin support [done!]
 
-1.9.x series:
+2.x series:
 
 - MIDI-subsystem updates [some of the specs ready]
-
-2.x series (1.x -> 2.x requirements):
-
-- central libecasound APIs ready for general use [getting close]
-- users's and programmer's guide cover all ecasound basics [done!]
+- aim to make the 2.x series release binary-compatible
 
 -----------------------------------------------------------------------
 

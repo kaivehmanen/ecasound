@@ -257,6 +257,7 @@ void ECA_CONTROL::action(int action_id) {
   case ec_cs_remove: { remove_chainsetup(); break; }
   case ec_cs_select: { select_chainsetup(action_args_rep[0]); break; }
   case ec_cs_selected: { set_last_string(selected_chainsetup()); break; }
+  case ec_cs_list: { set_last_string_list(chainsetup_names()); break; }
   case ec_cs_index_select: { 
     if (action_args_rep[0].empty() != true) {
       if (action_args_rep[0][0] != 'c') {
@@ -347,7 +348,7 @@ void ECA_CONTROL::action(int action_id) {
       set_last_string(chain_status()); 
       break; 
     }
-  case ec_c_list: { set_last_string_list(selected_chains()); break; }
+  case ec_c_list: { set_last_string_list(chain_names()); break; }
 
     // ---
     // Audio objects

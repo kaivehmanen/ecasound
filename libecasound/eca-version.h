@@ -4,17 +4,16 @@
 /**
  * Ecasound library version as a formatted string.
  *
- * "vx.y.zRt" :
+ * "vX.Y[.Z][devT]" :
  *
  * x = major version  - the overall development status
  *
- * y = devel-series   - represents a set of planned features
+ * y = minor version  - represents a set of planned features (see TODO)
  *
- * z = minor version  - version number of the current development series
+ * z = revision       - version number of the current development series
  *
- * Rt = 'rx'          - stable release number x
- *
- * Rt = 'dx'  	      - development version
+ * devT = dev-release - development releases leading to the stable
+ * 		        release X.Y[.Z]
  */
 extern const char* ecasound_library_version;
 
@@ -25,7 +24,7 @@ extern const long int ecasound_library_version_current;
 extern const long int ecasound_library_version_revision;
 extern const long int ecasound_library_version_age;
 
-#define ECASOUND_LIBRARY_VERSION             "1.8.6d15"
+#define ECASOUND_LIBRARY_VERSION             "1.9dev1"
 #define ECASOUND_LIBRARY_VERSION_CURRENT     7
 #define ECASOUND_LIBRARY_VERSION_REVISION    0
 #define ECASOUND_LIBRARY_VERSION_AGE         0

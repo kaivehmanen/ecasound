@@ -1,7 +1,7 @@
 #include "eca-comhelp.h"
 
 const char* ecasound_parameter_help_rep =
-"USAGE: (qt)ecasound [options] \n"
+"USAGE: ecasound [options] \n"
 "     -c                       set interactive mode \n"
 "     -d:debug_level           show debug info \n"
 "     -D                       print all debug info to stderr\n"

@@ -2,24 +2,26 @@
 ** Ecasound - User-visible changes (NEWS)      (last edited: 070200) **
 -----------------------------------------------------------------------
 
-About the version numbers... "vx.y.zRt" :
+About the version numbers... "vX.Y[.Z][devT]" :
 
-  x = major version  - the overall development status
-  y = devel-series   - represents a set of planned features
-  z = minor version  - version number of the current development series
-  Rt = 'rx'          - stable release number x
-  Rt = 'dx'  	     - development version
+  X = major version  - the overall development status
+  Y = minor version  - represents a set of planned features (see TODO)
+  Z = revision       - small changes to major.minor version (optional)
+		
+  devT = dev-release - development releases leading to the stable
+		       release X.Y[.Z]
 
 -----------------------------------------------------------------------
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??022001 (v1.8.6d15)
+07022001 (v1.9dev1)
+	- notice: new version numbering scheme
 	- added: eiam-cmds; set-position, get-position, get-length, 
-		 cs-connected, cs-selected, engine-status, c-list,
+		 cs-connected, cs-selected, engine-status,  
 		 aio-get-position, aio-get-length, aio-selected,
 		 ctrl-select, ctrl-remove, cop-select, copp-select, 
-		 copp-set, copp-get
+		 copp-set, copp-get, c-list, cs-list
 	- added: eiam command return type documentation to
 	 	 ecasound-iam man page
 	- added: ecasound detects all eiam return types and

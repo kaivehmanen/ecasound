@@ -60,7 +60,7 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["cs-set"] = ec_cs_set;
   cmd_map_rep["cs-format"] = ec_cs_format;
   cmd_map_rep["cs-status"] = ec_cs_status;
-  cmd_map_rep["cs-list"] = ec_cs_status;
+  cmd_map_rep["cs-list"] = ec_cs_list;
   cmd_map_rep["cs-length"] = ec_cs_length;
   cmd_map_rep["cs-loop"] = ec_cs_loop;
 

@@ -18,7 +18,7 @@ dnl Init automake
 dnl ---
 dnl -- >                   !!!!!!!!!
 dnl remember to update eca-version.h
-AM_INIT_AUTOMAKE(ecasound, 1.8.6d15)
+AM_INIT_AUTOMAKE(ecasound, 1.9dev1)
 dnl <--                    !!!!!!!!!
 AM_CONFIG_HEADER(config.h)
 

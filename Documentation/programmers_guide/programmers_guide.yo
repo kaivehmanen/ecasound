@@ -12,7 +12,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (05122000)
+       (07022001)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -126,6 +126,52 @@ same as above.
 enddit()
 
 COMMENT(----------------------------------------------------------------)
+subsect(Physical level organization)
+Ecasound libraries and applications are divided into em(distribution 
+packages), em(directories) and em(file groups). 
+
+subsubsect(Distribution packages)
+As an example, em(ecasound) and em(qtecasound) are distributed as separate
+packages. This decision has been made because a) they are clearly 
+independent, b) they have different external dependencies, and c)
+they address different target uses. 
+
+subsubsect(Directories)
+It's convenient to organize larger sets of source code into separate
+directories. For instance in ecasound, em(libecasound) and
+em(ecatools) are in two separate directories.
+
+subsubsect(File groups)
+Although files are divided in directories and subdirectories, 
+there's still a need to logically group a set of source files based
+on their use and role in the overall design. As the use of C++ 
+namespaces is very limited in ecasound (to avoid portability
+problems), filename prefixes are used for grouping files. Here's
+a short list of commonly used prefixes. 
+
+startdit()
+dit(audioio*.{cpp,h}) 
+Audio device and file input/output.
+dit(audiofx*.{cpp,h}) 
+Audio effects and other DSP-related code.
+dit(audiogate*.{cpp,h}) 
+Gate operators.
+dit(eca-*.{cpp,h}) 
+Core functionality.
+dit(midi-*.{cpp,h}) 
+MIDI input/output devices, handlers and controller code.
+dit(osc-*.{cpp,h}) 
+Oscillator and other controller sources.
+dit(qe*.{cpp,h}) 
+Generic prefix for files utilizing both Qt and ecasound libraries.
+dit(samplebuffer-*.{cpp,h}) 
+Routines and helper functions for processing audio data buffers.
+enddit()
+
+You should note that these are just recommendations - there are no
+strict rules on how files should be named.
+
+COMMENT(----------------------------------------------------------------)
 subsect(Documentation style)
 Javadoc-style class documentation is the preferred style.
 Class members can be documented either when they are declared (header
@@ -146,12 +192,12 @@ enddit()
 
 COMMENT(----------------------------------------------------------------)
 subsect(Versioning)
-All ecasound releases have a distinct version number. In addition, 
-every released version is marked either with 'd' (development) 
-or 'r' (stable release). For instance, you could have development 
-releases 0.1d1, 0.2d1 and 0.3d1. When the development reaches a stable 
-status, 0.4r1 will be released. After this, a new development series 
-will start (0.5d2, and so on).
+All ecasound releases have a distinct version number. To emphasize the
+difference between stable and development releases, devel versions are 
+marked with 'devXX'. For instance, you could have development 
+releases 0.1dev1, 0.1dev2 and 0.1dev3. When the development reaches 
+a stable status, 0.1 is be released. After this, a new development 
+series will start (0.2dev1, and so on).
 
 Separation between development and stable releases is very important,
 because it affects library versioning. The idea is that all library

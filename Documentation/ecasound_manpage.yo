@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (12.12.2000)
+       (07.02.2001)
        ()
        (Multimedia software)
 
@@ -603,13 +603,19 @@ manpagefiles()
 	The default ecasound resource file. See url(ecasoundrc(5))(ecasoundrc_manpage.html).
 	man page.
 
-	em(*.ews) 
-	Ecasound Wave Stats. These files are used to cache
-	waveform data. 
-
 	em(*.ecs) 
 	Ecasound Chainsetup files. Syntax is more or less the
 	same as with command-line arguments.
+
+	em(*.ecp) 
+	Ecasound Chain Preset files. Used for storing effect
+	and chain operator presets. See url(ecasound user's guide)(users_guide/users_guide.html) for
+	more better documentation.
+
+	em(*.ews) 
+	Ecasound Wave Stats. These files are used to cache
+	waveform data.
+
 
 manpageseealso()
 

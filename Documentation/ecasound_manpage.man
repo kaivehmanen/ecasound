@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "12\&.12\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "07\&.02\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -558,13 +558,18 @@ See \fIecasound-iam(1)\fP\&.
 The default ecasound resource file\&. See ecasoundrc(5)\&.
 man page\&.
 .PP 
-\fI*\&.ews\fP 
-Ecasound Wave Stats\&. These files are used to cache
-waveform data\&. 
-.PP 
 \fI*\&.ecs\fP 
 Ecasound Chainsetup files\&. Syntax is more or less the
 same as with command-line arguments\&.
+.PP 
+\fI*\&.ecp\fP 
+Ecasound Chain Preset files\&. Used for storing effect
+and chain operator presets\&. See ecasound user\'s guide for
+more better documentation\&.
+.PP 
+\fI*\&.ews\fP 
+Ecasound Wave Stats\&. These files are used to cache
+waveform data\&.
 .PP 
 .SH "SEE ALSO" 
 .PP 
