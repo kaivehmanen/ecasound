@@ -1,5 +1,5 @@
 =======================================================================
-*** Ecasound - README                                               ***
+*** Ecasound - README                    (maintainer: Kai Vehmanen) ***
 =======================================================================
 -----------------------------------------------------------------------
  What is it?
@@ -15,33 +15,72 @@ parameters can be controlled by operator objects like oscillators
 and MIDI-CCs. A versatile console mode user-interface is included 
 in the package.
 
+Primary platform for running Ecasound is Linux. Ecasound also
+works on many other UNIX-derived systems such as FreeBSD and Solaris. 
+Limited support for Windows is available through Cygwin.
+
+-----------------------------------------------------------------------
+ How do you?
+-----------------------------------------------------------------------
+
+... spell the name? 
+
+I haven't been very consistent with this, but at least in principle, 
+when capitalized, the name refers to the whole package. When in lower 
+case, it refers to the console mode application which happens to have 
+the same name.
+
+"Ecasound" = the whole package
+"ecasound" = the console mode client application (binary)
+
+... pronounce the name?
+
+Any way you want! :) Personally I say something to the effect of
+"eck-uh-sound". Start from "megasound", and omit pronouncing the 
+'m' at the start, and replace 'g' with a sharper 'uh' sound.
+
 -----------------------------------------------------------------------
  Why?
 -----------------------------------------------------------------------
 
-I've written ecasound for my own recording purposes. The first 
-versions ran under IBM Os/2. I used them for finalizing my analog 
-4-track recordings. My 4-track was a nice tool, but it had its limits.
-So eventually I started to use Windows-based multitrack software. I
-still used ecasound for fx processing and finalizing. When I 
-ported ecasound to Linux, a lot of the code was rewritten from 
-scratch. During this I also added multitrack capabilities
-to ecasound. It took a lot of work, but in the end I was able to 
-get rid of all my Windows recording software. Nowadays I use 
-ecasound for all my music projects. Because of this, I also 
-continue to improve and develop ecasound.
+I started developing Ecasound because I needed an application to
+record, process and mix my own music. The first versions of Ecasound 
+ran under IBM OS/2. I used those versions for finalizing my analog 
+4-track recordings. 
+
+The analog 4-track - Tascam 414 - was a nice tool, but it 
+had its limits. So eventually I started looking for PC software 
+that supported multitrack recording. The first programs I used were 
+for Windows. I still used the OS/2 version of Ecasound for effects 
+processing and finalizing my mixes. Although I'm not fanatical
+about operating systems, I did prefer (and still do) to use Linux
+for my computing needs. I also hate rebooting between multiple 
+systems all the time, so it was time to do a port.
+
+When I ported Ecasound to Linux, a lot of functionality was rewritten 
+from scratch. During this work I also added multitrack capabilities
+to Ecasound. It took quite a lot of effort to put it all back 
+together, but in the end I reached the point where I could do 
+all the audio processing tasks on Linux. As an additional benefit
+I now had source code for - and thus control over - all tools I used
+for audio processing.
+
+Nowadays I still use Ecasound for my music projects. This is also
+the primary motivation for continuing the development work. There is 
+always something to improve.
 
 -----------------------------------------------------------------------
  Requirements
 -----------------------------------------------------------------------
 
-To run ecasound, you need...:
+To run Ecasound, you need...:
 
-- POSIX compliant UNIX system; tested with various Linux 2.2/2.4 
-  and glibc 2.x combinations, FreeBSD 4.x, Solaris 2.8, Cygwin 1.3.20
-- POSIX threads support; tested with linuxthreads
+- POSIX compliant UNIX system; has been tested with various 
+  Linux 2.2/2.4/2.6 and glibc 2.1/2.2/2.3 combinations, FreeBSD 4.x, 
+  Solaris 2.8 and Cygwin 1.3.20
+- POSIX threads support; has been tested with linuxthreads
 
-Optional when running ecasound:
+Optional when running Ecasound:
 
 - for soundcard input/output: OSS, OSS/Lite or ALSA drivers
 - for JACK-support, the JACK runtime environment
@@ -53,15 +92,15 @@ Optional when running ecasound:
 - for aRts support, the aRts server package
 - for higher quality resampling, libsamplerate
 
-To compile ecasound, you also need...:
+To compile Ecasound, you also need...:
 
 - standard C++ build environment; tested with egcs 1.1.2, 
-  gcc 2.91.66, gcc 2.95.3, gcc 3.0.x, gcc 3.1.x, gcc 3.2 and
-  Sun Workshop 6 C5.2 C++ (STL and exceptions need to 
-  be supported)
+  gcc 2.91.66, gcc 2.95.3, gcc 3.0.x, gcc 3.1.x, gcc 3.2.x, 
+  gcc-3.3 and Sun Workshop 6 C5.2 C++ (STL and exceptions 
+  need to be supported)
 - GNU make, automake and autoconf packages
 
-Optional when compiling ecasound:
+Optional when compiling Ecasound:
 
 - for pyecasound, the Python devel package
 - for curses support, the ncurses devel package
@@ -76,13 +115,13 @@ Optional when compiling ecasound:
  Installing
 -----------------------------------------------------------------------
 
-First of all, you should first try to use a binary rpm package.
-It's probably the easiest and the most straigthforward way to 
-install this software. 
+First of all, you should first try to install from a binary package 
+(in rpm, dpkg, etc format, depending on your system). This is probably 
+the easiest and most straigthforward way to install Ecasound.
 
-If you need to compile ecasound, the file 'INSTALL' contains detailed 
-instructions. To create rpm source and binary packages, issue "rpm 
--ta ecasound-x.y.x.tar.gz".
+If you need to compile Ecasound, the file 'INSTALL' contains detailed 
+instructions. To build RPM source and binary packages from the 
+source tar package, issue "rpm -ta ecasound-x.y.x.tar.gz".
 
 -----------------------------------------------------------------------
  Documentation
@@ -91,7 +130,7 @@ instructions. To create rpm source and binary packages, issue "rpm
 Ecasound documentation is updated whenever new features are added 
 or old features have been modified. Some things are not documented
 in great detail, but on the other hand, all documentation is kept
-up-to-date.
+up-to-date. The primary documentation sources are:
 
 - Ecasound User's Guide
 - Ecasound Programmer's Guide
@@ -101,32 +140,33 @@ up-to-date.
 	- ecatools(1)
 	- ecasound-iam(1)
 	- ecasoundrc(5)
-- misc HTML-formatted docs
+- misc HTML-formatted docs (Documentation/ directory)
 - command line help
 	- ecasound --help
 
 Probably the best place to start is the examples section of 
-ecasound HTML-documentation (Documentation/examples.html).
+Ecasound's HTML-documentation (Documentation/examples.html).
 
 -----------------------------------------------------------------------
  Mailing lists
 -----------------------------------------------------------------------
 
 ecasound-announce@wakkanet.fi:
-	A read-only list for announcements concerning
-	ecasound and ecawave.
+	A read-only list for announcements concerning Ecasound and 
+	Ecawave.
 
 ecasound-list@wakkanet.fi:
-	A general discussion forum for ecasound/ecawave
-	developers and users. Announcements of new versions, bug warnings, etc 
-	will be posted to this list. If you have problems compiling,
-	installing or using ecasound/ecawave, this is a good place to ask for
-	help. Reports of working software/hardware combinations are also welcome.
-	You can browse the message archives at
+	A general discussion forum for Ecasound/Ecawave
+	developers and users. Announcements of new versions, bug 
+	warnings, etc will be posted to this list. If you have
+	problems compiling, installing or using Ecasound/Ecawave, this 
+	is a good place to ask for help. Reports of working 
+	software/hardware combinations are also welcome. You can
+	browse 	the message archives at
 	http://www.wakkanet.fi/~kaiv/ecasound/ecasound-list/current/ 
 
 ecasound-cvs@wakkanet.fi:
-	A read-only list for reports about ecasound CVS activity.
+	A read-only list for reports about Ecasound CVS activity.
 
 You can join the lists by sending subscribe message to
 majordomo@wakkanet.fi. You can also join using the following 
@@ -142,97 +182,63 @@ Ecasound home site
 Distribution packages
 - http://ecasound.seul.org/download/
 
-Eca projects page (links, apps based on ecasound, etc)
+Eca projects page (links, apps based on Ecasound, etc)
 - http://www.eca.cx
 
 Examples of ecasound in real-life use
 - http://www.eca.cx/ecasound_users.html
 
 -----------------------------------------------------------------------
- About free software development
+ About free open-source software (FOSS) development
 -----------------------------------------------------------------------
 
-You should always keep in mind, that development of free software
-doesn't work in the same way as commercial development. Every
-succesful free software project has an active userbase behind it. This
+You should keep in mind that FOSS [1] development process differs
+greatly from closed commercial development. Active participation, 
+both from developers and users, is what pushes a FOSS project forward. 
+Every succesful FOSS project has an active userbase behind it. This 
 means that your comments, ideas and bug reports are extremely
-important. If something doesn't work, or some feature is missing,
-please mail me about it. Thank you in advance! You can send ecasound
-related mails to me at mailto:k@eca.cx.
+important. If something does not work, or some feature is missing, 
+be active. Either try to fix the problem yourself, or report it
+on the ecasound-list mailing list.
+
+[1] Although Ecasound is free software (http://www.gnu.org), it also 
+    fits the definition of open-source software (http://www.opensource.org/).
+    Although the two initiatives have different goals, they also share
+    a lot in common. I use the term FOSS to refer to both of them,
+    while still acknowledging the difference between the two.
 
 -----------------------------------------------------------------------
  Stable and development versions
 -----------------------------------------------------------------------
 
 Although publically released versions are called stable, this is not 
-a guarantee of any kind. I use a small test-bench to check that all 
-essential features are working and I use these versions myself, but 
-that's it. And note that this isn't a temporary solution. As ecasound 
-is open-source software, it will become more stable as more people 
-start using it and bugs are found. So join the fun! :) 
-	 
------------------------------------------------------------------------
- Author / project leader
------------------------------------------------------------------------
-
-Kai Vehmanen <kai.vehmanen@wakkanet.fi> - [kaiv]
+a guarantee of any kind. Before releases I run through a small set 
+of test cases to verify that all basic features are working. I also 
+use the latest versions for my own work. But other than that, there
+is no guarantee that Ecasound won't eat your data. On the other hand,
+as Ecasound is free software, you have the possibility to review
+and test Ecasound code, perform tests, and fix any bugs you might find. 
+The more people there are that do this, the more stable Ecasound 
+will eventually become! So join the fun! :)
 
 -----------------------------------------------------------------------
- Contributors / credits / thanks to 
+ Authors
 -----------------------------------------------------------------------
 
-Amundsen, Eric - Bug hunting. [amundsen]
-Anarcat - Work on ecasound's FreeBSD port [anarcat]
-Davis, Paul - Has probably written more Linux audio related code (and mails) than anyone else! :)
-Beaupre, Antoine - Patches for FreeBSD compatibility. [beaupran]
-Bowman, Brad - Perl ECI binding, bug hunting. [bowman]
-Campbell, Ross - Tips concerning Solaris. [rcampbel]
-Carmack, Michael - Support for devfs /dev/sound/dsp devices [karmak]
-Chappell, Jesse - Bug fixes. [jesse]
-Claassen, Julien - Ideas for interface development, marketing. :) [julien]
-Coker, Rob - Pulse gate (-eemp) code. [rcs]
-Darilek, Nolan - Ogg vorbis fixes. [nolan_d]
-Dye, Rob - OSS compilation fixes. [rob]
-Dyson, John S. - Wrote the original advanced compressor (-eca) code.
+See the file 'AUTHORS'.
+
+-----------------------------------------------------------------------
+ Thanks to
+-----------------------------------------------------------------------
+
 Endersz, Viktor - For sending me the adv.compressor source code!
-Eure, Ian and Junichi Uekawa  - For creating ecasound debian packages [ieure,juekawa]
-Fendt, Stefan - Original code for reverb (-ete) and RC-lowpass filter (-ef4).
-Fischer, Hans-Georg - Bug fix that solved edi-1. [hgfischer]
-Hall, Jeremy - Extensive testing, ALSA 0.6.x support, many design ideas. [jhall]
-Halttunen, Janne - Helped in developing the EIAM, and specifically the 
-		   new ECI concept. [jhalttun]
-Hamara, Arto - Ecasound logo(s), preset params, general linear
-	       envelope support, various bug fixes! [artham]
-Harris, Steve - Gcc 2.96 (RH7.0) testing and fixes. [swharris]
-Jeanneau, Aymeric - Reentrant libecasoundc implementation. [ajeanneau]
-Lang, Mario - Ecasound.el, the ecasound emacs module. [mlang]
-Lavallée, Marc - Rpm-spec for Mandrake.
-Laydier, Antoine - layer.cpp (interprets mp3 headers). [SMF]
-Leake, Tony - PHP ECI extension. [tonyleake]
-Massy, S. - Extensive testing and debugging. [smassy]
-Morris, Steve - Ewf-handling fixes. [smorris]
-Petit, Bertrand - Helped with POSIX-compatibility issues.
-Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!
-Poelstra, Remco - ECI C API bug hunting. [rjpoelstra]
-Polton, Richard - A 250k gcc3.x related patch. :) [rpolton]
-Poulton, Ron - Helped to track down the mysterious chain-bug. [thok]
-Sassmannshausen, Ruediger - Mp3 filename parsing fixes. [rsassman]
-Smith, Richard A. - Helped in solving the "gcc 2.95" bug.
-Sousa, Rui - OSS bug fixes.
-Stradling, Rob - MIDI-MMC bug fixes. [robstr]
-Tiedemann, Eric S. - Wrote the eci.py interface. [est]
-Tkachenko, Vadim - Autoconf magic. :)
-Yee-king, Matt - Helped debugging ppc big-endian troubles. [yeeking]
-Westbrook, Tim - Autoconf 2.5x fixes. [iondiode]
-Wróblewski, Artur - PLD-Linux RPM-specfile, readline and destdir patches. [wrobell]
-
-all LAD members - Always a great source of inspiration!
-www.niccx.com - For eca.cx, ecasound.cx and ecawave.cx domains.
+LAD members - Always a great source of inspiration! Special thanks
+	      to Paul Davis, who has kept on pushing Linux audio 
+	      forward all these years.
+Philips, Dave - Your Linux Sound+MIDI apps website has 
 SEUL - For hosting ecasound ftp, http and CVS sites.
-Wakkanet Oy - For hosting ecasound web site.
-
-Note! The developer tags are (for instance I have [kaiv]) used
-      throughout ecasound docs (NEWS, TODO-list, edi-list.txt, etc).
+Wakkanet Oy - For hosting the ecasound web site.
+www.niccx.com - For eca.cx, ecasound.cx and ecawave.cx domains.
 
 -----------------------------------------------------------------------
  Licensing/distribution policy

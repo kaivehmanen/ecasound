@@ -1,4 +1,4 @@
-EXTRA_DIST = BUGS COPYING.GPL COPYING.LGPL NEWS TODO ecasound.spec effect_presets generic_oscillators
+EXTRA_DIST = AUTHORS BUGS COPYING.GPL COPYING.LGPL NEWS TODO ecasound.spec effect_presets generic_oscillators
 
 # for automake 1.4/1.5 compatibility
 EXTRA_DIST += depcomp

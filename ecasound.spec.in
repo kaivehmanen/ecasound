@@ -123,7 +123,7 @@ strip --strip-unneeded \
 
 %files
 %defattr(-, root, root)
-%doc NEWS COPYING COPYING.GPL COPYING.LGPL README INSTALL BUGS TODO examples
+%doc NEWS COPYING COPYING.GPL COPYING.LGPL README INSTALL AUTHORS BUGS TODO examples
 %doc Documentation/*.html
 %doc Documentation/*.txt
 %{_mandir}/man1/eca*
@@ -178,6 +178,9 @@ strip --strip-unneeded \
 # changelog
 
 %changelog
+* Wed Aug 20 2003 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+- added 'AUTHORS' file
+
 * Mon Jan 20 2003 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 - added Serial tag to differentiate between 2.2 pre and 
   final releases
