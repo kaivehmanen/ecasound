@@ -154,7 +154,7 @@ void ECA_NETECI_SERVER::open_server_socket(void)
   DBC_REQUIRE(srvfd_rep > 0);
 
   int val = 1;
-  int ret = setsockopt(srvfd_rep, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+  int ret = setsockopt(srvfd_rep, SOL_SOCKET, SO_REUSEADDR, (void *)&val, sizeof(val));
   if (ret < 0) 
     std::cerr << "(eca-neteci-server) setsockopt() failed." << endl;
   
