@@ -96,7 +96,12 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
     throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: Buffersize() is 0!"));
     
   int fragsize, fragtotal = 16;
-  unsigned short int fr_size, fr_count = 0x7fff; // 0x7fff = not limited
+  unsigned short int fr_size, fr_count;
+
+  if (max_buffers() == true) 
+    fr_count = 0x7fff; // 0x7fff = not limited
+  else
+    fr_count = 3;
     
   MESSAGE_ITEM m;
   m << "Setting OSS fragment size according to buffersize() " << buffersize() << ".\n";

@@ -128,6 +128,30 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    * Seeking is impossible with realtime devices.
    */
   virtual void seek_position(void) { }
+
+  /**
+   * Whether to ignore possible under- and overrun 
+   * situations. If enabled, device should try to
+   * recover from these situations, ie. keep on 
+   * running. If disabled, processing should be aborted
+   * if an xrun occurs. Should be set before opening 
+   * the device. Defaults to 'true'.
+   */
+  virtual void toggle_ignore_xruns(bool v) { ignore_xruns_rep = v; }
+
+  /** 
+   * Whether the use of internal buffering is limited. 
+   * If disabled, the device should use minimal amount 
+   * of internal buffering. The recommended size is 
+   * two or three fragments, each buffersize() sample frames
+   * in size. Otherwise the device can use all its
+   * internal buffering. This toggle is meant for controlling
+   * the latency caused by the device. Defaults to 'true'.
+   */
+  virtual void toggle_max_buffers(bool v) { max_buffers_rep = v; }
+  
+  virtual bool ignore_xruns(void) const { return(ignore_xruns_rep); }
+  virtual bool max_buffers(void) const { return(max_buffers_rep); }
   virtual bool supports_seeking(void) const { return(false); }
   virtual bool finished(void) const { return(is_open() == false); }
 
@@ -145,6 +169,8 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
 
   bool is_running_rep;
   bool is_prepared_rep;
+  bool ignore_xruns_rep;
+  bool max_buffers_rep;
 };
 
 #endif

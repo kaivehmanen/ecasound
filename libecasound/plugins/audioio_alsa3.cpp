@@ -234,6 +234,15 @@ void ALSA_PCM_DEVICE_06X::fill_and_set_hw_params(void) {
   }
 
   unsigned int bsize_usec = 1000000 * buffersize() / samples_per_second();
+
+  // FIXME: the following is wrong
+  //        we should have period_time = buffersize().to_usecs
+  //        and buffer_time = x * buffersize().to_usecs
+//    if (max_buffers() == true) 
+//      bsize_usec *= 3;
+//    else
+//      bsize_usec *= 16;
+ 
   fragment_size_rep = buffersize();
 
   err = ::snd_pcm_hw_param_near(audio_fd_repp, &params,
@@ -369,9 +378,16 @@ long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer,
     realsamples = ::snd_pcm_read(audio_fd_repp, target_buffer,
 				 fragment_size_rep);
     if (realsamples == -EPIPE) {
-      handle_xrun_capture();
-      realsamples = ::snd_pcm_read(audio_fd_repp, target_buffer,
-				   fragment_size_rep);
+      if (ignore_xruns() == true) {
+	handle_xrun_capture();
+	realsamples = ::snd_pcm_read(audio_fd_repp, target_buffer,
+				     fragment_size_rep);
+      }
+      else {
+	cerr << "(audioio-alsa3) Underrun! Stopping operation!" << endl;
+	stop();
+	close();
+      }
     }
   }
   else {
@@ -382,10 +398,16 @@ long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer,
     }
     realsamples = ::snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), fragment_size_rep);
     if (realsamples == -EPIPE) {
-      handle_xrun_capture();
-      realsamples = ::snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), fragment_size_rep);
+      if (ignore_xruns() == true) {
+	handle_xrun_capture();
+	realsamples = ::snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), fragment_size_rep);
+      }
+      else {
+	cerr << "(audioio-alsa3) Underrun! Stopping operation!" << endl;
+	stop();
+	close();
+      }
     }
-
   }
   position_in_samples_rep += realsamples;
   return(realsamples);
@@ -407,12 +429,18 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
   if (interleaved_channels() == true) {
     if (::snd_pcm_write(audio_fd_repp, target_buffer,
 			samples) == -EPIPE) {
-      handle_xrun_playback();
-      if (::snd_pcm_write(audio_fd_repp, target_buffer,
-			  samples) == -EPIPE) 
-	cerr << "(audioio-alsa3) Xrun handling failed!" << endl;
-      
-      trigger_request_rep = true;
+      if (ignore_xruns() == true) {
+	handle_xrun_playback();
+	if (::snd_pcm_write(audio_fd_repp, target_buffer,
+			    samples) == -EPIPE) 
+	  cerr << "(audioio-alsa3) Xrun handling failed!" << endl;
+	trigger_request_rep = true;
+      }
+      else {
+	cerr << "(audioio-alsa3) Underrun! Stopping operation!" << endl;
+	stop();
+	close();
+      }
     }
   }
   else {
@@ -426,10 +454,18 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
     if (::snd_pcm_writen(audio_fd_repp,
 		     reinterpret_cast<void**>(nbufs_repp),
 		     samples) == -EPIPE) {
-      handle_xrun_playback();
-      ::snd_pcm_writen(audio_fd_repp,
-		     reinterpret_cast<void**>(nbufs_repp),
-		       samples);
+      if (ignore_xruns() == true) {
+	handle_xrun_playback();
+	::snd_pcm_writen(audio_fd_repp,
+			 reinterpret_cast<void**>(nbufs_repp),
+			 samples);
+	trigger_request_rep = true;
+      }
+      else {
+	cerr << "(audioio-alsa3) Underrun! Stopping operation!" << endl;
+	stop();
+	close();
+      }
     }
   }
 

@@ -48,6 +48,8 @@ ECA_AUDIO_OBJECTS::ECA_AUDIO_OBJECTS(void)
   : 
     double_buffering_rep (false),
     precise_sample_rates_rep (false),
+    ignore_xruns_rep(true),
+    max_buffers_rep(true),
     output_openmode_rep (AUDIO_IO::io_readwrite),
     buffersize_rep(0),
     selected_chainids (0) { }

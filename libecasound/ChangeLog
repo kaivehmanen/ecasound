@@ -2,6 +2,13 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-02-08  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* audioio-types.h (toggle_max_buffers,max_buffers): added
+	* audioio-types.h (toggle_ignore_xruns,ignore_xruns): added
+	* eca-audio-objects.h (toggle_max_buffers,max_buffers): added
+	* eca-audio-objects.h (toggle_ignore_xruns,ignore_xruns): added
+	
 2001-02-07  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-iamode-parser.h (enum Commands): moved from public to

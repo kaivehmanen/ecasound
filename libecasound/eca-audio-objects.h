@@ -24,6 +24,8 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
 
   bool double_buffering_rep;
   bool precise_sample_rates_rep;
+  bool ignore_xruns_rep;
+  bool max_buffers_rep;
   long int double_buffer_size_rep;
   int output_openmode_rep;
   long int buffersize_rep;
@@ -110,6 +112,8 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   void toggle_double_buffering(bool value) { double_buffering_rep = value; }
   void set_double_buffer_size(long int v) { double_buffer_size_rep = v; }
   void toggle_precise_sample_rates(bool value) { precise_sample_rates_rep = value; }
+  void toggle_ignore_xruns(bool v) { ignore_xruns_rep = v; }
+  void toggle_max_buffers(bool v) { max_buffers_rep = v; }
   void set_output_openmode(int value) { output_openmode_rep = value; }
   void set_buffersize(long int value) { buffersize_rep = value; }
   void set_default_audio_format(ECA_AUDIO_FORMAT& value) { default_audio_format_rep = value; }
@@ -117,6 +121,8 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   bool double_buffering(void) const { return(double_buffering_rep); }
   long int double_buffer_size(void) const { return(double_buffer_size_rep); }
   bool precise_sample_rates(void) const { return(precise_sample_rates_rep); }
+  bool ignore_xruns(void) const { return(ignore_xruns_rep); }
+  bool max_buffers(void) const { return(max_buffers_rep); }
   long int buffersize(void) const { return(buffersize_rep); }
   const ECA_AUDIO_FORMAT& default_audio_format(void) const { return(default_audio_format_rep); }
   int output_openmode(void) const { return(output_openmode_rep); }

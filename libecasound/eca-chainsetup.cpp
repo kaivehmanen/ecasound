@@ -40,6 +40,7 @@
 #include "global-preset.h"
 
 #include "audioio.h"
+#include "audioio-types.h"
 #include "eca-static-object-maps.h"
 #include "eca-ladspa-plugin-map.h"
 #include "eca-chainop-map.h"
@@ -170,13 +171,23 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
       ecadebug->control_flow("Chainsetup/Enabling audio inputs");
       for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
 	(*q)->buffersize(buffersize(), sample_rate());
+	AUDIO_IO_DEVICE* dev = dynamic_cast<AUDIO_IO_DEVICE*>(*q);
+	if (dev != 0) {
+	  dev->toggle_max_buffers(max_buffers());
+	  dev->toggle_ignore_xruns(ignore_xruns());
+	}
 	if ((*q)->is_open() == false) (*q)->open();
 	audio_object_info(*q);
-    }
+      }
       
       ecadebug->control_flow("Chainsetup/Enabling audio outputs");
       for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
 	(*q)->buffersize(buffersize(), sample_rate());
+	AUDIO_IO_DEVICE* dev = dynamic_cast<AUDIO_IO_DEVICE*>(*q);
+	if (dev != 0) {
+	  dev->toggle_max_buffers(max_buffers());
+	  dev->toggle_ignore_xruns(ignore_xruns());
+	}
 	if ((*q)->is_open() == false) (*q)->open();
 	audio_object_info(*q);
       }
@@ -415,9 +426,17 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
 	ecadebug->msg("(eca-chainsetup) Double-buffering disabled.");
 	toggle_double_buffering(false);
       }
+      else if (get_argument_number(1, argu) == "nointbuf") {
+	ecadebug->msg("(eca-chainsetup) Disabling extra buffering on realtime devices.");
+	toggle_max_buffers(false);
+      }
       else if (get_argument_number(1, argu) == "psr") {
 	ecadebug->msg("(eca-chainsetup) Using precise-sample-rates with OSS audio devices.");
 	toggle_precise_sample_rates(true);
+      }
+      else if (get_argument_number(1, argu) == "xruns") {
+	ecadebug->msg("(eca-chainsetup) Processing is stopped if an xrun occurs.");
+	toggle_ignore_xruns(false);
       }
       break;
     }
