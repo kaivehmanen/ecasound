@@ -9,7 +9,7 @@
 #include "audiofx_filter.h"
 #include "osc-sine.h"
 
-typedef deque<SAMPLE_SPECS::sample_type> SINGLE_BUFFER;
+typedef std::deque<SAMPLE_SPECS::sample_type> SINGLE_BUFFER;
 
 /**
  * Base class for time-based effects (delays, reverbs, etc).
@@ -35,14 +35,15 @@ class EFFECT_DELAY : public EFFECT_TIME_BASED {
   parameter_type dtime;
   parameter_type dtime_msec;
   parameter_type mix;
+  parameter_type feedback;
 
   parameter_type laskuri;
-  vector<vector<SINGLE_BUFFER> > buffer;
+  std::vector<std::vector<SINGLE_BUFFER> > buffer;
 
  public:
 
-  virtual string name(void) const { return("Delay"); }
-  virtual string parameter_names(void) const { return("delay-time-msec,surround-mode,number-of-delays,mix-%"); }
+  virtual std::string name(void) const { return("Delay"); }
+  virtual std::string parameter_names(void) const { return("delay-time-msec,surround-mode,number-of-delays,mix-%,feedback-%"); }
 
   virtual parameter_type get_parameter(int param) const;
   virtual void set_parameter(int param, parameter_type value);
@@ -55,7 +56,7 @@ class EFFECT_DELAY : public EFFECT_TIME_BASED {
 
   EFFECT_DELAY* clone(void)  { return new EFFECT_DELAY(*this); }
   EFFECT_DELAY* new_expr(void)  { return new EFFECT_DELAY(); }
-  EFFECT_DELAY (parameter_type delay_time = 100.0, int surround_mode = 0, int num_of_delays = 1, parameter_type mix_percent = 50.0);
+  EFFECT_DELAY (parameter_type delay_time = 100.0, int surround_mode = 0, int num_of_delays = 1, parameter_type mix_percent = 50.0, parameter_type feedback_percent = 100.0);
 };
 
 /** 
@@ -73,14 +74,14 @@ class EFFECT_MULTITAP_DELAY : public EFFECT_TIME_BASED {
   parameter_type dtime_msec;
   long int dtime, dnum;
 
-  vector<long int> delay_index;
-  vector<vector<bool> > filled;
-  vector<vector<SAMPLE_SPECS::sample_type> > buffer;
+  std::vector<long int> delay_index;
+  std::vector<std::vector<bool> > filled;
+  std::vector<std::vector<SAMPLE_SPECS::sample_type> > buffer;
 
  public:
 
-  virtual string name(void) const { return("Multitap delay"); }
-  virtual string parameter_names(void) const { return("delay-time-msec,number-of-delays,mix-%"); }
+  virtual std::string name(void) const { return("Multitap delay"); }
+  virtual std::string parameter_names(void) const { return("delay-time-msec,number-of-delays,mix-%"); }
 
   virtual parameter_type get_parameter(int param) const;
   virtual void set_parameter(int param, parameter_type value);
@@ -99,14 +100,14 @@ class EFFECT_MULTITAP_DELAY : public EFFECT_TIME_BASED {
  */
 class EFFECT_FAKE_STEREO : public EFFECT_TIME_BASED {
 
-  vector<deque<SAMPLE_SPECS::sample_type> > buffer;
+  std::vector<std::deque<SAMPLE_SPECS::sample_type> > buffer;
   SAMPLE_ITERATOR_CHANNEL l,r;
   parameter_type dtime;
   parameter_type dtime_msec;
 
  public:
 
-  string name(void) const { return("Fake stereo"); }
+  std::string name(void) const { return("Fake stereo"); }
 
   virtual string parameter_names(void) const { return("delay-time-msec"); }
   virtual parameter_type get_parameter(int param) const;
@@ -128,7 +129,7 @@ class EFFECT_REVERB : public EFFECT_TIME_BASED {
 
  private:
     
-  vector<deque<SAMPLE_SPECS::sample_type>  > buffer;
+  std::vector<std::deque<SAMPLE_SPECS::sample_type>  > buffer;
   SAMPLE_ITERATOR_CHANNEL l,r;
 
   parameter_type surround;
@@ -162,14 +163,14 @@ class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
 
  protected:
 
-  vector<vector<SAMPLE_SPECS::sample_type> > buffer;
+  std::vector<std::vector<SAMPLE_SPECS::sample_type> > buffer;
   SAMPLE_ITERATOR_CHANNELS i;
   long int dtime;
   parameter_type dtime_msec;
   parameter_type feedback, vartime;
   SINE_OSCILLATOR lfo;
-  vector<long int> delay_index;
-  vector<bool> filled;
+  std::vector<long int> delay_index;
+  std::vector<bool> filled;
 
  public:
 

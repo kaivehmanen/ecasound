@@ -76,53 +76,53 @@ private:
   // Pointers to connected chainsetup
   // ---
   ECA_CHAINSETUP* csetup_repp;
-  vector<CHAIN*>* chains_repp;
+  std::vector<CHAIN*>* chains_repp;
 
   // -> pointers to input objects
   //    (when proxies are used, inputsr_inputs != inputs)
-  vector<AUDIO_IO*>* inputs_repp;
-  vector<AUDIO_IO*>* csetup_inputs_repp;
+  std::vector<AUDIO_IO*>* inputs_repp;
+  std::vector<AUDIO_IO*>* csetup_inputs_repp;
   
   // -> pointers to input objects in csetup
   // -> r_outputs used for runtime-i/o calls
   //    (only when proxies are used, r_outputs != outputs)
-  vector<AUDIO_IO*>* outputs_repp;
-  vector<AUDIO_IO*>* csetup_outputs_repp;
+  std::vector<AUDIO_IO*>* outputs_repp;
+  std::vector<AUDIO_IO*>* csetup_outputs_repp;
 
-  mutable map<AUDIO_IO*,AUDIO_IO*> csetup_orig_ptr_map_rep;
+  mutable std::map<AUDIO_IO*,AUDIO_IO*> csetup_orig_ptr_map_rep;
 
   // ---
   // Various audio objects groupings
   // ---
   // - pointers to all realtime inputs
-  vector<AUDIO_IO_DEVICE*> realtime_inputs_rep;
+  std::vector<AUDIO_IO_DEVICE*> realtime_inputs_rep;
   // - pointers to all realtime outputs
-  vector<AUDIO_IO_DEVICE*> realtime_outputs_rep;
+  std::vector<AUDIO_IO_DEVICE*> realtime_outputs_rep;
   // - pointers to all realtime inputs and outputs
-  vector<AUDIO_IO_DEVICE*> realtime_objects_rep;
+  std::vector<AUDIO_IO_DEVICE*> realtime_objects_rep;
   // - pointers to all non_realtime inputs
-  vector<AUDIO_IO*> non_realtime_inputs_rep;
+  std::vector<AUDIO_IO*> non_realtime_inputs_rep;
   // - pointers to all non_realtime outputs
-  vector<AUDIO_IO*> non_realtime_outputs_rep;
+  std::vector<AUDIO_IO*> non_realtime_outputs_rep;
   // - pointers to all non_realtime inputs and outputs
-  vector<AUDIO_IO*> non_realtime_objects_rep;
+  std::vector<AUDIO_IO*> non_realtime_objects_rep;
   // - pointers to proxy input objects (if used, assigned to r_inputs)
-  vector<AUDIO_IO*> proxy_inputs_rep;
+  std::vector<AUDIO_IO*> proxy_inputs_rep;
   // - pointers to proxy output objects (if used, assigned to r_inputs)
-  vector<AUDIO_IO*> proxy_outputs_rep;
-  vector<AUDIO_IO_BUFFERED_PROXY*> proxies_rep;
+  std::vector<AUDIO_IO*> proxy_outputs_rep;
+  std::vector<AUDIO_IO_BUFFERED_PROXY*> proxies_rep;
 
   // ---
   // Data objects
   // ---
-  vector<int> input_start_pos_rep;
-  vector<int> output_start_pos_rep;
-  vector<int> input_chain_count_rep;
-  vector<int> output_chain_count_rep;
+  std::vector<int> input_start_pos_rep;
+  std::vector<int> output_start_pos_rep;
+  std::vector<int> input_chain_count_rep;
+  std::vector<int> output_chain_count_rep;
 
   AUDIO_IO_PROXY_SERVER pserver_rep;
   SAMPLE_BUFFER mixslot_rep;
-  vector<SAMPLE_BUFFER> cslots_rep;
+  std::vector<SAMPLE_BUFFER> cslots_rep;
 
   long int buffersize_rep;
   ECA_CHAINSETUP::Mix_mode mixmode_rep;
@@ -220,11 +220,11 @@ private:
   void exec_simple_iactive(void);
   bool finished(void);
 
-  typedef vector<AUDIO_IO*>::const_iterator audio_ci;
-  typedef vector<SAMPLE_BUFFER>::const_iterator audioslot_ci;
-  typedef vector<CHAIN*>::const_iterator chain_ci;
-  typedef vector<CHAIN*>::iterator chain_i;
-  typedef vector<CHAIN_OPERATOR*>::const_iterator chainop_ci;
+  typedef std::vector<AUDIO_IO*>::const_iterator audio_ci;
+  typedef std::vector<SAMPLE_BUFFER>::const_iterator audioslot_ci;
+  typedef std::vector<CHAIN*>::const_iterator chain_ci;
+  typedef std::vector<CHAIN*>::iterator chain_i;
+  typedef std::vector<CHAIN_OPERATOR*>::const_iterator chainop_ci;
 
  public:
 

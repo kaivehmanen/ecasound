@@ -22,54 +22,54 @@
 
 #include "kvu_numtostr.h"
 
-string kvu_numtostr (unsigned char c) { return kvu_numtostr((int)c); }
-string kvu_numtostr (signed char c) {  return kvu_numtostr((int)c); }
-string kvu_numtostr (bool b) { return kvu_numtostr((int)b); }
-string kvu_numtostr(unsigned short i) { return kvu_numtostr((int)i); }
+std::string kvu_numtostr (unsigned char c) { return kvu_numtostr((int)c); }
+std::string kvu_numtostr (signed char c) {  return kvu_numtostr((int)c); }
+std::string kvu_numtostr (bool b) { return kvu_numtostr((int)b); }
+std::string kvu_numtostr(unsigned short i) { return kvu_numtostr((int)i); }
 
-string kvu_numtostr (float n, int flo_prec) { return kvu_numtostr(static_cast<double>(n), flo_prec); }
+std::string kvu_numtostr (float n, int flo_prec) { return kvu_numtostr(static_cast<double>(n), flo_prec); }
 
-string kvu_numtostr (int n) {
+std::string kvu_numtostr (int n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%d",n);
   ctmp[11] = 0;
-  return(string(ctmp));
+  return(std::string(ctmp));
 }
 
-string kvu_numtostr (const void *p) {
+std::string kvu_numtostr (const void *p) {
   char ctmp[12];
   snprintf(ctmp, 12, "%p",p);
   ctmp[11] = 0;
-  return(string(ctmp));
+  return(std::string(ctmp));
 }
 
-string kvu_numtostr (unsigned int n) {
+std::string kvu_numtostr (unsigned int n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%u",n);
   ctmp[11] = 0;
-  return(string(ctmp));
+  return(std::string(ctmp));
 }
 
-string kvu_numtostr (long n) {
+std::string kvu_numtostr (long n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%ld",n);
   ctmp[11] = 0;
-  return(string(ctmp));
+  return(std::string(ctmp));
 }
 
-string kvu_numtostr (unsigned long n) {
+std::string kvu_numtostr (unsigned long n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%lu",n);
   ctmp[11] = 0;
-  return(string(ctmp));
+  return(std::string(ctmp));
 }
 
 
-string kvu_numtostr (double n, int flo_prec) {
+std::string kvu_numtostr (double n, int flo_prec) {
   char ctmp[32];
   snprintf(ctmp, 12, "%.*f",flo_prec, n);
   ctmp[31] = 0;
-  return(string(ctmp));
+  return(std::string(ctmp));
 }
 
 

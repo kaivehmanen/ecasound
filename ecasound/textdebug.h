@@ -18,8 +18,8 @@ private:
 public:
 
     void flush(void);
-    void control_flow(const string& part);
-    void msg(int level, const string& info);
+    void control_flow(const std::string& part);
+    void msg(int level, const std::string& info);
 
     TEXTDEBUG(void);
     ~TEXTDEBUG(void);

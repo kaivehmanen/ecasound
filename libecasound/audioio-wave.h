@@ -113,14 +113,14 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;
 
-  WAVEFILE (const string& name = "");
+  WAVEFILE (const std::string& name = "");
   ~WAVEFILE(void);
-  WAVEFILE* clone(void) { cerr << "Not implemented!" << endl; return this; }
+  WAVEFILE* clone(void) { std::cerr << "Not implemented!" << std::endl; return this; }
   WAVEFILE* new_expr(void) { return new WAVEFILE(); }
 
  private:
 
-  WAVEFILE(const WAVEFILE& x) { cerr << "WAVE construct"; }
+  WAVEFILE(const WAVEFILE& x) { std::cerr << "WAVE construct"; }
   WAVEFILE& operator=(const WAVEFILE& x) {  return(*this); }
 
   void update(void);        

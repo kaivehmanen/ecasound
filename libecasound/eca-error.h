@@ -30,12 +30,12 @@ private:
 
 public:
 
-  const string& error_section(void) const { return(esection_rep); }
-  const string& error_message(void) const { return(eerrormsg_rep); }
+  const std::string& error_section(void) const { return(esection_rep); }
+  const std::string& error_message(void) const { return(eerrormsg_rep); }
   const Action& error_action(void) const { return(eaction_rep); }
   
-  ECA_ERROR(const string& section, 
-	    const string& errormsg, 
+  ECA_ERROR(const std::string& section, 
+	    const std::string& errormsg, 
 	    const Action action = ECA_ERROR::retry) {
     esection_rep = section;
     eerrormsg_rep = errormsg;

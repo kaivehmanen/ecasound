@@ -16,18 +16,18 @@ class MIDI_IO_RAW : public MIDI_IO {
 
   int fd_rep;
   bool finished_rep;
-  string device_name_rep;
+  std::string device_name_rep;
 
  public:
 
-  virtual string name(void) const { return("Raw MIDI"); }
+  virtual std::string name(void) const { return("Raw MIDI"); }
   virtual int supported_io_modes(void) const { return(io_read | io_write | io_readwrite); }
   virtual bool supports_nonblocking_mode(void) const { return(true); }
   virtual int file_descriptor(void) const { return(fd_rep); }
-  virtual string parameter_names(void) const { return("label,device_name"); }
+  virtual std::string parameter_names(void) const { return("label,device_name"); }
 
-  virtual void set_parameter(int param, string value);
-  virtual string get_parameter(int param) const;
+  virtual void set_parameter(int param, std::string value);
+  virtual std::string get_parameter(int param) const;
   
   virtual void open(void);
   virtual void close(void);
@@ -37,7 +37,7 @@ class MIDI_IO_RAW : public MIDI_IO {
 
   virtual bool finished(void) const;
 
-  MIDI_IO_RAW (const string& name = "");
+  MIDI_IO_RAW (const std::string& name = "");
   ~MIDI_IO_RAW(void);
     
   MIDI_IO_RAW* clone(void) { return(new MIDI_IO_RAW(*this)); }

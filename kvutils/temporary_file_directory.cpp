@@ -37,7 +37,7 @@ TEMPORARY_FILE_DIRECTORY::TEMPORARY_FILE_DIRECTORY(void)
 /**
  * Constructor that reserves a new directory.
  */
-TEMPORARY_FILE_DIRECTORY::TEMPORARY_FILE_DIRECTORY(const string& dir) 
+TEMPORARY_FILE_DIRECTORY::TEMPORARY_FILE_DIRECTORY(const std::string& dir) 
   : valid_rep(false) {
   reserve_directory(dir);
 }
@@ -48,7 +48,7 @@ TEMPORARY_FILE_DIRECTORY::TEMPORARY_FILE_DIRECTORY(const string& dir)
  * physically creating the directory. If these variables are 
  * not defined, default "/tmp" is used.
  */
-void TEMPORARY_FILE_DIRECTORY::reserve_directory(const string& dir) {
+void TEMPORARY_FILE_DIRECTORY::reserve_directory(const std::string& dir) {
   if (is_valid() == true) {
     release_directory();
   }
@@ -130,25 +130,25 @@ void TEMPORARY_FILE_DIRECTORY::check_validity(void) {
  * Sets a new directory prefix (for instance "/tmp"). The new 
  * setting will take effect when the reserve_directory() is issued.
  */
-void TEMPORARY_FILE_DIRECTORY::set_directory_prefix(const string& dir) {
+void TEMPORARY_FILE_DIRECTORY::set_directory_prefix(const std::string& dir) {
   dirprefix_rep = dir;
 }
 
-string TEMPORARY_FILE_DIRECTORY::get_directory_prefix(void) const {
+std::string TEMPORARY_FILE_DIRECTORY::get_directory_prefix(void) const {
   if (dirprefix_rep.size() > 0) {
     return(dirprefix_rep);
   }
     
-  string tmpname ("/tmp");
+  std::string tmpname ("/tmp");
   if ((getuid() == geteuid()) && (getgid() == getegid())) {
     char* tmpdir_p = NULL;
     tmpdir_p = getenv("TMPDIR");
     if (tmpdir_p != NULL) {
-      if (tmpdir_p != NULL) tmpname = string(tmpdir_p);
+      if (tmpdir_p != NULL) tmpname = std::string(tmpdir_p);
     }
     else {
       tmpdir_p = getenv("TMP");
-      if (tmpdir_p != NULL) tmpname = string(tmpdir_p);
+      if (tmpdir_p != NULL) tmpname = std::string(tmpdir_p);
     }
   }
   return(tmpname);
@@ -157,7 +157,7 @@ string TEMPORARY_FILE_DIRECTORY::get_directory_prefix(void) const {
 /** 
  * Returns the whole path of the reserved directory. 
  */
-string TEMPORARY_FILE_DIRECTORY::get_reserved_directory(void) const {
+std::string TEMPORARY_FILE_DIRECTORY::get_reserved_directory(void) const {
   if (is_valid() == true) 
     return(tdir_rep);
 
@@ -170,15 +170,15 @@ string TEMPORARY_FILE_DIRECTORY::get_reserved_directory(void) const {
  * is generated. Returns an empty string if directory is not 
  * in valid state, or an error has occured.
  */
-string TEMPORARY_FILE_DIRECTORY::create_filename(const string& prefix, const string& postfix) {
-  string fname (tdir_rep + "/" + prefix + "-" +
+std::string TEMPORARY_FILE_DIRECTORY::create_filename(const std::string& prefix, const std::string& postfix) {
+  std::string fname (tdir_rep + "/" + prefix + "-" +
 		kvu_numtostr(getpid()) + "-");
   struct stat statbuf;
   
   for(int n = 0; n < TEMPORARY_FILE_DIRECTORY::max_temp_files; n++) {
     if (is_valid() != true) break;
 
-    string temp = fname + kvu_numtostr(tmp_index_rep) + postfix;
+    std::string temp = fname + kvu_numtostr(tmp_index_rep) + postfix;
     if (tmp_index_rep > TEMPORARY_FILE_DIRECTORY::max_temp_files) tmp_index_rep = 0;
     ++tmp_index_rep;
 

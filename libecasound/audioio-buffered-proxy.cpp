@@ -67,7 +67,7 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
 AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void) {
   pserver_repp->unregister_client(child_repp);
   if (xruns_rep > 0) 
-    cerr << "(audioio-buffered-proxy) There were total " << xruns_rep << " xruns." << endl;
+    std::cerr << "(audioio-buffered-proxy) There were total " << xruns_rep << " xruns." << std::endl;
 }
 
 /**
@@ -108,7 +108,7 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
     else {
       finished_rep = false;
       xruns_rep++;
-      cerr << "Underrun! Exiting!" << endl;
+      std::cerr << "Underrun! Exiting!" << std::endl;
       exit(0);
     }
   }
@@ -130,7 +130,7 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
     else {
       finished_rep = false;
       xruns_rep++;
-      cerr << "Overrun! Exiting" << endl;
+      std::cerr << "Overrun! Exiting" << std::endl;
       exit(0);
     }
   }

@@ -68,7 +68,7 @@ ECA_SESSION::~ECA_SESSION(void) {
 
   status(ep_status_notready);
 
-  for(vector<ECA_CHAINSETUP*>::iterator q = chainsetups_rep.begin(); q != chainsetups_rep.end(); q++) {
+  for(std::vector<ECA_CHAINSETUP*>::iterator q = chainsetups_rep.begin(); q != chainsetups_rep.end(); q++) {
     delete *q;
   }
 
@@ -87,7 +87,7 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
   cline.combine();
   interpret_general_options(cline);
 
-  vector<string> options;
+  std::vector<std::string> options;
   create_chainsetup_options(cline, &options);
 
   if (chainsetups_rep.size() == 0) {
@@ -154,7 +154,7 @@ void ECA_SESSION::set_defaults(void) {
  *  selected_chainsetup->name() == name ||
  *  chainsetup_names().size() has not changed
  */
-void ECA_SESSION::add_chainsetup(const string& name) {
+void ECA_SESSION::add_chainsetup(const std::string& name) {
   // --------
   // require:
   DBC_REQUIRE(name != "");
@@ -190,7 +190,7 @@ void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup) {
   // --------
   int old_size = chainsetups_rep.size();
 
-  vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups_rep.begin();
+  std::vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups_rep.begin();
   while(p != chainsetups_rep.end()) {
     if ((*p)->name() == comline_setup->name()) {
       delete comline_setup;
@@ -228,7 +228,7 @@ void ECA_SESSION::remove_chainsetup(void) {
   DBC_REQUIRE(connected_chainsetup_repp != selected_chainsetup_repp);
   // --------
 
-  vector<ECA_CHAINSETUP*>::iterator p = chainsetups_rep.begin();
+  std::vector<ECA_CHAINSETUP*>::iterator p = chainsetups_rep.begin();
   while(p != chainsetups_rep.end()) {
     if (*p == selected_chainsetup_repp) {
       selected_chainsetup_repp = 0;
@@ -245,14 +245,14 @@ void ECA_SESSION::remove_chainsetup(void) {
   // --------
 }
 
-void ECA_SESSION::select_chainsetup(const string& name) {
+void ECA_SESSION::select_chainsetup(const std::string& name) {
   // --------
   // require:
   DBC_REQUIRE(name.empty() != true);
   // --------
 
   selected_chainsetup_repp = 0;
-  vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups_rep.begin();
+  std::vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups_rep.begin();
   while(p != chainsetups_rep.end()) {
     if ((*p)->name() == name) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-session) Chainsetup \"" + name + "\" selected.");
@@ -278,7 +278,7 @@ void ECA_SESSION::save_chainsetup(void) throw(ECA_ERROR&) {
   selected_chainsetup_repp->save();
 }
 
-void ECA_SESSION::save_chainsetup(const string& filename) throw(ECA_ERROR&) {
+void ECA_SESSION::save_chainsetup(const std::string& filename) throw(ECA_ERROR&) {
   // --------
   // require:
   DBC_REQUIRE(selected_chainsetup_repp != 0 && filename.empty() != true);
@@ -292,7 +292,7 @@ void ECA_SESSION::save_chainsetup(const string& filename) throw(ECA_ERROR&) {
  * selected_chainsetup_repp == 0, ie. no chainsetup 
  * selected.
  */
-void ECA_SESSION::load_chainsetup(const string& filename) {
+void ECA_SESSION::load_chainsetup(const std::string& filename) {
   // --------
   DBC_REQUIRE(filename.empty() != true);
   // --------
@@ -355,9 +355,9 @@ void ECA_SESSION::disconnect_chainsetup(void) {
   // --------
 }
 
-vector<string> ECA_SESSION::chainsetup_names(void) const {
-  vector<string> result;
-  vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups_rep.begin();
+std::vector<std::string> ECA_SESSION::chainsetup_names(void) const {
+  std::vector<std::string> result;
+  std::vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups_rep.begin();
   while(p != chainsetups_rep.end()) {
     result.push_back((*p)->name());
     ++p;
@@ -366,7 +366,7 @@ vector<string> ECA_SESSION::chainsetup_names(void) const {
 }
 
 void ECA_SESSION::create_chainsetup_options(COMMAND_LINE& cline,
-					    vector<string>* options) {
+					    std::vector<std::string>* options) {
   cline.begin();
   cline.next(); // skip the program name
   while(cline.end() == false) {
@@ -379,7 +379,7 @@ void ECA_SESSION::create_chainsetup_options(COMMAND_LINE& cline,
 /**
  * Tests whether the given argument is a session-level option.
  */
-bool ECA_SESSION::is_session_option(const string& arg) const {
+bool ECA_SESSION::is_session_option(const std::string& arg) const {
   if (arg.size() < 2 ||
       arg[0] != '-') return(false);
 
@@ -415,7 +415,7 @@ void ECA_SESSION::interpret_general_options(COMMAND_LINE& cline) {
   }
 }
 
-void ECA_SESSION::interpret_general_option (const string& argu) {
+void ECA_SESSION::interpret_general_option (const std::string& argu) {
   if (argu.size() < 2) return;
   if (argu[0] != '-') return;
   switch(argu[1]) {
@@ -442,7 +442,7 @@ void ECA_SESSION::interpret_general_option (const string& argu) {
       break;
     }
   case 'h':      // help!
-    cout << ecasound_parameter_help();
+    std::cout << ecasound_parameter_help();
     break;
 
   case 'q':
@@ -479,7 +479,7 @@ void ECA_SESSION::interpret_general_option (const string& argu) {
   }
 }
 
-void ECA_SESSION::interpret_chainsetup (const string& argu) {
+void ECA_SESSION::interpret_chainsetup (const std::string& argu) {
   if (argu.size() == 0) return;
   
   string tname = get_argument_number(1, argu);

@@ -19,10 +19,10 @@ class AUDIO_IO_FORKED_STREAM {
   int pid_of_child_rep;
   int fd_rep;
   bool last_fork_rep;
-  string tmpfile_repp;
+  std::string tmpfile_repp;
   bool tmp_file_created_rep;
-  string command_rep;
-  string object_rep;
+  std::string command_rep;
+  std::string object_rep;
   TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
 
   void init_temp_directory(void);
@@ -34,8 +34,8 @@ class AUDIO_IO_FORKED_STREAM {
    * Set the command string. This must be done before other set_* 
    * calls.
    */
-  void set_fork_command(const string& cmd) { command_rep = cmd; }
-  void set_fork_file_name(const string& filename);
+  void set_fork_command(const std::string& cmd) { command_rep = cmd; }
+  void set_fork_file_name(const std::string& filename);
   void set_fork_pipe_name(void);
   void set_fork_channels(int channels);
   void set_fork_sample_rate(long int sample_rate);

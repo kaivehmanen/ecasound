@@ -27,14 +27,14 @@
 #include "eca-iamode-parser.h"
 #include "eca-debug.h"
 
-map<string,int> ECA_IAMODE_PARSER::cmd_map_rep;
+std::map<std::string,int> ECA_IAMODE_PARSER::cmd_map_rep;
 
 ECA_IAMODE_PARSER::~ECA_IAMODE_PARSER(void) { }
 
-vector<string> ECA_IAMODE_PARSER::registered_commands_list(void) {
-  vector<string> cmdlist;
-  const map<string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
-  map<string,int>::const_iterator p = map_ref.begin();
+std::vector<std::string> ECA_IAMODE_PARSER::registered_commands_list(void) {
+  std::vector<std::string> cmdlist;
+  const std::map<std::string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
+  std::map<std::string,int>::const_iterator p = map_ref.begin();
   while (p != map_ref.end()) {
     cmdlist.push_back(p->first);
     ++p;

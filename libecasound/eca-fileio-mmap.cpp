@@ -32,8 +32,8 @@
 ECA_FILE_IO_MMAP::ECA_FILE_IO_MMAP(void) { }
 ECA_FILE_IO_MMAP::~ECA_FILE_IO_MMAP(void) { }
 
-void ECA_FILE_IO_MMAP::open_file(const string& fname, 
-				 const string& fmode)
+void ECA_FILE_IO_MMAP::open_file(const std::string& fname, 
+				 const std::string& fmode)
 {
   int openflags = O_RDWR;
   int mmapflags = PROT_READ | PROT_WRITE;

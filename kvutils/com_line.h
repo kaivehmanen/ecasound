@@ -19,16 +19,16 @@ class COMMAND_LINE {
 
 private:
     
-    vector<string> cparams;
+    std::vector<std::string> cparams;
 
-    mutable vector<string>::size_type current_rep;
+    mutable std::vector<std::string>::size_type current_rep;
 
 public:
    
     /**
      * Number of elements
      */
-    string::size_type size() const { return(cparams.size()); }
+    std::string::size_type size() const { return(cparams.size()); }
 
     /**
      * Sets the first argument active. This is usually program's
@@ -57,7 +57,7 @@ public:
      * require:
      *  end() == false
      */
-    const string& current(void) const { return(cparams[current_rep]); }
+    const std::string& current(void) const { return(cparams[current_rep]); }
 
     /**
      * Is '-option' is among the arguments?
@@ -70,7 +70,7 @@ public:
     /**
      * Is '-option' is among the arguments?
      */
-    bool has(const string& option) const;
+    bool has(const std::string& option) const;
 
     /**
      * Make sure that all option tokens start with a '-' sign
@@ -80,15 +80,15 @@ public:
     /**
      * Static version of <code>combine</code>
      */
-    static vector<string> combine(const vector<string>& source);
+    static std::vector<std::string> combine(const std::vector<std::string>& source);
 
     /**
      * Adds 'argu' to the arguments.
      */
-    void push_back(const string& argu);
+    void push_back(const std::string& argu);
 
     COMMAND_LINE(int argc, char *argv[]);
-    COMMAND_LINE(const vector<string>& params);
+    COMMAND_LINE(const std::vector<std::string>& params);
 };
 
 #endif

@@ -104,8 +104,8 @@ void EFFECT_BW_FILTER::init(SAMPLE_BUFFER *insample) {
   set_channels(insample->number_of_channels());
   set_samples_per_second(insample->sample_rate());
 
-  sin.resize(insample->number_of_channels(), vector<SAMPLE_SPECS::sample_type> (2));
-  sout.resize(insample->number_of_channels(), vector<SAMPLE_SPECS::sample_type> (2));
+  sin.resize(insample->number_of_channels(), std::vector<SAMPLE_SPECS::sample_type> (2));
+  sout.resize(insample->number_of_channels(), std::vector<SAMPLE_SPECS::sample_type> (2));
 }
 
 void EFFECT_BW_FILTER::process(void) {
@@ -255,7 +255,7 @@ void EFFECT_COMB_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_type
   case 1: 
     {
       C = value;
-      vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
+      std::vector<std::deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
 	if (p->size() > C) {
 	  p->resize(static_cast<unsigned int>(C));

@@ -59,7 +59,7 @@ static PyObject * pyeca_command_float_arg(PyObject* self, PyObject *args) {
 
 static PyObject * pyeca_last_string_list(PyObject* self, PyObject *args) {
   pyeca_control_t *selfp = (pyeca_control_t*) self;
-  const vector<string>& vec = selfp->eci->last_string_list();
+  const std::vector<std::string>& vec = selfp->eci->last_string_list();
   PyObject *list = Py_BuildValue("[]");
   for(unsigned int n = 0; n < vec.size(); n++) {
     PyList_Append(list, Py_BuildValue("s", vec[n].c_str()));

@@ -43,7 +43,7 @@ public:
 
   EFFECT_VST* clone(void)  { return new EFFECT_VST(library_file_rep); }
   EFFECT_VST* new_expr(void)  { return new EFFECT_VST(library_file_rep); }
-  EFFECT_VST (const string& fname) throw(ECA_ERROR&);
+  EFFECT_VST (const std::string& fname) throw(ECA_ERROR&);
   ~EFFECT_VST (void);
 
  private:

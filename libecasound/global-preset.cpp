@@ -25,20 +25,20 @@
 #include "eca-error.h"
 #include "global-preset.h"
 
-GLOBAL_PRESET::GLOBAL_PRESET(const string& preset_name) 
+GLOBAL_PRESET::GLOBAL_PRESET(const std::string& preset_name) 
   : preset_name_rep(preset_name) {
   ECA_RESOURCES ecarc;
   ecadebug->msg(ECA_DEBUG::system_objects,"(global-preset) Opening sc-preset file.");
 
-  string user_filename =
+  std::string user_filename =
     ecarc.resource("user-resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
 
   RESOURCE_FILE rc;
   rc.resource_file(user_filename);
   rc.load();
-  string raw = rc.resource(preset_name);
+  std::string raw = rc.resource(preset_name);
   if (raw == "") {
-    string global_filename =
+    std::string global_filename =
       ecarc.resource("resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
     rc.resource_file(global_filename);
     rc.load();
@@ -56,7 +56,7 @@ GLOBAL_PRESET::GLOBAL_PRESET(const string& preset_name)
 }
 
 GLOBAL_PRESET* GLOBAL_PRESET::clone(void) {
-  vector<parameter_type> param_values;
+  std::vector<parameter_type> param_values;
   for(int n = 0; n < number_of_params(); n++) {
     param_values.push_back(get_parameter(n + 1));
   }

@@ -52,9 +52,9 @@ public:
   int get_debug_level(void) const { return(debug_value_rep); } 
   void disable(void) { debug_value_rep = disabled; }
 
-  virtual void control_flow(const string& part) = 0;
-  virtual void msg(const string& info) { msg(module_flow, info); }
-  virtual void msg(int level, const string& info) = 0;
+  virtual void control_flow(const std::string& part) = 0;
+  virtual void msg(const std::string& info) { msg(module_flow, info); }
+  virtual void msg(int level, const std::string& info) = 0;
 
   ECA_DEBUG(void) : debug_value_rep(0) { }
   virtual ~ECA_DEBUG(void) { }

@@ -33,7 +33,7 @@
  * Object map will take care that objects with multiple registered
  * keywords are destructed properly.
  */
-void ECA_OBJECT_MAP::register_object(const string& keyword, ECA_OBJECT* object) {
+void ECA_OBJECT_MAP::register_object(const std::string& keyword, ECA_OBJECT* object) {
   object_map[keyword] = object;
   object_keyword_map[keyword] = object->name();
 }
@@ -43,7 +43,7 @@ void ECA_OBJECT_MAP::register_object(const string& keyword, ECA_OBJECT* object) 
  * delete the assigned object, because one object can be 
  * registered with multiple keywords.
  */
-void ECA_OBJECT_MAP::unregister_object(const string& keyword) {
+void ECA_OBJECT_MAP::unregister_object(const std::string& keyword) {
   object_map[keyword] = 0;
   object_keyword_map[keyword] = "";
 }
@@ -51,7 +51,7 @@ void ECA_OBJECT_MAP::unregister_object(const string& keyword) {
 /**
  * List of registered objects ('regexpr'-'object name' map).
  */
-const map<string,string>& ECA_OBJECT_MAP::registered_objects(void) const {
+const std::map<std::string,std::string>& ECA_OBJECT_MAP::registered_objects(void) const {
   return(object_keyword_map);
 }
 
@@ -63,8 +63,8 @@ const map<string,string>& ECA_OBJECT_MAP::registered_objects(void) const {
  * In other words, the returned pointer refers to the object
  * stored in the object map.
  */
-ECA_OBJECT* ECA_OBJECT_MAP::object(const string& keyword, bool use_regexp) const {
-  map<string,ECA_OBJECT*>::const_iterator p = object_map.begin();
+ECA_OBJECT* ECA_OBJECT_MAP::object(const std::string& keyword, bool use_regexp) const {
+  std::map<std::string,ECA_OBJECT*>::const_iterator p = object_map.begin();
   regex_t preg;
   ECA_OBJECT* object = 0;
   while(p != object_map.end()) {
@@ -87,8 +87,8 @@ ECA_OBJECT* ECA_OBJECT_MAP::object(const string& keyword, bool use_regexp) const
 /**
  * Returns the matching keyword for 'object'.
  */
-string ECA_OBJECT_MAP::object_identifier(const ECA_OBJECT* object) const {
-  map<string, ECA_OBJECT*>::const_iterator p = object_map.begin();
+std::string ECA_OBJECT_MAP::object_identifier(const ECA_OBJECT* object) const {
+  std::map<std::string, ECA_OBJECT*>::const_iterator p = object_map.begin();
   while(p != object_map.end()) {
     if (object->name() == p->second->name()) {
       return(p->first);
@@ -102,7 +102,7 @@ string ECA_OBJECT_MAP::object_identifier(const ECA_OBJECT* object) const {
  * Unregister all objects without physically deleting them.
  */
 void ECA_OBJECT_MAP::flush(void) { 
-  map<string, ECA_OBJECT*>::iterator p = object_map.begin();
+  std::map<std::string, ECA_OBJECT*>::iterator p = object_map.begin();
   while(p != object_map.end()) {
     p->second = 0;
     ++p;
@@ -110,17 +110,17 @@ void ECA_OBJECT_MAP::flush(void) {
 }
 
 ECA_OBJECT_MAP::~ECA_OBJECT_MAP (void) { 
-  map<string, ECA_OBJECT*>::iterator p = object_map.begin();
+  std::map<std::string, ECA_OBJECT*>::iterator p = object_map.begin();
   while(p != object_map.end()) {
     if (p->second != 0) {
       ECA_OBJECT* next_obj = p->second;
-//        cerr << "Deleting " << next_obj->name() << "." << endl;
-      map<string, ECA_OBJECT*>::iterator q = p;
+//        std::cerr << "Deleting " << next_obj->name() << "." << std::endl;
+      std::map<std::string, ECA_OBJECT*>::iterator q = p;
       ++q;
       while(q != object_map.end()) {
 	if (q->second != 0 &&
 	    q->second == p->second) {
-//  	  cerr << "Deleting sub-object with keyword " << q->first << "." << endl;
+//  	  std::cerr << "Deleting sub-object with keyword " << q->first << "." << std::endl;
 	  q->second = 0;
 	}
 	++q;

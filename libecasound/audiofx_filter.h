@@ -30,15 +30,15 @@ private:
   SAMPLE_SPECS::sample_type outputSample;
   SAMPLE_ITERATOR_CHANNELS i;
 
-  vector<vector<SAMPLE_SPECS::sample_type> > sin;
-  vector<vector<SAMPLE_SPECS::sample_type> > sout;
+  std::vector<std::vector<SAMPLE_SPECS::sample_type> > sin;
+  std::vector<std::vector<SAMPLE_SPECS::sample_type> > sout;
 
   void init_values(void);
 
  protected:
 
-  vector<SAMPLE_SPECS::sample_type> a;
-  vector<SAMPLE_SPECS::sample_type> b;
+  std::vector<SAMPLE_SPECS::sample_type> a;
+  std::vector<SAMPLE_SPECS::sample_type> b;
    
 public:
 
@@ -144,7 +144,7 @@ public:
  */
 class EFFECT_ALLPASS_FILTER : public EFFECT_FILTER {
 
-  vector<deque<SAMPLE_SPECS::sample_type> > inbuf, outbuf;
+  std::vector<std::deque<SAMPLE_SPECS::sample_type> > inbuf, outbuf;
   SAMPLE_ITERATOR_CHANNELS i;
 
   parameter_type feedback_gain;
@@ -175,8 +175,8 @@ public:
  */
 class EFFECT_COMB_FILTER : public EFFECT_FILTER {
 
-  vector<deque<SAMPLE_SPECS::sample_type> > buffer;
-  vector<SAMPLE_SPECS::sample_type> temp;
+  std::vector<std::deque<SAMPLE_SPECS::sample_type> > buffer;
+  std::vector<SAMPLE_SPECS::sample_type> temp;
   SAMPLE_ITERATOR_CHANNELS i;
 
   parameter_type C;
@@ -206,9 +206,9 @@ public:
  */
 class EFFECT_INVERSE_COMB_FILTER : public EFFECT_FILTER {
 
-  vector<parameter_type> laskuri;
-  vector<deque<SAMPLE_SPECS::sample_type> > buffer;
-  vector<SAMPLE_SPECS::sample_type> temp;
+  std::vector<parameter_type> laskuri;
+  std::vector<std::deque<SAMPLE_SPECS::sample_type> > buffer;
+  std::vector<SAMPLE_SPECS::sample_type> temp;
   SAMPLE_ITERATOR_CHANNELS i;
 
   parameter_type C;
@@ -276,7 +276,7 @@ private:
 
   parameter_type cutOffFreq;
   parameter_type A, B;
-  vector<SAMPLE_SPECS::sample_type> outhist, tempin, temphist;
+  std::vector<SAMPLE_SPECS::sample_type> outhist, tempin, temphist;
   SAMPLE_ITERATOR_CHANNELS i;
 
 public:
@@ -302,7 +302,7 @@ class EFFECT_RESONANT_BANDPASS : public EFFECT_FILTER {
 
 private:
 
-  vector<SAMPLE_SPECS::sample_type> outhist1, outhist2;
+  std::vector<SAMPLE_SPECS::sample_type> outhist1, outhist2;
   
   parameter_type center;
   parameter_type width;
@@ -337,8 +337,8 @@ class EFFECT_RESONANT_LOWPASS : public EFFECT_FILTER {
 
   SAMPLE_ITERATOR_CHANNELS i;
     
-  vector<SAMPLE_SPECS::sample_type> outhist0, outhist1, outhist2, outhist3;
-  vector<SAMPLE_SPECS::sample_type> newhist0, newhist1;
+  std::vector<SAMPLE_SPECS::sample_type> outhist0, outhist1, outhist2, outhist3;
+  std::vector<SAMPLE_SPECS::sample_type> newhist0, newhist1;
     
   class TRIPLE_COEFS {
   public:
@@ -351,9 +351,9 @@ class EFFECT_RESONANT_LOWPASS : public EFFECT_FILTER {
     parameter_type A, B, C, D;       // filter coefficients
   };
     
-  vector<TRIPLE_COEFS> ProtoCoef;         // Filter prototype coefficients,
+  std::vector<TRIPLE_COEFS> ProtoCoef;         // Filter prototype coefficients,
                                           // for each filter section
-  vector<FILTER_COEFS> Coef;
+  std::vector<FILTER_COEFS> Coef;
     
   parameter_type cutoff, Q, gain, gain_orig;
   parameter_type pi;
@@ -397,15 +397,15 @@ private:
   parameter_type center;
   parameter_type width;
 
-  vector<SAMPLE_SPECS::sample_type> cona;
-  vector<SAMPLE_SPECS::sample_type> conb;
+  std::vector<SAMPLE_SPECS::sample_type> cona;
+  std::vector<SAMPLE_SPECS::sample_type> conb;
 
-  vector<SAMPLE_SPECS::sample_type> saout0, saout1;
+  std::vector<SAMPLE_SPECS::sample_type> saout0, saout1;
 
 public:
 
-  virtual string name(void) const { return("Resonator filter"); }
-  virtual string parameter_names(void) const { return("center-freq,width"); }
+  virtual std::string name(void) const { return("Resonator filter"); }
+  virtual std::string parameter_names(void) const { return("center-freq,width"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;

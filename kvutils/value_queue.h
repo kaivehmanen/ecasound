@@ -24,8 +24,8 @@ class VALUE_QUEUE {
   mutable pthread_mutex_t lock_rep;     // mutex ensuring exclusive access to buffer
   mutable pthread_cond_t cond_rep;
 
-  pair<int,double> empty_rep;
-  deque<pair<int,double> > cmds_rep;
+  std::pair<int,double> empty_rep;
+  std::deque<std::pair<int,double> > cmds_rep;
 
 public:
   /**
@@ -47,7 +47,7 @@ public:
    * require:
    *   is_empty() == false
    */
-  const pair<int,double>& front(void);
+  const std::pair<int,double>& front(void);
 
   /**
    * Blocks until 'is_empty() != true'. 'timeout_sec' and

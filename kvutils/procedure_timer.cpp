@@ -111,8 +111,8 @@ double PROCEDURE_TIMER::min_duration_seconds(void) const { return(to_seconds(&mi
 double PROCEDURE_TIMER::average_duration_seconds(void) const { return(event_time_total_rep / event_count()); }
 const struct timeval* PROCEDURE_TIMER::min_duration(void) const { return(&max_event_rep); }
 const struct timeval* PROCEDURE_TIMER::max_duration(void) const { return(&min_event_rep); }
-string PROCEDURE_TIMER::to_string(void) const { 
-  string res;
+std::string PROCEDURE_TIMER::to_string(void) const { 
+  std::string res;
 
   res = idstr_rep + ":\n";
   res += "Number of events: " + kvu_numtostr(event_count()) + "\n";

@@ -26,15 +26,15 @@ class ECA_AUDIO_TIME {
 
   ECA_AUDIO_TIME(long int samples, long int sample_rate);
   ECA_AUDIO_TIME(double time_in_seconds);
-  ECA_AUDIO_TIME(format_type type, const string& time);
+  ECA_AUDIO_TIME(format_type type, const std::string& time);
   ECA_AUDIO_TIME(void);
 
-  void set(format_type type, const string& time);
+  void set(format_type type, const std::string& time);
   void set_seconds(double seconds);
   void set_samples(long int samples);
   void set_samples_per_second(long int srate);
     
-  string to_string(format_type type) const;
+  std::string to_string(format_type type) const;
   double seconds(void) const;
   long int samples_per_second(void) const;
   long int samples(void) const;

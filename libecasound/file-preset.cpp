@@ -24,9 +24,9 @@
 #include "eca-error.h"
 #include "file-preset.h"
 
-FILE_PRESET::FILE_PRESET(const string& file_name) {
+FILE_PRESET::FILE_PRESET(const std::string& file_name) {
   RESOURCE_FILE pfile (file_name);
-  string pname = "empty";
+  std::string pname = "empty";
   if (pfile.keywords().size() > 0) pname = pfile.keywords()[0];
   set_name(pname);
   set_filename(file_name);
@@ -34,7 +34,7 @@ FILE_PRESET::FILE_PRESET(const string& file_name) {
 }
 
 FILE_PRESET* FILE_PRESET::clone(void) {
-  vector<parameter_type> param_values;
+  std::vector<parameter_type> param_values;
   for(int n = 0; n < number_of_params(); n++) {
     param_values.push_back(get_parameter(n + 1));
   }

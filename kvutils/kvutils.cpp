@@ -29,11 +29,11 @@
 
 #include "kvutils.h"
 
-vector<string> string_to_words(const string& s) {
-  vector<string> vec;
-  string stmp = "";
+std::vector<std::string> string_to_words(const std::string& s) {
+  std::vector<std::string> vec;
+  std::string stmp = "";
 
-  for(string::const_iterator p = s.begin(); p != s.end(); p++) {
+  for(std::string::const_iterator p = s.begin(); p != s.end(); p++) {
     if (isspace(*p) == false)
       stmp += *p;
     else {
@@ -49,12 +49,12 @@ vector<string> string_to_words(const string& s) {
   return(vec);
 }
 
-vector<string> string_to_vector(const string& str, const
-				string::value_type separator) {
-  vector<string> vec;
-  string stmp = "";
+std::vector<std::string> string_to_vector(const std::string& str, const
+				std::string::value_type separator) {
+  std::vector<std::string> vec;
+  std::string stmp = "";
 
-  for(string::const_iterator p = str.begin(); p != str.end(); p++) {
+  for(std::string::const_iterator p = str.begin(); p != str.end(); p++) {
     if (*p != separator)
       stmp += *p;
     else {
@@ -69,12 +69,12 @@ vector<string> string_to_vector(const string& str, const
   return(vec);
 }
 
-vector<int> string_to_int_vector(const string& str, 
-				 const string::value_type separator) {
-  vector<int> vec;
-  string stmp = "";
+std::vector<int> string_to_int_vector(const std::string& str, 
+				 const std::string::value_type separator) {
+  std::vector<int> vec;
+  std::string stmp = "";
 
-  for(string::const_iterator p = str.begin(); p != str.end(); p++) {
+  for(std::string::const_iterator p = str.begin(); p != str.end(); p++) {
     if (*p != separator)
       stmp += *p;
     else {
@@ -89,12 +89,12 @@ vector<int> string_to_int_vector(const string& str,
   return(vec);
 }
 
-string vector_to_string(const vector<string>& str, 
-			const string& separator) {
+std::string vector_to_string(const std::vector<std::string>& str, 
+			const std::string& separator) {
 
-  string stmp;
+  std::string stmp;
 
-  vector<string>::const_iterator p = str.begin();
+  std::vector<std::string>::const_iterator p = str.begin();
   while(p != str.end()) {
     stmp += *p;
     ++p;
@@ -105,11 +105,11 @@ string vector_to_string(const vector<string>& str,
   return(stmp);
 }
 
-string string_search_and_replace(const string& str, 
-				 const string::value_type from,
-				 const string::value_type to) {
-  string stmp (str);
-  for(vector<string>::size_type p = 0; p < str.size(); p++) {
+std::string string_search_and_replace(const std::string& str, 
+				 const std::string::value_type from,
+				 const std::string::value_type to) {
+  std::string stmp (str);
+  for(std::vector<std::string>::size_type p = 0; p < str.size(); p++) {
     if (str[p] == from) stmp[p] = to;
     else stmp[p] = str[p];
   }
@@ -118,10 +118,10 @@ string string_search_and_replace(const string& str,
 }
 
 
-bool string_icmp(const string& first, const string& second) {
+bool string_icmp(const std::string& first, const std::string& second) {
 
-  string a = first;
-  string b = second;
+  std::string a = first;
+  std::string b = second;
 
   a = remove_trailing_spaces(a);
   a = remove_preceding_spaces(a);
@@ -134,9 +134,9 @@ bool string_icmp(const string& first, const string& second) {
   return(a == b);
 }
 
-string remove_trailing_spaces(const string& a) { 
-  string r = "";
-  string::const_reverse_iterator p;
+std::string remove_trailing_spaces(const std::string& a) { 
+  std::string r = "";
+  std::string::const_reverse_iterator p;
   for(p = a.rbegin(); p != a.rend(); p++) {
     if (*p != ' ') break;
   }
@@ -146,9 +146,9 @@ string remove_trailing_spaces(const string& a) {
   return(r);
 }
 
-string remove_preceding_spaces(const string& a) { 
-  string r = "";
-  string::const_iterator p;
+std::string remove_preceding_spaces(const std::string& a) { 
+  std::string r = "";
+  std::string::const_iterator p;
   for(p = a.begin(); p != a.end(); p++) {
     if (*p != ' ') break;
   }
@@ -158,49 +158,49 @@ string remove_preceding_spaces(const string& a) {
   return(r);
 }
 
-string remove_surrounding_spaces(const string& a) { 
-  string::const_iterator p,q;
+std::string remove_surrounding_spaces(const std::string& a) { 
+  std::string::const_iterator p,q;
   for(p = a.begin(); p != a.end() && *p == ' '; p++);
   for(q = (a.end() - 1); q != a.begin() && *q == ' '; q--);
-  return(string(p,q + 1));
+  return(std::string(p,q + 1));
 }
 
-string convert_to_uppercase(const string& a) { 
-  string r = a;
-  for(string::iterator p = r.begin(); p != r.end(); p++)
+std::string convert_to_uppercase(const std::string& a) { 
+  std::string r = a;
+  for(std::string::iterator p = r.begin(); p != r.end(); p++)
     *p = toupper(*p);
   return(r);
 }
 
-string convert_to_lowercase(const string& a) { 
-  string r = a;
-  for(string::iterator p = r.begin(); p != r.end(); p++)
+std::string convert_to_lowercase(const std::string& a) { 
+  std::string r = a;
+  for(std::string::iterator p = r.begin(); p != r.end(); p++)
     *p = tolower(*p);
   return(r);
 }
 
-void to_uppercase(string& a) { 
-  string::iterator p = a.begin();
+void to_uppercase(std::string& a) { 
+  std::string::iterator p = a.begin();
   while(p != a.end()) {
     *p = toupper(*p);
     ++p;
   }
 }
 
-void to_lowercase(string& a) { 
-  string::iterator p = a.begin();
+void to_lowercase(std::string& a) { 
+  std::string::iterator p = a.begin();
   while(p != a.end()) {
     *p = tolower(*p);
     ++p;
   }
 }
 
-string get_argument_number(int number, const string& argu) {
+std::string get_argument_number(int number, const std::string& argu) {
     int curnro = 1;
-    string::const_iterator e;
-    string::const_iterator b = find(argu.begin(), argu.end(), ':');
+    std::string::const_iterator e;
+    std::string::const_iterator b = std::find(argu.begin(), argu.end(), ':');
 
-    string target;
+    std::string target;
 
     if (b == argu.end()) {
       if (argu.size() > 0) b = argu.begin();
@@ -212,10 +212,10 @@ string get_argument_number(int number, const string& argu) {
       ++b;
 
     do {
-        e = find(b, argu.end(), ',');
+        e = std::find(b, argu.end(), ',');
 
         if (number == curnro) {
-            target = string(b, e);
+            target = std::string(b, e);
             break;
         }
         curnro++;
@@ -227,11 +227,11 @@ string get_argument_number(int number, const string& argu) {
     return(target);
 }
 
-int get_number_of_arguments(const string& argu) {
+int get_number_of_arguments(const std::string& argu) {
   int result = 0;
 
-  string::const_iterator b,e; 
-  b = find(argu.begin(), argu.end(), ':');
+  std::string::const_iterator b,e; 
+  b = std::find(argu.begin(), argu.end(), ':');
 
   if (b == argu.end()) {
     if (argu.size() > 0) b = argu.begin();
@@ -241,7 +241,7 @@ int get_number_of_arguments(const string& argu) {
     ++b;
 
   for(; b != argu.end(); b++) {
-    e = find(b, argu.end(), ',');
+    e = std::find(b, argu.end(), ',');
     if (b != e) {
       ++result;
     }
@@ -251,11 +251,11 @@ int get_number_of_arguments(const string& argu) {
   return(result);
 }
 
-vector<string> get_arguments(const string& argu) {
-  vector<string> rvalue;
+std::vector<std::string> get_arguments(const std::string& argu) {
+  std::vector<std::string> rvalue;
 
-  string::const_iterator b = find(argu.begin(), argu.end(), ':');
-  string::const_iterator e;
+  std::string::const_iterator b = std::find(argu.begin(), argu.end(), ':');
+  std::string::const_iterator e;
 
   if (b == argu.end()) {
     if (argu.size() > 0) b = argu.begin();
@@ -266,8 +266,8 @@ vector<string> get_arguments(const string& argu) {
 
 
   for(; b != argu.end(); b++) {
-    e = find(b, argu.end(), ',');
-    string target = string(b, e);
+    e = std::find(b, argu.end(), ',');
+    std::string target = std::string(b, e);
     if (target.size() > 0) {
       rvalue.push_back(target);
     }
@@ -277,19 +277,19 @@ vector<string> get_arguments(const string& argu) {
   return(rvalue);
 }
 
-string get_argument_prefix(const string& argu) {
+std::string get_argument_prefix(const std::string& argu) {
   // --------
   // require:
-  assert(argu.find('-') != string::npos);
+  assert(argu.find('-') != std::string::npos);
   // --------
 
-  string::const_iterator b = find(argu.begin(), argu.end(), '-');
-  string::const_iterator e = find(argu.begin(), argu.end(), ':');
+  std::string::const_iterator b = std::find(argu.begin(), argu.end(), '-');
+  std::string::const_iterator e = std::find(argu.begin(), argu.end(), ':');
 
   if (b != argu.end()) {
     ++b;
     if (b !=  argu.end()) {
-      return(string(b,e));
+      return(std::string(b,e));
     }
   }
 
@@ -316,15 +316,14 @@ void print_time_stamp(void) {
 
   ::gettimeofday(&current, 0);
 
-  cerr << "(timestamp) " << current.tv_sec << "sec, " <<
+  std::cerr << "(timestamp) " << current.tv_sec << "sec, " <<
     current.tv_usec << "msec.";
   
   long delta = current.tv_usec;
   delta -= last.tv_usec;
   delta += (current.tv_sec - last.tv_sec) * 1000000;
-  cerr << " Delta " << delta << "msec." << endl;
+  std::cerr << " Delta " << delta << "msec." << std::endl;
 
   last.tv_sec = current.tv_sec;
   last.tv_usec = current.tv_usec;
 }
-

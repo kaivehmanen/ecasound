@@ -37,7 +37,7 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-OSSDEVICE::OSSDEVICE(const string& name,
+OSSDEVICE::OSSDEVICE(const std::string& name,
 		     bool precise_sample_rates) 
 {
   label(name);

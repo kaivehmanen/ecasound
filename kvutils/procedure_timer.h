@@ -36,7 +36,7 @@ class PROCEDURE_TIMER {
   double average_duration_seconds(void) const;
   const struct timeval* min_duration(void) const;
   const struct timeval* max_duration(void) const;
-  string to_string(void) const;
+  std::string to_string(void) const;
 
   PROCEDURE_TIMER(int id = 0);
   ~PROCEDURE_TIMER(void);
@@ -62,7 +62,7 @@ class PROCEDURE_TIMER {
   long int events_over_bound_rep;
   long int events_under_bound_rep;
 
-  string idstr_rep;
+  std::string idstr_rep;
 };
 
 #endif

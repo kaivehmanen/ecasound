@@ -21,7 +21,7 @@ class GLOBAL_PRESET : public PRESET {
   virtual GLOBAL_PRESET* new_expr(void) { return(new GLOBAL_PRESET(preset_name_rep)); }
   virtual ~GLOBAL_PRESET (void) { }
 
-  GLOBAL_PRESET(const string& preset_name = "");
+  GLOBAL_PRESET(const std::string& preset_name = "");
 };
 
 #endif

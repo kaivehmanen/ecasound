@@ -63,13 +63,13 @@ CHAIN::CHAIN (void) {
 CHAIN::~CHAIN (void) { 
   ecadebug->msg(ECA_DEBUG::system_objects,"CHAIN destructor!");
 
-  for(vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
+  for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
 	chainops_rep.end(); p++) {
     ecadebug->msg((*p)->status());
     delete *p;
   }
 
-  for(vector<GENERIC_CONTROLLER*>::iterator p = gcontrollers_rep.begin(); p !=
+  for(std::vector<GENERIC_CONTROLLER*>::iterator p = gcontrollers_rep.begin(); p !=
 	gcontrollers_rep.end(); p++) {
     delete *p;
   }
@@ -162,11 +162,11 @@ void CHAIN::remove_chain_operator(void) {
   // --------
 
   int n = 0;
-  for(vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
+  for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
 	chainops_rep.end(); p++) {
     ++n;
     if (n == selected_chain_operator()) {
-      for(vector<GENERIC_CONTROLLER*>::iterator q = gcontrollers_rep.begin(); q !=
+      for(std::vector<GENERIC_CONTROLLER*>::iterator q = gcontrollers_rep.begin(); q !=
 	    gcontrollers_rep.end(); q++) {
 	if ((*p) == (*q)->target_pointer()) {
 	  delete *q;
@@ -325,7 +325,7 @@ void CHAIN::remove_controller(void) {
   // --------
 
   int n = 0;
-  for(vector<GENERIC_CONTROLLER*>::iterator q = gcontrollers_rep.begin(); 
+  for(std::vector<GENERIC_CONTROLLER*>::iterator q = gcontrollers_rep.begin(); 
       q != gcontrollers_rep.end(); 
       q++) {
     if ((n + 1) == selected_controller()) {
@@ -342,11 +342,11 @@ void CHAIN::remove_controller(void) {
  * Clears chain (removes all chain operators and controllers)
  */
 void CHAIN::clear(void) {
-  for(vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p != chainops_rep.end(); p++) {
+  for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p != chainops_rep.end(); p++) {
     delete *p;
   }
   chainops_rep.resize(0);
-  for(vector<GENERIC_CONTROLLER*>::iterator p = gcontrollers_rep.begin(); p !=
+  for(std::vector<GENERIC_CONTROLLER*>::iterator p = gcontrollers_rep.begin(); p !=
 	gcontrollers_rep.end(); p++) {
     delete *p;
   }
@@ -617,7 +617,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
     if (n + 1 < chainop->number_of_params()) t << ",";
   }
 
-  vector<GENERIC_CONTROLLER*>::size_type p = 0;
+  std::vector<GENERIC_CONTROLLER*>::size_type p = 0;
   while (p < gcontrollers_rep.size()) {
     if (chainop == gcontrollers_rep[p]->target_pointer()) {
       t << " " << controller_to_string(gcontrollers_rep[p]);
@@ -637,7 +637,7 @@ string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const {
     if (n + 1 < gctrl->number_of_params()) t << ",";
   }
 
-  vector<GENERIC_CONTROLLER*>::size_type p = 0;
+  std::vector<GENERIC_CONTROLLER*>::size_type p = 0;
   while (p < gcontrollers_rep.size()) {
     if (gctrl == gcontrollers_rep[p]->target_pointer()) {
       t << " -kx " << controller_to_string(gcontrollers_rep[p]);

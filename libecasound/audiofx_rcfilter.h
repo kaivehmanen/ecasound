@@ -28,7 +28,7 @@ class EFFECT_RC_LOWPASS_FILTER : public EFFECT_FILTER {
 
   SAMPLE_ITERATOR_CHANNELS i;
   SAMPLE_SPECS::sample_type output_temp;
-  vector<SAMPLE_SPECS::sample_type> lp1_old, lp2_old, lp3_old, hp1_old, feedback;
+  std::vector<SAMPLE_SPECS::sample_type> lp1_old, lp2_old, lp3_old, hp1_old, feedback;
     
   parameter_type cutoff_rep;
   parameter_type resonance_rep;

@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "03\&.06\&.2001" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "19\&.08\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -113,6 +113,16 @@ Command for starting mp3 output\&. All input data should be read
 from standard input\&. Before execution, "%f" is replaced with 
 path to the output mp3\&. Defaults to \fIlame -b 128 -x -S - %f\fP\&.
 .IP 
+.IP "ext-ogg-input-cmd" 
+Command for starting ogg input\&. All output should be directed
+to standard output\&. Before execution, "%f" is replaced with 
+path to the input ogg\&. Defaults to \fIogg123 -d raw --file=%F %f\fP\&.
+.IP 
+.IP "ext-ogg-output-cmd" 
+Command for starting ogg output\&. All input data should be read
+from standard input\&. Before execution, "%f" is replaced with 
+path to the output ogg\&. Defaults to \fIoggenc -b 128 --raw --output=%f -\fP\&.
+.IP 
 .IP "ext-mikmod-cmd" 
 Command for starting mikmod input\&. Before execution, "%f" is replaced with 
 file path, and %s with select sample rate\&. Defaults to 
@@ -130,5 +140,5 @@ ecasound(1), qtecasound (1), ecatools (1), ecasound-iam(1)
 .PP 
 .SH "AUTHOR" 
 .PP 
-Kai Vehmanen, <kaiv@wakkanet\&.fi>
+Kai Vehmanen, <kai\&.vehmanen@wakkanet\&.fi>
 .PP 

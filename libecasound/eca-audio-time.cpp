@@ -33,13 +33,13 @@ ECA_AUDIO_TIME::ECA_AUDIO_TIME(double time_in_seconds) {
   set_seconds(time_in_seconds);
 }
 
-ECA_AUDIO_TIME::ECA_AUDIO_TIME(format_type type, const string& time) {
+ECA_AUDIO_TIME::ECA_AUDIO_TIME(format_type type, const std::string& time) {
   set(type, time);
 }
 
 ECA_AUDIO_TIME::ECA_AUDIO_TIME(void) : samples_rep(0), sample_rate_rep(44100) { }
 
-void ECA_AUDIO_TIME::set(format_type type, const string& time) {
+void ECA_AUDIO_TIME::set(format_type type, const std::string& time) {
   switch(type) 
     {
     case format_hour_min_sec: { }
@@ -58,7 +58,7 @@ void ECA_AUDIO_TIME::set_seconds(double seconds) {
 void ECA_AUDIO_TIME::set_samples(long int samples) { samples_rep = samples; } 
 void ECA_AUDIO_TIME::set_samples_per_second(long int srate)  { sample_rate_rep = srate; } 
   
-string ECA_AUDIO_TIME::to_string(format_type type) const {
+std::string ECA_AUDIO_TIME::to_string(format_type type) const {
   switch(type) 
     {
     case format_hour_min_sec: 

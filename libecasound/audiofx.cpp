@@ -31,7 +31,7 @@ int EFFECT_BASE::channels(void) const { return(channels_rep); }
 
 void EFFECT_BASE::set_samples_per_second(long int v) { 
   if (samples_per_second() != v) {
-    vector<parameter_type> old_values (number_of_params());
+    std::vector<parameter_type> old_values (number_of_params());
     for(int n = 0; n < number_of_params(); n++) {
       old_values[n] = get_parameter(n + 1);
     }

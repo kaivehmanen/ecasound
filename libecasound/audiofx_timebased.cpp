@@ -27,7 +27,8 @@
 #include "audiofx_timebased.h"
 
 EFFECT_DELAY::EFFECT_DELAY (CHAIN_OPERATOR::parameter_type delay_time, int surround_mode, 
-			    int num_of_delays, CHAIN_OPERATOR::parameter_type mix_percent) 
+			    int num_of_delays, CHAIN_OPERATOR::parameter_type mix_percent,
+			    CHAIN_OPERATOR::parameter_type feedback_percent) 
 {
   laskuri = 0.0;
 
@@ -35,6 +36,7 @@ EFFECT_DELAY::EFFECT_DELAY (CHAIN_OPERATOR::parameter_type delay_time, int surro
   set_parameter(2, surround_mode);
   set_parameter(3, num_of_delays);
   set_parameter(4, mix_percent);
+  set_parameter(5, feedback_percent);
 }
 
 CHAIN_OPERATOR::parameter_type EFFECT_DELAY::get_parameter(int param) const { 
@@ -47,6 +49,8 @@ CHAIN_OPERATOR::parameter_type EFFECT_DELAY::get_parameter(int param) const {
     return(dnum);
   case 4:
     return(mix * 100.0);
+  case 5:
+    return(feedback * 100.0);
   }
   return(0.0);
 }
@@ -57,9 +61,9 @@ void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value
     {
       dtime_msec = value;
       dtime = dtime_msec * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
-      vector<vector<SINGLE_BUFFER> >::iterator p = buffer.begin();
+      std::vector<std::vector<SINGLE_BUFFER> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
-	vector<SINGLE_BUFFER>::iterator q = p->begin();
+	std::vector<SINGLE_BUFFER>::iterator q = p->begin();
 	while(q != p->end()) {
 	  if (q->size() > dtime) {
 	    q->resize(static_cast<unsigned int>(dtime));
@@ -80,7 +84,7 @@ void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value
     {
       if (value != 0.0) dnum = static_cast<long int>(value);
       else dnum = 1.0;
-      vector<vector<SINGLE_BUFFER> >::iterator p = buffer.begin();
+      std::vector<std::vector<SINGLE_BUFFER> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
 	p->resize(static_cast<unsigned int>(dnum));
 	++p;
@@ -91,6 +95,14 @@ void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value
 
   case 4:
     mix = value / 100.0;
+    break;
+
+  case 5:
+    if (value == 0 || value > 100) {
+      feedback = 1.0;
+    } else {
+    feedback = value / 100.0;
+    }
     break;
   }
 }
@@ -103,7 +115,7 @@ void EFFECT_DELAY::init(SAMPLE_BUFFER* insample) {
   set_samples_per_second(insample->sample_rate());
   set_parameter(1, dtime_msec);
 
-  buffer.resize(2, vector<SINGLE_BUFFER> (static_cast<unsigned int>(dnum)));
+  buffer.resize(2, std::vector<SINGLE_BUFFER> (static_cast<unsigned int>(dnum)));
 }
 
 void EFFECT_DELAY::process(void) {
@@ -114,9 +126,15 @@ void EFFECT_DELAY::process(void) {
     SAMPLE_SPECS::sample_type temp2_left = 0.0;
     SAMPLE_SPECS::sample_type temp2_right = 0.0;
 
+    // Initializing the feedback factor to one. (x*1 = x)
+    SAMPLE_SPECS::sample_type feedfact = 1;
+
     for(int nm2 = 0; nm2 < dnum; nm2++) {
       SAMPLE_SPECS::sample_type temp_left = 0.0;
       SAMPLE_SPECS::sample_type temp_right = 0.0;
+
+      // Preparing the factor...
+      feedfact *= feedback;
 
       if (laskuri >= dtime * (nm2 + 1)) {
  
@@ -155,6 +173,11 @@ void EFFECT_DELAY::process(void) {
 	    break;
 	}
 	} // switch
+
+	// Applying the reduction.
+	temp_left *= feedfact;
+	temp_right *= feedfact;
+
 	buffer[SAMPLE_SPECS::ch_left][nm2].pop_front();
 	buffer[SAMPLE_SPECS::ch_right][nm2].pop_front();
       }
@@ -249,8 +272,8 @@ void EFFECT_MULTITAP_DELAY::init(SAMPLE_BUFFER* insample) {
   set_parameter(1, dtime_msec);
 
   delay_index.resize(channels(), dtime * dnum - 1);
-  filled.resize(channels(), vector<bool> (dnum, false));
-  buffer.resize(channels(), vector<SAMPLE_SPECS::sample_type> (dtime *
+  filled.resize(channels(), std::vector<bool> (dnum, false));
+  buffer.resize(channels(), std::vector<SAMPLE_SPECS::sample_type> (dtime *
 							       dnum));
 }
 
@@ -298,7 +321,7 @@ void EFFECT_FAKE_STEREO::set_parameter(int param, CHAIN_OPERATOR::parameter_type
   case 1:
     dtime_msec = value;
     dtime = dtime_msec * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
-    vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
+    std::vector<std::deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
     while(p != buffer.end()) {
       if (p->size() > dtime) {
 	p->resize(static_cast<unsigned int>(dtime));
@@ -377,7 +400,7 @@ void EFFECT_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_type valu
     {
       dtime_msec = value;
       dtime = dtime_msec * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
-      vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
+      std::vector<std::deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
 	if (p->size() > dtime) {
 	  p->resize(static_cast<unsigned int>(dtime));
@@ -512,7 +535,7 @@ void EFFECT_MODULATING_DELAY::init(SAMPLE_BUFFER* insample) {
 
   filled.resize(channels(), false);
   delay_index.resize(channels(), 2 * dtime);
-  buffer.resize(channels(), vector<SAMPLE_SPECS::sample_type> (2 * dtime));
+  buffer.resize(channels(), std::vector<SAMPLE_SPECS::sample_type> (2 * dtime));
 }
 
 void EFFECT_FLANGER::process(void) {

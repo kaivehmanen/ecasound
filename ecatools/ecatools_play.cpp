@@ -86,13 +86,13 @@ int main(int argc, char *argv[])
 	  exit_request_rep == 0) {
       filename = cline.current();
 
-      cerr << "Playing file \"" << filename << "\".\n";
+      std::cerr << "Playing file \"" << filename << "\".\n";
 
       ectrl.add_chainsetup("default");
       ectrl.add_chain("default");
       ectrl.add_audio_input(filename);
       if (ectrl.get_audio_input() == 0) {
-	cerr << "Error! Skipping file " << filename << "." << endl;
+	std::cerr << "Error! Skipping file " << filename << "." << std::endl;
       }
       else {
 	aio_params = ectrl.get_audio_format(ectrl.get_audio_input());
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 	ectrl.add_default_output();
 	ectrl.connect_chainsetup();
 	if (ectrl.is_connected() != true) {
-	  cerr << "---\nError while playing file " << filename << ". Skipping...\n";
+	  std::cerr << "---\nError while playing file " << filename << ". Skipping...\n";
 	}
 	else {
 	  ectrl.run();
@@ -113,20 +113,20 @@ int main(int argc, char *argv[])
     }
   }
   catch(ECA_ERROR& e) {
-    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    std::cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
   catch(...) {
-    cerr << "\nCaught an unknown exception.\n";
+    std::cerr << "\nCaught an unknown exception.\n";
   }
   return(0);
 }
 
 void signal_handler(int signum) {
-//    cerr << "Caught an interrupt... moving to next file.\n";
+//    std::cerr << "Caught an interrupt... moving to next file.\n";
   if (ptimer_repp != 0) {
     ptimer_repp->stop();
     if (ptimer_repp->events_under_lower_bound() > 0) {
-      cerr << endl << "Caught an exception. Exiting..." << endl;
+      std::cerr << std::endl << "Caught an exception. Exiting..." << std::endl;
       exit_request_rep = 1;
     }
     ptimer_repp->reset();
@@ -139,12 +139,12 @@ void signal_handler(int signum) {
 }
 
 void print_usage(void) {
-  cerr << "****************************************************************************\n";
-  cerr << "* ecatools_play, v" << ecatools_play_version;
-  cerr << " (linked to ecasound v" << ecasound_library_version 
+  std::cerr << "****************************************************************************\n";
+  std::cerr << "* ecatools_play, v" << ecatools_play_version;
+  std::cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
-  cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence \n";
-  cerr << "****************************************************************************\n";
+  std::cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence \n";
+  std::cerr << "****************************************************************************\n";
 
-  cerr << "\nUSAGE: ecatools_play file1 [ file2, ... fileN ]\n\n";
+  std::cerr << "\nUSAGE: ecatools_play file1 [ file2, ... fileN ]\n\n";
 }

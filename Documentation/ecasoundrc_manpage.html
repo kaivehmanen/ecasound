@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>03.06.2001</h2>
+<h2>19.08.2001</h2>
 
 
     
@@ -117,6 +117,14 @@
 	Command for starting mp3 output. All input data should be read
 	from standard input. Before execution, "%f" is replaced with 
 	path to the output mp3. Defaults to <em>lame -b 128 -x -S - %f</em>.
+<p><p></p><dt><strong>ext-ogg-input-cmd</strong><dd>
+	Command for starting ogg input. All output should be directed
+	to standard output. Before execution, "%f" is replaced with 
+	path to the input ogg. Defaults to <em>ogg123 -d raw --file=%F %f</em>.
+<p><p></p><dt><strong>ext-ogg-output-cmd</strong><dd>
+	Command for starting ogg output. All input data should be read
+	from standard input. Before execution, "%f" is replaced with 
+	path to the output ogg. Defaults to <em>oggenc -b 128 --raw --output=%f -</em>.
 <p><p></p><dt><strong>ext-mikmod-cmd</strong><dd>
 	Command for starting mikmod input. Before execution, "%f" is replaced with 
 	file path, and %s with select sample rate. Defaults to 
@@ -131,7 +139,7 @@
 <p>ecasound(1), qtecasound (1), ecatools (1), ecasound-iam(1)
 <p><h2>AUTHOR</h2>
     
-<p>Kai Vehmanen, &lt;<a href="mailto:kaiv@wakkanet.fi"><em>kaiv@wakkanet.fi</em></a>&gt;
+<p>Kai Vehmanen, &lt;<a href="mailto:kai.vehmanen@wakkanet.fi"><em>kai.vehmanen@wakkanet.fi</em></a>&gt;
 <p><insert name=ecasound_tail>
 </body>
 </html>

@@ -37,7 +37,7 @@ class CHAIN_OPERATOR : public OPERATOR {
    * Optional status info.
    * @param single_sample pointer to a single sample
    */
-  virtual string status(void) const { return(""); }
+  virtual std::string status(void) const { return(""); }
 
   /** 
    * If chain operator regularly adds or removes samples from 

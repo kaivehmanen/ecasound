@@ -41,16 +41,16 @@ void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset) {
   ECA_RESOURCES ecarc;
   ecadebug->msg(ECA_DEBUG::system_objects,"(osc-gen-file) Opening genosc envelope file.");
 
-  string user_filename =
+  std::string user_filename =
     ecarc.resource("user-resource-directory") + "/" + ecarc.resource("resource-file-genosc-envelopes");
 
-  string pname = kvu_numtostr(preset);
+  std::string pname = kvu_numtostr(preset);
 
   RESOURCE_FILE rc;
   rc.resource_file(user_filename);
   rc.load();
   if (rc.has(pname) != true) {
-    string global_filename =
+    std::string global_filename =
       ecarc.resource("resource-directory") + "/" + ecarc.resource("resource-file-genosc-envelopes");
     rc.resource_file(global_filename);
     rc.load();
@@ -64,8 +64,8 @@ void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset) {
   }
 }
 
-void GENERIC_OSCILLATOR_FILE::parse_envelope(const string& str) {
-  vector<string> tokens = string_to_words(str);
+void GENERIC_OSCILLATOR_FILE::parse_envelope(const std::string& str) {
+  std::vector<std::string> tokens = string_to_words(str);
   if (tokens.size() > 0) {
     set_start_value(atof(tokens[0].c_str()));
     if (tokens.size() > 1) {

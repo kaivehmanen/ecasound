@@ -47,9 +47,9 @@ long vst_audiomaster(AEffect *effect,
     }
 }
 
-VST_plugin_descriptor create_vst_plugin(const string& fname) throw(ECA_ERROR&);
+VST_plugin_descriptor create_vst_plugin(const std::string& fname) throw(ECA_ERROR&);
 
-EFFECT_VST::EFFECT_VST (const string& fname) throw(ECA_ERROR&) {
+EFFECT_VST::EFFECT_VST (const std::string& fname) throw(ECA_ERROR&) {
   cerr << "here!" << endl;
   library_file_rep = fname;
   master_func = create_vst_plugin(fname);
@@ -97,7 +97,7 @@ void EFFECT_VST::process(void) {
   }
 }
 
-VST_plugin_descriptor create_vst_plugin(const string& fname) throw(ECA_ERROR&) { 
+VST_plugin_descriptor create_vst_plugin(const std::string& fname) throw(ECA_ERROR&) { 
   cerr << "fname: " << fname << endl;
   void *plugin_handle = dlopen(fname.c_str(), RTLD_LAZY);
   if (plugin_handle == 0) 

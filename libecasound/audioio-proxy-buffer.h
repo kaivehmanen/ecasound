@@ -15,7 +15,7 @@ class AUDIO_IO_PROXY_BUFFER {
   ATOMIC_INTEGER readptr_rep;
   ATOMIC_INTEGER writeptr_rep;
   ATOMIC_INTEGER finished_rep;
-  vector<SAMPLE_BUFFER> sbufs_rep;
+  std::vector<SAMPLE_BUFFER> sbufs_rep;
   AUDIO_IO::Io_mode io_mode_rep;
 
   void reset(void);

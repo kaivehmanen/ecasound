@@ -25,7 +25,7 @@
 
 #include "eca-debug.h"
 
-MIDI_IO_RAW::MIDI_IO_RAW(const string& name) { label("rawmidi"); device_name_rep = name; }
+MIDI_IO_RAW::MIDI_IO_RAW(const std::string& name) { label("rawmidi"); device_name_rep = name; }
 
 MIDI_IO_RAW::~MIDI_IO_RAW(void) { if (is_open()) close(); }
 
@@ -85,7 +85,7 @@ long int MIDI_IO_RAW::write_bytes(void* target_buffer, long int bytes) {
 }
 
 void MIDI_IO_RAW::set_parameter(int param, 
-				string value) {
+				std::string value) {
   switch (param) {
   case 1: 
     label(value);
@@ -97,7 +97,7 @@ void MIDI_IO_RAW::set_parameter(int param,
   }
 }
 
-string MIDI_IO_RAW::get_parameter(int param) const {
+std::string MIDI_IO_RAW::get_parameter(int param) const {
   switch (param) {
   case 1: 
     return(label());

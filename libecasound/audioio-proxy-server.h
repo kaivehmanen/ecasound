@@ -21,9 +21,9 @@ class AUDIO_IO_PROXY_SERVER {
   static const int buffercount_default;
   static const long int buffersize_default;
 
-  vector<AUDIO_IO_PROXY_BUFFER*> buffers_rep;
-  vector<AUDIO_IO*> clients_rep;
-  map<AUDIO_IO*, int> client_map_rep;
+  std::vector<AUDIO_IO_PROXY_BUFFER*> buffers_rep;
+  std::vector<AUDIO_IO*> clients_rep;
+  std::map<AUDIO_IO*, int> client_map_rep;
   pthread_t io_thread_rep;
   bool thread_running_rep;
   ATOMIC_INTEGER exit_request_rep;

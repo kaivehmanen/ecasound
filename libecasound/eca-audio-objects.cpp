@@ -61,13 +61,13 @@ ECA_AUDIO_OBJECTS::ECA_AUDIO_OBJECTS(void)
 ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
   ecadebug->msg(ECA_DEBUG::system_objects,"ECA_AUDIO_OBJECTS destructor!");
 
-  for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+  for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting chain \"" + (*q)->name() + "\".");
     delete *q;
     *q = 0;
   }
   
-  for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
+  for(std::vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
     if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
       delete *q;
@@ -76,7 +76,7 @@ ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
   }
   //  inputs.resize(0);
   
-  for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
+  for(std::vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
     if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
       delete *q;
@@ -85,7 +85,7 @@ ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
   }
   //  outputs.resize(0);
 
-  for(map<int,LOOP_DEVICE*>::iterator q = loop_map.begin(); q != loop_map.end(); q++) {
+  for(std::map<int,LOOP_DEVICE*>::iterator q = loop_map.begin(); q != loop_map.end(); q++) {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting loop device \"" + q->second->label() + "\".");
     delete q->second;
     q->second = 0;
@@ -108,7 +108,7 @@ bool ECA_AUDIO_OBJECTS::is_valid_for_connection(void) const {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) No chains in the current chainsetup.");
     return(false);
   }
-  for(vector<CHAIN*>::const_iterator q = chains.begin(); q != chains.end();
+  for(std::vector<CHAIN*>::const_iterator q = chains.begin(); q != chains.end();
       q++) {
     if ((*q)->is_valid() == false) return(false);
   }
@@ -121,7 +121,7 @@ bool ECA_AUDIO_OBJECTS::is_valid_for_connection(void) const {
  * require:
  *  argu.empty() != true
  */
-AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_input(const string& argu) {
+AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_input(const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.empty() != true);
   // --------
@@ -149,7 +149,7 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_input(const string& argu) {
  * require:
  *  argu.empty() != true
  */
-AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_output(const string& argu) {
+AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_output(const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.empty() != true);
   // --------
@@ -198,10 +198,10 @@ void ECA_AUDIO_OBJECTS::add_default_chain(void) {
   // --------  
 }
 
-void ECA_AUDIO_OBJECTS::add_new_chains(const vector<string>& newchains) {
-  for(vector<string>::const_iterator p = newchains.begin(); p != newchains.end(); p++) {
+void ECA_AUDIO_OBJECTS::add_new_chains(const std::vector<std::string>& newchains) {
+  for(std::vector<std::string>::const_iterator p = newchains.begin(); p != newchains.end(); p++) {
     bool exists = false;
-    for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+    for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*p == (*q)->name()) exists = true;
     }
     if (exists == false) {
@@ -213,8 +213,8 @@ void ECA_AUDIO_OBJECTS::add_new_chains(const vector<string>& newchains) {
 }
 
 void ECA_AUDIO_OBJECTS::remove_chains(void) {
-  for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
-    for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+  for(std::vector<std::string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
+    for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
 	delete *q;
 	chains.erase(q);
@@ -226,8 +226,8 @@ void ECA_AUDIO_OBJECTS::remove_chains(void) {
 }
 
 void ECA_AUDIO_OBJECTS::clear_chains(void) {
-  for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
-    for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+  for(std::vector<std::string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
+    for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
 	(*q)->clear();
       }
@@ -235,9 +235,9 @@ void ECA_AUDIO_OBJECTS::clear_chains(void) {
   }
 }
 
-void ECA_AUDIO_OBJECTS::rename_chain(const string& name) {
-  for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
-    for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+void ECA_AUDIO_OBJECTS::rename_chain(const std::string& name) {
+  for(std::vector<std::string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
+    for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
 	(*q)->name(name);
 	return;
@@ -247,7 +247,7 @@ void ECA_AUDIO_OBJECTS::rename_chain(const string& name) {
 }
 
 void ECA_AUDIO_OBJECTS::select_all_chains(void) {
-  vector<CHAIN*>::const_iterator p = chains.begin();
+  std::vector<CHAIN*>::const_iterator p = chains.begin();
   selected_chainids.resize(0);
   while(p != chains.end()) {
     selected_chainids.push_back((*p)->name());
@@ -260,8 +260,8 @@ void ECA_AUDIO_OBJECTS::select_all_chains(void) {
  * are selected, returns 'last_index + 1' (chains.size()).
  */
 unsigned int ECA_AUDIO_OBJECTS::first_selected_chain(void) const {
-  const vector<string>& schains = selected_chains();
-  vector<string>::const_iterator o = schains.begin();
+  const std::vector<std::string>& schains = selected_chains();
+  std::vector<std::string>::const_iterator o = schains.begin();
   unsigned int p = chains.size();
   while(o != schains.end()) {
     for(p = 0; p != chains.size(); p++) {
@@ -274,8 +274,8 @@ unsigned int ECA_AUDIO_OBJECTS::first_selected_chain(void) const {
 }
 
 void ECA_AUDIO_OBJECTS::toggle_chain_muting(void) {
-  for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
-    for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+  for(std::vector<std::string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
+    for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
 	if ((*q)->is_muted()) 
 	  (*q)->toggle_muting(false);
@@ -287,8 +287,8 @@ void ECA_AUDIO_OBJECTS::toggle_chain_muting(void) {
 }
 
 void ECA_AUDIO_OBJECTS::toggle_chain_bypass(void) {
-  for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
-    for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+  for(std::vector<std::string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
+    for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
 	if ((*q)->is_processing()) 
 	  (*q)->toggle_processing(false);
@@ -299,9 +299,9 @@ void ECA_AUDIO_OBJECTS::toggle_chain_bypass(void) {
   }
 }
 
-vector<string> ECA_AUDIO_OBJECTS::chain_names(void) const {
-  vector<string> result;
-  vector<CHAIN*>::const_iterator p = chains.begin();
+std::vector<std::string> ECA_AUDIO_OBJECTS::chain_names(void) const {
+  std::vector<std::string> result;
+  std::vector<CHAIN*>::const_iterator p = chains.begin();
   while(p != chains.end()) {
     result.push_back((*p)->name());
     ++p;
@@ -309,9 +309,9 @@ vector<string> ECA_AUDIO_OBJECTS::chain_names(void) const {
   return(result);
 }
 
-vector<string> ECA_AUDIO_OBJECTS::audio_input_names(void) const {
-  vector<string> result;
-  vector<AUDIO_IO*>::const_iterator p = inputs.begin();
+std::vector<std::string> ECA_AUDIO_OBJECTS::audio_input_names(void) const {
+  std::vector<std::string> result;
+  std::vector<AUDIO_IO*>::const_iterator p = inputs.begin();
   while(p != inputs.end()) {
     result.push_back((*p)->label());
     ++p;
@@ -319,9 +319,9 @@ vector<string> ECA_AUDIO_OBJECTS::audio_input_names(void) const {
   return(result);
 }
 
-vector<string> ECA_AUDIO_OBJECTS::audio_output_names(void) const {
-  vector<string> result;
-  vector<AUDIO_IO*>::const_iterator p = outputs.begin();
+std::vector<std::string> ECA_AUDIO_OBJECTS::audio_output_names(void) const {
+  std::vector<std::string> result;
+  std::vector<AUDIO_IO*>::const_iterator p = outputs.begin();
   while(p != outputs.end()) {
     result.push_back((*p)->label());
     ++p;
@@ -331,11 +331,11 @@ vector<string> ECA_AUDIO_OBJECTS::audio_output_names(void) const {
 
 
 
-vector<string>
+std::vector<std::string>
 ECA_AUDIO_OBJECTS::get_attached_chains_to_input(AUDIO_IO* aiod) const{ 
-  vector<string> res;
+  std::vector<std::string> res;
   
-  vector<CHAIN*>::const_iterator q = chains.begin();
+  std::vector<CHAIN*>::const_iterator q = chains.begin();
   while(q != chains.end()) {
     if (aiod == (*q)->input_id_repp) {
       res.push_back((*q)->name());
@@ -346,11 +346,11 @@ ECA_AUDIO_OBJECTS::get_attached_chains_to_input(AUDIO_IO* aiod) const{
   return(res); 
 }
 
-vector<string>
+std::vector<std::string>
 ECA_AUDIO_OBJECTS::get_attached_chains_to_output(AUDIO_IO* aiod) const { 
-  vector<string> res;
+  std::vector<std::string> res;
   
-  vector<CHAIN*>::const_iterator q = chains.begin();
+  std::vector<CHAIN*>::const_iterator q = chains.begin();
   while(q != chains.end()) {
     if (aiod == (*q)->output_id_repp) {
       res.push_back((*q)->name());
@@ -364,7 +364,7 @@ ECA_AUDIO_OBJECTS::get_attached_chains_to_output(AUDIO_IO* aiod) const {
 int ECA_AUDIO_OBJECTS::number_of_attached_chains_to_input(AUDIO_IO* aiod) const {
   int count = 0;
   
-  vector<CHAIN*>::const_iterator q = chains.begin();
+  std::vector<CHAIN*>::const_iterator q = chains.begin();
   while(q != chains.end()) {
     if (aiod == (*q)->input_id_repp) {
       ++count;
@@ -378,7 +378,7 @@ int ECA_AUDIO_OBJECTS::number_of_attached_chains_to_input(AUDIO_IO* aiod) const 
 int ECA_AUDIO_OBJECTS::number_of_attached_chains_to_output(AUDIO_IO* aiod) const {
   int count = 0;
   
-  vector<CHAIN*>::const_iterator q = chains.begin();
+  std::vector<CHAIN*>::const_iterator q = chains.begin();
   while(q != chains.end()) {
     if (aiod == (*q)->output_id_repp) {
       ++count;
@@ -389,11 +389,11 @@ int ECA_AUDIO_OBJECTS::number_of_attached_chains_to_output(AUDIO_IO* aiod) const
   return(count); 
 }
 
-vector<string> ECA_AUDIO_OBJECTS::get_attached_chains_to_iodev(const
-							     string&
+std::vector<std::string> ECA_AUDIO_OBJECTS::get_attached_chains_to_iodev(const
+							     std::string&
 							     filename) const
   {
-  vector<AUDIO_IO*>::size_type p;
+  std::vector<AUDIO_IO*>::size_type p;
 
   p = 0;
   while (p < inputs.size()) {
@@ -408,7 +408,7 @@ vector<string> ECA_AUDIO_OBJECTS::get_attached_chains_to_iodev(const
       return(get_attached_chains_to_output(outputs[p]));
     ++p;
   }
-  return(vector<string> (0));
+  return(std::vector<std::string> (0));
 }
 
 /**
@@ -481,11 +481,11 @@ void ECA_AUDIO_OBJECTS::audio_object_info(const AUDIO_IO* aio) const {
   ecadebug->msg(temp);
 }
 
-void ECA_AUDIO_OBJECTS::remove_audio_input(const string& label) { 
-  vector<AUDIO_IO*>::iterator ci = inputs.begin();
+void ECA_AUDIO_OBJECTS::remove_audio_input(const std::string& label) { 
+  std::vector<AUDIO_IO*>::iterator ci = inputs.begin();
   while (ci != inputs.end()) {
     if ((*ci)->label() == label) {
-      vector<CHAIN*>::iterator q = chains.begin();
+      std::vector<CHAIN*>::iterator q = chains.begin();
       while(q != chains.end()) {
 	if ((*q)->input_id_repp == *ci) (*q)->disconnect_input();
 	++q;
@@ -498,11 +498,11 @@ void ECA_AUDIO_OBJECTS::remove_audio_input(const string& label) {
   }
 }
 
-void ECA_AUDIO_OBJECTS::remove_audio_output(const string& label) { 
-  vector<AUDIO_IO*>::iterator ci = outputs.begin();
+void ECA_AUDIO_OBJECTS::remove_audio_output(const std::string& label) { 
+  std::vector<AUDIO_IO*>::iterator ci = outputs.begin();
   while (ci != outputs.end()) {
     if ((*ci)->label() == label) {
-      vector<CHAIN*>::iterator q = chains.begin();
+      std::vector<CHAIN*>::iterator q = chains.begin();
       while(q != chains.end()) {
 	if ((*q)->output_id_repp == *ci) (*q)->disconnect_output();
 	++q;
@@ -539,8 +539,8 @@ void ECA_AUDIO_OBJECTS::add_midi_device(MIDI_IO* mididev) {
 /**
  * Remove an MIDI-device by the name 'mdev_name'.
  */
-void ECA_AUDIO_OBJECTS::remove_midi_device(const string& mdev_name) {
-  for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
+void ECA_AUDIO_OBJECTS::remove_midi_device(const std::string& mdev_name) {
+  for(std::vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
     if (mdev_name == (*q)->label()) {
       delete *q;
       midi_devices.erase(q);
@@ -553,7 +553,7 @@ string ECA_AUDIO_OBJECTS::midi_to_string(void) const {
   MESSAGE_ITEM t;
   t.setprecision(3);
 
-  vector<MIDI_IO*>::size_type p = 0;
+  std::vector<MIDI_IO*>::size_type p = 0;
   while (p < midi_devices.size()) {
     t << "-Md:";
     for(int n = 0; n < midi_devices[p]->number_of_params(); n++) {
@@ -573,8 +573,8 @@ string ECA_AUDIO_OBJECTS::inputs_to_string(void) const {
   int p = 0;
   while (p < static_cast<int>(inputs.size())) {
     t << "-a:";
-    vector<string> c = get_attached_chains_to_input(inputs[p]);
-    vector<string>::const_iterator cp = c.begin();
+    std::vector<std::string> c = get_attached_chains_to_input(inputs[p]);
+    std::vector<std::string>::const_iterator cp = c.begin();
     while (cp != c.end()) {
       t << *cp;
       ++cp;
@@ -597,11 +597,11 @@ string ECA_AUDIO_OBJECTS::inputs_to_string(void) const {
 string ECA_AUDIO_OBJECTS::outputs_to_string(void) const { 
   MESSAGE_ITEM t; 
   t.setprecision(3);
-  vector<AUDIO_IO*>::size_type p = 0;
+  std::vector<AUDIO_IO*>::size_type p = 0;
   while (p < outputs.size()) {
     t << "-a:";
-    vector<string> c = get_attached_chains_to_output(outputs[p]);
-    vector<string>::const_iterator cp = c.begin();
+    std::vector<std::string> c = get_attached_chains_to_output(outputs[p]);
+    std::vector<std::string>::const_iterator cp = c.begin();
     while (cp != c.end()) {
       t << *cp;
       ++cp;
@@ -628,7 +628,7 @@ string ECA_AUDIO_OBJECTS::outputs_to_string(void) const {
 string ECA_AUDIO_OBJECTS::chains_to_string(void) const { 
   MESSAGE_ITEM t;
 
-  vector<CHAIN*>::size_type p = 0;
+  std::vector<CHAIN*>::size_type p = 0;
   while (p < chains.size()) {
     t << "-a:" << chains[p]->name() << " ";
     t << chains[p]->to_string();
@@ -639,7 +639,7 @@ string ECA_AUDIO_OBJECTS::chains_to_string(void) const {
   return(t.to_string());
 }
 
-string ECA_AUDIO_OBJECTS::audioio_to_string(const AUDIO_IO* aiod, const string& direction) const {
+string ECA_AUDIO_OBJECTS::audioio_to_string(const AUDIO_IO* aiod, const std::string& direction) const {
   MESSAGE_ITEM t;
 
   t << "-f:" << aiod->format_string() << "," <<
@@ -653,8 +653,8 @@ string ECA_AUDIO_OBJECTS::audioio_to_string(const AUDIO_IO* aiod, const string& 
   return(t.to_string());
 }
 
-const CHAIN* ECA_AUDIO_OBJECTS::get_chain_with_name(const string& name) const {
-  vector<CHAIN*>::const_iterator p = chains.begin();
+const CHAIN* ECA_AUDIO_OBJECTS::get_chain_with_name(const std::string& name) const {
+  std::vector<CHAIN*>::const_iterator p = chains.begin();
   while(p != chains.end()) {
     if ((*p)->name() == name) return(*p);
     ++p;
@@ -667,18 +667,18 @@ void ECA_AUDIO_OBJECTS::attach_input_to_selected_chains(const AUDIO_IO* obj) {
   DBC_REQUIRE(obj != 0);
   // --------
   string temp;
-  vector<AUDIO_IO*>::size_type c = 0;
+  std::vector<AUDIO_IO*>::size_type c = 0;
 
   while (c < inputs.size()) {
     if (inputs[c] == obj) {
-      for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+      for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
 	if ((*q)->input_id_repp == inputs[c]) {
 	  (*q)->disconnect_input();
 	}
       }
       temp += "(eca-audio-objects) Assigning file to chains:";
-      for(vector<string>::const_iterator p = selected_chainids.begin(); p!= selected_chainids.end(); p++) {
-	for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+      for(std::vector<std::string>::const_iterator p = selected_chainids.begin(); p!= selected_chainids.end(); p++) {
+	for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
 	  if (*p == (*q)->name()) {
 	    (*q)->connect_input(inputs[c]);
 	    temp += " " + *p;
@@ -697,17 +697,17 @@ void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const AUDIO_IO* obj) {
   // --------
 
   string temp;
-  vector<AUDIO_IO*>::size_type c = 0;
+  std::vector<AUDIO_IO*>::size_type c = 0;
   while (c < outputs.size()) {
     if (outputs[c] == obj) {
-      for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+      for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
 	if ((*q)->output_id_repp == outputs[c]) {
 	  (*q)->disconnect_output();
 	}
       }
       temp += "(eca-chainsetup) Assigning file to chains:";
-      for(vector<string>::const_iterator p = selected_chainids.begin(); p!= selected_chainids.end(); p++) {
-	for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+      for(std::vector<std::string>::const_iterator p = selected_chainids.begin(); p!= selected_chainids.end(); p++) {
+	for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
 	  if (*p == (*q)->name()) {
 	    (*q)->connect_output(outputs[c]);
 	    temp += " " + *p;

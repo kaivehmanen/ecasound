@@ -57,8 +57,8 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
 
   AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver, AUDIO_IO* aobject); 
   ~AUDIO_IO_BUFFERED_PROXY(void);
-  AUDIO_IO_BUFFERED_PROXY* clone(void) { cerr << "Not implemented!" << endl; return this; }
-  AUDIO_IO_BUFFERED_PROXY* new_expr(void) { cerr << "Not implemented!" << endl; return this; }
+  AUDIO_IO_BUFFERED_PROXY* clone(void) { std::cerr << "Not implemented!" << std::endl; return this; }
+  AUDIO_IO_BUFFERED_PROXY* new_expr(void) { std::cerr << "Not implemented!" << std::endl; return this; }
 
 protected:
 

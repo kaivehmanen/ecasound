@@ -17,14 +17,14 @@ class GENERIC_OSCILLATOR_FILE : public GENERIC_OSCILLATOR {
 
  protected:
 
-  void parse_envelope(const string& str);
+  void parse_envelope(const std::string& str);
   
  public:
 
-  virtual string parameter_names(void) const { return("freq,mode,preset-number"); }
+  virtual std::string parameter_names(void) const { return("freq,mode,preset-number"); }
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
-  virtual string name(void) const { return("Generic oscillator (preset)"); }
+  virtual std::string name(void) const { return("Generic oscillator (preset)"); }
 
   GENERIC_OSCILLATOR_FILE* clone(void)  { return new GENERIC_OSCILLATOR_FILE(*this); }
   GENERIC_OSCILLATOR_FILE* new_expr(void)  { return new GENERIC_OSCILLATOR_FILE(*this); }

@@ -20,7 +20,7 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
 
  public:
 
-  static void set_mikmod_cmd(const string& value);
+  static void set_mikmod_cmd(const std::string& value);
 
  private:
 
@@ -53,7 +53,7 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
   virtual bool finished(void) const { return(finished_rep); }
   virtual void seek_position(void);
  
-  MIKMOD_INTERFACE (const string& name = "");
+  MIKMOD_INTERFACE (const std::string& name = "");
   ~MIKMOD_INTERFACE(void);
     
   MIKMOD_INTERFACE* clone(void) { return new MIKMOD_INTERFACE(*this); }

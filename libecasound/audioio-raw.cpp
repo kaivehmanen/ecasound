@@ -32,7 +32,7 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-RAWFILE::RAWFILE(const string& name) {
+RAWFILE::RAWFILE(const std::string& name) {
   label(name);
   fio_repp = 0;
   mmaptoggle_rep = "0";
@@ -78,7 +78,7 @@ void RAWFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
     {
       fio_repp = new ECA_FILE_IO_STREAM();
       if (label() == "stdout" || label().at(0) == '-') {
-	cerr << "(audioio-raw) Outputting to standard output [r].\n";
+	std::cerr << "(audioio-raw) Outputting to standard output [r].\n";
 	fio_repp->open_stdout();
       }
       else {
@@ -93,7 +93,7 @@ void RAWFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
     {
       fio_repp = new ECA_FILE_IO_STREAM();
       if (label() == "stdout" || label().at(0) == '-') {
-	cerr << "(audioio-raw) Outputting to standard output [rw].\n";
+	std::cerr << "(audioio-raw) Outputting to standard output [rw].\n";
 	fio_repp->open_stdout();
       }
       else {

@@ -147,7 +147,7 @@ void ECA_AUDIO_FORMAT::set_samples_per_second(long int v) { srate_rep = v; }
 void ECA_AUDIO_FORMAT::set_channels(int v) { channels_rep = v; }
 void ECA_AUDIO_FORMAT::toggle_interleaved_channels(bool v) { ileaved_rep = v; }
 
-void ECA_AUDIO_FORMAT::set_sample_format(const string& f_str) throw(ECA_ERROR&) {
+void ECA_AUDIO_FORMAT::set_sample_format(const std::string& f_str) throw(ECA_ERROR&) {
   if (f_str == "u8") sfmt_rep = sfmt_u8;
   else if (f_str == "s16") sfmt_rep = sfmt_s16;
   else if (f_str == "s16_le") sfmt_rep = sfmt_s16_le;

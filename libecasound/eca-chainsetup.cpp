@@ -71,7 +71,7 @@
  * ensure:
  *   buffersize != 0
  */
-ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts) 
+ECA_CHAINSETUP::ECA_CHAINSETUP(const std::vector<std::string>& opts) 
   : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default),
     options(opts) {
 
@@ -129,7 +129,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(void)
  * ensure:
  *   buffersize != 0
  */
-ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file) 
+ECA_CHAINSETUP::ECA_CHAINSETUP(const std::string& setup_file) 
   : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default) {
 
   setup_name_rep = "";
@@ -191,7 +191,7 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
   try {
     if (is_enabled_rep == false) {
       ecadebug->control_flow("Chainsetup/Enabling audio inputs");
-      for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
+      for(std::vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
 	(*q)->buffersize(buffersize(), sample_rate());
 	AUDIO_IO_DEVICE* dev = dynamic_cast<AUDIO_IO_DEVICE*>(*q);
 	if (dev != 0) {
@@ -203,7 +203,7 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
       }
       
       ecadebug->control_flow("Chainsetup/Enabling audio outputs");
-      for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
+      for(std::vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
 	(*q)->buffersize(buffersize(), sample_rate());
 	AUDIO_IO_DEVICE* dev = dynamic_cast<AUDIO_IO_DEVICE*>(*q);
 	if (dev != 0) {
@@ -216,13 +216,13 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
 
     if (midi_server_rep.is_enabled() != true &&
 	midi_devices.size() > 0) midi_server_rep.enable();
-      for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
+      for(std::vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
 	(*q)->toggle_nonblocking_mode(true);
 	if ((*q)->is_open() != true) {
 	  (*q)->open();
 	  if ((*q)->is_open() != true) {
 	    throw(ECA_ERROR("ECA-CHAINSETUP", 
-			    string("Unable to open MIDI-device: ") +
+			    std::string("Unable to open MIDI-device: ") +
 			    (*q)->label() +
 			    "."));
 	  }
@@ -233,7 +233,7 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
   }
   catch(AUDIO_IO::SETUP_ERROR& e) {
     throw(ECA_ERROR("ECA-CHAINSETUP", 
-		    string("Enabling chainsetup: ")
+		    std::string("Enabling chainsetup: ")
 		    + e.message()));
   }
   catch(...) { throw; }
@@ -253,18 +253,18 @@ void ECA_CHAINSETUP::disable(void) {
   update_option_strings();
   if (is_enabled_rep == true) {
     ecadebug->msg(ECA_DEBUG::system_objects, "Closing chainsetup \"" + name() + "\"");
-    for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
+    for(std::vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
       (*q)->close();
     }
     
-    for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
+    for(std::vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
       (*q)->close();
     }
 
     if (midi_server_rep.is_enabled() == true) midi_server_rep.disable();
-    for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
+    for(std::vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing midi device \"" + (*q)->label() + "\".");
       if ((*q)->is_open() == true) (*q)->close();
     }
@@ -283,7 +283,7 @@ void ECA_CHAINSETUP::disable(void) {
 void ECA_CHAINSETUP::change_position_exact(double seconds) { 
   ECA_CHAINSETUP_POSITION::change_position_exact(seconds); // change the global cs position
 
-  vector<AUDIO_IO*>::iterator q = inputs.begin();
+  std::vector<AUDIO_IO*>::iterator q = inputs.begin();
   while(q != inputs.end()) {
     (*q)->seek_position_in_seconds(seconds + (*q)->position_in_seconds_exact());
     ++q;
@@ -302,7 +302,7 @@ void ECA_CHAINSETUP::change_position_exact(double seconds) {
 void ECA_CHAINSETUP::set_position_exact(double seconds) {
   ECA_CHAINSETUP_POSITION::set_position_exact(seconds); // set the global cs position
 
-  vector<AUDIO_IO*>::iterator q = inputs.begin();
+  std::vector<AUDIO_IO*>::iterator q = inputs.begin();
   while(q != inputs.end()) {
     (*q)->seek_position_in_seconds(seconds);
     ++q;
@@ -321,8 +321,8 @@ void ECA_CHAINSETUP::set_position_exact(double seconds) {
  * ensure:
  *  all options valid for interpret_option()
  */
-void ECA_CHAINSETUP::preprocess_options(vector<string>& opts) {
-  vector<string>::iterator p = opts.begin();
+void ECA_CHAINSETUP::preprocess_options(std::vector<std::string>& opts) {
+  std::vector<std::string>::iterator p = opts.begin();
   while(p != opts.end()) {
     if (p->size() > 0 && (*p)[0] != '-') *p = "-i:" + *p;
     ++p;
@@ -349,7 +349,7 @@ void ECA_CHAINSETUP::interpret_entry(void) {
  *  interpret_result() == true && interpret_result_verbose() == "" ||
  *  interpret_result() == false && interpret_result_verbose() != ""
  */
-void ECA_CHAINSETUP::interpret_exit(const string& arg) {
+void ECA_CHAINSETUP::interpret_exit(const std::string& arg) {
   if (istatus_rep != true) {
     /* option 'arg' was not found */
     interpret_set_result(false, string("Interpreting option \"") +
@@ -385,7 +385,7 @@ void ECA_CHAINSETUP::interpret_exit(const string& arg) {
  *  (option succesfully interpreted && interpret_result() ==  true) ||
  *  (unknown or invalid option && interpret_result() != true)
  */
-void ECA_CHAINSETUP::interpret_option (const string& arg) {
+void ECA_CHAINSETUP::interpret_option (const std::string& arg) {
   interpret_entry();
 
   istatus_rep = false;
@@ -407,7 +407,7 @@ void ECA_CHAINSETUP::interpret_option (const string& arg) {
  *  (option succesfully interpreted && interpretation_result() ==  true) ||
  *  (unknown or invalid option && interpretation_result() == false)
  */
-void ECA_CHAINSETUP::interpret_global_option (const string& arg) {
+void ECA_CHAINSETUP::interpret_global_option (const std::string& arg) {
   interpret_entry();
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting global option \"" + arg + "\".");
@@ -430,7 +430,7 @@ void ECA_CHAINSETUP::interpret_global_option (const string& arg) {
  *  (option succesfully interpreted && interpretation_result() ==  true) ||
  *  (unknown or invalid option && interpretation_result() == false)
  */
-void ECA_CHAINSETUP::interpret_object_option (const string& arg) {
+void ECA_CHAINSETUP::interpret_object_option (const std::string& arg) {
   interpret_entry();
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting object option \"" + arg + "\".");
@@ -520,7 +520,7 @@ void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
  *  argu[0] == '-'
  *  istatus_rep == false
  */
-void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
+void ECA_CHAINSETUP::interpret_general_option (const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -541,7 +541,7 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
 
   case 'm':      // mixmode
     {
-      string temp = get_argument_number(1, argu);
+      std::string temp = get_argument_number(1, argu);
       if (temp == "auto") {
 	mixmode_rep = ep_mm_auto;
 	ecadebug->msg("(eca-chainsetup) Mix-mode is selected automatically.");
@@ -646,7 +646,7 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
  *  argu[0] == '-'
  *  istatus_rep == false
  */
-void ECA_CHAINSETUP::interpret_processing_control (const string& argu) {
+void ECA_CHAINSETUP::interpret_processing_control (const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -693,7 +693,7 @@ void ECA_CHAINSETUP::interpret_processing_control (const string& argu) {
  *  argu[0] == '-'
  *  istatus_rep == false
  */
-void ECA_CHAINSETUP::interpret_chains (const string& argu) {
+void ECA_CHAINSETUP::interpret_chains (const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -705,7 +705,7 @@ void ECA_CHAINSETUP::interpret_chains (const string& argu) {
   switch(argu[1]) {
   case 'a':
     {
-      vector<string> schains = get_arguments(argu);
+      std::vector<std::string> schains = get_arguments(argu);
       if (find(schains.begin(), schains.end(), "all") != schains.end()) {
 	select_all_chains();
 	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Selected all chains.");
@@ -715,7 +715,7 @@ void ECA_CHAINSETUP::interpret_chains (const string& argu) {
 	add_new_chains(schains);
 	MESSAGE_ITEM mtempa;
 	mtempa << "(eca-chainsetup) Selected chain ids: ";
-	for (vector<string>::const_iterator p = schains.begin(); p !=
+	for (std::vector<std::string>::const_iterator p = schains.begin(); p !=
 	       schains.end(); p++) { mtempa << *p << " "; }
 	ecadebug->msg(ECA_DEBUG::system_objects, mtempa.to_string());
       }
@@ -735,7 +735,7 @@ void ECA_CHAINSETUP::interpret_chains (const string& argu) {
  *  argu[0] == '-'
  *  istatus_rep == false
  */
-void ECA_CHAINSETUP::interpret_audio_format (const string& argu) {
+void ECA_CHAINSETUP::interpret_audio_format (const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -776,7 +776,7 @@ void ECA_CHAINSETUP::interpret_audio_format (const string& argu) {
  *  argu[0] == '-'
  *  istatus_rep == false
  */
-void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
+void ECA_CHAINSETUP::interpret_effect_preset (const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -802,9 +802,9 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
 
       case 'n': 
 	{
-	  string name = get_argument_number(1,argu);
-  	  const map<string,string>& preset_map = eca_preset_map->registered_objects(); 
-	  map<string,string>::const_iterator p = preset_map.begin();
+	 std::string name = get_argument_number(1,argu);
+  	  const std::map<std::string,std::string>& preset_map = eca_preset_map->registered_objects(); 
+	  std::map<std::string,std::string>::const_iterator p = preset_map.begin();
 	  while (p != preset_map.end()) {
 	    if (p->first == name) {
 //	      add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new GLOBAL_PRESET(name)));
@@ -842,7 +842,7 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
  *  argu.size() > 0
  *  argu[0] == '-'
  */
-void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) { 
+void ECA_CHAINSETUP::interpret_audioio_device (const std::string& argu) { 
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -942,7 +942,7 @@ void ECA_CHAINSETUP::interpret_audioio_device (const string& argu) {
  *  argu.size() > 0
  *  argu[0] == '-'
  */
-void ECA_CHAINSETUP::interpret_midi_device (const string& argu) { 
+void ECA_CHAINSETUP::interpret_midi_device (const std::string& argu) { 
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -958,7 +958,7 @@ void ECA_CHAINSETUP::interpret_midi_device (const string& argu) {
       switch(argu[2]) {
 	case 'd': 
 	  {
-	    string tname = get_argument_number(1, argu);
+	 std::string tname = get_argument_number(1, argu);
 	    ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup) MIDI-config: Adding device \"" + tname + "\".");
 	    MIDI_IO* mdev = 0;
 	    mdev = ECA_OBJECT_FACTORY::create_midi_device(argu);
@@ -1050,7 +1050,7 @@ void ECA_CHAINSETUP::interpret_midi_device (const string& argu) {
  *  argu[0] == '-'
  *  istatus_rep == false
  */
-void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
+void ECA_CHAINSETUP::interpret_chain_operator (const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -1075,7 +1075,7 @@ void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
  *  argu.size() > 0
  *  argu[0] == '-'
  */
-CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
+CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -1084,9 +1084,9 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
 #ifdef HAVE_LADSPA_H
   MESSAGE_ITEM otemp;
   CHAIN_OPERATOR* cop = 0;
-  string prefix = get_argument_prefix(argu);
+ std::string prefix = get_argument_prefix(argu);
   if (prefix == "el" || prefix == "eli") {
-    string unique = get_argument_number(1, argu);
+ std::string unique = get_argument_number(1, argu);
     if (prefix == "el") 
       cop = ECA_OBJECT_FACTORY::ladspa_map_object(unique);
     else 
@@ -1115,7 +1115,7 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
 /**
  * Create a new VST1.0/2.0 plugin
  */
-CHAIN_OPERATOR* ECA_CHAINSETUP::create_vst_plugin (const string& argu) {
+CHAIN_OPERATOR* ECA_CHAINSETUP::create_vst_plugin (const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -1123,7 +1123,7 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_vst_plugin (const string& argu) {
 
   MESSAGE_ITEM otemp;
   CHAIN_OPERATOR* cop = 0;
-  string prefix = get_argument_prefix(argu);
+ std::string prefix = get_argument_prefix(argu);
 
 #ifdef FEELING_EXPERIMENTAL
   cop = dynamic_cast<CHAIN_OPERATOR*>(eca_vst_plugin_map.object(prefix));
@@ -1150,7 +1150,7 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_vst_plugin (const string& argu) {
  *  argu.size() > 0
  *  argu[0] == '-'
  */
-CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
+CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -1187,7 +1187,7 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
  *  argu[0] == '-'
  *  istatus_rep == false
  */
-void ECA_CHAINSETUP::interpret_controller (const string& argu) {
+void ECA_CHAINSETUP::interpret_controller (const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -1215,7 +1215,7 @@ void ECA_CHAINSETUP::interpret_controller (const string& argu) {
  *  argu.size() > 0
  *  argu[0] == '-'
  */
-GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
+GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const std::string& argu) {
   // --------
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
@@ -1258,9 +1258,9 @@ GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
  * Select controllers as targets for parameter control
  */
 void ECA_CHAINSETUP::set_target_to_controller(void) {
-  vector<string> schains = selected_chains();
-  for(vector<string>::const_iterator a = schains.begin(); a != schains.end(); a++) {
-    for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+  std::vector<std::string> schains = selected_chains();
+  for(std::vector<std::string>::const_iterator a = schains.begin(); a != schains.end(); a++) {
+    for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
 	(*q)->selected_controller_as_target();
 	return;
@@ -1287,9 +1287,9 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
     p->register_server(&stamp_server_rep);
   }
 
-  vector<string> schains = selected_chains();
-  for(vector<string>::const_iterator a = schains.begin(); a != schains.end(); a++) {
-    for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+  std::vector<std::string> schains = selected_chains();
+  for(std::vector<std::string>::const_iterator a = schains.begin(); a != schains.end(); a++) {
+    for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
 	if ((*q)->selected_target() == 0) return;
 	(*q)->add_controller(csrc);
@@ -1315,9 +1315,9 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   if (p != 0) {
     stamp_server_rep.register_stamp(p);
   }
-  vector<string> schains = selected_chains();
-  for(vector<string>::const_iterator p = schains.begin(); p != schains.end(); p++) {
-    for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+  std::vector<std::string> schains = selected_chains();
+  for(std::vector<std::string>::const_iterator p = schains.begin(); p != schains.end(); p++) {
+    for(std::vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*p == (*q)->name()) {
 	ecadebug->msg(ECA_DEBUG::system_objects, "Adding chainop to chain " + (*q)->name() + ".");
 	(*q)->add_chain_operator(cotmp);
@@ -1343,16 +1343,16 @@ void ECA_CHAINSETUP::add_default_output(void) {
   }
 }
 
-void ECA_CHAINSETUP::load_from_file(const string& filename) throw(ECA_ERROR&) { 
-  ifstream fin (filename.c_str());
+void ECA_CHAINSETUP::load_from_file(const std::string& filename) throw(ECA_ERROR&) { 
+  std::ifstream fin (filename.c_str());
   if (!fin) throw(ECA_ERROR("ECA_CHAINSETUP", "Couldn't open setup read file: \"" + filename + "\".", ECA_ERROR::retry));
 
-  string temp;
+  std::string temp;
   while(getline(fin,temp)) {
     if (temp.size() > 0 && temp[0] == '#') {
       continue;
     }
-    vector<string> words = string_to_words(temp);
+    std::vector<std::string> words = string_to_words(temp);
     for(unsigned int n = 0; n < words.size(); n++) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding \"" + words[n] + "\" to options (loaded from \"" + filename + "\".");
       options.push_back(words[n]);
@@ -1370,12 +1370,12 @@ void ECA_CHAINSETUP::save(void) throw(ECA_ERROR&) {
   save_to_file(setup_filename_rep);
 }
 
-void ECA_CHAINSETUP::save_to_file(const string& filename) throw(ECA_ERROR&) {
+void ECA_CHAINSETUP::save_to_file(const std::string& filename) throw(ECA_ERROR&) {
   update_option_strings();
 
-  ofstream fout (filename.c_str());
+  std::ofstream fout (filename.c_str());
   if (!fout) {
-    cerr << "Going to throw an exception...\n";
+    std::cerr << "Going to throw an exception...\n";
     throw(ECA_ERROR("ECA_CHAINSETUP", "Couldn't open setup save file: \"" +
   			filename + "\".", ECA_ERROR::retry));
   }
@@ -1395,7 +1395,7 @@ void ECA_CHAINSETUP::update_option_strings(void) {
   
   while(options.size() > 0) options.pop_back();
 
-  string temp = options_general + 
+ std::string temp = options_general + 
                 inputs_to_string() + 
                 outputs_to_string() +
                 chains_to_string();

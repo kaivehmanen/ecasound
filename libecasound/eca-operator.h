@@ -28,7 +28,7 @@ class OPERATOR : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type> {
     /**
      * Parameter description. 
      */
-    string description;
+    std::string description;
 
     /**
      * Is parameter bounded above?

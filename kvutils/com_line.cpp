@@ -32,12 +32,12 @@ COMMAND_LINE::COMMAND_LINE(int argc, char *argv[]) {
   }
 }
 
-COMMAND_LINE::COMMAND_LINE(const vector<string>& params) {  cparams = params; }
-void COMMAND_LINE::push_back(const string& argu) { cparams.push_back(argu); }
+COMMAND_LINE::COMMAND_LINE(const std::vector<std::string>& params) {  cparams = params; }
+void COMMAND_LINE::push_back(const std::string& argu) { cparams.push_back(argu); }
 
 
 bool COMMAND_LINE::has(char option) const {
-  vector<string>::size_type savepos = current_rep;
+  std::vector<std::string>::size_type savepos = current_rep;
 
   current_rep = 0;
   while (current_rep < cparams.size()) {
@@ -54,8 +54,8 @@ bool COMMAND_LINE::has(char option) const {
   return(false);
 }
 
-bool COMMAND_LINE::has(const string& option) const {
-  vector<string>::size_type savepos = current_rep;
+bool COMMAND_LINE::has(const std::string& option) const {
+  std::vector<std::string>::size_type savepos = current_rep;
 
   current_rep = 0;
   while (current_rep < cparams.size()) {
@@ -71,10 +71,10 @@ bool COMMAND_LINE::has(const string& option) const {
 
 void COMMAND_LINE::combine(void) { cparams = combine(cparams); }
 
-vector<string> COMMAND_LINE::combine(const vector<string>& source) {
-  vector<string> result;
-  string first;
-  vector<string>::const_iterator p = source.begin();
+std::vector<std::string> COMMAND_LINE::combine(const std::vector<std::string>& source) {
+  std::vector<std::string> result;
+  std::string first;
+  std::vector<std::string>::const_iterator p = source.begin();
   while(p != source.end()) {
     if (p->size() == 0) {
       ++p;

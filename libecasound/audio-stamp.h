@@ -34,7 +34,7 @@ class AUDIO_STAMP_SERVER {
 
  private:
 
-  map<int, AUDIO_STAMP*> stamp_map_rep;
+  std::map<int, AUDIO_STAMP*> stamp_map_rep;
 };
 
 class AUDIO_STAMP_CLIENT {

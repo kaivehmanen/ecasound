@@ -37,7 +37,7 @@
 /**
  * Return the first effect that matches with 'keyword'
  */
-EFFECT_LADSPA* ECA_OBJECT_FACTORY::ladspa_map_object(const string& keyword) { 
+EFFECT_LADSPA* ECA_OBJECT_FACTORY::ladspa_map_object(const std::string& keyword) { 
   return(dynamic_cast<EFFECT_LADSPA*>(eca_ladspa_plugin_map->object(keyword))); 
 }
 
@@ -52,14 +52,14 @@ EFFECT_LADSPA* ECA_OBJECT_FACTORY::ladspa_map_object(long int number) {
 /**
  * Return the first controller object that matches with 'keyword'
  */
-GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::controller_map_object(const string& keyword) {
+GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::controller_map_object(const std::string& keyword) {
   return(dynamic_cast<GENERIC_CONTROLLER*>(eca_controller_map->object(keyword)));
 }
 
 /**
  * Return the first effect that matches with 'keyword'
  */
-CHAIN_OPERATOR* ECA_OBJECT_FACTORY::chain_operator_map_object(const string& keyword) {
+CHAIN_OPERATOR* ECA_OBJECT_FACTORY::chain_operator_map_object(const std::string& keyword) {
   return(dynamic_cast<CHAIN_OPERATOR*>(eca_chain_operator_map->object(keyword)));
 }
 
@@ -67,7 +67,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::chain_operator_map_object(const string& keyw
  * Return the first audio object that matches with 'keyword'. If 
  * 'use_regex', regular expression matching is used.
  */
-AUDIO_IO* ECA_OBJECT_FACTORY::audio_io_map_object(const string& keyword, bool use_regex ) {
+AUDIO_IO* ECA_OBJECT_FACTORY::audio_io_map_object(const std::string& keyword, bool use_regex ) {
   return(dynamic_cast<AUDIO_IO*>(eca_audio_object_map->object(keyword, use_regex)));
 }
 
@@ -82,7 +82,7 @@ AUDIO_IO* ECA_OBJECT_FACTORY::audio_io_map_object(const string& keyword, bool us
  * require:
  *  arg.empty() != true
  */
-AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg) {
+AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const std::string& arg) {
   assert(arg.empty() != true);
  
   string fname = get_argument_number(1, arg);
@@ -114,7 +114,7 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg) {
  * require:
  *  arg.empty() != true
  */
-MIDI_IO* ECA_OBJECT_FACTORY::create_midi_device(const string& arg) {
+MIDI_IO* ECA_OBJECT_FACTORY::create_midi_device(const std::string& arg) {
   assert(arg.empty() != true);
  
   ::register_default_objects();

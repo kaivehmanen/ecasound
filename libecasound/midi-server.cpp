@@ -83,8 +83,8 @@ void MIDI_SERVER::io_thread(void) {
     }
 
     if (read_bytes < 0) {
-      cerr << "ERROR: Can't read from MIDI-device: " 
-	   << clients_rep[0]->label() << "." << endl;
+      std::cerr << "ERROR: Can't read from MIDI-device: " 
+	   << clients_rep[0]->label() << "." << std::endl;
       break;
     }
     else {
@@ -92,7 +92,7 @@ void MIDI_SERVER::io_thread(void) {
       for(int n = 0; n < read_bytes; n++) {
 	buffer_rep.push_back(buf[n]);
 	while(buffer_rep.size() > max_queue_size_rep) {
-	  cerr << "(eca-midi) dropping midi bytes" << endl;
+	  std::cerr << "(eca-midi) dropping midi bytes" << std::endl;
 	  buffer_rep.pop_front();
 	}
 	for(unsigned int m = 0; m < handlers_rep.size(); m++) {
@@ -351,7 +351,7 @@ void MIDI_SERVER::send_mmc_command(unsigned int cmd) {
   buf[3] = 0x06;
   buf[4] = cmd;
   buf[5] = 0xf7;
-  list<int>::const_iterator p = mmc_send_ids_rep.begin();
+  std::list<int>::const_iterator p = mmc_send_ids_rep.begin();
   while(p != mmc_send_ids_rep.end()) {
     buf[2] = static_cast<unsigned char>(*p);
     send_midi_bytes(1, buf, 6);
@@ -398,7 +398,7 @@ void MIDI_SERVER::send_midi_stop(void) {
  * controller 'ctrl' on channel 'channel'.
  */
 void MIDI_SERVER::add_controller_trace(int channel, int ctrl) {
-  controller_values_rep[pair<int,int>(channel,ctrl)] = 0;
+  controller_values_rep[std::pair<int,int>(channel,ctrl)] = 0;
 }
 
 /**
@@ -406,7 +406,7 @@ void MIDI_SERVER::add_controller_trace(int channel, int ctrl) {
  * controller 'ctrl' on channel 'channel'.
  */
 void MIDI_SERVER::remove_controller_trace(int channel, int controller) {
-  map<pair<int,int>,int>::iterator p = controller_values_rep.find(pair<int,int>(channel,controller));
+  std::map<std::pair<int,int>,int>::iterator p = controller_values_rep.find(std::pair<int,int>(channel,controller));
   if (p != controller_values_rep.end()) {
     controller_values_rep.erase(p);
   }
@@ -417,9 +417,9 @@ void MIDI_SERVER::remove_controller_trace(int channel, int controller) {
  * channel 'channel'.
  */
 int MIDI_SERVER::last_controller_value(int channel, int ctrl) const {  
-  map<pair<int,int>,int>::iterator p = controller_values_rep.find(pair<int,int>(channel,ctrl));
+  std::map<std::pair<int,int>,int>::iterator p = controller_values_rep.find(std::pair<int,int>(channel,ctrl));
   if (p != controller_values_rep.end()) {
-    return(controller_values_rep[pair<int,int>(channel,ctrl)]);
+    return(controller_values_rep[std::pair<int,int>(channel,ctrl)]);
   }
   return(0);
 }
@@ -460,9 +460,9 @@ void MIDI_SERVER::parse_receive_queue(void) {
 //        	    cerr << endl << "C:" << current_ctrl_number << ".";
 	  }
 	  else {
-	    if (controller_values_rep.find(pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)) 
+	    if (controller_values_rep.find(std::pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)) 
 		!= controller_values_rep.end()) {
-	      controller_values_rep[pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] = static_cast<int>(byte);
+	      controller_values_rep[std::pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] = static_cast<int>(byte);
 //      	      cerr << endl << "(midi-server) Value:" 
 //      		   << controller_values_rep[pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] 
 //      		   << ", ch:" << current_ctrl_channel_rep 

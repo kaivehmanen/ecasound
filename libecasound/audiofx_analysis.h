@@ -32,8 +32,8 @@ class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
   static const int range_count = 16;
   static const SAMPLE_SPECS::sample_type clip_amplitude = SAMPLE_SPECS::max_amplitude - SAMPLE_SPECS::max_amplitude / 16384.0f; // max-(max/2^15)
 
-  mutable vector<unsigned long int> num_of_samples; // number of samples processed
-  mutable vector<vector<unsigned long int> > ranges;
+  mutable std::vector<unsigned long int> num_of_samples; // number of samples processed
+  mutable std::vector<std::vector<unsigned long int> > ranges;
 
   mutable parameter_type max_pos_period, max_neg_period;
   mutable unsigned long int clipped_pos_period, clipped_neg_period;
@@ -73,9 +73,9 @@ class EFFECT_DCFIND : public EFFECT_ANALYSIS {
 
 private:
 
-  vector<parameter_type> pos_sum;
-  vector<parameter_type> neg_sum;
-  vector<parameter_type> num_of_samples;
+  std::vector<parameter_type> pos_sum;
+  std::vector<parameter_type> neg_sum;
+  std::vector<parameter_type> num_of_samples;
 
   SAMPLE_SPECS::sample_type tempval;
   SAMPLE_ITERATOR_CHANNELS i;

@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
       tempfile_dir_rep.reserve_directory(tmpdir);
     }
     if (tempfile_dir_rep.is_valid() != true) {
-      cerr << "---\nError while creating temporary directory \"" << tmpdir << "\". Exiting...\n";
+      std::cerr << "---\nError while creating temporary directory \"" << tmpdir << "\". Exiting...\n";
       return(0);
     }
 
@@ -100,10 +100,10 @@ int main(int argc, char *argv[])
 	ectrl.add_chainsetup("default");
 	ectrl.add_chain("default");
 	if (m == 0) {
-	  cerr << "Analyzing file \"" << filename << "\".\n";
+	  std::cerr << "Analyzing file \"" << filename << "\".\n";
 	  ectrl.add_audio_input(filename);
 	  if (ectrl.get_audio_input() == 0) {
-	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+	    std::cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	    break;
 	  }
 	  aio_params = ectrl.get_audio_format(ectrl.get_audio_input());
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(string(ecatools_normalize_tempfile));
 	  if (ectrl.get_audio_output() == 0) {
-	    cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
+	    std::cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
 	    break;
 	  }
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 	else {
 	  ectrl.add_audio_input(string(ecatools_normalize_tempfile));
 	  if (ectrl.get_audio_input() == 0) {
-	    cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
+	    std::cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
 	    break;
 	  }
 	  aio_params = ectrl.get_audio_format(ectrl.get_audio_input());
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(filename);
 	  if (ectrl.get_audio_output() == 0) {
-	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+	    std::cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	    break;
 	  }
 	  
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 	}
 	ectrl.connect_chainsetup();
 	if (ectrl.is_connected() == false) {
-	  cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+	  std::cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	  break;
 	}
 
@@ -148,15 +148,15 @@ int main(int argc, char *argv[])
 	if (m == 0) {
 	  multiplier = volume->max_multiplier();
 	  if (multiplier <= 1.0) {
-	    cerr << "File \"" << filename << "\" is already normalized.\n";
+	    std::cerr << "File \"" << filename << "\" is already normalized.\n";
 	    ectrl.disconnect_chainsetup();
 	    ectrl.select_chainsetup("default");
 	    ectrl.remove_chainsetup();
 	    break;
 	  }
 	  else {
-	    cerr << "Normalizing file \"" << filename << "\" (amp-%: ";
-	    cerr << multiplier * 100.0 << ").\n";
+	    std::cerr << "Normalizing file \"" << filename << "\" (amp-%: ";
+	    std::cerr << multiplier * 100.0 << ").\n";
 	  }
 	}
 	ectrl.disconnect_chainsetup();
@@ -168,27 +168,27 @@ int main(int argc, char *argv[])
     }
   }
   catch(ECA_ERROR& e) {
-    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    std::cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
   catch(...) {
-    cerr << "\nCaught an unknown exception.\n";
+    std::cerr << "\nCaught an unknown exception.\n";
   }
   return(0);
 }
 
 void print_usage(void) {
-  cerr << "****************************************************************************\n";
-  cerr << "* [1mecatools_normalize, v" << ecatools_normalize_version;
-  cerr << " (linked to ecasound v" << ecasound_library_version 
+  std::cerr << "****************************************************************************\n";
+  std::cerr << "* [1mecatools_normalize, v" << ecatools_normalize_version;
+  std::cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
-  cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence[0m \n";
-  cerr << "****************************************************************************\n";
+  std::cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence[0m \n";
+  std::cerr << "****************************************************************************\n";
 
-  cerr << "\nUSAGE: ecatools_normalize file1 [ file2, ... fileN ]\n\n";
+  std::cerr << "\nUSAGE: ecatools_normalize file1 [ file2, ... fileN ]\n\n";
 }
 
 void signal_handler(int signum) {
-  cerr << "Unexpected interrupt... cleaning up.\n";
+  std::cerr << "Unexpected interrupt... cleaning up.\n";
   remove(ecatools_normalize_tempfile.c_str());
   exit(1);
 }

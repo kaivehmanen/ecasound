@@ -114,7 +114,7 @@ void register_internal_plugins(void);
 void register_default_midi_devices(void);
 
 #ifdef HAVE_LADSPA_H
-vector<EFFECT_LADSPA*> create_plugins(const string& fname);
+vector<EFFECT_LADSPA*> create_plugins(const std::string& fname);
 #endif
 
 void register_default_objects(void) {
@@ -279,9 +279,9 @@ void register_default_controllers(void) {
 
 void register_default_presets(void) { }
 
-static AUDIO_IO* register_internal_plugin(const string& libdir,
-					       const string& filename) {
-  string file = libdir + string("/") + filename;
+static AUDIO_IO* register_internal_plugin(const std::string& libdir,
+					       const std::string& filename) {
+  std::string file = libdir + std::string("/") + filename;
   audio_io_descriptor desc_func = 0;
   void *plugin_handle = dlopen(file.c_str(), RTLD_NOW);
   if (plugin_handle != 0) {
@@ -326,7 +326,7 @@ static AUDIO_IO* register_internal_plugin(const string& libdir,
 
 void register_internal_plugins(void) {
   ECA_RESOURCES ecarc;
-  string libdir = ecarc.resource("internal-plugin-directory");
+  std::string libdir = ecarc.resource("internal-plugin-directory");
 
   struct stat fbuf;
   if (stat(libdir.c_str(), &fbuf) < 0) {
@@ -409,25 +409,25 @@ void register_default_midi_devices(void) {
 void register_ladspa_plugins(void) {
   DIR *dp;
 
-  vector<string> dir_names;
+  std::vector<std::string> dir_names;
   char* env = getenv("LADSPA_PATH");
   if (env != 0) 
     dir_names = string_to_vector(string(), ':');
   ECA_RESOURCES ecarc;
-  string add_file = ecarc.resource("ladspa-plugin-directory");
-  if (find(dir_names.begin(), dir_names.end(), add_file) == dir_names.end()) dir_names.push_back(add_file);
+  std::string add_file = ecarc.resource("ladspa-plugin-directory");
+  if (std::find(dir_names.begin(), dir_names.end(), add_file) == dir_names.end()) dir_names.push_back(add_file);
 
   struct stat statbuf;
-  vector<string>::const_iterator p = dir_names.begin();
+  std::vector<std::string>::const_iterator p = dir_names.begin();
   while (p != dir_names.end()) {
     dp = opendir(p->c_str());
     if (dp != 0) {
       struct dirent *entry = readdir(dp);
       while(entry != 0) {
 	lstat(entry->d_name, &statbuf);
-	vector<EFFECT_LADSPA*> ladspa_plugins;
+	std::vector<EFFECT_LADSPA*> ladspa_plugins;
 	try {
-	  string entry_name (entry->d_name);
+	  std::string entry_name (entry->d_name);
 	  if (entry_name.size() > 0 && entry_name[0] != '.')
 	    ladspa_plugins = create_plugins(*p + "/" + entry_name);
 	}
@@ -443,7 +443,7 @@ void register_ladspa_plugins(void) {
   }
 }
 
-vector<EFFECT_LADSPA*> create_plugins(const string& fname) { 
+vector<EFFECT_LADSPA*> create_plugins(const std::string& fname) { 
   vector<EFFECT_LADSPA*> plugins;
 
   void *plugin_handle = dlopen(fname.c_str(), RTLD_NOW);

@@ -20,20 +20,20 @@ class ADVANCED_REVERB : public EFFECT_TIME_BASED {
 
   class CHANNEL_DATA {
   public:
-    vector<SAMPLE_SPECS::sample_type> buffer;
-    vector<long int> dpos;
-    vector<parameter_type> mul;
+    std::vector<SAMPLE_SPECS::sample_type> buffer;
+    std::vector<long int> dpos;
+    std::vector<parameter_type> mul;
     long int bufferpos_rep;
     SAMPLE_SPECS::sample_type oldvalue, lpvalue;
 
     CHANNEL_DATA(void) : buffer(65536, 0.0), dpos(200), mul(200), bufferpos_rep(0) { }
   };
-  vector<CHANNEL_DATA> cdata;
+  std::vector<CHANNEL_DATA> cdata;
 
  public:
 
-  virtual string name(void) const { return("Advanced reverb"); }
-  virtual string parameter_names(void) const { return("Room-size,feedback-%,wet-%"); }
+  virtual std::string name(void) const { return("Advanced reverb"); }
+  virtual std::string parameter_names(void) const { return("Room-size,feedback-%,wet-%"); }
 
   virtual parameter_type get_parameter(int param) const;
   virtual void set_parameter(int param, parameter_type value);

@@ -12,12 +12,12 @@ class LINEAR_ENVELOPE : public FINITE_ENVELOPE {
 
  public:
 
-  string name(void) const { return("Linear envelope"); }
+  std::string name(void) const { return("Linear envelope"); }
   parameter_type value(void);
 
   void init(parameter_type step);
 
-  string parameter_names(void) const { return("length-sec"); }
+  std::string parameter_names(void) const { return("length-sec"); }
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
 

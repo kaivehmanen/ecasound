@@ -30,16 +30,16 @@ class ECA_OBJECT_MAP {
 
  private:
 
-  mutable map<string, ECA_OBJECT*> object_map;
-  mutable map<string,string> object_keyword_map;
+  mutable std::map<std::string, ECA_OBJECT*> object_map;
+  mutable std::map<std::string,std::string> object_keyword_map;
 
  public:
 
-  virtual void register_object(const string& regexpr, ECA_OBJECT* object);
-  virtual void unregister_object(const string& keyword);
-  virtual const map<string,string>& registered_objects(void) const;
-  virtual ECA_OBJECT* object(const string& expr, bool use_regexp = true) const;
-  virtual string object_identifier(const ECA_OBJECT* object) const;
+  virtual void register_object(const std::string& regexpr, ECA_OBJECT* object);
+  virtual void unregister_object(const std::string& keyword);
+  virtual const std::map<std::string,std::string>& registered_objects(void) const;
+  virtual ECA_OBJECT* object(const std::string& expr, bool use_regexp = true) const;
+  virtual std::string object_identifier(const ECA_OBJECT* object) const;
   virtual void flush(void);
 
   virtual ~ECA_OBJECT_MAP (void);

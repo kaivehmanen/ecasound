@@ -32,7 +32,7 @@
 
 #include "eca-debug.h"
 
-WAVEFILE::WAVEFILE (const string& name) {
+WAVEFILE::WAVEFILE (const std::string& name) {
   label(name);
   fio_repp = 0;
   mmaptoggle_rep = "0";

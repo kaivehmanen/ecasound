@@ -29,8 +29,8 @@ class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
 
   bool file_ready_rep;
   bool file_ended_rep;
-  string mode_rep;
-  string fname_rep;
+  std::string mode_rep;
+  std::string fname_rep;
    
  public:
 
@@ -38,8 +38,8 @@ class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
   // --
   // Open/close routines
   // ---
-  void open_file(const string& fname, 
-		 const string& fmode);
+  void open_file(const std::string& fname, 
+		 const std::string& fmode);
   void open_stdin(void) { }
   void open_stdout(void) { }
   void close_file(void);
@@ -64,7 +64,7 @@ class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
   bool is_file_error(void) const;
   bool is_file_ended(void) const;
   long int file_bytes_processed(void) const;
-  const string& file_mode(void) const { return(mode_rep); }
+  const std::string& file_mode(void) const { return(mode_rep); }
 
   ECA_FILE_IO_MMAP(void);
   ~ECA_FILE_IO_MMAP(void);

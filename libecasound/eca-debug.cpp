@@ -16,13 +16,13 @@ public:
 
   void flush(void) { }
 
-  void control_flow(const string& part) { 
+  void control_flow(const std::string& part) { 
     if ((get_debug_level() & ECA_DEBUG::module_flow) != ECA_DEBUG::module_flow) return;
-    cerr << "[* " << part << " *]" << endl;
+    std::cerr << "[* " << part << " *]" << std::endl;
   }
-  void msg(int level, const string& info) { 
+  void msg(int level, const std::string& info) { 
     if ((get_debug_level() & level) != level) return;
-    cerr << info << "\n"; 
+    std::cerr << info << "\n"; 
   }
 
   DEFAULTDEBUG(void) { }

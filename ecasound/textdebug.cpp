@@ -26,7 +26,7 @@ void TEXTDEBUG::flush(void) {
   dostream->flush();
 }
 
-void TEXTDEBUG::control_flow(const string& part) {
+void TEXTDEBUG::control_flow(const std::string& part) {
   if ((get_debug_level() & ECA_DEBUG::module_flow) != ECA_DEBUG::module_flow) return;
 
 #ifdef USE_NCURSES
@@ -43,7 +43,7 @@ void TEXTDEBUG::control_flow(const string& part) {
   *dostream << "\n";
 }
 
-void TEXTDEBUG::msg(int level, const string& info) {
+void TEXTDEBUG::msg(int level, const std::string& info) {
   if ((get_debug_level() & level) != level) return;
   *dostream << info << "\n";
 }

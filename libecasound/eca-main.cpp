@@ -60,7 +60,7 @@ ECA_PROCESSOR::~ECA_PROCESSOR(void) {
     stop();
 
     if (csetup_repp != 0) {
-      vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
+      std::vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
       while(q != csetup_repp->chains.end()) {
 	if (*q != 0) (*q)->disconnect_buffer();
 	++q;
@@ -68,7 +68,7 @@ ECA_PROCESSOR::~ECA_PROCESSOR(void) {
     }
   }
   
-  vector<AUDIO_IO_BUFFERED_PROXY*>::iterator p = proxies_rep.begin();
+  std::vector<AUDIO_IO_BUFFERED_PROXY*>::iterator p = proxies_rep.begin();
   while(p != proxies_rep.end()) {
     delete *p;
     ++p;
@@ -126,8 +126,8 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) {
   csetup_repp = eparams_repp->connected_chainsetup_repp;
 
   if (csetup_repp == 0 ) {
-    cerr << "(eca-processor) Engine startup aborted, no chainsetup connected!";
-    cerr << " Exiting..." << endl;
+    std::cerr << "(eca-processor) Engine startup aborted, no chainsetup connected!";
+    std::cerr << " Exiting..." << std::endl;
     exit(-1);
   }
 
@@ -180,7 +180,7 @@ void ECA_PROCESSOR::init_servers(void) {
 }
 
 /**
- * Assign input objects in vectors of realtime, nonrealtime vectors,
+ * Assign input objects in std::vectors of realtime, nonrealtime std::vectors,
  * and store pointers to the original objects.
  */
 void ECA_PROCESSOR::create_sorted_input_map(void) {
@@ -196,8 +196,8 @@ void ECA_PROCESSOR::create_sorted_input_map(void) {
   }
 
   if (inputs_repp == 0 || inputs_repp->size() == 0) {
-    cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no inputs!";
-    cerr << " Exiting..." << endl;
+    std::cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no inputs!";
+    std::cerr << " Exiting..." << std::endl;
     exit(-1);
   }
 
@@ -221,7 +221,7 @@ void ECA_PROCESSOR::create_sorted_input_map(void) {
 }
 
 /**
- * Assign input objects in vectors of realtime, nonrealtime vectors,
+ * Assign input objects in std::vectors of realtime, nonrealtime std::vectors,
  * and store pointers to the original objects.
  */
 void ECA_PROCESSOR::create_sorted_output_map(void) {
@@ -238,8 +238,8 @@ void ECA_PROCESSOR::create_sorted_output_map(void) {
 
   if (outputs_repp  == 0 ||
       outputs_repp->size() == 0) {
-    cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no outputs!";
-    cerr << " Exiting..." << endl;
+    std::cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no outputs!";
+    std::cerr << " Exiting..." << std::endl;
     exit(-1);
   }
 
@@ -352,8 +352,8 @@ void ECA_PROCESSOR::init_chains(void) {
 
   if (chains_repp == 0 ||
       chains_repp->size() == 0) {
-    cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no chains!";
-    cerr << " Exiting..." << endl;
+    std::cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no chains!";
+    std::cerr << " Exiting..." << std::endl;
     exit(-1);
   }
 
@@ -422,7 +422,7 @@ void ECA_PROCESSOR::exec(void) {
     ecadebug->msg("(eca-main) Warning! An output object has raised an error! Out of disk space, permission denied, etc?");
 
   stop();
-  vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
+  std::vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
   while(q != csetup_repp->chains.end()) {
     (*q)->disconnect_buffer();
     ++q;
@@ -735,7 +735,7 @@ void ECA_PROCESSOR::start(void) {
 
     // this would be a serious problem
     if (sync_fix < 0) {
-      cerr << "(eca-main) Aborting! Negative multitrack-sync; problems with hardware?" << endl;
+      std::cerr << "(eca-main) Aborting! Negative multitrack-sync; problems with hardware?" << std::endl;
       exit(-1);
     }
     // FIXME: add a better fix later; now just make sure that no
@@ -757,7 +757,7 @@ void ECA_PROCESSOR::start(void) {
   //    char buf = 0xfa;
   //    int temp = ::write(midi_fd, &buf, 1);
   //    if (temp < 0) {
-  //      cerr << "ERROR: Can't write to MIDI-device.\n";
+  //      std::cerr << "ERROR: Can't write to MIDI-device.\n";
   //    }
   // --- !!! ---
 
@@ -840,9 +840,9 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 
 void ECA_PROCESSOR::interpret_queue(void) {
   while(eparams_repp->ecasound_queue_rep.is_empty() != true) {
-    pair<int,double> item = eparams_repp->ecasound_queue_rep.front();
-//      cerr << "(eca-main) ecasound_queue: cmds available; first one is "
-//  	 << item.first << "." << endl;
+    std::pair<int,double> item = eparams_repp->ecasound_queue_rep.front();
+//      std::cerr << "(eca-main) ecasound_queue: cmds available; first one is "
+//  	 << item.first << "." << std::endl;
     switch(item.first) {
     // ---
     // Basic commands.
@@ -1015,7 +1015,7 @@ bool ECA_PROCESSOR::is_slave_output(AUDIO_IO* aiod) const {
 
   AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(aiod);
   if (p != 0) return(false);
-  vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
+  std::vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
   while(q != csetup_repp->chains.end()) {
     if ((*q)->output_id_repp == aiod) {
       p = dynamic_cast<AUDIO_IO_DEVICE*>((*q)->input_id_repp);

@@ -399,7 +399,7 @@ string ECA_CONTROL_BASE::engine_status(void) const {
  *
  * @pre is_selected() == true
  */
-string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
+std::string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -421,7 +421,7 @@ string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
  *
  * @pre is_selected() == true
  */
-string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
+std::string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -443,7 +443,7 @@ string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
  *
  * @pre is_selected() == true
  */
-vector<string> ECA_CONTROL_BASE::attached_chains(const string& filename) const {
+std::vector<std::string> ECA_CONTROL_BASE::attached_chains(const string& filename) const {
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -477,12 +477,12 @@ void ECA_CONTROL_BASE::toggle_raise_priority(bool v) {
   session_repp->toggle_raised_priority(v);
 }
 
-void ECA_CONTROL_BASE::set_last_string_list(const vector<string>& s) { 
+void ECA_CONTROL_BASE::set_last_string_list(const std::vector<std::string>& s) { 
   last_los_rep = s; 
   last_type_rep = "S";
 }
 
-void ECA_CONTROL_BASE::set_last_string(const string& s) { 
+void ECA_CONTROL_BASE::set_last_string(const std::string& s) { 
   last_s_rep = s; 
   last_type_rep = "s";
 }
@@ -506,8 +506,8 @@ void ECA_CONTROL_BASE::set_last_error(const string& s) {
   last_error_rep = s;
 }
 
-const vector<string>& ECA_CONTROL_BASE::last_string_list(void) const { return(last_los_rep); }
-const string& ECA_CONTROL_BASE::last_string(void) const { return(last_s_rep); }
+const std::vector<std::string>& ECA_CONTROL_BASE::last_string_list(void) const { return(last_los_rep); }
+const std::string& ECA_CONTROL_BASE::last_string(void) const { return(last_s_rep); }
 double ECA_CONTROL_BASE::last_float(void) const { return(last_f_rep); }
 int ECA_CONTROL_BASE::last_integer(void) const { return(last_i_rep); } 
 long int ECA_CONTROL_BASE::last_long_integer(void) const { return(last_li_rep); }

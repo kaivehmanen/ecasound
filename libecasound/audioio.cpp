@@ -28,10 +28,10 @@
 
 #include "eca-debug.h"
 
-const string& AUDIO_IO::SETUP_ERROR::message(void) const { return(message_rep); }
+const std::string& AUDIO_IO::SETUP_ERROR::message(void) const { return(message_rep); }
 AUDIO_IO::SETUP_ERROR::Error_type AUDIO_IO::SETUP_ERROR::type(void) const { return(type_rep); }
 AUDIO_IO::SETUP_ERROR::SETUP_ERROR(AUDIO_IO::SETUP_ERROR::Error_type type, 
-				   const string& message) 
+				   const std::string& message) 
   : type_rep(type), message_rep(message) { }
 
 
@@ -111,7 +111,7 @@ void AUDIO_IO::io_mode(int mode) { io_mode_rep = mode; }
  * require:
  *  is_open() != true
  */
-void AUDIO_IO::label(const string& id_label) { id_label_rep = id_label; }
+void AUDIO_IO::label(const std::string& id_label) { id_label_rep = id_label; }
 
 /**
  * Enable/disbale nonblocking mode.
@@ -124,9 +124,9 @@ void AUDIO_IO::toggle_nonblocking_mode(bool value) { nonblocking_rep =
 
 /**
  * Returns the current label. See documentation for 
- * label(const string&).
+ * label(const std::string&).
  */
-const string& AUDIO_IO::label(void) const { return(id_label_rep); }
+const std::string& AUDIO_IO::label(void) const { return(id_label_rep); }
 
 
 /**
@@ -251,7 +251,7 @@ string AUDIO_IO::status(void) const {
 
 AUDIO_IO::~AUDIO_IO(void) { }
 
-AUDIO_IO::AUDIO_IO(const string& name, 
+AUDIO_IO::AUDIO_IO(const std::string& name, 
 		   int mode, 
 		   const ECA_AUDIO_FORMAT& fmt)
   : ECA_AUDIO_POSITION(fmt)

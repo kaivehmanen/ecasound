@@ -62,7 +62,7 @@ void ADVANCED_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_type va
     break;
   }
   if (param == 1 || param == 2) {
-    vector<CHANNEL_DATA>::iterator p = cdata.begin();
+    std::vector<CHANNEL_DATA>::iterator p = cdata.begin();
     while(p != cdata.end()) {
       p->dpos[0] = static_cast<long int>(roomsize_rep * srate_rep / 333);
       p->mul[0] = 0.035;
@@ -80,7 +80,7 @@ void ADVANCED_REVERB::init(SAMPLE_BUFFER *insample) {
   i_channels.init(insample);
   srate_rep = insample->sample_rate();
   cdata.resize(insample->number_of_channels());
-  vector<CHANNEL_DATA>::iterator p = cdata.begin();
+  std::vector<CHANNEL_DATA>::iterator p = cdata.begin();
   while(p != cdata.end()) {
     p->dpos[0] = static_cast<long int>(roomsize_rep * srate_rep / 333);
     p->mul[0] = 0.035;

@@ -3,19 +3,12 @@
 
 #include <string>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#ifdef USE_CXX_STD_NAMESPACE
-using std::string;
-#endif
-
 /**
  * A simple version of C++ stringstream
  */
 class MESSAGE_ITEM {
   
-  string stringtemp;
+  std::string stringtemp;
   int flo_prec;
 
 public:
@@ -23,14 +16,14 @@ public:
     MESSAGE_ITEM(void) { flo_prec = 2; }
 
     void setprecision (int prec) { flo_prec = prec; }
-    const string& to_string(void) const { return(stringtemp); }
+    const std::string& to_string(void) const { return(stringtemp); }
 
-    MESSAGE_ITEM& operator<< (string& c) { stringtemp = stringtemp + c; return (*this); }
-    MESSAGE_ITEM& operator<< (const string& c) { stringtemp = stringtemp + c; return (*this); }
+    MESSAGE_ITEM& operator<< (std::string& c) { stringtemp = stringtemp + c; return (*this); }
+    MESSAGE_ITEM& operator<< (const std::string& c) { stringtemp = stringtemp + c; return (*this); }
     MESSAGE_ITEM& operator<< (char c);
     MESSAGE_ITEM& operator<< (unsigned char c) { return (*this) << (char)c; }
     MESSAGE_ITEM& operator<< (signed char c) { return (*this) << (char)c; }
-    MESSAGE_ITEM& operator<< (const char *s) { stringtemp = stringtemp + string(s); return (*this); }
+    MESSAGE_ITEM& operator<< (const char *s) { stringtemp = stringtemp + std::string(s); return (*this); }
     MESSAGE_ITEM& operator<< (const unsigned char *s)
 	{ return (*this) << (const char*)s; }
     MESSAGE_ITEM& operator<< (const signed char *s)

@@ -12,12 +12,12 @@ class TWO_STAGE_LINEAR_ENVELOPE : public FINITE_ENVELOPE {
 
  public:
 
-  string name(void) const { return("Two-stage linear envelope"); }
+  std::string name(void) const { return("Two-stage linear envelope"); }
   parameter_type value(void);
 
   void init(parameter_type step);
 
-  string parameter_names(void) const { return("1st-stage-sec,2nd-stage-sec"); }
+  std::string parameter_names(void) const { return("1st-stage-sec,2nd-stage-sec"); }
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
 

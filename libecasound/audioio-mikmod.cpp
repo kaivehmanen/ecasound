@@ -27,9 +27,9 @@
 
 string MIKMOD_INTERFACE::default_mikmod_cmd = "mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f";
 
-void MIKMOD_INTERFACE::set_mikmod_cmd(const string& value) { MIKMOD_INTERFACE::default_mikmod_cmd = value; }
+void MIKMOD_INTERFACE::set_mikmod_cmd(const std::string& value) { MIKMOD_INTERFACE::default_mikmod_cmd = value; }
 
-MIKMOD_INTERFACE::MIKMOD_INTERFACE(const string& name) {
+MIKMOD_INTERFACE::MIKMOD_INTERFACE(const std::string& name) {
   finished_rep = false;
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 }

@@ -22,8 +22,8 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
 
  public:
 
-  static void set_mp3_input_cmd(const string& value);
-  static void set_mp3_output_cmd(const string& value);
+  static void set_mp3_input_cmd(const std::string& value);
+  static void set_mp3_output_cmd(const std::string& value);
 
  private:
 
@@ -38,7 +38,7 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   bool mono_input_rep;
   
   void process_mono_fix(char* target_buffer, long int bytes_rep);
-  void get_mp3_params(const string& fname) throw(AUDIO_IO::SETUP_ERROR&);
+  void get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERROR&);
   
   //  MP3FILE(const MP3FILE& x) { }
   MP3FILE& operator=(const MP3FILE& x) { return *this; }
@@ -65,7 +65,7 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   // Realtime related functions
   // --
   
-  MP3FILE (const string& name = "");
+  MP3FILE (const std::string& name = "");
   ~MP3FILE(void);
     
   MP3FILE* clone(void) { return new MP3FILE(*this); }

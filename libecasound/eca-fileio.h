@@ -19,8 +19,8 @@ class ECA_FILE_IO {
   // -----
   // Open/close routines
 
-  virtual void open_file(const string& fname,
-			 const string& fmode) = 0;
+  virtual void open_file(const std::string& fname,
+			 const std::string& fmode) = 0;
   virtual void open_stdin(void) = 0;
   virtual void open_stdout(void) = 0;
   virtual void close_file(void) = 0;
@@ -43,7 +43,7 @@ class ECA_FILE_IO {
   virtual bool is_file_ready(void) const = 0;
   virtual bool is_file_error(void) const = 0;
   virtual long int file_bytes_processed(void) const = 0;
-  virtual const string& file_mode(void) const = 0;
+  virtual const std::string& file_mode(void) const = 0;
 
   virtual ~ECA_FILE_IO(void) { }
 };

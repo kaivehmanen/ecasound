@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 
   ecadebug->flush();
 
-  cerr << "Normal exit..." << endl;
+//    cerr << "Normal exit..." << endl;
 
   clean_exit(global_error_no);
 }
@@ -178,7 +178,7 @@ void parse_command_line(COMMAND_LINE& cline) {
  * called.
  */
 void clean_exit(int n) {
-  cerr << "Clean exit..." << endl;
+//    cerr << "Clean exit..." << endl;
   ecadebug->flush();
   if (global_control_deleted == false) {
     global_control_deleted = true;
@@ -209,7 +209,7 @@ void clean_exit(int n) {
  * Signal handling call back.
  */
 void signal_handler(int signum) {
-  cerr << "<-- Caught a signal... cleaning up." << endl << endl;
+//    cerr << "<-- Caught a signal... cleaning up." << endl << endl;
   clean_exit(128);
 }
 
@@ -350,9 +350,9 @@ char** ecasound_completion (char *text, int start, int end) {
  */
 char* ecasound_command_generator (char* text, int state) {
   static int list_index, len;
-  static const map<string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
-  static map<string,int>::const_iterator p;
-  static string cmd;
+  static const std::map<std::string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
+  static std::map<std::string,int>::const_iterator p;
+  static std::string cmd;
 
   // If this is a new word to complete, initialize now.  This includes
   // saving the length of TEXT for efficiency, and initializing the index

@@ -15,13 +15,13 @@ using namespace std;
  * Case-insensitive string compare. Ignores preceding and 
  * trailing white space.
  */
-bool string_icmp(const string& a, const string& b);
+bool string_icmp(const std::string& a, const std::string& b);
 
 /**
  * Converts a string to a vector of strings (words).
  * Whitespace is used as the separator.
  */
-vector<string> string_to_words(const string& s);
+std::vector<std::string> string_to_words(const std::string& s);
 
 /**
  * Converts a string to a vector of strings.
@@ -29,7 +29,7 @@ vector<string> string_to_words(const string& s);
  * @param str string to be converted
  * @param separator character to be used for separating items
  */
-vector<string> string_to_vector(const string& str, const string::value_type separator);
+std::vector<std::string> string_to_vector(const std::string& str, const std::string::value_type separator);
 
 /**
  * Converts a string to a vector of integers.
@@ -37,15 +37,15 @@ vector<string> string_to_vector(const string& str, const string::value_type sepa
  * @param str string to be converted
  * @param separator character to be used for separating items
  */
-vector<int> string_to_int_vector(const string& str, const string::value_type separator);
+std::vector<int> string_to_int_vector(const std::string& str, const std::string::value_type separator);
 
 /**
  * Return a new string, where all 'from' characters are
  * replaced with 'to' characters.
  */
-string string_search_and_replace(const string& a, 
-				 const string::value_type from,
-				 const string::value_type to);
+std::string string_search_and_replace(const std::string& a, 
+				 const std::string::value_type from,
+				 const std::string::value_type to);
 
 /**
  * Converts a vector of strings to a single string.
@@ -53,45 +53,45 @@ string string_search_and_replace(const string& a,
  * @param str vector of strings to be converted
  * @param separator string that is inserted between items
  */
-string vector_to_string(const vector<string>& str, 
-			const string& separator);
+std::string vector_to_string(const std::vector<std::string>& str, 
+			const std::string& separator);
 
 /**
  * Removes all trailing white space
  */
-string remove_trailing_spaces(const string& a);
+std::string remove_trailing_spaces(const std::string& a);
 
 /**
  * Removes all preciding white space
  */
-string remove_preceding_spaces(const string& a);
+std::string remove_preceding_spaces(const std::string& a);
 
 /**
  * Removes all surrounding white spaces
  */
-string remove_surrounding_spaces(const string& a);
+std::string remove_surrounding_spaces(const std::string& a);
 
 /**
  * Converts string to uppercase using toupper(int)
  */
-string convert_to_uppercase(const string& a);
+std::string convert_to_uppercase(const std::string& a);
 
 /**
  * Converts string to lowercase using tolower(int)
  */
-string convert_to_lowercase(const string& a);
+std::string convert_to_lowercase(const std::string& a);
 
 /**
  * Converts string to uppercase using toupper(int)
  * Modifies the parameter object.
  */
-void to_uppercase(string& a);
+void to_uppercase(std::string& a);
 
 /**
  * Converts string to lowercase using tolower(int)
  * Modifies the parameter object.
  */
-void to_lowercase(string& a);
+void to_lowercase(std::string& a);
 
 /**
  * Returns the nth argument from a formatted string
@@ -102,19 +102,19 @@ void to_lowercase(string& a);
  * require:
  *  number >= 1
  */
-string get_argument_number(int number, const string& argu);
+std::string get_argument_number(int number, const std::string& argu);
 
 /**
  * Returns a vector of all arguments from a formatted string
  *
  * @param argu a formatted string: "something:arg1,arg2,...,argn"
  */
-vector<string> get_arguments(const string& argu);
+std::vector<std::string> get_arguments(const std::string& argu);
 
 /** 
  * Returns number of arguments in formatted string 'argu'.
  */
-int get_number_of_arguments(const string& argu);
+int get_number_of_arguments(const std::string& argu);
 
 /**
  * Get the prefix part of a string argument
@@ -126,7 +126,7 @@ int get_number_of_arguments(const string& argu);
  * ensure:
  *   argu.size() >= 0
  */
-string get_argument_prefix(const string& argument);
+std::string get_argument_prefix(const std::string& argument);
 
 /**
  * Prints a time stamp to stderr

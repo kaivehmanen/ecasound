@@ -32,8 +32,8 @@ class CHAIN {
   int in_channels_rep;
   int out_channels_rep;
 
-  vector<CHAIN_OPERATOR*> chainops_rep;
-  vector<GENERIC_CONTROLLER*> gcontrollers_rep;
+  std::vector<CHAIN_OPERATOR*> chainops_rep;
+  std::vector<GENERIC_CONTROLLER*> gcontrollers_rep;
 
   CHAIN_OPERATOR* selected_chainop_repp;
   GENERIC_CONTROLLER* selected_controller_repp;
@@ -59,7 +59,7 @@ class CHAIN {
   void toggle_processing(bool v) { sfx_rep = v; }
 
   string name(void) const { return(chainname_rep); }
-  void name(const string& c) { chainname_rep = c; }
+  void name(const std::string& c) { chainname_rep = c; }
 
   bool is_valid(void) const;
 
@@ -110,7 +110,7 @@ class CHAIN {
   int selected_controller(void) const { return(selected_controller_number_rep); }
   int selected_controller_parameter(void) const { return(selected_controller_parameter_rep); }
   int number_of_controllers(void) const { return(gcontrollers_rep.size()); }
-  string controller_name(void) const;
+  std::string controller_name(void) const;
   void selected_chain_operator_as_target(void);
 
   void selected_controller_as_target(void);

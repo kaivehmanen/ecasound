@@ -17,9 +17,9 @@ using namespace std;
  */
 class RESOURCE_FILE {
 
-  string resfile_rep;
-  mutable map<string,string> resmap_rep;
-  vector<string> lines_rep;
+  std::string resfile_rep;
+  mutable std::map<std::string,std::string> resmap_rep;
+  std::vector<std::string> lines_rep;
   bool modified_rep;
 
  public:
@@ -27,38 +27,38 @@ class RESOURCE_FILE {
   /**
    * Returns a vector of registered presets
    */
-  vector<string> keywords(void) const;
+  std::vector<std::string> keywords(void) const;
 
   /**
    * Returns current resource file name.
    */
-  const string& resource_file(void) const { return(resfile_rep); }
+  const std::string& resource_file(void) const { return(resfile_rep); }
 
   /**
    * Set resource file name.
    */
-  void resource_file(const string& v) { resfile_rep = v; }
+  void resource_file(const std::string& v) { resfile_rep = v; }
 
   /**
    * Returns value of resource 'tag'.
    */
-  string resource(const string& tag) const;
+  std::string resource(const std::string& tag) const;
 
   /**
    * Set resource 'tag' value to 'value'. If value wasn't 
    * previously defined, it's added.
    */
-  void resource(const string& tag, const string& value);
+  void resource(const std::string& tag, const std::string& value);
 
   /**
    * Returns true if resource 'tag' is 'true', otherwise false
    */
-  bool boolean_resource(const string& tag) const;
+  bool boolean_resource(const std::string& tag) const;
   
   /**
    * Whether resource 'tag' is specified in the resource file
    */
-  bool has(const string& tag) const;
+  bool has(const std::string& tag) const;
 
   /**
    * Load/restore resources from file
@@ -74,7 +74,7 @@ class RESOURCE_FILE {
    * Constructor. Resource values are read, if
    * filename argument is given.
    */
-  RESOURCE_FILE(const string& resource_file = "");
+  RESOURCE_FILE(const std::string& resource_file = "");
   virtual ~RESOURCE_FILE(void);
 };
 

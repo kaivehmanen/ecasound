@@ -24,14 +24,14 @@ class PRESET : public CHAIN_OPERATOR {
 
   SAMPLE_BUFFER* first_buffer;
 
-  vector<SAMPLE_BUFFER*> buffers;
-  vector<CHAIN*> chains;
-  vector<string> param_names;
-  vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > param_objects;
-  vector<int> param_arg_indices;
+  std::vector<SAMPLE_BUFFER*> buffers;
+  std::vector<CHAIN*> chains;
+  std::vector<std::string> param_names;
+  std::vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > param_objects;
+  std::vector<int> param_arg_indices;
   bool parsed_rep;
-  string parse_string_rep;
-  string name_rep;
+  std::string parse_string_rep;
+  std::string name_rep;
 
   void add_chain(void);
   PRESET& operator=(const PRESET& x) { return *this; }
@@ -44,7 +44,7 @@ class PRESET : public CHAIN_OPERATOR {
   virtual ~PRESET (void);
 
   string name(void) const { return(name_rep); }
-  void set_name(const string& v) { name_rep = v; }
+  void set_name(const std::string& v) { name_rep = v; }
 
   /**
    * Connect input to chain
@@ -66,7 +66,7 @@ class PRESET : public CHAIN_OPERATOR {
    * ensure:
    *  is_parsed() == true
    */
-  void parse(const string& formatted_string);
+  void parse(const std::string& formatted_string);
   
   /**
    * Whether preset data has been parsed
@@ -74,7 +74,7 @@ class PRESET : public CHAIN_OPERATOR {
   bool is_parsed(void) const { return(parsed_rep); }
 
   PRESET(void);
-  PRESET(const string& formatted_string);
+  PRESET(const std::string& formatted_string);
 };
 
 #endif

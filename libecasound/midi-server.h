@@ -36,18 +36,18 @@ class MIDI_SERVER {
 
  private:
 
-  deque<unsigned char> buffer_rep;
-  mutable map<pair<int,int>,int> controller_values_rep;
+  std::deque<unsigned char> buffer_rep;
+  mutable std::map<std::pair<int,int>,int> controller_values_rep;
   unsigned char running_status_rep;
   int current_ctrl_channel_rep;
   int current_ctrl_number;
 
-  list<int> mmc_send_ids_rep;
+  std::list<int> mmc_send_ids_rep;
   int mmc_receive_id_rep;
-  vector<MIDI_IO*> clients_rep;
+  std::vector<MIDI_IO*> clients_rep;
   bool midi_sync_send_rep;
   bool midi_sync_receive_rep;
-  vector<MIDI_HANDLER*> handlers_rep;
+  std::vector<MIDI_HANDLER*> handlers_rep;
 
   pthread_t io_thread_rep;
   bool thread_running_rep;

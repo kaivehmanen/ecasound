@@ -28,7 +28,7 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-REALTIME_NULL::REALTIME_NULL(const string& name) {
+REALTIME_NULL::REALTIME_NULL(const std::string& name) {
   //cerr << "delay " << buffer_delay.tv_sec << "sec.\n";
   //cerr << "delay " << buffer_delay.tv_usec << "usec.\n";
 }

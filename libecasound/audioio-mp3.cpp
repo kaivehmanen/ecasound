@@ -44,8 +44,8 @@
 string MP3FILE::default_mp3_input_cmd = "mpg123 --stereo -r %s -b 0 -q -s -k %o %f";
 string MP3FILE::default_mp3_output_cmd = "lame -b 128 -x -S - %f";
 
-void MP3FILE::set_mp3_input_cmd(const string& value) { MP3FILE::default_mp3_input_cmd = value; }
-void MP3FILE::set_mp3_output_cmd(const string& value) { MP3FILE::default_mp3_output_cmd = value; }
+void MP3FILE::set_mp3_input_cmd(const std::string& value) { MP3FILE::default_mp3_input_cmd = value; }
+void MP3FILE::set_mp3_output_cmd(const std::string& value) { MP3FILE::default_mp3_output_cmd = value; }
 
 /***************************************************************
  * Routines for parsing mp3 header information. Taken from XMMS
@@ -316,7 +316,7 @@ static bool mpg123_detect_by_content(const char* filename, struct frame* frp) {
  * MP3FILE specific parts.
  **************************************************************/
 
-MP3FILE::MP3FILE(const string& name) {
+MP3FILE::MP3FILE(const std::string& name) {
   label(name);
   finished_rep = false;
   mono_input_rep = false;
@@ -401,7 +401,7 @@ void MP3FILE::seek_position(void) {
 }
 
 /*
-void MP3FILE::get_mp3_params_old(const string& fname) throw(AUDIO_IO::SETUP_ERROR&) {
+void MP3FILE::get_mp3_params_old(const std::string& fname) throw(AUDIO_IO::SETUP_ERROR&) {
   Layer newlayer;
 
   if (newlayer.get(fname.c_str()) != true) {
@@ -439,7 +439,7 @@ void MP3FILE::get_mp3_params_old(const string& fname) throw(AUDIO_IO::SETUP_ERRO
 }
 */ 
 
-void MP3FILE::get_mp3_params(const string& fname) throw(AUDIO_IO::SETUP_ERROR&) {
+void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERROR&) {
   struct frame fr;
   if (mpg123_detect_by_content(fname.c_str(), &fr) != true) {
     throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-MP3: Can't open " + label() + " for reading."));

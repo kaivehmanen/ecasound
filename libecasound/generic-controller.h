@@ -22,10 +22,10 @@ class GENERIC_CONTROLLER : public OPERATOR {
 
   typedef SAMPLE_SPECS::sample_type parameter_type;
 
-  virtual string name(void) const { return(source->name()); }
-  string status(void) const;
+  virtual std::string name(void) const { return(source->name()); }
+  std::string status(void) const;
 
-  virtual string parameter_names(void) const { return("param-id,range-low,range-high," +  source->parameter_names()); }
+  virtual std::string parameter_names(void) const { return("param-id,range-low,range-high," +  source->parameter_names()); }
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
 

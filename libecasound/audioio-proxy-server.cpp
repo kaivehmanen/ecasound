@@ -265,9 +265,9 @@ void AUDIO_IO_PROXY_SERVER::flush(void) {
       if (buffers_rep[p]->io_mode_rep != AUDIO_IO::io_read) {
 	if (buffers_rep[p]->read_space() > 0) {
 	  ++not_finished;
-	  cerr << "Flushing buffer " << buffers_rep[p]->readptr_rep.get() << " of client " 
+	  std::cerr << "Flushing buffer " << buffers_rep[p]->readptr_rep.get() << " of client " 
 	       << p << ";";
-	  cerr << " read_space: " << buffers_rep[p]->read_space() << "." << endl;
+	  std::cerr << " read_space: " << buffers_rep[p]->read_space() << "." << std::endl;
 	  
 	  clients_rep[p]->write_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
 	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);

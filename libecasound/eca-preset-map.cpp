@@ -36,30 +36,30 @@ ECA_PRESET_MAP::ECA_PRESET_MAP(void) {
   load_preset_file(filename);
 }
 
-void ECA_PRESET_MAP::load_preset_file(const string& fname) {
+void ECA_PRESET_MAP::load_preset_file(const std::string& fname) {
   RESOURCE_FILE preset_file;
   preset_file.resource_file(fname);
   preset_file.load();
-  const vector<string>& pmap = preset_file.keywords();
-  vector<string>::const_iterator p = pmap.begin();
+  const std::vector<std::string>& pmap = preset_file.keywords();
+  std::vector<std::string>::const_iterator p = pmap.begin();
   while(p != pmap.end()) {
     object_keyword_map[*p] = *p;
     ++p;
   }
 }
 
-void ECA_PRESET_MAP::register_object(const string& keyword,
+void ECA_PRESET_MAP::register_object(const std::string& keyword,
 				     PRESET* object) {
   object_map[keyword] = object;
   object_keyword_map[keyword] = object->name();
 }
 
-void ECA_PRESET_MAP::unregister_object(const string& keyword) {
+void ECA_PRESET_MAP::unregister_object(const std::string& keyword) {
   object_map[keyword] = 0;
   object_keyword_map[keyword] = "";
 }
 
-const map<string,string>& ECA_PRESET_MAP::registered_objects(void) const {
+const std::map<std::string,std::string>& ECA_PRESET_MAP::registered_objects(void) const {
   return(object_keyword_map);
 }
 
@@ -71,8 +71,8 @@ const map<string,string>& ECA_PRESET_MAP::registered_objects(void) const {
  * the returned pointer refers to the object stored in the object 
  * map.
  */
-ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword, bool use_regex) const {
-  map<string, PRESET*>::const_iterator p = object_map.begin();
+ECA_OBJECT* ECA_PRESET_MAP::object(const std::string& keyword, bool use_regex) const {
+  std::map<std::string, PRESET*>::const_iterator p = object_map.begin();
   while(p != object_map.end()) {
     if (p->first == keyword) 
       return(dynamic_cast<PRESET*>(p->second));
@@ -96,7 +96,7 @@ string ECA_PRESET_MAP::object_identifier(const PRESET* object) const {
 }
 
 void ECA_PRESET_MAP::flush(void) { 
-  map<string, PRESET*>::iterator p = object_map.begin();
+  std::map<std::string, PRESET*>::iterator p = object_map.begin();
   while(p != object_map.end()) {
     p->second = 0;
     ++p;
@@ -104,7 +104,7 @@ void ECA_PRESET_MAP::flush(void) {
 }
 
 ECA_PRESET_MAP::~ECA_PRESET_MAP (void) { 
-  map<string, PRESET*>::iterator p = object_map.begin();
+  std::map<std::string, PRESET*>::iterator p = object_map.begin();
   while(p != object_map.end()) {
     delete p->second;
     p->second = 0;

@@ -61,11 +61,11 @@ ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession)
 
 ECA_CONTROL::~ECA_CONTROL(void) { }
 
-void ECA_CONTROL::command(const string& cmd) {
+void ECA_CONTROL::command(const std::string& cmd) {
   clear_last_values();
   clear_action_arguments();
-  vector<string> cmds = string_to_words(cmd);
-  vector<string>::iterator p = cmds.begin();
+  std::vector<std::string> cmds = string_to_words(cmd);
+  std::vector<std::string>::iterator p = cmds.begin();
   if (p != cmds.end()) {
     if (ECA_IAMODE_PARSER::cmd_map_rep.find(*p) == ECA_IAMODE_PARSER::cmd_map_rep.end()) {
       // ---
@@ -87,7 +87,7 @@ void ECA_CONTROL::command(const string& cmd) {
 	string first = *p;
 	++p;
 	if (p != cmds.end()) {
-	  set_action_argument(vector<string> (p, cmds.end()));
+	  set_action_argument(std::vector<std::string> (p, cmds.end()));
 	}
 	action(action_id);
       }
@@ -95,7 +95,7 @@ void ECA_CONTROL::command(const string& cmd) {
   }
 }
 
-void ECA_CONTROL::set_action_argument(const vector<string>& s) {
+void ECA_CONTROL::set_action_argument(const std::vector<std::string>& s) {
   action_args_rep = s;
   action_arg_f_set_rep = false;
 }
@@ -118,7 +118,7 @@ double ECA_CONTROL::first_argument_as_number(void) const {
   return(atof(action_args_rep[0].c_str()));
 }
 
-void ECA_CONTROL::command_float_arg(const string& cmd, double arg) {
+void ECA_CONTROL::command_float_arg(const std::string& cmd, double arg) {
   clear_action_arguments();
   set_action_argument(arg);
   int action_id = ec_unknown;
@@ -131,7 +131,7 @@ void ECA_CONTROL::command_float_arg(const string& cmd, double arg) {
 /**
  * Performs a direct EIAM command (prefixed with '-').
  */
-void ECA_CONTROL::direct_command(const string& cmd) {
+void ECA_CONTROL::direct_command(const std::string& cmd) {
   string prefix = get_argument_prefix(cmd);
   if (prefix == "el" || prefix == "pn") { // --- LADSPA plugins and presets
     if (selected_chains().size() == 1) 
@@ -158,7 +158,7 @@ void ECA_CONTROL::direct_command(const string& cmd) {
 }
 
 void ECA_CONTROL::action(int action_id, 
-			 const vector<string>& args) 
+			 const std::vector<std::string>& args) 
 {
   clear_action_arguments();
   set_action_argument(args);
@@ -471,7 +471,7 @@ void ECA_CONTROL::action(int action_id) {
   case ec_cop_selected: { set_last_integer(selected_chain_operator()); break; }
   case ec_cop_set: 
     { 
-      vector<string> a = string_to_vector(action_args_rep[0], ',');
+      std::vector<std::string> a = string_to_vector(action_args_rep[0], ',');
       if (a.size() < 3) {
 	set_last_error("Not enough parameters!");
 	break;
@@ -635,11 +635,11 @@ void ECA_CONTROL::print_general_status(void) {
   set_last_string(st_info_string.to_string());
 }
 
-string ECA_CONTROL::chainsetup_status(void) const { 
-  vector<ECA_CHAINSETUP*>::const_iterator cs_citer = session_repp->chainsetups_rep.begin();
+std::string ECA_CONTROL::chainsetup_status(void) const { 
+  std::vector<ECA_CHAINSETUP*>::const_iterator cs_citer = session_repp->chainsetups_rep.begin();
 
   int index = 0;
-  string result;
+  std::string result;
   while(cs_citer != session_repp->chainsetups_rep.end()) {
     result += "Chainsetup ("  + kvu_numtostr(++index) + ") \"";
     result += (*cs_citer)->name() + "\" ";
@@ -673,15 +673,15 @@ string ECA_CONTROL::chainsetup_status(void) const {
   return(result);
 }
 
-string ECA_CONTROL::chain_status(void) const {
+std::string ECA_CONTROL::chain_status(void) const {
   // --------
   // require:
   assert(is_selected() == true);
   // --------
   MESSAGE_ITEM mitem;
-  vector<CHAIN*>::const_iterator chain_citer;
-  vector<CHAIN_OPERATOR*>::const_iterator chainop_citer;
-  const vector<string>& schains = selected_chainsetup_repp->selected_chains();
+  std::vector<CHAIN*>::const_iterator chain_citer;
+  std::vector<CHAIN_OPERATOR*>::const_iterator chainop_citer;
+  const std::vector<std::string>& schains = selected_chainsetup_repp->selected_chains();
 
   for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\" ";
@@ -700,16 +700,16 @@ string ECA_CONTROL::chain_status(void) const {
   return(mitem.to_string());
 }
 
-string ECA_CONTROL::chain_operator_status(void) const {
+std::string ECA_CONTROL::chain_operator_status(void) const {
   // --------
   // require:
   assert(is_selected() == true);
   // --------
 
   MESSAGE_ITEM mitem;
-  string st_info_string;
-  vector<CHAIN*>::const_iterator chain_citer;
-  vector<CHAIN_OPERATOR*>::size_type p;
+  std::string st_info_string;
+  std::vector<CHAIN*>::const_iterator chain_citer;
+  std::vector<CHAIN_OPERATOR*>::size_type p;
 
   for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\":\n";
@@ -734,16 +734,16 @@ string ECA_CONTROL::chain_operator_status(void) const {
   return(mitem.to_string());
 }
 
-string ECA_CONTROL::controller_status(void) const {
+std::string ECA_CONTROL::controller_status(void) const {
   // --------
   // require:
   assert(is_selected() == true);
   // --------
 
   MESSAGE_ITEM mitem;
-  string st_info_string;
-  vector<CHAIN*>::const_iterator chain_citer;
-  vector<GENERIC_CONTROLLER*>::size_type p;
+  std::string st_info_string;
+  std::vector<CHAIN*>::const_iterator chain_citer;
+  std::vector<GENERIC_CONTROLLER*>::size_type p;
 
   for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\":\n";
@@ -767,15 +767,15 @@ string ECA_CONTROL::controller_status(void) const {
   return(mitem.to_string());
 }
 
-string ECA_CONTROL::aio_status(void) const {
+std::string ECA_CONTROL::aio_status(void) const {
   // --------
   // require:
   assert(is_selected() == true);
   // --------
 
-  string st_info_string;
-  vector<AUDIO_IO*>::const_iterator adev_citer;
-  vector<AUDIO_IO*>::size_type adev_sizet = 0;
+  std::string st_info_string;
+  std::vector<AUDIO_IO*>::const_iterator adev_citer;
+  std::vector<AUDIO_IO*>::size_type adev_sizet = 0;
 
   adev_citer = selected_chainsetup_repp->inputs.begin();
   
@@ -788,8 +788,8 @@ string ECA_CONTROL::aio_status(void) const {
     st_info_string += "\" - [" + (*adev_citer)->name() + "]";
     if ((*adev_citer) == selected_audio_input_repp) st_info_string += " [selected]";
     st_info_string += "\n -> connected to chains \"";
-    vector<string> temp = selected_chainsetup_repp->get_attached_chains_to_input((selected_chainsetup_repp->inputs)[adev_sizet]);
-    vector<string>::const_iterator p = temp.begin();
+    std::vector<std::string> temp = selected_chainsetup_repp->get_attached_chains_to_input((selected_chainsetup_repp->inputs)[adev_sizet]);
+    std::vector<std::string>::const_iterator p = temp.begin();
     while (p != temp.end()) {
       st_info_string += *p; 
       ++p;
@@ -811,8 +811,8 @@ string ECA_CONTROL::aio_status(void) const {
     st_info_string += "\" - [" + (*adev_citer)->name() + "]";
     if ((*adev_citer) == selected_audio_output_repp) st_info_string += " [selected]";
     st_info_string += "\n -> connected to chains \"";
-    vector<string> temp = selected_chainsetup_repp->get_attached_chains_to_output((selected_chainsetup_repp->outputs)[adev_sizet]);
-    vector<string>::const_iterator p = temp.begin();
+    std::vector<std::string> temp = selected_chainsetup_repp->get_attached_chains_to_output((selected_chainsetup_repp->outputs)[adev_sizet]);
+    std::vector<std::string>::const_iterator p = temp.begin();
     while (p != temp.end()) {
       st_info_string += *p; 
       ++p;
@@ -830,12 +830,12 @@ string ECA_CONTROL::aio_status(void) const {
 
 void ECA_CONTROL::aio_register(void) { 
   ecadebug->control_flow("Registered audio objects");
-  string result;
-  const map<string,string>& kmap = ::eca_audio_object_map->registered_objects();
+  std::string result;
+  const std::map<std::string,std::string>& kmap = ::eca_audio_object_map->registered_objects();
   int count = 1;
-  map<string,string>::const_iterator p = kmap.begin();
+  std::map<std::string,std::string>::const_iterator p = kmap.begin();
   while(p != kmap.end()) {
-    string temp;
+    std::string temp;
     AUDIO_IO* q = ECA_OBJECT_FACTORY::audio_io_map_object(p->first, false);
     int params = q->number_of_params();
     if (params > 0) {
@@ -856,12 +856,12 @@ void ECA_CONTROL::aio_register(void) {
 
 void ECA_CONTROL::cop_register(void) { 
   ecadebug->control_flow("Registered chain operators");
-  string result;
-  const map<string,string>& kmap = eca_chain_operator_map->registered_objects();
-  map<string,string>::const_iterator p = kmap.begin();
+  std::string result;
+  const std::map<std::string,std::string>& kmap = eca_chain_operator_map->registered_objects();
+  std::map<std::string,std::string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
-    string temp;
+    std::string temp;
     CHAIN_OPERATOR* q = ECA_OBJECT_FACTORY::chain_operator_map_object(p->first);
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
@@ -879,9 +879,9 @@ void ECA_CONTROL::cop_register(void) {
 
 void ECA_CONTROL::preset_register(void) { 
   ecadebug->control_flow("Registered effect presets");
-  string result;
-  const map<string,string>& kmap = ::eca_preset_map->registered_objects();
-  map<string,string>::const_iterator p = kmap.begin();
+  std::string result;
+  const std::map<std::string,std::string>& kmap = ::eca_preset_map->registered_objects();
+  std::map<std::string,std::string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
     result += "\n";
@@ -919,12 +919,12 @@ void ECA_CONTROL::ladspa_register(void) {
 
 void ECA_CONTROL::ctrl_register(void) { 
   ecadebug->control_flow("Registered controllers");
-  string result;
-  const map<string,string>& kmap = eca_controller_map->registered_objects();
-  map<string,string>::const_iterator p = kmap.begin();
+  std::string result;
+  const std::map<std::string,std::string>& kmap = eca_controller_map->registered_objects();
+  std::map<std::string,std::string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
-    string temp;
+    std::string temp;
     GENERIC_CONTROLLER* q = ECA_OBJECT_FACTORY::controller_map_object(p->first);
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {

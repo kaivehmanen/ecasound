@@ -110,7 +110,7 @@ class ECA_AUDIO_FORMAT {
    * Similarly if big endian, "_be" is added. This postfix
    * can be omitted if applicable. 
    */
-  void set_sample_format(const string& f_str) throw(ECA_ERROR&);
+  void set_sample_format(const std::string& f_str) throw(ECA_ERROR&);
 
   /**
    * Set audio format

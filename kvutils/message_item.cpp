@@ -25,7 +25,7 @@ MESSAGE_ITEM& MESSAGE_ITEM::operator<< (char c) {
     char temp[2];
     temp[0] = c;
     temp[1] = 0;
-    stringtemp += string(temp);
+    stringtemp += std::string(temp);
     return (*this);    
 }
 
@@ -33,7 +33,7 @@ MESSAGE_ITEM& MESSAGE_ITEM::operator<< (int n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%d",n);
   ctmp[11] = 0;
-  stringtemp += string(ctmp);
+  stringtemp += std::string(ctmp);
   return (*this);    
 }
 
@@ -41,7 +41,7 @@ MESSAGE_ITEM& MESSAGE_ITEM::operator<< (const void *p) {
   char ctmp[12];
   snprintf(ctmp, 12, "%p",p);
   ctmp[11] = 0;
-  stringtemp += string(ctmp);
+  stringtemp += std::string(ctmp);
   return (*this);    
 }
 
@@ -49,7 +49,7 @@ MESSAGE_ITEM& MESSAGE_ITEM::operator<< (unsigned int n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%u",n);
   ctmp[11] = 0;
-  stringtemp += string(ctmp);
+  stringtemp += std::string(ctmp);
   return (*this);    
 }
 
@@ -57,7 +57,7 @@ MESSAGE_ITEM& MESSAGE_ITEM::operator<< (long n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%ld",n);
   ctmp[11] = 0;
-  stringtemp += string(ctmp);
+  stringtemp += std::string(ctmp);
   return (*this);    
 }
 
@@ -65,7 +65,7 @@ MESSAGE_ITEM& MESSAGE_ITEM::operator<< (unsigned long n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%lu",n);
   ctmp[11] = 0;
-  stringtemp += string(ctmp);
+  stringtemp += std::string(ctmp);
   return (*this);    
 }
 
@@ -73,7 +73,7 @@ MESSAGE_ITEM& MESSAGE_ITEM::operator<< (double n) {
   char ctmp[32];
   snprintf(ctmp, 12, "%.*f",flo_prec, n);
   ctmp[31] = 0;
-  stringtemp += string(ctmp);
+  stringtemp += std::string(ctmp);
   return (*this);    
 }
 

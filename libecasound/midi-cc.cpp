@@ -41,7 +41,7 @@ CONTROLLER_SOURCE::parameter_type MIDI_CONTROLLER::value(void) {
 				     controller);
     }
     else {
-      cerr << "(midi-cc) Warning! No MIDI-server found!" << endl;
+      std::cerr << "(midi-cc) Warning! No MIDI-server found!" << std::endl;
     }
     trace_request_rep = false;
   }

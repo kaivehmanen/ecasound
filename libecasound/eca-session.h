@@ -46,7 +46,7 @@ class ECA_SESSION {
   // Status data
   // ---
   Engine_status ep_status_rep;
-  vector<ECA_CHAINSETUP*> chainsetups_rep;
+  std::vector<ECA_CHAINSETUP*> chainsetups_rep;
 
   ECA_CHAINSETUP* connected_chainsetup_repp;
   ECA_CHAINSETUP* selected_chainsetup_repp;
@@ -57,16 +57,16 @@ class ECA_SESSION {
   void set_defaults(void);
 
   void interpret_general_options(COMMAND_LINE& cline);
-  void interpret_general_option (const string& argu);
-  void interpret_chainsetup (const string& argu);
-  void create_chainsetup_options(COMMAND_LINE& cline, vector<string>* options);
-  bool is_session_option(const string& arg) const;
+  void interpret_general_option (const std::string& argu);
+  void interpret_chainsetup (const std::string& argu);
+  void create_chainsetup_options(COMMAND_LINE& cline, std::vector<std::string>* options);
+  bool is_session_option(const std::string& arg) const;
 
   // ---
   // Function for handling chainsetups
   // ---
 
-  void add_chainsetup(const string& name);
+  void add_chainsetup(const std::string& name);
   void add_chainsetup(ECA_CHAINSETUP* comline_setup);
   void remove_chainsetup(void);
 
@@ -80,7 +80,7 @@ class ECA_SESSION {
    *  (selected_chainsetup->name() == name) ||
    *  (selected_chainsetup == 0)
    */
-  void select_chainsetup(const string& name);
+  void select_chainsetup(const std::string& name);
 
   /**
    * Save selected chainsetup
@@ -97,7 +97,7 @@ class ECA_SESSION {
    *  selected_chainsetup != 0 &&
    *  filename.empty() != true
    */
-  void save_chainsetup(const string& filename) throw(ECA_ERROR&);
+  void save_chainsetup(const std::string& filename) throw(ECA_ERROR&);
 
   /**
    * Load chainsetup from file "filename"
@@ -108,7 +108,7 @@ class ECA_SESSION {
    * ensure:
    *  selected_chainsetup->filename() == filename
    */
-  void load_chainsetup(const string& filename);
+  void load_chainsetup(const std::string& filename);
 
   /**
    * Connect selected chainsetup
@@ -136,7 +136,7 @@ class ECA_SESSION {
   /**
    * Gets a vector of all chainsetup names.
    */
-  vector<string> chainsetup_names(void) const;
+  std::vector<std::string> chainsetup_names(void) const;
 
  private:
 
@@ -148,8 +148,8 @@ class ECA_SESSION {
   // ---
   Engine_status status(void) const;
 
-  vector<string> get_attached_chains_to_input(AUDIO_IO* aiod) const { return(selected_chainsetup_repp->get_attached_chains_to_input(aiod)); }
-  vector<string> get_attached_chains_to_output(AUDIO_IO* aiod) const { return(selected_chainsetup_repp->get_attached_chains_to_output(aiod)); }
+  std::vector<std::string> get_attached_chains_to_input(AUDIO_IO* aiod) const { return(selected_chainsetup_repp->get_attached_chains_to_input(aiod)); }
+  std::vector<std::string> get_attached_chains_to_output(AUDIO_IO* aiod) const { return(selected_chainsetup_repp->get_attached_chains_to_output(aiod)); }
   int number_of_connected_chains_to_input(AUDIO_IO* aiod) const {
     return(connected_chainsetup_repp->number_of_attached_chains_to_input(aiod)); }
   int number_of_connected_chains_to_output(AUDIO_IO* aiod) const {
@@ -178,10 +178,10 @@ class ECA_SESSION {
   // --
  public:
 
-  const vector<ECA_CHAINSETUP*>& get_chainsetups(void) const { return chainsetups_rep; }
+  const std::vector<ECA_CHAINSETUP*>& get_chainsetups(void) const { return chainsetups_rep; }
   const ECA_CHAINSETUP* get_selected_chainsetup(void) const { return selected_chainsetup_repp; }
   const ECA_CHAINSETUP* get_connected_chainsetup(void) const { return connected_chainsetup_repp; }
-  const ECA_CHAINSETUP* get_chainsetup_with_name(const string& name) const;
+  const ECA_CHAINSETUP* get_chainsetup_with_name(const std::string& name) const;
   bool is_selected_chainsetup_connected(void) const { return(selected_chainsetup_repp == connected_chainsetup_repp); }
 
   bool is_interactive(void) const { return iactive_rep; }

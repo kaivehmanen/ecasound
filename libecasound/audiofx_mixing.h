@@ -12,7 +12,7 @@
  */
 class EFFECT_MIXING : public EFFECT_BASE {
  public:
-  typedef vector<parameter_type>::size_type ch_type;
+  typedef std::vector<parameter_type>::size_type ch_type;
 
   virtual ~EFFECT_MIXING(void) { }
 };
@@ -55,7 +55,7 @@ class EFFECT_MIX_TO_CHANNEL : public EFFECT_MIXING {
 
 private:
 
-  typedef vector<parameter_type>::size_type ch_type;
+  typedef std::vector<parameter_type>::size_type ch_type;
 
   int channels;
   ch_type to_channel;

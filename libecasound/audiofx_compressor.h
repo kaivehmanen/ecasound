@@ -21,14 +21,14 @@ class ADVANCED_COMPRESSOR : public EFFECT_AMPLITUDE {
 
   double rlevelsq0, rlevelsq1;
   double rlevelsq0filter, rlevelsq1filter;
-  vector<double> rlevelsqn; // [NFILT];
+  std::vector<double> rlevelsqn; // [NFILT];
   double rlevelsqefilter;
-  vector<double> rlevelsqe; // [NEFILT];
+  std::vector<double> rlevelsqe; // [NEFILT];
   double rlevelsq0ffilter;
   int ndelay; /* delay for rlevelsq0ffilter delay */
   int ndelayptr; /* ptr for the input */
-  vector<double> rightdelay;
-  vector<double> leftdelay;
+  std::vector<double> rightdelay;
+  std::vector<double> leftdelay;
 /* Simple gain running average */
   double rgain;
   double rgainfilter;

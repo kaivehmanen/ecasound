@@ -52,7 +52,7 @@ void ECA_CONTROL_DUMP::dump_chainsetup_status(void) {
 }
 
 void ECA_CONTROL_DUMP::dump_selected_chain(void) { 
-  const vector<string>& t = ctrl_repp->selected_chains();
+  const std::vector<std::string>& t = ctrl_repp->selected_chains();
   if (t.empty() == false) {
     dump("dump-c-selected", vector_to_string(t, ","));
   }

@@ -48,21 +48,21 @@ ECA_CONTROL_INTERFACE::~ECA_CONTROL_INTERFACE (void) {
 /**
  * Parse string mode command and act accordingly.
  */
-void ECA_CONTROL_INTERFACE::command(const string& cmd) { 
+void ECA_CONTROL_INTERFACE::command(const std::string& cmd) { 
   control_repp->command(cmd);
 }
 
-void ECA_CONTROL_INTERFACE::command_float_arg(const string& cmd, double arg) {
+void ECA_CONTROL_INTERFACE::command_float_arg(const std::string& cmd, double arg) {
   control_repp->command_float_arg(cmd, arg);
 }
 
-const vector<string>& ECA_CONTROL_INTERFACE::last_string_list(void) const { return(control_repp->last_string_list()); }
-const string& ECA_CONTROL_INTERFACE::last_string(void) const { return(control_repp->last_string()); }
+const std::vector<std::string>& ECA_CONTROL_INTERFACE::last_string_list(void) const { return(control_repp->last_string_list()); }
+const std::string& ECA_CONTROL_INTERFACE::last_string(void) const { return(control_repp->last_string()); }
 double ECA_CONTROL_INTERFACE::last_float(void) const { return(control_repp->last_float()); }
 int ECA_CONTROL_INTERFACE::last_integer(void) const { return(control_repp->last_integer()); }
 long int ECA_CONTROL_INTERFACE::last_long_integer(void) const { return(control_repp->last_long_integer()); }
-const string& ECA_CONTROL_INTERFACE::last_error(void) const { return(control_repp->last_error()); }
-const string& ECA_CONTROL_INTERFACE::last_type(void) const { return(control_repp->last_type()); }
+const std::string& ECA_CONTROL_INTERFACE::last_error(void) const { return(control_repp->last_error()); }
+const std::string& ECA_CONTROL_INTERFACE::last_type(void) const { return(control_repp->last_type()); }
 
 bool ECA_CONTROL_INTERFACE::error(void) const {
   if (control_repp->last_error().size() > 0) return(true);
@@ -71,4 +71,4 @@ bool ECA_CONTROL_INTERFACE::error(void) const {
 
 bool ECA_CONTROL_INTERFACE::events_available(void) { return(false); }
 void ECA_CONTROL_INTERFACE::next_event(void) { }
-const string& ECA_CONTROL_INTERFACE::current_event(void) { return(current_event_rep); }
+const std::string& ECA_CONTROL_INTERFACE::current_event(void) { return(current_event_rep); }

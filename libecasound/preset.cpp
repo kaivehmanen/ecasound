@@ -36,12 +36,12 @@ PRESET::PRESET(void) {
   parsed_rep = false;
 }
 
-PRESET::PRESET(const string& formatted_string) {
+PRESET::PRESET(const std::string& formatted_string) {
   parse(formatted_string);
 }
 
 PRESET* PRESET::clone(void) {
-  vector<parameter_type> param_values;
+  std::vector<parameter_type> param_values;
   for(int n = 0; n < number_of_params(); n++) {
     param_values.push_back(get_parameter(n + 1));
   }
@@ -53,7 +53,7 @@ PRESET* PRESET::clone(void) {
 }
 
 PRESET::~PRESET(void) {
-  vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
+  std::vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
   while(p != buffers.end()) {
     if (p != buffers.begin()) delete *p; // first buffer points to an
                                          // outside buffer -> not
@@ -61,14 +61,14 @@ PRESET::~PRESET(void) {
     ++p;
   }
 
-  vector<CHAIN*>::iterator q = chains.begin();
+  std::vector<CHAIN*>::iterator q = chains.begin();
   while(q != chains.end()) {
     delete *q;
     ++q;
   }
 }
 
-void PRESET::parse(const string& formatted_string) {
+void PRESET::parse(const std::string& formatted_string) {
   // --------
   DBC_REQUIRE(formatted_string.empty() == false);
   // --------
@@ -81,8 +81,8 @@ void PRESET::parse(const string& formatted_string) {
   GENERIC_CONTROLLER* gctrl;
 
   int param_index = 0;
-  vector<string> tokens = string_to_words(formatted_string);
-  vector<string>::const_iterator p = tokens.begin();
+  std::vector<std::string> tokens = string_to_words(formatted_string);
+  std::vector<std::string>::const_iterator p = tokens.begin();
   while(p != tokens.end()) {
     ecadebug->msg(ECA_DEBUG::user_objects, "Parsing: " + *p + ".");
     if (*p == "|") {
@@ -92,10 +92,10 @@ void PRESET::parse(const string& formatted_string) {
     }
 
     // Parse for parameters.
-    vector<int> arg_numbers;
+    std::vector<int> arg_numbers;
 //      cerr << "*p = " << *p << endl;
 //      cerr << "get_number_of_arguments(*p) = " << get_number_of_arguments(*p) << endl; 
-    vector<string> ps_parts(get_number_of_arguments(*p));
+    std::vector<std::string> ps_parts(get_number_of_arguments(*p));
     for(int i = 1; i <= get_number_of_arguments(*p); i++) {
         ecadebug->msg(ECA_DEBUG::system_objects, "  COP-argument "+get_argument_number(i, *p)+".");
         if(get_argument_number(i, *p)[0] == '%') {
@@ -155,7 +155,7 @@ void PRESET::add_chain(void) {
 }
 
 
-string PRESET::parameter_names(void) const {
+std::string PRESET::parameter_names(void) const {
   return vector_to_string(param_names, ",");
 }
 
@@ -187,13 +187,13 @@ void PRESET::init(SAMPLE_BUFFER *insample) {
 }
 
 void PRESET::process(void) {
-  vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
+  std::vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
   while(p != buffers.end()) {
     (*p)->copy(*first_buffer);
     ++p;
   }
 
-  vector<CHAIN*>::iterator q = chains.begin();
+  std::vector<CHAIN*>::iterator q = chains.begin();
   while(q != chains.end()) {
     (*q)->process();
     ++q;

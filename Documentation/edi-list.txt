@@ -30,13 +30,13 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-1) Initial reverb-spike with the -ete reverb.
 	submitted: Anthony Paul Van Groningen, 04.01.2001
 (edi-8) EIAM parser doesn't handle white-space properly (for instance
-	"ai-add Filename with whitespace".
+	"ai-add Filename with whitespace").
 	submitted: smassy, 8.5.2001
 (edi-12) Conversions problems with non-interleaved, s32_le streams.
 	 submitted: jhall, 16.7.2001
 (edi-13) Possible bug in forked-stream module (mp3,ogg), which 
 	 causes ecawave crashes.
-	 submitted: kiav, 17.08.2001
+	 submitted: kaiv, 17.08.2001
 
 -----------------------------------------------------------------------
 [ Enhancements, new features ]

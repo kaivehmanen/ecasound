@@ -51,7 +51,7 @@ class ECA_CONTROL_BASE {
 
  private:
 
-  vector<string> last_los_rep;
+  std::vector<std::string> last_los_rep;
   string last_s_rep;
   long int last_li_rep;
   int last_i_rep;
@@ -61,23 +61,23 @@ class ECA_CONTROL_BASE {
 
  protected:
 
-  void set_last_string_list(const vector<string>& s);
-  void set_last_string(const string& s);
+  void set_last_string_list(const std::vector<std::string>& s);
+  void set_last_string(const std::string& s);
   void set_last_float(double v);
   void set_last_integer(int v);
   void set_last_long_integer(int v);
-  void set_last_error(const string& s);
+  void set_last_error(const std::string& s);
   void clear_last_values(void);
 
  public:
 
-  const vector<string>& last_string_list(void) const;
-  const string& last_string(void) const;
+  const std::vector<std::string>& last_string_list(void) const;
+  const std::string& last_string(void) const;
   double last_float(void) const;
   int last_integer(void) const;
   long int last_long_integer(void) const;
-  const string& last_error(void) const;
-  const string& last_type(void) const;
+  const std::string& last_error(void) const;
+  const std::string& last_type(void) const;
 
   // -------------------------------------------------------------------
   // Session info / functions
@@ -85,7 +85,7 @@ class ECA_CONTROL_BASE {
   
   string attached_chains_input(AUDIO_IO* aiod) const;
   string attached_chains_output(AUDIO_IO* aiod) const;
-  vector<string> attached_chains(const string& name) const;
+  std::vector<std::string> attached_chains(const std::string& name) const;
 
   // -------------------------------------------------------------------
   // Session info / position and length of selected chainsetup
@@ -103,7 +103,7 @@ class ECA_CONTROL_BASE {
   /**
    * Get resource values from ~/.ecasoundrc
    */
-  string resource_value(const string& key) const { return session_repp->ecaresources.resource(key); }
+  std::string resource_value(const std::string& key) const { return session_repp->ecaresources.resource(key); }
 
   // -------------------------------------------------------------------
   // Modify session
@@ -128,7 +128,7 @@ class ECA_CONTROL_BASE {
    * Returns true if engine has been started. 
    */
   bool is_engine_started(void) const { return(engine_started_rep); }
-  string engine_status(void) const;
+ std::string engine_status(void) const;
 
   ECA_CONTROL_BASE (ECA_SESSION* psession);
   ~ECA_CONTROL_BASE (void);

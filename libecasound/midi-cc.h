@@ -23,11 +23,11 @@ class MIDI_CONTROLLER : public CONTROLLER_SOURCE,
    */
   void init(parameter_type phasestep);
 
-  string parameter_names(void) const { return("controller,channel"); }
+  std::string parameter_names(void) const { return("controller,channel"); }
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
 
-  string name(void) const {  return("MIDI-Controller"); }
+  std::string name(void) const {  return("MIDI-Controller"); }
   parameter_type value(void);
  
   MIDI_CONTROLLER* clone(void)  { return new MIDI_CONTROLLER(*this); }

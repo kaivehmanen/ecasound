@@ -51,7 +51,7 @@ class SAMPLE_BUFFER_BASE {
    * class. Representation of 'buffer' may change at any time, 
    * and this will break all code using direct-access.
    */
-  vector<sample_type*> buffer;
+  std::vector<sample_type*> buffer;
 
  public:
     
@@ -202,7 +202,7 @@ class SAMPLE_BUFFER_BASE {
   // Other member variables
   // ---
   sample_type* old_buffer_repp; // for resampling
-  vector<sample_type> resample_memory_rep;
+  std::vector<sample_type> resample_memory_rep;
 
   void resize(long int buffersize);
 

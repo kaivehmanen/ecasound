@@ -14,12 +14,12 @@ class GENERIC_LINEAR_ENVELOPE : public CONTROLLER_SOURCE {
 public:
     void init(parameter_type step);
 
-    string parameter_names(void) const;
+    std::string parameter_names(void) const;
     void set_parameter(int param, parameter_type value);
     parameter_type get_parameter(int param) const;
 
     parameter_type value(void);
-    string name(void) const { return("Generic linear envelope"); }
+    std::string name(void) const { return("Generic linear envelope"); }
     
     GENERIC_LINEAR_ENVELOPE(void); 
     GENERIC_LINEAR_ENVELOPE* clone(void)  { return new GENERIC_LINEAR_ENVELOPE(*this); }
@@ -27,11 +27,11 @@ public:
     
 private:
     
-    vector<parameter_type> pos_rep;
-    vector<parameter_type> val_rep;
+    std::vector<parameter_type> pos_rep;
+    std::vector<parameter_type> val_rep;
     parameter_type curpos, curval;
     int curstage;
-    string param_names_rep;
+    std::string param_names_rep;
     
     void set_param_count(int params);
 };

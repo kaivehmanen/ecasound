@@ -17,14 +17,14 @@ class ECA_OBJECT_FACTORY {
 
  public:
 
-  static EFFECT_LADSPA* ladspa_map_object(const string& keyword);
+  static EFFECT_LADSPA* ladspa_map_object(const std::string& keyword);
   static EFFECT_LADSPA* ladspa_map_object(long int number);
-  static GENERIC_CONTROLLER* controller_map_object(const string& keyword);
-  static CHAIN_OPERATOR* chain_operator_map_object(const string& keyword);
-  static AUDIO_IO* audio_io_map_object(const string& keyword, bool use_regex = true);
+  static GENERIC_CONTROLLER* controller_map_object(const std::string& keyword);
+  static CHAIN_OPERATOR* chain_operator_map_object(const std::string& keyword);
+  static AUDIO_IO* audio_io_map_object(const std::string& keyword, bool use_regex = true);
 
-  static AUDIO_IO* create_audio_object(const string& arg);
-  static MIDI_IO* create_midi_device(const string& arg);
+  static AUDIO_IO* create_audio_object(const std::string& arg);
+  static MIDI_IO* create_midi_device(const std::string& arg);
 };
 
 #endif

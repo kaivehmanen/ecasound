@@ -79,7 +79,7 @@ void GENERIC_LINEAR_ENVELOPE::set_param_count(int params) {
     }
 }
 
-string GENERIC_LINEAR_ENVELOPE::parameter_names(void) const { 
+std::string GENERIC_LINEAR_ENVELOPE::parameter_names(void) const { 
     return(param_names_rep);
 }
 

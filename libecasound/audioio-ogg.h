@@ -24,8 +24,8 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
 
  public:
 
-  static void set_ogg_input_cmd(const string& value);
-  static void set_ogg_output_cmd(const string& value);
+  static void set_ogg_input_cmd(const std::string& value);
+  static void set_ogg_output_cmd(const std::string& value);
 
  private:
 
@@ -59,7 +59,7 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   // Realtime related functions
   // --
   
-  OGG_VORBIS_INTERFACE (const string& name = "");
+  OGG_VORBIS_INTERFACE (const std::string& name = "");
   ~OGG_VORBIS_INTERFACE(void);
     
   OGG_VORBIS_INTERFACE* clone(void) { return new OGG_VORBIS_INTERFACE(*this); }

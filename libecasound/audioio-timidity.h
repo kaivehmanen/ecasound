@@ -21,7 +21,7 @@ class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
 
  public:
 
-  static void set_timidity_cmd(const string& value);
+  static void set_timidity_cmd(const std::string& value);
 
  private:
 
@@ -53,7 +53,7 @@ class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
   virtual bool finished(void) const { return(finished_rep); }
   virtual void seek_position(void);
  
-  TIMIDITY_INTERFACE (const string& name = "");
+  TIMIDITY_INTERFACE (const std::string& name = "");
   ~TIMIDITY_INTERFACE(void);
     
   TIMIDITY_INTERFACE* clone(void) { return new TIMIDITY_INTERFACE(*this); }

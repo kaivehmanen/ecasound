@@ -41,7 +41,7 @@
  * If found, replaces the string '%f' with 'filename'. This is
  * the file used by the forked child for input/output.
  */
-void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const string& filename) {
+void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const std::string& filename) {
   object_rep = filename;
 }
 
@@ -51,7 +51,7 @@ void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const string& filename) {
  * with the forked child instead of standard input and output pipes.
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_pipe_name(void) {
-  if (command_rep.find("%F") != string::npos) {
+  if (command_rep.find("%F") != std::string::npos) {
     init_temp_directory();
     if (tempfile_dir_rep.is_valid() == true) {
       tmpfile_repp = tempfile_dir_rep.create_filename("fork-pipe", ".raw");
@@ -63,10 +63,10 @@ void AUDIO_IO_FORKED_STREAM::set_fork_pipe_name(void) {
 }
 
 void AUDIO_IO_FORKED_STREAM::init_temp_directory(void) {
-  string tmpdir ("ecasound-");
+  std::string tmpdir ("ecasound-");
   char* tmp_p = getenv("USER");
   if (tmp_p != NULL) {
-    tmpdir += string(tmp_p);
+    tmpdir += std::string(tmp_p);
     tempfile_dir_rep.reserve_directory(tmpdir);
   }
   if (tempfile_dir_rep.is_valid() != true) {
@@ -79,7 +79,7 @@ void AUDIO_IO_FORKED_STREAM::init_temp_directory(void) {
  * 'channels'.
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_channels(int channels) {
-  if (command_rep.find("%c") != string::npos) {
+  if (command_rep.find("%c") != std::string::npos) {
     command_rep.replace(command_rep.find("%c"), 2, kvu_numtostr(channels));
   }
 }
@@ -89,7 +89,7 @@ void AUDIO_IO_FORKED_STREAM::set_fork_channels(int channels) {
  * 'sample_rate'.
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_sample_rate(long int sample_rate) {
-  if (command_rep.find("%s") != string::npos) {
+  if (command_rep.find("%s") != std::string::npos) {
     command_rep.replace(command_rep.find("%s"), 2, kvu_numtostr(sample_rate));
   }
 }
@@ -99,7 +99,7 @@ void AUDIO_IO_FORKED_STREAM::set_fork_sample_rate(long int sample_rate) {
  * 'bits'.
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_bits(int bits) {
-  if (command_rep.find("%b") != string::npos) {
+  if (command_rep.find("%b") != std::string::npos) {
     command_rep.replace(command_rep.find("%b"), 2, kvu_numtostr(bits));
   }
 }
@@ -124,11 +124,11 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
 	::close(fpipes[0]);
 	::close(fpipes[1]);
 	freopen("/dev/null", "w", stderr);
-	vector<string> temp = string_to_words(command_rep);
+	std::vector<std::string> temp = string_to_words(command_rep);
 	if (temp.size() > 1024) temp.resize(1024);
 	const char* args[1024];
 	// = new char* [temp.size() + 1];
-	vector<string>::size_type p = 0;
+	std::vector<std::string>::size_type p = 0;
 	while(p < temp.size()) {
 	  if (temp[p] == "%f") 
 	    args[p] = object_rep.c_str();
@@ -140,7 +140,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
 	int res = execvp(temp[0].c_str(), const_cast<char**>(args));
 	::close(1);
 	exit(res);
-	cerr << "You shouldn't see this!\n";
+	std::cerr << "You shouldn't see this!\n";
       }
       else if (pid_of_child_rep > 0) { 
 	// ---
@@ -168,10 +168,10 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
     // child 
     // ---
     freopen("/dev/null", "w", stderr);
-    vector<string> temp = string_to_words(command_rep);
+    std::vector<std::string> temp = string_to_words(command_rep);
     if (temp.size() > 1024) temp.resize(1024);
     const char* args[1024];
-    vector<string>::size_type p = 0;
+    std::vector<std::string>::size_type p = 0;
     while(p < temp.size()) {
       if (temp[p] == "%f") 
 	args[p] = object_rep.c_str();
@@ -191,7 +191,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
     }
     
     exit(res);
-    cerr << "You shouldn't see this!\n";
+    std::cerr << "You shouldn't see this!\n";
   }
   else if (pid_of_child_rep > 0) { 
     // ---
@@ -222,11 +222,11 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
       ::close(fpipes[0]);
       ::close(fpipes[1]);
       freopen("/dev/null", "w", stderr);
-      vector<string> temp = string_to_words(command_rep);
+      std::vector<std::string> temp = string_to_words(command_rep);
       if (temp.size() > 1024) temp.resize(1024);
       const char* args[1024];
       // = new char* [temp.size() + 1];
-      vector<string>::size_type p = 0;
+      std::vector<std::string>::size_type p = 0;
       while(p < temp.size()) {
 	if (temp[p] == "%f") 
 	  args[p] = object_rep.c_str();
@@ -239,7 +239,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
       int res = execvp(temp[0].c_str(), const_cast<char**>(args));
       ::close(0);
       exit(res);
-      cerr << "You shouln't see this!\n";
+      std::cerr << "You shouln't see this!\n";
     }
     else if (pid_of_child_rep > 0) { 
       // ---

@@ -15,13 +15,13 @@ class FILE_PRESET : public PRESET {
  public:
 
   string filename(void) const { return(filename_rep); }
-  void set_filename(const string& v) { filename_rep = v; }
+  void set_filename(const std::string& v) { filename_rep = v; }
 
   virtual FILE_PRESET* clone(void);
   virtual FILE_PRESET* new_expr(void) { return(new FILE_PRESET(filename_rep)); }
   virtual ~FILE_PRESET (void) { }
 
-  FILE_PRESET(const string& file_name = "");
+  FILE_PRESET(const std::string& file_name = "");
 };
 
 #endif

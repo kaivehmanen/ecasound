@@ -24,7 +24,7 @@
 #include <kvutils.h>
 #include "resource-file.h"
 
-RESOURCE_FILE::RESOURCE_FILE(const string& resource_file) :
+RESOURCE_FILE::RESOURCE_FILE(const std::string& resource_file) :
   resfile_rep(resource_file) { 
   load();
 }
@@ -36,10 +36,10 @@ RESOURCE_FILE::~RESOURCE_FILE(void) {
 
 void RESOURCE_FILE::load(void) { 
   lines_rep.resize(0);
-  ifstream fin (resfile_rep.c_str());
+  std::ifstream fin (resfile_rep.c_str());
   if (fin) {
-    string line;
-    string first, second;
+    std::string line;
+    std::string first, second;
 
     while(getline(fin,line)) {
       if (line.size() > 0 && line[0] == '#') {
@@ -47,18 +47,18 @@ void RESOURCE_FILE::load(void) {
 	continue;
       }
 
-      string::size_type n = line.find_first_of("=");
-      if (n == string::npos) n = line.find_first_of(" ");
-      if (n == string::npos) {
+      std::string::size_type n = line.find_first_of("=");
+      if (n == std::string::npos) n = line.find_first_of(" ");
+      if (n == std::string::npos) {
 	continue;
       }
       
-      first = string(line, 0, n);
-      second = string(line, n + 1, string::npos);
+      first = std::string(line, 0, n);
+      second = std::string(line, n + 1, std::string::npos);
 
       first = remove_surrounding_spaces(first);
       second = remove_surrounding_spaces(second);
-      string::iterator p = second.end();
+      std::string::iterator p = second.end();
       --p;
       while (*p == '\\') {
 	second.erase(p);
@@ -81,9 +81,9 @@ void RESOURCE_FILE::load(void) {
 }
 
 void RESOURCE_FILE::save(void) { 
-  ofstream fout (resfile_rep.c_str(), ios::out | ios::trunc);
+  std::ofstream fout (resfile_rep.c_str(), std::ios::out | std::ios::trunc);
   if (fout) {
-    vector<string>::const_iterator p = lines_rep.begin();
+    std::vector<std::string>::const_iterator p = lines_rep.begin();
     while(p != lines_rep.end()) {
       if (p->size() > 0) {
 //  	cerr << "Writing line: " << *p << "." << endl;
@@ -96,9 +96,9 @@ void RESOURCE_FILE::save(void) {
   modified_rep = false;
 }
 
-vector<string> RESOURCE_FILE::keywords(void) const {
-  vector<string> keys;
-  map<string,string>::const_iterator p;
+std::vector<std::string> RESOURCE_FILE::keywords(void) const {
+  std::vector<std::string> keys;
+  std::map<std::string,std::string>::const_iterator p;
   p = resmap_rep.begin();
   while(p != resmap_rep.end()) {
 //      cerr << "Adding keyword: " << p->first << "." << endl;
@@ -108,37 +108,37 @@ vector<string> RESOURCE_FILE::keywords(void) const {
   return(keys);
 }
 
-bool RESOURCE_FILE::boolean_resource(const string& tag) const {
+bool RESOURCE_FILE::boolean_resource(const std::string& tag) const {
   if (resource(tag) == "true") return(true);
   return(false);
 }
 
-bool RESOURCE_FILE::has(const string& tag) const {
+bool RESOURCE_FILE::has(const std::string& tag) const {
   if (resmap_rep.find(tag) == resmap_rep.end())
     return(false);
   return(true);
 }
 
-string RESOURCE_FILE::resource(const string& tag) const {
+std::string RESOURCE_FILE::resource(const std::string& tag) const {
   if (has(tag) != true)
     return("");
 //    cerr << "Returning resource: " << resmap_rep[tag] << "." << endl;
   return(resmap_rep[tag]);
 }
 
-void RESOURCE_FILE::resource(const string& tag, const string& value) {
+void RESOURCE_FILE::resource(const std::string& tag, const std::string& value) {
   resmap_rep[tag] = value;
   
   bool found = false;
-  vector<string>::iterator p;
+  std::vector<std::string>::iterator p;
   p = lines_rep.begin();
   while(p != lines_rep.end()) {
-    string line = *p;
+    std::string line = *p;
     if (line.size() > 0 && line[0] != '#') {
-      string::size_type n = line.find_first_of("=");
-      if (n == string::npos) n = line.find_first_of(" ");
-      if (n != string::npos) {
-	string first = remove_surrounding_spaces(string(line, 0, n));
+      std::string::size_type n = line.find_first_of("=");
+      if (n == std::string::npos) n = line.find_first_of(" ");
+      if (n != std::string::npos) {
+	std::string first = remove_surrounding_spaces(std::string(line, 0, n));
 	if (first == tag) {
 	  *p = first + " = " + value;
 	  found = true;

@@ -24,7 +24,7 @@
 #include "eca-resources.h"
 
 ECA_RESOURCES::ECA_RESOURCES(void) :
-  RESOURCE_FILE(string(getenv("HOME")) + "/" + ".ecasoundrc")
+  RESOURCE_FILE(std::string(getenv("HOME")) + "/" + ".ecasoundrc")
 { 
   set_defaults(); 
 }
@@ -47,7 +47,7 @@ void ECA_RESOURCES::set_defaults(void) {
   if (has("resource-file-genosc-envelopes") != true) resource("resource-file-genosc-envelopes","generic_oscillators");
   if (has("resource-file-effect-presets") != true) resource("resource-file-effect-presets","effect_presets");
   if (has("user-resource-directory") != true) resource("user-resource-directory", 
-						       string(getenv("HOME")) + "/" + "ecasound-config");
+						       std::string(getenv("HOME")) + "/" + "ecasound-config");
 
   if (has("ext-text-editor") != true) resource("ext-text-editor","pico");
   if (has("ext-text-editor-use-getenv") != true) resource("ext-text-editor-use-getenv","true");

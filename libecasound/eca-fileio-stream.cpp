@@ -27,8 +27,8 @@
 #include "eca-fileio.h"
 #include "eca-fileio-stream.h"
 
-void ECA_FILE_IO_STREAM::open_file(const string& fname, 
-				   const string& fmode)
+void ECA_FILE_IO_STREAM::open_file(const std::string& fname, 
+				   const std::string& fmode)
 { 
   f1 = ::fopen(fname.c_str(), fmode.c_str());
   if (!f1) {

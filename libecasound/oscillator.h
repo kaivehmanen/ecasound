@@ -16,7 +16,7 @@ class OSCILLATOR : public CONTROLLER_SOURCE {
 
  public:
 
-  virtual string name(void) const = 0;
+  virtual std::string name(void) const = 0;
   virtual parameter_type value(void) = 0;
 
   /**

@@ -13,7 +13,7 @@ class ECA_FILE_IO_STREAM : public ECA_FILE_IO {
   FILE *f1;
   long int bytes_rep;
 
-  string mode_rep;
+  std::string mode_rep;
   bool standard_mode;
    
  public:
@@ -22,8 +22,8 @@ class ECA_FILE_IO_STREAM : public ECA_FILE_IO {
   // --
   // Open/close routines
   // ---
-  void open_file(const string& fname, 
-		 const string& fmode);
+  void open_file(const std::string& fname, 
+		 const std::string& fmode);
   void open_stdin(void);
   void open_stdout(void);
   void close_file(void);
@@ -46,7 +46,7 @@ class ECA_FILE_IO_STREAM : public ECA_FILE_IO {
   bool is_file_ready(void) const;
   bool is_file_error(void) const;
   long int file_bytes_processed(void) const;
-  const string& file_mode(void) const { return(mode_rep); }
+  const std::string& file_mode(void) const { return(mode_rep); }
 
   ECA_FILE_IO_STREAM (void) { }
   ~ECA_FILE_IO_STREAM(void) { if (mode_rep != "") close_file(); }

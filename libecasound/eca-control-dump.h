@@ -122,17 +122,17 @@ class ECA_CONTROL_DUMP {
   /** 
    * Set target stream for dumping.
    */
-  void set_dump_target(ostream* target) { dostream_repp = target; internal_rep = false; }
+  void set_dump_target(std::ostream* target) { dostream_repp = target; internal_rep = false; }
 
   /** 
    * Set target stream for dumping.
    */
-  void set_dump_target(const string& filename) { dostream_repp = new ofstream(filename.c_str()); internal_rep = true; }
+  void set_dump_target(const std::string& filename) { dostream_repp = new std::ofstream(filename.c_str()); internal_rep = true; }
 
   /**
    * Class constructor
    */ 
-  ECA_CONTROL_DUMP (ECA_CONTROL* ctrl) : ctrl_repp(ctrl), dostream_repp(&cout), internal_rep(false) { }
+  ECA_CONTROL_DUMP (ECA_CONTROL* ctrl) : ctrl_repp(ctrl), dostream_repp(&std::cout), internal_rep(false) { }
 
   /**
    * Virtual destructor
@@ -142,10 +142,10 @@ class ECA_CONTROL_DUMP {
  private:
 
   ECA_CONTROL* ctrl_repp;
-  ostream* dostream_repp;
+  std::ostream* dostream_repp;
   bool internal_rep;
 
-  void dump(const string& key, const string& value) { *dostream_repp << key << " " << value << endl; }
+  void dump(const std::string& key, const std::string& value) { *dostream_repp << key << " " << value << std::endl; }
 };
 
 #endif

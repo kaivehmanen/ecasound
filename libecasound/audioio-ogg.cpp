@@ -30,10 +30,10 @@
 string OGG_VORBIS_INTERFACE::default_ogg_input_cmd = "ogg123 -d raw --file=%F %f";
 string OGG_VORBIS_INTERFACE::default_ogg_output_cmd = "oggenc -b 128 --raw --output=%f -";
 
-void OGG_VORBIS_INTERFACE::set_ogg_input_cmd(const string& value) { OGG_VORBIS_INTERFACE::default_ogg_input_cmd = value; }
-void OGG_VORBIS_INTERFACE::set_ogg_output_cmd(const string& value) { OGG_VORBIS_INTERFACE::default_ogg_output_cmd = value; }
+void OGG_VORBIS_INTERFACE::set_ogg_input_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_ogg_input_cmd = value; }
+void OGG_VORBIS_INTERFACE::set_ogg_output_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_ogg_output_cmd = value; }
 
-OGG_VORBIS_INTERFACE::OGG_VORBIS_INTERFACE(const string& name) {
+OGG_VORBIS_INTERFACE::OGG_VORBIS_INTERFACE(const std::string& name) {
   label(name);
   finished_rep = false;
   toggle_open_state(false);

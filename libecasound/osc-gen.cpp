@@ -120,7 +120,7 @@ void GENERIC_OSCILLATOR::set_param_count(int params) {
   param_names_rep = "freq,mode,pcount,start_val,end_val";
   if (params > 0) {
     for(int n = 0; n < params; n++) {
-      string num = kvu_numtostr(n + 1);
+      std::string num = kvu_numtostr(n + 1);
       param_names_rep += ",pos";
       param_names_rep += num;
       param_names_rep += ",val";
@@ -129,7 +129,7 @@ void GENERIC_OSCILLATOR::set_param_count(int params) {
   }
 }
 
-string GENERIC_OSCILLATOR::parameter_names(void) const { 
+std::string GENERIC_OSCILLATOR::parameter_names(void) const { 
   return(param_names_rep);
 }
 

@@ -63,9 +63,9 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 
   virtual long position_in_samples(void) const;
 
-  OSSDEVICE (const string& name = "/dev/dsp", bool precise_sample_rates = false);
+  OSSDEVICE (const std::string& name = "/dev/dsp", bool precise_sample_rates = false);
   ~OSSDEVICE(void);
-  OSSDEVICE* clone(void) { cerr << "Not implemented!" << endl; return this; }
+  OSSDEVICE* clone(void) { std::cerr << "Not implemented!" << std::endl; return this; }
   OSSDEVICE* new_expr(void) { return new OSSDEVICE(); }
 
  private:

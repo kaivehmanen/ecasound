@@ -70,7 +70,7 @@ void MIDI_IO::io_mode(int mode) { io_mode_rep = mode; }
  * require:
  *  is_open() != true
  */
-void MIDI_IO::label(const string& id_label) { id_label_rep = id_label; }
+void MIDI_IO::label(const std::string& id_label) { id_label_rep = id_label; }
 
 /**
  * Enable/disbale nonblocking mode.
@@ -82,17 +82,17 @@ void MIDI_IO::toggle_nonblocking_mode(bool value) { nonblocking_rep = value; }
 
 /**
  * Returns the current label. See documentation for 
- * label(const string&).
+ * label(const std::string&).
  */
-const string& MIDI_IO::label(void) const { return(id_label_rep); }
+const std::string& MIDI_IO::label(void) const { return(id_label_rep); }
 
 
 void MIDI_IO::set_parameter(int param, 
-			    string value) {
+			    std::string value) {
   if (param == 1) label(value);
 }
 
-string MIDI_IO::get_parameter(int param) const {
+std::string MIDI_IO::get_parameter(int param) const {
   if (param == 1) return(label());
   return("");
 }
@@ -125,7 +125,7 @@ void MIDI_IO::toggle_open_state(bool value) { open_rep = value; }
 
 MIDI_IO::~MIDI_IO(void) { }
 
-MIDI_IO::MIDI_IO(const string& name, 
+MIDI_IO::MIDI_IO(const std::string& name, 
 		   int mode) {
   label(name);
   io_mode(mode);

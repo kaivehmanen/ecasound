@@ -54,10 +54,10 @@ class RAWFILE : public AUDIO_IO_BUFFERED {
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;
 
-  RAWFILE (const string& name = "");
+  RAWFILE (const std::string& name = "");
   ~RAWFILE(void);
     
-  RAWFILE* clone(void) { cerr << "Not implemented!" << endl;  return this; }    
+  RAWFILE* clone(void) { std::cerr << "Not implemented!" << std::endl;  return this; }    
   RAWFILE* new_expr(void) { return new RAWFILE(); }    
 };
 

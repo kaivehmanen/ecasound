@@ -33,8 +33,8 @@ EFFECT_ANALYZE::EFFECT_ANALYZE (void) {
   cumulativemode_rep = false;
 }
 
-string EFFECT_ANALYZE::status_entry(int range) const {
-  string res;
+std::string EFFECT_ANALYZE::status_entry(int range) const {
+  std::string res;
   for(int n = 0; n < channels(); n++) {
     res += "\t ";
     res += kvu_numtostr(ranges[range][n]);
@@ -172,7 +172,7 @@ void EFFECT_ANALYZE::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
   set_channels(insample->number_of_channels());
   num_of_samples.resize(channels(), 0);
-  ranges.resize(range_count, vector<unsigned long int> (channels()));
+  ranges.resize(range_count, std::vector<unsigned long int> (channels()));
 }
 
 void EFFECT_ANALYZE::process(void) {
@@ -229,7 +229,7 @@ string EFFECT_DCFIND::status(void) const {
 }
 
 string EFFECT_DCFIND::parameter_names(void) const {
-  vector<string> t;
+  std::vector<std::string> t;
   for(int n = 0; n < channels(); n++) {
     t.push_back("result-offset-ch" + kvu_numtostr(n));
   }

@@ -138,7 +138,7 @@ class EFFECT_COMPRESS : public EFFECT_AMPLITUDE {
   parameter_type delta, ratio, new_value;
   bool first_time;
 
-  vector<SAMPLE_SPECS::sample_type> lastin, lastout;
+  std::vector<SAMPLE_SPECS::sample_type> lastin, lastout;
 
  public:
 
@@ -170,15 +170,15 @@ class EFFECT_NOISEGATE : public EFFECT_AMPLITUDE {
   parameter_type th_time;
   parameter_type atime, htime, rtime;
   
-  vector<parameter_type> th_time_lask;
-  vector<parameter_type> attack_lask;
-  vector<parameter_type> hold_lask;
-  vector<parameter_type> release_lask;
-  vector<parameter_type> kerroin;
+  std::vector<parameter_type> th_time_lask;
+  std::vector<parameter_type> attack_lask;
+  std::vector<parameter_type> hold_lask;
+  std::vector<parameter_type> release_lask;
+  std::vector<parameter_type> kerroin;
 
   enum { ng_waiting, ng_attacking, ng_active, ng_holding, ng_releasing };
 
-  vector<int> ng_status;
+  std::vector<int> ng_status;
   
  public:
   

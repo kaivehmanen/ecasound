@@ -22,7 +22,7 @@
  *
  * @author Kai Vehmanen
  */
-class MIDI_IO : public DYNAMIC_OBJECT<string> {
+class MIDI_IO : public DYNAMIC_OBJECT<std::string> {
 
  public:
 
@@ -63,15 +63,15 @@ class MIDI_IO : public DYNAMIC_OBJECT<string> {
   // Configuration (setting and getting configuration parameters)
 
   int io_mode(void) const;
-  const string& label(void) const;
+  const std::string& label(void) const;
 
   void io_mode(int mode);
-  void label(const string& id_label);
+  void label(const std::string& id_label);
   void toggle_nonblocking_mode(bool value);
 
-  virtual string parameter_names(void) const { return("label"); }
-  virtual void set_parameter(int param, string value);
-  virtual string get_parameter(int param) const;
+  virtual std::string parameter_names(void) const { return("label"); }
+  virtual void set_parameter(int param, std::string value);
+  virtual std::string get_parameter(int param) const;
 
   // ===================================================================
   // Functionality (control and runtime information)
@@ -155,13 +155,13 @@ class MIDI_IO : public DYNAMIC_OBJECT<string> {
   virtual MIDI_IO* clone(void) = 0;
   virtual MIDI_IO* new_expr(void) = 0;
   virtual ~MIDI_IO(void);
-  MIDI_IO(const string& name = "unknown",
+  MIDI_IO(const std::string& name = "unknown",
 	  int mode = io_read);
 
  private:
   
   int io_mode_rep;
-  string id_label_rep;
+  std::string id_label_rep;
 
   bool nonblocking_rep;
   bool readable_rep;

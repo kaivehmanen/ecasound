@@ -27,9 +27,9 @@
 
 string TIMIDITY_INTERFACE::default_timidity_cmd = "timidity -Or1S -id -s %s -o - %f";
 
-void TIMIDITY_INTERFACE::set_timidity_cmd(const string& value) { TIMIDITY_INTERFACE::default_timidity_cmd = value; }
+void TIMIDITY_INTERFACE::set_timidity_cmd(const std::string& value) { TIMIDITY_INTERFACE::default_timidity_cmd = value; }
 
-TIMIDITY_INTERFACE::TIMIDITY_INTERFACE(const string& name) {
+TIMIDITY_INTERFACE::TIMIDITY_INTERFACE(const std::string& name) {
   finished_rep = false;
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 }

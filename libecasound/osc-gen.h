@@ -28,13 +28,13 @@ class GENERIC_OSCILLATOR : public OSCILLATOR {
   int eindex_rep;
   int pindex_rep;
   double current_value_rep;
-  string param_names_rep;
+  std::string param_names_rep;
   void set_param_count(int n);
 
  protected:
 
   // FIXME: replace this with a function: void set_point(int n);
-  vector<double> ienvelope_rep;
+  std::vector<double> ienvelope_rep;
 
   void set_start_value(double v) { start_value_rep = v; }
   void set_end_value(double v) { end_value_rep = v; }
@@ -49,12 +49,12 @@ class GENERIC_OSCILLATOR : public OSCILLATOR {
    */
   virtual void init(parameter_type phasestep);
 
-  virtual string parameter_names(void) const;
+  virtual std::string parameter_names(void) const;
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
 
   virtual parameter_type value(void);
-  string name(void) const { return("Generic oscillator"); }
+  std::string name(void) const { return("Generic oscillator"); }
 
   GENERIC_OSCILLATOR* clone(void)  { return new GENERIC_OSCILLATOR(*this); }
   GENERIC_OSCILLATOR* new_expr(void)  { return new GENERIC_OSCILLATOR(*this); }

@@ -30,7 +30,7 @@
 #include "audioio-cdr.h"
 #include "eca-debug.h"
 
-CDRFILE::CDRFILE(const string& name) {
+CDRFILE::CDRFILE(const std::string& name) {
   label(name);
 }
 

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (24.06.2001)
+       (08.09.2001)
        ()
        (Multimedia software)
 
@@ -494,13 +494,19 @@ startdit()
 dit(-etc:delay-time-msec,variance-time-samples,feedback-%,lfo-freq)
 Chorus.
 
-dit(-etd:delay-time-msec,surround-mode,number-of-delays,mix-%)
+dit(-etd:delay-time-msec,surround-mode,number-of-delays,mix-%,feedback-%)
 Delay effect. 'delay time' is the delay time in milliseconds.
 'surround-mode' is a integer with following meanings: 0 = normal, 
 1 = surround, 2 = stereo-spread. 'number_of_delays' should be 
 obvious. Beware that large number of delays and huge delay times 
 need a lot of CPU power. 'mix-%' determines how much effected (wet)
-signal is mixed to the original.
+signal is mixed to the original. 'feedback-%' represents how much of
+the signal is recycled in each delay or, if you prefer, at what rate
+the repeated snippet of delayed audio fades. Note that sufficiently
+low feedback values may result in a number of audible repetitions
+lesser than what you have specified for 'number_of_delays', especially
+if you have set a low value for 'mix-%'. By default the value for this
+parameter is 100% (No signal loss.).
 
 dit(-ete:room_size,feedback-%,wet-%)
 A more advanced reverb effect (original algorithm by Stefan M. Fendt). 

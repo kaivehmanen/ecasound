@@ -55,7 +55,7 @@ ECA_CONTROL_OBJECTS::ECA_CONTROL_OBJECTS (ECA_SESSION* psession)
  * ensure:
  *  selected_chainsetup() == name || (last_error().size() > 0 && no_errors != true)
  */
-void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name) {
+void ECA_CONTROL_OBJECTS::add_chainsetup(const std::string& name) {
   // --------
   DBC_REQUIRE(name != "");
   // --------
@@ -115,7 +115,7 @@ void ECA_CONTROL_OBJECTS::remove_chainsetup(void) {
  * ensure:
  *  filename exists implies loaded chainsetup == selected_chainsetup()
  */
-void ECA_CONTROL_OBJECTS::load_chainsetup(const string& filename) {
+void ECA_CONTROL_OBJECTS::load_chainsetup(const std::string& filename) {
   try {
     session_repp->load_chainsetup(filename);
     select_chainsetup(get_chainsetup_filename(filename)->name());
@@ -134,7 +134,7 @@ void ECA_CONTROL_OBJECTS::load_chainsetup(const string& filename) {
  * require:
  *  selected_chainsetup().empty() != true
  */
-void ECA_CONTROL_OBJECTS::save_chainsetup(const string& filename) {
+void ECA_CONTROL_OBJECTS::save_chainsetup(const std::string& filename) {
   // --------
   // require:
   assert(selected_chainsetup().empty() != true);
@@ -165,7 +165,7 @@ void ECA_CONTROL_OBJECTS::save_chainsetup(const string& filename) {
  *  name == selected_chainsetup() ||
  *  selected_chainsetup_rep == 0
  */
-void ECA_CONTROL_OBJECTS::select_chainsetup(const string& name) {
+void ECA_CONTROL_OBJECTS::select_chainsetup(const std::string& name) {
   // --------
   // require:
   assert(name != "");
@@ -200,7 +200,7 @@ void ECA_CONTROL_OBJECTS::select_chainsetup_by_index(int index_number) {
   DBC_REQUIRE(index_number > 0);
   // --------
 
-  for(vector<ECA_CHAINSETUP*>::size_type p = 0; 
+  for(std::vector<ECA_CHAINSETUP*>::size_type p = 0; 
       p != session_repp->chainsetups_rep.size();
       p++) {
     if (index_number == static_cast<int>(p + 1)) {
@@ -522,7 +522,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds) {
 /**
  * Gets a vector of al chainsetup names.
  */
-vector<string> ECA_CONTROL_OBJECTS::chainsetup_names(void) const {
+std::vector<std::string> ECA_CONTROL_OBJECTS::chainsetup_names(void) const {
   return(session_repp->chainsetup_names());
 }
 
@@ -537,9 +537,9 @@ ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup(void) const {
 /**
  * Gets a pointer to chainsetup with filename 'filename'.
  */
-ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup_filename(const string&
+ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup_filename(const std::string&
 							      filename) const {
-  vector<ECA_CHAINSETUP*>::const_iterator p = session_repp->chainsetups_rep.begin();
+  std::vector<ECA_CHAINSETUP*>::const_iterator p = session_repp->chainsetups_rep.begin();
   while(p != session_repp->chainsetups_rep.end()) {
     if ((*p)->filename() == filename) {
       return((*p));
@@ -555,7 +555,7 @@ ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup_filename(const string&
  * require:
  *  is_selected() == true
  */
-const string& ECA_CONTROL_OBJECTS::chainsetup_filename(void) const {
+const std::string& ECA_CONTROL_OBJECTS::chainsetup_filename(void) const {
   // --------
   // require:
   assert(is_selected() == true);
@@ -570,7 +570,7 @@ const string& ECA_CONTROL_OBJECTS::chainsetup_filename(void) const {
  *  is_selected() == true && 
  *  name.empty() != true
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_filename(const string& name) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_filename(const std::string& name) {
   // --------
   // require:
   assert(is_selected() == true);
@@ -586,7 +586,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_filename(const string& name) {
  *  is_selected() == true && 
  *  name.empty() != true
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_parameter(const string& name) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_parameter(const std::string& name) {
   // --------
   // require:
   assert(is_selected() == true  && 
@@ -603,7 +603,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_parameter(const string& name) {
  *  is_selected() == true && 
  *  name.empty() != true
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_sample_format(const string& name) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_sample_format(const std::string& name) {
   // --------
   // require:
   assert(is_selected() == true  && 
@@ -627,14 +627,14 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_sample_format(const string& name) {
  * ensure:
  *   selected_chains().size() > 0
  */
-void ECA_CONTROL_OBJECTS::add_chain(const string& name) { 
+void ECA_CONTROL_OBJECTS::add_chain(const std::string& name) { 
   // --------
   // require:
   assert(is_selected() == true);
   assert(selected_chainsetup() != connected_chainsetup());
   // --------
 
-  add_chains(vector<string> (1, name));
+  add_chains(std::vector<std::string> (1, name));
 
   // --------
   // ensure:
@@ -655,7 +655,7 @@ void ECA_CONTROL_OBJECTS::add_chain(const string& name) {
  * ensure:
  *   selected_chains().size() > 0
  */
-void ECA_CONTROL_OBJECTS::add_chains(const string& names) { 
+void ECA_CONTROL_OBJECTS::add_chains(const std::string& names) { 
   // --------
   // require:
   assert(is_selected() == true &&
@@ -683,7 +683,7 @@ void ECA_CONTROL_OBJECTS::add_chains(const string& names) {
  * ensure:
  *   selected_chains().size() == names.size()
  */
-void ECA_CONTROL_OBJECTS::add_chains(const vector<string>& new_chains) { 
+void ECA_CONTROL_OBJECTS::add_chains(const std::vector<std::string>& new_chains) { 
   // --------
   // require:
   assert(is_selected() == true &&
@@ -741,7 +741,7 @@ void ECA_CONTROL_OBJECTS::remove_chains(void) {
  * require:
  *   is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::select_chains_by_index(const vector<int>& index_numbers) { 
+void ECA_CONTROL_OBJECTS::select_chains_by_index(const std::vector<int>& index_numbers) { 
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -772,12 +772,12 @@ void ECA_CONTROL_OBJECTS::select_chains_by_index(const vector<int>& index_number
  * ensure:
  *   selected_chains().size() == 1
  */
-void ECA_CONTROL_OBJECTS::select_chain(const string& chain) {
+void ECA_CONTROL_OBJECTS::select_chain(const std::string& chain) {
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  vector<string> c (1);
+  std::vector<std::string> c (1);
   c[0] = chain;
   selected_chainsetup_repp->select_chains(c);
   ecadebug->msg(ECA_DEBUG::user_objects, "(eca-controller) Selected chain: " + chain + ".");
@@ -800,7 +800,7 @@ void ECA_CONTROL_OBJECTS::select_chain(const string& chain) {
  * ensure:
  *   selected_chains().size() > 0
  */
-void ECA_CONTROL_OBJECTS::select_chains(const vector<string>& chains) {
+void ECA_CONTROL_OBJECTS::select_chains(const std::vector<std::string>& chains) {
   // --------
   // require:
   assert(is_selected() == true);
@@ -820,16 +820,16 @@ void ECA_CONTROL_OBJECTS::select_chains(const vector<string>& chains) {
  * require:
  *   is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::deselect_chains(const vector<string>& chains) {
+void ECA_CONTROL_OBJECTS::deselect_chains(const std::vector<std::string>& chains) {
   // --------
   // require:
   assert(is_selected() == true);
   // --------
 
-  vector<string> schains = selected_chainsetup_repp->selected_chains();
-  vector<string>::const_iterator p = chains.begin();
+  std::vector<std::string> schains = selected_chainsetup_repp->selected_chains();
+  std::vector<std::string>::const_iterator p = chains.begin();
   while(p != chains.end()) {
-    vector<string>::iterator o = schains.begin();
+    std::vector<std::string>::iterator o = schains.begin();
     while(o != schains.end()) {
       if (*p == *o) {
 	ecadebug->msg("(eca-controller-objects) Deselected chain " + *o  + ".");
@@ -867,7 +867,7 @@ void ECA_CONTROL_OBJECTS::select_all_chains(void) {
  * require:
  *  is_selected() == true
  */
-const vector<string>& ECA_CONTROL_OBJECTS::selected_chains(void) const {
+const std::vector<std::string>& ECA_CONTROL_OBJECTS::selected_chains(void) const {
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -880,7 +880,7 @@ const vector<string>& ECA_CONTROL_OBJECTS::selected_chains(void) const {
  * require:
  *  is_selected() == true
  */
-vector<string> ECA_CONTROL_OBJECTS::chain_names(void) const {
+std::vector<std::string> ECA_CONTROL_OBJECTS::chain_names(void) const {
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -899,10 +899,10 @@ CHAIN* ECA_CONTROL_OBJECTS::get_chain(void) const {
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() == 1);
   // --------
-  const vector<string>& schains = selected_chainsetup_repp->selected_chains();
-  vector<string>::const_iterator o = schains.begin();
+  const std::vector<std::string>& schains = selected_chainsetup_repp->selected_chains();
+  std::vector<std::string>::const_iterator o = schains.begin();
   while(o != schains.end()) {
-    for(vector<CHAIN*>::size_type p = 0; 
+    for(std::vector<CHAIN*>::size_type p = 0; 
 	p != selected_chainsetup_repp->chains.size();
 	p++) {
       if (selected_chainsetup_repp->chains[p]->name() == *o)
@@ -942,7 +942,7 @@ void ECA_CONTROL_OBJECTS::clear_chains(void) {
  *  connected_chainsetup() != selected_chainsetup()
  *  selected_chains().size() == 1
  */
-void ECA_CONTROL_OBJECTS::rename_chain(const string& name) { 
+void ECA_CONTROL_OBJECTS::rename_chain(const std::string& name) { 
   // --------
   // require:
   assert(is_selected() == true);
@@ -953,11 +953,11 @@ void ECA_CONTROL_OBJECTS::rename_chain(const string& name) {
 }
 
 void ECA_CONTROL_OBJECTS::send_chain_commands_to_engine(int command, double value) {
-  const vector<string>& schains = selected_chainsetup_repp->selected_chains();
+  const std::vector<std::string>& schains = selected_chainsetup_repp->selected_chains();
 
-  vector<string>::const_iterator o = schains.begin();
+  std::vector<std::string>::const_iterator o = schains.begin();
   while(o != schains.end()) {
-    for(vector<CHAIN*>::size_type p = 0; 
+    for(std::vector<CHAIN*>::size_type p = 0; 
 	p != selected_chainsetup_repp->chains.size();
 	p++) {
       if (selected_chainsetup_repp->chains[p]->name() == *o) {
@@ -1074,10 +1074,10 @@ void ECA_CONTROL_OBJECTS::change_position_chains(double change_in_seconds) {
     send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_setpos, change_in_seconds);
   }
   else {
-    const vector<string>& schains = selected_chainsetup_repp->selected_chains();
-    vector<string>::const_iterator o = schains.begin();
+    const std::vector<std::string>& schains = selected_chainsetup_repp->selected_chains();
+    std::vector<std::string>::const_iterator o = schains.begin();
     while(o != schains.end()) {
-      for(vector<CHAIN*>::size_type p = 0; 
+      for(std::vector<CHAIN*>::size_type p = 0; 
 	  p != selected_chainsetup_repp->chains.size();
 	  p++) {
 	if (selected_chainsetup_repp->chains[p]->name() == *o) {
@@ -1111,10 +1111,10 @@ void ECA_CONTROL_OBJECTS::set_position_chains(double pos_in_seconds) {
     send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_setpos, pos_in_seconds);
   }
   else {
-    const vector<string>& schains = selected_chainsetup_repp->selected_chains();
-    vector<string>::const_iterator o = schains.begin();
+    const std::vector<std::string>& schains = selected_chainsetup_repp->selected_chains();
+    std::vector<std::string>::const_iterator o = schains.begin();
     while(o != schains.end()) {
-      for(vector<CHAIN*>::size_type p = 0; 
+      for(std::vector<CHAIN*>::size_type p = 0; 
 	  p != selected_chainsetup_repp->chains.size();
 	  p++) {
 	if (selected_chainsetup_repp->chains[p]->name() == *o) {
@@ -1143,7 +1143,7 @@ void ECA_CONTROL_OBJECTS::audio_output_as_selected(void) {
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::set_default_audio_format(const string& sfrm,
+void ECA_CONTROL_OBJECTS::set_default_audio_format(const std::string& sfrm,
 						   int channels, 
 						   long int srate,
 						   bool interleaving) {
@@ -1196,14 +1196,14 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const ECA_AUDIO_FORMAT& forma
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::select_audio_input(const string& name) { 
+void ECA_CONTROL_OBJECTS::select_audio_input(const std::string& name) { 
   // --------
   // require:
   assert(is_selected() == true);
   // --------
 
   selected_audio_input_repp = 0;
-  vector<AUDIO_IO*>::size_type p = 0;  
+  std::vector<AUDIO_IO*>::size_type p = 0;  
   for(p = 0; p != selected_chainsetup_repp->inputs.size(); p++) {
     if (selected_chainsetup_repp->inputs[p]->label() == name) {
       selected_audio_input_repp = selected_chainsetup_repp->inputs[p];
@@ -1217,14 +1217,14 @@ void ECA_CONTROL_OBJECTS::select_audio_input(const string& name) {
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::select_audio_output(const string& name) { 
+void ECA_CONTROL_OBJECTS::select_audio_output(const std::string& name) { 
   // --------
   // require:
   assert(is_selected() == true);
   // --------
 
   selected_audio_output_repp = 0;
-  vector<AUDIO_IO*>::size_type p = 0;  
+  std::vector<AUDIO_IO*>::size_type p = 0;  
   for(p = 0; p != selected_chainsetup_repp->outputs.size(); p++) {
     if (selected_chainsetup_repp->outputs[p]->label() == name) {
       selected_audio_output_repp = selected_chainsetup_repp->outputs[p];
@@ -1247,7 +1247,7 @@ void ECA_CONTROL_OBJECTS::select_audio_input_by_index(int index_number) {
   // --------
 
   selected_audio_input_repp = 0;
-  vector<AUDIO_IO*>::size_type p = 0;
+  std::vector<AUDIO_IO*>::size_type p = 0;
   for(p = 0; p != selected_chainsetup_repp->inputs.size(); p++) {
     if (index_number == static_cast<int>(p + 1)) {
       selected_audio_input_repp = selected_chainsetup_repp->inputs[p];
@@ -1270,7 +1270,7 @@ void ECA_CONTROL_OBJECTS::select_audio_output_by_index(int index_number) {
   // --------
 
   selected_audio_output_repp = 0;
-  vector<AUDIO_IO*>::size_type p = 0;
+  std::vector<AUDIO_IO*>::size_type p = 0;
   for(p = 0; p != selected_chainsetup_repp->outputs.size(); p++) {
     if (index_number == static_cast<int>(p + 1)) {
       selected_audio_output_repp = selected_chainsetup_repp->outputs[p];
@@ -1322,7 +1322,7 @@ ECA_AUDIO_FORMAT ECA_CONTROL_OBJECTS::get_audio_format(AUDIO_IO* aobj) const {
  *   is_selected() == true
  *   connected_chainsetup() != selected_chainsetup()
  */
-void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
+void ECA_CONTROL_OBJECTS::add_audio_input(const std::string& filename) {
   // --------
   DBC_REQUIRE(filename.empty() == false);
   DBC_REQUIRE(is_selected() == true);
@@ -1350,7 +1350,7 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
  *   is_selected() == true
  *   connected_chainsetup() != selected_chainsetup()
  */
-void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
+void ECA_CONTROL_OBJECTS::add_audio_output(const std::string& filename) {
   // --------
   // require:
   assert(filename.empty() == false);
@@ -1394,7 +1394,7 @@ void ECA_CONTROL_OBJECTS::add_default_output(void) {
  * require:
  *  is_selected() == true
  */
-vector<string> ECA_CONTROL_OBJECTS::audio_input_names(void) const {
+std::vector<std::string> ECA_CONTROL_OBJECTS::audio_input_names(void) const {
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -1407,7 +1407,7 @@ vector<string> ECA_CONTROL_OBJECTS::audio_input_names(void) const {
  * require:
  *  is_selected() == true
  */
-vector<string> ECA_CONTROL_OBJECTS::audio_output_names(void) const {
+std::vector<std::string> ECA_CONTROL_OBJECTS::audio_output_names(void) const {
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -1627,7 +1627,7 @@ void ECA_CONTROL_OBJECTS::wave_edit_audio_object(void) {
  *  is_selected() == true
  *  selected_chains().size() == 1
  */
-void ECA_CONTROL_OBJECTS::add_chain_operator(const string& chainop_params) {
+void ECA_CONTROL_OBJECTS::add_chain_operator(const std::string& chainop_params) {
   // --------
   // require:
   assert(is_selected() == true);
@@ -1714,14 +1714,14 @@ CHAIN_OPERATOR* ECA_CONTROL_OBJECTS::get_chain_operator(void) const {
  *  is_selected() == true
  *  selected_chains().size() == 1
  */
-vector<string> ECA_CONTROL_OBJECTS::chain_operator_names(void) const {
+std::vector<std::string> ECA_CONTROL_OBJECTS::chain_operator_names(void) const {
   // --------
   // require:
   assert(is_selected() == true);
   assert(selected_chains().size() == 1);
   // --------
 
-  vector<string> result; 
+  std::vector<std::string> result; 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
     CHAIN* selected_chain = selected_chainsetup_repp->chains[p];
@@ -1826,7 +1826,7 @@ void ECA_CONTROL_OBJECTS::select_chain_operator(int chainop_id) {
  *  selected_chains().size() == 1
  *  get_chain_operator() != 0
  */
-vector<string> ECA_CONTROL_OBJECTS::chain_operator_parameter_names(void) const {
+std::vector<std::string> ECA_CONTROL_OBJECTS::chain_operator_parameter_names(void) const {
   // --------
   // require:
   assert(is_selected() == true);
@@ -1834,7 +1834,7 @@ vector<string> ECA_CONTROL_OBJECTS::chain_operator_parameter_names(void) const {
   assert(get_chain_operator() != 0);
   // --------
 
-  vector<string> result; 
+  std::vector<std::string> result; 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
     CHAIN* selected_chain = selected_chainsetup_repp->chains[p];
@@ -1966,7 +1966,7 @@ int ECA_CONTROL_OBJECTS::selected_chain_operator_parameter(void) const {
  *  connected_chainsetup() != selected_chainsetup()
  *  selected_chains().size() > 0
  */
-void ECA_CONTROL_OBJECTS::add_controller(const string& gcontrol_params) { 
+void ECA_CONTROL_OBJECTS::add_controller(const std::string& gcontrol_params) { 
   // --------
   // require:
   assert(is_selected() == true);
@@ -2061,14 +2061,14 @@ void ECA_CONTROL_OBJECTS::remove_controller(void) {
  *  is_selected() == true
  *  selected_chains().size() == 1
  */
-vector<string> ECA_CONTROL_OBJECTS::controller_names(void) const {
+std::vector<std::string> ECA_CONTROL_OBJECTS::controller_names(void) const {
   // --------
   // require:
   assert(is_selected() == true);
   assert(selected_chains().size() == 1);
   // --------
 
-  vector<string> result; 
+  std::vector<std::string> result; 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
     CHAIN* selected_chain = selected_chainsetup_repp->chains[p];

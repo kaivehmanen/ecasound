@@ -24,7 +24,7 @@ class ECA_IAMODE_PARSER {
 
  protected:
 
-  static map<string,int> cmd_map_rep;
+  static std::map<std::string,int> cmd_map_rep;
   static void register_commands(void);
 
   enum Commands {
@@ -174,8 +174,8 @@ class ECA_IAMODE_PARSER {
 
  public:
 
-  static const map<string,int>& registered_commands(void) { return(cmd_map_rep); }
-  static vector<string> registered_commands_list(void);
+  static const std::map<std::string,int>& registered_commands(void) { return(cmd_map_rep); }
+  static std::vector<std::string> registered_commands_list(void);
 
   bool action_requires_params(int id);
   bool action_requires_connected(int id);
