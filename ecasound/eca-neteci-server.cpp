@@ -245,7 +245,7 @@ void ECA_NETECI_SERVER::listen_for_events(void)
 void ECA_NETECI_SERVER::check_for_events(int timeout)
 {
   int nfds = clients_rep.size() + 1;
-  struct pollfd ufds[nfds];
+  struct pollfd* ufds = new struct pollfd [nfds];
 
   ufds[0].fd = srvfd_rep;
   ufds[0].events = POLLIN;
@@ -283,6 +283,8 @@ void ECA_NETECI_SERVER::check_for_events(int timeout)
     }
     DBC_CHECK(nfds == 1 || p == clients_rep.end());
   }
+
+  delete[] ufds;
 }
 
 void ECA_NETECI_SERVER::handle_connection(int fd)
