@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 310305) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 010405) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -30,6 +30,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 flags with -ppt (see effect_presets file and the
 		 relevant sections in User's Guide)
 	- added: new sections on preset parameters to User's Guide
+	- added: allow reseting ecasignalview max-peak and clipped-samples 
+		 counters by sending a SIGHUP to the process
 	- changed: moved definitions from acconfig.h to configure.in;
 		   gets rid of the AC_DEFINE warnings produced by
 		   recent versions of autoheader
