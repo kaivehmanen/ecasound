@@ -1,11 +1,17 @@
-#ifndef _AUDIOFX_LADSPA_H
-#define _AUDIOFX_LADSPA_H
+#ifndef INCLUDED_AUDIOFX_LADSPA_H
+#define INCLUDED_AUDIOFX_LADSPA_H
 
 #include <vector>
 
 #include "samplebuffer.h"
 #include "audiofx.h"
-#include "ladspa.h"
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef HAVE_LADSPA_H
+#include <ladspa.h>
 
 /**
  * Wrapper class for LADSPA plugins
@@ -69,4 +75,5 @@ public:
   EFFECT_LADSPA& operator=(const EFFECT_LADSPA& x) { return *this; }
 };
 
+#endif /* HAVE_LADSPA_H */
 #endif

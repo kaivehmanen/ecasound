@@ -969,6 +969,7 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
   REQUIRE(argu[0] == '-');
   // --------
 
+#ifdef HAVE_LADSPA_H
   MESSAGE_ITEM otemp;
   CHAIN_OPERATOR* cop = 0;
   string prefix = get_argument_prefix(argu);
@@ -995,6 +996,7 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
     }
     return(cop);
   }
+#endif /* HAVE_LADSPA_H */
   return(0);
 }
 

@@ -17,6 +17,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string>
 #include <vector>
 #include <unistd.h>
@@ -521,6 +525,7 @@ string CHAIN::to_string(void) const {
 string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
   MESSAGE_ITEM t;
   
+#ifdef HAVE_LADSPA_H
   // >--
   // special handling for LADPSA-plugins
   EFFECT_LADSPA* ladspa = dynamic_cast<EFFECT_LADSPA*>(chainop);
@@ -533,6 +538,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
     if (chainop->number_of_params() > 0) t << ":";
   }
   // --<
+#endif /* HAVE_LADSPA_H */
 
   for(int n = 0; n < chainop->number_of_params(); n++) {
     t << chainop->get_parameter(n + 1);

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-static-object-maps.h: Static object map instances
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,15 +43,19 @@
 #include "audiofx_mixing.h"
 #include "audiofx_timebased.h"
 #include "audiogate.h"
-#include "audiofx_ladspa.h"
 
+#ifdef HAVE_LADSPA_H
+#include "audiofx_ladspa.h"
 extern "C" {
-#include "ladspa.h"
+#include <ladspa.h>
+}
+#endif
 
 #ifdef FEELING_EXPERIMENTAL
+extern "C" {
 #include "audiofx_vst.h"
-#endif
 }
+#endif
 
 #include "generic-controller.h"
 #include "ctrl-source.h"
@@ -102,11 +106,15 @@ void register_default_audio_objects(void);
 void register_default_controllers(void);
 void register_default_chainops(void);
 void register_default_presets(void);
+#ifdef HAVE_LADSPA_H
 void register_ladspa_plugins(void);
+#endif
 void register_internal_plugins(void);
 void register_default_midi_devices(void);
 
+#ifdef HAVE_LADSPA_H
 vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR&);
+#endif
 
 void register_default_objects(void) {
   if (ecasound_default_map_ref_count > 0) return;
@@ -127,7 +135,9 @@ void register_default_objects(void) {
   register_default_audio_objects();
   register_default_midi_devices();
   register_internal_plugins();
+#ifdef HAVE_LADSPA_H
   register_ladspa_plugins();
+#endif
 }
 
 void unregister_default_objects(void) {
@@ -393,6 +403,7 @@ void register_default_midi_devices(void) {
   eca_midi_device_map->register_object("^rawmidi$", new MIDI_IO_RAW());
 }
 
+#ifdef HAVE_LADSPA_H
 void register_ladspa_plugins(void) {
   DIR *dp;
 
@@ -458,3 +469,4 @@ vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR&) {
   //  if (plugin_handle != 0) dlclose(plugin_handle);
   return(plugins);
 }
+#endif /* HAVE_LADSPA_H */

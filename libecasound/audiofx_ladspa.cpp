@@ -17,14 +17,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef HAVE_LADSPA_H
+
 #include <dlfcn.h>
-
 #include <kvutils.h>
-
-#include "ladspa.h"
 #include "samplebuffer.h"
 #include "audiofx_ladspa.h"
-
 #include "eca-error.h"
 
 EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&) {
@@ -212,3 +214,4 @@ void EFFECT_LADSPA::process(void) {
     plugin_desc->run(plugins[m], buffer->length_in_samples());
 }
 
+#endif /* HAVE_LADSPA_H */
