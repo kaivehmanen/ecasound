@@ -32,6 +32,7 @@ a detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 21.03.2005 - Updated the ``Tips for debugging'' section.
 \item 25.09.2004 - Updated the ``Return values'' section based on feedback
                    from Adam Linson.
 \item 02.05.2004 - ``Emacs'' section added (written by Mario Lang).
@@ -695,6 +696,11 @@ is not working correctly.
       manually one-by-one and see what happens. If something
       goes wrong, increase Ecasound's debug level (for instance
       ``-ddd'') and re-run the test. 
+
+\item Utilize the ``int-log-history'' ECI command added to
+      version 2.4.0 of Ecasound. Recent messages from the
+      engine can help to track down the problem.
+
 \end{enumerate}
 
 \end{document}
