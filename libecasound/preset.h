@@ -22,8 +22,24 @@ class PRESET : public CHAIN_OPERATOR,
 
  public:
 
+  /** @name Public virtual functions to notify about changes 
+   *        (Reimplemented from ECA_RESAMPLE_AWARE) */
+  /*@{*/
+
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
+
+  /*@}*/
+
+  /** @name Constructors and destructors */
+  /*@{*/
+
   PRESET(void);
   PRESET(const std::string& formatted_string);
+
+  /*@}*/
+
+  /** @name Public API functions */
+  /*@{*/
 
   virtual PRESET* clone(void) const;
   virtual PRESET* new_expr(void) const;
@@ -44,6 +60,8 @@ class PRESET : public CHAIN_OPERATOR,
   void parse(const std::string& formatted_string);
   
   bool is_parsed(void) const;
+
+  /*@}*/
 
  private:
 

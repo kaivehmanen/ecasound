@@ -97,6 +97,20 @@ PRESET* PRESET::new_expr(void) const
   return(new PRESET(impl_repp->parse_string_rep)); 
 }
 
+void PRESET::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
+{
+  for(size_t q = 0; q < chains.size(); q++) {
+    chains[q]->set_samples_per_second(v);
+  }
+
+  for(size_t n = 0; n < impl_repp->gctrls_rep.size(); n++) {
+    impl_repp->gctrls_rep[n]->set_samples_per_second(v);
+  }
+
+  
+  ECA_SAMPLERATE_AWARE::set_samples_per_second(v);
+}
+
 string PRESET::name(void) const
 {
   return(impl_repp->name_rep); 
@@ -144,6 +158,7 @@ void PRESET::parse(const string& formatted_string)
   impl_repp->parse_string_rep = formatted_string;
   chains.clear();
   chains.push_back(new CHAIN());
+  chains.back()->set_samples_per_second(samples_per_second());
 
   // FIXME: add support for quotes (ie. "one token with space" style)
   vector<string> tokens = kvu_string_to_words(formatted_string);
@@ -502,6 +517,7 @@ void PRESET::init(SAMPLE_BUFFER *insample)
 
   for(size_t n = 0; n < impl_repp->gctrls_rep.size(); n++) {
     impl_repp->gctrls_rep[n]->init();
+    impl_repp->gctrls_rep[n]->set_samples_per_second(samples_per_second());
   }
 }
 
