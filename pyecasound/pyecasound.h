@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-void initpyeca(void);
+void initpyecasound(void);
 
 #ifdef __cplusplus
 }
