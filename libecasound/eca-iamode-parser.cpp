@@ -43,6 +43,19 @@ std::vector<std::string> ECA_IAMODE_PARSER::registered_commands_list(void) {
 }
 
 void ECA_IAMODE_PARSER::register_commands(void) {
+  register_commands_misc();
+  register_commands_cs();
+  register_commands_c();
+  register_commands_aio();
+  register_commands_ai();
+  register_commands_ao();
+  register_commands_cop();
+  register_commands_copp();
+  register_commands_ctrl();
+  register_commands_dump();
+}
+
+void ECA_IAMODE_PARSER::register_commands_misc(void) {
   cmd_map_rep["help"] = ec_help;
   cmd_map_rep["?"] = ec_help;
   cmd_map_rep["h"] = ec_help;
@@ -58,6 +71,25 @@ void ECA_IAMODE_PARSER::register_commands(void) {
 
   cmd_map_rep["debug"] = ec_debug;
 
+  cmd_map_rep["engine-status"] = ec_engine_status;
+  cmd_map_rep["status"] = ec_cs_status;
+  cmd_map_rep["st"] = ec_cs_status;
+  cmd_map_rep["cs"] = ec_c_status;
+  cmd_map_rep["es"] = ec_cop_status;
+  cmd_map_rep["x"] = ec_cop_status;
+  cmd_map_rep["fs"] = ec_aio_status;
+
+  cmd_map_rep["int-cmd-list"] = ec_int_cmd_list;
+  cmd_map_rep["int-version-string"] = ec_int_version_string;
+  cmd_map_rep["int-version-lib-current"] = ec_int_version_lib_current;
+  cmd_map_rep["int-version-lib-revision"] = ec_int_version_lib_revision;
+  cmd_map_rep["int-version-lib-age"] = ec_int_version_lib_age;
+
+  cmd_map_rep["preset-register"] = ec_preset_register;
+  cmd_map_rep["ladspa-register"] = ec_ladspa_register;
+}
+
+void ECA_IAMODE_PARSER::register_commands_cs(void) {
   cmd_map_rep["cs-add"] = ec_cs_add;
   cmd_map_rep["cs-remove"] = ec_cs_remove;
   cmd_map_rep["cs-list"] = ec_cs_list;
@@ -99,7 +131,9 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["cs-set-length-samples"] = ec_cs_set_length_samples;
   cmd_map_rep["cs-toggle-loop"] = ec_cs_toggle_loop;
   cmd_map_rep["cs-option"] = ec_cs_option;
+}
 
+void ECA_IAMODE_PARSER::register_commands_c(void) {
   cmd_map_rep["c-add"] = ec_c_add;
   cmd_map_rep["c-remove"] = ec_c_remove;
   cmd_map_rep["c-list"] = ec_c_list;
@@ -122,10 +156,14 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["c-setpos"] = ec_c_setpos;
   cmd_map_rep["c-set-position"] = ec_c_setpos;
   cmd_map_rep["c-status"] = ec_c_status;
+}
 
+void ECA_IAMODE_PARSER::register_commands_aio(void) {
   cmd_map_rep["aio-register"] = ec_aio_register;
   cmd_map_rep["aio-status"] = ec_aio_status;
+}
 
+void ECA_IAMODE_PARSER::register_commands_ai(void) {
   cmd_map_rep["ai-add"] = ec_ai_add;
   cmd_map_rep["ai-remove"] = ec_ai_remove;
   cmd_map_rep["ai-list"] = ec_ai_list;
@@ -147,7 +185,9 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["ai-get-length-samples"] = ec_ai_get_length_samples;
   cmd_map_rep["ai-get-format"] = ec_ai_get_format;
   cmd_map_rep["ai-wave-edit"] = ec_ai_wave_edit;
+}
 
+void ECA_IAMODE_PARSER::register_commands_ao(void) {
   cmd_map_rep["ao-add"] = ec_ao_add;
   cmd_map_rep["ao-list"] = ec_ao_list;
   cmd_map_rep["ao-select"] = ec_ao_select;
@@ -169,17 +209,22 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["ao-get-length-samples"] = ec_ao_get_length_samples;
   cmd_map_rep["ao-get-format"] = ec_ao_get_format;
   cmd_map_rep["ao-wave-edit"] = ec_ao_wave_edit;
+}
 
+void ECA_IAMODE_PARSER::register_commands_cop(void) {
   cmd_map_rep["cop-add"] = ec_cop_add;
   cmd_map_rep["cop-remove"] = ec_cop_remove;
   cmd_map_rep["cop-list"] = ec_cop_list;
   cmd_map_rep["cop-select"] = ec_cop_select;
   cmd_map_rep["cop-index-select"] = ec_cop_select;
   cmd_map_rep["cop-iselect"] = ec_cop_select;
+  cmd_map_rep["cop-register"] = ec_cop_register;
   cmd_map_rep["cop-selected"] = ec_cop_selected;
   cmd_map_rep["cop-set"] = ec_cop_set;
   cmd_map_rep["cop-status"] = ec_cop_status;
+}
 
+void ECA_IAMODE_PARSER::register_commands_copp(void) {
   cmd_map_rep["copp-list"] = ec_copp_list;
   cmd_map_rep["copp-select"] = ec_copp_select;
   cmd_map_rep["copp-index-select"] = ec_copp_select;
@@ -187,35 +232,21 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["copp-selected"] = ec_copp_selected;
   cmd_map_rep["copp-set"] = ec_copp_set;
   cmd_map_rep["copp-get"] = ec_copp_get;
+}
 
+void ECA_IAMODE_PARSER::register_commands_ctrl(void) {
   cmd_map_rep["ctrl-add"] = ec_ctrl_add;
   cmd_map_rep["ctrl-remove"] = ec_ctrl_remove;
   cmd_map_rep["ctrl-list"] = ec_ctrl_list;
   cmd_map_rep["ctrl-select"] = ec_ctrl_select;
   cmd_map_rep["ctrl-index-select"] = ec_ctrl_select;
   cmd_map_rep["ctrl-iselect"] = ec_ctrl_select;
+  cmd_map_rep["ctrl-register"] = ec_ctrl_register;
   cmd_map_rep["ctrl-selected"] = ec_ctrl_selected;
   cmd_map_rep["ctrl-status"] = ec_ctrl_status;
+}
 
-  cmd_map_rep["cop-register"] = ec_cop_register;
-  cmd_map_rep["preset-register"] = ec_preset_register;
-  cmd_map_rep["ladspa-register"] = ec_ladspa_register;
-  cmd_map_rep["ctrl-register"] = ec_ctrl_register;
-
-  cmd_map_rep["engine-status"] = ec_engine_status;
-  cmd_map_rep["status"] = ec_cs_status;
-  cmd_map_rep["st"] = ec_cs_status;
-  cmd_map_rep["cs"] = ec_c_status;
-  cmd_map_rep["es"] = ec_cop_status;
-  cmd_map_rep["x"] = ec_cop_status;
-  cmd_map_rep["fs"] = ec_aio_status;
-
-  cmd_map_rep["int-cmd-list"] = ec_int_cmd_list;
-  cmd_map_rep["int-version-string"] = ec_int_version_string;
-  cmd_map_rep["int-version-lib-current"] = ec_int_version_lib_current;
-  cmd_map_rep["int-version-lib-revision"] = ec_int_version_lib_revision;
-  cmd_map_rep["int-version-lib-age"] = ec_int_version_lib_age;
-
+void ECA_IAMODE_PARSER::register_commands_dump(void) {
   cmd_map_rep["dump-target"] = ec_dump_target;
   cmd_map_rep["dump-status"] = ec_dump_status;
   cmd_map_rep["dump-position"] = ec_dump_position;

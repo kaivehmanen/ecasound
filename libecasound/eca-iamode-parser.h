@@ -186,6 +186,20 @@ class ECA_IAMODE_PARSER {
 
   ECA_IAMODE_PARSER(void) { register_commands(); }
   virtual ~ECA_IAMODE_PARSER(void);
+  
+ private:
+
+  static void register_commands_misc(void);
+  static void register_commands_cs(void);
+  static void register_commands_c(void);
+  static void register_commands_aio(void);
+  static void register_commands_ai(void);
+  static void register_commands_ao(void);
+  static void register_commands_cop(void);
+  static void register_commands_copp(void);
+  static void register_commands_ctrl(void);
+  static void register_commands_dump(void);
+
 };
 
 void show_controller_help(void);
