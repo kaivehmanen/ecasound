@@ -1,28 +1,28 @@
-.TH "ecatools" "1" "18\&.04\&.2004" "" "Multimedia software" 
+.TH "ecatools" "1" "17\&.03\&.2005" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecatools \- audio processing utils based on ecasound
 .PP 
 .SH "SYNOPSIS" 
-\fBecaconvert\fP \&.extension file1 [ file2,\&.\&.\&.,fileN ]
+\fBecaconvert\fP \&.extension file1 [ file2 \&.\&.\&. fileN ]
 .PP 
-\fBecafixdc\fP file1 [ file2,\&.\&.\&.,fileN ]
+\fBecafixdc\fP file1 [ file2 \&.\&.\&. fileN ]
 .PP 
-\fBecalength\fP file1 [ file2,\&.\&.\&.,fileN ]
+\fBecalength\fP file1 [ file2 \&.\&.\&. fileN ]
 .PP 
 \fBecamonitor\fP [host][:port]
 .PP 
-\fBecanormalize\fP file1 [ file2,\&.\&.\&.,fileN ]
+\fBecanormalize\fP file1 [ file2 \&.\&.\&. fileN ]
 .PP 
-\fBecaplay\fP [-dhk] file1 [ file2,\&.\&.\&.,fileN ]
+\fBecaplay\fP [-dfhklopq] [ file1 file2 \&.\&.\&. fileN ]
 .PP 
 \fBecasignalview\fP [ options ] [ input ] [ output ]
 .PP 
 .SH "DESCRIPTION" 
 .PP 
-Ecatools are simple command line utils that do various audio
-processing tasks\&. Most of them support batch processing\&. They all
-use ecasound to do the actual audio processing work\&.
+Ecatools are simple command line utils for audio file processing\&.
+Each tool is designed to perform one specific operation\&. Most of 
+the tools also support batch processing\&.
 .PP 
 \fBECACONVERT\fP
 .PP 
@@ -60,32 +60,70 @@ implemented in Python using the NetECI API\&.
 .PP 
 \fBECANORMALIZE\fP
 .PP 
-A simple command-line tool for normalizing sample volume\&. 
-Finds out how much input file can be amplified without clipping
-and, if necessary, does the amplification\&.
+Ecanormalize is a command-line tool for normalizing audio
+files to utilize the full available sample resolution\&. Ecanormalize
+first finds out how much the input file can be amplified without 
+clipping and if there is room for increase, a static gain will 
+be applied to the file\&.
 .PP 
 \fBECAPLAY\fP
 .PP 
-Command-line tool that plays input files using the default output 
-specified in \fI~/\&.ecasoundrc\fP\&. Note! You can abort ecaplay at any
-time by pressing Ctrl-C\&. If you are playing multiple files, this will 
-stop the current file and begin playing the next one\&. If you want 
-to abort playing immediately instead of skipping to the 
-next file, press Ctrl-C twice in short succession (around one
-second)\&.
+Ecaplay is a command-line tool for playing audio files\&. Ecaplay 
+uses the libecasound engine and is thus able to handle all audio formats
+supported by the library\&. 
+.PP 
+Files can be selected for playback either by specifying the 
+filenames on the command-line, or by using the playlist 
+mechanism\&. In playlist mode, files can be added to the playlist
+using the \fI-q\fP option\&. The \fI-p\fP option can then be used
+to play all tracks on the playlist\&. Ecaplay will repeat the
+playlist tracks until explicitly stopped (with double Ctrl-C)\&.
+Playlist can be flushed with \fI-f\fP and its contents listed
+with \fI-l\fP option\&.
+.PP 
+If not otherwise specified, ecaplay will use the audio output device 
+specified in \fI~/\&.ecasound/ecasoundrc\fP for playback\&. A different 
+output device can be selected with \fIECAPLAY_OUTPUT_DEVICE\fP shell 
+environment variable or with the \fI-o:output_device\fP command-line
+option\&.
+.PP 
+Playback can be stopped at any time with Ctrl-C\&. If multiple
+files are played, first Ctrl-C will stop the current file and move
+on to play the next one\&. Issuing Ctrl-C twice (within one second), 
+will cause ecaplay to exit\&.
 .PP 
 .IP "-d:debuglevel" 
 Set libecasound debug level\&. See ecasound(1)\&.
+.IP 
+.IP "-f" 
+Flush the playlist contents\&. See also 
+options \fI-l, -p and -q\fP\&.
 .IP 
 .IP "-h" 
 Print usage information and exit\&.
 .IP 
 .IP "-k:number" 
-Skip \'number\' of files\&.
+Skip \&'number\&' of files\&.
+.IP 
+.IP "-l" 
+List the current playlist contents to stdout\&. See also 
+options \fI-f, -p and -q\fP\&.
 .IP 
 .IP "-o:output_device" 
-Use \'output_device\' instead of the default output device 
-(as specified in \fI~/\&.ecasoundrc\fP\&.
+Use \&'output_device\&' instead of the default output device 
+(as specified in \fI~/\&.ecasound/ecasoundrc\fP)\&. Syntax is same
+as used by "-o" ecasound option (see ecasound(1) man page)\&.
+This option overrides the \fIECAPLAY_OUTPUT_DEVICE\fP environment
+variable (more info below)\&.
+.IP 
+.IP "-p" 
+Play tracks in the playlist (in looped mode)\&. See also 
+options \fI-f, -l and -q\fP\&.
+.IP 
+.IP "-q" 
+Queue new tracks to the playlist\&. All filenames given on
+the command-line will be added to the the playlist\&. See
+also options \fI-f, -l and -p\fP\&.
 .IP 
 .PP 
 \fBECASIGNALVIEW\fP
@@ -94,13 +132,13 @@ Ecasignalview is meant for monitoring signal amplitude and peak
 statistics\&. It accepts the following options:
 .PP 
 .IP "input" 
-The first option not starting with a \'-\' is interpreted 
-as input string\&. This can be a device or a filename\&. All formats
-supported by libecasound are accepted\&. Defaults to \'/dev/dsp\'\&.
+The first option not starting with a \&'-\&' is interpreted 
+as an input string\&. This can be a device or a filename\&. All formats
+supported by libecasound are accepted\&. Defaults to \&'/dev/dsp\&'\&.
 .IP 
 .IP "output" 
-Similarly to input, second option not starting with a \'-\'
-is interpreted as output\&. Defaults to \'null\'\&.
+Similarly to input, second option not starting with a \&'-\&'
+is interpreted as output\&. Defaults to \&'null\&'\&.
 .IP 
 .IP "-b:buffersize" 
 Buffersize in sample frames\&. Defaults to 128\&.
@@ -119,19 +157,27 @@ Specify default audio format\&. See ecasound(1) for details\&.
 Specify screen refresh rate in milliseconds\&.
 .PP 
 More complete documentation for ecasignalview can be found 
-from "Ecasound User\'s Guide" (see \'\'http://www\&.eca\&.cx/ecasound 
--> Documentation\'\')\&.
+from "Ecasound User\&'s Guide" (see \&'\&'http://www\&.eca\&.cx/ecasound 
+-> Documentation\&'\&')\&.
 .PP 
 .SH "ENVIRONMENT" 
 .PP 
 \fIECASOUND\fP
-Path to the ecasound executable\&. Affects most ecatools\&.
+Path to the ecasound executable\&. Used by many ecatools\&.
+.PP 
+\fIECAPLAY_OUTPUT_DEVICE\fP
+Device ecaplay should use for audio output\&. Same syntax
+as for ecaplay/ecasound "-o" option\&.
 .PP 
 .SH "FILES" 
 .PP 
 \fI~/\&.ecasound/ecasoundrc\fP
 The default ecasound resource file\&. See ecasoundrc(5)
 for details\&.
+.PP 
+\fI~/\&.ecasound/ecaplay_queue\fP
+File used to store the ecaplay playlist (one track per
+line with full path)\&.
 .PP 
 .SH "SEE ALSO" 
 .PP 
@@ -140,4 +186,3 @@ ecasound (1), ecalength(1), "HTML docs in the Documentation subdirectory"
 .SH "AUTHOR" 
 .PP 
 Kai Vehmanen, <kvehmanen -at- eca -dot- cx>
-.PP 

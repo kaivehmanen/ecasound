@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecatools</h1>
-<h2>18.04.2004</h2>
+<h2>17.03.2005</h2>
 
 
     
@@ -21,18 +21,18 @@
     ecatools - audio processing utils based on ecasound
 <p><h2>SYNOPSIS</h2>
     
-<strong>ecaconvert</strong> .extension file1 [ file2,...,fileN ]
-<p><strong>ecafixdc</strong> file1 [ file2,...,fileN ]
-<p><strong>ecalength</strong> file1 [ file2,...,fileN ]
+<strong>ecaconvert</strong> .extension file1 [ file2 ... fileN ]
+<p><strong>ecafixdc</strong> file1 [ file2 ... fileN ]
+<p><strong>ecalength</strong> file1 [ file2 ... fileN ]
 <p><strong>ecamonitor</strong> [host][:port]
-<p><strong>ecanormalize</strong> file1 [ file2,...,fileN ]
-<p><strong>ecaplay</strong> [-dhk] file1 [ file2,...,fileN ]
+<p><strong>ecanormalize</strong> file1 [ file2 ... fileN ]
+<p><strong>ecaplay</strong> [-dfhklopq] [ file1 file2 ... fileN ]
 <p><strong>ecasignalview</strong> [ options ] [ input ] [ output ]
 <p><h2>DESCRIPTION</h2>
     
-<p>Ecatools are simple command line utils that do various audio
-processing tasks. Most of them support batch processing. They all
-use ecasound to do the actual audio processing work.
+<p>Ecatools are simple command line utils for audio file processing.
+Each tool is designed to perform one specific operation. Most of 
+the tools also support batch processing.
 <p><strong>ECACONVERT</strong>
 <p>A tool for converting a set of files to a common target format.
 This target format is given as the first command line
@@ -58,27 +58,58 @@ starting ecamonitor, for example
 started with the <em>--daemon</em> option. Ecamonitor is 
 implemented in Python using the NetECI API.
 <p><strong>ECANORMALIZE</strong>
-<p>A simple command-line tool for normalizing sample volume. 
-Finds out how much input file can be amplified without clipping
-and, if necessary, does the amplification.
+<p>Ecanormalize is a command-line tool for normalizing audio
+files to utilize the full available sample resolution. Ecanormalize
+first finds out how much the input file can be amplified without 
+clipping and if there is room for increase, a static gain will 
+be applied to the file.
 <p><strong>ECAPLAY</strong>
-<p>Command-line tool that plays input files using the default output 
-specified in <em>~/.ecasoundrc</em>. Note! You can abort ecaplay at any
-time by pressing Ctrl-C. If you are playing multiple files, this will 
-stop the current file and begin playing the next one. If you want 
-to abort playing immediately instead of skipping to the 
-next file, press Ctrl-C twice in short succession (around one
-second).
+<p>Ecaplay is a command-line tool for playing audio files. Ecaplay 
+uses the libecasound engine and is thus able to handle all audio formats
+supported by the library. 
+<p>Files can be selected for playback either by specifying the 
+filenames on the command-line, or by using the playlist 
+mechanism. In playlist mode, files can be added to the playlist
+using the <em>-q</em> option. The <em>-p</em> option can then be used
+to play all tracks on the playlist. Ecaplay will repeat the
+playlist tracks until explicitly stopped (with double Ctrl-C).
+Playlist can be flushed with <em>-f</em> and its contents listed
+with <em>-l</em> option.
+<p>If not otherwise specified, ecaplay will use the audio output device 
+specified in <em>~/.ecasound/ecasoundrc</em> for playback. A different 
+output device can be selected with <em>ECAPLAY_OUTPUT_DEVICE</em> shell 
+environment variable or with the <em>-o:output_device</em> command-line
+option.
+<p>Playback can be stopped at any time with Ctrl-C. If multiple
+files are played, first Ctrl-C will stop the current file and move
+on to play the next one. Issuing Ctrl-C twice (within one second), 
+will cause ecaplay to exit.
 <p><dl>
 <p></p><dt><strong>-d:debuglevel</strong><dd>
 Set libecasound debug level. See ecasound(1).
+<p><p></p><dt><strong>-f</strong><dd>
+Flush the playlist contents. See also 
+options <em>-l, -p and -q</em>.
 <p><p></p><dt><strong>-h</strong><dd>
 Print usage information and exit.
 <p><p></p><dt><strong>-k:number</strong><dd>
 Skip 'number' of files.
+<p><p></p><dt><strong>-l</strong><dd>
+List the current playlist contents to stdout. See also 
+options <em>-f, -p and -q</em>.
 <p><p></p><dt><strong>-o:output_device</strong><dd>
 Use 'output_device' instead of the default output device 
-(as specified in <em>~/.ecasoundrc</em>.
+(as specified in <em>~/.ecasound/ecasoundrc</em>). Syntax is same
+as used by "-o" ecasound option (see ecasound(1) man page).
+This option overrides the <em>ECAPLAY_OUTPUT_DEVICE</em> environment
+variable (more info below).
+<p><p></p><dt><strong>-p</strong><dd>
+Play tracks in the playlist (in looped mode). See also 
+options <em>-f, -l and -q</em>.
+<p><p></p><dt><strong>-q</strong><dd> 
+Queue new tracks to the playlist. All filenames given on
+the command-line will be added to the the playlist. See
+also options <em>-f, -l and -p</em>.
 <p></dl>
 <p><strong>ECASIGNALVIEW</strong>
 <p>Ecasignalview is meant for monitoring signal amplitude and peak 
@@ -86,7 +117,7 @@ statistics. It accepts the following options:
 <p><dl>
 <p></p><dt><strong>input</strong><dd>
 The first option not starting with a '-' is interpreted 
-as input string. This can be a device or a filename. All formats
+as an input string. This can be a device or a filename. All formats
 supported by libecasound are accepted. Defaults to '/dev/dsp'.
 <p><p></p><dt><strong>output</strong><dd>
 Similarly to input, second option not starting with a '-'
@@ -109,17 +140,23 @@ from "Ecasound User's Guide" (see ''http://www.eca.cx/ecasound
 <p><h2>ENVIRONMENT</h2>
     
 <p><em>ECASOUND</em>
-	Path to the ecasound executable. Affects most ecatools.
+	Path to the ecasound executable. Used by many ecatools.
+<p><em>ECAPLAY_OUTPUT_DEVICE</em>
+	Device ecaplay should use for audio output. Same syntax
+	as for ecaplay/ecasound "-o" option.
 <p><h2>FILES</h2>
     
 <p><em>~/.ecasound/ecasoundrc</em>
 	The default ecasound resource file. See ecasoundrc(5)
 	for details.
+<p><em>~/.ecasound/ecaplay_queue</em>
+	File used to store the ecaplay playlist (one track per
+	line with full path).
 <p><h2>SEE ALSO</h2>
     
 <p>ecasound (1), ecalength(1), "HTML docs in the Documentation subdirectory"
 <p><h2>AUTHOR</h2>
     
 <p>Kai Vehmanen, &lt;<a href="mailto:kvehmanen -at- eca -dot- cx"><em>kvehmanen -at- eca -dot- cx</em></a>&gt;
-<p></body>
+</body>
 </html>

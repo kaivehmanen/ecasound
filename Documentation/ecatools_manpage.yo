@@ -2,32 +2,32 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecatools)
        (1)
-       (18.04.2004)
+       (17.03.2005)
        ()
        (Multimedia software)
 
 manpagename(ecatools)(audio processing utils based on ecasound)
 
 manpagesynopsis()
-bf(ecaconvert) .extension file1 [ file2,...,fileN ]
+bf(ecaconvert) .extension file1 [ file2 ... fileN ]
 
-bf(ecafixdc) file1 [ file2,...,fileN ]
+bf(ecafixdc) file1 [ file2 ... fileN ]
 
-bf(ecalength) file1 [ file2,...,fileN ]
+bf(ecalength) file1 [ file2 ... fileN ]
 
 bf(ecamonitor) [host][:port]
 
-bf(ecanormalize) file1 [ file2,...,fileN ]
+bf(ecanormalize) file1 [ file2 ... fileN ]
 
-bf(ecaplay) [-dhk] file1 [ file2,...,fileN ]
+bf(ecaplay) [-dfhklopq] [ file1 file2 ... fileN ]
 
 bf(ecasignalview) [ options ] [ input ] [ output ]
 
 manpagedescription()
 
-Ecatools are simple command line utils that do various audio
-processing tasks. Most of them support batch processing. They all
-use ecasound to do the actual audio processing work.
+Ecatools are simple command line utils for audio file processing.
+Each tool is designed to perform one specific operation. Most of 
+the tools also support batch processing.
 
 bf(ECACONVERT)
 
@@ -65,23 +65,45 @@ implemented in Python using the NetECI API.
 
 bf(ECANORMALIZE)
 
-A simple command-line tool for normalizing sample volume. 
-Finds out how much input file can be amplified without clipping
-and, if necessary, does the amplification.
+Ecanormalize is a command-line tool for normalizing audio
+files to utilize the full available sample resolution. Ecanormalize
+first finds out how much the input file can be amplified without 
+clipping and if there is room for increase, a static gain will 
+be applied to the file.
 
 bf(ECAPLAY)
 
-Command-line tool that plays input files using the default output 
-specified in em(~/.ecasoundrc). Note! You can abort ecaplay at any
-time by pressing Ctrl-C. If you are playing multiple files, this will 
-stop the current file and begin playing the next one. If you want 
-to abort playing immediately instead of skipping to the 
-next file, press Ctrl-C twice in short succession (around one
-second).
+Ecaplay is a command-line tool for playing audio files. Ecaplay 
+uses the libecasound engine and is thus able to handle all audio formats
+supported by the library. 
+
+Files can be selected for playback either by specifying the 
+filenames on the command-line, or by using the playlist 
+mechanism. In playlist mode, files can be added to the playlist
+using the em(-q) option. The em(-p) option can then be used
+to play all tracks on the playlist. Ecaplay will repeat the
+playlist tracks until explicitly stopped (with double Ctrl-C).
+Playlist can be flushed with em(-f) and its contents listed
+with em(-l) option.
+
+If not otherwise specified, ecaplay will use the audio output device 
+specified in em(~/.ecasound/ecasoundrc) for playback. A different 
+output device can be selected with em(ECAPLAY_OUTPUT_DEVICE) shell 
+environment variable or with the em(-o:output_device) command-line
+option.
+ 
+Playback can be stopped at any time with Ctrl-C. If multiple
+files are played, first Ctrl-C will stop the current file and move
+on to play the next one. Issuing Ctrl-C twice (within one second), 
+will cause ecaplay to exit.
 
 startdit()
 dit(-d:debuglevel)
 Set libecasound debug level. See ecasound(1).
+
+dit(-f)
+Flush the playlist contents. See also 
+options em(-l, -p and -q).
 
 dit(-h)
 Print usage information and exit.
@@ -89,9 +111,25 @@ Print usage information and exit.
 dit(-k:number)
 Skip 'number' of files.
 
+dit(-l)
+List the current playlist contents to stdout. See also 
+options em(-f, -p and -q).
+
 dit(-o:output_device)
 Use 'output_device' instead of the default output device 
-(as specified in em(~/.ecasoundrc).
+(as specified in em(~/.ecasound/ecasoundrc)). Syntax is same
+as used by "-o" ecasound option (see ecasound(1) man page).
+This option overrides the em(ECAPLAY_OUTPUT_DEVICE) environment
+variable (more info below).
+
+dit(-p)
+Play tracks in the playlist (in looped mode). See also 
+options em(-f, -l and -q).
+
+dit(-q) 
+Queue new tracks to the playlist. All filenames given on
+the command-line will be added to the the playlist. See
+also options em(-f, -l and -p).
 
 enddit()
 
@@ -103,7 +141,7 @@ statistics. It accepts the following options:
 startdit()
 dit(input)
 The first option not starting with a '-' is interpreted 
-as input string. This can be a device or a filename. All formats
+as an input string. This can be a device or a filename. All formats
 supported by libecasound are accepted. Defaults to '/dev/dsp'.
 
 dit(output)
@@ -134,13 +172,21 @@ from "Ecasound User's Guide" (see ''http://www.eca.cx/ecasound
 manpagesection(ENVIRONMENT)
 
         em(ECASOUND)
-	Path to the ecasound executable. Affects most ecatools.
+	Path to the ecasound executable. Used by many ecatools.
+
+        em(ECAPLAY_OUTPUT_DEVICE)
+	Device ecaplay should use for audio output. Same syntax
+	as for ecaplay/ecasound "-o" option.
 
 manpagefiles()
 
 	em(~/.ecasound/ecasoundrc)
 	The default ecasound resource file. See ecasoundrc(5)
 	for details.
+
+	em(~/.ecasound/ecaplay_queue)
+	File used to store the ecaplay playlist (one track per
+	line with full path).
 
 manpageseealso()
 
@@ -149,4 +195,3 @@ manpageseealso()
 manpageauthor()
 
 	Kai Vehmanen, <email(kvehmanen -at- eca -dot- cx)>
-
