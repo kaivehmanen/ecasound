@@ -101,10 +101,10 @@ int main(int argc, char *argv[])
 
 void print_usage(void) {
   cerr << "****************************************************************************\n";
-  cerr << "* [1mecatools_play, v" << ecatools_play_version;
+  cerr << "* ecatools_play, v" << ecatools_play_version;
   cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
-  cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence[0m \n";
+  cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence \n";
   cerr << "****************************************************************************\n";
 
   cerr << "\nUSAGE: ecatools_play file1 [ file2, ... fileN ]\n\n";
