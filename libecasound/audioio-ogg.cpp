@@ -121,7 +121,7 @@ void OGG_VORBIS_INTERFACE::fork_ogg_input(void) {
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
     fd_rep = file_descriptor();
-    f1_rep = std::fdopen(fd_rep, "r");
+    f1_rep = fdopen(fd_rep, "r"); /* not part of <cstdio> */
     if (f1_rep == 0) finished_rep = true;
   }
   else
