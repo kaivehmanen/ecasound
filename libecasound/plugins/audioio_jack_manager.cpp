@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio_jack_manager.cpp: Manager for JACK client objects
-// Copyright (C) 2001-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2001-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -152,14 +152,7 @@ static void eca_jack_process_engine_iteration(jack_nframes_t nframes, void* arg)
 {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
 
-  // FIXME/17.05.2002:
-  //  - make cb_buffers to be at least 2*buffersize in size;
-  //    and make it a ring-buffer
-  //  - if 'nframes < buffersize', only copy nframes to 
-  //    inport cb_buffers
-  //  - update (17.02): not necessarily needed anymore; see 
-  //    discussions on jackit-devel
-  
+  /* this is guaranteed by libjack */
   DBC_CHECK(current->buffersize_rep == static_cast<long int>(nframes));
 
   if (current->engine_repp->status() != ECA_ENGINE::engine_status_finished) {
@@ -179,19 +172,10 @@ static void eca_jack_process_engine_iteration(jack_nframes_t nframes, void* arg)
     
     // DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine_iter_in");
   
-    // FIXME/17.05.2002:
-    //  - don't call engine_iteration() if there's 
-    //    less than buffersize of data in inport cb_buffers
-    //  - see above, not necessarily needed anymore
-    
     /* 2. execute one engine iteration */
     current->engine_repp->engine_iteration();
     
     // DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine_iter_out");
-    
-    // FIXME/17.05.2002:
-    //  - only copy nframes of data to the output buffers
-    //  - see above, not necessarily needed anymore
     
     /* 3. copy data from ecasound buffers to port output buffers */
     for(size_t n = 0; n < current->outports_rep.size(); n++) {

@@ -10,6 +10,10 @@ Details:
 - goals
     - ability to dynamically change engine sampling rate and buffering
     - primary aimed at supporting changes initiated by the JACK server
+- status
+    - update 29.01.2003: is this needed anymore now that libjack 
+      no longer required variable-nframes support from clients...
+      let's wait and see
 - work to be done
     - change the audioio-db system so that the double-buffer 
       can be read in blocks of != buffersize()
