@@ -30,7 +30,7 @@ detailed EIAM documentation.
 \section{Document history}
 \begin{itemize}
 \item 24.10.2002 - Added ``Notes Concerning Standalone ECI Implementations''
-                   section.
+                   section. Added compilation examples.
 \item 06.10.2002 - Added ``Application development'' section.
 \item 05.10.2002 - Changed the libecasoundc link path.
 \item 29.09.2002 - ``PHP'' section added.
@@ -205,11 +205,12 @@ STL vector is used for representing collections of objects
 
 \subsubsection{Usage}
 \begin{enumerate} 
-\item  \#include <eca-control-interface.h>
-\item  create an instance of the ECA\_CONTROL\_INTERFACE class
-        and use its member functions
-\item  link you app agains libecasound (-lecasoundX, where
-       X is the interface number)
+\item \#include <eca-control-interface.h>
+\item create an instance of the ECA\_CONTROL\_INTERFACE class
+      and use its member functions
+\item link you app agains libecasound (-lecasoundX, where
+      X is the interface number)
+\item compilation example: \emph{c++ -o ecidoc\_example ecidoc\_example.cpp `libecasound-config --cflags --libs`}
 \end{enumerate}
 
 \subsubsection{Example}
@@ -278,9 +279,10 @@ pointer (const char*) to the string at index \emph{n}.
 \subsubsection{Usage}
 
 \begin{enumerate}
-\item  \#include <ecasoundc.h>
-\item  use the eci\_* routines
-\item  link your app against libecasoundc (-lecasoundc)
+\item \#include <ecasoundc.h>
+\item use the eci\_* routines
+\item link your app against libecasoundc (-lecasoundc)
+\item compilation example: \emph{gcc -o ecidoc\_example ecidoc\_example.c `libecasoundc-config --cflags --libs`}
 \end{enumerate}
 
 \subsubsection{Example}

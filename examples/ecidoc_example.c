@@ -15,6 +15,11 @@
 #include <unistd.h>
 #include <ecasoundc.h>
 
+/* compile with: 
+ *
+ * gcc -o ecidoc_example ecidoc_example.c `libecasoundc-config --cflags --libs`
+ */
+
 int main(int argc, char *argv[])
 {
   double cutoff_inc = 500.0;

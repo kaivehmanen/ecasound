@@ -13,7 +13,12 @@
 
 #include <iostream>
 #include <unistd.h>
-#include <ecasound/eca-control-interface.h>
+#include <eca-control-interface.h>
+
+/* compile with: 
+ *
+ * c++ -o ecidoc_example ecidoc_example.cpp `libecasound-config --cflags --libs`
+ */
 
 int main(int argc, char *argv[])
 {
@@ -44,7 +49,7 @@ int main(int argc, char *argv[])
   e.command("stop");
   e.command("cs-disconnect");
   e.command("cop-status");
-  cerr << "Chain operator status: " << e.last_string() << endl;
+  std::cerr << "Chain operator status: " << e.last_string() << std::endl;
 
   return(0);
 }
