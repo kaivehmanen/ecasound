@@ -145,6 +145,7 @@ class ECA_IAMODE_PARSER {
     ec_ctrlp_get,      /* FIXME: not implemented */
     // --
     ec_int_cmd_list,
+    ec_int_output_mode_wellformed,
     ec_int_version_string,
     ec_int_version_lib_current,
     ec_int_version_lib_revision,

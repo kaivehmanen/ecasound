@@ -104,6 +104,7 @@ void ECA_IAMODE_PARSER::register_commands_misc(void)
   (*cmd_map_repp)["fs"] = ec_aio_status;
 
   (*cmd_map_repp)["int-cmd-list"] = ec_int_cmd_list;
+  (*cmd_map_repp)["int-output-mode-wellformed"] = ec_int_output_mode_wellformed;
   (*cmd_map_repp)["int-version-string"] = ec_int_version_string;
   (*cmd_map_repp)["int-version-lib-current"] = ec_int_version_lib_current;
   (*cmd_map_repp)["int-version-lib-revision"] = ec_int_version_lib_revision;

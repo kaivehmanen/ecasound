@@ -48,6 +48,9 @@ class ECA_LOGGER {
    *
    *   continuous     = debug info printed for during processing;
    *                    continuous high volume
+   *
+   *   eiam_return_values = return values for EIAM commands
+   *
    */
   typedef enum {
     disabled = 0,
@@ -58,7 +61,8 @@ class ECA_LOGGER {
     user_objects = 16,
     system_objects = 32,
     functions = 64,
-    continuous = 128
+    continuous = 128,
+    eiam_return_values = 256
   } Msg_level_t;
 
   /**

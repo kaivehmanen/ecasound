@@ -35,13 +35,13 @@
 #include <kvu_dbc.h>
 #include <kvu_numtostr.h>
 
-#include "eca-session.h"
 #include "eca-control.h"
 #include "eca-chainop.h"
 #include "eca-chainsetup.h"
 #include "eca-object-factory.h"
 #include "eca-object-map.h"
 #include "eca-preset-map.h"
+#include "eca-session.h"
 
 #include "generic-controller.h"
 #include "eca-chainop.h"
@@ -52,6 +52,7 @@
 #include "eca-version.h"
 #include "eca-error.h"
 #include "eca-logger.h"
+#include "eca-logger-wellformed.h"
 
 /**
  * Import namespaces
@@ -590,6 +591,7 @@ void ECA_CONTROL::action(int action_id)
   // Internal commands
   // ---
   case ec_int_cmd_list: { set_last_string_list(registered_commands_list()); break; }
+  case ec_int_output_mode_wellformed: { ECA_LOGGER::attach_logger(new ECA_LOGGER_WELLFORMED()); break; }
   case ec_int_version_string: { set_last_string(ecasound_library_version); break; }
   case ec_int_version_lib_current: { set_last_integer(ecasound_library_version_current); break; }
   case ec_int_version_lib_revision: { set_last_integer(ecasound_library_version_revision); break; }
@@ -658,14 +660,14 @@ void ECA_CONTROL::print_last_value(void)
     result = kvu_numtostr(last_float(), 3);
    
   if (result.size() > 0) {
-    ECA_LOG_MSG(ECA_LOGGER::info, result);
+    ECA_LOG_MSG(ECA_LOGGER::eiam_return_values, type + " " + result);
   }
 }
 
 void ECA_CONTROL::print_last_error(void)
 {
   if (last_error().size() > 0) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-control) ERROR: " + last_error());
+    ECA_LOG_MSG(ECA_LOGGER::eiam_return_values, "e (eca-control) ERROR: " + last_error());
   }
 }
 
