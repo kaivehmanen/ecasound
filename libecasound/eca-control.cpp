@@ -682,7 +682,7 @@ string ECA_CONTROL::last_value_to_string(void)
   else if (type == "s")
     result = last_string();
   else if (type == "S") {
-    result = kvu_vector_to_string(kvu_vector_search_and_replace(last_string_list(), '\'', ';'), ",");
+    result = kvu_vector_to_string(kvu_vector_search_and_replace(last_string_list(), ",", "\\,"), ",");
   }
   else if (type == "i")
     result = kvu_numtostr(last_integer());
