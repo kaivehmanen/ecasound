@@ -30,7 +30,7 @@ MIDI_IO_RAW::MIDI_IO_RAW(const std::string& name) { label("rawmidi"); device_nam
 MIDI_IO_RAW::~MIDI_IO_RAW(void) { if (is_open()) close(); }
 
 void MIDI_IO_RAW::open(void) { 
-  int flags;
+  int flags = 0;
 
   switch(io_mode()) {
   case io_read:
