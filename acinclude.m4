@@ -1,6 +1,6 @@
 dnl ---
 dnl acinclude.m4 for ecasound
-dnl last modified: 20030326-2
+dnl last modified: 20030807-4
 dnl ---
 
 ## ------------------------------------------------------------------------
@@ -37,21 +37,38 @@ old_INCLUDES=$INCLUDES
 CPPFLAGS="$CPPFLAGS $ECA_S_JACK_INCLUDES"
 LDFLAGS="$LDFLAGS $ECA_S_JACK_LIBS"
 INCLUDES="--host=a.out-i386-linux"
+
+AC_TRY_LINK(
+[ #include <jack/transport.h> ],
+[
+	jack_position_t t;
+	int *a = (void*)&jack_transport_query;
+	int *b = (void*)&jack_transport_start;
+	int *c = (void*)&jack_transport_stop;
+	t.frame = 0;
+	t.valid = 0;
+	return 0;
+],
+[ ECA_JACK_TRANSPORT_API="3" ],
+[ ECA_JACK_TRANSPORT_API="2" ]
+)
+
 AC_TRY_LINK(
 [ #include <jack/transport.h> ],
 [
 	jack_transport_info_t t;
-	t.frame = 0;
+	t.state = 0;
 	return 0;
 ],
-[ ECA_JACK_TRANSPORT_API="2" ],
-[ ECA_JACK_TRANSPORT_API="1" ]
+[ ECA_JACK_TRANSPORT_API="1" ],
+[ true ]
 )
+
 CPPFLAGS="$old_cppflags"
 LDFLAGS="$old_ldflags"
 INCLUDES="$old_INCLUDES"
 
-echo "Using JACK transport API: " ${ECA_JACK_TRANSPORT_API}
+echo "Using JACK transport API version:" ${ECA_JACK_TRANSPORT_API}
 AC_DEFINE_UNQUOTED(ECA_JACK_TRANSPORT_API, ${ECA_JACK_TRANSPORT_API})
 
 AC_SUBST(ECA_S_JACK_LIBS)
