@@ -44,6 +44,7 @@
 #include "eca-static-object-maps.h"
 #include "eca-object-factory.h"
 
+#include "eca-version.h"
 #include "eca-error.h"
 #include "eca-debug.h"
 
@@ -484,6 +485,15 @@ void ECA_CONTROL::action(int action_id) {
       print_general_status(); break; 
     }
   case ec_engine_status: { set_last_string(engine_status()); break; }
+
+  // ---
+  // Internal commands
+  // ---
+  case ec_int_cmd_list: { set_last_string_list(registered_commands_list()); break; }
+  case ec_int_version_string: { set_last_string(ecasound_library_version); break; }
+  case ec_int_version_lib_current: { set_last_integer(ecasound_library_version_current); break; }
+  case ec_int_version_lib_revision: { set_last_integer(ecasound_library_version_revision); break; }
+  case ec_int_version_lib_age: { set_last_integer(ecasound_library_version_age); break; }
 
   // ---
   // Dump commands

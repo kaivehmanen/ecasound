@@ -29,6 +29,17 @@
 
 map<string,int> ECA_IAMODE_PARSER::cmd_map_rep;
 
+vector<string> ECA_IAMODE_PARSER::registered_commands_list(void) {
+  vector<string> cmdlist;
+  const map<string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
+  map<string,int>::const_iterator p = map_ref.begin();
+  while (p != map_ref.end()) {
+    cmdlist.push_back(p->first);
+    ++p;
+  }
+  return(cmdlist);
+}
+
 void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["help"] = ec_help;
   cmd_map_rep["?"] = ec_help;
@@ -144,6 +155,12 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["getpos"] = ec_get_position;
   cmd_map_rep["get-position"] = ec_get_position;
   cmd_map_rep["get-length"] = ec_get_length;
+
+  cmd_map_rep["int-cmd-list"] = ec_int_cmd_list;
+  cmd_map_rep["int-version-string"] = ec_int_version_string;
+  cmd_map_rep["int-version-lib-current"] = ec_int_version_lib_current;
+  cmd_map_rep["int-version-lib-revision"] = ec_int_version_lib_revision;
+  cmd_map_rep["int-version-lib-age"] = ec_int_version_lib_age;
 
   cmd_map_rep["dump-target"] = ec_dump_target;
   cmd_map_rep["dump-status"] = ec_dump_status;
@@ -330,6 +347,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_object(int id) {
   return(false);
 
 }
+
 
 void show_controller_help(void) {
   MESSAGE_ITEM mitem; 

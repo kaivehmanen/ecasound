@@ -112,6 +112,12 @@ class ECA_IAMODE_PARSER {
     ec_ctrl_status,
     ec_ctrl_register,
     // --
+    ec_int_cmd_list,
+    ec_int_version_string,
+    ec_int_version_lib_current,
+    ec_int_version_lib_revision,
+    ec_int_version_lib_age,
+    // --
     ec_dump_target,
     ec_dump_status,
     ec_dump_position,
@@ -128,6 +134,7 @@ class ECA_IAMODE_PARSER {
  public:
 
   static const map<string,int>& registered_commands(void) { return(cmd_map_rep); }
+  static vector<string> registered_commands_list(void);
 
   bool action_requires_params(int id);
   bool action_requires_connected(int id);

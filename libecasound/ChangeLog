@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-03-20  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-iamode-parser.h (registered_commands_list): added
+	
 2001-03-06  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-audio-format.h (default_ecasound_audio_format): removed
