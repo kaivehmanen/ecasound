@@ -4,7 +4,7 @@
 
 ;; Author: Mario Lang <mlang@delysid.org>
 ;; Keywords: audio, ecasound, eci, comint, process, pcomplete
-;; Version: 0.65
+;; Version: 0.7.1
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -57,6 +57,14 @@
 ;; For programmatic use of the ECI API, have a look at `eci-init',
 ;; `eci-command' and in general the eci-* namespace.
 ;;
+;; Bugs:
+;;
+;; The function ecasound-copp-increase is used to allow the use of +/-
+;; on the copp-select button to change the value of the number.
+;; Strangely, if this function is used, the number field changes,
+;; but also does no longer be a field, i.e., it can no longer
+;; be edited.   Any ideas?
+;;
 ;; Todo:
 ;;
 ;; * Convince Kai to make NetECI look and behave exactly like ecasound -c.
@@ -81,6 +89,17 @@
 
 ;;; History:
 ;; 
+;; Version: 0.7.1
+;;
+;; * Created a slider widget.  It's not flawless, but it works!
+;;
+;; Version: 0.7
+;;
+;; * Rewrote ecasound-cop-edit completely.
+;; Now we are using our own widget types and all that
+;; funky stuff.  Added cop-select and copp-select buttons.
+;; Added +/- stepping functionality, but not as expected (see Bugs).
+;;
 ;; Version 0.65:
 ;;
 ;; * Wrote `eci-process-cop-status' and `eci-cop-status' on top of that.
@@ -1043,6 +1062,67 @@ If argument CHAINS is a list, its elements are concatenated with ','."
   (interactive "nValue for Chain operator parameter: ")
   (eci-command (format "copp-set %f" value buffer-or-process)))
 
+;;;; ECI Examples
+
+(defun eci-example ()
+  "Implements the example given in the ECI documentation."
+  (interactive)
+  (save-current-buffer
+    (set-buffer (eci-init))
+    (display-buffer (current-buffer))
+    (eci-cs-add "play_chainsetup")
+    (eci-c-add "1st_chain")
+    (call-interactively #'eci-ai-add)
+    (eci-ao-add "/dev/dsp")
+    (eci-cop-add "-efl:100")
+    (eci-cop-select 1) (eci-copp-select 1)
+    (eci-cs-connect)
+    (eci-command "start")
+    (sit-for 1)
+    (while (and (string= (eci-engine-status) "running")
+                (< (eci-get-position) 15))
+      (eci-copp-set (+ (eci-copp-get) 500))
+      (sit-for 1))
+    (eci-command "stop")
+    (eci-cs-disconnect)
+    (message (concat "Chain operator status: "
+                      (eci-command "cop-status")))))
+
+(defun eci-make-temp-file-name (suffix)
+  (concat (make-temp-name
+           (expand-file-name "emacs-eci" temporary-file-directory))
+          suffix))
+
+(defun ecasound-normalize (filename)
+  "Normalize a audio file using ECI."
+  (interactive "fFile to normalize: ")
+  (let ((tmpfile (eci-make-temp-file-name ".wav")))
+    (unwind-protect
+        (with-current-buffer (eci-init)
+          (display-buffer (current-buffer)) (sit-for 1)
+          (eci-cs-add "analyze") (eci-c-add "1")
+          (eci-ai-add filename) (eci-ao-add tmpfile)
+          (eci-cop-add "-ev")
+          (message "Analyzing sample data...")
+          (eci-cs-connect) (eci-run)
+          (eci-cop-select 1) (eci-copp-select 2)
+          (let ((gainfactor (eci-copp-get)))
+            (eci-cs-disconnect)
+            (if (<= gainfactor 1)
+                (message "File already normalized!")
+              (eci-cs-add "apply") (eci-c-add "1")
+              (eci-ai-add tmpfile) (eci-ao-add filename)
+              (eci-cop-add "-ea:100")
+              (eci-cop-select 1)
+              (eci-copp-select 1)
+              (eci-copp-set (* gainfactor 100))
+              (eci-cs-connect) (eci-run) (eci-cs-disconnect)
+              (message "Done"))))
+      (if (file-exists-p tmpfile)
+          (delete-file tmpfile)))))
+
+;;; Utility functions for converting strings to data-structures.
+
 (defun eci-process-cop-register (string)
   (let (result (cops (split-string string "\n")))
     (while cops
@@ -1131,106 +1211,245 @@ If argument CHAINS is a list, its elements are concatenated with ','."
     (setq args2 (nreverse args2))
     (eci-cop-add (concat arg (mapconcat #'identity args2 ",")))))
 
+;;; ChainOp Editor
+
+(defvar ecasound-cop-edit-mode-map
+  (let ((map (make-keymap)))
+    (set-keymap-parent map widget-keymap)
+    map))
+
 (define-derived-mode ecasound-cop-edit-mode fundamental-mode "COP-edit"
   "A major mode for editing ecasound chain operators.")
 
 (defun ecasound-cop-edit ()
-  "Edit the chain operator settings of the current session interactively."
+  "Edit the chain operator settings of the current session interactively.
+This is done using the ecasound-cop widget."
   (interactive)
   (let ((cb (current-buffer))
-        (cops (eci-cop-status)))
+        (chains (eci-cop-status)))
     (switch-to-buffer-other-window (generate-new-buffer "*cop-edit*"))
     (ecasound-cop-edit-mode)
-    (while cops
-      (let ((chain (car cops)))
-        (widget-insert (format "Chain %s:\n" (car chain)))
-        (let ((cop (cdr chain)))
-          (while cop
-            (let ((name (caar cop))
-                  (cop-num (nth 1 (car cop)))
-                  (args (cddar cop)))
-              (widget-insert (format "%d. %s:\n" cop-num name))
-              (while args
-                (let ((name (caar args))
-                      (num (nth 1 (car args)))
-                      (value (nth 2 (car args))))
-                  (widget-insert
-                   (format "\t%s: " name))
-                  (widget-create 'editable-field
-                                 :size 7
-                                 :action `(lambda (widget &rest ignore)
-                                            (eci-cop-select ,cop-num ,cb)
-                                            (eci-copp-select ,num ,cb)
-                                            (eci-copp-set
-                                             (string-to-number
-                                              (widget-value widget))
-                                             ,cb))
-                                 (number-to-string value))
-                  (widget-insert "\n")
-                  (setq args (cdr args)))))
-            (setq cop (cdr cop)))))
-      (setq cops (cdr cops)))
+    (mapc
+     (lambda (chain)
+       (widget-insert (format "Chain %s:\n" (car chain)))
+       (mapc
+        (lambda (cop)
+          (apply 'widget-create 'ecasound-cop :buffer cb cop))
+        (cdr chain)))
+     chains)
     (widget-setup)
     (goto-char (point-min))))
 
-;;;; ECI Examples
+(define-widget 'ecasound-cop 'default
+  "A Chain Operator.
+:children is a list of ecasound-copp widgets."
+  :convert-widget 'ecasound-cop-convert
+  :value-create 'ecasound-cop-value-create
+  :format "%i %t\n%v"
+  :format-handler 'ecasound-cop-format-handler)
 
-(defun eci-example ()
-  "Implements the example given in the ECI documentation."
-  (interactive)
-  (save-current-buffer
-    (set-buffer (eci-init))
-    (display-buffer (current-buffer))
-    (eci-cs-add "play_chainsetup")
-    (eci-c-add "1st_chain")
-    (call-interactively #'eci-ai-add)
-    (eci-ao-add "/dev/dsp")
-    (eci-cop-add "-efl:100")
-    (eci-cop-select 1) (eci-copp-select 1)
-    (eci-cs-connect)
-    (eci-command "start")
-    (sit-for 1)
-    (while (and (string= (eci-engine-status) "running")
-                (< (eci-get-position) 15))
-      (eci-copp-set (+ (eci-copp-get) 500))
-      (sit-for 1))
-    (eci-command "stop")
-    (eci-cs-disconnect)
-    (message (concat "Chain operator status: "
-                      (eci-command "cop-status")))))
+(defun ecasound-cop-convert (widget)
+  "Convert arguments passed to `widget-create' for this widget.
+The arguments should be of the form NAME NUM (COPP-ARGS) ..."
+  (let ((args (widget-get widget :args)))
+    (when args
+      (widget-put widget :tag (car args))
+      (widget-put widget :cop-number (nth 1 args))
+      (widget-put widget :args (cddr args))))
+  widget)
+  
+(defun ecasound-cop-value-create (widget)
+  "Insert the value of this widget into the buffer.
+This function is called if the %v escape appears.
+The \"value\" in this case is the list of chain operator parameters."
+  (widget-put
+   widget :children
+   (mapcar
+    (lambda (copp-arg)
+      (apply 'widget-create-child-and-convert
+             widget '(ecasound-copp) copp-arg))
+    (widget-get widget :args))))
 
-(defun eci-make-temp-file-name (suffix)
-  (concat (make-temp-name
-           (expand-file-name "emacs-eci" temporary-file-directory))
-          suffix))
+(defun ecasound-cop-format-handler (widget escape)
+  (cond
+   ((eq escape ?i)
+    (widget-put
+     widget :cop-select
+     (widget-create-child-value widget
+      '(ecasound-cop-select) (widget-get widget :cop-number))))))
 
-(defun ecasound-normalize (filename)
-  "Normalize a audio file using ECI."
-  (interactive "fFile to normalize: ")
-  (let ((tmpfile (eci-make-temp-file-name ".wav")))
-    (unwind-protect
-        (with-current-buffer (eci-init)
-          (display-buffer (current-buffer)) (sit-for 1)
-          (eci-cs-add "analyze") (eci-c-add "1")
-          (eci-ai-add filename) (eci-ao-add tmpfile)
-          (eci-cop-add "-ev")
-          (message "Analyzing sample data...")
-          (eci-cs-connect) (eci-run)
-          (eci-cop-select 1) (eci-copp-select 2)
-          (let ((gainfactor (eci-copp-get)))
-            (eci-cs-disconnect)
-            (if (<= gainfactor 1)
-                (message "File already normalized!")
-              (eci-cs-add "apply") (eci-c-add "1")
-              (eci-ai-add tmpfile) (eci-ao-add filename)
-              (eci-cop-add "-ea:100")
-              (eci-cop-select 1)
-              (eci-copp-select 1)
-              (eci-copp-set (* gainfactor 100))
-              (eci-cs-connect) (eci-run) (eci-cs-disconnect)
-              (message "Done"))))
-      (if (file-exists-p tmpfile)
-          (delete-file tmpfile)))))
+(define-widget 'ecasound-cop-select 'link
+  "Select this chain operator parameter."
+  :help-echo "RET to select."
+  :button-prefix ""
+  :button-suffix ""
+  :format "%[%v.%]"
+  :action 'ecasound-cop-select-action)
+
+(defun ecasound-cop-select-action (widget &rest ignore)
+  "Selects WIDGET in its associated ecasound buffer."
+  (let ((buffer (widget-get (widget-get widget :parent) :buffer)))
+    (eci-cop-select (widget-value widget) buffer)))
+
+;;;; A Chain Operator Parameter Widget.
+
+; This is used as a component of the cop widget.
+
+(define-widget 'ecasound-copp 'number
+  "A Chain operator parameter."
+  :action 'ecasound-copp-action
+  :convert-widget 'ecasound-copp-convert
+  :format "  %i %v (%t)\n  %s\n"
+  :format-handler 'ecasound-copp-format-handler
+  :size 10)
+
+(defun ecasound-copp-convert (widget)
+  "Convert args."
+  (let ((args (widget-get widget :args)))
+    (when args
+      (widget-put widget :tag (car args))
+      (widget-put widget :copp-number (nth 1 args))
+      (widget-put widget :value (nth 2 args))
+      (widget-put widget :args nil)))
+  widget)
+
+(defun ecasound-copp-format-handler (widget escape)
+  (cond
+   ((eq escape ?i)
+    (widget-put
+     widget
+     :copp-select
+     (widget-create-child-value
+      widget
+      '(ecasound-copp-select)
+      (widget-get widget :copp-number))))
+   ((eq escape ?s)
+    (widget-put
+     widget
+     :slider
+     (widget-create-child-value
+      widget
+      '(slider)
+      (string-to-number (widget-get widget :value)))))))
+
+(defun ecasound-copp-action (widget &rest ignore)
+  "Sets WIDGETs value in its associated ecasound buffer."
+  (let ((buffer (widget-get (widget-get widget :parent) :buffer)))
+    (if (widget-apply widget :match (widget-value widget))
+        (progn
+          (widget-apply (widget-get (widget-get widget :parent)
+                                    :cop-select) :action)
+          (widget-apply (widget-get widget :copp-select) :action)
+          (eci-copp-set (widget-value widget) buffer))
+      (message "Invalid"))))
+
+(defvar ecasound-copp-select-keymap
+  (let ((map (copy-keymap widget-keymap)))
+    (define-key map "+" 'ecasound-copp-increase)
+    (define-key map "-" 'ecasound-copp-decrease)
+    map)
+  "Keymap used inside an copp.")
+
+(defun ecasound-copp-increase (pos &optional event)
+  (interactive "@d")
+  ;; BUG, if we do this, the field is suddently no longer editable, why???
+  (let ((widget (widget-get (widget-at pos) :parent)))
+    (widget-value-set
+     widget
+     (+ (widget-value widget) 1))
+    (widget-apply widget :action)))
+
+(defun ecasound-copp-decrease (pos &optional event)
+  (interactive "@d")
+  (let ((widget (widget-get (widget-at pos) :parent)))
+    (widget-value-set
+     widget
+     (- (widget-value widget) 1))
+    (widget-apply widget :action)))
+
+(define-widget 'ecasound-copp-select 'link
+  "Select this chain operator parameter."
+  :help-echo "RET to select, +/- to set in steps."
+  :keymap ecasound-copp-select-keymap
+  :format "%[%v%]"
+  :action 'ecasound-copp-select-action)
+
+(defun ecasound-copp-select-action (widget &rest ignore)
+  "Selects WIDGET in its associated ecasound buffer."
+  (let ((buffer (widget-get (widget-get (widget-get widget :parent) :parent)
+                            :buffer)))
+    (eci-copp-select (widget-get widget :value) buffer)))
+
+(define-widget 'slider 'default
+  "A slider."
+  :action 'widget-slider-action
+  :button-prefix ""
+  :button-suffix ""
+  :format "(%[%v%])"
+  :keymap
+  (let ((map (copy-keymap widget-keymap)))
+    (define-key map "\C-m" 'widget-slider-press)
+    (define-key map "+" 'widget-slider-increase)
+    (define-key map "-" 'widget-slider-decrease)
+    map)
+  :value-create 'widget-slider-value-create
+  :value-delete 'ignore
+  :value-get 'widget-value-value-get
+  :size 70)
+  :value 0)
+
+(defun widget-slider-press (pos &optional event)
+  "Invoke slider at POS."
+  (interactive "@d")
+  (let ((button (get-char-property pos 'button)))
+    (if button
+        (progn
+          (widget-value-set button
+                            (- pos (overlay-start (widget-get button :button-overlay))))
+          (widget-apply-action button event))
+      (let ((command (lookup-key widget-global-map (this-command-keys))))
+        (when (commandp command)
+          (call-interactively command))))))
+
+(defun widget-slider-increase (pos &optional event)
+  "Increase slider at POS."
+  (interactive "@d")
+  (let ((button (get-char-property pos 'button)))
+    (if button
+        (progn
+          (widget-value-set button
+                            (+ (widget-value button) 1))
+          (widget-apply-action button event))
+      (let ((command (lookup-key widget-global-map (this-command-keys))))
+        (when (commandp command)
+          (call-interactively command))))))
+
+(defun widget-slider-decrease (pos &optional event)
+  "Decrease slider at POS."
+  (interactive "@d")
+  (let ((button (get-char-property pos 'button)))
+    (if button
+        (progn
+          (widget-value-set button
+                            (- (widget-value button) 1))
+          (widget-apply-action button event))
+      (let ((command (lookup-key widget-global-map (this-command-keys))))
+        (when (commandp command)
+          (call-interactively command))))))
+
+(defun widget-slider-action (widget &rest ignore)
+  "Set the current :parent value to :value."
+  (widget-value-set (widget-get widget :parent)
+                    (widget-value widget)))
+
+(defun widget-slider-value-create (widget)
+  "Create a sliders value."
+  (let ((size (widget-get widget :size))
+        (value (string-to-int (format "%.0f" (widget-get widget :value))))
+        (from (point)))
+    (insert-char ?\  value)
+    (insert-char ?\| 1)
+    (insert-char ?\  (- size value 1))))
 
 .
 ;;; Ecasound .ewf major mode
