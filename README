@@ -189,6 +189,7 @@ Bowman, Brad - Perl ECI binding, bug hunting. [bowman]
 Campbell, Ross - Tips concerning Solaris. [rcampbel]
 Carmack, Michael - Support for devfs /dev/sound/dsp devices [karmak]
 Chappell, Jesse - Bug fixes. [jesse]
+Claassen, Julien - Ideas for interface development, marketing. :) [julien]
 Coker, Rob - Pulse gate (-eemp) code. [rcs]
 Darilek, Nolan - Ogg vorbis fixes. [nolan_d]
 Dye, Rob - OSS compilation fixes. [rob]
@@ -215,7 +216,6 @@ Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!
 Poelstra, Remco - ECI C API bug hunting. [rjpoelstra]
 Polton, Richard - A 250k gcc3.x related patch. :) [rpolton]
 Poulton, Ron - Helped to track down the mysterious chain-bug. [thok]
-Wróblewski, Artur - PLD-Linux RPM-specfile, readline and destdir patches. [wrobell]
 Sassmannshausen, Ruediger - Mp3 filename parsing fixes. [rsassman]
 Smith, Richard A. - Helped in solving the "gcc 2.95" bug.
 Sousa, Rui - OSS bug fixes.
@@ -224,6 +224,7 @@ Tiedemann, Eric S. - Wrote the eci.py interface. [est]
 Tkachenko, Vadim - Autoconf magic. :)
 Yee-king, Matt - Helped debugging ppc big-endian troubles. [yeeking]
 Westbrook, Tim - Autoconf 2.5x fixes. [iondiode]
+Wróblewski, Artur - PLD-Linux RPM-specfile, readline and destdir patches. [wrobell]
 
 all LAD members - Always a great source of inspiration!
 www.niccx.com - For eca.cx, ecasound.cx and ecawave.cx domains.
