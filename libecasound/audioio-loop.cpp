@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audioio-loop.cpp: Audio object that routes data between reads and writes
-// Copyright (C) 2000,2001 Kai Vehmanen
+// Copyright (C) 2000-2001,2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,12 +61,12 @@ LOOP_DEVICE* LOOP_DEVICE::clone(void) const
   for(int n = 0; n < number_of_params(); n++) {
     target->set_parameter(n + 1, get_parameter(n + 1));
   }
-  return(target);
+  return target;
 }
 
 bool LOOP_DEVICE::finished(void) const
 {
-  return(finished_rep);
+  return finished_rep;
 }
 
 void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer)
@@ -107,7 +110,7 @@ void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer)
 
     if (writes_rep > registered_outputs_rep) {
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		    "(audioio-loop) Warning! Multiple writes without reads!");
+		  "Warning! Multiple writes without reads!");
     }
   }
   /* empty 'buffer' */
@@ -132,13 +135,14 @@ void LOOP_DEVICE::set_parameter(int param,
   }
 }
 
-string LOOP_DEVICE::get_parameter(int param) const {
+string LOOP_DEVICE::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(label());
+    return label();
 
   case 2: 
-    return(kvu_numtostr(id_rep));
+    return kvu_numtostr(id_rep);
   }
-  return("");
+  return "";
 }

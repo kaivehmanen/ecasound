@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audiofx.cpp: Generel effect processing routines.
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,16 +52,16 @@ void EFFECT_BASE::init(SAMPLE_BUFFER* sbuf)
 
 int EFFECT_BASE::channels(void) const
 { 
-  return(channels_rep);
+  return channels_rep;
 }
 
 void EFFECT_BASE::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_rate)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		"(audiofx) Setting samplerate to " +
-		kvu_numtostr(new_rate) + " for object " +
-		name() + ". Old value " +
-		kvu_numtostr(samples_per_second()) + ".");
+	      "Setting samplerate to " +
+	      kvu_numtostr(new_rate) + " for object " +
+	      name() + ". Old value " +
+	      kvu_numtostr(samples_per_second()) + ".");
 
   if (samples_per_second() != new_rate) {
     std::vector<parameter_t> old_values (number_of_params());
