@@ -105,6 +105,10 @@ void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf) {
   DBC_REQUIRE(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
   // --------
 
+  if (sbuf->sample_rate() != samples_per_second()) {
+    /* FIXME: resample_init_memory() may end up allocating memory! */
+    sbuf->resample_init_memory(samples_per_second(), sbuf->sample_rate());
+  }
   if (interleaved_channels() == true) {
     sbuf->copy_to_buffer(iobuf_uchar_repp,
 			 read_samples(iobuf_uchar_repp, buffersize_rep),
@@ -130,6 +134,10 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   if (buffersize_sig_rep != sbuf->length_in_samples() * sbuf->sample_rate()) {
     //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) buffersize() doesn't match - correcting");
     buffersize(sbuf->length_in_samples(), sbuf->sample_rate());
+  }
+  if (sbuf->sample_rate() != samples_per_second()) {
+    /* FIXME: resample_init_memory() may end up allocating memory! */
+    sbuf->resample_init_memory(sbuf->sample_rate(), samples_per_second());
   }
   if (interleaved_channels() == true) {
     sbuf->copy_from_buffer(iobuf_uchar_repp,

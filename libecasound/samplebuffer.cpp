@@ -1081,25 +1081,54 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
   if (srate != sample_rate_rep) resample_from(srate);
 }
 
-void SAMPLE_BUFFER::resample_nofilter(buf_size_t from, 
-				      buf_size_t to) {
-  double step = (double)to / from;
-  buf_size_t old_buffer_size = buffersize_rep;
-  buffersize_rep = static_cast<buf_size_t>(step * buffersize_rep);
-
-  DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_no_f from " << from << " to " << to << "." std::endl); 
+/**
+ * Prepares sample buffer object for resampling 
+ * operations with params 'from_srate' and 
+ * 'to_srate'. This functions is meant for 
+ * doing memory allocations and other similar 
+ * operations which cannot be performed 
+ * with realtime guarantees.
+ */
+void SAMPLE_BUFFER::resample_init_memory(srate_size_t from_srate,
+					 srate_size_t to_srate) {
+  double step = static_cast<double>(to_srate) / from_srate;
+  buf_size_t new_buffer_size = static_cast<buf_size_t>(step * buffersize_rep);
 
   if (impl_repp->old_buffer_repp == 0) 
     impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep * sizeof(sample_t)];
 
   for(int c = 0; c < channel_count_rep; c++) {
-    memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));
 
-    if (buffersize_rep > reserved_samples_rep) {
-      reserved_samples_rep = buffersize_rep;
+    if (new_buffer_size > reserved_samples_rep) {
+      reserved_samples_rep = new_buffer_size;
       delete[] buffer[c];
       buffer[c] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
     }
+  }
+
+  impl_repp->resample_memory_rep.resize(channel_count_rep, SAMPLE_SPECS::silent_value);
+}
+
+/**
+ * Resamples samplebuffer contents.
+ *
+ * Note! 'resample_init_memory()' must be called before 
+ *       before calling this function.
+ */
+void SAMPLE_BUFFER::resample_nofilter(srate_size_t from, 
+				      srate_size_t to) {
+  double step = static_cast<double>(to) / from;
+  buf_size_t old_buffer_size = buffersize_rep;
+  buffersize_rep = static_cast<buf_size_t>(step * buffersize_rep);
+
+  DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_no_f from " << from << " to " << to << "." std::endl); 
+
+  DBC_CHECK(impl_repp->old_buffer_repp != 0);
+
+  for(int c = 0; c < channel_count_rep; c++) {
+    memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));
+
+    DBC_CHECK(buffersize_rep <= reserved_samples_rep);
     
     double counter = 0.0;
     buf_size_t new_buffer_index = 0;
@@ -1131,26 +1160,27 @@ void SAMPLE_BUFFER::resample_nofilter(buf_size_t from,
   }
 }
 
-void SAMPLE_BUFFER::resample_with_memory(buf_size_t from, 
-					 buf_size_t to) {
+/**
+ * Resamples samplebuffer contents.
+ *
+ * Note! 'resample_init_memory()' must be called before 
+ *       before calling this function.
+ */
+void SAMPLE_BUFFER::resample_with_memory(srate_size_t from, 
+					 srate_size_t to) {
   double step = (double)to / from;
   buf_size_t old_buffer_size = buffersize_rep;
   buffersize_rep = static_cast<buf_size_t>(step * buffersize_rep);
-  impl_repp->resample_memory_rep.resize(channel_count_rep, SAMPLE_SPECS::silent_value);
 
+  DBC_CHECK(impl_repp->old_buffer_repp != 0);
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_w_m from " << from << " to " << to << "." std::endl); 
-
-  if (impl_repp->old_buffer_repp == 0) 
-    impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep * sizeof(sample_t)];
+  /* FIXME: resize() may end up allocating memory! */
+  impl_repp->resample_memory_rep.resize(channel_count_rep);
 
   for(int c = 0; c < channel_count_rep; c++) {
     memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));
 
-    if (buffersize_rep > reserved_samples_rep) {
-      reserved_samples_rep = buffersize_rep;
-      delete[] buffer[c];
-      buffer[c] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
-    }
+    DBC_CHECK(buffersize_rep <= reserved_samples_rep);
     
     double counter = 0.0;
     buf_size_t new_buffer_index = 0;

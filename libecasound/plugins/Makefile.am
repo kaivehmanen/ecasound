@@ -20,12 +20,6 @@ if COMPILE_AF
 af_libs = -laudiofile
 endif
 
-if KVUTILS_INSTALLED
-kvutils_libs =
-else
-kvutils_libs = -L$(top_srcdir)/kvutils/.libs -lkvutils
-endif
-
 INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils $(arts_cflags)
 libdir = ${exec_prefix}/lib/ecasound-plugins
 
@@ -67,14 +61,14 @@ libaudioio_alsa3_la_SOURCES		= audioio_alsa3.cpp audioio_alsa3_hw.cpp
 libaudioio_alsa3_pcm_la_SOURCES		= audioio_alsa3.cpp audioio_alsa3_pcm.cpp
 libaudioio_arts_la_SOURCES	        = audioio_arts.cpp
 
-libaudioio_af_la_LIBADD	     		= $(af_libs)  $(kvutils_libs)
-libaudioio_alsa_la_LIBADD	     	= $(alsa_libs) $(kvutils_libs)
-libaudioio_alsalb_la_LIBADD	     	= $(alsa_libs) $(kvutils_libs)
-libaudioio_alsa2_la_LIBADD     		= $(alsa_libs) $(kvutils_libs)
-libaudioio_alsa2_plugin_la_LIBADD 	= $(alsa_libs) $(kvutils_libs)
-libaudioio_alsa3_la_LIBADD		= $(alsa_libs) $(kvutils_libs)
-libaudioio_alsa3_pcm_la_LIBADD		= $(alsa_libs) $(kvutils_libs)
-libaudioio_arts_la_LIBADD		= $(kvutils_libs)
+libaudioio_af_la_LIBADD	     		= $(af_libs)
+libaudioio_alsa_la_LIBADD	     	= $(alsa_libs)
+libaudioio_alsalb_la_LIBADD	     	= $(alsa_libs)
+libaudioio_alsa2_la_LIBADD     		= $(alsa_libs)
+libaudioio_alsa2_plugin_la_LIBADD 	= $(alsa_libs)
+libaudioio_alsa3_la_LIBADD		= $(alsa_libs)
+libaudioio_alsa3_pcm_la_LIBADD		= $(alsa_libs)
+libaudioio_arts_la_LIBADD		= 
 
 libaudioio_af_la_LDFLAGS	     	= -avoid-version -export-dynamic
 libaudioio_alsa_la_LDFLAGS	     	= -avoid-version -export-dynamic

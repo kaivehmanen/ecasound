@@ -965,6 +965,7 @@ void ECA_ENGINE::inputs_to_chains(bool skip_realtime_inputs) {
 	  break;
 	}
 	else {
+	  /* FIXME: operator=() may end up allocating memory! */
 	  cslots_rep[c].operator=(mixslot_rep);
 	}
       }
@@ -983,6 +984,7 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
 
     int count = 0;
 
+    /* FIXME: number_of_channels() may end up allocating memory! */
     mixslot_rep.number_of_channels((*outputs_repp)[audioslot_sizet]->channels());
     
     for(unsigned int n = 0; n != chains_repp->size(); n++) {

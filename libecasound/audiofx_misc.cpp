@@ -20,6 +20,7 @@
 #include <iostream>
 #include <cmath>
 
+#include <kvutils/dbc.h>
 #include <kvutils/kvu_numtostr.h>
 
 #include "samplebuffer_iterators.h"
@@ -92,8 +93,15 @@ void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_t va
       ecadebug->msg(ECA_DEBUG::user_objects, "(audiofx_misc) WARNING! Shift-% must be greater that 0! Using the default 100%.");
       pmod_rep = 100.0;
     }
-    else
+    else {
       pmod_rep = value;
+    }
+    if (sbuf_repp != 0) {
+      target_rate_rep = static_cast<long int>(sbuf_repp->sample_rate() * 100.0 / pmod_rep);
+    }
+    else {
+      target_rate_rep = 0;
+    }
     break;
   }
 }
@@ -125,6 +133,7 @@ void EFFECT_PITCH_SHIFT::parameter_description(int param, struct PARAM_DESCRIPTI
 void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample) { 
   sbuf_repp = insample;
   target_rate_rep = static_cast<long int>(sbuf_repp->sample_rate() * 100.0 / pmod_rep);
+  sbuf_repp->resample_init_memory(sbuf_repp->sample_rate(), target_rate_rep);
   ecadebug->msg(ECA_DEBUG::user_objects, "(audiofx) resampling from " +
 		                         kvu_numtostr(sbuf_repp->sample_rate()) + 
 		                         " to " + 
@@ -132,12 +141,11 @@ void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample) {
 }
 
 void EFFECT_PITCH_SHIFT::process(void) { 
-  target_rate_rep = static_cast<long int>(sbuf_repp->sample_rate() * 100.0 / pmod_rep);
   sbuf_repp->resample_with_memory(sbuf_repp->sample_rate(), target_rate_rep); 
 }
 
 long int EFFECT_PITCH_SHIFT::output_samples(long int i_samples) {
-  assert(sbuf_repp != 0);
+  DBC_CHECK(sbuf_repp != 0);
   return(static_cast<long int>(static_cast<double>(target_rate_rep) /
 			       sbuf_repp->sample_rate() *
 			       i_samples));
@@ -181,5 +189,5 @@ void EFFECT_AUDIO_STAMP::init(SAMPLE_BUFFER *insample) {
 
 void EFFECT_AUDIO_STAMP::process(void) {
   store(sbuf_repp);
-//    cerr << "Storing audio stamp with id " << id() << "." << endl;
+  // std::cerr << "Storing audio stamp with id " << id() << "." << std::endl;
 }

@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-12-08  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+	
+	* samplebuffer.h (resample_init_memory): added
+	
 2001-12-06  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-resources.h (all): dropped inheritance of RESOURCE_FILE

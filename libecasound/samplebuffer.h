@@ -110,6 +110,7 @@ class SAMPLE_BUFFER {
 
  public:
 
+  void resample_init_memory(srate_size_t from_srate, srate_size_t to_srate);
   void resample_extfilter(srate_size_t from_srate, srate_size_t to_srate);
   void resample_simplefilter(srate_size_t from_srate, srate_size_t to_srate);
   void resample_nofilter(srate_size_t from_srate, srate_size_t to_srate);
