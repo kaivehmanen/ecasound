@@ -3,6 +3,7 @@ Status: OPEN
 
 (edi-40): Update to error and warning reporting mechanisms.
          - submitted: kaiv, 13.05.2004
+	 - last updated: kiav, 12.11.2004
 
 ------------------------------------------------------------------------
 Details:
@@ -22,9 +23,23 @@ Details:
 - todo-list
     - return explanation on why chainsetup is not considered to be valid
         - ECA_CONTROL::check_action_preconditions() (case 5)
-	- ECA_CONTROL::action() -> cs_connect
+	   -> these are now reasonably good [12/2004]
+	- ECA_CONTROL::action() -> cs_connect [done, 12/2004]
 	- ECA_CONTROL::action() -> reconnect after case-switch
+	   -> these are now reasonably good [12/2004]
 	- ECA_CONTROL::chainsetup_details_to_string()
     - ...
+
+- done items list
+    - added explanations to engine run errors [12/2004]
+    - print more detailed explanation why a chainsetup
+      cannot be connected [12/2004]
+
+- detected error scenerios:
+    - warning: some inputs and/or outputs are not connected 
+      to any chain (ecasound -i foo.wav -i foo.bar -o rtnull) -> can
+      be connected but result is probably not what the user expected
+    - error: some chain is missing either an input or output -> cannot
+      be connected (ecasound -a:1 -i foo.wav -a:2 -i bar.wav -o rtnull)
 
 ------------------------------------------------------------------------
