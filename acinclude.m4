@@ -1,6 +1,6 @@
 dnl ---
 dnl acinclude.m4 for ecasound
-dnl last modified: 20041105-9
+dnl last modified: 20050313-11
 dnl ---
 
 ## ------------------------------------------------------------------------
@@ -10,7 +10,7 @@ dnl ---
 ##          ECA_COMPILE_JACK, ECA_JACK_TRANSPORT_API
 ## ------------------------------------------------------------------------
 
-AC_DEFUN(AC_CHECK_JACK,
+AC_DEFUN([AC_CHECK_JACK],
 [
 AC_CHECK_HEADER(jack/jack.h,jack_support=yes,jack_support=no)
 AC_ARG_WITH(jack,
@@ -26,7 +26,7 @@ AC_ARG_ENABLE(jack,
 AM_CONDITIONAL(ECA_AM_COMPILE_JACK, test x$jack_support = xyes)
 
 if test x$jack_support = xyes; then
-    AC_DEFINE(ECA_COMPILE_JACK)
+    AC_DEFINE([ECA_COMPILE_JACK], 1, [enable JACK support])
     ECA_S_JACK_LIBS="${ECA_S_JACK_LIBS} -ljack"
     case "$host" in
 	*darwin*)
@@ -75,7 +75,7 @@ LDFLAGS="$old_ldflags"
 INCLUDES="$old_INCLUDES"
 
 echo "Using JACK transport API version:" ${ECA_JACK_TRANSPORT_API}
-AC_DEFINE_UNQUOTED(ECA_JACK_TRANSPORT_API, ${ECA_JACK_TRANSPORT_API})
+AC_DEFINE_UNQUOTED([ECA_JACK_TRANSPORT_API], ${ECA_JACK_TRANSPORT_API}, [version of JACK transport API to use])
 
 AC_SUBST(ECA_S_JACK_LIBS)
 AC_SUBST(ECA_S_JACK_INCLUDES)
@@ -91,7 +91,7 @@ AC_SUBST(ECA_S_JACK_INCLUDES)
 ## ------------------------------------------------------------------------
 ##
 
-AC_DEFUN(AC_CHECK_LARGEFILE,
+AC_DEFUN([AC_CHECK_LARGEFILE],
 [
 AC_MSG_CHECKING(for largefile support (>2GB files))
 AC_ARG_WITH(largefile,
@@ -121,7 +121,7 @@ fi
 ## defines: ECA_USE_CXX_STD_NAMESPACE
 ## ------------------------------------------------------------------------
 ##
-AC_DEFUN(AC_CHECK_CXX_NAMESPACE_SUPPORT,
+AC_DEFUN([AC_CHECK_CXX_NAMESPACE_SUPPORT],
 [
 AC_MSG_CHECKING(if C++ compiler supports namespaces)
 AC_LANG_CPLUSPLUS
@@ -143,7 +143,7 @@ int main(void)
 ],
 [ 	
 	AC_MSG_RESULT(yes.)
-	AC_DEFINE(ECA_USE_CXX_STD_NAMESPACE)
+	AC_DEFINE([ECA_USE_CXX_STD_NAMESPACE], 1, [use C++ std namespace])
 ],
 [
 	AC_MSG_RESULT(no.)
@@ -163,7 +163,7 @@ CXXFLAGS=$old_cxx_flags
 ## version: 1
 ## ------------------------------------------------------------------------
 ##
-AC_DEFUN(AC_FIND_FILE,
+AC_DEFUN([AC_FIND_FILE],
 [
 $3=NO
 for i in $2;
