@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // libecasound_tester.cpp: Runs all tests registered to ECA_TEST_REPOSITORY
-// Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2002-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,9 @@
 #include <iostream>
 #include <string>
 
+#include <signal.h>    /* POSIX: various signal functions */
+#include <unistd.h>    /* POSIX: sleep() */
+
 #include "eca-logger.h"
 #include "eca-test-repository.h"
 
@@ -36,6 +39,16 @@ int main(int argc, char *argv[]) {
   // ECA_LOGGER::instance().set_log_level_bitmask(63);
 
   ECA_TEST_REPOSITORY& repo = ECA_TEST_REPOSITORY::instance();
+
+#ifdef __FreeBSD__
+  {
+    /* on FreeBSD, SIGFPEs are not ignored by default */
+    struct sigaction blockaction;
+    blockaction.sa_flags = 0;
+    blockaction.sa_handler = SIG_IGN;   
+    sigaction(SIGFPE, &blockaction, 0);
+  }
+#endif
 
   repo.run();
 

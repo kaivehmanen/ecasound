@@ -451,6 +451,11 @@ void ecasound_setup_signals(struct ecasound_state* state)
   sigaction(SIGPIPE, &blockaction, 0);
   sigaction(SIGQUIT, &blockaction, 0);
 
+#ifdef __FreeBSD__
+  blockaction.sa_handler = SIG_IGN;
+  sigaction(SIGFPE, &blockaction, 0);
+#endif
+
   int res = pthread_create(&watchdog, 
 			   NULL, 
 			   ecasound_watchdog_thread, 
