@@ -16,10 +16,11 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ??102002 (v2.2.0-pre4)
-	- added: eiam - command 'cop-descriptions',
+	- added: eiam - commands 'cop-descriptions',
 		 'ctrl-descriptions', 'ladspa-descriptions' and 
 		 'preset-descriptions'; see ecasound-iam(1) man
 		 page for details
+	- added: eiam - 'ao-add-default' command
 	- changed: libecasoundc now LGPL licensed
 	- removed: eiam - all mentions of map commands from the 
 		   man page; these were never implemented

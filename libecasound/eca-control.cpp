@@ -484,6 +484,7 @@ void ECA_CONTROL::action(int action_id)
     // Audio output objects
     // ---
   case ec_ao_add: { if (action_args_rep.size() == 0) add_default_output(); else add_audio_output(action_args_rep[0]); break; }
+  case ec_ao_add_default: { add_default_output(); break; }
   case ec_ao_remove: { remove_audio_output(); break; }
   case ec_ao_list: { set_last_string_list(audio_output_names()); break; }
   case ec_ao_select: { select_audio_output(action_args_rep[0]); break; }

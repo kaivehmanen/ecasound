@@ -211,6 +211,7 @@ void ECA_IAMODE_PARSER::register_commands_ai(void) {
 
 void ECA_IAMODE_PARSER::register_commands_ao(void) {
   (*cmd_map_repp)["ao-add"] = ec_ao_add;
+  (*cmd_map_repp)["ao-add-default"] = ec_ao_add_default;
   (*cmd_map_repp)["ao-list"] = ec_ao_list;
   (*cmd_map_repp)["ao-select"] = ec_ao_select;
   (*cmd_map_repp)["ao-index-select"] = ec_ao_index_select;
@@ -421,6 +422,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_ai_wave_edit:
 
   case ec_ao_add:
+  case ec_ao_add_default:
   case ec_ao_select:
   case ec_ao_selected:
   case ec_ao_index_select:
@@ -486,6 +488,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
   case ec_ai_wave_edit:
 
   case ec_ao_add:
+  case ec_ao_add_default:
   case ec_ao_remove:
   case ec_ao_attach:
   case ec_ao_forward:

@@ -85,6 +85,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_ai_wave_edit,
     // --
     ec_ao_add,
+    ec_ao_add_default,
     ec_ao_remove,
     ec_ao_list,
     ec_ao_select,
