@@ -30,8 +30,8 @@
 #include "audioio_jack.h"
 #include "audioio_jack_manager.h"
 
-static const char* audio_io_keyword_const = "jack";
-static const char* audio_io_keyword_regex_const = "^jack$";
+static const char* audio_io_keyword_const = "jack_generic";
+static const char* audio_io_keyword_regex_const = "(^jack_alsa$)|(^jack_mono$)|(^jack_multi$)|(^jack_generic$)";
 
 AUDIO_IO* audio_io_descriptor(void) { return(new AUDIO_IO_JACK()); }
 const char* audio_io_keyword(void){return(audio_io_keyword_const); }
@@ -70,9 +70,34 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_f32_le);
   toggle_interleaved_channels(false);
 
+  if (label() == "jack_mono") {
+   set_channels(1);
+  }
+
   if (jackmgr_rep != 0) {
     jackmgr_rep->open(myid_rep);
     jackmgr_rep->register_jack_ports(myid_rep, channels(), jackname_rep);
+
+    if (label() != "jack_generic") {
+      if (label() == "jack_alsa") {
+	for(int n = 0; n < channels(); n++) {
+	  if (io_mode() == AUDIO_IO::io_read) {
+	    jackmgr_rep->auto_connect_jack_port(myid_rep, n + 1, "alsa:in_" + kvu_numtostr(n + 1));
+	  }
+	  else {
+	    jackmgr_rep->auto_connect_jack_port(myid_rep, n + 1, "alsa:out_" + kvu_numtostr(n + 1));
+	  }
+	}
+      }
+      else if (label() == "jack_multi") {
+	for(int n = 0; n < channels(); n++) {
+	  jackmgr_rep->auto_connect_jack_port(myid_rep, n + 1, deststring_rep + "_" + kvu_numtostr(n + 1));
+	}
+      }
+      else if (label() == "jack_mono") {
+	jackmgr_rep->auto_connect_jack_port(myid_rep, 1, deststring_rep);
+      }
+    }
   }
 
   toggle_open_state(true);
@@ -141,11 +166,23 @@ SAMPLE_SPECS::sample_pos_t AUDIO_IO_JACK::position_in_samples(void) const {
   return(curpos_rep);
 }
 
+std::string AUDIO_IO_JACK::parameter_names(void) const { 
+  if (label() == "jack_alsa")
+    return("label,portgroup");
+  if (label() == "jack_multi")
+    return("label,portgroup,client:destgroup");
+  if (label() == "jack_mono")
+    return("label,portgroup,client:destport");
+
+  return("label,portgroup");
+}
+
 void AUDIO_IO_JACK::set_parameter(int param, std::string value) {
   switch(param) 
     {
     case 1: { label(value); break; }
     case 2: { jackname_rep = value; break; }
+    case 3: { deststring_rep = value; break; }
     }
 }
 
@@ -154,6 +191,7 @@ std::string AUDIO_IO_JACK::get_parameter(int param) const {
     {
     case 1: { return(label()); }
     case 2: { return(jackname_rep); }
+    case 3: { return(deststring_rep); }
     }  
   return("");
 }

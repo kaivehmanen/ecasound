@@ -20,7 +20,7 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
 
   virtual std::string name(void) const { return("JACK interface"); }
   virtual std::string description(void) const { return(name()); }
-  virtual std::string parameter_names(void) const { return("label,jackname"); }
+  virtual std::string parameter_names(void) const;
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
   virtual bool locked_audio_format(void) const { return(true); }
@@ -52,11 +52,11 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
 
  private:
 
-
   AUDIO_IO_JACK_MANAGER* jackmgr_rep;
   int myid_rep;
 
   std::string jackname_rep;
+  std::string deststring_rep;
   SAMPLE_SPECS::sample_pos_t curpos_rep;
 
  private:

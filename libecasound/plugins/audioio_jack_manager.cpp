@@ -47,9 +47,9 @@ static int eca_jack_process(nframes_t nframes, void *arg) {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
   if (current->active_rep == true) {
     DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "process1 entry --> ");
-    for(size_t n = 0; n < current->in_ports_rep.size(); n++) {
-      sample_t* in_cb_buffer = static_cast<sample_t*>(jack_port_get_buffer(current->in_ports_rep[n], nframes));
-      memcpy(current->in_cb_buffers_rep[n], in_cb_buffer, current->cb_nframes_rep * sizeof(sample_t));
+    for(size_t n = 0; n < current->inports_rep.size(); n++) {
+      sample_t* in_cb_buffer = static_cast<sample_t*>(jack_port_get_buffer(current->inports_rep[n].jackport, nframes));
+      memcpy(current->inports_rep[n].cb_buffer, in_cb_buffer, current->cb_nframes_rep * sizeof(sample_t));
     }
     current->cb_nframes_rep = static_cast<long int>(nframes);
     DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "process2");
@@ -61,10 +61,10 @@ static int eca_jack_process(nframes_t nframes, void *arg) {
     }
     else {
       DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "process3 last node -- ");
-      for(size_t n = 0; n < current->out_ports_rep.size(); n++) {
+      for(size_t n = 0; n < current->outports_rep.size(); n++) {
 	DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "process3.6");
-	sample_t* out_cb_buffer = static_cast<sample_t*>(jack_port_get_buffer(current->out_ports_rep[n], nframes));
-	memcpy(out_cb_buffer, current->out_cb_buffers_rep[n], current->cb_nframes_rep * sizeof(sample_t));
+	sample_t* out_cb_buffer = static_cast<sample_t*>(jack_port_get_buffer(current->outports_rep[n].jackport, nframes));
+	memcpy(out_cb_buffer, current->outports_rep[n].cb_buffer, current->cb_nframes_rep * sizeof(sample_t));
       }
     }
     DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "process4 exit <--");
@@ -155,17 +155,17 @@ AUDIO_IO_JACK_MANAGER::~AUDIO_IO_JACK_MANAGER(void)
     ++p;
   }
 
-  std::vector<sample_t*>::iterator q = in_cb_buffers_rep.begin();
-  while(q != in_cb_buffers_rep.end()) {
-    delete[] *q;
-    *q = 0;
+  std::vector<jack_port_data_t>::iterator q = inports_rep.begin();
+  while(q != inports_rep.end()) {
+    delete[] q->cb_buffer;
+    q->cb_buffer = 0;
     ++q;
   }
 
-  std::vector<sample_t*>::iterator r = out_cb_buffers_rep.begin();
-  while(r != out_cb_buffers_rep.end()) {
-    delete[] *r;
-    *r = 0;
+  std::vector<jack_port_data_t>::iterator r = outports_rep.begin();
+  while(r != outports_rep.end()) {
+    delete[] r->cb_buffer;
+    r->cb_buffer = 0;
     ++r;
   }
 }
@@ -301,13 +301,14 @@ void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port(int client_id, int portnum, c
   jack_node_t* node = jacknodemap_rep[client_id];
   if (node->aobj->io_mode() == AUDIO_IO::io_read) {
     int index = node->first_in_port + portnum - 1;
-    in_port_autoconnect_rep[index] = portname;
+    inports_rep[index].autoconnect = portname;
   }
   else {
     int index = node->first_out_port + portnum - 1;
-    out_port_autoconnect_rep[index] = portname;
+    outports_rep[index].autoconnect = portname;
   }
 }
+
 
 /**
  * Registers new JACK port for client 'client_id'. The direction of
@@ -341,16 +342,14 @@ void AUDIO_IO_JACK_MANAGER::register_jack_ports(int client_id, int ports, const 
     node->in_ports = node->out_ports = 0;
     for(int n = 0; n < ports; n++) {
       node->in_ports++;
-      in_ports_rep.push_back(0);
-      in_cb_buffers_rep.push_back(new sample_t [cb_allocated_frames_rep]);
-      in_port_autoconnect_rep.push_back("");
+      inports_rep.push_back(jack_port_data_t ());
+      inports_rep.back().cb_buffer = new sample_t [cb_allocated_frames_rep];
+      inports_rep.back().autoconnect = "";
       std::string tport = portprefix + "_" + kvu_numtostr(last_in_port_rep + 1);
-      in_ports_rep[last_in_port_rep] = jack_port_register(client_repp, tport.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+      inports_rep[last_in_port_rep].jackport = jack_port_register(client_repp, tport.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
       ++last_in_port_rep;
     }
-    DBC_CHECK(in_ports_rep.size() == in_cb_buffers_rep.size());
-    DBC_CHECK(in_ports_rep.size() == static_cast<size_t>(last_in_port_rep));
-    DBC_CHECK(in_ports_rep.size() == in_port_autoconnect_rep.size());
+    DBC_CHECK(inports_rep.size() == static_cast<size_t>(last_in_port_rep));
   }
   else {
     node->first_out_port = last_out_port_rep;
@@ -358,16 +357,14 @@ void AUDIO_IO_JACK_MANAGER::register_jack_ports(int client_id, int ports, const 
     node->in_ports = node->out_ports = 0;
     for(int n = 0; n < ports; n++) {
       node->out_ports++;
-      out_ports_rep.push_back(0);
-      out_cb_buffers_rep.push_back(new sample_t [cb_allocated_frames_rep]);
-      out_port_autoconnect_rep.push_back("");
+      outports_rep.push_back(jack_port_data_t ());
+      outports_rep.back().cb_buffer = new sample_t [cb_allocated_frames_rep];
+      outports_rep.back().autoconnect = "";
       std::string tport = portprefix + "_" + kvu_numtostr(last_out_port_rep + 1);
-      out_ports_rep[last_out_port_rep] = jack_port_register(client_repp, tport.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+      outports_rep[last_out_port_rep].jackport = jack_port_register(client_repp, tport.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
       ++last_out_port_rep;
     }
-    DBC_CHECK(out_ports_rep.size() == out_cb_buffers_rep.size());
-    DBC_CHECK(out_ports_rep.size() == static_cast<size_t>(last_out_port_rep));
-    DBC_CHECK(out_ports_rep.size() == out_port_autoconnect_rep.size());
+    DBC_CHECK(outports_rep.size() == static_cast<size_t>(last_out_port_rep));
   }
   
   // ---
@@ -482,8 +479,8 @@ long int AUDIO_IO_JACK_MANAGER::read_samples(int client_id, void* target_buffer,
   sample_t* ptr = static_cast<sample_t*>(target_buffer);
   jack_node_t* node = jacknodemap_rep[client_id];
   for(int n = node->first_in_port; n < node->first_in_port + node->in_ports; n++) {
-    DBC_CHECK(n < static_cast<int>(in_cb_buffers_rep.size()));
-    memcpy(ptr, in_cb_buffers_rep[n], cb_nframes_rep * sizeof(sample_t)); // FIXME: was frame_size()
+    DBC_CHECK(n < static_cast<int>(inports_rep.size()));
+    memcpy(ptr, inports_rep[n].cb_buffer, cb_nframes_rep * sizeof(sample_t)); // FIXME: was frame_size()
     ptr += cb_nframes_rep;
   }
   DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "read2");
@@ -501,8 +498,8 @@ void AUDIO_IO_JACK_MANAGER::write_samples(int client_id, void* target_buffer, lo
   sample_t* ptr = static_cast<sample_t*>(target_buffer);
   jack_node_t* node = jacknodemap_rep[client_id];
   for(int n = node->first_out_port; n < node->first_out_port + node->out_ports; n++) {
-    DBC_CHECK(n < static_cast<int>(out_cb_buffers_rep.size()));
-    memcpy(out_cb_buffers_rep[n], ptr, cb_nframes_rep * sizeof(sample_t)); // FIXME: was frame_size()
+    DBC_CHECK(n < static_cast<int>(outports_rep.size()));
+    memcpy(outports_rep[n].cb_buffer, ptr, cb_nframes_rep * sizeof(sample_t)); // FIXME: was frame_size()
     ptr += cb_nframes_rep;
   }
   DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "write2");
@@ -545,24 +542,22 @@ void AUDIO_IO_JACK_MANAGER::stop(int client_id)
 void AUDIO_IO_JACK_MANAGER::connect_node(jack_node_t* node) { 
   if (node->aobj->io_mode() == AUDIO_IO::io_read) {
     for(int n = node->first_in_port; n < node->first_in_port + node->in_ports; n++) {
-      std::string tport = in_port_autoconnect_rep[n];
-      if (tport.size() == 0) {
-	tport = "ALSA I/O:Input " + kvu_numtostr(n + 1);
-      }
-      if (jack_port_connect (client_repp, tport.c_str(), jack_port_name(in_ports_rep[n]))) {
-	ecadebug->msg(ECA_DEBUG::info, 
-		      "(audioio-jack-manager) Error! Cannot connect to input " + tport);
+      std::string tport = inports_rep[n].autoconnect;
+      if (tport.size() > 0) {
+	if (jack_port_connect (client_repp, tport.c_str(), jack_port_name(inports_rep[n].jackport))) {
+	  ecadebug->msg(ECA_DEBUG::info, 
+			"(audioio-jack-manager) Error! Cannot connect to input " + tport);
+	}
       }
     }
   }
   else {
     for(int n = node->first_out_port; n < node->first_out_port + node->out_ports; n++) {
-      std::string tport = out_port_autoconnect_rep[n];
-      if (tport.size() == 0) {
-	tport = "ALSA I/O:Output " + kvu_numtostr(n + 1);
-      }
-      if (jack_port_connect (client_repp, jack_port_name(out_ports_rep[n]), tport.c_str())) {
-	ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot connect to output " + tport);
+      std::string tport = outports_rep[n].autoconnect;
+      if (tport.size() > 0) {
+	if (jack_port_connect (client_repp, jack_port_name(outports_rep[n].jackport), tport.c_str())) {
+	  ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot connect to output " + tport);
+	}
       }
     }
   }

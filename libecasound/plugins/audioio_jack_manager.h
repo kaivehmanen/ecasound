@@ -41,6 +41,13 @@ public:
     bool open;
   } jack_node_t;
 
+  typedef struct jack_port_data {
+    jack_port_t* jackport;
+    std::string autoconnect;
+    bool autoconnect_addprefix;
+    sample_t* cb_buffer;
+  } jack_port_data_t;
+
  public:
 
   /** @name Constructors */
@@ -117,12 +124,9 @@ private:
   jack_client_t *client_repp;
   std::string jackname_rep;
 
-  std::vector<jack_port_t*> in_ports_rep;
-  std::vector<jack_port_t*> out_ports_rep;
-  std::vector<std::string> in_port_autoconnect_rep;
-  std::vector<std::string> out_port_autoconnect_rep;
-  std::vector<sample_t*> in_cb_buffers_rep;
-  std::vector<sample_t*> out_cb_buffers_rep;
+  std::vector<jack_port_data_t> inports_rep;
+  std::vector<jack_port_data_t> outports_rep;
+
   long int cb_nframes_rep;
   long int cb_allocated_frames_rep;
 };
