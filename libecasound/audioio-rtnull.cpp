@@ -80,6 +80,7 @@ do { \
 
 REALTIME_NULL::REALTIME_NULL(const std::string& name)
 {
+  xruns_rep = 0;
 }
 
 REALTIME_NULL::~REALTIME_NULL(void)
@@ -88,6 +89,16 @@ REALTIME_NULL::~REALTIME_NULL(void)
 
   if (is_open() == true) {
     close();
+  }
+
+  if (xruns_rep != 0) {
+    cerr << "(audioio-rtnull) WARNING! There were " << xruns_rep << " xruns while ";
+    if (io_mode() != io_read) {
+      cerr << "writing.\n";
+    }
+    else {
+      cerr << "reading.\n";
+    }
   }
 }
 
@@ -100,9 +111,9 @@ void REALTIME_NULL::open(void) throw (AUDIO_IO::SETUP_ERROR &)
   buffer_length_rep.tv_sec = static_cast<time_t>(floor(t));
   buffer_length_rep.tv_usec = static_cast<long>((t - buffer_length_rep.tv_sec) * 1000000.0);
 
-  total_buffers_rep = 2;
+  total_buffers_rep = 3;
   if (max_buffers() == true) { 
-    total_buffers_rep = 3;
+    total_buffers_rep = 8;
   }
   total_buffer_length_rep.tv_sec = total_buffers_rep * buffer_length_rep.tv_sec;
   total_buffer_length_rep.tv_usec = total_buffers_rep * buffer_length_rep.tv_usec;
@@ -167,7 +178,8 @@ void REALTIME_NULL::calculate_available_data(void) const
     timersub(&total_buffer_length_rep, &diff, &avail_data_rep);
   }
   if (timercmp(&avail_data_rep, &total_buffer_length_rep, >)) {
-    cerr << "(audioio-rtnull) xrun occured!" << endl;
+    ++xruns_rep;
+    // cerr << "(audioio-rtnull) xrun occured!" << endl;
   }
 } 
 

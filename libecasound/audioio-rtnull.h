@@ -47,6 +47,7 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
   void block_until_data_available(void);
 
   int total_buffers_rep;
+  mutable int xruns_rep;
 
   struct timeval start_time_rep;
   struct timeval time_since_start_rep;
