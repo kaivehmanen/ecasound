@@ -80,3 +80,6 @@ libaudioio_alsa2_plugin_la_LDFLAGS 	= -export-dynamic
 libaudioio_alsa3_la_LDFLAGS		= -export-dynamic
 libaudioio_arts_la_LDFLAGS	        = -export-dynamic $(arts_libs)
 
+# ----------------------------------------------------------------------
+# separate rules for compiling non-libtool plugins
+# ----------------------------------------------------------------------

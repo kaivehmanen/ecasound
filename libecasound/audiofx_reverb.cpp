@@ -122,7 +122,7 @@ void ADVANCED_REVERB::process(void) {
      */
     cdata[i_channels.channel()].oldvalue = cdata[i_channels.channel()].oldvalue * 0.75 + old_value * 0.25;
 
-    *i_channels.current() = cdata[i_channels.channel()].oldvalue * wet_rep + *i_channels.current() * 0.8;
+    *i_channels.current() = cdata[i_channels.channel()].oldvalue * wet_rep + *i_channels.current() * (1 - wet_rep);
     i_channels.next();
   }
 }

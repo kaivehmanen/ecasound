@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 050700) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 230700) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -26,6 +26,7 @@ Last officially released version is -*> v1.7.9r13 <*-
 	          (while waiting, use ALSA's OSS-emulation)
 	- changed: aRts support enabled by default
 	- changed: small change in licensing - see the file COPYING.Qt
+	- changed: behaviour of -ete effects wet-% parameter
 	- fixed: system readline related fixes (wrobell)
 25062000 (v1.8.0d14)
 	- added: ecaconvert - a new ecatools app; converts a set of 
