@@ -449,7 +449,8 @@ then
 	python_incdirs=$with_python_includes
 else
 	python_incdirs="/usr/local/include/python2.1 /usr/include/python2.1 /usr/local/include/python2.0 /usr/include/python2.0 /usr/local/include/python1.6 /usr/include/python1.6 /usr/local/include/python1.5 /usr/include/python1.5 /usr/local/include /usr/include "
-	python_incdirsmore=`python -c "import sys; print (sys.prefix + '/include/python' + sys.version[:3])"`
+	dnl -- Double-brackets to espace the real brackets
+	python_incdirsmore=`python -c "import sys; print (sys.prefix + '/include/python' + sys.version[[:3]])"`
 	python_incdirs="$python_incdirs $python_incdirsmore"
 fi
 
@@ -482,7 +483,8 @@ AC_ARG_WITH(python-modules,
 if test "X$with_python_modules" = "X"
 then
 	pymoddirs="/usr/local/include/python2.1 /usr/include/python2.1 /usr/local/lib/python2.0 /usr/lib/python2.0 /usr/local/lib/python1.6 /usr/lib/python1.6 /usr/local/lib/python1.5 /usr/lib/python1.5 /usr/local/lib /usr/lib"
-	pymoddirsmore=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[:3])"`
+	dnl -- Double-brackets to espace the real brackets
+	pymoddirsmore=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[[:3]])"`
 	pymoddirs="$pymoddirs $pymoddirsmore"
 else
 	pymoddirs=$with_python_modules
