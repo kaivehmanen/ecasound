@@ -6,7 +6,7 @@ AC_INIT(libecasound/audiofx.h)
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 1.8.0d13)
+AM_INIT_AUTOMAKE(ecasound, 1.8.0413)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
@@ -102,6 +102,15 @@ AC_CHECK_LIB(pthread,pthread_create, ,
 	AC_CHECK_LIB(c_r,pthread_create, 
 		LDFLAGS="-pthreads",
 		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **])))
+
+dnl ---
+dnl Check for already installed libkvutils
+dnl ---
+AC_CHECK_LIB(kvutils,main,kvutils_installed=yes,kvutils_installed=no)
+AM_CONDITIONAL(KVUTILS_INSTALLED, test x$kvutils_installed = xyes)
+if test x$kvutils_installed = xyes; then
+	LIBS="$LIBS -lkvutils"
+fi
 
 dnl ---
 dnl Audiofile library

@@ -13,6 +13,12 @@ if COMPILE_AF
 af_libs = -laudiofile
 endif
 
+if KVUTILS_INSTALLED
+kvutils_libs =
+else
+kvutils_libs = -L$(top_srcdir)/kvutils/.libs -lkvutils
+endif
+
 if INCLUDE_DEBUG
 eca_ldflags = -version-info 6:0:0
 else
@@ -244,8 +250,7 @@ ecasound_common_src = 	$(ecasound_audiofx_src) \
 
 libecasound_la_SOURCES = $(ecasound_common_src)
 libecasound_debug_la_SOURCES = $(ecasound_common_src)
-libecasound_la_LIBADD = $(af_libs)  $(alsa_libs) \
-			-L$(top_builddir)/kvutils -lkvutils
+libecasound_la_LIBADD = $(af_libs) $(alsa_libs) $(kvutils_libs)
 libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
 libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)

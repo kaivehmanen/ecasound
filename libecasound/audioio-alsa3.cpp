@@ -67,7 +67,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
     using_plugin_rep = true;
   }
 
-  struct snd_pcm_stream_params params;
+  struct snd_pcm_params params;
   ::memset(&params, 0, sizeof(params));
 
   // -------------------------------------------------------------------
@@ -81,13 +81,15 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 					  card_number_rep, 
 					  device_number_rep,
 					  subdevice_number_rep,
-					  SND_PCM_OPEN_CAPTURE | SND_PCM_NONBLOCK_CAPTURE);
+					  pcm_stream_rep,
+					  SND_PCM_NONBLOCK);
     else
-      err = ::snd_pcm_open_subdevice(&audio_fd_repp, 
+      err = ::snd_pcm_hw_open_subdevice(&audio_fd_repp, 
 				     card_number_rep, 
 				     device_number_rep,
 				     subdevice_number_rep,
-				     SND_PCM_OPEN_CAPTURE | SND_PCM_NONBLOCK_CAPTURE);
+				     pcm_stream_rep,
+				     SND_PCM_NONBLOCK);
     
     if (err < 0) {
       if (using_plugin_rep)
@@ -105,13 +107,15 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 					  card_number_rep, 
 					  device_number_rep,
 					  subdevice_number_rep,
-					  SND_PCM_OPEN_PLAYBACK | SND_PCM_NONBLOCK_PLAYBACK);
+					  pcm_stream_rep,
+					  SND_PCM_NONBLOCK);
     else
-      err = ::snd_pcm_open_subdevice(&audio_fd_repp, 
+      err = ::snd_pcm_hw_open_subdevice(&audio_fd_repp, 
 				     card_number_rep, 
 				     device_number_rep,
 				     subdevice_number_rep,
-				     SND_PCM_OPEN_PLAYBACK | SND_PCM_NONBLOCK_PLAYBACK);
+				     pcm_stream_rep,
+				     SND_PCM_NONBLOCK);
 
     if (err < 0) {
       if (using_plugin_rep)
@@ -128,25 +132,25 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 
   // -------------------------------------------------------------------
   // Sets non-blocking mode 
-  ::snd_pcm_stream_nonblock(audio_fd_repp, pcm_stream_rep, 0);
+  ::snd_pcm_nonblock(audio_fd_repp, 0);
 
   // -------------------------------------------------------------------
   // Fetch stream info
 
   ::memset(&pcm_info_rep, 0, sizeof(pcm_info_rep));
   pcm_info_rep.stream = pcm_stream_rep;
-  ::snd_pcm_stream_info(audio_fd_repp, &pcm_info_rep);
+  ::snd_pcm_info(audio_fd_repp, &pcm_info_rep);
 
   // -------------------------------------------------------------------
   // Select audio format
 
-  ::snd_pcm_stream_flush(audio_fd_repp, pcm_stream_rep);
+  ::snd_pcm_flush(audio_fd_repp);
 
   snd_pcm_format_t pf;
   ::memset(&pf, 0, sizeof(pf));
 
   if (channels() > 1 &&
-      (pcm_info_rep.flags & SND_PCM_STREAM_INFO_INTERLEAVE) != SND_PCM_STREAM_INFO_INTERLEAVE)
+      (pcm_info_rep.flags & SND_PCM_INFO_INTERLEAVE) != SND_PCM_INFO_INTERLEAVE)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "device can't handle interleaved streams!", ECA_ERROR::stop));
   pf.interleave = 1;
 
@@ -188,9 +192,8 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   ::memcpy(&params.format, &pf, sizeof(pf));
 
   params.mode = pcm_mode_rep;
-  params.stream = pcm_stream_rep;
 
-  if (params.stream == SND_PCM_STREAM_PLAYBACK)
+  if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK)
     params.start_mode = SND_PCM_START_GO;
   else
     params.start_mode = SND_PCM_START_DATA;
@@ -214,14 +217,13 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Stream params
 
-  err = ::snd_pcm_stream_params(audio_fd_repp, &params);
+  err = ::snd_pcm_params(audio_fd_repp, &params);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Error when setting up stream params: " + string(snd_strerror(err))));
 
-  struct snd_pcm_stream_setup setup;
-  setup.stream = params.stream;
+  struct snd_pcm_setup setup;
   setup.mode = params.mode;
-  ::snd_pcm_stream_setup(audio_fd_repp, &setup);
+  ::snd_pcm_setup(audio_fd_repp, &setup);
 
   fragment_size_rep = setup.frag_size;
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Fragment size: " +
@@ -242,16 +244,15 @@ void ALSA_PCM_DEVICE::stop(void) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) stop");
 
-  snd_pcm_stream_status_t status;
+  snd_pcm_status_t status;
   ::memset(&status, 0, sizeof(status));
-  status.stream = pcm_stream_rep;
-  ::snd_pcm_stream_status(audio_fd_repp, &status);
+  ::snd_pcm_status(audio_fd_repp, &status);
   if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK)
     underruns_rep += status.xruns;
   else if (pcm_stream_rep == SND_PCM_STREAM_CAPTURE)
     overruns_rep += status.xruns;
 
-  int err = ::snd_pcm_stream_flush(audio_fd_repp, pcm_stream_rep);
+  int err = ::snd_pcm_flush(audio_fd_repp);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Error when flushing stream: " + string(snd_strerror(err))));
   
@@ -280,7 +281,7 @@ void ALSA_PCM_DEVICE::prepare(void) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) prepare");
 
-  int err = ::snd_pcm_stream_prepare(audio_fd_repp, pcm_stream_rep);
+  int err = ::snd_pcm_prepare(audio_fd_repp);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Error when preparing stream: " + string(snd_strerror(err))));
   is_prepared_rep = true;
@@ -294,7 +295,7 @@ void ALSA_PCM_DEVICE::start(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) start");
 
   if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK)
-    ::snd_pcm_stream_go(audio_fd_repp, pcm_stream_rep);
+    ::snd_pcm_go(audio_fd_repp);
   is_triggered_rep = true;
 }
 
@@ -305,10 +306,9 @@ long int ALSA_PCM_DEVICE::read_samples(void* target_buffer,
 }
 
 void ALSA_PCM_DEVICE::print_status_debug(void) {
-  snd_pcm_stream_status_t status;
+  snd_pcm_status_t status;
   memset(&status, 0, sizeof(status));
-  status.stream = pcm_stream_rep;
-  ::snd_pcm_stream_status(audio_fd_repp, &status);
+  ::snd_pcm_status(audio_fd_repp, &status);
   if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK)
     underruns_rep += status.xruns;
   else if (pcm_stream_rep == SND_PCM_STREAM_CAPTURE)
@@ -342,10 +342,9 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
 
 long ALSA_PCM_DEVICE::position_in_samples(void) const {
   if (is_triggered_rep == false) return(0);
-  snd_pcm_stream_status_t status;
+  snd_pcm_status_t status;
   memset(&status, 0, sizeof(status));
-  status.stream = pcm_stream_rep;
-  ::snd_pcm_stream_status(audio_fd_repp, &status);
+  ::snd_pcm_status(audio_fd_repp, &status);
   return (status.frame_io / frame_size());
 }
 

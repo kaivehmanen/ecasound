@@ -30,7 +30,8 @@ Input/output devices:
 
 Interactive-mode:
 
-- more info about current chainsetup status (cs-selected, c-list, ?)
+- make separate x-list and c-status commands (a pure list, and a more
+  XSverbose -status command)
 
 Effects, routing, dsp routines:
 
@@ -39,6 +40,8 @@ Effects, routing, dsp routines:
 - better reverbs [--> update: -ete added to 1.7.8r12] 
 - embedded effect preset parameters
 	- "-p[fn]:string,par1,...,parN"
+- qtecasound - chain-setup tab
+- qtecasound - debug-window to be always visible
 	
 Ecatools:
 

@@ -180,9 +180,9 @@ void register_default_audio_objects(void) {
   eca_audio_object_map.register_object("rtnull", device);
   eca_audio_device_map.register_object("rtnull", device);
 
+  eca_audio_object_map.register_object("-", raw);
   eca_audio_object_map.register_object("stdin", raw);
   eca_audio_object_map.register_object("stdout", raw);
-  eca_audio_object_map.register_object("-", raw);
   eca_audio_object_map.register_object("null", new NULLFILE());
 }
 

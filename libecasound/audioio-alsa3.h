@@ -24,7 +24,7 @@
 class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
 
   snd_pcm_t *audio_fd_repp;
-  snd_pcm_stream_info_t pcm_info_rep;
+  snd_pcm_info_t pcm_info_rep;
 
   long int fragment_size_rep;
  
