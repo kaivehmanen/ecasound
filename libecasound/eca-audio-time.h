@@ -1,7 +1,14 @@
-#ifndef _ECA_AUDIO_TIME_H
-#define _ECA_AUDIO_TIME_H
+#ifndef INCLUDED_ECA_AUDIO_TIME_H
+#define INCLUDED_ECA_AUDIO_TIME_H
 
 #include <string>
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#ifdef USE_CXX_STD_NAMESPACE
+using std::string;
+#endif
 
 /**
  * Generic class for representing time in audio environment
