@@ -49,6 +49,7 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
   unsigned char **nbufs_repp;
 
   string pcm_device_name_rep;
+  static const string default_pcm_device_rep;
 
   bool is_triggered_rep;
   bool is_prepared_rep;
@@ -69,7 +70,7 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
 
  protected:
 
-  void set_pcm_device_name(const string& n) { pcm_device_name_rep = n; }
+  void set_pcm_device_name(const string& n);
   const string& pcm_device_name(void) const { return(pcm_device_name_rep); }
 
  public:

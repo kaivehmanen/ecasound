@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// audioio_alsa3_pcm.cpp: ALSA named (/dev/snd/pcm*) input/output.
+// audioio_alsa3_pcm.cpp: ALSA 0.9.x named (/dev/snd/pcm*) input/output.
 // Copyright (C) 2001 Kai Vehmanen (kaiv@wakkanet.fi)
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// audioio-alsa3.cpp: ALSA (/dev/snd/pcm*) input/output.
+// audioio-alsa3.cpp: ALSA 0.9.x (/dev/snd/pcm*) input/output.
 // Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi),
 //                         Jeremy Hall (jhall@uu.net)
 // This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,8 @@ do { \
 	} \
 } while (0)
 #endif
+
+const string ALSA_PCM_DEVICE_06X::default_pcm_device_rep = "default";
 
 ALSA_PCM_DEVICE_06X::ALSA_PCM_DEVICE_06X (int card, 
 					  int device, 
@@ -665,6 +667,13 @@ string ALSA_PCM_DEVICE_06X::get_parameter(int param) const {
     return(kvu_numtostr(subdevice_number_rep));
   }
   return("");
+}
+
+void ALSA_PCM_DEVICE_06X::set_pcm_device_name(const string& n) { 
+  if (n.size() > 0)
+    pcm_device_name_rep = n; 
+  else
+    pcm_device_name_rep = default_pcm_device_rep;
 }
 
 #endif // ALSALIB_060
