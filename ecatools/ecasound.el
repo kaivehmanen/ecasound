@@ -4,7 +4,7 @@
 
 ;; Author: Mario Lang <mlang@delysid.org>
 ;; Keywords: audio, ecasound, eci, comint, process, pcomplete
-;; Version: 0.7.5
+;; Version: 0.7.6
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -67,30 +67,51 @@
 ;;
 ;; Todo:
 ;;
+;; * Use map-xxx-list data in the ecasound-copp widget.  This means we
+;; need to merge cop-status and map-cop-list data.
+;; * Make `ecasound-signalview' faster.
+;; * Fix the case where ecasound sends output *after* the prompt.
+;; This is tricky!
 ;; * Convince Kai to make NetECI look and behave exactly like ecasound -c.
 ;; This would make it very easy to make neteci connections using the current
 ;; code.  Just set eci-program to (host . port).
-;; * Cache things like c-, cs- and cop-list as well as c-, cs- and
-;; engine-status in buffer-local variables like it's already done for
-;; cop- and ladspa-register.
 ;; * Tweak the mode-line to include status information like engine-status
 ;; or inputs/outputs/chains or the current selected cs or chains.
 ;; * Add NetECI support to fetch status info (eci-hide-output t calls)
 ;; via a separate, not visible buffer.
-;; * Write eci-cop-register alike support for preset-register.
 ;; * Copy documentation for ECI commands into eci-* docstrings and menu
 ;; :help keywords.
 ;; * Expand the menu.
-;; * Bind most important interactive functions in ecasound-aim-mode-map
+;; * Add Lisp ecatools to "Tools" menu.
+;; * Bind most important interactive functions in ecasound-iam-mode-map
 ;; (which layout to use?)
 
 ;;; History:
 ;; 
+;; Version: 0.7.6
+;;
+;; * Various minor bugfixes and enhancements.
+;; * Implemented ecasignalview as `ecasound-signalview' directly in Lisp.
+;; This is another demonstration that ECI was really a Good Thing(tm)!
+;; * Changed defeci to make it look more like a defun.
+;; * Removed eci-process-*-register handling completely. Rationale is
+;; that the map-*-list stuff is actually much more uniform and offers more
+;; info.
+;; * Rewrote `pcomplete/ecasound-iam-mode/cop-add' to use map-*-list.
+;; * Rewrote `ecasound-ctrl-add' using map-ctrl-list instead of ctrl-register
+;; and `ecasound-read-copp'.
+;; * Rewrote `ecasound-cop-add' using map-cop|ladspa|preset-list.
+;; * New function `eci-process-map-list' which processes the new map-xxx-list
+;; output into a wellformed Lisp list.
+;; * `ecasound-iam-commands' is now filled using int-cmd-list.
+;; * cop-map-list handling.  Used in `ecasound-cop-add' now.  New function
+;; `ecasound-read-copp' uses the now available default value.
+;;
 ;; Version: 0.7.5
 ;;
 ;; * Added ctrl-register parsing support and `ecasound-ctrl-add'.
 ;; * Added preset-register support (so far only for cop-add completion)
-;; * Fixed cop-status parsing bug which caused ecasound-cop-edit to not
+;; * Fixed cop-status parsing bug which caused `ecasound-cop-edit' to not
 ;; work in some cases.
 ;; * New macro defeci which handles defining ECI commands in lisp.
 ;; * Several other minor tweaks and fixes.
@@ -264,121 +285,7 @@ the parameter -d is given in `ecasound-arguments'."
   :group 'ecasound
   :type 'regexp)
 
-(defconst ecasound-iam-commands
-  '( ;; GENERAL
-    "quit" "q"
-    "start" "t"
-    "stop" "s"
-    "run"
-    "debug"
-    "help" "h"
-    ;; GLOBAL
-    "status" "st"
-    "engine-status"
-    ;; CHAINSETUPS
-    "cs-add"
-    "cs-remove"
-    "cs-list"
-    "cs-select"
-    "cs-selected"
-    "cs-index-select" "cs-iselect"
-    "cs-load"
-    "cs-save"
-    "cs-save-as"
-    "cs-edit"
-    "cs-is-valid"
-    "cs-connect"
-    "cs-disconnect"
-    "cs-connected"
-    "cs-rewind" "rewind" "rw"
-    "cs-forward" "forward" "fw"
-    "cs-set-position" "cs-setpos" "setpos" "set-position"
-    "cs-get-position" "cs-getpos" "getpos" "get-position"
-    "cs-get-length" "get-length"
-    "cs-set-length"
-    "cs-toggle-loop"
-    "cs-set-param"
-    "cs-set-audio-format"
-    "cs-status" "cs"
-    ;; CHAINS
-    "c-add"
-    "c-remove"
-    "c-list"
-    "c-select"
-    "c-index-select" "c-iselect"
-    "c-select-all"
-    "c-select-add"
-    "c-deselect"
-    "c-selected"
-    "c-clear"
-    "c-rename"
-    "c-muting"
-    "c-bypass"
-    "c-forward" "c-fw"
-    "c-rewind" "c-rw"
-    "c-set-position" "c-setpos"
-    "c-status"
-    ;; AUDIO INPUT/OUTPUT OBJECTS
-    "ai-add"
-    "ao-add"
-    "ai-select"
-    "ao-select"
-    "ai-index-select" "ai-iselect"
-    "ao-index-select" "ao-iselect"
-    "ai-selected"
-    "ao-selected"
-    "ai-attach"
-    "ao-attach"
-    "ai-remove"
-    "ao-remove"
-    "ai-forward" "ai-fw"
-    "ao-forward" "ao-fw"
-    "ai-rewind" "ai-rw"
-    "ao-rewind" "ao-rw"
-    "ai-set-position" "ai-setpos"
-    "ao-set-position" "ao-setpos"
-    "ai-get-position" "ai-getpos"
-    "ao-get-position" "ao-getpos"
-    "ai-get-length"
-    "ao-get-length"
-    "ai-get-format"
-    "ao-get-format"
-    "ai-wave-edit"
-    "ao-wave-edit"
-    "ai-list"
-    "ao-list"
-    "aio-register"
-    "aio-status"
-    ;; CHAIN OPERATORS
-    "cop-add"
-    "cop.list"
-    "cop-remove"
-    "cop-select"
-    "cop-index-select" "cop-iselect"
-    "cop-selected"
-    "cop-set"
-    "cop-status"
-    "copp-list"
-    "copp-select"
-    "copp-index-select" "copp-iselect"
-    "copp-selected"
-    "copp-set"
-    "copp-get"
-    "cop-register"
-    "preset-register"
-    "ladspa-register"
-    ;; CONTROLLERS
-    "ctrl-add"
-    "ctrl-remove"
-    "ctrl-list"
-    "ctrl-select"
-    "ctrl-index-select" "ctrl-iselect"
-    "ctrl-selected"
-    "ctrl-status"
-    "ctrl-register"
-    ;; OBJECT MAPS
-					; Unimplemented currently...
-    )
+(defvar ecasound-iam-commands nil
   "Available Ecasound IAM commands.")
   
 (defvar ecasound-iam-mode-map
@@ -515,24 +422,25 @@ Argument STRING is the string originally received and inserted into the buffer."
 	(when result
 	  (setq eci-result
 		(cond
-		 ((string= eci-last-command "cop-register")
-		  (eci-process-cop-register result))
+		 ((string= eci-last-command "int-cmd-list")
+		  (setq ecasound-iam-commands result))
+		 ((string= eci-last-command "map-cop-list")
+		  (setq eci-map-cop-list (eci-process-map-list result)))
+		 ((string= eci-last-command "map-ladspa-list")
+		  (setq eci-map-ladspa-list (eci-process-map-list result)))
+		 ((string= eci-last-command "map-ctrl-list")
+		  (setq eci-map-ctrl-list (eci-process-map-list result)))
+		 ((string= eci-last-command "map-preset-list")
+		  (setq eci-map-preset-list (eci-process-map-list result)))
 		 ((string= eci-last-command "cop-status")
 		  (eci-process-cop-status result))
-		 ((string= eci-last-command "preset-register")
-		  (eci-process-preset-register result))
-		 ((string= eci-last-command "ctrl-register")
-		  (eci-process-ctrl-register result))
-		 ((string= eci-last-command "ladspa-register")
-		  (eci-process-ladspa-register result))
 		 ((string= eci-last-command "int-output-mode-wellformed")
 		  (if (eq result t)
 		      (setq eci-int-output-mode-wellformed-flag t)))
-		 (t
-		  (if (and (listp result)
-			   (eq (nth 0 result) 'error))
-		      nil
-		    result)))))))))
+		 ((and (listp result)
+		       (eq (nth 0 result) 'error))
+		  nil)
+		 (t result))))))))
 
 ;;; Ecasound-iam-mode pcomplete functions
 
@@ -540,7 +448,9 @@ Argument STRING is the string originally received and inserted into the buffer."
   "Setup buffer-local functions for pcomplete in `ecasound-iam-mode'."
   (set (make-local-variable 'pcomplete-command-completion-function)
        (lambda ()
-	 (pcomplete-here ecasound-iam-commands)))
+	 (pcomplete-here (if ecasound-iam-commands
+			     ecasound-iam-commands
+			   (eci-int-cmd-list)))))
   (set (make-local-variable 'pcomplete-command-name-function)
        (lambda ()
          (pcomplete-arg 'first)))
@@ -625,13 +535,13 @@ Argument STRING is the string originally received and inserted into the buffer."
   (message "Returns the name of currently connected chainsetup.")
   (throw 'pcompleted t))
 
-(defun eci-register-find-arg (arg register)
+(defun eci-map-find-args (arg map)
   (let (result)
-    (while register
-      (if (string= (nth 1 (car register)) arg)
-	  (setq result (nth 2 (car register))
-		register nil))
-      (setq register (cdr register)))
+    (while map
+      (if (string= (nth 1 (car map)) arg)
+	  (setq result (nthcdr 3 (car map))
+		map nil))
+      (setq map (cdr map)))
     result))
 
 (defun pcomplete/ecasound-iam-mode/cs-rewind ()
@@ -654,53 +564,67 @@ Argument STRING is the string originally received and inserted into the buffer."
       '("-el:" "-pn:")
       (mapcar
        (lambda (elt)
-	 (concat (nth 1 elt) ":"))
-       (if eci-cop-register
-	   eci-cop-register
-	 (eci-cop-register))))))
+	 (concat "-" (nth 1 elt) ":"))
+       (if eci-map-cop-list
+	   eci-map-cop-list
+	 (eci-map-cop-list))))))
    ((string= (pcomplete-arg) "-el")
-    (unless eci-ladspa-register
-      (eci-ladspa-register))
+    (unless eci-map-ladspa-list
+      (eci-map-ladspa-list))
     (cond
      ((= pcomplete-last 2)
       (pcomplete-next-arg)
       (pcomplete-here
-       (sort (mapcar (lambda (elt) (substring (nth 1 elt) 4))
-		     eci-ladspa-register)
+       (sort (mapcar (lambda (elt) (nth 1 elt) 4)
+		     eci-map-ladspa-list)
 	     #'string-lessp)))
      ((> pcomplete-last 2)
-      (let* ((args (eci-register-find-arg (concat "-el:" (pcomplete-arg -1))
-					eci-ladspa-register))
-	   (arg (nth (- pcomplete-last 3) args)))
-      (if arg
-	  (message "%s" arg)
-	(message "No help available"))))))
-   ((string= (pcomplete-arg) "-pn")
-    (unless eci-preset-register
-      (eci-preset-register))
-    (cond
-     ((= pcomplete-last 2)
-      (pcomplete-next-arg)
-      (pcomplete-here
-       (sort (mapcar (lambda (elt) (substring (nth 1 elt) 4))
-		     eci-preset-register)
-	     #'string-lessp)))
-     ((> pcomplete-last 2)
-      (let* ((args (eci-register-find-arg (concat "-pn:" (pcomplete-arg -1))
-					eci-preset-register))
-	     (arg (nth (- pcomplete-last 3) args)))
+      (let ((arg (nth (- pcomplete-last 3)
+		      (eci-map-find-args
+		       (pcomplete-arg -1) eci-map-ladspa-list))))
 	(if arg
-	    (message "%s" arg)
+	    (message (ecasound-format-arg arg))
+	  (message "No help available"))))))
+   ((string= (pcomplete-arg) "-pn")
+    (unless eci-map-preset-list
+      (eci-map-preset-list))
+    (cond
+     ((= pcomplete-last 2)
+      (pcomplete-next-arg)
+      (pcomplete-here
+       (sort (mapcar (lambda (elt) (nth 1 elt))
+		     eci-map-preset-list)
+	     #'string-lessp)))
+     ((> pcomplete-last 2)
+      (let ((arg (nth
+		  (- pcomplete-last 3)
+		  (eci-map-find-args
+		   (pcomplete-arg -1) eci-map-preset-list))))
+	(if arg
+	    (message (ecasound-format-arg arg))
 	  (message "No help available"))))))
    ((> pcomplete-last 1)
-    (let* ((args (eci-register-find-arg (pcomplete-arg)
-					(if eci-cop-register eci-cop-register
-					  (eci-cop-register))))
-	   (arg (nth (- pcomplete-last 2) args)))
+    (let ((arg (nth (- pcomplete-last 2)
+		    (eci-map-find-args
+		     (substring (pcomplete-arg) 1)
+		     (if eci-map-cop-list
+			 eci-map-cop-list
+		       (eci-map-cop-list))))))
       (if arg
-	  (message "%s" arg)
+	  (message (ecasound-format-arg arg))
 	(message "No help available")))))
   (throw 'pcompleted t))
+
+(defsubst ecasound-format-arg (arg)
+  (format "%s%s%s, default %S %s%s"
+	   (car arg)
+	   (if (nth 5 arg) (format " (%S)" (nth 5 arg)) "")
+	   (if (not (string= (car arg) (nth 1 arg)))
+	       (format " (%s)" (nth 1 arg))
+	     "")
+	   (nth 2 arg)
+	   (if (nth 4 arg) (format "min %S" (nth 4 arg)) "")
+	   (if (nth 3 arg) (format "max %S, " (nth 3 arg)) "")))
 
 
 ;;; ECI --- The Ecasound Control Interface
@@ -769,37 +693,37 @@ Arguments are LOGLEVEL and STRING."
   "Indicates if int-output-mode-wellformed was successfully initialized.")
 (make-variable-buffer-local 'eci-int-output-mode-wellformed-flag)
 
-(defvar eci-cop-register nil
-  "If non-nil, contains the list of registered chainops.
+(defvar eci-map-cop-list nil
+  "If non-nil, contains the chainop object map.
 It has the form
- ((NAME PREFIX (ARGNAME ...)) ...)
+ ((NAME PREFIX DESCR ((ARGNAME DESCR DEFAULT LOW HIGH TYPE) ...)) ...)
 
-Use `eci-cop-register' to fill this list with data.")
-(make-variable-buffer-local 'eci-cop-register)
+Use `eci-map-cop-list' to fill this list with data.")
+(make-variable-buffer-local 'eci-map-cop-list)
 
-(defvar eci-ctrl-register nil
-  "If non-nil, contains the list of registered controllers.
+(defvar eci-map-ctrl-list nil
+  "If non-nil, contains the chainop controller object map.
 It has the form
- ((NAME PREFIX (ARGNAME ...)) ...)
+ ((NAME PREFIX DESCR ((ARGNAME DESCR DEFAULT LOW HIGH TYPE) ...)) ...)
 
-Use `eci-cop-register' to fill this list with data.")
-(make-variable-buffer-local 'eci-ctrl-register)
+Use `eci-map-ctrl-list' to fill this list with data.")
+(make-variable-buffer-local 'eci-map-ctrl-list)
 
-(defvar eci-preset-register nil
-  "If non-nil, contains the list of registered presets.
+(defvar eci-map-ladspa-list nil
+  "If non-nil, contains the LADSPA object map.
 It has the form
- ((NAME PREFIX (ARGNAME ...)) ...)
+ ((NAME PREFIX DESCR ((ARGNAME DESCR DEFAULT LOW HIGH TYPE) ...)) ...)
 
-Use `eci-preset-register' to fill this list with data.")
-(make-variable-buffer-local 'eci-preset-register)
+Use `eci-map-ladspa-list' to fill this list with data.")
+(make-variable-buffer-local 'eci-map-ladspa-list)
 
-(defvar eci-ladspa-register nil
-  "If non-nil, contains the list of registered ladspa plugins.
+(defvar eci-map-preset-list nil
+  "If non-nil, contains the preset object map.
 It has the form
- ((FULL-NAME NAME (ARGNAME ...)) ...)
+ ((NAME PREFIX DESCR ((ARGNAME DESCR DEFAULT LOW HIGH TYPE) ...)) ...)
 
-Use `eci-ladspa-register' to fill this list with data.")
-(make-variable-buffer-local 'eci-cop-register)
+Use `eci-map-preset-list' to fill this list with data.")
+(make-variable-buffer-local 'eci-map-preset-list)
 
 (defun eci-init ()
   "Initialize a programmatic ECI session.
@@ -816,9 +740,8 @@ The caller is responsible for terminating the subprocess at some point."
 	   eci-arguments)
     (ecasound-iam-mode)
     (while (accept-process-output (get-buffer-process (current-buffer)) 1))
-    (if (string-match "^256 0 -" (eci-command "int-output-mode-wellformed"))
-	(setq eci-int-output-mode-wellformed-flag t))
-    (current-buffer)))
+    (if (eci-command "int-output-mode-wellformed")
+	(current-buffer))))
 
 (defun eci-interactive-startup ()
   "Used to interactively startup a ECI session using `eci-init'.
@@ -837,24 +760,25 @@ Return the string we received in reply to the command except
 `eci-int-output-mode-wellformed-flag' is set, which means we can parse the
 output via `eci-parse' and return a meaningful value."
   (interactive "sECI Command: ")
-  (let ((proc (cond ((processp buffer-or-process) buffer-or-process)
-		    ((bufferp buffer-or-process) (get-buffer-process buffer-or-process))
-		    ((and (eq major-mode 'ecasound-iam-mode)
-			  (comint-check-proc (current-buffer)))
-		     (get-buffer-process (current-buffer)))
-		    ((comint-check-proc "*ecasound*")
-		     (get-buffer-process (get-buffer "*ecasound*")))
-		    (t (error
-			"Could not determine suitable ecasound process")))))
-    (with-current-buffer (process-buffer proc)
+  (let ((buf (cond
+	      ((bufferp buffer-or-process)
+		buffer-or-process)
+	      ((processp buffer-or-process) (process-buffer buffer-or-process))
+	      ((and (eq major-mode 'ecasound-iam-mode)
+		    (comint-check-proc (current-buffer)))
+	       (current-buffer))
+	      ((comint-check-proc "*ecasound*")
+	       (get-buffer (get-buffer "*ecasound*")))
+	      (t (error "Could not determine suitable ecasound process")))))
+    (with-current-buffer buf
       (let ((moving (= (point) (point-max))))
-	(goto-char (process-mark proc))
-	(insert (format "%s" command))
+	(goto-char (process-mark (get-buffer-process buf)))
+	(insert command)
 	(let (comint-eol-on-send)
 	  (comint-send-input))
 	(let ((here (point)) result)
 	  (while (not (re-search-forward ecasound-prompt-regexp nil t))
-	    (accept-process-output proc 0 50)
+	    (accept-process-output (get-buffer-process buf) 0 50)
 	    (goto-char here))
 	  (setq result
 		(if eci-int-output-mode-wellformed-flag
@@ -921,9 +845,8 @@ Return an appropriate lisp value if possible."
 	(setq eci-return-value value
 	      eci-return-type type)
 	(cond
-	 ((string= type "e")
-	  (run-hook-with-args 'eci-error-hook value)
-	  (list 'error value))
+	 ((string= type "-")
+	  t)
 	 ((string= type "f")
 	  (string-to-number value))
 	 ((or (string= type "i")
@@ -933,8 +856,9 @@ Return an appropriate lisp value if possible."
 	  value)
 	 ((string= type "S")
 	  (split-string value ","))
-	 ((string= type "-")
-	  t)
+	 ((string= type "e")
+	  (run-hook-with-args 'eci-error-hook value)
+	  (list 'error value))
 	 (t (error "Unimplemented return type %s" type)))))))
 
 (defsubst eci-error-p ()
@@ -943,7 +867,7 @@ Return an appropriate lisp value if possible."
 
 ;;; ECI commands implemented as lisp functions
 
-(defmacro defeci (name &optional doc args &rest body)
+(defmacro defeci (name &optional args doc &rest body)
   `(defun ,(intern (format "eci-%S" name))
      ,(if args (append (mapcar #'car args) `(&optional buffer-or-process))
 	`(&optional buffer-or-process))
@@ -956,28 +880,63 @@ Return an appropriate lisp value if possible."
 		      (mapconcat #'identity (mapcar #'cadr args) "\n")
 		    `(list ,@(mapcar #'cadr args))))
 	`(interactive))
-     ,@(if body body
-	`((eci-command
-	 ,(if args
-	      `(format ,(format "%S %s" name (mapconcat #'caddr args " "))
-		       ,@(mapcar
-			  (lambda (arg)
-			    `(if (or (stringp ,(car arg)) (numberp ,(car arg)))
-				 ,(car arg)
-			       (mapconcat #'identity ,(car arg) ",")))
-			  args))
-	    (format "%S" name))
-	 buffer-or-process)))))
+     ,@(cond
+	((eq body nil)
+	 `((eci-command
+	    ,(if args
+		 `(format ,(format "%S %s" name (mapconcat #'caddr args " "))
+			  ,@(mapcar
+			     (lambda (arg)
+			       `(if (or (stringp ,(car arg)) (numberp ,(car arg)))
+				    ,(car arg)
+				  (mapconcat #'identity ,(car arg) ",")))
+			     args))
+	       (format "%S" name))
+	    buffer-or-process)))
+	((eq (car body) :hide-output)
+	 `((let ((eci-hide-output (not (interactive-p))))
+	     (eci-command
+	      ,(if args
+		   `(format ,(format "%S %s" name (mapconcat #'caddr args " "))
+			    ,@(mapcar
+			       (lambda (arg)
+				 `(if (or (stringp ,(car arg)) (numberp ,(car arg)))
+				      ,(car arg)
+				    (mapconcat #'identity ,(car arg) ",")))
+			       args))
+		 (format "%S" name))
+	      buffer-or-process))))
+	(t body))))
 
 (defmacro defecialias (alias def)
   `(defalias ',(intern (format "eci-%S" alias))
      ',(intern (format "eci-%S" def))))
 
+(defeci int-cmd-list ()
+  ""
+  :hide-output)
+
+(defeci map-cop-list ()
+  ""
+  :hide-output)
+
+(defeci map-ctrl-list ()
+  ""
+  :hide-output)
+
+(defeci map-ladspa-list ()
+  ""
+  :hide-output)
+
+(defeci map-preset-list ()
+  ""
+  :hide-output)
+
 (defeci run)
 
 (defeci start)
 
-(defeci cs-add "" ((chainsetup "sChainsetup to add: " "%s")))
+(defeci cs-add ((chainsetup "sChainsetup to add: " "%s")))
 
 (defeci cs-connect)
 
@@ -994,10 +953,11 @@ Return an appropriate lisp value if possible."
 (defecialias getpos cs-get-position)
 (defecialias get-position cs-get-position)
 
-(defeci cs-index-select "" ((index "nChainsetup index: " "%d")))
+(defeci cs-index-select ((index "nChainsetup index: " "%d")))
 (defecialias cs-iselect cs-index-select)
 
-(defeci cs-is-valid "" nil
+(defeci cs-is-valid ()
+  ""
   (let ((val (eci-command "cs-is-valid" buffer-or-process)))
     (setq val 
 	  (cond
@@ -1010,7 +970,8 @@ Return an appropriate lisp value if possible."
 	(message (format "Chainsetup is%s valid" (if val "" " not"))))
     val))
 
-(defeci cs-list "" nil
+(defeci cs-list ()
+  ""
   (let ((val (eci-command "cs-list" buffer-or-process)))
     (if (interactive-p)
 	(message (concat "Available chainsetups: " 
@@ -1020,15 +981,17 @@ Return an appropriate lisp value if possible."
 
 (defeci cs-save)
 
-(defeci cs-save-as "" ((filename "FChainsetup filename: " "%s")))
+(defeci cs-save-as ((filename "FChainsetup filename: " "%s")))
 
-(defeci cs-selected "" nil
+(defeci cs-selected ()
+  ""
   (let ((val (eci-command "cs-selected")))
     (if (interactive-p)
 	(message (format "Selected chainsetup: %s" val)))
     val))
 
-(defeci cs-status "Return ChainSetup status as a Lisp object." nil
+(defeci cs-status ()
+  "Return ChainSetup status as a Lisp object."
   ;; FIXME, only works with stable
   (let ((chains (split-string (eci-command "cs-status" buffer-or-process)
 			      "^Chainsetup " ))
@@ -1058,10 +1021,9 @@ Return an appropriate lisp value if possible."
       (error "Unknown return value"))
     chainlist))
 
-(defeci c-add
+(defeci c-add ((chains "sChain(s) to add: " "%s"))
   "Adds a set of chains.  Added chains are automatically selected.
-If argument CHAINS is a list, its elements are concatenated with ','."
-  ((chains "sChain(s) to add: " "%s")))
+If argument CHAINS is a list, its elements are concatenated with ','.")
 
 (defun ecasound-read-list (prompt list)
   "Interactively prompt for a number of inputs until empty string.
@@ -1079,16 +1041,16 @@ PROMPT is used as prompt and LIST is a list of choices to choose from."
     (nreverse result)))
 
 (defeci c-deselect
-  "Deselects chains."
-  ((chains (ecasound-read-list "Chain to deselect: " (eci-c-selected)) "%s")))
+  ((chains (ecasound-read-list "Chain to deselect: " (eci-c-selected)) "%s"))
+  "Deselects chains.")
 
 (defeci c-list)
 
-(defeci c-select
-  "Selects chains.  Other chains are automatically deselected."
-  ((chains (ecasound-read-list "Chain: " (eci-c-list)) "%s")))
+(defeci c-select ((chains (ecasound-read-list "Chain: " (eci-c-list)) "%s"))
+  "Selects chains.  Other chains are automatically deselected.")
 
-(defeci c-selected "" nil
+(defeci c-selected ()
+  ""
   (let ((val (eci-command "c-selected" buffer-or-process)))
     (if (interactive-p)
 	(if (null val)
@@ -1097,38 +1059,39 @@ PROMPT is used as prompt and LIST is a list of choices to choose from."
 			   (mapconcat #'identity val ", ")))))
     val))
 
-(defeci c-select-all "Selects all chains.")
+(defeci c-select-all ()
+  "Selects all chains.")
 
-(defeci cs-select ""
+(defeci cs-select
   ((chainsetup
-   (completing-read "Chainsetup: " (mapcar #'list (eci-cs-list))) "%s")))
+    (completing-read "Chainsetup: " (mapcar #'list (eci-cs-list))) "%s")))
 
-(defeci ai-add ""
+(defeci ai-add
   ((filename "fInput filename: " "%s")))
 
-(defeci ao-add ""
+(defeci ao-add
   ((filename "FOutput filename: " "%s")))
 
 (defeci engine-status)
 
-(defeci cop-add ""
+(defeci cop-add
   ((string "sChainop to add: " "%s")))
 
-(defeci cop-select ""
+(defeci cop-select
   ((index "nChainop to select: " "%d")))
 
-(defeci ctrl-add ""
+(defeci ctrl-add
   ((string "sController to add: " "%s")))
 
-(defeci ctrl-select ""
+(defeci ctrl-select
   ((index "nController to select: " "%d")))
 
-(defeci copp-select ""
+(defeci copp-select
   ((index "nChainop parameter to select: " "%d")))
 
 (defeci copp-get)
 
-(defeci copp-set ""
+(defeci copp-set
   ((value "nValue for Chain operator parameter: " "%f")))
 
 ;;;; ECI Examples
@@ -1162,6 +1125,103 @@ PROMPT is used as prompt and LIST is a list of choices to choose from."
 	   (expand-file-name "emacs-eci" temporary-file-directory))
 	  suffix))
 
+(defun ecasound-read-from-minibuffer (prompt default)
+  (let ((result (read-from-minibuffer
+		 (format "%s (default %S): " prompt default)
+		 nil nil nil nil default)))
+    (if (and result (not (string= result "")))
+	result
+      default)))
+
+(defconst ecasound-signalview-clipped-threshold (- 1.0 (/ 1.0 16384)))
+
+(defconst ecasound-signalview-bar-length 55)
+
+(defun ecasound-signalview (bufsize format input output)
+  (interactive
+   (list
+    (ecasound-read-from-minibuffer "Buffersize" "128")
+    (ecasound-read-from-minibuffer "Format" "s16_le,2,44100,i")
+    (let ((file (read-file-name "Input: ")))
+      (if (file-exists-p file)
+	  (expand-file-name file)
+	file))
+    (ecasound-read-from-minibuffer "Output" "null")))
+  (let* ((eci-parse-cleanup-buffer nil)
+	 (handle (eci-init))
+	 (channels (string-to-number (nth 1 (split-string format ","))))
+	 (chinfo (make-vector channels nil)))
+    (dotimes (ch channels) (aset chinfo ch (cons 0 0)))
+    (eci-cs-add "signalview" handle)
+    (eci-c-add "analysis" handle)
+    (eci-cs-set-audio-format format handle)
+    (eci-ai-add input handle)
+    (eci-ao-add output handle)
+    (eci-cop-add "-evp" handle)
+    (eci-cop-add "-ev" handle)
+    (set-buffer (get-buffer-create "*Ecasound-signalview*"))
+    (erase-buffer)
+    (dotimes (ch channels)
+      (insert "---\n"))
+    (setq header-line-format
+	 (list (concat "Channel#"
+		       (make-string (- ecasound-signalview-bar-length 3) 32)
+		       "| max-value  clipped")))
+    (set (make-variable-buffer-local 'ecasignalview-position) "unknown")
+    (set (make-variable-buffer-local 'ecasignalview-engine-status) "unknown")
+    (setq mode-line-format
+	  (list
+	   (list
+	    (- ecasound-signalview-bar-length 3)
+	    (format "Input: %s, output: %s" input output)
+	    'ecasignalview-engine-status)
+	   " | " 'ecasignalview-position))
+    (switch-to-buffer-other-window (current-buffer))
+    (eci-cs-connect handle)
+    (eci-start handle)
+    (sit-for 0.8)
+    (eci-cop-select 1 handle)
+    (while (string= (setq ecasignalview-engine-status
+			  (eci-engine-status handle)) "running")
+      (let ((inhibit-quit t) (inhibit-redisplay t))
+	(setq ecasignalview-position
+	      (let ((secs (eci-cs-get-position handle)))
+		(format "%02d:%02d.%02d"
+			(/ secs 60)
+			(% (round (floor secs)) 60)
+			(* (- secs (floor secs)) 100))))
+	(delete-region (point-min) (point-max))
+	(dotimes (ch channels)
+	  (insert (format "ch%d: " (1+ ch)))
+	  (let ((val (progn (eci-copp-select (1+ ch) handle)
+			    (eci-copp-get handle)))
+		(bl ecasound-signalview-bar-length))
+	    (insert
+	     (concat
+	      (make-string (round (* val bl)) ?*)
+	      (make-string (- bl (round (* val bl))) ? )))
+	    (if (> val (car (aref chinfo ch)))
+		(setcar (aref chinfo ch) val))
+	    (if (> val ecasound-signalview-clipped-threshold)
+	      (incf (cdr (aref chinfo ch))))
+	    (insert (format "| %.4f     %d\n" (car (aref chinfo ch))
+			    (cdr (aref chinfo ch))))))
+	(goto-char (point-min)))
+      (sit-for 0.1)
+      (fit-window-to-buffer))
+    (goto-char (point-max))
+    (let ((pos (point)))
+      (insert
+       (nth 2
+	    (nth 2
+		 (nthcdr 2
+			 (assoc "Volume analysis"
+				(assoc "analysis"
+				       (eci-cop-status handle)))))))
+      (goto-char pos))
+    (recenter channels)
+    (fit-window-to-buffer)))
+
 (defun ecasound-normalize (filename)
   "Normalize a audio file using ECI."
   (interactive "fFile to normalize: ")
@@ -1192,66 +1252,14 @@ PROMPT is used as prompt and LIST is a list of choices to choose from."
 
 ;;; Utility functions for converting strings to data-structures.
 
-(defun eci-process-cop-register (string)
-  (set
-   (make-local-variable 'eci-cop-register)
-   (mapcar
-    (lambda (cop)
-      (when (string-match
-	     "^[0-9]+\\. \\([^,]+\\), \\(-[a-zA-Z]+\\)\\(:\\(.*\\)\\)?" cop)
-	(list (match-string-no-properties 1 cop)
-	      (match-string-no-properties 2 cop)
-	      (when (match-string 3 cop)
-		(split-string (match-string-no-properties 4 cop) ",")))))
-    (split-string string "\n"))))
-
-(defun eci-process-preset-register (string)
-  (set
-   (make-local-variable 'eci-preset-register)
-   (mapcar
-    (lambda (preset)
-      (when (string-match
-	     "^[0-9]+\\. \\([^,]+\\), \\(-pn:[a-zA-Z_]+\\)\\(:\\(.*\\)\\)?" preset)
-	(list (match-string-no-properties 1 preset)
-	      (match-string-no-properties 2 preset)
-	      (when (match-string 3 preset)
-		(split-string (match-string-no-properties 4 preset) ",")))))
-    (split-string string "\n"))))
-
-(defun eci-process-ctrl-register (string)
-  (set
-   (make-local-variable 'eci-ctrl-register)
-   (mapcar
-    (lambda (ctrl)
-      (when (string-match
-	     "^[0-9]+\\. \\([^,]+\\), \\(-[a-zA-Z0-9]+\\)\\(:\\(.*\\)\\)?"
-	     ctrl)
-	(list (match-string-no-properties 1 ctrl)
-	      (match-string-no-properties 2 ctrl)
-	      (when (match-string 3 ctrl)
-		(split-string (match-string-no-properties 4 ctrl) ",")))))
-    (split-string string "\n"))))
-
-(defun eci-process-ladspa-register (string)
-  (let (result)
-    (with-temp-buffer
-      (insert string)
-      (goto-char (point-min))
-      (while (re-search-forward "[0-9]+\\. \\(.*\\)\n\t\\(-el:[^,\n]+\\),\\(.*\\)" nil t)
-	(let ((full-name (match-string-no-properties 1))
-	      (name (match-string-no-properties 2))
-	      (args (split-string (concat "'," (match-string-no-properties 3)
-					  ",'") "','")))
-	  (setq result (cons (list full-name name args) result)))))
-    (set (make-local-variable 'eci-ladspa-register)
-	 (nreverse result))))
+(defvar eci-cop-status-header
+  "### Chain operator status (chainsetup '\\([^']+\\)') ###\n")
 
 (defun eci-process-cop-status (string)
   (with-temp-buffer
     (insert string) (goto-char (point-min))
-    (when (re-search-forward
-	   "### Chain operator status (chainsetup '\\([^']+\\)') ###\n" nil t)
-      (let ((cs (match-string-no-properties 1)) result)
+    (when (re-search-forward eci-cop-status-header nil t)
+      (let (result)
 	(while (re-search-forward "Chain \"\\([^\"]+\\)\":\n" nil t)
 	  (let ((c (match-string-no-properties 1)) chain)
 	    (while (re-search-forward
@@ -1269,72 +1277,129 @@ PROMPT is used as prompt and LIST is a list of choices to choose from."
 				(string-to-number (match-string 3 elt)))))
 		      (split-string
 		       (match-string-no-properties 3) ", "))))
+		(if (looking-at "\tStatus info:\n")
+		    (setq args
+			  (append
+			   args
+			   (list
+			    (list
+			     "Status info" nil
+			     (buffer-substring
+			      (progn (forward-line 1) (point))
+			      (or (re-search-forward "\n\n" nil t)
+				  (point-max))))))))
 		(setq chain (cons (append (list name n) args) chain))))
 	    (setq result (cons (reverse (append chain (list c))) result))))
-	(reverse result)))))
+	result))))
 
-(defeci cop-register "" nil
-  (let ((eci-hide-output (not (interactive-p))))
-    (eci-command "cop-register")))
+(defun eci-process-map-list (string)
+  "Parse the output of a map-xxx-list ECI command and return an alist.
+STRING is the string returned by a map-xxx-list command."
+  (mapcar
+   (lambda (elt)
+     (append
+      (list (nth 1 elt) (nth 0 elt) (nth 2 elt))
+      (let (res (count (string-to-number (nth 3 elt))))
+	(setq elt (nthcdr 4 elt))
+	(while (> count 0)
+	  (setq
+	   res
+	   (cons
+	    (list (nth 0 elt) (nth 1 elt)
+		  (string-to-number (nth 2 elt)) ;; default value
+		  (when (string= (nth 3 elt) "1")
+		    (string-to-number (nth 4 elt)))
+		  (when (string= (nth 5 elt) "1")
+		    (string-to-number (nth 6 elt)))
+		  (cond
+		   ((string= (nth 7 elt) "1")
+		    'toggle)
+		   ((string= (nth 8 elt) "1")
+		    'integer)
+		   ((string= (nth 9 elt) "1")
+		    'logarithmic)
+		   ((string= (nth 10 elt) "1")
+		    'output))) res)
+	   elt (nthcdr 11 elt)
+	   count (1- count)))
+	(reverse res))))
+   (mapcar (lambda (str) (split-string str ","))
+	   (split-string string "\n"))))
 
-(defeci preset-register "" nil
-  (let ((eci-hide-output (not (interactive-p))))
-    (eci-command "preset-register")))
+(defeci cs-set-audio-format
+  ((format (ecasound-read-from-minibuffer
+	    "Audio format" "s16_le,2,44100,i") "%s")))
 
-(defeci ctrl-register "" nil
-  (let ((eci-hide-output (not (interactive-p))))
-    (eci-command "ctrl-register")))
+(defeci cop-register)
+(defeci preset-register)
+(defeci ctrl-register)
 
-(defeci cop-status "" nil
+(defeci cop-status ()
+  ""
   (let ((eci-hide-output (not (interactive-p))))
-    (eci-command "cop-status")))
+    (eci-command "cop-status" buffer-or-process)))
 
 (defeci ladspa-register "" nil
   (let ((eci-hide-output (not (interactive-p))))
     (eci-command "ladspa-register")))
 
+(defun ecasound-read-copp (copp)
+  "Interactively read one chainop parameter."
+  (let* ((completion-ignore-case t)
+	 (default (format "%S" (nth 2 copp)))
+	 (answer
+	  (read-from-minibuffer
+	   (concat
+	    (car copp)
+	    " (default " default "): ")
+	   nil nil nil nil
+	   default)))
+    (if (and answer (not (string= answer "")))
+	answer
+      default)))
+
 (defun ecasound-cop-add ()
   "Interactively prompt for the name and argument of a chain operator to add."
   (interactive)
-  (unless eci-cop-register
-    (eci-cop-register))
-  (unless eci-ladspa-register
-    (eci-ladspa-register))
-  (let* ((completion-ignore-case t)
-	 (cop (completing-read "Chain operator: "
-			       (append eci-cop-register eci-ladspa-register)))
-	 (args (nth 2 (or (assoc cop eci-cop-register)
-			  (assoc cop eci-ladspa-register))))
-	 (arg (nth 1 (or (assoc cop eci-cop-register)
-			 (assoc cop eci-ladspa-register))))
-	 args2)
-    (while args
-      (setq args2 (cons (read-from-minibuffer (concat (car args) ": "))
-			args2))
-      (setq args (cdr args)))
-    (setq args2 (nreverse args2))
-    (eci-cop-add (concat arg (if (assoc cop eci-cop-register) ":" ",")
-			 (mapconcat #'identity args2 ",")))))
+  (unless eci-map-cop-list
+    (eci-map-cop-list))
+  (unless eci-map-ladspa-list
+    (eci-map-ladspa-list))
+  (unless eci-map-preset-list
+    (eci-map-preset-list))
+  (let* ((cop (completing-read "Chain operator: "
+			       (append eci-map-cop-list eci-ladspa-register
+				       eci-map-preset-list)))
+	 (arg (nth 1 (or (assoc cop eci-map-cop-list)
+			 (assoc cop eci-map-ladspa-list)
+			 (assoc cop eci-map-preset-list)))))
+    (eci-cop-add
+     (concat
+      (cond
+       ((assoc cop eci-map-cop-list)
+	(concat "-" arg ":"))
+       ((assoc cop eci-map-ladspa-list)
+	(concat "-el:" arg ","))
+       ((assoc cop eci-map-preset-list)
+	(concat "-pn:" arg ",")))
+      (mapconcat #'ecasound-read-copp
+		 (or (nthcdr 3 (assoc cop eci-map-cop-list))
+		     (nthcdr 3 (assoc cop eci-map-ladspa-list))
+		     (nthcdr 3 (assoc cop eci-map-preset-list))) ",")))))
 
 (defun ecasound-ctrl-add ()
   "Prompt for the name and arguments of a chainop controllerr to add."
   (interactive)
-  (unless eci-ctrl-register
-    (eci-ctrl-register))
-  (let* ((completion-ignore-case t)
-	 (ctrl (completing-read "Chain operator controller: "
-				eci-ctrl-register))
-	 (arg (nth 1 (assoc ctrl eci-ctrl-register))))
-    
+  (unless eci-map-ctrl-list
+    (eci-map-ctrl-list))
+  (let ((ctrl (completing-read "Chain operator controller: "
+			       eci-map-ctrl-list)))
     (eci-ctrl-add
      (concat
-      arg ":"
+      "-" (nth 1 (assoc ctrl eci-map-ctrl-list)) ":"
       (mapconcat
-       #'identity
-       (mapcar
-	(lambda (arg)
-	  (read-from-minibuffer (concat arg ": ")))
-	(nth 2 (assoc ctrl eci-ctrl-register)))
+       #'ecasound-read-copp
+       (nthcdr 3 (assoc ctrl eci-map-ctrl-list))
        ",")))))
 
 ;;; ChainOp Editor
@@ -1708,8 +1773,6 @@ This is done using the ecasound-cop widget."
 ;; mode: outline-minor
 ;; outline-regexp: ";;;;* \\|"
 ;; End:
-
-
 
 (provide 'ecasound)
 
