@@ -18,12 +18,41 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include "eca-session.h"
 #include "eca-control.h"
+
 #include "eca-control-interface.h"
 
-ECA_CONTROL_INTERFACE::ECA_CONTROL_INTERFACE (void) { }
+/**
+ * Class constructor.
+ */
+ECA_CONTROL_INTERFACE::ECA_CONTROL_INTERFACE (void) { 
+  session_repp = new ECA_SESSION();
+  control_repp = new ECA_CONTROL(session_repp);
+}
+
+/**
+ * Desctructor.
+ */
+ECA_CONTROL_INTERFACE::~ECA_CONTROL_INTERFACE (void) { 
+  delete session_repp;
+  delete control_repp;
+}
 
 /**
  * Parse string mode command and act accordingly.
  */
-void ECA_CONTROL_INTERFACE::command(const string& cmd) { }
+void ECA_CONTROL_INTERFACE::command(const string& cmd) { 
+  try {
+    control_repp->command(cmd);
+  }
+  catch(int n) {
+    cerr << "Caught an exception (1)!" << endl;
+  }
+  catch(ECA_ERROR& e) {
+    cerr << "Caught an exception (2)!" << endl;
+  }
+  catch(...) {
+    cerr << "Caught an exceptiong (3)!" << endl;
+  }
+}
