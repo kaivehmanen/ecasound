@@ -17,15 +17,10 @@ list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 -----------------------------------------------------------------------
 [ Active development areas ]
 
-2.2 (2.1devX series):
+2.2:
 
-- JACK and ALSA 0.9.x support [done]
-- cleanup of samplerate and audio position related
-  code (edi-18, edi-21) [done!]
-
-2.0:
-
-- stable, only critical bug fixes
+- JACK and ALSA 0.9.x support
+- usability issues with basic multitrack recording scenarios
 
 -----------------------------------------------------------------------
 [ Help - developer in trouble ]
