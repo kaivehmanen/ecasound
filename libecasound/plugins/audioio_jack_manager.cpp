@@ -931,6 +931,8 @@ void AUDIO_IO_JACK_MANAGER::close(int client_id)
   if (open_clients_rep == 1) {
     if (is_open() == true) close_connection();
   }
+
+  --open_clients_rep;
 }
 
 /**
