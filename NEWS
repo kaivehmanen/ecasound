@@ -15,9 +15,12 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 xx082004 (v2.3.4)  -** stable release **-
 	- edi-entries: edi-14 closed, edi-40 added
+	- note: verified to compile ok ok MacOS X 10.3.2 [smbolton]
 	- fixed: multitrack offset was calculated incorrectly for
 		 ALSA devices which limit buffer period count to 2
-	- fixed: compile errors on MacOS X 10.3.2 [smbolton]
+	- fixed: bugs in .wav, .cdr, JACK code, and in internal sample 
+		 conversion routines that occur on big-endian 
+		 machines [smbolton]
 05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command
