@@ -8,8 +8,6 @@ PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 SUBDIRS = users_guide programmers_guide
 
-#distdir = ../$(PACKAGE)-$(VERSION)
-#top_distdir = $(distdir)
 # ---------------------------------------------------------------------
 # Files going into distribution:
 DISTFILES = 	Makefile.am \
@@ -35,9 +33,10 @@ DISTFILES = 	Makefile.am \
 	    	ecamonitor.1 \
 	    	ecanormalize.1 \
 	    	ecasignalview.1 \
-	    	examples.html \
 		index.html \
+	    	examples.html \
 		manpages.html \
+		tutorials.html \
 		edi-list.txt
 
 # ---------------------------------------------------------------------
