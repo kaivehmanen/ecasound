@@ -93,7 +93,11 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)
     }
     else {
       add_chainsetup(comline_setup); /* ownership object transfered */
-      if (selected_chainsetup_repp->is_valid() != true) {
+      if (selected_chainsetup_repp == 0) {
+	/* adding the chainsetup failed */
+	delete comline_setup;
+      }
+      else if (selected_chainsetup_repp->is_valid() != true) {
 	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-session) Note! Unable to create a valid chainsetup from the command-line arguments.");
       }
     }
@@ -138,9 +142,15 @@ void ECA_SESSION::add_chainsetup(const std::string& name)
   ECA_CHAINSETUP* newsetup = new ECA_CHAINSETUP;
   newsetup->set_name(name);
   add_chainsetup(newsetup);
+  if (selected_chainsetup_repp == 0) {
+    /* adding the chainsetup failed */
+    delete newsetup;
+  }
 
   // --------
-  DBC_ENSURE(selected_chainsetup_repp->name() == name);
+  DBC_ENSURE(selected_chainsetup_repp != 0 &&
+	     selected_chainsetup_repp->name() == name ||
+	     selected_chainsetup_repp == 0);
   // --------
 }
 
@@ -151,11 +161,13 @@ void ECA_SESSION::add_chainsetup(const std::string& name)
  * is deleted.
  *
  * require:
- *  comline_setup != 0
+ *   comline_setup != 0
  *
  * ensure:
- *  selected_chainsetup == comline_setup ||
- *  comline_setup == 0
+ *   (selected_chainsetup_repp == comline_setup && 
+ *    static_cast<int>(chainsetups_rep.size()) == old_size + 1) ||
+ *   (selected_chainsetup_repp == 0 && 
+ *    static_cast<int>(chainsetups_rep.size()) == old_size)
  */
 void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup)
 {
@@ -163,26 +175,29 @@ void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup)
   DBC_REQUIRE(comline_setup != 0);
   DBC_DECLARE(int old_size = chainsetups_rep.size());
   // --------
+
+  selected_chainsetup_repp = comline_setup;
   
   std::vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups_rep.begin();
   while(p != chainsetups_rep.end()) {
     if ((*p)->name() == comline_setup->name()) {
-      delete comline_setup;
-      comline_setup = 0;
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		    string("ECA-SESSION","Unable to add chainsetup \"") + 
-		    (*p)->name() + 
-		    "\"; chainsetup with the same name already exists.");
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "(eca-session) Unable to add chainsetup, chainsetup with the same name already exists.");
+      selected_chainsetup_repp = 0;
+      break;
     }
     ++p;
   }
 
-  selected_chainsetup_repp = comline_setup;
-  chainsetups_rep.push_back(comline_setup);
+  if (selected_chainsetup_repp != 0) {
+    chainsetups_rep.push_back(selected_chainsetup_repp);
+  }
 
   // --------
-  DBC_ENSURE(selected_chainsetup_repp == comline_setup);
-  DBC_ENSURE(static_cast<int>(chainsetups_rep.size()) == old_size + 1);
+  DBC_ENSURE((selected_chainsetup_repp == comline_setup && 
+	      static_cast<int>(chainsetups_rep.size()) == old_size + 1) ||
+	     (selected_chainsetup_repp == 0 && 
+	      static_cast<int>(chainsetups_rep.size()) == old_size));
   // --------
 }
 
@@ -266,6 +281,10 @@ void ECA_SESSION::save_chainsetup(const std::string& filename) throw(ECA_ERROR&)
  * Load a chainsetup from file (ecs). If operation fails,
  * selected_chainsetup_repp == 0, ie. no chainsetup 
  * selected.
+ *
+ * @post (selected_chainsetup_repp != 0 &&
+ *	  selected_chainsetup_repp->filename() == filename || 
+ *        selected_chainsetup_repp == 0)
  */
 void ECA_SESSION::load_chainsetup(const std::string& filename)
 {
@@ -275,13 +294,15 @@ void ECA_SESSION::load_chainsetup(const std::string& filename)
 
   ECA_CHAINSETUP* new_setup = new ECA_CHAINSETUP(filename);
   add_chainsetup(new_setup);
-  if (new_setup != 0) /* adding chainsetup ok */
-    selected_chainsetup_repp = new_setup;
-  else
-    selected_chainsetup_repp = 0;
+  if (selected_chainsetup_repp == 0) {
+    /* adding the chainsetup failed */
+    delete new_setup;
+  }
   
   // --------
-  DBC_ENSURE(selected_chainsetup_repp != 0 && selected_chainsetup_repp->filename() == filename);
+  DBC_ENSURE(selected_chainsetup_repp != 0 &&
+	     selected_chainsetup_repp->filename() == filename || 
+	     selected_chainsetup_repp == 0);
   // --------
 }
 
@@ -469,7 +490,7 @@ void ECA_SESSION::interpret_chainsetup_option (const std::string& argu)
   case 's': {
     if (argu.size() > 2 && argu[2] == ':') {
       load_chainsetup(tname);
-      if (selected_chainsetup_repp->is_valid()) connect_chainsetup();
+      if (selected_chainsetup_repp != 0 && selected_chainsetup_repp->is_valid()) connect_chainsetup();
     }
     break;
   }

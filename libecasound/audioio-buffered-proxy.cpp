@@ -122,6 +122,8 @@ bool AUDIO_IO_BUFFERED_PROXY::finished(void) const { return(finished_rep); }
  */
 void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf)
 {
+  DBC_CHECK(pbuffer_repp != 0);
+
   if (pbuffer_repp->read_space() > 0) {
     SAMPLE_BUFFER* source = pbuffer_repp->sbufs_rep[pbuffer_repp->readptr_rep.get()];
     sbuf->number_of_channels(source->number_of_channels());
@@ -161,6 +163,8 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf)
  */
 void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf)
 {
+  DBC_CHECK(pbuffer_repp != 0);
+
   if (pbuffer_repp->write_space() > 0) {
     SAMPLE_BUFFER* target = pbuffer_repp->sbufs_rep[pbuffer_repp->writeptr_rep.get()];
     target->number_of_channels(sbuf->number_of_channels());
@@ -208,7 +212,9 @@ void AUDIO_IO_BUFFERED_PROXY::seek_position(void)
     DBC_CHECK(pserver_repp->is_running() != true);
   }
   child_repp->seek_position_in_samples(position_in_samples());
-  pbuffer_repp->reset();
+  if (pbuffer_repp != 0) {
+    pbuffer_repp->reset();
+  }
   finished_rep = false;
   if (was_running == true) {
     pserver_repp->start();
