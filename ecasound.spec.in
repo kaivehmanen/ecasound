@@ -87,7 +87,7 @@ Python bindings to Ecasound Control Interface (ECI).
 %prep
 %setup -n ecasound-@VERSION@
 %build
-./configure --prefix=%{_prefix} --mandir=%{_mandir} --disable-static $extra_params
+./configure --prefix=%{_prefix} --mandir=%{_mandir} $extra_params
 make
 
 %install
