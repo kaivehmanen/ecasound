@@ -377,8 +377,8 @@ void MP3FILE::close(void)
   AUDIO_IO::close();
 }
 
-void MP3FILE::process_mono_fix(char* target_buffer, long int bytes_rep) {
-  for(long int n = 0; n < bytes_rep;) {
+void MP3FILE::process_mono_fix(char* target_buffer, long int bytes) {
+  for(long int n = 0; n < bytes;) {
     target_buffer[n + 2] = target_buffer[n];
     target_buffer[n + 3] = target_buffer[n + 1];
     n += 4;

@@ -62,7 +62,7 @@ dnl ---
 dnl ---
 dnl Sets up some operating system specific options for POSIX threads
 dnl
-dnl modifies: CXXFLAGS, CFLAGS
+dnl modifies: CXXFLAGS, CFLAGS, CPPFLAGS, LIBS
 dnl ---
 
 case "$host" in
@@ -79,6 +79,7 @@ case "$host" in
                ;;
 	*-*-solaris*)
                CPPFLAGS="$CPPFLAGS -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS"
+	       LIBS="$LIBS -lposix4"
                echo "Setting Solaris compilation options for POSIX threads"
                ;;
 	*)
@@ -88,7 +89,7 @@ esac
 
 dnl switch to C while testing for pthread support
 AC_LANG_C
-AC_SEARCH_LIBS(pthread_create, pthread c_r, [],
+AC_SEARCH_LIBS(pthread_create, pthread c_r,,
 		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **]))
 dnl switch back to C++
 AC_LANG_CPLUSPLUS
@@ -413,12 +414,15 @@ dnl ---
 dnl Check system libraries
 dnl ---
 
-AC_SEARCH_LIBS(nanosleep, rt)
-AC_SEARCH_LIBS(sched_setscheduler, rt)
-AC_SEARCH_LIBS(nanosleep, posix4)
-AC_SEARCH_LIBS(sched_setscheduler, posix4)
-AC_CHECK_LIB(m, sin)
-AC_CHECK_LIB(dl, dlopen)
+dnl switch to C for testing
+AC_LANG_C
+dnl see also section 7 - functions 
+AC_SEARCH_LIBS(nanosleep, rt posix4)
+AC_SEARCH_LIBS(sched_setscheduler, rt posix4)
+AC_CHECK_LIB(m, sin,, AC_MSG_ERROR([*** required sin() function not found! ***]))
+AC_CHECK_LIB(dl, dlopen,, AC_MSG_ERROR([*** required dlopen() function not found! ***]))
+dnl switch back to C++
+AC_LANG_CPLUSPLUS
 
 dnl ------------------------------------------------------------------
 
@@ -583,7 +587,9 @@ dnl Checks for system header files.
 dnl ---
 AC_HEADER_TIME
 dnl Note! Header filenames must be on the same line!
-AC_CHECK_HEADERS(fcntl.h dlfcn.h sys/ioctl.h sys/time.h sys/resource.h sys/stat.h sys/wait.h signal.h sys/types.h sys/mman.h errno.h sched.h unistd.h inttypes.h stdint.h inttypes.h asm/atomic.h ladspa.h)
+AC_CHECK_HEADERS(dlfcn.h errno.h fcntl.h signal.h unistd.h sys/stat.h sys/time.h sys/types.h sys/wait.h,,
+		 AC_MSG_ERROR([*** not all required header files were found ***]))
+AC_CHECK_HEADERS(inttypes.h ladspa.h sched.h stdint.h asm/atomic.h sys/mman.h)
 
 dnl ------------------------------------------------------------------
 
@@ -624,9 +630,16 @@ dnl ---
 dnl Checks for functions.
 dnl ---
 AC_FUNC_MMAP
+AC_CHECK_FUNCS(atoll)
+AC_CHECK_FUNCS(gettimeofday)
 AC_CHECK_FUNCS(mlockall)
 AC_CHECK_FUNCS(munlockall)
-AC_CHECK_FUNCS(atoll)
+AC_CHECK_FUNCS(nanosleep)
+AC_CHECK_FUNCS(usleep)
+AC_CHECK_FUNCS(sched_get_priority_max)
+AC_CHECK_FUNCS(sched_getparam)
+AC_CHECK_FUNCS(sched_getscheduler)
+AC_CHECK_FUNCS(sched_setscheduler)
 
 dnl ------------------------------------------------------------------
 
@@ -674,8 +687,8 @@ fi
 echo "libkvutils: 		yes"
 echo "-----------------------------------------------------------------"
 echo "Compiler options:"
-echo "CFLAGS                    $CFLAGS"
-echo "CXXFLAGS                  $CXXFLAGS"
+echo "CFLAGS                  $CFLAGS"
+echo "CXXFLAGS                $CXXFLAGS"
 echo "-----------------------------------------------------------------"
 echo "Following features were selected:"
 if test x$include_debug = xyes ; then

@@ -29,7 +29,6 @@
 #include <pthread.h>
 #include <errno.h>
 #include <sys/time.h> /* gettimeofday() */
-#include <sys/resource.h>
 
 #include <kvutils/dbc.h>
 #include <kvutils/threads.h>

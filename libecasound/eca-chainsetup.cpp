@@ -28,7 +28,10 @@
 #include <vector>
 #include <list>
 #include <iostream>
+
+#ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h> /* for mlockall() */
+#endif
 
 #include <kvutils/dbc.h>
 #include <kvutils/message_item.h>

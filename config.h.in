@@ -49,11 +49,32 @@
 /* Define if you have the getpagesize function.  */
 #undef HAVE_GETPAGESIZE
 
+/* Define if you have the gettimeofday function.  */
+#undef HAVE_GETTIMEOFDAY
+
 /* Define if you have the mlockall function.  */
 #undef HAVE_MLOCKALL
 
 /* Define if you have the munlockall function.  */
 #undef HAVE_MUNLOCKALL
+
+/* Define if you have the nanosleep function.  */
+#undef HAVE_NANOSLEEP
+
+/* Define if you have the sched_get_priority_max function.  */
+#undef HAVE_SCHED_GET_PRIORITY_MAX
+
+/* Define if you have the sched_getparam function.  */
+#undef HAVE_SCHED_GETPARAM
+
+/* Define if you have the sched_getscheduler function.  */
+#undef HAVE_SCHED_GETSCHEDULER
+
+/* Define if you have the sched_setscheduler function.  */
+#undef HAVE_SCHED_SETSCHEDULER
+
+/* Define if you have the usleep function.  */
+#undef HAVE_USLEEP
 
 /* Define if you have the <asm/atomic.h> header file.  */
 #undef HAVE_ASM_ATOMIC_H
@@ -85,14 +106,8 @@
 /* Define if you have the <stdlib.h> header file.  */
 #undef HAVE_STDLIB_H
 
-/* Define if you have the <sys/ioctl.h> header file.  */
-#undef HAVE_SYS_IOCTL_H
-
 /* Define if you have the <sys/mman.h> header file.  */
 #undef HAVE_SYS_MMAN_H
-
-/* Define if you have the <sys/resource.h> header file.  */
-#undef HAVE_SYS_RESOURCE_H
 
 /* Define if you have the <sys/stat.h> header file.  */
 #undef HAVE_SYS_STAT_H

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvutils.cpp: Misc helper routines
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,19 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <algorithm>
 #include <cstdlib> /* atoi() */
 #include <iostream>
 #include <string>
 #include <vector>
 
+#include <time.h> /* nanosleep() */
 #include <sys/time.h> /* gettimeofday() */
-#include <unistd.h>
+#include <unistd.h> /* usleep() */
 #include <ctype.h> /* isspace(), toupper() */
 #include <assert.h>
 
@@ -362,4 +367,23 @@ void print_time_stamp(void) {
 
   last.tv_sec = current.tv_sec;
   last.tv_usec = current.tv_usec;
+}
+
+int kvu_sleep(long int seconds, long int nanoseconds)
+{
+  int ret = 0;
+#ifdef HAVE_NANOSLEEP
+  struct timespec len;
+  len.tv_sec = static_cast<time_t>(seconds);
+  len.tv_nsec = nanoseconds;
+  ret = nanosleep(&len, NULL);
+
+#elif HAVE_USLEEP
+  int ret = usleep(second * 1000000 + nanoseconds / 1000);
+
+#else
+  std::cerr << "(libkvutils) kvutils:: warning! neither nanosleep() or usleep() found!" << std::endl;
+#endif
+
+  return(ret);
 }

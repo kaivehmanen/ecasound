@@ -28,10 +28,11 @@
 #include <unistd.h>
 #include <signal.h>
 
-#include <kvutils/value_queue.h>
-#include <kvutils/message_item.h>
 #include <kvutils/dbc.h>
+#include <kvutils/kvutils.h>
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils/message_item.h>
+#include <kvutils/value_queue.h>
 
 #include "eca-engine.h"
 #include "eca-session.h"
@@ -137,12 +138,8 @@ void ECA_CONTROL_BASE::run(void)
   else { 
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 
-    struct timespec sleepcount;
-    sleepcount.tv_sec = 1;
-    sleepcount.tv_nsec = 0;
-
     while(is_finished() == false) {
-      ::nanosleep(&sleepcount, NULL);
+      kvu_sleep(1, 0);
       if (processing_started != true) {
 	if (is_running() == true) {
 	  processing_started = true;

@@ -67,6 +67,8 @@ Last officially released version is -*> v2.0.4 *-
 		   frozen together with libecasound.so.8
 	- changed: rewritten rtnull implementation; now imitates
 		   soundcard behaviour much more accurately
+	- changed: numerous portability improvements to the 
+	           autoconf scripts
 	- fixed: -[io]:alsaplugin,x,y didn't work with latest ALSA
 		 0.9betaX releases
 	- fixed: serious bug in setting up ALSA 0.9.x buffering params
@@ -99,6 +101,9 @@ Last officially released version is -*> v2.0.4 *-
 		 multitrack mode
 	- fixed: incorrect parsing of wav headers on big-endian 
 	         machines
+	- fixed: various small fixes to make ecasound compile 
+		 (but not yet link) with Sun's Workshop6 C5.2 
+		 C++ compiler under Solaris 2.8 (sparc ultra-250)
 16012002 (v2.1dev7)
 	- edi-entries: edi-12
 	- added: a watchdog thread that handles thread cleanup; 

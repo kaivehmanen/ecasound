@@ -17,11 +17,18 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <iostream>
 
 #include <unistd.h>
-#include <sys/time.h>
 #include <signal.h>
+#include <sys/time.h>
+#ifdef HAVE_SCHED_H
+#include <sched.h>
+#endif
 
 #include <kvutils/kvu_numtostr.h>
 #include <kvutils/dbc.h>
@@ -192,6 +199,7 @@ void MIDI_SERVER::enable(void) {
       ecadebug->msg("(midi-server) pthread_create failed, exiting");
       exit(1);
     }
+#ifdef HAVE_SCHED_GETSCHEDULER
     if (sched_getscheduler(0) == SCHED_FIFO) {
       struct sched_param sparam;
       sparam.sched_priority = schedpriority_rep;
@@ -200,6 +208,9 @@ void MIDI_SERVER::enable(void) {
       else 
 	ecadebug->msg("Using realtime-scheduling (SCHED_FIFO).");
     }
+#else
+	ecadebug->msg("Warning! sched_getscheduler() not available!");
+#endif
     thread_running_rep = true;
   }
 

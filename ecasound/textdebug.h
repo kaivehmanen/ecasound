@@ -19,7 +19,7 @@ public:
 
     void flush(void);
     void control_flow(const std::string& part);
-    void msg(int level, const std::string& info);
+    void msg(int level, const std::string& infoarg);
 
     TEXTDEBUG(void);
     ~TEXTDEBUG(void);

@@ -33,7 +33,6 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
   static const int sectorsize = 2352;
 
   long int samples_read;
-  off_t curpos_rep;
 
   FILE* fobject;
   void pad_to_sectorsize(void);

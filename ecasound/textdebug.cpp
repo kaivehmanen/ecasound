@@ -45,9 +45,9 @@ void TEXTDEBUG::control_flow(const std::string& part) {
   *dostream << "\n";
 }
 
-void TEXTDEBUG::msg(int level, const std::string& info) {
+void TEXTDEBUG::msg(int level, const std::string& infoarg) {
   if ((get_debug_level() & level) != level) return;
-  *dostream << info << "\n";
+  *dostream << infoarg << "\n";
 }
 
 TEXTDEBUG::TEXTDEBUG(void) {

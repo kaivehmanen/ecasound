@@ -2,6 +2,10 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2002-04-19  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* kvutils.h (kvu_sleep): added
+	
 2002-02-27  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* threads.h (all): added

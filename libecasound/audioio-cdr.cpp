@@ -119,9 +119,9 @@ void CDRFILE::write_samples(void* target_buffer, long int samples) {
 }
 
 void CDRFILE::seek_position(void) {
-  DBC_CHECK(curpos_rep >= 0);
   if (is_open() == true) {
     off_t curpos_rep = position_in_samples() * frame_size();
+    DBC_CHECK(curpos_rep >= 0);
 /* fseeko doesn't seem to work with glibc 2.1.x */
 #if _LARGEFILE_SOURCE
     off_t seekpos = 0;

@@ -17,16 +17,24 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <iostream>
 #include <string>
 
-#include <unistd.h>
+#include <errno.h> /* ETIMEDOUT */
 #include <signal.h>
 #include <pthread.h>
+#include <unistd.h>
 #include <sys/time.h> /* gettimeofday() */
-#include <errno.h> /* ETIMEDOUT */
+#ifdef HAVE_SCHED_H
+#include <sched.h>
+#endif
 
 #include <kvutils/dbc.h>
+#include <kvutils/kvutils.h>
 #include <kvutils/kvu_numtostr.h>
 
 #include "sample-specs.h"
@@ -163,6 +171,7 @@ void AUDIO_IO_PROXY_SERVER::start(void)
    *       ... or is it? - testing again 15.10.2001
    */
 #if 0
+#ifdef HAVE_SCHED_GETSCHEDULER
    if (sched_getscheduler(0) == SCHED_FIFO) {
      struct sched_param sparam;
      sparam.sched_priority = schedpriority_rep;
@@ -171,6 +180,9 @@ void AUDIO_IO_PROXY_SERVER::start(void)
      else 
        ecadebug->msg("(audioio-proxy-server) Using realtime-scheduling (SCHED_FIFO).");
    }
+#else
+	ecadebug->msg("Warning! sched_getscheduler() not available!");
+#endif
 #endif
 
   stop_request_rep.set(0);
@@ -451,18 +463,16 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void)
   bool one_time_full = false;
 
   /* set idle timeout to ~10% of total buffersize (using 44.1Hz as a reference) */
-  struct timespec sleepcount; /* was: 100ms */
-  sleepcount.tv_sec = 0; 
-  sleepcount.tv_nsec = buffersize_rep * buffercount_rep * 1000 / 44100 / 10 * 1000000;
-  
+  long int sleeplen = buffersize_rep * buffercount_rep * 1000 / 44100 / 10 * 1000000;
+
   ecadebug->msg(ECA_DEBUG::system_objects, 
 		"(audio_io_proxy_server) Using idle timeout of " +
-		kvu_numtostr(sleepcount.tv_nsec) + 
+		kvu_numtostr(sleeplen) + 
 		" nsecs.");
 
   while(true) {
     if (running_rep.get() == 0) {
-      nanosleep(&sleepcount, 0);
+      kvu_sleep(0, sleeplen);
       if (exit_request_rep.get() == 1) break;
       continue;
     }
@@ -544,7 +554,7 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void)
 	/* case 2: nothing processed ==> sleep */
 	PROXY_PROFILING_INC(impl_repp->profile_no_processing_rep);
       }
-      nanosleep(&sleepcount, 0);
+      kvu_sleep(0, sleeplen);
     }
     else {
       if (min_free_space < (buffercount_rep / 2)) {

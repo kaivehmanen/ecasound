@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvu_rtcaps.h: Routines for checking realtime-related capabilities.
-// Copyright (C) 2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2001,2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,27 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <sched.h>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <iostream>
 #include <unistd.h> /* getpid(), _POSIX_MEMLOCK */
+
+#ifdef HAVE_SCHED_H
+#include <sched.h>
+#endif
+#ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h> /* mlockall(), munlockall() */
+#endif
 
 #include "kvu_rtcaps.h"
 
 static bool kvu_check_for_sched_sub(int policy);
 
-bool kvu_check_for_sched_sub(int policy) {
-
+bool kvu_check_for_sched_sub(int policy)
+{
+#ifdef HAVE_SCHED_GETPARAM
   int curpid = getpid();
   bool result = false;
 
@@ -53,7 +64,9 @@ bool kvu_check_for_sched_sub(int policy) {
       }
     }
   } 
-
+#else /* HAVE_SCHED_GETPARAM */
+  std::cerr << "(libkvutils) kvu_rtcaps: warning! sched_getparam() not supported" << std::endl;
+#endif
   return(result);
 }
 
@@ -62,7 +75,11 @@ bool kvu_check_for_sched_sub(int policy) {
  * to set scheduler to SCHED_FIFO.
  */
 bool kvu_check_for_sched_fifo(void) {
+#ifdef HAVE_SCHED_H
   return(kvu_check_for_sched_sub(SCHED_FIFO));
+#else
+  std::cerr << "(libkvutils) kvu_rtcaps: warning! sched.h not available" << std::endl;
+#endif
 }
 
 /**
@@ -70,8 +87,13 @@ bool kvu_check_for_sched_fifo(void) {
  * to set scheduler to SCHED_RR.
  */
 bool kvu_check_for_sched_rr(void) {
+#ifdef HAVE_SCHED_H
   return(kvu_check_for_sched_sub(SCHED_RR));
+#else
+  std::cerr << "(libkvutils) kvu_rtcaps: warning! sched.h not available" << std::endl;
+#endif
 }
+
 
 /**
  * Checks whether mlockall() call is available 
@@ -84,12 +106,14 @@ bool kvu_check_for_sched_rr(void) {
  */
 bool kvu_check_for_mlockall(void) {
   bool result = false;
-#ifdef _POSIX_MEMLOCK /* unistd.h */
+#if defined(_POSIX_MEMLOCK) && defined(HAVE_MLOCKALL) && defined(HAVE_MUNLOCKALL) /* unistd.h */
   int ret = mlockall(MCL_CURRENT);
   if (ret == 0) {
     result = true;
     munlockall();
   }
+#else
+  std::cerr << "(libkvutils) kvu_rtcaps: warning! POSIX_MEMLOCK not supported" << std::endl;
 #endif
   return(result);
 }

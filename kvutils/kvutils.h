@@ -141,6 +141,17 @@ std::string get_argument_prefix(const std::string& argument);
 void print_time_stamp(void);
 
 /**
+ * Put the calling execution context to sleeps for 
+ * 'seconds.nanosecods'.
+ *
+ * Note! If available, implemented using nanosleep().
+ *
+ * @return 0 on success, non-zero if sleep was 
+ *         interrupted for some reason
+ */
+int kvu_sleep(long int seconds, long int nanoseconds);
+
+/**
  * Obsolete functions.
  */
 /*@{*/

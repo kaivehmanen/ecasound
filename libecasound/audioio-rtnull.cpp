@@ -20,7 +20,7 @@
 #include <cmath>
 #include <iostream>
 #include <string>
-#include <time.h>
+#include <sys/time.h> /* gettimeofday() */
 
 #include <kvutils/dbc.h>
 #include <kvutils/kvutils.h>
@@ -178,14 +178,11 @@ void REALTIME_NULL::block_until_data_available(void)
 
   while (timercmp(&avail_data_rep, &buffer_length_rep, <)) {
     struct timeval delay;
-    struct timespec ndelay;
 
     timersub(&buffer_length_rep, &avail_data_rep, &delay);
 
-    ndelay.tv_sec = delay.tv_sec;
-    ndelay.tv_nsec = delay.tv_usec * 1000;
     // cerr << "(audioio-rtnull) sleeping for: " << ndelay.tv_sec << " sec, " << ndelay.tv_nsec << " nanoseconds.\n";
-    nanosleep(&ndelay, NULL);
+    kvu_sleep(delay.tv_sec, delay.tv_usec * 1000);
 
     calculate_device_position();
     calculate_available_data();
