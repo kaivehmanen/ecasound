@@ -44,12 +44,12 @@ ecasound_debug_SOURCES = $(ecasound_SOURCES)
 if ECA_AM_SYSTEM_READLINE
 ecasound_LDFLAGS = -export-dynamic
 ecasound_LDADD = $(termcap_library) \
-		$(readline_library} -lreadline -lhistory \
+		$(readline_library) -lreadline -lhistory \
 		$(top_builddir)/libecasound/libecasound.la \
 		$(top_builddir)/kvutils/libkvutils.la
 ecasound_debug_LDFLAGS = $(ecasound_LDFLAGS)
 ecasound_debug_LDADD = $(termcap_library) \
-		$(readline_library} -lreadline -lhistory \
+		$(readline_library) -lreadline -lhistory \
 	 	$(top_builddir)/libecasound/libecasound_debug.la \
 		$(top_builddir)/kvutils/libkvutils_debug.la
 

@@ -686,7 +686,11 @@ AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
   pthread_mutex_init(&engine_mod_lock_rep, NULL);
 
   /* set default transport mode */
+#if ECA_JACK_TRANSPORT_API >= 3
   mode_rep = AUDIO_IO_JACK_MANAGER::Transport_send_receive;
+#else
+  mode_rep = AUDIO_IO_JACK_MANAGER::Transport_none;
+#endif
 
   cb_allocated_frames_rep = 0;
   buffersize_rep = 0;

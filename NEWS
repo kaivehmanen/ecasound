@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 290803) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 030903) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,6 +13,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+????2003 (v2.3.1)  -** stable release **-
+       - fixed: makefile errors when building against system librealine
+       - fixed: processing did not start in the default transport mode
+		with JACK versions 0.80 and older
 29082003 (v2.3.0)  -** stable release **-
 	- edi-entries: edi-4, edi-19 and edi-35 frozen, edi-38 added 
 		       and frozen immediately, edi-39 added; frozen is 
