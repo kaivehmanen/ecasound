@@ -544,7 +544,7 @@ void AUDIO_IO_JACK_MANAGER::stop(int client_id)
 
 void AUDIO_IO_JACK_MANAGER::connect_node(jack_node_t* node) { 
   if (node->aobj->io_mode() == AUDIO_IO::io_read) {
-    for(size_t n = 0; n < in_ports_rep.size(); n++) {
+    for(int n = node->first_in_port; n < node->first_in_port + node->in_ports; n++) {
       std::string tport = in_port_autoconnect_rep[n];
       if (tport.size() == 0) {
 	tport = "ALSA I/O:Input " + kvu_numtostr(n + 1);
@@ -556,7 +556,7 @@ void AUDIO_IO_JACK_MANAGER::connect_node(jack_node_t* node) {
     }
   }
   else {
-    for(size_t n = 0; n < out_ports_rep.size(); n++) {
+    for(int n = node->first_out_port; n < node->first_out_port + node->out_ports; n++) {
       std::string tport = out_port_autoconnect_rep[n];
       if (tport.size() == 0) {
 	tport = "ALSA I/O:Output " + kvu_numtostr(n + 1);
