@@ -201,12 +201,12 @@ void ECA_CHAINSETUP_PARSER::preprocess_options(std::vector<std::string>& opts) c
 
     if (p->size() > 0 && (*p)[0] != '-') {
       /* hack1: rest as "-i:file" */
-      *p = "-i:" + *p;
       ecadebug->msg("(eca-chainsetup-parser) Note! Interpreting option " +
 		    *p +
 		    " as -i:" +
 		    *p +
 		    ".");
+      *p = "-i:" + *p;
     }
     ++p;
   }
