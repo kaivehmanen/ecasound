@@ -387,7 +387,7 @@ AM_CONDITIONAL(COMPILE_JACK, test x$jack_support = xyes)
 if test x$jack_support = xyes; then
   AC_DEFINE(COMPILE_JACK)
 fi
-AC_SUBST(jack_libs)
+AC_SUBST(jack_libraries)
 AC_SUBST(jack_headers)
 
 dnl ------------------------------------------------------------------
