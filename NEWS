@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 030403) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 110403) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -30,8 +30,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: prefer usleep over nanosleep on cygwin; avoids 
 		 the excessive-cpu-usage problem
 	- fixed: work-around for a bug in the pcm plugin of ALSA 0.9.1
-		 and earlier that caused recording to stop to 
-		 an audio i/o error
+		 and earlier that caused recording/playback to
+		 stop to an audio i/o error
 	- fixed: inconsistencies in how configure --disable/enable-feat
 		 options were handled
 	- fixed: if pyecasound was disabled at build time, make

@@ -486,7 +486,8 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
   if (interleaved_channels() == true) {
     long int count = snd_pcm_writei(audio_fd_repp, target_buffer, samples);
     if (count < 0) {
-      if (count == -EPIPE) {
+      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state */
+      if (count == -EPIPE || count == -EIO) {
 	if (ignore_xruns() == true) {
 	  handle_xrun_playback();
 	  if (snd_pcm_writei(audio_fd_repp, target_buffer, samples) < 0) 
@@ -518,7 +519,8 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
 				       reinterpret_cast<void**>(nbufs_repp), 
 				       samples);
     if (count < 0) {
-      if (count == -EPIPE) {
+      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state */
+      if (count == -EPIPE || count == -EIO) {
 	if (ignore_xruns() == true) {
 	  handle_xrun_playback();
 	  snd_pcm_writen(audio_fd_repp,
