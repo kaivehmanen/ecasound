@@ -56,8 +56,11 @@ MP3FILE::~MP3FILE(void) { close(); }
 void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) { 
   if (io_mode() == io_read) {
     get_mp3_params(label());
+    fork_mpg123();
   }
-  fork_mpg123();
+  else
+    fork_lame();
+
   toggle_open_state(true);
   triggered_rep = false;
 }
@@ -195,6 +198,7 @@ void MP3FILE::kill_lame(void) {
 
 void MP3FILE::fork_lame(void) {
   ecadebug->msg("(audioio-mp3) Starting to encode " + label() + " with lame.");
+  last_position_rep = position_in_samples();
   set_fork_command(MP3FILE::default_mp3_output_cmd);
   set_fork_file_name(label());
   fork_child_for_write();
