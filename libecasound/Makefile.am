@@ -148,6 +148,7 @@ ecasound_general_include = 	\
 			eca-audio-format.h \
 			eca-audio-time.h \
 			preset.h \
+			preset_impl.h \
 			file-preset.h \
 			global-preset.h \
 			plugin-paths.h \
