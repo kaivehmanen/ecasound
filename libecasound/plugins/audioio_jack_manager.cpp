@@ -119,6 +119,8 @@ static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t 
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
   int result = 1; /* ready for rolling */
 
+  if (current->exit_request_rep == 1) return 0;
+
   /* try to get the driver lock; if it fails or connection 
    * is not fully establish, skip this processing cycle */
   int ret = pthread_mutex_trylock(&current->engine_mod_lock_rep);
@@ -332,6 +334,8 @@ static int eca_jack_process_callback(jack_nframes_t nframes, void *arg)
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
 
   PROFILE_CE_STATEMENT(eca_jack_process_profile_pre());
+
+  if (current->exit_request_rep == 1) return -1;
 
   /* try to get the driver lock; if it fails or connection 
    * is not fully establish, skip this processing cycle */
