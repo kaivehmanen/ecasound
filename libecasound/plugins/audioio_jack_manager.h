@@ -191,7 +191,9 @@ private:
   list<eca_jack_node_t*> node_list_rep;
   vector<eca_jack_port_data_t*> inports_rep;
   vector<eca_jack_port_data_t*> outports_rep;
+#if ECA_JACK_TRANSPORT_API >= 2
   jack_transport_info_t transport_info_rep;
+#endif
 
   int jackslave_seekahead_rep;
   long int jackslave_seekahead_target_rep;

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 180303) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 270303) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,6 +13,18 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+??042003 (v2.2.3)  -** stable release **-
+	- added: support for both -0.64 and 0.65- JACK versions; 
+		 transport functionality is only enabled with the 
+		 newer versions
+	- changed: by default python version of ECI is used; the C 
+		   python module for ECI, pyecasound, is only compiled
+		   if --enable-pyecasound is specified
+	- fixed: yet another fix for creating temporary files in
+                 ecanormalize and ecafixdc; now both LOGNAME and USER
+		 are checked for a valid user name
+	- fixed: prefer usleep over nanosleep on cygwin; avoids 
+		 the excessive-cpu-usage problem
 18032003 (v2.2.2)  -** stable release **-
 	- edi-entries: edi-35 and edi-36 added
 	- added: ecacontrol.py - a native python implementation of 
@@ -24,7 +36,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	         the dist package
 	- added: ecamonitor - a warning is printed if you try to 
 		 run with python-1.x; python-2.x is required
-	- added: new tutorials pages added to documentations; 
+	- added: new tutorials page added to documentation; 
 		 see Documentation/index.html
 	- changed: ecasound.el updated to 0.8.2, lots of small
 		   changes, see ecasound.el for details [mlang]
@@ -44,7 +56,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: use LOGNAME instead of USER for creating temporary 
 		 files for ecanormalize and ecafixdc
 	- fixed: -tl has been broken since 2.2.0-pre5
-	- fixed: copp-list dumped core if no was cop selected
+	- fixed: copp-list dumped core if no cop was selected
 15022003 (v2.2.1)  -** stable release **-
 	- added: sane default param hints for chainops: -ec, -etd,
 		 -ete, -etf, -etl, -etm, -etp, -etr and -epp

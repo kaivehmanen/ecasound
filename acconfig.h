@@ -48,6 +48,9 @@
 /* whether to compile JACK input/output */
 #undef ECA_COMPILE_JACK
 
+/* version of the JACK transport API */
+#undef ECA_JACK_TRANSPORT_API
+
 /* whether to compile libsamplerate input/output */
 #undef ECA_COMPILE_SAMPLERATE
 
