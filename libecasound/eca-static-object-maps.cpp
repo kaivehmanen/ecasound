@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-static-object-maps.h: Static object map instances
-// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -412,10 +412,21 @@ static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id)
     dir_names = kvu_string_to_vector(string(env), ':');
   }
 
+  /* add directories mentioned in 'ladspa-plugin-directory'
+   * to the directory search list and remove duplicates */
   ECA_RESOURCES ecarc;
   string add_file = ecarc.resource("ladspa-plugin-directory");
-  if (std::find(dir_names.begin(), dir_names.end(), add_file) == dir_names.end()) dir_names.push_back(add_file);
+  vector<string> more_dir_names = kvu_string_to_vector(add_file, ':');
+  vector<string>::const_iterator di = more_dir_names.begin();
+  while(di != more_dir_names.end()) {
+    if (std::find(dir_names.begin(), dir_names.end(), *di) == dir_names.end()) {
+      dir_names.push_back(*di);
+    }
+    ++di;
+  }
 
+  /* go through all directories in the list and 
+   * try to open all encountered files as LADSPA plugins */
   struct stat statbuf;
   vector<string>::const_iterator p = dir_names.begin();
   while (p != dir_names.end()) {
