@@ -18,6 +18,8 @@ endif
 
 INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound -I$(top_srcdir)/libecasoundc
 
+bin_SCRIPTS = ecamonitor
+EXTRA_DIST = ecamonitor
 
 if ECA_AM_DEBUG_MODE
 bin_PROGRAMS = 	ecaconvert_debug \
