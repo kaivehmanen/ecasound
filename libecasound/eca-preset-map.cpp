@@ -53,7 +53,7 @@ void ECA_PRESET_MAP::load_preset_file(const string& fname) {
   const vector<string>& pmap = preset_file.keywords();
   vector<string>::const_iterator p = pmap.begin();
   while(p != pmap.end()) {
-    preset_keywords_rep.push_back(*p);
+    if (*p != "") preset_keywords_rep.push_back(*p);
     ++p;
   }
 }
@@ -107,7 +107,7 @@ const ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword) const {
       }
       catch(...) { retobj = 0; }
 
-      DBC_CHECK(find(objlist.begin(), objlist.end(), keyword) != objlist.end());
+      DBC_CHECK(find(objlist.begin(), objlist.end(), keyword) != objlist.end() || retobj == 0);
     }
     else {
       retobj = dynamic_cast<const PRESET*>(ECA_OBJECT_MAP::object(keyword));

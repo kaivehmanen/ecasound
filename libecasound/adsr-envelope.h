@@ -22,7 +22,7 @@ class TWO_STAGE_LINEAR_ENVELOPE : public FINITE_ENVELOPE {
   parameter_type get_parameter(int param) const;
 
   TWO_STAGE_LINEAR_ENVELOPE_ENVELOPE(parameter_type time_in_seconds = 0.0); 
-  TWO_STAGE_LINEAR_ENVELOPE_ENVELOPE* clone(void)  { return new TWO_STAGE_LINEAR_ENVELOPE_ENVELOPE(*this); }
+  TWO_STAGE_LINEAR_ENVELOPE_ENVELOPE* clone(void) const { return new TWO_STAGE_LINEAR_ENVELOPE_ENVELOPE(*this); }
 
   private:
 

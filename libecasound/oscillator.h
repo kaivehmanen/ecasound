@@ -1,5 +1,5 @@
-#ifndef _OSCILLATOR_H
-#define _OSCILLATOR_H
+#ifndef INCLUDED_OSCILLATOR_H
+#define INCLUDED_OSCILLATOR_H
 
 #include <cmath>
 #include <string>

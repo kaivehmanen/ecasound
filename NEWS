@@ -18,6 +18,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.3 *-
 
 ??112001 (v2.1dev5)
+	- changed: most preset names changed in 'effect_presets'
 	- fixed: processing didn't stop with setups that had loop-
 		 devices connected to multiple input objects
 	- fixed: using loop devices in setups with non-default 

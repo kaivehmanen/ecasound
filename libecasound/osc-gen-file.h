@@ -26,8 +26,8 @@ class GENERIC_OSCILLATOR_FILE : public GENERIC_OSCILLATOR {
   virtual parameter_type get_parameter(int param) const;
   virtual std::string name(void) const { return("Generic oscillator (preset)"); }
 
-  GENERIC_OSCILLATOR_FILE* clone(void)  { return new GENERIC_OSCILLATOR_FILE(*this); }
-  GENERIC_OSCILLATOR_FILE* new_expr(void)  { return new GENERIC_OSCILLATOR_FILE(*this); }
+  GENERIC_OSCILLATOR_FILE* clone(void) const  { return new GENERIC_OSCILLATOR_FILE(*this); }
+  GENERIC_OSCILLATOR_FILE* new_expr(void) const { return new GENERIC_OSCILLATOR_FILE(*this); }
   GENERIC_OSCILLATOR_FILE (double freq = 0.0, int preset_number = 0);
   virtual ~GENERIC_OSCILLATOR_FILE (void);
 };
