@@ -78,7 +78,7 @@ using std::vector;
  * Driver implementation
  **********************************************************************/
 
-void ECA_ENGINE_DEFAULT_DRIVER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
+int ECA_ENGINE_DEFAULT_DRIVER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 {
   engine_repp = engine;
 
@@ -113,6 +113,8 @@ void ECA_ENGINE_DEFAULT_DRIVER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
   }
 
   if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
+
+  return 0;
 }
 
 void ECA_ENGINE_DEFAULT_DRIVER::start(void)
@@ -160,7 +162,8 @@ ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup)
     running_rep(false),
     edit_lock_rep(false),
     finished_rep(false),
-    outputs_finished_rep(false),
+    outputs_finished_rep(0),
+    driver_errors_rep(0),
     csetup_repp(csetup),
     mixslot_repp(0)
 {
@@ -255,14 +258,23 @@ void ECA_ENGINE::exec(bool batch_mode)
 
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Engine init - Driver start");
 
-  driver_repp->exec(this, csetup_repp);
+  int res = driver_repp->exec(this, csetup_repp);
+  if (res < 0) {
+    ++driver_errors_rep;
+    ECA_LOG_MSG(ECA_LOGGER::info, 
+		"(eca-engine) Warning! Engine has raised an error! "
+		"Possible causes: connection lost to system services, unable to adapt "
+		"to changes in operating environment, etc.");
+  }
 
   csetup_repp->toggle_locked_state(false);
 
   signal_exit();
 
   if (outputs_finished_rep > 0) 
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Warning! An output object has raised an error! Out of disk space, permission denied, etc?");
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Warning! An output object has raised an error! "
+		"Possible causes: Out of disk space, permission denied, unable to launch external "
+		"applications needed in procesing, etc.");
 
   DBC_CHECK(status() == ECA_ENGINE::engine_status_stopped ||
 	    status() == ECA_ENGINE::engine_status_finished ||
@@ -392,7 +404,8 @@ ECA_ENGINE::Engine_status_t ECA_ENGINE::status(void) const
   if (finished_rep == true)
     return(ECA_ENGINE::engine_status_finished);
   
-  if (outputs_finished_rep > 0) 
+  if (outputs_finished_rep > 0 ||
+      driver_errors_rep > 0) 
     return(ECA_ENGINE::engine_status_error);
 
   if (is_running() == true) 

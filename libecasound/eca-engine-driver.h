@@ -23,13 +23,15 @@ class ECA_ENGINE_DRIVER {
   /*@{*/
 
   /**
-   * Starts engine execution. 
+   * Launches the driver. Returns an error if any problems are
+   * detected during drier operation.
    *
    * @pre engine != 0
    * @pre engine->is_valid() == true
    * @pre engine->connected_chainsetup() == csetup
+   * @return zero on success; -1 on error
    */
-  virtual void exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup) = 0;
+  virtual int exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup) = 0;
 
   /*@}*/
 

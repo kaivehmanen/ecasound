@@ -22,7 +22,7 @@ class ECA_ENGINE_DEFAULT_DRIVER : public ECA_ENGINE_DRIVER {
 
  public:
 
-  virtual void exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup);
+  virtual int exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup);
   virtual void start(void);
   virtual void stop(void);
   virtual void exit(void);
@@ -187,6 +187,7 @@ private:
 
   bool finished_rep;
   int outputs_finished_rep;
+  int driver_errors_rep;
   int inputs_not_finished_rep;
 
   long int prefill_threshold_rep;
