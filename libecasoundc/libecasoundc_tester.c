@@ -60,12 +60,14 @@ static int eci_test_1(void);
 static int eci_test_2(void);
 static int eci_test_3(void);
 static int eci_test_4(void);
+static int eci_test_5(void);
 
 static eci_test_t eci_funcs[] = { 
   eci_test_1, 
   eci_test_2, 
   eci_test_3, 
   eci_test_4, 
+  eci_test_5, 
   NULL 
 };
 
@@ -204,6 +206,36 @@ static int eci_test_4(void)
   if (eci_error_r(handle) != 0) { ECA_TEST_FAIL(3, "cs-connect failed (3)"); }
 
   eci_command_r(handle, "cs-disconnect");
+
+  eci_cleanup_r(handle);
+  
+  ECA_TEST_SUCCESS();
+}
+
+static int eci_test_5(void)
+{
+  eci_handle_t handle;
+  int count;
+
+  ECA_TEST_ENTRY();
+
+  handle = eci_init_r();
+  if (handle == NULL) { ECA_TEST_FAIL(1, "init failed"); }
+
+  eci_command_r(handle, "cs-remove");
+  /* eci_command_r(handle, "cs-add test_cs"); */
+  eci_command_r(handle, "cs-list");
+  count = eci_last_string_list_count_r(handle);
+  fprintf(stderr, "count=%d name=%s.\n", count, eci_last_string_list_item_r(handle, 0));
+  if (count != 0) { ECA_TEST_FAIL(1, "cs-list count not zero"); }
+
+  eci_command_r(handle, "cs-add test_cs2");
+  count = eci_last_string_list_count_r(handle);
+  if (count != 1) { ECA_TEST_FAIL(2, "cs-list count not one"); }
+
+  if (strncmp(eci_last_string_list_item_r(handle, 0), "test_cs2", 8) != 0) {
+    ECA_TEST_FAIL(3, "cs name does not match");
+  }
 
   eci_cleanup_r(handle);
   

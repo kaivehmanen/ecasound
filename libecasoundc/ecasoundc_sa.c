@@ -7,6 +7,8 @@
 /* FIXME: add check for big sync-error -> ecasound probably 
  *        died so better to give an error */
 /* FIXME: add check for msgsize errors */
+/* FIXME: parsing the content of an empty string list returns
+ *        the wrong value (-> rettype str instead of content str) */
 /* FIXME: get rid of the static string lengths (C... blaah ;)) */
 /* FIXME: add documentation for ECASOUND envvar */
 /* FIXME: add proper signal handling */
@@ -63,7 +65,7 @@
  * Options
  */
 
-/* #define ECI_ENABLE_DEBUG  */
+#define ECI_ENABLE_DEBUG
 
 /* --------------------------------------------------------------------- 
  * Definitions and constants
@@ -315,7 +317,8 @@ eci_handle_t eci_init_r(void)
       }
       else {
 	write(eci_rep->cmd_write_fd_rep, "int-output-mode-wellformed\n", strlen("int-output-mode-wellformed\n"));
-	eci_rep->commands_counter_rep++;
+	write(eci_rep->cmd_write_fd_rep, "debug 259\n", strlen("debug 259\n"));
+	eci_rep->commands_counter_rep ++;
       
 	/* check that exec() succeeded */
 	eci_impl_read_return_value(eci_rep);
@@ -796,7 +799,7 @@ void eci_impl_set_last_los_value(struct eci_parser* parser)
   assert(parser != 0);
   assert(parser->state_rep == ECI_STATE_COMMON_LF_3);
 
-  /* ECI_DEBUG("(ecasoundc_sa) parsing a list '%s'\n", parser->buffer_repp); */
+  ECI_DEBUG_1("(ecasoundc_sa) parsing a list '%s'\n", parser->buffer_repp);
 
   eci_impl_los_list_clear(i);
 

@@ -29,18 +29,15 @@ while test $# -gt 0
 do
   case $1 in
     --libs)
-	  # -lecasound${libecasound_version} -lkvutils${libkvutils_version}
 	  flags="$flags -L$libdir -lecasoundc"
 	  ;;
     --libs_debug)
-	  # -L$libdir -lecasound${libecasound_version}_debug -lkvutils${libkvutils_version}_debug
-	  flags="$flags -lecasoundc_debug"
+	  flags="$flags -L$libdir -lecasoundc_debug"
 	  ;;
     --ldflags)
 	  flags="$flags -Wl,--rpath -Wl,$libdir"
 	  ;;
     --cflags)
-	  # -I$includedir/libecasound${libecasound_version} -I$includedir/kvutils${libkvutils_version}
 	  flags="$flags -I$includedir/libecasoundc"
 	  ;;
     --version)
