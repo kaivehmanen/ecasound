@@ -163,6 +163,8 @@ private:
   void open_server_connection(void);
   void close_server_connection(void);
 
+  void initial_seek(void);
+
   void activate_server_connection(void);
   void deactivate_server_connection(void);
 

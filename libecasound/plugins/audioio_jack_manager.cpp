@@ -107,10 +107,19 @@ using std::vector;
  */
 const int AUDIO_IO_JACK_MANAGER::instance_limit = 8;
 
+/**
+ * Context help:
+ *  J = originates from JACK callback
+ *  E = ----- " ------- engine thread (exec())
+ *  C = ----- " ------- control/client thread
+ */
+
 #if ECA_JACK_TRANSPORT_API >= 3
 /**
  * JACK sync callback function. Called when someone has 
  * issued a state change request.
+ *
+ * context: J-level-0
  */
 static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t *pos, void *arg)
 {
@@ -119,7 +128,10 @@ static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t 
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
   int result = 1; /* ready for rolling */
 
-  if (current->exit_request_rep == 1) return 0;
+  if (current->exit_request_rep == 1) { 
+    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: after exit!!!" << endl); 
+    return 0;
+  }
 
   /* try to get the driver lock; if it fails or connection 
    * is not fully establish, skip this processing cycle */
@@ -199,10 +211,10 @@ static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t 
     pthread_mutex_unlock(&current->engine_mod_lock_rep);
   }
   else {
-    // DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: couldn't get lock" << endl);
+    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: couldn't get lock" << endl);
     result = 0;
   }
-    
+
   return result;
 }
 #endif
@@ -210,6 +222,8 @@ static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t 
 #if ECA_JACK_TRANSPORT_API >= 3
 /**
  * Helper function to start seeking to a new position.
+ *
+ * context: J-level-1
  */
 static void eca_jack_sync_start_seek_to(jack_transport_state_t state, jack_position_t *pos, void *arg)
 {
@@ -235,6 +249,8 @@ static void eca_jack_sync_start_seek_to(jack_transport_state_t state, jack_posit
  * Helper function to start forced (live-)seeking to a new 
  * position. We have to be prepared to chase the timebase 
  * master.
+ *
+ * context: J-level-1/2
  */
 static void eca_jack_sync_start_live_seek_to(jack_transport_state_t state, jack_position_t *pos, void *arg)
 {
@@ -328,6 +344,8 @@ static void eca_jack_sync_start_live_seek_to(jack_transport_state_t state, jack_
  * Processes all registered JACK input and output ports.
  * This is the main callback function registered to 
  * the JACK framework.
+ *
+ * context: J-level-0
  */
 static int eca_jack_process_callback(jack_nframes_t nframes, void *arg)
 {
@@ -335,14 +353,17 @@ static int eca_jack_process_callback(jack_nframes_t nframes, void *arg)
 
   PROFILE_CE_STATEMENT(eca_jack_process_profile_pre());
 
-  if (current->exit_request_rep == 1) return -1;
+  if (current->exit_request_rep == 1) { 
+    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: after exit!!!" << endl); 
+    return 0;
+  }
 
   /* try to get the driver lock; if it fails or connection 
    * is not fully establish, skip this processing cycle */
   int ret = pthread_mutex_trylock(&current->engine_mod_lock_rep);
   if (ret == 0) {
     // DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: got lock" << endl);
-
+    
     /* 1. transport control processing in "notransport" and "transport" mode */
     if (current->mode_rep == AUDIO_IO_JACK_MANAGER::Transport_none ||
 	current->mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send) {
@@ -366,19 +387,22 @@ static int eca_jack_process_callback(jack_nframes_t nframes, void *arg)
 #endif
 
     pthread_mutex_unlock(&current->engine_mod_lock_rep);
+    // DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: released lock" << endl);
   }
   else {
-    // DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: couldn't get lock; muting" << endl);
+    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: couldn't get lock; muting" << endl);
     eca_jack_process_mute(nframes, current);
   }
   
   PROFILE_CE_STATEMENT(eca_jack_process_profile_post());
-  
+
   return(0);
 }
 
 /**
  * Helper routine. Only called by eca_jack_process*() functions.
+ *
+ * context: J-level-1/
  */
 static void eca_jack_process_engine_iteration(jack_nframes_t nframes, void* arg)
 {
@@ -439,6 +463,8 @@ static void eca_jack_process_engine_iteration(jack_nframes_t nframes, void* arg)
 
 /**
  * Helper routine. Only called by eca_jack_process*() functions.
+ *
+ * context: J-level-1/2
  */
 static void eca_jack_process_mute(jack_nframes_t nframes, void* arg)
 {
@@ -459,6 +485,8 @@ static void eca_jack_process_mute(jack_nframes_t nframes, void* arg)
 
 /**
  * Helper routine. Only called by eca_jack_process_callback() function.
+ *
+ * context: J-level-1
  */
 static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
 {
@@ -588,6 +616,8 @@ static int eca_jack_srate (jack_nframes_t nframes, void *arg)
 /**
  * Shuts down the callback context. Callback function registered
  * to the JACK framework.
+ *
+ * context: J-level-0
  */
 static void eca_jack_shutdown (void *arg)
 {
@@ -600,6 +630,8 @@ static void eca_jack_shutdown (void *arg)
 
 /**
  * Implementations of non-static functions
+ *
+ * context: E-level-0
  */
 AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
 {
@@ -618,14 +650,19 @@ AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
   pthread_cond_init(&exit_cond_rep, NULL);
   pthread_mutex_init(&exit_mutex_rep, NULL);
   pthread_mutex_init(&engine_mod_lock_rep, NULL);
-  
-  /* FIXME: change to something else? */
-  mode_rep = AUDIO_IO_JACK_MANAGER::Transport_send;
+
+  /* set default transport mode */
+  mode_rep = AUDIO_IO_JACK_MANAGER::Transport_send_receive;
 
   cb_allocated_frames_rep = 0;
   buffersize_rep = 0;
 }
 
+/**
+ * Class destructor.
+ *
+ * context: E-level-0
+ */
 AUDIO_IO_JACK_MANAGER::~AUDIO_IO_JACK_MANAGER(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) destructor");
@@ -663,6 +700,9 @@ AUDIO_IO_JACK_MANAGER::~AUDIO_IO_JACK_MANAGER(void)
   }
 }
 
+/**
+ * context: C-level-1
+ */
 bool AUDIO_IO_JACK_MANAGER::is_managed_type(const AUDIO_IO* aobj) const
 {
   // ---
@@ -677,6 +717,9 @@ bool AUDIO_IO_JACK_MANAGER::is_managed_type(const AUDIO_IO* aobj) const
   return(false);
 }
 
+/**
+ * context: C-level-1
+ */
 void AUDIO_IO_JACK_MANAGER::register_object(AUDIO_IO* aobj)
 {
   // ---
@@ -704,6 +747,9 @@ void AUDIO_IO_JACK_MANAGER::register_object(AUDIO_IO* aobj)
   // ---
 }
 
+/**
+ * context: C-level-0
+ */
 int AUDIO_IO_JACK_MANAGER::get_object_id(const AUDIO_IO* aobj) const
 {
   // ---
@@ -723,6 +769,9 @@ int AUDIO_IO_JACK_MANAGER::get_object_id(const AUDIO_IO* aobj) const
   return(-1);
 }
 
+/**
+ * context: C-level-0
+ */
 list<int> AUDIO_IO_JACK_MANAGER::get_object_list(void) const
 {
   list<int> object_list;
@@ -741,6 +790,7 @@ list<int> AUDIO_IO_JACK_MANAGER::get_object_list(void) const
  * @param id unique identifier for managed objects; @see
  *        get_object_id
  *
+ * context: C-level-0
  */
 void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
 {
@@ -773,6 +823,9 @@ void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
   // ---
 }
 
+/**
+ * context: E-level-0
+ */
 void AUDIO_IO_JACK_MANAGER::set_parameter(int param, std::string value)
 {
   switch(param) 
@@ -816,6 +869,9 @@ void AUDIO_IO_JACK_MANAGER::set_parameter(int param, std::string value)
     }
 }
 
+/**
+ * context: E-level-0
+ */
 std::string AUDIO_IO_JACK_MANAGER::get_parameter(int param) const
 {
   switch(param) 
@@ -840,6 +896,29 @@ std::string AUDIO_IO_JACK_MANAGER::get_parameter(int param) const
   return("");
 }
 
+/**
+ * If transport is stopped, request JACK to seek to 
+ * Ecasond's current position. Otherwise let Ecasound seek
+ * to JACK's position.
+ */
+void AUDIO_IO_JACK_MANAGER::initial_seek(void)
+{
+  jack_transport_state_t jackstate;
+  jack_position_t jackpos;
+
+  jackstate = jack_transport_query(client_repp, &jackpos);
+
+  /* FIXME: is this a good idea...? might confuse some scripts */
+  if (jackstate == JackTransportStopped &&
+      (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send ||
+       mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send_receive)) {
+    jack_transport_locate(client_repp, engine_repp->current_position_in_samples());
+  }
+}
+
+/**
+ * context: E-level-0
+ */
 void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver exec");
@@ -853,20 +932,13 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
   j_stopped_rounds_rep = 0;
   start_request_rep = 0;
 
-#if 0
-  /* FIXME: is this a good idea...? might confuse some scripts */
-  if (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send ||
-      mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send_receive) {
-    /* ignore initial start when first joining the JACK network */
-    start_request_rep = 1;
-  }
-#endif
-
   activate_server_connection();
   if (is_connection_active() != true) {
     signal_exit();
   }
-  
+
+  initial_seek();
+
   while(true) {
 
     DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: wait for commands" << endl);
@@ -935,13 +1007,15 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 /**
  * Activate connection to the JACK server.
  *
- * context: Can be called at the same time with
+ * context: E-level-0/3
+ *          Can be called at the same time with
  *          JACK callbacks, so proper locking 
  *          must be ensured (engine_mod_lock_rep taken
  *          upon entry).
  *
  * @pre is_running() != true
  * @post is_running() == true
+ *
  */
 void AUDIO_IO_JACK_MANAGER::start(void)
 {
@@ -977,7 +1051,8 @@ void AUDIO_IO_JACK_MANAGER::start(void)
  * Once stopped, driver must not call
  * any ECA_ENGINE functions.
  *
- * context: Caller must ensure that JACK process callback
+ * context: E-level-0/3
+ *          Caller must ensure that JACK process callback
  *          does not run at the same time (engine_mod_lock_rep 
  *          taken upon entry).
  */
@@ -1002,6 +1077,8 @@ void AUDIO_IO_JACK_MANAGER::stop(void)
 
 /**
  * Activates connection to server.
+ *
+ * context: E-level-1
  *
  * @pre is_connection_active() != true
  */
@@ -1032,8 +1109,9 @@ void AUDIO_IO_JACK_MANAGER::activate_server_connection(void)
  * Disconnects all connected ports and then
  * deactives the client.
  *
- * Caller must ensure that JACK process callback
- * does not rung at the same time.
+ * context: E-level-1
+ *          Caller must ensure that JACK process callback
+ *          does not rung at the same time.
  *
  * @pre is_connection_active() == true
  * @post is_connection_active() != true
@@ -1045,8 +1123,8 @@ void AUDIO_IO_JACK_MANAGER::deactivate_server_connection(void)
   // --
 
   if (shutdown_request_rep != true) {
-    /* disconnect all clients */
-    disconnect_all_nodes();
+    /* no need to disconnect as deactivate does that for us */
+    // disconnect_all_nodes();
 
     ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_deactivate() ");
     if (jack_deactivate (client_repp)) {
@@ -1069,7 +1147,8 @@ void AUDIO_IO_JACK_MANAGER::deactivate_server_connection(void)
  * Signals that driver should stop operation 
  * and return from its exec() method.
  *
- * context: Can be called at the same time with
+ * context: E-level-0/3
+ *          Can be called at the same time with
  *          JACK callbacks, so proper locking 
  *          must be ensured (caller must hold
  *          lock against the callbacks).
@@ -1424,6 +1503,9 @@ SAMPLE_SPECS::sample_rate_t AUDIO_IO_JACK_MANAGER::samples_per_second(void) cons
   return(srate_rep);
 }
 
+/**
+ * context: J-E-C-level-3
+ */
 long int AUDIO_IO_JACK_MANAGER::read_samples(int client_id, void* target_buffer, long int samples)
 {
   // DEBUG_CFLOW_STATEMENT(cerr << endl << "read_samples:" << client_id);
@@ -1444,6 +1526,9 @@ long int AUDIO_IO_JACK_MANAGER::read_samples(int client_id, void* target_buffer,
   return(buffersize_rep);
 }
 
+/**
+ * context: J-E-C-level-3
+ */
 void AUDIO_IO_JACK_MANAGER::write_samples(int client_id, void* target_buffer, long int samples)
 {
   // DEBUG_CFLOW_STATEMENT(cerr << endl << "write_samples:" << client_id);
@@ -1469,6 +1554,8 @@ void AUDIO_IO_JACK_MANAGER::write_samples(int client_id, void* target_buffer, lo
  * succesfully opened.
  *
  * @pre is_open() != true
+ *
+ * context: C-level-1
  */
 void AUDIO_IO_JACK_MANAGER::open_server_connection(void)
 {
@@ -1523,6 +1610,8 @@ void AUDIO_IO_JACK_MANAGER::open_server_connection(void)
  *
  * @pre is_open() == true
  * @post is_open() != true
+ *
+ * context: C-level-1
  */
 void AUDIO_IO_JACK_MANAGER::close_server_connection(void)
 {
@@ -1557,6 +1646,8 @@ void AUDIO_IO_JACK_MANAGER::close_server_connection(void)
 
 /**
  * Fetches total port latency information.
+ *
+ * context: E-level-5
  */
 void AUDIO_IO_JACK_MANAGER::get_total_port_latency(jack_client_t* client, eca_jack_port_data_t* ports)
 {
@@ -1572,6 +1663,8 @@ void AUDIO_IO_JACK_MANAGER::get_total_port_latency(jack_client_t* client, eca_ja
  *
  * @param node pointers to a node object
  * @param connect whether to connect (true) or disconnect (false)
+ *
+ * context: E-level-4
  */
 void AUDIO_IO_JACK_MANAGER::set_node_connection(eca_jack_node_t* node, bool connect)
 {
@@ -1624,6 +1717,8 @@ void AUDIO_IO_JACK_MANAGER::set_node_connection(eca_jack_node_t* node, bool conn
  * Connects ports of all registered nodes.
  *
  * @see set_node_connection()
+ *
+ * context: E-level-3
  */
 void AUDIO_IO_JACK_MANAGER::connect_all_nodes(void)
 { 
@@ -1643,6 +1738,8 @@ void AUDIO_IO_JACK_MANAGER::connect_all_nodes(void)
  * Disconnects all ports of registered nodes.
  *
  * @see set_node_connection()
+ *
+ * context: E-level-3
  */
 void AUDIO_IO_JACK_MANAGER::disconnect_all_nodes(void)
 {
@@ -1657,6 +1754,8 @@ void AUDIO_IO_JACK_MANAGER::disconnect_all_nodes(void)
  * Signals that exec() has exited.
  *
  * @see wait_for_exit();
+ *
+ * context: E-level-1
  */
 void AUDIO_IO_JACK_MANAGER::signal_exit(void)
 {
@@ -1667,6 +1766,8 @@ void AUDIO_IO_JACK_MANAGER::signal_exit(void)
 
 /**
  * Waits until exec() has exited.
+ *
+ * context: not in use
  */
 void AUDIO_IO_JACK_MANAGER::wait_for_exit(void)
 {
@@ -1679,6 +1780,8 @@ void AUDIO_IO_JACK_MANAGER::wait_for_exit(void)
  * Signals that client has stopped.
  *
  * @see wait_for_stop()
+ *
+ * context: E-level-2
  */
 void AUDIO_IO_JACK_MANAGER::signal_stop(void)
 {
@@ -1688,8 +1791,9 @@ void AUDIO_IO_JACK_MANAGER::signal_stop(void)
 }
 
 /**
- * Waits until client has stopped (no more
- * callbacks).
+ * Waits until client has stopped (no more callbacks).
+ *
+ * context: not in use
  */
 void AUDIO_IO_JACK_MANAGER::wait_for_stop(void)
 {
