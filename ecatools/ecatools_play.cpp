@@ -21,7 +21,7 @@
 
 #include <string>
 #include <cstdio>
-#include <signal.h>
+#include <signal.h> /* sigaction() */
 
 #include <kvutils/com_line.h>
 #include <kvutils/procedure_timer.h>
@@ -42,7 +42,7 @@ static int ecaplay_exit_request_rep = 0;
 static int ecaplay_skip_files = 0;
 static int ecaplay_total_files = 0;
 
-static const string ecaplay_version = "20011009";
+static const string ecaplay_version = "20011221";
 
 int process_option(const string& option);
 
@@ -54,7 +54,17 @@ int main(int argc, char *argv[])
   es_handler_int.sa_handler = signal_handler;
   sigemptyset(&es_handler_int.sa_mask);
   es_handler_int.sa_flags = 0;
+
+  struct sigaction ign_handler;
+  ign_handler.sa_handler = SIG_IGN;
+  sigemptyset(&ign_handler.sa_mask);
+  ign_handler.sa_flags = 0;
+
+  /* handle the follwing signals explicitly */
   sigaction(SIGINT, &es_handler_int, 0);
+
+  /* ignore the following signals */
+  sigaction(SIGPIPE, &ign_handler, 0);
 
   COMMAND_LINE cline = COMMAND_LINE (argc, argv);
 

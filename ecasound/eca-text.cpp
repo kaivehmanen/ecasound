@@ -21,12 +21,15 @@
 #include <config.h>
 #endif
 
+#include <algorithm>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm>
+
 #include <cstdlib>
-#include <signal.h>
 #include <cstdio>
+
+#include <signal.h> /* sigaction() */
 
 #include <kvutils/com_line.h>
 
@@ -61,34 +64,19 @@ static bool global_session_deleted = false;
 static ECA_CONTROL* global_pointer_to_ecacontrol = 0; 
 static bool global_control_deleted = false;
 
-TEXTDEBUG textdebug;
+static TEXTDEBUG ecasound_textdebug;
 static int global_error_no = 0;
 
-void clean_exit(int n);
+static void ecasound_clean_exit(int n);
+static void ecasound_signal_handler(int signum);
+static void ecasound_setup_signals(void);
 
 int main(int argc, char *argv[])
 {
-  struct sigaction es_handler;
-  es_handler.sa_handler = signal_handler;
-  sigemptyset(&es_handler.sa_mask);
-  es_handler.sa_flags = 0;
+  ecasound_setup_signals();
 
-  struct sigaction ign_handler;
-  ign_handler.sa_handler = SIG_IGN;
-  sigemptyset(&ign_handler.sa_mask);
-  ign_handler.sa_flags = 0;
-
-  /* handle the follwing signals explicitly */
-  sigaction(SIGTERM, &es_handler, 0);
-  sigaction(SIGINT, &es_handler, 0);
-  sigaction(SIGQUIT, &es_handler, 0);
-  sigaction(SIGABRT, &es_handler, 0);
-  
-  /* ignore the following signals */
-  sigaction(SIGHUP, &ign_handler, 0);
-  sigaction(SIGPIPE, &ign_handler, 0);
-
-  try { /* FIXME: remove this at some point; ecasound shoult not leak exceptions anymore */
+  try { 
+    /* FIXME: remove this at some point; ecasound shoult not leak exceptions anymore */
 
     COMMAND_LINE cline (argc, argv);
     parse_command_line(cline);
@@ -96,7 +84,7 @@ int main(int argc, char *argv[])
     bool debug_to_cerr = true;
     if (cline.has("-D") != true) {
       debug_to_cerr = false;
-      attach_debug_object(&textdebug);  
+      attach_debug_object(&ecasound_textdebug);  
     }
     ecadebug->set_debug_level(ECA_DEBUG::info |
 			      ECA_DEBUG::module_flow);
@@ -110,7 +98,7 @@ int main(int argc, char *argv[])
       if (debug_to_cerr == true)
 	print_header(&cerr);
       else
-	print_header(&cout);
+	print_header(&std::cout);
     }
 
     try {
@@ -135,7 +123,7 @@ int main(int argc, char *argv[])
     catch(ECA_ERROR& e) {
       /* problems with ECA_SESSION constructor (...parsing 'cline' options) */
       std::cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
-      clean_exit(127);
+      ecasound_clean_exit(127);
     }
 
   }
@@ -149,7 +137,7 @@ int main(int argc, char *argv[])
 
   // std::cerr << "Normal exit..." << endl;
 
-  clean_exit(global_error_no);
+  ecasound_clean_exit(global_error_no);
 }
 
 /**
@@ -158,24 +146,23 @@ int main(int argc, char *argv[])
 void parse_command_line(COMMAND_LINE& cline) {
   if (cline.size() < 2) {
     // No parameters, let's give some help.
-    cout << ecasound_parameter_help();
-    clean_exit(0);
+    std::cout << ecasound_parameter_help();
+    ecasound_clean_exit(0);
   }
   
   cline.begin();
   while(cline.end() == false) {
     if (cline.current() == "--version") {
-      cout << "ecasound v" << ecasound_library_version << endl;
-      cout << "Copyright (C) 1997-2001 Kai Vehmanen" << endl;
-      cout << "Ecasound comes with ABSOLUTELY NO WARRANTY." << endl;
-      cout << "You may redistribute copies of ecasound under the terms of the GNU" << endl;
-      cout << "General Public License. For more information about these matters, see" << endl; 
-      cout << "the file named COPYING." << endl;
-      exit(0);
+      std::cout << "ecasound v" << ecasound_library_version << std::endl;
+      std::cout << "Copyright (C) 1997-2001 Kai Vehmanen" << std::endl;
+      std::cout << "Ecasound comes with ABSOLUTELY NO WARRANTY." << std::endl;
+      std::cout << "You may redistribute copies of ecasound under the terms of the GNU" << std::endl;
+      std::cout << "General Public License. For more information about these matters, see" << std::endl; 
+      std::cout << "the file named COPYING." << std::endl;
     }
     else if (cline.current() == "--help") {
-      cout << ecasound_parameter_help();
-      clean_exit(0);
+      std::cout << ecasound_parameter_help();
+      ecasound_clean_exit(0);
     }
     cline.next();
   }
@@ -187,7 +174,7 @@ void parse_command_line(COMMAND_LINE& cline) {
  * is done to ensure that destructors are properly 
  * called.
  */
-void clean_exit(int n) {
+void ecasound_clean_exit(int n) {
   // std::cerr << "Clean exit..." << endl;
   ecadebug->flush();
   if (global_control_deleted == false) {
@@ -218,9 +205,28 @@ void clean_exit(int n) {
 /**
  * Signal handling call back.
  */
-void signal_handler(int signum) {
+void ecasound_signal_handler(int signum) {
   // std::cerr << "<-- Caught a signal... cleaning up." << endl << endl;
-  clean_exit(128);
+  ecasound_clean_exit(128);
+}
+
+void ecasound_setup_signals(void) {
+  struct sigaction es_handler;
+  es_handler.sa_handler = ecasound_signal_handler;
+  sigemptyset(&es_handler.sa_mask);
+  es_handler.sa_flags = 0;
+
+  struct sigaction ign_handler;
+  ign_handler.sa_handler = SIG_IGN;
+  sigemptyset(&ign_handler.sa_mask);
+  ign_handler.sa_flags = 0;
+
+  /* handle the follwing signals explicitly */
+  sigaction(SIGTERM, &es_handler, 0);
+  sigaction(SIGINT, &es_handler, 0);
+  
+  /* ignore the following signals */
+  sigaction(SIGPIPE, &ign_handler, 0);
 }
 
 /**
@@ -230,7 +236,7 @@ void print_header(ostream* dostream) {
   *dostream << "****************************************************************************\n";
   *dostream << "*";
 #if defined USE_NCURSES || defined USE_TERMCAP
-  if (dostream == &cout) {
+  if (dostream == &std::cout) {
     setupterm((char *)0, 1, (int *)0);
     putp(tigetstr("bold"));
   }
@@ -239,7 +245,7 @@ void print_header(ostream* dostream) {
 	    << ecasound_library_version
 	    << " (C) 1997-2001 Kai Vehmanen                 ";
 #if defined USE_NCURSES || defined USE_TERMCAP
-  if (dostream == &cout) {
+  if (dostream == &std::cout) {
     putp(tigetstr("sgr0"));
   }
 #endif
@@ -272,7 +278,7 @@ void start_iactive(ECA_SESSION* param) {
 	global_error_no = 1;
       }
     }
-    cout << "ecasound ('h' for help)> ";
+    std::cout << "ecasound ('h' for help)> ";
   }
   while(getline(cin,cmd));
 }
@@ -364,24 +370,24 @@ char* ecasound_command_generator (char* text, int state) {
   static std::map<std::string,int>::const_iterator p;
   static std::string cmd;
 
-  // If this is a new word to complete, initialize now.  This includes
-  // saving the length of TEXT for efficiency, and initializing the index
-  // variable to 0
+  /* If this is a new word to complete, initialize now.  This includes
+   * saving the length of TEXT for efficiency, and initializing the index
+   * variable to 0
+   */
   if (!state) {
       list_index = 0;
       p = map_ref.begin();
       len = strlen (text);
       // std::cerr << "First:" << p->first << ",";
   }
-  // Return the next name which partially matches from the command list
+  /* Return the next name which partially matches from the command list */
   while (p != map_ref.end()) {
       cmd = p->first;
       list_index++;
-      //  std::cerr << "Cmd:" << cmd << " (" << list_index << "),";
+      // std::cerr << "Cmd:" << cmd << " (" << list_index << "),";
       ++p;
       if (p != map_ref.end()) {
 	// std::cerr << text << " = " << cmd << "\n";
-	//	if (cmd.compare(text, 0, len) == cmd.size() - len) {
 	string hyphenstr = string_search_and_replace(text, '_', '-');
 	if (strncmp(hyphenstr.c_str(), cmd.c_str(), len) == 0) {
   	  // std::cerr << "Len: " << len << " - compare returns: " << cmd.compare(text, 0, len) << ".\n";
@@ -391,7 +397,6 @@ char* ecasound_command_generator (char* text, int state) {
       //      cmd.find_first_of(text, 0, len) != string::npos)
   }
   // std::cerr << "NULL";
-  // no names matched, return null
   return ((char *)0);
 }
-#endif // defined USE_NCURSES || defined USE_TERMCAP
+#endif /* defined USE_NCURSES || defined USE_TERMCAP */
