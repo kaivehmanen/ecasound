@@ -27,8 +27,7 @@
 
 #include "eca-logger-interface.h"
 
-// FIXME: change to zero before CVS-commit
-const static int eca_l_i_default_log_history_len = 10;
+const static int eca_l_i_default_log_history_len = 5;
 
 /**
  * Class constructor. Initializes log level to 'disabled'.

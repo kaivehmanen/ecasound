@@ -1,6 +1,7 @@
 #ifndef INCLUDE_ECA_LOGGER_H
 #define INCLUDE_ECA_LOGGER_H
 
+#include <string>
 #include <pthread.h>
 
 /**
@@ -51,6 +52,7 @@ class ECA_LOGGER {
    *
    *   eiam_return_values = return values for EIAM commands
    *
+   * @see level_to_string()
    */
   typedef enum {
     disabled = 0,
@@ -88,6 +90,11 @@ class ECA_LOGGER {
    * Detaches the current logger implementation.
    */
   static void detach_logger(void);
+
+  /**
+   * Returns description of log level 'arg'.
+   */
+  static const char* level_to_string(Msg_level_t arg);
 
   private:
 

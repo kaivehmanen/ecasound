@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // eca-logger-wellformed.cpp: Logging implementation that outputs 
 //                            messages in a well-formed format.
-// Copyright (C) 2002 Kai Vehmanen
+// Copyright (C) 2002-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -103,5 +106,5 @@ string ECA_LOGGER_WELLFORMED::create_wellformed_message(ECA_LOGGER::Msg_level_t 
   result += string(p,message.end()); 
   result += "\r\n\r\n";
 
-  return(result);
+  return result;
 }

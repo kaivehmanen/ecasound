@@ -31,8 +31,8 @@ void ECA_LOGGER_DEFAULT::do_msg(ECA_LOGGER::Msg_level_t level, const std::string
     if (level == ECA_LOGGER::subsystems) {
       std::cerr << "[* ";
     }
-      
-    if (is_log_level_set(ECA_LOGGER::module_names) == true) {
+    else if (is_log_level_set(ECA_LOGGER::module_names) == true &&
+	     level != ECA_LOGGER::eiam_return_values) {
       std::cerr << "(" 
 		<< std::string(module_name.begin(), 
 			       find(module_name.begin(), module_name.end(), '.'))

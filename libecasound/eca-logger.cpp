@@ -27,6 +27,19 @@
 ECA_LOGGER_INTERFACE* ECA_LOGGER::interface_impl_repp = 0;
 pthread_mutex_t ECA_LOGGER::lock_rep = PTHREAD_MUTEX_INITIALIZER;
 
+static const char *level_descs[] = {
+  "ERROR", /* 0 */
+  "INFO",
+  "SUBSYSTEM",
+  "MODULE",
+  "OBJECTS",
+  "SYSTEM",
+  "FUNCTION",
+  "CONTINUOUS",
+  "EIAM",
+  "UNKNOWN" /* 9 */
+};
+
 ECA_LOGGER_INTERFACE& ECA_LOGGER::instance(void)
 {
   //
@@ -74,4 +87,21 @@ void ECA_LOGGER::detach_logger(void)
     }
   }
   DBC_ENSURE(ECA_LOGGER::interface_impl_repp == 0);
+}
+
+const char* ECA_LOGGER::level_to_string(ECA_LOGGER::Msg_level_t arg)
+{
+  switch(arg) 
+  {
+    case ECA_LOGGER::errors: return level_descs[0];
+    case ECA_LOGGER::info: return level_descs[1];
+    case ECA_LOGGER::subsystems: return level_descs[2];
+    case ECA_LOGGER::module_names: return level_descs[3];
+    case ECA_LOGGER::user_objects: return level_descs[4];
+    case ECA_LOGGER::system_objects: return level_descs[5];
+    case ECA_LOGGER::functions: return level_descs[6];
+    case ECA_LOGGER::continuous: return level_descs[7];
+    case ECA_LOGGER::eiam_return_values: return level_descs[8];
+    default: return level_descs[9];
+  }
 }
