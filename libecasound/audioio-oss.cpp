@@ -223,6 +223,8 @@ void OSSDEVICE::stop(void)
 
 void OSSDEVICE::close(void)
 {
+  if (is_prepared() == true && is_running() == true) stop();
+
   ::close(audio_fd);
 
   AUDIO_IO_DEVICE::close();
