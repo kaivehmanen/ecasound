@@ -342,16 +342,17 @@ void MIDI_SERVER::send_midi_bytes(int dev_id, unsigned char* buf, int bytes) {
  * Sends an MMC-command to all MMC-send client device ids.
  */
 void MIDI_SERVER::send_mmc_command(unsigned int cmd) {
-  unsigned char buf[5];
+  unsigned char buf[6];
   buf[0] = 0xf0;
   buf[1] = 0x7f;
   buf[2] = 0x00; /* dev-id */
   buf[3] = 0x06;
   buf[4] = cmd;
+  buf[5] = 0xf7;
   list<int>::const_iterator p = mmc_send_ids_rep.begin();
   while(p != mmc_send_ids_rep.end()) {
     buf[2] = static_cast<unsigned char>(*p);
-    send_midi_bytes(1, buf, 5);
+    send_midi_bytes(1, buf, 6);
     ++p;
   }
 }
