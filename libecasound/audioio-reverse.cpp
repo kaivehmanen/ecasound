@@ -23,7 +23,6 @@
 #include <kvu_dbc.h>
 #include <kvu_numtostr.h>
 
-#include "audioio-null.h"
 #include "audioio-reverse.h"
 #include "eca-logger.h"
 #include "eca-object-factory.h"
@@ -35,7 +34,6 @@
 AUDIO_IO_REVERSE::AUDIO_IO_REVERSE (void)
 {
   
-  child_repp = new NULLFILE("uninitialized");
   tempbuf_repp = new SAMPLE_BUFFER();
   init_rep = false;
   finished_rep = false;
@@ -46,7 +44,6 @@ AUDIO_IO_REVERSE::AUDIO_IO_REVERSE (void)
  */
 AUDIO_IO_REVERSE::~AUDIO_IO_REVERSE (void)
 {
-  delete child_repp; // either null or the actual child object
 }
 
 AUDIO_IO_REVERSE* AUDIO_IO_REVERSE::clone(void) const
@@ -77,43 +74,42 @@ void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     }
     
     if (tmp != 0) {
-      delete child_repp; // the placeholder null object
-      child_repp = tmp;
+      set_child(tmp);
     }
 
-    int numparams = child_repp->number_of_params();
+    int numparams = child()->number_of_params();
     for(int n = 0; n < numparams; n++) {
-      child_repp->set_parameter(n + 1, get_parameter(n + 2));
-      numparams = child_repp->number_of_params(); // in case 'n_o_p()' varies
+      child()->set_parameter(n + 1, get_parameter(n + 2));
+      numparams = child()->number_of_params(); // in case 'n_o_p()' varies
     }
 
     init_rep = true; /* must be set after dyn. parameters */
   }
     
-  if (child_repp->finite_length_stream() != true) {
-    throw(SETUP_ERROR(SETUP_ERROR::dynamic_params, "AUDIOIO-REVERSE: Unable to reverse an infinite length audio object " + child_repp->label() + "."));
+  if (child()->finite_length_stream() != true) {
+    throw(SETUP_ERROR(SETUP_ERROR::dynamic_params, "AUDIOIO-REVERSE: Unable to reverse an infinite length audio object " + child()->label() + "."));
   }
 
-  if (child_repp->supports_seeking() != true) {
-    throw(SETUP_ERROR(SETUP_ERROR::dynamic_params, "AUDIOIO-REVERSE: Unable to reverse audio object types that don't support seek (" + child_repp->label() + ")."));
+  if (child()->supports_seeking() != true) {
+    throw(SETUP_ERROR(SETUP_ERROR::dynamic_params, "AUDIOIO-REVERSE: Unable to reverse audio object types that don't support seek (" + child()->label() + ")."));
   }
   
-  child_repp->set_buffersize(buffersize());
-  child_repp->set_io_mode(io_mode());
-  child_repp->set_audio_format(audio_format());
-  child_repp->open();
-  if (child_repp->locked_audio_format() == true) {
-    set_audio_format(child_repp->audio_format());
+  child()->set_buffersize(buffersize());
+  child()->set_io_mode(io_mode());
+  child()->set_audio_format(audio_format());
+  child()->open();
+  if (child()->locked_audio_format() == true) {
+    set_audio_format(child()->audio_format());
   }
-  set_label(child_repp->label());
-  set_length_in_samples(child_repp->length_in_samples());
+  set_label(child()->label());
+  set_length_in_samples(child()->length_in_samples());
 
   AUDIO_IO::open();
 }
 
 void AUDIO_IO_REVERSE::close(void)
 {
-  if (child_repp->is_open() == true) child_repp->close();
+  if (child()->is_open() == true) child()->close();
 
   AUDIO_IO::close();
 }
@@ -125,7 +121,7 @@ bool AUDIO_IO_REVERSE::finished(void) const
 
 string AUDIO_IO_REVERSE::parameter_names(void) const
 {
-  return(string("reverse,") + child_repp->parameter_names()); 
+  return(string("reverse,") + child()->parameter_names()); 
 }
 
 void AUDIO_IO_REVERSE::set_parameter(int param, string value)
@@ -142,7 +138,7 @@ void AUDIO_IO_REVERSE::set_parameter(int param, string value)
   }
   
   if (param > 1 && init_rep == true) {
-    child_repp->set_parameter(param - 1, value);
+    child()->set_parameter(param - 1, value);
   }
 }
 
@@ -154,7 +150,7 @@ string AUDIO_IO_REVERSE::get_parameter(int param) const
 
   if (param > 0 && param < static_cast<int>(params_rep.size()) + 1) {
     if (param > 1 && init_rep == true) {
-      params_rep[param - 1] = child_repp->get_parameter(param - 1);
+      params_rep[param - 1] = child()->get_parameter(param - 1);
     }
     return(params_rep[param - 1]);
   }
@@ -175,19 +171,19 @@ void AUDIO_IO_REVERSE::read_buffer(SAMPLE_BUFFER* sbuf)
 
   /* phase 1: seek to correct position and read one buffer */
   SAMPLE_SPECS::sample_pos_t curpos = position_in_samples();
-  SAMPLE_SPECS::sample_pos_t newpos = child_repp->length_in_samples() - curpos - buffersize();
+  SAMPLE_SPECS::sample_pos_t newpos = child()->length_in_samples() - curpos - buffersize();
   if (newpos <= 0) {
-    child_repp->seek_position_in_samples(0);
-    int oldbufsize = child_repp->buffersize();
-    child_repp->set_buffersize(-newpos);
-    child_repp->read_buffer(tempbuf_repp);
-    child_repp->set_buffersize(oldbufsize);
+    child()->seek_position_in_samples(0);
+    int oldbufsize = child()->buffersize();
+    child()->set_buffersize(-newpos);
+    child()->read_buffer(tempbuf_repp);
+    child()->set_buffersize(oldbufsize);
     finished_rep = true;
     DBC_CHECK(-newpos == tempbuf_repp->length_in_samples());
   }
   else {
-    child_repp->seek_position_in_samples(newpos);
-    child_repp->read_buffer(tempbuf_repp);
+    child()->seek_position_in_samples(newpos);
+    child()->read_buffer(tempbuf_repp);
     DBC_CHECK(buffersize() == tempbuf_repp->length_in_samples());
   }
   curpos += tempbuf_repp->length_in_samples();

@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 
-#include "audioio.h"
+#include "audioio-proxy.h"
 
 /**
  * A proxy class that resamples the the child 
@@ -16,7 +16,7 @@
  *
  * @author Kai Vehmanen
  */
-class AUDIO_IO_RESAMPLE : public AUDIO_IO {
+class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
 
  public:
 
@@ -31,8 +31,7 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO {
   /** @name Reimplemented functions from ECA_OBJECT */
   /*@{*/
 
-  virtual std::string name(void) const { return(string("Resample => ") + child_repp->name()); }
-  virtual std::string description(void) const { return(child_repp->description()); }
+  virtual std::string name(void) const { return(string("Resample => ") + child()->name()); }
 
   /*@}*/
 
@@ -59,7 +58,7 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO {
   virtual void seek_position(void);
 
   /* -- not reimplemented 
-   * virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const { return(child_repp->position_in_samples()); }
+   * virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const { return(child()->position_in_samples()); }
    * virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const { return(); }
    * virtual void set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos);
    * virtual void set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
@@ -71,10 +70,8 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO {
   /*@{*/
 
   virtual int supported_io_modes(void) const { return(io_read); }
-  virtual bool supports_nonblocking_mode(void) const { return(child_repp->supports_nonblocking_mode()); }
   virtual bool supports_seeking(void) const { return(true); }
   virtual bool finite_length_stream(void) const { return(true); }
-  virtual bool locked_audio_format(void) const { return(child_repp->locked_audio_format()); }
 
   virtual void set_buffersize(long int samples) { buffersize_rep =  samples; /* child_buffersize_rep = static_cast<long  int>(buffersize() * (1.0f / psfactor_rep)); */  }
   virtual long int buffersize(void) const { return(buffersize_rep); }
@@ -92,7 +89,6 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO {
  private:
 
   mutable std::vector<std::string> params_rep;
-  AUDIO_IO* child_repp;
   bool init_rep;
   SAMPLE_SPECS::sample_rate_t child_srate_rep;
   long int buffersize_rep;

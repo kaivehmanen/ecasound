@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 
-#include "audioio.h"
+#include "audioio-proxy.h"
 
 class SAMPLE_BUFFER;
 
@@ -13,13 +13,12 @@ class SAMPLE_BUFFER;
  * A proxy class that reverts the child 
  * object's data.
  *
- *
  * Related design patterns:
  *     - Proxy (GoF207
  *
  * @author Kai Vehmanen
  */
-class AUDIO_IO_REVERSE : public AUDIO_IO {
+class AUDIO_IO_REVERSE : public AUDIO_IO_PROXY {
 
  public:
 
@@ -34,8 +33,7 @@ class AUDIO_IO_REVERSE : public AUDIO_IO {
   /** @name Reimplemented functions from ECA_OBJECT */
   /*@{*/
 
-  virtual std::string name(void) const { return(string("Reverse => ") + child_repp->name()); }
-  virtual std::string description(void) const { return(child_repp->description()); }
+  virtual std::string name(void) const { return(string("Reverse => ") + child()->name()); }
 
   /*@}*/
 
@@ -74,16 +72,11 @@ class AUDIO_IO_REVERSE : public AUDIO_IO {
   /*@{*/
 
   virtual int supported_io_modes(void) const { return(io_read); }
-  virtual bool supports_nonblocking_mode(void) const { return(child_repp->supports_nonblocking_mode()); }
   virtual bool supports_seeking(void) const { return(true); }
   virtual bool finite_length_stream(void) const { return(true); }
-  virtual bool locked_audio_format(void) const { return(child_repp->locked_audio_format()); }
-
-  virtual void set_buffersize(long int samples) { child_repp->set_buffersize(samples); }
-  virtual long int buffersize(void) const { return(child_repp->buffersize()); }
 
   virtual void read_buffer(SAMPLE_BUFFER* sbuf);
-  virtual void write_buffer(SAMPLE_BUFFER* sbuf) { child_repp->write_buffer(sbuf); }
+  virtual void write_buffer(SAMPLE_BUFFER* sbuf) { child()->write_buffer(sbuf); }
 
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
   virtual void close(void);
@@ -95,7 +88,6 @@ class AUDIO_IO_REVERSE : public AUDIO_IO {
  private:
 
   mutable std::vector<std::string> params_rep;
-  AUDIO_IO* child_repp;
   bool init_rep;
   bool finished_rep;
   SAMPLE_SPECS::sample_pos_t curpos;

@@ -29,8 +29,6 @@
 AUDIO_IO_TYPESELECT::AUDIO_IO_TYPESELECT (void) { 
 
   //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-typeselect) constructor " + label() + ".");  
-
-  child_repp = new NULLFILE("uninitialized");
   init_rep = false;
 }
 
@@ -40,7 +38,6 @@ AUDIO_IO_TYPESELECT::AUDIO_IO_TYPESELECT (void) {
 AUDIO_IO_TYPESELECT::~AUDIO_IO_TYPESELECT (void)
 {
   //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-typeselect) destructor " + label() + ".");  
-  delete child_repp; // either null or the actual child object
 }
 
 AUDIO_IO_TYPESELECT* AUDIO_IO_TYPESELECT::clone(void) const
@@ -67,41 +64,40 @@ void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     }
 
     if (tmp != 0) {
-      delete child_repp; /* the placeholder null object */
-      child_repp = tmp;
-
-      int numparams = child_repp->number_of_params();
-      for(int n = 0; n < numparams; n++) {
-	child_repp->set_parameter(n + 1, get_parameter(n + 3));
-	numparams = child_repp->number_of_params(); // in case 'n_o_p()' varies
-      }
-
-      init_rep = true; /* must be set after dyn. parameters */
+      set_child(tmp);
     }
+
+    int numparams = child()->number_of_params();
+    for(int n = 0; n < numparams; n++) {
+      child()->set_parameter(n + 1, get_parameter(n + 3));
+      numparams = child()->number_of_params(); // in case 'n_o_p()' varies
+    }
+
+    init_rep = true; /* must be set after dyn. parameters */
   }
   
-  child_repp->set_buffersize(buffersize());
-  child_repp->set_io_mode(io_mode());
-  child_repp->set_audio_format(audio_format());
-  child_repp->open();
-  if (child_repp->locked_audio_format() == true) {
-    set_audio_format(child_repp->audio_format());
+  child()->set_buffersize(buffersize());
+  child()->set_io_mode(io_mode());
+  child()->set_audio_format(audio_format());
+  child()->open();
+  if (child()->locked_audio_format() == true) {
+    set_audio_format(child()->audio_format());
   }
-  set_label(child_repp->label());
+  set_label(child()->label());
 
-  AUDIO_IO::open();
+  AUDIO_IO_PROXY::open();
 }
 
 void AUDIO_IO_TYPESELECT::close(void)
 { 
-  if (child_repp->is_open() == true) child_repp->close();
+  if (child()->is_open() == true) child()->close();
 
-  AUDIO_IO::close();
+  AUDIO_IO_PROXY::close();
 }
 
 string AUDIO_IO_TYPESELECT::parameter_names(void) const
 { 
-  return(string("typeselect,format,") + child_repp->parameter_names()); 
+  return(string("typeselect,format,") + child()->parameter_names()); 
 }
 
 void AUDIO_IO_TYPESELECT::set_parameter(int param, string value)
@@ -118,7 +114,7 @@ void AUDIO_IO_TYPESELECT::set_parameter(int param, string value)
   
   if (param > 2 && 
       init_rep == true) {
-    child_repp->set_parameter(param - 2, value);
+    child()->set_parameter(param - 2, value);
   }
 }
 
@@ -131,23 +127,10 @@ string AUDIO_IO_TYPESELECT::get_parameter(int param) const
   if (param > 0 && param < static_cast<int>(params_rep.size()) + 1) {
     if (param > 2 &&
 	init_rep == true) {
-      params_rep[param - 1] = child_repp->get_parameter(param - 2);
+      params_rep[param - 1] = child()->get_parameter(param - 2);
     }
     return(params_rep[param - 1]);
   }
 
   return(""); 
-}
-
-void AUDIO_IO_TYPESELECT::set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos)
-{
-  /* only way to update the current position */
-  child_repp->seek_position_in_samples(pos);
-  AUDIO_IO::set_position_in_samples(pos);
-}
-
-void AUDIO_IO_TYPESELECT::set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
-{
-  // child_repp->set_length_in_samples(pos);
-  AUDIO_IO::set_length_in_samples(pos);
 }
