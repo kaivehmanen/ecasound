@@ -160,9 +160,15 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     else if (strstr(teksti.c_str(),".svx") != 0) { file_format = SF_FORMAT_SVX; }
     else if (strstr(teksti.c_str(),".nist") != 0) { file_format = SF_FORMAT_NIST; }
     else if (strstr(teksti.c_str(),".voc") != 0) { file_format = SF_FORMAT_VOC; }
+#ifdef SF_FORMAT_XI
     else if (strstr(teksti.c_str(),".xi") != 0) { file_format = SF_FORMAT_XI; }
+#endif
+#ifdef SF_FORMAT_PVF
     else if (strstr(teksti.c_str(),".pvf") != 0) { file_format = SF_FORMAT_PVF; }
+#endif
+#ifdef SF_FORMAT_HTK
     else if (strstr(teksti.c_str(),".htk") != 0) { file_format = SF_FORMAT_HTK; }
+#endif
     else {
       ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Warning! Unknown audio format, using WAV format instead.");
       file_format = SF_FORMAT_WAV;

@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20031127-31
+dnl last modified: 20031209-32
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -23,7 +23,7 @@ echo "------------------------------------------------------------------"
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 2.3.2)
+AM_INIT_AUTOMAKE(ecasound, 2.3.3)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
@@ -854,6 +854,25 @@ AC_ARG_ENABLE(sndfile,
     esac
  ]
 )
+
+if test x$sndfile_support = xyes; then
+  AC_LANG_C
+  AC_TRY_LINK(
+  [ #include <sndfile.h> ],
+  [
+	SF_INFO sfinfo;
+	sfinfo.frames = 0;
+	return 0;
+  ],
+  [ /bin/true ],
+  [ 
+    sndfile_support=no 
+    AC_MSG_WARN([Found an old version of libsndfile. Libsndfile 1.0.0 or newer is required.])
+  ]
+  )
+  AC_LANG_CPLUSPLUS
+fi
+
 AM_CONDITIONAL(ECA_AM_COMPILE_SNDFILE, test x$sndfile_support = xyes)
 
 if test x$sndfile_support = xyes; then
