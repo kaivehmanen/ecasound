@@ -80,7 +80,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void attach_output_to_selected_chains(const AUDIO_IO* obj);
   void audio_object_info(const AUDIO_IO* aio) const;
   bool ok_audio_object(const AUDIO_IO* aobj) const;
-  bool is_slave_output(AUDIO_IO* aiod) const;
+  bool is_realtime_target_output(int output_id) const;
   vector<string> audio_input_names(void) const;
   vector<string> audio_output_names(void) const;
 

@@ -358,7 +358,7 @@ void ALSA_PCM_DEVICE_06X::stop(void) {
   ::snd_pcm_drop(audio_fd_repp); // non-blocking 
 //    ::snd_pcm_drain(audio_fd_repp); // blocking
   
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Audio device \"" + label() + "\" disabled.");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) stop - " + label() + ".");
   
   is_triggered_rep = false;
   is_prepared_rep = false;
@@ -369,7 +369,7 @@ void ALSA_PCM_DEVICE_06X::close(void) {
   DBC_REQUIRE(is_open() == true);
   // --
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) close");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) close - " + label() + ".");
 
   if (is_triggered_rep == true) stop();
   ::snd_pcm_close(audio_fd_repp);
@@ -386,7 +386,7 @@ void ALSA_PCM_DEVICE_06X::prepare(void) {
   // --
 
   AUDIO_IO_DEVICE::prepare();
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) prepare");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) prepare - " + label() + ".");
 
   int err = ::snd_pcm_prepare(audio_fd_repp);
   if (err < 0)
@@ -402,7 +402,7 @@ void ALSA_PCM_DEVICE_06X::start(void) {
   // --
 
   AUDIO_IO_DEVICE::start();
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) start");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) start - " + label() + ".");
   ::snd_pcm_start(audio_fd_repp);
   is_triggered_rep = true;
   position_in_samples_rep = 0;

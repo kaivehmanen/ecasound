@@ -217,6 +217,7 @@ void ECA_ENGINE::signal_stop(void) {
 void ECA_ENGINE::init_variables(void) {
   set_status(ECA_ENGINE::engine_status_stopped);
   buffersize_rep = session_repp->connected_chainsetup_repp->buffersize();
+  prefill_threshold_rep = ECA_ENGINE::prefill_threshold_constant_rep / buffersize_rep;
   use_midi_rep = false;
   max_channels_rep = 0;
   continue_request_rep = false;
@@ -292,10 +293,9 @@ void ECA_ENGINE::init_sorted_input_map(void) {
   }
 
   for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
-    AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>((*inputs_repp)[adev_sizet]);
-    if (p != 0) {
-      realtime_inputs_rep.push_back(p);
-      realtime_objects_rep.push_back(p);
+    if (is_realtime_object((*inputs_repp)[adev_sizet]) == true) {
+      realtime_inputs_rep.push_back(static_cast<AUDIO_IO_DEVICE*>((*inputs_repp)[adev_sizet]));
+      realtime_objects_rep.push_back(static_cast<AUDIO_IO_DEVICE*>((*inputs_repp)[adev_sizet]));
     }
     else {
       non_realtime_inputs_rep.push_back((*inputs_repp)[adev_sizet]);
@@ -321,10 +321,9 @@ void ECA_ENGINE::init_sorted_output_map(void) {
   }
 
   for(unsigned int adev_sizet = 0; adev_sizet < outputs_repp->size(); adev_sizet++) {
-    AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>((*outputs_repp)[adev_sizet]);
-    if (p != 0) {
-      realtime_outputs_rep.push_back(p);
-      realtime_objects_rep.push_back(p);
+    if (is_realtime_object((*outputs_repp)[adev_sizet]) == true) {
+      realtime_outputs_rep.push_back(static_cast<AUDIO_IO_DEVICE*>((*outputs_repp)[adev_sizet]));
+      realtime_objects_rep.push_back(static_cast<AUDIO_IO_DEVICE*>((*outputs_repp)[adev_sizet]));
     }
     else {
       non_realtime_outputs_rep.push_back((*outputs_repp)[adev_sizet]);
@@ -503,7 +502,18 @@ void ECA_ENGINE::conditional_stop(void) {
  * Checks for incoming messages and controls
  * internal state flags. 
  */
-void ECA_ENGINE::update_requests(void) {
+void ECA_ENGINE::update_engine_state(void) {
+  
+  // --
+  // Updates engine status (if necessary).
+  if (input_not_finished_rep != true) {
+    stop();
+
+    if (output_finished_rep == true)
+      set_status(ECA_ENGINE::engine_status_error);
+    else
+      set_status(ECA_ENGINE::engine_status_finished);
+  }
 
   // --
   // check whether processing has finished 
@@ -529,20 +539,254 @@ void ECA_ENGINE::update_requests(void) {
   }
 }
 
-/**
- * Updates engine status (if necessary).
- */
-void ECA_ENGINE::update_engine_state(void) {
-  if (input_not_finished_rep != true) {
-    stop();
+void ECA_ENGINE::interpret_queue(void) {
+  while(command_queue_rep.is_empty() != true) {
+    std::pair<int,double> item = command_queue_rep.front();
+//      std::cerr << "(eca-engine) ecasound_queue: cmds available; first one is "
+//  	 << item.first << "." << std::endl;
+    switch(item.first) {
+    // ---
+    // Basic commands.
+    // ---            
+    case ep_exit:
+      {
+	while(command_queue_rep.is_empty() == false) command_queue_rep.pop_front();
+	ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) ecasound_queue: exit!");
+	stop();
+	end_request_rep = true;
+	return;
+      }
+    case ep_start: { start(); break; }
+    case ep_stop: { stop(); break; }
 
-    if (output_finished_rep == true)
-      set_status(ECA_ENGINE::engine_status_error);
-    else
-      set_status(ECA_ENGINE::engine_status_finished);
+    // ---
+    // Section/chain (en/dis)abling commands.
+    // ---
+    case ep_c_select: {	csetup_repp->active_chain_index_rep = static_cast<size_t>(item.second); break; }
+    case ep_c_mute: { chain_muting(); break; }
+    case ep_c_bypass: { chain_processing(); break; }
+    case ep_c_rewind: { change_position_chain(- item.second); break; }
+    case ep_c_forward: { change_position_chain(item.second); break; }
+    case ep_c_setpos: { set_position_chain(item.second); break; }
+
+    // ---
+    // Chain operators
+    // ---
+    case ep_cop_select: { 
+      csetup_repp->active_chainop_index_rep =  static_cast<size_t>(item.second);
+      if (csetup_repp->active_chainop_index_rep - 1 < static_cast<int>((*chains_repp)[csetup_repp->active_chain_index_rep]->number_of_chain_operators()))
+	(*chains_repp)[csetup_repp->active_chain_index_rep]->select_chain_operator(csetup_repp->active_chainop_index_rep);
+      else 
+	csetup_repp->active_chainop_index_rep = 0;
+      break;
+    }
+    case ep_copp_select: { 
+      csetup_repp->active_chainop_param_index_rep = static_cast<size_t>(item.second);
+      (*chains_repp)[csetup_repp->active_chain_index_rep]->select_chain_operator_parameter(csetup_repp->active_chainop_param_index_rep);
+      break;
+    }
+    case ep_copp_value: { 
+      assert(chains_repp != 0);
+      (*chains_repp)[csetup_repp->active_chain_index_rep]->set_parameter(item.second);
+      break;
+    }
+
+    // ---
+    // Global position
+    // ---
+    case ep_rewind: { change_position(- item.second); break; }
+    case ep_forward: { change_position(item.second); break; }
+    case ep_setpos: { set_position(item.second); break; }
+    }
+    command_queue_rep.pop_front();
   }
 }
 
+void ECA_ENGINE::stop(void) { 
+  // --
+  // as an exception, stop() will be performed even 
+  // though status is not running anymore iff 
+  // rt_running_rep is true (ie. rt-objects are still
+  // in running state and have to be stopped)
+
+  if (status() != ECA_ENGINE::engine_status_running && 
+      rt_running_rep != true) return;
+
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Stop");
+
+  if (rt_running_rep == true) {
+    for (unsigned int adev_sizet = 0; adev_sizet != realtime_objects_rep.size(); adev_sizet++) {
+      realtime_objects_rep[adev_sizet]->stop();
+    }
+  }
+
+  stop_servers();
+  rt_running_rep = false;
+
+  // ---
+  // Handle priority
+  // ---
+  if (csetup_repp->raised_priority() == true) {
+    struct sched_param sparam;
+    sparam.sched_priority = 0;
+    if (::sched_setscheduler(0, SCHED_OTHER, &sparam) == -1)
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Unable to change scheduling back to SCHED_OTHER!");
+    else
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Changed back to non-realtime scheduling SCHED_OTHER.");
+  }
+
+  set_status(ECA_ENGINE::engine_status_stopped);
+  signal_stop();
+}
+
+void ECA_ENGINE::start(void) {
+  if (status() == ECA_ENGINE::engine_status_running) return;
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Start");
+  output_finished_rep = false;
+
+  // ---
+  // Handle priority
+  // ---
+  if (csetup_repp->raised_priority() == true) {
+    struct sched_param sparam;
+    sparam.sched_priority = csetup_repp->sched_priority();
+    if (::sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Unable to change scheduling policy!");
+    else 
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Using realtime-scheduling (SCHED_FIFO).");
+  }
+
+  // ---
+  // Start servers and devices 
+  start_servers();
+
+  // ---
+  // Prepare rt-objects for processing
+  for (unsigned int adev_sizet = 0; adev_sizet != realtime_objects_rep.size(); adev_sizet++) {
+    realtime_objects_rep[adev_sizet]->prepare();
+  }
+
+  // ---
+  // Handle multitrack and normal start differently
+  if (csetup_repp->multitrack_mode_rep == true) {
+    multitrack_start();
+  }
+  else {
+    for (unsigned int adev_sizet = 0; adev_sizet != realtime_inputs_rep.size(); adev_sizet++)
+      realtime_inputs_rep[adev_sizet]->start();
+
+    trigger_outputs_request_rep = true;
+  }
+
+  // --- !!! ---
+  //    char buf = 0xfa;
+  //    int temp = ::write(midi_fd, &buf, 1);
+  //    if (temp < 0) {
+  //      std::cerr << "ERROR: Can't write to MIDI-device.\n";
+  //    }
+  // --- !!! ---
+
+  rt_running_rep = true;
+  set_status(ECA_ENGINE::engine_status_running);
+}
+
+void ECA_ENGINE::multitrack_start(void) {
+
+  // ---
+  // Reset all rt-devices to make sure device buffers
+  // are in a clean state (to avoid sync problems)
+  reset_realtime_devices();
+
+  // ---
+  // Start rt-objects
+  for (unsigned int adev_sizet = 0; adev_sizet != realtime_inputs_rep.size(); adev_sizet++)
+    realtime_inputs_rep[adev_sizet]->start();
+  
+  // --
+  // store time stamp when rt-inputs were started
+  gettimeofday(&multitrack_input_stamp_rep, NULL);
+  
+  // --
+  // prefill rt-output buffers before actually startin them
+  int loops = 2;
+  if (csetup_repp->max_buffers() == true) {
+    loops = prefill_threshold_rep;
+  }
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) multitrack sync (" + kvu_numtostr(loops) + " loops)");
+  for(int n = 0; n < loops; n++) {
+      multitrack_sync();
+  }
+  
+  // --
+  // start rt-objects (pref
+  for (unsigned int adev_sizet = 0; adev_sizet != realtime_outputs_rep.size(); adev_sizet++)
+    realtime_outputs_rep[adev_sizet]->start();
+  
+  DBC_CHECK(realtime_inputs_rep.size() > 0);
+  DBC_CHECK(realtime_outputs_rep.size() > 0);
+  
+  struct timeval now;
+  gettimeofday(&now, NULL);
+  double time = now.tv_sec * 1000000.0 + now.tv_usec -
+    multitrack_input_stamp_rep.tv_sec * 1000000.0 - multitrack_input_stamp_rep.tv_usec;
+  long int sync_fix = static_cast<long>(time * csetup_repp->sample_rate() / 1000000.0);
+  sync_fix -= loops * buffersize_rep;
+  
+  // sync_fix = total_samples_recorded - 
+  //            processed_recorded_samples, 
+  //            calculated when playback_samples==0 (just started)
+  // ==> result: first byte written to non-rt outputs 
+  //             was recorded exactly at 'now - sync_fix'
+  
+  // this would be a serious problem
+  if (sync_fix < 0) {
+    std::cerr << "(eca-engine) Negative multitrack-sync " 
+              << sync_fix 
+              << "; problems with hardware? " << std::endl;
+  }
+  else {
+    // write 'syncfix' samples of silence to nonrt outputs
+    for (size_t n = 0; n != outputs_repp->size(); n++) {
+      if (is_realtime_object((*outputs_repp)[n]) != true) {
+	for(size_t m = 0; m != chains_repp->size(); m++) {
+	  if ((*chains_repp)[m]->connected_output() == static_cast<int>(n)) {
+	    cslots_rep[m].length_in_samples(sync_fix);
+	    cslots_rep[m].make_silent();
+	    (*outputs_repp)[n]->write_buffer(&(cslots_rep[m]));
+	    cslots_rep[m].length_in_samples(buffersize_rep);
+	    ecadebug->msg(ECA_DEBUG::system_objects, 
+			  "(eca-engine) sync fix: " + 
+			  kvu_numtostr(sync_fix) + 
+			  " for " +
+			  (*outputs_repp)[n]->label() + 
+			  ".");
+    	  }
+	}
+      }
+    }
+  }
+}
+
+/**
+ * Performs a close-open cycle for all realtime 
+ * devices.
+ */
+void ECA_ENGINE::reset_realtime_devices(void) {
+  for (size_t n = 0; n < realtime_objects_rep.size(); n++) {
+    if (realtime_objects_rep[n]->is_open() == true) {
+      ecadebug->msg(ECA_DEBUG::user_objects, 
+		    "Reseting rt-object " + 
+		    realtime_objects_rep[n]->label());
+      realtime_objects_rep[n]->close();
+      realtime_objects_rep[n]->open();
+    }
+  }
+}
+
+
+/**
+ * The main engine loop for 'simple' mix-mode.
+ */
 void ECA_ENGINE::exec_simple_iactive(void) {
   int inch = (*inputs_repp)[(*chains_repp)[0]->connected_input()]->channels();
   int outch = (*outputs_repp)[(*chains_repp)[0]->connected_output()]->channels();
@@ -550,24 +794,37 @@ void ECA_ENGINE::exec_simple_iactive(void) {
 
   ecadebug->control_flow("Engine init - mixmode \"simple\"");
   if (session_repp->iactive_rep != true) start();
+  input_not_finished_rep = true;
   while (true) {
-    update_requests();
+    // --
+    // handle state logic
+    update_engine_state();
     if (end_request_rep) break;
     if (continue_request_rep) continue;
-    input_not_finished_rep = false;
 
+    // --
+    // read from inputs to chain '0'
+    input_not_finished_rep = false;
     prehandle_control_position();
     (*inputs_repp)[0]->read_buffer(&mixslot_rep);
     if ((*inputs_repp)[0]->finished() == false) input_not_finished_rep = true;
+
+    // --
+    // process chain '0'
     (*chains_repp)[0]->process();
+
+    // --
+    // mix to outputs
     (*outputs_repp)[0]->write_buffer(&mixslot_rep);
     if ((*outputs_repp)[0]->finished() == true) output_finished_rep = true;
     trigger_outputs();
     posthandle_control_position();
-    update_engine_state();
   }
 }
 
+/**
+ * The main engine loop for 'normal' mix-mode.
+ */
 void ECA_ENGINE::exec_normal_iactive(void) {
   ecadebug->control_flow("Engine init - mixmode \"normal\"");
 
@@ -578,26 +835,222 @@ void ECA_ENGINE::exec_normal_iactive(void) {
   }
 
   if (session_repp->iactive_rep != true) start();
+  input_not_finished_rep = true;
   while (true) {
-    update_requests();
+    // --
+    // handle state logic
+    update_engine_state();
     if (end_request_rep) break;
     if (continue_request_rep) continue;
-    input_not_finished_rep = false;
 
+    // --
+    // inputs -> chains -> outputs
+    input_not_finished_rep = false;
     prehandle_control_position();
     inputs_to_chains();
+    process_chains();
+    mix_to_outputs(false);
+    trigger_outputs();
+    posthandle_control_position();
+  }
+}
+
+/**
+ * Performs one processing loop skipping all outputs
+ * which are not rt-targets. The idea is to prefill all 
+ * the output buffers before starting actual recording.
+ */
+void ECA_ENGINE::multitrack_sync(void) {
+  inputs_to_chains();
+  process_chains();
+  mix_to_outputs(true);
+}
+
+void ECA_ENGINE::process_chains(void) {
     chain_i chain_iter = chains_repp->begin();
     while(chain_iter != chains_repp->end()) {
       (*chain_iter)->process();
       ++chain_iter;
     }
-    mix_to_outputs();
-    trigger_outputs();
-    posthandle_control_position();
-    update_engine_state();
+}
+
+void ECA_ENGINE::inputs_to_chains(void) {
+  for(unsigned int audioslot_sizet = 0; audioslot_sizet < inputs_repp->size(); audioslot_sizet++) {
+    if (input_chain_count_rep[audioslot_sizet] > 1) {
+      (*inputs_repp)[audioslot_sizet]->read_buffer(&mixslot_rep);
+      if ((*inputs_repp)[audioslot_sizet]->finished() == false) input_not_finished_rep = true;
+    }
+    for (unsigned int c = 0; c != chains_repp->size(); c++) {
+      if ((*chains_repp)[c]->connected_input() == static_cast<int>(audioslot_sizet)) {
+	if (input_chain_count_rep[audioslot_sizet] == 1) {
+	  (*inputs_repp)[audioslot_sizet]->read_buffer(&(cslots_rep[c]));
+	  if ((*inputs_repp)[audioslot_sizet]->finished() == false) input_not_finished_rep = true;
+	  break;
+	}
+	else {
+	  cslots_rep[c].operator=(mixslot_rep);
+	}
+      }
+    }
   }
 }
 
+void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
+  for(unsigned int audioslot_sizet = 0; audioslot_sizet < outputs_repp->size(); audioslot_sizet++) {
+    mixslot_rep.number_of_channels((*outputs_repp)[audioslot_sizet]->channels());
+
+    if (skip_realtime_target_outputs == true) {
+      if (csetup_repp->is_realtime_target_output(audioslot_sizet) ==
+	  true) {
+	//  std::cerr << "Skipping rt-target output " << (*outputs_repp)[audioslot_sizet]->label() << "." << endl;
+	continue;
+      }
+    }
+
+    int count = 0;
+    
+    for(unsigned int n = 0; n != chains_repp->size(); n++) {
+      // --
+      // if chain is already released, skip
+      // --
+      if ((*chains_repp)[n]->connected_output() == -1) {
+	// --
+	// skip, if chain is not connected
+	// --
+	continue;
+      }
+
+      if ((*chains_repp)[n]->connected_output() == static_cast<int>(audioslot_sizet)) {
+	// --
+	// output is connected to this chain
+	// --
+	if (output_chain_count_rep[audioslot_sizet] == 1) {
+	  // --
+	  // there's only one output connected to this chain,
+	  // so we don't need to mix anything
+	  // --
+	  (*outputs_repp)[audioslot_sizet]->write_buffer(&(cslots_rep[n]));
+	  if ((*outputs_repp)[audioslot_sizet]->finished() == true) output_finished_rep = true;
+	  cslots_rep[n].length_in_samples(buffersize_rep);
+	  break;
+	}
+	else {
+	  ++count;
+	  if (count == 1) {
+	    // -- 
+	    // this is the first output connected to this chain
+	    // --
+	    mixslot_rep.copy(cslots_rep[n]);
+	    mixslot_rep.divide_by(output_chain_count_rep[audioslot_sizet]);
+	  }
+	  else {
+	    mixslot_rep.add_with_weight(cslots_rep[n],
+				    output_chain_count_rep[audioslot_sizet]);
+	  }
+	  
+	  if (count == output_chain_count_rep[audioslot_sizet]) {
+	    if (mixslot_rep.length_in_samples() == 0) {
+	      if (is_realtime_object((*outputs_repp)[audioslot_sizet]) == true) {
+		mixslot_rep.length_in_samples(buffersize_rep);
+		mixslot_rep.make_silent();
+	      }
+	    }
+	    (*outputs_repp)[audioslot_sizet]->write_buffer(&mixslot_rep);
+	    if ((*outputs_repp)[audioslot_sizet]->finished() == true) output_finished_rep = true;
+	    mixslot_rep.length_in_samples(buffersize_rep);
+	  }
+	}
+      }
+    }
+  } 
+}
+
+void ECA_ENGINE::prehandle_control_position(void) {
+  csetup_repp->change_position(buffersize_rep);
+  if (csetup_repp->is_over() == true &&
+      processing_range_set_rep == true) {
+    int buffer_remain = csetup_repp->position_in_samples() -
+                        csetup_repp->length_in_samples();
+    for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
+      (*inputs_repp)[adev_sizet]->buffersize(buffer_remain, csetup_repp->sample_rate());
+    }
+  }
+}
+
+void ECA_ENGINE::posthandle_control_position(void) {
+  if (csetup_repp->is_over() == true &&
+      processing_range_set_rep == true) {
+    if (csetup_repp->looping_enabled() == true) {
+      input_not_finished_rep = true;
+      rewind_to_start_position();
+      csetup_repp->set_position(0);
+      for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
+	(*inputs_repp)[adev_sizet]->buffersize(buffersize_rep, csetup_repp->sample_rate());
+      }
+    }
+    else {
+      stop();
+      csetup_repp->set_position(0);
+      set_status(ECA_ENGINE::engine_status_finished);
+    }
+  }
+}
+
+void ECA_ENGINE::trigger_outputs(void) {
+  if (trigger_outputs_request_rep == true) {
+    ++trigger_counter_rep;
+    if (trigger_counter_rep == prefill_threshold_rep) {
+      trigger_outputs_request_rep = false;
+      trigger_counter_rep = 0;
+      for (unsigned int adev_sizet = 0; adev_sizet != realtime_outputs_rep.size(); adev_sizet++)
+	realtime_outputs_rep[adev_sizet]->start();
+      rt_running_rep = true;
+    }
+  }
+}
+
+void ECA_ENGINE::start_servers(void) {
+  if (use_double_buffering_rep == true) {
+    csetup_repp->pserver_rep.start();
+    ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Prefilling i/o buffers.");
+    csetup_repp->pserver_rep.wait_for_full();
+  }
+  
+  if (use_midi_rep == true) {
+    csetup_repp->midi_server_rep.start();
+  }
+}
+
+void ECA_ENGINE::stop_servers(void) { 
+  if (use_double_buffering_rep == true) {
+    csetup_repp->pserver_rep.stop();
+    csetup_repp->pserver_rep.wait_for_stop();
+  }
+
+  if (use_midi_rep == true) {
+    csetup_repp->midi_server_rep.stop();
+  }
+}
+
+bool ECA_ENGINE::is_realtime_object(const AUDIO_IO* aobj) const {
+  const AUDIO_IO_DEVICE* p = dynamic_cast<const AUDIO_IO_DEVICE*>(aobj);
+  if (p != 0) return(true);
+  return(false);
+}
+
+void ECA_ENGINE::chain_muting(void) {
+  if ((*chains_repp)[csetup_repp->active_chain_index_rep]->is_muted()) 
+    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_muting(false);
+  else
+    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_muting(true);
+}
+
+void ECA_ENGINE::chain_processing(void) {
+  if ((*chains_repp)[csetup_repp->active_chain_index_rep]->is_processing()) 
+    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_processing(false);
+  else
+    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_processing(true);
+}
 
 /**
  * Seeks to position 'seconds'. Affects all input and 
@@ -688,396 +1141,3 @@ double ECA_ENGINE::current_position_chain(void) const {
     return(ptr->position_in_seconds_exact());
   return(0.0f);
 }
-
-void ECA_ENGINE::prehandle_control_position(void) {
-  csetup_repp->change_position(buffersize_rep);
-  if (csetup_repp->is_over() == true &&
-      processing_range_set_rep == true) {
-    int buffer_remain = csetup_repp->position_in_samples() -
-                        csetup_repp->length_in_samples();
-    for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
-      (*inputs_repp)[adev_sizet]->buffersize(buffer_remain, csetup_repp->sample_rate());
-    }
-  }
-}
-
-void ECA_ENGINE::posthandle_control_position(void) {
-  if (csetup_repp->is_over() == true &&
-      processing_range_set_rep == true) {
-    if (csetup_repp->looping_enabled() == true) {
-      input_not_finished_rep = true;
-      rewind_to_start_position();
-      csetup_repp->set_position(0);
-      for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
-	(*inputs_repp)[adev_sizet]->buffersize(buffersize_rep, csetup_repp->sample_rate());
-      }
-    }
-    else {
-      stop();
-      csetup_repp->set_position(0);
-      set_status(ECA_ENGINE::engine_status_finished);
-    }
-  }
-}
-
-void ECA_ENGINE::start_servers(void) {
-  if (use_double_buffering_rep == true) {
-    csetup_repp->pserver_rep.start();
-    ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Prefilling i/o buffers.");
-    csetup_repp->pserver_rep.wait_for_full();
-  }
-  
-  if (use_midi_rep == true) {
-    csetup_repp->midi_server_rep.start();
-  }
-}
-
-void ECA_ENGINE::stop_servers(void) { 
-  if (use_double_buffering_rep == true) {
-    csetup_repp->pserver_rep.stop();
-    csetup_repp->pserver_rep.wait_for_stop();
-  }
-
-  if (use_midi_rep == true) {
-    csetup_repp->midi_server_rep.stop();
-  }
-}
-
-void ECA_ENGINE::stop(void) { 
-  if (status() != ECA_ENGINE::engine_status_running && rt_running_rep == false) return;
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Stop");
-
-  if (rt_running_rep == true) {
-    for (unsigned int adev_sizet = 0; adev_sizet != realtime_objects_rep.size(); adev_sizet++) {
-      realtime_objects_rep[adev_sizet]->stop();
-    }
-  }
-  stop_servers();
-  rt_running_rep = false;
-
-  // ---
-  // Handle priority
-  // ---
-  if (csetup_repp->raised_priority() == true) {
-    struct sched_param sparam;
-    sparam.sched_priority = 0;
-    if (::sched_setscheduler(0, SCHED_OTHER, &sparam) == -1)
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Unable to change scheduling back to SCHED_OTHER!");
-    else
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Changed back to non-realtime scheduling SCHED_OTHER.");
-  }
-
-  set_status(ECA_ENGINE::engine_status_stopped);
-  signal_stop();
-}
-
-void ECA_ENGINE::start(void) {
-  if (status() == ECA_ENGINE::engine_status_running) return;
-  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Start");
-  output_finished_rep = false;
-
-  // ---
-  // Handle priority
-  // ---
-  if (csetup_repp->raised_priority() == true) {
-    struct sched_param sparam;
-    sparam.sched_priority = csetup_repp->sched_priority();
-    if (::sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Unable to change scheduling policy!");
-    else 
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Using realtime-scheduling (SCHED_FIFO).");
-  }
-
-  // ---
-  // Start servers and devices 
-  // ---
-
-  start_servers();
-
-  for (unsigned int adev_sizet = 0; adev_sizet != realtime_objects_rep.size(); adev_sizet++) {
-    realtime_objects_rep[adev_sizet]->prepare();
-  }
-
-  if (csetup_repp->multitrack_mode_rep == true) {
-    for (unsigned int adev_sizet = 0; adev_sizet != realtime_inputs_rep.size(); adev_sizet++)
-      realtime_inputs_rep[adev_sizet]->start();
-
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) multitrack sync");
-    multitrack_sync();
-    multitrack_sync();
-
-    for (unsigned int adev_sizet = 0; adev_sizet != realtime_outputs_rep.size(); adev_sizet++)
-      realtime_outputs_rep[adev_sizet]->start();
-
-    assert(realtime_inputs_rep.size() > 0);
-    assert(realtime_outputs_rep.size() > 0);
-
-    struct timeval now;
-    gettimeofday(&now, NULL);
-    double time = now.tv_sec * 1000000.0 + now.tv_usec -
-      multitrack_input_stamp_rep.tv_sec * 1000000.0 - multitrack_input_stamp_rep.tv_usec;
-    long int sync_fix = static_cast<long>(time * csetup_repp->sample_rate() / 1000000.0);
-
-    // - sync_fix = time elapsed since recording the first input
-    // fragment (not meant to be discarded) was started
-    // ==> result: first byte written to non-realtime outputs 
-    //     was recorded exactly at 'now - output_sync'
-
-    // this would be a serious problem
-    if (sync_fix < 0) {
-      std::cerr << "(eca-engine) Aborting! Negative multitrack-sync; problems with hardware?" << std::endl;
-      exit(-1);
-    }
-    // FIXME: add a better fix later; now just make sure that no
-    // seeking is done when -z:db is enabled
-    if (csetup_repp->double_buffering() != true) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) sync fix: " + kvu_numtostr(sync_fix));
-      for (unsigned int adev_sizet = 0; adev_sizet != non_realtime_outputs_rep.size(); adev_sizet++) {
-	non_realtime_outputs_rep[adev_sizet]->seek_position_in_samples_advance(sync_fix);
-      }
-    }
-  }
-  else {
-    for (unsigned int adev_sizet = 0; adev_sizet != realtime_inputs_rep.size(); adev_sizet++)
-      realtime_inputs_rep[adev_sizet]->start();
-    trigger_outputs_request_rep = true;
-  }
-
-  // --- !!! ---
-  //    char buf = 0xfa;
-  //    int temp = ::write(midi_fd, &buf, 1);
-  //    if (temp < 0) {
-  //      std::cerr << "ERROR: Can't write to MIDI-device.\n";
-  //    }
-  // --- !!! ---
-
-  rt_running_rep = true;
-  set_status(ECA_ENGINE::engine_status_running);
-}
-
-void ECA_ENGINE::trigger_outputs(void) {
-  if (trigger_outputs_request_rep == true) {
-    ++trigger_counter_rep;
-    if (trigger_counter_rep == 2) {
-      trigger_outputs_request_rep = false;
-      trigger_counter_rep = 0;
-      for (unsigned int adev_sizet = 0; adev_sizet != realtime_outputs_rep.size(); adev_sizet++)
-	realtime_outputs_rep[adev_sizet]->start();
-      rt_running_rep = true;
-    }
-  }
-}
-
-void ECA_ENGINE::multitrack_sync(void) {
-  // ---
-  // Read and mix inputs
-  // ---
-  inputs_to_chains();
-  gettimeofday(&multitrack_input_stamp_rep, NULL);
-  
-  // ---
-  // Chainoperator processing phase
-  // ---
-  chain_i chain_iter = chains_repp->begin();
-  while(chain_iter != chains_repp->end()) {
-    (*chain_iter)->process();
-    ++chain_iter;
-  }
-
-  // ---
-  // Mix to outputs (skip non-realtime outputs which are connected to realtime inputs)
-  // ---
-  for(unsigned int audioslot_sizet = 0; audioslot_sizet < outputs_repp->size(); audioslot_sizet++) {
-    if (csetup_repp->is_slave_output((*outputs_repp)[audioslot_sizet]) == true) {
-      continue;
-    }
-    mixslot_rep.make_silent();
-    int count = 0;
-    
-    for(unsigned int n = 0; n != chains_repp->size(); n++) {
-      if ((*chains_repp)[n]->connected_output() == -1) {
-	continue;
-      }
-
-      if ((*chains_repp)[n]->connected_output() == static_cast<int>(audioslot_sizet)) {
-	if (output_chain_count_rep[audioslot_sizet] == 1) {
-	  (*outputs_repp)[audioslot_sizet]->write_buffer(&(cslots_rep[n]));
-	  if ((*outputs_repp)[audioslot_sizet]->finished() == true) output_finished_rep = true;
-	  cslots_rep[n].length_in_samples(buffersize_rep);
-	  break;
-	}
-	else {
-	  ++count;
-	  if (count == 1) {
-	    mixslot_rep.copy(cslots_rep[n]);
-	    mixslot_rep.divide_by(output_chain_count_rep[audioslot_sizet]);
-	  }
-	  else {
-	    mixslot_rep.add_with_weight(cslots_rep[n],
-					output_chain_count_rep[audioslot_sizet]);
-	    
-	    if (count == output_chain_count_rep[audioslot_sizet]) {
-	      (*outputs_repp)[audioslot_sizet]->write_buffer(&mixslot_rep);
-	      if ((*outputs_repp)[audioslot_sizet]->finished() == true) output_finished_rep = true;
-	      mixslot_rep.length_in_samples(buffersize_rep);
-	    }
-	  }
-	}
-      }
-    }
-  }
-}
-
-void ECA_ENGINE::interpret_queue(void) {
-  while(command_queue_rep.is_empty() != true) {
-    std::pair<int,double> item = command_queue_rep.front();
-//      std::cerr << "(eca-engine) ecasound_queue: cmds available; first one is "
-//  	 << item.first << "." << std::endl;
-    switch(item.first) {
-    // ---
-    // Basic commands.
-    // ---            
-    case ep_exit:
-      {
-	while(command_queue_rep.is_empty() == false) command_queue_rep.pop_front();
-	ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) ecasound_queue: exit!");
-	stop();
-	end_request_rep = true;
-	return;
-      }
-    case ep_start: { start(); break; }
-    case ep_stop: { stop(); break; }
-
-    // ---
-    // Section/chain (en/dis)abling commands.
-    // ---
-    case ep_c_select: {	csetup_repp->active_chain_index_rep = static_cast<size_t>(item.second); break; }
-    case ep_c_mute: { chain_muting(); break; }
-    case ep_c_bypass: { chain_processing(); break; }
-    case ep_c_rewind: { change_position_chain(- item.second); break; }
-    case ep_c_forward: { change_position_chain(item.second); break; }
-    case ep_c_setpos: { set_position_chain(item.second); break; }
-
-    // ---
-    // Chain operators
-    // ---
-    case ep_cop_select: { 
-      csetup_repp->active_chainop_index_rep =  static_cast<size_t>(item.second);
-      if (csetup_repp->active_chainop_index_rep - 1 < static_cast<int>((*chains_repp)[csetup_repp->active_chain_index_rep]->number_of_chain_operators()))
-	(*chains_repp)[csetup_repp->active_chain_index_rep]->select_chain_operator(csetup_repp->active_chainop_index_rep);
-      else 
-	csetup_repp->active_chainop_index_rep = 0;
-      break;
-    }
-    case ep_copp_select: { 
-      csetup_repp->active_chainop_param_index_rep = static_cast<size_t>(item.second);
-      (*chains_repp)[csetup_repp->active_chain_index_rep]->select_chain_operator_parameter(csetup_repp->active_chainop_param_index_rep);
-      break;
-    }
-    case ep_copp_value: { 
-      assert(chains_repp != 0);
-      (*chains_repp)[csetup_repp->active_chain_index_rep]->set_parameter(item.second);
-      break;
-    }
-
-    // ---
-    // Global position
-    // ---
-    case ep_rewind: { change_position(- item.second); break; }
-    case ep_forward: { change_position(item.second); break; }
-    case ep_setpos: { set_position(item.second); break; }
-    }
-    command_queue_rep.pop_front();
-  }
-}
-
-void ECA_ENGINE::inputs_to_chains(void) {
-  for(unsigned int audioslot_sizet = 0; audioslot_sizet < inputs_repp->size(); audioslot_sizet++) {
-    if (input_chain_count_rep[audioslot_sizet] > 1) {
-      (*inputs_repp)[audioslot_sizet]->read_buffer(&mixslot_rep);
-      if ((*inputs_repp)[audioslot_sizet]->finished() == false) input_not_finished_rep = true;
-    }
-    for (unsigned int c = 0; c != chains_repp->size(); c++) {
-      if ((*chains_repp)[c]->connected_input() == static_cast<int>(audioslot_sizet)) {
-	if (input_chain_count_rep[audioslot_sizet] == 1) {
-	  (*inputs_repp)[audioslot_sizet]->read_buffer(&(cslots_rep[c]));
-	  if ((*inputs_repp)[audioslot_sizet]->finished() == false) input_not_finished_rep = true;
-	  break;
-	}
-	else {
-	  cslots_rep[c].operator=(mixslot_rep);
-	}
-      }
-    }
-  }
-}
-
-void ECA_ENGINE::mix_to_outputs(void) {
-  for(unsigned int audioslot_sizet = 0; audioslot_sizet < outputs_repp->size(); audioslot_sizet++) {
-    mixslot_rep.number_of_channels((*outputs_repp)[audioslot_sizet]->channels());
-    int count = 0;
-    
-    for(unsigned int n = 0; n != chains_repp->size(); n++) {
-      // --
-      // if chain is already released, skip
-      // --
-      if ((*chains_repp)[n]->connected_output() == -1) {
-	// --
-	// skip, if chain is not connected
-	// --
-	continue;
-      }
-
-      if ((*chains_repp)[n]->connected_output() == static_cast<int>(audioslot_sizet)) {
-	// --
-	// output is connected to this chain
-	// --
-	if (output_chain_count_rep[audioslot_sizet] == 1) {
-	  // --
-	  // there's only one output connected to this chain,
-	  // so we don't need to mix anything
-	  // --
-	  (*outputs_repp)[audioslot_sizet]->write_buffer(&(cslots_rep[n]));
-	  if ((*outputs_repp)[audioslot_sizet]->finished() == true) output_finished_rep = true;
-	  cslots_rep[n].length_in_samples(buffersize_rep);
-	  break;
-	}
-	else {
-	  ++count;
-	  if (count == 1) {
-	    // -- 
-	    // this is the first output connected to this chain
-	    // --
-	    mixslot_rep.copy(cslots_rep[n]);
-	    mixslot_rep.divide_by(output_chain_count_rep[audioslot_sizet]);
-	  }
-	  else {
-	    mixslot_rep.add_with_weight(cslots_rep[n],
-				    output_chain_count_rep[audioslot_sizet]);
-	  }
-	  
-	  if (count == output_chain_count_rep[audioslot_sizet]) {
-	    (*outputs_repp)[audioslot_sizet]->write_buffer(&mixslot_rep);
-	    if ((*outputs_repp)[audioslot_sizet]->finished() == true) output_finished_rep = true;
-	    mixslot_rep.length_in_samples(buffersize_rep);
-	  }
-	}
-      }
-    }
-  } 
-}
-
-void ECA_ENGINE::chain_muting(void) {
-  if ((*chains_repp)[csetup_repp->active_chain_index_rep]->is_muted()) 
-    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_muting(false);
-  else
-    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_muting(true);
-}
-
-void ECA_ENGINE::chain_processing(void) {
-  if ((*chains_repp)[csetup_repp->active_chain_index_rep]->is_processing()) 
-    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_processing(false);
-  else
-    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_processing(true);
-}
-

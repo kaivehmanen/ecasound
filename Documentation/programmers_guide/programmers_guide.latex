@@ -10,7 +10,7 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{03102001}
+\date{06102001}
 \begin{document}
 
 \maketitle
@@ -287,14 +287,14 @@ inputs and outputs to multiple chains.
 \subsubsection{Passive operation}
 When ecasound is run in passive mode, the program flow is simple.
 A ECA\_SESSION object is created with suitable parameters, it is
-passed to a ECA\_PROCESSOR object and that is all. 
-Processing is started with the exec() member function of 
-ECA\_PROCESSOR. After processing is finished, exec() returns
+passed to a ECA\_ENGINE (ECA\_PROCESSOR in ecasound 2.0.x and earlier) 
+object and that is all. Processing is started with the exec() member 
+function of ECA\_ENGINE. After processing is finished, exec() returns
 to the caller.
 
 Another way to do passive processing is to create a ECA\_CONTROL 
 object and use it to to access and modify the ECA\_SESSION object 
-before passing it to ECA\_PROCESSOR.
+before passing it to ECA\_ENGINE.
 
 \subsubsection{Interactive operation}
 In interactive mode, everything is done using the interface provided
@@ -315,18 +315,18 @@ input-output pair connected to the same chain.
 ECA\_CHAINSETUP can be...
 \begin{description}
 
-\item[not selected] - can't be accessed from ECA\_PROCESSOR
+\item[not selected] - can't be accessed from ECA\_ENGINE
 \item[selected, invalid] - can be edited (files and devices are not opened)
 \item[selected, valid] - can be connected (files and devices are not opened)
 \item[connected] - ready for processing (files and devices are opened before connecting)
 
 \end{description}
 
-ECA\_PROCESSOR status is one of...
+ECA\_ENGINE status is one of...
 \begin{description}
 
 \item[not\_ready] - ECA\_SESSION object is not ready for processing or
-ECA\_PROCESSOR hasn't been created
+ECA\_ENGINE hasn't been created
 \item[running] - processing
 \item[stopped] - processing hasn't been started or it has been stopped
 before completion
@@ -343,14 +343,14 @@ Anyway, let's look at the some central classes.
 
 
 \subsubsection{Core} 
-\paragraph{ECA\_PROCESSOR} 
-ECA\_PROCESSOR is the actual processing engine. It is initialized with
+\paragraph{ECA\_ENGINE} 
+ECA\_ENGINE is the actual processing engine. It is initialized with
 a pointer to a ECA\_SESSION object, which has all information needed at
 runtime. Processing is started with the exec() member function and
-after that, ECA\_PROCESSOR runs on its own. If the interactive mode is
-enabled in ECA\_SESSION, ECA\_PROCESSOR can be controlled using the
+after that, ECA\_ENGINE runs on its own. If the interactive mode is
+enabled in ECA\_SESSION, ECA\_ENGINE can be controlled using the
 ECA\_CONTROL class. It offers a safe way to control ecasound.
-Another way to communicate with ECA\_PROCESSOR is to access the
+Another way to communicate with ECA\_ENGINE is to access the
 ECA\_SESSION object directly.
 
 \paragraph{ECA\_SESSION} 
@@ -358,7 +358,7 @@ ECA\_SESSION represents the data used by ecasound. A session contains
 all ECA\_CHAINSETUP objects and general runtime settings (iactive-mode,
 debug-level, etc). Only one ECA\_CHAINSETUP can be active at a time. To
 make it easier to control how threads access ECA\_SESSION, only
-ECA\_PROCESSOR and ECA\_CONTROL classes have direct access to
+ECA\_ENGINE and ECA\_CONTROL classes have direct access to
 ECA\_SESSION data and functions. Other classes can only use \emph{const}
 members of ECA\_SESSION. 
 
@@ -495,7 +495,7 @@ ctrl.start(); // starts processing in another thread (doesn't block)
 
 
 If you don't want to use threads, you can do as above, but use
-ECA\_PROCESSOR directly to do the actual processing. In other words, 
+ECA\_ENGINE directly to do the actual processing. In other words, 
 you only use ECA\_CONTROL for setting up a ECA\_SESSION object. This 
 way the processing is done without additional threads. Here's a 
 short sample:
@@ -507,7 +507,7 @@ ECA_SESSION esession;
 ECA_CONTROL ctrl (&esession);
 ctrl.add_chainsetup("default");
 [... other setup routines ]
-ECA_PROCESSOR p (&esession);
+ECA_ENGINE p (&esession);
 p.exec(); // blocks until processing is finished
 --cut--
  

@@ -717,24 +717,31 @@ int ECA_CHAINSETUP::number_of_attached_chains_to_output(AUDIO_IO* aiod) const {
 }
 
 /**
- * Slave output is a non-realtime output which is not 
- * connected to any realtime inputs.
+ * Output object is realtime target if it is not 
+ * connected to any chains with non-realtime inputs.
+ * In other words all data coming to a rt target
+ * output comes from realtime devices.
  */
-bool ECA_CHAINSETUP::is_slave_output(AUDIO_IO* aiod) const {
-  AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(aiod);
-  if (p != 0) return(false);
+bool ECA_CHAINSETUP::is_realtime_target_output(int output_id) const {
+  bool result = true;
+  bool output_found = false;
   vector<CHAIN*>::const_iterator q = chains.begin();
   while(q != chains.end()) {
-    if (outputs[(*q)->connected_output()] == aiod) {
-      p = dynamic_cast<AUDIO_IO_DEVICE*>(inputs[(*q)->connected_input()]);
-      if (p != 0) {
-	ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup) slave output detected: " + outputs[(*q)->connected_output()]->label());
-	return(true);
+    if ((*q)->connected_output() == output_id) {
+      output_found = true;
+      AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(inputs[(*q)->connected_input()]);
+      if (p == 0) {
+	result = false;
       }
     }
     ++q;
   }
-  return(false);
+  if (output_found == true && result == true) 
+    ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup) slave output detected: " + outputs[output_id]->label());
+  else
+    result = false;
+
+  return(result);
 }
 
 vector<string> ECA_CHAINSETUP::get_attached_chains_to_iodev(const

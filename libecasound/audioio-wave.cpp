@@ -322,7 +322,7 @@ void WAVEFILE::update_riff_datablock(void) {
 
 bool WAVEFILE::next_riff_block(RB *t, unsigned long int *offtmp)
 {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave)  next_riff_block()");
+  //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) next_riff_block()");
 
   fio_repp->read_to_buffer(t, sizeof(RB));
   if (fio_repp->file_bytes_processed() != sizeof(RB)) {
@@ -397,7 +397,7 @@ void WAVEFILE::set_length_in_bytes(void) {
   t = fio_repp->get_file_position() - t;
   length_in_samples(t / frame_size());
   MESSAGE_ITEM mitem;
-  mitem << "(audioio-wave) data length " << t << "bytes.";
+  mitem << "(audioio-wave) data length " << t << " bytes.";
   ecadebug->msg(ECA_DEBUG::user_objects, mitem.to_string());
 
   fio_repp->set_file_position(savetemp);

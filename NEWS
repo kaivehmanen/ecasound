@@ -39,6 +39,8 @@ Last officially released version is -*> v2.0.3 *-
 		 buffering mode (see ecasound man page)
 	- added: edi-15 - ecasoundrc bmode-defaults options; 
 		 obsoletes old default-buffersize, etc options
+	- added: various improvements to multitrack sync-mechanism 
+		 to make it work reliably in all buffering modes
 	- changed: library version changed to 8.0.0
 	- changed: use of kvutils/definition_by_contract 
 		   dropped; more lightweight kvutils/dbc.h

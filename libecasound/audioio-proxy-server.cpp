@@ -23,6 +23,8 @@
 #include <signal.h>
 #include <pthread.h>
 
+#include <kvutils/dbc.h>
+
 #include "sample-specs.h"
 #include "audioio-proxy-server.h"
 #include "eca-debug.h"
@@ -153,7 +155,6 @@ void AUDIO_IO_PROXY_SERVER::start(void) {
 void AUDIO_IO_PROXY_SERVER::stop(void) { 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) stop");
   stop_request_rep.set(1);
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audio_io_proxy_server) stopping processing");
 }
 
 /**
@@ -268,8 +269,14 @@ void AUDIO_IO_PROXY_SERVER::set_buffer_defaults(int buffers,
 
 /**
  * Registers a new client object.
+ *
+ * @pre aobject != 0
  */
 void AUDIO_IO_PROXY_SERVER::register_client(AUDIO_IO* aobject) { 
+  // --
+  DBC_REQUIRE(aobject != 0);
+  // --
+  
   clients_rep.push_back(aobject);
   ecadebug->msg(ECA_DEBUG::system_objects, 
 		"(audioio-proxy-server) Registering client " +
@@ -292,7 +299,16 @@ void AUDIO_IO_PROXY_SERVER::register_client(AUDIO_IO* aobject) {
  */
 void AUDIO_IO_PROXY_SERVER::unregister_client(AUDIO_IO* aobject) { 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) unregister_client " + aobject->label() + ".");
-  clients_rep[client_map_rep[aobject]] = 0;
+  if (client_map_rep.find(aobject) != client_map_rep.end()) {
+    size_t index = client_map_rep[aobject];
+    if (index >= 0 && index < clients_rep.size()) 
+      clients_rep[index] = 0;
+    else 
+      ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) unregister_client failed (1)");
+  }
+  else 
+    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) unregister_client failed (2)");
+      
 }
 
 /**

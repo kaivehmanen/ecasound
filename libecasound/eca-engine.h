@@ -102,6 +102,14 @@ private:
   /** @name Private data and functions */
   /*@{*/
 
+  /**
+   * Number of sample-frames of data is prefilled to 
+   * rt-outputs before starting processing.
+   */
+  static const long int prefill_threshold_constant_rep = 4096;
+
+  long int prefill_threshold_rep;
+
   pthread_cond_t *ecasound_stop_cond_repp;
   pthread_mutex_t *ecasound_stop_mutex_repp;
 
@@ -208,13 +216,10 @@ private:
   void start_servers(void);
   void stop_servers(void);
 
-  /**
-   * Performs one processing loop skipping all realtime inputs
-   * and outputs connected to them. The idea is to fill all 
-   * the output buffers before starting to record from realtime 
-   * inputs.
-   */
   void multitrack_sync(void);
+  void multitrack_start(void);
+  void reset_realtime_devices(void);
+  bool is_realtime_object(const AUDIO_IO* aobj) const;
 
   /**
    * Trigger all output devices if requested by start()
@@ -258,7 +263,6 @@ private:
    */
   void interpret_queue(void);
 
-  void update_requests(void);
   void update_engine_state(void);
 
   /*@}*/
@@ -284,7 +288,8 @@ private:
 
   void inputs_to_chains(void);
   void mix_to_chains(void);
-  void mix_to_outputs(void);
+  void process_chains(void);
+  void mix_to_outputs(bool skip_realtime_target_outputs);
 
   /*@}*/
 
