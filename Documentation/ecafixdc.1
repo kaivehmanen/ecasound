@@ -10,7 +10,7 @@ ecatools \- audio processing utils based on ecasound
 \fBecalength\fP file1 [ file2,\&.\&.\&.,fileN ]
 \fBecanormalize\fP file1 [ file2,\&.\&.\&.,fileN ]
 .PP 
-\fBecaplay\fP file1 [ file2,\&.\&.\&.,fileN ]
+\fBecaplay\fP [-dhk] file1 [ file2,\&.\&.\&.,fileN ]
 .PP 
 \fBecasignalview\fP [ options ] [ input ] [ output ]
 .PP 
@@ -49,6 +49,16 @@ files, this will stop the current file and begin playing the next one\&.
 If you want to abort playing immediately instead of skipping to the 
 next file, press Ctrl-C twice in short succession (around one
 second)\&.
+.PP 
+.IP "-d:debuglevel" 
+Set libecasound debug level\&. See ecasound(1)\&.
+.IP 
+.IP "-h" 
+Print usage information and exit\&.
+.IP 
+.IP "-k:number" 
+Skip \'number\' of files\&.
+.IP 
 .PP 
 \fBECASIGNALVIEW\fP
 .PP 

@@ -35,7 +35,7 @@
 <p><strong>ecafixdc</strong> file1 [ file2,...,fileN ]
 <strong>ecalength</strong> file1 [ file2,...,fileN ]
 <strong>ecanormalize</strong> file1 [ file2,...,fileN ]
-<p><strong>ecaplay</strong> file1 [ file2,...,fileN ]
+<p><strong>ecaplay</strong> [-dhk] file1 [ file2,...,fileN ]
 <p><strong>ecasignalview</strong> [ options ] [ input ] [ output ]
 <p><h2>DESCRIPTION</h2>
     
@@ -62,6 +62,14 @@ files, this will stop the current file and begin playing the next one.
 If you want to abort playing immediately instead of skipping to the 
 next file, press Ctrl-C twice in short succession (around one
 second).
+<p><dl>
+<p></p><dt><strong>-d:debuglevel</strong><dd>
+Set libecasound debug level. See ecasound(1).
+<p><p></p><dt><strong>-h</strong><dd>
+Print usage information and exit.
+<p><p></p><dt><strong>-k:number</strong><dd>
+Skip 'number' of files.
+<p></dl>
 <p><strong>ECASIGNALVIEW</strong>
 <p>Ecasignalview is meant for monitoring signal amplitude and peak 
 statistics. It accepts the following options:

@@ -25,7 +25,7 @@ bf(ecafixdc) file1 [ file2,...,fileN ]
 bf(ecalength) file1 [ file2,...,fileN ]
 bf(ecanormalize) file1 [ file2,...,fileN ]
 
-bf(ecaplay) file1 [ file2,...,fileN ]
+bf(ecaplay) [-dhk] file1 [ file2,...,fileN ]
 
 bf(ecasignalview) [ options ] [ input ] [ output ]
 
@@ -64,6 +64,18 @@ files, this will stop the current file and begin playing the next one.
 If you want to abort playing immediately instead of skipping to the 
 next file, press Ctrl-C twice in short succession (around one
 second).
+
+startdit(Options)
+dit(-d:debuglevel)
+Set libecasound debug level. See ecasound(1).
+
+dit(-h)
+Print usage information and exit.
+
+dit(-k:number)
+Skip 'number' of files.
+
+enddit()
 
 bf(ECASIGNALVIEW)
 

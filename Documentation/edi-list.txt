@@ -15,12 +15,12 @@ To submit a new EDI-item, send a mail the 'ecasound-list' mailing
 list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 
 -----------------------------------------------------------------------
-[ Format ]
+[ Syntax ]
 
 (edi-xxx): Short description of the item. This should be no more 
 	   than a few lines. 
-	   submitted: who submitted, date
-	   action: what happened, who and when
+	   - submitted: who submitted, date
+	   - action: what happened, who and when
 
 Note! See README for a list of defined developer tags (kaiv -> me).
 
