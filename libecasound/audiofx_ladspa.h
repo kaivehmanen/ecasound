@@ -29,8 +29,8 @@ private:
 
 public:
 
-  virtual string name(void) const { return("LADSPA/" + label_rep); }
-  virtual string description(void) const { return("Wrapper for LADSPA plugins."); }
+  virtual string name(void) const { return(label_rep); }
+  virtual string description(void) const { return("LADSPA plugin."); }
 
   virtual string parameter_names(void) const { return(param_names_rep); }
 
