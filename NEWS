@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 311002) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 051102) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -15,6 +15,22 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+??112002 (v2.2.0-pre5)
+	- added: ecasound emacs interface, ecasound.el, is now 
+	   	 distributed with ecasound (ecatools/ecasound.el);
+		 ecasound.el is installed to ecasound's data 
+		 directory (default /usr/local/share/ecasound)
+	- added: libkvutils_tester, unit tester for libkvutils
+	- added: ecamonitor - 'q' to quit
+	- changed: rpm spec file unified with the spec file used
+		   to build PlanetCCRMA's ecasound packages
+	- changed: pyecasound license from GPL to LGPL
+	- changed: the C++ ECI implementation, the 
+		   ECA_CONTROL_INTERFACE class, moved from libecasound
+		   to libecasoundc; now also under LGPL
+	- fixed: cleanup of curses/ncurses detection in configure.in;
+		 this also fixes ecasound compilation on mandrake9.x
+		 systems
 31102002 (v2.2.0-pre4)
 	- edi-entries: edi-27, edi-28, edi-29, edi-30
 	- added: eiam - commands 'map-cop-list', 'map-ctrl-list', 
