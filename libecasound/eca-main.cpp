@@ -295,6 +295,7 @@ void ECA_PROCESSOR::init_inputs(void) {
 		  kvu_numtostr(input_chain_count_rep[adev_sizet]) + " .\n");
   }
   
+  csetup_repp->set_position(0);
   if (csetup_repp->length_set() == false) {
     processing_range_set_rep = false;
     csetup_repp->length_in_samples(max_input_length);
@@ -541,7 +542,7 @@ void ECA_PROCESSOR::change_position(double seconds) {
   csetup_repp->change_position(seconds);
 
   for (unsigned int adev_sizet = 0; adev_sizet != non_realtime_objects_rep.size(); adev_sizet++) {
-    non_realtime_objects_rep[adev_sizet]->seek_position_in_seconds(non_realtime_objects_rep[adev_sizet]->position_in_seconds()
+    non_realtime_objects_rep[adev_sizet]->seek_position_in_seconds(non_realtime_objects_rep[adev_sizet]->position_in_seconds_exact()
                                            + seconds);
   }
 
@@ -567,11 +568,11 @@ void ECA_PROCESSOR::change_position_chain(double seconds) {
 
   AUDIO_IO* ptr = (*chains_repp)[eparams_repp->active_chain_index_rep]->input_id_repp; 
   if (csetup_orig_ptr_map_rep.find(ptr) != csetup_orig_ptr_map_rep.end())
-    csetup_orig_ptr_map_rep[ptr]->seek_position_in_seconds(csetup_orig_ptr_map_rep[ptr]->position_in_seconds() + seconds);
+    csetup_orig_ptr_map_rep[ptr]->seek_position_in_seconds(csetup_orig_ptr_map_rep[ptr]->position_in_seconds_exact() + seconds);
   
   ptr = (*chains_repp)[eparams_repp->active_chain_index_rep]->output_id_repp;
   if (csetup_orig_ptr_map_rep.find(ptr) != csetup_orig_ptr_map_rep.end())
-    csetup_orig_ptr_map_rep[ptr]->seek_position_in_seconds(csetup_orig_ptr_map_rep[ptr]->position_in_seconds() + seconds);
+    csetup_orig_ptr_map_rep[ptr]->seek_position_in_seconds(csetup_orig_ptr_map_rep[ptr]->position_in_seconds_exact() + seconds);
 
   conditional_start();
 }
