@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 
   TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
   string tmpdir ("ecatools-");
-  char* tmp_p = getenv("USER");
+  char* tmp_p = getenv("LOGNAME");
   if (tmp_p != NULL) {
     tmpdir += string(tmp_p);
     tempfile_dir_rep.reserve_directory(tmpdir);
