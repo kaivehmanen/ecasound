@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// definition_by_contract.h: Class for simulating desing-by-contract
+// definition_by_contract.h: Class for simulating design-by-contract
 // Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#ifndef _DEFINITION_BY_CONTRACT_H
-#define _DEFINITION_BY_CONTRACT_H
+#ifndef INCLUDED_DEFINITION_BY_CONTRACT_H
+#define INCLUDED_DEFINITION_BY_CONTRACT_H
 
 #include <iostream>
 
@@ -53,15 +53,18 @@ class DEFINITION_BY_CONTRACT {
  public:
 
 #ifdef ENABLE_DBC
-
   inline void require(bool expr, const char* file, int line) const { check_invariant(file, line); if (!expr) throw(new DBC_EXCEPTION("require", file, line)); }
   inline void ensure(bool expr, const char* file, int line) const { if (!expr) throw(new DBC_EXCEPTION("require", file, line)); check_invariant(file, line); }
   inline void check_invariant(const char* file, int line) const { if (!class_invariant()) throw(new DBC_EXCEPTION("class invariant", file, line)); }
+
+  virtual bool class_invariant(void) const { return(true); }
+  virtual ~DEFINITION_BY_CONTRACT(void) { }
 
 #define REQUIRE(expr)							      \
    (expr) ? static_cast<void>(0) :	(require (false,__FILE__, __LINE__))
 #define ENSURE(expr)							      \
    (expr) ? static_cast<void>(0) :	(ensure (false,__FILE__, __LINE__))
+
 #else
 
 #define REQUIRE(expr)		((void) 0)
@@ -71,11 +74,9 @@ class DEFINITION_BY_CONTRACT {
   inline void ensure(bool expr, const char* file, int line) const { }
   inline void check_invariant(const char* file, int line) const { }
 
+  bool class_invariant(void) const { return(true); }
+  ~DEFINITION_BY_CONTRACT(void) { }
 #endif
-
-  virtual bool class_invariant(void) const { return(true); }
-
-  DEFINITION_BY_CONTRACT(void) { }
 };
 
 #endif

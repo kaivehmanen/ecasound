@@ -33,6 +33,7 @@
   verbose xxx-status command) [ia-mode]
 - add threshold parameter to -eca
 - embedded effect preset parameters ("-p[fn]:string,par1,...,parN")
+- metronome signal
   
 -----------------------------------------------------------------------
 
@@ -40,7 +41,6 @@
 
 Input/output devices:
 
-- metronome signal
 - internal support for mp3 encoding and decoding (libmpg123 + libmp3lame)
 - SMPTE time-code
 - integration to some synth engine - for instance Csound, aRts, 
@@ -51,6 +51,7 @@ Input/output devices:
 	- and so on... the same with outputs
 - mpeglib support
 - ogg vorbis plugin
+- shorten support
 
 Effects, routing, dsp routines:
 
@@ -78,8 +79,6 @@ Misc:
 
 [ Help - developer in trouble ]
 
-- does ecasound work with ALSA-supported multichannel cards
-  (Hammerfall, MidiMan, etc)?
 - does ecasound compile on FreeBSD/Irix/Solaris/etc system, what
   versions?
 - how current ecasound versions work with old gcc packages (2.7.x

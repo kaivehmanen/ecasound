@@ -17,6 +17,9 @@
 /* whether ALSA lib version is 0.6.0 or newer */
 #undef ALSALIB_060
 
+/* whether to compile ALSA rawmidi input/output */
+#undef COMPILE_ALSA_RAWMIDI
+
 /* whether to compile ESD input/output */
 #undef COMPILE_ESD
 

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 310800) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 140900) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,6 +14,16 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.7.9r13 <*-
 
+??092000 (v1.8.2d14)
+	- added: --enable-alsa-rawmidi configure option - this is a 
+		 temporary solution for supporting ALSA rawmidi until
+		 we have a proper plugin-based MIDI-subsystem
+	- fixed: some broken mp3 headers caused ecasound to misinterpret
+		 mp3 sampling rate
+	- fixed: problems when handling mp3 files with white-space in 
+		 the filename (R.Sassmannshausen)
+	- fixed: incorrect riff-wave header bug fixed (A.Hamara)
+	- fixed: in some cases, controllers weren't parsed correctly
 01092000 (v1.8.1d14)
 	- notice: all qt-related stuff put to separate packages
 	- added: support for internal plugins; modules using external 

@@ -126,8 +126,8 @@ void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR*) {
   m << "MP3 pcm value: " << pcm_rep << ".";
   ecadebug->msg(ECA_DEBUG::user_objects,m.to_string());
 
-  set_samples_per_second(newlayer.sfreq());
   set_channels((newlayer.mode() == Layer::MPG_MD_MONO) ? 1 : 2);
+  set_samples_per_second(bsecond / channels() / 2);
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 }
 
@@ -145,9 +145,6 @@ void MP3FILE::fork_mpg123(void) throw(ECA_ERROR*) {
   if (!is_open()) {
     
     string cmd = MP3FILE::default_mp3_input_cmd;
-    if (cmd.find("%f") != string::npos) {
-      cmd.replace(cmd.find("%f"), 2, label());
-    }
 
     if (cmd.find("%o") != string::npos) {
       cmd.replace(cmd.find("%o"), 2, kvu_numtostr((long)(position_in_samples() / pcm_rep)));
@@ -179,14 +176,17 @@ void MP3FILE::fork_mpg123(void) throw(ECA_ERROR*) {
 	// = new char* [temp.size() + 1];
 	vector<string>::size_type p = 0;
 	while(p < temp.size()) {
-	  args[p] = temp[p].c_str();
+	  if (temp[p] == "%f") 
+	    args[p] = label().c_str();
+	  else
+	    args[p] = temp[p].c_str();
 	  ++p;
 	}
 	args[p] = 0;
 	execvp(temp[0].c_str(), const_cast<char**>(args));
 	::close(1);
 	exit(0);
-	cerr << "You shouln't see this!\n";
+	cerr << "You shouldn't see this!\n";
       }
       else { 
 	// ---

@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (27082000)
+       (04092000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -116,8 +116,14 @@ enddit()
 
 COMMENT(----------------------------------------------------------------)
 subsect(Documentation style)
-Javadoc-style class documentation is the preferred style. Here's a few
-specific cases:
+Javadoc-style class documentation is the preferred style.
+Class members can be documented either when they are declared (header
+files), or when they are defined. Especilly when specifying
+complicated interfaces, it's better to put documentation in the
+definition files. This way the header files remain compact and serve 
+better as a reference. 
+
+Here's a few general documentation guide lines:
 startdit()
 dit(Use of 3rd person) 
 "Writes samples to memory." instead of "Write samples to memory."

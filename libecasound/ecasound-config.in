@@ -25,10 +25,10 @@ while test $# -gt 0
 do
   case $1 in
     --libs)
-	  flags="$flags -L$exec_prefix/lib/ecasound -lecasound -lkvutils"
+	  flags="$flags -L$libdir -lecasound -lkvutils"
 	  ;;
     --libs_debug)
-	  flags="$flags -L$exec_prefix/lib/ecasound -lecasound_debug -lkvutils"
+	  flags="$flags -L$libdir -lecasound_debug -lkvutils"
 	  ;;
     --cflags)
 	  flags="$flags -I$includedir/ecasound"

@@ -14,7 +14,7 @@
  *
  * Rt = 'rx'          - stable release number x
  *
- * Rt = 'dx'  	     - development version
+ * Rt = 'dx'  	      - development version
  */
 extern const char* ecasound_library_version;
 

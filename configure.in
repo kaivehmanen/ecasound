@@ -6,7 +6,7 @@ AC_INIT(libecasound/audiofx.h)
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 1.8.1d14)
+AM_INIT_AUTOMAKE(ecasound, 1.8.2d14)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
@@ -145,6 +145,41 @@ AC_CHECK_LIB(asound,snd_pcm_plug_open,AC_DEFINE(ALSALIB_060),
 				AC_MSG_ERROR([ALSA <0.3.2 not supported - update to a newer version or compile with --disable-alsa])))))
 fi
 
+dnl ---
+dnl ALSA raw-midi support
+dnl ---
+AC_MSG_CHECKING(whether to include direct support for ALSA rawmidi interface)
+AC_ARG_ENABLE(alsa_rawmidi,
+  [  --enable-alsa-rawmidi		enable ALSA raw midi support (default=no)],
+  [
+    case "$enableval" in
+      y | yes)
+        AC_MSG_RESULT(yes)
+        alsa_rawmidi_support=yes 
+      ;;
+
+      n | no)
+        AC_MSG_RESULT(no)
+        alsa_rawmidi_support=no
+      ;;
+        
+      *)
+        AC_MSG_ERROR([Invalid parameter value for --enable-alsa-rawmidi: $enableval])
+      ;;
+    esac
+  ],
+  [
+    AC_MSG_RESULT(no)
+	alsa_rawmidi_support=no
+  ]
+)
+
+AM_CONDITIONAL(COMPILE_ALSA_RAWMIDI, test x$alsa_rawmidi_support = xyes)
+if test x$alsa_rawmidi_support = xyes; then
+	AC_CHECK_LIB(asound, snd_rawmidi_open)
+	AC_DEFINE(COMPILE_ALSA_RAWMIDI)
+fi
+
 dnl AM_PATH_ESD(0.2.4,esd_support=yes,esd_support=no)
 dnl AC_ARG_ENABLE(esd,
 dnl [  --disable-esd		  Disable ESD (default = no)],
@@ -248,7 +283,7 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h dlfcn.h sys/ioctl.h sys/time.h sys/resource.h sys/stat.h sys/wait.h signal.h sys/types.h sys/mman.h errno.h pthread.h sched.h unistd.h inttypes.h)
 AC_CHECK_HEADER(map.h,nostlmap=0,nostlmap=1)
 if test "x$nostlmap" = "x1" ; then
-	AC_MSG_ERROR([C++ header files not found!])
+	AC_MSG_ERROR([C++ header files not found! Searched for 'map.h' (STL).])
 fi
 
 dnl ---
@@ -307,20 +342,26 @@ else
 fi
 
 if test x$alsa_support = xyes ; then
-	echo "ALSA-support		yes"
+	echo "ALSA support		yes"
 else
-	echo "ALSA-support		no"
+	echo "ALSA support		no"
+fi
+
+if test x$alsa_rawmidi_support = xyes ; then
+	echo "ALSA rawmidi support	yes"
+else
+	echo "ALSA rawmidi support	no"
 fi
 
 if test x$oss_support = xyes ; then
-	echo "OSS-support		yes"
+	echo "OSS support		yes"
 else
-	echo "OSS-support		no"
+	echo "OSS support		no"
 fi
 if test x$arts_support = xyes ; then
-	echo "aRts-support		yes"
+	echo "aRts support		yes"
 else
-	echo "aRts-support		no"
+	echo "aRts support		no"
 fi
 if test x$enable_sysreadline = xyes ; then
 	echo "Use system readline	yes"
