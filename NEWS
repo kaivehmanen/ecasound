@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.3 *-
 
-????2001 (v2.1dev4)
+31102001 (v2.1dev4)
 	- added: eiam - 'cs-option' commmand; although explicit use 
 		 of cmd-line options as iactive-mod commands (like 
                  "-i:file.wav") is still supported, "cs-option 
@@ -41,6 +41,8 @@ Last officially released version is -*> v2.0.3 *-
 	- fixed: didn't work with ALSA +0.9b8 CVS-tree
 	- fixed: additional noises when mixing mono and stereo
 		 streams in ecasound chains
+	- fixed: better handling of situations where ecasound
+		 can't execute ogg123 for ogg input
 21102001 (v2.1dev3)
 	- note: major changes to effect preset system which 
 		break some old preset definitions

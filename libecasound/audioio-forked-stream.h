@@ -21,6 +21,7 @@ class AUDIO_IO_FORKED_STREAM {
   bool last_fork_rep;
   std::string tmpfile_repp;
   bool tmp_file_created_rep;
+  bool use_named_pipe_rep;
   std::string command_rep;
   std::string object_rep;
   TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
@@ -54,7 +55,8 @@ class AUDIO_IO_FORKED_STREAM {
     pid_of_child_rep(0),
     fd_rep(0),
     last_fork_rep(false),
-    tmp_file_created_rep(false) { }
+    tmp_file_created_rep(false),
+    use_named_pipe_rep(false) { }
 };
 
 #endif

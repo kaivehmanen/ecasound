@@ -53,6 +53,7 @@ void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const std::string& filename) {
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_pipe_name(void) {
   if (command_rep.find("%F") != std::string::npos) {
+    use_named_pipe_rep = true;
     init_temp_directory();
     if (tempfile_dir_rep.is_valid() == true) {
       tmpfile_repp = tempfile_dir_rep.create_filename("fork-pipe", ".raw");
@@ -60,7 +61,11 @@ void AUDIO_IO_FORKED_STREAM::set_fork_pipe_name(void) {
       command_rep.replace(command_rep.find("%F"), 2, tmpfile_repp);
       tmp_file_created_rep = true;
     }
+    else 
+      tmp_file_created_rep = false;
   }
+  else 
+    use_named_pipe_rep = false;
 }
 
 void AUDIO_IO_FORKED_STREAM::init_temp_directory(void) {
@@ -109,8 +114,13 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
   last_fork_rep = false;
   fd_rep = 0;
 
-  if (tmp_file_created_rep == true) {
-    fork_child_for_fifo_read();
+  if (use_named_pipe_rep == true) {
+    if (tmp_file_created_rep == true) {
+      fork_child_for_fifo_read();
+    }
+    else {
+      last_fork_rep = false;
+    }
   }
   else {
     int fpipes[2];

@@ -61,7 +61,13 @@ long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int sample
     fork_ogg_input();
   }
 
-  bytes_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
+  if (f1_rep != 0) {
+    bytes_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
+  }
+  else {
+    bytes_rep = 0;
+  }
+
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
       ecadebug->msg(ECA_DEBUG::info, "(audioio-ogg) Can't start process \"" + OGG_VORBIS_INTERFACE::default_ogg_input_cmd + "\". Please check your ~/.ecasoundrc.");
@@ -83,7 +89,12 @@ void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples) 
     finished_rep = true;
   }
   else {
-    bytes_rep = ::write(fd_rep, target_buffer, frame_size() * samples);
+    if (fd_rep > 0) {
+      bytes_rep = ::write(fd_rep, target_buffer, frame_size() * samples);
+    }
+    else {
+      bytes_rep = 0;
+    }
     if (bytes_rep < frame_size() * samples || bytes_rep == 0) finished_rep = true;
     else finished_rep = false;
   }
@@ -108,6 +119,8 @@ void OGG_VORBIS_INTERFACE::fork_ogg_input(void) {
     f1_rep = fdopen(fd_rep, "r");
     if (f1_rep == 0) finished_rep = true;
   }
+  else
+    f1_rep = 0;
 }
 
 void OGG_VORBIS_INTERFACE::fork_ogg_output(void) {
@@ -121,5 +134,8 @@ void OGG_VORBIS_INTERFACE::fork_ogg_output(void) {
   fork_child_for_write();
   if (child_fork_succeeded() == true) {
     fd_rep = file_descriptor();
+  }
+  else {
+    fd_rep = 0;
   }
 }
