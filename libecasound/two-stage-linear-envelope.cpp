@@ -60,7 +60,12 @@ void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::para
   case 1:
     {
       first_stage_length_rep = value;
-      set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
+      if (samples_per_second() > 0) {
+	set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
+      }
+      else {
+	set_length_in_samples(0);
+      }
       set_position_in_samples(0);
       curval = 0.0;
       break;
@@ -68,7 +73,12 @@ void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::para
   case 2:
     {
       second_stage_length_rep = value;
-      set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
+      if (samples_per_second() > 0) {
+	set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
+      }
+      else {
+	set_length_in_samples(0);
+      }
       set_position_in_samples(0);
       curval = 0.0;
       break;
