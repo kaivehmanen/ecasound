@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 110303) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 180303) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,13 +14,18 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ??032003 (v2.2.2)  -** stable release **-
-	- added: ecanative.py - a native python implementation of 
+	- edi-entries: edi-35 and edi-36 added
+	- added: ecacontrol.py - a native python implementation of 
 		 the ECI API [jhalttun]
 	- added: stream ogg/mp3/mid directly from network if the 
 	         filename has a url-prefix
 	- added: author name to the description of LADSPA plugins
 	- added: latest config.guess and config.sub added to 
 	         the dist package
+	- added: ecamonitor - a warning is printed if you try to 
+		 run with python-1.x; python-2.x is required
+	- added: new tutorials pages added to documentations; 
+		 see Documentation/index.html
 	- changed: ecasound.el updated to 0.8.2, lots of small
 		   changes, see ecasound.el for details [mlang]
 	- changed: alsa-0.9 - better support for pcm devices such as 
@@ -36,6 +41,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 ecasound (swh's sc4 is one example)
 	- fixed: theoretical problem with ecalength argument 
 		 parsing
+	- fixed: use LOGNAME instead of USER for creating temporary 
+		 files for ecanormalize and ecafixdc
+	- fixed: -tl has been broken since 2.2.0-pre5
 15022003 (v2.2.1)  -** stable release **-
 	- added: sane default param hints for chainops: -ec, -etd,
 		 -ete, -etf, -etl, -etm, -etp, -etr and -epp
