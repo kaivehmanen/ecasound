@@ -1,3 +1,8 @@
+%define python_sitepkgsdir %(echo `python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[:3] + '/site-packages/')"`)
+%define python_compile_opt python -O -c "import compileall; compileall.compile_dir('.')"
+%define python_compile python -c "import compileall; compileall.compile_dir('.')"
+
+
 Buildroot: /tmp/ecasound-build
 Prefix: /usr/local
 Packager: Kai Vehmanen <kaiv@wakkanet.fi>
@@ -60,6 +65,11 @@ make
 make DESTDIR="$RPM_BUILD_ROOT" install-strip
 make DESTDIR="$RPM_BUILD_ROOT" delete-static-libs
 make DESTDIR="$RPM_BUILD_ROOT" strip-shared-libs
+( cd pyecasound
+  %python_compile_opt
+  %python_compile
+  install *.pyc *.pyo $RPM_BUILD_ROOT%{python_sitepkgsdir}
+)
 
 %post
 if ! grep %{prefix}/lib /etc/ld.so.conf > /dev/null ; then
@@ -99,11 +109,15 @@ fi
 /usr/local/lib/ecasound-plugins
 
 %files -n pyecasound
-%defattr(-, root, root)
-/usr/local/lib/python2.0/site-packages/pyeca.py
-/usr/local/lib/python2.0/site-packages/libpyecasound.*
+%defattr(644,root,root,755)
+%attr(755,root,root) %{python_sitepkgsdir}/*.so
+%{python_sitepkgsdir}/*.pyo
+%{python_sitepkgsdir}/*.pyc
 
 %changelog
+* Wed Jan 17 2001 Kai Vehmanen <kaiv@wakkanet.fi>
+- python subpackage config (thanks to wrobell / PLD Linux!)
+
 * Sat Dec 06 2000 Kai Vehmanen <kaiv@wakkanet.fi>
 - contrib and examples directories added to docs
 - ecasoundc-config added
