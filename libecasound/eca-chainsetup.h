@@ -20,7 +20,7 @@ class ECA_AUDIO_FORMAT;
 class ECA_CHAINSETUP_BUFPARAMS;
 class ECA_CHAINSETUP_impl;
 class ECA_ENGINE_DRIVER;
-class ECA_RESOURCE;
+class ECA_RESOURCES;
 class GENERIC_CONTROLLER;
 class LOOP_DEVICE;
 class MIDI_IO;
@@ -372,7 +372,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   static bool ok_audio_object_helper(const AUDIO_IO* aobj, const vector<AUDIO_IO*>& aobjs);
   static void check_object_samplerate(const AUDIO_IO* obj,
 				      SAMPLE_SPECS::sample_rate_t srate) throw(ECA_ERROR&);
-  static const string& set_resource_helper(const ECA_RESOURCE* ecaresources, const string& tag, const string& alternative);
+  static const string set_resource_helper(const ECA_RESOURCES& ecaresources, const string& tag, const string& alternative);
 
   /*@}*/
 

@@ -285,8 +285,8 @@ void ECA_CHAINSETUP::set_defaults(void)
   
   set_default_midi_device(ecaresources.resource("midi-device"));
 
-  string aformat_temp = set_resource_helper(&ecaresources,
-					    string("default-audio-format"), 
+  string aformat_temp = set_resource_helper(ecaresources,
+					    "default-audio-format", 
 					    ECA_CHAINSETUP::default_audio_format_const);
   cparser_rep.interpret_object_option("-f:" + aformat_temp);
 
@@ -294,14 +294,14 @@ void ECA_CHAINSETUP::set_defaults(void)
 
   toggle_precise_sample_rates(ecaresources.boolean_resource("default-to-precise-sample-rates"));
 
-  impl_repp->bmode_nonrt_rep.set_all(set_resource_helper(&ecaresources,
-							 string("bmode-defaults-nonrt"),
+  impl_repp->bmode_nonrt_rep.set_all(set_resource_helper(ecaresources,
+							 "bmode-defaults-nonrt",
 							 ECA_CHAINSETUP::default_bmode_nonrt_const));
-  impl_repp->bmode_rt_rep.set_all(set_resource_helper(&ecaresources,
-						      string("bmode-defaults-rt"),
+  impl_repp->bmode_rt_rep.set_all(set_resource_helper(ecaresources,
+						      "bmode-defaults-rt",
 						      ECA_CHAINSETUP::default_bmode_rt_const));
-  impl_repp->bmode_rtlowlatency_rep.set_all(set_resource_helper(&ecaresources,
-								string("bmode-defaults-rtlowlatency"),
+  impl_repp->bmode_rtlowlatency_rep.set_all(set_resource_helper(ecaresources,
+								"bmode-defaults-rtlowlatency",
 								ECA_CHAINSETUP::default_bmode_rtlowlatency_const));
 
   impl_repp->bmode_active_rep = impl_repp->bmode_nonrt_rep;
@@ -312,10 +312,10 @@ void ECA_CHAINSETUP::set_defaults(void)
  *
  * Only used by ECA_CHAINSETUP::set_defaults.
  */
-const string& set_resource_helper(const ECA_RESOURCE* ecaresources, const string& tag, const string& alternative)
+string set_resource_helper(const ECA_RESOURCES& ecaresources, const string& tag, const string& alternative)
 {
-  if (ecaresources->has(tag) == true) {
-    return(ecaresources->resource(tag));
+  if (ecaresources.has(tag) == true) {
+    return(ecaresources.resource(tag));
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::system_objects,
