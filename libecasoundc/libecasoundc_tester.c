@@ -222,6 +222,7 @@ static int eci_test_4(void)
   if (eci_error_r(handle) != 0) { ECA_TEST_FAIL(3, "cs-connect failed (3)"); }
 
   eci_command_r(handle, "cs-disconnect");
+  eci_command_r(handle, "quit");
 
   eci_cleanup_r(handle);
   
