@@ -1,6 +1,6 @@
 dnl ---
 dnl acinclude.m4 for ecasound
-dnl last modified: 20040421-7
+dnl last modified: 20041105-9
 dnl ---
 
 ## ------------------------------------------------------------------------
@@ -26,8 +26,13 @@ AC_ARG_ENABLE(jack,
 AM_CONDITIONAL(ECA_AM_COMPILE_JACK, test x$jack_support = xyes)
 
 if test x$jack_support = xyes; then
-    ECA_S_JACK_LIBS="${ECA_S_JACK_LIBS} -ljack ${eca_platform_system_audio}"
     AC_DEFINE(ECA_COMPILE_JACK)
+    ECA_S_JACK_LIBS="${ECA_S_JACK_LIBS} -ljack"
+    case "$host" in
+	*darwin*)
+	    AM_LDFLAGS="$AM_LDFLAGS -framework CoreAudio"
+	    ;;
+    esac
 fi                                     
 
 AC_LANG_C

@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20041102-38
+dnl last modified: 20041106-40
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -92,8 +92,6 @@ dnl ---
 dnl Sets up default values 
 dnl ---
 
-dnl Libs needed when linking against a system audio framework.
-eca_platform_system_audio=""
 dnl Selected the Python ECI implementation.
 eca_platform_python_impl="python"
 
@@ -127,7 +125,6 @@ case "$host" in
                ;;
 	*-*-linux-gnu)
 	       eca_platform_python_impl="c"
-	       eca_platform_system_audio=""
 	       ;;
 	alpha*-*-linux-*)
 	       AM_CFLAGS="$AM_CFLAGS -mieee"
@@ -138,7 +135,6 @@ case "$host" in
 	       if test "$GCC" = yes; then
 		  AM_CPPFLAGS="$AM_CPPFLAGS -D_P1003_1B_VISIBLE"
 	       fi
-	       eca_platform_system_audio="-framework CoreAudio"
 	       ;;
 	*)
 	       echo "Using generic settings for POSIX thread support."
