@@ -26,6 +26,7 @@
 #include <algorithm> /* find() */
 #include <fstream>
 #include <vector>
+#include <list>
 #include <iostream>
 #include <sys/mman.h> /* for mlockall() */
 
