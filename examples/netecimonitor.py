@@ -23,6 +23,12 @@ import curses
 import socket
 import time
 
+# TODO:
+#  - doesn't work if info doesn't fit on one screen
+#  - updates bandwidth-heavy; lots of room for optimization
+#  - implement signal-level monitoring
+#  - implement MIDI-activity monitoring
+
 def connect_to_server():
     print "NetECI Monitor: Connecting to remote host."
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -98,6 +104,8 @@ def main():
                 if e[0] == 32 or e[0] == 111:
                     s = reconnect_to_server(stdscr);
                     pass
+		else:
+		    raise e
            
     finally:
         s.close()
