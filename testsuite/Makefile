@@ -30,7 +30,8 @@ TARGETS=		con_test1 \
 			con_test2 \
 			eci_test1 \
 			eci_test2 \
-			eci_test3
+			eci_test3 \
+			eca_test1
 
 
 all: $(TARGETS) create-test-list

@@ -6,7 +6,7 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{28042002}
+\date{30042002}
 \begin{document}
 
 \maketitle
@@ -31,10 +31,11 @@ ecasound version.
 \section{Document history}
 
 \begin{itemize}
+\item 29.04.2002 - Added chapter about ``Unit Tests'' \cite{unit_tests}.
 \item 28.04.2002 - Revised namespace policy (see chapter
                    \ref{cpp_std_namespace}), replaced references to
-		   the obsolete ECA_DEBUG with a description
-		   of the new ECA_LOGGER subsystem.
+		   the obsolete ECA\_DEBUG with a description
+		   of the new ECA\_LOGGER subsystem.
 \item 27.02.2002 - Rewrote the ``Control flows'' chapter according 
                    to the structural changes made in 2.1dev8. Added
 		   a ``References'' section.
@@ -215,6 +216,17 @@ member functions. In addition, the private header file
 implementation file (eca-engine.cpp). This allows us to 
 add new data members to ECA\_ENGINE\_impl without breaking 
 the binary interface.
+
+\subsubsection{Unit tests}
+\label{unit_tests}
+
+Unit tests are used for verifying that modules work as intended. 
+A test for component, with a public interface defined in 
+``prefix-component.h'', should located in
+``prefix-component\_test.h''. The test itself should implement
+the ECA\_TEST\_CASE interface. In addition, generic test cases 
+should be added to ECA\_TEST\_REPOSITORY - see 
+``libecasound/eca-test-repository.cpp''.
 
 % ----------------------------------------------------------------------
 \subsection{Physical level organization}
@@ -674,7 +686,7 @@ output. On the other hand, in qtecasound, ECA\_LOGGER\_INTERFACE is
 implemented using a Qt widget.
 
 New ECA\_LOGGER\_INTERFACE implementations can be registered at
-runtime with the \emph{ECA_LOGGER::attach\_logger()} member
+runtime with the \emph{ECA\_LOGGER::attach\_logger()} member
 function (declared in eca-logger.h).
 
 % ----------------------------------------------------------------------

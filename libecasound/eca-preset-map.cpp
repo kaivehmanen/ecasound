@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-preset-map: Dynamic register for storing effect presets
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,12 +29,14 @@
 #include "eca-preset-map.h"
 #include "global-preset.h"
 
+using std::find;
+using std::list;
 using std::map;
 using std::string;
-using std::list;
 using std::vector;
 
-ECA_PRESET_MAP::ECA_PRESET_MAP(void) {
+ECA_PRESET_MAP::ECA_PRESET_MAP(void)
+{
   ECA_RESOURCES ecarc;
 
   string filename =
@@ -47,7 +49,12 @@ ECA_PRESET_MAP::ECA_PRESET_MAP(void) {
   load_preset_file(filename);
 }
 
-void ECA_PRESET_MAP::load_preset_file(const string& fname) {
+ECA_PRESET_MAP::~ECA_PRESET_MAP(void)
+{
+}
+
+void ECA_PRESET_MAP::load_preset_file(const string& fname)
+{
   RESOURCE_FILE preset_file;
   preset_file.resource_file(fname);
   preset_file.load();
@@ -59,37 +66,43 @@ void ECA_PRESET_MAP::load_preset_file(const string& fname) {
   }
 }
 
-void ECA_PRESET_MAP::register_object(const string& keyword, const string& matchstr, PRESET* object) {
+void ECA_PRESET_MAP::register_object(const string& keyword, const string& matchstr, PRESET* object)
+{
   if (find(preset_keywords_rep.begin(), preset_keywords_rep.end(), keyword) == preset_keywords_rep.end())
     preset_keywords_rep.push_back(keyword);
 
   ECA_OBJECT_MAP::register_object(keyword, matchstr, object);
 }
 
-void ECA_PRESET_MAP::unregister_object(const string& keyword) {
+void ECA_PRESET_MAP::unregister_object(const string& keyword)
+{
   preset_keywords_rep.remove(keyword);
   ECA_OBJECT_MAP::unregister_object(keyword);
 }
 
-const list<string>& ECA_PRESET_MAP::registered_objects(void) const {
+const list<string>& ECA_PRESET_MAP::registered_objects(void) const
+{
   return(preset_keywords_rep);
 }
 
-bool ECA_PRESET_MAP::has_keyword(const std::string& keyword) const {
+bool ECA_PRESET_MAP::has_keyword(const std::string& keyword) const
+{
   if (find(preset_keywords_rep.begin(), preset_keywords_rep.end(), keyword) == preset_keywords_rep.end())
     return(false);
 
   return (true);
 }
 
-const ECA_OBJECT* ECA_PRESET_MAP::object_expr(const string& expr) const {
+const ECA_OBJECT* ECA_PRESET_MAP::object_expr(const string& expr) const
+{
   if (find(preset_keywords_rep.begin(), preset_keywords_rep.end(), expr) != preset_keywords_rep.end()) {
     return(object(expr));
   }
   return(0);
 }
 
-const ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword) const {
+const ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword) const
+{
   const PRESET* retobj = 0;
 
   if (find(preset_keywords_rep.begin(), preset_keywords_rep.end(), keyword) != preset_keywords_rep.end()) {

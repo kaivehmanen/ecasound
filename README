@@ -38,12 +38,15 @@ continue to improve and develop ecasound.
 
 To run ecasound, you need...:
 
-- POSIX compliant UNIX system; tested with Linux 2.2.x and 2.4.x, glibc 2.1.x
-- POSIX threads; tested with linuxthreads 0.7 and 0.8 (libpthread, comes with glibc)
+- POSIX compliant UNIX system; tested with various Linux 2.2/2.4 
+  and glibc 2.x combinations, FreeBSD 4.x, Solaris 2.8
+- POSIX threads; tested with linuxthreads 0.7 and 0.8 (libpthread, 
+  comes with glibc)
 
 Optional when running ecasound:
 
 - for soundcard input/output: OSS, OSS/Lite or ALSA drivers
+- for JACK-support, the JACK runtime environment
 - for mp3 support, mpg123 (input) and lame (output) packages
 - for tracker module support, MikMod package
 - for .aiff/.au/.snd support, libaudiofile (SGI audio file) library
@@ -54,8 +57,9 @@ Optional when running ecasound:
 To compile ecasound, you also need...:
 
 - standard C++ build environment; tested with egcs 1.1.2, 
-  gcc 2.91.66, gcc 2.95.3 and gcc 3.0 (STL and exceptions 
-  need to be supported)
+  gcc 2.91.66, gcc 2.95.3, gcc 3.0.x, gcc 3.1.x and
+  Sun Workshop 6 C5.2 C++ (STL and exceptions need to 
+  be supported)
 - GNU make, automake and autoconf packages
 
 Optional when compiling ecasound:
@@ -64,6 +68,7 @@ Optional when compiling ecasound:
 - for curses support, the ncurses devel package
 - for LADSPA support, the LADSPA SDK package
 - for ALSA support, the ALSA devel package
+- for JACK support, the JACK devel package
 - for .aiff/.au/.snd support libaudiofile devel package
 - for aRts support, the aRts C-API devel package
 

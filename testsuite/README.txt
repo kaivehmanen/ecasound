@@ -36,6 +36,7 @@ CON - Test cases for testing the 'ecasound' console
       interface. 
 ECI - Test cases utilizing the ECI API (Ecasound Control 
       Interface); (eci_*)
+ECA - Tests cases for testing libecasound components.
 
 ---
 List of current tests
@@ -51,5 +52,6 @@ ECI-3 - Snapshot test for basic ECI C API functionality, where
             a simple chainsetup is configured, connected and then
 	    executed. Multiple error conditions.
 
+ECA-1 - Runs all tests cases in ECA_TEST_REPOSITORY.
 
 -----------------------------------------------------------------------

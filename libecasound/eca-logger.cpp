@@ -32,10 +32,10 @@ ECA_LOGGER_INTERFACE& ECA_LOGGER::instance(void)
   // Note! Below we use the Double-Checked Locking Pattern
   //       to protect against concurrent access
 
-  if (interface_impl_repp == 0) {
+  if (ECA_LOGGER::interface_impl_repp == 0) {
     KVU_GUARD_LOCK guard(&ECA_LOGGER::lock_rep);
-    if (interface_impl_repp == 0) {
-      interface_impl_repp = new ECA_LOGGER_DEFAULT();
+    if (ECA_LOGGER::interface_impl_repp == 0) {
+      ECA_LOGGER::interface_impl_repp = new ECA_LOGGER_DEFAULT();
     }
   }
   return(*interface_impl_repp);
@@ -44,7 +44,12 @@ ECA_LOGGER_INTERFACE& ECA_LOGGER::instance(void)
 void ECA_LOGGER::attach_logger(ECA_LOGGER_INTERFACE* logger)
 {
   ECA_LOGGER::detach_logger();
-  interface_impl_repp = logger;
+  if (ECA_LOGGER::interface_impl_repp == 0) {
+    KVU_GUARD_LOCK guard(&ECA_LOGGER::lock_rep);
+    if (ECA_LOGGER::interface_impl_repp == 0) {
+      ECA_LOGGER::interface_impl_repp = logger;
+    }
+  }
 }
 
 /**
@@ -53,7 +58,10 @@ void ECA_LOGGER::attach_logger(ECA_LOGGER_INTERFACE* logger)
 void ECA_LOGGER::detach_logger(void)
 {
   if (ECA_LOGGER::interface_impl_repp != 0) {
-    delete interface_impl_repp;
-    interface_impl_repp = 0;
+    KVU_GUARD_LOCK guard(&ECA_LOGGER::lock_rep);
+    if (ECA_LOGGER::interface_impl_repp != 0) {
+      delete ECA_LOGGER::interface_impl_repp;
+      ECA_LOGGER::interface_impl_repp = 0;
+    }
   }
 }

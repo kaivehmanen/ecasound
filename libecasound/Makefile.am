@@ -130,6 +130,7 @@ ecasound_general_include = 	\
 			sample-specs.h \
 			eca-version.h \
 			eca-object-factory.h \
+			eca-object-factory_test.h \
 			eca-chainsetup.h \
 			eca-chainsetup_impl.h \
 			eca-chainsetup-bufparams.h \
@@ -161,6 +162,10 @@ ecasound_general_include = 	\
 ecasound_extra_include = \
 			ladspa.h
 
+ecasound_test_framework_include = \
+			eca-test-repository.h \
+			eca-test-case.h
+
 # VST-support:
 #			eca-vst-plugin-map.h
 # vst_header_files = AEffEditor.hpp AEffect.h aeffectx.h AudioEffect.hpp
@@ -172,7 +177,8 @@ noinst_HEADERS = 	$(ecasound_audiofx_include) \
 			$(ecasound_midi_include) \
 		 	$(ecasound_controller_include) \
 			$(ecasound_general_include) \
-			$(ecasound_extra_include)
+			$(ecasound_extra_include) \
+			$(ecasound_test_framework_include)
 
 # ----------------------------------------------------------------------
 # source files
@@ -280,11 +286,16 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-preset-map.cpp \
 			global-preset.cpp
 
+ecasound_test_framework_src = \
+		   	eca-test-repository.cpp \
+			eca-test-case.cpp
+
 ecasound_common_src = 	$(ecasound_audiofx_src) \
 			$(ecasound_audioio_src) \
 			$(ecasound_midi_src) \
 		      	$(ecasound_controller_src) \
-			$(ecasound_general_src)
+			$(ecasound_general_src) \
+			$(ecasound_test_framework_src)
 
 libecasound8_la_SOURCES = $(ecasound_common_src)
 libecasound8_debug_la_SOURCES = $(ecasound_common_src)

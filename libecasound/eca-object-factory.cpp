@@ -72,6 +72,8 @@ pthread_mutex_t ECA_OBJECT_FACTORY::lock_rep = PTHREAD_MUTEX_INITIALIZER;
 /**
  * Returns an object map containing all registered
  * realtime audio i/o object types.
+ *
+ * All stored objects are derived from AUDIO_IO_DEVICE.
  */
 ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::audio_io_rt_map(void) 
 {
@@ -92,6 +94,8 @@ ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::audio_io_rt_map(void)
 /**
  * Returns an object map containing all registered
  * non-realtime audio i/o object types.
+ *
+ * All stored objects are derived from AUDIO_IO.
  */
 ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::audio_io_nonrt_map(void) 
 {
@@ -108,6 +112,8 @@ ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::audio_io_nonrt_map(void)
 /**
  * Returns an object map containing all registered
  * chain operator object types.
+ *
+ * All stored objects are derived from CHAIN_OPERATOR.
  */
 ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::chain_operator_map(void) 
 {
@@ -125,6 +131,9 @@ ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::chain_operator_map(void)
  * Returns an object map containing all registered
  * LADSPA plugin types.
  * 
+ *
+ * All stored objects are derived from EFFECT_LADSPA.
+ *
  * @see ladspa_plugin_id_map()
  */
 ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::ladspa_plugin_map(void) 
@@ -144,6 +153,8 @@ ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::ladspa_plugin_map(void)
  * LADSPA plugin types. Plugins are identified using
  * their unique LADSPA id number.
  * 
+ * All stored objects are derived from EFFECT_LADSPA.
+ *
  * @see ladspa_plugin_map()
  */
 ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::ladspa_plugin_id_map(void) 
@@ -161,6 +172,8 @@ ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::ladspa_plugin_id_map(void)
 /**
  * Returns an object map containing all registered
  * chain operator preset object types.
+ *
+ * All stored objects are derived from PRESET.
  */
 ECA_PRESET_MAP& ECA_OBJECT_FACTORY::preset_map(void) 
 {
@@ -177,6 +190,8 @@ ECA_PRESET_MAP& ECA_OBJECT_FACTORY::preset_map(void)
 /**
  * Returns an object map containing all registered
  * controller object types.
+ *
+ * All stored objects are derived from GENERIC_CONTROLLER.
  */
 ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::controller_map(void) 
 {
@@ -193,6 +208,9 @@ ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::controller_map(void)
 /**
  * Returns an object map containing all registered
  * MIDI-device types.
+ *
+ *
+ * All stored objects are derived from MIDI_IO.
  */
 ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::midi_device_map(void) 
 {
@@ -214,7 +232,7 @@ ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::midi_device_map(void)
  * @return the created object or 0 if an invalid format string was given 
  *         as the argument
  *
- *  @pre arg.empty() != true
+ * @pre arg.empty() != true
  */
 AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg) {
   // --
