@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20041106-40
+dnl last modified: 20041114-41
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -23,7 +23,7 @@ echo "------------------------------------------------------------------"
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 2.3.5)
+AM_INIT_AUTOMAKE(ecasound, 2.3.6-cvs)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
@@ -1198,10 +1198,10 @@ echo "libkvutils:             yes"
 
 echo "-----------------------------------------------------------------"
 echo "Compiler options:"
-echo "AM_CFLAGS:                 $AM_CFLAGS"
-echo "AM_CXXFLAGS:               $AM_CXXFLAGS"
-echo "AM_CPPFLAGS:               $AM_CPPFLAGS"
-echo "AM_LDFLAGS:                $AM_LDFLAGS"
+echo "CFLAGS:                 $AM_CFLAGS $CFLAGS"
+echo "CXXFLAGS:               $AM_CXXFLAGS $CXXFLAGS"
+echo "CPPFLAGS:               $AM_CPPFLAGS $CPPFLAGS"
+echo "LDFLAGS:                $AM_LDFLAGS $LDFLAGS"
 
 echo "-----------------------------------------------------------------"
 echo "Following features were selected:"
