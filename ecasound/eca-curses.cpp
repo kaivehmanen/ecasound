@@ -58,13 +58,16 @@ static char* ecasound_command_generator (char* text, int state);
 
 ECA_CURSES::ECA_CURSES(void)
 {
+  rl_initialized_rep = false;
   setupterm((char *)0, 1, (int *)0);
   init_readline_support();
 }
 
 ECA_CURSES::~ECA_CURSES(void)
 {
-  rl_cleanup_after_signal();
+  if (rl_initialized_rep == true) {
+    rl_cleanup_after_signal();
+  }
 }
 
 void ECA_CURSES::print(const std::string& msg)
@@ -87,6 +90,7 @@ void ECA_CURSES::print_banner(void)
 
 void ECA_CURSES::read_command(const std::string& prompt)
 {
+  if (rl_initialized_rep != true) rl_initialized_rep = true;
   last_cmdchar_repp = readline(const_cast<char*>(prompt.c_str()));
   if (last_cmdchar_repp != 0) {
     add_history(last_cmdchar_repp);

@@ -54,6 +54,7 @@ class ECA_CURSES : public ECA_CONSOLE {
 
   char* last_cmdchar_repp;
   std::string last_cmd_rep;
+  bool rl_initialized_rep;
 };
 
 #endif /* INCLUDED_ECA_CURSES_H */
