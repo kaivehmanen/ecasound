@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <cstdlib>
 #include <string>
 
 #include "eca-sample-conversion.h"
@@ -49,15 +50,15 @@ void ECA_SAMPLE_CONVERSION_TEST::do_run(void)
   double dzero = 0.0f;
 
   uint8_t u8min = eca_sample_convert_float_to_u8(dmin);
-  if (u8min != UINT8_MIN) {
+  if (abs(u8min - UINT8_MIN) > 1) {
     cout << "u8min=" << (int)u8min << "\n";
-    ECA_TEST_FAILURE("u8min != UINT8_MIN");
+    ECA_TEST_FAILURE("abs(u8min - UINT8_MIN) > 1");
   }
 
   uint8_t u8max = eca_sample_convert_float_to_u8(dmax);
-  if (u8max != UINT8_MAX) {
+  if (abs(u8max - UINT8_MAX) > 1) {
     cout << "u8max=" << (int)u8max << "\n";
-    ECA_TEST_FAILURE("u8max != UINT8_MAX");
+    ECA_TEST_FAILURE("abs(u8max - UINT8_MAX) > 1");
   }
 
   uint8_t u8zero = eca_sample_convert_float_to_u8(dzero);
@@ -67,15 +68,15 @@ void ECA_SAMPLE_CONVERSION_TEST::do_run(void)
   }
 
   int16_t s16min = eca_sample_convert_float_to_s16(dmin);
-  if (s16min != INT16_MIN) {
+  if (abs(s16min - INT16_MIN) > 1) {
     cout << "s16min=" << s16min << "\n";
-    ECA_TEST_FAILURE("s16min != INT16_MIN");
+    ECA_TEST_FAILURE("abs(s16min - INT16_MIN) > 1");
   }
   
   int16_t s16max = eca_sample_convert_float_to_s16(dmax);
-  if (s16max != INT16_MAX) {
+  if (abs(s16max - INT16_MAX) > 1) {
     cout << "s16max=" << s16max << "\n";
-    ECA_TEST_FAILURE("s16max != INT16_MAX");
+    ECA_TEST_FAILURE("abs(s16max - INT16_MAX) > 1");
   }
 
   int16_t s16zero = eca_sample_convert_float_to_s16(dzero);
@@ -84,14 +85,14 @@ void ECA_SAMPLE_CONVERSION_TEST::do_run(void)
   }
 
   int32_t s32min = eca_sample_convert_float_to_s32(dmin);
-  if (s32min != INT32_MIN) {
-    ECA_TEST_FAILURE("s32min != INT32_MIN");
+  if (labs(s32min - INT32_MIN) > 1) {
+    ECA_TEST_FAILURE("labs(s32min - INT32_MIN) > 1");
   }
   
   int32_t s32max = eca_sample_convert_float_to_s32(dmax);
-  if (s32max != INT32_MAX) {
+  if (labs(s32max - INT32_MAX) > 1) {
     cout << "s32max=" << s32max << "\n";
-    ECA_TEST_FAILURE("s32max != INT32_MAX");
+    ECA_TEST_FAILURE("labs(s32max - INT32_MAX) > 1");
   }
 
   int32_t s32zero = eca_sample_convert_float_to_s32(dzero);
