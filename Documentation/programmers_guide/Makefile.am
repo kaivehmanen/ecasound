@@ -17,14 +17,16 @@ programmers_guide: programmers_guide.latex
 	dvips -Ppdf -o programmers_guide.ps programmers_guide.dvi
 	ps2pdf programmers_guide.ps ecasound_programmers_guide.pdf
 	mkdir -p html_pguide
-	latex2html -no_math -html_version 3.2,math -short_index -split 2 -link 5 -dir html_pguide programmers_guide.latex
+	hevea -o html_pguide/programmers_guide.html programmers_guide.latex
+	hevea -o html_pguide/programmers_guide.html programmers_guide.latex
 
 ecidoc: eci_doc.latex
 	latex eci_doc.latex
 	dvips -Ppdf -o eci_doc.ps eci_doc.dvi
 	ps2pdf eci_doc.ps ecasound_eci_doc.pdf
 	mkdir -p html_ecidoc
-	latex2html -no_math -html_version 3.2,math -short_index -split 2 -link 5 -dir html_ecidoc eci_doc.latex
+	hevea -o html_ecidoc/eci_doc.html eci_doc.latex
+	hevea -o html_ecidoc/eci_doc.html eci_doc.latex
 
 clean-docs:
 	rm -fv programmers_guide.log programmers_guide.toc programmers_guide.dvi programmers_guide.aux programmers_guide.ps programmers_guide.dvi

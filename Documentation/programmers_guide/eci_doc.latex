@@ -1,12 +1,12 @@
 \documentclass{article}
 \usepackage[T1]{fontenc}
-\usepackage{html}
 
-\bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
+%\usepackage{html}
+%\bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
 
 \title{Ecasound Control Interface Guide}
 \author{Kai Vehmanen}
-\date{02112002}
+\date{18112003}
 \begin{document}
 
 \maketitle
@@ -20,7 +20,7 @@ Idea behind the Ecasound Control Interface (ECI) is to take a subset of
 functionality provided by libecasound, write a simple API for it, and
 port it to various languages. At the moment, at least C++, C and
 Python implementations of the ECI API are available and part of the
-main ecasound distribution. ECI is heavily based on ecasound's
+main Ecasound distribution. ECI is heavily based on ecasound's
 interactive mode (EIAM), and the services it provides. See 
 \texttt{ecasound-iam(1) manual page} for 
 detailed EIAM documentation.
@@ -29,6 +29,9 @@ detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 18.11.2003 - Typo fixes. Updated documentation to reflect the new
+                   naming convention (ecasound refers to the binary,
+		   Ecasound refers to the whole package).
 \item 26.10.2002 - Changed the C++ linking example.
 \item 24.10.2002 - Added ``Notes Concerning Standalone ECI Implementations''
                    section. Added compilation examples.
@@ -46,8 +49,8 @@ detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{General}
 ECI doesn't provide any routines that directly manipulate audio or 
-ecasound objects. What is does provide is an easy and generic way
-to issue EIAM (ecasound interactive mode) commands, access to the
+Ecasound objects. What is does provide is an easy and generic way
+to issue EIAM (Ecasound Inter-Active Mode) commands, access to the
 command return-values and error handling.
 
 This approach has two benefits. First, it's possible to keep the API 
@@ -185,7 +188,7 @@ Implementation of the following:
 \subsection{Notes Concerning Standalone ECI Implementations}
 
 The C implementation of ECI is not directly linked against the main 
-ecasound libraries. Instead, the it launches the ecasound executable 
+Ecasound libraries. Instead, the it launches the ecasound executable 
 on the background and uses command pipes to communicate with it.
 
 The launched ecasound executable can be selected by using the
@@ -272,7 +275,7 @@ Returning a list of strings is implemented using two functions:
 available, and \emph{eci\_last\_string\_list\_item(int n)} returns a 
 pointer (const char*) to the string at index \emph{n}.
 
-\emph{Note!} As of ecasound 2.0.1, the C ECI implementation also 
+\emph{Note!} As of Ecasound 2.0.1, the C ECI implementation also 
 	  provides reentrant access to the ECI API. These
 	  alternative routines are marked with '\_r' postfix.
 
@@ -342,7 +345,7 @@ Lists are used for representing collections of objects.
 
 Note! Eric S. Tiedemann has written an alternative Python interface
       to ECI. You'll find this interface included in the main 
-      ecasound packege, in pyecasound/esteci.py. To use this instead
+      Ecasound packege, in pyecasound/esteci.py. To use this instead
       of the standard interface, just 'import eci' and you're set! :)
 
 \subsubsection{Usage}
@@ -393,14 +396,14 @@ print "Chain operator status: ", e.last_string()
 % ----------------------------------------------------------------------
 \subsection{Perl}
 \subsubsection{Overview}
-Audio::Ecasound provides perl bindings to the ecasound
-control interface of the ecasound program.  You can use
-perl to automate or interact with ecasound so you don't
+Audio::Ecasound provides perl bindings to the Ecasound
+control interface of the Ecasound program.  You can use
+perl to automate or interact with Ecasound so you don't
 have to turn you back on the adoring masses packed into
 Wembly Stadium.
 
 Audio::Ecasound was written by Brad Bowman. At the moment this module 
-is not distributed with ecasound. To get the latest version, check the 
+is not distributed with Ecasound. To get the latest version, check the 
 following \texttt{CPAN link}.
 
 \subsubsection{Usage}
@@ -442,13 +445,13 @@ print "Chain operator status: ", eci("cop-status");
 % ----------------------------------------------------------------------
 \subsection{PHP}
 \subsubsection{Overview}
-This PHP extension provides bindings to the ecasound
+This PHP extension provides bindings to the Ecasound
 control interface.  It is useful both for scripting Ecasound
 and for writing graphical audio applications with PHP Gtk.
 
 
 The PHP Ecasound extension was written by Tony Leake. At the moment this module 
-is not distributed with ecasound. The latest version and example scripts, are 
+is not distributed with Ecasound. The latest version and example scripts, are 
 available from  \texttt{http://www.webwise-data.co.uk/php\_audio/php\_audio\_extension.html}.
 
 \subsubsection{Usage}
@@ -530,7 +533,7 @@ Here's a few tips what to do if the ECI app you have developed
 is not working correctly.
 
 \begin{enumerate}
-\item Check your ecasound installation. Try to run the ``ecasound'' 
+\item Check your Ecasound installation. Try to run the ``ecasound'' 
       console user-interface and verify that the basic functionality
       is working (ie. something like ``ecasound -i foo.wav -o
       /dev/dsp''.
@@ -545,11 +548,11 @@ is not working correctly.
       ECI for the first time and after important commands
       like ``cs-connect'', you should always check for errors.
 
-\item Launch ecasound in interactive mode (``ecasound -c''), 
+\item Launch Ecasound in interactive mode (``ecasound -c''), 
       and issue the commands your ECI application is using, 
       manually one-by-one and see what happens. If something
-      goes wrong, increase ecasound's debug level (for instance
-      ``-d:511'') and re-run the test. 
+      goes wrong, increase Ecasound's debug level (for instance
+      ``-ddd'') and re-run the test. 
 \end{enumerate}
 
 \end{document}

@@ -1,12 +1,12 @@
 \documentclass{report}
 \usepackage[T1]{fontenc}
-\usepackage{html}
 
-\bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
+%\usepackage{html}
+%\bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{20082003}
+\date{18112003}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,7 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 18.11.2003 - Typo fixes.
 \item 20.08.2003 - Capitalize Ecasound in all cases where talking
                    about the software package, not the console mode 
 		   user-interface. Updated JACK documentation with 
@@ -90,7 +91,7 @@ continue to improve and develop Ecasound.
 
 Audio objects are used to transfer audio from and to Ecasound. 
 Usually audio objects are either files (like wav, mp3 or ogg) 
-or devices (soundcard input\&output). There are also some
+or devices (soundcard input/output). There are also some
 special audio object types for transfering data between 
 applications.
 
@@ -431,7 +432,7 @@ ecasignalview -f:s32,10,96000,i /dev/dsp null
 \subsection{Use with JACK}
 
 \emph{FIXME: to be written...}
-\ref{JACK Audio Server}
+See also \ref{JACK Audio Server}.
 
 \subsection{Further Reading}
 
@@ -795,8 +796,7 @@ to understand how Ecasound and JACK states related to each other.
 
 When Ecasound chainsetup is connected (EIAM-command ``cs-connect''),
 a connection is established with the JACK server, and all the 
-JACK ports in that chainsetup are registered to it.
-
+JACK ports in that chainsetup are registered to it. 
 Once Ecasound's engine is launched with EIAM-command ``engine-launch'',
 connections (if any specified) are made to the ports of other
 JACK clients. In this state Ecasound is ready to process
@@ -804,18 +804,15 @@ incoming transport state and position changes.
 
 When Ecasound processing is started (either with ``start'' or
 by an incoming transport event), Ecasound's engine runs 
-as a node in the JACK system.
-
-When processing is stopped (either with ``stop'', or by a
-transport event), Ecasound's engine is not run.
+as a node in the JACK system. When processing is stopped (either 
+with ``stop'', or by a transport event), Ecasound's engine is 
+not run.
 
 Any connections (iniated by Ecasound) to other clients, 
 are disconnected once ``engine-halt'' is issued and engine
-operation is stopped.
-
-Connection to the remote JACK server as well as unregistering
-any ports is performed when chainsetup is disconnected 
-(``cs-disconnect'').
+operation is stopped. Connection to the remote JACK server 
+as well as unregistering any ports is performed when chainsetup 
+is disconnected  (``cs-disconnect'').
 
 Note! Normally you don't need to go through all the steps one
 by one. Instead issuing ``start'' will automatically connect

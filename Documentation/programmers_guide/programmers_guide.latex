@@ -1,12 +1,12 @@
 \documentclass{report}
 \usepackage[T1]{fontenc}
-\usepackage{html}
 
-\bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
+%\usepackage{html}
+%\bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{07112002}
+\date{18112003}
 \begin{document}
 
 \maketitle
@@ -17,20 +17,23 @@
 % ----------------------------------------------------------------------
 \chapter{Preface}
 
-This document describes how the ecasound and the related libraries
+This document describes how Ecasound and the related libraries
 work, how to use them, how to extend and add features and other 
 similar issues. Before reading this document, you should first take a 
 look at other available documentation (especially 
 \texttt{Ecasound Users's Guide}).
 
 If not otherwise specified, all documentation refers to the latest
-ecasound version.
+Ecasound version.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
 \chapter{Document history}
 
 \begin{itemize}
+\item 18.11.2003 - Typo fixes. Updated documentation to reflect the new
+                   naming convention (ecasound refers to the binary,
+		   Ecasound refers to the whole package).
 \item 07.11.2002 - Added documentation for NetECI.
 \item 25.10.2002 - Added ``Checklist for Audio Object Implementations''.
 \item 17.10.2002 - Added a warning against direct use of libecasound
@@ -81,7 +84,7 @@ possible, the actual data representation and implementation
 should always be hidden. This allows you to make local implementation 
 changes without affecting other parts of the code base. It cannot
 be emphasized enough how important this goal is for large software 
-projects like ecasound.
+projects like Ecasound.
 
 \subsection{Design by contract} 
 
@@ -119,7 +122,7 @@ I try to make a clear distinction between routines that
 have side-effects (=methods, processors, modifiers; routines that
 change object's state) and const routines (=functions, observers).
 
-To make monitoring side effects easier, all ecasound classes 
+To make monitoring side effects easier, all Ecasound classes 
 should be const-correct. A object is const-correct if a function
 taking only a single argument that is a const reference to that object
 is not able, without explicit casting, to obtain a non-const
@@ -132,22 +135,22 @@ Sanity checks are done only to prevent crashes. All effects
 and operators happily accept "insane" parameters. For instance 
 you can give -100.0\% to the amplifier effect. This of course 
 results in inverted sample data. I think this a reasonable 
-approach. After all, ecasound is supposed to be a tool for creative
+approach. After all, Ecasound is supposed to be a tool for creative
 work and experimenting. It's not meant for e-commerce. ;)
 
 \subsection{Error handling}
 
 Two specific things worth mentioning: First, the standard UNIX-style 
 error handling, where functions performing actions return an integer 
-value, is \emph{not} used in ecasound. As described in the above section 
+value, is \emph{not} used in Ecasound. As described in the above section 
 \emph{Routine side effects}, all routines are either modifiers or
-observers, not both. So when using ecasound APIs, you first perform an
+observers, not both. So when using Ecasound APIs, you first perform an
 action (modifying function), and then afterwards check what happened
 (using an observer function).
 
 \subsection{Exceptions}
 
-C++ exceptions are used in ecasound. Exception based error
+C++ exceptions are used in Ecasound. Exception based error
 handling has its problems, but in some cases it is clearly the best
 option. Exceptions are most useful in situations where 
 controlled error recovery is very difficult, and in situations
@@ -260,8 +263,9 @@ rules follow:
       dependencies to other modules don't need to be 
       stated in both.
 \item Direct dependencies to outside modules must always 
-      be mentioned directly. It's easy to include a required
-      header file indirecly.
+      be mentioned directly. It's easy to unknowingly include 
+      a required header file via some other header file. This
+      should be avoided as it hides real dependencies.
 \item When including headers for more special services, it's
       good to add a comment why this header file is needed.
 \end{itemize}
@@ -276,7 +280,7 @@ they address different target uses.
 \subsection{Directories}
 
 It's convenient to organize larger sets of source code into separate
-directories. For instance in ecasound, \emph{libecasound} and
+directories. For instance in Ecasound, \emph{libecasound} and
 \emph{ecatools} are in two separate directories.
 
 \subsection{File groups}
@@ -284,7 +288,7 @@ directories. For instance in ecasound, \emph{libecasound} and
 Although files are divided in directories and subdirectories, 
 there's still a need to logically group a set of source files based
 on their use and role in the overall design. As the use of C++ 
-namespaces is very limited in ecasound (to avoid portability
+namespaces is very limited in Ecasound (to avoid portability
 problems), filename prefixes are used for grouping files. Here's
 a short list of commonly used prefixes. 
 
@@ -302,7 +306,7 @@ MIDI input/output devices, handlers and controller code.
 \item[osc-*.\{cpp,h\}] 
 Oscillator and other controller sources.
 \item[qe*.\{cpp,h\}] 
-Generic prefix for files utilizing both Qt and ecasound libraries.
+Generic prefix for files utilizing both Qt and Ecasound libraries.
 \item[samplebuffer-*.\{cpp,h\}] 
 Routines and helper functions for processing audio data buffers.
 \end{description}
@@ -343,21 +347,21 @@ Here's a few general documentation guide lines:
 % ----------------------------------------------------------------------
 \section{Versioning}
 
-All ecasound releases have a distinct version number. The
+All Ecasound releases have a distinct version number. The
 version number syntax is \emph{x.y[.z][-extraT}, where \emph{x} and
 \emph{y} are the major and minor numbers, and \emph{z} is an optional
 revision number. To test major changes, separate \emph{-preX} or 
 \emph{-rcX} versions can be distributed before the actual new 
 release.
 
-In addition, all ecasound libraries have a separate interface 
+In addition, all Ecasound libraries have a separate interface 
 version. The libtool-style \emph{version:revision:age} versioning
 is used. See the libtool documentation for details.
 
 One important thing to note is that the library interface version 
 numbers are tied to the source-code level interfaces, not the binary
 interfaces. Because binary interfaces are not explicitly versioned,
-applications should always statically link against the ecasound 
+applications should always statically link against the Ecasound 
 libraries. Also, any private source-code interfaces, ie. header
 files with a \emph{\_impl.h} postfix, are not part of the versioned
 public interface. Applications should not rely on these interfaces!
@@ -366,19 +370,19 @@ All changes in the public interfaces are documented in library
 specific \emph{ChangeLog} files. These files are usually located in the
 top-level source directory of the versioned library.
 
-One thing to note is that ecasound's versioning practises have 
+One thing to note is that Ecasound's versioning practises have 
 changed quite a few times during the project's history. The
-rules described above only apply to ecasound 2.2.0 and newer
+rules described above only apply to Ecasound 2.2.0 and newer
 releases.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\chapter{How ecasound works?}
+\chapter{How Ecasound works?}
 
 % ----------------------------------------------------------------------
 \section{Example use cases}
 
-Here's a fe common use cases how ecasound can be used.
+Here's a few common use cases how Ecasound can be used.
 
 \subsection{Simple non-interactive processing}
 
@@ -409,7 +413,7 @@ more non-realtime inputs routed to a realtime output.
 You could also route your realtime input to the monitoring
 chain, but this is not recommended because of severe
 timing problems. To synchronize these two separate chains,
-ecasound uses a special multitrack mode (which should be
+Ecasound uses a special multitrack mode (which should be
 enabled automatically).
 
 \subsection{Recycling a signal through external devices}
@@ -421,7 +425,7 @@ connected.
 % ----------------------------------------------------------------------
 \section{Audio signal routing}
 
-Basic audio flow inside an ecasound chainsetup is as follows: Audio 
+Basic audio flow inside an Ecasound chainsetup is as follows: Audio 
 data is routed from input audio objects to a group of chains. In
 the chains audio data is processed using chain operators. After
 processing data is routed to output objects.
@@ -441,7 +445,7 @@ multiple chains is mixed together to one output object.
 
 \subsection{Batch operation}
 
-When ecasound is run in batch mode, the program flow is simple.
+When Ecasound is run in batch mode, the program flow is simple.
 To store the session data, a ECA\_SESSION object is first
 created. The created object is then passed as an argument for
 ECA\_CONTROL class constructor.
@@ -495,7 +499,7 @@ a higher level of interface stability.
 
 ECA\_CONTROL represents the whole public interface offered by 
 libecasound. The primary purpose of ECA\_CONTROL is to offer a 
-consistent, straightforward interface for controlling ecasound. 
+consistent, straightforward interface for controlling Ecasound. 
 The interface is also designed to be more stable than other 
 parts of the library.
 
@@ -687,10 +691,10 @@ modifying the core classes.
 
 \subsection{eca-logger.h - ECA\_LOGGER}
 
-Singleton class that provides an interface to ecasound's logging 
+Singleton class that provides an interface to Ecasound's logging 
 subsystem. Libecasound sends all log messages to this interface. 
 The actual logger implementation can be done in many ways. For example 
-in the console mode user-interface of ecasound, TEXTDEBUG class 
+in the console mode user-interface of Ecasound, TEXTDEBUG class 
 implements the ECA\_LOGGER\_INTERFACE class interface. It sends all 
 messages that have a suitable debug level to the console's standard 
 output. On the other hand, in qtecasound, ECA\_LOGGER\_INTERFACE is 
@@ -722,7 +726,7 @@ of whole object types. They provide the following services:
 
 \end{itemize}
 
-In ecasound, all access to object maps goes throuh the library-wide
+In Ecasound, all access to object maps goes throuh the library-wide
 ECA\_OBJECT\_FACTORY class, which provides a set of static functions
 to access the object maps.
 
@@ -743,17 +747,17 @@ All objects defined in libecasound are registered in the file
 
 \subsection{eca-object.h - ECA\_OBJECT}
 
-A virtual base class that represents an ecasound object. All objects
+A virtual base class that represents an Ecasound object. All objects
 handled by the object factory must inherit this class.
 
 \subsection{eca-object-factory.h - ECA\_OBJECT\_FACTORY}
 
-The public interface to ecasound's object maps. All its functions
+The public interface to Ecasound's object maps. All its functions
 are static.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\chapter{Adding new features and components to ecasound?}
+\chapter{Adding new features and components to Ecasound?}
 
 % ----------------------------------------------------------------------
 \section{Things to remember when writing new C++ classes}
@@ -793,7 +797,7 @@ categories: 1) attributes (describes the object and its capabilities),
 functionality (open, close, input, output, etc) and 4) runtime
 information (status info).
 
-Adding the new object to ecasound is much like adding a new effect
+Adding the new object to Ecasound is much like adding a new effect
 (see the next section). Basicly you just add it to the makefiles and
 then register it to the appropriate object map (see below).
 
@@ -824,9 +828,9 @@ process and a default constructor) and add your source files to
 libecasound's makefiles. Then all that's left to do is to add your
 effect to \emph{libecasound/eca-static-object-maps.cpp},
 \emph{register\_default\_objects()}. Now the new effect can be used just 
-like any other ecasound effect (parameters control, effect presets, etc).
+like any other Ecasound effect (parameters control, effect presets, etc).
 
-Another way to add effects to ecasound is to write them as LADSPA
+Another way to add effects to Ecasound is to write them as LADSPA
 plugins. The API is well documented and there's plenty of
 example code available. See \texttt{www.ladspa.org} 
 for more information.
@@ -837,7 +841,7 @@ for more information.
 
 Design-wise, audio objects and effects (chain operators) aren't that 
 far away from each other. Many audio apps don't separate these
-concepts at all (for instance most UG based synthesizers). In ecasound 
+concepts at all (for instance most UG based synthesizers). In Ecasound 
 though, there are some differences:
 
 Input/output:
@@ -853,7 +857,7 @@ Audio format:
 \item  audio objects have a distinct audio format (sample rate, bits,
      channels)
 \item  effects should be capable of accepting audio data in any format
-     (this is usually easy as ecasound converts all input data to its
+     (this is usually easy as Ecasound converts all input data to its
      internal format)
 \end{itemize}
 
@@ -892,12 +896,12 @@ more info about LADSPA. Other useful sites are
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\chapter{Application development using the ecasound framework}
+\chapter{Application development using the Ecasound framework}
 
 % ----------------------------------------------------------------------
 \section{Console mode ecasound - {[}all languages{]}}
 
-This is the easiest way to take advantage of ecasound features in your
+This is the easiest way to take advantage of Ecasound features in your
 own programs. You can fork ecasound, pipe commands to ecasound's
 interactive mode or you can create chainsetup (.ecs) files and load
 them to ecasound. You'll be able to do practically anything. The only 
@@ -915,7 +919,7 @@ Idea behind Ecasound Control Interface (ECI) is to take a subset of
 functionality provided by libecasound, write a simple API for it, and
 port it to various languages. At the moment, at least C++, C and
 Python implementations of the ECI API are available and part of the
-main ecasound distribution. ECI is heavily based on the Ecasound
+main Ecasound distribution. ECI is heavily based on the Ecasound
 Interactive Mode (EIAM), and the services it provides. 
 
 Specific tasks ECI is aimed at:
@@ -929,7 +933,7 @@ Specific tasks ECI is aimed at:
 % ----------------------------------------------------------------------
 \section{NetECI - {[}various{]}}
 
-NetECI is a network version of the ECI API. When ecasound is
+NetECI is a network version of the ECI API. When Ecasound is
 started in daemon mode (the --daemon option), it creates 
 a server for incoming TCP connections. Client applications
 can connect to this socket and use the connection to 
@@ -952,8 +956,8 @@ not recommended anymore! Please use the Ecasound Control Interface
 (ECI) instead.
 
 By linking your program to libecasound, you can use the ECA\_CONTROL
-class for controlling ecasound. This is a large interface class that
-offers routines for controlling all ecasound features. It's easy
+class for controlling Ecasound. This is a large interface class that
+offers routines for controlling all Ecasound features. It's easy
 to use while still powerful. Best examples are the utils in ecatools 
 directory (most of them are just a couple screenfuls of code). Also, 
 qtecasound and ecawave heavily use ECA\_CONTROL. Here's a few lines of 
@@ -995,7 +999,7 @@ ctrl.run(); // blocks until processing is finished
 not recommended anymore! Please use the Ecasound Control Interface
 (ECI) instead.
  
-You can also use individual ecasound classes directly.
+You can also use individual Ecasound classes directly.
 This means more control, but it also means more work. Here's
 another short sample:
 
@@ -1018,7 +1022,7 @@ another short sample:
 \label{Ecasound Interactive Mode - Well-Formed Output Mode}
 
 By issuing the EIAM command ``int-output-mode-wellformed'', 
-ecasound will start printing all messages using the following
+Ecasound will start printing all messages using the following
 format:
 
 % FIXME: write this using rfc-style ABNF (see RFC2234)

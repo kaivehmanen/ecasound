@@ -27,6 +27,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: pyecasound - the native python impl (ecacontrol.py)
 		   now returns an error if communication with the
                    ecasound process times out
+	- changed: html versions of programmer's, user's and ECI 
+                   developer's guide are generated with Hevea instead
+		   of latex2html [juekawa]
         - fixed: makefile errors when building against system libreadline
         - fixed: processing did not start in the default transport mode
 	  	 with JACK versions 0.80 and older
