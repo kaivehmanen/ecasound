@@ -1,7 +1,11 @@
+2004-12-14  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* kvu_value_queue.h (VALUE_QUEUE_RT_C): Added.
+
 2004-12-12  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
-	* kvu_utils.cpp (kvu_vector_search_and_replace): Added.
-	* kvu_utils.cpp (kvu_string_shell_meta_escape): Added.
+	* kvu_utils.h (kvu_vector_search_and_replace): Added.
+	* kvu_utils.h (kvu_string_shell_meta_escape): Added.
 	* library version changed to 7:0:3
 	
 2003-08-29  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
@@ -10,7 +14,7 @@
 
 2003-05-29  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
-	* kvu_rtcaps.cpp (kvu_set_thread_scheduling): added
+	* kvu_rtcaps.h (kvu_set_thread_scheduling): added
 	* library version changed to 6:0:2
 	
 2003-02-13  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
@@ -42,9 +46,9 @@
 
 2002-06-28  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
-	* kvu_com_line.cpp (COMMAND_LINE): iterators
+	* kvu_com_line.h (COMMAND_LINE): iterators
 	functions to const members
-	* kvu_com_line.cpp (COMMAND_LINE): added 
+	* kvu_com_line.h (COMMAND_LINE): added 
 	constructor that takes 'void' as its argument
 
 2002-04-29  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
@@ -151,7 +155,7 @@
 	
 2000-04-11  Kai Vehmanen  <kaiv@.devtag.AUTHORS>	
 
-	* kvutils.cpp (print_time_stamp): added
+	* kvutils.h (print_time_stamp): added
 	* library version changed to 1:0:0
 	
 2000-03-24  Kai Vehmanen  <kaiv@.devtag.AUTHORS>	
