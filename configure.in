@@ -220,12 +220,12 @@ if test x$termcap_library = xtermcap; then
 fi
 if test x$termcap_library = xncurses; then
 	AC_CHECK_HEADER(curses.h,
-	 	AC_CHECK_HEADER(term.h,, AC_MSG_ERROR([*** curses headers not installed ***])),
-    	  		AC_CHECK_HEADER(ncurses/curses.h, [ 
-           			AC_CHECK_HEADER(ncurses/term.h,, AC_MSG_ERROR([*** curses headers not installed ***]))
-             			CXXFLAGS="-DHAVE_NCURSES_CURSES_H $CXXFLAGS"
-      	     			],
-      	   			AC_MSG_ERROR([*** curses headers not installed ***]))
+               [AC_CHECK_HEADER(term.h,, [AC_MSG_ERROR([*** curses headers not installed ***])])],
+                       [AC_CHECK_HEADER(ncurses/curses.h, [ 
+                                AC_CHECK_HEADER(ncurses/term.h,, AC_MSG_ERROR([*** curses headers not installed ***]))
+                                CXXFLAGS="-DHAVE_NCURSES_CURSES_H $CXXFLAGS"
+                                        ],
+                                       AC_MSG_ERROR([*** curses headers not installed ***]))]
         )
 	AC_DEFINE(USE_NCURSES)
 fi
@@ -288,7 +288,7 @@ AC_ARG_ENABLE(alsa,
 alsa_support=no)
 AM_CONDITIONAL(COMPILE_ALSA, test x$alsa_support = xyes)
 if test x$alsa_support = xyes; then
-AC_CHECK_LIB(asound,snd_pcm_plug_open,AC_DEFINE(ALSALIB_060),
+AC_CHECK_LIB(asound,snd_pcm_delay,AC_DEFINE(ALSALIB_060),
 	AC_CHECK_LIB(asound,snd_pcm_channel_params,AC_DEFINE(ALSALIB_050),
 		AC_CHECK_LIB(asound,snd_pcm_capture_params,AC_DEFINE(ALSALIB_032),
 			AC_CHECK_LIB(asound,snd_pcm_record_params,
@@ -428,14 +428,13 @@ dnl
 AM_CONDITIONAL(SYSTEM_READLINE, test x$enable_sysreadline = xyes)
 if test x$enable_sysreadline = xyes; then
   AC_CHECK_HEADER(readline.h, readline_includes=/usr/include, 
-    AC_CHECK_HEADER(readline/readline.h,
-      readline_includes=/usr/include/readline,
-      AC_MSG_ERROR([*** readline headers not installed ***]))
-  )
+    [AC_CHECK_HEADER(readline/readline.h,
+		     readline_includes=/usr/include/readline,
+       [AC_MSG_ERROR([*** readline headers not installed ***])])])
   AC_CHECK_HEADER(history.h,,
-    AC_CHECK_HEADER(readline/history.h,,
-      AC_MSG_ERROR([*** readline history headers not installed ***]))
-  )
+     [AC_CHECK_HEADER(readline/history.h,,
+       AC_MSG_ERROR([*** readline history headers not installed ***]))])
+
   AC_CHECK_LIB(readline, main,, AC_MSG_ERROR([*** readline support not installed ***]))
   AC_CHECK_LIB(history, main,, AC_MSG_ERROR([*** readline history support not installed ***]))
   AC_SUBST(readline_includes)
