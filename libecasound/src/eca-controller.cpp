@@ -445,15 +445,28 @@ void ECA_CONTROLLER::edit_chainsetup(void) {
   // --------
   // require:
   assert(selected_chainsetup().empty() != true);
-  assert(connected_chainsetup() != selected_chainsetup());
   // --------
 
-  string origname = selected_chainsetup_rep->filename();
+  bool hot_swap = false;
+  bool restart = false;
+  if (connected_chainsetup() == selected_chainsetup()) {
+    hot_swap = true;
+    if (is_running()) restart = true;
+  }
+  string origname = selected_chainsetup_rep->name();
+  string origfilename = selected_chainsetup_rep->filename();
   string filename = string(tmpnam(NULL));
   filename += ".ecs";
 
+  if (hot_swap == true)
+    set_chainsetup_parameter("-n:cs-edit-temp");
+
   save_chainsetup(filename);
-  remove_chainsetup();
+
+  if (hot_swap == true)
+    set_chainsetup_parameter(string("-n:") + origname);
+  else
+    remove_chainsetup();
 
   string editori = "";
   if (resource_value("ext-text-editor-use-getenv") == "true") {
@@ -477,11 +490,36 @@ void ECA_CONTROLLER::edit_chainsetup(void) {
   }
   else {
     load_chainsetup(filename);
-    select_chainsetup(get_chainsetup_filename(filename)->name());
-    if (origname.empty() == false) {
-      set_chainsetup_filename(origname);
-    }
+    if (origfilename.empty() == false) set_chainsetup_filename(origfilename);
     remove(filename.c_str());
+
+    if (hot_swap == true) {
+      double pos = position_in_seconds_exact();
+      disconnect_chainsetup();
+      select_chainsetup("cs-edit-temp");
+      if (origfilename.empty() == false) set_chainsetup_filename(origfilename);
+      if (is_valid() == false) {
+	ecadebug->msg("(eca-controller) Can't connect; edited chainsetup not valid.");
+	select_chainsetup(origname);
+	connect_chainsetup();
+	ecasound_queue.push_back(ECA_PROCESSOR::ep_setpos, pos);
+	if (is_connected() == true) {
+	  if (restart == true) start();
+	}
+	select_chainsetup("cs-edit-temp");
+      }
+      else {
+	connect_chainsetup();
+	ecasound_queue.push_back(ECA_PROCESSOR::ep_setpos, pos);
+	if (is_connected() == true) {
+	  select_chainsetup(origname);
+	  remove_chainsetup();
+	  if (restart == true) start();
+	  select_chainsetup("cs-edit-temp");
+	  set_chainsetup_parameter(string("-n:") + origname);
+	}
+      }
+    }
   }
 }
 

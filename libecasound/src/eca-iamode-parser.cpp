@@ -261,7 +261,6 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
 bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) { 
   switch(id) {
   case ec_direct_option:
-  case ec_cs_edit:
   case ec_cs_remove:
   case ec_cs_length:
   case ec_cs_loop:

@@ -103,11 +103,12 @@ void ECA_PROCESSOR::init(void) {
 }
 
 void ECA_PROCESSOR::init_connection_to_chainsetup(void) {
-  if (eparams->is_selected_chainsetup_connected() == false) {
-    throw(new ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, no chainsetup connected to session!"));
+  csetup = eparams->connected_chainsetup;
+
+  if (csetup == 0 ) {
+    throw(new ECA_ERROR("ECA_PROCESSOR", "Engine startup aborted, no chainsetup connected!"));
   }
 
-  csetup = eparams->connected_chainsetup;
   inputs = eparams->inputs;
   outputs = eparams->outputs;
   chains = eparams->chains;
@@ -314,6 +315,7 @@ void ECA_PROCESSOR::exec_normal_iactive(void) {
     // Mix from chains to outputs.
     // ---
     mix_to_outputs();
+    trigger_outputs();
     posthandle_control_position();
   }
 }
@@ -611,14 +613,11 @@ void ECA_PROCESSOR::interpret_queue(void) {
     // ---            
     case ep_exit:
       {
+	while(ecasound_queue.is_empty() == false) ecasound_queue.pop_front();
 	ecadebug->msg(2,"(eca-main) ecasound_queue: exit!");
 	stop();
 	end_request = true;
-	while(ecasound_queue.is_empty() == false) {
-	  ecasound_queue.pop_front();
-	  return;
-	}
-	break;
+	return;
       }
     case ep_start: { start(); break; }
     case ep_stop: { stop(); break; }

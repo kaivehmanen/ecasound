@@ -122,7 +122,7 @@ string print_header(void)
   MESSAGE_ITEM mout;
 
   mout << "****************************************************************************\n";
-  mout << "*                [1mecasound " << ecasound_version << " (C) 1997-1999 Kai Vehmanen[0m            *\n";
+  mout << "*                [1mecasound " << ecasound_version << " (C) 1997-2000 Kai Vehmanen[0m            *\n";
   mout << "****************************************************************************\n";
   
   return(mout.to_string());

@@ -15,6 +15,7 @@ class ECA_FILE_IO_STREAM : public ECA_FILE_IO {
   long int bytes_rep;
 
   string mode_rep;
+  bool standard_mode;
    
  public:
 

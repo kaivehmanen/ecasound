@@ -20,6 +20,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <errno.h>
 #include <unistd.h>
 #include <sys/mman.h>
 
@@ -42,20 +43,23 @@ void ECA_FILE_IO_STREAM::open_file(const string& fname,
   else {
     mode_rep = fmode;
   }
+  standard_mode = false;
 }
 
 void ECA_FILE_IO_STREAM::open_stdin(void) { 
   f1 = stdin;
   mode_rep = "rb";
+  standard_mode = true;
 }
 
 void ECA_FILE_IO_STREAM::open_stdout(void) { 
   f1 = stdout;
   mode_rep = "wb";
+  standard_mode = true;
 }
 
 void ECA_FILE_IO_STREAM::close_file(void) { 
-  fclose(f1); 
+  if (standard_mode == false) fclose(f1);
   mode_rep = "";
 }
 
@@ -63,8 +67,7 @@ void ECA_FILE_IO_STREAM::read_to_buffer(void* obuf, long int bytes) {
   bytes_rep = fread(obuf, 1, bytes, f1);
 }
 
-void ECA_FILE_IO_STREAM::write_from_buffer(void* obuf, long int
-					   bytes) { 
+void ECA_FILE_IO_STREAM::write_from_buffer(void* obuf, long int bytes) { 
   bytes_rep = fwrite(obuf, 1, bytes, f1);
 }
 
@@ -82,20 +85,27 @@ bool ECA_FILE_IO_STREAM::is_file_error(void) const {
 }
 
 void ECA_FILE_IO_STREAM::set_file_position(long int newpos) { 
-  fseek(f1, newpos, SEEK_SET);
+  if (f1 != stdin && f1 != stdout)
+    fseek(f1, newpos, SEEK_SET);
 }
 
 void ECA_FILE_IO_STREAM::set_file_position_advance(long int fw) { 
-  fseek(f1, fw, SEEK_CUR);
+  if (standard_mode == false)
+    fseek(f1, fw, SEEK_CUR);
 }
 
 void ECA_FILE_IO_STREAM::set_file_position_end(void) { 
-  fseek(f1, 0, SEEK_END);
+  if (standard_mode == false)
+    fseek(f1, 0, SEEK_END);
 }
 
-long int ECA_FILE_IO_STREAM::get_file_position(void) const { return(ftell(f1)); }
+long int ECA_FILE_IO_STREAM::get_file_position(void) const { 
+  if (standard_mode == false) return(ftell(f1));
+  return(0);
+}
 
 long int ECA_FILE_IO_STREAM::get_file_length(void) const {
+  if (standard_mode == true) return(0);
   long int savetemp = ftell(f1);
   fseek(f1, 0, SEEK_END);
   long int lentemp = ftell(f1);

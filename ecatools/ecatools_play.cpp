@@ -96,7 +96,7 @@ void print_usage(void) {
   cerr << "* [1mecatools_play, " << ecatools_play_version;
   cerr << " (linked to ecasound " << ecasound_version 
        << ")\n";
-  cerr << "* (C) 1997-1999 Kai Vehmanen, released under GPL licence[0m \n";
+  cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence[0m \n";
   cerr << "****************************************************************************\n";
 
   cerr << "\nUSAGE: ecatools_play file1 [ file2, ... fileN ]\n\n";

@@ -149,7 +149,7 @@ void print_usage(void) {
   cerr << "* [1mecatools_normalize, " << ecatools_normalize_version;
   cerr << " (linked to ecasound " << ecasound_version 
        << ")\n";
-  cerr << "* (C) 1997-1999 Kai Vehmanen, released under GPL licence[0m \n";
+  cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence[0m \n";
   cerr << "****************************************************************************\n";
 
   cerr << "\nUSAGE: ecatools_normalize file1 [ file2, ... fileN ]\n\n";

@@ -76,7 +76,7 @@ void RAWFILE::open(void) {
     {
       fio = new ECA_FILE_IO_STREAM();
       if (label().at(0) == '-') {
-	cerr << "(audioio-raw) Outputting to standard output.\n";
+	cerr << "(audioio-raw) Outputting to standard output [r].\n";
 	fio->open_stdout();
       }
       else {
@@ -88,7 +88,7 @@ void RAWFILE::open(void) {
     {
       fio = new ECA_FILE_IO_STREAM();
       if (label().at(0) == '-') {
-	cerr << "(audioio-raw) Outputting to standard output.\n";
+	cerr << "(audioio-raw) Outputting to standard output [rw].\n";
 	fio->open_stdout();
       }
       else {

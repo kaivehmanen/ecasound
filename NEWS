@@ -18,11 +18,13 @@ Last officially released version is -*> v1.6.9r9 <*-
 	- added: -ef4 - 2th-order, 24dB filter which simulates
 	         an analog active RC-lowpass filter - submitted by 
 		 Stefan Fendt
+	- changed: 'cs-edit' now possible while processing
 	- fixed: removed the huge delay in (dis)connecting 
 		 chainsetups
 	- fixed: 'fw', 'rw', 'setpos' crashed if executed without
 		 parameters 
 	- fixed: under/overrun problems with ALSA drivers
+	- fixed: stdin/stdout not working
 03012000 (v1.6.10d10)
 	- added: a realtime null audio device 'rtnull' - simulates
 		 soundcard behaviour (warns about over/underruns)
