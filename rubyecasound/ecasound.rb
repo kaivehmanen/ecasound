@@ -94,7 +94,7 @@ class ControlInterface
             # child
             # stderr has to be redirected to avoid buffering problems 
             $stderr.reopen(open("/dev/null", "w"))
-            exec("#{@@ecasound} -c -D -d:256" + args)
+            exec("#{@@ecasound} -c -D -d:256 " + args)
         else
             # parent
             command("int-output-mode-wellformed")
@@ -154,7 +154,7 @@ class ControlInterface
         while select([@ecapipe], nil, nil, 0)
             buffer = buffer + @ecapipe.read(1)
         end
-        buffer
+        return buffer
     end
 end # ControlInterface
 
