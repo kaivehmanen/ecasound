@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // audioio-resample.cpp: A proxy class that resamples the child 
 //                       object's data.
-// Copyright (C) 2002,2003 Kai Vehmanen
+// Copyright (C) 2002-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +36,8 @@
 /**
  * Constructor.
  */
-AUDIO_IO_RESAMPLE::AUDIO_IO_RESAMPLE (void)
+AUDIO_IO_RESAMPLE::AUDIO_IO_RESAMPLE (void) 
+  : sbuf_rep(buffersize(), 0)
 {
   init_rep = false;
   quality_rep = 50;
@@ -52,12 +56,12 @@ AUDIO_IO_RESAMPLE* AUDIO_IO_RESAMPLE::clone(void) const
   for(int n = 0; n < number_of_params(); n++) {
     target->set_parameter(n + 1, get_parameter(n + 1));
   }
-  return(target);
+  return target;
 }
 
 void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-resample) open " + label() + ".");  
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "open " + label() + ".");  
 
   if (init_rep != true) {
     AUDIO_IO* tmp = 0;
@@ -104,11 +108,12 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   }
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-	      "(audioio-resample) open(); psfactor=" + kvu_numtostr(psfactor_rep) +
+	      "open(); psfactor=" + kvu_numtostr(psfactor_rep) +
 	      ", child_srate=" + kvu_numtostr(child_srate_rep) +
 	      ", srate=" + kvu_numtostr(samples_per_second()) +
-	      ", bsize=" + kvu_numtostr(child_buffersize_rep) + ".");
-    
+	      ", bsize=" + kvu_numtostr(buffersize()) +
+	      ", c-bsize=" + kvu_numtostr(child_buffersize_rep) + ".");
+
   /* note, we don't use pre_child_open() as 
    * we want to set srate differently */
   child()->set_buffersize(child_buffersize_rep);
@@ -125,6 +130,11 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     set_samples_per_second(orig_srate);
   }
 
+  sbuf_rep.length_in_samples(buffersize());
+  sbuf_rep.number_of_channels(channels());
+  sbuf_rep.resample_init_memory(child_srate_rep, samples_per_second());
+  sbuf_rep.resample_set_quality(quality_rep);
+    
   set_label(child()->label());
   set_length_in_samples(child()->length_in_samples());
 
@@ -140,19 +150,19 @@ void AUDIO_IO_RESAMPLE::close(void)
 
 bool AUDIO_IO_RESAMPLE::finished(void) const
 {
-  return(child()->finished());
+  return child()->finished();
 }
 
 string AUDIO_IO_RESAMPLE::parameter_names(void) const
 {
-  return(string("resample,srate,") + child()->parameter_names()); 
+  return string("resample,srate,") + child()->parameter_names();
 }
 
 void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
 {
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-	      "(audioio-resample) set_parameter " + label() +
+	      "set_parameter " + label() +
 	      " to value " + value + ".");  
 
   /* total of n+1 params, where n is number of childobj params */
@@ -165,6 +175,9 @@ void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
       if (value == "resample-hq") {
 	quality_rep = 100;
       }
+      else if (value == "resample-lq") {
+	quality_rep = 5;
+      }
       else {
 	quality_rep = 50;
       }
@@ -173,17 +186,19 @@ void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
       if (value == "auto") {
 	child_srate_rep = 0;
 	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		  "(audioio-resample) resampling with automatic detection of child srate");
+		  "resampling with automatic detection of child srate");
       }
       else {
 	child_srate_rep = std::atoi(value.c_str());
 	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		  "(audioio-resample) resampling w/ child srate of " + 
+		  "resampling w/ child srate of " + 
 		  kvu_numtostr(child_srate_rep));
       }
     }
   }
   
+  sbuf_rep.resample_set_quality(quality_rep);
+
   if (param > 2 && init_rep == true) {
     child()->set_parameter(param - 2, value);
   }
@@ -192,22 +207,22 @@ void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
 string AUDIO_IO_RESAMPLE::get_parameter(int param) const
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"(audioio-resample) get_parameter " + label() + ".");
+		"get_parameter " + label() + ".");
 
   if (param > 0 && param < static_cast<int>(params_rep.size()) + 1) {
     if (param > 2 && init_rep == true) {
       params_rep[param - 1] = child()->get_parameter(param - 2);
     }
-    return(params_rep[param - 1]);
+    return params_rep[param - 1];
   }
 
-  return(""); 
+  return "";
 }
 
 void AUDIO_IO_RESAMPLE::seek_position(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"(audioio-resample) seek_position " + kvu_numtostr(position_in_samples()) + ".");
+		"seek_position " + kvu_numtostr(position_in_samples()) + ".");
   child()->seek_position_in_samples(position_in_samples());
 
   AUDIO_IO_PROXY::seek_position();
@@ -226,41 +241,21 @@ void AUDIO_IO_RESAMPLE::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
 void AUDIO_IO_RESAMPLE::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 {
   AUDIO_IO::set_samples_per_second(v);
-
   /* the child srate is only set in open */
 }
 
 void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* sbuf)
 {
-  /* FIXME: add temp buffer with preallocated mem area */
-
-  child()->read_buffer(sbuf);
-
-  /* FIXME: not really rt-safe: */
-  sbuf->resample_init_memory(child_srate_rep, samples_per_second());
-
-  sbuf->resample_set_quality(quality_rep);
-  sbuf->resample(child_srate_rep, samples_per_second());
-
-  /* FIXME: the rabbit-code may sometimes a length of blen-1 */
-  // DBC_CHECK(sbuf->length_in_samples() == buffersize());
-  //
-  // if (sbuf->length_in_samples() != buffersize()) {
-  //   std::cerr << "sbuf->length_in_samples()=" << sbuf->length_in_samples() << std::endl;
-  //   std::cerr << "buffersize()" << buffersize() << std::endl;
-  // }
-
+  /* read sample buffer */
+  child()->read_buffer(&sbuf_rep);
+  /* resample and copy to sbuf */
+  sbuf_rep.resample(child_srate_rep, samples_per_second());
+  sbuf->copy(sbuf_rep);
   change_position_in_samples(sbuf->length_in_samples());
 }
 
 void AUDIO_IO_RESAMPLE::write_buffer(SAMPLE_BUFFER* sbuf)
 {
-  /* FIXME: add temp buffer with preallocated mem area */
-
-  /* FIXME: not really rt-safe: */
-  sbuf->resample_init_memory(samples_per_second(), child_srate_rep);
-  sbuf->resample_set_quality(quality_rep);
-  sbuf->resample(samples_per_second(), child_srate_rep);
-  child()->write_buffer(sbuf);
+  /* FIXME: not implemented */
   change_position_in_samples(sbuf->length_in_samples());
 }

@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 
+#include "samplebuffer.h"
 #include "audioio-proxy.h"
 
 /**
@@ -105,6 +106,7 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
   long int child_buffersize_rep;
   float psfactor_rep;
   int quality_rep;
+  SAMPLE_BUFFER sbuf_rep;
 
   AUDIO_IO_RESAMPLE& operator=(const AUDIO_IO_RESAMPLE& x) { return *this; }
   AUDIO_IO_RESAMPLE (const AUDIO_IO_RESAMPLE& x) { }
