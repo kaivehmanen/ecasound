@@ -93,7 +93,6 @@ void *mthread_process_chains(void* params) {
 	    // --
 	    (*outputs)[audioslot_sizet]->write_buffer(&(*chains)[n]->audioslot);
 	    if ((*outputs)[audioslot_sizet]->finished() == true) ecamain->output_finished = true;
-	    break;
 	  }
 	  else {
 	    ++count;
