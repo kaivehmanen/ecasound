@@ -183,7 +183,7 @@ void clean_exit(int n) {
   if (global_control_deleted == false) {
     global_control_deleted = true;
     if (global_pointer_to_ecacontrol != 0) {
-      global_pointer_to_ecacontrol->~ECA_CONTROL();
+      delete global_pointer_to_ecacontrol;
       global_pointer_to_ecacontrol = 0;
     }
   }
@@ -191,14 +191,14 @@ void clean_exit(int n) {
   if (global_engine_deleted == false) {
     global_engine_deleted = true;
     if (global_pointer_to_ecaengine != 0) {
-      global_pointer_to_ecaengine->~ECA_ENGINE();
+      delete global_pointer_to_ecaengine;
       global_pointer_to_ecaengine = 0;
     }
   }
   if (global_session_deleted == false) {
     global_session_deleted = true;
     if (global_pointer_to_ecasession != 0) {
-      global_pointer_to_ecasession->~ECA_SESSION();
+      delete global_pointer_to_ecasession;
       global_pointer_to_ecasession = 0;
     }
   }

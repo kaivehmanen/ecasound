@@ -19,7 +19,6 @@ list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 
 2.x series:
 
-- MIDI-subsystem updates [finished; continues with 2.1devX]
 - aim is to make the 2.0.x releases binary-compatible
 
 2.2 (2.1devX series):

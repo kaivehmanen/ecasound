@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 051001) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 061001) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,8 +17,8 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.3 *-
 
-??0?2001 (v2.1.0)
-	- edi-entries: edi-6, edi-15
+06102001 (v2.1.0)
+	- edi-entries: edi-2, edi-6, edi-10, edi-15
 	- added: more recent config.guess and config.sub to 
 	         the dist package  [juekawa]
 	- added: new feedback-% param to -etd effect, doesn't
@@ -41,6 +41,15 @@ Last officially released version is -*> v2.0.3 *-
 		 obsoletes old default-buffersize, etc options
 	- added: various improvements to multitrack sync-mechanism 
 		 to make it work reliably in all buffering modes
+	- added: ladspa.h added back to distribution; it is however
+		 not installed to incdir/ecasound/ladspa; also 
+		 already installed ladspa.h is preferred over
+		 the local header file version
+	- added: S.Massy's ecalength added to ecatools - 
+		 see ecalength(1) manual page (edi-10)
+	- added: new 'typeselect' audio object type that can 
+		 be used to override the object type; see 
+		 man ecasound(1) for details
 	- changed: library version changed to 8.0.0
 	- changed: use of kvutils/definition_by_contract 
 		   dropped; more lightweight kvutils/dbc.h
