@@ -119,6 +119,7 @@ void ECA_IAMODE_PARSER::register_commands_misc(void)
   (*cmd_map_repp)["map-cop-list"] = ec_map_cop_list;
   (*cmd_map_repp)["map-preset-list"] = ec_map_preset_list;
   (*cmd_map_repp)["map-ladspa-list"] = ec_map_ladspa_list;
+  (*cmd_map_repp)["map-ladspa-id-list"] = ec_map_ladspa_id_list;
   (*cmd_map_repp)["map-ctrl-list"] = ec_map_ctrl_list;
 }
 

@@ -590,7 +590,8 @@ void ECA_CONTROL::action(int action_id)
 
   case ec_map_cop_list: { cop_descriptions(); break; }
   case ec_map_preset_list: { preset_descriptions(); break; }
-  case ec_map_ladspa_list: { ladspa_descriptions(); break; }
+  case ec_map_ladspa_list: { ladspa_descriptions(false); break; }
+  case ec_map_ladspa_id_list: { ladspa_descriptions(true); break; }
   case ec_map_ctrl_list: { ctrl_descriptions(); break; }
 
   // ---
@@ -1171,10 +1172,15 @@ void ECA_CONTROL::preset_descriptions(void)
  * Prints the description of all LADSPA plugins and 
  * their parameters.
  */
-void ECA_CONTROL::ladspa_descriptions(void)
+void ECA_CONTROL::ladspa_descriptions(bool use_id)
 {
   string result;
-  operator_descriptions_helper(ECA_OBJECT_FACTORY::ladspa_plugin_map(), &result);
+  if (use_id) {
+    operator_descriptions_helper(ECA_OBJECT_FACTORY::ladspa_plugin_id_map(), &result);
+  }
+  else {
+    operator_descriptions_helper(ECA_OBJECT_FACTORY::ladspa_plugin_map(), &result);
+  }
   set_last_string(result);
 }
 

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (20.08.2003)
+       (15.01.2004)
        ()
        (Multimedia software)
 
@@ -515,6 +515,11 @@ the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
 dit(map-ladspa-list)
 Prints a list of registered LADSPA plugins using 
 the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
+
+dit(map-ladspa-id-list)
+Prints a list of registered LADSPA plugins using 
+the format specified in section em(OPERATOR DESCRIPTIONS). 
+Numerical LADPSA plugin identifiers are used. em([s])
 
 dit(map-ctrl-list)
 Prints a list of registered controllers using 

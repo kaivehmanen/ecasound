@@ -146,6 +146,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_map_cop_list,
     ec_map_preset_list,
     ec_map_ladspa_list,
+    ec_map_ladspa_id_list,
     ec_map_ctrl_list,
     // --
     ec_dump_target,
