@@ -66,7 +66,7 @@ void ECA_PRESET_MAP::load_preset_file(const string& fname)
   }
 }
 
-void ECA_PRESET_MAP::register_object(const string& keyword, const string& matchstr, PRESET* object)
+void ECA_PRESET_MAP::register_object(const string& keyword, const string& matchstr, ECA_OBJECT* object)
 {
   if (find(preset_keywords_rep.begin(), preset_keywords_rep.end(), keyword) == preset_keywords_rep.end())
     preset_keywords_rep.push_back(keyword);

@@ -120,7 +120,7 @@ bool PRESET::is_parsed(void) const
   return(impl_repp->parsed_rep); 
 }
 
-void PRESET::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void PRESET::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   if (param > 0 && param <= static_cast<int>(impl_repp->pardesclist_rep.size()))
     *pd = *impl_repp->pardesclist_rep[param - 1];

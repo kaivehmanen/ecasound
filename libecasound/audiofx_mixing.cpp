@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_mixing.cpp: Effects for channel mixing and routing
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <assert.h>
+#include <kvu_dbc.h>
 
 #include "samplebuffer_iterators.h"
 #include "audiofx_mixing.h"
@@ -27,19 +27,21 @@ EFFECT_MIXING::~EFFECT_MIXING(void)
 }
 
 EFFECT_CHANNEL_COPY::EFFECT_CHANNEL_COPY (parameter_t from, 
-					  parameter_t to) {
-
+					  parameter_t to)
+{
   set_parameter(1, from);
   set_parameter(2, to);
 }
 
-int EFFECT_CHANNEL_COPY::output_channels(int i_channels) const {
+int EFFECT_CHANNEL_COPY::output_channels(int i_channels) const
+{
   int c = static_cast<int>(to_channel > from_channel ? to_channel : from_channel);
   ++c;
   return(c > i_channels ? c : i_channels);
 }
 
-void EFFECT_CHANNEL_COPY::parameter_description(int param, struct PARAM_DESCRIPTION *pd) {
+void EFFECT_CHANNEL_COPY::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
   pd->default_value = 1;
   pd->description = get_parameter_name(param);
   pd->bounded_above = false;
@@ -52,22 +54,24 @@ void EFFECT_CHANNEL_COPY::parameter_description(int param, struct PARAM_DESCRIPT
   pd->output = false;
 }
 
-void EFFECT_CHANNEL_COPY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_CHANNEL_COPY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     from_channel = static_cast<ch_type>(value);
-    assert(from_channel > 0);
+    DBC_CHECK(from_channel > 0);
     from_channel--;
     break;
   case 2: 
     to_channel = static_cast<ch_type>(value);
-    assert(to_channel > 0);
+    DBC_CHECK(to_channel > 0);
     to_channel--;
     break;
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_COPY::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_COPY::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(from_channel + 1);
@@ -82,7 +86,8 @@ void EFFECT_CHANNEL_COPY::init(SAMPLE_BUFFER *insample) {
   t_iter.init(insample);
 }
 
-void EFFECT_CHANNEL_COPY::process(void) {
+void EFFECT_CHANNEL_COPY::process(void)
+{
   f_iter.begin(from_channel);
   t_iter.begin(to_channel);
   while(!f_iter.end() && !t_iter.end()) {
@@ -92,17 +97,20 @@ void EFFECT_CHANNEL_COPY::process(void) {
   }
 }
 
-EFFECT_MIX_TO_CHANNEL::EFFECT_MIX_TO_CHANNEL (parameter_t to) {
+EFFECT_MIX_TO_CHANNEL::EFFECT_MIX_TO_CHANNEL (parameter_t to)
+{
   set_parameter(1, to);
 }
 
-int EFFECT_MIX_TO_CHANNEL::output_channels(int i_channels) const {
+int EFFECT_MIX_TO_CHANNEL::output_channels(int i_channels) const
+{
   int c = static_cast<int>(to_channel);
   ++c;
   return(c > i_channels ? c : i_channels);
 }
 
-void EFFECT_MIX_TO_CHANNEL::parameter_description(int param, struct PARAM_DESCRIPTION *pd) {
+void EFFECT_MIX_TO_CHANNEL::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
   pd->default_value = 1;
   pd->description = get_parameter_name(param);
   pd->bounded_above = false;
@@ -119,13 +127,14 @@ void EFFECT_MIX_TO_CHANNEL::set_parameter(int param, CHAIN_OPERATOR::parameter_t
   switch (param) {
   case 1: 
     to_channel = static_cast<ch_type>(value);
-    assert(to_channel > 0);
+    DBC_CHECK(to_channel > 0);
     to_channel--;
     break;
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_MIX_TO_CHANNEL::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_MIX_TO_CHANNEL::get_parameter(int param) const
+{ 
   switch (param) {
   case 1: 
     return(to_channel + 1);
@@ -133,13 +142,15 @@ CHAIN_OPERATOR::parameter_t EFFECT_MIX_TO_CHANNEL::get_parameter(int param) cons
   return(0.0);
 }
 
-void EFFECT_MIX_TO_CHANNEL::init(SAMPLE_BUFFER *insample) { 
+void EFFECT_MIX_TO_CHANNEL::init(SAMPLE_BUFFER *insample)
+{
   i.init(insample);
   t_iter.init(insample);
   channels = insample->number_of_channels();
 }
 
-void EFFECT_MIX_TO_CHANNEL::process(void) {
+void EFFECT_MIX_TO_CHANNEL::process(void)
+{
   i.begin();
   t_iter.begin(to_channel);
   while(!t_iter.end() && !i.end()) {
@@ -153,7 +164,3 @@ void EFFECT_MIX_TO_CHANNEL::process(void) {
     t_iter.next();
   }
 }
-
-
-
-

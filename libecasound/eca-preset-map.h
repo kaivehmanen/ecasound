@@ -32,7 +32,7 @@ class ECA_PRESET_MAP : public ECA_OBJECT_MAP {
   /** @name Object registration */
   /*@{*/
 
-  virtual void register_object(const std::string& keyword, const std::string& matchstr, PRESET* object);
+  virtual void register_object(const std::string& keyword, const std::string& matchstr, ECA_OBJECT* object);
   virtual void unregister_object(const std::string& keyword);
 
   /*@}*/
