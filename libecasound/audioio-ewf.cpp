@@ -162,6 +162,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	child->read_buffer(&tmp_buffer);
 	assert(tmp_buffer.length_in_samples() == tail);
 	child->buffersize(save_bsize, child->samples_per_second());
+	sbuf->length_in_samples(buffersize());
 	sbuf->copy_range(tmp_buffer, 
 			 0,
 			 tmp_buffer.length_in_samples(), 
