@@ -685,5 +685,5 @@ fi
 
 echo "-------------------------------------------------------------------"
 echo "Type 'make' to compile the package and 'make install' to install."
-echo "Remember to use GNU Make, often installed as 'gmake'.
+echo "Remember to use GNU Make, often installed as 'gmake'."
 echo "-------------------------------------------------------------------"
