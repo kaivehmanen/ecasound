@@ -48,7 +48,6 @@
 #include "eca-error.h"
 #include "eca-logger.h"
 #include "eca-logger.h"
-#include "eca-comhelp.h"
 #include "eca-session.h"
 #include "eca-chainsetup.h"
 
@@ -383,11 +382,7 @@ bool ECA_SESSION::is_session_option(const std::string& arg) const
       arg[0] != '-') return(false);
 
   switch(arg[1]) {
-  case 'c':
-  case 'C':
-  case 'D':
   case 'd':
-  case 'h':
   case 'q':
     return(true);
 
@@ -466,10 +461,6 @@ void ECA_SESSION::interpret_general_option (const std::string& argu)
       ECA_LOG_MSG(ECA_LOGGER::info, mtempd.to_string());
       break;
     }
-
-  case 'h': // help!
-    std::cout << ecasound_parameter_help();
-    break;
 
   case 'q':
     ECA_LOGGER::instance().disable();

@@ -157,6 +157,9 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
 { 
   ECA_LOG_MSG(ECA_LOGGER::system_objects,"ECA_CHAINSETUP destructor!");
 
+  DBC_CHECK(is_locked() != true);
+  DBC_CHECK(is_enabled() != true);
+
   /* delete chain objects */
   for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
     ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting chain \"" + (*q)->name() + "\".");
