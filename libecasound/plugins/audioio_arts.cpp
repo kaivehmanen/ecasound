@@ -20,12 +20,13 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef COMPILE_ARTS
 
 #include "audioio-types.h"
-#include "audioio-arts.h"
 #include "eca-error.h"
 #include "eca-debug.h"
+
+#ifdef COMPILE_ARTS
+#include "audioio_arts.h"
 
 int ARTS_INTERFACE::ref_rep = 0;
 

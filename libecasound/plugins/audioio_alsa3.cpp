@@ -36,7 +36,7 @@
 
 #include "samplebuffer.h"
 #include "audioio-types.h"
-#include "audioio-alsa3.h"
+#include "audioio_alsa3.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"

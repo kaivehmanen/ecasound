@@ -26,7 +26,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (11.06.2000)
+       (06.07.2000)
        ()
        (Multimedia software)
 
@@ -99,6 +99,14 @@ startdit()
   	Configuration file for effect presets. Is located in the 
   	resource directory. Defaults to em(effect_presets).
 
+	dit(internal-plugin-directory)
+	Directory containing ecasound's internal plugins. Defaults to em((prefix-dir)/lib/ecasound-plugins).
+
+	dit(ladspa-plugin-directory)
+	Directory containing LADPSA effect plugins. Defaults to em(/usr/local/lib/ladspa).
+	If environment variable em(LADSPA_PATH) exists, directories
+	specified in it are automatically searched for plugins.
+
 	dit(ext-text-editor)
 	If em(ext-text-editor-use-getenv) is em(false) or "EDITOR" 
 	is null, value of this field is used. Defaults to em(pico).
@@ -127,11 +135,6 @@ startdit()
 
 	dit(ext-mikmod-args)
 	Additional options that are passed to mikmod. Defaults to em("-p 0 --noloops").
-
-	dit(ladspa-plugin-directory)
-	Directory containing LADPSA effect plugins. Defaults to em(/usr/local/lib/ladspa).
-	If environment variable em(LADSPA_PATH) exists, directories
-	specified in it are automatically searched for plugins.
 
 enddit()
 

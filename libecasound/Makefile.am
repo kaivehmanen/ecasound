@@ -1,25 +1,10 @@
-EXTRA_DIST = ChangeLog
+EXTRA_DIST = ChangeLog plugin-paths.h.in
 AUTOMAKE_OPTIONS = foreign
+SUBDIRS = plugins
 
 # ----------------------------------------------------------------------
 # defines
 # ----------------------------------------------------------------------
-
-if COMPILE_ARTS
-arts_libs = `artsc-config --libs`
-arts_cflags = `artsc-config --cflags`
-else
-arts_libs =
-arts_cflags =
-endif
-
-if COMPILE_ALSA
-alsa_libs = -lasound
-endif
-
-if COMPILE_AF
-af_libs = -laudiofile
-endif
 
 if KVUTILS_INSTALLED
 kvutils_libs =
@@ -39,7 +24,7 @@ else
 INSTALL_STRIP_FLAG = -s
 endif
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils $(arts_cflags)
+INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils
 
 if INCLUDE_DEBUG
 lib_LTLIBRARIES = libecasound_debug.la
@@ -68,6 +53,7 @@ ecasound_audiofx_include =  \
 			audiofx_vst.h
 
 ecasound_audioio_include = 	\
+			audioio-plugin.h
 			audioio-cdr.h \
 			audioio-cdr_impl.h \
 			audioio-ewf.h \
@@ -75,21 +61,14 @@ ecasound_audioio_include = 	\
 			audioio-mp3_impl.h \
 			audioio-wave.h \
 			audioio.h \
-			audioio-af.h \
 			audioio-raw.h \
 			audioio-oss.h \
 			audioio-oss_impl.h \
-			audioio-alsalb.h \
-			audioio-alsa.h \
 			audioio-null.h \
 			audioio-rtnull.h \
 			audioio-mikmod.h \
 			audioio-types.h \
-			audioio-alsa2.h \
-			audioio-alsa2-plugin.h \
-			audioio-alsa3.h \
-			audioio-loop.h \
-			audioio-arts.h
+			audioio-loop.h
 
 ecasound_controller_include = \
 			generic-controller.h \
@@ -153,7 +132,8 @@ ecasound_general_include = 	\
 			eca-audio-time.h \
 			preset.h \
 			file-preset.h \
-			global-preset.h
+			global-preset.h \
+			plugin-paths.h
 
 if FEELING_EXPERIMENTAL
 vst_header_files = AEffEditor.hpp AEffect.h aeffectx.h AudioEffect.hpp
@@ -186,27 +166,17 @@ ecasound_audiofx_src =  audiofx.cpp \
 
 ecasound_audioio_oss_src = audioio-oss.cpp
 
-ecasound_audioio_alsa_src = \
-			audioio-alsa.cpp \
-			audioio-alsa2.cpp \
-			audioio-alsa2-plugin.cpp \
-			audioio-alsa3.cpp \
-			audioio-alsalb.cpp
-
 ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-ewf.cpp \
 			audioio-mp3.cpp \
 			audioio-wave.cpp \
 			audioio.cpp \
-			audioio-af.cpp \
 			audioio-raw.cpp \
 			audioio-mikmod.cpp \
 			audioio-rtnull.cpp \
 			audioio-types.cpp \
 			audioio-loop.cpp \
-			audioio-arts.cpp \
-			$(ecasound_audioio_oss_src) \
-			$(ecasound_audioio_alsa_src)
+			$(ecasound_audioio_oss_src)
 
 ecasound_controller_src = \
 			generic-controller.cpp \
@@ -260,16 +230,16 @@ ecasound_common_src = 	$(ecasound_audiofx_src) \
 
 libecasound_la_SOURCES = $(ecasound_common_src)
 libecasound_debug_la_SOURCES = $(ecasound_common_src)
-libecasound_la_LIBADD = $(af_libs) $(alsa_libs) $(kvutils_libs)
+libecasound_la_LIBADD = $(kvutils_libs)
 libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
-libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags) $(arts_libs)
+libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
 
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(pkgincludedir)
 	cd $(srcdir) ; \
-	cp      $(ecasound_audiofx_src) \
-		$(ecasound_audioio_src) \
-		$(ecasound_controller_src) \
-		$(ecasound_general_src) $(vst_files) \
+	cp      $(ecasound_audiofx_include) \
+		$(ecasound_audioio_include) \
+		$(ecasound_controller_include) \
+		$(ecasound_general_include) \
 		$(DESTDIR)$(pkgincludedir)

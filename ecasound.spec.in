@@ -44,6 +44,14 @@ Requires: ecasound
 %description qt
 Qt-based X-interface to ecasound.
 
+%package plugins
+Summary: Additional ecasound plugins (ALSA, Audiofile, aRts).
+Group: X11/Applications/Sound
+Requires: ecasound
+
+%description plugins
+Additional ecasound plugins (ALSA, Audiofile, aRts).
+
 %prep
 %setup -n ecasound-@VERSION@
 %build
@@ -85,7 +93,14 @@ make strip-shared-libs
 /usr/local/bin/qtecasound
 /usr/local/lib/libqtecasound.*
 
+%files plugins
+%defattr(-, root, root)
+/usr/local/lib/ecasound-plugins
+
 %changelog
+* Wed Jul 06 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- Added the -plugins package.
+
 * Wed Jun 07 2000 Kai Vehmanen <kaiv@wakkanet.fi>
 - ecaconvert added to the package.
 

@@ -1,5 +1,9 @@
+/* Prefix path */
+const char* ecasound_prefix_path = "@prefix@";
+
 /* Package name */
 #undef PACKAGE
+
 /* Package version */
 #undef VERSION
 

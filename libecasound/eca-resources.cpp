@@ -20,6 +20,7 @@
 #include <string>
 #include <cstdlib>
 
+#include "plugin-paths.h"
 #include "eca-resources.h"
 
 ECA_RESOURCES::ECA_RESOURCES(void) :
@@ -52,5 +53,6 @@ void ECA_RESOURCES::set_defaults(void) {
   if (resource("ext-mikmod-path") == "") resource("ext-mikmod-path","mikmod");
   if (resource("ext-mikmod-args") == "") resource("ext-mikmod-args","-p 0 --noloops");
 
+  if (resource("internal-plugin-directory") == "") resource("internal-plugin-directory", ecasound_plugin_path);
   if (resource("ladspa-plugin-directory") == "") resource("ladspa-plugin-directory","/usr/local/lib/ladspa");
 }

@@ -60,22 +60,23 @@ extern "C" {
 #include "audioio-cdr.h"
 #include "audioio-wave.h"
 #include "audioio-oss.h"
-#include "audioio-arts.h"
 #include "audioio-ewf.h"
 #include "audioio-mp3.h"
 #include "audioio-mikmod.h"
-#include "audioio-alsa.h"
-#include "audioio-alsa2.h"
-#include "audioio-alsa3.h"
-#include "audioio-alsa2-plugin.h"
-#include "audioio-alsalb.h"
-#include "audioio-af.h"
 #include "audioio-raw.h"
 #include "audioio-null.h"
 #include "audioio-rtnull.h"
 
 #include "eca-resources.h"
 #include "eca-error.h"
+
+//  #include "audioio-arts.h"
+//  #include "audioio-alsa.h"
+//  #include "audioio-alsa2.h"
+//  #include "audioio-alsa3.h"
+//  #include "audioio-alsa2-plugin.h"
+//  #include "audioio-alsalb.h"
+//  #include "audioio-af.h"
 
 ECA_OBJECT_MAP eca_audio_object_map;
 ECA_OBJECT_MAP eca_audio_device_map;
@@ -140,10 +141,10 @@ void register_default_audio_objects(void) {
   eca_audio_object_map.register_object(".xm", mikmod);
 
 #ifdef COMPILE_AF
-  AUDIO_IO* af = new AUDIOFILE_INTERFACE();
-  eca_audio_object_map.register_object(".aif", af);
-  eca_audio_object_map.register_object(".au", af);
-  eca_audio_object_map.register_object(".snd", af);
+//    AUDIO_IO* af = new AUDIOFILE_INTERFACE();
+//    eca_audio_object_map.register_object(".aif", af);
+//    eca_audio_object_map.register_object(".au", af);
+//    eca_audio_object_map.register_object(".snd", af);
 #endif
 
   AUDIO_IO* device = 0;  
@@ -161,25 +162,25 @@ void register_default_audio_objects(void) {
 
 #if (defined ALSALIB_050 || defined ALSALIB_060)
 #ifdef ALSALIB_060
-  device = new ALSA_PCM_DEVICE();
+//    device = new ALSA_PCM_DEVICE();
 #else
-  device = new ALSA_PCM2_PLUGIN_DEVICE();
+//    device = new ALSA_PCM2_PLUGIN_DEVICE();
 #endif // ALSALIB_060
-  eca_audio_object_map.register_object("alsaplugin", device);
-  eca_audio_device_map.register_object("alsaplugin", device);
-  device = new ALSA_PCM_DEVICE();
-  eca_audio_object_map.register_object("alsa", device);
-  eca_audio_device_map.register_object("alsa", device);
+//    eca_audio_object_map.register_object("alsaplugin", device);
+//    eca_audio_device_map.register_object("alsaplugin", device);
+//    device = new ALSA_PCM_DEVICE();
+//    eca_audio_object_map.register_object("alsa", device);
+//    eca_audio_device_map.register_object("alsa", device);
 #endif // ALSALIB_050 || ALSALIB_060
 #ifdef ALSALIB_032
-  device = new ALSA_PCM_DEVICE();
-  eca_audio_object_map.register_object("alsa", device);      
-  eca_audio_device_map.register_object("alsa", device);
+//    device = new ALSA_PCM_DEVICE();
+//    eca_audio_object_map.register_object("alsa", device);      
+//    eca_audio_device_map.register_object("alsa", device);
 #endif
 
 #ifdef COMPILE_ARTS
-  device = new ARTS_INTERFACE();
-  eca_audio_object_map.register_object("arts", device);
+//    device = new ARTS_INTERFACE();
+//    eca_audio_object_map.register_object("arts", device);
 #endif
 
   device = new REALTIME_NULL();
@@ -239,6 +240,12 @@ void register_default_controllers(void) {
 }
 
 void register_default_presets(void) { }
+
+void register_internal_plugins(void) {
+  ECA_RESOURCES ecarc;
+  string add_file = ecarc.resource("internal-plugin-directory");
+
+}
 
 void register_ladspa_plugins(void) {
   DIR *dp;
