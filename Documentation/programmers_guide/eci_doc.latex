@@ -29,6 +29,7 @@ detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 26.11.2003 - Fix filename for the alternative Python API (eci.py).
 \item 18.11.2003 - Typo fixes. Updated documentation to reflect the new
                    naming convention (ecasound refers to the binary,
 		   Ecasound refers to the whole package).
@@ -345,7 +346,7 @@ Lists are used for representing collections of objects.
 
 Note! Eric S. Tiedemann has written an alternative Python interface
       to ECI. You'll find this interface included in the main 
-      Ecasound packege, in pyecasound/esteci.py. To use this instead
+      Ecasound packege, in ``pyecasound/eci.py''. To use this instead
       of the standard interface, just 'import eci' and you're set! :)
 
 \subsubsection{Usage}
