@@ -68,6 +68,7 @@ class ECA_CHAINSETUP_PARSER {
   void interpret_controller (const std::string& arg);
   void interpret_effect_preset (const std::string& arg);
   void interpret_audioio_device (const std::string& argu);
+  void interpret_audioio_manager (const std::string& argu);
   void interpret_midi_device (const std::string& arg);
   bool interpret_match_found(void) const { return(istatus_rep); }
 

@@ -109,6 +109,7 @@ void ECA_CHAINSETUP_PARSER::interpret_object_option (const std::string& arg)
   interpret_chains(arg);
   if (istatus_rep == false) interpret_audio_format(arg);
   if (istatus_rep == false) interpret_audioio_device(arg);
+  if (istatus_rep == false) interpret_audioio_manager(arg);
   if (istatus_rep == false) interpret_midi_device(arg);
   if (istatus_rep == false) interpret_chain_operator(arg);
   if (istatus_rep == false) interpret_controller(arg);
@@ -714,6 +715,39 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu)
       break;
     }
 
+  default: { match = false; }
+  }
+  if (match == true) istatus_rep = true;
+}
+
+/**
+ * Handles audio-IO manager options.
+ *
+ * @pre argu.size() > 0
+ * @pre argu[0] == '-'
+ */
+void ECA_CHAINSETUP_PARSER::interpret_audioio_manager(const std::string& argu)
+{
+  // --------
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  DBC_REQUIRE(istatus_rep == false);
+  // --------
+ 
+  string tname = kvu_get_argument_number(1, argu);
+
+  bool match = true;
+  if (argu.size() < 2) return;
+  switch(argu[1]) {
+  case 'G':
+    {
+      std::vector<std::string> args = kvu_get_arguments(argu);
+      args.erase(args.begin());
+      DBC_CHECK(args.size() == kvu_get_arguments(argu).size() - 1);
+      csetup_repp->set_audio_io_manager_option(tname,
+					       kvu_vector_to_string(args, ","));
+      break;
+    }
   default: { match = false; }
   }
   if (match == true) istatus_rep = true;

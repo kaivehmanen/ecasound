@@ -439,7 +439,8 @@ void ECA_CONTROL_OBJECTS::toggle_chainsetup_looping(void) {
  * ensure:
  *  is_connected() == true || (last_error().size() > 0 && no_errors != true)
  */
-void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
+void ECA_CONTROL_OBJECTS::connect_chainsetup(void)
+{
   // --------
   DBC_REQUIRE(is_selected());
   DBC_REQUIRE(is_valid());
@@ -488,7 +489,8 @@ string ECA_CONTROL_OBJECTS::connected_chainsetup(void) const {
  * ensure:
  *  connected_chainsetup() == ""
  */
-void ECA_CONTROL_OBJECTS::disconnect_chainsetup(void) {
+void ECA_CONTROL_OBJECTS::disconnect_chainsetup(void)
+{
   // --------
   DBC_REQUIRE(is_connected());
   // --------

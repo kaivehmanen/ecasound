@@ -54,7 +54,6 @@ class AUDIO_IO_PROXY_SERVER {
   /** @name Public functions for waiting on server conditions */
   /*@{*/
 
-  void wait_for_data(void);
   void wait_for_full(void);
   void wait_for_stop(void);
   void wait_for_flush(void);
@@ -103,7 +102,6 @@ class AUDIO_IO_PROXY_SERVER {
 
   void wait_for_client_activity(void);
 
-  void signal_data(void);
   void signal_full(void);
   void signal_stop(void);
   void signal_flush(void);

@@ -10,6 +10,7 @@
 #include <jack/jack.h>
 
 #include "sample-specs.h"
+#include "dynamic-object.h"
 #include "audioio-manager.h"
 #include "eca-engine-driver.h"
 #include "audioio_jack.h"
@@ -30,7 +31,7 @@ using std::vector;
  * @author Kai Vehmanen
  */
 class AUDIO_IO_JACK_MANAGER : public AUDIO_IO_MANAGER, 
-			      public ECA_ENGINE_DRIVER  {
+			      public ECA_ENGINE_DRIVER {
 
  public:
 
@@ -60,6 +61,14 @@ public:
     jack_default_audio_sample_t* cb_buffer;
   } jack_port_data_t;
 
+ private:
+
+  typedef enum Operation_mode {
+    Streaming,
+    Master,
+    Slave
+  } Operation_mode_t;
+
  public:
 
   /** @name Constructors */
@@ -73,7 +82,6 @@ public:
   /** @name Functions reimplemented from AUDIO_IO_MANAGER */
   /*@{*/
 
-  virtual string name(void) const { return("JACK object manager"); }
   virtual bool is_managed_type(const AUDIO_IO* aobj) const;
   virtual void register_object(AUDIO_IO* aobj);
   virtual int get_object_id(const AUDIO_IO* aobj) const;
@@ -81,6 +89,32 @@ public:
   virtual void unregister_object(int id);
 
   /*@}*/
+
+  /** @name Functions reimplemented from ECA_OBJECT */
+  /*@{*/
+
+  virtual string name(void) const { return("jack"); }
+  virtual string description(void) const { return("JACK object manager"); }
+
+  /*@}*/
+
+  /** @name Function reimplemented from DYNAMIC_PARAMETERS */
+  /*@{*/
+
+  virtual std::string parameter_names(void) const { return("mode"); }
+  virtual void set_parameter(int param, std::string value);
+  virtual std::string get_parameter(int param) const;
+
+  /*@}*/
+
+  /** @name Function reimplemented from DYNAMIC_OBJECT */
+  /*@{*/
+
+  AUDIO_IO_JACK_MANAGER* clone(void) const { return new_expr(); }
+  AUDIO_IO_JACK_MANAGER* new_expr(void) const { return new AUDIO_IO_JACK_MANAGER(); }  
+
+  /*@}*/
+
 
   /** @name Functions reimplemented from ECA_ENGINE_DRIVER */
   /*@{*/
@@ -137,6 +171,8 @@ private:
   pthread_cond_t stop_cond_rep;
   pthread_mutex_t stop_mutex_rep;
   pthread_mutex_t lock_rep;
+
+  Operation_mode_t mode_rep;
 
   int total_nodes_rep;
   int active_nodes_rep;

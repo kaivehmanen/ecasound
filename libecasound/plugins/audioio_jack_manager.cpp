@@ -111,6 +111,10 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
     //    and make it a ring-buffer
     //  - if 'nframes < buffersize', only copy nframes to 
     //    inport cb_buffers
+    //  - update (17.02): not necessarily needed anymore; see 
+    //    discussions on jackit-devel
+
+    DBC_CHECK(current->buffersize_rep == static_cast<long int>(nframes));
 
     /* 2. copy audio data from port input buffers to ecasound buffers */
     for(size_t n = 0; n < current->inports_rep.size(); n++) {
@@ -122,13 +126,10 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
     
     DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine_iter_in");
 
-    // FIXME: we shouldn't need to make this check, but to make
-    //        sure this doesn't go unnoticed...
-    DBC_CHECK(current->buffersize_rep == static_cast<long int>(nframes));
-
     // FIXME/17.05.2002:
     //  - don't call engine_iteration() if there's 
     //    less than buffersize of data in inport cb_buffers
+    //  - see above, not necessarily needed anymore
     
     /* 3. execute one engine iteration */
     if (current->engine_repp->is_active()) {
@@ -139,6 +140,7 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
 
     // FIXME/17.05.2002:
     //  - only copy nframes of data to the output buffers
+    //  - see above, not necessarily needed anymore
     
     /* 4. copy data from ecasound buffers to port output buffers */
     for(size_t n = 0; n < current->outports_rep.size(); n++) {
@@ -244,6 +246,8 @@ AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
   pthread_cond_init(&exit_cond_rep, NULL);
   pthread_mutex_init(&exit_mutex_rep, NULL);
   pthread_mutex_init(&lock_rep, NULL);
+  
+  mode_rep = AUDIO_IO_JACK_MANAGER::Streaming;
 
   cb_allocated_frames_rep = 0;
   buffersize_rep = 0;
@@ -253,13 +257,17 @@ AUDIO_IO_JACK_MANAGER::~AUDIO_IO_JACK_MANAGER(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) destructor");
 
+  if (is_open() == true) close_connection();
+
   list<int>::iterator p = objlist_rep.begin();
   while(p != objlist_rep.end()) {
     jack_node_t* tmp = jacknodemap_rep[*p];
 
-    close(*p);
-
-    delete tmp->aobj;
+    // ownership was not transferred to us!
+    //   close(*p);
+    //   delete tmp->aobj;
+    tmp->aobj = 0;
+    
     jacknodemap_rep.erase(*p);
 
     ++p;
@@ -388,6 +396,48 @@ void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
   DBC_ENSURE(total_nodes_rep == old_total_nodes - 1);
   DBC_ENSURE(std::count(get_object_list().begin(), get_object_list().end(), id) == 0);
   // ---
+}
+
+void AUDIO_IO_JACK_MANAGER::set_parameter(int param, std::string value)
+{
+  switch(param) 
+    {
+    case 1: { 
+      if (value == "streaming") {
+	mode_rep = AUDIO_IO_JACK_MANAGER::Streaming;
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		    "(audioio-jack-manager) 'streaming' mode selected.");
+      }
+      else if (value == "master") {
+	mode_rep = AUDIO_IO_JACK_MANAGER::Master;
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		    "(audioio-jack-manager) 'master' mode selected.");
+      }
+      else {
+	mode_rep = AUDIO_IO_JACK_MANAGER::Slave;
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		    "(audioio-jack-manager) 'slave' mode selected.");
+      }
+      break;
+    }
+    }
+}      
+
+std::string AUDIO_IO_JACK_MANAGER::get_parameter(int param) const
+{
+  switch(param) 
+    {
+    case 1: 
+      { 
+	switch(mode_rep) {
+	case AUDIO_IO_JACK_MANAGER::Master: return("master");
+	case AUDIO_IO_JACK_MANAGER::Slave: return("slave");
+	default: return("streaming");
+	}
+	break;
+      }
+    }
+  return("");
 }
 
 void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)

@@ -288,7 +288,6 @@ void ECA_SESSION::load_chainsetup(const std::string& filename)
 void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&)
 {
   // --------
-  // require:
   DBC_REQUIRE(selected_chainsetup_repp != 0);
   DBC_REQUIRE(selected_chainsetup_repp->is_valid());
   // --------
@@ -319,7 +318,6 @@ void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&)
 void ECA_SESSION::disconnect_chainsetup(void)
 {
   // --------
-  // require:
   DBC_REQUIRE(connected_chainsetup_repp != 0);
   // --------
 
@@ -329,7 +327,6 @@ void ECA_SESSION::disconnect_chainsetup(void)
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup disconnected");
 
   // --------
-  // ensure:
   DBC_ENSURE(connected_chainsetup_repp == 0);
   // --------
 }

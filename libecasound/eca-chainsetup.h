@@ -141,6 +141,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void set_default_audio_format(ECA_AUDIO_FORMAT& value);
   void set_default_midi_device(const string& name) { default_midi_device_rep = name; }
   void set_buffering_mode(Buffering_mode_t value);
+  void set_audio_io_manager_option(const string& mgrname, const string& optionstr);
 
   bool precise_sample_rates(void) const { return(precise_sample_rates_rep); }
   bool ignore_xruns(void) const { return(ignore_xruns_rep); }
@@ -279,9 +280,10 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   int proxy_clients_rep;
   string setup_name_rep;
   string setup_filename_rep;
-  vector<string> selected_chainids;
 
-  std::map<int,LOOP_DEVICE*> loop_map;
+  vector<string> selected_chainids;
+  map<int,LOOP_DEVICE*> loop_map;
+
   vector<double> input_start_pos;
   vector<double> output_start_pos;
 
@@ -293,6 +295,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   vector<AUDIO_IO*> outputs;
   vector<AUDIO_IO*> outputs_direct_rep;
   vector<AUDIO_IO_MANAGER*> aio_managers_rep;
+  map<string,string> aio_manager_option_map_rep;
   vector<CHAIN*> chains;
   vector<MIDI_IO*> midi_devices;
   std::list<AUDIO_IO*> aobj_garbage_rep;
@@ -311,6 +314,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void register_engine_driver(AUDIO_IO_MANAGER* amgr);
   void register_audio_object_to_manager(AUDIO_IO* aio);
   void unregister_audio_object_from_manager(AUDIO_IO* aio);
+  void propagate_audio_io_manager_options(void);
   AUDIO_IO* add_audio_object_helper(AUDIO_IO* aio);
   void remove_audio_object_helper(AUDIO_IO* aio);
 

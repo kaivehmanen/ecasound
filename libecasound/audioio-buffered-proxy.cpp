@@ -140,7 +140,7 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf)
       std::cerr << "(audioio-buffered-proxy) Warning! Underrun in reading from \"" 
 		<< child_repp->label() 
 		<< "\". Trying to recover." << std::endl;
-      pserver_repp->wait_for_data(); 
+      wait_for_full();
       if (recursing_rep != true && pbuffer_repp->read_space() > 0) {
 	recursing_rep = true;
 	this->read_buffer(sbuf);
@@ -148,6 +148,7 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf)
       }
       else {
 	std::cerr << "(audioio-buffered-proxy) Serious trouble with the disk-io subsystem! (1)" << std::endl;
+	seek_position(); // hack to force a restart of the proxy server
 	sbuf->length_in_samples(0);
       }
     }
@@ -176,13 +177,14 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf)
       std::cerr << "(audioio-buffered-proxy) Warning! Overrun in writing to \"" 
 		<< child_repp->label() 
 		<< "\". Trying to recover." << std::endl;
-      pserver_repp->wait_for_data(); 
+      wait_for_full();
       if (recursing_rep != true && pbuffer_repp->write_space() > 0) {
 	recursing_rep = true;
 	this->write_buffer(sbuf);
 	recursing_rep = false;
       }
       else {
+	seek_position(); // hack to force a restart of the proxy server
 	std::cerr << "(audioio-buffered-proxy) Serious trouble with the disk-io subsystem! (2)" << std::endl;
       }
     }

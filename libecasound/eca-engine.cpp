@@ -208,7 +208,7 @@ ECA_ENGINE::~ECA_ENGINE(void)
  * until processing is finished.
  *
  * Note that a exec() is a one-shot function.
- * It's not possibly to call it multiple times.
+ * It's not possible to call it multiple times.
  *
  * @param batch_mode if true, once engine is started 
  *                   it will continue processing until 
@@ -899,8 +899,8 @@ void ECA_ENGINE::interpret_queue(void)
 	driver_repp->exit();
 	return;
       }
-    case ep_start: { request_start(); break; }
-    case ep_stop: { request_stop(); break; }
+    case ep_start: { if (status() != engine_status_running) request_start(); break; }
+    case ep_stop: { if (status() == engine_status_running) request_stop(); break; }
 
     // ---
     // Section/chain (en/dis)abling commands.

@@ -147,7 +147,6 @@ int main(int argc, char *argv[])
 	  ++consecutive_errors;
 	  if (consecutive_errors == 3) {
 	    std::cerr << "(ecaplay) Too many errors, exiting." << std::endl;
-	    ectrl.disconnect_chainsetup();
 	    ectrl.remove_chainsetup();
 	    break;
 	  }

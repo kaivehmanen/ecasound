@@ -19,7 +19,7 @@ class AUDIO_IO;
  *
  * @author Kai Vehmanen
  */
-class AUDIO_IO_MANAGER {
+class AUDIO_IO_MANAGER : public DYNAMIC_OBJECT<std::string> {
 
  public:
 
@@ -32,6 +32,11 @@ class AUDIO_IO_MANAGER {
    * Must be implemented in all subclasses.
    */
   virtual std::string name(void) const = 0;
+
+  /**
+   * More verbose description of the manager type.
+   */
+  virtual std::string description(void) const = 0;
 
   /**
    * Whether 'aobj' is of the type handled by this 

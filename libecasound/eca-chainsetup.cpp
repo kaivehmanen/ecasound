@@ -37,6 +37,7 @@
 #include <kvu_message_item.h>
 #include <kvu_numtostr.h>
 #include <kvu_rtcaps.h>
+#include <kvu_utils.h>
 
 #include "eca-resources.h"
 #include "eca-session.h"
@@ -319,6 +320,22 @@ void ECA_CHAINSETUP::set_buffering_mode(Buffering_mode_t value)
     buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_auto;
   else
     buffering_mode_rep = value;
+}
+
+/**
+ * Sets audio i/o manager option for manager
+ * object type 'mgrname' to be 'optionstr'.
+ * Previously set option string is overwritten.
+ */
+void ECA_CHAINSETUP::set_audio_io_manager_option(const string& mgrname, const string& optionstr)
+{
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+	      "(eca-chainsetup) Set manager '" +
+	      mgrname + "' option string to '" +
+	      optionstr + "'.");
+
+  aio_manager_option_map_rep[mgrname] = optionstr;
+  propagate_audio_io_manager_options();
 }
 
 /**
@@ -1081,6 +1098,7 @@ void ECA_CHAINSETUP::register_audio_object_to_manager(AUDIO_IO* aio)
 		    "' for aio '" +
 		    aio->name() + "'.");
       aio_managers_rep.push_back(mgr);
+      propagate_audio_io_manager_options();
       mgr->register_object(aio);
 
       /* in case manager is also a driver */
@@ -1108,6 +1126,30 @@ void ECA_CHAINSETUP::unregister_audio_object_from_manager(AUDIO_IO* aio)
 		    mgr->name() + "'.");
       mgr->unregister_object(id);
     }
+  }
+}
+
+/**
+ * Propagates to set manager options to all existing 
+ * audio i/o manager objects.
+ */
+void ECA_CHAINSETUP::propagate_audio_io_manager_options(void)
+{
+  for(vector<AUDIO_IO_MANAGER*>::const_iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
+    if (aio_manager_option_map_rep.find((*q)->name()) != 
+	aio_manager_option_map_rep.end()) {
+      
+      const string& optstring = aio_manager_option_map_rep[(*q)->name()];
+      int numparams = (*q)->number_of_params();
+      for(int n = 0; n < numparams; n++) {
+	(*q)->set_parameter(n + 1, kvu_get_argument_number(n + 1, optstring));
+	ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		    "(eca-chainsetup) Manager '" +
+		    (*q)->name() + "', " + 
+		    kvu_numtostr(n + 1) + ". parameter set to '" +
+		    (*q)->get_parameter(n + 1) + "'.");
+      }
+    }      
   }
 }
 

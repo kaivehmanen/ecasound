@@ -284,31 +284,10 @@ void AUDIO_IO_PROXY_SERVER::wait_for_client_activity(void)
  * Function that blocks until the server signals 
  * that all its buffers are full.
  */
-void AUDIO_IO_PROXY_SERVER::wait_for_data(void)
-{
-  if (is_running() == true &&
-      clients_rep.size() > 0) {
-
-    server_allowed_to_sleep_rep.set(0);
-    signal_client_activity();
-    int res = timed_wait(&impl_repp->data_mutex_rep, &impl_repp->data_cond_rep, 5);
-    timed_wait_print_result(res, "wait_for_data");
-    server_allowed_to_sleep_rep.set(1);
-  }
-  else {
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-proxy-server) wait_for_data failed; not running");
-  }
-}
-
-/**
- * Function that blocks until the server signals 
- * that all its buffers are full.
- */
 void AUDIO_IO_PROXY_SERVER::wait_for_full(void)
 {
   if (is_running() == true &&
-      clients_rep.size() > 0 &&
-      full_rep.get() == 0) {
+      clients_rep.size() > 0) {
 
     server_allowed_to_sleep_rep.set(0);
     signal_client_activity();

@@ -17,6 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.4 *-
 
+??052002 (v2.1dev10)
 17052002 (v2.1dev9)
 	- edi-entries: edi-22
 	- changed: optimized disk i/o subsystem (-z:db) performance

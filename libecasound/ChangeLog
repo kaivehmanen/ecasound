@@ -4,6 +4,12 @@
 
 2002-05-16  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
+	* audioio-manager.h (all): added inheritance of 
+	DYNAMIC_OBJECT<std::string>
+	* eca-chainsetup.h (set_audio_io_manager_option): added
+
+2002-05-16  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
 	* audioio-proxy-server.h (set_priority): removed
 	* eca-engine-driver.h (stop,exit): blocking arg dropped
 
