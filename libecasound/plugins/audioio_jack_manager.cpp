@@ -1000,7 +1000,13 @@ int AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
     DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: wakes up; commands available" << endl);
 
     /* we must take the lock to ensure that 
-     * process callback does not run at the same time */
+     * process callback does not run at the same time 
+     *
+     * note: the RT-optimized command queue (VALUE_QUEUE_RT_C) is not
+     * safe when accessed from more than 2 threads, but here it is ok
+     * as we limit concurrent threads to two with engine_mod_lock_rep
+     **/
+
     SAMPLE_SPECS::sample_pos_t enginepos = engine_repp->current_position_in_samples();
     pthread_mutex_lock(&engine_mod_lock_rep);
     engine_repp->check_command_queue();
