@@ -1,9 +1,14 @@
 =begin
 = ruby-ecasound
-'require' this file to get access to Ecasound::ControlInterface.
-Eventually, there will be more (see README).
 
-TODO
+Example:
+
+require "ecasound"
+eci = Ecasound::ControlInterface.new(ecasound_args)
+ecasound-response = eci.command("iam-command-here")
+...
+
+TODO:
 Is there a chance that the ecasound process gets zombified?
 
 = copyright
@@ -26,10 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 require "timeout"
 
-# File::which
-# just a utility
 class File
-    
     def self::which(prog, path=ENV['PATH'])
         path.split(File::PATH_SEPARATOR).each do |dir|
             f = File::join(dir, prog)
@@ -38,54 +40,53 @@ class File
             end
         end
     end
-
 end # File
 
 class VersionString < String
+    attr_reader :numbers
+
     def initialize(str)
         if str.split(".").length() != 3
-            raise("VersionString must be like a.b.c")
+            raise("Versioning scheme must be major.minor.micro")
         end
         super(str)
+        @numbers = []
+        str.split(".").each {|s| @numbers.push(s.to_i())}
     end
     
-    def <=>(comp_str)
-        comp_ints = comp_str.split(".")
-        my_ints = self.split(".")
-        my_ints.each_index do |index|
-            if my_ints[index].to_i() < comp_ints[index].to_i()
+    def <=>(other)
+        numbers.each_index do |i|
+            if numbers[i] < other.numbers[i]
                 return -1
-            elsif my_ints[index].to_i() > comp_ints[index].to_i()
+            elsif numbers[i] > other.numbers[i]
                 return 1
-            elsif index < 2
+            elsif i < 2
                 next
             end
         end
         return 0
     end
-end
+end # VersionString
 
 module Ecasound
+
+REQUIRED_VERSION = VersionString.new("2.2.0")
+TIMEOUT = 5 # seconds before sync is called 'lost'
 
 class EcasoundError < RuntimeError; end
 
 class ControlInterface
-    
-    REQUIRED_VERSION = VersionString.new("2.2.0")
-    
     @@ecasound = ENV['ECASOUND'] || File::which("ecasound")
     
     if not File::executable?(@@ecasound)
-        raise(EcasoundError, "ecasound executable not found")
+        raise("ecasound executable not found")
     else
         @@version = VersionString.new(`#{@@ecasound} --version`.split("\n")[0][/\d\.\d\.\d/])
         if @@version < REQUIRED_VERSION
-            raise(EcasoundError, "ecasound version #{REQUIRED_VERSION} or newer required, found: #{@@version}")
+            raise("ecasound version #{REQUIRED_VERSION} or newer required, found: #{@@version}")
         end
     end
     
-    @@timeout = 5   # seconds before sync is called 'lost'
-
     def initialize(args = "")
         @ecapipe = IO.popen("-", "r+") # fork!
         
@@ -96,63 +97,61 @@ class ControlInterface
             exec("#{@@ecasound} -c -D " + args)
         else
             # parent
-            @command = nil
-            @response = {}
-            @last_type = nil
-
             command("int-output-mode-wellformed")
         end
     end
 
-    def command(cmd, f=nil)
-        @command = cmd.strip()
-        @ecapipe.write(@command + "\n")
+    def command(cmd)
+        cmd.strip!()
+        @ecapipe.write(cmd + "\n")
 
         response = ""
         
         # TimeoutError is raised unless response is complete
         begin
-            timeout(@@timeout) do
+            timeout(TIMEOUT) do
                 loop do
-                    response += read_eca()
-                    if response =~ /256 ([0-9]{1,5}) (.+)\r\n(.*)\r\n\r\n/m
+                    response += read()
+                    if response =~ /256 ([0-9]{1,5}) (\-|i|li|f|s|S|e)\r\n(.*)\r\n\r\n/m
                         # we have a valid response
                         break
                     end
                 end
             end
         rescue TimeoutError
-            msg = "lost synchronisation to ecasound subprocess"
-            raise(EcasoundError, msg)
+            raise(EcasoundError, "lost synchronisation to ecasound subprocess")
         end
+        
+        content = $~[3][0, $~[1].to_i()]
 
-        @last_type = $~[2]
-        case @last_type
+        #print "command: #{cmd}\n"
+        #print "type: '#{$~[2]}'\n"
+        #print "length: #{$~[1]}\n"
+        #print "content: #{content}\n"
+
+        case $~[2]
             when "e"
-                # an error occured!
-                raise(EcasoundError, "command failed: '#{@command}'")
+                raise(EcasoundError, "command '#{cmd}' failed: #{content}")
             when "S"
-                @response["S"] = $~[3].split(",")
+                return content.split(",")
             when "f"
-                @response["f"] = $~[3].to_f()
+                return content.to_f()
             when "i", "li"
-                @response[@last_type] = $~[3].to_i()
+                return content.to_i()
             else
-                @response[@last_type] = $~[3]
+                return content
         end
-        @response[@last_type]
     end
 
     private
 
-    def read_eca()
+    def read()
         buffer = ""
         while select([@ecapipe], nil, nil, 0)
             buffer = buffer + @ecapipe.read(1)
         end
         buffer
     end
-
 end # ControlInterface
 
 end # Ecasound::
