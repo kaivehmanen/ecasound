@@ -26,7 +26,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (17.10.2000)
+       (20.10.2000)
        ()
        (Multimedia software)
 
@@ -68,6 +68,10 @@ dit(-d:debug_level)
 Set the debug level to 'debug_level'. This a bitmasked value, 
 that defaults to 3. See ECA_DEBUG class documentation for 
 more detailed info about various debug_level values.
+
+dit(-D)
+Print all debug information to stderr (unbuffered, plain output
+without ncurses).
 
 dit(-q)
 Quiet mode, no output. Same as em(-d:0).

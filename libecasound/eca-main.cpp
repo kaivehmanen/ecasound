@@ -695,6 +695,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
       if ((*chains)[n]->output_id_repp == (*outputs)[audioslot_sizet]) {
 	if (output_chain_count[audioslot_sizet] == 1) {
 	  (*outputs)[audioslot_sizet]->write_buffer(&(cslots[n]));
+	  cslots[n].length_in_samples(buffersize_rep);
 	  break;
 	}
 	else {
@@ -708,6 +709,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 	    
 	    if (count == output_chain_count[audioslot_sizet]) {
 	      (*outputs)[audioslot_sizet]->write_buffer(&mixslot);
+	      cslots[n].length_in_samples(buffersize_rep);
 	    }
 	  }
 	}
@@ -826,6 +828,7 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 	  // so we don't need to mix anything
 	  // --
 	  (*outputs)[audioslot_sizet]->write_buffer(&(cslots[n]));
+	  cslots[n].length_in_samples(buffersize_rep);
 	  break;
 	}
 	else {
@@ -844,6 +847,7 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 	  
 	  if (count == output_chain_count[audioslot_sizet]) {
 	    (*outputs)[audioslot_sizet]->write_buffer(&mixslot);
+	    mixslot.length_in_samples(buffersize_rep);
 	  }
 	}
       }

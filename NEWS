@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 171000) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 201000) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -25,6 +25,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- added: support for noninterleaved streams to ALSA 0.6.x plugin
 	- added: 4th parameter to -f, 'i' (default) indicates interleaved 
 		 stream format while 'n' refers to noninterleaved
+	- added: -D option; prints debug messages to stderr
 	- changed: tries to load all internal plugins even if some 
 		   plugins were disabled during compile-time; this 
 		   makes it possible to have multiple versions of same
@@ -42,6 +43,8 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- fixed: sync-related ALSA 0.6.x fixes
 	- fixed: better handling of mp3, ogg, timidity and mikmod
 		 related errors
+	- fixed: -sr:srate didn't work (broken in 1.8.3d15)
+	- fixed: problems with ALSA 0.6.x pcm plugins
 26092000 (v1.8.3d15)
 	- changed: code for parsing command-line arguments rewritten; 
 		   now reports about invalid arguments

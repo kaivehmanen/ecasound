@@ -3,12 +3,13 @@
 
 #include <string>
 #include <algorithm>
+#include <iostream>
 
 #include <eca-session.h>
 
 class COMMAND_LINE;
 
-void print_header(void);
+void print_header(ostream* dostream);
 void signal_handler(int signum);
 void parse_command_line(COMMAND_LINE& cline);
 

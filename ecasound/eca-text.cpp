@@ -63,10 +63,6 @@ int main(int argc, char *argv[])
 
   ECA_SESSION* ecaparams = 0;
 
-  attach_debug_object(&textdebug);  
-  ecadebug->set_debug_level(ECA_DEBUG::info |
-			    ECA_DEBUG::module_flow);
-
   struct sigaction es_handler;
   es_handler.sa_handler = signal_handler;
   sigemptyset(&es_handler.sa_mask);
@@ -81,14 +77,26 @@ int main(int argc, char *argv[])
     COMMAND_LINE cline = COMMAND_LINE (argc, argv);
     parse_command_line(cline);
 
+    bool debug_to_cerr = true;
+    if (cline.has("-D") != true) {
+      debug_to_cerr = false;
+      attach_debug_object(&textdebug);  
+    }
+    ecadebug->set_debug_level(ECA_DEBUG::info |
+			      ECA_DEBUG::module_flow);
+
     if (cline.has("-o:stdout") ||
 	cline.has("stdout") || 
 	cline.has("-d:0") || 
 	cline.has('q'))
       ecadebug->disable();
-    else
-      print_header();
-
+    else {
+      if (debug_to_cerr == true)
+	print_header(&cerr);
+      else
+	print_header(&cout);
+    }
+    
     ecaparams = new ECA_SESSION(cline);
     global_pointer_to_ecaparams = ecaparams;  // used only for signal handling! 
     if (ecaparams->is_interactive()) start_iactive_readline(ecaparams);
@@ -173,19 +181,23 @@ void signal_handler(int signum) {
   exit(0);
 }
 
-void print_header(void) {
-  cout << "****************************************************************************\n";
-  cout << "*";
+void print_header(ostream* dostream) {
+  *dostream << "****************************************************************************\n";
+  *dostream << "*";
 #ifdef USE_NCURSES
-  setupterm((char *)0, 1, (int *)0);
-  putp(tigetstr("bold"));
+  if (dostream == &cout) {
+    setupterm((char *)0, 1, (int *)0);
+    putp(tigetstr("bold"));
+  }
 #endif
-  cout << "               ecasound v" << ecasound_library_version << " (C) 1997-2000 Kai Vehmanen              ";
+  *dostream << "               ecasound v" << ecasound_library_version << " (C) 1997-2000 Kai Vehmanen              ";
 #ifdef USE_NCURSES
-  putp(tigetstr("sgr0"));
+  if (dostream == &cout) {
+    putp(tigetstr("sgr0"));
+  }
 #endif
-  cout << "*\n";
-  cout << "****************************************************************************\n";
+  *dostream << "*\n";
+  *dostream << "****************************************************************************\n";
 }
 
 void start_iactive(ECA_SESSION* param) {

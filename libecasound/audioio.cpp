@@ -137,7 +137,11 @@ string AUDIO_IO::format_info(void) const {
   } else {
     otemp << "Format: " << format_string();
     otemp << ", channels " << channels();
-    otemp << ", srate " << samples_per_second() << ".";
+    otemp << ", srate " << samples_per_second();
+    if (interleaved_channels() == true) 
+      otemp << ", interleaved.";
+    else
+      otemp << ", noninterleaved.";
   }
   return(otemp.to_string());
 }

@@ -33,7 +33,7 @@ class OBJECT_QUEUE {
 private:
 
     deque<T> cmds_rep;
-    pthread_mutex_t lock_rep;
+    mutable pthread_mutex_t lock_rep;
 
 public:
     
@@ -102,7 +102,7 @@ public:
     }
 
     ~OBJECT_QUEUE(void) {
-      pthread_mutex_destroy(&lock_rep, NULL);      
+      pthread_mutex_destroy(&lock_rep);      
     }
 };
 

@@ -50,7 +50,7 @@ void AUDIO_IO_BUFFERED::reserve_buffer_space(long int bytes) {
       delete[] iobuf_uchar_repp;
       iobuf_uchar_repp = 0;
     }
-    //    cerr << "Reserving " << bytes << " bytes (" << label() << ").\n";
+//      cerr << "Reserving " << bytes << " bytes (" << label() << ").\n";
     iobuf_uchar_repp = new unsigned char [bytes];
     iobuf_size_rep = bytes;
   }
@@ -58,10 +58,12 @@ void AUDIO_IO_BUFFERED::reserve_buffer_space(long int bytes) {
 
 void AUDIO_IO_BUFFERED::buffersize(long int samples, 
 				   long int sample_rate) {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) Setting buffer size [" +
-		   kvu_numtostr(samples) + "," +
-		   kvu_numtostr(sample_rate) + "].");
-
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) " +
+		label() + ": " +
+		" Setting buffer size [" +
+		kvu_numtostr(samples) + "," +
+		kvu_numtostr(sample_rate) + "].");
+  
   long int old_bsize = buffersize_rep;
   if (sample_rate != 0) {
     target_srate_rep = sample_rate;
@@ -82,8 +84,11 @@ void AUDIO_IO_BUFFERED::buffersize(long int samples,
   else
     buffersize_rep = 0;
 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) Set buffer size [" +
-		   kvu_numtostr(buffersize_rep) + "].");
+  ecadebug->msg(ECA_DEBUG::user_objects, 
+		"(audioio-types/buffered) " +
+		label() + ": " +
+		" Set buffer size [" +
+		kvu_numtostr(buffersize_rep) + "].");
 
 }
 
@@ -114,7 +119,9 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   assert(iobuf_uchar_repp != 0);
   assert(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
   // --------
-  if (buffersize_rep != sbuf->length_in_samples()) buffersize(sbuf->length_in_samples(), samples_per_second());
+  if (buffersize_rep != sbuf->length_in_samples()) {
+    buffersize(sbuf->length_in_samples(), samples_per_second());
+  }
   if (interleaved_channels() == true)
     sbuf->copy_from_buffer(iobuf_uchar_repp,
 			   sample_format(),

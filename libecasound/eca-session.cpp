@@ -299,7 +299,7 @@ void ECA_SESSION::create_chainsetup_options(COMMAND_LINE& cline,
   cline.begin();
   cline.next(); // skip the program name
   while(cline.end() == false) {
-    if (is_session_option(cline.current()) != true) 
+    if (is_session_option(cline.current()) != true)
       options->push_back(cline.current());
     cline.next();
   }
@@ -314,12 +314,15 @@ bool ECA_SESSION::is_session_option(const string& arg) const {
 
   switch(arg[1]) {
   case 'c':
+  case 'D':
   case 'd':
   case 'h':
   case 'q':
   case 'r':
-  case 's': 
     return(true);
+
+  case 's': 
+    if (arg.size() > 2 && arg[2] == ':') return(true);
   }
   return(false);
 }

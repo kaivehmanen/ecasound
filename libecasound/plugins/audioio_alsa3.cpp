@@ -21,7 +21,8 @@
 #include <cstring>
 #include <cstdio>
 #include <dlfcn.h>
-#include <unistd.h>  
+#include <unistd.h>
+#include <errno.h>
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
@@ -151,19 +152,26 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
   snd_pcm_format_t pf;
   ::memset(&pf, 0, sizeof(pf));
 
-  if ((pcm_params_info_rep.flags & SND_PCM_INFO_INTERLEAVED) == SND_PCM_INFO_INTERLEAVED)
+  if ((pcm_params_info_rep.flags & SND_PCM_INFO_INTERLEAVED) == SND_PCM_INFO_INTERLEAVED) {
     ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Device supports interleaved stream format.");
-  if ((pcm_params_info_rep.flags & SND_PCM_INFO_NONINTERLEAVED) == SND_PCM_INFO_NONINTERLEAVED)
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Device supports noninterleaved stream format.");
-
-  toggle_interleaved_channels(true);
-  if (channels() > 1 &&
-      (pcm_params_info_rep.flags & SND_PCM_INFO_INTERLEAVED) != SND_PCM_INFO_INTERLEAVED) {
-    toggle_interleaved_channels(false);
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Using noninterleaved stream format.");
   }
-  else 
+  else {
+    if (interleaved_channels() == true)
+      toggle_interleaved_channels(false);
+  }
+
+  if ((pcm_params_info_rep.flags & SND_PCM_INFO_NONINTERLEAVED) == SND_PCM_INFO_NONINTERLEAVED) {
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Device supports noninterleaved stream format.");
+  }
+  else {
+    if (interleaved_channels() != true)
+      toggle_interleaved_channels(true);
+  }
+  
+  if (interleaved_channels() == true)
     ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Using interleaved stream format.");
+  else
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Using noninterleaved stream format.");
   
   int format;
   switch(sample_format()) 
@@ -188,19 +196,19 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
     throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-ALSA3: Selected sample format not supported by the device!"));
   pf.sfmt = format;
 
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Supported sample rates; min: " + kvu_numtostr(pcm_params_info_rep.min_rate) + ", max: " + kvu_numtostr(pcm_params_info_rep.max_rate) + ".");
   if (static_cast<unsigned int>(samples_per_second()) < pcm_params_info_rep.min_rate ||
       static_cast<unsigned int>(samples_per_second()) > pcm_params_info_rep.max_rate)
     throw(SETUP_ERROR(SETUP_ERROR::sample_rate, "AUDIOIO-ALSA3: Sample rate " +
 			kvu_numtostr(samples_per_second()) + " is out of range!"));
   pf.rate = samples_per_second();
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Supported sample rates; min: " + kvu_numtostr(pcm_params_info_rep.min_rate) + ", max: " + kvu_numtostr(pcm_params_info_rep.max_rate) + ".");
 
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Supported channel counts; min: " + kvu_numtostr(pcm_params_info_rep.min_channels) + ", max: " + kvu_numtostr(pcm_params_info_rep.max_channels) + ".");
   if (static_cast<unsigned int>(channels()) < pcm_params_info_rep.min_channels ||
       static_cast<unsigned int>(channels()) > pcm_params_info_rep.max_channels)
     throw(SETUP_ERROR(SETUP_ERROR::channels, "AUDIOIO-ALSA3: Channel count " +
 			kvu_numtostr(channels()) + " is out of range!"));
   pf.channels = channels();
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Supported channel counts; min: " + kvu_numtostr(pcm_params_info_rep.min_channels) + ", max: " + kvu_numtostr(pcm_params_info_rep.max_channels) + ".");
   
   if (interleaved_channels() != true) {
     if (nbufs_repp == 0)
@@ -214,14 +222,17 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
     params.xfer_mode = SND_PCM_XFER_INTERLEAVED;
   else
     params.xfer_mode = SND_PCM_XFER_NONINTERLEAVED;
-  params.xrun_mode = SND_PCM_XRUN_FRAGMENT;
+  params.xrun_mode = SND_PCM_XRUN_FRAGMENT; /* FIXME: _NONE? */
+  params.ready_mode = SND_PCM_READY_FRAGMENT; /* FIXME: _NONE? */
 //    params.xrun_act = SND_PCM_XRUN_ACT_RESTART;
 
   // -------------------------------------------------------------------
   // Fetch stream info (2nd time, now getting frame size info)
   pcm_params_info_rep.req.format.sfmt = format;
   pcm_params_info_rep.req.format.channels = channels();
-  pcm_params_info_rep.req_mask = SND_PCM_PARAMS_SFMT | SND_PCM_PARAMS_CHANNELS;
+  pcm_params_info_rep.req_mask = SND_PCM_PARAMS_SFMT | 
+                                 SND_PCM_PARAMS_CHANNELS | 
+                                 SND_PCM_PARAMS_FRAGMENT_SIZE;
   err = ::snd_pcm_params_info(audio_fd_repp, &pcm_params_info_rep);
   if (err < 0)
     throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA3: Error when querying stream info: " + string(snd_strerror(err))));
@@ -229,12 +240,12 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
   // -------------------------------------------------------------------
   // Set fragment size.
 
-  if (static_cast<unsigned int>(buffersize()) < pcm_params_info_rep.min_fragment_size ||
-      static_cast<unsigned int>(buffersize()) > pcm_params_info_rep.max_fragment_size) 
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Supported fragment sizes; min: " + kvu_numtostr(pcm_params_info_rep.min_fragment_size) + ", max: " + kvu_numtostr(pcm_params_info_rep.max_fragment_size) + ".");
+  if (using_plugin_rep != true && 
+      (static_cast<unsigned int>(buffersize()) < pcm_params_info_rep.min_fragment_size ||
+       static_cast<unsigned int>(buffersize()) > pcm_params_info_rep.max_fragment_size))
     throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-ALSA3: buffersize " +
 			kvu_numtostr(buffersize()) + " is out of range!"));
-
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Supported fragment sizes; min: " + kvu_numtostr(pcm_params_info_rep.min_fragment_size) + ", max: " + kvu_numtostr(pcm_params_info_rep.max_fragment_size) + ".");
 
   // <--
   params.buffer_size = pcm_params_info_rep.buffer_size;
@@ -364,40 +375,49 @@ void ALSA_PCM_DEVICE_06X::print_status_debug(void) {
 }
 
 void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
-  if (samples == fragment_size_rep) {
-    if (interleaved_channels() == true) 
-      ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
-    else {
-      unsigned char* ptr_to_channel = reinterpret_cast<unsigned char*>(target_buffer);
-      for (int channel = 0; channel < channels(); channel++) {
-	nbufs_repp[channel] = ptr_to_channel;
-	cerr << "Pointer to channel " << channel << ": " << reinterpret_cast<void*>(nbufs_repp[channel]) << endl;
-	ptr_to_channel += samples * frame_size();
-	cerr << "Advancing pointer count to " << reinterpret_cast<void*>(ptr_to_channel) << endl;
-      }
-      ::snd_pcm_writen(audio_fd_repp, reinterpret_cast<void**>(nbufs_repp), fragment_size_rep);
-    }
-  }
-  else {
+  bool trigger = false;
+  if (samples != fragment_size_rep) {
     /**
      * We need to adjust the fragment size, because ALSA requires 
      * i/o to happen exactly one fragment at a time.
      */
-    if (static_cast<size_t>(samples) < pcm_params_info_rep.min_fragment_size ||
-	static_cast<size_t>(samples) > pcm_params_info_rep.max_fragment_size) {
-      if (is_triggered_rep) stop();
-      return; 
-    }
-    bool was_triggered = false;
-    if (is_triggered_rep == true) { stop(); was_triggered = true; }
+    if (static_cast<size_t>(samples) < pcm_params_info_rep.min_fragment_size)
+      samples = pcm_params_info_rep.min_fragment_size;
+    if (static_cast<size_t>(samples) > pcm_params_info_rep.max_fragment_size)
+      samples = pcm_params_info_rep.max_fragment_size;
+
+    if (is_triggered_rep == true) { stop(); trigger = true; }
     close();
     buffersize(samples, samples_per_second());
     open();
     prepare();
     assert(samples <= fragment_size_rep);
-    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
-    if (was_triggered == true) start();
   }
+  if (interleaved_channels() == true) {
+    if (::snd_pcm_write(audio_fd_repp, target_buffer,
+			fragment_size_rep) == -EPIPE) {
+      underruns_rep++;
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-alsa3) underrun! stopping device");
+      stop();
+    }
+  }
+  else {
+    unsigned char* ptr_to_channel = reinterpret_cast<unsigned char*>(target_buffer);
+    for (int channel = 0; channel < channels(); channel++) {
+      nbufs_repp[channel] = ptr_to_channel;
+//        cerr << "Pointer to channel " << channel << ": " << reinterpret_cast<void*>(nbufs_repp[channel]) << endl;
+      ptr_to_channel += samples * frame_size();
+//        cerr << "Advancing pointer count to " << reinterpret_cast<void*>(ptr_to_channel) << endl;
+    }
+    if (::snd_pcm_writen(audio_fd_repp,
+		     reinterpret_cast<void**>(nbufs_repp),
+		     fragment_size_rep) == -EPIPE) {
+      underruns_rep++;
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-alsa3) underrun! stopping device");
+      stop();
+    }
+  }
+  if (trigger == true) start();
   position_in_samples_rep += samples;
 }
 

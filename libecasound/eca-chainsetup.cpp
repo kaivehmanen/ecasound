@@ -299,7 +299,11 @@ void ECA_CHAINSETUP::interpret_options(vector<string>& opts) throw(ECA_ERROR&) {
   while(p != opts.end()) {
     interpret_object_option(*p);
     if (interpretation_status() == false) {
+      int dlevel = ecadebug->get_debug_level(); /* hack to avoid printing the same info
+						   multiple times */
+      ecadebug->disable();
       interpret_global_option(*p);
+      ecadebug->set_debug_level(dlevel);
       if (interpretation_status() == false) {
 	throw(ECA_ERROR("ECA-CHAINSETUP", "Invalid argument, unable to parse: '" + *p + "'"));
       }
@@ -331,7 +335,7 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
       set_buffersize(atoi(get_argument_number(1, argu).c_str()));
       MESSAGE_ITEM mitemb;
       mitemb << "(eca-chainsetup) Setting buffersize to (samples) " << buffersize() << ".";
-      ecadebug->msg(0, mitemb.to_string()); 
+      ecadebug->msg(mitemb.to_string()); 
       break;
     }
 
