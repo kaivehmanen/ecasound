@@ -58,7 +58,7 @@ Python bindings to ecasound control interface.
 %prep
 %setup -n ecasound-@VERSION@
 %build
-./configure --prefix=%{prefix} --disable-static --with-python-modules=%{prefix}/lib/python2.0 $extra_params
+./configure --prefix=%{prefix} --disable-static $extra_params
 make
 
 %install
@@ -115,6 +115,10 @@ fi
 %{python_sitepkgsdir}/*.pyc
 
 %changelog
+* Mon Oct 01 2001 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+- dropped the hardcoded python module path from configure
+  argument list
+
 * Wed Jan 17 2001 Kai Vehmanen <kaiv@wakkanet.fi>
 - python subpackage config (thanks to wrobell / PLD Linux!)
 
