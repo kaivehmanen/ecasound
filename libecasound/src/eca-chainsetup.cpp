@@ -444,9 +444,13 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
   MESSAGE_ITEM otemp;
   CHAIN_OPERATOR* cop = 0;
   string prefix = get_argument_prefix(argu);
-  if (prefix == "el") {
-    prefix = get_argument_number(1, argu);
-    cop = ECA_LADSPA_PLUGIN_MAP::object(prefix);
+  if (prefix == "el" || prefix == "eli") {
+    string unique = get_argument_number(1, argu);
+    if (prefix == "el") 
+      cop = ECA_LADSPA_PLUGIN_MAP::object(unique);
+    else 
+      cop = ECA_LADSPA_PLUGIN_MAP::object(atol(unique.c_str()));
+
     if (cop != 0) {
       cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
       cop->map_parameters();

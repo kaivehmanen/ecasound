@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecawave - User-visible changes (NEWS)       (last edited: 260400) **
+** Ecawave - User-visible changes (NEWS)       (last edited: 210500) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.yRt" :
@@ -17,6 +17,9 @@ Last officially released version is -*> v0.1.0r1 <*-
 ??052000 (v0.2.2d2)
 	- added: --version and --help command-line options (for GNU 
 		 compliance)
+	- fixed: configure problems (libecasound not recognized 
+		 properly)
+	- fixed: unneeded dependence on ALSA headers files
 26042000 (v0.2.1d2)
 	- added: 'mark all' and 'redraw' buttons
 	- changed: new color scheme - hopefully looks better :)

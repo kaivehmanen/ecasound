@@ -89,30 +89,30 @@ qt_libraries = @qt_libraries@
 
 INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils 			-I$(top_srcdir)/libecasound/include 			-I$(top_srcdir)/libecasound/src
 
-@INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecatools_normalize_debug 	       ecatools_fixdc_debug 	       ecatools_play_debug
-@INCLUDE_DEBUG_FALSE@bin_PROGRAMS = ecatools_normalize 	       ecatools_fixdc 	       ecatools_play
+@INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecanormalize_debug 	       ecafixdc_debug 	       ecaplay_debug
+@INCLUDE_DEBUG_FALSE@bin_PROGRAMS = ecanormalize 	       ecafixdc 	       ecaplay
 
-ecatools_normalize_SOURCES = ecatools_normalize.cpp 	 		     ecatools_normalize.h
+ecanormalize_SOURCES = ecatools_normalize.cpp 	 		     ecatools_normalize.h
 
 
-ecatools_normalize_LDADD = $(libecasound_path)
+ecanormalize_LDADD = $(libecasound_path)
 
-ecatools_fixdc_SOURCES = ecatools_fixdc.cpp 			 ecatools_fixdc.h
+ecafixdc_SOURCES = ecatools_fixdc.cpp 			 ecatools_fixdc.h
 
-ecatools_fixdc_LDADD = $(libecasound_path)
+ecafixdc_LDADD = $(libecasound_path)
 
-ecatools_play_SOURCES = ecatools_play.cpp 			ecatools_play.h
+ecaplay_SOURCES = ecatools_play.cpp 			ecatools_play.h
 
-ecatools_play_LDADD = $(libecasound_path)
+ecaplay_LDADD = $(libecasound_path)
 
-ecatools_normalize_debug_SOURCES = $(ecatools_normalize_SOURCES)
-ecatools_normalize_debug_LDADD = $(ecatools_normalize_LDADD)
+ecanormalize_debug_SOURCES = $(ecatools_normalize_SOURCES)
+ecanormalize_debug_LDADD = $(ecatools_normalize_LDADD)
 
-ecatools_fixdc_debug_SOURCES = $(ecatools_fixdc_SOURCES)
-ecatools_fixdc_debug_LDADD = $(ecatools_fixdc_LDADD)
+ecafixdc_debug_SOURCES = $(ecatools_fixdc_SOURCES)
+ecafixdc_debug_LDADD = $(ecatools_fixdc_LDADD)
 
-ecatools_play_debug_SOURCES = $(ecatools_play_SOURCES)
-ecatools_play_debug_LDADD = $(ecatools_play_LDADD)
+ecaplay_debug_SOURCES = $(ecatools_play_SOURCES)
+ecaplay_debug_LDADD = $(ecatools_play_LDADD)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -123,42 +123,33 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-ecatools_normalize_debug_OBJECTS =  ecatools_normalize.o
-@INCLUDE_DEBUG_TRUE@ecatools_normalize_debug_DEPENDENCIES =  \
+ecanormalize_debug_OBJECTS = 
+ecanormalize_debug_DEPENDENCIES = 
+ecanormalize_debug_LDFLAGS = 
+ecafixdc_debug_OBJECTS = 
+ecafixdc_debug_DEPENDENCIES = 
+ecafixdc_debug_LDFLAGS = 
+ecaplay_debug_OBJECTS = 
+ecaplay_debug_DEPENDENCIES = 
+ecaplay_debug_LDFLAGS = 
+ecanormalize_OBJECTS =  ecatools_normalize.o
+@INCLUDE_DEBUG_TRUE@ecanormalize_DEPENDENCIES =  \
 @INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
-@INCLUDE_DEBUG_FALSE@ecatools_normalize_debug_DEPENDENCIES =  \
+@INCLUDE_DEBUG_FALSE@ecanormalize_DEPENDENCIES =  \
 @INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
-ecatools_normalize_debug_LDFLAGS = 
-ecatools_fixdc_debug_OBJECTS =  ecatools_fixdc.o
-@INCLUDE_DEBUG_TRUE@ecatools_fixdc_debug_DEPENDENCIES =  \
+ecanormalize_LDFLAGS = 
+ecafixdc_OBJECTS =  ecatools_fixdc.o
+@INCLUDE_DEBUG_TRUE@ecafixdc_DEPENDENCIES =  \
 @INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
-@INCLUDE_DEBUG_FALSE@ecatools_fixdc_debug_DEPENDENCIES =  \
+@INCLUDE_DEBUG_FALSE@ecafixdc_DEPENDENCIES =  \
 @INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
-ecatools_fixdc_debug_LDFLAGS = 
-ecatools_play_debug_OBJECTS =  ecatools_play.o
-@INCLUDE_DEBUG_TRUE@ecatools_play_debug_DEPENDENCIES =  \
+ecafixdc_LDFLAGS = 
+ecaplay_OBJECTS =  ecatools_play.o
+@INCLUDE_DEBUG_TRUE@ecaplay_DEPENDENCIES =  \
 @INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
-@INCLUDE_DEBUG_FALSE@ecatools_play_debug_DEPENDENCIES =  \
+@INCLUDE_DEBUG_FALSE@ecaplay_DEPENDENCIES =  \
 @INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
-ecatools_play_debug_LDFLAGS = 
-ecatools_normalize_OBJECTS =  ecatools_normalize.o
-@INCLUDE_DEBUG_TRUE@ecatools_normalize_DEPENDENCIES =  \
-@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
-@INCLUDE_DEBUG_FALSE@ecatools_normalize_DEPENDENCIES =  \
-@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
-ecatools_normalize_LDFLAGS = 
-ecatools_fixdc_OBJECTS =  ecatools_fixdc.o
-@INCLUDE_DEBUG_TRUE@ecatools_fixdc_DEPENDENCIES =  \
-@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
-@INCLUDE_DEBUG_FALSE@ecatools_fixdc_DEPENDENCIES =  \
-@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
-ecatools_fixdc_LDFLAGS = 
-ecatools_play_OBJECTS =  ecatools_play.o
-@INCLUDE_DEBUG_TRUE@ecatools_play_DEPENDENCIES =  \
-@INCLUDE_DEBUG_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
-@INCLUDE_DEBUG_FALSE@ecatools_play_DEPENDENCIES =  \
-@INCLUDE_DEBUG_FALSE@$(top_builddir)/libecasound/src/libecasound.la
-ecatools_play_LDFLAGS = 
+ecaplay_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -178,8 +169,8 @@ TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/ecatools_fixdc.P .deps/ecatools_normalize.P \
 .deps/ecatools_play.P
-SOURCES = $(ecatools_normalize_debug_SOURCES) $(ecatools_fixdc_debug_SOURCES) $(ecatools_play_debug_SOURCES) $(ecatools_normalize_SOURCES) $(ecatools_fixdc_SOURCES) $(ecatools_play_SOURCES)
-OBJECTS = $(ecatools_normalize_debug_OBJECTS) $(ecatools_fixdc_debug_OBJECTS) $(ecatools_play_debug_OBJECTS) $(ecatools_normalize_OBJECTS) $(ecatools_fixdc_OBJECTS) $(ecatools_play_OBJECTS)
+SOURCES = $(ecanormalize_debug_SOURCES) $(ecafixdc_debug_SOURCES) $(ecaplay_debug_SOURCES) $(ecanormalize_SOURCES) $(ecafixdc_SOURCES) $(ecaplay_SOURCES)
+OBJECTS = $(ecanormalize_debug_OBJECTS) $(ecafixdc_debug_OBJECTS) $(ecaplay_debug_OBJECTS) $(ecanormalize_OBJECTS) $(ecafixdc_OBJECTS) $(ecaplay_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -249,29 +240,29 @@ distclean-libtool:
 
 maintainer-clean-libtool:
 
-ecatools_normalize_debug: $(ecatools_normalize_debug_OBJECTS) $(ecatools_normalize_debug_DEPENDENCIES)
-	@rm -f ecatools_normalize_debug
-	$(CXXLINK) $(ecatools_normalize_debug_LDFLAGS) $(ecatools_normalize_debug_OBJECTS) $(ecatools_normalize_debug_LDADD) $(LIBS)
+ecanormalize_debug: $(ecanormalize_debug_OBJECTS) $(ecanormalize_debug_DEPENDENCIES)
+	@rm -f ecanormalize_debug
+	$(LINK) $(ecanormalize_debug_LDFLAGS) $(ecanormalize_debug_OBJECTS) $(ecanormalize_debug_LDADD) $(LIBS)
 
-ecatools_fixdc_debug: $(ecatools_fixdc_debug_OBJECTS) $(ecatools_fixdc_debug_DEPENDENCIES)
-	@rm -f ecatools_fixdc_debug
-	$(CXXLINK) $(ecatools_fixdc_debug_LDFLAGS) $(ecatools_fixdc_debug_OBJECTS) $(ecatools_fixdc_debug_LDADD) $(LIBS)
+ecafixdc_debug: $(ecafixdc_debug_OBJECTS) $(ecafixdc_debug_DEPENDENCIES)
+	@rm -f ecafixdc_debug
+	$(LINK) $(ecafixdc_debug_LDFLAGS) $(ecafixdc_debug_OBJECTS) $(ecafixdc_debug_LDADD) $(LIBS)
 
-ecatools_play_debug: $(ecatools_play_debug_OBJECTS) $(ecatools_play_debug_DEPENDENCIES)
-	@rm -f ecatools_play_debug
-	$(CXXLINK) $(ecatools_play_debug_LDFLAGS) $(ecatools_play_debug_OBJECTS) $(ecatools_play_debug_LDADD) $(LIBS)
+ecaplay_debug: $(ecaplay_debug_OBJECTS) $(ecaplay_debug_DEPENDENCIES)
+	@rm -f ecaplay_debug
+	$(LINK) $(ecaplay_debug_LDFLAGS) $(ecaplay_debug_OBJECTS) $(ecaplay_debug_LDADD) $(LIBS)
 
-ecatools_normalize: $(ecatools_normalize_OBJECTS) $(ecatools_normalize_DEPENDENCIES)
-	@rm -f ecatools_normalize
-	$(CXXLINK) $(ecatools_normalize_LDFLAGS) $(ecatools_normalize_OBJECTS) $(ecatools_normalize_LDADD) $(LIBS)
+ecanormalize: $(ecanormalize_OBJECTS) $(ecanormalize_DEPENDENCIES)
+	@rm -f ecanormalize
+	$(CXXLINK) $(ecanormalize_LDFLAGS) $(ecanormalize_OBJECTS) $(ecanormalize_LDADD) $(LIBS)
 
-ecatools_fixdc: $(ecatools_fixdc_OBJECTS) $(ecatools_fixdc_DEPENDENCIES)
-	@rm -f ecatools_fixdc
-	$(CXXLINK) $(ecatools_fixdc_LDFLAGS) $(ecatools_fixdc_OBJECTS) $(ecatools_fixdc_LDADD) $(LIBS)
+ecafixdc: $(ecafixdc_OBJECTS) $(ecafixdc_DEPENDENCIES)
+	@rm -f ecafixdc
+	$(CXXLINK) $(ecafixdc_LDFLAGS) $(ecafixdc_OBJECTS) $(ecafixdc_LDADD) $(LIBS)
 
-ecatools_play: $(ecatools_play_OBJECTS) $(ecatools_play_DEPENDENCIES)
-	@rm -f ecatools_play
-	$(CXXLINK) $(ecatools_play_LDFLAGS) $(ecatools_play_OBJECTS) $(ecatools_play_LDADD) $(LIBS)
+ecaplay: $(ecaplay_OBJECTS) $(ecaplay_DEPENDENCIES)
+	@rm -f ecaplay
+	$(CXXLINK) $(ecaplay_LDFLAGS) $(ecaplay_OBJECTS) $(ecaplay_LDADD) $(LIBS)
 .cpp.o:
 	$(CXXCOMPILE) -c $<
 .cpp.lo:

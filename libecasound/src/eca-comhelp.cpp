@@ -47,6 +47,7 @@ const char* ecasound_parameter_help_rep =
 "     -efs:parms               resonator filter\n"
 "     -ei:params               pitch shifter\n"
 "     -el:name,params          LADSPA-plugin\n"
+"     -eli:id_number,params    LADSPA-plugin (unique-id)\n"
 "     -enm:params              noise gate\n"
 "     -erc:params              copy channel 'source' to 'target'\n"
 "     -erm:params              mix all channels to channel 'target' \n"

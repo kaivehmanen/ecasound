@@ -171,23 +171,24 @@ Kai Vehmanen -	mailto:kaiv@wakkanet.fi
  Contributors / credits / thanks to 
 -----------------------------------------------------------------------
 
-Barton-Davis, Paul - Quasimodo and Hdr have given me a lot of ideas
-Dyson, John S. - advanced compressor (-eca)
-Endersz, Viktor - for sending me the adv.compressor source code!
-Fendt, Stefan - RC-lowpass filter (-ef4)
-Hall, Jeremy - extensive testing, many design ideas
-Hamara, Arto - ecasound logo, lots of great ideas!
-Lavallée, Marc - rpm-spec for Mandrake
+Barton-Davis, Paul - Quasimodo and Hdr have given me a lot of ideas.
+Dyson, John S. - Wrote the original advanced compressor (-eca) core.
+Endersz, Viktor - For sending me the adv.compressor source code!
+Fendt, Stefan - Wrote the original code for RC-lowpass filter (-ef4).
+Hall, Jeremy - Extensive testing, many design ideas.
+Hamara, Arto - Ecasound logo, lots of great ideas!
+Lavallée, Marc - Rpm-spec for Mandrake.
 Laydier, Antoine aka SMF - layer.cpp (interprets mp3 headers)
-Petit, Bertrand - helped with POSIX-compatibility issues
+Petit, Bertrand - Helped with POSIX-compatibility issues.
 Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!
-Sousa, Rui - bug fixes
-Tkachenko, Vadim - autoconf magic
+Smith, Richard A. - Helped in solving the "gcc 2.95" bug.
+Sousa, Rui - OSS bug fixes.
+Tkachenko, Vadim - Autoconf magic. :)
 
-all LAD members - always a great source of inspiration
-nic.cx - for eca.cx, ecasound.cx and ecawave.cx domains
-SEUL - for hosting ecasound ftp, http and CVS sites
-WakkaNet Oy - for hosting ecasound web site
+all LAD members - Always a great source of inspiration!
+nic.cx - For eca.cx, ecasound.cx and ecawave.cx domains.
+SEUL - For hosting ecasound ftp, http and CVS sites.
+WakkaNet Oy - For hosting ecasound web site.
 
 -----------------------------------------------------------------------
  Licensing/distribution policy

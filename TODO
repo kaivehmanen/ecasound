@@ -27,19 +27,47 @@
 
 -----------------------------------------------------------------------
 
-[ Upcoming features - implemented as soon as possible ]
+[ Upcoming features/fixes - implemented as soon as possible ]
 
 Input/output devices:
 
 - type override for audio objects
 - automatic handling of mono mp3s
 - mp3 bitrate as a command-line parameter
+- more efficient interleaving of multichannel inputs/outputs
+	- "-i:ileave,mchannel-file.wav,1" - only reads the 1st channel
+	- "-i:ileave,mchannel-file.wav,2" - only reads the 2nd channel
+	- and so on... the same with outputs
+
+Interactive-mode:
+
+- more info about current chainsetup status (cs-selected, c-list, ?)
 
 Effects, routing, dsp routines:
 
+- pitch-shifting mono streams doesn't work
 - better reverbs
 - effect preset parameters
+	- "-p[fn]:string,par1,...,parN"
+	
+Ecatools:
 
+- make the executable names shorter (eg. ecaplay, ecanormalize, ecafixdc)
+
+-----------------------------------------------------------------------
+
+[ Help - developer in trouble ]
+
+- does ecasound work with ALSA-supported multichannel cards
+  (Hammerfall, MidiMan, etc)?
+- does ecasound compile on FreeBSD/Irix/Solaris/etc system, what
+  versions?
+- how current ecasound versions work with old gcc packages (2.7.x
+  and older)?
+- ... and old libc-versions (2.x and 5.x)?
+- ecasound compiles out-of-the-box on Redhat 6.x system, what about
+  other distros?
+  
 -----------------------------------------------------------------------
 
 [ Wish-list - implemented if enough demand ]
@@ -55,9 +83,13 @@ Effects, routing, dsp routines:
 
 - generic envelope followers
 
+Interactive-mode:
+
+- cs-copy 'chainsetupname' (duplicate chainsetup)
+
 User-interface:
 
-- daemon mode for ecasound
+- daemon mode for ecasound (ecad, ecasoundd)
 
 Misc:
 

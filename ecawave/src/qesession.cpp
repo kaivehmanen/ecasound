@@ -51,30 +51,6 @@
 
 #include "version.h"
 
-#define COMPILE_ALSA
-#include <ecasound/audioio-alsa2.h>
-#include <ecasound/qeaudioformatinput.h>
-#include <ecasound/qeaudioobjectconfiguration.h>
-#include <ecasound/qechainoperatorinput.h>
-#include <ecasound/qefilenameinput.h>
-#include <ecasound/qestringdialog.h>
-#include <ecasound/qeobjectmap.h>
-#include <ecasound/eca-static-object-maps.h>
-#include <ecasound/audiofx_compressor.h>
-#include <ecasound/qeokcancelinput.h>
-#include <ecasound/qeoperatorconfiguration.h>
-#include <ecasound/qeslider.h>
-
-void QESession::show_event(void) {
-  //  ALSA_PCM2_DEVICE alsa (0,0); QWidget* widget1 = new QEAudioObjectConfiguration(&alsa, 0, "test1");
-  //  QWidget* widget2 = new QEAudioFormatInput(0, "test2");
-  //  QWidget* widget2 = new QEChainOperatorInput(0, "test2");
-  //  QWidget* widget4 = new QEObjectMap(&eca_chain_operator_map, 0, "test4");
-  //  ADVANCED_COMPRESSOR cop; QWidget* widget6 = new QEOperatorConfiguration(&cop, 0, "test6");
-  QWidget* widget = new QESlider(0, "test4");
-  widget->show();
-}
-
 QESession::QESession (const string& filename, 
 		      const ECA_AUDIO_FORMAT& frm, 
 		      bool use_wave_cache, 
@@ -218,7 +194,6 @@ void QESession::init_layout(void) {
 
   QAccel* a = new QAccel (this);
   a->connectItem(a->insertItem(ALT+Key_D), this, SLOT(debug_event()));
-  a->connectItem(a->insertItem(ALT+Key_B), this, SLOT(show_event()));
 
   if (state_rep == state_orig_file ||
       state_rep == state_orig_direct) 

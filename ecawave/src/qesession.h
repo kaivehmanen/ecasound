@@ -48,7 +48,6 @@ public slots:
   void cut_event(void);
 
   void debug_event(void);
-  void show_event(void);
 
 private slots:
 

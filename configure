@@ -726,7 +726,7 @@ fi
 
 PACKAGE=ecasound
 
-VERSION=1.7.7r11
+VERSION=1.7.8d12
 
 if test "`cd $srcdir && pwd`" != "`pwd`" && test -f $srcdir/config.status; then
   { echo "configure: error: source directory already configured; run "make distclean" there first" 1>&2; exit 1; }
@@ -1913,7 +1913,7 @@ else
   FEELING_EXPERIMENTAL_FALSE=
 fi
 
-CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math"
+CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math -fstrict-aliasing -funroll-loops"
 
 # Check whether --enable-debug or --disable-debug was given.
 if test "${enable_debug+set}" = set; then
@@ -3484,55 +3484,15 @@ if test "x$nostlmap" = "x1" ; then
 	{ echo "configure: error: C++ header files not found!" 1>&2; exit 1; }
 fi
 
-echo $ac_n "checking for inline""... $ac_c" 1>&6
-echo "configure:3489: checking for inline" >&5
-if eval "test \"`echo '$''{'ac_cv_c_inline'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  ac_cv_c_inline=no
-for ac_kw in inline __inline__ __inline; do
-  cat > conftest.$ac_ext <<EOF
-#line 3496 "configure"
-#include "confdefs.h"
-
-int main() {
-} $ac_kw foo() {
-; return 0; }
-EOF
-if { (eval echo configure:3503: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
-  rm -rf conftest*
-  ac_cv_c_inline=$ac_kw; break
-else
-  echo "configure: failed program was:" >&5
-  cat conftest.$ac_ext >&5
-fi
-rm -f conftest*
-done
-
-fi
-
-echo "$ac_t""$ac_cv_c_inline" 1>&6
-case "$ac_cv_c_inline" in
-  inline | yes) ;;
-  no) cat >> confdefs.h <<\EOF
-#define inline 
-EOF
- ;;
-  *)  cat >> confdefs.h <<EOF
-#define inline $ac_cv_c_inline
-EOF
- ;;
-esac
-
 echo $ac_n "checking whether byte ordering is bigendian""... $ac_c" 1>&6
-echo "configure:3529: checking whether byte ordering is bigendian" >&5
+echo "configure:3489: checking whether byte ordering is bigendian" >&5
 if eval "test \"`echo '$''{'ac_cv_c_bigendian'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   ac_cv_c_bigendian=unknown
 # See if sys/param.h defines the BYTE_ORDER macro.
 cat > conftest.$ac_ext <<EOF
-#line 3536 "configure"
+#line 3496 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #include <sys/param.h>
@@ -3543,11 +3503,11 @@ int main() {
 #endif
 ; return 0; }
 EOF
-if { (eval echo configure:3547: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:3507: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   # It does; now see whether it defined to BIG_ENDIAN or not.
 cat > conftest.$ac_ext <<EOF
-#line 3551 "configure"
+#line 3511 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #include <sys/param.h>
@@ -3558,7 +3518,7 @@ int main() {
 #endif
 ; return 0; }
 EOF
-if { (eval echo configure:3562: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:3522: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   ac_cv_c_bigendian=yes
 else
@@ -3578,7 +3538,7 @@ if test "$cross_compiling" = yes; then
     { echo "configure: error: can not run test program while cross compiling" 1>&2; exit 1; }
 else
   cat > conftest.$ac_ext <<EOF
-#line 3582 "configure"
+#line 3542 "configure"
 #include "confdefs.h"
 #ifdef __cplusplus
 extern "C" void exit(int);
@@ -3594,7 +3554,7 @@ main () {
   exit (u.c[sizeof (long) - 1] == 1);
 }
 EOF
-if { (eval echo configure:3598: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
+if { (eval echo configure:3558: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
 then
   ac_cv_c_bigendian=no
 else
@@ -3618,12 +3578,12 @@ EOF
 fi
 
 echo $ac_n "checking for size_t""... $ac_c" 1>&6
-echo "configure:3622: checking for size_t" >&5
+echo "configure:3582: checking for size_t" >&5
 if eval "test \"`echo '$''{'ac_cv_type_size_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3627 "configure"
+#line 3587 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS

@@ -189,10 +189,13 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu) {
   assert(argu.empty() != true);
  
   register_default_objects();
-  string tname = get_argument_number(1, argu);
+  string fname = get_argument_number(1, argu);
+  if (fname.find(".") != string::npos) {
+    fname = string(fname, fname.find_last_of("."), string::npos);
+  }
 
   AUDIO_IO* main_file = 0;
-  main_file = ECA_AUDIO_OBJECT_MAP::object(tname);
+  main_file = ECA_AUDIO_OBJECT_MAP::object(fname);
 
   if (main_file != 0) {
     main_file = main_file->new_expr();

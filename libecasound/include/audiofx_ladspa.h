@@ -21,6 +21,9 @@ private:
   vector<LADSPA_Handle> plugins;
 
   unsigned long port_count_rep;
+  int in_audio_ports;
+  int out_audio_ports;
+  long unique_number_rep;
   string label_rep, unique_rep, param_names_rep;
   vector<LADSPA_Data> params;
 
@@ -30,7 +33,21 @@ public:
   virtual string description(void) const { return("Wrapper for LADSPA plugins."); }
 
   virtual string parameter_names(void) const { return(param_names_rep); }
+
+  /**
+   * This identifier can be used as a unique, case-sensitive
+   * identifier for the plugin type within the plugin file. 
+   * Labels must not contain white-space characters. 
+   */
   string unique(void) const { return(unique_rep); }
+
+  /**
+   * This numeric identifier indicates the plugin type
+   * uniquely. Plugin programmers may reserve ranges of IDs from a
+   * central body to avoid clashes. Hosts may assume that IDs are
+   * below 0x1000000. 
+   */
+  long int unique_number(void) const { return(unique_number_rep); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;

@@ -35,9 +35,19 @@ EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR*) 
 
   label_rep = string(plugin_desc->Name);
   unique_rep = string(plugin_desc->Label);
+  unique_number_rep = static_cast<long int>(plugin_desc->UniqueID);
   port_count_rep = plugin_desc->PortCount;
 
+  in_audio_ports = 0;
+  out_audio_ports = 0;
+
   for(unsigned long m = 0; m < port_count_rep; m++) {
+    if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
+      if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_INPUT) == LADSPA_PORT_INPUT)
+	++in_audio_ports;
+      else
+	++out_audio_ports;
+    }
     if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) ==
 	LADSPA_PORT_CONTROL) {
       params.push_back(1.0);
@@ -81,14 +91,35 @@ CHAIN_OPERATOR::parameter_type EFFECT_LADSPA::get_parameter(int param) const {
 
 void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) { 
   buffer = insample;
-  plugins.resize(buffer->number_of_channels());
-  for(unsigned int n = 0; n < plugins.size(); n++) {
-    plugins[n] = reinterpret_cast<LADSPA_Handle*>(plugin_desc->instantiate(plugin_desc, buffer->sample_rate()));
-  }
-  for(unsigned long m = 0; m < port_count_rep; m++) {
-    for(unsigned int n = 0; n < plugins.size(); n++) {
+  if (in_audio_ports > 1 &&
+      in_audio_ports == out_audio_ports &&
+      in_audio_ports == buffer->number_of_channels()) {
+    plugins.resize(1);
+    plugins[0] = reinterpret_cast<LADSPA_Handle*>(plugin_desc->instantiate(plugin_desc, buffer->sample_rate()));
+    int inport = 0;
+    int outport = 0;
+    for(unsigned long m = 0; m < port_count_rep; m++) {
       if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
-	plugin_desc->connect_port(plugins[n], m, buffer->buffer[n]);
+	if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_INPUT) == LADSPA_PORT_INPUT) {
+	  plugin_desc->connect_port(plugins[0], m, buffer->buffer[inport]);
+	  ++inport;
+	}
+	else {
+	  plugin_desc->connect_port(plugins[0], m, buffer->buffer[outport]);
+	  ++outport;
+	}
+      }
+    }
+  } else {
+    plugins.resize(buffer->number_of_channels());
+    for(unsigned int n = 0; n < plugins.size(); n++) {
+      plugins[n] = reinterpret_cast<LADSPA_Handle*>(plugin_desc->instantiate(plugin_desc, buffer->sample_rate()));
+    }
+    for(unsigned long m = 0; m < port_count_rep; m++) {
+      for(unsigned int n = 0; n < plugins.size(); n++) {
+	if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
+	  plugin_desc->connect_port(plugins[n], m, buffer->buffer[n]);
+	}
       }
     }
   }

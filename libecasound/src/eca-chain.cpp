@@ -329,8 +329,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
   // special handling for LADPSA-plugins
   EFFECT_LADSPA* ladspa = dynamic_cast<EFFECT_LADSPA*>(chainop);
   if (ladspa != 0) {
-    t << "-" << eca_ladspa_plugin_map.object_identifier(ladspa) << ":";
-    t << ladspa->unique();
+    t << "-eli:" << ladspa->unique_number();
     if (chainop->number_of_params() > 0) t << ",";
   }
   else {

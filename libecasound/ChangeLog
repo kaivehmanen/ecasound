@@ -2,6 +2,13 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-05-21  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* library version changed to 6:0:1
+	* audiofx_ladspa.h (unique_number): added
+	* eca-ladspa-plugin-map.h (object, register_object): new
+	overloaded versions
+	
 2000-05-02  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* library version 5:0:0 frozen

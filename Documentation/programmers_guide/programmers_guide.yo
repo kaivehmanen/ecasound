@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (15052000)
+       (20052000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -27,7 +27,7 @@ sect(Preface)
 This document describes how ecasound library works, how to use it,
 how to extend and add features to it and so on. Before reading this
 document, you should first look at other available documentation
-(especially url(ecasound users's guide)(../users_guide/users_guide.html).
+(especially url(ecasound users's guide)(../users_guide/users_guide.html)).
 
 Unlike most web pages, this document really is under construction. :)
 
@@ -44,7 +44,7 @@ to appreciate genericity. :) Although specific use-cases are used
 for testing new ideas, they are just design aids.
 
 subsubsect(Object-orientation)
-Ecasound is written in standard C++ (as specified in 1997 ANSI). 
+Ecasound is written in C++ (as specified in 1997 ANSI/ISO C++ standard). 
 Because C++ language itself doesn't force you to follow OO-principles, 
 I often use Eiffel language as a reference when designing classes and 
 routines.
@@ -226,7 +226,7 @@ subsect(Class descriptions)
 
 The primary source for class documentation is header files.
 A browsable version of header documentation is at
-url(www.wakkanet.fi/~kaiv/ecasound/Documentation/kdoc_pages.html)(http://www.wakkanet.fi/~kaiv/ecasound/Documentation/kdoc_pages.html).
+url(www.wakkanet.fi/~kaiv/ecasound/Documentation/doxygen_pages.html)(http://www.wakkanet.fi/~kaiv/ecasound/Documentation/doxygen_pages.html)
 Anyway, let's look at the some central classes.
 
 COMMENT(----------------------------------------------------------------)
@@ -356,9 +356,9 @@ like any other ecasound effect (parameters control, effect presets, etc).
 COMMENT(----------------------------------------------------------------)
 subsect(LADSPA plugins)
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
-Plugin API). See url(LAD home page)(http://audio.netpedia.net/lad) for 
+Plugin API). See url(LAD mailing list web site)(http://audio.netpedia.net/lad) for 
 more info about LADSPA. Other useful sites are 
-url(LADSPA home page)(http://www.muse.demon.co.uk/ladspa.html) and
+url(LADSPA home page)(http://www.ladspa.org) and
 url(LADSPA documentation)(http://www.ffem.org/gdam/ladspa-doc/ladspa.html).
 
 htmlcommand(<insert name=ecasound_tail>)

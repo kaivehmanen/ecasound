@@ -3,10 +3,10 @@ Prefix: /usr/local
 Packager: Kai Vehmanen <kaiv@wakkanet.fi>
 Distribution: Red Hat Contrib
 Name: ecasound
-Version: 1.7.7r11
+Version: 1.7.8d12
 Release: 1
 Copyright: GPL
-Source: http://ecasound.seul.org/download/ecasound-1.7.7r11.tar.gz
+Source: http://ecasound.seul.org/download/ecasound-1.7.8d12.tar.gz
 
 Summary: ecasound - multitrack audio processing tool
 Group: Applications/Sound
@@ -67,9 +67,9 @@ make strip-shared-libs
 %doc /usr/local/man/man1/ecasound-iam.1
 %doc /usr/local/man/man5/ecasoundrc.5
 /usr/local/bin/ecasound
-/usr/local/bin/ecatools_fixdc
-/usr/local/bin/ecatools_normalize
-/usr/local/bin/ecatools_play
+/usr/local/bin/ecafixdc
+/usr/local/bin/ecanormalize
+/usr/local/bin/ecaplay
 /usr/local/lib/libecasound.*
 /usr/local/lib/libkvutils.*
 %config /usr/local/share/ecasound
@@ -85,7 +85,11 @@ make strip-shared-libs
 /usr/local/lib/libqtecasound.*
 
 %changelog
+* Sun May 21 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- Renamed ecatools programs to ecaplay, ecanormalize and ecafixdc.
+	
 * Mon Apr 15 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+
 - Removed dynamic linking to ALSA libraries. You 
   can get ALSA support by recompiling the source-RPM
   package.

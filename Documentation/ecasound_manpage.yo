@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (14.05.2000)
+       (21.05.2000)
        ()
        (Multimedia software)
 
@@ -197,9 +197,9 @@ audio-cd tracks (.cdr), ecasound ewf-files (.ewf), RAW audio data
 SGI audiofile library: AIFF (.aiff, .aifc, .aif) and Sun/NeXT audio 
 files (.au, .snd). MikMod is also supported (.xm, .mod, .s3m, 
 .it, etc). Supported devices are OSS audio devices (/dev/dsp*),
-ALSA audio and loopback devices (/dev/snd/pcm*, alsalb). If no inputs 
-are specified, the first non-option (doesn't start with '-') command
-line argument is considered to be an input.
+ALSA audio and loopback devices. If no inputs are specified, the first 
+non-option (doesn't start with '-') command line argument is
+considered to be an input.
 
 dit(-o[:]output-file-or-device)
 Works in the same way as the -i option. If no outputs are specified,
@@ -335,6 +335,9 @@ is activated. If the signal stays below the threshold for
 and stays there over 'hold' ms the gate is released during 
 'release' ms.
 
+dit(-ei:pitch-shift-%)
+Pitch shifter. Modifies audio pitch by altering its length.
+
 dit(-epp:right-%)
 Normal pan effect. Balance value of 0 means to pan signal fully
 left and 100 fully right. If the panned signal is
@@ -465,10 +468,16 @@ Plugin API). Plugins are located in shared library (.so) files in
 /usr/local/share/ladspa (configured in ecasoundrc(5)). One shared
 library file can contain multiple plugin objects, but every plugin 
 has a unique plugin name. This name is used for selecting plugins. 
-See url(LAD home page)(http://audio.netpedia.net/lad) for more info 
-about LADSPA. Other useful sites are
-url(LADSPA home page)(http://www.muse.demon.co.uk/ladspa.html) and
-url(LADSPA documentation)(http://www.ffem.org/gdam/ladspa-doc/ladspa.html).
+See url(LAD mailing list web site)(http://audio.netpedia.net/lad) for
+more info about LADSPA. Other useful sites are url(LADSPA home
+page)(http://www.ladspa.org) and url(LADSPA
+documentation)(http://www.ffem.org/gdam/ladspa-doc/ladspa.html).
+
+dit(-eli:plugin_unique_number,param-1,...,param-N)
+Same as above expect plugin's unique id-number is used. It
+is guaranteed that these id-numbers are unique among all 
+LADSPA plugins.
+
 enddit()
 
 bf(GATE SETUP)
@@ -477,7 +486,7 @@ startdit()
 
 dit(-gc:start-time,len)
 Time crop gate. Initially gate is closed. After 'start-time' seconds
-has elapse, gate opens and remains open for 'len' seconds.
+has elapsed, gate opens and remains open for 'len' seconds.
 
 dit(-ge:open-threshold-%, close-thold-%,volume-mode)
 Threshold gate. Initially gate is closed. It is opened when volume 

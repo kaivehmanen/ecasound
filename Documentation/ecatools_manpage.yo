@@ -26,18 +26,18 @@ htmlcommand(
 
 manpage(ecatools)
        (1)
-       (28.08.1999)
+       (21.05.2000)
        ()
        (Multimedia software)
 
 manpagename(ecatools)(audio processing utils based on ecasound)
 
 manpagesynopsis()
-bf(ecatools_fixdc) file1 [ file2,...,fileN ]
+bf(ecafixdc) file1 [ file2,...,fileN ]
 
-bf(ecatools_normalize) file1 [ file2,...,fileN ]
+bf(ecanormalize) file1 [ file2,...,fileN ]
 
-bf(ecatools_play) file1 [ file2,...,fileN ]
+bf(ecaplay) file1 [ file2,...,fileN ]
 
 manpagedescription()
 
@@ -45,17 +45,17 @@ Ecatools are simple command line utils that do various audio
 processing tasks. Most of them support batch processing. They all
 use the ecasound engine (libecasound).
 
-bf(ECATOOLS_FIXDC)
+bf(ECAFIXDC)
 
 A simple command-line tool for fixing DC-offset.
 
-bf(ECATOOLS_NORMALIZE)
+bf(ECANORMALIZE)
 
 A simple command-line tool for normalizing sample volume. 
 Finds out how much input file can be amplified without clipping
 and, if necessary, does the amplification.
 
-bf(ECATOOLS_PLAY)
+bf(ECAPLAY)
 
 A simple command-line tool that plays input files using the
 default output specified in em(~/.ecasoundrc).
