@@ -34,6 +34,8 @@ Details:
     - added explanations to engine run errors [12/2004]
     - print more detailed explanation why a chainsetup
       cannot be connected [12/2004]
+    - do not raise an error conditions on non-fatal cases when
+      connecting chainsetups [12/2004]
 
 - detected error scenerios:
     - warning: some inputs and/or outputs are not connected 
