@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
   eci_init();
   eci_command("cs-add play_chainsetup");
   eci_command("c-add 1st_chain");
-  eci_command("-i:some_file.wav");
-  eci_command("-o:/dev/dsp");
+  eci_command("ai-add foo.wav");
+  eci_command("ao-add /dev/dsp");
   eci_command("cop-add -efl:100");
   eci_command("cop-select 1");
   eci_command("copp-select 1");

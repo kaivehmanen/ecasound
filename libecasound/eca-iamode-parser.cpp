@@ -98,6 +98,7 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["cs-set-length"] = ec_cs_set_length;
   cmd_map_rep["cs-set-length-samples"] = ec_cs_set_length_samples;
   cmd_map_rep["cs-toggle-loop"] = ec_cs_toggle_loop;
+  cmd_map_rep["cs-option"] = ec_cs_option;
 
   cmd_map_rep["c-add"] = ec_c_add;
   cmd_map_rep["c-remove"] = ec_c_remove;
@@ -234,7 +235,6 @@ void ECA_IAMODE_PARSER::register_commands(void) {
 
 bool ECA_IAMODE_PARSER::action_requires_params(int id) { 
   switch(id) {
-  case ec_direct_option:
   case ec_debug:
 
   case ec_cs_add:
@@ -249,6 +249,7 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_cs_rewind:
   case ec_cs_forward:
   case ec_cs_set_position:
+  case ec_cs_option:
 
   case ec_c_add:
   case ec_c_select:
@@ -313,7 +314,6 @@ bool ECA_IAMODE_PARSER::action_requires_connected(int id) {
 
 bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   switch(id) {
-  case ec_direct_option:
 
   case ec_cs_remove: 
   case ec_cs_edit:
@@ -333,6 +333,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_cs_set_length:
   case ec_cs_set_length_samples:
   case ec_cs_toggle_loop:
+  case ec_cs_option:
 
   case ec_c_remove:
   case ec_c_clear:
@@ -408,14 +409,13 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
 
 bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) { 
   switch(id) {
-  case ec_direct_option:
-
   case ec_cs_remove:
   case ec_cs_set_length:
   case ec_cs_set_length_samples:
   case ec_cs_toggle_loop:
   case ec_cs_set_param:
   case ec_cs_set_position_samples:
+  case ec_cs_option:
 
   case ec_c_add:
   case ec_c_remove:

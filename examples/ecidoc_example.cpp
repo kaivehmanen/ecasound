@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
   ECA_CONTROL_INTERFACE e;
   e.command("cs-add play_chainsetup");
   e.command("c-add 1st_chain");
-  e.command("-i:some_file.wav");
-  e.command("-o:/dev/dsp");
+  e.command("ai-add foo.wav");
+  e.command("ao-add /dev/dsp");
   e.command("cop-add -efl:100");
   e.command("cop-select 1");
   e.command("copp-select 1");

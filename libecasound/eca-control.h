@@ -23,7 +23,7 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   ECA_CONTROL_DUMP ctrl_dump_rep;
 
   void action(int action_id);
-  void direct_command(const std::string& cmd);
+  void chainsetup_option(const std::string& cmd);
   void set_action_argument(const std::vector<std::string>& s);
   void set_action_argument(double v);
   void clear_action_arguments(void);

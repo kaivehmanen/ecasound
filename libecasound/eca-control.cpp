@@ -21,8 +21,8 @@
 #include <config.h>
 #endif
 
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -54,6 +54,8 @@
 
 using std::string;
 using std::vector;
+using std::cerr;
+using std::endl;
 
 ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession) 
   : ECA_CONTROL_OBJECTS(psession),
@@ -73,7 +75,10 @@ void ECA_CONTROL::command(const string& cmd) {
       // *p is not recognized as a iamode command
       // ---
       if (p->size() > 0 && (*p)[0] == '-') {
-	direct_command(cmd);
+	cerr << "Note! Direct use of EOS-options (-prefix:arg1,...,argN)";
+	cerr << " as iactive-mode commands is considered deprecated. " << endl;
+	cerr << "\tUse the notation 'cs-option -prefix:a,b,x' instead." << endl;
+	chainsetup_option(cmd);
       }
       else {
 	set_last_error("Unknown command!");
@@ -134,9 +139,9 @@ void ECA_CONTROL::command_float_arg(const string& cmd, double arg) {
 }
 
 /**
- * Performs a direct EIAM command (prefixed with '-').
+ * Interprets an EOS (ecasound optiont syntax) token  (prefixed with '-').
  */
-void ECA_CONTROL::direct_command(const string& cmd) {
+void ECA_CONTROL::chainsetup_option(const string& cmd) {
   string prefix = get_argument_prefix(cmd);
   if (prefix == "el" || prefix == "pn") { // --- LADSPA plugins and presets
     if (selected_chains().size() == 1) 
@@ -158,7 +163,7 @@ void ECA_CONTROL::direct_command(const string& cmd) {
   }
   else {
     set_action_argument(string_to_words(cmd));
-    action(ec_direct_option);
+    action(ec_cs_option);
   }
 }
 
@@ -229,17 +234,6 @@ void ECA_CONTROL::action(int action_id) {
   }
 
   switch(action_id) {
-    // ---
-    // Direct options
-    // ---
-  case ec_direct_option: 
-    {
-      selected_chainsetup_repp->interpret_options(action_args_rep);
-      if (selected_chainsetup_repp->interpret_result() != true) {
-	set_last_error(selected_chainsetup_repp->interpret_result_verbose());
-      }
-      break;
-    }
 
   case ec_unknown: { set_last_error("Unknown command!"); break; }
 
@@ -329,6 +323,14 @@ void ECA_CONTROL::action(int action_id) {
       break;
     }
   case ec_cs_toggle_loop: { toggle_chainsetup_looping(); break; } 
+  case ec_cs_option: 
+    {
+      selected_chainsetup_repp->interpret_options(action_args_rep);
+      if (selected_chainsetup_repp->interpret_result() != true) {
+	set_last_error(selected_chainsetup_repp->interpret_result_verbose());
+      }
+      break;
+    }
 
   // ---
   // Chains

@@ -82,8 +82,8 @@ if __name__ == '__main__':
     e("""
     cs-add play_chainsetup
     c-add 1st_chain
-    -i:%s
-    -o:/dev/dsp
+    ai-add %s
+    ao-add /dev/dsp
     cop-add -efl:100
     cop-select 1
     copp-select 1

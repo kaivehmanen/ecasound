@@ -600,7 +600,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_filename(const std::string& name) {
 void ECA_CONTROL_OBJECTS::set_chainsetup_parameter(const std::string& name) {
   // --------
   DBC_REQUIRE(is_selected() == true  && 
-	 name.empty() != true);
+	      name.empty() != true);
   // --------
 
   selected_chainsetup_repp->interpret_global_option(name);

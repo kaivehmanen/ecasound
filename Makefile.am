@@ -1,4 +1,4 @@
-EXTRA_DIST = BUGS NEWS TODO FAQ generic_oscillators effect_presets ecasound.spec
+EXTRA_DIST = BUGS NEWS TODO generic_oscillators effect_presets ecasound.spec
 
 if SYSTEM_READLINE
 SUBDIRS = kvutils libecasound libecasoundc pyecasound ecasound ecatools Documentation examples contrib

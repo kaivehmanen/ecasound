@@ -29,7 +29,6 @@ class ECA_IAMODE_PARSER {
 
   enum Commands {
     ec_unknown,
-    ec_direct_option,
     // --
     ec_help,
     ec_exit,
@@ -68,6 +67,7 @@ class ECA_IAMODE_PARSER {
     ec_cs_set_length,
     ec_cs_set_length_samples,
     ec_cs_toggle_loop,
+    ec_cs_option,
     // --
     ec_c_add,
     ec_c_remove,

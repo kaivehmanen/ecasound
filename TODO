@@ -51,7 +51,7 @@ Input/output devices:
 
 - wrapper objects for triggering file input/output based on volume
   level or timers
-- (edi-2): type override for audio objects
+- (edi-2): type override for audio objects [done - 2.1dev2]
 - wrapper object for using effects as audio inputs/outputs
 - more efficient interleaving of multichannel inputs/outputs
 	- "-i:ileave,mchannel-file.wav,1" - only reads the 1st channel
@@ -65,7 +65,6 @@ Input/output devices:
 - shorten support
 - integration to some synth engine - for instance Csound, aRts, 
   Quasimodo, Bacterium, ...
-
 
 Effects, routing, dsp routines:
 

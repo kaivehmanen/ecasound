@@ -18,6 +18,19 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.3 *-
 
 ????2001 (v2.1dev4)
+	- added: eiam - 'cs-option' commmand; see below
+	- removed: ecasound FAQ file - it only contains about 	 
+		   a pageful of useful text - I moved that
+		   precious piece of content to the user's 
+		   guide :)
+	- changed: support for explicit use of cmd-line options 
+		   as iactive-mod commands (like "-i:file.wav)
+	           dropped; they can still be used when given 
+		   as arguments to the 'cs-option' command
+	- changed: uses of '-i' an '-o' replaced with 'ai-add' 
+		   and 'ao-add' in ECI documentation and 
+		   code examples in 'ecasound/examples'
+	- changed: user's and programmer's guides updated
 21102001 (v2.1dev3)
 	- note: major changes to effect preset system which 
 		break some old preset definitions

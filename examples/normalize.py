@@ -32,8 +32,8 @@ e.command("cs-add analyze")
 e.command("c-add 1")
 print "Normalizing file " + filename
 print "Using tempfile " + tmpfile
-e.command("-i:" + filename)
-e.command("-o:" + tmpfile)
+e.command("ai-add " + filename)
+e.command("ao-add " + tmpfile)
 e.command("cop-add -ev")
 print "Analyzing sample data."
 e.command("cs-connect")
@@ -51,8 +51,8 @@ if gain_factor <= 1:
 a = ECA_CONTROL_INTERFACE()
 a.command("cs-add apply")
 a.command("c-add 1")
-a.command("-i:" + tmpfile)
-a.command("-o:" + filename)
+a.command("ai-add " + tmpfile)
+a.command("ao-add " + filename)
 print "Applying gain factor: ", gain_factor
 a.command("cop-add -ea:100")
 a.command("cop-select 1")
