@@ -13,7 +13,7 @@
 /** ------------------------------------------------------------------------
  * ecasoundc.cpp: Standalone C implementation of the 
  *                ecasound control interface
- * Copyright (C) 2000-2004 Kai Vehmanen
+ * Copyright (C) 2000-2005 Kai Vehmanen
  * Copyright (C) 2001 Aymeric Jeanneau
  *
  * This library is free software; you can redistribute it and/or
@@ -305,7 +305,6 @@ eci_handle_t eci_init_r(void)
       pid = getpid();
       write(1, &pid, sizeof(pid));
       
-      
       /* notify the parent that we're up */
       res = write(1, args, 1); 
 
@@ -338,11 +337,12 @@ eci_handle_t eci_init_r(void)
 	  eci_rep = NULL;
       }
       eci_rep->pid_of_child_rep = pid;
-      
       eci_rep->pid_of_parent_rep = getpid();
 
       eci_rep->cmd_read_fd_rep = cmd_receive_pipe[0];
+      close(cmd_receive_pipe[1]);
       eci_rep->cmd_write_fd_rep = cmd_send_pipe[1];
+      close(cmd_send_pipe[0]);
 
       /* switch to non-blocking mode for read */
       fcntl(eci_rep->cmd_read_fd_rep, F_SETFL, O_NONBLOCK);
@@ -408,6 +408,10 @@ void eci_cleanup_r(eci_handle_t ptr)
   ECI_DEBUG("(ecasoundc_sa) child exit signalled\n");
 
   if(eci_rep != 0) {
+    /* close descriptors */
+    close(eci_rep->cmd_read_fd_rep);
+    close(eci_rep->cmd_write_fd_rep);
+
     /* if (eci_rep->eci != 0) {} */
     /* delete eci_rep->eci; */
     free(eci_rep->parser_repp);
