@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "14\&.11\&.2004" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "22\&.12\&.2004" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -46,6 +46,13 @@ Defaults to \fIs16_le,2,44100,i\fP\&.
 .IP "default-to-precise-sample-rates" 
 Whether to ignore sample rate differences (and possibly avoid 
 resampling)\&. Currently only affects OSS-devices\&. Defaults to \fIfalse\fP\&.
+.IP 
+.IP "default-mix-mode" 
+If \fIdefault-mix-mode\fP is \fIsum\fP, engine will mix multiple channels into
+one output channel by summing all input channels\&. In mode \fIavg\fP, 
+mixing is done by taking the average of all input channels\&. The
+\fIavg\fP mode is safe from clipping, while \fIsum\fP is closer
+to the way analog mixers work\&. Defaults to \fIavg\fP\&.
 .IP 
 .IP "bmode-defaults-nonrt" 
 Selects the default parameters to use with buffering 

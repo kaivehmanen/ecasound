@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>14.11.2004</h2>
+<h2>22.12.2004</h2>
 
 
     
@@ -57,6 +57,12 @@
 <p><p></p><dt><strong>default-to-precise-sample-rates</strong><dd> 
 	Whether to ignore sample rate differences (and possibly avoid 
 	resampling). Currently only affects OSS-devices. Defaults to <em>false</em>.
+<p><p></p><dt><strong>default-mix-mode</strong><dd>
+	If <em>default-mix-mode</em> is <em>sum</em>, engine will mix multiple channels into
+	one output channel by summing all input channels. In mode <em>avg</em>, 
+	mixing is done by taking the average of all input channels. The
+	<em>avg</em> mode is safe from clipping, while <em>sum</em> is closer
+	to the way analog mixers work. Defaults to <em>avg</em>.
 <p><p></p><dt><strong>bmode-defaults-nonrt</strong><dd>
 	Selects the default parameters to use with buffering 
 	mode 'nonrt' (other modes are 'rt' and 'rtlowlatency). 
@@ -93,8 +99,8 @@
 	variable, 'ladspa-plugin-directory' can contain multiple
 	directories, separated by ':' characters.
 <p><p></p><dt><strong>ext-cmd-text-editor</strong><dd>
-	If <em>ext-cmd-text-editor-use-getenv</em> is <em>false</em> or "EDITOR" 
-	is null, value of this field is used. Defaults to <em>pico</em>.
+        If <em>ext-cmd-text-editor-use-getenv</em> is <em>false</em> or "EDITOR" 
+        is null, value of this field is used. Defaults to <em>pico</em>.
 <p><p></p><dt><strong>ext-cmd-text-editor-use-getenv</strong><dd>
 	Should ecasound try to query environment variable "EDITOR".
 	Defaults to <em>true</em>.

@@ -123,7 +123,10 @@ multitrack-mode\&. In rare cases you may want to explicitly specify
 the recording offset with \'-z:multitrack,offset-in-samples\'\&. The
 offset is the amount of samples skipped when recording from 
 real-time inputs\&. \'-z:psr\' enables the \fIprecise-sample-rates\fP mode 
-for OSS-devices\&. See ecasoundrc(5)\&.
+for OSS-devices\&. \'-z:mixmode,sum\' enables mixing mode where channels
+are mixed by summing all channels\&. The default is \'-z:mixmode,avg\',
+in which channels are mixed by averaging\&. 
+See ecasoundrc(5)\&.
 .IP 
 .PP 
 \fBCHAINSETUP BUFFERING AND PERFORMANCE OPTIONS\fP

@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasoundrc)
        (5)
-       (14.11.2004)
+       (22.12.2004)
        ()
        (Multimedia software)
 
@@ -54,6 +54,13 @@ startdit()
 	Whether to ignore sample rate differences (and possibly avoid 
 	resampling). Currently only affects OSS-devices. Defaults to em(false).
 
+	dit(default-mix-mode)
+	If em(default-mix-mode) is em(sum), engine will mix multiple channels into
+	one output channel by summing all input channels. In mode em(avg), 
+	mixing is done by taking the average of all input channels. The
+	em(avg) mode is safe from clipping, while em(sum) is closer
+	to the way analog mixers work. Defaults to em(avg).
+
 	dit(bmode-defaults-nonrt)
 	Selects the default parameters to use with buffering 
 	mode 'nonrt' (other modes are 'rt' and 'rtlowlatency). 
@@ -97,8 +104,8 @@ startdit()
 	directories, separated by ':' characters.
 
 	dit(ext-cmd-text-editor)
-	If em(ext-cmd-text-editor-use-getenv) is em(false) or "EDITOR" 
-	is null, value of this field is used. Defaults to em(pico).
+        If em(ext-cmd-text-editor-use-getenv) is em(false) or "EDITOR" 
+        is null, value of this field is used. Defaults to em(pico).
 
 	dit(ext-cmd-text-editor-use-getenv)
 	Should ecasound try to query environment variable "EDITOR".

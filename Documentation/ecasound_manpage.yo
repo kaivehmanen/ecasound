@@ -133,7 +133,10 @@ multitrack-mode. In rare cases you may want to explicitly specify
 the recording offset with '-z:multitrack,offset-in-samples'. The
 offset is the amount of samples skipped when recording from 
 real-time inputs. '-z:psr' enables the em(precise-sample-rates) mode 
-for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html).
+for OSS-devices. '-z:mixmode,sum' enables mixing mode where channels
+are mixed by summing all channels. The default is '-z:mixmode,avg',
+in which channels are mixed by averaging. 
+See url(ecasoundrc(5))(ecasoundrc_manpage.html).
 
 enddit()
 
