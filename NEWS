@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 121204) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 141204) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -33,6 +33,11 @@ xx022005 (v2.3.6)  -** stable release **-
 		   commas with semi-colons in the string items to avoid 
 		   ambiguity in parsing
 	- changed: new default debug level of 271
+	- changed: new optimized message queue implementation used in
+	           communication between the engine and the interface 
+		   subsystems; solves a few remaining corner cases 
+		   where ecasound could block in real-time critical 
+		   code-paths
 	- fixed: correctly interpret EIAM command arguments containing
 	         whitespace (example: "ai-add foo bar.wav")
 	- fixed: denormal problems in filter and delay operators
@@ -43,8 +48,11 @@ xx022005 (v2.3.6)  -** stable release **-
 		 or srate changes on the fly, but at least it now fails 
 		 gracefully
 	- fixed: always pass filename (%f) as one parameter to the 
-		 external apps; fixed remaining cases with mp3s, oggs, 
-	         which have spaces in the filename
+		 external apps; fixes bug present in 2.3.3 and 2.3.4 
+		 releases which broke handling spaces in filenames; 
+		 affected all file formats handled via external tools 
+		 (ogg/mp3/flac/m4a/...); also a separate bug in handling
+		 spaces in ogg output filenames was fixed
 12112004 (v2.3.5)  -** stable release **-
 	- note: main website address has changed to www.eca.cx/ecasound
 	- changed: collected all email addresses from source files to 
