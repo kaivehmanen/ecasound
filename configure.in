@@ -281,7 +281,7 @@ dnl --
 dnl FIXME: should really check for 'arts-config' script
 dnl --
 AC_CHECK_HEADER(artsc/artsc.h,arts_support=yes,arts_support=no)
-AC_CHECK_LIB(artsc,main,,arts_support=no)
+AC_CHECK_LIB(artsc,main,arts_null_check=yes,arts_support=no)
 AC_ARG_ENABLE(arts,
 [  --disable-arts		  Disable aRts support (default = no)],
 arts_support=no)
