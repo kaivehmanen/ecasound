@@ -27,6 +27,9 @@ xx022005 (v2.3.6)  -** stable release **-
 		 useful tool for debugging ECI scripts and apps
 	- added: eiam - new 'int-set-log-history-length' command to set
 		 log history length; default to 5 items
+	- added: add proper meta-char quoting to forked-io module; 
+		 allows handlings mp3s, oggs, etc which have metachars
+	         like spaces, parentheses, semicolons in their filenames
 	- changed: more helpful messages explain why a chainsetup 
 		   cannot be connected to the engine
 	- changed: EIAM - when returning a list of strings, replace all 
