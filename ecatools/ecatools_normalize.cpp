@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
 
     ECA_SESSION esession;
     ECA_CONTROL ectrl (&esession);
-    ECA_PROCESSOR emain;  
     ECA_AUDIO_FORMAT aio_params;
     ectrl.toggle_interactive_mode(false);
 
@@ -141,9 +140,10 @@ int main(int argc, char *argv[])
 	  std::cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	  break;
 	}
-
-	emain.init(&esession);
-	emain.exec();
+	else {
+	  ECA_PROCESSOR emain (&esession);
+	  emain.exec();
+	}
 
 	if (m == 0) {
 	  multiplier = volume->max_multiplier();

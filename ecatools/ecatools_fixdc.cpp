@@ -74,7 +74,6 @@ int main(int argc, char *argv[])
 
     ECA_SESSION esession;
     ECA_CONTROL ectrl (&esession);
-    ECA_PROCESSOR emain;
     ECA_AUDIO_FORMAT aio_params;
 
     TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
@@ -149,9 +148,10 @@ int main(int argc, char *argv[])
 	  std::cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	  break;
 	}
-  
-	emain.init(&esession);
-	emain.exec();
+	else {
+	  ECA_PROCESSOR emain (&esession);      
+	  emain.exec();
+	}
 	
 	if (m == 0) {
 	  for(int nm = 0; nm < 2; nm++) {

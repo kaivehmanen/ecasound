@@ -53,7 +53,6 @@ int main(int argc, char *argv[])
 
     ECA_SESSION esession;
     ECA_CONTROL ectrl (&esession);
-    ECA_PROCESSOR emain;
     ECA_AUDIO_FORMAT aio_params;
 
     cline.begin();
@@ -90,8 +89,8 @@ int main(int argc, char *argv[])
 	std::cerr << "---\nError while converting file " << filename << ". Exiting...\n";
 	break;
       }
-      
-      emain.init(&esession);
+
+      ECA_PROCESSOR emain (&esession);      
       emain.exec();
 
       ectrl.disconnect_chainsetup();
