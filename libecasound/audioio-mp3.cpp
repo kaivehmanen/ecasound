@@ -2,7 +2,7 @@
 // audioio-mp3.cpp: Interface for mp3 decoders and encoders that support 
 //                  input/output using standard streams. Defaults to
 //                  mpg123 and lame.
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2001,2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 // Note! Routines for parsing mp3 header information were taken from XMMS
 //       1.2.5's mpg123 plugin.
 //
@@ -23,8 +23,6 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
-#else
-#define HAVE_INTTYPES_H
 #endif
 
 #include <string>
@@ -36,18 +34,8 @@
 #include <unistd.h> /* stat() */
 #include <sys/stat.h> /* stat() */
 #include <sys/wait.h>
-/* ANSI/ISO type defs: */
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uint32_t, etc types */
-#else
-  #ifdef HAVE_INTTYPES_H
-  #include <inttypes.h> /* uint32_t, etc types */
-  #endif
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* uint32_t, etc types */
-#endif
 
+#include <kvu_inttypes.h>
 #include <kvu_message_item.h>
 #include <kvu_numtostr.h>
 

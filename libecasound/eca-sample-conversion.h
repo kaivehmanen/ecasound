@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-sample-conversion.h: Routines for convering between sample formats.
-// Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2002,2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,20 +21,10 @@
 #define INCLUDED_ECA_SAMPLE_CONVERSION_H
 
 #ifndef HAVE_CONFIG_H
-#define HAVE_INTTYPES_H
-#else
 #include <config.h>
 #endif
 
-/* ANSI/ISO type defs: */
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uint32_t, etc types */
-#else
-  #ifdef HAVE_INTTYPES_H
-  #include <inttypes.h> /* uint32_t, etc types */
-  #endif
-#endif
-#include <sys/types.h> /* off_t, uint32_t, etc types */
+#include <kvu_inttypes.h>
 
 /**
  * Type definitions
