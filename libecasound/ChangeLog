@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-10-17  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+	
+	* eca-chainsetup.h (is_in_use): added
+	
 2001-10-13  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	
 	* eca-chainsetup.h (options_to_string): added

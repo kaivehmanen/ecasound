@@ -921,12 +921,12 @@ const CHAIN* ECA_CONTROL_OBJECTS::get_chain(void) const {
  *
  * require:
  *  is_selected() == true
- *  connected_chainsetup() != selected_chainsetup()
+ *  is_running() != true
  */
 void ECA_CONTROL_OBJECTS::clear_chains(void) { 
   // --------
   DBC_REQUIRE(is_selected() == true);
-  DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
+  DBC_REQUIRE(is_running() != true);
   // --------
   selected_chainsetup_repp->clear_chains();
 }

@@ -193,6 +193,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
    * Checks whethers chainsetup is enabled (device ready for use).
    */
   bool is_enabled(void) const { return(is_enabled_rep); }
+  bool is_in_use(void) const { return(is_in_use_rep); }
   bool is_valid(void) const;
   bool has_realtime_objects(void) const;
   bool has_nonrealtime_objects(void) const;
@@ -247,6 +248,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /** @name Current setup data (internal state, objects) */
   /*@{*/
 
+  bool is_in_use_rep;
   bool is_enabled_rep;
   bool multitrack_mode_rep;
   bool memory_locked_rep;
@@ -306,6 +308,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   int number_of_realtime_inputs(void) const;
   int number_of_realtime_outputs(void) const;
   int number_of_chain_operators(void) const;
+  void toggle_is_in_use(bool value) { is_in_use_rep=value; }
 
   /*@}*/
 

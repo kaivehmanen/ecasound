@@ -209,6 +209,7 @@ void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
     pbuffer_repp = pserver_repp->get_client_buffer(child_repp);
   }
   fetch_child_data();
+  toggle_open_state(true);
 }
 
 /**
@@ -219,4 +220,5 @@ void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
 void AUDIO_IO_BUFFERED_PROXY::close(void) { 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) close " + label() + ".");
   child_repp->close();
+  toggle_open_state(false);
 }

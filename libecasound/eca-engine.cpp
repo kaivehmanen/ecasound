@@ -99,6 +99,7 @@ ECA_ENGINE::~ECA_ENGINE(void) {
 	if (*q != 0) (*q)->disconnect_buffer();
 	++q;
       }
+      csetup_repp->toggle_is_in_use(false);
     }
   }
 
@@ -107,7 +108,7 @@ ECA_ENGINE::~ECA_ENGINE(void) {
   delete impl_repp;
 
   set_status(ECA_ENGINE::engine_status_notready);
- 
+   
   ecadebug->control_flow("Engine exiting");
 }
 
@@ -701,6 +702,7 @@ void ECA_ENGINE::stop(void) {
   }
 
   set_status(ECA_ENGINE::engine_status_stopped);
+  csetup_repp->toggle_is_in_use(false);
   signal_stop();
 }
 
@@ -753,6 +755,7 @@ void ECA_ENGINE::start(void) {
 
   rt_running_rep = true;
   set_status(ECA_ENGINE::engine_status_running);
+  csetup_repp->toggle_is_in_use(true);
 }
 
 void ECA_ENGINE::multitrack_start(void) {

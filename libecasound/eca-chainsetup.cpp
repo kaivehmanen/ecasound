@@ -243,6 +243,7 @@ void ECA_CHAINSETUP::set_defaults(void) {
   is_enabled_rep = false;
   multitrack_mode_rep = false;
   memory_locked_rep = false;
+  is_in_use_rep = false;
   active_chain_index_rep = 0;
   active_chainop_index_rep = 0;
   active_chainop_param_index_rep = 0;
@@ -310,13 +311,11 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void) {
   }
   else if (buffering_mode() == ECA_CHAINSETUP::cs_bmode_auto) {
     if (has_realtime_objects() == true) {
-      if (rtcaps_rep != true) {
-	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
+      if (rtcaps_rep != true ||
+	  (number_of_chain_operators() == 0 &&
+	   (number_of_realtime_inputs() == 0 || 
+	    number_of_realtime_outputs() == 0))) {
 	toggle_raised_priority(false);
-      }
-      else if (number_of_chain_operators() == 0 &&
-	       (number_of_realtime_inputs() == 0 || 
-		number_of_realtime_outputs() == 0)) {
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
       }
       else {
@@ -586,11 +585,11 @@ void ECA_CHAINSETUP::remove_chains(void) {
  * Clears all selected chains. Removes all chain operators
  * and controllers.
  *
- * @pre is_enabled() != true
+ * @pre is_in_use() != true
  */
 void ECA_CHAINSETUP::clear_chains(void) {
   // --------
-  DBC_REQUIRE(is_enabled() != true);
+  DBC_REQUIRE(is_in_use() != true);
   // --------
 
   for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
@@ -1463,14 +1462,14 @@ void ECA_CHAINSETUP::set_target_to_controller(void) {
 /**
  * Add general controller to selected chainop.
  *
- * @pre  csrc != 0
- * @pre is_enabled() != true
+ * @pre csrc != 0
+ * @pre is_in_use() != true
  * @pre selected_chains().size() == 1
  */
 void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
   // --------
   DBC_REQUIRE(csrc != 0);
-  DBC_REQUIRE(is_enabled() != true);
+  DBC_REQUIRE(is_in_use() != true);
   // --------
 
   AUDIO_STAMP_CLIENT* p = dynamic_cast<AUDIO_STAMP_CLIENT*>(csrc->source_pointer());
@@ -1496,13 +1495,13 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
  * Add chain operator to selected chain.
  *
  * @pre cotmp != 0
- * @pre is_enabled() != true
+ * @pre is_in_use() != true
  * @pre selected_chains().size() == 1
  */
 void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   // --------
   DBC_REQUIRE(cotmp != 0);
-  DBC_REQUIRE(is_enabled() != true);
+  DBC_REQUIRE(is_in_use() != true);
   // --------
   
   AUDIO_STAMP* p = dynamic_cast<AUDIO_STAMP*>(cotmp);

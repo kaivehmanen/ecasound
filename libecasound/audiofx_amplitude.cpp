@@ -117,15 +117,16 @@ EFFECT_AMPLIFY_CHANNEL::EFFECT_AMPLIFY_CHANNEL (parameter_type multiplier_percen
 
 void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_type value) {
   switch (param) {
-  case 1: 
-    kerroin = value / 100.0;
-    break;
-
- case 2: 
-    channel_rep = static_cast<int>(value);
-    assert(channel_rep > 0);
-    channel_rep--;
-    break;
+    case 1: 
+      kerroin = value / 100.0;
+      break;
+      
+    case 2: 
+      if (value > 0) {
+	channel_rep = static_cast<int>(value);
+	channel_rep--;
+	break;
+      }
   }
 }
 

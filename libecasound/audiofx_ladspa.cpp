@@ -96,35 +96,35 @@ void EFFECT_LADSPA::init_ports(void) {
 	LADSPA_PORT_CONTROL) {
       parameter_type init_value, lowb, upperb;
 
-      if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+      if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
 	lowb = plugin_desc->PortRangeHints[m].LowerBound * samples_per_second();
       else
 	lowb = plugin_desc->PortRangeHints[m].LowerBound;
 
-      if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+      if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
 	upperb = plugin_desc->PortRangeHints[m].UpperBound * samples_per_second();
       else
 	upperb = plugin_desc->PortRangeHints[m].UpperBound;
 
       /* case 1 */
-      if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m]) &&
-	  !LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m])) {
+      if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortRangeHints[m].HintDescriptor) &&
+	  !LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor)) {
 
 	if (lowb < 0) init_value = 0.0f;
 	else init_value = lowb;
       }
 
       /* case 2 */
-      else if (!LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m]) &&
-	       LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m])) {
+      else if (!LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortRangeHints[m].HintDescriptor) &&
+	       LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor)) {
 
 	if (upperb > 0) init_value = 0.0f;
 	else init_value = upperb;
       }
 
       /* case 3 */
-      else if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m]) &&
-	       LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m])) {
+      else if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortRangeHints[m].HintDescriptor) &&
+	       LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor)) {
 
 	if (lowb < 0 && upperb > 0) init_value = 0.0f;
 	else if (lowb < 0 && upperb < 0) init_value = upperb;
@@ -133,10 +133,10 @@ void EFFECT_LADSPA::init_ports(void) {
 
       /* case 4 */
       else {
-	assert(!LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m]) &&
-	       !LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m]));
+	assert(!LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortRangeHints[m].HintDescriptor) &&
+	       !LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor));
 
-	if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+	if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
 	  init_value = samples_per_second();
 	else
 	  init_value = 1.0f;
@@ -158,9 +158,9 @@ void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *p
 	pd->default_value = 1;
 	pd->description = get_parameter_name(param);
 
-	if (LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortDescriptors[m])) {
+	if (LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor)) {
 	  pd->bounded_above = true;
-	  if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+	  if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
 	    pd->upper_bound = plugin_desc->PortRangeHints[m].UpperBound * samples_per_second();
 	  else
 	    pd->upper_bound = plugin_desc->PortRangeHints[m].UpperBound;
@@ -168,9 +168,9 @@ void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *p
 	else
 	  pd->bounded_above = false;
 
-	if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortDescriptors[m])) {
+	if (LADSPA_IS_HINT_BOUNDED_BELOW(plugin_desc->PortRangeHints[m].HintDescriptor)) {
 	  pd->bounded_below = true;
-	  if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortDescriptors[m])) 
+	  if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
 	    pd->lower_bound = plugin_desc->PortRangeHints[m].LowerBound * samples_per_second();
 	  else
 	    pd->lower_bound = plugin_desc->PortRangeHints[m].LowerBound;
@@ -178,17 +178,19 @@ void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *p
 	else 
 	  pd->bounded_below = false;
 
-	if (LADSPA_IS_HINT_TOGGLED(plugin_desc->PortDescriptors[m]))
+	if (LADSPA_IS_HINT_TOGGLED(plugin_desc->PortRangeHints[m].HintDescriptor))
 	  pd->toggled = true;
 	else
 	  pd->toggled = false;
 
-	if (LADSPA_IS_HINT_INTEGER(plugin_desc->PortDescriptors[m]))
+	if (LADSPA_IS_HINT_INTEGER(plugin_desc->PortRangeHints[m].HintDescriptor)) {
 	  pd->integer = true;
-	else
+	}
+	else {
 	  pd->integer = false;
+	}
 
-	if (LADSPA_IS_HINT_LOGARITHMIC(plugin_desc->PortDescriptors[m]))
+	if (LADSPA_IS_HINT_LOGARITHMIC(plugin_desc->PortRangeHints[m].HintDescriptor))
 	  pd->logarithmic = true;
 	else
 	  pd->logarithmic = false;

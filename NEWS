@@ -29,8 +29,8 @@ Last officially released version is -*> v2.0.3 *-
 		   its cpu-load
 	- changed: db-subsystem - runs once again under sched_fifo
 		   scheduling if -r is enabled
-	- fixed: in cases where ecasound selected -B:rt instead 
-		 of -B:rtlowlatency, -r was alwasy disabled
+	- fixed: major bugs in interpreting LADSPA plugin 
+		 parameter hint flags
 14102001 (v2.1dev2)
 	- added: ecaplay - -k, -d and -h options, see 'man ecaplay'
 	- added: eiam - ai-get-length-samples, ao-get-length-samples,
