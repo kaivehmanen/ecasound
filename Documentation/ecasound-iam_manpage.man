@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "08\&.12\&.2000" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "13\&.12\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -65,7 +65,7 @@ General status info\&. \fI[s]\fP
 .PP 
 .IP "engine-status" 
 Returns a string describing the engine status (running, stopped,
-finished, not ready)\&. \fI[s]\fP
+finished, error, not ready)\&. \fI[s]\fP
 .PP 
 .IP 
 .SH "DIRECT ARGUMENTS" 

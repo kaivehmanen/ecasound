@@ -264,6 +264,11 @@ as a parameter to -ezx effect\&.
 .IP 
 .PP 
 \fIGENERAL SIGNAL PROCESSING ALGORITHMS\fP
+.IP "-eS:stamp-id" 
+Audio stamp\&. Takes a snapshot of passing audio data and stores
+it using id \'stamp-id\' (integer number)\&. This data can later be
+used by controllers and other operators\&.
+.IP 
 .IP "-ea:amplify-%" 
 Amplifies signal by amplify-% percent\&. 
 .IP 
@@ -528,6 +533,13 @@ Messages on the MIDI-channel \'channel\' that are coming from
 controller number \'controller\' are used as the controller
 source\&. The MIDI-device is specified in \&./ecasoundrc (see 
 \fIecasoundrc(5)\fP)\&. Defaults to \fI/dev/midi\fP\&.
+.IP 
+.IP "-ksv:fx-param,start-value,end-value,stamp-id,rms-toggle" 
+Volume analyze controller\&. Analyzes the audio stored in 
+stamp \'stamp-id\' (see \'-eS:id\' docs), and creates
+control data based on the results\&. If \'rms-toggle\' is non-zero, 
+RMS-volume is used to calculate the control value\&. Otherwise
+average peak-amplitude is used\&.
 .IP 
 .IP "-kx" 
 This is a special switch that can be used when you need

@@ -402,20 +402,27 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        _G_E_N_E_R_A_L _S_I_G_N_A_L _P_R_O_C_E_S_S_I_N_G _A_L_G_O_R_I_T_H_M_S
 
+       -eS:stamp-id
+              Audio stamp. Takes a snapshot of passing audio data
+              and stores it using id 'stamp-id' (integer number).
+              This data can later  be  used  by  controllers  and
+              other operators.
+
+
        -ea:amplify-%
               Amplifies signal by amplify-% percent.
 
 
        -eac:amplify-%,channel
-              Amplifies signal of channel 'channel' by  amplify-%
+              Amplifies  signal of channel 'channel' by amplify-%
               percent. 'channel' ranges from 1...n where n is the
               total number of channels.
 
 
        -eaw:amplify-%,max-clipped-samples
               Amplifies signal by amplify-% percent. If number of
-              consecutive  clipped  samples (resulting sample has
-              the  largest  amplitude  possible)  reaches   'max-
+              consecutive clipped samples (resulting  sample  has
+              the   largest  amplitude  possible)  reaches  'max-
               clipped-samples', a warning will be issued.
 
 
@@ -424,36 +431,29 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -ec:rate,threshold-%
-              Compressor  (a  simple one). 'rate' is the compres-
-              sion rate in decibels ('rate' dB  change  in  input
-              signal  causes  1dB  change in output). 'threshold'
-              varies between 0.0 (silence) and  1.0  (max  ampli-
+              Compressor (a simple one). 'rate' is  the  compres-
+              sion  rate  in  decibels ('rate' dB change in input
+              signal causes 1dB change  in  output).  'threshold'
+              varies  between  0.0  (silence) and 1.0 (max ampli-
               tude).
 
 
        -eca:peak-level-%, release-time-sec, fast-crate, crate
-              A  more  advanced compressor (original algorithm by
-              John S. Dyson).  If you give a value of  0  to  any
-              parameter,  the  default  is  used.  'peak-level-%'
-              essentially specifies how hard the peak limiter  is
+              A more advanced compressor (original  algorithm  by
+              John  S.  Dyson).   If you give a value of 0 to any
+              parameter, the  default  is  used.   'peak-level-%'
+              essentially  specifies how hard the peak limiter is
               pushed.  The default of 69% is good. 'release_time'
               is  given  in  seconds.  This  compressor  is  very
-              sophisticated,  and  actually  the  release time is
-              complex.  This is one of the dominant release  time
-              controls,  but the actual release time is dependent
-              on a lot of factors regarding the dynamics  of  the
-              audio  in.  'fastrate' is the compression ratio for
-              the fast compressor.  This is not really  the  com-
-              pression  ratio.   Value of 1.0 is infinity to one,
+              sophisticated, and actually  the  release  time  is
+              complex.   This is one of the dominant release time
+              controls, but the actual release time is  dependent
+              on  a  lot of factors regarding the dynamics of the
+              audio in. 'fastrate' is the compression  ratio  for
+              the  fast  compressor.  This is not really the com-
+              pression ratio.  Value of 1.0 is infinity  to  one,
               while the default 0.50 is 2:1.  Another really good
-              value  is  special cased in the code: 0.25 is some-
-              what  less  than  2:1,  and  sounds  super  smooth.
-              'rate' is the compression ratio for the entire com-
-              pressor chain.  The default is 1.0, and  holds  the
-              volume   very  constant  without  many  nasty  side
-              effects.   However  the  dynamics  in   music   are
-              severely  restricted, and a value of 0.5 might keep
-              the music more intact.
+              value  is  special  cased  in  the  code:  0.25  is
 
 
 
@@ -466,16 +466,25 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+              somewhat  less  than  2:1, and sounds super smooth.
+              'rate' is the compression ratio for the entire com-
+              pressor  chain.   The default is 1.0, and holds the
+              volume  very  constant  without  many  nasty   side
+              effects.    However   the  dynamics  in  music  are
+              severely restricted, and a value of 0.5 might  keep
+              the music more intact.
+
+
        -enm:threshold-level-%,pre-hold-time-msec,attack-time-
               msec,post- hold-time-msec,release-time-msec
-              Noise gate. Supports multichannel processing  (each
-              channel  processed  separately). When signal ampli-
-              tude falls below 'threshold_level_%' percent  (100%
+              Noise  gate. Supports multichannel processing (each
+              channel processed separately). When  signal  ampli-
+              tude  falls below 'threshold_level_%' percent (100%
               means maximum amplitude), gate is activated. If the
-              signal stays below the threshold for 'th_time'  ms,
-              it's  faded out during the attack phase of 'attack'
-              ms.  If  the  signal  raises  above  the   'thresh-
-              old_level'  and stays there over 'hold' ms the gate
+              signal  stays below the threshold for 'th_time' ms,
+              it's faded out during the attack phase of  'attack'
+              ms.   If  the  signal  raises  above  the  'thresh-
+              old_level' and stays there over 'hold' ms the  gate
               is released during 'release' ms.
 
 
@@ -485,16 +494,16 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -epp:right-%
-              Normal  pan effect. Balance value of 0 means to pan
-              signal fully left  and  100  fully  right.  If  the
-              panned  signal  is  a stereo signal, left and right
-              channels aren't mixed together.  Use the  -erm  and
-              -erc  effects  to  force  conversion to mono before
+              Normal pan effect. Balance value of 0 means to  pan
+              signal  fully  left  and  100  fully  right. If the
+              panned signal is a stereo signal,  left  and  right
+              channels  aren't  mixed together.  Use the -erm and
+              -erc effects to force  conversion  to  mono  before
               panning.
 
 
        -ezx:left-dc-fix-value,right-dc-fix-value
-              Adjusts the signal DC by 'dc-fix-value'.  Use  -ezf
+              Adjusts  the  signal DC by 'dc-fix-value'. Use -ezf
               to find the optimal value.
 
 
@@ -502,7 +511,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -eemb:bpm,on-time-msec
-              Pulse  gate  (pulse  frequency  given as beats-per-
+              Pulse gate (pulse  frequency  given  as  beats-per-
               minute).
 
 
@@ -510,16 +519,7 @@ ecasound(1)            Multimedia software            ecasound(1)
               Pulse gate.
 
 
-       -eemt:bpm,depth-%
-              Tremolo effect (tremolo speed given  as  beats-per-
-              minute).
 
-
-       _F_I_L_T_E_R _E_F_F_E_C_T_S
-
-       -ef1:center_freq, width
-              Resonant bandpass filter. 'center_freq' is the cen-
-              ter frequency. Width is specified in Hz.
 
 
 
@@ -532,60 +532,60 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+       -eemt:bpm,depth-%
+              Tremolo  effect  (tremolo speed given as beats-per-
+              minute).
+
+
+       _F_I_L_T_E_R _E_F_F_E_C_T_S
+
+       -ef1:center_freq, width
+              Resonant bandpass filter. 'center_freq' is the cen-
+              ter frequency. Width is specified in Hz.
+
+
        -ef3:cutoff_freq, reso, gain
               Resonant lowpass filter. 'cutoffr_freq' is the fil-
-              ter  cutoff frequency. 'reso' means resonance. Usu-
-              ally the best values for resonance are between  1.0
-              and  2.0,  but  you  can  use  even  bigger values.
-              'gain' is the overall gain-factor.  It's  a  simple
-              multiplier  (1.0  is  the  normal level). With high
-              resonance values it often is useful to  reduce  the
+              ter cutoff frequency. 'reso' means resonance.  Usu-
+              ally  the best values for resonance are between 1.0
+              and 2.0,  but  you  can  use  even  bigger  values.
+              'gain'  is  the  overall gain-factor. It's a simple
+              multiplier (1.0 is the  normal  level).  With  high
+              resonance  values  it often is useful to reduce the
               gain value.
 
 
        -ef4:cutoff, resonance
-              Resonant  lowpass filter (3rd-order, 36dB, original
-              algorithm by Stefan M. Fendt). Simulates an  analog
+              Resonant lowpass filter (3rd-order, 36dB,  original
+              algorithm  by Stefan M. Fendt). Simulates an analog
               active RC-lowpass design. Cutoff is a value between
               [0,1], while resonance is between [0,infinity).
 
 
        -efa:delay-samples,feedback-%
-              Allpass filter.  Passes  all  frequencies  with  no
-              change  in amplitude.  However, at the same time it
+              Allpass  filter.  Passes  all  frequencies  with no
+              change in amplitude.  However, at the same time  it
               imposes a frequency-dependent phase-shift.
 
 
        -efc:delay-samples,radius
-              Comb filter. Allows the spikes of the comb to  pass
-              through.   Value  of 'radius' should be between [0,
+              Comb  filter. Allows the spikes of the comb to pass
+              through.  Value of 'radius' should be  between  [0,
               1.0).
 
 
        -efb:center-freq,width
-              Bandpass filter. 'center_freq' is the  center  fre-
+              Bandpass  filter.  'center_freq' is the center fre-
               quency. Width is specified in Hz.
 
 
        -efh:cutoff-freq
-              Highpass   filter.  Only  frequencies  above  'cut-
+              Highpass  filter.  Only  frequencies  above   'cut-
               off_freq' are passed through.
 
 
        -efi:delay-samples,radius
-              Inverse comb filter. Filters out the spikes of  the
-              comb.  There are 'delay_in_samples-2' spikes. Value
-              of 'radius' should be between [0, 1.0). The  closer
-              it  is to the maximum value, the deeper the dips of
-              the comb are.
-
-
-       -efl:cutoff-freq
-              Lowpass  filter.  Only  frequencies   below   'cut-
-              off_freq' are passed through.
-
-
-
+              Inverse  comb filter. Filters out the spikes of the
 
 
 
@@ -598,13 +598,24 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+              comb. There are 'delay_in_samples-2' spikes.  Value
+              of  'radius' should be between [0, 1.0). The closer
+              it is to the maximum value, the deeper the dips  of
+              the comb are.
+
+
+       -efl:cutoff-freq
+              Lowpass   filter.   Only  frequencies  below  'cut-
+              off_freq' are passed through.
+
+
        -efr:center-freq,width
               Bandreject filter. 'center_freq' is the center fre-
               quency. Width is specified in Hz.
 
 
        -efs:center-freq,width
-              Resonator. 'center_freq' is the  center  frequency.
+              Resonator.  'center_freq'  is the center frequency.
               Width is specified in Hz. Basicly just another res-
               onating bandpass filter.
 
@@ -613,14 +624,14 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -erc:from-channel, to-channel
-              Copy channel  'from_channel'  to  'to_channel'.  If
-              'to_channel'  doesn't exist, it is created. Channel
+              Copy  channel  'from_channel'  to  'to_channel'. If
+              'to_channel' doesn't exist, it is created.  Channel
               indexing is started from 1.
 
 
        -erm:to-channel
               Mix  all  channels  to  channel  'to_channel'.   If
-              'to_channel'  doesn't exist, it is created. Channel
+              'to_channel' doesn't exist, it is created.  Channel
               indexing is started from 1.
 
 
@@ -633,25 +644,14 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -etd:delay-time-msec,surround-mode,number-of-delays,mix-%
-              Delay  effect.  'delay  time'  is the delay time in
-              milliseconds.  'surround-mode' is  a  integer  with
-              following  meanings:  0 = normal, 1 = surround, 2 =
-              stereo-spread. 'number_of_delays' should  be  obvi-
-              ous.  Beware  that  large number of delays and huge
+              Delay effect. 'delay time' is  the  delay  time  in
+              milliseconds.   'surround-mode'  is  a integer with
+              following meanings: 0 = normal, 1 = surround,  2  =
+              stereo-spread.  'number_of_delays'  should be obvi-
+              ous. Beware that large number of  delays  and  huge
               delay times need a lot of CPU power. 'mix-%' deter-
-              mines  how  much  effected (wet) signal is mixed to
+              mines how much effected (wet) signal  is  mixed  to
               the original.
-
-
-       -ete:room_size,feedback-%,wet-%
-              A more advanced reverb effect  (original  algorithm
-              by  Stefan  M.  Fendt).   'room_size'  is  given in
-              meters, 'feedback-%' is the feedback level given in
-              percents and 'wet-%' is the amount of reverbed sig-
-              nal added to the original signal.
-
-
-
 
 
 
@@ -664,12 +664,20 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+       -ete:room_size,feedback-%,wet-%
+              A  more  advanced reverb effect (original algorithm
+              by Stefan  M.  Fendt).   'room_size'  is  given  in
+              meters, 'feedback-%' is the feedback level given in
+              percents and 'wet-%' is the amount of reverbed sig-
+              nal added to the original signal.
+
+
        -etf:delay-time-msec
-              Fake-stereo effect. The input signal is  summed  to
+              Fake-stereo  effect.  The input signal is summed to
               mono. The original signal goes to the left channels
               while a delayed version (with delay of 'delay time'
-              milliseconds)  is  goes  to the right. With a delay
-              time of 1-40 milliseconds this adds  a  stereo-feel
+              milliseconds) is goes to the right.  With  a  delay
+              time  of  1-40 milliseconds this adds a stereo-feel
               to mono-signals.
 
 
@@ -679,9 +687,9 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -etm:delay-time-msec,number-of-delays,mix-%
-              Multitap delay. 'delay time' is the delay  time  in
-              milliseconds.   'number_of_delays'  should be obvi-
-              ous. 'mix-%' determines  how  much  effected  (wet)
+              Multitap  delay.  'delay time' is the delay time in
+              milliseconds.  'number_of_delays' should  be  obvi-
+              ous.  'mix-%'  determines  how  much effected (wet)
               signal is mixed to the original.
 
 
@@ -691,33 +699,25 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -etr:delay-time,surround-mode,feedback-%
-              Reverb effect. 'delay time' is the  delay  time  in
-              milliseconds.   If  'surround-mode'  is 'surround',
-              reverbed signal  moves  around  the  stereo  image.
-              'feedback-%'  determines  how  much  effected (wet)
+              Reverb  effect.  'delay  time' is the delay time in
+              milliseconds.  If  'surround-mode'  is  'surround',
+              reverbed  signal  moves  around  the  stereo image.
+              'feedback-%' determines  how  much  effected  (wet)
               signal is fed back to the reverb.
 
 
        _L_A_D_S_P_A_-_P_L_U_G_I_N_S
 
        -el:plugin_unique_name,param-1,...,param-N
-              Ecasound  supports  LADSPA-effect  plugins   (Linux
-              Audio  Developer's  Simple Plugin API). Plugins are
-              located  in   shared   library   (.so)   files   in
-              /usr/local/share/ladspa    (configured    in   eca-
-              soundrc(5)). One shared library  file  can  contain
-              multiple  plugin  objects,  but  every plugin has a
+              Ecasound   supports  LADSPA-effect  plugins  (Linux
+              Audio Developer's Simple Plugin API).  Plugins  are
+              located   in   shared   library   (.so)   files  in
+              /usr/local/share/ladspa   (configured    in    eca-
+              soundrc(5)).  One  shared  library file can contain
+              multiple plugin objects, but  every  plugin  has  a
               unique plugin name. This name is used for selecting
-              plugins.   See  LAD  mailing list web site for more
-              info about LADSPA. Other useful  sites  are  LADSPA
-              home page and LADSPA documentation.
-
-
-       -eli:plugin_unique_number,param-1,...,param-N
-              Same  as  above expect plugin's unique id-number is
-              used. It is guaranteed that  these  id-numbers  are
-              unique among all LADSPA plugins.
-
+              plugins.  See LAD mailing list web  site  for  more
+              info  about  LADSPA.  Other useful sites are LADSPA
 
 
 
@@ -730,23 +730,32 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+              home page and LADSPA documentation.
+
+
+       -eli:plugin_unique_number,param-1,...,param-N
+              Same as above expect plugin's unique  id-number  is
+              used.  It  is  guaranteed that these id-numbers are
+              unique among all LADSPA plugins.
+
+
        GGAATTEE SSEETTUUPP
 
 
 
        -gc:start-time,len
-              Time  crop  gate.  Initially  gate is closed. After
-              'start-time' seconds has elapsed,  gate  opens  and
-              remains  open for 'len' seconds. When closed, pass-
+              Time crop gate. Initially  gate  is  closed.  After
+              'start-time'  seconds  has  elapsed, gate opens and
+              remains open for 'len' seconds. When closed,  pass-
               ing audio buffers are trucated to zero length.
 
 
        -ge:open-threshold-%, close-thold-%,volume-mode
-              Threshold gate. Initially gate  is  closed.  It  is
-              opened  when volume goes over 'othreshold' percent.
+              Threshold  gate.  Initially  gate  is closed. It is
+              opened when volume goes over 'othreshold'  percent.
               After this, if volume drops below 'cthold' percent,
-              gate  is  closed  and  won't  be  opened again.  If
-              'value_mode' is 'rms', average RMS volume is  used.
+              gate is closed  and  won't  be  opened  again.   If
+              'value_mode'  is 'rms', average RMS volume is used.
               Otherwise peak average is used.  When closed, pass-
               ing audio buffers are trucated to zero length.
 
@@ -754,36 +763,27 @@ ecasound(1)            Multimedia software            ecasound(1)
        CCOONNTTRROOLL EENNVVEELLOOPPEE SSEETTUUPP
 
               Controllers  can  be  used  to  dynamically  change
-              effect   parameters  during  processing.  All  con-
+              effect  parameters  during  processing.  All   con-
               trollers are attached to the selected (=usually the
               last specified effect/controller) effect. The first
-              three parameters are common  for  all  controllers.
+              three  parameters  are  common for all controllers.
               'fx_param'  specifies  the  parameter  to  be  con-
-              trolled. Value '1' means the first  parameter,  '2'
+              trolled.  Value  '1' means the first parameter, '2'
               the second and so on. 'start_value' and 'end_value'
-              set the value range. You really  should  see  _e_x_a_m_-
+              set  the  value  range. You really should see _e_x_a_m_-
               _p_l_e_s_._h_t_m_l for some more info.
 
 
        -kos:fx-param,start-value,end-value,freq,i-phase
-              Sine  oscillator  with  frequency  of 'freq' Hz and
+              Sine oscillator with frequency  of  'freq'  Hz  and
               initial phase of 'i_phase' times pi.
 
 
        -kog:fx-param,start-value,end-value,freq,mode,point-
               pairs,start- value,end-value,pos1,value1,...
-              Generic  oscillator.  Frequency  'freq'  Hz,   mode
-              either  '0'  for  static  values  or '1' for linear
-              interpolation. 'point-pairs' specifies  the  number
-              of  'posN'  -  'valueN'  pairs to include.  'start-
-              value' and 'end-value' are used as border values.
-
-
-       -kf:fx-param,start-value,end-value,freq,mode,genosc-number
-              Generic  oscillator.  'genosc_number' is the number
-              of the oscillator preset  to  be  loaded.  Mode  is
-              either  '0'  for  static  values  or '1' for linear
-              interpolation. The location for the preset file  is
+              Generic   oscillator.  Frequency  'freq'  Hz,  mode
+              either '0' for static  values  or  '1'  for  linear
+              interpolation.  'point-pairs'  specifies the number
 
 
 
@@ -796,32 +796,50 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+              of 'posN' - 'valueN'  pairs  to  include.   'start-
+              value' and 'end-value' are used as border values.
+
+
+       -kf:fx-param,start-value,end-value,freq,mode,genosc-number
+              Generic oscillator. 'genosc_number' is  the  number
+              of  the  oscillator  preset  to  be loaded. Mode is
+              either '0' for static  values  or  '1'  for  linear
+              interpolation.  The location for the preset file is
               taken from ./ecasoundrc (see _e_c_a_s_o_u_n_d_r_c_(_5_)).
 
 
        -kl:fx-param,start-value,end-value,time-seconds
-              Linear  envelope that starts from 'start_value' and
-              linearly    changes    to    'end_value'     during
-              'time_in_seconds'.  Can  be  used  for  fadeins and
+              Linear envelope that starts from 'start_value'  and
+              linearly     changes    to    'end_value'    during
+              'time_in_seconds'. Can  be  used  for  fadeins  and
               fadeouts.
 
 
        -kl2:fx-param,start-value,end-value,1st-stage-length-
               sec,2nd- stage-length-sec
-              Two-stage linear envelope, a  more  versatile  tool
-              for   doing   fade-ins   and  fade-outs.  Stays  at
-              'start_value' for  '1st_stage_length'  seconds  and
-              then  linearly  changes  towards 'end_value' during
+              Two-stage  linear  envelope,  a more versatile tool
+              for  doing  fade-ins  and   fade-outs.   Stays   at
+              'start_value'  for  '1st_stage_length'  seconds and
+              then linearly changes  towards  'end_value'  during
               '2nd_stage_length' seconds.
 
 
        -km:fx-param,start-value,end-value,controller,channel
-              MIDI continuous  controller  (control  change  mes-
-              sages).   Messages  on  the  MIDI-channel 'channel'
+              MIDI  continuous  controller  (control  change mes-
+              sages).  Messages  on  the  MIDI-channel  'channel'
               that are coming from controller number 'controller'
-              are  used as the controller source. The MIDI-device
-              is specified in ./ecasoundrc  (see  _e_c_a_s_o_u_n_d_r_c_(_5_)).
+              are used as the controller source. The  MIDI-device
+              is  specified  in ./ecasoundrc (see _e_c_a_s_o_u_n_d_r_c_(_5_)).
               Defaults to _/_d_e_v_/_m_i_d_i.
+
+
+       -ksv:fx-param,start-value,end-value,stamp-id,rms-toggle
+              Volume  analyze  controller.  Analyzes  the   audio
+              stored in stamp 'stamp-id' (see '-eS:id' docs), and
+              creates control data based on the results. If 'rms-
+              toggle'  is  non-zero, RMS-volume is used to calcu-
+              late the control  value.  Otherwise  average  peak-
+              amplitude is used.
 
 
        -kx    This  is a special switch that can be used when you
@@ -831,6 +849,18 @@ ecasound(1)            Multimedia software            ecasound(1)
               Then you just add another controller as usual.
 
        IINNTTEERRAACCTTIIVVEE MMOODDEE
+
+
+
+
+                            12.12.2000                         13
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
 
        See _e_c_a_s_o_u_n_d_-_i_a_m_(_1_).
 
@@ -851,17 +881,6 @@ SSEEEE AALLSSOO
        the Documentation subdirectory"
 
 
-
-
-                            12.12.2000                         13
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
 BBUUGGSS
        See  file  BUGS.  If  ecasound  behaves  weirdly,  try  to
        increase the debug level to see what's going on.
@@ -869,25 +888,6 @@ BBUUGGSS
 
 AAUUTTHHOORR
        Kai Vehmanen, <kaiv@wakkanet.fi>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
