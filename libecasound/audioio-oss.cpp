@@ -43,7 +43,7 @@ OSSDEVICE::OSSDEVICE(const string& name,
   precise_srate_mode = precise_sample_rates;
 }
 
-void OSSDEVICE::open(void) throw(SETUP_ERROR&) {
+void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   if (is_open() == true) return;
   if (io_mode() == io_read) {
     if ((audio_fd = ::open(label().c_str(), O_RDONLY, 0)) == -1) {

@@ -41,7 +41,7 @@ OGG_VORBIS_INTERFACE::OGG_VORBIS_INTERFACE(const string& name) {
 
 OGG_VORBIS_INTERFACE::~OGG_VORBIS_INTERFACE(void) { close(); }
 
-void OGG_VORBIS_INTERFACE::open(void) { 
+void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
   fork_ogg123();
   triggered_rep = false;
   toggle_open_state(true);

@@ -11,7 +11,7 @@ class NULLFILE : public AUDIO_IO_BUFFERED {
 
   virtual string name(void) const { return("Null audio file"); }
 
-  virtual void open(void) { }
+  virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) { }
   virtual void close(void) { }
 
   virtual long int read_samples(void* target_buffer, long int samples) { return(samples); }

@@ -41,7 +41,7 @@ class RAWFILE : public AUDIO_IO_BUFFERED {
   virtual string name(void) const { return("Raw audio file"); }
   virtual string parameter_names(void) const { return("label,toggle_mmap"); }
   
-  virtual void open(void);
+  virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);
 
   virtual long int read_samples(void* target_buffer, long int samples);

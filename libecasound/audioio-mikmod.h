@@ -44,7 +44,7 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
   virtual int supported_io_modes(void) const { return(io_read); }
   virtual bool supports_seeking(void) const { return(false); }
 
-  virtual void open(void);
+  virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);
   
   virtual long int read_samples(void* target_buffer, long int samples);

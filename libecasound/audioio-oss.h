@@ -51,7 +51,7 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
 
-  virtual void open(void) throw(SETUP_ERROR&);
+  virtual void open(void) throw(AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);
   
   virtual long int read_samples(void* target_buffer, long int samples);

@@ -53,7 +53,7 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   virtual string description(void) const { return("Interface for mp3 decoders and encoders that support input/output using standard streams."); }
   virtual bool locked_audio_format(void) const { return(true); }
 
-  virtual void open(void) throw(SETUP_ERROR&);
+  virtual void open(void) throw(AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);
   
   virtual long int read_samples(void* target_buffer, long int samples);

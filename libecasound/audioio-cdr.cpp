@@ -54,7 +54,7 @@ void CDRFILE::format_query(void) {
   // -------
 }
 
-void CDRFILE::open(void) throw(SETUP_ERROR&) { 
+void CDRFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) { 
   // --------
   // require:
   assert(!is_open());

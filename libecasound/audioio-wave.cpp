@@ -74,7 +74,7 @@ void WAVEFILE::format_query(void) throw(SETUP_ERROR&) {
 }
 
 
-void WAVEFILE::open(void) throw(SETUP_ERROR&) {
+void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
   switch(io_mode()) {
   case io_read:
     {

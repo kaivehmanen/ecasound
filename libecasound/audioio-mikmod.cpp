@@ -36,7 +36,7 @@ MIKMOD_INTERFACE::MIKMOD_INTERFACE(const string& name) {
 
 MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void) { close(); }
 
-void MIKMOD_INTERFACE::open(void) { 
+void MIKMOD_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
   fork_mikmod();
   triggered_rep = false;
   toggle_open_state(true); 

@@ -39,7 +39,7 @@ EWFFILE::~EWFFILE(void) {
   delete child;
 }
 
-void EWFFILE::open(void) throw(SETUP_ERROR&) {
+void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   child_active = false;
 
   ewf_rc.resource_file(label());

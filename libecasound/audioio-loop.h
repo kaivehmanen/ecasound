@@ -27,7 +27,7 @@ class LOOP_DEVICE : public AUDIO_IO {
   virtual void buffersize(long int samples, long int sample_rate) { };
   virtual long int buffersize(void) const { return(0); };
 
-  virtual void open(void) { }
+  virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) { }
   virtual void close(void) { }
 
   virtual void read_buffer(SAMPLE_BUFFER* sbuf);

@@ -55,7 +55,7 @@ MP3FILE::MP3FILE(const string& name) {
 
 MP3FILE::~MP3FILE(void) { close(); }
 
-void MP3FILE::open(void) throw(SETUP_ERROR&) { 
+void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) { 
   if (io_mode() == io_read) {
     get_mp3_params(label());
   }

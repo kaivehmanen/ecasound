@@ -75,7 +75,7 @@ void ALSA_PCM_DEVICE_06X::open_device(void) {
     pcm_stream_rep = SND_PCM_STREAM_CAPTURE;
     if (using_plugin_rep)
       err = ::snd_pcm_open(&audio_fd_repp, 
-			   (string("plug:") + 
+			   (char*)(string("plug:") + 
 			   kvu_numtostr(card_number_rep) +
 			   "," +
 			   kvu_numtostr(device_number_rep) +
@@ -85,7 +85,7 @@ void ALSA_PCM_DEVICE_06X::open_device(void) {
 			   SND_PCM_NONBLOCK);
     else
       err = ::snd_pcm_open(&audio_fd_repp, 
-			   (string("hw:") + 
+			   (char*)(string("hw:") + 
 			   kvu_numtostr(card_number_rep) +
 			   "," +
 			   kvu_numtostr(device_number_rep) +
@@ -107,7 +107,7 @@ void ALSA_PCM_DEVICE_06X::open_device(void) {
     pcm_stream_rep = SND_PCM_STREAM_PLAYBACK;
     if (using_plugin_rep)
       err = ::snd_pcm_open(&audio_fd_repp, 
-			   (string("plug:") + 
+			   (char*)(string("plug:") + 
 			   kvu_numtostr(card_number_rep) +
 			   "," +
 			   kvu_numtostr(device_number_rep) +
@@ -118,7 +118,7 @@ void ALSA_PCM_DEVICE_06X::open_device(void) {
 
     else
       err = ::snd_pcm_open(&audio_fd_repp, 
-			   (string("hw:") + 
+			   (char*)(string("hw:") + 
 			   kvu_numtostr(card_number_rep) +
 			   "," +
 			   kvu_numtostr(device_number_rep) +

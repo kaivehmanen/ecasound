@@ -56,7 +56,7 @@ void RAWFILE::format_query(void) {
   // -------
 }
 
-void RAWFILE::open(void) { 
+void RAWFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
   switch(io_mode()) {
   case io_read:
     {

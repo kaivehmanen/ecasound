@@ -182,7 +182,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * ensure:
    *  readable() == true || writable() == true
    */
-  virtual void open(void) throw(SETUP_ERROR&) = 0;
+  virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) = 0;
 
   /**
    * Close audio object. After calling this routine, 

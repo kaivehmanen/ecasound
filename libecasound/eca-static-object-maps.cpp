@@ -375,7 +375,7 @@ void register_ladspa_plugins(void) {
 	  if (entry_name.size() > 0 && entry_name[0] != '.')
 	    ladspa_plugins = create_plugins(*p + "/" + entry_name);
 	}
-	catch(ECA_ERROR& e) { cerr << e.error_message() << endl; }
+	catch(ECA_ERROR& e) { ecadebug->msg(ECA_DEBUG::user_objects, e.error_message()); }
 	for(unsigned int n = 0; n < ladspa_plugins.size(); n++) {
 	  eca_ladspa_plugin_map.register_object(ladspa_plugins[n]->unique(), ladspa_plugins[n]);
 	  eca_ladspa_plugin_id_map.register_object(kvu_numtostr(ladspa_plugins[n]->unique_number()), ladspa_plugins[n]);

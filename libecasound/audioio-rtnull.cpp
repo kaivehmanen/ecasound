@@ -32,7 +32,7 @@ REALTIME_NULL::REALTIME_NULL(const string& name) {
   //cerr << "delay " << buffer_delay.tv_usec << "usec.\n";
 }
 
-void REALTIME_NULL::open(void) {
+void REALTIME_NULL::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
   toggle_open_state(true);
   double t = static_cast<double>(buffersize()) / samples_per_second();
   buffer_delay.tv_sec = static_cast<time_t>(floor(t));

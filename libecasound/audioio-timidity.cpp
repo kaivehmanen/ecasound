@@ -36,7 +36,7 @@ TIMIDITY_INTERFACE::TIMIDITY_INTERFACE(const string& name) {
 
 TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void) { close(); }
 
-void TIMIDITY_INTERFACE::open(void) { 
+void TIMIDITY_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
   set_channels(2);
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
   fork_timidity();
