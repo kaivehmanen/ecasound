@@ -2,6 +2,21 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-02-15  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* resource-file.h (keywords): added
+	
+2000-02-14  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* audioio-ewf.h (various): new functionality
+	* resource-file.h (load, save, is_modified, set_modified_state): removed
+	* resource-file.h (set_resource_file, get_resource_file): renamed
+	* eca-controller-base.h (resource_value): return value changed
+	
+2000-02-13  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* audioio.h (various): added support for class ECA_AUDIO_TIME
+	
 2000-02-11  Kai Vehmanen <kaiv@wakkanet.fi>
         
 	* audioio-types.h (prepare): added to AUDIO_IO_DEVICE and all 

@@ -17,48 +17,42 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <map>
 #include <string>
 #include <cstdlib>
 
 #include "eca-resources.h"
 
-ECA_RESOURCES::ECA_RESOURCES(void) { 
-  set_resource_file(string(getenv("HOME")) + "/" + ".ecasoundrc");
+ECA_RESOURCES::ECA_RESOURCES(void) :
+  RESOURCE_FILE(string(getenv("HOME")) + "/" + ".ecasoundrc")
+{ 
   set_defaults(); 
 }
 
 void ECA_RESOURCES::set_defaults(void) {
-  resource("midi-device","/dev/midi");
-  resource("default-output","/dev/dsp");
-  resource("default-buffersize","1024");
-  resource("default-samplerate","44100");
-  resource("default-to-interactive-mode","false");
-  resource("default-to-raisepriority","false");
-  resource("default-to-double-buffering","false");
-  resource("default-double-buffer-size","131072");
-  resource("default-to-precise-sample-rates","false");
-  resource("resource-directory","/usr/local/share/ecasound");
-  resource("resource-file-genosc-envelopes","generic_oscillators");
-  resource("resource-file-single-effect-presets","singlechain_effect_presets");
-  resource("resource-file-multi-effect-presets","multichain_effect_presets");
+  if (resource("midi-device") == "") resource("midi-device","/dev/midi");
+  if (resource("default-output") == "") resource("default-output","/dev/dsp");
+  if (resource("default-buffersize") == "") resource("default-buffersize","1024");
+  if (resource("default-samplerate") == "") resource("default-samplerate","44100");
+  if (resource("default-to-interactive-mode") == "") resource("default-to-interactive-mode","false");
+  if (resource("default-to-raisepriority") == "") resource("default-to-raisepriority","false");
+  if (resource("default-to-double-buffering") == "") resource("default-to-double-buffering","false");
+  if (resource("default-double-buffer-size") == "") resource("default-double-buffer-size","131072");
+  if (resource("default-to-precise-sample-rates") == "") resource("default-to-precise-sample-rates","false");
+  if (resource("resource-directory") == "") resource("resource-directory","/usr/local/share/ecasound");
+  if (resource("resource-file-genosc-envelopes") == "") resource("resource-file-genosc-envelopes","generic_oscillators");
+  if (resource("resource-file-single-effect-presets") == "") resource("resource-file-single-effect-presets","singlechain_effect_presets");
+  if (resource("resource-file-multi-effect-presets") == "") resource("resource-file-multi-effect-presets","multichain_effect_presets");
 
-  resource("ext-text-editor","pico");
-  resource("ext-text-editor-use-getenv","true");
-  resource("ext-wave-editor","ecawave");
+  if (resource("ext-text-editor") == "") resource("ext-text-editor","pico");
+  if (resource("ext-text-editor-use-getenv") == "") resource("ext-text-editor-use-getenv","true");
+  if (resource("ext-wave-editor") == "") resource("ext-wave-editor","ecawave");
 
-  resource("ext-mpg123-path","mpg123");
-  resource("ext-mpg123-args","-b 0");
+  if (resource("ext-mpg123-path") == "") resource("ext-mpg123-path","mpg123");
+  if (resource("ext-mpg123-args") == "") resource("ext-mpg123-args","-b 0");
 
-  resource("ext-lame-path","lame");
-  resource("ext-lame-args","-b 128");
+  if (resource("ext-lame-path") == "") resource("ext-lame-path","lame");
+  if (resource("ext-lame-args") == "") resource("ext-lame-args","-b 128");
 
-  resource("ext-mikmod-path","mikmod");
-  resource("ext-mikmod-args","-p 0 --noloops");
-
-  set_modified_state(false);
+  if (resource("ext-mikmod-path") == "") resource("ext-mikmod-path","mikmod");
+  if (resource("ext-mikmod-args") == "") resource("ext-mikmod-args","-p 0 --noloops");
 }
-
-
-
-

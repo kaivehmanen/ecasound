@@ -94,4 +94,3 @@ void ECA_AUDIO_POSITION::seek_position_in_seconds(double pos_in_seconds) {
   seek_position_in_samples(pos_in_seconds *
 			   samples_per_second());
 }
-

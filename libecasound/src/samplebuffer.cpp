@@ -392,6 +392,23 @@ void SAMPLE_BUFFER::make_silent(void) {
   }
 }
 
+void SAMPLE_BUFFER::make_silent_range(long int start_pos,
+				      long int end_pos) {
+  assert(start_pos >= 0);
+  assert(end_pos >= 0);
+
+  buf_channel_iter_t buf_iter = buffer.begin();
+  while(buf_iter != buffer.end()) {
+    for(long int s = start_pos;
+	s < end_pos && s < static_cast<long int>(buf_iter->size());
+	s++) {
+      (*buf_iter)[s] = SAMPLE_SPECS::silent_value;
+      ++s;
+    }
+    ++buf_iter;
+  }
+}
+
 void SAMPLE_BUFFER::limit_values(void) {
   buf_channel_iter_t c = buffer.begin();
   while(c != buffer.end()) {
@@ -453,6 +470,27 @@ void SAMPLE_BUFFER::copy(const SAMPLE_BUFFER& x) {
   for(int q = 0; q != c_count; q++) {
     for(long int t = 0; t != static_cast<long int>(x.buffer[q].size()); t++) {
       buffer[q][t] = x.buffer[q][t];
+    }
+  }
+}
+
+void SAMPLE_BUFFER::copy_range(const SAMPLE_BUFFER& x, 
+			       long int start_pos,
+			       long int end_pos,
+			       long int to_pos) {
+  int c_count = (number_of_channels() <= x.number_of_channels()) ? number_of_channels() : x.number_of_channels();
+  long int t = to_pos;
+
+  assert(start_pos < end_pos);
+  assert(to_pos < length_in_samples());
+
+  if (start_pos >= x.length_in_samples()) start_pos = x.length_in_samples();
+  if (end_pos >= x.length_in_samples()) end_pos = x.length_in_samples();
+
+  for(int q = 0; q != c_count; q++) {
+    for(long int s = start_pos; s != end_pos && t < static_cast<long int>(buffer[q].size()); s++) {
+      buffer[q][t] = x.buffer[q][s];
+      ++t;
     }
   }
 }

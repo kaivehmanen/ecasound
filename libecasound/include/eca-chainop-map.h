@@ -15,7 +15,14 @@ class ECA_CHAIN_OPERATOR_MAP {
 
  public:
 
+  /**
+   * 'id-string' - 'object pointer' map
+   */
   static map<string, DYNAMIC_OBJECT*> object_map;
+
+  /**
+   * 'object-name' - 'prefix-string' map
+   */
   static map<string, string> object_prefix_map;
 
   /**

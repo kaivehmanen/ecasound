@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 100200) **
+** ecasound - user visible changes (NEWS)      (last edited: 170200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,7 +14,7 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.12r10 <*-
 
-??022000 (v1.7.0d11)
+17022000 (v1.7.0d11)
 	- added: qtecasound - chainsetup status
 	- added: automatic grouping of realtime and non-realtime
 		 audio objects for better performance
@@ -28,6 +28,8 @@ Last officially released version is -*> v1.6.12r10 <*-
 	- added: qtecasound - a nicer looking debug-window
 	- added: libqtecasound - a new subpackage containing 
 		 generic GUI objects
+	- added: support for chain-to-chain looping, see ecasound(1)
+		 manual page for more info
 	- removed: qtecasound - waveform view
 	- changed: ecawave is now the default ext. wave-editor
 	- changed: all shortcuts are now alt+key combinations
@@ -36,8 +38,11 @@ Last officially released version is -*> v1.6.12r10 <*-
 		   "ctrl-remove"
 	- changed: qtecasound - some renamed pushbuttons and 
 		   reassigned shortcut keys
-	- changed: changes in debugging subsystem affect '-d'
+	- changed: changes in debugging subsystem, affects '-d'
 	           behaviour, see ecasound man page
+	- changed: rewritten .ewf support with lots of new 
+		   features - see ecasound user's guide for more
+	           detailed info
 	- fixed: qtecasound - position slider wasn't working
 	- fixed: instead of just outputting raw ANSI-codes, 
 		 standard ncurses routines are now used
@@ -45,7 +50,7 @@ Last officially released version is -*> v1.6.12r10 <*-
 		 when processing length was not set
 	- fixed: setting processing length didn't work in normal 
 		 passive mixing mode (multiple chains)
-	- fixed: overrun/underrun problem with ALSA 0.5.x
+	- fixed: overrun/underrun problems with ALSA 0.5.x
 30012000 (v1.6.13d11)
 	- changed: rtnull reports about over/underruns now
 		   level-4 debug messages

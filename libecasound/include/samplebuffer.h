@@ -122,6 +122,13 @@ class SAMPLE_BUFFER {
   void copy(const SAMPLE_BUFFER& x);
 
   /**
+   * Ranged channel-wise copy. Copies samples in range 
+   * 'start_pos' - 'end_pos' from buffer 'x' to current 
+   * buffer and position 'to_pos'. 
+   */
+  void copy_range(const SAMPLE_BUFFER& x, long int start_pos, long int end_pos, long int to_pos);
+
+  /**
    * Divide all samples by 'dvalue'.
    */
   void divide_by(sample_type dvalue);
@@ -135,6 +142,11 @@ class SAMPLE_BUFFER {
    * Mute the whole buffer.
    */
   void make_silent(void);
+
+  /**
+   * Mute a range of samples.
+   */
+  void make_silent_range(long int start_pos, long int end_pos);
 
   /**
    * Fill buffer from external buffer source. 

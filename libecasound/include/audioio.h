@@ -4,6 +4,7 @@
 #include <string>
 
 #include "eca-audio-position.h"
+#include "eca-audio-time.h"
 
 class SAMPLE_BUFFER;
 
@@ -153,10 +154,16 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
    */
   bool is_open(void) const { return(open_rep); }
 
+  ECA_AUDIO_TIME length(void) const;
+  ECA_AUDIO_TIME position(void) const;
+
   virtual bool readable(void) const { return(is_open() && io_mode() != si_write); }
   virtual bool writable(void) const { return(is_open() && io_mode() != si_read); }
 
  protected:
+
+  void position(const ECA_AUDIO_TIME& v);
+  void length(const ECA_AUDIO_TIME& v);
 
   virtual AUDIO_IO* clone(void) = 0;
 

@@ -60,6 +60,11 @@ string remove_trailing_spaces(const string& a);
 string remove_preceding_spaces(const string& a);
 
 /**
+ * Removes all surrounding white spaces
+ */
+string remove_surrounding_spaces(const string& a);
+
+/**
  * Converts string to uppercase using toupper(int)
  */
 string convert_to_uppercase(const string& a);
@@ -98,6 +103,11 @@ string get_argument_number(int number, const string& argu);
  * @param argu a formatted string: "something:arg1,arg2,...,argn"
  */
 vector<string> get_arguments(const string& argu);
+
+/** 
+ * Returns number of arguments in formatted string 'argu'.
+ */
+int get_number_of_arguments(const string& argu);
 
 /**
  * Get the prefix part of a string argument

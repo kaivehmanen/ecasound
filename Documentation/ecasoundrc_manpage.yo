@@ -26,7 +26,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (28.01.2000)
+       (15.02.2000)
        ()
        (Multimedia software)
 
@@ -95,13 +95,9 @@ startdit()
   	Configuration file for generic oscillators. Is located in the 
   	resource directory. Defaults to em(generic_oscillators).
 
-  	dit(resource-file-single-effect-presets)
-  	Configuration file for single-chain effect presets. Is located in the 
-  	resource directory. Defaults to em(singlechain_effect_presets).
-
-  	dit(resource-file-multi-effect-presets)
-  	Configuration file for single-chain effect presets. Is located in the 
-  	resource directory. Defaults to em(multichain_effect_presets).
+  	dit(resource-file-effect-presets)
+  	Configuration file for effect presets. Is located in the 
+  	resource directory. Defaults to em(effect_presets).
 
 	dit(ext-text-editor)
 	If em(ext-text-editor-use-getenv) is em(false) or "EDITOR" 

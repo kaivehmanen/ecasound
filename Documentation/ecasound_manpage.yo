@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (09.02.2000)
+       (14.02.2000)
        ()
        (Multimedia software)
 
@@ -176,7 +176,9 @@ Currently supported formats are "u8" (same as "8"), "s16_le" (same
 as "16"), "s16_be", "s24_le", "s24_be", "s32_le" and "s32_be".
 
 dit(-y:seconds)
-Set starting position for last specified input/output.
+Set starting position for last specified input/output. If 
+you need more flexible control over audio objects, you should
+use the em(.ewf) format.
 
 dit(-i[:]input-file-or-device)
 Specifies a new input source that is connected to all selected chains.
@@ -211,6 +213,11 @@ other ALSA pcm device. Option syntax is
 bf(-i[:]alsalb,card_number,device_number,loop_mode). Loopmode 
 is either bf("p") for looping a playback device or bf("c") for
 a capture device.
+
+dit(Ecasound Wave Files - .ewf)
+A a simple wrapper class for handling other audio objects. 
+See url(ecasound user's guide)(users_guide/users_guide.html) for more 
+detailed information.
 
 dit(Loop device) 
 Loop devices make it possible to route data between chains.

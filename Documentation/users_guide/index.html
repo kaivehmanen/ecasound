@@ -28,7 +28,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>10012000</h2>
+<h2>14022000</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -166,12 +166,26 @@ in <em>/usr/local/share/ecasound</em>.
 <h3>3.3: Audio objects</h3>
 <a name="l15"></a>
 <strong>3.3.1: ewf - ecasound wave file</strong><p>
-Ecasound wave file (.ewf) is a simple wrapper format for RIFF WAVE
-(.wav) files that allows seeking beyond end position. When first write
-operation is performed, current file position is stored into the 
-.ewf file and corresponding .wav is opened for writing. When reading,
-you get silence until the offset position. Shortly put, this is a
-handy way to save disk space when doing multitrack recording.
+Ecasound wave file (.ewf) is a simple wrapper format for controlling 
+other audio objects. One important feature of ewf is the ability to seek
+beyond end position. When first write operation is performed, current 
+file position is stored into the .ewf file and the actual audio object
+is opened for writing. When reading, you get silence until the offset 
+position is reached. Shortly put, this is a practical way to save disk 
+space when doing multitrack recording. Newer versions of ewf-format 
+support looping, ranges, etc
+<p>Ewf-files are simple ascii files that contain key-value pairs. The 
+format used is the same as with ecasound resource files. See
+<a href="../ecasoundrc_manpage.html">ecasoundrc(5)</a> manual page for more
+info. Currently recognized keywords are:
+<p><dl>
+<li > source - audio object name
+<li > offset - insert audio object at offset (seconds)
+<li > start-position - start offset inside audio object (seconds)
+<li > length - how much of audio object data is used (seconds)
+<li > looping - whether to loop sample data (true or false)
+<li > loop-start-position - start offset for looping (seconds)
+</dl>
 <p>
 <a name="l16"></a>
 <h3>3.4: Chain operators</h3>

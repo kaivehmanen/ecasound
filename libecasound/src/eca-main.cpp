@@ -485,7 +485,6 @@ void ECA_PROCESSOR::prehandle_control_position(void) {
   csetup->change_position(buffersize_rep);
   if (csetup->is_over() == true &&
       processing_range_set == true) {
-    eparams->status(ep_status_finished);
     int buffer_remain = csetup->position_in_samples() -
                         csetup->length_in_samples();
     for(int adev_sizet = 0; adev_sizet < input_count; adev_sizet++) {
@@ -504,6 +503,8 @@ void ECA_PROCESSOR::posthandle_control_position(void) {
 	(*inputs)[adev_sizet]->buffersize(buffersize_rep, SAMPLE_BUFFER::sample_rate);
       }
     }
+    else
+      eparams->status(ep_status_finished);
   }
 }
 

@@ -37,7 +37,7 @@ ECA_AUDIO_TIME::ECA_AUDIO_TIME(format_type type, const string& time) {
   set(type, time);
 }
 
-ECA_AUDIO_TIME::ECA_AUDIO_TIME(void) : sample_rate_rep(44100), samples_rep(0) { }
+ECA_AUDIO_TIME::ECA_AUDIO_TIME(void) : samples_rep(0), sample_rate_rep(44100) { }
 
 void ECA_AUDIO_TIME::set(format_type type, const string& time) {
   switch(type) 

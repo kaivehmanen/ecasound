@@ -166,6 +166,7 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   setup.channel = params.channel;
   setup.mode = params.mode;
   dl_snd_pcm_channel_setup(audio_fd, &setup);
+  fragment_size = setup.buf.block.frag_size;
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Fragment size: " +
 		kvu_numtostr(setup.buf.block.frag_size) + ", max: " +
 		kvu_numtostr(setup.buf.block.frags_max) + ", min: " +
@@ -236,12 +237,13 @@ void ALSA_PCM2_DEVICE::start(void) {
 }
 
 long int ALSA_PCM2_DEVICE::read_samples(void* target_buffer, 
-				 long int samples) {
-  return(dl_snd_pcm_read(audio_fd, target_buffer, frame_size() * samples) / frame_size());
+					long int samples) {
+  assert(samples * frame_size() <= fragment_size);
+  return(dl_snd_pcm_read(audio_fd, target_buffer, fragment_size) / frame_size());
 }
 
 void ALSA_PCM2_DEVICE::write_samples(void* target_buffer, long int samples) {
-  dl_snd_pcm_write(audio_fd, target_buffer, frame_size() * samples);
+  dl_snd_pcm_write(audio_fd, target_buffer, fragment_size);
 }
 
 long ALSA_PCM2_DEVICE::position_in_samples(void) const {
@@ -254,7 +256,7 @@ long ALSA_PCM2_DEVICE::position_in_samples(void) const {
 }
 
 ALSA_PCM2_DEVICE::~ALSA_PCM2_DEVICE(void) { 
-  close(); 
+  if (is_open() == true) close(); 
 
   if (io_mode() != si_read) {
     if (underruns != 0) {

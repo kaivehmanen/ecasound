@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvutils.cpp: Misc helper routines.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -132,6 +132,13 @@ string remove_preceding_spaces(const string& a) {
   return(r);
 }
 
+string remove_surrounding_spaces(const string& a) { 
+  string::const_iterator p,q;
+  for(p = a.begin(); p != a.end() && *p == ' '; p++);
+  for(q = (a.end() - 1); q != a.begin() && *q == ' '; q--);
+  return(string(p,q + 1));
+}
+
 string convert_to_uppercase(const string& a) { 
   string r = a;
   for(string::iterator p = r.begin(); p != r.end(); p++)
@@ -198,6 +205,30 @@ string get_argument_number(int number, const string& argu) {
     } while( b < argu.end());
 
     return(target);
+}
+
+int get_number_of_arguments(const string& argu) {
+  int result = 0;
+
+  string::const_iterator b,e; 
+  b = find(argu.begin(), argu.end(), ':');
+
+  if (b == argu.end()) {
+    if (argu.size() > 0) b = argu.begin();
+    else return(0);
+  }
+  else 
+    ++b;
+
+  for(; b != argu.end(); b++) {
+    e = find(b, argu.end(), ',');
+    if (b != e) {
+      ++result;
+    }
+    if (e == argu.end()) break;
+    b = e;
+  }
+  return(result);
 }
 
 vector<string> get_arguments(const string& argu) {

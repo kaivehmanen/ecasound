@@ -28,6 +28,22 @@
 
 #include "eca-debug.h"
 
+ECA_AUDIO_TIME AUDIO_IO::length(void) const {
+  return(ECA_AUDIO_TIME(length_in_samples(), samples_per_second()));
+}
+
+ECA_AUDIO_TIME AUDIO_IO::position(void) const {
+  return(ECA_AUDIO_TIME(position_in_samples(), samples_per_second()));
+}
+
+void AUDIO_IO::length(const ECA_AUDIO_TIME& v) {
+  length_in_samples(v.samples());
+}
+
+void AUDIO_IO::position(const ECA_AUDIO_TIME& v) {
+  position_in_samples(v.samples());
+}
+
 string AUDIO_IO::format_info(void) const {
   MESSAGE_ITEM otemp;
 

@@ -50,6 +50,11 @@ instructions.
  Documentation 
 -----------------------------------------------------------------------
 
+Ecasound documentation is updated whenever new features are added 
+or old features have been modified. Some things are not documented
+in great detail, but on the other hand, all documentation is kept
+up-to-date.
+
 - user's guide
 - programmer's guide
 - man pages
@@ -58,7 +63,8 @@ instructions.
 	- ecatools(1)
 	- ecasound-iam(1)
 	- ecasoundrc(5)
-- command line help (most up-to-date source)
+- misc HTML-formatted docs
+- command line help
 	- (qt)ecasound -h
 
 Probably the best place to start is the examples section of 

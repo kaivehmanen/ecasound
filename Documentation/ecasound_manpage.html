@@ -38,7 +38,7 @@ page]</A></H4></CENTER>
 <hr>
 
 <h1>ecasound</h1>
-<h2>08.02.2000</h2>
+<h2>14.02.2000</h2>
 
 
     
@@ -72,10 +72,12 @@ line is important!
 Starts ecasound in interactive mode. In interactive mode you can
 control ecasound with simple commands ("start", "stop", "pause",
 etc.). See <a href="ecasound-iam_manpage.html">ecasound-iam(1)</a>.
-<p><p></p><dt><strong>-d:debug level</strong><dd>
-Set the debug level. Default is 0.
+<p><p></p><dt><strong>-d:debug_level</strong><dd>
+Set the debug level to 'debug_level'. This a bitmasked value, 
+that defaults to 3. See ECA_DEBUG class documentation for 
+more detailed info about various debug_level values.
 <p><p></p><dt><strong>-q</strong><dd>
-Quiet mode, no output.
+Quiet mode, no output. Same as <em>-d:0</em>.
 <p></dl>
 <p><strong>CHAINSETUP OPTIONS</strong>
 <dl>
@@ -158,7 +160,9 @@ little endian, "_le" is added to the end. Similarly if big endian,
 Currently supported formats are "u8" (same as "8"), "s16_le" (same 
 as "16"), "s16_be", "s24_le", "s24_be", "s32_le" and "s32_be".
 <p><p></p><dt><strong>-y:seconds</strong><dd>
-Set starting position for last specified input/output.
+Set starting position for last specified input/output. If 
+you need more flexible control over audio objects, you should
+use the <em>.ewf</em> format.
 <p><p></p><dt><strong>-i[:]input-file-or-device</strong><dd>
 Specifies a new input source that is connected to all selected chains.
 Connecting multiple inputs to the same chain isn't possible. Input
@@ -189,6 +193,10 @@ other ALSA pcm device. Option syntax is
 <strong>-i[:]alsalb,card_number,device_number,loop_mode</strong>. Loopmode 
 is either <strong>"p"</strong> for looping a playback device or <strong>"c"</strong> for
 a capture device.
+<p><p></p><dt><strong>Ecasound Wave Files - .ewf</strong><dd>
+A a simple wrapper class for handling other audio objects. 
+See <a href="users_guide/users_guide.html">ecasound user's guide</a> for more 
+detailed information.
 <p><p></p><dt><strong>Loop device</strong><dd> 
 Loop devices make it possible to route data between chains.
 Option syntax is <strong>-[io][:]loop,id_number</strong>. If you add a loop 
@@ -372,14 +380,13 @@ oscillator preset to be loaded. The location for the preset
 file is taken from ./ecasoundrc (see <em>ecasoundrc(5)</em>).
 <p><p></p><dt><strong>-kl:fx_param,start_value,end_value,time_in_seconds</strong><dd>
 Linear envelope that starts from 'start_value' and linearly 
-increases to 'end_value' during 'time_in_seconds'. Can
+changes to 'end_value' during 'time_in_seconds'. Can
 be used for fadeins and fadeouts.
-<p><p></p><dt><strong>-kl2:fx_param,start_value,end_value,1st_stage_length,2nd_stage_length,midpoint_value_%</strong><dd>
-Two-stage linear envelope that starts from 'start_value' and linearly 
-increases to the middle value (specified in percents) during 
-'1st_stage_length' seconds. Then it continues to 'end_value' 
-during '2nd_stage_length' seconds. A more versatile for doing
-fade-ins and fade-outs.
+<p><p></p><dt><strong>-kl2:fx_param,start_value,end_value,1st_stage_length,2nd_stage_length</strong><dd>
+Two-stage linear envelope, a more versatile tool for doing fade-ins
+and fade-outs. Stays at 'start_value' for '1st_stage_length' seconds
+and then linearly changes towards 'end_value' during
+'2nd_stage_length' seconds.
 <p><p></p><dt><strong>-km:fx_param,start_value,end_value,controller,channel</strong><dd>
 MIDI continuous controller (control change messages). 
 Messages on the MIDI-channel 'channel' that are coming from

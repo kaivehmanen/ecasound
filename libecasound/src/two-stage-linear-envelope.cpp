@@ -25,8 +25,12 @@
 DYNAMIC_PARAMETERS::parameter_type TWO_STAGE_LINEAR_ENVELOPE::value(void) {
   curpos += step_length();
   if (curpos > first_stage_length_rep) {
-    curval = ((curpos - first_stage_length_rep) /
-	      second_stage_length_rep);
+    if (curpos <= length_in_seconds()) {
+      curval = ((curpos - first_stage_length_rep) /
+		second_stage_length_rep);
+    }
+    else 
+      curval = 1.0;
   }
   return(curval);
 }

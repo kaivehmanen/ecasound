@@ -22,7 +22,8 @@
 class ALSA_PCM2_DEVICE : public AUDIO_IO_DEVICE {
 
   snd_pcm_t *audio_fd;
-
+  long int fragment_size;
+  
   int card_number, device_number, subdevice_number;
   int pcm_mode, pcm_channel;
 

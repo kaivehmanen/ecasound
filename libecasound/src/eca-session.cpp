@@ -46,7 +46,6 @@
 
 ECA_SESSION::ECA_SESSION(void) {
   //  pthread_mutex_init(&status_lock, NULL);
-  ecaresources.load();
   set_defaults();
   set_scheduling();
 }
@@ -55,8 +54,6 @@ ECA_SESSION::~ECA_SESSION(void) {
   ecadebug->msg(ECA_DEBUG::system_objects,"ECA_SESSION destructor!");
 
   status(ep_status_notready);
-
-  ecaresources.save();
 
   for(vector<ECA_CHAINSETUP*>::iterator q = chainsetups.begin(); q != chainsetups.end(); q++) {
     delete *q;
@@ -67,7 +64,6 @@ ECA_SESSION::~ECA_SESSION(void) {
 
 ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*) {
   //  pthread_mutex_init(&status_lock, NULL);
-  ecaresources.load();
   set_defaults();
 
   interpret_general_options(cline);

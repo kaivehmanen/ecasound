@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "28\&.01\&.2000" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "15\&.02\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -64,13 +64,9 @@ Defaults to \fI/usr/local/share/ecasound\fP\&.
 Configuration file for generic oscillators\&. Is located in the 
 resource directory\&. Defaults to \fIgeneric_oscillators\fP\&.
 .IP 
-.IP "resource-file-single-effect-presets" 
-Configuration file for single-chain effect presets\&. Is located in the 
-resource directory\&. Defaults to \fIsinglechain_effect_presets\fP\&.
-.IP 
-.IP "resource-file-multi-effect-presets" 
-Configuration file for single-chain effect presets\&. Is located in the 
-resource directory\&. Defaults to \fImultichain_effect_presets\fP\&.
+.IP "resource-file-effect-presets" 
+Configuration file for effect presets\&. Is located in the 
+resource directory\&. Defaults to \fIeffect_presets\fP\&.
 .IP 
 .IP "ext-text-editor" 
 If \fIext-text-editor-use-getenv\fP is \fIfalse\fP or "EDITOR" 

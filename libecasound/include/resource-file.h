@@ -1,39 +1,50 @@
 #ifndef _RESOURCE_FILE_H
 #define _RESOURCE_FILE_H
 
-#include <map>
+#include <vector>
 #include <string>
 
 /**
- * Class that represents a generic resource file
+ * Generic resource file class
  */
 class RESOURCE_FILE {
 
-  map<string,string> rcmap;
-  map<int,string> rc_comments;
-
   string res_file;
-  bool changed_rep;
-  bool use_equal_sign;
-  int loaded_resource_values;
 
  public:
 
-  bool is_modified(void) { return(changed_rep); }
-  void set_modified_state(bool value) { changed_rep = value; }
+  /**
+   * Returns a vector of registered presets
+   */
+  vector<string> keywords(void) const;
 
-  void load(void);
-  void save(void);
+  /**
+   * Returns current resource file name.
+   */
+  const string& resource_file(void) const { return(res_file); }
 
-  const string& get_resource_file(void) { return(res_file); }
-  void set_resource_file(const string& file) { res_file = file; }
+  /**
+   * Returns value of resource 'tag'.
+   */
+  string resource(const string& tag) const;
 
-  const string& resource(const string& tag);
+  /**
+   * Set resource 'tag' value to 'value'. If value wasn't 
+   * previously defined, it's added.
+   */
   void resource(const string& tag, const string& value);
 
-  bool boolean_resource(const string& tag);
+  /**
+   * Returns true if resource 'tag' is 'true', otherwise false
+   */
+  bool boolean_resource(const string& tag) const;
+  
+  /**
+   * Whether resource 'tag' is specified in the resource file
+   */
+  bool has(const string& tag) const;
 
-  RESOURCE_FILE(void) : changed_rep(false), use_equal_sign(true), loaded_resource_values(-1) { }
+  RESOURCE_FILE(const string& resource_file) : res_file(resource_file) { }
   ~RESOURCE_FILE(void);
 };
 

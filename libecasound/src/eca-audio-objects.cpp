@@ -149,6 +149,9 @@ void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu, const stri
 
   case 'y':
     {
+      if (last_audio_object == 0)
+	ecadebug->msg("Error! No audio object defined.");
+
       last_audio_object->seek_position_in_seconds(atof(get_argument_number(1, argu).c_str()));
       if (last_audio_object->io_mode() == si_read) {
 	input_start_pos[input_start_pos.size() - 1] = last_audio_object->position_in_seconds_exact();
@@ -205,7 +208,7 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu,
     break;
     
   case TYPE_EWF:
-    main_file = new EWFFILE (tname, mode, format);
+    main_file = new EWFFILE (tname, mode, format, buffersize_arg);
     break;
     
     //  case TYPE_OSSDMA:

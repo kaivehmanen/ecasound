@@ -151,8 +151,6 @@ void *update_midi_queues(void *) {
   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);  // other threads can cancel this one
     
   ECA_RESOURCES erc;
-  erc.load();
-    
   string midi_dev = erc.resource("midi-device");
 
   bool use_alsa = false;

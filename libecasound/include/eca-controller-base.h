@@ -142,7 +142,7 @@ class ECA_CONTROLLER_BASE : public DEFINITION_BY_CONTRACT {
   /**
    * Get resource values from ~/.ecasoundrc
    */
-  const string& resource_value(const string& key) { return session_rep->ecaresources.resource(key); }
+  string resource_value(const string& key) const { return session_rep->ecaresources.resource(key); }
 
   // -------------------------------------------------------------------
   // Modify session

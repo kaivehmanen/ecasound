@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "08\&.02\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "14\&.02\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -34,11 +34,13 @@ Starts ecasound in interactive mode\&. In interactive mode you can
 control ecasound with simple commands ("start", "stop", "pause",
 etc\&.)\&. See ecasound-iam(1)\&.
 .IP 
-.IP "-d:debug level" 
-Set the debug level\&. Default is 0\&.
+.IP "-d:debug_level" 
+Set the debug level to \'debug_level\'\&. This a bitmasked value, 
+that defaults to 3\&. See ECA_DEBUG class documentation for 
+more detailed info about various debug_level values\&.
 .IP 
 .IP "-q" 
-Quiet mode, no output\&.
+Quiet mode, no output\&. Same as \fI-d:0\fP\&.
 .IP 
 .PP 
 \fBCHAINSETUP OPTIONS\fP
@@ -135,7 +137,9 @@ Currently supported formats are "u8" (same as "8"), "s16_le" (same
 as "16"), "s16_be", "s24_le", "s24_be", "s32_le" and "s32_be"\&.
 .IP 
 .IP "-y:seconds" 
-Set starting position for last specified input/output\&.
+Set starting position for last specified input/output\&. If 
+you need more flexible control over audio objects, you should
+use the \fI\&.ewf\fP format\&.
 .IP 
 .IP "-i[:]input-file-or-device" 
 Specifies a new input source that is connected to all selected chains\&.
@@ -170,6 +174,11 @@ other ALSA pcm device\&. Option syntax is
 \fB-i[:]alsalb,card_number,device_number,loop_mode\fP\&. Loopmode 
 is either \fB"p"\fP for looping a playback device or \fB"c"\fP for
 a capture device\&.
+.IP 
+.IP "Ecasound Wave Files - \&.ewf" 
+A a simple wrapper class for handling other audio objects\&. 
+See ecasound user\'s guide for more 
+detailed information\&.
 .IP 
 .IP "Loop device" 
 Loop devices make it possible to route data between chains\&.
@@ -388,15 +397,14 @@ file is taken from \&./ecasoundrc (see \fIecasoundrc(5)\fP)\&.
 .IP 
 .IP "-kl:fx_param,start_value,end_value,time_in_seconds" 
 Linear envelope that starts from \'start_value\' and linearly 
-increases to \'end_value\' during \'time_in_seconds\'\&. Can
+changes to \'end_value\' during \'time_in_seconds\'\&. Can
 be used for fadeins and fadeouts\&.
 .IP 
-.IP "-kl2:fx_param,start_value,end_value,1st_stage_length,2nd_stage_length,midpoint_value_%" 
-Two-stage linear envelope that starts from \'start_value\' and linearly 
-increases to the middle value (specified in percents) during 
-\'1st_stage_length\' seconds\&. Then it continues to \'end_value\' 
-during \'2nd_stage_length\' seconds\&. A more versatile for doing
-fade-ins and fade-outs\&.
+.IP "-kl2:fx_param,start_value,end_value,1st_stage_length,2nd_stage_length" 
+Two-stage linear envelope, a more versatile tool for doing fade-ins
+and fade-outs\&. Stays at \'start_value\' for \'1st_stage_length\' seconds
+and then linearly changes towards \'end_value\' during
+\'2nd_stage_length\' seconds\&.
 .IP 
 .IP "-km:fx_param,start_value,end_value,controller,channel" 
 MIDI continuous controller (control change messages)\&. 

@@ -44,6 +44,9 @@ ALSA_LOOPBACK_DEVICE::ALSA_LOOPBACK_DEVICE (int card,
   :  AUDIO_IO_DEVICE(string("alsa_loopback,") + kvu_numtostr(card) +
 		     string(",") + kvu_numtostr(device) , mode, form)
 {
+#ifdef ALSALIB_050
+  throw(new ECA_ERROR("AUDIOIO-ALSALB", "support for ALSA versions >0.5.0 not implemented"));
+#endif
   buffersize(bsize, samples_per_second());
   card_number = card;
   device_number = device;
