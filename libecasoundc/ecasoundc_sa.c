@@ -259,8 +259,10 @@ eci_handle_t eci_init_r(void)
       /* child */
 
       /* -c = interactive mode, -D = direct prompts and banners to stderr */
-      const char* args[8] = { ecasound_exec, "-c", "-D", NULL };
+      const char* args[4] = { NULL, "-c", "-D", NULL };
       int res = 0;
+  
+      args[0] = ecasound_exec;
 
       /* close all unused descriptors */
 
