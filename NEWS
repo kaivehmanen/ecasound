@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 221002) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 241002) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -20,6 +20,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 'ctrl-descriptions', 'ladspa-descriptions' and 
 		 'preset-descriptions'; see ecasound-iam(1) man
 		 page for details
+	- changed: libecasoundc now LGPL licensed
 	- removed: eiam - all mentions of map commands from the 
 		   man page; these were never implemented
 19102002 (v2.2.0-pre3)

@@ -235,9 +235,13 @@ Note! The developer tags are (for instance I have [kaiv]) used
 Copyright (C) 1997-2002 Kai Vehmanen
 
 Ecasound is freely distributable according to the terms of the 
-GNU General Public License (see the file 'COPYING').
+GNU General Public License (see the file 'COPYING.GPL').
 
 This program is distributed without any warranty. See the file 
-'COPYING' for details. 
+'COPYING.GPL' for details. 
+
+As an exception to the above, the C implementation of the Ecasound 
+Control Interface (libecasoundc) is licensed under the LGPL 
+(see the file 'COPYING.LGPL').
 
 =======================================================================
