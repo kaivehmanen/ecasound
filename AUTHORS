@@ -92,7 +92,7 @@ Rzewnicki, Eric Dantan [ericdr]
 Sassmannshausen, Ruediger [rsassman]
 	Mp3 filename parsing fixes.
 Shchepin, Alexey [alexey]
-	Bugfix to audiogate operator (-gc).
+	Bugfix to time crop gate operator (-gc).
 Sijrier, Remon [remon]
 	Fix to a bug in setting -eca initial values.
 Smith, Richard A.
