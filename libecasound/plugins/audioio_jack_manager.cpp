@@ -53,7 +53,6 @@
 #endif
 
 #ifdef PROFILE_CALLBACK_EXECUTION
-#include <asm/msr.h>
 #define PROFILE_CE_STATEMENT(x) (x)
 static PROCEDURE_TIMER profile_callback_timer;
 #else
@@ -93,19 +92,25 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
 {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
 
-#if 0 /* PROFILE_CALLBACK_EXECUTION */
-  unsigned long long start, stop;
-  float difference;
-  rdtscll (start); /* start client timer */
-#endif
-
   PROFILE_CE_STATEMENT(profile_callback_timer.start());
-  DEBUG_CFLOW_STATEMENT(cerr << endl << "jack_process entry ----> ");
+  DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): entry ----> ");
 
+  // FIXME/17.05.2002:
+  //  - if in transport-slave mode, verify that ecasound engine 
+  //    position matches JACK position
+  //  - if the position doesn't match, initiate seeking to 
+  //    the estimated position and skip processing for this round
+  
   /* 1. try to get the driver lock; if it fails or connection 
    *    is not fully establish, skip this processing cycly */
   int ret = pthread_mutex_trylock(&current->lock_rep);
   if (ret == 0 && current->connection_active_rep == true) {
+
+    // FIXME/17.05.2002:
+    //  - make cb_buffers to be at least 2*buffersize in size;
+    //    and make it a ring-buffer
+    //  - if 'nframes < buffersize', only copy nframes to 
+    //    inport cb_buffers
 
     /* 2. copy audio data from port input buffers to ecasound buffers */
     for(size_t n = 0; n < current->inports_rep.size(); n++) {
@@ -115,18 +120,25 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
       }
     }
     
-    DEBUG_CFLOW_STATEMENT(cerr << endl << "process 1 iter_in");
+    DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine_iter_in");
 
-    // FIXME: we should be able to handle cases where 
-    //        'nframes > 0' && 'nframes < current->buffersize_rep'
+    // FIXME: we shouldn't need to make this check, but to make
+    //        sure this doesn't go unnoticed...
     DBC_CHECK(current->buffersize_rep == static_cast<long int>(nframes));
+
+    // FIXME/17.05.2002:
+    //  - don't call engine_iteration() if there's 
+    //    less than buffersize of data in inport cb_buffers
     
     /* 3. execute one engine iteration */
     if (current->engine_repp->is_active()) {
       current->engine_repp->engine_iteration();
     }
     
-    DEBUG_CFLOW_STATEMENT(cerr << endl << "process 2 iter_out");
+    DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine_iter_out");
+
+    // FIXME/17.05.2002:
+    //  - only copy nframes of data to the output buffers
     
     /* 4. copy data from ecasound buffers to port output buffers */
     for(size_t n = 0; n < current->outports_rep.size(); n++) {
@@ -143,18 +155,11 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
     pthread_mutex_unlock(&current->lock_rep);
   }
   else {
-    DEBUG_CFLOW_STATEMENT(cerr << "jack_process: couldn't lock" << endl);
+    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process(): couldn't get lock" << endl);
   }
 
-#if 0 /* PROFILE_CALLBACK_EXECUTION */
-  rdtscll (stop); /* stop client timer */
-  difference = (float)(stop - start)/466000.0f;
-  if (difference > 1) 
-    jack_error ("jack-profile: process cycle took %.6f msecs\n", difference);
-#endif
-  
   PROFILE_CE_STATEMENT(profile_callback_timer.stop());
-  DEBUG_CFLOW_STATEMENT(cerr << endl << "process out" << endl);
+  DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): process out" << endl);
   
 #ifdef PROFILE_CALLBACK_EXECUTION
   if (profile_callback_timer.last_duration_seconds() > 0.005f) {
