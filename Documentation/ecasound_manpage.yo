@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (18.12.2003)
+       (17.04.2004)
        ()
        (Multimedia software)
 
@@ -713,7 +713,7 @@ static values or '1' for linear interpolation. 'point-pairs'
 specifies the number of 'posN' - 'valueN' pairs to include.
 'start-value' and 'end-value' are used as border values.
 All 'posN' and 'valueN' must be between 0.0 and 1.0. Also, 
-for all 'posN´ values 'pos1 < pos2 < ... < posN' must be true.
+for all 'posN' values 'pos1 < pos2 < ... < posN' must be true.
 
 dit(-kf:fx-param,start-value,end-value,freq,mode,genosc-number)
 Generic oscillator. 'genosc_number' is the number of the 
