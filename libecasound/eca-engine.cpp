@@ -1115,7 +1115,6 @@ void ECA_ENGINE::posthandle_control_position(void)
 void ECA_ENGINE::interpret_queue(void)
 {
   while(impl_repp->command_queue_rep.is_empty() != true) {
-#if 1 /* FIXME: experimental code */
     const std::pair<int,double>* item_p = impl_repp->command_queue_rep.front();
     std::pair<int,double> item;
     if (item_p != impl_repp->command_queue_rep.invalid_item()) {
@@ -1126,9 +1125,6 @@ void ECA_ENGINE::interpret_queue(void)
        * messages */
       break;
     }
-#else
-    std::pair<int,double> item = impl_repp->command_queue_rep.front();
-#endif
 
     switch(item.first) 
       {

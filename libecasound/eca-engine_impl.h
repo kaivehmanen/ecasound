@@ -28,11 +28,7 @@ class ECA_ENGINE_impl {
   double looptimer_mid_rep;
   double looptimer_high_rep;
 
-#if 1 /* FIXME: experimental code */
   VALUE_QUEUE_RT_C command_queue_rep;
-#else
-  VALUE_QUEUE command_queue_rep;
-#endif
 
   pthread_cond_t ecasound_stop_cond_repp;
   pthread_mutex_t ecasound_stop_mutex_repp;
