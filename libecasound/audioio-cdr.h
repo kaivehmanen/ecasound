@@ -30,6 +30,7 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
   static const int sectorsize = 2352;
 
   long int samples_read;
+  off_t curpos_rep;
 
   FILE* fobject;
   void pad_to_sectorsize(void);
@@ -46,17 +47,6 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
     t->sample[SAMPLE_SPECS::ch_right] = swapw(t->sample[SAMPLE_SPECS::ch_right]);
   }
   
-  /**
-   * Do a info query prior to actually opening the device.
-   *
-   * require:
-   *  !is_open()
-   *
-   * ensure:
-   *  !is_open()
-   */
-  void format_query(void);
-
  public:
 
   std::string name(void) const { return("CD-R audio file"); }

@@ -17,18 +17,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-/* hack to make fseeko and fteelo work with glibc2.1.x */
-#ifdef _LARGEFILE_SOURCE
-  #if __GNUC__ == 2
-    #if __GNUC_MINOR__ < 92
-      #define _XOPEN_SOURCE 500
-    #endif
-  #endif
-#else
-#define fseeko std::fseek
-#define ftello std::ftell
-#endif
-
 #include <cstdio>
 #include <cstring> /* memcpy */
 #include <unistd.h>

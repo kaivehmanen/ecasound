@@ -12,13 +12,13 @@ namespace SAMPLE_SPECS {
   
   /**
    * Type used to represent one sample value; should
-   * be a floating point value.
+   * be a floating point value (floating-point type)
    */
   typedef float sample_t;
 
   /**
    * Type used to represent position in sample 
-   * frames.
+   * frames (signed integer).
    */
 #if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GLIBC__
   typedef long long int sample_pos_t;
@@ -27,12 +27,12 @@ namespace SAMPLE_SPECS {
 #endif
 
   /**
-   * Type used to represent sample rate values.
+   * Type used to represent sample rate values (signed integer).
    */
   typedef long int sample_rate_t;
 
   /**
-   * Type used to identify individual channels.
+   * Type used to identify individual channels (signed integer).
    */
   typedef int channel_t;
 

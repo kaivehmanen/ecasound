@@ -10,9 +10,7 @@
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* off_t */
-#endif
-
-#ifndef off_t
+#else
 typedef long int off_t;
 #endif
 

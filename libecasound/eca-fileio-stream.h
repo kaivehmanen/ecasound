@@ -1,6 +1,7 @@
 #ifndef INCLUDED_FILEIO_STREAM_H
 #define INCLUDED_FILEIO_STREAM_H
 
+#include <string>
 #include <cstdio>
 #include "eca-fileio.h"
 
@@ -13,9 +14,11 @@ class ECA_FILE_IO_STREAM : public ECA_FILE_IO {
  private:
 
   FILE *f1;
-  off_t bytes_rep;
+  off_t curpos_rep;
+  off_t last_rep;
 
   std::string mode_rep;
+  std::string fname_rep;
   bool standard_mode;
    
  public:
