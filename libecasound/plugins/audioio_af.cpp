@@ -42,7 +42,7 @@ AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name) {
   label(name);
 }
 
-void AUDIOFILE_INTERFACE::format_query(void) throw(SETUP_ERROR&) {
+void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
   // --------
   // require:
   assert(!is_open());
@@ -87,7 +87,7 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(SETUP_ERROR&) {
   // -------
 }
 
-void AUDIOFILE_INTERFACE::open(void) throw(SETUP_ERROR&) {
+void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
 
   switch(io_mode()) {
   case io_read:

@@ -13,7 +13,7 @@ class ECA_CHAINSETUP_POSITION {
   long int srate_rep;
 
   long int length_rep;
-  long curpos_rep;
+  long int curpos_rep;
 
  public:
 

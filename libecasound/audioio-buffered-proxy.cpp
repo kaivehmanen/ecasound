@@ -120,7 +120,7 @@ void AUDIO_IO_BUFFERED_PROXY::seek_position(void) {
   }
 }
 
-void AUDIO_IO_BUFFERED_PROXY::open(void) throw(SETUP_ERROR&) { 
+void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) { 
   child_repp->open();
   fetch_child_data();
 }

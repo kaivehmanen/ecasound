@@ -69,7 +69,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
    *  !is_open()
    *  fio == 0
    */
-  void format_query(void) throw(SETUP_ERROR&);
+  void format_query(void) throw(AUDIO_IO::SETUP_ERROR&);
 
   enum Format_tags {
     unknown		= (0x0000),
@@ -124,14 +124,14 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
 
   void update(void);        
   void set_length_in_bytes(void);
-  void read_riff_header (void) throw(SETUP_ERROR&);
+  void read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&);
   bool next_riff_block(RB *t, unsigned long int *offtmp);
-  void read_riff_fmt(void) throw(SETUP_ERROR&);
-  void write_riff_header (void) throw(SETUP_ERROR&);
+  void read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&);
+  void write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&);
   void write_riff_fmt(void);
   void write_riff_datablock(void);
   void update_riff_datablock(void);
-  void find_riff_datablock (void) throw(SETUP_ERROR&);
+  void find_riff_datablock (void) throw(AUDIO_IO::SETUP_ERROR&);
   signed long int find_block(const char* fblock);
 };
 

@@ -52,7 +52,7 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO,
   virtual void write_buffer(SAMPLE_BUFFER* sbuf);
 
   void seek_position(void);
-  void open(void) throw(SETUP_ERROR&);
+  void open(void) throw(AUDIO_IO::SETUP_ERROR&);
   void close(void);
 
   AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver, AUDIO_IO* aobject); 

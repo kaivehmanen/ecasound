@@ -1,5 +1,5 @@
-#ifndef _ECA_OBJECT_MAP_H
-#define _ECA_OBJECT_MAP_H
+#ifndef INCLUDED_ECA_OBJECT_MAP_H
+#define INCLUDED_ECA_OBJECT_MAP_H
 
 #include <string>
 #include <map>

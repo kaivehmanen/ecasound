@@ -44,7 +44,7 @@ ALSA_PCM_DEVICE_032::ALSA_PCM_DEVICE_032 (int card,
   overruns_rep = underruns_rep = 0;
 }
 
-void ALSA_PCM_DEVICE_032::open(void) throw(SETUP_ERROR&) {
+void ALSA_PCM_DEVICE_032::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
   if (is_open() == true) return;
 
   int err;

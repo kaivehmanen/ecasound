@@ -54,7 +54,7 @@ void ECA_RESOURCES::set_defaults(void) {
   if (has("ext-mp3-output-cmd") != true) resource("ext-mp3-output-cmd", "lame -b 128 -x -S - %f");
 
   if (has("ext-ogg-input-cmd") != true) resource("ext-ogg-input-cmd","ogg123 -d wav -o file:%F %f");
-  if (has("ext-ogg-output-cmd") != true) resource("ext-ogg-output-cmd", "vorbize --raw --write=%f");
+  if (has("ext-ogg-output-cmd") != true) resource("ext-ogg-output-cmd", "vorbize --raw --write=%f -");
 
   if (has("ext-mikmod-cmd") != true) resource("ext-mikmod-cmd","mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f");
   if (has("ext-timidity-cmd") != true) resource("ext-timidity-cmd", "timidity -Or1S -id -s %s -o - %f");

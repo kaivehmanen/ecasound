@@ -71,7 +71,7 @@ ALSA_LOOPBACK_DEVICE::ALSA_LOOPBACK_DEVICE (int card,
 #endif
 }
 
-void ALSA_LOOPBACK_DEVICE::open(void) throw(SETUP_ERROR&) {
+void ALSA_LOOPBACK_DEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
   if (is_open() == true) return;
   int err;
   if (io_mode() == io_read) {

@@ -34,7 +34,7 @@ ARTS_INTERFACE::ARTS_INTERFACE(const string& name)
   label(name);
 }
 
-void ARTS_INTERFACE::open(void) throw(SETUP_ERROR&)
+void ARTS_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   if (is_open() == true) return;
 

@@ -43,11 +43,11 @@ void ECA_CHAINSETUP_POSITION::length_in_seconds(double pos_in_seconds) {
 }
 
 long int ECA_CHAINSETUP_POSITION::length_in_seconds(void) const {
-  return(static_cast<double>(length_rep) / srate_rep);
+  return(length_rep / srate_rep);
 }
 
 long int ECA_CHAINSETUP_POSITION::position_in_seconds(void) const {
-  return(static_cast<double>(curpos_rep) / srate_rep);
+  return(curpos_rep / srate_rep);
 }
 
 double ECA_CHAINSETUP_POSITION::length_in_seconds_exact(void) const {

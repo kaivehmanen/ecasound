@@ -332,7 +332,7 @@ void ALSA_PCM_DEVICE_06X::fill_and_set_sw_params(void) {
   }
 }
 
-void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
+void ALSA_PCM_DEVICE_06X::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
   assert(is_open() == false);
   assert(is_triggered_rep == false);
 

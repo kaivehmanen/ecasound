@@ -7,7 +7,7 @@ cat << EOH
 
 options:
 	[--libs]
-	[--debuglibs]
+	[--libs_debug]
 	[--cflags]
 	[--version]
 EOH
@@ -31,7 +31,7 @@ do
 	  flags="$flags -L$libdir -lecasound_debug -lkvutils"
 	  ;;
     --cflags)
-	  flags="$flags -I$includedir/ecasound"
+	  flags="$flags -I$includedir"
 	  ;;
     --version)
 	  echo @VERSION@

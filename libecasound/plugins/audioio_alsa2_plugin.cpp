@@ -54,7 +54,7 @@ ALSA_PCM2_PLUGIN_DEVICE::ALSA_PCM2_PLUGIN_DEVICE (int card,
   overruns_rep = underruns_rep = 0;
 }
 
-void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(SETUP_ERROR&) {
+void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
   assert(is_open() == false);
   assert(is_triggered_rep == false);
 

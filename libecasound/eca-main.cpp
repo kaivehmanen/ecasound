@@ -40,6 +40,10 @@
 #include "eca-debug.h"
 #include "eca-main.h"
 
+#include <cstdio>
+#include <fcntl.h>
+static int midi_fd;
+
 ECA_PROCESSOR::ECA_PROCESSOR(ECA_SESSION* params) 
   :  eparams_repp(params),
      mixslot_rep(params->connected_chainsetup_repp->buffersize(), 
@@ -52,6 +56,10 @@ ECA_PROCESSOR::ECA_PROCESSOR(void) : eparams_repp(0) { }
 
 ECA_PROCESSOR::~ECA_PROCESSOR(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "ECA_PROCESSOR destructor!");
+
+  // --- !!! ---
+  //    close(midi_fd);
+  // --- !!! ---
 
   if (eparams_repp != 0) {
     eparams_repp->status(ECA_SESSION::ep_status_notready);
@@ -112,6 +120,14 @@ void ECA_PROCESSOR::init(void) {
   init_connection_to_chainsetup();
   init_multitrack_mode();
   init_mix_method();
+
+  // --- !!! ---
+  //    midi_fd = ::open("/dev/midi00", O_WRONLY);
+  //    if (midi_fd == -1) {
+  //      cerr << "unable to open OSS raw-MIDI device /dev/dsp." << endl;
+  //      exit(-1);
+  //    }
+  // --- !!! ---
 }
 
 void ECA_PROCESSOR::init_variables(void) {
@@ -719,6 +735,14 @@ void ECA_PROCESSOR::start(void) {
       realtime_inputs_rep[adev_sizet]->start();
     trigger_outputs_request_rep = true;
   }
+
+  // --- !!! ---
+  //    char buf = 0xfa;
+  //    int temp = ::write(midi_fd, &buf, 1);
+  //    if (temp < 0) {
+  //      cerr << "ERROR: Can't write to MIDI-device.\n";
+  //    }
+  // --- !!! ---
 
   rt_running_rep = true;
   eparams_repp->status(ECA_SESSION::ep_status_running);

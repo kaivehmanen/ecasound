@@ -54,7 +54,7 @@ ALSA_PCM_DEVICE_05X::ALSA_PCM_DEVICE_05X (int card,
   overruns_rep = underruns_rep = 0;
 }
 
-void ALSA_PCM_DEVICE_05X::open(void) throw(SETUP_ERROR&) {
+void ALSA_PCM_DEVICE_05X::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
   assert(is_open() == false);
   assert(is_triggered_rep == false);
 

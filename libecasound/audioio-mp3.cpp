@@ -129,7 +129,7 @@ void MP3FILE::seek_position(void) {
     fork_lame();
 }
 
-void MP3FILE::get_mp3_params(const string& fname) throw(SETUP_ERROR&) {
+void MP3FILE::get_mp3_params(const string& fname) throw(AUDIO_IO::SETUP_ERROR&) {
   Layer newlayer;
 
   if (newlayer.get(fname.c_str()) != true) {

@@ -28,7 +28,7 @@
 #include "eca-debug.h"
 
 string OGG_VORBIS_INTERFACE::default_ogg_input_cmd = "ogg123 -d wav -o file:%F %f";
-string OGG_VORBIS_INTERFACE::default_ogg_output_cmd = "vorbize --raw --write=%f";
+string OGG_VORBIS_INTERFACE::default_ogg_output_cmd = "vorbize --raw --write=%f -";
 
 void OGG_VORBIS_INTERFACE::set_ogg_input_cmd(const string& value) { OGG_VORBIS_INTERFACE::default_ogg_input_cmd = value; }
 void OGG_VORBIS_INTERFACE::set_ogg_output_cmd(const string& value) { OGG_VORBIS_INTERFACE::default_ogg_output_cmd = value; }
@@ -42,7 +42,11 @@ OGG_VORBIS_INTERFACE::OGG_VORBIS_INTERFACE(const string& name) {
 OGG_VORBIS_INTERFACE::~OGG_VORBIS_INTERFACE(void) { close(); }
 
 void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
-  fork_ogg123();
+  if (io_mode() == io_read)
+    fork_ogg123();
+  else
+    fork_vorbize();
+
   triggered_rep = false;
   toggle_open_state(true);
 }

@@ -223,7 +223,7 @@ void MIDI_IN_QUEUE::update_midi_queues(void) {
     tv.tv_sec = 0;
     tv.tv_usec = 0;
 
-    fd = ::open("/dev/midi", O_RDONLY);
+    fd = ::open(rc_midi_device.c_str(), O_RDONLY);
     if (fd == -1) {
       throw(ECA_ERROR("ECA-MIDI", "unable to open OSS raw-MIDI device " +
 			  rc_midi_device + "."));
