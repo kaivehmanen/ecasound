@@ -123,6 +123,7 @@ int main(int argc, char *argv[])
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
+    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::eiam_return_values, true);
     
     /* 6. create eca objects */
     ecasound_create_eca_objects(state, *clineout);
