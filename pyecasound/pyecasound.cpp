@@ -4,7 +4,7 @@
 
 // ------------------------------------------------------------------------
 // pyecasound.cpp: Python interface to the ecasound control interface
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -176,11 +176,11 @@ static void pyeca_control_del(PyObject *self, PyObject *args) {
   PyMem_DEL(self);
 }
 
-static PyMethodDef libpyecasoundmethods[] = {
+static PyMethodDef pyecamethods[] = {
   {"ECA_CONTROL_INTERFACE",    pyeca_control_new,    METH_VARARGS },
   {NULL,		       NULL }
 };
 
-void initlibpyecasound(void) {
-  Py_InitModule("libpyecasound", libpyecasoundmethods);
+void initpyeca(void) {
+  Py_InitModule("pyeca", pyecamethods);
 }
