@@ -1,3 +1,9 @@
+2002-11-18  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* eca-chainsetup-position.h: Added a separate public
+	API for maximum chainsetup length. This is to avoid
+	confusion between maximum and actual lengths.
+
 2002-10-30  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* eca-control.cpp (last_value_to_string): added

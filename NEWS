@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 161102) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 181102) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -24,6 +24,11 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	         dc-offset
 	- fixed: compilation fixes for solaris+gcc combo
 	- fixed: -y option was not working; broken since 2.2.0-pre1
+	- fixed: seg.faults when finishing processing a setup with 
+		 -t:x defined, -z:db, no rt-inputs and one or more 
+		 rt-outputs
+	- fixed: restarting processing from a new position after
+		 processing had reached the finished state
 07112002 (v2.2.0-pre5)
 	- edi-entries: edi-29 closed
 	- added: ecasound emacs interface, ecasound.el, is now 

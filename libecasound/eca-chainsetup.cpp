@@ -1742,6 +1742,9 @@ void ECA_CHAINSETUP::disable(void)
   DBC_REQUIRE(is_locked() != true);
   // --------
 
+  /* calculate chainsetup length in case it has changed during processing */
+  calculate_processing_length();
+
   if (is_enabled_rep == true) {
     ECA_LOG_MSG(ECA_LOGGER::system_objects, "Closing chainsetup \"" + name() + "\"");
     for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
@@ -1781,9 +1784,18 @@ void ECA_CHAINSETUP::calculate_processing_length(void)
       max_input_length = inputs[n]->length_in_samples();
   }
   
-  if (length_set() != true) {
-    if (max_input_length > 0) {
-      set_length_in_samples(max_input_length);
+  /* note! here we set the _actual_ length of the 
+   *       chainsetup */
+  set_length_in_samples(max_input_length);
+
+  if (looping_enabled() == true) {
+    if (max_length_set() != true &&
+	max_input_length > 0) {
+      /* looping but length not set */
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "(eca-chainsetup-parser) Setting loop point to "
+		   + kvu_numtostr(length_in_seconds_exact()) + ".");
+      set_max_length_in_samples(max_input_length);
     }
   }
 }

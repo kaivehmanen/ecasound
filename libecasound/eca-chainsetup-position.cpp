@@ -18,14 +18,38 @@
 // ------------------------------------------------------------------------
 
 #include <cmath>
+#include <math.h> /* ceil() */
+
 #include "eca-chainsetup-position.h"
 
 ECA_CHAINSETUP_POSITION::ECA_CHAINSETUP_POSITION(void)
 {
   looping_rep = false;
+  max_length_set_rep = false;
 }
 
 ECA_CHAINSETUP_POSITION::~ECA_CHAINSETUP_POSITION(void)
 {
 }
 
+SAMPLE_SPECS::sample_pos_t ECA_CHAINSETUP_POSITION::max_length_in_samples(void) const
+{
+  return(max_length_in_samples_rep); 
+}
+
+double ECA_CHAINSETUP_POSITION::max_length_in_seconds_exact(void) const
+{
+  return((double)max_length_in_samples_rep / (double)samples_per_second());
+}
+
+void ECA_CHAINSETUP_POSITION::set_max_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
+{
+  max_length_in_samples_rep = pos;
+  max_length_set_rep = true;
+}
+
+
+void ECA_CHAINSETUP_POSITION::set_max_length_in_seconds(double pos_in_seconds)
+{
+  set_max_length_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(pos_in_seconds * samples_per_second()));
+}

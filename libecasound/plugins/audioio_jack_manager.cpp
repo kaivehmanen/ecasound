@@ -750,7 +750,7 @@ void AUDIO_IO_JACK_MANAGER::stop(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver stop");
 
-  engine_repp->stop_operation();
+  if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
 }
 
 /**
@@ -811,8 +811,7 @@ void AUDIO_IO_JACK_MANAGER::deactivate_server_connection(void)
     ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot deactive client!");
   }
  
-  if (engine_repp->is_prepared() == true ||
-      engine_repp->is_running() == true) engine_repp->stop_operation();
+  if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
 
   activated_rep = false;
 

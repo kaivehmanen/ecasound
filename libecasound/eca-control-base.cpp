@@ -96,6 +96,7 @@ void ECA_CONTROL_BASE::start(void)
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Processing started");
 
   if (is_engine_started() != true) {
+    /* request_batchmode=false */
     start_engine(false);
   }
 
@@ -136,6 +137,7 @@ void ECA_CONTROL_BASE::run(void)
   bool processing_started = false;
 
   if (is_engine_started() != true) {
+    /* request_batchmode=true */
     start_engine(true);
   }
 
@@ -153,16 +155,21 @@ void ECA_CONTROL_BASE::run(void)
       kvu_sleep(1, 0);
 
       if (processing_started != true) {
-	if (is_running() == true) {
+	if (is_running() == true ||
+	    is_finished() == true ||
+	    engine_exited_rep.get() == 1) {
 	  /* make a note that engine state changed to 'running' */
 	  processing_started = true;
 	}
 	else if (is_engine_started() == true) {
-	  if (engine_repp->status() != ECA_ENGINE::engine_status_stopped) {
+	  if (engine_repp->status() == ECA_ENGINE::engine_status_error) {
 	    /* not running, so status() is either 'not_ready' or 'error' */
 	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-control-base) Can't start processing: engine startup failed. (3)");
 	    break;
 	  }
+	  /* other valid state alternatives: */
+	  DBC_CHECK(engine_repp->status() == ECA_ENGINE::engine_status_stopped ||
+		    engine_repp->status() == ECA_ENGINE::engine_status_notready);
 	}
 	else {
 	  /* ECA_CONTROL_BASE destructor has been run and 
@@ -386,7 +393,15 @@ SAMPLE_SPECS::sample_pos_t ECA_CONTROL_BASE::length_in_samples(void) const
   DBC_REQUIRE(is_selected());
   // --------
 
-  return(selected_chainsetup_repp->length_in_samples());
+  SAMPLE_SPECS::sample_pos_t cslen = 0;
+  if (selected_chainsetup_repp->length_set() == true) {
+    cslen = selected_chainsetup_repp->length_in_samples();
+  }
+  if (selected_chainsetup_repp->max_length_set() == true) {
+    cslen = selected_chainsetup_repp->max_length_in_samples();
+  }
+
+  return(cslen);
 }
 
 /**
@@ -400,7 +415,15 @@ double ECA_CONTROL_BASE::length_in_seconds_exact(void) const
   DBC_REQUIRE(is_selected());
   // --------
 
-  return(selected_chainsetup_repp->length_in_seconds_exact());
+  double cslen = 0.0f;
+  if (selected_chainsetup_repp->length_set() == true) {
+    cslen = selected_chainsetup_repp->length_in_seconds_exact();
+  }
+  if (selected_chainsetup_repp->max_length_set() == true) {
+    cslen = selected_chainsetup_repp->max_length_in_seconds_exact();
+  }
+
+  return(cslen);
 }
 
 /**

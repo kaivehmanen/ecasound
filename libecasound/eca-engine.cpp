@@ -110,23 +110,24 @@ void ECA_ENGINE_DEFAULT_DRIVER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 
     engine_repp->update_engine_state();
   }
+
+  if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
 }
 
 void ECA_ENGINE_DEFAULT_DRIVER::start(void)
 {
-  engine_repp->prepare_operation();
+  if (engine_repp->is_prepared() != true) engine_repp->prepare_operation();
   engine_repp->start_operation();
 }
 
 void ECA_ENGINE_DEFAULT_DRIVER::stop(void)
 {
-  engine_repp->stop_operation();
+  if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
 }
 
 void ECA_ENGINE_DEFAULT_DRIVER::exit(void)
 {
-  if (engine_repp->is_prepared() == true ||
-      engine_repp->is_running() == true) engine_repp->stop_operation();
+  if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
   exit_request_rep = true;
 
   /* no need to block here as the next 
@@ -577,6 +578,8 @@ void ECA_ENGINE::start_operation(void)
   DBC_REQUIRE(is_running() != true);
   // ---
 
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) starting engine operation!");
+
   start_realtime_objects();
   running_rep = true;
 
@@ -605,6 +608,8 @@ void ECA_ENGINE::stop_operation(void)
   // ---
   DBC_REQUIRE(is_prepared() == true);
   // ---
+
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) stopping engine operation!");
 
   running_rep = false;
 
@@ -932,8 +937,8 @@ void ECA_ENGINE::change_position(double seconds)
 void ECA_ENGINE::prehandle_control_position(void)
 {
   csetup_repp->change_position_in_samples(buffersize());
-  if (csetup_repp->is_over() == true &&
-      csetup_repp->length_set() == true) {
+  if (csetup_repp->max_length_set() == true &&
+      csetup_repp->is_over_max_length() == true) {
     int buffer_remain = csetup_repp->position_in_samples() -
                         csetup_repp->length_in_samples();
     for(unsigned int adev_sizet = 0; adev_sizet < non_realtime_inputs_rep.size(); adev_sizet++) {
@@ -950,8 +955,8 @@ void ECA_ENGINE::prehandle_control_position(void)
  */
 void ECA_ENGINE::posthandle_control_position(void)
 {
-  if (csetup_repp->is_over() == true &&
-      csetup_repp->length_set() == true) {
+  if (csetup_repp->max_length_set() == true &&
+      csetup_repp->is_over_max_length() == true) {
     if (csetup_repp->looping_enabled() == true) {
       inputs_not_finished_rep = 1;
       csetup_repp->seek_position_in_samples(0);
@@ -959,9 +964,8 @@ void ECA_ENGINE::posthandle_control_position(void)
 	non_realtime_inputs_rep[adev_sizet]->set_buffersize(buffersize());
       }
     }
-    else if (realtime_objects_rep.size() == 0) {
-      /* if not recording from any rt sources, Then stop */
-      ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) posthandle_c_p - stop");
+    else {
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) posthandle_c_p over_max - stop");
       request_stop();
       finished_rep = true;
     }
@@ -994,7 +998,8 @@ void ECA_ENGINE::interpret_queue(void)
 	return;
       }
     case ep_start: { if (status() != engine_status_running) request_start(); break; }
-    case ep_stop: { if (status() == engine_status_running) request_stop(); break; }
+    case ep_stop: { if (status() == engine_status_running || 
+			status() == engine_status_finished) request_stop(); break; }
 
     // ---
     // Section/chain (en/dis)abling commands.

@@ -358,11 +358,14 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
  *  is_selected() == true
  *  value >= 0
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_seconds(double value) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_seconds(double value)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
+
+  /* note! here we set the _maximum_ length of the chainsetup */
   selected_chainsetup_repp->set_length_in_seconds(value);
   ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Set chainsetup processing length to \"" + kvu_numtostr(value) + "\" seconds.");
 }
@@ -375,11 +378,14 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_seconds(double val
  *  is_selected() == true
  *  value >= 0
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_samples(SAMPLE_SPECS::sample_pos_t value) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_samples(SAMPLE_SPECS::sample_pos_t value)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
+
+  /* note! here we set the _maximum_ length of the chainsetup */
   selected_chainsetup_repp->set_length_in_samples(value);
   ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Set chainsetup processing length to \"" + 
 	      kvu_numtostr(selected_chainsetup_repp->length_in_seconds_exact()) + "\" seconds.");

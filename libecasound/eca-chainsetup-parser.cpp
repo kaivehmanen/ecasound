@@ -448,9 +448,10 @@ void ECA_CHAINSETUP_PARSER::interpret_processing_control (const string& argu)
       switch(argu[2]) {
       case ':': 
 	{
-	  csetup_repp->set_length_in_seconds(atof(kvu_get_argument_number(1, argu).c_str()));
+	  /* note! here we set the _maximum_ length of the chainsetup */
+	  csetup_repp->set_max_length_in_seconds(atof(kvu_get_argument_number(1, argu).c_str()));
 	  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Set processing time to "
-		      + kvu_numtostr(csetup_repp->length_in_seconds_exact()) + ".");
+		      + kvu_numtostr(csetup_repp->max_length_in_seconds_exact()) + ".");
 	  break;
 	}
 	
@@ -458,7 +459,7 @@ void ECA_CHAINSETUP_PARSER::interpret_processing_control (const string& argu)
 	{
 	  csetup_repp->toggle_looping(true);
 	  if (csetup_repp->length_set() != true)
-	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Looping enabled. Lenght of input objects will be used to set the loop point.");
+	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Looping enabled. Length of input objects will be used to set the loop point.");
 	  else
 	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Looping enabled.");
 	  break;
@@ -1008,10 +1009,10 @@ string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const
     t << " -z:nopsr";
 
   t.setprecision(3);
-  if (csetup_repp->length_set()) {
-    t << " -t:" << csetup_repp->length_in_seconds();
-    if (csetup_repp->looping_enabled()) t << " -tl";
+  if (csetup_repp->max_length_set()) {
+    t << " -t:" << csetup_repp->max_length_in_seconds_exact();
   }
+  if (csetup_repp->looping_enabled()) t << " -tl";
 
   return(t.to_string());
 }
