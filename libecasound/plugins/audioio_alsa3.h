@@ -33,8 +33,9 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
   long int position_in_samples_rep;
  
   int card_number_rep, device_number_rep, subdevice_number_rep;
-  int pcm_mode_rep, pcm_stream_rep;
-  unsigned int format_rep;
+  int pcm_mode_rep;
+  snd_pcm_stream_t pcm_stream_rep;
+  snd_pcm_format_t format_rep;
 
   long int bytes_read_rep;
   long underruns_rep, overruns_rep;
@@ -47,7 +48,7 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
 
   void open_device(void);
   void get_pcm_info(void);
-  void get_pcm_hw_info(snd_pcm_hw_info_t* pcm_hw_info_rep);
+/*    void get_pcm_hw_info(snd_pcm_hw_info_t* pcm_hw_info_rep); */
   void set_audio_format_params(void);
   void fill_and_set_hw_params(void);
   void fill_and_set_sw_params(void);
