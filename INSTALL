@@ -39,8 +39,9 @@ The simplest way to compile this package is:
   3. Type `make install' to install the programs and any data files and
      documentation.
 
-  4. Make sure that you have `/usr/local/lib´ in your
-     `/etc/ld.so.conf' and run `/sbin/ldconfig´.
+  4. If you have not specified an alternative install prefix with --prefix
+     option, make sure that you have `/usr/local/lib´ in your
+     `/etc/ld.so.conf' and then run `/sbin/ldconfig´ (as root).
 
   5. You can remove the program binaries and object files from the
      source code directory by typing `make clean'.  To also remove the
@@ -161,42 +162,57 @@ Ecasound specific options
         is found on the system.
 
 
+Supported automake/autoconf features
+====================================
 
-Compilers and Options
-=====================
+Ecasound uses the autotools (automake, automake and libtool) 
+build system framework. Standard practises (see below for 
+references) are followed where applicable.
 
-   Some systems require unusual options for compilation or linking that
-the `configure' script does not know about.  You can give `configure'
-initial values for variables by setting them in the environment.  Using
-a Bourne-compatible shell, you can do that on the command line like
-this:
-     CC=c89 CFLAGS=-O2 LIBS=-lposix ./configure
+Some features offered by the autotools do not work without
+explicit support from the package. Following is a short list of
+features that Ecasound _does_ support. If you encounter any
+problems in using these features with Ecasound, please report
+them as bugs.
 
-Or on systems that have the `env' program, you can do it like this:
-     env CPPFLAGS=-I/usr/local/include LDFLAGS=-s ./configure
+1. Building Ecasound in a directory separate from the source 
+   directory.
+   Example: "mkdir objdir ; cd objdir ; ../configure ; make"
 
-Installation Names
-==================
+2. 'uninstall' make target
+   You should be able to uninstall Ecasound by running "make uninstall".
+   Note that if you override any make variable when running "make install",
+   you should specify the same variables also when running "make uninstall".
+   Reference: Automake manual (see below)
 
-   By default, `make install' will install the package's files in
-`/usr/local/bin', `/usr/local/man', etc.  You can specify an
-installation prefix other than `/usr/local' by giving `configure' the
-option `--prefix=PATH'.
+3. 'DESTDIR' make variable for staging installs
+   Reference: http://sources.redhat.com/automake/automake.html#Install
 
-   You can specify separate installation prefixes for
-architecture-specific files and architecture-independent files.  If you
-give `configure' the option `--exec-prefix=PATH', the package will use
-PATH as the prefix for installing programs and libraries.
-Documentation and other data files will still use the regular prefix.
+4. 'prefix', 'datadir', pkgdatadir' make variables
+   You should be able to override any of the make variables 
+   on the make command-line. But remember to always override 
+   the same variables when you switch between make targets (see
+   notes on (2)). 
+   Example: make prefix=/tmp/ecasound-foobar install
 
-   In addition, if you use an unusual directory layout you can give
-options like `--bindir=PATH' to specify different values for particular
-kinds of files.  Run `configure --help' for a list of the directories
-you can set and what kinds of files go in them.
+5. Overriding CPPFLAGS, CFLAGS, CXXFLAGS, etc variables.
+   It is possible to override these parameters both before
+   running the configure script (specify new values as
+   environment variables), or at make time (specify new
+   values on the make command-line). Note that these 
+   mechanisms are exclusive to each other.
+ 
+General references:
 
-   If the package supports it, you can cause programs to be installed
-with an extra prefix or suffix on their names by giving `configure' the
-option `--program-prefix=PREFIX' or `--program-suffix=SUFFIX'.
+o Automake manual
+  http://sources.redhat.com/automake/automake.html
+
+o Autoconf manual
+  http://www.gnu.org/software/autoconf/manual/
+
+o GNU Coding Standards
+  http://www.gnu.org/prep/standards/
+
 
 Specifying the System Type
 ==========================

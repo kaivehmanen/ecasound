@@ -21,12 +21,14 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 file, support for ECAPLAY_OUTPUT_DEVICE environment
 		 variable; see ecatools(1) for more info
 	- added: playlist mode to ecaplay
+	- added: "Supported automake/autoconf features" section to
+	         the INSTALL file
 	- changed: moved definitions from acconfig.h to configure.in;
 		   gets rid of the AC_DEFINE warnings produced by
 		   recent versions of autoheader
 	- changed: Ecasound Programmer's Guide converted from LaTeX
 		   to ascii/rst
-	- changed: sed is used to generate ecasoundrc; allows to 
+	- changed: sed is used to generate ecasoundrc at make; allows to 
 		   specify a custom pkgdatadir when running make 
 	- changed: various small improvements to all ecatools and 
 		   the related manpages
