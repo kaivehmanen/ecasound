@@ -39,23 +39,6 @@ void GENERIC_CONTROLLER::process(void) {
   target->set_parameter(param_id, new_value);
 }
 
-GENERIC_CONTROLLER* GENERIC_CONTROLLER::clone(void) const {
-  DBC_CHECK(source != 0);
-
-  CONTROLLER_SOURCE* s = source->clone();
-
-  OPERATOR* t = 0;
-  if (target != 0)
-    t = target->clone();
-
-  GENERIC_CONTROLLER* obj = new GENERIC_CONTROLLER(*this);
-
-  if (t != 0) obj->assign_target(t);
-  obj->assign_source(s);
-
-  return(obj);
-}
-
 GENERIC_CONTROLLER::GENERIC_CONTROLLER(CONTROLLER_SOURCE* src, OPERATOR* dobj, int par_id, double range_low, double range_high) {
   source = src;
   target = dobj;

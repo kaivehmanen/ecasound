@@ -31,12 +31,15 @@ void AUDIO_STAMP::set_id(int n) {
 }
 
 void AUDIO_STAMP::store(const SAMPLE_BUFFER* x) {
-  buffer_rep.operator=(*x);
+  buffer_rep.length_in_samples(x->length_in_samples());
+  buffer_rep.number_of_channels(x->number_of_channels());
+  buffer_rep.copy(*x);
 }
 
 void AUDIO_STAMP::fetch_stamp(SAMPLE_BUFFER* x) {
-  x->operator=(buffer_rep);
-//    cerr << "(as) fetch stamp id " << id() << "." << endl;
+  x->length_in_samples(buffer_rep.length_in_samples());
+  x->number_of_channels(buffer_rep.number_of_channels());
+  x->copy(buffer_rep);
 }
 
 void AUDIO_STAMP_SERVER::register_stamp(AUDIO_STAMP* stamp) {
@@ -46,7 +49,7 @@ void AUDIO_STAMP_SERVER::register_stamp(AUDIO_STAMP* stamp) {
 void AUDIO_STAMP_SERVER::fetch_stamp(int id, SAMPLE_BUFFER* x) {
   if (stamp_map_rep.find(id) == stamp_map_rep.end()) {
     x->make_silent();
-//      cerr << "(as-server) Making silent!" << endl;
+    // std::cerr << "(as-server) Making silent!" << std::endl;
   }
   else {
     AUDIO_STAMP* p = stamp_map_rep[id];

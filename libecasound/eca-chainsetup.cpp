@@ -1699,7 +1699,6 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
 	(*q)->add_chain_operator(cotmp);
 	(*q)->selected_chain_operator_as_target();
 	return;
-	//	(*q)->add_chain_operator(cotmp->clone());
       }
     }
   }

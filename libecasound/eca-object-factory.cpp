@@ -450,22 +450,31 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu) {
   const GENERIC_CONTROLLER* gcontroller = ECA_OBJECT_FACTORY::controller_map_object(prefix);
   GENERIC_CONTROLLER* new_gcontroller = 0;
   if (gcontroller != 0) {
-    new_gcontroller = gcontroller->clone();
+    new_gcontroller = gcontroller->new_expr();
+    if (new_gcontroller != 0) {
+      CONTROLLER_SOURCE* csrc = gcontroller->source_pointer();
 
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Creating controller source \"" +  new_gcontroller->name() + "\"");
+      if (csrc != 0) 
+	new_gcontroller->assign_source(csrc);
+      else
+	new_gcontroller->assign_source(0);
 
-    MESSAGE_ITEM otemp;
-    otemp << "(eca-object-factory) Setting parameters: ";
-    int numparams = new_gcontroller->number_of_params();
-    for(int n = 0; n < numparams; n++) {
-      new_gcontroller->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
-      otemp << new_gcontroller->get_parameter_name(n + 1) << " = ";
-      otemp << new_gcontroller->get_parameter(n +1);
-      numparams = new_gcontroller->number_of_params(); // in case 'n_o_p()' varies
-      if (n + 1 < numparams) otemp << ", ";
+      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Creating controller source \"" +  new_gcontroller->name() + "\"");
+
+      MESSAGE_ITEM otemp;
+      otemp << "(eca-object-factory) Setting parameters: ";
+      int numparams = new_gcontroller->number_of_params();
+      for(int n = 0; n < numparams; n++) {
+	new_gcontroller->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
+	otemp << new_gcontroller->get_parameter_name(n + 1) << " = ";
+	otemp << new_gcontroller->get_parameter(n +1);
+	numparams = new_gcontroller->number_of_params(); // in case 'n_o_p()' varies
+	if (n + 1 < numparams) otemp << ", ";
+      }
+      ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
+
+      return(new_gcontroller);
     }
-    ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
-    return(new_gcontroller);
   }
   return(0);
 }

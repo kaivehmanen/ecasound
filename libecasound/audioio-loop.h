@@ -56,7 +56,7 @@ class LOOP_DEVICE : public AUDIO_IO {
   LOOP_DEVICE(int id);
   LOOP_DEVICE(void) { }
   ~LOOP_DEVICE(void) { }
-  LOOP_DEVICE* clone(void) const { return new LOOP_DEVICE(*this); }
+  LOOP_DEVICE* clone(void) const { return 0; }
   LOOP_DEVICE* new_expr(void) const { return new LOOP_DEVICE(); }
 };
 

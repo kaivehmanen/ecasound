@@ -64,6 +64,8 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels, sr
   }
   make_silent();
 
+  impl_repp->rt_lock_rep = false;
+  impl_repp->lockref_rep = 0;
   impl_repp->old_buffer_repp = 0;
  
   ecadebug->msg(ECA_DEBUG::buffer_level, 
@@ -73,7 +75,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels, sr
 		kvu_numtostr(sample_rate_rep) + ".");
 
   // ---
-  DBC_ENSURE(buffer.size() == channel_count_rep);
+  DBC_ENSURE(buffer.size() == static_cast<size_t>(channel_count_rep));
   DBC_ENSURE(buffersize_rep == reserved_samples_rep);
   // ---
 }
@@ -84,6 +86,8 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels, sr
  *
  * For better performance, doesn't copy IO-buffers nor
  * iterator state.
+ *
+ * ** Note! This function is obsolete!
  */
 SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
   : channel_count_rep(x.channel_count_rep),
@@ -109,7 +113,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
 		kvu_numtostr(sample_rate_rep) + ".");
 
   // ---
-  DBC_ENSURE(buffer.size() == channel_count_rep);
+  DBC_ENSURE(buffer.size() == static_cast<size_t>(channel_count_rep));
   DBC_ENSURE(buffersize_rep == reserved_samples_rep);
   // ---
 }
@@ -119,6 +123,8 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
  *
  * For better performance, doesn't copy IO-buffers nor
  * iterator state.
+ *
+ * ** Note! This function is obsolete!
  */
 SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x) {
  
@@ -155,7 +161,7 @@ SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x) {
   return *this;
 
   // ---
-  DBC_ENSURE(buffer.size() == channel_count_rep);
+  DBC_ENSURE(buffer.size() == static_cast<size_t>(channel_count_rep));
   DBC_ENSURE(buffersize_rep == reserved_samples_rep);
   // ---
 }
@@ -164,6 +170,9 @@ SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x) {
  * Destructor.
  */
 SAMPLE_BUFFER::~SAMPLE_BUFFER (void) { 
+
+  DBC_CHECK(impl_repp->lockref_rep == 0);
+
   for(size_t n = 0; n < buffer.size(); n++) {
     delete[] buffer[n];
   }
@@ -174,117 +183,6 @@ SAMPLE_BUFFER::~SAMPLE_BUFFER (void) {
   }
 
   delete impl_repp;
-}
-
-/** 
- * Sets the number of audio channels.
- */
-void SAMPLE_BUFFER::number_of_channels(channel_size_t len) 
-{
-  /*  std::cerr << "(samplebuffer_impl) ch-count changes from " << channel_count_rep << " to " << len << ".\n"; */
-  if (len > static_cast<channel_size_t>(buffer.size())) {
-    size_t old_size = buffer.size();
-    buffer.resize(len);
-    for(channel_size_t n = old_size; n < len; n++) {
-      buffer[n] = new sample_t [reserved_samples_rep];
-    }
-    ecadebug->msg(ECA_DEBUG::system_objects, "(samplebuffer<>) Increasing channel-count (1).");    
-  }
-  if (len > channel_count_rep) {
-    for(channel_size_t n = channel_count_rep; n < len; n++) {
-      for(buf_size_t m = 0; m < reserved_samples_rep; m++) {
-	buffer[n][m] = SAMPLE_SPECS::silent_value;
-      }
-    }
-    ecadebug->msg(ECA_DEBUG::system_objects, "(samplebuffer<>) Increasing channel-count (2).");
-  }
-  channel_count_rep = len;
-}
-
-/**
- * Resizes the buffer to fit 'buffersize' samples. Doesn't
- * change channel count.
- */
-void SAMPLE_BUFFER::resize(buf_size_t buffersize) {
-  if (buffersize > reserved_samples_rep) {
-    reserved_samples_rep = buffersize;
-    for(size_t n = 0; n < buffer.size(); n++) {
-      delete[] buffer[n];
-      buffer[n] = new sample_t [reserved_samples_rep];
-    }
-
-    if (impl_repp->old_buffer_repp != 0) {
-      delete[] impl_repp->old_buffer_repp;
-      impl_repp->old_buffer_repp = 0;
-    }
-  }
-
-  if (buffersize != buffersize_rep) {
-    for(size_t n = 0; n < buffer.size(); n++) {
-      for(buf_size_t m = 0; m < buffersize; m++) {
-	buffer[n][m] = SAMPLE_SPECS::silent_value;
-      }
-    }
-
-    buffersize_rep = buffersize;
-  }
-}
-
-
-/**
- * Mutes the whole buffer.
- */
-void SAMPLE_BUFFER::make_silent(void) {
-  for(channel_size_t n = 0; n < channel_count_rep; n++) {
-    for(buf_size_t s = 0; s < buffersize_rep; s++) {
-      buffer[n][s] = SAMPLE_SPECS::silent_value;
-    }
-  }
-}
-
-/**
- * Mute a range of samples.
- * 
- * @pre start_pos >= 0
- * @pre end_pos >= 0
- */
-void SAMPLE_BUFFER::make_silent_range(buf_size_t start_pos,
-				      buf_size_t end_pos) {
-  // --
-  DBC_REQUIRE(start_pos >= 0);
-  DBC_REQUIRE(end_pos >= 0);
-  // --
-
-  for(channel_size_t n = 0; n < channel_count_rep; n++) {
-    for(buf_size_t s = start_pos; s < end_pos && s < buffersize_rep; s++) {
-      buffer[n][s] = SAMPLE_SPECS::silent_value;
-    }
-  }
-}
-
-/**
- * Limits all samples to valid values. 
- */
-void SAMPLE_BUFFER::limit_values(void) {
-  for(channel_size_t n = 0; n < channel_count_rep; n++) {
-    for(buf_size_t m = 0; m < buffersize_rep; m++) {
-      if (buffer[n][m] > SAMPLE_SPECS::impl_max_value) 
-	buffer[n][m] = SAMPLE_SPECS::impl_max_value;
-      else if (buffer[n][m] < SAMPLE_SPECS::impl_min_value) 
-	buffer[n][m] = SAMPLE_SPECS::impl_min_value;
-    }
-  }
-}
-
-/**
- * Divides all samples by 'dvalue'.
- */
-void SAMPLE_BUFFER::divide_by(SAMPLE_BUFFER::sample_t dvalue) {
-  for(channel_size_t n = 0; n < channel_count_rep; n++) {
-    for(buf_size_t m = 0; m < buffersize_rep; m++) {
-      buffer[n][m] /= dvalue;
-    }
-  }
 }
 
 /**
@@ -382,9 +280,66 @@ void SAMPLE_BUFFER::copy_range(const SAMPLE_BUFFER& x,
 }
 
 /**
- * Copy contents of sample buffer to 'target'. Sample data 
+ * Divides all samples by 'dvalue'.
+ */
+void SAMPLE_BUFFER::divide_by(SAMPLE_BUFFER::sample_t dvalue) {
+  for(channel_size_t n = 0; n < channel_count_rep; n++) {
+    for(buf_size_t m = 0; m < buffersize_rep; m++) {
+      buffer[n][m] /= dvalue;
+    }
+  }
+}
+
+/**
+ * Mutes the whole buffer.
+ */
+void SAMPLE_BUFFER::make_silent(void) {
+  for(channel_size_t n = 0; n < channel_count_rep; n++) {
+    for(buf_size_t s = 0; s < buffersize_rep; s++) {
+      buffer[n][s] = SAMPLE_SPECS::silent_value;
+    }
+  }
+}
+
+/**
+ * Mute a range of samples.
+ * 
+ * @pre start_pos >= 0
+ * @pre end_pos >= 0
+ */
+void SAMPLE_BUFFER::make_silent_range(buf_size_t start_pos,
+				      buf_size_t end_pos) {
+  // --
+  DBC_REQUIRE(start_pos >= 0);
+  DBC_REQUIRE(end_pos >= 0);
+  // --
+
+  for(channel_size_t n = 0; n < channel_count_rep; n++) {
+    for(buf_size_t s = start_pos; s < end_pos && s < buffersize_rep; s++) {
+      buffer[n][s] = SAMPLE_SPECS::silent_value;
+    }
+  }
+}
+
+/**
+ * Limits all samples to valid values. 
+ */
+void SAMPLE_BUFFER::limit_values(void) {
+  for(channel_size_t n = 0; n < channel_count_rep; n++) {
+    for(buf_size_t m = 0; m < buffersize_rep; m++) {
+      if (buffer[n][m] > SAMPLE_SPECS::impl_max_value) 
+	buffer[n][m] = SAMPLE_SPECS::impl_max_value;
+      else if (buffer[n][m] < SAMPLE_SPECS::impl_min_value) 
+	buffer[n][m] = SAMPLE_SPECS::impl_min_value;
+    }
+  }
+}
+
+/**
+ * Exports contents of sample buffer to 'target'. Sample data 
  * will be converted according to the given arguments
  * (sample rate, sample format and endianess).
+ * If 'chcount > 1', channels will be written interleaved.
  *
  * Note! If chcount > number_of_channels(), empty
  *       channels will be automatically added.
@@ -394,10 +349,10 @@ void SAMPLE_BUFFER::copy_range(const SAMPLE_BUFFER& x,
  * @pre srate > 0
  * @ensure number_of_channels() >= chcount
  */
-void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
-				     ECA_AUDIO_FORMAT::Sample_format fmt,
-				     channel_size_t chcount,
-				     srate_size_t srate) 
+void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
+				       ECA_AUDIO_FORMAT::Sample_format fmt,
+				       channel_size_t chcount,
+				       srate_size_t srate) 
 {
   // --------
   DBC_REQUIRE(target != 0);
@@ -555,7 +510,7 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 }
 
 /**
- * Same as 'copy_from_buffer()', but 'target' data is 
+ * Same as 'export_data()', but 'target' data is 
  * written in non-interleaved format.
  *
  * Note! If chcount > number_of_channels(), empty
@@ -566,10 +521,10 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
  * @pre srate > 0
  * @ensure number_of_channels() >= chcount
  */
-void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
-					    ECA_AUDIO_FORMAT::Sample_format fmt,
-					    channel_size_t chcount,
-					    srate_size_t srate) 
+void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
+					  ECA_AUDIO_FORMAT::Sample_format fmt,
+					  channel_size_t chcount,
+					  srate_size_t srate) 
 {
   // --------
   DBC_REQUIRE(target != 0);
@@ -729,20 +684,20 @@ void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
 }
 
 /**
- * Fill buffer from external buffer source. Sample data 
+ * Import audio from external raw buffer. Sample data 
  * will be converted to internal sample format using the 
  * given arguments (sample rate, sample format and 
- * endianess).
+ * endianess). Channels will be read in interleaved.
  *
  * @pre source != 0
  * @pre srate > 0
  * @pre samples_read >= 0
  */
-void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
-				   buf_size_t samples_read,
-				   ECA_AUDIO_FORMAT::Sample_format fmt,
-				   channel_size_t chcount,
-				   srate_size_t srate) {
+void SAMPLE_BUFFER::import_interleaved(unsigned char* source,
+				       buf_size_t samples_read,
+				       ECA_AUDIO_FORMAT::Sample_format fmt,
+				       channel_size_t chcount,
+				       srate_size_t srate) {
   // --------
   DBC_REQUIRE(source != 0);
   DBC_REQUIRE(srate > 0);
@@ -750,7 +705,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
   // --------
 
   if (channel_count_rep != chcount) number_of_channels(chcount);
-  if (buffersize_rep != samples_read) resize(samples_read);
+  if (buffersize_rep != samples_read) length_in_samples(samples_read);
 
   unsigned char a[2];
   unsigned char b[4];
@@ -916,14 +871,14 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 }
 
 /**
- * Same as 'copy_to_buffer()', but 'source' data is 
- * assumed be in non-interleaved format.
+ * Same as 'import_interleaved()', but 'source' data is 
+ * assumed to be in non-interleaved format.
  *
  * @pre source != 0
  * @pre srate > 0
  * @pre samples_read >= 0
  */
-void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
+void SAMPLE_BUFFER::import_noninterleaved(unsigned char* source,
 					  buf_size_t samples_read,
 					  ECA_AUDIO_FORMAT::Sample_format fmt,
 					  channel_size_t chcount,
@@ -935,7 +890,7 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
   // --------
 
   if (channel_count_rep != chcount) number_of_channels(chcount);
-  if (buffersize_rep != samples_read) resize(samples_read);
+  if (buffersize_rep != samples_read) length_in_samples(samples_read);
 
   unsigned char a[2];
   unsigned char b[4];
@@ -1100,6 +1055,73 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
   if (srate != sample_rate_rep) resample_from(srate);
 }
 
+/** 
+ * Sets the number of audio channels.
+ */
+void SAMPLE_BUFFER::number_of_channels(channel_size_t len) 
+{
+  // std::cerr << "(samplebuffer_impl) ch-count changes from " << channel_count_rep << " to " << len << ".\n";
+
+  if (len > static_cast<channel_size_t>(buffer.size())) {
+    DBC_CHECK(impl_repp->rt_lock_rep != true);
+
+    size_t old_size = buffer.size();
+    buffer.resize(len);
+    for(channel_size_t n = old_size; n < len; n++) {
+      buffer[n] = new sample_t [reserved_samples_rep];
+    }
+    ecadebug->msg(ECA_DEBUG::system_objects, "(samplebuffer<>) Increasing channel-count (1).");    
+  }
+
+  /* note! channel_count_rep and buffer.size() necessarily
+   *       weren't the same before this call, so we need
+   *       to double check for old data
+   */
+  if (len > channel_count_rep) {
+    for(channel_size_t n = channel_count_rep; n < len; n++) {
+      for(buf_size_t m = 0; m < reserved_samples_rep; m++) {
+	buffer[n][m] = SAMPLE_SPECS::silent_value;
+      }
+    }
+    // ecadebug->msg(ECA_DEBUG::system_objects, "(samplebuffer<>) Increasing channel-count (2).");
+  }
+
+  channel_count_rep = len;
+}
+
+void SAMPLE_BUFFER::sample_rate(srate_size_t srate) { 
+  sample_rate_rep = srate;
+}
+
+void SAMPLE_BUFFER::length_in_samples(buf_size_t len) { 
+  if (len > reserved_samples_rep) {
+
+    DBC_CHECK(impl_repp->rt_lock_rep != true);
+    DBC_CHECK(impl_repp->lockref_rep == 0);
+
+    reserved_samples_rep = len;
+    for(size_t n = 0; n < buffer.size(); n++) {
+      delete[] buffer[n];
+      buffer[n] = new sample_t [reserved_samples_rep];
+    }
+
+    if (impl_repp->old_buffer_repp != 0) {
+      delete[] impl_repp->old_buffer_repp;
+      impl_repp->old_buffer_repp = 0;
+    }
+  }
+
+  if (len != buffersize_rep) {
+    for(size_t n = 0; n < buffer.size(); n++) {
+      for(buf_size_t m = 0; m < len; m++) {
+	buffer[n][m] = SAMPLE_SPECS::silent_value;
+      }
+    }
+
+    buffersize_rep = len;
+  }
+}
+
 /**
  * Prepares sample buffer object for resampling 
  * operations with params 'from_srate' and 
@@ -1114,11 +1136,11 @@ void SAMPLE_BUFFER::resample_init_memory(srate_size_t from_srate,
   if (from_srate != 0) { step = static_cast<double>(to_srate) / from_srate; }
   buf_size_t new_buffer_size = static_cast<buf_size_t>(step * buffersize_rep);
 
-  if (impl_repp->old_buffer_repp == 0) 
-    impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep];
-
   if (new_buffer_size > reserved_samples_rep) {
     reserved_samples_rep = new_buffer_size;
+
+    DBC_CHECK(impl_repp->rt_lock_rep != true);
+    DBC_CHECK(impl_repp->lockref_rep == 0);
 
     for(int c = 0; c < channel_count_rep; c++) {
       delete[] buffer[c];
@@ -1126,7 +1148,71 @@ void SAMPLE_BUFFER::resample_init_memory(srate_size_t from_srate,
     }
   }
 
-  impl_repp->resample_memory_rep.resize(channel_count_rep, SAMPLE_SPECS::silent_value);
+  if (impl_repp->old_buffer_repp == 0) {
+    DBC_CHECK(impl_repp->rt_lock_rep != true);
+    impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep];
+  }
+
+  if (impl_repp->resample_memory_rep.size() < static_cast<size_t>(channel_count_rep)) {
+    DBC_CHECK(impl_repp->rt_lock_rep != true);
+    impl_repp->resample_memory_rep.resize(channel_count_rep);
+  }
+}
+
+void SAMPLE_BUFFER::reserve_channels(channel_size_t num)
+{
+  channel_size_t oldcount = number_of_channels();
+  number_of_channels(num);
+  number_of_channels(oldcount);
+}
+
+void SAMPLE_BUFFER::reserve_length_in_samples(buf_size_t len)
+{
+  buf_size_t oldlen = length_in_samples();
+  length_in_samples(len);
+  length_in_samples(oldlen);
+}
+
+/**
+ * Sets the realtime-lock state. When realtime-lock
+ * is enabled, all non-rt-safe operations 
+ * like for instance memory allocations are
+ * blocked.
+ * 
+ * @param state true=lock, false=unlock
+ */
+void SAMPLE_BUFFER::set_rt_lock(bool state)
+{
+  impl_repp->rt_lock_rep = state;
+}
+
+/** 
+ * Increases reference count of 'buffer' data
+ * area.
+ *
+ * This should be issued when an object uses
+ * direct access to the samplebuffer's 
+ * audio data buffer.
+ * 
+ * Note! release_pointer_reflock() must be 
+ * called after caller stops accessing
+ * 'buffer'.
+ */
+void SAMPLE_BUFFER::get_pointer_reflock(void)
+{
+  impl_repp->lockref_rep++;
+}
+
+/** 
+ * Increases reference count of 'buffer' data
+ * area.
+ *
+ * @see get_pointer_reflock()
+ */
+void SAMPLE_BUFFER::release_pointer_reflock(void)
+{
+  impl_repp->lockref_rep--;
+  DBC_ENSURE(impl_repp->lockref_rep >= 0);
 }
 
 /**
@@ -1194,8 +1280,13 @@ void SAMPLE_BUFFER::resample_with_memory(srate_size_t from,
 
   DBC_CHECK(impl_repp->old_buffer_repp != 0);
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_w_m from " << from << " to " << to << "." std::endl); 
-  /* FIXME: resize() may end up allocating memory! */
-  impl_repp->resample_memory_rep.resize(channel_count_rep);
+
+  if (impl_repp->resample_memory_rep.size() < static_cast<size_t>(channel_count_rep)) {
+    DBC_CHECK(impl_repp->rt_lock_rep != true);
+    impl_repp->resample_memory_rep.resize(channel_count_rep);
+  }
+
+  length_in_samples(buffersize_rep);
 
   for(int c = 0; c < channel_count_rep; c++) {
     std::memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));

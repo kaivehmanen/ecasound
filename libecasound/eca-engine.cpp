@@ -67,8 +67,7 @@ using std::vector;
  */
 ECA_ENGINE::ECA_ENGINE(ECA_SESSION* arg) 
   : session_repp(arg),
-    mixslot_rep(arg->connected_chainsetup_repp->buffersize(),
-		SAMPLE_SPECS::channel_count_default) {
+    mixslot_repp(0) {
   // --
   DBC_REQUIRE(arg != 0);
   DBC_REQUIRE(arg->get_connected_chainsetup() != 0);
@@ -78,6 +77,9 @@ ECA_ENGINE::ECA_ENGINE(ECA_SESSION* arg)
   ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) Engine/Initializing");
 
   impl_repp = new ECA_ENGINE_impl;
+  mixslot_repp = new SAMPLE_BUFFER(arg->connected_chainsetup_repp->buffersize(),
+				   SAMPLE_SPECS::channel_count_default,
+				   SAMPLE_SPECS::sample_rate_default);
 
   init_variables();
   init_connection_to_chainsetup();
@@ -110,6 +112,11 @@ ECA_ENGINE::~ECA_ENGINE(void) {
 
   dump_profile_info();
 
+  for(size_t n = 0; n < cslots_rep.size(); n++) {
+    delete cslots_rep[n];
+  }
+
+  delete mixslot_repp;
   delete impl_repp;
 
   set_status(ECA_ENGINE::engine_status_notready);
@@ -479,8 +486,8 @@ void ECA_ENGINE::init_outputs(void) {
 		  ", number of connected chain " +
 		  kvu_numtostr(output_chain_count_rep[adev_sizet]) + " .");
   }
-  mixslot_rep.number_of_channels(max_channels_rep);
-  mixslot_rep.sample_rate(csetup_repp->sample_rate());
+  mixslot_repp->number_of_channels(max_channels_rep);
+  mixslot_repp->sample_rate(csetup_repp->sample_rate());
 }
 
 /**
@@ -496,7 +503,10 @@ void ECA_ENGINE::init_chains(void) {
     exit(-1);
   }
 
-  while(cslots_rep.size() < chains_repp->size()) cslots_rep.push_back(SAMPLE_BUFFER(buffersize_rep, max_channels_rep, csetup_repp->sample_rate()));
+  cslots_rep.resize(chains_repp->size());
+  for(size_t n = 0; n < cslots_rep.size(); n++) {
+    cslots_rep[n] = new SAMPLE_BUFFER(buffersize_rep, max_channels_rep, csetup_repp->sample_rate());
+  }
 }
 
 /**
@@ -664,6 +674,14 @@ void ECA_ENGINE::stop(void) {
   for (unsigned int adev_sizet = 0; adev_sizet != realtime_objects_rep.size(); adev_sizet++) {
     if (realtime_objects_rep[adev_sizet]->is_running() == true) realtime_objects_rep[adev_sizet]->stop();
   }
+
+  // ---
+  // Release realtime-safefy locks for samplebuffers
+  // --
+  for(size_t n = 0; n < cslots_rep.size(); n++) {
+    cslots_rep[n]->set_rt_lock(false);
+  }
+  mixslot_repp->set_rt_lock(false);
   
   if (csetup_repp->multitrack_mode_rep == true) {
     // ---
@@ -709,6 +727,14 @@ void ECA_ENGINE::start(void) {
       ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Using realtime-scheduling (SCHED_FIFO).");
   }
 
+  // ---
+  // Get realtime-safefy locks for samplebuffers
+  // --
+  for(size_t n = 0; n < cslots_rep.size(); n++) {
+    cslots_rep[n]->set_rt_lock(true);
+  }
+  mixslot_repp->set_rt_lock(true);
+  
   // --
   // Reinitialize chains if necessary
   //
@@ -805,10 +831,10 @@ void ECA_ENGINE::multitrack_start(void) {
       if (AUDIO_IO_DEVICE::is_realtime_object((*outputs_repp)[n]) != true) {
 	for(size_t m = 0; m != chains_repp->size(); m++) {
 	  if ((*chains_repp)[m]->connected_output() == static_cast<int>(n)) {
-	    cslots_rep[m].length_in_samples(sync_fix);
-	    cslots_rep[m].make_silent();
-	    (*outputs_repp)[n]->write_buffer(&(cslots_rep[m]));
-	    cslots_rep[m].length_in_samples(buffersize_rep);
+	    cslots_rep[m]->length_in_samples(sync_fix);
+	    cslots_rep[m]->make_silent();
+	    (*outputs_repp)[n]->write_buffer(cslots_rep[m]);
+	    cslots_rep[m]->length_in_samples(buffersize_rep);
 	    ecadebug->msg(ECA_DEBUG::system_objects, 
 			  "(eca-engine) sync fix: " + 
 			  kvu_numtostr(sync_fix) + 
@@ -847,7 +873,7 @@ void ECA_ENGINE::reset_realtime_devices(void) {
 void ECA_ENGINE::exec_simple_iactive(void) {
   int inch = (*inputs_repp)[(*chains_repp)[0]->connected_input()]->channels();
   int outch = (*outputs_repp)[(*chains_repp)[0]->connected_output()]->channels();
-  (*chains_repp)[0]->init(&mixslot_rep, inch, outch);
+  (*chains_repp)[0]->init(mixslot_repp, inch, outch);
 
   ecadebug->control_flow("Engine init - mixmode \"simple\"");
   if (session_repp->iactive_rep != true) start();
@@ -865,7 +891,7 @@ void ECA_ENGINE::exec_simple_iactive(void) {
     // read from inputs to chain '0'
     inputs_not_finished_rep = 0;
     prehandle_control_position();
-    (*inputs_repp)[0]->read_buffer(&mixslot_rep);
+    (*inputs_repp)[0]->read_buffer(mixslot_repp);
     if ((*inputs_repp)[0]->finished() == false) inputs_not_finished_rep++;
 
     // --
@@ -874,7 +900,7 @@ void ECA_ENGINE::exec_simple_iactive(void) {
 
     // --
     // mix to outputs
-    (*outputs_repp)[0]->write_buffer(&mixslot_rep);
+    (*outputs_repp)[0]->write_buffer(mixslot_repp);
     if ((*outputs_repp)[0]->finished() == true) outputs_finished_rep++;
 
     if (rt_running_rep == true) { impl_repp->looptimer_rep.stop(); impl_repp->looptimer_range_rep.stop(); }
@@ -893,7 +919,7 @@ void ECA_ENGINE::exec_normal_iactive(void) {
   for (unsigned int c = 0; c != chains_repp->size(); c++) {
     int inch = (*inputs_repp)[(*chains_repp)[c]->connected_input()]->channels();
     int outch = (*outputs_repp)[(*chains_repp)[c]->connected_output()]->channels();
-    (*chains_repp)[c]->init(&(cslots_rep[c]), inch, outch);
+    (*chains_repp)[c]->init(cslots_rep[c], inch, outch);
   }
 
   if (session_repp->iactive_rep != true) start();
@@ -943,31 +969,34 @@ void ECA_ENGINE::process_chains(void) {
 }
 
 void ECA_ENGINE::inputs_to_chains(bool skip_realtime_inputs) {
-  for(unsigned int audioslot_sizet = 0; audioslot_sizet < inputs_repp->size(); audioslot_sizet++) {
+  for(size_t inputnum = 0; inputnum < inputs_repp->size(); inputnum++) {
 
     if (skip_realtime_inputs == true) {
-      if (AUDIO_IO_DEVICE::is_realtime_object((*inputs_repp)[audioslot_sizet]) == true) {
-	//  cerr << "(eca-engine) Skipping rt-input " << (*inputs_repp)[audioslot_sizet]->label() << "." << endl;
+      if (AUDIO_IO_DEVICE::is_realtime_object((*inputs_repp)[inputnum]) == true) {
+	//  std::cerr << "(eca-engine) Skipping rt-input " << (*inputs_repp)[inputnum]->label() << "." << endl;
 	continue;
       }
     }
 
-    if (input_chain_count_rep[audioslot_sizet] > 1) {
-      mixslot_rep.length_in_samples(buffersize_rep);
-      (*inputs_repp)[audioslot_sizet]->read_buffer(&mixslot_rep);
-      if ((*inputs_repp)[audioslot_sizet]->finished() == false) inputs_not_finished_rep++;
+    if (input_chain_count_rep[inputnum] > 1) {
+      /* case-1a: read buffer from input 'inputnum' to 'mixslot' */
+      mixslot_repp->length_in_samples(buffersize_rep);
+      (*inputs_repp)[inputnum]->read_buffer(mixslot_repp);
+      if ((*inputs_repp)[inputnum]->finished() == false) inputs_not_finished_rep++;
     }
-    for (unsigned int c = 0; c != chains_repp->size(); c++) {
-      if ((*chains_repp)[c]->connected_input() == static_cast<int>(audioslot_sizet)) {
-	if (input_chain_count_rep[audioslot_sizet] == 1) {
-	  cslots_rep[c].length_in_samples(buffersize_rep);
-	  (*inputs_repp)[audioslot_sizet]->read_buffer(&(cslots_rep[c]));
-	  if ((*inputs_repp)[audioslot_sizet]->finished() == false) inputs_not_finished_rep++;
+    for (size_t c = 0; c != chains_repp->size(); c++) {
+      if ((*chains_repp)[c]->connected_input() == static_cast<int>(inputnum)) {
+	if (input_chain_count_rep[inputnum] == 1) {
+	  /* case-2: read buffer from input 'inputnum' to chain 'c' */
+	  cslots_rep[c]->length_in_samples(buffersize_rep);
+	  (*inputs_repp)[inputnum]->read_buffer(cslots_rep[c]);
+	  if ((*inputs_repp)[inputnum]->finished() == false) inputs_not_finished_rep++;
 	  break;
 	}
 	else {
-	  /* FIXME: operator=() may end up allocating memory! */
-	  cslots_rep[c].operator=(mixslot_rep);
+	  /* case-1b: copy 'mixslot' to chain 'n' */
+	  cslots_rep[c]->number_of_channels(mixslot_repp->number_of_channels());
+	  cslots_rep[c]->copy(*mixslot_repp);
 	}
       }
     }
@@ -975,10 +1004,10 @@ void ECA_ENGINE::inputs_to_chains(bool skip_realtime_inputs) {
 }
 
 void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
-  for(unsigned int audioslot_sizet = 0; audioslot_sizet < outputs_repp->size(); audioslot_sizet++) {
+  for(size_t outputnum = 0; outputnum < outputs_repp->size(); outputnum++) {
     if (skip_realtime_target_outputs == true) {
-      if (csetup_repp->is_realtime_target_output(audioslot_sizet) == true) {
-	//  cerr << "(eca-engine) Skipping rt-target output " << (*outputs_repp)[audioslot_sizet]->label() << "." << endl;
+      if (csetup_repp->is_realtime_target_output(outputnum) == true) {
+	//  std::cerr << "(eca-engine) Skipping rt-target output " << (*outputs_repp)[outputnum]->label() << "." << std::endl;
 	continue;
       }
     }
@@ -986,9 +1015,9 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
     int count = 0;
 
     /* FIXME: number_of_channels() may end up allocating memory! */
-    mixslot_rep.number_of_channels((*outputs_repp)[audioslot_sizet]->channels());
+    mixslot_repp->number_of_channels((*outputs_repp)[outputnum]->channels());
     
-    for(unsigned int n = 0; n != chains_repp->size(); n++) {
+    for(size_t n = 0; n != chains_repp->size(); n++) {
       // --
       // if chain is already released, skip
       // --
@@ -999,17 +1028,17 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
 	continue;
       }
 
-      if ((*chains_repp)[n]->connected_output() == static_cast<int>(audioslot_sizet)) {
+      if ((*chains_repp)[n]->connected_output() == static_cast<int>(outputnum)) {
 	// --
 	// output is connected to this chain
 	// --
-	if (output_chain_count_rep[audioslot_sizet] == 1) {
+	if (output_chain_count_rep[outputnum] == 1) {
 	  // --
 	  // there's only one output connected to this chain,
 	  // so we don't need to mix anything
 	  // --
-	  (*outputs_repp)[audioslot_sizet]->write_buffer(&(cslots_rep[n]));
-	  if ((*outputs_repp)[audioslot_sizet]->finished() == true) outputs_finished_rep++;
+	  (*outputs_repp)[outputnum]->write_buffer(cslots_rep[n]);
+	  if ((*outputs_repp)[outputnum]->finished() == true) outputs_finished_rep++;
 	  break;
 	}
 	else {
@@ -1018,17 +1047,17 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
 	    // -- 
 	    // this is the first output connected to this chain
 	    // --
-	    mixslot_rep.copy(cslots_rep[n]);
-	    mixslot_rep.divide_by(output_chain_count_rep[audioslot_sizet]);
+	    mixslot_repp->copy(*cslots_rep[n]);
+	    mixslot_repp->divide_by(output_chain_count_rep[outputnum]);
 	  }
 	  else {
-	    mixslot_rep.add_with_weight(cslots_rep[n],
-					output_chain_count_rep[audioslot_sizet]);
+	    mixslot_repp->add_with_weight(*cslots_rep[n],
+					  output_chain_count_rep[outputnum]);
 	  }
 	  
-	  if (count == output_chain_count_rep[audioslot_sizet]) {
-	    (*outputs_repp)[audioslot_sizet]->write_buffer(&mixslot_rep);
-	    if ((*outputs_repp)[audioslot_sizet]->finished() == true) outputs_finished_rep++;
+	  if (count == output_chain_count_rep[outputnum]) {
+	    (*outputs_repp)[outputnum]->write_buffer(mixslot_repp);
+	    if ((*outputs_repp)[outputnum]->finished() == true) outputs_finished_rep++;
 	  }
 	}
       }

@@ -104,18 +104,18 @@ void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf) {
     sbuf->resample_init_memory(samples_per_second(), sbuf->sample_rate());
   }
   if (interleaved_channels() == true) {
-    sbuf->copy_to_buffer(iobuf_uchar_repp,
-			 read_samples(iobuf_uchar_repp, buffersize_rep),
-			 sample_format(),
-			 channels(),
-			 samples_per_second());
+    sbuf->import_interleaved(iobuf_uchar_repp,
+			     read_samples(iobuf_uchar_repp, buffersize_rep),
+			     sample_format(),
+			     channels(),
+			     samples_per_second());
   }
   else {
-    sbuf->copy_to_buffer_vector(iobuf_uchar_repp,
-			 read_samples(iobuf_uchar_repp, buffersize_rep),
-			 sample_format(),
-			 channels(),
-			 samples_per_second());
+    sbuf->import_noninterleaved(iobuf_uchar_repp,
+				read_samples(iobuf_uchar_repp, buffersize_rep),
+				sample_format(),
+				channels(),
+				samples_per_second());
   }
   position_in_samples_advance(sbuf->length_in_samples());
 }
@@ -134,16 +134,16 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
     sbuf->resample_init_memory(sbuf->sample_rate(), samples_per_second());
   }
   if (interleaved_channels() == true) {
-    sbuf->copy_from_buffer(iobuf_uchar_repp,
-			   sample_format(),
-			   channels(),
-			   samples_per_second());
+    sbuf->export_interleaved(iobuf_uchar_repp,
+			     sample_format(),
+			     channels(),
+			     samples_per_second());
   }
   else {
-    sbuf->copy_from_buffer_vector(iobuf_uchar_repp,
-				  sample_format(),
-				  channels(),
-				  samples_per_second());
+    sbuf->export_noninterleaved(iobuf_uchar_repp,
+				sample_format(),
+				channels(),
+				samples_per_second());
   }
   write_samples(iobuf_uchar_repp, sbuf->length_in_samples());
   position_in_samples_advance(sbuf->length_in_samples());

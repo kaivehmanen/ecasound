@@ -22,7 +22,7 @@ class GENERIC_CONTROLLER : public OPERATOR {
 
   typedef SAMPLE_SPECS::sample_t parameter_t;
 
-  virtual std::string name(void) const { return(source->name()); }
+  virtual std::string name(void) const { return(source == 0 ? "" : source->name()); }
   std::string status(void) const;
 
   virtual std::string parameter_names(void) const { return("param-id,range-low,range-high," +  source->parameter_names()); }
@@ -58,7 +58,7 @@ class GENERIC_CONTROLLER : public OPERATOR {
    */
   void process(void);
 
-  GENERIC_CONTROLLER* clone(void) const;
+  GENERIC_CONTROLLER* clone(void) const { return(0); }
   GENERIC_CONTROLLER* new_expr(void) const { return(new GENERIC_CONTROLLER(0)); }
 
   GENERIC_CONTROLLER(CONTROLLER_SOURCE* source,

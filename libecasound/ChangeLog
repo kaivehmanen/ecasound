@@ -2,6 +2,18 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-12-22  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* samplebuffer.h (copy_from_buffer): renamed to export_interleaved()
+	* samplebuffer.h (copy_from_buffer_vector): renamed to export_noninterleaved()
+	* samplebuffer.h (copy_to_buffer): renamed to import_interleaved()
+	* samplebuffer.h (copy_to_buffer_vector): renamed to import_noninterleaved()
+	* samplebuffer.h (reserve_length_in_samples,reserve_channels): added
+	* samplebuffer.h (assign-operator,copy-constructor): moved to private
+	access scope
+        * samplebuffer.h (set_rt_lock): added
+	* samplebuffer.h (get_pointer_reflock,release_pointer_reflock): added
+	
 2001-12-19  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audioio-types.h (all): removed - replaced by audioio-buffered.h 

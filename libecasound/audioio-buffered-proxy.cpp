@@ -70,8 +70,8 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
   int channels = child_repp->channels();
   int buffersize = child_repp->buffersize();
   for(unsigned int n = 0; n < pbuffer_repp->sbufs_rep.size(); n++) {
-    pbuffer_repp->sbufs_rep[n].number_of_channels(channels);
-    pbuffer_repp->sbufs_rep[n].length_in_samples(buffersize);
+    pbuffer_repp->sbufs_rep[n]->number_of_channels(channels);
+    pbuffer_repp->sbufs_rep[n]->length_in_samples(buffersize);
   }
 }
 
@@ -110,7 +110,9 @@ bool AUDIO_IO_BUFFERED_PROXY::finished(void) const { return(finished_rep); }
  */
 void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) { 
   if (pbuffer_repp->read_space() > 0) {
-    sbuf->operator=(pbuffer_repp->sbufs_rep[pbuffer_repp->readptr_rep.get()]);
+    SAMPLE_BUFFER* source = pbuffer_repp->sbufs_rep[pbuffer_repp->readptr_rep.get()];
+    sbuf->number_of_channels(source->number_of_channels());
+    sbuf->copy(*source);
     pbuffer_repp->advance_read_pointer();
     position_in_samples_advance(sbuf->length_in_samples());
     // FIXME: make the threshold configurable
@@ -149,7 +151,9 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
  */
 void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) { 
   if (pbuffer_repp->write_space() > 0) {
-    pbuffer_repp->sbufs_rep[pbuffer_repp->writeptr_rep.get()].operator=(*sbuf);
+    SAMPLE_BUFFER* target = pbuffer_repp->sbufs_rep[pbuffer_repp->readptr_rep.get()];
+    target->number_of_channels(sbuf->number_of_channels());
+    target->copy(*sbuf);
     pbuffer_repp->advance_write_pointer();
     position_in_samples_advance(sbuf->length_in_samples());
     extend_position();

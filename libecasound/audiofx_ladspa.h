@@ -22,7 +22,7 @@ class EFFECT_LADSPA : public EFFECT_BASE {
 
 private:
 
-  SAMPLE_BUFFER* buffer;
+  SAMPLE_BUFFER* buffer_repp;
   
   const LADSPA_Descriptor *plugin_desc;
   std::vector<LADSPA_Handle> plugins_rep;

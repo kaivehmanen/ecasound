@@ -85,7 +85,7 @@ Other areas:
 -----------------------------------------------------------------------
 [ Help - developer in trouble ]
 
-- ecasound compiles on Solaris 2.6 and FreeBSD 4.1, what about other
+- ecasound compiles on Solaris 2.6 and FreeBSD 4.2, what about other
   versions; how about Irix, other BSDs?
 - how current ecasound versions work with old gcc packages (2.7.x
   and older)?

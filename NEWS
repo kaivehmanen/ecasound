@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 211201) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 221201) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -18,7 +18,9 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.3 *-
 
 ??122001 (v2.1dev6)
-	- edi-entries: edi-11, edi-17
+	- edi-entries: edi-8, edi-11, edi-17
+	- note: review of all samplebuffer-related code; 
+		lots of code-cleanups and minor improvements
 	- added: edi-11; hierarchy-based config file system; 
 		 default values now stored to 
 		 '{prefix}/share/ecasound/ecasoundrc' while
@@ -27,6 +29,10 @@ Last officially released version is -*> v2.0.3 *-
 	- added: bitrate (kbps) params to mp3 and ogg outputs
 	- added: initial JACK support; enable by giving
 		 --with-jack=install_prefix configure option
+	- added: edi-8; ia-mode - support for parsing args 
+	         containing white-space; either by quoting
+	         with ("a token") or backslash espacing 
+	         (a\ token) [junichi]
 	- removed: ecasoundrc - 'user-resource-directory' tag 
                    removed; user-specific preset/oscillator 
 		   definition directory now '~/.ecasound'
@@ -40,6 +46,7 @@ Last officially released version is -*> v2.0.3 *-
 	- fixed: bugs with combining -ei and LADSPA plugins
 	- fixed: 2.1dev5 wrote broken wav-headers
 	- fixed: minor changes to posix signal handling
+	- fixed: seg.faults with -ei:x where x < 50
 05122001 (v2.1dev5)
 	- added: docs - Documentation/manpages.html
 	- added: ecalength - -su option added [smassy]

@@ -30,6 +30,7 @@
 #include <kvutils/kvu_numtostr.h>
 
 #include "sample-specs.h"
+#include "samplebuffer.h"
 #include "eca-debug.h"
 #include "audioio-proxy-server.h"
 #include "audioio-proxy-server_impl.h"
@@ -456,7 +457,7 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 	free_space = buffers_rep[p]->write_space();
 	if (free_space > 0) {
 
-	  clients_rep[p]->read_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->writeptr_rep.get()]);
+	  clients_rep[p]->read_buffer(buffers_rep[p]->sbufs_rep[buffers_rep[p]->writeptr_rep.get()]);
 	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
 	  buffers_rep[p]->advance_write_pointer();
 	  ++processed;
@@ -471,7 +472,7 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 	free_space = buffers_rep[p]->read_space();
 	if (free_space > 0) {
 
-	  clients_rep[p]->write_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
+	  clients_rep[p]->write_buffer(buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
 	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
 	  buffers_rep[p]->advance_read_pointer();
 	  ++processed;
@@ -573,7 +574,7 @@ void AUDIO_IO_PROXY_SERVER::flush(void) {
 			kvu_numtostr(buffers_rep[p]->read_space()) +
 			".");
 	  
-	  clients_rep[p]->write_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
+	  clients_rep[p]->write_buffer(buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
 	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
 	  buffers_rep[p]->advance_read_pointer();
 	}

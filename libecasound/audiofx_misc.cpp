@@ -80,6 +80,8 @@ void EFFECT_DCFIX::process(void) {
   }
 }
 
+const int EFFECT_PITCH_SHIFT::resample_low_limit = 8;
+
 EFFECT_PITCH_SHIFT::EFFECT_PITCH_SHIFT (const EFFECT_PITCH_SHIFT& x) {
   pmod_rep = x.pmod_rep;
   target_rate_rep = x.target_rate_rep;
@@ -89,9 +91,13 @@ EFFECT_PITCH_SHIFT::EFFECT_PITCH_SHIFT (const EFFECT_PITCH_SHIFT& x) {
 void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   switch (param) {
   case 1: 
-    if (pmod_rep <= 0) {
-      ecadebug->msg(ECA_DEBUG::user_objects, "(audiofx_misc) WARNING! Shift-% must be greater that 0! Using the default 100%.");
-      pmod_rep = 100.0;
+    double lowlimit = 1.0f / EFFECT_PITCH_SHIFT::resample_low_limit * 100.0f;
+    if (value <= lowlimit) {
+      ecadebug->msg(ECA_DEBUG::user_objects, 
+		    "(audiofx_misc) WARNING! Shift-% must be greater than " +
+		    kvu_numtostr(lowlimit) + 
+		    "%! Limiting to the low-limit.");
+      pmod_rep = lowlimit;
     }
     else {
       pmod_rep = value;
@@ -133,6 +139,13 @@ void EFFECT_PITCH_SHIFT::parameter_description(int param, struct PARAM_DESCRIPTI
 void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample) { 
   sbuf_repp = insample;
   target_rate_rep = static_cast<long int>(sbuf_repp->sample_rate() * 100.0 / pmod_rep);
+
+  long int lowlimit = sbuf_repp->length_in_samples() * EFFECT_PITCH_SHIFT::resample_low_limit; 
+  sbuf_repp->reserve_length_in_samples(lowlimit);
+  ecadebug->msg(ECA_DEBUG::system_objects, 
+		"(audiofx) setting resampling lowlimit to " + 
+		kvu_numtostr(lowlimit) + " bytes.");
+
   sbuf_repp->resample_init_memory(sbuf_repp->sample_rate(), target_rate_rep);
   ecadebug->msg(ECA_DEBUG::user_objects, "(audiofx) resampling from " +
 		                         kvu_numtostr(sbuf_repp->sample_rate()) + 
@@ -141,7 +154,7 @@ void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample) {
 }
 
 void EFFECT_PITCH_SHIFT::process(void) { 
-  sbuf_repp->resample_with_memory(sbuf_repp->sample_rate(), target_rate_rep); 
+  sbuf_repp->resample_to(target_rate_rep); 
 }
 
 long int EFFECT_PITCH_SHIFT::output_samples(long int i_samples) {
@@ -149,6 +162,16 @@ long int EFFECT_PITCH_SHIFT::output_samples(long int i_samples) {
   return(static_cast<long int>(static_cast<double>(target_rate_rep) /
 			       sbuf_repp->sample_rate() *
 			       i_samples));
+}
+
+EFFECT_AUDIO_STAMP::EFFECT_AUDIO_STAMP(void) 
+  : sbuf_repp(0) 
+{
+}
+
+EFFECT_AUDIO_STAMP::EFFECT_AUDIO_STAMP(const EFFECT_AUDIO_STAMP& arg) 
+  : sbuf_repp(0) 
+{
 }
 
 void EFFECT_AUDIO_STAMP::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>29.10.2001</h2>
+<h2>21.12.2001</h2>
 
 
     
@@ -234,6 +234,16 @@ output using aRts audio server. Option syntax is <strong>-i:arts</strong>,
 A simple wrapper class for handling other audio objects. 
 See <a href="users_guide/users_guide.html">ecasound user's guide</a> for more 
 detailed information.
+<p><p></p><dt><strong>JACK input/outputs</strong><dd>
+Jack is a low-latency audio server that can connect a number of out of
+process apps. It is different from other audio server efforts in that
+it has been designed from the ground up to be suitable for low-latency
+professional audio work. Ecasound provides multiple ways to
+communicate with JACK servers. <strong>-o jack_alsa,myport</strong>,
+-<strong>jack_multi,alsa_pcm:out,myport</strong>, 
+-<strong>jack_mono,alsa_pcm:out_X,myport</strong> and -<strong>-o jack_generic,myport</strong>
+are all valid JACK output definitions. Similar syntax can be used
+to create JACK inputs.
 <p><p></p><dt><strong>Loop device</strong><dd> 
 Loop devices make it possible to route data between chains.
 Option syntax is <strong>-[io][:]loop,id_number</strong>. If you add a loop 

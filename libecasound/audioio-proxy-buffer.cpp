@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include "samplebuffer.h"
 #include "audioio-proxy-buffer.h"
 
 /**
@@ -29,14 +30,21 @@ AUDIO_IO_PROXY_BUFFER::AUDIO_IO_PROXY_BUFFER(int number_of_buffers,
   :  readptr_rep(0),
      writeptr_rep(0),
      finished_rep(0),
-     sbufs_rep(number_of_buffers, SAMPLE_BUFFER(buffersize,
-						channels,
-						sample_rate))
+     sbufs_rep(number_of_buffers)
 {
-//    cerr << "Created a new client buffer with " 
-//         << sbufs_rep.size()
-//         << " buffers." 
-//         << endl;
+
+  for(size_t n = 0; n < sbufs_rep.size(); n++) {
+    sbufs_rep[n] = new SAMPLE_BUFFER(buffersize, channels, sample_rate);
+  }
+
+  // std::cerr << "Created a new client buffer with "  << sbufs_rep.size() << " buffers." << std::endl;
+}
+
+AUDIO_IO_PROXY_BUFFER::~AUDIO_IO_PROXY_BUFFER(void)
+{
+  for(size_t n = 0; n < sbufs_rep.size(); n++) {
+    delete sbufs_rep[n];
+  }
 }
 
 /**

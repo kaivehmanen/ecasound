@@ -3,16 +3,15 @@
 
 #include <vector>
 
-#include "samplebuffer.h"
-
 class AUDIO_IO;
+class AUDIO_IO_BUFFERED_PROXY;
 class AUDIO_IO_DEVICE;
-class ECA_SESSION;
-class ECA_CHAINSETUP;
 class CHAIN;
 class CHAIN_OPERATOR;
-class AUDIO_IO_BUFFERED_PROXY;
+class ECA_CHAINSETUP;
 class ECA_ENGINE_impl;
+class ECA_SESSION;
+class SAMPLE_BUFFER;
 
 /**
  * Main processing engine
@@ -137,8 +136,8 @@ private:
   /** @name Audio data buffers */
   /*@{*/
 
-  SAMPLE_BUFFER mixslot_rep;
-  std::vector<SAMPLE_BUFFER> cslots_rep;
+  SAMPLE_BUFFER* mixslot_repp;
+  std::vector<SAMPLE_BUFFER*> cslots_rep;
 
   /*@}*/
 
@@ -315,7 +314,7 @@ private:
   /*@{*/
 
   typedef std::vector<AUDIO_IO*>::const_iterator audio_ci;
-  typedef std::vector<SAMPLE_BUFFER>::const_iterator audioslot_ci;
+  typedef std::vector<SAMPLE_BUFFER*>::const_iterator audioslot_ci;
   typedef std::vector<CHAIN*>::const_iterator chain_ci;
   typedef std::vector<CHAIN*>::iterator chain_i;
   typedef std::vector<CHAIN_OPERATOR*>::const_iterator chainop_ci;

@@ -38,11 +38,16 @@ EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&) 
   name_rep = string(plugin_desc->Name);
   unique_rep = string(plugin_desc->Label);
   unique_number_rep = static_cast<long int>(plugin_desc->UniqueID);
+  buffer_repp = 0;
 
   init_ports();
 }
 
 EFFECT_LADSPA::~EFFECT_LADSPA (void) {
+  if (buffer_repp != 0) {
+    buffer_repp->release_pointer_reflock();
+  }
+  
   if (plugin_desc != 0) {
     for(unsigned int n = 0; n < plugins_rep.size(); n++) {
       if (plugin_desc->deactivate != 0) plugin_desc->deactivate(plugins_rep[n]);
@@ -222,7 +227,13 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) {
 
   EFFECT_BASE::init(insample);
 
-  buffer = insample;
+  if (buffer_repp != insample) {
+    if (buffer_repp != 0) {
+      buffer_repp->release_pointer_reflock();
+    }
+    buffer_repp = insample;
+    buffer_repp->get_pointer_reflock();
+  }
 
   if (plugin_desc != 0) {
     for(unsigned int n = 0; n < plugins_rep.size(); n++) {
@@ -249,12 +260,12 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) {
     for(unsigned long m = 0; m < port_count_rep; m++) {
       if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
 	if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_INPUT) == LADSPA_PORT_INPUT) {
-	  plugin_desc->connect_port(plugins_rep[0], m, buffer->buffer[inport]);
+	  plugin_desc->connect_port(plugins_rep[0], m, buffer_repp->buffer[inport]);
 	  ++inport;
 	  if (inport == channels()) inport--;
 	}
 	else {
-	  plugin_desc->connect_port(plugins_rep[0], m, buffer->buffer[outport]);
+	  plugin_desc->connect_port(plugins_rep[0], m, buffer_repp->buffer[outport]);
 	  ++outport;
 	  if (outport == channels()) outport--;
 	}
@@ -268,7 +279,7 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) {
 
       for(unsigned long m = 0; m < port_count_rep; m++) {
 	if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
-	  plugin_desc->connect_port(plugins_rep[n], m, buffer->buffer[n]);
+	  plugin_desc->connect_port(plugins_rep[n], m, buffer_repp->buffer[n]);
 	}
       }
     }
@@ -303,5 +314,5 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) {
 
 void EFFECT_LADSPA::process(void) {
   for(unsigned long m = 0; m < plugins_rep.size(); m++)
-    plugin_desc->run(plugins_rep[m], buffer->length_in_samples());
+    plugin_desc->run(plugins_rep[m], buffer_repp->length_in_samples());
 }

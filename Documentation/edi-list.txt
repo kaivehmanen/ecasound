@@ -29,9 +29,6 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 
 (edi-1)	Initial reverb-spike with the -ete reverb.
 	submitted: Anthony Paul Van Groningen, 04.01.2001
-(edi-8) EIAM parser doesn't handle white-space properly (for instance
-	"ai-add Filename with whitespace").
-	- submitted: smassy, 8.5.2001
 (edi-12) Conversions problems with non-interleaved, s32_le streams.
 	- submitted: jhall, 16.7.2001
 (edi-13) Possible bug in forked-stream module (mp3,ogg), which 
@@ -77,6 +74,10 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	- submitted: smassy, xx.06.2001
 	- first version: kaiv, 03.10.2001, 2.1 CVS-tree
 	- done: 06.10.2001, ecasound 2.1dev0
+(edi-8) EIAM parser doesn't handle white-space properly (for instance
+	"ai-add Filename with whitespace").
+	- submitted: smassy, 8.5.2001
+	- done; junichi; 22.12.2001, ecasound 2.1dev6
 (edi-10) Adding ecalength to ecatools package.
 	- submitted: kaiv, xx.07.2001
 	- done: kaiv, 06.10.2001, to ecasound 2.1dev0

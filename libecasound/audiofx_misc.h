@@ -51,6 +51,8 @@ private:
 
 public:
 
+  static const int resample_low_limit;
+
   virtual std::string name(void) const { return("Pitch shifter"); }
   virtual std::string description(void) const { return("Modify audio pitch by altering its length."); }
   virtual std::string parameter_names(void) const { return("change-%"); }
@@ -92,6 +94,9 @@ class EFFECT_AUDIO_STAMP : public EFFECT_BASE,
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
+
+  EFFECT_AUDIO_STAMP(void);
+  EFFECT_AUDIO_STAMP(const EFFECT_AUDIO_STAMP& arg);
 
   EFFECT_AUDIO_STAMP* clone(void) const { return new EFFECT_AUDIO_STAMP(*this); }
   EFFECT_AUDIO_STAMP* new_expr(void) const { return new EFFECT_AUDIO_STAMP(); }

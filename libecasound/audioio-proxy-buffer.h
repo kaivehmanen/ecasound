@@ -3,7 +3,8 @@
 
 #include <kvutils/locks.h>
 #include "audioio.h"
-#include "samplebuffer.h"
+
+class SAMPLE_BUFFER;
 
 /**
  * Buffer used between proxy server and client
@@ -15,7 +16,7 @@ class AUDIO_IO_PROXY_BUFFER {
   ATOMIC_INTEGER readptr_rep;
   ATOMIC_INTEGER writeptr_rep;
   ATOMIC_INTEGER finished_rep;
-  std::vector<SAMPLE_BUFFER> sbufs_rep;
+  std::vector<SAMPLE_BUFFER*> sbufs_rep;
   AUDIO_IO::Io_mode io_mode_rep;
 
   void reset(void);
@@ -28,6 +29,7 @@ class AUDIO_IO_PROXY_BUFFER {
 			long int buffersize,
 			int channels,
 			long int sample_rate);
+  ~AUDIO_IO_PROXY_BUFFER(void);
 };
 
 #endif
