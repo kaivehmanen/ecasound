@@ -18,7 +18,8 @@
 // ------------------------------------------------------------------------
 
 #include <string>
-#include <unistd.h>
+#include <unistd.h> /* stat() */
+#include <sys/stat.h> /* stat() */
 
 #include <kvu_numtostr.h>
 
@@ -43,6 +44,12 @@ MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void)
 void MIKMOD_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 {
   triggered_rep = false;
+
+  struct stat buf;
+  int ret = ::stat(label().c_str(), &buf);
+  if (ret != 0) {
+    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-MIKMOD: Can't open file " + label() + "."));
+  }
 
   /* s16 samples, 2 channels, srate configurable */
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);

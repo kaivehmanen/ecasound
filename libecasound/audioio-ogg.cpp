@@ -19,8 +19,8 @@
 
 #include <string>
 #include <cstdlib> /* atol() */
-
-#include <unistd.h>
+#include <unistd.h> /* stat() */
+#include <sys/stat.h> /* stat() */
 
 #include <kvu_message_item.h>
 #include <kvu_numtostr.h>
@@ -58,6 +58,15 @@ void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
    * FIXME: we have no idea about the audio format of the 
    *        stream we get from ogg123!
    */
+
+  if (io_mode() == io_read) {
+    struct stat buf;
+    int ret = ::stat(label().c_str(), &buf);
+    if (ret != 0) {
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-OGG: Can't open file " + label() + "."));
+    }
+  }
+
   AUDIO_IO::open();
 }
 
