@@ -82,6 +82,7 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["c-rewind"] = ec_c_rewind;
   cmd_map_rep["c-rw"] = ec_c_rewind;
   cmd_map_rep["c-setpos"] = ec_c_setpos;
+  cmd_map_rep["c-set-position"] = ec_c_setpos;
   cmd_map_rep["c-status"] = ec_c_status;
   cmd_map_rep["c-list"] = ec_c_list;
 
@@ -98,7 +99,9 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["aio-list"] = ec_aio_status;
   cmd_map_rep["aio-forward"] = ec_aio_forward;
   cmd_map_rep["aio-rewind"] = ec_aio_rewind;
-  cmd_map_rep["aio-setpos"] = ec_aio_setpos;
+  cmd_map_rep["aio-setpos"] = ec_aio_set_position;
+  cmd_map_rep["aio-set-position"] = ec_aio_set_position;
+  cmd_map_rep["aio-getpos"] = ec_aio_get_position;
   cmd_map_rep["aio-get-position"] = ec_aio_get_position;
   cmd_map_rep["aio-get-length"] = ec_aio_get_length;
   cmd_map_rep["aio-wave-edit"] = ec_aio_wave_edit;
@@ -138,6 +141,7 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["fw"] = ec_forward;
   cmd_map_rep["setpos"] = ec_setpos;
   cmd_map_rep["set-position"] = ec_setpos;
+  cmd_map_rep["getpos"] = ec_get_position;
   cmd_map_rep["get-position"] = ec_get_position;
   cmd_map_rep["get-length"] = ec_get_length;
 
@@ -181,7 +185,7 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_aio_index_select:
   case ec_aio_forward:
   case ec_aio_rewind:
-  case ec_aio_setpos:
+  case ec_aio_set_position:
   case ec_cop_add:
   case ec_cop_select:
   case ec_cop_set:
@@ -256,7 +260,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_aio_status:
   case ec_aio_forward:
   case ec_aio_rewind:
-  case ec_aio_setpos:
+  case ec_aio_set_position:
   case ec_aio_get_position:
   case ec_aio_get_length:
   case ec_aio_wave_edit:
@@ -295,7 +299,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
   case ec_aio_attach:
   case ec_aio_forward:
   case ec_aio_rewind:
-  case ec_aio_setpos:
+  case ec_aio_set_position:
   case ec_aio_wave_edit:
 
     return(true);
@@ -313,7 +317,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_object(int id) {
   case ec_aio_attach:
   case ec_aio_forward:
   case ec_aio_rewind:
-  case ec_aio_setpos:
+  case ec_aio_set_position:
   case ec_aio_selected:
   case ec_aio_get_position:
   case ec_aio_get_length:

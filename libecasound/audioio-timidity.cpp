@@ -39,24 +39,25 @@ TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void) { close(); }
 void TIMIDITY_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
   set_channels(2);
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
-  fork_timidity();
-  if (wait_for_child() != true) {
-    finished_rep = true;
-  }
   triggered_rep = false;
   toggle_open_state(true);
 }
 
 void TIMIDITY_INTERFACE::close(void) {
-  if (io_mode() == io_read) {
-    kill_timidity();
+  if (pid_of_child() > 0) {
+    if (io_mode() == io_read) {
+      kill_timidity();
+    }
   }
   toggle_open_state(false);
 }
 
 long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, long int samples) {
-  if (triggered_rep != true) triggered_rep = true;
-//    bytes_read_rep = ::read(fd_rep, target_buffer, frame_size() * samples);
+  if (triggered_rep != true) { 
+    triggered_rep = true;
+    fork_timidity();
+  }
+
   bytes_read_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
@@ -68,20 +69,17 @@ long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, long int samples)
 }
 
 void TIMIDITY_INTERFACE::seek_position(void) {
-  if (is_open() == true) {
+  if (triggered_rep == true) {
     if (io_mode() == io_read) {
       kill_timidity();
     }
   }
-  fork_timidity();
-  if (wait_for_child() != true) {
-    finished_rep = true;
-  }
 }
 
 void TIMIDITY_INTERFACE::kill_timidity(void) {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-timidity) Killing Timidity++-child with pid " + kvu_numtostr(pid_of_child()) + ".");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-timidity) Cleaning Timidity++-child with pid " + kvu_numtostr(pid_of_child()) + ".");
   clean_child();
+  triggered_rep = false;
 }
 
 void TIMIDITY_INTERFACE::fork_timidity(void) {
@@ -95,5 +93,8 @@ void TIMIDITY_INTERFACE::fork_timidity(void) {
     fd_rep = file_descriptor();
     f1_rep = fdopen(fd_rep, "r");
     if (f1_rep == 0) finished_rep = true;
+  }
+  if (wait_for_child() != true) {
+    finished_rep = true;
   }
 }

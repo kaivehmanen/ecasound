@@ -37,21 +37,25 @@ MIKMOD_INTERFACE::MIKMOD_INTERFACE(const string& name) {
 MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void) { close(); }
 
 void MIKMOD_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
-  fork_mikmod();
   triggered_rep = false;
   toggle_open_state(true); 
 }
 
 void MIKMOD_INTERFACE::close(void) {
-  if (io_mode() == io_read) {
-    kill_mikmod();
+  if (pid_of_child() > 0) {
+    if (io_mode() == io_read) {
+      kill_mikmod();
+    }
   }
   toggle_open_state(false);
 }
 
 long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {
-  if (triggered_rep != true) triggered_rep = true;
-//    bytes_read_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
+  if (triggered_rep != true) { 
+    triggered_rep = true;
+    fork_mikmod();
+  }
+
   bytes_read_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
@@ -63,17 +67,17 @@ long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {
 }
 
 void MIKMOD_INTERFACE::seek_position(void) {
-  if (is_open() == true) {
+  if (triggered_rep == true) {
     if (io_mode() == io_read) {
       kill_mikmod();
     }
   }
-  fork_mikmod();
 }
 
 void MIKMOD_INTERFACE::kill_mikmod(void) {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mikmod) Killing mikmod-child with pid " + kvu_numtostr(pid_of_child()) + ".");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mikmod) Cleaning mikmod-child with pid " + kvu_numtostr(pid_of_child()) + ".");
   clean_child();
+  triggered_rep = false;
 }
 
 void MIKMOD_INTERFACE::fork_mikmod(void) {

@@ -15,6 +15,7 @@ class AUDIO_IO_FORKED_STREAM {
 
  private:
 
+  int pid_of_parent_rep;
   int pid_of_child_rep;
   int fd_rep;
   bool last_fork_rep;

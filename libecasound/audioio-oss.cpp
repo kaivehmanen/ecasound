@@ -196,6 +196,8 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
 }
 
 void OSSDEVICE::stop(void) {
+  // FIXME: should close and re-open the device - otherwise triggering 
+  //        won't work properly (see OSS adv.prog.guide)
   AUDIO_IO_DEVICE::stop();
   ::ioctl(audio_fd, SNDCTL_DSP_POST, 0);
   ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" disabled.");

@@ -395,11 +395,7 @@ void ECA_CONTROL::action(int action_id) {
       rewind_audio_object(first_argument_as_number()); 
       break; 
     }
-  case ec_aio_setpos: 
-    { 
-      set_audio_object_position(first_argument_as_number()); 
-      break; 
-    }
+  case ec_aio_set_position: { set_audio_object_position(first_argument_as_number()); break; }
   case ec_aio_get_position: { set_last_float(get_audio_object()->position().seconds()); break; }
   case ec_aio_get_length: { set_last_float(get_audio_object()->length().seconds()); break; }
   case ec_aio_wave_edit: { wave_edit_audio_object(); break; }
@@ -452,7 +448,7 @@ void ECA_CONTROL::action(int action_id) {
     // ---
   case ec_ctrl_add: { add_controller(action_args_rep[0]); break; }
   case ec_ctrl_select: { select_controller(atoi((action_args_rep[0]).c_str())); break; }
-  case ec_ctrl_remove: {  remove_chain_operator(); break; }
+  case ec_ctrl_remove: {  remove_controller(); break; }
   case ec_ctrl_status: 
     { 
       ecadebug->control_flow("Controller status");

@@ -87,7 +87,7 @@ class ECA_IAMODE_PARSER {
     ec_aio_status,
     ec_aio_forward,
     ec_aio_rewind,
-    ec_aio_setpos,
+    ec_aio_set_position,
     ec_aio_get_position,
     ec_aio_get_length,
     ec_aio_wave_edit,

@@ -35,10 +35,8 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   int fd_rep;
   FILE* f1_rep;
   
-  void fork_ogg123(void);
-  void kill_ogg123(void);
-  void fork_vorbize(void);
-  void kill_vorbize(void);
+  void fork_ogg_input(void);
+  void fork_ogg_output(void);
   
  public:
 

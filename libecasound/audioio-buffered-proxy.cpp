@@ -49,6 +49,8 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
     pbuffer_repp->io_mode_rep = AUDIO_IO::io_read;
   else
     pbuffer_repp->io_mode_rep = AUDIO_IO::io_write;
+
+  set_audio_format(child_repp->audio_format());
   
   int channels = child_repp->channels();
   int buffersize = child_repp->buffersize();

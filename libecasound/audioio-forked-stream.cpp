@@ -33,6 +33,7 @@
 #include <kvutils/kvu_numtostr.h>
 #include <kvutils/kvutils.h>
 
+#include "eca-debug.h"
 #include "audioio-forked-stream.h"
 
 /**
@@ -130,6 +131,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
 	// ---
 	// parent
 	// ---
+	pid_of_parent_rep = ::getpid();
 	::close(fpipes[1]);
 	fd_rep = fpipes[0];
 	if (wait_for_child() == true)
@@ -180,6 +182,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
     // ---
     // parent
     // ---
+    pid_of_parent_rep = ::getpid();
     fd_rep = 0;
     if (wait_for_child() == true)
       fd_rep = ::open(tmpfile_repp, O_RDONLY);
@@ -227,6 +230,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
       // ---
       // parent
       // ---
+      pid_of_parent_rep = ::getpid();
       ::close(fpipes[0]);
       fd_rep = fpipes[1];
       if (wait_for_child() == true)
@@ -237,10 +241,21 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
   }
 }
 
+/**
+ * Cleans (waits for) the forked child process. Note! This
+ * function must be called from the same thread as 
+ * fork_child_for_read/write() was called.
+ */
 void AUDIO_IO_FORKED_STREAM::clean_child(void) {
   if (pid_of_child_rep > 0) {
     kill(pid_of_child_rep, SIGTERM);
-    waitpid(pid_of_child_rep, 0, 0);
+    if (::getpid() == pid_of_parent_rep) {
+      waitpid(pid_of_child_rep, 0, 0);
+      pid_of_child_rep = 0;
+    }
+    else {
+      ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-forked-stream) Warning! Parent-pid changed!");
+    }
   }
   if (fd_rep > 0) ::close(fd_rep);
   if (tmp_file_created_rep == true) {
@@ -248,9 +263,17 @@ void AUDIO_IO_FORKED_STREAM::clean_child(void) {
   }
 }
 
+/**
+ * Checks whether child is still active. Returns false 
+ * if child has exited, otherwise true.
+ */
 bool AUDIO_IO_FORKED_STREAM::wait_for_child(void) const {
-  if (waitpid(pid_of_child_rep, 0, WNOHANG) != 0)
-    return false;
-
-  return true;
+  if (pid_of_child_rep > 0) {
+    int pid = waitpid(pid_of_child_rep, 0, WNOHANG);
+    if (pid > 0) {
+      return false;
+    }
+    if (pid == 0) return true;
+  }
+  return false;
 }

@@ -43,10 +43,8 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   //  MP3FILE(const MP3FILE& x) { }
   MP3FILE& operator=(const MP3FILE& x) { return *this; }
 
-  void fork_mpg123(void);
-  void kill_mpg123(void);
-  void fork_lame(void);
-  void kill_lame(void);
+  void fork_mp3_input(void);
+  void fork_mp3_output(void);
   
  public:
 

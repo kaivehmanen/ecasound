@@ -56,21 +56,17 @@ MP3FILE::~MP3FILE(void) { close(); }
 void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) { 
   if (io_mode() == io_read) {
     get_mp3_params(label());
-    fork_mpg123();
   }
-  else
-    fork_lame();
 
   toggle_open_state(true);
   triggered_rep = false;
 }
 
 void MP3FILE::close(void) {
-  if (io_mode() == io_read) {
-    kill_mpg123();
-  }
-  else {
-    kill_lame();
+  if (pid_of_child() > 0) {
+      ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+      clean_child();
+      triggered_rep = false;
   }
   toggle_open_state(false);
 }
@@ -84,8 +80,11 @@ void MP3FILE::process_mono_fix(char* target_buffer, long int bytes_rep) {
 }
 
 long int MP3FILE::read_samples(void* target_buffer, long int samples) {
-  if (triggered_rep != true) triggered_rep = true;
-//    bytes_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
+  if (triggered_rep != true) { 
+    triggered_rep = true;
+    fork_mp3_input();
+  }
+
   bytes_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
@@ -98,7 +97,11 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples) {
 }
 
 void MP3FILE::write_samples(void* target_buffer, long int samples) {
-  if (triggered_rep != true) triggered_rep = true;
+  if (triggered_rep != true) {
+    triggered_rep = true;
+    fork_mp3_output();
+  }
+
   if (wait_for_child() != true) {
     finished_rep = true;
   }
@@ -114,18 +117,13 @@ void MP3FILE::write_samples(void* target_buffer, long int samples) {
 }
 
 void MP3FILE::seek_position(void) {
-  if (last_position_rep != position_in_samples()) {
+  if (triggered_rep == true &&
+      last_position_rep != position_in_samples()) {
     if (is_open() == true) {
       finished_rep = false;
-      if (io_mode() == io_read)
-	kill_mpg123();
-      else
-	kill_lame();
-
-      if (io_mode() == io_read)
-	fork_mpg123(); 
-      else
-	fork_lame();
+      ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+      clean_child();
+      triggered_rep = false;
     }
   }
 }
@@ -167,12 +165,7 @@ void MP3FILE::get_mp3_params(const string& fname) throw(AUDIO_IO::SETUP_ERROR&) 
   ecadebug->msg(ECA_DEBUG::user_objects,m.to_string());
 }
 
-void MP3FILE::kill_mpg123(void) {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing mpg123-child." + kvu_numtostr(pid_of_child()) + ".");
-  clean_child();
-}
-
-void MP3FILE::fork_mpg123(void) {
+void MP3FILE::fork_mp3_input(void) {
   string cmd = MP3FILE::default_mp3_input_cmd;
   if (cmd.find("%o") != string::npos) {
     cmd.replace(cmd.find("%o"), 2, kvu_numtostr((long)(position_in_samples() / pcm_rep)));
@@ -191,12 +184,7 @@ void MP3FILE::fork_mpg123(void) {
   }
 }
 
-void MP3FILE::kill_lame(void) {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing lame-child with pid " + kvu_numtostr(pid_of_child()) + ".");
-  clean_child();
-}
-
-void MP3FILE::fork_lame(void) {
+void MP3FILE::fork_mp3_output(void) {
   ecadebug->msg("(audioio-mp3) Starting to encode " + label() + " with lame.");
   last_position_rep = position_in_samples();
   set_fork_command(MP3FILE::default_mp3_output_cmd);
