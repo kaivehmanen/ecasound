@@ -4,6 +4,11 @@
 
 2001-10-11  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
+	* audioio-types.h (AUDIO_IO_DEVICE::is_realtime_object): added
+	* eca-engine.h (is_realtime_object): removed
+	
+2001-10-11  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
 	* eca-chainsetup-bufparams.h (number_of_set): added
 	* eca-chainsetup.h (has_nonrealtime_objects): added
 	

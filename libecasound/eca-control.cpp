@@ -31,6 +31,7 @@
 #include <kvutils.h> /* string_to_vector(), string_to_int_vector() */
 #include <kvutils/value_queue.h>
 #include <kvutils/message_item.h>
+#include <kvutils/dbc.h>
 
 #include "eca-session.h"
 #include "eca-control.h"
@@ -317,10 +318,16 @@ void ECA_CONTROL::action(int action_id) {
   case ec_cs_get_position: { set_last_float(position_in_seconds_exact()); break; }
   case ec_cs_get_position_samples: { set_last_long_integer(selected_chainsetup_repp->position_in_samples()); break; }
   case ec_cs_get_length: { set_last_float(length_in_seconds_exact()); break; }
+  case ec_cs_get_length_samples: { set_last_float(length_in_samples()); break; }
   case ec_cs_set_length: 
     { 
       set_chainsetup_processing_length_in_seconds(first_argument_as_float()); 
       break; 
+    }
+  case ec_cs_set_length_samples:
+    {
+      set_chainsetup_processing_length_in_samples(first_argument_as_float());
+      break;
     }
   case ec_cs_toggle_loop: { toggle_chainsetup_looping(); break; } 
 
@@ -421,6 +428,7 @@ void ECA_CONTROL::action(int action_id) {
   case ec_ai_get_position: { set_last_float(get_audio_input()->position().seconds()); break; }
   case ec_ai_get_position_samples: { set_last_long_integer(get_audio_input()->position().samples()); break; }
   case ec_ai_get_length: { set_last_float(get_audio_input()->length().seconds()); break; }
+  case ec_ai_get_length_samples: { set_last_float(get_audio_input()->length().samples()); break; }
   case ec_ai_get_format: {
     set_last_string(get_audio_input()->format_string() + "," +
 		    kvu_numtostr(get_audio_input()->channels()) + "," +
@@ -463,6 +471,7 @@ void ECA_CONTROL::action(int action_id) {
   case ec_ao_get_position: { set_last_long_integer(get_audio_output()->position().seconds()); break; }
   case ec_ao_get_position_samples: { set_last_long_integer(get_audio_output()->position().samples()); break; }
   case ec_ao_get_length: { set_last_float(get_audio_output()->length().seconds()); break; }
+  case ec_ao_get_length_samples: { set_last_float(get_audio_output()->length().samples()); break; }
   case ec_ao_get_format: { 
     set_last_string(get_audio_output()->format_string() + "," +
 		    kvu_numtostr(get_audio_output()->channels()) + "," +
@@ -903,8 +912,9 @@ void ECA_CONTROL::ladspa_register(void) {
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
-    string temp = "\n\t-el:" + p->second + ",";
+    string temp = "\n\t-el:" + p->first + ",";
     EFFECT_LADSPA* q = ECA_OBJECT_FACTORY::ladspa_map_object(p->first);
+    DBC_CHECK(q != 0);
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
       temp += "\"" + q->get_parameter_name(n + 1) + "\"";
@@ -912,7 +922,7 @@ void ECA_CONTROL::ladspa_register(void) {
     }
 
     result += "\n";
-    result += kvu_numtostr(count) + ". " + p->first + temp;
+    result += kvu_numtostr(count) + ". " + p->second + temp;
     ++count;
     ++p;
   }

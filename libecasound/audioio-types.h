@@ -65,6 +65,71 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
  
  public:
 
+  /** @name Public static functions */
+  /*@{*/
+
+  /**
+   * Whether given object is an AUDIO_IO_DEVICE object.
+   */
+  static bool is_realtime_object(const AUDIO_IO* aobj);
+
+  /*@}*/
+
+  /** @name Constructors and destructors */
+  /*@{*/
+
+  AUDIO_IO_DEVICE(void);
+  virtual ~AUDIO_IO_DEVICE(void);
+
+  /*@}*/
+
+  /** @name Attribute functions */
+  /*@{*/
+
+  virtual bool supports_seeking(void) const { return(false); }
+
+  /**
+   * Estimed processing latency in samples.
+   */
+  virtual long int latency(void) const { return(0); }
+
+  /*@}*/
+
+  /** @name Configuration 
+   * 
+   * For setting and getting configuration parameters.
+   */
+  /*@{*/
+
+  /**
+   * Whether to ignore possible under- and overrun 
+   * situations. If enabled, device should try to
+   * recover from these situations, ie. keep on 
+   * running. If disabled, processing should be aborted
+   * if an xrun occurs. Should be set before opening 
+   * the device. Defaults to 'true'.
+   */
+  virtual void toggle_ignore_xruns(bool v) { ignore_xruns_rep = v; }
+
+  /** 
+   * Whether the use of internal buffering is limited. 
+   * If disabled, the device should use minimal amount 
+   * of internal buffering. The recommended size is 
+   * two or three fragments, each buffersize() sample frames
+   * in size. Otherwise the device can use all its
+   * internal buffering. This toggle is meant for controlling
+   * the latency caused by the device. Defaults to 'true'.
+   */
+  virtual void toggle_max_buffers(bool v) { max_buffers_rep = v; }
+  
+  virtual bool ignore_xruns(void) const { return(ignore_xruns_rep); }
+  virtual bool max_buffers(void) const { return(max_buffers_rep); }
+
+  /*@}*/
+
+  /** @name Main functionality */
+  /*@{*/
+
   /**
    * Prepare device for processing. After this call, device is 
    * ready for input/output (buffer can be pre-filled).
@@ -107,10 +172,10 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    */
   virtual void stop(void) { toggle_running_state(false); toggle_prepared_state(false); }
 
-  /**
-   * Estimed processing latency in samples.
-   */
-  virtual long int latency(void) const { return(0); }
+  /*@}*/
+
+  /** @name Runtime information */
+  /*@{*/
 
   /**
    * Whether device has been started?
@@ -122,43 +187,18 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    */
   virtual bool is_prepared(void) const { return(is_prepared_rep); }
 
+  virtual bool finished(void) const { return(is_open() == false); }
+
   virtual long position_in_samples(void) const = 0;
+
+  virtual string status(void) const;
+
+  /*@}*/
   
   /**
    * Seeking is impossible with realtime devices.
    */
   virtual void seek_position(void) { }
-
-  /**
-   * Whether to ignore possible under- and overrun 
-   * situations. If enabled, device should try to
-   * recover from these situations, ie. keep on 
-   * running. If disabled, processing should be aborted
-   * if an xrun occurs. Should be set before opening 
-   * the device. Defaults to 'true'.
-   */
-  virtual void toggle_ignore_xruns(bool v) { ignore_xruns_rep = v; }
-
-  /** 
-   * Whether the use of internal buffering is limited. 
-   * If disabled, the device should use minimal amount 
-   * of internal buffering. The recommended size is 
-   * two or three fragments, each buffersize() sample frames
-   * in size. Otherwise the device can use all its
-   * internal buffering. This toggle is meant for controlling
-   * the latency caused by the device. Defaults to 'true'.
-   */
-  virtual void toggle_max_buffers(bool v) { max_buffers_rep = v; }
-  
-  virtual bool ignore_xruns(void) const { return(ignore_xruns_rep); }
-  virtual bool max_buffers(void) const { return(max_buffers_rep); }
-  virtual bool supports_seeking(void) const { return(false); }
-  virtual bool finished(void) const { return(is_open() == false); }
-
-  virtual string status(void) const;
-
-  AUDIO_IO_DEVICE(void);
-  virtual ~AUDIO_IO_DEVICE(void);
 
  protected:
   

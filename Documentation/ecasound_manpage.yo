@@ -1,4 +1,4 @@
-mailto(kaiv@wakkanet.fi)
+mailto(kai.vehmanen@wakkanet.fi)
 
 htmlcommand(
 <insert file=../es-makrot.txt>
@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (06.10.2001)
+       (12.10.2001)
        ()
        (Multimedia software)
 
@@ -130,7 +130,7 @@ bf(CHAINSETUP BUFFERING AND PERFORMANCE OPTIONS)
 startdit()
 
 dit(-B:buffering_mode)
-Selects the default buffering mode. Mode is one of: 'auto' (default), 
+Selects the default buffering mode. Mode is one of: 'auto' (default),
 'nonrt', 'rt', 'rtlowlatency'.
 
 dit(-b:buffer size)

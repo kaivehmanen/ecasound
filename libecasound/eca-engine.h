@@ -210,7 +210,6 @@ private:
   void multitrack_sync(void);
   void multitrack_start(void);
   void reset_realtime_devices(void);
-  bool is_realtime_object(const AUDIO_IO* aobj) const;
 
   /**
    * Trigger all output devices if requested by start()
@@ -277,7 +276,7 @@ private:
   /** @name Private functions for signal routing  */
   /*@{*/
 
-  void inputs_to_chains(void);
+  void inputs_to_chains(bool skip_realtime_inputs);
   void mix_to_chains(void);
   void process_chains(void);
   void mix_to_outputs(bool skip_realtime_target_outputs);

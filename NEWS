@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 101001) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 111001) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -19,15 +19,26 @@ Last officially released version is -*> v2.0.3 *-
 
 ??102001 (v2.1dev2)
 	- added: ecaplay - -k, -d and -h options, see 'man ecaplay'
+	- added: eiam - ai-get-length-samples, ao-get-length-samples,
+		 cs-get-length-samples, cs-set-length-samples [smassy]
+	- added: support for variable length buffer's for ALSA 0.9
+		 output (required by -ei:xx type effects)
 	- changed: tuned prefill-parameters for double-buffering
 	- changed: when saving chainsetups, if no parameters 
 	           are overridden, buffermode definition (-B) is
 		   saved instead of individual parameters
+	- changed: yet more changes to the multitrack-mode
 	- fixed: -r option wasn't saved to chainsetups (used
 		 to be a session-level option)
 	- fixed: typeselect problems when used for outputs
 	- fixed: system lockups with -B:rtlowlatency and 
 		 rt-object-only chainsetup
+	- fixed: misplaced tab prevented eci.py from working
+		 with python 2.1 (nested scopes)
+	- fixed: if a monitor track input ended before recording 
+                 stopped in multitrack mode and -z:db was enabled, 
+		 it continued producing unwanted noise to the
+		 monitor output
 09102001 (v2.1dev1)
 	- added: chainsetup parser prints a warning if an unknown
 	         buffering mode is given to -B:mode 

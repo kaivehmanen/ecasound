@@ -120,7 +120,10 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
     //      }
   }
   else {
-    if (pbuffer_repp->finished_rep.get() == 1) finished_rep = true;
+    if (pbuffer_repp->finished_rep.get() == 1) {
+      finished_rep = true;
+      sbuf->length_in_samples(0);
+    }
     else {
       xruns_rep++;
       ecadebug->msg(ECA_DEBUG::user_objects, 
@@ -133,6 +136,7 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
       }
       else {
 	std::cerr << "(audioio-buffered-proxy) Serious trouble with the disk-io subsystem! (1)" << std::endl;
+	sbuf->length_in_samples(0);
       }
     }
   }

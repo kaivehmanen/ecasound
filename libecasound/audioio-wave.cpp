@@ -23,6 +23,7 @@
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils/dbc.h>
 
 #include "samplebuffer.h"
 #include "audioio-wave.h"
@@ -44,8 +45,7 @@ WAVEFILE::~WAVEFILE(void) {
 
 void WAVEFILE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
   // --------
-  // require:
-  assert(!is_open());
+  DBC_REQUIRE(!is_open());
   // --------
 
   if (io_mode() == io_write) return;
@@ -65,9 +65,8 @@ void WAVEFILE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
   fio_repp = 0;
 
   // -------
-  // ensure:
-  assert(!is_open());
-  assert(fio_repp == 0);
+  DBC_ENSURE(!is_open());
+  DBC_ENSURE(fio_repp == 0);
   // -------
 }
 
@@ -367,9 +366,8 @@ bool WAVEFILE::finished(void) const {
 long int WAVEFILE::read_samples(void* target_buffer, long int samples)
 {
   // --------
-  // require:
-  assert(samples >= 0);
-  assert(target_buffer != 0);
+  DBC_REQUIRE(samples >= 0);
+  DBC_REQUIRE(target_buffer != 0);
   // --------
   fio_repp->read_to_buffer(target_buffer, frame_size() * samples);
   return(fio_repp->file_bytes_processed() / frame_size());
@@ -377,9 +375,8 @@ long int WAVEFILE::read_samples(void* target_buffer, long int samples)
 
 void WAVEFILE::write_samples(void* target_buffer, long int samples) {
   // --------
-  // require:
-  assert(samples >= 0);
-  assert(target_buffer != 0);
+  DBC_REQUIRE(samples >= 0);
+  DBC_REQUIRE(target_buffer != 0);
   // --------
   fio_repp->write_from_buffer(target_buffer, frame_size() * samples);
 }

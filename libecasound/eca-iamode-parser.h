@@ -65,7 +65,9 @@ class ECA_IAMODE_PARSER {
     ec_cs_get_position,
     ec_cs_get_position_samples,
     ec_cs_get_length,
+    ec_cs_get_length_samples,
     ec_cs_set_length,
+    ec_cs_set_length_samples,
     ec_cs_toggle_loop,
     // --
     ec_c_add,
@@ -104,6 +106,7 @@ class ECA_IAMODE_PARSER {
     ec_ai_get_position,
     ec_ai_get_position_samples,
     ec_ai_get_length,
+    ec_ai_get_length_samples,
     ec_ai_get_format,
     ec_ai_wave_edit,
     // --
@@ -122,6 +125,7 @@ class ECA_IAMODE_PARSER {
     ec_ao_get_position,
     ec_ao_get_position_samples,
     ec_ao_get_length,
+    ec_ao_get_length_samples,
     ec_ao_get_format,
     ec_ao_wave_edit,
     // --

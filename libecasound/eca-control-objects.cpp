@@ -23,6 +23,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdlib.h> /* getenv() */
+#include <cstdio>
 
 #include <kvutils/dbc.h> /* DBC_* */
 #include <kvutils/value_queue.h>
@@ -487,7 +488,7 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position(double seconds) {
   DBC_REQUIRE(is_selected());
   // --------
 
-  if (connected_chainsetup() == selected_chainsetup()) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     if (seconds < 0)
       send_chain_commands_to_engine(ECA_ENGINE::ep_rewind, 
 				    -seconds);
@@ -512,7 +513,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds) {
   DBC_REQUIRE(is_selected());
   // --------
 
-  if (connected_chainsetup() == selected_chainsetup()) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_setpos, seconds);
   }
   else {
@@ -985,7 +986,7 @@ void ECA_CONTROL_OBJECTS::toggle_chain_muting(void) {
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
-  if (connected_chainsetup() == selected_chainsetup()) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_c_mute, 0.0);
   } 
   else {
@@ -1005,7 +1006,7 @@ void ECA_CONTROL_OBJECTS::toggle_chain_bypass(void) {
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
-  if (connected_chainsetup() == selected_chainsetup()) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_c_bypass, 0.0);
   }
   else {
@@ -1025,7 +1026,7 @@ void ECA_CONTROL_OBJECTS::rewind_chains(double pos_in_seconds) {
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
-  if (connected_chainsetup() == selected_chainsetup()) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_c_rewind, pos_in_seconds);
   }
   else {
@@ -1045,7 +1046,7 @@ void ECA_CONTROL_OBJECTS::forward_chains(double pos_in_seconds) {
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
-  if (connected_chainsetup() == selected_chainsetup()) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_c_forward, pos_in_seconds);
   }
   else {
@@ -1068,7 +1069,7 @@ void ECA_CONTROL_OBJECTS::change_position_chains(double change_in_seconds) {
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
-  if (connected_chainsetup() == selected_chainsetup()) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_c_setpos, change_in_seconds);
   }
   else {
@@ -1104,7 +1105,7 @@ void ECA_CONTROL_OBJECTS::set_position_chains(double pos_in_seconds) {
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
-  if (connected_chainsetup() == selected_chainsetup()) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_c_setpos, pos_in_seconds);
   }
   else {

@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "05\&.10\&.2001" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "12\&.10\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -166,8 +166,14 @@ Returns the current chainsetup position in samples\&. \fI[li]\fP
 .IP "cs-get-length, get-length" 
 Returns the chainsetup length in seconds (if known)\&. \fI[f]\fP
 .PP 
+.IP "cs-get-length-samples, get-length-samples" 
+Returns the chainsetup length in samples (if known)\&. \fI[li]\fP
+.PP 
 .IP "cs-set-length \'seconds\'" 
 Sets processing time in seconds (doesn\'t have to be an integer value)\&. \fI[-]\fP
+.PP 
+.IP "cs-set-length-samples \'samples\'" 
+Sets processing time in samples\&. \fI[-]\fP
 .PP 
 .IP "cs-toggle-loop" 
 Toggle looping\&. When processing is finished, engine will start 
@@ -323,10 +329,13 @@ Set audio object position to \'time_in_samples\'\&. \fI[-]\fP
 Returns the audio object position in seconds\&. \fI[f]\fP
 .PP 
 .IP "ai-get-position-samples, ao-get-position-samples" 
-Returns the audio object position in samples\&. \fI[f]\fP
+Returns the audio object position in samples\&. \fI[li]\fP
 .PP 
 .IP "ai-get-length, ao-get-length" 
 Returns the audio object length in seconds\&. \fI[f]\fP
+.PP 
+.IP "ai-get-length-samples, ao-get-length-samples" 
+Returns the audio object length in samples\&. \fI[li]\fP
 .PP 
 .IP "ai-get-format, ao-get-format" 
 Returns the audio format of the selected audio input/output as a

@@ -102,4 +102,4 @@ if __name__ == '__main__':
     e("""stop
          cs-disconnect""")
 
-print "Chain operator status: ", e("cop-status")
+    print "Chain operator status: ", e("cop-status")

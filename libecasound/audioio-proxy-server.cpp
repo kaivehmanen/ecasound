@@ -151,9 +151,9 @@ void AUDIO_IO_PROXY_SERVER::start(void) {
      *   struct sched_param sparam;
      *   sparam.sched_priority = schedpriority_rep;
      *   if (::pthread_setschedparam(io_thread_rep, SCHED_FIFO, &sparam) != 0)
-     *   ecadebug->msg("Unable to change scheduling policy to SCHED_FIFO!");
+     *   ecadebug->msg("(audioio-proxy-server) Unable to change scheduling policy to SCHED_FIFO!");
      * else 
-     *   ecadebug->msg("Using realtime-scheduling (SCHED_FIFO).");
+     *   ecadebug->msg("(audioio-proxy-server) Using realtime-scheduling (SCHED_FIFO).");
      * }
      */
 
@@ -471,7 +471,7 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
     else passive_rounds = 0;
 
     if (processed == 0) {
-      if (passive_rounds > 2) {
+      if (passive_rounds > 1) {
 	/* case 1: nothing processed during x rounds ==> full, sleep */
 	PROXY_PROFILING_INC(impl_repp->profile_sleep_rep);
 	full_rep.set(1);

@@ -16,14 +16,14 @@
 
 <html><head><title>ecasound-iam</title>
 
-<link rev="made" href="mailto:kaiv@wakkanet.fi">
+<link rev="made" href="mailto:kai.vehmanen@wakkanet.fi">
 </head>
 <body>
 
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>05.10.2001</h2>
+<h2>12.10.2001</h2>
 
 
     
@@ -165,8 +165,12 @@ Returns the current chainsetup position in seconds. <em>[f]</em>
 Returns the current chainsetup position in samples. <em>[li]</em>
 <p><p></p><dt><strong>cs-get-length, get-length</strong><dd>
 Returns the chainsetup length in seconds (if known). <em>[f]</em>
+<p><p></p><dt><strong>cs-get-length-samples, get-length-samples</strong><dd>
+Returns the chainsetup length in samples (if known). <em>[li]</em>
 <p><p></p><dt><strong>cs-set-length 'seconds'</strong><dd>
 Sets processing time in seconds (doesn't have to be an integer value). <em>[-]</em>
+<p><p></p><dt><strong>cs-set-length-samples 'samples'</strong><dd>
+Sets processing time in samples. <em>[-]</em>
 <p><p></p><dt><strong>cs-toggle-loop</strong><dd>
 Toggle looping. When processing is finished, engine will start 
 again from the initial position. It's not always possible to enable looping
@@ -289,9 +293,11 @@ Set audio object position to 'time_in_samples'. <em>[-]</em>
 <p><p></p><dt><strong>ai-getpos, ai-get-position, ao-getpos, ao-get-position</strong><dd>
 Returns the audio object position in seconds. <em>[f]</em>
 <p><p></p><dt><strong>ai-get-position-samples, ao-get-position-samples</strong><dd>
-Returns the audio object position in samples. <em>[f]</em>
+Returns the audio object position in samples. <em>[li]</em>
 <p><p></p><dt><strong>ai-get-length, ao-get-length</strong><dd>
 Returns the audio object length in seconds. <em>[f]</em>
+<p><p></p><dt><strong>ai-get-length-samples, ao-get-length-samples</strong><dd>
+Returns the audio object length in samples. <em>[li]</em>
 <p><p></p><dt><strong>ai-get-format, ao-get-format</strong><dd>
 Returns the audio format of the selected audio input/output as a
 formatted string. See documentation for '-f' command-line option. <em>[s]</em>

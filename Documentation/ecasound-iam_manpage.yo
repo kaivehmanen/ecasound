@@ -1,4 +1,4 @@
-mailto(kaiv@wakkanet.fi)
+mailto(kai.vehmanen@wakkanet.fi)
 
 htmlcommand(
 <insert file=../es-makrot.txt>
@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (05.10.2001)
+       (12.10.2001)
        ()
        (Multimedia software)
 
@@ -188,8 +188,14 @@ Returns the current chainsetup position in samples. em([li])
 dit(cs-get-length, get-length)
 Returns the chainsetup length in seconds (if known). em([f])
 
+dit(cs-get-length-samples, get-length-samples)
+Returns the chainsetup length in samples (if known). em([li])
+
 dit(cs-set-length 'seconds')
 Sets processing time in seconds (doesn't have to be an integer value). em([-])
+
+dit(cs-set-length-samples 'samples')
+Sets processing time in samples. em([-])
 
 dit(cs-toggle-loop)
 Toggle looping. When processing is finished, engine will start 
@@ -349,10 +355,13 @@ dit(ai-getpos, ai-get-position, ao-getpos, ao-get-position)
 Returns the audio object position in seconds. em([f])
 
 dit(ai-get-position-samples, ao-get-position-samples)
-Returns the audio object position in samples. em([f])
+Returns the audio object position in samples. em([li])
 
 dit(ai-get-length, ao-get-length)
 Returns the audio object length in seconds. em([f])
+
+dit(ai-get-length-samples, ao-get-length-samples)
+Returns the audio object length in samples. em([li])
 
 dit(ai-get-format, ao-get-format)
 Returns the audio format of the selected audio input/output as a

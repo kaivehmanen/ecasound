@@ -58,11 +58,21 @@ void ECA_FILE_IO_STREAM::close_file(void) {
 }
 
 void ECA_FILE_IO_STREAM::read_to_buffer(void* obuf, long int bytes) { 
-  bytes_rep = ::fread(obuf, 1, bytes, f1);
+  if (is_file_ready() == true) {
+    bytes_rep = ::fread(obuf, 1, bytes, f1);
+  }
+  else {
+    bytes_rep = 0;
+  }
 }
 
 void ECA_FILE_IO_STREAM::write_from_buffer(void* obuf, long int bytes) { 
-  bytes_rep = ::fwrite(obuf, 1, bytes, f1);
+  if (is_file_ready() == true) {
+    bytes_rep = ::fwrite(obuf, 1, bytes, f1);
+  }
+  else {
+    bytes_rep = 0;
+  }
 }
 
 long int ECA_FILE_IO_STREAM::file_bytes_processed(void) const { return(bytes_rep); }

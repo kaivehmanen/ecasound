@@ -22,6 +22,7 @@
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils/dbc.h>
 
 #include "samplebuffer.h"
 #include "audioio-types.h"
@@ -60,7 +61,7 @@ void AUDIO_IO_BUFFERED::buffersize(long int samples,
 				   long int sample_rate) {
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) " +
 		label() + ": " +
-		" Setting buffer size [" +
+		"Setting buffer size [" +
 		kvu_numtostr(samples) + "," +
 		kvu_numtostr(sample_rate) + "].");
   
@@ -93,9 +94,8 @@ void AUDIO_IO_BUFFERED::buffersize(long int samples,
 
 void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf) {
   // --------
-  // require:
-  assert(iobuf_uchar_repp != 0);
-  assert(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
+  DBC_REQUIRE(iobuf_uchar_repp != 0);
+  DBC_REQUIRE(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
   // --------
   if (interleaved_channels() == true)
     sbuf->copy_to_buffer(iobuf_uchar_repp,
@@ -114,9 +114,8 @@ void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf) {
 
 void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   // --------
-  // require:
-  assert(iobuf_uchar_repp != 0);
-  assert(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
+  DBC_REQUIRE(iobuf_uchar_repp != 0);
+  DBC_REQUIRE(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
   // --------
   if (buffersize_rep != sbuf->length_in_samples()) {
     buffersize(sbuf->length_in_samples(), samples_per_second());
@@ -144,6 +143,12 @@ AUDIO_IO_DEVICE::AUDIO_IO_DEVICE(void)
 { }
 
 AUDIO_IO_DEVICE::~AUDIO_IO_DEVICE(void) { }
+
+bool AUDIO_IO_DEVICE::is_realtime_object(const AUDIO_IO* aobj) {
+  const AUDIO_IO_DEVICE* p = dynamic_cast<const AUDIO_IO_DEVICE*>(aobj);
+  if (p != 0) return(true);
+  return(false);
+}
 
 string AUDIO_IO_DEVICE::status(void) const {
   MESSAGE_ITEM mitem;
