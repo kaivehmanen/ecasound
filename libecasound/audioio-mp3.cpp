@@ -149,7 +149,9 @@ void MP3FILE::fork_mpg123(void) throw(ECA_ERROR&) {
       cmd.replace(cmd.find("%o"), 2, kvu_numtostr((long)(position_in_samples() / pcm_rep)));
     }
     ecadebug->msg(ECA_DEBUG::user_objects,cmd);
-    fork_child_for_read(cmd, label());
+    set_fork_command(cmd);
+    set_fork_file_name(label());
+    fork_child_for_read();
     if (child_fork_succeeded() != true) {
       throw(ECA_ERROR("ECA-MP3","Can't start mpg123-thread! Check that 'mpg123' is installed properly."));
     }
@@ -169,7 +171,9 @@ void MP3FILE::kill_lame(void) {
 void MP3FILE::fork_lame(void) throw(ECA_ERROR&) {
   if (!is_open()) {
     ecadebug->msg("(audioio-mp3) Starting to encode " + label() + " with lame.");
-    fork_child_for_write(MP3FILE::default_mp3_output_cmd, label());
+    set_fork_command(MP3FILE::default_mp3_output_cmd);
+    set_fork_file_name(label());
+    fork_child_for_write();
     if (child_fork_succeeded() != true) {
       throw(ECA_ERROR("AUDIOIO-MP3","Can't start lame-thread! Check that 'lame' is installed properly."));
     }

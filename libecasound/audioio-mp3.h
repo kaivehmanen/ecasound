@@ -7,7 +7,7 @@
 #include "audioio-forked-stream.h"
 
 /**
- *Interface for mp3 decoders and encoders that support 
+ * Interface for mp3 decoders and encoders that support 
  * input/output using standard streams. Defaults to
  * mpg123 and lame.
  * @author Kai Vehmanen
@@ -45,8 +45,8 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   
  public:
 
-  virtual string name(void) const { return("MP3 file"); }
-  virtual string description(void) const { return("Wrapper object that reads mp3s using mpg123 and writes them using lame."); }
+  virtual string name(void) const { return("Mp3 stream"); }
+  virtual string description(void) const { return("Interface for mp3 decoders and encoders that support input/output using standard streams."); }
   virtual bool locked_audio_format(void) const { return(true); }
 
   virtual void open(void);

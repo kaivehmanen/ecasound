@@ -76,12 +76,10 @@ void MIKMOD_INTERFACE::kill_mikmod(void) {
 
 void MIKMOD_INTERFACE::fork_mikmod(void) throw(ECA_ERROR&) {
   if (!is_open()) {
-    string cmd = MIKMOD_INTERFACE::default_mikmod_cmd;
-    ecadebug->msg(ECA_DEBUG::user_objects,cmd);
-    if (cmd.find("%s") != string::npos) {
-      cmd.replace(cmd.find("%s"), 2, kvu_numtostr(samples_per_second()));
-    }
-    fork_child_for_read(cmd, label());
+    set_fork_command(MIKMOD_INTERFACE::default_mikmod_cmd);
+    set_fork_file_name(label());
+    set_fork_sample_rate(samples_per_second());
+    fork_child_for_read();
     if (child_fork_succeeded() != true) {
       throw(ECA_ERROR("AUDIOIO-MIKMOD","Can't start mikmod-thread! Check that 'mikmod' is installed properly."));
     }

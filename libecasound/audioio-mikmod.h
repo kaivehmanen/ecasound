@@ -7,7 +7,8 @@
 #include "audioio-forked-stream.h"
 
 /**
- * Interface class for MikMod input. Uses FIFO pipes.
+ * Interface for module players that support i/o using standard streams. 
+ * Defaults to MikMod.
  * @author Kai Vehmanen
  */
 class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
@@ -36,7 +37,10 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
  public:
 
   virtual string name(void) const { return("MikMod tracker module"); }
+  virtual string description(void) const { return("Interface for module players that support i/o using standard streams."); }
+
   virtual int supported_io_modes(void) const { return(io_read); }
+  virtual bool supports_seeking(void) const { return(false); }
 
   virtual void open(void);
   virtual void close(void);

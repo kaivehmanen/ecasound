@@ -63,6 +63,7 @@ ecasound_audioio_include = 	\
 			audioio-ewf.h \
 			audioio-mp3.h \
 			audioio-mp3_impl.h \
+			audioio-ogg.h \
 			audioio-wave.h \
 			audioio.h \
 			audioio-raw.h \
@@ -176,6 +177,7 @@ ecasound_audioio_oss_src = audioio-oss.cpp
 ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-ewf.cpp \
 			audioio-mp3.cpp \
+			audioio-ogg.cpp \
 			audioio-wave.cpp \
 			audioio.cpp \
 			audioio-raw.cpp \

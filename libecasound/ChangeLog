@@ -5,9 +5,11 @@
 2000-10-07  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-error.h (all): classes made non-virtual, many other big changes
-	* audioio-mikmod.h (default_mikmod_path and default_mikmod_args
-	combined into default_mikmod_cmd)
-		
+	* audioio-mikmod.h (MIKMOD_INTERFACE): default_mikmod_path and 
+	default_mikmod_args combined into default_mikmod_cmd)
+	* audioio-timidity.h (all): a new file
+	* audioio.h (all): various changes and code cleanups
+			
 2000-09-24  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* audiofx_timebased.h (EFFECT_MODULATING_DELAY): constructor
