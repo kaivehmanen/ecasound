@@ -4,7 +4,7 @@
 
 ;; Author: Mario Lang <mlang@delysid.org>
 ;; Keywords: audio, ecasound, eci, comint, process, pcomplete
-;; Version: 0.5
+;; Version: 0.6
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -37,9 +37,44 @@
 ;;
 ;; * ecasound-ewf-mode, a mode for editing .ewf files.
 ;;
-;; NEWS:
+;; ChangeLog:
 ;;
-;; Since the last public release:
+;; Version 0.6:
+;;
+;; * Fix the problem when using eci-* commands while typing a command
+;; in the buffer (input area).  Now already typed text is preserved.
+;;
+;; * pcomplete/ecasound-aim-mode/cop-add for completing cop-add in
+;; the buffer directly.  Only glitch is that it doesn't add ':' and ','
+;; at the right place by default.  Works for -el: completion too now, can
+;; complete all ladspa plugin arguments (it gives help for them).
+;;
+;; * Completely integrated comint and ECI handling.  The main work
+;; is now done in the comint-output-filter-function `eci-output-filter'
+;; which sets `eci-return-value', `eci-return-type' and `eci-result'
+;; if a return value was parsed correctly.  Also calls `eci-message-hook'
+;; and `eci-error-hook'.
+;; This now allows us to be very flexible, i.e., user types a command
+;; manually on the ecasound prompt.  After he sent it you can use
+;; `eci-last-command' to test which command it was, and above variables to
+;; see what the result was.
+;; `eci-output-filter' now also does automatic handling of cop-register
+;; and ladspa-register result values (i.e., sets the buffer-local
+;; variables).
+;;
+;; * `eci-last-command' is used to track the last issued command via
+;; `comint-input-filter-functions' (`eci-input-filter').
+;; This allows us to catch useful results like those of *-registerr
+;; command even if the user issued them manually.
+;;
+;; * `eci-hide-output': If t, `eci-command' will delete the generated
+;; output so that it is not visible in the buffer.
+;; This is useful for fetching *-register info while completing without
+;; producing unwanted output...
+;; Only bug there is that everytime we do this, the window redisplays
+;; such that the prompt+point is in the first line (strange).
+;;
+;; Version 0.5:
 ;;
 ;; * ecasound.el, ecasound-ewf.el and eci.el were merged into a single
 ;; file, ecasound.el.  Code was integrated (ecasound-aim-mode uses eci-*
@@ -58,17 +93,21 @@
 ;;
 ;; Todo:
 ;;
-;; * Write eci-cop-register alike support for preset-register and
-;; ladspa-register.
+;; * Convince Kai to make NetECI look and behave exactly like ecasound -c.
+;; This would make it very easy to make neteci connections using the current
+;; code.
+;; * Cache things like c- and cs-list locally.  Same for engine-status.
+;; * Tweak the mode-line to include status informations like engine-status
+;; or inputs/outputs/chains or the current selected cs or chains.
+;; * Write eci-cop-register alike support for preset-register.
 ;; * Copy documentation for ECI commands into eci-* docstrings and menu
 ;; :help keywords.
 ;; * Expand the menu.
 ;; * Bind most important interactive functions in ecasound-aim-mode-map
 ;; (which layout to use?)
 ;; * Collapse all the duplicate code into a macro and an alist which
-;; defines the available eci commands.  (This seems rather complicated and
-;; is probably not worth the effort.
-
+;; defines the available eci commands.  (This seems rather complicated
+;; and is probably not worth the effort.
 ;;; Code:
 
 (require 'comint)
@@ -91,8 +130,7 @@ to ECI."
   :group 'ecasound
   :type '(repeat string))
 
-;(defcustom ecasound-program "/usr/bin/ecasound")
-(defcustom ecasound-program "/home/kaiv/bin/ecasound_debug"
+(defcustom ecasound-program "/usr/bin/ecasound"
   "*Ecasound's executable.
 This program is executed when the user invokes \\[ecasound]."
   :group 'ecasound
@@ -104,7 +142,7 @@ This program is executed when the user invokes \\[ecasound]."
   :type 'regexp)
 
 (defconst ecasound-iam-commands
-  '(;; GENERAL
+  '( ;; GENERAL
     "quit" "q"
     "start" "t"
     "stop" "s"
@@ -216,7 +254,7 @@ This program is executed when the user invokes \\[ecasound]."
     "ctrl-status"
     "ctrl-register"
     ;; OBJECT MAPS
-    ; Unimplemented currently...
+					; Unimplemented currently...
     )
   "Available Ecasound IAM commands.")
   
@@ -225,10 +263,10 @@ This program is executed when the user invokes \\[ecasound]."
     (set-keymap-parent map comint-mode-map)
     (define-key map "\t" 'pcomplete)
     (define-key map (kbd "M-\"") 'eci-command)
-;    (define-key map "\M-?"
-;      'comint-dynamic-list-filename-completions)
-;    (define-key map [menu-bar completion]
-;      (copy-keymap (lookup-key comint-mode-map [menu-bar completion])))
+					;    (define-key map "\M-?"
+					;      'comint-dynamic-list-filename-completions)
+					;    (define-key map [menu-bar completion]
+					;      (copy-keymap (lookup-key comint-mode-map [menu-bar completion])))
     map))
 
 (easy-menu-define
@@ -280,6 +318,8 @@ This program is executed when the user invokes \\[ecasound]."
   (set (make-local-variable 'comint-prompt-regexp)
        (set (make-local-variable 'paragraph-start)
 	    ecasound-prompt-regexp))
+  (add-hook 'comint-output-filter-functions 'eci-output-filter nil t)
+  (add-hook 'comint-input-filter-functions 'eci-input-filter nil t)
   (ecasound-iam-setup-pcomplete))
 
 ;;;###autoload
@@ -312,10 +352,44 @@ completing IAM commands. See `ecasound-iam-mode'.
 	  (while (accept-process-output
 		  (get-buffer-process (current-buffer))
 		  1))
-	  (if (string-match "^256 0 -" (eci-command "int-output-mode-wellformed"))
-	      (setq eci-int-output-mode-wellformed-flag t)))
+	  (if (not (eq (eci-command "int-output-mode-wellformed") t))
+	      (message "Failed to initialize properly")))
 	(pop-to-buffer ecasound-buffer))
     (pop-to-buffer buffer)))
+
+(defun ecasound-delete-last-in-and-output ()
+  "Delete the region of text generated by the last in and output.
+This is usually used to hide ECI requests from the user."
+  (delete-region
+   (save-excursion (goto-char comint-last-input-end) (forward-line -1)
+		   (unless (looking-at ecasound-prompt-regexp)
+		     (error "Assumed ecasound-prompt"))
+		   (point))
+   comint-last-output-start))
+
+(defun eci-input-filter (string)
+  (if (string-match "^[[:space:]]*\\([a-zA-Z-]+\\)[\n\t ]+" string)
+      (setq eci-last-command (match-string-no-properties 1 string))))
+
+(defun eci-output-filter (string)
+  (let ((start comint-last-input-end)
+	(end (process-mark (get-buffer-process (current-buffer)))))
+    (goto-char start)
+    (if (re-search-forward ecasound-prompt-regexp end t)
+      (let ((result (eci-parse start (progn (forward-char -1)
+					    (beginning-of-line)
+					    (point)))))
+	(when result
+	  (setq eci-result
+		(cond
+		 ((string= eci-last-command "cop-register")
+		  (eci-process-cop-register result))
+		 ((string= eci-last-command "ladspa-register")
+		  (eci-process-ladspa-register result))
+		 ((string= eci-last-command "int-output-mode-wellformed")
+		  (if (eq result t)
+		      (setq eci-int-output-mode-wellformed-flag t)))
+		 (t result))))))))
 
 ;;; Ecasound-iam-mode pcomplete functions
 
@@ -408,6 +482,15 @@ for splitting."
   (message "Returns the name of currently connected chainsetup.")
   (throw 'pcompleted t))
 
+(defun eci-register-find-arg (arg register)
+  (let (result)
+    (while register
+      (if (string= (nth 1 (car register)) arg)
+	  (setq result (nth 2 (car register))
+		register nil))
+      (setq register (cdr register)))
+    result))
+
 (defun pcomplete/ecasound-iam-mode/cs-rewind ()
   (message "Rewinds the current chainsetup position by `time-in-seconds` seconds.")
   (throw 'pcompleted t))
@@ -419,6 +502,36 @@ for splitting."
 
 (defun pcomplete/ecasound-iam-mode/ao-add ()
   (pcomplete-here (ecasound-input-file-or-device)))
+
+(defun pcomplete/ecasound-iam-mode/cop-add ()
+  (unless eci-cop-register
+    (eci-cop-register))
+  (unless eci-ladspa-register
+    (eci-ladspa-register))
+  (cond
+   ((= pcomplete-last 1)
+    (pcomplete-here (mapcar (lambda (elt) (nth 1 elt)) eci-cop-register)))
+   ((> pcomplete-last 1)
+    (if (and (= pcomplete-last 2)
+	     (string= (pcomplete-arg) "-el"))
+	    (progn (pcomplete-next-arg)
+		   (pcomplete-here (mapcar (lambda (elt) (nth 1 elt))
+					   eci-ladspa-register)))
+      (if (and (string= (pcomplete-arg) "-el")
+	       (> pcomplete-last 2))
+	      (let* ((args (eci-register-find-arg (pcomplete-arg -1)
+						  eci-ladspa-register))
+		     (arg (nth (- pcomplete-last 3) args)))
+		(if arg
+		    (message "%s" arg)
+		  (message "No help available")))
+	(let* ((args (eci-register-find-arg (pcomplete-arg)
+					    eci-cop-register))
+	       (arg (nth (- pcomplete-last 2) args)))
+	  (if arg
+	      (message "%s" arg)
+	    (message "No help available")))))))
+  (throw 'pcompleted t))
 
 
 ;;; ECI --- The Ecasound Control Interface
@@ -464,6 +577,13 @@ Arguments are LOGLEVEL and STRING."
   "Face used to highlight errors."
   :group 'eci)
 
+(defvar eci-hide-output nil
+  "If non-nil, `eci-command' will remove the output generated.")
+
+(defvar eci-last-command nil
+  "Last command sent to the ecasound process.")
+(make-variable-buffer-local 'eci-last-command)
+
 (defvar eci-return-type nil
   "The return type of the last received return value as a string.")
 (make-variable-buffer-local 'eci-return-type)
@@ -471,6 +591,10 @@ Arguments are LOGLEVEL and STRING."
 (defvar eci-return-value nil
   "The last received return value as a string.")
 (make-variable-buffer-local 'eci-return-value)
+
+(defvar eci-result nil
+  "The last received return value as a Lisp Object.")
+(make-variable-buffer-local 'eci-result)
 
 (defvar eci-int-output-mode-wellformed-flag nil
   "Indicates if int-output-mode-wellformed was successfully initialized.")
@@ -482,6 +606,14 @@ It has the form
  ((NAME PREFIX (ARGNAME ...)) ...)
 
 Use `eci-cop-register' to fill this list with data.")
+(make-variable-buffer-local 'eci-cop-register)
+
+(defvar eci-ladspa-register nil
+  "If non-nil, contains the list of registered ladspa plugins.
+It has the form
+ ((FULL-NAME NAME (ARGNAME ...)) ...)
+
+Use `eci-ladspa-register' to fill this list with data.")
 (make-variable-buffer-local 'eci-cop-register)
 
 (defun eci-init ()
@@ -530,27 +662,32 @@ output via `eci-parse' and return a meaningful value."
 		    (t (error
 			"Could not determine suitable ecasound process")))))
     (with-current-buffer (process-buffer proc)
-      (goto-char (process-mark proc))
-      (insert (format "%s" command))
-      (comint-send-input)
-      (let ((here (point)))
-	(when (accept-process-output proc 2)
-	  (goto-char here)
-	  (while (not (re-search-forward ecasound-prompt-regexp nil t))
-	    (accept-process-output proc 0 50)
-	    (goto-char here))
-	  (if eci-int-output-mode-wellformed-flag
-	      (eci-parse here (save-excursion
-				(forward-char -1) (beginning-of-line)
-				(point)))
-	    ;; Backward compatibility.  Just return the string
-	    (buffer-substring-no-properties here (save-excursion
+      (let ((moving (= (point) (point-max))))
+	(goto-char (process-mark proc))
+	(insert (format "%s" command))
+	(let (comint-eol-on-send)
+	  (comint-send-input))
+	(let ((here (point)) result)
+	  (when (accept-process-output proc 2)
+	    (goto-char here)
+	    (while (not (re-search-forward ecasound-prompt-regexp nil t))
+	      (accept-process-output proc 0 50)
+	      (goto-char here))
+	    (setq result
+		  (if eci-int-output-mode-wellformed-flag
+		      eci-result
+		    ;; Backward compatibility.  Just return the string
+		    (buffer-substring-no-properties here (save-excursion
 					; Strange hack to avoid fields
-						   (forward-char -1)
-						   (beginning-of-line)
-						   (if (not (= here (point)))
-						       (forward-char -1))
-						   (point)))))))))
+							   (forward-char -1)
+							   (beginning-of-line)
+							   (if (not (= here (point)))
+							       (forward-char -1))
+							   (point)))))
+	    (when (and eci-hide-output result)
+	      (ecasound-delete-last-in-and-output))
+	    (if moving (goto-char (point-max)))
+	    result))))))
 
 (defun eci-print-message (level msg)
   "Simple interactive function which prints every message regardless
@@ -596,8 +733,8 @@ Return an appropriate lisp value if possible."
 	      (eci-message loglevel msg)
 	    (setq value msg
 		  type return-type))))
-      (unless (= (point) end)
-	(error "Parser out of sync"))
+;      (unless (= (point) end)
+;	(error "Parser out of sync"))
       (when type
 	(setq eci-return-value value eci-return-type type)
 	(cond
@@ -840,24 +977,48 @@ If argument CHAINS is a list, its elements are concatenated with ','."
   (interactive "nValue for Chain operator parameter: ")
   (eci-command (format "copp-set %f" value buffer-or-process)))
 
-(defun eci-cop-register ()
-  (let (result (cops (split-string (eci-command "cop-register") "\n")))
+(defun eci-process-cop-register (string)
+  (let (result (cops (split-string string "\n")))
     (while cops
-      (if (string-match "^[0-9]+\\. \\([^,]+\\), \\(-[a-zA-Z]+:\\(.*\\)\\)" (car cops))
+      (if (string-match "^[0-9]+\\. \\([^,]+\\), \\(-[a-zA-Z]+\\):\\(.*\\)" (car cops))
 	  (setq
 	   result
 	   (cons
 	    (list (match-string-no-properties 1 (car cops))
-		  (substring (car cops) (match-beginning 2)
-			                (match-beginning 3))
+		  (match-string-no-properties 2 (car cops))
 		  (split-string (match-string-no-properties 3 (car cops)) ","))
 	    result)))
       (setq cops (cdr cops)))
     (set (make-local-variable 'eci-cop-register)
 	 result)))
 
+(defun eci-process-ladspa-register (string)
+  (let (result)
+    (with-temp-buffer
+      (insert string)
+    (goto-char (point-min))
+    (while (re-search-forward "[0-9]+\\. \\(.*\\)\n\t-el:\\([^,\n]+\\),\\(.*\\)" nil t)
+      (let ((full-name (match-string-no-properties 1))
+	    (name (match-string-no-properties 2))
+	    (args (split-string (concat "'," (match-string-no-properties 3)
+					",'") "','")))
+	(setq result (cons (list full-name name args) result)))))
+    (set (make-local-variable 'eci-ladspa-register)
+	 (nreverse result))))
+
+(defun eci-cop-register ()
+  (interactive)
+  (let ((eci-hide-output (not (interactive-p))))
+    (eci-command "cop-register")))
+
+(defun eci-ladspa-register ()
+  (interactive)
+  (let ((eci-hide-output (not (interactive-p))))
+    (eci-command "ladspa-register")))
+
 (defun ecasound-cop-add ()
   "Interactively prompt for the name and argument of a chain operator to add."
+  ;; FIXME, ask for ladspa plugins too.
   (interactive)
   (unless eci-cop-register
     (eci-cop-register))
