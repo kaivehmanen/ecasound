@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-session.cpp: Ecasound runtime setup and parameters.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -85,9 +85,11 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)
 
   if (chainsetups_rep.size() == 0) {
     ECA_CHAINSETUP* comline_setup = new ECA_CHAINSETUP(csoptions);
+
     if (comline_setup->interpret_result() != true) {
       string temp = comline_setup->interpret_result_verbose();
       delete comline_setup;
+      // std::cerr << "EXCEPTION DETECTED:'" << temp << "'. Core dump follows if you've compiled with gcc-3.3...\n";
       throw(ECA_ERROR("ECA-SESSION", temp));
     }
     else {

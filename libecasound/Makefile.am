@@ -194,6 +194,7 @@ ecasound_test_framework_include = \
 			eca-test-case.h \
 			eca-chainsetup_test.h \
 			eca-control_test.h \
+			eca-session_test.h \
 			eca-object-factory_test.h \
 			eca-sample-conversion_test.h \
 			audioio_test.h \

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-test-repository.cpp: A testing subsystem implemented as a
 //                          singleton class.
-// Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2002,2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ ECA_TEST_REPOSITORY& ECA_TEST_REPOSITORY::instance(void)
  */
 
 #include "eca-control_test.h"
+#include "eca-session_test.h"
 #include "eca-object-factory_test.h"
 #include "eca-sample-conversion_test.h"
 
@@ -60,6 +61,7 @@ ECA_TEST_REPOSITORY& ECA_TEST_REPOSITORY::instance(void)
  */
 ECA_TEST_REPOSITORY::ECA_TEST_REPOSITORY(void)
 {
+  test_cases_rep.push_back(new ECA_SESSION_TEST());
   test_cases_rep.push_back(new ECA_CONTROL_TEST());
   test_cases_rep.push_back(new ECA_OBJECT_FACTORY_TEST());
   test_cases_rep.push_back(new ECA_SAMPLE_CONVERSION_TEST());

@@ -60,7 +60,6 @@ void ECA_CONTROL_TEST::do_run_chainsetup_creation(void)
   ECA_CONTROL *ectrl = new ECA_CONTROL(esession);
 
   int iterations = 127;
-  long int test = 5000000;
 
   for(int i = 0; i < iterations; i++) {
     cerr << "libecasound_tester: do_run_chainsetup_creation() iteration " 
