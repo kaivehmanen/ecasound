@@ -6,6 +6,9 @@
 
 #include "eca-logger.h"
 #include "eca-test-repository.h"
+#include "eca-test-repository.cpp"
+#include "eca-test-case.h"
+#include "eca-test-case.cpp"
 
 #include "ecatestsuite.h"
 
@@ -21,14 +24,14 @@ int main(int argc, char *argv[]) {
   /**
    * Uncomment to enable libecasound log messages
    */
-  ECA_LOGGER::instance().set_log_level_bitmask(0xff);
+  // ECA_LOGGER::instance().set_log_level_bitmask(0x63);
 
   ECA_TEST_REPOSITORY& repo = ECA_TEST_REPOSITORY::instance();
 
   repo.run();
 
   if (repo.success() != true) {
-    cerr << "---" << endl <<; 
+    cerr << "---" << endl; 
     cerr << repo.failures().size() << " failed test cases ";
     cerr << "in ECA_TEST_REPOSITORY:" << endl << endl;
 
