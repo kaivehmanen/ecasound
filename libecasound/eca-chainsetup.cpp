@@ -1658,6 +1658,10 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
 	  }
 	}
       }
+
+      /* 8. calculate chainsetup length */
+      calculate_processing_length();
+
     }
     is_enabled_rep = true;
   }
@@ -1721,6 +1725,26 @@ void ECA_CHAINSETUP::disable(void)
   // --------
   DBC_ENSURE(is_enabled() != true);
   // --------
+}
+
+/**
+ * Updates the chainsetup processing length based on 
+ * 1) requested length, 2) lengths of individual 
+ * input objects, and 3) looping settings.
+ */
+void ECA_CHAINSETUP::calculate_processing_length(void)
+{
+  long int max_input_length = 0;
+  for(unsigned int n = 0; n < inputs.size(); n++) {
+    if (inputs[n]->length_in_samples() > max_input_length)
+      max_input_length = inputs[n]->length_in_samples();
+  }
+  
+  if (length_set() != true) {
+    if (max_input_length > 0) {
+      set_length_in_samples(max_input_length);
+    }
+  }
 }
 
 /**

@@ -99,7 +99,8 @@ class ECA_ENGINE {
     // --
     ep_rewind,
     ep_forward,
-    ep_setpos
+    ep_setpos,
+    ep_setpos_live_samples
   };
   typedef enum Engine_command Engine_command_t;
 
@@ -135,13 +136,15 @@ class ECA_ENGINE {
   void update_engine_state(void);
   void engine_iteration(void);
 
+  void prepare_operation(void);
   void start_operation(void);
   void stop_operation(void);
 
   void update_cache_chain_connections(void);
   void update_cache_latency_values(void);
 
-  bool is_active(void) const;
+  bool is_prepared(void) const;
+  bool is_running(void) const;
   bool batch_mode(void) const { return(batchmode_enabled_rep); }
 
   SAMPLE_SPECS::sample_pos_t current_position_in_samples(void) const;
@@ -169,7 +172,8 @@ private:
   bool batchmode_enabled_rep;
   bool processing_range_set_rep;
 
-  bool active_rep;
+  bool prepared_rep;
+  bool running_rep;
   bool was_running_rep;
   bool driver_local;
 
@@ -249,6 +253,7 @@ private:
   void start_servers(void);
   void stop_servers(void);
 
+  void prepare_realtime_objects(void);
   void start_realtime_objects(void);
   void reset_realtime_devices(void);
 
@@ -259,6 +264,7 @@ private:
 
   void set_position(double seconds);
   void set_position(int seconds) { set_position((double)seconds); }
+  void set_position_samples(SAMPLE_SPECS::sample_pos_t samples);
   void change_position(double seconds);
 
   void prehandle_control_position(void);
@@ -281,7 +287,6 @@ private:
   void init_driver(void);
   void init_prefill(void);
   void init_servers(void);
-  void init_processing_length(void);
   void init_chains(void);
   void cleanup(void);
 

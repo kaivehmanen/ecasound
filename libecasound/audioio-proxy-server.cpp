@@ -243,7 +243,7 @@ static void timed_wait_print_result(int result, const string& tag, bool verbose)
 {
   ECA_LOGGER::Msg_level_t level = ECA_LOGGER::info;
   if (verbose != true)
-    level = ECA_LOGGER::system_objects;
+    level = ECA_LOGGER::continuous;
 
   if (result != 0) {
     if (result == -ETIMEDOUT)

@@ -47,7 +47,7 @@ class ECA_ENGINE_DRIVER {
   /**
    * Signals that driver should stop operation.
    * Once stopped, driver must not call
-   * any ECA_ENGINE functions.
+   * any non-const ECA_ENGINE functions.
    */
   virtual void stop(void) = 0;
 

@@ -363,6 +363,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   int number_of_attached_chains_to_output(AUDIO_IO* aiod) const;
   void add_chain_helper(const string& name);
   void enable_audio_object_helper(AUDIO_IO* aobj) const;
+  void calculate_processing_length(void);
 
   /*@}*/
 

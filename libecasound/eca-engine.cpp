@@ -114,6 +114,7 @@ void ECA_ENGINE_DEFAULT_DRIVER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 
 void ECA_ENGINE_DEFAULT_DRIVER::start(void)
 {
+  engine_repp->prepare_operation();
   engine_repp->start_operation();
 }
 
@@ -124,7 +125,8 @@ void ECA_ENGINE_DEFAULT_DRIVER::stop(void)
 
 void ECA_ENGINE_DEFAULT_DRIVER::exit(void)
 {
-  if (engine_repp->is_active() == true) engine_repp->stop_operation();
+  if (engine_repp->is_prepared() == true ||
+      engine_repp->is_running() == true) engine_repp->stop_operation();
   exit_request_rep = true;
 
   /* no need to block here as the next 
@@ -180,7 +182,7 @@ ECA_ENGINE::~ECA_ENGINE(void)
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) ECA_ENGINE destructor!");
 
   if (csetup_repp != 0) {
-    if (is_active() == true) {
+    if (is_prepared() == true) {
       driver_repp->exit();
     }
     cleanup();
@@ -355,8 +357,11 @@ ECA_ENGINE::Engine_status_t ECA_ENGINE::status(void) const
   if (outputs_finished_rep > 0) 
     return(ECA_ENGINE::engine_status_error);
 
-  if (is_active() == true) 
+  if (is_running() == true) 
     return(ECA_ENGINE::engine_status_running);
+
+  if (is_prepared() == true) 
+    return(ECA_ENGINE::engine_status_stopped);
 
   return(ECA_ENGINE::engine_status_stopped);
 }
@@ -427,9 +432,9 @@ void ECA_ENGINE::update_engine_state(void)
   if (inputs_not_finished_rep == 0 && 
       outputs_finished_rep == 0 && 
       finished_rep != true) {
-    if (is_active() == true) {
+    if (is_running() == true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) all inputs finished - stop");
-      // we are not allowed to callr request_stop here
+      // we are not allowed to call request_stop here
       // request_stop();
       command(ECA_ENGINE::ep_stop, 0.0f);
     }
@@ -440,7 +445,7 @@ void ECA_ENGINE::update_engine_state(void)
   // Check whether some output has raised an error
 
   if (status() == ECA_ENGINE::engine_status_error) {
-    if (is_active() == true) {
+    if (is_running() == true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) output error - stop");
       // we are not allowed to call request_stop here
       // request_stop();
@@ -456,7 +461,7 @@ void ECA_ENGINE::update_engine_state(void)
  */
 void ECA_ENGINE::engine_iteration(void)
 {
-  DBC_CHECK(is_active() == true);
+  DBC_CHECK(is_running() == true);
   
   PROFILE_ENGINE_STATEMENT(impl_repp->looptimer_rep.start(); impl_repp->looptimer_range_rep.start());
   
@@ -478,7 +483,8 @@ void ECA_ENGINE::engine_iteration(void)
 }
 
 /**
- * Starts all realtime devices and servers.
+ * Prepares engine for operation. Prepares all 
+ * realtime devices and starts servers.
  * 
  * This function should be called by the
  * driver before it starts iterating the 
@@ -487,14 +493,16 @@ void ECA_ENGINE::engine_iteration(void)
  * context: must not be run at the same time
  *          as engine_iteration()
  *
- * @pre is_active() != true
- * @post is_active() == true
+ * @pre is_running() != true
+ * @pre is_prepared() != true
+ * @post is_prepared() == true
  * @post status() == ECA_ENGINE::engine_status_running
  */
-void ECA_ENGINE::start_operation(void)
+void ECA_ENGINE::prepare_operation(void)
 {
   // ---
-  DBC_REQUIRE(is_active() != true);
+  DBC_REQUIRE(is_running() != true);
+  DBC_REQUIRE(is_prepared() != true);
   // ---
 
   /* 1. acquire rt-lock for chainsetup and samplebuffers */
@@ -523,16 +531,47 @@ void ECA_ENGINE::start_operation(void)
   /* 4. start subsystem servers */
   start_servers();
 
-  /* 5. start realtime devices */
-  start_realtime_objects();
+  /* 5. prepare rt objects */
+  prepare_realtime_objects();
 
   /* 6. change engine to active and running */
   samples_since_trigger_rep = 0;
-  active_rep = true;
+  prepared_rep = true;
   init_engine_state();
 
   // ---
-  DBC_ENSURE(is_active() == true);
+  DBC_ENSURE(is_prepared() == true);
+  DBC_ENSURE(status() == ECA_ENGINE::engine_status_stopped);
+  // ---
+}
+
+/**
+ * Starts engine operation.
+ * 
+ * This function should be called by the
+ * driver just before it starts iterating the 
+ * engine's main loop.
+ *
+ * context: must not be run at the same time
+ *          as engine_iteration()
+ *
+ * @pre is_prepared() == true
+ * @pre is_running() != true
+ * @post is_running() == true
+ * @post status() == ECA_ENGINE::engine_status_running
+ */
+void ECA_ENGINE::start_operation(void)
+{
+  // ---
+  DBC_REQUIRE(is_prepared() == true);
+  DBC_REQUIRE(is_running() != true);
+  // ---
+
+  start_realtime_objects();
+  running_rep = true;
+
+  // ---
+  DBC_ENSURE(is_running() == true);
   DBC_ENSURE(status() == ECA_ENGINE::engine_status_running);
   // ---
 }
@@ -547,19 +586,24 @@ void ECA_ENGINE::start_operation(void)
  * context: must not be run at the same time
  *          as engine_iteration()
  *
- * @pre is_active() == true
- * @post is_active() != true
+ * @pre is_running() == true
+ * @post is_running() != true
+ * @post is_prepared() != true
  */
 void ECA_ENGINE::stop_operation(void)
 {
   // ---
-  DBC_REQUIRE(is_active() == true);
+  DBC_REQUIRE(is_prepared() == true);
   // ---
+
+  running_rep = false;
 
   /* stop realtime devices */
   for (unsigned int adev_sizet = 0; adev_sizet != realtime_objects_rep.size(); adev_sizet++) {
     if (realtime_objects_rep[adev_sizet]->is_running() == true) realtime_objects_rep[adev_sizet]->stop();
   }
+
+  prepared_rep = false;
 
   /* release samplebuffer rt-locks */
   for(size_t n = 0; n < cslots_rep.size(); n++) {
@@ -585,22 +629,32 @@ void ECA_ENGINE::stop_operation(void)
   /* signals wait_for_stop() that engine operation has stopped */
   signal_stop();
 
-  active_rep = false;
-
   // ---
-  DBC_ENSURE(is_active() != true);
+  DBC_ENSURE(is_running() != true);
+  DBC_ENSURE(is_prepared() != true);
   // ---
 }
 
 /**
  * Whether engine has been actived 
- * with start_processing().
+ * with prepare_operation().
  *
  * context: no limitations
  */
-bool ECA_ENGINE::is_active(void) const
+bool ECA_ENGINE::is_prepared(void) const
 {
-  return(active_rep);
+  return(prepared_rep);
+}
+
+/**
+ * Whether engine has been started
+ * with start_operation().
+ *
+ * context: no limitations
+ */
+bool ECA_ENGINE::is_running(void) const
+{
+  return(running_rep);
 }
 
 /**********************************************************************
@@ -645,7 +699,7 @@ void ECA_ENGINE::request_start(void)
   DBC_REQUIRE(status() != engine_status_running);
   // ---
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Request start");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-engine) Request start");
 
   // --
   // start the driver
@@ -666,7 +720,7 @@ void ECA_ENGINE::request_stop(void)
   DBC_REQUIRE(status() == engine_status_running);
   // ---
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Request stop");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-engine) Request stop");
 
   driver_repp->stop();
 }
@@ -752,7 +806,7 @@ void ECA_ENGINE::stop_servers(void)
   }
 }
 
-void ECA_ENGINE::start_realtime_objects(void)
+void ECA_ENGINE::prepare_realtime_objects(void)
 {
   /* 1. prepare objects */
   for (unsigned int n = 0; n < realtime_objects_rep.size(); n++) {
@@ -769,8 +823,11 @@ void ECA_ENGINE::start_realtime_objects(void)
       }
     }
   }
+}
 
-  /* 3. start all realtime devices */
+void ECA_ENGINE::start_realtime_objects(void)
+{
+  /* 1. start all realtime devices */
   for (unsigned int n = 0; n < realtime_objects_rep.size(); n++)
     realtime_objects_rep[n]->start();
 }
@@ -831,6 +888,17 @@ void ECA_ENGINE::set_position(double seconds)
 }
 
 /**
+ * Seeks to position 'samples'. Affects all input and 
+ * outputs objects, and the chainsetup object position.
+ */
+void ECA_ENGINE::set_position_samples(SAMPLE_SPECS::sample_pos_t samples)
+{
+  // conditional_stop();
+  csetup_repp->seek_position_in_samples(samples);
+  // conditional_start();
+}
+
+/**
  * Seeks to position 'current+seconds'. Affects all input and 
  * outputs objects, and the chainsetup object position.
  */
@@ -849,7 +917,7 @@ void ECA_ENGINE::prehandle_control_position(void)
 {
   csetup_repp->change_position_in_samples(buffersize());
   if (csetup_repp->is_over() == true &&
-      processing_range_set_rep == true) {
+      csetup_repp->length_set() == true) {
     int buffer_remain = csetup_repp->position_in_samples() -
                         csetup_repp->length_in_samples();
     for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
@@ -867,7 +935,7 @@ void ECA_ENGINE::prehandle_control_position(void)
 void ECA_ENGINE::posthandle_control_position(void)
 {
   if (csetup_repp->is_over() == true &&
-      processing_range_set_rep == true) {
+      csetup_repp->length_set() == true) {
     if (csetup_repp->looping_enabled() == true) {
       inputs_not_finished_rep = 1;
       csetup_repp->seek_position_in_samples(0);
@@ -946,6 +1014,7 @@ void ECA_ENGINE::interpret_queue(void)
     case ep_rewind: { change_position(- item.second); break; }
     case ep_forward: { change_position(item.second); break; }
     case ep_setpos: { set_position(item.second); break; }
+    case ep_setpos_live_samples: { set_position_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(item.second)); break; }
     }
     impl_repp->command_queue_rep.pop_front();
   }
@@ -983,7 +1052,6 @@ void ECA_ENGINE::init_connection_to_chainsetup(void)
   init_driver();
   init_prefill();
   init_servers();
-  init_processing_length();
   init_chains();
   create_cache_object_lists();
   update_cache_chain_connections();
@@ -1035,34 +1103,6 @@ void ECA_ENGINE::init_servers(void)
     use_midi_rep = true;
     ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Initializing MIDI-server.");
     csetup_repp->midi_server_repp->init();
-  }
-}
-
-/**
- * Sets the chainsetup processing length based on 
- * 1) requested length, 2) lengths of individual 
- * input objects, and 3) looping settings.
- */
-void ECA_ENGINE::init_processing_length(void)
-{
-  long int max_input_length = 0;
-  for(unsigned int n = 0; n < inputs_repp->size(); n++) {
-    if (csetup_repp->inputs[n]->length_in_samples() > max_input_length)
-      max_input_length = csetup_repp->inputs[n]->length_in_samples();
-  }
-  
-  processing_range_set_rep = false;
-
-  if (csetup_repp->length_set() == true) {
-    processing_range_set_rep = true;
-  }
-  else {
-    if (csetup_repp->looping_enabled() == true) {
-      if (max_input_length > 0) {
-	csetup_repp->set_length_in_samples(max_input_length);
-	processing_range_set_rep = true;
-      }
-    }
   }
 }
 
@@ -1402,7 +1442,6 @@ void ECA_ENGINE::chain_processing(void)
   else
     (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_processing(true);
 }
-
 
 /**********************************************************************
  * Engine implementation - Obsolete functions

@@ -35,6 +35,9 @@ class AUDIO_IO_JACK_MANAGER : public AUDIO_IO_MANAGER,
 
   friend int eca_jack_process(jack_nframes_t nframes, void *arg);
   friend void eca_jack_process_engine_iteration(jack_nframes_t nframes, void *arg);
+  friend void eca_jack_process_mute(jack_nframes_t nframes, void *arg);
+  friend void eca_jack_process_timebase_master(jack_nframes_t nframes, void *arg);
+  friend void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg);
   friend int eca_jack_bufsize (jack_nframes_t nframes, void *arg);
   friend int eca_jack_srate (jack_nframes_t nframes, void *arg);
   friend void eca_jack_shutdown (void *arg);
@@ -138,7 +141,8 @@ public:
   void write_samples(int client_id, void* target_buffer, long int samples);
 
   bool is_open(void) const { return(open_rep); }
-  bool is_connection_active(void) const { return(connection_active_rep); }
+  bool is_connection_active(void) const { return(activated_rep); }
+  bool is_running(void) const;
 
   long int buffersize(void) const;
   SAMPLE_SPECS::sample_rate_t samples_per_second(void) const;
@@ -150,9 +154,11 @@ private:
   static void get_total_port_latency(jack_client_t* client, 
 				     eca_jack_port_data_t* ports);
 
-  void open_connection(void);
-  void close_connection(void);
-  void stop_connection(void);
+  void open_server_connection(void);
+  void close_server_connection(void);
+
+  void activate_server_connection(void);
+  void deactivate_server_connection(void);
 
   void set_node_connection(eca_jack_node_t* node, bool connect);
   void connect_all_nodes(void);
@@ -168,18 +174,20 @@ private:
   pthread_mutex_t exit_mutex_rep;
   pthread_cond_t stop_cond_rep;
   pthread_mutex_t stop_mutex_rep;
-  pthread_mutex_t lock_rep;
+  pthread_mutex_t engine_mod_lock_rep;
 
   Operation_mode_t mode_rep;
 
   bool open_rep;
-  bool connection_active_rep;
+  bool activated_rep;
+  bool running_rep;
 
   bool shutdown_request_rep;
   bool exit_request_rep;
 
   int open_clients_rep;
   int last_node_id_rep;
+  int trace_position_count_rep;
 
   list<eca_jack_node_t*> node_list_rep;
   vector<eca_jack_port_data_t*> inports_rep;
