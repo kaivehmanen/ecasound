@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 301101) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 051201) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.3 *-
 
-??112001 (v2.1dev5)
+05122001 (v2.1dev5)
 	- added: docs - Documentation/manpages.html
 	- added: ecalength - -su option added [smassy]
 	- added: experimental support for largefiles (>2GB); 
