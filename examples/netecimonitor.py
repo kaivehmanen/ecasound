@@ -56,6 +56,7 @@ def main():
 
         while 1:
             try:
+                stdscr.erase()
                 stdscr.addstr(0, 0, "NetECI Monitor v20020630-2\n\n")
 
                 # FIXME: kaataa libecasoundin
