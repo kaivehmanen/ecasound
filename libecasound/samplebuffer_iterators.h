@@ -39,7 +39,7 @@ class SAMPLE_ITERATOR {
   /**
    * Returns a pointer to the current sample.
    */
-  inline SAMPLE_SPECS::sample_type* current(void) { return(&(target->buffer[channel_index][index])); }
+  inline SAMPLE_SPECS::sample_t* current(void) { return(&(target->buffer[channel_index][index])); }
 };
 
 /**
@@ -84,7 +84,7 @@ class SAMPLE_ITERATOR_CHANNEL {
   /**
    * Returns a pointer to the current sample.
    */
-  inline SAMPLE_SPECS::sample_type* current(void) { return(&target->buffer[channel_index][index]); }
+  inline SAMPLE_SPECS::sample_t* current(void) { return(&target->buffer[channel_index][index]); }
 };
 
 /**
@@ -123,7 +123,7 @@ class SAMPLE_ITERATOR_CHANNELS {
   /**
    * Returns a pointer to the current sample.
    */
-  inline SAMPLE_SPECS::sample_type* current(void) { return(&(target->buffer[channel_index][index])); }
+  inline SAMPLE_SPECS::sample_t* current(void) { return(&(target->buffer[channel_index][index])); }
 
   /**
    * Returns current channel index (starting from 0)
@@ -166,7 +166,7 @@ class SAMPLE_ITERATOR_INTERLEAVED {
   /**
    * Returns a pointer to the current sample.
    */
-  inline SAMPLE_SPECS::sample_type* current(int channel) { return(&target->buffer[channel][index]); }
+  inline SAMPLE_SPECS::sample_t* current(int channel) { return(&target->buffer[channel][index]); }
 };
 
 #endif

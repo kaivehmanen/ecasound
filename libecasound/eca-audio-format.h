@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "sample-specs.h"
 #include "eca-error.h"
 
 /**
@@ -70,17 +71,17 @@ class ECA_AUDIO_FORMAT {
   /**
    * Sampling rate in samples per second.
    */
-  long int samples_per_second(void) const { return(srate_rep); }
+  SAMPLE_SPECS::sample_rate_t samples_per_second(void) const { return(srate_rep); }
 
   /**
    * Sampling rate in bytes per second (data transfer rate)
    */
-  long int bytes_per_second(void) const { return(srate_rep * align_rep * channels_rep); }
+  int bytes_per_second(void) const { return(srate_rep * align_rep * channels_rep); }
 
   /** 
    * Number of channels
    */
-  int channels(void) const { return(channels_rep); }
+  SAMPLE_SPECS::channel_t channels(void) const { return(channels_rep); }
 
   /**
    * Are channels interleaved?
@@ -92,7 +93,7 @@ class ECA_AUDIO_FORMAT {
    */
   ECA_AUDIO_FORMAT audio_format(void) const;
 
-  void set_channels(int v);
+  void set_channels(SAMPLE_SPECS::channel_t v);
   void set_sample_format(Sample_format v) throw(ECA_ERROR&);
   void set_samples_per_second(long int v);
   void toggle_interleaved_channels(bool v);
@@ -134,9 +135,9 @@ class ECA_AUDIO_FORMAT {
   void convert_to_host_byte_order(void);
 
   bool ileaved_rep;
-  int channels_rep;
-  long int srate_rep;
-  int align_rep;            // the size of one sample value in bytes
+  SAMPLE_SPECS::channel_t channels_rep;
+  SAMPLE_SPECS::sample_rate_t srate_rep;
+  size_t align_rep;            // the size of one sample value in bytes
   Sample_format sfmt_rep;
 };
 

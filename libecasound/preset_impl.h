@@ -25,7 +25,7 @@ class PRESET_impl {
   vector<string> preset_param_names_rep;
 
   vector<vector<int> > slave_param_indices_rep;
-  vector<vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > > slave_param_objects_rep;
+  vector<vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_t>* > > slave_param_objects_rep;
 
   vector<GENERIC_CONTROLLER*> gctrls_rep;
   vector<OPERATOR::PARAM_DESCRIPTION*> pardesclist_rep;

@@ -55,7 +55,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels, sr
 
   buffer.resize(channels);
   for(size_t n = 0; n < buffer.size(); n++) {
-    buffer[n] = new sample_type [reserved_samples_rep * sizeof(sample_type)];
+    buffer[n] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
     for(buf_size_t m = 0; m < reserved_samples_rep; m++) {
       buffer[n][m] = SAMPLE_SPECS::silent_value;
     }
@@ -87,8 +87,8 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
   buffer.resize(x.buffer.size());
 
   for(size_t n = 0; n < buffer.size(); n++) {
-    buffer[n] = new sample_type [reserved_samples_rep * sizeof(sample_type)];
-    memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_type));
+    buffer[n] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
+    memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_t));
   }
 
   impl_repp->old_buffer_repp = 0;
@@ -122,7 +122,7 @@ SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x) {
       buffer.resize(x.buffer.size());
 
       for(size_t n = 0; n < buffer.size(); n++) {
-	buffer[n] = new sample_type [reserved_samples_rep * sizeof(sample_type)];
+	buffer[n] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
 	for(buf_size_t m = 0; m < reserved_samples_rep; m++) {
 	  buffer[n][m] = SAMPLE_SPECS::silent_value;
 	}
@@ -134,7 +134,7 @@ SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x) {
     sample_rate_rep = x.sample_rate_rep;
 
     for(size_t n = 0; n < buffer.size(); n++) {
-      memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_type));
+      memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_t));
     }
   }
 
@@ -167,7 +167,7 @@ void SAMPLE_BUFFER::number_of_channels(channel_size_t len)
     size_t old_size = buffer.size();
     buffer.resize(len);
     for(channel_size_t n = old_size; n < len; n++) {
-      buffer[n] = new sample_type [reserved_samples_rep * sizeof(sample_type)];
+      buffer[n] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
     }
     ecadebug->msg(ECA_DEBUG::system_objects, "(samplebuffer<>) Increasing channel-count (1).");    
   }
@@ -191,7 +191,7 @@ void SAMPLE_BUFFER::resize(buf_size_t buffersize) {
     reserved_samples_rep = buffersize;
     for(size_t n = 0; n < buffer.size(); n++) {
       delete[] buffer[n];
-      buffer[n] = new sample_type [reserved_samples_rep * sizeof(sample_type)];
+      buffer[n] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
     }
 
     if (impl_repp->old_buffer_repp != 0) {
@@ -260,7 +260,7 @@ void SAMPLE_BUFFER::limit_values(void) {
 /**
  * Divides all samples by 'dvalue'.
  */
-void SAMPLE_BUFFER::divide_by(SAMPLE_BUFFER::sample_type dvalue) {
+void SAMPLE_BUFFER::divide_by(SAMPLE_BUFFER::sample_t dvalue) {
   for(channel_size_t n = 0; n < channel_count_rep; n++) {
     for(buf_size_t m = 0; m < buffersize_rep; m++) {
       buffer[n][m] /= dvalue;
@@ -392,7 +392,7 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
   buf_size_t osize = 0;
   for(buf_size_t isize = 0; isize < buffersize_rep; isize++) {
     for(channel_size_t c = 0; c < chcount; c++) {
-      sample_type stemp = buffer[c][isize];
+      sample_t stemp = buffer[c][isize];
       if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
       else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
       
@@ -400,7 +400,7 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
       case ECA_AUDIO_FORMAT::sfmt_u8:
 	{
 	  target[osize++] = (unsigned
-			     char)((sample_type)(stemp / SAMPLE_SPECS::u8_to_st_constant) + SAMPLE_SPECS::u8_to_st_delta);
+			     char)((sample_t)(stemp / SAMPLE_SPECS::u8_to_st_constant) + SAMPLE_SPECS::u8_to_st_delta);
 	  break;
 	}
       
@@ -408,9 +408,9 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 	{
 	  int16_t s16temp;
 	  if (stemp < 0) 
-	    s16temp = (int16_t)(sample_type)(stemp * SAMPLE_SPECS::s16_to_st_constant - 0.5);
+	    s16temp = (int16_t)(sample_t)(stemp * SAMPLE_SPECS::s16_to_st_constant - 0.5);
 	  else 
-	    s16temp = (int16_t)(sample_type)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
+	    s16temp = (int16_t)(sample_t)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
   
 	  // little endian: (LSB, MSB) (Intel).
 	  // big endian: (MSB, LSB) (Motorola).
@@ -424,9 +424,9 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 	{
 	  int16_t s16temp;
 	  if (stemp < 0) 
-	    s16temp = (int16_t)(sample_type)(stemp * SAMPLE_SPECS::s16_to_st_constant - 0.5);
+	    s16temp = (int16_t)(sample_t)(stemp * SAMPLE_SPECS::s16_to_st_constant - 0.5);
 	  else 
-	    s16temp = (int16_t)(sample_type)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
+	    s16temp = (int16_t)(sample_t)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
 	
 	  // little endian: (LSB, MSB) (Intel).
 	  // big endian: (MSB, LSB) (Motorola).
@@ -440,9 +440,9 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
 
 	  target[osize++] = (unsigned char)(s32temp & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
@@ -457,9 +457,9 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
 
 	  target[osize++] = 0;
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
@@ -474,9 +474,9 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
 	
 	  target[osize++] = (unsigned char)(s32temp & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
@@ -489,9 +489,9 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
   
 	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
@@ -564,7 +564,7 @@ void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
   buf_size_t osize = 0;
   for(channel_size_t c = 0; c < chcount; c++) {
     for(buf_size_t isize = 0; isize < buffersize_rep; isize++) {
-      sample_type stemp = buffer[c][isize];
+      sample_t stemp = buffer[c][isize];
       if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
       else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
       
@@ -572,7 +572,7 @@ void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
       case ECA_AUDIO_FORMAT::sfmt_u8:
 	{
 	  target[osize++] = (unsigned
-			     char)((sample_type)(stemp / SAMPLE_SPECS::u8_to_st_constant) + SAMPLE_SPECS::u8_to_st_delta);
+			     char)((sample_t)(stemp / SAMPLE_SPECS::u8_to_st_constant) + SAMPLE_SPECS::u8_to_st_delta);
 	  break;
 	}
       
@@ -580,9 +580,9 @@ void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
 	{
 	  int16_t s16temp;
 	  if (stemp < 0) 
-	    s16temp = (int16_t)(sample_type)(stemp * SAMPLE_SPECS::s16_to_st_constant - 0.5);
+	    s16temp = (int16_t)(sample_t)(stemp * SAMPLE_SPECS::s16_to_st_constant - 0.5);
 	  else 
-	    s16temp = (int16_t)(sample_type)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
+	    s16temp = (int16_t)(sample_t)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
 	
 	  // little endian: (LSB, MSB) (Intel).
 	  // big endian: (MSB, LSB) (Motorola).
@@ -596,9 +596,9 @@ void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
 	{
 	  int16_t s16temp;
 	  if (stemp < 0) 
-	    s16temp = (int16_t)(sample_type)(stemp * SAMPLE_SPECS::s16_to_st_constant - 0.5);
+	    s16temp = (int16_t)(sample_t)(stemp * SAMPLE_SPECS::s16_to_st_constant - 0.5);
 	  else 
-	    s16temp = (int16_t)(sample_type)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
+	    s16temp = (int16_t)(sample_t)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
 	
 	  // little endian: (LSB, MSB) (Intel).
 	  // big endian: (MSB, LSB) (Motorola).
@@ -612,9 +612,9 @@ void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
 
 	  target[osize++] = (unsigned char)(s32temp & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
@@ -630,9 +630,9 @@ void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s24_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s24_to_st_constant - 1) + 0.5);
 
 	  target[osize++] = 0;
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
@@ -648,9 +648,9 @@ void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
 	
 	  target[osize++] = (unsigned char)(s32temp & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
@@ -663,9 +663,9 @@ void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
 	{
 	  int32_t s32temp;
 	  if (stemp < 0) 
-	    s32temp = (int32_t)(sample_type)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
-	    s32temp = (int32_t)(sample_type)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
+	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
   
 	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
@@ -760,7 +760,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 	    a[1] = source[isize++];
 	    a[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
+	  buffer[c][osize] = (sample_t)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
 	}
 	break;
 
@@ -774,7 +774,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 	    a[1] = source[isize++];
 	    a[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
+	  buffer[c][osize] = (sample_t)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
 	}
 	break;
 
@@ -792,7 +792,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 	    b[1] = source[isize++];
 	    b[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = (sample_t)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
 	}
 	break;
 
@@ -810,7 +810,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 	    b[2] = source[isize++];
 	    b[3] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = (sample_t)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
 	}
 	break;
 
@@ -828,7 +828,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 	    b[1] = source[isize++];
 	    b[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = (sample_t)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
 	}
 	break;
 
@@ -846,7 +846,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 	    b[2] = source[isize++];
 	    b[3] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = (sample_t)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
 	}
 	break;
 
@@ -864,7 +864,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 	    b[1] = source[isize++];
 	    b[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(float*)b);
+	  buffer[c][osize] = (sample_t)(*(float*)b);
 	}
 	break;
 
@@ -882,7 +882,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 	    b[2] = source[isize++];
 	    b[3] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(float*)b);
+	  buffer[c][osize] = (sample_t)(*(float*)b);
 	}
 	break;
 
@@ -945,7 +945,7 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
 	    a[1] = source[isize++];
 	    a[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
+	  buffer[c][osize] = (sample_t)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
 	}
 	break;
 
@@ -959,7 +959,7 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
 	    a[1] = source[isize++];
 	    a[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
+	  buffer[c][osize] = (sample_t)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
 	}
 	break;
 
@@ -977,7 +977,7 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
 	    b[1] = source[isize++];
 	    b[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = (sample_t)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
 	}
 	break;
 
@@ -995,7 +995,7 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
 	    b[2] = source[isize++];
 	    b[3] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = (sample_t)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
 	}
 	break;
 
@@ -1013,7 +1013,7 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
 	    b[1] = source[isize++];
 	    b[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = (sample_t)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
 	}
 	break;
 
@@ -1031,7 +1031,7 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
 	    b[2] = source[isize++];
 	    b[3] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
+	  buffer[c][osize] = (sample_t)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
 	}
 	break;
 
@@ -1049,7 +1049,7 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
 	    b[1] = source[isize++];
 	    b[0] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(float*)b);
+	  buffer[c][osize] = (sample_t)(*(float*)b);
 	}
 	break;
 
@@ -1067,7 +1067,7 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
 	    b[2] = source[isize++];
 	    b[3] = source[isize++];
 	  }
-	  buffer[c][osize] = (sample_type)(*(float*)b);
+	  buffer[c][osize] = (sample_t)(*(float*)b);
 	}
 	break;
 
@@ -1090,15 +1090,15 @@ void SAMPLE_BUFFER::resample_nofilter(buf_size_t from,
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_no_f from " << from << " to " << to << "." std::endl); 
 
   if (impl_repp->old_buffer_repp == 0) 
-    impl_repp->old_buffer_repp = new sample_type [reserved_samples_rep * sizeof(sample_type)];
+    impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep * sizeof(sample_t)];
 
   for(int c = 0; c < channel_count_rep; c++) {
-    memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_type));
+    memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));
 
     if (buffersize_rep > reserved_samples_rep) {
       reserved_samples_rep = buffersize_rep;
       delete[] buffer[c];
-      buffer[c] = new sample_type [reserved_samples_rep * sizeof(sample_type)];
+      buffer[c] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
     }
     
     double counter = 0.0;
@@ -1121,7 +1121,7 @@ void SAMPLE_BUFFER::resample_nofilter(buf_size_t from,
 	for(buf_size_t t = interpolate_index + 1; t < new_buffer_index; t++) {
 	  buffer[c][t] = impl_repp->old_buffer_repp[old_buffer_index - 1] + ((impl_repp->old_buffer_repp[old_buffer_index]
 									      - impl_repp->old_buffer_repp[old_buffer_index-1])
-									     * static_cast<SAMPLE_BUFFER::sample_type>(t - interpolate_index)
+									     * static_cast<SAMPLE_BUFFER::sample_t>(t - interpolate_index)
 									     / (new_buffer_index - interpolate_index));
 	}
 	buffer[c][new_buffer_index] = impl_repp->old_buffer_repp[old_buffer_index];
@@ -1141,21 +1141,21 @@ void SAMPLE_BUFFER::resample_with_memory(buf_size_t from,
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_w_m from " << from << " to " << to << "." std::endl); 
 
   if (impl_repp->old_buffer_repp == 0) 
-    impl_repp->old_buffer_repp = new sample_type [reserved_samples_rep * sizeof(sample_type)];
+    impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep * sizeof(sample_t)];
 
   for(int c = 0; c < channel_count_rep; c++) {
-    memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_type));
+    memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));
 
     if (buffersize_rep > reserved_samples_rep) {
       reserved_samples_rep = buffersize_rep;
       delete[] buffer[c];
-      buffer[c] = new sample_type [reserved_samples_rep * sizeof(sample_type)];
+      buffer[c] = new sample_t [reserved_samples_rep * sizeof(sample_t)];
     }
     
     double counter = 0.0;
     buf_size_t new_buffer_index = 0;
     buf_size_t interpolate_index = -1;
-    sample_type from_point;
+    sample_t from_point;
 
     for(buf_size_t old_buffer_index = 0; old_buffer_index < old_buffer_size; old_buffer_index++) {
       counter += step;
@@ -1174,7 +1174,7 @@ void SAMPLE_BUFFER::resample_with_memory(buf_size_t from,
 	for(buf_size_t t = interpolate_index + 1; t < new_buffer_index; t++) {
 	  buffer[c][t] = from_point + ((impl_repp->old_buffer_repp[old_buffer_index]
 					- from_point)
-				       * static_cast<SAMPLE_BUFFER::sample_type>(t - interpolate_index)
+				       * static_cast<SAMPLE_BUFFER::sample_t>(t - interpolate_index)
 				       / (new_buffer_index - interpolate_index));
 	}
 	buffer[c][new_buffer_index] = impl_repp->old_buffer_repp[old_buffer_index];

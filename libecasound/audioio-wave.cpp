@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-wave.cpp: RIFF WAVE audio file input/output.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <string>
+#include <cstdio>
 #include <cstring>
 #include <cmath>
+#include <string>
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
@@ -32,6 +33,10 @@
 #include "eca-fileio-stream.h"
 
 #include "eca-debug.h"
+
+#ifndef UINT32_MAX
+#define UINT32_MAX 4294967295U
+#endif
 
 WAVEFILE::WAVEFILE (const std::string& name) {
   label(name);
@@ -170,7 +175,7 @@ void WAVEFILE::update (void) {
 }
 
 void WAVEFILE::find_riff_datablock (void) throw(AUDIO_IO::SETUP_ERROR&) {
-  if (find_block("data")==-1) {
+  if (find_block("data") != true) {
     throw(ECA_ERROR("AUDIOIO-WAVE", "no RIFF data block found", ECA_ERROR::retry));
   }
   data_start_position_rep = fio_repp->get_file_position();
@@ -191,11 +196,16 @@ void WAVEFILE::read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) {
 void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) {
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) write_riff_header()");
 
-  long int savetemp = fio_repp->get_file_position();
+  fpos_t savetemp = fio_repp->get_file_position();
     
   memcpy(riff_header_rep.id,"RIFF",4);
   memcpy(riff_header_rep.wname,"WAVE",4);
-  riff_header_rep.size = fio_repp->get_file_length() - sizeof(riff_header_rep);
+
+  /* hack for 64bit wav files */
+  if (fio_repp->get_file_length() - sizeof(riff_header_rep) > UINT32_MAX)
+    riff_header_rep.size = UINT32_MAX;
+  else
+    riff_header_rep.size = fio_repp->get_file_length() - sizeof(riff_header_rep);
 
   fio_repp->set_file_position(0);
   //  fseek(fobject,0,SEEK_SET);
@@ -212,7 +222,7 @@ void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) {
   temp[13] = 0;
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) " + string(temp));
 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) Wave data size " + 	kvu_numtostr(riff_header_rep.size));
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) Wave data size " + kvu_numtostr(riff_header_rep.size));
   memcpy(temp, "Riff type: ", 11);
   memcpy(&(temp[11]), riff_header_rep.wname, 4);
   temp[15] = 0;
@@ -226,9 +236,9 @@ void WAVEFILE::read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) read_riff_fmt()");
 
-  long int savetemp = fio_repp->get_file_position();    
+  fpos_t savetemp = fio_repp->get_file_position();    
 
-  if (find_block("fmt ")==-1)
+  if (find_block("fmt ") != true)
     throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: no riff fmt-block found"));
   else {
     fio_repp->read_to_buffer(&riff_format_rep, sizeof(riff_format_rep));
@@ -310,10 +320,15 @@ void WAVEFILE::update_riff_datablock(void) {
   memcpy(fblock.sig,"data",4);
 
   find_block("data");
-  long int savetemp = fio_repp->get_file_position();
+  fpos_t savetemp = fio_repp->get_file_position();
 
   fio_repp->set_file_position_end();
-  fblock.bsize = fio_repp->get_file_position() - savetemp;
+
+  /* hack for 64bit wav files */
+  if (fio_repp->get_file_position() - savetemp > UINT32_MAX)
+    fblock.bsize = UINT32_MAX;
+  else
+    fblock.bsize = fio_repp->get_file_position() - savetemp;
 
   savetemp = savetemp - sizeof(fblock);
   if (savetemp > 0) {
@@ -322,7 +337,7 @@ void WAVEFILE::update_riff_datablock(void) {
   }
 }
 
-bool WAVEFILE::next_riff_block(RB *t, unsigned long int *offtmp)
+bool WAVEFILE::next_riff_block(RB *t, fpos_t *offtmp)
 {
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) next_riff_block()");
 
@@ -337,22 +352,22 @@ bool WAVEFILE::next_riff_block(RB *t, unsigned long int *offtmp)
   return (true);
 }
 
-signed long int WAVEFILE::find_block(const char* fblock) {
-  unsigned long int offset;
+bool WAVEFILE::find_block(const char* fblock) {
+  fpos_t offset;
   RB block;
 
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) find_block(): " + string(fblock,4));
     
   fio_repp->set_file_position(sizeof(riff_header_rep));
   while(next_riff_block(&block,&offset)) {
-    //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) found RIFF-block ");
+    // ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) found RIFF-block ");
     if (memcmp(block.sig,fblock,4) == 0) {
-      return(block.bsize);
+      return(true);
     }
     fio_repp->set_file_position(offset);
   }
 
-  return(-1);
+  return(false);
 }
 
 bool WAVEFILE::finished(void) const {
@@ -388,16 +403,16 @@ void WAVEFILE::seek_position(void) {
 }
 
 void WAVEFILE::set_length_in_bytes(void) {
-  long int savetemp = fio_repp->get_file_position();
+  fpos_t savetemp = fio_repp->get_file_position();
 
   find_block("data");
-  long int t = fio_repp->get_file_position();
+  fpos_t datastart = fio_repp->get_file_position();
 
   fio_repp->set_file_position_end();
-  t = fio_repp->get_file_position() - t;
-  length_in_samples(t / frame_size());
+  fpos_t datalen = fio_repp->get_file_position() - datastart;
+  length_in_samples(datalen / frame_size());
   MESSAGE_ITEM mitem;
-  mitem << "(audioio-wave) data length " << t << " bytes.";
+  mitem << "(audioio-wave) data length " << datalen << " bytes.";
   ecadebug->msg(ECA_DEBUG::user_objects, mitem.to_string());
 
   fio_repp->set_file_position(savetemp);

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-oss.cpp: OSS (/dev/dsp) input/output.
-// Copyright (C) 1999,2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   ecadebug->msg(ECA_DEBUG::user_objects, m.to_string());
 
   // fr_size == 4  -> the minimum fragment size: 2^4 = 16 bytes
-  for(fr_size = 4; fragtotal < buffersize() * frame_size(); fr_size++)
+  for(fr_size = 4; fragtotal < static_cast<long int>(buffersize() * frame_size()); fr_size++)
     fragtotal = fragtotal * 2;
 
   fragsize = ((fr_count << 16) | fr_size);
@@ -222,7 +222,7 @@ void OSSDEVICE::start(void) {
   gettimeofday(&start_time, NULL);
 }
 
-long OSSDEVICE::position_in_samples(void) const { 
+SAMPLE_SPECS::sample_pos_t OSSDEVICE::position_in_samples(void) const { 
   if (is_running() != true) return(0);
   if ((oss_caps & DSP_CAP_REALTIME) == DSP_CAP_REALTIME) {
     count_info info;
@@ -233,7 +233,7 @@ long OSSDEVICE::position_in_samples(void) const {
     else {
       ::ioctl(audio_fd, SNDCTL_DSP_GETOPTR, &info);
     }
-    return(info.bytes / frame_size());
+    return(static_cast<SAMPLE_SPECS::sample_pos_t>(info.bytes / frame_size()));
   }
   struct timeval now;
   gettimeofday(&now, NULL);

@@ -342,7 +342,7 @@ std::string ECA_CONTROL_BASE::resource_value(const std::string& key) const {
  *
  * @pre is_selected() == true
  */
-long ECA_CONTROL_BASE::length_in_samples(void) const { 
+SAMPLE_SPECS::sample_pos_t ECA_CONTROL_BASE::length_in_samples(void) const { 
   // --------
   DBC_REQUIRE(is_selected());
   // --------
@@ -368,7 +368,7 @@ double ECA_CONTROL_BASE::length_in_seconds_exact(void) const {
  *
  * @pre is_selected() == true
  */
-long ECA_CONTROL_BASE::position_in_samples(void) const { 
+SAMPLE_SPECS::sample_pos_t ECA_CONTROL_BASE::position_in_samples(void) const { 
   // --------
   DBC_REQUIRE(is_selected());
   // --------

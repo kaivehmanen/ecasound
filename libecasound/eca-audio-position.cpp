@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
-// eca-audioposition.cpp: Base class for representing position and length
-//                        of a audio stream.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// eca-audio-position.cpp: Base class for representing position and length
+//                         of a audio stream.
+// Copyright (C) 1999,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ ECA_AUDIO_POSITION::ECA_AUDIO_POSITION(const ECA_AUDIO_FORMAT& fmt) : ECA_AUDIO_
 
 ECA_AUDIO_POSITION::~ECA_AUDIO_POSITION(void) { }
 
-long ECA_AUDIO_POSITION::length_in_samples(void) const { return(length_in_samples_rep); }
+SAMPLE_SPECS::sample_pos_t ECA_AUDIO_POSITION::length_in_samples(void) const { return(length_in_samples_rep); }
 
 int ECA_AUDIO_POSITION::length_in_seconds(void) const { 
   return((int)ceil((double)length_in_samples() /
@@ -39,7 +39,7 @@ double ECA_AUDIO_POSITION::length_in_seconds_exact(void) const {
   return((double)length_in_samples() / (double)samples_per_second());  
 }
 
-void ECA_AUDIO_POSITION::length_in_samples(long pos) {
+void ECA_AUDIO_POSITION::length_in_samples(SAMPLE_SPECS::sample_pos_t pos) {
   length_in_samples_rep = pos;
 }
 
@@ -51,7 +51,7 @@ void ECA_AUDIO_POSITION::length_in_seconds(double pos_in_seconds) {
   length_in_samples(pos_in_seconds * samples_per_second());  
 }
 
-long ECA_AUDIO_POSITION::position_in_samples(void) const {
+SAMPLE_SPECS::sample_pos_t ECA_AUDIO_POSITION::position_in_samples(void) const {
   return(position_in_samples_rep);
 }
 
@@ -64,14 +64,14 @@ double ECA_AUDIO_POSITION::position_in_seconds_exact(void) const {
   return((double)position_in_samples() / (double)samples_per_second()); 
 }
 
-void ECA_AUDIO_POSITION::position_in_samples(long pos) {
+void ECA_AUDIO_POSITION::position_in_samples(SAMPLE_SPECS::sample_pos_t pos) {
   position_in_samples_rep = pos;
   if (position_in_samples_rep < 0) {
     position_in_samples_rep = 0;
   }
 }
 
-void ECA_AUDIO_POSITION::position_in_samples_advance(long pos) {
+void ECA_AUDIO_POSITION::position_in_samples_advance(SAMPLE_SPECS::sample_pos_t pos) {
   position_in_samples_rep += pos;
 }
 
@@ -86,12 +86,12 @@ void ECA_AUDIO_POSITION::position_in_seconds(double pos_in_seconds) {
 void ECA_AUDIO_POSITION::seek_first(void) { seek_position_in_samples(0); }
 void ECA_AUDIO_POSITION::seek_last(void) { seek_position_in_samples(length_in_samples()); }
 
-void ECA_AUDIO_POSITION::seek_position_in_samples(long pos_in_samples) { 
+void ECA_AUDIO_POSITION::seek_position_in_samples(SAMPLE_SPECS::sample_pos_t pos_in_samples) { 
   position_in_samples(pos_in_samples);
   seek_position();
 }
 
-void ECA_AUDIO_POSITION::seek_position_in_samples_advance(long pos) { seek_position_in_samples(position_in_samples() + pos); }
+void ECA_AUDIO_POSITION::seek_position_in_samples_advance(SAMPLE_SPECS::sample_pos_t pos) { seek_position_in_samples(position_in_samples() + pos); }
 void ECA_AUDIO_POSITION::seek_position_in_seconds(double pos_in_seconds) {
   seek_position_in_samples(pos_in_seconds *
 			   samples_per_second());

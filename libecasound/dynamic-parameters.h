@@ -20,7 +20,7 @@ class DYNAMIC_PARAMETERS {
 
  public:
 
-  typedef T parameter_type;
+  typedef T parameter_t;
 
   /**
    * Gets the total number of of parameters.

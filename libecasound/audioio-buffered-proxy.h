@@ -69,7 +69,7 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
   /** @name Reimplemented functions from ECA_AUDIO_POSITION */
   /*@{*/
 
-  virtual long length_in_samples(void) const { return(child_repp->length_in_samples()); }
+  virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const { return(child_repp->length_in_samples()); }
   virtual void seek_position(void);
   /* -- not reimplemented 
    * virtual void length_in_samples(long pos) { return(child_repp->length_in_samples(pos); }

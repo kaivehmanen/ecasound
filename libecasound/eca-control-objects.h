@@ -24,7 +24,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void rewind_audio_object(double seconds);
   void forward_audio_object(double seconds);
   void set_audio_object_position(double seconds);
-  void set_audio_object_position_samples(long int samples);
+  void set_audio_object_position_samples(SAMPLE_SPECS::sample_pos_t samples);
   void wave_edit_audio_object(void);
 
   void send_chain_commands_to_engine(int command, double value);
@@ -62,7 +62,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void set_chainsetup_parameter(const std::string& name);
   void set_chainsetup_sample_format(const std::string& name);
   void set_chainsetup_processing_length_in_seconds(double value);
-  void set_chainsetup_processing_length_in_samples(long int value);
+  void set_chainsetup_processing_length_in_samples(SAMPLE_SPECS::sample_pos_t value);
   void set_chainsetup_output_mode(int output_mode);
   void toggle_chainsetup_looping(void);
   void set_chainsetup_buffersize(int bsize);
@@ -133,7 +133,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void remove_chain_operator(void);
   void select_chain_operator(int chainop_id);
   void select_chain_operator_parameter(int param);
-  void set_chain_operator_parameter(CHAIN_OPERATOR::parameter_type value);
+  void set_chain_operator_parameter(CHAIN_OPERATOR::parameter_t value);
   void add_controller(const std::string& gcontrol_params);
   void select_controller(int ctrl_id);
   void remove_controller(void);
@@ -143,7 +143,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   int selected_controller(void) const;
 
   const CHAIN_OPERATOR* get_chain_operator(void) const;
-  CHAIN_OPERATOR::parameter_type get_chain_operator_parameter(void) const;
+  CHAIN_OPERATOR::parameter_t get_chain_operator_parameter(void) const;
   const GENERIC_CONTROLLER* get_controller(void) const;
 
   std::vector<std::string> chain_operator_names(void) const;

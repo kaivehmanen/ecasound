@@ -10,5 +10,3 @@
 	- big buffersizes cause problems; for instance 
 	  there's distortion when using sine-oscillators
   	  with big buffers
-- on 32bit platforms, there's an upper limit for maximum 
-  audio object length (for 44100Hz sample rate it is 13 hours)

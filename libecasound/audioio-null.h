@@ -16,7 +16,7 @@ class NULLFILE : public AUDIO_IO_BUFFERED {
   virtual void close(void) { }
 
   virtual long int read_samples(void* target_buffer, long int samples) { 
-    for(int n = 0; n < samples * frame_size(); n++) ((char*)target_buffer)[n] = 0;
+    for(long int n = 0; n < static_cast<long int>(samples * frame_size()); n++) ((char*)target_buffer)[n] = 0;
     return(samples); 
   }
   virtual void write_samples(void* target_buffer, long int samples) { }

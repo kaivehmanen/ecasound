@@ -128,7 +128,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
    * the buffersize. Otherwise the real length of the buffer changes whenever
    * sampling parameters are changed.
    */
-  virtual void buffersize(long int samples, long int sample_rate) = 0;
+  virtual void buffersize(long int samples, SAMPLE_SPECS::sample_rate_t sample_rate) = 0;
 
   /**
    * Returns the buffersize in sample frames.

@@ -50,19 +50,35 @@ std::string kvu_numtostr (unsigned int n) {
   return(std::string(ctmp));
 }
 
-std::string kvu_numtostr (long n) {
+std::string kvu_numtostr (long int n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%ld",n);
   ctmp[11] = 0;
   return(std::string(ctmp));
 }
 
-std::string kvu_numtostr (unsigned long n) {
+std::string kvu_numtostr (unsigned long int n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%lu",n);
   ctmp[11] = 0;
   return(std::string(ctmp));
 }
+
+#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GLIBC__
+std::string kvu_numtostr (long long int n) {
+  char ctmp[24];
+  snprintf(ctmp, 24, "%lli", n);
+  ctmp[23] = 0;
+  return (std::string(ctmp));    
+}
+
+std::string kvu_numtostr (unsigned long long int n) {
+  char ctmp[24];
+  snprintf(ctmp, 24, "%llu", n);
+  ctmp[23] = 0;
+  return (std::string(ctmp));    
+}
+#endif
 
 
 std::string kvu_numtostr (double n, int flo_prec) {

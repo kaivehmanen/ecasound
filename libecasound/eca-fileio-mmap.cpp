@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-fileio-mmap.cpp: mmap based file-I/O and buffering routines.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
+
+#ifdef HAVE_CONFIG_H
+#include <config.h> /* for largefile support */
+#endif
 
 #include <cstdio>
 #include <cstring>
@@ -81,7 +85,7 @@ void ECA_FILE_IO_MMAP::close_file(void) {
   ::close(fd_rep);
 }
 
-void ECA_FILE_IO_MMAP::read_to_buffer(void* obuf, long int bytes) {
+void ECA_FILE_IO_MMAP::read_to_buffer(void* obuf, fpos_t bytes) {
   if (is_file_ready() == false) {
     bytes_rep = 0;
     file_ended_rep = true;
@@ -98,8 +102,7 @@ void ECA_FILE_IO_MMAP::read_to_buffer(void* obuf, long int bytes) {
   bytes_rep = bytes;
 }
 
-void ECA_FILE_IO_MMAP::write_from_buffer(void* obuf, long int
-				   bytes) { 
+void ECA_FILE_IO_MMAP::write_from_buffer(void* obuf, fpos_t bytes) { 
   if (is_file_ready() == false) {
     bytes_rep = 0;
     file_ended_rep = true;
@@ -114,12 +117,12 @@ void ECA_FILE_IO_MMAP::write_from_buffer(void* obuf, long int
   bytes_rep = bytes;
 }
 
-long int ECA_FILE_IO_MMAP::file_bytes_processed(void) const { return(bytes_rep); }
+fpos_t ECA_FILE_IO_MMAP::file_bytes_processed(void) const { return(bytes_rep); }
 bool ECA_FILE_IO_MMAP::is_file_ready(void) const { return(file_ready_rep); }
 bool ECA_FILE_IO_MMAP::is_file_ended(void) const { return(file_ended_rep); }
 bool ECA_FILE_IO_MMAP::is_file_error(void) const { return(!file_ready_rep && !file_ended_rep); }
 
-void ECA_FILE_IO_MMAP::set_file_position(long int newpos, bool seek) { 
+void ECA_FILE_IO_MMAP::set_file_position(fpos_t newpos, bool seek) { 
   fposition_rep = newpos;
   if (fposition_rep >= flength_rep) {
     fposition_rep = flength_rep;
@@ -132,7 +135,7 @@ void ECA_FILE_IO_MMAP::set_file_position(long int newpos, bool seek) {
   }
 }
 
-void ECA_FILE_IO_MMAP::set_file_position_advance(long int fw) { 
+void ECA_FILE_IO_MMAP::set_file_position_advance(fpos_t fw) { 
   set_file_position(fposition_rep + fw, false);
 }
 
@@ -140,10 +143,10 @@ void ECA_FILE_IO_MMAP::set_file_position_end(void) {
   fposition_rep = get_file_length();
 }
 
-long int ECA_FILE_IO_MMAP::get_file_position(void) const { return(fposition_rep); }
+fpos_t ECA_FILE_IO_MMAP::get_file_position(void) const { return(fposition_rep); }
 
-long int ECA_FILE_IO_MMAP::get_file_length(void) const {
+fpos_t ECA_FILE_IO_MMAP::get_file_length(void) const {
   struct stat stattemp;
   fstat(fd_rep, &stattemp);
-  return((long int)stattemp.st_size);
+  return((fpos_t)stattemp.st_size);
 }

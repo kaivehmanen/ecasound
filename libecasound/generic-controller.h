@@ -20,14 +20,14 @@ class GENERIC_CONTROLLER : public OPERATOR {
 
  public:
 
-  typedef SAMPLE_SPECS::sample_type parameter_type;
+  typedef SAMPLE_SPECS::sample_t parameter_t;
 
   virtual std::string name(void) const { return(source->name()); }
   std::string status(void) const;
 
   virtual std::string parameter_names(void) const { return("param-id,range-low,range-high," +  source->parameter_names()); }
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   void assign_target(OPERATOR* obj) { target  = obj; }
   void assign_source(CONTROLLER_SOURCE* obj) { source = obj; }
@@ -38,7 +38,7 @@ class GENERIC_CONTROLLER : public OPERATOR {
   /**
    * Initializes the controller source
    */
-  void init(parameter_type phase_step) { source->init(phase_step); }
+  void init(parameter_t phase_step) { source->init(phase_step); }
 
   int param_number(void) const { return(param_id); }
   double low_range_limit(void) const { return(rangelow); }
@@ -46,8 +46,8 @@ class GENERIC_CONTROLLER : public OPERATOR {
 
   bool is_valid(void) const { return(target != 0 && source != 0); }
   void param_number(int v) { param_id = v; }
-  void low_range_limit(parameter_type v) { rangelow = v; }
-  void high_range_limit(parameter_type v) { rangehigh = v; }
+  void low_range_limit(parameter_t v) { rangelow = v; }
+  void high_range_limit(parameter_t v) { rangehigh = v; }
   
   /**
    * Fetch new value from controller source, scale it and

@@ -27,11 +27,10 @@ class SAMPLE_BUFFER {
   /** @name Public type definitions */
   /*@{*/
 
-  typedef int channel_size_t;
+  typedef SAMPLE_SPECS::channel_t channel_size_t;
   typedef long int buf_size_t;
-  typedef long int srate_size_t;
-
-  typedef SAMPLE_SPECS::sample_type sample_type;
+  typedef SAMPLE_SPECS::sample_rate_t srate_size_t;
+  typedef SAMPLE_SPECS::sample_t sample_t;
 
   /*@}*/
 
@@ -59,7 +58,7 @@ class SAMPLE_BUFFER {
   void add_with_weight(const SAMPLE_BUFFER& x, int weight);
   void copy(const SAMPLE_BUFFER& x);
   void copy_range(const SAMPLE_BUFFER& x, buf_size_t start_pos, buf_size_t end_pos, buf_size_t to_pos);
-  void divide_by(sample_type dvalue);
+  void divide_by(sample_t dvalue);
 
   void limit_values(void);
   void make_silent(void);
@@ -125,7 +124,7 @@ class SAMPLE_BUFFER {
    * class. Representation of 'buffer' may change at any time, 
    * and this will break all code using direct-access.
    */
-  std::vector<sample_type*> buffer;
+  std::vector<sample_t*> buffer;
 
  private:
 

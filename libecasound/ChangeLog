@@ -2,6 +2,16 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-11-29  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-fileio.h, eca-fileio-mmap.h, eca-fileio-stream.h (all):
+	added support for 64bit files; long ints changed to fpos_t
+	in all public interfaces
+	* eca-fileio-stream.h (open_stderr): added
+	* sample-specs.h (sample_type): renamed to sample_t
+	* sample-specs.h (sample_pos_t,sample_rate_t,channel_t): added
+	* dynamic-parameters.h (parameter_type): renamed to parameter_t
+	
 2001-11-19  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	
 	* resource-file.h (is_modified): added

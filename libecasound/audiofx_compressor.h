@@ -86,8 +86,8 @@ class ADVANCED_COMPRESSOR : public EFFECT_AMPLITUDE {
   virtual std::string name(void) const { return("Advanced compressor"); }
   virtual std::string parameter_names(void) const { return("peak-limit-%,release-time-sec,fast-crate,overall-crate"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);

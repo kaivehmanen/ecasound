@@ -56,7 +56,7 @@ class CHAIN {
   void remove_chain_operator(void);
   void select_chain_operator(int index);
   void select_chain_operator_parameter(int index);
-  void set_parameter(CHAIN_OPERATOR::parameter_type value);
+  void set_parameter(CHAIN_OPERATOR::parameter_t value);
 
   /**
    * Index of selected chain operator
@@ -65,7 +65,7 @@ class CHAIN {
   int selected_chain_operator_parameter(void) const { return(selected_chainop_parameter_rep); }
   int number_of_chain_operators(void) const { return(chainops_rep.size()); }
   int number_of_chain_operator_parameters(void) const;
-  CHAIN_OPERATOR::parameter_type get_parameter(void) const;
+  CHAIN_OPERATOR::parameter_t get_parameter(void) const;
   std::string chain_operator_name(void) const;
   std::string chain_operator_parameter_name(void) const;
   const CHAIN_OPERATOR* get_chain_operator(int index) const { return(chainops_rep[index]); }

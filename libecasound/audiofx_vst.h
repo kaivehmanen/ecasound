@@ -36,8 +36,8 @@ public:
 
   std::string unique(void) const { return(unique_rep); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);

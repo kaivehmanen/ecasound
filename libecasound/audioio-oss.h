@@ -61,7 +61,7 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   virtual void stop(void);
   virtual void start(void);
 
-  virtual long position_in_samples(void) const;
+  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
 
   OSSDEVICE (const std::string& name = "/dev/dsp", bool precise_sample_rates = false);
   ~OSSDEVICE(void);

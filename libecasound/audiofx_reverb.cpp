@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audiofx_reverb.cpp: Reverb effect
 // Copyright (C) 2000 Stefan Fendt <stefan@lionfish.ping.de>,
-//                    Kai Vehmanen <kaiv@wakkanet.fi> (C++ version)
+//                    Kai Vehmanen <kai.vehmanen@wakkanet.fi> (C++ version)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,16 +23,16 @@
 #include "sample-specs.h"
 #include "audiofx_reverb.h"
 
-ADVANCED_REVERB::ADVANCED_REVERB (parameter_type roomsize,
-				  parameter_type feedback_percent, 
-				  parameter_type wet_percent) {
+ADVANCED_REVERB::ADVANCED_REVERB (parameter_t roomsize,
+				  parameter_t feedback_percent, 
+				  parameter_t wet_percent) {
   srate_rep = SAMPLE_SPECS::sample_rate_default;
   set_parameter(1, roomsize);
   set_parameter(2, feedback_percent);
   set_parameter(3, wet_percent);
 }
 
-CHAIN_OPERATOR::parameter_type ADVANCED_REVERB::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t ADVANCED_REVERB::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(roomsize_rep);
@@ -44,7 +44,7 @@ CHAIN_OPERATOR::parameter_type ADVANCED_REVERB::get_parameter(int param) const {
   return(0.0);
 }
 
-void ADVANCED_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void ADVANCED_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   switch (param) {
   case 1: 
     roomsize_rep = value;

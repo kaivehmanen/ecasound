@@ -267,7 +267,7 @@ string CHAIN::controller_name(void) const {
  *  selected_chainop_number > 0 && selected_chainop_number <= number_of_chain_operators() &&
  *  selected_chain_operator_parameter() > 0
  */
-void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_type value) {
+void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_t value) {
   // --------
   DBC_REQUIRE(selected_chainop_number_rep > 0 && selected_chainop_number_rep <= number_of_chain_operators());
   DBC_REQUIRE(selected_chain_operator_parameter() > 0);
@@ -284,7 +284,7 @@ void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_type value) {
  *  selected_chain_operator_parameter() > 0 &&
  *  selected_chain_operator() != 0
  */
-CHAIN_OPERATOR::parameter_type CHAIN::get_parameter(void) const {
+CHAIN_OPERATOR::parameter_t CHAIN::get_parameter(void) const {
   // --------
   DBC_REQUIRE(selected_chain_operator_parameter() > 0);
   DBC_REQUIRE(selected_chain_operator() != 0);

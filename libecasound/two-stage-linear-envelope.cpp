@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // two-stage-linear-envelope.cpp: Two-stage linear envelope
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include "two-stage-linear-envelope.h"
 #include "eca-debug.h"
 
-CONTROLLER_SOURCE::parameter_type TWO_STAGE_LINEAR_ENVELOPE::value(void) {
+CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::value(void) {
   curpos += step_length();
   if (curpos > first_stage_length_rep) {
     if (curpos <= length_in_seconds()) {
@@ -41,7 +41,7 @@ TWO_STAGE_LINEAR_ENVELOPE::TWO_STAGE_LINEAR_ENVELOPE(void) {
   set_parameter(2, get_parameter(2));
 } 
 
-void TWO_STAGE_LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_type step) {
+void TWO_STAGE_LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_t step) {
   step_length(step);
 
   MESSAGE_ITEM otemp;
@@ -52,7 +52,7 @@ void TWO_STAGE_LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_type step) {
   ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
 }
 
-void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_type value) {
+void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
   switch (param) {
   case 1:
     {
@@ -73,7 +73,7 @@ void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::para
   }
 }
 
-CONTROLLER_SOURCE::parameter_type TWO_STAGE_LINEAR_ENVELOPE::get_parameter(int param) const {
+CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::get_parameter(int param) const {
   switch (param) {
   case 1:
     return(first_stage_length_rep);

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-gen-file.cpp: Generic oscillator using envelope presets
-// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ void GENERIC_OSCILLATOR_FILE::parse_envelope(const std::string& str) {
   prepare_envelope();
 }
 
-void GENERIC_OSCILLATOR_FILE::set_parameter(int param, CONTROLLER_SOURCE::parameter_type value) {
+void GENERIC_OSCILLATOR_FILE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
   switch (param) {
   case 1: 
   case 2: 
@@ -93,14 +93,14 @@ void GENERIC_OSCILLATOR_FILE::set_parameter(int param, CONTROLLER_SOURCE::parame
   }
 }
 
-CONTROLLER_SOURCE::parameter_type GENERIC_OSCILLATOR_FILE::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR_FILE::get_parameter(int param) const { 
   switch (param) {
   case 1: 
   case 2:
     return(GENERIC_OSCILLATOR::get_parameter(param));
 
   case 3:
-    return(static_cast<parameter_type>(preset_rep));
+    return(static_cast<parameter_t>(preset_rep));
   }
   return(0.0);
 }

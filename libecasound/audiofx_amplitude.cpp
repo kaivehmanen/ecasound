@@ -27,11 +27,11 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-EFFECT_AMPLIFY::EFFECT_AMPLIFY (parameter_type multiplier_percent) {
+EFFECT_AMPLIFY::EFFECT_AMPLIFY (parameter_t multiplier_percent) {
   set_parameter(1, multiplier_percent);
 }
 
-void EFFECT_AMPLIFY::set_parameter(int param, parameter_type value) {
+void EFFECT_AMPLIFY::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1: 
     kerroin = value / 100.0;
@@ -39,7 +39,7 @@ void EFFECT_AMPLIFY::set_parameter(int param, parameter_type value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_AMPLIFY::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(kerroin * 100.0);
@@ -62,13 +62,13 @@ void EFFECT_AMPLIFY::process(void) {
   }
 }
 
-EFFECT_AMPLIFY_CLIPCOUNT::EFFECT_AMPLIFY_CLIPCOUNT (parameter_type multiplier_percent, int max_clipped) {
+EFFECT_AMPLIFY_CLIPCOUNT::EFFECT_AMPLIFY_CLIPCOUNT (parameter_t multiplier_percent, int max_clipped) {
   set_parameter(1, multiplier_percent);
   set_parameter(2, max_clipped);
   num_of_clipped = 0;
 }
 
-void EFFECT_AMPLIFY_CLIPCOUNT::set_parameter(int param, parameter_type value) {
+void EFFECT_AMPLIFY_CLIPCOUNT::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1: 
     kerroin = value / 100.0;
@@ -79,7 +79,7 @@ void EFFECT_AMPLIFY_CLIPCOUNT::set_parameter(int param, parameter_type value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_AMPLIFY_CLIPCOUNT::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CLIPCOUNT::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(kerroin * 100.0);
@@ -120,12 +120,12 @@ void EFFECT_AMPLIFY_CLIPCOUNT::parameter_description(int param, struct PARAM_DES
   OPERATOR::parameter_description(param, pd);
 }
 
-EFFECT_AMPLIFY_CHANNEL::EFFECT_AMPLIFY_CHANNEL (parameter_type multiplier_percent, int channel) {
+EFFECT_AMPLIFY_CHANNEL::EFFECT_AMPLIFY_CHANNEL (parameter_t multiplier_percent, int channel) {
   set_parameter(1, multiplier_percent);
   set_parameter(2, channel);
 }
 
-void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_type value) {
+void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_t value) {
   switch (param) {
     case 1: 
       kerroin = value / 100.0;
@@ -140,13 +140,13 @@ void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_type value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_AMPLIFY_CHANNEL::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CHANNEL::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(kerroin * 100.0);
 
   case 2: 
-    return(static_cast<parameter_type>(channel_rep + 1));
+    return(static_cast<parameter_t>(channel_rep + 1));
   }
   return(0.0);
 }
@@ -177,11 +177,11 @@ void EFFECT_AMPLIFY_CHANNEL::process(void) {
   }
 }
 
-EFFECT_LIMITER::EFFECT_LIMITER (parameter_type limiting_percent) {
+EFFECT_LIMITER::EFFECT_LIMITER (parameter_t limiting_percent) {
   set_parameter(1, limiting_percent);
 }
 
-void EFFECT_LIMITER::set_parameter(int param, parameter_type value) {
+void EFFECT_LIMITER::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1:
     limit_rep = value / 100.0;
@@ -189,7 +189,7 @@ void EFFECT_LIMITER::set_parameter(int param, parameter_type value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_LIMITER::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_LIMITER::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(limit_rep * 100.0);
@@ -220,7 +220,7 @@ void EFFECT_LIMITER::process(void) {
   }
 }
 
-EFFECT_COMPRESS::EFFECT_COMPRESS (parameter_type compress_rate, parameter_type thold) {
+EFFECT_COMPRESS::EFFECT_COMPRESS (parameter_t compress_rate, parameter_t thold) {
   set_parameter(1, compress_rate);
   set_parameter(2, thold);
 
@@ -238,7 +238,7 @@ EFFECT_COMPRESS::EFFECT_COMPRESS (const EFFECT_COMPRESS& x) {
   lastout = x.lastout;
 }
 
-void EFFECT_COMPRESS::set_parameter(int param, parameter_type value) {
+void EFFECT_COMPRESS::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1: 
     crate = pow(2.0, value / 6.0);
@@ -249,7 +249,7 @@ void EFFECT_COMPRESS::set_parameter(int param, parameter_type value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_COMPRESS::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_COMPRESS::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return((log (crate)) / (log (2.0f)) * 6.0);
@@ -303,7 +303,7 @@ void EFFECT_COMPRESS::process(void) {
   }
 }
 
-EFFECT_NOISEGATE::EFFECT_NOISEGATE (parameter_type thlevel_percent, parameter_type thtime, parameter_type a, parameter_type h, parameter_type r) {
+EFFECT_NOISEGATE::EFFECT_NOISEGATE (parameter_t thlevel_percent, parameter_t thtime, parameter_t a, parameter_t h, parameter_t r) {
   // map_parameters();
 
   set_parameter(1, thlevel_percent);
@@ -313,38 +313,38 @@ EFFECT_NOISEGATE::EFFECT_NOISEGATE (parameter_type thlevel_percent, parameter_ty
   set_parameter(5, r);
 }
 
-void EFFECT_NOISEGATE::set_parameter(int param, parameter_type value) {
+void EFFECT_NOISEGATE::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1: 
     th_level = SAMPLE_SPECS::max_amplitude * (value / 100.0);
     break;
   case 2: 
-    th_time = (value * (parameter_type)samples_per_second() / 1000.0);
+    th_time = (value * (parameter_t)samples_per_second() / 1000.0);
     break;
   case 3: 
-    atime = (value * (parameter_type)samples_per_second() / 1000.0);
+    atime = (value * (parameter_t)samples_per_second() / 1000.0);
     break;
   case 4: 
-    htime = (value * (parameter_type)samples_per_second() / 1000.0);
+    htime = (value * (parameter_t)samples_per_second() / 1000.0);
     break;
   case 5: 
-    rtime = (value * (parameter_type)samples_per_second() / 1000.0);
+    rtime = (value * (parameter_t)samples_per_second() / 1000.0);
     break;
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_NOISEGATE::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_NOISEGATE::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(th_level * 100.0 / (parameter_type)SAMPLE_SPECS::max_amplitude);
+    return(th_level * 100.0 / (parameter_t)SAMPLE_SPECS::max_amplitude);
   case 2: 
-    return(th_time * 1000.0 / (parameter_type)samples_per_second());
+    return(th_time * 1000.0 / (parameter_t)samples_per_second());
   case 3: 
-    return(atime * 1000.0 / (parameter_type)samples_per_second());
+    return(atime * 1000.0 / (parameter_t)samples_per_second());
   case 4: 
-    return(htime * 1000.0 / (parameter_type)samples_per_second());
+    return(htime * 1000.0 / (parameter_t)samples_per_second());
   case 5: 
-    return(rtime * 1000.0 / (parameter_type)samples_per_second());
+    return(rtime * 1000.0 / (parameter_t)samples_per_second());
   }
   return(0.0);
 }
@@ -470,11 +470,11 @@ void EFFECT_NOISEGATE::process(void) {
   }
 }
 
-EFFECT_NORMAL_PAN::EFFECT_NORMAL_PAN (parameter_type right_percent) {
+EFFECT_NORMAL_PAN::EFFECT_NORMAL_PAN (parameter_t right_percent) {
   set_parameter(1, right_percent);
 }
 
-void EFFECT_NORMAL_PAN::set_parameter(int param, parameter_type value) {
+void EFFECT_NORMAL_PAN::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1: 
     right_percent_rep = value;
@@ -493,7 +493,7 @@ void EFFECT_NORMAL_PAN::set_parameter(int param, parameter_type value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_NORMAL_PAN::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_NORMAL_PAN::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(right_percent_rep);

@@ -137,7 +137,7 @@ void EFFECT_ANALYZE::parameter_description(int param,
   }
 }
 
-void EFFECT_ANALYZE::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void EFFECT_ANALYZE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   switch (param) {
   case 1: 
     if (value != 0)
@@ -147,7 +147,7 @@ void EFFECT_ANALYZE::set_parameter(int param, CHAIN_OPERATOR::parameter_type val
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_ANALYZE::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_ANALYZE::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     if (cumulativemode_rep == true) return(1.0);
@@ -158,9 +158,9 @@ CHAIN_OPERATOR::parameter_type EFFECT_ANALYZE::get_parameter(int param) const {
   return(0.0);
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_ANALYZE::max_multiplier(void) const { 
-  parameter_type k;
-  SAMPLE_SPECS::sample_type max_peak = max_pos;
+CHAIN_OPERATOR::parameter_t EFFECT_ANALYZE::max_multiplier(void) const { 
+  parameter_t k;
+  SAMPLE_SPECS::sample_t max_peak = max_pos;
   if (max_neg > max_pos) max_peak = max_neg;
   if (max_peak != 0.0f) k = SAMPLE_SPECS::max_amplitude / max_peak;
   else k = 0.0f;
@@ -236,8 +236,8 @@ string EFFECT_DCFIND::parameter_names(void) const {
   return(vector_to_string(t, ","));
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_DCFIND::get_deltafix(int channel) const { 
-  SAMPLE_SPECS::sample_type deltafix;
+CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_deltafix(int channel) const { 
+  SAMPLE_SPECS::sample_t deltafix;
 
   if (channel >= static_cast<int>(pos_sum.size()) ||
       channel >= static_cast<int>(neg_sum.size())) return(0.0);
@@ -245,7 +245,7 @@ CHAIN_OPERATOR::parameter_type EFFECT_DCFIND::get_deltafix(int channel) const {
   if (pos_sum[channel] > neg_sum[channel]) deltafix = -(pos_sum[channel] - neg_sum[channel]) / num_of_samples[channel];
   else deltafix = (neg_sum[channel] - pos_sum[channel]) / num_of_samples[channel];
 
-  return((CHAIN_OPERATOR::parameter_type)deltafix); 
+  return((CHAIN_OPERATOR::parameter_t)deltafix); 
 }
 
 void EFFECT_DCFIND::parameter_description(int param, 
@@ -263,9 +263,9 @@ void EFFECT_DCFIND::parameter_description(int param,
 }
 
 void EFFECT_DCFIND::set_parameter(int param,
-				 CHAIN_OPERATOR::parameter_type value) { }
+				 CHAIN_OPERATOR::parameter_t value) { }
 
-CHAIN_OPERATOR::parameter_type EFFECT_DCFIND::get_parameter(int param) const {
+CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_parameter(int param) const {
   return(get_deltafix(param));
 }
 

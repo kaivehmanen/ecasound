@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup-position.cpp: Global chainsetup position
-// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include <cmath>
 #include "eca-chainsetup-position.h"
 
-ECA_CHAINSETUP_POSITION::ECA_CHAINSETUP_POSITION(long int srate) {
+ECA_CHAINSETUP_POSITION::ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_t srate) {
   srate_rep = srate;
   length_set_rep = false;
   looping_rep = false;
@@ -28,18 +28,18 @@ ECA_CHAINSETUP_POSITION::ECA_CHAINSETUP_POSITION(long int srate) {
   length_rep = 0;
 }
 
-void ECA_CHAINSETUP_POSITION::length_in_samples(long pos) { 
+void ECA_CHAINSETUP_POSITION::length_in_samples(SAMPLE_SPECS::sample_pos_t pos) { 
   length_rep = pos;
   length_set_rep = true;
   if (pos == 0) length_set_rep = false;
 }
 
 void ECA_CHAINSETUP_POSITION::change_position_exact(double seconds) {
- change_position(static_cast<long>(seconds * srate_rep));
+ change_position(static_cast<SAMPLE_SPECS::sample_pos_t>(seconds * srate_rep));
 }
 
 void ECA_CHAINSETUP_POSITION::set_position_exact(double seconds) {
- set_position(static_cast<long>(seconds * srate_rep));
+ set_position(static_cast<SAMPLE_SPECS::sample_pos_t>(seconds * srate_rep));
 }
 
 void ECA_CHAINSETUP_POSITION::length_in_seconds(double pos_in_seconds) { 

@@ -69,13 +69,13 @@ EFFECT_VST::EFFECT_VST (const std::string& fname) throw(ECA_ERROR&) {
 
 EFFECT_VST::~EFFECT_VST (void) { }
 
-void EFFECT_VST::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void EFFECT_VST::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   for(int n = 0; n < static_cast<int>(vst_handles.size()); n++) {
     vst_handles[n]->setParameter(vst_handles[n], param, value);
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_VST::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_VST::get_parameter(int param) const { 
   return(vst_handles.back()->getParameter(vst_handles.back(), param));
 }
 

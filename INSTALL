@@ -93,6 +93,9 @@ Ecasound specific options
 	specified, you're still required to have a working
 	ncurses/termcap installation to compile)
 
+`--with-largefile'
+	Compile with support for large files (>2GB).
+
 Compilers and Options
 =====================
 

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_mixing.cpp: Effects for channel mixing and routing
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 #include "samplebuffer_iterators.h"
 #include "audiofx_mixing.h"
 
-EFFECT_CHANNEL_COPY::EFFECT_CHANNEL_COPY (parameter_type from, 
-					  parameter_type to) {
+EFFECT_CHANNEL_COPY::EFFECT_CHANNEL_COPY (parameter_t from, 
+					  parameter_t to) {
 
   set_parameter(1, from);
   set_parameter(2, to);
@@ -46,7 +46,7 @@ void EFFECT_CHANNEL_COPY::parameter_description(int param, struct PARAM_DESCRIPT
   pd->output = false;
 }
 
-void EFFECT_CHANNEL_COPY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void EFFECT_CHANNEL_COPY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   switch (param) {
   case 1: 
     from_channel = static_cast<ch_type>(value);
@@ -61,7 +61,7 @@ void EFFECT_CHANNEL_COPY::set_parameter(int param, CHAIN_OPERATOR::parameter_typ
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_CHANNEL_COPY::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_COPY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(from_channel + 1);
@@ -86,7 +86,7 @@ void EFFECT_CHANNEL_COPY::process(void) {
   }
 }
 
-EFFECT_MIX_TO_CHANNEL::EFFECT_MIX_TO_CHANNEL (parameter_type to) {
+EFFECT_MIX_TO_CHANNEL::EFFECT_MIX_TO_CHANNEL (parameter_t to) {
   set_parameter(1, to);
 }
 
@@ -109,7 +109,7 @@ void EFFECT_MIX_TO_CHANNEL::parameter_description(int param, struct PARAM_DESCRI
   pd->output = false;
 }
 
-void EFFECT_MIX_TO_CHANNEL::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void EFFECT_MIX_TO_CHANNEL::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   switch (param) {
   case 1: 
     to_channel = static_cast<ch_type>(value);
@@ -119,7 +119,7 @@ void EFFECT_MIX_TO_CHANNEL::set_parameter(int param, CHAIN_OPERATOR::parameter_t
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_MIX_TO_CHANNEL::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_MIX_TO_CHANNEL::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(to_channel + 1);

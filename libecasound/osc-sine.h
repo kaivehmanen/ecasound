@@ -16,14 +16,14 @@ class SINE_OSCILLATOR : public OSCILLATOR {
   
  public:
 
-  void init(parameter_type step);
+  void init(parameter_t step);
 
   std::string parameter_names(void) const { return("freq,phase-offset"); }
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  void set_parameter(int param, parameter_t value);
+  parameter_t get_parameter(int param) const;
 
   std::string name(void) const { return("Sine oscillator"); }
-  parameter_type value(void);
+  parameter_t value(void);
 
   SINE_OSCILLATOR* clone(void) const { return new SINE_OSCILLATOR(*this); }
   SINE_OSCILLATOR* new_expr(void) const { return new SINE_OSCILLATOR(); }

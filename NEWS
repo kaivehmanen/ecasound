@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 261101) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 301101) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -20,9 +20,14 @@ Last officially released version is -*> v2.0.3 *-
 ??112001 (v2.1dev5)
 	- added: docs - Documentation/manpages.html
 	- added: ecalength - -su option added [smassy]
+	- added: experimental support for largefiles (>2GB); 
+		 enabled with --with-largefile configure option
 	- changed: most preset names changed in 'effect_presets'
 	- changed: ecasoundrc - new defaults for mp3 and ogg
 		   output
+	- changed: unified kvutils build process; added separate
+	           libkvutils_debug target; CXXFLAGS shared with
+		   ecasound build configuration
 	- fixed: processing didn't stop with setups that had loop-
 		 devices connected to multiple input objects
 	- fixed: using loop devices in setups with non-default 

@@ -10,11 +10,11 @@
  *
  * @author Kai Vehmanen
  */
-class OPERATOR : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type> {
+class OPERATOR : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_t> {
 
  public:
 
-  typedef SAMPLE_SPECS::sample_type parameter_type;
+  typedef SAMPLE_SPECS::sample_t parameter_t;
 
   /**
    * Structure describing one operator parameter. 
@@ -23,7 +23,7 @@ class OPERATOR : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type> {
     /**
      * A reasonable default value.
      */
-    parameter_type default_value;
+    parameter_t default_value;
 
     /**
      * Parameter description. 
@@ -38,7 +38,7 @@ class OPERATOR : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type> {
     /**
      * If 'bounded_above', contains the bound value.
      */
-    parameter_type upper_bound;
+    parameter_t upper_bound;
 
     /**
      * Is parameter bounded below?
@@ -48,7 +48,7 @@ class OPERATOR : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type> {
     /**
      * If 'bounded_below', contains the bound value.
      */
-    parameter_type lower_bound;
+    parameter_t lower_bound;
 
     /**
      * Whether parameter should be treated as a boolean toggle?

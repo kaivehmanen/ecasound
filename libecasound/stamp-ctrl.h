@@ -27,12 +27,12 @@ class VOLUME_ANALYZE_CONTROLLER : public AUDIO_STAMP_CONTROLLER {
  public:
 
   virtual std::string name(void) const { return("Volume analyze controller"); }
-  virtual parameter_type value(void);
+  virtual parameter_t value(void);
 
-  virtual void init(parameter_type step);
+  virtual void init(parameter_t step);
   virtual std::string parameter_names(void) const { return("stamp-id,rms-toggle"); }
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   VOLUME_ANALYZE_CONTROLLER(void); 
   VOLUME_ANALYZE_CONTROLLER* clone(void) const { return new VOLUME_ANALYZE_CONTROLLER(*this); }

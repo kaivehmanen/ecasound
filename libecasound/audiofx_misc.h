@@ -15,7 +15,7 @@ class EFFECT_DCFIX : public EFFECT_BASE {
 
 private:
 
-  SAMPLE_SPECS::sample_type deltafix_rep[2];
+  SAMPLE_SPECS::sample_t deltafix_rep[2];
   SAMPLE_ITERATOR_CHANNEL i_rep;
 
 public:
@@ -25,8 +25,8 @@ public:
   virtual std::string parameter_names(void) const { return("delta-value-left,delta-value-right"); }
   virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
@@ -34,7 +34,7 @@ public:
   EFFECT_DCFIX* clone(void) const { return new EFFECT_DCFIX(*this); }
   EFFECT_DCFIX* new_expr(void) const { return new EFFECT_DCFIX(); }
   EFFECT_DCFIX (const EFFECT_DCFIX& x);
-  EFFECT_DCFIX (parameter_type delta_left = 0.0, parameter_type delta_right = 0.0);
+  EFFECT_DCFIX (parameter_t delta_left = 0.0, parameter_t delta_right = 0.0);
 };
 
 /**
@@ -45,7 +45,7 @@ class EFFECT_PITCH_SHIFT : public EFFECT_BASE {
 
 private:
 
-  parameter_type pmod_rep;
+  parameter_t pmod_rep;
   long int target_rate_rep;
   SAMPLE_BUFFER* sbuf_repp;
 
@@ -56,8 +56,8 @@ public:
   virtual std::string parameter_names(void) const { return("change-%"); }
   virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
@@ -87,8 +87,8 @@ class EFFECT_AUDIO_STAMP : public EFFECT_BASE,
   virtual std::string parameter_names(void) const { return("stamp-id"); }
   virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);

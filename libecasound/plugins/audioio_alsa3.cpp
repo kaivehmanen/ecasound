@@ -610,7 +610,7 @@ void ALSA_PCM_DEVICE_06X::handle_xrun_playback(void) {
   }
 }
 
-long ALSA_PCM_DEVICE_06X::position_in_samples(void) const {
+SAMPLE_SPECS::sample_pos_t ALSA_PCM_DEVICE_06X::position_in_samples(void) const {
   if (is_triggered_rep == false) return(0);
   snd_pcm_sframes_t delay = 0;
   if (::snd_pcm_delay(audio_fd_repp, &delay) != 0) 

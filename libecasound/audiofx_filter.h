@@ -28,18 +28,18 @@ class EFFECT_BW_FILTER : public EFFECT_FILTER {
 
 private:
   
-  SAMPLE_SPECS::sample_type outputSample;
+  SAMPLE_SPECS::sample_t outputSample;
   SAMPLE_ITERATOR_CHANNELS i;
 
-  std::vector<std::vector<SAMPLE_SPECS::sample_type> > sin;
-  std::vector<std::vector<SAMPLE_SPECS::sample_type> > sout;
+  std::vector<std::vector<SAMPLE_SPECS::sample_t> > sin;
+  std::vector<std::vector<SAMPLE_SPECS::sample_t> > sout;
 
   void init_values(void);
 
  protected:
 
-  std::vector<SAMPLE_SPECS::sample_type> a;
-  std::vector<SAMPLE_SPECS::sample_type> b;
+  std::vector<SAMPLE_SPECS::sample_t> a;
+  std::vector<SAMPLE_SPECS::sample_t> b;
    
 public:
 
@@ -66,23 +66,23 @@ class EFFECT_BANDPASS: public EFFECT_BW_FILTER {
 
 private:
     
-  parameter_type center;
-  parameter_type width;
+  parameter_t center;
+  parameter_t width;
 
-  parameter_type C;
-  parameter_type D;
+  parameter_t C;
+  parameter_t D;
 
 public:
   
   virtual std::string name(void) const { return("Bandpass filter"); }
   virtual std::string parameter_names(void) const { return("center-freq,width"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   EFFECT_BANDPASS* clone(void) const  { return new EFFECT_BANDPASS(*this); }
   EFFECT_BANDPASS* new_expr(void) const { return new EFFECT_BANDPASS(); }
-  EFFECT_BANDPASS (parameter_type centerf = 1000.0, parameter_type width = 1000.0);
+  EFFECT_BANDPASS (parameter_t centerf = 1000.0, parameter_t width = 1000.0);
 };
 
 /**
@@ -95,23 +95,23 @@ class EFFECT_BANDREJECT: public EFFECT_BW_FILTER {
 
 private:
     
-  parameter_type center;
-  parameter_type width;
+  parameter_t center;
+  parameter_t width;
 
-  parameter_type C;
-  parameter_type D;
+  parameter_t C;
+  parameter_t D;
 
 public:
 
   virtual std::string name(void) const { return("Bandreject filter"); }
   virtual std::string parameter_names(void) const { return("center-freq,width"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   EFFECT_BANDREJECT* clone(void) const { return new EFFECT_BANDREJECT(*this); }
   EFFECT_BANDREJECT* new_expr(void) const { return new EFFECT_BANDREJECT(); }
-  EFFECT_BANDREJECT (parameter_type centerf = 1000.0, parameter_type width = 1000.0);
+  EFFECT_BANDREJECT (parameter_t centerf = 1000.0, parameter_t width = 1000.0);
 };
 
 /**
@@ -124,20 +124,20 @@ class EFFECT_HIGHPASS : public EFFECT_BW_FILTER {
   
  private:
 
-  parameter_type cutOffFreq;
-  parameter_type C;
+  parameter_t cutOffFreq;
+  parameter_t C;
     
 public:
     
   virtual std::string name(void) const { return("Highpass filter"); }
   virtual std::string parameter_names(void) const { return("cutoff-freq"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   EFFECT_HIGHPASS* clone(void) const { return new EFFECT_HIGHPASS(*this); }
   EFFECT_HIGHPASS* new_expr(void) const { return new EFFECT_HIGHPASS(); }
-  EFFECT_HIGHPASS (parameter_type cutoff = 1000.0);
+  EFFECT_HIGHPASS (parameter_t cutoff = 1000.0);
 };
 
 /**
@@ -145,19 +145,19 @@ public:
  */
 class EFFECT_ALLPASS_FILTER : public EFFECT_FILTER {
 
-  std::vector<std::deque<SAMPLE_SPECS::sample_type> > inbuf, outbuf;
+  std::vector<std::deque<SAMPLE_SPECS::sample_t> > inbuf, outbuf;
   SAMPLE_ITERATOR_CHANNELS i;
 
-  parameter_type feedback_gain;
-  parameter_type D;
+  parameter_t feedback_gain;
+  parameter_t D;
 
 public:
 
   virtual std::string name(void) const { return("Allpass filter"); }
   virtual std::string parameter_names(void) const { return("delay-samples,feedback-%"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
@@ -176,27 +176,27 @@ public:
  */
 class EFFECT_COMB_FILTER : public EFFECT_FILTER {
 
-  std::vector<std::deque<SAMPLE_SPECS::sample_type> > buffer;
-  std::vector<SAMPLE_SPECS::sample_type> temp;
+  std::vector<std::deque<SAMPLE_SPECS::sample_t> > buffer;
+  std::vector<SAMPLE_SPECS::sample_t> temp;
   SAMPLE_ITERATOR_CHANNELS i;
 
-  parameter_type C;
-  parameter_type D;
+  parameter_t C;
+  parameter_t D;
 
 public:
 
   virtual std::string name(void) const { return("Comb filter"); }
   virtual std::string parameter_names(void) const { return("delay-samples,radius"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
   EFFECT_COMB_FILTER* clone(void) const { return new EFFECT_COMB_FILTER(*this); }  
   EFFECT_COMB_FILTER* new_expr(void) const { return new EFFECT_COMB_FILTER(); }
-  EFFECT_COMB_FILTER (int delay_in_samples = 1, parameter_type constant = 1.0);
+  EFFECT_COMB_FILTER (int delay_in_samples = 1, parameter_t constant = 1.0);
 };
 
 /**
@@ -207,28 +207,28 @@ public:
  */
 class EFFECT_INVERSE_COMB_FILTER : public EFFECT_FILTER {
 
-  std::vector<parameter_type> laskuri;
-  std::vector<std::deque<SAMPLE_SPECS::sample_type> > buffer;
-  std::vector<SAMPLE_SPECS::sample_type> temp;
+  std::vector<parameter_t> laskuri;
+  std::vector<std::deque<SAMPLE_SPECS::sample_t> > buffer;
+  std::vector<SAMPLE_SPECS::sample_t> temp;
   SAMPLE_ITERATOR_CHANNELS i;
 
-  parameter_type C;
-  parameter_type D;
+  parameter_t C;
+  parameter_t D;
 
 public:
 
   virtual std::string name(void) const { return("Inverse comb filter"); }
   virtual std::string parameter_names(void) const { return("delay-samples,radius"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
   EFFECT_INVERSE_COMB_FILTER* clone(void) const { return new EFFECT_INVERSE_COMB_FILTER(*this); }  
   EFFECT_INVERSE_COMB_FILTER* new_expr(void) const { return new EFFECT_INVERSE_COMB_FILTER(); }
-  EFFECT_INVERSE_COMB_FILTER (int delay_in_samples = 10, parameter_type constant = 1.0);
+  EFFECT_INVERSE_COMB_FILTER (int delay_in_samples = 10, parameter_t constant = 1.0);
 };
 
 /**
@@ -241,23 +241,23 @@ class EFFECT_LOWPASS: public EFFECT_BW_FILTER {
 
 private:
 
-  parameter_type cutOffFreq;
+  parameter_t cutOffFreq;
 
-  parameter_type C;
+  parameter_t C;
 
 public:
 
   virtual std::string name(void) const { return("Lowpass filter"); }
   virtual std::string parameter_names(void) const { return("cutoff-freq"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
-  void set_cutoff(parameter_type value, long int srate);
+  void set_cutoff(parameter_t value, long int srate);
 
   EFFECT_LOWPASS* clone(void) const { return new EFFECT_LOWPASS(*this); }  
   EFFECT_LOWPASS* new_expr(void) const { return new EFFECT_LOWPASS(); }
-  EFFECT_LOWPASS (parameter_type cutoff = 1000.0);
+  EFFECT_LOWPASS (parameter_t cutoff = 1000.0);
 };
 
 /**
@@ -275,9 +275,9 @@ class EFFECT_LOWPASS_SIMPLE : public EFFECT_FILTER {
 
 private:
 
-  parameter_type cutOffFreq;
-  parameter_type A, B;
-  std::vector<SAMPLE_SPECS::sample_type> outhist, tempin, temphist;
+  parameter_t cutOffFreq;
+  parameter_t A, B;
+  std::vector<SAMPLE_SPECS::sample_t> outhist, tempin, temphist;
   SAMPLE_ITERATOR_CHANNELS i;
 
 public:
@@ -288,12 +288,12 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   EFFECT_LOWPASS_SIMPLE* clone(void) const { return new EFFECT_LOWPASS_SIMPLE(*this); }
   EFFECT_LOWPASS_SIMPLE* new_expr(void) const { return new EFFECT_LOWPASS_SIMPLE(); }
-  EFFECT_LOWPASS_SIMPLE (parameter_type cutoff = 1000.0);
+  EFFECT_LOWPASS_SIMPLE (parameter_t cutoff = 1000.0);
 };
 
 /**
@@ -303,13 +303,13 @@ class EFFECT_RESONANT_BANDPASS : public EFFECT_FILTER {
 
 private:
 
-  std::vector<SAMPLE_SPECS::sample_type> outhist1, outhist2;
+  std::vector<SAMPLE_SPECS::sample_t> outhist1, outhist2;
   
-  parameter_type center;
-  parameter_type width;
+  parameter_t center;
+  parameter_t width;
   
-  parameter_type a, b, c, R;
-  parameter_type pole_angle;
+  parameter_t a, b, c, R;
+  parameter_t pole_angle;
 
   SAMPLE_ITERATOR_CHANNELS i;
 
@@ -318,15 +318,15 @@ public:
   virtual std::string name(void) const { return("Resonant bandpass filter"); }
   virtual std::string parameter_names(void) const { return("center-freq,width"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
   EFFECT_RESONANT_BANDPASS* clone(void) const { return new EFFECT_RESONANT_BANDPASS(*this); }  
   EFFECT_RESONANT_BANDPASS* new_expr(void) const { return new EFFECT_RESONANT_BANDPASS(); }  
-  EFFECT_RESONANT_BANDPASS (parameter_type centerf = 1000.0, parameter_type width = 1000.0);
+  EFFECT_RESONANT_BANDPASS (parameter_t centerf = 1000.0, parameter_t width = 1000.0);
 };
 
 /**
@@ -338,29 +338,29 @@ class EFFECT_RESONANT_LOWPASS : public EFFECT_FILTER {
 
   SAMPLE_ITERATOR_CHANNELS i;
     
-  std::vector<SAMPLE_SPECS::sample_type> outhist0, outhist1, outhist2, outhist3;
-  std::vector<SAMPLE_SPECS::sample_type> newhist0, newhist1;
+  std::vector<SAMPLE_SPECS::sample_t> outhist0, outhist1, outhist2, outhist3;
+  std::vector<SAMPLE_SPECS::sample_t> newhist0, newhist1;
     
   class TRIPLE_COEFS {
   public:
-    parameter_type a0, a1, a2;       // numerator coefficients
-    parameter_type b0, b1, b2;       // denominator coefficients
+    parameter_t a0, a1, a2;       // numerator coefficients
+    parameter_t b0, b1, b2;       // denominator coefficients
   };
 
   class FILTER_COEFS {
   public:
-    parameter_type A, B, C, D;       // filter coefficients
+    parameter_t A, B, C, D;       // filter coefficients
   };
     
   std::vector<TRIPLE_COEFS> ProtoCoef;         // Filter prototype coefficients,
                                           // for each filter section
   std::vector<FILTER_COEFS> Coef;
     
-  parameter_type cutoff, Q, gain, gain_orig;
-  parameter_type pi;
-  parameter_type laskuri;
+  parameter_t cutoff, Q, gain, gain_orig;
+  parameter_t pi;
+  parameter_t laskuri;
 
-  parameter_type ad, bd, wp;      // for szxform()
+  parameter_t ad, bd, wp;      // for szxform()
 
   void szxform(int section);
   void refresh_values(void);
@@ -370,17 +370,17 @@ public:
   virtual std::string name(void) const { return("Resonant lowpass filter"); }
   virtual std::string parameter_names(void) const { return("cutoff-freq,resonance,gain"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
   EFFECT_RESONANT_LOWPASS* clone(void) const { return new EFFECT_RESONANT_LOWPASS(*this); }  
   EFFECT_RESONANT_LOWPASS* new_expr(void) const { return new EFFECT_RESONANT_LOWPASS(); }  
-  EFFECT_RESONANT_LOWPASS (parameter_type cutoff = 1000.0,
-			   parameter_type resonance = 1.0,
-			   parameter_type gain = 1.0);
+  EFFECT_RESONANT_LOWPASS (parameter_t cutoff = 1000.0,
+			   parameter_t resonance = 1.0,
+			   parameter_t gain = 1.0);
 };
 
 /**
@@ -395,28 +395,28 @@ private:
 
   SAMPLE_ITERATOR_CHANNELS i;
     
-  parameter_type center;
-  parameter_type width;
+  parameter_t center;
+  parameter_t width;
 
-  std::vector<SAMPLE_SPECS::sample_type> cona;
-  std::vector<SAMPLE_SPECS::sample_type> conb;
+  std::vector<SAMPLE_SPECS::sample_t> cona;
+  std::vector<SAMPLE_SPECS::sample_t> conb;
 
-  std::vector<SAMPLE_SPECS::sample_type> saout0, saout1;
+  std::vector<SAMPLE_SPECS::sample_t> saout0, saout1;
 
 public:
 
   virtual std::string name(void) const { return("Resonator filter"); }
   virtual std::string parameter_names(void) const { return("center-freq,width"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
   EFFECT_RESONATOR* clone(void) const { return new EFFECT_RESONATOR(*this); }
   EFFECT_RESONATOR* new_expr(void) const { return new EFFECT_RESONATOR(); }  
-  EFFECT_RESONATOR (parameter_type center = 1000.0, parameter_type width = 1000.0);
+  EFFECT_RESONATOR (parameter_t center = 1000.0, parameter_t width = 1000.0);
 };
 
 #endif

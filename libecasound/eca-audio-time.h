@@ -2,13 +2,7 @@
 #define INCLUDED_ECA_AUDIO_TIME_H
 
 #include <string>
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#ifdef USE_CXX_STD_NAMESPACE
-using std::string;
-#endif
+#include "sample-specs.h"
 
 /**
  * Generic class for representing time in audio environment
@@ -17,27 +11,27 @@ class ECA_AUDIO_TIME {
 
  private:
 
-  long int samples_rep;
-  long int sample_rate_rep;
+  SAMPLE_SPECS::sample_pos_t samples_rep;
+  SAMPLE_SPECS::sample_rate_t sample_rate_rep;
 
  public:
 
   enum format_type { format_hour_min_sec, format_min_sec, format_seconds, format_samples };
 
-  ECA_AUDIO_TIME(long int samples, long int sample_rate);
+  ECA_AUDIO_TIME(SAMPLE_SPECS::sample_pos_t samples, SAMPLE_SPECS::sample_rate_t sample_rate);
   ECA_AUDIO_TIME(double time_in_seconds);
   ECA_AUDIO_TIME(format_type type, const std::string& time);
   ECA_AUDIO_TIME(void);
 
   void set(format_type type, const std::string& time);
   void set_seconds(double seconds);
-  void set_samples(long int samples);
+  void set_samples(SAMPLE_SPECS::sample_pos_t samples);
   void set_samples_per_second(long int srate);
     
   std::string to_string(format_type type) const;
   double seconds(void) const;
-  long int samples_per_second(void) const;
-  long int samples(void) const;
+  SAMPLE_SPECS::sample_rate_t samples_per_second(void) const;
+  SAMPLE_SPECS::sample_pos_t samples(void) const;
 };
 
 #endif

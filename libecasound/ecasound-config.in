@@ -33,7 +33,7 @@ do
 	  flags="$flags -L$libdir -lecasound -lkvutils"
 	  ;;
     --libs_debug)
-	  flags="$flags -L$libdir -lecasound_debug -lkvutils"
+	  flags="$flags -L$libdir -lecasound_debug -lkvutils_debug"
 	  ;;
     --ldflags)
 	  flags="$flags -Wl,--rpath -Wl,$libdir"

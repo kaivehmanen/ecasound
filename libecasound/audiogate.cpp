@@ -48,7 +48,7 @@ void TIME_CROP_GATE::analyze(SAMPLE_BUFFER* sbuf) {
   curtime += sbuf->length_in_seconds();
 }
 
-TIME_CROP_GATE::TIME_CROP_GATE (CHAIN_OPERATOR::parameter_type open_at, CHAIN_OPERATOR::parameter_type duration) {
+TIME_CROP_GATE::TIME_CROP_GATE (CHAIN_OPERATOR::parameter_t open_at, CHAIN_OPERATOR::parameter_t duration) {
   btime = open_at;
   etime = btime + duration;
   curtime = 0.0;
@@ -58,7 +58,7 @@ TIME_CROP_GATE::TIME_CROP_GATE (CHAIN_OPERATOR::parameter_type open_at, CHAIN_OP
 		kvu_numtostr(duration) + " seconds.\n");
 }
 
-CHAIN_OPERATOR::parameter_type TIME_CROP_GATE::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t TIME_CROP_GATE::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(btime);
@@ -68,7 +68,7 @@ CHAIN_OPERATOR::parameter_type TIME_CROP_GATE::get_parameter(int param) const {
   return(0.0);
 }
 
-void TIME_CROP_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void TIME_CROP_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   switch (param) {
   case 1: 
     btime = value;
@@ -80,8 +80,8 @@ void TIME_CROP_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_type val
   }
 }
 
-THRESHOLD_GATE::THRESHOLD_GATE (CHAIN_OPERATOR::parameter_type threshold_openlevel, 
-				CHAIN_OPERATOR::parameter_type threshold_closelevel,
+THRESHOLD_GATE::THRESHOLD_GATE (CHAIN_OPERATOR::parameter_t threshold_openlevel, 
+				CHAIN_OPERATOR::parameter_t threshold_closelevel,
 				bool use_rms) {
   openlevel = threshold_openlevel / 100.0;
   closelevel = threshold_closelevel / 100.0;
@@ -122,7 +122,7 @@ void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf) {
   }
 }
 
-CHAIN_OPERATOR::parameter_type THRESHOLD_GATE::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t THRESHOLD_GATE::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(openlevel * 100.0);
@@ -135,7 +135,7 @@ CHAIN_OPERATOR::parameter_type THRESHOLD_GATE::get_parameter(int param) const {
   return(0.0);
 }
 
-void THRESHOLD_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void THRESHOLD_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   switch (param) {
   case 1: 
     openlevel = value / 100.0;

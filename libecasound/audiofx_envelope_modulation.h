@@ -23,23 +23,23 @@ class EFFECT_ENV_MOD : public EFFECT_BASE {
 class EFFECT_PULSE_GATE: public EFFECT_ENV_MOD {
 
   SAMPLE_ITERATOR_INTERLEAVED i;
-  parameter_type period;
-  parameter_type stopTime;
-  parameter_type currentTime;
-  parameter_type incrTime;
+  parameter_t period;
+  parameter_t stopTime;
+  parameter_t currentTime;
+  parameter_t incrTime;
 
  public:
 
   virtual std::string name(void) const { return("Pulse Gate"); }
   virtual std::string parameter_names(void) const  { return("freq-Hz,on-time-%"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_PULSE_GATE (parameter_type freq_Hz = 1.0, parameter_type onTime_percent = 50.0);
+  EFFECT_PULSE_GATE (parameter_t freq_Hz = 1.0, parameter_t onTime_percent = 50.0);
   virtual ~EFFECT_PULSE_GATE(void) { }
   EFFECT_PULSE_GATE* clone(void) const { return new EFFECT_PULSE_GATE(*this); }
   EFFECT_PULSE_GATE* new_expr(void) const { return new EFFECT_PULSE_GATE(); }
@@ -60,13 +60,13 @@ class EFFECT_PULSE_GATE_BPM : public EFFECT_ENV_MOD {
   virtual std::string name(void) const { return("Pulse gate BPM"); }
   virtual std::string parameter_names(void) const  { return("bpm,on-time-msec"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_PULSE_GATE_BPM (parameter_type bpm = 120.0, parameter_type ontime_percent = 5.0);
+  EFFECT_PULSE_GATE_BPM (parameter_t bpm = 120.0, parameter_t ontime_percent = 5.0);
   virtual ~EFFECT_PULSE_GATE_BPM(void) { }
   EFFECT_PULSE_GATE_BPM* clone(void) const { return new EFFECT_PULSE_GATE_BPM(*this); }
   EFFECT_PULSE_GATE_BPM* new_expr(void) const { return new EFFECT_PULSE_GATE_BPM(); }
@@ -79,23 +79,23 @@ class EFFECT_PULSE_GATE_BPM : public EFFECT_ENV_MOD {
 class EFFECT_TREMOLO: public EFFECT_ENV_MOD {
 
   SAMPLE_ITERATOR_INTERLEAVED i;
-  parameter_type freq;
-  parameter_type depth;
-  parameter_type currentTime;
-  parameter_type incrTime;
+  parameter_t freq;
+  parameter_t depth;
+  parameter_t currentTime;
+  parameter_t incrTime;
 
  public:
 
   virtual std::string name(void) const { return("Tremolo"); }
   virtual std::string parameter_names(void) const  { return("bpm,depth-%"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_TREMOLO (parameter_type freq_bpm = 60.0, parameter_type depth_percent = 100.0);
+  EFFECT_TREMOLO (parameter_t freq_bpm = 60.0, parameter_t depth_percent = 100.0);
   virtual ~EFFECT_TREMOLO(void) { }
   EFFECT_TREMOLO* clone(void) const { return new EFFECT_TREMOLO(*this); }
   EFFECT_TREMOLO* new_expr(void) const { return new EFFECT_TREMOLO(); }

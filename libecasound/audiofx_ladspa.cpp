@@ -92,7 +92,7 @@ void EFFECT_LADSPA::init_ports(void) {
      */
     if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) ==
 	LADSPA_PORT_CONTROL) {
-      parameter_type init_value, lowb, upperb;
+      parameter_t init_value, lowb, upperb;
 
       if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
 	lowb = plugin_desc->PortRangeHints[m].LowerBound * samples_per_second();
@@ -202,7 +202,7 @@ void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *p
   }
 }
 
-void EFFECT_LADSPA::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void EFFECT_LADSPA::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   
   if (param > 0 && (param - 1 < static_cast<int>(params.size()))) {
     //  cerr << "ladspa: setting param " << param << " to " << value << "." << endl;
@@ -210,7 +210,7 @@ void EFFECT_LADSPA::set_parameter(int param, CHAIN_OPERATOR::parameter_type valu
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_LADSPA::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_LADSPA::get_parameter(int param) const { 
   if (param > 0 && (param - 1 < static_cast<int>(params.size()))) {
     //  cerr << "ladspa: getting param " << param << " with value " << params[param - 1] << "." << endl;
     return(params[param - 1]);

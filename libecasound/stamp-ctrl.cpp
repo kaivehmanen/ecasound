@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // stamp-ctrl.cpp: Controller sources that analyze audio stamps
 //                 and produce control data.
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@
 
 VOLUME_ANALYZE_CONTROLLER::VOLUME_ANALYZE_CONTROLLER(void) { }
 
-CONTROLLER_SOURCE::parameter_type VOLUME_ANALYZE_CONTROLLER::value(void) {
+CONTROLLER_SOURCE::parameter_t VOLUME_ANALYZE_CONTROLLER::value(void) {
   fetch_stamp(&sbuf_rep);
-  parameter_type v = 0.0f;
+  parameter_t v = 0.0f;
   if (rms_mode_rep != 0) 
     v = SAMPLE_BUFFER_FUNCTIONS::RMS_volume(sbuf_rep);
   else
@@ -35,12 +35,12 @@ CONTROLLER_SOURCE::parameter_type VOLUME_ANALYZE_CONTROLLER::value(void) {
   return(v);
 }
 
-void VOLUME_ANALYZE_CONTROLLER::init(CONTROLLER_SOURCE::parameter_type step) {
+void VOLUME_ANALYZE_CONTROLLER::init(CONTROLLER_SOURCE::parameter_t step) {
   step_length(step);
 //    cerr << "(volume-analyze-ctrl) Initialized.";
 }
 
-void VOLUME_ANALYZE_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_type value) {
+void VOLUME_ANALYZE_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
   switch (param) {
   case 1: 
     set_id(static_cast<int>(value));
@@ -53,13 +53,13 @@ void VOLUME_ANALYZE_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::para
   }
 }
 
-CONTROLLER_SOURCE::parameter_type VOLUME_ANALYZE_CONTROLLER::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_t VOLUME_ANALYZE_CONTROLLER::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(static_cast<parameter_type>(id()));
+    return(static_cast<parameter_t>(id()));
 
   case 2: 
-    return(static_cast<parameter_type>(rms_mode_rep));
+    return(static_cast<parameter_t>(rms_mode_rep));
   }
   return(0.0);
 }

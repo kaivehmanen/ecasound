@@ -34,7 +34,7 @@ FILE_PRESET::FILE_PRESET(const std::string& file_name) {
 }
 
 FILE_PRESET* FILE_PRESET::clone(void) const {
-  std::vector<parameter_type> param_values;
+  std::vector<parameter_t> param_values;
   for(int n = 0; n < number_of_params(); n++) {
     param_values.push_back(get_parameter(n + 1));
   }

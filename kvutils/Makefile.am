@@ -3,9 +3,12 @@ AUTOMAKE_OPTIONS = foreign
 # ---
 # Makefile.am for building libkvutils.a
 # ---
-CXXFLAGS=-D_REENTRANT -s -O2 -ffast-math -I$(srcdir)
 
+if INCLUDE_DEBUG
+lib_LTLIBRARIES = libkvutils_debug.la
+else
 lib_LTLIBRARIES = libkvutils.la
+endif
 
 kvutil_sources = 	kvutils.cpp \
 			message_item.cpp \
@@ -33,6 +36,9 @@ kvutil_headers = 	kvutils.h \
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
 libkvutils_la_LDFLAGS = -version-info 3:0:1
+
+libkvutils_debug_la_SOURCES = $(libkvutils_la_SOURCES)
+libkvutils_debug_la_LDFLAGS = $(libkvutils_la_LDFLAGS)
 
 DIST_COMMON = 	README \
 		COPYING \

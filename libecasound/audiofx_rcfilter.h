@@ -27,27 +27,27 @@
 class EFFECT_RC_LOWPASS_FILTER : public EFFECT_FILTER {
 
   SAMPLE_ITERATOR_CHANNELS i;
-  SAMPLE_SPECS::sample_type output_temp;
-  std::vector<SAMPLE_SPECS::sample_type> lp1_old, lp2_old, lp3_old, hp1_old, feedback;
+  SAMPLE_SPECS::sample_t output_temp;
+  std::vector<SAMPLE_SPECS::sample_t> lp1_old, lp2_old, lp3_old, hp1_old, feedback;
     
-  parameter_type cutoff_rep;
-  parameter_type resonance_rep;
+  parameter_t cutoff_rep;
+  parameter_t resonance_rep;
 
 public:
 
   virtual std::string name(void) const { return("RC-lowpass filter"); }
   virtual std::string parameter_names(void) const { return("cutoff-freq,resonance"); }
 
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
   EFFECT_RC_LOWPASS_FILTER* clone(void) const { return new EFFECT_RC_LOWPASS_FILTER(*this); }
   EFFECT_RC_LOWPASS_FILTER* new_expr(void) const { return new EFFECT_RC_LOWPASS_FILTER(); }
-  EFFECT_RC_LOWPASS_FILTER (parameter_type cutoff = 0.25,
-			   parameter_type resonance = 1.0);
+  EFFECT_RC_LOWPASS_FILTER (parameter_t cutoff = 0.25,
+			    parameter_t resonance = 1.0);
 };
 
 #endif

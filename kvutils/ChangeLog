@@ -2,6 +2,13 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2001-11-29  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* message_item.h (<<operator): added overloaded versions
+	for handling (un)signed long long ints
+	* kvu_numtostr.h (kvu_numtostr): added overloaded versions
+	for handling (un)signed long long ints
+	
 2001-10-15  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
 	* procudure_timer.h (set_upper_bound_seconds,

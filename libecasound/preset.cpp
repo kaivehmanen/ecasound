@@ -77,7 +77,7 @@ PRESET::~PRESET(void) {
 }
 
 PRESET* PRESET::clone(void) const {
-  vector<parameter_type> param_values;
+  vector<parameter_t> param_values;
   for(int n = 0; n < number_of_params(); n++) {
     param_values.push_back(get_parameter(n + 1));
   }
@@ -370,7 +370,7 @@ void PRESET::parse_operator_option(const string& arg) {
   //  cerr << "Creating object from '" << ps << "'."  << endl;
 
   /* phase 3: create an object using 'ps' */
-  DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* object = 0;
+  DYNAMIC_OBJECT<SAMPLE_SPECS::sample_t>* object = 0;
   cop = 0;
   cop = ECA_OBJECT_FACTORY::create_chain_operator(ps);
   if (cop == 0) cop = ECA_OBJECT_FACTORY::create_ladspa_plugin(ps);
@@ -435,7 +435,7 @@ string PRESET::parameter_names(void) const {
   return vector_to_string(impl_repp->preset_param_names_rep, ",");
 }
 
-void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   if (param > 0 && param <= static_cast<int>(impl_repp->slave_param_objects_rep.size())) {
     for(size_t n = 0; n < impl_repp->slave_param_objects_rep[param - 1].size(); n++) {
       DBC_CHECK(static_cast<int>(impl_repp->slave_param_indices_rep.size()) > param - 1);
@@ -447,7 +447,7 @@ void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_type PRESET::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t PRESET::get_parameter(int param) const { 
   if (param > 0 && param <= static_cast<int>(impl_repp->slave_param_objects_rep.size())) {
     DBC_CHECK(static_cast<int>(impl_repp->slave_param_indices_rep.size()) > param - 1);
     DBC_CHECK(impl_repp->slave_param_indices_rep[param - 1].size() > 0);

@@ -14,6 +14,7 @@
 #include <config.h>
 #endif
 
+#include "sample-specs.h"
 #include "samplebuffer.h"
 #include "audioio-types.h"
 #include "audioio-types.h"
@@ -38,7 +39,7 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
 #endif
 
   long int fragment_size_rep;
-  long int position_in_samples_rep;
+  SAMPLE_SPECS::sample_pos_t position_in_samples_rep;
  
   int card_number_rep, device_number_rep, subdevice_number_rep;
   int pcm_mode_rep;
@@ -90,7 +91,7 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
   virtual void start(void);
   virtual void prepare(void);
 
-  virtual long position_in_samples(void) const;
+  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
 
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;

@@ -14,8 +14,8 @@ class SAMPLE_BUFFER_impl {
   /** @name Misc member variables */
   /*@{*/
 
-  SAMPLE_BUFFER::sample_type* old_buffer_repp; // for resampling
-  std::vector<SAMPLE_BUFFER::sample_type> resample_memory_rep;
+  SAMPLE_BUFFER::sample_t* old_buffer_repp; // for resampling
+  std::vector<SAMPLE_BUFFER::sample_t> resample_memory_rep;
 
   /*@}*/
 };

@@ -494,7 +494,7 @@ void ECA_CONTROL::action(int action_id) {
       }
       int id1 = atoi(a[0].c_str());
       int id2 = atoi(a[1].c_str());
-      CHAIN_OPERATOR::parameter_type v = atof(a[2].c_str());
+      CHAIN_OPERATOR::parameter_t v = atof(a[2].c_str());
 
       if (id1 > 0 && id2 > 0) {
 	select_chain_operator(id1);

@@ -190,13 +190,13 @@ long int REALTIME_NULL::latency(void) const {
   return(buffersize());
 }
 
-long REALTIME_NULL::position_in_samples(void) const { 
+SAMPLE_SPECS::sample_pos_t REALTIME_NULL::position_in_samples(void) const { 
   if (is_running() != true) return(0);
   struct timeval now;
   ::gettimeofday(&now, NULL);
   double time = now.tv_sec * 1000000.0 + now.tv_usec -
     start_time.tv_sec * 1000000.0 - start_time.tv_usec;
-  return(static_cast<long>(time * samples_per_second() / 1000000.0));
+  return(static_cast<SAMPLE_SPECS::sample_pos_t>(time * samples_per_second() / 1000000.0));
 }
 
 REALTIME_NULL::~REALTIME_NULL(void) { close(); }

@@ -48,8 +48,8 @@ public:
 
   // Functions returning info about effect and its parameters.
   // ---
-  parameter_type get_parameter(int param) const;
-  void set_parameter(int param, parameter_type value);
+  parameter_t get_parameter(int param) const;
+  void set_parameter(int param, parameter_t value);
 
   std::string name(void) const { return("Time crop gate"); }
 
@@ -59,14 +59,14 @@ public:
 
   TIME_CROP_GATE* clone(void) const { return new TIME_CROP_GATE(*this); }
   TIME_CROP_GATE* new_expr(void) const { return new TIME_CROP_GATE(); }
-  TIME_CROP_GATE (parameter_type open_at, parameter_type duration);
+  TIME_CROP_GATE (parameter_t open_at, parameter_t duration);
   TIME_CROP_GATE (void) : curtime(0.0) {
     close_gate();
   }
 
 private:
 
-  parameter_type curtime, btime, etime; 
+  parameter_t curtime, btime, etime; 
 };
 
 /**
@@ -85,8 +85,8 @@ public:
 
   // Functions returning info about effect and its parameters.
   // ---
-  parameter_type get_parameter(int param) const;
-  void set_parameter(int param, parameter_type value);
+  parameter_t get_parameter(int param) const;
+  void set_parameter(int param, parameter_t value);
 
   std::string name(void) const { return("Threshold gate"); }
 
@@ -96,14 +96,14 @@ public:
 
   THRESHOLD_GATE* clone(void) const { return new THRESHOLD_GATE(*this); }
   THRESHOLD_GATE* new_expr(void) const { return new THRESHOLD_GATE(); }
-  THRESHOLD_GATE (parameter_type threshold_openlevel, parameter_type
+  THRESHOLD_GATE (parameter_t threshold_openlevel, parameter_t
 		  threshold_closelevel,  bool use_rms = false);
   THRESHOLD_GATE (void) 
     : rms(false), is_opened(false), is_closed(false) { }
   
 private:
   
-  parameter_type openlevel, closelevel, avolume;
+  parameter_t openlevel, closelevel, avolume;
   bool rms;
   bool is_opened, is_closed;
 };

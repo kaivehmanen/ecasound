@@ -24,7 +24,7 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
 
   virtual long int latency(void) const;
 
-  virtual long position_in_samples(void) const;
+  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
 
   REALTIME_NULL(const std::string& name = "realtime null");
   virtual ~REALTIME_NULL(void);

@@ -47,13 +47,13 @@ class GENERIC_OSCILLATOR : public OSCILLATOR {
   /**
    * Initialize generic controller
    */
-  virtual void init(parameter_type phasestep);
+  virtual void init(parameter_t phasestep);
 
   virtual std::string parameter_names(void) const;
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
 
-  virtual parameter_type value(void);
+  virtual parameter_t value(void);
   std::string name(void) const { return("Generic oscillator"); }
 
   GENERIC_OSCILLATOR* clone(void) const { return new GENERIC_OSCILLATOR(*this); }

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-sine.cpp: Sine oscillator
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #include "osc-sine.h"
 #include "eca-debug.h"
 
-CONTROLLER_SOURCE::parameter_type SINE_OSCILLATOR::value(void) {
+CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::value(void) {
   curval = (sin(phase) + 1.0) / 2.0;
   phase += phasemod * step_length();
   return(curval);
@@ -39,7 +39,7 @@ SINE_OSCILLATOR::SINE_OSCILLATOR (double freq, double initial_phase) :
   set_parameter(2, get_parameter(2));
 }
 
-void SINE_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_type phasestep) {
+void SINE_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_t phasestep) {
   step_length(phasestep);
 
   MESSAGE_ITEM otemp;
@@ -51,7 +51,7 @@ void SINE_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_type phasestep) {
   ecadebug->msg(otemp.to_string());
 }
 
-void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_type value) {
+void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
   switch (param) {
   case 1: 
     frequency(value);
@@ -66,7 +66,7 @@ void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_type
   }
 }
 
-CONTROLLER_SOURCE::parameter_type SINE_OSCILLATOR::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(frequency());

@@ -33,7 +33,7 @@ ecasound_LDADD = $(termcap_library) \
 		-L$(top_builddir)/kvutils/.libs -lkvutils
 ecasound_debug_LDADD = $(termcap_library) \
 		-L$(top_builddir)/libecasound/.libs -lecasound_debug 
-		-L$(top_builddir)/kvutils/.libs -lkvutils
+		-L$(top_builddir)/kvutils/.libs -lkvutils_debug
 else
 ecasound_LDADD = $(top_builddir)/readline-4.0/libreadline.a \
 		$(top_builddir)/readline-4.0/libhistory.a $(termcap_library) \
@@ -42,5 +42,5 @@ ecasound_LDADD = $(top_builddir)/readline-4.0/libreadline.a \
 ecasound_debug_LDADD = $(top_builddir)/readline-4.0/libreadline.a \
 		$(top_builddir)/readline-4.0/libhistory.a $(termcap_library) \
 	 	$(top_builddir)/libecasound/libecasound_debug.la \
-		-L$(top_builddir)/kvutils/.libs -lkvutils
+		-L$(top_builddir)/kvutils/.libs -lkvutils_debug
 endif

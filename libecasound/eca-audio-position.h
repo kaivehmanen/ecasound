@@ -1,6 +1,7 @@
 #ifndef INCLUDED_ECA_AUDIO_POSITION_H
 #define INCLUDED_ECA_AUDIO_POSITION_H
 
+#include "sample-specs.h"
 #include "eca-audio-format.h"
 
 /**
@@ -10,15 +11,15 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
 
  private:
 
-  long int position_in_samples_rep;
-  long int length_in_samples_rep;
+  SAMPLE_SPECS::sample_pos_t position_in_samples_rep;
+  SAMPLE_SPECS::sample_pos_t length_in_samples_rep;
 
  public:
 
   // --
   // Get length
   // --
-  virtual long length_in_samples(void) const;
+  virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const;
   int length_in_seconds(void) const;
   double length_in_seconds_exact(void) const;
 
@@ -27,7 +28,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   // --
   // Set length
   // --
-  virtual void length_in_samples(long pos);
+  virtual void length_in_samples(SAMPLE_SPECS::sample_pos_t pos);
   void length_in_seconds(int pos_in_seconds);
   void length_in_seconds(double pos_in_seconds);
 
@@ -36,7 +37,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   // --
   // Get position
   // --
-  virtual long position_in_samples(void) const;
+  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
   int position_in_seconds(void) const;
   double position_in_seconds_exact(void) const;
 
@@ -45,8 +46,8 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   // --
   // Set position
   // --
-  virtual void position_in_samples(long pos);
-  void position_in_samples_advance(long pos);
+  virtual void position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
+  void position_in_samples_advance(SAMPLE_SPECS::sample_pos_t pos);
   void position_in_seconds(int pos_in_seconds);
   void position_in_seconds(double pos_in_seconds);
 
@@ -64,8 +65,8 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
    */
   virtual void seek_position(void) = 0;
 
-  void seek_position_in_samples(long pos_in_samples);
-  void seek_position_in_samples_advance(long pos_in_samples);
+  void seek_position_in_samples(SAMPLE_SPECS::sample_pos_t pos_in_samples);
+  void seek_position_in_samples_advance(SAMPLE_SPECS::sample_pos_t pos_in_samples);
   void seek_position_in_seconds(double pos_in_seconds);
   void seek_first(void);
   void seek_last(void);

@@ -35,8 +35,8 @@ class PRESET : public CHAIN_OPERATOR {
   virtual void init(SAMPLE_BUFFER* sbuf);
   virtual void process(void);
   virtual std::string parameter_names(void) const;
-  virtual void set_parameter(int param, parameter_type value);
-  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
   virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
   void parse(const std::string& formatted_string);

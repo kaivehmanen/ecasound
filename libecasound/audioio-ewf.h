@@ -68,7 +68,7 @@ class EWFFILE : public AUDIO_IO {
   void toggle_looping(bool v) { child_looping_rep = v; }
     
   virtual bool finished(void) const;
-  virtual long length_in_samples(void) const;
+  virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const;
 
   virtual void buffersize(long int samples, long int sample_rate) { if (child != 0) child->buffersize(samples, sample_rate); }
   virtual long int buffersize(void) const { if (child != 0) return(child->buffersize()); return(0); }

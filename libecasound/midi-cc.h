@@ -13,7 +13,7 @@ class MIDI_CONTROLLER : public CONTROLLER_SOURCE,
 			public MIDI_CLIENT {
     
   int controller, channel;
-  parameter_type value_rep;
+  parameter_t value_rep;
   bool trace_request_rep;
 
  public:
@@ -21,14 +21,14 @@ class MIDI_CONTROLLER : public CONTROLLER_SOURCE,
   /**
    * Initialize MIDI-controller (child-thread is spawned)
    */
-  void init(parameter_type phasestep);
+  void init(parameter_t phasestep);
 
   std::string parameter_names(void) const { return("controller,channel"); }
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  void set_parameter(int param, parameter_t value);
+  parameter_t get_parameter(int param) const;
 
   std::string name(void) const {  return("MIDI-Controller"); }
-  parameter_type value(void);
+  parameter_t value(void);
  
   MIDI_CONTROLLER* clone(void) const { return new MIDI_CONTROLLER(*this); }
   MIDI_CONTROLLER* new_expr(void) const { return new MIDI_CONTROLLER(); }

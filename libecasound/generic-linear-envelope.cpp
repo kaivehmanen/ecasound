@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // generic-linear-envelope.cpp: Generic linear envelope
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 // Copyright (C) 2001 Arto Hamara (artham@utu.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 #include "generic-linear-envelope.h"
 #include "eca-debug.h"
 
-CONTROLLER_SOURCE::parameter_type GENERIC_LINEAR_ENVELOPE::value(void) {
+CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::value(void) {
     curpos += step_length();
 
     if (curpos < pos_rep[0]) {
@@ -50,7 +50,7 @@ CONTROLLER_SOURCE::parameter_type GENERIC_LINEAR_ENVELOPE::value(void) {
 
 GENERIC_LINEAR_ENVELOPE::GENERIC_LINEAR_ENVELOPE(void) { } 
 
-void GENERIC_LINEAR_ENVELOPE::init(parameter_type step) {
+void GENERIC_LINEAR_ENVELOPE::init(parameter_t step) {
     step_length(step);
 
     curpos = 0.0;
@@ -83,7 +83,7 @@ std::string GENERIC_LINEAR_ENVELOPE::parameter_names(void) const {
     return(param_names_rep);
 }
 
-void GENERIC_LINEAR_ENVELOPE::set_parameter(int param, parameter_type value) {
+void GENERIC_LINEAR_ENVELOPE::set_parameter(int param, parameter_t value) {
     switch(param) {
         case 1:
             set_param_count(static_cast<int>(value));
@@ -99,10 +99,10 @@ void GENERIC_LINEAR_ENVELOPE::set_parameter(int param, parameter_type value) {
     }
 }
 
-CONTROLLER_SOURCE::parameter_type GENERIC_LINEAR_ENVELOPE::get_parameter(int param) const {
+CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::get_parameter(int param) const {
     switch(param) {
         case 1:
-            return(static_cast<parameter_type>(number_of_params() - 1));
+            return(static_cast<parameter_t>(number_of_params() - 1));
             break;
         default:
             int pointnum = param/2 - 1;

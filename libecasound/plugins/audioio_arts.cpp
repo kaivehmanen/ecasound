@@ -84,7 +84,7 @@ void ARTS_INTERFACE::start(void) {
   AUDIO_IO_DEVICE::start();
 }
 
-long ARTS_INTERFACE::position_in_samples(void) const { return(samples_rep); }
+SAMPLE_SPECS::sample_pos_t ARTS_INTERFACE::position_in_samples(void) const { return(samples_rep); }
 long int ARTS_INTERFACE::read_samples(void* target_buffer, 
 				      long int samples) 
 {

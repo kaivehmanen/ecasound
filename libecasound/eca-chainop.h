@@ -18,8 +18,6 @@ class CHAIN_OPERATOR : public OPERATOR {
 
  public:
 
-  typedef SAMPLE_SPECS::sample_type parameter_type;
-
   /**
    * Prepare chain operator for processing. All following 
    * calls will use the sample buffer pointed by 'sbuf'.

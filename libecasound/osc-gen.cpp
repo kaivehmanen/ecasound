@@ -27,7 +27,7 @@
 #include "oscillator.h"
 #include "eca-debug.h"
 
-CONTROLLER_SOURCE::parameter_type GENERIC_OSCILLATOR::value(void) {
+CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::value(void) {
   if (mode_rep == 0)
     update_current_static();
   else
@@ -111,7 +111,7 @@ GENERIC_OSCILLATOR::GENERIC_OSCILLATOR(double freq, int mode)
   // std::cerr << "(osc-gen) construct; params " << parameter_names() << ".\n";
 }
 
-void GENERIC_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_type phasestep) {
+void GENERIC_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_t phasestep) {
   step_length(phasestep);
 
   ecadebug->msg(ECA_DEBUG::user_objects, "(osc-gen) Generic oscillator init.");
@@ -147,7 +147,7 @@ void GENERIC_OSCILLATOR::prepare_envelope(void) {
 }
 
 
-void GENERIC_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_type value) {
+void GENERIC_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
   switch (param) {
   case 1: 
     frequency(value);
@@ -189,28 +189,28 @@ void GENERIC_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t
   }
 }
 
-CONTROLLER_SOURCE::parameter_type GENERIC_OSCILLATOR::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(frequency());
 
   case 2:
-    return(static_cast<parameter_type>(mode_rep));
+    return(static_cast<parameter_t>(mode_rep));
 
   case 3:
-    return(static_cast<parameter_type>((number_of_params() - 5) / 2));
+    return(static_cast<parameter_t>((number_of_params() - 5) / 2));
 
   case 4:
-    return(static_cast<parameter_type>(start_value_rep));
+    return(static_cast<parameter_t>(start_value_rep));
 
   case 5:
-    return(static_cast<parameter_type>(end_value_rep));
+    return(static_cast<parameter_t>(end_value_rep));
 
   default:
     int pointnum = param - 5;
     if (pointnum > 0) {
       if (pointnum <= static_cast<int>(ienvelope_rep.size())) {
-	return(static_cast<parameter_type>(ienvelope_rep[pointnum - 1]));
+	return(static_cast<parameter_t>(ienvelope_rep[pointnum - 1]));
       }
     }
   }

@@ -9,8 +9,12 @@ std::string kvu_numtostr(signed char c);
 std::string kvu_numtostr(const void *p);
 std::string kvu_numtostr(int n);
 std::string kvu_numtostr(unsigned int n);
-std::string kvu_numtostr(long n);
-std::string kvu_numtostr(unsigned long n);
+std::string kvu_numtostr(long int n);
+std::string kvu_numtostr(unsigned long int n);
+#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GLIBC__
+std::string kvu_numtostr(long long int n);
+std::string kvu_numtostr(unsigned long long int n);
+#endif
 std::string kvu_numtostr(short n);
 std::string kvu_numtostr(unsigned short n);
 std::string kvu_numtostr(bool b);

@@ -1,4 +1,33 @@
 ## ------------------------------------------------------------------------
+## Check for LFS
+## 
+## version: 1
+## ------------------------------------------------------------------------
+##
+
+AC_DEFUN(AC_CHECK_LARGEFILE,
+[
+AC_MSG_CHECKING(for largefile support (>2GB files))
+AC_ARG_WITH(largefile,
+  [  --with-largefile        Support large (>2GB) files],
+  [ if test "x$withval" = "xyes" ; then
+      enable_largefile="yes"
+    fi 
+  ])
+       
+if test "x$enable_largefile" = "xyes"; then
+  # AC_DEFINE(_FILE_OFFSET_BITS, 64)
+  # AC_DEFINE(_LARGEFILE_SOURCE)
+  CXXFLAGS="$CXXFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
+  CFLAGS="$CFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
+  AC_MSG_RESULT(yes.)
+else
+  AC_MSG_RESULT(no.)
+fi
+
+])
+
+## ------------------------------------------------------------------------
 ## Check whether atomic locking primitives are defined in asm/atomic.h
 ## 
 ## version: 1

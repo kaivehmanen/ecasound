@@ -1,6 +1,7 @@
 #ifndef INCLUDED_AUDIOIO_TYPES_H
 #define INCLUDED_AUDIOIO_TYPES_H
 
+#include "sample-specs.h"
 #include "audioio.h"
 
 /**
@@ -190,7 +191,7 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
 
   virtual bool finished(void) const { return(is_open() == false); }
 
-  virtual long position_in_samples(void) const = 0;
+  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const = 0;
 
   virtual std::string status(void) const;
 

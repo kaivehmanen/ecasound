@@ -161,10 +161,10 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	// case 3a: we're looping
 	// ---
 	child->read_buffer(sbuf);
-	long int tail = position_in_samples()
-	                  + buffersize()
-	                  - child_offset_rep.samples()
-	                  - child_length_rep.samples();
+	SAMPLE_SPECS::sample_pos_t tail = position_in_samples()
+	  + buffersize()
+	  - child_offset_rep.samples()
+	  - child_length_rep.samples();
 	//  	dump_child_debug();
 	if (position_in_samples() > 
 	    child_offset_rep.samples() + child_length_rep.samples()) tail = sbuf->length_in_samples();
@@ -195,13 +195,13 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	child_active = false;
 	child->read_buffer(sbuf);
       
-	long int tail = child->position_in_samples() 
-	                - child_start_pos_rep.samples() 
-	                - child_length_rep.samples();
+	SAMPLE_SPECS::sample_pos_t tail = child->position_in_samples() 
+	  - child_start_pos_rep.samples() 
+	  - child_length_rep.samples();
 	DBC_CHECK(tail >= 0);
 
 	/* mute the extra tail */
-	long int startpos = sbuf->length_in_samples() - tail;
+	SAMPLE_SPECS::sample_pos_t startpos = sbuf->length_in_samples() - tail;
 	if (startpos >= 0) {
 	  sbuf->make_silent_range(startpos,
 				  sbuf->length_in_samples());
@@ -320,7 +320,7 @@ bool EWFFILE::finished(void) const {
   return(false);
 }
 
-long EWFFILE::length_in_samples(void) const {
+SAMPLE_SPECS::sample_pos_t EWFFILE::length_in_samples(void) const {
   if (child_looping_rep == true)  return(0);
 
   return(child_offset_rep.samples() + child_length_rep.samples());

@@ -31,8 +31,14 @@ public:
     MESSAGE_ITEM& operator<< (const void *p);
     MESSAGE_ITEM& operator<< (int n);
     MESSAGE_ITEM& operator<< (unsigned int n);
-    MESSAGE_ITEM& operator<< (long n);
+    MESSAGE_ITEM& operator<< (long int n);
     MESSAGE_ITEM& operator<< (unsigned long n);
+
+#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GLIBC__
+    MESSAGE_ITEM& operator<< (long long int n);
+    MESSAGE_ITEM& operator<< (unsigned long long int n);
+#endif
+
     MESSAGE_ITEM& operator<< (short n) {return operator<<((int)n);}
     MESSAGE_ITEM& operator<< (unsigned short n) {return operator<<((unsigned int)n);}
     MESSAGE_ITEM& operator<< (bool b) { return operator<<((int)b); }

@@ -344,7 +344,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_seconds(double val
  *  is_selected() == true
  *  value >= 0
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_samples(long int value) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_processing_length_in_samples(SAMPLE_SPECS::sample_pos_t value) {
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -1628,7 +1628,7 @@ void ECA_CONTROL_OBJECTS::set_audio_object_position(double seconds) {
  * @pre connected_chainsetup() != selected_chainsetup()
  * @pre selected_audio_object_repp != 0
  */
-void ECA_CONTROL_OBJECTS::set_audio_object_position_samples(long int samples) {
+void ECA_CONTROL_OBJECTS::set_audio_object_position_samples(SAMPLE_SPECS::sample_pos_t samples) {
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
@@ -1923,7 +1923,7 @@ void ECA_CONTROL_OBJECTS::select_chain_operator_parameter(int param) {
  *  selected_chains().size() == 1
  *  get_chain_operator() != 0
  */
-void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(CHAIN_OPERATOR::parameter_type value) {
+void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(CHAIN_OPERATOR::parameter_t value) {
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() == 1);
@@ -1952,7 +1952,7 @@ void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(CHAIN_OPERATOR::parameter
  *  selected_chains().size() == 1
  *  get_chain_operator() != 0
  */
-CHAIN_OPERATOR::parameter_type ECA_CONTROL_OBJECTS::get_chain_operator_parameter(void) const {
+CHAIN_OPERATOR::parameter_t ECA_CONTROL_OBJECTS::get_chain_operator_parameter(void) const {
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() == 1);

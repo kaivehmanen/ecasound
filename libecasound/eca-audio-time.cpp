@@ -18,13 +18,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <cstdio>
 #include <cmath>
 
 #include <kvutils/kvu_numtostr.h>
 
 #include "eca-audio-time.h"
 
-ECA_AUDIO_TIME::ECA_AUDIO_TIME(long int samples, long int sample_rate) {
+ECA_AUDIO_TIME::ECA_AUDIO_TIME(SAMPLE_SPECS::sample_pos_t samples, SAMPLE_SPECS::sample_rate_t sample_rate) {
   set_samples_per_second(sample_rate);
   set_samples(samples);
 }
@@ -44,7 +45,7 @@ void ECA_AUDIO_TIME::set(format_type type, const std::string& time) {
     {
     case format_hour_min_sec: { }
     case format_min_sec: { }
-    case format_seconds: { samples_rep = static_cast<long int>(sample_rate_rep * atof(time.c_str())); }
+    case format_seconds: { samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(sample_rate_rep * atof(time.c_str())); }
     case format_samples: { samples_rep = atol(time.c_str()); }
 
     default: { }
@@ -52,11 +53,11 @@ void ECA_AUDIO_TIME::set(format_type type, const std::string& time) {
 }
 
 void ECA_AUDIO_TIME::set_seconds(double seconds) {
-  samples_rep = static_cast<long int>(seconds * sample_rate_rep);
+  samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(seconds * sample_rate_rep);
 }
 
-void ECA_AUDIO_TIME::set_samples(long int samples) { samples_rep = samples; } 
-void ECA_AUDIO_TIME::set_samples_per_second(long int srate)  { sample_rate_rep = srate; } 
+void ECA_AUDIO_TIME::set_samples(SAMPLE_SPECS::sample_pos_t samples) { samples_rep = samples; } 
+void ECA_AUDIO_TIME::set_samples_per_second(SAMPLE_SPECS::sample_rate_t srate)  { sample_rate_rep = srate; } 
   
 std::string ECA_AUDIO_TIME::to_string(format_type type) const {
   switch(type) 
@@ -81,5 +82,5 @@ double ECA_AUDIO_TIME::seconds(void) const {
   return(static_cast<double>(samples_rep) / sample_rate_rep);
 }
 
-long int ECA_AUDIO_TIME::samples_per_second(void) const  { return(sample_rate_rep); }
-long int ECA_AUDIO_TIME::samples(void) const { return(samples_rep); }
+SAMPLE_SPECS::sample_rate_t ECA_AUDIO_TIME::samples_per_second(void) const  { return(sample_rate_rep); }
+SAMPLE_SPECS::sample_pos_t ECA_AUDIO_TIME::samples(void) const { return(samples_rep); }

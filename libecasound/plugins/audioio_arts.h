@@ -13,6 +13,7 @@ extern "C" {
 }
 #endif
 
+#include "sample-specs.h"
 #include "eca-version.h"
 
 /**
@@ -27,7 +28,7 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
 #ifdef COMPILE_ARTS
   arts_stream_t stream_rep;
 #endif
-  long int samples_rep;
+  SAMPLE_SPECS::sample_pos_t samples_rep;
   static int ref_rep;
   
  public:
@@ -45,7 +46,7 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
 
   virtual void stop(void);
   virtual void start(void);
-  virtual long position_in_samples(void) const;
+  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
 
   virtual long int read_samples(void* target_buffer, long int samples);
   virtual void write_samples(void* target_buffer, long int samples);

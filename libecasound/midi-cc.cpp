@@ -29,7 +29,7 @@
 
 #include "eca-debug.h"
 
-CONTROLLER_SOURCE::parameter_type MIDI_CONTROLLER::value(void) {
+CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(void) {
 //    if (midi_in_queue.update_controller_value()) {
 //      value_rep =
 //        static_cast<double>(midi_in_queue.last_controller_value(static_cast<int>(channel), static_cast<int>(controller)));
@@ -61,7 +61,7 @@ MIDI_CONTROLLER::MIDI_CONTROLLER(int controller_number,
     trace_request_rep(false) 
 { }
 
-void MIDI_CONTROLLER::init(CONTROLLER_SOURCE::parameter_type phasestep) {
+void MIDI_CONTROLLER::init(CONTROLLER_SOURCE::parameter_t phasestep) {
 //      init_midi_queues();
 
     MESSAGE_ITEM otemp;
@@ -72,7 +72,7 @@ void MIDI_CONTROLLER::init(CONTROLLER_SOURCE::parameter_type phasestep) {
 
 }
 
-void MIDI_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_type value) {
+void MIDI_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value) {
   switch (param) {
   case 1: 
     controller = static_cast<int>(value);
@@ -84,12 +84,12 @@ void MIDI_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_type
   trace_request_rep = true;
 }
 
-CONTROLLER_SOURCE::parameter_type MIDI_CONTROLLER::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(static_cast<parameter_type>(controller));
+    return(static_cast<parameter_t>(controller));
   case 2: 
-    return(static_cast<parameter_type>(channel));
+    return(static_cast<parameter_t>(channel));
   }
   return(0.0);
 }

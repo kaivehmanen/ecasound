@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // message_item.cpp: A simple version of C++ stringstream
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ MESSAGE_ITEM& MESSAGE_ITEM::operator<< (unsigned int n) {
   return (*this);    
 }
 
-MESSAGE_ITEM& MESSAGE_ITEM::operator<< (long n) {
+MESSAGE_ITEM& MESSAGE_ITEM::operator<< (long int n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%ld",n);
   ctmp[11] = 0;
@@ -61,13 +61,31 @@ MESSAGE_ITEM& MESSAGE_ITEM::operator<< (long n) {
   return (*this);    
 }
 
-MESSAGE_ITEM& MESSAGE_ITEM::operator<< (unsigned long n) {
+MESSAGE_ITEM& MESSAGE_ITEM::operator<< (unsigned long int n) {
   char ctmp[12];
   snprintf(ctmp, 12, "%lu",n);
   ctmp[11] = 0;
   stringtemp += std::string(ctmp);
   return (*this);    
 }
+
+#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GLIBC__
+MESSAGE_ITEM& MESSAGE_ITEM::operator<< (long long int n) {
+  char ctmp[24];
+  snprintf(ctmp, 24, "%lli", n);
+  ctmp[23] = 0;
+  stringtemp += std::string(ctmp);
+  return (*this);    
+}
+
+MESSAGE_ITEM& MESSAGE_ITEM::operator<< (unsigned long long int n) {
+  char ctmp[24];
+  snprintf(ctmp, 24, "%llu", n);
+  ctmp[23] = 0;
+  stringtemp += std::string(ctmp);
+  return (*this);    
+}
+#endif
 
 MESSAGE_ITEM& MESSAGE_ITEM::operator<< (double n) {
   char ctmp[32];

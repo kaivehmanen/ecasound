@@ -28,14 +28,14 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-EFFECT_PULSE_GATE::EFFECT_PULSE_GATE (parameter_type freq_Hz,
-				      parameter_type onTime_percent) {
+EFFECT_PULSE_GATE::EFFECT_PULSE_GATE (parameter_t freq_Hz,
+				      parameter_t onTime_percent) {
   set_parameter(1, freq_Hz);
   set_parameter(2, onTime_percent);
   currentTime = 0.0;
 }
 
-void EFFECT_PULSE_GATE::set_parameter(int param, parameter_type value) {
+void EFFECT_PULSE_GATE::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1: 
     if (value > 0)
@@ -64,7 +64,7 @@ void EFFECT_PULSE_GATE::set_parameter(int param, parameter_type value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_PULSE_GATE::get_parameter(int param) const {
+CHAIN_OPERATOR::parameter_t EFFECT_PULSE_GATE::get_parameter(int param) const {
   switch (param) {
   case 1: 
     return(1.0/period);
@@ -102,13 +102,13 @@ void EFFECT_PULSE_GATE::process(void) {
   }
 }
 
-EFFECT_PULSE_GATE_BPM::EFFECT_PULSE_GATE_BPM (parameter_type bpm,
-					      parameter_type ontime_percent) {
+EFFECT_PULSE_GATE_BPM::EFFECT_PULSE_GATE_BPM (parameter_t bpm,
+					      parameter_t ontime_percent) {
   set_parameter(1, bpm);
   set_parameter(2, ontime_percent);
 }
 
-void EFFECT_PULSE_GATE_BPM::set_parameter(int param, parameter_type value) {
+void EFFECT_PULSE_GATE_BPM::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1: 
     pulsegate_rep.set_parameter(1, value / 60.0);
@@ -119,7 +119,7 @@ void EFFECT_PULSE_GATE_BPM::set_parameter(int param, parameter_type value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_PULSE_GATE_BPM::get_parameter(int param) const {
+CHAIN_OPERATOR::parameter_t EFFECT_PULSE_GATE_BPM::get_parameter(int param) const {
   switch (param) {
   case 1: 
     return (pulsegate_rep.get_parameter(1) * 60.0);
@@ -134,14 +134,14 @@ CHAIN_OPERATOR::parameter_type EFFECT_PULSE_GATE_BPM::get_parameter(int param) c
 void EFFECT_PULSE_GATE_BPM::init(SAMPLE_BUFFER* sbuf) { pulsegate_rep.init(sbuf); }
 void EFFECT_PULSE_GATE_BPM::process(void) { pulsegate_rep.process(); }
 
-EFFECT_TREMOLO::EFFECT_TREMOLO (parameter_type freq_bpm,
-				      parameter_type depth_percent) {
+EFFECT_TREMOLO::EFFECT_TREMOLO (parameter_t freq_bpm,
+				      parameter_t depth_percent) {
   set_parameter(1, freq_bpm);
   set_parameter(2, depth_percent);
   currentTime = 0.0;
 }
 
-void EFFECT_TREMOLO::set_parameter(int param, parameter_type value) {
+void EFFECT_TREMOLO::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1:
     if (value > 0)
@@ -161,7 +161,7 @@ void EFFECT_TREMOLO::set_parameter(int param, parameter_type value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_TREMOLO::get_parameter(int param) const {
+CHAIN_OPERATOR::parameter_t EFFECT_TREMOLO::get_parameter(int param) const {
   switch (param) {
   case 1:
     return freq*120;

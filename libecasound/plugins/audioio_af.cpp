@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-af.cpp: Interface to SGI audiofile library.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -76,6 +76,7 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
 	case AF_SAMPFMT_DOUBLE: { format = "f"; break; }
 	}
       format += kvu_numtostr(sample_width);
+
 //        if (afGetByteOrder(afhandle, AF_DEFAULT_TRACK) == AF_BYTEORDER_BIGENDIAN)
 //  	format += "_be";
 //        else
@@ -213,8 +214,3 @@ void AUDIOFILE_INTERFACE::seek_position(void) {
 }
 
 #endif
-
-
-
-
-

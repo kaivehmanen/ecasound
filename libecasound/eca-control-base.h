@@ -10,6 +10,7 @@
 #include "eca-session.h"
 #include "dynamic-parameters.h"
 #include "eca-iamode-parser.h"
+#include "sample-specs.h"
 
 class ECA_CHAINSETUP;
 class ECA_ENGINE;
@@ -95,9 +96,9 @@ class ECA_CONTROL_BASE {
   // Session info / position and length of selected chainsetup
   // -------------------------------------------------------------------
 
-  long length_in_samples(void) const;
+  SAMPLE_SPECS::sample_pos_t length_in_samples(void) const;
   double length_in_seconds_exact(void) const;
-  long position_in_samples(void) const;
+  SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
   double position_in_seconds_exact(void) const;
 
   // -------------------------------------------------------------------

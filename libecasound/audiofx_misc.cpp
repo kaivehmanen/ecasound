@@ -28,7 +28,7 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-EFFECT_DCFIX::EFFECT_DCFIX (CHAIN_OPERATOR::parameter_type delta_left, CHAIN_OPERATOR::parameter_type delta_right) {
+EFFECT_DCFIX::EFFECT_DCFIX (CHAIN_OPERATOR::parameter_t delta_left, CHAIN_OPERATOR::parameter_t delta_right) {
 
   deltafix_rep[0] = delta_left;
   deltafix_rep[1] = delta_right;
@@ -41,7 +41,7 @@ EFFECT_DCFIX::EFFECT_DCFIX (const EFFECT_DCFIX& x) {
   i_rep = x.i_rep;
 }
 
-void EFFECT_DCFIX::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void EFFECT_DCFIX::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   switch (param) {
   case 1: 
     deltafix_rep[0] = value;
@@ -52,7 +52,7 @@ void EFFECT_DCFIX::set_parameter(int param, CHAIN_OPERATOR::parameter_type value
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_DCFIX::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_DCFIX::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(deltafix_rep[0]);
@@ -85,7 +85,7 @@ EFFECT_PITCH_SHIFT::EFFECT_PITCH_SHIFT (const EFFECT_PITCH_SHIFT& x) {
   sbuf_repp = 0;
 }
 
-void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   switch (param) {
   case 1: 
     if (pmod_rep <= 0) {
@@ -98,7 +98,7 @@ void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_type
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_PITCH_SHIFT::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_PITCH_SHIFT::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(pmod_rep);
@@ -143,7 +143,7 @@ long int EFFECT_PITCH_SHIFT::output_samples(long int i_samples) {
 			       i_samples));
 }
 
-void EFFECT_AUDIO_STAMP::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void EFFECT_AUDIO_STAMP::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   switch (param) {
   case 1: 
     set_id(static_cast<int>(value));
@@ -151,10 +151,10 @@ void EFFECT_AUDIO_STAMP::set_parameter(int param, CHAIN_OPERATOR::parameter_type
   }
 }
 
-CHAIN_OPERATOR::parameter_type EFFECT_AUDIO_STAMP::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_AUDIO_STAMP::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(static_cast<parameter_type>(id()));
+    return(static_cast<parameter_t>(id()));
   }
   return(0.0);
 }

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // generic_controller.cpp: General sources for control signals
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ string GENERIC_CONTROLLER::status(void) const {
   }
 }
 
-void GENERIC_CONTROLLER::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
+void GENERIC_CONTROLLER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   switch (param) {
   case 1: 
     param_number(static_cast<int>(value));
@@ -95,10 +95,10 @@ void GENERIC_CONTROLLER::set_parameter(int param, CHAIN_OPERATOR::parameter_type
   }
 }
 
-CHAIN_OPERATOR::parameter_type GENERIC_CONTROLLER::get_parameter(int param) const {
+CHAIN_OPERATOR::parameter_t GENERIC_CONTROLLER::get_parameter(int param) const {
   switch (param) {
   case 1: 
-    return(static_cast<parameter_type>(param_number()));
+    return(static_cast<parameter_t>(param_number()));
   case 2: 
     return(low_range_limit());
   case 3: 
