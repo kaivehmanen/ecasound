@@ -1,7 +1,9 @@
 """Native python ECI (ecasound control interface) implementation
+
+   Can be used to replace the C implementation 'pyecasound.so'.
 """
 
-# Version: $Id: ecacontrol.py,v 1.5 2003-11-17 00:41:38 kaiv Exp $
+# Version: $Id: ecacontrol.py,v 1.6 2003-11-17 18:41:59 kaiv Exp $
 
 authors="""Kai Vehmanen, Eric S. Tiedemann and Janne Halttunen."""
 
@@ -29,7 +31,7 @@ class ECA_CONTROL_INTERFACE:
 	
 	I._cmd=''
 	I._type=''
-        I._timeout=10 # in seconds
+        I._timeout=5 # in seconds
 	I._resp={}
 	I.initialize()
 	

@@ -28,6 +28,10 @@ INCLUDES 			= -I$(srcdir) \
 				-I$(top_srcdir)/libecasoundc \
 				-I$(ECA_S_PYTHON_INCLUDES)
 
+if ECA_AM_PYECASOUND_INSTALL
+TESTS				= test1_stresstest.py
+endif
+
 # ----------------------------------------------------------------------
 # header files
 # ----------------------------------------------------------------------
