@@ -26,6 +26,7 @@ QEPasteEvent::QEPasteEvent(ECA_CONTROLLER* ctrl,
   : QEBlockingEvent(ctrl),
     ectrl(ctrl) {
 
+  status_info("Copying data from clipboard...");
   init("pasteevent", "default");
   set_input(input);
   set_input_position(0);

@@ -33,6 +33,7 @@ QECutEvent::QECutEvent(ECA_CONTROLLER* ctrl,
     input_rep(input),
     output_rep(output) {
 
+  status_info("Cutting selected area...");
   init("cutevent-phase1", "default");
   set_input(input_rep);
   set_input_position(start_pos);
@@ -45,6 +46,7 @@ QECutEvent::QECutEvent(ECA_CONTROLLER* ctrl,
 
 void QECutEvent::start(void) {
   // copy cut-area to clipboard
+  status_info("Copying selected area to clipboard...");
   blocking_start(); 
 
   // copy before-cut to temporary file
@@ -57,6 +59,7 @@ void QECutEvent::start(void) {
     ectrl->set_chainsetup_output_mode(AUDIO_IO::io_write);
     set_output(tmpfile);
     set_length(start_pos_rep);
+    status_info("Copying begin to a temporary file...");
     blocking_start();
   }
 
@@ -68,6 +71,8 @@ void QECutEvent::start(void) {
   set_length(0);
   ectrl->set_chainsetup_output_mode(AUDIO_IO::io_readwrite);  
   set_output(tmpfile);
+  set_output_position(start_pos_rep);
+  status_info("Copying end to the temporary file...");
   blocking_start();
 
   // copy temporary over the input file  
@@ -77,7 +82,6 @@ void QECutEvent::start(void) {
   set_default_audio_format(tmpfile);
   set_output(input_rep);
   set_length(0);
+  status_info("Copying from the temporary file...");
   blocking_start();
 }
-
-

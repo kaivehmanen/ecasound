@@ -19,7 +19,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>15042000</h2>
+<h2>28052000</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -41,21 +41,23 @@
 <dt><a href="users_guide.html#l12">2.2.1: Start &lt;alt-t&gt;</a>
 <dt><a href="users_guide.html#l13">2.2.2: Stop &lt;alt-s&gt;</a>
 <dt><a href="users_guide.html#l14">2.2.3: Effect &lt;alt-e&gt;</a>
-<dt><a href="users_guide.html#l15">2.2.4: Copy &lt;alt-y&gt;</a>
-<dt><a href="users_guide.html#l16">2.2.5: Cut &lt;alt-u&gt;</a>
-<dt><a href="users_guide.html#l17">2.2.6: Paste &lt;alt-p&gt;</a>
+<dt><a href="users_guide.html#l15">2.2.4: Fade-in &lt;alt-i&gt;</a>
+<dt><a href="users_guide.html#l16">2.2.5: Fade-out &lt;alt-d&gt;</a>
+<dt><a href="users_guide.html#l17">2.2.6: Copy &lt;alt-y&gt;</a>
+<dt><a href="users_guide.html#l18">2.2.7: Cut &lt;alt-u&gt;</a>
+<dt><a href="users_guide.html#l19">2.2.8: Paste &lt;alt-p&gt;</a>
 </dl><p>
-<dt><h3><a href="users_guide.html#l18">2.3: Waveform view</a></h3>
+<dt><h3><a href="users_guide.html#l20">2.3: Waveform view</a></h3>
 <dl><p>
-<dt><a href="users_guide.html#l19">2.3.1: Zoom in &lt;alt-z&gt;</a>
-<dt><a href="users_guide.html#l20">2.3.2: Zoom out &lt;alt-m&gt;</a>
-<dt><a href="users_guide.html#l21">2.3.3: Mark all &lt;alt-r&gt;</a>
-<dt><a href="users_guide.html#l22">2.3.4: Unmark &lt;alt-u&gt;</a>
-<dt><a href="users_guide.html#l23">2.3.5: Redraw &lt;alt-w&gt;</a>
+<dt><a href="users_guide.html#l21">2.3.1: Zoom in &lt;alt-z&gt;</a>
+<dt><a href="users_guide.html#l22">2.3.2: Zoom out &lt;alt-m&gt;</a>
+<dt><a href="users_guide.html#l23">2.3.3: Mark all &lt;alt-r&gt;</a>
+<dt><a href="users_guide.html#l24">2.3.4: Unmark &lt;alt-u&gt;</a>
+<dt><a href="users_guide.html#l25">2.3.5: Redraw &lt;alt-w&gt;</a>
 </dl><p>
 </dl><p>
-<dt><h2><a href="users_guide.html#l24">3: Configuration</a></h2>
-<dt><h2><a href="users_guide.html#l25">4: Ecawave internals</a></h2>
+<dt><h2><a href="users_guide.html#l26">3: Configuration</a></h2>
+<dt><h2><a href="users_guide.html#l27">4: Ecawave internals</a></h2>
  
 <p><hr><p><br>
 <p>
@@ -132,36 +134,42 @@ Stop processing. Current position is resetted to begin.
 Process marked area with ecasound effects. It's also possible to 
 preview effects before processing.
 <p><a name="l15"></a>
-<strong>2.2.4: Copy &lt;alt-y&gt;</strong><p>
-Copy marked area to ecawave's clipboard.
+<strong>2.2.4: Fade-in &lt;alt-i&gt;</strong><p>
+Apply a fade-in effect to the currently selected area.
 <p><a name="l16"></a>
-<strong>2.2.5: Cut &lt;alt-u&gt;</strong><p>
+<strong>2.2.5: Fade-out &lt;alt-d&gt;</strong><p>
+Apply a fade-out effect to the currently selected area.
+<p><a name="l17"></a>
+<strong>2.2.6: Copy &lt;alt-y&gt;</strong><p>
+Copy marked area to ecawave's clipboard.
+<p><a name="l18"></a>
+<strong>2.2.7: Cut &lt;alt-u&gt;</strong><p>
 Copy marked area to ecawave's clipboard, and then remove it
 from the edited file.
-<p><a name="l17"></a>
-<strong>2.2.6: Paste &lt;alt-p&gt;</strong><p>
+<p><a name="l19"></a>
+<strong>2.2.8: Paste &lt;alt-p&gt;</strong><p>
 Paste the contents of ecawave's clipboard into the current file 
 starting from the current position.
 <p>
-<a name="l18"></a>
+<a name="l20"></a>
 <h3>2.3: Waveform view</h3>
-<a name="l19"></a>
+<a name="l21"></a>
 <strong>2.3.1: Zoom in &lt;alt-z&gt;</strong><p>
 Zoom to marked area.
-<p><a name="l20"></a>
+<p><a name="l22"></a>
 <strong>2.3.2: Zoom out &lt;alt-m&gt;</strong><p>
 Zoom out so that the whole file is visible.
-<p><a name="l21"></a>
+<p><a name="l23"></a>
 <strong>2.3.3: Mark all &lt;alt-r&gt;</strong><p>
 Mark the entire file. Note! Not just the visible area.
-<p><a name="l22"></a>
+<p><a name="l24"></a>
 <strong>2.3.4: Unmark &lt;alt-u&gt;</strong><p>
 Unmark currently marked area.
-<p><a name="l23"></a>
+<p><a name="l25"></a>
 <strong>2.3.5: Redraw &lt;alt-w&gt;</strong><p>
 Redraws the waveform data.
 <p>
-<a name="l24"></a>
+<a name="l26"></a>
 <h2>3: Configuration</h2>
 The most important configuration files are <em>~/.ecawaverc</em>
 and <em>~/.ecasouncrc</em>. 
@@ -179,7 +187,7 @@ ignored (comment lines).
 <p>Also take a look at, <a href="http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecasoundrc_manpage.html">ecasoundrc(5)</a> 
 manual page.
 <p>
-<a name="l25"></a>
+<a name="l27"></a>
 <h2>4: Ecawave internals</h2>
 Under the hood, ecawave is just another ecasound user-interface. Based
 on what user wants to do, ecawave creates a suitable chainsetup and

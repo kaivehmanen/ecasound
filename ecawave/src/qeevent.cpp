@@ -24,7 +24,8 @@
 #include "qeevent.h"
 
 QEEvent::QEEvent(ECA_CONTROLLER* ctrl) 
-  : ectrl(ctrl) {
+  : ectrl(ctrl),
+    info_string_rep("Processing...") {
 #ifdef NDEBUG
   ecadebug->set_debug_level(0);
 #else
@@ -95,7 +96,7 @@ void QEEvent::blocking_start(void) {
       progress_length = static_cast<int>(input_object->length_in_seconds_exact() * 10.0);
     double progress_start = ectrl->position_in_seconds_exact();
 
-    QProgressDialog progress ("Processing data...", 0,
+    QProgressDialog progress (status_info().c_str(), 0,
 			      progress_length - progress_start * 10, 0, 0, true);
 
     progress.setProgress(0);

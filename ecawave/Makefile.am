@@ -6,7 +6,11 @@ RELEASE = 1
 create-rpm-spec:
 	cat $(PACKAGE).spec | awk -- '{ print gensub("METAVERSION","$(VERSION)",g) }' >$(PACKAGE)-$(VERSION)-$(RELEASE).spec
 
-build-rpm: create-rpm-spec $(PACKAGE)-$(VERSION).tar.gz
+redhat-rpm: create-rpm-spec dist
+	cp -fv $(PACKAGE)-$(VERSION).tar.gz /usr/src/redhat/SOURCES/
+	rpm -ba $(PACKAGE)-$(VERSION)-$(RELEASE).spec
+
+dist-build-rpm: create-rpm-spec dist
 	cp -fv $(PACKAGE)-$(VERSION).tar.gz /usr/src/redhat/SOURCES/
 	rm -Rf /tmp/ecawave-build
 	rpm -ba $(PACKAGE)-$(VERSION)-$(RELEASE).spec

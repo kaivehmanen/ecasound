@@ -48,6 +48,8 @@
 #include "qecopyevent.h"
 #include "qepasteevent.h"
 #include "qecutevent.h"
+#include "qefadeinevent.h"
+#include "qefadeoutevent.h"
 
 #include "version.h"
 
@@ -184,16 +186,21 @@ void QESession::init_layout(void) {
 			this, SLOT(stop_event()));
   buttonrow2->add_button(new QPushButton("(E)ffect",buttonrow2), ALT+Key_E,
 			this, SLOT(effect_event()));
+  buttonrow2->add_button(new QPushButton("Fade (i)n",buttonrow2), ALT+Key_I,
+			this, SLOT(fade_in_event()));
+  buttonrow2->add_button(new QPushButton("Fa(d)e out",buttonrow2), ALT+Key_D,
+			this, SLOT(fade_out_event()));
   buttonrow2->add_button(new QPushButton("Cop(y)",buttonrow2), ALT+Key_Y,
 			this, SLOT(copy_event()));
   buttonrow2->add_button(new QPushButton("C(u)t",buttonrow2), ALT+Key_U,
 			this, SLOT(cut_event()));
   buttonrow2->add_button(new QPushButton("(P)aste",buttonrow2), ALT+Key_P,
 			this, SLOT(paste_event()));
+
   vlayout->addWidget(buttonrow2);
 
   QAccel* a = new QAccel (this);
-  a->connectItem(a->insertItem(ALT+Key_D), this, SLOT(debug_event()));
+  a->connectItem(a->insertItem(ALT+CTRL+Key_D), this, SLOT(debug_event()));
 
   if (state_rep == state_orig_file ||
       state_rep == state_orig_direct) 
@@ -347,21 +354,6 @@ void QESession::prepare_event(void) {
   // --------
 }
 
-void QESession::effect_event(void) {
-  stop_event();
-  prepare_event();
-  if (file->is_valid() == false) return;
-  prepare_temp();
-  if (state_rep == state_invalid) return;
-
-  QEChainopEvent* p = new QEChainopEvent(ectrl, active_filename_rep, active_filename_rep,
-					 start_pos, sel_length);
-
-  QObject::connect(p, SIGNAL(finished()), this, SLOT(update_wave_data()));
-  p->show();
-  nb_event = p;
-}
-
 void QESession::update_wave_data(void) {
   // --------
   // require:
@@ -397,6 +389,7 @@ void QESession::prepare_temp(void) {
     stat(temp.c_str(), &stattemp2);
     if (stattemp1.st_size != stattemp2.st_size) {
       QECopyEvent p (ectrl, active_filename_rep, temp, 0, 0);
+      p.status_info("Creating temporary file for processing...");
       if (p.is_valid() == true) {
 	p.start();
       }
@@ -463,6 +456,21 @@ void QESession::save_as_event(void) {
   }
 }
 
+void QESession::effect_event(void) {
+  stop_event();
+  prepare_event();
+  if (file->is_valid() == false) return;
+  prepare_temp();
+  if (state_rep == state_invalid) return;
+
+  QEChainopEvent* p = new QEChainopEvent(ectrl, active_filename_rep, active_filename_rep,
+					 start_pos, sel_length);
+
+  QObject::connect(p, SIGNAL(finished()), this, SLOT(update_wave_data()));
+  p->show();
+  nb_event = p;
+}
+
 void QESession::copy_event(void) { 
   stop_event();
   prepare_event();
@@ -507,6 +515,42 @@ void QESession::cut_event(void) {
   if (p.is_valid() == true) {
     p.start();
     file->unmark();
+    update_wave_data();
+  }
+}
+
+void QESession::fade_in_event(void) { 
+  stop_event();
+  prepare_event();
+  prepare_temp();
+  if (state_rep == state_invalid) return;
+  assert(state_rep != state_orig_file);
+
+  QEFadeInEvent p (ectrl, 
+		   active_filename_rep,
+		   active_filename_rep,
+		   start_pos,
+		   sel_length);
+  if (p.is_valid() == true) {
+    p.start();
+    update_wave_data();
+  }
+}
+
+void QESession::fade_out_event(void) { 
+  stop_event();
+  prepare_event();
+  prepare_temp();
+  if (state_rep == state_invalid) return;
+  assert(state_rep != state_orig_file);
+
+  QEFadeOutEvent p (ectrl, 
+		   active_filename_rep,
+		   active_filename_rep,
+		   start_pos,
+		   sel_length);
+  if (p.is_valid() == true) {
+    p.start();
     update_wave_data();
   }
 }

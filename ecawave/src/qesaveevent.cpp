@@ -27,6 +27,7 @@ QESaveEvent::QESaveEvent(ECA_CONTROLLER* ctrl,
   : QEBlockingEvent(ctrl),
     ectrl(ctrl) {
 
+  status_info("Saving file...");
   init("saveevent");
   ectrl->add_chain("default");
   set_input(input);

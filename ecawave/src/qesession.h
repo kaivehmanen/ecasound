@@ -46,6 +46,8 @@ public slots:
   void copy_event(void);
   void paste_event(void);
   void cut_event(void);
+  void fade_in_event(void);
+  void fade_out_event(void);
 
   void debug_event(void);
 

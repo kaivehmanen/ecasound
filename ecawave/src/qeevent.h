@@ -128,8 +128,21 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
    */
   void set_length(long int pos);
 
+ public:
+
+  /**
+   * Sets a status info string shown to the user while processing
+   */
+  void status_info(const string& info_string) { info_string_rep = info_string; }
+
+  /**
+   * Get the current status string
+   */
+  const string& status_info(void) const { return(info_string_rep); }
+
  private:
 
+  string info_string_rep;
   bool triggered_rep;
   ECA_CONTROLLER* ectrl;
   string initialized_cs_rep;

@@ -29,7 +29,9 @@ ecawave_src_files = 	ecawave.cpp \
 			qechainopevent.cpp \
 			qecutevent.cpp \
 			qecopyevent.cpp \
-			qepasteevent.cpp
+			qepasteevent.cpp \
+			qefadeinevent.cpp \
+			qefadeoutevent.cpp
 ecawave_src_mocs = 	qesession_moc.cpp \
 			qefile_moc.cpp \
 			qeacceptinput_moc.cpp \
@@ -56,7 +58,9 @@ ecawave_include_files = ecawave.h \
 			qechainopevent.h \
 			qecutevent.h \
 			qecopyevent.h \
-			qepasteevent.h
+			qepasteevent.h \
+			qefadeinevent.h \
+			qefadeoutevent.h
 
 ecawave_SOURCES = $(ecawave_src_files) $(ecawave_include_files) $(ecawave_src_mocs)
 ecawave_debug_SOURCES = $(ecawave_SOURCES)

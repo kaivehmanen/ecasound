@@ -10,7 +10,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (15042000)
+       (28052000)
 
 COMMENT(----------------------------------------------------------------)
 sect(What is ecawave?)
@@ -85,6 +85,12 @@ Stop processing. Current position is resetted to begin.
 subsubsect(Effect <alt-e>)
 Process marked area with ecasound effects. It's also possible to 
 preview effects before processing.
+
+subsubsect(Fade-in <alt-i>)
+Apply a fade-in effect to the currently selected area.
+
+subsubsect(Fade-out <alt-d>)
+Apply a fade-out effect to the currently selected area.
 
 subsubsect(Copy <alt-y>)
 Copy marked area to ecawave's clipboard.

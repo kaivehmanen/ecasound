@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecawave - User-visible changes (NEWS)       (last edited: 210500) **
+** Ecawave - User-visible changes (NEWS)       (last edited: 280500) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.yRt" :
@@ -12,14 +12,18 @@ About the version numbers... "vx.yRt" :
 
 -----------------------------------------------------------------------
 
-Last officially released version is -*> v0.1.0r1 <*-
+Last officially released version is -*> v0.2.2r2 <*-
 
-??052000 (v0.2.2d2)
+28052000 (v0.2.2r2)
 	- added: --version and --help command-line options (for GNU 
 		 compliance)
+	- added: fade-in and fade-out effects
 	- fixed: configure problems (libecasound not recognized 
 		 properly)
 	- fixed: unneeded dependence on ALSA headers files
+	- fixed: with ecasound 1.7.7r12 and older, 'effect' crashed 
+		 if no LADSPA plugins were found
+	- fixed: 'cut' bugs
 26042000 (v0.2.1d2)
 	- added: 'mark all' and 'redraw' buttons
 	- changed: new color scheme - hopefully looks better :)
