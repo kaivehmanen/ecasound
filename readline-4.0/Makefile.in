@@ -197,7 +197,9 @@ installdirs: $(srcdir)/support/mkdirs
 	-$(SHELL) $(srcdir)/support/mkdirs $(includedir) \
 		$(includedir)/readline $(libdir) $(infodir) $(man3dir)
 
-uninstall:
+uninstall: all
+
+uninstall-hook:
 	-test -n "$(includedir)" && cd $(includedir)/readline && \
 		${RM} ${INSTALLED_HEADERS}
 	-test -n "$(libdir)" && cd $(libdir) && \
