@@ -19,6 +19,8 @@
 // ------------------------------------------------------------------------
 
 #include <iostream>
+#include <cassert>
+
 #include <ecasoundc.h>
 
 #include "eca-control-interface.h"
