@@ -57,7 +57,7 @@ output.
 
 dit(-d:debug_level)
 Set the debug level mask to 'debug_level'. This a bitmasked value, 
-that defaults to 263. See ECA_LOGGER class documentation for 
+that defaults to 3. See ECA_LOGGER class documentation for 
 more detailed info about various debug_level values.
 
 dit(-D)
