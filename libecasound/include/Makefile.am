@@ -52,14 +52,14 @@ ecasound_general_src = 	eca-chain.h \
 			eca-main.h \
 			eca-session.h \
 			eca-resources.h \
-			resource-file.h\
+			resource-file.h \
 			generic-controller.h \
 			layer.h \
 			eca-static-object-maps.h \
 			eca-object-map.h \
 			eca-preset-map.h \
 			eca-ladspa-plugin-map.h \
-			eca-vst-plugin-map.h
+			eca-vst-plugin-map.h \
 			eca-chainop-map.h \
 			eca-controller-map.h \
 			eca-audio-object-map.h \

@@ -49,7 +49,7 @@ class SAMPLE_BUFFER_FUNCTIONS_BASE {
 	temp_avg += buf.buffer[n][m] * buf.buffer[n][m];
       }
     }
-    return(sqrt(temp_avg) / buf.channel_count_rep / buf.buffersize_rep);
+    return(sqrt(temp_avg / buf.channel_count_rep / buf.buffersize_rep));
   }
 
   static sample_type average_amplitude(const SAMPLE_BUFFER_BASE<T>& buf,
@@ -73,7 +73,7 @@ class SAMPLE_BUFFER_FUNCTIONS_BASE {
     for(SAMPLE_BUFFER::buf_size_t n = 0; n < buf.buffersize_rep; n++) {
       temp_avg += buf.buffer[channel][n] * buf.buffer[channel][n];
     }
-    return(sqrt(temp_avg) / count_samples);
+    return(sqrt(temp_avg / count_samples));
   }
 };
 

@@ -51,7 +51,6 @@ ecawave_include_files = ecawave.h \
 			qeevent.h \
 			qeblockingevent.h \
 			qenonblockingevent.h \
-			qeinterfaceevent.h \
 			qeplayevent.h \
 			qesaveevent.h \
 			qechainopevent.h \

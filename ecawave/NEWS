@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecawave - user visible changes (NEWS)       (last edited: 050400) **
+** ecawave - user visible changes (NEWS)       (last edited: 120400) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.yRt" :
@@ -14,7 +14,7 @@ About the version numbers... "vx.yRt" :
 
 Last officially released version is -*> v0.1.0r1 <*-
 
-??042000 (v0.2.0d2)
+12042000 (v0.2.0d2)
 	- added: 'copy', 'cut' and 'paste' buttons
 	- added: 'clipboard-file' entry to ecawaverc - defaults to
 	         /tmp/ecawave-clipboard.wav

@@ -101,21 +101,25 @@ libqtecasound_general_include = qebuttonrow.h 				qestringdialog.h
 libqtecasound_general_moc = qestringdialog_moc.cpp 				qebuttonrow_moc.cpp			 
 
 
-libqtecasound_inputs_src = qeinput.cpp 				qefilenameinput.cpp 				qeokcancelinput.cpp 				qeaudioformatinput.cpp 				qechainoperatorinput.cpp 				qeobjectmap.cpp 				qeoperatorconfiguration.cpp
+libqtecasound_lobjects_src = qesignallevel.cpp
+libqtecasound_lobjects_include = qelibraryobject.h 				qechainoperator.h 				qecontroller.h 				qesignallevel.h
 
-libqtecasound_inputs_include = qeinput.h 				qefilenameinput.h 				qeokcancelinput.h 				qeaudioformatinput.h 				qechainoperatorinput.h 				qeobjectmap.h 				qeoperatorconfiguration.h
+libqtecasound_lobjects_moc = qesignallevel_moc.cpp
 
-libqtecasound_inputs_moc = qeinput_moc.cpp 				qefilenameinput_moc.cpp 				qeokcancelinput_moc.cpp 				qeaudioformatinput_moc.cpp 				qechainoperatorinput_moc.cpp 				qeobjectmap_moc.cpp 				qeoperatorconfiguration_moc.cpp
+libqtecasound_inputs_src = qeinput.cpp 				qefilenameinput.cpp 				qeokcancelinput.cpp 				qeaudioformatinput.cpp 				qechainoperatorinput.cpp 				qeobjectmap.cpp 				qeoperatorconfiguration.cpp 				qeaudioobjectconfiguration.cpp
 
+libqtecasound_inputs_include = qeinput.h 				qefilenameinput.h 				qeokcancelinput.h 				qeaudioformatinput.h 				qechainoperatorinput.h 				qeobjectmap.h 				qeoperatorconfiguration.h 				qeaudioobjectconfiguration.h
+
+libqtecasound_inputs_moc = qeinput_moc.cpp 				qefilenameinput_moc.cpp 				qeokcancelinput_moc.cpp 				qeaudioformatinput_moc.cpp 				qechainoperatorinput_moc.cpp 				qeobjectmap_moc.cpp 				qeoperatorconfiguration_moc.cpp 				qeaudioobjectconfiguration_moc.cpp
 
 libqtecasound_dialogs_src = qedialog.cpp
 libqtecasound_dialogs_include = qedialog.h
 libqtecasound_dialogs_moc = qedialog_moc.cpp
 
-libqtecasound_common_src = $(libqtecasound_general_src) 				$(libqtecasound_general_moc) 				$(libqtecasound_inputs_src) 				$(libqtecasound_inputs_moc) 				$(libqtecasound_dialogs_src) 				$(libqtecasound_dialogs_moc) 
+libqtecasound_common_src = $(libqtecasound_general_src) 				$(libqtecasound_general_moc) 				$(libqtecasound_lobjects_src) 				$(libqtecasound_lobjects_moc) 				$(libqtecasound_inputs_src) 				$(libqtecasound_inputs_moc) 				$(libqtecasound_dialogs_src) 				$(libqtecasound_dialogs_moc) 
 
 
-libqtecasound_common_include = $(libqtecasound_general_include) 				$(libqtecasound_inputs_include) 				$(libqtecasound_dialogs_include)
+libqtecasound_common_include = $(libqtecasound_general_include) 				$(libqtecasound_lobjects_include) 				$(libqtecasound_inputs_include) 				$(libqtecasound_dialogs_include)
 
 
 libqtecasound_la_SOURCES = $(libqtecasound_common_src)
@@ -138,20 +142,24 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libqtecasound_debug_la_DEPENDENCIES = 
 libqtecasound_debug_la_OBJECTS =  qebuttonrow.lo qestringdialog.lo \
-qestringdialog_moc.lo qebuttonrow_moc.lo qeinput.lo qefilenameinput.lo \
-qeokcancelinput.lo qeaudioformatinput.lo qechainoperatorinput.lo \
-qeobjectmap.lo qeoperatorconfiguration.lo qeinput_moc.lo \
+qestringdialog_moc.lo qebuttonrow_moc.lo qesignallevel.lo \
+qesignallevel_moc.lo qeinput.lo qefilenameinput.lo qeokcancelinput.lo \
+qeaudioformatinput.lo qechainoperatorinput.lo qeobjectmap.lo \
+qeoperatorconfiguration.lo qeaudioobjectconfiguration.lo qeinput_moc.lo \
 qefilenameinput_moc.lo qeokcancelinput_moc.lo qeaudioformatinput_moc.lo \
 qechainoperatorinput_moc.lo qeobjectmap_moc.lo \
-qeoperatorconfiguration_moc.lo qedialog.lo qedialog_moc.lo
+qeoperatorconfiguration_moc.lo qeaudioobjectconfiguration_moc.lo \
+qedialog.lo qedialog_moc.lo
 libqtecasound_la_DEPENDENCIES = 
 libqtecasound_la_OBJECTS =  qebuttonrow.lo qestringdialog.lo \
-qestringdialog_moc.lo qebuttonrow_moc.lo qeinput.lo qefilenameinput.lo \
-qeokcancelinput.lo qeaudioformatinput.lo qechainoperatorinput.lo \
-qeobjectmap.lo qeoperatorconfiguration.lo qeinput_moc.lo \
+qestringdialog_moc.lo qebuttonrow_moc.lo qesignallevel.lo \
+qesignallevel_moc.lo qeinput.lo qefilenameinput.lo qeokcancelinput.lo \
+qeaudioformatinput.lo qechainoperatorinput.lo qeobjectmap.lo \
+qeoperatorconfiguration.lo qeaudioobjectconfiguration.lo qeinput_moc.lo \
 qefilenameinput_moc.lo qeokcancelinput_moc.lo qeaudioformatinput_moc.lo \
 qechainoperatorinput_moc.lo qeobjectmap_moc.lo \
-qeoperatorconfiguration_moc.lo qedialog.lo qedialog_moc.lo
+qeoperatorconfiguration_moc.lo qeaudioobjectconfiguration_moc.lo \
+qedialog.lo qedialog_moc.lo
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -167,13 +175,15 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/qeaudioformatinput.P .deps/qeaudioformatinput_moc.P \
-.deps/qebuttonrow.P .deps/qebuttonrow_moc.P \
-.deps/qechainoperatorinput.P .deps/qechainoperatorinput_moc.P \
-.deps/qedialog.P .deps/qedialog_moc.P .deps/qefilenameinput.P \
-.deps/qefilenameinput_moc.P .deps/qeinput.P .deps/qeinput_moc.P \
-.deps/qeobjectmap.P .deps/qeobjectmap_moc.P .deps/qeokcancelinput.P \
-.deps/qeokcancelinput_moc.P .deps/qeoperatorconfiguration.P \
-.deps/qeoperatorconfiguration_moc.P .deps/qestringdialog.P \
+.deps/qeaudioobjectconfiguration.P \
+.deps/qeaudioobjectconfiguration_moc.P .deps/qebuttonrow.P \
+.deps/qebuttonrow_moc.P .deps/qechainoperatorinput.P \
+.deps/qechainoperatorinput_moc.P .deps/qedialog.P .deps/qedialog_moc.P \
+.deps/qefilenameinput.P .deps/qefilenameinput_moc.P .deps/qeinput.P \
+.deps/qeinput_moc.P .deps/qeobjectmap.P .deps/qeobjectmap_moc.P \
+.deps/qeokcancelinput.P .deps/qeokcancelinput_moc.P \
+.deps/qeoperatorconfiguration.P .deps/qeoperatorconfiguration_moc.P \
+.deps/qesignallevel.P .deps/qesignallevel_moc.P .deps/qestringdialog.P \
 .deps/qestringdialog_moc.P
 SOURCES = $(libqtecasound_debug_la_SOURCES) $(libqtecasound_la_SOURCES)
 OBJECTS = $(libqtecasound_debug_la_OBJECTS) $(libqtecasound_la_OBJECTS)
@@ -451,6 +461,11 @@ qebuttonrow_moc.cpp: $(srcdir)/qebuttonrow.h
 	$(MOC) -o qebuttonrow_moc.cpp $(srcdir)/qebuttonrow.h
 
 # ---
+# library objects:
+qesignallevel_moc.cpp: $(srcdir)/qesignallevel.h
+	$(MOC) -o qesignallevel_moc.cpp $(srcdir)/qesignallevel.h
+
+# ---
 # inputs:
 qeaudioformatinput_moc.cpp: $(srcdir)/qeaudioformatinput.h
 	$(MOC) -o qeaudioformatinput_moc.cpp $(srcdir)/qeaudioformatinput.h
@@ -458,6 +473,8 @@ qechainoperatorinput_moc.cpp: $(srcdir)/qechainoperatorinput.h
 	$(MOC) -o qechainoperatorinput_moc.cpp $(srcdir)/qechainoperatorinput.h
 qeoperatorconfiguration_moc.cpp: $(srcdir)/qeoperatorconfiguration.h
 	$(MOC) -o qeoperatorconfiguration_moc.cpp $(srcdir)/qeoperatorconfiguration.h
+qeaudioobjectconfiguration_moc.cpp: $(srcdir)/qeaudioobjectconfiguration.h
+	$(MOC) -o qeaudioobjectconfiguration_moc.cpp $(srcdir)/qeaudioobjectconfiguration.h
 qefilenameinput_moc.cpp: $(srcdir)/qefilenameinput.h
 	$(MOC) -o qefilenameinput_moc.cpp $(srcdir)/qefilenameinput.h
 qeinput_moc.cpp: $(srcdir)/qeinput.h

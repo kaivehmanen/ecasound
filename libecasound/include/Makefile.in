@@ -92,7 +92,7 @@ ecasound_audioio_src = audioio-cdr.h 			audioio-cdr_impl.h 			audioio-ewf.h 			a
 ecasound_controller_src =  	generic-controller.h 	ctrl-source.h 	midi-cc.h 	oscillator.h 	osc-gen.h 	osc-sine.h 	finite-envelope.h 	linear-envelope.h 	two-stage-linear-envelope.h
 
 
-ecasound_general_src = eca-chain.h 			eca-chainop.h 			eca-error.h 			eca-debug.h 			eca-comhelp.h 			eca-midi.h 			eca-main.h 			eca-session.h 			eca-resources.h 			resource-file.h 			generic-controller.h 			layer.h 			eca-static-object-maps.h 			eca-object-map.h 			eca-preset-map.h 			eca-ladspa-plugin-map.h 			eca-vst-plugin-map.h
+ecasound_general_src = eca-chain.h 			eca-chainop.h 			eca-error.h 			eca-debug.h 			eca-comhelp.h 			eca-midi.h 			eca-main.h 			eca-session.h 			eca-resources.h 			resource-file.h 			generic-controller.h 			layer.h 			eca-static-object-maps.h 			eca-object-map.h 			eca-preset-map.h 			eca-ladspa-plugin-map.h 			eca-vst-plugin-map.h 			eca-chainop-map.h 			eca-controller-map.h 			eca-audio-object-map.h 			samplebuffer.h 			samplebuffer_impl.h 			samplebuffer_functions.h 			samplebuffer_iterators.h 			sample-specs.h 			eca-version.h 			eca-chainsetup.h 			eca-controller.h 			eca-controller-base.h 			eca-controller-objects.h 			eca-controller-dump.h 			eca-iamode-parser.h 			osc-gen.h 			midi-cc.h 			eca-control-position.h 			eca-audio-position.h 			eca-fileio.h  			eca-fileio-stream.h 			eca-fileio-mmap.h 			eca-fileio-mmap-fthread.h 			eca-mthreaded-processor.h 			dynamic-parameters.h 			dynamic-object.h 			eca-object.h 			eca-operator.h 			eca-audio-objects.h 			eca-audio-format.h 			eca-audio-time.h 			preset.h 			file-preset.h 			global-preset.h
 
 
 #			eca-chainop-map.h \
@@ -239,40 +239,6 @@ uninstall-am uninstall all-redirect all-am all installdirs \
 mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-			eca-chainop-map.h \
-			eca-controller-map.h \
-			eca-audio-object-map.h \
-			samplebuffer.h \
-			samplebuffer_impl.h \
-			samplebuffer_functions.h \
-			samplebuffer_iterators.h \
-			sample-specs.h \
-			eca-version.h \
-			eca-chainsetup.h \
-			eca-controller.h \
-			eca-controller-base.h \
-			eca-controller-objects.h \
-			eca-controller-dump.h \
-			eca-iamode-parser.h \
-			osc-gen.h \
-			midi-cc.h \
-			eca-control-position.h \
-			eca-audio-position.h \
-			eca-fileio.h  \
-			eca-fileio-stream.h \
-			eca-fileio-mmap.h \
-			eca-fileio-mmap-fthread.h \
-			eca-mthreaded-processor.h \
-			dynamic-parameters.h \
-			dynamic-object.h \
-			eca-object.h \
-			eca-operator.h \
-			eca-audio-objects.h \
-			eca-audio-format.h \
-			eca-audio-time.h \
-			preset.h \
-			file-preset.h \
-			global-preset.h
 
 install-data-local:
 	$(INSTALL) -d $(pkgincludedir)

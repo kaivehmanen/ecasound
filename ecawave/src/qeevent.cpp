@@ -96,7 +96,8 @@ void QEEvent::blocking_start(void) {
     double progress_start = ectrl->position_in_seconds_exact();
 
     QProgressDialog progress ("Processing data...", 0,
-			      progress_length, 0, 0, true);
+			      progress_length - progress_start * 10, 0, 0, true);
+
     progress.setProgress(0);
     progress.show();
     while(ectrl->is_finished() == false) {

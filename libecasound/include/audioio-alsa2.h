@@ -22,13 +22,14 @@
 class ALSA_PCM2_DEVICE : public AUDIO_IO_DEVICE {
 
   snd_pcm_t *audio_fd;
+  snd_pcm_channel_info_t pcm_info;
+
   long int fragment_size;
-  
+ 
   int card_number, device_number, subdevice_number;
   int pcm_mode, pcm_channel;
 
   long int bytes_read;
-
   long underruns, overruns;
 
   bool is_triggered;
@@ -61,7 +62,8 @@ class ALSA_PCM2_DEVICE : public AUDIO_IO_DEVICE {
   ALSA_PCM2_DEVICE* new_expr(void) { return new ALSA_PCM2_DEVICE(); }
   
  private:
-  
+
+  void print_status_debug(void);
   ALSA_PCM2_DEVICE& operator=(const ALSA_PCM2_DEVICE& x) { return *this; }
 };
 

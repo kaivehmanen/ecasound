@@ -113,4 +113,9 @@ int get_number_of_arguments(const string& argu);
  */
 string get_argument_prefix(const string& argument);
 
+/**
+ * Prints a time stamp to stderr
+ */
+void print_time_stamp(void);
+
 #endif

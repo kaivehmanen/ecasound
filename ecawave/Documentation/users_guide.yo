@@ -4,13 +4,13 @@ htmlcommand(
 <insert file=ew-makrot.txt _ecawave_title="user's guide">
 <insert name=ecawave_headeronly>
 <p>
-<center><h2>ecawave user's guide</h2></center>
+<center><h2>Ecawave User's guide</h2></center>
 </p>
 )
 
 article()
        (Kai Vehmanen)
-       (27012000)
+       (12042000)
 
 COMMENT(----------------------------------------------------------------)
 sect(What is ecawave?)
@@ -89,6 +89,10 @@ preview effects before processing.
 subsubsect(Copy <alt-y>)
 Copy marked area to ecawave's clipboard.
 
+subsubsect(Cut <alt-u>)
+Copy marked area to ecawave's clipboard, and then remove it
+from the edited file.
+
 subsubsect(Paste <alt-p>)
 Paste the contents of ecawave's clipboard into the current file 
 starting from the current position.
@@ -115,6 +119,9 @@ startdit()
 
   	dit(default-output)
   	Output device to use. Defaults to em(/dev/dsp).
+
+  	dit(clipboard-file)
+	Location of ecawave's clipboard file. Defaults to em(/tmp/ecawave-clipboard.wav).
 
 enddit()
 

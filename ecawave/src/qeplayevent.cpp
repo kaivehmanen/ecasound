@@ -18,8 +18,10 @@
 // ------------------------------------------------------------------------
 
 #include <ecasound/eca-debug.h>
+#include <ecasound/qesignallevel.h>
 
 #include "qeplayevent.h"
+
 
 QEPlayEvent::QEPlayEvent(ECA_CONTROLLER* ctrl,
 			 const string& input,
@@ -37,4 +39,8 @@ QEPlayEvent::QEPlayEvent(ECA_CONTROLLER* ctrl,
   set_default_audio_format(input);
   set_output(output);
   set_length(length);
+
+  //  QESignalLevel* sl = new QESignalLevel(1, 0, 0);
+  //  ectrl->add_chain_operator(sl);
+  //  sl->show();
 }

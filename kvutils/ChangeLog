@@ -2,6 +2,11 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2000-04-11  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* kvutils.cpp (print_time_stamp): added
+	* library version changed to 1:0:0
+	
 2000-03-24  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* com_line.h (combine): a new overloaded version

@@ -17,6 +17,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <sys/time.h>
+#include <unistd.h>
+
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -274,3 +277,31 @@ string get_argument_prefix(const string& argu) {
   assert(argu.size() >= 0);
   // --------
 }
+
+void print_time_stamp(void) {
+  // --
+  // not thread-safe!
+  // --
+  static bool first = true;
+  static struct timeval last;
+  struct timeval current;
+
+  if (first) {
+    ::gettimeofday(&last, 0);
+    first = false;
+  }
+
+  ::gettimeofday(&current, 0);
+
+  cerr << "(timestamp) " << current.tv_sec << "sec, " <<
+    current.tv_usec << "msec.";
+  
+  long delta = current.tv_usec;
+  delta -= last.tv_usec;
+  delta += (current.tv_sec - last.tv_sec) * 1000000;
+  cerr << " Delta " << delta << "msec." << endl;
+
+  last.tv_sec = current.tv_sec;
+  last.tv_usec = current.tv_usec;
+}
+

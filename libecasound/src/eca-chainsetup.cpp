@@ -194,7 +194,6 @@ void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
     interpret_audio_format(temp);
     if (chains.size() == 0) add_default_chain();
     interpret_audioio_device(temp);
-    interpret_effect_preset(temp);
     interpret_chain_operator(temp);
     interpret_controller(temp);
     ++p;

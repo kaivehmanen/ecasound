@@ -1,5 +1,5 @@
-#ifndef _QESTRINGPARAMETERINPUT_H
-#define _QESTRINGPARAMETERINPUT_H
+#ifndef _QEAUDIOOBJECTCONFIGURATION_H
+#define _QEAUDIOOBJECTCONFIGURATION_H
 
 #include <vector>
 
@@ -7,37 +7,46 @@
 #include <qhbox.h>
 #include <qlineedit.h>
 
-#include <ecasound/dynamic-object.h>
+#include <ecasound/audioio.h>
 
 #include "qeinput.h"
 
 class QLabel;
 class QLineEdit;
+class QGroupBox;
+class QGrid;
 
 /**
- * Input widget for dynamic objects with string parameters
+ * Input widget for configuring ecasound audio objects
  */
-class QEStringParameterInput : public QEInput {
+class QEAudioObjectConfiguration : public QEInput {
   Q_OBJECT
  public:
 
-  QEStringParameterInput (OPERATOR* op, QWidget *parent = 0, const char *name = 0);
-
-  DYNAMIC_OBJECT<string>* result(void) const { return(operator_rep); }
-
-  virtual bool class_invariant(void) const { return(operator_rep != 0); }
+  QEAudioObjectConfiguration (AUDIO_IO* op, QWidget *parent = 0, const char *name = 0);
+  AUDIO_IO* result(void) const { return(object_rep); }
 
 public slots:
 
   virtual void update_results(void);
+  void change_object(AUDIO_IO* op);
 
  private:
 
-  DYNAMIC_OBJECT<string>* operator_rep;
+  AUDIO_IO* object_rep;
   vector<QLabel*> paramlist;
   vector<QLineEdit*> inputlist;
 
+  QGrid* paramgrid;
+  QLabel* obj_desc;
+  QLabel* obj_name;
+  QGroupBox* paramgroup;
+
   void init_layout(void);
+
+ public:
+
+  virtual bool class_invariant(void) const { return(object_rep != 0); }
 };
 
 #endif

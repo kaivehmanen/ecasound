@@ -28,6 +28,7 @@
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils.h>
 
 #include <sys/asoundlib.h>
 
@@ -78,7 +79,7 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
 				    SND_PCM_OPEN_CAPTURE | SND_PCM_OPEN_NONBLOCK);
     
     if (err < 0) {
-      throw(new ECA_ERROR("AUDIOIO-ALSA2", "unable to open ALSA-device for capture; error: " + 
+      throw(new ECA_ERROR("AUDIOIO-ALSA2", "Unable to open ALSA-device for capture; error: " + 
 			  string(snd_strerror(err))));
     }
   }    
@@ -90,7 +91,7 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
 				    subdevice_number,
 				    SND_PCM_OPEN_PLAYBACK | SND_PCM_OPEN_NONBLOCK);
     if (err < 0) {
-      throw(new ECA_ERROR("AUDIOIO-ALSA2", "unable to open ALSA-device for playback; error: " +  
+      throw(new ECA_ERROR("AUDIOIO-ALSA2", "Unable to open ALSA-device for playback; error: " +  
 			  string(snd_strerror(err))));
     }
   }
@@ -98,7 +99,15 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
       throw(new ECA_ERROR("AUDIOIO-ALSA2", "Simultaneous intput/output not supported."));
   }
 
+  // -------------------------------------------------------------------
+  // Sets non-blocking mode 
   ::snd_pcm_nonblock_mode(audio_fd, 0);
+
+  // -------------------------------------------------------------------
+  // Fetch channel info
+
+  ::memset(&pcm_info, 0, sizeof(pcm_info));
+  ::snd_pcm_channel_info(audio_fd, &pcm_info);
 
   // -------------------------------------------------------------------
   // Select audio format
@@ -107,7 +116,10 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   snd_pcm_format_t pf;
   ::memset(&pf, 0, sizeof(pf));
 
+  if ((pcm_info.flags & SND_PCM_CHNINFO_INTERLEAVE) != SND_PCM_CHNINFO_INTERLEAVE)
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "non-interleaved streams not supported!", ECA_ERROR::stop));
   pf.interleave = 1;
+
   int format;
   switch(sample_format()) 
     {
@@ -126,31 +138,43 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
       }
     }
 
+  unsigned int format_mask = (1 << format);
+  if ((pcm_info.formats & format_mask) != format_mask)
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Selected sample format not supported by the device!", ECA_ERROR::stop));
   pf.format = format;
+
+  if (samples_per_second() < pcm_info.min_rate ||
+      samples_per_second() > pcm_info.max_rate)
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Sample rate " +
+			kvu_numtostr(samples_per_second()) + " is out of range!", ECA_ERROR::stop));
   pf.rate = samples_per_second();
+
+  if (channels() < pcm_info.min_voices ||
+      channels() > pcm_info.max_voices)
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "Channel count " +
+			kvu_numtostr(channels()) + " is out of range!", ECA_ERROR::stop));
   pf.voices = channels();
 
   ::memcpy(&params.format, &pf, sizeof(pf));
 
-  if (pcm_channel == SND_PCM_CHANNEL_PLAYBACK)
-    params.start_mode = SND_PCM_START_GO;
-  else 
-    params.start_mode = SND_PCM_START_GO;
-  params.stop_mode = SND_PCM_STOP_ROLLOVER;
-
-  //  params.stop_mode = SND_PCM_STOP_STOP;
-
   params.mode = pcm_mode;
   params.channel = pcm_channel;
+  if (params.channel == SND_PCM_CHANNEL_PLAYBACK)
+    params.start_mode = SND_PCM_START_GO;
+  else
+    params.start_mode = SND_PCM_START_DATA;
+  params.stop_mode = SND_PCM_STOP_ROLLOVER; // SND_PCM_STOP_STOP
 
   // -------------------------------------------------------------------
   // Set fragment size.
 
-  if (buffersize() == 0) 
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "buffersize() is 0!", ECA_ERROR::stop));
-
+  if (buffersize() < pcm_info.min_fragment_size * frame_size() ||
+      buffersize() > pcm_info.max_fragment_size * frame_size()) 
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "buffersize " +
+			kvu_numtostr(buffersize()) + " is out of range!", ECA_ERROR::stop));
+  
   params.buf.block.frag_size = buffersize() * frame_size();
-  params.buf.block.frags_max = -1;
+  params.buf.block.frags_max = 1;
   params.buf.block.frags_min = 1;
 
   // -------------------------------------------------------------------
@@ -193,6 +217,7 @@ void ALSA_PCM2_DEVICE::stop(void) {
   ::memset(&status, 0, sizeof(status));
   status.channel = pcm_channel;
   ::snd_pcm_channel_status(audio_fd, &status);
+  overruns += status.overrun;
   underruns += status.underrun;
 
   int err = ::snd_pcm_channel_flush(audio_fd, pcm_channel);
@@ -237,28 +262,39 @@ void ALSA_PCM2_DEVICE::start(void) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) start");
 
-  if (io_mode() == io_write) {
-    snd_pcm_channel_status_t status;
-    memset(&status, 0, sizeof(status));
-    status.channel = pcm_channel;
-    ::snd_pcm_channel_status(audio_fd, &status);
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Bytes in output-queue: " + kvu_numtostr(status.count) + ".");
-  }
-  ::snd_pcm_channel_go(audio_fd, pcm_channel);
+  if (pcm_channel == SND_PCM_CHANNEL_PLAYBACK)
+    ::snd_pcm_channel_go(audio_fd, pcm_channel);
   is_triggered = true;
+  //  if (io_mode() == io_write) print_status_debug();
 }
 
 long int ALSA_PCM2_DEVICE::read_samples(void* target_buffer, 
 					long int samples) {
   assert(samples * frame_size() <= fragment_size);
+  //    cerr << "R"; print_status_debug();
   return(::snd_pcm_read(audio_fd, target_buffer, fragment_size) / frame_size());
+}
+
+void ALSA_PCM2_DEVICE::print_status_debug(void) {
+  snd_pcm_channel_status_t status;
+  memset(&status, 0, sizeof(status));
+  status.channel = pcm_channel;
+  ::snd_pcm_channel_status(audio_fd, &status);
+  overruns += status.overrun;
+  underruns += status.underrun;
+  cerr << "status:" << status.count << "," << status.scount << "," <<
+    status.overrun << "," << status.status << " ";
+  print_time_stamp();
 }
 
 void ALSA_PCM2_DEVICE::write_samples(void* target_buffer, long int samples) {
   if (samples * frame_size()== fragment_size) {
     ::snd_pcm_write(audio_fd, target_buffer, fragment_size);
+    //    cerr << "W"; print_status_debug();
   }
   else {
+    if ((samples * frame_size()) < pcm_info.min_fragment_size ||
+	(samples * frame_size()) > pcm_info.max_fragment_size) return;
     bool was_triggered = false;
     if (is_triggered == true) { stop(); was_triggered = true; }
     close();

@@ -11,7 +11,7 @@ htmlcommand(
 <A HREF=manpages.html>[Man pages]</A>
 <A HREF=users_guide/index.html>[User's guide]</A>
 <A HREF=programmers_guide/index.html>[Programmer's guide]</A>
-<A HREF=kdoc_pages.html>[Source tree]</A>
+<A HREF=doxygen_pages.html>[Source tree]</A>
 <A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
 <CENTER><H4><A HREF=ecasound_manpage.html>[ecasound(1)]</A>
 <A HREF=ecatools_manpage.html>[ecatools(1)]</A>

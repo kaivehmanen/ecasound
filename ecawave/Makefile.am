@@ -1,6 +1,7 @@
-EXTRA_DIST = BUGS NEWS Documentation
+EXTRA_DIST = BUGS NEWS ecawave.spec
 SUBDIRS = src Documentation
 AUTOMAKE_OPTIONS = foreign
+RELEASE = 1
 
 create-rpm-spec:
 	cat $(PACKAGE).spec | awk -- '{ print gensub("METAVERSION","$(VERSION)",g) }' >$(PACKAGE)-$(VERSION)-$(RELEASE).spec
@@ -15,3 +16,4 @@ build-rpm: create-rpm-spec $(PACKAGE)-$(VERSION).tar.gz
 copy-to-seul:
 	cp -v /usr/src/redhat/SOURCES/$(PACKAGE)-$(VERSION).tar.gz /opt/http/ecasound.seul/
 	cp -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
+	cp -v /usr/src/redhat/SRPMS/$(PACKAGE)-$(VERSION)-$(RELEASE).src.rpm /opt/http/ecasound.seul/

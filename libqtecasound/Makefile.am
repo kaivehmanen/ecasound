@@ -32,40 +32,52 @@ libqtecasound_general_include =	qebuttonrow.h \
 libqtecasound_general_moc =	qestringdialog_moc.cpp \
 				qebuttonrow_moc.cpp			 
 
+libqtecasound_lobjects_src = 	qesignallevel.cpp
+libqtecasound_lobjects_include=	qelibraryobject.h \
+				qechainoperator.h \
+				qecontroller.h \
+				qesignallevel.h
+libqtecasound_lobjects_moc =	qesignallevel_moc.cpp
+
 libqtecasound_inputs_src = 	qeinput.cpp \
 				qefilenameinput.cpp \
 				qeokcancelinput.cpp \
 				qeaudioformatinput.cpp \
 				qechainoperatorinput.cpp \
 				qeobjectmap.cpp \
-				qeoperatorconfiguration.cpp
+				qeoperatorconfiguration.cpp \
+				qeaudioobjectconfiguration.cpp
 libqtecasound_inputs_include = 	qeinput.h \
 				qefilenameinput.h \
 				qeokcancelinput.h \
 				qeaudioformatinput.h \
 				qechainoperatorinput.h \
 				qeobjectmap.h \
-				qeoperatorconfiguration.h
+				qeoperatorconfiguration.h \
+				qeaudioobjectconfiguration.h
 libqtecasound_inputs_moc = 	qeinput_moc.cpp \
 				qefilenameinput_moc.cpp \
 				qeokcancelinput_moc.cpp \
 				qeaudioformatinput_moc.cpp \
 				qechainoperatorinput_moc.cpp \
 				qeobjectmap_moc.cpp \
-				qeoperatorconfiguration_moc.cpp
-
+				qeoperatorconfiguration_moc.cpp \
+				qeaudioobjectconfiguration_moc.cpp
 libqtecasound_dialogs_src = 	qedialog.cpp
 libqtecasound_dialogs_include = qedialog.h
 libqtecasound_dialogs_moc = 	qedialog_moc.cpp
 
 libqtecasound_common_src = 	$(libqtecasound_general_src) \
 				$(libqtecasound_general_moc) \
+				$(libqtecasound_lobjects_src) \
+				$(libqtecasound_lobjects_moc) \
 				$(libqtecasound_inputs_src) \
 				$(libqtecasound_inputs_moc) \
 				$(libqtecasound_dialogs_src) \
 				$(libqtecasound_dialogs_moc) 
 
 libqtecasound_common_include = 	$(libqtecasound_general_include) \
+				$(libqtecasound_lobjects_include) \
 				$(libqtecasound_inputs_include) \
 				$(libqtecasound_dialogs_include)
 
@@ -95,6 +107,11 @@ qebuttonrow_moc.cpp: $(srcdir)/qebuttonrow.h
 	$(MOC) -o qebuttonrow_moc.cpp $(srcdir)/qebuttonrow.h
 
 # ---
+# library objects:
+qesignallevel_moc.cpp: $(srcdir)/qesignallevel.h
+	$(MOC) -o qesignallevel_moc.cpp $(srcdir)/qesignallevel.h
+
+# ---
 # inputs:
 qeaudioformatinput_moc.cpp: $(srcdir)/qeaudioformatinput.h
 	$(MOC) -o qeaudioformatinput_moc.cpp $(srcdir)/qeaudioformatinput.h
@@ -102,6 +119,8 @@ qechainoperatorinput_moc.cpp: $(srcdir)/qechainoperatorinput.h
 	$(MOC) -o qechainoperatorinput_moc.cpp $(srcdir)/qechainoperatorinput.h
 qeoperatorconfiguration_moc.cpp: $(srcdir)/qeoperatorconfiguration.h
 	$(MOC) -o qeoperatorconfiguration_moc.cpp $(srcdir)/qeoperatorconfiguration.h
+qeaudioobjectconfiguration_moc.cpp: $(srcdir)/qeaudioobjectconfiguration.h
+	$(MOC) -o qeaudioobjectconfiguration_moc.cpp $(srcdir)/qeaudioobjectconfiguration.h
 qefilenameinput_moc.cpp: $(srcdir)/qefilenameinput.h
 	$(MOC) -o qefilenameinput_moc.cpp $(srcdir)/qefilenameinput.h
 qeinput_moc.cpp: $(srcdir)/qeinput.h

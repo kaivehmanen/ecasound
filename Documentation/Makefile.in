@@ -89,6 +89,8 @@ mandir = $(prefix)/man
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 SUBDIRS = users_guide programmers_guide
+
+SCANDOC = /opt/p/scandoc/scandoc
 #distdir = ../$(PACKAGE)-$(VERSION)
 #top_distdir = $(distdir)
 # ---------------------------------------------------------------------
@@ -364,35 +366,51 @@ ecasound_faq.html: ecasound_faq.yo
 kdoc:
 	cd @top_srcdir@/kvutils ; \
 	 kdoc -u \
-	 "http://www.wakkanet.fi/~kaiv/ecasound/Documentation/libkvutils/" \
 	 -d ../Documentation/libkvutils/ \
+	 -u "http://localhost/ecasound/Documentation/libkvutils/" \
 	 -n libkvutils \
 	 -L ../Documentation/ *.h
 	cd @top_srcdir@/libecasound/include ; \
-	 kdoc -f html -u "http://localhost/ecasound/Documentation/libecasound/"\
+	 kdoc -f html -u "http://localhost/ecasound/Documentation/libecasound/" \
 	 -d ../../Documentation/libecasound/ -n libecasound \
-	 -L ../../Documentation/ *.h
+	 -L ../../Documentation/ *.h -llibkvutils
 	cd @top_srcdir@/libqtecasound ; \
-	 kdoc -f html -u "http://localhost/ecasound/Documentation/libqtecasound/"\
+	 kdoc -f html -u "http://localhost/ecasound/Documentation/libqtecasound/" \
 	 -d ../Documentation/libqtecasound/ -n libqtecasound \
-	 -L ../Documentation/ *.h
+	 -L ../Documentation/ *.h \
+	 -llibecasound -llibkvutils -lqt
 	cd @top_srcdir@/ecasound ; \
 	 kdoc -f html -u \
-	 "http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecasound/" \
+	 "http://localhost/ecasound/Documentation/ecasound/" \
 	 -d ../Documentation/ecasound/ \
 	 -L ../Documentation/ *.h *.cpp -llibecasound
 	cd @top_srcdir@/qtecasound ; \
 	 kdoc -f html -u \
-	 "http://www.wakkanet.fi/~kaiv/ecasound/Documentation/qtecasound/" \
+	 "http://localhost/ecasound/Documentation/qtecasound/" \
 	 -d ../Documentation/qtecasound/ \
-	 -L ../Documentation/ *.h -llibecasound -lqt
+	 -L ../Documentation/ *.h -llibecasound -lqt -llibkvutils
 	cd @top_srcdir@/Documentation/qtecasound ; \
 	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/doc/qt/
 	cd @top_srcdir@/ecatools ; \
 	 kdoc -f html -u \
-	 "http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecatools/" \
+	 "http://localhost/ecasound/Documentation/ecatools/" \
 	 -d ../Documentation/ecatools/ \
 	 -L ../Documentation/ *.h *.cpp -llibecasound
+
+# ---------------------------------------------------------------------
+# scandoc creation @top_srcdir@
+scandoc:
+	perl $(SCANDOC) -i scandoc_template_kvutils.pl -p test/ @top_srcdir@/kvutils/*.h
+	perl $(SCANDOC) -i scandoc_template_libqtecasound.pl -p test3/ @top_srcdir@/libqtecasound/*.h
+	perl $(SCANDOC) -i scandoc_template_libecasound.pl -p test2/ @top_srcdir@/libecasound/include/*.h
+
+# ---------------------------------------------------------------------
+# doxygen
+doxygen:
+	doxygen doxygen_libkvutils_config
+	doxygen doxygen_libecasound_config
+	doxygen doxygen_libqtecasound_config
+	doxygen doxygen_qtecasound_config
 
 # ---------------------------------------------------------------------
 # Clean targets

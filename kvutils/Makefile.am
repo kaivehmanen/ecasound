@@ -24,7 +24,7 @@ kvutil_headers = 	kvutils.h \
 			object_queue.h
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
-libkvutils_la_LDFLAGS = -version-info 0:0:0
+libkvutils_la_LDFLAGS = -version-info 1:0:0
 
 DIST_COMMON = 	README \
 		COPYING \

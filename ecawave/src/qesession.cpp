@@ -72,7 +72,10 @@ QESession::QESession (const string& filename,
     state_rep = state_new_file;
   }
 
-  if (direct_mode_rep == true) state_rep = state_orig_direct;
+  if (direct_mode_rep == true) {
+    state_rep = state_orig_direct;
+    statusbar->toggle_editing(true);
+  }
 
   esession = new ECA_SESSION();
   ectrl = new ECA_CONTROLLER(esession);
@@ -282,7 +285,10 @@ void QESession::open_file(void) {
     remove_temps();
     file->new_file(fdialog->result_filename());
     state_rep = state_orig_file;
-    if (direct_mode_rep == true) state_rep = state_orig_direct;
+    if (direct_mode_rep == true) {
+      state_rep = state_orig_direct;
+      statusbar->toggle_editing(true);
+    }
     orig_filename_rep = file->filename();
     active_filename_rep = orig_filename_rep;
     emit filename_changed(orig_filename_rep);
@@ -355,7 +361,7 @@ void QESession::update_wave_data(void) {
   
   if (state_rep != state_orig_file ||
       state_rep != state_orig_direct) {
-    statusbar->toggle_editing(true);
+
   }
 }
 
@@ -380,9 +386,10 @@ void QESession::prepare_temp(void) {
       QECopyEvent p (ectrl, active_filename_rep, temp, 0, 0);
       if (p.is_valid() == true) {
 	p.start();
-	copy_file(active_filename_rep + ".ews", temp + ".ews");
       }
     }
+    if (stattemp1.st_size != stattemp2.st_size) 
+      copy_file(active_filename_rep + ".ews", temp + ".ews");
     stat(temp.c_str(), &stattemp2);
     if (stattemp2.st_size == 0) {
       QMessageBox* mbox = new QMessageBox(this, "mbox");
@@ -394,6 +401,7 @@ void QESession::prepare_temp(void) {
       int old_height_hint = file->sizeHint().height();
       file->new_file(active_filename_rep);
       state_rep = state_edit_file;
+      statusbar->toggle_editing(true);
       resize(width(), height() + file->sizeHint().height() - old_height_hint);
     }
   }

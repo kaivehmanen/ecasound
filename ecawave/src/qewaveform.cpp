@@ -168,13 +168,13 @@ void QEWaveForm::mark_area_relative(int from, int to) {
 void QEWaveForm::visible_area(long int start_blocks, long int end_blocks) { 
   visible_area_begin_rep = start_blocks; 
   visible_area_end_rep = end_blocks; 
-  repaint(true);
+  repaint(false);
 }
 
 void QEWaveForm::zoom_to_marked(void) {
   visible_area_begin_rep = marked_area_begin_rep;
   visible_area_end_rep = marked_area_end_rep;
-  repaint(true);
+  repaint(false);
 }
 
 QSize QEWaveForm::sizeHint(void) const {
@@ -189,7 +189,7 @@ void QEWaveForm::update_wave_blocks(const vector<QEWaveBlock>* block) {
   waveblock = block;
   visible_area_begin_rep = 0;
   visible_area_end_rep = waveblock->size();
-  repaint(0, 0, width(), height(), true);
+  repaint(0, 0, width(), height(), false);
 }
 
 void QEWaveForm::paintEvent(QPaintEvent* e) {

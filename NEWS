@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 040400) **
+** ecasound - user visible changes (NEWS)      (last edited: 120400) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,11 +14,13 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.12r10 <*-
 
-??042000 (v1.7.5d11)
+12042000 (v1.7.5d11)
 	- added: ALSA support for s32_le and s32_be sample formats
+	- added: numerous fixes and small improvements to ALSA 0.5.x 
+		 support
 	- removed: dynamic loading of ALSA support - as ALSA is
 		   getting bigger and bigger, maintaining dynamic 
-		   support is has become more and more difficult - 
+		   support has become more and more difficult - 
 		   this means that ALSA support isn't anymore included 
 		   in binary distribution packages - to get native 
 		   ALSA support, you have to compile ecasound from 

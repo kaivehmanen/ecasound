@@ -82,7 +82,7 @@ ecawave_src_files = ecawave.cpp 			version.cpp 			resources.cpp 		 	qesession.cp
 
 ecawave_src_mocs = qesession_moc.cpp 			qefile_moc.cpp 			qeacceptinput_moc.cpp 			qeopenfiledialog_moc.cpp 			qesavefiledialog_moc.cpp 			qewaveform_moc.cpp 			qestatusbar_moc.cpp 			qechainopevent_moc.cpp
 
-ecawave_include_files = ecawave.h 			version.h 			resources.h 			qesession.h 			qefile.h 			qeacceptinput.h 			qeopenfiledialog.h 			qesavefiledialog.h 			qewaveform.h 			qestatusbar.h 			qeevent.h 			qeblockingevent.h 			qenonblockingevent.h 			qeinterfaceevent.h 			qeplayevent.h 			qesaveevent.h 			qechainopevent.h 			qecutevent.h 			qecopyevent.h 			qepasteevent.h
+ecawave_include_files = ecawave.h 			version.h 			resources.h 			qesession.h 			qefile.h 			qeacceptinput.h 			qeopenfiledialog.h 			qesavefiledialog.h 			qewaveform.h 			qestatusbar.h 			qeevent.h 			qeblockingevent.h 			qenonblockingevent.h 			qeplayevent.h 			qesaveevent.h 			qechainopevent.h 			qecutevent.h 			qecopyevent.h 			qepasteevent.h
 
 
 ecawave_SOURCES = $(ecawave_src_files) $(ecawave_include_files) $(ecawave_src_mocs)

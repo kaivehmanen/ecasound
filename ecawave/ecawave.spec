@@ -10,6 +10,7 @@ Source: http://ecasound.seul.org/download/ecawave-%{version}.tar.gz
 Summary: ecawave - graphical audio file editor
 Group: X11/Applications/Sound
 Requires: ecasound
+Requires: ecasound-qt
 
 %description
 Ecawave is a simple graphical audio file editor. The user-interface is

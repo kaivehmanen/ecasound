@@ -215,6 +215,11 @@ kdoc:
 	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/doc/qt/
 
 # ---------------------------------------------------------------------
+# doxygen
+doxygen:
+	doxygen doxygen_ecawave_config
+
+# ---------------------------------------------------------------------
 # Clean targets
 clean:
 clean-docs:

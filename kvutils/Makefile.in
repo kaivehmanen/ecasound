@@ -93,7 +93,7 @@ kvutil_headers = kvutils.h 			message_item.h 			com_line.h 			command_queue.h 		
 
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
-libkvutils_la_LDFLAGS = -version-info 0:0:0
+libkvutils_la_LDFLAGS = -version-info 1:0:0
 
 DIST_COMMON = README 		COPYING 		INSTALL 		Makefile.in 		Makefile.am 		aclocal.m4 		config.guess 		config.sub 		configure 		configure.in 		install-sh 		mkinstalldirs 		ltconfig 		ltmain.sh
 

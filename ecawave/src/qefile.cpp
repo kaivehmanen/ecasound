@@ -517,8 +517,8 @@ bool QEFile::check_ews_data(void) {
   struct stat ewsfile;
   stat(nEWWaveForm.c_str(), &ewsfile);
   
-  if (wfile.st_ctime > ewsfile.st_ctime) {
-    for(int n = 0; n < static_cast<int>(waveblocks.size()); n++) {
+  if (wfile.st_mtime > ewsfile.st_mtime) {
+   for(int n = 0; n < static_cast<int>(waveblocks.size()); n++) {
       waveblocks[n].resize(0);
     }
     return(false);
