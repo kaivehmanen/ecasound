@@ -43,7 +43,7 @@
 // --
 // Select features
 
-#define PROXY_PROFILING
+// #define PROXY_PROFILING
 
 // --
 // Macro definitions
@@ -66,7 +66,7 @@ const long int AUDIO_IO_PROXY_SERVER::buffersize_default = 1024;
 // Initialization of static, global functions
 
 static int timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int usecs);
-static void timed_wait_print_result(int result, const string& tag);
+static void timed_wait_print_result(int result, const string& tag, bool verbose);
 
 /**
  * Helper function for starting the slave thread.
@@ -209,7 +209,9 @@ bool AUDIO_IO_PROXY_SERVER::is_full(void) const
  *         -ETIMEDOUT if timeout occured, 
  *	   other nonzero value on other errors
  */
-static int timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int msecs)
+static int timed_wait(pthread_mutex_t* mutex, 
+		      pthread_cond_t* cond, 
+		      long int msecs)
 {
    struct timeval now;
    gettimeofday(&now, 0);
@@ -237,13 +239,17 @@ static int timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int mse
  * Prints debug information based on the result 
  * of timed_wait() call.
  */
-static void timed_wait_print_result(int result, const string& tag)
+static void timed_wait_print_result(int result, const string& tag, bool verbose)
 {
+  ECA_LOGGER::Msg_level_t level = ECA_LOGGER::info;
+  if (verbose == true)
+    level = ECA_LOGGER::continuous;
+
   if (result != 0) {
     if (result == -ETIMEDOUT)
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-proxy-server) " + tag + " failed; timeout");
+      ECA_LOG_MSG(level, "(audioio-proxy-server) " + tag + " failed; timeout");
     else
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-proxy-server) " + tag + " failed");
+      ECA_LOG_MSG(level, "(audioio-proxy-server) " + tag + " failed");
   }
 }
 
@@ -283,7 +289,7 @@ void AUDIO_IO_PROXY_SERVER::wait_for_client_activity(void)
    *       room for new data 
    */
   int res = timed_wait(&impl_repp->client_mutex_rep, &impl_repp->client_cond_rep, 100);
-  timed_wait_print_result(res, "wait_for_client_activity");
+  timed_wait_print_result(res, "wait_for_client_activity", false);
 }
 
 /**
@@ -299,7 +305,7 @@ void AUDIO_IO_PROXY_SERVER::wait_for_full(void)
      *       full_rep could already be set */
 
     int res = timed_wait(&impl_repp->full_mutex_rep, &impl_repp->full_cond_rep, 5000);
-    timed_wait_print_result(res, "wait_for_full");
+    timed_wait_print_result(res, "wait_for_full", true);
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-proxy-server) wait_for_full failed; not running");
@@ -314,7 +320,7 @@ void AUDIO_IO_PROXY_SERVER::wait_for_stop(void)
 {
   if (is_running() == true) {
     int res = timed_wait(&impl_repp->stop_mutex_rep, &impl_repp->stop_cond_rep, 5000);
-    timed_wait_print_result(res, "wait_for_stop");
+    timed_wait_print_result(res, "wait_for_stop", true);
   }
 }
 
@@ -329,7 +335,7 @@ void AUDIO_IO_PROXY_SERVER::wait_for_flush(void)
     if (exit_ok_rep.get() == 0) {
       signal_client_activity();
       int res = timed_wait(&impl_repp->flush_mutex_rep, &impl_repp->flush_cond_rep, 5000);
-      timed_wait_print_result(res, "wait_for_flush");
+      timed_wait_print_result(res, "wait_for_flush", true);
     }
   }
   else {
