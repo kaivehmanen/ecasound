@@ -31,7 +31,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 	         '-[io]:alsahw,card,dev,subdev' and '-[io]:alsaplugin,
 		 c,d,sd' can also be used; doesn't affect 0.5.x and 
 	         older ALSA plugins
-	- added eiam-cmds; cs-is-valid
+	- added: eiam-cmds; cs-is-valid
 	- changed: support for -z:nointbuf to OSS-devices (/dev/dsp)
 		   and ALSA 0.5.x plugin
 	- fixed: severe bugs with -km (midi-routines)
