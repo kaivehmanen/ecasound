@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 301002) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 311002) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -16,7 +16,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ??102002 (v2.2.0-pre4)
-	- edi-entries: edi-28, edi-30
+	- edi-entries: edi-27, edi-28, edi-29, edi-30
 	- added: eiam - commands 'map-cop-list', 'map-ctrl-list', 
 		 'map-ladspa-list' and 'map-preset-list'; see 
 		 ecasound-iam(1) man page for details
@@ -31,7 +31,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: implementation level improvements to db, ewf, 
 		   resample, reverse and typeselect audio object 
 		   types
-	- changed: edi-28 done; ECI standalone now the only ECI 
+	- changed: edi-27 done; ECI standalone now the only ECI 
 	           implementation
 	- changed: ecasound now uses the new JACK (0.40.0 and newer) 
 	           ALSA PCM port names (alsa_pcm:capture_X and 
@@ -44,10 +44,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   details
 	- changed: ecasound JACK transport master mode now follows
 		   the new pending-timebase model 
-	- changed: the NetECI protocol replaced with the ECI 
-		   standalone protocol defined in ecasound 
+	- changed: edi-27 done; the NetECI protocol replaced with the 
+		   ECI standalone protocol defined in ecasound 
 		   programmer's guide
-	- changed: major updates to ecamonitor; moved back 
+	- changed: edi-29; major updates to ecamonitor; moved back 
 	           to ecasound/ecamonitor
 	- fixed: libecasoundc return value sync problem; return
 		 value for command wasn't returned until command n+1 
@@ -62,6 +62,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	         the standard input suddenly disappeared in 
 		 the -D output mode; this happened every now 
 		 and then with ECI apps
+	- fixed: eiam - missing newlines in output of 'cop-status' 
+		 and 'ctrl-status'
 19102002 (v2.2.0-pre3)
 	- fixed: reverted to using old ALSA 0.9 hw-params API,
 		 ecasound agains works with old 0.9beta and 0.9rc 

@@ -802,6 +802,7 @@ string ECA_CONTROL::chain_operator_status(void) const
       if (p + 1 < (*chain_citer)->number_of_chain_operators()) msg << "\n";
     }
     ++chain_citer;
+    if (chain_citer != selected_chainsetup_repp->chains.end()) msg << "\n";
   }
   return(msg.to_string());
 }
@@ -839,6 +840,7 @@ string ECA_CONTROL::controller_status(void) const
       if (p + 1 < (*chain_citer)->number_of_controllers()) mitem << "\n";
     }
     ++chain_citer;
+    if (chain_citer != selected_chainsetup_repp->chains.end()) mitem << "\n";
   }
   return(mitem.to_string());
 }
