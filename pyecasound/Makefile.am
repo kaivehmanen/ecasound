@@ -65,10 +65,14 @@ if ECA_AM_HAVE_PYTHON
 install-exec-hook: $(pyecasound_install_list1) $(pyecasound_install_list2)
 	$(INSTALL) -d $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
 	$(INSTALL) $(pyecasound_install_list1) $(pyecasound_install_list2) $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
+else
+install-exec-hook:
 endif
 
 if ECA_AM_HAVE_PYTHON
 uninstall-local:
 	rm -f $(pyecasound_uninstall_list1) $(pyecasound_uninstall_list2)
 	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
+else
+uninstall-local:
 endif
