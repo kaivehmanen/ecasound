@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 280102) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 300102) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -15,16 +15,20 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 -----------------------------------------------------------------------
 
-Last officially released version is -*> v2.0.3 *-
+Last officially released version is -*> v2.0.4 *-
 
 ??022002 (v2.1dev8)
 	- added: reverse audio object type; see the ecasound(1) 
 		 man page for better documentation
+	- added: pyecasound - if python version is 2.2 or higher, 
+		 pyeca.py sets custom dlopen flags before importing
+	         the actual pyecasound python module; this makes 
+		 possible to access ecasound's plugins (ALSA, JACK,
+	         libaudiofile) from python ECI apps
 	- changed: JACK support updated to match JACK's 28/Jan/02
 		   CVS-tree
 	- changed: pyecasound - module libpyecasound.so renamed 
-		   to pyeca.so; this replaces the old pyeca.py 
-		   wrapper
+		   to pyecasound.so
 	- fixed: -[io]:alsaplugin,x,y didn't work with latest ALSA
 		 0.9betaX releases
 	- fixed: serious bug in setting up ALSA 0.9.x buffering params
