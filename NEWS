@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 061201) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 121201) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -36,6 +36,8 @@ Last officially released version is -*> v2.0.3 *-
 	- fixed: problems with automake1.5
 	- fixed: eiam - 'ao-get-position' returned an integer 
 		 value instead of a float as it should
+	- fixed: bugs with combining -ei and LADSPA plugins
+	- fixed: 2.1dev5 wrote broken wav-headers
 05122001 (v2.1dev5)
 	- added: docs - Documentation/manpages.html
 	- added: ecalength - -su option added [smassy]
