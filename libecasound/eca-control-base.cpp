@@ -108,7 +108,9 @@ void ECA_CONTROL_BASE::start(void) {
  * @pre is_connected() == true
  * @post is_finished() == true || 
  * @post (processing_started == true && is_running() != true) ||
- * @post (processing_started != true && engine_repp->status() != ECA_ENGINE::engine_status_stopped)
+ * @post (processing_started != true && 
+ *        is_engine_started() == true &&
+ *        engine_repp->status() != ECA_ENGINE::engine_status_stopped)
  */
 void ECA_CONTROL_BASE::run(void) {
   // --------
@@ -128,8 +130,20 @@ void ECA_CONTROL_BASE::run(void) {
   while(is_finished() == false) {
     ::nanosleep(&sleepcount, NULL);
     if (processing_started != true) {
-      if (is_running() == true) processing_started = true;
-      else if (engine_repp->status() != ECA_ENGINE::engine_status_stopped) break;
+      if (is_running() == true) {
+	processing_started = true;
+      }
+      else if (is_engine_started() == true) {
+	if (engine_repp->status() != ECA_ENGINE::engine_status_stopped) {
+	  /* status() is either 'not_ready' or 'error' */
+	  break;
+	}
+      }
+      else {
+	/* ECA_CONTROL_BASE destructor has been run and 
+	 * engine_repp is now 0 (--> is_engine_start() != true) */
+	break;
+      }
     }
     else {
       if (is_running() != true) break;
@@ -141,7 +155,9 @@ void ECA_CONTROL_BASE::run(void) {
   // --------
   DBC_ENSURE(is_finished() == true || 
 	     (processing_started == true && is_running() != true) ||
-	     (processing_started != true && engine_repp->status() != ECA_ENGINE::engine_status_stopped));
+	     (processing_started != true && 
+	      is_engine_started() == true && 
+	      engine_repp->status() != ECA_ENGINE::engine_status_stopped));
   // --------
 }
 

@@ -40,9 +40,11 @@
 // Macro definitions
 
 #ifdef PROXY_PROFILING
-#define PROXY_PROFILING_INC(x)    ++(x)
+#define PROXY_PROFILING_INC(x)          ++(x)
+#define PROXY_PROFILING_STATEMENT(x)    x
 #else
-#define PROXY_PROFILING_INC(x)    (void)0
+#define PROXY_PROFILING_INC(x)          (void)0
+#define PROXY_PROFILING_STATEMENT(x)    (void)0
 #endif
 
 // --
@@ -105,6 +107,8 @@ AUDIO_IO_PROXY_SERVER::AUDIO_IO_PROXY_SERVER (void) {
   profile_full_and_active_rep = 0;
   profile_full_signaled_rep = 0;
   profile_not_full_rep = 0;
+  profile_read_xrun_danger_rep = 0;
+  profile_write_xrun_danger_rep = 0;
 }
 
 /**
@@ -406,6 +410,8 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
       continue;
     }
 
+    PROXY_PROFILING_INC(profile_rounds_total_rep);
+
     processed = 0;
 
     for(unsigned int p = 0; p < clients_rep.size(); p++) {
@@ -413,32 +419,30 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 	  buffers_rep[p]->finished_rep.get()) continue;
       if (buffers_rep[p]->io_mode_rep == AUDIO_IO::io_read) {
 	if (buffers_rep[p]->write_space() > 0) {
+
 	  clients_rep[p]->read_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->writeptr_rep.get()]);
 	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
-
-	  //  	  if (buffers_rep[p]->write_space() > 16) {
-	  //   	    cerr << "Writing buffer " << buffers_rep[p]->writeptr_rep.get() << " of client " << p << ";";
-	  //   	    cerr << " write_space: " << buffers_rep[p]->write_space() << ";";
-	  //	    cerr << "Sleepcount " << sleep_counter << "." << endl;
-	  //	    sleep_counter = 0;
-	  //  	  }
-
 	  buffers_rep[p]->advance_write_pointer();
 	  ++processed;
+
+	  PROXY_PROFILING_STATEMENT( if (buffers_rep[p]->write_space() > 16) { )
+	  PROXY_PROFILING_INC(profile_read_xrun_danger_rep);
+	  PROXY_PROFILING_STATEMENT( } )
+
 	}
       }
       else {
 	if (buffers_rep[p]->read_space() > 0) {
 
-	  //  	  if (buffers_rep[p]->read_space() > 16) {
-	  //  	    cerr << "Reading buffer " << buffers_rep[p]->readptr_rep.get() << " of client " << p << ";";
-	  //  	    cerr << " read_space: " << buffers_rep[p]->read_space() << "." << endl;
-	  //  	  }
-
 	  clients_rep[p]->write_buffer(&buffers_rep[p]->sbufs_rep[buffers_rep[p]->readptr_rep.get()]);
 	  if (clients_rep[p]->finished() == true) buffers_rep[p]->finished_rep.set(1);
 	  buffers_rep[p]->advance_read_pointer();
 	  ++processed;
+
+	  PROXY_PROFILING_STATEMENT( if (buffers_rep[p]->read_space() < 16) { )
+	  PROXY_PROFILING_INC(profile_write_xrun_danger_rep);
+	  PROXY_PROFILING_STATEMENT( } )
+
 	}
       }
     }
@@ -453,7 +457,7 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
     else full_rounds = 0;
 			 
     if (full_rep.get() == 1) {
-      if (processed != 0) {
+      if (processed != 0 || full_request_rep.get() != 0) {
 	/* case 1 - active iteration; there was free space in buffers */
 	full_rep.set(0);
 	PROXY_PROFILING_INC(profile_not_full_anymore_rep);
@@ -470,7 +474,7 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 	PROXY_PROFILING_INC(profile_full_and_active_rep);
     }
     else {
-      if (full_request_rep.get() != 0 || full_rounds > 16) {
+      if (full_rounds > 16) {
 	/* case 3 - buffers have become full, or someone is waiting
 	 *          for a signal_full() */
 	full_rep.set(1);
@@ -489,17 +493,16 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 }
 
 void AUDIO_IO_PROXY_SERVER::dump_profile_counters(void) {
-  if (profile_not_full_anymore_rep > 0 ||
-      profile_pauses_rep > 0 ||
-      profile_full_and_active_rep > 0 ||
-      profile_full_signaled_rep > 0 ||
-      profile_not_full_rep > 0) {
+  if (profile_not_full_anymore_rep > 0) {
     std::cerr << "(audioio-proxy-server) *** profile begin ***" << endl;
     std::cerr << "profile_not_full_anymore_rep: " << profile_not_full_anymore_rep << endl;
     std::cerr << "profile_pauses_rep: " << profile_pauses_rep << endl;
     std::cerr << "profile_full_and_active_rep: " << profile_full_and_active_rep << endl;
     std::cerr << "profile_full_signaled_rep: " << profile_full_signaled_rep << endl;
-    std::cerr << "profile_not_full_rep: " << profile_not_full_rep <<  endl;
+    std::cerr << "profile_not_full_rep: " << profile_not_full_rep << endl; 
+    std::cerr << "profile_read_xrun_danger_rep: " << profile_read_xrun_danger_rep << endl;
+    std::cerr << "profile_write_xrun_danger_rep: " << profile_write_xrun_danger_rep << endl;
+    std::cerr << "profile_rounds_total_rep: " << profile_rounds_total_rep << endl;
     std::cerr << "(audioio-proxy-server) *** profile end   ***" << endl;
   }
 }

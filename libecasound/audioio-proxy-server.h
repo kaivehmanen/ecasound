@@ -40,7 +40,7 @@ class AUDIO_IO_PROXY_SERVER {
   ATOMIC_INTEGER running_rep;
   ATOMIC_INTEGER full_rep;
   ATOMIC_INTEGER full_request_rep;
-
+  
   int buffercount_rep;
   long int buffersize_rep;
   long int samplerate_rep;
@@ -51,6 +51,9 @@ class AUDIO_IO_PROXY_SERVER {
   size_t profile_full_and_active_rep;
   size_t profile_full_signaled_rep;
   size_t profile_not_full_rep;
+  size_t profile_read_xrun_danger_rep;
+  size_t profile_write_xrun_danger_rep;
+  size_t profile_rounds_total_rep;
 
   AUDIO_IO_PROXY_SERVER& operator=(const AUDIO_IO_PROXY_SERVER& x) { return *this; }
   AUDIO_IO_PROXY_SERVER (const AUDIO_IO_PROXY_SERVER& x) { }
