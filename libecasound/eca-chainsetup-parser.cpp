@@ -298,6 +298,10 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_rtlowlatency);
 	ecadebug->msg("(eca-chainsetup-parser) Buffering mode 'rtlowlatency' selected.");
       }
+      else {
+	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_auto);
+	ecadebug->msg("(eca-chainsetup-parser) Unknown buffering mode; 'auto' mode is used instead.");
+      }
       break;
     }
 

@@ -267,10 +267,6 @@ void ECA_ENGINE::init_connection_to_chainsetup(void) {
 void ECA_ENGINE::init_servers(void) {
   if (csetup_repp->double_buffering() == true) {
     use_double_buffering_rep = true;
-    csetup_repp->pserver_rep.set_buffer_defaults(csetup_repp->double_buffer_size() / buffersize_rep, 
-						 buffersize_rep,
-						 csetup_repp->sample_rate());
-    csetup_repp->pserver_rep.set_schedpriority(csetup_repp->sched_priority() - 1);
   }
   else
     use_double_buffering_rep = false;
@@ -515,7 +511,9 @@ void ECA_ENGINE::update_engine_state(void) {
   // --
   // Updates engine status (if necessary).
   if (inputs_not_finished_rep == 0) {
-    ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) input not finished / stop");
+    if (status() != ECA_ENGINE::engine_status_running)
+      ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) input not finished / stop");
+
     stop();
 
     if (outputs_finished_rep > 0)

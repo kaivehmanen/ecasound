@@ -397,6 +397,13 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void) {
     ecadebug->msg(ECA_DEBUG::system_objects,
 		  "(eca-chainsetup) Hahaa, I guessed right. No need to switch.");
   }
+
+  if (double_buffering() == true) {
+    pserver_rep.set_buffer_defaults(double_buffer_size() / buffersize(), 
+				    buffersize(),
+				    sample_rate());
+    pserver_rep.set_schedpriority(sched_priority() - 1);
+  }
 }
 
 void ECA_CHAINSETUP::switch_to_direct_mode(void) {
