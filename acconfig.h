@@ -1,6 +1,6 @@
 /** 
  * acconfig.h for ecasound
- * last modified: 20030130-6
+ * last modified: 20030213-7
  */
 
 /* Package name */
@@ -20,6 +20,9 @@
 
 /* libkvutils interface version */
 #undef LIBKVUTILS_VERSION
+
+/* libkvutils interface age */
+#undef LIBKVUTILS_VERSION_AGE
 
 /* Ecasound configure script prefix */
 #undef ECA_PREFIX
