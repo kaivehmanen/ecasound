@@ -7,4 +7,4 @@ if sys.version_info[0] >= 2:
         import DLFCN
         sys.setdlopenflags(DLFCN.RTLD_LAZY|DLFCN.RTLD_GLOBAL)
         
-from pyeca import *
+from pyecasound import *

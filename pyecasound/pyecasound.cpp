@@ -181,6 +181,6 @@ static PyMethodDef pyecamethods[] = {
   {NULL,		       NULL }
 };
 
-void initpyeca(void) {
+void initpyecasound(void) {
   Py_InitModule("pyecasound", pyecamethods);
 }
