@@ -74,26 +74,28 @@ else
 noinst_LTLIBRARIES = libecasound_plugins.la
 endif
 
-#lib_LTLIBRARIES = 	$(af_target) \
-#                       $(alsa_target) \
-#			$(arts_target) \
-#			$(jack_target)
+plugin_cond_sources = 	$(af_src) \
+                        $(alsa_src) \
+			$(arts_src) \
+			$(jack_src)
 
 # ----------------------------------------------------------------------
 # source files
 # ----------------------------------------------------------------------
 
-libecasound_plugins_la_SOURCES         = audioio_dummy.cpp
-EXTRA_libecasound_plugins_la_SOURCES    = $(af_src) \
-                                          $(alsa_src) \
-                                          $(arts_src) \
-                                          $(jack_src)
+libecasound_plugins_la_SOURCES          = audioio_dummy.cpp $(plugin_cond_sources)
+EXTRA_libecasound_plugins_la_SOURCES    = $(plugin_cond_sources)
 libecasound_plugins_la_LIBADD		= $(af_libs) $(alsa_libs) $(arts_libs) $(jack_libs)
 libecasound_plugins_la_LDFLAGS 		= -static
 
 libecasound_plugins_debug_la_SOURCES	= $(libecasound_plugins_la_SOURCES)
+EXTRA_libecasound_plugins_debug_la_SOURCES = $(EXTRA_libecasound_plugins_la_SOURCES)
 libecasound_plugins_debug_la_LIBADD	= $(libecasound_plugins_la_LIBADD)
 libecasound_plugins_debug_la_LDFLAGS	= $(libecasound_plugins_la_LDFLAGS)
+
+# ----------------------------------------------------------------------
+# old rules for separate linking of plugins
+# ----------------------------------------------------------------------
 
 #libaudioio_af_la_SOURCES	     	= audioio_af.cpp
 #libaudioio_alsa_la_SOURCES	     	= audioio_alsa.cpp audioio_alsa_hw.cpp
