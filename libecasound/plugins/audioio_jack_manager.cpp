@@ -73,7 +73,6 @@ static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg);
 static void eca_jack_process_profile_pre(void);
 static void eca_jack_process_profile_post(void);
 #endif
-static int eca_jack_bufsize (jack_nframes_t nframes, void *arg);
 static int eca_jack_srate (jack_nframes_t nframes, void *arg);
 static void eca_jack_shutdown (void *arg);
 
@@ -310,15 +309,25 @@ static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
 
       /* transport rolling: engine not started; start it now */
       if (current->engine_repp->status() != ECA_ENGINE::engine_status_finished &&
-	  (current->transport_info_rep.position <=
-	   current->engine_repp->connected_chainsetup()->length_in_samples())) {
-	if (current->engine_repp->is_prepared() == true) {
+	  ((current->transport_info_rep.position <=
+	    current->engine_repp->connected_chainsetup()->length_in_samples()) ||
+	   (current->engine_repp->is_finite_length() != true))) {
+
+	/* conditions when we should start the engine 
+	 *  a. engine status not finished, AND...
+	 *   a.1. transport position not beyond csetup length, OR...
+	 *   a.2. csetup has infinite length
+	 */
+
+	if (current->engine_repp->is_prepared() == true && 
+	    enginepos == current->transport_info_rep.position) {
 	  current->engine_repp->start_operation();
 	  DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): Starting engine (direct)\n");
 	}
 	else {
 	  current->engine_repp->command(ECA_ENGINE::ep_start, 0.0f);
 	  DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): Starting engine (cmdpipe)\n");
+	  enginepos = -1;
 	}
       }
     }
@@ -336,8 +345,9 @@ static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
 			    "' doesn't match JACK curpos '" << 
 			    current->transport_info_rep.position << "'!" << endl);
 
-      if (current->transport_info_rep.position >=
-	  current->engine_repp->connected_chainsetup()->length_in_samples()) {
+      if ((current->transport_info_rep.position >=
+	   current->engine_repp->connected_chainsetup()->length_in_samples() &&
+	   (current->engine_repp->is_finite_length() == true))) {
 	DEBUG_CFLOW_STATEMENT(cerr << endl <<
 			      "eca_jack_process_timebase_slave(): over max length" << endl);
 	current->engine_repp->command(ECA_ENGINE::ep_stop, 0.0f);
@@ -361,7 +371,7 @@ static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
 	  /* previous seek has failed; try again with a longer look-ahead */
 	  current->jackslave_seekahead_rep = 
 	    (current->jackslave_seekahead_rep < (65536 / current->buffersize()) ?
-	     current->jackslave_seekahead_rep + 1 : (65536 / current->buffersize()));
+	     current->jackslave_seekahead_rep * 2 : (65536 / current->buffersize()));
 	  DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process(): seek-ahead request failed; increasing seek-ahead to "
 				<< current->jackslave_seekahead_rep << endl);
 
@@ -419,25 +429,6 @@ static void eca_jack_process_profile_post(void)
   }
 }
 #endif /* PROFILE_CALLBACK_EXECUTION */
-
-/**
- * Changes current bufferize. Callback function registered
- * to the JACK framework.
- */
-static int eca_jack_bufsize (jack_nframes_t nframes, void *arg)
-{
-  AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-	      "(audioio-jack-manager) [callback] " +  current->jackname_rep + ": eca_jack_bufsize");
-
-  if (static_cast<long int>(nframes) != current->buffersize_rep) {
-    current->shutdown_request_rep = true;
-    ECA_LOG_MSG(ECA_LOGGER::info, 
-		"(audioio-jack-manager) Invalid new buffersize, shutting down.");
-  }
-  
-  return(0);
-}
 
 /**
  * Changes current sampling rate. Callback function registered
@@ -1245,7 +1236,6 @@ void AUDIO_IO_JACK_MANAGER::open_server_connection(void)
 
     /* set callbacks */
     jack_set_process_callback(client_repp, eca_jack_process, static_cast<void*>(this));
-    jack_set_buffer_size_callback(client_repp, eca_jack_bufsize, static_cast<void*>(this));
     jack_set_sample_rate_callback(client_repp, eca_jack_srate, static_cast<void*>(this));
     jack_on_shutdown(client_repp, eca_jack_shutdown, static_cast<void*>(this));
 
