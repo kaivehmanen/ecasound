@@ -244,7 +244,8 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu,
 					  buffersize_arg);
       else
 	main_file = new ALSA_PCM2_DEVICE (card, device, -1, mode, format, buffersize_arg);
-#else
+#endif
+#ifdef ALSALIB_032
       if (mode != si_read)
 	main_file = new ALSA_PCM_DEVICE (card, device, si_write, format,
 				    buffersize_arg);
@@ -289,7 +290,8 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu,
 					  buffersize_arg);
       else
 	main_file = new ALSA_PCM2_DEVICE (card, device, subdevice, mode, format, buffersize_arg);
-#else
+#endif
+#ifdef ALSALIB_032
       if (mode != si_read)
 	main_file = new ALSA_PCM_DEVICE (card, device, si_write, format,
 					 buffersize_arg);

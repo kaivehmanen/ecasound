@@ -611,8 +611,9 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 
 void ECA_PROCESSOR::interpret_queue(void) {
   while(ecasound_queue.is_empty() == false) {
-    ecadebug->msg(2,"(eca-main) ecasound_queue: cmds available");
     pair<int,double> item = ecasound_queue.front();
+    ecadebug->msg(2,"(eca-main) ecasound_queue: cmds available; first one is " 
+		  + kvu_numtostr(item.first));
     switch(item.first) {
     // ---
     // Basic commands.

@@ -18,7 +18,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   // --
   // Get length
   // --
-  inline long length_in_samples(void) const { return(length_in_samples_rep); }
+  virtual long length_in_samples(void) const { return(length_in_samples_rep); }
   int length_in_seconds(void) const;
   double length_in_seconds_exact(void) const;
 
@@ -27,7 +27,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   // --
   // Set length
   // --
-  void length_in_samples(long pos);
+  virtual length_in_samples(long pos);
   void length_in_seconds(int pos_in_seconds);
   void length_in_seconds(double pos_in_seconds);
 
@@ -36,7 +36,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   // --
   // Get position
   // --
-  long position_in_samples(void) const;
+  virtual long position_in_samples(void) const;
   int position_in_seconds(void) const;
   double position_in_seconds_exact(void) const;
 
@@ -45,7 +45,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   // --
   // Set position
   // --
-  void position_in_samples(long pos);
+  virtual void position_in_samples(long pos);
   void position_in_samples_advance(long pos);
   void position_in_seconds(int pos_in_seconds);
   void position_in_seconds(double pos_in_seconds);

@@ -112,6 +112,7 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
   virtual bool is_realtime(void) const { return(true); }
   virtual bool finished(void) const { return(is_open() == false); }
   virtual void seek_position(void) { }
+  //  virtual long position_in_samples(void) const;
 
   AUDIO_IO_DEVICE(const string& name, 
 		  const SIMODE mode, 
