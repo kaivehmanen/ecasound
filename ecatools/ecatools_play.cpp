@@ -106,10 +106,10 @@ int main(int argc, char *argv[])
 	std::cout << "Playing file '" << filename << "'";
         std::cout << " (" << playing_file;
 	std::cout << "/" << ecaplay_total_files;
-	std::cout << ")." << endl;
+	std::cout << ")." << std::endl;
       }
       else {
-	std::cout << "Skipping file '" << filename << "'." << endl;
+	std::cout << "Skipping file '" << filename << "'." << std::endl;
 	--ecaplay_skip_files;
 	cline.next();
 	continue;
@@ -207,7 +207,7 @@ int process_option(const string& option) {
     default:
       {
 	std::cerr << "Error! Unknown option '" << option
-		  << "'." << endl;
+		  << "'." << std::endl;
 	return(2);
       }
     }
