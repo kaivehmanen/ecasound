@@ -110,7 +110,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
   WAVEFILE (const std::string& name = "");
   virtual ~WAVEFILE(void);
 
-  virtual WAVEFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  virtual WAVEFILE* clone(void) const;
   virtual WAVEFILE* new_expr(void) const { return new WAVEFILE(); }
 
   virtual std::string name(void) const { return("RIFF wave file"); }

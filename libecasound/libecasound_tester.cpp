@@ -25,6 +25,10 @@
 
 using namespace std;
 
+/**
+ * See also 'ecasound/testsuite/eca_test1.cpp'
+ */
+
 int main(int argc, char *argv[]) {
   /**
    * Uncomment to enable libecasound log messages

@@ -52,6 +52,15 @@ LOOP_DEVICE::~LOOP_DEVICE(void)
   }
 }
 
+LOOP_DEVICE* LOOP_DEVICE::clone(void) const
+{
+  LOOP_DEVICE* target = new LOOP_DEVICE();
+  for(int n = 0; n < number_of_params(); n++) {
+    target->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(target);
+}
+
 bool LOOP_DEVICE::finished(void) const
 {
   return(finished_rep);

@@ -53,6 +53,15 @@ CDRFILE::~CDRFILE(void)
   }
 }
 
+CDRFILE* CDRFILE::clone(void) const
+{
+  CDRFILE* target = new CDRFILE();
+  for(int n = 0; n < number_of_params(); n++) {
+    target->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(target);
+}
+
 void CDRFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 {
   set_channels(2);

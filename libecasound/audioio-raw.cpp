@@ -44,6 +44,15 @@ RAWFILE::~RAWFILE(void)
   }
 }
 
+RAWFILE* RAWFILE::clone(void) const
+{
+  RAWFILE* target = new RAWFILE();
+  for(int n = 0; n < number_of_params(); n++) {
+    target->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(target);
+}
+
 /**
  * Opens the raw audio i/o device. 
  * 

@@ -40,14 +40,25 @@ int audio_io_interface_version(void) { return(ecasound_library_version_current);
 
 AUDIO_IO_ALSA_PCM_NAMED::AUDIO_IO_ALSA_PCM_NAMED (void)
 {
+  set_pcm_device_name("");
 }
 
 AUDIO_IO_ALSA_PCM_NAMED::~AUDIO_IO_ALSA_PCM_NAMED(void)
 {
 }
 
+AUDIO_IO_ALSA_PCM_NAMED* AUDIO_IO_ALSA_PCM_NAMED::clone(void) const
+{
+  AUDIO_IO_ALSA_PCM_NAMED* target = new AUDIO_IO_ALSA_PCM_NAMED();
+  for(int n = 0; n < number_of_params(); n++) {
+    target->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(target);
+}
+
 void AUDIO_IO_ALSA_PCM_NAMED::set_parameter(int param, 
-					      string value) {
+					    string value)
+{
   switch (param) {
   case 1: 
     set_label(value);
@@ -59,7 +70,8 @@ void AUDIO_IO_ALSA_PCM_NAMED::set_parameter(int param,
   }
 }
 
-string AUDIO_IO_ALSA_PCM_NAMED::get_parameter(int param) const {
+string AUDIO_IO_ALSA_PCM_NAMED::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(label());

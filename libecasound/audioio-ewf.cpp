@@ -51,6 +51,15 @@ EWFFILE::~EWFFILE(void)
   }
 }
 
+EWFFILE* EWFFILE::clone(void) const
+{
+  EWFFILE* target = new EWFFILE();
+  for(int n = 0; n < number_of_params(); n++) {
+    target->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(target);
+}
+
 void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 {
   child_active = false;

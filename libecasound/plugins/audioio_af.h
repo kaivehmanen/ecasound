@@ -55,7 +55,7 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   virtual bool finished(void) const;
   virtual void seek_position(void);
     
-  AUDIOFILE_INTERFACE* clone(void) const { return new AUDIOFILE_INTERFACE(*this); }
+  AUDIOFILE_INTERFACE* clone(void) const;
   AUDIOFILE_INTERFACE* new_expr(void) const { return new AUDIOFILE_INTERFACE(); }  
 
   AUDIOFILE_INTERFACE (const string& name = "");

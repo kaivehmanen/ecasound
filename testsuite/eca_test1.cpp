@@ -11,6 +11,10 @@
 
 using namespace std;
 
+/**
+ * See also 'ecasound/libecasound/libecasound_tester.cpp'
+ */
+
 int main(int argc, char *argv[]) {
   ECA_TEST_ENTRY();
 
@@ -24,12 +28,15 @@ int main(int argc, char *argv[]) {
   repo.run();
 
   if (repo.success() != true) {
-    cerr << "Test case FAILED!" << endl << endl;
+    cerr << "---" << endl <<; 
+    cerr << repo.failures().size() << " failed test cases ";
+    cerr << "in ECA_TEST_REPOSITORY:" << endl << endl;
 
     const list<string>& failures = repo.failures();
     list<string>::const_iterator q = failures.begin();
+    int n = 1;
     while(q != failures.end()) {
-      cerr << *q << endl;
+      cerr << n++ << ". " << *q << endl;
       ++q;
     }
 

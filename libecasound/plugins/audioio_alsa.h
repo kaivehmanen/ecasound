@@ -27,7 +27,7 @@ class AUDIO_IO_ALSA_PCM : public AUDIO_IO_DEVICE {
 
   AUDIO_IO_ALSA_PCM (int card = 0, int device = 0, int subdevice = -1);
   virtual ~AUDIO_IO_ALSA_PCM(void);
-  AUDIO_IO_ALSA_PCM* clone(void) const { cerr << "Not implemented!" << endl; return 0; }
+  AUDIO_IO_ALSA_PCM* clone(void) const;
   AUDIO_IO_ALSA_PCM* new_expr(void) const { return new AUDIO_IO_ALSA_PCM(); }
 
   virtual string name(void) const { return("ALSA PCM device"); }

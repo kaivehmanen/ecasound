@@ -51,7 +51,7 @@ class AUDIO_IO_REVERSE : public AUDIO_IO {
   /** @name Reimplemented functions from DYNAMIC_OBJECT<string> */
   /*@{*/
 
-  virtual AUDIO_IO_REVERSE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  virtual AUDIO_IO_REVERSE* clone(void) const;
   virtual AUDIO_IO_REVERSE* new_expr(void) const { return(new AUDIO_IO_REVERSE()); }
 
   /*@}*/

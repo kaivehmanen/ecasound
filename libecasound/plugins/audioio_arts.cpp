@@ -49,6 +49,15 @@ ARTS_INTERFACE::~ARTS_INTERFACE(void)
   if (ref_rep == 0) ::arts_free();
 }
 
+ARTS_INTERFACE* ARTS_INTERFACE::clone(void) const
+{
+  ARTS_INTERFACE* target = new ARTS_INTERFACE();
+  for(int n = 0; n < number_of_params(); n++) {
+    target->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(target);
+}
+
 void ARTS_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   if (ref_rep == 0) {

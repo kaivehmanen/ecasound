@@ -104,6 +104,15 @@ WAVEFILE::~WAVEFILE(void)
   }
 }
 
+WAVEFILE* WAVEFILE::clone(void) const
+{
+  WAVEFILE* target = new WAVEFILE();
+  for(int n = 0; n < number_of_params(); n++) {
+    target->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(target);
+}
+
 void WAVEFILE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   // --------

@@ -100,6 +100,15 @@ AUDIO_IO_ALSA_PCM::~AUDIO_IO_ALSA_PCM(void)
   deallocate_structs();
 }
 
+AUDIO_IO_ALSA_PCM* AUDIO_IO_ALSA_PCM::clone(void) const
+{
+  AUDIO_IO_ALSA_PCM* target = new AUDIO_IO_ALSA_PCM();
+  for(int n = 0; n < number_of_params(); n++) {
+    target->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(target);
+}
+
 void AUDIO_IO_ALSA_PCM::allocate_structs(void)
 {
   int err = snd_pcm_hw_params_malloc(&pcm_hw_params_repp);

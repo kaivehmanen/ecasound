@@ -1,6 +1,8 @@
 #ifndef INCLUDED_AUDIOIO_LOOP_DEVICE_H
 #define INCLUDED_AUDIOIO_LOOP_DEVICE_H
 
+#include <iostream>
+
 #include "audioio.h"
 #include "samplebuffer.h"
 
@@ -15,7 +17,7 @@ class LOOP_DEVICE : public AUDIO_IO {
   LOOP_DEVICE(void) { }
   virtual ~LOOP_DEVICE(void);
 
-  virtual LOOP_DEVICE* clone(void) const { return 0; }
+  virtual LOOP_DEVICE* clone(void) const;
   virtual LOOP_DEVICE* new_expr(void) const { return new LOOP_DEVICE(); }
 
   virtual std::string name(void) const { return("Internal loop device"); }

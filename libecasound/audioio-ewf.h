@@ -29,7 +29,7 @@ class EWFFILE : public AUDIO_IO {
   EWFFILE (const std::string& name = "") { set_label(name); child = 0; }
   virtual ~EWFFILE(void);
 
-  virtual EWFFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  virtual EWFFILE* clone(void) const;
   virtual EWFFILE* new_expr(void) const { return new EWFFILE(); }
 
   virtual std::string name(void) const { return("Ecasound wave file"); }

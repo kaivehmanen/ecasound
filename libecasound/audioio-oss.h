@@ -34,7 +34,7 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 
   OSSDEVICE (const std::string& name = "/dev/dsp", bool precise_sample_rates = false);
   virtual ~OSSDEVICE(void);
-  virtual OSSDEVICE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  virtual OSSDEVICE* clone(void) const;
   virtual OSSDEVICE* new_expr(void) const { return new OSSDEVICE(); }
 
   virtual std::string name(void) const { return("OSS soundcard device"); }

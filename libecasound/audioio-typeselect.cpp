@@ -43,6 +43,15 @@ AUDIO_IO_TYPESELECT::~AUDIO_IO_TYPESELECT (void)
   delete child_repp; // either null or the actual child object
 }
 
+AUDIO_IO_TYPESELECT* AUDIO_IO_TYPESELECT::clone(void) const
+{
+  AUDIO_IO_TYPESELECT* target = new AUDIO_IO_TYPESELECT();
+  for(int n = 0; n < number_of_params(); n++) {
+    target->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(target);
+}
+
 void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-typeselect) open " + label() + ".");  

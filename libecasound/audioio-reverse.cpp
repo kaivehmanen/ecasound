@@ -49,6 +49,15 @@ AUDIO_IO_REVERSE::~AUDIO_IO_REVERSE (void)
   delete child_repp; // either null or the actual child object
 }
 
+AUDIO_IO_REVERSE* AUDIO_IO_REVERSE::clone(void) const
+{
+  AUDIO_IO_REVERSE* target = new AUDIO_IO_REVERSE();
+  for(int n = 0; n < number_of_params(); n++) {
+    target->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(target);
+}
+
 void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-reverse) open " + label() + ".");  

@@ -22,7 +22,7 @@ class RAWFILE : public AUDIO_IO_BUFFERED {
   RAWFILE (const std::string& name = "");
   virtual ~RAWFILE(void);
     
-  virtual RAWFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl;  return 0; }    
+  virtual RAWFILE* clone(void) const;
   virtual RAWFILE* new_expr(void) const { return new RAWFILE(); }    
 
   virtual std::string name(void) const { return("Raw audio file"); }

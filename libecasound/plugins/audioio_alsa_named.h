@@ -20,7 +20,7 @@ class AUDIO_IO_ALSA_PCM_NAMED : public AUDIO_IO_ALSA_PCM {
 
   AUDIO_IO_ALSA_PCM_NAMED (void);
   virtual ~AUDIO_IO_ALSA_PCM_NAMED(void);
-  AUDIO_IO_ALSA_PCM_NAMED* clone(void) const { cerr << "Not implemented!" << endl; return 0; }
+  AUDIO_IO_ALSA_PCM_NAMED* clone(void) const;
   AUDIO_IO_ALSA_PCM_NAMED* new_expr(void) const { return new AUDIO_IO_ALSA_PCM_NAMED(); }
   
  private:

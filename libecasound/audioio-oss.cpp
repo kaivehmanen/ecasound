@@ -52,6 +52,12 @@ OSSDEVICE::~OSSDEVICE(void)
   }
 }
 
+OSSDEVICE* OSSDEVICE::clone(void) const
+{
+  OSSDEVICE* target = new OSSDEVICE(label(), precise_srate_mode);
+  return(target);
+}
+
 void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 {
   if (io_mode() == io_read) {

@@ -51,7 +51,7 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
   ARTS_INTERFACE (const string& name = "arts");
   ~ARTS_INTERFACE(void);
     
-  ARTS_INTERFACE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  ARTS_INTERFACE* clone(void) const;
   ARTS_INTERFACE* new_expr(void) const { return new ARTS_INTERFACE(); }
 
   private:

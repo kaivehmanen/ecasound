@@ -56,6 +56,15 @@ AUDIOFILE_INTERFACE::~AUDIOFILE_INTERFACE(void)
   }
 }
 
+AUDIOFILE_INTERFACE* AUDIOFILE_INTERFACE::clone(void) const
+{
+  AUDIOFILE_INTERFACE* target = new AUDIOFILE_INTERFACE();
+  for(int n = 0; n < number_of_params(); n++) {
+    target->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(target);
+}
+
 void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   // --------
