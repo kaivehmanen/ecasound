@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "01\&.02\&.2002" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "02\&.10\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -19,7 +19,9 @@ ECI, it\'s possible that commands also return information\&. Currently
 supported return value types are: string [s], list of strings [S],
 integer [i], long integer [li] and floating-point number [f]\&. These
 definitions are used throughout this document\&. Commands that do not
-return anything are marked with [-]\&.
+return anything are marked with [-]\&. Additionally, return type [e]
+marks an error condition\&. When an EIAM results in an error, a error 
+string explaining the condition is returned\&.
 .PP 
 .SH "Realtime commands" 
 It\'s not possible to use all EIAM commands to modify and control 
@@ -536,6 +538,9 @@ are primarily meant for use in scripting and frontends\&.
 .IP 
 .IP "int-cmd-list" 
 Returns a list of all registered EIAM commands\&. \fI[S]\fP
+.IP 
+.IP "int-output-mode-wellformed" 
+Select the well-format output format for log messages\&. \fI[-]\fP
 .IP 
 .IP "int-cmd-version-string" 
 Returns EIAM parser version string\&. \fI[s]\fP
