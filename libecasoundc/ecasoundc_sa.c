@@ -122,9 +122,9 @@
  */
 
 struct eci_los_list {
-  char* data_repp;
   struct eci_los_list* prev_repp;
   struct eci_los_list* next_repp;
+  char* data_repp;
 };
 
 struct eci_parser { 
