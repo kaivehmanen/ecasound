@@ -157,26 +157,27 @@ Ecasound's HTML-documentation (Documentation/examples.html).
  Mailing lists
 -----------------------------------------------------------------------
 
-ecasound-announce at wakkanet dot fi:
-	A read-only list for announcements concerning Ecasound and 
-	related tools.
+- ecasound-list at wakkanet dot fi:
 
-ecasound-list at wakkanet dot fi:
-	A general discussion forum for Ecasound and related tools.
-	developers and users. Announcements of new versions, bug 
-	warnings, etc will be posted to this list. If you have
-	problems compiling, installing or using Ecasound/Ecawave, this 
-	is a good place to ask for help. Reports of working 
-	software/hardware combinations are also welcome. You can
-	browse the message archives at
-	http://www.eca.cx/ecasound-list/current/ 
+A general discussion forum for developers and users of Ecasound and
+related tools. Announcements of new versions, bug warnings, etc will be 
+posted to this list. If you have problems compiling, installing or 
+using Ecasound, this is a good place to ask for help. Reports of 
+working software/hardware combinations are also welcome. You can
+browse the message archives at http://www.eca.cx/ecasound-list/
 
-ecasound-cvs at wakkanet dot fi:
-	A read-only list for reports about Ecasound CVS activity.
+You can join the lists using the following web front-end: 
+http://eca.cx/mlists.php
 
-You can join the lists by sending subscribe message to
-<majordomo at wakkanet dot fi>. You can also join using the following 
-web front-end: http://eca.cx/mlists.php
+- linux-audio-announce at music dot columbia dot edu:
+
+Announcements of Ecasound releases will, in addition to 
+ecasound-list, be sent to the linux-audio-announce list. See the
+list home page at http://www.linuxdj.com/audio/lad/subscribelaa.php
+for more information.
+
+You can also subscribe to Ecasound releases at http://freshmeat.net .
+All Ecasound releases will be announced at Freshmeat.
 
 -----------------------------------------------------------------------
  Web sites
