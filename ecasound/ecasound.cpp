@@ -396,7 +396,7 @@ void ecasound_print_usage(void)
 void ecasound_print_version_banner(void)
 {
   cout << "ecasound v" << ecasound_library_version << endl;
-  cout << "Copyright (C) 1997-2003 Kai Vehmanen" << endl;
+  cout << "Copyright (C) 1997-2004 Kai Vehmanen" << endl;
   cout << "Ecasound comes with ABSOLUTELY NO WARRANTY." << endl;
   cout << "You may redistribute copies of ecasound under the terms of the GNU" << endl;
   cout << "General Public License. For more information about these matters, see" << endl; 
