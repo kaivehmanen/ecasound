@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 080200) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 140200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -23,6 +23,11 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 is still required during compiling, but with this,
 		 ncurses/termcap is ignored during linking
 	- added: -Md:device option for specifying MIDI-devices
+	- added: support for ALSA 0.6.x named pcm-devices; the new
+		 syntax is '-[io]:alsa,pcm_name'; alternatively, 
+	         '-[io]:alsahw,card,dev,subdev' and '-[io]:alsaplugin,
+		 c,d,sd' can also be used; doesn't affect 0.5.x and 
+	         older ALSA plugins
 	- fixed: severe bugs with -km (midi-routines)
 07022001 (v1.9dev1)
 	- notice: new version numbering scheme

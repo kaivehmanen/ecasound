@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (08.02.2001)
+       (14.02.2001)
        ()
        (Multimedia software)
 
@@ -212,18 +212,22 @@ be obvious) nor to ALSA's loopback device.
 em(OBJECT TYPE SPECIFIC NOTES)
 dit(ALSA devices)
 When using ALSA drivers, instead of a device filename, you need to
-use the following option syntax: bf(-i[:]alsa,card_number,device_number). 
-If you need to specify individual subdevices:
-bf(-i[:]alsa,card_number,device_number,subdevice_number).
+use the following option syntax: bf(-i[:]alsa,pcm_device_name).
+Note! Pcm device naming was introduced in ALSA 0.6.x (doesn't work
+with older ALSA versions; see below for the old syntax).  
 
-dit(ALSA pcm-plugin layer)
-Just like normal ALSA devices, but with automatic sample rate and format 
-conversions. Option syntax is bf(-i[:]alsaplugin,card_number,device_number,subdevice_number).
+dit(ALSA direct-gw and plugin access)
+It's also possible to use a specific card and device combination
+using the following notation: bf(-i[:]alsahw,card_number,device_number,subdevice_number).
+The ALSA plugin layer works just like the normal ALSA pcm-devices, but 
+with automatic sample rate and format conversions. Option syntax is 
+bf(-i[:]alsaplugin,card_number,device_number,subdevice_number).
 
 dit(ALSA loopback device)
 By using the ALSA loopback system, you can grab audio data from any
 other pcm device. Option syntax is
 bf(-i[:]alsalb,card_number,device_number,subdevice_number).
+Note! Only works with ALSA 0.5.x and older.
 
 dit(aRts input/output)
 If enabled at compile-time, ecasound supports audio input and 

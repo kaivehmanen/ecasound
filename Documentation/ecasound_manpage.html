@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>08.02.2001</h2>
+<h2>14.02.2001</h2>
 
 
     
@@ -189,16 +189,20 @@ be obvious) nor to ALSA's loopback device.
 <p><em>OBJECT TYPE SPECIFIC NOTES</em>
 <p></p><dt><strong>ALSA devices</strong><dd>
 When using ALSA drivers, instead of a device filename, you need to
-use the following option syntax: <strong>-i[:]alsa,card_number,device_number</strong>. 
-If you need to specify individual subdevices:
-<strong>-i[:]alsa,card_number,device_number,subdevice_number</strong>.
-<p><p></p><dt><strong>ALSA pcm-plugin layer</strong><dd>
-Just like normal ALSA devices, but with automatic sample rate and format 
-conversions. Option syntax is <strong>-i[:]alsaplugin,card_number,device_number,subdevice_number</strong>.
+use the following option syntax: <strong>-i[:]alsa,pcm_device_name</strong>.
+Note! Pcm device naming was introduced in ALSA 0.6.x (doesn't work
+with older ALSA versions; see below for the old syntax).  
+<p><p></p><dt><strong>ALSA direct-gw and plugin access</strong><dd>
+It's also possible to use a specific card and device combination
+using the following notation: <strong>-i[:]alsahw,card_number,device_number,subdevice_number</strong>.
+The ALSA plugin layer works just like the normal ALSA pcm-devices, but 
+with automatic sample rate and format conversions. Option syntax is 
+<strong>-i[:]alsaplugin,card_number,device_number,subdevice_number</strong>.
 <p><p></p><dt><strong>ALSA loopback device</strong><dd>
 By using the ALSA loopback system, you can grab audio data from any
 other pcm device. Option syntax is
 <strong>-i[:]alsalb,card_number,device_number,subdevice_number</strong>.
+Note! Only works with ALSA 0.5.x and older.
 <p><p></p><dt><strong>aRts input/output</strong><dd>
 If enabled at compile-time, ecasound supports audio input and 
 output using aRts audio server. Option syntax is <strong>-i:arts</strong>,

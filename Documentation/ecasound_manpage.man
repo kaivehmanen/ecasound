@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "08\&.02\&.2001" "" "Multimedia software" 
+.TH "ecasound" "1" "14\&.02\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -188,18 +188,22 @@ be obvious) nor to ALSA\'s loopback device\&.
 \fIOBJECT TYPE SPECIFIC NOTES\fP
 .IP "ALSA devices" 
 When using ALSA drivers, instead of a device filename, you need to
-use the following option syntax: \fB-i[:]alsa,card_number,device_number\fP\&. 
-If you need to specify individual subdevices:
-\fB-i[:]alsa,card_number,device_number,subdevice_number\fP\&.
+use the following option syntax: \fB-i[:]alsa,pcm_device_name\fP\&.
+Note! Pcm device naming was introduced in ALSA 0\&.6\&.x (doesn\'t work
+with older ALSA versions; see below for the old syntax)\&.  
 .IP 
-.IP "ALSA pcm-plugin layer" 
-Just like normal ALSA devices, but with automatic sample rate and format 
-conversions\&. Option syntax is \fB-i[:]alsaplugin,card_number,device_number,subdevice_number\fP\&.
+.IP "ALSA direct-gw and plugin access" 
+It\'s also possible to use a specific card and device combination
+using the following notation: \fB-i[:]alsahw,card_number,device_number,subdevice_number\fP\&.
+The ALSA plugin layer works just like the normal ALSA pcm-devices, but 
+with automatic sample rate and format conversions\&. Option syntax is 
+\fB-i[:]alsaplugin,card_number,device_number,subdevice_number\fP\&.
 .IP 
 .IP "ALSA loopback device" 
 By using the ALSA loopback system, you can grab audio data from any
 other pcm device\&. Option syntax is
 \fB-i[:]alsalb,card_number,device_number,subdevice_number\fP\&.
+Note! Only works with ALSA 0\&.5\&.x and older\&.
 .IP 
 .IP "aRts input/output" 
 If enabled at compile-time, ecasound supports audio input and 

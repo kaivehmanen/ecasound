@@ -26,6 +26,8 @@ ECA_AUDIO_POSITION::ECA_AUDIO_POSITION(const ECA_AUDIO_FORMAT& fmt) : ECA_AUDIO_
   length_in_samples_rep = 0;
 }
 
+ECA_AUDIO_POSITION::~ECA_AUDIO_POSITION(void) { }
+
 long ECA_AUDIO_POSITION::length_in_samples(void) const { return(length_in_samples_rep); }
 
 int ECA_AUDIO_POSITION::length_in_seconds(void) const { 

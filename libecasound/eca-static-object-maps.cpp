@@ -334,15 +334,25 @@ void register_internal_plugins(void) {
 
   aobj = register_internal_plugin(libdir, "libaudioio_alsa3.so");
   if (aobj != 0) {
-    eca_audio_object_map.register_object("^alsa_06$", aobj);
-    eca_audio_device_map.register_object("^alsa_06$", aobj);
+    eca_audio_object_map.register_object("^alsahw_06$", aobj);
+    eca_audio_device_map.register_object("^alsahw_06$", aobj);
     eca_audio_object_map.register_object("^alsaplugin_06$", aobj);
     eca_audio_device_map.register_object("^alsaplugin_06$", aobj);
 #ifdef ALSALIB_060
-    eca_audio_object_map.register_object("^alsa$", aobj);
-    eca_audio_device_map.register_object("^alsa$", aobj);
+    eca_audio_object_map.register_object("^alsahw$", aobj);
+    eca_audio_device_map.register_object("^alsahw$", aobj);
     eca_audio_object_map.register_object("^alsaplugin$", aobj);
     eca_audio_device_map.register_object("^alsaplugin$", aobj);
+#endif
+  }
+
+  aobj = register_internal_plugin(libdir, "libaudioio_alsa3_pcm.so");
+  if (aobj != 0) {
+    eca_audio_object_map.register_object("^alsa_06$", aobj);
+    eca_audio_device_map.register_object("^alsa_06$", aobj);
+#ifdef ALSALIB_060
+    eca_audio_object_map.register_object("^alsa$", aobj);
+    eca_audio_device_map.register_object("^alsa$", aobj);
 #endif
   }
 

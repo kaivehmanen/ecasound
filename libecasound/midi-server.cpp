@@ -287,10 +287,10 @@ void MIDI_SERVER::parse_receive_queue(void) {
 	    if (controller_values_rep.find(pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)) 
 		!= controller_values_rep.end()) {
 	      controller_values_rep[pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] = static_cast<int>(byte);
-//  	      cerr << endl << "D:" 
-//  		   << controller_values_rep[pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] 
-//  		   << ", ch:" << current_ctrl_channel_rep 
-//  		   << ", ctrl:" << current_ctrl_number << ".";
+//    	      cerr << endl << "(midi-server) Value:" 
+//    		   << controller_values_rep[pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] 
+//    		   << ", ch:" << current_ctrl_channel_rep 
+//    		   << ", ctrl:" << current_ctrl_number << ".";
 	    }
 //  	    else {
 //  	      cerr << endl << "E:" << " found an entry we are not following..." << endl;
