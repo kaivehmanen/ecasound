@@ -22,11 +22,6 @@
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifdef ALSALIB_060
 #include <alsa/asoundlib.h>
 
 #include "audioio_alsa_named.h"
@@ -74,5 +69,3 @@ string AUDIO_IO_ALSA_PCM_NAMED::get_parameter(int param) const {
   }
   return("");
 }
-
-#endif // ALSALIB_060

@@ -17,6 +17,7 @@
 // ------------------------------------------------------------------------
 
 #include <algorithm> /* std::count() */
+#include <string>
 
 #include <sys/time.h> /* gettimeofday() */
 #include <errno.h> /* ETIMEDOUT */
@@ -42,7 +43,7 @@ static int eca_jack_srate (nframes_t nframes, void *arg);
 static void eca_jack_shutdown (void *arg);
 
 static int timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int seconds);
-static void timed_wait_print_result(int result, const string& tag);
+static void timed_wait_print_result(int result, const std::string& tag);
 
 #include "audioio_jack_manager.h"
 
@@ -341,7 +342,7 @@ void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
  * @pre is_open() == true
  @ @pre portnum > 0
  */
-void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port(int client_id, int portnum, const string& portname)
+void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port(int client_id, int portnum, const std::string& portname)
 {
   // ---
   DBC_REQUIRE(std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1);
@@ -891,7 +892,7 @@ static int timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int sec
  * Prints debug information based on the result 
  * of timed_wait() call.
  */
-static void timed_wait_print_result(int result, const string& tag)
+static void timed_wait_print_result(int result, const std::string& tag)
 {
   if (result != 0) {
     if (result == -ETIMEDOUT)
