@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 131001) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 141001) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.3 *-
 
-13102001 (v2.1dev2)
+14102001 (v2.1dev2)
 	- added: ecaplay - -k, -d and -h options, see 'man ecaplay'
 	- added: eiam - ai-get-length-samples, ao-get-length-samples,
 		 cs-get-length-samples, cs-set-length-samples [smassy]
