@@ -212,7 +212,7 @@ static bool mpg123_decode_header(struct frame *fr, unsigned long newhead)
   fr->stereo = (fr->mode == MPG_MD_MONO) ? 1 : 2;
 
   if (!fr->bitrate_index) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "Invalid bitrate!");
+    ECA_LOG_MSG(ECA_LOGGER::errors, "Invalid bitrate!");
     return false;
   }
 
@@ -250,7 +250,7 @@ static bool mpg123_decode_header(struct frame *fr, unsigned long newhead)
     }
 
   if(fr->framesize > MAXFRAMESIZE) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "Invalid framesize!");
+    ECA_LOG_MSG(ECA_LOGGER::errors, "Invalid framesize!");
     return false;
   }
 
@@ -276,14 +276,14 @@ static bool mpg123_detect_by_content(const char* filename, struct frame* frp)
   size_t offset = 0;
 
   if((file = std::fopen(filename, "rb")) == NULL) {
-    ECA_LOG_MSG(ECA_LOGGER::info, string("Unable to open file ") + filename + ".");
+    ECA_LOG_MSG(ECA_LOGGER::errors, string("Unable to open file ") + filename + ".");
     data_left = false;
   }
   /* search for headers in the first 262kB of data */
   while(data_left == true && offset < (1<<18)) {
     /* octet-by-octet search */
     if (std::fread(tmp, 1, 1, file) != 1) {
-      ECA_LOG_MSG(ECA_LOGGER::info, "End of mp3 file, no valid header data found.");
+      ECA_LOG_MSG(ECA_LOGGER::errors, "End of mp3 file, no valid header data found.");
       data_left = false;
       break;
     }
@@ -309,7 +309,7 @@ static bool mpg123_detect_by_content(const char* filename, struct frame* frp)
 	  }
 	  header_found = true;
 	}
-	ECA_LOG_MSG(ECA_LOGGER::info, "Found mp3 header at offset " + 
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, "Found mp3 header at offset " + 
 		    kvu_numtostr(static_cast<int>(offset - 4)));
       }
     }
@@ -387,7 +387,7 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples)
   bytes_rep = std::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
-      ECA_LOG_MSG(ECA_LOGGER::info, "Can't start process \"" + MP3FILE::default_input_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::errors, "Can't start process \"" + MP3FILE::default_input_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }
@@ -411,7 +411,7 @@ void MP3FILE::write_samples(void* target_buffer, long int samples)
     bytes_rep = ::write(fd_rep, target_buffer, frame_size() * samples);
     if (bytes_rep < frame_size() * samples || bytes_rep == 0) {
       if (position_in_samples() == 0) 
-	ECA_LOG_MSG(ECA_LOGGER::info, "Can't start process \"" + MP3FILE::default_output_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
+	ECA_LOG_MSG(ECA_LOGGER::errors, "Can't start process \"" + MP3FILE::default_output_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
       finished_rep = true;
     }
     else finished_rep = false;
