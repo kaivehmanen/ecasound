@@ -18,6 +18,7 @@
 // ------------------------------------------------------------------------
 
 #include <cstdio>
+#include <stdio.h> /* for AIX */
 #include <time.h> /* ANSI-C: clock() */
 
 #include "kvu_locks.h"
@@ -111,6 +112,10 @@ static void* kvu_test_1_helper(void* ptr)
   return 0;
 }
 
+/**
+ * Test for the ATOMIC_INTEGER class defined 
+ * in kvu_locks.h. 
+ */
 static int kvu_test_1(void)
 {
   ECA_TEST_ENTRY();
