@@ -4,7 +4,7 @@
 
 ;; Author: Mario Lang <mlang@delysid.org>
 ;; Keywords: audio, ecasound, eci, comint, process, pcomplete
-;; Version: 0.7.2
+;; Version: 0.7.3
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -89,6 +89,10 @@
 
 ;;; History:
 ;; 
+;; Version: 0.7.3
+;;
+;; * Fixed missing require.
+;;
 ;; Version: 0.7.2
 ;;
 ;; * Integrated ladspa-register into ecasound-cop-add
@@ -194,6 +198,8 @@
 (require 'comint)
 (require 'easymenu)
 (require 'pcomplete)
+(require 'widget)
+(require 'wid-edit)
 
 (defgroup ecasound nil
   "Ecasound is a multitrack audio recorder.
