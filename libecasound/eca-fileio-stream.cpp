@@ -30,11 +30,18 @@
 #define ftello std::ftell
 #endif
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <cstdio>
 #include <cstring>
 #include <errno.h>
 #include <unistd.h>
 #include <sys/mman.h>
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* off_t */
+#endif
 
 #include "eca-fileio.h"
 #include "eca-fileio-stream.h"

@@ -156,7 +156,7 @@ void CDRFILE::pad_to_sectorsize(void) {
   for(int n = 0; n < padsamps; n++) ::fputc(0,fobject);
 
   DBC_DECLARE(off_t endpos);
-  DBC_DECLARE(endpos = std::ftello(fobject));
+  DBC_DECLARE(endpos = ftello(fobject));
   DBC_CHECK((endpos %  CDRFILE::sectorsize) == 0);
 }
 
@@ -165,7 +165,7 @@ void CDRFILE::set_length_in_bytes(void) {
   std::fgetpos(fobject, &save);
   fseeko(fobject,0,SEEK_END);
   off_t endpos;
-  endpos = std::ftello(fobject);
+  endpos = ftello(fobject);
   length_in_samples(endpos / frame_size());
   std::fsetpos(fobject, &save);
 }

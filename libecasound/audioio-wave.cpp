@@ -29,10 +29,17 @@
 #define ftello std::ftell
 #endif
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <cstdio>
 #include <cstring>
 #include <cmath>
 #include <string>
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* off_t */
+#endif
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>

@@ -30,7 +30,7 @@
 #endif
 
 #include <cstdio>
-#include <cstring>
+#include <cstring> /* memcpy */
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -104,7 +104,7 @@ void ECA_FILE_IO_MMAP::read_to_buffer(void* obuf, off_t bytes) {
     bytes = flength_rep - fposition_rep;
 
 //    cerr << fname_rep << ": mmap read " << fposition_rep << " -> ";
-  ::memcpy(obuf, buffer_repp + fposition_rep, bytes);
+  std::memcpy(obuf, buffer_repp + fposition_rep, bytes);
 //    cerr <<  fposition_rep + bytes << "." << endl;
   set_file_position(fposition_rep + bytes, false);
   bytes_rep = bytes;
@@ -120,7 +120,7 @@ void ECA_FILE_IO_MMAP::write_from_buffer(void* obuf, off_t bytes) {
   if (fposition_rep + bytes > flength_rep)
     bytes = flength_rep - fposition_rep;
 
-  ::memcpy(buffer_repp + fposition_rep, obuf, bytes);
+  std::memcpy(buffer_repp + fposition_rep, obuf, bytes);
   set_file_position(fposition_rep + bytes, false);
   bytes_rep = bytes;
 }

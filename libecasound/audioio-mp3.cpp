@@ -24,7 +24,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #else
-#define HAVE_STDINT_H
+#define HAVE_INTTYPES_H
 #endif
 
 #include <cmath>
@@ -34,15 +34,17 @@
 #include <unistd.h> /* stat() */
 #include <sys/stat.h> /* stat() */
 #include <sys/wait.h>
-
-/* ANSI/ISO type defs */
+/* ANSI/ISO type defs: */
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* uint32_t, etc types */
+#else
+  #ifdef HAVE_INTTYPES_H
+  #include <inttypes.h> /* uint32_t, etc types */
+  #endif
 #endif
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* uint32_t, etc types */
 #endif
-
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
 

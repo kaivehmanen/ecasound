@@ -8,6 +8,10 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* off_t */
+#endif
+
 #ifndef off_t
 typedef long int off_t;
 #endif
