@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvutils.cpp: Misc helper routines
-// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,29 +17,34 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <sys/time.h> /* gettimeofday() */
-#include <unistd.h>
-#include <ctype.h> /* isspace(), toupper() */
-
+#include <algorithm>
 #include <cstdlib> /* atoi() */
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm>
+
+#include <sys/time.h> /* gettimeofday() */
+#include <unistd.h>
+#include <ctype.h> /* isspace(), toupper() */
 
 #include "kvutils.h"
 
-std::vector<std::string> string_to_words(const std::string& s) {
+std::vector<std::string> string_to_words(const std::string& s)
+{
+  return(string_to_tokens(s));
+}
+
+std::vector<std::string> string_to_tokens(const std::string& s)
+{
   std::vector<std::string> vec;
   std::string stmp = "";
 
   for(std::string::const_iterator p = s.begin(); p != s.end(); p++) {
-    if (isspace(*p) == false)
+    if (isspace(*p) == 0)
       stmp += *p;
     else {
       if (stmp == "") continue;
       vec.push_back(stmp);
-      //      cout << "EDebug - added word: " << stmp << ".\n";
       stmp = "";
     }
   }
@@ -49,8 +54,38 @@ std::vector<std::string> string_to_words(const std::string& s) {
   return(vec);
 }
 
-std::vector<std::string> string_to_vector(const std::string& str, const
-				std::string::value_type separator) {
+std::vector<std::string> string_to_tokens_quoted(const std::string& s)
+{
+  std::vector<std::string> vec;
+  std::string stmp;
+  bool quoteflag = false;
+
+  for(std::string::const_iterator p = s.begin(); p != s.end(); p++) {
+    if (*p == '\"') {
+      quoteflag = !quoteflag;
+    }
+    else if (*p == '\\') {
+      p++;
+      stmp += *p;
+    }
+    else if (isspace(*p) == 0 || quoteflag == true) {
+      stmp += *p;
+    }
+    else {
+      if (stmp == "") continue;
+      vec.push_back(stmp);
+      stmp = "";
+    }
+  }
+  if (stmp.size() > 0)
+    vec.push_back(stmp);
+
+  return(vec);
+}
+
+std::vector<std::string> string_to_vector(const std::string& str, 
+					  const std::string::value_type separator)
+{
   std::vector<std::string> vec;
   std::string stmp = "";
 

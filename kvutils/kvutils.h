@@ -11,10 +11,24 @@
 bool string_icmp(const std::string& a, const std::string& b);
 
 /**
- * Converts a string to a vector of strings (words).
+ * Converts a string to a vector of token strings.
  * Whitespace is used as the separator.
  */
-std::vector<std::string> string_to_words(const std::string& s);
+std::vector<std::string> string_to_tokens(const std::string& s);
+
+/**
+ * Converts a string to a vector of token strings.
+ * Whitespace is used as the token separator. 
+ *
+ * Unlike string_to_tokens(), quotes can be used to mark 
+ * groups of words as tokens (e.g. "this is one token").
+ *
+ * It's also possible to add individual whitespace
+ * characted by escaping them with a backclash (e.g.
+ * 'this\ is\ one token\ '). Escaped characters are
+ * not considered as possible separators.
+ */
+std::vector<std::string> string_to_tokens_quoted(const std::string& s);
 
 /**
  * Converts a string to a vector of strings.
@@ -125,5 +139,21 @@ std::string get_argument_prefix(const std::string& argument);
  * Prints a time stamp to stderr
  */
 void print_time_stamp(void);
+
+/**
+ * Obsolete functions.
+ */
+/*@{*/
+
+/**
+ * Converts a string to a vector of strings (words).
+ * Whitespace is used as the separator.
+ *
+ * Note! This function is obsolete, use @see string_to_tokens() 
+ *       instead.
+ */
+std::vector<std::string> string_to_words(const std::string& s);
+
+/*@}*/
 
 #endif

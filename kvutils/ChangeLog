@@ -2,6 +2,13 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2001-12-22  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* kvutils.h (string_to_words): marked obsolete - not removed 
+	from the library
+	* kvutils.h (string_to_tokens): replaces string_to_words()
+	* kvutils.h (string_to_tokens_quoted): added
+	
 2001-11-29  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* message_item.h (<<operator): added overloaded versions
