@@ -109,7 +109,7 @@ class EFFECT_FAKE_STEREO : public EFFECT_TIME_BASED {
 
   std::string name(void) const { return("Fake stereo"); }
 
-  virtual string parameter_names(void) const { return("delay-time-msec"); }
+  virtual std::string parameter_names(void) const { return("delay-time-msec"); }
   virtual parameter_type get_parameter(int param) const;
   virtual void set_parameter(int param, parameter_type value);
 
@@ -139,8 +139,8 @@ class EFFECT_REVERB : public EFFECT_TIME_BASED {
 
  public:
 
-  virtual string name(void) const { return("Reverb"); }
-  virtual string parameter_names(void) const { return("delay-time,surround-mode,feedback-%"); }
+  virtual std::string name(void) const { return("Reverb"); }
+  virtual std::string parameter_names(void) const { return("delay-time,surround-mode,feedback-%"); }
 
   virtual parameter_type get_parameter(int param) const;
   virtual void set_parameter(int param, parameter_type value);
@@ -191,8 +191,8 @@ class EFFECT_FLANGER : public EFFECT_MODULATING_DELAY {
 
  public:
 
-  virtual string name(void) const { return("Flanger"); }
-  virtual string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
+  virtual std::string name(void) const { return("Flanger"); }
+  virtual std::string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
 
   void process(void);
 
@@ -207,8 +207,8 @@ class EFFECT_CHORUS : public EFFECT_MODULATING_DELAY {
 
  public:
 
-  virtual string name(void) const { return("Chorus"); }
-  virtual string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
+  virtual std::string name(void) const { return("Chorus"); }
+  virtual std::string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
 
   void process(void);
 
@@ -223,8 +223,8 @@ class EFFECT_PHASER : public EFFECT_MODULATING_DELAY {
 
  public:
 
-  virtual string name(void) const { return("Phaser"); }
-  virtual string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
+  virtual std::string name(void) const { return("Phaser"); }
+  virtual std::string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
 
   void process(void);
 

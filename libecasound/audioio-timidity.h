@@ -18,7 +18,7 @@ class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
 
  private:
   
-  static string default_timidity_cmd;
+  static std::string default_timidity_cmd;
 
  public:
 
@@ -40,8 +40,8 @@ class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
   
  public:
 
-  virtual string name(void) const { return("MIDI-to-audio stream"); }
-  virtual string description(void) const { return("Interface for MIDI->audio converters that support i/o using standard streams."); }
+  virtual std::string name(void) const { return("MIDI-to-audio stream"); }
+  virtual std::string description(void) const { return("Interface for MIDI->audio converters that support i/o using standard streams."); }
   virtual int supported_io_modes(void) const { return(io_read); }
   virtual bool supports_seeking(void) const { return(false); }
 

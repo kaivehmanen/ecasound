@@ -29,17 +29,17 @@ class AUDIO_IO_TYPESELECT : public AUDIO_IO {
   /** @name Reimplemented functions from ECA_OBJECT */
   /*@{*/
 
-  virtual string name(void) const { return(string("Typeselect => ") + child_repp->name()); }
-  virtual string description(void) const { return(child_repp->description()); }
+  virtual std::string name(void) const { return(string("Typeselect => ") + child_repp->name()); }
+  virtual std::string description(void) const { return(child_repp->description()); }
 
   /*@}*/
 
   /** @name Reimplemented functions from DYNAMIC_PARAMETERS<string> */
   /*@{*/
 
-  virtual string parameter_names(void) const;
-  virtual void set_parameter(int param, string value);
-  virtual string get_parameter(int param) const;
+  virtual std::string parameter_names(void) const;
+  virtual void set_parameter(int param, std::string value);
+  virtual std::string get_parameter(int param) const;
 
   /*@}*/
 
@@ -88,8 +88,8 @@ class AUDIO_IO_TYPESELECT : public AUDIO_IO {
 
  private:
 
-  string type_rep;
-  mutable vector<string> params_rep;
+  std::string type_rep;
+  mutable std::vector<std::string> params_rep;
   AUDIO_IO* child_repp;
   bool init_rep;
 

@@ -31,9 +31,9 @@ class PRESET_impl {
   vector<OPERATOR::PARAM_DESCRIPTION*> pardesclist_rep;
 
   bool parsed_rep;
-  string parse_string_rep;
-  string name_rep;
-  string description_rep;
+  std::string parse_string_rep;
+  std::string name_rep;
+  std::string description_rep;
 
 };
 

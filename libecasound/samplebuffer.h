@@ -10,13 +10,6 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#ifdef USE_CXX_STD_NAMESPACE
-using namespace std;
-#endif
-
 template<class T> class SAMPLE_BUFFER_FUNCTIONS_BASE;
 
 /**

@@ -2,7 +2,7 @@
 #define INCLUDED_ECA_VERSION_H
 
 /**
- * Ecasound library version as a formatted string.
+ * Ecasound library version as a formatted std::string.
  *
  * "vX.Y[.Z][devT]" :
  *
@@ -24,7 +24,7 @@ extern const long int ecasound_library_version_current;
 extern const long int ecasound_library_version_revision;
 extern const long int ecasound_library_version_age;
 
-#define ECASOUND_LIBRARY_VERSION             "2.1dev3"
+#define ECASOUND_LIBRARY_VERSION             "2.1dev4"
 #define ECASOUND_LIBRARY_VERSION_CURRENT     8
 #define ECASOUND_LIBRARY_VERSION_REVISION    0
 #define ECASOUND_LIBRARY_VERSION_AGE         0

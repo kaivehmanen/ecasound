@@ -2,6 +2,7 @@
 #define INCLUDED_PRESET_H
 
 #include <string>
+#include <vector>
 
 class PRESET_impl;
 class CHAIN;
@@ -55,7 +56,7 @@ class PRESET : public CHAIN_OPERATOR {
   void parse_preset_option(const std::string& arg);
   void parse_operator_option(const std::string& arg);
   void set_preset_defaults(const std::vector<std::string>& args);
-  void set_preset_param_names(const vector<string>& args);
+  void set_preset_param_names(const std::vector<string>& args);
   void set_preset_lower_bounds(const std::vector<std::string>& args);
   void set_preset_upper_bounds(const std::vector<std::string>& args);
   void set_preset_toggles(const std::vector<std::string>& args);

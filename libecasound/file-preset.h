@@ -10,11 +10,11 @@
  */
 class FILE_PRESET : public PRESET {
 
-  string filename_rep;
+  std::string filename_rep;
 
  public:
 
-  string filename(void) const { return(filename_rep); }
+  std::string filename(void) const { return(filename_rep); }
   void set_filename(const std::string& v) { filename_rep = v; }
 
   virtual FILE_PRESET* clone(void);

@@ -31,7 +31,7 @@ class AUDIO_IO_FORKED_STREAM {
  public:
   
   /**
-   * Set the command string. This must be done before other set_* 
+   * Set the command std::string. This must be done before other set_* 
    * calls.
    */
   void set_fork_command(const std::string& cmd) { command_rep = cmd; }

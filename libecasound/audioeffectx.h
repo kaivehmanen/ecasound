@@ -62,7 +62,7 @@ public:
 													// in automation. parameter index in <value> (-1: all, any)
 	// plug
 	virtual bool canParameterBeAutomated (long index) { return true; }
-	virtual bool string2parameter (long index, char* text) {return false;} 	// note: implies setParameter. text==0 is to be
+	virtual bool std::string2parameter (long index, char* text) {return false;} 	// note: implies setParameter. text==0 is to be
 																			// expected to check the capability (returns true).	
 	virtual float getChannelParameter (long channel, long index) {return 0;}
 	virtual long getNumCategories () {return 1L;}
@@ -141,8 +141,8 @@ public:
 	// host
 	virtual void setOutputSamplerate (float samplerate);
 	virtual bool getSpeakerArrangement (VstSpeakerArrangement* pluginInput, VstSpeakerArrangement* pluginOutput);
-	virtual bool getHostVendorString (char* text);		// fills <text> with a string identifying the vendor (max 64 char)
-	virtual bool getHostProductString (char* text);		// fills <text> with a string with product name (max 64 char)
+	virtual bool getHostVendorString (char* text);		// fills <text> with a std::string identifying the vendor (max 64 char)
+	virtual bool getHostProductString (char* text);		// fills <text> with a std::string with product name (max 64 char)
 	virtual long getHostVendorVersion ();				// returns vendor-specific version
 	virtual long hostVendorSpecific (long lArg1, long lArg2, void* ptrArg, float floatArg);		// no definition
 	virtual long canHostDo (char* text);				// see 'hostCanDos' in audioeffectx.cpp
@@ -166,8 +166,8 @@ public:
 	virtual bool setBypass(bool onOff) {return false;}			// for 'soft-bypass; process() still called
 	virtual bool getEffectName (char* name) {return false;}		// name max 32 char
 	virtual bool getErrorText (char* text) {return false;}		// max 256 char
-	virtual bool getVendorString (char* text) {return false;}	// fill text with a string identifying the vendor (max 64 char)
-	virtual bool getProductString (char* text) {return false;}	// fill text with a string identifying the product name (max 64 char)					// fills <ptr> with a string with product name (max 64 char)
+	virtual bool getVendorString (char* text) {return false;}	// fill text with a std::string identifying the vendor (max 64 char)
+	virtual bool getProductString (char* text) {return false;}	// fill text with a std::string identifying the product name (max 64 char)					// fills <ptr> with a std::string with product name (max 64 char)
 	virtual long getVendorVersion () {return 0;}				// return vendor-specific version
 	virtual long vendorSpecific (long lArg, long lArg2, void* ptrArg, float floatArg) {return 0;}
 														// no definition, vendor specific handling

@@ -47,8 +47,8 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   
  public:
 
-  virtual string name(void) const { return("OSS soundcard device"); }
-  virtual string description(void) const { return("Open Sound System -devices (OSS/Linux and OSS/Free)."); }
+  virtual std::string name(void) const { return("OSS soundcard device"); }
+  virtual std::string description(void) const { return("Open Sound System -devices (OSS/Linux and OSS/Free)."); }
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
 

@@ -17,7 +17,7 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
 
  private:
   
-  static string default_mikmod_cmd;
+  static std::string default_mikmod_cmd;
 
  public:
 
@@ -39,8 +39,8 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
   
  public:
 
-  virtual string name(void) const { return("MikMod tracker module"); }
-  virtual string description(void) const { return("Interface for module players that support i/o using standard streams."); }
+  virtual std::string name(void) const { return("MikMod tracker module"); }
+  virtual std::string description(void) const { return("Interface for module players that support i/o using standard streams."); }
 
   virtual int supported_io_modes(void) const { return(io_read); }
   virtual bool supports_seeking(void) const { return(false); }

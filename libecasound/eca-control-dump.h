@@ -47,8 +47,8 @@ class ECA_CONTROL_DUMP {
   // --
 
   /**
-   * Dumps status string for the currently selected chainsetup - 'connected', 
-   * 'selected' or an empty string.
+   * Dumps status std::string for the currently selected chainsetup - 'connected', 
+   * 'selected' or an empty std::string.
    */
   void dump_chainsetup_status(void);
 
@@ -63,7 +63,7 @@ class ECA_CONTROL_DUMP {
 
   /**
    * Dumps label of currently selected audio input. If no
-   * input is selected, dumps an empty string.
+   * input is selected, dumps an empty std::string.
    */
   void dump_selected_audio_input(void);
 
@@ -86,7 +86,7 @@ class ECA_CONTROL_DUMP {
 
   /**
    * Dumps label of currently selected audio output. If no
-   * output is selected, dumps an empty string.
+   * output is selected, dumps an empty std::string.
    */
   void dump_selected_audio_output(void);
 

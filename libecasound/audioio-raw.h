@@ -19,7 +19,7 @@
 class RAWFILE : public AUDIO_IO_BUFFERED {
 
   ECA_FILE_IO* fio_repp;
-  string mmaptoggle_rep;
+  std::string mmaptoggle_rep;
 
   RAWFILE(const RAWFILE& x) { }
   RAWFILE& operator=(const RAWFILE& x) { return *this; }
@@ -39,8 +39,8 @@ class RAWFILE : public AUDIO_IO_BUFFERED {
 
  public:
 
-  virtual string name(void) const { return("Raw audio file"); }
-  virtual string parameter_names(void) const { return("label,toggle_mmap"); }
+  virtual std::string name(void) const { return("Raw audio file"); }
+  virtual std::string parameter_names(void) const { return("label,toggle_mmap"); }
   
   virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);
@@ -51,8 +51,8 @@ class RAWFILE : public AUDIO_IO_BUFFERED {
   virtual bool finished(void) const;
   virtual void seek_position(void);
 
-  virtual void set_parameter(int param, string value);
-  virtual string get_parameter(int param) const;
+  virtual void set_parameter(int param, std::string value);
+  virtual std::string get_parameter(int param) const;
 
   RAWFILE (const std::string& name = "");
   ~RAWFILE(void);

@@ -10,7 +10,7 @@
 class NULLFILE : public AUDIO_IO_BUFFERED {
  public:
 
-  virtual string name(void) const { return("Null audio object"); }
+  virtual std::string name(void) const { return("Null audio object"); }
 
   virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) { }
   virtual void close(void) { }

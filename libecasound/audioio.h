@@ -8,8 +8,6 @@
 #include "dynamic-object.h"
 #include "samplebuffer.h"
 
-using std::string;
-
 /**
  * Virtual base for all audio I/O classes (files, audio devices,
  * sound producing program modules, etc.)
@@ -30,7 +28,7 @@ using std::string;
  *
  * @author Kai Vehmanen
  */
-class AUDIO_IO : public DYNAMIC_OBJECT<string>,
+class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
 		 public ECA_AUDIO_POSITION {
 
  public:
@@ -76,13 +74,13 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
       unexpected        /* unexpected/unknown error */
     };
     
-     const string& message(void) const;
+     const std::string& message(void) const;
      Error_type type(void) const;
-     SETUP_ERROR(Error_type type, const string& message);
+     SETUP_ERROR(Error_type type, const std::string& message);
 
    private:
      Error_type type_rep;
-     string message_rep;
+     std::string message_rep;
   };
 
  public:
@@ -95,7 +93,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   virtual AUDIO_IO* clone(void) = 0;
   virtual AUDIO_IO* new_expr(void) = 0;
   virtual ~AUDIO_IO(void);
-  AUDIO_IO(const string& name = "unknown", 
+  AUDIO_IO(const std::string& name = "unknown", 
 	   int mode = io_read, 
 	   const ECA_AUDIO_FORMAT& fmt = ECA_AUDIO_FORMAT());
 
@@ -137,16 +135,16 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   virtual long int buffersize(void) const = 0;
 
   int io_mode(void) const;
-  const string& label(void) const;
-  string format_info(void) const;
+  const std::string& label(void) const;
+  std::string format_info(void) const;
 
   void io_mode(int mode);
-  void label(const string& id_label);
+  void label(const std::string& id_label);
   void toggle_nonblocking_mode(bool value);
 
-  virtual string parameter_names(void) const { return("label"); }
-  virtual void set_parameter(int param, string value);
-  virtual string get_parameter(int param) const;
+  virtual std::string parameter_names(void) const { return("label"); }
+  virtual void set_parameter(int param, std::string value);
+  virtual std::string get_parameter(int param) const;
 
  public:
 
@@ -273,7 +271,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   virtual bool nonblocking_mode(void) const;
   virtual bool readable(void) const;
   virtual bool writable(void) const;
-  virtual string status(void) const;
+  virtual std::string status(void) const;
 
   ECA_AUDIO_TIME length(void) const;
   ECA_AUDIO_TIME position(void) const;
@@ -290,7 +288,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
  private:
   
   int io_mode_rep;
-  string id_label_rep;
+  std::string id_label_rep;
 
   bool nonblocking_rep;
   bool readable_rep;

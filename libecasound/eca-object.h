@@ -19,13 +19,13 @@ class ECA_OBJECT {
    * cases, object name is same for all class instances.
    * Must be implemented in all subclasses.
    */
-  virtual string name(void) const = 0;
+  virtual std::string name(void) const = 0;
 
   /**
    * Object description. Description should be short, informative
    * and unformatted.
    */
-  virtual string description(void) const { return(name()); }
+  virtual std::string description(void) const { return(name()); }
 
   virtual ~ECA_OBJECT (void) { }
 };

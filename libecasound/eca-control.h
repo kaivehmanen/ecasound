@@ -30,19 +30,19 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   double first_argument_as_float(void) const;
   long int first_argument_as_long_int(void) const;
 
-  string chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const;
+  std::string chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const;
 
  public:
 
   /**
-   * Parses a string containing set of ecasound interactive mode (EIAM)
+   * Parses a std::string containing set of ecasound interactive mode (EIAM)
    * commands and acts accordingly.
    */
   void command(const std::string& cmd);
 
   /**
-   * A special version of 'command()' which parses a string-float-arg 
-   * pair. The string argument is required to contain exactly one EIAM 
+   * A special version of 'command()' which parses a std::string-float-arg 
+   * pair. The std::string argument is required to contain exactly one EIAM 
    * command, while the float argument contains one numerical parameter.
    */
   void command_float_arg(const std::string& cmd, double arg);

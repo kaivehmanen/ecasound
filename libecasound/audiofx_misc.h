@@ -20,10 +20,10 @@ private:
 
 public:
 
-  virtual string name(void) const { return("DC-Fix"); }
-  virtual string description(void) const { return("Adjusts DC-offset."); }
+  virtual std::string name(void) const { return("DC-Fix"); }
+  virtual std::string description(void) const { return("Adjusts DC-offset."); }
 
-  virtual string parameter_names(void) const { return("delta-value-left,delta-value-right"); }
+  virtual std::string parameter_names(void) const { return("delta-value-left,delta-value-right"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -51,9 +51,9 @@ private:
 
 public:
 
-  virtual string name(void) const { return("Pitch shifter"); }
-  virtual string description(void) const { return("Modify audio pitch by altering its length."); }
-  virtual string parameter_names(void) const { return("change-%"); }
+  virtual std::string name(void) const { return("Pitch shifter"); }
+  virtual std::string description(void) const { return("Modify audio pitch by altering its length."); }
+  virtual std::string parameter_names(void) const { return("change-%"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -80,10 +80,10 @@ class EFFECT_AUDIO_STAMP : public EFFECT_BASE,
 
   public:
 
-  virtual string name(void) const { return("Audio stamp"); }
-  virtual string description(void) const { return("Takes a snapshot of passing audio buffers."); }
+  virtual std::string name(void) const { return("Audio stamp"); }
+  virtual std::string description(void) const { return("Takes a snapshot of passing audio buffers."); }
 
-  virtual string parameter_names(void) const { return("stamp-id"); }
+  virtual std::string parameter_names(void) const { return("stamp-id"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;

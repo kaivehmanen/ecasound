@@ -11,7 +11,7 @@ class ECA_CHAINSETUP_BUFPARAMS {
 
   ECA_CHAINSETUP_BUFPARAMS(void);
 
-  void set_all(const string& paramstring);
+  void set_all(const std::string& paramstring);
 
   void set_buffersize(long int value);
   void toggle_raised_priority(bool value);
@@ -37,7 +37,7 @@ class ECA_CHAINSETUP_BUFPARAMS {
   bool is_set_double_buffer_size(void) const { return(set_double_buffer_size_rep); }
   bool is_set_max_buffers(void) const { return(set_max_buffers_rep); }
 
-  string to_string(void) const;
+  std::string to_string(void) const;
   
  private:
 

@@ -18,7 +18,7 @@ class EFFECT_ANALYSIS : public EFFECT_BASE {
   virtual void set_parameter(int param, parameter_type value) { }
   virtual parameter_type get_parameter(int param) const { return(0.0); }
 
-  virtual string parameter_names(void) const { return(""); }
+  virtual std::string parameter_names(void) const { return(""); }
 
   virtual ~EFFECT_ANALYSIS(void) { }
 };
@@ -43,14 +43,14 @@ class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
   SAMPLE_ITERATOR_CHANNELS i;
 
   void reset_stats(void);
-  string status_entry(int range) const;
+  std::string status_entry(int range) const;
 
  public:
 
   parameter_type max_multiplier(void) const;
     
-  virtual string name(void) const { return("Volume-analyze"); }
-  virtual string parameter_names(void) const { return("cumulative-mode,result-max-multiplier"); }
+  virtual std::string name(void) const { return("Volume-analyze"); }
+  virtual std::string parameter_names(void) const { return("cumulative-mode,result-max-multiplier"); }
 
   virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
   virtual void set_parameter(int param, parameter_type value);
@@ -58,7 +58,7 @@ class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
-  virtual string status(void) const;
+  virtual std::string status(void) const;
   
   EFFECT_ANALYZE* clone(void)  { return new EFFECT_ANALYZE(*this); }
   EFFECT_ANALYZE* new_expr(void)  { return new EFFECT_ANALYZE(); }
@@ -84,13 +84,13 @@ public:
 
   parameter_type get_deltafix(int channel) const;
 
-  virtual string name(void) const { return("DC-Find"); }
-  virtual string description(void) const { return("Calculates the DC-offset."); }
-  virtual string parameter_names(void) const;
+  virtual std::string name(void) const { return("DC-Find"); }
+  virtual std::string description(void) const { return("Calculates the DC-offset."); }
+  virtual std::string parameter_names(void) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
-  virtual string status(void) const;
+  virtual std::string status(void) const;
 
   virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
   virtual void set_parameter(int param, parameter_type value);

@@ -286,13 +286,13 @@ typedef struct _LADSPA_Descriptor {
      (e.g. "Sine Oscillator"). */
   const char * Name;
 
-  /* This member points to the null-terminated string indicating the
-     maker of the plugin. This can be an empty string but not NULL. */
+  /* This member points to the null-terminated std::string indicating the
+     maker of the plugin. This can be an empty std::string but not NULL. */
   const char * Maker;
 
-  /* This member points to the null-terminated string indicating any
+  /* This member points to the null-terminated std::string indicating any
      copyright applying to the plugin. If no Copyright applies the
-     string "None" should be used. */
+     std::string "None" should be used. */
   const char * Copyright;
 
   /* This indicates the number of ports (input AND output) present on
@@ -303,7 +303,7 @@ typedef struct _LADSPA_Descriptor {
      vary from 0 to PortCount-1. */
   const LADSPA_PortDescriptor * PortDescriptors;
 
-  /* This member indicates an array of null-terminated strings
+  /* This member indicates an array of null-terminated std::strings
      describing ports (e.g. "Frequency (Hz)"). Valid indices vary from
      0 to PortCount-1. */
   const char * const * PortNames;

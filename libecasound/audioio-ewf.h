@@ -27,7 +27,7 @@ class EWFFILE : public AUDIO_IO {
   ECA_AUDIO_TIME child_offset_rep,
                  child_start_pos_rep,
                  child_length_rep;
-  string child_name_rep;
+  std::string child_name_rep;
   bool child_active;
 
   RESOURCE_FILE ewf_rc;
@@ -42,8 +42,8 @@ class EWFFILE : public AUDIO_IO {
 
  public:
 
-  virtual string name(void) const { return("Ecasound wave file"); }
-  virtual string description(void) const { return("Special format acts as a wrapper for other file formats. It can used for looping, audio data relocation and other special tasks."); }
+  virtual std::string name(void) const { return("Ecasound wave file"); }
+  virtual std::string description(void) const { return("Special format acts as a wrapper for other file formats. It can used for looping, audio data relocation and other special tasks."); }
 
   virtual bool locked_audio_format(void) const { return(true); }
 

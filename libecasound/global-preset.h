@@ -13,7 +13,7 @@ class GLOBAL_PRESET : public PRESET {
 
  private:
 
-  string preset_name_rep;
+  std::string preset_name_rep;
 
  public:
 

@@ -58,8 +58,8 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
 
  public:
 
-  string name(void) const { return("CD-R audio file"); }
-  string description(void) const { return("CD-R/CDDA audio files. This format is used when mastering audio-CDs."); }
+  std::string name(void) const { return("CD-R audio file"); }
+  std::string description(void) const { return("CD-R/CDDA audio files. This format is used when mastering audio-CDs."); }
 
   virtual bool locked_audio_format(void) const { return(true); }
 

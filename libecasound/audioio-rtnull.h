@@ -10,7 +10,7 @@
 class REALTIME_NULL : public AUDIO_IO_DEVICE {
  public:
 
-  virtual string name(void) const { return("Realtime null device"); }
+  virtual std::string name(void) const { return("Realtime null device"); }
 
   virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);

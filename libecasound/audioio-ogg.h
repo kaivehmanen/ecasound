@@ -19,8 +19,8 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
 
  private:
   
-  static string default_ogg_input_cmd;
-  static string default_ogg_output_cmd;
+  static std::string default_ogg_input_cmd;
+  static std::string default_ogg_output_cmd;
 
  public:
 
@@ -40,8 +40,8 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   
  public:
 
-  virtual string name(void) const { return("Ogg Vorbis stream"); }
-  virtual string description(void) const { return("Interface for ogg decoders and encoders that support i/o using standard streams."); }
+  virtual std::string name(void) const { return("Ogg Vorbis stream"); }
+  virtual std::string description(void) const { return("Interface for ogg decoders and encoders that support i/o using standard streams."); }
   virtual bool locked_audio_format(void) const { return(true); }
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
   virtual bool supports_seeking(void) const { return(false); }

@@ -1,6 +1,7 @@
-#ifndef _AUDIOFX_VST_H
-#define _AUDIOFX_VST_H
+#ifndef INCLUDE_AUDIOFX_VST_H
+#define INCLUDE_AUDIOFX_VST_H
 
+#include <string>
 #include <vector>
 
 #include "samplebuffer.h"
@@ -24,16 +25,16 @@ private:
   SAMPLE_BUFFER* buffer;
 
   VST_plugin_descriptor master_func;
-  vector<AEffect*> vst_handles;
-  string label_rep, unique_rep, param_names_rep, library_file_rep;
+  std::vector<AEffect*> vst_handles;
+  std::string label_rep, unique_rep, param_names_rep, library_file_rep;
 
 public:
 
-  virtual virtual string name(void) const { return("VST/" + label_rep); }
-  virtual string description(void) const { return("Wrapper for VST-plugins."); }
-  virtual virtual string parameter_names(void) const { return(param_names_rep); }
+  virtual virtual std::string name(void) const { return("VST/" + label_rep); }
+  virtual std::string description(void) const { return("Wrapper for VST-plugins."); }
+  virtual virtual std::string parameter_names(void) const { return(param_names_rep); }
 
-  string unique(void) const { return(unique_rep); }
+  std::string unique(void) const { return(unique_rep); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;

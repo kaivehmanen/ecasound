@@ -35,8 +35,8 @@ class EFFECT_RC_LOWPASS_FILTER : public EFFECT_FILTER {
 
 public:
 
-  virtual string name(void) const { return("RC-lowpass filter"); }
-  virtual string parameter_names(void) const { return("cutoff-freq,resonance"); }
+  virtual std::string name(void) const { return("RC-lowpass filter"); }
+  virtual std::string parameter_names(void) const { return("cutoff-freq,resonance"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;

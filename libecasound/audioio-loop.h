@@ -21,8 +21,8 @@ class LOOP_DEVICE : public AUDIO_IO {
 
  public:
 
-  virtual string name(void) const { return("Internal loop device"); }
-  virtual string description(void) const { return("Loop device that routes data from output to input."); }
+  virtual std::string name(void) const { return("Internal loop device"); }
+  virtual std::string description(void) const { return("Loop device that routes data from output to input."); }
 
   virtual void buffersize(long int samples, long int sample_rate) { };
   virtual long int buffersize(void) const { return(0); };
@@ -36,9 +36,9 @@ class LOOP_DEVICE : public AUDIO_IO {
   virtual bool finished(void) const;
   virtual void seek_position(void) { } 
 
-  virtual string parameter_names(void) const { return("label,id_number"); }
-  virtual void set_parameter(int param, string value);
-  virtual string get_parameter(int param) const;
+  virtual std::string parameter_names(void) const { return("label,id_number"); }
+  virtual void set_parameter(int param, std::string value);
+  virtual std::string get_parameter(int param) const;
 
   /**
    * Register a new input client

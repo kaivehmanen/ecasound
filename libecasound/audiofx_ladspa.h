@@ -2,6 +2,7 @@
 #define INCLUDED_AUDIOFX_LADSPA_H
 
 #include <vector>
+#include <string>
 
 #include "samplebuffer.h"
 #include "audiofx.h"
@@ -27,28 +28,28 @@ private:
   SAMPLE_BUFFER* buffer;
   
   const LADSPA_Descriptor *plugin_desc;
-  vector<LADSPA_Handle> plugins_rep;
+  std::vector<LADSPA_Handle> plugins_rep;
 
   unsigned long port_count_rep;
   int in_audio_ports;
   int out_audio_ports;
   long unique_number_rep;
-  string name_rep, unique_rep, param_names_rep;
-  vector<LADSPA_Data> params;
+  std::string name_rep, unique_rep, param_names_rep;
+  std::vector<LADSPA_Data> params;
 
   void init_ports(void);
 
 public:
 
-  virtual string name(void) const { return(name_rep); }
-  virtual string parameter_names(void) const { return(param_names_rep); }
+  virtual std::string name(void) const { return(name_rep); }
+  virtual std::string parameter_names(void) const { return(param_names_rep); }
 
   /**
    * This identifier can be used as a unique, case-sensitive
    * identifier for the plugin type within the plugin file. 
    * Labels must not contain white-space characters. 
    */
-  string unique(void) const { return(unique_rep); }
+  std::string unique(void) const { return(unique_rep); }
 
   /**
    * This numeric identifier indicates the plugin type

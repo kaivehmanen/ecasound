@@ -24,8 +24,8 @@ public:
   enum Action { stop, retry, notice };
  
 private:
-  string esection_rep;
-  string eerrormsg_rep;
+  std::string esection_rep;
+  std::string eerrormsg_rep;
   Action eaction_rep;
 
 public:

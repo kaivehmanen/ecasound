@@ -23,7 +23,7 @@ class ECA_CHAINSETUP_PARSER {
   ECA_CHAINSETUP_PARSER(ECA_CHAINSETUP* csetup);
 
   // --
-  // functions for string->state conversions
+  // functions for std::string->state conversions
 
   /**
    * Returns the result of last call to interpret_option(), interpret_global_option() 
@@ -55,7 +55,7 @@ class ECA_CHAINSETUP_PARSER {
  private:
 
   // --
-  // functions for string->state conversions
+  // functions for std::string->state conversions
 
   void interpret_entry(void);
   void interpret_exit(const std::string& arg);

@@ -32,13 +32,13 @@ class DYNAMIC_PARAMETERS {
    * @param id parameter id number
    * 
    */
-  string get_parameter_name(int id) const { return(get_argument_number(id, parameter_names())); }
+  std::string get_parameter_name(int id) const { return(get_argument_number(id, parameter_names())); }
 
   /**
    * A comma-separated list of parameters names. Derived classes 
    * must implement this.
    */
-  virtual string parameter_names(void) const = 0;
+  virtual std::string parameter_names(void) const = 0;
 
   /**
    * Sets the parameter value. Implementations should be able to

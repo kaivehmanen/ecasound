@@ -56,12 +56,12 @@ class ECA_CONTROL_BASE {
  private:
 
   std::vector<std::string> last_los_rep;
-  string last_s_rep;
+  std::string last_s_rep;
   long int last_li_rep;
   int last_i_rep;
   double last_f_rep;
-  string last_error_rep;
-  string last_type_rep;
+  std::string last_error_rep;
+  std::string last_type_rep;
 
  protected:
 
@@ -87,8 +87,8 @@ class ECA_CONTROL_BASE {
   // Session info / functions
   // -------------------------------------------------------------------
   
-  string attached_chains_input(AUDIO_IO* aiod) const;
-  string attached_chains_output(AUDIO_IO* aiod) const;
+  std::string attached_chains_input(AUDIO_IO* aiod) const;
+  std::string attached_chains_output(AUDIO_IO* aiod) const;
   std::vector<std::string> attached_chains(const std::string& name) const;
 
   // -------------------------------------------------------------------

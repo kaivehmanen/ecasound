@@ -30,8 +30,8 @@ private:
 
 public:
 
-  virtual string name(void) const { return("Channel copy"); }
-  virtual string parameter_names(void) const { return("from-channel,to-channel"); }
+  virtual std::string name(void) const { return("Channel copy"); }
+  virtual std::string parameter_names(void) const { return("from-channel,to-channel"); }
 
   int output_channels(int i_channels) const;
 
@@ -66,8 +66,8 @@ private:
 
 public:
 
-  virtual string name(void) const { return("Mix to channel"); }
-  virtual string parameter_names(void) const { return("to-channel"); }
+  virtual std::string name(void) const { return("Mix to channel"); }
+  virtual std::string parameter_names(void) const { return("to-channel"); }
 
   int output_channels(int i_channels) const;
 

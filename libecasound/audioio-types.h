@@ -192,7 +192,7 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
 
   virtual long position_in_samples(void) const = 0;
 
-  virtual string status(void) const;
+  virtual std::string status(void) const;
 
   /*@}*/
   

@@ -1,7 +1,7 @@
 #ifndef INCLUDED_AUDIOFX_ENVELOPE_MODULATION_H
 #define INCLUDED_AUDIOFX_ENVELOPE_MODULATION_H
 
-#include <vector>
+#include <string>
 
 #include "samplebuffer_iterators.h"
 #include "audiofx.h"
@@ -30,8 +30,8 @@ class EFFECT_PULSE_GATE: public EFFECT_ENV_MOD {
 
  public:
 
-  virtual string name(void) const { return("Pulse Gate"); }
-  virtual string parameter_names(void) const  { return("freq-Hz,on-time-%"); }
+  virtual std::string name(void) const { return("Pulse Gate"); }
+  virtual std::string parameter_names(void) const  { return("freq-Hz,on-time-%"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -57,8 +57,8 @@ class EFFECT_PULSE_GATE_BPM : public EFFECT_ENV_MOD {
 
  public:
 
-  virtual string name(void) const { return("Pulse gate BPM"); }
-  virtual string parameter_names(void) const  { return("bpm,on-time-msec"); }
+  virtual std::string name(void) const { return("Pulse gate BPM"); }
+  virtual std::string parameter_names(void) const  { return("bpm,on-time-msec"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -86,8 +86,8 @@ class EFFECT_TREMOLO: public EFFECT_ENV_MOD {
 
  public:
 
-  virtual string name(void) const { return("Tremolo"); }
-  virtual string parameter_names(void) const  { return("bpm,depth-%"); }
+  virtual std::string name(void) const { return("Tremolo"); }
+  virtual std::string parameter_names(void) const  { return("bpm,depth-%"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;

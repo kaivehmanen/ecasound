@@ -58,7 +58,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
   RF riff_format_rep;
 
   long int data_start_position_rep;
-  string mmaptoggle_rep;
+  std::string mmaptoggle_rep;
 
   /**
    * Do a info query prior to actually opening the device.
@@ -97,9 +97,9 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
     
  public:
 
-  virtual string name(void) const { return("RIFF wave file"); }
+  virtual std::string name(void) const { return("RIFF wave file"); }
   virtual bool locked_audio_format(void) const { return(true); }
-  virtual string parameter_names(void) const { return("label,toggle_mmap"); }
+  virtual std::string parameter_names(void) const { return("label,toggle_mmap"); }
 
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);
@@ -110,8 +110,8 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
   virtual bool finished(void) const;
   virtual void seek_position(void);
 
-  virtual void set_parameter(int param, string value);
-  virtual string get_parameter(int param) const;
+  virtual void set_parameter(int param, std::string value);
+  virtual std::string get_parameter(int param) const;
 
   WAVEFILE (const std::string& name = "");
   ~WAVEFILE(void);

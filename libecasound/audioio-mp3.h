@@ -18,8 +18,8 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
 
  private:
   
-  static string default_mp3_input_cmd;
-  static string default_mp3_output_cmd;
+  static std::string default_mp3_input_cmd;
+  static std::string default_mp3_output_cmd;
 
  public:
 
@@ -49,8 +49,8 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   
  public:
 
-  virtual string name(void) const { return("Mp3 stream"); }
-  virtual string description(void) const { return("Interface for mp3 decoders and encoders that support input/output using standard streams."); }
+  virtual std::string name(void) const { return("Mp3 stream"); }
+  virtual std::string description(void) const { return("Interface for mp3 decoders and encoders that support input/output using standard streams."); }
   virtual bool locked_audio_format(void) const { return(true); }
 
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR &);

@@ -28,7 +28,7 @@ class CHAIN {
   void toggle_muting(bool v) { muted_rep = v; }
   void toggle_processing(bool v) { sfx_rep = v; }
 
-  string name(void) const { return(chainname_rep); }
+  std::string name(void) const { return(chainname_rep); }
   void name(const std::string& c) { chainname_rep = c; }
 
   bool is_valid(void) const;
@@ -66,8 +66,8 @@ class CHAIN {
   int number_of_chain_operators(void) const { return(chainops_rep.size()); }
   int number_of_chain_operator_parameters(void) const;
   CHAIN_OPERATOR::parameter_type get_parameter(void) const;
-  string chain_operator_name(void) const;
-  string chain_operator_parameter_name(void) const;
+  std::string chain_operator_name(void) const;
+  std::string chain_operator_parameter_name(void) const;
   const CHAIN_OPERATOR* get_chain_operator(int index) const { return(chainops_rep[index]); }
   const CHAIN_OPERATOR* get_selected_chain_operator(void) const { return(selected_chainop_repp); }
 
@@ -100,14 +100,14 @@ class CHAIN {
   void controller_update(void);
   void refresh_parameters(void);
 
-  string to_string(void) const;
-  string chain_operator_to_string(CHAIN_OPERATOR* chainop) const;
-  string controller_to_string(GENERIC_CONTROLLER* gctrl) const;
+  std::string to_string(void) const;
+  std::string chain_operator_to_string(CHAIN_OPERATOR* chainop) const;
+  std::string controller_to_string(GENERIC_CONTROLLER* gctrl) const;
 
  private:
 
   bool initialized_rep;
-  string chainname_rep;
+  std::string chainname_rep;
   bool muted_rep;
   bool sfx_rep;
   int in_channels_rep;

@@ -48,9 +48,9 @@ public:
   parameter_type get_parameter(int param) const;
   void set_parameter(int param, parameter_type value);
 
-  string name(void) const { return("Time crop gate"); }
+  std::string name(void) const { return("Time crop gate"); }
 
-  string parameter_names(void) const { return("open-at-sec,duration-sec"); }
+  std::string parameter_names(void) const { return("open-at-sec,duration-sec"); }
 
   void analyze(SAMPLE_BUFFER* insample);
 
@@ -85,9 +85,9 @@ public:
   parameter_type get_parameter(int param) const;
   void set_parameter(int param, parameter_type value);
 
-  string name(void) const { return("Threshold gate"); }
+  std::string name(void) const { return("Threshold gate"); }
 
-  string parameter_names(void) const { return("threshold-openlevel-%,threshold-closelevel-%,rms-enabled"); }
+  std::string parameter_names(void) const { return("threshold-openlevel-%,threshold-closelevel-%,rms-enabled"); }
 
   void analyze(SAMPLE_BUFFER* insample);
 

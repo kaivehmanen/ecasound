@@ -1,5 +1,5 @@
-#ifndef _TWO_STAGE_LINEAR_ENVELOPE_H
-#define _TWO_STAGE_LINEAR_ENVELOPE_H
+#ifndef INCLUDE_TWO_STAGE_LINEAR_ENVELOPE_H
+#define INCLUDE_TWO_STAGE_LINEAR_ENVELOPE_H
 
 #include <string>
 
@@ -12,12 +12,12 @@ class TWO_STAGE_LINEAR_ENVELOPE : public FINITE_ENVELOPE {
 
  public:
 
-  string name(void) const { return("Two-stage linear envelope"); }
+  std::string name(void) const { return("Two-stage linear envelope"); }
   parameter_type value(void);
 
   void init(parameter_type step);
 
-  string parameter_names(void) const { return("1st_stage_sec,2nd_stage_sec,mid_level_%"); }
+  std::string parameter_names(void) const { return("1st_stage_sec,2nd_stage_sec,mid_level_%"); }
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
 

@@ -43,17 +43,17 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
   /** @name Reimplemented functions from ECA_OBJECT */
   /*@{*/
 
-  virtual string name(void) const { return(string("Buffering proxy => ") + child_repp->name()); }
-  virtual string description(void) const { return(child_repp->description()); }
+  virtual std::string name(void) const { return(string("Buffering proxy => ") + child_repp->name()); }
+  virtual std::string description(void) const { return(child_repp->description()); }
 
   /*@}*/
 
   /** @name Reimplemented functions from DYNAMIC_PARAMETERS<string> */
   /*@{*/
 
-  virtual string parameter_names(void) const { return(child_repp->parameter_names()); }
-  virtual void set_parameter(int param, string value) { child_repp->set_parameter(param,value); }
-  virtual string get_parameter(int param) const { return(child_repp->get_parameter(param)); }
+  virtual std::string parameter_names(void) const { return(child_repp->parameter_names()); }
+  virtual void set_parameter(int param, std::string value) { child_repp->set_parameter(param,value); }
+  virtual std::string get_parameter(int param) const { return(child_repp->get_parameter(param)); }
 
   /*@}*/
 

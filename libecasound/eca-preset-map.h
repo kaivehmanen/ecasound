@@ -29,7 +29,7 @@ class ECA_PRESET_MAP : public ECA_OBJECT_MAP {
   virtual void unregister_object(const std::string& keyword);
   virtual const std::map<std::string,std::string>& registered_objects(void) const;
   virtual ECA_OBJECT* object(const std::string& keyword, bool use_regexp = false) const;
-  virtual string object_identifier(const PRESET* object) const;
+  virtual std::string object_identifier(const PRESET* object) const;
   virtual void flush(void);
 
   ECA_PRESET_MAP(void);

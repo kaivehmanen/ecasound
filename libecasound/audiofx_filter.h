@@ -73,8 +73,8 @@ private:
 
 public:
   
-  virtual string name(void) const { return("Bandpass filter"); }
-  virtual string parameter_names(void) const { return("center-freq,width"); }
+  virtual std::string name(void) const { return("Bandpass filter"); }
+  virtual std::string parameter_names(void) const { return("center-freq,width"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -102,8 +102,8 @@ private:
 
 public:
 
-  virtual string name(void) const { return("Bandreject filter"); }
-  virtual string parameter_names(void) const { return("center-freq,width"); }
+  virtual std::string name(void) const { return("Bandreject filter"); }
+  virtual std::string parameter_names(void) const { return("center-freq,width"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -128,8 +128,8 @@ class EFFECT_HIGHPASS : public EFFECT_BW_FILTER {
     
 public:
     
-  virtual string name(void) const { return("Highpass filter"); }
-  virtual string parameter_names(void) const { return("cutoff-freq"); }
+  virtual std::string name(void) const { return("Highpass filter"); }
+  virtual std::string parameter_names(void) const { return("cutoff-freq"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -152,8 +152,8 @@ class EFFECT_ALLPASS_FILTER : public EFFECT_FILTER {
 
 public:
 
-  virtual string name(void) const { return("Allpass filter"); }
-  virtual string parameter_names(void) const { return("delay-samples,feedback-%"); }
+  virtual std::string name(void) const { return("Allpass filter"); }
+  virtual std::string parameter_names(void) const { return("delay-samples,feedback-%"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -184,8 +184,8 @@ class EFFECT_COMB_FILTER : public EFFECT_FILTER {
 
 public:
 
-  virtual string name(void) const { return("Comb filter"); }
-  virtual string parameter_names(void) const { return("delay-samples,radius"); }
+  virtual std::string name(void) const { return("Comb filter"); }
+  virtual std::string parameter_names(void) const { return("delay-samples,radius"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -216,8 +216,8 @@ class EFFECT_INVERSE_COMB_FILTER : public EFFECT_FILTER {
 
 public:
 
-  virtual string name(void) const { return("Inverse comb filter"); }
-  virtual string parameter_names(void) const { return("delay-samples,radius"); }
+  virtual std::string name(void) const { return("Inverse comb filter"); }
+  virtual std::string parameter_names(void) const { return("delay-samples,radius"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -246,8 +246,8 @@ private:
 
 public:
 
-  virtual string name(void) const { return("Lowpass filter"); }
-  virtual string parameter_names(void) const { return("cutoff-freq"); }
+  virtual std::string name(void) const { return("Lowpass filter"); }
+  virtual std::string parameter_names(void) const { return("cutoff-freq"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -281,8 +281,8 @@ private:
 
 public:
 
-  virtual string name(void) const { return("Simple lowpass filter"); }
-  virtual string parameter_names(void) const { return("cutoff-freq"); }
+  virtual std::string name(void) const { return("Simple lowpass filter"); }
+  virtual std::string parameter_names(void) const { return("cutoff-freq"); }
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
@@ -314,8 +314,8 @@ private:
 
 public:
 
-  virtual string name(void) const { return("Resonant bandpass filter"); }
-  virtual string parameter_names(void) const { return("center-freq,width"); }
+  virtual std::string name(void) const { return("Resonant bandpass filter"); }
+  virtual std::string parameter_names(void) const { return("center-freq,width"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -366,8 +366,8 @@ class EFFECT_RESONANT_LOWPASS : public EFFECT_FILTER {
 
 public:
 
-  virtual string name(void) const { return("Resonant lowpass filter"); }
-  virtual string parameter_names(void) const { return("cutoff-freq,resonance,gain"); }
+  virtual std::string name(void) const { return("Resonant lowpass filter"); }
+  virtual std::string parameter_names(void) const { return("cutoff-freq,resonance,gain"); }
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
