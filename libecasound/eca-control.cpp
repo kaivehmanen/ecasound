@@ -1107,6 +1107,8 @@ void ECA_CONTROL::operator_descriptions_helper(const ECA_OBJECT_MAP& arg, string
     string temp;
     const OPERATOR* q = dynamic_cast<const OPERATOR*>(arg.object(*p));
     if (q != 0) {
+      /* FIXME: prefer backslash escaped over '_' to handle commas */
+      
       /* 1. keyword */
       *result += kvu_string_search_and_replace(*p, ',', '_');
       /* 2. name */
