@@ -310,6 +310,21 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void) {
     active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_auto;
   }
   
+  if (!(multitrack_mode_override_rep == true && 
+	multitrack_mode_rep != true) && 
+      ((multitrack_mode_override_rep == true && 
+	multitrack_mode_rep == true) ||
+       (number_of_realtime_inputs() > 0 && 
+	number_of_realtime_outputs() > 0 &&
+	number_of_non_realtime_inputs() > 0 && 
+	number_of_non_realtime_outputs() > 0 &&
+	chains.size() > 1))) {
+    ecadebug->msg("(eca-chainsetup) Multitrack-mode enabled.");
+    multitrack_mode_rep = true;
+  }
+  else
+    multitrack_mode_rep = false;
+  
   if (buffering_mode() == ECA_CHAINSETUP::cs_bmode_auto) {
 
     /* initialize to 'nonrt', mt-disabled */
@@ -317,17 +332,7 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void) {
 
     if (has_realtime_objects() == true) {
       /* case 1: a multitrack setup */
-      if (!(multitrack_mode_override_rep == true && 
-	      multitrack_mode_rep != true) && 
-	  ((multitrack_mode_override_rep == true && 
-	    multitrack_mode_rep == true) ||
-	   (number_of_realtime_inputs() > 0 && 
-	    number_of_realtime_outputs() > 0 &&
-	    number_of_non_realtime_inputs() > 0 && 
-	    number_of_non_realtime_outputs() > 0 &&
-	    chains.size() > 1))) {
-	ecadebug->msg("(eca-chainsetup) Multitrack-mode enabled.");
-	multitrack_mode_rep = true;
+      if (multitrack_mode_rep == true) {
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
 	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection case-1");
       }
