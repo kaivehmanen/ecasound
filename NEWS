@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 150203) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 160203) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,6 +13,12 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+??032003 (v2.2.2)  -** stable release **-
+	- fixed: libecasound sample conversion unit test failed when 
+		 compiled with gcc-2.91.66 on certain platforms
+	- fixed: compile failed on systems that don't have nanosleep()
+	- fixed: subtle bug in -kl and -kl2 (and possibly others) 
+		 with fade lengths under 1s
 15022003 (v2.2.1)  -** stable release **-
 	- added: sane default param hints for chainops: -ec, -etd,
 		 -ete, -etf, -etl, -etm, -etp, -etr and -epp
