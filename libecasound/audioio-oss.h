@@ -2,6 +2,8 @@
 #define INCLUDED_AUDIOIO_OSS_H
 
 #include <string>
+#include <iostream>
+
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
@@ -21,7 +23,6 @@
 #endif
 #ifndef AFMT_S32_BE
 #define AFMT_S32_BE              0x00002000
-#endif
 #endif
 
 /**
@@ -74,4 +75,5 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 
 };
 
+#endif /* COMPILE_OSS */
 #endif
