@@ -404,7 +404,11 @@ void ecasound_init_readline_support(void)
   rl_readline_name = "ecasound";
 
   /* we want to attempt completion first */
+#if RL_READLINE_VERSION >= 0x0402
+  rl_attempted_completion_function = (rl_completion_func_t*)ecasound_completion;
+#else
   rl_attempted_completion_function = (CPPFunction *)ecasound_completion;
+#endif
 }
 
 /**
@@ -414,16 +418,24 @@ void ecasound_init_readline_support(void)
  * in case we want to do some simple parsing.  Return the array of matches,
  * or NULL if there aren't any.
  */
+#if RL_READLINE_VERSION >= 0x0402
+char** ecasound_completion (const char *text, int start, int end)
+#else
 char** ecasound_completion (char *text, int start, int end)
+#endif
 {
   char **matches;
   matches = (char **)NULL;
 
   /* complete only the first command, otherwise complete files in 
    * the current directory */
-  if (start == 0)
+  if (start == 0) {
+#if RL_READLINE_VERSION >= 0x0402
+    matches = rl_completion_matches (text, (rl_compentry_func_t *)ecasound_command_generator);
+#else
     matches = completion_matches (text, (CPFunction *)ecasound_command_generator);
-
+#endif
+  }
   return (matches);
 }
 
@@ -432,7 +444,11 @@ char** ecasound_completion (char *text, int start, int end)
  * to start from scratch; without any state (i.e. STATE == 0), then we
  * start at the top of the list.
  */
+#if RL_READLINE_VERSION >= 0x0402
+char* ecasound_command_generator (const char* text, int state)
+#else
 char* ecasound_command_generator (char* text, int state)
+#endif
 {
   static int list_index, len;
   static const std::map<std::string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
