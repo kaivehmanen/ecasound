@@ -32,7 +32,8 @@
 /**
  * Constructor.
  */
-AUDIO_IO_REVERSE::AUDIO_IO_REVERSE (void) { 
+AUDIO_IO_REVERSE::AUDIO_IO_REVERSE (void)
+{
   
   child_repp = new NULLFILE("uninitialized");
   tempbuf_repp = new SAMPLE_BUFFER();
@@ -43,11 +44,13 @@ AUDIO_IO_REVERSE::AUDIO_IO_REVERSE (void) {
 /**
  * Destructor.
  */
-AUDIO_IO_REVERSE::~AUDIO_IO_REVERSE (void) { 
+AUDIO_IO_REVERSE::~AUDIO_IO_REVERSE (void)
+{
   delete child_repp; // either null or the actual child object
 }
 
-void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&) { 
+void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
+{
 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-reverse) open " + label() + ".");  
 
@@ -110,11 +113,13 @@ bool AUDIO_IO_REVERSE::finished(void) const
   return(finished_rep);
 }
 
-string AUDIO_IO_REVERSE::parameter_names(void) const { 
-  return(string("reverse,audio_object,") + child_repp->parameter_names()); 
+string AUDIO_IO_REVERSE::parameter_names(void) const
+{
+  return(string("reverse,") + child_repp->parameter_names()); 
 }
 
-void AUDIO_IO_REVERSE::set_parameter(int param, string value) { 
+void AUDIO_IO_REVERSE::set_parameter(int param, string value)
+{
 
   ecadebug->msg(ECA_DEBUG::user_objects, 
 		"(audioio-reverse) set_parameter " + label() + ".");  
@@ -131,7 +136,8 @@ void AUDIO_IO_REVERSE::set_parameter(int param, string value) {
   }
 }
 
-string AUDIO_IO_REVERSE::get_parameter(int param) const {
+string AUDIO_IO_REVERSE::get_parameter(int param) const
+{
 
   ecadebug->msg(ECA_DEBUG::user_objects, 
 		"(audioio-reverse) get_parameter " + label() + ".");

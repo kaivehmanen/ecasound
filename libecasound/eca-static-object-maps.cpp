@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-static-object-maps.h: Static object map instances
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -377,7 +377,6 @@ static void register_internal_audioio_plugin(const string& libdir,
 		      kvu_numtostr(ecasound_library_version_current) + "." +
 		      kvu_numtostr(ecasound_library_version_revision) + "." +
 		      kvu_numtostr(ecasound_library_version_age) + ".");
-	return;
       }
       else {
 	desc_func = (audio_io_descriptor)dlsym(plugin_handle, "audio_io_descriptor");
@@ -392,6 +391,14 @@ static void register_internal_audioio_plugin(const string& libdir,
 	}
       }
     }
+    else {
+      // std::cerr << "(eca-static-object-maps) dlsym() failed; " << file;
+      // std::cerr << ": \"" << dlerror() << "\"." << std::endl;
+    }
+  }
+  else {
+    // std::cerr << "(eca-static-object-maps) dlopen() failed; " << file;
+    // std::cerr << ": \"" << dlerror() << "\"." << std::endl;
   }
 
   if (plugin_handle == 0 ||
@@ -401,10 +408,7 @@ static void register_internal_audioio_plugin(const string& libdir,
       desc_func == 0) {
     ecadebug->msg(ECA_DEBUG::user_objects, 
 		  "(eca-static-object-maps) Opening internal plugin file \"" + 
-		  file + 
-		  "\" failed, because: \"" + 
-		  dlerror() +
-		  "\"");
+		  file + "\" failed.");
   }
 }
 
