@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 110403) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 270403) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,10 +13,12 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??042003 (v2.2.3)  -** stable release **-
+27042003 (v2.2.3)  -** stable release **-
 	- added: support for both -0.64 and 0.65- JACK versions; 
 		 transport functionality is only enabled with the 
 		 newer versions
+	- added: automatic query of child object sample rate by 
+		 giving 'auto' as 2nd arg to resample object
 	- changed: by default python version of ECI is used; the C 
 		   python module for ECI, pyecasound, is only compiled
 		   if --enable-pyecasound is specified

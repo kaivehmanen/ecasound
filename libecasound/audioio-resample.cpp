@@ -68,6 +68,10 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 	tmp = ECA_OBJECT_FACTORY::create_audio_object(type);
       }
     }
+
+    /* FIXME: add check for real-time devices, resample does _not_
+     *        work with them (rt API not proxied properly)
+     */
     
     if (tmp != 0) {
       set_child(tmp);
