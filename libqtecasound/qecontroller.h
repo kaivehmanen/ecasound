@@ -2,17 +2,21 @@
 #define _QECONTROLLER_H
 
 #include <qwidget.h>
-
-#include "eca-chainop.h"
-#include "samplebuffer.h"
+#include "qelibraryobject.h"
+#include "ctrl-source.h"
 
 class QEController : public QWidget,
-		     public QElibraryObject,
+		     public QELibraryObject,
 		     public CONTROLLER_SOURCE {
   Q_OBJECT
+
  public:
 
-  QEController (QWidget *parent = 0, const char *name = 0);
+  /**
+   * Class constructor
+   */
+  QEController (QWidget *parent = 0, const char *name = 0) 
+    : QWidget(parent, name) { }
 };
 
 #endif

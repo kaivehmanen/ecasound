@@ -40,12 +40,12 @@ class QEFilenameInput : public QEInput {
   const string& current_dir(void) const { return(current_dir_rep); }
 
   /**
-   * Set initial filename
+   * Sets the initial file name
    */
   void set_filename(const string& name) { filenameinput->setText(name.c_str()); }
 
   /**
-   * Set starting directory for browsing
+   * Sets the starting directory for browsing
    */
   void set_current_dir(const string& newpath) { current_dir_rep = newpath; }
 
@@ -54,7 +54,7 @@ public slots:
   void button_browse(void);
 
   /** 
-   * Fetch result data from widgets
+   * Fetches result data from widgets
    */
  virtual void update_results(void) { }
 
@@ -71,6 +71,9 @@ signals:
 
  private:
 
+  /**
+   * Creates and initializes widget layout
+   */
   void init_layout(void);
 
   QBoxLayout* filename;

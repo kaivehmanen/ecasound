@@ -74,7 +74,7 @@ qt_libraries = @qt_libraries@
 @INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
 @INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
 
-INCLUDES = -I. -I$(qt_includes) -I$(all_includes)
+INCLUDES = -I$(srcdir) -I$(qt_includes) -I$(all_includes)
 @INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecawave_debug
 @INCLUDE_DEBUG_FALSE@bin_PROGRAMS = ecawave
 

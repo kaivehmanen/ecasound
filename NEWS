@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 260400) **
+** ecasound - user visible changes (NEWS)      (last edited: 030500) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -12,8 +12,14 @@ About the version numbers... "vx.y.zRt" :
 
 -----------------------------------------------------------------------
 
-Last officially released version is -*> v1.6.12r10 <*-
+Last officially released version is -*> v1.7.7r11 <*-
 
+03052000 (v1.7.7r11)  -** public release **-
+	- added: --version and --help command-line options (for GNU 
+		 compliance)
+	- changed: documentation updates
+	- fixed: some compile-time problems
+	- fixed: chain-muting wasn't working properly
 26042000 (v1.7.6d11)
 	- added: new input/output device 'alsaplugin' - similar to 
 		 normal ALSA pcm-devices, but uses the pcm-plugin 

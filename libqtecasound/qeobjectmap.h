@@ -15,8 +15,16 @@ class QEObjectMap : public QEInput {
   Q_OBJECT
  public:
 
+  /**
+   * Class constructor
+   */
   QEObjectMap (ECA_OBJECT_MAP* omap, QWidget *parent = 0, const char *name = 0);
+
+  /**
+   * Returns the currently selected object
+   */
   ECA_OBJECT* result(void) const { return(object_rep); }
+
   virtual bool class_invariant(void) const { return(omap_rep != 0); }
 
 public slots:
@@ -41,6 +49,9 @@ private slots:
   ECA_OBJECT* object_rep;
   int selected_index;
 
+  /**
+   * Creates and initializes widget layout
+   */
   void init_layout(void);
 };
 

@@ -25,12 +25,12 @@ class GENERIC_CONTROLLER : public OPERATOR,
 
   typedef SAMPLE_SPECS::sample_type parameter_type;
 
-  string name(void) const { return(source->name()); }
+  virtual string name(void) const { return(source->name()); }
   string status(void) const;
 
-  string parameter_names(void) const { return("param-id,range-low,range-high," +  source->parameter_names()); }
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual string parameter_names(void) const { return("param-id,range-low,range-high," +  source->parameter_names()); }
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
   void assign_target(OPERATOR* obj) { target  = obj; }
   void assign_source(CONTROLLER_SOURCE* obj) { source = obj; }
@@ -38,7 +38,7 @@ class GENERIC_CONTROLLER : public OPERATOR,
   OPERATOR* target_pointer(void) const { return(target); }
 
   /**
-   * Initialize controller source
+   * Initializes the controller source
    */
   void init(parameter_type phase_step) { source->init(phase_step); }
 

@@ -63,6 +63,7 @@
 #include <ecasound/audiofx_compressor.h>
 #include <ecasound/qeokcancelinput.h>
 #include <ecasound/qeoperatorconfiguration.h>
+#include <ecasound/qeslider.h>
 
 void QESession::show_event(void) {
   //  ALSA_PCM2_DEVICE alsa (0,0); QWidget* widget1 = new QEAudioObjectConfiguration(&alsa, 0, "test1");
@@ -70,7 +71,8 @@ void QESession::show_event(void) {
   //  QWidget* widget2 = new QEChainOperatorInput(0, "test2");
   //  QWidget* widget4 = new QEObjectMap(&eca_chain_operator_map, 0, "test4");
   //  ADVANCED_COMPRESSOR cop; QWidget* widget6 = new QEOperatorConfiguration(&cop, 0, "test6");
-  //  widget1->show();
+  QWidget* widget = new QESlider(0, "test4");
+  widget->show();
 }
 
 QESession::QESession (const string& filename, 

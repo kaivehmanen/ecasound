@@ -35,6 +35,7 @@
 #include <eca-version.h>
 #include <eca-debug.h>
 #include <eca-error.h>
+#include <eca-comhelp.h>
 
 #include <curses.h>
 #include <term.h>
@@ -71,6 +72,7 @@ int main(int argc, char *argv[])
 
   try {
     COMMAND_LINE cline = COMMAND_LINE (argc, argv);
+    parse_command_line(cline);
 
     if (cline.has("-o:stdout") ||
 	cline.has("stdout") || 
@@ -84,8 +86,10 @@ int main(int argc, char *argv[])
     global_pointer_to_ecaparams = ecaparams;  // used only for signal handling! 
     if (ecaparams->is_interactive()) start_iactive_readline(ecaparams);
     else {
-      ECA_PROCESSOR epros (ecaparams);
-      epros.exec();
+      if (ecaparams->is_selected_chainsetup_connected() == true) {
+	ECA_PROCESSOR epros (ecaparams);
+	epros.exec();
+      }
     }
   }
   catch(ECA_ERROR* e) {
@@ -115,6 +119,31 @@ int main(int argc, char *argv[])
   ecadebug->flush();
     
   return(0); // everything ok!
+}
+
+void parse_command_line(COMMAND_LINE& cline) {
+  if (cline.size() < 2) {
+    // No parameters, let's give some help.
+    cout << ecasound_parameter_help();
+    exit(0);
+  }
+  
+  cline.begin();
+  while(cline.end() == false) {
+    if (cline.current() == "--version") {
+      cout << "ecasound v" << ecasound_library_version << endl;
+      cout << "Copyright (C) 1997-2000 Kai Vehmanen" << endl;
+      cout << "Ecasound comes with ABSOLUTELY NO WARRANTY." << endl;
+      cout << "You may redistribute copies of ecasound under the terms of the GNU General Public License." << endl; 
+      cout << "For more information about these matters, see the file named COPYING." << endl;
+      exit(0);
+    }
+    else if (cline.current() == "--help") {
+      cout << ecasound_parameter_help();
+      exit(0);
+    }
+    cline.next();
+  }
 }
 
 void signal_handler(int signum) {

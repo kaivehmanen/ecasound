@@ -20,12 +20,19 @@
 #include <qapplication.h>
 
 #include <kvutils/definition_by_contract.h>
+#include <kvutils/com_line.h>
 #include <ecasound/eca-error.h>
+#include <ecasound/eca-version.h>
 
+#include "version.h"
+#include "ecawave.h"
 #include "qesession.h"
 
 int main(int argc, char **argv) {
   try {
+    COMMAND_LINE cline = COMMAND_LINE (argc, argv);
+    parse_command_line(cline);
+
     QApplication qapp (argc, argv);
     string param;
     if (argc > 1) param = string(argv[1]);
@@ -45,5 +52,32 @@ int main(int argc, char **argv) {
   }
   catch(...) {
     cerr << "---\nCaught an unknown exception!\n";
+  }
+}
+
+void parse_command_line(COMMAND_LINE& cline) {
+  cline.begin();
+  while(cline.end() == false) {
+    if (cline.current() == "--version") {
+      cout << "ecawave "
+	   << ecawave_version
+	   << " ["
+	   << ecasound_library_version
+	   << "]" << endl;
+      cout << "Copyright (C) 1999-2000 Kai Vehmanen" << endl;
+      cout << "Ecawave comes with ABSOLUTELY NO WARRANTY." << endl;
+      cout << "You may redistribute copies of ecawave under the terms of the GNU General Public License." << endl; 
+      cout << "For more information about these matters, see the file named COPYING." << endl;
+      exit(0);
+    }
+    else if (cline.current() == "--help") {
+	cout << "USAGE: ecawave [options] filename\n" 
+	     << "    --version   print version info" << endl
+	     << "    --help      show this help" << endl << endl;
+	cout << "For a more detailed documentation, see ecawave(1) man  page." << endl;
+	cout << "Report bugs to <k@eca.cx>." << endl;
+	exit(0);
+      }
+    cline.next();
   }
 }

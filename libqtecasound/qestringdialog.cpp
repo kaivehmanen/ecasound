@@ -41,7 +41,7 @@ QEStringDialog::QEStringDialog (const QString& prompt, QWidget *parent, const ch
   tekstirivi->setMinimumSize(300,0);
   textinput->addWidget( tekstirivi);
   
-  QObject::connect(tekstirivi, SIGNAL(returnPressed ()), this, SLOT(input_given()) );
+  QObject::connect(tekstirivi, SIGNAL(returnPressed ()), this, SLOT(update_results()) );
 
   QBoxLayout* buttons = new QHBoxLayout();
 
@@ -52,7 +52,7 @@ QEStringDialog::QEStringDialog (const QString& prompt, QWidget *parent, const ch
   cancel = new QPushButton( "(C)ancel", this );
   buttons->addWidget(cancel);
 
-  QObject::connect( ok, SIGNAL(clicked()), SLOT(input_given()) );
+  QObject::connect( ok, SIGNAL(clicked()), SLOT(update_results()) );
   QObject::connect( cancel, SIGNAL(clicked()), SLOT(reject()) );    
 
   topLayout->addLayout(textinput, 0);
@@ -62,10 +62,10 @@ QEStringDialog::QEStringDialog (const QString& prompt, QWidget *parent, const ch
   a->connectItem(a->insertItem(CTRL+Key_C), this,
 		 SLOT(reject()));
   a->connectItem(a->insertItem(CTRL+Key_O), this,
-		 SLOT(input_given()));
+		 SLOT(update_results()));
 }
 
-void QEStringDialog::input_given(void) {
+void QEStringDialog::update_results(void) {
   input_text = tekstirivi->text();
   accept();
 }
@@ -79,7 +79,7 @@ void QEStringDialog::keyPressEvent(QKeyEvent* kevent) {
     }
   case 'o': 
     {
-      input_given();
+      update_results();
       break;
     }
   }

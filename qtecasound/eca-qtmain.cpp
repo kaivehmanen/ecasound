@@ -22,12 +22,15 @@
 #include <signal.h>
 
 #include <kvutils.h>
+#include <kvutils/com_line.h>
 
 #include "eca-debug.h"
 #include "eca-error.h"
 #include "eca-main.h"
 #include "eca-session.h"
 #include "eca-controller.h"
+#include "eca-comhelp.h"
+#include "eca-version.h"
 
 #include "eca-qtinte.h"
 #include "eca-qtmain.h"
@@ -46,12 +49,13 @@ int main( int argc, char **argv )
   ECA_SESSION* param = 0;
 
   try {
+    COMMAND_LINE cline = COMMAND_LINE (argc, argv);
+    parse_command_line(cline);
+
     QApplication a (argc, argv);
     attach_debug_object(&qtdebug_if);  
     ecadebug->set_debug_level(ECA_DEBUG::info |
 			      ECA_DEBUG::module_flow);
-
-    COMMAND_LINE cline = COMMAND_LINE (argc, argv);
 
     if (cline.has("-o:stdout") ||
 	cline.has("stdout") || 
@@ -116,4 +120,23 @@ void signal_handler(int signum) {
   remove(ecasound_lockfile.c_str());
 
   exit(1);
+}
+
+void parse_command_line(COMMAND_LINE& cline) {
+  cline.begin();
+  while(cline.end() == false) {
+    if (cline.current() == "--version") {
+      cout << "qtecasound v" << ecasound_library_version << endl;
+      cout << "Copyright (C) 1997-2000 Kai Vehmanen" << endl;
+      cout << "Qtecasound comes with ABSOLUTELY NO WARRANTY." << endl;
+      cout << "You may redistribute copies of qtecasound under the terms of the GNU General Public License." << endl; 
+      cout << "For more information about these matters, see the file named COPYING." << endl;
+      exit(0);
+    }
+    else if (cline.current() == "--help") {
+      cout << ecasound_parameter_help();
+      exit(0);
+    }
+    cline.next();
+  }
 }

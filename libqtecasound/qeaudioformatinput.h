@@ -22,12 +22,12 @@ public slots:
   /**
    * Enables/activates the inputs
    */
-  void enable(void);
-
+   virtual void enable(void);
+ 
   /**
    * Disables the inputs (user can't change)
    */
-  void disable(void);
+  virtual void disable(void);
 
   /** 
    * Fetch result data from widgets
@@ -36,6 +36,9 @@ public slots:
 
  private:
 
+  /**
+   * Creates and initializes widget layout
+   */
   void init_layout(void);
 
   QSpinBox* bits_input;

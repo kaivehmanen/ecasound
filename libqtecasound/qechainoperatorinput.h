@@ -25,6 +25,10 @@ class QEChainOperatorInput : public QEInput {
  public:
 
   QEChainOperatorInput (QWidget *parent = 0, const char *name = 0);
+
+  /**
+   * Returns the resulting chain operator object instance
+   */
   CHAIN_OPERATOR* result(void) const { return(chainop_rep); }
 
 public slots:
@@ -47,6 +51,9 @@ private slots:
   vector<QLineEdit*> inputlist; 
   int selected_index;
 
+  /**
+   * Creates and initializes widget layout
+   */
   void init_layout(void);
 };
 

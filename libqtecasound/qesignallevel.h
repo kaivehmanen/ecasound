@@ -7,6 +7,9 @@
 
 #include "qechainoperator.h"
 
+/**
+ * Widget for volume/signal level monitoring
+ */
 class QESignalLevel : public QEChainOperator {
   Q_OBJECT
 

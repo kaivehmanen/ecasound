@@ -107,7 +107,7 @@ void QEChainopEvent::process(void) {
 void QEChainopEvent::init_layout(void) {
   QBoxLayout* top = new QVBoxLayout(this);
 
-  copinput = new QEChainOperatorInput(this); 
+  copinput = new QEChainOperatorInput(this, "qechainop"); 
   top->addWidget(copinput);
 
   top->addSpacing(10);

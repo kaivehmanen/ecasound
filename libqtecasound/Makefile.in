@@ -85,7 +85,7 @@ qt_libraries = @qt_libraries@
 @INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
 @INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
 
-INCLUDES = -I. -I$(top_srcdir)/kvutils 		-I$(top_srcdir)/libecasound/include 		-I$(top_srcdir)/libqtecasound 		-I$(qt_includes) -I$(all_includes)
+INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils 		-I$(top_srcdir)/libecasound/include 		-I$(top_srcdir)/libqtecasound 		-I$(qt_includes) -I$(all_includes)
 
 @INCLUDE_DEBUG_TRUE@libqtecasound_ldflags = -version-info 0:0:0 -lkvutils
 @INCLUDE_DEBUG_FALSE@libqtecasound_ldflags = -s -version-info 0:0:0 -lkvutils
@@ -101,18 +101,20 @@ libqtecasound_general_include = qebuttonrow.h 				qestringdialog.h
 libqtecasound_general_moc = qestringdialog_moc.cpp 				qebuttonrow_moc.cpp			 
 
 
-libqtecasound_lobjects_src = qesignallevel.cpp
-libqtecasound_lobjects_include = qelibraryobject.h 				qechainoperator.h 				qecontroller.h 				qesignallevel.h
+libqtecasound_lobjects_src = qesignallevel.cpp 				qeslider.cpp
 
-libqtecasound_lobjects_moc = qesignallevel_moc.cpp
+libqtecasound_lobjects_include = qelibraryobject.h 				qechainoperator.h 				qecontroller.h 				qesignallevel.h 				qeslider.h
 
-libqtecasound_inputs_src = qeinput.cpp 				qefilenameinput.cpp 				qeokcancelinput.cpp 				qeaudioformatinput.cpp 				qechainoperatorinput.cpp 				qeobjectmap.cpp 				qeoperatorconfiguration.cpp 				qeaudioobjectconfiguration.cpp
+libqtecasound_lobjects_moc = qechainoperator_moc.cpp 				qecontroller_moc.cpp 				qesignallevel_moc.cpp 				qeslider_moc.cpp
+
+
+libqtecasound_inputs_src = qefilenameinput.cpp 				qeokcancelinput.cpp 				qeaudioformatinput.cpp 				qechainoperatorinput.cpp 				qeobjectmap.cpp 				qeoperatorconfiguration.cpp 				qeaudioobjectconfiguration.cpp
 
 libqtecasound_inputs_include = qeinput.h 				qefilenameinput.h 				qeokcancelinput.h 				qeaudioformatinput.h 				qechainoperatorinput.h 				qeobjectmap.h 				qeoperatorconfiguration.h 				qeaudioobjectconfiguration.h
 
 libqtecasound_inputs_moc = qeinput_moc.cpp 				qefilenameinput_moc.cpp 				qeokcancelinput_moc.cpp 				qeaudioformatinput_moc.cpp 				qechainoperatorinput_moc.cpp 				qeobjectmap_moc.cpp 				qeoperatorconfiguration_moc.cpp 				qeaudioobjectconfiguration_moc.cpp
 
-libqtecasound_dialogs_src = qedialog.cpp
+libqtecasound_dialogs_src = 
 libqtecasound_dialogs_include = qedialog.h
 libqtecasound_dialogs_moc = qedialog_moc.cpp
 
@@ -142,24 +144,26 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libqtecasound_debug_la_DEPENDENCIES = 
 libqtecasound_debug_la_OBJECTS =  qebuttonrow.lo qestringdialog.lo \
-qestringdialog_moc.lo qebuttonrow_moc.lo qesignallevel.lo \
-qesignallevel_moc.lo qeinput.lo qefilenameinput.lo qeokcancelinput.lo \
+qestringdialog_moc.lo qebuttonrow_moc.lo qesignallevel.lo qeslider.lo \
+qechainoperator_moc.lo qecontroller_moc.lo qesignallevel_moc.lo \
+qeslider_moc.lo qefilenameinput.lo qeokcancelinput.lo \
 qeaudioformatinput.lo qechainoperatorinput.lo qeobjectmap.lo \
 qeoperatorconfiguration.lo qeaudioobjectconfiguration.lo qeinput_moc.lo \
 qefilenameinput_moc.lo qeokcancelinput_moc.lo qeaudioformatinput_moc.lo \
 qechainoperatorinput_moc.lo qeobjectmap_moc.lo \
 qeoperatorconfiguration_moc.lo qeaudioobjectconfiguration_moc.lo \
-qedialog.lo qedialog_moc.lo
+qedialog_moc.lo
 libqtecasound_la_DEPENDENCIES = 
 libqtecasound_la_OBJECTS =  qebuttonrow.lo qestringdialog.lo \
-qestringdialog_moc.lo qebuttonrow_moc.lo qesignallevel.lo \
-qesignallevel_moc.lo qeinput.lo qefilenameinput.lo qeokcancelinput.lo \
+qestringdialog_moc.lo qebuttonrow_moc.lo qesignallevel.lo qeslider.lo \
+qechainoperator_moc.lo qecontroller_moc.lo qesignallevel_moc.lo \
+qeslider_moc.lo qefilenameinput.lo qeokcancelinput.lo \
 qeaudioformatinput.lo qechainoperatorinput.lo qeobjectmap.lo \
 qeoperatorconfiguration.lo qeaudioobjectconfiguration.lo qeinput_moc.lo \
 qefilenameinput_moc.lo qeokcancelinput_moc.lo qeaudioformatinput_moc.lo \
 qechainoperatorinput_moc.lo qeobjectmap_moc.lo \
 qeoperatorconfiguration_moc.lo qeaudioobjectconfiguration_moc.lo \
-qedialog.lo qedialog_moc.lo
+qedialog_moc.lo
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -177,14 +181,15 @@ GZIP_ENV = --best
 DEP_FILES =  .deps/qeaudioformatinput.P .deps/qeaudioformatinput_moc.P \
 .deps/qeaudioobjectconfiguration.P \
 .deps/qeaudioobjectconfiguration_moc.P .deps/qebuttonrow.P \
-.deps/qebuttonrow_moc.P .deps/qechainoperatorinput.P \
-.deps/qechainoperatorinput_moc.P .deps/qedialog.P .deps/qedialog_moc.P \
-.deps/qefilenameinput.P .deps/qefilenameinput_moc.P .deps/qeinput.P \
-.deps/qeinput_moc.P .deps/qeobjectmap.P .deps/qeobjectmap_moc.P \
-.deps/qeokcancelinput.P .deps/qeokcancelinput_moc.P \
-.deps/qeoperatorconfiguration.P .deps/qeoperatorconfiguration_moc.P \
-.deps/qesignallevel.P .deps/qesignallevel_moc.P .deps/qestringdialog.P \
-.deps/qestringdialog_moc.P
+.deps/qebuttonrow_moc.P .deps/qechainoperator_moc.P \
+.deps/qechainoperatorinput.P .deps/qechainoperatorinput_moc.P \
+.deps/qecontroller_moc.P .deps/qedialog_moc.P .deps/qefilenameinput.P \
+.deps/qefilenameinput_moc.P .deps/qeinput_moc.P .deps/qeobjectmap.P \
+.deps/qeobjectmap_moc.P .deps/qeokcancelinput.P \
+.deps/qeokcancelinput_moc.P .deps/qeoperatorconfiguration.P \
+.deps/qeoperatorconfiguration_moc.P .deps/qesignallevel.P \
+.deps/qesignallevel_moc.P .deps/qeslider.P .deps/qeslider_moc.P \
+.deps/qestringdialog.P .deps/qestringdialog_moc.P
 SOURCES = $(libqtecasound_debug_la_SOURCES) $(libqtecasound_la_SOURCES)
 OBJECTS = $(libqtecasound_debug_la_OBJECTS) $(libqtecasound_la_OBJECTS)
 
@@ -462,8 +467,14 @@ qebuttonrow_moc.cpp: $(srcdir)/qebuttonrow.h
 
 # ---
 # library objects:
+qechainoperator_moc.cpp: $(srcdir)/qechainoperator.h
+	$(MOC) -o qechainoperator_moc.cpp $(srcdir)/qechainoperator.h
+qecontroller_moc.cpp: $(srcdir)/qecontroller.h
+	$(MOC) -o qecontroller_moc.cpp $(srcdir)/qecontroller.h
 qesignallevel_moc.cpp: $(srcdir)/qesignallevel.h
 	$(MOC) -o qesignallevel_moc.cpp $(srcdir)/qesignallevel.h
+qeslider_moc.cpp: $(srcdir)/qeslider.h
+	$(MOC) -o qeslider_moc.cpp $(srcdir)/qeslider.h
 
 # ---
 # inputs:

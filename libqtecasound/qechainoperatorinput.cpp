@@ -27,8 +27,8 @@
 #include "eca-static-object-maps.h"
 
 #include "qeobjectmap.h"
-#include "qechainoperatorinput.h"
 #include "qeoperatorconfiguration.h"
+#include "qechainoperatorinput.h"
 
 QEChainOperatorInput::QEChainOperatorInput (QWidget *parent, const char *name) 
   : QEInput(parent, name) {
@@ -56,7 +56,7 @@ void QEChainOperatorInput::init_layout(void) {
 		   this, SLOT(operator_updated(const QString&)));
 
   chainop_rep = dynamic_cast<CHAIN_OPERATOR*>(omap_inputs[0]->result());
-  opconf = new QEOperatorConfiguration(chainop_rep, this);
+  opconf = new QEOperatorConfiguration(chainop_rep, this, "qeopconf");
   top->addWidget(opconf);
 }
 

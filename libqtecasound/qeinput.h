@@ -4,12 +4,18 @@
 #include <qwidget.h>
 #include <kvutils/definition_by_contract.h>
 
+/**
+ * A base class for libqtecasound input dialogs
+ */
 class QEInput : public QWidget,
 		public DEFINITION_BY_CONTRACT {
   Q_OBJECT
 public:
 
-  QEInput (QWidget *parent = 0, const char *name = 0);
+  /**
+   * Class constructor
+   */
+  QEInput (QWidget *parent = 0, const char *name = 0) : QWidget(parent, name) { }
 
 public slots:
 
@@ -17,12 +23,12 @@ public slots:
   /**
    * Enables/activates the inputs
    */
-  virtual void enable(void) { }
+  virtual void enable(void) { setEnabled(true); }
  
   /**
    * Disables the inputs
    */
-  virtual void disable(void) { }
+  virtual void disable(void) { setEnabled(false); }
 
   /** 
    * Fetch result data from widgets

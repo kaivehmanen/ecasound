@@ -29,6 +29,7 @@
 #include <kvutils/message_item.h>
 
 #include "eca-resources.h"
+#include "eca-version.h"
 
 #include "eca-chain.h"
 #include "audiofx.h"
@@ -83,21 +84,7 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*) {
 	throw;
     }
   }
-
   set_scheduling();
-
-  if (iactive == false) {
-    // These were added for convenience...
-    if (cline.size() < 2) {
-      // No parameters, let's give some help.
-      interpret_general_option("-h");
-    }
-    if (!is_selected_chainsetup_connected()) {
-      // Still no inputs? If not in interactive mode, there really isn't
-      // anything left to do.
-      throw(new ECA_ERROR("ECA_SESSION","Nothing to do!"));
-    }
-  }
 }
 
 void ECA_SESSION::set_defaults(void) {
@@ -327,9 +314,11 @@ void ECA_SESSION::interpret_general_option (const string& argu) {
   if (argu[0] != '-') return;
   switch(argu[1]) {
   case 'c':
-    iactive = true;
-    ecadebug->msg("(eca-session) Interactive mode enabled."); 
-    break;
+    {
+      iactive = true;
+      ecadebug->msg("(eca-session) Interactive mode enabled."); 
+      break;
+    }
 
   case 'd':
     {

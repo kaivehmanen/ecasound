@@ -66,8 +66,8 @@ void QECutEvent::start(void) {
   set_input_position(start_pos_rep + length_rep);
   set_default_audio_format(input_rep);
   set_length(0);
-  set_output(tmpfile);
   ectrl->set_chainsetup_output_mode(AUDIO_IO::io_readwrite);  
+  set_output(tmpfile);
   blocking_start();
 
   // copy temporary over the input file  

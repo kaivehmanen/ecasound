@@ -104,7 +104,6 @@ void ECA_CHAINSETUP::set_defaults(void) {
 
   ECA_RESOURCES ecaresources;
   set_buffersize(atoi(ecaresources.resource("default-buffersize").c_str()));
-
   set_sample_rate(atol(ecaresources.resource("default-samplerate").c_str()));
   
   toggle_double_buffering(ecaresources.boolean_resource("default-to-double-buffering"));

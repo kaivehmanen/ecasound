@@ -9,11 +9,25 @@
 
 class QWidget;
 
+/**
+ * A base class for libqtecasound dialog widgets
+ */
 class QEDialog : public QDialog {
   Q_OBJECT
+
+public slots:
+
+  /** 
+   * Fetch result data from widgets
+   */
+  virtual void update_results(void) = 0;
+
  public:
 
-  QEDialog (QWidget *parent = 0, const char *name = 0);
+  /**
+   * Class constructor
+   */
+  QEDialog (QWidget *parent = 0, const char *name = 0) : QDialog(parent, name, true) { }
 };
 
 #endif

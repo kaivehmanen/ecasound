@@ -110,5 +110,3 @@ void QESignalLevel::process(void) {
   unlock_object();
   //  cerr << "C2-2, rmsvolume_size:" << rms_volume[0].size() << ", samples: " << samples_processed << endl;
 }
-
-

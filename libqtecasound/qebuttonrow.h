@@ -19,6 +19,9 @@ class QEButtonRow : public QWidget, public DEFINITION_BY_CONTRACT {
 
  public:
 
+  /**
+   * Sets the default font for all QEButtonRow instances
+   */
   static void set_default_font(const QFont&);
 
  private:

@@ -12,12 +12,12 @@
 class QEChainOperator : public QWidget,
 			public QELibraryObject,
 			public CHAIN_OPERATOR {
+  Q_OBJECT
+
  public:
 
   QEChainOperator (QWidget *parent = 0, const char *name = 0) 
     : QWidget(parent, name) { }
-
- private:
 };
 
 #endif

@@ -7,7 +7,7 @@
 #include <qhbox.h>
 #include <qlineedit.h>
 
-#include <ecasound/eca-operator.h>
+#include "eca-operator.h"
 
 #include "qeinput.h"
 
@@ -23,13 +23,23 @@ class QEOperatorConfiguration : public QEInput {
   Q_OBJECT
  public:
 
+  /**
+   * Class constructor
+   */
   QEOperatorConfiguration (OPERATOR* op, QWidget *parent = 0, const char *name = 0);
 
+  /**
+   * Returns the resulting operator object instance
+   */
   OPERATOR* result(void) const { return(operator_rep); }
 
 public slots:
 
   virtual void update_results(void);
+
+  /** 
+   * Initilizes a new operator object
+   */
   void change_operator(OPERATOR* op);
 
  private:
@@ -43,6 +53,9 @@ public slots:
   QLabel* obj_name;
   QGroupBox* paramgroup;
 
+  /**
+   * Creates and initializes widget layout
+   */
   void init_layout(void);
 
  public:

@@ -4,7 +4,7 @@ else
 INSTALL_STRIP_FLAG = -s
 endif
 
-INCLUDES = -I. -I$(top_srcdir)/kvutils \
+INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils \
 		-I$(top_srcdir)/libecasound/include \
 		-I$(top_srcdir)/libqtecasound \
 		-I$(qt_includes) -I$(all_includes)
@@ -32,15 +32,19 @@ libqtecasound_general_include =	qebuttonrow.h \
 libqtecasound_general_moc =	qestringdialog_moc.cpp \
 				qebuttonrow_moc.cpp			 
 
-libqtecasound_lobjects_src = 	qesignallevel.cpp
+libqtecasound_lobjects_src = 	qesignallevel.cpp \
+				qeslider.cpp
 libqtecasound_lobjects_include=	qelibraryobject.h \
 				qechainoperator.h \
 				qecontroller.h \
-				qesignallevel.h
-libqtecasound_lobjects_moc =	qesignallevel_moc.cpp
+				qesignallevel.h \
+				qeslider.h
+libqtecasound_lobjects_moc =	qechainoperator_moc.cpp \
+				qecontroller_moc.cpp \
+				qesignallevel_moc.cpp \
+				qeslider_moc.cpp
 
-libqtecasound_inputs_src = 	qeinput.cpp \
-				qefilenameinput.cpp \
+libqtecasound_inputs_src = 	qefilenameinput.cpp \
 				qeokcancelinput.cpp \
 				qeaudioformatinput.cpp \
 				qechainoperatorinput.cpp \
@@ -63,7 +67,7 @@ libqtecasound_inputs_moc = 	qeinput_moc.cpp \
 				qeobjectmap_moc.cpp \
 				qeoperatorconfiguration_moc.cpp \
 				qeaudioobjectconfiguration_moc.cpp
-libqtecasound_dialogs_src = 	qedialog.cpp
+libqtecasound_dialogs_src = 	
 libqtecasound_dialogs_include = qedialog.h
 libqtecasound_dialogs_moc = 	qedialog_moc.cpp
 
@@ -108,8 +112,14 @@ qebuttonrow_moc.cpp: $(srcdir)/qebuttonrow.h
 
 # ---
 # library objects:
+qechainoperator_moc.cpp: $(srcdir)/qechainoperator.h
+	$(MOC) -o qechainoperator_moc.cpp $(srcdir)/qechainoperator.h
+qecontroller_moc.cpp: $(srcdir)/qecontroller.h
+	$(MOC) -o qecontroller_moc.cpp $(srcdir)/qecontroller.h
 qesignallevel_moc.cpp: $(srcdir)/qesignallevel.h
 	$(MOC) -o qesignallevel_moc.cpp $(srcdir)/qesignallevel.h
+qeslider_moc.cpp: $(srcdir)/qeslider.h
+	$(MOC) -o qeslider_moc.cpp $(srcdir)/qeslider.h
 
 # ---
 # inputs:

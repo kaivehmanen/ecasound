@@ -3,10 +3,10 @@ Prefix: /usr/local
 Packager: Kai Vehmanen <kaiv@wakkanet.fi>
 Distribution: Red Hat Contrib
 Name: ecasound
-Version: 1.7.6d11
+Version: 1.7.7r11
 Release: 1
 Copyright: GPL
-Source: http://ecasound.seul.org/download/ecasound-1.7.6d11.tar.gz
+Source: http://ecasound.seul.org/download/ecasound-1.7.7r11.tar.gz
 
 Summary: ecasound - multitrack audio processing tool
 Group: Applications/Sound
@@ -45,7 +45,7 @@ Requires: ecasound
 Qt-based X-interface to ecasound.
 
 %prep
-%setup -n ecasound-1.7.6d11
+%setup -n ecasound-1.7.7r11
 %build
 ./configure --prefix=$RPM_BUILD_ROOT%prefix --disable-static $extra_params
 make

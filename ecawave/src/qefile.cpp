@@ -175,7 +175,7 @@ void QEFile::init_layout(void) {
   buttonrow->add_button(new QPushButton("Redra(w)",buttonrow), 
 		       ALT+Key_W,
 		       this, SLOT(update_wave_form_data()));
-  top_layout->addWidget(buttonrow);
+  top_layout->addWidget(buttonrow, 0, Qt::AlignTop);
 }
 
 void QEFile::update_layout(void) {

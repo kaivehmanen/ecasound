@@ -6,8 +6,11 @@
 
 #include <eca-session.h>
 
+class COMMAND_LINE;
+
 void print_header(void);
 void signal_handler(int signum);
+void parse_command_line(COMMAND_LINE& cline);
 
 void start_iactive(ECA_SESSION* param);
 void start_iactive_readline(ECA_SESSION* param);

@@ -13,8 +13,15 @@ class QEOkCancelInput : public QEInput {
   Q_OBJECT
 
 public slots:
-
+    
+  /**
+   * Accepts the current result and exit the modal event loop
+   */
   void accept(void);
+
+  /**
+   * Rejects the current result and exit the modal event loop
+   */
   void reject(void);
 
   /** 
@@ -24,7 +31,14 @@ public slots:
    
 signals:
 
+  /**
+   * Emitted when result is accepted
+   */
   void ok(void);
+
+  /**
+   * Emitted when result is rejected
+   */
   void cancel(void);
 
  public:

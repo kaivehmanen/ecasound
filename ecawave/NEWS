@@ -14,6 +14,9 @@ About the version numbers... "vx.yRt" :
 
 Last officially released version is -*> v0.1.0r1 <*-
 
+??052000 (v0.2.2d2)
+	- added: --version and --help command-line options (for GNU 
+		 compliance)
 26042000 (v0.2.1d2)
 	- added: 'mark all' and 'redraw' buttons
 	- changed: new color scheme - hopefully looks better :)

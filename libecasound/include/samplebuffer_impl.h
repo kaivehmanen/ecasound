@@ -23,7 +23,6 @@ void SAMPLE_BUFFER_BASE<T>::make_silent(void) {
   for(int n = 0; n < channel_count_rep; n++) {
     for(long int s = 0; s < buffersize_rep; s++) {
       buffer[n][s] = SAMPLE_SPECS::silent_value;
-      ++s;
     }
   }
 }
@@ -37,7 +36,6 @@ void SAMPLE_BUFFER_BASE<T>::make_silent_range(long int start_pos,
   for(int n = 0; n < channel_count_rep; n++) {
     for(long int s = start_pos; s < end_pos && s < buffersize_rep; s++) {
       buffer[n][s] = SAMPLE_SPECS::silent_value;
-      ++s;
     }
   }
 }

@@ -5,6 +5,8 @@ const char* ecasound_parameter_help_rep =
 "     -c                       set interactive mode \n"
 "     -d:debug_level           show debug info \n"
 "     -q                       quiet mode, no output \n"
+"     --help                   show this help\n"
+"     --version                print version info\n"
 "     -s[:]file                load chainsetup from 'file' \n"
 " --- \n"
 "     -b:buffersize            size of sample buffer in samples \n"
@@ -72,7 +74,8 @@ const char* ecasound_parameter_help_rep =
 "     -kx                      use last specified controller as\n"
 "                              controller target\n"
 "\n"
-"See ecasound(1) man page for more accurate info.\n\n";
+"For a more detailed documentation, see ecasound(1) man page.\n"
+"Report bugs to <k@eca.cx>.\n";
 
 const char* ecasound_parameter_help(void) {
   return(ecasound_parameter_help_rep);

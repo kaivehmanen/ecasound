@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (14.04.2000)
+       (02.05.2000)
        ()
        (Multimedia software)
 
@@ -72,7 +72,13 @@ more detailed info about various debug_level values.
 
 dit(-q)
 Quiet mode, no output. Same as em(-d:0).
- 
+
+dit(--help)
+Show this help.
+
+dit(--version)
+Print version info.
+
 enddit()
 
 bf(CHAINSETUP OPTIONS)
@@ -196,7 +202,7 @@ are specified, the first non-option (doesn't start with '-') command
 line argument is considered to be an input.
 
 dit(-o[:]output-file-or-device)
-Works in the same way as the -i option. If no no outputs are specified,
+Works in the same way as the -i option. If no outputs are specified,
 the default output device is used (see &tilde;/.ecasoundrc). Note! 
 you can't output to module formats supported by MikMod (this should
 be obvious) nor to ALSA's loopback device.
@@ -403,12 +409,11 @@ startdit()
 
 dit(-erc:from-channel, to-channel)
 Copy channel 'from_channel' to 'to_channel'. If 'to_channel' 
-doesn't exist, it is created. Channel indexing is started from 0.
+doesn't exist, it is created. Channel indexing is started from 1.
 
 dit(-erm:to-channel)
 Mix all channels to channel 'to_channel'.  If 'to_channel' 
-doesn't exist, it is created. Channel indexing is started from 0.
-Channel indexing is started from 0.
+doesn't exist, it is created. Channel indexing is started from 1.
 
 enddit()
 
@@ -428,7 +433,7 @@ signal is mixed to the original.
 
 dit(-etf:delay-time-msec)
 Fake-stereo effect. The input signal is summed to mono. The
-original signal goes to the left channels while a delayd 
+original signal goes to the left channels while a delayed 
 version (with delay of 'delay time' milliseconds) is goes to
 the right. With a delay time of 1-40 milliseconds this 
 adds a stereo-feel to mono-signals. 
