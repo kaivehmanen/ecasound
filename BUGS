@@ -1,6 +1,17 @@
 -----------------------------------------------------------------------
-*** Ecasound - Known bugs/features                                  ***
+*** Ecasound - Known Bugs/Features                                  ***
 -----------------------------------------------------------------------
+
+-----------------------------------------------------------------------
+[ Ecasound Development Items - (edi-x) codes ]
+
+The Ecasound Development Item concept is used for keeping track of 
+bugs, open issues, enhancement proposals, and other similar issues.
+For a full list of EDI items, see 'Documentation/edi-list.txt' or
+on the web at http://www.eca.cx/ecasound -> 'EDIs' menu item.
+
+-----------------------------------------------------------------------
+[ Known Bugs and Features ]
 
 - pitch shifter (-ei) doesn't work with all real-time audio object
   types (for instance JACK)
