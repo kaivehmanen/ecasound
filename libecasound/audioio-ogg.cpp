@@ -27,8 +27,8 @@
 
 #include "eca-debug.h"
 
-string OGG_VORBIS_INTERFACE::default_ogg_input_cmd = "ogg123 -d wav -o file:%F %f";
-string OGG_VORBIS_INTERFACE::default_ogg_output_cmd = "vorbize --raw --write=%f -";
+string OGG_VORBIS_INTERFACE::default_ogg_input_cmd = "ogg123 -d raw --file=%F %f";
+string OGG_VORBIS_INTERFACE::default_ogg_output_cmd = "oggenc -b 128 --raw --output=%f -";
 
 void OGG_VORBIS_INTERFACE::set_ogg_input_cmd(const string& value) { OGG_VORBIS_INTERFACE::default_ogg_input_cmd = value; }
 void OGG_VORBIS_INTERFACE::set_ogg_output_cmd(const string& value) { OGG_VORBIS_INTERFACE::default_ogg_output_cmd = value; }
