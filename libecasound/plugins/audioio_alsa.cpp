@@ -389,8 +389,9 @@ long int AUDIO_IO_ALSA_PCM::read_samples(void* target_buffer,
     realsamples = snd_pcm_readi(audio_fd_repp, target_buffer,
 				buffersize());
     if (realsamples < 0) {
-      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state */
-      if (realsamples == -EPIPE || realsamples == -EIO) {
+      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state;
+       *       EPIPE=xrun, ESTRPIPE=xrun) */
+      if (realsamples == -EPIPE || realsamples == -ESTRPIPE || realsamples == -EIO) {
 	if (ignore_xruns() == true) {
 	  handle_xrun_capture();
 	  realsamples = snd_pcm_readi(audio_fd_repp, target_buffer,
@@ -418,8 +419,9 @@ long int AUDIO_IO_ALSA_PCM::read_samples(void* target_buffer,
     }
     realsamples = snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), buffersize());
     if (realsamples < 0) {
-      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state */
-      if (realsamples == -EPIPE || realsamples == -EIO) {
+      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state;
+       *       EPIPE=xrun, ESTRPIPE=xrun) */
+      if (realsamples == -EPIPE || realsamples == -ESTRPIPE || realsamples == -EIO) {
 	if (ignore_xruns() == true) {
 	  handle_xrun_capture();
 	  realsamples = snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), buffersize());
@@ -448,8 +450,8 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_capture(void)
 
   int res = snd_pcm_status(audio_fd_repp, status);
   if (res >= 0) {
-    if (snd_pcm_status_get_state(status) == SND_PCM_STATE_XRUN) {
- 
+    snd_pcm_state_t state = snd_pcm_status_get_state(status);
+    if (state == SND_PCM_STATE_XRUN) {
       struct timeval now, diff, tstamp;
       gettimeofday(&now, 0);
       snd_pcm_status_get_trigger_tstamp(status, &tstamp);
@@ -467,8 +469,14 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_capture(void)
       prepare();
       start();
     }
+    else if (state == SND_PCM_STATE_SUSPENDED) {
+      cerr << "(audioio-alsa) Device suspended! Stopping operation!" << endl;
+      stop();
+      close();
+    }
     else {
-      cerr << "(audioio-alsa) unknown device state!" << endl;
+      cerr << "(audioio-alsa) Unknown device state '" 
+	   << static_cast<int>(state) << "'" << endl;
     }
   }
   else {
@@ -486,8 +494,10 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
   if (interleaved_channels() == true) {
     long int count = snd_pcm_writei(audio_fd_repp, target_buffer, samples);
     if (count < 0) {
-      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state */
-      if (count == -EPIPE || count == -EIO || count == -EINTR) {
+      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state;
+       *       EPIPE=xrun, ESTRPIPE=xrun) */
+      DBC_CHECK(count != -EINTR);
+      if (count == -EPIPE || count == -EIO || count == -ESTRPIPE) {
 	if (ignore_xruns() == true) {
 	  handle_xrun_playback();
 	  if (snd_pcm_writei(audio_fd_repp, target_buffer, samples) < 0) 
@@ -519,8 +529,10 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
 				       reinterpret_cast<void**>(nbufs_repp), 
 				       samples);
     if (count < 0) {
-      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state */
-      if (count == -EPIPE || count == -EIO || count == -EINTR) {
+      /* Note! ALSA versions <=0.9.1 sometimes return -EIO in xrun-state;
+       *       EPIPE=xrun, ESTRPIPE=xrun) */
+      DBC_CHECK(count != -EINTR);
+      if (count == -EPIPE || count == -EIO || count == -ESTRPIPE) {
 	if (ignore_xruns() == true) {
 	  handle_xrun_playback();
 	  snd_pcm_writen(audio_fd_repp,
@@ -550,8 +562,8 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
 
   int res = snd_pcm_status(audio_fd_repp, status);
   if (res >= 0) {
-    if (snd_pcm_status_get_state(status) == SND_PCM_STATE_XRUN) {
-
+    snd_pcm_state_t state = snd_pcm_status_get_state(status);
+    if (state == SND_PCM_STATE_XRUN) {
       struct timeval now, diff, tstamp;
       gettimeofday(&now, 0);
       snd_pcm_status_get_trigger_tstamp(status, &tstamp);
@@ -568,8 +580,14 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
       prepare();
       trigger_request_rep = true;
     }
+    else if (state == SND_PCM_STATE_SUSPENDED) {
+      cerr << "(audioio-alsa) Device suspended! Stopping operation!" << endl;
+      stop();
+      close();
+    }
     else {
-      cerr << "(audioio-alsa) unknown device state!" << endl;
+      cerr << "(audioio-alsa) Unknown device state '" 
+	   << static_cast<int>(state) << "'" << endl;
     }
   }
   else {
