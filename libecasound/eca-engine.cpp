@@ -382,7 +382,9 @@ ECA_ENGINE::Engine_status_t ECA_ENGINE::status(void) const
  * immediately without blocking.
  *
  * context: can be run at the same time as 
- *          engine_iteration()
+ *          engine_iteration(); 
+ *          note! this is called with the engine lock held
+ *          so no long operations allowed!
  */
 void ECA_ENGINE::check_command_queue(void)
 {
@@ -986,6 +988,13 @@ void ECA_ENGINE::posthandle_control_position(void)
  * Processes messages from the command queue.
  * If no messages are available, function
  * will return immediately.
+ *
+ * context: can be run at the same time as 
+ *          engine_iteration(); 
+ *          note! this is called with the engine lock held
+ *          so no long operations allowed!
+ *
+ * @see check_command_queue()
  */
 void ECA_ENGINE::interpret_queue(void)
 {
@@ -1019,7 +1028,7 @@ void ECA_ENGINE::interpret_queue(void)
 	// ---
 	// Section/chain (en/dis)abling commands.
 	// ---
-      case ep_c_select: {	csetup_repp->active_chain_index_rep = static_cast<size_t>(item.second); break; }
+      case ep_c_select: { csetup_repp->active_chain_index_rep = static_cast<size_t>(item.second); break; }
       case ep_c_muting: { chain_muting(); break; }
       case ep_c_bypass: { chain_processing(); break; }
 	
