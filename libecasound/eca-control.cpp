@@ -273,6 +273,13 @@ void ECA_CONTROL::action(int action_id) {
   case ec_cs_load: { load_chainsetup(action_args_rep[0]); break; }
   case ec_cs_save: { save_chainsetup(""); break; }
   case ec_cs_save_as: { save_chainsetup(action_args_rep[0]); break; }
+  case ec_cs_is_valid: { 
+    if (is_valid() == true) 
+      set_last_integer(1);
+    else
+      set_last_integer(0);
+    break;
+  }
   case ec_cs_connect: 
     { 
       if (is_valid() != false) {

@@ -48,6 +48,7 @@ class ECA_IAMODE_PARSER {
     ec_cs_save,
     ec_cs_save_as,
     ec_cs_edit,
+    ec_cs_is_valid,
     ec_cs_connect,
     ec_cs_connected,
     ec_cs_disconnect,

@@ -54,6 +54,7 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["cs-save"] = ec_cs_save;
   cmd_map_rep["cs-save-as"] = ec_cs_save_as;
   cmd_map_rep["cs-edit"] = ec_cs_edit;
+  cmd_map_rep["cs-is-valid"] = ec_cs_is_valid;
   cmd_map_rep["cs-connect"] = ec_cs_connect;
   cmd_map_rep["cs-connected"] = ec_cs_connected;
   cmd_map_rep["cs-disconnect"] = ec_cs_disconnect;
@@ -226,6 +227,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_direct_option:
   case ec_cs_remove: 
   case ec_cs_edit:
+  case ec_cs_is_valid:
   case ec_cs_save: 
   case ec_cs_save_as: 
   case ec_cs_connect: 
