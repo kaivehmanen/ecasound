@@ -29,7 +29,8 @@ DISTFILES = 	Makefile.am \
 	    	ecasound_manpage.yo \
 	    	ecasoundrc_manpage.yo ecasound_faq.yo \
 	    	examples.html \
-		index.html
+		index.html \
+		edi-list.txt
 
 # ---------------------------------------------------------------------
 docs: ecasound.1 ecasound_manpage.html \

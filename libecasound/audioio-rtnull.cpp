@@ -19,6 +19,7 @@
 
 #include <cmath>
 #include <string>
+#include <time.h>
 #include <kvutils.h>
 
 #include "audioio-types.h"

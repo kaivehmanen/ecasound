@@ -3,6 +3,18 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
+[ Ecasound Development Items - (edi-x) codes ]
+
+The Ecasound Development Item concept is used for keeping track of 
+bugs, open issues, enhancement proposals, and other similar issues.
+Each new EDI item is given a unique number. The resulting
+tag '(edi-xxx)' can then be used as a reference in mailing list 
+discussions, changelogs, etc. 
+
+To submit a new EDI-item, send a mail the 'ecasound-list' mailing
+list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
+
+-----------------------------------------------------------------------
 [ Development goals and current status ]
 
 2.x series:
@@ -21,7 +33,7 @@
 [ Bugs to be fixed ]
 
 - commas confuse file name handling (ecatools)
-- initial reverb-spike when using -ete
+- (edi-1): initial reverb-spike when using -ete
 - ecasound crashes if /dev/midi points to an invalid rawmidi device
 
 -----------------------------------------------------------------------
@@ -30,8 +42,8 @@
 - ia-mode: make separate xxx-list and xxx-status commands (a pure list, and a more
   verbose xxx-status command [ partly done - 1.9.x ]
 - better MIDI-support (separate MIDI input/output objects) [under work]
-- support for 14bit MIDI-CCs
-- add threshold parameter to -eca
+- (edi-4): support for 14bit MIDI-CCs
+- (edi-5): add threshold parameter to -eca
   
 -----------------------------------------------------------------------
 [ Wish-list - implemented if enough demand ]
@@ -40,7 +52,7 @@ Input/output devices:
 
 - wrapper objects for triggering file input/output based on volume
   level or timers
-- type override for audio objects
+- (edi-2): type override for audio objects
 - wrapper object for using effects as audio inputs/outputs
 - more efficient interleaving of multichannel inputs/outputs
 	- "-i:ileave,mchannel-file.wav,1" - only reads the 1st channel

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 170801) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 180801) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -15,8 +15,12 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 -----------------------------------------------------------------------
 
-Last officially released version is -*> v2.0.1 *-
+Last officially released version is -*> v2.0.2 *-
 
+??0?2001 (v2.0.3)  -** stable release **-
+	- added: more recent config.guess and config.sub to 
+	         the dist package  [juekawa]
+	- fixed: gcc3.x fixes to ALSA 0.5.x plugin [juekawa]
 17082001 (v2.0.2)  -** stable release **-
  	- added: current position tracking to loop devices
 	- added: more verbose xrun info from ALSA 0.9.x devices

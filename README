@@ -168,11 +168,10 @@ is open-source software, it will become more stable as more people
 start using it and bugs are found. So join the fun! :) 
 	 
 -----------------------------------------------------------------------
- Author 
+ Author / project leader
 -----------------------------------------------------------------------
 
-Kai Vehmanen -	mailto:kai.vehmanen@wakkanet.fi
-		http://www.wakkanet.fi/kv
+Kai Vehmanen <kai.vehmanen@wakkanet.fi> - [kaiv]
 
 -----------------------------------------------------------------------
  Contributors / credits / thanks to 
@@ -190,7 +189,8 @@ Endersz, Viktor - For sending me the adv.compressor source code!
 Eure, Ian and Junichi Uekawa  - For creating ecasound debian packages [ieure,juekawa]
 Fendt, Stefan - Original code for reverb (-ete) and RC-lowpass filter (-ef4).
 Hall, Jeremy - Extensive testing, ALSA 0.6.x support, many design ideas [jhall]
-Halttunen, Janne - Helped in developing the EIAM, and specifically the new ECI concept.
+Halttunen, Janne - Helped in developing the EIAM, and specifically the 
+		   new ECI concept. [jhalttun]
 Hamara, Arto - Ecasound logo(s), preset params, general linear
 	       envelope support, various bug fixes! [artham]
 Harris, Steve - Gcc 2.96 (RH7.0) testing and fixes. [swharris]
@@ -215,6 +215,9 @@ all LAD members - Always a great source of inspiration!
 www.niccx.com - For eca.cx, ecasound.cx and ecawave.cx domains.
 SEUL - For hosting ecasound ftp, http and CVS sites.
 WakkaNet Oy - For hosting ecasound web site.
+
+Note! The developer tags are (for instance I have [kaiv]) are used
+      throughout ecasound docs (NEWS, TODO-list, edi-list.txt, etc).
 
 -----------------------------------------------------------------------
  Licensing/distribution policy

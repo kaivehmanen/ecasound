@@ -1,5 +1,5 @@
-#ifndef _AUDIOIO_RTNULL_H
-#define _AUDIOIO_RTNULL_H
+#ifndef INCLUDED_AUDIOIO_RTNULL_H
+#define INCLUDED_AUDIOIO_RTNULL_H
 
 #include <sys/time.h>
 #include "audioio-types.h"

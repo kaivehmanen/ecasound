@@ -34,6 +34,9 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	submitted: smassy, 8.5.2001
 (edi-12) Conversions problems with non-interleaved, s32_le streams.
 	 submitted: jhall, 16.7.2001
+(edi-13) Possible bug in forked-stream module (mp3,ogg), which 
+	 causes ecawave crashes.
+	 submitted: kiav, 17.08.2001
 
 -----------------------------------------------------------------------
 [ Enhancements, new features ]
@@ -58,7 +61,9 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	 submitted: kaiv, xx.07.2001
 (edi-11) Hierarchy-based config file system. 
 	 submitted: kaiv, xx.07.2001
-
+(edi-14) Making ALSA the default output device with a compile 
+	 time options. 
+	 submitted: Patrick Shirkey, 18.8.2001
 
 -----------------------------------------------------------------------
 [ Closed items ]
