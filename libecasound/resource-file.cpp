@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // resource-file.cpp: Generic resource file class
-// Copyright (C) 1999-2001 Kai Vehmanen
+// Copyright (C) 1999-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,15 +29,18 @@
 #include "eca-logger.h"
 
 RESOURCE_FILE::RESOURCE_FILE(const std::string& resource_file) :
-  resfile_rep(resource_file) { 
+  resfile_rep(resource_file)
+{
   load();
 }
 
-RESOURCE_FILE::~RESOURCE_FILE(void) { 
+RESOURCE_FILE::~RESOURCE_FILE(void)
+{
 }
 
-void RESOURCE_FILE::load(void) { 
-  ECA_LOG_MSG(ECA_LOGGER::functions, "(resource-file) Loading file " + resfile_rep + ".");
+void RESOURCE_FILE::load(void)
+{
+  ECA_LOG_MSG(ECA_LOGGER::functions, "Loading file " + resfile_rep + ".");
   lines_rep.resize(0);
   std::ifstream fin (resfile_rep.c_str());
   if (fin) {
@@ -71,7 +77,7 @@ void RESOURCE_FILE::load(void) {
 	}
       }
 
-      // cerr << "(resource-file) found key-value pair: " +
+      // cerr << "found key-value pair: " +
       // first + " = \"" + second + "\"." << endl;
 
       resmap_rep[first] = second;
@@ -82,8 +88,9 @@ void RESOURCE_FILE::load(void) {
   modified_rep = false;
 }
 
-void RESOURCE_FILE::save(void) { 
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(resource-file) Saving file " + resfile_rep + ".");
+void RESOURCE_FILE::save(void)
+{
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Saving file " + resfile_rep + ".");
   std::ofstream fout (resfile_rep.c_str(), std::ios::out | std::ios::trunc);
   if (fout) {
     std::vector<std::string>::const_iterator p = lines_rep.begin();
@@ -99,7 +106,8 @@ void RESOURCE_FILE::save(void) {
   modified_rep = false;
 }
 
-std::vector<std::string> RESOURCE_FILE::keywords(void) const {
+std::vector<std::string> RESOURCE_FILE::keywords(void) const
+{
   std::vector<std::string> keys;
   std::map<std::string,std::string>::const_iterator p;
   p = resmap_rep.begin();
@@ -108,30 +116,34 @@ std::vector<std::string> RESOURCE_FILE::keywords(void) const {
     keys.push_back(p->first);
     ++p;
   }
-  return(keys);
+  return keys;
 }
 
-bool RESOURCE_FILE::boolean_resource(const std::string& tag) const {
-  if (resource(tag) == "true") return(true);
-  return(false);
+bool RESOURCE_FILE::boolean_resource(const std::string& tag) const
+{
+  if (resource(tag) == "true") return true;
+  return false;
 }
 
-bool RESOURCE_FILE::has(const std::string& tag) const {
+bool RESOURCE_FILE::has(const std::string& tag) const
+{
   if (resmap_rep.find(tag) == resmap_rep.end())
-    return(false);
-  return(true);
+    return false;
+  return true;
 }
 
-std::string RESOURCE_FILE::resource(const std::string& tag) const {
+std::string RESOURCE_FILE::resource(const std::string& tag) const
+{
   if (has(tag) != true)
-    return("");
+    return "";
 
   // cerr << "Returning resource: " << resmap_rep[tag] << "." << endl;
 
-  return(resmap_rep[tag]);
+  return resmap_rep[tag];
 }
 
-void RESOURCE_FILE::resource(const std::string& tag, const std::string& value) {
+void RESOURCE_FILE::resource(const std::string& tag, const std::string& value)
+{
   resmap_rep[tag] = value;
   
   bool found = false;

@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // eca-object-map: A virtual base for dynamic object maps 
-// Copyright (C) 2000-2002 Kai Vehmanen
+// Copyright (C) 2000-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,7 +83,7 @@ void ECA_OBJECT_MAP::register_object(const string& keyword, const string& expr, 
   if (expr_to_keyword(keyword) != keyword &&
       object != 0) {
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "(eca-object-map) Warning! Keyword " + keyword + 
+		  "Warning! Keyword " + keyword + 
 		  " doesn't match to regex " + expr + 
 		  " for object '" + object->name() + 
 		  "' (" + expr_to_keyword(expr) + ").");
@@ -104,15 +107,15 @@ void ECA_OBJECT_MAP::unregister_object(const string& keyword)
  */
 const list<string>& ECA_OBJECT_MAP::registered_objects(void) const
 {
-  return(object_keywords_rep);
+  return object_keywords_rep;
 }
 
 bool ECA_OBJECT_MAP::has_keyword(const std::string& keyword) const
 {
   if (find(object_keywords_rep.begin(), object_keywords_rep.end(), keyword) == object_keywords_rep.end())
-    return(false);
+    return false;
 
-  return (true);
+  return true;
 }
 
 bool ECA_OBJECT_MAP::has_object(const ECA_OBJECT* obj) const
@@ -120,11 +123,11 @@ bool ECA_OBJECT_MAP::has_object(const ECA_OBJECT* obj) const
   map<string, ECA_OBJECT*>::const_iterator p = object_map.begin();
   while(p != object_map.end()) {
     if (obj->name() == p->second->name()) {
-      return(true);
+      return true;
     }
     ++p;
   }
-  return(false);
+  return false;
 }
 
 /**
@@ -141,7 +144,7 @@ const ECA_OBJECT* ECA_OBJECT_MAP::object(const string& keyword) const
   if (object_map.find(keyword) != object_map.end()) {
     object = object_map[keyword];
   }
-  return(object);
+  return object;
 }
 
 /**
@@ -150,7 +153,7 @@ const ECA_OBJECT* ECA_OBJECT_MAP::object(const string& keyword) const
  */
 const ECA_OBJECT* ECA_OBJECT_MAP::object_expr(const string& expr) const
 {
-  return(object(expr_to_keyword(expr)));
+  return object(expr_to_keyword(expr));
 }
 
 /**
@@ -164,7 +167,7 @@ string ECA_OBJECT_MAP::expr_to_keyword(const string& expr) const
   while(p != object_expr_map.end()) {
     regcomp(&preg, p->second.c_str(), REG_EXTENDED | REG_NOSUB | REG_ICASE);
     if (regexec(&preg, expr.c_str(), 0, 0, 0) == 0) {
-      ECA_LOG_MSG(ECA_LOGGER::functions, "(eca-object-map) match (1): " + expr + " to regexp " + p->second);
+      ECA_LOG_MSG(ECA_LOGGER::functions, "match (1): " + expr + " to regexp " + p->second);
       result = p->first;
       regfree(&preg);
       break;
@@ -172,7 +175,7 @@ string ECA_OBJECT_MAP::expr_to_keyword(const string& expr) const
     regfree(&preg);
     ++p;
   }
-  return(result);
+  return result;
 }
 
 /**
@@ -181,9 +184,9 @@ string ECA_OBJECT_MAP::expr_to_keyword(const string& expr) const
 string ECA_OBJECT_MAP::keyword_to_expr(const string& keyword) const
 {
   if (object_expr_map.find(keyword) != object_expr_map.end())
-    return(object_expr_map[keyword]);
+    return object_expr_map[keyword];
 
-  return("");
+  return "";
 }
 
 /**
@@ -194,9 +197,9 @@ string ECA_OBJECT_MAP::object_identifier(const ECA_OBJECT* object) const
   map<string, ECA_OBJECT*>::const_iterator p = object_map.begin();
   while(p != object_map.end()) {
     if (object->name() == p->second->name()) {
-      return(p->first);
+      return p->first;
     }
     ++p;
   }
-  return("");
+  return "";
 }

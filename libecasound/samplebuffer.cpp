@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // samplebuffer.cpp: Class representing a buffer of audio samples.
-// Copyright (C) 1999-2003 Kai Vehmanen
+// Copyright (C) 1999-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -395,7 +398,7 @@ void SAMPLE_BUFFER::resample_set_quality(int quality)
  */
 int SAMPLE_BUFFER::resample_get_quality(void) const
 {
-  return(impl_repp->quality_rep);
+  return impl_repp->quality_rep;
 }
 
 void SAMPLE_BUFFER::export_helper(unsigned char* obuffer, 
@@ -499,7 +502,7 @@ void SAMPLE_BUFFER::export_helper(unsigned char* obuffer,
     
   default: 
     { 
-      ECA_LOG_MSG(ECA_LOGGER::info, "(samplebuffer) Unknown sample format! [1].");
+      ECA_LOG_MSG(ECA_LOGGER::info, "Unknown sample format! [1].");
     }
   }
 }
@@ -739,7 +742,7 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 
   default: 
     { 
-      ECA_LOG_MSG(ECA_LOGGER::info, "(samplebuffer) Unknown sample format! [4].");
+      ECA_LOG_MSG(ECA_LOGGER::info, "Unknown sample format! [4].");
     }
   }
 }

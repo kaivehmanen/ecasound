@@ -61,7 +61,7 @@
 
 CHAIN::CHAIN (void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(chain) constuctor: CHAIN");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "constuctor: CHAIN");
   muted_rep = false;
   sfx_rep = false;
   initialized_rep = false;
@@ -79,7 +79,7 @@ CHAIN::CHAIN (void)
 
 CHAIN::~CHAIN (void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects,"CHAIN destructor!");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "CHAIN destructor!");
 
   for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
 	chainops_rep.end(); p++) {
@@ -549,14 +549,14 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels)
   initialized_rep = true;
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"(chain) Initialized chain " +
-		name() + 
-		" with " +
-		kvu_numtostr(chainops_rep.size()) +
-		" chainops and " +
-		kvu_numtostr(gcontrollers_rep.size()) +
-		" gcontrollers. Sbuf points to " +
-		kvu_numtostr(reinterpret_cast<long int>(audioslot_repp)) + ".");
+	      "Initialized chain " +
+	      name() + 
+	      " with " +
+	      kvu_numtostr(chainops_rep.size()) +
+	      " chainops and " +
+	      kvu_numtostr(gcontrollers_rep.size()) +
+	      " gcontrollers. Sbuf points to " +
+	      kvu_numtostr(reinterpret_cast<long int>(audioslot_repp)) + ".");
   
   // --------
   DBC_ENSURE(is_initialized() == true);

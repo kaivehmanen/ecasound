@@ -2,7 +2,10 @@
 // audioio-db-client.cpp: Client class for double-buffering providing 
 //                        additional layer of buffering for objects
 //                        derived from AUDIO_IO.
-// Copyright (C) 2000-2002 Kai Vehmanen
+// Copyright (C) 2000-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,7 +81,7 @@ void AUDIO_IO_DB_CLIENT::fetch_initial_child_data(void)
  */
 AUDIO_IO_DB_CLIENT::~AUDIO_IO_DB_CLIENT(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-db-client) destructor " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "destructor " + label() + ".");
 
   if (is_open() == true) {
     close();
@@ -118,7 +121,7 @@ AUDIO_IO_DB_CLIENT::~AUDIO_IO_DB_CLIENT(void)
  * finished() has returned 'true', further calls to read_buffer() 
  * and/or write_buffer() won't process any data.
  */
-bool AUDIO_IO_DB_CLIENT::finished(void) const { return(finished_rep); }
+bool AUDIO_IO_DB_CLIENT::finished(void) const { return finished_rep; }
 
 /**
  * Reads samples to buffer pointed by 'sbuf'. If necessary, the target 
@@ -232,7 +235,7 @@ void AUDIO_IO_DB_CLIENT::seek_position(void)
  */
 void AUDIO_IO_DB_CLIENT::open(void) throw(AUDIO_IO::SETUP_ERROR&) 
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-db-client) open " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "open " + label() + ".");
 
   if (child()->is_open() != true) {
     child()->open();
@@ -266,7 +269,7 @@ void AUDIO_IO_DB_CLIENT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
  */
 void AUDIO_IO_DB_CLIENT::close(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-db-client) close " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "close " + label() + ".");
 
   if (child()->is_open() == true) child()->close();
 
