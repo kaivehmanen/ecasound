@@ -28,6 +28,8 @@ class AUDIO_IO_JACK_MANAGER : public AUDIO_IO_MANAGER {
   friend int eca_jack_srate (nframes_t nframes, void *arg);
   friend void eca_jack_shutdown (void *arg);
 
+  static const int instance_limit;
+
 public:
 
   typedef struct jack_node {
@@ -37,8 +39,6 @@ public:
     int first_in_port;
     int out_ports;
     int first_out_port;
-    bool active;
-    bool open;
   } jack_node_t;
 
   typedef struct jack_port_data {
@@ -75,7 +75,7 @@ public:
   void unregister_jack_ports(int client_id);
   void auto_connect_jack_port(int client_id, int portnum, const string& portname);
 
-  void open(int client_id);
+  void open(int client_id, long int buffersize, long int samplerate);
   void close(int client_id);
   
   long int read_samples(int client_id, void* target_buffer, long int samples);
@@ -83,6 +83,8 @@ public:
 
   void stop(int client_id);
   void start(int client_id);
+
+  bool is_open(void) const { return(open_rep); }
 
   /*@}*/
 
@@ -126,7 +128,7 @@ private:
 
   std::vector<jack_port_data_t> inports_rep;
   std::vector<jack_port_data_t> outports_rep;
-
+  
   long int cb_nframes_rep;
   long int cb_allocated_frames_rep;
 };

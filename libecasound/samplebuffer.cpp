@@ -66,7 +66,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels, sr
 
   impl_repp->old_buffer_repp = 0;
  
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ecadebug->msg(ECA_DEBUG::buffer_level, 
 		"(samplebuffer) Buffer created, channels: " +
 		kvu_numtostr(buffer.size()) + ", length-samples: " +
 		kvu_numtostr(buffersize_rep) + ", sample rate: " +
@@ -102,7 +102,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
 
   impl_repp->old_buffer_repp = 0;
 
-  ecadebug->msg(ECA_DEBUG::system_objects, 
+  ecadebug->msg(ECA_DEBUG::buffer_level, 
 		"(samplebuffer) Buffer copy-constructed, channels: " +
 		kvu_numtostr(buffer.size()) + ", length-samples: " +
 		kvu_numtostr(buffersize_rep) + ", sample rate: " +

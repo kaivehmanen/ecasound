@@ -154,19 +154,19 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
     *q = 0;
   }
 
-  /* delete aio manager objects */
-  for(vector<AUDIO_IO_MANAGER*>::iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio manager \"" + (*q)->name() + "\".");
-    delete *q;
-    *q = 0;
-  }
-
   /* delete input proxy objects; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
     if (dynamic_cast<AUDIO_IO_BUFFERED_PROXY*>(*q) != 0) {
       ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio proxy \"" + (*q)->label() + "\".");
       delete *q;
     }
+    *q = 0;
+  }
+
+  /* delete aio manager objects */
+  for(vector<AUDIO_IO_MANAGER*>::iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
+    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio manager \"" + (*q)->name() + "\".");
+    delete *q;
     *q = 0;
   }
 

@@ -44,7 +44,8 @@ AUDIO_IO_JACK::AUDIO_IO_JACK (void) {
   
   jackmgr_rep = 0;
   myid_rep = 0;
- 
+  secondparam_rep = "";
+  thirdparam_rep = "";
 }
 
 AUDIO_IO_JACK::~AUDIO_IO_JACK(void) { 
@@ -75,8 +76,20 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
   }
 
   if (jackmgr_rep != 0) {
-    jackmgr_rep->open(myid_rep);
-    jackmgr_rep->register_jack_ports(myid_rep, channels(), jackname_rep);
+    string workstring = thirdparam_rep;
+    if (label() == "jack_generic" ||
+	label() == "jack_alsa") {
+      workstring = secondparam_rep;
+    }
+    if (workstring.size() == 0) workstring = label();
+
+    jackmgr_rep->open(myid_rep, buffersize(), samples_per_second());
+    if (jackmgr_rep->is_open() != true) {
+      /* unable to open connection to jackd, exit */
+      throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-JACK: Unable to open JACK-client"));
+    }
+
+    jackmgr_rep->register_jack_ports(myid_rep, channels(), workstring);
 
     if (label() != "jack_generic") {
       if (label() == "jack_alsa") {
@@ -89,13 +102,15 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
 	  }
 	}
       }
-      else if (label() == "jack_multi") {
-	for(int n = 0; n < channels(); n++) {
-	  jackmgr_rep->auto_connect_jack_port(myid_rep, n + 1, deststring_rep + "_" + kvu_numtostr(n + 1));
+      else {
+	if (label() == "jack_multi") {
+	  for(int n = 0; n < channels(); n++) {
+	    jackmgr_rep->auto_connect_jack_port(myid_rep, n + 1, secondparam_rep + "_" + kvu_numtostr(n + 1));
+	  }
 	}
-      }
-      else if (label() == "jack_mono") {
-	jackmgr_rep->auto_connect_jack_port(myid_rep, 1, deststring_rep);
+	else if (label() == "jack_mono") {
+	  jackmgr_rep->auto_connect_jack_port(myid_rep, 1, secondparam_rep);
+	}
       }
     }
   }
@@ -137,29 +152,31 @@ void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples) {
 
 
 void AUDIO_IO_JACK::stop(void) { 
+  bool was_running = is_running();
   AUDIO_IO_DEVICE::stop();
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) stop / " + jackname_rep);
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) stop / " + label());
 
-  if (jackmgr_rep != 0) {
+  if (jackmgr_rep != 0 && was_running == true) {
     jackmgr_rep->stop(myid_rep);
   }
 }
 
 void AUDIO_IO_JACK::start(void) { 
+  bool was_running = is_running();
   AUDIO_IO_DEVICE::start();
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) start / " + label());
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) start / " + jackname_rep);
-
-  if (jackmgr_rep != 0) {
+  if (jackmgr_rep != 0 && was_running != true) {
     jackmgr_rep->start(myid_rep);
   }
+
 }
 
 void AUDIO_IO_JACK::prepare(void) {
   AUDIO_IO_DEVICE::prepare();
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) prepare / " + jackname_rep);
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) prepare / " + label());
 }
 
 SAMPLE_SPECS::sample_pos_t AUDIO_IO_JACK::position_in_samples(void) const {
@@ -170,9 +187,9 @@ std::string AUDIO_IO_JACK::parameter_names(void) const {
   if (label() == "jack_alsa")
     return("label,portgroup");
   if (label() == "jack_multi")
-    return("label,portgroup,client:destgroup");
+    return("label,client:destgroup,portgroup");
   if (label() == "jack_mono")
-    return("label,portgroup,client:destport");
+    return("label,client:destport,portgroup");
 
   return("label,portgroup");
 }
@@ -181,8 +198,8 @@ void AUDIO_IO_JACK::set_parameter(int param, std::string value) {
   switch(param) 
     {
     case 1: { label(value); break; }
-    case 2: { jackname_rep = value; break; }
-    case 3: { deststring_rep = value; break; }
+    case 2: { secondparam_rep = value; break; }
+    case 3: { thirdparam_rep = value; break; }
     }
 }
 
@@ -190,8 +207,8 @@ std::string AUDIO_IO_JACK::get_parameter(int param) const {
   switch(param) 
     {
     case 1: { return(label()); }
-    case 2: { return(jackname_rep); }
-    case 3: { return(deststring_rep); }
+    case 2: { return(secondparam_rep); }
+    case 3: { return(thirdparam_rep); }
     }  
   return("");
 }

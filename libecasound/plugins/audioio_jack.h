@@ -55,8 +55,8 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
   AUDIO_IO_JACK_MANAGER* jackmgr_rep;
   int myid_rep;
 
-  std::string jackname_rep;
-  std::string deststring_rep;
+  std::string secondparam_rep;
+  std::string thirdparam_rep;
   SAMPLE_SPECS::sample_pos_t curpos_rep;
 
  private:
