@@ -31,6 +31,7 @@ public:
   EFFECT_LADSPA* new_expr(void) const { return new EFFECT_LADSPA(plugin_desc); }
 
   virtual std::string name(void) const { return(name_rep); }
+  virtual std::string description(void) const;
   virtual std::string parameter_names(void) const { return(param_names_rep); }
 
   /**
@@ -72,7 +73,7 @@ private:
   int in_audio_ports;
   int out_audio_ports;
   long unique_number_rep;
-  std::string name_rep, unique_rep, param_names_rep;
+  std::string name_rep, maker_rep, unique_rep, param_names_rep;
   std::vector<LADSPA_Data> params;
   std::vector<struct PARAM_DESCRIPTION> param_descs_rep;
 

@@ -39,6 +39,7 @@ EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&)
 
   name_rep = string(plugin_desc->Name);
   unique_rep = string(plugin_desc->Label);
+  maker_rep = string(plugin_desc->Maker);
   unique_number_rep = static_cast<long int>(plugin_desc->UniqueID);
   buffer_repp = 0;
 
@@ -55,6 +56,11 @@ EFFECT_LADSPA::~EFFECT_LADSPA (void)
       plugin_desc->cleanup(plugins_rep[n]);
     }
   }
+}
+
+std::string EFFECT_LADSPA::description(void) const
+{
+  return(name_rep + " - Author: '" + maker_rep + "'");
 }
 
 EFFECT_LADSPA* EFFECT_LADSPA::clone(void) const
@@ -88,7 +94,9 @@ void EFFECT_LADSPA::init_ports(void)
       params.push_back(pd.default_value);
       param_descs_rep.push_back(pd);
       if (params.size() > 1) param_names_rep += ",";
-      param_names_rep += kvu_string_search_and_replace(string(plugin_desc->PortNames[m]), ',', ' ');;
+      string temp = kvu_string_search_and_replace(string(plugin_desc->PortNames[m]), ',', ' ');
+      temp = kvu_string_search_and_replace(temp, ':', ' ');
+      param_names_rep += temp;
     }
   }
 }
