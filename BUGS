@@ -2,6 +2,8 @@
 *** Ecasound - Known bugs/features                                  ***
 -----------------------------------------------------------------------
 
+- pitch shifter (-ei) doesn't work with all real-time audio object
+  types (for instance JACK)
 - ecasound crashes if /dev/midi points to an invalid rawmidi device
 - MIDI-ops like -km can't be used in presets
 - RIFF WAVE files
