@@ -450,6 +450,7 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
 			    samples) == -EPIPE) 
 	  cerr << "(audioio-alsa3) Xrun handling failed!" << endl;
 	trigger_request_rep = true;
+	stop();
       }
       else {
 	cerr << "(audioio-alsa3) Underrun! Stopping operation!" << endl;
