@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // linear-envelope.cpp: Linear envelope
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,13 +41,13 @@ CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::value(void)
   if (position_in_seconds_exact() <= length_in_seconds_exact()) {
     curval = (position_in_seconds_exact() / length_in_seconds_exact());
   }
-  return(curval);
+  return curval;
 }
 
 void LINEAR_ENVELOPE::init(void)
 {
   MESSAGE_ITEM otemp;
-  otemp << "(linear-envelope) Fade-in enveloped initialized; length ";
+  otemp << "Fade-in enveloped initialized; length ";
   otemp.setprecision(3);
   otemp << length_in_seconds_exact();
   otemp << " seconds.";
@@ -66,7 +69,7 @@ CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::get_parameter(int param) const
 {
   switch (param) {
   case 1:
-    return(length_in_seconds_exact());
+    return length_in_seconds_exact();
   }
-  return(0.0);
+  return 0.0;
 }

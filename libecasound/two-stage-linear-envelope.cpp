@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // two-stage-linear-envelope.cpp: Two-stage linear envelope
-// Copyright (C) 2000-2002 Kai Vehmanen
+// Copyright (C) 2000-2002,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +39,7 @@ CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::value(void)
     else 
       curval = 1.0;
   }
-  return(curval);
+  return curval;
 }
 
 TWO_STAGE_LINEAR_ENVELOPE::TWO_STAGE_LINEAR_ENVELOPE(void)
@@ -50,7 +53,7 @@ TWO_STAGE_LINEAR_ENVELOPE::TWO_STAGE_LINEAR_ENVELOPE(void)
 void TWO_STAGE_LINEAR_ENVELOPE::init(void)
 {
   MESSAGE_ITEM otemp;
-  otemp << "(two-stage-linear-envelope) Envelope initialized: ";
+  otemp << "Envelope initialized: ";
   otemp.setprecision(3);
   otemp << "1." << get_parameter(1);
   otemp << "- 2." << get_parameter(2);
@@ -83,10 +86,10 @@ CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::get_parameter(int para
 {
   switch (param) {
   case 1:
-    return(first_stage_length_rep);
+    return first_stage_length_rep;
 
   case 2:
-    return(second_stage_length_rep);
+    return second_stage_length_rep;
   }
-  return(0.0);
+  return 0.0;
 }

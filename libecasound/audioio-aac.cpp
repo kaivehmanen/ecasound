@@ -2,6 +2,9 @@
 // audioio-faad.cpp: Interface class for FAAC/FAAD AAC encoder/decoder.
 // Copyright (C) 2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 3
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -95,7 +98,7 @@ void AAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 void AAC_FORKED_INTERFACE::close(void)
 {
   if (pid_of_child() > 0) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
       clean_child();
       triggered_rep = false;
   }
@@ -126,7 +129,7 @@ long int AAC_FORKED_INTERFACE::read_samples(void* target_buffer, long int sample
   else 
     finished_rep = false;
 
-  return(bytes_rep / frame_size());
+  return bytes_rep / frame_size();
 }
 
 void AAC_FORKED_INTERFACE::write_samples(void* target_buffer, long int samples)
@@ -156,7 +159,8 @@ void AAC_FORKED_INTERFACE::write_samples(void* target_buffer, long int samples)
   }
 }
 
-void AAC_FORKED_INTERFACE::seek_position(void) {
+void AAC_FORKED_INTERFACE::seek_position(void)
+{
   if (pid_of_child() > 0) {
     ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-aac) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
     clean_child();
@@ -178,9 +182,9 @@ string AAC_FORKED_INTERFACE::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(label());
+    return label();
   }
-  return("");
+  return "";
 }
 
 void AAC_FORKED_INTERFACE::fork_input_process(void)
