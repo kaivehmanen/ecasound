@@ -6,7 +6,7 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{30042002}
+\date{02102002}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,7 @@ ecasound version.
 \section{Document history}
 
 \begin{itemize}
+\item 02.10.2002 - Added the ``Protocols and Interfaces'' chapter.
 \item 29.04.2002 - Added chapter about ``Unit Tests'' \cite{unit_tests}.
 \item 28.04.2002 - Revised namespace policy (see chapter
                    \ref{cpp_std_namespace}), replaced references to
@@ -955,6 +956,41 @@ another short sample:
 - write samples with an audio I/O object - OSSDEVICE, WAVEFILE, etc.
 --cut--
  \end{verbatim}
+
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
+\section{Protocols and Interfaces}
+
+% ----------------------------------------------------------------------
+\subsection{Ecasound Interactive Mode - Well-Formed Output Mode}
+
+By issuing the EIAM command ``int-output-mode-wellformed'', 
+ecasound will start printing all messages using the following
+format:
+
+% FIXME: write this using rfc-style ABNF (see RFC2234)
+\begin{verbatim}
+<message> = <loglevel><sp><msgsize>(<genmsg> | <returnmsg>)
+
+<loglevel> = <integer>      ; loglevel number
+<msgsize = <integer>        ; size of content in octets
+<genmsg> = <contentblock>   ; generic log message
+<returnmsg> = <sp><returntype><contentblock>
+                            ; EIAM return value message
+<contentblock> = <crlf><content><crlf><crlf>
+                            ; actual content of the message
+<returntype> = ``i'' | ``li'' | ``f'' | ``s'' | ``S'' | ``e''
+                            ; type of the return value (see ECI/EIAM docs)
+<content> = *<octet>        ; zero or more octets of message content
+
+<sp> = 0x20                 ; space
+<octet> = 0x00-0xff         ; 8bits of data
+<crlf> = <cr><lf>           ; new line 
+<cr> = 0x0d                 ; carriage return
+<lf> = 0x0a                 ; line feed
+<integer> = +<digit>        ; one or more digits
+<digit> = 0x30-0x39         ; digits 0-9
+\end{verbatim}
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------

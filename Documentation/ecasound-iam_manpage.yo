@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (01.02.2002)
+       (02.10.2002)
        ()
        (Multimedia software)
 
@@ -35,7 +35,9 @@ ECI, it's possible that commands also return information. Currently
 supported return value types are: string [s], list of strings [S],
 integer [i], long integer [li] and floating-point number [f]. These
 definitions are used throughout this document. Commands that do not
-return anything are marked with [-].
+return anything are marked with [-]. Additionally, return type [e]
+marks an error condition. When an EIAM results in an error, a error 
+string explaining the condition is returned.
 
 manpagesection(Realtime commands)
 It's not possible to use all EIAM commands to modify and control 
@@ -533,6 +535,9 @@ are primarily meant for use in scripting and frontends.
 
 dit(int-cmd-list)
 Returns a list of all registered EIAM commands. em([S])
+
+dit(int-output-mode-wellformed)
+Select the well-format output format for log messages. em([-])
 
 dit(int-cmd-version-string)
 Returns EIAM parser version string. em([s])
