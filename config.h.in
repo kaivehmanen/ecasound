@@ -58,6 +58,9 @@
 /* use C++ std namespace */
 #undef USE_CXX_STD_NAMESPACE
 
+/* Define if you have the atoll function.  */
+#undef HAVE_ATOLL
+
 /* Define if you have the getpagesize function.  */
 #undef HAVE_GETPAGESIZE
 

@@ -177,6 +177,7 @@ dnl ---
 AC_FUNC_MMAP
 AC_CHECK_FUNCS(mlockall)
 AC_CHECK_FUNCS(munlockall)
+AC_CHECK_FUNCS(atoll)
 
 dnl ---
 dnl Checks for libraries.

@@ -41,6 +41,9 @@ Last officially released version is -*> v2.0.3 *-
 	- fixed: ecasound wrote to ewf-files opened in read-only mode
 	- fixed: work-around for environments without the C99 stdint.h
                  header file [anarcat]
+	- fixed: eiam - problems with 'cs-set-position-samples', 
+                 'cs-rewind' and 'cs-forward' with unconnected
+		 chainsetups
 31102001 (v2.1dev4)
 	- added: eiam - 'cs-option' commmand; although explicit use 
 		 of cmd-line options as iactive-mod commands (like 
