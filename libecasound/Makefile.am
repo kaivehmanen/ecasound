@@ -37,7 +37,8 @@ endif
 # header files
 # ----------------------------------------------------------------------
 
-ecasound_audiofx_src =  audiofx.h \
+ecasound_audiofx_include =  \
+			audiofx.h \
 			audiofx_impl.h \
 			audiofx_amplitude.h \
 			audiofx_compressor.h \
@@ -52,7 +53,8 @@ ecasound_audiofx_src =  audiofx.h \
 			ladspa.h \
 			audiofx_vst.h
 
-ecasound_audioio_src = 	audioio-cdr.h \
+ecasound_audioio_include = 	\
+			audioio-cdr.h \
 			audioio-cdr_impl.h \
 			audioio-ewf.h \
 			audioio-mp3.h \
@@ -74,7 +76,7 @@ ecasound_audioio_src = 	audioio-cdr.h \
 			audioio-alsa3.h \
 			audioio-loop.h
 
-ecasound_controller_src = \
+ecasound_controller_include = \
 			generic-controller.h \
 			ctrl-source.h \
 			midi-cc.h \
@@ -85,7 +87,8 @@ ecasound_controller_src = \
 			linear-envelope.h \
 			two-stage-linear-envelope.h
 
-ecasound_general_src = 	eca-chain.h \
+ecasound_general_include = 	\
+			eca-chain.h \
 			eca-chainop.h \
 			eca-error.h \
 			eca-debug.h \
@@ -141,8 +144,8 @@ if FEELING_EXPERIMENTAL
 vst_header_files = AEffEditor.hpp AEffect.h aeffectx.h AudioEffect.hpp
 endif
 
-noinst_HEADERS = $(ecasound_audiofx_src) $(ecasound_audioio_src) \
-		 $(ecasound_controller_src) $(ecasound_general_src) $(vst_header_files)
+noinst_HEADERS = $(ecasound_audiofx_include) $(ecasound_audioio_include) \
+		 $(ecasound_controller_include) $(ecasound_general_include) $(vst_header_files)
 
 
 # ----------------------------------------------------------------------
@@ -250,8 +253,8 @@ libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
 install-data-local:
 	$(INSTALL) -d $(pkgincludedir)
 	cd $(srcdir) ; \
-	cp 	$(ecasound_audiofx_src) \
-		$(ecasound_audioio_src) \
-		$(ecasound_controller_src) \
-		$(ecasound_general_src) $(vst_header_files) \
+	cp 	$(ecasound_audiofx_include) \
+		$(ecasound_audioio_include) \
+		$(ecasound_controller_include) \
+		$(ecasound_general_include) $(vst_header_files) \
 		$(pkgincludedir)

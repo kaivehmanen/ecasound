@@ -87,8 +87,8 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   }    
   else if (io_mode() == io_write) {
     pcm_channel_rep = SND_PCM_CHANNEL_PLAYBACK;
-    err = ::snd_pcm_open_subdevice(&audio_fd_repp, 
-				   card_number_rep, 
+    err = ::snd_pcm_open_subdevice(&audio_fd_repp,
+				   card_number_rep,
 				   device_number_rep,
 				   subdevice_number_rep,
 				   SND_PCM_OPEN_PLAYBACK | SND_PCM_OPEN_NONBLOCK);
@@ -115,7 +115,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Select audio format
 
-  ::snd_pcm_channel_flush(audio_fd_repp, pcm_channel);
+  ::snd_pcm_channel_flush(audio_fd_repp, pcm_channel_rep);
   snd_pcm_format_t pf;
   ::memset(&pf, 0, sizeof(pf));
 
@@ -220,7 +220,7 @@ void ALSA_PCM_DEVICE::stop(void) {
   overruns_rep += status.overrun;
   underruns_rep += status.underrun;
 
-  int err = ::snd_pcm_channel_flush(audio_fd_repp, pcm_channe_repl);
+  int err = ::snd_pcm_channel_flush(audio_fd_repp, pcm_channel_rep);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when flushing channel: " + string(snd_strerror(err))));
 
@@ -287,7 +287,7 @@ void ALSA_PCM_DEVICE::print_status_debug(void) {
 }
 
 void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
-  if (samples * frame_size()== fragment_size) {
+  if (samples * frame_size()== fragment_size_rep) {
     ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
   }
   else {
@@ -302,8 +302,8 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
     buffersize(samples, samples_per_second());
     open();
     prepare();
-    assert(samples * frame_size() <= fragment_size);
-    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size);
+    assert(samples * frame_size() <= fragment_size_rep);
+    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
     if (was_triggered == true) start();
   }
 }
@@ -323,14 +323,14 @@ ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) destruct");
 
   if (io_mode() != io_read) {
-    if (underruns != 0) {
+    if (underruns_rep != 0) {
       cerr << "(audioio-alsa2) WARNING! While writing to ALSA-pcm device ";
       cerr << "C" << card_number_rep << "D" << device_number_rep;
       cerr << ", there were " << underruns_rep << " underruns.\n";
     }
   }
   else {
-    if (overruns != 0) {
+    if (overruns_rep != 0) {
       cerr << "(audioio-alsa2) WARNING! While reading from ALSA-pcm device ";
       cerr << "C" << card_number_rep << "D" << device_number_rep;
       cerr << ", there were " << overruns_rep << " overruns.\n";

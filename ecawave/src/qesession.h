@@ -10,7 +10,7 @@
 #include <kvutils/definition_by_contract.h>
 #include <ecasound/eca-audio-format.h>
 
-class ECA_CONTROLLER;
+class ECA_CONTROL;
 class ECA_SESSION;
 
 class QEFile;
@@ -118,10 +118,10 @@ signals:
   bool refresh_toggle_rep, wcache_toggle_rep;
   bool direct_mode_rep;
 
-  auto_ptr<ECA_CONTROLLER> auto_ectrl;
+  auto_ptr<ECA_CONTROL> auto_ectrl;
   auto_ptr<ECA_SESSION> auto_esession;
 
-  ECA_CONTROLLER* ectrl;
+  ECA_CONTROL* ectrl;
   ECA_SESSION* esession;
 };
 

@@ -21,7 +21,6 @@
 #include <cstring>
 #include <cstdio>
 #include <dlfcn.h>  
-
 #include <kvutils.h>
 
 #include "samplebuffer.h"
@@ -30,7 +29,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 #ifdef ALSALIB_032
 #include <sys/asoundlib.h>
 #include "audioio-alsa.h"
@@ -166,7 +164,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   }
 
   is_triggered_rep = false;
-  is_prepared = false;
+  is_prepared_rep = false;
   toggle_open_state(true);
 }
 
@@ -187,15 +185,15 @@ void ALSA_PCM_DEVICE::close(void) {
       snd_pcm_playback_status_t pb_status;
       ::snd_pcm_playback_status(audio_fd_repp, &pb_status);
       underruns_rep += pb_status.underrun;
-      ::snd_pcm_drain_playback(audio_fd);
+      ::snd_pcm_drain_playback(audio_fd_repp);
     }
     else if (io_mode() == io_read) {
       snd_pcm_capture_status_t ca_status;
       ::snd_pcm_capture_status(audio_fd_repp, &ca_status);
       overruns_rep += ca_status.overrun;
-      ::snd_pcm_flush_capture(audio_fd);
+      ::snd_pcm_flush_capture(audio_fd_repp);
     }
-    ::snd_pcm_close(audio_fd);
+    ::snd_pcm_close(audio_fd_repp);
   }    
   toggle_open_state(false);
 }
@@ -212,7 +210,7 @@ void ALSA_PCM_DEVICE::start(void) {
       ::snd_pcm_playback_pause(audio_fd_repp, 0);
     }
     else {
-      ::snd_pcm_flush_capture(audio_fd);
+      ::snd_pcm_flush_capture(audio_fd_repp);
     }
     is_triggered_rep = true;
   }
@@ -259,7 +257,6 @@ ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) {
       cerr << ", there were " << overruns_rep << " overruns_rep.\n";
     }
   }
-
   //  eca_alsa_unload_dynamic_support();
 }
 

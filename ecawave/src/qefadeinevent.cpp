@@ -22,7 +22,7 @@
 #include <ecasound/sample-specs.h>
 #include "qefadeinevent.h"
 
-QEFadeInEvent::QEFadeInEvent(ECA_CONTROLLER* ctrl,
+QEFadeInEvent::QEFadeInEvent(ECA_CONTROL* ctrl,
 			     const string& input,
 			     const string& output,
 			     long int start_pos, 

@@ -20,12 +20,12 @@
 #include <qstatusbar.h>
 #include <qtimer.h>
 
-#include <ecasound/eca-controller.h>
+#include <ecasound/eca-control.h>
 
 #include "qestatusbar.h"
 #include "version.h"
 
-QEStatusBar::QEStatusBar (ECA_CONTROLLER* ctrl,
+QEStatusBar::QEStatusBar (ECA_CONTROL* ctrl,
 			  const string& filename,
 			  QWidget *parent, 
 			  const char *name)

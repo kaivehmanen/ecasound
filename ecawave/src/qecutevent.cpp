@@ -21,7 +21,7 @@
 
 #include "qecutevent.h"
 
-QECutEvent::QECutEvent(ECA_CONTROLLER* ctrl,
+QECutEvent::QECutEvent(ECA_CONTROL* ctrl,
 		       const string& input,
 		       const string& output,
 		       long int start_pos, 

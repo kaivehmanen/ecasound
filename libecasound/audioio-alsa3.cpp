@@ -208,8 +208,8 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   
   params.buffer_size = pcm_info_rep.buffer_size;
   params.frag_size = buffersize() * frame_size();
-  params.bytes_xrun_max = ~0U;
-  params.bytes_min = params.frag_size;
+  params.frames_xrun_max = ~0U;
+  params.frames_min = params.frag_size;
 
   // -------------------------------------------------------------------
   // Stream params
@@ -226,8 +226,8 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   fragment_size_rep = setup.frag_size;
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Fragment size: " +
 		kvu_numtostr(setup.frag_size) + ", max: " +
-		kvu_numtostr(setup.bytes_xrun_max) + ", min: " +
-		kvu_numtostr(setup.bytes_min) + ", current: " +
+		kvu_numtostr(setup.frames_xrun_max) + ", min: " +
+		kvu_numtostr(setup.frames_min) + ", current: " +
 		kvu_numtostr(setup.frags) + ".");
 
   is_triggered_rep = false;
@@ -313,7 +313,7 @@ void ALSA_PCM_DEVICE::print_status_debug(void) {
     underruns_rep += status.xruns;
   else if (pcm_stream_rep == SND_PCM_STREAM_CAPTURE)
     overruns_rep += status.xruns;
-  cerr << "status:" << status.bytes_avail << "," << status.byte_io << "," <<
+  cerr << "status:" << status.frames_avail << "," << status.frame_io << "," <<
     status.xruns << "," << status.state << " ";
   print_time_stamp();
 }
@@ -346,7 +346,7 @@ long ALSA_PCM_DEVICE::position_in_samples(void) const {
   memset(&status, 0, sizeof(status));
   status.stream = pcm_stream_rep;
   ::snd_pcm_stream_status(audio_fd_repp, &status);
-  return (status.byte_io / frame_size());
+  return (status.frame_io / frame_size());
 }
 
 ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) { 

@@ -11,7 +11,7 @@ class QEFadeOutEvent : public QEBlockingEvent {
 
  public:
 
-  QEFadeOutEvent(ECA_CONTROLLER* ctrl,
+  QEFadeOutEvent(ECA_CONTROL* ctrl,
 		 const string& input,
 		 const string& output,
 		 long int insert_pos,
@@ -19,7 +19,7 @@ class QEFadeOutEvent : public QEBlockingEvent {
 
  private:
 
-  ECA_CONTROLLER* ectrl;
+  ECA_CONTROL* ectrl;
 };
 
 #endif

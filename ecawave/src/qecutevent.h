@@ -15,7 +15,7 @@ class QECutEvent : public QEBlockingEvent {
 
   virtual void start(void);
 
-  QECutEvent(ECA_CONTROLLER* ctrl,
+  QECutEvent(ECA_CONTROL* ctrl,
 	      const string& input,
 	      const string& output,
 	      long int start_pos, 
@@ -23,7 +23,7 @@ class QECutEvent : public QEBlockingEvent {
 
  private:
 
-  ECA_CONTROLLER* ectrl;
+  ECA_CONTROL* ectrl;
   long int start_pos_rep, length_rep;
   string input_rep, output_rep;
 };

@@ -50,7 +50,7 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
   const string& output_name(void) const { return(output_object->label()); }
 
   bool class_invariant(void) { return(ectrl != 0); }
-  QEEvent(ECA_CONTROLLER* ctrl);
+  QEEvent(ECA_CONTROL* ctrl);
   virtual ~QEEvent(void);
 
  protected:

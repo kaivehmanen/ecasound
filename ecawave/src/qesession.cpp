@@ -30,7 +30,7 @@
 #include <qaccel.h>
 
 #include <ecasound/eca-session.h>
-#include <ecasound/eca-controller.h>
+#include <ecasound/eca-control.h>
 #include <ecasound/qebuttonrow.h>
 #include <ecasound/eca-version.h>
 
@@ -86,12 +86,12 @@ QESession::QESession (const string& filename,
   }
 
   esession = new ECA_SESSION();
-  ectrl = new ECA_CONTROLLER(esession);
+  ectrl = new ECA_CONTROL(esession);
 
   auto_ptr<ECA_SESSION> p (esession);
   auto_esession = p;
 
-  auto_ptr<ECA_CONTROLLER> q (ectrl);
+  auto_ptr<ECA_CONTROL> q (ectrl);
   auto_ectrl = q;
 
   vlayout = new QVBoxLayout(this);

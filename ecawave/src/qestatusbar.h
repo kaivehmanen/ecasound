@@ -8,7 +8,7 @@
 
 #include <ecasound/eca-audio-time.h>
 
-class ECA_CONTROLLER;
+class ECA_CONTROL;
 
 /**
  * Ecawave statusbar that displays info about currently edited audio file
@@ -27,14 +27,14 @@ public slots:
 
  private:
 
-  ECA_CONTROLLER* ectrl;
+  ECA_CONTROL* ectrl;
   string filename_rep;
   ECA_AUDIO_TIME curpos, vstartpos, vendpos, mstartpos, mendpos;
   bool editing_rep;
 
  public:
 
-  QEStatusBar (ECA_CONTROLLER* ctrl, const string& filename, QWidget *parent = 0, const char *name = 0);
+  QEStatusBar (ECA_CONTROL* ctrl, const string& filename, QWidget *parent = 0, const char *name = 0);
 };
 
 #endif
