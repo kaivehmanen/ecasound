@@ -32,6 +32,8 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-13) Possible bug in forked-stream module (mp3,ogg), which 
 	 causes ecawave crashes.
 	- submitted: kaiv, 17.08.2001
+(edi-21) Review of object position functionality
+	- submitted: kaiv, 31.01.2002
 
 -----------------------------------------------------------------------
 [ Enhancements, new features ]

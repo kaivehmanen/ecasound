@@ -1,0 +1,30 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-21) Review of object position functionality
+	- submitted: kaiv, 31.01.2002
+
+------------------------------------------------------------------------
+Details:
+
+- goals 
+  - find out which objects contain audio position and length 
+    information
+  - determine how different objects behave when position (or length)
+    is set in different situations (chainsetup connected/disconnect, 
+    with/without engine running)
+  - add concept of current position to controller objects (to 
+    make for example fade-ins work even if chainsetup position 
+    is changed during operation)
+  - make sure all ECI commands work correctly in all 
+    situations described above
+  - update documentation
+- technical details
+  - separate ECA_AUDIO_POSITION from ECA_AUDIO_FORMAT; make 
+    both of them inherit ECA_SAMPLERATE_AWARE
+  - implement ECA_CHAINSETUP position using ECA_AUDIO_POSITION
+- open issues
+  - should new functionality (locations, alternative position
+    representations) be added to ECA_AUDIO_POSITION
+
+------------------------------------------------------------------------
