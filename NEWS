@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 071102) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 081102) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -15,6 +15,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+??112002 (v2.2.0-pre6)
+	- fixed: more curses fixes
+	- fixed: ecaplay - -k and ctrl-c cleanup bugs
 07112002 (v2.2.0-pre5)
 	- edi-entries: edi-29 closed
 	- added: ecasound emacs interface, ecasound.el, is now 
