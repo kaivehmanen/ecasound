@@ -2,7 +2,7 @@
 // audioio-mp3.cpp: Interface for mp3 decoders and encoders that support 
 //                  input/output using standard streams. Defaults to
 //                  mpg123 and lame.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 // Note! Routines for parsing mp3 header information were taken from XMMS
 //       1.2.5's mpg123 plugin.
 //
@@ -21,15 +21,27 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#else
+#define HAVE_STDINT_H
+#endif
+
 #include <cmath>
 #include <string>
 #include <cstring>
-#include <sys/stat.h>
-#include <sys/wait.h>
 #include <signal.h>
-#include <inttypes.h> /* for ANSI/ISO type defs */
+#include <unistd.h> /* stat() */
+#include <sys/stat.h> /* stat() */
+#include <sys/wait.h>
 
-#include <unistd.h>
+/* ANSI/ISO type defs */
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* uint32_t, etc types */
+#endif
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* uint32_t, etc types */
+#endif
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
@@ -252,10 +264,10 @@ static bool mpg123_detect_by_content(const char* filename, struct frame* frp) {
 	unsigned char *buf;
 	int in_buf, i;
 
-	if((file = fopen(filename, "rb")) == NULL) {
+	if((file = std::fopen(filename, "rb")) == NULL) {
 	  return false;
 	}
-	if (fread(tmp, 1, 4, file) != 4)
+	if (std::fread(tmp, 1, 4, file) != 4)
 		goto done;
 	buf = new unsigned char [1024];
 	head = convert_to_header(tmp);
@@ -265,7 +277,7 @@ static bool mpg123_detect_by_content(const char* filename, struct frame* frp) {
 		 * so we check the entire file
 		 */
 		/* Optimize this */
-		in_buf = fread(buf, 1, 1024, file);
+		in_buf = std::fread(buf, 1, 1024, file);
 		if(in_buf == 0)
 		{
 			delete[] buf;
@@ -278,7 +290,7 @@ static bool mpg123_detect_by_content(const char* filename, struct frame* frp) {
 			head |= buf[i];
 			if(mpg123_head_check(head))
 			{
-				fseek(file, i+1-in_buf, SEEK_CUR);
+				std::fseek(file, i+1-in_buf, SEEK_CUR);
 				break;
 			}
 		}
@@ -290,22 +302,22 @@ static bool mpg123_detect_by_content(const char* filename, struct frame* frp) {
 		 * We found something which looks like a MPEG-header.
 		 * We check the next frame too, to be sure
 		 */
-	        if (fseek(file, frp->framesize, SEEK_CUR) != 0) {
+	        if (std::fseek(file, frp->framesize, SEEK_CUR) != 0) {
 			goto done;
 		}
-		if (fread(tmp, 1, 4, file) != 4) {
+		if (std::fread(tmp, 1, 4, file) != 4) {
 			goto done;
 		}
 		head = convert_to_header(tmp);
 		if (mpg123_head_check(head) && mpg123_decode_header(frp, head))
 		{
-			fclose(file);
+			std::fclose(file);
 			return true;
 		}
 	}
 
  done:
-	fclose(file);
+	std::fclose(file);
 	ecadebug->msg(ECA_DEBUG::info, "(audioio-mp3) Valid mp3 header not found!");
 	return false;
 }
@@ -362,7 +374,7 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples) {
     fork_mp3_input();
   }
 
-  bytes_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
+  bytes_rep = std::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
       ecadebug->msg(ECA_DEBUG::info, "(audioio-mp3) Can't start process \"" + MP3FILE::default_mp3_input_cmd + "\". Please check your ~/.ecasoundrc.");
@@ -471,7 +483,7 @@ void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERR
   set_channels(2);
 
   /* temporal length */
-  int numframes =  static_cast<int>((fsize / mpg123_compute_bpf(&fr)));
+  long int numframes =  static_cast<long int>((fsize / mpg123_compute_bpf(&fr)));
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Total length (frames): " + kvu_numtostr(numframes));
   double tpf = mpg123_compute_tpf(&fr);
   length_in_seconds(tpf * numframes);
@@ -511,7 +523,7 @@ void MP3FILE::fork_mp3_input(void) {
 //      cerr << "Child fork succeeded!" << endl;
 
     fd_rep = file_descriptor();
-    f1_rep = fdopen(fd_rep, "r");
+    f1_rep = std::fdopen(fd_rep, "r");
     if (f1_rep == 0) finished_rep = true;
   }
 

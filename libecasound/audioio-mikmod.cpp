@@ -90,7 +90,7 @@ void MIKMOD_INTERFACE::fork_mikmod(void) {
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
     fd_rep = file_descriptor();
-    f1_rep = fdopen(fd_rep, "r");
+    f1_rep = std::fdopen(fd_rep, "r");
     if (f1_rep == 0) finished_rep = true;
   }
 }

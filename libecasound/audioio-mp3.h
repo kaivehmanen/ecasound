@@ -5,6 +5,7 @@
 #include <cstdio>
 #include "audioio-types.h"
 #include "audioio-forked-stream.h"
+#include "sample-specs.h"
 
 /**
  * Interface for mp3 decoders and encoders that support 
@@ -32,7 +33,7 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   int pid_of_child_rep;
   long pcm_rep;
   long int bytes_rep;
-  long last_position_rep;
+  SAMPLE_SPECS::sample_pos_t last_position_rep;
   int fd_rep;
   FILE* f1_rep;
   bool mono_input_rep;

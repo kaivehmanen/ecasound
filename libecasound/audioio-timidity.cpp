@@ -59,7 +59,7 @@ long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, long int samples)
     fork_timidity();
   }
 
-  bytes_read_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
+  bytes_read_rep = std::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
       ecadebug->msg(ECA_DEBUG::info, "(audioio-timidity) Can't start process \"" + TIMIDITY_INTERFACE::default_timidity_cmd + "\". Please check your ~/.ecasoundrc.");
@@ -92,7 +92,7 @@ void TIMIDITY_INTERFACE::fork_timidity(void) {
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
     fd_rep = file_descriptor();
-    f1_rep = fdopen(fd_rep, "r");
+    f1_rep = std::fdopen(fd_rep, "r");
     if (f1_rep == 0) finished_rep = true;
   }
   if (wait_for_child() != true) {

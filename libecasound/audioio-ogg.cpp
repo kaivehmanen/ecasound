@@ -67,7 +67,7 @@ long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int sample
   }
 
   if (f1_rep != 0) {
-    bytes_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
+    bytes_rep = std::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   }
   else {
     bytes_rep = 0;
@@ -121,7 +121,7 @@ void OGG_VORBIS_INTERFACE::fork_ogg_input(void) {
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
     fd_rep = file_descriptor();
-    f1_rep = fdopen(fd_rep, "r");
+    f1_rep = std::fdopen(fd_rep, "r");
     if (f1_rep == 0) finished_rep = true;
   }
   else
