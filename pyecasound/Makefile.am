@@ -53,9 +53,10 @@ libpyecasound_la_LDFLAGS 	= -avoid-version -export-dynamic
 # ----------------------------------------------------------------------
 
 install-data-hook:
+if COMPILE_PYECASOUND
 	$(INSTALL) -d $(DESTDIR)$(libdir)
 	cd $(srcdir) ; cp pyeca.py $(DESTDIR)$(libdir)
-
+endif
 
 
 
