@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 091100) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 201100) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -16,6 +16,15 @@ Last officially released version is -*> v1.8.2r14 <*-
 
 ??112000 (v1.8.5d15)
 	- added: tremolo effect (-eemt) [rcs]
+	- added: -z:db; i/o double buffering layer is back! - 
+		 after complete rewrite, db-mode now supports all
+		 non-realtime audio objects, and works both for 
+		 input and output
+	- removed: the "LADSPA/" prefix removed from plugin labels
+	- changed: more intelligent handling of resource files
+	           (for instance ~/.ecasoundrc and preset files)
+	- fixed: nasty bug in effect preset mapping
+	- fixed: -ei:0 caused problems
 07112000 (v1.8.4d15)
 	- added: pulse gate (-eemp); can be used to generate a
 	         metronome signal [rcs]

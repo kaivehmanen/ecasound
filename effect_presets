@@ -88,7 +88,7 @@ metronome = -el:sine_fcac,880,1 -eemb:%bpm,10 -efl:2000
 variable_pan = -epp:0 -kf:1,0,100,0.2,0
 chipmunk_mix = -ei:400 -efl:400 -kos:1,400,10000,2,0
 parchip = -ei:%pitch -efl:400 -kos:1,400,10000,%modfreq,0
-filtertest = -efl:%filter -efl:%filter2
+filtertest = -efl:%filter
 paralmadness = -efb:0,2000 -kos:1,1,3000,%freq1,0 -ea:150 | \
 	       -efb:0,2000 -kos:1,3000,5000,%freq2,0 -ea:150 | \
 	       -efh:0 -kos:1,3000,5000,%freq3,0 -ea:200

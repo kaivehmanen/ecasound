@@ -33,8 +33,8 @@
 
 - comments in ecs (chainsetup) files
 - mp3 bitrate as a command-line parameter
-- make separate xxx-list and xxx-status commands (a pure list, and a more
-  verbose xxx-status command) [ia-mode]
+- ia-mode: make separate xxx-list and xxx-status commands (a pure list, and a more
+  verbose xxx-status command
 - add threshold parameter to -eca
 - embedded effect preset parameters ("-p[fn]:string,par1,...,parN") [done! 1.8.x]
 - metronome signal [done! 1.8.x]
