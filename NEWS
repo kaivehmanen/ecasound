@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 051002) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 061002) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -26,6 +26,11 @@ Last officially released version is -*> v2.0.4 *-
 		   0.9rc4 or newer
 	- changed: libecasoundc versioning back to normal libtool 
 		   style; interface version reverted back to 1:0:0
+	- changed: edi-28; C implementation of ECI, libecasoundc, 
+	           is rewritten to not depend on libecasound
+	- changed: edi-28; pyecasound is rewritten to use the 
+	           new C ECI implementation instead of direct
+		   use of libecasound
 	- fixed: unnecessary warnings when closing OSS 
 	         audio objects
 	- fixed: unnecessary warnings when adding audio 

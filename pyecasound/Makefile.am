@@ -6,15 +6,9 @@ EXTRA_DIST 			= eci.py pyeca.py
 # ----------------------------------------------------------------------
 
 if ECA_AM_DEBUG_MODE
-ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound@LIBECASOUND_VERSION@_debug
+ecasoundc_libs 			= -L$(top_builddir)/libecasoundc/.libs -lecasoundc_debug
 else
-ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound@LIBECASOUND_VERSION@
-endif
-
-if ECA_AM_DEBUG_MODE
-kvutils_libs                    = -L$(top_builddir)/kvutils/.libs -lkvutils@LIBKVUTILS_VERSION@_debug
-else
-kvutils_libs 			= -L$(top_builddir)/kvutils/.libs -lkvutils@LIBKVUTILS_VERSION@
+ecasoundc_libs 			= -L$(top_builddir)/libecasoundc/.libs -lecasoundc
 endif
 
 # difficult from RPM point-of-view
@@ -22,8 +16,8 @@ endif
 # datadir = $(ECA_S_PYTHON_MODULES)
 # libdir = $(prefix)/lib/site-lisp
 
-INCLUDES 			= -I$(srcdir) -I$(top_srcdir) \
-				-I$(top_srcdir)/libecasound \
+INCLUDES 			= -I$(srcdir) \
+				-I$(top_srcdir)/libecasoundc \
 				-I$(ECA_S_PYTHON_INCLUDES)
 
 # ----------------------------------------------------------------------
@@ -41,15 +35,15 @@ if ECA_AM_COMPILE_PYECASOUND
 noinst_LTLIBRARIES 		= libpyecasound.la
 endif
 
-libpyecasound_la_SOURCES	= pyecasound.cpp
-libpyecasound_la_LIBADD		= $(ecasound_libs) $(kvutils_libs)
-libpyecasound_la_LDFLAGS 	= -avoid-version -export-dynamic -Wl,--rpath -Wl,${prefix}/lib
+libpyecasound_la_SOURCES	= pyecasound.c
+# old LDFLAGS: -Wl,--rpath -Wl,${prefix}/lib
+libpyecasound_la_LDFLAGS 	= -avoid-version -export-dynamic
 
 if ECA_AM_COMPILE_PYECASOUND
 all: pyecasound.so
 
 pyecasound.so: pyecasound.o
-	$(CXX) -o pyecasound.so pyecasound.o -shared -nostartfiles  $(libpyecasound_la_LDFLAGS) $(ecasound_libs) $(kvutils_libs)
+	$(CC) -o pyecasound.so pyecasound.o -shared -nostartfiles $(libpyecasound_la_LDFLAGS) $(ecasoundc_libs)
 endif
 
 # ----------------------------------------------------------------------
