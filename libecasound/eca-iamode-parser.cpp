@@ -202,8 +202,8 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["ctrl-register"] = ec_ctrl_register;
 
   cmd_map_rep["engine-status"] = ec_engine_status;
-  cmd_map_rep["status"] = ec_st_general;
-  cmd_map_rep["st"] = ec_st_general;
+  cmd_map_rep["status"] = ec_cs_status;
+  cmd_map_rep["st"] = ec_cs_status;
   cmd_map_rep["cs"] = ec_c_status;
   cmd_map_rep["es"] = ec_cop_status;
   cmd_map_rep["x"] = ec_cop_status;
@@ -510,12 +510,12 @@ void show_controller_help(void) {
   mitem << "\n'rewind time-in-seconds', 'rw time-in-seconds' - Rewind";
   mitem << "\n'forward time-in-seconds', 'fw time-in-seconds' - Forward";
   mitem << "\n'setpos time-in-seconds' - Sets the current position to 'time-in-seconds' seconds from the beginning.";
-  mitem << "\n'status','st','u' - General status info";
-  mitem << "\n'cs-status' - Chainsetup status";
-  mitem << "\n'c-status', 'cstatus','cs','a' - Chain status";
-  mitem << "\n'cop-status', 'estatus', 'es','x' - Chain operator status";
+  mitem << "\n'engine-status' - Engine status";
+  mitem << "\n'cs-status','status','st' - Chainsetup status";
+  mitem << "\n'c-status', 'cstatus','cs' - Chain status";
+  mitem << "\n'cop-status', 'estatus', 'es' - Chain operator status";
   mitem << "\n'ctrl-status' - Controller status"; 
-  mitem << "\n'aio-status', 'fstatus', 'fs','l' - Audio input/output status";
+  mitem << "\n'aio-status', 'fstatus', 'fs' - Audio input/output status";
 
   mitem << "\n--- see ecasound-iam(1) manual page for more info -----------------\n";
   //  mitem << "\n'chain chainname', 'c chainname' - Enable/disable the the chain 'chainname'";

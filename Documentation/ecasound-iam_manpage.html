@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>12.10.2001</h2>
+<h2>13.10.2001</h2>
 
 
     
@@ -81,11 +81,9 @@ Help! <em>[-]</em>
 <p><h2>GLOBAL</h2>
     
 <p><dl>
-<p><p></p><dt><strong>status, st</strong><dd>
-General status info. <em>[s]</em>
 <p><p></p><dt><strong>engine-status</strong><dd>
 Returns a string describing the engine status (running, stopped,
-finished, error, not ready). <em>[s]</em>
+finished, error, not ready). See also <em>cs-status</em>. <em>[s]</em>
 <p></dl>
 <p><h2>DIRECT ARGUMENTS</h2>
     
@@ -184,7 +182,7 @@ See ecasound(1) for more info. <em>[-]</em>
 Set the default sample parameters for currently selected chainsetup. 
 For example cd-quality audio would be "16,2,44100". This does the
 same as command-line argument "-f" (see ecasound(1)). <em>[-]</em>
-<p><p></p><dt><strong>cs-status, cs</strong><dd>
+<p><p></p><dt><strong>cs-status, status, st</strong><dd>
 Print status info about all chainsetups. <em>[s]</em>
 <p></dl>
 <p><h2>CHAINS</h2>
@@ -243,7 +241,7 @@ times. <em>[-]</em>
 <p><p></p><dt><strong>c-setpos 'time_in_seconds', c-set-position 'time_in_seconds'</strong><dd>
 Set position of all inputs and outputs connected to selected chains to
 'time_in_seconds'. <em>[-]</em>
-<p><p></p><dt><strong>c-status</strong><dd>
+<p><p></p><dt><strong>c-status, cs</strong><dd>
 Print status info about all chains. <em>[s]</em>
 <p></dl>
 <p><h2>AUDIO INPUT/OUTPUT OBJECTS</h2>

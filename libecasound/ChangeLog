@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-10-13  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+	
+	* eca-chainsetup.h (options_to_string): added
+	* eca-control.h (print_general_status): removed
+	
 2001-10-11  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audioio-types.h (AUDIO_IO_DEVICE::is_realtime_object): added

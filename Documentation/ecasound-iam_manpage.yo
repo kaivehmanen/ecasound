@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (12.10.2001)
+       (13.10.2001)
        ()
        (Multimedia software)
 
@@ -80,12 +80,9 @@ manpagesection(GLOBAL)
 
 startdit()
 
-dit(status, st)
-General status info. em([s])
-
 dit(engine-status)
 Returns a string describing the engine status (running, stopped,
-finished, error, not ready). em([s])
+finished, error, not ready). See also em(cs-status). em([s])
  
 enddit()
 
@@ -213,7 +210,7 @@ Set the default sample parameters for currently selected chainsetup.
 For example cd-quality audio would be "16,2,44100". This does the
 same as command-line argument "-f" (see ecasound(1)). em([-])
 
-dit(cs-status, cs)
+dit(cs-status, status, st)
 Print status info about all chainsetups. em([s])
 
 enddit()
@@ -290,7 +287,7 @@ dit(c-setpos 'time_in_seconds', c-set-position 'time_in_seconds')
 Set position of all inputs and outputs connected to selected chains to
 'time_in_seconds'. em([-])
 
-dit(c-status)
+dit(c-status, cs)
 Print status info about all chains. em([s])
 
 enddit()

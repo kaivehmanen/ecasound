@@ -38,7 +38,6 @@ class ECA_IAMODE_PARSER {
     ec_run,
     ec_debug,
     // --
-    ec_st_general,
     ec_engine_status,
     // --
     ec_cs_add,

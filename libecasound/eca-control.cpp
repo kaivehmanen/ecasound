@@ -307,7 +307,6 @@ void ECA_CONTROL::action(int action_id) {
   case ec_cs_set_param: { set_chainsetup_parameter(action_args_rep[0]); break; }
   case ec_cs_set_audio_format: { set_chainsetup_sample_format(action_args_rep[0]); break; }
   case ec_cs_status: { 
-    ecadebug->msg("Controller/Chainsetup status:\n");
     set_last_string(chainsetup_status()); 
     break; 
   }
@@ -378,7 +377,6 @@ void ECA_CONTROL::action(int action_id) {
     }
   case ec_c_status: 
     { 
-      ecadebug->msg("Controller/Chain status:\n");
       set_last_string(chain_status()); 
       break; 
     }
@@ -390,7 +388,6 @@ void ECA_CONTROL::action(int action_id) {
   case ec_ai_status:
   case ec_ao_status:
     { 
-      ecadebug->msg("Controller/Audio input/output status:\n");
       set_last_string(aio_status()); 
       break; 
     }
@@ -510,7 +507,6 @@ void ECA_CONTROL::action(int action_id) {
     }
   case ec_cop_status: 
     { 
-      ecadebug->msg("Chain operator status:\n");
       set_last_string(chain_operator_status()); 
       break; 
     }
@@ -534,7 +530,6 @@ void ECA_CONTROL::action(int action_id) {
   case ec_ctrl_selected: { set_last_integer(selected_controller()); break; }
   case ec_ctrl_status: 
     { 
-      ecadebug->msg("Controller status");
       set_last_string(controller_status()); 
       break; 
     }
@@ -547,11 +542,6 @@ void ECA_CONTROL::action(int action_id) {
   // ---
   // Session status
   // ---
-  case ec_st_general: 
-    { 
-      ecadebug->msg("Controller/General Status");
-      print_general_status(); break; 
-    }
   case ec_engine_status: { set_last_string(engine_status()); break; }
 
   // ---
@@ -632,31 +622,29 @@ void ECA_CONTROL::print_last_error(void) {
   }
 }
 
-void ECA_CONTROL::print_general_status(void) {
-  MESSAGE_ITEM st_info_string;
+string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const {
+  string result;
 
-  if (is_selected()) {
-    st_info_string << "Selected chainsetup: " +
-      selected_chainsetup() + "\n";
-    st_info_string << "Selected chain(s): ";
-    st_info_string << vector_to_string(selected_chainsetup_repp->selected_chains(),",");
-    st_info_string << "\n";
-    if (selected_chainsetup_repp->raised_priority()) st_info_string << "Raised-priority mode: enabled\n";
-    if (selected_chainsetup_repp->multitrack_mode_rep) st_info_string << "Multitrack-mode: enabled\n";
-    else st_info_string << "Multitrack-mode: disabled\n";
+  result += "\n -> Objects: " + kvu_numtostr(cs->inputs.size());
+  result += " inputs, " + kvu_numtostr(cs->outputs.size());
+  result += " outputs, " + kvu_numtostr(cs->chains.size());
+  result += " chains";
 
-  }
-  else {
-    st_info_string << "Selected chainsetup: -\n";
-  }
-  st_info_string << "Engine status: \"" << engine_status() << "\"\n";
+  if (cs->is_valid()) 
+    result += "\n -> State:   valid (can be connected)";
+  else
+    result += "\n -> State:   not valid (cannot be connected)";
 
-  set_last_string(st_info_string.to_string());
+  result += "\n -> Options: ";
+  result += cs->options_to_string();
+  
+  return(result);
 }
 
 string ECA_CONTROL::chainsetup_status(void) const { 
-  vector<ECA_CHAINSETUP*>::const_iterator cs_citer = session_repp->chainsetups_rep.begin();
+  ecadebug->msg("### Chainsetup status ###");
 
+  vector<ECA_CHAINSETUP*>::const_iterator cs_citer = session_repp->chainsetups_rep.begin();
   int index = 0;
   string result;
   while(cs_citer != session_repp->chainsetups_rep.end()) {
@@ -664,27 +652,8 @@ string ECA_CONTROL::chainsetup_status(void) const {
     result += (*cs_citer)->name() + "\" ";
     if ((*cs_citer)->name() == selected_chainsetup()) result += "[selected] ";
     if ((*cs_citer)->name() == connected_chainsetup()) result += "[connected] ";
-    result += "\n\tFilename:\t\t" + (*cs_citer)->filename();
-    result += "\n\tSetup:\t\t\tinputs " + kvu_numtostr((*cs_citer)->inputs.size());
-    result += " - outputs " + kvu_numtostr((*cs_citer)->outputs.size());
-    result += " - chains " + kvu_numtostr((*cs_citer)->chains.size());
-    result += "\n\tBuffersize:\t\t" + kvu_numtostr((*cs_citer)->buffersize());
-    result += "\n\tInternal sample rate:\t" + kvu_numtostr((*cs_citer)->sample_rate());
-    result += "\n\tDefault sformat:\t" + kvu_numtostr(static_cast<int>((*cs_citer)->default_audio_format().bits())) 
-                                    + "bit/"
-                                    + kvu_numtostr(static_cast<int>((*cs_citer)->default_audio_format().channels())) 
-                                    + "ch/"
-                                     + kvu_numtostr((*cs_citer)->default_audio_format().samples_per_second());
-    result += "\n\tFlags:\t\t\t";
-    if ((*cs_citer)->double_buffering()) result += "D";
-    if ((*cs_citer)->precise_sample_rates()) result += "P";
-    // FIXME: some status variables are missing from the output
-    // (-z:xruns, etc)
-    if ((*cs_citer)->is_valid()) 
-      result += "\n\tState: \t\t\tvalid - can be connected";
-    else
-      result += "\n\tState: \t\t\tnot valid - cannot be connected";
-
+    result += chainsetup_details_to_string((*cs_citer));
+    
     ++cs_citer;
     if (cs_citer != session_repp->chainsetups_rep.end()) result += "\n";
   }
@@ -694,9 +663,12 @@ string ECA_CONTROL::chainsetup_status(void) const {
 
 string ECA_CONTROL::chain_status(void) const {
   // --------
-  // require:
-  assert(is_selected() == true);
+  DBC_REQUIRE(is_selected() == true);
   // --------
+  
+  ecadebug->msg("### Chain status (chainsetup '" +
+		selected_chainsetup() + "') ###");
+  
   MESSAGE_ITEM mitem;
   vector<CHAIN*>::const_iterator chain_citer;
   const vector<string>& schains = selected_chainsetup_repp->selected_chains();
@@ -719,9 +691,11 @@ string ECA_CONTROL::chain_status(void) const {
 
 string ECA_CONTROL::chain_operator_status(void) const {
   // --------
-  // require:
-  assert(is_selected() == true);
+  DBC_REQUIRE(is_selected() == true);
   // --------
+
+  ecadebug->msg("### Chain operator status (chainsetup '" +
+		selected_chainsetup() + "') ###");
 
   MESSAGE_ITEM msg;
   string st_info_string;
@@ -752,14 +726,15 @@ string ECA_CONTROL::chain_operator_status(void) const {
 
 string ECA_CONTROL::controller_status(void) const {
   // --------
-  // require:
-  assert(is_selected() == true);
+  DBC_REQUIRE(is_selected() == true);
   // --------
+
+  ecadebug->msg("### Controller status (chainsetup '" +
+		selected_chainsetup() + "') ###");
 
   MESSAGE_ITEM mitem;
   string st_info_string;
   vector<CHAIN*>::const_iterator chain_citer;
-
   for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\":\n";
     for(int p = 0; p < (*chain_citer)->number_of_controllers(); p++) {
@@ -785,9 +760,11 @@ string ECA_CONTROL::controller_status(void) const {
 
 string ECA_CONTROL::aio_status(void) const {
   // --------
-  // require:
-  assert(is_selected() == true);
+  DBC_REQUIRE(is_selected() == true);
   // --------
+
+  ecadebug->msg("### Audio input/output status (chainsetup '" +
+		selected_chainsetup() + "') ###");
 
   string st_info_string;
   vector<AUDIO_IO*>::size_type adev_sizet = 0;
@@ -837,7 +814,6 @@ string ECA_CONTROL::aio_status(void) const {
     ++adev_citer;
     if (adev_sizet < selected_chainsetup_repp->outputs.size()) st_info_string += "\n";
   }
-
   return(st_info_string);
 }
 

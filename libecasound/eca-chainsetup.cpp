@@ -854,6 +854,15 @@ bool ECA_CHAINSETUP::has_nonrealtime_objects(void) const {
 }
 
 /**
+ * Returns a string containing currently active chainsetup
+ * options and settings. Syntax is the same as used for
+ * saved chainsetup files.
+ */
+string ECA_CHAINSETUP::options_to_string(void) const {
+  return(cparser_rep.general_options_to_string());
+}
+
+/**
  * Returns number of realtime audio input objects.
  */
 int ECA_CHAINSETUP::number_of_realtime_inputs(void) const {

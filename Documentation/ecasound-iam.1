@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "12\&.10\&.2001" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "13\&.10\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -60,12 +60,9 @@ Help! \fI[-]\fP
 .SH "GLOBAL" 
 .IP 
 .PP 
-.IP "status, st" 
-General status info\&. \fI[s]\fP
-.PP 
 .IP "engine-status" 
 Returns a string describing the engine status (running, stopped,
-finished, error, not ready)\&. \fI[s]\fP
+finished, error, not ready)\&. See also \fIcs-status\fP\&. \fI[s]\fP
 .PP 
 .IP 
 .SH "DIRECT ARGUMENTS" 
@@ -191,7 +188,7 @@ Set the default sample parameters for currently selected chainsetup\&.
 For example cd-quality audio would be "16,2,44100"\&. This does the
 same as command-line argument "-f" (see ecasound(1))\&. \fI[-]\fP
 .PP 
-.IP "cs-status, cs" 
+.IP "cs-status, status, st" 
 Print status info about all chainsetups\&. \fI[s]\fP
 .PP 
 .IP 
@@ -266,7 +263,7 @@ times\&. \fI[-]\fP
 Set position of all inputs and outputs connected to selected chains to
 \'time_in_seconds\'\&. \fI[-]\fP
 .PP 
-.IP "c-status" 
+.IP "c-status, cs" 
 Print status info about all chains\&. \fI[s]\fP
 .PP 
 .IP 

@@ -196,6 +196,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   bool is_valid(void) const;
   bool has_realtime_objects(void) const;
   bool has_nonrealtime_objects(void) const;
+  string options_to_string(void) const;
 
   /*@}*/
 

@@ -6,6 +6,7 @@
 #include "eca-control-dump.h"
 
 class CHAIN_OPERATOR;
+class ECA_CHAINSETUP;
 
 /**
  * Class for controlling the whole ecasound library
@@ -29,6 +30,8 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   double first_argument_as_float(void) const;
   long int first_argument_as_long_int(void) const;
 
+  string chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const;
+
  public:
 
   /**
@@ -47,14 +50,12 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   /**
    * See ECA_IAMODE_PARSER for detailed decsription of 'action_id'.
    */
-   void action(int action_id, const std::vector<std::string>& args);
+  void action(int action_id, const std::vector<std::string>& args);
 
   // -------------------------------------------------------------------
   // Session info
   // -------------------------------------------------------------------
   
-  void print_general_status(void);
-
   /**
    * Return info about chainsetups
    */
