@@ -11,11 +11,7 @@ else
 ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound
 endif
 
-if KVUTILS_INSTALLED
-kvutils_libs 			= -lkvutils
-else
 kvutils_libs 			= -L$(top_builddir)/kvutils/.libs -lkvutils
-endif
 
 # difficult from RPM point-of-view
 libdir = $(eca_python_dlmodules)
