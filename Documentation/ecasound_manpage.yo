@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (17.10.2002)
+       (24.10.2002)
        ()
        (Multimedia software)
 
@@ -706,7 +706,14 @@ COMMENT(----------------------------------------------------------------)
 bf(INTERACTIVE MODE)
 
 See em(ecasound-iam(1)).
- 
+
+manpagesection(ENVIRONMENT)
+
+        em(ECASOUND)
+	If defined, some utility programs and scripts will use 
+	the em(ECASOUND) environment as the default path to
+	ecasound executable.
+
 manpagefiles()
 
 	em(~/.ecasound)

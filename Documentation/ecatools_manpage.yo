@@ -77,6 +77,10 @@ Print usage information and exit.
 dit(-k:number)
 Skip 'number' of files.
 
+dit(-o:output_device)
+Use 'output_device' instead of the default output device 
+(as specified in em(~/.ecasoundrc).
+
 enddit()
 
 bf(ECASIGNALVIEW)
@@ -114,6 +118,13 @@ enddit()
 More complete documentation for ecasignalview can be found 
 from "Ecasound User's Guide" (see ''http://www.eca.cx/ecasound 
 -> Documentation'').
+
+manpagesection(ENVIRONMENT)
+
+        em(ECASOUND)
+	If defined, most ecatools programs will use the 
+	em(ECASOUND) environment as the default path to
+	ecasound executable.
 
 manpagefiles()
 

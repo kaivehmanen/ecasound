@@ -61,6 +61,10 @@ Print usage information and exit\&.
 .IP "-k:number" 
 Skip \'number\' of files\&.
 .IP 
+.IP "-o:output_device" 
+Use \'output_device\' instead of the default output device 
+(as specified in \fI~/\&.ecasoundrc\fP\&.
+.IP 
 .PP 
 \fBECASIGNALVIEW\fP
 .PP 
@@ -95,6 +99,13 @@ Specify screen refresh rate in milliseconds\&.
 More complete documentation for ecasignalview can be found 
 from "Ecasound User\'s Guide" (see \'\'http://www\&.eca\&.cx/ecasound 
 -> Documentation\'\')\&.
+.PP 
+.SH "ENVIRONMENT" 
+.PP 
+\fIECASOUND\fP
+If defined, most ecatools programs will use the 
+\fIECASOUND\fP environment as the default path to
+ecasound executable\&.
 .PP 
 .SH "FILES" 
 .PP 

@@ -69,6 +69,9 @@ Set libecasound debug level. See ecasound(1).
 Print usage information and exit.
 <p><p></p><dt><strong>-k:number</strong><dd>
 Skip 'number' of files.
+<p><p></p><dt><strong>-o:output_device</strong><dd>
+Use 'output_device' instead of the default output device 
+(as specified in <em>~/.ecasoundrc</em>.
 <p></dl>
 <p><strong>ECASIGNALVIEW</strong>
 <p>Ecasignalview is meant for monitoring signal amplitude and peak 
@@ -96,6 +99,12 @@ Specify screen refresh rate in milliseconds.
 <p>More complete documentation for ecasignalview can be found 
 from "Ecasound User's Guide" (see ''http://www.eca.cx/ecasound 
 -&gt; Documentation'').
+<p><h2>ENVIRONMENT</h2>
+    
+<p><em>ECASOUND</em>
+	If defined, most ecatools programs will use the 
+	<em>ECASOUND</em> environment as the default path to
+	ecasound executable.
 <p><h2>FILES</h2>
     
 <p><em>~/.ecasoundrc</em>

@@ -6,14 +6,12 @@
 
 \title{Ecasound Control Interface Guide}
 \author{Kai Vehmanen}
-\date{06102002}
+\date{24102002}
 \begin{document}
 
 \maketitle
 \tableofcontents 
 \clearpage
-
-
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
@@ -31,6 +29,8 @@ detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 24.10.2002 - Added ``Notes Concerning Standalone ECI Implementations''
+                   section.
 \item 06.10.2002 - Added ``Application development'' section.
 \item 05.10.2002 - Changed the libecasoundc link path.
 \item 29.09.2002 - ``PHP'' section added.
@@ -157,6 +157,7 @@ as the underlying implementation.
 
 % ----------------------------------------------------------------------
 \subsection{General}
+
 \subsubsection{Overview}
 This section contains overview of how ECI is implemented in the 
 discussed language (eg. as a single class, set of classes, set of
@@ -178,6 +179,22 @@ Implementation of the following:
       chainsetup. Print chain operator status info.
 \end{enumerate}
 
+
+% ----------------------------------------------------------------------
+\subsection{Notes Concerning Standalone ECI Implementations}
+
+The C implementation of ECI is not directly linked against the main 
+ecasound libraries. Instead, the it launches the ecasound executable 
+on the background and uses command pipes to communicate with it.
+
+The launched ecasound executable can be selected by using the
+\emph{ECASOUND} environment variable. If it is not defined,
+the C ECI implementation will try to launch ``ecasound'' (ie.
+has to be somewhere in PATH). 
+
+In addition to the C implementation, this also affects all 
+ECI implementations that are based on the C version. Currently
+this includes at least the Perl, PHP and Python ECI modules.
 
 % ----------------------------------------------------------------------
 \subsection{C++}

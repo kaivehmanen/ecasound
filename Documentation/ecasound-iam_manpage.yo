@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (22.10.2002)
+       (24.10.2002)
        ()
        (Multimedia software)
 
@@ -293,6 +293,9 @@ dit(ao-add 'output_format_string')
 Adds a new output object. See ecasound(1) man page for more info about 
 the argument format ('-o' option). If argument is omitted, 
 a default output device is added (see ecasoundrc(5)). em([-])
+
+dit(ao-add-default)
+Adds the default output device (see ecasoundrc(5)). em([-])
 
 dit(ai-select 'aobject_name', ao-select 'aobject_name')
 Selects an audio object. 'aobject_name' refers to the string
