@@ -27,6 +27,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+23.10.2002 - edi-31 added
 15.10.2002 - edi-30 added
 29.09.2002 - edi-27, edi-28 and edi-29 added
 22.08.2002 - edi-24 closed

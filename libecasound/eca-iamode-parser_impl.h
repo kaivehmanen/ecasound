@@ -112,7 +112,6 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_cop_set,
     ec_cop_status,
     ec_cop_register,
-    ec_cop_descriptions,
     ec_copp_list,
     ec_copp_select,
     ec_copp_selected,
@@ -122,9 +121,6 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_ladspa_register,
     ec_preset_register,
     // --
-    ec_ladspa_descriptions,
-    ec_preset_descriptions,
-    // --
     ec_ctrl_add,
     ec_ctrl_remove,
     ec_ctrl_list,
@@ -132,7 +128,6 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_ctrl_selected,
     ec_ctrl_status,
     ec_ctrl_register,
-    ec_ctrl_descriptions,
     ec_ctrlp_list,     /* FIXME: not implemented */
     ec_ctrlp_select,   /* FIXME: not implemented */
     ec_ctrlp_selected, /* FIXME: not implemented */
@@ -145,6 +140,11 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_int_version_lib_current,
     ec_int_version_lib_revision,
     ec_int_version_lib_age,
+    // --
+    ec_map_cop_list,
+    ec_map_preset_list,
+    ec_map_ladspa_list,
+    ec_map_ctrl_list,
     // --
     ec_dump_target,
     ec_dump_status,

@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "24\&.10\&.2002" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "25\&.10\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -393,23 +393,11 @@ Returns the selected parameter value\&. \fI[f]\fP
 .IP "cop-register" 
 Prints a list of registered chain operators\&. \fI[s]\fP
 .PP 
-.IP "cop-descriptions" 
-Prints a list of registered chain operators using 
-the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
-.PP 
 .IP "preset-register" 
 Prints a list of registered effect presets\&. \fI[s]\fP
 .PP 
-.IP "preset-descriptions" 
-Prints a list of registered effect presets using 
-the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
-.PP 
 .IP "ladspa-register" 
 Prints a list of registered LADSPA plugins\&. \fI[s]\fP
-.PP 
-.IP "ladspa-descriptions" 
-Prints a list of registered LADSPA plugins using 
-the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
 .PP 
 .IP 
 .SH "CONTROLLERS" 
@@ -442,10 +430,6 @@ Returns info about controller status\&. \fI[s]\fP
 .IP "ctrl-register" 
 Prints a list of registered controllers\&. \fI[s]\fP
 .IP 
-.IP "ctrl-descriptions" 
-Prints a list of registered controllers using 
-the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
-.IP 
 .IP 
 .SH "INTERNAL COMMANDS" 
 Internal commands are not directly aimed at normal use\&. They
@@ -469,12 +453,37 @@ Returns EIAM library interface revision (libtool)\&. \fI[i]\fP
 .IP "int-cmd-version-lib-age" 
 Returns EIAM library interface age (libtool)\&. \fI[i]\fP
 .IP 
+.IP 
+.SH "OBJECT MAPS" 
+Object maps are central repositories for commonly used object types\&.
+By querying the maps, applications can get a list of all registered
+object types and their properties\&. 
+.IP 
+.IP 
+.IP "map-cop-list" 
+Prints a list of registered chain operators using 
+the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
+.IP 
+.IP "map-preset-list" 
+Prints a list of registered effect presets using 
+the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
+.IP 
+.IP "map-ladspa-list" 
+Prints a list of registered LADSPA plugins using 
+the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
+.IP 
+.IP "map-ctrl-list" 
+Prints a list of registered controllers using 
+the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
+.IP 
+.IP 
 .SH "DUMP COMMANDS" 
 The following dump commands are not meant for normal use\&. 
 Their primary purpose is to provide an easy way to get 
 internal state information from libecasound\&. All dump
 commands output a single line with syntax "key value"
 to the selected output stream (defaults to stdout)\&. 
+.IP 
 .IP 
 .IP "dump-target \'filename\'" 
 Set target stream for dumping\&. \fI[-]\fP
@@ -531,10 +540,11 @@ Dumps audio output state info\&. Either \'open\' or \'closed\'\&. \fI[-]\fP
 Dumps chain operator parameter value\&. \'chainop\' and \'param\' are 
 operator and parameter index values (1\&.\&.\&.n)\&. \fI[-]\fP
 .IP 
+.IP 
 .SH "OPERATOR DESCRIPTIONS" 
 .IP 
-The \fIxxx-descriptions\fP return a string containing all registered
-objects of the given type\&. Each line of the output described
+The \fImap-xxx-list\fP commands return a string containing all registered
+objects of the given type \fIxxx\fP\&. Each line of the output describes
 one registered type\&. The used syntax is:
 .IP 
 \'keyword,name,description,num_of_params,par1_def,par2_def,\&.\&.\&.\'

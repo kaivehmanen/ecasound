@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (24.10.2002)
+       (25.10.2002)
        ()
        (Multimedia software)
 
@@ -421,23 +421,11 @@ Returns the selected parameter value. em([f])
 dit(cop-register)
 Prints a list of registered chain operators. em([s])
 
-dit(cop-descriptions)
-Prints a list of registered chain operators using 
-the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
-
 dit(preset-register)
 Prints a list of registered effect presets. em([s])
 
-dit(preset-descriptions)
-Prints a list of registered effect presets using 
-the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
-
 dit(ladspa-register)
 Prints a list of registered LADSPA plugins. em([s])
-
-dit(ladspa-descriptions)
-Prints a list of registered LADSPA plugins using 
-the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
 
 enddit()
 
@@ -471,16 +459,13 @@ Returns info about controller status. em([s])
 dit(ctrl-register)
 Prints a list of registered controllers. em([s])
 
-dit(ctrl-descriptions)
-Prints a list of registered controllers using 
-the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
-
 enddit()
 
 manpagesection(INTERNAL COMMANDS)
 Internal commands are not directly aimed at normal use. They
 are primarily meant for use in scripting and frontends.
 
+startdit()
 dit(int-cmd-list)
 Returns a list of all registered EIAM commands. em([S])
 
@@ -499,12 +484,41 @@ Returns EIAM library interface revision (libtool). em([i])
 dit(int-cmd-version-lib-age)
 Returns EIAM library interface age (libtool). em([i])
 
+enddit()
+
+manpagesection(OBJECT MAPS)
+Object maps are central repositories for commonly used object types.
+By querying the maps, applications can get a list of all registered
+object types and their properties. 
+
+startdit()
+
+dit(map-cop-list)
+Prints a list of registered chain operators using 
+the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
+
+dit(map-preset-list)
+Prints a list of registered effect presets using 
+the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
+
+dit(map-ladspa-list)
+Prints a list of registered LADSPA plugins using 
+the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
+
+dit(map-ctrl-list)
+Prints a list of registered controllers using 
+the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
+
+enddit()
+
 manpagesection(DUMP COMMANDS)
 The following dump commands are not meant for normal use. 
 Their primary purpose is to provide an easy way to get 
 internal state information from libecasound. All dump
 commands output a single line with syntax "key value"
 to the selected output stream (defaults to stdout). 
+
+startdit()
 
 dit(dump-target 'filename')
 Set target stream for dumping. em([-])
@@ -561,10 +575,12 @@ dit(dump-cop-value 'chainop,param')
 Dumps chain operator parameter value. 'chainop' and 'param' are 
 operator and parameter index values (1...n). em([-])
 
+enddit()
+
 manpagesection(OPERATOR DESCRIPTIONS)
 
-The em(xxx-descriptions) return a string containing all registered
-objects of the given type. Each line of the output described
+The em(map-xxx-list) commands return a string containing all registered
+objects of the given type em(xxx). Each line of the output describes
 one registered type. The used syntax is:
 
 'keyword,name,description,num_of_params,par1_def,par2_def,...'

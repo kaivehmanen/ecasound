@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>24.10.2002</h2>
+<h2>25.10.2002</h2>
 
 
     
@@ -339,19 +339,10 @@ Sets the selected parameter value to 'value'. <em>[-]</em>
 Returns the selected parameter value. <em>[f]</em>
 <p><p></p><dt><strong>cop-register</strong><dd>
 Prints a list of registered chain operators. <em>[s]</em>
-<p><p></p><dt><strong>cop-descriptions</strong><dd>
-Prints a list of registered chain operators using 
-the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
 <p><p></p><dt><strong>preset-register</strong><dd>
 Prints a list of registered effect presets. <em>[s]</em>
-<p><p></p><dt><strong>preset-descriptions</strong><dd>
-Prints a list of registered effect presets using 
-the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
 <p><p></p><dt><strong>ladspa-register</strong><dd>
 Prints a list of registered LADSPA plugins. <em>[s]</em>
-<p><p></p><dt><strong>ladspa-descriptions</strong><dd>
-Prints a list of registered LADSPA plugins using 
-the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
 <p></dl>
 <p><h2>CONTROLLERS</h2>
     
@@ -376,15 +367,13 @@ Returns the index number of currently selected controller. <em>[i]</em>
 Returns info about controller status. <em>[s]</em>
 <p><p></p><dt><strong>ctrl-register</strong><dd>
 Prints a list of registered controllers. <em>[s]</em>
-<p><p></p><dt><strong>ctrl-descriptions</strong><dd>
-Prints a list of registered controllers using 
-the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
 <p></dl>
 <p><h2>INTERNAL COMMANDS</h2>
     
 Internal commands are not directly aimed at normal use. They
 are primarily meant for use in scripting and frontends.
-<p><p></p><dt><strong>int-cmd-list</strong><dd>
+<p><dl>
+<p></p><dt><strong>int-cmd-list</strong><dd>
 Returns a list of all registered EIAM commands. <em>[S]</em>
 <p><p></p><dt><strong>int-output-mode-wellformed</strong><dd>
 Select the well-format output format for log messages. <em>[-]</em>
@@ -396,6 +385,26 @@ Returns EIAM library interface version (libtool). <em>[i]</em>
 Returns EIAM library interface revision (libtool). <em>[i]</em>
 <p><p></p><dt><strong>int-cmd-version-lib-age</strong><dd>
 Returns EIAM library interface age (libtool). <em>[i]</em>
+<p></dl>
+<p><h2>OBJECT MAPS</h2>
+    
+Object maps are central repositories for commonly used object types.
+By querying the maps, applications can get a list of all registered
+object types and their properties. 
+<p><dl>
+<p><p></p><dt><strong>map-cop-list</strong><dd>
+Prints a list of registered chain operators using 
+the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
+<p><p></p><dt><strong>map-preset-list</strong><dd>
+Prints a list of registered effect presets using 
+the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
+<p><p></p><dt><strong>map-ladspa-list</strong><dd>
+Prints a list of registered LADSPA plugins using 
+the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
+<p><p></p><dt><strong>map-ctrl-list</strong><dd>
+Prints a list of registered controllers using 
+the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
+<p></dl>
 <p><h2>DUMP COMMANDS</h2>
     
 The following dump commands are not meant for normal use. 
@@ -403,6 +412,7 @@ Their primary purpose is to provide an easy way to get
 internal state information from libecasound. All dump
 commands output a single line with syntax "key value"
 to the selected output stream (defaults to stdout). 
+<p><dl>
 <p><p></p><dt><strong>dump-target 'filename'</strong><dd>
 Set target stream for dumping. <em>[-]</em>
 <p><p></p><dt><strong>dump-status</strong><dd>
@@ -443,10 +453,11 @@ Dumps audio output state info. Either 'open' or 'closed'. <em>[-]</em>
 <p><p></p><dt><strong>dump-cop-value 'chainop,param'</strong><dd>
 Dumps chain operator parameter value. 'chainop' and 'param' are 
 operator and parameter index values (1...n). <em>[-]</em>
+<p></dl>
 <p><h2>OPERATOR DESCRIPTIONS</h2>
     
-<p>The <em>xxx-descriptions</em> return a string containing all registered
-objects of the given type. Each line of the output described
+<p>The <em>map-xxx-list</em> commands return a string containing all registered
+objects of the given type <em>xxx</em>. Each line of the output describes
 one registered type. The used syntax is:
 <p>'keyword,name,description,num_of_params,par1_def,par2_def,...'
 <p><em>parX_def</em> describes one object parameter. This definition

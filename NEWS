@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 241002) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 251002) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -17,16 +17,16 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 ??102002 (v2.2.0-pre4)
 	- edi-entries: edi-30
-	- added: eiam - commands 'cop-descriptions',
-		 'ctrl-descriptions', 'ladspa-descriptions' and 
-		 'preset-descriptions'; see ecasound-iam(1) man
-		 page for details
+	- added: eiam - commands 'map-cop-list', 'map-ctrl-list', 
+		 'map-ladspa-list' and 'map-preset-list'; see 
+		 ecasound-iam(1) man page for details
 	- added: eiam - 'ao-add-default' command
 	- changed: libecasoundc now LGPL licensed
 	- changed: edi-30; ecaplay rewritten using the new standalone
 	 	   ECI api
-	- removed: eiam - all mentions of map commands from the 
-		   man page; these were never implemented
+	- fixed: libecasoundc return value sync problem; return
+		 value for command wasn't returned until command n+1 
+		 was issued
 19102002 (v2.2.0-pre3)
 	- fixed: reverted to using old ALSA 0.9 hw-params API,
 		 ecasound agains works with old 0.9beta and 0.9rc 

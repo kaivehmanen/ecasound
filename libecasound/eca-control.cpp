@@ -584,10 +584,10 @@ void ECA_CONTROL::action(int action_id)
   case ec_ladspa_register: { ladspa_register(); break; }
   case ec_ctrl_register: { ctrl_register(); break; }
 
-  case ec_cop_descriptions: { cop_descriptions(); break; }
-  case ec_preset_descriptions: { preset_descriptions(); break; }
-  case ec_ladspa_descriptions: { ladspa_descriptions(); break; }
-  case ec_ctrl_descriptions: { ctrl_descriptions(); break; }
+  case ec_map_cop_list: { cop_descriptions(); break; }
+  case ec_map_preset_list: { preset_descriptions(); break; }
+  case ec_map_ladspa_list: { ladspa_descriptions(); break; }
+  case ec_map_ctrl_list: { ctrl_descriptions(); break; }
 
   // ---
   // Session status
