@@ -246,7 +246,7 @@ void ALSA_PCM_DEVICE_06X::fill_and_set_hw_params(void) {
   unsigned int btime_usec = 0;
   if (max_buffers() == true) {
     btime_usec = 500000;
-    cerr << "btime to " << btime_usec << " usecs." << endl;
+//      cerr << "btime to " << btime_usec << " usecs." << endl;
     err = ::snd_pcm_hw_params_set_buffer_time_near(audio_fd_repp, 
 						  pcm_hw_params_repp,
 						  btime_usec, 
@@ -256,7 +256,7 @@ void ALSA_PCM_DEVICE_06X::fill_and_set_hw_params(void) {
   }
   else {
     btime_usec = 3 * period_usec;
-    cerr << "btime to " << btime_usec << " usecs." << endl;
+//      cerr << "btime to " << btime_usec << " usecs." << endl;
     err = ::snd_pcm_hw_params_set_buffer_time_near(audio_fd_repp, 
 						   pcm_hw_params_repp,
 						   btime_usec, 
@@ -267,7 +267,7 @@ void ALSA_PCM_DEVICE_06X::fill_and_set_hw_params(void) {
  
   fragment_size_rep = buffersize();
 
-  cerr << "ptime to " << period_usec << " usecs." << endl;
+//    cerr << "ptime to " << period_usec << " usecs." << endl;
   err = ::snd_pcm_hw_params_set_period_time_near(audio_fd_repp, 
 						 pcm_hw_params_repp,
 						 period_usec, 
