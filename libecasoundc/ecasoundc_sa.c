@@ -43,7 +43,6 @@
  * -------------------------------------------------------------------------
  */
 
-#include <assert.h>       /* ANSI-C: assert() */
 #include <stdio.h>        /* ANSI-C: printf(), ... */
 #include <stdlib.h>       /* ANSI-C: calloc(), free() */
 #include <string.h>       /* ANSI-C: strlen() */
@@ -108,6 +107,14 @@
 #define ECI_DEBUG_2(x,y,z) ((void) 0)
 #define ECI_DEBUG_3(x,y,z,t) ((void) 0)
 #endif
+
+#define DBC_REQUIRE(expr)						      \
+   (expr) ? (void)(0) :	(void)(fprintf(stderr, "Warning: DBC_REQUIRE failed - \"%s\", %s, %d.\n", #expr,__FILE__, __LINE__))
+#define DBC_ENSURE(expr)							      \
+   (expr) ? (void)(0) :	(void)(fprintf(stderr, "Warning: DBC_ENSURE failed - \"%s\", %s, %d.\n", #expr,__FILE__, __LINE__))
+#define DBC_CHECK(expr)							      \
+   (expr) ? (void)(0) :	(void)(fprintf(stderr, "Warning: DBC_CHECK failed - \"%s\", %s, %d.\n", #expr,__FILE__, __LINE__))
+#define DBC_DECLARE(expr)               expr
 
 /* --------------------------------------------------------------------- 
  * Data structures 
@@ -226,7 +233,7 @@ void eci_impl_update_state(struct eci_parser* eci_rep, char c);
  */
 void eci_init(void)
 {
-  assert(static_eci_rep == NULL);
+  DBC_CHECK(static_eci_rep == NULL);
   static_eci_rep = eci_init_r();
 }
 
@@ -425,7 +432,6 @@ void eci_command_r(eci_handle_t ptr, const char* command)
   if (eci_rep->commands_counter_rep >
       eci_rep->parser_repp->last_counter_rep) {
     fprintf(stderr, "%s", eci_str_sync_lost);
-    eci_cleanup_r(eci_rep);
   }
 }
 
@@ -629,14 +635,14 @@ void eci_impl_check_handle(struct eci_internal* eci_rep)
 {
   if (eci_rep == NULL) {
     fprintf(stderr, "%s", eci_str_null_handle);
-    assert(eci_rep != NULL);
+    DBC_CHECK(eci_rep != NULL);
     exit(-1);
   }
 }
 
 void eci_impl_clean_last_values(struct eci_parser* parser)
 {
-  assert(parser != 0);
+  DBC_CHECK(parser != 0);
 
   memset(parser->last_s_repp, 0, ECI_MAX_STRING_SIZE);
   parser->last_los_repp = NULL;
@@ -723,7 +729,9 @@ void eci_impl_los_list_add_item(struct eci_los_list** headptr, char* stmp, int l
 void eci_impl_los_list_alloc_item(struct eci_los_list **ptr)
 {
   *ptr = (struct eci_los_list*)malloc(sizeof(struct eci_los_list*));
+  DBC_CHECK(*ptr != NULL);
   (*ptr)->data_repp = (char*)malloc(ECI_MAX_STRING_SIZE);
+  DBC_CHECK((*ptr)->data_repp != NULL);
   (*ptr)->next_repp = NULL;
 }
 
@@ -755,8 +763,8 @@ void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout)
   char* raw_buffer = eci_rep->raw_buffer_repp;
   int attempts = 0;
 
-  assert(eci_rep->commands_counter_rep >=
-	 eci_rep->parser_repp->last_counter_rep);
+  DBC_CHECK(eci_rep->commands_counter_rep >=
+	    eci_rep->parser_repp->last_counter_rep);
 
   while(attempts < ECI_MAX_RESYNC_ATTEMPTS) {
     int res = eci_impl_fd_read(eci_rep->cmd_read_fd_rep, raw_buffer, ECI_MAX_PARSER_BUF_SIZE-1, timeout);
@@ -804,8 +812,9 @@ void eci_impl_set_last_los_value(struct eci_parser* parser)
   int quoteflag = 0, m = 0, n;
   char* stmp = malloc(ECI_MAX_STRING_SIZE);
 
-  assert(parser != 0);
-  assert(parser->state_rep == ECI_STATE_COMMON_LF_3);
+  DBC_CHECK(stmp != NULL);
+  DBC_CHECK(parser != 0);
+  DBC_CHECK(parser->state_rep == ECI_STATE_COMMON_LF_3);
 
   /* ECI_DEBUG_2("(ecasoundc_sa) parsing a list '%s' (count=%d)\n", parser->buffer_repp, parser->buffer_current_rep); */
 
@@ -848,8 +857,8 @@ void eci_impl_set_last_los_value(struct eci_parser* parser)
  */
 void eci_impl_set_last_values(struct eci_parser* parser)
 {
-  assert(parser != 0);
-  assert(parser->state_rep == ECI_STATE_COMMON_LF_3);
+  DBC_CHECK(parser != 0);
+  DBC_CHECK(parser->state_rep == ECI_STATE_COMMON_LF_3);
 
   switch(parser->last_type_repp[0])
     {
