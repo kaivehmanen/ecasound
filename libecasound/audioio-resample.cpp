@@ -174,12 +174,18 @@ void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
     if (param == 1) {
       if (value == "resample-hq") {
 	quality_rep = 100;
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		    "using high-quality resampler");
       }
       else if (value == "resample-lq") {
 	quality_rep = 5;
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		    "using low-quality resampler");
       }
       else {
 	quality_rep = 50;
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		    "using default resampler");
       }
     }
     else if (param == 2) {
