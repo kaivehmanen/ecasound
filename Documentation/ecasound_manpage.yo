@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (21.12.2004)
+       (31.03.2005)
        ()
        (Multimedia software)
 
@@ -791,7 +791,7 @@ manpagefiles()
 
 	em(*.ecp) 
 	Ecasound Chain Preset files. Used for storing effect
-	and chain operator presets. See url(ecasound user's guide)(users_guide/users_guide.html) for
+	and chain operator presets. See url(ecasound user's guide)(users_guide/html_uguide/users_guide.html) for
 	more better documentation.
 
 	em(*.ews) 

@@ -7,7 +7,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{30032005}
+\date{01042005}
 \begin{document}
 
 \maketitle
@@ -32,6 +32,7 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 01.04.2005 - Updated ``Ecasignalview'' documentation.
 \item 30.03.2005 - Added sections on ``Preset parameters'' and 
                    ``Parameter descriptors''.
 \item 11.12.2004 - Added section ``Filenames with commas not handled correctly''
@@ -419,6 +420,10 @@ ecasignalview /dev/dsp null
 # native ALSA-mode, recording from the 'default' device
 ecasignalview alsa,default null
 \end{verbatim}
+
+It is possible to reset the max-peak and clipped-samples 
+counters by sending a SIGHUP signal to the process (i.e.
+from another console: "killall -v -HUP ecasignalview").
 
 To monitor the input signal you can either use the soundcard's
 analog (or in some cases, digital) monitoring functions by 
