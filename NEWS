@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 280305) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 310305) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -25,6 +25,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- added: playlist mode to ecaplay
 	- added: "Supported automake/autoconf features" section to
 	         the INSTALL file
+	- added: new presets to the default effect_presets file
 	- changed: moved definitions from acconfig.h to configure.in;
 		   gets rid of the AC_DEFINE warnings produced by
 		   recent versions of autoheader
@@ -47,6 +48,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 in eci_cleanup(); for example playing thousands of
 		 files with ecaplay would cause the system to run
 		 out of file descriptors (too many open files error)
+	- fixed: bug in handling LADSPA plugins with colon chars in 
+		 their port descriptions (such as the SC1-4 
+		 compressors)
 12032005 (v2.4.0)  -** stable release **-
 	- edi-entries: edi-40 progress
 	- added: support for having commas in arguments by escaping 
