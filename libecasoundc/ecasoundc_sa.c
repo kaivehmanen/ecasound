@@ -53,6 +53,7 @@
 #include <sys/stat.h>     /* POSIX: stat() */
 #include <sys/types.h>    /* POSIX: fork() */
 #include <sys/wait.h>     /* POSIX: wait() */
+#include <signal.h>       /* POSIIX: signal handling */
 
 #include "ecasoundc.h"
 
@@ -265,12 +266,24 @@ eci_handle_t eci_init_r(void)
 
     eci_rep->pid_of_child_rep = fork();
     if (eci_rep->pid_of_child_rep == 0) { 
-      /* child */
+      /* first child */
 
       /* -c = interactive mode, -D = direct prompts and banners to stderr */
       const char* args[4] = { NULL, "-c", "-D", NULL };
       int res = 0;
+      struct sigaction sa;
+      pid_t pid;
 
+      sa.sa_handler=SIG_IGN;
+      sigemptyset(&sa.sa_mask);
+      sa.sa_flags=0;
+      sigaction(SIGHUP, &sa, NULL);
+      setsid();
+      if (fork() != 0)
+	  exit(0);    /* first child terminates here */
+
+      /* second child continues */
+     
       args[0] = ecasound_exec;
 
       /* close all unused descriptors */
@@ -287,6 +300,11 @@ eci_handle_t eci_init_r(void)
       close(cmd_send_pipe[1]);
 
       freopen("/dev/null", "w", stderr);
+
+      /* write second child's pid to the (grand) parent */
+      pid = getpid();
+      write(1, &pid, sizeof(pid));
+      
       
       /* notify the parent that we're up */
       res = write(1, args, 1); 
@@ -300,11 +318,27 @@ eci_handle_t eci_init_r(void)
       exit(res);
       ECI_DEBUG("(ecasoundc_sa) You shouldn't see this!\n");
     }
-    else if (eci_rep->pid_of_child_rep > 0) { 
+    else { 
       /* parent */
       int res;
       char buf[1];
+      int status;
+      int pid;
 
+      /*
+	waits for first child to prevent the zombie
+	read grand child prozess id from pipe
+      */
+      waitpid(eci_rep->pid_of_child_rep, &status, 0);
+      res = read(cmd_receive_pipe[0], &pid, sizeof(pid));
+      if ( res != sizeof(pid) ) {
+	  ECI_DEBUG_1("(ecasoundc_sa) fork() of %s FAILED!\n", ecasound_exec);
+	  free(eci_rep->parser_repp);
+	  free(eci_rep);
+	  eci_rep = NULL;
+      }
+      eci_rep->pid_of_child_rep = pid;
+      
       eci_rep->pid_of_parent_rep = getpid();
 
       eci_rep->cmd_read_fd_rep = cmd_receive_pipe[0];
@@ -765,9 +799,11 @@ void eci_impl_los_list_clear(struct eci_los_list **ptr)
 
     if (i->data_repp) {
       {
-	if (next->data_repp != NULL) {
-	  /* ECI_DEBUG_1("(ecasoundc_sa) removing item '%s' from los list\n", i->data_repp); */
-	}
+	  if ( next != NULL ) {
+	      if (next->data_repp != NULL) {
+		  /* ECI_DEBUG_1("(ecasoundc_sa) removing item '%s' from los list\n", i->data_repp); */
+	      }
+	  }
       }
       /* ECI_DEBUG("(ecasoundc_sa) freeing list item\n"); */
       free(i->data_repp);
