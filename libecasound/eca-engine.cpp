@@ -39,7 +39,7 @@
 #include "audioio.h"
 #include "audioio-buffered.h"
 #include "audioio-device.h"
-#include "audioio-buffered-proxy.h"
+#include "audioio-db-client.h"
 #include "midi-server.h"
 #include "eca-chain.h"
 #include "eca-chainop.h"

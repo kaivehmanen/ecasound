@@ -87,10 +87,11 @@ ecasound_audioio_include = 	\
 			audioio-loop.h \
 			audioio-forked-stream.h \
 			audioio-timidity.h \
-			audioio-proxy-server.h \
-			audioio-proxy-server_impl.h \
-			audioio-proxy-buffer.h \
-			audioio-buffered-proxy.h \
+			audioio-db-server.h \
+			audioio-db-server_impl.h \
+			audioio-db-buffer.h \
+			audioio-db-client.h \
+			audioio-proxy.h \
 			audioio-typeselect.h \
 			audioio-resample.h \
 			audioio-reverse.h
@@ -239,12 +240,13 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-loop.cpp \
 			audioio-forked-stream.cpp \
 			audioio-timidity.cpp \
-			audioio-proxy-server.cpp \
-			audioio-proxy-buffer.cpp \
-			audioio-buffered-proxy.cpp \
+			audioio-db-server.cpp \
+			audioio-db-buffer.cpp \
+			audioio-db-client.cpp \
 			audioio-typeselect.cpp \
 			audioio-resample.cpp \
 			audioio-reverse.cpp \
+			audioio-proxy.cpp \
 			$(ecasound_audioio_oss_src)
 
 ecasound_midi_src =	\

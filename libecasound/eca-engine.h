@@ -6,7 +6,7 @@
 #include "eca-engine-driver.h"
 
 class AUDIO_IO;
-class AUDIO_IO_BUFFERED_PROXY;
+class AUDIO_IO_DB_CLIENT;
 class AUDIO_IO_DEVICE;
 class CHAIN;
 class CHAIN_OPERATOR;

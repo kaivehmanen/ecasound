@@ -12,7 +12,7 @@
 
 class AUDIO_IO;
 class AUDIO_IO_MANAGER;
-class AUDIO_IO_PROXY_SERVER;
+class AUDIO_IO_DB_SERVER;
 class CHAIN;
 class CHAIN_OPERATOR;
 class CONTROLLER_SOURCE;
@@ -283,7 +283,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   int active_chain_index_rep;
   int active_chainop_index_rep;
   int active_chainop_param_index_rep;
-  int proxy_clients_rep;
+  int db_clients_rep;
   string setup_name_rep;
   string setup_filename_rep;
 
@@ -306,7 +306,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   vector<MIDI_IO*> midi_devices;
   std::list<AUDIO_IO*> aobj_garbage_rep;
 
-  AUDIO_IO_PROXY_SERVER* pserver_repp;
+  AUDIO_IO_DB_SERVER* pserver_repp;
   MIDI_SERVER* midi_server_repp;
   ECA_ENGINE_DRIVER* engine_driver_repp;
 
@@ -338,8 +338,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void enable_active_buffering_mode(void);
   void switch_to_direct_mode(void);
   void switch_to_direct_mode_helper(vector<AUDIO_IO*>* objs, const vector<AUDIO_IO*>& directobjs);
-  void switch_to_proxy_mode(void);
-  void switch_to_proxy_mode_helper(vector<AUDIO_IO*>* objs, const vector<AUDIO_IO*>& directobjs);
+  void switch_to_db_mode(void);
+  void switch_to_db_mode_helper(vector<AUDIO_IO*>* objs, const vector<AUDIO_IO*>& directobjs);
   void lock_all_memory(void);
   void unlock_all_memory(void);
   void set_defaults (void);

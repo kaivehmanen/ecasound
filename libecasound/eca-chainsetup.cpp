@@ -178,10 +178,10 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
     *q = 0;
   }
 
-  /* delete input proxy objects; reset all pointers to null */
+  /* delete input db objects; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
-    if (dynamic_cast<AUDIO_IO_BUFFERED_PROXY*>(*q) != 0) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting audio proxy \"" + (*q)->label() + "\".");
+    if (dynamic_cast<AUDIO_IO_DB_CLIENT*>(*q) != 0) {
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting audio db-client \"" + (*q)->label() + "\".");
       delete *q;
     }
     *q = 0;
@@ -196,10 +196,10 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
     *q = 0;
   }
 
-  /* delete output proxy objects; reset all pointers to null */
+  /* delete output db objects; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
-    if (dynamic_cast<AUDIO_IO_BUFFERED_PROXY*>(*q) != 0) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting audio proxy \"" + (*q)->label() + "\".");
+    if (dynamic_cast<AUDIO_IO_DB_CLIENT*>(*q) != 0) {
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chainsetup) Deleting audio db-client \"" + (*q)->label() + "\".");
       delete *q;
     }
     *q = 0;
@@ -267,7 +267,7 @@ void ECA_CHAINSETUP::set_defaults(void)
   else 
     rtcaps_rep = false;
 
-  proxy_clients_rep = 0;
+  db_clients_rep = 0;
   multitrack_mode_rep = false;
   multitrack_mode_override_rep = false;
   memory_locked_rep = false;
@@ -495,7 +495,7 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void)
     unlock_all_memory();
   }
 
-  /* 2. if necessary, switch between different proxy and direct modes */
+  /* 2. if necessary, switch between different db and direct modes */
   if (double_buffering() == true) {
     if (has_realtime_objects() != true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,
@@ -509,10 +509,10 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void)
       switch_to_direct_mode();
       impl_repp->bmode_active_rep.toggle_double_buffering(false);
     }
-    else if (proxy_clients_rep == 0) {
+    else if (db_clients_rep == 0) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,
-		    "(eca-chainsetup) Switching to proxy mode.");
-      switch_to_proxy_mode();
+		    "(eca-chainsetup) Switching to db mode.");
+      switch_to_db_mode();
     }
 
     impl_repp->pserver_rep.set_buffer_defaults(double_buffer_size() / buffersize(), 
@@ -520,7 +520,7 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void)
   }
   else {
     /* double_buffering() != true */
-    if (proxy_clients_rep > 0) {
+    if (db_clients_rep > 0) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,
 		    "(eca-chainsetup) Switching to direct mode.");
       switch_to_direct_mode();
@@ -536,7 +536,7 @@ void ECA_CHAINSETUP::switch_to_direct_mode(void)
   switch_to_direct_mode_helper(&inputs, inputs_direct_rep);
   switch_to_direct_mode_helper(&outputs, outputs_direct_rep);
   // --
-  DBC_ENSURE(proxy_clients_rep == 0);
+  DBC_ENSURE(db_clients_rep == 0);
   // --
 }
 
@@ -548,23 +548,23 @@ void ECA_CHAINSETUP::switch_to_direct_mode_helper(vector<AUDIO_IO*>* objs,
   // --
 
   for(size_t n = 0; n < objs->size(); n++) {
-    AUDIO_IO_BUFFERED_PROXY* pobj = dynamic_cast<AUDIO_IO_BUFFERED_PROXY*>((*objs)[n]);
+    AUDIO_IO_DB_CLIENT* pobj = dynamic_cast<AUDIO_IO_DB_CLIENT*>((*objs)[n]);
     if (pobj != 0) {
       //  aobj_garbage_rep.push_back((*objs)[n]);
       delete (*objs)[n];
       (*objs)[n] = directobjs[n];
-      --proxy_clients_rep;
+      --db_clients_rep;
     }
   } 
 }
 
-void ECA_CHAINSETUP::switch_to_proxy_mode(void)
+void ECA_CHAINSETUP::switch_to_db_mode(void)
 {
-  switch_to_proxy_mode_helper(&inputs, inputs_direct_rep);
-  switch_to_proxy_mode_helper(&outputs, outputs_direct_rep);
+  switch_to_db_mode_helper(&inputs, inputs_direct_rep);
+  switch_to_db_mode_helper(&outputs, outputs_direct_rep);
 }
 
-void ECA_CHAINSETUP::switch_to_proxy_mode_helper(vector<AUDIO_IO*>* objs, 
+void ECA_CHAINSETUP::switch_to_db_mode_helper(vector<AUDIO_IO*>* objs, 
 						 const vector<AUDIO_IO*>& directobjs)
 {
   // --
@@ -576,7 +576,7 @@ void ECA_CHAINSETUP::switch_to_proxy_mode_helper(vector<AUDIO_IO*>* objs,
   } 
 
   // --
-  DBC_ENSURE(proxy_clients_rep > 0);
+  DBC_ENSURE(db_clients_rep > 0);
   // --
 }
 
@@ -1209,8 +1209,8 @@ AUDIO_IO* ECA_CHAINSETUP::add_audio_object_helper(AUDIO_IO* aio)
   LOOP_DEVICE* q = dynamic_cast<LOOP_DEVICE*>(aio);
   if (p == 0 && q == 0) {
     /* not a realtime or loop device */
-    retobj = new AUDIO_IO_BUFFERED_PROXY(&impl_repp->pserver_rep, aio, false);
-    ++proxy_clients_rep;
+    retobj = new AUDIO_IO_DB_CLIENT(&impl_repp->pserver_rep, aio, false);
+    ++db_clients_rep;
   }
   return(retobj);
 }
@@ -1220,12 +1220,12 @@ AUDIO_IO* ECA_CHAINSETUP::add_audio_object_helper(AUDIO_IO* aio)
  */
 void ECA_CHAINSETUP::remove_audio_object_helper(AUDIO_IO* aio)
 {
-  AUDIO_IO_BUFFERED_PROXY* p = dynamic_cast<AUDIO_IO_BUFFERED_PROXY*>(aio);
+  AUDIO_IO_DB_CLIENT* p = dynamic_cast<AUDIO_IO_DB_CLIENT*>(aio);
   if (p != 0) {
     /* a proxied object */
     //  aobj_garbage_rep.push_back(aio);
     delete aio;
-    --proxy_clients_rep;
+    --db_clients_rep;
   }
 }
 
@@ -1234,7 +1234,7 @@ void ECA_CHAINSETUP::remove_audio_object_helper(AUDIO_IO* aio)
  * 
  * If double-buffering is enabled (double_buffering() == true),
  * and the object in question is not a realtime object, it
- * is wrapped in a AUDIO_IO_BUFFERED_PROXY object before 
+ * is wrapped in a AUDIO_IO_DB_CLIENT object before 
  * inserted to the chainsetup. Otherwise object is added
  * as is. 
  * 
@@ -1275,7 +1275,7 @@ void ECA_CHAINSETUP::add_input(AUDIO_IO* aio)
  * 
  * If double-buffering is enabled (double_buffering() == true),
  * and the object in question is not a realtime object, it
- * is wrapped in a AUDIO_IO_BUFFERED_PROXY object before 
+ * is wrapped in a AUDIO_IO_DB_CLIENT object before 
  * inserted to the chainsetup. Otherwise object is added
  * as is. 
  * 
