@@ -1,8 +1,8 @@
 /****************************************************************************
 ** QEChainopEvent meta object code from reading C++ file 'qechainopevent.h'
 **
-** Created: Sat Mar 11 02:27:08 2000
-**      by: The Qt Meta Object Compiler ($Revision: 1.4 $)
+** Created: Fri Mar 24 11:32:17 2000
+**      by: The Qt Meta Object Compiler ($Revision: 1.5 $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/

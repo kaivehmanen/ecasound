@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 2300300) **
+** ecasound - user visible changes (NEWS)      (last edited: 2400300) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,15 +14,17 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.12r10 <*-
 
-??032000 (v1.7.4d11)
+24032000 (v1.7.4d11)
+	- added: summary info to configure-script 
 	- changed: upgraded LADSPA support to API v1-rel1
 	- changed: default directory for LADSPA plugins is now
-		   /usr/local/lib/ladspa (see ecasoundrc(5)) 
+		   /usr/local/lib/ladspa (see ecasoundrc(5))
 	- fixed: latency-problems with ALSA pcm-loopback
 	- fixed: thread scheduling problems with '-r'
 	- fixed: compile problems under Solaris
 	- fixed: many .ewf bugs
 	- fixed: compile problems with ALSA 0.4.x
+	- fixed: few minor bugs in -ev and -ezf
 21032000 (v1.7.3d11)
 	- added: initial LADSPA support (-el), see ecasound(1) man page
 	- added: 'ladspa-plugin-directory' entry to ~/.ecasoundrc

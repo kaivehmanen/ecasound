@@ -13,6 +13,9 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
 
   /**
    * Starts processing
+   *
+   * require:
+   *  is_valid() == true
    */
   virtual void start(void) = 0;
 
@@ -22,14 +25,19 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
   bool is_triggered(void) const { return(triggered_rep); }
 
   /**
+   * Tests whether event ready for processing
+   */
+  bool is_valid(void) const { if (ectrl == 0) return(false); else return(ectrl->is_selected() && ectrl->is_valid()); }
+
+  /**
    * Current position in samples
    */
-  virtual long int position(void) const { return(controller()->position_in_samples()); }
+  virtual long int position(void) const { return(ectrl->position_in_samples()); }
 
   /**
    * Returns processing length in samples
    */
-  virtual long int length(void) const { return(controller()->length_in_samples()); }
+  virtual long int length(void) const { return(ectrl->length_in_samples()); }
 
   /**
    * Returns name of current input as a formatted string
@@ -46,6 +54,34 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
   virtual ~QEEvent(void) { }
 
  protected:
+
+  /**
+   * Starts processing. If processing takes long, a graphical progressbar 
+   * is shown.
+   *
+   * require:
+   *  ectrl->is_valid() == true
+   *  ectrl->is_selected() == true
+   *  is_triggered() == false
+   *
+   * ensure:
+   *  is_triggered() == false
+   */
+  void blocking_start(void);
+
+  /**
+   * Starts processing and returns immediately without blocking.
+   * is shown.
+   *
+   * require:
+   *  ectrl->is_valid() == true
+   *  ectrl->is_selected() == true
+   *  is_triggered() == false
+   *
+   * ensure:
+   *  is_triggered() == true || ectrl->is_running() == false
+   */
+  void nonblocking_start(void);
 
   /**
    * Initializes chainsetup for processing

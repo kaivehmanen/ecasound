@@ -1,8 +1,7 @@
-#include "../../config.h"
-
 #include "eca-version.h"
 
-const string ecasound_version = "v" + string(VERSION);
+const long int ecasound_library_version_current = 5;
+const long int ecasound_library_version_revision = 0;
+const long int ecasound_library_version_age = 0;
 
-
-
+const string ecasound_library_version = "1.7.5d11";

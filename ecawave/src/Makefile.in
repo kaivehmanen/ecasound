@@ -78,11 +78,11 @@ INCLUDES = -I. -I$(qt_includes) -I$(all_includes)
 @INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecawave_debug
 @INCLUDE_DEBUG_FALSE@bin_PROGRAMS = ecawave
 
-ecawave_src_files = ecawave.cpp 			version.cpp 			resources.cpp 		 	qesession.cpp 			qefile.cpp 			qeacceptinput.cpp 			qeopenfiledialog.cpp 			qesavefiledialog.cpp 			qewaveform.cpp 			qestatusbar.cpp 			qeevent.cpp 			qeblockingevent.cpp 			qenonblockingevent.cpp 			qeinterfaceevent.cpp 			qeplayevent.cpp 			qesaveevent.cpp 			qeprocessevent.cpp 			qechainopevent.cpp 			qecutevent.cpp 			qecopyevent.cpp 			qepasteevent.cpp
+ecawave_src_files = ecawave.cpp 			version.cpp 			resources.cpp 		 	qesession.cpp 			qefile.cpp 			qeacceptinput.cpp 			qeopenfiledialog.cpp 			qesavefiledialog.cpp 			qewaveform.cpp 			qestatusbar.cpp 			qeevent.cpp 			qenonblockingevent.cpp 			qeplayevent.cpp 			qesaveevent.cpp 			qechainopevent.cpp 			qecutevent.cpp 			qecopyevent.cpp 			qepasteevent.cpp
 
 ecawave_src_mocs = qesession_moc.cpp 			qefile_moc.cpp 			qeacceptinput_moc.cpp 			qeopenfiledialog_moc.cpp 			qesavefiledialog_moc.cpp 			qewaveform_moc.cpp 			qestatusbar_moc.cpp 			qechainopevent_moc.cpp
 
-ecawave_include_files = ecawave.h 			version.h 			resources.h 			qesession.h 			qefile.h 			qeacceptinput.h 			qeopenfiledialog.h 			qesavefiledialog.h 			qewaveform.h 			qestatusbar.h 			qeevent.h 			qeblockingevent.h 			qenonblockingevent.h 			qeinterfaceevent.h 			qeplayevent.h 			qesaveevent.h 			qeprocessevent.h 			qechainopevent.h 			qecutevent.h 			qecopyevent.h 			qepasteevent.h
+ecawave_include_files = ecawave.h 			version.h 			resources.h 			qesession.h 			qefile.h 			qeacceptinput.h 			qeopenfiledialog.h 			qesavefiledialog.h 			qewaveform.h 			qestatusbar.h 			qeevent.h 			qeblockingevent.h 			qenonblockingevent.h 			qeinterfaceevent.h 			qeplayevent.h 			qesaveevent.h 			qechainopevent.h 			qecutevent.h 			qecopyevent.h 			qepasteevent.h
 
 
 ecawave_SOURCES = $(ecawave_src_files) $(ecawave_include_files) $(ecawave_src_mocs)
@@ -104,21 +104,19 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 ecawave_debug_OBJECTS =  ecawave.o version.o resources.o qesession.o \
 qefile.o qeacceptinput.o qeopenfiledialog.o qesavefiledialog.o \
-qewaveform.o qestatusbar.o qeevent.o qeblockingevent.o \
-qenonblockingevent.o qeinterfaceevent.o qeplayevent.o qesaveevent.o \
-qeprocessevent.o qechainopevent.o qecutevent.o qecopyevent.o \
+qewaveform.o qestatusbar.o qeevent.o qenonblockingevent.o qeplayevent.o \
+qesaveevent.o qechainopevent.o qecutevent.o qecopyevent.o \
 qepasteevent.o qesession_moc.o qefile_moc.o qeacceptinput_moc.o \
 qeopenfiledialog_moc.o qesavefiledialog_moc.o qewaveform_moc.o \
 qestatusbar_moc.o qechainopevent_moc.o
 ecawave_debug_DEPENDENCIES = 
 ecawave_OBJECTS =  ecawave.o version.o resources.o qesession.o qefile.o \
 qeacceptinput.o qeopenfiledialog.o qesavefiledialog.o qewaveform.o \
-qestatusbar.o qeevent.o qeblockingevent.o qenonblockingevent.o \
-qeinterfaceevent.o qeplayevent.o qesaveevent.o qeprocessevent.o \
-qechainopevent.o qecutevent.o qecopyevent.o qepasteevent.o \
-qesession_moc.o qefile_moc.o qeacceptinput_moc.o qeopenfiledialog_moc.o \
-qesavefiledialog_moc.o qewaveform_moc.o qestatusbar_moc.o \
-qechainopevent_moc.o
+qestatusbar.o qeevent.o qenonblockingevent.o qeplayevent.o \
+qesaveevent.o qechainopevent.o qecutevent.o qecopyevent.o \
+qepasteevent.o qesession_moc.o qefile_moc.o qeacceptinput_moc.o \
+qeopenfiledialog_moc.o qesavefiledialog_moc.o qewaveform_moc.o \
+qestatusbar_moc.o qechainopevent_moc.o
 ecawave_DEPENDENCIES = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -136,12 +134,11 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/ecawave.P .deps/qeacceptinput.P \
-.deps/qeacceptinput_moc.P .deps/qeblockingevent.P \
-.deps/qechainopevent.P .deps/qechainopevent_moc.P .deps/qecopyevent.P \
-.deps/qecutevent.P .deps/qeevent.P .deps/qefile.P .deps/qefile_moc.P \
-.deps/qeinterfaceevent.P .deps/qenonblockingevent.P \
-.deps/qeopenfiledialog.P .deps/qeopenfiledialog_moc.P \
-.deps/qepasteevent.P .deps/qeplayevent.P .deps/qeprocessevent.P \
+.deps/qeacceptinput_moc.P .deps/qechainopevent.P \
+.deps/qechainopevent_moc.P .deps/qecopyevent.P .deps/qecutevent.P \
+.deps/qeevent.P .deps/qefile.P .deps/qefile_moc.P \
+.deps/qenonblockingevent.P .deps/qeopenfiledialog.P \
+.deps/qeopenfiledialog_moc.P .deps/qepasteevent.P .deps/qeplayevent.P \
 .deps/qesaveevent.P .deps/qesavefiledialog.P \
 .deps/qesavefiledialog_moc.P .deps/qesession.P .deps/qesession_moc.P \
 .deps/qestatusbar.P .deps/qestatusbar_moc.P .deps/qewaveform.P \

@@ -100,7 +100,7 @@ void QEInterface::init_bottomrow(QBoxLayout* bottomrow) {
 void QEInterface::init_statusbar(void) {
   statusbar = new QStatusBar(this, "qsbar");
 
-  statusbar->message(string("qtecasound " + ecasound_version + " ready.").c_str()); 
+  statusbar->message(string("qtecasound v" + ecasound_library_version + " ready.").c_str()); 
 
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()), this, SLOT(update_statusbar()));
@@ -114,7 +114,7 @@ void QEInterface::update_statusbar(void) {
   if (new_epstatus == last_epstatus) return;
   else last_epstatus = new_epstatus;
 
-  statusbar->message(string("qtecasound " + ecasound_version
+  statusbar->message(string("qtecasound v" + ecasound_library_version
 			    + " . (C) 1997-2000 Kai Vehmanen . engine status: [" +
 			    last_epstatus + "]").c_str()); 
 }

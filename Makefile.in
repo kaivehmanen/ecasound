@@ -82,7 +82,7 @@ VERSION = @VERSION@
 qt_includes = @qt_includes@
 qt_libraries = @qt_libraries@
 
-EXTRA_DIST = BUGS NEWS FAQ generic_oscillators effect_presets
+EXTRA_DIST = BUGS NEWS FAQ generic_oscillators effect_presets ecasound.spec
 
 SUBDIRS = kvutils readline-4.0 libecasound ecasound libqtecasound qtecasound ecatools Documentation
 AUTOMAKE_OPTIONS = foreign

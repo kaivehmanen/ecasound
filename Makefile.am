@@ -1,4 +1,4 @@
-EXTRA_DIST = BUGS NEWS FAQ generic_oscillators effect_presets
+EXTRA_DIST = BUGS NEWS FAQ generic_oscillators effect_presets ecasound.spec
 
 SUBDIRS = kvutils readline-4.0 libecasound ecasound libqtecasound qtecasound ecatools Documentation
 AUTOMAKE_OPTIONS = foreign
@@ -20,4 +20,3 @@ strip-shared-libs:
 	strip $(libdir)/libecasound.so
 	strip $(libdir)/libqtecasound.so
 	strip $(libdir)/libkvutils.so
-

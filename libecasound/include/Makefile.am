@@ -62,6 +62,7 @@ ecasound_general_src = 	eca-chain.h \
 			eca-controller-map.h \
 			eca-audio-object-map.h \
 			samplebuffer.h \
+			samplebuffer_impl.h \
 			samplebuffer_functions.h \
 			samplebuffer_iterators.h \
 			sample-specs.h \
@@ -105,5 +106,8 @@ noinst_HEADERS = $(ecasound_audiofx_src) $(ecasound_audioio_src) \
 install-data-local:
 	$(INSTALL) -d $(pkgincludedir)
 	cd $(srcdir) ; \
-	cp $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_controller_src) $(ecasound_general_src) \
-	$(pkgincludedir)
+	cp 	$(ecasound_audiofx_src) \
+		$(ecasound_audioio_src) \
+		$(ecasound_controller_src) \
+		$(ecasound_general_src) \
+		$(pkgincludedir)

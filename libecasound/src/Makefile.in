@@ -90,7 +90,8 @@ qt_libraries = @qt_libraries@
 @INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
 @INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
 
-INCLUDES = -I. -I$(top_srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound//include
+INCLUDES = -I. -I$(top_srcdir) -I$(top_srcdir)/kvutils 				-I$(top_srcdir)/libecasound/include
+
 @INCLUDE_DEBUG_TRUE@lib_LTLIBRARIES = libecasound_debug.la
 @INCLUDE_DEBUG_FALSE@lib_LTLIBRARIES = libecasound.la
 

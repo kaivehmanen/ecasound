@@ -32,14 +32,16 @@ EFFECT_ANALYZE::EFFECT_ANALYZE (void) { max = 0; }
 string EFFECT_ANALYZE::status(void) const {
   MESSAGE_ITEM otemp;
   otemp << "(audiofx) -- Printing volume statistics --\n";
-  for(int nm = 0; nm < range_count; nm++) {
+  for(int nm = 0; nm < static_cast<int>(ranges.size()); nm++) {
     otemp.setprecision(2);
     otemp << "(audiofx) Vol-range: ";
     otemp << nm << "\t L: ";
+    assert(SAMPLE_SPECS::ch_left < ranges[nm].size());
     otemp << ranges[nm][SAMPLE_SPECS::ch_left] << " (";
     otemp << ((CHAIN_OPERATOR::parameter_type)ranges[nm][SAMPLE_SPECS::ch_left] / (CHAIN_OPERATOR::parameter_type)num_of_samples[SAMPLE_SPECS::ch_left] * 100.0);
     otemp << ") \t\t";
     otemp << "R: ";
+    assert(SAMPLE_SPECS::ch_right < ranges[nm].size());
     otemp << ranges[nm][SAMPLE_SPECS::ch_right] << " (";
     otemp << ((CHAIN_OPERATOR::parameter_type)ranges[nm][SAMPLE_SPECS::ch_right] / (CHAIN_OPERATOR::parameter_type)num_of_samples[SAMPLE_SPECS::ch_right] * 100.0);
     otemp << ").\n";
@@ -54,7 +56,7 @@ string EFFECT_ANALYZE::status(void) const {
   for(int nm = 0; nm < static_cast<int>(ranges.size()); nm++)
     for(int ch = 0; ch < static_cast<int>(ranges[0].size()); ch++)
       ranges[nm][ch] = 0;
-  for(int ch = 0; ch < static_cast<int>(ranges[0].size()); ch++)
+  for(int ch = 0; ranges.size() > 0 && ch < static_cast<int>(ranges[0].size()); ch++)
     num_of_samples[ch] = 0;
 
   max = 0;
@@ -75,8 +77,14 @@ CHAIN_OPERATOR::parameter_type EFFECT_ANALYZE::max_multiplier(void) const {
 
 void EFFECT_ANALYZE::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
-  num_of_samples.resize(insample->number_of_channels(), 0);
-  ranges.resize(range_count, vector<unsigned long int> (insample->number_of_channels()));
+  if (insample->number_of_channels() < 2) {
+    num_of_samples.resize(2, 0);
+    ranges.resize(range_count, vector<unsigned long int> (2));
+  }
+  else {
+    num_of_samples.resize(insample->number_of_channels(), 0);
+    ranges.resize(range_count, vector<unsigned long int> (insample->number_of_channels()));
+  }
 }
 
 void EFFECT_ANALYZE::process(void) {
@@ -117,6 +125,9 @@ string EFFECT_DCFIND::status(void) const {
 
 CHAIN_OPERATOR::parameter_type EFFECT_DCFIND::get_deltafix(int channel) const { 
   SAMPLE_SPECS::sample_type deltafix;
+
+  if (channel >= pos_sum.size() ||
+      channel >= neg_sum.size()) return(0.0);
 
   if (pos_sum[channel] > neg_sum[channel]) deltafix = -(pos_sum[channel] - neg_sum[channel]) / num_of_samples[channel];
   else deltafix = (neg_sum[channel] - pos_sum[channel]) / num_of_samples[channel];

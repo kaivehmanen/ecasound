@@ -2,6 +2,10 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2000-03-24  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* com_line.h (combine): a new overloaded version
+	
 2000-03-21  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* object_queue.h: added

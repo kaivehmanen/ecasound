@@ -29,8 +29,6 @@ QESaveEvent::QESaveEvent(ECA_CONTROLLER* ctrl,
   : QEBlockingEvent(ctrl),
     ectrl(ctrl) {
 
-  toggle_valid_state(false);
-
   init("saveevent");
   ectrl->add_chain("default");
   set_input(input);
@@ -39,5 +37,4 @@ QESaveEvent::QESaveEvent(ECA_CONTROLLER* ctrl,
   set_default_audio_format(input);
   set_output(output);
   set_output_position(start_pos);
-  toggle_valid_state(true);
 }

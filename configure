@@ -3906,3 +3906,62 @@ if test "$no_recursion" != yes; then
   done
 fi
 
+
+# And a short summary 
+echo "-----------------------------------------------------------------"
+echo "Following packages are now configured:"
+echo "ecasound: 		yes (ecasound,libecasound,libkvutils)"
+echo "ecatools: 		yes"
+if test "$qt_support" = "yes"  ; then
+	echo "libqtecasound: 		yes"
+	echo "qtecasound: 		yes"
+else
+	echo "libqtecasound: 		no"
+	echo "qtecasound: 		no"
+fi
+echo "-----------------------------------------------------------------"
+echo "Following features were selected:"
+if test x$include_debug = xyes ; then
+	echo "Debugging info:		yes"
+else
+	echo "Debugging info:		no"	
+fi
+if test x$termcap_library = xtermcap ; then
+	echo "Termcap:		termcap"
+fi
+if test x$termcap_library = xncurses; then
+	echo "Termcap:		ncurses"
+fi
+if test x$termcap_library = x; then
+	echo "Termcap:		none"
+fi
+
+if test x$af_support = xyes ; then
+	echo "Libaudiofile:		yes"
+else
+	echo "Libaudiofile:		no"
+fi
+
+if test x$alsa_support = xyes ; then
+	echo "ALSA-support		yes"
+else
+	echo "ALSA-support		no"
+fi
+
+if test x$oss_support = xyes ; then
+	echo "OSS-support		yes"
+else
+	echo "OSS-support		no"
+fi
+
+echo "-----------------------------------------------------------------"
+echo "Following directories are used:"
+echo "Directory prefix:		"$prefix
+if test "$qt_support" = "yes"  ; then
+	echo "Qt-libraries:			"$qt_libraries
+	echo "Qt-includes:			"$qt_includes
+fi
+
+echo "-----------------------------------------------------------------"
+echo "Type 'make' to compile the package and 'make install' to install."
+echo "-----------------------------------------------------------------"

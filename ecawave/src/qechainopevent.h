@@ -6,18 +6,17 @@
 #include <qdialog.h>
 #include <qwidget.h>
 
-#include <kvutils/definition_by_contract.h>
 #include <ecasound/eca-chainop.h>
 #include <ecasound/qechainopinput.h>
 
-#include "qeprocessevent.h"
+#include "qenonblockingevent.h"
 
 /**
  * Process audio data with a chain operator 
  * provided by libecasound
  */
 class QEChainopEvent : public QDialog, 
-		       public QEProcessEvent {
+		       public QENonblockingEvent {
   Q_OBJECT
 
 public slots:
@@ -37,6 +36,7 @@ private:
   void create_output(void);
   void copy_file(const string& a, const string& b);
 
+  ECA_CONTROLLER* ectrl;
   string input_rep, output_rep;
   long int start_pos_rep;
   long int length_rep;

@@ -5,7 +5,7 @@ int main(int argc, char *argv[]);
 void print_usage(void);
 void signal_handler(int signum);
 
-const string ecatools_fixdc_version = "v19991113";
+const string ecatools_fixdc_version = "19991113";
 string ecatools_fixdc_tempfile;
 
 #endif

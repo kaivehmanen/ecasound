@@ -31,7 +31,7 @@ void QEProcessEvent::add_chain_operator(CHAIN_OPERATOR* cop) {
   // --------
   REQUIRE(cop != 0);
   // --------
-  ectrl->add_chain_operator(cop);
+ 
 }
 
 

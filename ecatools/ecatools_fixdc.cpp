@@ -77,6 +77,7 @@ int main(int argc, char *argv[])
     ECA_AUDIO_FORMAT aio_params;
 
     cline.begin();
+    cline.next(); // skip the program name
     while(cline.end() == false) {
       filename = cline.current();
 
@@ -145,8 +146,8 @@ int main(int argc, char *argv[])
 
 void print_usage(void) {
   cerr << "****************************************************************************\n";
-  cerr << "* [1mecatools_fixdc, " << ecatools_fixdc_version;
-  cerr << " (linked to ecasound " << ecasound_version 
+  cerr << "* [1mecatools_fixdc, v" << ecatools_fixdc_version;
+  cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
   cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence[0m \n";
   cerr << "****************************************************************************\n";

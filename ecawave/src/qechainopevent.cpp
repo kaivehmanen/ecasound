@@ -44,13 +44,12 @@ QEChainopEvent::QEChainopEvent (ECA_CONTROLLER* ctrl,
 				QWidget *parent, 
 				const char *name) 
   : QDialog(parent, name, false),
-    QEProcessEvent(ctrl),
+    QENonblockingEvent(ctrl),
+    ectrl(ctrl),
     input_rep(input),
     output_rep(output),
     start_pos_rep(start_pos),
     length_rep(length) {
-
-  init();
   init_layout();
 }
 
@@ -63,41 +62,38 @@ void QEChainopEvent::restart(long int start_pos, long int length) {
 
 void QEChainopEvent::preview(void) {
   mode = preview_mode;
-  init();
-  toggle_valid_state(false);
+  init("chainopevent");
   ectrl->add_chain("default");
   set_input(input_rep);
   set_input_position(start_pos_rep);
   set_length(length_rep);
-  get_default_audio_format(input_rep);
+  set_default_audio_format(input_rep);
   ectrl->add_default_output();
-  toggle_valid_state(true);
   if (copinput != 0) {
     copinput->update_results();
-    add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(copinput->result()->clone()));
+    ectrl->add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(copinput->result()->clone()));
   }
-  start(false);
+  start();
 }
 
 void QEChainopEvent::process(void) {
-  toggle_valid_state(false);
   create_output();
   if (mode != invalid) {
     mode = process_mode;
-    init();
+    init("chainopevent");
     ectrl->add_chain("default");
     set_input(input_rep);
     set_input_position(start_pos_rep);
     set_length(length_rep);
-    get_default_audio_format(input_rep);
+    set_default_audio_format(input_rep);
     set_output(output_rep);
     set_output_position(start_pos_rep);
-    toggle_valid_state(true);
+
     if (copinput != 0) {
       copinput->update_results();
-      add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(copinput->result()->clone()));
+      ectrl->add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(copinput->result()->clone()));
     }
-    start(true);
+    blocking_start();
     emit finished();
     accept();
   }

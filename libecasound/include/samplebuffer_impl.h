@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// samplebuffer.cpp: Routines and classes for handling sample buffers
+// samplebuffer_impl.h: Routines and classes for handling sample buffers
 // Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 // 
 // This program is free software; you can redistribute it and/or modify
@@ -636,4 +636,3 @@ SAMPLE_BUFFER_BASE<T>::SAMPLE_BUFFER_BASE (const SAMPLE_BUFFER_BASE<T>& x)
 		kvu_numtostr(buffersize_rep) + ", sample rate: " +
 		kvu_numtostr(sample_rate_rep) + ".");
 }
-

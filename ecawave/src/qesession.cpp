@@ -38,6 +38,7 @@
 
 #include "qestatusbar.h"
 #include "qeevent.h"
+#include "qenonblockingevent.h"
 #include "qeplayevent.h"
 #include "qesaveevent.h"
 #include "qechainopevent.h"
@@ -53,14 +54,14 @@ QESession::QESession (const string& filename,
 		      QWidget *parent, 
 		      const char *name)
         : QWidget( parent, name ),
-	  orig_file_rep(filename),
+	  orig_filename_rep(filename),
 	  refresh_toggle_rep(force_refresh),
 	  wcache_toggle_rep(use_wave_cache),
           direct_mode_rep(direct_mode) {
-  event = 0;
+  nb_event = 0;
   temp_created = false;
 
-  active_file_rep = filename_rep;
+  active_filename_rep = orig_filename_rep;
 
   esession = new ECA_SESSION();
   ectrl = new ECA_CONTROLLER(esession);
@@ -87,15 +88,15 @@ QESession::QESession (const string& filename,
 }
 
 QESession::~QESession(void) {
-  if (event != 0) {
-    if (event->is_triggered() &&
-  	ectrl->is_running()) event->stop();
-    delete event;
+  if (nb_event != 0) {
+    if (nb_event->is_triggered() &&
+  	ectrl->is_running()) nb_event->stop();
+    delete nb_event;
   }
 
-  if (temp_created == true && active_file_rep.empty() == false) {
-    remove(active_file_rep.c_str());
-    remove((active_file_rep + ".ews").c_str());
+  if (temp_created == true && active_filename_rep.empty() == false) {
+    remove(active_filename_rep.c_str());
+    remove((active_filename_rep + ".ews").c_str());
   }
 
   while(child_sessions.size() > 0) {
@@ -153,7 +154,7 @@ void QESession::init_layout(void) {
 			this, SLOT(new_session()));
   vlayout->addWidget(buttonrow2);
 
-  if (active_file_rep.empty() == false) file = new QEFile(active_file_rep,
+  if (active_filename_rep.empty() == false) file = new QEFile(active_filename_rep,
 							  wcache_toggle_rep,
 							  refresh_toggle_rep, 
 							  this, 
@@ -163,7 +164,7 @@ void QESession::init_layout(void) {
 
   vlayout->addWidget(file,1);
 
-  statusbar = new QEStatusBar(ectrl, active_file_rep, this);
+  statusbar = new QEStatusBar(ectrl, active_filename_rep, this);
   statusbar->visible_area(ECA_AUDIO_TIME(0, file->samples_per_second()),
 			  ECA_AUDIO_TIME(file->length(), file->samples_per_second()));
   vlayout->addWidget(statusbar);
@@ -269,21 +270,21 @@ void QESession::effect_event(void) {
   QEChainopEvent* p;
   if (temp_created == false) {
     string temp = string(tmpnam(NULL)) + ".wav";
-    p = new QEChainopEvent(ectrl, active_file_rep, temp, start_pos, sel_length);
+    p = new QEChainopEvent(ectrl, active_filename_rep, temp, start_pos, sel_length);
     temp_created = true;
-    active_file_rep = temp;
+    active_filename_rep = temp;
     edit_start = start_pos;
     edit_length = sel_length;
   }
   else {
-    p = new QEChainopEvent(ectrl, active_file_rep, active_file_rep,
+    p = new QEChainopEvent(ectrl, active_filename_rep, active_filename_rep,
 			   start_pos, sel_length);
     if (start_pos < edit_start) edit_start = start_pos;
     if (sel_length > edit_length) edit_length = sel_length;
   }
   QObject::connect(p, SIGNAL(finished()), this, SLOT(update_wave_data()));
   p->show();
-  event = p;
+  nb_event = p;
 
   // --------
   // ensure:
@@ -297,8 +298,8 @@ void QESession::update_wave_data(void) {
   assert(file != 0);
   // --------
 
-  if (active_file_rep != file->filename) {
-    file->open(active_file_rep);
+  if (active_filename_rep != file->filename()) {
+    file->open(active_filename_rep);
   }
   else {
     file->update_wave_form_data();
@@ -312,8 +313,8 @@ void QESession::update_wave_data(void) {
 bool QESession::temp_file_created(void) {
   struct stat stattemp1;
   struct stat stattemp2;
-  stat(active_file_rep.c_str(), &stattemp1);
-  stat(active_file_rep.c_str(), &stattemp2);
+  stat(active_filename_rep.c_str(), &stattemp1);
+  stat(active_filename_rep.c_str(), &stattemp2);
   if (stattemp1.st_size != stattemp2.st_size) return(false);
   return(true);
 }
@@ -324,14 +325,14 @@ void QESession::play_event(void) {
   if (file->is_valid() == false) return;
 
   QEPlayEvent* p;
-  p = new QEPlayEvent(ectrl, active_file_rep, ecawaverc.resource("default-output"), start_pos, sel_length);
+  p = new QEPlayEvent(ectrl, active_filename_rep, ecawaverc.resource("default-output"), start_pos, sel_length);
 
   if (p->is_valid() == true) {
     p->start();
-    event = p;
+    nb_event = p;
   }
   else 
-    event = 0;
+    nb_event = 0;
 }
 
 void QESession::save_event(void) { 
@@ -343,14 +344,11 @@ void QESession::save_event(void) {
 
   stop_event();
 
-  QESaveEvent* p = new QESaveEvent(ectrl, active_file_rep, orig_file_rep, edit_start, edit_length);
+  QESaveEvent* p = new QESaveEvent(ectrl, active_filename_rep, orig_filename_rep, edit_start, edit_length);
 
   if (p->is_valid() == true) {
-    p->start(true);
-    event = p;
+    p->start();
   }
-  else 
-    event = 0;
 }
 
 void QESession::save_as_event(void) { 
@@ -359,14 +357,11 @@ void QESession::save_as_event(void) {
     stop_event();
 
     QESaveEvent* p;
-    p = new QESaveEvent(ectrl, active_file_rep, fdialog->result_filename(), 0, file->length());
+    p = new QESaveEvent(ectrl, active_filename_rep, fdialog->result_filename(), 0, file->length());
 
     if (p->is_valid() == true) {
-      p->start(true);
-      event = p;
+      p->start();
     }
-    else 
-      event = 0;
   }
 }
 
@@ -376,28 +371,25 @@ void QESession::copy_event(void) {
   if (file->is_valid() == false) return;
 
   QECopyEvent* p;
-  p = new QECopyEvent(ectrl, active_file_rep, ecawaverc.resource("clipboard-file"), start_pos, sel_length);
+  p = new QECopyEvent(ectrl, active_filename_rep, ecawaverc.resource("clipboard-file"), start_pos, sel_length);
   
   if (p->is_valid() == true) {
     p->start();
-    event = p;
   }
-  else 
-    event = 0;
 }
 
 void QESession::stop_event(void) { 
-  if (event != 0) {
-    if (ectrl->is_running()) event->stop();
-    delete event;
+  if (nb_event != 0) {
+    if (ectrl->is_running()) nb_event->stop();
+    delete nb_event;
   }
-  event = 0;
+  nb_event = 0;
 }
 
 void QESession::selection_update(void) {
 //    if (event != 0) {
 //      prepare_event();
-//      event->restart(start_pos, sel_length);
+//      nb_event->restart(start_pos, sel_length);
 //    }
 }
 

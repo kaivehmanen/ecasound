@@ -7,7 +7,9 @@ libecasound_path = -L$(top_builddir)/kvutils -L$(top_builddir)/kvutils/.libs -lk
 endif
 
 
-INCLUDES = -I. -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound/include
+INCLUDES = -I. 	-I$(top_srcdir)/kvutils \
+		-I$(top_srcdir)/libecasound/include \
+		-I$(top_srcdir)/libecasound/src
 
 if INCLUDE_DEBUG
 bin_PROGRAMS = ecatools_normalize_debug \

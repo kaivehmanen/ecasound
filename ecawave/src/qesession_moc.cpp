@@ -1,8 +1,8 @@
 /****************************************************************************
 ** QESession meta object code from reading C++ file 'qesession.h'
 **
-** Created: Tue Mar 14 00:58:47 2000
-**      by: The Qt Meta Object Compiler ($Revision: 1.4 $)
+** Created: Fri Mar 24 11:31:51 2000
+**      by: The Qt Meta Object Compiler ($Revision: 1.5 $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/

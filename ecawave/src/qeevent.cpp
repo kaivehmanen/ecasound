@@ -57,23 +57,53 @@ void QEEvent::init(const string& chainsetup) {
   // --------
 }
 
-void QEEvent::stop(void) {
+void QEEvent::blocking_start(void) {
   // --------
-  REQUIRE(ectrl->is_running() == true);
-  REQUIRE(is_triggered() == true);
+  REQUIRE(ectrl->is_valid() == true);
+  REQUIRE(ectrl->is_selected() == true);
+  REQUIRE(is_triggered() == false);
   // --------
+
   try {
-    ectrl->stop();
-    ectrl->disconnect_chainsetup();
-    toggle_triggered_state(false);
+    ectrl->connect_chainsetup();
+    ectrl->start();
+    toggle_triggered_state(true);
+
+    struct timespec sleepcount;
+    sleepcount.tv_sec = 1;
+    sleepcount.tv_nsec = 0;
+    
+    QProgressDialog progress ("Processing data...", 0,
+			      (int)(ectrl->length_in_seconds_exact() * 10.0), 0, 0, true);
+    progress.setProgress(0);
+    progress.show();
+    while(ectrl->is_finished() == false) {
+      nanosleep(&sleepcount, NULL);
+      progress.setProgress((int)(ectrl->position_in_seconds_exact() * 10.0));	
+    }      
   }
   catch(ECA_ERROR* e) {
-    cerr << "---\nlibecasound error while stopping event: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+    cerr << "---\nlibecasound error while processing event: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
   }
 
   // --------
-  ENSURE(ectrl->is_connected() == false);
   ENSURE(is_triggered() == false);
+  // --------
+}
+
+void QEEvent::nonblocking_start(void) {
+  // --------
+  REQUIRE(ectrl->is_valid() == true);
+  REQUIRE(ectrl->is_selected() == true);
+  REQUIRE(is_triggered() == false);
+  // --------
+
+  ectrl->connect_chainsetup();
+  ectrl->start();
+  toggle_triggered_state(true);
+
+  // --------
+  ENSURE(is_triggered() == true || ectrl->is_running() == false);
   // --------
 }
 

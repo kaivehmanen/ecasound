@@ -3,8 +3,6 @@
 
 #include <string>
 
-#include <kvutils/definition_by_contract.h>
-
 #include "qenonblockingevent.h"
 
 /**

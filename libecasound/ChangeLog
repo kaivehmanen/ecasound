@@ -2,7 +2,16 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
-2000-03-22  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-03-24  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-version.h (ecasound_library_version_current): added
+	* eca-version.h (ecasound_library_version_revision): added
+	* eca-version.h (ecasound_library_version_age): added
+	* eca-version.h (ecasound_library_version): added
+	* eca-version.h (ecasound_version): removed
+	* eca-controller-objects.h (get_audio_format): no longer const
+	
+2000-03-23  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* samplebuffer_functions.h: added
 	* samplebuffer.h: removed all non-template code

@@ -3,9 +3,7 @@
 
 #include <string>
 
-#include <kvutils/definition_by_contract.h>
-
-#include "qeevent.h"
+#include "qeblockingevent.h"
 
 /**
  * Simple audio-playback using the default output device

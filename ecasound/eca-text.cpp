@@ -132,7 +132,7 @@ void print_header(void) {
   setupterm((char *)0, 1, (int *)0);
   putp(tigetstr("bold"));
 #endif
-  cout << "               ecasound " << ecasound_version << " (C) 1997-2000 Kai Vehmanen              ";
+  cout << "               ecasound v" << ecasound_library_version << " (C) 1997-2000 Kai Vehmanen              ";
 #ifdef USE_NCURSES
   putp(tigetstr("rmso"));
 #endif

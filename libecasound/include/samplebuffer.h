@@ -186,6 +186,6 @@ class SAMPLE_BUFFER_BASE {
 
 typedef SAMPLE_BUFFER_BASE<SAMPLE_SPECS::sample_type> SAMPLE_BUFFER;
 
-#include "../src/samplebuffer.cpp"
+#include "samplebuffer_impl.h"
 
 #endif

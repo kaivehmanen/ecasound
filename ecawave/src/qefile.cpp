@@ -33,7 +33,7 @@
 
 #include <ecasound/audioio.h>
 #include <ecasound/eca-audio-objects.h>
-#include <ecasound/samplebuffer.h>
+#include <ecasound/samplebuffer_functions.h>
 #include <ecasound/qebuttonrow.h>
 
 #include "qefile.h"
@@ -388,10 +388,10 @@ void QEFile::update_wave_form_data(void) {
       }
 
       for(int ch = 0; ch < t->number_of_channels() && ch < io_object->channels(); ch++) {
-	blocktmp.max = (int)(32767.0 * t->max_value(ch) / SAMPLE_SPECS::max_amplitude);
+	blocktmp.max = (int)(32767.0 * SAMPLE_BUFFER_FUNCTIONS::max_value(*t, ch) / SAMPLE_SPECS::max_amplitude);
 	//	      cerr << blocktmp.max;
 	//	      cerr << "-";
-	blocktmp.min = (int)(32767.0 * t->min_value(ch) / SAMPLE_SPECS::max_amplitude);
+	blocktmp.min = (int)(32767.0 * SAMPLE_BUFFER_FUNCTIONS::min_value(*t, ch) / SAMPLE_SPECS::max_amplitude);
 	//	      cerr << blocktmp.min;
 	//	      cerr << "<br>\n";
 	waveblocks[ch].push_back(blocktmp);

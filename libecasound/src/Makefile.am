@@ -20,7 +20,8 @@ endif
 
 INCLUDES = -I$(top_srcdir)/include
 
-INCLUDES = -I. -I$(top_srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound//include
+INCLUDES = -I. -I$(top_srcdir) -I$(top_srcdir)/kvutils \
+				-I$(top_srcdir)/libecasound/include
 
 #SUBDIRS = kvutils
 #DIST_SUBDIRS = kvutils

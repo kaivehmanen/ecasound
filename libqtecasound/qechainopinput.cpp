@@ -104,6 +104,7 @@ void QEChainopInput::update_chainop(int index) {
       selected_index = counter;
     }   
     ++p;
+    ++counter;
   }
 
   if (chainop_rep != 0) {

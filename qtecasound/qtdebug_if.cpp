@@ -38,7 +38,7 @@ QTDEBUG_IF::QTDEBUG_IF(void) { }
 QTDEBUG_IF::~QTDEBUG_IF(void) { 
   if (get_debug_level() > 0) {
     while(qtdebug_queue.cmds_available() == true) {
-      cerr << qtdebug_queue.front() << "\n";
+      //      cerr << qtdebug_queue.front() << "\n";
       qtdebug_queue.pop_front();
     }
   }

@@ -695,18 +695,23 @@ void ECA_CONTROLLER_OBJECTS::select_audio_object_by_index(const string& index) {
   }
 }
 
-ECA_AUDIO_FORMAT ECA_CONTROLLER_OBJECTS::get_audio_format(void) const {
+ECA_AUDIO_FORMAT ECA_CONTROLLER_OBJECTS::get_audio_format(void) {
   // --------
   // require:
   assert(is_selected() == true);
   assert(selected_audio_object_rep != 0);
   // --------
 
+  bool was_open = true;
+  if (selected_audio_object_rep->is_open() == false) {
+    was_open = false;
+    selected_audio_object_rep->open();
+  }
   ECA_AUDIO_FORMAT t (selected_audio_object_rep->channels(), 
 		      selected_audio_object_rep->samples_per_second(), 
 		      selected_audio_object_rep->sample_format(),
 		      selected_audio_object_rep->interleaved_channels());
-
+  if (was_open == false) selected_audio_object_rep->close();
   return(t);
 }
 

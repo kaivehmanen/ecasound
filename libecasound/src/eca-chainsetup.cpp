@@ -599,7 +599,6 @@ void ECA_CHAINSETUP::load_from_file(const string& filename) throw(ECA_ERROR*) {
   if (!fin) throw(new ECA_ERROR("ECA_CHAINSETUP", "Couldn't open setup read file: \"" + filename + "\".", ECA_ERROR::retry));
 
   string temp, another;
-  
   while(fin >> temp) {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainseup) Adding \"" + temp + "\" to options (loaded from \"" + filename + "\".");
     options.push_back(temp);
@@ -607,6 +606,7 @@ void ECA_CHAINSETUP::load_from_file(const string& filename) throw(ECA_ERROR*) {
   fin.close();
 
   setup_filename = filename;
+  options = COMMAND_LINE::combine(options);
 }
 
 void ECA_CHAINSETUP::save(void) throw(ECA_ERROR*) { 

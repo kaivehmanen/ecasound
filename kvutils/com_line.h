@@ -70,7 +70,12 @@ public:
     void combine(void);
 
     /**
-     * Add 'argu' to the arguments.
+     * Static version of <code>combine</code>
+     */
+    static vector<string> combine(const vector<string>& source);
+
+    /**
+     * Adds 'argu' to the arguments.
      */
     void push_back(const string& argu);
 

@@ -69,11 +69,13 @@ bool COMMAND_LINE::has(const string& option) const {
   return(false);
 }
 
-void COMMAND_LINE::combine(void) {
+void COMMAND_LINE::combine(void) { cparams = combine(cparams); }
+
+vector<string> COMMAND_LINE::combine(const vector<string>& source) {
   vector<string> result;
   string first;
-  vector<string>::const_iterator p = cparams.begin();
-  while(p != cparams.end()) {
+  vector<string>::const_iterator p = source.begin();
+  while(p != source.end()) {
     if (p->size() == 0) {
       ++p;
       continue;
@@ -82,7 +84,7 @@ void COMMAND_LINE::combine(void) {
       if (find(p->begin(), p->end(), ':') == p->end()) {
 	first = *p;
 	++p;
-	if (p == cparams.end()) {
+	if (p == source.end()) {
 	  result.push_back(first);
 	  break;
 	}
@@ -103,8 +105,5 @@ void COMMAND_LINE::combine(void) {
     
     ++p;
   }
-  cparams = result;
+  return(result);
 }
-
-
-

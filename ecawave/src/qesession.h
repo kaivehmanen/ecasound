@@ -16,7 +16,7 @@ class ECA_SESSION;
 class QEFile;
 class QEButtonRow;
 class QEStatusBar;
-class QEEvent;
+class QENonblockingEvent;
 class QVBoxLayout;
 
 #include "resources.h"
@@ -77,8 +77,8 @@ private slots:
   void prepare_event(void);
   bool temp_file_created(void);
 
-  string orig_file_rep;
-  string active_file_rep;
+  string orig_filename_rep;
+  string active_filename_rep;
 
   bool temp_created;
 
@@ -94,7 +94,7 @@ private slots:
   QEFile* file;
   QEButtonRow* buttonrow;
   QEButtonRow* buttonrow2;
-  QEEvent* event;
+  QENonblockingEvent* nb_event;
 
   QVBoxLayout* vlayout;
   QEStatusBar* statusbar;

@@ -534,13 +534,15 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void select_audio_object_by_index(const string& name);
 
   /**
-   * Gets audio format of currently selected audio object
+   * Gets audio format of currently selected audio object. 
+   * Note! This function is not a const member, because
+   * it will open the targer audio object, if necessary.
    *
    * require:
    *  selected_audio_object_rep != 0
    *  is_selected() == true
    */
-  ECA_AUDIO_FORMAT get_audio_format(void) const;
+  ECA_AUDIO_FORMAT get_audio_format(void);
 
   /**
    * Sets default audio format. This format will be used, when
