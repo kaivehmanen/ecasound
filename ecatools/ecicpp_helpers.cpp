@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // ecicpp_helper.cpp: Helper routines for C++ ECI programming.
-// Copyright (C) 2002 Kai Vehmanen
+// Copyright (C) 2002-2005 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,6 +46,11 @@ using std::string;
 
 int ecicpp_add_input(ECA_CONTROL_INTERFACE* eci, const string& filename, string* format)
 {
+  if (filename.find(',') != string::npos) {
+    cerr << "Error: Unable to handle filenames with commas. Exiting...\n";
+    return -1;
+  }
+
   eci->command("ai-add " + filename);
   bool error = eci->error();
   eci->command("ai-list");
@@ -106,5 +111,5 @@ int ecicpp_format_channels(const string& format)
 {
   std::vector<std::string> tokens = kvu_string_to_vector(format, ',');
   DBC_CHECK(tokens.size() >= 3);
-  return(atoi(tokens[1].c_str()));
+  return atoi(tokens[1].c_str());
 }

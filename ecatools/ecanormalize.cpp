@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // ecanormalize.cpp: A simple command-line tools for normalizing
 //                   sample volume.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2005 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ static void ecanormalize_signal_handler(int signum);
  * Global variables
  */
 
-static const string ecatools_normalize_version = "20021030-26";
+static const string ecatools_normalize_version = "20050316-27";
 static string ecatools_normalize_tempfile;
 
 /**

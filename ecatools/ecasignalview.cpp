@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // ecasignalview.cpp: A simple command-line tools for monitoring
 //                    signal amplitude.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2005 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ void ecasv_signal_handler(int signum);
  * Static global variables
  */
 
-static const string ecatools_signalview_version = "20021028-5";
+static const string ecatools_signalview_version = "20050316-6";
 static const double ecasv_clipped_threshold_const = 1.0f - 1.0f / 16384.0f;
 static const int ecasv_bar_length_const = 32;
 static const int ecasv_header_height_const = 10;

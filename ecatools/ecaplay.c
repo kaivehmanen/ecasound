@@ -1,8 +1,7 @@
 /**
- * ecaplay.c: A simple command-line tool for playing audio files
- *            using the default output device specified in 
- *            "~/.ecasoundrc".
- * Copyright (C) 1999-2002,2004,2005 Kai Vehmanen
+ * ecaplay.c: A simple command-line tool for playing audio files.
+ *
+ * Copyright (C) 1999-2002,2004-2005 Kai Vehmanen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,45 +18,77 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
  */
 
+/**
+ * TODO:
+ * - handle filenames that contain commas
+ * - write some notes about locking issues
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
 #include <assert.h>
+#include <limits.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <signal.h> /* POSIX: sigaction() */
 #include <stdlib.h> /* ANSI-C: malloc(), free() */
 #include <string.h> /* ANSI-C: strlen(), strncmp() */
+
+#include <unistd.h>    /* POSIX: ... */
+#include <signal.h>    /* POSIX: sigaction() */
+#include <sys/stat.h>  /* POSIX: mkdir() */
+#include <sys/types.h> /* POSIX: mkdir() */
 
 #include <ecasoundc.h>
 
 /**
  * Function declarations
  */
+
 int main(int argc, char *argv[]);
 
-static void add_track_to_chainsetup(eci_handle_t eci, const char* nextrack);
-static void set_track_to_chainsetup(eci_handle_t* eci, const char* nexttrack);
+static void add_input_to_chainsetup(eci_handle_t eci, const char* nextrack);
+static int flush_tracks(void);
+static char* get_playlist_path(void);
 static const char* get_track(int n, int argc, char *argv[]);
+static const char* get_track_playlist(int n, int argc, char *argv[]);
+static void initialize_chainsetup_for_playback(eci_handle_t* eci, const char* nexttrack);
+static int list_tracks(void);
+static int play_tracks(int argc, char *argv[]);
 static void print_usage(FILE* stream);
 static int process_option(const char* option);
-static void signal_handler(int signum);
+static int queue_tracks(int argc, char *argv[]);
+static int set_audio_format(eci_handle_t* eci, const char* fmt);
 static void setup_signal_handling(void);
+static void signal_handler(int signum);
 
 /**
  * Definitions and options 
  */
 
-#define ECAPLAY_TIMEOUT 3
-#define ECAPLAY_EIAM_LOGLEVEL 256
+#define ECAPLAY_AFMT_MAXLEN     64
+#define ECAPLAY_EIAM_LOGLEVEL   256
+#define ECAPLAY_TIMEOUT         3
+
+#define ECAPLAY_MODE_NORMAL     0
+#define ECAPLAY_MODE_PL_FLUSH   1
+#define ECAPLAY_MODE_PL_LIST    2
+#define ECAPLAY_MODE_PL_PLAY    3
+#define ECAPLAY_MODE_PL_QUEUE   4
+
+#define ECAPLAY_PLAYLIST_BASEDIR    ".ecasound"
+#define ECAPLAY_PLAYLIST_FILE       "ecaplay_queue"
 
 /** 
  * Global variables
  */
-static const char* ecaplay_version = "20040417-37";
+
+static const char* ecaplay_version = "20050317-39";
+static char ecaplay_next[PATH_MAX];
+static char ecaplay_audio_format[ECAPLAY_AFMT_MAXLEN];
 static int ecaplay_debuglevel = ECAPLAY_EIAM_LOGLEVEL;
 static int ecaplay_skip = 0;
+static int ecaplay_mode = ECAPLAY_MODE_NORMAL;
 static const char* ecaplay_output = NULL;
 static sig_atomic_t ecaplay_skip_flag = 0;
 
@@ -67,64 +98,54 @@ static sig_atomic_t ecaplay_skip_flag = 0;
 
 int main(int argc, char *argv[])
 {
-  eci_handle_t eci = NULL;
-  int i, res = 0, tracknum = 1;
-  const char* nexttrack = NULL;
+  int i, res = 0;
 
+  /* get the default output device */
+  ecaplay_output = getenv("ECAPLAY_OUTPUT_DEVICE");
+
+  /* process command-line arguments */
   for(i = 1; i < argc; i++) { res += process_option(argv[i]); }
 
-  tracknum += ecaplay_skip;
-  if (tracknum <= argc) {
-    nexttrack = get_track(tracknum, argc, argv);
+  if (res == 0) {
+    switch(ecaplay_mode) {
+    case ECAPLAY_MODE_PL_FLUSH:
+      res = flush_tracks();
+      break;
+      
+    case ECAPLAY_MODE_PL_LIST:
+      res = list_tracks();
+      break;
+      
+    case ECAPLAY_MODE_PL_QUEUE:
+      res = queue_tracks(argc, argv);
+      break;
+      
+    case ECAPLAY_MODE_NORMAL:
+    case ECAPLAY_MODE_PL_PLAY:
+      res = play_tracks(argc, argv);
+      break;
+      
+    default:
+      assert(0);
+    }
   }
 
-  if (res == 0 && nexttrack != NULL) {
-    setup_signal_handling();
-
-    set_track_to_chainsetup(&eci, nexttrack);
-
-    while(nexttrack != NULL) {
-      unsigned int timeleft = ECAPLAY_TIMEOUT;
-
-      while(timeleft > 0) {
-	timeleft = sleep(timeleft);
-
-	if (timeleft > 0 && ecaplay_skip_flag > 1) {
-	  fprintf(stderr, "\n(ecaplay) Caught an exception. Exiting...\n");
-	  eci_cleanup_r(eci);
-	  return 0;
-	}
-      }
-
-      if (ecaplay_skip_flag == 0) {
-	eci_command_r(eci, "engine-status");
-      }
-
-      if (ecaplay_skip_flag != 0 || strcmp(eci_last_string_r(eci), "running") != 0) {
-	ecaplay_skip_flag = 0;
-	nexttrack = get_track(++tracknum, argc, argv);
-	if (nexttrack != NULL) {
-	  eci_cleanup_r(eci);
-	  set_track_to_chainsetup(&eci, nexttrack);
-	}
-	else {
-	  break;
-	}
-      }
-    }
-  
-    fprintf(stderr, "exiting...\n");
-  
-    eci_cleanup_r(eci);
+  if (res != 0) {
+    fprintf(stderr, "(ecaplay) Errors encountered, return code is %d.\n", res);
   }
 
   return res;
 }
 
-static void add_track_to_chainsetup(eci_handle_t eci, const char* nexttrack)
+/**
+ * Adds input 'nexttrack' to currently selected chainsetup
+ * of 'eci'. Sets the global variable 'ecaplay_audio_format'.
+ */
+static void add_input_to_chainsetup(eci_handle_t eci, const char* nexttrack)
 {
   size_t len = strlen("ai-add '") + strlen(nexttrack) + strlen("'") + 1;
   char* tmpbuf = malloc(len);
+
   assert(tmpbuf != NULL);
   snprintf(tmpbuf, len, "ai-add \"%s\"", nexttrack);
   eci_command_r(eci, tmpbuf);
@@ -135,10 +156,43 @@ static void add_track_to_chainsetup(eci_handle_t eci, const char* nexttrack)
     fprintf(stderr, "(ecaplay) Warning! Failed to add input '%s'.\n", nexttrack);
   }
 
+  /* we must connect to get correct input format */
+  eci_command_r(eci, "ao-add null");
+  eci_command_r(eci, "cs-connect");
+  eci_command_r(eci, "ai-iselect 1");
+  eci_command_r(eci, "ai-get-format");
+
+  strncpy(ecaplay_audio_format, 
+	  eci_last_string_r(eci),
+	  ECAPLAY_AFMT_MAXLEN);
+  ecaplay_audio_format[ECAPLAY_AFMT_MAXLEN - 1] = 0;
+
+  printf("(ecaplay) Using audio format: %s.\n", ecaplay_audio_format);
+
+  /* disconnect and remove the null output */
+  eci_command_r(eci, "cs-disconnect");
+  eci_command_r(eci, "ao-iselect 1");
+  eci_command_r(eci, "ao-remove");
+
   free(tmpbuf);
 }
 
-static void set_track_to_chainsetup(eci_handle_t* eci, const char* nexttrack)
+/**
+ * Flushes the playlist contents.
+ *
+ * @return zero on success, non-zero otherwise
+ */
+static int flush_tracks(void)
+{
+  char *path = get_playlist_path();
+  if (truncate(path, 0) != 0) {
+    printf("(ecaplay) Unable to flush playlist '%s'.\n", path);
+    return -1;
+  }
+  return 0;
+}
+
+static void initialize_chainsetup_for_playback(eci_handle_t* eci, const char* nexttrack)
 {
   const char* ret = NULL;
 
@@ -161,9 +215,8 @@ static void set_track_to_chainsetup(eci_handle_t* eci, const char* nexttrack)
    * adding chains succeeds */
   eci_command_r(*eci, "c-add ecaplay_chain");
   
-  add_track_to_chainsetup(*eci, nexttrack);
-
-  /* FIXME: add support for fetcing input audio format, see ecanormalize.cpp */
+  add_input_to_chainsetup(*eci, nexttrack);
+  set_audio_format(*eci, ecaplay_audio_format);
 
   if (ecaplay_output == NULL) {
     eci_command_r(*eci, "ao-add-default");
@@ -183,21 +236,26 @@ static void set_track_to_chainsetup(eci_handle_t* eci, const char* nexttrack)
   }
 
   /* FIXME: add detection of consecutive errors */
+
   eci_command_r(*eci, "cs-connect");
-  /* FIXME: fetch last_error and print it; see other ecatools */
-  eci_command_r(*eci, "cs-connected");
-  ret = eci_last_string_r(*eci);
-  if (strncmp(ret, "ecaplay_chainsetup", strlen("ecaplay_chainsetup")) != 0) {
-    fprintf(stderr, "(ecaplay) Error while playing file '%s' . Skipping...\n", nexttrack);
+  if (eci_error_r(*eci)) {
+    fprintf(stderr, "(ecaplay) Unable to play file '%s':\n%s\n", nexttrack, eci_last_error_r(*eci));
   }
   else {
-    printf("(ecaplay) Playing file '%s'.\n", nexttrack);
-    eci_command_r(*eci, "start");
+    eci_command_r(*eci, "cs-connected");
+    ret = eci_last_string_r(*eci);
+    if (strncmp(ret, "ecaplay_chainsetup", strlen("ecaplay_chainsetup")) != 0) {
+      fprintf(stderr, "(ecaplay) Error while playing file '%s' . Skipping...\n", nexttrack);
+    }
+    else {
+      printf("(ecaplay) Playing file '%s'.\n", nexttrack);
+      eci_command_r(*eci, "start");
+    }
   }
 }
 
 /**
- * Returns the track number from the list 
+ * Returns the track number 'n' from the list 
  * given in argc and argv.
  * 
  * @return track name or NULL on error
@@ -205,6 +263,9 @@ static void set_track_to_chainsetup(eci_handle_t* eci, const char* nexttrack)
 static const char* get_track(int n, int argc, char *argv[])
 {
   int i, c = 0;
+
+  if (ecaplay_mode == ECAPLAY_MODE_PL_PLAY)
+    return get_track_playlist(n, argc, argv);
 
   assert(n > 0 && n <= argc);
 
@@ -220,17 +281,227 @@ static const char* get_track(int n, int argc, char *argv[])
   return NULL;
 }
 
+/**
+ * Returns a string containing the full path to the
+ * playlist file. Ownership of the string is transfered
+ * to the caller (i.e. it must be free()'ed).
+ *
+ * @return full pathname or NULL if error has occured
+ */
+static char* get_playlist_path(void)
+{
+  char *path = malloc(PATH_MAX);
+  struct stat statbuf;
+
+  /* create pathname based on HOME */
+  strncpy(path, getenv("HOME"), PATH_MAX);
+  strncat(path, "/" ECAPLAY_PLAYLIST_BASEDIR, PATH_MAX - strlen(path) - 1);
+
+  /* make sure basedir exists */
+  if (stat(path, &statbuf) != 0) {
+    printf("(ecaplay) Creating directory %s.\n", path);
+    mkdir(path, 0700);
+  }
+  else {
+    if (!S_ISDIR(statbuf.st_mode)) {
+      /* error, basedir exists but is not a directory */
+      free(path);
+      path = NULL;
+    }
+  }
+  
+  if (path != NULL) {
+    /* add filename to basedir */
+    strncat(path, "/" ECAPLAY_PLAYLIST_FILE, PATH_MAX - strlen(path) - 1);
+  }
+
+  return path;
+}
+
+/**
+ * Returns the track from playlist matching number 'n'.
+ * 
+ * In case 'n' is larger than the playlist length, 
+ * track 'n mod playlist_len' will be selected.
+ *
+ * @return track name or NULL on error
+ */
+static const char* get_track_playlist(int n, int argc, char *argv[])
+{
+
+  const char *res = NULL;
+  char *path;
+  FILE *f1;
+
+  assert(n > 0);
+
+  path = get_playlist_path();
+  if (path == NULL) {
+    return path;
+  }
+
+  f1 = fopen(path, "rb");
+  if (f1 != NULL) {
+    int c, w, cur_item = 1;
+
+    /* iterate through all data octet at a time */
+    for(w = 0;;) {
+      c = fgetc(f1);
+      if (c == EOF) 
+	break;
+
+      if (cur_item == n) {
+	if (c == '\n') {
+      	  ecaplay_next[w] = 0;
+	  res = ecaplay_next;
+	  break;
+	}
+      	else {
+	  ecaplay_next[w] = c;
+	}
+	++w;
+      }
+      if (c == '\n') {
+	++cur_item;
+      }
+    }
+
+    /* close the file and return results */
+    fclose(f1);
+  }
+
+  free(path);
+  
+  return res;
+}
+
+/**
+ * Lists tracks on the playlist.
+ *
+ * @return zero on success, non-zero otherwise
+ */
+static int list_tracks(void)
+{
+  FILE *f1;
+  char *path = get_playlist_path();
+
+  f1 = fopen(path, "rb");
+  if (f1 != NULL) {
+    int c;
+    while((c = fgetc(f1)) != EOF) {
+      printf("%c", c);
+    }
+    fclose(f1);
+    return 0;
+  }
+  return -1;
+}
+
+/**
+ * Play tracks using the Ecasound engine via the
+ * ECI interface.
+ *
+ * Depending on the mode, tracks are selected either
+ * from the command-line or from the playlist.
+ */
+static int play_tracks(int argc, char *argv[])
+{
+  eci_handle_t eci = NULL;
+  int tracknum = 1, stop = 0;
+  const char* nexttrack = NULL;
+
+  assert(ecaplay_mode == ECAPLAY_MODE_NORMAL || 
+	 ecaplay_mode == ECAPLAY_MODE_PL_PLAY);
+
+  tracknum += ecaplay_skip;
+  if (tracknum <= argc) {
+    nexttrack = get_track(tracknum, argc, argv);
+  }
+
+  if (nexttrack != NULL) {
+    setup_signal_handling();
+    initialize_chainsetup_for_playback(&eci, nexttrack);
+
+    while(nexttrack != NULL) {
+      unsigned int timeleft = ECAPLAY_TIMEOUT;
+
+      while(timeleft > 0) {
+	timeleft = sleep(timeleft);
+
+	if (timeleft > 0 && ecaplay_skip_flag > 1) {
+	  fprintf(stderr, "\n(ecaplay) Interrupted, exiting...\n");
+	  eci_cleanup_r(eci);
+	  stop = 1;
+	  break;
+	}
+      }
+
+      /* see above while() loop */
+      if (stop) break;
+
+      if (ecaplay_skip_flag == 0) {
+	eci_command_r(eci, "engine-status");
+      }
+      else {
+	printf("(ecaplay) Skipping...\n");
+      }
+
+      if (ecaplay_skip_flag != 0 || strcmp(eci_last_string_r(eci), "running") != 0) {
+	ecaplay_skip_flag = 0;
+	/* FIXME: segment A1 to separate function (5 lines): */
+	nexttrack = get_track(++tracknum, argc, argv);
+	if (nexttrack != NULL) {
+	  eci_cleanup_r(eci);
+	  initialize_chainsetup_for_playback(&eci, nexttrack);
+	}
+	/* /A1 */
+	else {
+	  /* no more files to play */
+	  if (ecaplay_mode == ECAPLAY_MODE_PL_PLAY) {
+	    /* if in playlist mode, loop from beginning */
+	    tracknum = 1;
+	    /* FIXME: segment A1 to separate function (5 lines): */
+	    nexttrack = get_track(tracknum, argc, argv);
+	    /* printf("(ecaplay) Looping back to start of playlist...(%s)\n", nexttrack); */
+	    if (nexttrack != NULL) {
+	      eci_cleanup_r(eci);
+	      initialize_chainsetup_for_playback(&eci, nexttrack);
+	    }
+	    /* /A1 */
+	  }
+	  else {
+	    /* printf("(ecaplay) No more files...\n"); */
+	    /* end processing */
+	    break;
+	  }
+	}
+      }
+    }
+  
+    fprintf(stderr, "exiting...\n");
+
+    /* see while() loop above */
+    if (stop == 0) {
+      eci_cleanup_r(eci);
+    }
+  }
+
+  return 0;
+}
+
 static void print_usage(FILE* stream)
 {
   fprintf(stream, "Ecaplay v%s (%s)\n\n", ecaplay_version, VERSION);
 
-  fprintf(stream, "Copyright (C) 1997-2004 Kai Vehmanen, released under GPL licence \n");
+  fprintf(stream, "Copyright (C) 1997-2005 Kai Vehmanen, released under GPL licence \n");
   fprintf(stream, "Ecaplay comes with ABSOLUTELY NO WARRANTY.\n");
   fprintf(stream, "You may redistribute copies of ecasound under the terms of the GNU\n");
   fprintf(stream, "General Public License. For more information about these matters, see\n"); 
   fprintf(stream, "the file named COPYING.\n");
 
-  fprintf(stream, "\nUSAGE: ecaplay [-dhko] file1 [ file2, ... fileN ]\n\n");
+  fprintf(stream, "\nUSAGE: ecaplay [-dfhklopq] [ file1 file2 ... fileN ]\n\n");
+
+  fprintf(stream, "See ecaplay(1) man page for more details.\n");
 }
 
 static int process_option(const char* option)
@@ -239,7 +510,7 @@ static int process_option(const char* option)
     if (strncmp("--help", option, sizeof("--help")) == 0 ||
 	strncmp("--version", option, sizeof("--version")) == 0) {
       print_usage(stdout);
-      return(1);
+      return 0;
     }
 
     switch(option[1]) 
@@ -254,10 +525,17 @@ static int process_option(const char* option)
 	  break;
 	}
 
+      case 'f': 
+	{
+	  ecaplay_mode = ECAPLAY_MODE_PL_FLUSH;
+	  printf("(ecaplay) Flushing playlist.\n");
+	  break;
+	}
+
       case 'h': 
 	{
 	  print_usage(stdout);
-	  return 1;
+	  return 0;
 	}
       
       case 'k': 
@@ -267,6 +545,13 @@ static int process_option(const char* option)
 	    ecaplay_skip = atoi(skip);
 	    printf("(ecaplay) Skipping the first %d files..\n", ecaplay_skip);
 	  }
+	  break;
+	}
+
+      case 'l': 
+	{
+	  ecaplay_mode = ECAPLAY_MODE_PL_LIST;
+	  /* printf("(ecaplay) Listing playlist contents.\n"); */
 	  break;
 	}
 	
@@ -280,17 +565,101 @@ static int process_option(const char* option)
 	  break;
 	}
 
+      case 'p': 
+	{
+	  ecaplay_mode = ECAPLAY_MODE_PL_PLAY;
+	  printf("(ecaplay) Playlist mode selected (location:%s).\n",
+		 "~/" ECAPLAY_PLAYLIST_BASEDIR "/" ECAPLAY_PLAYLIST_FILE);
+	  break;
+	}
+
+      case 'q': 
+	{
+	  ecaplay_mode = ECAPLAY_MODE_PL_QUEUE;
+	  printf("(ecaplay) Queuing tracks to playlist.\n");
+	  break;
+	}
       
       default:
 	{
 	  fprintf(stderr, "(ecaplay) Error! Unknown option '%s'.\n", option);
 	  print_usage(stderr);
-	  return 2;
+	  return 1;
 	}
       }
   }
 
   return 0;
+}
+
+static int queue_tracks(int argc, char *argv[])
+{
+  int i, res = 0;
+  char *path;
+  FILE *f1;
+
+  path = get_playlist_path();
+  /* path maybe NULL but fopen can handle it */
+
+  f1 = fopen(path, "a+b");
+  if (f1 != NULL) {
+    for(i = 1; i < argc; i++) { 
+      char c = argv[i][0];
+      /* printf("(ecaplay) processing arg '%s' (%c).\n", argv[i], c); */
+      /* FIXME: add support for '-- -foo.wav' */
+      if (c != '-') {
+	/* printf("(ecaplay) 2:processing arg '%s' (%c).\n", argv[i], c); */
+	if (c != '/') {
+	  /* reserve extra room for '/' */
+	  char* tmp = malloc(PATH_MAX + strlen(argv[i]) + 1);
+	  if (getcwd(tmp, PATH_MAX) != NULL) {
+	    strcat(tmp, "/");
+	    strcat(tmp, argv[i]);
+	    printf("(ecaplay) Track '%s' added to playlist.\n", argv[i]);
+	    fwrite(tmp, 1, strlen(tmp), f1);
+	  }
+	  free(tmp);
+	}
+	else {
+	  printf("(ecaplay) Track '%s' added to playlist.\n", argv[i]);
+	  fwrite(argv[i], 1, strlen(argv[i]), f1);
+	}
+	fwrite("\n", 1, 1, f1);
+      }
+    }
+    fclose(f1);
+  }
+  else {
+    res = -1;
+  }
+
+  free(path); /* can be NULL */
+
+  return res;
+}
+
+/**
+ * Sets the chainsetup audio format to 'fmt'.
+ *
+ * @return zero on success, non-zero on error
+ */
+int set_audio_format(eci_handle_t* eci, const char* fmt)
+{
+  size_t len = strlen("cs-set-audio-format -f:") + strlen(fmt) + 1;
+  char* tmpbuf = malloc(len);
+  int res = 0;
+
+  strcpy(tmpbuf, "cs-set-audio-format ");
+  strcat(tmpbuf, fmt);
+  tmpbuf[len - 1] = 0;
+  eci_command_r(eci, tmpbuf);
+  if (eci_error_r(eci)) {
+    fprintf(stderr, "(ecaplay) Unknown audio format encountered.\n");
+    res = -1;
+  }
+  free(tmpbuf);
+
+  return res;
 }
 
 static void setup_signal_handling(void)
