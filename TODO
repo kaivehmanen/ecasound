@@ -8,6 +8,7 @@
 
 - qtecasound - major improvements
 - embedded effect preset parameters
+- internal plugin support
 - new effects - Schroeder reverb
 
 2.x series (1.x -> 2.x requirements):
@@ -23,6 +24,9 @@
 Input/output devices:
 
 - ALSA 0.6.x support [--> update: already in CVS]
+- internal plugins (this makes it possible to support ALSA, aRts, etc 
+  audio objects requiring external libraries to be conditionally
+  loaded ==> only one binary-RPM needed)
 - type override for audio objects
 - automatic handling of mono mp3s
 - mp3 bitrate as a command-line parameter
@@ -73,10 +77,14 @@ User-interface:
 
 - daemon mode for ecasound (ecad, ecasoundd)
 
+Library-interface:
+
+- C-API for libecasound
+
 Misc:
 
 - smart mixing / dithering
-- better MIDI-support
+- better MIDI-support (separate MIDI input/output objects)
 
 -----------------------------------------------------------------------
 

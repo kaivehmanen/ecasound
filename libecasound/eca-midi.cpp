@@ -27,10 +27,6 @@
 #include <pthread.h>
 #include <vector>
 
-#ifdef COMPILE_ALSA
-#include <sys/asoundlib.h>
-#endif
-
 #include "eca-resources.h"
 #include "eca-midi.h"
 #include "eca-debug.h"
@@ -165,66 +161,20 @@ void *update_midi_queues(void *) {
   ECA_RESOURCES erc;
   string midi_dev = erc.resource("midi-device");
 
-  bool use_alsa = false;
+  tv.tv_sec = 0;
+  tv.tv_usec = 0;
 
-#ifdef COMPILE_ALSA
-  snd_rawmidi_t *midihandle;
-#endif
-  if (midi_dev.find("/dev/snd/") != string::npos) {
-    string cardstr,devicestr;
-    string::const_iterator p = midi_dev.begin();
-    while(p != midi_dev.end() && *p != 'C') ++p;
-    ++p;
-    while(p != midi_dev.end() && isdigit(*p)) {
-      cardstr += " ";
-      cardstr[cardstr.size() - 1] = *p;
-      ++p;
-    }
-    while(p != midi_dev.end() && *p != 'D') ++p;
-    ++p;
-    while(p != midi_dev.end() && isdigit(*p)) {
-      devicestr += " ";
-      devicestr[devicestr.size() - 1] = *p;
-      ++p;
-    }
-    
-    int card = ::atoi(cardstr.c_str());
-    int device = ::atoi(devicestr.c_str());
-    
-    use_alsa = true;
-#ifdef COMPILE_ALSA
-    if (::snd_rawmidi_open(&midihandle, card, device, SND_RAWMIDI_OPEN_INPUT) < 0) {
-      throw(new ECA_ERROR("ECA-MIDI", "unable to open ALSA raw-MIDI device " +
+  fd = ::open("/dev/midi", O_RDONLY);
+  if (fd == -1) {
+    throw(new ECA_ERROR("ECA-MIDI", "unable to open OSS raw-MIDI device " +
 			erc.resource("midi-device") + "."));
-    }
-
-    fd = ::snd_rawmidi_file_descriptor(midihandle);
-#else 
-    throw(new ECA_ERROR("ECA-MIDI", "Unable to open ALSA raw-MIDI device, because ALSA was disabled during compilation."));
-#endif
-  }
-  else {
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;
-
-    fd = ::open("/dev/midi", O_RDONLY);
-    if (fd == -1) {
-      throw(new ECA_ERROR("ECA-MIDI", "unable to open OSS raw-MIDI device " +
-			  erc.resource("midi-device") + "."));
-    }
   }
   
   ecadebug->control_flow("MIDI-thread ready " + erc.resource("midi-device"));
 
   while(true) {
-    if (use_alsa) {
-#ifdef COMPILE_ALSA
-      temp = ::snd_rawmidi_read(midihandle, buf, 1);
-#endif
-    }
-    else {
-      temp = ::read(fd, buf, 1);
-    }
+    temp = ::read(fd, buf, 1);
+
     ::pthread_mutex_lock(&::midi_in_lock);
     while (::midi_in_locked == true) ::pthread_cond_wait(&::midi_in_cond,
 							 &::midi_in_lock);
@@ -241,14 +191,7 @@ void *update_midi_queues(void *) {
     ::pthread_mutex_unlock(&::midi_in_lock);
   }
 
-  if (use_alsa) {
-#ifdef COMPILE_ALSA
-    ::snd_rawmidi_close(midihandle);
-#endif
-  }
-  else {
-    ::close(fd);
-  }
-
+  ::close(fd);
+  
   return(0);
 }

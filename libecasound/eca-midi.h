@@ -1,5 +1,5 @@
-#ifndef _ECA_MIDI_H
-#define _ECA_MIDI_H
+#ifndef INCLUDE_ECA_MIDI_H
+#define INCLUDE_ECA_MIDI_H
 
 #define MIDI_IN_QUEUE_SIZE 1024
 

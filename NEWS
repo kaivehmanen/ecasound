@@ -14,6 +14,9 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.7.9r13 <*-
 
+??072000 (v1.8.1d14)
+	- remove: support for native ALSA rawmidi temporarily removed
+	          (while waiting, use ALSA's OSS-emulation)
 25062000 (v1.8.0d14)
 	- added: ecaconvert - a new ecatools app; converts a set of 
 		 files to target file format

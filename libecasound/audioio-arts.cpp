@@ -32,19 +32,19 @@ int ARTS_INTERFACE::ref_rep = 0;
 ARTS_INTERFACE::ARTS_INTERFACE(const string& name) throw(ECA_ERROR*)
 {
   label(name);
-  if (ref_rep == 0) {
-    int err = ::arts_init();
-    if (err < 0) {
-      throw(new ECA_ERROR("AUDIOIO-ARTS", "unable to connect to aRts
-    server: " + string(arts_error_text(err))));
-    }
-  }
-  ++ref_rep;
 }
 
 void ARTS_INTERFACE::open(void) throw(ECA_ERROR*)
 {
   if (is_open() == true) return;
+
+  if (ref_rep == 0) {
+    int err = ::arts_init();
+    if (err < 0) {
+      throw(new ECA_ERROR("AUDIOIO-ARTS", "unable to connect to aRts server: " + string(arts_error_text(err))));
+    }
+  }
+  ++ref_rep;
 
   if (io_mode() == io_read) {
     stream_rep = ::arts_record_stream(samples_per_second(), channels(), bits(), "ecasound-input");
