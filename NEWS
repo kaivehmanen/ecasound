@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 290902) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 051002) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -33,6 +33,8 @@ Last officially released version is -*> v2.0.4 *-
 	         currently selected
 	- fixed: resample, reverse and typeselect audio objects
 		 types were broken in 2.1dev11
+	- fixed: removing audio inputs and outputs didn't work
+		 as specified
 22082002 (v2.1dev11)
 	- added: configure-check for socket libraries
 	- added: -evp - volume peak watcher operator

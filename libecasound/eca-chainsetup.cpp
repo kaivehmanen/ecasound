@@ -1301,7 +1301,6 @@ void ECA_CHAINSETUP::add_output(AUDIO_IO* aio, bool truncate)
   else
     aio->set_io_mode(AUDIO_IO::io_readwrite);
 
-
   register_audio_object_to_manager(aio);
   AUDIO_IO* layerobj = add_audio_object_helper(aio);
   outputs.push_back(layerobj);
@@ -1324,6 +1323,7 @@ void ECA_CHAINSETUP::remove_audio_input(const string& label)
 {
   // ---
   DBC_REQUIRE(is_enabled() != true);
+  DBC_DECLARE(size_t oldsize = inputs.size());
   // ---
 
   for(size_t n = 0; n < inputs.size(); n++) {
@@ -1340,13 +1340,33 @@ void ECA_CHAINSETUP::remove_audio_input(const string& label)
 
       unregister_audio_object_from_manager(inputs_direct_rep[n]);
 
-      delete inputs_direct_rep[n];
-      inputs[n] = inputs_direct_rep[n] = new NULLFILE("null");
+      vector<AUDIO_IO*>::iterator p = inputs.begin();
+      while(p != inputs.end()) {
+	if (*p == inputs[n]) {
+	  inputs.erase(p);
+	  break;
+	}
+	++p;
+      }
+      
+      p = inputs_direct_rep.begin();
+      while(p != inputs_direct_rep.end()) {
+	if (*p == inputs_direct_rep[n]) {
+	  delete *p;
+	  inputs_direct_rep.erase(p);
+	  break;
+	}
+	++p;
+      }
+      
+      /* vectors changed; can't continue iteration */
+      break;
     }
   }
 
   // ---
   DBC_ENSURE(inputs.size() == inputs_direct_rep.size());
+  DBC_ENSURE(oldsize == inputs.size() + 1);
   // ---
 }
 
@@ -1359,6 +1379,7 @@ void ECA_CHAINSETUP::remove_audio_output(const string& label)
 {
   // --------
   DBC_REQUIRE(is_enabled() != true);
+  DBC_DECLARE(size_t oldsize = outputs.size());
   // --------
 
   for(size_t n = 0; n < outputs.size(); n++) {
@@ -1375,13 +1396,33 @@ void ECA_CHAINSETUP::remove_audio_output(const string& label)
 
       unregister_audio_object_from_manager(outputs_direct_rep[n]);
 
-      delete outputs_direct_rep[n];
-      outputs[n] = outputs_direct_rep[n] = new NULLFILE("null");
+      vector<AUDIO_IO*>::iterator p = outputs.begin();
+      while(p != outputs.end()) {
+	if (*p == outputs[n]) {
+	  outputs.erase(p);
+	  break;
+	}
+	++p;
+      }
+
+      p = outputs_direct_rep.begin();
+      while(p != outputs_direct_rep.end()) {
+	if (*p == outputs_direct_rep[n]) {
+	  delete *p;
+	  outputs_direct_rep.erase(p);
+	  break;
+	}
+	++p;
+      }
+
+      /* vectors changed; can't continue iteration */
+      break;
     }
   }
 
   // ---
   DBC_ENSURE(outputs.size() == outputs_direct_rep.size());
+  DBC_ENSURE(oldsize == outputs.size() + 1);
   // ---
 }
 
