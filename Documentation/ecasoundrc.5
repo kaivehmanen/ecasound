@@ -1,0 +1,198 @@
+
+
+
+ecasoundrc(5)          Multimedia software          ecasoundrc(5)
+
+
+NNAAMMEE
+       ecasoundrc - ecasound rcfile
+
+
+SSYYNNOOPPSSIISS
+       $HOME/.ecasoundrc
+
+
+DDEESSCCRRIIPPTTIIOONN
+       eeccaassoouunnddrrcc  is  the  main configuration file for ecasound.
+       If it doesn't exist, ecasound creates it with default val-
+       ues. If it exists, all name-value pairs are read. When you
+       quit ecasound, eeccaassoouunnddrrcc is rewritten if resource  values
+       have been modified.
+
+       The format is quite simple. One line consists of a config-
+       uration variable and its value.  Variable  and  value  are
+       separated  with  either '=' or ' '. Lines beginning with a
+       "#" are ignored (comment lines).
+
+
+VVAARRIIAABBLLEESS
+       midi-device
+              MIDI-device.  If  the  device  name  is  given   in
+              _/_d_e_v_/_m_i_d_i_*  format,  OSS/Linux  os OSS/Lite drivers
+              are used.  Device _/_d_e_v_/_s_n_d_/_m_i_d_i_C_x_D_y opens  an  ALSA
+              raw-MIDI  device  with  card  number 'x' and device
+              number 'y'.  Defaults to _/_d_e_v_/_m_i_d_i.
+
+
+       default-output
+              Output device to use. Defaults to _/_d_e_v_/_d_s_p.
+
+
+       default-buffersize
+              Sets the size of buffer  in  samples  (must  be  an
+              exponent  of  2).   Same  as  the  --bb  command line
+              options. Defaults to _1_0_2_4.
+
+
+       default-to-interactive-mode
+              Whether to always use  interactive  mode  (true  or
+              false).  Same  as  the  the --cc command line option.
+              Defaults to _f_a_l_s_e.
+
+
+       default-to-raisepriority
+              Whether to always raise runtime priority  (true  or
+              false).  Same  as  the  the --rr command line option.
+              Defaults to _f_a_l_s_e.
+
+
+       default-to-double-buffering
+              Whether  to  used  advanced  double-buffering  with
+
+
+
+                            03.01.2000                          1
+
+
+
+
+
+ecasoundrc(5)          Multimedia software          ecasoundrc(5)
+
+
+              audio inputs that support it. Defaults to _f_a_l_s_e.
+
+
+       default-to-precise-sample-rates
+              Whether to ignore sample rate differences (and pos-
+              sibly avoid resampling). Curretly only affects OSS-
+              devices. Defaults to _f_a_l_s_e.
+
+
+       resource-directory
+              Directory   for   ecasound   configuration   files.
+              Defaults to _/_u_s_r_/_l_o_c_a_l_/_s_h_a_r_e_/_e_c_a_s_o_u_n_d.
+
+
+       resource-file-genosc-envelopes
+              Configuration  file  for  generic  oscillators.  Is
+              located  in  the  resource  directory.  Defaults to
+              _g_e_n_e_r_i_c___o_s_c_i_l_l_a_t_o_r_s.
+
+
+       resource-file-single-effect-presets
+              Configuration file for single-chain effect presets.
+              Is  located  in the resource directory. Defaults to
+              _s_i_n_g_l_e_c_h_a_i_n___e_f_f_e_c_t___p_r_e_s_e_t_s.
+
+
+       resource-file-multi-effect-presets
+              Configuration file for single-chain effect presets.
+              Is  located  in the resource directory. Defaults to
+              _m_u_l_t_i_c_h_a_i_n___e_f_f_e_c_t___p_r_e_s_e_t_s.
+
+
+       ext-text-editor
+              If _e_x_t_-_t_e_x_t_-_e_d_i_t_o_r_-_u_s_e_-_g_e_t_e_n_v is _f_a_l_s_e or  "EDITOR"
+              is  null,  value of this field is used. Defaults to
+              _p_i_c_o.
+
+
+       ext-text-editor-use-getenv
+              Should ecasound try to query  environment  variable
+              "EDITOR".  Defaults to _t_r_u_e.
+
+
+       ext-wave-editor
+              Command line for executing an external wave editor.
+              Defaults to _s_n_d.
+
+
+       ext-mpg123-path
+              Path to mpg123. Defaults to _m_p_g_1_2_3.
+
+
+       ext-mpg123-args
+              Additional  options  that  are  passed  to  mpg123.
+
+
+
+                            03.01.2000                          2
+
+
+
+
+
+ecasoundrc(5)          Multimedia software          ecasoundrc(5)
+
+
+              Defaults to _"_-_b _0_".
+
+
+       ext-lame-path
+              Path to lame. Defaults to _l_a_m_e.
+
+
+       ext-lame-args
+              Additional   options   that  are  passed  to  lame.
+              Defaults to _"_-_b _1_2_8_".
+
+
+       ext-mikmod-path
+              Path to mikmod. Defaults to _m_i_k_m_o_d.
+
+
+       ext-mikmod-args
+              Additional  options  that  are  passed  to  mikmod.
+              Defaults to _"_-_p _0 _-_-_n_o_l_o_o_p_s_".
+
+
+
+SSEEEE AALLSSOO
+       ecasound(1), qtecasound (1), ecatools (1), ecasound-iam(1)
+
+
+AAUUTTHHOORR
+       Kai Vehmanen, <kaiv@wakkanet.fi>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            03.01.2000                          3
+
+

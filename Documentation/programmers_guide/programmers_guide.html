@@ -1,0 +1,287 @@
+
+
+
+
+
+<insert file=../../es-makrot.txt>
+<insert name=ecasound_subindexbar>
+
+<CENTER><H4><A HREF=../index.html>[Index]</A>
+<A HREF=../examples.html>[Examples]</A>
+<A HREF=../ecasound_faq.html>[FAQ]</A>
+<A HREF=../manpages.html>[Man pages]</A>
+<A HREF=../users_guide/index.html>[User's guide]</A>
+<A HREF=../programmers_guide/index.html>[Programmer's guide]</A>
+<A HREF=../kdoc_pages.html>[Source tree]</A>
+<A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
+<p>
+<center><h2>ecasound documentation - programmer's guide</h2></center>
+</p>
+
+
+
+
+<html><head><link rev="made" href="mailto:kaiv@wakkanet.fi">
+</head>
+<body>
+
+<hr>
+
+<h2>Kai Vehmanen</h2>
+<h2>131299</h2>
+
+<h1>Table of Contents </h1><p></p>
+<dl><p>
+<dt><h2><a href="programmers_guide.html#l1">1: Preface</a></h2>
+<dt><h2><a href="programmers_guide.html#l2">2: Guide-lines for design and programming</a></h2>
+<dl><p>
+<dt><h3><a href="programmers_guide.html#l3">2.1: Open and generic design</a></h3>
+<dt><h3><a href="programmers_guide.html#l4">2.2: Object-orientation</a></h3>
+<dt><h3><a href="programmers_guide.html#l5">2.3: Data hiding</a></h3>
+<dt><h3><a href="programmers_guide.html#l6">2.4: Design by contract</a></h3>
+<dt><h3><a href="programmers_guide.html#l7">2.5: Routine side effects</a></h3>
+<dt><h3><a href="programmers_guide.html#l8">2.6: Sanity checks</a></h3>
+</dl><p>
+<dt><h2><a href="programmers_guide.html#l9">3: How ecasound works?</a></h2>
+<dl><p>
+<dt><h3><a href="programmers_guide.html#l10">3.1: Common use-cases</a></h3>
+<dl><p>
+<dt><a href="programmers_guide.html#l11">3.1.1: Simple non-interactive processing</a>
+<dt><a href="programmers_guide.html#l12">3.1.2: Multitrack mixing</a>
+<dt><a href="programmers_guide.html#l13">3.1.3: Realtime effect processing</a>
+<dt><a href="programmers_guide.html#l14">3.1.4: One-track recording</a>
+<dt><a href="programmers_guide.html#l15">3.1.5: Multitrack recording</a>
+<dt><a href="programmers_guide.html#l16">3.1.6: Recycling a signal through external devices</a>
+</dl><p>
+<dt><h3><a href="programmers_guide.html#l17">3.2: Signal flow</a></h3>
+<dt><h3><a href="programmers_guide.html#l18">3.3: Control flow</a></h3>
+<dl><p>
+<dt><a href="programmers_guide.html#l19">3.3.1: Passive operation</a>
+<dt><a href="programmers_guide.html#l20">3.3.2: Interactive operation</a>
+</dl><p>
+<dt><h3><a href="programmers_guide.html#l21">3.4: Class descriptions</a></h3>
+<dl><p>
+<dt><a href="programmers_guide.html#l22">3.4.1: Core</a>
+<dt><a href="programmers_guide.html#l23">3.4.2: Data objects</a>
+</dl><p>
+</dl><p>
+<dt><h2><a href="programmers_guide.html#l24">4: Using ecasound from other programs</a></h2>
+<dt><h2><a href="programmers_guide.html#l25">5: Adding new features and components?</a></h2>
+ 
+<p><hr><p><br>
+<p>
+
+<a name="l1"></a>
+<h2>1: Preface</h2>
+This documents describes how ecasound library works, how to use it,
+how to extend and add features to it and so on. Before reading this
+documentent, you should first look at other available documentation
+(especially <a href="../users_guide/users_guide.html">ecasound users's guide</a>.
+<p>Unlike most web pages, this document really is under construction. 
+<p>
+
+<a name="l2"></a>
+<h2>2: Guide-lines for design and programming</h2>
+<a name="l3"></a>
+<h3>2.1: Open and generic design</h3>
+Over the years ecasound's core design has been revised many times.
+After rewriting some code sections hundreds of times, you start
+to appreciate genericity. :) Although specific use-cases are used
+for testing new ideas, they are just design aids.
+<p><a name="l4"></a>
+<h3>2.2: Object-orientation</h3>
+Ecasound is written in standard C++ (as specified in 1997 ANSI 
+C++ standard). Because C++ language itself doesn't force you 
+to follow OO-principles, I often use Eiffel language as a reference
+when designing classes and routines.
+<p><a name="l5"></a>
+<h3>2.3: Data hiding</h3> 
+This OO-feature deserves to be mentioned separately. Whenever 
+possible, I always try to hide the actual data representation. 
+This helps to make local implementation changes. One thing I've
+especially tried to avoid is excessive use of pointer magic.
+<p><a name="l6"></a>
+<h3>2.4: Design by contract</h3> 
+Design by contract means that when you write a new routine,
+in addition to the actual code, you also describe routine's 
+behaviour as accurately as possible.
+<p>Routine must specify all requirements and assumptions. 
+If the caller violates this specification, routine is not 
+responsible for the error. This means that routine mustn't
+check argument validity. This is must be done by the caller.
+<p>Routine should also specify, what conditions are true when
+returning to the caller. By doing this, routine ensures that
+it works correctly and calling routine knows what is happening.
+<p>Ideally, these conditions prove that the routine works correctly. 
+The benefits of this approach should be clear. When you call 
+a well-defined routine, a) you know what parameter values it 
+accepts, b) you know what it does to them and c) if errors occur, 
+it's easier to pinpoint the faulty routine. In practice this is 
+done by using comments and pre/postconditions. As C++ doesn't 
+directly support pre/postconditions, I've simulated them using
+the class DEFINITION_BY_CONTRACT from kvutils package and with 
+normal assert() calls.
+<p><a name="l7"></a>
+<h3>2.5: Routine side effects</h3> 
+I try to make a clear distinction between routines that 
+have side-effects (=methods, processors, modifiers; routines that
+change object's state) and const routines (=functions, observers).
+<p><a name="l8"></a>
+<h3>2.6: Sanity checks</h3>
+Sanity checks are done only to prevent crashes. All effects
+and operators happily accept "insane" parameters. For instance 
+you can give -100.0% to the amplifier effect. This of course 
+results in inverted sample data. I think this a reasonable 
+approach. After all, ecasound is supposed to be a tool for creative
+work and experimenting. It's not meant for e-commerce. ;)
+<p>
+
+<a name="l9"></a>
+<h2>3: How ecasound works?</h2>
+<p>
+<a name="l10"></a>
+<h3>3.1: Common use-cases</h3>
+Here's some common cases how ecasound can be used. 
+<p><a name="l11"></a>
+<strong>3.1.1: Simple non-interactive processing</strong><p>
+One input is processed and then written to one output. This includes effect 
+processing, normal sample playback, format conversions, etc.
+<p><a name="l12"></a>
+<strong>3.1.2: Multitrack mixing</strong><p>
+Multiple inputs are mixed into one output.
+<p><a name="l13"></a>
+<strong>3.1.3: Realtime effect processing</strong><p>
+There's at least one realtime input and one realtime output.
+Signal is sampled from the realtime input, processed and
+written to the realtime output.
+<p><a name="l14"></a>
+<strong>3.1.4: One-track recording</strong><p>
+One input is processed and written to one or more outputs.
+<p><a name="l15"></a>
+<strong>3.1.5: Multitrack recording</strong><p>
+The most common situation is that there are two separate
+chains. First one consists of realtime input routed to a
+non-realtime output. This is the recording chain. The
+other one is the monitor chain and it consists of one or
+more non-realtime inputs routed to a realtime output.
+You could also route your realtime input to the monitoring
+chain, but this is not recommended because of severe
+timing problems. To synchronize these two separate chains,
+ecasound uses a special multitrack mode (which should be
+enabled automatically).
+<p><a name="l16"></a>
+<strong>3.1.6: Recycling a signal through external devices</strong><p>
+Just like multirack recording. The only difference is
+that realtime input and output are externally
+connected.
+<p>
+<a name="l17"></a>
+<h3>3.2: Signal flow</h3>
+This is simple. A group of inputs is routed to a group of chains.
+Audio data is processed in the chains and afterwards routed to 
+a group of outputs. Currently signals can't be redirected from one
+chain to another, but you can assing inputs and outputs to
+multiple chains.
+<p>
+<a name="l18"></a>
+<h3>3.3: Control flow</h3>
+<a name="l19"></a>
+<strong>3.3.1: Passive operation</strong><p>
+When ecasound is run in passive mode, the program flow is simple.
+A ECA_SESSION object is created with suitable parameters, it is
+passed to a ECA_PROCESSOR object and that is all. Once engine
+is started, it does the processing and exits. 
+<p>Another way to do passive processing is to create a ECA_CONTROLLER 
+object and use it to to access and modify the ECA_SESSION object 
+before passing it to ECA_PROCESSOR.
+<p><a name="l20"></a>
+<strong>3.3.2: Interactive operation</strong><p>
+In interactive mode, everything is done using the interface provided
+by ECA_CONTROLLER. This is when things get complex:
+<p>ECA_SESSION object can contain many ECA_CHAINSETUP objects, but
+only one of them can be active. On the other hand it is possible
+that there are no chainsetups. If this is the case, about the
+only thing you can do is to add a new chainsetup. 
+<p>When some chainsetup is activated, it can be edited using the
+interface provided by ECA_CONTROLLER. Before actual processing can
+start, the chainsetup must first be connected. Only valid 
+chainsetups (at least one input-output pair connected to the same
+chain) can be connected. 
+<p><dl>
+ECA_CHAINSETUP can be...
+<dl>
+<p><p></p><dt><strong>not selected</strong><dd> - can't be accessed from ECA_PROCESSOR
+<p></p><dt><strong>selected, invalid</strong><dd> - can be edited (files and devices are not opened)
+<p></p><dt><strong>selected, valid</strong><dd> - can be connected (files and devices are not opened)
+<p></p><dt><strong>connected</strong><dd> - ready for processing (files and devices are opened before connecting)
+<p></dl>
+</dl>
+<p><dl>
+ECA_PROCESSOR status is one of...
+<dl>
+<p><p></p><dt><strong>not_ready</strong><dd> - ECA_SESSION object is not ready for processing or
+ECA_PROCESSOR hasn't been created
+<p></p><dt><strong>running</strong><dd> - processing
+<p></p><dt><strong>stopped</strong><dd> - processing hasn't been started or it has been stopped
+before completion
+<p></p><dt><strong>finished</strong><dd> - processing has been completed
+<p></dl>
+</dl>
+<p>
+<a name="l21"></a>
+<h3>3.4: Class descriptions</h3>
+<p>The primary source for class documentation is header files.
+A browsable version of header documentation is at
+<a href="http://www.wakkanet.fi/~kaiv/ecasound/Documentation/kdoc_pages.html">www.wakkanet.fi/~kaiv/ecasound/Documentation/kdoc_pages.html</a>.
+Anyway, let's look at the some central classes.
+<p>
+<a name="l22"></a>
+<strong>3.4.1: Core</strong><p> 
+<p><strong>ECA_PROCESSOR</strong><br><br> 
+ECA_PROCESSOR is the actual processing engine. It is initialized with
+a pointer to a ECA_SESSION object, which has all information needed at
+runtime. Processing is started with the exec() member function and
+after that, ECA_PROCESSOR runs on its own. If the interactive mode is
+enabled in ECA_SESSION, ECA_PROCESSOR can be controlled using the
+ECA_CONTROLLER class. It offers a safe way to control ecasound.
+Another way to communicate with ECA_PROCESSOR is to access the
+ECA_SESSION object directly.
+<p><p><strong>ECA_SESSION</strong><br><br> 
+ECA_SESSION represents the data used by ecasound. A session contains
+all ECA_CHAINSETUP objects and general runtime settings (iactive-mode,
+debug-level, etc). Only one ECA_CHAINSETUP can be active at a time. To
+make it easier to control how threads access ECA_SESSION, only
+ECA_PROCESSOR and ECA_CONTROLLER classes have direct access to
+ECA_SESSION data and functions. Other classes can only use <em>const</em>
+members of ECA_SESSION. 
+<p><p><strong>ECA_CONTROLLER</strong><br><br> 
+ECA_CONTROLLER represents the whole public interface offered by 
+ecasound library. It also has a simple command interpreter 
+(interactive-mode) that can used for controlling ecasound. 
+<p>
+<a name="l23"></a>
+<strong>3.4.2: Data objects</strong><p>
+<p><p><strong>SAMPLEBUFFER</strong><br><br>
+Basic unit for representing sample data. The data type used to 
+represent a single sample, valid value range, channel count, global 
+sampling rate and system endianess are all specified in 
+"samplebuffer.h".
+<p><p><strong>DEBUG</strong><br><br>
+Virtual interface class for the debugging subsystem. Ecasound engine 
+sends all debug messages to this class. The actual implementation of
+this class can be done in many ways. For example in the console mode
+version of ecasound, TEXTDEBUG class is used to implement the DEBUG
+interface. It sends all messages that have a suitable debug 
+level to the standard output stream. On the other hand, in qtecasound 
+DEBUG is implemented using a Qt widget.
+<p>
+
+<p><a name="l24"></a>
+<h2>4: Using ecasound from other programs</h2>
+<p>
+
+<p><a name="l25"></a>
+<h2>5: Adding new features and components?</h2>
+<p><insert name=ecasound_tail>
+</body>
+</html>

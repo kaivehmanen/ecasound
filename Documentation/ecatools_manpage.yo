@@ -1,0 +1,78 @@
+mailto(kaiv@wakkanet.fi)
+
+htmlcommand(
+<insert file=../es-makrot.txt>
+<insert name=ecasound_indexbar>
+
+<hr>
+<CENTER><H4><A HREF=index.html>[Index]</A>
+<A HREF=examples.html>[Examples]</A>
+<A HREF=ecasound_faq.html>[FAQ]</A>
+<A HREF=manpages.html>[Man pages]</A>
+<A HREF=users_guide/index.html>[User's guide]</A>
+<A HREF=programmers_guide/index.html>[Programmer's guide]</A>
+<A HREF=kdoc_pages.html>[Source tree]</A>
+<A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
+<CENTER><H4><A HREF=ecasound_manpage.html>[ecasound(1)]</A>
+<A HREF=qtecasound_manpage.html>[qtecasound(1)]</A>
+<A HREF=ecatools_manpage.html>[ecatools(1)]</A>
+<A HREF=ecasound-iam_manpage.html>[ecasound-iam(1)]</A>
+<A HREF=ecasoundrc_manpage.html>[ecasoundrc(5)]</A></H4></CENTER>
+<p>
+<hr>
+<center><h2> ecasound documentation - manual pages </h2></center>
+</p>
+)
+
+manpage(ecatools)
+       (1)
+       (28.08.1999)
+       ()
+       (Multimedia software)
+
+manpagename(ecatools)(audio processing utils based on ecasound)
+
+manpagesynopsis()
+bf(ecatools_fixdc) file1 [ file2,...,fileN ]
+
+bf(ecatools_normalize) file1 [ file2,...,fileN ]
+
+bf(ecatools_play) file1 [ file2,...,fileN ]
+
+manpagedescription()
+
+Ecatools are simple command line utils that do various audio
+processing tasks. Most of them support batch processing. They all
+use the ecasound engine (libecasound).
+
+bf(ECATOOLS_FIXDC)
+
+A simple command-line tool for fixing DC-offset.
+
+bf(ECATOOLS_NORMALIZE)
+
+A simple command-line tool for normalizing sample volume. 
+Finds out how much input file can be amplified without clipping
+and, if necessary, does the amplification.
+
+bf(ECATOOLS_PLAY)
+
+A simple command-line tool that plays input files using the
+default output specified in em(~/.ecasoundrc).
+
+manpagefiles()
+
+	em(~/.ecasoundrc)
+	The default ecasound resource file. If the file doesn't exist, it 
+	is created with some default values. See ecasoundrc(5).
+
+manpageseealso()
+
+	ecasound (1), "HTML docs in the Documentation subdirectory",
+	qtecasound (1)
+
+manpageauthor()
+
+	Kai Vehmanen, <email(kaiv@wakkanet.fi)>
+
+htmlcommand(<insert name=ecasound_tail>)

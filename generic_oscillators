@@ -1,0 +1,25 @@
+# --------------------------------------------------------------------
+# ecasound / generic oscillator presets 
+# --------------------------------------------------------------------
+#
+# - all lines beginning with a '#' are ignored
+# - all values specified must be between 0.0 and 1.0
+# - preset format:
+#   "preset_number S point1 point2 ...;" - static points
+#   "preset_number L point1 point2 ...;" - linear interpolation
+#					   between points
+#
+# --------------------------------------------------------------------
+#
+0 L 0.01 0.10 0.20 0.20 0.20 0.20 0.80 0.100 1.00 1.00 1.00 0.40 0.10;
+#
+1 L 0.10 0.20 0.20 0.20 0.20 0.80 1.00 1.00 1.00 1.00 0.40 0.99;
+#
+2 S 0.01 1.0;
+
+
+
+
+
+
+

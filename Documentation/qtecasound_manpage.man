@@ -1,0 +1,70 @@
+.TH "qtecasound" "1" "13\&.12\&.1999" "" "Multimedia software" 
+.PP 
+.SH "NAME" 
+qtecasound \- multitrack recorder, fx-processor, etc\&.
+.PP 
+.SH "SYNOPSIS" 
+\fBqtecasound\fP [ general_options ] { [ chain_setup ] [ effect_setup ] [ input_setup ] [ output_setup ] }
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+qtecasound is a Qt-based X-interface to ecasound\&. It uses the same engine as the 
+the console mode version\&. Because of this, command line parameters and 
+interactive-mode commands work identically\&. Also environment variables
+and files are used in the same manner\&. The idea behind qtecasound is
+to provide a graphical \fBruntime\fP interface\&. Although usable, it
+still lacks many important features\&.
+.PP 
+.SH "INTERFACE" 
+.PP 
+.IP 
+The aim of qtecasound design has been to make it easy to use and still
+retain efficiency\&. 
+.IP 
+I personally don\'t like traditional graphical interfaces very much\&. My
+biggest complaint is that they are often inefficient in the hands of a
+expert user\&. When you\'ve used some program for years, you don\'t need
+cute icons and menubars to remember how to do some specific task\&.
+Icons and menubars should be there for the beginners, but there should
+be alternatives for the more advanced users\&. 
+.IP 
+Here\'s a few rules I try to follow in designing qtecasound interface:
+.IP 
+.IP "No hidden functions" 
+I\'ve tried to avoid hiding functionality\&. All pushbuttons and other
+widgets are visible\&. If more functionality is needed, a new 
+window is created\&. For instance I\'ve tried to avoid menubars 
+altogether\&.
+.IP 
+.IP "Keyboard shortcuts" 
+My goal is that qtecasound can be used without a mouse\&. Shortcuts 
+work everywhere\&. All pushbuttons have a short description and 
+shortcut keys are marked with parenthesis (for example: "S(t)art")\&.
+Shortcuts \fIa\fP, \fIA\fP and \fIctrl+a\fP all do the same thing\&.
+This applies to all shortcut keys\&.
+.IP 
+.PP 
+.SH "OPTIONS" 
+.PP 
+See \fBecasound(1)\fP
+.PP 
+.SH "FILES" 
+.PP 
+\fI~/\&.ecasoundrc\fP
+The default ecasound resource file\&. If the file doesn\'t exist, it 
+is created with some default values\&. 
+.PP 
+.SH "SEE ALSO" 
+.PP 
+ecasound (1), ecatools (1), ecasoundrc (5), ecasound-iam(1), "HTML docs in the Documentation subdirectory"
+.PP 
+.SH "BUGS" 
+.PP 
+See file BUGS\&. If qtecasound behaves weirdly, try to
+increase the debug level to see what\'s going on\&.
+.PP 
+.SH "AUTHOR" 
+.PP 
+Kai Vehmanen, <kaiv@wakkanet\&.fi>
+.PP 
+.PP 

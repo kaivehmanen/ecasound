@@ -1,0 +1,109 @@
+.TH "ecasoundrc" "5" "03\&.01\&.2000" "" "Multimedia software" 
+.PP 
+.SH "NAME" 
+ecasoundrc \- ecasound rcfile
+.PP 
+.SH "SYNOPSIS" 
+$HOME/\&.ecasoundrc
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+\fBecasoundrc\fP is the main configuration file for ecasound\&. 
+If it doesn\'t exist, ecasound creates it with default 
+values\&. If it exists, all name-value pairs are read\&. When 
+you quit ecasound, \fBecasoundrc\fP is rewritten if resource
+values have been modified\&.
+.PP 
+The format is quite simple\&. One line consists of 
+a configuration variable and its value\&. Variable and value 
+are separated with either \'=\' or \' \'\&. Lines beginning with a
+"#" are ignored (comment lines)\&. 
+.PP 
+.SH "VARIABLES" 
+.PP 
+.IP 
+.IP "midi-device" 
+MIDI-device\&. If the device name is given in \fI/dev/midi*\fP 
+format, OSS/Linux os OSS/Lite drivers are used\&. 
+Device \fI/dev/snd/midiCxDy\fP opens an ALSA raw-MIDI 
+device with card number \'x\' and device number \'y\'\&. 
+Defaults to \fI/dev/midi\fP\&.
+.IP 
+.IP "default-output" 
+Output device to use\&. Defaults to \fI/dev/dsp\fP\&.
+.IP 
+.IP "default-buffersize" 
+Sets the size of buffer in samples (must be an exponent of 2)\&.
+Same as the \fB-b\fP command line options\&. Defaults to \fI1024\fP\&.
+.IP 
+.IP "default-to-interactive-mode" 
+Whether to always use interactive mode (true or false)\&. Same as the
+the \fB-c\fP command line option\&. Defaults to \fIfalse\fP\&. 
+.IP 
+.IP "default-to-raisepriority" 
+Whether to always raise runtime priority (true or false)\&. Same as the
+the \fB-r\fP command line option\&. Defaults to \fIfalse\fP\&.
+.IP 
+.IP "default-to-double-buffering" 
+Whether to used advanced double-buffering with audio inputs
+that support it\&. Defaults to \fIfalse\fP\&.
+.IP 
+.IP "default-to-precise-sample-rates" 
+Whether to ignore sample rate differences (and possibly avoid 
+resampling)\&. Curretly only affects OSS-devices\&. Defaults to \fIfalse\fP\&.
+.IP 
+.IP "resource-directory" 
+Directory for ecasound configuration files\&. 
+Defaults to \fI/usr/local/share/ecasound\fP\&.
+.IP 
+.IP "resource-file-genosc-envelopes" 
+Configuration file for generic oscillators\&. Is located in the 
+resource directory\&. Defaults to \fIgeneric_oscillators\fP\&.
+.IP 
+.IP "resource-file-single-effect-presets" 
+Configuration file for single-chain effect presets\&. Is located in the 
+resource directory\&. Defaults to \fIsinglechain_effect_presets\fP\&.
+.IP 
+.IP "resource-file-multi-effect-presets" 
+Configuration file for single-chain effect presets\&. Is located in the 
+resource directory\&. Defaults to \fImultichain_effect_presets\fP\&.
+.IP 
+.IP "ext-text-editor" 
+If \fIext-text-editor-use-getenv\fP is \fIfalse\fP or "EDITOR" 
+is null, value of this field is used\&. Defaults to \fIpico\fP\&.
+.IP 
+.IP "ext-text-editor-use-getenv" 
+Should ecasound try to query environment variable "EDITOR"\&.
+Defaults to \fItrue\fP\&.
+.IP 
+.IP "ext-wave-editor" 
+Command line for executing an external wave editor\&. Defaults
+to \fIsnd\fP\&.
+.IP 
+.IP "ext-mpg123-path" 
+Path to mpg123\&. Defaults to \fImpg123\fP\&.
+.IP 
+.IP "ext-mpg123-args" 
+Additional options that are passed to mpg123\&. Defaults to \fI"-b 0"\fP\&.
+.IP 
+.IP "ext-lame-path" 
+Path to lame\&. Defaults to \fIlame\fP\&.
+.IP 
+.IP "ext-lame-args" 
+Additional options that are passed to lame\&. Defaults to \fI"-b 128"\fP\&.
+.IP 
+.IP "ext-mikmod-path" 
+Path to mikmod\&. Defaults to \fImikmod\fP\&.
+.IP 
+.IP "ext-mikmod-args" 
+Additional options that are passed to mikmod\&. Defaults to \fI"-p 0 --noloops"\fP\&.
+.IP 
+.PP 
+.SH "SEE ALSO" 
+.PP 
+ecasound(1), qtecasound (1), ecatools (1), ecasound-iam(1)
+.PP 
+.SH "AUTHOR" 
+.PP 
+Kai Vehmanen, <kaiv@wakkanet\&.fi>
+.PP 

@@ -1,0 +1,66 @@
+
+
+
+ecatools(1)            Multimedia software            ecatools(1)
+
+
+NNAAMMEE
+       ecatools - audio processing utils based on ecasound
+
+
+SSYYNNOOPPSSIISS
+       eeccaattoooollss__ffiixxddcc file1 [ file2,...,fileN ]
+
+       eeccaattoooollss__nnoorrmmaalliizzee file1 [ file2,...,fileN ]
+
+       eeccaattoooollss__ppllaayy file1 [ file2,...,fileN ]
+
+
+DDEESSCCRRIIPPTTIIOONN
+       Ecatools  are  simple  command  line utils that do various
+       audio processing tasks. Most of them  support  batch  pro-
+       cessing. They all use the ecasound engine (libecasound).
+
+       EECCAATTOOOOLLSS__FFIIXXDDCC
+
+       A simple command-line tool for fixing DC-offset.
+
+       EECCAATTOOOOLLSS__NNOORRMMAALLIIZZEE
+
+       A  simple command-line tool for normalizing sample volume.
+       Finds out how much input file  can  be  amplified  without
+       clipping and, if necessary, does the amplification.
+
+       EECCAATTOOOOLLSS__PPLLAAYY
+
+       A  simple  command-line  tool that plays input files using
+       the default output specified in _~_/_._e_c_a_s_o_u_n_d_r_c.
+
+
+FFIILLEESS
+       _~_/_._e_c_a_s_o_u_n_d_r_c The default ecasound resource file.  If  the
+       file  doesn't  exist, it is created with some default val-
+       ues. See ecasoundrc(5).
+
+
+SSEEEE AALLSSOO
+       ecasound (1), "HTML docs in  the  Documentation  subdirec-
+       tory", qtecasound (1)
+
+
+AAUUTTHHOORR
+       Kai Vehmanen, <kaiv@wakkanet.fi>
+
+
+
+
+
+
+
+
+
+
+
+                            28.08.1999                          1
+
+

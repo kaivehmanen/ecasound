@@ -1,0 +1,163 @@
+mailto(kaiv@wakkanet.fi)
+
+htmlcommand(
+<insert file=../../es-makrot.txt>
+<insert name=ecasound_subindexbar>
+
+<CENTER><H4><A HREF=../index.html>[Index]</A>
+<A HREF=../examples.html>[Examples]</A>
+<A HREF=../ecasound_faq.html>[FAQ]</A>
+<A HREF=../manpages.html>[Man pages]</A>
+<A HREF=../users_guide/index.html>[User's guide]</A>
+<A HREF=../programmers_guide/index.html>[Programmer's guide]</A>
+<A HREF=../kdoc_pages.html>[Source tree]</A>
+<A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
+<p>
+<center><h2>ecasound documentation - user's guide</h2></center>
+</p>
+)
+
+article()
+       (Kai Vehmanen)
+       (131299)
+
+COMMENT(----------------------------------------------------------------)
+COMMENT(----------------------------------------------------------------)
+sect(Preface)
+
+This document describes ecasound's use from user's point of view. 
+In addition to the actual user/client-programs, all essential ecasound 
+library concepts and features are also discussed. To avoid duplicating
+documentation, I've used referenced to other sources whenever suitable. 
+For instance, ecasound's man pages are in a very good shape.
+They are also available in HTML-format.
+
+COMMENT(----------------------------------------------------------------)
+COMMENT(----------------------------------------------------------------)
+sect(Introduction)
+
+subsect(What is ecasound?)
+
+Ecasound is a software package designed for multitrack audio
+processing. It can be used for simple tasks like audio playback, 
+recording and format conversions, as well as for multitrack effect 
+processing, mixing, recording and signal recycling. Ecasound supports 
+a wide range of audio inputs, outputs and effect algorithms. Several
+open-source audio packages, like for instance ALSA, OSS, mpg123, lame, 
+libaudiofile and MikMod, are directly supported. One of the advantages 
+of ecasound's chain-based design is that effects can easily be 
+combined both in series and in parallel. Oscillators and MIDI-CCs 
+can be used for controlling effect parameters. Included user-interfaces 
+are ecasound - a versatile console mode interface, qtecasound - 
+a Qt-based X-interface and various command-line utils suitable for 
+batch processing.
+
+subsect(History)
+
+I've programmed ecasound for my own recording purposes. The first 
+versions ran under IBM Os/2. I used them for finalizing my analog 
+4-track recordings. My 4-track was a nice tool, but it had its limits.
+So eventually I started to use Windows-based multitrack software. I
+still used ecasound for fx processing and finalizing. When I 
+ported ecasound to Linux, a lot of the code was rewritten from 
+scratch. During this I also added multitrack capabilities
+to ecasound. It took a lot of work, but in the end I was able to 
+get rid of all my Windows recording software. Nowadays I use 
+ecasound for all my music projects. Because of this, I also 
+continue to improve and develop ecasound.
+
+COMMENT(----------------------------------------------------------------)
+COMMENT(----------------------------------------------------------------)
+sect(Ecasound library features)
+
+COMMENT(----------------------------------------------------------------)
+subsect(Concepts)
+subsubsect(Chain)
+Chain is a simple signal flow abstraction. Every chain has one input
+and one output. All chain operators and their controllers are attached
+to chains. Chain can be muted, unmuted and it can be bypassed.
+
+subsubsect(Audio object)
+Audio object is a really generic concept. Practically anything that 
+is able to produce or receive audio data can be an ecasound audio 
+object. Currently there's support for soundcard drivers/subsystems, 
+various file formats and various types of data-piping.
+Notice that inputs and outputs are not separated in any way. 
+
+subsubsect(Chain operators and controllers)
+Chain operators are used to process and analyze sample data.
+Controllers are used to control individual chain operator parameters.
+Both types of objects are attached to chains.
+
+subsubsect(Chainsetup)
+Chainsetup is the central data object. All other objects (inputs,
+outputs, chains, etc) are connected to some chainsetup. There can be 
+many chainsetups but only one can be connected. Similarly only
+one chainsetup can be selected. Chainsetups are also used for
+loading and saving. The format used is identical to the command-line
+syntax used by the console mode user-interface, which makes it 
+easy to edit saved chainsetups. See
+url(ecasound(1))(../ecasound_manpage.html) for details.
+
+subsubsect(Concept of current position)
+Only audio objects have a current position. When you change 
+position of a chain, you're changing position of audio objects
+connected to that chain. When you change global engine position,
+all chains (= all audio objects attached to them) are affected.
+
+subsubsect(Interactive-mode)
+Ecasound library can be controlled with simple commands. 
+This is called the interactive-mode. All programs linked
+to ecasound library can use this facility. 
+
+COMMENT(----------------------------------------------------------------)
+subsect(Configuration)
+User preferences are stored to em(~/.ecasouncrc). See 
+url(ecasoundrc(5))(../ecasoundrc_manpage.html) manual page for more 
+info.
+
+By default, files for effects and oscillator presets are 
+in em(/usr/local/share/ecasound).
+
+COMMENT(----------------------------------------------------------------)
+subsect(Audio objects)
+subsubsect(ewf - ecasound wave file)
+Ecasound wave file (.ewf) is a simple wrapper format for RIFF WAVE
+(.wav) files that allows seeking beyond end position. When first write
+operation is performed, current file position is stored into the 
+.ewf file and corresponding .wav is opened for writing. When reading,
+you get silence until the offset position. Shortly put, this is a
+handy way to save disk space when doing multitrack recording.
+
+COMMENT(----------------------------------------------------------------)
+subsect(Chain operators)
+See url(ecasound(1))(../ecasound_manpage.html).
+
+COMMENT(----------------------------------------------------------------)
+subsect(Controllers)
+See url(ecasound(1))(../ecasound_manpage.html).
+
+COMMENT(----------------------------------------------------------------)
+COMMENT(----------------------------------------------------------------)
+sect(User interfaces)
+
+Probably the best place to start is the examples section of 
+ecasound HTML-documentation (../examples.html).
+
+COMMENT(----------------------------------------------------------------)
+subsect(ecasound)
+See url(ecasound(1))(../ecasound_manpage.html).
+
+COMMENT(----------------------------------------------------------------)
+subsect(qtecasound)
+See url(qtecasound(1))(../qtecasound_manpage.html).
+
+COMMENT(----------------------------------------------------------------)
+subsect(ecatools)
+See url(ecatools(1))(../ecatools_manpage.html).
+
+COMMENT(----------------------------------------------------------------)
+COMMENT(----------------------------------------------------------------)
+sect(Documentation)
+
+htmlcommand(<insert name=ecasound_tail>)

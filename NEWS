@@ -1,0 +1,654 @@
+-----------------------------------------------------------------------
+** ecasound - user visible changes (NEWS)    (last edited: 03012000) **
+-----------------------------------------------------------------------
+
+About the version numbers... "vx.y.zRt" :
+
+  x = major version  - the overall development status
+  y = devel-series   - represents a set of planned features
+  z = minor version  - version number of the current development series
+  Rt = 'rx'          - stable release number x
+  Rt = 'dx'  	     - development version
+
+-----------------------------------------------------------------------
+
+Last officially released version is -*> v1.6.9r9 <*-
+
+03012000 (v1.6.10d10)
+	- added: a realtime null audio device 'rtnull' - simulates
+		 soundcard behaviour (warns about over/underruns)
+	- changed: 'make install' isn't forced anymore
+	- changed: mono noisegate (-enm) replaced with a new
+	           multichannel noisegate
+	- changed: behaviour of -r; now changes scheduling policy 
+		   to SCHED_FIFO (realtime) - beware! this gives 
+                   better performance, but might cause total 
+		   lock-ups if something goes wrong
+	- fixed: improvements to autoconf scripts; --enable-qt and 
+		 --disable-qt now work as expected - thanks to 
+		 Vadim Tkachenko for the patch
+	- fixed: seg.faults with some files when using -z:db
+	- fixed: many bug fixes to delay effects (-etf, -etr and -etd)
+	- fixed: nasty bug in ewf-routines
+	- fixed: double-buffered mode (-z:db) sometimes discarded the
+		 last few bytes before end-of-file
+151299 (v1.6.9r9)  -** public release **-
+	- notice: changes in version numbering
+	- added: linear envelope (-kl), useful for fade-ins/outs
+	- changed: signal limiting code moved from chains to output 
+		   mixing stage - when processing multichain setups, 
+		   this is faster and gives more dynamic headroom
+       	- changed: mikmod default args now "-p 0 --noloops"
+	- changed: many improvements to input double-buffering (-z:db)
+		   and multithreaded mixmode (-m:mthreaded)
+	- fixed: bug in testing chainsetup validity
+	- fixed: piping bugs that caused mpg123, lame and mikmod
+		 to hang in some situations
+	- fixed: mono noise-gate (-enm) wasn't working
+	- fixed: changes to -s broke -sr in 1.6.8r8
+041299 (v1.6.8r8)  -** public release **-
+	- added: cs-index-select (see ecasound-iam(1))
+	- added: more info fiels to cs-status
+	- added: configure check for Qt version (must be >= 2.x)
+	- fixed: cs-status didn't show all chainsetups
+	- fixed: problems with cs-load
+	- fixed: processing ended prematurely when mixing 
+	         multiple chains to one output
+	- fixed: some uses of C++ namespaces caused compile errors 
+		 with older gcc versions
+	- fixed: in addition to '-s:cs_file.ecs', '-s cs_file.ecs'
+		 is now also accepted
+251199 (v1.6.7r7)  -** public release **-
+	- changed: some not-so-important runtime info (opening and 
+		   closing devices, etc) is now considered to be 
+		   debug info and is not printed by default
+	- changed: position is printed as a floating-point value
+	- fixed: qtecasound - lots of bugs
+221199 (v1.6.6d6)
+	- fixed: cs-save and cs-save-as didn't work as expected
+	- fixed: cs-load didn't work properly
+221199 (v1.6.5d6)
+	- added: safety-checks to prevent users from connecting
+	         invalid chainsetups
+	- added: underlines are accepted in ia-mode commands
+	- fixed: problems with -ev
+	- fixed: minor bugs in audvvio object positioning
+191199 (v1.6.4d6)
+	- added: -erc - channel copy (one-to-one) and
+		 -erm - mix all channels (all-to-one) ; these are 
+		 meant for handling multichannel files
+	- added: -y option - set starting position for last specified
+		 input/output
+	- added: -t option - set processing time in seconds (makes 
+		 multitrack cut&paste possible when used with -y)
+	- added: -tl option - enable looping (see -y and -t)
+	- added: ia-mode: cs-length (like -t), cs-loop (like -tl)
+	- added: you can now pass additional options to external 
+	         programs (mpg123, lame, mikmod), specified 
+	 	 in ~/.ecasoundrc 
+	- changed: mute + unmute -> mute (on/off toggle)
+	- changed: bypass-enable + bypass-disable -> bypass
+	- changed: minor changes in ~/.ecasoundrc format (see 
+		   ecasoundrc(5))
+	- fixed: tried to reconnect invalid chainsetups
+	- fixed: global forward and rewind weren't working
+	- fixed: dumped core if number of delays (-etd) was changed
+		 during processing
+	- fixed: gates are working once again
+	- fixed: minor bugs in output mixing
+	- fixed: -s option wasn't working properly
+	- fixed: 8<->16bit conversion
+  	- fixed: bugs in AIFF output
+161199 (v1.6.3d6)
+	- added: new ia-mode commands: aio-forward, aio-rewind, 
+		 aio-setpos, aio-index-select and aio-wave-edit 
+		 (load currently selected audio object into an
+		 external wave editor)
+	- added: support for using tracker modules as input 
+	         sources - uses mikmod (mikmod 3.1.6 + libmikmod 
+		 3.1.7 or newer required)
+	- changed: cleaned up the audio object interface
+	- changed: -f parameter format has changed - instead of 
+		   bits, sample type is now specified as a formatted
+		   string ("u8", "s16_le", "s24_le" and so on)
+	- changed: in precise-sample-rate mode, removed all implicit 
+		   sample rate conversions - instead a warning is issued
+121199 (v1.6.2d6)
+	- added: all ia-mode commands now implemented&documented
+	- added: a little bit of artificial intelligence to command
+                 interpreting :) - as an example, if you want to start
+		 processing but no chainsetup is connected, ecasound 
+		 tries to connect the currently selected setup, etc
+	- fixed: given a certain combination of forward and rewind 
+	         commands, processing wouldn't start anymore
+ 	- fixed: delay surround mode now works normally
+	- fixed: ecatools - files not in the default sample format
+	         were not handled properly
+	- fixed: some bugs in double-buffering
+	- removed: adding chain operators to multiple chains is no
+	           longer possile - this makes the library interface
+		   more powerful as client programs can have direct
+	           access to chainops they've added (see 
+		   eca-controller.h for details)
+101199 (v1.6.1d6) 
+	- added: most interactive-mode commands are now implemented
+	- added: new ia-mode commands: c-mute, c-unmute, c-process,
+		 c-select-all, cs-save-as, 
+	- added: documentation for nearly all implemented ia-mode
+		 commands, see ecasound-aim(1)
+	- changes: major changes in RPM-packaging
+	- fixed: a very nasty bug in dynamic ALSA-support
+	- fixed: some effects caused core dumps (bug in the sbuf
+		 iterator routines)
+	- fixed: many minor bug fixes
+	- removed: ia-mode commands: exec, end
+081199 (v1.6.0d6) 
+	- added: iactive mode now uses GNU readline for user input 
+		 - command-line editing, command history and command 
+		 completion (use .inputrc for configuring)
+	- added: 30-40 new interactive-mode commands
+	- added: ecasound-iam(1) manual page - interactive mode 
+		 documentation
+	- added: ecasound user's guide and programmer's guide
+	- added: 'default-to-precise-sample-rates' to ecasoundrc -
+		 whether to ignore sample rate differences (and 
+	         possibly avoid resampling), affects OSS-devices,
+	         defaults to 'false'
+	- added: -z:psr option (see above)
+	- changed: reimplemented signal handling using POSIX 
+	           signal handlers (ANSI interface was used before)
+	- changed: divided all the bigger modules into smaller 
+		   classes and files (these big modules were
+		   causing lots of compiler and resource problems)
+	- changed: major internal changes (multichannel chain operators,
+		   improved mixing algorithms, etc)
+	- changed: rewritten mp3-support (still using mpg123 and lame)
+	- changed: lots of changes in handling external resources
+	           (wave and text editors, mpg123 and lame parameters,
+ 		   etc.) - see 'man ecasoundrc'
+	- removed: looping (interactive-mode loop commands)
+	- removed: 'sfx' command (iactive-mode)
+011099 (v1.5.16d6)
+	- added: changes and additions to libecasound interface are 
+		 from now on logged to libecasound/ChangeLog
+	- fixed: errors in -kf documentation
+270999 (v1.5.15d6)
+	- changed: optimized various engine and effect routines
+		   to improve ecasound's performance with
+		   complex setups
+	- fixed: "-ev" max-amplitude wasn't reseted
+	- fixed: some finetuning of ALSA buffer handling
+210999 (v1.5.14d6)
+	- notice: from now on development versions will be marked 
+		  with a 'd' in the version number
+	- added: configure check for libdl library
+	- added: "-eac:amp-%,channel" channel amplify
+	- changed: "-ea" to "-eaw", amplify with clipping control
+	- changed: "-eas" to "-ea", normal amplify
+180999 (v1.5.13r6)
+	- added: -sr:srate option - set chainsetup sample rate
+	- added: 'default-samplerate' to ~/.ecasoundrc
+	- fixed: problems with OSS es1370 drivers (thanks to Billy
+	         Biggs for the patch)
+	- fixed: resonant bandpass wasn't working (-ef1)
+140999 (v1.5.12r6)  -** public release **-
+	- fixed: problems with libaudiofile (.aiff and .au/.snd
+	         support)
+	- fixed: extra noise when upsampling
+	- fixed: qtecasound - chainsetup's name was changed to
+		 tempfile name if edited with an external editor
+	- fixed: qtecasound - conflict with Qt-libs when 
+		 stopping processing (resulted in abort) 
+120999 (v1.5.11r5)
+	- added: ldconfig is now always run after (un)install of 
+	         binary RPM packages
+	- added: if underruns/overruns occur when using ALSA devices,
+	         a warning message is given on exit (stderr)
+	- changed: gcc's -fomit-frame-pointer isn't used anymore
+	           (caused lots of problems with exceptions)
+	- fixed: ecasound tried to use ALSA headers even though 
+	         --disable-alsa was given (eca-alsa-dyn.h and
+	         eca-midi.h)
+	- fixed: audiofx_compressor.h tried to include obsolete
+	         error.h header file
+	- fixed: pan effect (-epp) decreased overall volume level
+	- fixed: fake-stereo effect (-etf) wasn't working properly
+	- fixed: "make install" created (prefix)/share/ecasound
+		 with permission mode 644 (only root could access
+		 the directory)
+	- fixed: some problems with effect option parsing
+	- removed: simple lowpass filter (-ef2)
+070999 (v1.5.10r5)
+	- added: qtecasound - file dialogs now remember the current
+		 directory
+	- added: a much more elegant system for dynamically loading 
+		 ALSA support
+	- added: support for ALSA MIDI devices (/dev/snd/midiCxDy)
+	- changed: rewrote the MIDI-input sybsystem (works better
+		   with multiple controllers)
+	- fixed: kvutils -package also needed configure script fixes 
+		 to recognise FreeBSD's pthread implementation
+	- fixed: although "make install" worked in all cases,
+		 plain "make" didn't work if installing ecasound 
+		 1.5.x for the first time
+	- fixed: crashed if you had two chainsetups with ALSA devices
+	         and you tried to delete the other one
+	- fixed: crashed in some conditions when closing .wav and 
+		 .raw files
+040999 (v1.5.9r5)
+	- changed: qtecasound - in all windows with list widgets,
+	           if no item is selected, current item (if any) 
+		   is used for all operations
+	- changed: in most cases, '-r' option (raise priority) isn't 
+		   needed anymore (see ecasound and ecasoundrc man
+		   pages for more info)
+	- changed ecasoundrc - 'x-text-editor-use-getenv' is now
+		  'true' by default
+	- fixed: resonant lowpass filter was once again broken
+	- fixed: configure should now recognise FreeBSD's pthread
+		 implementation (not tested yet)
+	- fixed: in some rare cases, engine was started in interactive 
+		 mixmode while the interface was in passive mode 
+	         (-> program started but didn't do anything)
+030999 (v1.5.8r5)
+	- added: '!' shortcut to all windows (keyboard focus to 
+		 control panel)
+	- changed: some Makefile changes for excluding static
+		   ecasound libraries from the binary dist packages
+		   (managed to shrink binary-rpms by nearly a 1MB!)
+	- fixed: qtecasound - shortcut-key fixes in chainsetup window
+	- fixed: qtecasound - waveform view positioning is now much 
+		 more precise than before
+	- fixed: qtecasound - core dumps when exiting
+020999 (v1.5.7r5)
+	- added: qtecasound - chainsetup window now has a wave-edit
+		 button which loads the active file into a external
+		 wave editor; defaults to "snd", can be changed by 
+		 changing the value of "x-wave-editor" in 
+		 ~/.ecasoundrc 
+	- added: qtecasound - support for external text editors 
+	         (can be launched from session window) - saves the 
+	         active chainsetup to a text file, loads it to an 
+                 editor and afterwards updates file's content back 
+		 to ecasound - if "x-text-editor-use-getenv true"
+	         is specified in ~/.ecasoundrc, ecasound uses 
+		 EDITOR environment variable if it's available, 
+	         otherwise value of "x-default-text-editor" is 
+	         used ... an of course, default value for this is
+		 the ultimate musicians tool: emacs! ;) 
+	- changed: qtecasound - some minor changes to session and 
+	 	   chainsetup widgets
+	- changed: .ews format (wave view cache files) has changed,
+		   ecasound can still read the old format
+	- changed: qtecasound - "activate" button changed to a
+		   "change status" button which rotates through 
+ 		   inactive->active->connected->inactive ...
+	- fixed: qtecasound - enabling/disabling chains sometimes
+                 resulted in program crashes
+	- fixed: all structs found in ecasound source code now 
+		 use the standard type definations from sys/type.h 
+		 (format "[u_]int'bits'_t") - this should solve some 
+		 compatibility problems with non-x86 platforms - 
+		 thanks for Guenter Geiger for notifying about these
+	- fixed: a few fixes to the new double-buffering system -
+		 lots of buffer parameter fine-tuning 
+290899 (v1.5.6r5) 
+	- added: "-z:feature" command line option for enabling 
+		 misc features
+	- added: mmap-based double-buffering now disabled by 
+		 default, enable it with "-z:db" or by putting 
+		 "default-to-double-buffering true" to your 
+		 ~/.ecasoundrc
+	- added: when upgrading ecasound, new resource values 
+		 will be automatically added to your ~/.ecasoundrc
+        - fixed: crashes when getting error messages from alsa-lib
+		 (for instance when using invalid card and device
+		 numbers)
+	- fixed: a few Makefile problems in 1.5.x versions 
+	     	 (thanks for Vadim Tkachenko for reporting these)
+280899 (v1.5.5r5) 
+	- added: improvements to resource file (~/.ecasoundrc) 
+	         handling - resource files can now have comment
+	         lines (lines beginning with a '#'); resource
+                 files are rewritten only if resource values are 
+		 changed directly from ecasound; '=' sign can be 
+		 used as a name-value separator
+	- fixed: since version 1.5.2r5, .cdr input/output hasn't
+		 worked (reversed byteorder when reading .crd 
+	         files, .cdr output files weren't padded correctly)
+270899 (v1.5.4r5) 
+	- added: experimental support for double-buffered 
+		 mmap() file i/o (currently implemented 
+		 for .wav/.raw input only)
+	- fixed: thread-priority was always risen (once again) 
+210899 (v1.5.3r5) 
+	- added: a lowpass filter effect (-ef2); not as good 
+	  	 as the other lowpass filters (-efl and -ef3), but
+		 should be a bit faster
+	- fixed: 1.5.2r5 was really _slow_ (a file seek bug)
+200899 (v1.5.2r5) 
+	- added: "-x" command line option - truncate outputs
+	- added: sample rate conversion (resampling) - if audio 
+		 object's sample rate differs from ecasound's
+		 internal rate the signal gets resampled 
+		 (internal rate is currently 44100; can be 
+		 changed from samplebuffer.h)
+	- changed: gcc 2.95.1 is now used when developing 
+		   ecasound; precompiled packages require libstdc++ 
+		   2.10.0 (comes with gcc 2.95.1) or newer
+	- fixed: few minor fixes to the noisegate effect
+	- fixed: upon creation, more precision is used to print
+		 effect parameters
+190899 (v1.5.1r5) 
+	- fixed: problems with filters
+180899 (v1.5.0r5) 
+	- added: ecatools package which now consists of programs
+		 ecatools_normalize, ecatools_fixdc and 
+		 ecatools_play - see ecatools(1) man page
+ 	- changed: ecasound and qtecasound now have their own 
+	           source trees; rest of ecasound is compiled
+	    	   into the libecasound.so shared library
+	- changed: to make ecasound relocatable, preset files are now
+		   installed to standard data dir (defaults to 
+		   /usr/local/share/ecasound)
+	- changed: lot of source file name changes
+	- changed: ALSA support (libasound.so library) is now loaded
+	 	   dynamically at runtime
+	- fixed: you had to have yodl installed to to install ecasound 
+		 man pages
+150899 (v1.4.6r5)  -** public release **-
+	- added: qtecasound - along with some other improvements, 
+	         waveform widget now uses cache files to store 
+	         wave statistics; for file "somefile.wav", cache
+	         file "somefile.wav.ews" is used
+	- fixed: reading and writing aiff files works again;
+		 some aiff files created with sox still seem to 
+		 cause trouble (might be a problem with 
+		 libaudiofile)
+	- fixed: qtecasound - a nasty mutex bug which caused ecasound
+		 to crash if you tried to use a chainsetup which has
+	         more inputs than chains
+120899 (v1.4.5r4):
+	- added: qtecasound - dialogs for adding, removing and 
+		 attaching inputs and outputs 
+	- added: support for null inputs/outputs
+	- added: effect status is now printed when exiting ecasound
+	         (doesn't affect interactive mode)
+	- added: if OSS drivers for your soundcard don't support 
+		 trigger functions, you can disable these with 
+		 configure option "--disable-osstrigger"
+	- added: -ev effect (analyze sample data) now also tells
+		 how much the analyzed signal can be amplified 
+	         without clipping
+	- added: debug level can now be set in iactive mode with 
+		 "debug level" command
+	- changed: qtecasound - shortcuts a, A and ctrl-a now do 
+		   the same thing; applies to all shortcuts
+	- fixed: adding a chain without a valid output resulted in 
+		 hangs when using multithreaded mixmode
+	- fixed: didn't compile with alsa-lib versions older than 0.3.1
+	- fixed: "ecasound -h" dumped core
+010899 (v1.4.4r4)
+	- added: qtecasound - now asks for a name when adding chainsetups
+	- added: qtecasound - adding and deleting chains
+	- changed: some layout changes
+290799 (v1.4.3r4)
+	- changed: if format supports it, outputs are now opened in 
+		   read-write mode; currently supported by .wav, 
+		   .cdr and .raw; when you use these as outputs, files 
+		   aren't truncated if they exist
+	- fixed: qtecasound - active chainsetup was always saved even 
+		 if some other chainsetup was selected
+	- fixed: qtecasound - crashed if you changed the active 
+		 chainsetup and you had a waveform window open
+	- fixed: qtecasound - crashed if tried to activate 
+	         a invalid chainsetup
+	- fixed: if you wrote to a output file, its length was 
+		 not changed (from ecasound's viewpoint)
+270799 (v1.4.2r4)
+	- fixed: samplebuffer.h still tried to include <soundcard.h>,
+		 which is both not necessary and a wrong place to 
+  	 	 look for it; thanks to Torbjorn Tornkvist and 
+		 Xavier Hosxe for notifying me
+	- fixed: qtecasound - using multithreaded mixmode, changing 
+		 chainsetups on the fly caused a lot of problems
+	- fixed: qtecasound - shortcut keys didn't work with CLI
+270799 (v1.4.1r4)
+	- added: qtecasound - chain widget now monitors effect
+		 parameters
+	- added: qtecasound - support for double clicks and return
+		 presses for various widgets
+	- added: qtecasound - some new features to the waveform widget
+	- changed: from now on, interactive mode isn't automatically 
+		   enabled, if a realtime input is specified
+	- changed: names of some functions (I'm trying to be careful
+	           how I use 'new' and 'add', 'load' and 'open', etc
+	- fixed: qtecasound - waveform widget crashed qtecasound if
+		 the analyzed file had less than 76800 samples 
+	- fixed: if processing was completed and was restarted without 
+	         a rewind/setpos, ecasound crashed/hang
+	- fixed: raised-priority mode was sometimes enabled even
+		 without the -r option 
+	- fixed: qtecasound - when using multithreaded mixmode, 
+		 exiting sometimes resulted in core dump or segfault
+250799 (v1.4.0r4)
+	- added: qtecasound - waveform widget; graphical representation
+	         for input/output objects
+	- added: qtecasound - chain widget; view chain status 
+	- added: qtecasound - chainsetup widget; status of input,
+		 output and chain objects, enable/disable chains
+	- added: qtecasound - session-setup widget; load and save
+	         chainsetups, create new ones, etc
+	- changed: can now be started without a valid chainsetup if 
+		   interactive mode is enabled
+	- fixed: *serious bug* if end of input was reached,
+		 that input remained silent until ecasound was 
+		 restarted (has been broken since 1.3.0r3)
+240799 (v1.3.3r4)
+	- added: -n option, sets chainsetup's name
+230799 (v1.3.2r4)
+	- added: a new compressor - thanks for Viktor Endersz for
+		 sending it to me and John S. Dyson for coding it; 
+	         it really works like a dream! (option -eca) 
+	- fixed: some fixes to my old compressor (now that we 
+		 have a better one, this should be used only if 
+		 you really want brutal results :))
+	- fixed: due to some changes in ALSA libs, ecasound 
+		 wouldn't compile with ALSA versions >0.3.2;
+		 haven't tested it, but should now work with both 
+		 new and old ALSA libs
+200799 (v1.3.1r4)  -** public release **-
+	- fixed: delay effect was broken; while fixing this I also 
+		 added a new surround mode, 2 = stereo-spread
+	- fixed: more bugs with ALSA and OSS input routines; 
+	         did some multitrack recording with both of them 
+		 and got suprisingly good results (it seems that
+	         finding the optimal buffer size is the key to success)
+190799 (v1.3.0r3)
+	- added: support for sessions and chainsetups; now you can 
+	         store the whole runtime setup to an ascii file and
+	         load it back; the syntax used is exactly the 
+		 same as the command line syntax so editing these 
+		 saved chainsetup files is easy
+	- added: "-s[:]filename" command line option for loading 
+	         chainsetup files 
+	- added: "load filename" and "save filename" commands to 
+	         the interactive-mode (for chainsetups)
+	- added: support for libaudiofile (SGI audiofile) library;
+		 new file formats: .aiff, .au and .snd; (linking to 
+  		 audiofile can be prevented with --disable-audiofile
+	         option to the configure script)
+	- added: -q option (quiet mode), disables all output
+	- added: support for raw/headerless (.raw) input/output files
+	- added: support for using standard system input and output
+		 streams (-i:stdin, -o:stdout)
+	- added: finished the man pages, all important options and
+		 features should now be covered
+	- fixed: file name ending with a upper-case extension 
+		 wasn't recognised
+	- fixed: when using multithreaded mixmode with complex setups,
+		 threads sometimes went out of sync causing strange
+	         behaviour
+	- changed: size of sample buffer objects can now be changed
+	           on-the-fly (output files are not aligned to 
+ 		   buffersize anymore) -> this makes ecasound more 
+		   usable as a format conversion tool
+	- changed: compressor wasn't working, decided to code
+	           a new one (still experimental but works better
+		   than the last one)
+140799 (v1.2.3r3)
+	- added: support for .mp2 files
+	- fixed: still some bugs in selecting mixmode
+	- fixed: automatic stereo-mono conversion wasn't working 
+		 at all (as all chains are internally stereo, this 
+		 occured everytime you specified a mono output, even
+		 if the input was mono, too)
+130799 (v1.2.2r3)
+	- added: ALSA devices can now also be opened by specifying 
+		 the actual device name (/dev/snd/pcm...)
+	- changed: default output is now always attached to chain 'all'
+	- fixed: start/stop/forward/rewind with ALSA-output sometimes 
+		 resulted in loud crackle
+	- fixed: some bugs in the position slider of qtecasound
+	- fixed: 'noise-gate-mono' effect was rewritten as it didn't 
+		 seem to work very well
+120799 (v1.2.1r3)  -** public release **-
+	- added: 'make install' now creates /etc/ecasound directory 
+		 and copies all the configuration/preset files 
+		 to this directory (existing files/dirs are skipped)
+	- added: lots of crash-guards to command line parsing 
+	- added: frequently-asked-questions file (both txt and html)
+	- added: new options to the configure script: --disable-alsa,
+		 --disable-oss and --disable-qt
+	- fixed: bugs in mixmode multithreaded-iactive (crashed
+		 pretty much everytime)
+	- fixed: estatus output was sometimes pretty messy
+110799 (v1.2.0r2)
+	- added: support for ALSA input/output 
+	- added: a lot of new documentation to the man pages
+	- added: new configurable options to ~/.ecasoundrc 
+		 (default-buffersize, default-to-interactive-mode,
+		 default-to-raisepriority)
+	- added: finally implemented the 'help' command in
+  	         the interactive-mode; also added a prompt, which 
+                 should help a bit :)
+	- added: autoconf and automake additions; now qtecasound is 
+		 compiled only if qt library is found, OSS and 
+                 ALSA modules are compiled if the necessary 
+                 headers and libraries are available
+	- added: support for single-chain effect presets (-ps command 
+		 line option)
+	- fixed: bugs with OSS-input (device was sometimes closed 
+                 multiple times resulting in core dumps)
+	- fixed: auto-runmode used 'simple-iactive' mixmode
+                 although iactive-mode wasn't set
+	- fixed: looping wasn't working properly
+	- fixed: -m option wasn't working
+	- removed: simple filter effect (not really useful)
+	- removed: 'Waiting for the processing thread'
+		   messagebox (qtecasound)
+100799 (v1.1.8r2)
+	- fixed: more synchronisation bugs
+050799 (v1.1.6r2)
+	- added: rewrote the man-pages using Yodl; now they're 
+ 		 also available in HTML-format 
+	- fixed: OSS-output module used a non-standard location
+		 for soundcard.h (noticed by D.Phillips)
+010799 (v1.1.5r2)  -** public release **-
+	- tested: did some real recording and mixing work with this 
+	          version and after a few fixes, everything seems
+	          to work ok
+	- added: now checks whether a chainop supports parameter
+		 controlling or not 
+	- added: a lot of new documentation (especially to 
+		 'Documentation/examples.html')
+	- fixed: chain 'all' wasn't working properly
+	- fixed: multitrack chain synchronization was broken; should 
+		 now work even with complex setups
+	- fixed: a serious bug in OSS-input: ecasound always threw 
+ 		 an "read-error" exception when trying to read from
+		 OSS input
+	- fixed: analyze effect (-ev) output didn't work
+300699 (v1.1.4r1)  -** public release **-
+	- notice! first release; should be considered beta
+	- fixed: if mp3 files had white-spaces in their filenames, 
+	         filenames weren't interpreted correctly
+250699 (v1.1.3r0)
+	- more bug fixes
+	- tested rpm-packaging and seemed to work ok
+230699 (v1.1.2r0)
+	- bug fixes 
+190699 (v1.1.1r0)
+       	- fixed: some bugs in exception handling 
+       	- qtecasound: added a not-implemented message screen! ;)
+180699 (v1.1.0r0)
+       	- all major features of ecasound v0.9.x and earlier are 
+          now implemented to the new program design 
+       	- support for gates (time crop gate and threshold gate
+          implemented)
+       	- support for ~/.ecasoundrc configuration file
+       	- support for GNU autoconf and automake
+       	- added some new command line shortcuts
+       	- qtecasound: added a position slider widget (displays and
+		      enables to change current position)
+       	- qtecasound: removed waveform and volume meter widgets;
+		      they will reappear in the "Chain Setup" 
+		      window (still under work)
+160699 (v1.0.8r0)
+       	- mp3 output support (using lame) 
+150699 (v1.0.7r0)
+       	- fixed: waveform -output now works with all inputs 
+                (for instance showing mp3 waveforms is now possible)
+       	- routines for interfacing with mpg123 recoded; 
+          a lot more stable than before
+       	- qtecasound now uses the new qt library (v2.0beta2)
+       	- support for various controllers (sine oscillator, MIDI 
+          cc-controllers, generic oscillator etc)
+       	- fixed: when ecasound was stopped with ctrl-c or kill, 
+                 proper cleanup wasn't done
+100699 (v1.0.6r0)
+       	- a new wave-form view 
+080699 (v1.0.5r0)
+       	- multitrack-mode sync-routines rewritten and tested
+       	- various mixmode bugs fixed
+040699 (v1.0.4r0)
+       	- simple graphical vu-meters added to test the new io-system
+030699 (v1.0.3r0):
+       	- multithread-io mode: one chain can be processed and mixed 
+         while waiting for getting data from other chains	
+020699 (v1.0.2r0):
+       	- a better way to deal with system endianess
+       	- new chain-operator routines; unless there are no no chainops, 
+          signal is always put through a clip control routine which 
+          ensures that all sample values fit the value range
+010699 (v1.0.1r0)
+        - fixed a _lot_ of bugs
+310599 (v1.0.0r0)
+        - changed version numbering
+        - major changes in nearly all program modules aiming at 
+          a more modular and abstract design
+       - fix: resonant_bandpass_filter wasn't working anymore
+190599 (v0.9.10)
+        - mp3 support using mpg123 (readonly)
+        - X-Window GUI added (using Qt-libraries)
+260499 (v0.9.x)
+        - support for multitrack recording
+        - independent effect chains
+        - interactive command-line-interface (CLI)
+        - looping (loop, loop_start, loop_end)
+        - new debug -system
+        - man -pages
+311098 (v0.80)
+        - support for MIDI-controllers
+        - now uses glibc v2.0 and linuxthread libraries
+041098 (v0.70)
+        - began to upkeep this history file
+        - fixing the gate-functions
+---
+1998:    - changed development platform from Os/2 to Linux
+1997-98: - complete rewrite in C++; name changed from "wavstat" to "ecasound"
+1995-97: - started working with this project; original program
+           was called "wavstat" and it basicly was just
+           a very simple command line DSP util (running under Os/2)
+	
+-----------------------------------------------------------------------

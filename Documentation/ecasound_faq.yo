@@ -1,0 +1,114 @@
+mailto(kaiv@wakkanet.fi)
+
+htmlcommand(
+<insert file=../es-makrot.txt>
+<insert name=ecasound_indexbar>
+
+<CENTER><H4><A HREF=index.html>[Index]</A>
+<A HREF=examples.html>[Examples]</A>
+<A HREF=ecasound_faq.html>[FAQ]</A>
+<A HREF=manpages.html>[Man pages]</A>
+<A HREF=users_guide/index.html>[User's guide]</A>
+<A HREF=programmers_guide/index.html>[Programmer's guide]</A>
+<A HREF=kdoc_pages.html>[Source tree]</A>
+<A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
+<p>
+<center><h2> ecasound documentation - frequently-asked-questions (FAQ)</h2></center>
+</p>
+)
+
+article()()()
+
+sect(Compiling)
+subsect(Errors when compiling audioio-af.cpp)
+
+Upgrade your audiofile headers. At least 0.1.6 version of the library 
+has duplicate extern "C" -wrappers in the file em(aupvlist.h). The result
+looks like this:
+verb(--cut--
+In file included from audioio-af.cpp:28:
+/usr/local/include/audiofile.h:603: parse error before `}'
+make[3]: *** [audioio-af.o] Error 1 
+--cut--)
+
+subsect(Errors when linking samplebuffer.o)
+
+If you get errors that look something like this...
+verb(--cut--
+samplebuffer.o(.text+0x1bb): undefined reference to `SAMPLE_BUFFER::is_system_littleendian
+--cut--)
+
+... you have a incompatible version of libstdc++. As ecasound uses
+many advanced features of standard C++, it requires libstdc++ 2.9.0
+or newer.
+
+subsect(If ecasound crashes - how to compile for debugging?)
+
+The easiest way is to increase debug level (-d:level option). This
+gives you a lot of info. Sometimes however, this is not enough. For 
+debugging purposes, you should compile a separate debug version of 
+ecasound. You can do this with "make distclean ; ./configure --enable-debug 
+; make install". This produces a new set of executables and libraries 
+(libecasound_debug.so, ecasound_debug, qtecasound_debug, etc). Notice
+that these are em(considerably slower) than normal optimized
+versions. To summarize, if ecasound acts weirdly, try to reproduce 
+the behaviour with _debug versions. This way all assertions are
+checked and extra debugging information helps to trace problems with
+gdb.
+
+sect(Installing)
+subsect(Is installing Qt 2.0 going to break KDE and other apps using Qt 1.xx?)
+
+You can install the Qt 2.0 runtime libs and still run apps using the
+older Qt versions (like KDE). If you compile KDE/Qt programs yourself, 
+you can choose between Qt 1.x and 2.x by changing the symbolic link 
+"libqt.so". If it points to libqt.so.1, the program is linked to 1.x 
+libs and to 2.x libs if it points to libqt.so.2.
+
+See url(this ecasound-list message)(http://www.wakkanet.fi/~kaiv/ecasound/ecasound-list/199909/0073.html)
+for more info.
+
+And of course you can just use the text-mode version of ecasound.
+It can do most things that the X-version (qtecasound) can do.
+
+subsect(Does qtecasound require KDE to be installed?)
+
+No. In addition to the Qt runtime libraries, qtecasound only 
+requires the normal X libraries. In other words it should run
+under any window manager. And most likely it will also stay 
+this way. I might do a KDE/some-other specific version, but
+I'd still support the generic version. After all, ecasound isn't
+actually aimed at the masses... 
+
+sect(Using)
+subsect(Can't open shared shared libraries)
+If you get the following error message...
+
+verb(--cut--
+error in loading shared libraries: libecasound.so.1: cannot open shared object file: No such
+file or directory
+--cut--)
+
+Add /usr/local/lib to your /etc/ld.so.conf and run "ldconfig". If
+you haven't installed ecasound to the default location, replace
+/usr/local/lib with the correct library path.
+
+subsect(How do I use the parameter xxx?)
+The best place to start is the file em(examples.html). It can be found
+from url(www.wakkanet.fi/ecasound)(http://www.wakkanet.fi/~kaiv/ecasound/Documentation/examples.html)
+(ecasound home page). Next you should check the em(ecasound(1)) manual
+page. Finally, help given by the bf(-h) command line 
+option is always up-to-date. If you still don't know what to do, mail me at 
+email(kaiv@wakkanet.fi). 
+
+subsect(Ecasound isn't doing anything but it still seems to hog all CPU-time)
+You're probably running ecasound in raised-priority mode. It is turned on
+with the -r command line option or by specifying 
+"default-to-raisepriority true" in your url(~/.ecasoundrc)(ecasoundrc_manpage.html).
+
+subsect(What file format should I use for mixing and recording?)
+You should always use .raw or .wav. By doing this, you will probably
+get better performance as these formats are internally supported by 
+ecasound.
+
+htmlcommand(<insert name=ecasound_tail>)

@@ -1,0 +1,66 @@
+-----------------------------------------------------------------------
+*** ecasound - changes and additions to libecasound interface       ***
+-----------------------------------------------------------------------
+
+1999-12-21
+
+	* audioio-ewf.h: EWFFILE now directly inherits AUDIO_IO
+	
+1999-12-16
+	
+	* library version changed to 4:0:0 
+	* audiofx_amplitude.cpp: NOISEGATE_MONO -> NOISEGATE
+	
+1999-12-15  Kai Vehmanen  <kaiv@wakkanet.fi>
+
+	* 1.6.9r9 released
+	* library version 3:0:0 frozen
+	
+1999-12-11  Kai Vehmanen  <kaiv@wakkanet.fi>
+
+	* dynamic-object.h: added
+	* ctrl_source.h -> ctrl-source.h
+	* gcontroller.* -> generic-controller.*
+	* parameter control subsystem rewritten, affects all related
+	classes (class inheriting from CONTROLLER_SOURCE,
+	GENERIC_CONTROLLER, ECA_OBJECT_MAP, ECA_CHAIN, ECA_CHAINSETUP
+	and so on)
+	
+1999-12-06  Kai Vehmanen  <kaiv@wakkanet.fi>
+
+	* ctrl_source.h: controller sources now inheric from 
+	DYNAMIC_PARAMETERS - this required many changes to controller
+	source classes
+	* eca-chainop-map.h: renamed to eca-object-map.h
+	* dynamic-parameters.h (name): added
+	* dynamic-parameters.h (parameter_names): changed return type,
+	affects all sub-classes
+	* library version changed to 3:0:0
+	
+1999-12-04  Kai Vehmanen  <kaiv@wakkanet.fi>
+
+	* 1.6.8r8 released
+	* library version 2:0:1 frozen
+	* library version changed to 2:0:1
+	
+1999-12-02  Kai Vehmanen  <kaiv@wakkanet.fi>
+
+	* eca-controller.h (select_chainsetup_by_index): a new routine
+	
+1999-11-23  Kai Vehmanen  <kaiv@wakkanet.fi>
+
+	* 1.6.7r7 released
+	* library version 1:0:0 frozen
+
+1999-11-08  Kai Vehmanen  <kaiv@wakkanet.fi>	
+
+	* major changes in nearly all interfaces
+	* library version changed 1:0:0
+	
+1999-09-14  Kai Vehmanen  <kaiv@wakkanet.fi>
+
+	* 1.5.12r6 released
+	* first public release of libecasound; libtool version 
+	  numnber 0:0:0 (current:revision:age)
+	
+-----------------------------------------------------------------------

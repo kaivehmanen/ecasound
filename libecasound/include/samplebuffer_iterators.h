@@ -1,0 +1,172 @@
+#ifndef _SAMPLEBUFFER_ITERATORS_H
+#define _SAMPLEBUFFER_ITERATORS_H
+
+#include "samplebuffer.h"
+
+/**
+ * Iterate through all samples. No specific order.
+ */
+class SAMPLE_ITERATOR {
+
+ private:
+
+  SAMPLE_BUFFER* target;
+  vector<SAMPLE_BUFFER::sample_type>::size_type index;     // index of the current sample
+  int channel_index;                        // index of current channel
+
+ public:
+
+  /**
+   * Prepare iterator for processing.
+   */
+  void init(SAMPLE_BUFFER* buf) { target = buf; }
+
+  /**
+   * Start iteration from the first audio item;
+   */
+  void begin(void);
+
+  /**
+   * True if iterator is past the last audio item.
+   */
+  inline bool end(void) { return(channel_index >= static_cast<int>(target->channel_count_rep)); }
+
+  /**
+   * Move iterator to the next audio item.
+   */
+  void next(void);
+
+  /**
+   * Returns a pointer to the current sample.
+   */
+  inline SAMPLE_BUFFER::sample_type* current(void) { return(&(target->buffer[channel_index][index])); }
+};
+
+/**
+ * Iterate through all samples of one channel. 
+ *
+ * Notice! This iterator can be used to add extra
+ * channels to the sample data.
+ */
+class SAMPLE_ITERATOR_CHANNEL {
+
+ private:
+
+  SAMPLE_BUFFER* target;
+  vector<SAMPLE_BUFFER::sample_type>::size_type index;     // index of the current sample
+  int channel_index;                        // index of current channel
+
+ public:
+
+  /**
+   * Prepare iterator for processing.
+   */
+  void init(SAMPLE_BUFFER* buf) { target = buf; }
+
+  /**
+   * Start iteration from the first sample of 'channel'. More channels 
+   * are allocated, if sample buffer has fewer channels than asked for.
+   *
+   * @param channel number of iterated channel (0, 1, ... , n)
+   */
+  void begin(int channel);
+
+  /**
+   * Move iterator to the next audio item.
+   */
+  void next(void) { ++index; }
+
+  /**
+   * True if iterator is past the last audio item.
+   */
+  inline bool end(void) { return(index >= target->buffersize_rep); }
+
+  /**
+   * Returns a pointer to the current sample.
+   */
+  inline SAMPLE_BUFFER::sample_type* current(void) { return(&target->buffer[channel_index][index]); }
+};
+
+/**
+ * Iterate through all samples, one channel at a time.
+ */
+class SAMPLE_ITERATOR_CHANNELS {
+
+ private:
+
+  SAMPLE_BUFFER* target;
+  vector<SAMPLE_BUFFER::sample_type>::size_type index;     // index of the current sample
+  int channel_index;                        // index of current channel
+
+ public:
+
+  /**
+   * Prepare iterator for processing.
+   */
+  void init(SAMPLE_BUFFER* buf) { target = buf; }
+
+  /**
+   * Start iteration from the first audio item;
+   */
+  void begin(void);
+
+  /**
+   * Move iterator to the next audio item.
+   */
+  void next(void);
+
+  /**
+   * True if iterator is past the last audio item.
+   */
+  inline bool end(void) { return(channel_index >= static_cast<int>(target->channel_count_rep)); }
+
+  /**
+   * Returns a pointer to the current sample.
+   */
+  inline SAMPLE_BUFFER::sample_type* current(void) { return(&(target->buffer[channel_index][index])); }
+
+  /**
+   * Returns current channel index (starting from 0)
+   */
+  inline int channel(void) const { return(channel_index); }
+};
+
+/**
+ * Iterate through all samples, one sample frame (interleaved) at a time.
+ */
+class SAMPLE_ITERATOR_INTERLEAVED {
+
+ private:
+
+  SAMPLE_BUFFER* target;
+  vector<SAMPLE_BUFFER::sample_type>::size_type index;     // index of the current sample
+
+ public:
+
+  /**
+   * Prepare iterator for processing.
+   */
+  void init(SAMPLE_BUFFER* buf) { target = buf; }
+
+  /**
+   * Start iteration from the first audio item;
+   */
+  void begin(void) { index = 0; }
+
+  /**
+   * Move iterator to the next audio item.
+   */
+  inline void next(void) { ++index; }
+
+  /**
+   * True if iterator is past the last audio item.
+   */
+  inline bool end(void) { return(index >= target->buffersize_rep); }
+
+  /**
+   * Returns a pointer to the current sample.
+   */
+  inline SAMPLE_BUFFER::sample_type* current(int channel) { return(&target->buffer[channel][index]); }
+};
+
+#endif

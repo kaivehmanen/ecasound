@@ -1,0 +1,478 @@
+mailto(kaiv@wakkanet.fi)
+
+htmlcommand(
+<insert file=../es-makrot.txt>
+<insert name=ecasound_indexbar>
+
+<hr>
+<CENTER><H4><A HREF=index.html>[Index]</A>
+<A HREF=examples.html>[Examples]</A>
+<A HREF=ecasound_faq.html>[FAQ]</A>
+<A HREF=manpages.html>[Man pages]</A>
+<A HREF=users_guide/index.html>[User's guide]</A>
+<A HREF=programmers_guide/index.html>[Programmer's guide]</A>
+<A HREF=kdoc_pages.html>[Source tree]</A>
+<A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home
+page]</A></H4></CENTER>
+<CENTER><H4><A HREF=ecasound_manpage.html>[ecasound(1)]</A>
+<A HREF=qtecasound_manpage.html>[qtecasound(1)]</A>
+<A HREF=ecatools_manpage.html>[ecatools(1)]</A>
+<A HREF=ecasound-iam_manpage.html>[ecasound-iam(1)]</A>
+<A HREF=ecasoundrc_manpage.html>[ecasoundrc(5)]</A></H4></CENTER>
+<p>
+<hr>
+<center><h2> ecasound documentation - manual pages </h2></center>
+</p>
+)
+
+manpage(ecasound)
+       (1)
+       (03.01.2000)
+       ()
+       (Multimedia software)
+
+manpagename(ecasound)(sample editor, multitrack recorder, fx-processor, etc.)
+
+manpagesynopsis()
+    bf(ecasound) [ general_options ] { [ chain_setup ] [ effect_setup ] [ input_setup ] [ output_setup ] }
+
+manpagedescription()
+
+Ecasound is a software package designed for multitrack audio
+processing. It can be used for simple tasks like audio playback, 
+recording and format conversions, as well as for multitrack effect 
+processing, mixing, recording and signal recycling. Ecasound supports 
+a wide range of audio inputs, outputs and effect algorithms. Several
+open-source audio packages, like for instance ALSA, OSS, mpg123, lame, 
+libaudiofile and MikMod, are directly supported. One of the advantages 
+of ecasound's chain-based design is that effects can easily be 
+combined both in series and in parallel. Oscillators and MIDI-CCs 
+can be used for controlling effect parameters. Included user-interfaces 
+are ecasound - a versatile console mode interface, qtecasound - 
+a Qt-based X-interface and various command-line utils suitable for 
+batch processing.
+
+manpageoptions()
+
+Notice that the order of parameters given on the command
+line is important!
+
+bf(GLOBAL OPTIONS)
+startdit()
+
+dit(-c)
+Starts ecasound in interactive mode. In interactive mode you can
+control ecasound with simple commands ("start", "stop", "pause",
+etc.). See url(ecasound-iam(1))(ecasound-iam_manpage.html).
+
+dit(-d:debug level)
+Set the debug level. Default is 0.
+
+dit(-q)
+Quiet mode, no output.
+ 
+enddit()
+
+bf(CHAINSETUP OPTIONS)
+startdit()
+
+dit(-n:name)
+Set the name of chainsetup to 'name'. If not specified, defaults
+either to "command-line-setup" or to the file name from which
+chainsetup was loaded. Whitespaces are not allowed.
+
+dit(-s[:]chainsetup-file)
+Create a new chainsetup from file 'chainsetup-file' and add
+it to the current session. Chainsetup can contain inputs, outputs, 
+chains, effects, controllers, etc. A session, on the other hand, 
+contains all the chainsetups. Although only one chainsetup can
+be connected at a time, you can switch between them on-the-fly.
+
+dit(-sr:sample_rate)
+Set internal sampling rate. This can be used to improve 
+realtime performance or to avoid resampling. Default is 44100 
+samples per second.
+
+enddit()
+
+bf(GENERAL)
+startdit()
+
+dit(-a:chainname1, chainname2, ...)
+Select active signal chains. All effects, inputs and outputs are assigned to
+these chains. If there are no -a options given, default chain is used.
+Chain name 'all' is reserved and means that all chains are selected. By giving 
+multiple -a options, you can control to which chains effects, inputs and outputs
+are assigned to. Look at the 
+bf(EXAMPLES)
+section for more detailed info about the usage of this option.
+
+dit(-b:buffer size)
+Sets the size of buffer in samples (must be an exponent of 2). This
+is quite an important option. For real-time processing, you should
+set this as low as possible to reduce the processing delay. Some
+machines can handle buffer values as low as 64 and 128. In some
+circumstances (for instance when using oscillator envelopes) small
+buffer sizes will make envelopes act more smoothly. When not processing
+in real-time (all inputs and outputs are normal files), values between
+512 - 4096 often give better results. Default is 1024.
+
+dit(-m:mix-mode)
+Force ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
+'simple' =  only one input/chain/output, 'normal' = normal single-threaded
+mode and 'mthreaded' = multithreaded mixing. In most cases, ecasound is 
+able to find out the correct mode automatically.
+
+dit(-r)
+Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
+ecasound doesn't have root priviledges. Beware! This gives better 
+performance, but can cause total lock-ups if something goes wrong.
+
+dit(-x)
+Truncate outputs. If this isn't set, ecasound opens all outputs 
+- if format allows it - in readwrite mode.
+
+dit(-z:feature)
+Enable 'feature'. 'db' enables double-buffering for audio inputs 
+that support it. 'psr' enables the em(precise-sample-rates) mode 
+for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html).
+
+enddit()
+
+bf(PROCESSING CONTROL)
+startdit()
+dit(-t:seconds) 
+Set processing time in seconds (doesn't have to be an integer value).
+If processing time isn't set, engine stops when all inputs are 
+finished.
+
+dit(-tl)
+Enable looping. When processing is finished, engine will start 
+again from the initial position.
+
+enddit()
+
+bf(INPUT/OUTPUT SETUP)
+
+See url(ecasound user's guide)(users_guide/users_guide.html) for 
+more detailed documentation.
+
+startdit()
+dit(-f:sample_format,channel,sample-rate)
+Set default sampling parameters. These are used for all following
+input and output files or until another -f is specified. If no -f
+option is present, ecasound uses s16_le/2ch/44100 as the default
+value. Some audio objects may override this altogether (for instance, 
+RIFF WAVE inputs and outputs).
+
+Sample format is given as a a formatted string. The first letter is 
+either "u", "s" and "f" (unsigned, signed, floating point). The 
+following number specifies sample size in bits. If sample is 
+little endian, "_le" is added to the end. Similarly if big endian, 
+"_be" is added. If endianess is not specified, host byte-oder is used. 
+Currently supported formats are "u8" (same as "8"), "s16_le" (same 
+as "16") and "s16_be".
+
+dit(-y:seconds)
+Set starting position for last specified input/output.
+
+dit(-i[:]input-file-or-device)
+Specifies a new input source that is connected to all selected chains.
+Connecting multiple inputs to the same chain isn't possible. Input
+can be a a file, device or some other audio object (see below). 
+If the input is a file, its type is determined using the file name 
+extension. Currently supported formats are RIFF WAVE files (.wav), 
+audio-cd tracks (.cdr), ecasound ewf-files (.ewf), RAW audio data
+(.raw) and MPEG files (.mp2,.mp3). Also, formats supported by the
+SGI audiofile library: AIFF (.aiff, .aifc, .aif) and Sun/NeXT audio 
+files (.au, .snd). MikMod is also supported (.xm, .mod, .s3m, 
+.it, etc). Supported devices are OSS audio devices (/dev/dsp*),
+ALSA audio and loopback devices (/dev/snd/pcm*, alsalb). If no inputs 
+are specified, the first non-option (doesn't start with '-') command
+line argument is considered to be an input.
+
+dit(-o[:]output-file-or-device)
+Works in the same way as the -i option. If no no outputs are specified,
+the default output device is used (see &tilde;/.ecasoundrc). Note! 
+you can't output to module formats supported by MikMod (this should
+be obvious) nor to ALSA's loopback device.
+
+em(SPECIAL INPUT/OUTPUT DEVICES)
+dit(ALSA devices)
+When using ALSA drivers, in addition to /dev/snd/pcm* files, you can 
+also use option syntax bf(-i[:]alsa,card_number,device_number).
+
+dit(ALSA loopback device)
+By using the ALSA loopback system, you can grab audio data from any
+other ALSA pcm device. Option syntax is 
+bf(-i[:]alsalb,card_number,device_number,loop_mode). Loopmode 
+is either bf("p") for looping a playback device or bf("c") for
+a capture device.
+
+dit(Null inputs/outputs)
+If you specify "null" or "/dev/null" as the input or output, 
+a null audio device is created. This is useful if you just want
+to analyze sample data without writing it to a file.
+
+dit(System standard streams and named pipes)
+You can use standard stream (stdin and stdout) by giving "stdin" 
+or "stdout" as the file name. Audio data is assumed to be in
+raw/headerless (.raw) format. If you want to use named pipes, 
+create a them with the proper file name extension.
+ 
+enddit()
+
+bf(EFFECT SETUP)
+
+dit(-ps:preset_name)
+Insert single-chain preset 'preset_name' to active chains.
+See ecasoundrc(5) for info about the preset file. 
+
+em(SIGNAL ANALYSIS)
+
+startdit()
+
+dit(-ev)
+Analyze sample data to find out how much the signal can
+be amplified without clipping. The resulting percent value
+can be used as a parameter to -ea and -eas effects. Also prints 
+a statistics table containing info about stereo-image and
+how different sample values are used.
+
+dit(-ezf)
+Find the optimal value for DC-adjusting. You can use the result
+as a parameter to -ezx effect.
+
+enddit()
+
+em(GENERAL SIGNAL PROCESSING ALGORITHMS)
+startdit()
+dit(-ea:amplify-%)
+Amplifies signal by amplify-% percent. 
+ 
+dit(-eac:amplify-%,channel)
+Amplifies signal of channel 'channel' by amplify-% percent. 'channel'
+ranges from 1...n where n is the total number of channels.
+
+dit(-eaw:amplify-%,max-clipped-samples)
+Amplifies signal by amplify-% percent. If number of consecutive
+clipped samples (resulting sample has the largest amplitude
+possible) reaches 'max-clipped-samples', a warning will be issued.
+ 
+dit(-ec:rate,threshold)
+Compressor (a simple one). 'rate' is the compression rate in
+decibels ('rate'dB change in input signal causes 1dB change 
+in output). 'threshold' varies between 0.0 (silence) and
+1.0 (max amplitude).
+
+dit(-eca:peak-level-%, release_time, fastrate, rate)
+A more advanced compressor (original algorithm by John S. Dyson). 
+If you give a value of 0 to any parameter, the default is used.
+'peak-level-%' essentially specifies how hard the peak limiter
+is pushed.  The default of 69% is good. 'release_time' is given 
+in seconds. This compressor is very sophisticated, and actually
+the release time is complex.  This is one of the dominant release 
+time controls, but the actual release time is dependent on a lot of 
+factors regarding the dynamics of the audio in. 'fastrate' is the 
+compression ratio for the fast compressor.  This is not really 
+the compression ratio.  Value of 1.0 is infinity to one, while the 
+default 0.50 is 2:1.  Another really good value is special cased in 
+the code: 0.25 is somewhat less than 2:1, and sounds super smooth.
+'rate' is the compression ratio for the entire compressor chain.  
+The default is 1.0, and holds the volume very constant without many nasty
+side effects.  However the dynamics in music are severely restricted,
+and a value of 0.5 might keep the music more intact.
+
+dit(-enm:threshold_level_%,th_time,attack,hold,release)
+Noise gate. Supports multichannel processing (each channel 
+processed separately). When signal amplitude falls below
+'threshold_level_%' percent (100% means maximum amplitude), gate 
+is activated. If the signal stays below the threshold for 
+'th_time' ms, it's faded out during the attack phase of 
+'attack' ms. If the signal raises above the 'threshold_level' 
+and stays there over 'hold' ms the gate is released during 
+'release' ms.
+
+dit(-epp:right-%)
+Normal pan effect. Balance value of 0 means to pan signal fully
+left and 100 fully right. If the panned signal is
+a stereo signal, left and right channels aren't mixed together.
+Use the -erm and -erc effects to force conversion to mono before 
+panning.
+
+dit(-ezx:left-dc-fix-value,right-dc-fix-value)
+Adjusts the signal DC by 'dc-fix-value'. Use -ezf to find the
+optimal value.
+ 
+enddit()
+
+em(FILTER EFFECTS)
+startdit()
+dit(-ef1:center_freq, width)
+Resonant bandpass filter. 'center_freq' is the center frequency. Width
+is specified in Hz. 
+
+dit(-ef3:cutoff_freq, reso, gain)
+Resonant lowpass filter. 'cutoffr_freq' is the filter cutoff
+frequency. 'reso' means resonance. Usually the best values for
+resonance are between 1.0 and 2.0, but you can use even bigger values.
+'gain' is the overall gain-factor. It's a simple multiplier (1.0 
+is the normal level). With high resonance values it often is useful 
+to reduce the gain value.
+
+dit(-efb:center_freq,width)
+Bandpass filter. 'center_freq' is the center frequency. Width
+is specified in Hz. 
+
+dit(-efh:cutoff_freq)
+Highpass filter. Only frequencies above 'cutoff_freq' are passed
+through.
+
+dit(-efi:delay_in_samples,radius)
+Inverse comb filter. Allows the spikes of the comb to pass through.
+The comb consists of 'delay_in_samples/2' spikes. The maximum
+value for 'radius' is 1.0. The closer it is to the maximum value,
+the deeper the dips of the comb.
+
+dit(-efl:cutoff_freq)
+Lowpass filter. Only frequencies below 'cutoff_freq' are passed
+through.
+
+dit(-efr:center_freq,width)
+Bandreject filter. 'center_freq' is the center frequency. Width
+is specified in Hz. 
+
+dit(-efs:center_freq,width)
+Resonator. 'center_freq' is the center frequency. Width is specified
+in Hz. Basicly just another resonating bandpass filter.
+
+enddit()
+
+em(CHANNEL MIXING / ROUTING)
+startdit()
+
+dit(-erc:from_channel, to_channel)
+Copy channel 'from_channel' to 'to_channel'. If 'to_channel' 
+doesn't exist, it is created. Channel indexing is started from 0.
+
+dit(-erm:to_channel)
+Mix all channels to channel 'to_channel'.  If 'to_channel' 
+doesn't exist, it is created. Channel indexing is started from 0.
+Channel indexing is started from 0.
+
+enddit()
+
+em(TIME-BASED EFFECTS)
+startdit()
+
+dit(-etd:delay_time,surround-mode,number_of_delays,mix-%)
+Delay effect. 'delay time' is the delay time in milliseconds.
+'surround-mode' is a integer with following meanings: 0 = normal, 
+1 = surround, 2 = stereo-spread. 'number_of_delays' should be 
+obvious. Beware that large number of delays and huge delay times 
+need a lot of CPU power. 'mix-%' determines how much effected (wet)
+signal is mixed to the original.
+
+dit(-etr:delay-time,surround-mode,feedback-%)
+Reverb effect. 'delay time' is the delay time in milliseconds.
+If 'surround-mode' is 'surround', reverbed signal moves around the
+stereo image. 'feedback-%' determines how much effected (wet)
+signal is fed back to the reverb.
+
+dit(-etf:delay_time)
+Fake-stereo effect. The input signal is summed to mono. The
+original signal goes to the left channels while a delayd 
+version (with delay of 'delay time' milliseconds) is goes to
+the right. With a delay time of 1-40 milliseconds this 
+adds a stereo-feel to mono-signals. 
+
+enddit()
+
+bf(GATE SETUP)
+
+startdit()
+
+dit(-gc:start-time,len)
+Time crop gate. Initially gate is closed. After 'start-time' seconds
+has elapse, gate opens and remains open for 'len' seconds.
+
+dit(-ge:othreshold%, cthold%,volume_mode)
+Threshold gate. Initially gate is closed. It is opened when volume 
+goes over 'othreshold' percent. After this, if volume drops below 
+'cthold' percent, gate is closed and won't be opened again. 
+If 'value_mode' is 'rms', average RMS volume is used. Otherwise
+peak average is used. 
+
+enddit()
+
+bf(CONTROL ENVELOPE SETUP)
+startdit()
+
+Controllers can be used to dynamically change effect parameters
+during processing. All controllers are attached to the selected
+(=usually the last specified effect/chainop) effect. The first 
+three parameters are common for all controllers. 'fx_param' 
+specifies the parameter to be controlled. Value '1' means 
+the first parameter, '2' the second and so on. 'low_range' 
+and 'high_range' set the value range. You really should see
+em(examples.html) for some more info. 
+
+dit(-kos:fx_param,low_range,high_range,freq,i_phase)
+Sine oscillator with frequency of 'freq' Hz and initial phase
+of 'i_phase' times pi. 
+
+dit(-kf:fx_param,low_range,high_range,freq,genosc_number)
+Generic oscillator. 'genosc_number' is the number of the 
+oscillator preset to be loaded. The location for the preset
+file is taken from ./ecasoundrc (see em(ecasoundrc(5))).
+
+dit(-kl:fx_param,low_range,high_range,time_in_seconds)
+Linear envelope that starts from 'low_range' and linearly 
+increases to 'high_range' during 'time_in_seconds'. Can
+be used for fadeins and fadeouts.
+
+dit(-km:fx_param,low_range,high_range,controller,channel)
+MIDI continuous controller (control change messages). 
+Messages on the MIDI-channel 'channel' that are coming from
+controller number 'controller' are used as the controller
+source. The MIDI-device is specified in ./ecasoundrc (see 
+em(ecasoundrc(5))). Defaults to em(/dev/midi).
+
+enddit()
+
+bf(INTERACTIVE MODE)
+
+See em(ecasound-iam(1)).
+ 
+manpagefiles()
+
+	em(~/.ecasoundrc)
+	The default ecasound resource file. See url(ecasoundrc(5))(ecasoundrc_manpage.html).
+	man page.
+
+	em(*.ews) 
+	Ecasound Wave Stats. These files are used to cache
+	waveform data. 
+
+	em(*.ecs) 
+	Ecasound Chainsetup files. Syntax is more or less the
+	same as with command-line arguments.
+
+manpageseealso()
+
+	url(qtecasound(1))(qtecasound_manpage.html),
+	url(ecatools(1))(ecatools_manpage.html), 
+	url(ecasound-iam(1))(ecasound-iam_manpage.html)
+	url(ecasoundrc(5))(ecasoundrc_manpage.html), 
+	url("HTML docs in the Documentation subdirectory")(index.html)
+
+manpagebugs()
+
+	See file BUGS. If ecasound behaves weirdly, try to
+	increase the debug level to see what's going on.
+
+manpageauthor()
+
+	Kai Vehmanen, <email(kaiv@wakkanet.fi)>
+
+htmlcommand(<insert name=ecasound_tail>)

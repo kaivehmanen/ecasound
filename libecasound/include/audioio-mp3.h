@@ -1,0 +1,75 @@
+#ifndef _AUDIOIO_MP3_H
+#define _AUDIOIO_MP3_H
+
+#include <string>
+#include "audioio-types.h"
+
+class SAMPLE_BUFFER;
+
+/**
+ * Interface class for MP3 input and output. Uses FIFO pipes to communicate 
+ * with mpg123 (input) and lame (output).
+ * @author Kai Vehmanen
+ */
+class MP3FILE : public AUDIO_IO_FILE {
+
+ private:
+  
+  static string default_mpg123_path;
+  static string default_mpg123_args;
+
+  static string default_lame_path;
+  static string default_lame_args;
+
+ public:
+
+  static void set_mpg123_path(const string& value);
+  static void set_mpg123_args(const string& value);
+
+  static void set_lame_path(const string& value);
+  static void set_lame_args(const string& value);
+
+ private:
+
+  bool finished_rep;
+  int pid_of_child;
+  long pcm;
+  long int bytes;
+  int fd;
+  
+  void seek_position_in_samples(long pos);
+  long int length_in_bytes(void) const;
+  void get_mp3_params(const string& fname);
+  
+  //  MP3FILE(const MP3FILE& x) { }
+  MP3FILE& operator=(const MP3FILE& x) { return *this; }
+
+  void fork_mpg123(void);
+  void kill_mpg123(void);
+  void fork_lame(void);
+  void kill_lame(void);
+  
+ public:
+
+  void open(void);
+  void close(void);
+  
+  long int read_samples(void* target_buffer, long int samples);
+  void write_samples(void* target_buffer, long int samples);
+
+  bool finished(void) const { return(finished_rep); }
+  void seek_position(void);
+
+  // --
+  // Realtime related functions
+  // --
+  
+  MP3FILE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& format);
+  MP3FILE::~MP3FILE(void);
+    
+  //    MP3FILE* new_expr(void) { return new MP3FILE(); }
+  MP3FILE* clone(void) { return new MP3FILE(*this); }
+};
+
+#endif
+

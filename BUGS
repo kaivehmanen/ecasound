@@ -1,0 +1,17 @@
+-----------------------------------------------------------------------
+*** Known bugs                                                      ***
+-----------------------------------------------------------------------
+
+- ALSA
+	- extra noises when starting playback
+- effects
+	- when saving chainsetups, presets are not saved as presets
+	  (actual effect definitions are used)
+- RIFF WAVE files
+	- doesn't preserve extra RIFF-blocks
+- controller sources
+	- big buffersizes cause problems; for instance 
+	  there's distortion when using sine-oscillators
+  	  with big buffers
+
+

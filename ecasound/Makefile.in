@@ -1,0 +1,398 @@
+# Makefile.in generated automatically by automake 1.4a from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+ACLOCAL = @ACLOCAL@
+AS = @AS@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+CC = @CC@
+CPP = @CPP@
+CXX = @CXX@
+DLLTOOL = @DLLTOOL@
+LD = @LD@
+LIBTOOL = @LIBTOOL@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+MOC = @MOC@
+NM = @NM@
+OBJDUMP = @OBJDUMP@
+PACKAGE = @PACKAGE@
+QT_INCLUDES = @QT_INCLUDES@
+QT_LDFLAGS = @QT_LDFLAGS@
+RANLIB = @RANLIB@
+VERSION = @VERSION@
+qt_includes = @qt_includes@
+qt_libraries = @qt_libraries@
+@INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
+@INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
+
+INCLUDES = -I. -I$(top_srcdir)/libecasound/include -I$(top_srcdir)/kvutils
+@USE_NCURSES_TRUE@termcap_library = -lncurses
+@USE_NCURSES_FALSE@termcap_library = -ltermcap
+@INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecasound_debug
+@INCLUDE_DEBUG_FALSE@bin_PROGRAMS = ecasound
+
+ecasound_SOURCES = eca-text.cpp eca-text.h textdebug.cpp textdebug.h
+ecasound_debug_SOURCES = $(ecasound_SOURCES)
+
+ecasound_LDADD =  		 $(top_srcdir)/libecasound/src/libecasound.la 		 $(top_srcdir)/readline-4.0/libreadline.a $(top_srcdir)/readline-4.0/libhistory.a                   $(termcap_library) 		 -L$(top_srcdir)/kvutils 		 -L$(top_srcdir)/kvutils/.libs -lkvutils
+
+#		 -ltermcap
+#		 -lreadline -lhistory
+ecasound_debug_LDADD = $(top_srcdir)/readline-4.0/libreadline.a $(top_srcdir)/readline-4.0/libhistory.a 		       $(top_srcdir)/libecasound/src/libecasound_debug.la 		       $(termcap_library) 		      -L$(top_srcdir)/kvutils 		      -L$(top_srcdir)/kvutils/.libs -lkvutils
+
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../config.h
+CONFIG_CLEAN_FILES = 
+PROGRAMS =  $(bin_PROGRAMS)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+ecasound_debug_OBJECTS =  eca-text.o textdebug.o
+@USE_NCURSES_FALSE@ecasound_debug_DEPENDENCIES =  \
+@USE_NCURSES_FALSE@$(top_srcdir)/readline-4.0/libreadline.a \
+@USE_NCURSES_FALSE@$(top_srcdir)/readline-4.0/libhistory.a \
+@USE_NCURSES_FALSE@$(top_srcdir)/libecasound/src/libecasound_debug.la
+@USE_NCURSES_TRUE@ecasound_debug_DEPENDENCIES =  \
+@USE_NCURSES_TRUE@$(top_srcdir)/readline-4.0/libreadline.a \
+@USE_NCURSES_TRUE@$(top_srcdir)/readline-4.0/libhistory.a \
+@USE_NCURSES_TRUE@$(top_srcdir)/libecasound/src/libecasound_debug.la
+ecasound_debug_LDFLAGS = 
+ecasound_OBJECTS =  eca-text.o textdebug.o
+@USE_NCURSES_FALSE@ecasound_DEPENDENCIES =  \
+@USE_NCURSES_FALSE@$(top_srcdir)/libecasound/src/libecasound.la \
+@USE_NCURSES_FALSE@$(top_srcdir)/readline-4.0/libreadline.a \
+@USE_NCURSES_FALSE@$(top_srcdir)/readline-4.0/libhistory.a
+@USE_NCURSES_TRUE@ecasound_DEPENDENCIES =  \
+@USE_NCURSES_TRUE@$(top_srcdir)/libecasound/src/libecasound.la \
+@USE_NCURSES_TRUE@$(top_srcdir)/readline-4.0/libreadline.a \
+@USE_NCURSES_TRUE@$(top_srcdir)/readline-4.0/libhistory.a
+ecasound_LDFLAGS = 
+CXXFLAGS = @CXXFLAGS@
+CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = gtar
+GZIP_ENV = --best
+SOURCES = $(ecasound_debug_SOURCES) $(ecasound_SOURCES)
+OBJECTS = $(ecasound_debug_OBJECTS) $(ecasound_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .S .c .cpp .lo .o .s
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps ecasound/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-binPROGRAMS:
+
+clean-binPROGRAMS:
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+
+distclean-binPROGRAMS:
+
+maintainer-clean-binPROGRAMS:
+
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo " $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	    $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	  else :; fi; \
+	done
+
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	done
+
+.c.o:
+	$(COMPILE) -c $<
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+.c.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+.s.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+.S.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+
+maintainer-clean-libtool:
+
+ecasound_debug: $(ecasound_debug_OBJECTS) $(ecasound_debug_DEPENDENCIES)
+	@rm -f ecasound_debug
+	$(CXXLINK) $(ecasound_debug_LDFLAGS) $(ecasound_debug_OBJECTS) $(ecasound_debug_LDADD) $(LIBS)
+
+ecasound: $(ecasound_OBJECTS) $(ecasound_DEPENDENCIES)
+	@rm -f ecasound
+	$(CXXLINK) $(ecasound_LDFLAGS) $(ecasound_OBJECTS) $(ecasound_LDADD) $(LIBS)
+.cpp.o:
+	$(CXXCOMPILE) -c $<
+.cpp.lo:
+	$(LTCXXCOMPILE) -c $<
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = ecasound
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+eca-text.o: eca-text.cpp ../kvutils/kvutils.h ../kvutils/message_item.h \
+	../kvutils/com_line.h ../kvutils/command_queue.h \
+	../kvutils/value_queue.h ../kvutils/kvu_numtostr.h \
+	../libecasound/include/eca-iamode-parser.h \
+	../libecasound/include/eca-error.h \
+	../libecasound/include/eca-controller.h \
+	../kvutils/definition_by_contract.h \
+	../libecasound/include/audioio.h \
+	../libecasound/include/eca-audio-position.h \
+	../libecasound/include/eca-audio-format.h ../config.h \
+	../libecasound/include/eca-chain.h \
+	../libecasound/include/eca-debug.h \
+	../libecasound/include/samplebuffer.h \
+	../libecasound/include/eca-chainop.h \
+	../libecasound/include/dynamic-object.h \
+	../libecasound/include/dynamic-parameters.h \
+	../libecasound/include/generic-controller.h \
+	../libecasound/include/ctrl-source.h \
+	../libecasound/include/eca-chainop-map.h \
+	../libecasound/include/eca-controller-map.h \
+	../libecasound/include/eca-session.h \
+	../libecasound/include/eca-resources.h \
+	../libecasound/include/resource-file.h \
+	../libecasound/include/eca-chainsetup.h \
+	../libecasound/include/eca-control-position.h \
+	../libecasound/include/eca-audio-objects.h \
+	../libecasound/include/eca-main.h \
+	../libecasound/include/eca-version.h ../readline-4.0/readline.h \
+	../readline-4.0/rlstdc.h ../readline-4.0/keymaps.h \
+	../readline-4.0/chardefs.h ../readline-4.0/tilde.h \
+	../readline-4.0/history.h textdebug.h eca-text.h
+textdebug.o: textdebug.cpp ../libecasound/include/eca-debug.h \
+	textdebug.h
+
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am: install-binPROGRAMS
+install-exec: install-exec-am
+
+install-data-am:
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-binPROGRAMS
+uninstall: uninstall-am
+all-am: Makefile $(PROGRAMS)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+installdirs:
+	$(mkinstalldirs)  $(DESTDIR)$(bindir)
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+mostlyclean-am:  mostlyclean-binPROGRAMS mostlyclean-compile \
+		mostlyclean-libtool mostlyclean-tags \
+		mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-binPROGRAMS clean-compile clean-libtool clean-tags \
+		clean-generic mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-binPROGRAMS distclean-compile distclean-libtool \
+		distclean-tags distclean-generic clean-am
+	-rm -f libtool
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-binPROGRAMS \
+		maintainer-clean-compile maintainer-clean-libtool \
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-binPROGRAMS distclean-binPROGRAMS clean-binPROGRAMS \
+maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile mostlyclean-libtool distclean-libtool \
+clean-libtool maintainer-clean-libtool tags mostlyclean-tags \
+distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
+dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+
+#		       -ltermcap
+#			 /usr/lib/libreadline.a /usr/lib/libhistory.a
+#ecasound_debug_LDFLAGS = -lkvutils
+# ecasound_LDADD = -lm -lpthread $(top_srcdir)/libecasound/src/libecasound.la
+# ../kvutils/.libs/libkvutils.a
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

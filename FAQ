@@ -1,0 +1,114 @@
+
+Contents 
+
+1: Compiling 
+1.1: Errors when compiling audioio-af.cpp 
+1.2: Errors when linking samplebuffer.o 
+1.3: If ecasound crashes - how to compile for debugging? 
+2: Installing 
+2.1: Is installing Qt 2.0 going to break KDE and other apps using Qt 1.xx? 
+2.2: Does qtecasound require KDE to be installed? 
+3: Using 
+3.1: Can't open shared shared libraries 
+3.2: How do I use the parameter xxx? 
+3.3: Ecasound isn't doing anything but it still seems to hog all CPU-time 
+3.4: What file format should I use for mixing and recording? 
+
+1: Compiling
+
+1.1: Errors when compiling audioio-af.cpp
+
+Upgrade your audiofile headers. At least 0.1.6 version of the library 
+has duplicate extern "C" -wrappers in the file aupvlist.h. The result
+looks like this:
+--cut--
+In file included from audioio-af.cpp:28:
+/usr/local/include/audiofile.h:603: parse error before `}'
+make[3]: *** [audioio-af.o] Error 1 
+--cut--
+
+1.2: Errors when linking samplebuffer.o
+
+If you get errors that look something like this...
+--cut--
+samplebuffer.o(.text+0x1bb): undefined reference to `SAMPLE_BUFFER::is_system_littleendian
+--cut--
+
+... you have a incompatible version of libstdc++. As ecasound uses
+many advanced features of standard C++, it requires libstdc++ 2.9.0
+or newer.
+
+1.3: If ecasound crashes - how to compile for debugging?
+
+The easiest way is to increase debug level (-d:level option). This
+gives you a lot of info. Sometimes however, this is not enough. For 
+debugging purposes, you should compile a separate debug version of 
+ecasound. You can do this with "make distclean ; ./configure --enable-debug 
+; make install". This produces a new set of executables and libraries 
+(libecasound_debug.so, ecasound_debug, qtecasound_debug, etc). Notice
+that these are considerably slower than normal optimized
+versions. To summarize, if ecasound acts weirdly, try to reproduce 
+the behaviour with _debug versions. This way all assertions are
+checked and extra debugging information helps to trace problems with
+gdb.
+
+2: Installing
+
+2.1: Is installing Qt 2.0 going to break KDE and other apps using Qt 1.xx?
+
+You can install the Qt 2.0 runtime libs and still run apps using the
+older Qt versions (like KDE). If you compile KDE/Qt programs yourself, 
+you can choose between Qt 1.x and 2.x by changing the symbolic link 
+"libqt.so". If it points to libqt.so.1, the program is linked to 1.x 
+libs and to 2.x libs if it points to libqt.so.2.
+
+See this ecasound-list message
+for more info.
+
+And of course you can just use the text-mode version of ecasound.
+It can do most things that the X-version (qtecasound) can do.
+
+2.2: Does qtecasound require KDE to be installed?
+
+No. In addition to the Qt runtime libraries, qtecasound only 
+requires the normal X libraries. In other words it should run
+under any window manager. And most likely it will also stay 
+this way. I might do a KDE/some-other specific version, but
+I'd still support the generic version. After all, ecasound isn't
+actually aimed at the masses... 
+
+3: Using
+
+3.1: Can't open shared shared libraries
+
+If you get the following error message...
+
+--cut--
+error in loading shared libraries: libecasound.so.1: cannot open shared object file: No such
+file or directory
+--cut--
+
+Add /usr/local/lib to your /etc/ld.so.conf and run "ldconfig". If
+you haven't installed ecasound to the default location, replace
+/usr/local/lib with the correct library path.
+
+3.2: How do I use the parameter xxx?
+
+The best place to start is the file examples.html. It can be found
+from www.wakkanet.fi/ecasound
+(ecasound home page). Next you should check the ecasound(1) manual
+page. Finally, help given by the -h command line 
+option is always up-to-date. If you still don't know what to do, mail me at 
+kaiv@wakkanet.fi. 
+
+3.3: Ecasound isn't doing anything but it still seems to hog all CPU-time
+
+You're probably running ecasound in raised-priority mode. It is turned on
+with the -r command line option or by specifying 
+"default-to-raisepriority true" in your ~/.ecasoundrc.
+
+3.4: What file format should I use for mixing and recording?
+
+You should always use .raw or .wav. By doing this, you will probably
+get better performance as these formats are internally supported by 
+ecasound.

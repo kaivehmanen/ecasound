@@ -1,0 +1,23 @@
+# --------------------------------------------------------------------
+# ecasound / single-chain effect presets
+# --------------------------------------------------------------------
+#
+# - all lines beginning with a '#' are ignored
+# - preset format:
+#   "preset_name_or_number chainop-spec1 chainop-spec2 ... "
+#
+# --------------------------------------------------------------------
+#
+# Bathroom reverb
+reverb1 -etr:40,0,85
+# A lowpass filter controlled by a sine oscillator 
+filter1 -ef3:800,1.5,0.9 -kos:1,400,4200,0.2,0
+# Compressor presets
+compress_supersoft -eca:0.69,0,0.25,0.25
+compress_soft -eca:0.69,0,0.25,0.5
+compress_medium -eca:0.69,0,0.25,1.0
+compress_hard -eca:0.69,0,0.5,1.0
+compress_infinite -eca:0.69,0,1.0,1.0
+compress_brutal -ec:9,0.69 
+# Noise gates
+noisegate_delanalog -enm:0.20,0.1,1000,50,0

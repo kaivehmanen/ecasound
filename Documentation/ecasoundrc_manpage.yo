@@ -1,0 +1,142 @@
+mailto(kaiv@wakkanet.fi)
+
+htmlcommand(
+<insert file=../es-makrot.txt>
+<insert name=ecasound_indexbar>
+
+<hr>
+<CENTER><H4><A HREF=index.html>[Index]</A>
+<A HREF=examples.html>[Examples]</A>
+<A HREF=ecasound_faq.html>[FAQ]</A>
+<A HREF=manpages.html>[Man pages]</A>
+<A HREF=users_guide/index.html>[User's guide]</A>
+<A HREF=programmers_guide/index.html>[Programmer's guide]</A>
+<A HREF=kdoc_pages.html>[Source tree]</A>
+<A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
+<CENTER><H4><A HREF=ecasound_manpage.html>[ecasound(1)]</A>
+<A HREF=ecatools_manpage.html>[ecatools(1)]</A>
+<A HREF=qtecasound_manpage.html>[qtecasound(1)]</A>
+<A HREF=ecasound-iam_manpage.html>[ecasound-iam(1)]</A>
+<A HREF=ecasoundrc_manpage.html>[ecasoundrc(5)]</A></H4></CENTER>
+<p>
+<hr>
+<center><h2> ecasound documentation - manual pages </h2></center>
+</p>
+)
+
+manpage(ecasoundrc)
+       (5)
+       (03.01.2000)
+       ()
+       (Multimedia software)
+
+
+manpagename(ecasoundrc)(ecasound rcfile)
+
+manpagesynopsis()
+    $HOME/.ecasoundrc
+
+manpagedescription()
+
+	bf(ecasoundrc) is the main configuration file for ecasound. 
+	If it doesn't exist, ecasound creates it with default 
+        values. If it exists, all name-value pairs are read. When 
+	you quit ecasound, bf(ecasoundrc) is rewritten if resource
+	values have been modified.
+
+	The format is quite simple. One line consists of 
+	a configuration variable and its value. Variable and value 
+	are separated with either '=' or ' '. Lines beginning with a
+	"#" are ignored (comment lines). 
+
+manpagesection(VARIABLES)
+
+startdit()
+
+	dit(midi-device)
+  	MIDI-device. If the device name is given in em(/dev/midi*) 
+	format, OSS/Linux os OSS/Lite drivers are used. 
+	Device em(/dev/snd/midiCxDy) opens an ALSA raw-MIDI 
+	device with card number 'x' and device number 'y'. 
+	Defaults to em(/dev/midi).
+
+  	dit(default-output)
+  	Output device to use. Defaults to em(/dev/dsp).
+
+  	dit(default-buffersize) 
+  	Sets the size of buffer in samples (must be an exponent of 2).
+  	Same as the bf(-b) command line options. Defaults to em(1024).
+
+  	dit(default-to-interactive-mode)
+  	Whether to always use interactive mode (true or false). Same as the
+  	the bf(-c) command line option. Defaults to em(false). 
+
+  	dit(default-to-raisepriority) 
+  	Whether to always raise runtime priority (true or false). Same as the
+  	the bf(-r) command line option. Defaults to em(false).
+
+  	dit(default-to-double-buffering) 
+	Whether to used advanced double-buffering with audio inputs
+	that support it. Defaults to em(false).
+
+	dit(default-to-precise-sample-rates) 
+	Whether to ignore sample rate differences (and possibly avoid 
+	resampling). Curretly only affects OSS-devices. Defaults to em(false).
+
+  	dit(resource-directory) 
+  	Directory for ecasound configuration files. 
+  	Defaults to em(/usr/local/share/ecasound).
+
+  	dit(resource-file-genosc-envelopes) 
+  	Configuration file for generic oscillators. Is located in the 
+  	resource directory. Defaults to em(generic_oscillators).
+
+  	dit(resource-file-single-effect-presets)
+  	Configuration file for single-chain effect presets. Is located in the 
+  	resource directory. Defaults to em(singlechain_effect_presets).
+
+  	dit(resource-file-multi-effect-presets)
+  	Configuration file for single-chain effect presets. Is located in the 
+  	resource directory. Defaults to em(multichain_effect_presets).
+
+	dit(ext-text-editor)
+	If em(ext-text-editor-use-getenv) is em(false) or "EDITOR" 
+	is null, value of this field is used. Defaults to em(pico).
+
+	dit(ext-text-editor-use-getenv)
+	Should ecasound try to query environment variable "EDITOR".
+	Defaults to em(true).
+
+	dit(ext-wave-editor)
+	Command line for executing an external wave editor. Defaults
+	to em(snd).
+
+	dit(ext-mpg123-path)
+	Path to mpg123. Defaults to em(mpg123).
+
+	dit(ext-mpg123-args)
+	Additional options that are passed to mpg123. Defaults to em("-b 0").
+
+	dit(ext-lame-path)
+	Path to lame. Defaults to em(lame).
+
+	dit(ext-lame-args)
+	Additional options that are passed to lame. Defaults to em("-b 128").
+
+	dit(ext-mikmod-path)
+	Path to mikmod. Defaults to em(mikmod).
+
+	dit(ext-mikmod-args)
+	Additional options that are passed to mikmod. Defaults to em("-p 0 --noloops").
+
+enddit()
+
+manpageseealso()
+
+	ecasound(1), qtecasound (1), ecatools (1), ecasound-iam(1)
+
+manpageauthor()
+
+	Kai Vehmanen, <email(kaiv@wakkanet.fi)>
+
+htmlcommand(<insert name=ecasound_tail>)

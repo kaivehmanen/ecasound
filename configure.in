@@ -1,0 +1,226 @@
+dnl ---
+dnl Process this file with autoconf to produce a configure script.
+dnl ---
+AC_INIT(libecasound/include/audiofx.h)
+AC_CONFIG_SUBDIRS(kvutils readline-4.0)
+
+dnl ---
+dnl Init automake
+dnl ---
+AM_INIT_AUTOMAKE(ecasound, 1.6.10d10)
+AM_CONFIG_HEADER(config.h)
+
+dnl ---
+dnl Checks for programs.
+dnl ---
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CPP
+AC_PROG_MAKE_SET
+dnl AC_PROG_RANLIB
+AM_PROG_LIBTOOL
+AC_PROG_INSTALL
+
+ACLOCAL=aclocal
+AUTOMAKE=automake
+AUTOCONF=autoconf
+AC_SUBST(ACLOCAL)
+AC_SUBST(AUTOCONF)
+AC_SUBST(AUTOMAKE)
+
+dnl ---
+dnl Sets experimental
+dnl ---
+AC_ARG_ENABLE(experimental,
+[  --enable-experimental	  Enable experimental code (default = no)],
+experimental=yes)
+if test x$experimental = xyes; then
+AC_DEFINE(FEELING_EXPERIMENTAL)
+fi
+
+dnl ---
+dnl Set CXXFLAGS.
+dnl ---
+CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math"
+dnl CXXFLAGS="-O2 -D_REENTRANT -fomit-frame-pointer -finline-functions -ffast-math"
+
+AC_ARG_ENABLE(debug,
+[  --enable-debug		  Enable debugging (default = no)],
+include_debug=yes)
+AM_CONDITIONAL(INCLUDE_DEBUG, test x$include_debug = xyes)
+if test x$include_debug = xyes; then
+CXXFLAGS="-D_REENTRANT -DENABLE_DBC -g -Wall"
+fi                                     
+
+AC_ARG_ENABLE(dbc,
+[  --enable-dbc 		  Enable checking dbc-assertions (default = no)],
+enable_dbc=yes)
+if test x$enable_dbc = xyes; then
+CXXFLAGS="$CXXFLAGS -DENABLE_DBC"
+fi                                     
+
+dnl ---
+dnl Checks for functions.
+dnl ---
+AC_FUNC_MMAP
+
+dnl ---
+dnl Checks for libraries.
+dnl ---
+AC_CHECK_LIB(m, sin)
+AC_CHECK_LIB(dl, dlopen)
+AC_CHECK_LIB(termcap, main, termcap_library=termcap,
+	AC_CHECK_LIB(ncurses, main, termcap_library=ncurses,
+		AC_MSG_ERROR([** neither termcap nor ncurses library is installed (needed by the console mode user interface) **])))
+AM_CONDITIONAL(USE_NCURSES, test $termcap_library = ncurses)
+AM_CONDITIONAL(USE_TERMCAP, test $termcap_library = termcap)
+
+dnl ---
+dnl POSIX.4 threads
+dnl ---
+AC_CHECK_LIB(pthread,pthread_create, ,
+	AC_CHECK_LIB(c_r,pthread_create, 
+		LDFLAGS="-pthreads",
+		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **])))
+
+dnl ---
+dnl Audiofile library
+dnl ---
+AC_CHECK_LIB(audiofile,main,af_support=yes,af_support=no)
+AC_ARG_ENABLE(audiofile,
+[  --disable-audiofile		  Disable libaudiofile (default = no)],
+af_support=no)
+AM_CONDITIONAL(COMPILE_AF, test x$af_support = xyes) 
+if test x$af_support = xyes; then
+AC_DEFINE(COMPILE_AF)
+fi                                     
+
+dnl ---
+dnl Audio drivers
+dnl ---
+AC_CHECK_LIB(asound,snd_cards,alsa_support=yes,alsa_support=no)
+AC_ARG_ENABLE(alsa,
+[  --disable-alsa		  Disable ALSA (default = no)],
+alsa_support=no)
+AM_CONDITIONAL(COMPILE_ALSA, test x$alsa_support = xyes) 
+if test x$alsa_support = xyes; then
+AC_DEFINE(COMPILE_ALSA)
+fi                                     
+AC_CHECK_LIB(asound,snd_pcm_record_params,AC_DEFINE(OLD_ALSALIB))
+
+dnl AM_PATH_ESD(0.2.4,esd_support=yes,esd_support=no)
+dnl AC_ARG_ENABLE(esd,
+dnl [  --disable-esd		  Disable ESD (default = no)],
+dnl esd_support=no)
+dnl AM_CONDITIONAL(COMPILE_ESD, test x$esd_support = xyes) 
+dnl if test x$esd_support = xyes; then
+dnl AC_DEFINE(COMPILE_ESD)
+dnl fi                                     
+
+AC_CHECK_HEADER(sys/soundcard.h,oss_support=yes,oss_support=no)
+AC_ARG_ENABLE(oss,
+[  --disable-oss		  Disable OSS (default = no)],
+oss_support=no)
+AM_CONDITIONAL(COMPILE_OSS, test x$oss_support = xyes) 
+if test x$oss_support = xyes; then
+AC_DEFINE(COMPILE_OSS)
+fi                                     
+
+dnl ---
+dnl Disabling OSS trigger functions
+dnl ---
+AC_ARG_ENABLE(osstrigger,
+[  --disable-osstrigger 	  Disable the use of OSS trigger functions (default = no)],
+osstrigger=yes)
+if test x$osstrigger = xyes; then
+AC_DEFINE(DISABLE_OSS_TRIGGER)
+fi
+
+dnl ---
+dnl Check for qt
+dnl ---
+AC_MSG_CHECKING(whether to build qtecasound)
+ AC_ARG_ENABLE(qt,
+[  --enable-qt                   Build qtecasound (default yes)],
+[
+# This happens if the parameter WAS specified, either --enable-qt or --disable-qt
+    case "$enableval" in
+
+        y | yes)
+
+            AC_MSG_RESULT(yes)
+            qt_support="yes"
+            ;;
+
+        n | no)
+
+            AC_MSG_RESULT(no)
+            qt_support="no"
+            ;;
+
+        *)
+
+	AC_MSG_ERROR([Invalid parameter value for --enable-qt: $enableval])
+            ;;
+    esac
+],
+[
+# This happens if the parameter was NOT specified, i.e. this is a default behavior
+	qt_support=yes
+    	AC_MSG_RESULT(yes)
+])
+
+# Now, it's a good time to check the conditions for building qtecasound
+
+AC_MSG_RESULT(checking qtecasound preconditions...)
+
+if test "$qt_support" = "yes"  ; then
+	dnl ---
+	dnl Check for libqt
+	dnl ---
+
+	AC_PATH_QT_2
+	if test x$qt_includes = x ; then
+	        AC_MSG_ERROR([qtecasound build requested, but libqt wasn't found. Fix this or try --disable-qt])
+	fi
+	if test x$qt_libraries = x ; then
+		qt_support=no
+	        AC_MSG_ERROR([qtecasound build requested, but libqt wasn't found. Fix this or try --disable-qt])
+	fi
+	AC_DEFINE(COMPILE_QTECASOUND)
+fi
+
+AM_CONDITIONAL(COMPILE_QTECASOUND, test x$qt_support = xyes)
+AC_MSG_RESULT(qtecasound preconditions: passed)
+
+dnl ---
+dnl Checks for header files.
+dnl ---
+dnl AC_HEADER_STDC
+AC_HEADER_STDC
+dnl --- AC_CHECK_HEADER(stl.h,, 
+dnl ---	AC_MSG_WARN([** C++/STL header files not found! ***]))
+AC_CHECK_HEADERS(fcntl.h sys/ioctl.h sys/time.h unistd.h)
+AC_HEADER_TIME
+
+dnl ---
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl ---
+AC_C_CONST
+AC_C_INLINE
+AC_C_BIGENDIAN
+AC_TYPE_SIZE_T
+
+dnl ---
+dnl Create outputs 
+dnl ---
+AC_OUTPUT([
+Makefile 
+libecasound/Makefile
+libecasound/include/Makefile
+libecasound/src/Makefile
+ecasound/Makefile
+qtecasound/Makefile
+ecatools/Makefile
+Documentation/Makefile
+])
