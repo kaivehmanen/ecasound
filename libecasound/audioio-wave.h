@@ -1,5 +1,5 @@
-#ifndef _AUDIOIO_WAVE_H
-#define _AUDIOIO_WAVE_H
+#ifndef INCLUDED_AUDIOIO_WAVE_H
+#define INCLUDED_AUDIOIO_WAVE_H
 
 #include <string>
 #include <inttypes.h>
@@ -45,12 +45,12 @@ typedef struct {
  */
 class WAVEFILE : public AUDIO_IO_BUFFERED {
 
-  ECA_FILE_IO* fio;
+  ECA_FILE_IO* fio_repp;
 
-  RH riff_header;
-  RF riff_format;
+  RH riff_header_rep;
+  RF riff_format_rep;
 
-  long int data_start_position;
+  long int data_start_position_rep;
   bool double_buffering_rep;
 
   /**
@@ -64,6 +64,29 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
    *  fio == 0
    */
   void format_query(void) throw(ECA_ERROR*);
+
+  enum Format_tags {
+    unknown		= (0x0000),
+    pcm			= (0x0001), 
+    adpcm		= (0x0002),
+    ieee_float          = (0x0003),
+    alaw		= (0x0006),
+    mulaw		= (0x0007),
+    oki_adpcm		= (0x0010),
+    ima_adpcm		= (0x0011),
+    digistd		= (0x0015),
+    digifix		= (0x0016),
+    dolby_ac2           = (0x0030),
+    gsm610              = (0x0031),
+    rockwell_adpcm      = (0x003b),
+    rockwell_digitalk   = (0x003c),
+    g721_adpcm          = (0x0040),
+    g728_celp           = (0x0041),
+    mpeg                = (0x0050),
+    mpeglayer3          = (0x0055),
+    g726_adpcm          = (0x0064),
+    g722_adpcm          = (0x0065)
+  };
     
  public:
 

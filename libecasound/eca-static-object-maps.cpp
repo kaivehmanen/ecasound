@@ -162,7 +162,7 @@ void register_default_audio_objects(void) {
 #ifdef ALSALIB_060
   device = new ALSA_PCM_DEVICE();
 #else
-  device = new ALSA_PCM_PLUGIN_DEVICE();
+  device = new ALSA_PCM2_PLUGIN_DEVICE();
 #endif // ALSALIB_060
   eca_audio_object_map.register_object("alsaplugin", device);
   eca_audio_device_map.register_object("alsaplugin", device);
