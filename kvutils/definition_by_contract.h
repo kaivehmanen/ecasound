@@ -51,13 +51,13 @@ class DEFINITION_BY_CONTRACT {
  protected:
   
   inline void require(bool expr, const char* expr_str, const char* file, int line) const {
-    check_invariant(file, line); if (!expr) throw(new DBC_EXCEPTION("require", expr_str, file, line));
+    check_invariant(file, line); if (!expr) throw(DBC_EXCEPTION("require", expr_str, file, line));
   }
   inline void ensure(bool expr, const char* expr_str, const char* file, int line) const {
-    if (!expr) throw(new DBC_EXCEPTION("ensure", expr_str, file, line)); check_invariant(file, line);
+    if (!expr) throw(DBC_EXCEPTION("ensure", expr_str, file, line)); check_invariant(file, line);
   }
   inline void check_invariant(const char* file, int line) const {
-    if (!class_invariant()) throw(new DBC_EXCEPTION("class invariant", "", file, line));
+    if (!class_invariant()) throw(DBC_EXCEPTION("class invariant", "", file, line));
   }
 
   virtual bool class_invariant(void) const { return(true); }

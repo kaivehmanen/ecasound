@@ -12,7 +12,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (12122000)
+       (04062001)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -226,6 +226,10 @@ Returning a list of strings is implemented using two functions:
 em(eci_last_string_list_count()) returns the number of strings
 available, and em(eci_last_string_list_item(int n)) returns a 
 pointer (const char*) to the string at index em(n).
+
+em(Note!) As of ecasound 2.0.1, the C ECI implementation also 
+	  provides reentrant access to the ECI API. These
+	  alternative routines are marked with '_r' postfix.
 
 subsubsect(Usage)
 

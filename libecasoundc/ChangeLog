@@ -2,6 +2,12 @@
 *** ecasound - changes and additions to libecasoundc interface      ***
 -----------------------------------------------------------------------
 
+2001-06-04  Kai Vehmanen  <kaiv@wakkanet.fi>
+
+	* library version changed to 1:0:1
+	* added reentrant variants for all ECI routines (submitted
+	  by Aymeric Jeanneau)
+	
 2001-04-27  Kai Vehmanen  <kaiv@wakkanet.fi>
 
 	* library version 0:0:0 frozen	

@@ -20,6 +20,9 @@ Last officially released version is -*> v2.0.0 *-
 ??062001 (v2.0.1)
 	- added: ecasoundrc - default-to-internal-buffering; select
 		 the default between -z:intbuf and -z:nointbuf
+	- added: alternative C ECI implementation providing reentrant
+		 access to the library; the new routines have a '_r' 
+		 postfix and are located in libecasoundc [ajeanneau]
 	- changed: completely rewritten mp3 header parsing; should 
 		   fix most of the compatibility problems
 	- fixed: disk buffers weren't properly flushed in -z:db mode 

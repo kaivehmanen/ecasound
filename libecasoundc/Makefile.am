@@ -8,10 +8,10 @@ AUTOMAKE_OPTIONS = foreign
 # !!!
 # remember to update eca-version.cpp
 if INCLUDE_DEBUG
-eca_ldflags = -version-info 0:0:0
+eca_ldflags = -version-info 1:0:1
 ecasound_libs = -L$(top_builddir)/libecasound/.libs -lecasound_debug
 else
-eca_ldflags = -s -version-info 0:0:0
+eca_ldflags = -s -version-info 1:0:1
 ecasound_libs = -L$(top_builddir)/libecasound/.libs -lecasound
 endif
 
