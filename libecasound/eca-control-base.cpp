@@ -392,7 +392,7 @@ double ECA_CONTROL_BASE::position_in_seconds_exact(void) const {
 /**
  * Return info about engine status.
  */
-string ECA_CONTROL_BASE::engine_status(void) const {
+std::string ECA_CONTROL_BASE::engine_status(void) const {
   if (is_engine_started() == true) {
     switch(engine_repp->status()) {
     case ECA_ENGINE::engine_status_running: 
@@ -435,9 +435,9 @@ std::string ECA_CONTROL_BASE::attached_chains_input(AUDIO_IO* aiod) const {
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  vector<string> t = selected_chainsetup_repp->get_attached_chains_to_input(aiod);
-  string out = "";
-  vector<string>::const_iterator p = t.begin();
+  std::vector<std::string> t = selected_chainsetup_repp->get_attached_chains_to_input(aiod);
+  std::string out = "";
+  std::vector<std::string>::const_iterator p = t.begin();
   while(p != t.end()) {
     out += *p;
     ++p;
@@ -457,9 +457,9 @@ std::string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  vector<string> t = selected_chainsetup_repp->get_attached_chains_to_output(aiod);
-  string out = "";
-  vector<string>::const_iterator p = t.begin();
+  std::vector<std::string> t = selected_chainsetup_repp->get_attached_chains_to_output(aiod);
+  std::string out = "";
+  std::vector<std::string>::const_iterator p = t.begin();
   while(p != t.end()) {
     out += *p;
     ++p;
@@ -474,7 +474,7 @@ std::string ECA_CONTROL_BASE::attached_chains_output(AUDIO_IO* aiod) const {
  *
  * @pre is_selected() == true
  */
-std::vector<std::string> ECA_CONTROL_BASE::attached_chains(const string& filename) const {
+std::vector<std::string> ECA_CONTROL_BASE::attached_chains(const std::string& filename) const {
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -507,7 +507,7 @@ void ECA_CONTROL_BASE::set_last_long_integer(long int v) {
   last_type_rep = "li";
 }
 
-void ECA_CONTROL_BASE::set_last_error(const string& s) {
+void ECA_CONTROL_BASE::set_last_error(const std::string& s) {
   last_error_rep = s;
 }
 
@@ -516,8 +516,8 @@ const std::string& ECA_CONTROL_BASE::last_string(void) const { return(last_s_rep
 double ECA_CONTROL_BASE::last_float(void) const { return(last_f_rep); }
 int ECA_CONTROL_BASE::last_integer(void) const { return(last_i_rep); } 
 long int ECA_CONTROL_BASE::last_long_integer(void) const { return(last_li_rep); }
-const string& ECA_CONTROL_BASE::last_error(void) const { return(last_error_rep); }
-const string& ECA_CONTROL_BASE::last_type(void) const { return(last_type_rep); }
+const std::string& ECA_CONTROL_BASE::last_error(void) const { return(last_error_rep); }
+const std::string& ECA_CONTROL_BASE::last_type(void) const { return(last_type_rep); }
 
 void ECA_CONTROL_BASE::clear_last_values(void) { 
   last_los_rep.clear();

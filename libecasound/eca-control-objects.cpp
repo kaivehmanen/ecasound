@@ -236,14 +236,14 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
     hot_swap = true;
     if (is_running()) restart = true;
   }
-  string origname = selected_chainsetup_repp->name();
-  string origfilename = selected_chainsetup_repp->filename();
+  std::string origname = selected_chainsetup_repp->name();
+  std::string origfilename = selected_chainsetup_repp->filename();
 
   TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
-  string tmpdir ("ecasound-");
+  std::string tmpdir ("ecasound-");
   char* tmp_p = getenv("USER");
   if (tmp_p != NULL) {
-    tmpdir += string(tmp_p);
+    tmpdir += std::string(tmp_p);
     tempfile_dir_rep.reserve_directory(tmpdir);
   }
   if (tempfile_dir_rep.is_valid() != true) {
@@ -251,7 +251,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
     return;
   }
 
-  string filename = tempfile_dir_rep.create_filename("cs-edit-tmp", ".ecs");
+  std::string filename = tempfile_dir_rep.create_filename("cs-edit-tmp", ".ecs");
 
   if (hot_swap == true)
     session_repp->connected_chainsetup_repp->set_name("cs-edit-temp");
@@ -263,7 +263,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
   else
     remove_chainsetup();
 
-  string editori = "";
+  std::string editori = "";
   if (resource_value("ext-text-editor-use-getenv") == "true") {
     if (getenv("EDITOR") != 0) {
       editori = getenv("EDITOR");
@@ -281,7 +281,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
   int res = ::system(editori.c_str());
 
   if (res == 127 || res == -1) {
-    ecadebug->msg("(eca-controller) Can't edit; unable to open file in text editor \"" + string(editori.c_str()) + "\".");
+    ecadebug->msg("(eca-controller) Can't edit; unable to open file in text editor \"" + std::string(editori.c_str()) + "\".");
 
   }
   else {
@@ -417,7 +417,7 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
   // --------
 
   bool no_errors = true;
-  string errmsg;
+  std::string errmsg;
   if (is_connected() == true) {
     disconnect_chainsetup();
   }
@@ -442,7 +442,7 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
 /**
  * Name of connected chainsetup.
  */
-string ECA_CONTROL_OBJECTS::connected_chainsetup(void) const {
+std::string ECA_CONTROL_OBJECTS::connected_chainsetup(void) const {
   if (session_repp->connected_chainsetup_repp != 0) {
     return(session_repp->connected_chainsetup_repp->name());
   }
@@ -795,11 +795,11 @@ void ECA_CONTROL_OBJECTS::select_chains_by_index(const std::vector<int>& index_n
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  vector<string> selchains;
-  for(vector<CHAIN*>::size_type p = 0; 
+  std::vector<std::string> selchains;
+  for(std::vector<CHAIN*>::size_type p = 0; 
       p != selected_chainsetup_repp->chains.size();
       p++) {
-    for(vector<int>::size_type q = 0;
+    for(std::vector<int>::size_type q = 0;
 	q != index_numbers.size();
 	q++) {
       if (index_numbers[q] == static_cast<int>(p + 1)) {
@@ -1091,7 +1091,7 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const std::string& sfrm,
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  string format;
+  std::string format;
   format = "-f:";
   format += sfrm;
   format += ",";
@@ -1586,9 +1586,9 @@ void ECA_CONTROL_OBJECTS::wave_edit_audio_object(void) {
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   DBC_REQUIRE(get_audio_input() != 0 || get_audio_output() != 0);
   // --------
-  string name = selected_audio_object_repp->label();
+  std::string name = selected_audio_object_repp->label();
 
-  int res = ::system(string(resource_value("ext-wave-editor") + " " + name).c_str());
+  int res = ::system(std::string(resource_value("ext-wave-editor") + " " + name).c_str());
   if (res == 127 || res == -1) {
     ecadebug->msg("(eca-controller) Can't edit; unable to open wave editor \"" 
 		  + resource_value("x-wave-editor") + "\".");

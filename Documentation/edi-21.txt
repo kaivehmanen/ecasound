@@ -22,7 +22,7 @@ Details:
   - update documentation [done!]
 - technical details
   - separate ECA_AUDIO_POSITION from ECA_AUDIO_FORMAT; make 
-    both of them inherit ECA_SAMPLERATE_AWARE [done!
+    both of them inherit ECA_SAMPLERATE_AWARE [done!]
   - implement ECA_CHAINSETUP_POSITION using ECA_AUDIO_POSITION [done!]
 - open issues
   - what's the role of ECA_AUDIO_TIME? [=> separate concrete class]

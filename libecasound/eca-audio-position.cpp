@@ -61,7 +61,7 @@ void ECA_AUDIO_POSITION::set_length_in_seconds(int pos_in_seconds)
 
 void ECA_AUDIO_POSITION::set_length_in_seconds(double pos_in_seconds)
 {
-  set_length_in_samples(pos_in_seconds * samples_per_second());  
+  set_length_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(pos_in_seconds * samples_per_second()));
 }
 
 SAMPLE_SPECS::sample_pos_t ECA_AUDIO_POSITION::position_in_samples(void) const
@@ -95,7 +95,7 @@ void ECA_AUDIO_POSITION::change_position_in_samples(SAMPLE_SPECS::sample_pos_t p
 
 void ECA_AUDIO_POSITION::change_position_in_seconds(double pos_in_seconds)
 {
-  change_position_in_samples(pos_in_seconds * samples_per_second());
+  change_position_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(pos_in_seconds * samples_per_second()));
 }
 
 void ECA_AUDIO_POSITION::set_position_in_seconds(int pos_in_seconds)
@@ -105,7 +105,7 @@ void ECA_AUDIO_POSITION::set_position_in_seconds(int pos_in_seconds)
 
 void ECA_AUDIO_POSITION::set_position_in_seconds(double pos_in_seconds)
 {
-  set_position_in_samples(pos_in_seconds * samples_per_second());
+  set_position_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(pos_in_seconds * samples_per_second()));
 }
 
 void ECA_AUDIO_POSITION::seek_first(void)
@@ -130,16 +130,16 @@ void ECA_AUDIO_POSITION::seek_position_in_samples_advance(SAMPLE_SPECS::sample_p
 
 void ECA_AUDIO_POSITION::seek_position_in_seconds(double pos_in_seconds)
 {
-  seek_position_in_samples(pos_in_seconds * samples_per_second());
+  seek_position_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(pos_in_seconds * samples_per_second()));
 }
 
 void ECA_AUDIO_POSITION::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_value)
 {
   double ratio (new_value);
   ratio /= samples_per_second();
-  set_position_in_samples(position_in_samples() * ratio);
+  set_position_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(position_in_samples() * ratio));
   if (length_set() == true) {
-    set_length_in_samples(length_in_samples() * ratio);
+    set_length_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(length_in_samples() * ratio));
   }
   ECA_SAMPLERATE_AWARE::set_samples_per_second(new_value);
 }

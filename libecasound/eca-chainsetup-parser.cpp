@@ -115,7 +115,7 @@ void ECA_CHAINSETUP_PARSER::interpret_object_option (const std::string& arg) {
 /**
  * Interpret a vector of options.
  */
-void ECA_CHAINSETUP_PARSER::interpret_options(vector<string>& opts) {
+void ECA_CHAINSETUP_PARSER::interpret_options(std::vector<std::string>& opts) {
   int optcount = static_cast<int>(opts.size());
   int global_matches = 0;
   int other_matches = 0;
@@ -125,7 +125,7 @@ void ECA_CHAINSETUP_PARSER::interpret_options(vector<string>& opts) {
   /*
    * phase1: parse global options only */
 
-  vector<string>::iterator p = opts.begin();
+  std::vector<std::string>::iterator p = opts.begin();
   p = opts.begin();
   while(p != opts.end()) {
     interpret_global_option(*p);
@@ -161,7 +161,7 @@ void ECA_CHAINSETUP_PARSER::interpret_options(vector<string>& opts) {
       interpret_global_option(*p);
       ecadebug->set_debug_level(dlevel);
       if (interpret_match_found() != true) {
-	interpret_set_result(false, string("Invalid argument, unable to parse: '") + *p + "'");
+	interpret_set_result(false, std::string("Invalid argument, unable to parse: '") + *p + "'");
 	break;
       }
       else {
@@ -175,7 +175,7 @@ void ECA_CHAINSETUP_PARSER::interpret_options(vector<string>& opts) {
   }
 
   if (other_matches + global_matches != optcount) {
-    ecadebug->msg(string("(eca-chainsetup-parser) Warning! Only ") + 
+    ecadebug->msg(std::string("(eca-chainsetup-parser) Warning! Only ") + 
 		  kvu_numtostr(other_matches) +
 		  "+" +
 		  kvu_numtostr(global_matches) +
@@ -236,7 +236,7 @@ void ECA_CHAINSETUP_PARSER::interpret_entry(void) {
 void ECA_CHAINSETUP_PARSER::interpret_exit(const std::string& arg) {
   if (istatus_rep != true) {
     /* option 'arg' was not found */
-    interpret_set_result(false, string("Interpreting option \"") +
+    interpret_set_result(false, std::string("Interpreting option \"") +
 			 arg + 
 			 "\" failed.");
   }
@@ -244,7 +244,7 @@ void ECA_CHAINSETUP_PARSER::interpret_exit(const std::string& arg) {
     /* option 'arg' was found, but incorrect */
     if (interpret_result() != true) {
       if (interpret_result_verbose() == "") {
-	interpret_set_result(false, string("Interpreting option \"") +
+	interpret_set_result(false, std::string("Interpreting option \"") +
 			     arg + 
 			     "\" failed.");
       }
@@ -657,7 +657,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu) {
       if (last_audio_object_repp != 0) {
 	if ((last_audio_object_repp->supported_io_modes() &
 	    AUDIO_IO::io_read) != AUDIO_IO::io_read) {
-	  interpret_set_result(false, string("(eca-chainsetup-parser) I/O-mode 'io_read' not supported by ") + last_audio_object_repp->name());
+	  interpret_set_result(false, std::string("(eca-chainsetup-parser) I/O-mode 'io_read' not supported by ") + last_audio_object_repp->name());
 	}
 	else {
 	  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
@@ -667,7 +667,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu) {
 	}
       }
       else {
-	interpret_set_result(false, string("(eca-chainsetup-parser) Unknown input object type '") + tname + "´.");
+	interpret_set_result(false, std::string("(eca-chainsetup-parser) Unknown input object type '") + tname + "´.");
       }
       break;
     }
@@ -687,7 +687,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu) {
 	}
 	if ((last_audio_object_repp->supported_io_modes() &
 	    mode_tmp != mode_tmp)) {
-	  interpret_set_result(false, string("(eca-chainsetup-parser) I/O-mode 'io_write' not supported by ") + last_audio_object_repp->name());
+	  interpret_set_result(false, std::string("(eca-chainsetup-parser) I/O-mode 'io_write' not supported by ") + last_audio_object_repp->name());
 	}
 	else {
 	  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
@@ -697,7 +697,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu) {
 	}
       }
       else {
-	interpret_set_result(false, string("(eca-chainsetup-parser) Format of output ") +
+	interpret_set_result(false, std::string("(eca-chainsetup-parser) Format of output ") +
 			     tname + " not recognized.");
       }
       break;
@@ -874,7 +874,7 @@ void ECA_CHAINSETUP_PARSER::interpret_controller (const std::string& argu) {
   DBC_REQUIRE(istatus_rep == false);
   // --------
 
-  string prefix = get_argument_prefix(argu);
+  std::string prefix = get_argument_prefix(argu);
   if (prefix == "kx") {
     csetup_repp->set_target_to_controller();
     ecadebug->msg(ECA_DEBUG::system_objects, "Selected controllers as parameter control targets.");
@@ -1069,7 +1069,7 @@ std::string ECA_CHAINSETUP_PARSER::chains_to_string(void) const {
 
   std::vector<CHAIN*>::size_type p = 0;
   while (p < csetup_repp->chains.size()) {
-    string tmpstr = csetup_repp->chains[p]->to_string();
+    std::string tmpstr = csetup_repp->chains[p]->to_string();
     if (tmpstr.size() > 0) {
       t << "-a:" << csetup_repp->chains[p]->name() << " ";
       t << tmpstr;
