@@ -6,7 +6,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{13082003}
+\date{20082003}
 \begin{document}
 
 \maketitle
@@ -17,28 +17,32 @@
 % ----------------------------------------------------------------------
 \chapter{Preface}
 
-This document describes ecasound from user's point of view. In
-addition to the actual user/client-programs, all essential ecasound 
+This document describes Ecasound from user's point of view. In
+addition to the actual user/client-programs, all essential Ecasound 
 library concepts and features are also discussed. To avoid duplicating
 documentation, I've used references to other sources whenever suitable. 
-For instance, ecasound's man pages are a very good (and up-to-date!)
+For instance, Ecasound's man pages are a very good (and up-to-date!)
 source of information. They are also available in HTML-format.
 
 If not otherwise specified, all documentation refers to the latest
-ecasound version.
+Ecasound version.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 20.08.2003 - Capitalize Ecasound in all cases where talking
+                   about the software package, not the console mode 
+		   user-interface. Updated JACK documentation with 
+		   a description of JACK and Ecasound states.
 \item 13.08.2003 - Updated documentation concerning JACK transport 
                    functions.
 \item 31.10.2002 - Few section layout bugs fixed.
 \item 30.10.2002 - Added JACK documentation, minor layout changes.
-\item 17.10.2002 - Updated ecasound overview.
+\item 17.10.2002 - Updated Ecasound overview.
 \item 17.07.2002 - Added documentation for ecasignalview.
 \item 18.05.2002 - Fixed a few typos.
-\item 21.10.2001 - Added material from the ecasound FAQ.
+\item 21.10.2001 - Added material from the Ecasound FAQ.
 \item 21.10.2001 - Added this history section. Document was 
       restructured and all major chapters reviewed.
 \item 01.02.2001 - Updated the ``Current position'' section.
@@ -49,7 +53,7 @@ ecasound version.
 \chapter{Introduction}
 
 % ----------------------------------------------------------------------
-\section{What is ecasound?}
+\section{What is Ecasound?}
 
 
 Ecasound is a software package designed for multitrack audio
@@ -65,17 +69,17 @@ the package.
 % ----------------------------------------------------------------------
 \section{History}
 
-I've programmed ecasound for my own recording purposes. The first 
+I've programmed Ecasound for my own recording purposes. The first 
 versions ran under IBM Os/2. I used them for finalizing my analog 
 4-track recordings. My 4-track was a nice tool, but it had its limits.
 So eventually I started to use Windows-based multitrack software. I
-still used ecasound for fx processing and finalizing. When I 
-ported ecasound to Linux, a lot of the code was rewritten from 
+still used Ecasound for fx processing and finalizing. When I 
+ported Ecasound to Linux, a lot of the code was rewritten from 
 scratch. During this I also added multitrack capabilities
-to ecasound. It took a lot of work, but in the end I was able to 
+to Ecasound. It took a lot of work, but in the end I was able to 
 get rid of all my Windows recording software. Nowadays I use 
-ecasound for all my music projects. Because of this, I also 
-continue to improve and develop ecasound.
+Ecasound for all my music projects. Because of this, I also 
+continue to improve and develop Ecasound.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
@@ -84,7 +88,7 @@ continue to improve and develop ecasound.
 % ----------------------------------------------------------------------
 \section{Audio object}
 
-Audio objects are used to transfer audio from and to ecasound. 
+Audio objects are used to transfer audio from and to Ecasound. 
 Usually audio objects are either files (like wav, mp3 or ogg) 
 or devices (soundcard input\&output). There are also some
 special audio object types for transfering data between 
@@ -132,7 +136,7 @@ operators and controllers.
 Chainsetup is the central data object. All other objects (inputs,
 outputs, chains, etc) are connected to some chainsetup. 
 Many chainsetups can exist at the same time (during one session),
-but only one of them can be in use. In ecasound documentation, 
+but only one of them can be in use. In Ecasound documentation, 
 the term \emph{connected} is used to describe a chainsetup that
 is in use. 
 
@@ -143,9 +147,9 @@ chainsetup is the one that is currently edited.
 Loading and saving chainsetups is the primary mechanism 
 for storing and restoring state information. When saving 
 to files, the \emph{.ecs} file format is used. The file syntax
-uses the same notation as ecasound's console (and command-line)
+uses the same notation as Ecasound's console (and command-line)
 interface. This makes it easy to edit the chainsetup files
-outside ecasound, either manually or using external utils.
+outside Ecasound, either manually or using external utils.
 See \texttt{ecasound(1)} man page for details.
 
 % ----------------------------------------------------------------------
@@ -167,14 +171,14 @@ and ``Ecasound Programmer's Guide'' for more information.
 % ----------------------------------------------------------------------
 \section{Ecasound Interactive Mode - EIAM}
 
-Most of ecasound's functionality is located in one 
+Most of Ecasound's functionality is located in one 
 central library (libecasound). One thing that this library 
 provides is a simple interpreter, which can be used for
-controlling ecasound. This mode of operation is better
-known as ecasound's interactive mode.
+controlling Ecasound. This mode of operation is better
+known as Ecasound's interactive mode.
 
 The most common frontend for EIAM is the console-mode
-ecasound program. You can enter interactive mode 
+Ecasound program. You can enter interactive mode 
 by issuing ``ecasound -c''. For more detailed information
 about EIAM, see \texttt{ecasound-iam(1)} man page.
 
@@ -212,20 +216,20 @@ parts of libecasound. To name a few places:
 % ----------------------------------------------------------------------
 \section{Where to start?}
 
-There's no one single way to use ecasound. You can use it as 
+There's no one single way to use Ecasound. You can use it as 
 a simple glue component for doing tasks that aren't handled by
-other applications you are using, or because ecasound does these tasks
-more easily (or better even :)). But ecasound can also serve as the 
+other applications you are using, or because Ecasound does these tasks
+more easily (or better even :)). But Ecasound can also serve as the 
 centre of your studio setup, doing everything from effects processing 
 to multitrack recording and mixing.
 
 This flexibility doesn't come for free. It's difficult to describe
-ecasound's features in a few phrases. Because of this, new users
+Ecasound's features in a few phrases. Because of this, new users
 are encouraged to start from the \texttt{Examples} page - 
 ``Ecasounds web site -> Documentation -> Examples''. It isn't 
 a perfect introduction, and definitely not the only way to use 
-ecasound, but it does give an overall view of what can be done
-with ecasound, and more importantly, it shows that most tasks are 
+Ecasound, but it does give an overall view of what can be done
+with Ecasound, and more importantly, it shows that most tasks are 
 actually quite easy to do.
 
 % ----------------------------------------------------------------------
@@ -254,7 +258,7 @@ these rules always apply:
 \section{Chain operators and controllers}
 
 Best place to start is to read through the \texttt{ecasound(1)} man
-page, which contains documentation for all native ecasound 
+page, which contains documentation for all native Ecasound 
 chain objects.
 
 % ----------------------------------------------------------------------
@@ -279,7 +283,7 @@ here's a quick list of things to try:
 \begin{itemize}
 \item Tune your disks (see the article)
 \item Enable ecasound's double-buffering system by using the em(-z:db)
-      option [note! this only necessary with ecasound 2.0.x and older]
+      option [note! this only necessary with Ecasound 2.0.x and older]
 \item If still having problems, run ecasound as root (or with SUID-bit
       set) and use ecasound's em(-r) option. This will raise ecasound's
       scheduling priority to realtime (SCHED\_FIFO). [with ecasound 2.1
@@ -303,7 +307,7 @@ section "Notes on Full Duplex Recording, and Other Realtime Issues".
 \subsection{Problems with panning mono files}
 
 In situations where you need to convert mono
-audio objects to multichannel objects, ecasound
+audio objects to multichannel objects, Ecasound
 can behave in somewhat unexpected manner.
 
 For instance, the correct way to set panning for 
@@ -356,13 +360,13 @@ files.
 \chapter{User interfaces and Applications}
 
 For a complete list of user-interfaces and applications built
-on top of ecasound, visit ecasound's web site at ``http://www.eca.cx''.
+on top of Ecasound, visit Ecasound's web site at ``http://www.eca.cx''.
 
 % ----------------------------------------------------------------------
 \section{Ecasound}
 
 The standalone program ``ecasound'' is the primary user interface
-for ecasound. 
+for Ecasound. 
 
 % FIXME: add examples from the 'examples' page
 
@@ -446,9 +450,9 @@ See \texttt{ecatools(1)} man page.
 \section{Audio loop devices}
 
 Just by using normal chain connections it's not possible to 
-route audio from one ecasound chain to another. One way
+route audio from one Ecasound chain to another. One way
 around this limitation is loop devices. They were introduced
-in ecasound 1.7.0.
+in Ecasound 1.7.0.
 
 \subsection{Example of use}
 
@@ -484,7 +488,7 @@ multitrack recording (output offsetting ) and looping.
 \subsection{File format}
 
 Ewf-files are stored in ascii format. The syntax is based on ``key=value''
-pairs. The same syntax is used with ecasound resource files. See
+pairs. The same syntax is used with Ecasound resource files. See
 \texttt{ecasoundrc(5)} man page for detailed info. Currently
 recognized ewf keywords are:
 
@@ -543,7 +547,7 @@ Just like in shell scripts, the '\textbackslash' character can
 be used to spread definitions across multiple lines.
 
 \subsection{Example of preset use}
-Ecasound effect presets are in fact small ecasound engines that
+Ecasound effect presets are in fact small Ecasound engines that
 behave just like native effects. Here's an example of 
 multi-chain effect preset:
 
@@ -566,7 +570,7 @@ ecasound -a:1 -i:some.mp3 -pf:bassbooster.ecp
  \end{verbatim} 
 
 When separate files are used (the ``-pf:name'' option), 
-ecasound always loads the first preset it finds. If the 
+Ecasound always loads the first preset it finds. If the 
 file contains more presets (additional ``key=value'' -pairs),
 they are ignored.
 
@@ -648,14 +652,14 @@ the LADSPA web site at ``www.ladspa.org'' for more information.
 Just installing the LADSPA SDK - ``www.ladspa.org)(http://www.ladspa.org''
 - should be enough. The plugins themselves are stored in shared library 
 files (.so). They are usually stored in ``/usr/local/lib/ladspa''. To test 
-whether ecasound finds the plugins, issue:
+whether Ecasound finds the plugins, issue:
 
 echo "ladspa-register" | ecasound -c
 
 You should get a list of all installed LADSPA plugins. If this doesn't
-work, you need to make sure ecasound is compiled with LADSPA enabled (ie.
-ladspa.h header was present when ecasound was compiled). The precompiled
-rpm-binaries have this, but if you've compiled ecasound yourself you
+work, you need to make sure Ecasound is compiled with LADSPA enabled (ie.
+ladspa.h header was present when Ecasound was compiled). The precompiled
+rpm-binaries have this, but if you've compiled Ecasound yourself you
 should recompile after installing the LADSPA SDK.
 
 Also, check Dave Phillips' great
@@ -679,19 +683,19 @@ work. This means that it focuses on two key areas: synchronous
 execution of all clients, and low latency operation. 
 
 If compiled with JACK support enabled (the ``--with-jack'' configure
-option), ecasound can be used with JACK, both for input and output
+option), Ecasound can be used with JACK, both for input and output
 as well as transport control.
 
 \subsection{Basic Input and Output}
 
-Let's start with how to play a file using ecasound and JACK:
+Let's start with how to play a file using Ecasound and JACK:
 
 \begin{verbatim}
 ecasound -i foo.wav -o jack_alsa
 \end{verbatim}
 
 This will create a separate JACK output port for each channel
-of foo.wav, and automatically connect these ecasound ports to
+of foo.wav, and automatically connect these Ecasound ports to
 the ALSA PCM output ports in the JACK server. The connections
 are as follows:
 
@@ -729,7 +733,7 @@ ecasound -i jack_generic,local_portprefix -o foo.wav
 
 ``jack'' and ``jack\_auto'' both create a set of input
 (ecasound:in\_X) and/or output (ecasound:out\_X) ports.
-In the former case, ecasound doesn't make any implicit
+In the former case, Ecasound doesn't make any implicit
 connections, but in latter case the created ports
 are automatically connected to the matching ports 
 of the specified client (client:in\_X or client:out\_X).
@@ -749,31 +753,32 @@ application. Ecasound can support this functionality in
 four different modes (``notransport'', ``send'', ``recv'' 
 and ``sendrecv'').
 
-By default ecasound will send all local transport events
-to other JACK clients:
+By default Ecasound will both send and reveive transport 
+events (position and state) to other JACK clients 
+(mode ``sendrecv''):
 
 \begin{verbatim}
 ecasound -c -i null -o jack
 \end{verbatim}
 
-To use transport control in ecasound, you have to have at least
+To use transport control in Ecasound, you have to have at least
 one publish input or output JACK port. Here we publish
-one null output port. After giving the initial ``engine-start'' command
-in ecasound interactive mode, you are now able to use
+one null output port. After giving the initial ``engine-launch'' command
+in Ecasound interactive mode, you are now able to use
 further EIAM commands to control all other JACK apps connected
 to the same server. Commands like 
 ``stop'', ``setpos 20'', ``rw 10'', ``fw 10'', and so should
 affect other apps.
 
-By default, ecasound doesn't react to outside transport 
+By default, Ecasound doesn't react to outside transport 
 control. To enable this:
 
 \begin{verbatim}
 ecasound -c -i foo.wav -o jack_alsa -G:jack,eca_slave,recv
 \end{verbatim}
                                                                
-After giving an initial ``engine-start'' to ecasound, you should
-now be able to use other JACK apps to control ecasound's
+After giving an initial ``engine-launch'' to Ecasound, you should
+now be able to use other JACK apps to control Ecasound's
 playback of ``foo.wav''. 
 
 To combine external control with the ability to control 
@@ -783,11 +788,45 @@ the transport from ecasound's user-interface:
 ecasound -c -i foo.wav -o jack_alsa -G:jack,eca_slave,sendrecv
 \end{verbatim}
 
+\subsection{JACK and Ecasound states}
+
+To have a good understand of the overall system, it's important
+to understand how Ecasound and JACK states related to each other.
+
+When Ecasound chainsetup is connected (EIAM-command ``cs-connect''),
+a connection is established with the JACK server, and all the 
+JACK ports in that chainsetup are registered to it.
+
+Once Ecasound's engine is launched with EIAM-command ``engine-launch'',
+connections (if any specified) are made to the ports of other
+JACK clients. In this state Ecasound is ready to process
+incoming transport state and position changes.
+
+When Ecasound processing is started (either with ``start'' or
+by an incoming transport event), Ecasound's engine runs 
+as a node in the JACK system.
+
+When processing is stopped (either with ``stop'', or by a
+transport event), Ecasound's engine is not run.
+
+Any connections (iniated by Ecasound) to other clients, 
+are disconnected once ``engine-halt'' is issued and engine
+operation is stopped.
+
+Connection to the remote JACK server as well as unregistering
+any ports is performed when chainsetup is disconnected 
+(``cs-disconnect'').
+
+Note! Normally you don't need to go through all the steps one
+by one. Instead issuing ``start'' will automatically connect
+the chainsetup and launch the engine. Similarly ``cs-disconnect''
+will stop processing and halt the engine if needed.
+
 \subsection{Troubleshooting}
 
 Ecasound v2.2 and earlier don't have the capability to change
 the engine buffersize and sampling rate dynamically during 
-processing. As a consequence, running ecasound will fail if
+processing. As a consequence, running Ecasound will fail if
 the currrent values for these parameters do not match to
 the ones used by the JACK server. In other words, you have
 to correctly set the buffersize (with ``-b:xxx'') and sampling 
@@ -795,8 +834,8 @@ rate (with ``-f:bits,channels,srate'' and possibly using the
 \emph{resample} audio object). This is the first thing to
 check if communication with JACK does not work.
 
-Future versions of ecasound will hopefully solve this 
-problem. This issue covered by ecasound development item 
+Future versions of Ecasound will hopefully solve this 
+problem. This issue covered by Ecasound development item 
 ``edi-31 - Support for dynamic sampling rate and buffersize changes.''.
 
 % ----------------------------------------------------------------------
@@ -806,19 +845,19 @@ problem. This issue covered by ecasound development item
 % ----------------------------------------------------------------------
 \section{Security considerations when running with root privileges}
 
-When given the -r option (raise priority), ecasound tries to raise 
+When given the -r option (raise priority), Ecasound tries to raise 
 its scheduling priority (to so called SCHED\_FIFO realtime scheduling)
 and to avoid swapping, locks all its memory. To do this,
-root-privileges are required. So either ecasound has to be run as
+root-privileges are required. So either Ecasound has to be run as
 root (logged in as root, or using the 'sudo' program), or it has to be
 installed with the suid-root bit set. Now is this a safe thing to do?
 
-Although there are no known vulnerabilities, setting ecasound suid-root is
+Although there are no known vulnerabilities, setting Ecasound suid-root is
 not safe. Whether this is a real problem depends on the particular setup
 (whether connected to network or not, any untrusted users with shell
 access, ...).
 
-The basic problem is that ecasound (or at least 2.0 and earlier) 
+The basic problem is that Ecasound (or at least 2.0 and earlier) 
 doesn't contain any code for altering privilege levels. If it is run
 with root-privileges, it does everything as root - including forking
 external programs such as mp3 and ogg utilities and editors.
@@ -837,7 +876,7 @@ root):
 
 In other words, ecasound binary is set as suid-root (so it is run with
 root-privileges), but only root and members of the 'ecausers' groups can   
-start it. Now just add all trusted ecasound users to the group and you are
+start it. Now just add all trusted Ecasound users to the group and you are
 set.
 
 The ideal solution would be that ecasound would not need to be run with
