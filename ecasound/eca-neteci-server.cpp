@@ -2,6 +2,9 @@
 // eca-neteci-server.c: NetECI server implementation.
 // Copyright (C) 2002,2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 3
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -88,12 +91,12 @@ ECA_NETECI_SERVER::~ECA_NETECI_SERVER(void)
  */
 void* ECA_NETECI_SERVER::launch_server_thread(void* arg)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-neteci-server) Server thread started");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Server thread started");
 
   ECA_NETECI_SERVER* self = 
     reinterpret_cast<ECA_NETECI_SERVER*>(arg);
   self->run();
-  return(0);
+  return 0;
 }
 
 void ECA_NETECI_SERVER::run(void)
@@ -105,14 +108,14 @@ void ECA_NETECI_SERVER::run(void)
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		"(eca-neteci-server) Unable to start NetECI server. Please check that no other program is using the TCP port "
+		"Unable to start NetECI server. Please check that no other program is using the TCP port "
 		+ kvu_numtostr(state_repp->daemon_port)
 		+ ".");
   }
   close_server_socket();
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-	      "(eca-neteci-server) server thread exiting");
+	      "server thread exiting");
 }
 
 /**
@@ -159,7 +162,7 @@ void ECA_NETECI_SERVER::open_server_socket(void)
   int val = 1;
   int ret = setsockopt(srvfd_rep, SOL_SOCKET, SO_REUSEADDR, (void *)&val, sizeof(val));
   if (ret < 0) 
-    std::cerr << "(eca-neteci-server) setsockopt() failed." << endl;
+    std::cerr << "setsockopt() failed." << endl;
   
   // int res = bind(srvfd_rep, (struct sockaddr*)addr_repp, sizeof(*addr_repp));
   
@@ -174,20 +177,20 @@ void ECA_NETECI_SERVER::open_server_socket(void)
     if (res == 0) {
       int res = fcntl(srvfd_rep, F_SETFL, O_NONBLOCK);
       if (res == -1) 
-	std::cerr << "(eca-neteci-server) fcntl() failed." << endl;
+	std::cerr << "fcntl() failed." << endl;
       
-      NETECI_DEBUG(std::cout << "(eca-neteci-server) server socket created." << endl);
+      NETECI_DEBUG(std::cout << "server socket created." << endl);
       server_listening_rep = true;
     }
     else 
-      std::cerr << "(eca-neteci-server) listen() failed." << endl;
+      std::cerr << "listen() failed." << endl;
   }
   else {
     if (unix_sockets_rep == true) {
       unlink(socketpath_rep.c_str());
     }
     socketpath_rep.resize(0);
-    std::cerr << "(eca-neteci-server) bind() failed." << endl;
+    std::cerr << "bind() failed." << endl;
   }
   
   DBC_ENSURE((unix_sockets_rep == true) && 
@@ -204,7 +207,7 @@ void ECA_NETECI_SERVER::close_server_socket(void)
   DBC_REQUIRE(srvfd_rep > 0);
   DBC_REQUIRE(server_listening_rep == true);
 
-  NETECI_DEBUG(cerr << "(eca-neteci-server) closing socket " << kvu_numtostr(srvfd_rep) << "." << endl);
+  NETECI_DEBUG(cerr << "closing socket " << kvu_numtostr(srvfd_rep) << "." << endl);
   close(srvfd_rep);
   srvfd_rep = -1;
   server_listening_rep = false;
@@ -231,12 +234,12 @@ void ECA_NETECI_SERVER::listen_for_events(void)
    * - return to poll
    */
   while(state_repp->exit_request == 0) {
-    // NETECI_DEBUG(cerr << "(eca-neteci-server) checking for events" << endl);
+    // NETECI_DEBUG(cerr << "checking for events" << endl);
     check_for_events(2000);
   }
 
   if (state_repp->exit_request != 0) {
-    NETECI_DEBUG(cerr << "(eca-neteci-server) exit_request received" << endl);
+    NETECI_DEBUG(cerr << "exit_request received" << endl);
   }
 }
 
@@ -326,12 +329,12 @@ void ECA_NETECI_SERVER::handle_connection(int fd)
   }
 
   ECA_LOG_MSG(ECA_LOGGER::info,
-	      "(eca-neteci-server) New connection from " + 
+	      "New connection from " + 
 	      peername + ".");
 
 
   if (connfd >= 0) {
-    NETECI_DEBUG(cerr << "(eca-neteci-server) incoming connection accepted" << endl);
+    NETECI_DEBUG(cerr << "incoming connection accepted" << endl);
     struct ecasound_neteci_server_client* client = new struct ecasound_neteci_server_client; /* add a new client */
     client->fd = connfd; 
     client->buffer_length = ECA_NETECI_START_BUFFER_SIZE;
@@ -350,7 +353,7 @@ void ECA_NETECI_SERVER::handle_client_messages(struct ecasound_neteci_server_cli
   char* buf[128];
   int connfd = client->fd;
 
-  NETECI_DEBUG(cerr << "(eca-neteci-server) handle_client_messages for fd " 
+  NETECI_DEBUG(cerr << "handle_client_messages for fd " 
 	       << connfd << endl);
 
   ssize_t c = kvu_fd_read(connfd, buf, 128, 5000);
@@ -359,7 +362,7 @@ void ECA_NETECI_SERVER::handle_client_messages(struct ecasound_neteci_server_cli
     while(parsed_cmd_queue_rep.size() > 0) {
       const string& nextcmd = parsed_cmd_queue_rep.front();
       if (nextcmd == "quit" || nextcmd == "q") {
-	NETECI_DEBUG(cerr << "(eca-neteci-server) client initiated quit, removing client-fd " << connfd << "." << endl);
+	NETECI_DEBUG(cerr << "client initiated quit, removing client-fd " << connfd << "." << endl);
 	remove_client(client);
       }
       else {
@@ -371,7 +374,7 @@ void ECA_NETECI_SERVER::handle_client_messages(struct ecasound_neteci_server_cli
   }
   else {
     /* read() <= 0 */
-    NETECI_DEBUG(cerr << "(eca-neteci-server) read error, removing client-fd " << connfd << "." << endl);
+    NETECI_DEBUG(cerr << "read error, removing client-fd " << connfd << "." << endl);
     remove_client(client);
   }
 }
@@ -386,7 +389,7 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
   DBC_DECLARE(int old_client_ptr = client->buffer_current_ptr);
   DBC_DECLARE(unsigned int old_cmd_queue_size = parsed_cmd_queue_rep.size());
 
-  NETECI_DEBUG(cerr << "(eca-neteci-server) parse incoming data; "
+  NETECI_DEBUG(cerr << "parse incoming data; "
 	       << bytes << " bytes. Buffer length is " 
 	       << client->buffer_length << endl);
   
@@ -397,11 +400,11 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
       char *new_buffer = new char [new_buffer_length];
 
       if (new_buffer_length > ECA_NETECI_MAX_BUFFER_SIZE) {
-	cerr << "(eca-neteci-server) client buffer overflow, unable to increase buffer size. flushing..." << endl;
+	cerr << "client buffer overflow, unable to increase buffer size. flushing..." << endl;
 	client->buffer_current_ptr = 0;
       }
       else {
-	NETECI_DEBUG(cerr << "(eca-neteci-server) client buffer overflow, increasing buffer size from "
+	NETECI_DEBUG(cerr << "client buffer overflow, increasing buffer size from "
 		     << client->buffer_length << " to " << new_buffer_length << " bytes." << endl);
 	
 	for(int i = 0; i < client->buffer_length; i++) new_buffer[i] = client->buffer[i];
@@ -412,17 +415,17 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
       }
     }
 
-    NETECI_DEBUG(cerr << "(eca-neteci-server) copying '" << buffer[n] << "'\n");
+    NETECI_DEBUG(cerr << "copying '" << buffer[n] << "'\n");
     client->buffer[client->buffer_current_ptr] = buffer[n];
     if (client->buffer_current_ptr > 0 &&
 	client->buffer[client->buffer_current_ptr] == '\n' &&
 	client->buffer[client->buffer_current_ptr - 1] == '\r') {
 
       string cmd (client->buffer, client->buffer_current_ptr - 1);
-      NETECI_DEBUG(cerr << "(eca-neteci-server) storing command '" <<	cmd << "'" << endl);
+      NETECI_DEBUG(cerr << "storing command '" <<	cmd << "'" << endl);
       parsed_cmd_queue_rep.push_back(cmd);
       
-      NETECI_DEBUG(cerr << "(eca-neteci-server) copying " 
+      NETECI_DEBUG(cerr << "copying " 
 		   << client->buffer_length - client->buffer_current_ptr - 1
 		   << " bytes from " << client->buffer_current_ptr + 1 
 		   << " to the beginning of the buffer."
@@ -441,7 +444,7 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
       client->buffer_current_ptr = 0;
     }
     else {
-      // NETECI_DEBUG(cerr << "(eca-neteci-server) crlf not found, index=" << index << ", n=" << n << "cur_ptr=" << client->buffer_current_ptr << ".\n");
+      // NETECI_DEBUG(cerr << "crlf not found, index=" << index << ", n=" << n << "cur_ptr=" << client->buffer_current_ptr << ".\n");
       client->buffer_current_ptr++;
     }
   }
@@ -454,7 +457,7 @@ void ECA_NETECI_SERVER::handle_eci_command(const string& cmd, struct ecasound_ne
 {
   ECA_CONTROL* ctrl = state_repp->control;
 
-  NETECI_DEBUG(cerr << "(eca-neteci-server) handle eci command: " << cmd << endl);
+  NETECI_DEBUG(cerr << "handle eci command: " << cmd << endl);
 
   int res = pthread_mutex_lock(state_repp->lock);
   DBC_CHECK(res == 0);
@@ -473,7 +476,7 @@ void ECA_NETECI_SERVER::handle_eci_command(const string& cmd, struct ecasound_ne
   while(bytes_to_send > 0) {
     int ret = kvu_fd_write(client->fd, strtosend.c_str(), strtosend.size(), 5000);
     if (ret < 0) {
-      cerr << "(eca-neteci-server) error in kvu_fd_write(), removing client.\n";
+      cerr << "error in kvu_fd_write(), removing client.\n";
       remove_client(client);
       break;
     }
@@ -493,11 +496,11 @@ void ECA_NETECI_SERVER::handle_eci_command(const string& cmd, struct ecasound_ne
  */
 void ECA_NETECI_SERVER::remove_client(struct ecasound_neteci_server_client* client)
 {
-  NETECI_DEBUG(std::cout << "(eca-neteci-server) removing client." << std::endl);
+  NETECI_DEBUG(std::cout << "removing client." << std::endl);
 
   if (client != 0 && client->fd > 0) {
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		"(eca-neteci-server) Closing connection " +
+		"Closing connection " +
 		client->peername + ".");
     close(client->fd);
     client->fd = -1;
@@ -516,11 +519,11 @@ void ECA_NETECI_SERVER::clean_removed_clients(void)
   DBC_DECLARE(size_t oldsize = clients_rep.size());
   DBC_DECLARE(size_t counter = 0);
 
-  NETECI_DEBUG(std::cerr << "(eca-neteci-server) cleaning removed clients." << std::endl);
+  NETECI_DEBUG(std::cerr << "cleaning removed clients." << std::endl);
 
   list<struct ecasound_neteci_server_client*>::iterator p = clients_rep.begin();
   while(p != clients_rep.end()) {
-    NETECI_DEBUG(std::cerr << "(eca-neteci-server) checking for delete, client " << *p << std::endl);
+    NETECI_DEBUG(std::cerr << "checking for delete, client " << *p << std::endl);
     if (*p != 0 && (*p)->fd == -1) {
       if ((*p)->buffer != 0) {
 	delete[] (*p)->buffer;
@@ -528,9 +531,9 @@ void ECA_NETECI_SERVER::clean_removed_clients(void)
       }
       std::list<struct ecasound_neteci_server_client*>::iterator q = p;
       ++q;
-      NETECI_DEBUG(std::cerr << "(eca-neteci-server) deleting client " << *p << std::endl);
+      NETECI_DEBUG(std::cerr << "deleting client " << *p << std::endl);
       delete *p;
-      NETECI_DEBUG(std::cerr << "(eca-neteci-server) erasing client " << *p << std::endl);
+      NETECI_DEBUG(std::cerr << "erasing client " << *p << std::endl);
       *p = 0;
       clients_rep.erase(p);
       p = q;

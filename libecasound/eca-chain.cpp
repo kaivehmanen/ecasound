@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing an abstract audio signal chain.
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -97,10 +100,9 @@ bool CHAIN::is_valid(void) const
 {
   if (input_id_rep == -1 ||
       output_id_rep == -1) {
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chain) Chain \"" + name() + "\" not valid.");
-    return(false);
+    return false;
   }
-  return(true);
+  return true;
 }
 
 /**
@@ -225,7 +227,7 @@ string CHAIN::chain_operator_name(void) const
   // --------
   DBC_REQUIRE(selected_chain_operator() > 0);
   // --------
-  return(selected_chainop_repp->name());
+  return selected_chainop_repp->name();
 }
 
 /**
@@ -241,7 +243,7 @@ string CHAIN::chain_operator_parameter_name(void) const
   DBC_REQUIRE(selected_chain_operator() > 0);
   DBC_REQUIRE(selected_chain_operator_parameter() > 0);
   // --------
-  return(selected_chainop_repp->get_parameter_name(selected_chain_operator_parameter()));
+  return selected_chainop_repp->get_parameter_name(selected_chain_operator_parameter());
 }
 
 /**
@@ -256,7 +258,7 @@ int CHAIN::number_of_chain_operator_parameters(void) const
   // --------
   DBC_REQUIRE(selected_chain_operator() > 0);
   // --------
-  return(selected_chainop_repp->number_of_params());
+  return selected_chainop_repp->number_of_params();
 }
 
 /**
@@ -270,7 +272,7 @@ string CHAIN::controller_name(void) const
   // --------
   DBC_REQUIRE(selected_controller() > 0);
   // --------
-  return(selected_controller_repp->name());
+  return selected_controller_repp->name();
 }
 
 /**
@@ -307,7 +309,7 @@ CHAIN_OPERATOR::parameter_t CHAIN::get_parameter(void) const
   DBC_REQUIRE(selected_chain_operator_parameter() > 0);
   DBC_REQUIRE(selected_chain_operator() != 0);
   // --------
-  return(selected_chainop_repp->get_parameter(selected_chainop_parameter_rep));
+  return selected_chainop_repp->get_parameter(selected_chainop_parameter_rep);
 }
 
 /**
@@ -327,7 +329,7 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller)
   gcontroller->set_samples_per_second(samples_per_second());
 #ifndef ECA_DISABLE_EFFECTS
   gcontroller->assign_target(selected_dynobj_repp);
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-chain) " + gcontroller->status());
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, gcontroller->status());
 #endif
   gcontrollers_rep.push_back(gcontroller);
   selected_controller_repp = gcontroller;
@@ -699,9 +701,9 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const
     }
     if (idstring.size() == 0) {
       ECA_LOG_MSG(ECA_LOGGER::errors,
-		  "(eca-chain) Unable to save chain operator \"" +
+		  "Unable to save chain operator \"" +
 		  chainop->name() + "\".");
-      return(t.to_string());
+      return t.to_string();
     }
      
     t << "-" << idstring;
@@ -720,7 +722,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const
     ++p;
   } 
 
-  return(t.to_string());
+  return t.to_string();
 }
 
 /**
@@ -735,7 +737,7 @@ string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const
 
   if (idstring.size() == 0) {
     ECA_LOG_MSG(ECA_LOGGER::errors, 
-		"(eca-chain) Unable to save controller \"" +
+		"Unable to save controller \"" +
 		gctrl->name() + "\".");
     return(t.to_string());
   }
@@ -752,7 +754,7 @@ string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const
     ++p;
   } 
 
-  return(t.to_string());
+  return t.to_string();
 }
 
 /**
@@ -768,7 +770,7 @@ string CHAIN::operator_parameters_to_string(const OPERATOR* chainop) const
     if (n + 1 < chainop->number_of_params()) t << ",";
   }
 
-  return(t.to_string());
+  return t.to_string();
 }
 
 /**
@@ -781,7 +783,7 @@ void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
     ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(temp);
     if (srateobj != 0) {
       ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		    "(eca-chain) sample rate change, chain '" +
+		    "sample rate change, chain '" +
 		    name() + "' object '" +
 		    temp->name() + "' rate " +
 		    kvu_numtostr(v) + ".");
@@ -791,7 +793,7 @@ void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 
   for(size_t p = 0; p != gcontrollers_rep.size(); p++) {
     ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		"(eca-chain) sample rate change, chain '" +
+		"sample rate change, chain '" +
 		name() + "' object '" +
 		gcontrollers_rep[p]->name() + "' rate " +
 		kvu_numtostr(v) + ".");
@@ -807,7 +809,7 @@ void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 void CHAIN::seek_position(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		"(eca-chain) seek position, to pos " +
+		"seek position, to pos " +
 		kvu_numtostr(position_in_seconds()) + ".");
 
   for(size_t p = 0; p != gcontrollers_rep.size(); p++) {

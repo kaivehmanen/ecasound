@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audioio.cpp: Routines common for all audio IO-devices.
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,8 +31,8 @@
 #include "audioio.h"
 #include "eca-logger.h"
 
-const string& AUDIO_IO::SETUP_ERROR::message(void) const { return(message_rep); }
-AUDIO_IO::SETUP_ERROR::Error_type AUDIO_IO::SETUP_ERROR::type(void) const { return(type_rep); }
+const string& AUDIO_IO::SETUP_ERROR::message(void) const { return message_rep; }
+AUDIO_IO::SETUP_ERROR::Error_type AUDIO_IO::SETUP_ERROR::type(void) const { return type_rep; }
 AUDIO_IO::SETUP_ERROR::SETUP_ERROR(AUDIO_IO::SETUP_ERROR::Error_type type, 
 				   const string& message) 
   : type_rep(type), message_rep(message) { }
@@ -61,21 +64,21 @@ AUDIO_IO::AUDIO_IO(const string& name,
  *
  * By default, all I/O modes are supported.
  */
-int AUDIO_IO::supported_io_modes(void) const { return(io_read | io_readwrite | io_write); }
+int AUDIO_IO::supported_io_modes(void) const { return (io_read | io_readwrite | io_write); }
 
 /**
  * Whether device supports non-blocking I/O mode.
  *
  * By default, nonblocking mode is not supported.
  */
-bool AUDIO_IO::supports_nonblocking_mode(void) const { return(false); }
+bool AUDIO_IO::supports_nonblocking_mode(void) const { return false; }
 
 /**
  * Whether device supports non-blocking I/O mode.
  *
  * By default, seeking is supported.
  */
-bool AUDIO_IO::supports_seeking(void) const { return(true); }
+bool AUDIO_IO::supports_seeking(void) const { return true; }
 
 /**
  * Whether audio stream has a distinct length. It's important
@@ -91,7 +94,7 @@ bool AUDIO_IO::supports_seeking(void) const { return(true); }
  *
  * By default, audio streams are finite length.
  */
-bool AUDIO_IO::finite_length_stream(void) const { return(true); }
+bool AUDIO_IO::finite_length_stream(void) const { return true; }
 
 /**
  * Whether audio format is locked. If this is true, audio object
@@ -99,7 +102,7 @@ bool AUDIO_IO::finite_length_stream(void) const { return(true); }
  *
  * By default, audio format is not locked.
  */
-bool AUDIO_IO::locked_audio_format(void) const { return(false); }
+bool AUDIO_IO::locked_audio_format(void) const { return false; }
 
 // ===================================================================
 // Configuration (setting and getting configuration parameters)
@@ -107,7 +110,7 @@ bool AUDIO_IO::locked_audio_format(void) const { return(false); }
 /**
  * Returns info about the current I/O mode.
  */
-int AUDIO_IO::io_mode(void) const { return(io_mode_rep); }
+int AUDIO_IO::io_mode(void) const { return io_mode_rep; }
 
 /**
  * Set object input/output-mode. If the requested mode isn't
@@ -146,7 +149,7 @@ void AUDIO_IO::toggle_nonblocking_mode(bool value)
  * Returns the current label. See documentation for 
  * label(const string&).
  */
-const string& AUDIO_IO::label(void) const { return(id_label_rep); }
+const string& AUDIO_IO::label(void) const { return id_label_rep; }
 
 
 /**
@@ -168,7 +171,7 @@ string AUDIO_IO::format_info(void) const
     else
       otemp << ", noninterleaved.";
   }
-  return(otemp.to_string());
+  return otemp.to_string();
 }
 
 void AUDIO_IO::set_parameter(int param, 
@@ -179,8 +182,8 @@ void AUDIO_IO::set_parameter(int param,
 
 string AUDIO_IO::get_parameter(int param) const
 {
-  if (param == 1) return(label());
-  return("");
+  if (param == 1) return label();
+  return "";
 }
 
 // ===================================================================
@@ -222,7 +225,7 @@ void AUDIO_IO::close(void)
  */
 ECA_AUDIO_TIME AUDIO_IO::length(void) const
 {
-  return(ECA_AUDIO_TIME(length_in_samples(), samples_per_second()));
+  return ECA_AUDIO_TIME(length_in_samples(), samples_per_second());
 }
 
 /**
@@ -230,23 +233,23 @@ ECA_AUDIO_TIME AUDIO_IO::length(void) const
  */
 ECA_AUDIO_TIME AUDIO_IO::position(void) const
 {
-  return(ECA_AUDIO_TIME(position_in_samples(), samples_per_second()));
+  return ECA_AUDIO_TIME(position_in_samples(), samples_per_second());
 }
 
 /**
  * Is nonblocking mode is enabled?
  */
-bool AUDIO_IO::nonblocking_mode(void) const { return(nonblocking_rep); }
+bool AUDIO_IO::nonblocking_mode(void) const { return nonblocking_rep; }
 
 /**
  * Is the audio object ready for reading? 
  */
-bool AUDIO_IO::readable(void) const { return(is_open() && io_mode() != io_write); }
+bool AUDIO_IO::readable(void) const { return is_open() && io_mode() != io_write; }
 
 /**
  * Is the audio object ready for writing? 
  */
-bool AUDIO_IO::writable(void) const { return(is_open() && io_mode() != io_read); }
+bool AUDIO_IO::writable(void) const { return is_open() && io_mode() != io_read; }
 
 /**
  * Sets the total length of audio object data.
@@ -292,7 +295,7 @@ string AUDIO_IO::status(void) const {
     mitem << "Hz, buffer " << buffersize() << ".";
   }
 
-  return(mitem.to_string());
+  return mitem.to_string();
 }
 
 /**
@@ -305,7 +308,7 @@ SAMPLE_SPECS::sample_rate_t AUDIO_IO::samples_per_second(void) const
 {
   DBC_CHECK(ECA_AUDIO_FORMAT::samples_per_second() == 
 	    ECA_AUDIO_POSITION::samples_per_second());
-  return(ECA_AUDIO_FORMAT::samples_per_second());
+  return ECA_AUDIO_FORMAT::samples_per_second();
 }
 
 void AUDIO_IO::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
@@ -313,7 +316,7 @@ void AUDIO_IO::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
   ECA_AUDIO_FORMAT::set_samples_per_second(v);
   ECA_AUDIO_POSITION::set_samples_per_second(v);
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		"(audioio) set srate, aobj '" +
+		"set srate, aobj '" +
 		name() + ":" + label() +
 		"' to " + 
 		kvu_numtostr(v) + ".");
@@ -328,7 +331,7 @@ void AUDIO_IO::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
 void AUDIO_IO::seek_position(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		"(audioio) seek position, aobj '" +
+		"seek position, aobj '" +
 		label() +
 		"' to pos in sec " + 
 		kvu_numtostr(position_in_seconds()) + ".");
