@@ -15,7 +15,7 @@ To submit a new EDI-item, send a mail the 'ecasound-list' mailing
 list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 
 -----------------------------------------------------------------------
-[ Syntax ]
+[ Meta: Syntax ]
 
 (edi-xxx): Short description of the item. This should be no more 
 	   than a few lines. 
@@ -23,35 +23,6 @@ list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 	   - action: what happened, who and when
 
 Note! See README for a list of defined developer tags (kaiv -> me).
-
------------------------------------------------------------------------
-[ History (newest first) ]
-
-13.05.2004 - edi-40 added, edi-14 closed
-28.11.2003 - edi-33 closed
-20.08.2003 - edi-4, edi-19 and edi-35 frozen, edi-38 added and frozen
-	     immediately, edi-39 added
-17.03.2003 - edi-36 and edi-37 added
-07.12.2002 - edi-1 closed
-16.11.2002 - edi-35 added
-07.11.2002 - edi-29 closed
-31.10.2002 - edi-27 closed
-29.10.2002 - edi-28 and edi-30 closed, edi-32, edi-33 and edi-34 added
-23.10.2002 - edi-31 added
-15.10.2002 - edi-30 added
-29.09.2002 - edi-27, edi-28 and edi-29 added
-22.08.2002 - edi-24 closed
-17.05.2002 - edi-22 closed
-23.04.2002 - edi-26 opened
-24.02.2002 - edi-13 closed
-22.02.2002 - edi-22, edi-23, edi-24 and edi-25 opened
-22.02.2002 - edi-template.txt updated
-01.02.2002 - edi-12 closed
-31.01.2002 - edi-12 opened
-31.01.2002 - edi-18 closed
-12.01.2002 - edi-12 closed
-
-2001 - no history information
 
 -----------------------------------------------------------------------
 [ Section: Bugs, problems ]
@@ -80,8 +51,6 @@ Note! See README for a list of defined developer tags (kaiv -> me).
         - submitted: jhall, 23.04.2002
 (edi-31): Support for dynamic sampling rate and buffersize changes.
          - submitted: kaiv, 23.10.2002
-(edi-32): FLAC support.
-	 - submitted: nolan_d, 17.10.2002
 (edi-34): Better checks for parsing operator arguments.
 	 - submitted: jhalttun, 28.10.2002
 (edi-36): Addition of position markers.
@@ -182,8 +151,42 @@ Note! See README for a list of defined developer tags (kaiv -> me).
          - submitted: kaiv, 08.10.2002
 	 - initial implementation: kaiv, 16.10.2002
 	 - done: kaiv, 29.10.2002
+(edi-32): FLAC support.
+	 - submitted: nolan_d, 17.10.2002
+	 - closed: kaiv, 09.07.2004
 (edi-33): Libsndfile support.
 	 - submitted: kaiv, 29.10.2002
 	 - closed: kaiv, 28.11.2003
 
 -----------------------------------------------------------------------
+[ History (newest first) ]
+
+07.07.2004 - edi-32 closed
+13.05.2004 - edi-40 added, edi-14 closed
+28.11.2003 - edi-33 closed
+20.08.2003 - edi-4, edi-19 and edi-35 frozen, edi-38 added and frozen
+	     immediately, edi-39 added
+17.03.2003 - edi-36 and edi-37 added
+07.12.2002 - edi-1 closed
+16.11.2002 - edi-35 added
+07.11.2002 - edi-29 closed
+31.10.2002 - edi-27 closed
+29.10.2002 - edi-28 and edi-30 closed, edi-32, edi-33 and edi-34 added
+23.10.2002 - edi-31 added
+15.10.2002 - edi-30 added
+29.09.2002 - edi-27, edi-28 and edi-29 added
+22.08.2002 - edi-24 closed
+17.05.2002 - edi-22 closed
+23.04.2002 - edi-26 opened
+24.02.2002 - edi-13 closed
+22.02.2002 - edi-22, edi-23, edi-24 and edi-25 opened
+22.02.2002 - edi-template.txt updated
+01.02.2002 - edi-12 closed
+31.01.2002 - edi-12 opened
+31.01.2002 - edi-18 closed
+12.01.2002 - edi-12 closed
+
+2001 - no history information
+
+-----------------------------------------------------------------------
+

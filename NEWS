@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 130504) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 090704) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,13 +14,19 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 xx082004 (v2.3.4)  -** stable release **-
-	- edi-entries: edi-14 closed, edi-40 added
-	- note: verified to compile ok ok MacOS X 10.3.2 [smbolton]
+	- edi-entries: edi-14 and edi-32 closed, edi-40 added
+	- note: verified to compile ok on MacOS X 10.3.2 [smbolton]
+	- added: basic FLAC input/output support using flac utils;
+		 new flac specific options to ecasoundrc
+	- changed: set srate for mp3 input based on mp3 header
 	- fixed: multitrack offset was calculated incorrectly for
 		 ALSA devices which limit buffer period count to 2
 	- fixed: bugs in .wav, .cdr, JACK code, and in internal sample 
 		 conversion routines that occur on big-endian 
 		 machines [smbolton]
+	- fixed: ogg input if requested sample-format has non-native
+		 endianess; new default-cmd for ogg-input, see 
+		 ecasoundrc(5)
 05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command

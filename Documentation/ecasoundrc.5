@@ -102,51 +102,70 @@ Command line for executing an external wave editor\&. Defaults
 to \fIsnd\fP\&.
 .IP 
 .IP "ext-cmd-mp3-input" 
-Command for starting mp3 input\&. All output should be directed
-to standard output\&. Before execution, %f is replaced with 
-path to the input mp3\&. If exists, "%o" is replaced with 
-the start offset in mp3 frames\&. Defaults to \fImpg123 --stereo -r -b 0 -q -s -k %o %f\fP\&.
+Command for starting mp3 input\&. Ecasound expects that signed,
+16bit, stereo audio samples are written to standard output\&.
+Ecasound will query other audio	format parameters by parsing 
+the mp3 file header\&. Before execution, %f is replaced with
+path to the input mp3\&. If exists, "%o" is replaced with he
+start offset in mp3 frames\&. Defaults to 
+\fImpg123 --stereo -r -b 0 -q -s -k %o %f\fP\&.
 .IP 
 .IP "ext-cmd-mp3-output" 
-Command for starting mp3 output\&. All input data should be read
-from standard input\&. Before execution, %f is replaced with 
+Command for starting mp3 output\&. Ecasound will write stereo, 
+signed, 16bit, little-endian samples to standard output\&. Sample
+rate is configurable\&. Before execution, %f is replaced with 
 path to the output mp3, %S with sample rate in kHz, and 
-%B with encoding bitrate in kbps\&. Defaults to \fIlame -b %B -s %S -x -S - %f\fP\&.
+%B with encoding bitrate in kbps\&. Defaults to 
+\fIlame -b %B -s %S -x -S - %f\fP\&.
 .IP 
 .IP "ext-cmd-ogg-input" 
-Command for starting Ogg Vorbis input\&. All output should be directed
-to standard output\&. Before execution, %f is replaced with 
-path to the input ogg\&. Defaults to \fIogg123 -d raw --file=- %f\fP\&.
+Command for starting Ogg Vorbis input\&. Ecasound expects that audio samples
+are written to standard output\&. It should be noted that
+Ecasound is not able to query the audio format parameters from
+ogg files, so these need to be set manually by the user\&.
+Before execution, %f is replaced with path to the input ogg\&. 
+Defaults to 
+\fIogg123 -d raw -o byteorder:%E --file=- %f\fP\&.
 .IP 
 .IP "ext-cmd-ogg-output" 
-Command for starting Ogg Vorbis output\&. All input data should be read
-from standard input\&. Before execution, %f is replaced with 
-path to the output ogg, %c, %s and %b with equivalent
+Command for starting Ogg Vorbis output\&. Ecasound will write
+samples in little-endian format to standard output\&. Other 
+audio parameters are configurable\&. Before execution, %f is
+replaced with path to the output ogg, %c, %s and %b with matching audio
 format parameters, and %B with encoding bitrate in kbps\&.
-Defaults to \fIoggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -\fP\&.
+Defaults to 
+\fIoggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --raw-endianness 0 --output=%f -\fP\&.
 .IP 
 .IP "ext-cmd-mikmod" 
-Command for starting mikmod input\&. Before execution, %f is replaced with 
-file path, and %s with select sample rate\&. Defaults to 
+Command for starting mikmod input\&. Ecasound expects that 
+signed, 16bit, stereo audio samples are written to standard 
+output\&. Before execution, %f is replaced with 
+file path, and %s with selected sample rate\&. Defaults to 
 \fImikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f\fP\&.
 .IP 
 .IP "ext-cmd-timidity" 
-Command for starting timidity++ input\&. Before execution, %f
-is replaced with file path\&. Defaults to 
-\fItimidity -Or -o - %f\fP\&.
+Command for starting timidity++ input\&. Ecasound expects that
+signed, 16bit, stereo audio samples are written to standard
+output\&. Before execution, %f is replaced with file path, and
+%s with sample rate\&. 
+Defaults to \fItimidity -Or1S -id -s %s -o - %f\fP\&.
 .IP 
 .IP "ext-cmd-flac-input" 
-Command for starting FLAC input\&. All output should be directed
-to standard output\&. Before execution, %f is replaced with 
-path to the input ogg\&. Defaults to \fIflac -d -c %f\fP\&.
+Command for starting FLAC input\&. Ecasound expects that audio samples
+are written to standard output\&. It should be noted that
+Ecasound is not able to query the audio format parameters from
+FLAC files, so these need to be set manually by the user\&. 
+Before execution, %f is replaced with path to the input FLAC
+file\&. Defaults to \fIflac -d -c %f\fP\&.
 .IP 
 .IP "ext-cmd-flac-output" 
-Command for starting FLAC output\&. All input data should be read
-from standard input\&. Before execution, %f is replaced with 
-path to the output ogg, %c, %b and %s with equivalent
-format parameters, %I with either \'signed\' or \'unsinged\', and
-%E with either \'little\' or \'big\'\&.
-Defaults to \fIflac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -\fP\&.
+Command for starting FLAC output\&. Ecasound will write
+samples to standard output\&. All audio parameters are
+configurable\&. Before execution, %f is replaced with path to
+the output ogg, %c, %b and %s with matching audio
+format parameters, %I with either \'signed\' or \'unsigned\', and
+%E with either \'little\' or \'big\'\&. Defaults to 
+\fIflac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -\fP\&.
 .IP 
 .PP 
 .SH "SEE ALSO" 
