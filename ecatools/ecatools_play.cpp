@@ -2,7 +2,7 @@
 // ecatools-play.cpp: A simple command-line tool for playing audio files
 //                    using the default output device specified in 
 //                    "~/.ecasoundrc".
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ int process_option(const string& option);
 int main(int argc, char *argv[])
 {
   ecadebug->disable();
+  // ecadebug->set_debug_level(15);
 
   struct sigaction es_handler_int;
   es_handler_int.sa_handler = signal_handler;
@@ -94,6 +95,7 @@ int main(int argc, char *argv[])
 
     ecaplay_total_files = cline.size() - 1;
     int playing_file = 0;
+    int consecutive_errors = 0;
     while(cline.end() == false &&
 	  ecaplay_exit_request_rep == 0) {
 
@@ -113,13 +115,13 @@ int main(int argc, char *argv[])
       ++playing_file;
 
       if (ecaplay_skip_files == 0) {
-	std::cout << "Playing file '" << filename << "'";
+	std::cout << "(ecaplay) Playing file '" << filename << "'";
         std::cout << " (" << playing_file;
 	std::cout << "/" << ecaplay_total_files;
 	std::cout << ")." << std::endl;
       }
       else {
-	std::cout << "Skipping file '" << filename << "'." << std::endl;
+	std::cout << "(ecaplay) Skipping file '" << filename << "'." << std::endl;
 	--ecaplay_skip_files;
 	cline.next();
 	continue;
@@ -129,7 +131,7 @@ int main(int argc, char *argv[])
       ectrl.add_chain("default");
       ectrl.add_audio_input(filename);
       if (ectrl.get_audio_input() == 0) {
-	std::cerr << "Error! Skipping file " << filename << "." << std::endl;
+	std::cerr << "(ecaplay) Error! Skipping file " << filename << "." << std::endl;
       }
       else {
 	ectrl.set_default_audio_format_to_selected_input();
@@ -138,11 +140,19 @@ int main(int argc, char *argv[])
 	ectrl.add_default_output();
 	ectrl.connect_chainsetup();
 	if (ectrl.is_connected() != true) {
-	  std::cerr << "---\nError while playing file " << filename << ". Skipping...\n";
+	  std::cerr << "(ecaplay) Error while playing file " << filename << ". Skipping...\n";
+	  ++consecutive_errors;
+	  if (consecutive_errors == 3) {
+	    std::cerr << "(ecaplay) Too many errors, exiting." << std::endl;
+	    ectrl.disconnect_chainsetup();
+	    ectrl.remove_chainsetup();
+	    break;
+	  }
 	}
 	else {
+	  consecutive_errors = 0;
 	  ectrl.run();
-	  ectrl.disconnect_chainsetup();
+	  if (ectrl.is_connected() == true) ectrl.disconnect_chainsetup();
 	}
       }
       ectrl.remove_chainsetup();
@@ -150,10 +160,10 @@ int main(int argc, char *argv[])
     }
   }
   catch(ECA_ERROR& e) {
-    std::cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    std::cerr << "(ecaplay) ---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
   catch(...) {
-    std::cerr << "\nCaught an unknown exception.\n";
+    std::cerr << "\n(ecaplay) Caught an unknown exception.\n";
   }
   return(0);
 }
@@ -163,7 +173,7 @@ void signal_handler(int signum) {
   if (ecaplay_ptimer_repp != 0) {
     ecaplay_ptimer_repp->stop();
     if (ecaplay_ptimer_repp->events_under_lower_bound() > 0) {
-      std::cerr << std::endl << "Caught an exception. Exiting..." << std::endl;
+      std::cerr << std::endl << "(ecaplay) Caught an exception. Exiting..." << std::endl;
       ecaplay_exit_request_rep = 1;
     }
     ecaplay_ptimer_repp->reset();
@@ -216,7 +226,7 @@ int process_option(const string& option) {
       
     default:
       {
-	std::cerr << "Error! Unknown option '" << option
+	std::cerr << "(ecaplay) Error! Unknown option '" << option
 		  << "'." << std::endl;
 	return(2);
       }
