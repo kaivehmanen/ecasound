@@ -437,7 +437,7 @@ void ECA_SESSION::preprocess_options(std::vector<std::string>* opts)
       /* hack1: options ending with .ecs as "-s:file.ecs" */
       string::size_type pos = p->find(".ecs");
       if (pos + 4 == p->size()) {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Note! Interpreting option " +
+	ECA_LOG_MSG(ECA_LOGGER::info, "Note! Interpreting option " +
 		    *p +
 		    " as -s:" +
 		    *p +
