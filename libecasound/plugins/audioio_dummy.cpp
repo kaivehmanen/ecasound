@@ -17,3 +17,7 @@
 // ------------------------------------------------------------------------
 
 static int audioio_dummy_integer = 0;
+
+void audioio_dummy_function(void)
+{
+}
