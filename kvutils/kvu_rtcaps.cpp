@@ -71,7 +71,7 @@ bool kvu_check_for_sched_sub(int policy)
 }
 
 /**
- * Checks whether current process has priviledges
+ * Checks whether current process has privileges
  * to set scheduler to SCHED_FIFO.
  */
 bool kvu_check_for_sched_fifo(void) {
@@ -83,7 +83,7 @@ bool kvu_check_for_sched_fifo(void) {
 }
 
 /**
- * Checks whether current process has priviledges
+ * Checks whether current process has privileges
  * to set scheduler to SCHED_RR.
  */
 bool kvu_check_for_sched_rr(void) {
@@ -97,7 +97,7 @@ bool kvu_check_for_sched_rr(void) {
 
 /**
  * Checks whether mlockall() call is available 
- * and whether current process has priviledges
+ * and whether current process has privileges
  * to execute it.
  *
  * Note! Function issues an munlockall() call,
