@@ -1,3 +1,8 @@
+2004-12-15  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* kvu_utils.cpp (kvu_string_regex_meta_escape): Added.
+	* kvu_utils.cpp (kvu_string_search_and_replace): Added.
+
 2004-12-14  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* kvu_value_queue.h (VALUE_QUEUE_RT_C): Added.

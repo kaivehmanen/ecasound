@@ -43,6 +43,44 @@ using namespace std;
 static string::const_iterator kvu_priv_find_next_instance(const string& arg, const string::const_iterator& curpos, const string::value_type value);
 static void kvu_priv_strip_escapes(string* const input);
 
+
+/**
+ * Returns a string where all regex metachars in 'arg'
+ * have been quoted using a backslash.
+ *
+ * Reference: man regex(71
+ */
+string kvu_string_regex_meta_escape(const string& arg)
+{
+  string result;
+
+  /* regex metachar set: ^.[]$()|*+?{}\ */
+
+  string::const_iterator p = arg.begin();
+  while(p != arg.end()) {
+    if (*p == '^') result += "\\^";
+    else if (*p == '.') result += "\\.";
+    else if (*p == '[') result += "\\[";
+    else if (*p == ']') result += "\\]";
+    else if (*p == '$') result += "\\$";
+    else if (*p == '(') result += "\\(";
+    else if (*p == ')') result += "\\)";
+    else if (*p == '|') result += "\\|";
+    else if (*p == '*') result += "\\*";
+    else if (*p == '+') result += "\\+";
+    else if (*p == '?') result += "\\?";
+    else if (*p == '{') result += "\\{";
+    else if (*p == '}') result += "\\}";
+    else if (*p == '\\') result += "\\\\";
+    else 
+      result += *p;
+
+    ++p;
+  }
+
+  return result;
+}
+
 /**
  * Returns a string where all meta characters in 'arg'
  * have been quoted using a backslash.
@@ -55,26 +93,16 @@ string kvu_string_shell_meta_escape(const string& arg)
 
   string::const_iterator p = arg.begin();
   while(p != arg.end()) {
-    if (*p == '"')
-      result += "\\\"";
-    else if (*p == '\'')
-      result += "\\\'";
-    else if (*p == ' ')
-      result += "\\ ";
-    else if (*p == '|')
-      result += "\\|";
-    else if (*p == '&')
-      result += "\\&";
-    else if (*p == ';')
-      result += "\\;";
-    else if (*p == '(')
-      result += "\\(";
-    else if (*p == ')')
-      result += "\\)";
-    else if (*p == '<')
-      result += "\\<";
-    else if (*p == '>')
-      result += "\\>";
+    if (*p == '"') result += "\\\"";
+    else if (*p == '\'') result += "\\\'";
+    else if (*p == ' ') result += "\\ ";
+    else if (*p == '|') result += "\\|";
+    else if (*p == '&') result += "\\&";
+    else if (*p == ';') result += "\\;";
+    else if (*p == '(') result += "\\(";
+    else if (*p == ')') result += "\\)";
+    else if (*p == '<') result += "\\<";
+    else if (*p == '>') result += "\\>";
     else 
       result += *p;
 
@@ -217,8 +245,8 @@ vector<int> kvu_string_to_int_vector(const string& str,
 }
 
 /**
- * Return a new string, where all 'from' characters are
- * replaced with 'to' characters.
+ * Return a modified copy of vector 'str_vector' where 'from' has
+ * been replaced with 'to' in all items.
  */
 vector<string> kvu_vector_search_and_replace(const vector<string>& str_vector, 
 					     const string& from,
@@ -227,13 +255,7 @@ vector<string> kvu_vector_search_and_replace(const vector<string>& str_vector,
   vector<string> vstmp;
   vector<string>::const_iterator p = str_vector.begin();
   while(p != str_vector.end()) {
-    string tmp (*p);
-    size_t pos = 0;
-    while((pos = tmp.find(from, pos)) != string::npos) {
-      tmp.replace(pos, from.size(), to);
-      pos += (to.size() > from.size() ? to.size() : from.size());
-    }
-    vstmp.push_back(tmp);
+    vstmp.push_back(kvu_string_search_and_replace(*p, from, to));
     ++p;
   }
   return vstmp;
@@ -277,6 +299,23 @@ string kvu_string_search_and_replace(const string& str,
   }
 
   return stmp;
+}
+
+/**
+ * Return a new string, where all 'from' characters are
+ * replaced with 'to' characters.
+ */
+string kvu_string_search_and_replace(const string& str, 
+				     const string& from,
+				     const string& to)
+{
+  string tmp (str);
+  size_t pos = 0;
+  while((pos = tmp.find(from, pos)) != string::npos) {
+    tmp.replace(pos, from.size(), to);
+    pos += (to.size() > from.size() ? to.size() : from.size());
+  }
+  return tmp;
 }
 
 /**
