@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-05-02  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* ecasound 2.0.0 released
+	
 2001-04-27  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* library version 7:0:0 frozen

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 270401) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 020501) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.0 *-
 
-??052001 (v2.0.0)  -** stable release **-
+02052001 (v2.0.0)  -** stable release **-
 	- added: -klg - a generic linear envelope; a controller source
 		 that can be used to map custom envelopes to chain 
 		 operator parameters [artham]
@@ -27,6 +27,7 @@ Last officially released version is -*> v2.0.0 *-
 		 selecting a parameter with copp-select
 	- fixed: few bugs in ewf looping routines
 	- fixed: 'make uninstall' forgot some files and dirs
+	- fixed: bug in ALSA 0.9.x xrun handling
 24042001 (v1.9dev6)
 	- added: eiam - cs-setpos, cs-set-position; aliases for setpos
 	- added: eiam - cs-getpos, cs-get-position; aliases for getpos

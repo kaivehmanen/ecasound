@@ -157,7 +157,7 @@ void parse_command_line(COMMAND_LINE& cline) {
       cout << "ecasound v" << ecasound_library_version << endl;
       cout << "Copyright (C) 1997-2001 Kai Vehmanen" << endl;
       cout << "Ecasound comes with ABSOLUTELY NO WARRANTY." << endl;
-      cout << "You may redistribute copies of qtecasound under the terms of the GNU" << endl;
+      cout << "You may redistribute copies of ecasound under the terms of the GNU" << endl;
       cout << "General Public License. For more information about these matters, see" << endl; 
       cout << "the file named COPYING." << endl;
       exit(0);

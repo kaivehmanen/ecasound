@@ -118,9 +118,12 @@ ecasound-list@wakkanet.fi:
 	You can browse the message archives at
 	http://www.wakkanet.fi/~kaiv/ecasound/ecasound-list/current/ 
 
+ecasound-cvs@wakkanet.fi:
+	A read-only list for reports about ecasound CVS activity.
+
 You can join the lists by sending subscribe message to
 majordomo@wakkanet.fi. You can also join using the following 
-web front-end: http://www.wakkanet.fi/~kaiv/ecasound/mlists.html
+web front-end: http://eca.cx/mlists.html
 
 -----------------------------------------------------------------------
  Web sites
