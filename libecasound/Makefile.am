@@ -72,7 +72,9 @@ ecasound_audioio_include = 	\
 			audioio-rtnull.h \
 			audioio-mikmod.h \
 			audioio-types.h \
-			audioio-loop.h
+			audioio-loop.h \
+			audioio-forked-stream.h \
+			audioio-timidity.h
 
 ecasound_controller_include = \
 			generic-controller.h \
@@ -181,6 +183,8 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-rtnull.cpp \
 			audioio-types.cpp \
 			audioio-loop.cpp \
+			audioio-forked-stream.cpp \
+			audioio-timidity.cpp \
 			$(ecasound_audioio_oss_src)
 
 ecasound_controller_src = \
