@@ -3,6 +3,8 @@
 
 #include <pthread.h>
 
+#include <kvutils/locks.h>
+
 #include "audioio.h"
 #include "eca-chain.h"
 #include "eca-session.h"
@@ -23,6 +25,7 @@ class ECA_CONTROL_BASE {
 
   int retcode_rep;
   pthread_t th_cqueue_rep;
+  ATOMIC_INTEGER engine_exited_rep;
 
  protected:
 

@@ -61,6 +61,7 @@ ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession) {
   session_repp = psession;
   selected_chainsetup_repp = psession->selected_chainsetup_repp;
   engine_repp = 0;
+  engine_exited_rep.set(0);
 }
 
 ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void) {
@@ -209,6 +210,8 @@ void ECA_CONTROL_BASE::start_engine(void) {
   DBC_REQUIRE(is_engine_started() != true);
   // --------
 
+  DBC_CHECK(engine_exited_rep.get() != 1);
+
   unsigned int p = session_repp->connected_chainsetup_repp->first_selected_chain();
   if (p < session_repp->connected_chainsetup_repp->chains.size())
     session_repp->connected_chainsetup_repp->active_chain_index_rep = p;
@@ -235,9 +238,7 @@ void ECA_CONTROL_BASE::run_engine(void) {
   // launch the engine - blocks until processing 
   // has stopped (or exit command is issued)
   engine_repp->exec();
-
-  delete engine_repp;
-  engine_repp = 0;
+  engine_exited_rep.set(1); 
 }
 
 /**
@@ -254,6 +255,15 @@ void ECA_CONTROL_BASE::close_engine(void) {
   // --
   // wait until run_engine() is finished
   ::pthread_join(th_cqueue_rep,NULL);
+
+  if (engine_exited_rep.get() == 1) {
+    delete engine_repp;
+    engine_repp = 0;
+    engine_exited_rep.set(0);
+  }
+  else {
+    ecadebug->msg(ECA_DEBUG::info, "Warning! Problems while shutting down the engine!");
+  }
 
   // ---
   DBC_ENSURE(is_engine_started() != true);

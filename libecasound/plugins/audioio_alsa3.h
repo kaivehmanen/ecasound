@@ -89,7 +89,7 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
 
   virtual void stop(void);
   virtual void start(void);
-  void prepare(void);
+  virtual void prepare(void);
 
   virtual long position_in_samples(void) const;
 

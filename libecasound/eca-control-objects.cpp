@@ -22,7 +22,6 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <pthread.h>
 #include <stdlib.h> /* getenv() */
 
 #include <kvutils/dbc.h> /* DBC_* */

@@ -26,12 +26,12 @@ class AUDIO_IO_PROXY_SERVER {
   std::map<AUDIO_IO*, int> client_map_rep;
 
   pthread_t io_thread_rep;
-  pthread_cond_t full_cond_rep;
-  pthread_mutex_t full_mutex_rep;
-  pthread_cond_t stop_cond_rep;
-  pthread_mutex_t stop_mutex_rep;
-  pthread_cond_t flush_cond_rep;
-  pthread_mutex_t flush_mutex_rep;
+  pthread_cond_t* full_cond_repp;
+  pthread_mutex_t* full_mutex_repp;
+  pthread_cond_t* stop_cond_repp;
+  pthread_mutex_t* stop_mutex_repp;
+  pthread_cond_t* flush_cond_repp;
+  pthread_mutex_t* flush_mutex_repp;
   bool thread_running_rep;
 
   ATOMIC_INTEGER exit_ok_rep;

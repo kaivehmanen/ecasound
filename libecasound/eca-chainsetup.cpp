@@ -289,10 +289,8 @@ void ECA_CHAINSETUP::set_buffering_mode(Buffering_mode_t value) {
  * chainsetup configuration. If the resulting parameters 
  * are different from current ones, a state change is
  * performed.
- *
- * Called only from enable().
  */ 
-void ECA_CHAINSETUP::set_active_buffering_mode(void) {
+void ECA_CHAINSETUP::select_active_buffering_mode(void) {
   if (buffering_mode() == ECA_CHAINSETUP::cs_bmode_none) {
     active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_nonrt;
   }
@@ -366,7 +364,7 @@ void ECA_CHAINSETUP::set_active_buffering_mode(void) {
 /**
  * Enable chosen active buffering mode.
  * 
- * Called only from set_active_buffering_mode().
+ * Called only from enable().
  */
 void ECA_CHAINSETUP::enable_active_buffering_mode(void) {
   /* if requested, lock all memory */
@@ -1164,7 +1162,8 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
   try {
     if (is_enabled_rep != true) {
 
-      set_active_buffering_mode();
+      select_active_buffering_mode();
+      enable_active_buffering_mode();
 
       for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
 	(*q)->buffersize(buffersize(), sample_rate());
@@ -1483,6 +1482,9 @@ void ECA_CHAINSETUP::save(void) throw(ECA_ERROR&) {
 }
 
 void ECA_CHAINSETUP::save_to_file(const string& filename) throw(ECA_ERROR&) {
+  // make sure that all overrides are processed
+  select_active_buffering_mode();
+
   std::ofstream fout (filename.c_str());
   if (!fout) {
     std::cerr << "Going to throw an exception...\n";

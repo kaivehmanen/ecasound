@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // locks.cpp: Various pthread and locking related helper functions.
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,8 +21,108 @@
 #include <config.h> /* for USE_ATOMIC */
 #endif
 
+#ifdef USE_ASM_ATOMIC
+#include <asm/atomic.h>
+#else
+#warning "locks.h: USE_ASM_ATOMIC not defined!"
+#endif
+
+#include <pthread.h>
 #include <sys/errno.h>
+
 #include "locks.h"
+
+ATOMIC_INTEGER::ATOMIC_INTEGER(int value = 0) {
+#ifdef USE_ASM_ATOMIC
+  atomic_t* ptr = new atomic_t;
+  value_repp = reinterpret_cast<void*>(ptr);
+  atomic_set(ptr, value);
+#else
+  pthread_mutex_t* mutex = new pthread_mutex_t;
+  mutex_repp = reinterpret_cast<void*>(mutex);
+  pthread_mutex_init(mutex, NULL);
+  set(value);
+#endif
+}
+ 
+ATOMIC_INTEGER::~ATOMIC_INTEGER(void) {
+#ifdef USE_ASM_ATOMIC
+  atomic_t* ptr = reinterpret_cast<atomic_t*>(value_repp);
+  delete ptr;
+#else
+  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
+  pthread_mutex_destroy(mutex);
+#endif
+}
+
+
+int ATOMIC_INTEGER::get(void) const {
+#ifdef USE_ASM_ATOMIC
+  return(atomic_read(reinterpret_cast<atomic_t*>(value_repp)));
+#else
+  int temp;
+  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
+  pthread_mutex_lock(mutex);
+  temp = value_rep;
+  pthread_mutex_unlock(mutex);
+  return(temp);
+#endif
+}
+
+void ATOMIC_INTEGER::set(int value) {
+#ifdef USE_ASM_ATOMIC
+  atomic_set(reinterpret_cast<atomic_t*>(value_repp), value);
+#else
+  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
+  pthread_mutex_lock(mutex);
+  value_rep = value;
+  pthread_mutex_unlock(mutex);
+#endif
+}
+
+void ATOMIC_INTEGER::add(int value) {
+#ifdef USE_ASM_ATOMIC
+  atomic_add(value, reinterpret_cast<atomic_t*>(value_repp));
+#else
+  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
+  pthread_mutex_lock(mutex);
+  value_rep += value;
+  pthread_mutex_unlock(mutex);
+#endif
+}
+
+void ATOMIC_INTEGER::subtract(int value) {
+#ifdef USE_ASM_ATOMIC
+  atomic_sub(value, reinterpret_cast<atomic_t*>(value_repp));
+#else
+  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
+  pthread_mutex_lock(mutex);
+  value_rep -= value;
+  pthread_mutex_unlock(mutex);
+#endif
+}
+
+void ATOMIC_INTEGER::increment(void) {
+#ifdef USE_ASM_ATOMIC
+  atomic_inc(reinterpret_cast<atomic_t*>(value_repp));
+#else
+  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
+  pthread_mutex_lock(mutex);
+  ++value_rep;
+  pthread_mutex_unlock(mutex);
+#endif
+}
+
+void ATOMIC_INTEGER::decrement(void) {
+#ifdef USE_ASM_ATOMIC
+  atomic_dec(reinterpret_cast<atomic_t*>(value_repp));
+#else
+  pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mutex_repp);
+  pthread_mutex_lock(mutex);
+  --value_rep;
+  pthread_mutex_unlock(mutex);
+#endif
+}
 
 /**
  * A variant of the standard pthread_mutex_lock. This routine is
@@ -32,17 +132,17 @@
  * spinning, before blocking with the standard pthread_mutex_lock() call.
  */
 int pthread_mutex_spinlock (pthread_mutex_t *mp, long int spinlimit) {
-	int err = EBUSY;
-	unsigned int i;
-
-	i = spinlimit;
-
-	while (i > 0 && ((err = pthread_mutex_trylock (mp)) == EBUSY))
-		i--;
-	
-	if (err == EBUSY) {
-		err = pthread_mutex_lock (mp);
-	}
-	
-	return err;
+  int err = EBUSY;
+  unsigned int i;
+  
+  i = spinlimit;
+  
+  while (i > 0 && ((err = pthread_mutex_trylock (mp)) == EBUSY))
+    i--;
+  
+  if (err == EBUSY) {
+    err = pthread_mutex_lock (mp);
+  }
+  
+  return err;
 }

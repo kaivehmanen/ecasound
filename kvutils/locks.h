@@ -1,11 +1,6 @@
 #ifndef INCLUDED_LOCKS_H
 #define INCLUDED_LOCKS_H
 
-#ifdef USE_ASM_ATOMIC
-#include <asm/atomic.h>
-#else
-#warning "locks.h: USE_ASM_ATOMIC not defined!"
-#endif
 #include <pthread.h>
 
 int pthread_mutex_spinlock (pthread_mutex_t *mp, long int spinlimit);
@@ -20,92 +15,21 @@ class ATOMIC_INTEGER {
 
  public:
 
-  int get(void) const {
-#ifdef USE_ASM_ATOMIC
-    return(atomic_read(&value_rep));
-#else
-    int temp;
-    pthread_mutex_lock(&mutex_rep);
-    temp = value_rep;
-    pthread_mutex_unlock(&mutex_rep);
-    return(temp);
-#endif
-  }
+  int get(void) const;
+  void set(int value);
+  void add(int value);
+  void subtract(int value);
+  void increment(void);
+  void decrement(void);
 
-  void set(int value) {
-#ifdef USE_ASM_ATOMIC
-    atomic_set(&value_rep, value);
-#else
-    pthread_mutex_lock(&mutex_rep);
-    value_rep = value;
-    pthread_mutex_unlock(&mutex_rep);
-#endif
-  }
-
-  void add(int value) {
-#ifdef USE_ASM_ATOMIC
-    atomic_add(value, &value_rep);
-#else
-    pthread_mutex_lock(&mutex_rep);
-    value_rep += value;
-    pthread_mutex_unlock(&mutex_rep);
-#endif
-  }
-
-  void subtract(int value) {
-#ifdef USE_ASM_ATOMIC
-    atomic_sub(value, &value_rep);
-#else
-    pthread_mutex_lock(&mutex_rep);
-    value_rep -= value;
-    pthread_mutex_unlock(&mutex_rep);
-#endif
-  }
-
-  void increment(void) {
-#ifdef USE_ASM_ATOMIC
-    atomic_inc(&value_rep);
-#else
-    pthread_mutex_lock(&mutex_rep);
-    ++value_rep;
-    pthread_mutex_unlock(&mutex_rep);
-#endif
-  }
-
-  void decrement(void) {
-#ifdef USE_ASM_ATOMIC
-    atomic_dec(&value_rep);
-#else
-    pthread_mutex_lock(&mutex_rep);
-    --value_rep;
-    pthread_mutex_unlock(&mutex_rep);
-#endif
-  }
-
-  ATOMIC_INTEGER(int value = 0) {
-#ifdef USE_ASM_ATOMIC
-    atomic_set(&value_rep, value);
-#else
-    pthread_mutex_init(&mutex_rep, NULL);
-    set(value);
-#endif
-  }
- 
-  ~ATOMIC_INTEGER(void) {
-#ifdef USE_ASM_ATOMIC
-#else
-    pthread_mutex_destroy(&mutex_rep);
-#endif
-  }
+  ATOMIC_INTEGER(int value = 0);
+  ~ATOMIC_INTEGER(void);
 
  private:
 
-#ifdef USE_ASM_ATOMIC
-  atomic_t value_rep;
-#else
-  mutable pthread_mutex_t mutex_rep;
+  void* value_repp;
+  mutable void* mutex_repp;
   int value_rep;
-#endif
 };
 
 #endif

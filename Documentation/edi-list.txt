@@ -69,18 +69,18 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-2)	Possibility to specify audio object's type instead of using 
 	filename extensions.
 	- submitted: Toby Shepard, 13.07.2001
-	- done: kaiv, 06.10.2001, to ecasound 2.1.0
+	- done: kaiv, 06.10.2001, to ecasound 2.1dev0
 (edi-6) 100% transparent implementation of -z:db system.
 	- submitted: smassy, xx.06.2001
 	- first version: kaiv, 03.10.2001, 2.1 CVS-tree
-	- done: 06.10.2001, ecasound 2.1.0
+	- done: 06.10.2001, ecasound 2.1dev0
 (edi-10) Adding ecalength to ecatools package.
 	- submitted: kaiv, xx.07.2001
-	- done: kaiv, 06.10.2001, to ecasound 2.1.0
+	- done: kaiv, 06.10.2001, to ecasound 2.1dev0
 (edi-15) More intelligent system for selecting buffering modes 
         and sizes for optimal out-of-the-box performance.
 	- submitted: kaiv, 09.08.2001
 	- first	version: kaiv, 05.10.2001, 2.1 CVS-tree
-	- done: kaiv, 06.10.2001, ecasound 2.1.0
+	- done: kaiv, 06.10.2001, ecasound 2.1dev0
 
 -----------------------------------------------------------------------

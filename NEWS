@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 061001) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 091001) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,7 +17,16 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.3 *-
 
-06102001 (v2.1.0)
+??102001 (v2.1dev1)
+	- changed: 'rt' buffering mode is preferred over 
+		   'rtlowlatency' if no chain operators are 
+		   present, and multitrack mode is not active
+	- fixed: critical bug when running in -B:rwlowlatency 
+		 mode (caused system-lockups with ALSA 0.9.x
+		 oss-emulation)
+	- fixed: explicitly specifying -z:nointbuf had no 
+		 effect
+06102001 (v2.1dev0)
 	- edi-entries: edi-2, edi-6, edi-10, edi-15
 	- added: more recent config.guess and config.sub to 
 	         the dist package  [juekawa]

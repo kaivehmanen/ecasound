@@ -100,7 +100,7 @@ ECA_ENGINE::~ECA_ENGINE(void) {
   delete ecasound_stop_mutex_repp;
 
   set_status(ECA_ENGINE::engine_status_notready);
-  
+ 
   ecadebug->control_flow("Engine exiting");
 }
 

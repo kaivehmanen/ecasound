@@ -26,7 +26,6 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <pthread.h>
 #include <unistd.h>
 
 #include <kvutils.h> /* string_to_vector(), string_to_int_vector() */

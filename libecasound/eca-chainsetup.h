@@ -299,7 +299,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /** @name Functions for internal state changes */
   /*@{*/
 
-  void set_active_buffering_mode(void);
+  void select_active_buffering_mode(void);
   void enable_active_buffering_mode(void);
   void switch_to_direct_mode(void);
   void switch_to_direct_mode_helper(std::vector<AUDIO_IO*>* objs, const std::vector<AUDIO_IO*>& directobjs);

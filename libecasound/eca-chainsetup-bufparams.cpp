@@ -103,5 +103,5 @@ void ECA_CHAINSETUP_BUFPARAMS::set_double_buffer_size(long int v) {
 
 void ECA_CHAINSETUP_BUFPARAMS::toggle_max_buffers(bool v) { 
   max_buffers_rep = v; 
-  set_max_buffers_rep = v; 
+  set_max_buffers_rep = true; 
 }

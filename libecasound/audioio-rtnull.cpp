@@ -34,6 +34,7 @@ REALTIME_NULL::REALTIME_NULL(const std::string& name) {
 }
 
 void REALTIME_NULL::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) open");
   toggle_open_state(true);
   double t = static_cast<double>(buffersize()) / samples_per_second();
   buffer_delay.tv_sec = static_cast<time_t>(floor(t));
@@ -41,10 +42,12 @@ void REALTIME_NULL::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
 }
 
 void REALTIME_NULL::close(void) {
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) close");
   toggle_open_state(false);
 }
 
 void REALTIME_NULL::prepare(void) {
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) prepare");
   if (io_mode() == io_read) {
     buffer_fill.tv_sec = 0; 
     buffer_fill.tv_usec = 0;
@@ -55,14 +58,14 @@ void REALTIME_NULL::prepare(void) {
 }
 
 void REALTIME_NULL::start(void) {
-  if (io_mode() == io_read) {
-    toggle_running_state(true);
-  }
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) start");
+  toggle_running_state(true);
 }
 
 void REALTIME_NULL::stop(void) {
-    toggle_running_state(false);
-    toggle_prepared_state(false);
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) stop");
+  toggle_running_state(false);
+  toggle_prepared_state(false);
 }
 
 long int REALTIME_NULL::read_samples(void* target_buffer, 
@@ -130,7 +133,7 @@ void REALTIME_NULL::write_samples(void* target_buffer, long int
     ::gettimeofday(&access_time, NULL);
     buffer_fill.tv_sec = 0; 
     buffer_fill.tv_usec = 0;
-    toggle_running_state(true);
+    //  toggle_running_state(true);
   }
   else {
     struct timeval d,n;
