@@ -39,7 +39,7 @@ continue to improve and develop ecasound.
 To run ecasound, you need...:
 
 - POSIX compliant UNIX system; tested with Linux 2.2.x and 2.4.x, glibc 2.1.x
-- POSIX threads; tested with linuxthreads 0.7 (libpthread, comes with glibc)
+- POSIX threads; tested with linuxthreads 0.7 and 0.8 (libpthread, comes with glibc)
 - for soundcard input/output: OSS, OSS/Lite or ALSA drivers
 - for mp3 support, mpg123 (input) and lame (output) packages
 - for tracker module support, mikmod package
@@ -175,6 +175,7 @@ Harris, Steve - Gcc 2.96 (RH7.0) testing and fixes. [swharris]
 Lavallée, Marc - Rpm-spec for Mandrake.
 Laydier, Antoine - layer.cpp (interprets mp3 headers) [SMF]
 Massy, S. - Extensive testing and debugging. [smassy]
+Morris, Steve - Ewf-handling fixes. [smorris]
 Petit, Bertrand - Helped with POSIX-compatibility issues.
 Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!
 Wróblewski, Artur - PLD-Linux RPM-specfile, readline and destdir patches. [wrobell]

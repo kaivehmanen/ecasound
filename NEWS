@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 090100) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 220100) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -22,7 +22,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 copp-set, copp-get
 	- added: eiam command return type documentation to
 	 	 ecasound-iam man page
-	- added: ecasounds detect all eiam return types and
+	- added: ecasound detects all eiam return types and
 		 automatically prints their values after commands
 		 are issued
 	- added: example code (under ./examples) - ecidoc_example.c, 
@@ -41,11 +41,14 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- changed: -kf - 'mode' parameter added
 	- changed: format of the file 'generic_oscillators'
 	- changed: ECI - last_list_of_strings() to last_string_list()
-	- changed: way gate operators functions; instead of muting 
+	- changed: the way gate operators work; instead of muting 
 		   the chain, they now truncate the passing buffers -
 		   in future, amplify+controller (-ea + -k)
 		   combinations can be used in the same manner as the
 		   old gate operators
+	- changed: 'ecasound-config --flags' now prints includedir
+		   instead of includedir/ecasound
+	- changed: updated ALSA 0.6.x support to match CVS-20010122
 	- fixed: "-x -i file.ext" style cmd-line arg sequences weren't
 		parsed correctly [jhall]
 	- fixed: ECI - command_float_arg() was broken (all languages)
@@ -56,6 +59,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- fixed: more FreeBSD 4.x related fixes [beaupran]
 	- fixed: ogg vorbis output fixes [nolan_d]
 	- fixed: gcc 2.96 (RH7.0) related fixes [swharris]
+	- fixed: ewf-file parsing not working [smorris]
 07122000 (v1.8.5d15)
 	- added: tremolo effect (-eemt) [rcs]
 	- added: -z:db; i/o double buffering layer is back! - 
