@@ -56,8 +56,6 @@ static char** ecasound_completion (char *text, int start, int end);
 static char* ecasound_command_generator (char* text, int state);
 #endif
 
-using namespace std;
-
 ECA_CURSES::ECA_CURSES(void)
 {
   init_readline_support();
@@ -69,24 +67,24 @@ ECA_CURSES::~ECA_CURSES(void)
 
 void ECA_CURSES::print(const std::string& msg)
 {
-  cout << msg << endl;
+  std::cout << msg << std::endl;
 }
 
 void ECA_CURSES::print_banner(void)
 {
-  cout << "****************************************************************************\n";
-  cout << "*";
+  std::cout << "****************************************************************************\n";
+  std::cout << "*";
   setupterm((char *)0, 1, (int *)0);
   putp(tigetstr("bold"));
-  cout << "               ecasound v" 
+  std::cout << "               ecasound v" 
        << ecasound_library_version
        << " (C) 1997-2002 Kai Vehmanen                 ";
   putp(tigetstr("sgr0"));
-  cout << "\n";
-  cout << "****************************************************************************\n";
+  std::cout << "\n";
+  std::cout << "****************************************************************************\n";
 }
 
-void ECA_CURSES::read_command(const string& prompt)
+void ECA_CURSES::read_command(const std::string& prompt)
 {
   last_cmdchar_repp = readline(const_cast<char*>(prompt.c_str()));
   if (last_cmdchar_repp != 0) {
@@ -100,7 +98,7 @@ void ECA_CURSES::read_command(const string& prompt)
   }
 }
 
-const string& ECA_CURSES::last_command(void) const
+const std::string& ECA_CURSES::last_command(void) const
 {
   return(last_cmd_rep);
 }
@@ -167,9 +165,9 @@ char* ecasound_command_generator (char* text, int state)
 #endif
 {
   static int list_index, len;
-  static const map<string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
-  static map<string,int>::const_iterator p;
-  static string cmd;
+  static const std::map<std::string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
+  static std::map<std::string,int>::const_iterator p;
+  static std::string cmd;
 
   /* If this is a new word to complete, initialize now.  This includes
    * saving the length of TEXT for efficiency, and initializing the index
@@ -187,7 +185,7 @@ char* ecasound_command_generator (char* text, int state)
       list_index++;
       ++p;
       if (p != map_ref.end()) {
-	string hyphenstr = kvu_string_search_and_replace(text, '_', '-');
+	std::string hyphenstr = kvu_string_search_and_replace(text, '_', '-');
 	if (strncmp(hyphenstr.c_str(), cmd.c_str(), len) == 0) {
 	  return(strdup(cmd.c_str()));
 	}
