@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // preset.cpp: Class for representing effect presets
-// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002,2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 // Copyright (C) 2001 Arto Hamara (artham@utu.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -22,8 +22,9 @@
 #include <vector>
 #include <string>
 
-#include <kvu_utils.h>
 #include <kvu_dbc.h>
+#include <kvu_numtostr.h>
+#include <kvu_utils.h>
 
 #include "eca-chain.h"
 #include "eca-chainop.h"
@@ -389,6 +390,13 @@ void PRESET::parse_operator_option(const string& arg)
       arg_indices.push_back(preset_index);
       arg_slave_indices.push_back(i + 1);
       ps_parts[i] = "0.0";
+
+      // make sure param is mentioned in param_names list
+      if (impl_repp->preset_param_names_rep.size() < preset_index) {
+	impl_repp->preset_param_names_rep.resize(preset_index);
+	impl_repp->preset_param_names_rep[preset_index - 1] = string("arg-") + kvu_numtostr(preset_index);
+      }
+
     } 
     else {
       ps_parts[i] = onearg;
