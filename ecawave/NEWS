@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecawave - User-visible changes (NEWS)       (last edited: 290500) **
+** Ecawave - User-visible changes (NEWS)       (last edited: 190600) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.yRt" :
@@ -15,8 +15,10 @@ About the version numbers... "vx.yRt" :
 Last officially released version is -*> v0.2.2r2 <*-
 
 ??062000 (v0.3.0d3)
+	- changed: filename now shown on its own line
 	- changed: small layout changes
 	- changed: updated the 'INSTALL' file
+	- changed: all shortcut keys are now ctrl-some_key
 	- fixed: Makefile fixes (inline and const macros)
 	- fixed: fade-in/out and redraw crashed when no file was opened
 	- changed: now requires ecasound 1.8.x

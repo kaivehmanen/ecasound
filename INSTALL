@@ -75,6 +75,9 @@ Ecasound specific options
 	efficient debugging. Created executables and libraries
 	have a "_debug" suffix.
 
+`--enable-sys-readline'
+	If installed, link to system's default libreadline.
+
 `--enable-experimental' 
 	Turns on some suspicious features. Not recommended.
 

@@ -10,9 +10,9 @@ INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils \
 		-I$(qt_includes) -I$(all_includes)
 
 if INCLUDE_DEBUG
-libqtecasound_ldflags = -version-info 0:0:0
+libqtecasound_ldflags = -version-info 1:0:1
 else
-libqtecasound_ldflags = -s -version-info 0:0:0
+libqtecasound_ldflags = -s -version-info 1:0:1
 endif
 
 if INCLUDE_DEBUG
@@ -26,10 +26,13 @@ lib_LTLIBRARIES = $(libqtecasound_target)
 endif
 
 libqtecasound_general_src = 	qebuttonrow.cpp \
-			    	qestringdialog.cpp
+			    	qestringdialog.cpp \
+			    	qestringlistdialog.cpp
 libqtecasound_general_include =	qebuttonrow.h \
-				qestringdialog.h
+				qestringdialog.h \
+			    	qestringlistdialog.h
 libqtecasound_general_moc =	qestringdialog_moc.cpp \
+			    	qestringlistdialog_moc.cpp \
 				qebuttonrow_moc.cpp			 
 
 libqtecasound_lobjects_src = 	qesignallevel.cpp \
@@ -95,8 +98,8 @@ libqtecasound_debug_la_LDFLAGS = $(libqtecasound_la_LDFLAGS)
 noinst_HEADERS = $(libqtecasound_common_include)
 
 install-data-local:
-	$(INSTALL) -d $(pkgincludedir)
-	cd $(srcdir) ; cp $(libqtecasound_common_include) $(pkgincludedir)
+	$(INSTALL) -d $(DESTDIR)$(pkgincludedir)
+	cd $(srcdir) ; cp $(libqtecasound_common_include) $(DESTDIR)$(pkgincludedir)
 
 # ------
 # qt-moc
@@ -146,3 +149,5 @@ qedialog_moc.cpp: $(srcdir)/qedialog.h
 	$(MOC) -o qedialog_moc.cpp $(srcdir)/qedialog.h
 qestringdialog_moc.cpp: $(srcdir)/qestringdialog.h
 	$(MOC) -o qestringdialog_moc.cpp $(srcdir)/qestringdialog.h
+qestringlistdialog_moc.cpp: $(srcdir)/qestringlistdialog.h
+	$(MOC) -o qestringlistdialog_moc.cpp $(srcdir)/qestringlistdialog.h

@@ -88,6 +88,7 @@ RANLIB = @RANLIB@
 VERSION = @VERSION@
 qt_includes = @qt_includes@
 qt_libraries = @qt_libraries@
+readline_includes = @readline_includes@
 
 DISTFILES = Makefile.am Makefile.in programmers_guide.yo programmers_guide.html
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs

@@ -151,13 +151,13 @@ clean-docs:
 # ---------------------------------------------------------------------
 # Install targets
 install-data-local:
-	mkdir -p $(mandir)/man1
-	mkdir -p $(mandir)/man5
-	cp $(srcdir)/ecasound.1 $(mandir)/man1
-	cp $(srcdir)/qtecasound.1 $(mandir)/man1
-	cp $(srcdir)/ecatools.1 $(mandir)/man1
-	cp $(srcdir)/ecasound-iam.1 $(mandir)/man1
-	cp $(srcdir)/ecasoundrc.5 $(mandir)/man5
+	mkdir -p $(DESTDIR)$(mandir)/man1
+	mkdir -p $(DESTDIR)$(mandir)/man5
+	cp $(srcdir)/ecasound.1 $(DESTDIR)$(mandir)/man1
+	cp $(srcdir)/qtecasound.1 $(DESTDIR)$(mandir)/man1
+	cp $(srcdir)/ecatools.1 $(DESTDIR)$(mandir)/man1
+	cp $(srcdir)/ecasound-iam.1 $(DESTDIR)$(mandir)/man1
+	cp $(srcdir)/ecasoundrc.5 $(DESTDIR)$(mandir)/man5
 	cp $(srcdir)/ecasound_faq.txt ../$(topdir)/FAQ
 
 # ---------------------------------------------------------------------

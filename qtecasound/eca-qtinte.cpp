@@ -139,7 +139,7 @@ void QEInterface::update_runtimebar(void) {
 void QEInterface::init_buttons(void) {
   buttonrow_repp = new QEButtonRow(this, "buttonrow");
   buttonrow_repp->add_button(new QPushButton("(B)egin",buttonrow_repp), 
-			ALT+Key_B,
+			CTRL+Key_B,
 			this, SLOT(emsg_rw_begin()));
 
   buttonrow_repp->add_button(new QPushButton("Rew (<)",buttonrow_repp), 
@@ -147,11 +147,11 @@ void QEInterface::init_buttons(void) {
 			this, SLOT(emsg_rewind()));
 
   buttonrow_repp->add_button(new QPushButton("S(t)art",buttonrow_repp), 
-			ALT+Key_T,
+			CTRL+Key_T,
 			this, SLOT(emsg_start()));
 
   buttonrow_repp->add_button(new QPushButton("(S)top",buttonrow_repp), 
-			ALT+Key_S,
+			CTRL+Key_S,
 			this, SLOT(emsg_stop()));
 
   buttonrow_repp->add_button(new QPushButton("Fw (>)",buttonrow_repp), 
@@ -159,7 +159,7 @@ void QEInterface::init_buttons(void) {
 			this, SLOT(emsg_forward()));
 
   buttonrow_repp->add_button(new QPushButton("(Q)uit",buttonrow_repp), 
-			ALT+Key_Q,
+			CTRL+Key_Q,
 			qApp, SLOT(closeAllWindows()));
 
 
@@ -173,7 +173,7 @@ void QEInterface::init_textinput(QBoxLayout* textinput) {
   textinput->addWidget( tekstirivi_repp, 10);
 
   QAccel* accel = new QAccel(this);
-  accel->connectItem(accel->insertItem(ALT+Key_I), tekstirivi_repp, SLOT(setFocus()));
+  accel->connectItem(accel->insertItem(CTRL+Key_I), tekstirivi_repp, SLOT(setFocus()));
   
   connect(tekstirivi_repp, SIGNAL(returnPressed ()), this, SLOT(emsg_general()) );
   connect(this, SIGNAL(clear_textinput()), tekstirivi_repp, SLOT(clear()) );

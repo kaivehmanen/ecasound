@@ -161,21 +161,23 @@ void QEFile::init_layout(void) {
 
   buttonrow = new QEButtonRow(this, "buttonrow");
   buttonrow->add_button(new QPushButton("(Z)oom in",buttonrow), 
-		       ALT+Key_Z,
+		       CTRL+Key_Z,
 		       this, SLOT(zoom_to_marked()));
   buttonrow->add_button(new QPushButton("Zoo(m) out",buttonrow), 
-		       ALT+Key_M,
+		       CTRL+Key_M,
 		       this, SLOT(zoom_out()));
   buttonrow->add_button(new QPushButton("Ma(r)k all",buttonrow),
-		       ALT+Key_R,
+		       CTRL+Key_R,
 		       this, SLOT(mark_all()));
   buttonrow->add_button(new QPushButton("(U)nmark",buttonrow), 
-		       ALT+Key_U,
+		       CTRL+Key_U,
 		       this, SLOT(unmark()));
   buttonrow->add_button(new QPushButton("Redra(w)",buttonrow), 
-		       ALT+Key_W,
+		       CTRL+Key_W,
 		       this, SLOT(update_wave_form_data()));
   top_layout->addWidget(buttonrow, 0, Qt::AlignTop);
+  gbox_repp = new QGroupBox(1, Qt::Horizontal, filename_rep.c_str(), this, 0);
+  top_layout->addWidget(gbox_repp);
 }
 
 void QEFile::update_layout(void) {
@@ -186,11 +188,12 @@ void QEFile::update_layout(void) {
   QString cinfo = "Channel ";
   for(int n = 0; n < channels_rep; n++) {
     if (n == static_cast<int>(waveforms.size())) {
-      QEWaveForm* w = new QEWaveForm(n, this);
-      QLabel* l = new QLabel(cinfo + QString::number(n), this);
-      top_layout->addWidget(l);
-      top_layout->addWidget(w);
+      QLabel* l = new QLabel(cinfo + QString::number(n), gbox_repp);
+      QEWaveForm* w = new QEWaveForm(n, gbox_repp);
+//        top_layout->addWidget(l);
+//        top_layout->addWidget(w);
       w->installEventFilter(this);
+      l->show();
       w->show();
       waveforms.push_back(w);
       clabels.push_back(l);
@@ -406,6 +409,7 @@ void QEFile::open_io_object(void) {
       errormsg += QString(filename_rep.c_str()) + "\", unknown audio format.";
       mbox->information(this, "ecawave", errormsg,0);
       filename_rep = "";
+      gbox_repp->setTitle(filename_rep.c_str());
     }
     else {
       io_object->io_mode(AUDIO_IO::io_read);

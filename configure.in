@@ -2,7 +2,6 @@ dnl ---
 dnl Process this file with autoconf to produce a configure script.
 dnl ---
 AC_INIT(libecasound/audiofx.h)
-AC_CONFIG_SUBDIRS(readline-4.0)
 
 dnl ---
 dnl Init automake
@@ -161,6 +160,57 @@ if test x$osstrigger = xyes; then
 AC_DEFINE(DISABLE_OSS_TRIGGER)
 fi
 
+dnl --
+dnl readline library
+dnl --
+AC_MSG_CHECKING(whether to build with system readline)
+AC_ARG_ENABLE(sys_readline,
+  [  --enable-sys-readline		compile with system readline (default=no)],
+  [
+    case "$enableval" in
+      y | yes)
+        AC_MSG_RESULT(yes)
+        enable_sysreadline=yes 
+      ;;
+
+      n | no)
+        AC_MSG_RESULT(no)
+        enable_sysreadline=no
+      ;;
+        
+      *)
+        AC_MSG_ERROR([Invalid parameter value for --enable-sys-readline: $enableval])
+      ;;
+    esac
+  ],
+  [
+    AC_MSG_RESULT(no)
+    enable_sysreadline=no
+  ]
+)
+
+dnl
+dnl Check for readline.h or readline/readline.h (same with history.h)
+dnl and for readline and history libraries
+dnl
+AM_CONDITIONAL(SYSTEM_READLINE, test x$enable_sysreadline = xyes)
+if test x$enable_sysreadline = xyes; then
+  AC_CHECK_HEADER(readline.h, readline_includes=/usr/include, 
+    AC_CHECK_HEADER(readline/readline.h,
+      readline_includes=/usr/include/readline,
+      AC_MSG_ERROR([*** readline headers not installed ***]))
+  )
+  AC_CHECK_HEADER(history.h,,
+    AC_CHECK_HEADER(readline/history.h,,
+      AC_MSG_ERROR([*** readline history headers not installed ***]))
+  )
+  AC_CHECK_LIB(readline, main,, AC_MSG_ERROR([*** readline support not installed ***]))
+  AC_CHECK_LIB(history, main,, AC_MSG_ERROR([*** readline history support not installed ***]))
+  AC_SUBST(readline_includes)
+else
+  AC_CONFIG_SUBDIRS(readline-4.0)
+fi
+
 dnl ---
 dnl Check for qt
 dnl ---
@@ -247,6 +297,7 @@ AC_OUTPUT([
 Makefile
 ecasound.spec
 ecasound.mdk.spec
+ecasound.pld.spec
 libecasound/Makefile
 ecasound/Makefile
 libqtecasound/Makefile
@@ -304,6 +355,11 @@ if test x$oss_support = xyes ; then
 else
 	echo "OSS-support		no"
 fi
+if test x$enable_sysreadline = xyes ; then
+	echo "Use system readline	yes"
+else
+	echo "Use system readline	no"
+fi
 
 echo "-----------------------------------------------------------------"
 echo "Following directories are used:"
@@ -312,6 +368,9 @@ if test "$qt_support" = "yes"  ; then
 	echo "Qt-libraries:			"$qt_libraries
 	echo "Qt-includes:			"$qt_includes
 fi
+if test x$enable_sysreadline = xyes ; then
+  	echo "readline includes:		"$readline_includes
+fi  
 
 echo "-----------------------------------------------------------------"
 echo "Type 'make' to compile the package and 'make install' to install."

@@ -1,5 +1,5 @@
-#ifndef QESTATUSBAR_H
-#define QESTATUSBAR_H
+#ifndef INCLUDED_QESTATUSBAR_H
+#define INCLUDED_QESTATUSBAR_H
 
 #include <string>
 #include <memory>
@@ -18,23 +18,21 @@ class QEStatusBar : public QStatusBar {
 
 public slots:
 
-  void current_position(ECA_AUDIO_TIME pos) { curpos = pos; }
+  void current_position(ECA_AUDIO_TIME pos) { curpos_rep = pos; }
   void visible_area(ECA_AUDIO_TIME start, ECA_AUDIO_TIME end);
   void marked_area(ECA_AUDIO_TIME start, ECA_AUDIO_TIME end);
   void toggle_editing(bool v) { editing_rep = v; }
-  void filename(const string& name) { filename_rep = name; }
   void update(void);
 
  private:
 
-  ECA_CONTROL* ectrl;
-  string filename_rep;
-  ECA_AUDIO_TIME curpos, vstartpos, vendpos, mstartpos, mendpos;
+  ECA_CONTROL* ectrl_repp;
+  ECA_AUDIO_TIME curpos_rep, vstartpos_rep, vendpos_rep, mstartpos_rep, mendpos_rep;
   bool editing_rep;
 
  public:
 
-  QEStatusBar (ECA_CONTROL* ctrl, const string& filename, QWidget *parent = 0, const char *name = 0);
+  QEStatusBar (ECA_CONTROL* ctrl, QWidget *parent = 0, const char *name = 0);
 };
 
 #endif

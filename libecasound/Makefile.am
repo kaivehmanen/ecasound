@@ -251,10 +251,10 @@ libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
 
 install-data-local:
-	$(INSTALL) -d $(pkgincludedir)
+	$(INSTALL) -d $(DESTDIR)$(pkgincludedir)
 	cd $(srcdir) ; \
-	cp 	$(ecasound_audiofx_include) \
-		$(ecasound_audioio_include) \
-		$(ecasound_controller_include) \
-		$(ecasound_general_include) $(vst_header_files) \
-		$(pkgincludedir)
+	cp      $(ecasound_audiofx_src) \
+		$(ecasound_audioio_src) \
+		$(ecasound_controller_src) \
+		$(ecasound_general_src) $(vst_files) \
+		$(DESTDIR)$(pkgincludedir)

@@ -26,12 +26,10 @@
 #include "version.h"
 
 QEStatusBar::QEStatusBar (ECA_CONTROL* ctrl,
-			  const string& filename,
 			  QWidget *parent, 
 			  const char *name)
   : QStatusBar( parent, name ),
-    ectrl(ctrl),
-    filename_rep(filename) { 
+    ectrl_repp(ctrl) { 
   editing_rep = false;
 
   QTimer *timer = new QTimer(this);
@@ -40,39 +38,30 @@ QEStatusBar::QEStatusBar (ECA_CONTROL* ctrl,
 }
 
 void QEStatusBar::visible_area(ECA_AUDIO_TIME start, ECA_AUDIO_TIME end) {
-  vstartpos = start;
-  vendpos = end;
+  vstartpos_rep = start;
+  vendpos_rep = end;
 }
 
 void QEStatusBar::marked_area(ECA_AUDIO_TIME start, ECA_AUDIO_TIME end) {
-  mstartpos = start;
-  mendpos = end;
+  mstartpos_rep = start;
+  mendpos_rep = end;
 }
 
 void QEStatusBar::update(void) {
   string status;
-  if (ectrl->is_running() == true) status = "running";
-  else status = " - ";
 
+  if (editing_rep == true) status += " (*) ";
 
-  if (filename_rep.empty() == true) {
-    message("ecawave ready - no file loaded"); 
-  }
-  else {
-    string begin;
-    if (editing_rep == true) 
-      begin = filename_rep + " (*)";
-    else 
-      begin = filename_rep;
-    
-    message(string(begin + 
-		 " - visible [ " +
-		   vstartpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s - " + 
-		   vendpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s ] - marked [ " +
-		   mstartpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s - " + 
-		   mendpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s ] - current " +
-		   curpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s - " +
-		   " status [" +
-		   status + "]").c_str()); 
-  }
+  status += "status [";
+  if (ectrl_repp->is_running() == true) status += "running";
+  else status += " - ";
+  status += "]";
+  
+  status += " - visible [ " +
+            vstartpos_rep.to_string(ECA_AUDIO_TIME::format_seconds) + "s - " + 
+            vendpos_rep.to_string(ECA_AUDIO_TIME::format_seconds) + "s ] - marked [ " +
+	    mstartpos_rep.to_string(ECA_AUDIO_TIME::format_seconds) + "s - " + 
+	    mendpos_rep.to_string(ECA_AUDIO_TIME::format_seconds) + "s ] - current " +
+            curpos_rep.to_string(ECA_AUDIO_TIME::format_seconds) + "s";
+  message(status.c_str());
 }

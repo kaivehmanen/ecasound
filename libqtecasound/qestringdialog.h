@@ -1,5 +1,5 @@
-#ifndef _QESTRINGDIALOG_H
-#define _QESTRINGDIALOG_H
+#ifndef INCLUDED_QESTRINGDIALOG_H
+#define INCLUDED_QESTRINGDIALOG_H
 
 #include <qwidget.h>
 #include <qdialog.h>

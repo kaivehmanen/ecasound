@@ -6,6 +6,7 @@
 
 #include <qwidget.h>
 #include <qlayout.h>
+#include <qgroupbox.h>
 
 #include <kvutils/definition_by_contract.h>
 #include <ecasound/eca-audio-format.h>
@@ -16,6 +17,7 @@
 class AUDIO_IO;
 class QEButtonRow;
 class QLabel;
+class QGroupBox;
 
 /**
  * Single audio file
@@ -32,6 +34,11 @@ public slots:
    * Update the waveform view
    */
   void update_wave_form_data(void);
+
+  /**
+   * Sets file view title
+   */
+  void title(const string& name) { gbox_repp->setTitle(name.c_str()); }
 
   /**
    * Emit all status info
@@ -206,6 +213,7 @@ signals:
 
   QVBoxLayout* top_layout;
   QEButtonRow* buttonrow;
+  QGroupBox* gbox_repp;
 
  public:
 

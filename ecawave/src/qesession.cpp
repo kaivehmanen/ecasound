@@ -167,35 +167,35 @@ void QESession::position_update(void) {
 void QESession::init_layout(void) {
   buttonrow = new QEButtonRow(this, "buttonrow");
   buttonrow->add_button(new QPushButton("(N)ew session",buttonrow), 
-		       ALT+Key_N,
+		       CTRL+Key_N,
 		       this, SLOT(new_session()));
   buttonrow->add_button(new QPushButton("New (f)ile",buttonrow), 
-		       ALT+Key_F, this, SLOT(new_file()));
+		       CTRL+Key_F, this, SLOT(new_file()));
   buttonrow->add_button(new QPushButton("(O)pen",buttonrow), 
-		       ALT+Key_O, this, SLOT(open_file()));
+		       CTRL+Key_O, this, SLOT(open_file()));
   buttonrow->add_button(new QPushButton("Sa(v)e",buttonrow), 
-		       ALT+Key_V, this, SLOT(save_event()));
+		       CTRL+Key_V, this, SLOT(save_event()));
   buttonrow->add_button(new QPushButton("Save (a)s",buttonrow), 
-		       ALT+Key_A, this, SLOT(save_as_event()));
-  buttonrow->add_button(new QPushButton("(Q)uit",buttonrow), ALT+Key_Q, this, SLOT(close()));
+		       CTRL+Key_A, this, SLOT(save_as_event()));
+  buttonrow->add_button(new QPushButton("(Q)uit",buttonrow), CTRL+Key_Q, this, SLOT(close()));
   vlayout->addWidget(buttonrow);
 
   buttonrow2 = new QEButtonRow(this, "buttonrow2");
-  buttonrow2->add_button(new QPushButton("S(t)art",buttonrow2), ALT+Key_T,
+  buttonrow2->add_button(new QPushButton("S(t)art",buttonrow2), CTRL+Key_T,
 			this, SLOT(play_event()));
-  buttonrow2->add_button(new QPushButton("(S)top",buttonrow2), ALT+Key_S,
+  buttonrow2->add_button(new QPushButton("(S)top",buttonrow2), CTRL+Key_S,
 			this, SLOT(stop_event()));
-  buttonrow2->add_button(new QPushButton("(E)ffect",buttonrow2), ALT+Key_E,
+  buttonrow2->add_button(new QPushButton("(E)ffect",buttonrow2), CTRL+Key_E,
 			this, SLOT(effect_event()));
-  buttonrow2->add_button(new QPushButton("Fade (i)n",buttonrow2), ALT+Key_I,
+  buttonrow2->add_button(new QPushButton("Fade (i)n",buttonrow2), CTRL+Key_I,
 			this, SLOT(fade_in_event()));
-  buttonrow2->add_button(new QPushButton("Fa(d)e out",buttonrow2), ALT+Key_D,
+  buttonrow2->add_button(new QPushButton("Fa(d)e out",buttonrow2), CTRL+Key_D,
 			this, SLOT(fade_out_event()));
-  buttonrow2->add_button(new QPushButton("Cop(y)",buttonrow2), ALT+Key_Y,
+  buttonrow2->add_button(new QPushButton("Cop(y)",buttonrow2), CTRL+Key_Y,
 			this, SLOT(copy_event()));
-  buttonrow2->add_button(new QPushButton("C(u)t",buttonrow2), ALT+Key_U,
+  buttonrow2->add_button(new QPushButton("C(u)t",buttonrow2), CTRL+Key_U,
 			this, SLOT(cut_event()));
-  buttonrow2->add_button(new QPushButton("(P)aste",buttonrow2), ALT+Key_P,
+  buttonrow2->add_button(new QPushButton("(P)aste",buttonrow2), CTRL+Key_P,
 			this, SLOT(paste_event()));
 
   vlayout->addWidget(buttonrow2);
@@ -203,22 +203,24 @@ void QESession::init_layout(void) {
   QAccel* a = new QAccel (this);
   a->connectItem(a->insertItem(ALT+CTRL+Key_D), this, SLOT(debug_event()));
 
-  QGroupBox* gbox = new QGroupBox(1, Qt::Horizontal, this, 0);
-  gbox->setFrameStyle(QFrame::Box | QFrame::Sunken);
   if (state_rep == state_orig_file ||
       state_rep == state_orig_direct) 
     file = new QEFile(active_filename_rep,
 		      wcache_toggle_rep,
 		      refresh_toggle_rep, 
-		      gbox, 
+		      this, 
 		      "sessionfile");
   else 
-    file = new QEFile(gbox, 
+    file = new QEFile(this, 
 		      "sessionfile");
+  QObject::connect(this, 
+		   SIGNAL(filename_changed(const string&)), 
+		   file,
+		   SLOT(title(const string&)));
   
-  vlayout->addWidget(gbox,1);
+  vlayout->addWidget(file,1);
 
-  statusbar = new QEStatusBar(ectrl, active_filename_rep, this);
+  statusbar = new QEStatusBar(ectrl, this);
   statusbar->visible_area(ECA_AUDIO_TIME(0, file->samples_per_second()),
 			  ECA_AUDIO_TIME(file->length(), file->samples_per_second()));
   vlayout->addWidget(statusbar);
@@ -237,10 +239,6 @@ void QESession::init_layout(void) {
 		   SIGNAL(current_position_changed(ECA_AUDIO_TIME)), 
 		   statusbar,
 		   SLOT(current_position(ECA_AUDIO_TIME)));
-  QObject::connect(this, 
-		   SIGNAL(filename_changed(const string&)), 
-		   statusbar,
-		   SLOT(filename(const string&)));
 }
 
 void QESession::debug_event(void) {

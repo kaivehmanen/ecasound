@@ -17,7 +17,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include "../config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <string>
 #include <vector>
@@ -37,12 +39,17 @@
 #include <eca-error.h>
 #include <eca-comhelp.h>
 
+#ifdef HAVE_NCURSES_CURSES_H
+#include <ncurses/curses.h>
+#include <ncurses/term.h>
+#else
 #include <curses.h>
 #include <term.h>
+#endif
 
 #define READLINE_LIBRARY
-#include <../readline-4.0/readline.h>
-#include <../readline-4.0/history.h>
+#include <readline.h>
+#include <history.h>
 
 #include "textdebug.h"
 #include "eca-text.h"

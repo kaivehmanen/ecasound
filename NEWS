@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 110600) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 190600) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -16,18 +16,24 @@ Last officially released version is -*> v1.7.8r12 <*-
 
 ??062000 (v1.8.0d13)
 	- added: ecaconvert - a new ecatools app; converts a set of 
-		 files to target file format; 
+		 files to target file format
 	- added: support for ALSA 0.6.x (plugin and direct) - thanks 
 		 to Jeremy Hall for the patch
 	- added: ia-mode - 'cs-list', 'c-list', 'aio-list',
 		 'cop-list'; nothing new, but some might find these 
 		 a bit more intuitive to use than various status cmds
 	- added: more info about audio object status
+	- added: --enable-sys-readline (compile against already 
+		 installed libreadline)
+	- added: rpm-spec file for PLD-Linux - ecasound.pld.spec
+	- added: support for destdir env.variable - the last three
+		 added features were submitted by wrobell
 	- changed: major changes in source tree organization
 	- changed: mp3 input and output now possible with all decoders
-		   and encoders which support standards i/o stream;
+		   and encoders which support standards i/o streams;
 		   still defaults to mpg123 and lame - see 
   	    	   ecasoundrc(5) for details
+	- changed: qtecasound - all shortcut keys are now ctrl-some_key
 	- fixed: stdin, stdout and '-' were all more or less broken
 	- fixed: loop devices weren't saved correctly
 05062000 (v1.7.8r12)  -** public release **-

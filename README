@@ -181,6 +181,7 @@ Lavallée, Marc - Rpm-spec for Mandrake.
 Laydier, Antoine aka SMF - layer.cpp (interprets mp3 headers)
 Petit, Bertrand - Helped with POSIX-compatibility issues.
 Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!
+Robell, W. - PLD-Linux RPM-specfile, readline and destdir patches.
 Smith, Richard A. - Helped in solving the "gcc 2.95" bug.
 Sousa, Rui - OSS bug fixes.
 Tkachenko, Vadim - Autoconf magic. :)

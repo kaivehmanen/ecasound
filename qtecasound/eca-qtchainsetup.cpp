@@ -190,27 +190,27 @@ void QEChainsetup::init_buttons(void) {
   buttons_repp = new QEButtonRow(this, "chain_buttonrow");
 
   buttons_repp->add_button(new QPushButton("(N)ew chain",buttons_repp), 
-		      ALT+Key_N,
+		      CTRL+Key_N,
 		      this,
 		      SLOT(button_add_chain()));
 
   buttons_repp->add_button(new QPushButton("Remo(v)e chain",buttons_repp), 
-		      ALT+Key_V,
+		      CTRL+Key_V,
 		      this,
 		      SLOT(button_remove_chain()));
 
   buttons_repp->add_button(new QPushButton("(M)uting",buttons_repp), 
-		      ALT+Key_M,
+		      CTRL+Key_M,
 		      this,
 		      SLOT(button_chain_muting()));
 
   buttons_repp->add_button(new QPushButton("(B)ypass",buttons_repp), 
-		      ALT+Key_B,
+		      CTRL+Key_B,
 		      this,
 		      SLOT(button_chain_bypass()));
 
 //    buttons_repp->add_button(new QPushButton("(O)pen",buttons_repp), 
-//  		      ALT+Key_O,
+//  		      CTRL+Key_O,
 //  		      this,
 //  		      SLOT(init_chain_list()));
 }

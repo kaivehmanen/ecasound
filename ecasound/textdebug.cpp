@@ -1,13 +1,20 @@
-#include "../config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <iostream>
 #include <string>
 
 #include <eca-debug.h>
-
 #include "textdebug.h"
 
+#ifdef HAVE_NCURSES_CURSES_H
+#include <ncurses/curses.h>
+#include <ncurses/term.h>
+#else
 #include <curses.h>
 #include <term.h>
+#endif
 
 void TEXTDEBUG::stream(ostream* dos) {
   dostream = dos;

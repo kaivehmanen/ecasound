@@ -38,5 +38,5 @@ DIST_COMMON = 	README \
 noinst_HEADERS = $(kvutil_headers)
 
 install-data-local:
-	$(INSTALL) -d $(pkgincludedir)
-	cd $(srcdir) ; cp  $(kvutil_headers) $(pkgincludedir)
+	$(INSTALL) -d $(DESTDIR)$(pkgincludedir)
+	cd $(srcdir) ; cp  $(kvutil_headers) $(DESTDIR)$(pkgincludedir)
