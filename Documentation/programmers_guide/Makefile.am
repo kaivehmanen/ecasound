@@ -5,7 +5,7 @@
 # Files going into distribution:
 DISTFILES = 	Makefile.am \
 		Makefile.in \
-		programmers_guide.txt \
+		ecasound_programmers_guide.txt \
 		eci_doc.latex
 
 all:
