@@ -731,7 +731,10 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 
   engine_repp = engine;
   engine->init_engine_state();
+
+#if ECA_JACK_TRANSPORT_API >= 2
   transport_info_rep.frame = engine_repp->current_position_in_samples();
+#endif
 
   shutdown_request_rep = false;
   exit_request_rep = false;
