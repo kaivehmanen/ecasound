@@ -5,6 +5,9 @@
 // Attributes:
 //     eca-style-version: 3
 //
+// References:
+//     http://www.mega-nerd.com/SRC/
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -83,17 +86,21 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels)
 
   impl_repp->rt_lock_rep = false;
   impl_repp->lockref_rep = 0;
-  impl_repp->quality_rep = 50;
   impl_repp->old_buffer_repp = 0;
+#ifdef ECA_COMPILE_SAMPLERATE
+  impl_repp->quality_rep = 50;
+  impl_repp->src_state_rep.resize(channels);
+#else
+  impl_repp->quality_rep = 5;
+#endif
  
   ECA_LOG_MSG(ECA_LOGGER::functions, 
-		"(samplebuffer) Buffer created, channels: " +
+		"Buffer created, channels: " +
 		kvu_numtostr(buffer.size()) + ", length-samples: " +
 		kvu_numtostr(buffersize_rep) + ".");
 
   // ---
   DBC_ENSURE(buffer.size() == static_cast<size_t>(channel_count_rep));
-  DBC_ENSURE(buffersize_rep == reserved_samples_rep);
   // ---
 }
 
@@ -123,7 +130,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
   impl_repp->old_buffer_repp = 0;
 
   ECA_LOG_MSG(ECA_LOGGER::functions, 
-		"(samplebuffer) Buffer copy-constructed, channels: " +
+		"Buffer copy-constructed, channels: " +
 		kvu_numtostr(buffer.size()) + ", length-samples: " +
 		kvu_numtostr(buffersize_rep) + ".");
 
@@ -198,6 +205,15 @@ SAMPLE_BUFFER::~SAMPLE_BUFFER (void)
     delete[] impl_repp->old_buffer_repp;
     impl_repp->old_buffer_repp = 0;
   }
+
+#ifdef ECA_COMPILE_SAMPLERATE
+  for(size_t n = 0; n < impl_repp->src_state_rep.size(); n++) {
+    if (impl_repp->src_state_rep[n] != 0) {
+      src_delete(impl_repp->src_state_rep[n]);
+      impl_repp->src_state_rep[n] = 0;
+    }
+  }
+#endif
 
   delete impl_repp;
 }
@@ -362,7 +378,7 @@ void SAMPLE_BUFFER::limit_values(void)
  * Resamples samplebuffer contents. Resampling
  * changes buffer length by 'to_rate/from_rate'.
  *
- * @post std::fabs(to_rate / from_rate * old_length_in_samples - length_in_samples()) <= 1
+ * @post to_rate / from_rate * old_length_in_samples - length_in_samples() >= -1
  */
 void SAMPLE_BUFFER::resample(SAMPLE_SPECS::sample_rate_t from_rate,
 			     SAMPLE_SPECS::sample_rate_t to_rate)
@@ -370,25 +386,42 @@ void SAMPLE_BUFFER::resample(SAMPLE_SPECS::sample_rate_t from_rate,
   DBC_DECLARE(buf_size_t old_length_in_samples = length_in_samples());
 
 #ifdef ECA_COMPILE_SAMPLERATE
-  resample_secret_rabbit_code(from_rate, to_rate);
-#else
-  resample_with_memory(from_rate, to_rate); 
+  if (impl_repp->quality_rep > 5) {
+    resample_secret_rabbit_code(from_rate, to_rate);
+  }
+  else 
 #endif
+    {
+      DBC_CHECK(impl_repp->quality_rep <= 5);
+      resample_with_memory(from_rate, to_rate); 
+    }
 
-  /* FIXME: fails all the fime... */
-  DBC_CHECK(std::fabs((static_cast<double>(to_rate) / from_rate * old_length_in_samples - length_in_samples())) <= 1.0f);
-  // DBC_CHECK(length_in_samples() == std::floor((static_cast<double>(to_rate) / from_rate) * static_cast<double>(old_length_in_samples) + 0.5f));
-  // fprintf(stderr, "resample fail len_samples=%ld, to=%ld, from=%ld, old_len=%ld, round=%f.\n", length_in_samples(), to_rate, from_rate, old_length_in_samples, std::floor((static_cast<double>(to_rate) / from_rate) * static_cast<double>(old_length_in_samples) + 0.5f));
+  DBC_CHECK((static_cast<double>(to_rate) / from_rate * old_length_in_samples - length_in_samples()) >= -1);
 }
 
 /**
  * Set resampling quality. 
  *
+ * Depending on build options, not all quality levels
+ * are necessarily supported. If the requested quality level 
+ * exceeds the available resamplers, the quality setting 
+ * is set to the highest available algorithm. You can use
+ * the get_resample_quality() function to query the current level.
+ *
  * @param quality value between 0 (lowest) to 100 (highest)
  */
 void SAMPLE_BUFFER::resample_set_quality(int quality)
 {
+#ifdef ECA_COMPILE_SAMPLERATE
   impl_repp->quality_rep = quality;
+#else
+  if (quality > 10) {
+    ECA_LOG_MSG(ECA_LOGGER::info, 
+		"WARNING: Libsamplerate is required for high-quality resampling. "
+		"Using the internal resampler instead.");
+    impl_repp->quality_rep = 5;
+  }
+#endif
 }
 
 /**
@@ -821,7 +854,7 @@ void SAMPLE_BUFFER::number_of_channels(channel_size_t len)
     for(channel_size_t n = old_size; n < len; n++) {
       buffer[n] = new sample_t [reserved_samples_rep];
     }
-    ECA_LOG_MSG(ECA_LOGGER::functions, "(samplebuffer<>) Increasing channel-count (1).");    
+    ECA_LOG_MSG(ECA_LOGGER::functions, "Increasing channel-count (1).");    
   }
 
   /* note! channel_count_rep and buffer.size() necessarily
@@ -834,7 +867,7 @@ void SAMPLE_BUFFER::number_of_channels(channel_size_t len)
 	buffer[n][m] = SAMPLE_SPECS::silent_value;
       }
     }
-    // ECA_LOG_MSG(ECA_LOGGER::system_objects, "(samplebuffer<>) Increasing channel-count (2).");
+    // ECA_LOG_MSG(ECA_LOGGER::system_objects, "Increasing channel-count (2).");
   }
 
   channel_count_rep = len;
@@ -861,7 +894,7 @@ void SAMPLE_BUFFER::length_in_samples(buf_size_t len)
 
     if (impl_repp->old_buffer_repp != 0) {
       delete[] impl_repp->old_buffer_repp;
-      impl_repp->old_buffer_repp = 0;
+      impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep];
     }
   }
 
@@ -889,7 +922,9 @@ void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
 {
   double step = 1.0;
   if (from_srate != 0) { step = static_cast<double>(to_srate) / from_srate; }
-  buf_size_t new_buffer_size = static_cast<buf_size_t>((step * buffersize_rep) + 1.0f);
+
+  /* add at least one word of extra space */
+  buf_size_t new_buffer_size = static_cast<buf_size_t>((step * buffersize_rep)) + sizeof(buf_size_t);
 
   if (new_buffer_size > reserved_samples_rep) {
     reserved_samples_rep = new_buffer_size * 2;
@@ -902,8 +937,19 @@ void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
     for(int c = 0; c < channel_count_rep; c++) {
       delete[] buffer[c];
       buffer[c] = new sample_t [reserved_samples_rep];
-    } 
+    }
   }
+
+#ifdef ECA_COMPILE_SAMPLERATE
+  impl_repp->src_state_rep.resize(channel_count_rep);
+  for(int c = 0; c < channel_count_rep; c++) {
+    if (impl_repp->src_state_rep[c] == 0) {
+      int error;
+      impl_repp->src_state_rep[c] = src_new((impl_repp->quality_rep > 75) ? SRC_SINC_BEST_QUALITY : SRC_SINC_MEDIUM_QUALITY, 1, &error);
+      DBC_CHECK(impl_repp->src_state_rep[c] != 0);
+    }
+  }
+#endif
 
   if (impl_repp->old_buffer_repp == 0) {
 #ifdef ECA_DEBUG_MODE
@@ -991,7 +1037,7 @@ void SAMPLE_BUFFER::resample_nofilter(SAMPLE_SPECS::sample_rate_t from,
   // truncate, not round, to integer
   length_in_samples(static_cast<buf_size_t>(std::floor(step * buffersize_rep)));
 
-  DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_no_f from " << from << " to " << to << "." << std::endl);
+  DEBUG_RESAMPLING_STATEMENT(std::cerr << "resample_no_f from " << from << " to " << to << "." << std::endl);
 
   DBC_CHECK(impl_repp->old_buffer_repp != 0);
 
@@ -1102,7 +1148,7 @@ void SAMPLE_BUFFER::resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from
   double step = static_cast<double>(to_srate) / from_srate;
   buf_size_t old_buffer_size = buffersize_rep;
 
-  // truncate, not round, to integer
+  /* modify buffersize_rep (size of dst buffer) */
   length_in_samples(static_cast<buf_size_t>(std::floor(step * buffersize_rep)));
 
   DBC_CHECK(impl_repp->old_buffer_repp != 0);
@@ -1125,40 +1171,48 @@ void SAMPLE_BUFFER::resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from
     // Maximum number of frames pointer to by data_out.
     // note: was 'reserved_samples_rep' but this led 
     //       to corrupted output
-    params.output_frames = reserved_samples_rep; /* buffersize_rep */
+    params.output_frames = reserved_samples_rep; /* buffersize_rep; */
 
     // Equal to output_sample_rate / input_sample_rate.
     params.src_ratio = step;
+    params.end_of_input = 0;
 
     // Perform the sample rate conversion
-    int ret = src_simple(&params, 
-			 (impl_repp->quality_rep > 75) ? SRC_SINC_BEST_QUALITY : SRC_SINC_MEDIUM_QUALITY, 1);
-
+    int ret = src_process(impl_repp->src_state_rep[c], &params);
     DBC_CHECK(ret == 0);
-    DBC_CHECK(std::labs(params.input_frames_used - old_buffer_size) <= 1);
+    DBC_CHECK(std::labs(params.input_frames_used - old_buffer_size) == 0);
 #ifdef ECA_DEBUG_MODE
+    /* make sure all input samples have been used */
     if (old_buffer_size != params.input_frames_used) { std::cerr << "input_frames_over=" << old_buffer_size - params.input_frames_used << ".\n"; }
-#endif
 
+    /* check that all channels are processed in the same way */
     if (c == 0) ch_out_count = params.output_frames_gen;
     DBC_CHECK(ch_out_count == params.output_frames_gen);
+#endif /* ECA_DEBUG_MODE */
+  }
+
+  DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) src_src input=" << old_buffer_size 
+			     << ", target=" << buffersize_rep 
+			     << ", processed=" << params.input_frames_used 
+			     << ", space_for=" << reserved_samples_rep 
+			     << ", out=" << params.output_frames_gen << std::endl); 
 
 #ifdef ECA_DEBUG_MODE
-    if (buffersize_rep != params.output_frames_gen) { std::cerr << "output_frame_space_left=" << params.output_frames_gen - buffersize_rep << ".\n"; }
-#endif
+  if ((params.output_frames_gen - buffersize_rep) > 1) {
+    std::cerr << "(samplebuffer) src_src input=" << old_buffer_size 
+	      << ", target=" << buffersize_rep 
+	      << ", processed=" << params.input_frames_used 
+	      << ", space_for=" << reserved_samples_rep 
+	      << ", out=" << params.output_frames_gen << std::endl; 
   }
-
-  DBC_CHECK(std::labs(params.output_frames_gen - buffersize_rep) <= 1);
-
-  /* FIXME: this is incorrect, but what to do!? */
-  // DBC_CHECK(std::labs(params.output_frames_gen - buffersize_rep) <= 1);
+#endif
   if (params.output_frames_gen != buffersize_rep) {
-    /* danger! we set buffersize_rep directly, but in this case 
-     * it is safe as we have used 'reserved_samples_rep' 
-     * as the upper limit */
+    /* note: we set buffersize_rep directly and bypass
+     * length_in_samples(), but in this case it is safe as 
+     * we have used 'reserved_samples_rep' as the upper limit */
     buffersize_rep = params.output_frames_gen;
   }
-#endif
+#endif /* ECA_COMPILE_SAMPLERATE */
 }
 
 void SAMPLE_BUFFER::resample_extfilter(SAMPLE_SPECS::sample_rate_t from_srate,
