@@ -187,8 +187,9 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
        * If execvp failed, make sure that the other end of 
        * the pipe doesn't block forever.
        */
-      int fd = ::open(tmpfile_repp.c_str(), O_WRONLY);
-      ::close(fd);
+      std::cerr << "(audioio-forked-stream) execvp() failed!\n";
+      int fd = open(tmpfile_repp.c_str(), O_WRONLY);
+      close(fd);
     }
     
     exit(res);

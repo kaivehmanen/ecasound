@@ -695,7 +695,7 @@ void ECA_ENGINE::stop(void) {
     struct sched_param sparam;
     sparam.sched_priority = 0;
     if (::sched_setscheduler(0, SCHED_OTHER, &sparam) == -1)
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Unable to change scheduling back to SCHED_OTHER!");
+      ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Unable to change scheduling back to SCHED_OTHER!");
     else
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Changed back to non-realtime scheduling SCHED_OTHER.");
   }

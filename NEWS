@@ -24,9 +24,11 @@ Last officially released version is -*> v2.0.3 *-
 		   to work even though compiled against libecasound 
 		   and libkvutils that are not installed to 
 		   a directory listed in /etc/ld.so.conf
-	- changed: disk i/o subsystem is put to sleep more 
+	- changed: db-subsystem - is put to sleep more 
 		   aggressively, which should further decrease 
 		   its cpu-load
+	- changed: db-subsystem - runs once again under sched_fifo
+		   scheduling if -r is enabled
 	- fixed: in cases where ecasound selected -B:rt instead 
 		 of -B:rtlowlatency, -r was alwasy disabled
 14102001 (v2.1dev2)

@@ -141,22 +141,25 @@ void AUDIO_IO_PROXY_SERVER::start(void) {
       ecadebug->msg("(audio_io_proxy_server) pthread_create failed, exiting");
       exit(1);
     }
-
-    /*
-     * Note! As the new recovery code is in place, this is not needed anymore.
-     * 
-     * if (sched_getscheduler(0) == SCHED_FIFO) {
-     *   struct sched_param sparam;
-     *   sparam.sched_priority = schedpriority_rep;
-     *   if (::pthread_setschedparam(io_thread_rep, SCHED_FIFO, &sparam) != 0)
-     *   ecadebug->msg("(audioio-proxy-server) Unable to change scheduling policy to SCHED_FIFO!");
-     * else 
-     *   ecadebug->msg("(audioio-proxy-server) Using realtime-scheduling (SCHED_FIFO).");
-     * }
-     */
-
+    
     thread_running_rep = true;
   }
+
+  /*
+   * Note! As the new recovery code is in place, this is not needed anymore.
+   *       ... or is it? - testing again 15.10.2001
+   */
+#if 1
+   if (sched_getscheduler(0) == SCHED_FIFO) {
+     struct sched_param sparam;
+     sparam.sched_priority = schedpriority_rep;
+     if (::pthread_setschedparam(impl_repp->io_thread_rep, SCHED_FIFO, &sparam) != 0)
+       ecadebug->msg("(audioio-proxy-server) Unable to change scheduling policy to SCHED_FIFO!");
+     else 
+       ecadebug->msg("(audioio-proxy-server) Using realtime-scheduling (SCHED_FIFO).");
+   }
+#endif
+
   stop_request_rep.set(0);
   running_rep.set(1);
   full_rep.set(0);
@@ -172,6 +175,23 @@ void AUDIO_IO_PROXY_SERVER::start(void) {
 void AUDIO_IO_PROXY_SERVER::stop(void) { 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) stop");
   stop_request_rep.set(1);
+
+#if 1
+  if (thread_running_rep == true) {
+    struct sched_param sparam;
+    int policy = 0;
+    pthread_getschedparam(impl_repp->io_thread_rep, &policy, &sparam);
+    if (policy != SCHED_OTHER) {
+      sparam.sched_priority = 0;
+      if (pthread_setschedparam(impl_repp->io_thread_rep, SCHED_OTHER, &sparam) != 0)
+	ecadebug->msg(ECA_DEBUG::info, 
+    		      "(audioio-proxy-server) Unable to change scheduling policy SCHED_FIFO->SCHED_OTHER!");
+      else 
+	ecadebug->msg(ECA_DEBUG::system_objects,
+    		      "(audioio-proxy-server) Changed scheduling policy  SCHED_FIFO->SCHED_OTHER.");
+        }
+  }
+#endif
 }
 
 /**
