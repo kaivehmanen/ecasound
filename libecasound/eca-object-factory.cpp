@@ -420,6 +420,11 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu)
       }
       ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
     }
+    else {
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "ERROR: Unable to find LADSPA plugin \"" + unique + "\"");
+
+    }
     return new_cop;
   }
   return 0;
@@ -630,7 +635,7 @@ std::string ECA_OBJECT_FACTORY::probe_default_output_device(void)
       /* phase 4: fallback to rtnull */
       if (output_selected != true) {
 	ECA_LOG_MSG(ECA_LOGGER::info,
-		    "(eca-chainsetup) Warning! No default output available. Using 'rtnull' as a fallback.");
+		    "WARNING: No default output available. Using 'rtnull' as a fallback.");
 	  default_output = "rtnull";
       }
     }
