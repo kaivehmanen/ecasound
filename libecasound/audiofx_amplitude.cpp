@@ -56,7 +56,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY::get_parameter(int param) const {
   return(0.0);
 }
 
-void EFFECT_AMPLIFY::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_AMPLIFY::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   OPERATOR::parameter_description(param, pd);
 }
@@ -124,7 +124,7 @@ void EFFECT_AMPLIFY_CLIPCOUNT::process(void) {
   }
 }
 
-void EFFECT_AMPLIFY_CLIPCOUNT::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_AMPLIFY_CLIPCOUNT::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   OPERATOR::parameter_description(param, pd);
 }
@@ -160,7 +160,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CHANNEL::get_parameter(int param) con
   return(0.0);
 }
 
-void EFFECT_AMPLIFY_CHANNEL::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_AMPLIFY_CHANNEL::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   OPERATOR::parameter_description(param, pd);
 
@@ -211,7 +211,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_LIMITER::get_parameter(int param) const {
   return(0.0);
 }
 
-void EFFECT_LIMITER::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_LIMITER::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   OPERATOR::parameter_description(param, pd);
 }
@@ -273,7 +273,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_COMPRESS::get_parameter(int param) const {
   return(0.0);
 }
 
-void EFFECT_COMPRESS::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_COMPRESS::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   OPERATOR::parameter_description(param, pd);
 }
@@ -363,7 +363,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_NOISEGATE::get_parameter(int param) const {
   return(0.0);
 }
 
-void EFFECT_NOISEGATE::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_NOISEGATE::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   OPERATOR::parameter_description(param, pd);
 }
@@ -515,7 +515,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_NORMAL_PAN::get_parameter(int param) const {
   return(0.0);
 }
 
-void EFFECT_NORMAL_PAN::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_NORMAL_PAN::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   OPERATOR::parameter_description(param, pd);
 

@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "02\&.10\&.2002" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "22\&.10\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -390,11 +390,24 @@ Returns the selected parameter value\&. \fI[f]\fP
 .IP "cop-register" 
 Prints a list of registered chain operators\&. \fI[s]\fP
 .PP 
+.IP "cop-descriptions" 
+Prints a list of registered chain operators using 
+the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
+.PP 
 .IP "preset-register" 
 Prints a list of registered effect presets\&. \fI[s]\fP
 .PP 
+.IP "preset-descriptions" 
+Prints a list of registered effect presets using 
+the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
+.PP 
 .IP "ladspa-register" 
-Prints a list of registered LADSPA-plugins\&. \fI[s]\fP
+Prints a list of registered LADSPA plugins\&. \fI[s]\fP
+.PP 
+.IP "ladspa-descriptions" 
+Prints a list of registered LADSPA plugins using 
+the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
+.PP 
 .IP 
 .SH "CONTROLLERS" 
 Controllers are used to control individual chain operator parameters\&.
@@ -426,110 +439,9 @@ Returns info about controller status\&. \fI[s]\fP
 .IP "ctrl-register" 
 Prints a list of registered controllers\&. \fI[s]\fP
 .IP 
-.IP 
-.SH "OBJECT MAPS" 
-Object maps are central repositories for commonly used objects\&.
-Their main purpose is to add flexibility to handling different 
-object types - especially to handling dynamic addition and removal
-of whole object types\&.
-.IP 
-.IP "map-aio-list" 
-**not implemented**
-Returns a list of all audio object type keywords 
-registered to the object maps\&. \fI[S]\fP\&.
-.IP 
-.IP "map-aio-device-list" 
-**not implemented**
-Returns a list of all audio object type keywords 
-registered to the object maps\&. \fI[S]\fP\&.
-.IP 
-.IP "map-aio-name \'keyword\'" 
-**not implemented**
-Returns the type name that matches \'keyword\'\&. \fI[s]\fP\&.
-.IP 
-.IP "map-aio-regex \'keyword\'" 
-**not implemented**
-Returns the regular expression that is mapped to \'keyword\'\&. \fI[s]\fP\&.
-.IP 
-.IP "map-cop-list" 
-**not implemented**
-Returns a list of all chain operator type keywords 
-registered to the object maps\&. \fI[S]\fP\&.
-.IP 
-.IP "map-cop-type \'regexp\'" 
-**not implemented**
-Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
-.IP 
-.IP "map-cop-description \'keyword\'" 
-**not implemented**
-.IP "map-cop-param-names \'keyword\'" 
-**not implemented**
-.IP "map-cop-param-defaults \'keyword\'" 
-**not implemented**
-.IP "map-cop-param-ubounds \'keyword\'" 
-**not implemented**
-.IP "map-cop-param-lbounds \'keyword\'" 
-**not implemented**
-.IP "map-cop-param-toggles \'keyword\'" 
-**not implemented**
-.IP 
-.IP "map-ctrl-list" 
-**not implemented**
-Returns a list of all controller type keywords 
-registered to the object maps\&. \fI[S]\fP\&.
-.IP 
-.IP "map-ctrl-type \'regexp\'" 
-**not implemented**
-Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
-.IP 
-.IP "map-ctrl-description \'keyword\'" 
-**not implemented**
-.IP "map-ctrl-param-names \'keyword\'" 
-**not implemented**
-.IP "map-ctrl-param-defaults \'keyword\'" 
-**not implemented**
-.IP "map-ctrl-param-ubounds \'keyword\'" 
-**not implemented**
-.IP "map-ctrl-param-lbounds \'keyword\'" 
-**not implemented**
-.IP "map-ctrl-param-toggles \'keyword\'" 
-**not implemented**
-.IP 
-.IP "map-preset-list" 
-**not implemented**
-Returns a list of all preset type keywords 
-registered to the object maps\&. \fI[S]\fP\&.
-.IP 
-.IP "map-preset-description \'keyword\'" 
-**not implemented**
-.IP "map-preset-param-names \'keyword\'" 
-**not implemented**
-.IP "map-preset-param-defaults \'keyword\'" 
-**not implemented**
-.IP "map-preset-param-ubounds \'keyword\'" 
-**not implemented**
-.IP "map-preset-param-lbounds \'keyword\'" 
-**not implemented**
-.IP "map-preset-param-toggles \'keyword\'" 
-**not implemented**
-.IP 
-.IP "map-ladspa-list" 
-**not implemented**
-Returns a list of all LADSPA plugin keywords 
-registered to the object maps\&. \fI[S]\fP\&.
-.IP 
-.IP "map-ladspa-description \'keyword\'" 
-**not implemented**
-.IP "map-ladspa-param-names \'keyword\'" 
-**not implemented**
-.IP "map-ladspa-param-defaults \'keyword\'" 
-**not implemented**
-.IP "map-ladspa-param-ubounds \'keyword\'" 
-**not implemented**
-.IP "map-ladspa-param-lbounds \'keyword\'" 
-**not implemented**
-.IP "map-ladspa-param-toggles \'keyword\'" 
-**not implemented**
+.IP "ctrl-descriptions" 
+Prints a list of registered controllers using 
+the format specified in section \fIOPERATOR DESCRIPTIONS\fP\&. \fI[s]\fP
 .IP 
 .IP 
 .SH "INTERNAL COMMANDS" 
@@ -615,6 +527,25 @@ Dumps audio output state info\&. Either \'open\' or \'closed\'\&. \fI[-]\fP
 .IP "dump-cop-value \'chainop,param\'" 
 Dumps chain operator parameter value\&. \'chainop\' and \'param\' are 
 operator and parameter index values (1\&.\&.\&.n)\&. \fI[-]\fP
+.IP 
+.SH "OPERATOR DESCRIPTIONS" 
+.IP 
+The \fIxxx-descriptions\fP return a string containing all registered
+objects of the given type\&. Each line of the output described
+one registered type\&. The used syntax is:
+.IP 
+\'keyword,name,description,num_of_params,par1_def,par2_def,\&.\&.\&.\'
+.IP 
+\fIparX_def\fP describes one object parameter\&. This definition
+is present for all parameters of the described object type\&.
+The used syntax is:
+.IP 
+\'name,description,defaultvalue,upper_bound_flag,upper_bound,
+lower_bound_flag,lower_bound,toggled_flag,integer_flag,
+logarithmic_flag,output_flag\'
+.IP 
+For exact descriptions of these fields, please see
+the header file emph(ecasound/libecasound/eca-operator\&.h)\&.
 .IP 
 .SH "SEE ALSO" 
 .IP 

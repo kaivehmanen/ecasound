@@ -583,6 +583,11 @@ void ECA_CONTROL::action(int action_id)
   case ec_ladspa_register: { ladspa_register(); break; }
   case ec_ctrl_register: { ctrl_register(); break; }
 
+  case ec_cop_descriptions: { cop_descriptions(); break; }
+  case ec_preset_descriptions: { preset_descriptions(); break; }
+  case ec_ladspa_descriptions: { ladspa_descriptions(); break; }
+  case ec_ctrl_descriptions: { ctrl_descriptions(); break; }
+
   // ---
   // Session status
   // ---
@@ -1041,5 +1046,109 @@ void ECA_CONTROL::ctrl_register(void)
     }
     ++p;
   }
+  set_last_string(result);
+}
+
+/**
+ * Print description of all chain operators and 
+ * their parameters.
+ */
+void ECA_CONTROL::operator_descriptions_helper(const ECA_OBJECT_MAP& arg, string* result)
+{
+  const list<string>& objlist = arg.registered_objects();
+  list<string>::const_iterator p = objlist.begin();
+  int count = 1;
+  while(p != objlist.end()) {
+    string temp;
+    const OPERATOR* q = dynamic_cast<const OPERATOR*>(arg.object(*p));
+    if (q != 0) {
+      /* 1. keyword */
+      *result += kvu_string_search_and_replace(*p, ',', '_');
+      /* 2. name */
+      *result += "," + kvu_string_search_and_replace(q->name(), ',', '_');
+      /* 3. name */
+      *result += "," + kvu_string_search_and_replace(q->name(), ',', '_');
+
+      int params = q->number_of_params();
+
+      /* 4. number of params */
+      *result += "," + kvu_numtostr(params);
+
+      /* 5. description of params (for all params) */
+      for(int n = 0; n < params; n++) {
+	struct OPERATOR::PARAM_DESCRIPTION pd;
+	q->parameter_description(n + 1, &pd);
+
+	/* 5.1 name of param */
+	*result += "," + q->get_parameter_name(n + 1);
+	/* 5.2 description */
+	*result += "," + kvu_string_search_and_replace(pd.description, ',', '_');
+	/* 5.3 default value */
+	*result += "," + kvu_numtostr(pd.default_value);
+	/* 5.4 is bounded above (1=yes, 0=no) */
+	*result += "," + kvu_numtostr(static_cast<int>(pd.bounded_above));
+	/* 5.5 upper bound */
+	*result += "," + kvu_numtostr(pd.upper_bound);
+	/* 5.6 is bounded below (1=yes, 0=no) */
+	*result += "," + kvu_numtostr(static_cast<int>(pd.bounded_below));
+	/* 5.7 lower bound */
+	*result += "," + kvu_numtostr(pd.lower_bound);
+	/* 5.8. is toggled (1=yes, 0=no) */
+	*result += "," + kvu_numtostr(static_cast<int>(pd.toggled));
+	/* 5.9. is integer value (1=yes, 0=no) */
+	*result += "," + kvu_numtostr(static_cast<int>(pd.integer));
+	/* 5.10. is logarithmis value (1=yes, 0=no) */
+	*result += "," + kvu_numtostr(static_cast<int>(pd.logarithmic));
+	/* 5.11. is output value (1=yes, 0=no) */
+	*result += "," + kvu_numtostr(static_cast<int>(pd.output));
+      }
+      *result += "\n";
+      ++count;
+    }
+    ++p;
+  }
+}
+
+/**
+ * Print the description of all chain operators and 
+ * their parameters.
+ */
+void ECA_CONTROL::cop_descriptions(void)
+{
+  string result;
+  operator_descriptions_helper(ECA_OBJECT_FACTORY::chain_operator_map(), &result);
+  set_last_string(result);
+}
+
+/**
+ * Prints the description of all effect presets and 
+ * their parameters.
+ */
+void ECA_CONTROL::preset_descriptions(void)
+{
+  string result;
+  operator_descriptions_helper(ECA_OBJECT_FACTORY::preset_map(), &result);
+  set_last_string(result);
+}
+
+/**
+ * Prints the description of all LADSPA plugins and 
+ * their parameters.
+ */
+void ECA_CONTROL::ladspa_descriptions(void)
+{
+  string result;
+  operator_descriptions_helper(ECA_OBJECT_FACTORY::ladspa_plugin_map(), &result);
+  set_last_string(result);
+}
+
+/**
+ * Print the description of all controllers and 
+ * their parameters.
+ */
+void ECA_CONTROL::ctrl_descriptions(void)
+{
+  string result;
+  operator_descriptions_helper(ECA_OBJECT_FACTORY::controller_map(), &result);
   set_last_string(result);
 }

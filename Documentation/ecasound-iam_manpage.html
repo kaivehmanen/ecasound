@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>02.10.2002</h2>
+<h2>22.10.2002</h2>
 
 
     
@@ -337,11 +337,20 @@ Sets the selected parameter value to 'value'. <em>[-]</em>
 Returns the selected parameter value. <em>[f]</em>
 <p><p></p><dt><strong>cop-register</strong><dd>
 Prints a list of registered chain operators. <em>[s]</em>
+<p><p></p><dt><strong>cop-descriptions</strong><dd>
+Prints a list of registered chain operators using 
+the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
 <p><p></p><dt><strong>preset-register</strong><dd>
 Prints a list of registered effect presets. <em>[s]</em>
+<p><p></p><dt><strong>preset-descriptions</strong><dd>
+Prints a list of registered effect presets using 
+the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
 <p><p></p><dt><strong>ladspa-register</strong><dd>
-Prints a list of registered LADSPA-plugins. <em>[s]</em>
-</dl>
+Prints a list of registered LADSPA plugins. <em>[s]</em>
+<p><p></p><dt><strong>ladspa-descriptions</strong><dd>
+Prints a list of registered LADSPA plugins using 
+the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
+<p></dl>
 <p><h2>CONTROLLERS</h2>
     
 Controllers are used to control individual chain operator parameters.
@@ -365,63 +374,9 @@ Returns the index number of currently selected controller. <em>[i]</em>
 Returns info about controller status. <em>[s]</em>
 <p><p></p><dt><strong>ctrl-register</strong><dd>
 Prints a list of registered controllers. <em>[s]</em>
-<p></dl>
-<p><h2>OBJECT MAPS</h2>
-    
-Object maps are central repositories for commonly used objects.
-Their main purpose is to add flexibility to handling different 
-object types - especially to handling dynamic addition and removal
-of whole object types.
-<p><p></p><dt><strong>map-aio-list</strong><dd> **not implemented**
-Returns a list of all audio object type keywords 
-registered to the object maps. <em>[S]</em>.
-<p><p></p><dt><strong>map-aio-device-list</strong><dd> **not implemented**
-Returns a list of all audio object type keywords 
-registered to the object maps. <em>[S]</em>.
-<p><p></p><dt><strong>map-aio-name 'keyword'</strong><dd> **not implemented**
-Returns the type name that matches 'keyword'. <em>[s]</em>.
-<p><p></p><dt><strong>map-aio-regex 'keyword'</strong><dd> **not implemented**
-Returns the regular expression that is mapped to 'keyword'. <em>[s]</em>.
-<p><p></p><dt><strong>map-cop-list</strong><dd> **not implemented**
-Returns a list of all chain operator type keywords 
-registered to the object maps. <em>[S]</em>.
-<p><p></p><dt><strong>map-cop-type 'regexp'</strong><dd> **not implemented**
-Returns the type name handling regular expression 'regexp'. <em>[s]</em>.
-<p><p></p><dt><strong>map-cop-description 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-cop-param-names 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-cop-param-defaults 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-cop-param-ubounds 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-cop-param-lbounds 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-cop-param-toggles 'keyword'</strong><dd> **not implemented**
-<p><p></p><dt><strong>map-ctrl-list</strong><dd> **not implemented**
-Returns a list of all controller type keywords 
-registered to the object maps. <em>[S]</em>.
-<p><p></p><dt><strong>map-ctrl-type 'regexp'</strong><dd> **not implemented**
-Returns the type name handling regular expression 'regexp'. <em>[s]</em>.
-<p><p></p><dt><strong>map-ctrl-description 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-ctrl-param-names 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-ctrl-param-defaults 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-ctrl-param-ubounds 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-ctrl-param-lbounds 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-ctrl-param-toggles 'keyword'</strong><dd> **not implemented**
-<p><p></p><dt><strong>map-preset-list</strong><dd> **not implemented**
-Returns a list of all preset type keywords 
-registered to the object maps. <em>[S]</em>.
-<p><p></p><dt><strong>map-preset-description 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-preset-param-names 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-preset-param-defaults 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-preset-param-ubounds 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-preset-param-lbounds 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-preset-param-toggles 'keyword'</strong><dd> **not implemented**
-<p><p></p><dt><strong>map-ladspa-list</strong><dd> **not implemented**
-Returns a list of all LADSPA plugin keywords 
-registered to the object maps. <em>[S]</em>.
-<p><p></p><dt><strong>map-ladspa-description 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-ladspa-param-names 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-ladspa-param-defaults 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-ladspa-param-ubounds 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-ladspa-param-lbounds 'keyword'</strong><dd> **not implemented**
-<p></p><dt><strong>map-ladspa-param-toggles 'keyword'</strong><dd> **not implemented**
+<p><p></p><dt><strong>ctrl-descriptions</strong><dd>
+Prints a list of registered controllers using 
+the format specified in section <em>OPERATOR DESCRIPTIONS</em>. <em>[s]</em>
 <p></dl>
 <p><h2>INTERNAL COMMANDS</h2>
     
@@ -486,6 +441,20 @@ Dumps audio output state info. Either 'open' or 'closed'. <em>[-]</em>
 <p><p></p><dt><strong>dump-cop-value 'chainop,param'</strong><dd>
 Dumps chain operator parameter value. 'chainop' and 'param' are 
 operator and parameter index values (1...n). <em>[-]</em>
+<p><h2>OPERATOR DESCRIPTIONS</h2>
+    
+<p>The <em>xxx-descriptions</em> return a string containing all registered
+objects of the given type. Each line of the output described
+one registered type. The used syntax is:
+<p>'keyword,name,description,num_of_params,par1_def,par2_def,...'
+<p><em>parX_def</em> describes one object parameter. This definition
+is present for all parameters of the described object type.
+The used syntax is:
+<p>'name,description,defaultvalue,upper_bound_flag,upper_bound,
+lower_bound_flag,lower_bound,toggled_flag,integer_flag,
+logarithmic_flag,output_flag'
+<p>For exact descriptions of these fields, please see
+the header file emph(ecasound/libecasound/eca-operator.h).
 <p><h2>SEE ALSO</h2>
     
 <p>ecasound(1), ecatools (1), ecasoundrc(5)

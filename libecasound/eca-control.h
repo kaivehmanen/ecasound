@@ -98,6 +98,12 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   void ladspa_register(void);
   void ctrl_register(void);
 
+  void operator_descriptions_helper(const ECA_OBJECT_MAP& arg, std::string* result);
+  void cop_descriptions(void);
+  void preset_descriptions(void);
+  void ladspa_descriptions(void);
+  void ctrl_descriptions(void);
+
   /*@}*/
 
   /** @name Public functions printing status information */

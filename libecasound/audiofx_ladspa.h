@@ -48,7 +48,7 @@ public:
    */
   long int unique_number(void) const { return(unique_number_rep); }
 
-  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
   virtual void set_parameter(int param, parameter_t value);
   virtual parameter_t get_parameter(int param) const;
 

@@ -112,6 +112,9 @@ void ECA_IAMODE_PARSER::register_commands_misc(void)
 
   (*cmd_map_repp)["preset-register"] = ec_preset_register;
   (*cmd_map_repp)["ladspa-register"] = ec_ladspa_register;
+
+  (*cmd_map_repp)["preset-descriptions"] = ec_preset_descriptions;
+  (*cmd_map_repp)["ladspa-descriptions"] = ec_ladspa_descriptions;
 }
 
 void ECA_IAMODE_PARSER::register_commands_cs(void) {
@@ -238,6 +241,7 @@ void ECA_IAMODE_PARSER::register_commands_cop(void) {
   (*cmd_map_repp)["cop-index-select"] = ec_cop_select;
   (*cmd_map_repp)["cop-iselect"] = ec_cop_select;
   (*cmd_map_repp)["cop-register"] = ec_cop_register;
+  (*cmd_map_repp)["cop-descriptions"] = ec_cop_descriptions;
   (*cmd_map_repp)["cop-selected"] = ec_cop_selected;
   (*cmd_map_repp)["cop-set"] = ec_cop_set;
   (*cmd_map_repp)["cop-status"] = ec_cop_status;
@@ -261,6 +265,7 @@ void ECA_IAMODE_PARSER::register_commands_ctrl(void) {
   (*cmd_map_repp)["ctrl-index-select"] = ec_ctrl_select;
   (*cmd_map_repp)["ctrl-iselect"] = ec_ctrl_select;
   (*cmd_map_repp)["ctrl-register"] = ec_ctrl_register;
+  (*cmd_map_repp)["ctrl-descriptions"] = ec_ctrl_descriptions;
   (*cmd_map_repp)["ctrl-selected"] = ec_ctrl_selected;
   (*cmd_map_repp)["ctrl-status"] = ec_ctrl_status;
 }

@@ -65,7 +65,7 @@ class EFFECT_VOLUME_BUCKETS : public EFFECT_ANALYSIS {
   virtual std::string name(void) const { return("Volume analysis"); }
   virtual std::string parameter_names(void) const { return("cumulative-mode,result-max-multiplier"); }
 
-  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
   virtual void set_parameter(int param, parameter_t value);
   virtual parameter_t get_parameter(int param) const;
 
@@ -91,7 +91,7 @@ class EFFECT_VOLUME_PEAK : public EFFECT_ANALYSIS {
   virtual std::string name(void) const { return("Peak amplitude watcher"); }
   virtual std::string parameter_names(void) const;
 
-  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
   virtual void set_parameter(int param, parameter_t value);
   virtual parameter_t get_parameter(int param) const;
 
@@ -142,7 +142,7 @@ public:
   virtual void process(void);
   virtual std::string status(void) const;
 
-  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
   virtual void set_parameter(int param, parameter_t value);
   virtual parameter_t get_parameter(int param) const;
 

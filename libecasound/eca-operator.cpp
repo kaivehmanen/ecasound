@@ -18,11 +18,17 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <kvu_dbc.h>
+
 #include "eca-operator.h"
 
 OPERATOR::~OPERATOR (void) { }
 
-void OPERATOR::parameter_description(int param, struct PARAM_DESCRIPTION *pd) {
+void OPERATOR::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
+  DBC_REQUIRE(param > 0);
+  DBC_REQUIRE(param <= number_of_params());
+
   pd->default_value = get_parameter(param);
   pd->description = get_parameter_name(param);
   pd->bounded_above = false;

@@ -84,8 +84,9 @@ class OPERATOR : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_t> {
    * they are not meant to be absolute.
    *
    * @param param parameter id
+   * @pre param > 0 && param <= number_of_params()
    */
-  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
 
   virtual OPERATOR* clone(void) const = 0;
   virtual OPERATOR* new_expr(void) const = 0;

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_misc.cpp: Miscellanous effect processing routines.
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_DCFIX::get_parameter(int param) const
   return(0.0);
 }
 
-void EFFECT_DCFIX::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_DCFIX::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   OPERATOR::parameter_description(param, pd);
 }
@@ -129,7 +129,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_PITCH_SHIFT::get_parameter(int param) const
   return(0.0);
 }
 
-void EFFECT_PITCH_SHIFT::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_PITCH_SHIFT::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   OPERATOR::parameter_description(param, pd);
 
@@ -209,7 +209,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_AUDIO_STAMP::get_parameter(int param) const
   return(0.0);
 }
 
-void EFFECT_AUDIO_STAMP::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_AUDIO_STAMP::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   OPERATOR::parameter_description(param, pd);
   switch(param) 

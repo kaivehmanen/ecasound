@@ -248,7 +248,7 @@ void EFFECT_LADSPA::parse_parameter_hint_information(int portnum, int paramnum, 
     pd->output = false;
 }
 
-void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   DBC_CHECK(param >= 0);
   DBC_CHECK(param <= static_cast<int>(param_descs_rep.size()));

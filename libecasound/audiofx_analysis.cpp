@@ -136,7 +136,7 @@ string EFFECT_VOLUME_BUCKETS::status(void) const
 }
 
 void EFFECT_VOLUME_BUCKETS::parameter_description(int param, 
-					   struct PARAM_DESCRIPTION *pd)
+						  struct PARAM_DESCRIPTION *pd) const
 {
   switch(param) {
   case 1: 
@@ -279,7 +279,7 @@ EFFECT_VOLUME_PEAK::~EFFECT_VOLUME_PEAK (void)
 }
 
 void EFFECT_VOLUME_PEAK::parameter_description(int param, 
-					       struct PARAM_DESCRIPTION *pd)
+					       struct PARAM_DESCRIPTION *pd) const
 {
   if (param > 0 && param <= channels()) {
     pd->default_value = 0;
@@ -380,7 +380,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_deltafix(int channel) const
 }
 
 void EFFECT_DCFIND::parameter_description(int param, 
-					  struct PARAM_DESCRIPTION *pd)
+					  struct PARAM_DESCRIPTION *pd) const
 {
   pd->default_value = 0.0f;
   pd->description = get_parameter_name(param);

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (02.10.2002)
+       (22.10.2002)
        ()
        (Multimedia software)
 
@@ -418,11 +418,24 @@ Returns the selected parameter value. em([f])
 dit(cop-register)
 Prints a list of registered chain operators. em([s])
 
+dit(cop-descriptions)
+Prints a list of registered chain operators using 
+the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
+
 dit(preset-register)
 Prints a list of registered effect presets. em([s])
 
+dit(preset-descriptions)
+Prints a list of registered effect presets using 
+the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
+
 dit(ladspa-register)
-Prints a list of registered LADSPA-plugins. em([s])
+Prints a list of registered LADSPA plugins. em([s])
+
+dit(ladspa-descriptions)
+Prints a list of registered LADSPA plugins using 
+the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
+
 enddit()
 
 manpagesection(CONTROLLERS)
@@ -455,77 +468,9 @@ Returns info about controller status. em([s])
 dit(ctrl-register)
 Prints a list of registered controllers. em([s])
 
-enddit()
-
-manpagesection(OBJECT MAPS)
-Object maps are central repositories for commonly used objects.
-Their main purpose is to add flexibility to handling different 
-object types - especially to handling dynamic addition and removal
-of whole object types.
-
-dit(map-aio-list) **not implemented**
-Returns a list of all audio object type keywords 
-registered to the object maps. em([S]).
-
-dit(map-aio-device-list) **not implemented**
-Returns a list of all audio object type keywords 
-registered to the object maps. em([S]).
-
-dit(map-aio-name 'keyword') **not implemented**
-Returns the type name that matches 'keyword'. em([s]).
-
-dit(map-aio-regex 'keyword') **not implemented**
-Returns the regular expression that is mapped to 'keyword'. em([s]).
-
-dit(map-cop-list) **not implemented**
-Returns a list of all chain operator type keywords 
-registered to the object maps. em([S]).
-
-dit(map-cop-type 'regexp') **not implemented**
-Returns the type name handling regular expression 'regexp'. em([s]).
-
-dit(map-cop-description 'keyword') **not implemented**
-dit(map-cop-param-names 'keyword') **not implemented**
-dit(map-cop-param-defaults 'keyword') **not implemented**
-dit(map-cop-param-ubounds 'keyword') **not implemented**
-dit(map-cop-param-lbounds 'keyword') **not implemented**
-dit(map-cop-param-toggles 'keyword') **not implemented**
-
-dit(map-ctrl-list) **not implemented**
-Returns a list of all controller type keywords 
-registered to the object maps. em([S]).
-
-dit(map-ctrl-type 'regexp') **not implemented**
-Returns the type name handling regular expression 'regexp'. em([s]).
-
-dit(map-ctrl-description 'keyword') **not implemented**
-dit(map-ctrl-param-names 'keyword') **not implemented**
-dit(map-ctrl-param-defaults 'keyword') **not implemented**
-dit(map-ctrl-param-ubounds 'keyword') **not implemented**
-dit(map-ctrl-param-lbounds 'keyword') **not implemented**
-dit(map-ctrl-param-toggles 'keyword') **not implemented**
-
-dit(map-preset-list) **not implemented**
-Returns a list of all preset type keywords 
-registered to the object maps. em([S]).
-
-dit(map-preset-description 'keyword') **not implemented**
-dit(map-preset-param-names 'keyword') **not implemented**
-dit(map-preset-param-defaults 'keyword') **not implemented**
-dit(map-preset-param-ubounds 'keyword') **not implemented**
-dit(map-preset-param-lbounds 'keyword') **not implemented**
-dit(map-preset-param-toggles 'keyword') **not implemented**
-
-dit(map-ladspa-list) **not implemented**
-Returns a list of all LADSPA plugin keywords 
-registered to the object maps. em([S]).
-
-dit(map-ladspa-description 'keyword') **not implemented**
-dit(map-ladspa-param-names 'keyword') **not implemented**
-dit(map-ladspa-param-defaults 'keyword') **not implemented**
-dit(map-ladspa-param-ubounds 'keyword') **not implemented**
-dit(map-ladspa-param-lbounds 'keyword') **not implemented**
-dit(map-ladspa-param-toggles 'keyword') **not implemented**
+dit(ctrl-descriptions)
+Prints a list of registered controllers using 
+the format specified in section em(OPERATOR DESCRIPTIONS). em([s])
 
 enddit()
 
@@ -612,6 +557,25 @@ Dumps audio output state info. Either 'open' or 'closed'. em([-])
 dit(dump-cop-value 'chainop,param')
 Dumps chain operator parameter value. 'chainop' and 'param' are 
 operator and parameter index values (1...n). em([-])
+
+manpagesection(OPERATOR DESCRIPTIONS)
+
+The em(xxx-descriptions) return a string containing all registered
+objects of the given type. Each line of the output described
+one registered type. The used syntax is:
+
+'keyword,name,description,num_of_params,par1_def,par2_def,...'
+
+em(parX_def) describes one object parameter. This definition
+is present for all parameters of the described object type.
+The used syntax is:
+
+'name,description,defaultvalue,upper_bound_flag,upper_bound,
+lower_bound_flag,lower_bound,toggled_flag,integer_flag,
+logarithmic_flag,output_flag'
+
+For exact descriptions of these fields, please see
+the header file emph(ecasound/libecasound/eca-operator.h).
 
 manpageseealso()
 
