@@ -1,0 +1,104 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-30): Turning libecasound and libkvutils into shared libraries.
+         - submitted: kaiv, 08.10.2002
+------------------------------------------------------------------------ 
+Details:
+
+- rationale: see below
+- goals
+    - shared versions of libecasound and libkvutils are never installed
+    - ecasound, ecamegapedal, ecawave and other apps that require 
+      direct access to libecasound should use static linkage (but _not_
+      necessarily to other libs than libecasound and libkvutils)
+    - ecasound-plugins should be separately versioned so that
+      applications linked to incompatible versions of libecasound 
+      are still able to use the plugins
+    - utils in the ecatools package should be rewritten using 
+      the ECI API
+- new ecasound packages
+    - runtime: ecasound binary, plugin package, ECI apps and 
+	       documentation
+    - devel: header files and .a libraries
+    
+ 
+
+------------------------------------------------------------------------
+[kaiv on ecasound-list, 08.10.2002]
+
+First of all, if you think this is a very bad way to go, do let me know.
+This request is aimed especially to those of you who are involved with
+distribution issues. I'll consider silence as 'I agree'. :) Ok, let me
+continue.
+
+1. Problem
+
+The current ecasound development model does not work very well. Nowadays
+it's simply impossible for me to spend long periods of time on ecasound
+development. I still have time for it, but it's just much more irregular.
+The common scenario nowadays is that I spent a hectic day or two
+implementing some new feature, and then have to return to other tasks.
+After a month or so the cycle repeats.
+
+2. Symptoms
+
+With the current model, the development series just never gets enough
+testing. As it is now, most ecasound users are using the stable branch.
+Only very few people actively use the development versions. This means I'm
+getting very little feedback concerning the new features, especially when
+compared to the huge amount of functionality that ecasound nowadays
+provides.
+
+A prime example of this is that yesterday, when doing some multitrack
+recording with the latest 2.1dev12, I noticed a huge bug in the
+multitrack-mode code. It turned out that ecasound would stop processing if
+all inputs tracks became finished, _even though_ we were still recording a
+live input. The fact that a bug of this magnitude has gone unnoticed for
+many _months_ makes me very, very, very uncomfortable about the status of
+the current development branch.
+
+3. Lost in the woods
+
+During the last year or so I've tried to find a cure to this problem. I've
+spent lots and lots of time with library versioning issues, defining roles
+for different branches, change control, developer documentation and other
+stuff that doesn't directly benefit the normal end-users of ecasound
+(including myself).
+
+I've also tried to attack the problem with testing. I've written separate
+test tools for libecasound and libecasoundc, a general testsuite and
+various smaller tools. These have helped a lot, but in the end, testing
+just doesn't replace real-life use.
+
+At the same time, the reality is that aside ECI apps, _nobody_ is using
+ecasound as a platform. So most of this work is just wasted effort. And
+this isn't a problem of slow adoption. Although released versions of
+libecasound have been available for over two years, the only applications
+using it are ecawave and ecamegapedal (both written by me). Maintaining
+the whole shared-library thing going on for just these two,
+not-so-widely-used apps just doesn't seem sensible.
+
+4. Improvement Proposal
+
+Inspired by the recent work on standalone ECI implementations, I'd like to
+drop the whole ecasound-as-a-platform concept, and instead, continue
+developing ecasound as an application. Only supported way of using
+ecasound as a development platform would be ECI.
+
+5. Implications
+
+- only one code-branch (no more separate stable and development
+  releases; just releases and CVS-access for bleeding-edge development)
+- removal of all shared libraries (libkvutils and libecasound)
+- ecasound binary would be statically linked against libkvutils
+  and libecasound, but dynamically against other libraries
+- ecatools have to be rewritten using ECI (otherwise
+  we'd have too many multi-megabyte binaries :))
+- ecawave and ecamegapedal have to be linked statically (this
+  isn't that big of a problem, I'm quite sure the few people
+  on this planet that use all these three apps can
+  sacrifice the harddrive space for three copies of libecasound
+  and libkvutils 
+
+------------------------------------------------------------------------ 

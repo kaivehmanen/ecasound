@@ -27,6 +27,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+15.10.2002 - edi-30 added
 29.09.2002 - edi-27, edi-28 and edi-29 added
 22.08.2002 - edi-24 closed
 17.05.2002 - edi-22 closed
@@ -82,6 +83,8 @@ xx.xx.2001 no history information
          - submitted: kaiv, 29.09.2002
 (edi-29): Ecamonitor - ecasound monitor client implemented using NetECI.
          - submitted: kaiv, 29.09.2002
+(edi-30): Turning libecasound and libkvutils into shared libraries.
+         - submitted: kaiv, 08.10.2002
 
 -----------------------------------------------------------------------
 [ Section: Closed items ]
