@@ -58,11 +58,8 @@ class GENERIC_OSCILLATOR : public OSCILLATOR {
 
   GENERIC_OSCILLATOR* clone(void) const { return new GENERIC_OSCILLATOR(*this); }
   GENERIC_OSCILLATOR* new_expr(void) const { return new GENERIC_OSCILLATOR(*this); }
-  GENERIC_OSCILLATOR(void) : OSCILLATOR(0.0, 0.0) { }
-  GENERIC_OSCILLATOR(double freq, int mode);
+  GENERIC_OSCILLATOR(double freq = 0.0f, int mode = 0.0f);
   virtual ~GENERIC_OSCILLATOR (void);
 };
 
 #endif
-
-

@@ -47,6 +47,11 @@ CHAIN_OPERATOR::parameter_type EFFECT_AMPLIFY::get_parameter(int param) const {
   return(0.0);
 }
 
+void EFFECT_AMPLIFY::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
+  OPERATOR::parameter_description(param, pd);
+}
+
 void EFFECT_AMPLIFY::init(SAMPLE_BUFFER* sbuf) { i.init(sbuf); }
 
 void EFFECT_AMPLIFY::process(void) {
@@ -110,6 +115,11 @@ void EFFECT_AMPLIFY_CLIPCOUNT::process(void) {
   }
 }
 
+void EFFECT_AMPLIFY_CLIPCOUNT::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
+  OPERATOR::parameter_description(param, pd);
+}
+
 EFFECT_AMPLIFY_CHANNEL::EFFECT_AMPLIFY_CHANNEL (parameter_type multiplier_percent, int channel) {
   set_parameter(1, multiplier_percent);
   set_parameter(2, channel);
@@ -141,6 +151,22 @@ CHAIN_OPERATOR::parameter_type EFFECT_AMPLIFY_CHANNEL::get_parameter(int param) 
   return(0.0);
 }
 
+void EFFECT_AMPLIFY_CHANNEL::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
+  OPERATOR::parameter_description(param, pd);
+
+  switch (param) {
+  case 2: 
+    {
+      pd->default_value = 1.0f;
+      pd->bounded_above = false;
+      pd->bounded_below = true;
+      pd->lower_bound = 1.0f;
+      pd->integer = true;
+    }
+  }
+}
+
 void EFFECT_AMPLIFY_CHANNEL::init(SAMPLE_BUFFER *insample) { i.init(insample); }
 
 void EFFECT_AMPLIFY_CHANNEL::process(void) {
@@ -169,6 +195,11 @@ CHAIN_OPERATOR::parameter_type EFFECT_LIMITER::get_parameter(int param) const {
     return(limit_rep * 100.0);
   }
   return(0.0);
+}
+
+void EFFECT_LIMITER::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
+  OPERATOR::parameter_description(param, pd);
 }
 
 void EFFECT_LIMITER::init(SAMPLE_BUFFER* sbuf) { i.init(sbuf); }
@@ -226,6 +257,11 @@ CHAIN_OPERATOR::parameter_type EFFECT_COMPRESS::get_parameter(int param) const {
     return(threshold * 100.0);
   }
   return(0.0);
+}
+
+void EFFECT_COMPRESS::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
+  OPERATOR::parameter_description(param, pd);
 }
 
 void EFFECT_COMPRESS::init(SAMPLE_BUFFER *insample) { 
@@ -311,6 +347,11 @@ CHAIN_OPERATOR::parameter_type EFFECT_NOISEGATE::get_parameter(int param) const 
     return(rtime * 1000.0 / (parameter_type)samples_per_second());
   }
   return(0.0);
+}
+
+void EFFECT_NOISEGATE::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
+  OPERATOR::parameter_description(param, pd);
 }
 
 void EFFECT_NOISEGATE::init(SAMPLE_BUFFER *insample) {
@@ -458,6 +499,22 @@ CHAIN_OPERATOR::parameter_type EFFECT_NORMAL_PAN::get_parameter(int param) const
     return(right_percent_rep);
   }
   return(0.0);
+}
+
+void EFFECT_NORMAL_PAN::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
+  OPERATOR::parameter_description(param, pd);
+
+  switch (param) {
+  case 1: 
+    {
+      pd->default_value = 50.0f;
+      pd->bounded_above = true;
+      pd->upper_bound = 100.0f;
+      pd->bounded_below = true;
+      pd->lower_bound = 100.0f;
+    }
+  }
 }
 
 void EFFECT_NORMAL_PAN::init(SAMPLE_BUFFER *insample) { i.init(insample); }

@@ -418,7 +418,7 @@ void PRESET::parse_operator_option(const string& arg) {
       impl_repp->slave_param_objects_rep[preset_index - 1].push_back(object);
       impl_repp->slave_param_indices_rep[preset_index - 1].push_back(slave_index);
 
-      //  cerr << "Linking preset parameter " << preset_index << " to object '" << impl_repp->slave_param_objects_rep[preset_index - 1].back()->name()  << "', and its parameter '" << impl_repp->slave_param_objects_rep[preset_index -	1].back()->get_parameter_name(impl_repp->slave_param_indices_rep[preset_index - 1].back()) << "'." << endl;
+      // cerr << "Linking preset parameter " << preset_index << " to object '" << impl_repp->slave_param_objects_rep[preset_index - 1].back()->name()  << "', and its parameter '" << impl_repp->slave_param_objects_rep[preset_index -	1].back()->get_parameter_name(impl_repp->slave_param_indices_rep[preset_index - 1].back()) << "'." << endl;
       
       DBC_CHECK(impl_repp->slave_param_objects_rep.size() == impl_repp->slave_param_indices_rep.size());
     }

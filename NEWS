@@ -24,6 +24,7 @@ Last officially released version is -*> v2.0.3 *-
 	- fixed: using loop devices in setups with non-default 
                  internal sample rate could cause unwanted 
   		 resampling
+	- fixed: -kog and -f were broken (since dev4)
 31102001 (v2.1dev4)
 	- added: eiam - 'cs-option' commmand; although explicit use 
 		 of cmd-line options as iactive-mod commands (like 

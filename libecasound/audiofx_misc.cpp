@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_misc.cpp: Miscellanous effect processing routines.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <kvutils/kvu_numtostr.h>
 
 #include "samplebuffer_iterators.h"
+#include "eca-operator.h"
 #include "audiofx_misc.h"
 #include "eca-debug.h"
 #include "eca-error.h"
@@ -59,6 +60,11 @@ CHAIN_OPERATOR::parameter_type EFFECT_DCFIX::get_parameter(int param) const {
     return(deltafix_rep[1]);
   }
   return(0.0);
+}
+
+void EFFECT_DCFIX::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
+  OPERATOR::parameter_description(param, pd);
 }
 
 void EFFECT_DCFIX::init(SAMPLE_BUFFER *insample) { i_rep.init(insample); }
@@ -100,6 +106,22 @@ CHAIN_OPERATOR::parameter_type EFFECT_PITCH_SHIFT::get_parameter(int param) cons
   return(0.0);
 }
 
+void EFFECT_PITCH_SHIFT::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
+  OPERATOR::parameter_description(param, pd);
+
+  switch(param) 
+    {
+    case 1: 
+      pd->default_value = 100.0f;
+      pd->bounded_above = true;
+      pd->upper_bound = 500.0f;
+      pd->bounded_below = true;
+      pd->lower_bound = 25.0f;
+      break;
+    }
+}
+
 void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample) { 
   sbuf_repp = insample;
   target_rate_rep = static_cast<long int>(sbuf_repp->sample_rate() * 100.0 / pmod_rep);
@@ -135,6 +157,22 @@ CHAIN_OPERATOR::parameter_type EFFECT_AUDIO_STAMP::get_parameter(int param) cons
     return(static_cast<parameter_type>(id()));
   }
   return(0.0);
+}
+
+void EFFECT_AUDIO_STAMP::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
+  OPERATOR::parameter_description(param, pd);
+  switch(param) 
+    {
+    case 1: 
+      pd->default_value = 1;
+      pd->description = get_parameter_name(param);
+      pd->bounded_above = false;
+      pd->bounded_below = true;
+      pd->lower_bound = 1;
+      pd->integer = true;
+      break;
+    }
 }
 
 void EFFECT_AUDIO_STAMP::init(SAMPLE_BUFFER *insample) { 

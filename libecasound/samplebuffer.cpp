@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <iostream>
 #include <vector>
 #include <cmath>
 
@@ -28,6 +29,15 @@
 #include "samplebuffer.h"
 #include "samplebuffer_impl.h"
 #include "eca-debug.h"
+
+/* Debug resampling operations */ 
+//  #define DEBUG_RESAMPLING
+
+#ifdef DEBUG_RESAMPLING
+#define DEBUG_RESAMPLING_STATEMENT(x) (x)
+#else
+#define DEBUG_RESAMPLING_STATEMENT(x) ((void)0)
+#endif
 
 using std::vector;
 
@@ -1077,6 +1087,8 @@ void SAMPLE_BUFFER::resample_nofilter(buf_size_t from,
   buf_size_t old_buffer_size = buffersize_rep;
   buffersize_rep = static_cast<buf_size_t>(step * buffersize_rep);
 
+  DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_no_f from " << from << " to " << to << "." std::endl); 
+
   if (impl_repp->old_buffer_repp == 0) 
     impl_repp->old_buffer_repp = new sample_type [reserved_samples_rep * sizeof(sample_type)];
 
@@ -1125,6 +1137,8 @@ void SAMPLE_BUFFER::resample_with_memory(buf_size_t from,
   buf_size_t old_buffer_size = buffersize_rep;
   buffersize_rep = static_cast<buf_size_t>(step * buffersize_rep);
   impl_repp->resample_memory_rep.resize(channel_count_rep, SAMPLE_SPECS::silent_value);
+
+  DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_w_m from " << from << " to " << to << "." std::endl); 
 
   if (impl_repp->old_buffer_repp == 0) 
     impl_repp->old_buffer_repp = new sample_type [reserved_samples_rep * sizeof(sample_type)];

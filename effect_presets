@@ -122,8 +122,10 @@ time_phaser1 = -etp:2,50,50,0.05 -pd:Phaser
 # ======
 # Various / mixes (var_)
 
-var_sweeping_pan = -epp:0 -kf:1,0,100,%1,0 \
-	-pd:Envelope_controller_panner -ppn:speed_hz -ppd:0.2
+var_sweeping_pan = -epp:0 -kos:1,0,100,%1,5 \
+	-pd:Sweeping_pan_envelope -ppn:speed_hz -ppd:0.2
+var_switching_pan = -epp:0 -kf:1,0,100,%1,0,0 \
+	-pd:Panner_that_alternates_between_left_and_right -ppn:speed_hz -ppd:0.2
 var_chipmunk = -ei:400 -efl:400 -kos:1,400,10000,2,0 \
 	-pd:Chipmunk_generator
 var_parchip = -ei:%1 -efl:400 -kos:1,400,10000,%2,0 \

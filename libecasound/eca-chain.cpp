@@ -21,8 +21,10 @@
 #include <config.h>
 #endif
 
+#include <cctype>
 #include <string>
 #include <vector>
+
 #include <unistd.h>
 
 #include <kvutils/message_item.h>
@@ -42,6 +44,15 @@
 
 #include "eca-error.h"
 #include "eca-debug.h"
+
+/* Debug controller source values */ 
+// #define DEBUG_CONTROLLERS
+
+#ifdef DEBUG_CONTROLLERS
+#define DEBUG_CTRL_STATEMENT(x) x
+#else
+#define DEBUG_CTRL_STATEMENT(x) ((void)0)
+#endif
 
 CHAIN::CHAIN (void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(chain) constuctor: CHAIN");
@@ -542,8 +553,14 @@ void CHAIN::process(void) {
  * Calculates/fetches new values for all controllers.
  */
 void CHAIN::controller_update(void) {
-  for(int gcontroller_sizet = 0; gcontroller_sizet < static_cast<int>(gcontrollers_rep.size()); gcontroller_sizet++) {
-    gcontrollers_rep[gcontroller_sizet]->process();
+  for(size_t n = 0; n < gcontrollers_rep.size(); n++) {
+    DEBUG_CTRL_STATEMENT(GENERIC_CONTROLLER* ptr = gcontrollers_rep[n]);
+
+    gcontrollers_rep[n]->process();
+
+    DEBUG_CTRL_STATEMENT(std::cerr << "trace: " << ptr->name());
+    DEBUG_CTRL_STATEMENT(std::cerr << "; value " << ptr->source_pointer()->value());
+    DEBUG_CTRL_STATEMENT(std::cerr << ", step " << ptr->source_pointer()->step_length() << "." << std::endl);
   }
 }
 

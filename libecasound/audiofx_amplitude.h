@@ -31,8 +31,8 @@ class EFFECT_AMPLIFY: public EFFECT_AMPLITUDE {
  public:
 
   virtual std::string name(void) const { return("Amplify"); }
-
   virtual std::string parameter_names(void) const  { return("amp-%"); }
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -59,8 +59,8 @@ class EFFECT_AMPLIFY_CLIPCOUNT : public EFFECT_AMPLITUDE {
  public:
 
   virtual std::string name(void) const { return("Amplify with clipping control"); }
-
   virtual std::string parameter_names(void) const { return("amp-%,max-clipped-samples"); }
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -86,8 +86,8 @@ class EFFECT_AMPLIFY_CHANNEL: public EFFECT_AMPLITUDE {
  public:
 
   virtual std::string name(void) const { return("Channel amplify"); }
-
-  std::string parameter_names(void) const  { return("amp-%,channel"); }
+  virtual std::string parameter_names(void) const  { return("amp-%,channel"); }
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -113,6 +113,7 @@ class EFFECT_LIMITER: public EFFECT_AMPLITUDE {
 
   virtual std::string name(void) const { return("Limiter"); }
   virtual std::string parameter_names(void) const  { return("limit-%"); }
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -144,8 +145,8 @@ class EFFECT_COMPRESS : public EFFECT_AMPLITUDE {
  public:
 
   virtual std::string name(void) const { return("Compressor"); }
-
   virtual std::string parameter_names(void) const  { return("compression-rate-dB,threshold-%"); }
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -185,10 +186,10 @@ class EFFECT_NOISEGATE : public EFFECT_AMPLITUDE {
   
   virtual std::string name(void) const { return("Noisegate"); }
   virtual std::string description(void) const { return("Noise gate with attack and release."); }
-
   virtual std::string parameter_names(void) const {
     return("threshold-level-%,pre-hold-time-msec,attack-time-msec,post-hold-time-msec,release-time-msec");
   }
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
@@ -223,6 +224,7 @@ public:
   virtual std::string name(void) const { return("Normal pan"); }
   virtual std::string description(void) const { return("Panning effect for controlling the stereo image."); }
   virtual std::string parameter_names(void) const { return("right-%"); }
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
   virtual int output_channels(int i_channels) const { return(2); }
     

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-gen.cpp: Generic oscillator
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,7 +58,6 @@ CONTROLLER_SOURCE::parameter_type GENERIC_OSCILLATOR::value(void) {
     }
   }
 
-//    cerr << "(gen-osc) new value: " << current_value_rep << ".\n";
   return(current_value_rep);
 }
 
@@ -96,12 +95,6 @@ void GENERIC_OSCILLATOR::update_current_linear(void) {
 GENERIC_OSCILLATOR::GENERIC_OSCILLATOR(double freq, int mode)
   : OSCILLATOR(freq, 0.0)
 {
-  set_parameter(1, get_parameter(1));
-  set_parameter(2, mode);
-}
-
-void GENERIC_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_type phasestep) {
-  step_length(phasestep);
   start_value_rep = end_value_rep = 0.0f;
   loop_length_rep = 0.0f;
   loop_pos_rep = 0.0f;
@@ -111,7 +104,17 @@ void GENERIC_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_type phasestep) {
   pindex_rep = 0;
   current_value_rep = 0.0f;
   set_param_count(0);
-  ecadebug->msg("(osc-gen) Generic oscillator created.");
+
+  set_parameter(1, get_parameter(1));
+  set_parameter(2, mode);
+
+  // std::cerr << "(osc-gen) construct; params " << parameter_names() << ".\n";
+}
+
+void GENERIC_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_type phasestep) {
+  step_length(phasestep);
+
+  ecadebug->msg(ECA_DEBUG::user_objects, "(osc-gen) Generic oscillator init.");
 }
 
 GENERIC_OSCILLATOR::~GENERIC_OSCILLATOR (void) { }
@@ -178,8 +181,8 @@ void GENERIC_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t
       }
 
       prepare_envelope();
-//        cerr << "Added point " << pointnum << ", envelope size " <<
-//  	ienvelope_rep.size() << "." << endl;
+
+      // std::cerr << "Added point " << pointnum << ", envelope size " << ienvelope_rep.size() << "." << std::endl;
      
       break;
     }
@@ -195,7 +198,7 @@ CONTROLLER_SOURCE::parameter_type GENERIC_OSCILLATOR::get_parameter(int param) c
     return(static_cast<parameter_type>(mode_rep));
 
   case 3:
-    return(static_cast<parameter_type>(number_of_params() - 5));
+    return(static_cast<parameter_type>((number_of_params() - 5) / 2));
 
   case 4:
     return(static_cast<parameter_type>(start_value_rep));
