@@ -19,6 +19,7 @@
 // ------------------------------------------------------------------------
 
 #include "kvu_locks.h"
+#include "kvu_numtostr.h"
 
 #include "eca-logger.h"
 #include "eca-test-repository.h"
@@ -70,16 +71,18 @@ ECA_TEST_REPOSITORY::~ECA_TEST_REPOSITORY(void)
 void ECA_TEST_REPOSITORY::do_run(void)
 {
   list<ECA_TEST_CASE*>::const_iterator p = test_cases_rep.begin();
+  int n = 0;
   while(p != test_cases_rep.end()) {
     (*p)->run();
     if ((*p)->success() != true) {
       string errormsg = (string("Test case ") + (*p)->name() + string(" FAILED."));
       ECA_LOG_MSG(ECA_LOGGER::user_objects, errormsg);
-      ECA_TEST_FAILURE(errormsg);
+      ECA_TEST_FAILURE(kvu_numtostr(++n) + ". " + errormsg);
       const list<string>& failures = (*p)->failures();
       list<string>::const_iterator q = failures.begin();
+      int m = 1;
       while(q != failures.end()) {
-	ECA_TEST_FAILURE(*q);
+	ECA_TEST_FAILURE(kvu_numtostr(n) + "." + kvu_numtostr(m++) + ". " + *q);
 	++q;
       }
     }

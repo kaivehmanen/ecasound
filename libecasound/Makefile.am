@@ -3,21 +3,39 @@ AUTOMAKE_OPTIONS = foreign
 SUBDIRS = plugins
 
 # ----------------------------------------------------------------------
-# defines
+# build targets and compiler options target defines
 # ----------------------------------------------------------------------
 
-
 if ECA_AM_DEBUG_MODE
-eca_ldflags = -version-info @LIBECASOUND_VERSION@:0:0
+lib_LTLIBRARIES = libecasound8_debug.la
 else
-eca_ldflags = -s -version-info @LIBECASOUND_VERSION@:0:0
+lib_LTLIBRARIES = libecasound8.la
 endif
 
-# below not used due to libtool problems
+TESTS = libecasound_tester
+
+check_PROGRAMS = libecasound_tester
+
+# ----------------------------------------------------------------------
+# compiler and linker options
+# ----------------------------------------------------------------------
+
 if ECA_AM_DEBUG_MODE
 eca_libadd = $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@_debug.la
 else
 eca_libadd = $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@.la
+endif
+
+eca_ldflags = -version-info @LIBECASOUND_VERSION@:0:0
+
+if ECA_AM_DEBUG_MODE
+libecasound_tester_libs =	$(top_builddir)/libecasound/.libs/libecasound@LIBECASOUND_VERSION@_debug.a \
+				$(top_builddir)/kvutils/.libs/libkvutils@LIBKVUTILS_VERSION@_debug.a
+else
+libecasound_tester_libs =	$(top_builddir)/kvutils/.libs/libkvutils@LIBKVUTILS_VERSION@.a \
+				$(top_builddir)/libecasound/.libs/libecasound@LIBECASOUND_VERSION@.a
+#libecasound_tester_libs =	$(eca_libadd) \
+#				$(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@.la
 endif
 
 # note! Automake >= 1.5 will install stripped libraries
@@ -27,12 +45,6 @@ endif
 #       with stripping libraries.
 
 INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils
-
-if ECA_AM_DEBUG_MODE
-lib_LTLIBRARIES = libecasound8_debug.la
-else
-lib_LTLIBRARIES = libecasound8.la
-endif
 
 # ----------------------------------------------------------------------
 # header files
@@ -130,7 +142,6 @@ ecasound_general_include = 	\
 			sample-specs.h \
 			eca-version.h \
 			eca-object-factory.h \
-			eca-object-factory_test.h \
 			eca-chainsetup.h \
 			eca-chainsetup_impl.h \
 			eca-chainsetup-bufparams.h \
@@ -164,7 +175,8 @@ ecasound_extra_include = \
 
 ecasound_test_framework_include = \
 			eca-test-repository.h \
-			eca-test-case.h
+			eca-test-case.h \
+			eca-object-factory_test.h
 
 # VST-support:
 #			eca-vst-plugin-map.h
@@ -286,16 +298,16 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-preset-map.cpp \
 			global-preset.cpp
 
-ecasound_test_framework_src = \
-		   	eca-test-repository.cpp \
-			eca-test-case.cpp
-
 ecasound_common_src = 	$(ecasound_audiofx_src) \
 			$(ecasound_audioio_src) \
 			$(ecasound_midi_src) \
 		      	$(ecasound_controller_src) \
-			$(ecasound_general_src) \
-			$(ecasound_test_framework_src)
+			$(ecasound_general_src)
+
+libecasound_tester_src = \
+			libecasound_tester.cpp \
+			eca-test-repository.cpp \
+			eca-test-case.cpp
 
 libecasound8_la_SOURCES = $(ecasound_common_src)
 libecasound8_debug_la_SOURCES = $(ecasound_common_src)
@@ -306,8 +318,16 @@ libecasound8_debug_la_CFLAGS = $(libecasound8_la_CFLAGS)
 libecasound8_debug_la_LDFLAGS = $(libecasound8_la_LDFLAGS)
 libecasound8_debug_la_LIBADD = $(libecasound8_la_LIBADD)
 
+libecasound_tester_SOURCES = $(libecasound_tester_src)
+libecasound_tester_CFLAGS = $(eca_cxxflags)
+libecasound_tester_LDFLAGS = \
+			-Wl,--rpath -Wl,$(top_builddir)/kvutils/.libs \
+			-Wl,--rpath -Wl,$(top_builddir)/libecasound/.libs
+libecasound_tester_LDADD = $(libecasound_tester_libs)
+
 # ---------------------------------------------------------------------
 # Install targets - note! we don't install $ecasound_extra_include
+#                         nor $ecasound_test_framework_include
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(includedir)/libecasound@LIBECASOUND_VERSION@
 	cd $(srcdir) ; \
