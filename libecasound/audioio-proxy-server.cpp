@@ -18,6 +18,7 @@
 // ------------------------------------------------------------------------
 
 #include <iostream>
+#include <string>
 
 #include <unistd.h>
 #include <signal.h>
@@ -31,6 +32,9 @@
 #include "eca-debug.h"
 #include "audioio-proxy-server.h"
 #include "audioio-proxy-server_impl.h"
+
+using std::cerr;
+using std::endl;
 
 // --
 // Select features

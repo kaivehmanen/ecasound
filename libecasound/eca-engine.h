@@ -2,7 +2,6 @@
 #define INCLUDED_ECA_ENGINE_H
 
 #include <vector>
-#include <string>
 
 #include "samplebuffer.h"
 

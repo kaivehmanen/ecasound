@@ -17,12 +17,13 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <iostream>
 #include <string>
 #include <vector>
-#include <map>
 #include <ctime>
 #include <cmath>
 #include <utility>
+
 #include <unistd.h>
 #include <pthread.h>
 #include <errno.h>
@@ -45,6 +46,10 @@
 #include "eca-debug.h"
 #include "eca-engine.h"
 #include "eca-engine_impl.h"
+
+using std::cerr;
+using std::endl;
+using std::vector;
 
 /**
  * Class constructor. A pointer to an ECA_SESSION 
@@ -93,7 +98,7 @@ ECA_ENGINE::~ECA_ENGINE(void) {
     stop();
 
     if (csetup_repp != 0) {
-      std::vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
+      vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
       while(q != csetup_repp->chains.end()) {
 	if (*q != 0) (*q)->disconnect_buffer();
 	++q;
@@ -148,7 +153,7 @@ void ECA_ENGINE::exec(void) {
     ecadebug->msg("(eca-engine) Warning! An output object has raised an error! Out of disk space, permission denied, etc?");
 
   stop();
-  std::vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
+  vector<CHAIN*>::iterator q = csetup_repp->chains.begin();
   while(q != csetup_repp->chains.end()) {
     (*q)->disconnect_buffer();
     ++q;
@@ -241,24 +246,24 @@ void ECA_ENGINE::dump_profile_info(void) {
                             impl_repp->looptimer_rep.events_under_lower_bound() -
                             impl_repp->looptimer_rep.events_over_upper_bound();
 
-  std::cerr << "(eca-engine) *** profile begin ***" << endl;
-  std::cerr << "Loops faster than realtime: "  << kvu_numtostr(impl_repp->looptimer_rep.events_under_lower_bound());
-  std::cerr << " (<" << kvu_numtostr(impl_repp->looptimer_low_rep * 1000, 1) << " msec)" << endl;
-  std::cerr << "Loops slower than realtime: "  << kvu_numtostr(slower_than_rt);
-  std::cerr << " (>=" << kvu_numtostr(impl_repp->looptimer_low_rep * 1000, 1) << " msec)" << endl;
-  std::cerr << "Loops slower than realtime: "  << kvu_numtostr(impl_repp->looptimer_range_rep.events_over_upper_bound());
-  std::cerr << " (>" << kvu_numtostr(impl_repp->looptimer_mid_rep * 1000, 1) << " msec)" << endl;
-  std::cerr << "Loops exceeding all buffering: " << kvu_numtostr(impl_repp->looptimer_rep.events_over_upper_bound());
-  std::cerr << " (>" << kvu_numtostr(impl_repp->looptimer_high_rep * 1000, 1) << " msec)" << endl;
-  std::cerr << "Total loops: " << kvu_numtostr(impl_repp->looptimer_rep.event_count()) << endl;
-  std::cerr << "Fastest/slowest/average loop time: ";
-  std::cerr << kvu_numtostr(impl_repp->looptimer_rep.min_duration_seconds() * 1000, 1);
-  std::cerr << "/";
-  std::cerr << kvu_numtostr(impl_repp->looptimer_rep.max_duration_seconds() * 1000, 1);
-  std::cerr << "/";
-  std::cerr << kvu_numtostr(impl_repp->looptimer_rep.average_duration_seconds() * 1000, 1);
-  std::cerr << " msec." << endl;
-  std::cerr << "(eca-engine) *** profile end   ***" << endl;
+  cerr << "(eca-engine) *** profile begin ***" << endl;
+  cerr << "Loops faster than realtime: "  << kvu_numtostr(impl_repp->looptimer_rep.events_under_lower_bound());
+  cerr << " (<" << kvu_numtostr(impl_repp->looptimer_low_rep * 1000, 1) << " msec)" << endl;
+  cerr << "Loops slower than realtime: "  << kvu_numtostr(slower_than_rt);
+  cerr << " (>=" << kvu_numtostr(impl_repp->looptimer_low_rep * 1000, 1) << " msec)" << endl;
+  cerr << "Loops slower than realtime: "  << kvu_numtostr(impl_repp->looptimer_range_rep.events_over_upper_bound());
+  cerr << " (>" << kvu_numtostr(impl_repp->looptimer_mid_rep * 1000, 1) << " msec)" << endl;
+  cerr << "Loops exceeding all buffering: " << kvu_numtostr(impl_repp->looptimer_rep.events_over_upper_bound());
+  cerr << " (>" << kvu_numtostr(impl_repp->looptimer_high_rep * 1000, 1) << " msec)" << endl;
+  cerr << "Total loops: " << kvu_numtostr(impl_repp->looptimer_rep.event_count()) << endl;
+  cerr << "Fastest/slowest/average loop time: ";
+  cerr << kvu_numtostr(impl_repp->looptimer_rep.min_duration_seconds() * 1000, 1);
+  cerr << "/";
+  cerr << kvu_numtostr(impl_repp->looptimer_rep.max_duration_seconds() * 1000, 1);
+  cerr << "/";
+  cerr << kvu_numtostr(impl_repp->looptimer_rep.average_duration_seconds() * 1000, 1);
+  cerr << " msec." << endl;
+  cerr << "(eca-engine) *** profile end   ***" << endl;
 }
 
 /**
@@ -285,8 +290,8 @@ void ECA_ENGINE::init_connection_to_chainsetup(void) {
   csetup_repp = session_repp->connected_chainsetup_repp;
 
   if (csetup_repp == 0 ) {
-    std::cerr << "(eca-processor) Engine startup aborted, no chainsetup connected!";
-    std::cerr << " Exiting..." << std::endl;
+    cerr << "(eca-processor) Engine startup aborted, no chainsetup connected!";
+    cerr << " Exiting..." << std::endl;
     exit(-1);
   }
 
@@ -332,7 +337,7 @@ void ECA_ENGINE::init_servers(void) {
 }
 
 /**
- * Assign input objects in std::vectors of realtime, nonrealtime std::vectors,
+ * Assign input objects in vectors of realtime, nonrealtime vectors,
  * and store pointers to the original objects.
  * 
  * Called only from init_connection_to_chainsetup().
@@ -341,8 +346,8 @@ void ECA_ENGINE::init_sorted_input_map(void) {
   inputs_repp = &(csetup_repp->inputs);
 
   if (inputs_repp == 0 || inputs_repp->size() == 0) {
-    std::cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no inputs!";
-    std::cerr << " Exiting..." << std::endl;
+    cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no inputs!";
+    cerr << " Exiting..." << std::endl;
     exit(-1);
   }
 
@@ -360,7 +365,7 @@ void ECA_ENGINE::init_sorted_input_map(void) {
 }
 
 /**
- * Assign input objects in std::vectors of realtime, nonrealtime std::vectors,
+ * Assign input objects in vectors of realtime, nonrealtime vectors,
  * and store pointers to the original objects.
  *
  * Called only from init_connection_to_chainsetup().
@@ -370,8 +375,8 @@ void ECA_ENGINE::init_sorted_output_map(void) {
 
   if (outputs_repp  == 0 ||
       outputs_repp->size() == 0) {
-    std::cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no outputs!";
-    std::cerr << " Exiting..." << std::endl;
+    cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no outputs!";
+    cerr << " Exiting..." << std::endl;
     exit(-1);
   }
 
@@ -485,8 +490,8 @@ void ECA_ENGINE::init_chains(void) {
 
   if (chains_repp == 0 ||
       chains_repp->size() == 0) {
-    std::cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no chains!";
-    std::cerr << " Exiting..." << std::endl;
+    cerr << "(eca-processor) Engine startup aborted, session in corrupted state: no chains!";
+    cerr << " Exiting..." << std::endl;
     exit(-1);
   }
 
@@ -583,7 +588,7 @@ void ECA_ENGINE::update_engine_state(void) {
 void ECA_ENGINE::interpret_queue(void) {
   while(impl_repp->command_queue_rep.is_empty() != true) {
     std::pair<int,double> item = impl_repp->command_queue_rep.front();
-//      std::cerr << "(eca-engine) ecasound_queue: cmds available; first one is "
+//      cerr << "(eca-engine) ecasound_queue: cmds available; first one is "
 //  	 << item.first << "." << std::endl;
     switch(item.first) {
     // ---
@@ -736,7 +741,7 @@ void ECA_ENGINE::start(void) {
   //    char buf = 0xfa;
   //    int temp = ::write(midi_fd, &buf, 1);
   //    if (temp < 0) {
-  //      std::cerr << "ERROR: Can't write to MIDI-device.\n";
+  //      cerr << "ERROR: Can't write to MIDI-device.\n";
   //    }
   // --- !!! ---
 
@@ -777,7 +782,7 @@ void ECA_ENGINE::multitrack_start(void) {
     impl_repp->multitrack_input_stamp_rep.tv_sec * 1000000.0 - impl_repp->multitrack_input_stamp_rep.tv_usec;
   long int sync_fix = static_cast<long>(time * csetup_repp->sample_rate() / 1000000.0);
 
-  std::cerr << "(eca-engine) sync fix is " << time << " usecs." << endl;
+  cerr << "(eca-engine) sync fix is " << time << " usecs." << endl;
 
   //  sync_fix -= prefill_threshold_rep * buffersize_rep;
   
@@ -789,7 +794,7 @@ void ECA_ENGINE::multitrack_start(void) {
   
   // this would be a serious problem
   if (sync_fix < 0) {
-    std::cerr << "(eca-engine) Negative multitrack-sync " 
+    cerr << "(eca-engine) Negative multitrack-sync " 
               << sync_fix 
               << "; problems with hardware? " << std::endl;
   }
@@ -941,7 +946,7 @@ void ECA_ENGINE::inputs_to_chains(bool skip_realtime_inputs) {
 
     if (skip_realtime_inputs == true) {
       if (AUDIO_IO_DEVICE::is_realtime_object((*inputs_repp)[audioslot_sizet]) == true) {
-	//  std::cerr << "(eca-engine) Skipping rt-input " << (*inputs_repp)[audioslot_sizet]->label() << "." << endl;
+	//  cerr << "(eca-engine) Skipping rt-input " << (*inputs_repp)[audioslot_sizet]->label() << "." << endl;
 	continue;
       }
     }
@@ -971,7 +976,7 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
 
     if (skip_realtime_target_outputs == true) {
       if (csetup_repp->is_realtime_target_output(audioslot_sizet) == true) {
-	//  std::cerr << "(eca-engine) Skipping rt-target output " << (*outputs_repp)[audioslot_sizet]->label() << "." << endl;
+	//  cerr << "(eca-engine) Skipping rt-target output " << (*outputs_repp)[audioslot_sizet]->label() << "." << endl;
 	continue;
       }
     }
