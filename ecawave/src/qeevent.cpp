@@ -53,6 +53,10 @@ void QEEvent::init(void) {
 }
 
 void QEEvent::start(bool blocking) {
+  process(blocking);
+}
+
+void QEEvent::process(bool blocking) {
   // --------
   REQUIRE(is_valid() == true);
   REQUIRE(ectrl->is_valid() == true);
@@ -79,7 +83,7 @@ void QEEvent::start(bool blocking) {
     }
   }
   catch(ECA_ERROR* e) {
-    cerr << "---\nlibecasound error while starting event: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+    cerr << "---\nlibecasound error while processing event: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
   }
 
   // --------
@@ -145,7 +149,6 @@ void QEEvent::set_input_position(long int pos) {
   REQUIRE(ectrl->is_running() == false);
   REQUIRE(input_object != 0);
   REQUIRE(pos >= 0);
-  REQUIRE(pos <= input_object->length_in_samples());
   // --------
   input_object->seek_position_in_samples(pos);
   // --------
@@ -175,7 +178,6 @@ void QEEvent::set_output_position(long int pos) {
   REQUIRE(ectrl->is_running() == false);
   REQUIRE(output_object != 0);
   REQUIRE(pos >= 0);
-  REQUIRE(pos <= output_object->length_in_samples());
   // --------
   output_object->seek_position_in_samples(pos);
   // --------

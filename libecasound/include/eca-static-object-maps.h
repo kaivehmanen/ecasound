@@ -1,10 +1,17 @@
 #ifndef _ECA_STATIC_OBJECT_MAPS_H
 #define _ECA_STATIC_OBJECT_MAPS_H
 
+#include "eca-preset-map.h"
+
+#include <string>
+
+#include "eca-object-map.h"
 #include "eca-audio-object-map.h"
 #include "eca-chainop-map.h"
 #include "eca-controller-map.h"
-#include "eca-preset-map.h"
+
+#include "eca-chainop.h"
+#include "ctrl-source.h"
 
 extern ECA_AUDIO_OBJECT_MAP eca_audio_object_map;
 extern ECA_AUDIO_OBJECT_MAP eca_audio_device_map;

@@ -3,13 +3,12 @@
 
 #include <string>
 
-#include "dynamic-object.h"
-#include "sample-specs.h"
+#include "eca-operator.h"
 
 /**
  * Base class for all controller sources
  */
-class CONTROLLER_SOURCE : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type> {
+class CONTROLLER_SOURCE : public OPERATOR {
 
  public:
 
@@ -22,6 +21,7 @@ class CONTROLLER_SOURCE : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type> {
 
   /**
    * Return current value and advance by 'phase_step' seconds.
+   * Standard value range is [0,1].
    */
   virtual parameter_type value(void) = 0; 
 

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "dynamic-parameters.h"
+#include "eca-object.h"
 
 /**
  * Virtual class for objects supporting dynamic parameter
@@ -12,27 +13,22 @@
  * @author Kai Vehmanen
  */
 template<class T>
-class DYNAMIC_OBJECT : public DYNAMIC_PARAMETERS<T> {
+class DYNAMIC_OBJECT : public DYNAMIC_PARAMETERS<T>,
+                       public ECA_OBJECT {
 
  public:
-
-  /**
-   * Object name. Identifies the type represented by dynamic parameters.
-   * Must be implemented in subclasses.
-   */
-  virtual string name(void) const = 0;
 
   /**
    * Virtual method that clones the current object and returns 
    * a pointer to it. This must be implemented by all subclasses!
    */
-  virtual DYNAMIC_OBJECT* clone(void) = 0;
+  virtual DYNAMIC_OBJECT<T>* clone(void) = 0;
 
   /**
    * Virtual method that creates a new object of current type.
    * This must be implemented by all subclasses!
    */
-  virtual DYNAMIC_OBJECT* new_expr(void) = 0;
+  virtual DYNAMIC_OBJECT<T>* new_expr(void) = 0;
 
   virtual ~DYNAMIC_OBJECT (void) { }
 };

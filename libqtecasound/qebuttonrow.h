@@ -28,7 +28,7 @@ class QEButtonRow : public QWidget, public DEFINITION_BY_CONTRACT {
  public:
 
   /**
-   * Set font used for all button labels. If not set, default font is used.
+   * Set default font used for all button labels. If not set, default font is used.
    */
   void set_font(const QFont& v);
 
@@ -66,4 +66,3 @@ class QEButtonRow : public QWidget, public DEFINITION_BY_CONTRACT {
 };
 
 #endif
-

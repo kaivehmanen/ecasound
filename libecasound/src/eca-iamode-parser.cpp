@@ -81,6 +81,8 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map["aio-add-input"] = ec_aio_add_input;
   cmd_map["aio-add-output"] = ec_aio_add_output;
   cmd_map["aio-select"] = ec_aio_select;
+  cmd_map["aio-select-input"] = ec_aio_select_input;
+  cmd_map["aio-select-output"] = ec_aio_select_output;
   cmd_map["aio-index-select"] = ec_aio_index_select;
   cmd_map["aio-attach"] = ec_aio_attach;
   cmd_map["aio-remove"] = ec_aio_remove;
@@ -121,6 +123,18 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map["forward"] = ec_forward;
   cmd_map["fw"] = ec_forward;
   cmd_map["setpos"] = ec_setpos;
+
+  cmd_map["dump-target"] = ec_dump_target;
+  cmd_map["dump-status"] = ec_dump_status;
+  cmd_map["dump-position"] = ec_dump_position;
+  cmd_map["dump-length"] = ec_dump_length;
+  cmd_map["dump-cs-status"] = ec_dump_cs_status;
+  cmd_map["dump-c-selected"] = ec_dump_c_selected;
+  cmd_map["dump-aio-selected"] = ec_dump_aio_selected;
+  cmd_map["dump-aio-position"] = ec_dump_aio_position;
+  cmd_map["dump-aio-length"] = ec_dump_aio_length;
+  cmd_map["dump-aio-open-state"] = ec_dump_aio_open_state;
+  cmd_map["dump-cop-value"] = ec_dump_cop_value;
 }
 
 bool ECA_IAMODE_PARSER::action_requires_params(int id) { 
@@ -144,8 +158,9 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_c_rewind: 
   case ec_c_setpos:
   case ec_aio_add_input:
-  case ec_aio_add_output:
   case ec_aio_select:
+  case ec_aio_select_input:
+  case ec_aio_select_output:
   case ec_aio_index_select:
   case ec_aio_forward:
   case ec_aio_rewind:
@@ -159,6 +174,8 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_rewind:
   case ec_forward:
   case ec_setpos:
+  case ec_dump_target:
+  case ec_dump_cop_value:
 
     return(true);
     
@@ -211,6 +228,8 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_aio_add_input:
   case ec_aio_add_output:
   case ec_aio_select:
+  case ec_aio_select_input:
+  case ec_aio_select_output:
   case ec_aio_index_select:
   case ec_aio_remove:
   case ec_aio_attach:

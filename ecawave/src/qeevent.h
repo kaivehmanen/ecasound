@@ -14,7 +14,7 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
   /**
    * Start processing
    */
-  void start(bool blocking = false);
+  virtual void start(bool blocking = false);
 
   /**
    * Stop processing
@@ -54,7 +54,7 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
   /**
    * Restart event with new position parameters
    */
-  virtual void restart(long int start_pos, long int length) = 0;
+  virtual void restart(long int start_pos, long int length) { }
 
   /**
    * Initialize event data to its original state
@@ -65,6 +65,8 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
   virtual ~QEEvent(void);
 
  protected:
+
+  void process(bool blocking);
 
   void toggle_triggered_state(bool v) { triggered_rep = v; }
   void toggle_valid_state(bool v) { valid_rep = v; }

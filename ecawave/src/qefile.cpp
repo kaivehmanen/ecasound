@@ -312,7 +312,13 @@ void QEFile::open_io_object(void) {
   // --------
 
   try {
-    io_object = dynamic_cast<AUDIO_IO*>(ECA_AUDIO_OBJECTS::create_audio_object(filename_rep));
+    io_object = ECA_AUDIO_OBJECTS::create_audio_object(filename_rep);
+    if (io_object == 0) {
+      QMessageBox* mbox = new QMessageBox(this, "mbox");
+      QString errormsg ("Can't open file \"");
+      errormsg += QString(filename_rep.c_str()) + "\", unknown audio format.";
+      mbox->information(this, "ecawave", errormsg,0);
+    }
     io_object->io_mode(AUDIO_IO::io_read);
     io_object->set_audio_format(aformat);
     io_object->buffersize(max_buffer_size, io_object->samples_per_second());

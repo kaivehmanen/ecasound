@@ -30,7 +30,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (08.02.2000)
+       (19.03.2000)
        ()
        (Multimedia software)
 
@@ -247,11 +247,18 @@ the argument format ('-i' option).
 
 dit(aio-add-output 'output_format_string')
 Add a new output object. See ecasound(1) man page for more info about 
-the argument format ('-o' option). 
+the argument format ('-o' option). If argument is omitted, 
+a default output device is added (see ecasoundrc(5)).
 
 dit(aio-select 'aobject_name')
 Select some audio object. 'aobject_name' is usually a file name, but
 not always.
+
+dit(aio-select-input 'aobject_name')
+Select some audio input.
+
+dit(aio-select-output 'aobject_name')
+Select some audio output.
 
 dit(aio-index-select 'aobject_index')
 Select some audio object based on short index string. Especially file
@@ -332,6 +339,53 @@ operator.
 dit(ctrl-status) 
 Info about controller status.
 enddit()
+
+manpagesection(DUMP COMMANDS)
+The following dump commands are not meant for normal use. 
+Their primary purpose is to provide an easy way to get 
+internal state information from libecasound. All dump
+commands output a single line with syntax "key value"
+to the selected output stream (defaults to stdout). 
+
+dit(dump-target 'filename')
+Set target stream for dumping.
+
+dit(dump-status)
+Dumps engine status - 'running', 'stopped', 'finished' or 'notready'.
+
+dit(dump-position)
+Dumps the global position. Printed in seconds using a floating-point 
+representation.
+
+dit(dump-length)
+Dumps the overall processing length. Printed in seconds using a floating-point 
+representation.
+
+dit(dump-cs-status)
+Dumps status string for the currently selected chainsetup - 'connected', 
+'selected' or an empty string.
+
+dit(dump-c-selected)
+Dumps the name of currently selected chain.
+
+dit(dump-aio-selected)
+Dumps label of currently selected audio object. If no object is
+selected, dumps an empty string.
+
+dit(dump-aio-position)
+Dumps position of currently selected audio objects. Printed in
+seconds, using a floating-point representation.
+
+dit(dump-aio-length)
+Dumps length of currently selected audio object. Printed in seconds,
+using a floating-point representation.
+
+dit(dump-aio-open-state)
+Dumps audio object state info. Either 'open' or 'closed'.
+
+dit(dump-cop-value 'chainop,param')
+Dumps chain operator parameter value. 'chainop' and 'param' are 
+operator and parameter index values (1...n).
 
 manpageseealso()
 

@@ -90,7 +90,7 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
    * require:
    *   aio != 0
    */
-  string audio_object_info(const AUDIO_IO* aio) const;
+  void audio_object_info(const AUDIO_IO* aio) const;
 
   /**
    * Adds a "default" chain to the setup.

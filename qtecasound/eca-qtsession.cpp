@@ -279,7 +279,7 @@ void QESession::button_new(void) {
   try {
     QEStringDialog* sdialog = new QEStringDialog("Chainsetup name: ", this);
     if (sdialog->exec() == QEStringDialog::Accepted) {
-      ctrl->add_chainsetup(sdialog->resultString().latin1());
+      ctrl->add_chainsetup(sdialog->result_string().latin1());
       update_chainsetuplist();
     }
   }

@@ -16,23 +16,14 @@
 template<class T>
 class DYNAMIC_PARAMETERS {
 
- private:
-
-  map<string,int> param_map;
-  map<int,string> param_revmap;
-
-  /**
-   * Add a new parameter. Derived classes should use this routine 
-   * to specify their parameters.
-   */
-  void add_parameter(const string& name) { 
-    int id = (int)(param_map.size() + 1);
-    param_map[name] = id;
-    param_revmap[id] = name;
-  }
-
  public:
 
+  typedef T parameter_type;
+
+  /**
+   * Initialize parameters before actual use. Virtual function 
+   * parameter_names() is used for getting a list of parameters.
+   */
   void map_parameters(void) {
     vector<string> t = string_to_vector(parameter_names(), ',');
     vector<string>::const_iterator p = t.begin();
@@ -68,7 +59,10 @@ class DYNAMIC_PARAMETERS {
 
   /**
    * Set parameter value. Implementations should be able to
-   * handle arbitrary values of 'value'.
+   * handle arbitrary values of 'value'. Argument validity 
+   * can be tested by a combination of set_parameter() and 
+   * get_parameter() calls. Parameter value is valid, if 
+   * get_parameter() returns it without changes.
    *
    * @param param parameter id
    * @param value new value
@@ -91,7 +85,31 @@ class DYNAMIC_PARAMETERS {
    */
   virtual pair<T,T> default_parameter_range(int param) const { return(make_pair(T(),T())); }
 
+  /**
+   * Test whether parameter is a on/off toggle. When
+   * setting parameter values, value > 0 means 'on' 
+   * and value <= 0 means 'off'.
+   *
+   * @param param parameter id
+   */
+  virtual bool is_toggle(int param) const { return(false); }
+
   virtual ~DYNAMIC_PARAMETERS (void) { }
+
+ private:
+
+  map<string,int> param_map;
+  map<int,string> param_revmap;
+
+  /**
+   * Add a new parameter.
+   */
+  void add_parameter(const string& name) { 
+    int id = (int)(param_map.size() + 1);
+    param_map[name] = id;
+    param_revmap[id] = name;
+  }
 };
 
 #endif
+

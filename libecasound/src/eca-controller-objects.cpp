@@ -635,6 +635,15 @@ void ECA_CONTROLLER_OBJECTS::select_audio_object(const string& name) {
   // require:
   assert(is_selected() == true);
   // --------
+  select_audio_input(name);
+  select_audio_output(name);
+}
+
+void ECA_CONTROLLER_OBJECTS::select_audio_input(const string& name) { 
+  // --------
+  // require:
+  assert(is_selected() == true);
+  // --------
 
   vector<AUDIO_IO*>::size_type p = 0;  
   for(p = 0; p != selected_chainsetup_rep->inputs.size(); p++) {
@@ -642,7 +651,15 @@ void ECA_CONTROLLER_OBJECTS::select_audio_object(const string& name) {
       selected_audio_object_rep = selected_chainsetup_rep->inputs[p];
     }
   }
+}
 
+void ECA_CONTROLLER_OBJECTS::select_audio_output(const string& name) { 
+  // --------
+  // require:
+  assert(is_selected() == true);
+  // --------
+
+  vector<AUDIO_IO*>::size_type p = 0;  
   for(p = 0; p != selected_chainsetup_rep->outputs.size(); p++) {
     if (selected_chainsetup_rep->outputs[p]->label() == name) {
       selected_audio_object_rep = selected_chainsetup_rep->outputs[p];

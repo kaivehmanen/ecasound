@@ -19,6 +19,9 @@ class CHAIN_OPERATOR;
 
 extern VALUE_QUEUE ecasound_queue;
 
+/**
+ * Main processing engine
+ */
 class ECA_PROCESSOR {
 
   friend void *mthread_process_chains(void* params);

@@ -18,45 +18,22 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <vector>
-#include <string>
-
 #include "audioio.h"
-
 #include "eca-audio-object-map.h"
-#include "eca-debug.h"
 
 void ECA_AUDIO_OBJECT_MAP::register_object(const string& id_string,
-					   AUDIO_IO* object) {
-  object->map_parameters();
-  object_names.push_back(object->name());
-  object_map[id_string] = object;
-  object_prefix_map[object->name()] = id_string;
+					     AUDIO_IO* object) {
+  omap.register_object(id_string, object);
 }
 
-const vector<string>& ECA_AUDIO_OBJECT_MAP::registered_objects(void) const {
-  return(object_names);
+const map<string,string>& ECA_AUDIO_OBJECT_MAP::registered_objects(void) const {
+  return(omap.registered_objects());
 }
 
 AUDIO_IO* ECA_AUDIO_OBJECT_MAP::object(const string& keyword) const {
-  map<string, AUDIO_IO*>::const_iterator p = object_map.begin();
-  while(p != object_map.end()) {
-    if (keyword.find(p->first) != string::npos) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(e-a-o-m) match: " + p->first + "-" + keyword);
-      return(p->second);
-    }
-    ++p;
-  }
-  return(0);
+  return(dynamic_cast<AUDIO_IO*>(omap.object(keyword)));
 }
 
 string ECA_AUDIO_OBJECT_MAP::object_identifier(const AUDIO_IO* object) const {
-  assert(object != 0);
-  map<string, string>::const_iterator p = object_prefix_map.begin();
-  while(p != object_prefix_map.end()) {
-    if (p->first == object->name())
-      return(p->second);
-    ++p;
-  }
-  return("");
+  return(object_identifier(object));
 }

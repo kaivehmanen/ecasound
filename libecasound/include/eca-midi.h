@@ -11,6 +11,9 @@ class ECA_ERROR;
 void init_midi_queues(void) throw(ECA_ERROR*);
 void *update_midi_queues(void *);
 
+/**
+ * Routines for accessing raw MIDI -devices (OSS or ALSA).
+ */
 class MIDI_IN_QUEUE {
 
 private:

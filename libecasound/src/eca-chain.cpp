@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// eca-chain.cpp: Class representing abstract audio signal chain.
+// eca-chain.cpp: Class representing an abstract audio signal chain.
 // Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify

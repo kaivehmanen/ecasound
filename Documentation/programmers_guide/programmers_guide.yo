@@ -19,40 +19,44 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (10012000)
+       (18032000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
 sect(Preface)
-This documents describes how ecasound library works, how to use it,
+This document describes how ecasound library works, how to use it,
 how to extend and add features to it and so on. Before reading this
-documentent, you should first look at other available documentation
+document, you should first look at other available documentation
 (especially url(ecasound users's guide)(../users_guide/users_guide.html).
 
-Unlike most web pages, this document really is under construction. 
+Unlike most web pages, this document really is under construction. :)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
-sect(Guide-lines for design and programming)
-subsect(Open and generic design)
+sect(General guidelines)
+
+COMMENT(----------------------------------------------------------------)
+subsect(Design and programming)
+subsubsect(Open and generic design)
 Over the years ecasound's core design has been revised many times.
 After rewriting some code sections hundreds of times, you start
 to appreciate genericity. :) Although specific use-cases are used
 for testing new ideas, they are just design aids.
 
-subsect(Object-orientation)
-Ecasound is written in standard C++ (as specified in 1997 ANSI 
-C++ standard). Because C++ language itself doesn't force you 
-to follow OO-principles, I often use Eiffel language as a reference
-when designing classes and routines.
+subsubsect(Object-orientation)
+Ecasound is written in standard C++ (as specified in 1997 ANSI). 
+Because C++ language itself doesn't force you to follow OO-principles, 
+I often use Eiffel language as a reference when designing classes and 
+routines.
 
-subsect(Data hiding) 
+subsubsect(Data hiding) 
 This OO-feature deserves to be mentioned separately. Whenever 
 possible, I always try to hide the actual data representation. 
-This helps to make local implementation changes. One thing I've
-especially tried to avoid is excessive use of pointer magic.
+This allows you to make local implementation changes without
+affecting parts of the code base. One thing I've especially tried 
+to avoid is excessive use of pointer magic.
 
-subsect(Design by contract) 
+subsubsect(Design by contract) 
 Design by contract means that when you write a new routine,
 in addition to the actual code, you also describe routine's 
 behaviour as accurately as possible.
@@ -76,18 +80,45 @@ directly support pre/postconditions, I've simulated them using
 the class DEFINITION_BY_CONTRACT from kvutils package and with 
 normal assert() calls.
 
-subsect(Routine side effects) 
+subsubsect(Routine side effects) 
 I try to make a clear distinction between routines that 
 have side-effects (=methods, processors, modifiers; routines that
 change object's state) and const routines (=functions, observers).
 
-subsect(Sanity checks)
+subsubsect(Sanity checks)
 Sanity checks are done only to prevent crashes. All effects
 and operators happily accept "insane" parameters. For instance 
 you can give -100.0% to the amplifier effect. This of course 
 results in inverted sample data. I think this a reasonable 
 approach. After all, ecasound is supposed to be a tool for creative
 work and experimenting. It's not meant for e-commerce. ;)
+
+COMMENT(----------------------------------------------------------------)
+subsect(Coding style)
+subsubsect(libecasound, ecasound, ecatools)
+Variable names are all lower case and words are separated with
+underscores (int very_long_variable_name_with_underscores). Class names
+are all in upper case and words separated with underscores
+(class ECA_CONTROLLER_BASE). Index-style short variable names (n, m, etc.) 
+are only used in local scopes.
+
+subsubsect(libqtecasound, qtecasound, ecawave)
+Qt-style is used when naming classes (class QELevelMeter), otherwise
+same as above.
+
+COMMENT(----------------------------------------------------------------)
+subsect(Documentation style)
+Javadoc-style class documentation is the preferred style. Here's a few
+specific cases:
+startdit()
+dit(Use of 3rd person) 
+"Writes samples to memory." instead of "Write samples to memory."
+dit(Sentences start with a verb)
+"Writes samples to memory." instead of "Samples are written to memory."
+dit(This instead of the)
+"Get controllers connected to this effect." instead of "Get
+controllers connected to the effect.
+enddit()
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -133,9 +164,9 @@ COMMENT(----------------------------------------------------------------)
 subsect(Signal flow)
 This is simple. A group of inputs is routed to a group of chains.
 Audio data is processed in the chains and afterwards routed to 
-a group of outputs. Currently signals can't be redirected from one
-chain to another, but you can assing inputs and outputs to
-multiple chains.
+a group of outputs. Using internal loop devices, it' also possible to 
+route signals from one chain to another. It's also possibleto assign
+inputs and outputs to multiple chains.
 
 COMMENT(----------------------------------------------------------------)
 subsect(Control flow)
@@ -294,7 +325,7 @@ p.exec(); // blocks until processing is finished
 COMMENT(----------------------------------------------------------------)
 subsect(Ecasound classes as building blocks)
 And of course, you can also use individual ecasound classes directly.
-This means more control, but it also means more works. Here's
+This means more control, but it also means more work. Here's
 another short sample:
 
 verb(
@@ -315,10 +346,10 @@ sect(Adding new features and components?)
 COMMENT(----------------------------------------------------------------)
 subsect(Effects and other chain operators)
 Write a new class that inherits from CHAIN_OPERATOR or any of its
-successors. Implement all the necessary routines (init,
-set/get_parameter, process and a default constructor) and add your
-source files to libecasound's makefiles. Then all that's left to do 
-is to add your effect to em(libecasound/src/eca-chainop-map.cpp), 
+successors. Implement the necessary routines (init, set/get_parameter, 
+process and a default constructor) and add your source files to
+libecasound's makefiles. Then all that's left to do is to add your
+effect to em(libecasound/src/eca-static-object-maps.cpp),
 em(register_default_objects()). Now the new effect can be used just 
 like any other ecasound effect (parameters control, effect presets, etc).
 

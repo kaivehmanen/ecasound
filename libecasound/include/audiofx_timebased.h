@@ -92,7 +92,7 @@ class EFFECT_MULTITAP_DELAY : public EFFECT_TIME_BASED {
   EFFECT_MULTITAP_DELAY (parameter_type delay_time = 0.0, int num_of_delays = 1, parameter_type mix_percent = 50.0);
 };
 
-/*
+/**
  * Transforms a mono signal to stereo using a panned delay signal.
  * Suitable delays values range from 1 to 40 milliseconds. 
  */
@@ -120,7 +120,7 @@ class EFFECT_FAKE_STEREO : public EFFECT_TIME_BASED {
   EFFECT_FAKE_STEREO (parameter_type delay_time = 0.0);
 };
 
-/*
+/**
  * Simple reverb (based on a iir comb filter)
  */
 class EFFECT_REVERB : public EFFECT_TIME_BASED {
@@ -154,7 +154,7 @@ class EFFECT_REVERB : public EFFECT_TIME_BASED {
   EFFECT_REVERB (parameter_type delay_time = 0.0, int surround_mode = 0, parameter_type feedback_percent = 50.0);
 };
 
-/*
+/**
  * Base class for modulating delay effects
  */
 class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
@@ -177,7 +177,7 @@ class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
   void init(SAMPLE_BUFFER* insample);
 };
 
-/*
+/**
  * Flanger
  */
 class EFFECT_FLANGER : public EFFECT_MODULATING_DELAY {
@@ -193,7 +193,7 @@ class EFFECT_FLANGER : public EFFECT_MODULATING_DELAY {
   EFFECT_FLANGER* new_expr(void)  { return new EFFECT_FLANGER(); }
 };
 
-/*
+/**
  * Chorus
  */
 class EFFECT_CHORUS : public EFFECT_MODULATING_DELAY {
@@ -209,7 +209,7 @@ class EFFECT_CHORUS : public EFFECT_MODULATING_DELAY {
   EFFECT_CHORUS* new_expr(void)  { return new EFFECT_CHORUS(); }
 };
 
-/*
+/**
  * Phaser
  */
 class EFFECT_PHASER : public EFFECT_MODULATING_DELAY {

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
 #include <qwidget.h>
 
@@ -41,6 +42,7 @@ public slots:
   void play_event(void);
   void stop_event(void);
   void effect_event(void);
+  void copy_event(void);
 
 private slots:
 
@@ -87,7 +89,8 @@ private slots:
   bool editing_rep;
 
   QEResources ecawaverc;
-
+  vector<QESession*> child_sessions;
+  
   QEFile* file;
   QEButtonRow* buttonrow;
   QEButtonRow* buttonrow2;

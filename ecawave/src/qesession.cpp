@@ -41,6 +41,7 @@
 #include "qeplayevent.h"
 #include "qesaveevent.h"
 #include "qechainopevent.h"
+#include "qecopyevent.h"
 
 #include "version.h"
 
@@ -147,6 +148,12 @@ void QESession::init_layout(void) {
 			this, SLOT(stop_event()));
   buttonrow2->add_button(new QPushButton("(E)ffect",buttonrow2), ALT+Key_E,
 			this, SLOT(effect_event()));
+  buttonrow2->add_button(new QPushButton("Cop(y)",buttonrow2), ALT+Key_Y,
+			this, SLOT(copy_event()));
+  buttonrow2->add_button(new QPushButton("C(u)t",buttonrow2), ALT+Key_U,
+			this, SLOT(new_session()));
+  buttonrow2->add_button(new QPushButton("(P)aste",buttonrow2), ALT+Key_P,
+			this, SLOT(new_session()));
   vlayout->addWidget(buttonrow2);
 
   if (filename_rep.empty() == false) file = new QEFile(filename_rep,
@@ -239,7 +246,7 @@ void QESession::prepare_event(void) {
   start_pos = file->current_position();
   sel_length = file->selection_length();
 
-  //  cerr << "Range: " << start_pos << " len " << sel_length << ".\n";
+  cerr << "Event-range: " << start_pos << " len " << sel_length << ".\n";
   if (start_pos > file->length() ||
       start_pos < 0) {
     start_pos = 0;
@@ -361,6 +368,25 @@ void QESession::save_as_event(void) {
     else 
       event = 0;
   }
+}
+
+void QESession::copy_event(void) { 
+  stop_event();
+  prepare_event();
+  if (file->is_valid() == false) return;
+
+  QECopyEvent* p;
+  if (temp_file_created() == true)
+    p = new QECopyEvent(ectrl, tempfile_rep, ecawaverc.resource("clipboard-file"), start_pos, sel_length);
+  else
+    p = new QECopyEvent(ectrl, filename_rep, ecawaverc.resource("clipboard-file"), start_pos, sel_length);
+
+  if (p->is_valid() == true) {
+    p->start();
+    event = p;
+  }
+  else 
+    event = 0;
 }
 
 void QESession::stop_event(void) { 

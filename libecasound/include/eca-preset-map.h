@@ -7,42 +7,44 @@
 
 #include "preset.h"
 #include "eca-object-map.h"
+#include "resource-file.h"
 
 /**
  * Dynamic register for storing effect presets
  *
  * @author Kai Vehmanen
  */
-class ECA_PRESET_MAP : public ECA_OBJECT_MAP<PRESET> {
+class ECA_PRESET_MAP : public ECA_OBJECT_MAP {
 
-  bool defaults_registered;
+ private:
+
+  RESOURCE_FILE preset_file;
   mutable map<string, PRESET*> object_map;
-  mutable map<string,string> object_prefix_map;
-  vector<string> object_names;
+  mutable map<string,string> object_keyword_map;
 
  public:
 
   /**
-   * Register a new effect.
+   * Register a new preset
    */
   void register_object(const string& id_string, PRESET* object);
 
   /**
-   * List of registered objects (keywords).
+   * List of registered presets ('preset name'-'keyword' map).
    */
-  const vector<string>& registered_objects(void) const;
+  const map<string,string>& registered_objects(void) const;
 
   /**
    * Return the first object that matches with 'keyword'
    */
-  PRESET* object(const string& keyword) const;
+  ECA_OBJECT* object(const string& keyword) const;
 
   /**
    * Return the matching keyword for 'object'.
    */
   string object_identifier(const PRESET* object) const;
 
-  ECA_PRESET_MAP(void) : defaults_registered(false) { }
+  ECA_PRESET_MAP(void);
   virtual ~ECA_PRESET_MAP(void) { }
 };
 

@@ -40,7 +40,7 @@
 #include "eca-debug.h"
 
 ECA_CONTROLLER::ECA_CONTROLLER (ECA_SESSION* psession) 
-  : ECA_CONTROLLER_OBJECTS(psession) { }
+  : ECA_CONTROLLER_DUMP(psession) { }
 
 void ECA_CONTROLLER::command(const string& cmd) throw(ECA_ERROR*) {
   vector<string> cmds = string_to_words(cmd);
@@ -258,8 +258,10 @@ void ECA_CONTROLLER::action(int action_id,
     // Audio objects
     // ---
   case ec_aio_add_input: { add_audio_input(args[0]); break; }
-  case ec_aio_add_output: { add_audio_output(args[0]); break; }
+  case ec_aio_add_output: { if (args.size() == 0) add_default_output(); else add_audio_output(args[0]); break; }
   case ec_aio_select: { select_audio_object(args[0]); break; }
+  case ec_aio_select_input: { select_audio_input(args[0]); break; }
+  case ec_aio_select_output: { select_audio_output(args[0]); break; }
   case ec_aio_index_select: { 
     if (args[0].empty() != true) {
       if (args[0][0] != 'i' && args[0][0] != 'o') {
@@ -374,7 +376,30 @@ void ECA_CONTROLLER::action(int action_id,
       ecadebug->control_flow("Controller/General Status");
       print_general_status(); break; 
     }
-  }
+
+  // ---
+  // Dump commands
+  // ---
+  case ec_dump_target: { set_dump_target(args[0]); break; }
+  case ec_dump_status: { dump_status(); break; }
+  case ec_dump_position: { dump_position(); break; }
+  case ec_dump_length: { dump_length(); break; }
+  case ec_dump_cs_status: { dump_chainsetup_status(); break; }
+  case ec_dump_c_selected: { dump_selected_chain(); break; }
+  case ec_dump_aio_selected: { dump_selected_audio_object(); break; }
+  case ec_dump_aio_position: { dump_audio_object_position(); break; }
+  case ec_dump_aio_length: { dump_audio_object_length(); break; }
+  case ec_dump_aio_open_state: { dump_audio_object_open_state(); break; }
+  case ec_dump_cop_value: 
+    { 
+      if (args.size() > 1) {
+	dump_chain_operator_value(atoi(args[0].c_str()),
+				  atoi(args[1].c_str())); 
+      }
+      break; 
+    }
+  } // <-- switch-case
+
   if (reconnect == true) {
     if (is_valid() == false || 
 	is_selected() == false) {
@@ -559,7 +584,11 @@ string ECA_CONTROLLER::aio_status(void) const {
   
   while(adev_citer != selected_chainsetup_rep->inputs.end()) {
     st_info_string += "Input (i" + kvu_numtostr(adev_sizet + 1) + "): \"";
-    st_info_string += (*adev_citer)->label() + "\"";
+    for(int n = 0; n < (*adev_citer)->number_of_params(); n++) {
+      st_info_string += (*adev_citer)->get_parameter(n + 1);
+      if (n + 1 < (*adev_citer)->number_of_params()) st_info_string += ",";
+    }
+    st_info_string += "\" - [" + (*adev_citer)->name() + "]";
     if ((*adev_citer) == selected_audio_object_rep) st_info_string += " [selected]";
     st_info_string += "\n\tconnected to chains \"";
     vector<string> temp = selected_chainsetup_rep->get_connected_chains_to_input((selected_chainsetup_rep->inputs)[adev_sizet]);
@@ -578,7 +607,11 @@ string ECA_CONTROLLER::aio_status(void) const {
   adev_citer = selected_chainsetup_rep->outputs.begin();
   while(adev_citer != selected_chainsetup_rep->outputs.end()) {
     st_info_string += "Output (o" + kvu_numtostr(adev_sizet + 1) + "): \"";
-    st_info_string += (*adev_citer)->label() + "\"";
+    for(int n = 0; n < (*adev_citer)->number_of_params(); n++) {
+      st_info_string += (*adev_citer)->get_parameter(n + 1);
+      if (n + 1 < (*adev_citer)->number_of_params()) st_info_string += ",";
+    }
+    st_info_string += "\" - [" + (*adev_citer)->name() + "]";
     if ((*adev_citer) == selected_audio_object_rep) st_info_string += " [selected]";
     st_info_string += "\n\tconnected to chains \"";
     vector<string> temp = selected_chainsetup_rep->get_connected_chains_to_output((selected_chainsetup_rep->outputs)[adev_sizet]);

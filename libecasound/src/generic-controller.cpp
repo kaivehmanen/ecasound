@@ -42,7 +42,7 @@ GENERIC_CONTROLLER* GENERIC_CONTROLLER::clone(void) {
   assert(source != 0);
   CONTROLLER_SOURCE* s = source->clone();
 
-  DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* t = 0;
+  OPERATOR* t = 0;
   if (target != 0)
     t = target->clone();
 
@@ -54,7 +54,7 @@ GENERIC_CONTROLLER* GENERIC_CONTROLLER::clone(void) {
   return(obj);
 }
 
-GENERIC_CONTROLLER::GENERIC_CONTROLLER(CONTROLLER_SOURCE* src, DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* dobj, int par_id, double range_low, double range_high) {
+GENERIC_CONTROLLER::GENERIC_CONTROLLER(CONTROLLER_SOURCE* src, OPERATOR* dobj, int par_id, double range_low, double range_high) {
   source = src;
   target = dobj;
   param_id = par_id;

@@ -3,6 +3,9 @@
 
 #include <string>
 
+/**
+ * Virtual base for ecasound exception objects.
+ */
 class ECA_ERROR {
 
 public:

@@ -76,8 +76,8 @@ ecasound HTML-documentation (Documentation/examples.html).
 
 To run ecasound, you need...:
 
-- POSIX compliant UNIX system; I use Linux 2.2.x, glibc 2.1.x
-- POSIX threads; I use linuxthreads 0.7 (libpthread, comes with glibc)
+- POSIX compliant UNIX system; tested with Linux 2.2.x, glibc 2.1.x
+- POSIX threads; tested with linuxthreads 0.7 (libpthread, comes with glibc)
 - for soundcard input/output: OSS, OSS/Lite or ALSA drivers
 - for mp3 support, mpg123 (input) and lame (output) packages
 - for tracker module support, mikmod package
@@ -85,7 +85,7 @@ To run ecasound, you need...:
 
 To compile ecasound, you also need...:
 
-- standard C++ build environment; I use gcc 2.95.2
+- standard C++ build environment; tested with gcc 2.91.66 and 2.95.2
   (STL and exceptions need to be supported)
 - GNU make, automake and autoconf packages
 
@@ -143,9 +143,11 @@ Hamara, Arto - ecasound logo, lots of great ideas!
 Laydier, Antoine aka SMF - layer.cpp (interprets mp3 headers)
 Petit, Bertrand - helped with POSIX-compatibility issues
 Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!
+Sousa, Rui - bug fixes
 Tkachenko, Vadim - autoconf magic
 
 all LAD members - always a great source of inspiration
+nic.cx - for eca.cx, ecasound.cx and ecawave.cx domains
 SEUL - for hosting ecasound ftp, http and CVS sites
 WakkaNet Oy - for hosting ecasound web site
 

@@ -70,7 +70,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
   // Set triggering 
 
 #ifndef DISABLE_OSS_TRIGGER
-  if (oss_caps & DSP_CAP_TRIGGER == DSP_CAP_TRIGGER) {
+  if ((oss_caps & DSP_CAP_TRIGGER) == DSP_CAP_TRIGGER) {
     if (io_mode() == io_read) {
       int enable_bits = ~PCM_ENABLE_INPUT; // This disables recording
       if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
@@ -147,7 +147,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
 
   int t = stereo;
   if (ioctl(audio_fd, SNDCTL_DSP_STEREO, &t)==-1)
-    ecadebug->msg("(audioio-oss) WARNING! Error when setting sample rate."); 
+    ecadebug->msg("(audioio-oss) Warning! Error when setting sample rate."); 
 
   if (stereo != t)
     throw(new ECA_ERROR("AUDIOIO-OSS", "audio format not supported SNDCTL_DSP_STEREO"));        
@@ -164,7 +164,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
       throw(new ECA_ERROR("AUDIOIO-OSS", "Requested sample rate is not supported. Audio device suggests sample rate of " + kvu_numtostr(speed) + ". Disable precise-sample-rate mode to ignore the difference."));
     }
     else {
-      ecadebug->msg("(audioio-oss) WARNING! Requested sample rate is not supported. Ignoring the the difference between requested (" + kvu_numtostr(samples_per_second()) + ") and suggested (" + kvu_numtostr(speed) + ") sample rates."); 
+      ecadebug->msg("(audioio-oss) Warning! Requested sample rate is not supported. Ignoring the the difference between requested (" + kvu_numtostr(samples_per_second()) + ") and suggested (" + kvu_numtostr(speed) + ") sample rates."); 
     }
   }
 
@@ -198,7 +198,7 @@ void OSSDEVICE::close(void) throw(ECA_ERROR*) {
 void OSSDEVICE::start(void) throw(ECA_ERROR*) {
   if (is_triggered == false) {
     ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" started.");
-    if (oss_caps & DSP_CAP_TRIGGER == DSP_CAP_TRIGGER) {
+    if ((oss_caps & DSP_CAP_TRIGGER) == DSP_CAP_TRIGGER) {
       int enable_bits;
       if (io_mode() == io_read) enable_bits = PCM_ENABLE_INPUT;
       else if (io_mode() == io_write) enable_bits = PCM_ENABLE_OUTPUT;
@@ -212,7 +212,7 @@ void OSSDEVICE::start(void) throw(ECA_ERROR*) {
 
 long OSSDEVICE::position_in_samples(void) const { 
   if (is_triggered == false) return(0);
-  if (oss_caps & DSP_CAP_REALTIME == DSP_CAP_REALTIME) {
+  if ((oss_caps & DSP_CAP_REALTIME) == DSP_CAP_REALTIME) {
     count_info info;
     info.bytes = 0;
     if (io_mode() == io_read) {

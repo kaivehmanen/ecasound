@@ -8,8 +8,8 @@
 
 #include <kvutils/definition_by_contract.h>
 #include <ecasound/eca-chainop.h>
+#include <ecasound/qechainopinput.h>
 
-#include "qechainopinput.h"
 #include "qeprocessevent.h"
 
 /**

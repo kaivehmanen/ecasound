@@ -30,7 +30,6 @@
 #include "audioio.h"
 #include "audioio-loop.h"
 #include "audioio-null.h"
-#include "eca-audio-object-map.h"
 #include "eca-static-object-maps.h"
 
 #include "eca-chain.h"
@@ -111,10 +110,10 @@ void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu) throw(ECA_
   switch(argu[1]) {
   case 'i':
     {
-      ecadebug->control_flow("Eca-audio-objects/Adding a new input");
-      last_audio_object = create_audio_object(tname);
+      ecadebug->msg(ECA_DEBUG::system_objects, "Eca-audio-objects/Parsing input");
+      last_audio_object = create_audio_object(argu);
       if (last_audio_object == 0) 
-	last_audio_object = create_loop_input(tname);
+	last_audio_object = create_loop_input(argu);
       if (last_audio_object != 0) {
 	if ((last_audio_object->supported_io_modes() &
 	    AUDIO_IO::io_read) != AUDIO_IO::io_read) {
@@ -133,9 +132,9 @@ void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu) throw(ECA_
 
   case 'o':
     {
-      ecadebug->control_flow("Eca-audio-objects/Adding a new output");
-      last_audio_object = create_audio_object(tname);
-      if (last_audio_object == 0) last_audio_object = create_loop_output(tname);
+      ecadebug->msg(ECA_DEBUG::system_objects, "Eca-audio-objects/Parsing output");
+      last_audio_object = create_audio_object(argu);
+      if (last_audio_object == 0) last_audio_object = create_loop_output(argu);
       if (last_audio_object != 0) {
 	int mode_tmp = output_openmode_rep;
 	if (mode_tmp == AUDIO_IO::io_readwrite) {
@@ -188,6 +187,7 @@ void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu) throw(ECA_
 AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu) {
   assert(argu.empty() != true);
  
+  register_default_objects();
   string tname = get_argument_number(1, argu);
 
   AUDIO_IO* main_file = 0;
@@ -218,7 +218,10 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_input(const string& argu) {
     if (loop_map.find(id) == loop_map.end()) { 
       loop_map[id] = p;
     }
-    loop_map[id]->register_input();
+    else
+      p = loop_map[id];
+
+    p->register_input();
   }
   
   return(p);
@@ -237,7 +240,10 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_output(const string& argu) {
     if (loop_map.find(id) == loop_map.end()) { 
       loop_map[id] = p;
     }
-    loop_map[id]->register_output();
+    else
+      p = loop_map[id];
+
+    p->register_output();
   }
   
   return(p);
@@ -432,7 +438,6 @@ void ECA_AUDIO_OBJECTS::add_input(AUDIO_IO* aio) {
 
   inputs.push_back(aio);
   input_start_pos.push_back(0);
-  //  ecadebug->msg(audio_object_info(aio));
   attach_input_to_selected_chains(aio->label());
 
   // --------
@@ -448,7 +453,6 @@ void ECA_AUDIO_OBJECTS::add_output(AUDIO_IO* aiod) {
 
   outputs.push_back(aiod);
   output_start_pos.push_back(0);
-  //  ecadebug->msg(audio_object_info(aiod));
   attach_output_to_selected_chains(aiod->label());
 
   // --------
@@ -456,19 +460,20 @@ void ECA_AUDIO_OBJECTS::add_output(AUDIO_IO* aiod) {
   // --------
 }
 
-string ECA_AUDIO_OBJECTS::audio_object_info(const AUDIO_IO* aio) const {
+void ECA_AUDIO_OBJECTS::audio_object_info(const AUDIO_IO* aio) const {
   // --------
   REQUIRE(aio != 0);
   // --------
 
-  string temp = "(eca-audio-objects) Added audio object \"" + aio->label();
+  string temp = "(eca-audio-objects) Audio object \"" + aio->label();
   temp += "\", mode \"";
   if (aio->io_mode() == AUDIO_IO::io_read) temp += "read";
   if (aio->io_mode() == AUDIO_IO::io_write) temp += "write";
   if (aio->io_mode() == AUDIO_IO::io_readwrite) temp += "read/write";
   temp += "\".\n";
   temp += aio->format_info();
-  return(temp);
+
+  ecadebug->msg(temp);
 }
 
 void ECA_AUDIO_OBJECTS::remove_audio_input(const string& label) { 
@@ -605,7 +610,7 @@ void ECA_AUDIO_OBJECTS::attach_input_to_selected_chains(const string& filename) 
 
   while (c < inputs.size()) {
     if (inputs[c]->label() == filename) {
-      temp += "(eca-chainsetup) Assigning file to chains:";
+      temp += "(eca-audio-objects) Assigning file to chains:";
       for(vector<string>::const_iterator p = selected_chainids.begin(); p!= selected_chainids.end(); p++) {
 	for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
 	  if (*p == (*q)->name()) {
@@ -617,7 +622,7 @@ void ECA_AUDIO_OBJECTS::attach_input_to_selected_chains(const string& filename) 
     }
     ++c;
   }
-  ecadebug->msg(temp);
+  ecadebug->msg(ECA_DEBUG::system_objects, temp);
 }
 
 void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const string& filename) {
@@ -638,5 +643,5 @@ void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const string& filename)
     }
     ++c;
   }
-  ecadebug->msg(temp);
+  ecadebug->msg(ECA_DEBUG::system_objects, temp);
 }

@@ -92,7 +92,7 @@ void ECA_PROCESSOR::init(ECA_SESSION* params) {
 void ECA_PROCESSOR::init(void) {
   assert(eparams != 0);
 
-  ecadebug->control_flow("Engine/Initializing");
+  ecadebug->msg(ECA_DEBUG::system_objects,"Engine/Initializing");
 
   eparams->status(ep_status_stopped);
 
@@ -354,7 +354,7 @@ void ECA_PROCESSOR::interactive_loop(void) {
 }
 
 void ECA_PROCESSOR::exec_normal_iactive(void) {
-  ecadebug->control_flow("Engine/Mixmode \"normal iactive\" selected");
+  ecadebug->control_flow("Engine/Init - mixmode \"normal iactive\"");
 
   for (int c = 0; c != chain_count; c++) 
     (*chains)[c]->init(&(cslots[c]));
@@ -383,7 +383,7 @@ void ECA_PROCESSOR::exec_normal_passive(void) {
     (*chains)[c]->init(&(cslots[c]));
   start();
   
-  ecadebug->control_flow("Engine/Mixmode \"normal passive\" selected");
+  ecadebug->control_flow("Engine/Init - mixmode \"normal passive\"");
   while (!finished()) {
     input_not_finished = false;
     prehandle_control_position();
@@ -403,7 +403,7 @@ void ECA_PROCESSOR::exec_normal_passive(void) {
 void ECA_PROCESSOR::exec_simple_iactive(void) {
   (*chains)[0]->init(&mixslot);
 
-  ecadebug->control_flow("Engine/Mixmode \"simple iactive\" selected");
+  ecadebug->control_flow("Engine/Init - mixmode \"simple iactive\"");
   while (true) {
     interactive_loop();
     if (end_request) break;
@@ -423,7 +423,7 @@ void ECA_PROCESSOR::exec_simple_iactive(void) {
 void ECA_PROCESSOR::exec_simple_passive(void) {
   (*chains)[0]->init(&mixslot);
   start();
-  ecadebug->control_flow("Engine/Mixmode \"simple passive\" selected");
+  ecadebug->control_flow("Engine/Init - mixmode \"simple passive\"");
   while (!finished()) {
     input_not_finished = false;
     prehandle_control_position();
@@ -835,7 +835,7 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
   for (int c = 0; c != chain_count; c++) 
     (*chains)[c]->init(&(cslots[c]));
 
-  ecadebug->control_flow("Engine/Mixmode \"multithreaded interactive\" selected");
+  ecadebug->control_flow("Engine/Init - mixmode \"multithreaded interactive\"");
   int submix_pid = pthread_create(&chain_thread, NULL, mthread_process_chains, ((void*)this));
   if (submix_pid != 0)
     throw(new ECA_ERROR("ECA-MAIN", "Unable to create a new thread (mthread_process_chains)."));
@@ -898,7 +898,7 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
   for (int c = 0; c != chain_count; c++) 
     (*chains)[c]->init(&(cslots[c]));
 
-  ecadebug->control_flow("Engine/Mixmode \"multithreaded passive\" selected");
+  ecadebug->control_flow("Engine/Init - mixmode \"multithreaded passive\"");
   start();
 
   for (int chain_sizet = 0; chain_sizet < chain_count; chain_sizet++)

@@ -200,7 +200,7 @@ void QEChainsetup::button_add_chain(void) {
   if (sdialog->exec() == QEStringDialog::Accepted) {
     ctrl->select_chainsetup(chainsetup->name());
     if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
-    ctrl->add_chain(sdialog->resultString().latin1());
+    ctrl->add_chain(sdialog->result_string().latin1());
     update_chainsetuplist();
     update_chainsetuplist_clean();
   }

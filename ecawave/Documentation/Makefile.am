@@ -51,7 +51,7 @@ kdoc:
 	 -d ../Documentation/source-tree/ \
 	 -L ../Documentation/ *.h -lqt -llibecasound -llibkvutils
 	cd @top_srcdir@/Documentation/source-tree ; \
-	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/local/qt/html/
+	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/doc/qt/
 
 # ---------------------------------------------------------------------
 # Clean targets

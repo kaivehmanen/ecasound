@@ -11,11 +11,11 @@ class QEStringDialog : public QDialog {
 
   QEStringDialog (const QString& prompt, QWidget *parent=0, const char *name=0);
 
-  QString resultString(void) { return(input_text); }
+  QString result_string(void) const { return(input_text); }
 
 protected slots:
 
-  void inputGiven(void);
+  void input_given(void);
 
  protected:
 

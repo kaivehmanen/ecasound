@@ -1,8 +1,8 @@
 /****************************************************************************
 ** QEOpenFileDialog meta object code from reading C++ file 'qeopenfiledialog.h'
 **
-** Created: Tue Mar 7 00:35:44 2000
-**      by: The Qt Meta Object Compiler ($Revision: 1.3 $)
+** Created: Sat Mar 11 02:26:53 2000
+**      by: The Qt Meta Object Compiler ($Revision: 1.4 $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/

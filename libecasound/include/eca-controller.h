@@ -2,7 +2,7 @@
 #define _ECA_CONTROLLER_H
 
 #include "eca-iamode-parser.h"
-#include "eca-controller-objects.h"
+#include "eca-controller-dump.h"
 
 class CHAIN_OPERATOR;
 
@@ -10,7 +10,7 @@ class CHAIN_OPERATOR;
  * Class for controlling the whole ecasound library
  * @author Kai Vehmanen
  */
-class ECA_CONTROLLER : public ECA_CONTROLLER_OBJECTS,
+class ECA_CONTROLLER : public ECA_CONTROLLER_DUMP,
 		       public ECA_IAMODE_PARSER {
 
  public:

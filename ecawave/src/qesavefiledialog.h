@@ -7,8 +7,9 @@
 #include <vector>
 #include <string>
 
+#include <ecasound/qefilenameinput.h>
+
 #include "qeacceptinput.h"
-#include "qefilenameinput.h"
 
 class QVGroupBox;
 

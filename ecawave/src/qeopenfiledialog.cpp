@@ -22,7 +22,9 @@
 #include <qlayout.h>
 #include <qcheckbox.h>
 
+#include <ecasound/audioio.h>
 #include <ecasound/eca-audio-objects.h>
+#include <ecasound/eca-static-object-maps.h>
 
 #include "qeopenfiledialog.h"
 
@@ -31,7 +33,7 @@ QEOpenFileDialog::QEOpenFileDialog (QWidget *parent, const char *name)
 
   QBoxLayout* top = new QVBoxLayout(this);
 
-  fname = new QEFilenameInput(QEFilenameInput::file_open, this);
+  fname = new QEFilenameInput(QEFilenameInput::browse_existing, this);
   QObject::connect(fname, SIGNAL(file_selected()), this, SLOT(format_test()));
   top->addWidget(fname);
 
@@ -84,22 +86,21 @@ void QEOpenFileDialog::update_refresh_toggle(bool v) {
 }
 
 void QEOpenFileDialog::format_test(void) {
-  int type = ECA_AUDIO_OBJECTS::get_type_from_extension(result_filename());
-  if (type == ECA_AUDIO_OBJECTS::TYPE_RAWFILE ||
-      type == ECA_AUDIO_OBJECTS::TYPE_STDIN ||
-      type == ECA_AUDIO_OBJECTS::TYPE_STDOUT) {
-    aformat->enable_format();
-  }
-  else {
-    aformat->disable_format();
-  }
-
-  if (type == ECA_AUDIO_OBJECTS::TYPE_RAWFILE ||
-      type == ECA_AUDIO_OBJECTS::TYPE_CDR ||
-      type == ECA_AUDIO_OBJECTS::TYPE_WAVE) {
-    direct_toggle->setEnabled(true);
-  }
-  else {
-    direct_toggle->setEnabled(false);
+  AUDIO_IO* p = dynamic_cast<AUDIO_IO*>(eca_audio_object_map.object(result_filename()));
+  if (p != 0) {
+    if (p->locked_audio_format() == true) {
+      aformat->disable_format();
+    }
+    else {
+      aformat->enable_format();
+    }
+  
+    if ((p->supported_io_modes() & AUDIO_IO::io_readwrite) ==
+	AUDIO_IO::io_readwrite) {
+      direct_toggle->setEnabled(true);
+    }
+    else {
+      direct_toggle->setEnabled(false);
+    }
   }
 }

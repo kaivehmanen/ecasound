@@ -1,6 +1,9 @@
 #ifndef _SAMPLE_SPECS_H
 #define _SAMPLE_SPECS_H
 
+/**
+ * Sample value defaults and constants.
+ */
 namespace SAMPLE_SPECS {
   typedef float sample_type; // should be a floating-point value!
 
@@ -27,6 +30,5 @@ namespace SAMPLE_SPECS {
   static const sample_type u8_to_st_delta = 128;
   static const sample_type u8_to_st_constant = (max_amplitude / 128);
 }
-using namespace SAMPLE_SPECS;
 
 #endif

@@ -25,7 +25,8 @@
 void QEButtonRow::set_default_font(const QFont& v) { default_font = v; }
 QFont QEButtonRow::default_font = QFont::defaultFont();
 
-QEButtonRow::QEButtonRow (QWidget *parent = 0, const char *name = 0) 
+QEButtonRow::QEButtonRow (QWidget *parent, 
+			  const char *name) 
   : QWidget(parent,name)
 {
   font_rep = QEButtonRow::default_font;

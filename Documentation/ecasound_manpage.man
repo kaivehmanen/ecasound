@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "07\&.03\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "19\&.03\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -162,21 +162,20 @@ the default output device is used (see &tilde;/\&.ecasoundrc)\&. Note!
 you can\'t output to module formats supported by MikMod (this should
 be obvious) nor to ALSA\'s loopback device\&.
 .IP 
-\fISPECIAL INPUT/OUTPUT DEVICES\fP
+\fIOBJECT TYPE SPECIFIC NOTES\fP
 .IP "ALSA devices" 
-When using ALSA drivers, in addition to /dev/snd/pcm* files, you can 
-also use option syntax \fB-i[:]alsa,card_number,device_number\fP\&. If 
-you need to specify individual subdevices, \fB-i[:]alsa,card_number,device_number,subdevice_number\fP\&.
+When using ALSA drivers, instead of a device filename, you need to
+use the following option syntax: \fB-i[:]alsa,card_number,device_number\fP\&. 
+If you need to specify individual subdevices:
+\fB-i[:]alsa,card_number,device_number,subdevice_number\fP\&.
 .IP 
 .IP "ALSA loopback device" 
 By using the ALSA loopback system, you can grab audio data from any
-other ALSA pcm device\&. Option syntax is 
-\fB-i[:]alsalb,card_number,device_number,loop_mode\fP\&. Loopmode 
-is either \fB"p"\fP for looping a playback device or \fB"c"\fP for
-a capture device\&.
+other pcm device\&. Option syntax is
+\fB-i[:]alsalb,card_number,device_number,subdevice_number\fP\&.
 .IP 
 .IP "Ecasound Wave Files - \&.ewf" 
-A a simple wrapper class for handling other audio objects\&. 
+A simple wrapper class for handling other audio objects\&. 
 See ecasound user\'s guide for more 
 detailed information\&.
 .IP 
@@ -193,10 +192,10 @@ a null audio device is created\&. This is useful if you just want
 to analyze sample data without writing it to a file\&.
 .IP 
 .IP "System standard streams and named pipes" 
-You can use standard stream (stdin and stdout) by giving "stdin" 
+You can use standard streams (stdin and stdout) by giving "stdin" 
 or "stdout" as the file name\&. Audio data is assumed to be in
 raw/headerless (\&.raw) format\&. If you want to use named pipes, 
-create a them with the proper file name extension\&.
+create them with the proper file name extension before use\&.
 .IP 
 .PP 
 \fBEFFECT SETUP\fP
@@ -249,7 +248,7 @@ possible) reaches \'max-clipped-samples\', a warning will be issued\&.
 .IP 
 .IP "-ec:rate,threshold-%" 
 Compressor (a simple one)\&. \'rate\' is the compression rate in
-decibels (\'rate\'dB change in input signal causes 1dB change 
+decibels (\'rate\' dB change in input signal causes 1dB change 
 in output)\&. \'threshold\' varies between 0\&.0 (silence) and
 1\&.0 (max amplitude)\&.
 .IP 

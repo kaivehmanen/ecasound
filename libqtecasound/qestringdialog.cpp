@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// qstringdialog.cpp: Qt dialog widget that asks user for a string.
+// qestringdialog.cpp: Qt dialog widget that asks user for a string.
 // Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -39,9 +39,9 @@ QEStringDialog::QEStringDialog (const QString& prompt, QWidget *parent, const ch
   
   tekstirivi = new QLineEdit(this, "tekstirivi");
   tekstirivi->setMinimumSize(300,0);
- textinput->addWidget( tekstirivi);
+  textinput->addWidget( tekstirivi);
   
-  QObject::connect(tekstirivi, SIGNAL(returnPressed ()), this, SLOT(inputGiven()) );
+  QObject::connect(tekstirivi, SIGNAL(returnPressed ()), this, SLOT(input_given()) );
 
   QBoxLayout* buttons = new QHBoxLayout();
 
@@ -52,7 +52,7 @@ QEStringDialog::QEStringDialog (const QString& prompt, QWidget *parent, const ch
   cancel = new QPushButton( "(C)ancel", this );
   buttons->addWidget(cancel);
 
-  QObject::connect( ok, SIGNAL(clicked()), SLOT(inputGiven()) );
+  QObject::connect( ok, SIGNAL(clicked()), SLOT(input_given()) );
   QObject::connect( cancel, SIGNAL(clicked()), SLOT(reject()) );    
 
   topLayout->addLayout(textinput, 0);
@@ -62,10 +62,10 @@ QEStringDialog::QEStringDialog (const QString& prompt, QWidget *parent, const ch
   a->connectItem(a->insertItem(CTRL+Key_C), this,
 		 SLOT(reject()));
   a->connectItem(a->insertItem(CTRL+Key_O), this,
-		 SLOT(inputGiven()));
+		 SLOT(input_given()));
 }
 
-void QEStringDialog::inputGiven(void) {
+void QEStringDialog::input_given(void) {
   input_text = tekstirivi->text();
   accept();
 }
@@ -79,7 +79,7 @@ void QEStringDialog::keyPressEvent(QKeyEvent* kevent) {
     }
   case 'o': 
     {
-      inputGiven();
+      input_given();
       break;
     }
   }

@@ -29,7 +29,7 @@ QESaveFileDialog::QESaveFileDialog (QWidget *parent, const char *name)
 
   QBoxLayout* top = new QVBoxLayout(this);
 
-  fname = new QEFilenameInput(QEFilenameInput::file_save, this);
+  fname = new QEFilenameInput(QEFilenameInput::browse_any, this);
   top->addWidget(fname);
 
   top->addSpacing(5);

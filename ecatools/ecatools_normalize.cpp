@@ -66,8 +66,8 @@ int main(int argc, char *argv[])
   try {
     string filename;
     double multiplier;
-    EFFECT_ANALYZE* volume;
-    EFFECT_AMPLIFY* amp;
+    EFFECT_ANALYZE* volume = 0;
+    EFFECT_AMPLIFY* amp = 0;
 
     ecatools_normalize_tempfile = string(tmpnam(NULL));
     ecatools_normalize_tempfile += ".wav";

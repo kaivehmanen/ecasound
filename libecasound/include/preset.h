@@ -9,9 +9,9 @@
 #include "eca-chain.h"
 #include "sample-specs.h"
 #include "eca-chainsetup.h"
+#include "samplebuffer.h"
 
 class AUDIO_IO;
-class SAMPLE_BUFFER;
 
 /**
  * Class for representing effect presets

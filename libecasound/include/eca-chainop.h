@@ -4,17 +4,15 @@
 #include <map>
 #include <string>
 
-#include "dynamic-object.h"
+#include "eca-operator.h"
 #include "eca-audio-format.h"
-#include "sample-specs.h"
-
-class SAMPLE_BUFFER;
+#include "samplebuffer.h"
 
 /**
  * Virtual base class for chain operators. 
  * @author Kai Vehmanen
  */
-class CHAIN_OPERATOR : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>,
+class CHAIN_OPERATOR : public OPERATOR,
                        public ECA_AUDIO_FORMAT {
 
  public:

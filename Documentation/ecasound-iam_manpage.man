@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "08\&.02\&.2000" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "19\&.03\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -284,6 +284,53 @@ operator\&.
 .IP 
 .IP "ctrl-status" 
 Info about controller status\&.
+.IP 
+.SH "DUMP COMMANDS" 
+The following dump commands are not meant for normal use\&. 
+Their primary purpose is to provide an easy way to get 
+internal state information from libecasound\&. All dump
+commands output a single line with syntax "key value"
+to the selected output stream (defaults to stdout)\&. 
+.IP 
+.IP "dump-target \'filename\'" 
+Set target stream for dumping\&.
+.IP 
+.IP "dump-status" 
+Dumps engine status - \'running\', \'stopped\', \'finished\' or \'notready\'\&.
+.IP 
+.IP "dump-position" 
+Dumps the global position\&. Printed in seconds using a floating-point 
+representation\&.
+.IP 
+.IP "dump-length" 
+Dumps the overall processing length\&. Printed in seconds using a floating-point 
+representation\&.
+.IP 
+.IP "dump-cs-status" 
+Dumps status string for the currently selected chainsetup - \'connected\', 
+\'selected\' or an empty string\&.
+.IP 
+.IP "dump-c-selected" 
+Dumps the name of currently selected chain\&.
+.IP 
+.IP "dump-aio-selected" 
+Dumps label of currently selected audio object\&. If no object is
+selected, dumps an empty string\&.
+.IP 
+.IP "dump-aio-position" 
+Dumps position of currently selected audio objects\&. Printed in
+seconds, using a floating-point representation\&.
+.IP 
+.IP "dump-aio-length" 
+Dumps length of currently selected audio object\&. Printed in seconds,
+using a floating-point representation\&.
+.IP 
+.IP "dump-aio-open-state" 
+Dumps audio object state info\&. Either \'open\' or \'closed\'\&.
+.IP 
+.IP "dump-cop-value \'param\'" 
+Dumps parameter value of currently selected chain operator\&. \'param\'
+is the parameter index (1\&.\&.\&.n)\&.
 .IP 
 .SH "SEE ALSO" 
 .IP 

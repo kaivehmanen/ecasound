@@ -266,6 +266,10 @@ kdoc:
 	 kdoc -f html -u "http://localhost/ecasound/Documentation/libecasound/"\
 	 -d ../../Documentation/libecasound/ -n libecasound \
 	 -L ../../Documentation/ *.h
+	cd @top_srcdir@/libqtecasound ; \
+	 kdoc -f html -u "http://localhost/ecasound/Documentation/libqtecasound/"\
+	 -d ../Documentation/libqtecasound/ -n libqtecasound \
+	 -L ../Documentation/ *.h
 	cd @top_srcdir@/ecasound ; \
 	 kdoc -f html -u \
 	 "http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecasound/" \
@@ -277,7 +281,7 @@ kdoc:
 	 -d ../Documentation/qtecasound/ \
 	 -L ../Documentation/ *.h -llibecasound -lqt
 	cd @top_srcdir@/Documentation/qtecasound ; \
-	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/local/qt/html/
+	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/doc/qt/
 	cd @top_srcdir@/ecatools ; \
 	 kdoc -f html -u \
 	 "http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecatools/" \

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 070300) **
+** ecasound - user visible changes (NEWS)      (last edited: 180300) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -15,17 +15,27 @@ About the version numbers... "vx.y.zRt" :
 Last officially released version is -*> v1.6.12r10 <*-
 
 ??032000 (v1.7.2d11)
+	- added: support for ALSA 0.5.x pcm-loopback
+	- added: more effect presets
+	- added: ia-mode - 'aio-select-input' and 'aio-select-output'
+	- added: ia-mode - dump-* commands, see ecasound-iam(5) for
+	         the details
 	- removed: /dev/snd/pcmCxDy notation for specifying ALSA 
  		   devices
+	- changed: ia-mode - if aio-add-output is executed without 
+		   arguments, the default output is used
 	- fixed: libqtecasound was compiled even if --disable-qt
 	         was specified
-	- fixed: qtecasound - libqtecasound header include path
+	- fixed: qtecasound - libqtecasound header include path 
 		 was wrong
 	- fixed: ia-mode - problems with '_' -> '-' conversions
 	- fixed: -erc, -erm and -epp didn't work as expected if 
 		 both mono and stereo files were present in the
 		 active setup
 	- fixed: minor bugs in ALSA pcm2 support
+	- fixed: bugs in OSS capability checking (triggering and
+	         realtime caps), thanks to Rui Sousa for the fix
+	- fixed: bugs in internal looping
 26022000 (v1.7.1d11)
 	- added: a new effect preset system, see user's guide and 
 		 ecasound man page for more info

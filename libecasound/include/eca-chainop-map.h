@@ -12,27 +12,24 @@
  *
  * @author Kai Vehmanen
  */
-class ECA_CHAIN_OPERATOR_MAP : public ECA_OBJECT_MAP<CHAIN_OPERATOR> {
+class ECA_CHAIN_OPERATOR_MAP {
 
-  bool defaults_registered;
-  mutable map<string, CHAIN_OPERATOR*> object_map;
-  mutable map<string,string> object_prefix_map;
-  vector<string> object_names;
+  ECA_OBJECT_MAP omap;
 
  public:
 
   /**
-   * Register a new effect.
+   * Register a new effect
    */
   void register_object(const string& id_string, CHAIN_OPERATOR* object);
 
   /**
-   * List of registered objects (keywords).
+   * List of registered effects ('effect name'-'keyword' map).
    */
-  const vector<string>& registered_objects(void) const;
+  const map<string,string>& registered_objects(void) const;
 
   /**
-   * Return the first object that matches with 'keyword'
+   * Return the first effect that matches with 'keyword'
    */
   CHAIN_OPERATOR* object(const string& keyword) const;
 
@@ -41,7 +38,6 @@ class ECA_CHAIN_OPERATOR_MAP : public ECA_OBJECT_MAP<CHAIN_OPERATOR> {
    */
   string object_identifier(const CHAIN_OPERATOR* object) const;
 
-  ECA_CHAIN_OPERATOR_MAP(void) : defaults_registered(false) { }
   virtual ~ECA_CHAIN_OPERATOR_MAP(void) { }
 };
 

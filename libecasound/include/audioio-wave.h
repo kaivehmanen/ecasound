@@ -29,8 +29,7 @@ typedef struct {
 } RH;
 
 /**
- *
- * Represents a RIFF WAVE -file (.wav)
+ * Represents a RIFF WAVE -file (wav).
  *
  * This class currently supports only a limited set of features:
  *
@@ -38,9 +37,9 @@ typedef struct {
  *
  * - multiple channels are interleaved
  *
- * - only 8 and 16 bit data supported
+ * - 8, 16, 24 and 32 bit data supported
  * 
- * - if 16 bits, least significant byte first as specified
+ * - if more than 8 bits, least significant byte first as specified
  *   in the stantard
  */
 class WAVEFILE : public AUDIO_IO_BUFFERED {
@@ -68,6 +67,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
  public:
 
   string name(void) const { return("RIFF wave file"); }
+  bool locked_audio_format(void) const { return(true); }
 
   void open(void) throw(ECA_ERROR*);
   void close(void);

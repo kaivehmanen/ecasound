@@ -6,8 +6,7 @@
 
 #include <string>
 #include <audiofile.h>
-
-class SAMPLE_BUFFER;
+#include "samplebuffer.h"
 
 #include "audioio-types.h"
 #include "samplebuffer.h"
@@ -41,6 +40,8 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
 
   string name(void) const { return("SGI libaudiofile object"); }
   int supported_io_modes(void) const { return(io_read | io_write); }
+  virtual bool locked_audio_format(void) const { return(true); }
+
   
   void open(void) throw(ECA_ERROR*);
   void close(void);

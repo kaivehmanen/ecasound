@@ -2,8 +2,7 @@
 #define _AUDIO_GATE_H
 
 #include "eca-chainop.h"
-
-class SAMPLE_BUFFER;
+#include "samplebuffer.h"
 
 /**
  * Interface to gate effects. Gate processes sample data, but
@@ -35,7 +34,6 @@ public:
 };
 
 /**
- *
  * A time crop gate. Initially the gate is closed, but is opened after 
  * 'open_at' seconds has elapsed. Gate remains open for 
  * 'duration' seconds. If 'duration' is 0, gate will stay open

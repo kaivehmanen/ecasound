@@ -54,10 +54,10 @@ ecasound_general_src = 	eca-chain.h \
 			layer.h \
 			eca-static-object-maps.h \
 			eca-object-map.h \
+			eca-preset-map.h \
 			eca-chainop-map.h \
 			eca-controller-map.h \
 			eca-audio-object-map.h \
-			eca-preset-map.h \
 			samplebuffer.h \
 			sample-specs.h \
 			eca-version.h \
@@ -65,6 +65,7 @@ ecasound_general_src = 	eca-chain.h \
 			eca-controller.h \
 			eca-controller-base.h \
 			eca-controller-objects.h \
+			eca-controller-dump.h \
 			eca-iamode-parser.h \
 			osc-gen.h \
 			midi-cc.h \
@@ -78,6 +79,8 @@ ecasound_general_src = 	eca-chain.h \
 			eca-mthreaded-processor.h \
 			dynamic-parameters.h \
 			dynamic-object.h \
+			eca-object.h \
+			eca-operator.h \
 			samplebuffer_iterators.h \
 			eca-audio-objects.h \
 			eca-audio-format.h \
@@ -85,6 +88,10 @@ ecasound_general_src = 	eca-chain.h \
 			preset.h \
 			file-preset.h \
 			global-preset.h
+
+#			eca-chainop-map.h \
+#			eca-controller-map.h \
+#			eca-audio-object-map.h \
 
 #pkgincludedir_HEADERS = $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_general_src)
 

@@ -41,7 +41,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>08.02.2000</h2>
+<h2>19.03.2000</h2>
 
 
     
@@ -280,6 +280,42 @@ operator.
 <p><p></p><dt><strong>ctrl-status</strong><dd> 
 Info about controller status.
 </dl>
+<p><h2>DUMP COMMANDS</h2>
+    
+The following dump commands are not meant for normal use. 
+Their primary purpose is to provide an easy way to get 
+internal state information from libecasound. All dump
+commands output a single line with syntax "key value"
+to the selected output stream (defaults to stdout). 
+<p><p></p><dt><strong>dump-target 'filename'</strong><dd>
+Set target stream for dumping.
+<p><p></p><dt><strong>dump-status</strong><dd>
+Dumps engine status - 'running', 'stopped', 'finished' or 'notready'.
+<p><p></p><dt><strong>dump-position</strong><dd>
+Dumps the global position. Printed in seconds using a floating-point 
+representation.
+<p><p></p><dt><strong>dump-length</strong><dd>
+Dumps the overall processing length. Printed in seconds using a floating-point 
+representation.
+<p><p></p><dt><strong>dump-cs-status</strong><dd>
+Dumps status string for the currently selected chainsetup - 'connected', 
+'selected' or an empty string.
+<p><p></p><dt><strong>dump-c-selected</strong><dd>
+Dumps the name of currently selected chain.
+<p><p></p><dt><strong>dump-aio-selected</strong><dd>
+Dumps label of currently selected audio object. If no object is
+selected, dumps an empty string.
+<p><p></p><dt><strong>dump-aio-position</strong><dd>
+Dumps position of currently selected audio objects. Printed in
+seconds, using a floating-point representation.
+<p><p></p><dt><strong>dump-aio-length</strong><dd>
+Dumps length of currently selected audio object. Printed in seconds,
+using a floating-point representation.
+<p><p></p><dt><strong>dump-aio-open-state</strong><dd>
+Dumps audio object state info. Either 'open' or 'closed'.
+<p><p></p><dt><strong>dump-cop-value 'param'</strong><dd>
+Dumps parameter value of currently selected chain operator. 'param'
+is the parameter index (1...n).
 <p><h2>SEE ALSO</h2>
     
 <p>ecasound(1), qtecasound (1), ecatools (1), ecasoundrc(5)

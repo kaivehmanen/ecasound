@@ -57,6 +57,7 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
  public:
 
   string name(void) const { return("CD-R audio file"); }
+  virtual bool locked_audio_format(void) const { return(true); }
 
   void open(void) throw(ECA_ERROR*);
   void close(void);

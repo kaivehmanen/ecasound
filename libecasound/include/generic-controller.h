@@ -4,18 +4,17 @@
 #include <kvutils/definition_by_contract.h>
 
 #include "ctrl-source.h"
-#include "dynamic-object.h"
-#include "sample-specs.h"
+#include "eca-operator.h"
 
 /**
  * Generic controller class that connects controller sources
  * to objects supporting dynamic parameter control (classes 
  * which inherit DYNAMIC_PARAMETERS).
  */
-class GENERIC_CONTROLLER : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>, 
+class GENERIC_CONTROLLER : public OPERATOR, 
 			   public DEFINITION_BY_CONTRACT {
 
-  DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* target;
+  OPERATOR* target;
   CONTROLLER_SOURCE* source;
 
   int param_id;
@@ -33,10 +32,10 @@ class GENERIC_CONTROLLER : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>,
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
 
-  void assign_target(DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* obj) { target  = obj; }
+  void assign_target(OPERATOR* obj) { target  = obj; }
   void assign_source(CONTROLLER_SOURCE* obj) { source = obj; }
 
-  DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* target_pointer(void) const { return(target); }
+  OPERATOR* target_pointer(void) const { return(target); }
 
   /**
    * Initialize controller source
@@ -65,7 +64,7 @@ class GENERIC_CONTROLLER : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>,
   GENERIC_CONTROLLER* new_expr(void) { return(new GENERIC_CONTROLLER(0)); }
 
   GENERIC_CONTROLLER(CONTROLLER_SOURCE* source,
-		     DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* dobj = 0, 
+		     OPERATOR* dobj = 0, 
 		     int param_id = 0, 
 		     double range_low = 0.0, 
 		     double range_high = 0.0);

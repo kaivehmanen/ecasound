@@ -3,8 +3,7 @@
 
 #include <string>
 #include "audioio-types.h"
-
-class SAMPLE_BUFFER;
+#include "samplebuffer.h"
 
 /**
  * Interface class for MP3 input and output. Uses FIFO pipes to communicate 

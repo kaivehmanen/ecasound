@@ -39,7 +39,7 @@
 #include "eca-static-object-maps.h"
 
 #include "eca-control-position.h"
-#include "eca-preset-map.h"
+//  #include "eca-preset-map.h"
 #include "eca-audio-objects.h"
 
 #include "eca-error.h"
@@ -148,15 +148,22 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
 
 void ECA_CHAINSETUP::enable(void) {
   if (is_enabled_rep == false) {
+    ecadebug->control_flow("Chainsetup/Enabling audio inputs");
     for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
       (*q)->buffersize(buffersize(), sample_rate());
       if ((*q)->is_open() == false) (*q)->open();
+      audio_object_info(*q);
     }
     
+    ecadebug->control_flow("Chainsetup/Enabling audio outputs");
     for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
       (*q)->buffersize(buffersize(), sample_rate());
       if ((*q)->is_open() == false) (*q)->open();
+      audio_object_info(*q);      
     }
+
+//      for(vector<CHAIN*>::const_iterator q = chains.begin(); q != 
+//  	  chains.end(); q++) {     }
   }
   is_enabled_rep = true;
 
@@ -429,9 +436,14 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
       case 'n': 
 	{
 	  string name = get_argument_number(1,argu);
-	  //	  if (ECA_PRESET_MAP::has(name) == true) {
-	    add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new GLOBAL_PRESET(name)));
-	    //	  }
+	  const map<string,string>& preset_map = eca_preset_map.registered_objects();
+	  map<string,string>::const_iterator p = preset_map.begin();
+	  while (p != preset_map.end()) {
+	    if (p->first == name) {
+	      add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new GLOBAL_PRESET(name)));
+	    }
+	    ++p;
+	  }
 	  break;
 	}
 	

@@ -5,18 +5,22 @@
 #include <vector>
 
 #include "eca-debug.h"
-#include "dynamic-object.h"
-#include "sample-specs.h"
-
+#include "eca-operator.h"
 #include "eca-chainop.h"
-#include "eca-chainop-map.h"
-#include "eca-controller-map.h"
+#include "samplebuffer.h"
 
-class SAMPLE_BUFFER;
+/*  #include "eca-chainop.h" */
+/*  #include "eca-chainop-map.h" */
+/*  #include "eca-controller-map.h" */
+
 class GENERIC_CONTROLLER;
 class AUDIO_IO;
 
-class CHAIN : public ECA_CONTROLLER_MAP {
+
+/**
+ * Class representing an abstract audio signal chain.
+ */
+class CHAIN {
 
   friend class ECA_PROCESSOR;
   friend class ECA_SESSION;
@@ -42,7 +46,7 @@ class CHAIN : public ECA_CONTROLLER_MAP {
 
   CHAIN_OPERATOR* selected_chainop;
   GENERIC_CONTROLLER* selected_controller_rep;
-  DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* selected_dynobj;
+  OPERATOR* selected_dynobj;
 
   int selected_chainop_number;
   int selected_controller_number;

@@ -8,9 +8,10 @@
 #include <vector>
 #include <string>
 
+#include <ecasound/qeaudioformatinput.h>
+#include <ecasound/qefilenameinput.h>
+
 #include "qeacceptinput.h"
-#include "qeaudioformatinput.h"
-#include "qefilenameinput.h"
 
 class QVGroupBox;
 
@@ -35,9 +36,9 @@ private slots:
   string result_filename(void) const { return(fname->result_filename()); }
   const string& current_dir(void) const { return(fname->current_dir()); }
 
-  int result_bits(void) const { return(aformat->result_bits()); }
-  int result_channels(void) const { return(aformat->result_channels()); }
-  int result_srate(void) const { return(aformat->result_srate()); }
+  int result_bits(void) const { return(aformat->bits()); }
+  int result_channels(void) const { return(aformat->channels()); }
+  int result_srate(void) const { return(aformat->samples_per_second()); }
 
   bool result_wave_cache_toggle(void) const { return(wcache_toggle->isChecked()); }
   bool result_cache_refresh_toggle(void) const { return(refresh_toggle->isChecked()); }

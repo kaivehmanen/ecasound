@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
     string filename;
     string tempfile;
     vector<double> dcfix_value (2);
-    EFFECT_DCFIND* dcfind;
-    EFFECT_DCFIX* dcfix;
+    EFFECT_DCFIND* dcfind = 0;
+    EFFECT_DCFIX* dcfix = 0;
 
     ECA_SESSION esession;
     ECA_CONTROLLER ectrl (&esession);
@@ -156,7 +156,3 @@ void signal_handler(int signum) {
   remove(ecatools_fixdc_tempfile.c_str());
   exit(1);
 }
-
-
-
-

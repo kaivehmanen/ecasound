@@ -8,8 +8,8 @@
 #include <kvutils/kvutils.h>
 
 #include "eca-control-position.h"
-#include "eca-chainop-map.h"
-#include "eca-controller-map.h"
+/*  #include "eca-chainop-map.h" */
+/*  #include "eca-controller-map.h" */
 #include "eca-audio-objects.h"
 
 #include "eca-error.h"
@@ -23,8 +23,7 @@ class GENERIC_CONTROLLER;
  * @author Kai Vehmanen
  */
 class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
-		       public ECA_AUDIO_OBJECTS,
-                       public ECA_CONTROLLER_MAP {
+		       public ECA_AUDIO_OBJECTS {
 
  public:
 

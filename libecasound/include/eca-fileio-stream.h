@@ -3,11 +3,10 @@
 
 #include "eca-fileio.h"
 
+/**
+ * File-I/O and buffering routines using normal file streams.
+ */
 class ECA_FILE_IO_STREAM : public ECA_FILE_IO {
-  // --
-  // Class that provides file-io and buffering functions for 
-  // other classes (uses normal file streams).
-  // --
 
  private:
 

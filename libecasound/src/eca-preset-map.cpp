@@ -21,38 +21,51 @@
 #include <string>
 #include <algorithm>
 
+#include "eca-resources.h"
 #include "eca-preset-map.h"
+#include "global-preset.h"
 
-void ECA_PRESET_MAP::register_object(const string& id_string,
-					     PRESET* object) {
-  object->map_parameters();
-  object_names.push_back(object->name());
-  object_map[id_string] = object;
-  object_prefix_map[object->name()] = id_string;
+ECA_PRESET_MAP::ECA_PRESET_MAP(void) {
+  ECA_RESOURCES ecarc;
+  string filename =
+    ecarc.resource("resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
+
+  preset_file.resource_file(filename);
+  
+  const vector<string>& pmap = preset_file.keywords();
+  vector<string>::const_iterator p = pmap.begin();
+  while(p != pmap.end()) {
+    object_keyword_map[*p] = *p;
+    ++p;
+  }
 }
 
-const vector<string>& ECA_PRESET_MAP::registered_objects(void) const {
-  return(object_names);
+void ECA_PRESET_MAP::register_object(const string& keyword,
+				     PRESET* object) {
+  object_map[keyword] = object;
+  object_keyword_map[object->name()] = keyword;
 }
 
-PRESET* ECA_PRESET_MAP::object(const string& keyword) const {
+const map<string,string>& ECA_PRESET_MAP::registered_objects(void) const {
+  return(object_keyword_map);
+}
+
+ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword) const {
   map<string, PRESET*>::const_iterator p = object_map.begin();
   while(p != object_map.end()) {
     if (p->first == keyword) 
       return(dynamic_cast<PRESET*>(p->second));
     ++p;
   }
-  return(0);
+  PRESET* gp = 0;
+  try {
+    gp = dynamic_cast<PRESET*>(new GLOBAL_PRESET(keyword));
+  }
+  catch(...) { gp = 0; }
+  return(gp);
 }
 
 string ECA_PRESET_MAP::object_identifier(const PRESET* object) const {
   assert(object != 0);
-  map<string, string>::const_iterator p = object_prefix_map.begin();
-  while(p != object_prefix_map.end()) {
-    if (p->first == object->name())
-      return(p->second);
-    ++p;
-  }
-  return("");
+  return(object->name());
 }
-

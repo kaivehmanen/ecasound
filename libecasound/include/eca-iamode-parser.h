@@ -71,6 +71,8 @@ class ECA_IAMODE_PARSER {
     ec_aio_add_output,
     ec_aio_remove,
     ec_aio_select,
+    ec_aio_select_input,
+    ec_aio_select_output,
     ec_aio_index_select,
     ec_aio_attach,
     ec_aio_status,
@@ -87,7 +89,19 @@ class ECA_IAMODE_PARSER {
     // --
     ec_ctrl_add,
     ec_ctrl_remove, // not implemented
-    ec_ctrl_status
+    ec_ctrl_status,
+    // --
+    ec_dump_target,
+    ec_dump_status,
+    ec_dump_position,
+    ec_dump_length,
+    ec_dump_cs_status,
+    ec_dump_c_selected,
+    ec_dump_aio_selected,
+    ec_dump_aio_position,
+    ec_dump_aio_length,
+    ec_dump_aio_open_state,
+    ec_dump_cop_value
   };
 
   /**

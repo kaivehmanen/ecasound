@@ -19,6 +19,7 @@
 
 #include <config.h>
 
+#include "eca-chainop.h"
 #include "audiofx.h"
 #include "audiofx_amplitude.h"
 #include "audiofx_analysis.h"
@@ -115,6 +116,12 @@ void register_default_audio_objects(void) {
   eca_audio_object_map.register_object("/dev/dsp", device);
   eca_audio_device_map.register_object("/dev/dsp", device);
 
+#ifdef COMPILE_ALSA
+  device = new ALSA_LOOPBACK_DEVICE();
+  eca_audio_object_map.register_object("alsalb", device);
+  eca_audio_device_map.register_object("alsalb", device);
+#endif
+
 #ifdef ALSALIB_050
   device = new ALSA_PCM2_DEVICE();
   eca_audio_object_map.register_object("alsa", device);
@@ -124,12 +131,6 @@ void register_default_audio_objects(void) {
   device = new ALSA_PCM_DEVICE();
   eca_audio_object_map.register_object("alsa", device);      
   eca_audio_device_map.register_object("alsa", device);
-#endif
-
-#ifdef COMPILE_ALSA
-  device = new ALSA_LOOPBACK_DEVICE();
-  eca_audio_object_map.register_object("alsalb", device);
-  eca_audio_device_map.register_object("alsalb", device);
 #endif
 
   device = new REALTIME_NULL();

@@ -61,7 +61,7 @@ GGLLOOBBAALL
 
 
 
-                            08.02.2000                          1
+                            19.03.2000                          1
 
 
 
@@ -127,7 +127,7 @@ CCHHAAIINNSSEETTUUPPSS
 
 
 
-                            08.02.2000                          2
+                            19.03.2000                          2
 
 
 
@@ -193,7 +193,7 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
 
-                            08.02.2000                          3
+                            19.03.2000                          3
 
 
 
@@ -259,7 +259,7 @@ CCHHAAIINNSS
 
 
 
-                            08.02.2000                          4
+                            19.03.2000                          4
 
 
 
@@ -325,7 +325,7 @@ AAUUDDIIOO IINNPPUUTT//OOUUTTPPUUTT OOBBJJEECCTTSS
 
 
 
-                            08.02.2000                          5
+                            19.03.2000                          5
 
 
 
@@ -391,7 +391,7 @@ CCHHAAIINN OOPPEERRAATTOORRSS
 
 
 
-                            08.02.2000                          6
+                            19.03.2000                          6
 
 
 
@@ -443,9 +443,96 @@ CCOONNTTRROOLLLLEERRSS
               Info about controller status.
 
 
+DDUUMMPP CCOOMMMMAANNDDSS
+       The  following dump commands are not meant for normal use.
+       Their primary purpose is to provide an  easy  way  to  get
+       internal state information from libecasound. All dump com-
+       mands output a single line with syntax "key value" to  the
+       selected output stream (defaults to stdout).
+
+
+       dump-target 'filename'
+              Set target stream for dumping.
+
+
+
+
+                            19.03.2000                          7
+
+
+
+
+
+ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
+       dump-status
+              Dumps  engine  status - 'running', 'stopped', 'fin-
+              ished' or 'notready'.
+
+
+       dump-position
+              Dumps the global position. Printed in seconds using
+              a floating-point representation.
+
+
+       dump-length
+              Dumps  the  overall  processing  length. Printed in
+              seconds using a floating-point representation.
+
+
+       dump-cs-status
+              Dumps status  string  for  the  currently  selected
+              chainsetup  -  'connected',  'selected' or an empty
+              string.
+
+
+       dump-c-selected
+              Dumps the name of currently selected chain.
+
+
+       dump-aio-selected
+              Dumps label of currently selected audio object.  If
+              no object is selected, dumps an empty string.
+
+
+       dump-aio-position
+              Dumps position of currently selected audio objects.
+              Printed in seconds, using a  floating-point  repre-
+              sentation.
+
+
+       dump-aio-length
+              Dumps  length  of  currently selected audio object.
+              Printed in seconds, using a  floating-point  repre-
+              sentation.
+
+
+       dump-aio-open-state
+              Dumps  audio  object  state  info. Either 'open' or
+              'closed'.
+
+
+       dump-cop-value 'param'
+              Dumps parameter value of currently  selected  chain
+              operator. 'param' is the parameter index (1...n).
+
+
 SSEEEE AALLSSOO
-              ecasound(1),  qtecasound  (1),  ecatools  (1), eca-
-              soundrc(5)
+              ecasound(1),    qtecasound   (1),   ecatools   (1),
+
+
+
+                            19.03.2000                          8
+
+
+
+
+
+ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
+              ecasoundrc(5)
 
 
 AAUUTTHHOORR
@@ -457,6 +544,51 @@ AAUUTTHHOORR
 
 
 
-                            08.02.2000                          7
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            19.03.2000                          9
 
 

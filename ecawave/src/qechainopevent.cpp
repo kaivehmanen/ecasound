@@ -73,8 +73,8 @@ void QEChainopEvent::preview(void) {
   ectrl->add_default_output();
   toggle_valid_state(true);
   if (copinput != 0) {
-    copinput->set_parameters();
-    add_chain_operator(copinput->clone_result());
+    copinput->update_results();
+    add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(copinput->result()->clone()));
   }
   start(false);
 }
@@ -94,8 +94,8 @@ void QEChainopEvent::process(void) {
     set_output_position(start_pos_rep);
     toggle_valid_state(true);
     if (copinput != 0) {
-      copinput->set_parameters();
-      add_chain_operator(copinput->clone_result());
+      copinput->update_results();
+      add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(copinput->result()->clone()));
     }
     start(true);
     emit finished();

@@ -53,6 +53,7 @@ ALSA_PCM2_DEVICE::ALSA_PCM2_DEVICE (int card,
 
 void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   assert(is_open() == false);
+  assert(is_triggered == false);
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) open");
 
@@ -210,9 +211,12 @@ void ALSA_PCM2_DEVICE::close(void) {
   if (is_triggered == true) stop();
   dl_snd_pcm_close(audio_fd);
   toggle_open_state(false);
+
+  assert(is_triggered == false);
 }
 
 void ALSA_PCM2_DEVICE::prepare(void) {
+  assert(is_triggered == false);
   assert(is_open() == true);
   assert(is_prepared == false);
 
@@ -253,14 +257,15 @@ void ALSA_PCM2_DEVICE::write_samples(void* target_buffer, long int samples) {
     dl_snd_pcm_write(audio_fd, target_buffer, fragment_size);
   }
   else {
-    if (is_triggered == true) stop();
+    bool was_triggered = false;
+    if (is_triggered == true) { stop(); was_triggered = true; }
     close();
     buffersize(samples, samples_per_second());
     open();
     prepare();
     assert(samples * frame_size() == fragment_size);
     dl_snd_pcm_write(audio_fd, target_buffer, fragment_size);
-    start();
+    if (was_triggered == true) start();
   }
 }
 

@@ -31,4 +31,5 @@ QEResources::QEResources(void)
 
 void QEResources::set_defaults(void) {
   if (resource("default-output") == "") resource("default-output","/dev/dsp");
+  if (resource("clipboard-file") == "") resource("clipboard-file","/tmp/ecawave-clipboard.wav");
 }

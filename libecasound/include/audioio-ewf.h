@@ -41,6 +41,7 @@ class EWFFILE : public AUDIO_IO {
  public:
 
   string name(void) const { return("Ecasound wave file"); }
+  virtual bool locked_audio_format(void) const { return(true); }
 
   /**
    * Set start offset for child object

@@ -2,6 +2,31 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-03-18  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* eca-controller-dump.h (various): added, affects ECA_CONTROLLER,
+	ECA_CONTROLLER_OBJECTS and ECA_IAMODE_PARSER
+	
+2000-03-13  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* eca-operator.h (various): added
+		
+2000-03-12  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* dynamic-parameters.h (is_toggle): added
+	* eca-audio-objects.h (audio_object_info): return type changed to void
+	
+2000-03-10  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* eca-object-map.h (various): template parameter is now 
+	the same as DYNAMIC_PARAMETERS<T>::parameter_type
+	* eca-object-map.h (registered_keywords): added
+	
+2000-03-09  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* dynamic-object.h (description): added
+	* audioio.h (locked_audio_format): added
+	
 2000-03-05  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* audioio-types.h (various): major changes in class hiearchy

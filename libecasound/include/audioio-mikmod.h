@@ -3,8 +3,7 @@
 
 #include <string>
 #include "audioio-types.h"
-
-class SAMPLE_BUFFER;
+#include "samplebuffer.h"
 
 /**
  * Interface class for MikMod input. Uses FIFO pipes.

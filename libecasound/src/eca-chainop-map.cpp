@@ -17,41 +17,23 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <vector>
 #include <string>
 
-#include "eca-chainop.h"
 #include "eca-chainop-map.h"
 
 void ECA_CHAIN_OPERATOR_MAP::register_object(const string& id_string,
 					     CHAIN_OPERATOR* object) {
-  object->map_parameters();
-  object_names.push_back(object->name());
-  object_map[id_string] = object;
-  object_prefix_map[object->name()] = id_string;
+  omap.register_object(id_string, object);
 }
 
-const vector<string>& ECA_CHAIN_OPERATOR_MAP::registered_objects(void) const {
-  return(object_names);
+const map<string,string>& ECA_CHAIN_OPERATOR_MAP::registered_objects(void) const {
+  return(omap.registered_objects());
 }
 
 CHAIN_OPERATOR* ECA_CHAIN_OPERATOR_MAP::object(const string& keyword) const {
-  map<string, CHAIN_OPERATOR*>::const_iterator p = object_map.begin();
-  while(p != object_map.end()) {
-    if (p->first == keyword) 
-      return(dynamic_cast<CHAIN_OPERATOR*>(p->second));
-    ++p;
-  }
-  return(0);
+  return(dynamic_cast<CHAIN_OPERATOR*>(omap.object(keyword)));
 }
 
 string ECA_CHAIN_OPERATOR_MAP::object_identifier(const CHAIN_OPERATOR* object) const {
-  assert(object != 0);
-  map<string, string>::const_iterator p = object_prefix_map.begin();
-  while(p != object_prefix_map.end()) {
-    if (p->first == object->name())
-      return(p->second);
-    ++p;
-  }
-  return("");
+  return(object_identifier(object));
 }

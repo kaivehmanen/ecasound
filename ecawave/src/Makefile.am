@@ -18,26 +18,23 @@ ecawave_src_files = 	ecawave.cpp \
 		 	qesession.cpp \
 			qefile.cpp \
 			qeacceptinput.cpp \
-			qefilenameinput.cpp \
-			qeaudioformatinput.cpp \
 			qeopenfiledialog.cpp \
 			qesavefiledialog.cpp \
-			qechainopinput.cpp \
 			qewaveform.cpp \
 			qestatusbar.cpp \
 			qeevent.cpp \
 			qeplayevent.cpp \
 			qesaveevent.cpp \
 			qeprocessevent.cpp \
-			qechainopevent.cpp
+			qechainopevent.cpp \
+			qecutevent.cpp \
+			qecopyevent.cpp \
+			qepasteevent.cpp
 ecawave_src_mocs = 	qesession_moc.cpp \
 			qefile_moc.cpp \
 			qeacceptinput_moc.cpp \
-			qefilenameinput_moc.cpp \
-			qeaudioformatinput_moc.cpp \
 			qeopenfiledialog_moc.cpp \
 			qesavefiledialog_moc.cpp \
-			qechainopinput_moc.cpp \
 			qewaveform_moc.cpp \
 			qestatusbar_moc.cpp \
 			qechainopevent_moc.cpp
@@ -47,25 +44,25 @@ ecawave_include_files = ecawave.h \
 			qesession.h \
 			qefile.h \
 			qeacceptinput.h \
-			qefilenameinput.h \
-			qeaudioformatinput.h \
 			qeopenfiledialog.h \
 			qesavefiledialog.h \
-			qechainopinput.h \
 			qewaveform.h \
 			qestatusbar.h \
 			qeevent.h \
 			qeplayevent.h \
 			qesaveevent.h \
 			qeprocessevent.h \
-			qechainopevent.h
+			qechainopevent.h \
+			qecutevent.h \
+			qecopyevent.h \
+			qepasteevent.h
 
 ecawave_SOURCES = $(ecawave_src_files) $(ecawave_include_files) $(ecawave_src_mocs)
 ecawave_debug_SOURCES = $(ecawave_SOURCES)
 
-ecawave_LDADD = -lecasound -lqtecasound -lqt -lkvutils
+ecawave_LDADD = -lecasound -lqtecasound -L$(qt_libraries) -lqt -lkvutils
 ecawave_LDFLAGS = $(all_libraries)
-ecawave_debug_LDADD = -lecasound_debug -lqtecasound_debug -lqt -lkvutils
+ecawave_debug_LDADD = -lecasound_debug -lqtecasound_debug -L$(qt_libraries) -lqt -lkvutils
 ecawave_debug_LDFLAGS = $(ecawave_LDFLAGS)
 
 # ------
@@ -83,20 +80,11 @@ qefile_moc.cpp: $(srcdir)/qefile.h
 qeacceptinput_moc.cpp: $(srcdir)/qeacceptinput.h
 	$(MOC) -o qeacceptinput_moc.cpp $(srcdir)/qeacceptinput.h
 
-qefilenameinput_moc.cpp: $(srcdir)/qefilenameinput.h
-	$(MOC) -o qefilenameinput_moc.cpp $(srcdir)/qefilenameinput.h
-
-qeaudioformatinput_moc.cpp: $(srcdir)/qeaudioformatinput.h
-	$(MOC) -o qeaudioformatinput_moc.cpp $(srcdir)/qeaudioformatinput.h
-
 qeopenfiledialog_moc.cpp: $(srcdir)/qeopenfiledialog.h
 	$(MOC) -o qeopenfiledialog_moc.cpp $(srcdir)/qeopenfiledialog.h
 
 qesavefiledialog_moc.cpp: $(srcdir)/qesavefiledialog.h
 	$(MOC) -o qesavefiledialog_moc.cpp $(srcdir)/qesavefiledialog.h
-
-qechainopinput_moc.cpp: $(srcdir)/qechainopinput.h
-	$(MOC) -o qechainopinput_moc.cpp $(srcdir)/qechainopinput.h
 
 qechainopevent_moc.cpp: $(srcdir)/qechainopevent.h
 	$(MOC) -o qechainopevent_moc.cpp $(srcdir)/qechainopevent.h

@@ -27,7 +27,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   // -------------------------------------------------------------------
 
   /**
-   * Add a new chainsetup.
+   * Adds a new chainsetup
    *
    * @param name chainsetup name 
    *
@@ -40,7 +40,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void add_chainsetup(const string& name);
 
   /**
-   * Remove chainsetup.
+   * Removes chainsetup
    *
    * @param name chainsetup name 
    *
@@ -54,7 +54,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void remove_chainsetup(void);
 
   /**
-   * Load chainsetup from file 'filename'.
+   * Loads chainsetup from file 'filename'.
    *
    * @param name chainsetup filename 
    *
@@ -77,7 +77,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void save_chainsetup(const string& filename);
 
   /**
-   * Select chainsetup
+   * Selects chainsetup
    *
    * @param name chainsetup name 
    *
@@ -91,7 +91,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void select_chainsetup(const string& name);
 
   /**
-   * Select chainsetup by index (see chainsetup_status())
+   * Selects chainsetup by index (see chainsetup_status())
    *
    * @param name chainsetup name 
    *
@@ -105,7 +105,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void select_chainsetup_by_index(const string& index);
 
   /**
-   * Name of currently active chainsetup.
+   * Name of currently active chainsetup
    */
   string selected_chainsetup(void) const;
 
@@ -119,7 +119,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void edit_chainsetup(void);
 
   /**
-   * Connect selected chainsetup.
+   * Connects selected chainsetup
    *
    * require:
    *  is_selected() == true
@@ -136,7 +136,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   string connected_chainsetup(void) const;
 
   /**
-   * Disconnect activate chainsetup.
+   * Disconnects activate chainsetup
    *
    * require:
    *  is_connected() == true
@@ -147,7 +147,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void disconnect_chainsetup(void);
 
   /**
-   * Get a pointer to selected chainsetup.
+   * Gets a pointer to selected chainsetup
    *
    * require:
    *  is_selected() == true
@@ -155,12 +155,12 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   ECA_CHAINSETUP* get_chainsetup(void) const;
 
   /**
-   * Get a pointer to chainsetup with filename 'filename'.
+   * Gets a pointer to chainsetup with filename 'filename'.
    */
   ECA_CHAINSETUP* get_chainsetup_filename(const string& filename) const;
 
   /** 
-   * Get chainsetup filename (used by save_chainsetup())
+   * Gets chainsetup filename (used by save_chainsetup())
    *
    * require:
    *  is_selected() == true
@@ -168,7 +168,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   const string& chainsetup_filename(void) const;
 
   /**
-   * Set chainsetup filename (used by save_chainsetup())
+   * Sets chainsetup filename (used by save_chainsetup())
    *
    * require:
    *  is_selected() == true && 
@@ -177,7 +177,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void set_chainsetup_filename(const string& name);
 
   /**
-   * Set general chainsetup chainsetup parameter
+   * Sets general chainsetup chainsetup parameter
    *
    * require:
    *  is_selected() == true && 
@@ -186,7 +186,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void set_chainsetup_parameter(const string& name);
 
   /**
-   * Set general chainsetup chainsetup parameter
+   * Sets general chainsetup chainsetup parameter
    *
    * require:
    *  is_selected() == true && 
@@ -195,7 +195,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void set_chainsetup_sample_format(const string& name);
 
   /**
-   * Set processing length in seconds
+   * Sets processing length in seconds
    *
    * require:
    *  is_selected() == true
@@ -204,7 +204,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void set_chainsetup_processing_length_in_seconds(double value);
 
   /**
-   * Set processing length in samples
+   * Sets processing length in samples
    *
    * require:
    *  is_selected() == true
@@ -213,7 +213,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void set_chainsetup_processing_length_in_samples(long int value);
 
   /**
-   * Toggle chainsetup looping
+   * Toggles chainsetup looping
    *
    * require:
    *  is_selected() == true
@@ -225,7 +225,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   // -------------------------------------------------------------------
 
   /**
-   * Add a new chain (selected chainsetup). Added chain is automatically
+   * Adds a new chain (selected chainsetup). Added chain is automatically
    * selected.
    *
    * require:
@@ -238,7 +238,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void add_chain(const string& names);
 
   /**
-   * Add new chains (selected chainsetup).  Added chains are automatically
+   * Adds new chains (selected chainsetup).  Added chains are automatically
    * selected.
    *
    * @param names comma separated list of chain names
@@ -253,7 +253,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void add_chains(const string& names);
 
   /**
-   * Add new chains (selected chainsetup). Added chains are automatically
+   * Adds new chains (selected chainsetup). Added chains are automatically
    * selected.
    *
    * @param namess vector of chain names
@@ -268,7 +268,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void add_chains(const vector<string>& names);
 
   /**
-   * Remove currently selected chain (selected chainsetup)
+   * Removes currently selected chain (selected chainsetup)
    *
    * require:
    *  is_selected() == true
@@ -281,7 +281,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void remove_chains(void);
 
   /**
-   * Select chains (currently selected chainsetup)
+   * Selects chains (currently selected chainsetup)
    *
    * @param chains vector of chain names
    *
@@ -294,7 +294,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void select_chains(const vector<string>& chains);
 
   /**
-   * Deselect chains (currently selected chainsetup)
+   * Deselects chains (currently selected chainsetup)
    *
    * @param chains vector of chain names
    *
@@ -304,7 +304,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void deselect_chains(const vector<string>& chains);
 
   /**
-   * Select all chains (currently selected chainsetup)
+   * Selects all chains (currently selected chainsetup)
    *
    * require:
    *   is_selected() == true
@@ -320,7 +320,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   const vector<string>& selected_chains(void) const;
 
   /**
-   * Clear all selected chains (all chain operators and controllers
+   * Clears all selected chains (all chain operators and controllers
    * are removed)
    *
    * @param name chain name 
@@ -333,7 +333,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void clear_chains(void);
 
   /**
-   * Clear all selected chains (all chain operators and controllers
+   * Clears all selected chains (all chain operators and controllers
    * are removed)
    *
    * @param name chain name 
@@ -346,7 +346,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void rename_chain(const string& name);
 
   /**
-   * Toggle whether chain is muted or not
+   * Toggles whether chain is muted or not
    *
    * require:
    *  is_selected() == true
@@ -355,7 +355,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void toggle_chain_muting(void);
 
   /**
-   * Toggle whether chain operators are enabled or disabled
+   * Toggles whether chain operators are enabled or disabled
    *
    * require:
    *  is_selected() == true && is_connected() == true
@@ -364,7 +364,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void toggle_chain_bypass(void);
 
   /**
-   * Rewind selected chains by 'pos_in_seconds' seconds
+   * Rewinds selected chains by 'pos_in_seconds' seconds
    *
    * require:
    *  is_selected() == true && is_connected() == true
@@ -373,7 +373,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void rewind_chains(double pos_in_seconds);
 
   /**
-   * Forward selected chains by 'pos_in_seconds' seconds
+   * Forwards selected chains by 'pos_in_seconds' seconds
    *
    * require:
    *  is_selected() == true && is_connected() == true
@@ -382,7 +382,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void forward_chains(double pos_in_seconds);
 
   /**
-   * Set position of selected chains to 'pos_in_seconds' seconds
+   * Sets position of selected chains to 'pos_in_seconds' seconds
    *
    * require:
    *  is_selected() == true && is_connected() == true
@@ -395,7 +395,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   // -------------------------------------------------------------------
 
   /** 
-   * Add a new audio input (file, soundcard device, etc). Input 
+   * Adds a new audio input (file, soundcard device, etc). Input 
    * is attached to currently selected chains (if any).
    *
    * require:
@@ -406,7 +406,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void add_audio_input(const string& filename);
 
   /** 
-   * Add a new audio output (file, soundcard device, etc). Output 
+   * Adds a new audio output (file, soundcard device, etc). Output 
    * is attached to currently selected chains (if any).
    *
    * require:
@@ -417,7 +417,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void add_audio_output(const string& filename);
 
   /** 
-   * Add a default output (as defined in ~/.ecasoundrc) and attach
+   * Adds a default output (as defined in ~/.ecasoundrc) and attach
    * it to currently selected chains.
    *
    * require:
@@ -427,7 +427,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void add_default_output(void);
 
   /** 
-   * Get a pointer to the currently selected audio object. 
+   * Gets a pointer to the currently selected audio object. 
    * Returns 0 if no audio object is selected.
    *
    * require:
@@ -436,7 +436,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   AUDIO_IO* get_audio_object(void) const;
 
   /**
-   * Remove selected audio input/output
+   * Removes selected audio input/output
    *
    * require:
    *  is_selected() == true
@@ -449,7 +449,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void remove_audio_object(void);
 
   /**
-   * Attach selected audio object to selected chains
+   * Attaches selected audio object to selected chains
    *
    * require:
    *  is_selected() == true
@@ -460,7 +460,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void attach_audio_object(void);
 
   /**
-   * Rewind selected audio object by 'pos_in_seconds' seconds
+   * Rewinds selected audio object by 'pos_in_seconds' seconds
    *
    * require:
    *  is_selected() == true
@@ -470,7 +470,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void rewind_audio_object(double seconds);
 
   /**
-   * Forward selected audio object by 'pos_in_seconds' seconds
+   * Forwards selected audio object by 'pos_in_seconds' seconds
    *
    * require:
    *  is_selected() == true
@@ -480,7 +480,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void forward_audio_object(double seconds);
 
   /**
-   * Set position of selected audio object
+   * Sets position of selected audio object
    *
    * require:
    *  is_selected() == true
@@ -500,7 +500,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void wave_edit_audio_object(void);
 
   /**
-   * Select an audio object
+   * Selects an audio object
    *
    * require:
    *  is_selected() == true
@@ -508,7 +508,23 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void select_audio_object(const string& name);
 
   /**
-   * Select an audio object by index (see aio_status())
+   * Selects an audio input
+   *
+   * require:
+   *  is_selected() == true
+   */
+  void select_audio_input(const string& name);
+
+  /**
+   * Selects an audio input
+   *
+   * require:
+   *  is_selected() == true
+   */
+  void select_audio_output(const string& name);
+
+  /**
+   * Selects an audio object by index (see aio_status())
    *
    * require:
    *  is_selected() == true
@@ -518,7 +534,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void select_audio_object_by_index(const string& name);
 
   /**
-   * Get audio format of currently selected audio object
+   * Gets audio format of currently selected audio object
    *
    * require:
    *  selected_audio_object_rep != 0
@@ -527,7 +543,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   ECA_AUDIO_FORMAT get_audio_format(void) const;
 
   /**
-   * Set default audio format. This format will be used, when
+   * Sets default audio format. This format will be used, when
    * adding audio inputs and outputs.
    *
    * require:
@@ -536,7 +552,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void set_default_audio_format(const string& sfrm, int channels, long int srate);
 
   /**
-   * Set default audio format. This format will be used, when
+   * Sets default audio format. This format will be used, when
    * adding audio inputs and outputs.
    *
    * require:
@@ -549,7 +565,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   // -------------------------------------------------------------------
 
   /**
-   * Add a new chain operator
+   * Adds a new chain operator
    *
    * require:
    *  is_selected() == true
@@ -559,7 +575,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void add_chain_operator(const string& chainop_params);
 
   /**
-   * Add a new chain operator. Pointer given as argument 
+   * Adds a new chain operator. Pointer given as argument 
    * will remain to be usable, but notice that it is
    * _NOT_ thread-safe to use assigned/registered objects 
    * from client programs. You must be sure that ecasound 
@@ -576,7 +592,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void add_chain_operator(CHAIN_OPERATOR* cotmp);
 
   /** 
-   * Get a const pointer to the Nth chain operator. If chain 
+   * Gets a const pointer to the Nth chain operator. If chain 
    * operator is not valid, 0 is returned.
    *
    * require:
@@ -588,7 +604,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   CHAIN_OPERATOR* get_chain_operator(int chainop_id) const;
 
   /**
-   * Remove Nth chain operator
+   * Removes the Nth chain operator
    *
    * require:
    *  is_selected() == true
@@ -599,7 +615,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
   void remove_chain_operator(int chainop_id);
 
   /**
-   * Set chain operator parameter value
+   * Sets chain operator parameter value
    *
    * require:
    *  is_selected() == true
@@ -612,7 +628,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
 				    CHAIN_OPERATOR::parameter_type value);
 
   /**
-   * Add a new controller
+   * Adds a new controller
    *
    * require:
    *  is_selected() == true

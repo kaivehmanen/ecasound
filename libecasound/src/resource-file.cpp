@@ -91,8 +91,8 @@ string RESOURCE_FILE::resource(const string& tag) const {
       }
     }
 
-    ecadebug->msg(ECA_DEBUG::system_objects, "(resource-file) found key-value pair: " + 
-		  first + "-" + second + ".");
+    //    ecadebug->msg(ECA_DEBUG::system_objects, "(resource-file) found key-value pair: " + 
+    //		  first + "-" + second + ".");
     if (first == tag) return(second);
   }
   return("");

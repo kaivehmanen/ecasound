@@ -6,8 +6,7 @@
 #include "eca-audio-position.h"
 #include "eca-audio-time.h"
 #include "dynamic-object.h"
-
-class SAMPLE_BUFFER;
+#include "samplebuffer.h"
 
 /**
  * Virtual base for all audio I/O classes (files, audio devices,
@@ -128,7 +127,6 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   // ===================================================================
   // Parameter handling
 
-  virtual string name(void) const = 0;
   virtual string parameter_names(void) const { return("label"); }
 
   virtual void set_parameter(int param, string value);
@@ -146,6 +144,11 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * Returns info about supported I/O modes (bitwise-OR)
    */
   virtual int supported_io_modes(void) const { return(io_read | io_readwrite | io_write); }
+
+  /**
+   * Whether audio format is locked
+   */
+  virtual bool locked_audio_format(void) const { return(false); }
 
   /**
    * Returns info about the current I/O mode.

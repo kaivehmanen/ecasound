@@ -15,12 +15,6 @@
 
 #include "samplebuffer.h"
 
-#ifdef ALSALIB_050
-void loopback_callback_data(void *private_data, char *buffer, size_t count);
-void loopback_callback_position_change(void *private_data, unsigned int pos);
-void loopback_callback_format_change(void *private_data, snd_pcm_format_t *format);
-#endif
-
 /**
  * Class for handling ALSA loopback-devices (Advanced Linux Sound Architecture).
  * @author Kai Vehmanen
@@ -29,7 +23,7 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
 
   snd_pcm_loopback_t *audio_fd;
 
-  int card_number, device_number;
+  int card_number, device_number, subdevice_number;
   bool pb_mode;
   long int bytes_read;
 
@@ -39,7 +33,12 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
 
   string name(void) const { return("ALSA PCM-loopback device"); }
   int supported_io_modes(void) const { return(io_read); }
+
+#ifdef ALSALIB_050
+  string parameter_names(void) const { return("label,card,device,subdevice"); }
+#else
   string parameter_names(void) const { return("label,card,device"); }
+#endif
 
   void open(void) throw(ECA_ERROR*);
   void close(void);

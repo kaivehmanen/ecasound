@@ -23,6 +23,9 @@ enum EP_STATUS { ep_status_running,
 
 #include "eca-chainsetup.h"
 
+/**
+ * Ecasound runtime setup and parameters.
+ */
 class ECA_SESSION {
 
   friend class ECA_CONTROLLER_BASE;
