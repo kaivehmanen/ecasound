@@ -342,7 +342,7 @@ MP3FILE::~MP3FILE(void)
 void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 { 
   if (io_mode() == io_read) {
-    /* decoder supports: fixed channel cound and sample format, 
+    /* decoder supports: fixed channel count and sample format, 
                          sample rate set by parsing mp3 header */
     get_mp3_params(label());
   }

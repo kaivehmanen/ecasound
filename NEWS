@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 090704) **
+** Ecasound - User-visible changes (NEWS)       (last edited: 14704) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -18,6 +18,8 @@ xx082004 (v2.3.4)  -** stable release **-
 	- note: verified to compile ok on MacOS X 10.3.2 [smbolton]
 	- added: basic FLAC input/output support using flac utils;
 		 new flac specific options to ecasoundrc
+	- added: basic AAC/M4A/MP4 input/output support faac/faad
+		 utils; new options to ecasoundrc
 	- changed: set srate for mp3 input based on mp3 header
 	- fixed: multitrack offset was calculated incorrectly for
 		 ALSA devices which limit buffer period count to 2

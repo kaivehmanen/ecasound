@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "09\&.07\&.2004" "" "Multimedia software" 
+.TH "ecasound" "1" "14\&.07\&.2004" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -213,11 +213,12 @@ SGI audiofile library: AIFF (\&.aiff, \&.aifc, \&.aif) and Sun/NeXT audio
 files (\&.au, \&.snd)\&. MikMod is also supported (\&.xm, \&.mod, \&.s3m, 
 \&.it, etc)\&. MIDI files (\&.mid) are supported using Timidity++\&. Similarly
 Ogg Vorbis (\&.ogg) can be read and written if ogg123 and vorbize tools
-are installed\&. Reading and writing FLAC is supported using the flac 
-command-line tool\&. Supported realtime devices are OSS audio devices 
-(/dev/dsp*), ALSA audio and loopback devices\&. If no inputs are 
-specified, the first non-option (doesn\'t start with \'-\') command 
-line argument is considered to be an input\&.
+are installed, FLAC files (\&.flac) with flac command-line tools, 
+and AAC files (\&.aac/\&.m4a/\&.mp4) with faad2/faac tools\&. Supported realtime 
+devices are OSS audio devices (/dev/dsp*), ALSA audio and loopback 
+devices and JACK audio subsystem\&. If no inputs are specified, the first 
+non-option (doesn\'t start with \'-\') command line argument is considered 
+to be an input\&.
 .IP 
 .IP "-o[:]output-file-or-device" 
 Works in the same way as the -i option\&. If no outputs are specified,

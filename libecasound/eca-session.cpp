@@ -43,6 +43,7 @@
 #include "audioio-timidity.h"
 #include "audioio-ogg.h"
 #include "audioio-flac.h"
+#include "audioio-aac.h"
 
 #include "osc-gen-file.h"
 
@@ -132,6 +133,8 @@ void ECA_SESSION::set_defaults(void)
   OGG_VORBIS_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-ogg-output"));
   FLAC_FORKED_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-flac-input"));
   FLAC_FORKED_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-flac-output"));
+  AAC_FORKED_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-aac-input"));
+  AAC_FORKED_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-aac-output"));
 }
 
 

@@ -1,5 +1,5 @@
-#ifndef INCLUDED_AUDIOIO_FLAC_H
-#define INCLUDED_AUDIOIO_FLAC_H
+#ifndef INCLUDED_AUDIOIO_AAC_H
+#define INCLUDED_AUDIOIO_AAC_H
 
 #include <string>
 #include <cstdio>
@@ -7,11 +7,11 @@
 #include "audioio-forked-stream.h"
 
 /**
- * Interface to FLAC decoders and encoders using UNIX pipe i/o.
+ * Interface to FAAC/FAAD encoder and decoder using UNIX pipe i/o.
  *
  * @author Kai Vehmanen
  */
-class FLAC_FORKED_INTERFACE : public AUDIO_IO_BUFFERED,
+class AAC_FORKED_INTERFACE : public AUDIO_IO_BUFFERED,
 			      protected AUDIO_IO_FORKED_STREAM {
 
  private:
@@ -26,14 +26,14 @@ class FLAC_FORKED_INTERFACE : public AUDIO_IO_BUFFERED,
 
  public:
 
-  FLAC_FORKED_INTERFACE (const std::string& name = "");
-  virtual ~FLAC_FORKED_INTERFACE(void);
+  AAC_FORKED_INTERFACE (const std::string& name = "");
+  virtual ~AAC_FORKED_INTERFACE(void);
     
-  virtual FLAC_FORKED_INTERFACE* clone(void) const { return new FLAC_FORKED_INTERFACE(*this); }
-  virtual FLAC_FORKED_INTERFACE* new_expr(void) const { return new FLAC_FORKED_INTERFACE(*this); }
+  virtual AAC_FORKED_INTERFACE* clone(void) const { return new AAC_FORKED_INTERFACE(*this); }
+  virtual AAC_FORKED_INTERFACE* new_expr(void) const { return new AAC_FORKED_INTERFACE(*this); }
 
-  virtual std::string name(void) const { return("FLAC stream"); }
-  virtual std::string description(void) const { return("Interface to FLAC decoders and encoders using UNIX pipe i/o."); }
+  virtual std::string name(void) const { return("AAC stream"); }
+  virtual std::string description(void) const { return("Interface to FAAC/FAAD encoder and decoder using UNIX pipe i/o."); }
   virtual std::string parameter_names(void) const { return("label"); }
   virtual bool locked_audio_format(void) const { return(true); }
 

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>09.07.2004</h2>
+<h2>14.07.2004</h2>
 
 
     
@@ -169,6 +169,21 @@
         format parameters, %I with either 'signed' or 'unsigned', and
 	%E with either 'little' or 'big'. Defaults to 
 	<em>flac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -</em>.
+<p><p></p><dt><strong>ext-cmd-aac-input</strong><dd>
+	Command for starting AAC input. Ecasound expects that signed,
+	16bit, stereo, big-endian audio samplesare written to standard 
+	output. It should be noted that	Ecasound is not able to query 
+	the input sample rate, so this needs to be set manually by the user. 
+	Before execution, %f is replaced with path to the input AAC
+	file. Note! FAAC must be compiled with MP4 support. Defaults to 
+	<em>faad -w -b 1 -f 2 -d %f</em>.
+<p><p></p><dt><strong>ext-cmd-aac-output</strong><dd>
+	Command for starting AAC output. Ecasound will write big-endian
+	audio samples to standard output. All other audio parameters are
+	configurable. Before execution, %f is replaced with path to
+	the output AAC file, %c, %b and %s with matching audio format 
+	parameters. Note! FAAC must be compiled with MP4 support. Defaults to 
+	<em>faac -P -o %f -R %s -B %b -C %c -</em>.
 <p></dl>
 <p><h2>SEE ALSO</h2>
     

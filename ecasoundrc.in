@@ -22,3 +22,5 @@ ext-cmd-mikmod = mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f
 ext-cmd-timidity = timidity -Or1S -id -s %s -o - %f
 ext-cmd-flac-input = flac -d -c %f
 ext-cmd-flac-output = flac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -
+ext-cmd-aac-input = faad -w -b 1 -f 2 -d %f
+ext-cmd-aac-output = faac -P -o %f -R %s -B %b -C %c -

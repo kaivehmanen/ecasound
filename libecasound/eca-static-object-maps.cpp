@@ -71,6 +71,7 @@
 #include "audioio-mikmod.h"
 #include "audioio-timidity.h"
 #include "audioio-flac.h"
+#include "audioio-aac.h"
 #include "audioio-raw.h"
 #include "audioio-null.h"
 #include "audioio-rtnull.h"
@@ -208,8 +209,13 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
   AUDIO_IO* timidity = new TIMIDITY_INTERFACE();
   objmap->register_object("mid", "(mid$)|(midi$)", timidity);
 
-  AUDIO_IO* flac = new FLAC_FORKED_INTERFACE();
-  objmap->register_object("flac", "flac$", flac);
+  AUDIO_IO* forkedflac = new FLAC_FORKED_INTERFACE();
+  objmap->register_object("flac", "flac$", forkedflac);
+
+  AUDIO_IO* forkedaac = new AAC_FORKED_INTERFACE();
+  objmap->register_object("aac", "aac$", forkedaac);
+  objmap->register_object("mp4", "mp4$", forkedaac);
+  objmap->register_object("m4a", "m4a$", forkedaac);
 
 #ifdef ECA_ENABLE_AUDIOIO_PLUGINS
   eca_import_internal_audioio_plugin(objmap, "libaudioio_af.so");
