@@ -21,7 +21,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>12122000</h2>
+<h2>04062001</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -271,6 +271,9 @@ it to application's own buffers.
 <em>eci_last_string_list_count()</em> returns the number of strings
 available, and <em>eci_last_string_list_item(int n)</em> returns a 
 pointer (const char*) to the string at index <em>n</em>.
+<p><em>Note!</em> As of ecasound 2.0.1, the C ECI implementation also 
+	  provides reentrant access to the ECI API. These
+	  alternative routines are marked with '_r' postfix.
 <p><a name="l21"></a>
 <strong>3.3.2: Usage</strong><p>
 <p><ol>

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 040601) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 050601) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -15,9 +15,9 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 -----------------------------------------------------------------------
 
-Last officially released version is -*> v2.0.0 *-
+Last officially released version is -*> v2.0.1 *-
 
-??062001 (v2.0.1)
+05062001 (v2.0.1)
 	- added: ecasoundrc - default-to-internal-buffering; select
 		 the default between -z:intbuf and -z:nointbuf
 	- added: alternative C ECI implementation providing reentrant
