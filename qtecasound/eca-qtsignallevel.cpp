@@ -26,7 +26,7 @@
 
 #include <kvutils.h>
 
-#include "samplebuffer.h"
+#include "samplebuffer_functions.h"
 #include "eca-chain.h"
 
 #include "eca-qtlevelmeter.h"
@@ -80,8 +80,8 @@ void QESignalLevel::update(int p) {
   //  levelmeters[p]->set_value(temp);
   //  levelmeters[p + 1]->set_value(temp);
 
-  levelmeters[p]->set_value((*inputs)[p].average_RMS_volume(SAMPLE_SPECS::ch_left,64));
-  levelmeters[p+1]->set_value((*inputs)[p].average_RMS_volume(SAMPLE_SPECS::ch_right,64));
+  levelmeters[p]->set_value(SAMPLE_BUFFER_FUNCTIONS::RMS_volume((*inputs)[p], SAMPLE_SPECS::ch_left, 64));
+  levelmeters[p+1]->set_value(SAMPLE_BUFFER_FUNCTIONS::RMS_volume((*inputs)[p], SAMPLE_SPECS::ch_right, 64));
 }
 
 void QESignalLevel::mute(void) {

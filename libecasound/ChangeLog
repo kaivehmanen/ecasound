@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-03-22  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* samplebuffer_functions.h: added
+	* samplebuffer.h: removed all non-template code
+	
 2000-03-22  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* eca-chainsetup.h (combine_options): moved to libkvutils
@@ -9,10 +14,10 @@
 2000-03-20  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* eca-static-object-maps.h (eca_ladspa_plugin_map): added
-	* audiofx_ladspa.h (various): added
+	* audiofx_ladspa.h: added
 	* eca-chainsetup.h (create_ladspa_plugin): added
-	* ladspa.h (various): added
-	* eca-ladspa-plugin-map.h (various): added
+	* ladspa.h: added
+	* eca-ladspa-plugin-map.h: added
 	
 2000-03-18  Kai Vehmanen <kaiv@wakkanet.fi>	
 

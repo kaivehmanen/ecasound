@@ -27,12 +27,10 @@
 #include "eca-debug.h"
 
 CONTROLLER_SOURCE::parameter_type MIDI_CONTROLLER::value(void) {
-  pthread_mutex_lock(&midi_in_lock);
   if (midi_in_queue.update_controller_value(controller,channel)) {
     value_rep = midi_in_queue.last_controller_value();
     value_rep /= 127.0;
   }
-  pthread_mutex_unlock(&midi_in_lock);
   return(value_rep);
 }
 
@@ -72,8 +70,3 @@ CONTROLLER_SOURCE::parameter_type MIDI_CONTROLLER::get_parameter(int param) cons
   }
   return(0.0);
 }
-
-
-
-
-

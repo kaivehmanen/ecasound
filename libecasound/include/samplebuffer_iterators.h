@@ -11,8 +11,8 @@ class SAMPLE_ITERATOR {
  private:
 
   SAMPLE_BUFFER* target;
-  vector<SAMPLE_SPECS::sample_type>::size_type index;     // index of the current sample
-  int channel_index;                        // index of current channel
+  SAMPLE_BUFFER::buf_size_t index;     // index of the current sample
+  SAMPLE_BUFFER::channel_size_t channel_index;  // index of current channel
 
  public:
 
@@ -53,8 +53,8 @@ class SAMPLE_ITERATOR_CHANNEL {
  private:
 
   SAMPLE_BUFFER* target;
-  vector<SAMPLE_SPECS::sample_type>::size_type index;     // index of the current sample
-  int channel_index;                        // index of current channel
+  SAMPLE_BUFFER::buf_size_t index;     // index of the current sample
+  SAMPLE_BUFFER::channel_size_t channel_index;  // index of current channel
 
  public:
 
@@ -95,8 +95,8 @@ class SAMPLE_ITERATOR_CHANNELS {
  private:
 
   SAMPLE_BUFFER* target;
-  vector<SAMPLE_SPECS::sample_type>::size_type index;     // index of the current sample
-  int channel_index;                        // index of current channel
+  SAMPLE_BUFFER::buf_size_t index;     // index of the current sample
+  SAMPLE_BUFFER::channel_size_t channel_index;  // index of current channel
 
  public:
 
@@ -139,7 +139,7 @@ class SAMPLE_ITERATOR_INTERLEAVED {
  private:
 
   SAMPLE_BUFFER* target;
-  vector<SAMPLE_SPECS::sample_type>::size_type index;     // index of the current sample
+  SAMPLE_BUFFER::buf_size_t  index;     // index of the current sample
 
  public:
 

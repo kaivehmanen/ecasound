@@ -22,6 +22,7 @@ Last officially released version is -*> v1.6.12r10 <*-
 	- fixed: thread scheduling problems with '-r'
 	- fixed: compile problems under Solaris
 	- fixed: many .ewf bugs
+	- fixed: compile problems with ALSA 0.4.x
 21032000 (v1.7.3d11)
 	- added: initial LADSPA support (-el), see ecasound(1) man page
 	- added: 'ladspa-plugin-directory' entry to ~/.ecasoundrc

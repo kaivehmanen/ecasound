@@ -34,6 +34,7 @@ class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
   long underruns, overruns;
 
   bool is_triggered;
+  bool is_prepared;
   
  public:
 

@@ -1,0 +1,11 @@
+-----------------------------------------------------------------------
+*** libkvutils - changes and additions to the public interfaces     ***
+-----------------------------------------------------------------------
+
+2000-03-21  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* object_queue.h: added
+	* changes in all interfaces
+	* library version set to 0:0:0 (current:revision:age)
+	
+-----------------------------------------------------------------------

@@ -19,7 +19,7 @@
 
 #include <kvutils/kvu_numtostr.h>
 
-#include "samplebuffer_iterators.h"
+#include "samplebuffer_functions.h"
 #include "audiogate.h"
 #include "eca-debug.h"
 
@@ -100,9 +100,9 @@ THRESHOLD_GATE::THRESHOLD_GATE (CHAIN_OPERATOR::parameter_type threshold_openlev
 }
 
 void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf) {
-  if (rms == true) avolume = sbuf->average_RMS_volume() /
+  if (rms == true) avolume = SAMPLE_BUFFER_FUNCTIONS::RMS_volume(*sbuf) /
 		     SAMPLE_SPECS::max_amplitude;
-  else avolume = sbuf->average_volume() / SAMPLE_SPECS::max_amplitude;
+  else avolume = SAMPLE_BUFFER_FUNCTIONS::average_amplitude(*sbuf) / SAMPLE_SPECS::max_amplitude;
 
   if (is_opened == false) {
     if (avolume > openlevel) { 

@@ -84,7 +84,6 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-debug.cpp \
 			layer.cpp \
 			samplebuffer_iterators.cpp \
-			samplebuffer.cpp \
 			eca-version.cpp  \
 			eca-chainsetup.cpp \
 			eca-controller.cpp \

@@ -108,7 +108,7 @@ ecasound_audioio_src = audioio-cdr.cpp 			audioio-ewf.cpp 			audioio-mp3.cpp 			
 ecasound_controller_src =  	generic-controller.cpp 	midi-cc.cpp 	osc-gen.cpp 	osc-sine.cpp 	linear-envelope.cpp 	two-stage-linear-envelope.cpp
 
 
-ecasound_general_src = eca-chain.cpp 			eca-main.cpp 			eca-midi.cpp 			eca-session.cpp 			eca-resources.cpp 			resource-file.cpp 			eca-comhelp.cpp 			eca-debug.cpp 			layer.cpp 			samplebuffer_iterators.cpp 			samplebuffer.cpp 			eca-version.cpp  			eca-chainsetup.cpp 			eca-controller.cpp 			eca-controller-base.cpp 			eca-controller-objects.cpp 			eca-controller-dump.cpp 			eca-iamode-parser.cpp 			eca-control-position.cpp 			eca-audio-position.cpp 			eca-audio-objects.cpp 			eca-audio-format.cpp 			eca-audio-time.cpp 			eca-fileio-stream.cpp 			eca-fileio-mmap.cpp 			eca-fileio-mmap-fthread.cpp 			eca-alsa-dyn.cpp eca-mthreaded-processor.cpp 			eca-static-object-maps.cpp 			preset.cpp 			file-preset.cpp 			eca-object-map.cpp 			eca-audio-object-map.cpp 			eca-chainop-map.cpp 			eca-controller-map.cpp 			eca-preset-map.cpp 			global-preset.cpp
+ecasound_general_src = eca-chain.cpp 			eca-main.cpp 			eca-midi.cpp 			eca-session.cpp 			eca-resources.cpp 			resource-file.cpp 			eca-comhelp.cpp 			eca-debug.cpp 			layer.cpp 			samplebuffer_iterators.cpp 			eca-version.cpp  			eca-chainsetup.cpp 			eca-controller.cpp 			eca-controller-base.cpp 			eca-controller-objects.cpp 			eca-controller-dump.cpp 			eca-iamode-parser.cpp 			eca-control-position.cpp 			eca-audio-position.cpp 			eca-audio-objects.cpp 			eca-audio-format.cpp 			eca-audio-time.cpp 			eca-fileio-stream.cpp 			eca-fileio-mmap.cpp 			eca-fileio-mmap-fthread.cpp 			eca-alsa-dyn.cpp eca-mthreaded-processor.cpp 			eca-static-object-maps.cpp 			preset.cpp 			file-preset.cpp 			eca-object-map.cpp 			eca-audio-object-map.cpp 			eca-chainop-map.cpp 			eca-controller-map.cpp 			eca-preset-map.cpp 			global-preset.cpp
 
 
 #			eca-audio-object-map.cpp \
@@ -153,16 +153,15 @@ generic-controller.lo midi-cc.lo osc-gen.lo osc-sine.lo \
 linear-envelope.lo two-stage-linear-envelope.lo eca-chain.lo \
 eca-main.lo eca-midi.lo eca-session.lo eca-resources.lo \
 resource-file.lo eca-comhelp.lo eca-debug.lo layer.lo \
-samplebuffer_iterators.lo samplebuffer.lo eca-version.lo \
-eca-chainsetup.lo eca-controller.lo eca-controller-base.lo \
-eca-controller-objects.lo eca-controller-dump.lo eca-iamode-parser.lo \
-eca-control-position.lo eca-audio-position.lo eca-audio-objects.lo \
-eca-audio-format.lo eca-audio-time.lo eca-fileio-stream.lo \
-eca-fileio-mmap.lo eca-fileio-mmap-fthread.lo eca-alsa-dyn.lo \
-eca-mthreaded-processor.lo eca-static-object-maps.lo preset.lo \
-file-preset.lo eca-object-map.lo eca-audio-object-map.lo \
-eca-chainop-map.lo eca-controller-map.lo eca-preset-map.lo \
-global-preset.lo
+samplebuffer_iterators.lo eca-version.lo eca-chainsetup.lo \
+eca-controller.lo eca-controller-base.lo eca-controller-objects.lo \
+eca-controller-dump.lo eca-iamode-parser.lo eca-control-position.lo \
+eca-audio-position.lo eca-audio-objects.lo eca-audio-format.lo \
+eca-audio-time.lo eca-fileio-stream.lo eca-fileio-mmap.lo \
+eca-fileio-mmap-fthread.lo eca-alsa-dyn.lo eca-mthreaded-processor.lo \
+eca-static-object-maps.lo preset.lo file-preset.lo eca-object-map.lo \
+eca-audio-object-map.lo eca-chainop-map.lo eca-controller-map.lo \
+eca-preset-map.lo global-preset.lo
 @COMPILE_AF_FALSE@libecasound_la_DEPENDENCIES = 
 @COMPILE_AF_TRUE@libecasound_la_DEPENDENCIES = 
 libecasound_la_OBJECTS =  audiofx.lo audiofx_amplitude.lo \
@@ -176,16 +175,15 @@ generic-controller.lo midi-cc.lo osc-gen.lo osc-sine.lo \
 linear-envelope.lo two-stage-linear-envelope.lo eca-chain.lo \
 eca-main.lo eca-midi.lo eca-session.lo eca-resources.lo \
 resource-file.lo eca-comhelp.lo eca-debug.lo layer.lo \
-samplebuffer_iterators.lo samplebuffer.lo eca-version.lo \
-eca-chainsetup.lo eca-controller.lo eca-controller-base.lo \
-eca-controller-objects.lo eca-controller-dump.lo eca-iamode-parser.lo \
-eca-control-position.lo eca-audio-position.lo eca-audio-objects.lo \
-eca-audio-format.lo eca-audio-time.lo eca-fileio-stream.lo \
-eca-fileio-mmap.lo eca-fileio-mmap-fthread.lo eca-alsa-dyn.lo \
-eca-mthreaded-processor.lo eca-static-object-maps.lo preset.lo \
-file-preset.lo eca-object-map.lo eca-audio-object-map.lo \
-eca-chainop-map.lo eca-controller-map.lo eca-preset-map.lo \
-global-preset.lo
+samplebuffer_iterators.lo eca-version.lo eca-chainsetup.lo \
+eca-controller.lo eca-controller-base.lo eca-controller-objects.lo \
+eca-controller-dump.lo eca-iamode-parser.lo eca-control-position.lo \
+eca-audio-position.lo eca-audio-objects.lo eca-audio-format.lo \
+eca-audio-time.lo eca-fileio-stream.lo eca-fileio-mmap.lo \
+eca-fileio-mmap-fthread.lo eca-alsa-dyn.lo eca-mthreaded-processor.lo \
+eca-static-object-maps.lo preset.lo file-preset.lo eca-object-map.lo \
+eca-audio-object-map.lo eca-chainop-map.lo eca-controller-map.lo \
+eca-preset-map.lo global-preset.lo
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -222,8 +220,7 @@ DEP_FILES =  .deps/audiofx.P .deps/audiofx_amplitude.P \
 .deps/generic-controller.P .deps/global-preset.P .deps/layer.P \
 .deps/linear-envelope.P .deps/midi-cc.P .deps/osc-gen.P \
 .deps/osc-sine.P .deps/preset.P .deps/resource-file.P \
-.deps/samplebuffer.P .deps/samplebuffer_iterators.P \
-.deps/two-stage-linear-envelope.P
+.deps/samplebuffer_iterators.P .deps/two-stage-linear-envelope.P
 SOURCES = $(libecasound_debug_la_SOURCES) $(libecasound_la_SOURCES)
 OBJECTS = $(libecasound_debug_la_OBJECTS) $(libecasound_la_OBJECTS)
 

@@ -62,6 +62,8 @@ ecasound_general_src = 	eca-chain.h \
 			eca-controller-map.h \
 			eca-audio-object-map.h \
 			samplebuffer.h \
+			samplebuffer_functions.h \
+			samplebuffer_iterators.h \
 			sample-specs.h \
 			eca-version.h \
 			eca-chainsetup.h \
@@ -84,7 +86,6 @@ ecasound_general_src = 	eca-chain.h \
 			dynamic-object.h \
 			eca-object.h \
 			eca-operator.h \
-			samplebuffer_iterators.h \
 			eca-audio-objects.h \
 			eca-audio-format.h \
 			eca-audio-time.h \

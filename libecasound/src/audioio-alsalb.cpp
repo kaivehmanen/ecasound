@@ -57,6 +57,7 @@ size_t loopback_buffer_size, callback_buffer_size;
 bool loopback_format_change = false;
 pthread_cond_t loopback_cond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t loopback_mutex = PTHREAD_MUTEX_INITIALIZER;
+bool loopback_locked = false;
 #endif
 
 ALSA_LOOPBACK_DEVICE::ALSA_LOOPBACK_DEVICE (int card, 
@@ -180,10 +181,11 @@ long int ALSA_LOOPBACK_DEVICE::read_samples(void* target_buffer,
   first_time = false;
 
   pthread_mutex_lock(&loopback_mutex);
-  while(loopback_count == callback_count) {
+  while(loopback_locked == true || loopback_count == callback_count) {
     pthread_cond_signal(&loopback_cond);
     pthread_cond_wait(&loopback_cond, &loopback_mutex);
   }
+  loopback_locked = true;
 
   if (loopback_format_change == true) {
     ecadebug->msg("Warning! Loopback audio format has changed!");
@@ -209,6 +211,8 @@ long int ALSA_LOOPBACK_DEVICE::read_samples(void* target_buffer,
   loopback_count += samples * frame_size();
   if (loopback_count > loopback_buffer_size) loopback_count -= loopback_buffer_size;
 
+  loopback_locked = false;
+  pthread_cond_signal(&loopback_cond);
   pthread_mutex_unlock(&loopback_mutex);
   return(samples);
 #endif
@@ -245,6 +249,10 @@ void loopback_callback_data(void *private_data,
   //  cerr << "count " << count << ".\n";
 
   pthread_mutex_lock(&loopback_mutex);
+  while(loopback_locked == true) {
+    pthread_cond_wait(&loopback_cond, &loopback_mutex);
+  }
+  loopback_locked = true;
 
   if (callback_count + count > loopback_buffer_size) {
     //    cerr << "C2-1: "<< callback_count << " - " << loopback_buffer_size - callback_count << ".\n";
@@ -264,6 +272,7 @@ void loopback_callback_data(void *private_data,
   callback_count += count;
   if (callback_count > loopback_buffer_size) callback_count -= loopback_buffer_size;
 
+  loopback_locked = false;
   pthread_cond_signal(&loopback_cond);
   pthread_mutex_unlock(&loopback_mutex);
 }
@@ -286,6 +295,10 @@ void loopback_callback_silence(void *private_data,
 			       size_t count) {
   //  cerr << "(audioio-alsalb) loopback_callback_silence - count " << count << ".\n";
   pthread_mutex_lock(&loopback_mutex);
+  while(loopback_locked == true || loopback_count == callback_count) {
+    pthread_cond_wait(&loopback_cond, &loopback_mutex);
+  }
+  loopback_locked = true;
 
   if (callback_count + count > loopback_buffer_size) {
     memset(loopback_buffer + callback_count, 
@@ -302,6 +315,7 @@ void loopback_callback_silence(void *private_data,
   callback_count += count;
   if (callback_count > loopback_buffer_size) callback_count -= loopback_buffer_size;
 
+  loopback_locked = false;
   pthread_cond_signal(&loopback_cond);
   pthread_mutex_unlock(&loopback_mutex);
 }

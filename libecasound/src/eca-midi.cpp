@@ -37,8 +37,9 @@
 #include "eca-error.h"
 
 MIDI_IN_QUEUE midi_in_queue;
-// MIDI_OUT_QUEUE midi_out_queue;
 pthread_mutex_t midi_in_lock;     // mutex ensuring exclusive access to MIDI-buffer
+pthread_cond_t midi_in_cond;
+bool midi_in_locked;
 
 MIDI_IN_QUEUE::MIDI_IN_QUEUE(void) {
   right = false;
@@ -53,7 +54,7 @@ MIDI_IN_QUEUE::MIDI_IN_QUEUE(void) {
   buffer = vector<char> (bufsize, char(0));
 }
 
-bool MIDI_IN_QUEUE::is_status_byte(char byte) {
+bool MIDI_IN_QUEUE::is_status_byte(char byte) const {
   if ((byte & 128) == 128) return(true);
   else return(false);
 }
@@ -65,11 +66,16 @@ void MIDI_IN_QUEUE::put(char byte) {
   if (current_put == bufsize) current_put = 0;
 }
 
-double MIDI_IN_QUEUE::last_controller_value(void) { 
+double MIDI_IN_QUEUE::last_controller_value(void) const { 
  return(controller_value); 
 }
 
 bool MIDI_IN_QUEUE::update_controller_value(double controller, double channel) {
+  pthread_mutex_lock(&midi_in_lock);
+  while (midi_in_locked == true) pthread_cond_wait(&midi_in_cond,
+						   &midi_in_lock);
+  midi_in_locked = true;
+
   bool value_found = false;
   int value_used = 0;
   //  cerr << "ucv:" << current_put << "->";
@@ -116,6 +122,11 @@ bool MIDI_IN_QUEUE::update_controller_value(double controller, double channel) {
   }
   //  cerr << current_get << ".\n";
   //  if (value_found) cerr << "vu:" << value_used << "\n";
+
+  midi_in_locked = false;
+  pthread_cond_signal(&midi_in_cond);
+  pthread_mutex_unlock(&midi_in_lock);
+  
   return(value_found);
 }
 
@@ -135,6 +146,8 @@ void init_midi_queues(void) throw(ECA_ERROR*) {
   else ready = true;
 
   pthread_mutex_init(&midi_in_lock, NULL);
+  pthread_cond_init(&midi_in_cond, NULL);
+  midi_in_locked = false;
   pthread_t th_midi;
   int retcode = pthread_create(&th_midi, NULL, update_midi_queues, NULL);
   if (retcode != 0)
@@ -219,6 +232,9 @@ void *update_midi_queues(void *) {
       temp = read(fd, buf, 1);
     }
     pthread_mutex_lock(&midi_in_lock);
+    while (midi_in_locked == true) pthread_cond_wait(&midi_in_cond,
+						     &midi_in_lock);
+    midi_in_locked = true;
     if (temp < 0) {
       cerr << "ERROR: Can't read from MIDI-device: " << midi_dev << ".\n";
       break;
@@ -226,6 +242,8 @@ void *update_midi_queues(void *) {
     for(int n = 0; n < temp; n++) {
       midi_in_queue.put(buf[n]);
     }
+    midi_in_locked = false;
+    pthread_cond_signal(&midi_in_cond);
     pthread_mutex_unlock(&midi_in_lock);
   }
 

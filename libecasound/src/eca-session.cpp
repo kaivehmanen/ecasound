@@ -46,7 +46,6 @@
 #include "eca-chainsetup.h"
 
 ECA_SESSION::ECA_SESSION(void) {
-  //  pthread_mutex_init(&status_lock, NULL);
   set_defaults();
   set_scheduling();
 }
@@ -64,7 +63,6 @@ ECA_SESSION::~ECA_SESSION(void) {
 }
 
 ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*) {
-  //  pthread_mutex_init(&status_lock, NULL);
   set_defaults();
 
   cline.combine();

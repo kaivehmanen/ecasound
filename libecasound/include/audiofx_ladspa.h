@@ -16,8 +16,8 @@ class EFFECT_LADSPA : public EFFECT_BASE {
 private:
 
   SAMPLE_BUFFER* buffer;
-
-  struct LADSPA_Descriptor *plugin_desc;
+  
+  const struct LADSPA_Descriptor *plugin_desc;
   vector<LADSPA_Handle> plugins;
 
   unsigned long port_count_rep;
@@ -38,7 +38,7 @@ public:
 
   EFFECT_LADSPA* clone(void)  { return new EFFECT_LADSPA(plugin_desc); }
   EFFECT_LADSPA* new_expr(void)  { return new EFFECT_LADSPA(plugin_desc); }
-  EFFECT_LADSPA (struct LADSPA_Descriptor *plugin_desc = 0) throw(ECA_ERROR*);
+  EFFECT_LADSPA (const struct LADSPA_Descriptor *plugin_desc = 0) throw(ECA_ERROR*);
   ~EFFECT_LADSPA (void);
 
  private:
