@@ -77,6 +77,22 @@
 #include "audioio-resample.h"
 #include "audioio-reverse.h"
 
+#ifndef ECA_ENABLE_AUDIOIO_PLUGINS
+#ifdef ECA_COMPILE_AUDIOFILE
+#include "plugins/audioio_af.h"
+#endif
+#ifdef ECA_COMPILE_ALSA
+#include "plugins/audioio_alsa.h"
+#include "plugins/audioio_alsa_named.h"
+#endif
+#ifdef ECA_COMPILE_ARTS
+#include "plugins/audioio_arts.h"
+#endif
+#ifdef ECA_COMPILE_JACK
+#include "plugins/audioio_jack.h"
+#endif
+#endif /* ECA_ENABLE_AUDIOIO_PLUGINS */
+
 #include "midiio-raw.h"
 
 #include "eca-object-map.h"
@@ -99,7 +115,10 @@ using std::vector;
 
 static vector<EFFECT_LADSPA*> eca_create_ladspa_plugins(const string& fname);
 static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id);
+
+#ifdef ECA_ENABLE_AUDIOIO_PLUGINS
 static void eca_import_internal_audioio_plugin(ECA_OBJECT_MAP* objmap, const string& filename);
+#endif
 
 /**
  * Definitions of static member functions
@@ -119,10 +138,30 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_rt_objects(ECA_OBJECT_MAP* objmap
   device = new REALTIME_NULL();
   objmap->register_object("rtnull", "^rtnull$", device);
 
+#ifdef ECA_ENABLE_AUDIOIO_PLUGINS
   eca_import_internal_audioio_plugin(objmap, "libaudioio_alsa.so");
   eca_import_internal_audioio_plugin(objmap, "libaudioio_alsa_named.so");
   eca_import_internal_audioio_plugin(objmap, "libaudioio_arts.so");
   eca_import_internal_audioio_plugin(objmap, "libaudioio_jack.so");
+#else
+#ifdef ECA_COMPILE_ALSA
+  device = new AUDIO_IO_ALSA_PCM();
+  objmap->register_object("alsahw_09", "(^alsahw_09$)|(^alsaplugin_09$)", device);
+
+  device = new AUDIO_IO_ALSA_PCM_NAMED();
+  objmap->register_object("alsa_09", "^alsa_09$", device);
+#endif
+
+#ifdef ECA_COMPILE_ARTS
+  device = new ARTS_INTERFACE();
+  objmap->register_object("arts", "^arts$", device);
+#endif
+
+#ifdef ECA_COMPILE_JACK
+  device = new AUDIO_IO_JACK();
+  objmap->register_object("jack_generic", "(^jack_alsa$)|(^jack_mono$)|(^jack_multi$)|(^jack_generic$)", device);
+#endif
+#endif
 
   const ECA_OBJECT* aobj = 0;
 
@@ -179,7 +218,12 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("mid", "mid$", timidity);
   objmap->register_object("midi", "midi$", timidity);
 
+#ifdef ECA_ENABLE_AUDIOIO_PLUGINS
   eca_import_internal_audioio_plugin(objmap, "libaudioio_af.so");
+#else
+  AUDIO_IO* af = new AUDIOFILE_INTERFACE();
+  objmap->register_object("audiofile_aiff_au_snd", "(aif*$)|(au$)|(snd$)", af);
+#endif
 
   objmap->register_object("-", "^-$", raw);
   objmap->register_object("stdin", "^stdin$", raw);
@@ -281,6 +325,7 @@ void ECA_STATIC_OBJECT_MAPS::register_midi_device_objects(ECA_OBJECT_MAP* objmap
  * Definitions for static private helper functions
  */
 
+#ifdef ECA_ENABLE_AUDIOIO_PLUGINS
 static void eca_import_internal_audioio_plugin(ECA_OBJECT_MAP* objmap,
 					       const string& filename)
 {
@@ -353,6 +398,7 @@ static void eca_import_internal_audioio_plugin(ECA_OBJECT_MAP* objmap,
 		  file + "\" failed.");
   }
 }
+#endif
 
 static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id)
 {

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (23.07.2002)
+       (16.10.2002)
        ()
        (Multimedia software)
 
@@ -92,11 +92,6 @@ startdit()
   	dit(resource-file-effect-presets)
   	Configuration file for effect presets. Is located in the 
   	resource directory. Defaults to em(effect_presets).
-
-	dit(internal-plugin-directory)
-	Directory containing ecasound's internal plugins.
-	Defaults to em({prefix-dir}/lib/libecasoundX-plugins),
-	where "X" is the library interface version number.
 
 	dit(ladspa-plugin-directory)
 	Directory containing LADSPA effect plugins. Defaults to em({prefix-dir}/lib/ladspa).

@@ -1,6 +1,6 @@
 /** 
  * acconfig.h for ecasound
- * last modified: 25.04.2002
+ * last modified: 20021016-2
  */
 
 /* Package name */
@@ -29,6 +29,18 @@
 
 /* use libtermcap for termcap info */
 #undef ECA_USE_TERMCAP
+
+/* whether to compile ALSA input/output */
+#undef ECA_COMPILE_ALSA
+
+/* whether to compile aRts input/output */
+#undef ECA_COMPILE_ARTS
+
+/* whether to compile libaudiofile input/output */
+#undef ECA_COMPILE_AUDIOFILE
+
+/* whether to compile JACK input/output */
+#undef ECA_COMPILE_JACK
 
 /* whether to compile OSS input/output */
 #undef ECA_COMPILE_OSS

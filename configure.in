@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 24.06.2002
+dnl last modified: 20021016-3
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -38,9 +38,9 @@ dnl #   2. replace instances of libpackageX with libpackageY
 dnl #      in package/Makefile.am
 dnl #   3. "find . -type f |xargs gre libpackageX"
 
-LIBECASOUND_VERSION=8
+LIBECASOUND_VERSION=9
 LIBECASOUNDC_VERSION=1
-LIBKVUTILS_VERSION=3
+LIBKVUTILS_VERSION=4
 
 AC_SUBST(LIBECASOUND_VERSION)
 AC_SUBST(LIBECASOUNDC_VERSION)
@@ -288,7 +288,8 @@ dnl ------------------------------------------------------------------
 dnl --
 dnl Check for aRts support
 dnl
-dnl defines: ECA_AM_COMPILE_ARTS, ECA_S_ARTSC_CFLAGS, ECA_S_ARTSC_LIBS
+dnl defines: ECA_AM_COMPILE_ARTS, ECA_S_ARTSC_CFLAGS, 
+dnl          ECA_S_ARTSC_LIBS, ECA_COMPILE_ARTS
 dnl --
 AC_PATH_PROG(ARTSC_CONFIG,artsc-config,none)
 if test x$ARTSC_CONFIG = xnone; then
@@ -302,6 +303,10 @@ AC_ARG_ENABLE(arts,
 	      arts_support=no)
 	      AM_CONDITIONAL(ECA_AM_COMPILE_ARTS, test x$arts_support = xyes) 
 
+if test x$arts_support = xyes; then
+    AC_DEFINE(ECA_COMPILE_ARTS)
+fi                                     
+
 ECA_S_ARTSC_CFLAGS="`$ARTSC_CONFIG --cflags`"
 ECA_S_ARTSC_LIBS="`$ARTSC_CONFIG --libs`"
 
@@ -313,7 +318,8 @@ dnl ------------------------------------------------------------------
 dnl --
 dnl Check for JACK support
 dnl
-dnl defines: ECA_AM_COMPILE_JACK, ECA_S_JACK_LIBS, ECA_S_JACK_INCLUDES
+dnl defines: ECA_AM_COMPILE_JACK, ECA_S_JACK_LIBS, ECA_S_JACK_INCLUDES,
+dnl          ECA_COMPILE_JACK
 dnl --
 AC_CHECK_HEADER(jack/jack.h,jack_support=yes,jack_support=no)
 AC_ARG_WITH(jack,
@@ -327,6 +333,10 @@ AC_ARG_ENABLE(jack,
 	      [  --disable-jack		  Disable JACK support (default = no)],
 	      jack_support=no)
 AM_CONDITIONAL(ECA_AM_COMPILE_JACK, test x$jack_support = xyes)
+
+if test x$jack_support = xyes; then
+    AC_DEFINE(ECA_COMPILE_JACK)
+fi                                     
 
 AC_SUBST(ECA_S_JACK_LIBS)
 AC_SUBST(ECA_S_JACK_INCLUDES)
@@ -500,7 +510,7 @@ dnl ------------------------------------------------------------------
 dnl ---
 dnl Audiofile library
 dnl 
-dnl defines: ECA_AM_COMPILE_AUDIOFILE
+dnl defines: ECA_AM_COMPILE_AUDIOFILE, ECA_COMPILE_AUDIOFILE
 dnl ---
 AC_CHECK_LIB(audiofile,main,af_support=yes,af_support=no)
 AC_ARG_ENABLE(audiofile,
@@ -524,6 +534,10 @@ AC_ARG_ENABLE(audiofile,
  ]
 )
 AM_CONDITIONAL(ECA_AM_COMPILE_AUDIOFILE, test x$af_support = xyes) 
+
+if test x$af_support = xyes; then
+    AC_DEFINE(ECA_COMPILE_AUDIOFILE)
+fi                                     
 
 dnl ------------------------------------------------------------------
 

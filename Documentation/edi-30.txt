@@ -3,26 +3,25 @@ Status: OPEN
 
 (edi-30): Turning libecasound and libkvutils into shared libraries.
          - submitted: kaiv, 08.10.2002
+	 - initial implementation: kaiv, 16.10.2002
+
 ------------------------------------------------------------------------ 
 Details:
 
 - rationale: see below
-- goals
+- immediate goals
     - shared versions of libecasound and libkvutils are never installed
     - ecasound, ecamegapedal, ecawave and other apps that require 
       direct access to libecasound should use static linkage (but _not_
       necessarily to other libs than libecasound and libkvutils)
-    - ecasound-plugins should be separately versioned so that
-      applications linked to incompatible versions of libecasound 
-      are still able to use the plugins
+    - ecasound-plugins are linked statically to the binaries
+- long-term goals
     - utils in the ecatools package should be rewritten using 
       the ECI API
 - new ecasound packages
-    - runtime: ecasound binary, plugin package, ECI apps and 
-	       documentation
-    - devel: header files and .a libraries
-    
- 
+    - runtime: ecasound binary, ECI apps, documentation and
+               libecasoundc
+    - devel: header files and .a libraries (libecasound + libkvutils)
 
 ------------------------------------------------------------------------
 [kaiv on ecasound-list, 08.10.2002]

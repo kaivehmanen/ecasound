@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 061002) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 161002) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -18,10 +18,15 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.4 *-
 
 ??102002 (v2.1dev12)
-	- edi-entries: edi-24, edi-28, edi-29
+	- edi-entries: edi-24, edi-28, edi-29, edi-30
+	- note: libecasound and libkvutils interface version numbers
+		will from now on track API changes instead of ABI
+	        changes
 	- added: edi-24; resample audio object added
 	- added: edi-29; initial version of ecamonitor
 	- added: edi-28; eiam-command 'int-output-mode-wellformed'
+	- removed: edi-30; ecasound internal plugins no longer
+		   installed separately
 	- changed: ALSA support requires alsa-lib version 
 		   0.9rc4 or newer
 	- changed: libecasoundc versioning back to normal libtool 
@@ -31,6 +36,11 @@ Last officially released version is -*> v2.0.4 *-
 	- changed: edi-28; pyecasound is rewritten to use the 
 	           new C ECI implementation instead of direct
 		   use of libecasound
+	- changed: edi-30; removed all shared libs and subpackages
+	  	   containing them from ecasound.spec.in
+	- changed: added ecamonitor to ecasound.spec.in
+	- changed: edi-30; libecasound and libkvutils 
+		   versioning back to normal libtool style
 	- fixed: unnecessary warnings when closing OSS 
 	         audio objects
 	- fixed: unnecessary warnings when adding audio 
@@ -43,6 +53,12 @@ Last officially released version is -*> v2.0.4 *-
 	- fixed: bugs in multitrack-mode operation; processing
 		 would stop once all input objects were
 		 finished
+	- fixed: pyeca.py - correct handling of 'e' and '-'
+	         return types [jhalttun]
+	- fixed: eiam - removed the extra newline char from output
+	         of 'cop-status' and 'ctrl-status'
+	- fixed: loglevel settings were lost when output mode 
+		 was changed
 22082002 (v2.1dev11)
 	- added: configure-check for socket libraries
 	- added: -evp - volume peak watcher operator

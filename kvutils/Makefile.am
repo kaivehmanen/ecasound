@@ -5,9 +5,9 @@ AUTOMAKE_OPTIONS = foreign
 # ---
 
 if ECA_AM_DEBUG_MODE
-lib_LTLIBRARIES = libkvutils3_debug.la
+lib_LTLIBRARIES = libkvutils_debug.la
 else
-lib_LTLIBRARIES = libkvutils3.la
+lib_LTLIBRARIES = libkvutils.la
 endif
 
 kvutil_sources = 	kvu_com_line.cpp \
@@ -37,23 +37,23 @@ kvutil_headers = 	kvu_dbc.h \
 			kvu_utils.h \
 			kvu_value_queue.h
 
-libkvutils3_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
-libkvutils3_la_LDFLAGS = -version-info @LIBKVUTILS_VERSION@:0:0
+libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
+libkvutils_la_LDFLAGS = -version-info @LIBKVUTILS_VERSION@:0:0 -static
 
-libkvutils3_debug_la_SOURCES = $(libkvutils3_la_SOURCES)
-libkvutils3_debug_la_LDFLAGS = $(libkvutils3_la_LDFLAGS)
+libkvutils_debug_la_SOURCES = $(libkvutils_la_SOURCES)
+libkvutils_debug_la_LDFLAGS = $(libkvutils_la_LDFLAGS)
 
 noinst_HEADERS = $(kvutil_headers)
 
 # ---------------------------------------------------------------------
 # Install targets
 install-data-local:
-	$(INSTALL) -d $(DESTDIR)$(includedir)/kvutils@LIBKVUTILS_VERSION@
-	cd $(srcdir) ; cp  $(kvutil_headers) $(DESTDIR)$(includedir)/kvutils@LIBKVUTILS_VERSION@
+	$(INSTALL) -d $(DESTDIR)$(includedir)/kvutils
+	cd $(srcdir) ; cp  $(kvutil_headers) $(DESTDIR)$(includedir)/kvutils
 
 # ---------------------------------------------------------------------
 # Uninstall targets
 uninstall-local:
-	cd $(DESTDIR)$(includedir)/kvutils@LIBKVUTILS_VERSION@ && \
+	cd $(DESTDIR)$(includedir)/kvutils && \
 	rm -f   $(kvutil_headers)
-	rmdir   $(DESTDIR)$(includedir)/kvutils@LIBKVUTILS_VERSION@
+	rmdir   $(DESTDIR)$(includedir)/kvutils

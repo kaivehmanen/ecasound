@@ -32,16 +32,16 @@ do
 	  flags="$flags $prefix"
 	  ;;
     --libs)
-	  flags="$flags -L$libdir -lecasound${libecasound_version} -lkvutils${libkvutils_version}"
+	  flags="$flags -L$libdir -lecasound -lkvutils"
 	  ;;
     --libs_debug)
-	  flags="$flags -L$libdir -lecasound${libecasound_version}_debug -lkvutils${libkvutils_version}_debug"
+	  flags="$flags -L$libdir -lecasound_debug -lkvutils_debug"
 	  ;;
     --ldflags)
 	  flags="$flags -Wl,--rpath -Wl,$libdir"
 	  ;;
     --cflags)
-	  flags="$flags -I$includedir/libecasound${libecasound_version} -I$includedir/kvutils${libkvutils_version}"
+	  flags="$flags -I$includedir/libecasound -I$includedir/kvutils"
 	  ;;
     --version)
 	  echo @VERSION@
