@@ -96,11 +96,10 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     }
 
     if (samples_per_second() != jackmgr_rep->samples_per_second()) {
-      jackmgr_rep->close(myid_rep);
-      throw(SETUP_ERROR(SETUP_ERROR::unexpected, 
-			"AUDIOIO-JACK: Cannot connect open connection! Samplerate " +
-			kvu_numtostr(samples_per_second()) + " differs from JACK server's sample rate of " + 
-			kvu_numtostr(jackmgr_rep->samples_per_second()) + "."));
+      set_samples_per_second(jackmgr_rep->samples_per_second());
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		  "(audioio-jack) Note! Locking to jackd samplerate " +
+		  kvu_numtostr(samples_per_second()));
     }
     
     if (buffersize() != jackmgr_rep->buffersize()) {
