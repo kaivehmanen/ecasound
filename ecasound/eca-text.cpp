@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
       ecadebug->disable();
     else {
       if (debug_to_cerr == true)
-	ecasound_print_header(&cerr);
+	ecasound_print_header(&std::cerr);
       else
 	ecasound_print_header(&std::cout);
     }
@@ -193,7 +193,7 @@ void ecasound_start_iactive(ECA_SESSION* param) {
     }
     std::cout << "ecasound ('h' for help)> ";
   }
-  while(getline(cin,cmd));
+  while(getline(std::cin,cmd));
 }
 
 #if defined USE_NCURSES || defined USE_TERMCAP

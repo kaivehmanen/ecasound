@@ -49,7 +49,7 @@ void TEXTDEBUG::msg(int level, const std::string& info) {
 }
 
 TEXTDEBUG::TEXTDEBUG(void) {
-  dostream = &cout;
+  dostream = &std::cout;
 }
 
 TEXTDEBUG::~TEXTDEBUG(void) {
