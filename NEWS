@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 200103) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 290103) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -16,6 +16,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 ??012003 (v2.2.1)  -** stable release **-
 	- added: sane default param hints for chainops: -ec, -etd,
 		 -ete, -etf, -etl, -etm, -etp, -etr and -epp
+	- added: if configured with JACK-support, ecasound will
+	  	 fetch the correct bufsize and srate parameters from 
+		 the JACK server when connecting a chainsetup with 
+	 	 JACK inputs or outputs
 	- changed: ecasoundrc - ladspa-plugin-directory can contain 
 		   multiple directories, separated by colons; this
 		   change was done to avoid any confusion with 
@@ -29,6 +33,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: excessive dbc warnings when using the jack plugin
 	- fixed: core dump if -eac:x,y was given an invalid channel 
 		 index
+	- fixed: compile failed if JACK support was enabled, but no
+		 explicit --with-jack option was given
+	- fixed: rounding errors fixed in the resample object
 09012003 (v2.2.0)  -** stable release **-
 	- edi-entries: edi-1 closed
 	- changed: ecasound.el updated to version 0.8.1 [mlang]

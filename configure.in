@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20030122-8
+dnl last modified: 20030129-9
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
