@@ -18,7 +18,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   the AUTHORS file and added some antispam measures
 	- fixed: default to native-python ECI implementation on MacOSX
 	- fixed: link against coreaudio libs if JACK enabled on MacOSX
-	- fixed: ecasignalview compilation bug on Cygwin
+	- fixed: ecasignalview build error if compiling without 
+		 ncurses [mb]
+	- fixed: bug in ecasound/rubyecasound 'make check' target
 27102004 (v2.3.4)  -** stable release **-
 	- edi-entries: edi-14 and edi-32 closed, edi-40 added
 	- note: verified to compile ok on MacOS X 10.3.2 [smbolton]

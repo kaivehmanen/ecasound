@@ -8,6 +8,14 @@
 # Licensed under GPL. See the file 'COPYING' for more information.
 # -----------------------------------------------------------------------
 
+if test(?x, "../ecasound/ecasound_debug")
+    ENV['ECASOUND'] = "../ecasound/ecasound_debug"
+end
+
+if test(?x, "../ecasound/ecasound")
+    ENV['ECASOUND'] = "../ecasound/ecasound"
+end
+
 require "ecasound"
 
 # ---
@@ -17,14 +25,6 @@ require "ecasound"
 runlen = 5
 # debug level (0, 1, 2)
 debuglevel = 2
-
-if test(?x, "../ecasound/ecasound_debug")
-    ENV['ECASOUND'] = "../ecasound/ecasound_debug"
-end
-
-if test(?x, "../ecasound/ecasound")
-    ENV['ECASOUND'] = "../ecasound/ecasound"
-end
 
 # if above tests fail, the default ecasound binary
 # will be used
