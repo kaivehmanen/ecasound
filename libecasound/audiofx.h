@@ -25,6 +25,8 @@ class EFFECT_BASE : public CHAIN_OPERATOR {
 
  public:
 
+  virtual void init(SAMPLE_BUFFER* sbuf);
+
   EFFECT_BASE(void);
   virtual ~EFFECT_BASE(void);
 };

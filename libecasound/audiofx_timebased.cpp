@@ -111,8 +111,8 @@ void EFFECT_DELAY::init(SAMPLE_BUFFER* insample) {
   l.init(insample);
   r.init(insample);
 
-  set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
+  EFFECT_BASE::init(insample);
+
   set_parameter(1, dtime_msec);
 
   buffer.resize(2, std::vector<SINGLE_BUFFER> (static_cast<unsigned int>(dnum)));
@@ -267,8 +267,8 @@ void EFFECT_MULTITAP_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t
 void EFFECT_MULTITAP_DELAY::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
 
-  set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
+  EFFECT_BASE::init(insample);
+
   set_parameter(1, dtime_msec);
 
   delay_index.resize(channels(), dtime * dnum - 1);
@@ -336,10 +336,9 @@ void EFFECT_FAKE_STEREO::init(SAMPLE_BUFFER* insample) {
   l.init(insample);
   r.init(insample);
 
-  set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
-  set_parameter(1, dtime_msec);
+  EFFECT_BASE::init(insample);
 
+  set_parameter(1, dtime_msec);
   buffer.resize(2);
 }
 
@@ -424,8 +423,8 @@ void EFFECT_REVERB::init(SAMPLE_BUFFER* insample) {
   l.init(insample);
   r.init(insample);
 
-  set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
+  EFFECT_BASE::init(insample);
+
   set_parameter(1, dtime_msec);
 
   buffer.resize(2);
@@ -529,8 +528,9 @@ void EFFECT_MODULATING_DELAY::init(SAMPLE_BUFFER* insample) {
   lfo.init(1.0 /
 	   insample->sample_rate() /
 	   insample->number_of_channels());
-  set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
+
+  EFFECT_BASE::init(insample);
+
   set_parameter(1, dtime_msec);
 
   filled.resize(channels(), false);

@@ -218,10 +218,10 @@ CHAIN_OPERATOR::parameter_type EFFECT_LADSPA::get_parameter(int param) const {
 }
 
 void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) { 
-  buffer = insample;
 
-  set_samples_per_second(insample->sample_rate());
-  set_channels(insample->number_of_channels());
+  EFFECT_BASE::init(insample);
+
+  buffer = insample;
 
 // the fancy definition :)
 //    if ((in_audio_ports > 1 &&
@@ -256,9 +256,8 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) {
     plugins_rep.resize(channels());
     for(unsigned int n = 0; n < plugins_rep.size(); n++) {
       plugins_rep[n] = reinterpret_cast<LADSPA_Handle*>(plugin_desc->instantiate(plugin_desc, samples_per_second()));
-    }
-    for(unsigned long m = 0; m < port_count_rep; m++) {
-      for(unsigned int n = 0; n < plugins_rep.size(); n++) {
+
+      for(unsigned long m = 0; m < port_count_rep; m++) {
 	if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
 	  plugin_desc->connect_port(plugins_rep[n], m, buffer->buffer[n]);
 	}
@@ -275,7 +274,9 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) {
 		kvu_numtostr(out_audio_ports) +
 		" output port(s), to chain with " +
 		kvu_numtostr(channels()) +
-		" channel(s).");
+		" channel(s) and srate of " +
+		kvu_numtostr(samples_per_second()) +
+		".");
 
   int data_index = 0;
   for(unsigned long m = 0; m < port_count_rep; m++) {

@@ -26,6 +26,11 @@ EFFECT_BASE::EFFECT_BASE(void) :
 
 EFFECT_BASE::~EFFECT_BASE(void) { }
 
+void EFFECT_BASE::init(SAMPLE_BUFFER* sbuf) {
+  set_samples_per_second(sbuf->sample_rate());
+  set_channels(sbuf->number_of_channels());
+}
+
 long int EFFECT_BASE::samples_per_second(void) const { return(srate_rep); }
 int EFFECT_BASE::channels(void) const { return(channels_rep); }
 
