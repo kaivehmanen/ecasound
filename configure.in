@@ -131,7 +131,8 @@ dnl ------------------------------------------------------------------
 dnl ---
 dnl Check whether to enable debugging
 dnl
-dnl defines: ECA_AM_DEBUG_MODE, CXXFLAGS, CFLAGS
+dnl defines: ECA_AM_DEBUG_MODE
+dnl modifies: CXXFLAGS, CFLAGS
 dnl ---
 
 AC_MSG_CHECKING(whether to enable debugging)
@@ -164,6 +165,26 @@ EXTRADEBUGFLAGS="-DNDEBUG"
 fi                                     
 CXXFLAGS="$CXXFLAGS $EXTRADEBUGFLAGS"
 CFLAGS="$CFLAGS $EXTRADEBUGFLAGS"
+
+dnl ------------------------------------------------------------------
+
+dnl ---
+dnl Check whether to disable all use of shared libs
+dnl
+dnl defines: ECA_STATIC_ONLY, ECA_AM_STATIC_ONLY
+dnl modifies: CXXFLAGS, CFLAGS, LDFLAGS
+dnl ---
+AC_ARG_ENABLE(static-only,
+[  --enable-static-only	  Build only static binaries (default = no)],
+enable_static_only=yes)
+if test x$enable_static_only = xyes; then
+    AC_DISABLE_SHARED
+    AC_DEFINE(ECA_STATIC_ONLY)
+    CXXFLAGS="$CXXFLAGS -static"
+    CFLAGS="$CFLAGS -static"
+    LDFLAGS="$LDFLAGS -Bstatic"
+fi
+AM_CONDITIONAL(ECA_AM_STATIC_ONLY, test x$enable_static_only = xyes)
 
 dnl ------------------------------------------------------------------
 

@@ -20,10 +20,11 @@ check_PROGRAMS = libecasound_tester
 # compiler and linker options
 # ----------------------------------------------------------------------
 
-if ECA_AM_DEBUG_MODE
-eca_libadd = $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@_debug.la
+if ECA_AM_STATIC_ONLY
+# FIXME: add linking to ecasound plugins
+eca_libadd =
 else
-eca_libadd = $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@.la
+eca_libadd =
 endif
 
 eca_ldflags = -version-info @LIBECASOUND_VERSION@:0:0
@@ -312,7 +313,7 @@ libecasound_tester_src = \
 libecasound8_la_SOURCES = $(ecasound_common_src)
 libecasound8_debug_la_SOURCES = $(ecasound_common_src)
 libecasound8_la_CFLAGS = $(eca_cxxflags)
-libecasound8_la_LIBADD = 
+libecasound8_la_LIBADD = $(eca_libadd)
 libecasound8_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasound8_debug_la_CFLAGS = $(libecasound8_la_CFLAGS)
 libecasound8_debug_la_LDFLAGS = $(libecasound8_la_LDFLAGS)
