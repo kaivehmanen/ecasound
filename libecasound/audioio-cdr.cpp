@@ -35,7 +35,7 @@
 typedef long int off_t;
 #endif
 
-#include <kvutils/dbc.h>
+#include <kvu_dbc.h>
 
 #include "sample-specs.h"
 #include "audioio-cdr.h"

@@ -19,15 +19,16 @@
 
 #include <algorithm>
 #include <string>
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 #include <cmath>
 #include <cstring>
+
 #include <audiofile.h>
 
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/dbc.h>
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
+#include <kvu_dbc.h>
 
 #include "audioio_af.h"
 #include "samplebuffer.h"
@@ -40,7 +41,7 @@ static const char* audio_io_keyword_regex_const = "(aif*$)|(au$)|(snd$)";
 
 const char* audio_io_keyword(void){return(audio_io_keyword_const); }
 const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
-int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
+int audio_io_interface_version(void) { return(ecasound_library_version_current); }
 
 AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name)
 {
@@ -127,7 +128,7 @@ void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
       int file_format = -1;
       string teksti = label();
-      to_lowercase(teksti);
+      kvu_to_lowercase(teksti);
 
       if (strstr(teksti.c_str(),".aiffc") != 0) { file_format = AF_FILE_AIFFC; }
       else if (strstr(teksti.c_str(),".aifc") != 0) { file_format = AF_FILE_AIFFC; }

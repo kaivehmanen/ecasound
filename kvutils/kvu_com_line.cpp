@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// com_line.cpp: A wrapper class for parsing command line arguments
+// kvu_com_line.cpp: A wrapper class for parsing command line arguments
 // Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,8 +21,7 @@
 #include <vector>
 #include <algorithm>
 
-// #include "debug.h"
-#include "com_line.h"
+#include "kvu_com_line.h"
 
 COMMAND_LINE::COMMAND_LINE(int argc, char *argv[]) {
   current_rep = 0;

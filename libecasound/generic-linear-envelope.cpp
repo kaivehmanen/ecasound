@@ -18,8 +18,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/message_item.h>
+#include <kvu_numtostr.h>
+#include <kvu_message_item.h>
 
 #include "generic-linear-envelope.h"
 #include "eca-debug.h"

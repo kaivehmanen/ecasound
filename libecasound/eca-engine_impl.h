@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-#include <kvutils/value_queue.h>
-#include <kvutils/procedure_timer.h>
+#include <kvu_value_queue.h>
+#include <kvu_procedure_timer.h>
 
 #include "eca-chainsetup.h"
 

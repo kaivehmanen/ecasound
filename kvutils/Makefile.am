@@ -5,53 +5,53 @@ AUTOMAKE_OPTIONS = foreign
 # ---
 
 if ECA_AM_DEBUG_MODE
-lib_LTLIBRARIES = libkvutils_debug.la
+lib_LTLIBRARIES = libkvutils3_debug.la
 else
-lib_LTLIBRARIES = libkvutils.la
+lib_LTLIBRARIES = libkvutils3.la
 endif
 
-kvutil_sources = 	kvutils.cpp \
-			message_item.cpp \
-			com_line.cpp \
-		 	value_queue.cpp \
+kvutil_sources = 	kvu_utils.cpp \
+			kvu_message_item.cpp \
+			kvu_com_line.cpp \
+		 	kvu_value_queue.cpp \
 			kvu_numtostr.cpp \
 			kvu_rtcaps.cpp \
-			locks.cpp \
-			threads.cpp \
-			procedure_timer.cpp \
-			temporary_file_directory.cpp
+			kvu_locks.cpp \
+			kvu_threads.cpp \
+			kvu_procedure_timer.cpp \
+			kvu_temporary_file_directory.cpp
 
-kvutil_headers = 	kvutils.h \
-			message_item.h \
-			com_line.h \
-			value_queue.h \
+kvutil_headers = 	kvu_utils.h \
+			kvu_message_item.h \
+			kvu_com_line.h \
+			kvu_value_queue.h \
 			kvu_numtostr.h \
 			kvu_rtcaps.h \
-			definition_by_contract.h \
-			object_queue.h \
-			locks.h \
-			threads.h \
-			procedure_timer.h \
-			temporary_file_directory.h \
-			dbc.h
+			kvu_definition_by_contract.h \
+			kvu_object_queue.h \
+			kvu_locks.h \
+			kvu_threads.h \
+			kvu_procedure_timer.h \
+			kvu_temporary_file_directory.h \
+			kvu_dbc.h
 
-libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
-libkvutils_la_LDFLAGS = -version-info 3:0:0
+libkvutils3_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
+libkvutils3_la_LDFLAGS = -version-info @LIBKVUTILS_VERSION@:0:0
 
-libkvutils_debug_la_SOURCES = $(libkvutils_la_SOURCES)
-libkvutils_debug_la_LDFLAGS = $(libkvutils_la_LDFLAGS)
+libkvutils3_debug_la_SOURCES = $(libkvutils3_la_SOURCES)
+libkvutils3_debug_la_LDFLAGS = $(libkvutils3_la_LDFLAGS)
 
 noinst_HEADERS = $(kvutil_headers)
 
 # ---------------------------------------------------------------------
 # Install targets
 install-data-local:
-	$(INSTALL) -d $(DESTDIR)$(includedir)/kvutils
-	cd $(srcdir) ; cp  $(kvutil_headers) $(DESTDIR)$(includedir)/kvutils
+	$(INSTALL) -d $(DESTDIR)$(includedir)/kvutils@LIBKVUTILS_VERSION@
+	cd $(srcdir) ; cp  $(kvutil_headers) $(DESTDIR)$(includedir)/kvutils@LIBKVUTILS_VERSION@
 
 # ---------------------------------------------------------------------
 # Uninstall targets
 uninstall-local:
-	cd $(DESTDIR)$(includedir)/kvutils ; \
+	cd $(DESTDIR)$(includedir)/kvutils@LIBKVUTILS_VERSION@ && \
 	rm -f   $(kvutil_headers)
-	rmdir   $(DESTDIR)$(includedir)/kvutils
+	rmdir   $(DESTDIR)$(includedir)/kvutils@LIBKVUTILS_VERSION@

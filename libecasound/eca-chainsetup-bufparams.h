@@ -25,7 +25,7 @@ class ECA_CHAINSETUP_BUFPARAMS {
 
   long int buffersize(void) const { return(buffersize_rep); }
   bool raised_priority(void) const { return(raisedpriority_rep); }
-  int sched_priority(void) const { return(sched_priority_rep); }
+  int get_sched_priority(void) const { return(sched_priority_rep); }
   bool double_buffering(void) const { return(double_buffering_rep); }
   long int double_buffer_size(void) const { return(double_buffer_size_rep); }
   bool max_buffers(void) const { return(max_buffers_rep); }

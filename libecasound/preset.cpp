@@ -22,8 +22,8 @@
 #include <vector>
 #include <string>
 
-#include <kvutils.h>
-#include <kvutils/dbc.h>
+#include <kvu_utils.h>
+#include <kvu_dbc.h>
 
 #include "eca-chain.h"
 #include "eca-chainop.h"
@@ -135,7 +135,7 @@ void PRESET::parse(const string& formatted_string) {
   chains.push_back(new CHAIN());
 
   // FIXME: add support for quotes (ie. "one token with space" style)
-  vector<string> tokens = string_to_words(formatted_string);
+  vector<string> tokens = kvu_string_to_words(formatted_string);
   vector<string>::const_iterator p = tokens.begin();
   while(p != tokens.end()) {
     ecadebug->msg(ECA_DEBUG::user_objects, "Parsing: " + *p + ".");
@@ -197,7 +197,7 @@ void PRESET::parse_preset_option(const string& arg) {
       case 'd':
 	{
 	  /* -pd:preset_description */
-	  impl_repp->description_rep = get_argument_number(1, arg);
+	  impl_repp->description_rep = kvu_get_argument_number(1, arg);
 	  break;
 	}
 
@@ -208,35 +208,35 @@ void PRESET::parse_preset_option(const string& arg) {
 	  case 'd': 
 	    {
 	      /* -ppd:x,y,z (param default values) */
-	      set_preset_defaults(get_arguments(arg));
+	      set_preset_defaults(kvu_get_arguments(arg));
 	      break;
 	    }
 
 	  case 'n': 
 	    {
 	      /* -ppn:x,y,z (param names) */
-	      set_preset_param_names(get_arguments(arg));
+	      set_preset_param_names(kvu_get_arguments(arg));
 	      break;
 	    }
 
 	  case 'l': 
 	    {
 	      /* -ppl:x,y,z (param lower bounds) */
-	      set_preset_lower_bounds(get_arguments(arg));
+	      set_preset_lower_bounds(kvu_get_arguments(arg));
 	      break;
 	    }
 
 	  case 'u':
 	    {
 	      /* -ppu:x,y,z (param upper bounds) */
-	      set_preset_upper_bounds(get_arguments(arg));
+	      set_preset_upper_bounds(kvu_get_arguments(arg));
 	      break;
 	    }
 
 	  case 't':
 	    {
 	      /* -ppt:x,y,z (param toggle) */
-	      set_preset_toggles(get_arguments(arg));
+	      set_preset_toggles(kvu_get_arguments(arg));
 	      break;
 	    }
 	    
@@ -343,14 +343,14 @@ void PRESET::parse_operator_option(const string& arg) {
   /* phase 1: parse for cop definitions -eabc:1.0,%param1,2.0 */
   vector<int> arg_indices;
   vector<int> arg_slave_indices;
-  vector<string> ps_parts(get_number_of_arguments(arg));
-  for(int i = 0; i < get_number_of_arguments(arg); i++) {
-    string onearg = get_argument_number(i + 1, arg);
+  vector<string> ps_parts(kvu_get_number_of_arguments(arg));
+  for(int i = 0; i < kvu_get_number_of_arguments(arg); i++) {
+    string onearg = kvu_get_argument_number(i + 1, arg);
     if(onearg.size() > 0 && onearg[0] == '%') {
 
       // FIXME: what if %xxx options are given in the "wrong" order?
 
-      size_t preset_index = atoi(get_argument_number(i + 1, arg).substr(1).c_str());
+      size_t preset_index = atoi(kvu_get_argument_number(i + 1, arg).substr(1).c_str());
       if (preset_index <= arg_indices.size()) {
 	preset_index = arg_indices.size() + 1;
       }
@@ -366,7 +366,7 @@ void PRESET::parse_operator_option(const string& arg) {
   DBC_CHECK(arg_indices.size() == arg_slave_indices.size());
 
   /* phase 2: 'ps' is set to -eabc:1.0,2.0,2.0 (no %-params) */
-  string ps = "-" + get_argument_prefix(arg) + ":" + vector_to_string(ps_parts, ",");
+  string ps = "-" + kvu_get_argument_prefix(arg) + ":" + kvu_vector_to_string(ps_parts, ",");
   //  cerr << "Creating object from '" << ps << "'."  << endl;
 
   /* phase 3: create an object using 'ps' */
@@ -381,7 +381,7 @@ void PRESET::parse_operator_option(const string& arg) {
     object = cop;
   }
   else {
-    if (get_argument_prefix(ps) == "kx") 
+    if (kvu_get_argument_prefix(ps) == "kx") 
       chains.back()->selected_controller_as_target();
     else {
       gctrl = ECA_OBJECT_FACTORY::create_controller(ps);
@@ -408,7 +408,7 @@ void PRESET::parse_operator_option(const string& arg) {
       // NOTE: for instance for LADSPA plugins -el:label,par1,par2 
       //       number_of_args is 3, but number_of_params is 2!
       int slave_index = arg_slave_indices[i];
-      slave_index -= get_number_of_arguments(arg) - object->number_of_params();
+      slave_index -= kvu_get_number_of_arguments(arg) - object->number_of_params();
 
       if (preset_index > impl_repp->slave_param_objects_rep.size()) {
 	impl_repp->slave_param_objects_rep.resize(preset_index);
@@ -432,7 +432,7 @@ void PRESET::add_chain(void) {
 
 
 string PRESET::parameter_names(void) const {
-  return vector_to_string(impl_repp->preset_param_names_rep, ",");
+  return kvu_vector_to_string(impl_repp->preset_param_names_rep, ",");
 }
 
 void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {

@@ -19,8 +19,8 @@
 #include <string>
 #include <unistd.h>
 
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
 
 #include <alsa/asoundlib.h>
 
@@ -35,7 +35,7 @@ static const char* audio_io_keyword_regex_const = "^alsa_09$";
 const char* audio_io_keyword(void){return(audio_io_keyword_const); }
 const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
 AUDIO_IO* audio_io_descriptor(void) { return(new AUDIO_IO_ALSA_PCM_NAMED()); }
-int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
+int audio_io_interface_version(void) { return(ecasound_library_version_current); }
 
 
 AUDIO_IO_ALSA_PCM_NAMED::AUDIO_IO_ALSA_PCM_NAMED (void)

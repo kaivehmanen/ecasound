@@ -23,8 +23,8 @@
 #include <cstdio>
 #include <signal.h> /* sigaction() */
 
-#include <kvutils/com_line.h>
-#include <kvutils/procedure_timer.h>
+#include <kvutils/kvu_com_line.h>
+#include <kvutils/kvu_procedure_timer.h>
 #include <kvutils/kvu_numtostr.h>
 
 #include <eca-debug.h>
@@ -42,7 +42,7 @@ static int ecaplay_exit_request_rep = 0;
 static int ecaplay_skip_files = 0;
 static int ecaplay_total_files = 0;
 
-static const string ecaplay_version = "20011221";
+static const string ecaplay_version = "20020427";
 
 int process_option(const string& option);
 
@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 }
 
 void signal_handler(int signum) {
-//    std::cerr << "Caught an interrupt... moving to next file.\n";
+  // std::cerr << "Caught an interrupt... moving to next file.\n";
   if (ecaplay_ptimer_repp != 0) {
     ecaplay_ptimer_repp->stop();
     if (ecaplay_ptimer_repp->events_under_lower_bound() > 0) {
@@ -181,8 +181,9 @@ void signal_handler(int signum) {
     ecaplay_ptimer_repp->start();
   }
 
-  if (ecaplay_ectrl_repp != 0)
-    ecaplay_ectrl_repp->quit();
+  if (ecaplay_ectrl_repp != 0) {
+    if (ecaplay_ectrl_repp->is_running() == true) ecaplay_ectrl_repp->stop();
+  }
 }
 
 void print_usage(void) {
@@ -207,14 +208,14 @@ int process_option(const string& option) {
     {
     case 'd': 
       {
-	int debuglevel = atoi(get_argument_number(1,option).c_str());
+	int debuglevel = atoi(kvu_get_argument_number(1,option).c_str());
 	ecadebug->set_debug_level(debuglevel);
 	break;
       }
       
     case 'k': 
       {
-	ecaplay_skip_files = atoi(get_argument_number(1,option).c_str());
+	ecaplay_skip_files = atoi(kvu_get_argument_number(1,option).c_str());
 	break;
       }
       

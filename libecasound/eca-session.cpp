@@ -27,10 +27,10 @@
 #include <config.h>
 #endif
 
-#include <kvutils/kvutils.h>
-#include <kvutils/com_line.h>
-#include <kvutils/message_item.h>
-#include <kvutils/dbc.h>
+#include <kvu_utils.h>
+#include <kvu_com_line.h>
+#include <kvu_message_item.h>
+#include <kvu_dbc.h>
 
 #include "eca-resources.h"
 #include "eca-version.h"
@@ -428,7 +428,7 @@ void ECA_SESSION::interpret_general_option (const std::string& argu) {
   switch(argu[1]) {
   case 'd':
     {
-      ecadebug->set_debug_level(atoi(get_argument_number(1, argu).c_str()));
+      ecadebug->set_debug_level(atoi(kvu_get_argument_number(1, argu).c_str()));
       MESSAGE_ITEM mtempd;
       mtempd << "(eca-session) Set debug level to: " << ecadebug->get_debug_level();
       ecadebug->msg(mtempd.to_string());
@@ -450,7 +450,7 @@ void ECA_SESSION::interpret_general_option (const std::string& argu) {
 void ECA_SESSION::interpret_chainsetup_option (const std::string& argu) {
   if (argu.size() == 0) return;
   
-  string tname = get_argument_number(1, argu);
+  string tname = kvu_get_argument_number(1, argu);
  
   if (argu.size() < 2) return;
   switch(argu[1]) {

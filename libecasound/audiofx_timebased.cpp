@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <string>
 
-#include <kvutils.h>
+#include <kvu_utils.h>
 
 #include "eca-debug.h"
 

@@ -20,9 +20,9 @@
 #include <cmath>
 #include <string>
 
-#include <kvutils/dbc.h>
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_dbc.h>
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
 
 #include "eca-error.h"
 #include "audioio.h"

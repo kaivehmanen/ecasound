@@ -20,9 +20,10 @@
 
 #include <algorithm> /* find() */
 
-#include <kvutils/dbc.h> /* DBC_* */
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_dbc.h> /* DBC_* */
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
+#include <kvu_utils.h>
 
 #include "audioio.h"
 #include "file-preset.h"
@@ -282,7 +283,7 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
   switch(argu[1]) {
   case 'b':
     {
-      int bsize = atoi(get_argument_number(1, argu).c_str());
+      int bsize = atoi(kvu_get_argument_number(1, argu).c_str());
       csetup_repp->set_buffersize(bsize);
       MESSAGE_ITEM mitemb;
       mitemb << "(eca-chainsetup-parser) Setting buffersize to (samples) " << bsize << ".";
@@ -292,7 +293,7 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
 
   case 'B':
     {
-      std::string temp = get_argument_number(1, argu);
+      std::string temp = kvu_get_argument_number(1, argu);
       if (temp == "auto") {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_auto);
 	ecadebug->msg("(eca-chainsetup-parser) Buffering mode is selected automatically.");
@@ -318,7 +319,7 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
 
   case 'n':
     {
-      csetup_repp->set_name(get_argument_number(1, argu));
+      csetup_repp->set_name(kvu_get_argument_number(1, argu));
       ecadebug->msg("(eca-chainsetup-parser) Setting chainsetup name to \""
 		    + csetup_repp->name() + "\".");
       break;
@@ -326,7 +327,7 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
 
   case 'r':
     {
-      int prio = ::atoi(get_argument_number(1, argu).c_str());
+      int prio = ::atoi(kvu_get_argument_number(1, argu).c_str());
       if (prio < 0) {
 	ecadebug->msg("(eca-chainsetup) Raised-priority mode disabled.");
 	csetup_repp->toggle_raised_priority(false);
@@ -365,49 +366,49 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
 
   case 'z':
     {
-      if (get_argument_number(1, argu) == "db") {
-	long int bufs = atol(get_argument_number(2, argu).c_str());
+      if (kvu_get_argument_number(1, argu) == "db") {
+	long int bufs = atol(kvu_get_argument_number(2, argu).c_str());
 	if (bufs == 0) bufs = 100000;
 	csetup_repp->set_double_buffer_size(bufs);
 	ecadebug->msg("(eca-chainsetup-parser) Using double-buffer of " + 
 		      kvu_numtostr(bufs) + " sample frames.");
 	csetup_repp->toggle_double_buffering(true);
       }
-      else if (get_argument_number(1, argu) == "nodb") {
+      else if (kvu_get_argument_number(1, argu) == "nodb") {
 	ecadebug->msg("(eca-chainsetup-parser) Double-buffering disabled.");
 	csetup_repp->toggle_double_buffering(false);
       }
-      else if (get_argument_number(1, argu) == "intbuf") {
+      else if (kvu_get_argument_number(1, argu) == "intbuf") {
 	ecadebug->msg("(eca-chainsetup-parser) Enabling extra buffering on realtime devices.");
 	csetup_repp->toggle_max_buffers(true);
       }
-      else if (get_argument_number(1, argu) == "nointbuf") {
+      else if (kvu_get_argument_number(1, argu) == "nointbuf") {
 	ecadebug->msg("(eca-chainsetup-parser) Disabling extra buffering on realtime devices.");
 	csetup_repp->toggle_max_buffers(false);
       }
-      else if (get_argument_number(1, argu) == "multitrack") {
+      else if (kvu_get_argument_number(1, argu) == "multitrack") {
 	ecadebug->msg("(eca-chainsetup-parser) Enabling multitrack-mode (override).");
 	csetup_repp->multitrack_mode_override_rep = true;
 	csetup_repp->multitrack_mode_rep = true;
       }
-      else if (get_argument_number(1, argu) == "nomultitrack") {
+      else if (kvu_get_argument_number(1, argu) == "nomultitrack") {
 	ecadebug->msg("(eca-chainsetup-parser) Disabling multitrack-mode (override).");
 	csetup_repp->multitrack_mode_override_rep = true;
 	csetup_repp->multitrack_mode_rep = false;
       }
-      else if (get_argument_number(1, argu) == "psr") {
+      else if (kvu_get_argument_number(1, argu) == "psr") {
 	ecadebug->msg("(eca-chainsetup-parser) Enabling precise-sample-rates with OSS audio devices.");
 	csetup_repp->toggle_precise_sample_rates(true);
       }
-      else if (get_argument_number(1, argu) == "nopsr") {
+      else if (kvu_get_argument_number(1, argu) == "nopsr") {
 	ecadebug->msg("(eca-chainsetup-parser) Disabling precise-sample-rates with OSS audio devices.");
 	csetup_repp->toggle_precise_sample_rates(false);
       }
-      else if (get_argument_number(1, argu) == "xruns") {
+      else if (kvu_get_argument_number(1, argu) == "xruns") {
 	ecadebug->msg("(eca-chainsetup-parser) Processing is stopped if an xrun occurs.");
 	csetup_repp->toggle_ignore_xruns(false);
       }
-      else if (get_argument_number(1, argu) == "noxruns") {
+      else if (kvu_get_argument_number(1, argu) == "noxruns") {
 	ecadebug->msg("(eca-chainsetup-parser) Ignoring xruns during processing.");
 	csetup_repp->toggle_ignore_xruns(true);
       }
@@ -442,7 +443,7 @@ void ECA_CHAINSETUP_PARSER::interpret_processing_control (const std::string& arg
       switch(argu[2]) {
       case ':': 
 	{
-	  csetup_repp->set_length_in_seconds(atof(get_argument_number(1, argu).c_str()));
+	  csetup_repp->set_length_in_seconds(atof(kvu_get_argument_number(1, argu).c_str()));
 	  ecadebug->msg("(eca-chainsetup-parser) Set processing time to "
 			+ kvu_numtostr(csetup_repp->length_in_seconds_exact()) + ".");
 	  break;
@@ -485,8 +486,8 @@ void ECA_CHAINSETUP_PARSER::interpret_chains (const std::string& argu)
   switch(argu[1]) {
   case 'a':
     {
-      std::vector<std::string> schains = get_arguments(argu);
-      if (find(schains.begin(), schains.end(), "all") != schains.end()) {
+      std::vector<std::string> schains = kvu_get_arguments(argu);
+      if (std::find(schains.begin(), schains.end(), "all") != schains.end()) {
 	csetup_repp->select_all_chains();
 	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup-parser) Selected all chains.");
       }
@@ -528,10 +529,10 @@ void ECA_CHAINSETUP_PARSER::interpret_audio_format (const std::string& argu)
   case 'f':
     {
       ECA_AUDIO_FORMAT active_sinfo;
-      active_sinfo.set_sample_format_string(get_argument_number(1, argu));
-      active_sinfo.set_channels(atoi(get_argument_number(2, argu).c_str()));
-      active_sinfo.set_samples_per_second(atol(get_argument_number(3, argu).c_str()));
-      if (get_argument_number(4, argu) == "n")
+      active_sinfo.set_sample_format_string(kvu_get_argument_number(1, argu));
+      active_sinfo.set_channels(atoi(kvu_get_argument_number(2, argu).c_str()));
+      active_sinfo.set_samples_per_second(atol(kvu_get_argument_number(3, argu).c_str()));
+      if (kvu_get_argument_number(4, argu) == "n")
 	active_sinfo.toggle_interleaved_channels(false);
       else
 	active_sinfo.toggle_interleaved_channels(true);
@@ -584,14 +585,14 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const std::string& argu)
       switch(argu[2]) {
       case 'f':
 	{
-//  	  add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(get_argument_number(1,argu))));
-          cop = dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(get_argument_number(1,argu)));
+//  	  add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(kvu_get_argument_number(1,argu))));
+          cop = dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(kvu_get_argument_number(1,argu)));
 	  break;
 	}
 
       case 'n': 
 	{
-	  std::string name = get_argument_number(1,argu);
+	  std::string name = kvu_get_argument_number(1,argu);
 	  const PRESET* preset = ECA_OBJECT_FACTORY::preset_object(name);
 	  if (preset != 0)
 	    cop = dynamic_cast<CHAIN_OPERATOR*>(preset->new_expr());
@@ -605,7 +606,7 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const std::string& argu)
       if (cop != 0) {
           MESSAGE_ITEM otemp;
           for(int n = 0; n < cop->number_of_params(); n++) {
-              cop->set_parameter(n + 1, atof(get_argument_number(n + 2, argu).c_str()));
+              cop->set_parameter(n + 1, atof(kvu_get_argument_number(n + 2, argu).c_str()));
               otemp << cop->get_parameter_name(n + 1) << " = ";
               otemp << cop->get_parameter(n +1);
               if (n + 1 < cop->number_of_params()) otemp << ", ";
@@ -634,7 +635,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu)
   DBC_REQUIRE(istatus_rep == false);
   // --------
  
-  string tname = get_argument_number(1, argu);
+  string tname = kvu_get_argument_number(1, argu);
 
   bool match = true;
   if (argu.size() < 2) return;
@@ -695,7 +696,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu)
       if (last_audio_object_repp == 0)
 	ecadebug->msg("Error! No audio object defined.");
 
-      last_audio_object_repp->seek_position_in_seconds(atof(get_argument_number(1, argu).c_str()));
+      last_audio_object_repp->seek_position_in_seconds(atof(kvu_get_argument_number(1, argu).c_str()));
       if (last_audio_object_repp->io_mode() == AUDIO_IO::io_read) {
 	csetup_repp->input_start_pos[csetup_repp->input_start_pos.size() - 1] = last_audio_object_repp->position_in_seconds_exact();
       }
@@ -739,7 +740,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu)
       switch(argu[2]) {
 	case 'd': 
 	  {
-	    std::string tname = get_argument_number(1, argu);
+	    std::string tname = kvu_get_argument_number(1, argu);
 	    ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) MIDI-config: Adding device \"" + tname + "\".");
 	    MIDI_IO* mdev = 0;
 	    mdev = ECA_OBJECT_FACTORY::create_midi_device(argu);
@@ -762,7 +763,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu)
 	  case 'r': 
 	    {
 	      // FIXME: not implemented!
-	      int id = atoi(get_argument_number(1, argu).c_str());
+	      int id = atoi(kvu_get_argument_number(1, argu).c_str());
 	      ecadebug->msg(ECA_DEBUG::info, 
 			    "(eca-chainsetup-parser) MIDI-config: Receiving MMC messages with id  \"" + 
 			    kvu_numtostr(id) +
@@ -774,7 +775,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const std::string& argu)
 
 	  case 's': 
 	    {
-	      int id = atoi(get_argument_number(1, argu).c_str());
+	      int id = atoi(kvu_get_argument_number(1, argu).c_str());
 	      ecadebug->msg(ECA_DEBUG::info, 
 			    "(eca-chainsetup-parser) MIDI-config: Adding MMC-send to device id \"" + 
 			    kvu_numtostr(id) +
@@ -864,7 +865,7 @@ void ECA_CHAINSETUP_PARSER::interpret_controller (const std::string& argu)
   DBC_REQUIRE(istatus_rep == false);
   // --------
 
-  std::string prefix = get_argument_prefix(argu);
+  std::string prefix = kvu_get_argument_prefix(argu);
   if (prefix == "kx") {
     csetup_repp->set_target_to_controller();
     ecadebug->msg(ECA_DEBUG::system_objects, "Selected controllers as parameter control targets.");
@@ -898,7 +899,7 @@ std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const
     t << "-b:" << csetup_repp->buffersize();
     
     if (csetup_repp->raised_priority() == true)
-      t << " -r:" << csetup_repp->sched_priority();
+      t << " -r:" << csetup_repp->get_sched_priority();
     else
       t << " -r:-1";
 

@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// locks.cpp: Various lock related helper functions.
+// kvu_locks.cpp: Various lock related helper functions.
 // Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,7 @@
 #include <pthread.h>
 #include <sys/errno.h>
 
-#include "locks.h"
+#include "kvu_locks.h"
 
 ATOMIC_INTEGER::ATOMIC_INTEGER(int value) {
 #ifdef USE_ASM_ATOMIC

@@ -24,10 +24,10 @@
 #include <errno.h> /* ETIMEDOUT */
 #include <jack/jack.h>
 
-#include <kvutils/dbc.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/procedure_timer.h>
-#include <kvutils/threads.h>
+#include <kvu_dbc.h>
+#include <kvu_numtostr.h>
+#include <kvu_procedure_timer.h>
+#include <kvu_threads.h>
 
 #include "eca-engine.h"
 #include "eca-debug.h"

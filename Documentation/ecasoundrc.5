@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "27\&.02\&.2002" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "25\&.04\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -77,7 +77,9 @@ Configuration file for effect presets\&. Is located in the
 resource directory\&. Defaults to \fIeffect_presets\fP\&.
 .IP 
 .IP "internal-plugin-directory" 
-Directory containing ecasound\'s internal plugins\&. Defaults to \fI{prefix-dir}/lib/ecasound-plugins\fP\&.
+Directory containing ecasound\'s internal plugins\&.
+Defaults to \fI{prefix-dir}/lib/libecasoundX-plugins\fP,
+where "X" is the library interface version number\&.
 .IP 
 .IP "ladspa-plugin-directory" 
 Directory containing LADSPA effect plugins\&. Defaults to \fI{prefix-dir}/lib/ladspa\fP\&.

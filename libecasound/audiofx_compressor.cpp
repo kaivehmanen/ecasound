@@ -40,7 +40,7 @@
 #include <cmath>
 #include <vector>
 
-#include <kvutils/message_item.h>
+#include <kvu_message_item.h>
 
 #include "samplebuffer_iterators.h"
 

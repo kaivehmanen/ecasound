@@ -2,7 +2,7 @@
 #define INCLUDED_AUDIOIO_PROXY_SERVER_IMPL_H
 
 #include <pthread.h>
-#include <kvutils/procedure_timer.h>
+#include <kvu_procedure_timer.h>
 
 class AUDIO_IO_PROXY_SERVER_impl {
 

@@ -13,7 +13,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <ecasound/ecasoundc.h>
+#include <ecasoundc.h>
 
 int main(int argc, char *argv[])
 {

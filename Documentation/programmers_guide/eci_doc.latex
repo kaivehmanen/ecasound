@@ -6,7 +6,7 @@
 
 \title{Ecasound Control Interface Guide}
 \author{Kai Vehmanen}
-\date{21102001}
+\date{25042002}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,9 @@ detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 25.04.2002 - Changed headers path from ``<ecasoundc/file.h>'' to 
+                   ``<file.h>'' and added library version number to 
+                   link instructions.
 \item 21.10.2001 - Added this history section. Minor changes to 
       ECI examples.
 \end{itemize}
@@ -182,10 +185,11 @@ STL vector is used for representing collections of objects
 
 \subsubsection{Usage}
 \begin{enumerate} 
-\item  \#include <ecasound/eca-control-interface.h>
+\item  \#include <eca-control-interface.h>
 \item  create an instance of the ECA\_CONTROL\_INTERFACE class
         and use its member functions
-\item  link you app agains libecasound (-lecasound)
+\item  link you app agains libecasound (-lecasoundX, where
+       X is the interface number)
 \end{enumerate}
 
 \subsubsection{Example}
@@ -193,7 +197,7 @@ STL vector is used for representing collections of objects
 
 #include <iostream>
 #include <unistd.h>
-#include <ecasound/eca-control-interface.h>
+#include <eca-control-interface.h>
 
 int main(int argc, char *argv[])
 {
@@ -254,9 +258,10 @@ pointer (const char*) to the string at index \emph{n}.
 \subsubsection{Usage}
 
 \begin{enumerate}
-\item  \#include <ecasound/ecasoundc.h>
+\item  \#include <ecasoundc.h>
 \item  use the eci\_* routines
-\item  link your app against libecasoundc (-lecasoundc)
+\item  link your app against libecasoundc (-lecasoundcX, 
+       where X is the interface number)
 \end{enumerate}
 
 \subsubsection{Example}
@@ -264,7 +269,7 @@ pointer (const char*) to the string at index \emph{n}.
 
 #include <stdio.h>
 #include <unistd.h>
-#include <ecasound/ecasoundc.h>
+#include <ecasoundc.h>
 
 int main(int argc, char *argv[])
 {

@@ -23,8 +23,8 @@
 #include <string>
 #include <vector>
 
-#include <kvutils.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_utils.h>
+#include <kvu_numtostr.h>
 
 #include "audioio.h"
 #include "eca-chainop.h"
@@ -55,7 +55,7 @@ void ECA_CONTROL_DUMP::dump_chainsetup_status(void) {
 void ECA_CONTROL_DUMP::dump_selected_chain(void) { 
   const std::vector<std::string>& t = ctrl_repp->selected_chains();
   if (t.empty() == false) {
-    dump("dump-c-selected", vector_to_string(t, ","));
+    dump("dump-c-selected", kvu_vector_to_string(t, ","));
   }
   else
     dump("dump-c-selected", "");

@@ -58,7 +58,7 @@ class AUDIO_IO_ALSA_PCM : public AUDIO_IO_DEVICE {
   virtual void stop(void);
 
   virtual long int delay(void) const;
-  virtual long int prefill_space(void) const { if (io_mode() != io_read) return(buffersize() * buffercount_rep); }
+  virtual long int prefill_space(void) const { if (io_mode() != io_read) return(buffersize() * buffercount_rep); else return(0); }
 
   /*@}*/
 

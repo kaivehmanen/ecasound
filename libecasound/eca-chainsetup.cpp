@@ -33,10 +33,10 @@
 #include <sys/mman.h> /* for mlockall() */
 #endif
 
-#include <kvutils/dbc.h>
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/kvu_rtcaps.h>
+#include <kvu_dbc.h>
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
+#include <kvu_rtcaps.h>
 
 #include "eca-resources.h"
 #include "eca-session.h"
@@ -458,7 +458,7 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void)
 
     impl_repp->pserver_rep.set_buffer_defaults(double_buffer_size() / buffersize(), 
 					       buffersize());
-    impl_repp->pserver_rep.set_schedpriority(sched_priority() - 1);
+    impl_repp->pserver_rep.set_schedpriority(get_sched_priority() - 1);
   }
   else {
     /* double_buffering() != true */
@@ -1782,11 +1782,11 @@ bool ECA_CHAINSETUP::raised_priority(void) const {
   return(impl_repp->bmode_active_rep.raised_priority()); 
 }
 
-int ECA_CHAINSETUP::sched_priority(void) const { 
+int ECA_CHAINSETUP::get_sched_priority(void) const { 
   if (impl_repp->bmode_override_rep.is_set_sched_priority() == true)
-    return(impl_repp->bmode_override_rep.sched_priority());
+    return(impl_repp->bmode_override_rep.get_sched_priority());
 
-  return(impl_repp->bmode_active_rep.sched_priority()); 
+  return(impl_repp->bmode_active_rep.get_sched_priority()); 
 }
 
 bool ECA_CHAINSETUP::double_buffering(void) const { 
@@ -1943,7 +1943,7 @@ void ECA_CHAINSETUP::load_from_file(const string& filename,
     if (temp.size() > 0 && temp[0] == '#') {
       continue;
     }
-    vector<string> words = string_to_tokens_quoted(temp);
+    vector<string> words = kvu_string_to_tokens_quoted(temp);
     for(unsigned int n = 0; n < words.size(); n++) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding \"" + words[n] + "\" to options (loaded from \"" + filename + "\".");
       options.push_back(words[n]);

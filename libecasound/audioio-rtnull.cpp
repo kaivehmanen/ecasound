@@ -22,8 +22,8 @@
 #include <string>
 #include <sys/time.h> /* gettimeofday() */
 
-#include <kvutils/dbc.h>
-#include <kvutils/kvutils.h>
+#include <kvu_dbc.h>
+#include <kvu_utils.h>
 
 #include "audioio-device.h"
 #include "audioio-rtnull.h"
@@ -225,6 +225,7 @@ void REALTIME_NULL::write_samples(void* target_buffer,
 long int REALTIME_NULL::prefill_space(void) const
 {
   if (io_mode() != io_read) return(total_buffers_rep * buffersize());
+  return(0);
 }
 
 long int REALTIME_NULL::delay(void) const

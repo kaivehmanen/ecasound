@@ -18,7 +18,7 @@
 // ------------------------------------------------------------------------
 
 #include <cmath> /* ceil() */
-#include <kvutils/dbc.h>
+#include <kvu_dbc.h>
 
 #include "samplebuffer.h"
 #include "audioio-buffered.h"

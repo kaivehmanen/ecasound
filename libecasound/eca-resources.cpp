@@ -56,7 +56,7 @@ ECA_RESOURCES::ECA_RESOURCES(void) {
 
 ECA_RESOURCES::~ECA_RESOURCES(void) { 
   if (userrc_rep.is_modified() == true) {
-    userrc_rep.resource("ecasound-version", ECASOUND_LIBRARY_VERSION);
+    userrc_rep.resource("ecasound-version", ecasound_library_version);
     userrc_rep.save();
   }
 }

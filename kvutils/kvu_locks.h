@@ -1,9 +1,5 @@
-#ifndef INCLUDED_LOCKS_H
-#define INCLUDED_LOCKS_H
-
-#include <pthread.h>
-
-int pthread_mutex_spinlock (pthread_mutex_t *mp, long int spinlimit);
+#ifndef INCLUDED_KVU_LOCKS_H
+#define INCLUDED_KVU_LOCKS_H
 
 /**
  * Simple class providing atomic read and write access

@@ -29,9 +29,9 @@
 #include <sys/types.h> /* off_t */
 #endif
 
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/dbc.h>
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
+#include <kvu_dbc.h>
 
 #include "sample-specs.h" /* for system endianess */
 #include "samplebuffer.h"
@@ -254,7 +254,7 @@ void WAVEFILE::read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
   //  fread(&riff_header_rep,1,sizeof(riff_header_rep),fobject);
   if ((memcmp("RIFF",riff_header_rep.id,4) == 0  &&
        memcmp("WAVE",riff_header_rep.wname,4) == 0) != true) {
-    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: invalid RIFF-header"));
+    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: invalid RIFF-header (read)"));
   }
 }
 
@@ -282,7 +282,7 @@ void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
   //  fwrite(&riff_header_rep,1,sizeof(riff_header_rep),fobject);
   if (memcmp("RIFF",riff_header_rep.id,4) != 0 || 
       memcmp("WAVE",riff_header_rep.wname,4) != 0)
-    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: invalid RIFF-header"));
+    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: invalid RIFF-header (write)"));
 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) Wave data size " + kvu_numtostr(little_endian_uint32(riff_header_rep.size)));
 

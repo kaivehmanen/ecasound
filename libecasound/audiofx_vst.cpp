@@ -23,7 +23,7 @@
 #ifdef FEELING_EXPERIMENTAL
 
 #include <dlfcn.h>
-#include <kvutils.h>
+#include <kvu_utils.h>
 
 #include "samplebuffer.h"
 #include "audiofx_vst.h"

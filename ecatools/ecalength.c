@@ -49,6 +49,7 @@
 #include <stdio.h> 
 #include <unistd.h> 
 #include <string.h>
+#include <stdlib.h> /* exit() */
 
 #include "ecasoundc.h"
 

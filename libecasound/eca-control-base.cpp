@@ -18,21 +18,22 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <assert.h>
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <pthread.h>
-#include <unistd.h>
-#include <signal.h>
 
-#include <kvutils/dbc.h>
-#include <kvutils/kvutils.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/message_item.h>
-#include <kvutils/value_queue.h>
+#include <assert.h>
+#include <pthread.h>
+#include <signal.h>
+#include <unistd.h>
+
+#include <kvu_dbc.h>
+#include <kvu_utils.h>
+#include <kvu_numtostr.h>
+#include <kvu_message_item.h>
+#include <kvu_value_queue.h>
 
 #include "eca-engine.h"
 #include "eca-session.h"
@@ -59,14 +60,16 @@ void* ECA_CONTROL_BASE::start_normal_thread(void *ptr)
   return(0);
 }
 
-ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession) {
+ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession)
+{
   session_repp = psession;
   selected_chainsetup_repp = psession->selected_chainsetup_repp;
   engine_repp = 0;
   engine_exited_rep.set(0);
 }
 
-ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void) {
+ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void)
+{
   close_engine();
 }
 
@@ -74,16 +77,15 @@ ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void) {
  * Start the processing engine
  *
  * @pre is_connected() == true
- * @pre is_connected() == true
+ * @pre is_running() != true
  * @post is_engine_started() == true
  */
-void ECA_CONTROL_BASE::start(void) {
+void ECA_CONTROL_BASE::start(void)
+{
   // --------
   DBC_REQUIRE(is_connected() == true);
+  DBC_REQUIRE(is_running() != true);
   // --------
-
-  if (is_engine_started() == true &&
-      engine_repp->status() == ECA_ENGINE::engine_status_running) return;
 
   ecadebug->control_flow("Controller/Processing started");
 
@@ -108,6 +110,7 @@ void ECA_CONTROL_BASE::start(void) {
  * processing is finished.
  *
  * @pre is_connected() == true
+ * @pre is_running() != true
  * @post is_finished() == true || 
  *       processing_started == true && is_running() != true ||
  *       processing_started != true &&
@@ -119,10 +122,8 @@ void ECA_CONTROL_BASE::run(void)
 {
   // --------
   DBC_REQUIRE(is_connected() == true);
+  DBC_REQUIRE(is_running() != true);
   // --------
-
-  if (is_engine_started() == true &&
-      engine_repp->status() == ECA_ENGINE::engine_status_running) return;
 
   ecadebug->control_flow("Controller/Starting batch processing");
 
@@ -133,20 +134,27 @@ void ECA_CONTROL_BASE::run(void)
   }
 
   if (is_engine_started() != true) {
-    ecadebug->msg("(eca-controller) Can't start processing: couldn't start the engine. (2)");
+    ecadebug->msg("(eca-control-base) Can't start processing: couldn't start the engine. (2)");
   } 
   else { 
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 
-    while(is_finished() == false) {
+    DBC_CHECK(is_finished() != true);
+
+    while(is_finished() != true) {
+      
+      /* sleep for one second */
       kvu_sleep(1, 0);
+
       if (processing_started != true) {
 	if (is_running() == true) {
+	  /* make a note that engine state changed to 'running' */
 	  processing_started = true;
 	}
 	else if (is_engine_started() == true) {
 	  if (engine_repp->status() != ECA_ENGINE::engine_status_stopped) {
-	    /* status() is either 'not_ready' or 'error' */
+	    /* not running, so status() is either 'not_ready' or 'error' */
+	    ecadebug->msg("(eca-control-base) Can't start processing: engine startup failed. (3)");
 	    break;
 	  }
 	}
@@ -157,9 +165,13 @@ void ECA_CONTROL_BASE::run(void)
 	}
       }
       else {
-	if (is_running() != true) break;
+	/* engine was started succesfully (processing_started == true) */
+	if (is_running() != true) {
+	  /* operation succesfully completed, exit from run() */
+	  break;
+	}
       }
-    }  
+    }
   }    
 
   ecadebug->control_flow("Controller/Batch processing finished");
@@ -178,14 +190,16 @@ void ECA_CONTROL_BASE::run(void)
  * Stops the processing engine.
  *
  * @pre is_engine_started() == true
+ * @pre is_running() == true
  * @post is_running() == false
  */
-void ECA_CONTROL_BASE::stop(void) {
+void ECA_CONTROL_BASE::stop(void)
+{
   // --------
   DBC_REQUIRE(is_engine_started() == true);
+  DBC_REQUIRE(is_running() == true);
   // --------
 
-  if (engine_repp->status() != ECA_ENGINE::engine_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped");
   engine_repp->command(ECA_ENGINE::ep_stop, 0.0);
   
@@ -285,9 +299,9 @@ void ECA_CONTROL_BASE::close_engine(void)
 
   engine_repp->command(ECA_ENGINE::ep_exit, 0.0);
 
-  // --
+ // --
   // wait until run_engine() is finished
-  ::pthread_join(th_cqueue_rep,NULL);
+  pthread_join(th_cqueue_rep,NULL);
 
   if (engine_exited_rep.get() == 1) {
     delete engine_repp;

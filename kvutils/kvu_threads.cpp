@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// threads.cpp: Various pthread related helper functions.
+// kvu_threads.cpp: Various pthread related helper functions.
 // Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 #include <sys/time.h> /* gettimeofday() */
 #include <errno.h> /* ETIMEDOUT */
 
-#include "threads.h"
+#include "kvu_threads.h"
 
 /**
  * A variant of the standard pthread_mutex_lock. This routine is

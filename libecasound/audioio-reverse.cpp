@@ -20,8 +20,8 @@
 
 #include <iostream>
 
-#include <kvutils/dbc.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_dbc.h>
+#include <kvu_numtostr.h>
 
 #include "audioio-null.h"
 #include "audioio-reverse.h"

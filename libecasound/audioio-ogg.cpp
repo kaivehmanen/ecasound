@@ -22,8 +22,8 @@
 
 #include <unistd.h>
 
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
 
 #include "audioio-ogg.h"
 

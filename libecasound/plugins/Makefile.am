@@ -42,7 +42,7 @@ INCLUDES =	-I$(srcdir) \
 		$(arts_cflags) \
 		$(jack_cflags)
 
-libdir = ${exec_prefix}/lib/ecasound-plugins
+libdir = ${exec_prefix}/lib/libecasound@LIBECASOUND_VERSION@-plugins
 
 # ----------------------------------------------------------------------
 # header files

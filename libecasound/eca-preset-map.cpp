@@ -22,7 +22,7 @@
 #include <vector>
 #include <string>
 
-#include <kvutils/dbc.h>
+#include <kvu_dbc.h>
 
 #include "eca-object.h"
 #include "eca-resources.h"

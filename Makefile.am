@@ -4,9 +4,9 @@ EXTRA_DIST = BUGS NEWS TODO generic_oscillators effect_presets ecasound.spec
 EXTRA_DIST += depcomp
 
 if ECA_AM_SYSTEM_READLINE
-SUBDIRS = kvutils libecasound libecasoundc pyecasound ecasound ecatools Documentation examples contrib
+SUBDIRS = kvutils libecasound libecasoundc pyecasound ecasound ecatools Documentation examples
 else
-SUBDIRS = kvutils readline-4.0 libecasound libecasoundc pyecasound ecasound ecatools Documentation examples contrib
+SUBDIRS = kvutils readline-4.0 libecasound libecasoundc pyecasound ecasound ecatools Documentation examples
 endif
 AUTOMAKE_OPTIONS = foreign
 
@@ -25,13 +25,3 @@ uninstall-local:
 		$(DESTDIR)$(datadir)/ecasound/effect_presets \
 		$(DESTDIR)$(datadir)/ecasound/ecasoundrc
 	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(datadir)/ecasound
-
-delete-static-libs:
-	rm -f $(DESTDIR)$(prefix)/lib/libkvutils.a
-	rm -f $(DESTDIR)$(prefix)/lib/libecasound.a
-	rm -f $(DESTDIR)$(prefix)/lib/libecasoundc.a
-
-strip-shared-libs:
-	strip $(DESTDIR)$(prefix)/lib/libkvutils.so
-	strip $(DESTDIR)$(prefix)/lib/libecasound.so
-	strip $(DESTDIR)$(prefix)/lib/libecasoundc.so

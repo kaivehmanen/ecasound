@@ -1,20 +1,33 @@
+# ---
+# definitions
+
 %define python_sitepkgsdir %(echo `python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[:3] + '/site-packages/')"`)
 %define python_compile_opt python -O -c "import compileall; compileall.compile_dir('.')"
 %define python_compile python -c "import compileall; compileall.compile_dir('.')"
 
+# ---
+# global settings
 
 Buildroot: /tmp/ecasound-build
 Prefix: /usr/local
 Packager: Kai Vehmanen <kai.vehmanen@wakkanet.fi>
-Distribution: Red Hat Contrib
+Distribution: www.eca.cx audio software
+
+# ---
+# main package
+
 Name: ecasound
 Version: @VERSION@
 Release: 1
 Copyright: GPL
 Source: http://ecasound.seul.org/download/ecasound-@VERSION@.tar.gz
+URL: http://www.eca.cx/ecasound
 
 Summary: ecasound - multitrack audio processing tool
 Group: Applications/Sound
+
+requires: libecasound@LIBECASOUND_VERSION@
+requires: libkvutils@LIBKVUTILS_VERSION@
 
 %description
 Ecasound is a software package designed for multitrack audio
@@ -28,32 +41,79 @@ and MIDI-CCs. As most functionality is located in shared libraries,
 creating alternative user-interfaces is easy. A versatile console mode
 interface is included in the package.
 
-%package devel
-Summary: Ecasound - Library header files
+# ---
+# main library package - libecasound
+
+%package -n libecasound@LIBECASOUND_VERSION@
+Summary: Ecasound - libecasound package
 Group: Applications/Sound
-Requires: ecasound
 
-%description devel
-Headers files needed for compiling other programs against
-ecasound libraries. This is package is not required for installing 
-other ecasound RPMs.
+requires: libkvutils@LIBKVUTILS_VERSION@
 
-%package plugins
-Summary: Additional ecasound plugins (ALSA, Audiofile, aRts).
+%description -n libecasound@LIBECASOUND_VERSION@
+Ecasound - libecasound package. Includes both
+runtime libraries needed at runtime and headers 
+files needed for compilation. 
+
+# ---
+# library package - libkvutils
+
+%package -n libkvutils@LIBKVUTILS_VERSION@
+Summary: Ecasound - libkvutils
+Group: Applications/Sound
+
+%description -n libkvutils@LIBKVUTILS_VERSION@
+Ecasound - libkvutils package. Includes both
+runtime libraries needed at runtime and headers 
+files needed for compilation.
+
+# ---
+# library package - libecasoundc
+
+%package -n libecasoundc@LIBECASOUNDC_VERSION@
+Summary: Ecasound - libecasoundc
+Group: Applications/Sound
+
+requires: libecasound@LIBECASOUND_VERSION@
+requires: libkvutils@LIBKVUTILS_VERSION@
+
+%description -n libecasoundc@LIBECASOUNDC_VERSION@
+Ecasound - libecasoundc package. Provides 
+C implementation of the Ecasound Control Interface
+(ECI). Both runtime libraries and and headers 
+files are included in the package.
+
+# ---
+# plugins package
+
+%package -n libecasound@LIBECASOUND_VERSION@-plugins
+Summary: Additional ecasound plugins (ALSA, JACK, libaudiofile, aRts).
 Group: Applications/Sound
 AutoReqProv: no
-Requires: ecasound
 
-%description plugins
-Additional ecasound plugins (ALSA, Audiofile, aRts).
+requires: libecasound@LIBECASOUND_VERSION@
+requires: libkvutils@LIBKVUTILS_VERSION@
+
+%description -n libecasound@LIBECASOUND_VERSION@-plugins
+Additional ecasound plugins (ALSA, JACK, libaudiofile, aRts).
+Note! Installing this package doesn\'t require you to install 
+all components needed by the various plugins.
+
+# ---
+# pyecasound
 
 %package -n pyecasound
 Summary: Python bindings to ecasound control interface.
 Group: Applications/Sound
-Requires: ecasound
+
+requires: libecasound@LIBECASOUND_VERSION@
+requires: libkvutils@LIBKVUTILS_VERSION@
 
 %description -n pyecasound
-Python bindings to ecasound control interface.
+Python bindings to Ecasound Control Interface (ECI).
+
+# ---
+# build phase
 
 %prep
 %setup -n ecasound-@VERSION@
@@ -63,25 +123,50 @@ make
 
 %install
 make DESTDIR="$RPM_BUILD_ROOT" install-strip
-make DESTDIR="$RPM_BUILD_ROOT" delete-static-libs
-make DESTDIR="$RPM_BUILD_ROOT" strip-shared-libs
 ( cd pyecasound
   %python_compile_opt
   %python_compile
   install *.pyc *.pyo $RPM_BUILD_ROOT%{python_sitepkgsdir}
 )
+# note! this is needed for automake 1.4 and older
+strip --strip-unneeded ${RPM_BUILD_ROOT}/lib/*.so
 
-%post
+# scripts for libecasound
+%post -n libecasound@LIBECASOUND_VERSION@
 if ! grep %{prefix}/lib /etc/ld.so.conf > /dev/null ; then
   echo "%{prefix}/lib" >> /etc/ld.so.conf
 fi
 /sbin/ldconfig
 
-%postun -p /sbin/ldconfig
+%postun -n libecasound@LIBECASOUND_VERSION@
+-p /sbin/ldconfig
+
+# scripts for libkvutils
+%post -n libkvutils@LIBKVUTILS_VERSION@
+if ! grep %{prefix}/lib /etc/ld.so.conf > /dev/null ; then
+  echo "%{prefix}/lib" >> /etc/ld.so.conf
+fi
+/sbin/ldconfig
+
+%postun -n libkvutils@LIBKVUTILS_VERSION@
+-p /sbin/ldconfig
+
+# scripts for libecasoundc
+%post -n libecasoundc@LIBECASOUNDC_VERSION@
+if ! grep %{prefix}/lib /etc/ld.so.conf > /dev/null ; then
+  echo "%{prefix}/lib" >> /etc/ld.so.conf
+fi
+/sbin/ldconfig
+
+%postun -n libecasoundc@LIBECASOUNDC_VERSION@
+-p /sbin/ldconfig
+
+# ---
+# files sections (main)
 
 %files
 %defattr(-, root, root)
-%doc NEWS README INSTALL BUGS Documentation contrib examples
+%doc NEWS README INSTALL BUGS Documentation examples
 %doc /usr/local/man/man1/ecasound.1
 %doc /usr/local/man/man1/ecatools.1
 %doc /usr/local/man/man1/ecasound-iam.1
@@ -92,21 +177,46 @@ fi
 /usr/local/bin/ecanormalize
 /usr/local/bin/ecaplay
 /usr/local/bin/ecasignalview
-/usr/local/bin/ecasound-config
-/usr/local/bin/ecasoundc-config
-/usr/local/lib/libecasound.*
-/usr/local/lib/libecasoundc.*
-/usr/local/lib/libkvutils.*
 %config /usr/local/share/ecasound
 
-%files devel
-%defattr(-, root, root)
-/usr/local/include/ecasound
-/usr/local/include/kvutils
+# ---
+# files sections (libecasound)
 
-%files plugins
+%files -n libecasound@LIBECASOUND_VERSION@
 %defattr(-, root, root)
-/usr/local/lib/ecasound-plugins
+/usr/local/lib/libecasound@LIBECASOUND_VERSION@.la
+/usr/local/lib/libecasound@LIBECASOUND_VERSION@.so*
+/usr/local/include/libecasound@LIBECASOUND_VERSION@
+/usr/local/bin/libecasound@LIBECASOUND_VERSION@-config
+
+# ---
+# files sections (libkvutils)
+
+%files -n libkvutils@LIBKVUTILS_VERSION@
+%defattr(-, root, root)
+/usr/local/lib/libkvutils@LIBKVUTILS_VERSION@.la
+/usr/local/lib/libkvutils@LIBKVUTILS_VERSION@.so*
+/usr/local/include/kvutils@LIBKVUTILS_VERSION@
+
+# ---
+# files sections (libecasoundc)
+
+%files -n libecasoundc@LIBECASOUNDC_VERSION@
+%defattr(-, root, root)
+/usr/local/lib/libecasoundc@LIBECASOUNDC_VERSION@.la
+/usr/local/lib/libecasoundc@LIBECASOUNDC_VERSION@.so*
+/usr/local/bin/libecasoundc@LIBECASOUNDC_VERSION@-config
+/usr/local/include/libecasoundc@LIBECASOUNDC_VERSION@
+
+# ---
+# files sections (plugins)
+
+%files -n libecasound@LIBECASOUND_VERSION@-plugins
+%defattr(-, root, root)
+/usr/local/lib/libecasound@LIBECASOUND_VERSION@-plugins
+
+# ---
+# files sections (pyecasound)
 
 %files -n pyecasound
 %defattr(644,root,root,755)
@@ -114,7 +224,20 @@ fi
 %{python_sitepkgsdir}/*.pyo
 %{python_sitepkgsdir}/*.pyc
 
+# ---
+# changelog
+
 %changelog
+* Thu Apr 25 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+- libraries put to separate subpackages, interface 
+  version numbers code to library names
+- ecasound-config renamed to libecasound-config
+- ecasoundc-config renamed to libecasoundc-config
+- plugin install dir changed from prefix/lib/ecasound-plugins
+  to prefix/lib/libecasoundX-plugins
+- 'contrib' directory removed
+- ecasound-plugins subpackage renamed to libecasoundX-plugins
+
 * Mon Oct 01 2001 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 - dropped the hardcoded python module path from configure
   argument list

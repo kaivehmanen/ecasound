@@ -1,7 +1,7 @@
 #ifndef INCLUDED_AUDIOIO_PROXY_BUFFER_H
 #define INCLUDED_AUDIOIO_PROXY_BUFFER_H
 
-#include <kvutils/locks.h>
+#include <kvu_locks.h>
 #include "audioio.h"
 
 class SAMPLE_BUFFER;

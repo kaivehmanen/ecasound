@@ -26,10 +26,10 @@
 
 #include <alsa/asoundlib.h>
 
-#include <kvutils/dbc.h>
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils.h>
+#include <kvu_dbc.h>
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
+#include <kvu_utils.h>
 
 #include "samplebuffer.h"
 #include "audioio-device.h"

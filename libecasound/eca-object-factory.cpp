@@ -21,9 +21,9 @@
 #include <map>
 #include <string>
 
-#include <kvutils/dbc.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/message_item.h>
+#include <kvu_dbc.h>
+#include <kvu_numtostr.h>
+#include <kvu_message_item.h>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -182,7 +182,7 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg) {
   DBC_REQUIRE(arg.empty() != true);
   // --
  
-  string fname = get_argument_number(1, arg);
+  string fname = kvu_get_argument_number(1, arg);
   if (fname.find(".") != string::npos) {
     fname = string(fname, fname.find_last_of("."), string::npos);
   }
@@ -195,7 +195,7 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg) {
     new_file = main_file->new_expr();
     ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Object \"" + arg + "\" created, type \"" + new_file->name() + "\". Has " + kvu_numtostr(new_file->number_of_params()) + " parameter(s).");
     for(int n = 0; n < new_file->number_of_params(); n++) {
-      new_file->set_parameter(n + 1, get_argument_number(n + 1, arg));
+      new_file->set_parameter(n + 1, kvu_get_argument_number(n + 1, arg));
     }
   }
   return(new_file);
@@ -218,7 +218,7 @@ MIDI_IO* ECA_OBJECT_FACTORY::create_midi_device(const string& arg) {
   // --------
  
   ECA_STATIC_OBJECT_MAPS::register_default_objects();
-  string fname = get_argument_number(1, arg);
+  string fname = kvu_get_argument_number(1, arg);
 
   const MIDI_IO* device = 0;
   device = dynamic_cast<const MIDI_IO*>(ECA_STATIC_OBJECT_MAPS::midi_device_map()->object_expr(fname));
@@ -228,7 +228,7 @@ MIDI_IO* ECA_OBJECT_FACTORY::create_midi_device(const string& arg) {
     new_device = device->new_expr();
     ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Object \"" + arg + "\" created, type \"" + new_device->name() + "\". Has " + kvu_numtostr(new_device->number_of_params()) + " parameter(s).");
     for(int n = 0; n < new_device->number_of_params(); n++) {
-      new_device->set_parameter(n + 1, get_argument_number(n + 1, arg));
+      new_device->set_parameter(n + 1, kvu_get_argument_number(n + 1, arg));
     }
   }
   return(new_device);
@@ -251,9 +251,9 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_input(const string& argu,
   // --------
 
   LOOP_DEVICE* p = 0;
-  string tname = get_argument_number(1, argu);
+  string tname = kvu_get_argument_number(1, argu);
   if (tname.find("loop") != string::npos) {
-    int id = atoi(get_argument_number(2, argu).c_str());
+    int id = atoi(kvu_get_argument_number(2, argu).c_str());
     p = new LOOP_DEVICE(id);
     if (loop_map->find(id) == loop_map->end()) { 
       (*loop_map)[id] = p;
@@ -284,9 +284,9 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_output(const string& argu,
   // --------
 
   LOOP_DEVICE* p = 0;
-  string tname = get_argument_number(1, argu);
+  string tname = kvu_get_argument_number(1, argu);
   if (tname.find("loop") != string::npos) {
-    int id = atoi(get_argument_number(2, argu).c_str());
+    int id = atoi(kvu_get_argument_number(2, argu).c_str());
     p = new LOOP_DEVICE(id);
     if (loop_map->find(id) == loop_map->end()) { 
       (*loop_map)[id] = p;
@@ -320,9 +320,9 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu) {
 #ifdef HAVE_LADSPA_H
   MESSAGE_ITEM otemp;
   const CHAIN_OPERATOR* cop = 0;
-  string prefix = get_argument_prefix(argu);
+  string prefix = kvu_get_argument_prefix(argu);
   if (prefix == "el" || prefix == "eli") {
-    string unique = get_argument_number(1, argu);
+    string unique = kvu_get_argument_number(1, argu);
     if (prefix == "el") 
       cop = ECA_OBJECT_FACTORY::ladspa_map_object(unique);
     else 
@@ -336,7 +336,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu) {
 		    new_cop->name() + "\"");
       otemp << "(eca-object-factory) Setting parameters: ";
       for(int n = 0; n < new_cop->number_of_params(); n++) {
-	new_cop->set_parameter(n + 1, atof(get_argument_number(n + 2, argu).c_str()));
+	new_cop->set_parameter(n + 1, atof(kvu_get_argument_number(n + 2, argu).c_str()));
 	otemp << new_cop->get_parameter_name(n + 1) << " = ";
 	otemp << new_cop->get_parameter(n + 1);
 	if (n + 1 < new_cop->number_of_params()) otemp << ", ";
@@ -365,7 +365,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const string& argu) {
 
   MESSAGE_ITEM otemp;
   const CHAIN_OPERATOR* cop = 0;
-  string prefix = get_argument_prefix(argu);
+  string prefix = kvu_get_argument_prefix(argu);
 
 #ifdef FEELING_EXPERIMENTAL
   cop = dynamic_cast<const CHAIN_OPERATOR*>(ECA_STATIC_OBJECT_MAPS::vst_plugin_map().object(prefix));
@@ -376,7 +376,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const string& argu) {
     ecadebug->msg(ECA_DEBUG::user_objects, "(eca-object-factory) Creating VST-plugin \"" + new_cop->name() + "\"");
     otemp << "(eca-object-factory) Setting parameters: ";
     for(int n = 0; n < new_cop->number_of_params(); n++) {
-      new_cop->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
+      new_cop->set_parameter(n + 1, atof(kvu_get_argument_number(n + 1, argu).c_str()));
       otemp << new_cop->get_parameter_name(n + 1) << " = ";
       otemp << new_cop->get_parameter(n + 1);
       if (n + 1 < new_cop->number_of_params()) otemp << ", ";
@@ -403,7 +403,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const string& argu) {
   DBC_REQUIRE(argu[0] == '-');
   // --------
 
-  string prefix = get_argument_prefix(argu);
+  string prefix = kvu_get_argument_prefix(argu);
 
   MESSAGE_ITEM otemp;
   const CHAIN_OPERATOR* cop = ECA_OBJECT_FACTORY::chain_operator_map_object(prefix);
@@ -416,7 +416,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const string& argu) {
     //    otemp << "(eca-chainsetup) Adding effect " << new_cop->name();
     otemp << "(eca-object-factory) Setting parameters: ";
     for(int n = 0; n < new_cop->number_of_params(); n++) {
-      new_cop->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
+      new_cop->set_parameter(n + 1, atof(kvu_get_argument_number(n + 1, argu).c_str()));
       otemp << new_cop->get_parameter_name(n + 1) << " = ";
       otemp << new_cop->get_parameter(n +1);
       if (n + 1 < new_cop->number_of_params()) otemp << ", ";
@@ -445,7 +445,7 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu) {
   // --------
 
   if (argu.size() > 0 && argu[0] != '-') return(0);
-  string prefix = get_argument_prefix(argu);
+  string prefix = kvu_get_argument_prefix(argu);
 
   const GENERIC_CONTROLLER* gcontroller = ECA_OBJECT_FACTORY::controller_map_object(prefix);
   GENERIC_CONTROLLER* new_gcontroller = 0;
@@ -465,7 +465,7 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu) {
       otemp << "(eca-object-factory) Setting parameters: ";
       int numparams = new_gcontroller->number_of_params();
       for(int n = 0; n < numparams; n++) {
-	new_gcontroller->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
+	new_gcontroller->set_parameter(n + 1, atof(kvu_get_argument_number(n + 1, argu).c_str()));
 	otemp << new_gcontroller->get_parameter_name(n + 1) << " = ";
 	otemp << new_gcontroller->get_parameter(n +1);
 	numparams = new_gcontroller->number_of_params(); // in case 'n_o_p()' varies

@@ -19,8 +19,8 @@
 
 #include <cmath>
 
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
 
 #include "samplebuffer_iterators.h"
 #include "audiofx_analysis.h"
@@ -240,7 +240,7 @@ string EFFECT_DCFIND::parameter_names(void) const {
   for(int n = 0; n < channels(); n++) {
     t.push_back("result-offset-ch" + kvu_numtostr(n));
   }
-  return(vector_to_string(t, ","));
+  return(kvu_vector_to_string(t, ","));
 }
 
 CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_deltafix(int channel) const { 

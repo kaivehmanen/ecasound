@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>27.02.2002</h2>
+<h2>25.04.2002</h2>
 
 
     
@@ -91,7 +91,9 @@
   	Configuration file for effect presets. Is located in the 
   	resource directory. Defaults to <em>effect_presets</em>.
 <p><p></p><dt><strong>internal-plugin-directory</strong><dd>
-	Directory containing ecasound's internal plugins. Defaults to <em>{prefix-dir}/lib/ecasound-plugins</em>.
+	Directory containing ecasound's internal plugins.
+	Defaults to <em>{prefix-dir}/lib/libecasoundX-plugins</em>,
+	where "X" is the library interface version number.
 <p><p></p><dt><strong>ladspa-plugin-directory</strong><dd>
 	Directory containing LADSPA effect plugins. Defaults to <em>{prefix-dir}/lib/ladspa</em>.
 	If environment variable <em>LADSPA_PATH</em> exists, directories

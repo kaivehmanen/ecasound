@@ -2,7 +2,7 @@
 #define INCLUDED_DYNAMIC_PARAMETERS_H
 
 #include <string>
-#include <kvutils/kvutils.h>
+#include <kvu_utils.h>
 
 /**
  * Virtual template class that provides a system for dynamically 
@@ -25,14 +25,14 @@ class DYNAMIC_PARAMETERS {
   /**
    * Gets the total number of of parameters.
    */
-  int number_of_params(void) const { return(string_to_vector(parameter_names(), ',').size()); }
+  int number_of_params(void) const { return(kvu_string_to_vector(parameter_names(), ',').size()); }
 
   /**
    * Gets name of parameter with index 'id'.
    * @param id parameter id number
    * 
    */
-  std::string get_parameter_name(int id) const { return(get_argument_number(id, parameter_names())); }
+  std::string get_parameter_name(int id) const { return(kvu_get_argument_number(id, parameter_names())); }
 
   /**
    * A comma-separated list of parameters names. Derived classes 

@@ -1,6 +1,6 @@
 /** 
  * acconfig.h for ecasound
- * last modified: 24.02.2002
+ * last modified: 25.04.2002
  */
 
 /* Package name */
@@ -8,6 +8,15 @@
 
 /* Package version */
 #undef VERSION
+
+/* libecasound interface version */
+#undef LIBECASOUND_VERSION
+
+/* libecasoundc interface version */
+#undef LIBECASOUNDC_VERSION
+
+/* libkvutils interface version */
+#undef LIBKVUTILS_VERSION
 
 /* Ecasound configure script prefix */
 #undef ECA_PREFIX

@@ -20,8 +20,8 @@
 #include <iostream>
 #include <cmath>
 
-#include <kvutils/dbc.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_dbc.h>
+#include <kvu_numtostr.h>
 
 #include "samplebuffer_iterators.h"
 #include "eca-operator.h"
@@ -173,7 +173,7 @@ void EFFECT_PITCH_SHIFT::process(void)
   sbuf_repp->resample(samples_per_second(), target_rate_rep); 
 }
 
-long int EFFECT_PITCH_SHIFT::output_samples(long int i_samples)
+long int EFFECT_PITCH_SHIFT::output_samples(long int i_samples) const
 {
   DBC_CHECK(sbuf_repp != 0);
   return(static_cast<long int>(static_cast<double>(target_rate_rep) /

@@ -19,7 +19,7 @@
 // ------------------------------------------------------------------------
 
 #include <cmath>
-#include <kvutils.h>
+#include <kvu_utils.h>
 
 #include "samplebuffer_iterators.h"
 #include "eca-debug.h"

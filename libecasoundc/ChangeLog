@@ -2,6 +2,12 @@
 *** ecasound - changes and additions to libecasoundc interface      ***
 -----------------------------------------------------------------------
 
+2002-04-25  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* library version changed to 2:0:0
+	* library version number added to library name; current
+	  name is libecasoundc2
+	
 2001-06-04  Kai Vehmanen  <kaiv@wakkanet.fi>
 
 	* library version changed to 1:0:1

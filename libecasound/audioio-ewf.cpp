@@ -23,9 +23,9 @@
 #include <fstream>
 #include <cmath>
 
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/dbc.h>
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
+#include <kvu_dbc.h>
 
 #include "eca-object-factory.h"
 #include "samplebuffer.h"

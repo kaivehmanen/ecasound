@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// value_queue.cpp: A thread-safe way to transmit int-double pairs.
+// kvu_value_queue.cpp: A thread-safe way to transmit int-double pairs.
 // Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 #include <errno.h>
 #include <assert.h>
 
-#include "value_queue.h"
+#include "kvu_value_queue.h"
 
 VALUE_QUEUE::VALUE_QUEUE(void) { 
   pthread_mutex_init(&lock_rep, NULL);

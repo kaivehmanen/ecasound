@@ -20,7 +20,7 @@
 
 #include <cmath>
 
-#include <kvutils/message_item.h>
+#include <kvu_message_item.h>
 
 #include "samplebuffer_iterators.h"
 #include "audiofx_envelope_modulation.h"

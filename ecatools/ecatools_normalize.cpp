@@ -23,8 +23,8 @@
 #include <signal.h>
 #include <stdlib.h>
 
-#include <kvutils/com_line.h>
-#include <kvutils/temporary_file_directory.h>
+#include <kvutils/kvu_com_line.h>
+#include <kvutils/kvu_temporary_file_directory.h>
 #include <kvutils/kvu_numtostr.h>
 
 #include <eca-debug.h>
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
   try {
     string filename;
-    double multiplier;
+    double multiplier = 1.0f;
     EFFECT_ANALYZE* volume = 0;
     EFFECT_AMPLIFY* amp = 0;
     

@@ -21,7 +21,7 @@
 #include <vector>
 #include <string>
 
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_numtostr.h>
 
 #include "osc-gen.h"
 #include "oscillator.h"

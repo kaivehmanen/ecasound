@@ -31,18 +31,18 @@ ecasound_debug_SOURCES = $(ecasound_SOURCES)
 
 if ECA_AM_SYSTEM_READLINE
 ecasound_LDADD = $(termcap_library) \
-		$(top_builddir)/libecasound/libecasound.la \
-		$(top_builddir)/kvutils/libkvutils.la
+		$(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@.la \
+		$(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@.la
 ecasound_debug_LDADD = $(termcap_library) \
-	 	$(top_builddir)/libecasound/libecasound_debug.la \
-		$(top_builddir)/kvutils/libkvutils_debug.la
+	 	$(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@_debug.la \
+		$(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@_debug.la
 else
 ecasound_LDADD = $(top_builddir)/readline-4.0/libreadline.a \
 		$(top_builddir)/readline-4.0/libhistory.a $(termcap_library) \
-		$(top_builddir)/libecasound/libecasound.la \
-		$(top_builddir)/kvutils/libkvutils.la
+		$(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@.la \
+		$(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@.la
 ecasound_debug_LDADD = $(top_builddir)/readline-4.0/libreadline.a \
 		$(top_builddir)/readline-4.0/libhistory.a $(termcap_library) \
-	 	$(top_builddir)/libecasound/libecasound_debug.la \
-		$(top_builddir)/kvutils/libkvutils_debug.la
+	 	$(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@_debug.la \
+		$(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@_debug.la
 endif

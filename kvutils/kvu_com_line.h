@@ -1,5 +1,5 @@
-#ifndef INCLUDED_COM_LINE_H
-#define INCLUDED_COM_LINE_H
+#ifndef INCLUDED_KVU_COM_LINE_H
+#define INCLUDED_KVU_COM_LINE_H
 
 #include <string>
 #include <vector>

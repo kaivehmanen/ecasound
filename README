@@ -182,6 +182,7 @@ Davis, Paul - Has probably written more Linux audio related code (and mails) tha
 Beaupre, Antoine - Patches for FreeBSD compatibility. [beaupran]
 Bowman, Brad - Perl ECI binding, bug hunting. [bowman]
 Campbell, Ross - Tips concerning Solaris. [rcampbel]
+Carmack, Michael - Support for devfs /dev/sound/dsp devices [karmak]
 Chappell, Jesse - Bug fixes. [jesse]
 Coker, Rob - Pulse gate (-eemp) code. [rcs]
 Darilek, Nolan - Ogg vorbis fixes. [nolan_d]
@@ -213,6 +214,7 @@ Sousa, Rui - OSS bug fixes.
 Stradling, Rob - MIDI-MMC bug fixes. [robstr]
 Tiedemann, Eric S. - Wrote the eci.py interface. [est]
 Tkachenko, Vadim - Autoconf magic. :)
+Yee-king, Matt - Helped debugging ppc big-endian troubles. [yeeking]
 Westbrook, Tim - Autoconf 2.5x fixes. [iondiode]
 
 all LAD members - Always a great source of inspiration!

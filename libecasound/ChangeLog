@@ -2,6 +2,20 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2002-04-25  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* library version number added to library name; current
+	  name is libecasound8
+	* eca-chainsetup.h, eca-chainsetup-bufparams.h
+	  (sched_priority): 
+        renamed to get_sched_priority to avoid namespace conflict 
+        with system header sched.h which introduces a macro with 
+        the same name
+
+2002-04-25  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+    
+        * eca-version.h: replaced all macros with static const variables
+ 
 2002-03-13  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-chainsetup.h (multitrack_mode): added

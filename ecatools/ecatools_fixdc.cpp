@@ -23,8 +23,8 @@
 #include <signal.h>
 #include <stdlib.h>
 
-#include <kvutils/com_line.h>
-#include <kvutils/temporary_file_directory.h>
+#include <kvutils/kvu_com_line.h>
+#include <kvutils/kvu_temporary_file_directory.h>
 #include <kvutils/kvu_numtostr.h>
 
 #include <samplebuffer.h>

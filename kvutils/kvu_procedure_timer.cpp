@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// procedure_timer.cpp: Procedure timer. Meant for timing and gathering 
-//                      statistics of repeating events.
+// kvu_procedure_timer.cpp: Procedure timer. Meant for timing and gathering 
+//                          statistics of repeating events.
 // Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 #include <cmath>
 #include <math.h> /* floor() */
 #include "kvu_numtostr.h"
-#include "procedure_timer.h"
+#include "kvu_procedure_timer.h"
 
 PROCEDURE_TIMER::PROCEDURE_TIMER(int id) {
   reset();

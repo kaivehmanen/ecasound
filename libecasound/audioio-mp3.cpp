@@ -48,8 +48,8 @@
 #include <sys/types.h> /* uint32_t, etc types */
 #endif
 
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
 
 #include "audioio-mp3.h"
 #include "audioio-mp3_impl.h"
@@ -395,7 +395,7 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples)
   bytes_rep = std::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-mp3) Can't start process \"" + MP3FILE::default_mp3_input_cmd + "\". Please check your ~/.ecasoundrc.");
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-mp3) Can't start process \"" + MP3FILE::default_mp3_input_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }

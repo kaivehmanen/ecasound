@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (27.02.2002)
+       (25.04.2002)
        ()
        (Multimedia software)
 
@@ -94,7 +94,9 @@ startdit()
   	resource directory. Defaults to em(effect_presets).
 
 	dit(internal-plugin-directory)
-	Directory containing ecasound's internal plugins. Defaults to em({prefix-dir}/lib/ecasound-plugins).
+	Directory containing ecasound's internal plugins.
+	Defaults to em({prefix-dir}/lib/libecasoundX-plugins),
+	where "X" is the library interface version number.
 
 	dit(ladspa-plugin-directory)
 	Directory containing LADSPA effect plugins. Defaults to em({prefix-dir}/lib/ladspa).

@@ -27,8 +27,8 @@
 #include <signal.h>
 #include <unistd.h>
 
-#include <kvutils/com_line.h>
-#include <kvutils/kvutils.h>
+#include <kvutils/kvu_com_line.h>
+#include <kvutils/kvu_utils.h>
 #include <kvutils/kvu_numtostr.h>
 
 #include <eca-debug.h>
@@ -85,15 +85,15 @@ void parse_command_line(int argc, char *argv[]) {
 	    output = arg;
       }
       else {
-	string prefix = get_argument_prefix(arg);
+	string prefix = kvu_get_argument_prefix(arg);
 	if (prefix == "b") 
-	  buffersize = atol(get_argument_number(1, arg).c_str());
+	  buffersize = atol(kvu_get_argument_number(1, arg).c_str());
 	if (prefix == "c") enable_cumulative_mode = true;
 	if (prefix == "d") enable_debug = true;
 	if (prefix == "f")
 	  format_string = arg;
 	if (prefix == "r") 
-	  rate_msec = atol(get_argument_number(1, arg).c_str());
+	  rate_msec = atol(kvu_get_argument_number(1, arg).c_str());
       }
     }
     cline.next();

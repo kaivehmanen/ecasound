@@ -17,8 +17,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <kvutils/dbc.h>
-#include <kvutils/message_item.h>
+#include <kvu_dbc.h>
+#include <kvu_message_item.h>
 
 #include "audioio-device.h"
 

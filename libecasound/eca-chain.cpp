@@ -27,9 +27,9 @@
 
 #include <unistd.h>
 
-#include <kvutils/message_item.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/dbc.h>
+#include <kvu_message_item.h>
+#include <kvu_numtostr.h>
+#include <kvu_dbc.h>
 
 #include "samplebuffer.h"
 #include "generic-controller.h"

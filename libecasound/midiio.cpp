@@ -19,7 +19,7 @@
 
 #include <string>
 
-#include <kvutils/message_item.h>
+#include <kvu_message_item.h>
 #include "midiio.h"
 #include "samplebuffer.h"
 #include "eca-error.h"

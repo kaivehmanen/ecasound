@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include <kvutils/com_line.h>
+#include <kvu_com_line.h>
 #include "eca-error.h"
 
 class AUDIO_IO;

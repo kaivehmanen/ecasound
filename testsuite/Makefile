@@ -1,16 +1,19 @@
 # ---
 # manual configuration
 srcdir=..
-ecasound_library=ecasound
-#ecasound_library=ecasound_debug
-ecasoundc_library=ecasoundc
-#ecasoundc_library=ecasoundc_debug
+#ecasound_library=ecasound8
+ecasound_library=ecasound8_debug
+#ecasoundc_library=ecasoundc2
+ecasoundc_library=ecasoundc2_debug
+#kvutils_library=kvutils3
+kvutils_library=kvutils3_debug
+
 # ---
 
-ECAFLAGS= -I${srcdir}/libecasound -I${srcdir}/libecasoundc -D_REENTRANT -g -Wall -Wstrict-prototypes -DVERBOSE
+ECAFLAGS= -I${srcdir}/libecasound -I${srcdir}/kvutils -I${srcdir}/libecasoundc -D_REENTRANT -g -Wall -Wstrict-prototypes -DVERBOSE
 ECALINK=-L${srcdir}/libecasound/.libs -l${ecasound_library} \
 	-L${srcdir}/libecasoundc/.libs -l${ecasoundc_library} \
-	-L${srcdir}/kvutils/.libs -lkvutils \
+	-L${srcdir}/kvutils/.libs -l${kvutils_library} \
 	-Wl,--rpath -Wl,${srcdir}/libecasound/.libs \
 	-Wl,--rpath -Wl,${srcdir}/libecasoundc/.libs \
 	-Wl,--rpath -Wl,${srcdir}/kvutils/.libs

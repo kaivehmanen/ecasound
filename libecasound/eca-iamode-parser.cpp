@@ -22,7 +22,7 @@
 #include <vector>
 #include <string>
 
-#include <kvutils/message_item.h>
+#include <kvu_message_item.h>
 
 #include "eca-iamode-parser.h"
 #include "eca-debug.h"

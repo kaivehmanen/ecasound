@@ -165,7 +165,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   long int buffersize(void) const;
   bool raised_priority(void) const;
-  int sched_priority(void) const;
+  int get_sched_priority(void) const;
   bool double_buffering(void) const;
   long int double_buffer_size(void) const;
   bool max_buffers(void) const;

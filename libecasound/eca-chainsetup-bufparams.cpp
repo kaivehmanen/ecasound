@@ -17,8 +17,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <kvutils/kvutils.h> /* get_argument_number */
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_utils.h> /* kvu_get_argument_number */
+#include <kvu_numtostr.h>
 
 #include "eca-chainsetup-bufparams.h"
 
@@ -38,12 +38,12 @@ ECA_CHAINSETUP_BUFPARAMS::ECA_CHAINSETUP_BUFPARAMS(void) {
  *                bool_db, int_db-bufsize, int_buffersize"
  */
 void ECA_CHAINSETUP_BUFPARAMS::set_all(const string& paramstr) {
-  set_buffersize(atoi(get_argument_number(1, paramstr).c_str()));
-  toggle_raised_priority(get_argument_number(2, paramstr) == "true");
-  set_sched_priority(atoi(get_argument_number(3, paramstr).c_str()));
-  toggle_double_buffering(get_argument_number(4, paramstr) == "true");
-  set_double_buffer_size(atol(get_argument_number(5, paramstr).c_str()));
-  toggle_max_buffers(get_argument_number(6, paramstr) == "true");
+  set_buffersize(atoi(kvu_get_argument_number(1, paramstr).c_str()));
+  toggle_raised_priority(kvu_get_argument_number(2, paramstr) == "true");
+  set_sched_priority(atoi(kvu_get_argument_number(3, paramstr).c_str()));
+  toggle_double_buffering(kvu_get_argument_number(4, paramstr) == "true");
+  set_double_buffer_size(atol(kvu_get_argument_number(5, paramstr).c_str()));
+  toggle_max_buffers(kvu_get_argument_number(6, paramstr) == "true");
 }
 
 /**

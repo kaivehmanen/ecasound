@@ -19,8 +19,8 @@
 
 #include <string>
 
-#include <kvutils/dbc.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_dbc.h>
+#include <kvu_numtostr.h>
 
 #include "samplebuffer.h"
 #include "sample-specs.h"

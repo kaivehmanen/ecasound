@@ -33,7 +33,7 @@
 #include <sys/types.h> /* off_t */
 #endif
 
-#include <kvutils/dbc.h>
+#include <kvu_dbc.h>
 
 #include "eca-debug.h"
 #include "eca-fileio.h"

@@ -65,7 +65,7 @@ public:
   virtual void release(void);
   virtual void process(void);
 
-  virtual long int output_samples(long int i_samples);
+  virtual long int output_samples(long int i_samples) const;
 
   EFFECT_PITCH_SHIFT(void) : pmod_rep(100.0), target_rate_rep(0), sbuf_repp(0) { }
   EFFECT_PITCH_SHIFT (const EFFECT_PITCH_SHIFT& x);

@@ -21,7 +21,7 @@
 #include <cstdlib>
 #include <fstream>
 
-#include <kvutils.h>
+#include <kvu_utils.h>
 #include "resource-file.h"
 #include "eca-debug.h"
 
@@ -56,15 +56,15 @@ void RESOURCE_FILE::load(void) {
       first = std::string(line, 0, n);
       second = std::string(line, n + 1, std::string::npos);
 
-      first = remove_surrounding_spaces(first);
-      second = remove_surrounding_spaces(second);
+      first = kvu_remove_surrounding_spaces(first);
+      second = kvu_remove_surrounding_spaces(second);
       std::string::iterator p = second.end();
       --p;
       while (*p == '\\') {
 	second.erase(p);
 	lines_rep.push_back(line);
 	if (getline(fin, line)) {
-	  line = remove_surrounding_spaces(line);
+	  line = kvu_remove_surrounding_spaces(line);
 	  second += line;
 	  p = second.end();
 	  --p;
@@ -143,7 +143,7 @@ void RESOURCE_FILE::resource(const std::string& tag, const std::string& value) {
       std::string::size_type n = line.find_first_of("=");
       if (n == std::string::npos) n = line.find_first_of(" ");
       if (n != std::string::npos) {
-	std::string first = remove_surrounding_spaces(std::string(line, 0, n));
+	std::string first = kvu_remove_surrounding_spaces(std::string(line, 0, n));
 	if (first == tag) {
 	  *p = first + " = " + value;
 	  found = true;

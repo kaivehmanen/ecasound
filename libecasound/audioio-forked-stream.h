@@ -2,7 +2,7 @@
 #define INCLUDED_AUDIOIO_FORKED_STREAM_H
 
 #include <string>
-#include <kvutils/temporary_file_directory.h>
+#include <kvu_temporary_file_directory.h>
 
 /**
  * Helper class providing routines for forking new processes 

@@ -33,9 +33,9 @@
 #include <sched.h>
 #endif
 
-#include <kvutils/dbc.h>
-#include <kvutils/kvutils.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_dbc.h>
+#include <kvu_utils.h>
+#include <kvu_numtostr.h>
 
 #include "sample-specs.h"
 #include "samplebuffer.h"

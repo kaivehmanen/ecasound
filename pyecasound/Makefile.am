@@ -6,15 +6,15 @@ EXTRA_DIST 			= eci.py pyeca.py
 # ----------------------------------------------------------------------
 
 if ECA_AM_DEBUG_MODE
-ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound_debug
+ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound@LIBECASOUND_VERSION@_debug
 else
-ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound
+ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound@LIBECASOUND_VERSION@
 endif
 
 if ECA_AM_DEBUG_MODE
-kvutils_libs                    = -L$(top_builddir)/kvutils/.libs -lkvutils_debug
+kvutils_libs                    = -L$(top_builddir)/kvutils/.libs -lkvutils@LIBKVUTILS_VERSION@_debug
 else
-kvutils_libs 			= -L$(top_builddir)/kvutils/.libs -lkvutils
+kvutils_libs 			= -L$(top_builddir)/kvutils/.libs -lkvutils@LIBKVUTILS_VERSION@
 endif
 
 # difficult from RPM point-of-view
@@ -71,7 +71,7 @@ endif
 install-data-hook:
 if ECA_AM_COMPILE_PYECASOUND
 	$(INSTALL) -d $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
-	cd $(srcdir) ; cp eci.py $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
+	cd $(srcdir) && cp eci.py $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
 endif
 
 uninstall-local:

@@ -30,10 +30,10 @@
 #include <errno.h>
 #include <sys/time.h> /* gettimeofday() */
 
-#include <kvutils/dbc.h>
-#include <kvutils/threads.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/procedure_timer.h>
+#include <kvu_dbc.h>
+#include <kvu_threads.h>
+#include <kvu_numtostr.h>
+#include <kvu_procedure_timer.h>
 
 #include "samplebuffer.h"
 #include "audioio.h"

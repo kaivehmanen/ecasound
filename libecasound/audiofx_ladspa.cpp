@@ -23,9 +23,9 @@
 
 #include <assert.h>
 #include <dlfcn.h>
-#include <kvutils.h>
-#include <kvutils/dbc.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_utils.h>
+#include <kvu_dbc.h>
+#include <kvu_numtostr.h>
 #include "samplebuffer.h"
 #include "audiofx_ladspa.h"
 #include "eca-error.h"
@@ -155,7 +155,7 @@ void EFFECT_LADSPA::init_ports(void) {
 
       params.push_back(init_value);
       if (params.size() > 1) param_names_rep += ",";
-      param_names_rep += string_search_and_replace(string(plugin_desc->PortNames[m]), ',', ' ');;
+      param_names_rep += kvu_string_search_and_replace(string(plugin_desc->PortNames[m]), ',', ' ');;
     }
   }
 }

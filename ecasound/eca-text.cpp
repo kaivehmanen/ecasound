@@ -33,7 +33,7 @@
 #include <pthread.h>
 #include <unistd.h> /* getpid() */
 
-#include <kvutils/com_line.h>
+#include <kvutils/kvu_com_line.h>
 
 #include <eca-iamode-parser.h>
 #include <eca-control.h>
@@ -453,7 +453,7 @@ char* ecasound_command_generator (char* text, int state)
       list_index++;
       ++p;
       if (p != map_ref.end()) {
-	string hyphenstr = string_search_and_replace(text, '_', '-');
+	string hyphenstr = kvu_string_search_and_replace(text, '_', '-');
 	if (strncmp(hyphenstr.c_str(), cmd.c_str(), len) == 0) {
 	  return(strdup(cmd.c_str()));
 	}

@@ -20,8 +20,8 @@
 
 
 #include <jack/jack.h>
-#include <kvutils/dbc.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_dbc.h>
+#include <kvu_numtostr.h>
 
 #include "audioio.h"
 #include "eca-version.h"
@@ -36,7 +36,7 @@ static const char* audio_io_keyword_regex_const = "(^jack_alsa$)|(^jack_mono$)|(
 AUDIO_IO* audio_io_descriptor(void) { return(new AUDIO_IO_JACK()); }
 const char* audio_io_keyword(void){return(audio_io_keyword_const); }
 const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
-int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
+int audio_io_interface_version(void) { return(ecasound_library_version_current); }
 
 AUDIO_IO_JACK::AUDIO_IO_JACK (void)
 {

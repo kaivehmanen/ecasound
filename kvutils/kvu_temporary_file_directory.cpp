@@ -1,6 +1,7 @@
 // ------------------------------------------------------------------------
-// temporary_file_directory.cpp: Provides services for allocating and 
-//                               reserving secure, temporary directories.
+// kvu_temporary_file_directory.cpp: Provides services for allocating and 
+//                                   reserving secure, temporary 
+//                                   directories.
 // Copyright (C) 2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -26,7 +27,7 @@
 #include <errno.h> /* errno */
 
 #include "kvu_numtostr.h"
-#include "temporary_file_directory.h"
+#include "kvu_temporary_file_directory.h"
 
 /**
  * Constructor.

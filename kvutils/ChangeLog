@@ -2,6 +2,16 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2002-04-28  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* all files renamed to have a 'kvu_' prefix
+	* 'kvu_' prefix added to all free operators
+	
+2002-04-25  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* library version number added to library name; current
+	  name is libkvutils3
+	
 2002-04-19  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* kvutils.h (kvu_sleep): added

@@ -21,7 +21,7 @@
 #include <cstdio>
 #include <cmath>
 
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_numtostr.h>
 
 #include "eca-audio-time.h"
 

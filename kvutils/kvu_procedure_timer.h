@@ -1,5 +1,5 @@
-#ifndef INCLUDED_PROCEDURE_TIMER
-#define INCLUDED_PROCEDURE_TIMER
+#ifndef INCLUDED_KVU_PROCEDURE_TIMER
+#define INCLUDED_KVU_PROCEDURE_TIMER
 
 #include <sys/time.h>
 #include <unistd.h>

@@ -22,14 +22,14 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <stdlib.h> /* getenv() */
 #include <cstdio>
+#include <cstdlib>
 
-#include <kvutils/dbc.h> /* DBC_* */
-#include <kvutils/value_queue.h>
-#include <kvutils/temporary_file_directory.h>
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/kvutils.h> /* get_argument_number() */
+#include <kvu_dbc.h> /* DBC_* */
+#include <kvu_value_queue.h>
+#include <kvu_temporary_file_directory.h>
+#include <kvu_numtostr.h>
+#include <kvu_utils.h> /* kvu_get_argument_number() */
 
 #include "eca-engine.h"
 #include "eca-session.h"
@@ -247,7 +247,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
 
   TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
   std::string tmpdir ("ecasound-");
-  char* tmp_p = getenv("USER");
+  char* tmp_p = std::getenv("USER");
   if (tmp_p != NULL) {
     tmpdir += std::string(tmp_p);
     tempfile_dir_rep.reserve_directory(tmpdir);
@@ -271,8 +271,8 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
 
   std::string editori = "";
   if (resource_value("ext-text-editor-use-getenv") == "true") {
-    if (getenv("EDITOR") != 0) {
-      editori = getenv("EDITOR");
+    if (std::getenv("EDITOR") != 0) {
+      editori = std::getenv("EDITOR");
     }
   }
   if (editori == "") 
@@ -306,7 +306,10 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
 	connect_chainsetup();
 	set_chainsetup_position(pos);
 	if (is_connected() == true) {
-	  if (restart == true) start();
+	  if (restart == true) {
+	    DBC_CHECK(is_running() != true);
+	    start();
+	  }
 	}
 	select_chainsetup("cs-edit-temp");
       }
@@ -316,7 +319,10 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
 	if (is_connected() == true) {
 	  select_chainsetup(origname);
 	  remove_chainsetup();
-	  if (restart == true) start();
+	  if (restart == true) {
+	    DBC_CHECK(is_running() != true);
+	    start();
+	  }
 	  select_chainsetup("cs-edit-temp");
 	  session_repp->connected_chainsetup_repp->set_name(origname);
 	}
@@ -721,7 +727,7 @@ void ECA_CONTROL_OBJECTS::add_chains(const std::string& names) {
 	 is_connected() == false);
   // --------
 
-  add_chains(string_to_vector(names, ','));
+  add_chains(kvu_string_to_vector(names, ','));
   
   // --------
   DBC_ENSURE(selected_chains().size() > 0);
@@ -751,7 +757,7 @@ void ECA_CONTROL_OBJECTS::add_chains(const std::vector<std::string>& new_chains)
   selected_chainsetup_repp->add_new_chains(new_chains);
   selected_chainsetup_repp->select_chains(new_chains);
 
-  ecadebug->msg("(eca-controller) Added chains: " + vector_to_string(new_chains, ", ") + ".");
+  ecadebug->msg("(eca-controller) Added chains: " + kvu_vector_to_string(new_chains, ", ") + ".");
 
   // --------
   DBC_ENSURE(selected_chains().size() == new_chains.size());
@@ -1308,7 +1314,7 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const std::string& filename) {
   selected_audio_input_repp = 0;
   selected_chainsetup_repp->interpret_object_option("-i:" + filename);
   if (selected_chainsetup_repp->interpret_result() == true) {
-    select_audio_input(get_argument_number(1, filename));
+    select_audio_input(kvu_get_argument_number(1, filename));
     ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
   }
   else {
@@ -1336,7 +1342,7 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const std::string& filename) {
   selected_audio_output_repp = 0;
   selected_chainsetup_repp->interpret_object_option("-o:" + filename);
   if (selected_chainsetup_repp->interpret_result() == true) {
-    select_audio_output(get_argument_number(1, filename));
+    select_audio_output(kvu_get_argument_number(1, filename));
     ecadebug->msg("(eca-controller) Added audio output \"" + filename +
 		  "\".");
   } else {

@@ -21,16 +21,17 @@
 #include <config.h>
 #endif
 
-#include <dlfcn.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <algorithm>
 
-#include <kvutils/kvu_numtostr.h>
+#include <dlfcn.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include <kvu_numtostr.h>
 
 #include "eca-version.h"
 #include "eca-chainop.h"
@@ -451,9 +452,9 @@ static void register_ladspa_plugins(void) {
   DIR *dp;
 
   vector<string> dir_names;
-  char* env = getenv("LADSPA_PATH");
+  char* env = std::getenv("LADSPA_PATH");
   if (env != 0) 
-    dir_names = string_to_vector(string(), ':');
+    dir_names = kvu_string_to_vector(string(), ':');
   ECA_RESOURCES ecarc;
   string add_file = ecarc.resource("ladspa-plugin-directory");
   if (find(dir_names.begin(), dir_names.end(), add_file) == dir_names.end()) dir_names.push_back(add_file);

@@ -20,7 +20,7 @@
 #include <string>
 #include <unistd.h>
 
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_numtostr.h>
 
 #include "audioio-mikmod.h"
 #include "eca-debug.h"

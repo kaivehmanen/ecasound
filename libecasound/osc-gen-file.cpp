@@ -20,8 +20,8 @@
 #include <vector>
 #include <string>
 
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/kvutils.h>
+#include <kvu_numtostr.h>
+#include <kvu_utils.h>
 
 #include "resource-file.h"
 #include "eca-resources.h"
@@ -65,7 +65,7 @@ void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset) {
 }
 
 void GENERIC_OSCILLATOR_FILE::parse_envelope(const std::string& str) {
-  std::vector<std::string> tokens = string_to_words(str);
+  std::vector<std::string> tokens = kvu_string_to_words(str);
   if (tokens.size() > 0) {
     set_start_value(atof(tokens[0].c_str()));
     if (tokens.size() > 1) {

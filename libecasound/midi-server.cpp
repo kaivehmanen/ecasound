@@ -30,8 +30,8 @@
 #include <sched.h>
 #endif
 
-#include <kvutils/kvu_numtostr.h>
-#include <kvutils/dbc.h>
+#include <kvu_numtostr.h>
+#include <kvu_dbc.h>
 
 #include "midi-parser.h"
 #include "midi-server.h"

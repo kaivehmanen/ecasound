@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// message_item.cpp: A simple version of C++ stringstream
+// kvu_message_item.cpp: A simple version of C++ stringstream
 // Copyright (C) 1999,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 #include <cstdio>
 
-#include "message_item.h"
+#include "kvu_message_item.h"
 
 MESSAGE_ITEM& MESSAGE_ITEM::operator<< (char c) {
     char temp[2];

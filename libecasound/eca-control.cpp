@@ -29,11 +29,11 @@
 #include <algorithm>
 #include <unistd.h>
 
-#include <kvutils.h> /* string_to_vector(), string_to_int_vector() */
-#include <kvutils/value_queue.h>
-#include <kvutils/message_item.h>
-#include <kvutils/dbc.h>
-#include <kvutils/kvu_numtostr.h>
+#include <kvu_utils.h> /* string_to_vector(), string_to_int_vector() */
+#include <kvu_value_queue.h>
+#include <kvu_message_item.h>
+#include <kvu_dbc.h>
+#include <kvu_numtostr.h>
 
 #include "eca-session.h"
 #include "eca-control.h"
@@ -72,7 +72,7 @@ void ECA_CONTROL::command(const string& cmd)
 {
   clear_last_values();
   clear_action_arguments();
-  vector<string> cmds = string_to_tokens_quoted(cmd);
+  vector<string> cmds = kvu_string_to_tokens_quoted(cmd);
   vector<string>::iterator p = cmds.begin();
   if (p != cmds.end()) {
 
@@ -161,7 +161,7 @@ void ECA_CONTROL::command_float_arg(const string& cmd, double arg)
  */
 void ECA_CONTROL::chainsetup_option(const string& cmd)
 {
-  string prefix = get_argument_prefix(cmd);
+  string prefix = kvu_get_argument_prefix(cmd);
   if (prefix == "el" || prefix == "pn") { // --- LADSPA plugins and presets
     if (selected_chains().size() == 1) 
       add_chain_operator(cmd);
@@ -181,7 +181,7 @@ void ECA_CONTROL::chainsetup_option(const string& cmd)
       set_last_error("When adding controllers, only one chain can be selected.");
   }
   else {
-    set_action_argument(string_to_tokens_quoted(cmd));
+    set_action_argument(kvu_string_to_tokens_quoted(cmd));
     action(ec_cs_option);
   }
 }
@@ -285,11 +285,11 @@ void ECA_CONTROL::action(int action_id)
   case ec_exit: { quit(); break; }
   case ec_start: 
     { 
-      start();
+      if (is_running() != true) start();
       // ecadebug->msg("(eca-control) Can't perform requested action; no chainsetup connected.");
       break; 
     }
-  case ec_stop: { if (is_engine_started() == true) stop(); break; }
+  case ec_stop: { if (is_running() == true) stop(); break; }
   case ec_run: { run(); break; }
   case ec_debug:
     {
@@ -377,17 +377,17 @@ void ECA_CONTROL::action(int action_id)
   // ---
   // Chains
   // ---
-  case ec_c_add: { add_chains(string_to_vector(action_args_rep[0], ',')); break; }
+  case ec_c_add: { add_chains(kvu_string_to_vector(action_args_rep[0], ',')); break; }
   case ec_c_remove: { remove_chains(); break; }
   case ec_c_list: { set_last_string_list(chain_names()); break; }
-  case ec_c_select: { select_chains(string_to_vector(action_args_rep[0], ',')); break; }
+  case ec_c_select: { select_chains(kvu_string_to_vector(action_args_rep[0], ',')); break; }
   case ec_c_selected: { set_last_string_list(selected_chains()); break; }
-  case ec_c_index_select: { select_chains_by_index(string_to_int_vector(action_args_rep[0], ',')); break; }
-  case ec_c_deselect: { deselect_chains(string_to_vector(action_args_rep[0], ',')); break; }
+  case ec_c_index_select: { select_chains_by_index(kvu_string_to_int_vector(action_args_rep[0], ',')); break; }
+  case ec_c_deselect: { deselect_chains(kvu_string_to_vector(action_args_rep[0], ',')); break; }
   case ec_c_select_add: 
     { 
-      select_chains(string_to_vector(action_args_rep[0] + "," +
-				     vector_to_string(selected_chains(), ","), ',')); 
+      select_chains(kvu_string_to_vector(action_args_rep[0] + "," +
+					 kvu_vector_to_string(selected_chains(), ","), ',')); 
       break; 
     }
   case ec_c_select_all: { select_all_chains(); break; }
@@ -516,7 +516,7 @@ void ECA_CONTROL::action(int action_id)
   case ec_cop_selected: { set_last_integer(selected_chain_operator()); break; }
   case ec_cop_set: 
     { 
-      vector<string> a = string_to_vector(action_args_rep[0], ',');
+      vector<string> a = kvu_string_to_vector(action_args_rep[0], ',');
       if (a.size() < 3) {
 	set_last_error("Not enough parameters!");
 	break;
@@ -620,7 +620,10 @@ void ECA_CONTROL::action(int action_id)
 	set_last_error("Can't reconnect chainsetup.");
       }
       else {
-	if (action_restart == true) start();
+	if (action_restart == true) {
+	  DBC_CHECK(is_running() != true);
+	  start();
+	}
       }
     }
   }
@@ -632,7 +635,7 @@ void ECA_CONTROL::print_last_value(void) {
   if (type == "s") 
     result = last_string();
   else if (type == "S")
-    result = vector_to_string(last_string_list(), ",");
+    result = kvu_vector_to_string(last_string_list(), ",");
   else if (type == "i")
     result = kvu_numtostr(last_integer());
   else if (type == "li")

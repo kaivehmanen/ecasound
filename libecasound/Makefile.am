@@ -6,20 +6,25 @@ SUBDIRS = plugins
 # defines
 # ----------------------------------------------------------------------
 
-# !!!
-# remember to update eca-version.cpp
+
 if ECA_AM_DEBUG_MODE
-eca_ldflags = -version-info 8:0:0
+eca_ldflags = -version-info @LIBECASOUND_VERSION@:0:0
 else
-eca_ldflags = -s -version-info 8:0:0
+eca_ldflags = -s -version-info @LIBECASOUND_VERSION@:0:0
 endif
 
 # below not used due to libtool problems
 if ECA_AM_DEBUG_MODE
-eca_libadd = $(top_builddir)/kvutils/libkvutils_debug.la
+eca_libadd = $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@_debug.la
 else
-eca_libadd = $(top_builddir)/kvutils/libkvutils.la
+eca_libadd = $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@.la
 endif
+
+# note! Automake >= 1.5 will install stripped libraries
+#       with "make install-strip". Older versions won't
+#       strip libraries even if INSTALL_STRIP_FLAG is set.
+#       also libtool 1.3.2 and older have problems 
+#       with stripping libraries.
 
 if ECA_AM_DEBUG_MODE
 INSTALL_STRIP_FLAG =
@@ -27,15 +32,13 @@ else
 INSTALL_STRIP_FLAG = -s
 endif
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils
+INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils
 
 if ECA_AM_DEBUG_MODE
-lib_LTLIBRARIES = libecasound_debug.la
+lib_LTLIBRARIES = libecasound8_debug.la
 else
-lib_LTLIBRARIES = libecasound.la
+lib_LTLIBRARIES = libecasound8.la
 endif
-
-bin_SCRIPTS = ecasound-config
 
 # ----------------------------------------------------------------------
 # header files
@@ -287,32 +290,39 @@ ecasound_common_src = 	$(ecasound_audiofx_src) \
 		      	$(ecasound_controller_src) \
 			$(ecasound_general_src)
 
-libecasound_la_SOURCES = $(ecasound_common_src)
-libecasound_debug_la_SOURCES = $(ecasound_common_src)
-libecasound_la_LIBADD = 
-libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
-libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
-libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
+libecasound8_la_SOURCES = $(ecasound_common_src)
+libecasound8_debug_la_SOURCES = $(ecasound_common_src)
+libecasound8_la_CFLAGS = $(eca_cxxflags)
+libecasound8_la_LIBADD = 
+libecasound8_la_LDFLAGS = -export-dynamic $(eca_ldflags)
+libecasound8_la_CFLAGS = $(libecasound8_la_CFLAGS)
+libecasound8_debug_la_LDFLAGS = $(libecasound8_la_LDFLAGS)
+libecasound8_debug_la_LIBADD = $(libecasound8_la_LIBADD)
 
 # ---------------------------------------------------------------------
 # Install targets - note! we don't install $ecasound_extra_include
 install-data-local:
-	$(INSTALL) -d $(DESTDIR)$(pkgincludedir)
+	$(INSTALL) -d $(DESTDIR)$(includedir)/libecasound@LIBECASOUND_VERSION@
 	cd $(srcdir) ; \
-	cp      $(ecasound_audiofx_include) \
+	$(INSTALL_DATA) \
+		$(ecasound_audiofx_include) \
 		$(ecasound_audioio_include) \
 		$(ecasound_controller_include) \
 		$(ecasound_midi_include) \
 		$(ecasound_general_include) \
-		$(DESTDIR)$(pkgincludedir)
+		$(DESTDIR)$(includedir)/libecasound@LIBECASOUND_VERSION@
+	$(INSTALL) -d $(DESTDIR)$(bindir)
+	$(INSTALL_SCRIPT) libecasound-config $(DESTDIR)$(bindir)/libecasound@LIBECASOUND_VERSION@-config
 
 # ---------------------------------------------------------------------
 # Uninstall targets
 uninstall-local:
-	cd $(DESTDIR)$(pkgincludedir) ; \
+	cd $(DESTDIR)$(includedir)/libecasound@LIBECASOUND_VERSION@ && \
 	rm -f   $(ecasound_audiofx_include) \
 		$(ecasound_audioio_include) \
 		$(ecasound_controller_include) \
 		$(ecasound_midi_include) \
 		$(ecasound_general_include)
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(pkgincludedir)
+	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(includedir)/libecasound@LIBECASOUND_VERSION@
+	rm -f 	$(DESTDIR)$(bindir)/libecasound@LIBECASOUND_VERSION@-config
+	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(bindir)

@@ -3,7 +3,7 @@
 
 #include <pthread.h>
 
-#include <kvutils/locks.h>
+#include <kvu_locks.h>
 
 #include "audioio.h"
 #include "eca-chain.h"

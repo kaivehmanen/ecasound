@@ -20,7 +20,7 @@
 #include <string>
 #include <iostream>
 
-#include <kvutils/message_item.h>
+#include <kvu_message_item.h>
 
 //  #include "eca-midi.h"
 #include "midi-client.h"

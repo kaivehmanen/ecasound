@@ -1,11 +1,11 @@
 if ECA_AM_DEBUG_MODE
 INSTALL_STRIP_FLAG =
-libecasound_path = $(top_builddir)/libecasound/libecasound_debug.la $(top_builddir)/kvutils/libkvutils_debug.la
-libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc_debug.la
+libecasound_path = $(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@_debug.la $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@_debug.la
+libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc@LIBECASOUNDC_VERSION@_debug.la
 else
 INSTALL_STRIP_FLAG = -s
-libecasound_path = $(top_builddir)/libecasound/libecasound.la $(top_builddir)/kvutils/libkvutils.la
-libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc.la
+libecasound_path = $(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@.la $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@.la
+libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc@LIBECASOUNDC_VERSION@.la
 endif
 
 if ECA_AM_USE_NCURSES
