@@ -2,6 +2,15 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-12-13  Kai Vehmanen <kaiv@wakkanet.fi>
+	
+	* audiofx.h (EFFECT_DCFIX,EFFECT_PITCH_SHIFTER): moved to audiofx.h
+	* audiofx_misc.h (EFFECT_AUDIO_STAMP): added
+	* audiofx_impl.h (all): removed
+	* stamp-ctrl.h (all): added
+	* audio-stamp.h (all): added
+	* generic-controller.h (source_pointer): added
+	
 2000-12-12  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-session.h (Engine_status): 'ep_status_error' added

@@ -38,9 +38,10 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-void *start_midi_queues(void *ptr);
-
 MIDI_IN_QUEUE midi_in_queue;
+
+void *start_midi_queues(void *ptr);
+string get_midi_device(void);
 
 void init_midi_queues(void) throw(ECA_ERROR&) {
   static bool ready = false;
@@ -64,6 +65,11 @@ void* start_midi_queues(void *ptr) {
   ::pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);  // other threads can cancel this one
   MIDI_IN_QUEUE* mqueue = static_cast<MIDI_IN_QUEUE*>(ptr);
   mqueue->update_midi_queues();
+}
+
+string get_midi_device(void) {
+  ECA_RESOURCES erc;
+  return(erc.resource("midi-device"));
 }
 
 MIDI_IN_QUEUE::MIDI_IN_QUEUE(void) {
@@ -169,16 +175,13 @@ void MIDI_IN_QUEUE::update_midi_queues(void) {
   int fd;
   char buf[MIDI_IN_QUEUE_SIZE];
   int temp;
-  
-  
-  ECA_RESOURCES erc;
-  string midi_dev = erc.resource("midi-device");
-
+  string rc_midi_device = get_midi_device();
   bool use_alsa = false;
 #ifdef COMPILE_ALSA_RAWMIDI
   snd_rawmidi_t *midihandle;
 #endif
 
+  string midi_dev = rc_midi_device;
   if (midi_dev.find("/dev/snd/") != string::npos) {
     string cardstr,devicestr;
     string::const_iterator p = midi_dev.begin();
@@ -204,7 +207,7 @@ void MIDI_IN_QUEUE::update_midi_queues(void) {
 #ifdef COMPILE_ALSA_RAWMIDI
     if (::snd_rawmidi_open(&midihandle, card, device, SND_RAWMIDI_OPEN_INPUT) < 0) {
       throw(ECA_ERROR("ECA-MIDI", "unable to open ALSA raw-MIDI device " +
-			erc.resource("midi-device") + "."));
+			rc_midi_device + "."));
     }
 
 #ifdef ALSALIB_060
@@ -223,11 +226,11 @@ void MIDI_IN_QUEUE::update_midi_queues(void) {
     fd = ::open("/dev/midi", O_RDONLY);
     if (fd == -1) {
       throw(ECA_ERROR("ECA-MIDI", "unable to open OSS raw-MIDI device " +
-			  erc.resource("midi-device") + "."));
+			  rc_midi_device + "."));
     }
   }
 
-  ecadebug->control_flow("MIDI-thread ready " + erc.resource("midi-device"));
+  ecadebug->control_flow("MIDI-thread ready " + rc_midi_device);
 
   while(true) {
     if (use_alsa) {

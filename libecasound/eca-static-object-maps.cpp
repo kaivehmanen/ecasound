@@ -33,6 +33,7 @@
 #include "eca-version.h"
 #include "eca-chainop.h"
 #include "audiofx.h"
+#include "audiofx_misc.h"
 #include "audiofx_amplitude.h"
 #include "audiofx_analysis.h"
 #include "audiofx_envelope_modulation.h"
@@ -61,6 +62,7 @@ extern "C" {
 #include "osc-sine.h"
 #include "linear-envelope.h"
 #include "two-stage-linear-envelope.h"
+#include "stamp-ctrl.h"
 
 #include "audioio-plugin.h"
 #include "audioio-types.h"
@@ -169,6 +171,7 @@ void register_default_audio_objects(void) {
 }
 
 void register_default_chainops(void) {
+  eca_chain_operator_map.register_object("eS", new EFFECT_AUDIO_STAMP());
   eca_chain_operator_map.register_object("ea", new EFFECT_AMPLIFY());
   eca_chain_operator_map.register_object("eac", new EFFECT_AMPLIFY_CHANNEL());
   eca_chain_operator_map.register_object("eal", new EFFECT_LIMITER());
@@ -216,6 +219,7 @@ void register_default_controllers(void) {
   eca_controller_map.register_object("kl2", new GENERIC_CONTROLLER(new TWO_STAGE_LINEAR_ENVELOPE()));
   eca_controller_map.register_object("km", new GENERIC_CONTROLLER(new MIDI_CONTROLLER()));
   eca_controller_map.register_object("kos", new GENERIC_CONTROLLER(new SINE_OSCILLATOR()));
+  eca_controller_map.register_object("ksv", new GENERIC_CONTROLLER(new VOLUME_ANALYZE_CONTROLLER()));
 }
 
 void register_default_presets(void) { }

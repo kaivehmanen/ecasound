@@ -8,6 +8,7 @@
 #include "eca-chainsetup-position.h"
 #include "eca-audio-objects.h"
 #include "eca-error.h"
+#include "audio-stamp.h"
 
 class CONTROLLER_SOURCE;
 class CHAIN_OPERATOR;
@@ -33,6 +34,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION,
   bool istatus_rep;
   enum Mix_mode mixmode_rep;
   AUDIO_IO* last_audio_object;
+  AUDIO_STAMP_SERVER stamp_server_rep;
 
   vector<string> options;
   string options_general;

@@ -35,6 +35,7 @@ class GENERIC_CONTROLLER : public OPERATOR,
   void assign_target(OPERATOR* obj) { target  = obj; }
   void assign_source(CONTROLLER_SOURCE* obj) { source = obj; }
 
+  CONTROLLER_SOURCE* source_pointer(void) const { return(source); }
   OPERATOR* target_pointer(void) const { return(target); }
 
   /**

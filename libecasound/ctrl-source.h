@@ -1,8 +1,7 @@
-#ifndef _CTRL_SOURCE_H
-#define _CTRL_SOURCE_H
+#ifndef INCLUDE_CTRL_SOURCE_H
+#define INCLUDE_CTRL_SOURCE_H
 
 #include <string>
-
 #include "eca-operator.h"
 
 /**

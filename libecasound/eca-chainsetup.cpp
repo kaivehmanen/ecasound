@@ -949,6 +949,12 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
   REQUIRE(csrc != 0);
   // --------
 
+  AUDIO_STAMP_CLIENT* p = dynamic_cast<AUDIO_STAMP_CLIENT*>(csrc->source_pointer());
+  if (p != 0) {
+//      cerr << "Found a stamp client!" << endl;
+    p->register_server(&stamp_server_rep);
+  }
+
   vector<string> schains = selected_chains();
   for(vector<string>::const_iterator a = schains.begin(); a != schains.end(); a++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
@@ -972,7 +978,12 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   // --------
   REQUIRE(cotmp != 0);
   // --------
-
+  
+  AUDIO_STAMP* p = dynamic_cast<AUDIO_STAMP*>(cotmp);
+  if (p != 0) {
+//      cerr << "Found a stamp!" << endl;
+    stamp_server_rep.register_stamp(p);
+  }
   vector<string> schains = selected_chains();
   for(vector<string>::const_iterator p = schains.begin(); p != schains.end(); p++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
@@ -1012,7 +1023,7 @@ void ECA_CHAINSETUP::load_from_file(const string& filename) throw(ECA_ERROR&) {
     }
     vector<string> words = string_to_words(temp);
     for(unsigned int n = 0; n < words.size(); n++) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainseup) Adding \"" + words[n] + "\" to options (loaded from \"" + filename + "\".");
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding \"" + words[n] + "\" to options (loaded from \"" + filename + "\".");
       options.push_back(words[n]);
     }
   }
