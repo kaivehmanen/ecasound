@@ -98,10 +98,10 @@
 #define ECI_RETURN_TYPE_LOGLEVEL   256
 
 #ifdef ECI_ENABLE_DEBUG
-#define ECI_DEBUG(x) printf(x)
-#define ECI_DEBUG_1(x,y) printf(x,y)
-#define ECI_DEBUG_2(x,y,z) printf(x,y,z)
-#define ECI_DEBUG_3(x,y,z,t) printf(x,y,z,t)
+#define ECI_DEBUG(x) fprintf(stderr,x)
+#define ECI_DEBUG_1(x,y) fprintf(stderr,x,y)
+#define ECI_DEBUG_2(x,y,z) fprintf(stderr,x,y,z)
+#define ECI_DEBUG_3(x,y,z,t) fprintf(stderr,x,y,z,t)
 #else
 #define ECI_DEBUG(x) ((void) 0)
 #define ECI_DEBUG_1(x,y) ((void) 0)
@@ -648,7 +648,8 @@ void eci_impl_clean_last_values(struct eci_parser* parser)
   DBC_CHECK(parser != 0);
 
   memset(parser->last_s_repp, 0, ECI_MAX_STRING_SIZE);
-  parser->last_los_repp = NULL;
+  eci_impl_los_list_clear(&parser->last_los_repp);
+  DBC_CHECK(parser->last_los_repp == NULL);
   parser->last_i_rep = 0;
   parser->last_li_rep = 0;
   parser->last_f_rep = 0.0f;
@@ -744,6 +745,7 @@ void eci_impl_los_list_add_item(struct eci_los_list** headptr, char* stmp, int l
 
 void eci_impl_los_list_alloc_item(struct eci_los_list **ptr)
 {
+  /* ECI_DEBUG("(ecasoundc_sa) list alloc item\n"); */
   *ptr = (struct eci_los_list*)malloc(sizeof(struct eci_los_list*));
   DBC_CHECK(*ptr != NULL);
   (*ptr)->data_repp = (char*)malloc(ECI_MAX_STRING_SIZE);
@@ -755,7 +757,10 @@ void eci_impl_los_list_clear(struct eci_los_list **ptr)
 {
   struct eci_los_list *i = *ptr;
 
+  ECI_DEBUG_1("(ecasoundc_sa) clearing list, i=%p\n", (void*)i);
+
   while(i != NULL) {
+    /* ECI_DEBUG_1("(ecasoundc_sa) freeing list item %p\n", (void*)i); */
     struct eci_los_list* next = i->next_repp;
 
     if (i->data_repp) {
@@ -764,6 +769,7 @@ void eci_impl_los_list_clear(struct eci_los_list **ptr)
 	  /* ECI_DEBUG_1("(ecasoundc_sa) removing item '%s' from los list\n", i->data_repp); */
 	}
       }
+      /* ECI_DEBUG("(ecasoundc_sa) freeing list item\n"); */
       free(i->data_repp);
     }
     free(i);
@@ -832,9 +838,10 @@ void eci_impl_set_last_los_value(struct eci_parser* parser)
   DBC_CHECK(parser != 0);
   DBC_CHECK(parser->state_rep == ECI_STATE_COMMON_LF_3);
 
-  /* ECI_DEBUG_2("(ecasoundc_sa) parsing a list '%s' (count=%d)\n", parser->buffer_repp, parser->buffer_current_rep); */
+  ECI_DEBUG_2("(ecasoundc_sa) parsing a list '%s' (count=%d)\n", parser->buffer_repp, parser->buffer_current_rep);
 
   eci_impl_los_list_clear(i);
+  /* eci_impl_los_list_clear(&parser->last_los_repp); */
 
   for(n = 0; n < parser->buffer_current_rep && n < parser->msgsize_rep; n++) {
     char c = parser->buffer_repp[n];
