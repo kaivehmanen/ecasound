@@ -24,7 +24,6 @@
 #include <string>
 #include <cstdlib>
 
-#include "plugin-paths.h"
 #include "eca-resources.h"
 
 ECA_RESOURCES::ECA_RESOURCES(void) :
