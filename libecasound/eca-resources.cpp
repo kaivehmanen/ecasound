@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
-// eca_resources.cpp: User settings (~/.ecasoundrc)
-// Copyright (C) 1999-2002 Kai Vehmanen
+// eca_resources.cpp: User settings (ecasoundrc)
+// Copyright (C) 1999-2002,2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,7 +46,7 @@ ECA_RESOURCES::ECA_RESOURCES(void)
   globalrc_repp->resource_file(ecasound_resource_path + "/ecasoundrc");
   globalrc_repp->load();
   if (globalrc_repp->keywords().size() == 0) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-resources) Warning! Global resource file '" + ecasound_resource_path + "/ecasoundrc" + "' not available! Ecasound may not function properly!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Global resource file '" + ecasound_resource_path + "/ecasoundrc" + "' not available! Ecasound may not function properly!");
     resources_found_rep = false;
   }
 
@@ -94,15 +97,15 @@ void ECA_RESOURCES::resource(const string& tag, const string& value)
 string ECA_RESOURCES::resource(const string& tag) const
 {
   if (tag == "user-resource-directory") 
-    return(user_resource_directory_rep);
+    return user_resource_directory_rep;
   
   if (userrc_repp->has(tag))
-    return(userrc_repp->resource(tag));
+    return userrc_repp->resource(tag);
   
   if (globalrc_repp->has(tag))
-    return(globalrc_repp->resource(tag));
+    return globalrc_repp->resource(tag);
 
-  return("");
+  return "";
 }
 
 /**
@@ -111,13 +114,13 @@ string ECA_RESOURCES::resource(const string& tag) const
 bool ECA_RESOURCES::boolean_resource(const string& tag) const
 {
   if (userrc_repp->has(tag)) {
-    return(userrc_repp->boolean_resource(tag));
+    return userrc_repp->boolean_resource(tag);
   }
   else if (globalrc_repp->has(tag)) {
-    return(globalrc_repp->boolean_resource(tag));
+    return globalrc_repp->boolean_resource(tag);
   }
 
-  return(false);
+  return false;
 }
   
 /**
@@ -125,8 +128,8 @@ bool ECA_RESOURCES::boolean_resource(const string& tag) const
  */
 bool ECA_RESOURCES::has(const string& tag) const
 {
-  if (globalrc_repp->has(tag) || userrc_repp->has(tag)) return(true);
-  return(false);
+  if (globalrc_repp->has(tag) || userrc_repp->has(tag)) return true;
+  return false;
 }
 
 /**
@@ -134,5 +137,5 @@ bool ECA_RESOURCES::has(const string& tag) const
  */
 bool ECA_RESOURCES::has_any(void) const
 {
-  return(resources_found_rep);
+  return resources_found_rep;
 }

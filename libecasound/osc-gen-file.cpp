@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // osc-gen-file.cpp: Generic oscillator using envelope presets
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +45,7 @@ GENERIC_OSCILLATOR_FILE::~GENERIC_OSCILLATOR_FILE (void)
 void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset)
 {
   ECA_RESOURCES ecarc;
-  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(osc-gen-file) Opening genosc envelope file.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Opening genosc envelope file.");
 
   std::string user_filename =
     ecarc.resource("user-resource-directory") + "/" + ecarc.resource("resource-file-genosc-envelopes");
@@ -63,7 +66,7 @@ void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset)
     parse_envelope(rc.resource(pname));
   }
   else {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-gen-file) Error! Oscillator preset " + pname + " not found!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "ERROR: Oscillator preset " + pname + " not found!");
   }
 }
 
@@ -103,10 +106,10 @@ CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR_FILE::get_parameter(int param)
   switch (param) {
   case 1: 
   case 2:
-    return(GENERIC_OSCILLATOR::get_parameter(param));
+    return GENERIC_OSCILLATOR::get_parameter(param);
 
   case 3:
-    return(static_cast<parameter_t>(preset_rep));
+    return static_cast<parameter_t>(preset_rep);
   }
-  return(0.0);
+  return 0.0;
 }
