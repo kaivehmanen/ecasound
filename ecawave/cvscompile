@@ -1,0 +1,6 @@
+#!/bin/bash
+automake -v
+aclocal
+autoconf
+./configure $@ || exit 1
+make
