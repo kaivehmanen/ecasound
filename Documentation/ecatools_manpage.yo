@@ -128,8 +128,10 @@ options em(-f, -l and -q).
 
 dit(-q) 
 Queue new tracks to the playlist. All filenames given on
-the command-line will be added to the the playlist. See
-also options em(-f, -l and -p).
+the command-line will be added to the the playlist. It is 
+possible to queue new tracks while another instance of 
+ecaplay is using the playlist. See also options em(-f, -l 
+and -p).
 
 enddit()
 
