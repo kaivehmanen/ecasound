@@ -1,0 +1,86 @@
+// ------------------------------------------------------------------------
+// audioio-timidity.cpp: Interface class for Timidity++ input.
+// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// ------------------------------------------------------------------------
+
+#include <string>
+#include <unistd.h>
+
+#include <kvutils/kvu_numtostr.h>
+
+#include "audioio-timidity.h"
+#include "eca-error.h"
+#include "eca-debug.h"
+
+string TIMIDITY_INTERFACE::default_timidity_cmd = "timidity -Or -o - %f";
+
+void TIMIDITY_INTERFACE::set_timidity_cmd(const string& value) { TIMIDITY_INTERFACE::default_timidity_cmd = value; }
+
+TIMIDITY_INTERFACE::TIMIDITY_INTERFACE(const string& name) {
+  finished_rep = false;
+  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
+}
+
+TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void) { close(); }
+
+void TIMIDITY_INTERFACE::open(void) { toggle_open_state(false); }
+
+void TIMIDITY_INTERFACE::close(void) {
+  if (io_mode() == io_read) {
+    kill_timidity();
+  }
+  toggle_open_state(false);
+}
+
+long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, long int samples) {
+  if (is_open() == false) fork_timidity();
+  if (wait_for_child() != true) {
+    finished_rep = true;
+    return(0);
+  }
+  bytes_read_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
+  if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) finished_rep = true;
+  else finished_rep = false;
+  return(bytes_read_rep / frame_size());
+}
+
+void TIMIDITY_INTERFACE::seek_position(void) {
+  if (is_open() == true) {
+    if (io_mode() == io_read) {
+      kill_timidity();
+    }
+  }
+}
+
+void TIMIDITY_INTERFACE::kill_timidity(void) {
+  if (is_open()) {
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-timidity) Killing Timidity++-child with pid " + kvu_numtostr(pid_of_child()) + ".");
+    clean_child();
+    toggle_open_state(false);
+  }
+}
+
+void TIMIDITY_INTERFACE::fork_timidity(void) throw(ECA_ERROR&) {
+  if (!is_open()) {
+    fork_child_for_read(TIMIDITY_INTERFACE::default_timidity_cmd, label());
+    if (child_fork_succeeded() != true) {
+      throw(ECA_ERROR("AUDIOIO-TIMIDITY","Can't start Timidity++-thread! Check that 'timidity' is installed properly."));
+    }
+    fd_rep = file_descriptor();
+    toggle_open_state(true);
+  }
+}
