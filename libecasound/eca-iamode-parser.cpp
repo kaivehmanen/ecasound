@@ -379,6 +379,8 @@ bool ECA_IAMODE_PARSER::action_requires_connected(int id)
   case ec_run:
 
   case ec_cs_disconnect:
+  case ec_cs_set_position:
+  case ec_cs_set_position_samples:
     return(true);
     
   default: 
@@ -491,7 +493,6 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id)
   case ec_cs_set_length_samples:
   case ec_cs_toggle_loop:
   case ec_cs_set_param:
-  case ec_cs_set_position_samples:
   case ec_cs_option:
 
   case ec_c_add:

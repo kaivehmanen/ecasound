@@ -1936,9 +1936,15 @@ void ECA_CHAINSETUP::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_valu
 
 /**
  * Reimplemented from ECA_AUDIO_POSITION.
+ *
+ * @pre is_enabled() == true
  */
 void ECA_CHAINSETUP::seek_position(void)
 {
+  // --------
+  DBC_REQUIRE(is_enabled() == true);
+  // --------
+
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		"(eca-chainsetup) seek position, chainsetup '" +
 		name() +
