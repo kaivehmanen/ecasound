@@ -205,7 +205,7 @@ void print_usage(void) {
   cerr << "* ecatools_play, v" << ecaplay_version;
   cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
-  cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence \n";
+  cerr << "* (C) 1997-2002 Kai Vehmanen, released under GPL licence \n";
   cerr << "****************************************************************************\n";
 
   cerr << "\nUSAGE: ecaplay [-dhk] file1 [ file2, ... fileN ]\n\n";
