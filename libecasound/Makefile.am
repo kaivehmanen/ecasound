@@ -20,7 +20,7 @@ check_PROGRAMS = libecasound_tester
 # compiler and linker options
 # ----------------------------------------------------------------------
 
-if ECA_AM_STATIC_ONLY
+if ECA_AM_ALL_STATIC
 # FIXME: add linking to ecasound plugins
 eca_libadd =
 else

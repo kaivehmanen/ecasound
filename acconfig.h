@@ -40,7 +40,7 @@
 #undef ECA_FEELING_EXPERIMENTAL
 
 /* whether to disable all use of shared libs */
-#undef ECA_STATIC_ONLY
+#undef ECA_ALL_STATIC
 
 /* use locking primitives found in asm/atomic.h */
 #undef ECA_USE_ASM_ATOMIC

@@ -169,26 +169,6 @@ CFLAGS="$CFLAGS $EXTRADEBUGFLAGS"
 dnl ------------------------------------------------------------------
 
 dnl ---
-dnl Check whether to disable all use of shared libs
-dnl
-dnl defines: ECA_STATIC_ONLY, ECA_AM_STATIC_ONLY
-dnl modifies: CXXFLAGS, CFLAGS, LDFLAGS
-dnl ---
-AC_ARG_ENABLE(static-only,
-[  --enable-static-only	  Build only static binaries (default = no)],
-enable_static_only=yes)
-if test x$enable_static_only = xyes; then
-    AC_DISABLE_SHARED
-    AC_DEFINE(ECA_STATIC_ONLY)
-    CXXFLAGS="$CXXFLAGS -static"
-    CFLAGS="$CFLAGS -static"
-    LDFLAGS="$LDFLAGS -Bstatic"
-fi
-AM_CONDITIONAL(ECA_AM_STATIC_ONLY, test x$enable_static_only = xyes)
-
-dnl ------------------------------------------------------------------
-
-dnl ---
 dnl Check for experimental mode
 dnl
 dnl defines: ECA_FEELING_EXPERIMENTAL, ECA_AM_FEELING_EXPERIMENTAL
@@ -692,6 +672,28 @@ AC_CHECK_FUNCS(sched_get_priority_max)
 AC_CHECK_FUNCS(sched_getparam)
 AC_CHECK_FUNCS(sched_getscheduler)
 AC_CHECK_FUNCS(sched_setscheduler)
+
+dnl ------------------------------------------------------------------
+
+dnl ---
+dnl Check whether to disable all use of shared libs
+dnl 
+dnl Note! Must be run after all other autoconf tests as 
+dnl       'ld' doesn't understand -all-static. 
+dnl
+dnl defines: ECA_STATIC_ONLY, ECA_AM_STATIC_ONLY
+dnl modifies: CXXFLAGS, CFLAGS, LDFLAGS
+dnl ---
+AC_ARG_ENABLE(all-static,
+[  --enable-all-static	  Build only static binaries (default = no)],
+enable_all_static=yes)
+if test x$enable_all_static = xyes; then
+    AC_DEFINE(ECA_ALL_STATIC)
+    CXXFLAGS="$CXXFLAGS -static"
+    CFLAGS="$CFLAGS -static"
+    LDFLAGS="$LDFLAGS -Bstatic -all-static"
+fi
+AM_CONDITIONAL(ECA_AM_ALL_STATIC, test x$enable_all_static = xyes)
 
 dnl ------------------------------------------------------------------
 

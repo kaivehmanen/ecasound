@@ -22,7 +22,7 @@ Last officially released version is -*> v2.0.4 *-
 		 audio object manager level options
 	- added: -G:jack,client_name,operation_mode option; see 
 	         ecasound(1) for details
-	- added: --enable-static-only configure option
+	- added: --enable-all-static configure option
 	- changed: major data structure cleanup in the JACK
 	 	   plugin
 	- fixed: 'unknown device state' errors with multichannel 
