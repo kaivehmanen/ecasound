@@ -146,7 +146,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Select audio format
 
-  ::snd_pcm_flush(audio_fd_repp);
+  ::snd_pcm_drain(audio_fd_repp);
 
   snd_pcm_format_t pf;
   ::memset(&pf, 0, sizeof(pf));
@@ -265,7 +265,7 @@ void ALSA_PCM_DEVICE::stop(void) {
   else if (pcm_stream_rep == SND_PCM_STREAM_CAPTURE)
     overruns_rep += status.xruns;
 
-  int err = ::snd_pcm_flush(audio_fd_repp);
+  int err = ::snd_pcm_stop(audio_fd_repp);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Error when flushing stream: " + string(snd_strerror(err))));
   
