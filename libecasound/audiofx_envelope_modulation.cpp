@@ -133,3 +133,68 @@ CHAIN_OPERATOR::parameter_type EFFECT_PULSE_GATE_BPM::get_parameter(int param) c
 
 void EFFECT_PULSE_GATE_BPM::init(SAMPLE_BUFFER* sbuf) { pulsegate_rep.init(sbuf); }
 void EFFECT_PULSE_GATE_BPM::process(void) { pulsegate_rep.process(); }
+
+EFFECT_TREMOLO::EFFECT_TREMOLO (parameter_type freq_bpm,
+				      parameter_type depth_percent) {
+  set_parameter(1, freq_bpm);
+  set_parameter(2, depth_percent);
+  currentTime = 0.0;
+}
+
+void EFFECT_TREMOLO::set_parameter(int param, parameter_type value) {
+  switch (param) {
+  case 1:
+    if (value > 0)
+      {
+	freq = value/(2*60); // convert from bpm to Hz
+      }
+    else
+      {
+	MESSAGE_ITEM otemp;
+	otemp << "(audiofx_envelope_modulation) WARNING! bpm must be greater than 0! ";
+	ecadebug->msg(otemp.to_string());
+      }
+    break;
+  case 2:
+	depth = (value/100.0); // from percent to fraction
+    break;
+  }
+}
+
+CHAIN_OPERATOR::parameter_type EFFECT_TREMOLO::get_parameter(int param) const {
+  switch (param) {
+  case 1:
+    return freq*120;
+    break;
+  case 2:
+    return depth*100.0;
+    break;
+  }
+  return(0.0);
+}
+
+void EFFECT_TREMOLO::init(SAMPLE_BUFFER* sbuf) {
+  i.init(sbuf);
+  set_samples_per_second(sbuf->sample_rate());
+  set_channels(sbuf->number_of_channels());
+  incrTime = 1.0/samples_per_second();
+}
+
+void EFFECT_TREMOLO::process(void) {
+  i.begin(); // iterate through all samples, one sample-frame at a
+             // time (interleaved)
+  while(!i.end())
+  {
+    currentTime += incrTime;
+    double envelope = (1-depth)+depth*fabs(sin(2*3.1416*currentTime*freq));
+    if (envelope < 0)
+    {
+       envelope = 0;
+    }
+  	for(int n = 0; n < channels(); n++)
+  	{
+	    *i.current(n) *= envelope;
+    }
+    i.next();
+  }
+}

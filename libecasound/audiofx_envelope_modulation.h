@@ -72,4 +72,33 @@ class EFFECT_PULSE_GATE_BPM : public EFFECT_ENV_MOD {
   EFFECT_PULSE_GATE_BPM* new_expr(void)  { return new EFFECT_PULSE_GATE_BPM(); }
 };
 
+/**
+ * Tremolo
+ * @author Rob Coker
+ */
+class EFFECT_TREMOLO: public EFFECT_ENV_MOD {
+
+  SAMPLE_ITERATOR_INTERLEAVED i;
+  parameter_type freq;
+  parameter_type depth;
+  parameter_type currentTime;
+  parameter_type incrTime;
+
+ public:
+
+  virtual string name(void) const { return("Tremolo"); }
+  virtual string parameter_names(void) const  { return("bpm,depth-%"); }
+
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
+
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
+
+  EFFECT_TREMOLO (parameter_type freq_bpm = 60.0, parameter_type depth_percent = 100.0);
+  virtual ~EFFECT_TREMOLO(void) { }
+  EFFECT_TREMOLO* clone(void)  { return new EFFECT_TREMOLO(*this); }
+  EFFECT_TREMOLO* new_expr(void)  { return new EFFECT_TREMOLO(); }
+};
+
 #endif

@@ -173,6 +173,9 @@ void register_default_chainops(void) {
   eca_chain_operator_map.register_object("eaw", new EFFECT_AMPLIFY_CLIPCOUNT());
   eca_chain_operator_map.register_object("ec", new EFFECT_COMPRESS());
   eca_chain_operator_map.register_object("eca", new ADVANCED_COMPRESSOR());
+  eca_chain_operator_map.register_object("eemb", new EFFECT_PULSE_GATE_BPM());
+  eca_chain_operator_map.register_object("eemp", new EFFECT_PULSE_GATE());
+  eca_chain_operator_map.register_object("eemt", new EFFECT_TREMOLO());
   eca_chain_operator_map.register_object("ef1", new EFFECT_RESONANT_BANDPASS());
   eca_chain_operator_map.register_object("ef3", new EFFECT_RESONANT_LOWPASS());
   eca_chain_operator_map.register_object("ef4", new EFFECT_RC_LOWPASS_FILTER());
@@ -184,8 +187,6 @@ void register_default_chainops(void) {
   eca_chain_operator_map.register_object("efl", new EFFECT_LOWPASS());
   eca_chain_operator_map.register_object("efr", new EFFECT_BANDREJECT());
   eca_chain_operator_map.register_object("efs", new EFFECT_RESONATOR());
-  eca_chain_operator_map.register_object("eemb", new EFFECT_PULSE_GATE_BPM());
-  eca_chain_operator_map.register_object("eemp", new EFFECT_PULSE_GATE());
   eca_chain_operator_map.register_object("ei", new EFFECT_PITCH_SHIFT());
   eca_chain_operator_map.register_object("enm", new EFFECT_NOISEGATE());
   eca_chain_operator_map.register_object("epp", new EFFECT_NORMAL_PAN());

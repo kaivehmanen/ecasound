@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-11-09  Rob Coker <rcs@birch.net>
+
+	* audiofx_envelope_modulation.h (): EFFECT_TREMOLO added
+	
 2000-11-01  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* audiofx_envelope_modulation.h (): EFFECT_PULSE_GATE_BPM added
