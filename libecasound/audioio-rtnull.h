@@ -43,7 +43,7 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
  private:
 
   void calculate_device_position(void);
-  void calculate_available_data(void);
+  void calculate_available_data(void) const;
   void block_until_data_available(void);
 
   int total_buffers_rep;
