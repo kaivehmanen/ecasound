@@ -46,7 +46,7 @@ ECA_RESOURCES::ECA_RESOURCES(void)
   globalrc_repp->resource_file(ecasound_resource_path + "/ecasoundrc");
   globalrc_repp->load();
   if (globalrc_repp->keywords().size() == 0) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Global resource file '" + ecasound_resource_path + "/ecasoundrc" + "' not available! Ecasound may not function properly!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Global resource file '" + ecasound_resource_path + "/ecasoundrc" + "' not available! Ecasound may not function properly!");
     resources_found_rep = false;
   }
 
@@ -60,7 +60,7 @@ ECA_RESOURCES::ECA_RESOURCES(void)
     userrc_repp->resource_file(user_ecasoundrc_path + "/ecasoundrc");
     userrc_repp->load();
     if (userrc_repp->has("user-resource-directory") == true) {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-resources) Warning! Old resource data found in '" + user_ecasoundrc_path + ". You can reset configuration parameters by removing the old rc-file.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Old resource data found in '" + user_ecasoundrc_path + ". You can reset configuration parameters by removing the old rc-file.");
     }
   }
 }
