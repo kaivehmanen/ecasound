@@ -128,7 +128,7 @@ static const char* ecasound_parameter_help_rep =
 "                              controller target\n"
 "\n"
 "For a more detailed documentation, see ecasound(1) man page.\n"
-"Report bugs to <k@eca.cx>.\n";
+"Report bugs to ecasound-list <ecasound-list@wakkanet.fi>.\n";
 
 const char* ecasound_parameter_help(void)
 {
