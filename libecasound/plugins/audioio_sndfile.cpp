@@ -145,6 +145,8 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     int file_format = -1;
     string teksti = real_filename;
     kvu_to_lowercase(teksti);
+
+    // FIXME: add support for more output types
     
     if (strstr(teksti.c_str(),".w64") != 0) { file_format = SF_FORMAT_W64; }
     else if (strstr(teksti.c_str(),".voc") != 0) { file_format = SF_FORMAT_VOC; }

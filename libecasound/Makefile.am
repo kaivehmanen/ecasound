@@ -202,6 +202,8 @@ ecasound_test_framework_include = \
 			audioio_test.h \
 			audioio-device_test.h
 
+# note! also remembers to update install-data-local and 
+#       uninstall-data targets
 noinst_HEADERS = 	$(ecasound_audiofx_include) \
 			$(ecasound_preset_include) \
 			$(ecasound_audioio_include) \
@@ -351,6 +353,7 @@ install-data-local:
 	cd $(srcdir) ; \
 	$(INSTALL_DATA) \
 		$(ecasound_audiofx_include) \
+		$(ecasound_preset_include) \
 		$(ecasound_audioio_include) \
 		$(ecasound_controller_include) \
 		$(ecasound_midi_include) \
@@ -364,6 +367,7 @@ install-data-local:
 uninstall-local:
 	cd $(DESTDIR)$(includedir)/libecasound && \
 	rm -f   $(ecasound_audiofx_include) \
+		$(ecasound_preset_include) \
 		$(ecasound_audioio_include) \
 		$(ecasound_controller_include) \
 		$(ecasound_midi_include) \

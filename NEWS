@@ -24,6 +24,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: libaudiofile - input file audio parameters
 		 parsed incorrectly
 	- fixed: -x option - truncate outputs - was not working 
+	- fixed: preset.h and other related headers were not installed
+		 during install-data phase
 19112003 (v2.3.1)  -** stable release **-
 	- added: --disable-effects configure option; build ecasound 
 		 without effect and controller components
