@@ -89,7 +89,6 @@ int main(int argc, char *argv[])
     ecaplay_ectrl_repp = &ectrl;
     ECA_AUDIO_FORMAT aio_params;
 
-    ectrl.toggle_interactive_mode(true);
     cline.begin();
     cline.next(); // skip the program name
 

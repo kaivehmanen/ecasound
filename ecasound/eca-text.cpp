@@ -38,7 +38,6 @@
 #include <eca-iamode-parser.h>
 #include <eca-control.h>
 #include <eca-session.h>
-#include <eca-engine.h>
 #include <eca-version.h>
 #include <eca-debug.h>
 #include <eca-error.h>
@@ -126,10 +125,13 @@ int main(int argc, char *argv[])
 	ecasound_print_header(&std::cout);
     }
 
+    bool batchmode = true;
+    if (cline.has('c') == true) batchmode = false;
+
     try {
       ECA_SESSION* session = new ECA_SESSION(cline);
       ecasound_pointer_to_ecasession = session; // used only for signal handling!
-      if (session->is_interactive() == true) {
+      if (batchmode != true) {
 #if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
 	ecasound_start_iactive_readline(session);
 #else
@@ -158,7 +160,8 @@ int main(int argc, char *argv[])
   ecasound_clean_exit(ecasound_error_no);
 }
 
-void ecasound_start_passive(ECA_SESSION* param) {
+void ecasound_start_passive(ECA_SESSION* param)
+{
   ECA_CONTROL* ctrl = new ECA_CONTROL(param);
   ecasound_pointer_to_ecacontrol = ctrl;
 
@@ -174,7 +177,8 @@ void ecasound_start_passive(ECA_SESSION* param) {
 /**
  * Ecasound interactive mode without ncurses.
  */
-void ecasound_start_iactive(ECA_SESSION* param) {
+void ecasound_start_iactive(ECA_SESSION* param)
+{
   ECA_CONTROL* ctrl = new ECA_CONTROL(param);
   ecasound_pointer_to_ecacontrol = ctrl;
 
@@ -205,7 +209,8 @@ void ecasound_start_iactive(ECA_SESSION* param) {
 /**
  * Ecasound interactive mode with ncurses.
  */
-void ecasound_start_iactive_readline(ECA_SESSION* param) {
+void ecasound_start_iactive_readline(ECA_SESSION* param)
+{
   ECA_CONTROL* ctrl = new ECA_CONTROL(param);
   ecasound_pointer_to_ecacontrol = ctrl;
 
@@ -246,7 +251,8 @@ void ecasound_start_iactive_readline(ECA_SESSION* param) {
 /**
  * Parses the command lines options in 'cline'.
  */
-void ecasound_parse_command_line(COMMAND_LINE& cline) {
+void ecasound_parse_command_line(COMMAND_LINE& cline)
+{
   if (cline.size() < 2) {
     // No parameters, let's give some help.
     std::cout << ecasound_parameter_help();
@@ -278,7 +284,8 @@ void ecasound_parse_command_line(COMMAND_LINE& cline) {
  * is done to ensure that destructors are properly 
  * called.
  */
-void ecasound_clean_exit(int n) {
+void ecasound_clean_exit(int n)
+{
   // std::cerr << "Clean exit..." << std::endl;
   ecadebug->flush();
 
@@ -357,7 +364,8 @@ void ecasound_setup_signals(void) {
 /**
  * Prints the ecasound banner.
  */
-void ecasound_print_header(std::ostream* dostream) {
+void ecasound_print_header(std::ostream* dostream)
+{
   *dostream << "****************************************************************************\n";
   *dostream << "*";
 #if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
@@ -388,7 +396,8 @@ void ecasound_print_header(std::ostream* dostream) {
 char *command_generator ();
 char **fileman_completion ();
 
-void ecasound_init_readline_support(void) {
+void ecasound_init_readline_support(void)
+{
   /* for conditional parsing of ~/.inputrc file. */
   rl_readline_name = "ecasound";
 
@@ -403,7 +412,8 @@ void ecasound_init_readline_support(void) {
  * in case we want to do some simple parsing.  Return the array of matches,
  * or NULL if there aren't any.
  */
-char** ecasound_completion (char *text, int start, int end) {
+char** ecasound_completion (char *text, int start, int end)
+{
   char **matches;
   matches = (char **)NULL;
 
@@ -420,7 +430,8 @@ char** ecasound_completion (char *text, int start, int end) {
  * to start from scratch; without any state (i.e. STATE == 0), then we
  * start at the top of the list.
  */
-char* ecasound_command_generator (char* text, int state) {
+char* ecasound_command_generator (char* text, int state)
+{
   static int list_index, len;
   static const std::map<std::string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
   static std::map<std::string,int>::const_iterator p;
@@ -434,24 +445,20 @@ char* ecasound_command_generator (char* text, int state) {
       list_index = 0;
       p = map_ref.begin();
       len = strlen (text);
-      // std::cerr << "First:" << p->first << ",";
   }
+
   /* Return the next name which partially matches from the command list */
   while (p != map_ref.end()) {
       cmd = p->first;
       list_index++;
-      // std::cerr << "Cmd:" << cmd << " (" << list_index << "),";
       ++p;
       if (p != map_ref.end()) {
-	// std::cerr << text << " = " << cmd << "\n";
 	string hyphenstr = string_search_and_replace(text, '_', '-');
 	if (strncmp(hyphenstr.c_str(), cmd.c_str(), len) == 0) {
-  	  // std::cerr << "Len: " << len << " - compare returns: " << cmd.compare(text, 0, len) << ".\n";
 	  return(strdup(cmd.c_str()));
 	}
       }
   }
-  // std::cerr << "NULL";
   return ((char *)0);
 }
 

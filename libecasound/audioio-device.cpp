@@ -47,8 +47,9 @@ string AUDIO_IO_DEVICE::status(void) const
 {
   MESSAGE_ITEM mitem;
 
-  mitem << "realtime-device, processed ";
-  mitem << position_in_samples() << " samples.\n -> ";
+  mitem << "realtime-device; position ";
+  mitem << position_in_samples() << ", delay ";
+  mitem << delay() << ".\n -> ";
   
   if (is_open() == true) 
     mitem << "open, ";

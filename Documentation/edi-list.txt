@@ -27,6 +27,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+24.02.2002 - edi-13 closed
 22.02.2002 - edi-22, edi-23, edi-24 and edi-25 opened
 22.02.2002 - edi-template.txt updated
 01.02.2002 - edi-12 closed
@@ -41,9 +42,6 @@ xx.xx.2001 no history information
 
 (edi-1): Initial reverb-spike with the -ete reverb.
 	- submitted: Anthony Paul Van Groningen, 04.01.2001
-(edi-13): Possible bug in forked-stream module (mp3,ogg), which 
-	 causes ecawave crashes.
-	- submitted: kaiv, 17.08.2001
 (edi-25): Distortion with multitap delay -etm if delay length changes
 	  dynamically.
         - submitted: rjpoelstra, 27.01.2002
@@ -104,6 +102,10 @@ xx.xx.2001 no history information
 (edi-12): Conversions problems with non-interleaved, s32_le streams.
 	- submitted: jhall, 16.7.2001
 	- done: kaiv, 16.1.2002, ecasound 2.1dev7
+(edi-13): Possible bug in forked-stream module (mp3,ogg), which 
+	 causes ecawave crashes.
+	- submitted: kaiv, 17.08.2001
+	- fixed: kaiv, 24.02.2002
 (edi-15): More intelligent system for selecting buffering modes 
           and sizes for optimal out-of-the-box performance.
 	- submitted: kaiv, 09.08.2001

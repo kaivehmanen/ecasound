@@ -73,6 +73,9 @@ void ARTS_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   ::arts_stream_set(stream_rep, ARTS_P_BLOCKING, 1);
   samples_rep = 0;
 
+  double total_latency = ::arts_stream_get(stream_rep, ARTS_P_TOTAL_LATENCY);
+  latency_rep = static_cast<long int>(total_latency * samples_per_second() / 1000.0f);
+  
   AUDIO_IO::open();
 }
 
@@ -93,17 +96,11 @@ void ARTS_INTERFACE::start(void)
   AUDIO_IO_DEVICE::start();
 }
 
-SAMPLE_SPECS::sample_pos_t ARTS_INTERFACE::position_in_samples(void) const
-{ 
-  return(samples_rep); 
-}
-
 long int ARTS_INTERFACE::read_samples(void* target_buffer, 
 				      long int samples) 
 {
   long int res = ::arts_read(stream_rep, target_buffer, frame_size() * samples);
   if (res >= 0) {
-    samples_rep += res;
     return(res / frame_size());
   }
   else {
@@ -114,5 +111,5 @@ long int ARTS_INTERFACE::read_samples(void* target_buffer,
 void ARTS_INTERFACE::write_samples(void* target_buffer, 
 				   long int samples) 
 {
-  samples_rep += ::arts_write(stream_rep, target_buffer, frame_size() * samples);
+  ::arts_write(stream_rep, target_buffer, frame_size() * samples);
 }

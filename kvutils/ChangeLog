@@ -2,6 +2,17 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2002-02-27  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* threads.h (all): added
+	* locks.h (pthread_mutex_spinlock): moved to threads.h
+	
+2002-02-26  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* library version changed to 3:0:0 (change in 
+	  binary-level API)
+	* procedure_timer.h (last_duration_seconds): added
+	
 2001-12-22  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* kvutils.h (string_to_words): marked obsolete - not removed 

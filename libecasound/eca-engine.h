@@ -2,6 +2,7 @@
 #define INCLUDED_ECA_ENGINE_H
 
 #include <vector>
+#include "eca-engine-driver.h"
 
 class AUDIO_IO;
 class AUDIO_IO_BUFFERED_PROXY;
@@ -9,18 +10,57 @@ class AUDIO_IO_DEVICE;
 class CHAIN;
 class CHAIN_OPERATOR;
 class ECA_CHAINSETUP;
+class ECA_ENGINE;
 class ECA_ENGINE_impl;
-class ECA_SESSION;
 class SAMPLE_BUFFER;
 
 /**
- * Main processing engine
+ * Default engine driver
+ */
+class ECA_ENGINE_DEFAULT_DRIVER : public ECA_ENGINE_DRIVER {
+
+ public:
+
+  virtual void exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup);
+  virtual void start(void);
+  virtual void stop(bool blocking);
+  virtual void exit(bool blocking);
+
+ private:
+
+  ECA_ENGINE* engine_repp;
+  bool exit_request_rep;
+
+};
+
+/**
+ * ECA_ENGINE is the actual processing engine. 
+ * It is initialized with a pointer to a 
+ * ECA_CHAINSETUP object, which has all information 
+ * needed at runtime. In other words ECA_ENGINE is 
+ * used to execute the chainsetup. You could say 
+ * ECA_ENGINE renders the final product according 
+ * to instruction given in ECA_CHAINSETUP. 
+ *
+ * In most use cases ECA_ENGINE operation 
+ * involves multiple threads. The main thread
+ * contexts are:
+ *
+ *     - control context in which
+ *       ECA_ENGINE::exec() is executed
+ *
+ *     - driver context; depending on the 
+ *       used driver, this can be either
+ *       a separate thread or same as the
+ *       control thread
+ *
+ *     - external context; other threads
+ *       sending commands to the engine
  *
  * Notes: This class is closely tied to 
- *        the ECA_SESSION and ECA_CHAINSETUP, 
- *        which all allow friend-access to all 
- *        their private data and members to 
- *        ECA_ENGINE.
+ *        ECA_CHAINSETUP. Its private data and
+ *        function members can be accessed by 
+ *        ECA_ENGINE through friend-access.
  */
 class ECA_ENGINE {
 
@@ -48,12 +88,6 @@ class ECA_ENGINE {
     ep_debug,
     ep_exit,
     // --
-    //      ep_aio_forward,
-    //      ep_aio_rewind,
-    //      ep_aio_setpos,
-    //      ep_ao_select,
-    //      ep_ai_select,
-    // --
     ep_c_mute,
     ep_c_bypass,
     ep_c_select,
@@ -62,7 +96,6 @@ class ECA_ENGINE {
     ep_copp_select,
     ep_copp_value,
     // --
-    ep_sfx,
     ep_rewind,
     ep_forward,
     ep_setpos
@@ -74,17 +107,40 @@ class ECA_ENGINE {
   /** @name Public functions */
   /*@{*/
 
-  ECA_ENGINE(ECA_SESSION* eparam);
+  ECA_ENGINE(ECA_CHAINSETUP* eparam);
   ~ECA_ENGINE(void);
-  void exec(void);
+
+  void exec(bool batch_mode);
   void command(Engine_command_t cmd, double arg);
   void wait_for_stop(int timeout);
+  void wait_for_exit(int timeout);
+
+  /*@}*/
 
   /** @name Public functions for observing engine status information */
   /*@{*/
 
+  bool is_valid(void) const;
   Engine_status_t status(void) const;
-  const ECA_SESSION* session(void) const { return(session_repp); }
+
+  /*@}*/
+
+  /** @name API for engine driver objects (@see ECA_ENGINE_DRIVER) */
+  /*@{*/
+
+  void check_command_queue(void);
+  void wait_for_commands(void);
+  void init_engine_state(void);
+  void update_engine_state(void);
+  void engine_iteration(void);
+
+  void start_operation(void);
+  void stop_operation(void);
+
+  bool is_active(void) const;
+  bool batch_mode(void) const { return(batchmode_enabled_rep); }
+
+  const ECA_CHAINSETUP* connected_chainsetup(void) const { return(csetup_repp); }
 
   /*@}*/
 
@@ -102,28 +158,30 @@ private:
 
   ECA_ENGINE_impl* impl_repp;
 
-  long int prefill_threshold_rep;
-
-  bool was_running_rep;
-  bool rt_running_rep;
-  bool end_request_rep;
-  bool continue_request_rep;
-  bool trigger_outputs_request_rep;
-  bool processing_range_set_rep;
-  bool use_double_buffering_rep;
   bool use_midi_rep;
+  bool batchmode_enabled_rep;
+  bool processing_range_set_rep;
+
+  bool active_rep;
+  bool was_running_rep;
+  bool driver_local;
+
+  bool finished_rep;
   int outputs_finished_rep;
   int inputs_not_finished_rep;
 
-  int trigger_counter_rep;
+  long int prefill_threshold_rep;
+  long int samples_since_trigger_rep;
+  long int recording_offset_rep;
 
   /*@}*/
 
   /** @name Pointers to connected chainsetup  */
   /*@{*/
 
-  ECA_SESSION* session_repp;
   ECA_CHAINSETUP* csetup_repp;
+  ECA_ENGINE_DRIVER* driver_repp;
+
   std::vector<CHAIN*>* chains_repp;
   std::vector<AUDIO_IO*>* inputs_repp;
   std::vector<AUDIO_IO*>* outputs_repp;
@@ -162,52 +220,30 @@ private:
 
   std::vector<int> input_chain_count_rep;
   std::vector<int> output_chain_count_rep;
-  int input_count_rep;
-  int output_count_rep;
-  int chain_count_rep;
-  int max_channels_rep;
-  long int buffersize_rep;
-  Engine_status_t engine_status_rep;
+
+  /** @name Attribute functions */
+  /*@{*/
+
+  long int buffersize(void) const;
+  int max_channels(void) const;
 
   /*@}*/
 
   /** @name Private functions for transport control  */
   /*@{*/
 
-  /**
-   * Start processing. If in multitrack-mode, performs the initial 
-   * multitrack-sync phase.
-   */
-  void start(void);
-
-  /**
-   * Stop processing and notifies all devices.
-   */
-  void stop(void);
-
+  void request_start(void);
+  void request_stop(void);
   void signal_stop(void);
-
-  /**
-   * Start processing if it was conditionally stopped
-   */
+  void signal_exit(void);
   void conditional_start(void);
-
-  /**
-   * Stop processing (see conditional_start())
-   */
   void conditional_stop(void);
 
   void start_servers(void);
   void stop_servers(void);
 
-  void multitrack_sync(void);
-  void multitrack_start(void);
+  void start_realtime_objects(void);
   void reset_realtime_devices(void);
-
-  /**
-   * Trigger all output devices if requested by start()
-   */
-  void trigger_outputs(void);
 
   /*@}*/
 
@@ -220,16 +256,7 @@ private:
   void set_position(int seconds) { set_position((double)seconds); }
   void change_position(double seconds);
 
-  /**
-   * Calculates how much data we need to process and sets buffersize 
-   * accordingly.
-   */
   void prehandle_control_position(void);
-
-  /**
-   * If we've processed all the data that was request, stop or rewind. 
-   * Also resets buffersize to its default value.
-   */
   void posthandle_control_position(void);
 
   /*@}*/
@@ -237,28 +264,26 @@ private:
   /** @name Private functions for command queue handling  */
   /*@{*/
 
-  /**
-   * Interprets the command queue for interactive commands and
-   * acts accordingly.
-   */
   void interpret_queue(void);
-
-  void update_engine_state(void);
 
   /*@}*/
 
-  /** @name Private functions for initial setup  */
+  /** @name Private functions for setup and cleanup  */
   /*@{*/
 
   void init_variables(void);
   void init_connection_to_chainsetup(void);
-  void init_mix_method(void);
+  void init_driver(void);
+  void init_prefill(void);
   void init_servers(void);
-  void init_inputs(void);
-  void init_outputs(void);
+  void init_processing_length(void);
   void init_chains(void);
-  void init_sorted_input_map(void);
-  void init_sorted_output_map(void);
+  void cleanup(void);
+
+  void update_cache_chain_connections(void);
+  void update_cache_latency_values(void);
+  void update_cache_object_lists(void);
+
   void init_profiling(void);
   void dump_profile_info(void);
 
@@ -267,49 +292,17 @@ private:
   /** @name Private functions for signal routing  */
   /*@{*/
 
-  void inputs_to_chains(bool skip_realtime_inputs);
-  void mix_to_chains(void);
+  void inputs_to_chains(void);
   void process_chains(void);
   void mix_to_outputs(bool skip_realtime_target_outputs);
-
-  /*@}*/
-
-  /** @name Private functions for processing  */
-  /*@{*/
-
-  void exec_normal_iactive(void);
-  void exec_simple_iactive(void);
 
   /*@}*/
 
   /** @name Private functions for toggling engine features */
   /*@{*/
 
-  void chain_processing(void);
   void chain_muting(void);
-
-  /*@}*/
-
-  /** @name Private functions for modifying engine status information */
-  /*@{*/
-
-  /**
-   * Set engine status to 'state'.
-   *
-   * @see status()
-   */
-  void set_status(Engine_status_t state);
-
-  /*@}*/
-
-  /** @name Private type definitions  */
-  /*@{*/
-
-  typedef std::vector<AUDIO_IO*>::const_iterator audio_ci;
-  typedef std::vector<SAMPLE_BUFFER*>::const_iterator audioslot_ci;
-  typedef std::vector<CHAIN*>::const_iterator chain_ci;
-  typedef std::vector<CHAIN*>::iterator chain_i;
-  typedef std::vector<CHAIN_OPERATOR*>::const_iterator chainop_ci;
+  void chain_processing(void);
 
   /*@}*/
 

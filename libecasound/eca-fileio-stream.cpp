@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-fileio-stream.cpp: File-I/O and buffering routines using normal
 //                        file streams.
-// Copyright (C) 1999,2001 Kai Vehmanen (kai-vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,26 +66,30 @@ void ECA_FILE_IO_STREAM::open_stdin(void) {
   curpos_rep = 0;
 }
 
-void ECA_FILE_IO_STREAM::open_stdout(void) { 
+void ECA_FILE_IO_STREAM::open_stdout(void) 
+{
   f1 = stdout;
   mode_rep = "wb";
   standard_mode = true;
   curpos_rep = 0;
 }
 
-void ECA_FILE_IO_STREAM::open_stderr(void) { 
+void ECA_FILE_IO_STREAM::open_stderr(void)
+{
   f1 = stderr;
   mode_rep = "wb";
   standard_mode = true;
   curpos_rep = 0;
 }
 
-void ECA_FILE_IO_STREAM::close_file(void) { 
+void ECA_FILE_IO_STREAM::close_file(void)
+{
   if (standard_mode != true) std::fclose(f1);
   mode_rep = "";
 }
 
-void ECA_FILE_IO_STREAM::read_to_buffer(void* obuf, off_t bytes) { 
+void ECA_FILE_IO_STREAM::read_to_buffer(void* obuf, off_t bytes)
+{
   if (is_file_ready() == true) {
     last_rep = std::fread(obuf, 1, bytes, f1);
     curpos_rep += last_rep;
@@ -95,7 +99,8 @@ void ECA_FILE_IO_STREAM::read_to_buffer(void* obuf, off_t bytes) {
   }
 }
 
-void ECA_FILE_IO_STREAM::write_from_buffer(void* obuf, off_t bytes) { 
+void ECA_FILE_IO_STREAM::write_from_buffer(void* obuf, off_t bytes)
+{
   if (is_file_ready() == true) {
     last_rep = std::fwrite(obuf, 1, bytes, f1);
     curpos_rep += last_rep;
@@ -107,19 +112,22 @@ void ECA_FILE_IO_STREAM::write_from_buffer(void* obuf, off_t bytes) {
 
 off_t ECA_FILE_IO_STREAM::file_bytes_processed(void) const { return(last_rep); }
 
-bool ECA_FILE_IO_STREAM::is_file_ready(void) const { 
+bool ECA_FILE_IO_STREAM::is_file_ready(void) const
+{
   if (mode_rep == "" ||
       std::feof(f1) ||
       std::ferror(f1)) return(false);
   return(true);
 }
 
-bool ECA_FILE_IO_STREAM::is_file_error(void) const { 
+bool ECA_FILE_IO_STREAM::is_file_error(void) const
+{ 
   if (std::ferror(f1)) return(true);
   return(false);
 }
 
-void ECA_FILE_IO_STREAM::set_file_position(off_t newpos) { 
+void ECA_FILE_IO_STREAM::set_file_position(off_t newpos)
+{
   curpos_rep = newpos;
   if (standard_mode != true) {
 /* fseeko doesn't seem to work with glibc 2.1.x */
@@ -127,11 +135,14 @@ void ECA_FILE_IO_STREAM::set_file_position(off_t newpos) {
     off_t seekpos = 0;
     off_t seekstep = 0;
     int whence = SEEK_SET;
-    while(curpos_rep - seekpos > 0) {
+    while(curpos_rep - seekpos >= 0) {
       if (curpos_rep - seekpos > LONG_MAX)
 	seekstep = LONG_MAX;
       else
 	seekstep = curpos_rep - seekpos;
+
+      /* null seek, break */
+      if (seekstep == 0 && whence == SEEK_CUR) break;
 
       // std::cerr << "(eca-fileio-stream) fw-seeking from " << seekpos << " to " << seekpos+seekstep << std::endl;
       int res = std::fseek(f1, seekstep, whence);
@@ -151,13 +162,15 @@ void ECA_FILE_IO_STREAM::set_file_position(off_t newpos) {
   }
 }
 
-void ECA_FILE_IO_STREAM::set_file_position_advance(off_t fw) { 
+void ECA_FILE_IO_STREAM::set_file_position_advance(off_t fw)
+{
   if (standard_mode != true) {
     set_file_position(curpos_rep + fw);
   }
 }
 
-void ECA_FILE_IO_STREAM::set_file_position_end(void) { 
+void ECA_FILE_IO_STREAM::set_file_position_end(void)
+{ 
   if (standard_mode == false) {
     int res = std::fseek(f1, 0, SEEK_END);
     if (res != 0) {
@@ -169,12 +182,14 @@ void ECA_FILE_IO_STREAM::set_file_position_end(void) {
   }
 }
 
-off_t ECA_FILE_IO_STREAM::get_file_position(void) const { 
+off_t ECA_FILE_IO_STREAM::get_file_position(void) const
+{
   if (standard_mode == true) return(0);
   return(curpos_rep);
 }
 
-off_t ECA_FILE_IO_STREAM::get_file_length(void) const {
+off_t ECA_FILE_IO_STREAM::get_file_length(void) const
+{
   if (standard_mode == true) return(0);
   
   struct stat temp;

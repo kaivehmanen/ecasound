@@ -112,11 +112,6 @@ void ECA_SESSION::set_defaults(void) {
 
   ECA_RESOURCES ecaresources;
 
-  if (ecaresources.resource("default-to-interactive-mode") == "true") 
-    iactive_rep = true;
-  else
-    iactive_rep = false;
-
   MP3FILE::set_mp3_input_cmd(ecaresources.resource("ext-cmd-mp3-input"));
   MP3FILE::set_mp3_output_cmd(ecaresources.resource("ext-cmd-mp3-output"));
   MIKMOD_INTERFACE::set_mikmod_cmd(ecaresources.resource("ext-cmd-mikmod"));
@@ -435,20 +430,6 @@ void ECA_SESSION::interpret_general_option (const std::string& argu) {
   if (argu.size() < 2) return;
   if (argu[0] != '-') return;
   switch(argu[1]) {
-  case 'C':
-    {
-      iactive_rep = false;
-      ecadebug->msg("(eca-session) Interactive mode disabled."); 
-      break;
-    }
-
-  case 'c':
-    {
-      iactive_rep = true;
-      ecadebug->msg("(eca-session) Interactive mode enabled."); 
-      break;
-    }
-
   case 'd':
     {
       ecadebug->set_debug_level(atoi(get_argument_number(1, argu).c_str()));
@@ -457,6 +438,7 @@ void ECA_SESSION::interpret_general_option (const std::string& argu) {
       ecadebug->msg(mtempd.to_string());
       break;
     }
+
   case 'h':      // help!
     std::cout << ecasound_parameter_help();
     break;

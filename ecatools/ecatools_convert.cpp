@@ -93,8 +93,8 @@ int main(int argc, char *argv[])
 	break;
       }
 
-      ECA_ENGINE emain (&esession);      
-      emain.exec();
+      // blocks until processing is done
+      ectrl.run();
 
       ectrl.disconnect_chainsetup();
       ectrl.remove_chainsetup();

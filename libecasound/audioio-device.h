@@ -41,18 +41,6 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
 
   /*@}*/
 
-  /** @name Attribute functions */
-  /*@{*/
-
-  virtual bool supports_seeking(void) const { return(false); }
-
-  /**
-   * Estimed processing latency in samples.
-   */
-  virtual long int latency(void) const { return(0); }
-
-  /*@}*/
-
   /** @name Configuration 
    * 
    * For setting and getting configuration parameters.
@@ -66,22 +54,62 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    * running. If disabled, processing should be aborted
    * if an xrun occurs. Should be set before opening 
    * the device. Defaults to 'true'.
+   *
+   * @pre is_open() != true
    */
   virtual void toggle_ignore_xruns(bool v) { ignore_xruns_rep = v; }
 
   /** 
-   * Whether the use of internal buffering is limited. 
-   * If disabled, the device should use minimal amount 
-   * of internal buffering. The recommended size is 
-   * two or three fragments, each buffersize() sample frames
-   * in size. Otherwise the device can use all its
-   * internal buffering. This toggle is meant for controlling
-   * the latency caused by the device. Defaults to 'true'.
+   * Whether the device should maximize the use 
+   * of internal buffering. If disabled, the device 
+   * should use minimal amount of internal buffering. The 
+   * recommended size is  two or three fragments, each 
+   * buffersize() sample frames in size. If enabled, 
+   * device is free to use as much as buffering as 
+   * is possible. The default state is enabled.
+   * 
+   * The exact amount of buffering can be checked 
+   * with the latency() function.
+   *
+   * @pre is_open() != true
    */
   virtual void toggle_max_buffers(bool v) { max_buffers_rep = v; }
   
+  /**
+   * Returns the current setting for xrun handling.
+   */
   virtual bool ignore_xruns(void) const { return(ignore_xruns_rep); }
+
+  /**
+   * Returns the current setting for how internal 
+   * buffering is used.
+   */
   virtual bool max_buffers(void) const { return(max_buffers_rep); }
+
+  /**
+   * Returns the systematic latency in sample frames. 
+   * This value is usually a multiple of buffersize().
+   * Note that the latency introduced by prefilling 
+   * outputs is not included in this figure.
+   *
+   * @see delay()
+   * @see prefill_space()
+   *
+   * @pre is_open() == true
+   */
+  virtual long int latency(void) const { return(0); }
+
+  /**
+   * How much data in sample frames can be prefilled 
+   * to a output device before processing is started 
+   * with start() (after prepare())?
+   *
+   * Note! Prefilling will have an affect to
+   *       output latency.
+   *
+   * @see latency()
+   */
+  virtual long int prefill_space(void) const { return(0); }
 
   /*@}*/
 
@@ -139,6 +167,21 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
   /*@{*/
 
   /**
+   * Returns the delay between current read/write position 
+   * and the exact hardware i/o location. For instance 
+   * with soundcard hardware this value tells the distance 
+   * to the exact audio frame currently being played or 
+   * recorded.
+   *
+   * @see latency()
+   * @see position_in_samples()
+   *
+   * @pre is_running() == true
+   * @post delay() <= latency()
+   */
+  virtual long int delay(void) const { return(0); }
+
+  /**
    * Whether device has been started?
    */
   bool is_running(void) const { return(is_running_rep); }
@@ -148,16 +191,19 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    */
   bool is_prepared(void) const { return(is_prepared_rep); }
 
-  virtual bool finished(void) const { return(is_open() == false); }
+  /*@}*/
 
+  /** @name Functions reimplemented from AUDIO_IO */
+  /*@{*/
+
+  virtual bool supports_seeking(void) const { return(false); }
+  virtual bool finished(void) const { return(is_open() == false); }
   virtual std::string status(void) const;
 
   /*@}*/
 
   /** @name Reimplemented functions from ECA_AUDIO_POSITION */
   /*@{*/
-
-  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const = 0;
 
   /**
    * Seeking is impossible with realtime devices.

@@ -89,10 +89,10 @@ void PROCEDURE_TIMER::start(void) {
 void PROCEDURE_TIMER::stop(void) {
   gettimeofday(&now_rep, 0);
   subtract(&now_rep, &start_rep);
-  double length = to_seconds(&now_rep);
+  last_duration_rep = to_seconds(&now_rep);
 //    cerr << idstr_rep << ": " << kvu_numtostr(length, 16) << " secs." << endl;
   events_rep++;
-  event_time_total_rep += length;
+  event_time_total_rep += last_duration_rep;
   if (events_rep == 1) 
     memcpy(&min_event_rep, &now_rep, sizeof(struct timeval));
   if (less_than(&now_rep, &min_event_rep))
@@ -110,6 +110,7 @@ void PROCEDURE_TIMER::reset(void) {
   events_under_bound_rep = 0;
   events_rep = 0;
   event_time_total_rep = 0.0f;
+  last_duration_rep = 0.0f;
   memset(&now_rep, 0, sizeof(struct timeval));
   memset(&start_rep, 0, sizeof(struct timeval));
   memset(&min_event_rep, 0, sizeof(struct timeval));
@@ -124,6 +125,7 @@ long int PROCEDURE_TIMER::event_count(void) const { return(events_rep); }
 double PROCEDURE_TIMER::max_duration_seconds(void) const { return(to_seconds(&max_event_rep)); }
 double PROCEDURE_TIMER::min_duration_seconds(void) const { return(to_seconds(&min_event_rep)); }
 double PROCEDURE_TIMER::average_duration_seconds(void) const { return(event_time_total_rep / event_count()); }
+double PROCEDURE_TIMER::last_duration_seconds(void) const { return(last_duration_rep); }
 const struct timeval* PROCEDURE_TIMER::min_duration(void) const { return(&max_event_rep); }
 const struct timeval* PROCEDURE_TIMER::max_duration(void) const { return(&min_event_rep); }
 std::string PROCEDURE_TIMER::to_string(void) const { 
@@ -137,8 +139,8 @@ std::string PROCEDURE_TIMER::to_string(void) const {
   res += " (" + kvu_numtostr(to_seconds(&lower_bound_rep), 8) + "sec)\n";
   res += "Min duration in seconds: " + kvu_numtostr(min_duration_seconds(), 16) + "\n";
   res += "Max duration in seconds: " + kvu_numtostr(max_duration_seconds(), 16) + "\n";
-  res += "Average duration in seconds: " + 
-    kvu_numtostr(average_duration_seconds(), 16) + "\n";
+  res += "Average duration in seconds: " + kvu_numtostr(average_duration_seconds(), 16) + "\n";
+  res += "Duration of last event: " + kvu_numtostr(last_duration_rep, 16) + "\n";
 
   return(res); 
 }

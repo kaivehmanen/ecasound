@@ -29,7 +29,6 @@
 ECA_CONTROL_INTERFACE::ECA_CONTROL_INTERFACE (void) { 
   session_repp = new ECA_SESSION();
   control_repp = new ECA_CONTROL(session_repp);
-  control_repp->toggle_interactive_mode(true);
 }
 
 /**

@@ -38,7 +38,6 @@ const char* audio_io_keyword(void){return(audio_io_keyword_const); }
 const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
 int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
 
-
 AUDIO_IO_JACK::AUDIO_IO_JACK (void)
 {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) constructor");
@@ -75,7 +74,6 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) open");
 
-  curpos_rep = 0;
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_f32_le);
   toggle_interleaved_channels(false);
 
@@ -164,49 +162,21 @@ bool AUDIO_IO_JACK::finished(void) const
   return(false);
 }
 
-long int AUDIO_IO_JACK::read_samples(void* target_buffer, long int samples) {
-  if (is_running() == true) {
-    if (jackmgr_rep != 0) {
-      long int res = jackmgr_rep->read_samples(myid_rep, target_buffer, samples);
-      curpos_rep += res;
-      return(res);
-    }
+long int AUDIO_IO_JACK::read_samples(void* target_buffer, long int samples)
+{
+  if (jackmgr_rep != 0) {
+    long int res = jackmgr_rep->read_samples(myid_rep, target_buffer, samples);
+    return(res);
   }
-
+  
   return(0);
 }
 
-void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples) { 
-  if (is_running() == true) {
-    if (jackmgr_rep != 0) {
-      curpos_rep += samples;
-      jackmgr_rep->write_samples(myid_rep, target_buffer, samples);
-    }
+void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples)
+{
+  if (jackmgr_rep != 0) {
+    jackmgr_rep->write_samples(myid_rep, target_buffer, samples);
   }
-}
-
-void AUDIO_IO_JACK::stop(void) { 
-  bool was_running = is_running();
-
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) stop / " + label());
-
-  if (jackmgr_rep != 0 && was_running == true) {
-    jackmgr_rep->stop(myid_rep);
-  }
-
-  AUDIO_IO_DEVICE::stop();
-}
-
-void AUDIO_IO_JACK::start(void) { 
-  bool was_running = is_running();
-
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) start / " + label());
-
-  if (jackmgr_rep != 0 && was_running != true) {
-    jackmgr_rep->start(myid_rep);
-  }
-
-  AUDIO_IO_DEVICE::start();
 }
 
 void AUDIO_IO_JACK::prepare(void)
@@ -215,9 +185,16 @@ void AUDIO_IO_JACK::prepare(void)
   AUDIO_IO_DEVICE::prepare();
 }
 
-SAMPLE_SPECS::sample_pos_t AUDIO_IO_JACK::position_in_samples(void) const
-{
-  return(curpos_rep);
+void AUDIO_IO_JACK::start(void)
+{ 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) start / " + label());
+  AUDIO_IO_DEVICE::start();
+}
+
+void AUDIO_IO_JACK::stop(void)
+{ 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) stop / " + label());
+  AUDIO_IO_DEVICE::stop();
 }
 
 std::string AUDIO_IO_JACK::parameter_names(void) const
@@ -252,4 +229,3 @@ std::string AUDIO_IO_JACK::get_parameter(int param) const
     }  
   return("");
 }
-

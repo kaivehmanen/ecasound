@@ -17,8 +17,7 @@ class ECA_CHAINSETUP;
  * selecting and connecting of chainsetups. 
  *
  * Notes: Friendship access to data members is 
- *        allowed for the ECA_CONTROL and 
- *        ECA_ENGINE classes.
+ *        allowed for ECA_CONTROL objects.
  */
 class ECA_SESSION {
 
@@ -30,7 +29,6 @@ class ECA_SESSION {
   friend class ECA_CONTROL_BASE;
   friend class ECA_CONTROL_OBJECTS;
   friend class ECA_CONTROL;
-  friend class ECA_ENGINE;
 
  public:
 
@@ -43,9 +41,6 @@ class ECA_SESSION {
   const ECA_CHAINSETUP* get_connected_chainsetup(void) const { return connected_chainsetup_repp; }
   const ECA_CHAINSETUP* get_chainsetup_with_name(const std::string& name) const;
   bool is_selected_chainsetup_connected(void) const { return(selected_chainsetup_repp == connected_chainsetup_repp); }
-  bool is_interactive(void) const { return iactive_rep; }
-
-  void toggle_interactive_mode(bool v) { iactive_rep = v; }
 
   // --
   // Constructors and destructors
@@ -154,12 +149,6 @@ class ECA_SESSION {
   std::vector<std::string> chainsetup_names(void) const;
 
   void update_controller_sources(void);
-
-  // ---
-  // Status data
-  // ---
-  bool iactive_rep;          // Should engine use 'cqueue'?
-
 
   // --
   // Make sure that objects of this class aren't copy constucted/assigned

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 240202) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 110302) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -18,7 +18,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.4 *-
 
 ??022002 (v2.1dev8)
-	- edi-entries: edi-18, edi-21
+	- edi-entries: edi-13, edi-18, edi-21, edi-22
 	- added: reverse audio object type; see the ecasound(1) 
 		 man page for better documentation
 	- added: pyecasound - if python version is 2.2 or higher, 
@@ -36,13 +36,16 @@ Last officially released version is -*> v2.0.4 *-
   		 in place; -kl, -kl2 and -klg are now position 
 		 aware - changing chainsetup position also affects
 	   	 controller sources
+	- added: initial implementation of edi-22
 	- removed: support for old ALSA driver versions 0.3.x, 
  		   0.4.x and 0.5.x
 	- removed: ecasoundrc - 'default-samplerate'
 	- removed: -sr option; not needed anymore
 	- removed: ia-mode - 'c-rewind', 'c-forward' and 
 		   'c-setpos'
-	- changed: JACK support updated to match JACK's 28/Jan/02
+	- removed: ecasoundrc - default-to-interactive-mode
+	- removed: mixmode switch (-m)
+	- changed: JACK support updated to match JACK's 11/Mar/02
 		   CVS-tree
 	- changed: pyecasound - module libpyecasound.so renamed 
 		   to pyecasound.so
@@ -58,6 +61,12 @@ Last officially released version is -*> v2.0.4 *-
 		   unpacked 24bit data, use s32_le and s32_be
 		   formats instead
 	- changed: configure.in cleanup
+	- changed: the libkvutils binary API has changes so its
+	           version number was changed from 3:0:1 to 3:0:0 
+                   (libkvutils.so.3); this interface will be 
+		   frozen together with libecasound.so.8
+	- changed: rewritten rtnull implementation; now imitates
+		   soundcard behaviour much more accurately
 	- fixed: -[io]:alsaplugin,x,y didn't work with latest ALSA
 		 0.9betaX releases
 	- fixed: serious bug in setting up ALSA 0.9.x buffering params
@@ -77,6 +86,13 @@ Last officially released version is -*> v2.0.4 *-
 	- fixed: problems with using ewf-files with doublebuffering
 	- fixed: loop devices didn't work; resulted in explicit 
 		 exception errors
+	- fixed: configure failed if neither ncurses nor termcap
+		 was installed
+	- fixed: compile failed if ALSA was not installed (even
+		 with --disable-alsa)
+	- fixed: if compiled with --with-largefile, when closing 
+		 output wav files, riff header block was written 
+		 over start of audio data
 16012002 (v2.1dev7)
 	- edi-entries: edi-12
 	- added: a watchdog thread that handles thread cleanup; 

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-rtnull.cpp: Null audio object with realtime behaviour
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999,2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,9 +30,55 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-REALTIME_NULL::REALTIME_NULL(const std::string& name) {
-  //cerr << "delay " << buffer_delay.tv_sec << "sec.\n";
-  //cerr << "delay " << buffer_delay.tv_usec << "usec.\n";
+using std::cerr;
+using std::endl;
+
+/** 
+ * Definitions from glibc's sys/time.h
+ */
+
+#ifndef timerclear
+#define	timerclear(tvp)		((tvp)->tv_sec = (tvp)->tv_usec = 0)
+#endif
+
+#ifndef timeradd
+#define	timeradd(a, b, result)						      \
+  do {									      \
+    (result)->tv_sec = (a)->tv_sec + (b)->tv_sec;			      \
+    (result)->tv_usec = (a)->tv_usec + (b)->tv_usec;			      \
+    if ((result)->tv_usec >= 1000000)					      \
+      {									      \
+	++(result)->tv_sec;						      \
+	(result)->tv_usec -= 1000000;					      \
+      }									      \
+  } while (0)
+#endif
+
+#ifndef timercmp
+#define	timercmp(a, b, CMP) 						      \
+  (((a)->tv_sec == (b)->tv_sec) ? 					      \
+   ((a)->tv_usec CMP (b)->tv_usec) : 					      \
+   ((a)->tv_sec CMP (b)->tv_sec))
+#endif
+
+#ifndef timersub
+#define	timersub(a, b, result) \
+do { \
+	(result)->tv_sec = (a)->tv_sec - (b)->tv_sec; \
+	(result)->tv_usec = (a)->tv_usec - (b)->tv_usec; \
+	if ((result)->tv_usec < 0) { \
+		--(result)->tv_sec; \
+		(result)->tv_usec += 1000000; \
+	} \
+} while (0)
+#endif
+
+/**
+ * Function definitions
+ */
+
+REALTIME_NULL::REALTIME_NULL(const std::string& name)
+{
 }
 
 REALTIME_NULL::~REALTIME_NULL(void)
@@ -47,9 +93,18 @@ REALTIME_NULL::~REALTIME_NULL(void)
 void REALTIME_NULL::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 {
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) open");
+
   double t = static_cast<double>(buffersize()) / samples_per_second();
-  buffer_delay.tv_sec = static_cast<time_t>(floor(t));
-  buffer_delay.tv_usec = static_cast<long>((t - buffer_delay.tv_sec) * 1000000.0);
+
+  buffer_length_rep.tv_sec = static_cast<time_t>(floor(t));
+  buffer_length_rep.tv_usec = static_cast<long>((t - buffer_length_rep.tv_sec) * 1000000.0);
+
+  total_buffers_rep = 2;
+  if (max_buffers() == true) { 
+    total_buffers_rep = 3;
+  }
+  total_buffer_length_rep.tv_sec = total_buffers_rep * buffer_length_rep.tv_sec;
+  total_buffer_length_rep.tv_usec = total_buffers_rep * buffer_length_rep.tv_usec;
 
   AUDIO_IO_DEVICE::open();
 }
@@ -61,84 +116,92 @@ void REALTIME_NULL::close(void)
 
 void REALTIME_NULL::prepare(void)
 {
-  AUDIO_IO_DEVICE::prepare();
-
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) prepare");
-  if (io_mode() == io_read) {
-    buffer_fill.tv_sec = 0; 
-    buffer_fill.tv_usec = 0;
-    ::gettimeofday(&access_time, NULL);
-    ::gettimeofday(&start_time, NULL);
-  }
+
+  timerclear(&data_processed_rep);
+
+  AUDIO_IO_DEVICE::prepare();
 }
 
 void REALTIME_NULL::start(void)
 {
-  AUDIO_IO_DEVICE::start();
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) start");
+
+  gettimeofday(&start_time_rep, NULL);
+
+  AUDIO_IO_DEVICE::start();
 }
 
 void REALTIME_NULL::stop(void)
 {
-  AUDIO_IO_DEVICE::stop();
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) stop");
+
+  AUDIO_IO_DEVICE::stop();
 }
 
-long int REALTIME_NULL::read_samples(void* target_buffer, 
+/**
+ * Calculates 'time_since_start_rep'.
+ */
+void REALTIME_NULL::calculate_device_position(void)
+{
+  struct timeval now;
+  gettimeofday(&now, NULL);
+
+  timersub(&now, &start_time_rep, &time_since_start_rep);
+}
+
+/**
+ * Calculates 'avail_data_rep'.
+ */
+void REALTIME_NULL::calculate_available_data(void)
+{ 
+  if (io_mode() == io_read) {
+    /* capture: device is always ahead */
+    timersub(&time_since_start_rep, &data_processed_rep, &avail_data_rep);
+  }
+  else {
+    /* playback: device is always behind */
+    struct timeval diff;
+    timersub(&data_processed_rep, &time_since_start_rep, &diff);
+    timersub(&total_buffer_length_rep, &diff, &avail_data_rep);
+  }
+  if (timercmp(&avail_data_rep, &total_buffer_length_rep, >)) {
+    cerr << "(audioio-rtnull) xrun occured!" << endl;
+  }
+} 
+
+void REALTIME_NULL::block_until_data_available(void) 
+{
+  calculate_device_position();
+  calculate_available_data();
+
+  while (timercmp(&avail_data_rep, &buffer_length_rep, <)) {
+    struct timeval delay;
+    struct timespec ndelay;
+
+    timersub(&buffer_length_rep, &avail_data_rep, &delay);
+
+    ndelay.tv_sec = delay.tv_sec;
+    ndelay.tv_nsec = delay.tv_usec * 1000;
+    // cerr << "(audioio-rtnull) sleeping for: " << ndelay.tv_sec << " sec, " << ndelay.tv_nsec << " nanoseconds.\n";
+    nanosleep(&ndelay, NULL);
+
+    calculate_device_position();
+    calculate_available_data();
+  }
+}
+
+long int REALTIME_NULL::read_samples(void* target_buffer,
 				     long int samples)
 {
   DBC_CHECK(is_running() == true);
 
   for(int n = 0; n < samples * frame_size(); n++) ((char*)target_buffer)[n] = 0;
 
-  struct timeval d,n;
-  ::gettimeofday(&d, NULL);
-  n.tv_sec = d.tv_sec;
-  n.tv_usec = d.tv_usec;
+  block_until_data_available();
 
-  d.tv_sec -= access_time.tv_sec;
-  d.tv_usec -= access_time.tv_usec;
-  if (d.tv_usec < 0) { 
-    d.tv_sec -= 1;
-    d.tv_usec += 1000000;
-  }
-  buffer_fill.tv_sec += d.tv_sec;
-  buffer_fill.tv_usec += d.tv_usec;
-  if (buffer_fill.tv_usec > 1000000) { 
-    buffer_fill.tv_sec += 1;
-    buffer_fill.tv_usec -= 1000000;
-  }
- 
-  if (buffer_fill.tv_sec * 1000000 + buffer_fill.tv_usec > 
-      (2 * (buffer_delay.tv_sec * 1000000 + buffer_delay.tv_usec))) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) Overrun occured!");
-    buffer_fill.tv_sec = 0;
-    buffer_fill.tv_usec = 0;
-  }
-  else if (buffer_fill.tv_sec * 1000000 + buffer_fill.tv_usec <
-	   (buffer_delay.tv_sec * 1000000 + buffer_delay.tv_usec)) {
-    timespec delay;
-    delay.tv_sec = buffer_delay.tv_sec - buffer_fill.tv_sec;
-    delay.tv_nsec = buffer_delay.tv_usec - buffer_fill.tv_usec;
-    if (delay.tv_nsec < 0) { 
-      delay.tv_sec -= 1;
-      delay.tv_nsec += 1000000;
-    }
-    if (delay.tv_sec >= 0) {
-      delay.tv_nsec *= 1000;
-      //      cerr << "(audioio-rtnull) delay: " << delay.tv_sec << " sec, " << delay.tv_nsec << " nanoseconds.\n";
-      nanosleep(&delay, NULL);
-    }
-  }
-  buffer_fill.tv_sec -= buffer_delay.tv_sec; 
-  buffer_fill.tv_usec -= buffer_delay.tv_usec;
-  if (buffer_fill.tv_usec < 0) { 
-    buffer_fill.tv_sec -= 1;
-    buffer_fill.tv_usec += 1000000;
-  }
-
-  access_time.tv_sec = n.tv_sec;
-  access_time.tv_usec = n.tv_usec;
+  /* read one buffer of audio */
+  timeradd(&data_processed_rep, &buffer_length_rep, &data_processed_rep);
 
   return(buffersize());
 }
@@ -147,74 +210,37 @@ void REALTIME_NULL::write_samples(void* target_buffer,
 				  long int samples)
 { 
   if (is_running() != true) {
-    ::gettimeofday(&start_time, NULL);
-    ::gettimeofday(&access_time, NULL);
-    buffer_fill.tv_sec = 0; 
-    buffer_fill.tv_usec = 0;
-    //  toggle_running_state(true);
+    /* prefill phase */
+
+    /* write one buffer of audio */
+    timeradd(&data_processed_rep, &buffer_length_rep, &data_processed_rep);
   }
   else {
-    struct timeval d,n;
-    ::gettimeofday(&d, NULL);
-    n.tv_sec = d.tv_sec;
-    n.tv_usec = d.tv_usec;
-    d.tv_sec -= access_time.tv_sec;
-    d.tv_usec -= access_time.tv_usec;
-    if (d.tv_usec < 0) { 
-      d.tv_sec -= 1;
-      d.tv_usec += 1000000;
-    }
-    assert(d.tv_sec >= 0);
-    buffer_fill.tv_sec -= d.tv_sec;
-    buffer_fill.tv_usec -= d.tv_usec;
-    if (buffer_fill.tv_usec < 0) { 
-      buffer_fill.tv_sec -= 1;
-      buffer_fill.tv_usec += 1000000;
-    }
-
-    if (buffer_fill.tv_sec < 0) {
-      ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) Underrun occured!");
-      buffer_fill.tv_sec = 0; 
-      buffer_fill.tv_usec = 0;
-    }
-    else if (buffer_fill.tv_sec > buffer_delay.tv_sec ||
-	     (buffer_fill.tv_sec == buffer_delay.tv_sec &&
-	      buffer_fill.tv_usec >= buffer_delay.tv_usec)) {
-      timespec delay;
-      delay.tv_sec = buffer_fill.tv_sec - buffer_delay.tv_sec;
-      delay.tv_nsec = buffer_fill.tv_usec - buffer_delay.tv_usec;
-      if (delay.tv_nsec < 0) { 
-	delay.tv_sec -= 1;
-	delay.tv_nsec += 1000000;
-      }
-      if (delay.tv_sec >= 0) {
-	delay.tv_nsec *= 1000;
-	//	cerr << "(audioio-rtnull) delay: " << delay.tv_sec << " sec, " << delay.tv_nsec << " nanoseconds.\n";
-	nanosleep(&delay, NULL);
-      }
-    }
-    access_time.tv_sec = n.tv_sec;
-    access_time.tv_usec = n.tv_usec;
-  }
-  buffer_fill.tv_sec += buffer_delay.tv_sec; 
-  buffer_fill.tv_usec += buffer_delay.tv_usec;
-  if (buffer_fill.tv_usec > 1000000) { 
-    buffer_fill.tv_sec += 1;
-    buffer_fill.tv_usec -= 1000000;
+    /* block until write space available */
+    block_until_data_available();
+  
+    /* write one buffer of audio */
+    timeradd(&data_processed_rep, &buffer_length_rep, &data_processed_rep);
   }
 }
 
-long int REALTIME_NULL::latency(void) const
+long int REALTIME_NULL::prefill_space(void) const
 {
-  return(buffersize());
+  if (io_mode() != io_read) return(total_buffers_rep * buffersize());
 }
 
-SAMPLE_SPECS::sample_pos_t REALTIME_NULL::position_in_samples(void) const
+long int REALTIME_NULL::delay(void) const
 { 
-  if (is_running() != true) return(0);
-  struct timeval now;
-  ::gettimeofday(&now, NULL);
-  double time = now.tv_sec * 1000000.0 + now.tv_usec -
-    start_time.tv_sec * 1000000.0 - start_time.tv_usec;
-  return(static_cast<SAMPLE_SPECS::sample_pos_t>(time * samples_per_second() / 1000000.0));
+  long int delay = 0;
+
+  if (is_running() == true) {
+    calculate_available_data();
+    
+    double time = avail_data_rep.tv_sec * 1000000.0 + avail_data_rep.tv_usec;
+    delay = static_cast<SAMPLE_SPECS::sample_pos_t>
+      (time * samples_per_second() / 1000000.0);
+  }
+
+  DBC_CHECK(delay >= 0);
+  return(delay);
 }

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-control-base.cpp: Base class providing basic functionality
 //                       for controlling the ecasound library
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,12 +41,11 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-void* start_normal_thread(void *ptr);
-
 /**
  * Helper function for starting the slave thread.
  */
-void* start_normal_thread(void *ptr) {
+void* ECA_CONTROL_BASE::start_normal_thread(void *ptr)
+{
   sigset_t sigset;
   sigemptyset(&sigset);
   sigaddset(&sigset, SIGINT);
@@ -87,7 +86,7 @@ void ECA_CONTROL_BASE::start(void) {
   ecadebug->control_flow("Controller/Processing started");
 
   if (is_engine_started() != true) {
-    start_engine();
+    start_engine(false);
   }
 
   if (is_engine_started() != true) {
@@ -103,7 +102,7 @@ void ECA_CONTROL_BASE::start(void) {
 }
 
 /**
- * Start the processing engine and block until 
+ * Starts the processing engine and blocks until 
  * processing is finished.
  *
  * @pre is_connected() == true
@@ -114,7 +113,8 @@ void ECA_CONTROL_BASE::start(void) {
  *        is_engine_started() == true &&
  * 	  engine_repp->status() != ECA_ENGINE::engine_status_stopped))
  */
-void ECA_CONTROL_BASE::run(void) {
+void ECA_CONTROL_BASE::run(void)
+{
   // --------
   DBC_REQUIRE(is_connected() == true);
   // --------
@@ -122,37 +122,49 @@ void ECA_CONTROL_BASE::run(void) {
   if (is_engine_started() == true &&
       engine_repp->status() == ECA_ENGINE::engine_status_running) return;
 
-  start();
-
-  struct timespec sleepcount;
-  sleepcount.tv_sec = 1;
-  sleepcount.tv_nsec = 0;
+  ecadebug->control_flow("Controller/Starting batch processing");
 
   bool processing_started = false;
-  while(is_finished() == false) {
-    ::nanosleep(&sleepcount, NULL);
-    if (processing_started != true) {
-      if (is_running() == true) {
-	processing_started = true;
-      }
-      else if (is_engine_started() == true) {
-	if (engine_repp->status() != ECA_ENGINE::engine_status_stopped) {
-	  /* status() is either 'not_ready' or 'error' */
+
+  if (is_engine_started() != true) {
+    start_engine(true);
+  }
+
+  if (is_engine_started() != true) {
+    ecadebug->msg("(eca-controller) Can't start processing: couldn't start the engine. (2)");
+  } 
+  else { 
+    engine_repp->command(ECA_ENGINE::ep_start, 0.0);
+
+    struct timespec sleepcount;
+    sleepcount.tv_sec = 1;
+    sleepcount.tv_nsec = 0;
+
+    while(is_finished() == false) {
+      ::nanosleep(&sleepcount, NULL);
+      if (processing_started != true) {
+	if (is_running() == true) {
+	  processing_started = true;
+	}
+	else if (is_engine_started() == true) {
+	  if (engine_repp->status() != ECA_ENGINE::engine_status_stopped) {
+	    /* status() is either 'not_ready' or 'error' */
+	    break;
+	  }
+	}
+	else {
+	  /* ECA_CONTROL_BASE destructor has been run and 
+	   * engine_repp is now 0 (--> is_engine_start() != true) */
 	  break;
 	}
       }
       else {
-	/* ECA_CONTROL_BASE destructor has been run and 
-	 * engine_repp is now 0 (--> is_engine_start() != true) */
-	break;
+	if (is_running() != true) break;
       }
-    }
-    else {
-      if (is_running() != true) break;
-    }
-  }      
+    }  
+  }    
 
-  ecadebug->control_flow("Controller/Processing finished");
+  ecadebug->control_flow("Controller/Batch processing finished");
 
   // --------
   DBC_ENSURE(is_finished() == true ||
@@ -204,8 +216,8 @@ void ECA_CONTROL_BASE::stop_on_condition(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-controller-base) Received stop-cond");
 
   // --
-  // blocks until engine has stopped (or 60sec has passed);
-  engine_repp->wait_for_stop(60);
+  // blocks until engine has stopped (or 5 sec has passed);
+  engine_repp->wait_for_stop(5);
 
   // --------
   DBC_ENSURE(is_running() == false); 
@@ -223,7 +235,8 @@ void ECA_CONTROL_BASE::quit(void) { close_engine(); }
  * @pre is_connected() == true
  * @pre is_engine_started() != true
  */
-void ECA_CONTROL_BASE::start_engine(void) {
+void ECA_CONTROL_BASE::start_engine(bool batchmode)
+{
   // --------
   DBC_REQUIRE(is_connected() == true);
   DBC_REQUIRE(is_engine_started() != true);
@@ -235,7 +248,10 @@ void ECA_CONTROL_BASE::start_engine(void) {
   if (p < session_repp->connected_chainsetup_repp->chains.size())
     session_repp->connected_chainsetup_repp->active_chain_index_rep = p;
 
-  engine_repp = new ECA_ENGINE (session_repp);
+  engine_repp = new ECA_ENGINE (session_repp->connected_chainsetup_repp);
+
+  /* to relay the batchmode parameter to created new thread */
+  req_batchmode_rep = batchmode;
 
   pthread_attr_t th_attr;
   pthread_attr_init(&th_attr);
@@ -245,6 +261,7 @@ void ECA_CONTROL_BASE::start_engine(void) {
 				   static_cast<void *>(this));
   if (retcode_rep != 0) {
     ecadebug->msg(ECA_DEBUG::info, "Warning! Unable to create a new thread for engine.");
+    delete engine_repp;
     engine_repp = 0;
   }
 }
@@ -252,11 +269,9 @@ void ECA_CONTROL_BASE::start_engine(void) {
 /**
  * Routine used for launching the engine.
  */
-void ECA_CONTROL_BASE::run_engine(void) {
-  // --
-  // launch the engine - blocks until processing 
-  // has stopped (or exit command is issued)
-  engine_repp->exec();
+void ECA_CONTROL_BASE::run_engine(void)
+{
+  engine_repp->exec(req_batchmode_rep);
   engine_exited_rep.set(1); 
 }
 
@@ -266,7 +281,8 @@ void ECA_CONTROL_BASE::run_engine(void) {
  * ensure:
  *  is_engine_started() != true
  */
-void ECA_CONTROL_BASE::close_engine(void) {
+void ECA_CONTROL_BASE::close_engine(void)
+{
   if (is_engine_started() != true) return;
 
   engine_repp->command(ECA_ENGINE::ep_exit, 0.0);

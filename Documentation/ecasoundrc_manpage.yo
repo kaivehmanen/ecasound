@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (01.02.2002)
+       (27.02.2002)
        ()
        (Multimedia software)
 
@@ -58,10 +58,6 @@ startdit()
 	dit(default-to-precise-sample-rates) 
 	Whether to ignore sample rate differences (and possibly avoid 
 	resampling). Currently only affects OSS-devices. Defaults to em(false).
-
-  	dit(default-to-interactive-mode)
-  	Whether to always use interactive mode (true or false). Same as the
-  	the bf(-c) command line option. Defaults to em(false). 
 
 	dit(bmode-defaults-nonrt)
 	Selects the default parameters to use with buffering 

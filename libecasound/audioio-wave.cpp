@@ -217,7 +217,7 @@ void WAVEFILE::read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
 
 void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) 
 {
-  //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) write_riff_header()");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) write_riff_header()");
 
   off_t savetemp = fio_repp->get_file_position();
     
@@ -241,20 +241,8 @@ void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
       memcmp("WAVE",riff_header_rep.wname,4) != 0)
     throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: invalid RIFF-header"));
 
-  // char temp[16];
-  // memcpy(temp, "Riff ID: ", 9);
-  // memcpy(&(temp[9]), riff_header_rep.id, 4);
-  // temp[13] = 0;
-  //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) " + string(temp));
-
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) Wave data size " + kvu_numtostr(riff_header_rep.size));
 
-  // memcpy(temp, "Riff type: ", 11);
-  // memcpy(&(temp[11]), riff_header_rep.wname, 4);
-  // temp[15] = 0;
-  //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) Riff type " + string(temp));
-
-  //  fseek(fobject,save,SEEK_SET);
   fio_repp->set_file_position(savetemp);
 }
 
@@ -325,6 +313,8 @@ void WAVEFILE::read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&)
 
 void WAVEFILE::write_riff_fmt(void)
 {
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) write_riff_fmt()");
+
   RB fblock;
 
   fio_repp->set_file_position_end();
@@ -353,7 +343,10 @@ void WAVEFILE::write_riff_fmt(void)
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) Wrote RIFF format header.");
 }
 
-void WAVEFILE::write_riff_datablock(void) {
+void WAVEFILE::write_riff_datablock(void)
+{
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) write_riff_datablock()");
+
   RB fblock;
 
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) write_riff_datablock()");
@@ -366,9 +359,11 @@ void WAVEFILE::write_riff_datablock(void) {
   data_start_position_rep = fio_repp->get_file_position();
 }
 
-void WAVEFILE::update_riff_datablock(void) {
-  RB fblock;
+void WAVEFILE::update_riff_datablock(void)
+{
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) update_riff_datablock()");
+
+  RB fblock;
     
   memcpy(fblock.sig,"data",4);
 

@@ -92,7 +92,6 @@ int main(int argc, char *argv[])
       return(0);
     }
 
-    ectrl.toggle_interactive_mode(false);
     cline.begin();
     cline.next(); // skip the program name
     while(cline.end() == false) {
@@ -152,8 +151,8 @@ int main(int argc, char *argv[])
 	  break;
 	}
 	else {
-	  ECA_ENGINE emain (&esession);      
-	  emain.exec();
+	  // blocks until processing is done
+	  ectrl.run();
 	}
 	
 	if (m == 0) {

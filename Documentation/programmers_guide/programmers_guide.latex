@@ -6,7 +6,7 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{01022002}
+\date{27022002}
 \begin{document}
 
 \maketitle
@@ -31,7 +31,10 @@ ecasound version.
 \section{Document history}
 
 \begin{itemize}
-\item 31.01.2001 - Reorganization of document structure. New chapter 
+\item 27.02.2002 - Rewrote the ``Control flows'' chapter according 
+                   to the structural changes made in 2.1dev8. Added
+		   a ``References'' section.
+\item 31.01.2002 - Reorganization of document structure. New chapter 
                    about ``Library organization''.
 \item 19.12.2001 - Added chapter 3.3.1 about include hierarchies.
 \item 28.10.2001 - Lots of changes to the ``Object maps'' chapter.
@@ -62,16 +65,19 @@ but not the only one. Sometimes other approaches work better.
 \subsubsection{Data hiding} 
 
 This design principle deserves to be mentioned separately. Whenever 
-possible, I always try to hide the actual data representation. 
-This allows you to make local implementation changes without
-affecting other parts of the code base. One thing I've especially 
-tried to avoid is excessive use of pointer magic.
+possible, the actual data representation and implementation 
+should always be hidden. This allows you to make local implementation 
+changes without affecting other parts of the code base. It cannot
+be emphasized enough how important this goal is for large software 
+projects like ecasound.
 
 \subsubsection{Design by contract} 
 
 Design by contract means that when you write a new routine,
 in addition to the actual code, you also describe routine's 
-behaviour as accurately as possible.
+behaviour as accurately as possible by defining a set 
+of preconditions and postconditions. These conditions are
+usually defined using boolean assertations.
 
 Routine must specify all requirements and assumptions. 
 If the caller violates this specification, routine is not 
@@ -83,14 +89,16 @@ returning to the caller. By doing this, routine ensures that
 it works correctly and calling routine knows what has been
 done.
 
-Ideally, these conditions prove that the routine works correctly. 
-The benefits of this approach should be clear. When you call 
-a well-defined routine, a) you know what parameter values it 
-accepts, b) you know what it does and c) if errors occur, 
-it's easier to pinpoint the faulty routine. In practice this is 
-done by using comments and pre/postconditions. As C++ doesn't 
-directly support pre/postconditions, I've simulated them using
-the DEFINITION\_BY\_CONTRACT and DBC tools provided by 
+Ideally, these conditions \emph{prove} that the routine works 
+correctly. Unfortunately writing good conditions is not 
+always easy. Still, the benefits of this approach should be 
+clear. When you call a well-defined routine, a) you know what 
+parameter values it accepts, b) you know what it does and c) if 
+errors occur, it's easier to pinpoint the faulty routine. In 
+practice this is done by using comments and pre/postconditions. 
+
+As C++ doesn't directly support pre/postconditions, I've simulated 
+them using the DEFINITION\_BY\_CONTRACT and DBC tools provided by 
 libkvutils.
 
 \subsubsection{Routine side effects}
@@ -98,6 +106,13 @@ libkvutils.
 I try to make a clear distinction between routines that 
 have side-effects (=methods, processors, modifiers; routines that
 change object's state) and const routines (=functions, observers).
+
+To make monitoring side effects easier, all ecasound classes 
+should be const-correct. A object is const-correct if a function
+taking only a single argument that is a const reference to that object
+is not able, without explicit casting, to obtain a non-const
+reference to that same object (or a portion thereof) from within
+the function body. \cite{Lakos96}
 
 \subsubsection{Sanity checks}
 
@@ -122,13 +137,22 @@ action (modifying function), and then afterwards check what happened
 
 C++ exceptions are used in ecasound. Exception based error
 handling has its problems, but in some cases it is clearly the best
-option. Using exceptions for anything other than pure exception
-handling is to be avoided at all cost. And when exceptions are used,
+option. Exceptions are most useful in situations where 
+controlled error recovery is very difficult, and in situations
+where errors occurs only very rarely. This allows callers to 
+avoid constantly checking returns values for functions that 
+in normal use never fail. Another special case is handling critical
+errors that occur in class contructors.
+
+Using exceptions for anything other than pure error handling 
+is to be avoided at all cost. And when exceptions are used,
 their use must be specified in function prototypes. This is important,
-as clients need to know what exceptions can be thrown. All in all, 
-use of exceptions should be carefully planned.
+as clients need to know what exceptions can be thrown. C++ 
+unfortunately doesn't require strict exception prototypes, so
+this issue requires extra care.
 
 A list of specific cases where exceptions are used follows:
+
 \begin{description}
 \item[AUDIO\_IO - open()]
 This method is used for initializing external connections (opening
@@ -262,6 +286,15 @@ Routines and helper functions for processing audio data buffers.
 You should note that these are just recommendations - there are no
 strict rules on how files should be named.
 
+\subsubsection{C++ std namespace}
+
+The preferred way to access C++ standard library functions is 
+to define a \emph{using} declaration for each function and type 
+used (for instance ``using std::string''. If a service is only 
+used once or twice, an explicit ``std::'' selector should be 
+used. Importing the whole std namespace (``using namespace std;'') 
+is not recommmended.
+
 % ----------------------------------------------------------------------
 \subsection{Documentation style}
 
@@ -377,56 +410,39 @@ multiple chains is mixed together to one output object.
 % ----------------------------------------------------------------------
 \subsection{Control flow}
 
-\subsubsection{Passive operation}
-When ecasound is run in passive mode, the program flow is simple.
-A ECA\_SESSION object is first created with suitable parametersi. It
-is then passed to a ECA\_ENGINE (ECA\_PROCESSOR in ecasound 2.0.x and 
-earlier) object and that is all. Processing is started with the 
-exec() member function of ECA\_ENGINE. After processing is finished, 
-exec() returns to the caller.
+\subsubsection{Batch operation}
 
-Another way to do passive processing is to create a ECA\_CONTROL 
-object and use it to to access and modify the ECA\_SESSION object 
-before passing it to ECA\_ENGINE.
+When ecasound is run in batch mode, the program flow is simple.
+To store the session data, a ECA\_SESSION object is first
+created. The created object is then passed as an argument for
+ECA\_CONTROL class constructor.
+
+All required configuration of inputs, outputs and chain 
+operators is done using the services provided by ECA\_CONTROL.
+Once a valid chainsetup is ready for processing, batch 
+operation is initiated by issuing ECA\_CONTROL::run(). This
+function will block until processing is finished.
 
 \subsubsection{Interactive operation}
 
-In interactive mode, everything is done using the interface provided
-by ECA\_CONTROL. This is when things get complex:
+Interactive operation is similar to batch operation. The 
+important difference is that processing is started with
+ECA\_CONTROL::start(). Unlike run(), start() does not 
+block the calling thread. This makes it possible to 
+continue using the ECA\_CONTROL interface while engine
+is running in the background. 
 
-ECA\_SESSION object can contain many ECA\_CHAINSETUP objects, but
-only one of them can be active. On the other hand it is possible
-that there are no chainsetups. If this is the case, about the
-only thing you can do is to add a new chainsetup. 
-
-One chainsetup at a time can be \emph{selected}. In this state
-the chainsetup can be edited using the methods provided by
-ECA\_CONTROL. Only one setup at a time can be \emph{connected} to
-the engine (ie. actual use). Trying to connect an invalid 
-chainsetups will fail. A valid chainsetup has at least one 
-input-output pair connected to the same chain.
-
-ECA\_CHAINSETUP can be...
-\begin{description}
-
-\item[not selected] - can't be accessed from ECA\_ENGINE
-\item[selected, invalid] - can be edited (files and devices are not opened)
-\item[selected, valid] - can be connected (files and devices are not opened)
-\item[connected] - ready for processing (files and devices are opened before connecting)
-
-\end{description}
-
-ECA\_ENGINE status is one of...
-\begin{description}
-
-\item[not\_ready] - ECA\_SESSION object is not ready for processing or
-ECA\_ENGINE hasn't been created
-\item[running] - processing
-\item[stopped] - processing hasn't been started or it has been stopped
-before completion
-\item[finished] - processing has been completed
-\item[error] - an error has occured during prosessing
-\end{description}
+Two important concepts to understand when 
+working with ECA\_CONTROL are the \emph{selected} 
+and \emph{connected} chainsetups. ECA\_CONTROL allows 
+working with multiple chainsetups, but only one
+of them can be edited at a time, and similarly 
+only one at a time can be connected to the 
+processing engine. For instance if you add a new
+input object with add\_audio\_input(), it is 
+added to the selected chainsetup. Similarly when
+you issue start(), the connected chainsetup is 
+started.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
@@ -495,23 +511,47 @@ ECA\_CHAINSETUP object.
 \subsubsection{ECA\_ENGINE - eca-engine.h} 
 
 ECA\_ENGINE is the actual processing engine. It is initialized with
-a pointer to a ECA\_SESSION object, which has all information needed at
-runtime. Processing is started with the exec() member function and
-after that, ECA\_ENGINE runs on its own. If the interactive mode is
-enabled in ECA\_SESSION, ECA\_ENGINE can be controlled using the
-ECA\_CONTROL class. It offers a thread-safe way to control the
-engine and other parts of ecasound. Another way to communicate with 
-ECA\_ENGINE is to access the ECA\_SESSION object directly.
+a pointer to a ECA\_CHAINSETUP object, which has all information 
+needed at runtime. In other words ECA\_ENGINE is used to execute
+the chainsetup. You could say ECA\_ENGINE renders the final product
+according to instruction given in ECA\_CHAINSETUP. 
+
+Processing is started with the exec() member function and
+after that, ECA\_ENGINE runs on its own. If 'batch\_mode' 
+is selected (parameter to exec()), one started ECA\_ENGINE will 
+run until a 'finished' condition is met and then exit 
+automatically. Finished means that we have read all available data 
+from input sources. Of course if some input has infinite length 
+(soundcards for example), processing will never finish. To get 
+around this limitation, it's possible to set the processing 
+length (see ECA\_CONTROL\_OBJECTS::set\_chainsetup\_processing\_length\_in\_seconds()).
+
+If batch mode is not enabled, engine will just perform
+the init phase and starts waiting for further instructions. 
+These instructions can be send to the engine using 
+the ECA\_ENGINE::command() member function.
+
+ECA\_ENGINE has the following states:
+\begin{description}
+\item[not\_ready] - ECA\_SESSION object is not ready for processing or
+ECA\_ENGINE hasn't been created
+\item[running] - processing
+\item[stopped] - processing hasn't been started or it has been stopped
+before completion
+\item[finished] - processing has been completed
+\item[error] - an error has occured during prosessing
+\end{description}
 
 \subsubsection{ECA\_SESSION - eca-session.h}
 
-ECA\_SESSION represents the data used by ecasound. A session contains
-all ECA\_CHAINSETUP objects and general runtime settings (iactive-mode,
-debug-level, etc). Only one ECA\_CHAINSETUP can be active at a time. To
-make it easier to control how threads access ECA\_SESSION, only
-ECA\_ENGINE and ECA\_CONTROL classes have direct access to
-ECA\_SESSION data and functions. Other classes can only use \emph{const}
-members of ECA\_SESSION. 
+ECA\_SESSION is an abtraction used to represents a group of
+chainsetups. At any time, only one chainsetup object at a time
+can be active (connected). For modification, one chainsetup
+can be set as 'selected'. This means that all configuration
+operations are targeted to the selected chainsetup.
+
+The only public access to ECA\_SESSION objects is 
+through ECA\_CONTROL objects.
 
 \subsubsection{MIDI\_SERVER - midi-server.h}
 
@@ -686,9 +726,12 @@ are static.
 
 % ----------------------------------------------------------------------
 \subsection{Things to remember when writing new C++ classes}
+
 \subsubsection{Copy constructor and assignment operator}
+
 Always take a moment to check your copy constructor and the assign 
 operation (=operation()). Basicly you have three alternatives: 
+
 \begin{itemize}
 \item  Trust the automatically created default definitons. If you don't
 have any pointers as data members, this isn't necessarily a bad
@@ -706,6 +749,7 @@ nobody will use the functions by accident!
 
 % ----------------------------------------------------------------------
 \subsection{Audio objects}
+
 To implement a new audio object type, you must first select which 
 top-level class to derive from. Usually this is either AUDIO\_IO
 (the top-level class), AUDIO\_IO\_BUFFERED (a more low level interface)
@@ -725,6 +769,7 @@ then register it to the appropriate object map (see below).
 
 % ----------------------------------------------------------------------
 \subsection{Effects and other chain operators}
+
 Write a new class that inherits from CHAIN\_OPERATOR or any of its
 successors. Implement the necessary routines (init, set/get\_parameter, 
 process and a default constructor) and add your source files to
@@ -741,6 +786,7 @@ for more information.
 
 % ----------------------------------------------------------------------
 \subsection{Differences between audio objects and chain operators}
+
 Design-wise, audio objects and effects (chain operators) aren't that 
 far away from each other. Many audio apps don't separate these
 concepts at all (for instance most UG based synthesizers). In ecasound 
@@ -789,6 +835,7 @@ as audio inputs by specifying:
 
 % ----------------------------------------------------------------------
 \subsection{LADSPA plugins}
+
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
 Plugin API). See \texttt{LAD mailing list web site} for 
 more info about LADSPA. Other useful sites are 
@@ -801,6 +848,7 @@ more info about LADSPA. Other useful sites are
 
 % ----------------------------------------------------------------------
 \subsection{Console mode ecasound - {[}all languages{]}}
+
 This is the easiest way to take advantage of ecasound features in your
 own programs. You can fork ecasound, pipe commands to ecasound's
 interactive mode or you can create chainsetup (.ecs) files and load
@@ -833,6 +881,7 @@ Specific tasks ECI is aimed at:
 
 % ----------------------------------------------------------------------
 \subsection{Libecasound's ECA\_CONTROL class - {[}C++{]}}
+
 By linking your program to libecasound, you can use the ECA\_CONTROL
 class for controlling ecasound. This is a large interface class that
 offers routines for controlling all ecasound features. It's easy
@@ -854,11 +903,8 @@ ctrl.start(); // starts processing in another thread (doesn't block)
 \end{verbatim} 
 
 
-If you don't want to use threads, you can do as above, but use
-ECA\_ENGINE directly to do the actual processing. In other words, 
-you only use ECA\_CONTROL for setting up a ECA\_SESSION object. This 
-way the processing is done without additional threads. Here's a 
-short sample:
+If you don't want to use threads, you can run the setup in
+batch mode:
 
 \begin{verbatim} 
 
@@ -867,16 +913,15 @@ ECA_SESSION esession;
 ECA_CONTROL ctrl (&esession);
 ctrl.add_chainsetup("default");
 [... other setup routines ]
-ECA_ENGINE p (&esession);
-p.exec(); // blocks until processing is finished
+ctrl.run(); // blocks until processing is finished
 --cut--
  
 \end{verbatim} 
 
 
-
 % ----------------------------------------------------------------------
 \subsection{Ecasound classes as building blocks - {[}C++{]}}
+
 And of course, you can also use individual ecasound classes directly.
 This means more control, but it also means more work. Here's
 another short sample:
@@ -890,5 +935,19 @@ another short sample:
 - write samples with an audio I/O object - OSSDEVICE, WAVEFILE, etc.
 --cut--
  \end{verbatim}
+
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
+\section{References}
+
+\begin{thebibliography}{10}
+ \bibitem{Lakos96} Large-Scale C++ Software Design, Lakos96
+    % - C++ Programming Language, 3rd ed. [Stroustrup]
+    % - Design Patterns and Contracts [xxx]
+    % - http://www.bell-labs.com/~cope/Patterns/C++Report/IdiomGeometry/IdiomGeometry-1.html
+    % - esimerkkejä fyysisen organisaation suunnittelusta
+    % - http://wwwhome.cs.utwente.nl/~tcm/developersguide/developersguidenode4.html
+    % - http://users.vnet.net/wwake/pubs/1997/software-guide/coding.shtml
+\end{thebibliography}
 
 \end{document}

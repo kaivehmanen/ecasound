@@ -11,6 +11,8 @@
 class SAMPLE_BUFFER;
 class AUDIO_IO_MANAGER;
 
+using std::string;
+
 /**
  * Virtual base class for all audio I/O objects. Different types
  * of audio objects include files, audio devices, sound 
@@ -32,7 +34,7 @@ class AUDIO_IO_MANAGER;
  *
  * @author Kai Vehmanen
  */
-class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
+class AUDIO_IO : public DYNAMIC_OBJECT<string>,
                  public ECA_AUDIO_FORMAT,
 		 public ECA_AUDIO_POSITION {
 
@@ -79,13 +81,13 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
       unexpected        /* unexpected/unknown error */
     };
     
-     const std::string& message(void) const;
+     const string& message(void) const;
      Error_type type(void) const;
-     SETUP_ERROR(Error_type type, const std::string& message);
+     SETUP_ERROR(Error_type type, const string& message);
 
    private:
      Error_type type_rep;
-     std::string message_rep;
+     string message_rep;
   };
 
  public:
@@ -110,7 +112,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
   virtual AUDIO_IO* clone(void) const = 0;
   virtual AUDIO_IO* new_expr(void) const = 0;
   virtual ~AUDIO_IO(void);
-  AUDIO_IO(const std::string& name = "uninitialized", 
+  AUDIO_IO(const string& name = "uninitialized", 
 	   int mode = io_read);
 
   /*@}*/
@@ -158,16 +160,16 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
   virtual long int buffersize(void) const = 0;
 
   int io_mode(void) const;
-  const std::string& label(void) const;
-  std::string format_info(void) const;
+  const string& label(void) const;
+  string format_info(void) const;
 
   void set_io_mode(int mode);
-  void set_label(const std::string& id_label);
+  void set_label(const string& id_label);
   void toggle_nonblocking_mode(bool value);
 
-  virtual std::string parameter_names(void) const { return("label"); }
-  virtual void set_parameter(int param, std::string value);
-  virtual std::string get_parameter(int param) const;
+  virtual string parameter_names(void) const { return("label"); }
+  virtual void set_parameter(int param, string value);
+  virtual string get_parameter(int param) const;
 
  public:
 
@@ -252,13 +254,15 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
   virtual int poll_descriptor(void) const { return(-1); }
 
   /**
-   * Effectively this is meant for implementing nonblocking 
-   * input and output with devices supporting it. If 'supports_nonblocking_mode() 
-   * == true', this function can be used to check how many samples are 
-   * available for reading, or alternatively, how many samples can be 
-   * written without blocking.  Note, you should use buffersize() call 
-   * for setting how many bytes read_buffer() will ask from the device.
+   * If 'supports_nonblocking_mode() == true', this function returns
+   * the number of samples frames that is available for reading, or 
+   * alternatively, how many sample frames can be written without 
+   * blocking. This function can be used for implementing nonblocking 
+   * input and output with devices supporting it.
    *
+   * Note, you should use set_buffersize() for setting how 
+   * many sample frames read_buffer() will ask from the device.
+   * 
    * require:
    *  supports_nonblocking_mode() == true
    */
@@ -287,7 +291,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
   virtual bool nonblocking_mode(void) const;
   virtual bool readable(void) const;
   virtual bool writable(void) const;
-  virtual std::string status(void) const;
+  virtual string status(void) const;
 
   ECA_AUDIO_TIME length(void) const;
   ECA_AUDIO_TIME position(void) const;
@@ -324,7 +328,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
  private:
   
   int io_mode_rep;
-  std::string id_label_rep;
+  string id_label_rep;
   bool nonblocking_rep;
   bool open_rep;
 };

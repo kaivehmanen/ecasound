@@ -39,6 +39,9 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
+using std::cerr;
+using std::endl;
+
 #ifndef timersub
 #define	timersub(a, b, result) \
 do { \
@@ -64,7 +67,6 @@ AUDIO_IO_ALSA_PCM::AUDIO_IO_ALSA_PCM (int card,
   subdevice_number_rep = subdevice;
   trigger_request_rep = false;
   overruns_rep = underruns_rep = 0;
-  position_in_samples_rep = 0;
   nbufs_repp = 0;
   allocate_structs();
 }
@@ -269,7 +271,9 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
 
   value = snd_pcm_hw_params_get_buffer_size(pcm_hw_params_repp);
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(value) + " frames.");
-  
+  buffercount_rep = value / buffersize();
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) total latency is " + kvu_numtostr(latency()) + " frames.");
+
   value = snd_pcm_hw_params_get_period_time(pcm_hw_params_repp, 0);
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(value) + " usecs.");
 
@@ -354,7 +358,6 @@ void AUDIO_IO_ALSA_PCM::start(void)
 {
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) start - " + label() + ".");
   snd_pcm_start(audio_fd_repp);
-  position_in_samples_rep = 0;
 
   AUDIO_IO_DEVICE::start();
 }
@@ -419,7 +422,6 @@ long int AUDIO_IO_ALSA_PCM::read_samples(void* target_buffer,
       }
     }
   }
-  position_in_samples_rep += realsamples;
   return(realsamples);
 }
 
@@ -437,7 +439,7 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_capture(void)
       snd_pcm_status_get_trigger_tstamp(status, &tstamp);
       timersub(&now, &tstamp, &diff);
 
-      std::cerr << "(audioio-alsa) warning! playback overrun - samples lost! " 
+      cerr << "(audioio-alsa) warning! playback overrun - samples lost! " 
 		<< " Break was at least " << kvu_numtostr(diff.tv_sec *
 							  1000 +
 							  diff.tv_usec /
@@ -450,7 +452,7 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_capture(void)
       start();
     }
     else {
-      std::cerr << "(audioio-alsa) unknown device state!" << endl;
+      cerr << "(audioio-alsa) unknown device state!" << endl;
     }
   }
   else {
@@ -482,7 +484,7 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
 	}
       }
       else {
-	std::cerr << "(audioio-alsa) Write error! Stopping operation (" << count << ")." << std::endl;
+	cerr << "(audioio-alsa) Write error! Stopping operation (" << count << ")." << endl;
 	stop();
 	close();
       }
@@ -492,9 +494,9 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
     unsigned char* ptr_to_channel = reinterpret_cast<unsigned char*>(target_buffer);
     for (int channel = 0; channel < channels(); channel++) {
       nbufs_repp[channel] = ptr_to_channel;
-      // std::cerr << "Pointer to channel " << channel << ": " << reinterpret_cast<void*>(nbufs_repp[channel]) << std::endl;
+      // cerr << "Pointer to channel " << channel << ": " << reinterpret_cast<void*>(nbufs_repp[channel]) << endl;
       ptr_to_channel += samples * sample_size();
-      // std::cerr << "Advancing pointer count by " << samples * sample_size() << " to " << reinterpret_cast<void*>(ptr_to_channel) << std::endl;
+      // cerr << "Advancing pointer count by " << samples * sample_size() << " to " << reinterpret_cast<void*>(ptr_to_channel) << endl;
     }
     long int count =  snd_pcm_writen(audio_fd_repp,
 				       reinterpret_cast<void**>(nbufs_repp), 
@@ -521,8 +523,6 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
       }
     }
   }
-
-  position_in_samples_rep += samples;
 }
 
 void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
@@ -539,7 +539,7 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
       snd_pcm_status_get_trigger_tstamp(status, &tstamp);
       timersub(&now, &tstamp, &diff);
       
-      std::cerr << "(audioio-alsa) warning! playback underrun - samples lost! " 
+      cerr << "(audioio-alsa) warning! playback underrun - samples lost! " 
 		<< " Break was at least " << kvu_numtostr(diff.tv_sec *
 							  1000 +
 							  diff.tv_usec /
@@ -551,7 +551,7 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
       trigger_request_rep = true;
     }
     else {
-      std::cerr << "(audioio-alsa) unknown device state!" << endl;
+      cerr << "(audioio-alsa) unknown device state!" << endl;
     }
   }
   else {
@@ -559,17 +559,17 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
   }
 }
 
-SAMPLE_SPECS::sample_pos_t AUDIO_IO_ALSA_PCM::position_in_samples(void) const
+long int AUDIO_IO_ALSA_PCM::delay(void) const
 {
-  if (is_running() != true) return(0);
   snd_pcm_sframes_t delay = 0;
-  if (snd_pcm_delay(audio_fd_repp, &delay) != 0) 
-    delay = 0;
-  
-  if (io_mode() == io_read)
-    return(position_in_samples_rep + delay);
-  
-  return(position_in_samples_rep - delay);
+
+  if (is_running() == true) {
+    if (snd_pcm_delay(audio_fd_repp, &delay) != 0) {
+      delay = 0;
+    }
+  }
+
+  return(static_cast<long int>(delay));
 }
 
 void AUDIO_IO_ALSA_PCM::set_parameter(int param, 

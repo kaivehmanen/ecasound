@@ -23,6 +23,7 @@ class ECA_ENGINE_impl {
 
   PROCEDURE_TIMER looptimer_rep;
   PROCEDURE_TIMER looptimer_range_rep;
+
   double looptimer_low_rep;
   double looptimer_mid_rep;
   double looptimer_high_rep;
@@ -31,10 +32,10 @@ class ECA_ENGINE_impl {
 
   pthread_cond_t ecasound_stop_cond_repp;
   pthread_mutex_t ecasound_stop_mutex_repp;
+  pthread_cond_t ecasound_exit_cond_repp;
+  pthread_mutex_t ecasound_exit_mutex_repp;
 
   struct timeval multitrack_input_stamp_rep;
-
-  ECA_CHAINSETUP::Mix_mode mixmode_rep;
 };
 
 #endif /* INCLUDED_ECA_ENGINE_IMPL_H */

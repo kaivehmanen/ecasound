@@ -114,6 +114,7 @@ ecasound_general_include = 	\
 			eca-debug.h \
 			eca-comhelp.h \
 			eca-engine.h \
+			eca-engine-driver.h \
 			eca-engine_impl.h \
 			eca-session.h \
 			eca-resources.h \

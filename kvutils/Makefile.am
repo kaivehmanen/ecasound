@@ -17,6 +17,7 @@ kvutil_sources = 	kvutils.cpp \
 			kvu_numtostr.cpp \
 			kvu_rtcaps.cpp \
 			locks.cpp \
+			threads.cpp \
 			procedure_timer.cpp \
 			temporary_file_directory.cpp
 
@@ -29,12 +30,13 @@ kvutil_headers = 	kvutils.h \
 			definition_by_contract.h \
 			object_queue.h \
 			locks.h \
+			threads.h \
 			procedure_timer.h \
 			temporary_file_directory.h \
 			dbc.h
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
-libkvutils_la_LDFLAGS = -version-info 3:0:1
+libkvutils_la_LDFLAGS = -version-info 3:0:0
 
 libkvutils_debug_la_SOURCES = $(libkvutils_la_SOURCES)
 libkvutils_debug_la_LDFLAGS = $(libkvutils_la_LDFLAGS)

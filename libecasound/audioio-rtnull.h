@@ -12,19 +12,28 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
 
   virtual std::string name(void) const { return("Realtime null device"); }
 
+  /** @name Function reimplemented from AUDIO_IO */
+  /*@{*/
+
   virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);
 
   virtual long int read_samples(void* target_buffer, long int samples);
   virtual void write_samples(void* target_buffer, long int samples);
 
+  /*@}*/
+
+  /** @name Function reimplemented from AUDIO_IO_DEVICE */
+  /*@{*/
+
+  virtual void prepare(void);
   virtual void stop(void);
   virtual void start(void);
-  virtual void prepare(void);
 
-  virtual long int latency(void) const;
+  virtual long int delay(void) const;
+  virtual long int prefill_space(void) const;
 
-  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
+  /*@}*/
 
   REALTIME_NULL(const std::string& name = "realtime null");
   virtual ~REALTIME_NULL(void);
@@ -33,10 +42,20 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
 
  private:
 
-  struct timeval start_time;
-  struct timeval access_time;
-  struct timeval buffer_delay;
-  struct timeval buffer_fill;
+  void calculate_device_position(void);
+  void calculate_available_data(void);
+  void block_until_data_available(void);
+
+  int total_buffers_rep;
+
+  struct timeval start_time_rep;
+  struct timeval time_since_start_rep;
+
+  struct timeval buffer_length_rep;
+  struct timeval total_buffer_length_rep;
+
+  struct timeval data_processed_rep;
+  mutable struct timeval avail_data_rep;
 };
 
 #endif

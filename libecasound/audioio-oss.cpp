@@ -26,6 +26,7 @@
 #include <cstdio>
 #include <errno.h>
 
+#include <kvutils/dbc.h>
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
 
@@ -110,30 +111,27 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   if (buffersize() == 0) 
     throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: Buffersize() is 0!"));
     
-  int fragsize, fragtotal = 16;
-  unsigned short int fr_size, fr_count;
-
   if (max_buffers() == true) 
-    fr_count = 0x7fff; // 0x7fff = not limited
+    fragment_count = (1 << 15) / buffersize() / frame_size(); // 0x7fff = not limited
   else
-    fr_count = 3;
+    fragment_count = 3;
     
-  MESSAGE_ITEM m;
-  m << "(audioio-oss) Setting OSS fragment size according to buffersize() " << buffersize() << ".\n";
-  m << "(audioio-oss) Setting OSS fragment size to " << buffersize() * frame_size() << ".";
-  ecadebug->msg(ECA_DEBUG::user_objects, m.to_string());
+  ecadebug->msg(ECA_DEBUG::user_objects, 
+		"(audioio-oss) Setting OSS fragment size according to " + kvu_numtostr(buffersize()) + ".");
 
   // fr_size == 4  -> the minimum fragment size: 2^4 = 16 bytes
-  for(fr_size = 4; fragtotal < static_cast<long int>(buffersize() * frame_size()); fr_size++)
+  unsigned short int fr_size = 4;
+  for(int fragtotal = 16; fragtotal < static_cast<long int>(buffersize() * frame_size()); fr_size++)
     fragtotal = fragtotal * 2;
 
-  fragsize = ((fr_count << 16) | fr_size);
+  int fragsize = ((fragment_count << 16) | fr_size);
     
   if (::ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &fragsize)==-1)
     throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: general OSS-error SNDCTL_DSP_SETFRAGMENT"));
 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-oss) set OSS fragment size to (2^x) " +
-		   kvu_numtostr(fr_size) + ".");
+  ecadebug->msg(ECA_DEBUG::user_objects, 
+		"(audioio-oss) set OSS fragment size to (2^x) " +
+		kvu_numtostr(fr_size) + ".");
     
   // -------------------------------------------------------------------
   // Select audio format
@@ -200,6 +198,9 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-oss) OSS set to use fragment size of " + 
 		   kvu_numtostr(fragment_size) + ".");
 
+  /* SNDCTL_DSP_GET[IO]PTR report offset since device was opened */
+  set_position_in_samples(0);
+
   AUDIO_IO_DEVICE::open();
 }
 
@@ -237,25 +238,38 @@ void OSSDEVICE::start(void)
   AUDIO_IO_DEVICE::start();
 }
 
-SAMPLE_SPECS::sample_pos_t OSSDEVICE::position_in_samples(void) const 
+long int OSSDEVICE::delay(void) const
 {
-  if (is_running() != true) return(0);
-  if ((oss_caps & DSP_CAP_REALTIME) == DSP_CAP_REALTIME) {
-    count_info info;
-    info.bytes = 0;
-    if (io_mode() == io_read) {
-      ::ioctl(audio_fd, SNDCTL_DSP_GETIPTR, &info);
+  long int delay = 0;
+  if (is_running() == true) {
+    if ((oss_caps & DSP_CAP_REALTIME) == DSP_CAP_REALTIME) {
+      count_info info;
+      info.bytes = 0;
+      if (io_mode() == io_read) {
+	::ioctl(audio_fd, SNDCTL_DSP_GETIPTR, &info);
+	delay = static_cast<SAMPLE_SPECS::sample_pos_t>
+	  (info.bytes / frame_size()) - position_in_samples();
+      }
+      else {
+	::ioctl(audio_fd, SNDCTL_DSP_GETOPTR, &info);
+	delay = position_in_samples() - 
+	  static_cast<SAMPLE_SPECS::sample_pos_t>(info.bytes / frame_size());
+      }
     }
     else {
-      ::ioctl(audio_fd, SNDCTL_DSP_GETOPTR, &info);
+      struct timeval now;
+      gettimeofday(&now, NULL);
+      double time = now.tv_sec * 1000000.0 + now.tv_usec -
+	start_time.tv_sec * 1000000.0 - start_time.tv_usec;
+
+      if (io_mode() == io_read)
+	delay = static_cast<long int>(time * samples_per_second() / 1000000.0) - position_in_samples();
+      else
+	delay = position_in_samples() - static_cast<long int>(time * samples_per_second() / 1000000.0);
     }
-    return(static_cast<SAMPLE_SPECS::sample_pos_t>(info.bytes / frame_size()));
   }
-  struct timeval now;
-  gettimeofday(&now, NULL);
-  double time = now.tv_sec * 1000000.0 + now.tv_usec -
-                start_time.tv_sec * 1000000.0 - start_time.tv_usec;
-  return(static_cast<long>(time * samples_per_second() / 1000000.0));
+  DBC_CHECK(delay >= 0);
+  return(delay);
 }
 
 long int OSSDEVICE::read_samples(void* target_buffer, 

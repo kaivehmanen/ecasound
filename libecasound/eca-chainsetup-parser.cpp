@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup-parser.cpp: Functionality for parsing chainsetup 
 //                            option syntax.
-// Copyright (C) 2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2001,2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -312,28 +312,6 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu)
       else {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_auto);
 	ecadebug->msg("(eca-chainsetup-parser) Unknown buffering mode; 'auto' mode is used instead.");
-      }
-      break;
-    }
-
-  case 'm':      // mixmode
-    {
-      std::string temp = get_argument_number(1, argu);
-      if (temp == "auto") {
-	csetup_repp->set_mixmode(ECA_CHAINSETUP::ep_mm_auto);
-	ecadebug->msg("(eca-chainsetup-parser) Mix-mode is selected automatically.");
-      }
-      else if (temp == "mthreaded") {
-	ecadebug->msg("(eca-chainsetup-parser) Multithreaded mixmode selected.");
-	csetup_repp->set_mixmode(ECA_CHAINSETUP::ep_mm_mthreaded);
-      }
-      else if (temp == "simple") {
-	ecadebug->msg("(eca-chainsetup-parser) Simple mixmode selected.");
-	csetup_repp->set_mixmode(ECA_CHAINSETUP::ep_mm_simple);
-      }
-      else if (temp == "normal") {
-	ecadebug->msg("(eca-chainsetup-parser) Normal mixmode selected.");
-	csetup_repp->set_mixmode(ECA_CHAINSETUP::ep_mm_normal);
       }
       break;
     }
@@ -668,13 +646,11 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu)
 	last_audio_object_repp = ECA_OBJECT_FACTORY::create_loop_input(argu, &csetup_repp->loop_map);
       if (last_audio_object_repp != 0) {
 	if ((last_audio_object_repp->supported_io_modes() &
-	    AUDIO_IO::io_read) != AUDIO_IO::io_read) {
+	     AUDIO_IO::io_read) != AUDIO_IO::io_read) {
 	  interpret_set_result(false, std::string("(eca-chainsetup-parser) I/O-mode 'io_read' not supported by ") + last_audio_object_repp->name());
 	}
 	else {
 	  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
-	  last_audio_object_repp->set_io_mode(AUDIO_IO::io_read);
-	  last_audio_object_repp->set_audio_format(csetup_repp->default_audio_format());
 	  csetup_repp->add_input(last_audio_object_repp);
 	}
       }
@@ -690,22 +666,21 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu)
 	
       if (last_audio_object_repp == 0) last_audio_object_repp = ECA_OBJECT_FACTORY::create_loop_output(argu, &csetup_repp->loop_map);
       if (last_audio_object_repp != 0) {
+	bool truncate = false;
 	int mode_tmp = csetup_repp->output_openmode();
 	if (mode_tmp == AUDIO_IO::io_readwrite) {
 	  if ((last_audio_object_repp->supported_io_modes() &
 	      AUDIO_IO::io_readwrite) != AUDIO_IO::io_readwrite) {
 	    mode_tmp = AUDIO_IO::io_write;
+	    truncate = true;
 	  }
 	}
-	if ((last_audio_object_repp->supported_io_modes() &
-	    mode_tmp != mode_tmp)) {
+	if ((last_audio_object_repp->supported_io_modes() & mode_tmp != mode_tmp)) {
 	  interpret_set_result(false, std::string("(eca-chainsetup-parser) I/O-mode 'io_write' not supported by ") + last_audio_object_repp->name());
 	}
 	else {
 	  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
-	  last_audio_object_repp->set_io_mode(mode_tmp);
-	  last_audio_object_repp->set_audio_format(csetup_repp->default_audio_format());
-	  csetup_repp->add_output(last_audio_object_repp);
+	  csetup_repp->add_output(last_audio_object_repp, truncate);
 	}
       }
       else {
@@ -963,18 +938,6 @@ std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const
   }
 
   t << " -n:" << csetup_repp->name();
-
-  switch(csetup_repp->mixmode()) {
-  case ECA_CHAINSETUP::ep_mm_simple: {
-    t << " -m:simple";
-    break;
-  }
-  case ECA_CHAINSETUP::ep_mm_normal: {
-     t << " -m:normal";
-    break;
-  }
-  default: { }
-  }
 
   if (csetup_repp->output_openmode() == AUDIO_IO::io_write) 
     t << " -x";

@@ -2,6 +2,25 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2002-03-11  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+        * eca-chainsetup.h (set_mixmode, mixmode): removed
+
+2002-02-27  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-engine.h (various): added
+	* eca-chainsetup.h (add_output): second parameter added
+	* audioio-device.h (supports_prefill, delay): added
+	
+2002-02-26  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-chainsetup.h (is_in_use, toggle_is_in_use): renamed to 
+	is_locked and toggle_locked_state
+	* eca-control-base.h (start_engine,run_engine,close_engine): moved
+	to private scope
+	* eca-control-base.h (toggle_interactive_mode): removed
+	* eca-session (is_interactive, toggle_interactive_mode): removed
+
 2002-02-24  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-audio-format (set_audio_format): turned into a virtual function

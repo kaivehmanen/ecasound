@@ -88,7 +88,6 @@ int main(int argc, char *argv[])
     ECA_SESSION esession;
     ECA_CONTROL ectrl (&esession);
     ECA_AUDIO_FORMAT aio_params;
-    ectrl.toggle_interactive_mode(false);
 
     cline.begin();
     cline.next(); // skip the program name
@@ -142,8 +141,8 @@ int main(int argc, char *argv[])
 	  break;
 	}
 	else {
-	  ECA_ENGINE emain (&esession);
-	  emain.exec();
+	  // blocks until processing is done
+	  ectrl.run();
 	}
 
 	if (m == 0) {

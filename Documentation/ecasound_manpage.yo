@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (01.02.2002)
+       (11.03.2002)
        ()
        (Multimedia software)
 
@@ -139,12 +139,6 @@ circumstances (for instance when using oscillator envelopes) small
 buffer sizes will make envelopes act more smoothly. When not processing
 in real-time (all inputs and outputs are normal files), values between
 512 - 4096 often give better results. Default is 1024.
-
-dit(-m:mix-mode)
-Forces ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
-'simple' =  only one input/chain/output and 'normal' = normal 
-single-threaded mode. In most cases, ecasound is able to find out 
-the correct mode automatically.
 
 dit(-r:sched_priority)
 Use realtime scheduling policy (SCHED_FIFO). This is impossible if 

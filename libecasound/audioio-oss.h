@@ -40,6 +40,9 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   virtual std::string name(void) const { return("OSS soundcard device"); }
   virtual std::string description(void) const { return("Open Sound System -devices (OSS/Linux and OSS/Free)."); }
 
+  /** @name Function reimplemented from AUDIO_IO */
+  /*@{*/
+
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
 
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR &);
@@ -48,10 +51,18 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   virtual long int read_samples(void* target_buffer, long int samples);
   virtual void write_samples(void* target_buffer, long int samples);
 
-  virtual void stop(void);
-  virtual void start(void);
+  /*@}*/
 
-  virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
+  /** @name Function reimplemented from AUDIO_IO_DEVICE */
+  /*@{*/
+
+  virtual void start(void);
+  virtual void stop(void);
+
+  virtual long int delay(void) const;
+  virtual long int prefill_space(void) const { if (io_mode() != io_read) return(fragment_size * fragment_count); }
+
+  /*@}*/
 
  private:
   
@@ -65,6 +76,7 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   fd_set fds;
 
   int fragment_size;
+  int fragment_count;
   long int bytes_read;
   int oss_caps;
   struct timeval start_time;

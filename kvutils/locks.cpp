@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// locks.cpp: Various pthread and locking related helper functions.
+// locks.cpp: Various lock related helper functions.
 // Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -124,25 +124,3 @@ void ATOMIC_INTEGER::decrement(void) {
 #endif
 }
 
-/**
- * A variant of the standard pthread_mutex_lock. This routine is
- * originally from Quasimodo CVS-tree, from the libpbd library, Written 
- * by Paul Barton-Davis. This version of the routine adds a second
- * argument, 'spinlimit' which specifies the number of loops spent
- * spinning, before blocking with the standard pthread_mutex_lock() call.
- */
-int pthread_mutex_spinlock (pthread_mutex_t *mp, long int spinlimit) {
-  int err = EBUSY;
-  unsigned int i;
-  
-  i = spinlimit;
-  
-  while (i > 0 && ((err = pthread_mutex_trylock (mp)) == EBUSY))
-    i--;
-  
-  if (err == EBUSY) {
-    err = pthread_mutex_lock (mp);
-  }
-  
-  return err;
-}

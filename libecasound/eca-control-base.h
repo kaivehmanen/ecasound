@@ -25,20 +25,24 @@ class ECA_CONTROL_BASE {
  private:
 
   int retcode_rep;
+  bool req_batchmode_rep;
   pthread_t th_cqueue_rep;
   ATOMIC_INTEGER engine_exited_rep;
 
+  static void* start_normal_thread(void *ptr);
+
+  void start_engine(bool batchmode);
+  void run_engine(void);
+
  protected:
+
+  void close_engine(void);
 
   ECA_ENGINE* engine_repp;
   ECA_SESSION* session_repp;
   ECA_CHAINSETUP* selected_chainsetup_repp;
 
  public:
-
-  void start_engine(void);
-  void run_engine(void);
-  void close_engine(void);
 
   // -------------------------------------------------------------------
   // Runtime control
@@ -111,12 +115,6 @@ class ECA_CONTROL_BASE {
   std::string resource_value(const std::string& key) const;
 
   // -------------------------------------------------------------------
-  // Session options
-  // -------------------------------------------------------------------
-
-  void toggle_interactive_mode(bool v) { session_repp->toggle_interactive_mode(v); } 
-
-  // -------------------------------------------------------------------
   // Session status
   // -------------------------------------------------------------------
 
@@ -130,7 +128,7 @@ class ECA_CONTROL_BASE {
    * Returns true if engine has been started. 
    */
   bool is_engine_started(void) const { return(engine_repp != 0); }
- std::string engine_status(void) const;
+  std::string engine_status(void) const;
 
   ECA_CONTROL_BASE (ECA_SESSION* psession);
   ~ECA_CONTROL_BASE (void);

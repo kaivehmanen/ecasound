@@ -38,7 +38,7 @@
 // --
 // Select features
 
-#define PROXY_PROFILING
+// #define PROXY_PROFILING
 
 // --
 // Macro definitions
@@ -162,7 +162,7 @@ void AUDIO_IO_PROXY_SERVER::start(void)
    * Note! As the new recovery code is in place, this is not needed anymore.
    *       ... or is it? - testing again 15.10.2001
    */
-#if 1
+#if 0
    if (sched_getscheduler(0) == SCHED_FIFO) {
      struct sched_param sparam;
      sparam.sched_priority = schedpriority_rep;
@@ -190,7 +190,7 @@ void AUDIO_IO_PROXY_SERVER::stop(void)
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) stop");
   stop_request_rep.set(1);
 
-#if 1
+#if 0
   if (thread_running_rep == true) {
     struct sched_param sparam;
     int policy = 0;
@@ -491,9 +491,11 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void)
 
 	  ++processed;
 
-	  PROXY_PROFILING_STATEMENT( if (buffers_rep[p]->write_space() > 16 && one_time_full == true) { )
-	  PROXY_PROFILING_INC(impl_repp->profile_read_xrun_danger_rep);
-	  PROXY_PROFILING_STATEMENT( } )
+#ifdef PROXY_PROFILING
+	  if (buffers_rep[p]->write_space() > 16 && one_time_full == true) {
+	    PROXY_PROFILING_INC(impl_repp->profile_read_xrun_danger_rep);
+	  }
+#endif
 
 	}
       }
@@ -506,9 +508,11 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void)
 	  buffers_rep[p]->advance_read_pointer();
 	  ++processed;
 
-	  PROXY_PROFILING_STATEMENT( if (buffers_rep[p]->read_space() < 16  && one_time_full == true) { )
-	  PROXY_PROFILING_INC(impl_repp->profile_write_xrun_danger_rep);
-	  PROXY_PROFILING_STATEMENT( } )
+#ifdef PROXY_PROFILING
+	  if (buffers_rep[p]->read_space() < 16  && one_time_full == true) {
+	    PROXY_PROFILING_INC(impl_repp->profile_write_xrun_danger_rep);
+	  }
+#endif
 
 	}
       }

@@ -1,0 +1,22 @@
+------------------------------------------------------------------------
+Status: CLOSED
+
+(edi-13): Possible bug in forked-stream module (mp3,ogg), which 
+	 causes ecawave crashes.
+	- submitted: kaiv, 17.08.2001
+	- fixed: kaiv, 24.02.2002
+
+------------------------------------------------------------------------
+Details:
+
+- description of problem/idea with background info
+    - ecawave crashed when playing mp3 files
+
+- solution ideas 
+    - it seems that problem was caused by the fact that
+      ecawave was _not_ linked against libpthread
+    - most libecasound functions worked fine, but
+      when a libecasound thread called fork(), that thread
+      died right away and left very little trace
+
+------------------------------------------------------------------------
