@@ -27,6 +27,44 @@ int main(void)
 ],
 [
 	AC_MSG_RESULT(not found.)
+],
+[
+	AC_MSG_RESULT(not found.)
+]
+)])
+
+## ------------------------------------------------------------------------
+## Check whether namespaces are supported.
+## ------------------------------------------------------------------------
+##
+AC_DEFUN(AC_CHECK_CXX_NAMESPACE_SUPPORT,
+[
+AC_MSG_CHECKING(if C++ compiler supports namespaces)
+AC_LANG_CPLUSPLUS
+AC_TRY_RUN(
+[
+#include <string>
+#include <vector>
+
+using std::string;
+
+int main(void)
+{	
+	string s ("foo");
+ 	std::vector v;
+	return(0);
+}
+],
+[ 	
+	AC_MSG_RESULT(yes.)
+	AC_DEFINE(USE_CXX_STD_NAMESPACE)
+],
+[
+	AC_MSG_RESULT(no.)
+]
+,
+[
+	AC_MSG_RESULT(no.)
 ]
 )])
 
