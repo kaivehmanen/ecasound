@@ -63,7 +63,7 @@ endif
 if ECA_AM_COMPILE_PYECASOUND
 install-exec-hook: pyecasound.so
 	$(INSTALL) -d $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
-	$(INSTALL) pyecasound.so pyeca.py $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
+	$(INSTALL) pyecasound.so $(srcdir)/pyeca.py $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
 else
 install-exec-hook:
 endif
