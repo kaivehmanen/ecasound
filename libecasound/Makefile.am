@@ -280,6 +280,8 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-resources.cpp \
 			resource-file.cpp \
 			eca-logger.cpp \
+			eca-logger-default.cpp \
+			eca-logger-interface.cpp \
 			eca-logger-wellformed.cpp \
 			layer.cpp \
 			samplebuffer_iterators.cpp \
