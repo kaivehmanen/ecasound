@@ -18,9 +18,10 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
-libecasound_version=@LIBECASOUND_VERSION@
-libecasoundc_version=@LIBECASOUNDC_VERSION@
-libkvutils_version=@LIBKVUTILS_VERSION@
+
+#libecasound_version=@LIBECASOUND_VERSION@
+#libecasoundc_version=@LIBECASOUNDC_VERSION@
+#libkvutils_version=@LIBKVUTILS_VERSION@
 
 flags=""
 
@@ -28,16 +29,19 @@ while test $# -gt 0
 do
   case $1 in
     --libs)
-	  flags="$flags -L$libdir -lecasound${libecasound_version} -lkvutils${libkvutils_version} -lecasoundc${libecasoundc_version}"
+	  # -lecasound${libecasound_version} -lkvutils${libkvutils_version}
+	  flags="$flags -L$libdir -lecasoundc"
 	  ;;
     --libs_debug)
-	  flags="$flags -L$libdir -lecasound${libecasound_version}_debug -lkvutils${libkvutils_version}_debug -lecasoundc${libecasoundc_version}_debug"
+	  # -L$libdir -lecasound${libecasound_version}_debug -lkvutils${libkvutils_version}_debug
+	  flags="$flags -lecasoundc_debug"
 	  ;;
     --ldflags)
 	  flags="$flags -Wl,--rpath -Wl,$libdir"
 	  ;;
     --cflags)
-	  flags="$flags -I$includedir/libecasound${libecasound_version} -I$includedir/kvutils${libkvutils_version} -I$includedir/libecasoundc${libecasoundc_version}"
+	  # -I$includedir/libecasound${libecasound_version} -I$includedir/kvutils${libkvutils_version}
+	  flags="$flags -I$includedir/libecasoundc"
 	  ;;
     --version)
 	  echo @VERSION@
