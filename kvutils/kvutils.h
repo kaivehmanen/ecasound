@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+using namespace std;
+
 /**
  * Case-insensitive string compare. Ignores preceding and 
  * trailing white space.

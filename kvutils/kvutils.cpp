@@ -19,8 +19,10 @@
 
 #include <sys/time.h> /* gettimeofday() */
 #include <unistd.h>
-#include <stdlib.h> /* atoi() */
+#include <ctype.h> /* isspace(), toupper() */
 
+#include <cstdlib> /* atoi() */
+#include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>

@@ -1,8 +1,9 @@
-#ifndef _MESSAGE_ITEM_H
-#define _MESSAGE_ITEM_H
+#ifndef INCLUDED_MESSAGE_ITEM_H
+#define INCLUDED_MESSAGE_ITEM_H
 
-#include <strstream>
 #include <string>
+
+using std::string;
 
 /**
  * A simple version of C++ stringstream
