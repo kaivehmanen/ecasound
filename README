@@ -177,6 +177,7 @@ Kai Vehmanen <kai.vehmanen@wakkanet.fi> - [kaiv]
  Contributors / credits / thanks to 
 -----------------------------------------------------------------------
 
+Anarcat - Work on ecasound's FreeBSD port [anarcat]
 Davis, Paul - Has probably written more Linux audio related code (and mails) than anyone else! :)
 Beaupre, Antoine - Patches for FreeBSD compatibility. [beaupran]
 Bowman, Brad - Perl ECI binding, bug hunting. [bowman]

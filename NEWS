@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 191101) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 261101) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -19,6 +19,7 @@ Last officially released version is -*> v2.0.3 *-
 
 ??112001 (v2.1dev5)
 	- added: docs - Documentation/manpages.html
+	- added: ecalength - -su option added [smassy]
 	- changed: most preset names changed in 'effect_presets'
 	- changed: ecasoundrc - new defaults for mp3 and ogg
 		   output
@@ -33,6 +34,8 @@ Last officially released version is -*> v2.0.3 *-
 		 ~/.ecasoundrc to match the new defaults,
 		 see ecasoundrc(5) man page
 	- fixed: ecasound wrote to ewf-files opened in read-only mode
+	- fixed: work-around for environments without the C99 stdint.h
+                 header file [anarcat]
 31102001 (v2.1dev4)
 	- added: eiam - 'cs-option' commmand; although explicit use 
 		 of cmd-line options as iactive-mod commands (like 

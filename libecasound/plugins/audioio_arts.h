@@ -2,6 +2,7 @@
 #define INCLUDED_AUDIOIO_ARTS_H
 
 #include <string>
+#include <iostream>
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -52,7 +53,7 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
   ARTS_INTERFACE (const string& name = "arts");
   ~ARTS_INTERFACE(void);
     
-  ARTS_INTERFACE* clone(void) const { cerr << "Not implemented!" << endl; return 0; }
+  ARTS_INTERFACE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
   ARTS_INTERFACE* new_expr(void) const { return new ARTS_INTERFACE(); }
 };
 

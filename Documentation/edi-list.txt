@@ -63,6 +63,8 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	- submitted: smassy, 17.10.2001
 (edi-19) Separate file format for multitrack setups (.emt).
 	- submitted: kaiv, 18.10.2001
+(edi-20) Ewf-v2 format.
+	- submitted: kaiv, 26.11.2001
 
 -----------------------------------------------------------------------
 [ Closed items ]
