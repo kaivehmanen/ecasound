@@ -399,7 +399,8 @@ void eci_command_r(eci_handle_t ptr, const char* command)
   write(eci_rep->cmd_write_fd_rep, "\n", 1);
 
   /* 'run' is the only blocking function */
-  if (strncmp(command, "run", 3) != 0) {
+  if (strncmp(command, "run", 3) == 0) {
+    ECI_DEBUG("\n(ecasoundc_sa) 'run' detected; disabling reply timeout!\n");
     timeout = -1;
   }
 
