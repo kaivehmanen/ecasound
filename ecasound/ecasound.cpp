@@ -119,8 +119,10 @@ int main(int argc, char *argv[])
 	state->console = new ECA_PLAIN_TEXT(ostr);
       }
     
-    /* 4. print banner */
-    state->console->print_banner();
+    if (state->quiet_mode != true) {
+      /* 4. print banner */
+      state->console->print_banner();
+    }
 
     /* 5. set default debug levels */
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);

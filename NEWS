@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 181102) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 211102) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -29,6 +29,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 rt-outputs
 	- fixed: restarting processing from a new position after
 		 processing had reached the finished state
+	- fixed: banner was printed to stdout even in quiet mode
 07112002 (v2.2.0-pre5)
 	- edi-entries: edi-29 closed
 	- added: ecasound emacs interface, ecasound.el, is now 
