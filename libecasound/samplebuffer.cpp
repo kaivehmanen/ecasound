@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // samplebuffer.cpp: Class representing a buffer of audio samples.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2005 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -924,6 +924,14 @@ void SAMPLE_BUFFER::length_in_samples(buf_size_t len)
 void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
 					 SAMPLE_SPECS::sample_rate_t to_srate)
 {
+#ifdef ECA_COMPILE_SAMPLERATE
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		"Resampler selected: libsamplerate (Secret Rabbit Code).");
+#else
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		"Resampler selected: internal resampler.");
+#endif
+
   double step = 1.0;
   if (from_srate != 0) { step = static_cast<double>(to_srate) / from_srate; }
 
@@ -1188,6 +1196,11 @@ void SAMPLE_BUFFER::resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from
     // Perform the sample rate conversion
     ret = src_process(impl_repp->src_state_rep[c], &params);
     DBC_CHECK(ret == 0);
+    if (ret) {
+      /* make sure we avoid segfault in all cases */
+      params.output_frames_gen = 0;
+      params.input_frames_used = old_buffer_size;
+    }
     DBC_CHECK(std::labs(params.input_frames_used - old_buffer_size) == 0);
 #ifdef ECA_DEBUG_MODE
     /* make sure all input samples have been used */

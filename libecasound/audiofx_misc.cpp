@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audiofx_misc.cpp: Miscellanous effect processing routines.
-// Copyright (C) 1999-2003 Kai Vehmanen
+// Copyright (C) 1999-2003,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,7 +64,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_DCFIX::get_parameter(int param) const
     result = deltafixes_rep[param - 2];
   }
 
-  return(result);
+  return result;
 }
 
 string EFFECT_DCFIX::parameter_names(void) const
@@ -74,7 +77,7 @@ string EFFECT_DCFIX::parameter_names(void) const
     t.push_back("delta-ch" + kvu_numtostr(n + 1));
   }
 
-  return(kvu_vector_to_string(t, ","));
+  return kvu_vector_to_string(t, ",");
 }
 
 void EFFECT_DCFIX::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
@@ -116,21 +119,13 @@ void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_t va
   switch (param) {
   case 1: 
     double lowlimit = 1.0f / EFFECT_PITCH_SHIFT::resample_low_limit * 100.0f;
-    double highlimit = 2000.0f;
 
     if (value <= lowlimit) {
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "(audiofx_misc) WARNING! Shift-% must be greater than " +
+		  "WARNING! Shift-% must be greater than " +
 		  kvu_numtostr(lowlimit) + 
 		  "%! Limiting to the low-limit.");
       pmod_rep = lowlimit;
-    }
-    else if (sbuf_repp != 0 && value > highlimit) {
-      ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "(audiofx_misc) WARNING! Upper limit for shift-% is  " +
-		  kvu_numtostr(highlimit) + 
-		  "%! Limiting value.");
-      pmod_rep = highlimit;
     }
     else {
       pmod_rep = value;
@@ -149,9 +144,9 @@ CHAIN_OPERATOR::parameter_t EFFECT_PITCH_SHIFT::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(pmod_rep);
+    return pmod_rep;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_PITCH_SHIFT::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
@@ -163,9 +158,11 @@ void EFFECT_PITCH_SHIFT::parameter_description(int param, struct PARAM_DESCRIPTI
     case 1: 
       pd->default_value = 100.0f;
       pd->bounded_above = true;
-      pd->upper_bound = 500.0f;
+      /* 100x speed-up is a sensible upper limit */
+      pd->upper_bound = 10000.0f; 
       pd->bounded_below = true;
-      pd->lower_bound = 25.0f;
+      /* ~8x slow-down is a sensible lower limit: */
+      pd->lower_bound = 1.0f / EFFECT_PITCH_SHIFT::resample_low_limit * 100.0f; 
       break;
     }
 }
@@ -179,12 +176,12 @@ void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample)
   long int lowlimit = sbuf_repp->length_in_samples() * EFFECT_PITCH_SHIFT::resample_low_limit; 
   sbuf_repp->reserve_length_in_samples(lowlimit);
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-	      "(audiofx) setting resampling lowlimit to " + 
+	      "Setting resampling lowlimit to " + 
 	      kvu_numtostr(lowlimit) + " bytes.");
 
   sbuf_repp->resample_init_memory(samples_per_second(), target_rate_rep);
   sbuf_repp->resample_set_quality(50);
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audiofx) resampling from " +
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Resampling from " +
 	      kvu_numtostr(samples_per_second()) + 
 	      " to " + 
 	      kvu_numtostr(target_rate_rep) + "."); 
@@ -203,9 +200,9 @@ void EFFECT_PITCH_SHIFT::process(void)
 long int EFFECT_PITCH_SHIFT::max_output_samples(long int i_samples) const
 {
   DBC_CHECK(sbuf_repp != 0);
-  return(static_cast<long int>(static_cast<double>(target_rate_rep) /
+  return static_cast<long int>(static_cast<double>(target_rate_rep) /
 			       samples_per_second() *
-			       i_samples));
+			       i_samples);
 }
 
 EFFECT_AUDIO_STAMP::EFFECT_AUDIO_STAMP(void) 
@@ -231,9 +228,9 @@ CHAIN_OPERATOR::parameter_t EFFECT_AUDIO_STAMP::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(static_cast<parameter_t>(id()));
+    return static_cast<parameter_t>(id());
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_AUDIO_STAMP::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
