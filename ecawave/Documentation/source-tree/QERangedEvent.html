@@ -1,0 +1,102 @@
+<HTML>
+<HEAD>
+<TITLE>class QERangedEvent</TITLE>
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class QERangedEvent</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+ Base class for events applied to a certain sample range
+  <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="qerangedevent_h.html">qerangedevent.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="QEEvent.html">QEEvent</A></TD></TR>
+<TR><TH><A HREF="full-list-QERangedEvent.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<H2>Public Members</H2>
+<UL>
+<LI>long int  <b><A HREF="#ref6">position</A></b> (void)  const
+</LI>
+<LI>long int  <b><A HREF="#ref7">length</A></b> (void)  const
+</LI>
+<LI>const string&amp;  <b><A HREF="#ref8">input_name</A></b> (void)  const
+</LI>
+<LI>const string&amp;  <b><A HREF="#ref9">output_name</A></b> (void)  const
+</LI>
+<LI>bool  <b>class_invariant</b> (void) 
+</LI>
+<LI> <b>QERangedEvent</b> (ECA_CONTROLLER* ctrl) 
+</LI>
+</UL>
+<H2>Protected Members</H2>
+<UL>
+<LI>void  <b><A HREF="#ref1">set_input</A></b> (const string&amp; name) 
+</LI>
+<LI>void  <b><A HREF="#ref2">set_input_position</A></b> (long int pos) 
+</LI>
+<LI>void  <b><A HREF="#ref3">set_output</A></b> (const string&amp; name) 
+</LI>
+<LI>void  <b><A HREF="#ref4">set_output_position</A></b> (long int pos) 
+</LI>
+<LI>void  <b><A HREF="#ref5">set_length</A></b> (long int pos) 
+</LI>
+</UL>
+<HR><A NAME="longdesc"><H2>Detailed Description</H2><p>
+ Base class for events applied to a certain sample range
+ </p><A NAME="set_input"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>void  <b>set_input</b> (const string&amp; name)
+</strong></td></tr></table> <small>[protected]</small></p><p>
+ Set input source using a formatted string (refer to ecasound's documentation)
+   </p><p>Reimplemented from <A HREF="QEEvent.html">QEEvent</A></p>
+<A NAME="set_input_position"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>void  <b>set_input_position</b> (long int pos)
+</strong></td></tr></table> <small>[protected]</small></p><p>
+ Set input start position in samples
+   </p><p>Reimplemented from <A HREF="QEEvent.html">QEEvent</A></p>
+<A NAME="set_output"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>void  <b>set_output</b> (const string&amp; name)
+</strong></td></tr></table> <small>[protected]</small></p><p>
+ Set output source using a formatted string (refer to ecasound's documentation)
+   </p><p>Reimplemented from <A HREF="QEEvent.html">QEEvent</A></p>
+<A NAME="set_output_position"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>void  <b>set_output_position</b> (long int pos)
+</strong></td></tr></table> <small>[protected]</small></p><p>
+ Set output start position in samples
+   </p><p>Reimplemented from <A HREF="QEEvent.html">QEEvent</A></p>
+<A NAME="set_length"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>void  <b>set_length</b> (long int pos)
+</strong></td></tr></table> <small>[protected]</small></p><p>
+ Set processing length in samples
+   </p><p>Reimplemented from <A HREF="QEEvent.html">QEEvent</A></p>
+<A NAME="position"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>long int  <b>position</b> (void)
+</strong></td></tr></table> <small>[const]</small></p><p>
+ Current position in samples
+   </p><p>Reimplemented from <A HREF="QEEvent.html">QEEvent</A></p>
+<A NAME="length"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>long int  <b>length</b> (void)
+</strong></td></tr></table> <small>[const]</small></p><p>
+ Returns processing length in samples
+   </p><p>Reimplemented from <A HREF="QEEvent.html">QEEvent</A></p>
+<A NAME="input_name"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>const string&amp;  <b>input_name</b> (void)
+</strong></td></tr></table> <small>[const]</small></p><p>
+ Returns name of current input as a formatted string
+   </p><p>Reimplemented from <A HREF="QEEvent.html">QEEvent</A></p>
+<A NAME="output_name"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>const string&amp;  <b>output_name</b> (void)
+</strong></td></tr></table> <small>[const]</small></p><p>
+ Returns name of current output as a formatted string
+   </p><p>Reimplemented from <A HREF="QEEvent.html">QEEvent</A></p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: root@sculpcave on Fri Jan 21 11:22:07 200.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

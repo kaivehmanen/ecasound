@@ -1,0 +1,421 @@
+# Makefile.in generated automatically by automake 1.4a from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+CC = @CC@
+CPP = @CPP@
+CXX = @CXX@
+MAKEINFO = @MAKEINFO@
+MOC = @MOC@
+PACKAGE = @PACKAGE@
+QT_INCLUDES = @QT_INCLUDES@
+QT_LDFLAGS = @QT_LDFLAGS@
+VERSION = @VERSION@
+qt_includes = @qt_includes@
+qt_libraries = @qt_libraries@
+@INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
+@INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
+
+INCLUDES = -I. -I$(qt_includes) -I$(all_includes)
+@INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecawave_debug
+@INCLUDE_DEBUG_FALSE@bin_PROGRAMS = ecawave
+
+ecawave_src_files = ecawave.cpp 			version.cpp 			resources.cpp 		 	qesession.cpp 			qefile.cpp 			qeacceptinput.cpp 			qefilenameinput.cpp 			qeaudioformatinput.cpp 			qeopenfiledialog.cpp 			qesavefiledialog.cpp 			qechainopinput.cpp 			qewaveform.cpp 			qebuttonrow.cpp 			qestatusbar.cpp 			qeevent.cpp 			qeplayevent.cpp 			qesaveevent.cpp 			qeprocessevent.cpp 			qechainopevent.cpp
+
+ecawave_src_mocs = qesession_moc.cpp 			qefile_moc.cpp 			qeacceptinput_moc.cpp 			qefilenameinput_moc.cpp 			qeaudioformatinput_moc.cpp 			qeopenfiledialog_moc.cpp 			qesavefiledialog_moc.cpp 			qechainopinput_moc.cpp 			qewaveform_moc.cpp 			qebuttonrow_moc.cpp 			qestatusbar_moc.cpp 			qechainopevent_moc.cpp
+
+ecawave_include_files = ecawave.h 			version.h 			resources.h 			qesession.h 			qefile.h 			qeacceptinput.h 			qefilenameinput.h 			qeaudioformatinput.h 			qeopenfiledialog.h 			qesavefiledialog.h 			qechainopinput.h 			qewaveform.h 			qebuttonrow.h 			qestatusbar.h 			qeevent.h 			qeplayevent.h 			qesaveevent.h 			qeprocessevent.h 			qechainopevent.h
+
+
+ecawave_SOURCES = $(ecawave_src_files) $(ecawave_include_files) $(ecawave_src_mocs)
+ecawave_debug_SOURCES = $(ecawave_SOURCES)
+
+ecawave_LDADD = -lecasound -lqt -lkvutils
+ecawave_LDFLAGS = $(all_libraries)
+ecawave_debug_LDADD = -lecasound_debug -lqt -lkvutils
+ecawave_debug_LDFLAGS = $(ecawave_LDFLAGS)
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../config.h
+CONFIG_CLEAN_FILES = 
+PROGRAMS =  $(bin_PROGRAMS)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+ecawave_debug_OBJECTS =  ecawave.o version.o resources.o qesession.o \
+qefile.o qeacceptinput.o qefilenameinput.o qeaudioformatinput.o \
+qeopenfiledialog.o qesavefiledialog.o qechainopinput.o qewaveform.o \
+qebuttonrow.o qestatusbar.o qeevent.o qeplayevent.o qesaveevent.o \
+qeprocessevent.o qechainopevent.o qesession_moc.o qefile_moc.o \
+qeacceptinput_moc.o qefilenameinput_moc.o qeaudioformatinput_moc.o \
+qeopenfiledialog_moc.o qesavefiledialog_moc.o qechainopinput_moc.o \
+qewaveform_moc.o qebuttonrow_moc.o qestatusbar_moc.o \
+qechainopevent_moc.o
+ecawave_debug_DEPENDENCIES = 
+ecawave_OBJECTS =  ecawave.o version.o resources.o qesession.o qefile.o \
+qeacceptinput.o qefilenameinput.o qeaudioformatinput.o \
+qeopenfiledialog.o qesavefiledialog.o qechainopinput.o qewaveform.o \
+qebuttonrow.o qestatusbar.o qeevent.o qeplayevent.o qesaveevent.o \
+qeprocessevent.o qechainopevent.o qesession_moc.o qefile_moc.o \
+qeacceptinput_moc.o qefilenameinput_moc.o qeaudioformatinput_moc.o \
+qeopenfiledialog_moc.o qesavefiledialog_moc.o qechainopinput_moc.o \
+qewaveform_moc.o qebuttonrow_moc.o qestatusbar_moc.o \
+qechainopevent_moc.o
+ecawave_DEPENDENCIES = 
+CXXFLAGS = @CXXFLAGS@
+CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = gtar
+GZIP_ENV = --best
+SOURCES = $(ecawave_debug_SOURCES) $(ecawave_SOURCES)
+OBJECTS = $(ecawave_debug_OBJECTS) $(ecawave_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .S .c .cpp .o .s
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps src/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-binPROGRAMS:
+
+clean-binPROGRAMS:
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+
+distclean-binPROGRAMS:
+
+maintainer-clean-binPROGRAMS:
+
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo "  $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	     $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	  else :; fi; \
+	done
+
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	done
+
+.c.o:
+	$(COMPILE) -c $<
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+ecawave_debug: $(ecawave_debug_OBJECTS) $(ecawave_debug_DEPENDENCIES)
+	@rm -f ecawave_debug
+	$(CXXLINK) $(ecawave_debug_LDFLAGS) $(ecawave_debug_OBJECTS) $(ecawave_debug_LDADD) $(LIBS)
+
+ecawave: $(ecawave_OBJECTS) $(ecawave_DEPENDENCIES)
+	@rm -f ecawave
+	$(CXXLINK) $(ecawave_LDFLAGS) $(ecawave_OBJECTS) $(ecawave_LDADD) $(LIBS)
+.cpp.o:
+	$(CXXCOMPILE) -c $<
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = src
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+ecawave.o: ecawave.cpp qesession.h resources.h
+qeacceptinput_moc.o: qeacceptinput_moc.cpp qeacceptinput.h
+qeacceptinput.o: qeacceptinput.cpp qeacceptinput.h
+qeaudioformatinput_moc.o: qeaudioformatinput_moc.cpp \
+	qeaudioformatinput.h
+qeaudioformatinput.o: qeaudioformatinput.cpp qeaudioformatinput.h
+qechainopdialog_moc.o: qechainopdialog_moc.cpp qechainopdialog.h \
+	../config.h
+qechainopdialog.o: qechainopdialog.cpp qechainopdialog.h ../config.h \
+	qeacceptinput.h
+qechainopevent_moc.o: qechainopevent_moc.cpp qechainopevent.h \
+	../config.h qechainopinput.h qeprocessevent.h qeevent.h
+qechainopevent.o: qechainopevent.cpp qechainopevent.h ../config.h \
+	qechainopinput.h qeprocessevent.h qeevent.h
+qechainopinput_moc.o: qechainopinput_moc.cpp qechainopinput.h \
+	../config.h
+qechainopinput.o: qechainopinput.cpp qechainopinput.h ../config.h
+qecopyevent.o: qecopyevent.cpp qeevent.h ../config.h qecopyevent.h
+qedialog_moc.o: qedialog_moc.cpp
+qedialog.o: qedialog.cpp qedialog.h
+qeevent.o: qeevent.cpp qeevent.h ../config.h
+qefiledialog_moc.o: qefiledialog_moc.cpp
+qefiledialog.o: qefiledialog.cpp qeformatdialog.h qefiledialog.h
+qefile_moc.o: qefile_moc.cpp qefile.h qewaveform.h
+qefilenameinput_moc.o: qefilenameinput_moc.cpp qefilenameinput.h
+qefilenameinput.o: qefilenameinput.cpp qefilenameinput.h
+qefile.o: qefile.cpp ../config.h qefile.h qewaveform.h qebuttonrow.h
+qeformatdialog_moc.o: qeformatdialog_moc.cpp
+qeformatdialog.o: qeformatdialog.cpp qeformatdialog.h
+qeopenfiledialog_moc.o: qeopenfiledialog_moc.cpp qeopenfiledialog.h \
+	qeacceptinput.h qeaudioformatinput.h qefilenameinput.h
+qeopenfiledialog.o: qeopenfiledialog.cpp ../config.h qeopenfiledialog.h \
+	qeacceptinput.h qeaudioformatinput.h qefilenameinput.h
+qeplayevent.o: qeplayevent.cpp qeplayevent.h qeevent.h ../config.h
+qeprocessevent.o: qeprocessevent.cpp ../config.h qeevent.h \
+	qeprocessevent.h
+qerangedevent.o: qerangedevent.cpp ../config.h qeevent.h qeplayevent.h \
+	qerangedevent.h
+qesaveevent.o: qesaveevent.cpp qesaveevent.h qeevent.h ../config.h
+qesavefiledialog_moc.o: qesavefiledialog_moc.cpp qesavefiledialog.h \
+	qeacceptinput.h qefilenameinput.h
+qesavefiledialog.o: qesavefiledialog.cpp ../config.h qesavefiledialog.h \
+	qeacceptinput.h qefilenameinput.h
+qesession_moc.o: qesession_moc.cpp qesession.h resources.h
+qesession.o: qesession.cpp ../config.h qefile.h qewaveform.h \
+	qeopenfiledialog.h qeacceptinput.h qeaudioformatinput.h \
+	qefilenameinput.h qesavefiledialog.h qesession.h resources.h \
+	qebuttonrow.h qestatusbar.h qeevent.h qeplayevent.h \
+	qesaveevent.h qechainopevent.h qechainopinput.h \
+	qeprocessevent.h version.h
+qestatusbar_moc.o: qestatusbar_moc.cpp qestatusbar.h
+qestatusbar.o: qestatusbar.cpp ../config.h qestatusbar.h version.h
+qewaveform_moc.o: qewaveform_moc.cpp qewaveform.h
+qewaveform.o: qewaveform.cpp qewaveform.h
+resources.o: resources.cpp resources.h
+version.o: version.cpp ../config.h version.h
+
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am: install-binPROGRAMS
+install-exec: install-exec-am
+
+install-data-am:
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-binPROGRAMS
+uninstall: uninstall-am
+all-am: Makefile $(PROGRAMS)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+installdirs:
+	$(mkinstalldirs)  $(DESTDIR)$(bindir)
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+mostlyclean-am:  mostlyclean-binPROGRAMS mostlyclean-compile \
+		mostlyclean-tags mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-binPROGRAMS clean-compile clean-tags clean-generic \
+		mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-binPROGRAMS distclean-compile distclean-tags \
+		distclean-generic clean-am
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-binPROGRAMS \
+		maintainer-clean-compile maintainer-clean-tags \
+		maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-binPROGRAMS distclean-binPROGRAMS clean-binPROGRAMS \
+maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
+check-am installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
+
+
+# ------
+# qt-moc
+# ------
+qesession_moc.cpp: $(srcdir)/qesession.h
+	$(MOC) -o qesession_moc.cpp $(srcdir)/qesession.h
+
+qefile_moc.cpp: $(srcdir)/qefile.h
+	$(MOC) -o qefile_moc.cpp $(srcdir)/qefile.h
+
+qeacceptinput_moc.cpp: $(srcdir)/qeacceptinput.h
+	$(MOC) -o qeacceptinput_moc.cpp $(srcdir)/qeacceptinput.h
+
+qefilenameinput_moc.cpp: $(srcdir)/qefilenameinput.h
+	$(MOC) -o qefilenameinput_moc.cpp $(srcdir)/qefilenameinput.h
+
+qeaudioformatinput_moc.cpp: $(srcdir)/qeaudioformatinput.h
+	$(MOC) -o qeaudioformatinput_moc.cpp $(srcdir)/qeaudioformatinput.h
+
+qeopenfiledialog_moc.cpp: $(srcdir)/qeopenfiledialog.h
+	$(MOC) -o qeopenfiledialog_moc.cpp $(srcdir)/qeopenfiledialog.h
+
+qesavefiledialog_moc.cpp: $(srcdir)/qesavefiledialog.h
+	$(MOC) -o qesavefiledialog_moc.cpp $(srcdir)/qesavefiledialog.h
+
+qechainopinput_moc.cpp: $(srcdir)/qechainopinput.h
+	$(MOC) -o qechainopinput_moc.cpp $(srcdir)/qechainopinput.h
+
+qechainopevent_moc.cpp: $(srcdir)/qechainopevent.h
+	$(MOC) -o qechainopevent_moc.cpp $(srcdir)/qechainopevent.h
+
+qewaveform_moc.cpp: $(srcdir)/qewaveform.h
+	$(MOC) -o qewaveform_moc.cpp $(srcdir)/qewaveform.h
+
+qebuttonrow_moc.cpp: $(srcdir)/qebuttonrow.h
+	$(MOC) -o qebuttonrow_moc.cpp $(srcdir)/qebuttonrow.h
+
+qestatusbar_moc.cpp: $(srcdir)/qestatusbar.h
+	$(MOC) -o qestatusbar_moc.cpp $(srcdir)/qestatusbar.h
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
