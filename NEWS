@@ -14,9 +14,12 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 xx052004 (v2.3.3)  -** stable release **-
+	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command
 	- changed: lots of typo fixes and other corrections to 
 	           the user's guide [ericdr]
+	- changed: minor configure.in cleanup relating to handling
+		   CFLAGS, CXXFLAGS and LDFLAGS
 	- fixed: building against libsndfile-1.0.4 and older; if 
 		 libsndfile older than 1.0.0 is detected, sndfile 
 		 support is disabled altogether
@@ -27,6 +30,8 @@ xx052004 (v2.3.3)  -** stable release **-
 	- fixed: bug in the daemon-mode (NetECI) protocol parser
 		 that caused parsing long (over 32 chars) commands 
 		 to fail
+	- fixed: 'libecasound-config --libs' did not list all 
+		 external libraries used
 06122003 (v2.3.2)  -** stable release **-
 	- edi-entries: edi-33 closed
 	- added: support for libsndfile; enabled if libsndfile is
