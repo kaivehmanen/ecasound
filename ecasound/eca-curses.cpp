@@ -197,8 +197,8 @@ ECA_CURSES::ECA_CURSES(void) {}
 ECA_CURSES::~ECA_CURSES(void) {}
 void ECA_CURSES::print(const std::string& msg) {}
 void ECA_CURSES::print_banner(void) {}
-void ECA_CURSES::read_command(const string& promp) {}
-const string& ECA_CURSES::last_command(void) const { static std::string empty; return(empty); }
+void ECA_CURSES::read_command(const std::string& prompt) {}
+const std::string& ECA_CURSES::last_command(void) const { static std::string empty; return(empty); }
 void ECA_CURSES::init_readline_support(void) {}
 
 #endif /* defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP */
