@@ -658,14 +658,18 @@ void AUDIO_IO_JACK_MANAGER::set_node_connection(jack_node_t* node, bool connect)
 	if (tport.size() > 0) {
 	  if (connect == true) {
 	    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_port_connect() ");
-	    if (jack_port_connect (client_repp, tport.c_str(), jack_port_name(inports_rep[n].jackport))) {
+	    if (jack_connect (client_repp,
+			      tport.c_str(), 
+			      jack_port_name(inports_rep[n].jackport))) {
 	      ecadebug->msg(ECA_DEBUG::info, 
 			    "(audioio-jack-manager) Error! Cannot connect input " + tport);
 	    }
 	  }
 	  else {
 	    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
-	    if (jack_port_disconnect (client_repp, tport.c_str(), jack_port_name(inports_rep[n].jackport))) {
+	    if (jack_disconnect(client_repp, 
+				tport.c_str(),
+				jack_port_name(inports_rep[n].jackport))) {
 	      ecadebug->msg(ECA_DEBUG::info, 
 			    "(audioio-jack-manager) Error! Cannot disconnect input " + tport);
 	    }
@@ -681,13 +685,17 @@ void AUDIO_IO_JACK_MANAGER::set_node_connection(jack_node_t* node, bool connect)
 	if (tport.size() > 0) {
 	  if (connect == true) {
 	    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_port_connect()");
-	    if (jack_port_connect (client_repp, jack_port_name(outports_rep[n].jackport), tport.c_str())) {
+	    if (jack_connect(client_repp, 
+			     jack_port_name(outports_rep[n].jackport), 
+			     tport.c_str())) {
 	      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot connect output " + tport);
 	    }
 	  }
 	  else {
 	    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
-	    if (jack_port_disconnect (client_repp, jack_port_name(outports_rep[n].jackport), tport.c_str())) {
+	    if (jack_disconnect(client_repp, 
+				jack_port_name(outports_rep[n].jackport),
+				tport.c_str())) {
 	      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack-manager) Error! Cannot disconnect output " + tport);
 	    }
 	  }
