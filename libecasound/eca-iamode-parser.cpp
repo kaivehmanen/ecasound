@@ -163,7 +163,7 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["cop-remove"] = ec_cop_remove;
   cmd_map_rep["cop-list"] = ec_cop_list;
   cmd_map_rep["cop-select"] = ec_cop_select;
-  cmd_map_rep["cop-inxed-select"] = ec_cop_select;
+  cmd_map_rep["cop-index-select"] = ec_cop_select;
   cmd_map_rep["cop-iselect"] = ec_cop_select;
   cmd_map_rep["cop-selected"] = ec_cop_selected;
   cmd_map_rep["cop-set"] = ec_cop_set;
