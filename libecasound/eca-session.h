@@ -66,10 +66,10 @@ class ECA_SESSION {
 
   void preprocess_options(std::vector<std::string>* opts);
   void create_chainsetup_options(COMMAND_LINE& cline, std::vector<std::string>* options);
-  void interpret_general_options(const std::vector<std::string>& inopts, std::vector<std::string>* outopts);
-  void interpret_general_option(const std::string& opts);
-  void interpret_chainsetup_option(const std::string& argu);
-  void interpret_general_option(COMMAND_LINE& cline, std::vector<std::string>* options);
+  int interpret_general_options(const std::vector<std::string>& inopts, std::vector<std::string>* outopts);
+  int interpret_general_option(const std::string& opts);
+  int interpret_chainsetup_option(const std::string& argu);
+  int interpret_general_option(COMMAND_LINE& cline, std::vector<std::string>* options);
   bool is_session_option(const std::string& arg) const;
 
   // ---

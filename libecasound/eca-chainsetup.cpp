@@ -87,7 +87,7 @@ const string ECA_CHAINSETUP::default_bmode_rtlowlatency_const = "256,true,50,tru
  * Construct from a vector of options.
  * 
  * If any invalid options are passed us argument, 
- * interpret_result() will be 'true', and 
+ * interpret_result() will be 'false', and 
  * interpret_result_verbose() contains more detailed 
  * error description.
  */
@@ -110,7 +110,11 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
   vector<string> options (opts);
   cparser_rep.preprocess_options(options);
   interpret_options(options);
-  add_default_output();
+  if (interpret_result() == true) {
+    /* do not add default if there were parsing errors as
+     * it might hide real problems */
+    add_default_output();
+  }
 }
 
 /**
@@ -134,7 +138,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(void)
  * Construct from a chainsetup file.
  * 
  * If any invalid options are passed us argument, 
- * interpret_result() will be 'true', and 
+ * interpret_result() will be 'false', and 
  * interpret_result_verbose() contains more detailed 
  * error description.
  *
@@ -156,7 +160,11 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file)
   if (name() == "") set_name(setup_file);
   cparser_rep.preprocess_options(options);
   interpret_options(options);
-  add_default_output();
+  if (interpret_result() == true) {
+    /* do not add default if there were parsing errors as
+     * it might hide real problems */
+    add_default_output();
+  }
 }
 
 /**
@@ -2014,6 +2022,11 @@ void ECA_CHAINSETUP::interpret_object_option (const string& arg)
 
 /**
  * Interpret a vector of options.
+ *
+ * If any invalid options are passed us argument, 
+ * interpret_result() will be 'false', and 
+ * interpret_result_verbose() contains more detailed 
+ * error description.
  *
  * @pre is_enabled() != true
  */

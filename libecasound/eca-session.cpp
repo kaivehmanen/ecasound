@@ -71,6 +71,7 @@ ECA_SESSION::~ECA_SESSION(void)
 
 ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)
 {
+  int errors = 0;
 
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Session created");
 
@@ -81,9 +82,16 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)
   std::vector<std::string> options,csoptions;
   create_chainsetup_options(cline, &options);
   preprocess_options(&options);
-  interpret_general_options(options,&csoptions);
+  errors += interpret_general_options(options,&csoptions);
+
+  if (errors > 0) {
+    throw(ECA_ERROR("ECA-SESSION", "Errors parsing session-level options. Unable to create session."));
+  }
 
   if (chainsetups_rep.size() == 0) {
+    /* Try to create a valid chainsetup from the options given
+     * on the command-line. */
+
     ECA_CHAINSETUP* comline_setup = new ECA_CHAINSETUP(csoptions);
 
     if (comline_setup->interpret_result() != true) {
@@ -294,10 +302,18 @@ void ECA_SESSION::load_chainsetup(const std::string& filename)
   // --------
 
   ECA_CHAINSETUP* new_setup = new ECA_CHAINSETUP(filename);
-  add_chainsetup(new_setup);
-  if (selected_chainsetup_repp == 0) {
-    /* adding the chainsetup failed */
+  if (new_setup->interpret_result() != true) {
+    string temp = new_setup->interpret_result_verbose();
     delete new_setup;
+    selected_chainsetup_repp = 0;
+    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-session) Error loading chainsetup: " + temp);
+  }
+  else {
+    add_chainsetup(new_setup);
+    if (selected_chainsetup_repp == 0) {
+      /* adding the chainsetup failed */
+      delete new_setup;
+    }
   }
   
   // --------
@@ -427,32 +443,43 @@ void ECA_SESSION::preprocess_options(std::vector<std::string>* opts)
 /**
  * Interprets all session specific options from 'inopts'.
  * All unprocessed options are copied to 'outopts'. 
+ *
+ * @return number of parsing errors
  */
-void ECA_SESSION::interpret_general_options(const std::vector<std::string>& inopts,
-					    std::vector<std::string>* outopts) 
+int ECA_SESSION::interpret_general_options(const std::vector<std::string>& inopts,
+					   std::vector<std::string>* outopts) 
 {
+  int errors = 0;
+
   std::vector<std::string>::const_iterator p = inopts.begin();
   while(p != inopts.end()) {
     if (p->size() > 0 && (*p)[0] == '-')
-      interpret_general_option(*p);
+      errors += interpret_general_option(*p);
     ++p;
   }
 
   p = inopts.begin();
   while(p != inopts.end()) {
     if (p->size() > 0 && (*p)[0] == '-')
-      interpret_chainsetup_option(*p);
+      errors += interpret_chainsetup_option(*p);
 
     if (is_session_option(*p) != true) outopts->push_back(*p);
 
     ++p;
   }
+
+  return(errors);
 }
 
-void ECA_SESSION::interpret_general_option (const std::string& argu)
+/**
+ * Parses session option 'argu'.
+ *
+ * @return number of parsing errors
+ */
+int ECA_SESSION::interpret_general_option (const std::string& argu)
 {
-  if (argu.size() < 2) return;
-  if (argu[0] != '-') return;
+  if (argu.size() < 2) return(0);
+  if (argu[0] != '-') return(0);
 
   switch(argu[1]) {
   case 'd':
@@ -470,23 +497,36 @@ void ECA_SESSION::interpret_general_option (const std::string& argu)
 
   default: { }
   }
+
+  return(0);
 }
 
-void ECA_SESSION::interpret_chainsetup_option (const std::string& argu)
+/**
+ * Parses session chainsetup option 'argu'.
+ *
+ * @return number of parsing errors
+ */
+int ECA_SESSION::interpret_chainsetup_option (const std::string& argu)
 {
-  if (argu.size() == 0) return;
+  int errors = 0;
+
+  if (argu.size() == 0) return(errors);
   
   string tname = kvu_get_argument_number(1, argu);
  
-  if (argu.size() < 2) return;
+  if (argu.size() < 2) return(errors);
   switch(argu[1]) {
   case 's': {
     if (argu.size() > 2 && argu[2] == ':') {
       load_chainsetup(tname);
-      if (selected_chainsetup_repp != 0 && selected_chainsetup_repp->is_valid()) connect_chainsetup();
+      if (selected_chainsetup_repp == 0 || 
+	  selected_chainsetup_repp->is_valid() != true) ++errors;
+      if (errors == 0) connect_chainsetup();
     }
     break;
   }
   default: { }
   }
+  
+  return(errors);
 }

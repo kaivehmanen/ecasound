@@ -17,10 +17,11 @@ list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 -----------------------------------------------------------------------
 [ Active development areas ]
 
-2.2:
+2.3:
 
-- JACK and ALSA 0.9.x support
-- usability issues with basic multitrack recording scenarios
+- verification of rt-safetiness of all engine code paths
+- improving support for JACK transport functionality
+- better handling and reporting of errors when parsing chainsetups
 
 -----------------------------------------------------------------------
 [ Help - developer in trouble ]
