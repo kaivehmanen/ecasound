@@ -1,5 +1,10 @@
 #!/bin/bash
-automake -v
+cd kvutils
+automake
+aclocal
+autoconf
+cd ..
+automake
 aclocal
 autoconf
 ./configure $@ || exit 1

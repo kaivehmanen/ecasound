@@ -188,7 +188,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 
   ::memcpy(&params.format, &pf, sizeof(pf));
 
-  params.mode = pcm_mode_rep
+  params.mode = pcm_mode_rep;
   params.stream = pcm_stream_rep;
 
   if (params.stream == SND_PCM_STREAM_PLAYBACK)
