@@ -20,6 +20,9 @@ Last officially released version is -*> v2.0.1 *-
 ??062001 (v2.0.2)  -** stable release **-
  	- added: current position tracking to loop devices
 	- added: more verbose xrun info from ALSA 0.9.x devices
+	- added: info about the new perl bindings to ECI API docs
+	- added: Eric Tiedemann's alternative Python ECI 
+		 interface, eci.py, added to pyecasound [est]
 	- added: support for gcc 3.0 [juekawa]
 	- changed: improved configure checks for python include 
 		   and library directories
