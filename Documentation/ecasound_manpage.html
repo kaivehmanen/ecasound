@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>07.02.2001</h2>
+<h2>08.02.2001</h2>
 
 
     
@@ -124,8 +124,12 @@ Truncate outputs. If this is _not_ set, ecasound opens all outputs
 <p><p></p><dt><strong>-z:feature</strong><dd>
 Enable 'feature'. '-z:db,dbsize' enables double-buffering for audio 
 objects that support it (dbzise=0 for default, otherwise buffer
-size in sample frames). '-z:psr' enables the <em>precise-sample-rates</em> 
-mode for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>. 
+size in sample frames). '-z:nodb' disables double-buffering. 
+'-z:nointbuf' prevents realtime devices from doing extra internal
+buffering. This setting can reduce latency times in some
+situations. With '-z:xruns', processing will be halted if an
+under/overrun occurs. '-z:psr' enables the <em>precise-sample-rates</em> 
+mode for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>.
 <p></dl>
 <p><strong>PROCESSING CONTROL</strong>
 <dl>

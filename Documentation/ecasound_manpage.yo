@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (07.02.2001)
+       (08.02.2001)
        ()
        (Multimedia software)
 
@@ -134,8 +134,12 @@ Truncate outputs. If this is _not_ set, ecasound opens all outputs
 dit(-z:feature)
 Enable 'feature'. '-z:db,dbsize' enables double-buffering for audio 
 objects that support it (dbzise=0 for default, otherwise buffer
-size in sample frames). '-z:psr' enables the em(precise-sample-rates) 
-mode for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html). 
+size in sample frames). '-z:nodb' disables double-buffering. 
+'-z:nointbuf' prevents realtime devices from doing extra internal
+buffering. This setting can reduce latency times in some
+situations. With '-z:xruns', processing will be halted if an
+under/overrun occurs. '-z:psr' enables the em(precise-sample-rates) 
+mode for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html).
 
 enddit()
 
