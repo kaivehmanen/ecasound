@@ -346,11 +346,15 @@ void QESession::prepare_event(void) {
       sel_length = file->length() - start_pos;
     }
   }
+  else
+    state_rep = state_invalid;
 
   // --------
   ENSURE(start_pos >= 0);
   ENSURE(sel_length >= 0);
   ENSURE(start_pos + sel_length <= file->length());
+  ENSURE((state_rep == state_invalid && file->is_valid() != true) ||
+	 (state_rep != state_invalid && file->is_valid() == true));
   // --------
 }
 
@@ -523,7 +527,8 @@ void QESession::fade_in_event(void) {
   stop_event();
   prepare_event();
   prepare_temp();
-  if (state_rep == state_invalid) return;
+  if (state_rep == state_invalid ||
+      state_rep == state_new_file) return;
   assert(state_rep != state_orig_file);
 
   QEFadeInEvent p (ectrl, 
@@ -541,7 +546,8 @@ void QESession::fade_out_event(void) {
   stop_event();
   prepare_event();
   prepare_temp();
-  if (state_rep == state_invalid) return;
+  if (state_rep == state_invalid ||
+      state_rep == state_new_file) return;
   assert(state_rep != state_orig_file);
 
   QEFadeOutEvent p (ectrl, 

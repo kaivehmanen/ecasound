@@ -108,9 +108,9 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Fetch channel info
 
-  ::memset(&pcm_info, 0, sizeof(pcm_info_rep));
+  ::memset(&pcm_info_rep, 0, sizeof(pcm_info_rep));
   pcm_info_rep.channel = pcm_channel_rep;
-  ::snd_pcm_channel_info(audio_fd_repp, &pcm_info);
+  ::snd_pcm_channel_info(audio_fd_repp, &pcm_info_rep);
 
   // -------------------------------------------------------------------
   // Select audio format
@@ -120,7 +120,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   ::memset(&pf, 0, sizeof(pf));
 
   if (channels() > 1 &&
-      (pcm_info_rep.flags & SND_PCM_STREAM_INFO_INTERLEAVE) != SND_PCM_STREAM_INFO_INTERLEAVE)
+      (pcm_info_rep.flags & SND_PCM_CHNINFO_INTERLEAVE) != SND_PCM_CHNINFO_INTERLEAVE)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "device can't handle interleaved streams!", ECA_ERROR::stop));
 
   pf.interleave = 1;
@@ -235,7 +235,7 @@ void ALSA_PCM_DEVICE::close(void) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) close");
 
-  if (is_triggered == true) stop();
+  if (is_triggered_rep == true) stop();
   ::snd_pcm_close(audio_fd_repp);
   toggle_open_state(false);
 
@@ -262,9 +262,9 @@ void ALSA_PCM_DEVICE::start(void) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) start");
 
-  if (pcm_channel == SND_PCM_CHANNEL_PLAYBACK)
+  if (pcm_channel_rep == SND_PCM_CHANNEL_PLAYBACK)
     ::snd_pcm_channel_go(audio_fd_repp, pcm_channel_rep);
-  is_triggered = true;
+  is_triggered_rep = true;
 }
 
 long int ALSA_PCM_DEVICE::read_samples(void* target_buffer, 
@@ -291,13 +291,13 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
     ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
   }
   else {
-    if ((samples * frame_size()) < pcm_info_rep.min_fragment_size_rep ||
-	(samples * frame_size()) > pcm_info_rep.max_fragment_size_rep) {
-      if (is_triggered) stop();
+    if ((samples * frame_size()) < pcm_info_rep.min_fragment_size ||
+	(samples * frame_size()) > pcm_info_rep.max_fragment_size) {
+      if (is_triggered_rep) stop();
       return; 
     }
     bool was_triggered = false;
-    if (is_triggered == true) { stop(); was_triggered = true; }
+    if (is_triggered_rep == true) { stop(); was_triggered = true; }
     close();
     buffersize(samples, samples_per_second());
     open();
@@ -309,7 +309,7 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
 }
 
 long ALSA_PCM_DEVICE::position_in_samples(void) const {
-  if (is_triggered == false) return(0);
+  if (is_triggered_rep == false) return(0);
   snd_pcm_channel_status_t status;
   memset(&status, 0, sizeof(status));
   status.channel = pcm_channel_rep;

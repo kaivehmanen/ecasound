@@ -28,14 +28,14 @@ extern "C" {
  */
 class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
 
-  snd_pcm_t *audio_fd;
-  snd_pcm_channel_info_t pcm_info;
+  snd_pcm_t *audio_fd_repp;
+  snd_pcm_channel_info_t pcm_info_rep;
 
-  long int fragment_size;
-  int card_number, device_number, subdevice_number;
-  int pcm_mode, pcm_channel;
+  long int fragment_size_rep;
+  int card_number_rep, device_number_rep, subdevice_number_rep;
+  int pcm_mode_rep, pcm_channel_rep;
 
-  long underruns, overruns;
+  long underruns_rep, overruns_rep;
 
   bool is_triggered;
   bool is_prepared;

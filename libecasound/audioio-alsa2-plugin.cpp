@@ -45,13 +45,13 @@ ALSA_PCM2_PLUGIN_DEVICE::ALSA_PCM2_PLUGIN_DEVICE (int card,
 						  int device, 
 						  int subdevice) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) construct");
-  card_number = card;
-  device_number = device;
-  subdevice_number = subdevice;
-  pcm_mode = SND_PCM_MODE_BLOCK;
+  card_number_rep = card;
+  device_number_rep = device;
+  subdevice_number_rep = subdevice;
+  pcm_mode_rep = SND_PCM_MODE_BLOCK;
   is_triggered = false;
   is_prepared = false;
-  overruns = underruns = 0;
+  overruns_rep = underruns_rep = 0;
 }
 
 void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(ECA_ERROR*) {
@@ -73,11 +73,11 @@ void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(ECA_ERROR*) {
 
   int err;
   if (io_mode() == io_read) {
-    pcm_channel = SND_PCM_CHANNEL_CAPTURE;
-    err = ::snd_pcm_open_subdevice(&audio_fd, 
-				   card_number, 
-				   device_number,
-				   subdevice_number,
+    pcm_channel_rep = SND_PCM_CHANNEL_CAPTURE;
+    err = ::snd_pcm_open_subdevice(&audio_fd_repp, 
+				   card_number_rep, 
+				   device_number_rep,
+				   subdevice_number_rep,
 				   SND_PCM_OPEN_CAPTURE | SND_PCM_OPEN_NONBLOCK);
     
     if (err < 0) {
@@ -86,11 +86,11 @@ void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(ECA_ERROR*) {
     }
   }    
   else if (io_mode() == io_write) {
-    pcm_channel = SND_PCM_CHANNEL_PLAYBACK;
-    err = ::snd_pcm_open_subdevice(&audio_fd, 
-				   card_number, 
-				   device_number,
-				   subdevice_number,
+    pcm_channel_rep = SND_PCM_CHANNEL_PLAYBACK;
+    err = ::snd_pcm_open_subdevice(&audio_fd_repp, 
+				   card_number_rep, 
+				   device_number_rep,
+				   subdevice_number_rep,
 				   SND_PCM_OPEN_PLAYBACK | SND_PCM_OPEN_NONBLOCK);
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "Unable to open ALSA-device for playback; error: " +  
@@ -103,24 +103,24 @@ void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(ECA_ERROR*) {
 
   // -------------------------------------------------------------------
   // Sets non-blocking mode 
-  ::snd_pcm_nonblock_mode(audio_fd, 0);
+  ::snd_pcm_nonblock_mode(audio_fd_repp, 0);
 
   // -------------------------------------------------------------------
   // Fetch channel info
 
-  ::memset(&pcm_info, 0, sizeof(pcm_info));
-  pcm_info.channel = pcm_channel;
-  ::snd_pcm_plugin_info(audio_fd, &pcm_info);
+  ::memset(&pcm_info_rep, 0, sizeof(pcm_info_rep));
+  pcm_info_rep.channel = pcm_channel_rep;
+  ::snd_pcm_plugin_info(audio_fd_repp, &pcm_info_rep);
 
   // -------------------------------------------------------------------
   // Select audio format
 
-  ::snd_pcm_plugin_flush(audio_fd, pcm_channel);
+  ::snd_pcm_plugin_flush(audio_fd_repp, pcm_channel_rep);
   snd_pcm_format_t pf;
   ::memset(&pf, 0, sizeof(pf));
 
   if (channels() > 1 &&
-      (pcm_info_rep.flags & SND_PCM_STREAM_INFO_INTERLEAVE) != SND_PCM_STREAM_INFO_INTERLEAVE)
+      (pcm_info_rep.flags & SND_PCM_CHNINFO_INTERLEAVE) != SND_PCM_CHNINFO_INTERLEAVE)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "device can't handle interleaved streams!", ECA_ERROR::stop));
   pf.interleave = 1;
 
@@ -143,26 +143,26 @@ void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(ECA_ERROR*) {
     }
 
   unsigned int format_mask = (1 << format);
-  if ((pcm_info.formats & format_mask) != format_mask)
+  if ((pcm_info_rep.formats & format_mask) != format_mask)
     throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "Selected sample format not supported by the device!", ECA_ERROR::stop));
   pf.format = format;
 
-  if (samples_per_second() < pcm_info.min_rate ||
-      samples_per_second() > pcm_info.max_rate)
+  if (samples_per_second() < pcm_info_rep.min_rate ||
+      samples_per_second() > pcm_info_rep.max_rate)
     throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "Sample rate " +
 			kvu_numtostr(samples_per_second()) + " is out of range!", ECA_ERROR::stop));
   pf.rate = samples_per_second();
 
-  if (channels() < pcm_info.min_voices ||
-      channels() > pcm_info.max_voices)
+  if (channels() < pcm_info_rep.min_voices ||
+      channels() > pcm_info_rep.max_voices)
     throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "Channel count " +
 			kvu_numtostr(channels()) + " is out of range!", ECA_ERROR::stop));
   pf.voices = channels();
 
   ::memcpy(&params.format, &pf, sizeof(pf));
 
-  params.mode = pcm_mode;
-  params.channel = pcm_channel;
+  params.mode = pcm_mode_rep;
+  params.channel = pcm_channel_rep;
   if (params.channel == SND_PCM_CHANNEL_PLAYBACK)
     params.start_mode = SND_PCM_START_GO;
   else
@@ -172,8 +172,8 @@ void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Set fragment size.
 
-  if (buffersize() * frame_size() < pcm_info.min_fragment_size ||
-      buffersize() * frame_size() > pcm_info.max_fragment_size) 
+  if (buffersize() * frame_size() < pcm_info_rep.min_fragment_size ||
+      buffersize() * frame_size() > pcm_info_rep.max_fragment_size) 
     throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "buffersize " +
 			kvu_numtostr(buffersize()) + " is out of range!", ECA_ERROR::stop));
   
@@ -184,7 +184,7 @@ void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Channel params
 
-  err = ::snd_pcm_plugin_params(audio_fd, &params);
+  err = ::snd_pcm_plugin_params(audio_fd_repp, &params);
   if (err < 0) {
     throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "Error when setting up channel params: " + string(snd_strerror(err))));
   }
@@ -192,16 +192,16 @@ void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(ECA_ERROR*) {
   struct snd_pcm_channel_setup setup;
   setup.channel = params.channel;
   setup.mode = params.mode;
-  ::snd_pcm_plugin_setup(audio_fd, &setup);
-  fragment_size = setup.buf.block.frag_size;
+  ::snd_pcm_plugin_setup(audio_fd_repp, &setup);
+  fragment_size_rep = setup.buf.block.frag_size;
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2-plugin) Fragment size: " +
 		kvu_numtostr(setup.buf.block.frag_size) + ", max: " +
 		kvu_numtostr(setup.buf.block.frags_max) + ", min: " +
 		kvu_numtostr(setup.buf.block.frags_min) + ", current: " +
 		kvu_numtostr(setup.buf.block.frags) + ".");
 
-//  ::snd_pcm_channel_flush(audio_fd, pcm_channel);
-//  err = ::snd_pcm_channel_prepare(audio_fd, pcm_channel);
+//  ::snd_pcm_channel_rep_flush(audio_fd_repp, pcm_channel_rep);
+//  err = ::snd_pcm_channel_prepare(audio_fd_repp, pcm_channel_rep);
 //  if (err < 0)
 //    throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "Error when preparing channel: " + string(snd_strerror(err))));
 
@@ -219,12 +219,12 @@ void ALSA_PCM2_PLUGIN_DEVICE::stop(void) {
 
   snd_pcm_channel_status_t status;
   ::memset(&status, 0, sizeof(status));
-  status.channel = pcm_channel;
-  ::snd_pcm_plugin_status(audio_fd, &status);
-  overruns += status.overrun;
-  underruns += status.underrun;
+  status.channel = pcm_channel_rep;
+  ::snd_pcm_plugin_status(audio_fd_repp, &status);
+  overruns_rep += status.overrun;
+  underruns_rep += status.underrun;
 
-  int err = ::snd_pcm_plugin_flush(audio_fd, pcm_channel);
+  int err = ::snd_pcm_plugin_flush(audio_fd_repp, pcm_channel_rep);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "Error when flushing channel: " + string(snd_strerror(err))));
 
@@ -240,7 +240,7 @@ void ALSA_PCM2_PLUGIN_DEVICE::close(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2-plugin) close");
 
   if (is_triggered == true) stop();
-  ::snd_pcm_close(audio_fd);
+  ::snd_pcm_close(audio_fd_repp);
   toggle_open_state(false);
 
   assert(is_triggered == false);
@@ -253,7 +253,7 @@ void ALSA_PCM2_PLUGIN_DEVICE::prepare(void) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2-plugin) prepare");
 
-  int err = ::snd_pcm_plugin_prepare(audio_fd, pcm_channel);
+  int err = ::snd_pcm_plugin_prepare(audio_fd_repp, pcm_channel_rep);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "Error when preparing channel: " + string(snd_strerror(err))));
   is_prepared = true;
@@ -266,25 +266,25 @@ void ALSA_PCM2_PLUGIN_DEVICE::start(void) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2-plugin) start");
 
-  if (pcm_channel == SND_PCM_CHANNEL_PLAYBACK)
-    ::snd_pcm_channel_go(audio_fd, pcm_channel);
+  if (pcm_channel_rep == SND_PCM_CHANNEL_PLAYBACK)
+    ::snd_pcm_channel_go(audio_fd_repp, pcm_channel_rep);
   is_triggered = true;
   //  if (io_mode() == io_write) print_status_debug();
 }
 
 long int ALSA_PCM2_PLUGIN_DEVICE::read_samples(void* target_buffer, 
 					long int samples) {
-  assert(samples * frame_size() <= fragment_size);
-  return(::snd_pcm_plugin_read(audio_fd, target_buffer, fragment_size) / frame_size());
+  assert(samples * frame_size() <= fragment_size_rep);
+  return(::snd_pcm_plugin_read(audio_fd_repp, target_buffer, fragment_size_rep) / frame_size());
 }
 
 void ALSA_PCM2_PLUGIN_DEVICE::write_samples(void* target_buffer, long int samples) {
-  if (samples * frame_size()== fragment_size) {
-    ::snd_pcm_plugin_write(audio_fd, target_buffer, fragment_size);
+  if (samples * frame_size()== fragment_size_rep) {
+    ::snd_pcm_plugin_write(audio_fd_repp, target_buffer, fragment_size_rep);
   }
   else {
-    if ((samples * frame_size()) < pcm_info.min_fragment_size ||
-	(samples * frame_size()) > pcm_info.max_fragment_size) {
+    if ((samples * frame_size()) < pcm_info_rep.min_fragment_size ||
+	(samples * frame_size()) > pcm_info_rep.max_fragment_size) {
       if (is_triggered) stop();
       return; 
     }
@@ -294,8 +294,8 @@ void ALSA_PCM2_PLUGIN_DEVICE::write_samples(void* target_buffer, long int sample
     buffersize(samples, samples_per_second());
     open();
     prepare();
-    assert(samples * frame_size() <= fragment_size);
-    ::snd_pcm_plugin_write(audio_fd, target_buffer, fragment_size);
+    assert(samples * frame_size() <= fragment_size_rep);
+    ::snd_pcm_plugin_write(audio_fd_repp, target_buffer, fragment_size_rep);
     if (was_triggered == true) start();
   }
 }
@@ -304,8 +304,8 @@ long ALSA_PCM2_PLUGIN_DEVICE::position_in_samples(void) const {
   if (is_triggered == false) return(0);
   snd_pcm_channel_status_t status;
   memset(&status, 0, sizeof(status));
-  status.channel = pcm_channel;
-  ::snd_pcm_plugin_status(audio_fd, &status);
+  status.channel = pcm_channel_rep;
+  ::snd_pcm_plugin_status(audio_fd_repp, &status);
   return(status.scount / frame_size());
 }
 
@@ -315,17 +315,17 @@ ALSA_PCM2_PLUGIN_DEVICE::~ALSA_PCM2_PLUGIN_DEVICE(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2-plugin) destruct");
 
   if (io_mode() != io_read) {
-    if (underruns != 0) {
+    if (underruns_rep != 0) {
       cerr << "(audioio-alsa2-plugin) WARNING! While writing to ALSA-pcm device ";
-      cerr << "C" << card_number << "D" << device_number;
-      cerr << ", there were " << underruns << " underruns.\n";
+      cerr << "C" << card_number_rep << "D" << device_number_rep;
+      cerr << ", there were " << underruns_rep << " underruns.\n";
     }
   }
   else {
-    if (overruns != 0) {
+    if (overruns_rep != 0) {
       cerr << "(audioio-alsa2-plugin) WARNING! While reading from ALSA-pcm device ";
-      cerr << "C" << card_number << "D" << device_number;
-      cerr << ", there were " << overruns << " overruns.\n";
+      cerr << "C" << card_number_rep << "D" << device_number_rep;
+      cerr << ", there were " << overruns_rep << " overruns.\n";
     }
   }
 
@@ -340,15 +340,15 @@ void ALSA_PCM2_PLUGIN_DEVICE::set_parameter(int param,
     break;
 
   case 2: 
-    card_number = atoi(value.c_str());
+    card_number_rep = atoi(value.c_str());
     break;
 
   case 3: 
-    device_number = atoi(value.c_str());
+    device_number_rep = atoi(value.c_str());
     break;
 
   case 4: 
-    subdevice_number = atoi(value.c_str());
+    subdevice_number_rep = atoi(value.c_str());
     break;
   }
 }
@@ -359,13 +359,13 @@ string ALSA_PCM2_PLUGIN_DEVICE::get_parameter(int param) const {
     return(label());
 
   case 2: 
-    return(kvu_numtostr(card_number));
+    return(kvu_numtostr(card_number_rep));
 
   case 3: 
-    return(kvu_numtostr(device_number));
+    return(kvu_numtostr(device_number_rep));
 
   case 4: 
-    return(kvu_numtostr(subdevice_number));
+    return(kvu_numtostr(subdevice_number_rep));
   }
   return("");
 }
