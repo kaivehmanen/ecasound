@@ -25,10 +25,9 @@ public:
 
  protected:
 
-  /** @name Protected functions for storing/retrieving channel count */
+  /** @name Protected functions for storing channel count */
   /*@{*/
 
-  int channels(void) const;
   void set_channels(int v);
 
   /*@}*/
@@ -48,6 +47,13 @@ public:
   /*@{*/
 
   virtual void init(SAMPLE_BUFFER* sbuf);
+
+  /*@}*/
+
+  /** @name Public non-virtual functions */
+  /*@{*/
+
+  int channels(void) const;
 
   /*@}*/
 
