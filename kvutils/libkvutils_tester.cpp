@@ -17,11 +17,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <string>
+
 #include <cstdio>
 #include <stdio.h> /* for AIX */
 #include <time.h> /* ANSI-C: clock() */
 
 #include "kvu_locks.h"
+#include "kvu_numtostr.h"
 #include "kvu_utils.h"
 
 /* --------------------------------------------------------------------- 
@@ -57,11 +60,13 @@ typedef int (*kvu_test_t)(void);
 
 static int kvu_test_1(void);
 static int kvu_test_2(void);
+static int kvu_test_3(void);
 static void* kvu_test_1_helper(void* ptr);
 
 static kvu_test_t kvu_funcs[] = { 
   kvu_test_1, 
   kvu_test_2, 
+  kvu_test_3, 
   NULL 
 };
 
@@ -214,6 +219,32 @@ static int kvu_test_2(void)
   if (kvu_string_search_and_replace("foo bar", 'f', 'b')
       != "boo bar") {
     ECA_TEST_FAIL(11, "kvu_test_2 kvu_string_search_and_replace"); 
+  }
+
+  ECA_TEST_SUCCESS();
+}
+
+/**
+ * Tests the floating point to text conversion functions.
+ */
+static int kvu_test_3(void)
+{
+  ECA_TEST_ENTRY();
+
+  /* 17 digits after decimal point */
+  double foo = 0.12345678912345678;
+  std::string foostr = kvu_numtostr(foo, 17);
+  if (foostr != "0.12345678912345678") {
+    // fprintf(stderr, "foo=%.17lf, res=%s.\n", foo, foostr.c_str());
+    ECA_TEST_FAIL(1, "kvu_test_3 kvu_numtostr double"); 
+  }
+
+  /* 8 digits after decimal point */
+  float bar = 0.12345678;
+  std::string barstr = kvu_numtostr(bar, 8);
+  if (barstr != "0.12345678") {
+    // fprintf(stderr, "bar=%.8f, res=%s.\n", bar, barstr.c_str());
+    ECA_TEST_FAIL(2, "kvu_test_3 kvu_numtostr float"); 
   }
 
   ECA_TEST_SUCCESS();

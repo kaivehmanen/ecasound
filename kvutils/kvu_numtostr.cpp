@@ -83,7 +83,7 @@ std::string kvu_numtostr (unsigned long long int n) {
 
 std::string kvu_numtostr (double n, int flo_prec) {
   char ctmp[32];
-  snprintf(ctmp, 12, "%.*f",flo_prec, n);
+  snprintf(ctmp, 32, "%.*f",flo_prec, n);
   ctmp[31] = 0;
   return(std::string(ctmp));
 }
