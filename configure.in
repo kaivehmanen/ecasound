@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20030828-22
+dnl last modified: 20030828-23
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -363,7 +363,7 @@ if test x$arts_support = xyes; then
 	arts_init();
 	return 0;
   ],
-  [ ],
+  [ /bin/true ],
   [ arts_support=no ]
   )
   AC_LANG_CPLUSPLUS
