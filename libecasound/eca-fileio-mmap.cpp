@@ -17,8 +17,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#ifdef HAVE_CONFIG_H
-#include <config.h> /* for largefile support */
+/* hack to make fseeko and fteelo work with glibc2.1.x */
+#ifdef _LARGEFILE_SOURCE
+  #if __GNUC__ == 2
+    #if __GNUC_MINOR__ < 92
+      #define _XOPEN_SOURCE 500
+    #endif
+  #endif
+#else
+#define fseeko std::fseek
+#define ftello std::ftell
 #endif
 
 #include <cstdio>
@@ -85,7 +93,7 @@ void ECA_FILE_IO_MMAP::close_file(void) {
   ::close(fd_rep);
 }
 
-void ECA_FILE_IO_MMAP::read_to_buffer(void* obuf, fpos_t bytes) {
+void ECA_FILE_IO_MMAP::read_to_buffer(void* obuf, off_t bytes) {
   if (is_file_ready() == false) {
     bytes_rep = 0;
     file_ended_rep = true;
@@ -102,7 +110,7 @@ void ECA_FILE_IO_MMAP::read_to_buffer(void* obuf, fpos_t bytes) {
   bytes_rep = bytes;
 }
 
-void ECA_FILE_IO_MMAP::write_from_buffer(void* obuf, fpos_t bytes) { 
+void ECA_FILE_IO_MMAP::write_from_buffer(void* obuf, off_t bytes) { 
   if (is_file_ready() == false) {
     bytes_rep = 0;
     file_ended_rep = true;
@@ -117,12 +125,12 @@ void ECA_FILE_IO_MMAP::write_from_buffer(void* obuf, fpos_t bytes) {
   bytes_rep = bytes;
 }
 
-fpos_t ECA_FILE_IO_MMAP::file_bytes_processed(void) const { return(bytes_rep); }
+off_t ECA_FILE_IO_MMAP::file_bytes_processed(void) const { return(bytes_rep); }
 bool ECA_FILE_IO_MMAP::is_file_ready(void) const { return(file_ready_rep); }
 bool ECA_FILE_IO_MMAP::is_file_ended(void) const { return(file_ended_rep); }
 bool ECA_FILE_IO_MMAP::is_file_error(void) const { return(!file_ready_rep && !file_ended_rep); }
 
-void ECA_FILE_IO_MMAP::set_file_position(fpos_t newpos, bool seek) { 
+void ECA_FILE_IO_MMAP::set_file_position(off_t newpos, bool seek) { 
   fposition_rep = newpos;
   if (fposition_rep >= flength_rep) {
     fposition_rep = flength_rep;
@@ -135,7 +143,7 @@ void ECA_FILE_IO_MMAP::set_file_position(fpos_t newpos, bool seek) {
   }
 }
 
-void ECA_FILE_IO_MMAP::set_file_position_advance(fpos_t fw) { 
+void ECA_FILE_IO_MMAP::set_file_position_advance(off_t fw) { 
   set_file_position(fposition_rep + fw, false);
 }
 
@@ -143,10 +151,10 @@ void ECA_FILE_IO_MMAP::set_file_position_end(void) {
   fposition_rep = get_file_length();
 }
 
-fpos_t ECA_FILE_IO_MMAP::get_file_position(void) const { return(fposition_rep); }
+off_t ECA_FILE_IO_MMAP::get_file_position(void) const { return(fposition_rep); }
 
-fpos_t ECA_FILE_IO_MMAP::get_file_length(void) const {
+off_t ECA_FILE_IO_MMAP::get_file_length(void) const {
   struct stat stattemp;
   fstat(fd_rep, &stattemp);
-  return((fpos_t)stattemp.st_size);
+  return((off_t)stattemp.st_size);
 }

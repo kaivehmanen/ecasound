@@ -17,6 +17,18 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+/* hack to make fseeko and fteelo work with glibc2.1.x */
+#ifdef _LARGEFILE_SOURCE
+  #if __GNUC__ == 2
+    #if __GNUC_MINOR__ < 92
+      #define _XOPEN_SOURCE 500
+    #endif
+  #endif
+#else
+#define fseeko std::fseek
+#define ftello std::ftell
+#endif
+
 #include <cmath>
 #include <cstdio>
 #include <string>
@@ -122,8 +134,8 @@ void CDRFILE::write_samples(void* target_buffer, long int samples) {
 
 void CDRFILE::seek_position(void) {
   if (is_open()) {
-    fpos_t newpos = position_in_samples() * frame_size();
-    std::fsetpos(fobject, &newpos);
+    off_t newpos = position_in_samples() * frame_size();
+    fseeko(fobject, newpos, SEEK_SET);
   }
 }
 
@@ -136,17 +148,17 @@ void CDRFILE::pad_to_sectorsize(void) {
   }
   for(int n = 0; n < padsamps; n++) ::fputc(0,fobject);
 
-  DBC_DECLARE(fpos_t endpos);
-  DBC_DECLARE(std::fgetpos(fobject, &endpos));
+  DBC_DECLARE(off_t endpos);
+  DBC_DECLARE(endpos = std::ftello(fobject));
   DBC_CHECK((endpos %  CDRFILE::sectorsize) == 0);
 }
 
 void CDRFILE::set_length_in_bytes(void) {
   fpos_t save;
   std::fgetpos(fobject, &save);
-  std::fseek(fobject,0,SEEK_END);
-  fpos_t endpos;
-  std::fgetpos(fobject, &endpos);
+  fseeko(fobject,0,SEEK_END);
+  off_t endpos;
+  endpos = std::ftello(fobject);
   length_in_samples(endpos / frame_size());
   std::fsetpos(fobject, &save);
 }

@@ -8,6 +8,10 @@
 #include <config.h>
 #endif
 
+#ifndef off_t
+typedef long int off_t;
+#endif
+
 /**
  * Interface for blocking file input/output with buffering
  */
@@ -27,21 +31,21 @@ class ECA_FILE_IO {
   // ----
   // Normal file operations
 
-  virtual void read_to_buffer(void* obuf, fpos_t bytes) = 0;
-  virtual void write_from_buffer(void* obuf, fpos_t bytes) = 0;
+  virtual void read_to_buffer(void* obuf, off_t bytes) = 0;
+  virtual void write_from_buffer(void* obuf, off_t bytes) = 0;
 
-  virtual void set_file_position(fpos_t newpos) = 0;
-  virtual void set_file_position_advance(fpos_t fw) = 0;
+  virtual void set_file_position(off_t newpos) = 0;
+  virtual void set_file_position_advance(off_t fw) = 0;
   virtual void set_file_position_end(void) = 0;
-  virtual fpos_t get_file_position(void) const = 0;
-  virtual fpos_t get_file_length(void) const = 0;
+  virtual off_t get_file_position(void) const = 0;
+  virtual off_t get_file_length(void) const = 0;
 
   // -----
   // Status
 
   virtual bool is_file_ready(void) const = 0;
   virtual bool is_file_error(void) const = 0;
-  virtual fpos_t file_bytes_processed(void) const = 0;
+  virtual off_t file_bytes_processed(void) const = 0;
   virtual const std::string& file_mode(void) const = 0;
 
   virtual ~ECA_FILE_IO(void) { }

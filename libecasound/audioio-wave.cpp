@@ -17,6 +17,18 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+/* hack to make fseeko and fteelo work with glibc2.1.x */
+#ifdef _LARGEFILE_SOURCE
+  #if __GNUC__ == 2
+    #if __GNUC_MINOR__ < 92
+      #define _XOPEN_SOURCE 500
+    #endif
+  #endif
+#else
+#define fseeko std::fseek
+#define ftello std::ftell
+#endif
+
 #include <cstdio>
 #include <cstring>
 #include <cmath>
@@ -196,7 +208,7 @@ void WAVEFILE::read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) {
 void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) {
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) write_riff_header()");
 
-  fpos_t savetemp = fio_repp->get_file_position();
+  off_t savetemp = fio_repp->get_file_position();
     
   memcpy(riff_header_rep.id,"RIFF",4);
   memcpy(riff_header_rep.wname,"WAVE",4);
@@ -236,7 +248,7 @@ void WAVEFILE::read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) read_riff_fmt()");
 
-  fpos_t savetemp = fio_repp->get_file_position();    
+  off_t savetemp = fio_repp->get_file_position();    
 
   if (find_block("fmt ") != true)
     throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: no riff fmt-block found"));
@@ -320,7 +332,7 @@ void WAVEFILE::update_riff_datablock(void) {
   memcpy(fblock.sig,"data",4);
 
   find_block("data");
-  fpos_t savetemp = fio_repp->get_file_position();
+  off_t savetemp = fio_repp->get_file_position();
 
   fio_repp->set_file_position_end();
 
@@ -337,7 +349,7 @@ void WAVEFILE::update_riff_datablock(void) {
   }
 }
 
-bool WAVEFILE::next_riff_block(RB *t, fpos_t *offtmp)
+bool WAVEFILE::next_riff_block(RB *t, off_t *offtmp)
 {
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) next_riff_block()");
 
@@ -353,7 +365,7 @@ bool WAVEFILE::next_riff_block(RB *t, fpos_t *offtmp)
 }
 
 bool WAVEFILE::find_block(const char* fblock) {
-  fpos_t offset;
+  off_t offset;
   RB block;
 
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) find_block(): " + string(fblock,4));
@@ -403,13 +415,13 @@ void WAVEFILE::seek_position(void) {
 }
 
 void WAVEFILE::set_length_in_bytes(void) {
-  fpos_t savetemp = fio_repp->get_file_position();
+  off_t savetemp = fio_repp->get_file_position();
 
   find_block("data");
-  fpos_t datastart = fio_repp->get_file_position();
+  off_t datastart = fio_repp->get_file_position();
 
   fio_repp->set_file_position_end();
-  fpos_t datalen = fio_repp->get_file_position() - datastart;
+  off_t datalen = fio_repp->get_file_position() - datastart;
   length_in_samples(datalen / frame_size());
   MESSAGE_ITEM mitem;
   mitem << "(audioio-wave) data length " << datalen << " bytes.";

@@ -23,9 +23,9 @@ class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
 
   int fd_rep;
   caddr_t buffer_repp;
-  fpos_t bytes_rep;
-  fpos_t fposition_rep;
-  fpos_t flength_rep;
+  off_t bytes_rep;
+  off_t fposition_rep;
+  off_t flength_rep;
 
   bool file_ready_rep;
   bool file_ended_rep;
@@ -47,15 +47,15 @@ class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
   // --
   // Normal file operations
   // ---
-  void read_to_buffer(void* obuf, fpos_t bytes);
-  void write_from_buffer(void* obuf, fpos_t bytes);
+  void read_to_buffer(void* obuf, off_t bytes);
+  void write_from_buffer(void* obuf, off_t bytes);
 
-  void set_file_position(fpos_t newpos) { set_file_position(newpos,true); }
-  void set_file_position(fpos_t newpos, bool seek);
-  void set_file_position_advance(fpos_t fw);
+  void set_file_position(off_t newpos) { set_file_position(newpos,true); }
+  void set_file_position(off_t newpos, bool seek);
+  void set_file_position_advance(off_t fw);
   void set_file_position_end(void);
-  fpos_t get_file_position(void) const;
-  fpos_t get_file_length(void) const;
+  off_t get_file_position(void) const;
+  off_t get_file_length(void) const;
 
   // --
   // Status
@@ -63,7 +63,7 @@ class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
   bool is_file_ready(void) const;
   bool is_file_error(void) const;
   bool is_file_ended(void) const;
-  fpos_t file_bytes_processed(void) const;
+  off_t file_bytes_processed(void) const;
   const std::string& file_mode(void) const { return(mode_rep); }
 
   ECA_FILE_IO_MMAP(void);
