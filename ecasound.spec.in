@@ -5,26 +5,28 @@
 %define python_compile_opt python -O -c "import compileall; compileall.compile_dir('.')"
 %define python_compile python -c "import compileall; compileall.compile_dir('.')"
 
+# until Documentation/Makefile.am is updated to use 'share/man'
+%define eca_mandir %{_prefix}/man
+
 # ---
 # global settings
 
-Buildroot: /tmp/ecasound-build
-Prefix: /usr/local
-Packager: Kai Vehmanen <kai.vehmanen@wakkanet.fi>
-Distribution: www.eca.cx audio software
+Packager: 	Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+Distribution: 	www.eca.cx audio software
 
 # ---
 # main package
 
-Name: ecasound
-Version: @VERSION@
-Release: 1
-Copyright: GPL
-Source: http://ecasound.seul.org/download/ecasound-@VERSION@.tar.gz
-URL: http://www.eca.cx/ecasound
+Name: 		ecasound
+Version: 	@VERSION@
+Release: 	1
+Copyright: 	GPL
+Source: 	http://ecasound.seul.org/download/ecasound-@VERSION@.tar.gz
+URL: 		http://www.eca.cx/ecasound
+BuildRoot:	/var/tmp/%{name}-%{version}-root-%(id -u -n)
 
-Summary: ecasound - multitrack audio processing tool
-Group: Applications/Sound
+Summary: 	ecasound - multitrack audio processing tool
+Group: 		Applications/Sound
 
 %description
 Ecasound is a software package designed for multitrack audio
@@ -40,10 +42,10 @@ in the package.
 # ---
 # library package - ecasound-devel
 
-%package devel
-Summary: Ecasound - development files
-Group: Applications/Sound
-
+%package 	devel
+Summary: 	Ecasound - development files
+Group: 		Applications/Sound
+	
 %description devel
 The ecasound-devel package contains the header files and static libraries
 necessary for building apps like ecawave and ecamegapedal that
@@ -52,9 +54,9 @@ directly link against ecasound libraries.
 # ---
 # library package - libecasoundc
 
-%package -n libecasoundc
-Summary: Ecasound - libecasoundc
-Group: Applications/Sound
+%package -n 	libecasoundc
+Summary: 	Ecasound - libecasoundc
+Group: 		Applications/Sound
 
 requires: ecasound
 
@@ -67,11 +69,10 @@ files are included in the package.
 # ---
 # pyecasound
 
-%package -n pyecasound
-Summary: Python bindings to ecasound control interface.
-Group: Applications/Sound
-
-requires: ecasound
+%package -n 	pyecasound
+Summary: 	Python bindings to ecasound control interface.
+Group: 		Applications/Sound
+Requires: 	ecasound
 
 %description -n pyecasound
 Python bindings to Ecasound Control Interface (ECI).
@@ -82,74 +83,82 @@ Python bindings to Ecasound Control Interface (ECI).
 %prep
 %setup -n ecasound-@VERSION@
 %build
-./configure --prefix=%{prefix} --disable-static $extra_params
+./configure --prefix=%{_prefix} --disable-static $extra_params
 make
 
 %install
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+
 make DESTDIR="$RPM_BUILD_ROOT" install-strip
 ( cd pyecasound
   %python_compile_opt
   %python_compile
   install *.pyc *.pyo $RPM_BUILD_ROOT%{python_sitepkgsdir}
 )
+
 # note! this is needed for automake 1.4 and older
 strip --strip-unneeded \
-	${RPM_BUILD_ROOT}/%{prefix}/bin/ecasound \
-	${RPM_BUILD_ROOT}/%{prefix}/bin/ecaconvert \
-	${RPM_BUILD_ROOT}/%{prefix}/bin/ecafixdc \
-	${RPM_BUILD_ROOT}/%{prefix}/bin/ecanormalize \
-	${RPM_BUILD_ROOT}/%{prefix}/bin/ecaplay \
-	${RPM_BUILD_ROOT}/%{prefix}/bin/ecasignalview \
-	${RPM_BUILD_ROOT}/%{prefix}/lib/libecasound.a \
-	${RPM_BUILD_ROOT}/%{prefix}/lib/libecasoundc.a \
-	${RPM_BUILD_ROOT}/%{prefix}/lib/libkvutils.a
+	${RPM_BUILD_ROOT}/%{_bindir}/ecasound \
+	${RPM_BUILD_ROOT}/%{_bindir}/ecaconvert \
+	${RPM_BUILD_ROOT}/%{_bindir}/ecafixdc \
+	${RPM_BUILD_ROOT}/%{_bindir}/ecanormalize \
+	${RPM_BUILD_ROOT}/%{_bindir}/ecaplay \
+	${RPM_BUILD_ROOT}/%{_bindir}/ecasignalview \
+	${RPM_BUILD_ROOT}/%{_libdir}/libecasound.a \
+	${RPM_BUILD_ROOT}/%{_libdir}/libecasoundc.a \
+	${RPM_BUILD_ROOT}/%{_libdir}/libkvutils.a
+
+%clean
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 # ---
 # files sections (main)
 
 %files
 %defattr(-, root, root)
-%doc NEWS COPYING COPYING.GPL COPYING.LGPL README INSTALL BUGS Documentation examples
-%doc /usr/local/man/man1/ecasound.1
-%doc /usr/local/man/man1/ecatools.1
-%doc /usr/local/man/man1/ecasound-iam.1
-%doc /usr/local/man/man5/ecasoundrc.5
-/usr/local/bin/ecasound
-/usr/local/bin/ecaconvert
-/usr/local/bin/ecafixdc
-/usr/local/bin/ecamonitor
-/usr/local/bin/ecanormalize
-/usr/local/bin/ecaplay
-/usr/local/bin/ecasignalview
-%config /usr/local/share/ecasound
+%doc NEWS COPYING COPYING.GPL COPYING.LGPL README INSTALL BUGS TODO Documentation examples
+%doc %{eca_mandir}/man1/eca*.1*
+%doc %{eca_mandir}/man5/ecasoundrc.5
+%{_bindir}/ecasound
+%{_bindir}/ecaconvert
+%{_bindir}/ecafixdc
+%{_bindir}/ecamonitor
+%{_bindir}/ecanormalize
+%{_bindir}/ecaplay
+%{_bindir}/ecasignalview
+%{_datadir}/ecasound
+%{_datadir}/ecasound/ecasound.el
+%config %{_datadir}/ecasound/ecasoundrc
+%config %{_datadir}/ecasound/generic_oscillators
+%config %{_datadir}/ecasound/effect_presets
 
 # ---
 # files sections (devel)
 
-%files devel
+%files 		devel
 %defattr(-, root, root)
-/usr/local/bin/libecasound-config
-/usr/local/include/kvutils
-/usr/local/include/libecasound
-/usr/local/lib/libecasound.la
-/usr/local/lib/libecasound.a
-/usr/local/lib/libkvutils.la
-/usr/local/lib/libkvutils.a
+%{_bindir}/libecasound-config
+%{_includedir}/kvutils
+%{_includedir}/libecasound
+%{_libdir}/libecasound.la
+%{_libdir}/libecasound.a
+%{_libdir}/libkvutils.la
+%{_libdir}/libkvutils.a
 
 # ---
 # files sections (libecasoundc)
 
-%files -n libecasoundc
+%files -n 	libecasoundc
 %defattr(-, root, root)
-/usr/local/bin/libecasoundc-config
-/usr/local/include/libecasoundc
-/usr/local/lib/libecasoundc.la
-/usr/local/lib/libecasoundc.a
+%{_bindir}/libecasoundc-config
+%{_includedir}/libecasoundc
+%{_libdir}/libecasoundc.la
+%{_libdir}/libecasoundc.a
 
 # ---
 # files sections (pyecasound)
 
-%files -n pyecasound
+%files -n 	pyecasound
 %defattr(644,root,root,755)
 %attr(755,root,root) %{python_sitepkgsdir}/*.so
 %{python_sitepkgsdir}/*.pyo
@@ -159,6 +168,11 @@ strip --strip-unneeded \
 # changelog
 
 %changelog
+* Thu Oct 31 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+- minor layout changes
+- added TODO to the package
+- changed to use rpmrc dir variables
+
 * Thu Oct 24 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 - added the COPYING files to the package
 
