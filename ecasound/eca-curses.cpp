@@ -48,7 +48,7 @@
 
 #include "eca-curses.h"
 
-#if RL_READLINE_VERSION >= 0x0402
+#if defined(RL_READLINE_VERSION) && RL_READLINE_VERSION >= 0x0402
 static char** ecasound_completion (const char *text, int start, int end);
 static char* ecasound_command_generator (const char* text, int state);
 #else 
