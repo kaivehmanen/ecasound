@@ -53,7 +53,7 @@ ecasound_audiofx_include =  \
 			audiofx_vst.h
 
 ecasound_audioio_include = 	\
-			audioio-plugin.h
+			audioio-plugin.h \
 			audioio-cdr.h \
 			audioio-cdr_impl.h \
 			audioio-ewf.h \

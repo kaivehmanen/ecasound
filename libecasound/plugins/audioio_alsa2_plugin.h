@@ -75,5 +75,9 @@ class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
   ALSA_PCM2_PLUGIN_DEVICE& operator=(const ALSA_PCM2_PLUGIN_DEVICE& x) { return *this; }
 };
 
+extern "C" {
+AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_PCM2_PLUGIN_DEVICE()); }
+};
+
 #endif // ALSALIB_050
 #endif

@@ -70,8 +70,8 @@ Ecasound specific options
 	Don't compile support for ALSA-drivers (otherwise 
 	links to libasound)
 
-`--enable-arts'
-	Enable aRts client support. See http://www.arts-project.org 
+`--disable-arts'
+	Don't compile aRts client support. See http://www.arts-project.org 
 	for more info about aRts.
 
 `--enable-debug'

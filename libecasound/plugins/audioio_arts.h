@@ -49,5 +49,9 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
   ARTS_INTERFACE* new_expr(void) { return new ARTS_INTERFACE(); }
 };
 
+extern "C" {
+AUDIO_IO* audio_io_descriptor(void) { return(new ARTS_INTERFACE()); }
+};
+
 #endif
 #endif

@@ -72,5 +72,9 @@ class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
   ALSA_PCM_DEVICE& operator=(const ALSA_PCM_DEVICE& x) { return *this; }
 };
 
+extern "C" {
+AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_PCM_DEVICE()); }
+};
+
 #endif // ALSALIB_050
 #endif

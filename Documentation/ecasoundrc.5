@@ -61,7 +61,7 @@ VVAARRIIAABBLLEESS
 
 
 
-                            11.06.2000                          1
+                            06.07.2000                          1
 
 
 
@@ -101,6 +101,18 @@ ecasoundrc(5)          Multimedia software          ecasoundrc(5)
               _s_e_t_s.
 
 
+       internal-plugin-directory
+              Directory  containing  ecasound's internal plugins.
+              Defaults to _(_p_r_e_f_i_x_-_d_i_r_)_/_l_i_b_/_e_c_a_s_o_u_n_d_-_p_l_u_g_i_n_s.
+
+
+       ladspa-plugin-directory
+              Directory   containing   LADPSA   effect   plugins.
+              Defaults  to _/_u_s_r_/_l_o_c_a_l_/_l_i_b_/_l_a_d_s_p_a.  If environment
+              variable _L_A_D_S_P_A___P_A_T_H exists, directories  specified
+              in it are automatically searched for plugins.
+
+
        ext-text-editor
               If  _e_x_t_-_t_e_x_t_-_e_d_i_t_o_r_-_u_s_e_-_g_e_t_e_n_v is _f_a_l_s_e or "EDITOR"
               is null, value of this field is used.  Defaults  to
@@ -110,6 +122,18 @@ ecasoundrc(5)          Multimedia software          ecasoundrc(5)
        ext-text-editor-use-getenv
               Should  ecasound  try to query environment variable
               "EDITOR".  Defaults to _t_r_u_e.
+
+
+
+
+
+                            06.07.2000                          2
+
+
+
+
+
+ecasoundrc(5)          Multimedia software          ecasoundrc(5)
 
 
        ext-wave-editor
@@ -123,17 +147,6 @@ ecasoundrc(5)          Multimedia software          ecasoundrc(5)
               "%f"  is  replaced  with  path to the input mp3. If
               exists, "%o" is replaced with the start  offset  in
               mp3 frames. Defaults to _m_p_g_1_2_3 _-_b _0 _-_q _-_s _-_k _%_o _%_f.
-
-
-
-
-                            11.06.2000                          2
-
-
-
-
-
-ecasoundrc(5)          Multimedia software          ecasoundrc(5)
 
 
        ext-mp3-output-cmd
@@ -150,13 +163,6 @@ ecasoundrc(5)          Multimedia software          ecasoundrc(5)
        ext-mikmod-args
               Additional  options  that  are  passed  to  mikmod.
               Defaults to _"_-_p _0 _-_-_n_o_l_o_o_p_s_".
-
-
-       ladspa-plugin-directory
-              Directory   containing   LADPSA   effect   plugins.
-              Defaults  to _/_u_s_r_/_l_o_c_a_l_/_l_i_b_/_l_a_d_s_p_a.  If environment
-              variable _L_A_D_S_P_A___P_A_T_H exists, directories  specified
-              in it are automatically searched for plugins.
 
 
 
@@ -187,12 +193,6 @@ AAUUTTHHOORR
 
 
 
-
-
-
-
-
-
-                            11.06.2000                          3
+                            06.07.2000                          3
 
 

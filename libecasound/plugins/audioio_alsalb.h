@@ -68,5 +68,9 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
   ALSA_LOOPBACK_DEVICE& operator=(const ALSA_LOOPBACK_DEVICE& x) { return *this; }
 };
 
+extern "C" {
+AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_LOOPBACK_DEVICE()); }
+};
+
 #endif // (defined ALSALIB_032 || defined ALSALIB_050)
 #endif

@@ -210,7 +210,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 			kvu_numtostr(buffersize()) + " is out of range!", ECA_ERROR::stop));
   
   params.buffer_size = pcm_info_rep.buffer_size;
-  params.frag_size = buffersize() * frame_size();
+  params.frag_size = buffersize();
   params.frames_xrun_max = ~0U;
   params.frames_min = params.frag_size;
 
@@ -301,7 +301,7 @@ void ALSA_PCM_DEVICE::start(void) {
 
 long int ALSA_PCM_DEVICE::read_samples(void* target_buffer, 
 					long int samples) {
-  assert(samples * frame_size() <= fragment_size_rep);
+  assert(samples <= fragment_size_rep);
   return(::snd_pcm_read(audio_fd_repp, target_buffer, fragment_size_rep) / frame_size());
 }
 
@@ -319,12 +319,12 @@ void ALSA_PCM_DEVICE::print_status_debug(void) {
 }
 
 void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
-  if (samples * frame_size()== fragment_size_rep) {
-    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
+  if (samples == fragment_size_rep) {
+    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep * frame_size());
   }
   else {
-    if ((samples * frame_size()) < pcm_info_rep.min_fragment_size ||
-	(samples * frame_size()) > pcm_info_rep.max_fragment_size) {
+    if (samples * frame_size() < pcm_info_rep.min_fragment_size ||
+	samples * frame_size() > pcm_info_rep.max_fragment_size) {
       if (is_triggered_rep) stop();
       return; 
     }
@@ -334,8 +334,8 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
     buffersize(samples, samples_per_second());
     open();
     prepare();
-    assert(samples * frame_size() <= fragment_size_rep);
-    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
+    assert(samples <= fragment_size_rep);
+    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep * frame_size());
     if (was_triggered == true) start();
   }
 }
@@ -345,7 +345,7 @@ long ALSA_PCM_DEVICE::position_in_samples(void) const {
   snd_pcm_status_t status;
   memset(&status, 0, sizeof(status));
   ::snd_pcm_status(audio_fd_repp, &status);
-  return (status.frame_io / frame_size());
+  return (status.frame_io);
 }
 
 ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) { 

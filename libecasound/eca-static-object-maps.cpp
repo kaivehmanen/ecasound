@@ -56,6 +56,7 @@ extern "C" {
 #include "linear-envelope.h"
 #include "two-stage-linear-envelope.h"
 
+#include "audioio-plugin.h"
 #include "audioio-types.h"
 #include "audioio-cdr.h"
 #include "audioio-wave.h"
@@ -69,14 +70,6 @@ extern "C" {
 
 #include "eca-resources.h"
 #include "eca-error.h"
-
-//  #include "audioio-arts.h"
-//  #include "audioio-alsa.h"
-//  #include "audioio-alsa2.h"
-//  #include "audioio-alsa3.h"
-//  #include "audioio-alsa2-plugin.h"
-//  #include "audioio-alsalb.h"
-//  #include "audioio-af.h"
 
 ECA_OBJECT_MAP eca_audio_object_map;
 ECA_OBJECT_MAP eca_audio_device_map;
@@ -95,6 +88,7 @@ void register_default_controllers(void);
 void register_default_chainops(void);
 void register_default_presets(void);
 void register_ladspa_plugins(void);
+void register_internal_plugins(void);
 
 vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR*);
 
@@ -106,6 +100,7 @@ void register_default_objects(void) {
   register_default_controllers();
   register_default_chainops();
   register_default_audio_objects();
+  register_internal_plugins();
   register_ladspa_plugins();
 }
 
@@ -140,47 +135,11 @@ void register_default_audio_objects(void) {
   eca_audio_object_map.register_object(".uni", mikmod);
   eca_audio_object_map.register_object(".xm", mikmod);
 
-#ifdef COMPILE_AF
-//    AUDIO_IO* af = new AUDIOFILE_INTERFACE();
-//    eca_audio_object_map.register_object(".aif", af);
-//    eca_audio_object_map.register_object(".au", af);
-//    eca_audio_object_map.register_object(".snd", af);
-#endif
-
   AUDIO_IO* device = 0;  
 #ifdef COMPILE_OSS
   device = new OSSDEVICE();
   eca_audio_object_map.register_object("/dev/dsp", device);
   eca_audio_device_map.register_object("/dev/dsp", device);
-#endif
-
-#if (defined ALSALIB_032 || defined ALSALIB_050)
-  device = new ALSA_LOOPBACK_DEVICE();
-  eca_audio_object_map.register_object("alsalb", device);
-  eca_audio_device_map.register_object("alsalb", device);
-#endif
-
-#if (defined ALSALIB_050 || defined ALSALIB_060)
-#ifdef ALSALIB_060
-//    device = new ALSA_PCM_DEVICE();
-#else
-//    device = new ALSA_PCM2_PLUGIN_DEVICE();
-#endif // ALSALIB_060
-//    eca_audio_object_map.register_object("alsaplugin", device);
-//    eca_audio_device_map.register_object("alsaplugin", device);
-//    device = new ALSA_PCM_DEVICE();
-//    eca_audio_object_map.register_object("alsa", device);
-//    eca_audio_device_map.register_object("alsa", device);
-#endif // ALSALIB_050 || ALSALIB_060
-#ifdef ALSALIB_032
-//    device = new ALSA_PCM_DEVICE();
-//    eca_audio_object_map.register_object("alsa", device);      
-//    eca_audio_device_map.register_object("alsa", device);
-#endif
-
-#ifdef COMPILE_ARTS
-//    device = new ARTS_INTERFACE();
-//    eca_audio_object_map.register_object("arts", device);
 #endif
 
   device = new REALTIME_NULL();
@@ -241,10 +200,82 @@ void register_default_controllers(void) {
 
 void register_default_presets(void) { }
 
+static AUDIO_IO* register_internal_plugin(const string& libdir,
+					       const string& filename) {
+  string file = libdir + string("/") + filename;
+  void *plugin_handle = dlopen(file.c_str(), RTLD_NOW);
+  if (plugin_handle != 0) {
+    audio_io_descriptor desc_func;
+    desc_func = (audio_io_descriptor)dlsym(plugin_handle, "audio_io_descriptor");
+    if (desc_func != 0) {
+      return(desc_func());
+    }
+//      dlclose(plugin_handle);
+  }
+  return(0);
+}
+
 void register_internal_plugins(void) {
   ECA_RESOURCES ecarc;
-  string add_file = ecarc.resource("internal-plugin-directory");
+  string libdir = ecarc.resource("internal-plugin-directory");
+  AUDIO_IO* aobj;
 
+#ifdef COMPILE_AF
+  aobj = register_internal_plugin(libdir, "libaudioio_af.so");
+  if (aobj != 0) {
+    eca_audio_object_map.register_object(".aif", aobj);
+    eca_audio_object_map.register_object(".au", aobj);
+    eca_audio_object_map.register_object(".snd", aobj);
+  }
+#endif
+
+#ifdef ALSALIB_032
+  aobj = register_internal_plugin(libdir, "libaudioio_alsa.so");
+  if (aobj != 0) {
+    eca_audio_object_map.register_object("alsa", aobj);
+    eca_audio_device_map.register_object("alsa", aobj);
+  }
+#endif
+
+#if (defined ALSALIB_032 || defined ALSALIB_050)
+  aobj = register_internal_plugin(libdir, "libaudioio_alsalb.so");
+  if (aobj != 0) {
+    eca_audio_object_map.register_object("alsalb", aobj);
+    eca_audio_device_map.register_object("alsalb", aobj);
+  }
+#endif
+
+#ifdef ALSALIB_050 
+  aobj = register_internal_plugin(libdir, "libaudioio_alsa2_plugin.so");
+  if (aobj != 0) {
+    eca_audio_object_map.register_object("alsaplugin", aobj);
+    eca_audio_device_map.register_object("alsaplugin", aobj);
+  }
+
+  aobj = register_internal_plugin(libdir, "libaudioio_alsa2.so");
+  if (aobj != 0) {
+    eca_audio_object_map.register_object("alsa", aobj);
+    eca_audio_device_map.register_object("alsa", aobj);
+  }
+#endif
+
+#ifdef ALSALIB_060
+  aobj = register_internal_plugin(libdir, "libaudioio_alsa3.so");
+  if (aobj != 0) {
+    eca_audio_object_map.register_object("alsa", aobj);
+    eca_audio_device_map.register_object("alsa", aobj);
+    eca_audio_object_map.register_object("alsaplugin", aobj);
+    eca_audio_device_map.register_object("alsaplugin", aobj);
+  }
+#endif
+
+#ifdef COMPILE_ARTS
+  aobj = register_internal_plugin(libdir, "libaudioio_arts.so");
+  if (aobj != 0) {
+    eca_audio_object_map.register_object("arts", aobj);
+    eca_audio_device_map.register_object("arts", aobj);
+  }
+#endif
 }
 
 void register_ladspa_plugins(void) {

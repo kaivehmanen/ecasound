@@ -46,7 +46,8 @@ Qt-based X-interface to ecasound.
 
 %package plugins
 Summary: Additional ecasound plugins (ALSA, Audiofile, aRts).
-Group: X11/Applications/Sound
+Group: Applications/Sound
+AutoReqProv: no
 Requires: ecasound
 
 %description plugins

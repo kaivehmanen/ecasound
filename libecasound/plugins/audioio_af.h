@@ -62,5 +62,9 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   ~AUDIOFILE_INTERFACE(void);
 };
 
+extern "C" {
+AUDIO_IO* audio_io_descriptor(void) { return(new AUDIOFILE_INTERFACE()); }
+};
+
 #endif
 #endif

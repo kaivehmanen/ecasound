@@ -3,12 +3,7 @@
 
 class AUDIO_IO;
 
-/**
- * Prefix path
- **/
-const char* ecasound_plugin_path = "/usr/local";
-
-typedef const AUDIO_IO * 
+typedef AUDIO_IO * 
 (*audio_io_descriptor)(void);
 
 #endif

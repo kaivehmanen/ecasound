@@ -76,9 +76,10 @@ long int ARTS_INTERFACE::read_samples(void* target_buffer,
 				      long int samples) 
 {
   long int res = ::arts_read(stream_rep, target_buffer, frame_size() * samples);
-  samples_rep += res;
-  if (res >= 0)
+  if (res >= 0) {
+    samples_rep += res;
     return(res / frame_size());
+  }
   else {
     return(0);
   }

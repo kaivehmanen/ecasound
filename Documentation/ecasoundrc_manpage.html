@@ -37,7 +37,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>11.06.2000</h2>
+<h2>06.07.2000</h2>
 
 
     
@@ -95,6 +95,12 @@
 <p><p></p><dt><strong>resource-file-effect-presets</strong><dd>
   	Configuration file for effect presets. Is located in the 
   	resource directory. Defaults to <em>effect_presets</em>.
+<p><p></p><dt><strong>internal-plugin-directory</strong><dd>
+	Directory containing ecasound's internal plugins. Defaults to <em>(prefix-dir)/lib/ecasound-plugins</em>.
+<p><p></p><dt><strong>ladspa-plugin-directory</strong><dd>
+	Directory containing LADPSA effect plugins. Defaults to <em>/usr/local/lib/ladspa</em>.
+	If environment variable <em>LADSPA_PATH</em> exists, directories
+	specified in it are automatically searched for plugins.
 <p><p></p><dt><strong>ext-text-editor</strong><dd>
 	If <em>ext-text-editor-use-getenv</em> is <em>false</em> or "EDITOR" 
 	is null, value of this field is used. Defaults to <em>pico</em>.
@@ -117,10 +123,6 @@
 	Path to mikmod. Defaults to <em>mikmod</em>.
 <p><p></p><dt><strong>ext-mikmod-args</strong><dd>
 	Additional options that are passed to mikmod. Defaults to <em>"-p 0 --noloops"</em>.
-<p><p></p><dt><strong>ladspa-plugin-directory</strong><dd>
-	Directory containing LADPSA effect plugins. Defaults to <em>/usr/local/lib/ladspa</em>.
-	If environment variable <em>LADSPA_PATH</em> exists, directories
-	specified in it are automatically searched for plugins.
 <p></dl>
 <p><h2>SEE ALSO</h2>
     

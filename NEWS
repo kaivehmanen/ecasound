@@ -15,9 +15,18 @@ About the version numbers... "vx.y.zRt" :
 Last officially released version is -*> v1.7.9r13 <*-
 
 ??072000 (v1.8.1d14)
-	- changed: small change in licensing - see the file COPYING.Qt
+	- added: support for internal plugins; modules using external 
+		 libraries (ALSA, aRts, libaudiofile, etc) are now 
+  	         dynamically loaded on runtime (no unnecessary 
+                 dependencies); installed by default to 
+  		 /usr/local/lib/ecasound-plugins; see also
+	         ecasoundrc(5) man page for related entries
+	- added: new ecasound-plugin rpm package
 	- remove: support for native ALSA rawmidi temporarily removed
 	          (while waiting, use ALSA's OSS-emulation)
+	- changed: aRts support enabled by default
+	- changed: small change in licensing - see the file COPYING.Qt
+	- fixed: system readline related fixes (wrobell)
 25062000 (v1.8.0d14)
 	- added: ecaconvert - a new ecatools app; converts a set of 
 		 files to target file format
