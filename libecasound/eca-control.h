@@ -46,7 +46,7 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
    * command, while the float argument contains one numerical parameter.
    */
   void command_float_arg(const std::string& cmd, double arg);
- 
+
   /**
    * See ECA_IAMODE_PARSER for detailed decsription of 'action_id'.
    */
@@ -116,7 +116,7 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
 
  private:
 
-  std::vector<std::string> action_args_rep;
+  std::string action_args_rep;
   double action_arg_f_rep; 
   bool action_arg_f_set_rep;
   bool action_ok;
@@ -128,12 +128,12 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   void action(int action_id);
   void check_action_preconditions(int action_id);
   void chainsetup_option(const std::string& cmd);
-  void set_action_argument(const std::vector<std::string>& s);
+  void set_action_argument(const std::string& s);
   void set_action_argument(double v);
   void clear_action_arguments(void);
-  double first_argument_as_float(void) const;
-  long int first_argument_as_long_int(void) const;
-  SAMPLE_SPECS::sample_pos_t first_argument_as_samples(void) const;
+  double first_action_argument_as_float(void) const;
+  long int first_action_argument_as_long_int(void) const;
+  SAMPLE_SPECS::sample_pos_t first_action_argument_as_samples(void) const;
 
   std::string chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const;
 };
