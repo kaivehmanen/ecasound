@@ -130,6 +130,16 @@ class SAMPLE_BUFFER {
   void resample_nofilter(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
   void resample_with_memory(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
 
+  static void import_helper(const unsigned char *ibuffer,
+			    buf_size_t* iptr,
+			    sample_t* obuffer,
+			    buf_size_t optr,
+			    ECA_AUDIO_FORMAT::Sample_format fmt);
+  static void export_helper(unsigned char* obuffer, 
+			    buf_size_t* optr,
+			    sample_t value,
+			    ECA_AUDIO_FORMAT::Sample_format fmt);
+
  public:
 
   /** @name Data representation */
