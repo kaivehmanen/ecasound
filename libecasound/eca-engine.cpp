@@ -2,6 +2,9 @@
 // eca-engine.cpp: Main processing engine
 // Copyright (C) 1999-2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 3
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -172,7 +175,7 @@ ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup)
   DBC_REQUIRE(csetup->is_enabled() == true);
   // --
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) Engine/Initializing");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Engine/Initializing");
 
   csetup_repp->toggle_locked_state(true);
 
@@ -196,7 +199,7 @@ ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup)
  */
 ECA_ENGINE::~ECA_ENGINE(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) ECA_ENGINE destructor!");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "ECA_ENGINE destructor!");
 
   if (csetup_repp != 0) {
     command(ECA_ENGINE::ep_exit, 0.0f);
@@ -262,7 +265,7 @@ void ECA_ENGINE::exec(bool batch_mode)
   if (res < 0) {
     ++driver_errors_rep;
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		"(eca-engine) Warning! Engine has raised an error! "
+		"Warning! Engine has raised an error! "
 		"Possible causes: connection lost to system services, unable to adapt "
 		"to changes in operating environment, etc.");
   }
@@ -272,7 +275,7 @@ void ECA_ENGINE::exec(bool batch_mode)
   signal_exit();
 
   if (outputs_finished_rep > 0) 
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Warning! An output object has raised an error! "
+    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! An output object has raised an error! "
 		"Possible causes: Out of disk space, permission denied, unable to launch external "
 		"applications needed in procesing, etc.");
 
@@ -283,7 +286,7 @@ void ECA_ENGINE::exec(bool batch_mode)
   cleanup();
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"(eca-engine) Engine state when finishing: " + 
+		"Engine state when finishing: " + 
 		kvu_numtostr(static_cast<int>(status())));
 
   // --
@@ -320,7 +323,7 @@ void ECA_ENGINE::wait_for_stop(int timeout)
 				   &impl_repp->ecasound_stop_cond_repp, 
 				   timeout);
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-	      kvu_pthread_timed_wait_result(ret, "(eca-engine) wait_for_stop"));
+	      kvu_pthread_timed_wait_result(ret, "wait_for_stop"));
 }
 
 /**
@@ -366,10 +369,10 @@ bool ECA_ENGINE::is_valid(void) const
       outputs_repp == 0 ||
       outputs_repp->size() == 0) {
 
-    return(false);
+    return false;
   }
   
-  return(true);
+  return true;
 }
 
 /**
@@ -383,10 +386,10 @@ bool ECA_ENGINE::is_finite_length(void) const
 
   if (csetup_repp->max_length_set() == true ||
       csetup_repp->number_of_realtime_inputs() == 0) {
-    return(true);
+    return true;
   }
 
-  return(false);
+  return false;
 }
 
 /**
@@ -398,23 +401,23 @@ bool ECA_ENGINE::is_finite_length(void) const
 ECA_ENGINE::Engine_status_t ECA_ENGINE::status(void) const
 { 
   if (csetup_repp == 0) 
-    return(ECA_ENGINE::engine_status_notready);
+    return ECA_ENGINE::engine_status_notready;
 
   /* calculated in update_engine_status() */
   if (finished_rep == true)
-    return(ECA_ENGINE::engine_status_finished);
+    return ECA_ENGINE::engine_status_finished;
   
   if (outputs_finished_rep > 0 ||
       driver_errors_rep > 0) 
-    return(ECA_ENGINE::engine_status_error);
+    return ECA_ENGINE::engine_status_error;
 
   if (is_running() == true) 
-    return(ECA_ENGINE::engine_status_running);
+    return ECA_ENGINE::engine_status_running;
 
   if (is_prepared() == true) 
-    return(ECA_ENGINE::engine_status_stopped);
+    return ECA_ENGINE::engine_status_stopped;
 
-  return(ECA_ENGINE::engine_status_stopped);
+  return ECA_ENGINE::engine_status_stopped;
 }
 
 /**********************************************************************
@@ -489,7 +492,7 @@ void ECA_ENGINE::update_engine_state(void)
       outputs_finished_rep == 0 && 
       finished_rep != true) {
     if (is_running() == true) {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) all inputs finished - stop");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,"all inputs finished - stop");
       // FIXME: this is still wrong, command() is not fully rt-safe
       // we are not allowed to call request_stop here
       command(ECA_ENGINE::ep_stop, 0.0f);
@@ -502,7 +505,7 @@ void ECA_ENGINE::update_engine_state(void)
 
   if (status() == ECA_ENGINE::engine_status_error) {
     if (is_running() == true) {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) output error - stop");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,"output error - stop");
       // FIXME: this is still wrong, command() is not fully rt-safe
       // we are not allowed to call request_stop here
       command(ECA_ENGINE::ep_stop, 0.0f);
@@ -579,9 +582,9 @@ void ECA_ENGINE::prepare_operation(void)
   /* 2. enable rt-scheduling */
   if (csetup_repp->raised_priority() == true) {
     if (kvu_set_thread_scheduling(SCHED_FIFO, csetup_repp->get_sched_priority()) != 0)
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Unable to change scheduling policy!");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Unable to change scheduling policy!");
     else
-      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Using realtime-scheduling (SCHED_FIFO).");
+      ECA_LOG_MSG(ECA_LOGGER::info, "Using realtime-scheduling (SCHED_FIFO).");
   }
 
   /* 3. reinitialize chains if necessary */
@@ -633,7 +636,7 @@ void ECA_ENGINE::start_operation(void)
   DBC_REQUIRE(is_running() != true);
   // ---
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) starting engine operation!");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "starting engine operation!");
 
   start_realtime_objects();
   running_rep = true;
@@ -665,7 +668,7 @@ void ECA_ENGINE::stop_operation(void)
   DBC_REQUIRE(is_prepared() == true);
   // ---
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) stopping engine operation!");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "stopping engine operation!");
 
   running_rep = false;
 
@@ -687,9 +690,9 @@ void ECA_ENGINE::stop_operation(void)
   /* lower priority back to normal */
   if (csetup_repp->raised_priority() == true) {
     if (kvu_set_thread_scheduling(SCHED_OTHER, 0) != 0)
-      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Unable to change scheduling back to SCHED_OTHER!");
+      ECA_LOG_MSG(ECA_LOGGER::info, "Unable to change scheduling back to SCHED_OTHER!");
     else
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Changed back to non-realtime scheduling SCHED_OTHER.");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Changed back to non-realtime scheduling SCHED_OTHER.");
   }
 
   /* release chainsetup lock */
@@ -712,7 +715,7 @@ void ECA_ENGINE::stop_operation(void)
  */
 bool ECA_ENGINE::is_prepared(void) const
 {
-  return(prepared_rep);
+  return prepared_rep;
 }
 
 /**
@@ -723,7 +726,7 @@ bool ECA_ENGINE::is_prepared(void) const
  */
 bool ECA_ENGINE::is_running(void) const
 {
-  return(running_rep);
+  return running_rep;
 }
 
 /**********************************************************************
@@ -733,7 +736,7 @@ bool ECA_ENGINE::is_running(void) const
 long int ECA_ENGINE::buffersize(void) const
 {
   DBC_CHECK(csetup_repp != 0);
-  return(csetup_repp->buffersize());
+  return csetup_repp->buffersize();
 }
 
 int ECA_ENGINE::max_channels(void) const
@@ -747,7 +750,7 @@ int ECA_ENGINE::max_channels(void) const
     if (csetup_repp->outputs[n]->channels() > result)
       result = csetup_repp->outputs[n]->channels();
   }
-  return(result);
+  return result;
 }
 
 /**********************************************************************
@@ -770,7 +773,7 @@ void ECA_ENGINE::request_start(void)
   DBC_REQUIRE(status() != engine_status_running);
   // ---
 
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-engine) Request start");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Request start");
 
   // --
   // start the driver
@@ -795,7 +798,7 @@ void ECA_ENGINE::request_stop(void)
 	      status() == engine_status_finished);
   // ---
 
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-engine) Request stop");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Request stop");
 
   driver_repp->stop();
 }
@@ -811,7 +814,7 @@ void ECA_ENGINE::request_stop(void)
 void ECA_ENGINE::signal_stop(void)
 {
   pthread_mutex_lock(&impl_repp->ecasound_stop_mutex_repp);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Signaling stop");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Signaling stop");
   pthread_cond_broadcast(&impl_repp->ecasound_stop_cond_repp);
   pthread_mutex_unlock(&impl_repp->ecasound_stop_mutex_repp);
 }
@@ -827,7 +830,7 @@ void ECA_ENGINE::signal_stop(void)
 void ECA_ENGINE::signal_exit(void)
 {
   pthread_mutex_lock(&impl_repp->ecasound_exit_mutex_repp);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Signaling exit");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Signaling exit");
   pthread_cond_broadcast(&impl_repp->ecasound_exit_cond_repp);
   pthread_mutex_unlock(&impl_repp->ecasound_exit_mutex_repp);
 }
@@ -859,7 +862,7 @@ void ECA_ENGINE::conditional_start(void)
 void ECA_ENGINE::conditional_stop(void)
 {
   if (status() == ECA_ENGINE::engine_status_running) {
-    ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) conditional stop");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects,"conditional stop");
     was_running_rep = true;
     // don't call request_stop(), as it would signal that we are 
     // stopping completely (JACK transport stop will be sent  to all)
@@ -872,9 +875,9 @@ void ECA_ENGINE::start_servers(void)
 {
   if (csetup_repp->double_buffering() == true) {
     csetup_repp->pserver_repp->start();
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Prefilling i/o buffers.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Prefilling i/o buffers.");
     csetup_repp->pserver_repp->wait_for_full();
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-engine) i/o buffers prefilled.");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "i/o buffers prefilled.");
   }
   
   if (use_midi_rep == true) {
@@ -909,7 +912,7 @@ void ECA_ENGINE::prepare_realtime_objects(void)
 	  prefill_threshold_rep * buffersize()) {
 
 	ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		    "(eca-engine) audio output '" + 
+		    "audio output '" + 
 		    realtime_outputs_rep[n]->name() + 
 		    "' only offers " +
 		    kvu_numtostr(realtime_outputs_rep[n]->prefill_space()) +
@@ -919,7 +922,7 @@ void ECA_ENGINE::prepare_realtime_objects(void)
       }
       
       ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		  "(eca-engine) prefilling rt-outputs with " +
+		  "prefilling rt-outputs with " +
 		  kvu_numtostr(prefill_threshold_rep) +
 		  " blocks.");
 
@@ -946,7 +949,7 @@ void ECA_ENGINE::reset_realtime_devices(void)
   for (size_t n = 0; n < realtime_objects_rep.size(); n++) {
     if (realtime_objects_rep[n]->is_open() == true) {
       ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		    "(eca-engine) Reseting rt-object " + 
+		    "Reseting rt-object " + 
 		    realtime_objects_rep[n]->label());
       realtime_objects_rep[n]->close();
     }
@@ -963,12 +966,12 @@ void ECA_ENGINE::reset_realtime_devices(void)
 
 SAMPLE_SPECS::sample_pos_t ECA_ENGINE::current_position_in_samples(void) const
 {
-  return(csetup_repp->position_in_samples());
+  return csetup_repp->position_in_samples();
 }
 
 double ECA_ENGINE::current_position_in_seconds_exact(void) const
 {
-  return(csetup_repp->position_in_seconds_exact());
+  return csetup_repp->position_in_seconds_exact();
 }
 
 // FIXME: remove
@@ -976,8 +979,8 @@ double ECA_ENGINE::current_position_in_seconds_exact(void) const
 double ECA_ENGINE::current_position_chain(void) const
 {
   AUDIO_IO* ptr = (*inputs_repp)[(*chains_repp)[csetup_repp->active_chain_index_rep]->connected_input()]; 
-    return(ptr->position_in_seconds_exact());
-  return(0.0f);
+    return ptr->position_in_seconds_exact();
+  return 0.0f;
 }
 #endif
 
@@ -1068,7 +1071,7 @@ void ECA_ENGINE::posthandle_control_position(void)
   if (csetup_repp->max_length_set() == true &&
       csetup_repp->is_over_max_length() == true) {
     if (csetup_repp->looping_enabled() == true) {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) loop point reached");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,"loop point reached");
       inputs_not_finished_rep = 1;
       csetup_repp->seek_position_in_samples(0);
       for(unsigned int adev_sizet = 0; adev_sizet < non_realtime_inputs_rep.size(); adev_sizet++) {
@@ -1076,7 +1079,7 @@ void ECA_ENGINE::posthandle_control_position(void)
       }
     }
     else {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) posthandle_c_p over_max - stop");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,"posthandle_c_p over_max - stop");
       if (status() == ECA_ENGINE::engine_status_running ||
 	  status() == ECA_ENGINE::engine_status_finished) {
 	command(ECA_ENGINE::ep_stop, 0.0f);
@@ -1118,7 +1121,7 @@ void ECA_ENGINE::interpret_queue(void)
 	  if (status() == engine_status_running || 
 	      status() == engine_status_finished) request_stop();
 	  while(impl_repp->command_queue_rep.is_empty() == false) impl_repp->command_queue_rep.pop_front();
-	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) ecasound_queue: exit!");
+	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"ecasound_queue: exit!");
 	  driver_repp->exit();
 	  return;
 	}
@@ -1244,7 +1247,7 @@ void ECA_ENGINE::init_prefill(void)
     prefill_threshold_rep = ECA_ENGINE::prefill_blocks_constant;
   
   ECA_LOG_MSG(ECA_LOGGER::system_objects,
-		"(eca-engine) Prefill loops: " +
+		"Prefill loops: " +
 		kvu_numtostr(prefill_threshold_rep) +
 		" (blocksize " + 
 		kvu_numtostr(buffersize()) + ").");
@@ -1258,7 +1261,7 @@ void ECA_ENGINE::init_servers(void)
 {
   if (csetup_repp->midi_devices.size() > 0) {
     use_midi_rep = true;
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Initializing MIDI-server.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Initializing MIDI-server.");
     csetup_repp->midi_server_repp->init();
   }
 }
@@ -1346,12 +1349,12 @@ void ECA_ENGINE::update_cache_latency_values(void)
       else {
 	if (in_latency != realtime_inputs_rep[n]->latency()) {
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
-			"(eca-engine) Warning! Latency mismatch between input objects!");
+			"Warning! Latency mismatch between input objects!");
 	}
       }
 
       ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		  "(eca-engine) Input latency for '" +
+		  "Input latency for '" +
 		  realtime_inputs_rep[n]->name() + 
 		  "' is " + kvu_numtostr(in_latency) + ".");
 
@@ -1376,12 +1379,12 @@ void ECA_ENGINE::update_cache_latency_values(void)
 	    realtime_outputs_rep[n]->prefill_space() == 0 &&
 	    out_latency != realtime_outputs_rep[n]->latency()) {
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
-			"(eca-engine) Warning! Latency mismatch between output objects!");
+			"Warning! Latency mismatch between output objects!");
 	}
       }
 
       ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		  "(eca-engine) Output latency for '" +
+		  "Output latency for '" +
 		  realtime_outputs_rep[n]->name() + 
 		  "' is " + kvu_numtostr(out_latency) + ".");
     }
@@ -1391,11 +1394,11 @@ void ECA_ENGINE::update_cache_latency_values(void)
     
     if (recording_offset_rep % buffersize()) {
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		    "(eca-engine) Warning! Recording offset not divisible with chainsetup buffersize.");
+		    "Warning! Recording offset not divisible with chainsetup buffersize.");
     }
     
     ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		  "(eca-engine) recording offset is " +
+		  "recording offset is " +
 		  kvu_numtostr(recording_offset_rep) +
 		  	" samples.");
   }
@@ -1463,7 +1466,7 @@ void ECA_ENGINE::dump_profile_info(void)
                             impl_repp->looptimer_rep.events_under_lower_bound() -
                             impl_repp->looptimer_rep.events_over_upper_bound();
 
-  cerr << "(eca-engine) *** profile begin ***" << endl;
+  cerr << "*** profile begin ***" << endl;
   cerr << "Loops faster than realtime: "  << kvu_numtostr(impl_repp->looptimer_rep.events_under_lower_bound());
   cerr << " (<" << kvu_numtostr(impl_repp->looptimer_low_rep * 1000, 1) << " msec)" << endl;
   cerr << "Loops slower than realtime: "  << kvu_numtostr(slower_than_rt);
@@ -1480,7 +1483,7 @@ void ECA_ENGINE::dump_profile_info(void)
   cerr << "/";
   cerr << kvu_numtostr(impl_repp->looptimer_rep.average_duration_seconds() * 1000, 1);
   cerr << " msec." << endl;
-  cerr << "(eca-engine) *** profile end   ***" << endl;
+  cerr << "*** profile end   ***" << endl;
 }
 
 /**********************************************************************
@@ -1554,7 +1557,7 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
     if (skip_realtime_target_outputs == true) {
       if (csetup_repp->is_realtime_target_output(outputnum) == true) {
 	ECA_LOG_MSG(ECA_LOGGER::system_objects,
-		    "(eca-engine) Skipping rt-target output " +
+		    "Skipping rt-target output " +
 		    (*outputs_repp)[outputnum]->label() + ".");
 	continue;
       }
