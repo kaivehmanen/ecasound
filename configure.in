@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20030529-17
+dnl last modified: 20030530-19
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -434,39 +434,46 @@ dnl --
 dnl Checks for pyecasound
 dnl
 dnl defines: ECA_S_PYTHON_INCLUDES, ECA_S_PYTHON_DLMODULES, 
-dnl          ECA_AM_COMPILE_PYECASOUND, ECA_AM_HAVE_PYTHON
+dnl          ECA_AM_PYECASOUND_CEXT, ECA_AM_PYECASOUND_INSTALL
 dnl --
 
-compile_pyecasound=no
+pyecasound_support=python
 
 AC_ARG_ENABLE(pyecasound,
-	      [  --enable-pyecasound 	  Enable compilation of pyecasound (default = no)],
+	      [  --enable-pyecasound 	  Enable compilation of pyecasound (default = python)],
 	      [
 	      case "$enableval" in
 	        y | yes)
-		  AC_MSG_RESULT(yes)
-		  compile_pyecasound=yes
+		  pyecasound_support=c
 		;;
 
-		n | no)
-		  AC_MSG_RESULT(no)
-		  compile_pyecasound=no
+		n | no | none)
+		  pyecasound_support=none
+		;;
+
+		python)
+		  pyecasound_support=python
+		;;
+
+		c)
+		  pyecasound_support=c
 		;;
         
 		*)
-		  AC_MSG_ERROR([Invalid parameter value for --enable-pyecasound: $enableval])
+		  pyecasound_support=python
 		;;
 	      esac
 	      ])
 
 dnl --
-dnl Python interpreter
+dnl Python interpreter and installation prefix
 
 AC_PATH_PROG(PYTHONPATH,python,none)
 if test x$PYTHONPATH = xnone; then
-  python_support=no
+  pyecasound_support=none
+  python_install_prefix=""
 else
-  python_support=yes
+  python_install_prefix=`python -c "import sys; print (sys.prefix)"`
 fi
 
 dnl --
@@ -499,7 +506,10 @@ AC_SUBST(ECA_S_PYTHON_INCLUDES)
 if test "X$ECA_S_PYTHON_INCLUDES" = "X"
 then
 	AC_MSG_WARN([Python.h not found])
-	compile_pyecasound=no
+	if test x${pyecasound_support} = xc; then
+	    dnl -- No python headers found, cannot compile C extension
+	    pyecasound_support=python
+	fi
 else
 	AC_MSG_RESULT($ECA_S_PYTHON_INCLUDES)
 fi
@@ -513,14 +523,33 @@ AC_ARG_WITH(python-modules,
 
 if test "X$with_python_modules" = "X"
 then
-    pymoddirs="/usr/local/lib /usr/lib"
-    dnl -- Double-brackets to espace the real brackets
-    pymoddirsmore=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[[:3]])"`
-    pymoddirs="$pymoddirs $pymoddirsmore"
+    if test x${python_install_prefix} != x${ecaprefix} ; then
+        pyecasound_support=none
+	AC_MSG_RESULT([none])
+	if test x$PYTHONPATH != xnone; then
+	    python_prefix_tmp=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[[:3]])"`
+	else
+	    python_prefix_tmp="DIR"
+	fi
+        AC_MSG_WARN([
+	***
+	*** Python modules won't be installed as the module install prefix does
+	*** not match ecasound's build prefix! To override, set python
+	*** module directory explicitly (for example 
+	*** "--with-python-modules=${python_prefix_tmp}").
+	***
+	])
+    else
+        pymoddirs="/usr/local/lib /usr/lib"
+        dnl -- Double-brackets to espace the real brackets
+        pymoddirsmore=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[[:3]])"`
+        pymoddirs="$pymoddirs $pymoddirsmore"
+	AC_MSG_RESULT($pymoddirs)
+    fi
 else
     pymoddirs=$with_python_modules
+    AC_MSG_RESULT($pymoddirs)
 fi
-AC_MSG_RESULT($pymoddirs)
 
 dnl ---
 dnl a hack to support broken debian python installs
@@ -557,9 +586,9 @@ fi
 AC_SUBST(ECA_S_PYTHON_MODULES)
 AC_SUBST(ECA_S_PYTHON_DLMODULES)
 
-dnl if test x$disable_pyecasound = xyes ; then compile_pyecasound=no ; fi
-AM_CONDITIONAL(ECA_AM_COMPILE_PYECASOUND, test x$compile_pyecasound = xyes)
-AM_CONDITIONAL(ECA_AM_HAVE_PYTHON, test x$python_support = xyes)
+dnl if test x$disable_pyecasound = xyes ; then pyecasound_support=no ; fi
+AM_CONDITIONAL(ECA_AM_PYECASOUND_CEXT, test x$pyecasound_support = xc)
+AM_CONDITIONAL(ECA_AM_PYECASOUND_INSTALL, test x$pyecasound_support != xnone)
 
 dnl ------------------------------------------------------------------
 
@@ -790,14 +819,14 @@ if test x$enable_sysreadline = xyes; then
      [AC_CHECK_HEADER(readline/history.h,,
        AC_MSG_ERROR([*** readline history headers not installed ***]))])
 
-  if x${termcap_library} = xnone; then
+  if test x${termcap_library} = xnone; then
      readline_extra_libs="";
   else
      readline_extra_libs="-l${termcap_library}"
   fi
 
-  AC_CHECK_LIB(readline, main,, AC_MSG_ERROR([*** readline support not installed ***]), ${readline_extra_libs})
-  AC_CHECK_LIB(history, main,, AC_MSG_ERROR([*** readline history support not installed ***]), ${readline_extra_libs})
+  AC_CHECK_LIB(readline, main, readline_library="-lreadline", AC_MSG_ERROR([*** readline support not installed ***]), ${readline_extra_libs})
+  AC_CHECK_LIB(history, main, readline_library="${readline_library} -lhistory", AC_MSG_ERROR([*** readline history support not installed ***]), ${readline_extra_libs})
   AC_SUBST(ECA_S_READLINE_INCLUDES)
 else
   AC_CONFIG_SUBDIRS(readline-4.0)
@@ -954,8 +983,8 @@ echo "-----------------------------------------------------------------"
 echo "Following packages are now configured:"
 echo "ecasound: 		yes (ecasound,libecasound,libecasoundc)"
 echo "ecatools: 		yes"
-if test x$python_support = xyes ; then
-	if test x$compile_pyecasound = xyes ; then
+if test x$pyecasound_support != xnone ; then
+	if test x$pyecasound_support = xc ; then
 		echo "pyecasound: 		yes (as Python C extension module)"
 	else
 		echo "pyecasound: 		yes (as native Python module)"
@@ -1026,7 +1055,7 @@ fi
 echo "-----------------------------------------------------------------"
 echo "Following directories are used:"
 echo "Directory prefix:    "$ECA_S_PREFIX
-if test x$compile_pyecasound = xyes ; then
+if test x$pyecasound_support != xnone ; then
 	echo "Python include dir:	"$ECA_S_PYTHON_INCLUDES
 	echo "Python module dir:	"$ECA_S_PYTHON_MODULES
 fi

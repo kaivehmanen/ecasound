@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 290503) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 300503) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -22,6 +22,15 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: if available, use pthread API for setting scheduler 
 		   params; might improve real-time reliability on 
 		   rh9.0 machines and others that have NPTL
+	- changed: pyecasound - redefined configure option 
+		   --enable-pyecasound=IMPL where 'IMPL' is either
+		   'c' or 'python'; --disable-pyecasound disables 
+		   them both
+	- changed: pyecasound - if python prefix does not match 
+		   ecasound's build prefix, pyecasound will be 
+		   disabled; you can override this by specifying 
+		   the python module directory explicitly with
+		   the --with-python-modules=DIR option
 	- fixed: use of the JACK transport API was never actually 
                  enabled in 2.2.3
 	- fixed: .aiff/.snd/.au input/output was not working at all
@@ -35,6 +44,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	 	 configurations; caused problems with -t:xxx and 
 		 other functions related to chainsetup level position 
 		 and length
+	- fixed: serious bug in mixing down multiple chains with
+ 		 different number of channels to one output; audio 
+		 from previous mixdown rounds leaked to unused 
+		 source channels
 27042003 (v2.2.3)  -** stable release **-
 	- added: support for both -0.64 and 0.65- JACK versions; 
 		 transport functionality is only enabled with the 

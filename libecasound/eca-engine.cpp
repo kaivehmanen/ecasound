@@ -1490,6 +1490,9 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
 	    // -- 
 	    // this is the first output connected to this chain
 	    // --
+	    if (cslots_rep[n]->number_of_channels() < mixslot_repp->number_of_channels()) {
+	      mixslot_repp->make_silent();
+	    }
 	    mixslot_repp->copy(*cslots_rep[n]);
 	    mixslot_repp->divide_by(output_chain_count_rep[outputnum]);
 	  }
