@@ -35,7 +35,8 @@ CDRFILE::CDRFILE(const string& name) {
 }
 
 CDRFILE::~CDRFILE(void) {
-  close();
+  if (is_open() == true)
+    close();
 }
 
 void CDRFILE::format_query(void) {

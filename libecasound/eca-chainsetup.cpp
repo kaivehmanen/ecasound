@@ -41,10 +41,9 @@
 
 #include "audioio.h"
 #include "audioio-types.h"
+#include "audiofx_ladspa.h"
+
 #include "eca-static-object-maps.h"
-#include "eca-ladspa-plugin-map.h"
-#include "eca-chainop-map.h"
-#include "eca-controller-map.h"
 
 #include "midiio.h"
 #include "midi-client.h"
@@ -138,8 +137,6 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file)
  * Sets default values.
  */
 void ECA_CHAINSETUP::set_defaults(void) {
-  register_default_objects();
-
   is_enabled_rep = false;
   mixmode_rep = ep_mm_auto;
   last_audio_object = 0;
@@ -636,7 +633,7 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
       case 'n': 
 	{
 	  string name = get_argument_number(1,argu);
-  	  const map<string,string>& preset_map = eca_preset_map.registered_objects(); 
+  	  const map<string,string>& preset_map = eca_preset_map->registered_objects(); 
 	  map<string,string>::const_iterator p = preset_map.begin();
 	  while (p != preset_map.end()) {
 	    if (p->first == name) {
@@ -919,9 +916,9 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
   if (prefix == "el" || prefix == "eli") {
     string unique = get_argument_number(1, argu);
     if (prefix == "el") 
-      cop = ECA_LADSPA_PLUGIN_MAP::object(unique);
+      cop = ECA_OBJECT_FACTORY::ladspa_map_object(unique);
     else 
-      cop = ECA_LADSPA_PLUGIN_MAP::object(atol(unique.c_str()));
+      cop = ECA_OBJECT_FACTORY::ladspa_map_object(atol(unique.c_str()));
 
     if (cop != 0) {
       cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
@@ -989,7 +986,7 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
   string prefix = get_argument_prefix(argu);
 
   MESSAGE_ITEM otemp;
-  CHAIN_OPERATOR* cop = ECA_CHAIN_OPERATOR_MAP::object(prefix);
+  CHAIN_OPERATOR* cop = ECA_OBJECT_FACTORY::chain_operator_map_object(prefix);
   if (cop != 0) {
     cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
 
@@ -1061,7 +1058,7 @@ GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
 
   MESSAGE_ITEM otemp;
 
-  GENERIC_CONTROLLER* gcontroller = ECA_CONTROLLER_MAP::object(prefix);
+  GENERIC_CONTROLLER* gcontroller = ECA_OBJECT_FACTORY::controller_map_object(prefix);
   if (gcontroller != 0) {
     gcontroller = gcontroller->clone();
 

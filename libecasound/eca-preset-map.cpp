@@ -47,10 +47,23 @@ void ECA_PRESET_MAP::register_object(const string& keyword,
   object_keyword_map[keyword] = object->name();
 }
 
+void ECA_PRESET_MAP::unregister_object(const string& keyword) {
+  object_map[keyword] = 0;
+  object_keyword_map[keyword] = "";
+}
+
 const map<string,string>& ECA_PRESET_MAP::registered_objects(void) const {
   return(object_keyword_map);
 }
 
+/**
+ * Returns the first object that matches 'keyword'. Regular 
+ * expressions are not used. For practical reasons a non-const 
+ * pointer is returned. However, in most cases the returned 
+ * object should be cloned before actual use. In other words, 
+ * the returned pointer refers to the object stored in the object 
+ * map.
+ */
 ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword, bool use_regex) const {
   map<string, PRESET*>::const_iterator p = object_map.begin();
   while(p != object_map.end()) {
@@ -75,4 +88,19 @@ string ECA_PRESET_MAP::object_identifier(const PRESET* object) const {
   return(object->name());
 }
 
-ECA_PRESET_MAP::~ECA_PRESET_MAP (void) { }
+void ECA_PRESET_MAP::flush(void) { 
+  map<string, PRESET*>::iterator p = object_map.begin();
+  while(p != object_map.end()) {
+    p->second = 0;
+    ++p;
+  }
+}
+
+ECA_PRESET_MAP::~ECA_PRESET_MAP (void) { 
+  map<string, PRESET*>::iterator p = object_map.begin();
+  while(p != object_map.end()) {
+    delete p->second;
+    p->second = 0;
+    ++p;
+  }
+}

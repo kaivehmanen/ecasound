@@ -2,6 +2,21 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-03-06  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-object-map.h (flush): added
+	* eca-ladspa-plugin-map.h (all): removed
+	* eca-controller-map.h (all): removed
+	* eca-audio-object-map.h (all): removed
+	* eca-chainop-map.h (all): removed
+	* eca-object-factory.h (ladspa_map_object): added
+	* eca-object-factory.h (controller_map_object,chain_operator_map_object): added
+	* eca-object-factory.h (chain_operator_map_object): added
+	* eca-object-factory.h (audio_io_map_object): added
+	* eca-static-object-maps.h (eca_audio_device_map): removed
+	* eca-static-object-maps.h (object map objects): changed into pointers
+	* eca-static-object-maps.h (unregister_default_objects): added
+	
 2001-02-19  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* midi-server (register_handler, unregister_handler): added

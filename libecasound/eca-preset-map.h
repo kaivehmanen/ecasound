@@ -1,5 +1,5 @@
-#ifndef _ECA_PRESET_MAP_H
-#define _ECA_PRESET_MAP_H
+#ifndef INCLUDED_ECA_PRESET_MAP_H
+#define INCLUDED_ECA_PRESET_MAP_H
 
 #include <string>
 #include <vector>
@@ -23,19 +23,12 @@ class ECA_PRESET_MAP : public ECA_OBJECT_MAP {
 
  public:
 
-  void register_object(const string& id_string, PRESET* object);
-  const map<string,string>& registered_objects(void) const;
-
-  /**
-   * Returns the first object that matches 'keyword'. Regular 
-   * expressions are not used. For practical reasons a non-const 
-   * pointer is returned. However, in most cases the returned 
-   * object should be cloned before actual use. In other words, 
-   * the returned pointer refers to the object stored in the object 
-   * map.
-   */
-  ECA_OBJECT* object(const string& keyword, bool use_regexp = false) const;
-  string object_identifier(const PRESET* object) const;
+  virtual void register_object(const string& id_string, PRESET* object);
+  virtual void unregister_object(const string& keyword);
+  virtual const map<string,string>& registered_objects(void) const;
+  virtual ECA_OBJECT* object(const string& keyword, bool use_regexp = false) const;
+  virtual string object_identifier(const PRESET* object) const;
+  virtual void flush(void);
 
   ECA_PRESET_MAP(void);
   virtual ~ECA_PRESET_MAP(void);

@@ -55,7 +55,6 @@ ecasound_audiofx_include =  \
 			audiofx_mixing.h \
 			audiofx_ladspa.h \
 			ladspa.h \
-			audiofx_vst.h \
 			audio-stamp.h
 
 ecasound_audioio_include = 	\
@@ -117,11 +116,6 @@ ecasound_general_include = 	\
 			eca-static-object-maps.h \
 			eca-object-map.h \
 			eca-preset-map.h \
-			eca-ladspa-plugin-map.h \
-			eca-vst-plugin-map.h \
-			eca-chainop-map.h \
-			eca-controller-map.h \
-			eca-audio-object-map.h \
 			samplebuffer.h \
 			samplebuffer_impl.h \
 			samplebuffer_functions.h \
@@ -154,24 +148,26 @@ ecasound_general_include = 	\
 			plugin-paths.h \
 			midiio.h
 
-if FEELING_EXPERIMENTAL
-vst_header_files = AEffEditor.hpp AEffect.h aeffectx.h AudioEffect.hpp
-endif
+# VST-support:
+#			eca-vst-plugin-map.h
+# vst_header_files = AEffEditor.hpp AEffect.h aeffectx.h AudioEffect.hpp
+#			$(vst_header_files)
+#			audiofx_vst.h \
 
 noinst_HEADERS = 	$(ecasound_audiofx_include) \
 			$(ecasound_audioio_include) \
 			$(ecasound_midi_include) \
 		 	$(ecasound_controller_include) \
-			$(ecasound_general_include) \
-			$(vst_header_files)
+			$(ecasound_general_include)
 
 # ----------------------------------------------------------------------
 # source files
 # ----------------------------------------------------------------------
 
-if FEELING_EXPERIMENTAL
-vst_src_files = AudioEffect.cpp audioeffectx.cpp
-endif
+# vst_src_files = AudioEffect.cpp audioeffectx.cpp
+# 			audiofx_vst.cpp \
+# 			eca-vst-plugin-map.cpp \
+# $(vst_src_files)
 
 ecasound_audiofx_src =  audiofx.cpp \
 			audiofx_misc.cpp \
@@ -186,7 +182,6 @@ ecasound_audiofx_src =  audiofx.cpp \
 			audiogate.cpp \
 			audiofx_mixing.cpp \
 			audiofx_ladspa.cpp \
-			audiofx_vst.cpp \
 			audio-stamp.cpp
 
 ecasound_audioio_oss_src = audioio-oss.cpp
@@ -256,18 +251,14 @@ ecasound_general_src = 	eca-chain.cpp \
 			preset.cpp \
 			file-preset.cpp \
 			eca-object-map.cpp \
-			eca-audio-object-map.cpp \
-			eca-chainop-map.cpp \
-			eca-controller-map.cpp \
 			eca-preset-map.cpp \
-			eca-vst-plugin-map.cpp \
 			global-preset.cpp
 
 ecasound_common_src = 	$(ecasound_audiofx_src) \
 			$(ecasound_audioio_src) \
 			$(ecasound_midi_src) \
 		      	$(ecasound_controller_src) \
-			$(ecasound_general_src) $(vst_src_files)
+			$(ecasound_general_src)
 
 libecasound_la_SOURCES = $(ecasound_common_src)
 libecasound_debug_la_SOURCES = $(ecasound_common_src)

@@ -35,8 +35,10 @@
   
 EWFFILE::~EWFFILE(void) {
   if (is_open()) close();
-  write_ewf_data();
-  delete child;
+  if (child != 0) {
+    delete child;
+    child = 0;
+  }
 }
 
 void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
@@ -72,6 +74,7 @@ void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
 void EWFFILE::close(void) {
   child->close();
   toggle_open_state(false);
+  write_ewf_data();
   child_active = false;
 }
 

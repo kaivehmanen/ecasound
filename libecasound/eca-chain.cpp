@@ -528,7 +528,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
     if (chainop->number_of_params() > 0) t << ",";
   }
   else {
-    t << "-" << eca_chain_operator_map.object_identifier(chainop);
+    t << "-" << eca_chain_operator_map->object_identifier(chainop);
     if (chainop->number_of_params() > 0) t << ":";
   }
   // --<
@@ -551,7 +551,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
 
 string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const {
   MESSAGE_ITEM t; 
-  t << "-" << eca_controller_map.object_identifier(gctrl);
+  t << "-" << eca_controller_map->object_identifier(gctrl);
   t << ":";
   for(int n = 0; n < gctrl->number_of_params(); n++) {
     t << gctrl->get_parameter(n + 1);

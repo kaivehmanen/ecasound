@@ -27,7 +27,7 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
   virtual long position_in_samples(void) const;
 
   REALTIME_NULL(const string& name = "realtime null");
-  ~REALTIME_NULL(void);
+  virtual ~REALTIME_NULL(void);
   REALTIME_NULL* clone(void) { return new REALTIME_NULL(*this); }
   REALTIME_NULL* new_expr(void) { return new REALTIME_NULL(); }
 

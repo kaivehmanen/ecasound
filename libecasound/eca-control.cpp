@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control.cpp: Class for controlling the whole ecasound library
-// Copyright (C) 1999,2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,11 +38,8 @@
 #include "eca-chainop.h"
 
 #include "audiofx_ladspa.h"
+#include "eca-object-factory.h"
 #include "eca-static-object-maps.h"
-#include "eca-audio-object-map.h"
-#include "eca-ladspa-plugin-map.h"
-#include "eca-chainop-map.h"
-#include "eca-controller-map.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"
@@ -132,13 +129,13 @@ void ECA_CONTROL::direct_command(const string& cmd) {
     else
       set_last_error("When adding chain operators, only one chain can be selected.");
   }
-  else if (ECA_CHAIN_OPERATOR_MAP::object(prefix) != 0) {
+  else if (ECA_OBJECT_FACTORY::chain_operator_map_object(prefix) != 0) {
     if (selected_chains().size() == 1) 
       add_chain_operator(cmd);
     else
       set_last_error("When adding chain operators, only one chain can be selected.");
   }
-  else if (ECA_CONTROLLER_MAP::object(prefix) != 0) {
+  else if (ECA_OBJECT_FACTORY::controller_map_object(prefix) != 0) {
     if (selected_chains().size() == 1) 
       add_controller(cmd);
     else
@@ -513,8 +510,8 @@ void ECA_CONTROL::action(int action_id) {
   } // <-- switch-case
 
   if (reconnect == true) {
-    if (is_valid() == false || 
-	is_selected() == false) {
+    if (is_selected() == false ||
+	is_valid() == false) {
       set_last_error("Can't reconnect chainsetup.");
     }
     else {
@@ -770,12 +767,12 @@ string ECA_CONTROL::aio_status(void) const {
 void ECA_CONTROL::aio_register(void) { 
   ecadebug->control_flow("Registered audio objects");
   string result;
-  const map<string,string>& kmap = ::eca_audio_object_map.registered_objects();
+  const map<string,string>& kmap = ::eca_audio_object_map->registered_objects();
   int count = 1;
   map<string,string>::const_iterator p = kmap.begin();
   while(p != kmap.end()) {
     string temp;
-    AUDIO_IO* q = ECA_AUDIO_OBJECT_MAP::object(p->first, false);
+    AUDIO_IO* q = ECA_OBJECT_FACTORY::audio_io_map_object(p->first, false);
     int params = q->number_of_params();
     if (params > 0) {
       temp += " (params: ";
@@ -796,12 +793,12 @@ void ECA_CONTROL::aio_register(void) {
 void ECA_CONTROL::cop_register(void) { 
   ecadebug->control_flow("Registered chain operators");
   string result;
-  const map<string,string>& kmap = ECA_CHAIN_OPERATOR_MAP::registered_objects();
+  const map<string,string>& kmap = eca_chain_operator_map->registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
     string temp;
-    CHAIN_OPERATOR* q = ECA_CHAIN_OPERATOR_MAP::object(p->first);
+    CHAIN_OPERATOR* q = ECA_OBJECT_FACTORY::chain_operator_map_object(p->first);
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
       if (n == 0) temp += ":";
@@ -819,7 +816,7 @@ void ECA_CONTROL::cop_register(void) {
 void ECA_CONTROL::preset_register(void) { 
   ecadebug->control_flow("Registered effect presets");
   string result;
-  const map<string,string>& kmap = ::eca_preset_map.registered_objects();
+  const map<string,string>& kmap = ::eca_preset_map->registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
@@ -834,12 +831,12 @@ void ECA_CONTROL::preset_register(void) {
 void ECA_CONTROL::ladspa_register(void) { 
   ecadebug->control_flow("Registered LADSPA plugins");
   string result;
-  const map<string,string>& kmap = ECA_LADSPA_PLUGIN_MAP::registered_objects();
+  const map<string,string>& kmap = eca_ladspa_plugin_map->registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
     string temp = "\n\t-el:" + p->second + ",";
-    EFFECT_LADSPA* q = ECA_LADSPA_PLUGIN_MAP::object(p->first);
+    EFFECT_LADSPA* q = ECA_OBJECT_FACTORY::ladspa_map_object(p->first);
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
       temp += "\"" + q->get_parameter_name(n + 1) + "\"";
@@ -857,12 +854,12 @@ void ECA_CONTROL::ladspa_register(void) {
 void ECA_CONTROL::ctrl_register(void) { 
   ecadebug->control_flow("Registered controllers");
   string result;
-  const map<string,string>& kmap = ECA_CONTROLLER_MAP::registered_objects();
+  const map<string,string>& kmap = eca_controller_map->registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
     string temp;
-    GENERIC_CONTROLLER* q = ECA_CONTROLLER_MAP::object(p->first);
+    GENERIC_CONTROLLER* q = ECA_OBJECT_FACTORY::controller_map_object(p->first);
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
       if (n == 0) temp += ":";

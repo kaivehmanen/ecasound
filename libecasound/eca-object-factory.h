@@ -3,6 +3,9 @@
 
 #include <string>
 
+class EFFECT_LADSPA;
+class GENERIC_CONTROLLER;
+class CHAIN_OPERATOR;
 class AUDIO_IO;
 class MIDI_IO;
 
@@ -14,32 +17,14 @@ class ECA_OBJECT_FACTORY {
 
  public:
 
-  /**
-   * Create a new audio object based on the formatted argument string.
-   *
-   * @param arg a formatted string describing an audio object, see ecasound 
-   *            manuals for detailed info
-   * @return the created object or 0 if an invalid format string was given 
-   *         as the argument
-   *
-   * require:
-   *  arg.empty() != true
-   */
+  static EFFECT_LADSPA* ladspa_map_object(const string& keyword);
+  static EFFECT_LADSPA* ladspa_map_object(long int number);
+  static GENERIC_CONTROLLER* controller_map_object(const string& keyword);
+  static CHAIN_OPERATOR* chain_operator_map_object(const string& keyword);
+  static AUDIO_IO* audio_io_map_object(const string& keyword, bool use_regex = true);
+
   static AUDIO_IO* create_audio_object(const string& arg);
-
-  /**
-   * Create a new MIDI-device object based on the formatted argument string.
-   *
-   * @param arg a formatted string describing a MIDI-device object, see ecasound 
-   *            manuals for detailed info
-   * @return the created object or 0 if an invalid format string was given 
-   *         as the argument
-   *
-   * require:
-   *  arg.empty() != true
-   */
   static MIDI_IO* create_midi_device(const string& arg);
-
 };
 
 #endif

@@ -38,8 +38,6 @@
 
 #include "eca-debug.h"
 
-FILE* audioio_mp3_pipe;
-
 string MP3FILE::default_mp3_input_cmd = "mpg123 --stereo -r %s -b 0 -q -s -k %o %f";
 string MP3FILE::default_mp3_output_cmd = "lame -b 128 -x -S - %f";
 

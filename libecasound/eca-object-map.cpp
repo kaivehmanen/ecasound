@@ -26,15 +26,43 @@
 #include "eca-object-map.h"
 #include "eca-debug.h"
 
+/**
+ * Registers a new object-regexp pair. Map object will take care
+ * of deleting the registered objects. Notice that it's possible 
+ * to register the same physical object with different keywords.
+ * Object map will take care that objects with multiple registered
+ * keywords are destructed properly.
+ */
 void ECA_OBJECT_MAP::register_object(const string& keyword, ECA_OBJECT* object) {
   object_map[keyword] = object;
   object_keyword_map[keyword] = object->name();
 }
 
+/**
+ * Unregisters object with keyword 'keyword'. Does not physically
+ * delete the assigned object, because one object can be 
+ * registered with multiple keywords.
+ */
+void ECA_OBJECT_MAP::unregister_object(const string& keyword) {
+  object_map[keyword] = 0;
+  object_keyword_map[keyword] = "";
+}
+
+/**
+ * List of registered objects ('regexpr'-'object name' map).
+ */
 const map<string,string>& ECA_OBJECT_MAP::registered_objects(void) const {
   return(object_keyword_map);
 }
 
+/**
+ * Returns the first object that matches the expression 'expr'.
+ * If 'use_regexp' is true, regex matching is used. For practical
+ * reasons a non-const pointer is returned. However, in most 
+ * cases the returned object should be cloned before actual use.
+ * In other words, the returned pointer refers to the object
+ * stored in the object map.
+ */
 ECA_OBJECT* ECA_OBJECT_MAP::object(const string& keyword, bool use_regexp) const {
   map<string,ECA_OBJECT*>::const_iterator p = object_map.begin();
   regex_t preg;
@@ -56,6 +84,9 @@ ECA_OBJECT* ECA_OBJECT_MAP::object(const string& keyword, bool use_regexp) const
   return(object);
 }
 
+/**
+ * Returns the matching keyword for 'object'.
+ */
 string ECA_OBJECT_MAP::object_identifier(const ECA_OBJECT* object) const {
   map<string, ECA_OBJECT*>::const_iterator p = object_map.begin();
   while(p != object_map.end()) {
@@ -67,4 +98,37 @@ string ECA_OBJECT_MAP::object_identifier(const ECA_OBJECT* object) const {
   return("");
 }
 
-ECA_OBJECT_MAP::~ECA_OBJECT_MAP (void) { }
+/**
+ * Unregister all objects without physically deleting them.
+ */
+void ECA_OBJECT_MAP::flush(void) { 
+  map<string, ECA_OBJECT*>::iterator p = object_map.begin();
+  while(p != object_map.end()) {
+    p->second = 0;
+    ++p;
+  }
+}
+
+ECA_OBJECT_MAP::~ECA_OBJECT_MAP (void) { 
+  map<string, ECA_OBJECT*>::iterator p = object_map.begin();
+  while(p != object_map.end()) {
+    if (p->second != 0) {
+      ECA_OBJECT* next_obj = p->second;
+      cerr << "Deleting " << next_obj->name() << "." << endl;
+      map<string, ECA_OBJECT*>::iterator q = p;
+      ++q;
+      while(q != object_map.end()) {
+	if (q->second != 0 &&
+	    q->second == p->second) {
+	  cerr << "Deleting sub-object with keyword " << q->first << "." << endl;
+	  q->second = 0;
+	}
+	++q;
+      }
+      p->second = 0;
+      delete next_obj;
+    }
+    ++p;
+  }
+}
+

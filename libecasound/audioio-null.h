@@ -22,7 +22,7 @@ class NULLFILE : public AUDIO_IO_BUFFERED {
   virtual void seek_position(void) { } 
 
   NULLFILE(const string& name = "null") { }
-  ~NULLFILE(void) { }
+  virtual ~NULLFILE(void) { }
   NULLFILE* clone(void) { return new NULLFILE(*this); }
   NULLFILE* new_expr(void) { return new NULLFILE(); }
 };

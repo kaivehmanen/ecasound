@@ -47,6 +47,7 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
+#include "eca-static-object-maps.h"
 #include "eca-comhelp.h"
 #include "eca-session.h"
 #include "eca-chainsetup.h"
@@ -66,6 +67,9 @@ ECA_SESSION::~ECA_SESSION(void) {
 
   delete ecasound_stop_cond_repp;
   delete ecasound_stop_mutex_repp;
+  
+  /* delete static object maps */
+  unregister_default_objects();
 
 //    ecadebug->control_flow("Closing session");
 }
@@ -97,6 +101,9 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
 }
 
 void ECA_SESSION::set_defaults(void) {
+  /* create static object maps */
+  register_default_objects();
+
   status(ep_status_notready);
   connected_chainsetup_repp = 0;
   selected_chainsetup_repp = 0;
