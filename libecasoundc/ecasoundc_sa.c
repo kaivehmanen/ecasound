@@ -5,6 +5,7 @@
 
 /* FIXME: add check for big sync-error -> ecasound probably 
  *        died so better to give an error */
+/* FIXME: add some mechanism to detect failed eci_init(); */
 /* FIXME: add check for msgsize errors */
 /* FIXME: get rid of the static string lengths (C... blaah ;)) */
 /* FIXME: add proper signal handling */
