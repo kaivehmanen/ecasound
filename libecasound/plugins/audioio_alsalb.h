@@ -14,6 +14,7 @@
 
 #if (defined ALSALIB_032 || defined ALSALIB_050)
 #include <sys/asoundlib.h>
+#endif
 
 #include "samplebuffer.h"
 
@@ -23,7 +24,9 @@
  */
 class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
 
+#if (defined ALSALIB_032 || defined ALSALIB_050)
   snd_pcm_loopback_t *audio_fd;
+#endif
 
   int card_number, device_number, subdevice_number;
   bool pb_mode;
@@ -72,5 +75,4 @@ extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_LOOPBACK_DEVICE()); }
 };
 
-#endif // (defined ALSALIB_032 || defined ALSALIB_050)
 #endif

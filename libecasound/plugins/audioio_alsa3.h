@@ -14,6 +14,7 @@
 
 #ifdef ALSALIB_060
 #include <sys/asoundlib.h>
+#endif
 
 #include "samplebuffer.h"
 #include "audioio-types.h"
@@ -23,9 +24,11 @@
  */
 class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
 
+#ifdef ALSALIB_060
   snd_pcm_t *audio_fd_repp;
   snd_pcm_info_t pcm_info_rep;
   snd_pcm_params_info_t pcm_params_info_rep;
+#endif
 
   long int fragment_size_rep;
  
@@ -78,5 +81,4 @@ extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_PCM_DEVICE()); }
 };
 
-#endif // ALSALIB_060
 #endif

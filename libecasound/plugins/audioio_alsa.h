@@ -14,6 +14,7 @@
 #endif
 #ifdef ALSALIB_032
 #include <sys/asoundlib.h>
+#endif
 
 #include "samplebuffer.h"
 
@@ -25,7 +26,9 @@ class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
 
  private:
 
+#ifdef ALSALIB_032
   snd_pcm_t *audio_fd_repp;
+#endif
 
   int card_number_rep, device_number_rep;
   int pcm_mode_rep, pcm_channel_rep;
@@ -75,6 +78,5 @@ extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_PCM_DEVICE()); }
 };
 
-#endif // ALSALIB_032
 #endif
 

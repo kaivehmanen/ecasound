@@ -5,11 +5,12 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef COMPILE_ARTS
 
+#ifdef COMPILE_ARTS
 extern "C" {
 #include <artsc.h>
 }
+#endif
 
 /**
  * Interface for communicating with aRts/MCOP.
@@ -20,7 +21,9 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
   ARTS_INTERFACE(const ARTS_INTERFACE& x) { }
   ARTS_INTERFACE& operator=(const ARTS_INTERFACE& x) { return *this; }
 
+#ifdef COMPILE_ARTS
   arts_stream_t stream_rep;
+#endif
   long int samples_rep;
   static int ref_rep;
   
@@ -53,5 +56,4 @@ extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new ARTS_INTERFACE()); }
 };
 
-#endif
 #endif
