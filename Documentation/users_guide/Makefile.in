@@ -205,7 +205,6 @@ users_guide: users_guide.latex
 	latex users_guide.latex
 	mkdir -p html_uguide
 	latex2html -no_math -html_version 3.2,math -short_index -split 4 -link 5 -dir html_uguide users_guide.latex
-	ln -sf html_uguide/index.html users_guide.html
 
 clean-docs:
 	rm -fv *.log *.toc *.dvi *.aux *.html

@@ -206,13 +206,11 @@ programmers_guide: programmers_guide.latex
 	latex programmers_guide.latex
 	mkdir -p html_pguide
 	latex2html -no_math -html_version 3.2,math -short_index -split 4 -link 5 -dir html_pguide programmers_guide.latex
-	ln -sf html_pguide/index.html programmers_guide.html
 
 ecidoc: eci_doc.latex
 	latex eci_doc.latex
 	mkdir -p html_ecidoc
 	latex2html -no_math -html_version 3.2,math -short_index -split 4 -link 5 -dir html_ecidoc eci_doc.latex
-	ln -sf html_ecidoc/index.html eci_doc.html
 
 clean-docs:
 	rm -fv *.log *.toc *.dvi *.aux *.html
