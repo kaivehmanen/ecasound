@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>19.03.2001</h2>
+<h2>21.03.2001</h2>
 
 
     
@@ -37,14 +37,28 @@
 a set of commands aimed at controlling various library services. 
 This is called the ecasound interactive mode (EIAM). All programs 
 linked to ecasound library can use this facility.
-<p>A special case of EIAM use is ecasound's control interface (ECI), 
+<p><h2>ECI API and return types</h2>
+    
+A special case of EIAM use is ecasound's control interface (ECI), 
 which is a small library providing easy access to the EIAM 
-commands from outside libecasound. When issuing EIAM commands using 
+commands from outside of libecasound. When issuing EIAM commands using 
 ECI, it's possible that commands also return information. Currently
-supported return value types are: strings [s], list of strings [S],
-integers [i], long integers [li] and floating-point numbers [f]. These
+supported return value types are: string [s], list of strings [S],
+integer [i], long integer [li] and floating-point number [f]. These
 definitions are used throughout this document. Commands that do not
 return anything are marked with [-].
+<p><h2>Realtime commands</h2>
+    
+It's not possible to use all EIAM commands to modify and control 
+objects that belong to a connected chainsetup. Commands that
+do support this are: 'start', 'stop', 'setpos', 'rewind', 'forward',
+'c-select', 'c-mute', 'c-bypass', 'c-rewind', 'c-forward', 'c-setpos', 
+'cop-select', 'copp-select' and 'copp-value'.
+<p>Another set of commands are those which can be used with connected
+chainsetups, but not without an audible break. These are: 'cop-add', 
+'cop-remove', 'ctrl-add', 'ctrl-select', 'ctrl-remove'
+<p>In addition, most non-modifying (const) commands work with 
+connected setups.
 <p><h2>GENERAL</h2>
     
 <dl>
@@ -372,6 +386,20 @@ available operator presets. <em>[S]</em>.
 Returns a list of regular expressions (LADSPA unique id numbers) matching
 registered LADSPA plugins. <em>[S]</em>.
 <p></dl>
+<p><h2>INTERNAL COMMANDS</h2>
+    
+Internal commands are not directly aimed at normal use. They
+are primarily meant for use in scripting and frontends.
+<p><p></p><dt><strong>int-cmd-list</strong><dd>
+Returns a list of all registered EIAM commands. <em>[S]</em>
+<p><p></p><dt><strong>int-cmd-version-string</strong><dd>
+Returns EIAM parser version string. <em>[s]</em>
+<p><p></p><dt><strong>int-cmd-version-lib-current</strong><dd>
+Returns EIAM library interface version (libtool). <em>[i]</em>
+<p><p></p><dt><strong>int-cmd-version-lib-revision</strong><dd>
+Returns EIAM library interface revision (libtool). <em>[i]</em>
+<p><p></p><dt><strong>int-cmd-version-lib-age</strong><dd>
+Returns EIAM library interface age (libtool). <em>[i]</em>
 <p><h2>DUMP COMMANDS</h2>
     
 The following dump commands are not meant for normal use. 

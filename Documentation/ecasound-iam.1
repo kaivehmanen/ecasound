@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "20\&.03\&.2001" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "21\&.03\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -11,14 +11,29 @@ a set of commands aimed at controlling various library services\&.
 This is called the ecasound interactive mode (EIAM)\&. All programs 
 linked to ecasound library can use this facility\&.
 .PP 
+.SH "ECI API and return types" 
 A special case of EIAM use is ecasound\'s control interface (ECI), 
 which is a small library providing easy access to the EIAM 
-commands from outside libecasound\&. When issuing EIAM commands using 
+commands from outside of libecasound\&. When issuing EIAM commands using 
 ECI, it\'s possible that commands also return information\&. Currently
-supported return value types are: strings [s], list of strings [S],
-integers [i], long integers [li] and floating-point numbers [f]\&. These
+supported return value types are: string [s], list of strings [S],
+integer [i], long integer [li] and floating-point number [f]\&. These
 definitions are used throughout this document\&. Commands that do not
 return anything are marked with [-]\&.
+.PP 
+.SH "Realtime commands" 
+It\'s not possible to use all EIAM commands to modify and control 
+objects that belong to a connected chainsetup\&. Commands that
+do support this are: \'start\', \'stop\', \'setpos\', \'rewind\', \'forward\',
+\'c-select\', \'c-mute\', \'c-bypass\', \'c-rewind\', \'c-forward\', \'c-setpos\', 
+\'cop-select\', \'copp-select\' and \'copp-value\'\&.
+.PP 
+Another set of commands are those which can be used with connected
+chainsetups, but not without an audible break\&. These are: \'cop-add\', 
+\'cop-remove\', \'ctrl-add\', \'ctrl-select\', \'ctrl-remove\'
+.PP 
+In addition, most non-modifying (const) commands work with 
+connected setups\&.
 .PP 
 .SH "GENERAL" 
 .IP "quit, q" 
