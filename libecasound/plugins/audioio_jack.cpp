@@ -54,13 +54,13 @@ int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT);
 
 static int eca_jack_process(nframes_t nframes, void *arg) {
   JACK_INTERFACE* current = static_cast<JACK_INTERFACE*>(arg);
-  sample_t *portbuf = static_cast<sample_t*>(jack_port_get_buffer(current->port_repp, nframes));
-
-  DEBUG_CFLOW_STATEMENT(std::cerr << "p0");
   if (current->is_running() == true) {
-    DEBUG_CFLOW_STATEMENT(std::cerr << "p1");
-    current->cb_buffer_repp = static_cast<void*>(portbuf);
-    current->cb_nframes_rep = static_cast<long int>(nframes);
+    for(size_t n = 0; n < current->portbufs_rep.size(); n++) {
+      DEBUG_CFLOW_STATEMENT(std::cerr << "p0");
+      DEBUG_CFLOW_STATEMENT(std::cerr << "p1");
+      current->cb_buffers_rep[n] = static_cast<void*>(jack_port_get_buffer(current->ports_rep[n], nframes));
+      current->cb_nframes_rep = static_cast<long int>(nframes);
+    }
     DEBUG_CFLOW_STATEMENT(std::cerr << "p2");
     current->signal_token();
     DEBUG_CFLOW_STATEMENT(std::cerr << "p3");
@@ -120,10 +120,14 @@ JACK_INTERFACE::~JACK_INTERFACE(void) {
 void JACK_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) open");
 
-  cb_buffer_repp = 0;
-  cb_nframes_rep = 0;
-  set_channels(1);
+  curpos_rep = 0;
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_f32_le);
+  toggle_interleaved_channels(false);
+
+  ports_rep.resize(channels());
+  portbufs_rep.resize(channels());
+  cb_buffers_rep.resize(channels());
+  cb_nframes_rep = 0;
 
   /* connect to server */
   if ((client_repp = jack_client_new (jackname_rep.c_str())) == 0) {
@@ -155,7 +159,12 @@ long int JACK_INTERFACE::read_samples(void* target_buffer, long int samples) {
     DEBUG_CFLOW_STATEMENT(std::cerr << "r1");
     wait_for_token();
     DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "r2");
-    memcpy(target_buffer, cb_buffer_repp, cb_nframes_rep * frame_size());
+    sample_t* ptr = static_cast<sample_t*>(target_buffer);
+    for(size_t n = 0; n < portbufs_rep.size(); n++) {
+      memcpy(ptr, cb_buffers_rep[n], cb_nframes_rep * frame_size());
+      ptr += cb_nframes_rep;
+    }
+    curpos_rep += cb_nframes_rep;
     DEBUG_CFLOW_STATEMENT(std::cerr << "r3");
     signal_completion();
     DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "r4");
@@ -170,18 +179,40 @@ void JACK_INTERFACE::write_samples(void* target_buffer, long int samples) {
     DEBUG_CFLOW_STATEMENT(std::cerr << "w1");
     wait_for_token();
     DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "w2");
-    memcpy(cb_buffer_repp, target_buffer, cb_nframes_rep * frame_size());
+    sample_t* ptr = static_cast<sample_t*>(target_buffer);
+    for(size_t n = 0; n < portbufs_rep.size(); n++) {
+      memcpy(cb_buffers_rep[n], ptr , cb_nframes_rep * frame_size());
+      ptr += cb_nframes_rep;
+    }
+    curpos_rep += cb_nframes_rep;
     DEBUG_CFLOW_STATEMENT(std::cerr << "w3");
     signal_completion();
     DEBUG_CFLOW_STATEMENT(std::cerr << "w4");
   }
 }
 
-void JACK_INTERFACE::stop(void) { 
-  AUDIO_IO_DEVICE::stop();
+void JACK_INTERFACE::connect_ports(void) { 
+  for(size_t n = 0; n < ports_rep.size(); n++) {
+    if (io_mode() == AUDIO_IO::io_read) {
+      std::string tport = "ALSA I/O:Input " + kvu_numtostr(n + 1);
+      if (jack_port_connect (client_repp, tport.c_str(), jack_port_name(ports_rep[n]))) {
+	ecadebug->msg(ECA_DEBUG::info, 
+		      "(audioio-jack) Error! Cannot connect to " + tport);
+      }
+    }
+    else {
+      std::string tport = "ALSA I/O:Output " + kvu_numtostr(n + 1);
+      if (jack_port_connect (client_repp, jack_port_name(ports_rep[n]), tport.c_str())) {
+	ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot connect to ALSA output 1!");
+      }
+    }
+  }
+}
 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) stop");
+void JACK_INTERFACE::disconnect_ports(void) { 
+  // FIXME: add proper disconnect calls
 
+  /***
   if (io_mode() == AUDIO_IO::io_read) {
     if (jack_port_disconnect (client_repp, "ALSA I/O:Input 1", jack_port_name(port_repp))) {
       ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot disconnect to ALSA input 1!");
@@ -192,13 +223,24 @@ void JACK_INTERFACE::stop(void) {
       ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot disconnect to ALSA output 1!");
     } 
   }
+  ***/
+}
+
+void JACK_INTERFACE::stop(void) { 
+  AUDIO_IO_DEVICE::stop();
+
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) stop");
+
+  disconnect_ports();
 
   if (jack_deactivate (client_repp)) {
     ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot deactive client!");
   }
 
-  if (jack_port_unregister(client_repp, port_repp)) {
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot unregister client!");
+  for(size_t n = 0; n < ports_rep.size(); n++) {
+    if (jack_port_unregister(client_repp, ports_rep[n])) {
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot unregister client port!");
+    }
   }
 }
 
@@ -210,26 +252,22 @@ void JACK_INTERFACE::start(void) {
   // FIXME: jackd doesn't seem to handle stop-start without
   //        re-registering the ports... bug or feature?
 
-  /* register one JACK port */
-  if (io_mode() == AUDIO_IO::io_read) 
-    port_repp = jack_port_register(client_repp, jackname_rep.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
-  else
-    port_repp = jack_port_register(client_repp, jackname_rep.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+  /* register JACK ports */
+  for(size_t n = 0; n < ports_rep.size(); n++) {
+    std::string cport = jackname_rep + "-" + kvu_numtostr(n + 1);
+    if (io_mode() == AUDIO_IO::io_read) {
+      ports_rep[n] = jack_port_register(client_repp, cport.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+    }
+    else {
+      ports_rep[n] = jack_port_register(client_repp, cport.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+    }
+  }
 
   if (jack_activate (client_repp)) {
     ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot active client!");
   }
 
-  if (io_mode() == AUDIO_IO::io_read) {
-    if (jack_port_connect (client_repp, "ALSA I/O:Input 1", jack_port_name(port_repp))) {
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot connect to ALSA input 1!");
-    } 
-  }
-  else {
-    if (jack_port_connect (client_repp, jack_port_name(port_repp), "ALSA I/O:Output 1")) {
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-jack) Error! Cannot connect to ALSA output 1!");
-    } 
-  }
+  connect_ports();
 }
 
 void JACK_INTERFACE::prepare(void) {
@@ -239,7 +277,7 @@ void JACK_INTERFACE::prepare(void) {
 }
 
 SAMPLE_SPECS::sample_pos_t JACK_INTERFACE::position_in_samples(void) const {
-  return(0);
+  return(curpos_rep);
 }
 
 void JACK_INTERFACE::set_parameter(int param, std::string value) {

@@ -2,6 +2,7 @@
 #define INCLUDED_AUDIOIO_JACK_H
 
 #include <string>
+#include <vector>
 
 #include <pthread.h>
 
@@ -62,20 +63,25 @@ class JACK_INTERFACE : public AUDIO_IO_DEVICE {
   bool completion_rep;
 
   jack_client_t *client_repp;
-  jack_port_t *port_repp;
-  void* cb_buffer_repp;
+  std::vector<jack_port_t*> ports_rep;
+  std::vector<sample_t*> portbufs_rep;
+  std::vector<void*> cb_buffers_rep;
   long int cb_nframes_rep;
   std::string jackname_rep;
+  SAMPLE_SPECS::sample_pos_t curpos_rep;
 
  private:
+
+  void connect_ports(void);
+  void disconnect_ports(void);
 
   void wait_for_token(void);
   void signal_token(void);
   void wait_for_completion(void);
   void signal_completion(void);
 
+  JACK_INTERFACE (const JACK_INTERFACE& x) { }
   JACK_INTERFACE& operator=(const JACK_INTERFACE& x) {  return *this; }
-
 };
 
 extern "C" {
