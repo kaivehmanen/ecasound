@@ -40,6 +40,7 @@
 #include <cmath>
 #include <vector>
 
+#include <kvu_dbc.h>
 #include <kvu_message_item.h>
 
 #include "samplebuffer_iterators.h"
@@ -128,6 +129,12 @@ void ADVANCED_COMPRESSOR::init_values(void) {
     rlevelsqn[i] = 0.0;
   for(i = 0; i < NEFILT;i++)
     rlevelsqe[i] = 0.0;
+
+  /* set defaults to some sane values */
+  peakpercent = 100.0f;
+  releasetime = 0;
+  fratio = 1.0;
+  fratio = 1.0;
 }
 
 ADVANCED_COMPRESSOR::~ADVANCED_COMPRESSOR (void)
@@ -158,10 +165,10 @@ void ADVANCED_COMPRESSOR::set_parameter(int param, CHAIN_OPERATOR::parameter_t v
       // --
       // Linear gain filters as opposed to the level measurement filters
       // --
+      DBC_CHECK(samples_per_second() != 0);
       releasetime = value;
       if (releasetime == 0) releasetime = 0.01;
-      rgainfilter = 1.0 / (releasetime * 44100.0);
-      //      rgainfilter = 1.0 / (releasetime * samples_per_second());
+      rgainfilter = 1.0 / (releasetime * samples_per_second());
       break;
     }
 
