@@ -52,13 +52,15 @@ class ARTS_INTERFACE : public AUDIO_IO_DEVICE {
   ARTS_INTERFACE (const string& name = "arts");
   ~ARTS_INTERFACE(void);
     
-  ARTS_INTERFACE* clone(void) { cerr << "Not implemented!" << endl; return this; }
-  ARTS_INTERFACE* new_expr(void) { return new ARTS_INTERFACE(); }
+  ARTS_INTERFACE* clone(void) const { cerr << "Not implemented!" << endl; return 0; }
+  ARTS_INTERFACE* new_expr(void) const { return new ARTS_INTERFACE(); }
 };
 
 extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new ARTS_INTERFACE()); }
-int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
+int audio_io_interface_version(void);
+const char* audio_io_keyword(void);
+const char* audio_io_keyword_regex(void);
 };
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef _LINEAR_ENVELOPE_H
-#define _LINEAR_ENVELOPE_H
+#ifndef INCLUDED_LINEAR_ENVELOPE_H
+#define INCLUDED_LINEAR_ENVELOPE_H
 
 #include <string>
 
@@ -22,8 +22,8 @@ class LINEAR_ENVELOPE : public FINITE_ENVELOPE {
   parameter_type get_parameter(int param) const;
 
   LINEAR_ENVELOPE(parameter_type time_in_seconds = 0.0); 
-  LINEAR_ENVELOPE* clone(void)  { return new LINEAR_ENVELOPE(*this); }
-  LINEAR_ENVELOPE* new_expr(void)  { return new LINEAR_ENVELOPE(*this); }
+  LINEAR_ENVELOPE* clone(void) const { return new LINEAR_ENVELOPE(*this); }
+  LINEAR_ENVELOPE* new_expr(void) const { return new LINEAR_ENVELOPE(*this); }
 
   private:
 

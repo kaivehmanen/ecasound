@@ -87,8 +87,8 @@ class OPERATOR : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type> {
    */
   virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd);
 
-  virtual OPERATOR* clone(void) = 0;
-  virtual OPERATOR* new_expr(void) = 0;
+  virtual OPERATOR* clone(void) const = 0;
+  virtual OPERATOR* new_expr(void) const = 0;
 
   virtual ~OPERATOR (void);
 };

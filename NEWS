@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 211001) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 291001) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -18,19 +18,22 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.3 *-
 
 ????2001 (v2.1dev4)
-	- added: eiam - 'cs-option' commmand; see below
+	- added: eiam - 'cs-option' commmand; although explicit use 
+		 of cmd-line options as iactive-mod commands (like 
+                 "-i:file.wav") is still supported, "cs-option 
+                 -i:file.wav" is now the preferred syntax
 	- removed: ecasound FAQ file - it only contains about 	 
 		   a pageful of useful text - I moved that
 		   precious piece of content to the user's 
 		   guide :)
-	- changed: support for explicit use of cmd-line options 
-		   as iactive-mod commands (like "-i:file.wav)
-	           dropped; they can still be used when given 
-		   as arguments to the 'cs-option' command
 	- changed: uses of '-i' an '-o' replaced with 'ai-add' 
 		   and 'ao-add' in ECI documentation and 
 		   code examples in 'ecasound/examples'
 	- changed: user's and programmer's guides updated
+	- changed: bug-alert; major rewrite of ecasound's 
+                   internal object factory code
+	- changed: eiam - output of aio-register, cop-register,
+		   ladspa-register and preset-register commands
 21102001 (v2.1dev3)
 	- note: major changes to effect preset system which 
 		break some old preset definitions

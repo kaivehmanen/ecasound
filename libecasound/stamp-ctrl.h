@@ -35,8 +35,8 @@ class VOLUME_ANALYZE_CONTROLLER : public AUDIO_STAMP_CONTROLLER {
   virtual parameter_type get_parameter(int param) const;
 
   VOLUME_ANALYZE_CONTROLLER(void); 
-  VOLUME_ANALYZE_CONTROLLER* clone(void)  { return new VOLUME_ANALYZE_CONTROLLER(*this); }
-  VOLUME_ANALYZE_CONTROLLER* new_expr(void)  { return new VOLUME_ANALYZE_CONTROLLER(*this); }
+  VOLUME_ANALYZE_CONTROLLER* clone(void) const { return new VOLUME_ANALYZE_CONTROLLER(*this); }
+  VOLUME_ANALYZE_CONTROLLER* new_expr(void) const { return new VOLUME_ANALYZE_CONTROLLER(*this); }
 
  private:
 

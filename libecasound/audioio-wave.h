@@ -115,8 +115,8 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
 
   WAVEFILE (const std::string& name = "");
   ~WAVEFILE(void);
-  WAVEFILE* clone(void) { std::cerr << "Not implemented!" << std::endl; return this; }
-  WAVEFILE* new_expr(void) { return new WAVEFILE(); }
+  WAVEFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  WAVEFILE* new_expr(void) const { return new WAVEFILE(); }
 
  private:
 

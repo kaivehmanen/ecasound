@@ -65,8 +65,8 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 
   OSSDEVICE (const std::string& name = "/dev/dsp", bool precise_sample_rates = false);
   ~OSSDEVICE(void);
-  OSSDEVICE* clone(void) { std::cerr << "Not implemented!" << std::endl; return this; }
-  OSSDEVICE* new_expr(void) { return new OSSDEVICE(); }
+  OSSDEVICE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  OSSDEVICE* new_expr(void) const { return new OSSDEVICE(); }
 
  private:
   

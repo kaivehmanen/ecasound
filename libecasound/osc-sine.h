@@ -1,5 +1,5 @@
-#ifndef _SINE_OSCILLATOR_H
-#define _SINE_OSCILLATOR_H
+#ifndef INCLUDED_SINE_OSCILLATOR_H
+#define INCLUDED_SINE_OSCILLATOR_H
 
 #include <string>
 
@@ -25,8 +25,8 @@ class SINE_OSCILLATOR : public OSCILLATOR {
   std::string name(void) const { return("Sine oscillator"); }
   parameter_type value(void);
 
-  SINE_OSCILLATOR* clone(void)  { return new SINE_OSCILLATOR(*this); }
-  SINE_OSCILLATOR* new_expr(void)  { return new SINE_OSCILLATOR(); }
+  SINE_OSCILLATOR* clone(void) const { return new SINE_OSCILLATOR(*this); }
+  SINE_OSCILLATOR* new_expr(void) const { return new SINE_OSCILLATOR(); }
   SINE_OSCILLATOR (double freq = 0, double initial_phase = 0);
 };
 

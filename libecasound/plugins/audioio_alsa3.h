@@ -17,7 +17,6 @@
 #include "samplebuffer.h"
 #include "audioio-types.h"
 #include "audioio-types.h"
-#include "eca-version.h"
 
 #ifdef ALSALIB_060
 #include <alsa/asoundlib.h>
@@ -98,8 +97,8 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
 
   ALSA_PCM_DEVICE_06X (int card = 0, int device = 0, int subdevice = -1);
   virtual ~ALSA_PCM_DEVICE_06X(void);
-  ALSA_PCM_DEVICE_06X* clone(void) { cerr << "Not implemented!" << endl; return this; }
-  ALSA_PCM_DEVICE_06X* new_expr(void) { return new ALSA_PCM_DEVICE_06X(); }
+  ALSA_PCM_DEVICE_06X* clone(void) const { cerr << "Not implemented!" << endl; return 0; }
+  ALSA_PCM_DEVICE_06X* new_expr(void) const { return new ALSA_PCM_DEVICE_06X(); }
   
  private:
 
@@ -110,6 +109,8 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
 extern "C" {
 AUDIO_IO* audio_io_descriptor(void);
 int audio_io_interface_version(void);
+const char* audio_io_keyword(void);
+const char* audio_io_keyword_regex(void);
 };
 
 #endif

@@ -45,10 +45,9 @@
 
 #include "osc-gen-file.h"
 
+#include "eca-object-factory.h"
 #include "eca-error.h"
 #include "eca-debug.h"
-
-#include "eca-static-object-maps.h"
 #include "eca-comhelp.h"
 #include "eca-session.h"
 #include "eca-chainsetup.h"
@@ -62,15 +61,14 @@ ECA_SESSION::ECA_SESSION(void) {
 }
 
 ECA_SESSION::~ECA_SESSION(void) {
-//    ecadebug->msg(ECA_DEBUG::system_objects,"ECA_SESSION destructor!");
+  // ecadebug->msg(ECA_DEBUG::system_objects,"ECA_SESSION destructor!");
 
   for(std::vector<ECA_CHAINSETUP*>::iterator q = chainsetups_rep.begin(); q != chainsetups_rep.end(); q++) {
     delete *q;
   }
 
-  
-  /* delete static object maps */
-  unregister_default_objects();
+  /* delete the object factory */
+  ECA_OBJECT_FACTORY::free_factory();
 }
 
 ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
@@ -103,8 +101,8 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
 }
 
 void ECA_SESSION::set_defaults(void) {
-  /* create static object maps */
-  register_default_objects();
+  /* create the object factory */
+  ECA_OBJECT_FACTORY::reserve_factory();
 
   connected_chainsetup_repp = 0;
   selected_chainsetup_repp = 0;

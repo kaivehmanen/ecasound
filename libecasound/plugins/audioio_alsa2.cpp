@@ -40,6 +40,14 @@
 
 #include "eca-error.h"
 #include "eca-debug.h"
+#include "eca-version.h"
+
+static const char* audio_io_keyword_const = "alsa_05";
+static const char* audio_io_keyword_regex_const = "^alsa_05$";
+
+const char* audio_io_keyword(void){return(audio_io_keyword_const); }
+const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
+int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
 
 ALSA_PCM_DEVICE_05X::ALSA_PCM_DEVICE_05X (int card, 
 				    int device, 

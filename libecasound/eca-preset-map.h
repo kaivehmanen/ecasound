@@ -1,13 +1,14 @@
 #ifndef INCLUDED_ECA_PRESET_MAP_H
 #define INCLUDED_ECA_PRESET_MAP_H
 
+#include <list>
 #include <string>
-#include <vector>
-#include <map>
 
 #include "preset.h"
 #include "eca-object-map.h"
 #include "resource-file.h"
+
+class ECA_OBJECT;
 
 /**
  * Dynamic register for storing effect presets
@@ -18,22 +19,23 @@ class ECA_PRESET_MAP : public ECA_OBJECT_MAP {
 
  private:
 
-  mutable std::map<std::string, PRESET*> object_map;
-  mutable std::map<std::string,string> object_keyword_map;
+  std::list<std::string> preset_keywords_rep;
 
   void load_preset_file(const std::string& fname);
 
  public:
 
-  virtual void register_object(const std::string& id_string, PRESET* object);
+  virtual void register_object(const std::string& keyword, const std::string& matchstr, PRESET* object);
   virtual void unregister_object(const std::string& keyword);
-  virtual const std::map<std::string,std::string>& registered_objects(void) const;
-  virtual ECA_OBJECT* object(const std::string& keyword, bool use_regexp = false) const;
-  virtual std::string object_identifier(const PRESET* object) const;
-  virtual void flush(void);
+
+  virtual bool has_keyword(const std::string& keyword) const;
+  virtual const std::list<std::string>& registered_objects(void) const;
+
+  virtual const ECA_OBJECT* object(const std::string& keyword) const;
+  virtual const ECA_OBJECT* object_expr(const string& expr) const;
 
   ECA_PRESET_MAP(void);
-  virtual ~ECA_PRESET_MAP(void);
+  virtual ~ECA_PRESET_MAP(void){}
 };
 
 #endif

@@ -22,8 +22,8 @@ public:
     std::string name(void) const { return("Generic linear envelope"); }
     
     GENERIC_LINEAR_ENVELOPE(void); 
-    GENERIC_LINEAR_ENVELOPE* clone(void)  { return new GENERIC_LINEAR_ENVELOPE(*this); }
-    GENERIC_LINEAR_ENVELOPE* new_expr(void)  { return new GENERIC_LINEAR_ENVELOPE(); }
+    GENERIC_LINEAR_ENVELOPE* clone(void) const { return new GENERIC_LINEAR_ENVELOPE(*this); }
+    GENERIC_LINEAR_ENVELOPE* new_expr(void) const { return new GENERIC_LINEAR_ENVELOPE(); }
     
 private:
     

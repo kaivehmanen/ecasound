@@ -66,8 +66,8 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_LADSPA* clone(void);
-  EFFECT_LADSPA* new_expr(void)  { return new EFFECT_LADSPA(plugin_desc); }
+  EFFECT_LADSPA* clone(void) const;
+  EFFECT_LADSPA* new_expr(void) const { return new EFFECT_LADSPA(plugin_desc); }
   EFFECT_LADSPA (const LADSPA_Descriptor *plugin_desc = 0) throw(ECA_ERROR&);
   ~EFFECT_LADSPA (void);
 

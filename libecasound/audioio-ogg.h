@@ -62,8 +62,8 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   OGG_VORBIS_INTERFACE (const std::string& name = "");
   ~OGG_VORBIS_INTERFACE(void);
     
-  OGG_VORBIS_INTERFACE* clone(void) { return new OGG_VORBIS_INTERFACE(*this); }
-  OGG_VORBIS_INTERFACE* new_expr(void) { return new OGG_VORBIS_INTERFACE(*this); }
+  OGG_VORBIS_INTERFACE* clone(void) const { return new OGG_VORBIS_INTERFACE(*this); }
+  OGG_VORBIS_INTERFACE* new_expr(void) const { return new OGG_VORBIS_INTERFACE(*this); }
 };
 
 #endif

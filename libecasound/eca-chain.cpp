@@ -36,8 +36,7 @@
 #include "file-preset.h"
 #include "global-preset.h"
 #include "audiofx_ladspa.h"
-#include "eca-object-map.h"
-#include "eca-static-object-maps.h"
+#include "eca-object-factory.h"
 #include "eca-chain.h"
 #include "eca-chainop.h"
 
@@ -296,7 +295,7 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller) {
   // --------
   gcontroller->assign_target(selected_dynobj_repp);
   gcontrollers_rep.push_back(gcontroller);
-  ecadebug->msg("(eca-chain) " + gcontroller->status());
+  ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chain) " + gcontroller->status());
   selected_controller_repp = gcontroller;
   selected_controller_number_rep = gcontrollers_rep.size();
 }
@@ -603,7 +602,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
     if (chainop->number_of_params() > 0) t << ",";
   }
   else {
-    t << "-" << eca_chain_operator_map->object_identifier(chainop);
+    t << "-" << ECA_OBJECT_FACTORY::object_identifier(chainop);
     if (chainop->number_of_params() > 0) t << ":";
   }
   // --<
@@ -626,7 +625,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
 
 string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const {
   MESSAGE_ITEM t; 
-  t << "-" << eca_controller_map->object_identifier(gctrl);
+  t << "-" << ECA_OBJECT_FACTORY::object_identifier(gctrl);
   t << ":";
   for(int n = 0; n < gctrl->number_of_params(); n++) {
     t << gctrl->get_parameter(n + 1);

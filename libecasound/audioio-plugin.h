@@ -7,8 +7,9 @@ typedef AUDIO_IO *
 (*audio_io_descriptor)(void);
 typedef int 
 (*audio_io_interface_version)(void);
-
-// FIXME: add support for plugin-specified 
-//        regexps/tags
+typedef const char *  
+(*audio_io_keyword)(void);
+typedef const char *  
+(*audio_io_keyword_regex)(void);
 
 #endif

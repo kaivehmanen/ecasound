@@ -289,6 +289,56 @@ be in sync. This problem is explained in detail in the Linux
 Audio-Quality HOWTO - ``http://www.linuxdj.com/audio/quality/'',
 section "Notes on Full Duplex Recording, and Other Realtime Issues".
 
+\subsubsection{Problems with panning mono files}
+In situations where you need to convert mono
+audio objects to multichannel objects, ecasound
+can behave in somewhat unexpected manner.
+
+For instance, the correct way to set panning for 
+three individual mono input files, and mix the
+resulting stereo output to soundcard, is:
+
+\begin{verbatim}
+ecasound -a:1 -i:monofile1.wav -erc:1,2 -epp:0 \
+         -a:2 -i:monofile2.wav -erc:1,2 -epp:50 \
+         -a:3 -i:monofile3.wav -erc:1,2 -epp:100 \
+         -a:all -f:16,2,44100 -o:/dev/dsp
+\end{verbatim}
+
+The actual signal chain is something like:
+
+\begin{verbatim}  
+monofile1.wav |--'1'---- erc ----| epp |---\
+                           \-----|     |---\\
+                                            \\
+monofile2.wav |--'2'---- erc ----| epp |------- | /dev/dsp
+                           \-----|     |------- | 
+                                            //
+monofile3.wav |--'3'---- erc ----| epp |---//
+                           \-----|     |---/
+
+('---' = mono channel)
+\end{verbatim}
+
+The critical points to notice are:
+ 
+\begin{itemize}
+\item ecasound automatically notices that the three
+      input files are mono files so chains are initialized
+      with one mono input
+\item chains contain mono signal until -erc operator,
+      which transforms the chain into a stereo chain
+      by copying the data from ch1 to ch2
+\item now -epp works as excepted (sets the stereo balance
+      for one input)
+\item chains are mixed to the soundcard device channel-wise
+\end{itemize} 
+
+If you leave out the -erc operators, chains will still be converted 
+to stereo (as -epp is a stereo operator), but on each chain, only 
+the first channel (left) will contain any audio from the input 
+files.
+
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
 \section{User interfaces}

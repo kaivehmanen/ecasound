@@ -40,6 +40,7 @@
 #include "audioio-types.h"
 #include "audioio_alsa3.h"
 
+#include "eca-version.h"
 #include "eca-error.h"
 #include "eca-debug.h"
 
@@ -56,6 +57,7 @@ do { \
 #endif
 
 const string ALSA_PCM_DEVICE_06X::default_pcm_device_rep = "default";
+
 
 ALSA_PCM_DEVICE_06X::ALSA_PCM_DEVICE_06X (int card, 
 					  int device, 

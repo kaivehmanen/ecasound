@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-static-object-maps.h: Static object map instances
-// Copyright (C) 2000,2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <cstdlib>
+#include <iostream>
 #include <string>
 #include <algorithm>
 
@@ -94,197 +95,267 @@ extern "C" {
 #include "eca-resources.h"
 #include "eca-error.h"
 
-ECA_OBJECT_MAP* eca_audio_object_map = 0;
-ECA_OBJECT_MAP* eca_chain_operator_map = 0;
-ECA_OBJECT_MAP* eca_ladspa_plugin_map = 0;
-ECA_OBJECT_MAP* eca_ladspa_plugin_id_map = 0;
-ECA_OBJECT_MAP* eca_controller_map = 0;
-ECA_OBJECT_MAP* eca_midi_device_map = 0;
-ECA_PRESET_MAP* eca_preset_map = 0;
+using std::cerr;
+using std::endl;
+using std::string;
+using std::vector;
 
-/* ECA_VST_PLUGIN_MAP* eca_vst_plugin_map = 0; */
+static ECA_OBJECT_MAP* eca_audio_object_map = 0;
+static ECA_OBJECT_MAP* eca_chain_operator_map = 0;
+static ECA_OBJECT_MAP* eca_ladspa_plugin_map = 0;
+static ECA_OBJECT_MAP* eca_ladspa_plugin_id_map = 0;
+static ECA_OBJECT_MAP* eca_controller_map = 0;
+static ECA_OBJECT_MAP* eca_midi_device_map = 0;
+static ECA_PRESET_MAP* eca_preset_map = 0;
+static ECA_OBJECT_MAP* eca_empty_map = 0;
 
-static int ecasound_default_map_ref_count = 0;
+/* static ECA_VST_PLUGIN_MAP* eca_vst_plugin_map = 0; */
 
-void register_default_audio_objects(void);
-void register_default_controllers(void);
-void register_default_chainops(void);
-void register_default_presets(void);
-void register_ladspa_plugins(void);
-void register_internal_plugins(void);
-void register_default_midi_devices(void);
+static int eca_default_objects_registered = 0;
 
-vector<EFFECT_LADSPA*> create_plugins(const std::string& fname);
+static void register_default_audio_objects(void);
+static void register_default_controllers(void);
+static void register_default_chainops(void);
+static void register_default_presets(void);
+static void register_ladspa_plugins(void);
+static void register_internal_audioio_plugins(void);
+static void register_default_midi_devices(void);
 
-void register_default_objects(void) {
-  if (ecasound_default_map_ref_count > 0) return;
-  ++ecasound_default_map_ref_count;
+static vector<EFFECT_LADSPA*> create_plugins(const string& fname);
+static void register_internal_audioio_plugin(const string& libdir, const string& filename);
+static ECA_OBJECT_MAP* check_map_validity(ECA_OBJECT_MAP* mapobj);
 
-  eca_audio_object_map = new ECA_OBJECT_MAP();
-  eca_chain_operator_map = new ECA_OBJECT_MAP();
-  eca_ladspa_plugin_map = new ECA_OBJECT_MAP();
-  eca_ladspa_plugin_id_map = new ECA_OBJECT_MAP();
-  eca_controller_map = new ECA_OBJECT_MAP();
-  eca_midi_device_map = new ECA_OBJECT_MAP();
-  eca_preset_map = new ECA_PRESET_MAP();
-
-/*    eca_vst_plugin_map = new ECA_VST_PLUGIN_MAP(); */
-
-  register_default_controllers();
-  register_default_chainops();
-  register_default_audio_objects();
-  register_default_midi_devices();
-  register_internal_plugins();
-  register_ladspa_plugins();
+static ECA_OBJECT_MAP* check_map_validity(ECA_OBJECT_MAP* mapobj) {
+  if (mapobj == 0) {
+    if (eca_empty_map == 0) {
+      eca_empty_map = new ECA_OBJECT_MAP();
+    }
+    std::cerr << "(eca-static-object-maps) Warning! Access to uninitialized object map!" << std::endl;
+    return(eca_empty_map);
+  }
+  return(mapobj);
 }
 
-void unregister_default_objects(void) {
-  --ecasound_default_map_ref_count;
-  if (ecasound_default_map_ref_count != 0) return;
 
-  delete eca_audio_object_map;
-  delete eca_chain_operator_map;
-  delete eca_ladspa_plugin_map;
-  eca_ladspa_plugin_id_map->flush();
-  delete eca_ladspa_plugin_id_map;
-  delete eca_controller_map;
-  delete eca_midi_device_map;
-  delete eca_preset_map;
-
-#ifdef FEELING_EXPERIMENTAL
-  delete eca_vst_plugin_map;
-#endif
-
-  eca_audio_object_map = 0;
-  eca_chain_operator_map = 0;
-  eca_ladspa_plugin_map = 0;
-  eca_ladspa_plugin_id_map = 0;
-  eca_controller_map = 0;
-  eca_midi_device_map = 0;
-  eca_preset_map = 0;
-
-#ifdef FEELING_EXPERIMENTAL
-  eca_vst_plugin_map = 0;
-#endif
+ECA_OBJECT_MAP* ECA_STATIC_OBJECT_MAPS::audio_object_map(void) 
+{
+  return(check_map_validity(eca_audio_object_map));
 }
 
-void register_default_audio_objects(void) {
-  eca_audio_object_map->register_object("\\.wav$", new WAVEFILE());
-  eca_audio_object_map->register_object("\\.ewf$", new EWFFILE());
-  eca_audio_object_map->register_object("\\.cdr$", new CDRFILE());
+ECA_OBJECT_MAP* ECA_STATIC_OBJECT_MAPS::chain_operator_map(void)
+{
+  return(check_map_validity(eca_chain_operator_map));
+}
+
+ECA_OBJECT_MAP* ECA_STATIC_OBJECT_MAPS::ladspa_plugin_map(void)
+{
+  return(check_map_validity(eca_ladspa_plugin_map));
+}
+
+ECA_OBJECT_MAP* ECA_STATIC_OBJECT_MAPS::ladspa_plugin_id_map(void)
+{
+  return(check_map_validity(eca_ladspa_plugin_id_map));
+}
+
+ECA_OBJECT_MAP* ECA_STATIC_OBJECT_MAPS::controller_map(void) 
+{
+  return(check_map_validity(eca_controller_map));
+}
+
+ECA_OBJECT_MAP* ECA_STATIC_OBJECT_MAPS::midi_device_map(void) 
+{
+  return(check_map_validity(eca_midi_device_map));
+}
+
+ECA_PRESET_MAP* ECA_STATIC_OBJECT_MAPS::preset_map(void) 
+{
+  return(static_cast<ECA_PRESET_MAP*>(check_map_validity(static_cast<ECA_OBJECT_MAP*>(eca_preset_map))));
+}
+
+bool ECA_STATIC_OBJECT_MAPS::default_objects_registered(void) {
+  if (eca_default_objects_registered == 0) return(false);
+
+  return(true);
+}
+
+void ECA_STATIC_OBJECT_MAPS::register_default_objects(void) {
+  if (eca_default_objects_registered == 0) {
+
+    //  std::cerr << "Creating factory." << endl;
+
+    eca_audio_object_map = new ECA_OBJECT_MAP();
+    eca_chain_operator_map = new ECA_OBJECT_MAP();
+    eca_ladspa_plugin_map = new ECA_OBJECT_MAP();
+    eca_ladspa_plugin_id_map = new ECA_OBJECT_MAP();
+    eca_controller_map = new ECA_OBJECT_MAP();
+    eca_midi_device_map = new ECA_OBJECT_MAP();
+    eca_preset_map = new ECA_PRESET_MAP();
+
+    /*  eca_vst_plugin_map = new ECA_VST_PLUGIN_MAP(); */
+
+    register_default_controllers();
+    register_default_chainops();
+    register_default_audio_objects();
+    register_default_midi_devices();
+    register_internal_audioio_plugins();
+    register_ladspa_plugins();
+  }
+
+  ++eca_default_objects_registered;
+}
+
+void ECA_STATIC_OBJECT_MAPS::unregister_default_objects(void) {
+  --eca_default_objects_registered;
+  if (eca_default_objects_registered == 0) {
+
+    //  std::cerr << "Deleting factory." << endl;
+
+    delete eca_audio_object_map;
+    delete eca_chain_operator_map;
+    delete eca_ladspa_plugin_map;
+    eca_ladspa_plugin_id_map->flush();
+    delete eca_ladspa_plugin_id_map;
+    delete eca_controller_map;
+    delete eca_midi_device_map;
+    delete eca_preset_map;
+    
+#ifdef FEELING_EXPERIMENTAL
+    delete eca_vst_plugin_map;
+#endif
+    
+    eca_audio_object_map = 0;
+    eca_chain_operator_map = 0;
+    eca_ladspa_plugin_map = 0;
+    eca_ladspa_plugin_id_map = 0;
+    eca_controller_map = 0;
+    eca_midi_device_map = 0;
+    eca_preset_map = 0;
+    
+#ifdef FEELING_EXPERIMENTAL
+    eca_vst_plugin_map = 0;
+#endif
+  }
+}
+
+static void register_default_audio_objects(void) {
+  eca_audio_object_map->register_object("wav", "wav$", new WAVEFILE());
+  eca_audio_object_map->register_object("ewf", "ewf$", new EWFFILE());
+  eca_audio_object_map->register_object("cdr", "cdr$", new CDRFILE());
 
   AUDIO_IO* raw = new RAWFILE();
-  eca_audio_object_map->register_object("\\.raw$", raw);
+  eca_audio_object_map->register_object("raw", "raw$", raw);
 
   AUDIO_IO* mp3 = new MP3FILE();
-  eca_audio_object_map->register_object("\\.mp3$", mp3);
-  eca_audio_object_map->register_object("\\.mp2$", mp3);
+  eca_audio_object_map->register_object("mp3", "mp3$", mp3);
+  eca_audio_object_map->register_object("mp2", "mp2$", mp3);
 
   AUDIO_IO* ogg = new OGG_VORBIS_INTERFACE();
-  eca_audio_object_map->register_object("\\.ogg$", ogg);
+  eca_audio_object_map->register_object("ogg", "ogg$", ogg);
 
   AUDIO_IO* mikmod = new MIKMOD_INTERFACE();
-  eca_audio_object_map->register_object("\\.669$", mikmod);
-  eca_audio_object_map->register_object("\\.amf$", mikmod);
-  eca_audio_object_map->register_object("\\.dsm$", mikmod);
-  eca_audio_object_map->register_object("\\.far$", mikmod);
-  eca_audio_object_map->register_object("\\.gdm$", mikmod);
-  eca_audio_object_map->register_object("\\.imf$", mikmod);
-  eca_audio_object_map->register_object("\\.it$", mikmod);
-  eca_audio_object_map->register_object("\\.m15$", mikmod);
-  eca_audio_object_map->register_object("\\.ed$", mikmod);
-  eca_audio_object_map->register_object("\\.mod$", mikmod);
-  eca_audio_object_map->register_object("\\.mtm$", mikmod);
-  eca_audio_object_map->register_object("\\.s3m$", mikmod);
-  eca_audio_object_map->register_object("\\.stm$", mikmod);
-  eca_audio_object_map->register_object("\\.stx$", mikmod);
-  eca_audio_object_map->register_object("\\.ult$", mikmod);
-  eca_audio_object_map->register_object("\\.uni$", mikmod);
-  eca_audio_object_map->register_object("\\.xm$", mikmod);
+  eca_audio_object_map->register_object("mikmod_669", "669$", mikmod);
+  eca_audio_object_map->register_object("mikmod_amf", "amf$", mikmod);
+  eca_audio_object_map->register_object("mikmod_dsm", "dsm$", mikmod);
+  eca_audio_object_map->register_object("mikmod_far", "far$", mikmod);
+  eca_audio_object_map->register_object("mikmod_gdm", "gdm$", mikmod);
+  eca_audio_object_map->register_object("mikmod_imf", "imf$", mikmod);
+  eca_audio_object_map->register_object("mikmod_it", "it$", mikmod);
+  eca_audio_object_map->register_object("mikmod_m15", "m15$", mikmod);
+  eca_audio_object_map->register_object("mikmod_ed", "ed$", mikmod);
+  eca_audio_object_map->register_object("mikmod_mod", "mod$", mikmod);
+  eca_audio_object_map->register_object("mikmod_mtm", "mtm$", mikmod);
+  eca_audio_object_map->register_object("mikmod_s3m", "s3m$", mikmod);
+  eca_audio_object_map->register_object("mikmod_stm", "stm$", mikmod);
+  eca_audio_object_map->register_object("mikmod_stx", "stx$", mikmod);
+  eca_audio_object_map->register_object("mikmod_ult", "ult$", mikmod);
+  eca_audio_object_map->register_object("mikmod_uni", "uni$", mikmod);
+  eca_audio_object_map->register_object("mikmod_xm", "xm$", mikmod);
 
   AUDIO_IO* timidity = new TIMIDITY_INTERFACE();
-  eca_audio_object_map->register_object("\\.mid$", timidity);
-  eca_audio_object_map->register_object("\\.midi$", timidity);
+  eca_audio_object_map->register_object("mid", "mid$", timidity);
+  eca_audio_object_map->register_object("midi", "midi$", timidity);
 
   AUDIO_IO* device = 0;  
 #ifdef COMPILE_OSS
   device = new OSSDEVICE();
-  eca_audio_object_map->register_object("/dev/dsp[0-9]*", device);
+  eca_audio_object_map->register_object("/dev/dsp", "/dev/dsp[0-9]*", device);
 #endif
 
   device = new REALTIME_NULL();
-  eca_audio_object_map->register_object("^rtnull$", device);
+  eca_audio_object_map->register_object("rtnull", "^rtnull$", device);
 
-  eca_audio_object_map->register_object("^-$", raw);
-  eca_audio_object_map->register_object("^stdin$", raw);
-  eca_audio_object_map->register_object("^stdout$", raw);
-  eca_audio_object_map->register_object("^null$", new NULLFILE());
-  eca_audio_object_map->register_object("^typeselect$", new AUDIO_IO_TYPESELECT());
+  eca_audio_object_map->register_object("-", "^-$", raw);
+  eca_audio_object_map->register_object("stdin", "^stdin$", raw);
+  eca_audio_object_map->register_object("stdout", "^stdout$", raw);
+  eca_audio_object_map->register_object("null", "^null$", new NULLFILE());
+  eca_audio_object_map->register_object("typeselect", "^typeselect$", new AUDIO_IO_TYPESELECT());
 }
 
-void register_default_chainops(void) {
-  eca_chain_operator_map->register_object("^eS$", new EFFECT_AUDIO_STAMP());
-  eca_chain_operator_map->register_object("^ea$", new EFFECT_AMPLIFY());
-  eca_chain_operator_map->register_object("^eac$", new EFFECT_AMPLIFY_CHANNEL());
-  eca_chain_operator_map->register_object("^eal$", new EFFECT_LIMITER());
-  eca_chain_operator_map->register_object("^eaw$", new EFFECT_AMPLIFY_CLIPCOUNT());
-  eca_chain_operator_map->register_object("^ec$", new EFFECT_COMPRESS());
-  eca_chain_operator_map->register_object("^eca$", new ADVANCED_COMPRESSOR());
-  eca_chain_operator_map->register_object("^eemb$", new EFFECT_PULSE_GATE_BPM());
-  eca_chain_operator_map->register_object("^eemp$", new EFFECT_PULSE_GATE());
-  eca_chain_operator_map->register_object("^eemt$", new EFFECT_TREMOLO());
-  eca_chain_operator_map->register_object("^ef1$", new EFFECT_RESONANT_BANDPASS());
-  eca_chain_operator_map->register_object("^ef3$", new EFFECT_RESONANT_LOWPASS());
-  eca_chain_operator_map->register_object("^ef4$", new EFFECT_RC_LOWPASS_FILTER());
-  eca_chain_operator_map->register_object("^efa$", new EFFECT_ALLPASS_FILTER());
-  eca_chain_operator_map->register_object("^efb$", new EFFECT_BANDPASS());
-  eca_chain_operator_map->register_object("^efc$", new EFFECT_COMB_FILTER());
-  eca_chain_operator_map->register_object("^efh$", new EFFECT_HIGHPASS());
-  eca_chain_operator_map->register_object("^efi$", new EFFECT_INVERSE_COMB_FILTER());
-  eca_chain_operator_map->register_object("^efl$", new EFFECT_LOWPASS());
-  eca_chain_operator_map->register_object("^efr$", new EFFECT_BANDREJECT());
-  eca_chain_operator_map->register_object("^efs$", new EFFECT_RESONATOR());
-  eca_chain_operator_map->register_object("^ei$", new EFFECT_PITCH_SHIFT());
-  eca_chain_operator_map->register_object("^enm$", new EFFECT_NOISEGATE());
-  eca_chain_operator_map->register_object("^epp$", new EFFECT_NORMAL_PAN());
-  eca_chain_operator_map->register_object("^erc$", new EFFECT_CHANNEL_COPY());
-  eca_chain_operator_map->register_object("^erm$", new EFFECT_MIX_TO_CHANNEL());
-  eca_chain_operator_map->register_object("^etc$", new EFFECT_CHORUS());
-  eca_chain_operator_map->register_object("^etd$", new EFFECT_DELAY());
-  eca_chain_operator_map->register_object("^ete$", new ADVANCED_REVERB());
-  eca_chain_operator_map->register_object("^etf$", new EFFECT_FAKE_STEREO());
-  eca_chain_operator_map->register_object("^etl$", new EFFECT_FLANGER());
-  eca_chain_operator_map->register_object("^etm$", new EFFECT_MULTITAP_DELAY());
-  eca_chain_operator_map->register_object("^etp$", new EFFECT_PHASER());
-  eca_chain_operator_map->register_object("^etr$", new EFFECT_REVERB());
-  eca_chain_operator_map->register_object("^ev$", new EFFECT_ANALYZE());
-  eca_chain_operator_map->register_object("^ezf$", new EFFECT_DCFIND());
-  eca_chain_operator_map->register_object("^ezx$", new EFFECT_DCFIX());
-  eca_chain_operator_map->register_object("^gc$", new TIME_CROP_GATE());
-  eca_chain_operator_map->register_object("^ge$", new THRESHOLD_GATE());
+static void register_default_chainops(void) {
+  eca_chain_operator_map->register_object("eS", "^eS$", new EFFECT_AUDIO_STAMP());
+  eca_chain_operator_map->register_object("ea", "^ea$", new EFFECT_AMPLIFY());
+  eca_chain_operator_map->register_object("eac", "^eac$", new EFFECT_AMPLIFY_CHANNEL());
+  eca_chain_operator_map->register_object("eal", "^eal$", new EFFECT_LIMITER());
+  eca_chain_operator_map->register_object("eaw", "^eaw$", new EFFECT_AMPLIFY_CLIPCOUNT());
+  eca_chain_operator_map->register_object("ec", "^ec$", new EFFECT_COMPRESS());
+  eca_chain_operator_map->register_object("eca", "^eca$", new ADVANCED_COMPRESSOR());
+  eca_chain_operator_map->register_object("eemb", "^eemb$", new EFFECT_PULSE_GATE_BPM());
+  eca_chain_operator_map->register_object("eemp", "^eemp$", new EFFECT_PULSE_GATE());
+  eca_chain_operator_map->register_object("eemt", "^eemt$", new EFFECT_TREMOLO());
+  eca_chain_operator_map->register_object("ef1", "^ef1$", new EFFECT_RESONANT_BANDPASS());
+  eca_chain_operator_map->register_object("ef3", "^ef3$", new EFFECT_RESONANT_LOWPASS());
+  eca_chain_operator_map->register_object("ef4", "^ef4$", new EFFECT_RC_LOWPASS_FILTER());
+  eca_chain_operator_map->register_object("efa", "^efa$", new EFFECT_ALLPASS_FILTER());
+  eca_chain_operator_map->register_object("efb", "^efb$", new EFFECT_BANDPASS());
+  eca_chain_operator_map->register_object("efc", "^efc$", new EFFECT_COMB_FILTER());
+  eca_chain_operator_map->register_object("efh", "^efh$", new EFFECT_HIGHPASS());
+  eca_chain_operator_map->register_object("efi", "^efi$", new EFFECT_INVERSE_COMB_FILTER());
+  eca_chain_operator_map->register_object("efl", "^efl$", new EFFECT_LOWPASS());
+  eca_chain_operator_map->register_object("efr", "^efr$", new EFFECT_BANDREJECT());
+  eca_chain_operator_map->register_object("efs", "^efs$", new EFFECT_RESONATOR());
+  eca_chain_operator_map->register_object("ei", "^ei$", new EFFECT_PITCH_SHIFT());
+  eca_chain_operator_map->register_object("enm", "^enm$", new EFFECT_NOISEGATE());
+  eca_chain_operator_map->register_object("epp", "^epp$", new EFFECT_NORMAL_PAN());
+  eca_chain_operator_map->register_object("erc", "^erc$", new EFFECT_CHANNEL_COPY());
+  eca_chain_operator_map->register_object("erm", "^erm$", new EFFECT_MIX_TO_CHANNEL());
+  eca_chain_operator_map->register_object("etc", "^etc$", new EFFECT_CHORUS());
+  eca_chain_operator_map->register_object("etd", "^etd$", new EFFECT_DELAY());
+  eca_chain_operator_map->register_object("ete", "^ete$", new ADVANCED_REVERB());
+  eca_chain_operator_map->register_object("etf", "^etf$", new EFFECT_FAKE_STEREO());
+  eca_chain_operator_map->register_object("etl", "^etl$", new EFFECT_FLANGER());
+  eca_chain_operator_map->register_object("etm", "^etm$", new EFFECT_MULTITAP_DELAY());
+  eca_chain_operator_map->register_object("etp", "^etp$", new EFFECT_PHASER());
+  eca_chain_operator_map->register_object("etr", "^etr$", new EFFECT_REVERB());
+  eca_chain_operator_map->register_object("ev", "^ev$", new EFFECT_ANALYZE());
+  eca_chain_operator_map->register_object("ezf", "^ezf$", new EFFECT_DCFIND());
+  eca_chain_operator_map->register_object("ezx", "^ezx$", new EFFECT_DCFIX());
+  eca_chain_operator_map->register_object("gc", "^gc$", new TIME_CROP_GATE());
+  eca_chain_operator_map->register_object("ge", "^ge$", new THRESHOLD_GATE());
 }
 
-void register_default_controllers(void) {
-  eca_controller_map->register_object("^kf$", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR_FILE()));
-  eca_controller_map->register_object("^kog$", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR()));
-  eca_controller_map->register_object("^kl$", new GENERIC_CONTROLLER(new LINEAR_ENVELOPE()));
-  eca_controller_map->register_object("^kl2$", new GENERIC_CONTROLLER(new TWO_STAGE_LINEAR_ENVELOPE()));
-  eca_controller_map->register_object("^klg$", new GENERIC_CONTROLLER(new GENERIC_LINEAR_ENVELOPE()));
-  eca_controller_map->register_object("^km$", new GENERIC_CONTROLLER(new MIDI_CONTROLLER()));
-  eca_controller_map->register_object("^kos$", new GENERIC_CONTROLLER(new SINE_OSCILLATOR()));
-  eca_controller_map->register_object("^ksv$", new GENERIC_CONTROLLER(new VOLUME_ANALYZE_CONTROLLER()));
+static void register_default_controllers(void) {
+  eca_controller_map->register_object("kf", "^kf$", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR_FILE()));
+  eca_controller_map->register_object("kog", "^kog$", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR()));
+  eca_controller_map->register_object("kl", "^kl$", new GENERIC_CONTROLLER(new LINEAR_ENVELOPE()));
+  eca_controller_map->register_object("kl2", "^kl2$", new GENERIC_CONTROLLER(new TWO_STAGE_LINEAR_ENVELOPE()));
+  eca_controller_map->register_object("klg", "^klg$", new GENERIC_CONTROLLER(new GENERIC_LINEAR_ENVELOPE()));
+  eca_controller_map->register_object("km", "^km$", new GENERIC_CONTROLLER(new MIDI_CONTROLLER()));
+  eca_controller_map->register_object("kos", "^kos$", new GENERIC_CONTROLLER(new SINE_OSCILLATOR()));
+  eca_controller_map->register_object("ksv", "^ksv$", new GENERIC_CONTROLLER(new VOLUME_ANALYZE_CONTROLLER()));
 }
 
-void register_default_presets(void) { }
+static void register_default_presets(void) { }
 
-static AUDIO_IO* register_internal_plugin(const std::string& libdir,
-					       const std::string& filename) {
+static void register_internal_audioio_plugin(const string& libdir,
+					     const string& filename) {
 
-  std::string file = libdir + std::string("/") + filename;
+  string file = libdir + string("/") + filename;
 
   audio_io_descriptor desc_func = 0;
   audio_io_interface_version plugin_version = 0;
-
+  audio_io_keyword plugin_keyword = 0;
+  audio_io_keyword_regex plugin_keyword_regex = 0;
+  
   void *plugin_handle = dlopen(file.c_str(), RTLD_NOW | RTLD_GLOBAL); /* RTLD_LAZY */
 
   if (plugin_handle != 0) {
@@ -303,18 +374,23 @@ static AUDIO_IO* register_internal_plugin(const std::string& libdir,
 		      kvu_numtostr(ecasound_library_version_current) + "." +
 		      kvu_numtostr(ecasound_library_version_revision) + "." +
 		      kvu_numtostr(ecasound_library_version_age) + ".");
-	return(0);
+	return;
       }
       else {
 	desc_func = (audio_io_descriptor)dlsym(plugin_handle, "audio_io_descriptor");
+	plugin_keyword = (audio_io_keyword)dlsym(plugin_handle, "audio_io_keyword");
+	plugin_keyword_regex = (audio_io_keyword_regex)dlsym(plugin_handle, "audio_io_keyword_regex");
 	if (desc_func != 0) {
-	  return(desc_func());
+	  AUDIO_IO* aobj = desc_func();
+	  if (plugin_keyword != 0 && plugin_keyword_regex != 0) {
+	    eca_audio_object_map->register_object(plugin_keyword(), plugin_keyword_regex(), aobj);
+	    //  cerr << "Registering audio io type: " << aobj->name()  << "\nType keyword " << plugin_keyword() << ",  regex " << plugin_keyword_regex() << "." << endl;
+	  }
 	}
-	
       }
     }
-
   }
+
   if (plugin_handle == 0 ||
       plugin_version == 0 ||
       desc_func == 0) {
@@ -325,20 +401,15 @@ static AUDIO_IO* register_internal_plugin(const std::string& libdir,
 		  dlerror() +
 		  "\"");
   }
-    
-  return(0);
 }
 
 /**
  * Registers internal audio plugins to the object
  * maps.
- *
- * FIXME: add support for custom regexp+object
- *        plugins
  */
-void register_internal_plugins(void) {
+static void register_internal_audioio_plugins(void) {
   ECA_RESOURCES ecarc;
-  std::string libdir = ecarc.resource("internal-plugin-directory");
+  string libdir = ecarc.resource("internal-plugin-directory");
 
   struct stat fbuf;
   if (stat(libdir.c_str(), &fbuf) < 0) {
@@ -346,106 +417,78 @@ void register_internal_plugins(void) {
     return;
   }
 
-  AUDIO_IO* aobj;
-  aobj = register_internal_plugin(libdir, "libaudioio_af.so");
-  if (aobj != 0) {
-#ifdef COMPILE_AF
-    eca_audio_object_map->register_object("\\.aif*", aobj);
-    eca_audio_object_map->register_object("\\.au$", aobj);
-    eca_audio_object_map->register_object("\\.snd$", aobj);
-#endif
-  }
+  register_internal_audioio_plugin(libdir, "libaudioio_af.so");
+  register_internal_audioio_plugin(libdir, "libaudioio_alsa.so");
+  register_internal_audioio_plugin(libdir, "libaudioio_alsalb.so");
+  register_internal_audioio_plugin(libdir, "libaudioio_alsa2.so");
+  register_internal_audioio_plugin(libdir, "libaudioio_alsa2_plugin.so");
+  register_internal_audioio_plugin(libdir, "libaudioio_alsa3.so");
+  register_internal_audioio_plugin(libdir, "libaudioio_alsa3_pcm.so");
+  register_internal_audioio_plugin(libdir, "libaudioio_arts.so");
 
-  aobj = register_internal_plugin(libdir, "libaudioio_alsa.so");
-  if (aobj != 0) {
-    eca_audio_object_map->register_object("^alsa_03$", aobj);
-#ifdef ALSALIB_032
-    eca_audio_object_map->register_object("^alsa$", aobj);
-#endif
-  }
+  const ECA_OBJECT* aobj = 0;
 
-  aobj = register_internal_plugin(libdir, "libaudioio_alsalb.so");
-  if (aobj != 0) {
-#if (defined ALSALIB_032 || defined ALSALIB_050)
-    eca_audio_object_map->register_object("^alsalb$", aobj);
-#endif
-  }
-
-  aobj = register_internal_plugin(libdir, "libaudioio_alsa2_plugin.so");
-  if (aobj != 0) {
-    eca_audio_object_map->register_object("^alsaplugin_05$", aobj);
 #ifdef ALSALIB_050
-    eca_audio_object_map->register_object("^alsaplugin$", aobj);
-#endif
+  aobj = eca_audio_object_map->object("alsaplugin_05");
+  if (aobj != 0) {
+    eca_audio_object_map->register_object("alsaplugin", "^alsaplugin$", const_cast<ECA_OBJECT*>(aobj));
   }
 
-  aobj = register_internal_plugin(libdir, "libaudioio_alsa2.so");
+  aobj = eca_audio_object_map->object("alsa_05");
   if (aobj != 0) {
-    eca_audio_object_map->register_object("^alsa_05$", aobj);
-#ifdef ALSALIB_050
-    eca_audio_object_map->register_object("^alsa$", aobj);
-#endif
+    eca_audio_object_map->register_object("alsa", "^alsa$", const_cast<ECA_OBJECT*>(aobj));
   }
+#endif
 
-  aobj = register_internal_plugin(libdir, "libaudioio_alsa3.so");
-  if (aobj != 0) {
-    eca_audio_object_map->register_object("^alsahw_06$", aobj);
-    eca_audio_object_map->register_object("^alsaplugin_06$", aobj);
 #ifdef ALSALIB_060
-    eca_audio_object_map->register_object("^alsahw$", aobj);
-    eca_audio_object_map->register_object("^alsaplugin$", aobj);
-#endif
+  aobj = eca_audio_object_map->object("alsahw_09");
+  if (aobj != 0) {
+    eca_audio_object_map->register_object("alsahw", "^alsahw$", const_cast<ECA_OBJECT*>(aobj));
+    eca_audio_object_map->register_object("alsaplugin", "^alsaplugin$", const_cast<ECA_OBJECT*>(aobj));
   }
 
-  aobj = register_internal_plugin(libdir, "libaudioio_alsa3_pcm.so");
+  aobj = eca_audio_object_map->object("alsa_09");
   if (aobj != 0) {
-    eca_audio_object_map->register_object("^alsa_06$", aobj);
-#ifdef ALSALIB_060
-    eca_audio_object_map->register_object("^alsa$", aobj);
-#endif
+    eca_audio_object_map->register_object("alsa", "^alsa$", const_cast<ECA_OBJECT*>(aobj));
   }
-
-  aobj = register_internal_plugin(libdir, "libaudioio_arts.so");
-  if (aobj != 0) {
-#ifdef COMPILE_ARTS
-    eca_audio_object_map->register_object("^arts$", aobj);
 #endif
-  }
 }
 
-void register_default_midi_devices(void) {
-  eca_midi_device_map->register_object("^rawmidi$", new MIDI_IO_RAW());
+static void register_default_midi_devices(void) {
+  eca_midi_device_map->register_object("rawmidi", "^rawmidi$", new MIDI_IO_RAW());
 }
 
-void register_ladspa_plugins(void) {
+static void register_ladspa_plugins(void) {
   DIR *dp;
 
-  std::vector<std::string> dir_names;
+  vector<string> dir_names;
   char* env = getenv("LADSPA_PATH");
   if (env != 0) 
     dir_names = string_to_vector(string(), ':');
   ECA_RESOURCES ecarc;
-  std::string add_file = ecarc.resource("ladspa-plugin-directory");
-  if (std::find(dir_names.begin(), dir_names.end(), add_file) == dir_names.end()) dir_names.push_back(add_file);
+  string add_file = ecarc.resource("ladspa-plugin-directory");
+  if (find(dir_names.begin(), dir_names.end(), add_file) == dir_names.end()) dir_names.push_back(add_file);
 
   struct stat statbuf;
-  std::vector<std::string>::const_iterator p = dir_names.begin();
+  vector<string>::const_iterator p = dir_names.begin();
   while (p != dir_names.end()) {
     dp = opendir(p->c_str());
     if (dp != 0) {
       struct dirent *entry = readdir(dp);
       while(entry != 0) {
 	lstat(entry->d_name, &statbuf);
-	std::vector<EFFECT_LADSPA*> ladspa_plugins;
+	vector<EFFECT_LADSPA*> ladspa_plugins;
 	try {
-	  std::string entry_name (entry->d_name);
+	  string entry_name (entry->d_name);
 	  if (entry_name.size() > 0 && entry_name[0] != '.')
 	    ladspa_plugins = create_plugins(*p + "/" + entry_name);
 	}
 	catch(ECA_ERROR& e) {  }
 	for(unsigned int n = 0; n < ladspa_plugins.size(); n++) {
-	  eca_ladspa_plugin_map->register_object("^" + ladspa_plugins[n]->unique() + "$", ladspa_plugins[n]);
-	  eca_ladspa_plugin_id_map->register_object(kvu_numtostr(ladspa_plugins[n]->unique_number()), ladspa_plugins[n]);
+	  eca_ladspa_plugin_map->register_object(ladspa_plugins[n]->unique(), "^" + ladspa_plugins[n]->unique() + "$", ladspa_plugins[n]);
+	  eca_ladspa_plugin_id_map->register_object(kvu_numtostr(ladspa_plugins[n]->unique_number()),
+						    kvu_numtostr(ladspa_plugins[n]->unique_number()), 
+						    ladspa_plugins[n]);
 	}
 	entry = readdir(dp);
       }
@@ -454,7 +497,7 @@ void register_ladspa_plugins(void) {
   }
 }
 
-vector<EFFECT_LADSPA*> create_plugins(const std::string& fname) { 
+vector<EFFECT_LADSPA*> create_plugins(const string& fname) { 
   vector<EFFECT_LADSPA*> plugins;
 
   void *plugin_handle = dlopen(fname.c_str(), RTLD_NOW);

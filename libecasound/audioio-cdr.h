@@ -75,8 +75,8 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
   CDRFILE (const std::string& name = "");
   ~CDRFILE(void);
     
-  CDRFILE* clone(void) { std::cerr << "Not implemented!" << std::endl; return this; }
-  CDRFILE* new_expr(void) { return new CDRFILE(); }
+  CDRFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  CDRFILE* new_expr(void) const { return new CDRFILE(); }
 };
 
 #endif

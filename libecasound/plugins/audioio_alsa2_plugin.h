@@ -22,7 +22,6 @@ extern "C" {
 
 #include "samplebuffer.h"
 #include "audioio-types.h"
-#include "eca-version.h"
 
 /**
  * Class for handling ALSA pcm2-devices using the pcm-plugin API.
@@ -69,8 +68,8 @@ class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
 
   ALSA_PCM2_PLUGIN_DEVICE (int card = 0, int device = 0, int subdevice = -1);
   ~ALSA_PCM2_PLUGIN_DEVICE(void);
-  ALSA_PCM2_PLUGIN_DEVICE* clone(void) { cerr << "Not implemented!" << endl; return this; }
-  ALSA_PCM2_PLUGIN_DEVICE* new_expr(void) { return new ALSA_PCM2_PLUGIN_DEVICE(); }
+  ALSA_PCM2_PLUGIN_DEVICE* clone(void) const { cerr << "Not implemented!" << endl; return this; }
+  ALSA_PCM2_PLUGIN_DEVICE* new_expr(void) const { return new ALSA_PCM2_PLUGIN_DEVICE(); }
   
  private:
 
@@ -81,7 +80,9 @@ class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
 
 extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_PCM2_PLUGIN_DEVICE()); }
-int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
+int audio_io_interface_version(void);
+const char* audio_io_keyword(void);
+const char* audio_io_keyword_regex(void);
 };
 
 #endif

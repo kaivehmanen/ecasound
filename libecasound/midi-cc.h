@@ -30,8 +30,8 @@ class MIDI_CONTROLLER : public CONTROLLER_SOURCE,
   std::string name(void) const {  return("MIDI-Controller"); }
   parameter_type value(void);
  
-  MIDI_CONTROLLER* clone(void)  { return new MIDI_CONTROLLER(*this); }
-  MIDI_CONTROLLER* new_expr(void)  { return new MIDI_CONTROLLER(); }
+  MIDI_CONTROLLER* clone(void) const { return new MIDI_CONTROLLER(*this); }
+  MIDI_CONTROLLER* new_expr(void) const { return new MIDI_CONTROLLER(); }
   MIDI_CONTROLLER(int controller_number = 0, int midi_channel = 0);
 };
 

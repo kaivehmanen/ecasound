@@ -46,8 +46,8 @@ class AUDIO_IO_TYPESELECT : public AUDIO_IO {
   /** @name Reimplemented functions from DYNAMIC_OBJECT<string> */
   /*@{*/
 
-  virtual AUDIO_IO_TYPESELECT* clone(void) { std::cerr << "Not implemented!" << std::endl; return this; }
-  virtual AUDIO_IO_TYPESELECT* new_expr(void) { return(new AUDIO_IO_TYPESELECT()); }
+  virtual AUDIO_IO_TYPESELECT* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  virtual AUDIO_IO_TYPESELECT* new_expr(void) const { return(new AUDIO_IO_TYPESELECT()); }
 
   /*@}*/
 

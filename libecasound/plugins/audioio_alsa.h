@@ -17,7 +17,6 @@
 #endif
 
 #include "samplebuffer.h"
-#include "eca-version.h"
 
 /**
  * Class for handling ALSA-devices (Advanced Linux Sound Architecture).
@@ -76,7 +75,9 @@ class ALSA_PCM_DEVICE_032 : public AUDIO_IO_DEVICE {
 
 extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_PCM_DEVICE_032()); }
-int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
+int audio_io_interface_version(void);
+const char* audio_io_keyword(void);
+const char* audio_io_keyword_regex(void);
 };
 
 #endif

@@ -41,8 +41,8 @@ class ADVANCED_REVERB : public EFFECT_TIME_BASED {
   virtual void init(SAMPLE_BUFFER* insample);
   virtual void process(void);
 
-  ADVANCED_REVERB* clone(void)  { return new ADVANCED_REVERB(*this); }
-  ADVANCED_REVERB* new_expr(void)  { return new ADVANCED_REVERB(); }
+  ADVANCED_REVERB* clone(void) const { return new ADVANCED_REVERB(*this); }
+  ADVANCED_REVERB* new_expr(void) const { return new ADVANCED_REVERB(); }
   ADVANCED_REVERB (parameter_type roomsize = 10.0, parameter_type feedback_percent = 100.0, parameter_type wet_percent = 100.0);
 };
 

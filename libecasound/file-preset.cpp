@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // file_preset.cpp: File based effect preset
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ FILE_PRESET::FILE_PRESET(const std::string& file_name) {
   parse(pfile.resource(pname));
 }
 
-FILE_PRESET* FILE_PRESET::clone(void) {
+FILE_PRESET* FILE_PRESET::clone(void) const {
   std::vector<parameter_type> param_values;
   for(int n = 0; n < number_of_params(); n++) {
     param_values.push_back(get_parameter(n + 1));

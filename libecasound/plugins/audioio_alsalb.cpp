@@ -39,6 +39,14 @@
 
 #include "eca-error.h"
 #include "eca-debug.h"
+#include "eca-version.h"
+
+static const char* audio_io_keyword_const = "alsalb";
+static const char* audio_io_keyword_regex_const = "^alsalb$";
+
+const char* audio_io_keyword(void){return(audio_io_keyword_const); }
+const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
+int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
 
 void *loopback_controller(void* params);
 

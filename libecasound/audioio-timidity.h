@@ -57,8 +57,8 @@ class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
   TIMIDITY_INTERFACE (const std::string& name = "");
   ~TIMIDITY_INTERFACE(void);
     
-  TIMIDITY_INTERFACE* clone(void) { return new TIMIDITY_INTERFACE(*this); }
-  TIMIDITY_INTERFACE* new_expr(void) { return new TIMIDITY_INTERFACE(); }
+  TIMIDITY_INTERFACE* clone(void) const { return new TIMIDITY_INTERFACE(*this); }
+  TIMIDITY_INTERFACE* new_expr(void) const { return new TIMIDITY_INTERFACE(); }
 };
 
 #endif

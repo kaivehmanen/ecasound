@@ -40,6 +40,15 @@ extern "C" {
 
 #include "eca-error.h"
 #include "eca-debug.h"
+#include "eca-version.h"
+
+static const char* audio_io_keyword_const = "alsaplugin_05";
+static const char* audio_io_keyword_regex_const = "^alsaplugin_05$";
+
+const char* audio_io_keyword(void){return(audio_io_keyword_const); }
+const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
+int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
+
 
 ALSA_PCM2_PLUGIN_DEVICE::ALSA_PCM2_PLUGIN_DEVICE (int card, 
 						  int device, 

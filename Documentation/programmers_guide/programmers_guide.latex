@@ -10,7 +10,7 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{21102001}
+\date{28102001}
 \begin{document}
 
 \maketitle
@@ -33,6 +33,7 @@ ecasound version.
 \section{Document history}
 \begin{itemize}
 \item 21.10.2001 - Added this history section.
+\item 28.10.2001 - Lots of changes to the ``Object maps'' chapter.
 \end{itemize}
 
 
@@ -378,7 +379,7 @@ Anyway, let's look at the some central classes.
 
 
 \subsubsection{Core} 
-\paragraph{ECA\_ENGINE} 
+\paragraph{eca-engine.h - ECA\_ENGINE} 
 ECA\_ENGINE is the actual processing engine. It is initialized with
 a pointer to a ECA\_SESSION object, which has all information needed at
 runtime. Processing is started with the exec() member function and
@@ -388,7 +389,7 @@ ECA\_CONTROL class. It offers a safe way to control ecasound.
 Another way to communicate with ECA\_ENGINE is to access the
 ECA\_SESSION object directly.
 
-\paragraph{ECA\_SESSION} 
+\paragraph{eca-session.h - ECA\_SESSION} 
 ECA\_SESSION represents the data used by ecasound. A session contains
 all ECA\_CHAINSETUP objects and general runtime settings (iactive-mode,
 debug-level, etc). Only one ECA\_CHAINSETUP can be active at a time. To
@@ -397,21 +398,22 @@ ECA\_ENGINE and ECA\_CONTROL classes have direct access to
 ECA\_SESSION data and functions. Other classes can only use \emph{const}
 members of ECA\_SESSION. 
 
-\paragraph{ECA\_CONTROL} 
+\paragraph{eca-control.h - ECA\_CONTROL} 
 ECA\_CONTROL represents the whole public interface offered by 
-ecasound library. It also has a simple command interpreter 
-(interactive-mode) that can used for controlling ecasound. 
-
+ecasound library. It also has a simple interpreter 
+that understands EOS (Ecasound Option Syntax) and EAIM (Ecasound
+Interactive Mode) commands. It offers a straightforward way for 
+controlling ecasound operation.
 
 \subsubsection{Data objects}
 
-\paragraph{SAMPLEBUFFER}
+\paragraph{samplebuffer.h - SAMPLEBUFFER}
 Basic unit for representing sample data. The data type used to 
 represent a single sample, valid value range, channel count, global 
 sampling rate and system endianess are all specified in 
 "samplebuffer.h" and "sample\_specs.h".
 
-\paragraph{DEBUG}
+\paragraph{eca-debug.h - DEBUG}
 Virtual interface class for ecasound's debugging subsystem. Ecasound 
 engine sends all debug messages to an instance of this class. The actual 
 implementation can be done in many ways. For example in the console mode
@@ -424,55 +426,51 @@ be registered at runtime with the \emph{attach\_debug\_object()} call
 
 
 \subsubsection{Object maps}
-Object maps are a central repositories for commonly used objects.
-When object is registered to a map, a regular expression is attached 
-to it. When object map receives a request for a new object, it 
-goes through all registered regular expressions, and returns an 
-object attached to the matching expression. Object maps can also provide
-a list of all registered objects. 
+Object maps are central repositories for commonly used objects.
+Their main purpose is to add flexibilty to handling different 
+object types - especially to handling dynamic addition and removal
+of whole object types. They provide the following services:
+
+\begin{itemize}
+
+\item listing all object types in any of the available 
+      categories (for instance, list all effect types)
+\item creating new object instances based on keyword strings
+      (for instance, returns an mp3 object if ``foo.mp3'' is given
+      as keyword)
+\item adding new object types (object map item is identified by 
+      tuple of ``keyword, regex expression, object type'')
+\item removing object types
+\item reverse mapping objects back to keyword strings
+
+\end{itemize}
+
+In ecasound, all access to object maps goes throuh the library-wide
+ECA\_OBJECT\_FACTORY class, which provides a set of static functions
+to access the object maps.
 
 This system may sound a bit complex, but in practise it is quite
 simple and makes a lot of things more easier. For instance, when
-adding new object types to the library, you only have to add a call
-which registers the new object; no need to modify any other part of 
-the library. It also makes it possible to add new types at runtime. For
-instance, an application linked against libecasound might add its own
-custom object types on startup. All parts of libecasound can use the
-custom objects, although they are not part of library itself.
+adding new object types to the library, you only have to add one
+function call which registers the new object; no need to modify any 
+other part of the library. It also makes it possible to add new 
+types at runtime, including dynamically loaded plugins. 
+
+One special use-case is where an application linked against
+libecasound adds its own custom object types on startup. All parts 
+of libecasound can use the custom objects, although they are not 
+part of library itself.
 
 All objects defined in libecasound are registered in the file
 \emph{eca-static-object-maps.cpp}.
 
-\paragraph{ECA\_OBJECT}
-A virtual base class that represents one object. All classes deriving 
-from ECA\_OBJECT can be registered to object maps.
+\paragraph{eca-object.h - ECA\_OBJECT}
+A virtual base class that represents an ecasound object. All objects
+handled by the object factory must inherit this class.
 
-\paragraph{ECA\_OBJECT\_MAP}
-This is the basic object map implementation. It offers map services
-for ECA\_OBJECT objects.
-
-\paragraph{ECA\_PRESET\_MAP}
-Special class that inherits from ECA\_OBJECT\_MAP. This class is used
-for mapping instances of class PRESET.
-
-\paragraph{ECA\_AUDIO\_OBJECT\_MAP}
-A convenience class for mapping AUDIO\_IO objects. Handles the casting 
-between ECA\_OBJECT<->AUDIO\_IO.
-
-\paragraph{ECA\_CHAIN\_OPERATOR\_MAP}
-A convenience class for mapping CHAIN\_OPERATOR objects. Handles the casting 
-between ECA\_OBJECT<->CHAIN\_OPERATOR.
-
-\paragraph{ECA\_CONTROLLER\_MAP}
-A convenience class for mapping GENERIC\_CONTROLLER objects. Handles the casting 
-between ECA\_OBJECT<->GENERIC\_CONTROLLER.
-
-\paragraph{ECA\_LADSPA\_PLUGIN\_MAP}
-A convenience class for mapping EFFECT\_LADSPA objects. Handles the casting 
-between ECA\_OBJECT<->EFFECT\_LADSPA.
-
-
-
+\paragraph{eca-object-factory.h - ECA\_OBJECT\_FACTORY}
+The public interface to ecasound's object maps. All its functions
+are static.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------

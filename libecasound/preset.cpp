@@ -76,7 +76,7 @@ PRESET::~PRESET(void) {
   impl_repp = 0;
 }
 
-PRESET* PRESET::clone(void) {
+PRESET* PRESET::clone(void) const {
   vector<parameter_type> param_values;
   for(int n = 0; n < number_of_params(); n++) {
     param_values.push_back(get_parameter(n + 1));
@@ -88,7 +88,7 @@ PRESET* PRESET::clone(void) {
   return(preset);
 }
 
-PRESET* PRESET::new_expr(void) { 
+PRESET* PRESET::new_expr(void) const{ 
   return(new PRESET(impl_repp->parse_string_rep)); 
 }
 

@@ -30,13 +30,21 @@
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils/dbc.h>
 
 #include "audioio_af.h"
 #include "samplebuffer.h"
-
+#include "eca-version.h"
 #include "eca-error.h"
 #include "eca-debug.h"
-  
+
+static const char* audio_io_keyword_const = "audiofile_aiff_au_snd";
+static const char* audio_io_keyword_regex_const = "(aif*$)|(au$)|(snd$)";
+
+const char* audio_io_keyword(void){return(audio_io_keyword_const); }
+const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
+int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
+
 AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name) {
   finished_rep = false;
   label(name);
@@ -44,8 +52,7 @@ AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name) {
 
 void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
   // --------
-  // require:
-  assert(!is_open());
+  DBC_REQUIRE(!is_open());
   // --------
 
   int sample_format, sample_width;
@@ -82,8 +89,7 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
   }
 
   // -------
-  // ensure:
-  assert(!is_open());
+  DBC_ENSURE(!is_open());
   // -------
 }
 

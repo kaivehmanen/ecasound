@@ -80,8 +80,8 @@ class EWFFILE : public AUDIO_IO {
   void open(void) throw(AUDIO_IO::SETUP_ERROR&);
   void close(void);
  
-  EWFFILE* clone(void) { std::cerr << "Not implemented!" << std::endl; return this; }
-  EWFFILE* new_expr(void) { return new EWFFILE(); }
+  EWFFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  EWFFILE* new_expr(void) const { return new EWFFILE(); }
   EWFFILE (const std::string& name = "") { label(name); child = 0; }
   ~EWFFILE(void);
 };

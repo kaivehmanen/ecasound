@@ -1,27 +1,33 @@
 #ifndef INCLUDED_ECA_STATIC_OBJECT_MAPS_H
 #define INCLUDED_ECA_STATIC_OBJECT_MAPS_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
+class ECA_FACTORY_MAP;
 class ECA_OBJECT_MAP;
 class ECA_PRESET_MAP;
 
-/*
- * When possible, use of the class ECA_OBJECT_FACTORY 
- * should be preferred to directed access to map objects.
+/**
+ * A private classed used by ECA_OBJECT_FACTORY
+ * to access object maps.
  */
+class ECA_STATIC_OBJECT_MAPS {
 
-extern ECA_OBJECT_MAP* eca_audio_object_map;
-extern ECA_OBJECT_MAP* eca_chain_operator_map;
-extern ECA_OBJECT_MAP* eca_ladspa_plugin_map;
-extern ECA_OBJECT_MAP* eca_ladspa_plugin_id_map;
-extern ECA_OBJECT_MAP* eca_controller_map;
-extern ECA_OBJECT_MAP* eca_midi_device_map;
-extern ECA_PRESET_MAP* eca_preset_map;
+ public:
 
-void register_default_objects(void);
-void unregister_default_objects(void);
+  friend class ECA_OBJECT_FACTORY;
+
+ private:
+
+  static ECA_OBJECT_MAP* audio_object_map(void);
+  static ECA_OBJECT_MAP* chain_operator_map(void);
+  static ECA_OBJECT_MAP* ladspa_plugin_map(void);
+  static ECA_OBJECT_MAP* ladspa_plugin_id_map(void);
+  static ECA_OBJECT_MAP* controller_map(void);
+  static ECA_OBJECT_MAP* midi_device_map(void);
+  static ECA_PRESET_MAP* preset_map(void);
+
+  static bool default_objects_registered(void);
+  static void register_default_objects(void);
+  static void unregister_default_objects(void);
+};
 
 #endif

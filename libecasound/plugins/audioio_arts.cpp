@@ -23,9 +23,17 @@
 
 #include "audioio-types.h"
 #include "eca-debug.h"
+#include "eca-version.h"
 
 #ifdef COMPILE_ARTS
 #include "audioio_arts.h"
+
+static const char* audio_io_keyword_const = "arts";
+static const char* audio_io_keyword_regex_const = "^arts$";
+
+const char* audio_io_keyword(void){return(audio_io_keyword_const); }
+const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
+int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
 
 int ARTS_INTERFACE::ref_rep = 0;
 

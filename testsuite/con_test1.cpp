@@ -15,7 +15,7 @@ static void eci_execute_test(const string& cmd);
 int main(int argc, char *argv[]) {
   ECA_TEST_ENTRY();
 
-  eci_execute_test(ecasound_exec + " -a:1 -i " + input_file + " -ggc:1,0.5 -o null -t:5 2>/dev/null >/dev/null");
+  eci_execute_test(ecasound_exec + " -a:1 -i " + input_file + " -gc:1,0.5 -o null -t:5 2>/dev/null >/dev/null");
   eci_execute_test(ecasound_exec + " -i:" + input_file + " -o:null -t:5 2>/dev/null >/dev/null");
   eci_execute_test(ecasound_exec + " -d:255 -z:db -r -z:nointbuf -i:" + input_file + " -o:null -t:5 2>/dev/null >/dev/null");
   eci_execute_test(ecasound_exec + "  -i:" + input_file + " -o:null -t:5 2>/dev/null >/dev/null");

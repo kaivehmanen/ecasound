@@ -83,7 +83,7 @@ void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_type
   switch (param) {
   case 1: 
     if (pmod_rep <= 0) {
-      ecadebug->msg(ECA_DEBUG::info, "(audiofx) WARNING! Shift-% must be greater that 0! Using the default 100%.");
+      ecadebug->msg(ECA_DEBUG::user_objects, "(audiofx_misc) WARNING! Shift-% must be greater that 0! Using the default 100%.");
       pmod_rep = 100.0;
     }
     else

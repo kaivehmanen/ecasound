@@ -55,7 +55,7 @@ GLOBAL_PRESET::GLOBAL_PRESET(const std::string& preset_name)
   }
 }
 
-GLOBAL_PRESET* GLOBAL_PRESET::clone(void) {
+GLOBAL_PRESET* GLOBAL_PRESET::clone(void) const {
   std::vector<parameter_type> param_values;
   for(int n = 0; n < number_of_params(); n++) {
     param_values.push_back(get_parameter(n + 1));

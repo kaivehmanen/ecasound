@@ -1,8 +1,9 @@
-#ifndef _AUDIOFX_FILTER_H
-#define _AUDIOFX_FILTER_H
+#ifndef INCLUDED_AUDIOFX_FILTER_H
+#define INCLUDED_AUDIOFX_FILTER_H
 
-#include <vector>
 #include <deque>
+#include <string>
+#include <vector>
 
 #include "audiofx.h"
 #include "samplebuffer_iterators.h"
@@ -46,7 +47,7 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  virtual EFFECT_BW_FILTER* clone(void) = 0;
+  virtual EFFECT_BW_FILTER* clone(void) const = 0;
 
   //  EFFECT_BW_FILTER(void) : sin(2), sout(2), a(3), b(2) {
 
@@ -79,8 +80,8 @@ public:
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
 
-  EFFECT_BANDPASS* clone(void)  { return new EFFECT_BANDPASS(*this); }
-  EFFECT_BANDPASS* new_expr(void)  { return new EFFECT_BANDPASS(); }
+  EFFECT_BANDPASS* clone(void) const  { return new EFFECT_BANDPASS(*this); }
+  EFFECT_BANDPASS* new_expr(void) const { return new EFFECT_BANDPASS(); }
   EFFECT_BANDPASS (parameter_type centerf = 1000.0, parameter_type width = 1000.0);
 };
 
@@ -108,8 +109,8 @@ public:
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
 
-  EFFECT_BANDREJECT* clone(void)  { return new EFFECT_BANDREJECT(*this); }
-  EFFECT_BANDREJECT* new_expr(void)  { return new EFFECT_BANDREJECT(); }
+  EFFECT_BANDREJECT* clone(void) const { return new EFFECT_BANDREJECT(*this); }
+  EFFECT_BANDREJECT* new_expr(void) const { return new EFFECT_BANDREJECT(); }
   EFFECT_BANDREJECT (parameter_type centerf = 1000.0, parameter_type width = 1000.0);
 };
 
@@ -134,8 +135,8 @@ public:
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
 
-  EFFECT_HIGHPASS* clone(void)  { return new EFFECT_HIGHPASS(*this); }
-  EFFECT_HIGHPASS* new_expr(void)  { return new EFFECT_HIGHPASS(); }
+  EFFECT_HIGHPASS* clone(void) const { return new EFFECT_HIGHPASS(*this); }
+  EFFECT_HIGHPASS* new_expr(void) const { return new EFFECT_HIGHPASS(); }
   EFFECT_HIGHPASS (parameter_type cutoff = 1000.0);
 };
 
@@ -161,8 +162,8 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_ALLPASS_FILTER* clone(void)  { return new EFFECT_ALLPASS_FILTER(*this); }  
-  EFFECT_ALLPASS_FILTER* new_expr(void)  { return new EFFECT_ALLPASS_FILTER(); }
+  EFFECT_ALLPASS_FILTER* clone(void) const { return new EFFECT_ALLPASS_FILTER(*this); }  
+  EFFECT_ALLPASS_FILTER* new_expr(void) const { return new EFFECT_ALLPASS_FILTER(); }
   EFFECT_ALLPASS_FILTER (void) { }
 };
 
@@ -193,8 +194,8 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_COMB_FILTER* clone(void)  { return new EFFECT_COMB_FILTER(*this); }  
-  EFFECT_COMB_FILTER* new_expr(void)  { return new EFFECT_COMB_FILTER(); }
+  EFFECT_COMB_FILTER* clone(void) const { return new EFFECT_COMB_FILTER(*this); }  
+  EFFECT_COMB_FILTER* new_expr(void) const { return new EFFECT_COMB_FILTER(); }
   EFFECT_COMB_FILTER (int delay_in_samples = 1, parameter_type constant = 1.0);
 };
 
@@ -225,8 +226,8 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_INVERSE_COMB_FILTER* clone(void)  { return new EFFECT_INVERSE_COMB_FILTER(*this); }  
-  EFFECT_INVERSE_COMB_FILTER* new_expr(void)  { return new EFFECT_INVERSE_COMB_FILTER(); }
+  EFFECT_INVERSE_COMB_FILTER* clone(void) const { return new EFFECT_INVERSE_COMB_FILTER(*this); }  
+  EFFECT_INVERSE_COMB_FILTER* new_expr(void) const { return new EFFECT_INVERSE_COMB_FILTER(); }
   EFFECT_INVERSE_COMB_FILTER (int delay_in_samples = 10, parameter_type constant = 1.0);
 };
 
@@ -254,8 +255,8 @@ public:
 
   void set_cutoff(parameter_type value, long int srate);
 
-  EFFECT_LOWPASS* clone(void)  { return new EFFECT_LOWPASS(*this); }  
-  EFFECT_LOWPASS* new_expr(void)  { return new EFFECT_LOWPASS(); }
+  EFFECT_LOWPASS* clone(void) const { return new EFFECT_LOWPASS(*this); }  
+  EFFECT_LOWPASS* new_expr(void) const { return new EFFECT_LOWPASS(); }
   EFFECT_LOWPASS (parameter_type cutoff = 1000.0);
 };
 
@@ -290,8 +291,8 @@ public:
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
 
-  EFFECT_LOWPASS_SIMPLE* clone(void)  { return new EFFECT_LOWPASS_SIMPLE(*this); }
-  EFFECT_LOWPASS_SIMPLE* new_expr(void)  { return new EFFECT_LOWPASS_SIMPLE(); }
+  EFFECT_LOWPASS_SIMPLE* clone(void) const { return new EFFECT_LOWPASS_SIMPLE(*this); }
+  EFFECT_LOWPASS_SIMPLE* new_expr(void) const { return new EFFECT_LOWPASS_SIMPLE(); }
   EFFECT_LOWPASS_SIMPLE (parameter_type cutoff = 1000.0);
 };
 
@@ -323,8 +324,8 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_RESONANT_BANDPASS* clone(void)  { return new EFFECT_RESONANT_BANDPASS(*this); }  
-  EFFECT_RESONANT_BANDPASS* new_expr(void)  { return new EFFECT_RESONANT_BANDPASS(); }  
+  EFFECT_RESONANT_BANDPASS* clone(void) const { return new EFFECT_RESONANT_BANDPASS(*this); }  
+  EFFECT_RESONANT_BANDPASS* new_expr(void) const { return new EFFECT_RESONANT_BANDPASS(); }  
   EFFECT_RESONANT_BANDPASS (parameter_type centerf = 1000.0, parameter_type width = 1000.0);
 };
 
@@ -375,8 +376,8 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_RESONANT_LOWPASS* clone(void)  { return new EFFECT_RESONANT_LOWPASS(*this); }  
-  EFFECT_RESONANT_LOWPASS* new_expr(void)  { return new EFFECT_RESONANT_LOWPASS(); }  
+  EFFECT_RESONANT_LOWPASS* clone(void) const { return new EFFECT_RESONANT_LOWPASS(*this); }  
+  EFFECT_RESONANT_LOWPASS* new_expr(void) const { return new EFFECT_RESONANT_LOWPASS(); }  
   EFFECT_RESONANT_LOWPASS (parameter_type cutoff = 1000.0,
 			   parameter_type resonance = 1.0,
 			   parameter_type gain = 1.0);
@@ -413,8 +414,8 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_RESONATOR* clone(void)  { return new EFFECT_RESONATOR(*this); }
-  EFFECT_RESONATOR* new_expr(void)  { return new EFFECT_RESONATOR(); }  
+  EFFECT_RESONATOR* clone(void) const { return new EFFECT_RESONATOR(*this); }
+  EFFECT_RESONATOR* new_expr(void) const { return new EFFECT_RESONATOR(); }  
   EFFECT_RESONATOR (parameter_type center = 1000.0, parameter_type width = 1000.0);
 };
 

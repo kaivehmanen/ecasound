@@ -7,7 +7,7 @@
 
 #include "audioio-types.h"
 #include "samplebuffer.h"
-#include "eca-version.h"
+
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -58,8 +58,8 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   virtual bool finished(void) const;
   virtual void seek_position(void);
     
-  AUDIOFILE_INTERFACE* clone(void) { return new AUDIOFILE_INTERFACE(*this); }
-  AUDIOFILE_INTERFACE* new_expr(void) { return new AUDIOFILE_INTERFACE(); }  
+  AUDIOFILE_INTERFACE* clone(void) const { return new AUDIOFILE_INTERFACE(*this); }
+  AUDIOFILE_INTERFACE* new_expr(void) const { return new AUDIOFILE_INTERFACE(); }  
 
   AUDIOFILE_INTERFACE (const string& name = "");
   ~AUDIOFILE_INTERFACE(void);
@@ -67,7 +67,9 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
 
 extern "C" {
 AUDIO_IO* audio_io_descriptor(void) { return(new AUDIOFILE_INTERFACE()); }
-int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
+int audio_io_interface_version(void);
+const char* audio_io_keyword(void);
+const char* audio_io_keyword_regex(void);
 };
 
 #endif

@@ -28,8 +28,8 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
 
   REALTIME_NULL(const std::string& name = "realtime null");
   virtual ~REALTIME_NULL(void);
-  REALTIME_NULL* clone(void) { return new REALTIME_NULL(*this); }
-  REALTIME_NULL* new_expr(void) { return new REALTIME_NULL(); }
+  REALTIME_NULL* clone(void) const { return new REALTIME_NULL(*this); }
+  REALTIME_NULL* new_expr(void) const { return new REALTIME_NULL(); }
 
  private:
 

@@ -32,11 +32,16 @@
 #include "audioio_alsa3_pcm.h"
 #include "eca-error.h"
 #include "eca-debug.h"
+#include "eca-version.h"
 
-extern "C" {
+static const char* audio_io_keyword_const = "alsa_09";
+static const char* audio_io_keyword_regex_const = "^alsa_09$";
+
+const char* audio_io_keyword(void){return(audio_io_keyword_const); }
+const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
 AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_NAMED_PCM_DEVICE_06X()); }
 int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
-};
+
 
 ALSA_NAMED_PCM_DEVICE_06X::ALSA_NAMED_PCM_DEVICE_06X (void) {
   //  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio_alsa3_pcm) construct");

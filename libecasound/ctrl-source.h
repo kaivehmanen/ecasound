@@ -1,7 +1,6 @@
 #ifndef INCLUDE_CTRL_SOURCE_H
 #define INCLUDE_CTRL_SOURCE_H
 
-#include <string>
 #include "eca-operator.h"
 
 /**
@@ -39,7 +38,7 @@ class CONTROLLER_SOURCE : public OPERATOR {
    * Virtual method that clones the current object and returns 
    * a pointer to it. This must be implemented by all subclasses!
    */
-  virtual CONTROLLER_SOURCE* clone(void) = 0;
+  virtual CONTROLLER_SOURCE* clone(void) const = 0;
 
  private:
 

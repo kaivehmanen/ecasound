@@ -1,5 +1,5 @@
-#ifndef _AUDIOIO_LOOP_DEVICE_H
-#define _AUDIOIO_LOOP_DEVICE_H
+#ifndef INCLUDED_AUDIOIO_LOOP_DEVICE_H
+#define INCLUDED_AUDIOIO_LOOP_DEVICE_H
 
 #include "audioio.h"
 #include "samplebuffer.h"
@@ -55,8 +55,8 @@ class LOOP_DEVICE : public AUDIO_IO {
   LOOP_DEVICE(int id);
   LOOP_DEVICE(void) { }
   ~LOOP_DEVICE(void) { }
-  LOOP_DEVICE* clone(void) { return new LOOP_DEVICE(*this); }
-  LOOP_DEVICE* new_expr(void) { return new LOOP_DEVICE(); }
+  LOOP_DEVICE* clone(void) const { return new LOOP_DEVICE(*this); }
+  LOOP_DEVICE* new_expr(void) const { return new LOOP_DEVICE(); }
 };
 
 #endif

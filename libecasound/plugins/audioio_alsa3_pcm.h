@@ -19,8 +19,8 @@ class ALSA_NAMED_PCM_DEVICE_06X : public ALSA_PCM_DEVICE_06X {
 
   ALSA_NAMED_PCM_DEVICE_06X (void);
   virtual ~ALSA_NAMED_PCM_DEVICE_06X(void);
-  ALSA_NAMED_PCM_DEVICE_06X* clone(void) { cerr << "Not implemented!" << endl; return this; }
-  ALSA_NAMED_PCM_DEVICE_06X* new_expr(void) { return new ALSA_NAMED_PCM_DEVICE_06X(); }
+  ALSA_NAMED_PCM_DEVICE_06X* clone(void) const { cerr << "Not implemented!" << endl; return 0; }
+  ALSA_NAMED_PCM_DEVICE_06X* new_expr(void) const { return new ALSA_NAMED_PCM_DEVICE_06X(); }
   
  private:
 

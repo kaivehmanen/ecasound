@@ -25,6 +25,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <list>
 #include <algorithm>
 #include <unistd.h>
 
@@ -37,22 +38,20 @@
 #include "eca-control.h"
 #include "eca-chainop.h"
 #include "eca-chainsetup.h"
+#include "eca-object-map.h"
+#include "eca-object-factory.h"
 
 #include "generic-controller.h"
 #include "eca-chainop.h"
-
 #include "audiofx_ladspa.h"
-
-#include "eca-object-map.h"
-#include "eca-preset-map.h"
-#include "eca-static-object-maps.h"
-#include "eca-object-factory.h"
+#include "preset.h"
 
 #include "eca-version.h"
 #include "eca-error.h"
 #include "eca-debug.h"
 
 using std::string;
+using std::list;
 using std::vector;
 using std::cerr;
 using std::endl;
@@ -75,9 +74,7 @@ void ECA_CONTROL::command(const string& cmd) {
       // *p is not recognized as a iamode command
       // ---
       if (p->size() > 0 && (*p)[0] == '-') {
-	cerr << "Note! Direct use of EOS-options (-prefix:arg1,...,argN)";
-	cerr << " as iactive-mode commands is considered deprecated. " << endl;
-	cerr << "\tUse the notation 'cs-option -prefix:a,b,x' instead." << endl;
+	//  cerr << "Note! Direct use of EOS-options (-prefix:arg1,...,argN)" << " as iactive-mode commands is considered deprecated. " << "\tUse the notation 'cs-option -prefix:a,b,x' instead." << endl;
 	chainsetup_option(cmd);
       }
       else {
@@ -822,24 +819,33 @@ string ECA_CONTROL::aio_status(void) const {
 void ECA_CONTROL::aio_register(void) { 
   ecadebug->msg("Registered audio objects:\n");
   string result;
-  const std::map<string,string>& kmap = ::eca_audio_object_map->registered_objects();
+  const list<string>& objlist = ECA_OBJECT_FACTORY::audio_io_list();
+  list<string>::const_iterator p = objlist.begin();
   int count = 1;
-  std::map<string,string>::const_iterator p = kmap.begin();
-  while(p != kmap.end()) {
+  while(p != objlist.end()) {
     string temp;
-    AUDIO_IO* q = ECA_OBJECT_FACTORY::audio_io_map_object(p->first, false);
-    int params = q->number_of_params();
-    if (params > 0) {
-      temp += " (params: ";
-      for(int n = 0; n < params; n++) {
-	temp += q->get_parameter_name(n + 1);
-	if (n + 1 < params) temp += ",";
+    const AUDIO_IO* q = ECA_OBJECT_FACTORY::audio_io_map_object(*p);
+    
+    DBC_CHECK(q != 0);
+
+    if (q != 0) {
+      int params = q->number_of_params();
+      if (params > 0) {
+	temp += ": ";
+	for(int n = 0; n < params; n++) {
+	  temp += q->get_parameter_name(n + 1);
+	  if (n + 1 < params) temp += ",";
+	}
       }
-      temp += ")";
+
+      result += kvu_numtostr(count) + ". " + q->name() + ", regex: " + 
+	        ECA_OBJECT_FACTORY::audio_io_map()->keyword_to_expr(*p) + ", params" + temp;
+      result += "\n";
+
+      ++count;
     }
-    result += "\n";
-    result += kvu_numtostr(count) + ". " + p->first + ", handled by \"" + p->second + "\"."  + temp;
-    ++count;
+    //  else std::cerr << "Failed obj: " << *p << "." << std::endl;
+
     ++p;
   }
   set_last_string(result);
@@ -848,12 +854,12 @@ void ECA_CONTROL::aio_register(void) {
 void ECA_CONTROL::cop_register(void) { 
   ecadebug->msg("Registered chain operators:\n");
   string result;
-  const std::map<string,string>& kmap = eca_chain_operator_map->registered_objects();
-  std::map<string,string>::const_iterator p = kmap.begin();
+  const list<string>& objlist = ECA_OBJECT_FACTORY::chain_operator_list();
+  list<string>::const_iterator p = objlist.begin();
   int count = 1;
-  while(p != kmap.end()) {
+  while(p != objlist.end()) {
     string temp;
-    CHAIN_OPERATOR* q = ECA_OBJECT_FACTORY::chain_operator_map_object(p->first, false);
+    const CHAIN_OPERATOR* q = ECA_OBJECT_FACTORY::chain_operator_map_object(*p);
     if (q != 0) {
       int params = q->number_of_params();
       for(int n = 0; n < params; n++) {
@@ -861,7 +867,7 @@ void ECA_CONTROL::cop_register(void) {
 	temp += q->get_parameter_name(n + 1);
 	if (n + 1 < params) temp += ",";
       }
-      result += kvu_numtostr(count) + ". " + p->first + " - " + p->second + temp;
+      result += kvu_numtostr(count) + ". " + q->name() + ", -" + *p + temp;
       result += "\n";
       ++count;
     }
@@ -873,13 +879,25 @@ void ECA_CONTROL::cop_register(void) {
 void ECA_CONTROL::preset_register(void) { 
   ecadebug->msg("Registered effect presets:\n");
   string result;
-  const std::map<string,string>& kmap = ::eca_preset_map->registered_objects();
-  std::map<string,string>::const_iterator p = kmap.begin();
+  const list<string>& objlist = ECA_OBJECT_FACTORY::preset_list();
+  list<string>::const_iterator p = objlist.begin();
   int count = 1;
-  while(p != kmap.end()) {
-    result += "\n";
-    result += kvu_numtostr(count) + ". " + p->first;
-    ++count;
+  while(p != objlist.end()) {
+    string temp;
+    const PRESET* q = ECA_OBJECT_FACTORY::preset_object(*p);
+    if (q != 0) {
+      int params = q->number_of_params();
+      for(int n = 0; n < params; n++) {
+	if (n == 0) temp += ":";
+	temp += q->get_parameter_name(n + 1);
+	if (n + 1 < params) temp += ",";
+      }
+
+      result += kvu_numtostr(count) + ". " + q->name() + ", -pn:" + *p + temp;
+      result += "\n";
+
+      ++count;
+    }
     ++p;
   }
   set_last_string(result);
@@ -888,21 +906,22 @@ void ECA_CONTROL::preset_register(void) {
 void ECA_CONTROL::ladspa_register(void) { 
   ecadebug->msg("Registered LADSPA plugins:\n");
   string result;
-  const map<string,string>& kmap = eca_ladspa_plugin_map->registered_objects();
-  map<string,string>::const_iterator p = kmap.begin();
+  const list<string>& objlist = ECA_OBJECT_FACTORY::ladspa_list();
+  list<string>::const_iterator p = objlist.begin();
   int count = 1;
-  while(p != kmap.end()) {
-    string temp = "\n\t-el:" + p->first + ",";
-    EFFECT_LADSPA* q = ECA_OBJECT_FACTORY::ladspa_map_object(p->first, false);
+  while(p != objlist.end()) {
+    const EFFECT_LADSPA* q = ECA_OBJECT_FACTORY::ladspa_map_object(*p);
     if (q != 0) {
+      string temp = "\n\t-el:" + q->unique() + ",";
       int params = q->number_of_params();
       for(int n = 0; n < params; n++) {
 	temp += "'" + q->get_parameter_name(n + 1) + "'";
 	if (n + 1 < params) temp += ",";
       }
       
+      result += kvu_numtostr(count) + ". " + q->name() + "" + temp;
       result += "\n";
-      result += kvu_numtostr(count) + ". " + p->second + temp;
+
       ++count;
     }
     ++p;
@@ -913,12 +932,12 @@ void ECA_CONTROL::ladspa_register(void) {
 void ECA_CONTROL::ctrl_register(void) { 
   ecadebug->msg("Registered controllers:\n");
   string result;
-  const std::map<string,string>& kmap = eca_controller_map->registered_objects();
-  std::map<string,string>::const_iterator p = kmap.begin();
+  const list<string>& objlist = ECA_OBJECT_FACTORY::controller_list();
+  list<string>::const_iterator p = objlist.begin();
   int count = 1;
-  while(p != kmap.end()) {
+  while(p != objlist.end()) {
     string temp;
-    GENERIC_CONTROLLER* q = ECA_OBJECT_FACTORY::controller_map_object(p->first, false);
+    const GENERIC_CONTROLLER* q = ECA_OBJECT_FACTORY::controller_map_object(*p);
     if (q != 0) {
       int params = q->number_of_params();
       for(int n = 0; n < params; n++) {
@@ -926,8 +945,11 @@ void ECA_CONTROL::ctrl_register(void) {
 	temp += q->get_parameter_name(n + 1);
 	if (n + 1 < params) temp += ",";
       }
+
+      result += kvu_numtostr(count) + ". " + q->name() + ", -" + *p +
+	temp;
       result += "\n";
-      result += kvu_numtostr(count) + ". " + p->first + " - " + p->second + temp;
+
       ++count;
     }
     ++p;

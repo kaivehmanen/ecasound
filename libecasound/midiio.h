@@ -60,8 +60,8 @@ class MIDI_IO : public DYNAMIC_OBJECT<std::string> {
   /** @name Constructors and destructors */
   /*@{*/
 
-  virtual MIDI_IO* clone(void) = 0;
-  virtual MIDI_IO* new_expr(void) = 0;
+  virtual MIDI_IO* clone(void) const = 0;
+  virtual MIDI_IO* new_expr(void) const = 0;
   virtual ~MIDI_IO(void);
   MIDI_IO(const std::string& name = "unknown",
 	  int mode = io_read);

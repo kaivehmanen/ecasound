@@ -46,7 +46,7 @@ void EFFECT_PULSE_GATE::set_parameter(int param, parameter_type value) {
       {
 	MESSAGE_ITEM otemp;
 	otemp << "(audiofx_envelope_modulation) WARNING! Frequency must be greater than 0! ";
-	ecadebug->msg(otemp.to_string());
+	ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
       }
     break;
   case 2:
@@ -58,7 +58,7 @@ void EFFECT_PULSE_GATE::set_parameter(int param, parameter_type value) {
       {
 	MESSAGE_ITEM otemp;
 	otemp << "(audiofx_envelope_modulation) WARNING! on time must be between 0 and 100 inclusive! ";
-	ecadebug->msg(otemp.to_string());
+	ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
       }
     break;
   }

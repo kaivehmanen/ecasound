@@ -47,9 +47,7 @@
 #include "audioio-loop.h"
 #include "audioio-null.h"
 
-#include "eca-object-map.h"
-#include "eca-preset-map.h"
-#include "eca-static-object-maps.h"
+#include "eca-object-factory.h"
 
 #include "midiio.h"
 #include "midi-client.h"

@@ -39,8 +39,9 @@ void GENERIC_CONTROLLER::process(void) {
   target->set_parameter(param_id, new_value);
 }
 
-GENERIC_CONTROLLER* GENERIC_CONTROLLER::clone(void) {
-  assert(source != 0);
+GENERIC_CONTROLLER* GENERIC_CONTROLLER::clone(void) const {
+  DBC_CHECK(source != 0);
+
   CONTROLLER_SOURCE* s = source->clone();
 
   OPERATOR* t = 0;

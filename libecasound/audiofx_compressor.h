@@ -93,8 +93,8 @@ class ADVANCED_COMPRESSOR : public EFFECT_AMPLITUDE {
   virtual void process(void);
   virtual int output_channels(int i_channels) const { return(2); }
 
-  ADVANCED_COMPRESSOR* clone(void)  { return new ADVANCED_COMPRESSOR(*this); }
-  ADVANCED_COMPRESSOR* new_expr(void)  { return new ADVANCED_COMPRESSOR(); }
+  ADVANCED_COMPRESSOR* clone(void) const { return new ADVANCED_COMPRESSOR(*this); }
+  ADVANCED_COMPRESSOR* new_expr(void) const { return new ADVANCED_COMPRESSOR(); }
   ADVANCED_COMPRESSOR (double peak_limit, double release_time, double cfrate, double crate);
 
   ADVANCED_COMPRESSOR (void) 

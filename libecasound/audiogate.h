@@ -1,6 +1,8 @@
 #ifndef INCLUDED_AUDIO_GATE_H
 #define INCLUDED_AUDIO_GATE_H
 
+#include <string>
+
 #include "eca-chainop.h"
 #include "samplebuffer.h"
 
@@ -27,7 +29,7 @@ public:
   void process(void);
   virtual void analyze(SAMPLE_BUFFER* sbuf) = 0;
 
-  virtual GATE_BASE* clone(void) = 0;   
+  virtual GATE_BASE* clone(void) const = 0;   
   virtual ~GATE_BASE(void) { }
 
   GATE_BASE(void) { close_gate(); }
@@ -54,8 +56,8 @@ public:
 
   void analyze(SAMPLE_BUFFER* insample);
 
-  TIME_CROP_GATE* clone(void)  { return new TIME_CROP_GATE(*this); }
-  TIME_CROP_GATE* new_expr(void)  { return new TIME_CROP_GATE(); }
+  TIME_CROP_GATE* clone(void) const { return new TIME_CROP_GATE(*this); }
+  TIME_CROP_GATE* new_expr(void) const { return new TIME_CROP_GATE(); }
   TIME_CROP_GATE (parameter_type open_at, parameter_type duration);
   TIME_CROP_GATE (void) : curtime(0.0) {
     close_gate();
@@ -91,8 +93,8 @@ public:
 
   void analyze(SAMPLE_BUFFER* insample);
 
-  THRESHOLD_GATE* clone(void)  { return new THRESHOLD_GATE(*this); }
-  THRESHOLD_GATE* new_expr(void)  { return new THRESHOLD_GATE(); }
+  THRESHOLD_GATE* clone(void) const { return new THRESHOLD_GATE(*this); }
+  THRESHOLD_GATE* new_expr(void) const { return new THRESHOLD_GATE(); }
   THRESHOLD_GATE (parameter_type threshold_openlevel, parameter_type
 		  threshold_closelevel,  bool use_rms = false);
   THRESHOLD_GATE (void) 

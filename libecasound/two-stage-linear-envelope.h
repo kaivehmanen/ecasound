@@ -1,5 +1,5 @@
-#ifndef _TWO_STAGE_LINEAR_ENVELOPE_H
-#define _TWO_STAGE_LINEAR_ENVELOPE_H
+#ifndef INCLUDED_TWO_STAGE_LINEAR_ENVELOPE_H
+#define INCLUDED_TWO_STAGE_LINEAR_ENVELOPE_H
 
 #include <string>
 
@@ -22,8 +22,8 @@ class TWO_STAGE_LINEAR_ENVELOPE : public FINITE_ENVELOPE {
   parameter_type get_parameter(int param) const;
 
   TWO_STAGE_LINEAR_ENVELOPE(void); 
-  TWO_STAGE_LINEAR_ENVELOPE* clone(void)  { return new TWO_STAGE_LINEAR_ENVELOPE(*this); }
-  TWO_STAGE_LINEAR_ENVELOPE* new_expr(void)  { return new TWO_STAGE_LINEAR_ENVELOPE(); }
+  TWO_STAGE_LINEAR_ENVELOPE* clone(void) const { return new TWO_STAGE_LINEAR_ENVELOPE(*this); }
+  TWO_STAGE_LINEAR_ENVELOPE* new_expr(void) const { return new TWO_STAGE_LINEAR_ENVELOPE(); }
 
   private:
 

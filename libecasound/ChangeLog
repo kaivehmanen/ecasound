@@ -2,6 +2,22 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-10-28  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-static-object-maps.h (all): all global functions 
+	and variables encapsulated into the ECA_STATIC_OBJECT_MAPS 
+	class; from now on, all access to object maps only throuh
+	ECA_OBJECT_FACTORY
+	* eca-object-map.h (registered_objects): return type changed
+	* eca-object-map.h (object_regex): added
+	* eca-operator.h (new_expr,clone): changed to const; affect
+	all subclasses
+	* audioio-plugin.h (audio_io_keyword, audio_io_keyword_regex): added
+	* eca-object-factory.h (object_identifier): added
+	* eca-object-factory.h (reserve_factory, free_factory): added	
+	* eca-object-map.h (keyword_to_expr, expr_to_keyword): added
+	* eca-object-factory (register_chain_operator,register_controller): added
+			
 2001-10-17  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	
 	* eca-chainsetup.h (is_in_use): added

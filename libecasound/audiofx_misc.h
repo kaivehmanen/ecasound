@@ -31,8 +31,8 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_DCFIX* clone(void)  { return new EFFECT_DCFIX(*this); }
-  EFFECT_DCFIX* new_expr(void)  { return new EFFECT_DCFIX(); }
+  EFFECT_DCFIX* clone(void) const { return new EFFECT_DCFIX(*this); }
+  EFFECT_DCFIX* new_expr(void) const { return new EFFECT_DCFIX(); }
   EFFECT_DCFIX (const EFFECT_DCFIX& x);
   EFFECT_DCFIX (parameter_type delta_left = 0.0, parameter_type delta_right = 0.0);
 };
@@ -65,8 +65,8 @@ public:
 
   EFFECT_PITCH_SHIFT(void) : pmod_rep(100.0), target_rate_rep(0), sbuf_repp(0) { }
   EFFECT_PITCH_SHIFT (const EFFECT_PITCH_SHIFT& x);
-  EFFECT_PITCH_SHIFT* clone(void)  { return new EFFECT_PITCH_SHIFT(*this); }
-  EFFECT_PITCH_SHIFT* new_expr(void)  { return new EFFECT_PITCH_SHIFT(); }
+  EFFECT_PITCH_SHIFT* clone(void) const { return new EFFECT_PITCH_SHIFT(*this); }
+  EFFECT_PITCH_SHIFT* new_expr(void) const { return new EFFECT_PITCH_SHIFT(); }
 };
 
 /**
@@ -91,8 +91,8 @@ class EFFECT_AUDIO_STAMP : public EFFECT_BASE,
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_AUDIO_STAMP* clone(void)  { return new EFFECT_AUDIO_STAMP(*this); }
-  EFFECT_AUDIO_STAMP* new_expr(void)  { return new EFFECT_AUDIO_STAMP(); }
+  EFFECT_AUDIO_STAMP* clone(void) const { return new EFFECT_AUDIO_STAMP(*this); }
+  EFFECT_AUDIO_STAMP* new_expr(void) const { return new EFFECT_AUDIO_STAMP(); }
 };
 
 #endif

@@ -27,8 +27,8 @@ class NULLFILE : public AUDIO_IO_BUFFERED {
 
   NULLFILE(const std::string& name = "null") { label(name); }
   virtual ~NULLFILE(void) { }
-  NULLFILE* clone(void) { return new NULLFILE(*this); }
-  NULLFILE* new_expr(void) { return new NULLFILE(); }
+  NULLFILE* clone(void) const { return new NULLFILE(*this); }
+  NULLFILE* new_expr(void) const { return new NULLFILE(); }
 };
 
 #endif

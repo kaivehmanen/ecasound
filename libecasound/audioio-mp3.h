@@ -69,8 +69,8 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   MP3FILE (const std::string& name = "");
   ~MP3FILE(void);
     
-  MP3FILE* clone(void) { return new MP3FILE(*this); }
-  MP3FILE* new_expr(void) { return new MP3FILE(*this); }
+  MP3FILE* clone(void) const { return new MP3FILE(*this); }
+  MP3FILE* new_expr(void) const { return new MP3FILE(*this); }
 };
 
 #endif

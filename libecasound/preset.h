@@ -23,8 +23,8 @@ class PRESET : public CHAIN_OPERATOR {
   PRESET(void);
   PRESET(const std::string& formatted_string);
 
-  virtual PRESET* clone(void);
-  virtual PRESET* new_expr(void);
+  virtual PRESET* clone(void) const;
+  virtual PRESET* new_expr(void) const;
   virtual ~PRESET (void);
 
   virtual std::string name(void) const;

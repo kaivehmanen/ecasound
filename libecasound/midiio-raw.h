@@ -40,8 +40,8 @@ class MIDI_IO_RAW : public MIDI_IO {
   MIDI_IO_RAW (const std::string& name = "");
   ~MIDI_IO_RAW(void);
     
-  MIDI_IO_RAW* clone(void) { return(new MIDI_IO_RAW(*this)); }
-  MIDI_IO_RAW* new_expr(void) { return new MIDI_IO_RAW(); }    
+  MIDI_IO_RAW* clone(void) const { return(new MIDI_IO_RAW(*this)); }
+  MIDI_IO_RAW* new_expr(void) const { return new MIDI_IO_RAW(); }    
 };
 
 #endif

@@ -90,8 +90,8 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
   /** @name Constructors and destructors */
   /*@{*/
 
-  virtual AUDIO_IO* clone(void) = 0;
-  virtual AUDIO_IO* new_expr(void) = 0;
+  virtual AUDIO_IO* clone(void) const = 0;
+  virtual AUDIO_IO* new_expr(void) const = 0;
   virtual ~AUDIO_IO(void);
   AUDIO_IO(const std::string& name = "unknown", 
 	   int mode = io_read, 

@@ -34,9 +34,7 @@
 #include "eca-chain.h"
 
 #include "eca-object-factory.h"
-#include "eca-object-map.h"
 #include "eca-preset-map.h"
-#include "eca-static-object-maps.h"
 
 #include "eca-chainsetup.h"
 #include "eca-chainsetup-parser.h"
@@ -177,13 +175,13 @@ void ECA_CHAINSETUP_PARSER::interpret_options(vector<string>& opts) {
   }
 
   if (other_matches + global_matches != optcount) {
-    ecadebug->msg(string("(eca-chainsetup-parser) Warning! While parsing options, ") + 
+    ecadebug->msg(string("(eca-chainsetup-parser) Warning! Only ") + 
 		  kvu_numtostr(other_matches) +
 		  "+" +
 		  kvu_numtostr(global_matches) +
-		  " recognized options; expected for " +
+		  " of the expected " +
 		  kvu_numtostr(optcount) +
-		  ".");
+		  " parameters were recognized succesfully.");
   }
 }
 
@@ -598,16 +596,12 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const std::string& argu) {
 
       case 'n': 
 	{
-	 std::string name = get_argument_number(1,argu);
-  	  const std::map<std::string,std::string>& preset_map = eca_preset_map->registered_objects(); 
-	  std::map<std::string,std::string>::const_iterator p = preset_map.begin();
-	  while (p != preset_map.end()) {
-	    if (p->first == name) {
-//	      add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new GLOBAL_PRESET(name)));
-	      cop = dynamic_cast<CHAIN_OPERATOR*>(new GLOBAL_PRESET(name));
-	    }
-	    ++p;
-	  }
+	  std::string name = get_argument_number(1,argu);
+	  const PRESET* preset = ECA_OBJECT_FACTORY::preset_object(name);
+	  if (preset != 0)
+	    cop = dynamic_cast<CHAIN_OPERATOR*>(preset->new_expr());
+	  else
+	    cop = 0;
 	  break;
 	}
 	
@@ -667,8 +661,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu) {
 	}
       }
       else {
-	interpret_set_result(false, string("(eca-chainsetup-parser) Format of input ") +
-			     tname + " not recognized.");
+	interpret_set_result(false, string("(eca-chainsetup-parser) Unknown input object type '") + tname + "´.");
       }
       break;
     }
@@ -1060,10 +1053,6 @@ std::string ECA_CHAINSETUP_PARSER::outputs_to_string(void) const {
     ++p;
 
     if (p < csetup_repp->outputs.size()) t << "\n";
-
-//    if (startpos_map.find(id) != startpos_map.end()) {
-//      
-//    }
   }
 
   return(t.to_string());

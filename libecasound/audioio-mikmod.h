@@ -57,8 +57,8 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
   MIKMOD_INTERFACE (const std::string& name = "");
   ~MIKMOD_INTERFACE(void);
     
-  MIKMOD_INTERFACE* clone(void) { return new MIKMOD_INTERFACE(*this); }
-  MIKMOD_INTERFACE* new_expr(void) { return new MIKMOD_INTERFACE(); }
+  MIKMOD_INTERFACE* clone(void) const { return new MIKMOD_INTERFACE(*this); }
+  MIKMOD_INTERFACE* new_expr(void) const { return new MIKMOD_INTERFACE(); }
 };
 
 #endif

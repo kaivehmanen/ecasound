@@ -60,8 +60,8 @@ class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
   virtual void process(void);
   virtual std::string status(void) const;
   
-  EFFECT_ANALYZE* clone(void)  { return new EFFECT_ANALYZE(*this); }
-  EFFECT_ANALYZE* new_expr(void)  { return new EFFECT_ANALYZE(); }
+  EFFECT_ANALYZE* clone(void) const { return new EFFECT_ANALYZE(*this); }
+  EFFECT_ANALYZE* new_expr(void) const { return new EFFECT_ANALYZE(); }
   EFFECT_ANALYZE (void);
 };
 
@@ -96,8 +96,8 @@ public:
   virtual void set_parameter(int param, parameter_type value);
   virtual parameter_type get_parameter(int param) const;
 
-  EFFECT_DCFIND* clone(void)  { return new EFFECT_DCFIND(*this); }
-  EFFECT_DCFIND* new_expr(void)  { return new EFFECT_DCFIND(); }
+  EFFECT_DCFIND* clone(void) const { return new EFFECT_DCFIND(*this); }
+  EFFECT_DCFIND* new_expr(void) const { return new EFFECT_DCFIND(); }
   EFFECT_DCFIND (void);
 };
 

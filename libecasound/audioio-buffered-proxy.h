@@ -60,8 +60,8 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
   /** @name Reimplemented functions from DYNAMIC_OBJECT<string> */
   /*@{*/
 
-  AUDIO_IO_BUFFERED_PROXY* clone(void) { std::cerr << "Not implemented!" << std::endl; return this; }
-  AUDIO_IO_BUFFERED_PROXY* new_expr(void) { std::cerr << "Not implemented!" << std::endl; return this; }
+  AUDIO_IO_BUFFERED_PROXY* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
+  AUDIO_IO_BUFFERED_PROXY* new_expr(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
 
   /*@}*/
 

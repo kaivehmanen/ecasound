@@ -16,9 +16,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include "eca-version.h"
 #include "audioio_alsa3.h"
 
-extern "C" {
+static const char* audio_io_keyword_const = "alsahw_09";
+static const char* audio_io_keyword_regex_const = "(^alsahw_09$)|(^alsaplugin_09$)";
+
+const char* audio_io_keyword(void){return(audio_io_keyword_const); }
+const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
 AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_PCM_DEVICE_06X()); }
 int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
-};
+

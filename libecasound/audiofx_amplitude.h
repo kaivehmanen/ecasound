@@ -42,8 +42,8 @@ class EFFECT_AMPLIFY: public EFFECT_AMPLITUDE {
 
   EFFECT_AMPLIFY (parameter_type multiplier_percent = 100.0);
   virtual ~EFFECT_AMPLIFY(void) { }
-  EFFECT_AMPLIFY* clone(void)  { return new EFFECT_AMPLIFY(*this); }
-  EFFECT_AMPLIFY* new_expr(void)  { return new EFFECT_AMPLIFY(); }
+  EFFECT_AMPLIFY* clone(void) const { return new EFFECT_AMPLIFY(*this); }
+  EFFECT_AMPLIFY* new_expr(void) const { return new EFFECT_AMPLIFY(); }
 };
 
 /**
@@ -68,8 +68,8 @@ class EFFECT_AMPLIFY_CLIPCOUNT : public EFFECT_AMPLITUDE {
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_AMPLIFY_CLIPCOUNT* new_expr(void)  { return new EFFECT_AMPLIFY_CLIPCOUNT(); }
-  EFFECT_AMPLIFY_CLIPCOUNT* clone(void)  { return new EFFECT_AMPLIFY_CLIPCOUNT(*this); }
+  EFFECT_AMPLIFY_CLIPCOUNT* new_expr(void) const { return new EFFECT_AMPLIFY_CLIPCOUNT(); }
+  EFFECT_AMPLIFY_CLIPCOUNT* clone(void) const { return new EFFECT_AMPLIFY_CLIPCOUNT(*this); }
   EFFECT_AMPLIFY_CLIPCOUNT (parameter_type multiplier_percent = 100.0, int max_clipped = 0);
 };
 
@@ -95,8 +95,8 @@ class EFFECT_AMPLIFY_CHANNEL: public EFFECT_AMPLITUDE {
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_AMPLIFY_CHANNEL* clone(void)  { return new EFFECT_AMPLIFY_CHANNEL(*this); }
-  EFFECT_AMPLIFY_CHANNEL* new_expr(void)  { return new EFFECT_AMPLIFY_CHANNEL(); }
+  EFFECT_AMPLIFY_CHANNEL* clone(void) const { return new EFFECT_AMPLIFY_CHANNEL(*this); }
+  EFFECT_AMPLIFY_CHANNEL* new_expr(void) const { return new EFFECT_AMPLIFY_CHANNEL(); }
   EFFECT_AMPLIFY_CHANNEL (parameter_type multiplier_percent = 100.0, int channel = 1);
 };
 
@@ -122,8 +122,8 @@ class EFFECT_LIMITER: public EFFECT_AMPLITUDE {
 
   EFFECT_LIMITER (parameter_type multiplier_percent = 100.0);
   virtual ~EFFECT_LIMITER(void) { }
-  EFFECT_LIMITER* clone(void)  { return new EFFECT_LIMITER(*this); }
-  EFFECT_LIMITER* new_expr(void)  { return new EFFECT_LIMITER(); }
+  EFFECT_LIMITER* clone(void) const { return new EFFECT_LIMITER(*this); }
+  EFFECT_LIMITER* new_expr(void) const { return new EFFECT_LIMITER(); }
 };
 
 /**
@@ -153,8 +153,8 @@ class EFFECT_COMPRESS : public EFFECT_AMPLITUDE {
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_COMPRESS* clone(void)  { return new EFFECT_COMPRESS(*this); }
-  EFFECT_COMPRESS* new_expr(void)  { return new EFFECT_COMPRESS(); }
+  EFFECT_COMPRESS* clone(void) const { return new EFFECT_COMPRESS(*this); }
+  EFFECT_COMPRESS* new_expr(void) const { return new EFFECT_COMPRESS(); }
   EFFECT_COMPRESS (const EFFECT_COMPRESS& x);
   EFFECT_COMPRESS (parameter_type compress_rate = 1.0, parameter_type thold = 10.0);
 };
@@ -196,8 +196,8 @@ class EFFECT_NOISEGATE : public EFFECT_AMPLITUDE {
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
-  EFFECT_NOISEGATE* clone(void)  { return new EFFECT_NOISEGATE(*this); }
-  EFFECT_NOISEGATE* new_expr(void)  { return new EFFECT_NOISEGATE(); }
+  EFFECT_NOISEGATE* clone(void) const { return new EFFECT_NOISEGATE(*this); }
+  EFFECT_NOISEGATE* new_expr(void) const { return new EFFECT_NOISEGATE(); }
   EFFECT_NOISEGATE (parameter_type thlevel_percent = 100.0, 
 		    parameter_type thtime = 50.0, 
 		    parameter_type atime = 50.0, 
@@ -232,8 +232,8 @@ public:
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
     
-  EFFECT_NORMAL_PAN* clone(void)  { return new EFFECT_NORMAL_PAN(*this); }
-  EFFECT_NORMAL_PAN* new_expr(void)  { return new EFFECT_NORMAL_PAN(); }
+  EFFECT_NORMAL_PAN* clone(void) const { return new EFFECT_NORMAL_PAN(*this); }
+  EFFECT_NORMAL_PAN* new_expr(void) const { return new EFFECT_NORMAL_PAN(); }
   EFFECT_NORMAL_PAN(parameter_type right_percent = 50.0);
 };
 

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-preset-map: Dynamic register for storing effect presets
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,26 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <algorithm>
+#include <list>
 #include <vector>
 #include <string>
-#include <algorithm>
 
+#include <kvutils/dbc.h>
+
+#include "eca-object.h"
 #include "eca-resources.h"
 #include "eca-preset-map.h"
 #include "global-preset.h"
 
+using std::map;
+using std::string;
+using std::list;
+using std::vector;
+
 ECA_PRESET_MAP::ECA_PRESET_MAP(void) {
   ECA_RESOURCES ecarc;
+
   string filename =
     ecarc.resource("user-resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
   string global_filename =
@@ -36,78 +46,75 @@ ECA_PRESET_MAP::ECA_PRESET_MAP(void) {
   load_preset_file(filename);
 }
 
-void ECA_PRESET_MAP::load_preset_file(const std::string& fname) {
+void ECA_PRESET_MAP::load_preset_file(const string& fname) {
   RESOURCE_FILE preset_file;
   preset_file.resource_file(fname);
   preset_file.load();
-  const std::vector<std::string>& pmap = preset_file.keywords();
-  std::vector<std::string>::const_iterator p = pmap.begin();
+  const vector<string>& pmap = preset_file.keywords();
+  vector<string>::const_iterator p = pmap.begin();
   while(p != pmap.end()) {
-    object_keyword_map[*p] = *p;
+    preset_keywords_rep.push_back(*p);
     ++p;
   }
 }
 
-void ECA_PRESET_MAP::register_object(const std::string& keyword,
-				     PRESET* object) {
-  object_map[keyword] = object;
-  object_keyword_map[keyword] = object->name();
+void ECA_PRESET_MAP::register_object(const string& keyword, const string& matchstr, PRESET* object) {
+  if (find(preset_keywords_rep.begin(), preset_keywords_rep.end(), keyword) == preset_keywords_rep.end())
+    preset_keywords_rep.push_back(keyword);
+
+  ECA_OBJECT_MAP::register_object(keyword, matchstr, object);
 }
 
-void ECA_PRESET_MAP::unregister_object(const std::string& keyword) {
-  object_map[keyword] = 0;
-  object_keyword_map[keyword] = "";
+void ECA_PRESET_MAP::unregister_object(const string& keyword) {
+  preset_keywords_rep.remove(keyword);
+  ECA_OBJECT_MAP::unregister_object(keyword);
 }
 
-const std::map<std::string,std::string>& ECA_PRESET_MAP::registered_objects(void) const {
-  return(object_keyword_map);
+const list<string>& ECA_PRESET_MAP::registered_objects(void) const {
+  return(preset_keywords_rep);
 }
 
-/**
- * Returns the first object that matches 'keyword'. Regular 
- * expressions are not used. For practical reasons a non-const 
- * pointer is returned. However, in most cases the returned 
- * object should be cloned before actual use. In other words, 
- * the returned pointer refers to the object stored in the object 
- * map.
- */
-ECA_OBJECT* ECA_PRESET_MAP::object(const std::string& keyword, bool use_regex) const {
-  std::map<std::string, PRESET*>::const_iterator p = object_map.begin();
-  while(p != object_map.end()) {
-    if (p->first == keyword) 
-      return(dynamic_cast<PRESET*>(p->second));
-    ++p;
+bool ECA_PRESET_MAP::has_keyword(const std::string& keyword) const {
+  if (find(preset_keywords_rep.begin(), preset_keywords_rep.end(), keyword) == preset_keywords_rep.end())
+    return(false);
+
+  return (true);
+}
+
+const ECA_OBJECT* ECA_PRESET_MAP::object_expr(const string& expr) const {
+  if (find(preset_keywords_rep.begin(), preset_keywords_rep.end(), expr) != preset_keywords_rep.end()) {
+    return(object(expr));
   }
-  PRESET* gp = 0;
-  try {
-    gp = dynamic_cast<PRESET*>(new GLOBAL_PRESET(keyword));
-    if (gp != 0) {
-      object_map[keyword] = gp;
-      object_keyword_map[keyword] = gp->name();
+  return(0);
+}
+
+const ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword) const {
+  const PRESET* retobj = 0;
+
+  if (find(preset_keywords_rep.begin(), preset_keywords_rep.end(), keyword) != preset_keywords_rep.end()) {
+    const list<string>& objlist = ECA_OBJECT_MAP::registered_objects();
+
+    if (find(objlist.begin(), objlist.end(), keyword) == objlist.end()) {
+      try {
+	PRESET* obj = dynamic_cast<const PRESET*>(new GLOBAL_PRESET(keyword));
+	if (obj != 0) {
+	  const_cast<ECA_PRESET_MAP*>(this)->register_object(keyword, "^" + keyword + "$", obj);
+	  retobj = obj;
+	  //  std::cerr << "(eca-preset-map) registering obj; " << keyword << ".\n";
+	}
+	//  else std::cerr << "(eca-preset-map) fail (3); " << keyword << ".\n";
+
+      }
+      catch(...) { retobj = 0; }
+
+      DBC_CHECK(find(objlist.begin(), objlist.end(), keyword) != objlist.end());
+    }
+    else {
+      retobj = dynamic_cast<const PRESET*>(ECA_OBJECT_MAP::object(keyword));
+      //  if (retobj == 0) std::cerr << "(eca-preset-map) fail (2); " << keyword << ".\n";
     }
   }
-  catch(...) { gp = 0; }
-  return(gp);
-}
+  //  else std::cerr << "(eca-preset-map) fail (1); " << keyword << ".\n";
 
-string ECA_PRESET_MAP::object_identifier(const PRESET* object) const {
-  assert(object != 0);
-  return(object->name());
-}
-
-void ECA_PRESET_MAP::flush(void) { 
-  std::map<std::string, PRESET*>::iterator p = object_map.begin();
-  while(p != object_map.end()) {
-    p->second = 0;
-    ++p;
-  }
-}
-
-ECA_PRESET_MAP::~ECA_PRESET_MAP (void) { 
-  std::map<std::string, PRESET*>::iterator p = object_map.begin();
-  while(p != object_map.end()) {
-    delete p->second;
-    p->second = 0;
-    ++p;
-  }
+  return(retobj);
 }

@@ -58,8 +58,8 @@ class GENERIC_CONTROLLER : public OPERATOR {
    */
   void process(void);
 
-  GENERIC_CONTROLLER* clone(void);
-  GENERIC_CONTROLLER* new_expr(void) { return(new GENERIC_CONTROLLER(0)); }
+  GENERIC_CONTROLLER* clone(void) const;
+  GENERIC_CONTROLLER* new_expr(void) const { return(new GENERIC_CONTROLLER(0)); }
 
   GENERIC_CONTROLLER(CONTROLLER_SOURCE* source,
 		     OPERATOR* dobj = 0, 

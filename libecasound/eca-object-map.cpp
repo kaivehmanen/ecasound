@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-object-map: A virtual base for dynamic object maps 
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <vector>
+#include <algorithm>
+#include <list>
 #include <string>
 #include <map>
 #include <sys/types.h>
@@ -28,18 +29,32 @@
 
 using std::map;
 using std::string;
-using std::vector;
+using std::list;
 
 /**
- * Registers a new object-regexp pair. Map object will take care
+ * Registers a new object to the object map. Map object will take care
  * of deleting the registered objects. Notice that it's possible 
  * to register the same physical object with different keywords.
  * Object map will take care that objects with multiple registered
  * keywords are destructed properly.
+ *
+ * @arg keyword tag string that identifies the registered object
+ * @arg expr    regex that is used to map strings to objects 
+ *              (note! 'keyword' should match 'expr')
  */
-void ECA_OBJECT_MAP::register_object(const std::string& keyword, ECA_OBJECT* object) {
+void ECA_OBJECT_MAP::register_object(const string& keyword, const string& expr, ECA_OBJECT* object) {
+  object_keywords_rep.push_back(keyword);
   object_map[keyword] = object;
-  object_keyword_map[keyword] = object->name();
+  object_expr_map[keyword] = expr;
+
+  if (expr_to_keyword(keyword) != keyword &&
+      object != 0) {
+    ecadebug->msg(ECA_DEBUG::info, 
+		  "(eca-object-map) Warning! Keyword " + keyword + 
+		  " doesn't match to regex " + expr + 
+		  " for object '" + object->name() + 
+		  "' (" + expr_to_keyword(expr) + ").");
+  }
 }
 
 /**
@@ -47,53 +62,97 @@ void ECA_OBJECT_MAP::register_object(const std::string& keyword, ECA_OBJECT* obj
  * delete the assigned object, because one object can be 
  * registered with multiple keywords.
  */
-void ECA_OBJECT_MAP::unregister_object(const std::string& keyword) {
+void ECA_OBJECT_MAP::unregister_object(const string& keyword) {
+  object_keywords_rep.remove(keyword);
   object_map[keyword] = 0;
-  object_keyword_map[keyword] = "";
+  object_expr_map[keyword] = "";
 }
 
 /**
- * List of registered objects ('regexpr'-'object name' map).
+ * Returns a list of registered objects.
  */
-const std::map<std::string,std::string>& ECA_OBJECT_MAP::registered_objects(void) const {
-  return(object_keyword_map);
+const list<string>& ECA_OBJECT_MAP::registered_objects(void) const {
+  return(object_keywords_rep);
 }
 
-/**
- * Returns the first object that matches the expression 'expr'.
- * If 'use_regexp' is true, regex matching is used. For practical
- * reasons a non-const pointer is returned. However, in most 
- * cases the returned object should be cloned before actual use.
- * In other words, the returned pointer refers to the object
- * stored in the object map.
- */
-ECA_OBJECT* ECA_OBJECT_MAP::object(const std::string& keyword, bool use_regexp) const {
-  std::map<std::string,ECA_OBJECT*>::const_iterator p = object_map.begin();
-  regex_t preg;
-  ECA_OBJECT* object = 0;
+bool ECA_OBJECT_MAP::has_keyword(const std::string& keyword) const {
+  if (std::find(object_keywords_rep.begin(), object_keywords_rep.end(), keyword) == object_keywords_rep.end())
+    return(false);
+
+  return (true);
+}
+
+bool ECA_OBJECT_MAP::has_object(const ECA_OBJECT* obj) const {
+  map<string, ECA_OBJECT*>::const_iterator p = object_map.begin();
   while(p != object_map.end()) {
-    if (use_regexp == true) {
-      regcomp(&preg, p->first.c_str(), REG_NOSUB | REG_ICASE);
-      if (regexec(&preg, keyword.c_str(), 0, 0, 0) == 0) {
-	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-object-map) match (1): " + keyword + " to regexp " + p->first);
-	object = p->second;
-      }
-      regfree(&preg);
-    }
-    else if (p->first == keyword) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-object-map) match (2): " + keyword + " to " + p->first);
-      object = p->second;
+    if (obj->name() == p->second->name()) {
+      return(true);
     }
     ++p;
+  }
+  return(false);
+}
+
+/**
+ * Returns the object identified by 'keyword'. If no keyword 
+ * matches, 0 is returned.
+ *
+ * As a const object pointer is returned, clone() and new_expr() 
+ * methods should be used to create new non-const objects of 
+ * the returned type.
+ */
+const ECA_OBJECT* ECA_OBJECT_MAP::object(const string& keyword) const {
+  const ECA_OBJECT* object = 0;
+  if (object_map.find(keyword) != object_map.end()) {
+    object = object_map[keyword];
   }
   return(object);
 }
 
 /**
- * Returns the matching keyword for 'object'.
+ * A convenience function which directly returns an object matching
+ * the regex 'expr'.
  */
-std::string ECA_OBJECT_MAP::object_identifier(const ECA_OBJECT* object) const {
-  std::map<std::string, ECA_OBJECT*>::const_iterator p = object_map.begin();
+const ECA_OBJECT* ECA_OBJECT_MAP::object_expr(const string& expr) const {
+  return(object(expr_to_keyword(expr)));
+}
+
+/**
+ * Returns the identifying keyword that matches the expression 'expr'.
+ */
+string ECA_OBJECT_MAP::expr_to_keyword(const string& expr) const {
+  map<string,string>::const_iterator p = object_expr_map.begin();
+  regex_t preg;
+  string result;
+  while(p != object_expr_map.end()) {
+    regcomp(&preg, p->second.c_str(), REG_EXTENDED | REG_NOSUB | REG_ICASE);
+    if (regexec(&preg, expr.c_str(), 0, 0, 0) == 0) {
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-object-map) match (1): " + expr + " to regexp " + p->second);
+      result = p->first;
+      regfree(&preg);
+      break;
+    }
+    regfree(&preg);
+    ++p;
+  }
+  return(result);
+}
+
+/**
+ * Returns the identifying keyword that matches the expression 'expr'.
+ */
+string ECA_OBJECT_MAP::keyword_to_expr(const string& keyword) const {
+  if (object_expr_map.find(keyword) != object_expr_map.end())
+    return(object_expr_map[keyword]);
+
+  return("");
+}
+
+/**
+ * Returns the matching identifying keyword for 'object'.
+ */
+string ECA_OBJECT_MAP::object_identifier(const ECA_OBJECT* object) const {
+  map<string, ECA_OBJECT*>::const_iterator p = object_map.begin();
   while(p != object_map.end()) {
     if (object->name() == p->second->name()) {
       return(p->first);
@@ -103,11 +162,14 @@ std::string ECA_OBJECT_MAP::object_identifier(const ECA_OBJECT* object) const {
   return("");
 }
 
+
 /**
  * Unregister all objects without physically deleting them.
+ *
+ * Note! Should only be used in special circumstances.
  */
 void ECA_OBJECT_MAP::flush(void) { 
-  std::map<std::string, ECA_OBJECT*>::iterator p = object_map.begin();
+  map<string, ECA_OBJECT*>::iterator p = object_map.begin();
   while(p != object_map.end()) {
     p->second = 0;
     ++p;
@@ -115,12 +177,12 @@ void ECA_OBJECT_MAP::flush(void) {
 }
 
 ECA_OBJECT_MAP::~ECA_OBJECT_MAP (void) { 
-  std::map<std::string, ECA_OBJECT*>::iterator p = object_map.begin();
+  map<string, ECA_OBJECT*>::iterator p = object_map.begin();
   while(p != object_map.end()) {
     if (p->second != 0) {
       ECA_OBJECT* next_obj = p->second;
       // std::cerr << "Deleting " << next_obj->name() << "." << std::endl;
-      std::map<std::string, ECA_OBJECT*>::iterator q = p;
+      map<string, ECA_OBJECT*>::iterator q = p;
       ++q;
       while(q != object_map.end()) {
 	if (q->second != 0 &&
@@ -136,4 +198,3 @@ ECA_OBJECT_MAP::~ECA_OBJECT_MAP (void) {
     ++p;
   }
 }
-

@@ -57,8 +57,8 @@ class RAWFILE : public AUDIO_IO_BUFFERED {
   RAWFILE (const std::string& name = "");
   ~RAWFILE(void);
     
-  RAWFILE* clone(void) { std::cerr << "Not implemented!" << std::endl;  return this; }    
-  RAWFILE* new_expr(void) { return new RAWFILE(); }    
+  RAWFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl;  return 0; }    
+  RAWFILE* new_expr(void) const { return new RAWFILE(); }    
 };
 
 #endif
