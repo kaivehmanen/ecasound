@@ -24,6 +24,7 @@ Prefix: 	%{_prefix}
 Name: 		ecasound
 Version: 	%{pkgver}
 Release: 	%{pkgrel}
+Serial: 	1
 Copyright: 	GPL
 Source: 	http://ecasound.seul.org/download/ecasound-%{ver}.tar.gz
 URL: 		http://www.eca.cx/ecasound
@@ -177,6 +178,10 @@ strip --strip-unneeded \
 # changelog
 
 %changelog
+* Mon Jan 20 2003 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+- added Serial tag to differentiate between 2.2 pre and 
+  final releases
+
 * Sat Nov 02 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 - ported Fernando Lopez-Lezcano's changes to unify this
   spec file with PlanetCCRMA's ecasound package; see
