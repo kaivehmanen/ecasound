@@ -16,12 +16,15 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ??102002 (v2.2.0-pre4)
+	- edi-entries: edi-30
 	- added: eiam - commands 'cop-descriptions',
 		 'ctrl-descriptions', 'ladspa-descriptions' and 
 		 'preset-descriptions'; see ecasound-iam(1) man
 		 page for details
 	- added: eiam - 'ao-add-default' command
 	- changed: libecasoundc now LGPL licensed
+	- changed: edi-30; ecaplay rewritten using the new standalone
+	 	   ECI api
 	- removed: eiam - all mentions of map commands from the 
 		   man page; these were never implemented
 19102002 (v2.2.0-pre3)
