@@ -41,15 +41,21 @@
 
 #include "ecicpp_helpers.h"
 
-#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
-#ifdef ECA_HAVE_NCURSES_CURSES_H
-#include <ncurses/curses.h>
-#include <ncurses/term.h>
+#if defined(ECA_USE_NCURSES_H) || defined(ECA_USE_NCURSES_NCURSES_H) || defined(ECA_USE_CURSES_H)
+#define ECASV_USE_CURSES 1
+
+#ifdef ECA_USE_NCURSES_H
+#include <ncurses.h>
+#include <term.h> /* for setupterm() */
+#elif ECA_USE_NCURSES_CURSES_H
+#include <ncurses/nnurses.h>
+#include <term.h> /* for setupterm() */
 #else
 #include <curses.h>
-#include <term.h>
+#include <term.h> /* for setupterm() */
 #endif
-#endif
+
+#endif /* ECA_*CURSES_H */
 
 /**
  * Import namespaces 
@@ -244,7 +250,7 @@ string ecasv_cop_to_string(ECA_CONTROL_INTERFACE* eci)
 
 void ecasv_output_init(void)
 {
-#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
+#ifdef ECASV_USE_CURSES
     initscr();
     erase();
 
@@ -269,7 +275,7 @@ void ecasv_output_init(void)
 
 void ecasv_output_cleanup(void)
 {
-#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
+#ifdef ECASV_USE_CURSES
     endwin();
 #endif
 
@@ -284,7 +290,7 @@ void ecasv_output_cleanup(void)
 
 void ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci, vector<struct ecasv_channel_stats>* chstats)
 {
-#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
+#ifdef ECASV_USE_CURSES
   for(int n = 0; n < ecasv_chcount; n++) {
     eci->command("copp-select " + kvu_numtostr(n + 1));
     eci->command("copp-get");

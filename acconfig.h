@@ -1,6 +1,6 @@
 /** 
  * acconfig.h for ecasound
- * last modified: 20021016-2
+ * last modified: 20021101-3
  */
 
 /* Package name */
@@ -21,14 +21,14 @@
 /* Ecasound configure script prefix */
 #undef ECA_PREFIX
 
-/* use libncurses for termcap info */
-#undef ECA_USE_NCURSES
+/* use ncurses.h for curses interface */
+#undef ECA_USE_NCURSES_H
 
-/* ncurses headers are installed in ncurses subdir <ncurses/curses.h> */
-#undef ECA_HAVE_NCURSES_CURSES_H
+/* ncurses headers are installed in ncurses subdir <ncurses/ncurses.h> */
+#undef ECA_USE_NCURSES_NCURSES_H
 
-/* use libtermcap for termcap info */
-#undef ECA_USE_TERMCAP
+/* use curses.h for curses interface */
+#undef ECA_USE_CURSES_H
 
 /* whether to compile ALSA input/output */
 #undef ECA_COMPILE_ALSA

@@ -25,14 +25,17 @@
 #include <map>
 #include <string>
 
-#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
+#if defined(ECA_USE_NCURSES_H) || defined(ECA_USE_NCURSES_NCURSES_H) || defined(ECA_USE_CURSES_H)
 
-#ifdef ECA_HAVE_NCURSES_CURSES_H
-#include <ncurses/curses.h>
-#include <ncurses/term.h>
+#ifdef ECA_USE_NCURSES_H
+#include <ncurses.h>
+#include <term.h> /* for setupterm() */
+#elif ECA_USE_NCURSES_CURSES_H
+#include <ncurses/nnurses.h>
+#include <ncurses/term.h> /* for setupterm() */
 #else
 #include <curses.h>
-#include <term.h>
+#include <term.h> /* for setupterm() */
 #endif
 
 #define READLINE_LIBRARY
