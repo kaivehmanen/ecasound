@@ -3,7 +3,7 @@
    Can be used to replace the C implementation 'pyecasound.so'.
 """
 
-# Version: $Id: ecacontrol.py,v 1.7 2003-11-26 17:02:33 kaiv Exp $
+# Version: $Id: ecacontrol.py,v 1.8 2003-11-26 19:33:55 kaiv Exp $
 
 authors="""Kai Vehmanen, Eric S. Tiedemann and Janne Halttunen."""
 
@@ -140,7 +140,7 @@ class ECA_CONTROL_INTERFACE:
         if ecasound_binary == '':
             ecasound_binary = 'ecasound'
 
-        _ecasound.append(Popen3(ecasound_binary + ' -c -d:256', 0, 0))
+        _ecasound.append(Popen3(ecasound_binary + ' -c -d:256 2>/dev/null', 0, 0))
 	
 	I.eca=_ecasound[-1]
 	
