@@ -59,14 +59,14 @@ Like before, but ecasound is now started in interactive mode.
 <li> ecasound -i:somefile.wav 
 <li> ecasound -i somefile.wav -o /dev/dsp
 </p><p>
-If you haven't touched your <b>~/.ecasoundrc</b> configuration file,
+If you haven't touched your <b>~/.ecasound/ecasoundrc</b> configuration file,
 these should all do the same thing, output <i>somefile.wav</i> to
 <i>/dev/dsp</i> using the <i>default</i> chain. If no inputs are 
 specified, ecasound tries to use the first non-option argument on the
 command line as a default input. If no chains are specified, the chain
 <i>default</i> is created and set active. If no outputs are specified,
-the default-output defined in <b>~/.ecasoundrc</b> is used. This is
-normally <i>/dev/dsp</i>. 
+the default-output defined in <b>~/.ecasound/ecasoundrc</b> is used. 
+This is normally <i>/dev/dsp</i>.
 </p>
 <p>
 <li> ecasound -i somefile.mp3 -o alsahw,0,0
