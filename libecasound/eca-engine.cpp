@@ -708,6 +708,9 @@ void ECA_ENGINE::multitrack_start(void) {
       multitrack_sync();
   }
 
+  DBC_CHECK(realtime_inputs_rep.size() > 0);
+  DBC_CHECK(realtime_outputs_rep.size() > 0);
+
   // ---
   // Start rt-inputs
   for (unsigned int adev_sizet = 0; adev_sizet != realtime_inputs_rep.size(); adev_sizet++)
@@ -721,10 +724,7 @@ void ECA_ENGINE::multitrack_start(void) {
   // start rt-outputs
   for (unsigned int adev_sizet = 0; adev_sizet != realtime_outputs_rep.size(); adev_sizet++)
     realtime_outputs_rep[adev_sizet]->start();
-  
-  DBC_CHECK(realtime_inputs_rep.size() > 0);
-  DBC_CHECK(realtime_outputs_rep.size() > 0);
-  
+ 
   struct timeval now;
   gettimeofday(&now, NULL);
   double time = now.tv_sec * 1000000.0 + now.tv_usec -
@@ -747,7 +747,7 @@ void ECA_ENGINE::multitrack_start(void) {
               << sync_fix 
               << "; problems with hardware? " << std::endl;
   }
-  else {
+  else if (sync_fix > 0) {
     // write 'syncfix' samples of silence to nonrt outputs
     for (size_t n = 0; n != outputs_repp->size(); n++) {
       if (AUDIO_IO_DEVICE::is_realtime_object((*outputs_repp)[n]) != true) {
@@ -884,7 +884,7 @@ void ECA_ENGINE::inputs_to_chains(bool skip_realtime_inputs) {
 
     if (skip_realtime_inputs == true) {
       if (AUDIO_IO_DEVICE::is_realtime_object((*inputs_repp)[audioslot_sizet]) == true) {
-	std::cerr << "(eca-engine) Skipping rt-input " << (*inputs_repp)[audioslot_sizet]->label() << "." << endl;
+	//  std::cerr << "(eca-engine) Skipping rt-input " << (*inputs_repp)[audioslot_sizet]->label() << "." << endl;
 	continue;
       }
     }
@@ -914,7 +914,7 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
 
     if (skip_realtime_target_outputs == true) {
       if (csetup_repp->is_realtime_target_output(audioslot_sizet) == true) {
-	std::cerr << "(eca-engine) Skipping rt-target output " << (*outputs_repp)[audioslot_sizet]->label() << "." << endl;
+	//  std::cerr << "(eca-engine) Skipping rt-target output " << (*outputs_repp)[audioslot_sizet]->label() << "." << endl;
 	continue;
       }
     }
