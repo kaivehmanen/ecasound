@@ -30,6 +30,9 @@ GLOBAL_PRESET::GLOBAL_PRESET(const std::string& preset_name)
   ECA_RESOURCES ecarc;
   ECA_LOG_MSG(ECA_LOGGER::system_objects,"(global-preset) Opening sc-preset file.");
 
+  /* FIXME: is this correct; user resources should be nowadays handled
+     in eca-resources.cpp */
+
   std::string user_filename =
     ecarc.resource("user-resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
 

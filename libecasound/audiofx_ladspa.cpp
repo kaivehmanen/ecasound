@@ -158,6 +158,9 @@ void EFFECT_LADSPA::parse_parameter_hint_information(int portnum, int paramnum, 
     if (LADSPA_IS_HINT_DEFAULT_MINIMUM(hintdescriptor)) {
       pd->default_value = pd->lower_bound;
     }
+
+    /* FIXME: add support for logarithmic defaults */
+
     else if (LADSPA_IS_HINT_DEFAULT_LOW(hintdescriptor)) {
       pd->default_value = pd->lower_bound * 0.75f + pd->upper_bound * 0.25f;
     }
@@ -287,7 +290,6 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample)
       plugin_desc->cleanup(plugins_rep[n]);
     }
   }
-
 
   // NOTE: the fancy definition :)
   //       if ((in_audio_ports > 1 &&
