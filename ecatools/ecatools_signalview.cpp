@@ -56,7 +56,10 @@
 static bool enable_debug, enable_cumulative_mode;
 static long int buffersize, rate_msec;
 static string input, output, format_string;
-const string ecatools_signalview_version = "20001124";
+const string ecatools_signalview_version = "20020623";
+
+using std::cerr;
+using std::endl;
 
 void parse_command_line(int argc, char *argv[]) {
   COMMAND_LINE cline = COMMAND_LINE (argc, argv);
@@ -130,7 +133,7 @@ int main(int argc, char *argv[])
   try {
     ECA_SESSION esession;
     ECA_CONTROL ectrl (&esession);
-//      ectrl.toggle_interactive_mode(true);
+    // ectrl.toggle_interactive_mode(true);
     ECA_AUDIO_FORMAT aio_params;
     ectrl.add_chainsetup("default");
     ectrl.add_chain("default");
@@ -139,7 +142,8 @@ int main(int argc, char *argv[])
       ectrl.set_chainsetup_parameter(format_string);
     ectrl.add_audio_input(input);
     if (ectrl.get_audio_input() == 0) {
-      std::cerr << "---\nError while opening \"" << input << "\". Exiting...\n";
+      cerr << ectrl.last_error() << endl;
+      cerr << "---\nError while opening \"" << input << "\". Exiting...\n";
       exit(0);
     }
     if (format_string.size() == 0) {
@@ -149,7 +153,8 @@ int main(int argc, char *argv[])
     }
     ectrl.add_audio_output(output);
     if (ectrl.get_audio_output() == 0) {
-      std::cerr << "---\nError while opening \"" << output << "\". Exiting...\n";
+      cerr << ectrl.last_error() << endl;
+      cerr << "---\nError while opening \"" << output << "\". Exiting...\n";
       exit(0);
     }
     EFFECT_ANALYZE cop;
@@ -158,7 +163,8 @@ int main(int argc, char *argv[])
     ectrl.add_chain_operator((CHAIN_OPERATOR*)&cop);
     ectrl.connect_chainsetup();
     if (ectrl.is_connected() == false) {
-      std::cerr << "---\nError while connecting chainsetup.\n";
+      cerr << ectrl.last_error() << endl;
+      cerr << "---\nError while connecting chainsetup.\n";
       exit(0);
 
     }
@@ -180,7 +186,7 @@ int main(int argc, char *argv[])
       printw("%s", cop.status().c_str());
       refresh();
 #else
-      std::cout << cop.status() << std::endl;
+      std::cout << cop.status() << endl;
 #endif
     }
 #if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
@@ -188,32 +194,34 @@ int main(int argc, char *argv[])
 #endif
   }
   catch(ECA_ERROR& e) {
-    std::cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
   catch(...) {
-    std::cerr << "\nCaught an unknown exception.\n";
+    cerr << "\nCaught an unknown exception.\n";
   }
   return(0);
 }
 
-void print_usage(void) {
-  std::cerr << "****************************************************************************\n";
-  std::cerr << "* ecatools_signalview, v" << ecatools_signalview_version;
-  std::cerr << " (linked to ecasound v" << ecasound_library_version 
+void print_usage(void)
+{
+  cerr << "****************************************************************************\n";
+  cerr << "* ecatools_signalview, v" << ecatools_signalview_version;
+  cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
-  std::cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence\n";
-  std::cerr << "****************************************************************************\n";
+  cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence\n";
+  cerr << "****************************************************************************\n";
 
-  std::cerr << "\nUSAGE: ecatsignalview [options] [input] [output] \n";
-  std::cerr << "\toptions:";
-  std::cerr << "\t-b:buffersize\n";
-  std::cerr << "\t-c (cumulative mode)\n";
-  std::cerr << "\t-d (debug mode)\n";
-  std::cerr << "\t-r:refresh_msec\n\n";
+  cerr << "\nUSAGE: ecatsignalview [options] [input] [output] \n";
+  cerr << "\toptions:";
+  cerr << "\t-b:buffersize\n";
+  cerr << "\t-c (cumulative mode)\n";
+  cerr << "\t-d (debug mode)\n";
+  cerr << "\t-r:refresh_msec\n\n";
 }
 
-void signal_handler(int signum) {
-  std::cerr << "Unexpected interrupt... cleaning up.\n";
+void signal_handler(int signum)
+{
+  cerr << "Unexpected interrupt... cleaning up.\n";
 #if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
   endwin();
 #endif

@@ -33,7 +33,10 @@
 
 #include "ecatools_convert.h"
 
-static const string ecatools_play_version = "20011009";
+static const string ecatools_play_version = "20020623";
+
+using std::cerr;
+using std::endl;
 
 int main(int argc, char *argv[])
 {
@@ -70,14 +73,15 @@ int main(int argc, char *argv[])
 
     while(cline.end() != true) {
       filename = cline.current();
-      std::cerr << "Converting file \"" << filename << "\" --> ";
-      std::cerr << "\"" << filename + extension << "\"." << std::endl;
+      cerr << "Converting file \"" << filename << "\" --> ";
+      cerr << "\"" << filename + extension << "\"." << endl;
 
       ectrl.add_chainsetup("default");
       ectrl.add_chain("default");
       ectrl.add_audio_input(filename);
       if (ectrl.get_audio_input() == 0) {
-	std::cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+	cerr << ectrl.last_error() << endl;
+	cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	break;
       }
       ectrl.set_default_audio_format_to_selected_input();
@@ -85,12 +89,14 @@ int main(int argc, char *argv[])
       ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
       ectrl.add_audio_output(filename + extension);
       if (ectrl.get_audio_output() == 0) {
-	std::cerr << "---\nError while processing file " << filename + extension << ". Exiting...\n";
+	cerr << ectrl.last_error() << endl;
+	cerr << "---\nError while processing file " << filename + extension << ". Exiting...\n";
 	break;
       }
       ectrl.connect_chainsetup();
       if (ectrl.is_connected() == false) {
-	std::cerr << "---\nError while converting file " << filename << ". Exiting...\n";
+	cerr << ectrl.last_error() << endl;
+	cerr << "---\nError while converting file " << filename << ". Exiting...\n";
 	break;
       }
 
@@ -104,21 +110,21 @@ int main(int argc, char *argv[])
     }
   }
   catch(ECA_ERROR& e) {
-    std::cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
   catch(...) {
-    std::cerr << "\nCaught an unknown exception.\n";
+    cerr << "\nCaught an unknown exception.\n";
   }
   return(0);
 }
 
 void print_usage(void) {
-  std::cerr << "****************************************************************************\n";
-  std::cerr << "* ecatools_convert, v" << ecatools_play_version;
-  std::cerr << " (linked to ecasound v" << ecasound_library_version 
+  cerr << "****************************************************************************\n";
+  cerr << "* ecatools_convert, v" << ecatools_play_version;
+  cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
-  std::cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence \n";
-  std::cerr << "****************************************************************************\n";
+  cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence \n";
+  cerr << "****************************************************************************\n";
 
-  std::cerr << "\nUSAGE: ecaconvert .extension file1 [ file2, ... fileN ]\n\n";
+  cerr << "\nUSAGE: ecaconvert .extension file1 [ file2, ... fileN ]\n\n";
 }

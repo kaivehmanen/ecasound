@@ -40,8 +40,11 @@
 
 #include "ecatools_fixdc.h"
 
-static const string ecatools_fixdc_version = "20011009";
+static const string ecatools_fixdc_version = "20020623";
 static string ecatools_fixdc_tempfile;
+
+using std::cerr;
+using std::endl;
 
 int main(int argc, char *argv[])
 {
@@ -107,6 +110,7 @@ int main(int argc, char *argv[])
 	  std::cerr << "Calculating DC-offset for file \"" << filename << "\".\n";
 	  ectrl.add_audio_input(filename);
 	  if (ectrl.get_audio_input() == 0) {
+	    cerr << ectrl.last_error() << endl;
 	    std::cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	    break;
 	  }
@@ -115,6 +119,7 @@ int main(int argc, char *argv[])
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(ecatools_fixdc_tempfile);
 	  if (ectrl.get_audio_output() == 0) {
+	    cerr << ectrl.last_error() << endl;
 	    std::cerr << "---\nError while processing file " << ecatools_fixdc_tempfile << ". Exiting...\n";
 	    break;
 	  }
@@ -130,6 +135,7 @@ int main(int argc, char *argv[])
 	       << ").\n";
 	  ectrl.add_audio_input(ecatools_fixdc_tempfile);
 	  if (ectrl.get_audio_input() == 0) {
+	    cerr << ectrl.last_error() << endl;
 	    std::cerr << "---\nError while processing file " << ecatools_fixdc_tempfile << ". Exiting...\n";
 	    break;
 	  }
@@ -138,6 +144,7 @@ int main(int argc, char *argv[])
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(filename);
 	  if (ectrl.get_audio_output() == 0) {
+	    cerr << ectrl.last_error() << endl;
 	    std::cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	    break;
 	  }
@@ -148,6 +155,7 @@ int main(int argc, char *argv[])
 	}
 	ectrl.connect_chainsetup();
 	if (ectrl.is_connected() == false) {
+	  cerr << ectrl.last_error() << endl;
 	  std::cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	  break;
 	}

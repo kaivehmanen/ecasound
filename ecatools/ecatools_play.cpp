@@ -42,9 +42,12 @@ static int ecaplay_exit_request_rep = 0;
 static int ecaplay_skip_files = 0;
 static int ecaplay_total_files = 0;
 
-static const string ecaplay_version = "20020427";
+static const string ecaplay_version = "20020623";
 
 int process_option(const string& option);
+
+using std::cerr;
+using std::endl;
 
 int main(int argc, char *argv[])
 {
@@ -121,10 +124,10 @@ int main(int argc, char *argv[])
 	std::cout << "(ecaplay) Playing file '" << filename << "'";
         std::cout << " (" << playing_file;
 	std::cout << "/" << ecaplay_total_files;
-	std::cout << ")." << std::endl;
+	std::cout << ")." << endl;
       }
       else {
-	std::cout << "(ecaplay) Skipping file '" << filename << "'." << std::endl;
+	std::cout << "(ecaplay) Skipping file '" << filename << "'." << endl;
 	--ecaplay_skip_files;
 	cline.next();
 	continue;
@@ -134,7 +137,8 @@ int main(int argc, char *argv[])
       ectrl.add_chain("default");
       ectrl.add_audio_input(filename);
       if (ectrl.get_audio_input() == 0) {
-	std::cerr << "(ecaplay) Error! Skipping file " << filename << "." << std::endl;
+	cerr << "(ecaplay) " << ectrl.last_error() << endl;
+	cerr << "(ecaplay) Error! Skipping file " << filename << "." << endl;
       }
       else {
 	ectrl.set_default_audio_format_to_selected_input();
@@ -143,10 +147,11 @@ int main(int argc, char *argv[])
 	ectrl.add_default_output();
 	ectrl.connect_chainsetup();
 	if (ectrl.is_connected() != true) {
-	  std::cerr << "(ecaplay) Error while playing file " << filename << ". Skipping...\n";
+	  cerr << "(ecaplay) " << ectrl.last_error() << endl;
+	  cerr << "(ecaplay) Error while playing file " << filename << ". Skipping...\n";
 	  ++consecutive_errors;
 	  if (consecutive_errors == 3) {
-	    std::cerr << "(ecaplay) Too many errors, exiting." << std::endl;
+	    cerr << "(ecaplay) Too many errors, exiting." << endl;
 	    ectrl.remove_chainsetup();
 	    break;
 	  }
@@ -161,21 +166,18 @@ int main(int argc, char *argv[])
       cline.next();
     }
   }
-  catch(ECA_ERROR& e) {
-    std::cerr << "(ecaplay) ---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
-  }
   catch(...) {
-    std::cerr << "\n(ecaplay) Caught an unknown exception.\n";
+    cerr << "\n(ecaplay) Caught an unknown exception.\n";
   }
   return(0);
 }
 
 void signal_handler(int signum) {
-  // std::cerr << "Caught an interrupt... moving to next file.\n";
+  // cerr << "Caught an interrupt... moving to next file.\n";
   if (ecaplay_ptimer_repp != 0) {
     ecaplay_ptimer_repp->stop();
     if (ecaplay_ptimer_repp->events_under_lower_bound() > 0) {
-      std::cerr << std::endl << "(ecaplay) Caught an exception. Exiting..." << std::endl;
+      cerr << endl << "(ecaplay) Caught an exception. Exiting..." << endl;
       ecaplay_exit_request_rep = 1;
     }
     ecaplay_ptimer_repp->reset();
@@ -189,14 +191,14 @@ void signal_handler(int signum) {
 }
 
 void print_usage(void) {
-  std::cerr << "****************************************************************************\n";
-  std::cerr << "* ecatools_play, v" << ecaplay_version;
-  std::cerr << " (linked to ecasound v" << ecasound_library_version 
+  cerr << "****************************************************************************\n";
+  cerr << "* ecatools_play, v" << ecaplay_version;
+  cerr << " (linked to ecasound v" << ecasound_library_version 
        << ")\n";
-  std::cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence \n";
-  std::cerr << "****************************************************************************\n";
+  cerr << "* (C) 1997-2001 Kai Vehmanen, released under GPL licence \n";
+  cerr << "****************************************************************************\n";
 
-  std::cerr << "\nUSAGE: ecaplay [-dhk] file1 [ file2, ... fileN ]\n\n";
+  cerr << "\nUSAGE: ecaplay [-dhk] file1 [ file2, ... fileN ]\n\n";
 }
 
 int process_option(const string& option) {
@@ -229,8 +231,7 @@ int process_option(const string& option) {
       
     default:
       {
-	std::cerr << "(ecaplay) Error! Unknown option '" << option
-		  << "'." << std::endl;
+	cerr << "(ecaplay) Error! Unknown option '" << option << "'." << endl;
 	return(2);
       }
     }
