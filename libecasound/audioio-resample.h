@@ -83,6 +83,20 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
 
   /*@}*/
 
+  /** @name Reimplemented functions from ECA_AUDIO_FORMAT */
+  /*@{*/
+
+  virtual void set_audio_format(const ECA_AUDIO_FORMAT& f_str);
+
+  /*@}*/
+
+  /** @name Reimplemented functions from ECA_SAMPLERATE_AWARE */
+  /*@{*/
+  
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
+
+  /*@}*/
+
  private:
 
   mutable std::vector<std::string> params_rep;

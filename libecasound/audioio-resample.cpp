@@ -185,6 +185,23 @@ void AUDIO_IO_RESAMPLE::seek_position(void)
   AUDIO_IO_PROXY::seek_position();
 }
 
+void AUDIO_IO_RESAMPLE::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
+{
+  AUDIO_IO::set_audio_format(f_str);
+  child()->set_audio_format(f_str);
+  
+  /* set_audio_format() also sets the sample rate so we need to 
+     reset the value back to the correct one */
+  child()->set_samples_per_second(child_srate_rep);
+}
+
+void AUDIO_IO_RESAMPLE::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
+{
+  AUDIO_IO::set_samples_per_second(v);
+
+  /* the child srate is only set in open */
+}
+
 void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* sbuf)
 {
   // std::cerr << "pre-pre-resample: " << child_buffersize_rep << " samples.\n";
