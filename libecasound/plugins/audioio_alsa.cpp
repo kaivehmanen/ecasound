@@ -2,6 +2,9 @@
 // audioio-alsa.cpp: ALSA 0.9.x PCM input and output.
 // Copyright (C) 1999-2004 Kai Vehmanen, Jeremy Hall 
 //
+// Attributes:
+//     eca-style-version: 3
+//
 // References:
 //     http://alsa-project.org/
 //
@@ -77,7 +80,7 @@ AUDIO_IO_ALSA_PCM::AUDIO_IO_ALSA_PCM (int card,
 				      int subdevice) 
   : AUDIO_IO_DEVICE()
 {
-  // ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) construct");
+  // ECA_LOG_MSG(ECA_LOGGER::system_objects, "construct");
   card_number_rep = card;
   device_number_rep = device;
   subdevice_number_rep = subdevice;
@@ -97,14 +100,14 @@ AUDIO_IO_ALSA_PCM::~AUDIO_IO_ALSA_PCM(void)
 
   if (io_mode() != io_read) {
     if (underruns_rep != 0) {
-      cerr << "(audioio-alsa) WARNING! While writing to ALSA-pcm device ";
+      cerr << "WARNING! While writing to ALSA-pcm device ";
       cerr << "C" << card_number_rep << "D" << device_number_rep;
       cerr << ", there were " << underruns_rep << " underruns.\n";
     }
   }
   else {
     if (overruns_rep != 0) {
-      cerr << "(audioio-alsa) WARNING! While reading from ALSA-pcm device ";
+      cerr << "WARNING! While reading from ALSA-pcm device ";
       cerr << "C" << card_number_rep << "D" << device_number_rep;
       cerr << ", there were " << overruns_rep << " overruns.\n";
     }
@@ -122,7 +125,7 @@ AUDIO_IO_ALSA_PCM* AUDIO_IO_ALSA_PCM::clone(void) const
   for(int n = 0; n < number_of_params(); n++) {
     target->set_parameter(n + 1, get_parameter(n + 1));
   }
-  return(target);
+  return target;
 }
 
 void AUDIO_IO_ALSA_PCM::allocate_structs(void)
@@ -143,7 +146,7 @@ void AUDIO_IO_ALSA_PCM::deallocate_structs(void)
 
 void AUDIO_IO_ALSA_PCM::open_device(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) open");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "open");
 
   // -------------------------------------------------------------------
   // Device name initialization
@@ -189,7 +192,7 @@ void AUDIO_IO_ALSA_PCM::open_device(void)
 
 void AUDIO_IO_ALSA_PCM::set_audio_format_params(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) set_audio_format_params");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "set_audio_format_params");
   format_rep = SND_PCM_FORMAT_LAST;
   switch(sample_format()) 
     {
@@ -215,7 +218,7 @@ void AUDIO_IO_ALSA_PCM::print_pcm_info(void)
 
 void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) fill_and_set_hw_params");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "fill_and_set_hw_params");
 
   /* 1. create one param combination */
   int err = snd_pcm_hw_params_any(audio_fd_repp, pcm_hw_params_repp);
@@ -223,9 +226,9 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
   
   /* 2. set interleaving mode */
   if (interleaved_channels() == true)
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) Using interleaved stream format.");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Using interleaved stream format.");
   else
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) Using noninterleaved stream format.");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Using noninterleaved stream format.");
 
   if (interleaved_channels() == true)
     err = snd_pcm_hw_params_set_access(audio_fd_repp, pcm_hw_params_repp,
@@ -292,21 +295,21 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
    
   /* 9. print debug information */
   snd_pcm_hw_params_get_period_time(pcm_hw_params_repp, &uivalue, 0);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(uivalue) + " usecs.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "period time set to " + kvu_numtostr(uivalue) + " usecs.");
   
   snd_pcm_hw_params_get_period_size(pcm_hw_params_repp, &period_size_rep, 0);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) period time set to " + kvu_numtostr(period_size_rep) + " frames.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "period time set to " + kvu_numtostr(period_size_rep) + " frames.");
   if (period_size_rep != static_cast<unsigned int>(buffersize())) {
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		"(audioio-alsa) Warning! Period-size differs from current client buffersize.");
+		"Warning! Period-size differs from current client buffersize.");
   }
 
   snd_pcm_hw_params_get_buffer_time(pcm_hw_params_repp, &uivalue, 0);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(uivalue) + " usecs.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "buffer time set to " + kvu_numtostr(uivalue) + " usecs.");
 
   snd_pcm_hw_params_get_buffer_size(pcm_hw_params_repp, &buffer_size_rep);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) buffer time set to " + kvu_numtostr(buffer_size_rep) + " frames.");
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) total latency is " + kvu_numtostr(latency()) + " frames.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "buffer time set to " + kvu_numtostr(buffer_size_rep) + " frames.");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "total latency is " + kvu_numtostr(latency()) + " frames.");
 
 
   /* 9. all set, now active hw params */
@@ -316,8 +319,9 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
   }
 }
 
-void AUDIO_IO_ALSA_PCM::fill_and_set_sw_params(void) {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-alsa) fill_and_set_sw_params");
+void AUDIO_IO_ALSA_PCM::fill_and_set_sw_params(void)
+{
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "fill_and_set_sw_params");
 
   /* 1. get current params */
   snd_pcm_sw_params_current(audio_fd_repp, pcm_sw_params_repp);
@@ -356,14 +360,14 @@ void AUDIO_IO_ALSA_PCM::stop(void)
   snd_pcm_drop(audio_fd_repp); /* non-blocking */
   // snd_pcm_drain(audio_fd_repp); /* blocking */
   
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) stop - " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "stop - " + label() + ".");
 
   AUDIO_IO_DEVICE::stop();
 }
 
 void AUDIO_IO_ALSA_PCM::close(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) close - " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "close - " + label() + ".");
 
   if (is_prepared() == true && is_running() == true) stop();
   snd_pcm_close(audio_fd_repp);
@@ -373,18 +377,18 @@ void AUDIO_IO_ALSA_PCM::close(void)
 
 void AUDIO_IO_ALSA_PCM::prepare(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) prepare - " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "prepare - " + label() + ".");
 
   int err = snd_pcm_prepare(audio_fd_repp);
   if (err < 0)
-    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-alsa) Error when preparing stream: " + string(snd_strerror(err)));
+    ECA_LOG_MSG(ECA_LOGGER::info, "Error when preparing stream: " + string(snd_strerror(err)));
 
   AUDIO_IO_DEVICE::prepare();
 }
 
 void AUDIO_IO_ALSA_PCM::start(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-alsa) start - " + label() + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "start - " + label() + ".");
   snd_pcm_start(audio_fd_repp);
 
   AUDIO_IO_DEVICE::start();
@@ -413,13 +417,13 @@ long int AUDIO_IO_ALSA_PCM::read_samples(void* target_buffer,
 	  if (realsamples < 0) realsamples = 0;
 	}
 	else {
-	  cerr << "(audioio-alsa) Overrun! Stopping operation!" << endl;
+	  cerr << "Overrun! Stopping operation!" << endl;
 	  stop();
 	  close();
 	}
       }
       else {
-	cerr << "(audioio-alsa) Read error (" << realsamples << ")! Stopping operation." << endl;
+	cerr << "Read error (" << realsamples << ")! Stopping operation." << endl;
 	stop();
 	close();
       }
@@ -442,19 +446,19 @@ long int AUDIO_IO_ALSA_PCM::read_samples(void* target_buffer,
 	  if (realsamples < 0) realsamples = 0;
 	}
 	else {
-	  cerr << "(audioio-alsa) Overrun! Stopping operation!" << endl;
+	  cerr << "Overrun! Stopping operation!" << endl;
 	  stop();
 	  close();
 	}
       }
       else {
-	cerr << "(audioio-alsa) Read error! Stopping operation." << endl;
+	cerr << "Read error! Stopping operation." << endl;
 	stop();
 	close();
       }
     }
   }
-  return(realsamples);
+  return realsamples;
 }
 
 void AUDIO_IO_ALSA_PCM::handle_xrun_capture(void)
@@ -471,7 +475,7 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_capture(void)
       snd_pcm_status_get_trigger_tstamp(status, &tstamp);
       timersub(&now, &tstamp, &diff);
 
-      cerr << "(audioio-alsa) warning! playback overrun - samples lost! " 
+      cerr << "warning! playback overrun - samples lost! " 
 		<< " Break was at least " << kvu_numtostr(diff.tv_sec *
 							  1000 +
 							  diff.tv_usec /
@@ -484,17 +488,17 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_capture(void)
       start();
     }
     else if (state == SND_PCM_STATE_SUSPENDED) {
-      cerr << "(audioio-alsa) Device suspended! Stopping operation!" << endl;
+      cerr << "Device suspended! Stopping operation!" << endl;
       stop();
       close();
     }
     else {
-      cerr << "(audioio-alsa) Unknown device state '" 
+      cerr << "Unknown device state '" 
 	   << static_cast<int>(state) << "'" << endl;
     }
   }
   else {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-alsa) snd_pcm_status() failed!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "snd_pcm_status() failed!");
   }
 }
 
@@ -515,17 +519,17 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
 	if (ignore_xruns() == true) {
 	  handle_xrun_playback();
 	  if (snd_pcm_writei(audio_fd_repp, target_buffer, samples) < 0) 
-	    cerr << "(audioio-alsa) Xrun handling failed!" << endl;
+	    cerr << "Xrun handling failed!" << endl;
 	  trigger_request_rep = true;
 	}
 	else {
-	  cerr << "(audioio-alsa) Underrun! Stopping operation!" << endl;
+	  cerr << "Underrun! Stopping operation!" << endl;
 	  stop();
 	  close();
 	}
       }
       else {
-	cerr << "(audioio-alsa) Write error! Stopping operation (" << count << ")." << endl;
+	cerr << "Write error! Stopping operation (" << count << ")." << endl;
 	stop();
 	close();
       }
@@ -555,13 +559,13 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
 	  trigger_request_rep = true;
 	}
 	else {
-	  cerr << "(audioio-alsa) Underrun! Stopping operation!" << endl;
+	  cerr << "Underrun! Stopping operation!" << endl;
 	  stop();
 	  close();
 	}
       }
       else {
-	cerr << "(audioio-alsa) Write  error! Stopping operation." << endl;
+	cerr << "Write  error! Stopping operation." << endl;
 	stop();
 	close();
       }
@@ -583,7 +587,7 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
       snd_pcm_status_get_trigger_tstamp(status, &tstamp);
       timersub(&now, &tstamp, &diff);
       
-      cerr << "(audioio-alsa) warning! playback underrun - samples lost! " 
+      cerr << "warning! playback underrun - samples lost! " 
 		<< " Break was at least " << kvu_numtostr(diff.tv_sec *
 							  1000 +
 							  diff.tv_usec /
@@ -595,17 +599,17 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
       trigger_request_rep = true;
     }
     else if (state == SND_PCM_STATE_SUSPENDED) {
-      cerr << "(audioio-alsa) Device suspended! Stopping operation!" << endl;
+      cerr << "Device suspended! Stopping operation!" << endl;
       stop();
       close();
     }
     else {
-      cerr << "(audioio-alsa) Unknown device state '" 
+      cerr << "Unknown device state '" 
 	   << static_cast<int>(state) << "'" << endl;
     }
   }
   else {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-alsa) snd_pcm_status() failed!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "snd_pcm_status() failed!");
   }
 }
 
@@ -619,7 +623,7 @@ long int AUDIO_IO_ALSA_PCM::delay(void) const
     }
   }
 
-  return(static_cast<long int>(delay));
+  return static_cast<long int>(delay);
 }
 
 void AUDIO_IO_ALSA_PCM::set_parameter(int param, 
@@ -668,18 +672,18 @@ string AUDIO_IO_ALSA_PCM::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(label());
+    return label();
 
   case 2: 
-    return(kvu_numtostr(card_number_rep));
+    return kvu_numtostr(card_number_rep);
 
   case 3: 
-    return(kvu_numtostr(device_number_rep));
+    return kvu_numtostr(device_number_rep);
 
   case 4: 
-    return(kvu_numtostr(subdevice_number_rep));
+    return kvu_numtostr(subdevice_number_rep);
   }
-  return("");
+  return "";
 }
 
 void AUDIO_IO_ALSA_PCM::set_pcm_device_name(const string& n)
