@@ -356,7 +356,7 @@ eci_handle_t eci_init_r(void)
 	eci_rep = NULL;
       }
       else {
-	write(eci_rep->cmd_write_fd_rep, "debug 259\n", strlen("debug 259\n"));
+	write(eci_rep->cmd_write_fd_rep, "debug 256\n", strlen("debug 256\n"));
 	write(eci_rep->cmd_write_fd_rep, "int-output-mode-wellformed\n", strlen("int-output-mode-wellformed\n"));
 	eci_rep->commands_counter_rep ++;
       

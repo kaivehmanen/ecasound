@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 050904) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 061004) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-xx082004 (v2.3.4)  -** stable release **-
+xx102004 (v2.3.4)  -** stable release **-
 	- edi-entries: edi-14 and edi-32 closed, edi-40 added
 	- note: verified to compile ok on MacOS X 10.3.2 [smbolton]
 	- note: verified to compile ok with gcc-3.4.1
@@ -41,6 +41,7 @@ xx082004 (v2.3.4)  -** stable release **-
 	- fixed: ecasound sample formats s24_le/_be were mapped
 		 to 4-byte ALSA formats S24_LE/_BE; now mapped
 		 to the correct 3-byte S24_3LE/_3BE formats
+	- fixed: bug in C ECI impl that caused sync-loss errors [jesse]
 05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command
