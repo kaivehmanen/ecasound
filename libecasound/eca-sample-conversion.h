@@ -20,10 +20,6 @@
 #ifndef INCLUDED_ECA_SAMPLE_CONVERSION_H
 #define INCLUDED_ECA_SAMPLE_CONVERSION_H
 
-#ifndef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <kvu_inttypes.h>
 
 /**

@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20030402-14
+dnl last modified: 20030428-15
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -23,7 +23,7 @@ echo "------------------------------------------------------------------"
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 2.2.3)
+AM_INIT_AUTOMAKE(ecasound, 2.2.4)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
@@ -943,8 +943,12 @@ echo "-----------------------------------------------------------------"
 echo "Following packages are now configured:"
 echo "ecasound: 		yes (ecasound,libecasound,libecasoundc)"
 echo "ecatools: 		yes"
-if test x$compile_pyecasound = xyes ; then
-	echo "pyecasound: 		yes"
+if test x$python_support = xyes ; then
+	if test x$compile_pyecasound = xyes ; then
+		echo "pyecasound: 		yes (as Python C extension module)"
+	else
+		echo "pyecasound: 		yes (as native Python module)"
+	fi
 else
 	echo "pyecasound: 		no"
 fi

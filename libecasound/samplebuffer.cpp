@@ -51,6 +51,12 @@
 #define DEBUG_RESAMPLING_STATEMENT(x) ((void)0)
 #endif
 
+#ifdef WORDS_BIGENDIAN
+static const bool is_system_littleendian = false;
+#else
+static const bool is_system_littleendian = true;
+#endif
+
 /**
  * Constructs a new sample buffer object.
  */

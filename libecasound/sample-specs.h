@@ -1,10 +1,6 @@
 #ifndef INCLUDED_SAMPLE_SPECS_H
 #define INCLUDED_SAMPLE_SPECS_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 /**
  * Sample value defaults and constants.
  */
@@ -44,11 +40,8 @@ namespace SAMPLE_SPECS {
   static const channel_t ch_left = 0;
   static const channel_t ch_right = 1;
 
-#ifdef WORDS_BIGENDIAN
-  static const bool is_system_littleendian = false;
-#else
+  /* FIXME: obsolete field, remove on next interface change */
   static const bool is_system_littleendian = true;
-#endif
 }
 
 #endif

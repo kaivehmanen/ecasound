@@ -50,6 +50,12 @@
 #define UINT32_MAX 4294967295U
 #endif
 
+#ifdef WORDS_BIGENDIAN
+static const bool is_system_littleendian = false;
+#else
+static const bool is_system_littleendian = true;
+#endif
+
 /**
  * Private function declarations 
  */
