@@ -56,7 +56,9 @@ Ecasound specific options
 
 `--enable-all-static'
 	Build static binaries that are not linked against any
-	shared libraries. Disabled by default.
+	shared libraries. Disabled by default. Note! This is 
+        an experimental option and may not work in all 
+	circumstances.
 
 `--enable-debug'
 	Disables optimizations and other things preventing 
@@ -153,6 +155,11 @@ Ecasound specific options
 
 `--with-python-modules=DIR'
 	Python modules should be installed to 'DIR'.
+
+`--enable-rubyecasound={yes,no}'
+	Enable rubyecasound. Defaults to yes if Ruby interpreter 
+        is found on the system.
+
 
 
 Compilers and Options
