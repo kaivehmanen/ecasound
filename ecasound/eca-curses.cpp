@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-curses.cpp: Curses implementation of the console user interface.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,11 +58,13 @@ static char* ecasound_command_generator (char* text, int state);
 
 ECA_CURSES::ECA_CURSES(void)
 {
+  setupterm((char *)0, 1, (int *)0);
   init_readline_support();
 }
 
 ECA_CURSES::~ECA_CURSES(void)
 {
+  rl_cleanup_after_signal();
 }
 
 void ECA_CURSES::print(const std::string& msg)
@@ -74,11 +76,10 @@ void ECA_CURSES::print_banner(void)
 {
   std::cout << "****************************************************************************\n";
   std::cout << "*";
-  setupterm((char *)0, 1, (int *)0);
   putp(tigetstr("bold"));
   std::cout << "               ecasound v" 
        << ecasound_library_version
-       << " (C) 1997-2002 Kai Vehmanen                 ";
+       << " (C) 1997-2003 Kai Vehmanen                 ";
   putp(tigetstr("sgr0"));
   std::cout << "\n";
   std::cout << "****************************************************************************\n";

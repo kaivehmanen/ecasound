@@ -38,6 +38,7 @@ class ECA_CONSOLE {
    */
   virtual const std::string& last_command(void) const = 0;
 
+  virtual ~ECA_CONSOLE(void) {};
 };
 
 #endif /* INCLUDED_ECA_CONSOLE_H */
