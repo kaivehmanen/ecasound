@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-text.cpp: Textmode user-interface routines for ecasound.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -197,7 +197,7 @@ void print_header(ostream* dostream) {
     putp(tigetstr("bold"));
   }
 #endif
-  *dostream << "               ecasound v" << ecasound_library_version << " (C) 1997-2000 Kai Vehmanen              ";
+  *dostream << "               ecasound v" << ecasound_library_version << " (C) 1997-2001 Kai Vehmanen              ";
 #ifdef USE_NCURSES
   if (dostream == &cout) {
     putp(tigetstr("sgr0"));
