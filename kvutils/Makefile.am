@@ -10,30 +10,32 @@ else
 lib_LTLIBRARIES = libkvutils3.la
 endif
 
-kvutil_sources = 	kvu_utils.cpp \
-			kvu_message_item.cpp \
-			kvu_com_line.cpp \
-		 	kvu_value_queue.cpp \
-			kvu_numtostr.cpp \
-			kvu_rtcaps.cpp \
+kvutil_sources = 	kvu_com_line.cpp \
+			kvu_fd_io.cpp \
 			kvu_locks.cpp \
-			kvu_threads.cpp \
+			kvu_message_item.cpp \
+			kvu_numtostr.cpp \
 			kvu_procedure_timer.cpp \
-			kvu_temporary_file_directory.cpp
+			kvu_rtcaps.cpp \
+			kvu_temporary_file_directory.cpp \
+			kvu_threads.cpp \
+			kvu_utils.cpp \
+		 	kvu_value_queue.cpp
 
-kvutil_headers = 	kvu_utils.h \
-			kvu_message_item.h \
-			kvu_com_line.h \
-			kvu_value_queue.h \
-			kvu_numtostr.h \
-			kvu_rtcaps.h \
+kvutil_headers = 	kvu_dbc.h \
 			kvu_definition_by_contract.h \
-			kvu_object_queue.h \
+			kvu_com_line.h \
+			kvu_fd_io.h \
 			kvu_locks.h \
-			kvu_threads.h \
+			kvu_message_item.h \
+			kvu_numtostr.h \
+			kvu_object_queue.h \
 			kvu_procedure_timer.h \
+			kvu_rtcaps.h \
 			kvu_temporary_file_directory.h \
-			kvu_dbc.h
+			kvu_threads.h \
+			kvu_utils.h \
+			kvu_value_queue.h
 
 libkvutils3_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
 libkvutils3_la_LDFLAGS = -version-info @LIBKVUTILS_VERSION@:0:0
