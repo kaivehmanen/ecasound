@@ -347,6 +347,21 @@ bool ECA_ENGINE::is_valid(void) const
 }
 
 /**
+ * Whether current setup has finite length.
+ */
+bool ECA_ENGINE::is_finite_length(void) const
+{
+  DBC_CHECK(csetup_repp != 0);
+
+  if (csetup_repp->max_length_set() == true ||
+      csetup_repp->number_of_realtime_inputs() == 0) {
+    return(true);
+  }
+
+  return(false);
+}
+
+/**
  * Returns engine's current status.
  *
  * context: no limitations

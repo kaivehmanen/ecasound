@@ -127,6 +127,7 @@ class ECA_ENGINE {
   /*@{*/
 
   bool is_valid(void) const;
+  bool is_finite_length(void) const;
   Engine_status_t status(void) const;
 
   /*@}*/
