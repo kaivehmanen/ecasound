@@ -20,9 +20,7 @@
     observer@colba.net  
 
     note: Compile it with:  
-    c++ -Wall `libecasoundc2-config --cflags` -o ecalength ecalength.cpp \
-              `libecasoundc2-config --ldflags` \
-              `libecasoundc2-config --libs` \
+    gcc -Wall -o ecalength ecalength.c `libecasoundc-config --cflags --libs`
 
 *    updated: Thu May 10 15:56:18 EDT 2001
 - Now works with the new ai/ao scheme.
@@ -48,6 +46,8 @@
 *    updated: Mon Apr 29 02:41:13 EEST 2002
 - Renamed to ecalength.cpp to avoid troubles with linking ecalength 
   against uninstalled libecasoundc.
+*    updated: Thu Oct 31 17:41:05 EET 2002
+- Renamed to ecalength.c. Updated the compilation instructions.
 */ 
 
 #include <stdio.h> 
