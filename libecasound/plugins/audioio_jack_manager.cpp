@@ -96,18 +96,18 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
 #if 0 /* PROFILE_CALLBACK_EXECUTION */
   unsigned long long start, stop;
   float difference;
-
-  /* start client timer */
-  rdtscll (start);			
+  rdtscll (start); /* start client timer */
 #endif
 
   PROFILE_CE_STATEMENT(profile_callback_timer.start());
   DEBUG_CFLOW_STATEMENT(cerr << endl << "jack_process entry ----> ");
 
+  /* 1. try to get the driver lock; if it fails or connection 
+   *    is not fully establish, skip this processing cycly */
   int ret = pthread_mutex_trylock(&current->lock_rep);
-  if (ret == 0) {
-    /* 1. copy audio data from port input buffers to ecasound buffers */
-    
+  if (ret == 0 && current->connection_active_rep == true) {
+
+    /* 2. copy audio data from port input buffers to ecasound buffers */
     for(size_t n = 0; n < current->inports_rep.size(); n++) {
       if (current->inports_rep[n].cb_buffer != 0) {
 	jack_default_audio_sample_t* in_cb_buffer = static_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(current->inports_rep[n].jackport, nframes));
@@ -116,18 +116,19 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
     }
     
     DEBUG_CFLOW_STATEMENT(cerr << endl << "process 1 iter_in");
+
+    // FIXME: we should be able to handle cases where 
+    //        'nframes > 0' && 'nframes < current->buffersize_rep'
     DBC_CHECK(current->buffersize_rep == static_cast<long int>(nframes));
     
-    /* 2. execute one engine iteration */
-
+    /* 3. execute one engine iteration */
     if (current->engine_repp->is_active()) {
       current->engine_repp->engine_iteration();
     }
     
     DEBUG_CFLOW_STATEMENT(cerr << endl << "process 2 iter_out");
     
-    /* 3. copy data from ecasound buffers to port output buffers */
-    
+    /* 4. copy data from ecasound buffers to port output buffers */
     for(size_t n = 0; n < current->outports_rep.size(); n++) {
       if (current->outports_rep[n].cb_buffer != 0) {
 	jack_default_audio_sample_t* out_cb_buffer = static_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(current->outports_rep[n].jackport, nframes));
@@ -136,17 +137,17 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
       }
     }
     
-    /* 4. update engine status based on the last iteration */
-    
+    /* 5. update engine status based on the last iteration */
     current->engine_repp->update_engine_state();
 
     pthread_mutex_unlock(&current->lock_rep);
   }
+  else {
+    DEBUG_CFLOW_STATEMENT(cerr << "jack_process: couldn't lock" << endl);
+  }
 
 #if 0 /* PROFILE_CALLBACK_EXECUTION */
-  /* stop client timer */
-  rdtscll (stop);
-  
+  rdtscll (stop); /* stop client timer */
   difference = (float)(stop - start)/466000.0f;
   if (difference > 1) 
     jack_error ("jack-profile: process cycle took %.6f msecs\n", difference);
@@ -393,30 +394,23 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
   engine->init_engine_state();
 
   shutdown_request_rep = false;
-  stop_request_rep = false;
   exit_request_rep = false;
 
   while(true) {
 
     engine_repp->wait_for_commands();
 
+    DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: wakes up; commands available" << endl);
+
     engine_repp->check_command_queue();
 
     /* case 1: external exit request */
     if (exit_request_rep == true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) exit request in exec");
-      if (is_connection_active() == true) stop_connection();
       break;
     }
 
-    /* case 2: external stop request */
-    if (stop_request_rep == true) {
-      stop_request_rep = false;
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) stop request in exec");
-      if (is_connection_active() == true) stop_connection();
-    }
-
-    /* case 3: engine finished and in batch mode -> exit */
+    /* case 2: engine finished and in batch mode -> exit */
     if ((engine_repp->status() == ECA_ENGINE::engine_status_finished ||
 	 engine_repp->status() == ECA_ENGINE::engine_status_error) &&
 	engine->batch_mode() == true) {
@@ -427,7 +421,7 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
       break;
     }
 
-    /* case 4: problems with jack callbacks -> exit */
+    /* case 3: problems with jack callbacks -> exit */
     if (shutdown_request_rep == true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) problems with JACK callbacks");
       if (is_connection_active() == true) stop_connection();
@@ -453,6 +447,12 @@ void AUDIO_IO_JACK_MANAGER::start(void)
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver start");
 
+  /* we must take the lock to ensure that 
+   * process callback does not run 
+   * ECA_ENGINE::engine_iteration() until we
+   * set 'connection_active_rep' */
+  pthread_mutex_lock(&lock_rep);
+
   /* prepare chainsetup for callbacks */
   engine_repp->start_operation();
 
@@ -472,17 +472,15 @@ void AUDIO_IO_JACK_MANAGER::start(void)
   engine_repp->update_cache_latency_values();
 
   connection_active_rep = true;
+
+  pthread_mutex_unlock(&lock_rep);
 }
 
-void AUDIO_IO_JACK_MANAGER::stop(bool blocking)
+void AUDIO_IO_JACK_MANAGER::stop(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver stop");
 
-  stop_request_rep = true;
-
-  if (blocking == true) {
-    wait_for_stop();
-  }
+  if (is_connection_active() == true) stop_connection();
 }
 
 /**
@@ -524,15 +522,13 @@ void AUDIO_IO_JACK_MANAGER::stop_connection(void)
   signal_stop();
 }
 
-void AUDIO_IO_JACK_MANAGER::exit(bool blocking)
+void AUDIO_IO_JACK_MANAGER::exit(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver exit");
 
-  exit_request_rep = true;
+  if (is_connection_active() == true) stop_connection();
 
-  if (blocking == true) {
-    wait_for_exit();
-  }
+  exit_request_rep = true;
 }
 
 /**

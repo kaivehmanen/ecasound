@@ -87,86 +87,81 @@ void ECA_OBJECT_FACTORY_TEST::test_map(const ECA_OBJECT_MAP& objmap)
 {
   const list<string>& regobjs = objmap.registered_objects();
 
-  if (regobjs.size() == 0) {
-    ECA_TEST_FAILURE("Map for object type \"" + string(typeid(objmap).name()) + "\" is empty.");
-  }
-  else {
-    list<string>::const_iterator p = regobjs.begin();
-    while(p != regobjs.end()) {
-      const T* obj = dynamic_cast<const T*>(objmap.object(*p));
-      if (obj == 0) {
-	ECA_TEST_FAILURE("Unable to create object of type \"" + obj->name()
-			 + "\" from keyword \"" + *p + "\"");
-      }
-      else {
-	ECA_LOG_MSG(ECA_LOGGER::user_objects, "Object type \"" +
-		    obj->name() + "\" succesfully created.");
-
-	T* target = dynamic_cast<T*>(obj->new_expr());
-	test_object_types<T>(obj, target, "new_expr");
-	if (target != 0) delete target;
-
-	target = dynamic_cast<T*>(obj->clone());
-	test_object_types<T>(obj, target, "clone");
-	
-	if (target != 0) {
-	  if (obj->number_of_params() != target->number_of_params()) {
-	    ECA_TEST_FAILURE("Cloned object has different number of arguments " 
-			     "than original object; type name \"" + 
-			     obj->name() + "\".");
-	  }
-	  else {
-	    const OPERATOR* operator_source = dynamic_cast<const OPERATOR*>(obj);
-	    OPERATOR* operator_target = dynamic_cast<OPERATOR*>(target);
-
-	    const AUDIO_IO* audioio_source = dynamic_cast<const AUDIO_IO*>(obj);
-	    AUDIO_IO* audioio_target = dynamic_cast<AUDIO_IO*>(target);
-
-	    for(int n = 0; n < obj->number_of_params(); n++) {
-	      if (obj->get_parameter_name(n + 1) != 
-		  target->get_parameter_name(n + 1)) {
-		ECA_TEST_FAILURE("Cloned object has different parameter name \"" + 
-				 target->get_parameter_name(n + 1) + 
-				 "\" than that of original object \"" + 
-				 obj->get_parameter_name(n + 1) + 
-				 "\"; type name \"" + 
-				 obj->name() + "\".");
-	      }
-	      else {
-		if (operator_source != 0 && operator_target != 0) {
-		  /* AUDIO_IO binds parameter type to 'SAMPLE_SPECS::sample_t' (float) */
-
-		  if (std::fabs(operator_source->get_parameter(n + 1) -
-				operator_target->get_parameter(n + 1)) > 0.1f) {
-		    ECA_TEST_FAILURE("Cloned object has different parameter value \"" + 
-				     kvu_numtostr(operator_target->get_parameter(n + 1)) + 
-				     "\" than that of the original object \"" + 
-				     kvu_numtostr(operator_source->get_parameter(n + 1)) + 
-				     "\"; type name \"" + 
-				     operator_source->name() + "\".");
-		  }
+  list<string>::const_iterator p = regobjs.begin();
+  while(p != regobjs.end()) {
+    const T* obj = dynamic_cast<const T*>(objmap.object(*p));
+    if (obj == 0) {
+      ECA_TEST_FAILURE("Unable to create object of type \"" + obj->name()
+		       + "\" from keyword \"" + *p + "\"");
+    }
+    else {
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Object type \"" +
+		  obj->name() + "\" succesfully created.");
+      
+      T* target = dynamic_cast<T*>(obj->new_expr());
+      test_object_types<T>(obj, target, "new_expr");
+      if (target != 0) delete target;
+      
+      target = dynamic_cast<T*>(obj->clone());
+      test_object_types<T>(obj, target, "clone");
+      
+      if (target != 0) {
+	if (obj->number_of_params() != target->number_of_params()) {
+	  ECA_TEST_FAILURE("Cloned object has different number of arguments " 
+			   "than original object; type name \"" + 
+			   obj->name() + "\".");
+	}
+	else {
+	  const OPERATOR* operator_source = dynamic_cast<const OPERATOR*>(obj);
+	  OPERATOR* operator_target = dynamic_cast<OPERATOR*>(target);
+	  
+	  const AUDIO_IO* audioio_source = dynamic_cast<const AUDIO_IO*>(obj);
+	  AUDIO_IO* audioio_target = dynamic_cast<AUDIO_IO*>(target);
+	  
+	  for(int n = 0; n < obj->number_of_params(); n++) {
+	    if (obj->get_parameter_name(n + 1) != 
+		target->get_parameter_name(n + 1)) {
+	      ECA_TEST_FAILURE("Cloned object has different parameter name \"" + 
+			       target->get_parameter_name(n + 1) + 
+			       "\" than that of original object \"" + 
+			       obj->get_parameter_name(n + 1) + 
+			       "\"; type name \"" + 
+			       obj->name() + "\".");
+	    }
+	    else {
+	      if (operator_source != 0 && operator_target != 0) {
+		/* AUDIO_IO binds parameter type to 'SAMPLE_SPECS::sample_t' (float) */
+		
+		if (std::fabs(operator_source->get_parameter(n + 1) -
+			      operator_target->get_parameter(n + 1)) > 0.1f) {
+		  ECA_TEST_FAILURE("Cloned object has different parameter value \"" + 
+				   kvu_numtostr(operator_target->get_parameter(n + 1)) + 
+				   "\" than that of the original object \"" + 
+				   kvu_numtostr(operator_source->get_parameter(n + 1)) + 
+				   "\"; type name \"" + 
+				   operator_source->name() + "\".");
 		}
-		else if (audioio_source != 0 && audioio_target != 0) {
-		  /* AUDIO_IO binds parameter type to 'std::string' */
-
-		  if (audioio_source->get_parameter(n + 1) != 
-		      audioio_target->get_parameter(n + 1)) {
-		    ECA_TEST_FAILURE("Cloned object has different parameter value \"" + 
-				     audioio_target->get_parameter(n + 1) + 
-				     "\" than that of the original object \"" + 
-				     audioio_source->get_parameter(n + 1) + 
-				     "\"; type name \"" + 
-				     audioio_source->name() + "\".");
-		  }
+	      }
+	      else if (audioio_source != 0 && audioio_target != 0) {
+		/* AUDIO_IO binds parameter type to 'std::string' */
+		
+		if (audioio_source->get_parameter(n + 1) != 
+		    audioio_target->get_parameter(n + 1)) {
+		  ECA_TEST_FAILURE("Cloned object has different parameter value \"" + 
+				   audioio_target->get_parameter(n + 1) + 
+				   "\" than that of the original object \"" + 
+				   audioio_source->get_parameter(n + 1) + 
+				   "\"; type name \"" + 
+				   audioio_source->name() + "\".");
 		}
 	      }
 	    }
 	  }
 	}
-	delete target;
       }
-      ++p;
+      delete target;
     }
+    ++p;
   }
 }
 

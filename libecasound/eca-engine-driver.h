@@ -39,26 +39,25 @@ class ECA_ENGINE_DRIVER {
 
   /**
    * Signals that driver should start operating 
-   * the engine.
+   * the engine. Once started, driver is allowed
+   * to call ECA_ENGINE functions.
    */
   virtual void start(void) = 0;
 
   /**
    * Signals that driver should stop operation.
-   *
-   * @param blocking if true, function will block
-   *                 until driver has stopped
+   * Once stopped, driver must not call
+   * any ECA_ENGINE functions.
    */
-  virtual void stop(bool blocking) = 0;
+  virtual void stop(void) = 0;
 
   /**
    * Signals that driver should stop operation 
    * and return from its exec() method.
-   *
-   * @param blocking if true, function will block
-   *                 until driver has exited
+   * After exiting, driver must not call any 
+   * ECA_ENGINE functions.
    */
-  virtual void exit(bool blocking) = 0;
+  virtual void exit(void) = 0;
 
   /*@}*/
 

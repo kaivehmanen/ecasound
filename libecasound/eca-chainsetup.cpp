@@ -459,7 +459,6 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void)
 
     impl_repp->pserver_rep.set_buffer_defaults(double_buffer_size() / buffersize(), 
 					       buffersize());
-    impl_repp->pserver_rep.set_schedpriority(get_sched_priority() - 1);
   }
   else {
     /* double_buffering() != true */

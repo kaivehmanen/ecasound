@@ -20,6 +20,8 @@
 
 #include <unistd.h> /* open(), close() */
 
+#include <kvu_dbc.h>
+
 #include "samplebuffer.h"
 #include "eca-logger.h"
 #include "audioio-buffered-proxy.h"
@@ -42,6 +44,7 @@ AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver
   pbuffer_repp = 0;
   xruns_rep = 0;
   finished_rep = false;
+  recursing_rep = false;
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		std::string("(audioio-buffered-proxy) Proxy created for ") +
@@ -55,7 +58,8 @@ AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver
 /**
  * Copy attributes from the proxied (child) object.
  */
-void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
+void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void)
+{
   if (pbuffer_repp != 0) {
     if (child_repp->io_mode() == AUDIO_IO::io_read) 
       pbuffer_repp->io_mode_rep = AUDIO_IO::io_read;
@@ -81,7 +85,8 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
  * Desctructor. Unregisters the client from the proxy 
  * server.
  */
-AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void) {
+AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void)
+{
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-buffered-proxy) destructor " + label() + ".");
 
   if (is_open() == true) {
@@ -115,12 +120,14 @@ bool AUDIO_IO_BUFFERED_PROXY::finished(void) const { return(finished_rep); }
  * Reads samples to buffer pointed by 'sbuf'. If necessary, the target 
  * buffer will be resized.
  */
-void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) { 
+void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf)
+{
   if (pbuffer_repp->read_space() > 0) {
     SAMPLE_BUFFER* source = pbuffer_repp->sbufs_rep[pbuffer_repp->readptr_rep.get()];
     sbuf->number_of_channels(source->number_of_channels());
     sbuf->copy(*source);
     pbuffer_repp->advance_read_pointer();
+    pserver_repp->signal_client_activity();
     change_position_in_samples(sbuf->length_in_samples());
   }
   else {
@@ -130,13 +137,14 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
     }
     else {
       xruns_rep++;
-      std::cerr << "(audioio-buffered-proxy) Warning! Overrun in reading from \"" 
+      std::cerr << "(audioio-buffered-proxy) Warning! Underrun in reading from \"" 
 		<< child_repp->label() 
 		<< "\". Trying to recover." << std::endl;
       pserver_repp->wait_for_data(); 
-      if (pbuffer_repp->read_space() > 0) {
-	// std::cerr << "(audioio-buffered-proxy) recursing, read_space: " << pbuffer_repp->read_space() << "." << std::endl;
+      if (recursing_rep != true && pbuffer_repp->read_space() > 0) {
+	recursing_rep = true;
 	this->read_buffer(sbuf);
+	recursing_rep = false;
       }
       else {
 	std::cerr << "(audioio-buffered-proxy) Serious trouble with the disk-io subsystem! (1)" << std::endl;
@@ -150,12 +158,14 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
  * Writes all data from sample buffer pointed by 'sbuf'. Notes
  * concerning read_buffer() also apply to this routine.
  */
-void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) { 
+void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf)
+{
   if (pbuffer_repp->write_space() > 0) {
     SAMPLE_BUFFER* target = pbuffer_repp->sbufs_rep[pbuffer_repp->writeptr_rep.get()];
     target->number_of_channels(sbuf->number_of_channels());
     target->copy(*sbuf);
     pbuffer_repp->advance_write_pointer();
+    pserver_repp->signal_client_activity();
     change_position_in_samples(sbuf->length_in_samples());
     extend_position();
   }
@@ -167,8 +177,10 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
 		<< child_repp->label() 
 		<< "\". Trying to recover." << std::endl;
       pserver_repp->wait_for_data(); 
-      if (pbuffer_repp->write_space() > 0) {
+      if (recursing_rep != true && pbuffer_repp->write_space() > 0) {
+	recursing_rep = true;
 	this->write_buffer(sbuf);
+	recursing_rep = false;
       }
       else {
 	std::cerr << "(audioio-buffered-proxy) Serious trouble with the disk-io subsystem! (2)" << std::endl;
@@ -179,6 +191,9 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
 
 /**
  * Seeks to the current position.
+ *
+ * Note! Seeking involves stopping the whole proxy 
+ *       server, so it's a costly operation.
  */
 void AUDIO_IO_BUFFERED_PROXY::seek_position(void)
 { 
@@ -188,15 +203,15 @@ void AUDIO_IO_BUFFERED_PROXY::seek_position(void)
     was_running = true;
     pserver_repp->stop();
     pserver_repp->wait_for_stop();
-    //  while(pserver_repp->is_running() != true) usleep(50000);
+    DBC_CHECK(pserver_repp->is_running() != true);
   }
   child_repp->seek_position_in_samples(position_in_samples());
-  pserver_repp->wait_for_stop();
+  pbuffer_repp->reset();
   finished_rep = false;
   if (was_running == true) {
     pserver_repp->start();
     pserver_repp->wait_for_full();
-    //  while(pserver_repp->is_full() != true) usleep(50000);
+    DBC_CHECK(pserver_repp->is_running() == true);
   }
 }
 
@@ -209,7 +224,6 @@ void AUDIO_IO_BUFFERED_PROXY::set_position_in_samples(SAMPLE_SPECS::sample_pos_t
 
 void AUDIO_IO_BUFFERED_PROXY::set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
 {
-  // child_repp->set_length_in_samples(pos);
   AUDIO_IO::set_length_in_samples(pos);
 }
 
@@ -218,7 +232,8 @@ void AUDIO_IO_BUFFERED_PROXY::set_length_in_samples(SAMPLE_SPECS::sample_pos_t p
  * This routine is meant for opening files and devices,
  * loading libraries, etc. 
  */
-void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) { 
+void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) 
+{
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-buffered-proxy) open " + label() + ".");
 
   if (child_repp->is_open() != true) {
@@ -238,7 +253,8 @@ void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
  * all resources (ie. soundcard) must be freed
  * (they can be used by other processes).
  */
-void AUDIO_IO_BUFFERED_PROXY::close(void) { 
+void AUDIO_IO_BUFFERED_PROXY::close(void)
+{
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-buffered-proxy) close " + label() + ".");
 
   if (child_repp->is_open() == true) child_repp->close();

@@ -87,8 +87,8 @@ public:
 
   virtual void exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup);
   virtual void start(void);
-  virtual void stop(bool blocking);
-  virtual void exit(bool blocking);
+  virtual void stop(void);
+  virtual void exit(void);
 
   /*@}*/
 
@@ -148,7 +148,6 @@ private:
   bool connection_active_rep;
 
   bool shutdown_request_rep;
-  bool stop_request_rep;
   bool exit_request_rep;
 
   int last_id_rep;

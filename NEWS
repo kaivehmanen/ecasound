@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 160502) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 170502) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -18,10 +18,15 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.4 *-
 
 ??052002 (v2.1dev9)
+	- changed: optimized disk i/o subsystem (-z:db) performance
 	- fixed: disk i/o subsystem didn't discard all old data 
 		 after a seek to a new location
-	- fixed: installing pyeca.py failed if building if
-		 ecasound was built outside srcdir
+	- fixed: installing pyeca.py failed if ecasound was 
+		 built outside srcdir
+	- fixed: timeouts when starting chainsetups with JACK 
+		 input/outputs
+	- fixed: bug in stopping JACK input/outputs; affects 
+		 seeking in interactive mode
 13052002 (v2.1dev8)
 	- edi-entries: edi-13, edi-18, edi-21, edi-22
 	- added: reverse audio object type; see the ecasound(1) 

@@ -44,7 +44,14 @@ class AUDIO_IO_PROXY_SERVER {
 
   /*@}*/
 
-  /** @name Public functions for waiting on conditions */
+  /** @name Public functions for reporting client activity */
+  /*@{*/
+
+  void signal_client_activity(void);
+
+  /*@}*/
+
+  /** @name Public functions for waiting on server conditions */
   /*@{*/
 
   void wait_for_data(void);
@@ -58,8 +65,6 @@ class AUDIO_IO_PROXY_SERVER {
   /*@{*/
 
   void set_buffer_defaults(int buffers, long int buffersize);
-  void set_schedpriority(int v) { schedpriority_rep = v; }
-
   void register_client(AUDIO_IO* abject);
   void unregister_client(AUDIO_IO* abject);
   AUDIO_IO_PROXY_BUFFER* get_client_buffer(AUDIO_IO* abject);
@@ -85,6 +90,7 @@ class AUDIO_IO_PROXY_SERVER {
   ATOMIC_INTEGER stop_request_rep;
   ATOMIC_INTEGER running_rep;
   ATOMIC_INTEGER full_rep;
+  ATOMIC_INTEGER server_allowed_to_sleep_rep;
   
   int buffercount_rep;
   long int buffersize_rep;
@@ -94,6 +100,8 @@ class AUDIO_IO_PROXY_SERVER {
   AUDIO_IO_PROXY_SERVER (const AUDIO_IO_PROXY_SERVER& x) { }
 
   void io_thread(void);
+
+  void wait_for_client_activity(void);
 
   void signal_data(void);
   void signal_full(void);

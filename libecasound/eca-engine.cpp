@@ -117,12 +117,12 @@ void ECA_ENGINE_DEFAULT_DRIVER::start(void)
   engine_repp->start_operation();
 }
 
-void ECA_ENGINE_DEFAULT_DRIVER::stop(bool blocking)
+void ECA_ENGINE_DEFAULT_DRIVER::stop(void)
 {
   engine_repp->stop_operation();
 }
 
-void ECA_ENGINE_DEFAULT_DRIVER::exit(bool blocking)
+void ECA_ENGINE_DEFAULT_DRIVER::exit(void)
 {
   if (engine_repp->is_active() == true) engine_repp->stop_operation();
   exit_request_rep = true;
@@ -181,7 +181,7 @@ ECA_ENGINE::~ECA_ENGINE(void)
 
   if (csetup_repp != 0) {
     if (is_active() == true) {
-      driver_repp->exit(true);
+      driver_repp->exit();
     }
     cleanup();
   }
@@ -429,7 +429,9 @@ void ECA_ENGINE::update_engine_state(void)
       finished_rep != true) {
     if (is_active() == true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) all inputs finished - stop");
-      request_stop();
+      // we are not allowed to callr request_stop here
+      // request_stop();
+      command(ECA_ENGINE::ep_stop, 0.0f);
     }
     finished_rep = true;
   }
@@ -440,7 +442,9 @@ void ECA_ENGINE::update_engine_state(void)
   if (status() == ECA_ENGINE::engine_status_error) {
     if (is_active() == true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) output error - stop");
-      request_stop();
+      // we are not allowed to call request_stop here
+      // request_stop();
+      command(ECA_ENGINE::ep_stop, 0.0f);
     }
   }
 }
@@ -664,7 +668,7 @@ void ECA_ENGINE::request_stop(void)
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Request stop");
 
-  driver_repp->stop(false);
+  driver_repp->stop();
 }
 
 /**
@@ -892,7 +896,7 @@ void ECA_ENGINE::interpret_queue(void)
       {
 	while(impl_repp->command_queue_rep.is_empty() == false) impl_repp->command_queue_rep.pop_front();
 	ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) ecasound_queue: exit!");
-	driver_repp->exit(false);
+	driver_repp->exit();
 	return;
       }
     case ep_start: { request_start(); break; }

@@ -15,8 +15,13 @@ class SAMPLE_BUFFER;
  * by a separate i/o engine thread, which is common to all
  * proxy objects.
  *
+ * The buffering subsystem has been optimized for 
+ * reliable streaming performance. Because of this some 
+ * operations like random seeks are considerably slower 
+ * than with direct access.
+ *
  * Related design patterns:
- *     - Proxy (GoF207
+ *     - Proxy (GoF207)
  *
  * @author Kai Vehmanen
  */
@@ -90,15 +95,6 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
 
   /*@}*/
 
-protected:
-
-  /** @name Functions reimplemented from AUDIO_IO */
-  /*@{*/
-
-  virtual bool class_invariant(void) const { return(child_repp != 0); }
-
-  /*@}*/
-
   private:
 
   AUDIO_IO_PROXY_SERVER* pserver_repp;
@@ -111,6 +107,7 @@ protected:
   int xruns_rep;
   bool finished_rep;
   bool free_child_rep;
+  bool recursing_rep;
 
   void fetch_child_data(void);
 };

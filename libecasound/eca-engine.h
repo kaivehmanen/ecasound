@@ -23,8 +23,8 @@ class ECA_ENGINE_DEFAULT_DRIVER : public ECA_ENGINE_DRIVER {
 
   virtual void exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup);
   virtual void start(void);
-  virtual void stop(bool blocking);
-  virtual void exit(bool blocking);
+  virtual void stop(void);
+  virtual void exit(void);
 
  private:
 
