@@ -169,7 +169,10 @@ SAMPLE_BUFFER::~SAMPLE_BUFFER (void)
   DBC_CHECK(impl_repp->lockref_rep == 0);
 
   for(size_t n = 0; n < buffer.size(); n++) {
-    delete[] buffer[n];
+    if (buffer[n] != 0) {
+      delete[] buffer[n];
+      buffer[n] = 0;
+    }
   }
 
   if (impl_repp->old_buffer_repp != 0) {
