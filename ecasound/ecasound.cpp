@@ -100,6 +100,7 @@ int main(int argc, char *argv[])
 
   /* 3. create console interface */
   if (state->retval == 0) {
+
    
 #if defined(ECA_USE_NCURSES) || defined (ECA_USE_TERMCAP)
     if (state->quiet_mode != true &&
@@ -133,7 +134,7 @@ int main(int argc, char *argv[])
 	ecasound_launch_daemon(state);
       }
     }
-     
+
     /* 8. start processing */
     if (state->retval == 0) {
       ecasound_main_loop(state);
@@ -173,6 +174,7 @@ void ecasound_atexit_cleanup(void)
     if (state->session != 0) { delete state->session; state->session = 0; }
     if (state->console != 0) { delete state->console; state->console = 0; }
     if (state->daemon_thread != 0) { delete state->daemon_thread; state->daemon_thread = 0; }
+    if (state->lock != 0) { delete state->lock; state->lock = 0; }
   }    
 
   // cerr << "ecasound: atexit cleanup done." << endl << endl;
@@ -208,29 +210,27 @@ void ecasound_create_eca_objects(struct ecasound_state* state,
 void ecasound_launch_daemon(struct ecasound_state* state)
 {
   DBC_REQUIRE(state != 0);
-  DBC_REQUIRE(state->console != 0);
+  // DBC_REQUIRE(state->console != 0);
 
-  state->console->print("ecasound: starting the NetECI server.");
+  // state->console->print("ecasound: starting the NetECI server.");
 
   state->daemon_thread = new pthread_t;
-  state->eciserver = new ECA_NETECI_SERVER();
+  state->lock = new pthread_mutex_t;
+  pthread_mutex_init(state->lock, NULL);
+  state->eciserver = new ECA_NETECI_SERVER(state);
 
   int res = pthread_create(state->daemon_thread, 
 			   NULL,
 			   ECA_NETECI_SERVER::launch_server_thread, 
-			   reinterpret_cast<void*>(state));
+			   reinterpret_cast<void*>(state->eciserver));
   if (res != 0) {
     cerr << "ecasound: Warning! Unable to create watchdog thread." << endl;
     delete state->daemon_thread;  state->daemon_thread = 0;
+    delete state->lock;  state->lock = 0;
     delete state->eciserver; state->eciserver = 0;
   }
 
-#if 0 
-  state->neteci_server = new ECA_NETECI_SERVER();
-  while(true) { }
-#endif
-
-  state->console->print("ecasound: NetECI server started");
+  // state->console->print("ecasound: NetECI server started");
 }
 
 /**
@@ -248,9 +248,21 @@ void ecasound_main_loop(struct ecasound_state* state)
       state->console->read_command("ecasound ('h' for help)> ");
       const string& cmd = state->console->last_command();
       if (cmd.size() > 0 && state->exit_request == 0) {
+
+	if (state->daemon_mode == true) {
+	  int res = pthread_mutex_lock(state->lock);
+	  DBC_CHECK(res == 0);
+	}
+
 	ctrl->command(cmd);
 	ctrl->print_last_error();
 	ctrl->print_last_value();
+
+	if (state->daemon_mode == true) {
+	  int res = pthread_mutex_unlock(state->lock);
+	  DBC_CHECK(res == 0);
+	}
+
 	if (cmd == "quit" || cmd == "q") {
 	  state->console->print("---\necasound: Exiting...");
 	  break;
@@ -259,12 +271,22 @@ void ecasound_main_loop(struct ecasound_state* state)
     }
   }
   else {
+    if (state->daemon_mode == true) {
+      int res = pthread_mutex_lock(state->lock);
+      DBC_CHECK(res == 0);
+    }
+
     ctrl->connect_chainsetup();
     if (ctrl->is_connected() == true) {
       ctrl->run();
     }
     else {
       ctrl->print_last_error();
+    }
+
+    if (state->daemon_mode == true) {
+      int res = pthread_mutex_unlock(state->lock);
+      DBC_CHECK(res == 0);
     }
   }
   // cerr << endl << "ecasound: mainloop exiting..." << endl;

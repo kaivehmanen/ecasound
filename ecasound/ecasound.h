@@ -22,6 +22,7 @@ struct ecasound_state {
   ECA_NETECI_SERVER* eciserver;
   ECA_SESSION* session;
   pthread_t* daemon_thread;
+  pthread_mutex_t* lock;
   sig_atomic_t exit_request;
   int retval;
   bool daemon_mode;
