@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)       (last edited: 14704) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 190804) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -29,6 +29,8 @@ xx082004 (v2.3.4)  -** stable release **-
 	- fixed: ogg input if requested sample-format has non-native
 		 endianess; new default-cmd for ogg-input, see 
 		 ecasoundrc(5)
+	- fixed: build failed on MacOSX/freebsd because of undefined 	
+		 mlockall and related defines
 05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command

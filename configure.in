@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20040421-35
+dnl last modified: 20040819-36
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -99,7 +99,7 @@ case "$host" in
                ;;
 	*-*-freebsd*)
                AM_CFLAGS="$AM_CFLAGS -pthread"
-               AM_CPPFLAGS="$AM_CPPFLAGS -D_THREAD_SAFE"
+               AM_CPPFLAGS="$AM_CPPFLAGS -D_THREAD_SAFE -D_P1003_1B_VISIBLE"
                AM_CXXFLAGS="$AM_CXXFLAGS -pthread"
                echo "Setting FreeBSD compilation options for POSIX threads"
                ;;
@@ -118,6 +118,11 @@ case "$host" in
 	       AM_CXXFLAGS="$AM_CXXFLAGS -mieee"
 	       echo "Enabling fully IEEE compliant floating-point code generation on Alpha."
 	       ;;
+	*darwin*)
+	      if test "$GCC" = yes; then
+		  AM_CPPFLAGS="$AM_CPPFLAGS -D_P1003_1B_VISIBLE"
+	      fi
+	      ;;
 	*)
 	       echo "Using generic settings for POSIX thread support."
 	       ;;
