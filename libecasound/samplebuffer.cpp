@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // samplebuffer.cpp: Class representing a buffer of audio samples.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -878,7 +878,7 @@ void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
 {
   double step = 1.0;
   if (from_srate != 0) { step = static_cast<double>(to_srate) / from_srate; }
-  buf_size_t new_buffer_size = static_cast<buf_size_t>(step * buffersize_rep);
+  buf_size_t new_buffer_size = static_cast<buf_size_t>((step * buffersize_rep) + 0.5f);
 
   if (new_buffer_size > reserved_samples_rep) {
     reserved_samples_rep = new_buffer_size;
@@ -970,7 +970,7 @@ void SAMPLE_BUFFER::resample_nofilter(SAMPLE_SPECS::sample_rate_t from,
 {
   double step = static_cast<double>(to) / from;
   buf_size_t old_buffer_size = buffersize_rep;
-  buffersize_rep = static_cast<buf_size_t>(step * buffersize_rep);
+  buffersize_rep = static_cast<buf_size_t>((step * buffersize_rep) + 0.5f);
 
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_no_f from " << from << " to " << to << "." << std::endl);
 
@@ -1022,7 +1022,7 @@ void SAMPLE_BUFFER::resample_with_memory(SAMPLE_SPECS::sample_rate_t from,
 {
   double step = (double)to / from;
   buf_size_t old_buffer_size = buffersize_rep;
-  buffersize_rep = static_cast<buf_size_t>(step * buffersize_rep);
+  buffersize_rep = static_cast<buf_size_t>((step * buffersize_rep) + 0.5f);
 
   DBC_CHECK(impl_repp->old_buffer_repp != 0);
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_w_m from " << from << " to " << to << "." << std::endl); 

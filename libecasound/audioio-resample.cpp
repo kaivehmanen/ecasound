@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-resample.cpp: A proxy class that resamples the child 
 //                       object's data.
-// Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2002,2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     psfactor_rep = static_cast<float>(child_srate_rep) / samples_per_second();
   }
 
-  child_buffersize_rep = static_cast<long int>(buffersize() * (1.0f / psfactor_rep));
+  child_buffersize_rep = static_cast<long int>((buffersize() * (1.0f / psfactor_rep)) + 0.5f);
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 	      "(audioio-resample) open(); psfactor=" + kvu_numtostr(psfactor_rep) +
