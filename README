@@ -80,7 +80,7 @@ To run Ecasound, you need...:
   glibc 2.1/2.2/2.3 combinations), FreeBSD 4.x, Solaris 2.8 and 
   Cygwin 1.3.20
 - POSIX threads support; has been tested with glibc linuxthreads 
-  and Native POSIX Thread Library (NPTL)
+  and the Native POSIX Thread Library (NPTL)
   
 Optional when running Ecasound:
 
@@ -187,7 +187,7 @@ Distribution packages
 Eca projects page (links, apps based on Ecasound, etc)
 - http://www.eca.cx
 
-Examples of ecasound in real-life use
+Examples of real-life Ecasound usage
 - http://www.eca.cx/ecasound_users.html
 
 -----------------------------------------------------------------------
@@ -233,14 +233,15 @@ See the file 'AUTHORS'.
  Thanks to
 -----------------------------------------------------------------------
 
+DotCX (www.nic.cx) - For providing the 'eca.cx' domain.
 Endersz, Viktor - For sending me the adv.compressor source code!
 LAD members - Always a great source of inspiration! Special thanks
 	      to Paul Davis, who has kept on pushing Linux audio 
 	      forward all these years.
-Philips, Dave - Your Linux Sound+MIDI apps website has 
-SEUL - For hosting ecasound ftp, http and CVS sites.
-Wakkanet Oy - For hosting the ecasound web site.
-www.niccx.com - For eca.cx, ecasound.cx and ecawave.cx domains.
+Philips, Dave - The 'Linux Sound & MIDI' website was the reason
+		why I initially got interested in Linux audio!
+SEUL (www.seul.org) - For hosting Ecasound ftp, http and CVS sites.
+Wakkanet Oy (www.wakkanet.fi) - For hosting the Ecasound web site.
 
 -----------------------------------------------------------------------
  Licensing/distribution policy

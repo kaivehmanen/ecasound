@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 171103) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 191103) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-????2003 (v2.3.1)  -** stable release **-
+19112003 (v2.3.1)  -** stable release **-
 	- added: --disable-effects configure option; build ecasound 
 		 without effect and controller components
 	- changed: libtool is setup to only create object files for
@@ -30,6 +30,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: html versions of programmer's, user's and ECI 
                    developer's guide are generated with Hevea instead
 		   of latex2html [juekawa]
+	- changed: updated config.guess and config.sub to more recent
+		   versions
         - fixed: makefile errors when building against system libreadline
         - fixed: processing did not start in the default transport mode
 	  	 with JACK versions 0.80 and older
