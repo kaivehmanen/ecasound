@@ -14,9 +14,11 @@ About the version numbers... "vx.yRt" :
 
 Last officially released version is -*> v0.2.2r2 <*-
 
-??052000 (v0.3.0d3)
+??062000 (v0.3.0d3)
+	- changed: small layout changes
 	- changed: updated the 'INSTALL' file
 	- fixed: Makefile fixes (inline and const macros)
+	- fixed: fade-in/out and redraw crashed when no file was opened
 	- changed: now requires ecasound 1.8.x
 28052000 (v0.2.2r2)
 	- added: --version and --help command-line options (for GNU 

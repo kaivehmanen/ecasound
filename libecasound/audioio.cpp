@@ -64,7 +64,7 @@ string AUDIO_IO::status(void) const {
 
   mitem << "position (" << position_in_seconds_exact();
   mitem << "/" << length_in_seconds_exact();
-  mitem << ") seconds.\n\t";
+  mitem << ") seconds.\n -> ";
   
   if (is_open() == true) 
     mitem << "open, ";

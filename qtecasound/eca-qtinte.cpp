@@ -24,6 +24,7 @@
 
 #include <qapplication.h>
 #include <qpushbutton.h>
+#include <qgroupbox.h>
 #include <qfont.h>
 #include <qaccel.h>
 #include <qlayout.h>
@@ -109,12 +110,12 @@ void QEInterface::update_statusbar(void) {
 void QEInterface::init_tabwidget(QBoxLayout* layout) {
   QTabWidget* qtab = new QTabWidget(this, "qtab");
 
-  QEDebugTab* debugtab = new QEDebugTab(this, this, "debugtab");
+  QEDebugTab* debugtab = new QEDebugTab(this, qtab, "debugtab");
   qtab->addTab(debugtab, "Engine o&utput");
 
-  session_repp = new QEChainsetup(ctrl_repp, this, "qechainsetup");
+  session_repp = new QEChainsetup(ctrl_repp, qtab, "qechainsetup");
   qtab->addTab(session_repp, "Session setu&p");
-  layout->addWidget(qtab,1,0);
+  layout->addWidget(qtab, 1, 0);
 }
 
 void QEInterface::init_runtimebar(QBoxLayout* buttons) {

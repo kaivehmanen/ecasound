@@ -629,7 +629,7 @@ string ECA_CONTROL::aio_status(void) const {
     }
     st_info_string += "\" - [" + (*adev_citer)->name() + "]";
     if ((*adev_citer) == selected_audio_object_repp) st_info_string += " [selected]";
-    st_info_string += "\n\tconnected to chains \"";
+    st_info_string += "\n -> connected to chains \"";
     vector<string> temp = selected_chainsetup_repp->get_attached_chains_to_input((selected_chainsetup_repp->inputs)[adev_sizet]);
     vector<string>::const_iterator p = temp.begin();
     while (p != temp.end()) {
@@ -652,7 +652,7 @@ string ECA_CONTROL::aio_status(void) const {
     }
     st_info_string += "\" - [" + (*adev_citer)->name() + "]";
     if ((*adev_citer) == selected_audio_object_repp) st_info_string += " [selected]";
-    st_info_string += "\n\tconnected to chains \"";
+    st_info_string += "\n -> connected to chains \"";
     vector<string> temp = selected_chainsetup_repp->get_attached_chains_to_output((selected_chainsetup_repp->outputs)[adev_sizet]);
     vector<string>::const_iterator p = temp.begin();
     while (p != temp.end()) {
@@ -681,7 +681,7 @@ void ECA_CONTROL::aio_register(void) const {
     q->map_parameters();
     int params = q->number_of_params();
     for(int n = 1; n < params; n++) {
-      if (n == 1) temp += "\n\t--> ";
+      if (n == 1) temp += "\n\t";
       temp += q->get_parameter_name(n + 1);
       if (n + 1 < params) temp += ",";
     }

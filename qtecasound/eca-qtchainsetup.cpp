@@ -43,7 +43,8 @@
 QEChainsetup::QEChainsetup (ECA_CONTROL* econtrol,
 			    QWidget *parent,
 			    const char *name) 
-  : ctrl_repp(econtrol)
+  : QWidget(parent, name),
+    ctrl_repp(econtrol)
 {
   startTimer(1000);
   user_input_lock_rep = false;
@@ -85,7 +86,9 @@ void QEChainsetup::init_chain_list(void) {
   chain_list_repp->setAllColumnsShowFocus(true); 
   chain_list_repp->setSorting(0);
   chain_list_repp->setMultiSelection(true);
-//    chain_list_repp->setSorting(-1);
+  for(int n = 0; n < 5; n++) { // n < chain_list_repp->columns()
+    chain_list_repp->setColumnWidthMode(n, QListView::Manual);
+  }
 
   QObject::connect(chain_list_repp,
   		   SIGNAL(selectionChanged()), 
@@ -153,7 +156,6 @@ void QEChainsetup::select_chains(const vector<string>& chains) {
   ctrl_repp->select_chains(chains);
   if (user_input_lock_rep != true) {
     user_input_lock_rep = true;
-    cerr << "L3-on" << endl;
     chain_list_repp->clearSelection();
     vector<string>::const_iterator p = chains.begin();
     while (p != chains.end()) {
@@ -167,14 +169,12 @@ void QEChainsetup::select_chains(const vector<string>& chains) {
       ++p;
     }
     user_input_lock_rep = false;
-    cerr << "L3-off" << endl;
   }
 }
 
 void QEChainsetup::select_chains(void) {
   if (user_input_lock_rep != true) {
     user_input_lock_rep = true;
-    cerr << "L4-on" << endl;
     vector<string> selected_chains;
     
     QListViewItem* selected = chain_list_repp->firstChild();
@@ -187,7 +187,6 @@ void QEChainsetup::select_chains(void) {
     
     ctrl_repp->select_chains(selected_chains);
     user_input_lock_rep = false;
-    cerr << "L4-off" << endl;
   }
 }
 
@@ -314,25 +313,17 @@ void QEChainsetup::button_remove_file(void) {
 
 void QEChainsetup::timerEvent(QTimerEvent *) { update_chain_list(); }
 void QEChainsetup::resizeEvent(QResizeEvent *) {
-  int pixelsleft = width();
-  for(int n = 1; n < 5; n++) { // n < chain_list_repp->columns()
-    pixelsleft -= chain_list_repp->columnWidth(n);
-  }
-
-  if (pixelsleft > 0) {
-    chain_list_repp->setColumnWidthMode(0, QListView::Maximum);
-    chain_list_repp->setColumnWidth(0, pixelsleft - 4);
-  }
+  chain_list_repp->setColumnWidth(0, width() * 0.10f);
+  chain_list_repp->setColumnWidth(1, width() * 0.25f);
+  chain_list_repp->setColumnWidth(2, width() * 0.25f);
+  chain_list_repp->setColumnWidth(3, width() * 0.15f);
+  chain_list_repp->setColumnWidth(4, width() * 0.25f);
 }
 
 void QEChainsetup::mousePressEvent(QMouseEvent *) { 
-  cerr << "L1-on" << endl;
   user_input_lock_rep = true;
-  cerr << "L1-off" << endl;
 }
 
 void QEChainsetup::mouseReleaseEvent(QMouseEvent *) {
-  cerr << "L2-on" << endl;
   user_input_lock_rep = false;
-  cerr << "L2-off" << endl;
 }

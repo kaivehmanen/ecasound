@@ -28,6 +28,7 @@
 #include <qmessagebox.h>
 #include <qprogressdialog.h>
 #include <qaccel.h>
+#include <qgroupbox.h>
 
 #include <ecasound/eca-session.h>
 #include <ecasound/eca-control.h>
@@ -202,18 +203,20 @@ void QESession::init_layout(void) {
   QAccel* a = new QAccel (this);
   a->connectItem(a->insertItem(ALT+CTRL+Key_D), this, SLOT(debug_event()));
 
+  QGroupBox* gbox = new QGroupBox(1, Qt::Horizontal, this, 0);
+  gbox->setFrameStyle(QFrame::Box | QFrame::Sunken);
   if (state_rep == state_orig_file ||
       state_rep == state_orig_direct) 
     file = new QEFile(active_filename_rep,
 		      wcache_toggle_rep,
 		      refresh_toggle_rep, 
-		      this, 
+		      gbox, 
 		      "sessionfile");
   else 
-    file = new QEFile(this, 
+    file = new QEFile(gbox, 
 		      "sessionfile");
-
-  vlayout->addWidget(file,1);
+  
+  vlayout->addWidget(gbox,1);
 
   statusbar = new QEStatusBar(ectrl, active_filename_rep, this);
   statusbar->visible_area(ECA_AUDIO_TIME(0, file->samples_per_second()),
@@ -527,8 +530,7 @@ void QESession::fade_in_event(void) {
   stop_event();
   prepare_event();
   prepare_temp();
-  if (state_rep == state_invalid ||
-      state_rep == state_new_file) return;
+  if (state_rep == state_invalid) return;
   assert(state_rep != state_orig_file);
 
   QEFadeInEvent p (ectrl, 
@@ -546,8 +548,7 @@ void QESession::fade_out_event(void) {
   stop_event();
   prepare_event();
   prepare_temp();
-  if (state_rep == state_invalid ||
-      state_rep == state_new_file) return;
+  if (state_rep == state_invalid) return;
   assert(state_rep != state_orig_file);
 
   QEFadeOutEvent p (ectrl, 

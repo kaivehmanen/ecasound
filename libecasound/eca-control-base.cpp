@@ -38,7 +38,7 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-static string ecasound_lockfile;
+string ecasound_lockfile;
 
 ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession) {
   session_repp = psession;
