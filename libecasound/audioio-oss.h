@@ -60,7 +60,8 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   virtual void stop(void);
 
   virtual long int delay(void) const;
-  virtual long int prefill_space(void) const { if (io_mode() != io_read) return(fragment_size * fragment_count); else return(0); }
+  virtual long int latency(void) const { return(buffersize()); }
+  virtual long int prefill_space(void) const { if (io_mode() != io_read) return(buffersize() * fragment_count); else return(0); }
 
   /*@}*/
 
