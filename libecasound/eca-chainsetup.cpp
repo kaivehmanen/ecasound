@@ -29,6 +29,7 @@
 #include <list>
 #include <iostream>
 
+#include <unistd.h>
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h> /* for mlockall() */
 #endif
@@ -515,8 +516,15 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void)
       switch_to_db_mode();
     }
 
-    impl_repp->pserver_rep.set_buffer_defaults(double_buffer_size() / buffersize(), 
-					       buffersize());
+    if (buffersize() != 0) {
+      impl_repp->pserver_rep.set_buffer_defaults(double_buffer_size() / buffersize(), 
+						 buffersize());
+    }
+    else {
+      ECA_LOG_MSG(ECA_LOGGER::info,
+		    "(eca-chainsetup) Warning! Buffersize set to 0.");
+      impl_repp->pserver_rep.set_buffer_defaults(0, 0);
+    }
   }
   else {
     /* double_buffering() != true */

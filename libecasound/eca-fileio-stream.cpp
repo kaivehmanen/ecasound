@@ -26,9 +26,9 @@
 #include <cstring>
 #include <climits> /* LONG_MAX */
 #include <errno.h>
+#include <unistd.h> /* stat() */
 #include <sys/mman.h>
 #include <sys/stat.h> /* stat() */
-#include <unistd.h> /* stat() */
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* off_t */
 #endif
