@@ -18,9 +18,17 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v1.8.2r14 <*-
 
 ??032001 (v1.9dev4)
+	- added: -C - disable interactive mode; reverse op. for -c
+	- added: -X - open outputs for updateing; rev.op. for -x
+	- added: -r:-1 to disabled raised-priority mode		
+	- added: -z:nopsr, -z:noxruns and -z:intbuf ; rev.ops for
+		 existing -z options
+	- added: 'user-resource-directory' define to ~/.ecasoundrc;
+		 see ecasoundrc(5) for details
 	- changed: ecasoundrc - the default midi-device has to be 
 		   given using the new 'type,device' syntax; defaults
 		   to 'rawmidi,/dev/midi'
+	- changed: man pages are now distributed in nroff 'man' format
 	- fixed: mpg123 instances weren't always properly cleaned
 	- fixed: loop-device code wasn't working
 	- fixed: more ewf-fixes
@@ -28,6 +36,8 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 C++ compatibility problems (no user-visible changes) 
 	- fixed: if connected, trying to remove the last chainsetup
 		 failed (possible core dump if debug disabled)
+	- fixed: when used as inputs, 'null' and 'rtnull' now produce
+	  	 silence instead of random data (=noise)
 02032001 (v1.9dev3)
 	- added: ecaplay - ctrl-c skips to the next file
 	- changed: -Md syntax to '-Md:rawmidi,device_name', where
