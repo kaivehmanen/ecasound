@@ -45,6 +45,8 @@ const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
 int audio_io_interface_version(void) { return(ecasound_library_version_current); }
 #endif
 
+using namespace std;
+
 AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name)
 {
   finished_rep = false;
@@ -67,78 +69,61 @@ AUDIOFILE_INTERFACE* AUDIOFILE_INTERFACE::clone(void) const
   return(target);
 }
 
-void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&)
+void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  // --------
-  DBC_REQUIRE(is_open() != true);
-  // --------
+  AUDIO_IO::open();
 
-  int sample_format, sample_width;
-    
-  if (io_mode() == io_read) {
-    afhandle = ::afOpenFile(label().c_str(), "r", NULL);
-    if (afhandle == AF_NULL_FILEHANDLE) {
-      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-AF: Can't open file \"" + label()
-			+ "\" using libaudiofile."));
-    }
-    else {
-      set_samples_per_second((long int)::afGetRate(afhandle, AF_DEFAULT_TRACK));
-      set_channels(::afGetChannels(afhandle, AF_DEFAULT_TRACK));
-      ::afGetSampleFormat(afhandle, AF_DEFAULT_TRACK, &sample_format, &sample_width);
-      string format;
-      switch(sample_format) 
+  string real_filename = label();
+  if (real_filename == "audiofile") {
+    real_filename = opt_filename_rep;
+  }
+
+  switch(io_mode()) {
+  case io_read:
+    {
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-af) Using audiofile library to open file \"" +
+		  real_filename + "\" for reading.");
+
+      afhandle = ::afOpenFile(real_filename.c_str(), "r", NULL);
+      if (afhandle == AF_NULL_FILEHANDLE) {
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-AF: Can't open file \"" + real_filename
+			    + "\" using libaudiofile."));
+      }
+      else {
+	set_samples_per_second((long int)::afGetRate(afhandle, AF_DEFAULT_TRACK));
+	set_channels(::afGetChannels(afhandle, AF_DEFAULT_TRACK));
+	int sample_format, sample_width;
+	::afGetSampleFormat(afhandle, AF_DEFAULT_TRACK, &sample_format, &sample_width);
+	string format;
+	switch(sample_format) 
 	{
 	case AF_SAMPFMT_TWOSCOMP: { format = "s"; break; }
         case AF_SAMPFMT_UNSIGNED: { format = "u"; break; }
 	case AF_SAMPFMT_FLOAT: { format = "f"; break; }
 	case AF_SAMPFMT_DOUBLE: { format = "f"; break; }
 	}
-      format += kvu_numtostr(sample_width);
-
-      //        if (afGetByteOrder(afhandle, AF_DEFAULT_TRACK) == AF_BYTEORDER_BIGENDIAN)
-      //  	format += "_be";
-      //        else
-      //  	format += "_le";
+	format += kvu_numtostr(sample_width);
 	
-      set_sample_format_string(format);
-
-      set_length_in_samples(::afGetFrameCount(afhandle, AF_DEFAULT_TRACK));
-      ::afCloseFile(afhandle);
-    }
-  }
-
-  // -------
-  DBC_ENSURE(is_open() != true);
-  // -------
-}
-
-void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
-{
-  AUDIO_IO::open();
-
-  switch(io_mode()) {
-  case io_read:
-    {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-af) Using audiofile library to open file \"" +
-		  label() + "\" for reading.");
-
-      afhandle = ::afOpenFile(label().c_str(), "r", NULL);
-      if (afhandle == AF_NULL_FILEHANDLE) {
-	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-AF: Can't open file \"" + label()
-			    + "\" using libaudiofile."));
+	//        if (afGetByteOrder(afhandle, AF_DEFAULT_TRACK) == AF_BYTEORDER_BIGENDIAN)
+	//  	format += "_be";
+	//        else
+	//  	format += "_le";
+	
+	set_sample_format_string(format);
+	set_length_in_samples(::afGetFrameCount(afhandle, AF_DEFAULT_TRACK));
       }
       break;
     }
   case io_write:
     {
       ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-af) Using audiofile library to open file \"" +
-		    label() + "\" for writing.");
+		    real_filename + "\" for writing.");
 
       AFfilesetup fsetup;
       fsetup = afNewFileSetup();
 
       int file_format = -1;
-      string teksti = label();
+      string teksti = real_filename;
       kvu_to_lowercase(teksti);
 
       if (strstr(teksti.c_str(),".aiffc") != 0) { file_format = AF_FILE_AIFFC; }
@@ -167,9 +152,9 @@ void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
       ::afInitRate(fsetup, AF_DEFAULT_TRACK, static_cast<double>(samples_per_second()));
 
-      afhandle = ::afOpenFile(label().c_str(), "w", fsetup);
+      afhandle = ::afOpenFile(real_filename.c_str(), "w", fsetup);
       if (afhandle == AF_NULL_FILEHANDLE) 
-	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-AF: Can't open file \"" + label()
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-AF: Can't open file \"" + real_filename
 			  + "\" using libaudiofile."));
      break;
     }
@@ -230,4 +215,30 @@ void AUDIOFILE_INTERFACE::seek_position(void)
 {
   ::afSeekFrame(afhandle, AF_DEFAULT_TRACK, position_in_samples());
   finished_rep = false;
+}
+
+void AUDIOFILE_INTERFACE::set_parameter(int param, 
+					string value)
+{
+  switch (param) {
+  case 1: 
+    set_label(value);
+    break;
+
+  case 2: 
+    opt_filename_rep = value;
+    break;
+  }
+}
+
+string AUDIOFILE_INTERFACE::get_parameter(int param) const
+{
+  switch (param) {
+  case 1: 
+    return(label());
+
+  case 2: 
+    return(opt_filename_rep);
+  }
+  return("");
 }

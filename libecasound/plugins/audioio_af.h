@@ -18,32 +18,25 @@
  */
 class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
 
+  std::string opt_filename_rep;
   long samples_read;
   bool finished_rep;
-
   AFfilehandle afhandle;
 
   AUDIOFILE_INTERFACE& operator=(const AUDIOFILE_INTERFACE& x) {
     return *this; }
   void debug_print_type(void);
   
-  /**
-   * Do a info query prior to actually opening the device.
-   *
-   * require:
-   *  !is_open()
-   *
-   * ensure:
-   *  !is_open()
-   */
-  void format_query(void) throw(AUDIO_IO::SETUP_ERROR&);
-  
  public:
 
   virtual string name(void) const { return("SGI libaudiofile object"); }
   virtual string description(void) const { return("SGI libaudiofile object. Supports AIFF (.aiff, .aifc, .aif) and Sun/NeXT audio files (.au, .snd)."); }
 
+  virtual void set_parameter(int param, string value);
+  virtual string get_parameter(int param) const;
+
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
+  virtual string parameter_names(void) const { return("filename,opt_filename"); }
   virtual bool locked_audio_format(void) const { return(true); }
   
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);

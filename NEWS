@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 191103) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 201103) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,12 +13,17 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??112003 (v2.3.1)  -** stable release **-
+??112003 (v2.3.2)  -** stable release **-
 	- added: support for libsndfile; enabled if libsndfile is
-	         detected succesfully in configure; FIXME: add ref
- 		 to docs
+	         detected succesfully by configure
+	- added: added new audio input/output types 'audiofile', 
+		 'sndfile' and 'mikmod'; see ecasound(1) for more
+		 details
 	- fixed: pyecasound/test1_stresstest.py was not included in
 		 the dist package
+	- fixed: libaudiofile - input file audio parameters
+		 parsed incorrectly
+	- fixed: -x option - truncate outputs - was not working 
 19112003 (v2.3.1)  -** stable release **-
 	- added: --disable-effects configure option; build ecasound 
 		 without effect and controller components

@@ -41,6 +41,8 @@ CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::value(void)
 
 TWO_STAGE_LINEAR_ENVELOPE::TWO_STAGE_LINEAR_ENVELOPE(void)
 {
+  first_stage_length_rep = 0;
+  second_stage_length_rep = 0;
   set_parameter(1, get_parameter(1));
   set_parameter(2, get_parameter(2));
 } 

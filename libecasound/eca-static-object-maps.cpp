@@ -199,39 +199,45 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("ogg", "ogg$", ogg);
 
   AUDIO_IO* mikmod = new MIKMOD_INTERFACE();
-  objmap->register_object("mikmod_669", "669$", mikmod);
-  objmap->register_object("mikmod_amf", "amf$", mikmod);
-  objmap->register_object("mikmod_dsm", "dsm$", mikmod);
-  objmap->register_object("mikmod_far", "far$", mikmod);
-  objmap->register_object("mikmod_gdm", "gdm$", mikmod);
-  objmap->register_object("mikmod_imf", "imf$", mikmod);
-  objmap->register_object("mikmod_it", "it$", mikmod);
-  objmap->register_object("mikmod_m15", "m15$", mikmod);
-  objmap->register_object("mikmod_ed", "ed$", mikmod);
-  objmap->register_object("mikmod_mod", "mod$", mikmod);
-  objmap->register_object("mikmod_mtm", "mtm$", mikmod);
-  objmap->register_object("mikmod_s3m", "s3m$", mikmod);
-  objmap->register_object("mikmod_stm", "stm$", mikmod);
-  objmap->register_object("mikmod_stx", "stx$", mikmod);
-  objmap->register_object("mikmod_ult", "ult$", mikmod);
-  objmap->register_object("mikmod_uni", "uni$", mikmod);
-  objmap->register_object("mikmod_xm", "xm$", mikmod);
+  objmap->register_object("mikmod", 
+			  "(^mikmod$)|(xm$)|(669$)|(amf$)|(dsm$)|(far$)|(gdm$)|(imf$)|"
+			  "(it$)|(m15$)|(ed$)|(mod$)|(mtm$)|(s3m$)|"
+			  "(stm$)|(stx$)|(ult$)|(uni$)", mikmod);
 
   AUDIO_IO* timidity = new TIMIDITY_INTERFACE();
-  objmap->register_object("mid", "mid$", timidity);
-  objmap->register_object("midi", "midi$", timidity);
+  objmap->register_object("mid", "(mid$)|(midi$)", timidity);
 
 #ifdef ECA_ENABLE_AUDIOIO_PLUGINS
   eca_import_internal_audioio_plugin(objmap, "libaudioio_af.so");
-#else
-#ifdef ECA_COMPILE_AUDIOFILE
-  AUDIO_IO* af = new AUDIOFILE_INTERFACE();
-  objmap->register_object("audiofile_aiff_au_snd", "(aif*$)|(au$)|(snd$)", af);
-#endif
+  eca_import_internal_audioio_plugin(objmap, "libaudioio_sndfile.so");
+#else /* !ECA_ENABLE_AUDIOIO_PLUGINS */
+
+  /* ---------------------------------------------------------*/
+  /* register file types to plugins handling audio file types */
+
+  const string common_types ("(aif*$)|(au$)|(snd$)");
+
 #ifdef ECA_COMPILE_SNDFILE
   AUDIO_IO* sndfile = new SNDFILE_INTERFACE();
-  objmap->register_object("sndfile", "(^sndfile$)|(w64$)|(vox$)|(paf$)|(iff$)|(nist$)|($mat[45])|(nist$)|(xi$)|(htk$)", sndfile);
+  /* 1. register types supported by libsndfile */
+  string sf_types ("(^sndfile$)|(w64$)|(vox$)|(paf$)|(iff$)|(nist$)|($mat[45])|(nist$)|(xi$)|(htk$)");
+  string af_types ("(^audiofile$)");
+  sf_types += string("|") + common_types;
+
+  objmap->register_object("sndfile", sf_types.c_str(), sndfile);
+#else
+  /* 2. sndfile not available, register common types libaudiofile */
+  string af_types ("(^audiofile$)");
+  af_types += string("|") + common_types;
 #endif
+
+#ifdef ECA_COMPILE_AUDIOFILE
+  AUDIO_IO* af = new AUDIOFILE_INTERFACE();
+  objmap->register_object("audiofile", af_types.c_str(), af);
+#endif
+
+  /* ---------------------------------------------------------*/
+
 #endif /* ECA_ENABLE_AUDIOIO_PLUGINS */
 
   objmap->register_object("-", "^-$", raw);

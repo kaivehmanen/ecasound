@@ -45,6 +45,8 @@ class AUDIO_IO_BUFFERED : public AUDIO_IO {
  protected:
 
   void reserve_buffer_space(long int bytes);
+  unsigned char* get_iobuf(void) const { return(iobuf_uchar_repp); }
+  size_t get_iobuf_size(void) const { return(iobuf_size_rep); }
 
  private:
 

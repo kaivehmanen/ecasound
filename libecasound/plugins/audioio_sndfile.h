@@ -18,6 +18,74 @@
  */
 class SNDFILE_INTERFACE : public AUDIO_IO_BUFFERED {
 
+ public:
+
+  /** @name Public functions */
+  /*@{*/
+
+  SNDFILE_INTERFACE (const string& name = "");
+  ~SNDFILE_INTERFACE(void);
+
+  /*@}*/
+  
+  /** @name Reimplemented functions from ECA_OBJECT */
+  /*@{*/
+
+  virtual string name(void) const { return("Libsndfile object"); }
+  virtual string description(void) const { return("Libsndfile object. Supports all commona audio formats."); }
+
+  /*@}*/
+
+  /** @name Reimplemented functions from DYNAMIC_PARAMETERS<string> */
+  /*@{*/
+
+  virtual void set_parameter(int param, string value);
+  virtual string get_parameter(int param) const;
+
+  /*@}*/
+
+  /** @name Reimplemented functions from DYNAMIC_OBJECT<string> */
+  /*@{*/
+
+  SNDFILE_INTERFACE* clone(void) const;
+  SNDFILE_INTERFACE* new_expr(void) const { return new SNDFILE_INTERFACE(); }  
+
+  /*@}*/
+
+  /** @name Reimplemented functions from ECA_AUDIO_POSITION */
+  /*@{*/
+
+  virtual void seek_position(void);
+
+  /*@}*/
+
+  /** @name Function reimplemented from AUDIO_IO_BUFFERED */
+  /*@{*/
+
+  virtual long int read_samples(void* target_buffer, long int samples);
+  virtual void write_samples(void* target_buffer, long int samples);
+
+  virtual void read_buffer(SAMPLE_BUFFER* sbuf);
+  virtual void write_buffer(SAMPLE_BUFFER* sbuf);
+
+  /*@}*/
+
+  /** @name Function reimplemented from AUDIO_IO */
+  /*@{*/
+
+  virtual int supported_io_modes(void) const { return(io_read | io_write | io_readwrite); }
+  virtual string parameter_names(void) const { return("filename,opt_filename"); }
+  virtual bool locked_audio_format(void) const { return(true); }
+  
+  virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
+  virtual void close(void);
+  
+  virtual bool finished(void) const;
+
+  /*@}*/
+    
+private:
+
   std::string opt_filename_rep;
   SNDFILE* snd_repp;
   long samples_read;
@@ -26,38 +94,6 @@ class SNDFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   void open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::SETUP_ERROR&);
 
   SNDFILE_INTERFACE& operator=(const SNDFILE_INTERFACE& x) { return *this; }
-  
- public:
-
-  virtual string name(void) const { return("Libsndfile object"); }
-  virtual string description(void) const { return("Libsndfile object. Supports all commona audio formats."); }
-
-  virtual void set_parameter(int param, string value);
-  virtual string get_parameter(int param) const;
-
-  /** @name Function reimplemented from AUDIO_IO */
-  /*@{*/
-
-  virtual int supported_io_modes(void) const { return(io_read | io_write); }
-  virtual string parameter_names(void) const { return("label,opt_filename"); }
-  virtual bool locked_audio_format(void) const { return(true); }
-  
-  virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
-  virtual void close(void);
-  
-  virtual long int read_samples(void* target_buffer, long int samples);
-  virtual void write_samples(void* target_buffer, long int samples);
-
-  /*@}*/
-
-  virtual bool finished(void) const;
-  virtual void seek_position(void);
-    
-  SNDFILE_INTERFACE* clone(void) const;
-  SNDFILE_INTERFACE* new_expr(void) const { return new SNDFILE_INTERFACE(); }  
-
-  SNDFILE_INTERFACE (const string& name = "");
-  ~SNDFILE_INTERFACE(void);
 };
 
 #ifdef ECA_ENABLE_AUDIOIO_PLUGINS

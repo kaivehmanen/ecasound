@@ -26,11 +26,17 @@
 #include "audioio-mikmod.h"
 #include "eca-logger.h"
 
+using namespace std;
+
 string MIKMOD_INTERFACE::default_mikmod_cmd = "mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f";
 
-void MIKMOD_INTERFACE::set_mikmod_cmd(const std::string& value) { MIKMOD_INTERFACE::default_mikmod_cmd = value; }
+void MIKMOD_INTERFACE::set_mikmod_cmd(const std::string& value)
+{
+  MIKMOD_INTERFACE::default_mikmod_cmd = value;
+}
 
-MIKMOD_INTERFACE::MIKMOD_INTERFACE(const std::string& name) {
+MIKMOD_INTERFACE::MIKMOD_INTERFACE(const std::string& name)
+{
   finished_rep = false;
 }
 
@@ -46,15 +52,20 @@ void MIKMOD_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
   std::string urlprefix;
   triggered_rep = false;
 
+  string real_filename = label();
+  if (real_filename == "mikmod") {
+    real_filename = opt_filename_rep;
+  }
+
   struct stat buf;
-  int ret = ::stat(label().c_str(), &buf);
+  int ret = ::stat(real_filename.c_str(), &buf);
   if (ret != 0) {
-    size_t offset = label().find_first_of("://");
+    size_t offset = real_filename.find_first_of("://");
     if (offset == std::string::npos) {
-      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-MIKMOD: Can't open file " + label() + "."));
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-MIKMOD: Can't open file " + real_filename + "."));
     }
     else {
-      urlprefix = std::string(label(), 0, offset);
+      urlprefix = std::string(real_filename, 0, offset);
       ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mikmod) Found url; protocol '" + urlprefix + "'.");
     }
   }
@@ -76,7 +87,8 @@ void MIKMOD_INTERFACE::close(void)
   AUDIO_IO::close();
 }
 
-long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {
+long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples)
+{
   if (triggered_rep != true) { 
     triggered_rep = true;
     fork_mikmod();
@@ -103,15 +115,22 @@ void MIKMOD_INTERFACE::seek_position(void)
   set_position_in_samples(0);
 }
 
-void MIKMOD_INTERFACE::kill_mikmod(void) {
+void MIKMOD_INTERFACE::kill_mikmod(void)
+{
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mikmod) Cleaning mikmod-child with pid " + kvu_numtostr(pid_of_child()) + ".");
   clean_child();
   triggered_rep = false;
 }
 
-void MIKMOD_INTERFACE::fork_mikmod(void) {
+void MIKMOD_INTERFACE::fork_mikmod(void)
+{
+  string real_filename = label();
+  if (real_filename == "mikmod") {
+    real_filename = opt_filename_rep;
+  }
+
   set_fork_command(MIKMOD_INTERFACE::default_mikmod_cmd);
-  set_fork_file_name(label());
+  set_fork_file_name(real_filename);
   set_fork_sample_rate(samples_per_second());
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
@@ -122,4 +141,30 @@ void MIKMOD_INTERFACE::fork_mikmod(void) {
       triggered_rep = false;
     }
   }
+}
+
+void MIKMOD_INTERFACE::set_parameter(int param, 
+				     string value)
+{
+  switch (param) {
+  case 1: 
+    set_label(value);
+    break;
+
+  case 2: 
+    opt_filename_rep = value;
+    break;
+  }
+}
+
+string MIKMOD_INTERFACE::get_parameter(int param) const
+{
+  switch (param) {
+  case 1: 
+    return(label());
+
+  case 2: 
+    return(opt_filename_rep);
+  }
+  return("");
 }

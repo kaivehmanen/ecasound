@@ -46,6 +46,7 @@ void AUDIO_IO_BUFFERED::reserve_buffer_space(long int bytes)
       delete[] iobuf_uchar_repp;
       iobuf_uchar_repp = 0;
     }
+    // remember to include <iostream>
     // std::cerr << "Reserving " << bytes << " bytes (" << label() << ").\n";
     iobuf_uchar_repp = new unsigned char [bytes];
     iobuf_size_rep = bytes;

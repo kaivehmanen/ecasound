@@ -105,7 +105,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
 
   virtual std::string name(void) const { return("RIFF wave file"); }
   virtual bool locked_audio_format(void) const { return(true); }
-  virtual std::string parameter_names(void) const { return("label,toggle_mmap"); }
+  virtual std::string parameter_names(void) const { return("filename,toggle_mmap"); }
 
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);
