@@ -126,6 +126,7 @@ void ECA_PROCESSOR::init_variables(void) {
   continue_request = false;
   end_request = false;
   rt_running = false;
+  trigger_counter_rep = 0;
 }
 
 void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR&) {
@@ -614,6 +615,8 @@ void ECA_PROCESSOR::start(void) {
     for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_inputs.size()); adev_sizet++)
       realtime_inputs[adev_sizet]->start();
 
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) multitrack sync");
+    multitrack_sync();
     multitrack_sync();
 
     for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_outputs.size()); adev_sizet++)
@@ -622,21 +625,25 @@ void ECA_PROCESSOR::start(void) {
     assert(realtime_inputs.size() > 0);
     assert(realtime_outputs.size() > 0);
 
-    long int input_sync = realtime_inputs[0]->position_in_samples();
-    long int output_sync = realtime_outputs[0]->position_in_samples();
-    long int sync_fix = output_sync - (input_sync - buffersize_rep);
+    struct timeval now;
+    gettimeofday(&now, NULL);
+    double time = now.tv_sec * 1000000.0 + now.tv_usec -
+      multitrack_input_stamp_rep.tv_sec * 1000000.0 - multitrack_input_stamp_rep.tv_usec;
+    long int sync_fix = static_cast<long>(time * csetup->sample_rate() / 1000000.0);
 
-    ecadebug->msg(ECA_DEBUG::system_objects, "sync fix: " + kvu_numtostr(sync_fix));
+    // - sync_fix = time elapsed since recording the first input
+    // fragment (not meant to be discarded) was started
+    // ==> result: first byte written to non-realtime outputs 
+    //     was recorded exactly at 'now - output_sync'
 
+    // this would be a serious problem
     if (sync_fix < 0) {
-      for (int adev_sizet = 0; adev_sizet != static_cast<int>(non_realtime_outputs.size()); adev_sizet++) {
-	non_realtime_outputs[adev_sizet]->seek_position_in_samples(-sync_fix);
-      }
+      cerr << "(eca-main) Aborting! Negative multitrack-sync; problems with hardware?" << endl;
+      exit(-1);
     }
-    else {
-      for (int adev_sizet = 0; adev_sizet != static_cast<int>(non_realtime_inputs.size()); adev_sizet++) {
-	non_realtime_inputs[adev_sizet]->seek_position_in_samples(sync_fix);
-      }
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) sync fix: " + kvu_numtostr(sync_fix));
+    for (int adev_sizet = 0; adev_sizet != static_cast<int>(non_realtime_outputs.size()); adev_sizet++) {
+      non_realtime_outputs[adev_sizet]->seek_position_in_samples_advance(sync_fix);
     }
   }
   else {
@@ -651,37 +658,24 @@ void ECA_PROCESSOR::start(void) {
 
 void ECA_PROCESSOR::trigger_outputs(void) {
   if (trigger_outputs_request == true) {
-    trigger_outputs_request = false;
-    for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_outputs.size()); adev_sizet++)
-      realtime_outputs[adev_sizet]->start();
-    rt_running = true;
+    ++trigger_counter_rep;
+    if (trigger_counter_rep == 2) {
+      trigger_outputs_request = false;
+      trigger_counter_rep = 0;
+      for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_outputs.size()); adev_sizet++)
+	realtime_outputs[adev_sizet]->start();
+      rt_running = true;
+    }
   }
 }
 
 void ECA_PROCESSOR::multitrack_sync(void) {
   // ---
-  // Read and mix inputs (skips realtime inputs)
+  // Read and mix inputs
   // ---
-
-  for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
-    if (input_chain_count[audioslot_sizet] > 1) {
-      (*r_inputs)[audioslot_sizet]->read_buffer(&mixslot);
-      if ((*r_inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
-    }
-    for (int c = 0; c != chain_count; c++) {
-      if ((*inputs)[audioslot_sizet] == (*chains)[c]->input_id_repp) {
-	if (input_chain_count[audioslot_sizet] == 1) {
-	  (*r_inputs)[audioslot_sizet]->read_buffer(&(cslots[c]));
-	  if ((*r_inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
-	  break;
-	}
-	else {
-	  cslots[c].operator=(mixslot);
-	}
-      }
-    }
-  }
-
+  inputs_to_chains();
+  gettimeofday(&multitrack_input_stamp_rep, NULL);
+  
   // ---
   // Chainoperator processing phase
   // ---
@@ -692,10 +686,12 @@ void ECA_PROCESSOR::multitrack_sync(void) {
   }
 
   // ---
-  // Mix to outputs (skip outputs which are connected to realtime inputs)
+  // Mix to outputs (skip non-realtime outputs which are connected to realtime inputs)
   // ---
   for(int audioslot_sizet = 0; audioslot_sizet < output_count; audioslot_sizet++) {
-    if (is_slave_output((*outputs)[audioslot_sizet]) == true) continue;
+    if (is_slave_output((*outputs)[audioslot_sizet]) == true) {
+      continue;
+    }
     mixslot.make_silent();
     int count = 0;
     
@@ -714,6 +710,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 	  ++count;
 	  if (count == 1) {
 	    mixslot.copy(cslots[n]);
+	    mixslot.divide_by(output_chain_count[audioslot_sizet]);
 	  }
 	  else {
 	    mixslot.add_with_weight(cslots[n],
@@ -721,7 +718,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 	    
 	    if (count == output_chain_count[audioslot_sizet]) {
 	      (*r_outputs)[audioslot_sizet]->write_buffer(&mixslot);
-	      cslots[n].length_in_samples(buffersize_rep);
+	      mixslot.length_in_samples(buffersize_rep);
 	    }
 	  }
 	}
@@ -881,6 +878,10 @@ void ECA_PROCESSOR::chain_processing(void) {
     (*chains)[active_chain_index]->toggle_processing(true);
 }
 
+/**
+ * Slave output is a non-realtime output which is not 
+ * connected to any realtime inputs.
+ */
 bool ECA_PROCESSOR::is_slave_output(AUDIO_IO* aiod) const {
   // --------
   // require:

@@ -5,6 +5,8 @@
 #include <string>
 #include <ctime>
 #include <pthread.h>
+#include <unistd.h>
+#include <sys/time.h>
 
 #include <kvutils/value_queue.h>
 
@@ -70,6 +72,9 @@ private:
   bool trigger_outputs_request;
   bool input_not_finished;
   bool processing_range_set;
+  
+  int trigger_counter_rep;
+  struct timeval multitrack_input_stamp_rep;  
 
   size_t active_chain_index;
   size_t active_chainop_index;
