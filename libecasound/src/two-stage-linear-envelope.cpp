@@ -49,7 +49,7 @@ void TWO_STAGE_LINEAR_ENVELOPE::init(DYNAMIC_PARAMETERS::parameter_type step) {
   otemp << "1." << get_parameter(1);
   otemp << "- 2." << get_parameter(2);
   otemp << "- 3." << get_parameter(3);
-  ecadebug->msg(1, otemp.to_string());
+  ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
 }
 
 void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {

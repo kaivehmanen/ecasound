@@ -60,7 +60,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(ECA_RESOURCES* ecarc, COMMAND_LINE&
   while(cline.ready()) {
     temp = cline.next();
     if (temp == "") continue;
-    ecadebug->msg(5, "(eca-chainsetup) Adding \"" + temp + "\" to options.");
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding \"" + temp + "\" to options.");
     options.push_back(temp);
   }
 
@@ -113,7 +113,7 @@ void ECA_CHAINSETUP::set_defaults(void) {
 }
 
 ECA_CHAINSETUP::~ECA_CHAINSETUP(void) { 
-  ecadebug->msg(1,"ECA_CHAINSETUP destructor!");
+  ecadebug->msg(ECA_DEBUG::system_objects,"ECA_CHAINSETUP destructor!");
 }
 
 void ECA_CHAINSETUP::enable(void) {
@@ -123,12 +123,12 @@ void ECA_CHAINSETUP::enable(void) {
     
     for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
       (*q)->open();
-      //      ecadebug->msg(1, open_info(*q));
+      //      ecadebug->msg(ECA_DEBUG::system_objects, open_info(*q));
     }
     
     for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
       (*q)->open();
-      //      ecadebug->msg(1, open_info(*q));
+      //      ecadebug->msg(ECA_DEBUG::system_objects, open_info(*q));
     }
     
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
@@ -146,14 +146,14 @@ void ECA_CHAINSETUP::enable(void) {
 void ECA_CHAINSETUP::disable(void) {
   update_option_strings();
   if (is_enabled_rep == true) {
-    ecadebug->msg(1, "Closing chainsetup \"" + name() + "\"");
+    ecadebug->msg(ECA_DEBUG::system_objects, "Closing chainsetup \"" + name() + "\"");
     for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
-      ecadebug->msg(1, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
       (*q)->close();
     }
     
     for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
-      ecadebug->msg(1, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
       (*q)->close();
     }
 
@@ -169,11 +169,11 @@ void ECA_CHAINSETUP::disable(void) {
 void ECA_CHAINSETUP::interpret_options(const vector<string>& opts) {
   vector<string>::const_iterator p = opts.begin();
   while(p != opts.end()) {
-    ecadebug->msg(5, "(eca-chainsetup) Interpreting general option \""
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting general option \""
 		  + *p + "\".");
     interpret_general_option(*p);
     interpret_processing_control(*p);
-    ecadebug->msg(5, "(eca-chainsetup) Interpreting chain option \""
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting chain option \""
 		  + *p + "\".");
     interpret_chains(*p);
     ++p;
@@ -197,7 +197,7 @@ void ECA_CHAINSETUP::interpret_options(const vector<string>& opts) {
 	another = "";
       }
     }
-    ecadebug->msg(5, "(eca-chainsetup) Interpreting setup, with args \""
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting setup, with args \""
 		  + temp + "\", \"" + another + "\".");
     interpret_chains(temp);
     interpret_audio_format(temp);
@@ -341,7 +341,7 @@ void ECA_CHAINSETUP::interpret_chains (const string& argu) {
       vector<string> schains = get_arguments(argu);
       if (find(schains.begin(), schains.end(), "all") != schains.end()) {
 	select_all_chains();
-	ecadebug->msg(1, "(eca-chainsetup) Selected all chains.");
+	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Selected all chains.");
       }
       else {
 	select_chains(schains);
@@ -350,7 +350,7 @@ void ECA_CHAINSETUP::interpret_chains (const string& argu) {
 	mtempa << "(eca-chainsetup) Selected chain ids: ";
 	for (vector<string>::const_iterator p = schains.begin(); p !=
 	       schains.end(); p++) { mtempa << *p << " "; }
-	ecadebug->msg(1, mtempa.to_string());
+	ecadebug->msg(ECA_DEBUG::system_objects, mtempa.to_string());
       }
       break;
     }
@@ -410,7 +410,7 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
 }
 
 void ECA_CHAINSETUP::add_singlechain_preset(const string& preset_name) throw(ECA_ERROR*) {
-  ecadebug->msg(1,"(eca-chainsetup) Opening sc-preset file.");
+  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup) Opening sc-preset file.");
   string filename =
     ecaresources->resource("resource-directory") + "/" + ecaresources->resource("resource-file-single-effect-presets");
   ifstream fin (filename.c_str());
@@ -420,7 +420,7 @@ void ECA_CHAINSETUP::add_singlechain_preset(const string& preset_name) throw(ECA
     return;
   }
   
-  ecadebug->msg(1,"(eca-chainsetup) Starting to process sc-preset file. Trying to find \"" + preset_name + "\".");
+  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup) Starting to process sc-preset file. Trying to find \"" + preset_name + "\".");
   string sana;
   while(fin >> sana) {
     if (sana.size() > 0 && sana[0] == '#') {
@@ -428,15 +428,15 @@ void ECA_CHAINSETUP::add_singlechain_preset(const string& preset_name) throw(ECA
       continue;
     }
     else {
-      ecadebug->msg(5, "(eca-chainsetup) Next sc-preset is " + sana + ".");
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Next sc-preset is " + sana + ".");
       if (preset_name == sana) {
-	ecadebug->msg(5, "(eca-chainsetup) Found the right preset!");
+	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Found the right preset!");
 
 	getline(fin,sana);
 	vector<string> chainops = string_to_words(sana);
 	vector<string>::const_iterator p = chainops.begin();
 	while (p != chainops.end()) {
-	  ecadebug->msg(5, "(eca-chainsetup) Adding chainop " + *p + ".");
+	  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding chainop " + *p + ".");
 	  interpret_chain_operator(*p);
 	  interpret_controller(*p);
 	  ++p;
@@ -488,7 +488,7 @@ void ECA_CHAINSETUP::interpret_controller (const string& argu) {
   string prefix = get_argument_prefix(argu);
   if (prefix == "kx") {
     set_target_to_controller();
-    ecadebug->msg(1, "Selected controllers as parameter control targets.");
+    ecadebug->msg(ECA_DEBUG::system_objects, "Selected controllers as parameter control targets.");
     return;
   }
 
@@ -554,7 +554,7 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   for(vector<string>::const_iterator p = schains.begin(); p != schains.end(); p++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*p == (*q)->name()) {
-	ecadebug->msg(1, "Adding chainop to chain " + (*q)->name() + ".");
+	ecadebug->msg(ECA_DEBUG::system_objects, "Adding chainop to chain " + (*q)->name() + ".");
 	(*q)->add_chain_operator(cotmp);
 	(*q)->selected_chain_operator_as_target();
 	return;
@@ -576,7 +576,7 @@ void ECA_CHAINSETUP::load_from_file(const string& filename) throw(ECA_ERROR*) {
   string temp, another;
   
   while(fin >> temp) {
-    ecadebug->msg(5, "(eca-chainseup) Adding \"" + temp + "\" to options (loaded from \"" + filename + "\".");
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainseup) Adding \"" + temp + "\" to options (loaded from \"" + filename + "\".");
     options.push_back(temp);
   }
   fin.close();

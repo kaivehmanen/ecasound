@@ -43,7 +43,7 @@ QESignalLevel::QESignalLevel(vector<SAMPLE_BUFFER>* c, QWidget *parent, const ch
   inputs = c;
   QBoxLayout* topLayout = new QVBoxLayout( this, 5 );
 
-  for (int q = 0; q < inputs->size(); q++) {
+  for (int q = 0; q < static_cast<int>(inputs->size()); q++) {
     topLayout->addWidget(new QLabel("Left", this, "left"), 5);
     levelmeters.push_back(new QELevelMeter((double)SAMPLE_SPECS::max_amplitude, this,"level_left"));
     topLayout->addWidget(levelmeters.back(), 2);
@@ -85,7 +85,7 @@ void QESignalLevel::update(int p) {
 }
 
 void QESignalLevel::mute(void) {
-  for (int p = 0; p < levelmeters.size(); p++) {
+  for (int p = 0; p < static_cast<int>(levelmeters.size()); p++) {
     levelmeters[p]->set_value(0);
   }
 }

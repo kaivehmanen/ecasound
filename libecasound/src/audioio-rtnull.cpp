@@ -92,7 +92,7 @@ long int REALTIME_NULL::read_samples(void* target_buffer,
  
   if (buffer_fill.tv_sec * 1000000 + buffer_fill.tv_usec > 
       (2 * (buffer_delay.tv_sec * 1000000 + buffer_delay.tv_usec))) {
-    ecadebug->msg(1, "(audioio-rtnull) Overrun occured!");
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) Overrun occured!");
     buffer_fill.tv_sec = 0;
     buffer_fill.tv_usec = 0;
   }
@@ -153,7 +153,7 @@ void REALTIME_NULL::write_samples(void* target_buffer, long int
     }
 
     if (buffer_fill.tv_sec < 0) {
-      ecadebug->msg(1, "(audioio-rtnull) Underrun occured!");
+      ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) Underrun occured!");
       buffer_fill.tv_sec = 0; 
       buffer_fill.tv_usec = 0;
     }

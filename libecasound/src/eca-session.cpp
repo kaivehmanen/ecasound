@@ -52,7 +52,7 @@ ECA_SESSION::ECA_SESSION(void) {
 }
 
 ECA_SESSION::~ECA_SESSION(void) {
-  ecadebug->msg(1,"ECA_SESSION destructor!");
+  ecadebug->msg(ECA_DEBUG::system_objects,"ECA_SESSION destructor!");
 
   status(ep_status_notready);
 
@@ -220,7 +220,7 @@ void ECA_SESSION::select_chainsetup(const string& name) {
   vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups.begin();
   while(p != chainsetups.end()) {
     if ((*p)->name() == name) {
-      ecadebug->msg(1, "(eca-session) Chainsetup \"" + name + "\" selected.");
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-session) Chainsetup \"" + name + "\" selected.");
       selected_chainsetup = *p;
       break;
     }
@@ -287,7 +287,7 @@ void ECA_SESSION::connect_chainsetup(void) {
   connected_chainsetup = selected_chainsetup;
   connected_chainsetup->enable();
 
-  ecadebug->msg(1, "Connecting connected chainsetup to engine.");
+  ecadebug->msg(ECA_DEBUG::system_objects, "Connecting connected chainsetup to engine.");
  
   // --------
   // ensure:
@@ -301,7 +301,7 @@ void ECA_SESSION::disconnect_chainsetup(void) {
   assert(connected_chainsetup != 0);
   // --------
 
-  ecadebug->msg(1, "Disconnecting selected setup from engine.");
+  ecadebug->msg(ECA_DEBUG::system_objects, "Disconnecting selected setup from engine.");
 
   connected_chainsetup->disable();
   connected_chainsetup = 0;
@@ -340,7 +340,7 @@ void ECA_SESSION::interpret_general_option (const string& argu) {
   switch(argu[1]) {
   case 'c':
     iactive = true;
-    ecadebug->msg(0, "(eca-session) Interactive mode enabled."); 
+    ecadebug->msg("(eca-session) Interactive mode enabled."); 
     break;
 
   case 'd':

@@ -54,8 +54,10 @@ int main(int argc, char *argv[])
 {
 
   ECA_SESSION* ecaparams = 0;
+
   attach_debug_object(&textdebug);  
-  ecadebug->set_debug_level(0);
+  ecadebug->set_debug_level(ECA_DEBUG::info |
+			    ECA_DEBUG::module_flow);
 
   struct sigaction es_handler;
   es_handler.sa_handler = signal_handler;
@@ -73,10 +75,11 @@ int main(int argc, char *argv[])
 
     if (cline.has("-o:stdout") ||
 	cline.has("stdout") || 
+	cline.has("-d:0") || 
 	cline.has('q'))
       ecadebug->disable();
-
-    print_header();
+    else
+      print_header();
 
     ecaparams = new ECA_SESSION(cline);
     global_pointer_to_ecaparams = ecaparams;  // used only for signal handling! 
@@ -124,15 +127,10 @@ void signal_handler(int signum) {
 }
 
 void print_header(void) {
-#ifdef USE_NCURSES
-  //  clear();
-  putp(tigetstr("smm"));
-  //  newterm(0, 1, 0);
-#endif
-
   cout << "****************************************************************************\n";
   cout << "*";
 #ifdef USE_NCURSES
+  setupterm((char *)0, 1, (int *)0);
   putp(tigetstr("bold"));
 #endif
   cout << "               ecasound " << ecasound_version << " (C) 1997-2000 Kai Vehmanen              ";

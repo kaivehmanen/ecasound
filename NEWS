@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 090200) **
+** ecasound - user visible changes (NEWS)      (last edited: 100200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -26,6 +26,8 @@ Last officially released version is -*> v1.6.12r10 <*-
 	- added: ia-mode command "ctrl-status" (controller status)
 	- added: qtecasound - controller status pushbutton
 	- added: qtecasound - a nicer looking debug-window
+	- added: libqtecasound - a new subpackage containing 
+		 generic GUI objects
 	- removed: qtecasound - waveform view
 	- changed: ecawave is now the default ext. wave-editor
 	- changed: all shortcuts are now alt+key combinations
@@ -34,6 +36,8 @@ Last officially released version is -*> v1.6.12r10 <*-
 		   "ctrl-remove"
 	- changed: qtecasound - some renamed pushbuttons and 
 		   reassigned shortcut keys
+	- changed: changes in debugging subsystem affect '-d'
+	           behaviour, see ecasound man page
 	- fixed: qtecasound - position slider wasn't working
 	- fixed: instead of just outputting raw ANSI-codes, 
 		 standard ncurses routines are now used
@@ -43,7 +47,7 @@ Last officially released version is -*> v1.6.12r10 <*-
 		 passive mixing mode (multiple chains)
 30012000 (v1.6.13d11)
 	- changed: rtnull reports about over/underruns now
-		   level-1 debug messages (-d:1)
+		   level-4 debug messages
 	- fixed: some problems in mixmode selection
 29012000 (v1.6.12r10)  -** public release **-
 	- added: support for s24_le, s24_be, s32_le and s32_be 

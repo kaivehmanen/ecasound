@@ -32,7 +32,7 @@
 
 CHAIN::CHAIN (int bsize, int channels) 
   : audioslot(bsize, channels) {
-  ecadebug->msg(1, "(chain) constuctor: CHAIN( " 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(chain) constuctor: CHAIN( " 
 		+ kvu_numtostr(bsize) + ", " + 
 		  kvu_numtostr(channels) + ")");
   muted = false;
@@ -49,7 +49,7 @@ CHAIN::CHAIN (int bsize, int channels)
 }
 
 CHAIN::~CHAIN (void) { 
-  ecadebug->msg(1,"CHAIN destructor!");
+  ecadebug->msg(ECA_DEBUG::system_objects,"CHAIN destructor!");
 
   for(vector<CHAIN_OPERATOR*>::iterator p = chainops.begin(); p !=
 	chainops.end(); p++) {
@@ -66,7 +66,7 @@ CHAIN::~CHAIN (void) {
 bool CHAIN::is_valid(void) const {
   if (input_id == 0 ||
       output_id == 0) {
-    ecadebug->msg(1, "(eca-chain) Chain \"" + name() + "\" not valid.");
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chain) Chain \"" + name() + "\" not valid.");
     return(false);
   }
   return(true);

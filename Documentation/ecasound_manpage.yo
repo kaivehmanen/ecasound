@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (08.02.2000)
+       (09.02.2000)
        ()
        (Multimedia software)
 
@@ -65,11 +65,13 @@ Starts ecasound in interactive mode. In interactive mode you can
 control ecasound with simple commands ("start", "stop", "pause",
 etc.). See url(ecasound-iam(1))(ecasound-iam_manpage.html).
 
-dit(-d:debug level)
-Set the debug level. Default is 0.
+dit(-d:debug_level)
+Set the debug level to 'debug_level'. This a bitmasked value, 
+that defaults to 3. See ECA_DEBUG class documentation for 
+more detailed info about various debug_level values.
 
 dit(-q)
-Quiet mode, no output.
+Quiet mode, no output. Same as em(-d:0).
  
 enddit()
 

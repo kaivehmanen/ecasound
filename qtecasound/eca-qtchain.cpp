@@ -25,11 +25,11 @@
 #include <qpushbutton.h>
 
 #include <kvutils.h>
+#include <ecasound/qebuttonrow.h>
 
 #include "eca-chain.h"
 #include "eca-controller.h"
 
-#include "qebuttonrow.h"
 #include "eca-qtinte.h"
 #include "eca-qtchain.h"
 

@@ -109,7 +109,7 @@ void ADVANCED_COMPRESSOR::init_values(void) {
   rlevelsq1 = 0;
   compress = 1;
   ndelay = (int)(1.0 / rlevelsq0ffilter);
-  //  ecadebug->msg(1, "(audiofx_compressor) Number of delays : " +
+  //  ecadebug->msg(ECA_DEBUG::user_objects, "(audiofx_compressor) Number of delays : " +
   //	       kvu_numtostr(ndelay) + ".");
 
   rightdelay.resize(ndelay);

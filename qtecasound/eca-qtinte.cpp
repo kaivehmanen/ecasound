@@ -34,6 +34,7 @@
 #include <qtimer.h>
 
 #include <kvutils.h>
+#include <ecasound/qebuttonrow.h>
 
 #include "eca-version.h"
 // #include "eca-main.h"
@@ -44,7 +45,6 @@
 #include "eca-qtrtposition.h"
 #include "eca-qtdebug.h"
 #include "eca-qtinte.h"
-#include "qebuttonrow.h"
 
 QEInterface::QEInterface(ECA_CONTROLLER* control, const ECA_SESSION* session, QWidget *parent, const char *name )
         : QWidget( parent, name ), ctrl(control), ecaparams(session)

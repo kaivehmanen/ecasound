@@ -141,7 +141,7 @@ void ECA_CONTROLLER_BASE::start_engine(bool ignore_lock) {
   else {
     MESSAGE_ITEM mitem;
     mitem << "(eca-controller) Can't execute; processing module already running!" << 'c' << "\n";
-    ecadebug->msg(1,mitem.to_string());
+    ecadebug->msg(ECA_DEBUG::system_objects,mitem.to_string());
   }
   fin.close();
 
@@ -297,7 +297,7 @@ void start_normal_thread(ECA_SESSION* session, int retcode, pthread_t*
 void* start_normal(void* param) {
   ofstream fout(ecasound_lockfile.c_str());
   fout.close();
-  ecadebug->msg(1,"(eca-controller) Engine-thread pid: " + kvu_numtostr(getpid()));
+  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-controller) Engine-thread pid: " + kvu_numtostr(getpid()));
   start_normal((ECA_SESSION*)param);
   remove(ecasound_lockfile.c_str());
   return(0);

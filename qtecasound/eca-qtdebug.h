@@ -1,5 +1,5 @@
-#ifndef _ECA_DEBUG_H
-#define _ECA_DEBUG_H
+#ifndef _ECA_QTDEBUG_H
+#define _ECA_QTDEBUG_H
 
 #include <qwidget.h>
 #include <qtextview.h>

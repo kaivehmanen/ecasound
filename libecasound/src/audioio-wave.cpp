@@ -42,7 +42,7 @@ WAVEFILE::WAVEFILE (const string& name, const SIMODE mode, const
 }
 
 WAVEFILE::~WAVEFILE(void) {
-  ecadebug->msg(1,"(file-io) Closing file " + label());
+  ecadebug->msg(ECA_DEBUG::user_objects,"(file-io) Closing file " + label());
   //  fclose(fobject);
   close();
 }
@@ -167,7 +167,7 @@ void WAVEFILE::find_riff_datablock (void) throw(ECA_ERROR*) {
 }
 
 void WAVEFILE::read_riff_header (void) throw(ECA_ERROR*) {
-  ecadebug->msg(5, "(program flow: read_riff_header())");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(program flow: read_riff_header())");
    
   fio->read_to_buffer(&riff_header, sizeof(riff_header));
 
@@ -179,7 +179,7 @@ void WAVEFILE::read_riff_header (void) throw(ECA_ERROR*) {
 }
 
 void WAVEFILE::write_riff_header (void) throw(ECA_ERROR*) {
-  ecadebug->msg(5, "(program flow: write_riff_header())");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(program flow: write_riff_header())");
 
   long int savetemp = fio->get_file_position();
     
@@ -200,13 +200,13 @@ void WAVEFILE::write_riff_header (void) throw(ECA_ERROR*) {
   memcpy(temp, "Riff ID: ", 9);
   memcpy(&(temp[9]), riff_header.id, 4);
   temp[13] = 0;
-  ecadebug->msg(5,  string(temp));
+  ecadebug->msg(ECA_DEBUG::user_objects,  string(temp));
 
-  ecadebug->msg(5, "Wave data size " + 	kvu_numtostr(riff_header.size));
+  ecadebug->msg(ECA_DEBUG::user_objects, "Wave data size " + 	kvu_numtostr(riff_header.size));
   memcpy(temp, "Riff type: ", 11);
   memcpy(&(temp[11]), riff_header.wname, 4);
   temp[15] = 0;
-  ecadebug->msg(5, "Riff type " + string(temp));
+  ecadebug->msg(ECA_DEBUG::user_objects, "Riff type " + string(temp));
 
   //  fseek(fobject,save,SEEK_SET);
   fio->set_file_position(savetemp);
@@ -214,7 +214,7 @@ void WAVEFILE::write_riff_header (void) throw(ECA_ERROR*) {
 
 void WAVEFILE::read_riff_fmt(void) throw(ECA_ERROR*)
 {
-  ecadebug->msg(5, "(program flow: read_riff_fmt())");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(program flow: read_riff_fmt())");
 
   long int savetemp = fio->get_file_position();    
 
@@ -265,13 +265,13 @@ void WAVEFILE::write_riff_fmt(void)
 
   fio->write_from_buffer(&fblock, sizeof(fblock));
   fio->write_from_buffer(&riff_format, sizeof(riff_format));
-  ecadebug->msg(5, "Wrote RIFF format header.");
+  ecadebug->msg(ECA_DEBUG::user_objects, "Wrote RIFF format header.");
 }
 
 void WAVEFILE::write_riff_datablock(void) {
   RB fblock;
 
-  ecadebug->msg(5, "(program flow: write_riff_datablock())");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(program flow: write_riff_datablock())");
     
   fio->set_file_position_end();
 
@@ -283,7 +283,7 @@ void WAVEFILE::write_riff_datablock(void) {
 
 void WAVEFILE::update_riff_datablock(void) {
   RB fblock;
-  ecadebug->msg(5, "(program flow: update_riff_datablock())");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(program flow: update_riff_datablock())");
     
   memcpy(fblock.sig,"data",4);
 
@@ -302,11 +302,11 @@ void WAVEFILE::update_riff_datablock(void) {
 
 bool WAVEFILE::next_riff_block(RB *t, unsigned long int *offtmp)
 {
-  ecadebug->msg(5, "(program flow: next_riff_block())");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(program flow: next_riff_block())");
 
   fio->read_to_buffer(t, sizeof(RB));
   if (fio->file_bytes_processed() != sizeof(RB)) {
-    ecadebug->msg(2, "invalid RIFF block!");
+    ecadebug->msg(ECA_DEBUG::user_objects, "invalid RIFF block!");
     return(false);
   }
     
@@ -319,11 +319,11 @@ signed long int WAVEFILE::find_block(const char* fblock) {
   unsigned long int offset;
   RB block;
 
-  ecadebug->msg(5, "(audioio-wave) find_block(): " + string(fblock,4));
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) find_block(): " + string(fblock,4));
     
   fio->set_file_position(sizeof(riff_header));
   while(next_riff_block(&block,&offset)) {
-    ecadebug->msg(5, "AUDIOIO-WAVE: found RIFF-block ");
+    ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-WAVE: found RIFF-block ");
     if (memcmp(block.sig,fblock,4) == 0) {
       return(block.bsize);
     }
@@ -377,7 +377,7 @@ void WAVEFILE::set_length_in_bytes(void) {
   length_in_samples(t / frame_size());
   MESSAGE_ITEM mitem;
   mitem << "(audioio-wave) data length " << t << "bytes.";
-  ecadebug->msg(5, mitem.to_string());
+  ecadebug->msg(ECA_DEBUG::user_objects, mitem.to_string());
 
   fio->set_file_position(savetemp);
 }

@@ -54,11 +54,9 @@ class SAMPLE_BUFFER {
 
   typedef vector<vector<sample_type> >::iterator buf_channel_iter_t;
   typedef vector<vector<sample_type> >::const_iterator buf_channel_citer_t;
-  typedef vector<vector<sample_type> >::size_type buf_channel_size_t;
 
   typedef vector<sample_type>::iterator buf_sample_iter_t;
   typedef vector<sample_type>::const_iterator buf_sample_citer_t;
-  typedef vector<sample_type>::size_type buf_sample_size_t;
 
   // ---
   // Static members
@@ -74,8 +72,8 @@ class SAMPLE_BUFFER {
   // buffer objects)
   // ---
 
-  buf_channel_size_t channel_count_rep;
-  buf_sample_size_t buffersize_rep;
+  int channel_count_rep;
+  long int buffersize_rep;
   vector<vector<sample_type> > buffer;
 
   // ---

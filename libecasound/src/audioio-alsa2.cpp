@@ -171,7 +171,7 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
 }
 
 void ALSA_PCM2_DEVICE::stop(void) {
-  ecadebug->msg(1, "(audioio-alsa2) Audio device \"" + label() + "\" disabled.");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Audio device \"" + label() + "\" disabled.");
   int err = dl_snd_pcm_channel_flush(audio_fd, pcm_channel);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA2", "Error when flushing channel: " + string(dl_snd_strerror(err))));
@@ -206,7 +206,7 @@ void ALSA_PCM2_DEVICE::start(void) {
       memset(&status, 0, sizeof(status));
       status.channel = pcm_channel;
       dl_snd_pcm_channel_status(audio_fd, &status);
-      ecadebug->msg(2, "(audioio-alsa2) Bytes in output-queue: " + kvu_numtostr(status.count) + ".");
+      ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2) Bytes in output-queue: " + kvu_numtostr(status.count) + ".");
     }
     dl_snd_pcm_channel_go(audio_fd, pcm_channel);
     is_triggered = true;

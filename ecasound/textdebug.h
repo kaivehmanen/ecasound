@@ -6,11 +6,10 @@
 
 #include <eca-debug.h>
 
-class TEXTDEBUG : public MAINDEBUG {
+class TEXTDEBUG : public ECA_DEBUG {
 private:
     
     ostream* dostream;
-
     int debug_level;
     
     void stream(ostream* dos);
@@ -19,14 +18,10 @@ private:
 public:
 
     void flush(void);
-    void set_debug_level(int level);
-    int get_debug_level(void) { return(debug_level); }
+    void control_flow(const string& part);
+    void msg(int level, const string& info);
 
     TEXTDEBUG(void);
-
-    void control_flow(const string& part);
-    void msg(const string& info);
-    void msg(int level, const string& info);
 };
 
 extern TEXTDEBUG textdebug;

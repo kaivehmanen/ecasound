@@ -307,7 +307,7 @@ void EFFECT_NOISEGATE::process(void) {
 	    if (th_time_lask[i.channel()] >= th_time) {
 	      th_time_lask[i.channel()] = 0.0;
 	      ng_status[i.channel()] = ng_attacking;
-	      ecadebug->msg(10,"(audiofx) noisegate - from waiting to attacking");
+	      ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from waiting to attacking");
 	    }
 	  }
 	  else {
@@ -328,14 +328,14 @@ void EFFECT_NOISEGATE::process(void) {
 	      attack_lask[i.channel()] = 0.0;
 	      ng_status[i.channel()] = ng_active;
 	      kerroin[i.channel()] = 0.0;
-	      ecadebug->msg(10,"(audiofx) noisegate - from attack to active");
+	      ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from attack to active");
 	    }
 	    *i.current() = *i.current() * kerroin[i.channel()];
 	  }
 	  else {
 	    attack_lask[i.channel()] = 0;
 	    ng_status[i.channel()] = ng_waiting;
-	    ecadebug->msg(10,"(audiofx) noisegate - from attack to waiting");
+	    ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from attack to waiting");
 	  }
 	  break;
 	}
@@ -347,7 +347,7 @@ void EFFECT_NOISEGATE::process(void) {
 	{
 	  if (below == false) {
 	    ng_status[i.channel()] = ng_holding;
-	    ecadebug->msg(10,"(audiofx) noisegate - from active to holding");
+	    ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from active to holding");
 	  }
 	  *i.current() = *i.current() * 0.0;
 	  break;
@@ -363,7 +363,7 @@ void EFFECT_NOISEGATE::process(void) {
 	    if (hold_lask[i.channel()] >= htime) {
 	      hold_lask[i.channel()] = 0.0;
 	      ng_status[i.channel()] = ng_releasing;
-	      ecadebug->msg(10,"(audiofx) noisegate - from holding to release");
+	      ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from holding to release");
 	    }
 	  }
 	  *i.current() = *i.current() * 0.0;
@@ -380,7 +380,7 @@ void EFFECT_NOISEGATE::process(void) {
 	  if (release_lask[i.channel()] >= rtime) {
 	    release_lask[i.channel()] = 0.0;
 	    ng_status[i.channel()] = ng_waiting;
-	    ecadebug->msg(10,"(audiofx) noisegate - from releasing to waiting");
+	    ecadebug->msg(ECA_DEBUG::user_objects,"(audiofx) noisegate - from releasing to waiting");
 	  }
 	  *i.current() = *i.current() * kerroin[i.channel()];
 	  break;

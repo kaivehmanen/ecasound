@@ -1,33 +1,26 @@
 #include "eca-debug.h"
 
-class DEFAULTDEBUG : public MAINDEBUG {
+class DEFAULTDEBUG : public ECA_DEBUG {
   
-  int dlevel;
-
 public:
 
   void flush(void) { }
-  void set_debug_level(int level) { dlevel = level; }
-  int get_debug_level(void) { return(dlevel); }
 
   void control_flow(const string& part) { 
-    if (is_enabled()) cerr << part << "\n";
-  }
-  void msg(const string& info) { 
-    if (is_enabled()) cerr << info << "\n";
+    if ((get_debug_level() & ECA_DEBUG::module_flow) != ECA_DEBUG::module_flow) return;
+    cerr << part << "\n";
   }
   void msg(int level, const string& info) { 
-    if (is_enabled() 
-	&& dlevel >= level) 
-      cerr << info << "\n"; 
+    if ((get_debug_level() & level) != level) return;
+    cerr << info << "\n"; 
   }
 
-  DEFAULTDEBUG(void) : dlevel(0) { disable(); }
+  DEFAULTDEBUG(void) { }
 };
 
 DEFAULTDEBUG ddebug;
-MAINDEBUG* ecadebug = &ddebug;
+ECA_DEBUG* ecadebug = &ddebug;
 
-void attach_debug_object(MAINDEBUG* newdebug) {
+void attach_debug_object(ECA_DEBUG* newdebug) {
   ecadebug = newdebug;
 }

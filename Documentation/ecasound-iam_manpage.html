@@ -41,7 +41,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>17.01.2000</h2>
+<h2>08.02.2000</h2>
 
 
     
@@ -66,6 +66,8 @@ client (library throws an exception).
 Processing is started (play).
 <p><p></p><dt><strong>stop, s</strong><dd>
 Stop processing. 
+<p><p></p><dt><strong>run</strong><dd>
+Like 'start' but blocks until processing is finished.
 <p><p></p><dt><strong>debug 'debug-level'</strong><dd>
 Set debug level to 'debug-level'. Notice that client programs can
 reimplement the debug routines.
@@ -244,11 +246,11 @@ wave editor (see ecasoundrc(5)).
 <p><h2>CHAIN OPERATORS</h2>
     
 Chain operators are used to process and analyze sample data.
-Controllers are used to control individual chain operator parameters.
-Both types of objects are attached to chains. If not otherwise stated,
-currently selected chainsetup and chains are used. Also, 'chainop_id' 
-and 'param_id' are used to selected chain operators and their
-parameters. First valid value for these parameters is 1.
+They are attached to chains. If not otherwise stated,
+currently selected chainsetup and chains are used. Also, 
+'chainop_id' and 'param_id' are used to select chain operators 
+and their parameters. First valid value for these parameters 
+is 1.
 <p><dl>
 <p></p><dt><strong>cop-add 'cop_format_string'</strong><dd>
 Add a new chain operator. Argument format is
@@ -256,20 +258,28 @@ Add a new chain operator. Argument format is
 info.
 <p><p></p><dt><strong>cop-remove 'chainop_id'</strong><dd> 
 Remove chain operator.
+<p><p></p><dt><strong>cop-set 'chainop_id, param_id, value'</strong><dd>
+Change the value of a single chain operator parameter. Unlike other
+chain operator commands, this can also be used during processing.
+<p><p></p><dt><strong>cop-status</strong><dd> 
+Info about chain operator status.
+</dl>
+<p><h2>CONTROLLERS</h2>
+    
+Controllers are used to control individual chain operator parameters.
+They are attached to chains. If not otherwise stated, currently 
+selected chainsetup and chains are used. 
 <p><p></p><dt><strong>cop-add-controller 'copc_format_string'</strong><dd>
 Add a new controller and attach it to currently selected chain 
 operator. Argument format is "-&lt;id_string&gt;:&lt;param_id&gt;,&lt;range_low&gt;,
 &lt;range_high&gt;,par1,...,parN".  See ecasound(1) man page for more 
 info.
-<p><p></p><dt><strong>cop-set 'chainop_id, param_id, value'</strong><dd>
-Change the value of a single chain operator parameter. Unlike other
-chain operator commands, this can also be used during processing.
 <p><p></p><dt><strong>cop-remove-controller 'param_id'</strong><dd>
 Remove the controller that is attached to the currently selected chain
 operator.
-<p><p></p><dt><strong>cop-status</strong><dd> 
-Info about chain operator status.
-<p></dl>
+<p><p></p><dt><strong>ctrl-status</strong><dd> 
+Info about controller status.
+</dl>
 <p><h2>SEE ALSO</h2>
     
 <p>ecasound(1), qtecasound (1), ecatools (1), ecasoundrc(5)

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiogate.cpp: Signal gates.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -107,14 +107,14 @@ void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf) {
   if (is_opened == false) {
     if (avolume > openlevel) { 
       open_gate();
-      ecadebug->msg(2, "(audiogate) Threshold gate opened.");
+      ecadebug->msg(ECA_DEBUG::user_objects, "(audiogate) Threshold gate opened.");
       is_opened = true;
     }
   }
   else if (is_closed == false) {
     if (avolume < closelevel) { 
       close_gate();
-      ecadebug->msg(2, "(audiogate) Threshold gate closed.");
+      ecadebug->msg(ECA_DEBUG::user_objects, "(audiogate) Threshold gate closed.");
       is_closed = true;
     }
   }

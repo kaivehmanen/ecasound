@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-gen.cpp: Generic oscillator
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -101,24 +101,24 @@ void GENERIC_OSCILLATOR::read_envelope(void) throw(ECA_ERROR*) {
       continue;
     }
     else {
-      ecadebug->msg(5, "(osc-gen) Next preset is " + sana + ".");
+      ecadebug->msg(ECA_DEBUG::user_objects, "(osc-gen) Next preset is " + sana + ".");
       curpreset = atoi(sana.c_str());
       if (curpreset == preset_rep) {
-	ecadebug->msg(5, "(osc-gen) Found the right preset!");
+	ecadebug->msg(ECA_DEBUG::user_objects, "(osc-gen) Found the right preset!");
 	preset_found = true;
 	fin >> sana; 
 	if (fin.eof()) break; 
 	else if (sana.size() > 0 && sana[0] == 'L') {
 	  linear = true;
-	  ecadebug->msg(2,"(osc-gen) Using linear-interpolation between envelope points.");
+	  ecadebug->msg(ECA_DEBUG::user_objects,"(osc-gen) Using linear-interpolation between envelope points.");
 	}
 	else {
 	  linear = false;
-	  ecadebug->msg(2,"(osc-gen) Using static envelope points.");
+	  ecadebug->msg(ECA_DEBUG::user_objects,"(osc-gen) Using static envelope points.");
 	}
 	double newpoint; 
 	while(fin >> newpoint) {
-	  ecadebug->msg(5, "(osc-gen) Added value: " + kvu_numtostr(newpoint));
+	  ecadebug->msg(ECA_DEBUG::user_objects, "(osc-gen) Added value: " + kvu_numtostr(newpoint));
 	  ienvelope.push_back(newpoint);
 	}
       }

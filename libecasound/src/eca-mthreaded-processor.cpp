@@ -42,7 +42,7 @@ void *mthread_process_chains(void* params) {
   ECA_PROCESSOR* ecamain = static_cast<ECA_PROCESSOR*>(params);
 
   ecadebug->control_flow("Submix-thread ready");
-  ecadebug->msg(1,"(eca-main) Submix-pid: " + kvu_numtostr(getpid()));
+  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-main) Submix-pid: " + kvu_numtostr(getpid()));
 
   vector<CHAIN*>* chains = ecamain->chains;
   vector<AUDIO_IO*>* outputs = ecamain->outputs;

@@ -183,7 +183,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 }
 
 void ALSA_PCM_DEVICE::stop(void) {
-  ecadebug->msg(1, "(audioio-alsa) Audio device \"" + label() + "\" disabled.");
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) Audio device \"" + label() + "\" disabled.");
   if (io_mode() == si_write) {
     dl_snd_pcm_playback_pause(audio_fd, 1);
   }
@@ -224,7 +224,7 @@ void ALSA_PCM_DEVICE::start(void) {
     if (io_mode() == si_write) {
       snd_pcm_playback_status_t pb_status;
       dl_snd_pcm_playback_status(audio_fd, &pb_status);
-      ecadebug->msg(2, "(audioio-alsa) Bytes in output-queue: " + kvu_numtostr(pb_status.queue) + ".");
+      ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) Bytes in output-queue: " + kvu_numtostr(pb_status.queue) + ".");
       dl_snd_pcm_playback_pause(audio_fd, 0);
     }
     else {

@@ -79,7 +79,7 @@ class SAMPLE_ITERATOR_CHANNEL {
   /**
    * True if iterator is past the last audio item.
    */
-  inline bool end(void) { return(index >= target->buffersize_rep); }
+  inline bool end(void) { return(static_cast<long int>(index) >= target->buffersize_rep); }
 
   /**
    * Returns a pointer to the current sample.
@@ -161,7 +161,7 @@ class SAMPLE_ITERATOR_INTERLEAVED {
   /**
    * True if iterator is past the last audio item.
    */
-  inline bool end(void) { return(index >= target->buffersize_rep); }
+  inline bool end(void) { return(static_cast<long int>(index) >= target->buffersize_rep); }
 
   /**
    * Returns a pointer to the current sample.

@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "17\&.01\&.2000" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "08\&.02\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -23,6 +23,9 @@ Processing is started (play)\&.
 .IP 
 .IP "stop, s" 
 Stop processing\&. 
+.IP 
+.IP "run" 
+Like \'start\' but blocks until processing is finished\&.
 .IP 
 .IP "debug \'debug-level\'" 
 Set debug level to \'debug-level\'\&. Notice that client programs can
@@ -243,11 +246,11 @@ wave editor (see ecasoundrc(5))\&.
 .IP 
 .SH "CHAIN OPERATORS" 
 Chain operators are used to process and analyze sample data\&.
-Controllers are used to control individual chain operator parameters\&.
-Both types of objects are attached to chains\&. If not otherwise stated,
-currently selected chainsetup and chains are used\&. Also, \'chainop_id\' 
-and \'param_id\' are used to selected chain operators and their
-parameters\&. First valid value for these parameters is 1\&.
+They are attached to chains\&. If not otherwise stated,
+currently selected chainsetup and chains are used\&. Also, 
+\'chainop_id\' and \'param_id\' are used to select chain operators 
+and their parameters\&. First valid value for these parameters 
+is 1\&.
 .IP 
 .IP "cop-add \'cop_format_string\'" 
 Add a new chain operator\&. Argument format is
@@ -257,23 +260,30 @@ info\&.
 .IP "cop-remove \'chainop_id\'" 
 Remove chain operator\&.
 .PP 
+.IP "cop-set \'chainop_id, param_id, value\'" 
+Change the value of a single chain operator parameter\&. Unlike other
+chain operator commands, this can also be used during processing\&.
+.PP 
+.IP "cop-status" 
+Info about chain operator status\&.
+.IP 
+.SH "CONTROLLERS" 
+Controllers are used to control individual chain operator parameters\&.
+They are attached to chains\&. If not otherwise stated, currently 
+selected chainsetup and chains are used\&. 
+.IP 
 .IP "cop-add-controller \'copc_format_string\'" 
 Add a new controller and attach it to currently selected chain 
 operator\&. Argument format is "-<id_string>:<param_id>,<range_low>,
 <range_high>,par1,\&.\&.\&.,parN"\&.  See ecasound(1) man page for more 
 info\&.
-.PP 
-.IP "cop-set \'chainop_id, param_id, value\'" 
-Change the value of a single chain operator parameter\&. Unlike other
-chain operator commands, this can also be used during processing\&.
-.PP 
+.IP 
 .IP "cop-remove-controller \'param_id\'" 
 Remove the controller that is attached to the currently selected chain
 operator\&.
-.PP 
-.IP "cop-status" 
-Info about chain operator status\&.
-.PP 
+.IP 
+.IP "ctrl-status" 
+Info about controller status\&.
 .IP 
 .SH "SEE ALSO" 
 .IP 

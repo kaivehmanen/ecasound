@@ -161,10 +161,23 @@ in first example. Controller numbers used are 74 (cutoff) and 71
 resonance knobs.
 </p><p>
 It's also possible to control controllers with other controllers 
-using the <i>-kx</i> option.
+using the <i>-kx</i> option. Normally when you add a controller,
+you're controlling the last specified chain operator. <i>-kx</i> 
+changes this. Let's take an example:
 </p><p>
-<li> ecasound -i somefile.wav -o /dev/dsp -efl:800
-     -kos:1,400,8000,0.2,0 -kx -kos:2,200,5000,0.15,0
+<li> ecasound -i file.wav -o /dev/dsp -ea:100 -kos:1,0,100,0.5,0 -kx -kos:4,0.1,5,0.5,0
+</p><p>
+Same as before, but now another 0.5Hz sine oscillator is controlling 
+the frequency of the first oscillator.
+</p><p>
+<li>ecasound -i file.wav -o /dev/dsp -ef3:1000,1.0,1.0 -kos:1,500,2000,1,0 \<br>
+				 -kos:2,0.2,1.0,0.5,0  \<br>
+				 -kx -km:1,0.1,1.5,2,0
+</p><p>
+Ok, let's get real whacky. Here a 1Hz sine oscillator is assigned to
+the cutoff frequency, while other controller is controlling resonance.
+Now we add a MIDI-controller, that controls the second sine
+oscillator.
 </p>
 </ol>
 <!-- ###  new section ### -->
@@ -238,20 +251,6 @@ also have another set of chains that are assigned to a WAVE file
 risen with <i>-r</i>. A bigger buffersize is also used.
 </p>
 </ol>
-<!-- ###  new section ### -->
-<a name=srouting><p><b>Signal routing</b></p></a>
-<ol>
-<p>
-<li> ecasound -c -b:128 -r -f:16,2,44100 \<br>
-<ul>
-	      -a:1 -i source-track.wav -o /dev/dsp3 \<br>
-  	      -a:2 -i /dev/dsp0 -o target-track.wav
-</ul>
-</p><p>
-So basicly, this is just like multirack recording. The only difference
-is that realtime input and output are externally connected.
-</p>
-</ol>
 
 <!-- ###  new section ### -->
 <a name=cutcopypaste><p><b>Cut, copy and paste</b></p></a>
@@ -286,6 +285,21 @@ divide a 4-channel audio file into 4 mono files.
  	    -a:3 -f:16,1,44100 -o mono-3.wav -erc:3,1 \<br>
  	    -a:4 -f:16,1,44100 -o mono-4.wav -erc:4,1
 </ul>
+</p>
+</ol>
+
+<!-- ###  new section ### -->
+<a name=srouting><p><b>Signal routing through external devices</b></p></a>
+<ol>
+<p>
+<li> ecasound -c -b:128 -r -f:16,2,44100 \<br>
+<ul>
+	      -a:1 -i source-track.wav -o /dev/dsp3 \<br>
+  	      -a:2 -i /dev/dsp0 -o target-track.wav
+</ul>
+</p><p>
+So basicly, this is just like multirack recording. The only difference
+is that realtime input and output are externally connected.
 </p>
 </ol>
 

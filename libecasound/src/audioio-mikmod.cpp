@@ -82,7 +82,7 @@ void MIKMOD_INTERFACE::seek_position(void) {
 
 void MIKMOD_INTERFACE::kill_mikmod(void) {
   if (is_open()) {
-    ecadebug->msg(1, "(audioio-mikmod) Killing mikmod-child with pid " + kvu_numtostr(pid_of_child) + ".");
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mikmod) Killing mikmod-child with pid " + kvu_numtostr(pid_of_child) + ".");
     kill(pid_of_child, SIGKILL);
     waitpid(pid_of_child, 0, 0);
     ::close(fd);
@@ -97,7 +97,7 @@ void MIKMOD_INTERFACE::fork_mikmod(void) throw(ECA_ERROR*) {
                    kvu_numtostr(samples_per_second()) +
                    + " " + MIKMOD_INTERFACE::default_mikmod_args +
                    " " + label();
-    ecadebug->msg(2,komen);
+    ecadebug->msg(ECA_DEBUG::user_objects,komen);
    
     int fpipes[2];
     if (pipe(fpipes) == 0) {

@@ -33,7 +33,7 @@ void GENERIC_CONTROLLER::process(void) {
 
   new_value = (source->value() * (rangehigh - rangelow)) + rangelow;
   
-  //  ecadebug->msg(2, "Setting new parameter value... to " + kvu_numtostr(new_value) + ".");
+  //  ecadebug->msg(ECA_DEBUG::user_objects, "Setting new parameter value... to " + kvu_numtostr(new_value) + ".");
   target->set_parameter(param_id, new_value);
 }
 

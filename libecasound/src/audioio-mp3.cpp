@@ -130,13 +130,13 @@ void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR*) {
   pcm = newlayer.pcmPerFrame();
 
   m << "MP3 pcm value: " << pcm << ".";
-  ecadebug->msg(4,m.to_string());
+  ecadebug->msg(ECA_DEBUG::user_objects,m.to_string());
   fclose(temp);
 }
 
 void MP3FILE::kill_mpg123(void) {
   if (is_open()) {
-    ecadebug->msg(1, "(audioio-mp3) Killing mpg123-child with pid " + kvu_numtostr(pid_of_child) + ".");
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing mpg123-child with pid " + kvu_numtostr(pid_of_child) + ".");
     kill(pid_of_child, SIGKILL);
     waitpid(pid_of_child, 0, 0);
     ::close(fd);
@@ -154,7 +154,7 @@ void MP3FILE::fork_mpg123(void) throw(ECA_ERROR*) {
     komen += kvu_numtostr((long)(position_in_samples() / pcm));
     komen += " " + label();
     //    komen += " '" + label() + "' 2>/dev/null";
-    ecadebug->msg(2,komen);
+    ecadebug->msg(ECA_DEBUG::user_objects,komen);
    
     int fpipes[2];
     if (pipe(fpipes) == 0) {
@@ -208,7 +208,7 @@ void MP3FILE::fork_mpg123(void) throw(ECA_ERROR*) {
 
 void MP3FILE::kill_lame(void) {
   if (is_open()) {
-    ecadebug->msg(1, "(audioio-mp3) Killing lame-child with pid " + kvu_numtostr(pid_of_child) + ".");
+    ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing lame-child with pid " + kvu_numtostr(pid_of_child) + ".");
     kill(pid_of_child, SIGKILL);
     waitpid(pid_of_child, 0, 0);
     ::close(fd);
@@ -225,7 +225,7 @@ void MP3FILE::fork_lame(void) throw(ECA_ERROR*) {
     komen += " -x -S - " + label();
     // "'"-  komen << label() << "' 2>/dev/null";
     ecadebug->msg("(audioio-mp3) Starting to encode " + label() + " with lame.");
-    ecadebug->msg(2,komen);
+    ecadebug->msg(ECA_DEBUG::user_objects,komen);
 
     int fpipes[2];
     if (pipe(fpipes) == 0) {

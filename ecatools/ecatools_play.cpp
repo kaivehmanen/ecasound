@@ -36,11 +36,10 @@
 int main(int argc, char *argv[])
 {
 #ifdef NDEBUG
-  ecadebug->set_debug_level(0);
   ecadebug->disable();
 #else
-  ecadebug->set_debug_level(2);
-  ecadebug->enable();
+  ecadebug->set_debug_level(ECA_DEBUG::info |
+			    ECA_DEBUG::module_flow);
 #endif
 
   COMMAND_LINE cline = COMMAND_LINE (argc, argv);

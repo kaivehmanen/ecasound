@@ -24,7 +24,6 @@ ecawave_src_files = 	ecawave.cpp \
 			qesavefiledialog.cpp \
 			qechainopinput.cpp \
 			qewaveform.cpp \
-			qebuttonrow.cpp \
 			qestatusbar.cpp \
 			qeevent.cpp \
 			qeplayevent.cpp \
@@ -40,7 +39,6 @@ ecawave_src_mocs = 	qesession_moc.cpp \
 			qesavefiledialog_moc.cpp \
 			qechainopinput_moc.cpp \
 			qewaveform_moc.cpp \
-			qebuttonrow_moc.cpp \
 			qestatusbar_moc.cpp \
 			qechainopevent_moc.cpp
 ecawave_include_files = ecawave.h \
@@ -55,7 +53,6 @@ ecawave_include_files = ecawave.h \
 			qesavefiledialog.h \
 			qechainopinput.h \
 			qewaveform.h \
-			qebuttonrow.h \
 			qestatusbar.h \
 			qeevent.h \
 			qeplayevent.h \
@@ -66,9 +63,9 @@ ecawave_include_files = ecawave.h \
 ecawave_SOURCES = $(ecawave_src_files) $(ecawave_include_files) $(ecawave_src_mocs)
 ecawave_debug_SOURCES = $(ecawave_SOURCES)
 
-ecawave_LDADD = -lecasound -lqt -lkvutils
+ecawave_LDADD = -lecasound -lqtecasound -lqt -lkvutils
 ecawave_LDFLAGS = $(all_libraries)
-ecawave_debug_LDADD = -lecasound_debug -lqt -lkvutils
+ecawave_debug_LDADD = -lecasound_debug -lqtecasound_debug -lqt -lkvutils
 ecawave_debug_LDFLAGS = $(ecawave_LDFLAGS)
 
 # ------
@@ -107,8 +104,6 @@ qechainopevent_moc.cpp: $(srcdir)/qechainopevent.h
 qewaveform_moc.cpp: $(srcdir)/qewaveform.h
 	$(MOC) -o qewaveform_moc.cpp $(srcdir)/qewaveform.h
 
-qebuttonrow_moc.cpp: $(srcdir)/qebuttonrow.h
-	$(MOC) -o qebuttonrow_moc.cpp $(srcdir)/qebuttonrow.h
 
 qestatusbar_moc.cpp: $(srcdir)/qestatusbar.h
 	$(MOC) -o qestatusbar_moc.cpp $(srcdir)/qestatusbar.h

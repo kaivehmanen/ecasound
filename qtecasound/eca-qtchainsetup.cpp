@@ -27,10 +27,10 @@
 #include <qmessagebox.h>
 #include <qpushbutton.h>
 
-#include <kvutils.h>
+#include <ecasound/qestringdialog.h>
+#include <ecasound/qebuttonrow.h>
 
-#include "qestringdialog.h"
-#include "qebuttonrow.h"
+#include <kvutils.h>
 
 #include "eca-chain.h"
 #include "audioio-types.h"

@@ -1,6 +1,6 @@
 EXTRA_DIST = BUGS NEWS FAQ generic_oscillators multichain_effect_presets singlechain_effect_presets
 
-SUBDIRS = kvutils readline-4.0 libecasound ecasound qtecasound ecatools Documentation
+SUBDIRS = kvutils readline-4.0 libecasound ecasound libqtecasound qtecasound ecatools Documentation
 AUTOMAKE_OPTIONS = foreign
 
 install-data-local:
@@ -12,8 +12,10 @@ install-data-local:
 delete-static-libs:
 	rm -f $(libdir)/libkvutils.a
 	rm -f $(libdir)/libecasound.a
+	rm -f $(libdir)/libqtecasound.a
 
 strip-shared-libs:
 	strip $(libdir)/libecasound.so
+	strip $(libdir)/libqtecasound.so
 	strip $(libdir)/libkvutils.so
 

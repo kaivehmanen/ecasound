@@ -1,4 +1,4 @@
-.TH "qtecasound" "1" "13\&.12\&.1999" "" "Multimedia software" 
+.TH "qtecasound" "1" "30\&.01\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 qtecasound \- multitrack recorder, fx-processor, etc\&.
@@ -40,8 +40,8 @@ altogether\&.
 My goal is that qtecasound can be used without a mouse\&. Shortcuts 
 work everywhere\&. All pushbuttons have a short description and 
 shortcut keys are marked with parenthesis (for example: "S(t)art")\&.
-Shortcuts \fIa\fP, \fIA\fP and \fIctrl+a\fP all do the same thing\&.
-This applies to all shortcut keys\&.
+Shortcuts are triggered using ALT-key\&. This applies to all shortcut 
+keys\&.
 .IP 
 .PP 
 .SH "OPTIONS" 

@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-02-09  Kai Vehmanen <kaiv@wakkanet.fi>
+        
+	* eca-debug.h (): class MAINDEBUG renamed to ECA_DEBUG
+	* eca-debug.h (): new enums and debug-level specs
+	
 2000-02-08  Kai Vehmanen <kaiv@wakkanet.fi>
         
 	* eca-chain.h (select_controller): added 

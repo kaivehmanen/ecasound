@@ -61,16 +61,16 @@ ECA_AUDIO_OBJECTS::ECA_AUDIO_OBJECTS(void)
     selected_chainids (0) { }
 
 ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
-  ecadebug->msg(1,"ECA_AUDIO_OBJECTS destructor!");
+  ecadebug->msg(ECA_DEBUG::system_objects,"ECA_AUDIO_OBJECTS destructor!");
 
   for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
-    ecadebug->msg(1, "(eca-audio-objects) Deleting chain \"" + (*q)->name() + "\".");
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting chain \"" + (*q)->name() + "\".");
     delete *q;
   }
   
   for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
     if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) {
-      ecadebug->msg(1, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
       delete *q;
     }
   }
@@ -78,29 +78,29 @@ ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
   
   for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
     if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) {
-      ecadebug->msg(1, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting audio device/file \"" + (*q)->label() + "\".");
       delete *q;
     }
   }
   //  outputs.resize(0);
 
   for(map<int,LOOP_DEVICE*>::iterator q = loop_map.begin(); q != loop_map.end(); q++) {
-    ecadebug->msg(1, "(eca-audio-objects) Deleting loop device \"" + q->second->label() + "\".");
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) Deleting loop device \"" + q->second->label() + "\".");
     delete q->second;
   }
 }
 
 bool ECA_AUDIO_OBJECTS::is_valid(void) const {
   if (inputs.size() == 0) {
-    ecadebug->msg(1, "(eca-audio-objects) No inputs in the current chainsetup.");
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) No inputs in the current chainsetup.");
     return(false);
   }
   if (outputs.size() == 0) {
-    ecadebug->msg(1, "(eca-audio-objects) No outputs in the current chainsetup.");
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) No outputs in the current chainsetup.");
     return(false);
   }
   if (chains.size() == 0) {
-    ecadebug->msg(1, "(eca-audio-objects) No chains in the current chainsetup.");
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-audio-objects) No chains in the current chainsetup.");
     return(false);
   }
   for(vector<CHAIN*>::const_iterator q = chains.begin(); q != chains.end();
@@ -127,7 +127,7 @@ void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu, const stri
 	  tname = string(p, argu.end());
 	}
   }
-  ecadebug->msg(5,"(eca-audio-objects) adding file \"" + tname + "\".");
+  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-audio-objects) adding file \"" + tname + "\".");
   if (argu.size() < 2) return;  
   if (argu[0] != '-') return;
   switch(argu[1]) {
@@ -383,7 +383,7 @@ void ECA_AUDIO_OBJECTS::add_default_chain(void) {
 
   chains.push_back(new CHAIN(buffersize(), SAMPLE_SPECS::channel_count_default));
   chains.back()->name("default");
-  ecadebug->msg(1,"add_default_chain() ");
+  ecadebug->msg(ECA_DEBUG::system_objects,"add_default_chain() ");
   selected_chainids.push_back("default");
 
   // --------
@@ -402,7 +402,7 @@ void ECA_AUDIO_OBJECTS::add_new_chains(const vector<string>& newchains) {
     if (exists == false) {
       chains.push_back(new CHAIN(buffersize(), SAMPLE_SPECS::channel_count_default));
       chains.back()->name(*p);
-      ecadebug->msg(1,"add_new_chains() added chain " + *p);
+      ecadebug->msg(ECA_DEBUG::system_objects,"add_new_chains() added chain " + *p);
     }
   }
 }

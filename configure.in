@@ -224,11 +224,12 @@ dnl ---
 dnl Create outputs 
 dnl ---
 AC_OUTPUT([
-Makefile 
+Makefile
 libecasound/Makefile
 libecasound/include/Makefile
 libecasound/src/Makefile
 ecasound/Makefile
+libqtecasound/Makefile
 qtecasound/Makefile
 ecatools/Makefile
 Documentation/Makefile

@@ -4,7 +4,11 @@ else
 INSTALL_STRIP_FLAG = -s
 endif
 
-INCLUDES = -I. -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound/include -I$(qt_includes) $(all_includes)
+INCLUDES = -I. -I$(top_srcdir)/kvutils \
+		-I$(top_srcdir)/libecasound/include \
+		-I$(top_srcdir)/libqtecasound \
+		-I$(qt_includes) \
+		-I$(all_includes)
 
 if COMPILE_QTECASOUND
 qt_binaries = qtecasound
@@ -31,9 +35,7 @@ ecasound_qt_src = 	eca-qtdebug.cpp \
 			eca-qtchainsetup.cpp \
 			eca-qtchain.cpp \
 			eca-qtiodevdialog.cpp \
-			eca-qtchainselectdialog.cpp \
-			qestringdialog.cpp \
-			qebuttonrow.cpp
+			eca-qtchainselectdialog.cpp
 
 ecasound_qt_includes = 	eca-qtdebug.h \
 			eca-qtinte.h \
@@ -46,9 +48,7 @@ ecasound_qt_includes = 	eca-qtdebug.h \
 			qtdebug_if.h \
 			eca-qtrtposition.h \
 			eca-qtmain.h \
-			eca-qtsignallevel.h \
-			qestringdialog.h \
-			qebuttonrow.h
+			eca-qtsignallevel.h
 
 ecasound_qt_mocs = 	eca-qtdebug_moc.cpp \
 			eca-qtinte_moc.cpp \
@@ -58,20 +58,22 @@ ecasound_qt_mocs = 	eca-qtdebug_moc.cpp \
 			eca-qtchainsetup_moc.cpp \
 			eca-qtsession_moc.cpp \
 			eca-qtsignallevel_moc.cpp \
-			eca-qtrtposition_moc.cpp \
-			qestringdialog_moc.cpp \
-			qebuttonrow_moc.cpp
+			eca-qtrtposition_moc.cpp
+
 
 qtecasound_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
 qtecasound_debug_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
 #qtecasound_LDFLAGS = -s -lstdc++ 
-qtecasound_LDADD =  -lqt -L$(top_builddir)/kvutils \
-		    -L$(top_builddir)/kvutils/.libs \
-		    -lkvutils $(top_builddir)/libecasound/src/libecasound.la
+qtecasound_LDADD = -lqt -L$(top_builddir)/kvutils \
+		    	-L$(top_builddir)/kvutils/.libs \
+			-lkvutils \
+			$(top_builddir)/libecasound/src/libecasound.la \
+			$(top_builddir)/libqtecasound/libqtecasound.la
 qtecasound_debug_LDADD =  -L$(top_builddir)/kvutils \
 			  -L$(top_builddir)/kvutils/.libs \
-			  -lkvutils -L$(qt_libraries) \
-			  -lqt $(top_builddir)/libecasound/src/libecasound_debug.la
+			  -lkvutils -L$(qt_libraries) -lqt \
+			   $(top_builddir)/libecasound/src/libecasound_debug.la \
+			   $(top_builddir)/libqtecasound/libqtecasound_debug.la
 qtecasound_LDFLAGS = $(all_libraries)
 qtecasound_debug_LDFLAGS = $(qtecasound_LDFLAGS)
 #qtecasound_LDADD   = -lm -lpthread -lqt $(top_srcdir)/libecasound/src/libecasound.la
@@ -88,10 +90,6 @@ dist-hook:
 
 #qlistview-dumb.cpp: qlistview-dumb.h
 #	$(MOC) -o qlistview-dumb_moc.cpp qlistview-dumb.h
-qestringdialog_moc.cpp: $(srcdir)/qestringdialog.h
-	$(MOC) -o qestringdialog_moc.cpp $(srcdir)/qestringdialog.h
-qebuttonrow_moc.cpp: $(srcdir)/qebuttonrow.h
-	$(MOC) -o qebuttonrow_moc.cpp $(srcdir)/qebuttonrow.h
 eca-qtinte_moc.cpp: $(srcdir)/eca-qtinte.h
 	$(MOC) -o eca-qtinte_moc.cpp $(srcdir)/eca-qtinte.h
 eca-qtdebug_moc.cpp: $(srcdir)/eca-qtdebug.h

@@ -59,13 +59,14 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 
   assert(ch == channel_count_rep);
 
-  buf_sample_size_t osize = 0;
 
-  for(buf_sample_size_t isize = 0; isize < buffersize_rep; isize++) {
+  long int osize = 0;
+
+  for(long int isize = 0; isize < buffersize_rep; isize++) {
     switch (fmt) {
     case ECA_AUDIO_FORMAT::sfmt_u8:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  // --- for debugging signal flow
 	  //	  printf("(c %u)(isize %u)(osize %u) converting %.2f, \n",
 	  //		   c, isize, osize, buffer[c][isize]);
@@ -82,7 +83,7 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 
     case ECA_AUDIO_FORMAT::sfmt_s16_le:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > impl_max_value) stemp = impl_max_value;
 	  else if (stemp < impl_min_value) stemp = impl_min_value;
@@ -103,7 +104,7 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 
     case ECA_AUDIO_FORMAT::sfmt_s16_be:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > impl_max_value) stemp = impl_max_value;
 	  else if (stemp < impl_min_value) stemp = impl_min_value;
@@ -125,7 +126,7 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 
     case ECA_AUDIO_FORMAT::sfmt_s24_le:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > impl_max_value) stemp = impl_max_value;
 	  else if (stemp < impl_min_value) stemp = impl_min_value;
@@ -148,7 +149,7 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 
     case ECA_AUDIO_FORMAT::sfmt_s24_be:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > impl_max_value) stemp = impl_max_value;
 	  else if (stemp < impl_min_value) stemp = impl_min_value;
@@ -166,7 +167,7 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 
     case ECA_AUDIO_FORMAT::sfmt_s32_le:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > impl_max_value) stemp = impl_max_value;
 	  else if (stemp < impl_min_value) stemp = impl_min_value;
@@ -182,7 +183,7 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 	
     case ECA_AUDIO_FORMAT::sfmt_s32_be:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  sample_type stemp = buffer[c][isize];
 	  if (stemp > impl_max_value) stemp = impl_max_value;
 	  else if (stemp < impl_min_value) stemp = impl_min_value;
@@ -226,13 +227,13 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 
   unsigned char a[2];
   unsigned char b[4];
-  buf_sample_size_t isize = 0;
+  long int isize = 0;
 
-  for(buf_sample_size_t osize = 0; osize < buffersize_rep; osize++) {
+  for(long int osize = 0; osize < buffersize_rep; osize++) {
     switch (fmt) {
     case ECA_AUDIO_FORMAT::sfmt_u8: 
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  // --- for debugging signal flow
 	  //	  if (osize == 0) 
 	  // printf("converting to u8 %u\n", source[isize]);
@@ -249,7 +250,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 
     case ECA_AUDIO_FORMAT::sfmt_s16_le:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  // little endian: (LSB, MSB) (Intel)
 	  // big endian: (MSB, LSB) (Motorola)
 	  if (SAMPLE_SPECS::is_system_littleendian) {
@@ -274,7 +275,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 
     case ECA_AUDIO_FORMAT::sfmt_s16_be:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  if (!SAMPLE_SPECS::is_system_littleendian) {
 	    a[0] = source[isize++];
 	    a[1] = source[isize++];
@@ -290,7 +291,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 
     case ECA_AUDIO_FORMAT::sfmt_s24_le:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    //	    if (osize == 0) cerr << "sisään:" << (*(int32_t*)(source+isize)) << "|\n";
 	    b[0] = source[isize++];
@@ -312,7 +313,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 
     case ECA_AUDIO_FORMAT::sfmt_s24_be:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    b[3] = source[isize++];
 	    b[2] = source[isize++];
@@ -332,7 +333,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 
     case ECA_AUDIO_FORMAT::sfmt_s32_le:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    b[0] = source[isize++];
 	    b[1] = source[isize++];
@@ -352,7 +353,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 
     case ECA_AUDIO_FORMAT::sfmt_s32_be:
       {
-	for(buf_channel_size_t c = 0; c < ch; c++) {
+	for(int c = 0; c < ch; c++) {
 	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    b[3] = source[isize++];
 	    b[2] = source[isize++];
@@ -422,10 +423,10 @@ void SAMPLE_BUFFER::add(const SAMPLE_BUFFER& x) {
   if (x.length_in_samples() >= length_in_samples()) {
     length_in_samples(x.length_in_samples());
   }
-  buf_channel_size_t c_count = (number_of_channels() <= x.number_of_channels()) ? number_of_channels() : x.number_of_channels();
-  for(buf_channel_size_t q = 0; q != c_count; q++) {
-    //    buf_sample_size_t s_count = (buffer[q].size() <= x.buffer[q].size()) ? buffer[q].size() : x.buffer[q].size();
-    for(buf_sample_size_t t = 0; t != x.buffer[q].size(); t++) {
+  int c_count = (number_of_channels() <= x.number_of_channels()) ? number_of_channels() : x.number_of_channels();
+  for(int q = 0; q != c_count; q++) {
+    //    long int s_count = (buffer[q].size() <= x.buffer[q].size()) ? buffer[q].size() : x.buffer[q].size();
+    for(long int t = 0; t != static_cast<long int>(x.buffer[q].size()); t++) {
       buffer[q][t] += x.buffer[q][t];
     }
   }
@@ -435,10 +436,10 @@ void SAMPLE_BUFFER::add_with_weight(const SAMPLE_BUFFER& x, int weight) {
   if (x.length_in_samples() >= length_in_samples()) {
     length_in_samples(x.length_in_samples());
   }
-  buf_channel_size_t c_count = (number_of_channels() <= x.number_of_channels()) ? number_of_channels() : x.number_of_channels();
-  for(buf_channel_size_t q = 0; q != c_count; q++) {
-    //    buf_sample_size_t s_count = (buffer[q].size() <= x.buffer[q].size()) ? buffer[q].size() : x.buffer[q].size();
-    for(buf_sample_size_t t = 0; t != x.buffer[q].size(); t++) {
+  int c_count = (number_of_channels() <= x.number_of_channels()) ? number_of_channels() : x.number_of_channels();
+  for(int q = 0; q != c_count; q++) {
+    //    long int s_count = (buffer[q].size() <= x.buffer[q].size()) ? buffer[q].size() : x.buffer[q].size();
+    for(long int t = 0; t != static_cast<long int>(x.buffer[q].size()); t++) {
       buffer[q][t] += x.buffer[q][t] / weight;
     }
   }
@@ -448,9 +449,9 @@ void SAMPLE_BUFFER::copy(const SAMPLE_BUFFER& x) {
   if (x.length_in_samples() >= length_in_samples()) {
     length_in_samples(x.length_in_samples());
   }
-  buf_channel_size_t c_count = (number_of_channels() <= x.number_of_channels()) ? number_of_channels() : x.number_of_channels();
-  for(buf_channel_size_t q = 0; q != c_count; q++) {
-    for(buf_sample_size_t t = 0; t != x.buffer[q].size(); t++) {
+  int c_count = (number_of_channels() <= x.number_of_channels()) ? number_of_channels() : x.number_of_channels();
+  for(int q = 0; q != c_count; q++) {
+    for(long int t = 0; t != static_cast<long int>(x.buffer[q].size()); t++) {
       buffer[q][t] = x.buffer[q][t];
     }
   }
@@ -510,6 +511,7 @@ SAMPLE_SPECS::sample_type SAMPLE_BUFFER::average_RMS_volume(int channel,
     temp_avg += *p + *p;
     ++p;
   }
+  return(temp_avg);
 }
 
 void SAMPLE_BUFFER::resample_from(unsigned int long from_srate) {
@@ -523,7 +525,7 @@ void SAMPLE_BUFFER::resample_to(unsigned int long to_srate) {
 void SAMPLE_BUFFER::resample_nofilter(unsigned int long from, 
 				      unsigned int long to) {
   double step = (double)to / from;
-  buffersize_rep *= step ;
+  buffersize_rep *= static_cast<long int>(step);
 
   for(int c = 0; c < channel_count_rep; c++) {
     old_buffer = buffer[c];
@@ -537,7 +539,7 @@ void SAMPLE_BUFFER::resample_nofilter(unsigned int long from,
     if (old_buffer.size() == 0) continue;
     
     buffer[c][0] = old_buffer[0];
-    for(buf_sample_size_t buf_sizet = 1; buf_sizet < old_buffer.size(); buf_sizet++) {
+    for(long int buf_sizet = 1; buf_sizet < static_cast<long int>(old_buffer.size()); buf_sizet++) {
       counter += step;
       if (step <= 1) {
 	if (counter >= newbuf_sizet + 1) {
@@ -580,10 +582,10 @@ void SAMPLE_BUFFER::length_in_samples(int len) {
 }
 
 void SAMPLE_BUFFER::number_of_channels(int len) {
-  if (len > buffer.size()) {
+  if (len > static_cast<long int>(buffer.size())) {
     buffer.resize(len, vector<sample_type> (buffersize_rep,
 					    sample_type(0.0)));
-    ecadebug->msg(1, "(samplebuffer) Increasing channel-count.");    
+    ecadebug->msg(ECA_DEBUG::system_objects, "(samplebuffer) Increasing channel-count.");    
   }
   channel_count_rep = len;
 }
@@ -598,22 +600,22 @@ void SAMPLE_BUFFER::resize(long int buffersize) {
 }
 
 SAMPLE_BUFFER::SAMPLE_BUFFER (long int buffersize, int channels) 
-  : buffer(channels, vector<SAMPLE_SPECS::sample_type> (buffersize, sample_type(0.0))),
+  : channel_count_rep(channels),
     buffersize_rep(buffersize),
-    channel_count_rep(channels) {
+    buffer(channels, vector<SAMPLE_SPECS::sample_type> (buffersize,
+							sample_type(0.0))) {
 
   MESSAGE_ITEM mitem;
   mitem << "Created a sample_buffer with " << buffer.size() << " channels";
   mitem << " that are " << buffersize << " samples long.";
-  ecadebug->msg(1, mitem.to_string());
+  ecadebug->msg(ECA_DEBUG::system_objects, mitem.to_string());
 }
 
 SAMPLE_BUFFER::SAMPLE_BUFFER (void) 
-  : buffer(0, vector<SAMPLE_SPECS::sample_type> (0)),
+  : channel_count_rep(0), 
     buffersize_rep(0),
-    channel_count_rep(0) {
-
-  ecadebug->msg(1, "Created a empty sample_buffer.");
+    buffer(0, vector<SAMPLE_SPECS::sample_type> (0)) {
+  ecadebug->msg(ECA_DEBUG::system_objects, "Created a empty sample_buffer.");
 }
 
 SAMPLE_BUFFER::~SAMPLE_BUFFER (void) {
@@ -631,15 +633,14 @@ SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x) {
     buffer = x.buffer;
     buffersize_rep = x.buffersize_rep;
     channel_count_rep = x.channel_count_rep;
-
-    return *this;
   }
+  return *this;
 }
 
 SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x) throw(ECA_ERROR*)
-  : buffer(x.buffer), 
+  : channel_count_rep(x.channel_count_rep),
     buffersize_rep(x.buffersize_rep),
-    channel_count_rep(x.channel_count_rep) 
+    buffer(x.buffer)
 {
   // ---
   // For better performance, doesn't copy IO-buffers.
@@ -651,5 +652,5 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x) throw(ECA_ERROR*)
   MESSAGE_ITEM mitem;
   mitem << "Created a sample_buffer with " << number_of_channels() << " channels";
   mitem << " that are " << buffer[0].size() << " samples long.";
-  ecadebug->msg(1, mitem.to_string());
+  ecadebug->msg(ECA_DEBUG::system_objects, mitem.to_string());
 }

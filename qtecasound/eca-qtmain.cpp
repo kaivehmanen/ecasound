@@ -48,7 +48,8 @@ int main( int argc, char **argv )
   try {
     QApplication a (argc, argv);
     attach_debug_object(&qtdebug_if);  
-    ecadebug->set_debug_level(0);
+    ecadebug->set_debug_level(ECA_DEBUG::info |
+			      ECA_DEBUG::module_flow);
 
     COMMAND_LINE cline = COMMAND_LINE (argc, argv);
 

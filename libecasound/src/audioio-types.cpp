@@ -47,7 +47,7 @@ AUDIO_IO_BUFFERED::~AUDIO_IO_BUFFERED(void) {
 }
 
 void AUDIO_IO_BUFFERED::reserve_buffer_space(long int bytes) {
-  if (bytes > iobuf_size) {
+  if (bytes > static_cast<long int>(iobuf_size)) {
     if (iobuf_uchar != 0) {
       delete[] iobuf_uchar;
       iobuf_uchar = 0;
@@ -60,7 +60,7 @@ void AUDIO_IO_BUFFERED::reserve_buffer_space(long int bytes) {
 
 void AUDIO_IO_BUFFERED::buffersize(long int samples, 
 				   long int sample_rate) {
-  ecadebug->msg(1, "(audioio-types/buffered) Setting buffer size [" +
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) Setting buffer size [" +
 		   kvu_numtostr(samples) + "," +
 		   kvu_numtostr(sample_rate) + "].");
 
@@ -74,8 +74,8 @@ void AUDIO_IO_BUFFERED::buffersize(long int samples,
   }
 
   if (target_srate_rep != samples_per_second()) {
-    buffersize_rep = ceil(static_cast<double>(target_samples_rep) *
-			  samples_per_second() / target_srate_rep);
+    buffersize_rep = static_cast<long int>(ceil(static_cast<double>(target_samples_rep) *
+			  samples_per_second() / target_srate_rep));
   }
   else {
     buffersize_rep = target_samples_rep;
@@ -90,7 +90,7 @@ void AUDIO_IO_BUFFERED::buffersize(long int samples,
 
   reserve_buffer_space(buffersize_rep * frame_size());
 
-  ecadebug->msg(1, "(audioio-types/buffered) Set buffer size [" +
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) Set buffer size [" +
 		   kvu_numtostr(buffersize_rep) + "].");
 
 }
@@ -99,7 +99,7 @@ void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf) {
   // --------
   // require:
   assert(iobuf_uchar != 0);
-  assert(iobuf_size >= buffersize_rep * frame_size());
+  assert(static_cast<long int>(iobuf_size) >= buffersize_rep * frame_size());
   // --------
   sbuf->copy_to_buffer(iobuf_uchar,
 		       read_samples(iobuf_uchar, buffersize_rep),
@@ -113,7 +113,7 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   // --------
   // require:
   assert(iobuf_uchar != 0);
-  assert(iobuf_size >= buffersize_rep * frame_size() ||
+  assert(static_cast<int>(iobuf_size) >= buffersize_rep * frame_size() ||
 	 samples_per_second() != SAMPLE_BUFFER::sample_rate);
   // --------
   sbuf->copy_from_buffer(iobuf_uchar,

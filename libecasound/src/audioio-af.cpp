@@ -185,7 +185,7 @@ AUDIOFILE_INTERFACE::~AUDIOFILE_INTERFACE(void) {
 
 void AUDIOFILE_INTERFACE::debug_print_type(void) {
   int temp = afGetFileFormat(afhandle, 0);
-  ecadebug->msg(1, "(audioio-af) afFileformat: " + kvu_numtostr(temp) + "."); 
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-af) afFileformat: " + kvu_numtostr(temp) + "."); 
 }
 
 bool AUDIOFILE_INTERFACE::finished(void) const {

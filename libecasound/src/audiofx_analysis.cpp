@@ -51,10 +51,10 @@ string EFFECT_ANALYZE::status(void) const {
   otemp << "; signal can be amplified by " << max_multiplier() * 100.0;
   otemp << "%.";
 
-  for(int nm = 0; nm < ranges.size(); nm++)
-    for(int ch = 0; ch < ranges[0].size(); ch++)
+  for(int nm = 0; nm < static_cast<int>(ranges.size()); nm++)
+    for(int ch = 0; ch < static_cast<int>(ranges[0].size()); ch++)
       ranges[nm][ch] = 0;
-  for(int ch = 0; ch < ranges[0].size(); ch++)
+  for(int ch = 0; ch < static_cast<int>(ranges[0].size()); ch++)
     num_of_samples[ch] = 0;
 
   max = 0;

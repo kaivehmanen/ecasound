@@ -29,14 +29,14 @@
 
 #include <ecasound/eca-session.h>
 #include <ecasound/eca-controller.h>
+#include <ecasound/qebuttonrow.h>
 
 #include "qefile.h"
 #include "qeopenfiledialog.h"
 #include "qesavefiledialog.h"
 #include "qesession.h"
-#include "qebuttonrow.h"
-#include "qestatusbar.h"
 
+#include "qestatusbar.h"
 #include "qeevent.h"
 #include "qeplayevent.h"
 #include "qesaveevent.h"
@@ -100,6 +100,11 @@ QESession::~QESession(void) {
   if (tempfile_rep.empty() == false) {
     remove(tempfile_rep.c_str());
     remove((tempfile_rep + ".ews").c_str());
+  }
+
+  while(child_sessions.size() > 0) {
+    delete child_sessions.back();
+    child_sessions.pop_back();
   }
 
   ecawaverc.save();
@@ -180,25 +185,24 @@ void QESession::init_layout(void) {
 }
 
 void QESession::new_session(void) {
-  QESession* session = new QESession();
-  session->show();
+  child_sessions.push_back(new QESession());
+  child_sessions.back()->show();
 }
 
 void QESession::new_file(void) {
   stop_event();
-  QESession* session = new QESession("", ECA_AUDIO_FORMAT());
-  session->show();
-  session->setGeometry(x(), y(), width(), height());
-  qApp->setMainWidget(session);
+  child_sessions.push_back(new QESession("", ECA_AUDIO_FORMAT()));
+  child_sessions.back()->show();
+  child_sessions.back()->setGeometry(x(), y(), width(), height());
+  qApp->setMainWidget(child_sessions.back());
   close(false);
 }
 
-
 void QESession::close_file(void) {
   stop_event();
-  QESession* session = new QESession();
-  session->show();
-  qApp->setMainWidget(session);
+  child_sessions.push_back(new QESession());
+  child_sessions.back()->show();
+  qApp->setMainWidget(child_sessions.back());
   close(false);
 }
 
@@ -213,14 +217,14 @@ void QESession::open_file(void) {
     if (fdialog->result_bits() == 8)
       frm.set_sample_format(ECA_AUDIO_FORMAT::sfmt_u8);
 
-    QESession* session = new QESession(fdialog->result_filename(), 
-				       frm,
-				       fdialog->result_wave_cache_toggle(),
-				       fdialog->result_cache_refresh_toggle(),
-				       fdialog->result_direct_mode_toggle());
-    session->setGeometry(x(), y(), width(), height());
-    session->show();
-    qApp->setMainWidget(session);
+    child_sessions.push_back(new QESession(fdialog->result_filename(), 
+					   frm,
+					   fdialog->result_wave_cache_toggle(),
+					   fdialog->result_cache_refresh_toggle(),
+					   fdialog->result_direct_mode_toggle()));
+    child_sessions.back()->setGeometry(x(), y(), width(), height());
+    child_sessions.back()->show();
+    qApp->setMainWidget(child_sessions.back());
     close(false);
   }
 }
@@ -281,18 +285,18 @@ void QESession::effect_event(void) {
 }
 
 void QESession::update_wave_data(void) {
-  //  cerr << "H1\n";
   if (file == 0) return;
+
+  if (editing_rep == false && direct_mode_rep == false) {
+    file->open(tempfile_rep);
+  }
+  else {
+    file->update_wave_form_data();
+  }
 
   if (editing_rep == false) {
     editing_rep = true;
     statusbar->toggle_editing(true);
-    //    cerr << "H2\n";
-    file->open(tempfile_rep);
-  }
-  else {
-    //    cerr << "H3\n";
-    file->update_wave_form_data();
   }
 }
 

@@ -43,7 +43,7 @@ void LINEAR_ENVELOPE::init(DYNAMIC_PARAMETERS::parameter_type step) {
   otemp.setprecision(3);
   otemp << length_in_seconds();
   otemp << " seconds.";
-  ecadebug->msg(1, otemp.to_string());
+  ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
 }
 
 void LINEAR_ENVELOPE::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {

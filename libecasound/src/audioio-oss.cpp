@@ -103,7 +103,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
   MESSAGE_ITEM m;
   m << "Setting OSS fragment size according to buffersize() " << buffersize() << ".\n";
   m << "Setting OSS fragment size to " << buffersize() * frame_size() << ".";
-  ecadebug->msg(1, m.to_string());
+  ecadebug->msg(ECA_DEBUG::user_objects, m.to_string());
 
   // fr_size == 4  -> the minimum fragment size: 2^4 = 16 bytes
   for(fr_size = 4; fragtotal < buffersize() * frame_size(); fr_size++)
@@ -114,7 +114,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
   if (ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &fragsize)==-1)
     throw(new ECA_ERROR("AUDIOIO-OSS", "general OSS-error SNDCTL_DSP_SETFRAGMENT"));
 
-  ecadebug->msg(1, "set OSS fragment size to (2^x) " +
+  ecadebug->msg(ECA_DEBUG::user_objects, "set OSS fragment size to (2^x) " +
 		   kvu_numtostr(fr_size) + ".");
     
   // -------------------------------------------------------------------
@@ -178,7 +178,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
   if (ioctl(audio_fd, SNDCTL_DSP_GETBLKSIZE, &fragment_size) == -1)
     throw(new ECA_ERROR("AUDIOIO-OSS", "general OSS error SNDCTL_DSP_GETBLKSIZE"));
 
-  ecadebug->msg(1, "OSS set to use fragment size of " + 
+  ecadebug->msg(ECA_DEBUG::user_objects, "OSS set to use fragment size of " + 
 		   kvu_numtostr(fragment_size) + ".");
 
   toggle_open_state(true);
@@ -186,7 +186,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
 
 void OSSDEVICE::stop(void) {
   ioctl(audio_fd, SNDCTL_DSP_POST, 0);
-  ecadebug->msg(1,"(audioio-oss) Audio device \"" + label() + "\" disabled.");
+  ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" disabled.");
   is_triggered = false;
   //  if (is_open()) close_device();
 }
@@ -201,7 +201,7 @@ void OSSDEVICE::close(void) throw(ECA_ERROR*) {
 
 void OSSDEVICE::start(void) throw(ECA_ERROR*) {
   if (is_triggered == false) {
-    ecadebug->msg(1,"(audioio-oss) Audio device \"" + label() + "\" started.");
+    ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" started.");
     if (oss_caps & DSP_CAP_TRIGGER == DSP_CAP_TRIGGER) {
       int enable_bits;
       if (io_mode() == si_read) enable_bits = PCM_ENABLE_INPUT;

@@ -53,7 +53,7 @@ ECA_PROCESSOR::ECA_PROCESSOR(ECA_SESSION* params)
 ECA_PROCESSOR::ECA_PROCESSOR(void) { }
 
 ECA_PROCESSOR::~ECA_PROCESSOR(void) {
-  ecadebug->msg(1,"ECA_PROCESSOR destructor!");
+  ecadebug->msg(ECA_DEBUG::system_objects,"ECA_PROCESSOR destructor!");
 
   stop();
   if (eparams != 0) eparams->status(ep_status_notready);
@@ -152,7 +152,7 @@ void ECA_PROCESSOR::init_inputs(void) {
       max_input_length = (*inputs)[adev_sizet]->length_in_samples();
 
     // ---
-    //      ecadebug->msg(4, "Input \"" + (*inputs)[adev_sizet]->label() +  ": start position " +
+    //      ecadebug->msg(ECA_DEBUG::system_objects, "Input \"" + (*inputs)[adev_sizet]->label() +  ": start position " +
     //  		     kvu_numtostr(input_start_pos[adev_sizet]) +  ", number of connected chain " +
     //  		     kvu_numtostr(input_chain_count[adev_sizet]) + " .\n");
   }
@@ -205,7 +205,7 @@ void ECA_PROCESSOR::init_outputs(void) {
       eparams->number_of_connected_chains_to_output((*outputs)[adev_sizet]);
 
     // ---
-    //      ecadebug->msg(4, "Output \"" + (*outputs)[adev_sizet]->label() +  ": start position " +
+    //      ecadebug->msg(ECA_DEBUG::system_objects, "Output \"" + (*outputs)[adev_sizet]->label() +  ": start position " +
     //  		     kvu_numtostr(output_start_pos[adev_sizet]) + ", number of connected chain " +
     //  		     kvu_numtostr(output_chain_count[adev_sizet]) + " .\n");
   }
@@ -250,8 +250,8 @@ void ECA_PROCESSOR::init_multitrack_mode(void) {
       eparams->iactive == true)  {
     ecadebug->msg("(eca-main) Multitrack-mode enabled. Changed mixmode to \"normal iactive\"");
     eparams->multitrack_mode = true;
-    ecadebug->msg(1, "Using input " + realtime_inputs[0]->label() + " for multitrack sync.");
-    ecadebug->msg(1, "Using output " + realtime_outputs[0]->label() + " for multitrack sync.");
+    ecadebug->msg(ECA_DEBUG::system_objects, "Using input " + realtime_inputs[0]->label() + " for multitrack sync.");
+    ecadebug->msg(ECA_DEBUG::system_objects, "Using output " + realtime_outputs[0]->label() + " for multitrack sync.");
   }
 }
 
@@ -509,7 +509,7 @@ void ECA_PROCESSOR::posthandle_control_position(void) {
 
 void ECA_PROCESSOR::stop(void) { 
   if (eparams->status() != ep_status_running) return;
-  ecadebug->msg(1, "(eca-main) Stop");
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Stop");
 
   for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_objects.size()); adev_sizet++) {
     realtime_objects[adev_sizet]->stop();
@@ -520,7 +520,7 @@ void ECA_PROCESSOR::stop(void) {
 
 void ECA_PROCESSOR::start(void) {
   if (eparams->status() == ep_status_running) return;
-  ecadebug->msg(1, "(eca-main) Start");
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Start");
 
   if (eparams->multitrack_mode == true) {
     assert(mixmode != ECA_CHAINSETUP::ep_mm_mthreaded);
@@ -535,7 +535,7 @@ void ECA_PROCESSOR::start(void) {
     long int output_sync = realtime_outputs[0]->position_in_samples();
     long int input_sync = realtime_inputs[0]->position_in_samples();
 
-    ecadebug->msg(1, "sync fix: " + kvu_numtostr(output_sync - input_sync));
+    ecadebug->msg(ECA_DEBUG::system_objects, "sync fix: " + kvu_numtostr(output_sync - input_sync));
 
     if (output_sync - input_sync > 0) {
       for (int adev_sizet = 0; adev_sizet != static_cast<int>(non_realtime_outputs.size()); adev_sizet++) {
@@ -637,7 +637,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 void ECA_PROCESSOR::interpret_queue(void) {
   while(ecasound_queue.is_empty() == false) {
     pair<int,double> item = ecasound_queue.front();
-    ecadebug->msg(2,"(eca-main) ecasound_queue: cmds available; first one is " 
+    ecadebug->msg(ECA_DEBUG::system_objects,"(eca-main) ecasound_queue: cmds available; first one is " 
 		  + kvu_numtostr(item.first));
     switch(item.first) {
     // ---
@@ -646,7 +646,7 @@ void ECA_PROCESSOR::interpret_queue(void) {
     case ep_exit:
       {
 	while(ecasound_queue.is_empty() == false) ecasound_queue.pop_front();
-	ecadebug->msg(2,"(eca-main) ecasound_queue: exit!");
+	ecadebug->msg(ECA_DEBUG::system_objects,"(eca-main) ecasound_queue: exit!");
 	stop();
 	end_request = true;
 	return;
@@ -811,7 +811,7 @@ bool ECA_PROCESSOR::is_slave_output(AUDIO_IO* aiod) const {
     if ((*q)->output_id == aiod) {
       p = dynamic_cast<AUDIO_IO_DEVICE*>((*q)->input_id);
       if (p != 0) {
-	ecadebug->msg(2,"(eca-main) slave output detected: " + (*q)->output_id->label());
+	ecadebug->msg(ECA_DEBUG::system_objects,"(eca-main) slave output detected: " + (*q)->output_id->label());
 	return(true);
       }
     }

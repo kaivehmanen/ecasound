@@ -46,7 +46,7 @@ EWFFILE::EWFFILE (const string& name, const SIMODE mode, const
   wavename = string(name.begin(), e);
   wavename = wavename + ".wav";
 
-  ecadebug->msg(1, "AUDIOIO-EWF: Opening EWF data file" + wavename);
+  ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: Opening EWF data file" + wavename);
   wobject = new WAVEFILE(wavename, mode, fmt);
     
   if (mode == si_read || mode == si_readwrite) {
@@ -82,7 +82,7 @@ void EWFFILE::close(void) {
 
 void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
   if (wave_object_active == false && position_in_samples() >= sample_offset) {
-    ecadebug->msg(2, "AUDIOIO-EWF: wave_object activated" + ewfname);
+    ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: wave_object activated" + ewfname);
     wave_object_active = true;
     wobject->seek_position_in_samples(position_in_samples()
 				      - sample_offset);
@@ -104,7 +104,7 @@ void EWFFILE::write_buffer(SAMPLE_BUFFER* sbuf) {
     sample_offset = position_in_samples();
     MESSAGE_ITEM m;
     m << "AUDIOIO-EWF: found sample_offset " << sample_offset << ".";
-    ecadebug->msg(5, m.to_string());
+    ecadebug->msg(ECA_DEBUG::user_objects, m.to_string());
   }
   
   wobject->write_buffer(sbuf);
@@ -129,10 +129,10 @@ void EWFFILE::read_ewf_parameters(void) {
   char c;
   while (fin.get(c)) {
     if (c == '=') break;
-    ecadebug->msg(5, "AUDIOIO-EWF: r_ewf_params(), found a = sign");
+    ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: r_ewf_params(), found a = sign");
   }
   fin >> sample_offset;
-  //    ecadebug->msg(5, "AUDIOIO-EWF: r_ewf_params(), read a sample_offset of", sample_offset);
+  //    ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: r_ewf_params(), read a sample_offset of", sample_offset);
 }
 
 void EWFFILE::write_ewf_parameters(void) {

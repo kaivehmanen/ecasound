@@ -8,21 +8,15 @@
 
 #include <eca-debug.h>
 
-class QTDEBUG_IF : public MAINDEBUG {
-private:
-
-     int debug_level;
+class QTDEBUG_IF : public ECA_DEBUG {
     
 public:
 
     void flush(void) { }
-    void set_debug_level(int level);
-    int get_debug_level(void) { return(debug_level); }
 
     QTDEBUG_IF(void);
 
     void control_flow(const string& part);
-    void msg(const string& info);
     void msg(int level, const string& info);
 };
 

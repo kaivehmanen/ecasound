@@ -33,9 +33,9 @@
 
 #include <ecasound/eca-audio-objects.h>
 #include <ecasound/samplebuffer.h>
+#include <ecasound/qebuttonrow.h>
 
 #include "qefile.h"
-#include "qebuttonrow.h"
 
 QEFile::QEFile(const string& filename,
 	       bool use_wave_cache, 
