@@ -15,7 +15,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??102002 (v2.2.0-pre4)
+31102002 (v2.2.0-pre4)
 	- edi-entries: edi-27, edi-28, edi-29, edi-30
 	- added: eiam - commands 'map-cop-list', 'map-ctrl-list', 
 		 'map-ladspa-list' and 'map-preset-list'; see 

@@ -145,11 +145,7 @@ int main(int argc, char *argv[])
 
 	cout << "Starting processing...\n";	
 
-	eci.command("cs-connect");
-	eci.command("cs-connected");
-	if (eci.last_string() != "default") {
-	  cerr << eci.last_error() << endl;
-	  cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+	if (ecicpp_connect_chainsetup(&eci, "default") < 0) {
 	  break;
 	}
 	else {

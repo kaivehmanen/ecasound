@@ -168,6 +168,7 @@ static void set_track_to_chainsetup(eci_handle_t* eci, const char* nexttrack)
 
   /* FIXME: add detection of consecutive errors */
   eci_command_r(*eci, "cs-connect");
+  /* FIXME: fetch last_error and print it; see other ecatools */
   eci_command_r(*eci, "cs-connected");
   ret = eci_last_string_r(*eci);
   if (strncmp(ret, "ecaplay_chainsetup", strlen("ecaplay_chainsetup")) != 0) {

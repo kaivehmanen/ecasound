@@ -81,11 +81,7 @@ int main(int argc, char *argv[])
 
     if (ecicpp_add_output(&eci, filename + extension, format) < 0) break;
 
-    eci.command("cs-connect");
-    eci.command("cs-connected");
-    if (eci.last_string() != "default") {
-      cerr << eci.last_error() << endl;
-      cerr << "---\nError while converting file " << filename << ". Exiting...\n";
+    if (ecicpp_connect_chainsetup(&eci, "default") < 0) {
       break;
     }
     

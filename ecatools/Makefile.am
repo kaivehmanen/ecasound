@@ -1,4 +1,4 @@
-EXTRA_DIST = ecasound.el
+EXTRA_DIST = ecasound.el ecamonitor
 
 if ECA_AM_DEBUG_MODE
 libkvutils_path = $(top_builddir)/kvutils/libkvutils_debug.la
@@ -19,7 +19,6 @@ endif
 INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound -I$(top_srcdir)/libecasoundc
 
 bin_SCRIPTS = ecamonitor
-EXTRA_DIST = ecamonitor
 
 if ECA_AM_DEBUG_MODE
 bin_PROGRAMS = 	ecaconvert_debug \

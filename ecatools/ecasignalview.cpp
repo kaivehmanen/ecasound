@@ -153,11 +153,7 @@ int main(int argc, char *argv[])
 
   eci.command("cop-select 1");
 
-  eci.command("cs-connect");
-  eci.command("cs-connected");
-  if (eci.last_string() != "default") {
-    cerr << eci.last_error() << endl;
-    cerr << "---\nUnable to start processing. Exiting...\n";
+  if (ecicpp_connect_chainsetup(&eci, "default") < 0) {
     return -1;
   }
 
@@ -216,7 +212,7 @@ void ecasv_parse_command_line(int argc, char *argv[])
 	if (prefix == "c") ecasv_enable_cumulative_mode = true;
 	if (prefix == "d") ecasv_enable_debug = true;
 	if (prefix == "f")
-	  ecasv_format_string = arg;
+	  ecasv_format_string = string(arg.begin() + 3, arg.end());
 	if (prefix == "r") 
 	  ecasv_rate_msec = atol(kvu_get_argument_number(1, arg).c_str());
       }
@@ -357,6 +353,7 @@ void ecasv_print_usage(void)
   cerr << "\t\t-b:buffersize\n";
   // cerr << "\t\t-c (cumulative mode)\n";
   cerr << "\t\t-d (debug mode)\n";
+  cerr << "\t\t-f:bits,channels,samplerate\n";
   cerr << "\t\t-r:refresh_msec\n\n";
 }
 

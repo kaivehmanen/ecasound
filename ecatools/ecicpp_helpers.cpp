@@ -87,6 +87,21 @@ int ecicpp_add_output(ECA_CONTROL_INTERFACE* eci, const string& filename , const
   return 0;
 }
 
+int ecicpp_connect_chainsetup(ECA_CONTROL_INTERFACE* eci, const string& csname)
+{
+  eci->command("cs-connect");
+  bool error = eci->error();
+  string errorstr = eci->last_error();
+  eci->command("cs-connected");
+  if (error == true || eci->last_string() != csname) {
+    cerr << endl << errorstr << endl;
+    cerr << "---\nUnable to start processing. Exiting...\n";
+    return -1;
+  }
+
+  return 0;
+}
+
 int ecicpp_format_channels(const string& format)
 {
   std::vector<std::string> tokens = kvu_string_to_vector(format, ',');
