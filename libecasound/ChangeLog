@@ -2,6 +2,12 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-01-13  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* audioio-alsa2.*: added
+	* audioio-alsa.*: ALSADEVICE renamed to ALSA_PCM_DEVICE
+	* audioio-lbalsa.*: ALSALBDEVICE renamed to ALSA_LOOPBACK_DEVICE
+	
 2000-01-07
 
 	* audiofx_rcfilter.h, audiofx_rcfilter.src: added

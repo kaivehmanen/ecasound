@@ -106,7 +106,10 @@ AM_CONDITIONAL(COMPILE_ALSA, test x$alsa_support = xyes)
 if test x$alsa_support = xyes; then
 AC_DEFINE(COMPILE_ALSA)
 fi                                     
-AC_CHECK_LIB(asound,snd_pcm_record_params,AC_DEFINE(OLD_ALSALIB))
+AC_CHECK_LIB(asound,snd_pcm_record_params,
+	AC_MSG_ERROR([ALSA <0.3.1 not support - update to a newer version or compile with --disable-alsa]))
+AC_CHECK_LIB(asound,snd_pcm_capture_params,AC_DEFINE(ALSALIB_032))
+AC_CHECK_LIB(asound,snd_pcm_channel_params,AC_DEFINE(ALSALIB_050))
 
 dnl AM_PATH_ESD(0.2.4,esd_support=yes,esd_support=no)
 dnl AC_ARG_ENABLE(esd,

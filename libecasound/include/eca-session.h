@@ -50,6 +50,7 @@ class ECA_SESSION {
   // Setup interpretation
   // ---
   void set_defaults(void);
+  void set_scheduling();
   void interpret_general_options(COMMAND_LINE& cline);
   void interpret_general_option (const string& argu);
   void interpret_chainsetup (const string& argu, const string& toinen);
@@ -203,6 +204,7 @@ class ECA_SESSION {
   bool iactive;          // Should engine use 'cqueue'?
   bool multitrack_mode;
   enum ECA_CHAINSETUP::EP_MM_MODE mixmode;
+  bool raisepriority_rep;
 
   // --
   // Public/const routines
@@ -221,6 +223,9 @@ class ECA_SESSION {
   double position_in_seconds_exact(void) const;
 
   bool is_interactive(void) const { return iactive; }
+
+  bool raised_priority(void) const { return(raisepriority_rep); }
+  void toggle_raised_priority(bool value) { raisepriority_rep = value; }
 
  public:
 

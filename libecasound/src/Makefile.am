@@ -47,13 +47,22 @@ ecasound_audiofx_src =  audiofx.cpp \
 
 ecasound_audioio_oss_src = audioio-oss.cpp
 
-ecasound_audioio_alsa_src = audioio-alsa.cpp audioio-alsalb.cpp
+ecasound_audioio_alsa_src = 	audioio-alsa.cpp \
+				audioio-alsa2.cpp \
+				audioio-alsalb.cpp
 
-ecasound_audioio_src = audioio-cdr.cpp \
-audioio-ewf.cpp audioio-mp3.cpp audioio-wave.cpp \
-audioio.cpp audioio-af.cpp audioio-raw.cpp audioio-mikmod.cpp \
-audioio-rtnull.cpp audioio-types.cpp \
-$(ecasound_audioio_oss_src) $(ecasound_audioio_alsa_src)
+ecasound_audioio_src = 	audioio-cdr.cpp \
+			audioio-ewf.cpp \
+			audioio-mp3.cpp \
+			audioio-wave.cpp \
+			audioio.cpp \
+			audioio-af.cpp \
+			audioio-raw.cpp \
+			audioio-mikmod.cpp \
+			audioio-rtnull.cpp \
+			audioio-types.cpp \
+			$(ecasound_audioio_oss_src) \
+			$(ecasound_audioio_alsa_src)
 
 ecasound_controller_src = \
 	generic-controller.cpp \
@@ -62,16 +71,30 @@ ecasound_controller_src = \
 	osc-sine.cpp \
 	linear-envelope.cpp
 
-ecasound_general_src = eca-chain.cpp eca-main.cpp \
-eca-midi.cpp eca-session.cpp eca-resources.cpp resource-file.cpp \
-eca-comhelp.cpp eca-debug.cpp layer.cpp samplebuffer_iterators.cpp \
-samplebuffer.cpp eca-version.cpp  \
-eca-chainsetup.cpp eca-controller.cpp eca-iamode-parser.cpp \
-eca-control-position.cpp eca-audio-position.cpp \
-eca-audio-objects.cpp eca-audio-format.cpp \
-eca-fileio-stream.cpp eca-fileio-mmap.cpp eca-fileio-mmap-fthread.cpp \
-eca-alsa-dyn.cpp eca-mthreaded-processor.cpp \
-eca-chainop-map.cpp eca-controller-map.cpp
+ecasound_general_src = 	eca-chain.cpp \
+			eca-main.cpp \
+			eca-midi.cpp \
+			eca-session.cpp \
+			eca-resources.cpp \
+			resource-file.cpp \
+			eca-comhelp.cpp \
+			eca-debug.cpp \
+			layer.cpp \
+			samplebuffer_iterators.cpp \
+			samplebuffer.cpp \
+			eca-version.cpp  \
+			eca-chainsetup.cpp \
+			eca-controller.cpp \
+			eca-iamode-parser.cpp \
+			eca-control-position.cpp \
+			eca-audio-position.cpp \
+			eca-audio-objects.cpp \
+			eca-audio-format.cpp \
+			eca-fileio-stream.cpp \
+			eca-fileio-mmap.cpp \
+			eca-fileio-mmap-fthread.cpp \
+			eca-alsa-dyn.cpp eca-mthreaded-processor.cpp \
+			eca-chainop-map.cpp eca-controller-map.cpp
 
 ecasound_common_src = $(ecasound_audiofx_src) $(ecasound_audioio_src) \
 		      $(ecasound_controller_src) $(ecasound_general_src) 

@@ -35,7 +35,6 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
   string setup_name;
   string setup_filename;
   bool is_enabled_rep;
-  bool raisepriority_rep;
   enum EP_MM_MODE mixmode_rep;
 
   ECA_RESOURCES* ecaresources;
@@ -159,11 +158,9 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
  public:
 
   void set_mixmode(enum EP_MM_MODE value) { mixmode_rep = value; }  
-  void toggle_raised_priority(bool value) { raisepriority_rep = value; }
 
   const string& name(void) const { return(setup_name); }
   const string& filename(void) const { return(setup_filename); }
-  bool raised_priority(void) const { return(raisepriority_rep); }
   enum EP_MM_MODE mixmode(void) const { return(mixmode_rep); }
 
   /**

@@ -107,7 +107,6 @@ void ECA_CHAINSETUP::set_defaults(void) {
   set_buffersize(atoi(ecaresources->resource("default-buffersize").c_str()));
 
   set_sample_rate(atol(ecaresources->resource("default-samplerate").c_str()));
-  raisepriority_rep = ecaresources->boolean_resource("default-to-raisepriority");
   
   toggle_double_buffering(ecaresources->boolean_resource("default-to-double-buffering"));
   toggle_precise_sample_rates(ecaresources->boolean_resource("default-to-precise-sample-rates"));
@@ -268,13 +267,6 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
       setup_name = get_argument_number(1, argu);
       ecadebug->msg("(eca-chainsetup) Setting chainsetup name to \""
 		    + setup_name + "\".");
-      break;
-    }
-
-  case 'r':
-    {
-      ecadebug->msg("(eca-chainsetup) Raised-priority mode enabled.");
-      raisepriority_rep = true;
       break;
     }
 
@@ -637,7 +629,6 @@ string ECA_CHAINSETUP::general_options_to_string(void) const {
   default: { }
   }
 
-  if (raised_priority()) t << " -r";
   if (output_openmode() == si_write) t << " -x";
   if (double_buffering()) t << " -z:db";
   if (precise_sample_rates()) t << " -z:psr";

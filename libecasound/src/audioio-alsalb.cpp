@@ -35,7 +35,7 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-ALSALBDEVICE::ALSALBDEVICE (int card, 
+ALSA_LOOPBACK_DEVICE::ALSA_LOOPBACK_DEVICE (int card, 
 			    int device, 
 			    const SIMODE mode, 
 			    const ECA_AUDIO_FORMAT& form, 
@@ -52,7 +52,7 @@ ALSALBDEVICE::ALSALBDEVICE (int card,
   eca_alsa_load_dynamic_support();
 }
 
-void ALSALBDEVICE::open(void) throw(ECA_ERROR*) {
+void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
   if (is_open() == true) return;
   int err;
   if (io_mode() == si_read) {
@@ -60,6 +60,7 @@ void ALSALBDEVICE::open(void) throw(ECA_ERROR*) {
       if ((err = dl_snd_pcm_loopback_open(&audio_fd, 
 					  card_number, 
 					  device_number,
+					  0, // subdev
 					  SND_PCM_LB_OPEN_PLAYBACK)) < 0) {
 	throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(dl_snd_strerror(err))));
       }
@@ -68,6 +69,7 @@ void ALSALBDEVICE::open(void) throw(ECA_ERROR*) {
       if ((err = dl_snd_pcm_loopback_open(&audio_fd, 
 					  card_number, 
 					  device_number,
+					  0, // subdev
 					  SND_PCM_LB_OPEN_CAPTURE)) < 0) {
 	throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to open ALSA-device for reading; error: " + string(dl_snd_strerror(err))));
       }
@@ -81,7 +83,6 @@ void ALSALBDEVICE::open(void) throw(ECA_ERROR*) {
   // Set blocking mode.
 
   dl_snd_pcm_loopback_block_mode(audio_fd, 1);    // enable block mode
-
 
   // -------------------------------------------------------------------
   // Set fragment size.
@@ -108,7 +109,11 @@ void ALSALBDEVICE::open(void) throw(ECA_ERROR*) {
   }
 
   pf.rate = samples_per_second();
+#ifdef ALSALIB_032
   pf.channels = channels();
+#else
+  pf.voices = channels();
+#endif
 
   if (io_mode() == si_read) {
     err = dl_snd_pcm_loopback_format(audio_fd, &pf);
@@ -119,22 +124,43 @@ void ALSALBDEVICE::open(void) throw(ECA_ERROR*) {
   toggle_open_state(true);
 }
 
-void ALSALBDEVICE::close(void) {
+void ALSA_LOOPBACK_DEVICE::close(void) {
   if (is_open()) {
     dl_snd_pcm_loopback_close(audio_fd);
   }    
   toggle_open_state(false);
 }
 
-long int ALSALBDEVICE::read_samples(void* target_buffer, 
+long int ALSA_LOOPBACK_DEVICE::read_samples(void* target_buffer, 
 				 long int samples) {
+#ifdef ALSALIB_031
   return(dl_snd_pcm_loopback_read(audio_fd, target_buffer, frame_size() * samples) / frame_size());
+#else
+  // not implemented
+#endif
 }
 
-ALSALBDEVICE::~ALSALBDEVICE(void) {
+ALSA_LOOPBACK_DEVICE::~ALSA_LOOPBACK_DEVICE(void) {
   close();
   eca_alsa_unload_dynamic_support();
 }
 
-#endif // COMPILE_ALSA
+#ifdef ALSALIB_050
+void loopback_callback_data(void *private_data, 
+			    char *buffer,
+			    size_t count) {
 
+}
+
+void loopback_callback_position_change(void *private_data, 
+				       unsigned int pos) {
+
+}
+
+void loopback_callback_format_change(void *private_data,
+				     snd_pcm_format_t *format) {
+
+}
+#endif
+
+#endif // COMPILE_ALSA

@@ -43,6 +43,9 @@ static bool eca_alsa_dynlib_initialized = false;
 int (*dl_snd_pcm_open)(snd_pcm_t **,int,int,int);
 int (*dl_snd_pcm_close)(snd_pcm_t *handle);
 const char* (*dl_snd_strerror)(int);
+ssize_t (*dl_snd_pcm_write)(snd_pcm_t *handle, const void *buffer, size_t size);
+ssize_t (*dl_snd_pcm_read)(snd_pcm_t *handle, void *buffer, size_t size);
+#ifdef ALSALIB_032
 int (*dl_snd_pcm_block_mode)(snd_pcm_t *handle, int enable);
 int (*dl_snd_pcm_info)(snd_pcm_t *handle, snd_pcm_info_t * info);
 int (*dl_snd_pcm_playback_info)(snd_pcm_t *handle, snd_pcm_playback_info_t * info);
@@ -54,25 +57,44 @@ int (*dl_snd_pcm_drain_playback)(snd_pcm_t *handle);
 int (*dl_snd_pcm_flush_playback)(snd_pcm_t *handle);
 int (*dl_snd_pcm_playback_pause)(snd_pcm_t *handle, int enable);
 int (*dl_snd_pcm_playback_time)(snd_pcm_t *handle, int enable);
-ssize_t (*dl_snd_pcm_write)(snd_pcm_t *handle, const void *buffer, size_t size);
-ssize_t (*dl_snd_pcm_read)(snd_pcm_t *handle, void *buffer, size_t size);
 int (*dl_snd_pcm_capture_info)(snd_pcm_t *handle, snd_pcm_capture_info_t * info);
 int (*dl_snd_pcm_capture_format)(snd_pcm_t *handle, snd_pcm_format_t * format);
 int (*dl_snd_pcm_capture_params)(snd_pcm_t *handle, snd_pcm_capture_params_t * params);
 int (*dl_snd_pcm_capture_status)(snd_pcm_t *handle, snd_pcm_capture_status_t * status);
 int (*dl_snd_pcm_capture_time)(snd_pcm_t *handle, int enable);
+#else 
+int (*dl_snd_pcm_nonblock_mode)(snd_pcm_t *handle, int enable);
+int (*dl_snd_pcm_info)(snd_pcm_t *handle, snd_pcm_info_t * info);
+int (*dl_snd_pcm_channel_info)(snd_pcm_t *handle, snd_pcm_channel_info_t * info);
+int (*dl_snd_pcm_channel_params)(snd_pcm_t *handle, snd_pcm_channel_params_t * params);
+int (*dl_snd_pcm_channel_status)(snd_pcm_t *handle, snd_pcm_channel_status_t * status);
+int (*dl_snd_pcm_channel_setup)(snd_pcm_t *handle, snd_pcm_channel_setup_t * setup);
+int (*dl_snd_pcm_channel_prepare)(snd_pcm_t *handle, int);
+int (*dl_snd_pcm_channel_go)(snd_pcm_t *handle, int channel);
+int (*dl_snd_pcm_sync_go)(snd_pcm_t *handle, snd_pcm_sync_t *sync);
+int (*dl_snd_pcm_playback_drain)(snd_pcm_t *handle);
+int (*dl_snd_pcm_channel_flush)(snd_pcm_t *handle, int channel);
+int (*dl_snd_pcm_playback_pause)(snd_pcm_t *handle, int enable);
+#endif
 
 // ---
 // ALSA-lib pcm loopback routines (snd_pcm_loopback_*)
 // ---
 
-int (*dl_snd_pcm_loopback_open)(snd_pcm_loopback_t **handle, int card, int device, int mode);
 int (*dl_snd_pcm_loopback_close)(snd_pcm_loopback_t *handle);
-// int (*dl_snd_pcm_loopback_file_descriptor)(snd_pcm_loopback_t *handle);
+int (*dl_snd_pcm_loopback_file_descriptor)(snd_pcm_loopback_t *handle);
 int (*dl_snd_pcm_loopback_block_mode)(snd_pcm_loopback_t *handle, int enable);
 int (*dl_snd_pcm_loopback_stream_mode)(snd_pcm_loopback_t *handle, int mode);
 int (*dl_snd_pcm_loopback_format)(snd_pcm_loopback_t *handle, snd_pcm_format_t * format);
+
+#ifdef ALSALIB_032
+int (*dl_snd_pcm_loopback_open)(snd_pcm_loopback_t **handle, int card, int device, int mode);
 ssize_t (*dl_snd_pcm_loopback_read)(snd_pcm_loopback_t *handle, void *buffer, size_t size);
+#else
+int (*dl_snd_pcm_loopback_open)(snd_pcm_loopback_t **handle, int card, int device, int subdev, int mode);
+int (*dl_snd_pcm_loopback_status)(snd_pcm_loopback_t *handle, snd_pcm_loopback_status_t * status);
+ssize_t (*dl_snd_pcm_loopback_read)(snd_pcm_loopback_t *handle, snd_pcm_loopback_callbacks_t * callbacks);
+#endif
 
 // ---------------------------------------------------------------------
 
@@ -85,13 +107,6 @@ int (*dl_snd_rawmidi_close)(snd_rawmidi_t *handle);
 int (*dl_snd_rawmidi_file_descriptor)(snd_rawmidi_t *handle);
 int (*dl_snd_rawmidi_block_mode)(snd_rawmidi_t *handle, int enable);
 int (*dl_snd_rawmidi_info)(snd_rawmidi_t *handle, snd_rawmidi_info_t * info);
-int (*dl_snd_rawmidi_output_params)(snd_rawmidi_t *handle, snd_rawmidi_output_params_t * params);
-int (*dl_snd_rawmidi_input_params)(snd_rawmidi_t *handle, snd_rawmidi_input_params_t * params);
-int (*dl_snd_rawmidi_output_status)(snd_rawmidi_t *handle, snd_rawmidi_output_status_t * status);
-int (*dl_snd_rawmidi_input_status)(snd_rawmidi_t *handle, snd_rawmidi_input_status_t * status);
-int (*dl_snd_rawmidi_drain_output)(snd_rawmidi_t *handle);
-int (*dl_snd_rawmidi_flush_output)(snd_rawmidi_t *handle);
-int (*dl_snd_rawmidi_flush_input)(snd_rawmidi_t *handle);
 ssize_t (*dl_snd_rawmidi_write)(snd_rawmidi_t *handle, const void *buffer, size_t size);
 ssize_t (*dl_snd_rawmidi_read)(snd_rawmidi_t *handle, void *buffer, size_t size);
 
@@ -138,6 +153,11 @@ void eca_alsa_load_dl_snd_pcm(void) {
   dl_snd_pcm_close = 
     (int (*)(snd_pcm_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_close");
   dl_snd_strerror = (const char* (*)(int))dlsym(eca_alsa_dynlib_handle, "snd_strerror");
+  dl_snd_pcm_write = 
+    (int (*)(snd_pcm_t *, const void *, size_t))dlsym(eca_alsa_dynlib_handle, "snd_pcm_write");
+  dl_snd_pcm_read = 
+    (int (*)(snd_pcm_t *, const void *, size_t))dlsym(eca_alsa_dynlib_handle, "snd_pcm_read");
+#ifdef ALSALIB_032
   dl_snd_pcm_playback_pause =
     (int (*)(snd_pcm_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_playback_pause");
   dl_snd_pcm_block_mode = 
@@ -160,32 +180,7 @@ void eca_alsa_load_dl_snd_pcm(void) {
     (int (*)(snd_pcm_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_playback_pause");
   dl_snd_pcm_playback_time = 
     (int (*)(snd_pcm_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_playback_time");
-  dl_snd_pcm_write = 
-    (int (*)(snd_pcm_t *, const void *, size_t))dlsym(eca_alsa_dynlib_handle, "snd_pcm_write");
-  dl_snd_pcm_read = 
-    (int (*)(snd_pcm_t *, const void *, size_t))dlsym(eca_alsa_dynlib_handle, "snd_pcm_read");
 
-#ifdef OLD_ALSALIB    
-  // ---
-  // ALSA 0.3.1 -> 0.3.2
-  // ---
-  dl_snd_pcm_capture_info = 
-    (int (*)(snd_pcm_t *, snd_pcm_capture_info_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_record_info");
-  dl_snd_pcm_capture_format = 
-    (int (*)(snd_pcm_t *handle, snd_pcm_format_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_record_format");
-  dl_snd_pcm_capture_params = 
-    (int (*)(snd_pcm_t *handle, snd_pcm_capture_params_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_record_params");
-  dl_snd_pcm_capture_status = 
-    (int (*)(snd_pcm_t *handle, snd_pcm_capture_status_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_record_status");
-  dl_snd_pcm_flush_capture = 
-    (int (*)(snd_pcm_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_flush_record");
-  dl_snd_pcm_capture_time = 
-    (int (*)(snd_pcm_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_record_time");
-
-#else 
-  // ---
-  // ALSA >0.3.2
-  // ---
   dl_snd_pcm_capture_info = 
     (int (*)(snd_pcm_t *, snd_pcm_capture_info_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_capture_info");
   dl_snd_pcm_capture_format = 
@@ -198,13 +193,35 @@ void eca_alsa_load_dl_snd_pcm(void) {
     (int (*)(snd_pcm_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_flush_capture");
   dl_snd_pcm_capture_time = 
     (int (*)(snd_pcm_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_capture_time");
+#else
+  dl_snd_pcm_nonblock_mode = 
+    (int (*)(snd_pcm_t *handle, int ))dlsym(eca_alsa_dynlib_handle, "snd_pcm_nonblock_mode");
+  dl_snd_pcm_info =
+    (int (*)(snd_pcm_t *, snd_pcm_info_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_info");
+  dl_snd_pcm_channel_info =
+    (int (*)(snd_pcm_t *, snd_pcm_channel_info_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_channel_info");
+  dl_snd_pcm_channel_params =
+    (int (*)(snd_pcm_t *, snd_pcm_channel_params_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_channel_params");
+  dl_snd_pcm_channel_status =
+    (int (*)(snd_pcm_t *, snd_pcm_channel_status_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_channel_status");
+  dl_snd_pcm_channel_setup =
+    (int (*)(snd_pcm_t *, snd_pcm_channel_setup_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_channel_setup");
+  dl_snd_pcm_playback_drain = 
+    (int (*)(snd_pcm_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_playback_drain");
+  dl_snd_pcm_channel_prepare =
+    (int (*)(snd_pcm_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_channel_prepare");
+  dl_snd_pcm_channel_go =
+    (int (*)(snd_pcm_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_channel_go");
+  dl_snd_pcm_sync_go =
+    (int (*)(snd_pcm_t *, snd_pcm_sync_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_sync_go");
+  dl_snd_pcm_channel_flush =
+    (int (*)(snd_pcm_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_channel_flush");
+  dl_snd_pcm_playback_pause =
+    (int (*)(snd_pcm_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_playback_pause");
 #endif
-
 }
 
 void eca_alsa_load_dl_snd_pcm_loopback(void) {
-  dl_snd_pcm_loopback_open = 
-    (int (*)(snd_pcm_loopback_t **, int, int, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_open");
   dl_snd_pcm_loopback_close = 
     (int (*)(snd_pcm_loopback_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_close");
   dl_snd_pcm_loopback_block_mode =
@@ -213,9 +230,19 @@ void eca_alsa_load_dl_snd_pcm_loopback(void) {
     (int (*)(snd_pcm_loopback_t *, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_stream_mode");
   dl_snd_pcm_loopback_format =
     (int (*)(snd_pcm_loopback_t *handle, snd_pcm_format_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_format");
-
+#ifdef ALSALIB_032
+  dl_snd_pcm_loopback_open = 
+    (int (*)(snd_pcm_loopback_t **, int, int, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_open");
   dl_snd_pcm_loopback_read = 
     (int (*)(snd_pcm_loopback_t *, void *, size_t))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_read");
+#else
+  dl_snd_pcm_loopback_open = 
+    (int (*)(snd_pcm_loopback_t **, int, int, int, int))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_open");
+  dl_snd_pcm_loopback_status = 
+    (int (*)(snd_pcm_loopback_t *, snd_pcm_loopback_status_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_status");
+  dl_snd_pcm_loopback_read = 
+    (int (*)(snd_pcm_loopback_t *, snd_pcm_loopback_callbacks_t *))dlsym(eca_alsa_dynlib_handle, "snd_pcm_loopback_read");
+#endif
 }
 
 void eca_alsa_load_dl_snd_rawmidi(void) {
@@ -230,32 +257,11 @@ void eca_alsa_load_dl_snd_rawmidi(void) {
     (int (*)(snd_rawmidi_t *handle)) dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_file_descriptor");
 
   dl_snd_rawmidi_block_mode =
-    (int (*)(snd_rawmidi_t *handle, int enable)) dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_");
+    (int (*)(snd_rawmidi_t *handle, int)) dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_block_mode");
 
   dl_snd_rawmidi_info =
     (int (*)(snd_rawmidi_t *handle, snd_rawmidi_info_t * info))
     dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_info");
-
-  dl_snd_rawmidi_output_params =
-    (int (*)(snd_rawmidi_t *handle, snd_rawmidi_output_params_t * params)) dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_output_params");
-
-  dl_snd_rawmidi_input_params =
-    (int (*)(snd_rawmidi_t *handle, snd_rawmidi_input_params_t * params)) dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_input_params");
-
-  dl_snd_rawmidi_output_status =
-    (int (*)(snd_rawmidi_t *handle, snd_rawmidi_output_status_t * status)) dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_output_status");
-
-  dl_snd_rawmidi_input_status =
-    (int (*)(snd_rawmidi_t *handle, snd_rawmidi_input_status_t * status)) dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_input_status");
-
-  dl_snd_rawmidi_drain_output =
-    (int (*)(snd_rawmidi_t *handle)) dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_drain_output");
-
-  dl_snd_rawmidi_flush_output =
-    (int (*)(snd_rawmidi_t *handle)) dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_flush_output");
-
-  dl_snd_rawmidi_flush_input =
-    (int (*)(snd_rawmidi_t *handle)) dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_flush_input");
 
   dl_snd_rawmidi_write =
     (int (*)(snd_rawmidi_t *handle, const void *buffer, size_t size)) dlsym(eca_alsa_dynlib_handle, "snd_rawmidi_write");
@@ -265,5 +271,3 @@ void eca_alsa_load_dl_snd_rawmidi(void) {
 }
 
 #endif
-
-

@@ -92,7 +92,7 @@ void ECA_PROCESSOR::init(void) {
   // ---
   // Handle priority
   // ---
-  if (csetup->raised_priority() == true) {
+  if (eparams->raised_priority() == true) {
     struct sched_param sparam;
     sparam.sched_priority = 10;
     if (sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)

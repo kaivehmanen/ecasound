@@ -37,6 +37,7 @@
 #include "audioio-mp3.h"
 #include "audioio-mikmod.h"
 #include "audioio-alsa.h"
+#include "audioio-alsa2.h"
 #include "audioio-alsalb.h"
 #include "audioio-af.h"
 #include "audioio-raw.h"
@@ -286,12 +287,18 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu,
       int card = atoi(cardstr.c_str());
       int device = atoi(devicestr.c_str());
 
-#ifdef COMPILE_ALSA
+#ifdef ALSALIB_050
       if (mode != si_read)
-	main_file = new ALSADEVICE (card, device, si_write, format,
+	main_file = new ALSA_PCM2_DEVICE (card, device, si_write, format,
+					  buffersize_arg);
+      else
+	main_file = new ALSA_PCM2_DEVICE (card, device, mode, format, buffersize_arg);
+#else
+      if (mode != si_read)
+	main_file = new ALSA_PCM_DEVICE (card, device, si_write, format,
 				    buffersize_arg);
       else
-	main_file = new ALSADEVICE (card, device, mode, format, buffersize_arg);
+	main_file = new ALSA_PCM_DEVICE (card, device, mode, format, buffersize_arg);
 #endif
       break;
     }
@@ -308,9 +315,9 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu,
 
 #ifdef COMPILE_ALSA
       if (mode != si_read)
-	main_file = new ALSALBDEVICE (card, device, si_write, format, buffersize_arg, loop_mode);
+	main_file = new ALSA_LOOPBACK_DEVICE (card, device, si_write, format, buffersize_arg, loop_mode);
       else
-	main_file = new ALSALBDEVICE (card, device, mode, format, buffersize_arg, loop_mode);
+	main_file = new ALSA_LOOPBACK_DEVICE (card, device, mode, format, buffersize_arg, loop_mode);
 #endif
       break;
     }
@@ -320,11 +327,18 @@ AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu,
       int card = atoi(get_argument_number(2, argu).c_str());
       int device = atoi(get_argument_number(3, argu).c_str());
 
-#ifdef COMPILE_ALSA
+#ifdef ALSALIB_050
       if (mode != si_read)
-	main_file = new ALSADEVICE (card, device, si_write, format, buffersize_arg);
+	main_file = new ALSA_PCM2_DEVICE (card, device, si_write, format,
+					  buffersize_arg);
       else
-	main_file = new ALSADEVICE (card, device, mode, format, buffersize_arg);
+	main_file = new ALSA_PCM2_DEVICE (card, device, mode, format, buffersize_arg);
+#else
+      if (mode != si_read)
+	main_file = new ALSA_PCM_DEVICE (card, device, si_write, format,
+					 buffersize_arg);
+      else
+	main_file = new ALSA_PCM_DEVICE (card, device, mode, format, buffersize_arg);
 #endif
       break;
     }

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)    (last edited: 10012000) **
+** ecasound - user visible changes (NEWS)    (last edited: 14012000) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,18 +14,22 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.9r9 <*-
 
-??012000 (v1.6.11d10)
+14012000 (v1.6.11d10)
 	- added: -ef4 - 2th-order, 24dB filter which simulates
 	         an analog active RC-lowpass filter - submitted by 
 		 Stefan Fendt
+	- added: support for ALSA 0.5.x (pcm2, no loopback)
+	- removed: support for ALSA 0.3.1 and older
 	- changed: 'cs-edit' now possible while processing
-	- fixed: removed the huge delay in (dis)connecting 
-		 chainsetups
+	- changed: raised-priority mode moved from chainsetups 
+		   to session-level (isn't saved to ecs-files, etc)
+	- fixed: removed the huge delay in (dis)connecting chainsetups
 	- fixed: 'fw', 'rw', 'setpos' crashed if executed without
 		 parameters 
 	- fixed: under/overrun problems with ALSA drivers
 	- fixed: stdin/stdout not working
 	- fixed: c-add and c-select didn't accept multiple parameters
+	- fixed: problems with -etf memory handling
 03012000 (v1.6.10d10)
 	- added: a realtime null audio device 'rtnull' - simulates
 		 soundcard behaviour (warns about over/underruns)
@@ -664,4 +668,3 @@ Last officially released version is -*> v1.6.9r9 <*-
            a very simple command line DSP util (running under Os/2)
 	
 -----------------------------------------------------------------------
-

@@ -15,15 +15,17 @@
 
 #include "samplebuffer.h"
 
+#ifdef ALSALIB_050
+void loopback_callback_data(void *private_data, char *buffer, size_t count);
+void loopback_callback_position_change(void *private_data, unsigned int pos);
+void loopback_callback_format_change(void *private_data, snd_pcm_format_t *format);
+#endif
+
 /**
  * Class for handling ALSA loopback-devices (Advanced Linux Sound Architecture).
  * @author Kai Vehmanen
  */
-class ALSALBDEVICE : public AUDIO_IO_DEVICE {
-
-#if SND_LIB_VERSION<769    // if alsa-lib older than 0.3.1
-  typedef snd_pcm_t void*;
-#endif
+class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
 
   snd_pcm_loopback_t *audio_fd;
 
@@ -44,16 +46,16 @@ class ALSALBDEVICE : public AUDIO_IO_DEVICE {
   void stop(void) { }
   void start(void) { }
 
-  ALSALBDEVICE (int card, int device, const SIMODE mode, const
+  ALSA_LOOPBACK_DEVICE (int card, int device, const SIMODE mode, const
 		ECA_AUDIO_FORMAT& form, long int buffersize,
 		bool playback_mode = true);
-  ALSALBDEVICE::~ALSALBDEVICE(void);
-  ALSALBDEVICE* clone(void) { return new ALSALBDEVICE(*this); }
+  ALSA_LOOPBACK_DEVICE::~ALSA_LOOPBACK_DEVICE(void);
+  ALSA_LOOPBACK_DEVICE* clone(void) { return new ALSA_LOOPBACK_DEVICE(*this); }
   
  private:
   
-  //  ALSALBDEVICE(const ALSALBDEVICE& x) { }
-  ALSALBDEVICE& operator=(const ALSALBDEVICE& x) { return *this; }
+  //  ALSA_LOOPBACK_DEVICE(const ALSA_LOOPBACK_DEVICE& x) { }
+  ALSA_LOOPBACK_DEVICE& operator=(const ALSA_LOOPBACK_DEVICE& x) { return *this; }
 };
 
 #endif // COMPILE_ALSA

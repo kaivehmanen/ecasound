@@ -18,7 +18,8 @@
 // ------------------------------------------------------------------------
 
 #include <config.h>
-#ifdef COMPILE_ALSA
+// #ifdef COMPILE_ALSA
+#ifdef ALSALIB_032
 
 #include <string>
 #include <cstring>
@@ -35,7 +36,7 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-ALSADEVICE::ALSADEVICE (int card, 
+ALSA_PCM_DEVICE::ALSA_PCM_DEVICE (int card, 
 			int device, 
 			const SIMODE mode, 
 			const ECA_AUDIO_FORMAT& form, 
@@ -51,11 +52,11 @@ ALSADEVICE::ALSADEVICE (int card,
   buffersize(bsize, samples_per_second());
 }
 
-void ALSADEVICE::open(void) throw(ECA_ERROR*) {
+void ALSA_PCM_DEVICE::open(void) {
   if (is_open() == true) return;
   int err;
   if (io_mode() == si_read) {
-#ifdef OLD_ALSALIB
+#ifdef ALSALIB_031
     err = dl_snd_pcm_open(&audio_fd, 
 			  card_number, 
 			  device_number,
@@ -98,7 +99,7 @@ void ALSADEVICE::open(void) throw(ECA_ERROR*) {
     throw(new ECA_ERROR("AUDIOIO-ALSA", "buffersize() is 0!", ECA_ERROR::stop));
     
   if (io_mode() == si_read) {
-#ifdef OLD_ALSALIB
+#ifdef ALSALIB_031
     snd_pcm_record_info_t pcm_info;
     snd_pcm_record_params_t pp;
 #else
@@ -179,7 +180,7 @@ void ALSADEVICE::open(void) throw(ECA_ERROR*) {
   toggle_open_state(true);
 }
 
-void ALSADEVICE::stop(void) {
+void ALSA_PCM_DEVICE::stop(void) {
   ecadebug->msg(1, "(audioio-alsa) Audio device \"" + label() + "\" disabled.");
   if (io_mode() == si_write) {
     dl_snd_pcm_playback_pause(audio_fd, 1);
@@ -190,7 +191,7 @@ void ALSADEVICE::stop(void) {
   is_triggered = false;
 }
 
-void ALSADEVICE::close(void) {
+void ALSA_PCM_DEVICE::close(void) {
   if (is_open()) {
     if (io_mode() != si_read) {
       snd_pcm_playback_status_t pb_status;
@@ -199,7 +200,7 @@ void ALSADEVICE::close(void) {
       dl_snd_pcm_drain_playback(audio_fd);
     }
     else if (io_mode() == si_read) {
-#ifdef OLD_ALSALIB
+#ifdef ALSALIB_031
       snd_pcm_record_status_t ca_status;
 #else
       snd_pcm_capture_status_t ca_status;
@@ -213,7 +214,7 @@ void ALSADEVICE::close(void) {
   toggle_open_state(false);
 }
 
-void ALSADEVICE::start(void) {
+void ALSA_PCM_DEVICE::start(void) {
   if (is_open() == false) {
     open();
   }
@@ -231,16 +232,16 @@ void ALSADEVICE::start(void) {
   }
 }
 
-long int ALSADEVICE::read_samples(void* target_buffer, 
+long int ALSA_PCM_DEVICE::read_samples(void* target_buffer, 
 				 long int samples) {
   return(dl_snd_pcm_read(audio_fd, target_buffer, frame_size() * samples) / frame_size());
 }
 
-void ALSADEVICE::write_samples(void* target_buffer, long int samples) {
+void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
   dl_snd_pcm_write(audio_fd, target_buffer, frame_size() * samples);
 }
 
-ALSADEVICE::~ALSADEVICE(void) { 
+ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) { 
   close(); 
 
   if (io_mode() != si_read) {
@@ -261,4 +262,6 @@ ALSADEVICE::~ALSADEVICE(void) {
   eca_alsa_unload_dynamic_support();
 }
 
-#endif // COMPILE_ALSA
+#endif // ALSALIB_032
+// #endif // COMPILE_ALSA
+

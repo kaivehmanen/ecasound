@@ -19,18 +19,15 @@
  * Class for handling ALSA-devices (Advanced Linux Sound Architecture).
  * @author Kai Vehmanen
  */
-class ALSADEVICE : public AUDIO_IO_DEVICE {
+class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
 
-// alsa-lib older than 0.3.1
-#if SND_LIB_VERSION<769    
+#ifdef ALSALIB_031
   typedef snd_pcm_t void*;
 #endif
-
   snd_pcm_t *audio_fd;
 
-  //  static int (ALSADEVICE::*snd_pcm_open)(snd_pcm_t **,int,int,int);
-
   int card_number, device_number;
+  int pcm_mode, pcm_channel;
 
   long int bytes_read;
 
@@ -49,18 +46,14 @@ class ALSADEVICE : public AUDIO_IO_DEVICE {
   void stop(void);
   void start(void);
 
-  ALSADEVICE (int card, int device, const SIMODE mode, const ECA_AUDIO_FORMAT& form, long int buffersize);
-  ALSADEVICE::~ALSADEVICE(void);
-  ALSADEVICE* clone(void) { return new ALSADEVICE(*this); }
+  ALSA_PCM_DEVICE (int card, int device, const SIMODE mode, const ECA_AUDIO_FORMAT& form, long int buffersize);
+  ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void);
+  ALSA_PCM_DEVICE* clone(void) { return new ALSA_PCM_DEVICE(*this); }
   
  private:
   
-  //  ALSADEVICE(const ALSADEVICE& x) { }
-  ALSADEVICE& operator=(const ALSADEVICE& x) { return *this; }
+  ALSA_PCM_DEVICE& operator=(const ALSA_PCM_DEVICE& x) { return *this; }
 };
 
 #endif // COMPILE_ALSA
 #endif
-
-
-

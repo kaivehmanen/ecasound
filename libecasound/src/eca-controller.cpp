@@ -771,23 +771,12 @@ void ECA_CONTROLLER::start_engine(bool ignore_lock) {
 
   ifstream fin(ecasound_lockfile.c_str());
   if (!fin || ignore_lock) {
-    struct sched_param sparam;
-    sparam.sched_priority = 10;
-
-    if (session_rep->connected_chainsetup->raised_priority() == true) {
-      if (sched_setscheduler(0, SCHED_FIFO, &sparam) == -1) 
-  	ecadebug->msg("(eca-controller) Unable to change scheduling policy!");
-      else 
-  	ecadebug->msg("(eca-controller) Using realtime-scheduling (SCHED_FIFO/10).");
-      pthread_attr_t th_attr;
-      pthread_attr_init(&th_attr);
-      //      pthread_attr_setschedpolicy(&th_attr, SCHED_FIFO);
-      //      pthread_attr_setschedparam(&th_attr, &sparam);
-      //      ecadebug->msg("(eca-controller) Using realtime-scheduling (SCHED_FIFO/10, engine-thread).");
-      start_normal_thread(session_rep, retcode, &th_cqueue, &th_attr);
-    }
-    else 
-      start_normal_thread(session_rep, retcode, &th_cqueue, NULL);
+    pthread_attr_t th_attr;
+    pthread_attr_init(&th_attr);
+    //      pthread_attr_setschedpolicy(&th_attr, SCHED_FIFO);
+    //      pthread_attr_setschedparam(&th_attr, &sparam);
+    //      ecadebug->msg("(eca-controller) Using realtime-scheduling (SCHED_FIFO/10, engine-thread).");
+    start_normal_thread(session_rep, retcode, &th_cqueue, &th_attr);
   }
   else {
     MESSAGE_ITEM mitem;
@@ -843,7 +832,9 @@ void ECA_CONTROLLER::print_general_status(void) {
 
   st_info_string << "Engine status: \"" << engine_status() << "\"\n";
   if (session_rep->multitrack_mode) st_info_string << "Multitrack-mode: enabled\n";
+  if (session_rep->multitrack_mode) st_info_string << "Multitrack-mode: enabled\n";
   else st_info_string << "Multitrack-mode: disabled\n";
+  if (session_rep->raised_priority()) st_info_string << "Raised-priority mode: enabled\n";
 
   ecadebug->msg(st_info_string.to_string());
 }
@@ -872,7 +863,6 @@ string ECA_CONTROLLER::chainsetup_status(void) const {
     result += "\n\tFlags:\t\t\t";
     if ((*cs_citer)->double_buffering()) result += "D";
     if ((*cs_citer)->precise_sample_rates()) result += "P";
-    if ((*cs_citer)->raised_priority()) result += "R";
     if ((*cs_citer)->is_valid()) 
       result += "\n\tState: \t\t\tvalid - can be connected";
     else
@@ -1647,7 +1637,7 @@ void ECA_CONTROLLER::toggle_raise_priority(bool v) {
   // require:
   assert(is_selected() == true);
   // --------
-  selected_chainsetup_rep->toggle_raised_priority(v);
+  session_rep->toggle_raised_priority(v);
 }
 
 void start_normal_thread(ECA_SESSION* param, int retcode, pthread_t*

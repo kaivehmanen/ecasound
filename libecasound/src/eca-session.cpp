@@ -48,6 +48,7 @@ ECA_SESSION::ECA_SESSION(void) {
   //  pthread_mutex_init(&status_lock, NULL);
   ecaresources.load();
   set_defaults();
+  set_scheduling();
 }
 
 ECA_SESSION::~ECA_SESSION(void) {
@@ -87,6 +88,8 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*) {
     }
   }
 
+  set_scheduling();
+
   if (iactive == false) {
     // These were added for convenience...
     if (cline.size() < 2) {
@@ -109,6 +112,7 @@ void ECA_SESSION::set_defaults(void) {
   // ---
   // Interpret resources 
 
+  raisepriority_rep = ecaresources.boolean_resource("default-to-raisepriority");
   if (ecaresources.resource("default-to-interactive-mode") == "true") 
     iactive = true;
   else
@@ -126,6 +130,18 @@ void ECA_SESSION::set_defaults(void) {
   MIKMOD_INTERFACE::set_mikmod_args(ecaresources.resource("ext-mikmod-args"));
 
   multitrack_mode = false;
+}
+
+void ECA_SESSION::set_scheduling(void) {
+  if (raisepriority_rep == true) {
+    struct sched_param sparam;
+    sparam.sched_priority = 10;
+
+    if (sched_setscheduler(0, SCHED_FIFO, &sparam) == -1) 
+      ecadebug->msg("(eca-session) Unable to change scheduling policy!");
+    else 
+      ecadebug->msg("(eca-session) Using realtime-scheduling (SCHED_FIFO/10).");
+  }
 }
 
 void ECA_SESSION::add_chainsetup(const string& name) {
@@ -368,6 +384,13 @@ void ECA_SESSION::interpret_general_option (const string& argu) {
   case 'h':      // help!
     cout << ecasound_parameter_help();
     break;
+
+  case 'r':
+    {
+      ecadebug->msg("(eca-session) Raised-priority mode enabled.");
+      raisepriority_rep = true;
+      break;
+    }
 
   default: { }
   }

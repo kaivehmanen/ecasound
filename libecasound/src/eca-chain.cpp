@@ -183,6 +183,7 @@ void CHAIN::init(void) {
   out_channels_rep = output_id->channels();
 
   int init_channels = in_channels_rep;
+  audioslot.number_of_channels(init_channels);
   for(int p = 0; p != chainops.size(); p++) {
     chainops[p]->init(&audioslot);
     init_channels = chainops[p]->output_channels(init_channels);

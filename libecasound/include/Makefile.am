@@ -13,7 +13,8 @@ ecasound_audioio_src = audioio-cdr.h audioio-cdr_impl.h \
 audioio-ewf.h audioio-mp3.h audioio-mp3_impl.h audioio-wave.h \
 audioio-wave_impl.h audioio.h audioio-af.h audioio-raw.h \
 audioio-oss.h audioio-oss_impl.h audioio-alsalb.h audioio-alsa.h \
-audioio-null.h audioio-rtnull.h audioio-mikmod.h audioio-types.h
+audioio-null.h audioio-rtnull.h audioio-mikmod.h audioio-types.h \
+audioio-alsa2.h
 
 ecasound_controller_src = \
 	generic-controller.h \
