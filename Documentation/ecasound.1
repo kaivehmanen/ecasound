@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "13\&.08\&.2003" "" "Multimedia software" 
+.TH "ecasound" "1" "26\&.08\&.2003" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -33,9 +33,14 @@ etc\&.)\&. See ecasound-iam(1)\&.
 .IP "-C" 
 Disables ecasound\'s interactive mode (see \'-c\')\&.
 .IP 
+.IP "-d, -dd, -ddd" 
+Increase the amount of printed debug messages\&. \fI-d\fP adds 
+some verbosity, while \fI-ddd\fP results in very detailed 
+output\&.
+.IP 
 .IP "-d:debug_level" 
-Set the debug level to \'debug_level\'\&. This a bitmasked value, 
-that defaults to 3\&. See ECA_LOGGER class documentation for 
+Set the debug level mask to \'debug_level\'\&. This a bitmasked value, 
+that defaults to 263\&. See ECA_LOGGER class documentation for 
 more detailed info about various debug_level values\&.
 .IP 
 .IP "-D" 

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 220803) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 260803) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -24,6 +24,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 for halting it without disconnecting; useful with
 		 JACK transport functions
 	- added: separate AUTHORS file; also added to the website
+	- added: -d, -dd and -d command-line options, see ecasound(1)
 	- changed: to avoid resampling faults, upper limit of 2000%
 		   set for pitchshifter's (-ei) shift-% arg; note! high
 		   values of shift-% can still cause crashes if using 
@@ -73,6 +74,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: pulse gate timing inaccuracy (-eemp); also affected
 		 the bpm pulse gate (-eemb) and thus the metronome
 		 preset (-pn:metronome)
+	- fixed: a 'setpos' on a not yet connected chainsetup would
+		 cause seeks to the wrong position for objects with 
+		 non-default samplerates
 27042003 (v2.2.3)  -** stable release **-
 	- added: support for both -0.64 and 0.65- JACK versions; 
 		 transport functionality is only enabled with the 

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>13.08.2003</h2>
+<h2>26.08.2003</h2>
 
 
     
@@ -56,9 +56,13 @@ control ecasound with simple commands ("start", "stop", "pause",
 etc.). See <a href="ecasound-iam_manpage.html">ecasound-iam(1)</a>.
 <p><p></p><dt><strong>-C</strong><dd>
 Disables ecasound's interactive mode (see '-c').
+<p><p></p><dt><strong>-d, -dd, -ddd</strong><dd>
+Increase the amount of printed debug messages. <em>-d</em> adds 
+some verbosity, while <em>-ddd</em> results in very detailed 
+output.
 <p><p></p><dt><strong>-d:debug_level</strong><dd>
-Set the debug level to 'debug_level'. This a bitmasked value, 
-that defaults to 3. See ECA_LOGGER class documentation for 
+Set the debug level mask to 'debug_level'. This a bitmasked value, 
+that defaults to 263. See ECA_LOGGER class documentation for 
 more detailed info about various debug_level values.
 <p><p></p><dt><strong>-D</strong><dd>
 Print all debug information to stderr (unbuffered, plain output

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (13.08.2003)
+       (26.08.2003)
        ()
        (Multimedia software)
 
@@ -50,9 +50,14 @@ etc.). See url(ecasound-iam(1))(ecasound-iam_manpage.html).
 dit(-C)
 Disables ecasound's interactive mode (see '-c').
 
+dit(-d, -dd, -ddd)
+Increase the amount of printed debug messages. em(-d) adds 
+some verbosity, while em(-ddd) results in very detailed 
+output.
+
 dit(-d:debug_level)
-Set the debug level to 'debug_level'. This a bitmasked value, 
-that defaults to 3. See ECA_LOGGER class documentation for 
+Set the debug level mask to 'debug_level'. This a bitmasked value, 
+that defaults to 263. See ECA_LOGGER class documentation for 
 more detailed info about various debug_level values.
 
 dit(-D)
