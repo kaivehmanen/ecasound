@@ -41,14 +41,13 @@
 using namespace std;
 
 static string::const_iterator kvu_priv_find_next_instance(const string& arg, const string::const_iterator& curpos, const string::value_type value);
-static void kvu_priv_strip_escapes(string* const input);
-
+static void kvu_priv_strip_escapes(string* const input, const string& escaped_char);
 
 /**
  * Returns a string where all regex metachars in 'arg'
  * have been quoted using a backslash.
  *
- * Reference: man regex(71
+ * Reference: man regex(7)
  */
 string kvu_string_regex_meta_escape(const string& arg)
 {
@@ -442,7 +441,7 @@ void kvu_to_lowercase(string& a)
  */
 static string::const_iterator kvu_priv_find_next_instance(const string& arg, const string::const_iterator& start, const string::value_type value)
 {
-  string::const_iterator curpos = start, ret;
+  string::const_iterator curpos = start, ret = arg.end();
 
   while(curpos != arg.end()) {
     ret = find(curpos, arg.end(), value);
@@ -481,12 +480,14 @@ string kvu_get_argument_number(int number, const string& arg)
 /**
  * Converts all backslash-commas into commas and returns
  * the result.
+ *
+ * @pre escaped_char.size() == 1
  */
-static void kvu_priv_strip_escapes(string* const input)
+static void kvu_priv_strip_escapes(string* const input, const string& escaped_char)
 {
   size_t pos; 
-  while((pos = input->find("\\,")) != string::npos) {
-    input->replace(pos, 2, ",");
+  while((pos = input->find(string("\\") + escaped_char)) != string::npos) {
+    input->replace(pos, 2, escaped_char);
   }
 }
 
@@ -507,7 +508,7 @@ vector<string> kvu_get_arguments(const string& argu)
 {
   vector<string> resvec;
 
-  string::const_iterator b = find(argu.begin(), argu.end(), ':');
+  string::const_iterator b = kvu_priv_find_next_instance(argu, argu.begin(), ':');
   string::const_iterator e;
 
   if (b == argu.end()) {
@@ -521,8 +522,9 @@ vector<string> kvu_get_arguments(const string& argu)
     e = kvu_priv_find_next_instance(argu, b, ',');
     string target = string(b, e);
     if (target.size() > 0) {
-      // FIXME: strip backslash-commas (and leave the commas in place)      
-      kvu_priv_strip_escapes(&target);
+      // strip backslash-commas (and leave the commas in place)      
+      kvu_priv_strip_escapes(&target, ",");
+      kvu_priv_strip_escapes(&target, ":");
       resvec.push_back(target);
     }
     if (e == argu.end()) break;

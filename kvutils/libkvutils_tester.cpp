@@ -245,7 +245,7 @@ static int kvu_test_2(void)
 
   /* argument string parsing: */
 
-  const string argument ("-efoobarsouNd:arg1,arg2,arg3,long\\,arg4,arg5,");
+  const string argument ("-efoobarsouNd:arg1,arg2,arg3,long\\,arg\\:4,arg5,");
 
   if (kvu_get_argument_prefix(argument) != "efoobarsouNd") {
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_argument_prefix"); 
@@ -266,7 +266,7 @@ static int kvu_test_2(void)
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_arguments (1)"); 
   }
 
-  if (vec[2] != "arg3" || vec[0] != "arg1" || vec[3] != "long,arg4") {
+  if (vec[2] != "arg3" || vec[0] != "arg1" || vec[3] != "long,arg:4") {
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_arguments (2)"); 
   }
 
