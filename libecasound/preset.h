@@ -18,7 +18,8 @@ class AUDIO_IO;
  *
  * @author Kai Vehmanen
  */
-class PRESET : public CHAIN_OPERATOR {
+class PRESET : public CHAIN_OPERATOR,
+	       public DEFINITION_BY_CONTRACT {
 
  private:
 

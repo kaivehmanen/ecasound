@@ -11,7 +11,8 @@
  * to objects supporting dynamic parameter control (classes 
  * which inherit DYNAMIC_PARAMETERS).
  */
-class GENERIC_CONTROLLER : public OPERATOR {
+class GENERIC_CONTROLLER : public OPERATOR,
+			   public DEFINITION_BY_CONTRACT {
 
   OPERATOR* target;
   CONTROLLER_SOURCE* source;

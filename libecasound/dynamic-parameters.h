@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 #include <kvutils/kvutils.h>
-#include <kvutils/definition_by_contract.h>
 
 /**
  * Virtual template class that provides a system for dynamically 
@@ -14,7 +13,7 @@
  * @author Kai Vehmanen
  */
 template<class T>
-class DYNAMIC_PARAMETERS : public DEFINITION_BY_CONTRACT {
+class DYNAMIC_PARAMETERS {
 
  public:
 

@@ -24,7 +24,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- added: updates and additions to ecasound programmer's guide
 	- changed: tries to load all internal plugins even if some 
 		   plugins were disabled during compile-time; this 
-		   makes it possible to have multiple version of same
+		   makes it possible to have multiple versions of same
                    plugin tupe (for instance, plugins for different 
 		   ALSA versions, etc)
 	- changed: ecasoundrc - mikmod-path and -args combined into

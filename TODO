@@ -61,22 +61,17 @@ Effects, routing, dsp routines:
 - generic envelope followers
 - more effects (for instance, a Schroeder reverb)
 
-Interactive-mode:
-
-- cs-copy 'chainsetupname' (duplicate chainsetup)
-
-User-interface:
+User-interfaces:
 
 - daemon mode for ecasound (ecad, ecasoundd)
 
-Library-interface:
+Other ares:
 
+- interactive mode: cs-copy 'chainsetupname' (duplicate chainsetup)
 - C-API for libecasound
-
-Misc:
-
 - smart mixing / dithering
-- few safety checks to ecatools
+- ecaduplex; tool for testing full-duplex performance, maybe
+  simulating normal multitrack recording
 
 -----------------------------------------------------------------------
 

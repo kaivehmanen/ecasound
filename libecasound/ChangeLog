@@ -2,7 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
-2000-10-10  Kai Vehmanen <kaiv@wakkanet.fi>
+2000-10-14  Kai Vehmanen <kaiv@wakkanet.fi>	
+	
+	* dynamic-parameters.h (): dropped inheritance of DEFINITION_BY_CONTRACT
+	
+2000-10-11  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* dynamic-parameters.h (): now inherits DEFINITION_BY_CONTRACT
 	* dynamic-parameters.h (default_parameter_range,is_toggle): moved
