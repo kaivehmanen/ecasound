@@ -943,6 +943,19 @@ void ECA_ENGINE::set_position(double seconds)
  */
 void ECA_ENGINE::set_position_samples(SAMPLE_SPECS::sample_pos_t samples)
 {
+  conditional_stop();
+  csetup_repp->seek_position_in_samples(samples);
+  init_engine_state();
+  conditional_start();
+}
+
+/**
+ * Seeks to position 'samples' without stopping the engine.
+ * Affects all input and outputs objects, and the chainsetup 
+ * object position.
+ */
+void ECA_ENGINE::set_position_samples_live(SAMPLE_SPECS::sample_pos_t samples)
+{
   csetup_repp->seek_position_in_samples(samples);
   init_engine_state();
 }
@@ -1084,7 +1097,8 @@ void ECA_ENGINE::interpret_queue(void)
       case ep_rewind: { change_position(- item.second); break; }
       case ep_forward: { change_position(item.second); break; }
       case ep_setpos: { set_position(item.second); break; }
-      case ep_setpos_live_samples: { set_position_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(item.second)); break; }
+      case ep_setpos_samples: { set_position_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(item.second)); break; }
+      case ep_setpos_live_samples: { set_position_samples_live(static_cast<SAMPLE_SPECS::sample_pos_t>(item.second)); break; }
       } /* switch */
     
     impl_repp->command_queue_rep.pop_front();

@@ -42,7 +42,7 @@
  */
 
 /* Debug control flow */ 
-// #define DEBUG_CFLOW
+#define DEBUG_CFLOW
 
 /* Profile callback execution */
 // #define PROFILE_CALLBACK_EXECUTION
@@ -128,7 +128,9 @@ static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t 
   else if (state == JackTransportStopped) {
     DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: JACK stopped" << endl);
 
-    if (current->jackslave_seekahead_target_rep == -1) {
+    /* 2.1 only start seek if engine is not already at correct place */
+    if (current->jackslave_seekahead_target_rep == -1 &&
+	enginepos != pos->frame) {
       DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: stopped - starting seek to "
 			    << pos->frame << "." << endl);
       eca_jack_sync_start_seek_to(state, pos, arg);
@@ -140,17 +142,30 @@ static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t 
         is the case where state info is not available at all) */
   else if (state == JackTransportStarting) {
     DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: JACK starting" << endl);
+    /* 3.1 engine at correct position */
     if (enginepos == pos->frame) {
-      DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: JACK running; correct position\n");
-      result = 1;
-      current->jackslave_seekahead_target_rep = -1;
+      /* 3.1.1 engine ready for process callback; return positive */
+      if (current->engine_repp->is_prepared() &&
+	  current->engine_repp->is_running()) {
+	DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: JACK running; correct position, engine running\n");
+	result = 1;
+	current->jackslave_seekahead_target_rep = -1;
+      }
+      /* 3.1.2 engine not ready for process callback; request start */
+      else {
+      	current->start_request_rep++;
+	current->engine_repp->command(ECA_ENGINE::ep_start, 0.0f);
+	result = 0;
+      }
     }
+    /* 3.2 engine at the wrong position but no seek target set; restart seek */
     else if (current->jackslave_seekahead_target_rep == -1) {
       DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: starting - new seek to "
 			    << pos->frame << "." << endl);
       eca_jack_sync_start_seek_to(state, pos, arg);
       result = 0;
     }
+    /* 3.3 engine at the wrong position; seek still ongoing */
     else {
       DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: still seeking, pos=" 
 			    << pos->frame 
@@ -184,21 +199,15 @@ static void eca_jack_sync_start_seek_to(jack_transport_state_t state, jack_posit
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
   SAMPLE_SPECS::sample_pos_t enginepos = current->engine_repp->current_position_in_samples();
 
-  if (current->is_running() == true) {
-    // DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: running" << endl);
-    current->engine_repp->command(ECA_ENGINE::ep_stop, 0.0f);
-  }
-
   /* prepare for the next start by seeking to the correct position */
   if (enginepos != pos->frame) {
     current->jackslave_seekahead_target_rep = pos->frame;
-    current->engine_repp->command(ECA_ENGINE::ep_setpos_live_samples, 
+    current->engine_repp->command(ECA_ENGINE::ep_setpos_samples, 
 				  current->jackslave_seekahead_target_rep);
     DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: seeking to " << pos->frame << endl);
   }
 
   current->engine_repp->command(ECA_ENGINE::ep_prepare, 0.0f);
-  current->engine_repp->command(ECA_ENGINE::ep_start, 0.0f);
 #endif
 }
 
@@ -231,6 +240,7 @@ static void eca_jack_sync_start_live_seek_to(jack_transport_state_t state, jack_
 	DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_FORCESYNC: Starting engine (direct)\n");
       }
       else {
+	current->start_request_rep++;
 	current->engine_repp->command(ECA_ENGINE::ep_start, 0.0f);
 	DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_FORCESYNC: Starting engine (cmdpipe)\n");
 	enginepos = -1;
@@ -247,6 +257,7 @@ static void eca_jack_sync_start_live_seek_to(jack_transport_state_t state, jack_
 	 (current->engine_repp->is_finite_length() == true))) {
       DEBUG_CFLOW_STATEMENT(cerr << endl <<
 			    "eca_jack_FORCESYNC: over max length" << endl);
+      current->stop_request_rep++;
       current->engine_repp->command(ECA_ENGINE::ep_stop, 0.0f);
     }
     else if (current->jackslave_seekahead_target_rep == -1 ||
@@ -445,28 +456,46 @@ static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
 
   /* 2. transport stopped or starting */
   else if (jackstate == JackTransportStopped) {
-    DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): JACK state stopped" << endl);
+    // DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): JACK state stopped" << endl);
+    ++current->j_stopped_rounds_rep;
+    
+    /* 2.1 transport stopped and no pending start requests */
+    if (current->is_running() == true && current->j_stopped_rounds_rep > 3) {
+      DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: running, request stop" << endl);
+      current->stop_request_rep++;
+      current->engine_repp->command(ECA_ENGINE::ep_stop, 0.0f);
+    }
   }
   /* 3. transport stopped or starting */
   else if (jackstate == JackTransportStarting) {
     DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): JACK state starting" << endl);
+    ++current->j_stopped_rounds_rep;
   }
 
   /* 4. transport rolling (or looping, both states are fine to us, as 
         is the case where state info is not available at all) */
   else {
+    current->j_stopped_rounds_rep = 0;
+
+    /* 4.1 engine not running for some odd reason; try a live-seek */
     if (current->is_running() != true) {
       DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): not running!" << endl);
       eca_jack_sync_start_live_seek_to(jackstate, &jackpos, arg);
     }
+    /* 4.2 engine running normally */
     else {
+      /* 4.2.1 engine at correct position, run the engine cycle */
       if (enginepos == jackpos.frame) {
-	DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): JACK running; correct position\n");
+	if (current->jackslave_seekahead_target_rep != -1) {
+	  // report only on the first time
+	  DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): JACK running; correct position\n");
+	}
 	/* execute engine iteration */
 	eca_jack_process_engine_iteration(nframes, current);
 	current->jackslave_seekahead_target_rep = -1;
 	need_mute = false;
       }
+      /* 4.2.2 engine at wrong position for some odd reason; try a live-seek */
       else {
 	DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process_timebase_slave():  engine curpos '" << 
 			      current->engine_repp->current_position_in_samples() << 
@@ -796,6 +825,9 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 
   shutdown_request_rep = false;
   exit_request_rep = false;
+  start_request_rep = 0;
+  stop_request_rep = 0;
+  j_stopped_rounds_rep = 0;
 
   activate_server_connection();
   if (is_connection_active() != true) {
@@ -815,7 +847,6 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
     SAMPLE_SPECS::sample_pos_t enginepos = engine_repp->current_position_in_samples();
     pthread_mutex_lock(&engine_mod_lock_rep);
     engine_repp->check_command_queue();
-    pthread_mutex_unlock(&engine_mod_lock_rep);
     if (enginepos != engine_repp->current_position_in_samples()) {
       /* seek requested */
 #if ECA_JACK_TRANSPORT_API >= 3
@@ -830,6 +861,7 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
       }
 #endif
     }
+    pthread_mutex_unlock(&engine_mod_lock_rep);
 
     DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: check_commands finished" << endl);
 
@@ -871,7 +903,8 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
  *
  * context: Can be called at the same time with
  *          JACK callbacks, so proper locking 
- *          must be ensured.
+ *          must be ensured (engine_mod_lock_rep taken
+ *          upon entry).
  *
  * @pre is_running() != true
  * @post is_running() == true
@@ -888,10 +921,16 @@ void AUDIO_IO_JACK_MANAGER::start(void)
   engine_repp->start_operation();
 
 #if ECA_JACK_TRANSPORT_API >= 3
-  if (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send ||
-      mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send_receive) {
-    jack_transport_start(client_repp);
+  if (start_request_rep > 0) {
+    start_request_rep = 0;
   }
+  else {
+    if (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send ||
+	mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send_receive) {
+      jack_transport_start(client_repp);
+    }
+  }
+  j_stopped_rounds_rep = 0;
 #endif
 
   // --
@@ -904,17 +943,23 @@ void AUDIO_IO_JACK_MANAGER::start(void)
  * Once stopped, driver must not call
  * any ECA_ENGINE functions.
  *
- * Caller must ensure that JACK process callback
- * does not rung at the same time.
+ * context: Caller must ensure that JACK process callback
+ *          does not run at the same time (engine_mod_lock_rep 
+ *          taken upon entry).
  */
 void AUDIO_IO_JACK_MANAGER::stop(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver stop");
 
 #if ECA_JACK_TRANSPORT_API >= 3
-  if (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send ||
-      mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send_receive) {
-    jack_transport_stop(client_repp);
+  if (stop_request_rep > 0) {
+    stop_request_rep = 0;
+  }
+  else {
+    if (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send ||
+	mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send_receive) {
+      jack_transport_stop(client_repp);
+    }
   }
 #endif
 

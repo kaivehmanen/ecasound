@@ -101,6 +101,7 @@ class ECA_ENGINE {
     ep_rewind,
     ep_forward,
     ep_setpos,
+    ep_setpos_samples,
     ep_setpos_live_samples,
     // --
     ep_edit_lock,
@@ -272,6 +273,7 @@ private:
   void set_position(double seconds);
   void set_position(int seconds) { set_position((double)seconds); }
   void set_position_samples(SAMPLE_SPECS::sample_pos_t samples);
+  void set_position_samples_live(SAMPLE_SPECS::sample_pos_t samples);
   void change_position(double seconds);
 
   void prehandle_control_position(void);

@@ -182,15 +182,18 @@ private:
 
   Operation_mode_t mode_rep;
 
-  bool open_rep;
-  bool activated_rep;
-  bool running_rep;
+  bool open_rep;        /**< connection established to the JACK server  */
+  bool activated_rep;   /**< JACK connection activated */
 
-  bool shutdown_request_rep;
-  bool exit_request_rep;
+  bool shutdown_request_rep;   /**< jack->engine pending shutdown request */
+  bool exit_request_rep;       /**< engine->engine exit request */
 
-  int open_clients_rep;
+  int open_clients_rep;       /** number of active client nodes */
   int last_node_id_rep;
+  int start_request_rep;      /**< number of jack->engine start requests pending */
+  int stop_request_rep;       /**< number of jack->engine stop requests pending */
+  int j_stopped_rounds_rep;   /**< number of iterations that JACK state has been stopped;
+				   accessed only from proces thread */
 
   list<eca_jack_node_t*> node_list_rep;
   vector<eca_jack_port_data_t*> inports_rep;
@@ -198,17 +201,14 @@ private:
 
   int jackslave_seekahead_rep;
   long int jackslave_seekahead_target_rep;
-  int jackslave_engine_ok_rep;
   
   ECA_ENGINE* engine_repp;
   jack_client_t *client_repp;
-  string jackname_rep;
+  string jackname_rep;          /**< client name */
 
   SAMPLE_SPECS::sample_rate_t srate_rep;
   long int buffersize_rep;
   long int cb_allocated_frames_rep;
-
-  int last_transport_state_rep;
 };
 
 #endif
