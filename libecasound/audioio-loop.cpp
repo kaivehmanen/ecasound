@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-loop.cpp: Audio object that routes data between reads and writes
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include <string>
 
+#include <kvutils/dbc.h>
 #include <kvutils/kvu_numtostr.h>
 
 #include "samplebuffer.h"
@@ -28,6 +29,8 @@
 
 #include "eca-error.h"
 #include "eca-debug.h"
+
+using std::string;
 
 LOOP_DEVICE::LOOP_DEVICE(int id) 
   :  AUDIO_IO("loop," + kvu_numtostr(id), io_readwrite),
@@ -41,7 +44,7 @@ LOOP_DEVICE::LOOP_DEVICE(int id)
   registered_outputs_rep = 0;
   filled_rep = false;
   finished_rep = false;
-  writes_finished_rep = false;
+  empty_rounds_rep = 0;
 }
 
 bool LOOP_DEVICE::finished(void) const {
@@ -49,37 +52,57 @@ bool LOOP_DEVICE::finished(void) const {
 }
 
 void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer) {
-  if (writes_finished_rep != true) {
-    if (filled_rep == false) buffer->make_silent();
-    else {
-//        *buffer = sbuf;
+  buffer->number_of_channels(channels());
+  if (empty_rounds_rep == 0) {
+    if (filled_rep == true) {
       buffer->copy(sbuf);
+      DBC_CHECK(writes_rep == registered_outputs_rep);
+      writes_rep = 0;
+    }
+    else {
+      buffer->make_silent();
     }
   }
   else {
     finished_rep = true;
     buffer->make_silent();
   }
+
+  DBC_CHECK(buffer->number_of_channels() == channels());
 }
 
 void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer) {
   ++writes_rep;
+
+  if (buffer->sample_rate() != sbuf.sample_rate()) {
+    sbuf.sample_rate(buffer->sample_rate());
+  }
+  
+  /* first write after an read (or reset) */
   if (writes_rep == 1) {
     position_in_samples_advance(buffer->length_in_samples());
     extend_position();
-    sbuf.number_of_channels(buffer->number_of_channels());
+    sbuf.number_of_channels(channels());
     sbuf.make_silent();
   }
-  if (writes_finished_rep == true ||
-      buffer->length_in_samples() > 0) {
-    writes_finished_rep = finished_rep = false;
+
+  /* store data from 'buffer' */
+  if (buffer->length_in_samples() > 0) {
+    empty_rounds_rep = 0;
     sbuf.add_with_weight(*buffer, registered_outputs_rep);
     filled_rep = true;
+
+    if (writes_rep > registered_outputs_rep) {
+      ecadebug->msg(ECA_DEBUG::info, 
+		    "(audioio-loop) Warning! Multiple writes without reads!");
+    }
   }
+  /* empty 'buffer' */
   else {
-    writes_finished_rep = true;
+    ++empty_rounds_rep;
   }
-  if (writes_rep == registered_outputs_rep) writes_rep = 0;
+
+  DBC_CHECK(sbuf.number_of_channels() == channels());
 }
 
 void LOOP_DEVICE::set_parameter(int param, 

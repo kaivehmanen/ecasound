@@ -17,6 +17,12 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.3 *-
 
+??112001 (v2.1dev5)
+	- fixed: processing didn't stop with setups that had loop-
+		 devices connected to multiple input objects
+	- fixed: using loop devices in setups with non-default 
+                 internal sample rate could cause unwanted 
+  		 resampling
 31102001 (v2.1dev4)
 	- added: eiam - 'cs-option' commmand; although explicit use 
 		 of cmd-line options as iactive-mod commands (like 

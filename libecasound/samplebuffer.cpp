@@ -255,6 +255,8 @@ void SAMPLE_BUFFER::divide_by(SAMPLE_BUFFER::sample_type dvalue) {
 
 /**
  * Channel-wise addition. Buffer length is increased if necessary.
+ *
+ * @post length_in_samples() >= x.length_in_samples()
  */
 void SAMPLE_BUFFER::add(const SAMPLE_BUFFER& x) {
   if (x.length_in_samples() > length_in_samples()) {
@@ -273,6 +275,7 @@ void SAMPLE_BUFFER::add(const SAMPLE_BUFFER& x) {
  * multiplied by '1/weight'. Buffer length is increased if necessary.
  *
  * @pre weight != 0
+ * @post length_in_samples() >= x.length_in_samples()
  */
 void SAMPLE_BUFFER::add_with_weight(const SAMPLE_BUFFER& x, int weight) {
   // ---
@@ -291,15 +294,16 @@ void SAMPLE_BUFFER::add_with_weight(const SAMPLE_BUFFER& x, int weight) {
 }
 
 /**
- * Channel-wise copy. Buffer length is increased if necessary.
+ * Channel-wise copy. Buffer length is adjusted if necessary.
+ *
+ * @post length_in_samples() == x.length_in_samples()
  */
 void SAMPLE_BUFFER::copy(const SAMPLE_BUFFER& x) {
-  if (x.length_in_samples() > length_in_samples()) {
-    length_in_samples(x.length_in_samples());
-  }
+  length_in_samples(x.length_in_samples());
+  
   int min_c_count = (channel_count_rep <= x.channel_count_rep) ? channel_count_rep : x.channel_count_rep;
   for(channel_size_t q = 0; q < min_c_count; q++) {
-    for(buf_size_t t = 0; t < x.length_in_samples(); t++) {
+    for(buf_size_t t = 0; t < length_in_samples(); t++) {
       buffer[q][t] = x.buffer[q][t];
     }
   }

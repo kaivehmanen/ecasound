@@ -25,6 +25,7 @@
 
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
+#include <kvutils/dbc.h>
 
 #include "eca-object-factory.h"
 #include "samplebuffer.h"
@@ -164,12 +165,16 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	//  	dump_child_debug();
 	if (position_in_samples() > 
 	    child_offset_rep.samples() + child_length_rep.samples()) tail = sbuf->length_in_samples();
-	assert(tail <= buffersize());
+
+	DBC_CHECK(tail <= buffersize());
+
 	child->seek_position_in_samples(child_start_pos_rep.samples());
 	long int save_bsize = child->buffersize();
 	child->buffersize(tail, child->samples_per_second());
 	child->read_buffer(&tmp_buffer);
-	assert(tmp_buffer.length_in_samples() == tail);
+
+	DBC_CHECK(tmp_buffer.length_in_samples() == tail);
+
 	child->buffersize(save_bsize, child->samples_per_second());
 	sbuf->length_in_samples(buffersize());
 	sbuf->copy_range(tmp_buffer, 
@@ -190,7 +195,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	long int tail = child->position_in_samples() 
 	                - child_start_pos_rep.samples() 
 	                - child_length_rep.samples();
-	assert(tail >= 0);
+	DBC_CHECK(tail >= 0);
 
 	/* mute the extra tail */
 	long int startpos = sbuf->length_in_samples() - tail;

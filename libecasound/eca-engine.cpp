@@ -952,12 +952,14 @@ void ECA_ENGINE::inputs_to_chains(bool skip_realtime_inputs) {
     }
 
     if (input_chain_count_rep[audioslot_sizet] > 1) {
+      mixslot_rep.length_in_samples(buffersize_rep);
       (*inputs_repp)[audioslot_sizet]->read_buffer(&mixslot_rep);
       if ((*inputs_repp)[audioslot_sizet]->finished() == false) inputs_not_finished_rep++;
     }
     for (unsigned int c = 0; c != chains_repp->size(); c++) {
       if ((*chains_repp)[c]->connected_input() == static_cast<int>(audioslot_sizet)) {
 	if (input_chain_count_rep[audioslot_sizet] == 1) {
+	  cslots_rep[c].length_in_samples(buffersize_rep);
 	  (*inputs_repp)[audioslot_sizet]->read_buffer(&(cslots_rep[c]));
 	  if ((*inputs_repp)[audioslot_sizet]->finished() == false) inputs_not_finished_rep++;
 	  break;
@@ -972,8 +974,6 @@ void ECA_ENGINE::inputs_to_chains(bool skip_realtime_inputs) {
 
 void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
   for(unsigned int audioslot_sizet = 0; audioslot_sizet < outputs_repp->size(); audioslot_sizet++) {
-    mixslot_rep.number_of_channels((*outputs_repp)[audioslot_sizet]->channels());
-
     if (skip_realtime_target_outputs == true) {
       if (csetup_repp->is_realtime_target_output(audioslot_sizet) == true) {
 	//  cerr << "(eca-engine) Skipping rt-target output " << (*outputs_repp)[audioslot_sizet]->label() << "." << endl;
@@ -982,6 +982,8 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
     }
 
     int count = 0;
+
+    mixslot_rep.number_of_channels((*outputs_repp)[audioslot_sizet]->channels());
     
     for(unsigned int n = 0; n != chains_repp->size(); n++) {
       // --
@@ -1005,7 +1007,6 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
 	  // --
 	  (*outputs_repp)[audioslot_sizet]->write_buffer(&(cslots_rep[n]));
 	  if ((*outputs_repp)[audioslot_sizet]->finished() == true) outputs_finished_rep++;
-	  cslots_rep[n].length_in_samples(buffersize_rep);
 	  break;
 	}
 	else {
@@ -1019,13 +1020,12 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs) {
 	  }
 	  else {
 	    mixslot_rep.add_with_weight(cslots_rep[n],
-				    output_chain_count_rep[audioslot_sizet]);
+					output_chain_count_rep[audioslot_sizet]);
 	  }
 	  
 	  if (count == output_chain_count_rep[audioslot_sizet]) {
 	    (*outputs_repp)[audioslot_sizet]->write_buffer(&mixslot_rep);
 	    if ((*outputs_repp)[audioslot_sizet]->finished() == true) outputs_finished_rep++;
-	    mixslot_rep.length_in_samples(buffersize_rep);
 	  }
 	}
       }

@@ -1,5 +1,5 @@
-#ifndef _AUDIOIO_EWF_H
-#define _AUDIOIO_EWF_H
+#ifndef INCLUDED_AUDIOIO_EWF_H
+#define INCLUDED_AUDIOIO_EWF_H
 
 #include <string>
 #include "audioio.h"

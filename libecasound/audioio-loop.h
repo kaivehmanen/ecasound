@@ -13,8 +13,9 @@ class LOOP_DEVICE : public AUDIO_IO {
   int writes_rep;
   int registered_inputs_rep;
   int registered_outputs_rep;
+  int empty_rounds_rep;
 
-  bool writes_finished_rep, finished_rep;
+  bool finished_rep;
   bool filled_rep;
     
   SAMPLE_BUFFER sbuf;

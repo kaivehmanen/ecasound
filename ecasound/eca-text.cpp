@@ -233,7 +233,7 @@ void print_header(ostream* dostream) {
     putp(tigetstr("sgr0"));
   }
 #endif
-  *dostream << "*\n";
+  *dostream << "\n";
   *dostream << "****************************************************************************\n";
 }
 
