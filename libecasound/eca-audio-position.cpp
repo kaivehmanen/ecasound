@@ -20,6 +20,9 @@
 
 #include <cmath>
 #include <math.h> /* ceil() */
+
+#include <kvu_dbc.h>
+
 #include "eca-audio-position.h"
 
 ECA_AUDIO_POSITION::ECA_AUDIO_POSITION(void)
@@ -40,12 +43,14 @@ SAMPLE_SPECS::sample_pos_t ECA_AUDIO_POSITION::length_in_samples(void) const
 
 int ECA_AUDIO_POSITION::length_in_seconds(void) const
 {
+  DBC_CHECK(samples_per_second() > 0);
   return((int)ceil((double)length_in_samples() /
 		   (double)samples_per_second()));  
 }
 
 double ECA_AUDIO_POSITION::length_in_seconds_exact(void) const
 { 
+  DBC_CHECK(samples_per_second() > 0);
   return((double)length_in_samples() / (double)samples_per_second());  
 }
 
@@ -57,11 +62,13 @@ void ECA_AUDIO_POSITION::set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
 
 void ECA_AUDIO_POSITION::set_length_in_seconds(int pos_in_seconds)
 {
+  DBC_CHECK(samples_per_second() > 0);
   set_length_in_seconds((double)pos_in_seconds); 
 }
 
 void ECA_AUDIO_POSITION::set_length_in_seconds(double pos_in_seconds)
 {
+  DBC_CHECK(samples_per_second() > 0);
   set_length_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(pos_in_seconds * samples_per_second()));
 }
 
@@ -72,12 +79,14 @@ SAMPLE_SPECS::sample_pos_t ECA_AUDIO_POSITION::position_in_samples(void) const
 
 int ECA_AUDIO_POSITION::position_in_seconds(void) const
 {
+  DBC_CHECK(samples_per_second() > 0);
   return((int)ceil((double)position_in_samples() /
 		   (double)samples_per_second())); 
 }
 
 double ECA_AUDIO_POSITION::position_in_seconds_exact(void) const
 {
+  DBC_CHECK(samples_per_second() > 0);
   return((double)position_in_samples() / (double)samples_per_second()); 
 }
 
@@ -96,16 +105,19 @@ void ECA_AUDIO_POSITION::change_position_in_samples(SAMPLE_SPECS::sample_pos_t p
 
 void ECA_AUDIO_POSITION::change_position_in_seconds(double pos_in_seconds)
 {
+  DBC_CHECK(samples_per_second() > 0);
   change_position_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(pos_in_seconds * samples_per_second()));
 }
 
 void ECA_AUDIO_POSITION::set_position_in_seconds(int pos_in_seconds)
 {
+  DBC_CHECK(samples_per_second() > 0);
   set_position_in_seconds((double)pos_in_seconds); 
 }
 
 void ECA_AUDIO_POSITION::set_position_in_seconds(double pos_in_seconds)
 {
+  DBC_CHECK(samples_per_second() > 0);
   set_position_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(pos_in_seconds * samples_per_second()));
 }
 
@@ -131,6 +143,7 @@ void ECA_AUDIO_POSITION::seek_position_in_samples_advance(SAMPLE_SPECS::sample_p
 
 void ECA_AUDIO_POSITION::seek_position_in_seconds(double pos_in_seconds)
 {
+  DBC_CHECK(samples_per_second() > 0);
   seek_position_in_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(pos_in_seconds * samples_per_second()));
 }
 
