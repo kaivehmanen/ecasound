@@ -1,6 +1,7 @@
 2004-12-12  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* kvu_utils.cpp (kvu_vector_search_and_replace): Added.
+	* kvu_utils.cpp (kvu_string_shell_meta_escape): Added.
 	* library version changed to 7:0:3
 	
 2003-08-29  Kai Vehmanen  <kaiv@.devtag.AUTHORS>

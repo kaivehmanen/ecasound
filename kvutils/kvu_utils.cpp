@@ -44,6 +44,47 @@ static string::const_iterator kvu_priv_find_next_instance(const string& arg, con
 static void kvu_priv_strip_escapes(string* const input);
 
 /**
+ * Returns a string where all meta characters in 'arg'
+ * have been quoted using a backslash.
+ *
+ * Reference: man sh(1), man bash(1)
+ */
+string kvu_string_shell_meta_escape(const string& arg)
+{
+  string result;
+
+  string::const_iterator p = arg.begin();
+  while(p != arg.end()) {
+    if (*p == '"')
+      result += "\\\"";
+    else if (*p == '\'')
+      result += "\\\'";
+    else if (*p == ' ')
+      result += "\\ ";
+    else if (*p == '|')
+      result += "\\|";
+    else if (*p == '&')
+      result += "\\&";
+    else if (*p == ';')
+      result += "\\;";
+    else if (*p == '(')
+      result += "\\(";
+    else if (*p == ')')
+      result += "\\)";
+    else if (*p == '<')
+      result += "\\<";
+    else if (*p == '>')
+      result += "\\>";
+    else 
+      result += *p;
+
+    ++p;
+  }
+
+  return result;
+}
+
+/**
  * Converts a string to a vector of strings (words).
  * Whitespace is used as the separator.
  *

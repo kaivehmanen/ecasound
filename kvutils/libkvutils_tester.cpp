@@ -43,10 +43,10 @@ using namespace std;
  */
 
 #ifdef VERBOSE
-#define ECA_TEST_ENTRY()   printf("\n%s:%d - Test started", __FILE__, __LINE__)
-#define ECA_TEST_SUCCESS() printf("\n%s:%d - Test passed\n", __FILE__, __LINE__); return 0
-#define ECA_TEST_FAIL(x,y) printf("\n%s:%d - Test failed: \"%s\"\n", __FILE__, __LINE__, y); return x
-#define ECA_TEST_CASE()    printf("."); fflush(stdout)
+#define ECA_TEST_ENTRY()   do { printf("\n%s:%d - Test started", __FILE__, __LINE__); } while(0)
+#define ECA_TEST_SUCCESS() do { printf("\n%s:%d - Test passed\n", __FILE__, __LINE__); return 0; } while(0)
+#define ECA_TEST_FAIL(x,y) do { printf("\n%s:%d - Test failed: \"%s\"\n", __FILE__, __LINE__, y); return x; } while(0)
+#define ECA_TEST_CASE()    do { printf("."); fflush(stdout); } while(0)
 #else
 #define ECA_TEST_ENTRY()   ((void) 0)
 #define ECA_TEST_SUCCESS() return 0
@@ -258,6 +258,14 @@ static int kvu_test_2(void)
       != "boo bar") {
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_search_and_replace"); 
   }
+
+  /* meta-char espacing: */
+
+  if (kvu_string_shell_meta_escape("foo\"bar") != "foo\\\"bar") ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_meta_escape");
+  if (kvu_string_shell_meta_escape("foo'bar") != "foo\\'bar") ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_meta_escape");
+  if (kvu_string_shell_meta_escape("foo|bar") != "foo\\|bar") ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_meta_escape");
+  if (kvu_string_shell_meta_escape("foo&bar&&&") != "foo\\&bar\\&\\&\\&") ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_meta_escape");
+  if (kvu_string_shell_meta_escape("foo bar ") != "foo\\ bar\\ ") ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_meta_escape");
 
   ECA_TEST_SUCCESS();
 }
