@@ -43,27 +43,83 @@ static PyObject* pyeca_getattr(PyObject *self, char *name);
 static PyObject * pyeca_command(PyObject* self, PyObject *args) {
   char *str;
   if (!PyArg_ParseTuple(args, "s", &str)) return NULL;
-//    cerr << "ECI: Issuing command." << endl;
   pyeca_control_t *selfp = (pyeca_control_t*) self;
-  try {
-    selfp->eci->command(str);
-  }
-  catch(ECA_ERROR& e) {
-    cerr << "ECI: Error occured when executing command!" << endl;
-  }
-  catch(...) {
-    cerr << "ECI: Something funny going on here!" << endl;
-
-  }
-
-//    cerr << "ECI: Command issued." << endl;
+  selfp->eci->command(str);
   return Py_BuildValue("");
 }
 
+static PyObject * pyeca_command_float_arg(PyObject* self, PyObject *args) {
+  char *str;
+  double v;
+  if (!PyArg_ParseTuple(args, "sd", &str, &v)) return NULL;
+  pyeca_control_t *selfp = (pyeca_control_t*) self;
+  selfp->eci->command_float_arg(str,v);
+  return Py_BuildValue("");
+}
+
+static PyObject * pyeca_last_list_of_strings(PyObject* self, PyObject *args) {
+  pyeca_control_t *selfp = (pyeca_control_t*) self;
+  const vector<string>& vec = selfp->eci->last_list_of_strings();
+  PyObject *list = Py_BuildValue("[]");
+  for(unsigned int n = 0; n < vec.size(); n++) {
+    PyList_Append(list, Py_BuildValue("s", vec[n].c_str()));
+  }
+  return(list);
+}
+
+static PyObject * pyeca_last_string(PyObject* self, PyObject *args) {
+  pyeca_control_t *selfp = (pyeca_control_t*) self;
+  return Py_BuildValue("s", selfp->eci->last_string().c_str());
+}
+
+static PyObject * pyeca_last_float(PyObject* self, PyObject *args) {
+  pyeca_control_t *selfp = (pyeca_control_t*) self;
+  return Py_BuildValue("d", selfp->eci->last_float());
+}
+
+static PyObject * pyeca_last_integer(PyObject* self, PyObject *args) {
+  pyeca_control_t *selfp = (pyeca_control_t*) self;
+  return Py_BuildValue("i", selfp->eci->last_integer());
+}
+
+static PyObject * pyeca_last_long_integer(PyObject* self, PyObject *args) {
+  pyeca_control_t *selfp = (pyeca_control_t*) self;
+  return Py_BuildValue("l", selfp->eci->last_long_integer());
+}
+
+static PyObject * pyeca_last_error(PyObject* self, PyObject *args) {
+  pyeca_control_t *selfp = (pyeca_control_t*) self;
+  return Py_BuildValue("s", selfp->eci->last_error().c_str());
+}
+
+static PyObject * pyeca_last_type(PyObject* self, PyObject *args) {
+  pyeca_control_t *selfp = (pyeca_control_t*) self;
+  return Py_BuildValue("s", selfp->eci->last_type().c_str());
+}
+static PyObject * pyeca_events_available(PyObject* self, PyObject *args) {
+  return Py_BuildValue("i", 0);
+}
+static PyObject * pyeca_next_event(PyObject* self, PyObject *args) {
+  return Py_BuildValue("");
+}
+static PyObject * pyeca_current_event(PyObject* self, PyObject *args) {
+  return Py_BuildValue("");
+}
 
 static struct PyMethodDef pyeca_control_methods[] = {
-  { "command",     pyeca_command,       METH_VARARGS},
-  { NULL,          NULL }
+  { "command",               pyeca_command,                METH_VARARGS},
+  { "command_float_arg",     pyeca_command_float_arg,      METH_VARARGS},
+  { "last_list_of_strings",  pyeca_last_list_of_strings,   METH_VARARGS},
+  { "last_string",           pyeca_last_string,            METH_VARARGS},
+  { "last_float",            pyeca_last_float,             METH_VARARGS},
+  { "last_integer",          pyeca_last_integer,           METH_VARARGS},
+  { "last_long_integer",     pyeca_last_long_integer,      METH_VARARGS},
+  { "last_error",            pyeca_last_error,             METH_VARARGS},
+  { "last_type",             pyeca_last_type,              METH_VARARGS},
+  { "events_available",      pyeca_events_available,       METH_VARARGS},
+  { "next_event",            pyeca_next_event,             METH_VARARGS},
+  { "current_event",         pyeca_current_event,          METH_VARARGS},
+  { NULL,                    NULL }
 };
 
 // ********************************************************************/
@@ -93,18 +149,9 @@ static PyTypeObject pyeca_control_type = {
 static PyObject *pyeca_control_new(PyObject *self, PyObject *args) {
   cerr << "ECI: pyeca_control_new, C++ constructor" << endl;
   
-//    if (eca_c_rep.ctrl != 0)
-//      delete eca_c_rep.ctrl;
-//    if (eca_c_rep.session != 0)
-//      delete eca_c_rep.session;
-
   ecadebug->set_debug_level(ECA_DEBUG::info |
   			    ECA_DEBUG::module_flow);
 
-//    if (eca_c_rep.ctrl == 0) {
-//      eca_c_rep.session = new ECA_SESSION();
-//      eca_c_rep.ctrl = new ECA_CONTROL (eca_c_rep.session);
-//    }
   pyeca_control_t *selfp = (pyeca_control_t*) PyObject_NEW(pyeca_control_t, &pyeca_control_type);
   selfp->eci = new ECA_CONTROL_INTERFACE();
   self = (PyObject *) selfp;
