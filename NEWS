@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 231201) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 291201) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -29,6 +29,15 @@ Last officially released version is -*> v2.0.3 *-
 		   error but will not exit as it did before; you 
 		   can continue editing in the ia-mode to check 
  		   what was wrong in the setup
+	- changed: compilation of eca-iamode-parser.cpp is now 
+		   significantly faster and takes less resources;
+		   this should fix problems with compiling ecasound 
+                   on machines with <256MB of memory
+	- fixed: audio-manager.h was missing from the dist-package
+	- fixed: critical bug that prevented writing to 
+ 		 double-buffered nonrealtime output objects
+	- fixed: chainsetups with multiple controller objects of
+		 the same type didn't work in 2.1dev6 [jesse]
 22122001 (v2.1dev6)
 	- edi-entries: edi-8, edi-11, edi-17
 	- note: review of all samplebuffer-related code; 

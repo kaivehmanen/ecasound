@@ -182,6 +182,7 @@ Davis, Paul - Has probably written more Linux audio related code (and mails) tha
 Beaupre, Antoine - Patches for FreeBSD compatibility. [beaupran]
 Bowman, Brad - Perl ECI binding, bug hunting. [bowman]
 Campbell, Ross - Tips concerning Solaris. [rcampbel]
+Chappell, Jesse - Bug fixes. [jesse]
 Coker, Rob - Pulse gate (-eemp) code. [rcs]
 Darilek, Nolan - Ogg vorbis fixes. [nolan_d]
 Dye, Rob - OSS compilation fixes. [rob]
