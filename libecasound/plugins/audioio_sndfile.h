@@ -13,7 +13,7 @@
 #endif
 
 /**
- * Interface to SGI audiofile library.
+ * Interface to libsndfile library.
  * @author Kai Vehmanen
  */
 class SNDFILE_INTERFACE : public AUDIO_IO_BUFFERED {
@@ -59,7 +59,7 @@ class SNDFILE_INTERFACE : public AUDIO_IO_BUFFERED {
 
   /*@}*/
 
-  /** @name Function reimplemented from AUDIO_IO_BUFFERED */
+  /** @name Functions reimplemented from AUDIO_IO_BUFFERED */
   /*@{*/
 
   virtual long int read_samples(void* target_buffer, long int samples);
@@ -70,7 +70,7 @@ class SNDFILE_INTERFACE : public AUDIO_IO_BUFFERED {
 
   /*@}*/
 
-  /** @name Function reimplemented from AUDIO_IO */
+  /** @name Functions reimplemented from AUDIO_IO */
   /*@{*/
 
   virtual int supported_io_modes(void) const { return(io_read | io_write | io_readwrite); }
