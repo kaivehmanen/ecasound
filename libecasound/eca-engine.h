@@ -182,7 +182,7 @@ private:
   int inputs_not_finished_rep;
 
   long int prefill_threshold_rep;
-  long int samples_since_trigger_rep;
+  long int preroll_samples_rep;
   long int recording_offset_rep;
 
   /*@}*/

@@ -474,12 +474,14 @@ void ECA_ENGINE::engine_iteration(void)
   inputs_to_chains();
   process_chains();
   // FIXME: add support for sub-buffersize offsets
-  if (samples_since_trigger_rep >= recording_offset_rep) {
+  if (preroll_samples_rep >= recording_offset_rep) {
+    /* record material to non-real-time outputs */
     mix_to_outputs(false);
   }
   else {
+    /* skip slave targets */
     mix_to_outputs(true);
-    samples_since_trigger_rep += buffersize();
+    preroll_samples_rep += buffersize();
   }
   posthandle_control_position();
   
@@ -538,8 +540,12 @@ void ECA_ENGINE::prepare_operation(void)
   /* 5. prepare rt objects */
   prepare_realtime_objects();
 
+  /* ... initial offset is needed because preroll is 
+   * incremented only after checking whether we are 
+   * still in preroll mode */
+  preroll_samples_rep = buffersize(); 
+
   /* 6. change engine to active and running */
-  samples_since_trigger_rep = 0;
   prepared_rep = true;
   init_engine_state();
 
@@ -822,6 +828,12 @@ void ECA_ENGINE::prepare_realtime_objects(void)
   for (unsigned int n = 0; n < realtime_outputs_rep.size(); n++) {
     if (realtime_outputs_rep[n]->prefill_space() > 0) {
       DBC_CHECK(prefill_blocks_constant <= realtime_outputs_rep[n]->prefill_space());
+
+      ECA_LOG_MSG(ECA_LOGGER::user_objects,
+		  "(eca-engine) prefilling rt-outputs with " +
+		  kvu_numtostr(prefill_threshold_rep) +
+		  " blocks.");
+
       for (int m = 0; m < prefill_threshold_rep; m++) {
 	realtime_outputs_rep[n]->write_buffer(mixslot_repp);
       }
@@ -914,8 +926,8 @@ void ECA_ENGINE::change_position(double seconds)
 }
 
 /**
- * Calculates how much data we need to process and sets buffersize 
- * accordingly.
+ * Calculates how much data we need to process and sets the
+ * buffersize accordingly for all non-real-time inputs.
  */
 void ECA_ENGINE::prehandle_control_position(void)
 {
@@ -924,8 +936,8 @@ void ECA_ENGINE::prehandle_control_position(void)
       csetup_repp->length_set() == true) {
     int buffer_remain = csetup_repp->position_in_samples() -
                         csetup_repp->length_in_samples();
-    for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
-      (*inputs_repp)[adev_sizet]->set_buffersize(buffer_remain);
+    for(unsigned int adev_sizet = 0; adev_sizet < non_realtime_inputs_rep.size(); adev_sizet++) {
+      non_realtime_inputs_rep[adev_sizet]->set_buffersize(buffer_remain);
     }
   }
 }
@@ -943,11 +955,12 @@ void ECA_ENGINE::posthandle_control_position(void)
     if (csetup_repp->looping_enabled() == true) {
       inputs_not_finished_rep = 1;
       csetup_repp->seek_position_in_samples(0);
-      for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
-	(*inputs_repp)[adev_sizet]->set_buffersize(buffersize());
+      for(unsigned int adev_sizet = 0; adev_sizet < non_realtime_inputs_rep.size(); adev_sizet++) {
+	non_realtime_inputs_rep[adev_sizet]->set_buffersize(buffersize());
       }
     }
-    else {
+    else if (realtime_objects_rep.size() == 0) {
+      /* if not recording from any rt sources, Then stop */
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) posthandle_c_p - stop");
       request_stop();
       finished_rep = true;
@@ -1207,14 +1220,14 @@ void ECA_ENGINE::update_cache_latency_values(void)
     for(unsigned int n = 0; n < realtime_outputs_rep.size(); n++) {
       if (out_latency == -1) {
 	if (realtime_outputs_rep[n]->prefill_space() > 0)
-	  out_latency = prefill_threshold_rep * buffersize() + realtime_outputs_rep[n]->latency();
+	  out_latency = (prefill_threshold_rep * buffersize()) + realtime_outputs_rep[n]->latency();
 	else
 	  out_latency = realtime_outputs_rep[n]->latency();
       }
       else {
 	if (realtime_outputs_rep[n]->prefill_space() > 0 && 
-	    out_latency != prefill_threshold_rep * buffersize() + realtime_outputs_rep[n]->latency() || 
-	    realtime_outputs_rep[n]->prefill_space() > 0 &&
+	    out_latency != (prefill_threshold_rep * buffersize()) + realtime_outputs_rep[n]->latency() || 
+	    realtime_outputs_rep[n]->prefill_space() == 0 &&
 	    out_latency != realtime_outputs_rep[n]->latency()) {
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
 			"(eca-engine) Warning! Latency mismatch between output objects!");
@@ -1331,16 +1344,27 @@ void ECA_ENGINE::inputs_to_chains(void)
     if (input_chain_count_rep[inputnum] > 1) {
       /* case-1a: read buffer from input 'inputnum' to 'mixslot' */
       mixslot_repp->length_in_samples(buffersize());
-      (*inputs_repp)[inputnum]->read_buffer(mixslot_repp);
-      if ((*inputs_repp)[inputnum]->finished() == false) inputs_not_finished_rep++;
+
+      if ((*inputs_repp)[inputnum]->finished() != true) {
+	(*inputs_repp)[inputnum]->read_buffer(mixslot_repp);
+	if ((*inputs_repp)[inputnum]->finished() != true) {
+	  inputs_not_finished_rep++;
+	}
+      }
     }
     for (size_t c = 0; c != chains_repp->size(); c++) {
       if ((*chains_repp)[c]->connected_input() == static_cast<int>(inputnum)) {
 	if (input_chain_count_rep[inputnum] == 1) {
 	  /* case-2: read buffer from input 'inputnum' to chain 'c' */
 	  cslots_rep[c]->length_in_samples(buffersize());
-	  (*inputs_repp)[inputnum]->read_buffer(cslots_rep[c]);
-	  if ((*inputs_repp)[inputnum]->finished() == false) inputs_not_finished_rep++;
+
+	  if ((*inputs_repp)[inputnum]->finished() != true) {
+	    (*inputs_repp)[inputnum]->read_buffer(cslots_rep[c]);
+	    if ((*inputs_repp)[inputnum]->finished() != true) {
+	      inputs_not_finished_rep++;
+	    }
+	  }
+
 	  break;
 	}
 	else {
