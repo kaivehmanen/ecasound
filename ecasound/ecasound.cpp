@@ -256,7 +256,6 @@ void ecasound_main_loop(struct ecasound_state* state)
 	}
 
 	ctrl->command(cmd);
-	ctrl->print_last_error();
 	ctrl->print_last_value();
 
 	if (state->daemon_mode == true) {
@@ -282,7 +281,7 @@ void ecasound_main_loop(struct ecasound_state* state)
       ctrl->run();
     }
     else {
-      ctrl->print_last_error();
+      ctrl->print_last_value();
     }
 
     if (state->daemon_mode == true) {

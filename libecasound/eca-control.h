@@ -104,7 +104,6 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   /*@{*/
 
   void print_last_value(void);
-  void print_last_error(void);
 
   /*@}*/
 
@@ -116,6 +115,7 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   bool action_ok;
   bool action_reconnect;
   bool action_restart;
+  bool wellformed_mode_rep;
   ECA_CONTROL_DUMP ctrl_dump_rep;
 
   void action(int action_id);

@@ -1,3 +1,7 @@
+2002-10-04  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* eca-control.h (print_last_error): function removed
+
 2002-09-29  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* audioio-resample.h: modified to inherit AUDIO_IO_PROXY

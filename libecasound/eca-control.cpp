@@ -74,6 +74,7 @@ static string eca_aio_register_sub(ECA_OBJECT_MAP& objmap);
 
 ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession) 
   : ECA_CONTROL_OBJECTS(psession),
+    wellformed_mode_rep(false),
     ctrl_dump_rep(this)
 {
 }
@@ -591,7 +592,11 @@ void ECA_CONTROL::action(int action_id)
   // Internal commands
   // ---
   case ec_int_cmd_list: { set_last_string_list(registered_commands_list()); break; }
-  case ec_int_output_mode_wellformed: { ECA_LOGGER::attach_logger(new ECA_LOGGER_WELLFORMED()); break; }
+  case ec_int_output_mode_wellformed: { 
+    ECA_LOGGER::attach_logger(new ECA_LOGGER_WELLFORMED()); 
+    wellformed_mode_rep = true;
+    break; 
+  }
   case ec_int_version_string: { set_last_string(ecasound_library_version); break; }
   case ec_int_version_lib_current: { set_last_integer(ecasound_library_version_current); break; }
   case ec_int_version_lib_revision: { set_last_integer(ecasound_library_version_revision); break; }
@@ -648,7 +653,14 @@ void ECA_CONTROL::print_last_value(void)
 {
   string type = last_type();
   string result;
-  if (type == "s") 
+
+  if (type == "e") {
+    if (wellformed_mode_rep != true) 
+      result = "(eca-control) ERROR: " + last_error();
+    else
+      result = last_error();
+  }
+  else if (type == "s")
     result = last_string();
   else if (type == "S")
     result = kvu_vector_to_string(last_string_list(), ",");
@@ -659,15 +671,14 @@ void ECA_CONTROL::print_last_value(void)
   else if (type == "f")
     result = kvu_numtostr(last_float(), 3);
    
-  if (result.size() > 0) {
-    ECA_LOG_MSG(ECA_LOGGER::eiam_return_values, type + " " + result);
+  if (wellformed_mode_rep != true) {
+    if (result.size() > 0) {
+      ECA_LOG_MSG(ECA_LOGGER::eiam_return_values, result);
+    }
   }
-}
-
-void ECA_CONTROL::print_last_error(void)
-{
-  if (last_error().size() > 0) {
-    ECA_LOG_MSG(ECA_LOGGER::eiam_return_values, "e (eca-control) ERROR: " + last_error());
+  else {
+    /* in wellformed-output-mode we always create return output */
+    ECA_LOG_MSG(ECA_LOGGER::eiam_return_values, type + " " + result);
   }
 }
 

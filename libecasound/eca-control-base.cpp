@@ -561,6 +561,7 @@ void ECA_CONTROL_BASE::set_last_long_integer(long int v)
 void ECA_CONTROL_BASE::set_last_error(const string& s)
 {
   last_error_rep = s;
+  last_type_rep = "e";
 }
 
 const vector<string>& ECA_CONTROL_BASE::last_string_list(void) const { return(last_los_rep); }
@@ -579,5 +580,5 @@ void ECA_CONTROL_BASE::clear_last_values(void)
   last_i_rep = 0;
   last_f_rep = 0.0f;
   last_error_rep = "";
-  last_type_rep = "";
+  last_type_rep = "-";
 }
