@@ -3,7 +3,7 @@
 
 #include <string>
 #include <iostream>
-#include <inttypes.h>
+#include <stdint.h>
 #include <sys/types.h>
 
 #include "audioio-types.h"

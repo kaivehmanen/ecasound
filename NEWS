@@ -40,12 +40,16 @@ Last officially released version is -*> v2.0.2 *-
 	- fixed: gcc3.x fixes to ALSA 0.5.x plugin [juekawa]
 	- fixed: problems with ALSA 0.9beta7 (dlopen() issue)
 	- fixed: minor samplerated bug with LADSPA plugins
+	- fixed: gcc3.x failed on certain glibc2.1 headers 
+		 if optimization was enabled (-O2)
 ??0?2001 (v2.0.3)  -** stable release **-
 	- added: more recent config.guess and config.sub to 
 	         the dist package  [juekawa]
 	- fixed: gcc3.x fixes to ALSA 0.5.x plugin [juekawa]
 	- fixed: problems with ALSA 0.9beta7 (dlopen() issue)
 	- fixed: minor samplerated bug with LADSPA plugins
+	- fixed: gcc3.x failed on certain glibc2.1 headers 
+		 if optimization was enabled (-O2)
 17082001 (v2.0.2)  -** stable release **-
  	- added: current position tracking to loop devices
 	- added: more verbose xrun info from ALSA 0.9.x devices
