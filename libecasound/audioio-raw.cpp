@@ -39,6 +39,9 @@ RAWFILE::RAWFILE(const std::string& name)
 
 RAWFILE::~RAWFILE(void)
 {
+  if (is_open() == true) {
+    close();
+  }
 }
 
 /**

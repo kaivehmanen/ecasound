@@ -45,6 +45,11 @@ OSSDEVICE::OSSDEVICE(const std::string& name,
 
 OSSDEVICE::~OSSDEVICE(void)
 {
+  if (is_open() == true && is_running()) stop();
+
+  if (is_open() == true) {
+    close();
+  }
 }
 
 void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)

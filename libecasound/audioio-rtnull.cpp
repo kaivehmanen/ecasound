@@ -37,6 +37,11 @@ REALTIME_NULL::REALTIME_NULL(const std::string& name) {
 
 REALTIME_NULL::~REALTIME_NULL(void)
 { 
+  if (is_open() == true && is_running()) stop();
+
+  if (is_open() == true) {
+    close();
+  }
 }
 
 void REALTIME_NULL::open(void) throw (AUDIO_IO::SETUP_ERROR &)

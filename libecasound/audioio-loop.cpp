@@ -47,6 +47,9 @@ LOOP_DEVICE::LOOP_DEVICE(int id)
 
 LOOP_DEVICE::~LOOP_DEVICE(void)
 {
+  if (is_open() == true) {
+    close();
+  }
 }
 
 bool LOOP_DEVICE::finished(void) const

@@ -59,8 +59,8 @@ class EWFFILE : public AUDIO_IO {
     
   virtual bool finished(void) const;
 
-  virtual void set_buffersize(long int samples) { if (child != 0) child->set_buffersize(samples); }
-  virtual long int buffersize(void) const { if (child != 0) return(child->buffersize()); return(0); }
+  virtual void set_buffersize(long int samples);
+  virtual long int buffersize(void) const;
 
   virtual void read_buffer(SAMPLE_BUFFER* sbuf);
   virtual void write_buffer(SAMPLE_BUFFER* sbuf);
@@ -93,6 +93,7 @@ private:
                  child_start_pos_rep,
                  child_length_rep;
   std::string child_name_rep;
+  long int buffersize_rep;
   bool child_active;
 
   RESOURCE_FILE ewf_rc;

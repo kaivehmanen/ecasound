@@ -45,6 +45,9 @@ OGG_VORBIS_INTERFACE::OGG_VORBIS_INTERFACE(const std::string& name)
 
 OGG_VORBIS_INTERFACE::~OGG_VORBIS_INTERFACE(void)
 {
+  if (is_open() == true) {
+    close();
+  }
 }
 
 void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)

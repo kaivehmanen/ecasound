@@ -51,6 +51,10 @@ AUDIO_IO_JACK::AUDIO_IO_JACK (void)
 
 AUDIO_IO_JACK::~AUDIO_IO_JACK(void)
 { 
+  if (is_open() == true && is_running()) stop();
+  if (is_open() == true) {
+    close();
+  }
 }
 
 AUDIO_IO_MANAGER* AUDIO_IO_JACK::create_object_manager(void) const

@@ -345,6 +345,9 @@ MP3FILE::MP3FILE(const std::string& name)
 
 MP3FILE::~MP3FILE(void)
 {
+  if (is_open() == true) {
+    close();
+  }
 }
 
 void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)

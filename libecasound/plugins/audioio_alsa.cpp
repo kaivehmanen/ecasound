@@ -76,6 +76,12 @@ AUDIO_IO_ALSA_PCM::AUDIO_IO_ALSA_PCM (int card,
 
 AUDIO_IO_ALSA_PCM::~AUDIO_IO_ALSA_PCM(void)
 {
+  if (is_open() == true && is_running()) stop();
+
+  if (is_open() == true) {
+    close();
+  }
+
   if (io_mode() != io_read) {
     if (underruns_rep != 0) {
       cerr << "(audioio-alsa) WARNING! While writing to ALSA-pcm device ";

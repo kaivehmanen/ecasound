@@ -42,6 +42,18 @@ ARTS_INTERFACE::ARTS_INTERFACE(const string& name)
   set_label(name);
 }
 
+ARTS_INTERFACE::~ARTS_INTERFACE(void)
+{
+  if (is_open() == true && is_running()) stop();
+
+  if (is_open() == true) {
+    close();
+  }
+
+  --ref_rep;
+  if (ref_rep == 0) ::arts_free();
+}
+
 void ARTS_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   if (ref_rep == 0) {
@@ -108,12 +120,6 @@ void ARTS_INTERFACE::write_samples(void* target_buffer,
 				   long int samples) 
 {
   samples_rep += ::arts_write(stream_rep, target_buffer, frame_size() * samples);
-}
-
-ARTS_INTERFACE::~ARTS_INTERFACE(void) 
-{ 
-  --ref_rep;
-  if (ref_rep == 0) ::arts_free();
 }
 
 #endif // COMPILE_ARTS

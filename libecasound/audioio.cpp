@@ -40,9 +40,6 @@ AUDIO_IO::SETUP_ERROR::SETUP_ERROR(AUDIO_IO::SETUP_ERROR::Error_type type,
 
 AUDIO_IO::~AUDIO_IO(void)
 {
-  if (is_open() == true) {
-    close();
-  }
   DBC_CHECK(is_open() != true);
 }
 
@@ -206,7 +203,6 @@ void AUDIO_IO::close(void)
   DBC_REQUIRE(is_open() == true);
   open_rep = false;
 }
-
 
 // ===================================================================
 // Runtime information

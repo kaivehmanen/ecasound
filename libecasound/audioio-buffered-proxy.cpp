@@ -81,6 +81,11 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
  */
 AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void) {
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) destructor " + label() + ".");
+
+  if (is_open() == true) {
+    close();
+  }
+
   if (pbuffer_repp != 0) {
     pserver_repp->unregister_client(child_repp);
   }

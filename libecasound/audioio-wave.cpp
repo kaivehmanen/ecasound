@@ -60,6 +60,9 @@ WAVEFILE::WAVEFILE (const std::string& name)
 
 WAVEFILE::~WAVEFILE(void)
 {
+  if (is_open() == true) {
+    close();
+  }
 }
 
 void WAVEFILE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&)
@@ -172,7 +175,7 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 void WAVEFILE::close(void)
 {
   ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-wave) Closing file " + label());
-  if (is_open() && fio_repp != 0) {
+  if (is_open() == true && fio_repp != 0) {
     update();
     fio_repp->close_file();
     delete fio_repp;
@@ -222,10 +225,12 @@ void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
   memcpy(riff_header_rep.wname,"WAVE",4);
 
   /* hack for 64bit wav files */
-  if (fio_repp->get_file_length() - sizeof(riff_header_rep) > UINT32_MAX)
+  if (fio_repp->get_file_length() > UINT32_MAX)
     riff_header_rep.size = UINT32_MAX;
-  else
+  else if (fio_repp->get_file_length() > sizeof(riff_header_rep))
     riff_header_rep.size = fio_repp->get_file_length() - sizeof(riff_header_rep);
+  else
+    riff_header_rep.size = 0;
 
   fio_repp->set_file_position(0);
   //  fseek(fobject,0,SEEK_SET);
@@ -236,16 +241,17 @@ void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
       memcmp("WAVE",riff_header_rep.wname,4) != 0)
     throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: invalid RIFF-header"));
 
-  char temp[16];
-  memcpy(temp, "Riff ID: ", 9);
-  memcpy(&(temp[9]), riff_header_rep.id, 4);
-  temp[13] = 0;
+  // char temp[16];
+  // memcpy(temp, "Riff ID: ", 9);
+  // memcpy(&(temp[9]), riff_header_rep.id, 4);
+  // temp[13] = 0;
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) " + string(temp));
 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) Wave data size " + kvu_numtostr(riff_header_rep.size));
-  memcpy(temp, "Riff type: ", 11);
-  memcpy(&(temp[11]), riff_header_rep.wname, 4);
-  temp[15] = 0;
+
+  // memcpy(temp, "Riff type: ", 11);
+  // memcpy(&(temp[11]), riff_header_rep.wname, 4);
+  // temp[15] = 0;
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) Riff type " + string(temp));
 
   //  fseek(fobject,save,SEEK_SET);
@@ -310,8 +316,8 @@ void WAVEFILE::read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&)
 
   DBC_CHECK(riff_format_rep.channels == channels());
   DBC_CHECK(riff_format_rep.bits == bits());
-  DBC_CHECK(riff_format_rep.srate == samples_per_second());
-  DBC_CHECK(riff_format_rep.byte_second == bytes_per_second());
+  DBC_CHECK(riff_format_rep.srate == static_cast<uint32_t>(samples_per_second()));
+  DBC_CHECK(riff_format_rep.byte_second == static_cast<uint32_t>(bytes_per_second()));
   DBC_CHECK(riff_format_rep.align == frame_size());
 
   fio_repp->set_file_position(savetemp);

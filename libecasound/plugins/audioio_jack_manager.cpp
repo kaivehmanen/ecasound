@@ -88,10 +88,22 @@ static int eca_jack_process(nframes_t nframes, void *arg)
       for(size_t n = 0; n < current->outports_rep.size(); n++) {
 	if (current->outports_rep[n].cb_buffer != 0) {
 	  sample_t* out_cb_buffer = static_cast<sample_t*>(jack_port_get_buffer(current->outports_rep[n].jackport, nframes));
+	  // std::cerr << "(audioio_jack_manager) portbuf=" << out_cb_buffer << ", count=" << current->cb_nframes_rep << std::endl;
 	  memcpy(out_cb_buffer, current->outports_rep[n].cb_buffer, current->cb_nframes_rep * sizeof(sample_t));
 	}
       }
     }
+
+
+#if 0
+     {
+       static int n = 0;
+       if (n++ == 512) {
+ 	std::cerr << "*** (audioio_jack_manager) JACK: timeout ***\n";
+ 	usleep(40000);
+       }
+     }
+#endif
 
     DEBUG_CFLOW_STATEMENT(std::cerr << std::endl << "process4 exit <--");
   }
@@ -500,7 +512,7 @@ void AUDIO_IO_JACK_MANAGER::close(int client_id)
 
   DBC_CHECK(open_clients > 0);
 
-  /* only for the first client */
+  /* only for the last client */
   if (open_clients == 1) {
     if (is_open() == true) close_connection();
   }

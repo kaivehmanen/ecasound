@@ -35,6 +35,9 @@ MIKMOD_INTERFACE::MIKMOD_INTERFACE(const std::string& name) {
 
 MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void) 
 {
+  if (is_open() == true) {
+    close();
+  }
 }
 
 void MIKMOD_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)

@@ -48,6 +48,9 @@ CDRFILE::CDRFILE(const std::string& name)
 
 CDRFILE::~CDRFILE(void)
 {
+  if (is_open() == true) {
+    close();
+  }
 }
 
 void CDRFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
@@ -88,7 +91,8 @@ void CDRFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   AUDIO_IO::open();
 }
 
-void CDRFILE::close(void) { 
+void CDRFILE::close(void)
+{ 
   if (io_mode() != io_read)
     pad_to_sectorsize();
 

@@ -36,6 +36,9 @@ TIMIDITY_INTERFACE::TIMIDITY_INTERFACE(const std::string& name)
 
 TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void)
 {
+  if (is_open() == true) {
+    close();
+  }
 }
 
 void TIMIDITY_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
