@@ -140,8 +140,9 @@ void ECA_ENGINE_DEFAULT_DRIVER::exit(bool blocking)
  * Class constructor. A pointer to an enabled 
  * ECA_CHAINSETUP object must be given as argument. 
  *
- @ @pre csetup != 0
+ * @pre csetup != 0
  * @pre csetup->is_enabled() == true
+ * @post status() == ECA_ENGINE::engine_status_stopped
  */
 ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup) 
   : csetup_repp(csetup),
@@ -165,6 +166,10 @@ ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup)
   PROFILE_ENGINE_STATEMENT(init_profiling());
 
   csetup_repp->toggle_locked_state(false);
+
+  // --
+  DBC_ENSURE(status() == ECA_ENGINE::engine_status_stopped);
+  // --
 }
 
 /**
@@ -500,7 +505,7 @@ void ECA_ENGINE::start_operation(void)
   /* 2. enable rt-scheduling */
   if (csetup_repp->raised_priority() == true) {
     struct sched_param sparam;
-    sparam.sched_priority = csetup_repp->sched_priority();
+    sparam.sched_priority = csetup_repp->get_sched_priority();
     if (::sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Unable to change scheduling policy!");
     else 
@@ -962,6 +967,7 @@ void ECA_ENGINE::init_connection_to_chainsetup(void)
   outputs_repp = &(csetup_repp->outputs);
   chains_repp = &(csetup_repp->chains);
 
+  init_engine_state();
   init_driver();
   init_prefill();
   init_servers();
