@@ -90,7 +90,8 @@ ssize_t kvu_fd_write(int fd, const void *buf, size_t count, int timeout)
  * A maximum of 'timeout' milliseconds will be
  * waited. A negative value means infinite timeout.
  *
- * @return on success returns 0, on error -1
+ * @return returns 1 for success, 0 for timeout 
+ *         and -1 on error
  */
 int kvu_fd_wait(int fd, int timeout)
 {
@@ -106,12 +107,19 @@ int kvu_fd_wait(int fd, int timeout)
     if (ufds.revents & POLLERR ||
 	ufds.revents & POLLHUP ||
 	ufds.revents & POLLNVAL) {
-      ret = -1;
+      /* error */
+      return(-1);
     }
-    else if (ret == 0) {
-      /* timeout */
-      ret = -1;
+    else {
+      /* success */
+      return(1);
     }
   }
-  return(ret);
+  else if (ret == 0) {
+    /* timeout */
+    return(0);
+  }
+
+  /* error */
+  return(-1);
 }
