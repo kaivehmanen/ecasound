@@ -183,7 +183,7 @@ void WAVEFILE::write_riff_header (void) throw(ECA_ERROR*) {
     
   memcpy(riff_header_rep.id,"RIFF",4);
   memcpy(riff_header_rep.wname,"WAVE",4);
-  riff_header_rep.size = fio_repp->get_file_length();
+  riff_header_rep.size = fio_repp->get_file_length() - sizeof(riff_header_rep);
 
   fio_repp->set_file_position(0);
   //  fseek(fobject,0,SEEK_SET);
