@@ -3,10 +3,10 @@ Contents
 
 1: Compiling 
 1.1: Errors when compiling audioio-af.cpp 
-1.2: Errors when linking samplebuffer.o 
-1.3: If ecasound crashes - how to compile for debugging? 
+1.2: If ecasound crashes - how to compile for debugging? 
+1.3: How to rebuild the source-RPMs with ALSA support? 
 2: Installing 
-2.1: Is installing Qt 2.0 going to break KDE and other apps using Qt 1.xx? 
+2.1: Is installing Qt 2.x going to break KDE 1.x and other apps using Qt 1.xx? 
 2.2: Does qtecasound require KDE to be installed? 
 3: Using 
 3.1: Can't open shared shared libraries 
@@ -27,18 +27,7 @@ In file included from audioio-af.cpp:28:
 make[3]: *** [audioio-af.o] Error 1 
 --cut--
 
-1.2: Errors when linking samplebuffer.o
-
-If you get errors that look something like this...
---cut--
-samplebuffer.o(.text+0x1bb): undefined reference to `SAMPLE_BUFFER::is_system_littleendian
---cut--
-
-... you have a incompatible version of libstdc++. As ecasound uses
-many advanced features of standard C++, it requires libstdc++ 2.9.0
-or newer.
-
-1.3: If ecasound crashes - how to compile for debugging?
+1.2: If ecasound crashes - how to compile for debugging?
 
 The easiest way is to increase debug level (-d:level option). This
 gives you a lot of info. Sometimes however, this is not enough. For 
@@ -52,11 +41,17 @@ the behaviour with _debug versions. This way all assertions are
 checked and extra debugging information helps to trace problems with
 gdb.
 
+1.3: How to rebuild the source-RPMs with ALSA support?
+
+If you have ALSA installed properly, normal rebuild is enough:
+"rpm --rebuild ecasound-x.y.zrt.src.rpm" (replace x, y, z and t 
+with proper version numbers).
+
 2: Installing
 
-2.1: Is installing Qt 2.0 going to break KDE and other apps using Qt 1.xx?
+2.1: Is installing Qt 2.x going to break KDE 1.x and other apps using Qt 1.xx?
 
-You can install the Qt 2.0 runtime libs and still run apps using the
+You can install the Qt 2.x runtime libs and still run apps using the
 older Qt versions (like KDE). If you compile KDE/Qt programs yourself, 
 you can choose between Qt 1.x and 2.x by changing the symbolic link 
 "libqt.so". If it points to libqt.so.1, the program is linked to 1.x 
@@ -84,11 +79,11 @@ actually aimed at the masses...
 If you get the following error message...
 
 --cut--
-error in loading shared libraries: libecasound.so.1: cannot open shared object file: No such
+error in loading shared libraries: libecasound.so.x: cannot open shared object file: No such
 file or directory
 --cut--
 
-Add /usr/local/lib to your /etc/ld.so.conf and run "ldconfig". If
+Add /usr/local/lib to your /etc/ld.so.conf and run "/sbin/ldconfig". If
 you haven't installed ecasound to the default location, replace
 /usr/local/lib with the correct library path.
 

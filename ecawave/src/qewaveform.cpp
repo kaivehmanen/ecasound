@@ -42,13 +42,13 @@ QEWaveForm::QEWaveForm (int channel,
   prev_xpos = 0;
   xpos = 0;
 
-  set_wave_color(QColor("royal blue"));
-  set_background_color(Qt::white);
-  set_position_color(Qt::black);
+  set_wave_color(Qt::red);
+  set_background_color(Qt::black);
+  set_position_color(Qt::white);
   set_minmax_color(Qt::gray);
   set_marked_color(Qt::red);
-  set_marked_background_color(Qt::black);
-  set_marked_position_color(Qt::white);
+  set_marked_background_color(Qt::yellow);
+  set_marked_position_color(Qt::blue);
   set_zeroline_color(QColor("royal blue"));
 }
 
@@ -103,8 +103,7 @@ void QEWaveForm::repaint_current_position(void) {
 
     p.setPen(background_color);
     p.drawLine(prev_xpos, 0, prev_xpos, height());
-  
-  
+ 
     if (prev_inside_marked == true &&
 	marked_rep == true) {
       p.setPen(marked_position_color);
@@ -118,7 +117,6 @@ void QEWaveForm::repaint_current_position(void) {
     else {
       p.setPen(position_color);
       p.drawLine(xpos, 0, xpos, height());
-
       p.setPen(wave_color);
     }
 
@@ -143,6 +141,12 @@ void QEWaveForm::repaint_current_position(void) {
     prev_inside_marked = false;
 
   prev_xpos = xpos;
+  int min = waveblock_minimum(current_position_rep, step);
+  int max = waveblock_maximum(current_position_rep, step);
+  if (max > -min)
+    set_wave_color(calculate_wave_color_value(max));
+  else
+    set_wave_color(calculate_wave_color_value(-min));
   prev_xpos_minimum = static_cast<int>(waveblock_minimum(current_position_rep, step) / 32767.0 * waveheight);
   prev_xpos_maximum = static_cast<int>(waveblock_maximum(current_position_rep, step) / 32767.0 * waveheight);
 }
@@ -262,6 +266,12 @@ void QEWaveForm::paintEvent(QPaintEvent* e) {
 	p.setPen(background_color);
 	p.drawLine(xcoord, 0,
 		   xcoord, height());
+	int min = waveblock_minimum(bufindex, step);
+	int max = waveblock_maximum(bufindex, step);
+	if (max > -min)
+	  set_wave_color(calculate_wave_color_value(max));
+	else
+	  set_wave_color(calculate_wave_color_value(-min));
 	p.setPen(wave_color);
       }
       p.drawLine(xcoord, half_height - (int)(waveblock_minimum(bufindex, step) / 32767.0 * waveheight),
@@ -317,5 +327,13 @@ int QEWaveForm::waveblock_maximum(double from, double step) {
   }
   
   return(maximum);
+}
+
+QColor QEWaveForm::calculate_wave_color_value(int value) {
+  double a = value / 32768.f;
+  int red = static_cast<int>(64 * a);
+  red += 192;
+  
+  return(QColor(red, 0, 0));
 }
 

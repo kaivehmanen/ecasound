@@ -62,6 +62,7 @@ extern "C" {
 #include "audioio-mikmod.h"
 #include "audioio-alsa.h"
 #include "audioio-alsa2.h"
+#include "audioio-alsa2-plugin.h"
 #include "audioio-alsalb.h"
 #include "audioio-af.h"
 #include "audioio-raw.h"
@@ -153,6 +154,9 @@ void register_default_audio_objects(void) {
 #endif
 
 #ifdef ALSALIB_050
+  device = new ALSA_PCM2_PLUGIN_DEVICE();
+  eca_audio_object_map.register_object("alsaplugin", device);
+  eca_audio_device_map.register_object("alsaplugin", device);
   device = new ALSA_PCM2_DEVICE();
   eca_audio_object_map.register_object("alsa", device);
   eca_audio_device_map.register_object("alsa", device);

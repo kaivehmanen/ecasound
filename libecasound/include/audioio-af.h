@@ -38,19 +38,20 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   
  public:
 
-  string name(void) const { return("SGI libaudiofile object"); }
-  int supported_io_modes(void) const { return(io_read | io_write); }
+  virtual string name(void) const { return("SGI libaudiofile object"); }
+  virtual string description(void) const { return("SGI libaudiofile object. Supports AIFF (.aiff, .aifc, .aif) and Sun/NeXT audio files (.au, .snd)."); }
+
+  virtual int supported_io_modes(void) const { return(io_read | io_write); }
   virtual bool locked_audio_format(void) const { return(true); }
-
   
-  void open(void) throw(ECA_ERROR*);
-  void close(void);
+  virtual void open(void) throw(ECA_ERROR*);
+  virtual void close(void);
   
-  long int read_samples(void* target_buffer, long int samples);
-  void write_samples(void* target_buffer, long int samples);
+  virtual long int read_samples(void* target_buffer, long int samples);
+  virtual void write_samples(void* target_buffer, long int samples);
 
-  bool finished(void) const;
-  void seek_position(void);
+  virtual bool finished(void) const;
+  virtual void seek_position(void);
     
   AUDIOFILE_INTERFACE* clone(void) { return new AUDIOFILE_INTERFACE(*this); }
   AUDIOFILE_INTERFACE* new_expr(void) { return new AUDIOFILE_INTERFACE(); }  

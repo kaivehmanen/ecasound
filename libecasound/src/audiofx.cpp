@@ -36,6 +36,7 @@ EFFECT_DCFIX::EFFECT_DCFIX (const EFFECT_DCFIX& x) {
   for(int nm = 0; nm < 2; nm++) {
     deltafix[nm] = x.deltafix[nm];
   }
+  i = x.i;
 }
 
 void EFFECT_DCFIX::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
@@ -69,6 +70,12 @@ void EFFECT_DCFIX::process(void) {
       i.next();
     }
   }
+}
+
+EFFECT_PITCH_SHIFT::EFFECT_PITCH_SHIFT (const EFFECT_PITCH_SHIFT& x) {
+  pmod = x.pmod;
+  target_rate = x.target_rate;
+  sbuf = 0;
 }
 
 void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {

@@ -43,6 +43,14 @@ public slots:
   void marked_area(long int startpos_samples, int endpos_samples);
 
   /**
+   * Mark the whole file
+   *
+   * ensure:
+   *  is_marked() == true
+   */
+  void mark_all(void);
+
+  /**
    * Unmark the marked area
    *
    * ensure:

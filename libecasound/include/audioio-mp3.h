@@ -48,16 +48,17 @@ class MP3FILE : public AUDIO_IO_BUFFERED {
   
  public:
 
-  string name(void) const { return("MP3 file"); }
+  virtual string name(void) const { return("MP3 file"); }
+  virtual string description(void) const { return("Wrapper object that reads mp3s using mpg123 and writes them using lame."); }
 
-  void open(void);
-  void close(void);
+  virtual void open(void);
+  virtual void close(void);
   
-  long int read_samples(void* target_buffer, long int samples);
-  void write_samples(void* target_buffer, long int samples);
+  virtual long int read_samples(void* target_buffer, long int samples);
+  virtual void write_samples(void* target_buffer, long int samples);
 
-  bool finished(void) const { return(finished_rep); }
-  void seek_position(void);
+  virtual bool finished(void) const { return(finished_rep); }
+  virtual void seek_position(void);
 
   // --
   // Realtime related functions

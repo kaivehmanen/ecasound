@@ -47,18 +47,14 @@
 
 QESession::QESession (ECA_CONTROLLER* econtrol, const ECA_SESSION*
 		      esession, QWidget *parent, const char *name)
-
-  : QWidget( parent, name ), ctrl(econtrol), ecasession(esession)
+  : QWidget(parent, name), ctrl(econtrol), ecasession(esession)
 {
-  setMinimumSize( 600, 0 );
-
   timer_id = startTimer(100);
   current_dir = "";
   child_csetup = 0;
 
   setCaption("qtecasound - session setup window");
-
-  QBoxLayout* topLayout = new QVBoxLayout( this );
+  QBoxLayout* topLayout = new QVBoxLayout(this);
 
   init_chainsetuplist();
   init_buttons();
@@ -67,18 +63,15 @@ QESession::QESession (ECA_CONTROLLER* econtrol, const ECA_SESSION*
   topLayout->addWidget(chainsetupview, 0, 0);
 
   setFocusPolicy(QWidget::ClickFocus);
-
   QObject::connect( chainsetupview,
 		    SIGNAL(doubleClicked(QListViewItem*)), 
 		    this, SLOT(button_chainsetup_clicked(QListViewItem*)));
   QObject::connect( chainsetupview,
 		    SIGNAL(returnPressed(QListViewItem*)), 
 		    this, SLOT(button_chainsetup_clicked(QListViewItem*)));
-
 }
 
-void QESession::closeEvent( QCloseEvent *e )
-{
+void QESession::closeEvent(QCloseEvent *e) {
   if (child_csetup != 0) {
     child_csetup->close(true);
   }
@@ -165,7 +158,7 @@ void QESession::init_chainsetuplist (void) {
   chainsetupview->setSorting(0);
 
   update_chainsetuplist();
-  chainsetupview->setGeometry(0, 0, width() - 4, chainsetupview->height() - 15);
+  //  chainsetupview->setGeometry(0, 0, width() - 4, chainsetupview->height() - 15);
 
   chainsetupview->show();
 }

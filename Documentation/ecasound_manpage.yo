@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (27.03.2000)
+       (14.04.2000)
        ()
        (Multimedia software)
 
@@ -207,6 +207,10 @@ When using ALSA drivers, instead of a device filename, you need to
 use the following option syntax: bf(-i[:]alsa,card_number,device_number). 
 If you need to specify individual subdevices:
 bf(-i[:]alsa,card_number,device_number,subdevice_number).
+
+dit(ALSA pcm-plugin layer)
+Just like normal ALSA devices, but with automatic sample rate and format 
+conversions. Option syntax is bf(-i[:]alsaplugin,card_number,device_number,subdevice_number).
 
 dit(ALSA loopback device)
 By using the ALSA loopback system, you can grab audio data from any

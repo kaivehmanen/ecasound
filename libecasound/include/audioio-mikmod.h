@@ -36,17 +36,17 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED {
   
  public:
 
-  string name(void) const { return("MikMod tracker module"); }
-  int supported_io_modes(void) const { return(io_read); }
+  virtual string name(void) const { return("MikMod tracker module"); }
+  virtual int supported_io_modes(void) const { return(io_read); }
 
-  void open(void);
-  void close(void);
+  virtual void open(void);
+  virtual void close(void);
   
-  long int read_samples(void* target_buffer, long int samples);
-  void write_samples(void* target_buffer, long int samples) { }
+  virtual long int read_samples(void* target_buffer, long int samples);
+  virtual void write_samples(void* target_buffer, long int samples) { }
 
-  bool finished(void) const { return(finished_rep); }
-  void seek_position(void);
+  virtual bool finished(void) const { return(finished_rep); }
+  virtual void seek_position(void);
  
   MIKMOD_INTERFACE (const string& name = "");
   ~MIKMOD_INTERFACE(void);

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-qtmain.cpp: GUI routines for qtecasound (based on QT-libraries).
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -85,6 +85,10 @@ int main( int argc, char **argv )
   catch(ECA_ERROR* e) {
     cerr << "\n---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
   }    
+  catch(DBC_EXCEPTION* e) { 
+    e->print();
+    exit(1);
+  }
   catch(...) {
     cerr << "\n---\nCaught an unknown exception!\n";
   }

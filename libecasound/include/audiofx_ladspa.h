@@ -26,15 +26,17 @@ private:
 
 public:
 
-  string name(void) const { return("LADSPA/" + label_rep); }
-  string parameter_names(void) const { return(param_names_rep); }
+  virtual string name(void) const { return("LADSPA/" + label_rep); }
+  virtual string description(void) const { return("Wrapper for LADSPA plugins."); }
+
+  virtual string parameter_names(void) const { return(param_names_rep); }
   string unique(void) const { return(unique_rep); }
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_LADSPA* clone(void);
   EFFECT_LADSPA* new_expr(void)  { return new EFFECT_LADSPA(plugin_desc); }

@@ -37,7 +37,6 @@
 QEChain::QEChain(ECA_CONTROLLER* control, const CHAIN* ch, QWidget *parent, const char *name )
         : QWidget( parent, name ), ctrl(control), chain(ch)
 {
-  setMinimumSize( 600, 0 );
   startTimer(500);
   
   QString caption = "qtecasound - chain: " + QString(ch->name().c_str());
@@ -101,13 +100,8 @@ void QEChain::init_buttons(void) {
 }
 
 void QEChain::init_chainlist (void) {
-
-  //  chainview = new QListView_dumb(this, "chainview");
   chainview = new QListView(this, "chainview");
 
-  //  chainsetupview->setMaximumSize( width() / 2, height() / 2);
-  chainview->setMinimumSize( 600, 100 );
-       
   chainview->addColumn("Operator");
   chainview->addColumn("Params");
 
@@ -117,8 +111,6 @@ void QEChain::init_chainlist (void) {
   update_chainlist_clean();
 
   chainview->setGeometry(0, 0, width(), 100);
-
-  chainview->show();
 }
 
 void QEChain::update_chainlist_clean (void) {

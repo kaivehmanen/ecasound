@@ -152,11 +152,11 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   // ---
   // Status/info functions
   // ---
-  vector<string> get_connected_chains_to_input(AUDIO_IO* aiod) const;
-  vector<string> get_connected_chains_to_output(AUDIO_IO* aiod) const;
-  vector<string> get_connected_chains_to_iodev(const string& filename) const;
-  int number_of_connected_chains_to_input(AUDIO_IO* aiod) const;
-  int number_of_connected_chains_to_output(AUDIO_IO* aiod) const;
+  vector<string> get_attached_chains_to_input(AUDIO_IO* aiod) const;
+  vector<string> get_attached_chains_to_output(AUDIO_IO* aiod) const;
+  vector<string> get_attached_chains_to_iodev(const string& filename) const;
+  int number_of_attached_chains_to_input(AUDIO_IO* aiod) const;
+  int number_of_attached_chains_to_output(AUDIO_IO* aiod) const;
   const CHAIN* get_chain_with_name(const string& name) const;
 
   // ---

@@ -23,7 +23,7 @@ class QEChainselectDialog : public QDialog {
 
 public slots:
 
-  void set_chains(const vector<string>& newchains) { r_chains = newchains; }
+  void set_chains(const vector<string>& newchains) { chains_rep = newchains; }
 
 protected slots:
 
@@ -39,7 +39,7 @@ protected slots:
   void init_shortcuts(void);
   void init_chains(void);
 
-  vector<string> r_chains;
+  vector<string> chains_rep, r_chains;
 
   const ECA_CHAINSETUP* chainsetup;
 
@@ -49,6 +49,3 @@ protected slots:
 };
 
 #endif
-
-
-

@@ -29,8 +29,10 @@ private:
 
 public:
 
-  virtual string name(void) const { return("VST/" + label_rep); }
-  virtual string parameter_names(void) const { return(param_names_rep); }
+  virtual virtual string name(void) const { return("VST/" + label_rep); }
+  virtual string description(void) const { return("Wrapper for VST-plugins."); }
+  virtual virtual string parameter_names(void) const { return(param_names_rep); }
+
   string unique(void) const { return(unique_rep); }
 
   virtual void set_parameter(int param, parameter_type value);

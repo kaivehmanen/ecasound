@@ -351,7 +351,7 @@ void ECA_AUDIO_OBJECTS::toggle_chain_bypass(void) {
 }
 
 vector<string>
-ECA_AUDIO_OBJECTS::get_connected_chains_to_input(AUDIO_IO* aiod) const{ 
+ECA_AUDIO_OBJECTS::get_attached_chains_to_input(AUDIO_IO* aiod) const{ 
   vector<string> res;
   
   vector<CHAIN*>::const_iterator q = chains.begin();
@@ -366,7 +366,7 @@ ECA_AUDIO_OBJECTS::get_connected_chains_to_input(AUDIO_IO* aiod) const{
 }
 
 vector<string>
-ECA_AUDIO_OBJECTS::get_connected_chains_to_output(AUDIO_IO* aiod) const { 
+ECA_AUDIO_OBJECTS::get_attached_chains_to_output(AUDIO_IO* aiod) const { 
   vector<string> res;
   
   vector<CHAIN*>::const_iterator q = chains.begin();
@@ -380,7 +380,7 @@ ECA_AUDIO_OBJECTS::get_connected_chains_to_output(AUDIO_IO* aiod) const {
   return(res); 
 }
 
-int ECA_AUDIO_OBJECTS::number_of_connected_chains_to_input(AUDIO_IO* aiod) const {
+int ECA_AUDIO_OBJECTS::number_of_attached_chains_to_input(AUDIO_IO* aiod) const {
   int count = 0;
   
   vector<CHAIN*>::const_iterator q = chains.begin();
@@ -394,7 +394,7 @@ int ECA_AUDIO_OBJECTS::number_of_connected_chains_to_input(AUDIO_IO* aiod) const
   return(count); 
 }
 
-int ECA_AUDIO_OBJECTS::number_of_connected_chains_to_output(AUDIO_IO* aiod) const {
+int ECA_AUDIO_OBJECTS::number_of_attached_chains_to_output(AUDIO_IO* aiod) const {
   int count = 0;
   
   vector<CHAIN*>::const_iterator q = chains.begin();
@@ -408,7 +408,7 @@ int ECA_AUDIO_OBJECTS::number_of_connected_chains_to_output(AUDIO_IO* aiod) cons
   return(count); 
 }
 
-vector<string> ECA_AUDIO_OBJECTS::get_connected_chains_to_iodev(const
+vector<string> ECA_AUDIO_OBJECTS::get_attached_chains_to_iodev(const
 							     string&
 							     filename) const
   {
@@ -417,14 +417,14 @@ vector<string> ECA_AUDIO_OBJECTS::get_connected_chains_to_iodev(const
   p = 0;
   while (p < inputs.size()) {
     if (inputs[p]->label() == filename)
-      return(get_connected_chains_to_input(inputs[p]));
+      return(get_attached_chains_to_input(inputs[p]));
     ++p;
   }
 
   p = 0;
   while (p < outputs.size()) {
     if (outputs[p]->label() == filename)
-      return(get_connected_chains_to_output(outputs[p]));
+      return(get_attached_chains_to_output(outputs[p]));
     ++p;
   }
   return(vector<string> (0));
@@ -516,7 +516,7 @@ string ECA_AUDIO_OBJECTS::inputs_to_string(void) const {
   int p = 0;
   while (p < static_cast<int>(inputs.size())) {
     t << "-a:";
-    vector<string> c = get_connected_chains_to_input(inputs[p]);
+    vector<string> c = get_attached_chains_to_input(inputs[p]);
     vector<string>::const_iterator cp = c.begin();
     while (cp != c.end()) {
       t << *cp;
@@ -543,7 +543,7 @@ string ECA_AUDIO_OBJECTS::outputs_to_string(void) const {
   vector<AUDIO_IO*>::size_type p = 0;
   while (p < outputs.size()) {
     t << "-a:";
-    vector<string> c = get_connected_chains_to_output(outputs[p]);
+    vector<string> c = get_attached_chains_to_output(outputs[p]);
     vector<string>::const_iterator cp = c.begin();
     while (cp != c.end()) {
       t << *cp;
@@ -611,6 +611,11 @@ void ECA_AUDIO_OBJECTS::attach_input_to_selected_chains(const string& filename) 
 
   while (c < inputs.size()) {
     if (inputs[c]->label() == filename) {
+      for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+	if ((*q)->input_id == inputs[c]) {
+	  (*q)->disconnect_input();
+	}
+      }
       temp += "(eca-audio-objects) Assigning file to chains:";
       for(vector<string>::const_iterator p = selected_chainids.begin(); p!= selected_chainids.end(); p++) {
 	for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
@@ -632,6 +637,11 @@ void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const string& filename)
 
   while (c < outputs.size()) {
     if (outputs[c]->label() == filename) {
+      for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+	if ((*q)->output_id == outputs[c]) {
+	  (*q)->disconnect_output();
+	}
+      }
       temp += "(eca-chainsetup) Assigning file to chains:";
       for(vector<string>::const_iterator p = selected_chainids.begin(); p!= selected_chainids.end(); p++) {
 	for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {

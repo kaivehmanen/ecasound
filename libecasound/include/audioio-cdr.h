@@ -32,7 +32,7 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
   void pad_to_sectorsize(void);
   void set_length_in_bytes(void);
 
-  //  CDRFILE(const CDRFILE& x) { }
+  CDRFILE(const CDRFILE& x) { }
   CDRFILE& operator=(const CDRFILE& x) { return *this; }
 
   void seek_position_in_samples(long pos);
@@ -57,21 +57,23 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
  public:
 
   string name(void) const { return("CD-R audio file"); }
+  string description(void) const { return("CD-R/CDDA audio files. This format is used when mastering audio-CDs."); }
+
   virtual bool locked_audio_format(void) const { return(true); }
 
-  void open(void) throw(ECA_ERROR*);
-  void close(void);
+  virtual void open(void) throw(ECA_ERROR*);
+  virtual void close(void);
 
-  long int read_samples(void* target_buffer, long int samples);
-  void write_samples(void* target_buffer, long int samples);
+  virtual long int read_samples(void* target_buffer, long int samples);
+  virtual void write_samples(void* target_buffer, long int samples);
 
-  bool finished(void) const;
-  void seek_position(void);
+  virtual bool finished(void) const;
+  virtual void seek_position(void);
     
   CDRFILE (const string& name = "");
   ~CDRFILE(void);
     
-  CDRFILE* clone(void) { return new CDRFILE(*this); }
+  CDRFILE* clone(void) { cerr << "Not implemented!" << endl; return this; }
   CDRFILE* new_expr(void) { return new CDRFILE(); }
 };
 

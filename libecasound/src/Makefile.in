@@ -103,7 +103,7 @@ ecasound_audiofx_src = audiofx.cpp 			audiofx_amplitude.cpp 			audiofx_compresso
 
 ecasound_audioio_oss_src = audioio-oss.cpp
 
-ecasound_audioio_alsa_src = audioio-alsa.cpp 				audioio-alsa2.cpp 				audioio-alsalb.cpp
+ecasound_audioio_alsa_src = audioio-alsa.cpp 				audioio-alsa2.cpp 				audioio-alsa2-plugin.cpp 				audioio-alsalb.cpp
 
 
 ecasound_audioio_src = audioio-cdr.cpp 			audioio-ewf.cpp 			audioio-mp3.cpp 			audioio-wave.cpp 			audioio.cpp 			audioio-af.cpp 			audioio-raw.cpp 			audioio-mikmod.cpp 			audioio-rtnull.cpp 			audioio-types.cpp 			audioio-loop.cpp 			$(ecasound_audioio_oss_src) 			$(ecasound_audioio_alsa_src)
@@ -127,7 +127,7 @@ libecasound_debug_la_SOURCES = $(ecasound_common_src)
 #libecasound_la_LIBADD = -lm -lpthread -lkvutils $(af_libs) $(alsa_libs)
 #libecasound_la_LIBADD = -lm -lpthread -ldl -lkvutils $(af_libs)
 #libecasound_la_LIBADD = $(af_libs) $(top_srcdir)/kvutils/libkvutils.la
-libecasound_la_LIBADD = $(af_libs) -L$(top_builddir)/kvutils -lkvutils
+libecasound_la_LIBADD = $(af_libs)  $(alsa_libs) -L$(top_builddir)/kvutils -lkvutils
 libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
 #libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD) -lefence
 libecasound_la_LDFLAGS = --export-dynamic $(eca_ldflags)
@@ -142,8 +142,10 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-@COMPILE_AF_FALSE@libecasound_debug_la_DEPENDENCIES = 
-@COMPILE_AF_TRUE@libecasound_debug_la_DEPENDENCIES = 
+@COMPILE_ALSA_TRUE@@COMPILE_AF_FALSE@libecasound_debug_la_DEPENDENCIES = 
+@COMPILE_ALSA_FALSE@@COMPILE_AF_TRUE@libecasound_debug_la_DEPENDENCIES = 
+@COMPILE_ALSA_FALSE@@COMPILE_AF_FALSE@libecasound_debug_la_DEPENDENCIES = 
+@COMPILE_ALSA_TRUE@@COMPILE_AF_TRUE@libecasound_debug_la_DEPENDENCIES = 
 @FEELING_EXPERIMENTAL_FALSE@libecasound_debug_la_OBJECTS =  audiofx.lo \
 @FEELING_EXPERIMENTAL_FALSE@audiofx_amplitude.lo audiofx_compressor.lo \
 @FEELING_EXPERIMENTAL_FALSE@audiofx_analysis.lo audiofx_filter.lo \
@@ -156,9 +158,10 @@ LIBS = @LIBS@
 @FEELING_EXPERIMENTAL_FALSE@audioio-mikmod.lo audioio-rtnull.lo \
 @FEELING_EXPERIMENTAL_FALSE@audioio-types.lo audioio-loop.lo \
 @FEELING_EXPERIMENTAL_FALSE@audioio-oss.lo audioio-alsa.lo \
-@FEELING_EXPERIMENTAL_FALSE@audioio-alsa2.lo audioio-alsalb.lo \
-@FEELING_EXPERIMENTAL_FALSE@generic-controller.lo midi-cc.lo osc-gen.lo \
-@FEELING_EXPERIMENTAL_FALSE@osc-sine.lo linear-envelope.lo \
+@FEELING_EXPERIMENTAL_FALSE@audioio-alsa2.lo audioio-alsa2-plugin.lo \
+@FEELING_EXPERIMENTAL_FALSE@audioio-alsalb.lo generic-controller.lo \
+@FEELING_EXPERIMENTAL_FALSE@midi-cc.lo osc-gen.lo osc-sine.lo \
+@FEELING_EXPERIMENTAL_FALSE@linear-envelope.lo \
 @FEELING_EXPERIMENTAL_FALSE@two-stage-linear-envelope.lo eca-chain.lo \
 @FEELING_EXPERIMENTAL_FALSE@eca-main.lo eca-midi.lo eca-session.lo \
 @FEELING_EXPERIMENTAL_FALSE@eca-resources.lo resource-file.lo \
@@ -191,9 +194,9 @@ LIBS = @LIBS@
 @FEELING_EXPERIMENTAL_TRUE@audioio-rtnull.lo audioio-types.lo \
 @FEELING_EXPERIMENTAL_TRUE@audioio-loop.lo audioio-oss.lo \
 @FEELING_EXPERIMENTAL_TRUE@audioio-alsa.lo audioio-alsa2.lo \
-@FEELING_EXPERIMENTAL_TRUE@audioio-alsalb.lo generic-controller.lo \
-@FEELING_EXPERIMENTAL_TRUE@midi-cc.lo osc-gen.lo osc-sine.lo \
-@FEELING_EXPERIMENTAL_TRUE@linear-envelope.lo \
+@FEELING_EXPERIMENTAL_TRUE@audioio-alsa2-plugin.lo audioio-alsalb.lo \
+@FEELING_EXPERIMENTAL_TRUE@generic-controller.lo midi-cc.lo osc-gen.lo \
+@FEELING_EXPERIMENTAL_TRUE@osc-sine.lo linear-envelope.lo \
 @FEELING_EXPERIMENTAL_TRUE@two-stage-linear-envelope.lo eca-chain.lo \
 @FEELING_EXPERIMENTAL_TRUE@eca-main.lo eca-midi.lo eca-session.lo \
 @FEELING_EXPERIMENTAL_TRUE@eca-resources.lo resource-file.lo \
@@ -215,8 +218,10 @@ LIBS = @LIBS@
 @FEELING_EXPERIMENTAL_TRUE@eca-controller-map.lo eca-preset-map.lo \
 @FEELING_EXPERIMENTAL_TRUE@eca-vst-plugin-map.lo global-preset.lo \
 @FEELING_EXPERIMENTAL_TRUE@AudioEffect.lo audioeffectx.lo
-@COMPILE_AF_FALSE@libecasound_la_DEPENDENCIES = 
-@COMPILE_AF_TRUE@libecasound_la_DEPENDENCIES = 
+@COMPILE_ALSA_TRUE@@COMPILE_AF_FALSE@libecasound_la_DEPENDENCIES = 
+@COMPILE_ALSA_FALSE@@COMPILE_AF_TRUE@libecasound_la_DEPENDENCIES = 
+@COMPILE_ALSA_FALSE@@COMPILE_AF_FALSE@libecasound_la_DEPENDENCIES = 
+@COMPILE_ALSA_TRUE@@COMPILE_AF_TRUE@libecasound_la_DEPENDENCIES = 
 @FEELING_EXPERIMENTAL_FALSE@libecasound_la_OBJECTS =  audiofx.lo \
 @FEELING_EXPERIMENTAL_FALSE@audiofx_amplitude.lo audiofx_compressor.lo \
 @FEELING_EXPERIMENTAL_FALSE@audiofx_analysis.lo audiofx_filter.lo \
@@ -229,9 +234,10 @@ LIBS = @LIBS@
 @FEELING_EXPERIMENTAL_FALSE@audioio-mikmod.lo audioio-rtnull.lo \
 @FEELING_EXPERIMENTAL_FALSE@audioio-types.lo audioio-loop.lo \
 @FEELING_EXPERIMENTAL_FALSE@audioio-oss.lo audioio-alsa.lo \
-@FEELING_EXPERIMENTAL_FALSE@audioio-alsa2.lo audioio-alsalb.lo \
-@FEELING_EXPERIMENTAL_FALSE@generic-controller.lo midi-cc.lo osc-gen.lo \
-@FEELING_EXPERIMENTAL_FALSE@osc-sine.lo linear-envelope.lo \
+@FEELING_EXPERIMENTAL_FALSE@audioio-alsa2.lo audioio-alsa2-plugin.lo \
+@FEELING_EXPERIMENTAL_FALSE@audioio-alsalb.lo generic-controller.lo \
+@FEELING_EXPERIMENTAL_FALSE@midi-cc.lo osc-gen.lo osc-sine.lo \
+@FEELING_EXPERIMENTAL_FALSE@linear-envelope.lo \
 @FEELING_EXPERIMENTAL_FALSE@two-stage-linear-envelope.lo eca-chain.lo \
 @FEELING_EXPERIMENTAL_FALSE@eca-main.lo eca-midi.lo eca-session.lo \
 @FEELING_EXPERIMENTAL_FALSE@eca-resources.lo resource-file.lo \
@@ -264,9 +270,9 @@ LIBS = @LIBS@
 @FEELING_EXPERIMENTAL_TRUE@audioio-rtnull.lo audioio-types.lo \
 @FEELING_EXPERIMENTAL_TRUE@audioio-loop.lo audioio-oss.lo \
 @FEELING_EXPERIMENTAL_TRUE@audioio-alsa.lo audioio-alsa2.lo \
-@FEELING_EXPERIMENTAL_TRUE@audioio-alsalb.lo generic-controller.lo \
-@FEELING_EXPERIMENTAL_TRUE@midi-cc.lo osc-gen.lo osc-sine.lo \
-@FEELING_EXPERIMENTAL_TRUE@linear-envelope.lo \
+@FEELING_EXPERIMENTAL_TRUE@audioio-alsa2-plugin.lo audioio-alsalb.lo \
+@FEELING_EXPERIMENTAL_TRUE@generic-controller.lo midi-cc.lo osc-gen.lo \
+@FEELING_EXPERIMENTAL_TRUE@osc-sine.lo linear-envelope.lo \
 @FEELING_EXPERIMENTAL_TRUE@two-stage-linear-envelope.lo eca-chain.lo \
 @FEELING_EXPERIMENTAL_TRUE@eca-main.lo eca-midi.lo eca-session.lo \
 @FEELING_EXPERIMENTAL_TRUE@eca-resources.lo resource-file.lo \
@@ -305,12 +311,12 @@ DEP_FILES =  .deps/AudioEffect.P .deps/audioeffectx.P .deps/audiofx.P \
 .deps/audiofx_compressor.P .deps/audiofx_filter.P \
 .deps/audiofx_ladspa.P .deps/audiofx_mixing.P .deps/audiofx_rcfilter.P \
 .deps/audiofx_timebased.P .deps/audiofx_vst.P .deps/audiogate.P \
-.deps/audioio-af.P .deps/audioio-alsa.P .deps/audioio-alsa2.P \
-.deps/audioio-alsalb.P .deps/audioio-cdr.P .deps/audioio-ewf.P \
-.deps/audioio-loop.P .deps/audioio-mikmod.P .deps/audioio-mp3.P \
-.deps/audioio-oss.P .deps/audioio-raw.P .deps/audioio-rtnull.P \
-.deps/audioio-types.P .deps/audioio-wave.P .deps/audioio.P \
-.deps/eca-audio-format.P .deps/eca-audio-object-map.P \
+.deps/audioio-af.P .deps/audioio-alsa.P .deps/audioio-alsa2-plugin.P \
+.deps/audioio-alsa2.P .deps/audioio-alsalb.P .deps/audioio-cdr.P \
+.deps/audioio-ewf.P .deps/audioio-loop.P .deps/audioio-mikmod.P \
+.deps/audioio-mp3.P .deps/audioio-oss.P .deps/audioio-raw.P \
+.deps/audioio-rtnull.P .deps/audioio-types.P .deps/audioio-wave.P \
+.deps/audioio.P .deps/eca-audio-format.P .deps/eca-audio-object-map.P \
 .deps/eca-audio-objects.P .deps/eca-audio-position.P \
 .deps/eca-audio-time.P .deps/eca-chain.P .deps/eca-chainop-map.P \
 .deps/eca-chainsetup.P .deps/eca-comhelp.P .deps/eca-control-position.P \

@@ -30,11 +30,8 @@
 QEChainselectDialog::QEChainselectDialog (const ECA_CHAINSETUP* csetup, QWidget *parent, const char *name) 
   : QDialog(parent, name, true), chainsetup(csetup) {
 
-  setMinimumSize(300, 300);
-
   setCaption("qtecasound - select chains");
-
-  QBoxLayout* topLayout = new QVBoxLayout( this );
+  QBoxLayout* topLayout = new QVBoxLayout(this);
 
   init_chains();
 
@@ -80,9 +77,11 @@ void QEChainselectDialog::init_chains(void) {
   }
   chains = new QHBoxLayout();
   chains->addWidget(chainbox);
+  chainbox->updateGeometry();
 }
 
 void QEChainselectDialog::inputGiven(void) {
+  r_chains.clear();
   for(int n = 0; n < chaininput->count(); n++) {
     ecadebug->msg(4, "(eca-qtiodevdialog) checking chaininput " + kvu_numtostr(n));
     if (chaininput->isSelected(chaininput->item(n))) {

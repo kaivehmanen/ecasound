@@ -37,10 +37,13 @@ class EWFFILE : public AUDIO_IO {
   void init_default_child(void) throw(ECA_ERROR*);
   
   EWFFILE& operator=(const EWFFILE& x) { return *this; }
+  EWFFILE (const EWFFILE& x) { }
 
  public:
 
-  string name(void) const { return("Ecasound wave file"); }
+  virtual string name(void) const { return("Ecasound wave file"); }
+  virtual string description(void) const { return("Special format acts as a wrapper for other file formats. It can used for looping, audio data relocation and other special tasks."); }
+
   virtual bool locked_audio_format(void) const { return(true); }
 
   /**
@@ -63,21 +66,21 @@ class EWFFILE : public AUDIO_IO {
    */
   void toggle_looping(bool v) { child_looping_rep = v; }
     
-  bool finished(void) const;
-  long length_in_samples(void) const;
+  virtual bool finished(void) const;
+  virtual long length_in_samples(void) const;
 
-  void buffersize(long int samples, long int sample_rate) { if (child != 0) child->buffersize(samples, sample_rate); }
-  long int buffersize(void) const { if (child != 0) return(child->buffersize()); return(0); }
-  void buffersize_changed(void) { if (child != 0) child->buffersize(buffersize(), samples_per_second()); }
+  virtual void buffersize(long int samples, long int sample_rate) { if (child != 0) child->buffersize(samples, sample_rate); }
+  virtual long int buffersize(void) const { if (child != 0) return(child->buffersize()); return(0); }
+  virtual void buffersize_changed(void) { if (child != 0) child->buffersize(buffersize(), samples_per_second()); }
 
-  void read_buffer(SAMPLE_BUFFER* sbuf);
-  void write_buffer(SAMPLE_BUFFER* sbuf);
+  virtual void read_buffer(SAMPLE_BUFFER* sbuf);
+  virtual void write_buffer(SAMPLE_BUFFER* sbuf);
 
   void seek_position(void);
   void open(void) throw(ECA_ERROR*);
   void close(void);
  
-  EWFFILE* clone(void) { return new EWFFILE(*this); }
+  EWFFILE* clone(void) { cerr << "Not implemented!" << endl; return this; }
   EWFFILE* new_expr(void) { return new EWFFILE(); }
   EWFFILE (const string& name = "") { label(name); child = 0; }
   ~EWFFILE(void);

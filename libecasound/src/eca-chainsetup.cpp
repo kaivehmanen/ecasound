@@ -609,7 +609,6 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   // --------
 
   vector<string> schains = selected_chains();
-  assert(schains.size() == 1);
   for(vector<string>::const_iterator p = schains.begin(); p != schains.end(); p++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*p == (*q)->name()) {
@@ -621,10 +620,6 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
       }
     }
   }
-
-  // --------
-  ENSURE(chains.size() > 0);
-  // --------
 }
 
 void ECA_CHAINSETUP::load_from_file(const string& filename) throw(ECA_ERROR*) { 

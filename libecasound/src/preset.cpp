@@ -46,7 +46,9 @@ PRESET::PRESET(const string& formatted_string)
 PRESET::~PRESET(void) {
   vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
   while(p != buffers.end()) {
-    delete *p;
+    if (p != buffers.begin()) delete *p; // first buffer points to an
+                                         // outside buffer -> not
+                                         // deleted here
     ++p;
   }
 

@@ -155,7 +155,7 @@ void QEEvent::set_default_audio_format(const string& name) {
   try {
     ectrl->select_audio_object(name);
     ECA_AUDIO_FORMAT aio_params = ectrl->get_audio_format();
-    ectrl->set_default_audio_format(&aio_params);
+    ectrl->set_default_audio_format(aio_params);
     //    cerr << "Setting sample rate of: " << aio_params.samples_per_second() << ".\n";
     ectrl->set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
   }

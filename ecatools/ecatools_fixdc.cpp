@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 	  cerr << "Calculating DC-offset for file \"" << filename << "\".\n";
 	  ectrl.add_audio_input(filename);
 	  aio_params = ectrl.get_audio_format();
-	  ectrl.set_default_audio_format(&aio_params);
+	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(ecatools_fixdc_tempfile);
 
@@ -103,9 +103,9 @@ int main(int argc, char *argv[])
 	       << ").\n";
 	  ectrl.add_audio_input(ecatools_fixdc_tempfile);
 	  aio_params = ectrl.get_audio_format();
-	  ectrl.set_default_audio_format(&aio_params);
+	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
-	  ectrl.set_default_audio_format(&aio_params);
+	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.add_audio_output(filename);
 
 	  dcfix = new EFFECT_DCFIX(dcfix_value[SAMPLE_SPECS::ch_left],

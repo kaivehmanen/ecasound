@@ -66,11 +66,13 @@ private:
   struct timespec sleepcount;
 
   bool was_running;
+  bool rt_running;
   bool end_request;
   bool continue_request;
   bool trigger_outputs_request;
   bool input_not_finished;
   bool processing_range_set;
+  bool subthread_initialized;
 
   size_t active_chain_index;
   size_t active_chainop_index;

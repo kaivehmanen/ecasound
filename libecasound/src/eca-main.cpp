@@ -68,9 +68,10 @@ ECA_PROCESSOR::~ECA_PROCESSOR(void) {
     ++q;
   }
 
-  ::pthread_cancel(chain_thread);
-  ::pthread_join(chain_thread,NULL);
-
+  if (subthread_initialized == true) {
+    ::pthread_cancel(chain_thread);
+    ::pthread_join(chain_thread,NULL);
+  }
   ecadebug->control_flow("Engine/Exiting");
 }
 
@@ -126,8 +127,10 @@ void ECA_PROCESSOR::init(void) {
 void ECA_PROCESSOR::init_variables(void) {
   active_chain_index = 0;
   max_channels = 0;
+  subthread_initialized = false;
   continue_request = false;
   end_request = false;
+  rt_running = false;
 }
 
 void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR*) {
@@ -331,6 +334,18 @@ void ECA_PROCESSOR::exec(void) {
       exec_normal_iactive();
     }
   }
+
+  stop();
+  vector<CHAIN*>::iterator q = csetup->chains.begin();
+  while(q != csetup->chains.end()) {
+    (*q)->disconnect_buffer();
+    ++q;
+  }
+
+  if (subthread_initialized == true) {
+    ::pthread_cancel(chain_thread);
+    ::pthread_join(chain_thread,NULL);
+  }
 }
 
 void ECA_PROCESSOR::conditional_start(void) {
@@ -348,11 +363,13 @@ void ECA_PROCESSOR::conditional_stop(void) {
 void ECA_PROCESSOR::interactive_loop(void) {
   if (finished() == true) stop();
   interpret_queue();
+  if (end_request) return;
   if (eparams->status() != ep_status_running) {
     //      sched_yield();
+    struct timespec sleepcount;
     sleepcount.tv_sec = 1;
     sleepcount.tv_nsec = 0;
-    ::nanosleep(&sleepcount, NULL);
+    nanosleep(&sleepcount, 0);
     continue_request = true;
   }
   else 
@@ -403,6 +420,8 @@ void ECA_PROCESSOR::exec_normal_passive(void) {
     trigger_outputs();
     posthandle_control_position();
   }
+  
+  stop();
 }
 
 
@@ -440,6 +459,7 @@ void ECA_PROCESSOR::exec_simple_passive(void) {
     trigger_outputs();
     posthandle_control_position();
   }
+  stop();
 }
 
 void ECA_PROCESSOR::set_position(double seconds) {
@@ -537,12 +557,15 @@ void ECA_PROCESSOR::posthandle_control_position(void) {
 }
 
 void ECA_PROCESSOR::stop(void) { 
-  if (eparams->status() != ep_status_running) return;
+  if (eparams->status() != ep_status_running && rt_running == false) return;
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Stop");
 
-  for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_objects.size()); adev_sizet++) {
-    realtime_objects[adev_sizet]->stop();
+  if (rt_running == true) {
+    for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_objects.size()); adev_sizet++) {
+      realtime_objects[adev_sizet]->stop();
+    }
   }
+  rt_running = false;
 
   eparams->status(ep_status_stopped);
   ::pthread_mutex_lock(&ecasound_stop_mutex);
@@ -595,6 +618,7 @@ void ECA_PROCESSOR::start(void) {
     trigger_outputs_request = true;
   }
 
+  rt_running = true;
   eparams->status(ep_status_running);
 }
 
@@ -603,6 +627,7 @@ void ECA_PROCESSOR::trigger_outputs(void) {
     trigger_outputs_request = false;
     for (int adev_sizet = 0; adev_sizet != static_cast<int>(realtime_outputs.size()); adev_sizet++)
       realtime_outputs[adev_sizet]->start();
+    rt_running = true;
   }
 }
 
@@ -611,11 +636,7 @@ void ECA_PROCESSOR::multitrack_sync(void) {
   // Read and mix inputs (skips realtime inputs)
   // ---
 
-  AUDIO_IO_DEVICE* p;
   for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
-    //    p = dynamic_cast<AUDIO_IO_DEVICE*>((*inputs)[audioslot_sizet]);
-    //    if (p != 0) continue;
-
     if (input_chain_count[audioslot_sizet] > 1) {
       (*inputs)[audioslot_sizet]->read_buffer(&mixslot);
       if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
@@ -739,7 +760,6 @@ bool ECA_PROCESSOR::finished(void) {
   if (input_not_finished == true &&
       eparams->status() != ep_status_finished) return(false);
 
-  stop();
   eparams->status(ep_status_finished);
   return(true);
 }
@@ -861,6 +881,7 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
   if (submix_pid != 0)
     throw(new ECA_ERROR("ECA-MAIN", "Unable to create a new thread (mthread_process_chains)."));
 
+  subthread_initialized = true;
   for (int chain_sizet = 0; chain_sizet < chain_count; chain_sizet++)
     chain_ready_for_submix[chain_sizet] = false;
 
@@ -926,9 +947,9 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
     chain_ready_for_submix[chain_sizet] = false;
 
   int submix_pid = ::pthread_create(&chain_thread, NULL, mthread_process_chains, ((void*)this));
-
   if (submix_pid != 0)
     throw(new ECA_ERROR("ECA-MAIN", "Unable to create a new thread (mthread_process_chains)."));
+  subthread_initialized = true;
 
   vector<SAMPLE_BUFFER> inslots (input_count,
 				 SAMPLE_BUFFER(buffersize_rep,
@@ -961,6 +982,7 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
     }
     posthandle_control_position();
   }
+  stop();
   ::pthread_cancel(chain_thread);
   ::pthread_join(chain_thread,NULL);
 }

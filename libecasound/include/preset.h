@@ -40,6 +40,9 @@ class PRESET : public CHAIN_OPERATOR,
 
   void add_chain(void);
 
+  PRESET (const PRESET& x) : csetup("untitled", false) { }
+  PRESET& operator=(const PRESET& x) { return *this; }
+
  public:
 
   virtual PRESET* clone(void) { return(new PRESET(parse_string_rep)); }

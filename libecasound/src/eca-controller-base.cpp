@@ -124,6 +124,7 @@ void ECA_CONTROLLER_BASE::stop_on_condition(void) {
   // --------
 
   if (session_rep->status() != ep_status_running) return;
+  ecadebug->control_flow("Controller/Processing stopped");
   ::ecasound_queue.push_back(ECA_PROCESSOR::ep_stop, 0.0);
   struct timeval now;
   gettimeofday(&now, 0);
@@ -263,10 +264,12 @@ string ECA_CONTROLLER_BASE::engine_status(void) const {
   }
 }
 
-string ECA_CONTROLLER_BASE::connected_chains_input(AUDIO_IO* aiod) const {
-  if (session_rep->connected_chainsetup == 0) return("");
+string ECA_CONTROLLER_BASE::attached_chains_input(AUDIO_IO* aiod) const {
+  // --------
+  REQUIRE(is_selected() == true);
+  // --------
 
-  vector<string> t = session_rep->get_connected_chains_to_input(aiod);
+  vector<string> t = session_rep->get_attached_chains_to_input(aiod);
   string out = "";
   vector<string>::const_iterator p = t.begin();
   while(p != t.end()) {
@@ -277,10 +280,12 @@ string ECA_CONTROLLER_BASE::connected_chains_input(AUDIO_IO* aiod) const {
   return(out);
 }
 
-string ECA_CONTROLLER_BASE::connected_chains_output(AUDIO_IO* aiod) const {
-  if (session_rep->connected_chainsetup == 0) return("");
+string ECA_CONTROLLER_BASE::attached_chains_output(AUDIO_IO* aiod) const {
+  // --------
+  REQUIRE(is_selected() == true);
+  // --------
 
-  vector<string> t = session_rep->get_connected_chains_to_output(aiod);
+  vector<string> t = session_rep->get_attached_chains_to_output(aiod);
   string out = "";
   vector<string>::const_iterator p = t.begin();
   while(p != t.end()) {
@@ -291,10 +296,12 @@ string ECA_CONTROLLER_BASE::connected_chains_output(AUDIO_IO* aiod) const {
   return(out);
 }
 
-vector<string> ECA_CONTROLLER_BASE::connected_chains(const string&
-						filename) const {
-  if (session_rep->connected_chainsetup == 0) return(*(new vector<string> (0)));
-  return(session_rep->connected_chainsetup->get_connected_chains_to_iodev(filename));
+vector<string> ECA_CONTROLLER_BASE::attached_chains(const string& filename) const {
+  // --------
+  REQUIRE(is_selected() == true);
+  // --------
+
+  return(selected_chainsetup_rep->get_attached_chains_to_iodev(filename));
 }
 
 void ECA_CONTROLLER_BASE::set_buffersize(int bsize) { 

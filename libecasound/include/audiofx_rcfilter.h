@@ -35,14 +35,14 @@ class EFFECT_RC_LOWPASS_FILTER : public EFFECT_FILTER {
 
 public:
 
-  string name(void) const { return("RC-lowpass filter"); }
-  string parameter_names(void) const { return("cutoff-freq,resonance"); }
+  virtual string name(void) const { return("RC-lowpass filter"); }
+  virtual string parameter_names(void) const { return("cutoff-freq,resonance"); }
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_RC_LOWPASS_FILTER* clone(void)  { return new EFFECT_RC_LOWPASS_FILTER(*this); }
   EFFECT_RC_LOWPASS_FILTER* new_expr(void)  { return new EFFECT_RC_LOWPASS_FILTER(); }

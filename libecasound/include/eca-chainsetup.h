@@ -185,8 +185,6 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
    *
    * require:
    *   cotmp != 0
-   *
-   * ensure:
    *   selected_chains().size() == 1
    */
   void add_chain_operator(CHAIN_OPERATOR* cotmp);
@@ -196,6 +194,7 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
    *
    * require:
    *   csrc != 0
+   *   selected_chains().size() == 1
    */
   void add_controller(GENERIC_CONTROLLER* csrc);
 

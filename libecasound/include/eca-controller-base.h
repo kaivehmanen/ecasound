@@ -123,20 +123,29 @@ class ECA_CONTROLLER_BASE : public DEFINITION_BY_CONTRACT {
   /**
    * Get a string containing a comma separated list of all chains 
    * attached to input with index 'aiod'. 
+   *
+   * require:
+   *  is_selected() == true
    */
-  string connected_chains_input(AUDIO_IO* aiod) const;
+  string attached_chains_input(AUDIO_IO* aiod) const;
 
   /**
    * Get a string containing a comma separated list of all chains 
-   * attached to output with index 'aiod'. 
+   * attached to output with index 'aiod'.
+   *
+   * require:
+   *  is_selected() == true
    */
-  string connected_chains_output(AUDIO_IO* aiod) const;
+  string attached_chains_output(AUDIO_IO* aiod) const;
 
   /**
    * Get a string containing a comma separated list of all chains 
    * attached to audio object with name 'filename'. 
+   *
+   * require:
+   *  is_selected() == true
    */
-  vector<string> connected_chains(const string& name) const;
+  vector<string> attached_chains(const string& name) const;
 
   // -------------------------------------------------------------------
   // Session info / position and length of connected chainsetup

@@ -33,6 +33,7 @@ QEFilenameInput::QEFilenameInput (int opmode,
     mode_rep(opmode) {
  
   filename = 0;
+  accel = new QAccel(this);
   init_layout();
 }
 
@@ -42,11 +43,9 @@ QSize QEFilenameInput::sizeHint(void) const {
 }
 
 void QEFilenameInput::init_layout(void) {
-
   filename = new QHBoxLayout(this);
 
   filename->add(new QLabel("(F)ile name: ", this, 0));
-
   filenameinput = new QLineEdit(this, "filenameinput");
   filenameinput->setMinimumSize(300,0);
   filename->addWidget(filenameinput);
@@ -56,9 +55,8 @@ void QEFilenameInput::init_layout(void) {
 
   QObject::connect(filenamebrowse, SIGNAL(clicked()), this, SLOT(button_browse()));
 
-  QAccel *a = new QAccel(this);
-  a->connectItem(a->insertItem(ALT+Key_B), this, SLOT(button_browse()));
-  a->connectItem(a->insertItem(ALT+Key_F), filenameinput, SLOT(setFocus()));
+  accel->connectItem(accel->insertItem(ALT+Key_B), this, SLOT(button_browse()));
+  accel->connectItem(accel->insertItem(ALT+Key_F), filenameinput, SLOT(setFocus()));
 }
 
 void QEFilenameInput::button_browse(void) { 

@@ -43,8 +43,8 @@ private:
 public:
 
   void process_notused(SAMPLE_BUFFER* sbuf);
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   virtual EFFECT_BW_FILTER* clone(void) = 0;
 
@@ -72,17 +72,16 @@ private:
   parameter_type D;
 
 public:
+  
+  virtual string name(void) const { return("Bandpass filter"); }
+  virtual string parameter_names(void) const { return("center-freq,width"); }
 
-  string name(void) const { return("Bandpass filter"); }
-
-  string parameter_names(void) const { return("center-freq,width"); }
-
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
   EFFECT_BANDPASS* clone(void)  { return new EFFECT_BANDPASS(*this); }
   EFFECT_BANDPASS* new_expr(void)  { return new EFFECT_BANDPASS(); }
-  EFFECT_BANDPASS (parameter_type centerf = 0.0, parameter_type width = 1.0);
+  EFFECT_BANDPASS (parameter_type centerf = 1000.0, parameter_type width = 1000.0);
 };
 
 /**
@@ -103,16 +102,15 @@ private:
 
 public:
 
-  string name(void) const { return("Bandreject filter"); }
+  virtual string name(void) const { return("Bandreject filter"); }
+  virtual string parameter_names(void) const { return("center-freq,width"); }
 
-  string parameter_names(void) const { return("center-freq,width"); }
-
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
   EFFECT_BANDREJECT* clone(void)  { return new EFFECT_BANDREJECT(*this); }
   EFFECT_BANDREJECT* new_expr(void)  { return new EFFECT_BANDREJECT(); }
-  EFFECT_BANDREJECT (parameter_type centerf = 0.0, parameter_type width = 1.0);
+  EFFECT_BANDREJECT (parameter_type centerf = 1000.0, parameter_type width = 1000.0);
 };
 
 /**
@@ -126,21 +124,19 @@ class EFFECT_HIGHPASS : public EFFECT_BW_FILTER {
  private:
 
   parameter_type cutOffFreq;
-
   parameter_type C;
     
 public:
     
-  string name(void) const { return("Highpass filter"); }
+  virtual string name(void) const { return("Highpass filter"); }
+  virtual string parameter_names(void) const { return("cutoff-freq"); }
 
-  string parameter_names(void) const { return("cutoff-freq"); }
-
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
   EFFECT_HIGHPASS* clone(void)  { return new EFFECT_HIGHPASS(*this); }
   EFFECT_HIGHPASS* new_expr(void)  { return new EFFECT_HIGHPASS(); }
-  EFFECT_HIGHPASS (parameter_type cutoff = 0.0);
+  EFFECT_HIGHPASS (parameter_type cutoff = 1000.0);
 };
 
 /**
@@ -156,14 +152,14 @@ class EFFECT_ALLPASS_FILTER : public EFFECT_FILTER {
 
 public:
 
-  string name(void) const { return("Allpass filter"); }
-  string parameter_names(void) const { return("delay-samples,feedback-%"); }
+  virtual string name(void) const { return("Allpass filter"); }
+  virtual string parameter_names(void) const { return("delay-samples,feedback-%"); }
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_ALLPASS_FILTER* clone(void)  { return new EFFECT_ALLPASS_FILTER(*this); }  
   EFFECT_ALLPASS_FILTER* new_expr(void)  { return new EFFECT_ALLPASS_FILTER(); }
@@ -188,18 +184,18 @@ class EFFECT_COMB_FILTER : public EFFECT_FILTER {
 
 public:
 
-  string name(void) const { return("Comb filter"); }
-  string parameter_names(void) const { return("delay-samples,radius"); }
+  virtual string name(void) const { return("Comb filter"); }
+  virtual string parameter_names(void) const { return("delay-samples,radius"); }
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_COMB_FILTER* clone(void)  { return new EFFECT_COMB_FILTER(*this); }  
   EFFECT_COMB_FILTER* new_expr(void)  { return new EFFECT_COMB_FILTER(); }
-  EFFECT_COMB_FILTER (int delay_in_samples = 0, parameter_type constant = 1.0);
+  EFFECT_COMB_FILTER (int delay_in_samples = 1, parameter_type constant = 1.0);
 };
 
 /**
@@ -220,15 +216,14 @@ class EFFECT_INVERSE_COMB_FILTER : public EFFECT_FILTER {
 
 public:
 
-  string name(void) const { return("Inverse comb filter"); }
+  virtual string name(void) const { return("Inverse comb filter"); }
+  virtual string parameter_names(void) const { return("delay-samples,radius"); }
 
-  string parameter_names(void) const { return("delay-samples,radius"); }
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
-
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_INVERSE_COMB_FILTER* clone(void)  { return new EFFECT_INVERSE_COMB_FILTER(*this); }  
   EFFECT_INVERSE_COMB_FILTER* new_expr(void)  { return new EFFECT_INVERSE_COMB_FILTER(); }
@@ -251,12 +246,11 @@ private:
 
 public:
 
-  string name(void) const { return("Lowpass filter"); }
+  virtual string name(void) const { return("Lowpass filter"); }
+  virtual string parameter_names(void) const { return("cutoff-freq"); }
 
-  string parameter_names(void) const { return("cutoff-freq"); }
-
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
   void set_cutoff(parameter_type value, long int srate);
 
@@ -287,19 +281,18 @@ private:
 
 public:
 
-  string name(void) const { return("Simple lowpass filter"); }
+  virtual string name(void) const { return("Simple lowpass filter"); }
+  virtual string parameter_names(void) const { return("cutoff-freq"); }
 
-  string parameter_names(void) const { return("cutoff-freq"); }
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
-
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
   EFFECT_LOWPASS_SIMPLE* clone(void)  { return new EFFECT_LOWPASS_SIMPLE(*this); }
   EFFECT_LOWPASS_SIMPLE* new_expr(void)  { return new EFFECT_LOWPASS_SIMPLE(); }
-  EFFECT_LOWPASS_SIMPLE (parameter_type cutoff = 0.0);
+  EFFECT_LOWPASS_SIMPLE (parameter_type cutoff = 1000.0);
 };
 
 /**
@@ -321,19 +314,18 @@ private:
 
 public:
 
-  string name(void) const { return("Resonant bandpass filter"); }
+  virtual string name(void) const { return("Resonant bandpass filter"); }
+  virtual string parameter_names(void) const { return("center-freq,width"); }
 
-  string parameter_names(void) const { return("center-freq,width"); }
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
-
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_RESONANT_BANDPASS* clone(void)  { return new EFFECT_RESONANT_BANDPASS(*this); }  
   EFFECT_RESONANT_BANDPASS* new_expr(void)  { return new EFFECT_RESONANT_BANDPASS(); }  
-  EFFECT_RESONANT_BANDPASS (parameter_type centerf = 0.0, parameter_type width = 0.0);
+  EFFECT_RESONANT_BANDPASS (parameter_type centerf = 1000.0, parameter_type width = 1000.0);
 };
 
 /**
@@ -374,19 +366,18 @@ class EFFECT_RESONANT_LOWPASS : public EFFECT_FILTER {
 
 public:
 
-  string name(void) const { return("Resonant lowpass filter"); }
+  virtual string name(void) const { return("Resonant lowpass filter"); }
+  virtual string parameter_names(void) const { return("cutoff-freq,resonance,gain"); }
 
-  string parameter_names(void) const { return("cutoff-freq,resonance,gain"); }
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
-
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_RESONANT_LOWPASS* clone(void)  { return new EFFECT_RESONANT_LOWPASS(*this); }  
   EFFECT_RESONANT_LOWPASS* new_expr(void)  { return new EFFECT_RESONANT_LOWPASS(); }  
-  EFFECT_RESONANT_LOWPASS (parameter_type cutoff = 0.0,
+  EFFECT_RESONANT_LOWPASS (parameter_type cutoff = 1000.0,
 			   parameter_type resonance = 1.0,
 			   parameter_type gain = 1.0);
 };
@@ -413,20 +404,18 @@ private:
 
 public:
 
-  string name(void) const { return("Resonator filter"); }
+  virtual string name(void) const { return("Resonator filter"); }
+  virtual string parameter_names(void) const { return("center-freq,width"); }
 
-  string parameter_names(void) const { return("center-freq,width"); }
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
-
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_RESONATOR* clone(void)  { return new EFFECT_RESONATOR(*this); }
   EFFECT_RESONATOR* new_expr(void)  { return new EFFECT_RESONATOR(); }  
-  EFFECT_RESONATOR (parameter_type center, parameter_type width);
-  EFFECT_RESONATOR (void) : cona(1), conb(2) { }
+  EFFECT_RESONATOR (parameter_type center = 1000.0, parameter_type width = 1000.0);
 };
 
 #endif

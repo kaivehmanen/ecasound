@@ -15,10 +15,10 @@ class EFFECT_ANALYSIS : public EFFECT_BASE {
 
  public:
 
-  void set_parameter(int param, parameter_type value) { }
-  parameter_type get_parameter(int param) const { return(0.0); }
+  virtual void set_parameter(int param, parameter_type value) { }
+  virtual parameter_type get_parameter(int param) const { return(0.0); }
 
-  string parameter_names(void) const { return(""); }
+  virtual string parameter_names(void) const { return(""); }
 
   virtual ~EFFECT_ANALYSIS(void) { }
 };
@@ -40,11 +40,11 @@ class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
 
   parameter_type max_multiplier(void) const;
     
-  string name(void) const { return("Volume-analyze"); }
+  virtual string name(void) const { return("Volume-analyze"); }
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
-  string status(void) const;
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
+  virtual string status(void) const;
   
   EFFECT_ANALYZE* clone(void)  { return new EFFECT_ANALYZE(*this); }
   EFFECT_ANALYZE* new_expr(void)  { return new EFFECT_ANALYZE(); }
@@ -70,11 +70,12 @@ public:
 
   parameter_type get_deltafix(int channel) const;
     
-  string name(void) const { return("DC-Find"); }
+  virtual string name(void) const { return("DC-Find"); }
+  virtual string description(void) const { return("Calculates the DC-offset."); }
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
-  string status(void) const;
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
+  virtual string status(void) const;
 
   EFFECT_DCFIND* clone(void)  { return new EFFECT_DCFIND(*this); }
   EFFECT_DCFIND* new_expr(void)  { return new EFFECT_DCFIND(); }

@@ -40,22 +40,21 @@ class EFFECT_DELAY : public EFFECT_TIME_BASED {
 
  public:
 
-  string name(void) const { return("Delay"); }
+  virtual string name(void) const { return("Delay"); }
+  virtual string parameter_names(void) const { return("delay-time-msec,surround-mode,number-of-delays,mix-%"); }
 
-  string parameter_names(void) const { return("delay-time-msec,surround-mode,number-of-delays,mix-%"); }
+  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
 
-  parameter_type get_parameter(int param) const;
-  void set_parameter(int param, parameter_type value);
-
-  void init(SAMPLE_BUFFER* insample);
-  void process(void);
-  int output_channels(int i_channels) const { return(2); }
+  virtual void init(SAMPLE_BUFFER* insample);
+  virtual void process(void);
+  virtual int output_channels(int i_channels) const { return(2); }
 
   parameter_type get_delta_in_samples(void) { return(dnum * dtime); }
 
   EFFECT_DELAY* clone(void)  { return new EFFECT_DELAY(*this); }
   EFFECT_DELAY* new_expr(void)  { return new EFFECT_DELAY(); }
-  EFFECT_DELAY (parameter_type delay_time = 0.0, int surround_mode = 0, int num_of_delays = 1, parameter_type mix_percent = 50.0);
+  EFFECT_DELAY (parameter_type delay_time = 100.0, int surround_mode = 0, int num_of_delays = 1, parameter_type mix_percent = 50.0);
 };
 
 /** 
@@ -78,18 +77,18 @@ class EFFECT_MULTITAP_DELAY : public EFFECT_TIME_BASED {
 
  public:
 
-  string name(void) const { return("Multitap delay"); }
-  string parameter_names(void) const { return("delay-time-msec,number-of-delays,mix-%"); }
+  virtual string name(void) const { return("Multitap delay"); }
+  virtual string parameter_names(void) const { return("delay-time-msec,number-of-delays,mix-%"); }
 
-  parameter_type get_parameter(int param) const;
-  void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
 
-  void init(SAMPLE_BUFFER* insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER* insample);
+  virtual void process(void);
 
   EFFECT_MULTITAP_DELAY* clone(void)  { return new EFFECT_MULTITAP_DELAY(*this); }
   EFFECT_MULTITAP_DELAY* new_expr(void)  { return new EFFECT_MULTITAP_DELAY(); }
-  EFFECT_MULTITAP_DELAY (parameter_type delay_time = 0.0, int num_of_delays = 1, parameter_type mix_percent = 50.0);
+  EFFECT_MULTITAP_DELAY (parameter_type delay_time = 100.0, int num_of_delays = 1, parameter_type mix_percent = 50.0);
 };
 
 /**
@@ -106,18 +105,17 @@ class EFFECT_FAKE_STEREO : public EFFECT_TIME_BASED {
 
   string name(void) const { return("Fake stereo"); }
 
-  string parameter_names(void) const { return("delay-time-msec"); }
+  virtual string parameter_names(void) const { return("delay-time-msec"); }
+  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
 
-  parameter_type get_parameter(int param) const;
-  void set_parameter(int param, parameter_type value);
-
-  void init(SAMPLE_BUFFER* insample);
-  void process(void);
-  int output_channels(int i_channels) const { return(2); }
+  virtual void init(SAMPLE_BUFFER* insample);
+  virtual void process(void);
+  virtual int output_channels(int i_channels) const { return(2); }
 
   EFFECT_FAKE_STEREO* clone(void)  { return new EFFECT_FAKE_STEREO(*this); }
   EFFECT_FAKE_STEREO* new_expr(void)  { return new EFFECT_FAKE_STEREO(); }
-  EFFECT_FAKE_STEREO (parameter_type delay_time = 0.0);
+  EFFECT_FAKE_STEREO (parameter_type delay_time = 20.0);
 };
 
 /**
@@ -136,22 +134,21 @@ class EFFECT_REVERB : public EFFECT_TIME_BASED {
 
  public:
 
-  string name(void) const { return("Reverb"); }
+  virtual string name(void) const { return("Reverb"); }
+  virtual string parameter_names(void) const { return("delay-time,surround-mode,feedback-%"); }
 
-  string parameter_names(void) const { return("delay-time,surround-mode,feedback-%"); }
+  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
 
-  parameter_type get_parameter(int param) const;
-  void set_parameter(int param, parameter_type value);
-
-  void init(SAMPLE_BUFFER* insample);
-  void process(void);
-  int output_channels(int i_channels) const { return(2); }
+  virtual void init(SAMPLE_BUFFER* insample);
+  virtual void process(void);
+  virtual int output_channels(int i_channels) const { return(2); }
 
   parameter_type get_delta_in_samples(void) { return(dtime); }
 
   EFFECT_REVERB* clone(void)  { return new EFFECT_REVERB(*this); }
   EFFECT_REVERB* new_expr(void)  { return new EFFECT_REVERB(); }
-  EFFECT_REVERB (parameter_type delay_time = 0.0, int surround_mode = 0, parameter_type feedback_percent = 50.0);
+  EFFECT_REVERB (parameter_type delay_time = 20.0, int surround_mode = 0, parameter_type feedback_percent = 50.0);
 };
 
 /**
@@ -163,18 +160,19 @@ class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
 
   vector<vector<SAMPLE_SPECS::sample_type> > buffer;
   SAMPLE_ITERATOR_CHANNELS i;
-  SINE_OSCILLATOR lfo;
-  parameter_type feedback, vartime;
   long int dtime;
+  parameter_type feedback, vartime;
+  SINE_OSCILLATOR lfo;
   vector<long int> delay_index;
   vector<bool> filled;
 
  public:
 
-  parameter_type get_parameter(int param) const;
-  void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
 
-  void init(SAMPLE_BUFFER* insample);
+  virtual void init(SAMPLE_BUFFER* insample);
+  EFFECT_MODULATING_DELAY(void) : dtime(1000), feedback(50.0), vartime(10), lfo(0.01) { }
 };
 
 /**
@@ -184,8 +182,8 @@ class EFFECT_FLANGER : public EFFECT_MODULATING_DELAY {
 
  public:
 
-  string name(void) const { return("Flanger"); }
-  string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
+  virtual string name(void) const { return("Flanger"); }
+  virtual string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
 
   void process(void);
 
@@ -200,8 +198,8 @@ class EFFECT_CHORUS : public EFFECT_MODULATING_DELAY {
 
  public:
 
-  string name(void) const { return("Chorus"); }
-  string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
+  virtual string name(void) const { return("Chorus"); }
+  virtual string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
 
   void process(void);
 
@@ -216,8 +214,8 @@ class EFFECT_PHASER : public EFFECT_MODULATING_DELAY {
 
  public:
 
-  string name(void) const { return("Phaser"); }
-  string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
+  virtual string name(void) const { return("Phaser"); }
+  virtual string parameter_names(void) const { return("delay-time-msec,variance-time-samples,feedback-%,lfo-freq"); }
 
   void process(void);
 

@@ -166,12 +166,12 @@ class ECA_SESSION {
   // ---
   EP_STATUS status(void) const;
 
-  vector<string> get_connected_chains_to_input(AUDIO_IO* aiod) const { return(connected_chainsetup->get_connected_chains_to_input(aiod)); }
-  vector<string> get_connected_chains_to_output(AUDIO_IO* aiod) const { return(connected_chainsetup->get_connected_chains_to_output(aiod)); }
+  vector<string> get_attached_chains_to_input(AUDIO_IO* aiod) const { return(selected_chainsetup->get_attached_chains_to_input(aiod)); }
+  vector<string> get_attached_chains_to_output(AUDIO_IO* aiod) const { return(selected_chainsetup->get_attached_chains_to_output(aiod)); }
   int number_of_connected_chains_to_input(AUDIO_IO* aiod) const {
-    return(connected_chainsetup->number_of_connected_chains_to_input(aiod)); }
+    return(connected_chainsetup->number_of_attached_chains_to_input(aiod)); }
   int number_of_connected_chains_to_output(AUDIO_IO* aiod) const {
-    return(connected_chainsetup->number_of_connected_chains_to_output(aiod)); }
+    return(connected_chainsetup->number_of_attached_chains_to_output(aiod)); }
 
  private:
 

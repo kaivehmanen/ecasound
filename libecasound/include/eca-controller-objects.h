@@ -451,7 +451,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    * require:
    *  is_selected() == true
    *  connected_chainsetup() != selected_chainsetup()
-   *  selected_audio_object_rep != 0
+   *  get_audio_object() != 0
    *
    * ensure:
    *  selected_audio_object_rep = 0
@@ -464,8 +464,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    * require:
    *  is_selected() == true
    *  connected_chainsetup() != selected_chainsetup()
-   *  selected_chains().size() > 0
-   *  selected_audio_object_rep != 0
+   *  get_audio_object() != 0
    */
   void attach_audio_object(void);
 
@@ -475,7 +474,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    * require:
    *  is_selected() == true
    *  connected_chainsetup() != selected_chainsetup()
-   *  selected_audio_object_rep != 0
+   *  get_audio_object() != 0
    */
   void rewind_audio_object(double seconds);
 
@@ -485,7 +484,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    * require:
    *  is_selected() == true
    *  connected_chainsetup() != selected_chainsetup()
-   *  selected_audio_object_rep != 0
+   *  get_audio_object() != 0
    */
   void forward_audio_object(double seconds);
 
@@ -495,7 +494,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    * require:
    *  is_selected() == true
    *  connected_chainsetup() != selected_chainsetup()
-   *  selected_audio_object_rep != 0
+   *  get_audio_object() != 0
    */
   void set_audio_object_position(double seconds);
 
@@ -505,7 +504,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    * require:
    *  is_selected() 
    *  connected_chainsetup() != selected_chainsetup()
-   *  selected_audio_object_rep != 0
+   *  get_audio_object() != 0
    */
   void wave_edit_audio_object(void);
 
@@ -549,7 +548,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    * it will open the targer audio object, if necessary.
    *
    * require:
-   *  selected_audio_object_rep != 0
+   *  get_audio_object() != 0
    *  is_selected() == true
    */
   ECA_AUDIO_FORMAT get_audio_format(void);
@@ -570,7 +569,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    * require:
    *  is_selected() == true
    */
-  void set_default_audio_format(const ECA_AUDIO_FORMAT* format);
+  void set_default_audio_format(const ECA_AUDIO_FORMAT& format);
 
   // -------------------------------------------------------------------
   // Chain operators (currently selected chainsetup and chains)

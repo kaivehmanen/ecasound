@@ -67,26 +67,26 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
     
  public:
 
-  string name(void) const { return("RIFF wave file"); }
-  bool locked_audio_format(void) const { return(true); }
+  virtual string name(void) const { return("RIFF wave file"); }
+  virtual bool locked_audio_format(void) const { return(true); }
 
-  void open(void) throw(ECA_ERROR*);
-  void close(void);
+  virtual void open(void) throw(ECA_ERROR*);
+  virtual void close(void);
 
-  long int read_samples(void* target_buffer, long int samples);
-  void write_samples(void* target_buffer, long int samples);
+  virtual long int read_samples(void* target_buffer, long int samples);
+  virtual void write_samples(void* target_buffer, long int samples);
 
-  bool finished(void) const;
-  void seek_position(void);
+  virtual bool finished(void) const;
+  virtual void seek_position(void);
 
   WAVEFILE (const string& name = "", bool double_buffering = false);
   ~WAVEFILE(void);
-  WAVEFILE* clone(void) { return new WAVEFILE(*this); }
+  WAVEFILE* clone(void) { cerr << "Not implemented!" << endl; return this; }
   WAVEFILE* new_expr(void) { return new WAVEFILE(); }
 
  private:
 
-  //  WAVEFILE(const WAVEFILE& x) { cerr << "WAVE construct"; }
+  WAVEFILE(const WAVEFILE& x) { cerr << "WAVE construct"; }
   WAVEFILE& operator=(const WAVEFILE& x) {  return(*this); }
 
   void update(void);        

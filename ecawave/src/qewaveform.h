@@ -165,6 +165,8 @@ public slots:
   int waveblock_minimum(double from, double step);
   int waveblock_maximum(double from, double step);
 
+  QColor calculate_wave_color_value(int value);
+
   // ------
 
   int channel_rep;

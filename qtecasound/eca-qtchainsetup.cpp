@@ -49,7 +49,6 @@ QEChainsetup::QEChainsetup (ECA_CONTROLLER* econtrol,
 			    const char *name) 
   : ctrl(econtrol), chainsetup(csetup)
 {
-  setMinimumSize( 600, 0 );
   startTimer(1000);
 
   child_chain = 0;
@@ -101,6 +100,10 @@ void QEChainsetup::init_chainview(void) {
 }
 
 void QEChainsetup::init_chainview(QListViewItem* item) {
+  // temporarily removed
+  not_implemented();
+  return;
+
   if (item != 0) {
     const CHAIN* chain =
       chainsetup->get_chain_with_name(item->text(0).latin1());
@@ -274,10 +277,7 @@ void QEChainsetup::select_highlighted_chain(void) {
 }
 
 void QEChainsetup::init_filesetuplist (void) {
-
   filesetupview = new QListView(this, "filesetupview");
-
-  filesetupview->setMinimumSize( 600, 100 );
 
   filesetupview->addColumn("File");
   filesetupview->addColumn("Mode");
@@ -290,57 +290,38 @@ void QEChainsetup::init_filesetuplist (void) {
   filesetupview->setAllColumnsShowFocus(true); 
   filesetupview->setSorting(6);
 
-  update_filesetuplist();
-
-  filesetupview->setGeometry(0, 0, width(), 100);
-
-  filesetupview->show();
+  update_filesetuplist(true);
+  //  filesetupview->show();
 }
 
 void QEChainsetup::update_filesetuplist (bool clean) {
-  QListViewItem* selected = filesetupview->selectedItem();
-  QString selname = ""; 
-
-  int pixelsleft = width() - 4;
-  for(int n = 1; n < 7; n++) {
-    pixelsleft -= filesetupview->columnWidth(n);
-  }  
-
-  if (pixelsleft > 0) {
-    filesetupview->setColumnWidthMode(0, QListView::Maximum);
-    filesetupview->setColumnWidth(0, pixelsleft);
-  }
-
-  if (selected != 0) selname = selected->text(0);
+  filesetupview->setColumnWidthMode(0, QListView::Maximum);
 
   if (clean) {
     filesetupview->clear();
-    update_filesetup_clean(chainsetup->inputs, selname);    
-    update_filesetup_clean(chainsetup->outputs, selname);
+    update_filesetup_clean(chainsetup->inputs);
+    update_filesetup_clean(chainsetup->outputs);
   }
   else {
-    if (!ctrl->is_connected()) return;
-    update_filesetup(chainsetup->inputs, selname);    
-    update_filesetup(chainsetup->outputs, selname);
+    if (ctrl->is_connected() == true) {
+      update_filesetup(chainsetup->inputs);    
+      update_filesetup(chainsetup->outputs);
+    }
   }
   filesetupview->triggerUpdate();
 }
 
-void QEChainsetup::update_filesetup_clean (const vector<AUDIO_IO*>&
-					   flist, const QString& selname) {
-  aiod_sizet = 0;
-
-  while(aiod_sizet < flist.size()) {
+void QEChainsetup::update_filesetup_clean (const vector<AUDIO_IO*>& flist) {
+  for(aiod_sizet = 0; aiod_sizet < flist.size(); aiod_sizet++) {
     cs_namestring = QString(flist[aiod_sizet]->label().c_str());
-
     cs_chainstring = ""; 
     if (flist[aiod_sizet]->io_mode() == AUDIO_IO::io_read) {
       cs_modestring = "input"; 
-      cs_chainstring = ctrl->connected_chains_input(flist[aiod_sizet]).c_str();
+      cs_chainstring = ctrl->attached_chains_input(flist[aiod_sizet]).c_str();
     }
     else {
       cs_modestring = "output"; 
-      cs_chainstring = ctrl->connected_chains_output(flist[aiod_sizet]).c_str();
+      cs_chainstring = ctrl->attached_chains_output(flist[aiod_sizet]).c_str();
     }
 
     if (ctrl->selected_chainsetup() != chainsetup->name()) {
@@ -380,14 +361,10 @@ void QEChainsetup::update_filesetup_clean (const vector<AUDIO_IO*>&
 				cs_statusstring,
 				cs_chainstring);
 
-    if (newitem->text(0) == selname) filesetupview->setSelected(newitem, true);
-    ++aiod_sizet;
   }
 }
 
-void QEChainsetup::update_filesetup (const vector<AUDIO_IO*>&
-  				     flist, const QString& selname) {
-
+void QEChainsetup::update_filesetup (const vector<AUDIO_IO*>& flist) {
   for(aiod_sizet = 0; aiod_sizet < flist.size(); aiod_sizet++) {
     newitem = filesetupview->firstChild();
     while(newitem != 0) {
@@ -401,7 +378,6 @@ void QEChainsetup::update_filesetup (const vector<AUDIO_IO*>&
     if (ctrl->selected_chainsetup() != chainsetup->name()) {
 	cs_posstring = "- / - ";
 	cs_statusstring = "not open";
-
     }
     else {
       if (flist[aiod_sizet]->is_open()) {
@@ -424,8 +400,6 @@ void QEChainsetup::update_filesetup (const vector<AUDIO_IO*>&
 void QEChainsetup::init_chainsetuplist (void) {
   chainsetupview = new QListView(this, "chainsetupview");
 
-  chainsetupview->setMinimumSize( 600, 100 );
-
   chainsetupview->addColumn("Chain");
   chainsetupview->addColumn("Chain operators");  
   chainsetupview->addColumn("Controllers");  
@@ -435,32 +409,15 @@ void QEChainsetup::init_chainsetuplist (void) {
   chainsetupview->setSorting(0);
 
   update_chainsetuplist_clean();
-
-  chainsetupview->setGeometry(0, 0, width(), 100);
-  chainsetupview->show();
+  // chainsetupview->show();
 }
 
 void QEChainsetup::update_chainsetuplist_clean(void) {
-  QListViewItem* selected = chainsetupview->selectedItem();
-  QString selname = ""; 
-
-  int pixelsleft = width() - 4;
-  for(int n = 1; n < 4; n++) 
-    pixelsleft -= chainsetupview->columnWidth(n);
-  
-  if (pixelsleft > 0) {
-    chainsetupview->setColumnWidthMode(0, QListView::Maximum);
-    chainsetupview->setColumnWidth(0, pixelsleft);
-  }
-
-  if (selected != 0) selname = selected->text(0);
-
+  chainsetupview->setColumnWidthMode(0, QListView::Maximum);
   chainsetupview->clear();
 
   vector<CHAIN*>::const_iterator p = chainsetup->chains.begin();
   while(p != chainsetup->chains.end()) {
-    //    cerr << "Adding a new one!\n";
-
     QString astring;
     if ((*p)->is_processing() == false)
       astring = "bypassed";
@@ -472,10 +429,8 @@ void QEChainsetup::update_chainsetuplist_clean(void) {
 				(*p)->name().c_str(),
 				kvu_numtostr((*p)->number_of_chain_operators()).c_str(),
 				0,
-				//				kvu_numtostr((*p)->gcontrollers.size()).c_str(),
+				kvu_numtostr((*p)->number_of_controllers()).c_str(),
 				astring);
-    // *** NOTICE!!! see above comment
-    if (newitem->text(0) == selname) chainsetupview->setSelected(newitem, true);
     ++p;
   }
 
@@ -518,11 +473,7 @@ void QEChainsetup::button_add_file(void) {
   QEIodevDialog* fdialog = new QEIodevDialog(chainsetup, this, "addfile");
   if (fdialog->exec() == QEIodevDialog::Accepted) {
     if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
-    string t = "s16_le";
-    if (fdialog->result_bits() == 8) t = "u8";
-    ctrl->set_default_audio_format(t,
-				   fdialog->result_channels(), 
-				   (long int)fdialog->result_srate());
+    ctrl->set_default_audio_format(fdialog->result_audio_format());
     ctrl->select_chains(fdialog->result_chains());
 
     if (fdialog->result_direction() == QEIodevDialog::input)
@@ -530,7 +481,7 @@ void QEChainsetup::button_add_file(void) {
     else
       ctrl->add_audio_output(fdialog->result_filename());
 
-    update_filesetuplist();
+    update_filesetuplist(true);
     update_chainsetuplist_clean();
   }
 }
@@ -538,8 +489,12 @@ void QEChainsetup::button_add_file(void) {
 void QEChainsetup::button_remove_file(void) { 
   if (is_filesetup_highlighted()) {
     select_highlighted_filesetup();
-    if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
-    ctrl->remove_audio_object();
+    if (ctrl->is_connected()) {
+      ctrl->disconnect_chainsetup();
+    }
+    if (ctrl->get_audio_object() != 0) {
+      ctrl->remove_audio_object();
+    }
     update_filesetuplist(true);
   }
   else
@@ -554,13 +509,12 @@ void QEChainsetup::button_chainselect(void) {
 
     QEChainselectDialog* cdialog = new QEChainselectDialog(chainsetup, this, "chainselect");
     if (ctrl->is_connected()) ctrl->disconnect_chainsetup();
-    cdialog->set_chains(ctrl->connected_chains(name));
-    
+    cdialog->set_chains(ctrl->attached_chains(name));
     if (cdialog->exec() == QEChainselectDialog::Accepted) {
       ctrl->select_chains(cdialog->result_chains());
       ctrl->select_audio_object(name);
       ctrl->attach_audio_object();
-      update_filesetuplist();
+      update_filesetuplist(true);
     }
   }
   else

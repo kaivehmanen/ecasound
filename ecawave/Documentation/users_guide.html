@@ -19,7 +19,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>12042000</h2>
+<h2>15042000</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -49,11 +49,13 @@
 <dl><p>
 <dt><a href="users_guide.html#l19">2.3.1: Zoom in &lt;alt-z&gt;</a>
 <dt><a href="users_guide.html#l20">2.3.2: Zoom out &lt;alt-m&gt;</a>
-<dt><a href="users_guide.html#l21">2.3.3: Unmark &lt;alt-u&gt;</a>
+<dt><a href="users_guide.html#l21">2.3.3: Mark all &lt;alt-r&gt;</a>
+<dt><a href="users_guide.html#l22">2.3.4: Unmark &lt;alt-u&gt;</a>
+<dt><a href="users_guide.html#l23">2.3.5: Redraw &lt;alt-w&gt;</a>
 </dl><p>
 </dl><p>
-<dt><h2><a href="users_guide.html#l22">3: Configuration</a></h2>
-<dt><h2><a href="users_guide.html#l23">4: Ecawave internals</a></h2>
+<dt><h2><a href="users_guide.html#l24">3: Configuration</a></h2>
+<dt><h2><a href="users_guide.html#l25">4: Ecawave internals</a></h2>
  
 <p><hr><p><br>
 <p>
@@ -150,10 +152,16 @@ Zoom to marked area.
 <strong>2.3.2: Zoom out &lt;alt-m&gt;</strong><p>
 Zoom out so that the whole file is visible.
 <p><a name="l21"></a>
-<strong>2.3.3: Unmark &lt;alt-u&gt;</strong><p>
+<strong>2.3.3: Mark all &lt;alt-r&gt;</strong><p>
+Mark the entire file. Note! Not just the visible area.
+<p><a name="l22"></a>
+<strong>2.3.4: Unmark &lt;alt-u&gt;</strong><p>
 Unmark currently marked area.
+<p><a name="l23"></a>
+<strong>2.3.5: Redraw &lt;alt-w&gt;</strong><p>
+Redraws the waveform data.
 <p>
-<a name="l22"></a>
+<a name="l24"></a>
 <h2>3: Configuration</h2>
 The most important configuration files are <em>~/.ecawaverc</em>
 and <em>~/.ecasouncrc</em>. 
@@ -171,7 +179,7 @@ ignored (comment lines).
 <p>Also take a look at, <a href="http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecasoundrc_manpage.html">ecasoundrc(5)</a> 
 manual page.
 <p>
-<a name="l23"></a>
+<a name="l25"></a>
 <h2>4: Ecawave internals</h2>
 Under the hood, ecawave is just another ecasound user-interface. Based
 on what user wants to do, ecawave creates a suitable chainsetup and

@@ -23,7 +23,9 @@ public:
 
   void timerEvent(QTimerEvent* e);
   void paintEvent(QPaintEvent* e);
+
   QSize sizeHint(void) const;
+  QSize minimumsizeHint(void) const { return(sizeHint()); }
   QSizePolicy sizePolicy (void) const { return(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred)); }
   
   OPERATOR* clone(void)  { return new QESignalLevel(); }
@@ -32,13 +34,14 @@ public:
   /**
    * Class constructor
    *
-   * @param buffer_latency Latency between library and screen updates in buffers. 
+   * @param buffer_latency Latency between library and screen updates in buffers.
    */
-  QESignalLevel(int buffer_latency = 1, QWidget *parent = 0, const char *name = 0);
+  QESignalLevel(int buffer_latency = 0, QWidget *parent = 0, const char *name = 0);
 
  private:
 
   int buffer_latency_rep;
+  long int samples_processed, samples_shown, sample_processing_step;
   bool update_geometry_request;
 
   SAMPLE_BUFFER* buffer_rep;

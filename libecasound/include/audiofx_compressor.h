@@ -84,16 +84,15 @@ class ADVANCED_COMPRESSOR : public EFFECT_AMPLITUDE {
 
  public:
 
-  string name(void) const { return("Advanced compressor"); }
+  virtual string name(void) const { return("Advanced compressor"); }
+  virtual string parameter_names(void) const { return("peak-limit-%,release-time-sec,fast-crate,overall-crate"); }
 
-  string parameter_names(void) const { return("peak-limit-%,release-time-sec,fast-crate,overall-crate"); }
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
-
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
-  int output_channels(int i_channels) const { return(2); }
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
+  virtual int output_channels(int i_channels) const { return(2); }
 
   ADVANCED_COMPRESSOR* clone(void)  { return new ADVANCED_COMPRESSOR(*this); }
   ADVANCED_COMPRESSOR* new_expr(void)  { return new ADVANCED_COMPRESSOR(); }

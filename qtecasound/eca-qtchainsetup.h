@@ -20,7 +20,7 @@ public:
   QEChainsetup (ECA_CONTROLLER* econtrol, const ECA_CHAINSETUP* setup, QWidget *parent=0, const char *name=0);
   
 public slots:
- void update_filesetuplist(bool clean = true);
+ void update_filesetuplist(bool clean);
  void update_chainsetuplist(void);
  void update_chainsetuplist_clean(void);
  // --
@@ -47,13 +47,13 @@ signals:
 
 protected:
 
-  void closeEvent( QCloseEvent * );
-  void timerEvent( QTimerEvent * );
+  void closeEvent(QCloseEvent *);
+  void timerEvent(QTimerEvent *);
 
  private:
 
-  void update_filesetup (const vector<AUDIO_IO*>& flist, const QString& selname);
-  void update_filesetup_clean (const vector<AUDIO_IO*>& flist, const QString& selname);
+  void update_filesetup (const vector<AUDIO_IO*>& flist);
+  void update_filesetup_clean (const vector<AUDIO_IO*>& flist);
 
   bool is_filesetup_highlighted(void) const;
   void select_highlighted_filesetup(void);
@@ -68,14 +68,12 @@ protected:
   void init_chain_buttons(void);
 
   QBoxLayout* topLayout;
-
   QEButtonRow* gen_buttons;
   QEButtonRow* file_buttons;
   QEButtonRow* chain_buttons;
 
   ECA_CONTROLLER* ctrl;
   const ECA_CHAINSETUP* chainsetup;
-
   QListView* filesetupview;
   QListView* chainsetupview;
   QEChain* child_chain;
@@ -84,7 +82,6 @@ protected:
   vector<AUDIO_IO*>::size_type aiod_sizet;
 
   QString current_dir;
-
   QString cs_namestring;
   QString cs_modestring, cs_posstring, cs_statusstring;
   QString cs_chainstring;

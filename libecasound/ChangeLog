@@ -2,6 +2,24 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-04-15  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-controller-objects.h (set_default_audio_format): signature
+	changed
+	* eca-audio-format.h (audio_format): added
+	* eca-session.h (get_attached_chains_to_input, _output): renamed 
+	from get_connected_chains...()
+	* eca-controller-base.h (attached_chains_input, _output): renamed 
+	from connected_chains...()
+	* eca-audio-objects.h (get_attached_chains...): renamed from 
+	get_connected_chains...()
+	
+2000-04-14  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* audioio-alsa2-plugin.h: added, contains the class
+	ALSA_PCM2_PLUGIN_DEVICE
+	* eca-controller.h (direct_command): private function, added 
+	
 2000-04-03  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-controller-objects.h (set_chainsetup_output_mode): added

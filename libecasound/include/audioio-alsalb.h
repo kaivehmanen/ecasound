@@ -31,38 +31,38 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
   
  public:
 
-  string name(void) const { return("ALSA PCM-loopback device"); }
-  int supported_io_modes(void) const { return(io_read); }
+  virtual string name(void) const { return("ALSA PCM-loopback device"); }
+  virtual int supported_io_modes(void) const { return(io_read); }
 
 #ifdef ALSALIB_050
-  string parameter_names(void) const { return("label,card,device,subdevice"); }
+  virtual string parameter_names(void) const { return("label,card,device,subdevice"); }
 #else
-  string parameter_names(void) const { return("label,card,device"); }
+  virtual string parameter_names(void) const { return("label,card,device"); }
 #endif
 
-  void open(void) throw(ECA_ERROR*);
-  void close(void);
+  virtual void open(void) throw(ECA_ERROR*);
+  virtual void close(void);
   
-  long int read_samples(void* target_buffer, long int samples);
-  void write_samples(void* target_buffer, long int samples) { }
+  virtual long int read_samples(void* target_buffer, long int samples);
+  virtual void write_samples(void* target_buffer, long int samples) { }
 
-  void stop(void) { }
-  void start(void) { }
-  void prepare(void) { }
+  virtual void stop(void) { }
+  virtual void start(void) { }
+  virtual void prepare(void) { }
 
-  long position_in_samples(void) const { return(0); }
+  virtual long position_in_samples(void) const { return(0); }
 
-  void set_parameter(int param, string value);
-  string get_parameter(int param) const;
+  virtual void set_parameter(int param, string value);
+  virtual string get_parameter(int param) const;
 
   ALSA_LOOPBACK_DEVICE (int card = 0, int device = 0, bool playback_mode = true);
   ~ALSA_LOOPBACK_DEVICE(void);
-  ALSA_LOOPBACK_DEVICE* clone(void) { return new ALSA_LOOPBACK_DEVICE(*this); }
+  ALSA_LOOPBACK_DEVICE* clone(void) { cerr << "Not implemented!" << endl; return this; }
   ALSA_LOOPBACK_DEVICE* new_expr(void) { return new ALSA_LOOPBACK_DEVICE(); }
   
  private:
   
-  //  ALSA_LOOPBACK_DEVICE(const ALSA_LOOPBACK_DEVICE& x) { }
+  ALSA_LOOPBACK_DEVICE (const ALSA_LOOPBACK_DEVICE& x) { }
   ALSA_LOOPBACK_DEVICE& operator=(const ALSA_LOOPBACK_DEVICE& x) { return *this; }
 };
 

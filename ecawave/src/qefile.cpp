@@ -166,9 +166,15 @@ void QEFile::init_layout(void) {
   buttonrow->add_button(new QPushButton("Zoo(m) out",buttonrow), 
 		       ALT+Key_M,
 		       this, SLOT(zoom_out()));
+  buttonrow->add_button(new QPushButton("Ma(r)k all",buttonrow),
+		       ALT+Key_R,
+		       this, SLOT(mark_all()));
   buttonrow->add_button(new QPushButton("(U)nmark",buttonrow), 
 		       ALT+Key_U,
 		       this, SLOT(unmark()));
+  buttonrow->add_button(new QPushButton("Redra(w)",buttonrow), 
+		       ALT+Key_W,
+		       this, SLOT(update_wave_form_data()));
   top_layout->addWidget(buttonrow);
 }
 
@@ -289,6 +295,17 @@ long int QEFile::blocks_to_samples(long int blocks) {
 long int QEFile::samples_to_blocks(long int samples) {
   if (waveforms.size() == 0) return(0);
   return(static_cast<long int>(waveblocks[0].size() * static_cast<double>(samples) / length_rep));
+}
+
+void QEFile::mark_all(void) {
+  for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
+    waveforms[n]->toggle_marking(true);
+    waveforms[n]->marked_area_begin(0);
+    waveforms[n]->marked_area_end(samples_to_blocks(length_rep));
+    waveforms[n]->repaint(false);
+  }
+  emit marked_area_changed(ECA_AUDIO_TIME(0, sample_rate_rep), 
+			   ECA_AUDIO_TIME(length_rep, sample_rate_rep));
 }
 
 void QEFile::unmark(void) {

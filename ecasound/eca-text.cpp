@@ -104,6 +104,10 @@ int main(int argc, char *argv[])
   catch(ECA_ERROR* e) {
     cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
   }
+  catch(DBC_EXCEPTION* e) { 
+    e->print();
+    exit(1);
+  }
   catch(...) {
     cerr << "---\nCaught an unknown exception!\n";
   }

@@ -246,6 +246,7 @@ dnl Create outputs
 dnl ---
 AC_OUTPUT([
 Makefile
+ecasound.spec
 libecasound/Makefile
 libecasound/include/Makefile
 libecasound/src/Makefile

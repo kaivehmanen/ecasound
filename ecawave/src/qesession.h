@@ -33,6 +33,8 @@ class QESession : public QWidget, public DEFINITION_BY_CONTRACT {
 
 public slots:
 
+  void timerEvent(QTimerEvent* e);
+
   void new_session(void);
   void new_file(void);
   void open_file(void);
@@ -46,6 +48,7 @@ public slots:
   void cut_event(void);
 
   void debug_event(void);
+  void show_event(void);
 
 private slots:
 

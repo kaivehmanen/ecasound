@@ -29,15 +29,16 @@ private:
 
 public:
 
-  string name(void) const { return("DC-Fix"); }
+  virtual string name(void) const { return("DC-Fix"); }
+  virtual string description(void) const { return("Adjusts DC-offset."); }
 
-  string parameter_names(void) const { return("delta-value-left,delta-value-right"); }
+  virtual string parameter_names(void) const { return("delta-value-left,delta-value-right"); }
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_DCFIX* clone(void)  { return new EFFECT_DCFIX(*this); }
   EFFECT_DCFIX* new_expr(void)  { return new EFFECT_DCFIX(); }
@@ -59,18 +60,20 @@ private:
 
 public:
 
-  string name(void) const { return("Pitch shifter"); }
-  string parameter_names(void) const { return("change-%"); }
+  virtual string name(void) const { return("Pitch shifter"); }
+  virtual string description(void) const { return("Modify audio pitch by altering its length."); }
+  virtual string parameter_names(void) const { return("change-%"); }
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
-  long int output_samples(long int i_samples);
+  virtual long int output_samples(long int i_samples);
 
-  EFFECT_PITCH_SHIFT(void) : pmod(0.0), target_rate(0), sbuf(0) { }
+  EFFECT_PITCH_SHIFT(void) : pmod(100.0), target_rate(0), sbuf(0) { }
+  EFFECT_PITCH_SHIFT (const EFFECT_PITCH_SHIFT& x);
   EFFECT_PITCH_SHIFT* clone(void)  { return new EFFECT_PITCH_SHIFT(*this); }
   EFFECT_PITCH_SHIFT* new_expr(void)  { return new EFFECT_PITCH_SHIFT(); }
 };

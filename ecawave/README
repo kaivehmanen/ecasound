@@ -52,7 +52,7 @@ To compile ecawave, you also need...:
 
 - ecasound development files
 - qt 2.x development environment
-- standard C++ build environment; tested with gcc 2.95.2
+- standard C++ build environment; tested with egcs 2.91.66 and gcc 2.95.2
   (STL and exceptions need to be supported)
 - GNU make, automake and autoconf packages
 

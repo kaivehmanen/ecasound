@@ -13,6 +13,10 @@ class CHAIN_OPERATOR;
 class ECA_CONTROLLER : public ECA_CONTROLLER_DUMP,
 		       public ECA_IAMODE_PARSER {
 
+ private:
+
+  void direct_command(const string& cmd);
+
  public:
 
   /**

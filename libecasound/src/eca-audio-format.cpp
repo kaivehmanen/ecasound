@@ -59,6 +59,13 @@ ECA_AUDIO_FORMAT& ECA_AUDIO_FORMAT::operator=(const ECA_AUDIO_FORMAT& x) {
   return *this;
 }
 
+ECA_AUDIO_FORMAT ECA_AUDIO_FORMAT::audio_format(void) const {
+  return(ECA_AUDIO_FORMAT(channels(),
+			  samples_per_second(),
+			  sample_format(),
+			  interleaved_channels()));
+}
+
 void ECA_AUDIO_FORMAT::set_audio_format(const ECA_AUDIO_FORMAT& f) {
   set_channels(f.channels());
   set_sample_format(f.sample_format());

@@ -75,11 +75,9 @@ MAKEINFO = @MAKEINFO@
 MOC = @MOC@
 NM = @NM@
 OBJDUMP = @OBJDUMP@
-PACKAGE = @PACKAGE@
 QT_INCLUDES = @QT_INCLUDES@
 QT_LDFLAGS = @QT_LDFLAGS@
 RANLIB = @RANLIB@
-VERSION = @VERSION@
 qt_includes = @qt_includes@
 qt_libraries = @qt_libraries@
 
@@ -87,14 +85,18 @@ EXTRA_DIST = BUGS NEWS FAQ generic_oscillators effect_presets ecasound.spec
 
 SUBDIRS = kvutils readline-4.0 libecasound ecasound libqtecasound qtecasound ecatools Documentation
 AUTOMAKE_OPTIONS = foreign
+
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+RELEASE = 1
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = 
+CONFIG_CLEAN_FILES =  ecasound.spec
 DIST_COMMON =  README ./stamp-h.in COPYING INSTALL Makefile.am \
 Makefile.in NEWS acconfig.h acinclude.m4 aclocal.m4 config.guess \
-config.h.in config.sub configure configure.in install-sh ltconfig \
-ltmain.sh missing mkinstalldirs
+config.h.in config.sub configure configure.in ecasound.spec.in \
+install-sh ltconfig ltmain.sh missing mkinstalldirs
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -145,6 +147,8 @@ distclean-hdr:
 	-rm -f config.h
 
 maintainer-clean-hdr:
+ecasound.spec: $(top_builddir)/config.status ecasound.spec.in
+	cd $(top_builddir) && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -390,6 +394,20 @@ strip-shared-libs:
 	strip $(libdir)/libecasound.so
 	strip $(libdir)/libqtecasound.so
 	strip $(libdir)/libkvutils.so
+
+build-rpms: ecasound.spec dist
+	cp -fv $(PACKAGE)-$(VERSION).tar.gz /usr/src/redhat/SOURCES/
+	rm -Rf /tmp/ecasound-build
+	export extra_params=--disable-alsa ; rpm -ba ecasound.spec
+	rpm --addsign /usr/src/redhat/SRPMS/$(PACKAGE)-$(VERSION)-$(RELEASE).src.rpm
+	rpm --addsign /usr/src/redhat/RPMS/i386/$(PACKAGE)*$(VERSION)-$(RELEASE).i386.rpm
+
+copy-to-seul:
+	cp -v /usr/src/redhat/SOURCES/$(PACKAGE)-$(VERSION).tar.gz /opt/http/ecasound.seul/
+	cp -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
+	cp -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-devel-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
+	cp -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-qt-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
+	cp -v /usr/src/redhat/SRPMS/$(PACKAGE)-$(VERSION)-$(RELEASE).src.rpm /opt/http/ecasound.seul/
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

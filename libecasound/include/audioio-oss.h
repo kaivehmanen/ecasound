@@ -40,29 +40,31 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   
  public:
 
-  string name(void) const { return("OSS soundcard device"); }
-  int supported_io_modes(void) const { return(io_read | io_write); }
+  virtual string name(void) const { return("OSS soundcard device"); }
+  virtual string description(void) const { return("Open Sound System -devices (OSS/Linux and OSS/Free)."); }
 
-  void open(void) throw(ECA_ERROR*);
-  void close(void) throw(ECA_ERROR*);
+  virtual int supported_io_modes(void) const { return(io_read | io_write); }
+
+  virtual void open(void) throw(ECA_ERROR*);
+  virtual void close(void) throw(ECA_ERROR*);
   
-  long int read_samples(void* target_buffer, long int samples);
-  void write_samples(void* target_buffer, long int samples);
+  virtual long int read_samples(void* target_buffer, long int samples);
+  virtual void write_samples(void* target_buffer, long int samples);
 
-  void stop(void);
-  void start(void) throw(ECA_ERROR*);
-  void prepare(void) { }
+  virtual void stop(void);
+  virtual void start(void) throw(ECA_ERROR*);
+  virtual void prepare(void) { }
 
-  long position_in_samples(void) const;
+  virtual long position_in_samples(void) const;
 
   OSSDEVICE (const string& name = "/dev/dsp", bool precise_sample_rates = false);
   ~OSSDEVICE(void);
-  OSSDEVICE* clone(void) { return new OSSDEVICE(*this); }
+  OSSDEVICE* clone(void) { cerr << "Not implemented!" << endl; return this; }
   OSSDEVICE* new_expr(void) { return new OSSDEVICE(); }
 
  private:
   
-  //  OSSDEVICE(const OSSDEVICE& x) { }
+  OSSDEVICE(const OSSDEVICE& x) { }
   OSSDEVICE& operator=(const OSSDEVICE& x) { return *this; }    
 
 };

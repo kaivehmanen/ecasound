@@ -10,21 +10,21 @@
 class REALTIME_NULL : public AUDIO_IO_DEVICE {
  public:
 
-  string name(void) const { return("Realtime null device"); }
+  virtual string name(void) const { return("Realtime null device"); }
 
-  void open(void);
-  void close(void);
+  virtual void open(void);
+  virtual void close(void);
 
-  long int read_samples(void* target_buffer, long int samples);
-  void write_samples(void* target_buffer, long int samples);
+  virtual long int read_samples(void* target_buffer, long int samples);
+  virtual void write_samples(void* target_buffer, long int samples);
 
-  void stop(void);
-  void start(void);
-  void prepare(void) { }
+  virtual void stop(void);
+  virtual void start(void);
+  virtual void prepare(void) { }
 
-  long int latency(void) const;
+  virtual long int latency(void) const;
 
-  long position_in_samples(void) const;
+  virtual long position_in_samples(void) const;
 
   REALTIME_NULL(const string& name = "realtime null");
   ~REALTIME_NULL(void);

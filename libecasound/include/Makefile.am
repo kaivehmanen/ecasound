@@ -30,6 +30,7 @@ ecasound_audioio_src = 	audioio-cdr.h \
 			audioio-mikmod.h \
 			audioio-types.h \
 			audioio-alsa2.h \
+			audioio-alsa2-plugin.h \
 			audioio-loop.h
 
 ecasound_controller_src = \

@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// audioio-alsa.cpp: ALSA (/dev/snd/pcm*) input/output.
+// audioio-alsa2.cpp: ALSA (/dev/snd/pcm*) input/output.
 // Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -73,10 +73,10 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   if (io_mode() == io_read) {
     pcm_channel = SND_PCM_CHANNEL_CAPTURE;
     err = ::snd_pcm_open_subdevice(&audio_fd, 
-				    card_number, 
-				    device_number,
-				    subdevice_number,
-				    SND_PCM_OPEN_CAPTURE | SND_PCM_OPEN_NONBLOCK);
+				   card_number, 
+				   device_number,
+				   subdevice_number,
+				   SND_PCM_OPEN_CAPTURE | SND_PCM_OPEN_NONBLOCK);
     
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA2", "Unable to open ALSA-device for capture; error: " + 
@@ -86,10 +86,10 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   else if (io_mode() == io_write) {
     pcm_channel = SND_PCM_CHANNEL_PLAYBACK;
     err = ::snd_pcm_open_subdevice(&audio_fd, 
-				    card_number, 
-				    device_number,
-				    subdevice_number,
-				    SND_PCM_OPEN_PLAYBACK | SND_PCM_OPEN_NONBLOCK);
+				   card_number, 
+				   device_number,
+				   subdevice_number,
+				   SND_PCM_OPEN_PLAYBACK | SND_PCM_OPEN_NONBLOCK);
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA2", "Unable to open ALSA-device for playback; error: " +  
 			  string(snd_strerror(err))));
@@ -107,6 +107,7 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   // Fetch channel info
 
   ::memset(&pcm_info, 0, sizeof(pcm_info));
+  pcm_info.channel = pcm_channel;
   ::snd_pcm_channel_info(audio_fd, &pcm_info);
 
   // -------------------------------------------------------------------
@@ -117,7 +118,7 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   ::memset(&pf, 0, sizeof(pf));
 
   if ((pcm_info.flags & SND_PCM_CHNINFO_INTERLEAVE) != SND_PCM_CHNINFO_INTERLEAVE)
-    throw(new ECA_ERROR("AUDIOIO-ALSA2", "non-interleaved streams not supported!", ECA_ERROR::stop));
+    throw(new ECA_ERROR("AUDIOIO-ALSA2", "interleaved streams not supported!", ECA_ERROR::stop));
   pf.interleave = 1;
 
   int format;
@@ -168,8 +169,8 @@ void ALSA_PCM2_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Set fragment size.
 
-  if (buffersize() < pcm_info.min_fragment_size * frame_size() ||
-      buffersize() > pcm_info.max_fragment_size * frame_size()) 
+  if (buffersize() * frame_size() < pcm_info.min_fragment_size ||
+      buffersize() * frame_size() > pcm_info.max_fragment_size) 
     throw(new ECA_ERROR("AUDIOIO-ALSA2", "buffersize " +
 			kvu_numtostr(buffersize()) + " is out of range!", ECA_ERROR::stop));
   
@@ -294,7 +295,10 @@ void ALSA_PCM2_DEVICE::write_samples(void* target_buffer, long int samples) {
   }
   else {
     if ((samples * frame_size()) < pcm_info.min_fragment_size ||
-	(samples * frame_size()) > pcm_info.max_fragment_size) return;
+	(samples * frame_size()) > pcm_info.max_fragment_size) {
+      if (is_triggered) stop();
+      return; 
+    }
     bool was_triggered = false;
     if (is_triggered == true) { stop(); was_triggered = true; }
     close();

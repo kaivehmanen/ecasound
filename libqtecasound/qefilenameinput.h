@@ -75,6 +75,7 @@ signals:
 
   QBoxLayout* filename;
   QLineEdit* filenameinput;
+  QAccel *accel;
   int mode_rep;
   mutable string filename_rep;
   string current_dir_rep;

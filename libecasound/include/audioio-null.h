@@ -9,16 +9,16 @@
 class NULLFILE : public AUDIO_IO_BUFFERED {
  public:
 
-  string name(void) const { return("Null audio file"); }
+  virtual string name(void) const { return("Null audio file"); }
 
-  void open(void) { }
-  void close(void) { }
+  virtual void open(void) { }
+  virtual void close(void) { }
 
-  long int read_samples(void* target_buffer, long int samples) { return(samples); }
-  void write_samples(void* target_buffer, long int samples) { }
+  virtual long int read_samples(void* target_buffer, long int samples) { return(samples); }
+  virtual void write_samples(void* target_buffer, long int samples) { }
 
-  bool finished(void) const { return(false); }
-  void seek_position(void) { } 
+  virtual bool finished(void) const { return(false); }
+  virtual void seek_position(void) { } 
 
   NULLFILE(const string& name = "null") { }
   ~NULLFILE(void) { }

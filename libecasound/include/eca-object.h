@@ -22,7 +22,7 @@ class ECA_OBJECT {
    * Object description. Description should be short, informative
    * and unformatted.
    */
-  virtual string description(void) const { return(""); }
+  virtual string description(void) const { return(name()); }
 
   virtual ~ECA_OBJECT (void) { }
 };

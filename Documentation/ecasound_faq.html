@@ -12,10 +12,10 @@
 <A HREF=manpages.html>[Man pages]</A>
 <A HREF=users_guide/index.html>[User's guide]</A>
 <A HREF=programmers_guide/index.html>[Programmer's guide]</A>
-<A HREF=kdoc_pages.html>[Source tree]</A>
+<A HREF=doxygen_pages.html>[Source tree]</A>
 <A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
 <p>
-<center><h2> Ecasound documentation - frequently-asked-questions (FAQ)</h2></center>
+<center><h2>Ecasound documentation - Frequently-asked-questions (FAQ)</h2></center>
 </p>
 
 
@@ -33,12 +33,12 @@
 <dt><h2><a href="ecasound_faq.html#l1">1: Compiling</a></h2>
 <dl><p>
 <dt><h3><a href="ecasound_faq.html#l2">1.1: Errors when compiling audioio-af.cpp</a></h3>
-<dt><h3><a href="ecasound_faq.html#l3">1.2: Errors when linking samplebuffer.o</a></h3>
-<dt><h3><a href="ecasound_faq.html#l4">1.3: If ecasound crashes - how to compile for debugging?</a></h3>
+<dt><h3><a href="ecasound_faq.html#l3">1.2: If ecasound crashes - how to compile for debugging?</a></h3>
+<dt><h3><a href="ecasound_faq.html#l4">1.3: How to rebuild the source-RPMs with ALSA support?</a></h3>
 </dl><p>
 <dt><h2><a href="ecasound_faq.html#l5">2: Installing</a></h2>
 <dl><p>
-<dt><h3><a href="ecasound_faq.html#l6">2.1: Is installing Qt 2.0 going to break KDE and other apps using Qt 1.xx?</a></h3>
+<dt><h3><a href="ecasound_faq.html#l6">2.1: Is installing Qt 2.x going to break KDE 1.x and other apps using Qt 1.xx?</a></h3>
 <dt><h3><a href="ecasound_faq.html#l7">2.2: Does qtecasound require KDE to be installed?</a></h3>
 </dl><p>
 <dt><h2><a href="ecasound_faq.html#l8">3: Using</a></h2>
@@ -50,11 +50,14 @@
 </dl><p>
  
 <p><hr><p><br>
-<p><a name="l1"></a>
+<p>
+
+<a name="l1"></a>
 <h2>1: Compiling</h2>
+<p>
 <a name="l2"></a>
 <h3>1.1: Errors when compiling audioio-af.cpp</h3>
-<p>Upgrade your audiofile headers. At least 0.1.6 version of the library 
+Upgrade your audiofile headers. At least 0.1.6 version of the library 
 has duplicate extern "C" -wrappers in the file <em>aupvlist.h</em>. The result
 looks like this:
 <pre>
@@ -65,21 +68,10 @@ make[3]: *** [audioio-af.o] Error 1
 --cut--
 </pre>
 
-<p><a name="l3"></a>
-<h3>1.2: Errors when linking samplebuffer.o</h3>
-<p>If you get errors that look something like this...
-<pre>
---cut--
-samplebuffer.o(.text+0x1bb): undefined reference to `SAMPLE_BUFFER::is_system_littleendian
---cut--
-</pre>
-
-<p>... you have a incompatible version of libstdc++. As ecasound uses
-many advanced features of standard C++, it requires libstdc++ 2.9.0
-or newer.
-<p><a name="l4"></a>
-<h3>1.3: If ecasound crashes - how to compile for debugging?</h3>
-<p>The easiest way is to increase debug level (-d:level option). This
+<p>
+<a name="l3"></a>
+<h3>1.2: If ecasound crashes - how to compile for debugging?</h3>
+The easiest way is to increase debug level (-d:level option). This
 gives you a lot of info. Sometimes however, this is not enough. For 
 debugging purposes, you should compile a separate debug version of 
 ecasound. You can do this with "make distclean ; ./configure --enable-debug 
@@ -90,11 +82,20 @@ versions. To summarize, if ecasound acts weirdly, try to reproduce
 the behaviour with _debug versions. This way all assertions are
 checked and extra debugging information helps to trace problems with
 gdb.
-<p><a name="l5"></a>
+<p>
+<a name="l4"></a>
+<h3>1.3: How to rebuild the source-RPMs with ALSA support?</h3>
+If you have ALSA installed properly, normal rebuild is enough:
+"rpm --rebuild ecasound-x.y.zrt.src.rpm" (replace x, y, z and t 
+with proper version numbers).
+<p>
+
+<a name="l5"></a>
 <h2>2: Installing</h2>
+<p>
 <a name="l6"></a>
-<h3>2.1: Is installing Qt 2.0 going to break KDE and other apps using Qt 1.xx?</h3>
-<p>You can install the Qt 2.0 runtime libs and still run apps using the
+<h3>2.1: Is installing Qt 2.x going to break KDE 1.x and other apps using Qt 1.xx?</h3>
+You can install the Qt 2.x runtime libs and still run apps using the
 older Qt versions (like KDE). If you compile KDE/Qt programs yourself, 
 you can choose between Qt 1.x and 2.x by changing the symbolic link 
 "libqt.so". If it points to libqt.so.1, the program is linked to 1.x 
@@ -103,30 +104,35 @@ libs and to 2.x libs if it points to libqt.so.2.
 for more info.
 <p>And of course you can just use the text-mode version of ecasound.
 It can do most things that the X-version (qtecasound) can do.
-<p><a name="l7"></a>
+<p>
+<a name="l7"></a>
 <h3>2.2: Does qtecasound require KDE to be installed?</h3>
-<p>No. In addition to the Qt runtime libraries, qtecasound only 
+No. In addition to the Qt runtime libraries, qtecasound only 
 requires the normal X libraries. In other words it should run
 under any window manager. And most likely it will also stay 
 this way. I might do a KDE/some-other specific version, but
 I'd still support the generic version. After all, ecasound isn't
 actually aimed at the masses... 
-<p><a name="l8"></a>
+<p>
+
+<a name="l8"></a>
 <h2>3: Using</h2>
+<p>
 <a name="l9"></a>
 <h3>3.1: Can't open shared shared libraries</h3>
 If you get the following error message...
 <p><pre>
 --cut--
-error in loading shared libraries: libecasound.so.1: cannot open shared object file: No such
+error in loading shared libraries: libecasound.so.x: cannot open shared object file: No such
 file or directory
 --cut--
 </pre>
 
-<p>Add /usr/local/lib to your /etc/ld.so.conf and run "ldconfig". If
+<p>Add /usr/local/lib to your /etc/ld.so.conf and run "/sbin/ldconfig". If
 you haven't installed ecasound to the default location, replace
 /usr/local/lib with the correct library path.
-<p><a name="l10"></a>
+<p>
+<a name="l10"></a>
 <h3>3.2: How do I use the parameter xxx?</h3>
 The best place to start is the file <em>examples.html</em>. It can be found
 from <a href="http://www.wakkanet.fi/~kaiv/ecasound/Documentation/examples.html">www.wakkanet.fi/ecasound</a>
@@ -134,12 +140,14 @@ from <a href="http://www.wakkanet.fi/~kaiv/ecasound/Documentation/examples.html"
 page. Finally, help given by the <strong>-h</strong> command line 
 option is always up-to-date. If you still don't know what to do, mail me at 
 <a href="mailto:kaiv@wakkanet.fi"><em>kaiv@wakkanet.fi</em></a>. 
-<p><a name="l11"></a>
+<p>
+<a name="l11"></a>
 <h3>3.3: Ecasound isn't doing anything but it still seems to hog all CPU-time</h3>
 You're probably running ecasound in raised-priority mode. It is turned on
 with the -r command line option or by specifying 
 "default-to-raisepriority true" in your <a href="ecasoundrc_manpage.html">~/.ecasoundrc</a>.
-<p><a name="l12"></a>
+<p>
+<a name="l12"></a>
 <h3>3.4: What file format should I use for mixing and recording?</h3>
 You should always use .raw or .wav. By doing this, you will probably
 get better performance as these formats are internally supported by 

@@ -40,7 +40,7 @@ QEPlayEvent::QEPlayEvent(ECA_CONTROLLER* ctrl,
   set_output(output);
   set_length(length);
 
-  //  QESignalLevel* sl = new QESignalLevel(1, 0, 0);
-  //  ectrl->add_chain_operator(sl);
-  //  sl->show();
+//    QESignalLevel* sl = new QESignalLevel(1, 0, 0);
+//    ectrl->add_chain_operator(sl);
+//    sl->show();
 }

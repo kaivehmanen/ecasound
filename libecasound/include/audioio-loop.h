@@ -21,19 +21,20 @@ class LOOP_DEVICE : public AUDIO_IO {
 
  public:
 
-  string name(void) const { return("Internal loop device"); }
+  virtual string name(void) const { return("Internal loop device"); }
+  virtual string description(void) const { return("Loop device that routes data from output to input."); }
 
-  void buffersize(long int samples, long int sample_rate) { };
-  long int buffersize(void) const { return(0); };
+  virtual void buffersize(long int samples, long int sample_rate) { };
+  virtual long int buffersize(void) const { return(0); };
 
-  void open(void) { }
-  void close(void) { }
+  virtual void open(void) { }
+  virtual void close(void) { }
 
-  void read_buffer(SAMPLE_BUFFER* sbuf);
-  void write_buffer(SAMPLE_BUFFER* sbuf);
+  virtual void read_buffer(SAMPLE_BUFFER* sbuf);
+  virtual void write_buffer(SAMPLE_BUFFER* sbuf);
 
-  bool finished(void) const { return(true); }
-  void seek_position(void) { } 
+  virtual bool finished(void) const { return(true); }
+  virtual void seek_position(void) { } 
 
   /**
    * Register a new input client

@@ -58,15 +58,7 @@ void ECA_CONTROLLER::command(const string& cmd) throw(ECA_ERROR*) {
     if (*p == "") return;
     if (ECA_IAMODE_PARSER::cmd_map.find(string_search_and_replace(*p, '_', '-')) == ECA_IAMODE_PARSER::cmd_map.end()) {
       if (p->size() > 0 && (*p)[0] == '-') {
-	string prefix = get_argument_prefix(*p);
-	if (prefix == "el" || ECA_CHAIN_OPERATOR_MAP::object(prefix) != 0) 
-	  add_chain_operator(*p);
-	else if (ECA_CONTROLLER_MAP::object(prefix) != 0)
-	  add_controller(*p);
-	else if (eca_preset_map.object(get_argument_number(1, *p)) != 0)
-	  add_chain_operator(*p);
-	else
-	  action(ec_direct_option, cmds);
+	direct_command(cmd);
       }
       else {
 	ecadebug->msg("(eca-controller) ERROR: Unknown command!");
@@ -89,6 +81,24 @@ void ECA_CONTROLLER::command(const string& cmd) throw(ECA_ERROR*) {
       }
     }
   }
+}
+
+void ECA_CONTROLLER::direct_command(const string& cmd) {
+  string prefix = get_argument_prefix(cmd);
+  if (prefix == "el" || prefix == "pn") { // --- LADSPA plugins and presets
+    if (selected_chains().size() == 1) 
+      add_chain_operator(cmd);
+    else
+      ecadebug->msg("(eca-controller) When adding chain operators, only one chain can be selected.");
+  }
+  else if (ECA_CONTROLLER_MAP::object(prefix) != 0) {
+    if (selected_chains().size() == 1) 
+      add_controller(cmd);
+    else
+      ecadebug->msg("(eca-controller) When adding controllers, only one chain can be selected.");
+  }
+  else
+    action(ec_direct_option, string_to_words(cmd));
 }
 
 void ECA_CONTROLLER::action(int action_id, 
@@ -237,7 +247,7 @@ void ECA_CONTROLLER::action(int action_id,
   case ec_c_name: 
     { 
       if (selected_chains().size() != 1) {
-	ecadebug->msg("(eca-controller) When renaming chains, only one chain has to selected.");
+	ecadebug->msg("(eca-controller) When renaming chains, only one chain canbe selected.");
       }
       else {
 	rename_chain(args[0]); 
@@ -614,7 +624,7 @@ string ECA_CONTROLLER::aio_status(void) const {
     st_info_string += "\" - [" + (*adev_citer)->name() + "]";
     if ((*adev_citer) == selected_audio_object_rep) st_info_string += " [selected]";
     st_info_string += "\n\tconnected to chains \"";
-    vector<string> temp = selected_chainsetup_rep->get_connected_chains_to_input((selected_chainsetup_rep->inputs)[adev_sizet]);
+    vector<string> temp = selected_chainsetup_rep->get_attached_chains_to_input((selected_chainsetup_rep->inputs)[adev_sizet]);
     vector<string>::const_iterator p = temp.begin();
     while (p != temp.end()) {
       st_info_string += *p; 
@@ -637,7 +647,7 @@ string ECA_CONTROLLER::aio_status(void) const {
     st_info_string += "\" - [" + (*adev_citer)->name() + "]";
     if ((*adev_citer) == selected_audio_object_rep) st_info_string += " [selected]";
     st_info_string += "\n\tconnected to chains \"";
-    vector<string> temp = selected_chainsetup_rep->get_connected_chains_to_output((selected_chainsetup_rep->outputs)[adev_sizet]);
+    vector<string> temp = selected_chainsetup_rep->get_attached_chains_to_output((selected_chainsetup_rep->outputs)[adev_sizet]);
     vector<string>::const_iterator p = temp.begin();
     while (p != temp.end()) {
       st_info_string += *p; 

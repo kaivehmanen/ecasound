@@ -13,7 +13,7 @@
 <A HREF=manpages.html>[Man pages]</A>
 <A HREF=users_guide/index.html>[User's guide]</A>
 <A HREF=programmers_guide/index.html>[Programmer's guide]</A>
-<A HREF=kdoc_pages.html>[Source tree]</A>
+<A HREF=doxygen_pages.html>[Source tree]</A>
 <A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home
 page]</A></H4></CENTER>
 <CENTER><H4><A HREF=ecasound_manpage.html>[ecasound(1)]</A>
@@ -23,13 +23,13 @@ page]</A></H4></CENTER>
 <A HREF=ecasoundrc_manpage.html>[ecasoundrc(5)]</A></H4></CENTER>
 <p>
 <hr>
-<center><h2> Ecasound documentation - manual pages </h2></center>
+<center><h2> ecasound documentation - manual pages </h2></center>
 </p>
 
 
 
 
-<html><head><title>Ecasound</title>
+<html><head><title>ecasound</title>
 
 <link rev="made" href="mailto:kaiv@wakkanet.fi">
 </head>
@@ -38,7 +38,7 @@ page]</A></H4></CENTER>
 <hr>
 
 <h1>ecasound</h1>
-<h2>27.03.2000</h2>
+<h2>14.04.2000</h2>
 
 
     
@@ -188,6 +188,9 @@ When using ALSA drivers, instead of a device filename, you need to
 use the following option syntax: <strong>-i[:]alsa,card_number,device_number</strong>. 
 If you need to specify individual subdevices:
 <strong>-i[:]alsa,card_number,device_number,subdevice_number</strong>.
+<p><p></p><dt><strong>ALSA pcm-plugin layer</strong><dd>
+Just like normal ALSA devices, but with automatic sample rate and format 
+conversions. Option syntax is <strong>-i[:]alsaplugin,card_number,device_number,subdevice_number</strong>.
 <p><p></p><dt><strong>ALSA loopback device</strong><dd>
 By using the ALSA loopback system, you can grab audio data from any
 other pcm device. Option syntax is

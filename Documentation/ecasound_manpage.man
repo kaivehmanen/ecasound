@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "27\&.03\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "14\&.04\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -168,6 +168,10 @@ When using ALSA drivers, instead of a device filename, you need to
 use the following option syntax: \fB-i[:]alsa,card_number,device_number\fP\&. 
 If you need to specify individual subdevices:
 \fB-i[:]alsa,card_number,device_number,subdevice_number\fP\&.
+.IP 
+.IP "ALSA pcm-plugin layer" 
+Just like normal ALSA devices, but with automatic sample rate and format 
+conversions\&. Option syntax is \fB-i[:]alsaplugin,card_number,device_number,subdevice_number\fP\&.
 .IP 
 .IP "ALSA loopback device" 
 By using the ALSA loopback system, you can grab audio data from any

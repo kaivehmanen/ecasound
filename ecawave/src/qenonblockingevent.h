@@ -19,7 +19,7 @@ class QENonblockingEvent : public QEEvent {
    * Stop processing
    *
    * require:
-   *  ectrl->is_running() == true
+   *  ectrl->is_engine_started() == true
    *  is_triggered() == true
    *
    * ensure:
@@ -32,6 +32,11 @@ class QENonblockingEvent : public QEEvent {
    * Restart event with new position parameters
    */
   virtual void restart(long int start_pos, long int length) { }
+
+  /**
+   * Tests whether processing has finished
+   */
+  bool is_finished(void) const { return(ectrl->is_finished()); }
 
   QENonblockingEvent(ECA_CONTROLLER* ctrl) : QEEvent(ctrl), ectrl(ctrl) { }
   virtual ~QENonblockingEvent(void) { }

@@ -10,7 +10,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (12042000)
+       (15042000)
 
 COMMENT(----------------------------------------------------------------)
 sect(What is ecawave?)
@@ -105,8 +105,14 @@ Zoom to marked area.
 subsubsect(Zoom out <alt-m>)
 Zoom out so that the whole file is visible.
 
+subsubsect(Mark all <alt-r>)
+Mark the entire file. Note! Not just the visible area.
+
 subsubsect(Unmark <alt-u>)
 Unmark currently marked area.
+
+subsubsect(Redraw <alt-w>)
+Redraws the waveform data.
 
 COMMENT(----------------------------------------------------------------)
 sect(Configuration)

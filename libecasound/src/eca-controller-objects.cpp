@@ -302,7 +302,7 @@ void ECA_CONTROLLER_OBJECTS::disconnect_chainsetup(void) {
   // --------
 
   if (is_engine_started() == true) {
-    stop();
+    stop_on_condition();
     close_engine();
   }
 
@@ -626,15 +626,15 @@ void ECA_CONTROLLER_OBJECTS::set_default_audio_format(const string& sfrm,
   selected_chainsetup_rep->interpret_audio_format(format);
 }
 
-void ECA_CONTROLLER_OBJECTS::set_default_audio_format(const ECA_AUDIO_FORMAT* format) {
+void ECA_CONTROLLER_OBJECTS::set_default_audio_format(const ECA_AUDIO_FORMAT& format) {
  // --------
   // require:
   assert(is_selected() == true);
   // --------
 
-  set_default_audio_format(format->format_string(), 
-			   static_cast<int>(format->channels()), 
-			   static_cast<long int>(format->samples_per_second()));
+  set_default_audio_format(format.format_string(), 
+			   static_cast<int>(format.channels()), 
+			   static_cast<long int>(format.samples_per_second()));
 }
 
 void ECA_CONTROLLER_OBJECTS::select_audio_object(const string& name) { 
@@ -706,7 +706,7 @@ ECA_AUDIO_FORMAT ECA_CONTROLLER_OBJECTS::get_audio_format(void) {
   // --------
   // require:
   assert(is_selected() == true);
-  assert(selected_audio_object_rep != 0);
+  assert(get_audio_object() != 0);
   // --------
 
   bool was_open = true;
@@ -770,16 +770,14 @@ void ECA_CONTROLLER_OBJECTS::remove_audio_object(void) {
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(selected_audio_object_rep != 0);
+  assert(get_audio_object() != 0);
   // --------
+  ecadebug->msg("(eca-controller) Removing selected audio object \"" + selected_audio_object_rep->label() +
+		"\" from selected chains.");
   if (selected_audio_object_rep->io_mode() == AUDIO_IO::io_read) 
     selected_chainsetup_rep->remove_audio_input(selected_audio_object_rep->label());
   else 
     selected_chainsetup_rep->remove_audio_output(selected_audio_object_rep->label());
-
-  ecadebug->msg("(eca-controller) Removed selected audio object \"" + selected_audio_object_rep->label() +
-		"\" to selected chains.");
-
   selected_audio_object_rep = 0;
 
   // --------
@@ -793,8 +791,7 @@ void ECA_CONTROLLER_OBJECTS::attach_audio_object(void) {
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(selected_chains().size() > 0);
-  assert(selected_audio_object_rep != 0);
+  assert(get_audio_object() != 0);
   // --------
   if (selected_audio_object_rep->io_mode() == AUDIO_IO::io_read) 
     selected_chainsetup_rep->attach_input_to_selected_chains(selected_audio_object_rep->label());
@@ -810,7 +807,7 @@ void ECA_CONTROLLER_OBJECTS::rewind_audio_object(double seconds) {
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(selected_audio_object_rep != 0);
+  assert(get_audio_object() != 0);
   // --------
   selected_audio_object_rep->seek_position_in_seconds(selected_audio_object_rep->position_in_seconds_exact() - seconds);
 }
@@ -820,7 +817,7 @@ void ECA_CONTROLLER_OBJECTS::forward_audio_object(double seconds) {
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(selected_audio_object_rep != 0);
+  assert(get_audio_object() != 0);
   // --------
   selected_audio_object_rep->seek_position_in_seconds(selected_audio_object_rep->position_in_seconds_exact() + seconds);
 }
@@ -830,7 +827,7 @@ void ECA_CONTROLLER_OBJECTS::set_audio_object_position(double seconds) {
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(selected_audio_object_rep != 0);
+  assert(get_audio_object() != 0);
   // --------
   selected_audio_object_rep->seek_position_in_seconds(seconds);
 }
@@ -840,7 +837,7 @@ void ECA_CONTROLLER_OBJECTS::wave_edit_audio_object(void) {
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(selected_audio_object_rep != 0);
+  assert(get_audio_object() != 0);
   // --------
   string name = selected_audio_object_rep->label();
 

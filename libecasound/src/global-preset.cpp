@@ -25,7 +25,8 @@
 #include "eca-error.h"
 #include "global-preset.h"
 
-GLOBAL_PRESET::GLOBAL_PRESET(const string& preset_name) {
+GLOBAL_PRESET::GLOBAL_PRESET(const string& preset_name) 
+  : preset_name_rep(preset_name) {
   ECA_RESOURCES ecarc;
   ecadebug->msg(ECA_DEBUG::system_objects,"(global-preset) Opening sc-preset file.");
   string filename =

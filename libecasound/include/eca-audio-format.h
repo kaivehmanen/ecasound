@@ -87,6 +87,11 @@ class ECA_AUDIO_FORMAT {
    */
   bool interleaved_channels(void) const { return(ileaved_rep); }
 
+  /** 
+   * Returns an identical audio format object
+   */
+  ECA_AUDIO_FORMAT audio_format(void) const;
+
   void set_channels(int v);
   void set_sample_format(SAMPLE_FORMAT v) throw(ECA_ERROR*);
   void set_samples_per_second(long int v);

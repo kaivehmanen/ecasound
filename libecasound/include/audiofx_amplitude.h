@@ -29,15 +29,15 @@ class EFFECT_AMPLIFY: public EFFECT_AMPLITUDE {
 
  public:
 
-  string name(void) const { return("Amplify"); }
+  virtual string name(void) const { return("Amplify"); }
 
-  string parameter_names(void) const  { return("amp-%"); }
+  virtual string parameter_names(void) const  { return("amp-%"); }
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_AMPLIFY (parameter_type multiplier_percent = 100.0);
   virtual ~EFFECT_AMPLIFY(void) { }
@@ -57,15 +57,15 @@ class EFFECT_AMPLIFY_CLIPCOUNT : public EFFECT_AMPLITUDE {
 
  public:
 
-  string name(void) const { return("Amplify with clipping control"); }
+  virtual string name(void) const { return("Amplify with clipping control"); }
 
-  string parameter_names(void) const { return("amp-%,max-clipped-samples"); }
+  virtual string parameter_names(void) const { return("amp-%,max-clipped-samples"); }
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_AMPLIFY_CLIPCOUNT* new_expr(void)  { return new EFFECT_AMPLIFY_CLIPCOUNT(); }
   EFFECT_AMPLIFY_CLIPCOUNT* clone(void)  { return new EFFECT_AMPLIFY_CLIPCOUNT(*this); }
@@ -84,15 +84,15 @@ class EFFECT_AMPLIFY_CHANNEL: public EFFECT_AMPLITUDE {
 
  public:
 
-  string name(void) const { return("Channel amplify"); }
+  virtual string name(void) const { return("Channel amplify"); }
 
   string parameter_names(void) const  { return("amp-%,channel"); }
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_AMPLIFY_CHANNEL* clone(void)  { return new EFFECT_AMPLIFY_CHANNEL(*this); }
   EFFECT_AMPLIFY_CHANNEL* new_expr(void)  { return new EFFECT_AMPLIFY_CHANNEL(); }
@@ -116,23 +116,20 @@ class EFFECT_COMPRESS : public EFFECT_AMPLITUDE {
 
  public:
 
-  string name(void) const { return("Compress"); }
+  virtual string name(void) const { return("Compressor"); }
 
-  string parameter_names(void) const  { return("compression-rate-dB,threshold-%"); }
+  virtual string parameter_names(void) const  { return("compression-rate-dB,threshold-%"); }
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_COMPRESS* clone(void)  { return new EFFECT_COMPRESS(*this); }
   EFFECT_COMPRESS* new_expr(void)  { return new EFFECT_COMPRESS(); }
   EFFECT_COMPRESS (const EFFECT_COMPRESS& x);
-  EFFECT_COMPRESS (parameter_type compress_rate, parameter_type thold);
-  EFFECT_COMPRESS (void) : first_time(true) { 
-    map_parameters();
-  }
+  EFFECT_COMPRESS (parameter_type compress_rate = 1.0, parameter_type thold = 10.0);
 };
 
 /**
@@ -159,24 +156,26 @@ class EFFECT_NOISEGATE : public EFFECT_AMPLITUDE {
   
  public:
   
-  string name(void) const { return("Noisegate"); }
+  virtual string name(void) const { return("Noisegate"); }
+  virtual string description(void) const { return("Noise gate with attack and release."); }
 
-  string parameter_names(void) const {
+  virtual string parameter_names(void) const {
     return("threshold-level-%,pre-hold-time-msec,attack-time-msec,post-hold-time-msec,release-time-msec");
   }
 
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_NOISEGATE* clone(void)  { return new EFFECT_NOISEGATE(*this); }
   EFFECT_NOISEGATE* new_expr(void)  { return new EFFECT_NOISEGATE(); }
-  EFFECT_NOISEGATE (parameter_type thlevel_percent, parameter_type thtime, parameter_type atime, parameter_type htime, parameter_type rtime);
-  EFFECT_NOISEGATE (void) { 
-    map_parameters();
-  }
+  EFFECT_NOISEGATE (parameter_type thlevel_percent = 100.0, 
+		    parameter_type thtime = 50.0, 
+		    parameter_type atime = 50.0, 
+		    parameter_type htime = 50.0, 
+		    parameter_type rtime = 50.0);
 };
 
 /**
@@ -194,16 +193,17 @@ private:
   
 public:
 
-  string name(void) const { return("Normal pan"); }
-  string parameter_names(void) const { return("right-%"); }
+  virtual string name(void) const { return("Normal pan"); }
+  virtual string description(void) const { return("Panning effect for controlling the stereo image."); }
+  virtual string parameter_names(void) const { return("right-%"); }
 
-  int output_channels(int i_channels) const { return(2); }
+  virtual int output_channels(int i_channels) const { return(2); }
     
-  void set_parameter(int param, parameter_type value);
-  parameter_type get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
     
   EFFECT_NORMAL_PAN* clone(void)  { return new EFFECT_NORMAL_PAN(*this); }
   EFFECT_NORMAL_PAN* new_expr(void)  { return new EFFECT_NORMAL_PAN(); }

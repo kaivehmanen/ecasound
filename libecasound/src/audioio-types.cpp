@@ -69,17 +69,18 @@ void AUDIO_IO_BUFFERED::buffersize(long int samples,
 
   if (samples != 0) {
     target_samples_rep = samples;
-  }
 
-  if (target_srate_rep != samples_per_second()) {
-    buffersize_rep = static_cast<long int>(ceil(static_cast<double>(target_samples_rep) *
-			  samples_per_second() / target_srate_rep));
+    if (target_srate_rep != samples_per_second()) {
+      buffersize_rep = static_cast<long int>(ceil(static_cast<double>(target_samples_rep) *
+						  samples_per_second() / target_srate_rep));
+    }
+    else {
+      buffersize_rep = target_samples_rep;
+    }
+    reserve_buffer_space(buffersize_rep * frame_size());
   }
-  else {
-    buffersize_rep = target_samples_rep;
-  }
-
-  reserve_buffer_space(buffersize_rep * frame_size());
+  else
+    buffersize_rep = 0;
 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) Set buffer size [" +
 		   kvu_numtostr(buffersize_rep) + "].");
