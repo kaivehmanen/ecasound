@@ -107,7 +107,8 @@ private:
    * Number of sample-frames of data is prefilled to 
    * rt-outputs before starting processing.
    */
-  static const long int prefill_threshold_constant_rep = 4096;
+  static const long int prefill_threshold_constant = 4096;
+  static const int prefill_blocks_constant = 3;
 
   long int prefill_threshold_rep;
 
@@ -122,8 +123,8 @@ private:
   bool processing_range_set_rep;
   bool use_double_buffering_rep;
   bool use_midi_rep;
-  bool input_not_finished_rep;
-  bool output_finished_rep;
+  int outputs_finished_rep;
+  int inputs_not_finished_rep;
 
   VALUE_QUEUE command_queue_rep;
   
