@@ -1,22 +1,26 @@
 # ---
 # manual configuration
 srcdir=..
-#ecasound_library=ecasound8
-ecasound_library=ecasound8_debug
-#kvutils_library=kvutils3
-kvutils_library=kvutils3_debug
+#ecasound_library=ecasound_debug
+ecasound_library=ecasound_debug
+#kvutils_library=kvutils_debug
+kvutils_library=kvutils_debug
 
 # ---
 
 ECAFLAGS= -I${srcdir}/libecasound -I${srcdir}/kvutils -I${srcdir}/libecasoundc -D_REENTRANT -g -Wall -Wstrict-prototypes -DVERBOSE
-ECALINK=-L${srcdir}/libecasound/.libs -l${ecasound_library} \
-	-L${srcdir}/kvutils/.libs -l${kvutils_library} \
-	-Wl,--rpath -Wl,${srcdir}/libecasound/.libs \
-	-Wl,--rpath -Wl,${srcdir}/kvutils/.libs
+ECALDFLAGS= \
+	-L${srcdir}/libecasound/.libs \
+	-L${srcdir}/kvutils/.libs
+
+ECALIBS= \
+	${srcdir}/libecasound/.libs/lib${ecasound_library}.a \
+	${srcdir}/kvutils/.libs/lib${kvutils_library}.a
 
 CXXFLAGS += $(ECAFLAGS)
-CFLAGS += $(ECAFLAGS)
-LDFLAGS += $(ECALINK)
+CFLAGS += $(ECACFLAGS)
+LDFLAGS += $(ECALDFLAGS)
+
 CXX=c++
 CC=c++
 
@@ -25,14 +29,18 @@ CC=c++
 COMMON_SRC = 		ecatestsuite.h
 GENERATED_FILES = 	ecatestlist.txt
 TARGETS=		con_test1 \
-			con_test2 \
-			eca_test1
+			con_test2
 
+#			eca_test1
 
 all: $(TARGETS) create-test-list
+
+con_test1: con_test1.o ${ECALIBS}
+con_test2: con_test2.o ${ECALIBS}
+eca_test1: ${ECALIBS} eca_test1.o
 
 create-test-list:
 	echo $(TARGETS) > ecatestlist.txt
 
 clean:
-	rm -f $(TARGETS) $(GENERATED_FILES)
+	rm -fv $(TARGETS) $(GENERATED_FILES) *.o
