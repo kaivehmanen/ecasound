@@ -1,34 +1,37 @@
-mailto(kaiv@wakkanet.fi)
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{html}
+\hfuzz=4pt % don't fuss when less than 4pt
+\input{/usr/share/yodl/xlatin1.tex}
+\setlength{\parskip}{3mm} % height between par
+\setlength{\parindent}{0mm} % no par indent
 
-htmlcommand(
-<insert file=../../es-makrot.txt>
-<insert name=ecasound_subindexbar>
+\bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
 
-<hr>
-<p>
-<center><h2>Ecasound Control Interface documentation</h2></center>
-</p>
-)
+\title{Ecasound Control Interface documentation}
+\author{Kai Vehmanen}
+\date{03102001}
+\begin{document}
 
-article()
-       (Kai Vehmanen)
-       (09072001)
+\maketitle
+\tableofcontents 
+\clearpage
 
-COMMENT(----------------------------------------------------------------)
-COMMENT(----------------------------------------------------------------)
-sect(Introduction)
+
+
+\section{Introduction}
 Idea behind the Ecasound Control Interface (ECI) is to take a subset of 
 functionality provided by libecasound, write a simple API for it, and
 port it to various languages. At the moment, at least C++, C and
 Python implementations of the ECI API are available and part of the
 main ecasound distribution. ECI is heavily based on ecasound's
 interactive mode (EIAM), and the services it provides. See 
-url(ecasound-iam(1) manual page)(../ecasound-iam_manpage.html) for 
+\texttt{ecasound-iam(1) manual page} for 
 detailed EIAM documentation.
 
-COMMENT(----------------------------------------------------------------)
-COMMENT(----------------------------------------------------------------)
-sect(General)
+
+
+\section{General}
 ECI doesn't provide any routines that directly manipulate audio or 
 ecasound objects. What is does provide is an easy and generic way
 to issue EIAM (ecasound interactive mode) commands, access to the
@@ -44,136 +47,137 @@ libecasound, these constant changes are very annoying, especially if
 your specific app doesn't need the latest new features. In these
 cases, ECI is the best choice.
 
-COMMENT(----------------------------------------------------------------)
-subsect(What's it good for?)
+
+\subsection{What's it good for?}
 
 Specific tasks ECI is aimed at:
 
-startit()
-it() 1. automating (scripting in its traditional sense)
-it() 2. frontends (generic / specialized)
-it() 3. sound services to other apps
-endit()
+\begin{itemize}
+\item  1. automating (scripting in its traditional sense)
+\item  2. frontends (generic / specialized)
+\item  3. sound services to other apps
+\end{itemize}
 
-COMMENT(----------------------------------------------------------------)
-subsect(Services and behaviour)
+
+\subsection{Services and behaviour}
 
 Here's a list of services provided by all ECI implementations:
 
-subsubsect(Actions)
-startdit()
-dit(command(string)) 
+\subsubsection{Actions}
+\begin{description}
+\item[command(string)] 
 Issue an EIAM command.
 
-dit(command_float_arg(string, float))
+\item[command\_float\_arg(string, float)]
 Issue an EIAM command. This function can be used instead of
-em(command(string)), if the command in question requires exactly one 
+\emph{command(string)}, if the command in question requires exactly one 
 numerical parameter. This way it's possible to avoid the extra 
 string -> float conversion, which would lead to lost precision.
-enddit()
+\end{description}
 
-subsubsect(Return values)
+\subsubsection{Return values}
 Each EIAM command has exactly one return value type. After a command
-has been issued, only one last_type() functions returns a non-empty 
+has been issued, only one last\_type() functions returns a non-empty 
 value. Not all EIAM commands return a value (return type is void).
 
-startdit()
-dit(last_string())
+\begin{description}
+\item[last\_string()]
 Returns the last string return value.
 
-dit(last_string_list())
+\item[last\_string\_list()]
 Returns the last collection of strings (one or more strings).
 
-dit(last_float())
-Returns the last floating-point return value. Note! last_float()
+\item[last\_float()]
+Returns the last floating-point return value. Note! last\_float()
 doesn't refer to the C/C++ type 'float'. In most implementations, 
 floats are 64bit values (doubles in C/C++).
 
-dit(last_integer())
+\item[last\_integer()]
 Returns the last integer return value. This function is also 
 used to return boolean values, where non-zero means 'true' 
 and zero 'false'.
 
-dit(last_long_integer())
+\item[last\_long\_integer()]
 Returns the last long integer return value. Long integers are 
-used to pass values like 'length_in_samples' and 'length_in_bytes'.
+used to pass values like 'length\_in\_samples' and 'length\_in\_bytes'.
 It's implementation specific whether there's any real difference
 between integers and long integers.
-enddit()
+\end{description}
 
-subsubsect(Errors)
-startdit()
-dit(error())
+\subsubsection{Errors}
+\begin{description}
+\item[error()]
 Returns true (!= 0) if error has occured during the execution 
 of last EIAM command. Otherwise returns false (= 0).
 
-dit(last_error())
+\item[last\_error()]
 Returns a string describing the last error. If the last EIAM command
-was executed succesfully, last_error() returns an empty string.
+was executed succesfully, last\_error() returns an empty string.
 
-enddit()
+\end{description}
 
-subsubsect(Other)
-startdit()
-dit(initialize())
+\subsubsection{Other}
+\begin{description}
+\item[initialize()]
 Reserve resources.
 
-dit(cleanup())
+\item[cleanup()]
 Free all reserved resources.
-enddit()
+\end{description}
 
 
-COMMENT(----------------------------------------------------------------)
-subsect(Porting to new environments)
+
+\subsection{Porting to new environments}
 Porting ECI to new languages should be easy. All there is to do is 
 to implement the services listed in the previous section to the target
 language. In most cases it's to easist to use the C++ or C ECI 
 as the underlying implementation.
 
-COMMENT(----------------------------------------------------------------)
-COMMENT(----------------------------------------------------------------)
-sect(Implementations)
 
-COMMENT(----------------------------------------------------------------)
-subsect(General)
-subsubsect(Overview)
+
+\section{Implementations}
+
+
+\subsection{General}
+\subsubsection{Overview}
 This section contains overview of how ECI is implemented in the 
 discussed language (eg. as a single class, set of classes, set of
 routines, etc).
 
-subsubsect(Usage)
+\subsubsection{Usage}
 A quick tutorial to get you started.
 
-subsubsect(Example)
+\subsubsection{Example}
 Implementation of the following:
-starteit()
-eit() Setup ECI to read audio from file, apply a 100Hz lowpass filter, and 
+\begin{enumerate}
+\item  Setup ECI to read audio from file, apply a 100Hz lowpass filter, and 
       send it to the soundcard (/dev/dsp).
-eit() Every second, check the current position. If the stream has
+\item  Every second, check the current position. If the stream has
       been running for over 15 seconds, exit immediately. Also,
       every second, increase the lowpass filter's cutoff frequency
       by 500Hz.
-eit() Stop the stream (if not already finished) and disconnect the 
+\item  Stop the stream (if not already finished) and disconnect the 
       chainsetup. Print chain operator status info.
-endit()
+\end{enumerate}
 
-COMMENT(----------------------------------------------------------------)
-subsect(C++)
-subsubsect(Overview)
-C++ implementation is based around the ECA_CONTROL_INTERFACE class.
+
+\subsection{C++}
+\subsubsection{Overview}
+C++ implementation is based around the ECA\_CONTROL\_INTERFACE class.
 STL vector is used for representing collections of objects
-(last_string_list()).
+(last\_string\_list()).
 
-subsubsect(Usage)
-starteit() 
-eit() #include <ecasound/eca-control-interface.h>
-eit() create an instance of the ECA_CONTROL_INTERFACE class
+\subsubsection{Usage}
+\begin{enumerate} 
+\item  \#include <ecasound/eca-control-interface.h>
+\item  create an instance of the ECA\_CONTROL\_INTERFACE class
         and use its member functions
-eit() link you app agains libecasound (-lecasound)
-endeit()
+\item  link you app agains libecasound (-lecasound)
+\end{enumerate}
 
-subsubsect(Example)
-verb(
+\subsubsection{Example}
+\begin{verbatim} 
+
 #include <iostream>
 #include <unistd.h>
 #include <ecasound/eca-control-interface.h>
@@ -211,36 +215,39 @@ int main(int argc, char *argv[])
 
   return(0);
 }
-)
+ 
+\end{verbatim} 
 
-COMMENT(----------------------------------------------------------------)
-subsect(C)
-subsubsect(Overview)
-All C ECI functions are prefixed with "eci_". When returning string
+
+
+\subsection{C}
+\subsubsection{Overview}
+All C ECI functions are prefixed with "eci\_". When returning string
 values, a const pointer to a null-terminated char array (const char*)
 is returned. It's important to keep in mind that these are "borrowed"
 references. If you need to later use the data, you must copy
 it to application's own buffers.
 
 Returning a list of strings is implemented using two functions: 
-em(eci_last_string_list_count()) returns the number of strings
-available, and em(eci_last_string_list_item(int n)) returns a 
-pointer (const char*) to the string at index em(n).
+\emph{eci\_last\_string\_list\_count()} returns the number of strings
+available, and \emph{eci\_last\_string\_list\_item(int n)} returns a 
+pointer (const char*) to the string at index \emph{n}.
 
-em(Note!) As of ecasound 2.0.1, the C ECI implementation also 
+\emph{Note!} As of ecasound 2.0.1, the C ECI implementation also 
 	  provides reentrant access to the ECI API. These
-	  alternative routines are marked with '_r' postfix.
+	  alternative routines are marked with '\_r' postfix.
 
-subsubsect(Usage)
+\subsubsection{Usage}
 
-starteit()
-eit() #include <ecasound/ecasoundc.h>
-eit() use the eci_* routines
-eit() link your app against libecasoundc (-lecasoundc)
-endeit()
+\begin{enumerate}
+\item  \#include <ecasound/ecasoundc.h>
+\item  use the eci\_* routines
+\item  link your app against libecasoundc (-lecasoundc)
+\end{enumerate}
 
-subsubsect(Example)
-verb(
+\subsubsection{Example}
+\begin{verbatim} 
+
 #include <stdio.h>
 #include <unistd.h>
 #include <ecasound/ecasoundc.h>
@@ -282,12 +289,14 @@ int main(int argc, char *argv[])
 
   return(0);
 }
-)
+ 
+\end{verbatim} 
 
-COMMENT(----------------------------------------------------------------)
-subsect(Python)
-subsubsect(Overview)
-Python implementation is based around the ECA_CONTROL_INTERFACE class.
+
+
+\subsection{Python}
+\subsubsection{Overview}
+Python implementation is based around the ECA\_CONTROL\_INTERFACE class.
 Lists are used for representing collections of objects.
 
 Note! Eric S. Tiedemann has written an alternative Python interface
@@ -295,17 +304,18 @@ Note! Eric S. Tiedemann has written an alternative Python interface
       ecasound packege, in pyecasound/esteci.py. To use this instead
       of the standard interface, just 'import eci' and you're set! :)
 
-subsubsect(Usage)
+\subsubsection{Usage}
 
-starteit()
-eit() import pyeca
-eit() create an instance of the ECA_CONTROL_INTERFACE class
+\begin{enumerate}
+\item  import pyeca
+\item  create an instance of the ECA\_CONTROL\_INTERFACE class
       and use its member functions
-eit() python 'yourapp.py' and that's it :) 
-endeit()
+\item  python 'yourapp.py' and that's it :) 
+\end{enumerate}
 
-subsubsect(Example)
-verb(
+\subsubsection{Example}
+\begin{verbatim} 
+
 #!/usr/local/bin/python
 import time
 from pyeca import *
@@ -334,11 +344,13 @@ e.command("stop")
 e.command("cs-disconnect")
 e.command("cop-status")
 print "Chain operator status: ", e.last_string()
-)
+ 
+\end{verbatim} 
 
-COMMENT(----------------------------------------------------------------)
-subsect(Perl)
-subsubsect(Overview)
+
+
+\subsection{Perl}
+\subsubsection{Overview}
 Audio::Ecasound provides perl bindings to the ecasound
 control interface of the ecasound program.  You can use
 perl to automate or interact with ecasound so you don't
@@ -347,17 +359,17 @@ Wembly Stadium.
 
 Audio::Ecasound was written by Brad Bowman. At the moment this module 
 is not distributed with ecasound. To get the latest version, check the 
-following url(CPAN link)
-(http://search.cpan.org/search?mode=module&query=ecasound).
+following \texttt{CPAN link}.
 
-subsubsect(Usage)
+\subsubsection{Usage}
 See the below example. For more info, here's another 
-url(CPAN link)(http://search.cpan.org/doc/BOWMANBS/Audio-Ecasound-0.2/README).
+\texttt{CPAN link}.
 
-subsubsect(Example)
+\subsubsection{Example}
 use Audio::Ecasound qw(:simple);
 
-verb(
+\begin{verbatim} 
+
 eci("cs-add play_chainsetup");
 eci("c-add 1st_chain");
 eci("-i:some_file.wav");
@@ -382,7 +394,10 @@ while (1) {
 eci("stop");
 eci("cs-disconnect");
 print "Chain operator status: ", eci("cop-status");
-)
+ 
+\end{verbatim} 
 
-htmlcommand(<insert name=ecasound_tail>)
 
+
+
+\end{document}

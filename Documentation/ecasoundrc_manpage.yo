@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (19.08.2001)
+       (28.09.2001)
        ()
        (Multimedia software)
 
@@ -74,12 +74,12 @@ startdit()
 	Whether to ignore sample rate differences (and possibly avoid 
 	resampling). Currently only affects OSS-devices. Defaults to em(false).
 
-	dit(default-to-internal-buffering) 
+	dit(default-to-max-internal-buffering) 
 	Whether to allow realtime devices to utilize extra internal
 	buffering. Enabling this improves reliability, but at the 
 	same time causes additional latency to the signal processing
 	chain. Can be overridden with -z:intbuf and -z:nointbuf options. 
-	Defaults to em(false).
+	Defaults to em(true).
 
   	dit(resource-directory) 
   	Directory for global ecasound configuration files. 

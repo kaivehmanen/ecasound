@@ -13,6 +13,7 @@ Contents
 2.5: Ecasound won't accept my chainsetup file/options! What's wrong with it? 
 2.6: I get occasional audio dropouts during operation? How to get rid of them? 
 2.7: Can I use multiple soundcards? 
+2.8: Ecasound is not able to find any LADSPA plugins I have installed! 
 
 1: Compiling
 
@@ -127,3 +128,22 @@ be in sync. This problem is explained in detail in the Linux
 Audio-Quality HOWTO -
 www.linuxdj.com/audio/quality/,
 section "Notes on Full Duplex Recording, and Other Realtime Issues".
+
+2.8: Ecasound is not able to find any LADSPA plugins I have installed!
+
+Just installing the LADSPA SDK www.ladspa.org 
+should be enough. The plugins themselves are stored in shared library 
+files (.so). They are usually stored in /usr/local/lib/ladspa. To test 
+whether ecasound finds the plugins, issue:
+
+echo "ladspa-register" | ecasound -c
+
+You should get a list of all installed LADSPA plugins. If this doesn't
+work, you need to make sure ecasound is compiled with LADSPA enabled (ie.
+ladspa.h header was present when ecasound was compiled). The precompiled
+rpm-binaries have this, but if you've compiled ecasound yourself you
+should recompile after installing the LADSPA SDK.
+
+Also, check Dave Phillips' great
+article 
+on Oreillynet.

@@ -38,6 +38,7 @@
 <dt><h3><a href="ecasound_faq.html#l10">2.5: Ecasound won't accept my chainsetup file/options! What's wrong with it?</a></h3>
 <dt><h3><a href="ecasound_faq.html#l11">2.6: I get occasional audio dropouts during operation? How to get rid of them?</a></h3>
 <dt><h3><a href="ecasound_faq.html#l12">2.7: Can I use multiple soundcards?</a></h3>
+<dt><h3><a href="ecasound_faq.html#l13">2.8: Ecasound is not able to find any LADSPA plugins I have installed!</a></h3>
 </dl><p>
  
 <p><hr><p><br>
@@ -79,9 +80,6 @@ gdb.
 If you have ALSA installed properly, normal rebuild is enough:
 "rpm --rebuild ecasound-x.y.zrt.src.rpm" (replace x, y, z and t 
 with proper version numbers).
-<p>
-
-
 <p>
 
 <a name="l5"></a>
@@ -167,6 +165,22 @@ be in sync. This problem is explained in detail in the Linux
 Audio-Quality HOWTO -
 <a href="http://www.linuxdj.com/audio/quality/">www.linuxdj.com/audio/quality/</a>,
 section "Notes on Full Duplex Recording, and Other Realtime Issues".
+<p>
+<a name="l13"></a>
+<h3>2.8: Ecasound is not able to find any LADSPA plugins I have installed!</h3>
+Just installing the LADSPA SDK <a href="http://www.ladspa.org">www.ladspa.org</a> 
+should be enough. The plugins themselves are stored in shared library 
+files (.so). They are usually stored in /usr/local/lib/ladspa. To test 
+whether ecasound finds the plugins, issue:
+<p>echo "ladspa-register" | ecasound -c
+<p>You should get a list of all installed LADSPA plugins. If this doesn't
+work, you need to make sure ecasound is compiled with LADSPA enabled (ie.
+ladspa.h header was present when ecasound was compiled). The precompiled
+rpm-binaries have this, but if you've compiled ecasound yourself you
+should recompile after installing the LADSPA SDK.
+<p>Also, check Dave Phillips' great
+<a href="http://www.oreillynet.com/pub/a/linux/2001/02/02/ladspa.html">article</a> 
+on Oreillynet.
 <p><insert name=ecasound_tail>
-<p></body>
+</body>
 </html>

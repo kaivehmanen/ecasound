@@ -1,55 +1,56 @@
-mailto(kaiv@wakkanet.fi)
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{html}
+\hfuzz=4pt % don't fuss when less than 4pt
+\input{/usr/share/yodl/xlatin1.tex}
+\setlength{\parskip}{3mm} % height between par
+\setlength{\parindent}{0mm} % no par indent
 
-htmlcommand(
-<insert file=../../es-makrot.txt>
-<insert name=ecasound_subindexbar>
+\bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
 
-<hr>
-<p>
-<center><h2>Ecasound documentation - Programmer's guide</h2></center>
-</p>
-)
+\title{Ecasound Programmer's Guide}
+\author{Kai Vehmanen}
+\date{03102001}
+\begin{document}
 
-article()
-       (Kai Vehmanen)
-       (19082001)
+\maketitle
+\tableofcontents 
+\clearpage
 
-COMMENT(----------------------------------------------------------------)
-COMMENT(----------------------------------------------------------------)
-sect(Preface)
+\section{Preface}
 This document describes how ecasound library works, how to use it,
 how to extend and add features to it and so on. Before reading this
 document, you should first look at other available documentation
-(especially url(ecasound users's guide)(../users_guide/users_guide.html)).
+(especially \texttt{ecasound users's guide}).
 
 Unlike most web pages, this document really is under construction. :)
 
-COMMENT(----------------------------------------------------------------)
-COMMENT(----------------------------------------------------------------)
-sect(General guidelines)
 
-COMMENT(----------------------------------------------------------------)
-subsect(Design and programming)
-subsubsect(Open and generic design)
+
+\section{General guidelines}
+
+
+\subsection{Design and programming}
+\subsubsection{Open and generic design}
 Over the years ecasound's core design has been revised many times.
 After rewriting some code sections hundreds of times, you start
 to appreciate genericity. :) Although specific use-cases are used
 for testing new ideas, they are just design aids.
 
-subsubsect(Object-orientation)
+\subsubsection{Object-orientation}
 Ecasound is written in C++ (as specified in 1997 ANSI/ISO C++ standard). 
 Because C++ language itself doesn't force you to follow OO-principles, 
 I often use Eiffel language as a reference when designing classes and 
 routines.
 
-subsubsect(Data hiding) 
+\subsubsection{Data hiding} 
 This OO-feature deserves to be mentioned separately. Whenever 
 possible, I always try to hide the actual data representation. 
 This allows you to make local implementation changes without
 affecting other parts of the code base. One thing I've especially 
 tried to avoid is excessive use of pointer magic.
 
-subsubsect(Design by contract) 
+\subsubsection{Design by contract} 
 Design by contract means that when you write a new routine,
 in addition to the actual code, you also describe routine's 
 behaviour as accurately as possible.
@@ -71,32 +72,32 @@ accepts, b) you know what it does and c) if errors occur,
 it's easier to pinpoint the faulty routine. In practice this is 
 done by using comments and pre/postconditions. As C++ doesn't 
 directly support pre/postconditions, I've simulated them using
-the class DEFINITION_BY_CONTRACT from kvutils package and with 
+the class DEFINITION\_BY\_CONTRACT from kvutils package and with 
 standard assert() calls.
 
-subsubsect(Routine side effects)
+\subsubsection{Routine side effects}
 I try to make a clear distinction between routines that 
 have side-effects (=methods, processors, modifiers; routines that
 change object's state) and const routines (=functions, observers).
 
-subsubsect(Sanity checks)
+\subsubsection{Sanity checks}
 Sanity checks are done only to prevent crashes. All effects
 and operators happily accept "insane" parameters. For instance 
-you can give -100.0% to the amplifier effect. This of course 
+you can give -100.0\% to the amplifier effect. This of course 
 results in inverted sample data. I think this a reasonable 
 approach. After all, ecasound is supposed to be a tool for creative
 work and experimenting. It's not meant for e-commerce. ;)
 
-subsubsect(Error handling)
+\subsubsection{Error handling}
 Two specific things worth mentioning: First, the standard UNIX-style 
 error handling, where functions performing actions return an integer 
-value, is em(not) used in ecasound. As described in the above section 
-em(Routine side effects), all routines are either modifiers or
+value, is \emph{not} used in ecasound. As described in the above section 
+\emph{Routine side effects}, all routines are either modifiers or
 observers, not both. So when using ecasound APIs, you first perform an
 action (modifying function), and then afterwards check what happened
 (using an observer function).
 
-subsubsect(Exceptions)
+\subsubsection{Exceptions}
 C++ exceptions are used in ecasound. Exception based error
 handling has its problems, but in some cases it is clearly the best
 option. Using exceptions for anything other than pure exception
@@ -106,59 +107,59 @@ as clients need to know what exceptions can be thrown. All in all,
 use of exceptions should be carefully planned.
 
 A list of specific cases where exceptions are used follows:
-startdit()
-dit(AUDIO_IO - open())
+\begin{description}
+\item[AUDIO\_IO - open()]
 This method is used for initializing external connections (opening
 files or devices, loading shared libraries, opening IPC connections). 
-It's impossibly to no in advance what might happen. It many cases it
+It's impossible to know in advance what might happen. In many cases it
 is also useful to get more verbose information about the problem 
 that caused open() to fail. Throwing an exception is an excellent way
 to achieve this.
 
-dit(ECA_CHAINSETUP - enable())
-dit(ECA_CHAINSETUP - load_from_file(), save() and save_to_file())
-dit(ECA_SESSION - constructor)
+\item[ECA\_CHAINSETUP - enable()]
+\item[ECA\_CHAINSETUP - load\_from\_\texttt{}, save() and save\_to\_\texttt{}]
+\item[ECA\_SESSION - constructor]
 
-enddit()
+\end{description}
 
-COMMENT(----------------------------------------------------------------)
-subsect(Coding style)
-subsubsect(General guide lines)
+
+\subsection{Coding style}
+\subsubsection{General guide lines}
 Variable names are all lower case and words are separated with
-underscores (int very_long_variable_name_with_underscores). Class data
-members are marked with em(_rep) postfix. Data members which are
-pointers are marked with em(_repp). Index-style short variable names 
-(em(n), em(m), etc.) are only used in local scopes. Enum types 
-have capitalized names (em(Some_enum)).
+underscores (int very\_long\_variable\_name\_with\_underscores). Class data
+members are marked with \emph{\_rep} postfix. Data members which are
+pointers are marked with \emph{\_repp}. Index-style short variable names 
+(\emph{n}, \emph{m}, etc.) are only used in local scopes. Enum types 
+have capitalized names (\emph{Some\_enum}).
 
-subsubsect(Package specific)
-startdit()
-dit(libecasound, ecasound, ecatools, libkvutils)
+\subsubsection{Package specific}
+\begin{description}
+\item[libecasound, ecasound, ecatools, libkvutils]
 Class names are all in upper case and words separated with underscores
-(class ECA_CONTROL_BASE). This a standard style in Eiffel programming.
+(class ECA\_CONTROL\_BASE). This a standard style in Eiffel programming.
 
-dit(libqtecasound, qtecasound, ecawave)
+\item[libqtecasound, qtecasound, ecawave]
 Qt-style is used when naming classes (class QELevelMeter), otherwise
 same as above.
-enddit()
+\end{description}
 
-COMMENT(----------------------------------------------------------------)
-subsect(Physical level organization)
-Ecasound libraries and applications are divided into em(distribution 
-packages), em(directories) and em(file groups). 
 
-subsubsect(Distribution packages)
-As an example, em(ecasound) and em(qtecasound) are distributed as separate
+\subsection{Physical level organization}
+Ecasound libraries and applications are divided into \emph{distribution 
+packages}, \emph{directories} and \emph{file groups}. 
+
+\subsubsection{Distribution packages}
+As an example, \emph{ecasound} and \emph{qtecasound} are distributed as separate
 packages. This decision has been made because a) they are clearly 
 independent, b) they have different external dependencies, and c)
 they address different target uses. 
 
-subsubsect(Directories)
+\subsubsection{Directories}
 It's convenient to organize larger sets of source code into separate
-directories. For instance in ecasound, em(libecasound) and
-em(ecatools) are in two separate directories.
+directories. For instance in ecasound, \emph{libecasound} and
+\emph{ecatools} are in two separate directories.
 
-subsubsect(File groups)
+\subsubsection{File groups}
 Although files are divided in directories and subdirectories, 
 there's still a need to logically group a set of source files based
 on their use and role in the overall design. As the use of C++ 
@@ -166,30 +167,30 @@ namespaces is very limited in ecasound (to avoid portability
 problems), filename prefixes are used for grouping files. Here's
 a short list of commonly used prefixes. 
 
-startdit()
-dit(audioio*.{cpp,h}) 
+\begin{description}
+\item[audioio*.\{cpp,h\}] 
 Audio device and file input/output.
-dit(audiofx*.{cpp,h}) 
+\item[audiofx*.\{cpp,h\}] 
 Audio effects and other DSP-related code.
-dit(audiogate*.{cpp,h}) 
+\item[audiogate*.\{cpp,h\}] 
 Gate operators.
-dit(eca-*.{cpp,h}) 
+\item[eca-*.\{cpp,h\}] 
 Core functionality.
-dit(midi-*.{cpp,h}) 
+\item[midi-*.\{cpp,h\}] 
 MIDI input/output devices, handlers and controller code.
-dit(osc-*.{cpp,h}) 
+\item[osc-*.\{cpp,h\}] 
 Oscillator and other controller sources.
-dit(qe*.{cpp,h}) 
+\item[qe*.\{cpp,h\}] 
 Generic prefix for files utilizing both Qt and ecasound libraries.
-dit(samplebuffer-*.{cpp,h}) 
+\item[samplebuffer-*.\{cpp,h\}] 
 Routines and helper functions for processing audio data buffers.
-enddit()
+\end{description}
 
 You should note that these are just recommendations - there are no
 strict rules on how files should be named.
 
-COMMENT(----------------------------------------------------------------)
-subsect(Documentation style)
+
+\subsection{Documentation style}
 Javadoc-style class documentation is the preferred style.
 Class members can be documented either when they are declared (header
 files), or when they are defined. Especially when specifying
@@ -198,17 +199,17 @@ definition files. This way the header files remain compact and serve
 better as a reference. 
 
 Here's a few general documentation guide lines:
-startdit()
-dit(Use of 3rd person) 
+\begin{description}
+\item[Use of 3rd person] 
 "Writes samples to memory." instead of "Write samples to memory."
-dit(Sentences start with a verb)
+\item[Sentences start with a verb]
 "Writes samples to memory." instead of "Samples are written to memory."
-dit(This instead of the)
+\item[This instead of the]
 "Get controllers connected to this effect." instead of "Get controllers connected to the effect.
-enddit()
+\end{description}
 
-COMMENT(----------------------------------------------------------------)
-subsect(Versioning)
+
+\subsection{Versioning}
 All ecasound releases have a distinct version number. To emphasize the
 difference between stable and development releases, stable versions
 have an even, and devel versions have an odd minor version number. In
@@ -230,33 +231,33 @@ releases. So if you are linking apps against development versions of
 ecasound libraries, you must be prepared for interface changes.
 
 All changes in the public interfaces are documented in library
-specific em(ChangeLog) files. These files are usually located in the
+specific \emph{ChangeLog} files. These files are usually located in the
 top-level source directory.
 
-COMMENT(----------------------------------------------------------------)
-COMMENT(----------------------------------------------------------------)
-sect(How ecasound works?)
 
-COMMENT(----------------------------------------------------------------)
-subsect(Common use-cases)
+
+\section{How ecasound works?}
+
+
+\subsection{Common use-cases}
 Here's some common cases how ecasound can be used.
 
-subsubsect(Simple non-interactive processing)
+\subsubsection{Simple non-interactive processing}
 One input is processed and then written to one output. This includes effect 
 processing, normal sample playback, format conversions, etc.
 
-subsubsect(Multitrack mixing)
+\subsubsection{Multitrack mixing}
 Multiple inputs are mixed into one output.
 
-subsubsect(Realtime effect processing)
+\subsubsection{Realtime effect processing}
 There's at least one realtime input and one realtime output.
 Signal is sampled from the realtime input, processed and
 written to the realtime output.
 
-subsubsect(One-track recording)
+\subsubsection{One-track recording}
 One input is processed and written to one or more outputs.
 
-subsubsect(Multitrack recording)
+\subsubsection{Multitrack recording}
 The most common situation is that there are two separate
 chains. First one consists of realtime input routed to a
 non-realtime output. This is the recording chain. The
@@ -268,129 +269,126 @@ timing problems. To synchronize these two separate chains,
 ecasound uses a special multitrack mode (which should be
 enabled automatically).
 
-subsubsect(Recycling a signal through external devices)
+\subsubsection{Recycling a signal through external devices}
 Just like multirack recording. The only difference is
 that realtime input and output are externally
 connected.
 
-COMMENT(----------------------------------------------------------------)
-subsect(Signal flow)
+
+\subsection{Signal flow}
 This is simple. A group of inputs is routed to a group of chains.
 Audio data is processed in the chains and afterwards routed to 
 a group of outputs. Using internal loop devices, it' also possible to 
 route signals from one chain to another. It's also possible to assign
 inputs and outputs to multiple chains.
 
-COMMENT(----------------------------------------------------------------)
-subsect(Control flow)
-subsubsect(Passive operation)
+
+\subsection{Control flow}
+\subsubsection{Passive operation}
 When ecasound is run in passive mode, the program flow is simple.
-A ECA_SESSION object is created with suitable parameters, it is
-passed to a ECA_PROCESSOR object and that is all. Once engine
-is started, it does the processing and exits. 
+A ECA\_SESSION object is created with suitable parameters, it is
+passed to a ECA\_PROCESSOR object and that is all. 
+Processing is started with the exec() member function of 
+ECA\_PROCESSOR. After processing is finished, exec() returns
+to the caller.
 
-Another way to do passive processing is to create a ECA_CONTROL 
-object and use it to to access and modify the ECA_SESSION object 
-before passing it to ECA_PROCESSOR.
+Another way to do passive processing is to create a ECA\_CONTROL 
+object and use it to to access and modify the ECA\_SESSION object 
+before passing it to ECA\_PROCESSOR.
 
-subsubsect(Interactive operation)
+\subsubsection{Interactive operation}
 In interactive mode, everything is done using the interface provided
-by ECA_CONTROL. This is when things get complex:
+by ECA\_CONTROL. This is when things get complex:
 
-ECA_SESSION object can contain many ECA_CHAINSETUP objects, but
+ECA\_SESSION object can contain many ECA\_CHAINSETUP objects, but
 only one of them can be active. On the other hand it is possible
 that there are no chainsetups. If this is the case, about the
 only thing you can do is to add a new chainsetup. 
 
-When some chainsetup is activated, it can be edited using the
-interface provided by ECA_CONTROL. Before actual processing can
-start, the chainsetup must first be connected. Only valid 
-chainsetups (at least one input-output pair connected to the same
-chain) can be connected. 
+One chainsetup at a time can be \emph{selected}. In this state
+the chainsetup can be edited using the methods provided by
+ECA\_CONTROL. Only one setup at a time can be \emph{connected} to
+the engine (ie. actual use). Trying to connect an invalid 
+chainsetups will fail. A valid chainsetup has at least one 
+input-output pair connected to the same chain.
 
-startdit()
-ECA_CHAINSETUP can be...
-startdit()
+ECA\_CHAINSETUP can be...
+\begin{description}
 
-dit(not selected) - can't be accessed from ECA_PROCESSOR
-dit(selected, invalid) - can be edited (files and devices are not opened)
-dit(selected, valid) - can be connected (files and devices are not opened)
-dit(connected) - ready for processing (files and devices are opened before connecting)
+\item[not selected] - can't be accessed from ECA\_PROCESSOR
+\item[selected, invalid] - can be edited (files and devices are not opened)
+\item[selected, valid] - can be connected (files and devices are not opened)
+\item[connected] - ready for processing (files and devices are opened before connecting)
 
-enddit()
-enddit()
+\end{description}
 
-startdit()
-ECA_PROCESSOR status is one of...
-startdit()
+ECA\_PROCESSOR status is one of...
+\begin{description}
 
-dit(not_ready) - ECA_SESSION object is not ready for processing or
-ECA_PROCESSOR hasn't been created
-dit(running) - processing
-dit(stopped) - processing hasn't been started or it has been stopped
+\item[not\_ready] - ECA\_SESSION object is not ready for processing or
+ECA\_PROCESSOR hasn't been created
+\item[running] - processing
+\item[stopped] - processing hasn't been started or it has been stopped
 before completion
-dit(finished) - processing has been completed
-dit(error) - an error has occured during prosessing
-enddit()
+\item[finished] - processing has been completed
+\item[error] - an error has occured during prosessing
+\end{description}
 
-enddit()
-
-COMMENT(----------------------------------------------------------------)
-subsect(Class descriptions)
+\subsection{Class descriptions}
 
 The primary source for class documentation is header files.
 A browsable version of header documentation is at
-url(www.wakkanet.fi/~kaiv/ecasound/Documentation/doxygen_pages.html)(http://www.wakkanet.fi/~kaiv/ecasound/Documentation/doxygen_pages.html)
+\texttt{www.wakkanet.fi/\textasciitilde kaiv/ecasound/Documentation/doxygen\_pages.html}
 Anyway, let's look at the some central classes.
 
-COMMENT(----------------------------------------------------------------)
-subsubsect(Core) 
-subsubsubsect(ECA_PROCESSOR) 
-ECA_PROCESSOR is the actual processing engine. It is initialized with
-a pointer to a ECA_SESSION object, which has all information needed at
+
+\subsubsection{Core} 
+\paragraph{ECA\_PROCESSOR} 
+ECA\_PROCESSOR is the actual processing engine. It is initialized with
+a pointer to a ECA\_SESSION object, which has all information needed at
 runtime. Processing is started with the exec() member function and
-after that, ECA_PROCESSOR runs on its own. If the interactive mode is
-enabled in ECA_SESSION, ECA_PROCESSOR can be controlled using the
-ECA_CONTROL class. It offers a safe way to control ecasound.
-Another way to communicate with ECA_PROCESSOR is to access the
-ECA_SESSION object directly.
+after that, ECA\_PROCESSOR runs on its own. If the interactive mode is
+enabled in ECA\_SESSION, ECA\_PROCESSOR can be controlled using the
+ECA\_CONTROL class. It offers a safe way to control ecasound.
+Another way to communicate with ECA\_PROCESSOR is to access the
+ECA\_SESSION object directly.
 
-subsubsubsect(ECA_SESSION) 
-ECA_SESSION represents the data used by ecasound. A session contains
-all ECA_CHAINSETUP objects and general runtime settings (iactive-mode,
-debug-level, etc). Only one ECA_CHAINSETUP can be active at a time. To
-make it easier to control how threads access ECA_SESSION, only
-ECA_PROCESSOR and ECA_CONTROL classes have direct access to
-ECA_SESSION data and functions. Other classes can only use em(const)
-members of ECA_SESSION. 
+\paragraph{ECA\_SESSION} 
+ECA\_SESSION represents the data used by ecasound. A session contains
+all ECA\_CHAINSETUP objects and general runtime settings (iactive-mode,
+debug-level, etc). Only one ECA\_CHAINSETUP can be active at a time. To
+make it easier to control how threads access ECA\_SESSION, only
+ECA\_PROCESSOR and ECA\_CONTROL classes have direct access to
+ECA\_SESSION data and functions. Other classes can only use \emph{const}
+members of ECA\_SESSION. 
 
-subsubsubsect(ECA_CONTROL) 
-ECA_CONTROL represents the whole public interface offered by 
+\paragraph{ECA\_CONTROL} 
+ECA\_CONTROL represents the whole public interface offered by 
 ecasound library. It also has a simple command interpreter 
 (interactive-mode) that can used for controlling ecasound. 
 
-COMMENT(----------------------------------------------------------------)
-subsubsect(Data objects)
 
-subsubsubsect(SAMPLEBUFFER)
+\subsubsection{Data objects}
+
+\paragraph{SAMPLEBUFFER}
 Basic unit for representing sample data. The data type used to 
 represent a single sample, valid value range, channel count, global 
 sampling rate and system endianess are all specified in 
-"samplebuffer.h" and "sample_specs.h".
+"samplebuffer.h" and "sample\_specs.h".
 
-subsubsubsect(DEBUG)
-Virtual interface class for the debugging subsystem. Ecasound engine 
-sends all debug messages to an instance of this class. The actual 
+\paragraph{DEBUG}
+Virtual interface class for ecasound's debugging subsystem. Ecasound 
+engine sends all debug messages to an instance of this class. The actual 
 implementation can be done in many ways. For example in the console mode
-user-interface  of ecasound, TEXTDEBUG class is used to implement the DEBUG
+user-interface of ecasound, TEXTDEBUG class implements the DEBUG
 interface. It sends all messages that have a suitable debug 
 level to the standard output stream. On the other hand, in qtecasound 
 DEBUG is implemented using a Qt widget. New DEBUG implementations can
-be registered at runtime with the em(attach_debug_object()) call
+be registered at runtime with the \emph{attach\_debug\_object()} call
 (declared in eca-debug.h).
 
-COMMENT(----------------------------------------------------------------)
-subsubsect(Object maps)
+
+\subsubsection{Object maps}
 Object maps are a central repositories for commonly used objects.
 When object is registered to a map, a regular expression is attached 
 to it. When object map receives a request for a new object, it 
@@ -408,43 +406,43 @@ custom object types on startup. All parts of libecasound can use the
 custom objects, although they are not part of library itself.
 
 All objects defined in libecasound are registered in the file
-em(eca-static-object-maps.cpp).
+\emph{eca-static-object-maps.cpp}.
 
-subsubsubsect(ECA_OBJECT)
+\paragraph{ECA\_OBJECT}
 A virtual base class that represents one object. All classes deriving 
-from ECA_OBJECT can be registered to object maps.
+from ECA\_OBJECT can be registered to object maps.
 
-subsubsubsect(ECA_OBJECT_MAP)
+\paragraph{ECA\_OBJECT\_MAP}
 This is the basic object map implementation. It offers map services
-for ECA_OBJECT objects.
+for ECA\_OBJECT objects.
 
-subsubsubsect(ECA_PRESET_MAP)
-Special class that inherits from ECA_OBJECT_MAP. This class is used
+\paragraph{ECA\_PRESET\_MAP}
+Special class that inherits from ECA\_OBJECT\_MAP. This class is used
 for mapping instances of class PRESET.
 
-subsubsubsect(ECA_AUDIO_OBJECT_MAP)
-A convenience class for mapping AUDIO_IO objects. Handles the casting 
-between ECA_OBJECT<->AUDIO_IO.
+\paragraph{ECA\_AUDIO\_OBJECT\_MAP}
+A convenience class for mapping AUDIO\_IO objects. Handles the casting 
+between ECA\_OBJECT<->AUDIO\_IO.
 
-subsubsubsect(ECA_CHAIN_OPERATOR_MAP)
-A convenience class for mapping CHAIN_OPERATOR objects. Handles the casting 
-between ECA_OBJECT<->CHAIN_OPERATOR.
+\paragraph{ECA\_CHAIN\_OPERATOR\_MAP}
+A convenience class for mapping CHAIN\_OPERATOR objects. Handles the casting 
+between ECA\_OBJECT<->CHAIN\_OPERATOR.
 
-subsubsubsect(ECA_CONTROLLER_MAP)
-A convenience class for mapping GENERIC_CONTROLLER objects. Handles the casting 
-between ECA_OBJECT<->GENERIC_CONTROLLER.
+\paragraph{ECA\_CONTROLLER\_MAP}
+A convenience class for mapping GENERIC\_CONTROLLER objects. Handles the casting 
+between ECA\_OBJECT<->GENERIC\_CONTROLLER.
 
-subsubsubsect(ECA_LADSPA_PLUGIN_MAP)
-A convenience class for mapping EFFECT_LADSPA objects. Handles the casting 
-between ECA_OBJECT<->EFFECT_LADSPA.
+\paragraph{ECA\_LADSPA\_PLUGIN\_MAP}
+A convenience class for mapping EFFECT\_LADSPA objects. Handles the casting 
+between ECA\_OBJECT<->EFFECT\_LADSPA.
 
-COMMENT(----------------------------------------------------------------)
-COMMENT(----------------------------------------------------------------)
 
-sect(Using ecasound from other programs)
 
-COMMENT(----------------------------------------------------------------)
-subsect(Console mode ecasound - [all languages])
+
+\section{Using ecasound from other programs}
+
+
+\subsection{Console mode ecasound - {[}all languages{]}}
 This is the easiest way to take advantage of ecasound features in your
 own programs. You can fork ecasound, pipe commands to ecasound's
 interactive mode or you can create chainsetup (.ecs) files and load
@@ -455,8 +453,8 @@ a bit easier, ecasound offers the dump-* commands. These print
 configuration and status info as formatted text strings (easier to
 parse than normal output).
 
-COMMENT(----------------------------------------------------------------)
-subsect(Ecasound Control Interface - [C++, C, Python])
+
+\subsection{Ecasound Control Interface - {[}C++, C, Python{]}}
 
 Idea behind Ecasound Control Interface (ECI) is to take a subset of 
 functionality provided by libecasound, write a simple API for it, and
@@ -467,23 +465,24 @@ interactive mode (EIAM), and the services it provides.
 
 Specific tasks ECI is aimed at:
 
-startit()
-it() 1. automating (scripting in its traditional sense)
-it() 2. frontends (generic / specialized)
-it() 3. sound services to other apps
-endit()
+\begin{itemize}
+\item  1. automating (scripting in its traditional sense)
+\item  2. frontends (generic / specialized)
+\item  3. sound services to other apps
+\end{itemize}
 
-COMMENT(----------------------------------------------------------------)
-subsect(Libecasound's ECA_CONTROL class - [C++])
-By linking your program to libecasound, you can use the ECA_CONTROL
+
+\subsection{Libecasound's ECA\_CONTROL class - {[}C++{]}}
+By linking your program to libecasound, you can use the ECA\_CONTROL
 class for controlling ecasound. This is a large interface class that
 offers routines for controlling all ecasound features. It's easy
 to use while still powerful. Best examples are the utils in ecatools 
 directory (most of them are just a couple screenfuls of code). Also, 
-qtecasound and ecawave heavily use ECA_CONTROL. Here's a few lines of 
+qtecasound and ecawave heavily use ECA\_CONTROL. Here's a few lines of 
 example code:
 
-verb(
+\begin{verbatim} 
+
 --cut--
 ECA_SESSION esession;
 ECA_CONTROL ctrl (&esession);
@@ -491,15 +490,18 @@ ctrl.new_chainsetup("default");
 [... other setup routines ]
 ctrl.start(); // starts processing in another thread (doesn't block)
 --cut--
-)
+ 
+\end{verbatim} 
+
 
 If you don't want to use threads, you can do as above, but use
-ECA_PROCESSOR directly to do the actual processing. In other words, 
-you only use ECA_CONTROL for setting up a ECA_SESSION object. This 
+ECA\_PROCESSOR directly to do the actual processing. In other words, 
+you only use ECA\_CONTROL for setting up a ECA\_SESSION object. This 
 way the processing is done without additional threads. Here's a 
 short sample:
 
-verb(
+\begin{verbatim} 
+
 --cut--
 ECA_SESSION esession;
 ECA_CONTROL ctrl (&esession);
@@ -508,15 +510,18 @@ ctrl.add_chainsetup("default");
 ECA_PROCESSOR p (&esession);
 p.exec(); // blocks until processing is finished
 --cut--
-)
+ 
+\end{verbatim} 
 
-COMMENT(----------------------------------------------------------------)
-subsect(Ecasound classes as building blocks - [C++])
+
+
+\subsection{Ecasound classes as building blocks - {[}C++{]}}
 And of course, you can also use individual ecasound classes directly.
 This means more control, but it also means more work. Here's
 another short sample:
 
-verb(
+\begin{verbatim} 
+
 --cut--
 - create a SAMPLE_BUFFER object for storing the samples
 - read samples with an audio I/O object - for example WAVEFILE
@@ -524,38 +529,40 @@ verb(
 - maybe change the filter frequency with EFFECT_LOWPASS::set_parameter(1, new_value)
 - write samples with an audio I/O object - OSSDEVICE, WAVEFILE, etc.
 --cut--
-)
+ 
+\end{verbatim} 
 
-COMMENT(----------------------------------------------------------------)
-COMMENT(----------------------------------------------------------------)
 
-sect(Adding new features and components?)
 
-COMMENT(----------------------------------------------------------------)
-subsect(Things to remember when writing new C++ classes)
-subsubsect(Copy constructor and assignment operator)
+
+
+\section{Adding new features and components?}
+
+
+\subsection{Things to remember when writing new C++ classes}
+\subsubsection{Copy constructor and assignment operator}
 Always take a moment to check your copy constructor and the assign 
 operation (=operation()). Basicly you have three alternatives: 
-startit()
-it() Trust the automatically created default definitons. If you don't
+\begin{itemize}
+\item  Trust the automatically created default definitons. If you don't
 have any pointers as data members, this isn't necessarily a bad
 choice at all. At least the compiler remembers to copy all members!
 
-it() If you have pointers to objects as class data members, you should
+\item  If you have pointers to objects as class data members, you should
 write definitions for both the copy-constructor and the assign
 operation.
 
-it() If you are lazy, just declare the two functions as null
-functions, and put them in _private_ access scope. At least this way
+\item  If you are lazy, just declare the two functions as null
+functions, and put them in \_private\_ access scope. At least this way
 nobody will use the functions by accident!
-endit()
+\end{itemize}
 
-COMMENT(----------------------------------------------------------------)
-subsect(Audio objects)
+
+\subsection{Audio objects}
 To implement a new audio object type, you must first select which 
-top-level class to derive from. Usually this is either AUDIO_IO
-(the top-level class), AUDIO_IO_BUFFERED (a more low level interface)
-or AUDIO_IO_DEVICE (realtime devices).
+top-level class to derive from. Usually this is either AUDIO\_IO
+(the top-level class), AUDIO\_IO\_BUFFERED (a more low level interface)
+or AUDIO\_IO\_DEVICE (realtime devices).
 
 The second step is to implement the various virtual functions declared
 in the parent classes. These functions can be divided into four
@@ -568,66 +575,75 @@ Adding the new object to ecasound is much like adding a new effect
 (see the next section). Basicly you just add it to the makefiles and
 then register it to the appropriate object map (see below).
 
-COMMENT(----------------------------------------------------------------)
-subsect(Effects and other chain operators)
-Write a new class that inherits from CHAIN_OPERATOR or any of its
-successors. Implement the necessary routines (init, set/get_parameter, 
+
+\subsection{Effects and other chain operators}
+Write a new class that inherits from CHAIN\_OPERATOR or any of its
+successors. Implement the necessary routines (init, set/get\_parameter, 
 process and a default constructor) and add your source files to
 libecasound's makefiles. Then all that's left to do is to add your
-effect to em(libecasound/eca-static-object-maps.cpp),
-em(register_default_objects()). Now the new effect can be used just 
+effect to \emph{libecasound/eca-static-object-maps.cpp},
+\emph{register\_default\_objects()}. Now the new effect can be used just 
 like any other ecasound effect (parameters control, effect presets, etc).
 
-COMMENT(----------------------------------------------------------------)
-subsect(Differences between audio objects and chain operators)
+Another way to add effects to ecasound is to write them as LADSPA
+plugins. The API is well documented and there's plenty of
+example code available. See \texttt{www.ladspa.org} 
+for more information.
+
+
+\subsection{Differences between audio objects and chain operators}
 Design-wise, audio objects and effects (chain operators) aren't that 
 far away from each other. Many audio apps don't separate these
 concepts at all (for instance most UG based synthesizers). In ecasound 
 though, there are some differences:
 
 Input/output:
-startit()
-it() audio objects can be opened for reading writing or read&write
-it() effects are modeless
-it() audio objects read from, or write to a buffer
-it() effects get a buffer which they operate (in-place processing)
-endit()
+\begin{itemize}
+\item  audio objects can be opened for reading writing or read\&write
+\item  effects are modeless
+\item  audio objects read from, or write to a buffer
+\item  effects get a buffer which they operate (in-place processing)
+\end{itemize}
 
 Audio format:
-startit()
-it() audio objects have a distinct audio format (sample rate, bits,
+\begin{itemize}
+\item  audio objects have a distinct audio format (sample rate, bits,
      channels)
-it() effects should be capable of accepting audio data in any format
+\item  effects should be capable of accepting audio data in any format
      (this is usually easy as ecasound converts all input data to its
      internal format)
-endit()
+\end{itemize}
 
 Control:
-startit()
-it() audio objects can be opened, closed, prepared, started and stopped
-it() effects don't have a running state
-endit()
+\begin{itemize}
+\item  audio objects can be opened, closed, prepared, started and stopped
+\item  effects don't have a running state
+\end{itemize}
 
 Position:
-startit()
-it() audio objects have length and position attributes
-it() effects just process buffers and don't know about their position
-endit()
+\begin{itemize}
+\item  audio objects have length and position attributes
+\item  effects just process buffers and don't know about their position
+\end{itemize}
 
 A good example of the similarity between the two types are LADSPA
 oscillator plugins. Although they are effects, you can easily use them 
 as audio inputs by specifying:
 
-verb(
+\begin{verbatim} 
+
 "ecasound -i null -o /dev/dsp -el:sine_fcac,440,1"
-)
+ 
+\end{verbatim} 
 
-COMMENT(----------------------------------------------------------------)
-subsect(LADSPA plugins)
+
+
+\subsection{LADSPA plugins}
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
-Plugin API). See url(LAD mailing list web site)(http://www.linuxdj.com/audio/lad) for 
+Plugin API). See \texttt{LAD mailing list web site} for 
 more info about LADSPA. Other useful sites are 
-url(LADSPA home page)(http://www.ladspa.org) and
-url(LADSPA documentation)(http://www.ffem.org/gdam/ladspa-doc/ladspa.html).
+\texttt{LADSPA home page} and
+\texttt{LADSPA documentation}.
 
-htmlcommand(<insert name=ecasound_tail>)
+
+\end{document}

@@ -49,10 +49,6 @@ with proper version numbers).
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
-COMMENT(sect(Installing))
-
-COMMENT(----------------------------------------------------------------)
-COMMENT(----------------------------------------------------------------)
 sect(Using)
 
 COMMENT(----------------------------------------------------------------)
@@ -138,5 +134,23 @@ Audio-Quality HOWTO -
 url(www.linuxdj.com/audio/quality/)(http://www.linuxdj.com/audio/quality/),
 section "Notes on Full Duplex Recording, and Other Realtime Issues".
 
-htmlcommand(<insert name=ecasound_tail>)
+COMMENT(----------------------------------------------------------------)
+subsect(Ecasound is not able to find any LADSPA plugins I have installed!)
+Just installing the LADSPA SDK url(www.ladspa.org)(http://www.ladspa.org) 
+should be enough. The plugins themselves are stored in shared library 
+files (.so). They are usually stored in /usr/local/lib/ladspa. To test 
+whether ecasound finds the plugins, issue:
 
+echo "ladspa-register" | ecasound -c
+
+You should get a list of all installed LADSPA plugins. If this doesn't
+work, you need to make sure ecasound is compiled with LADSPA enabled (ie.
+ladspa.h header was present when ecasound was compiled). The precompiled
+rpm-binaries have this, but if you've compiled ecasound yourself you
+should recompile after installing the LADSPA SDK.
+
+Also, check Dave Phillips' great
+url(article)(http://www.oreillynet.com/pub/a/linux/2001/02/02/ladspa.html) 
+on Oreillynet.
+
+htmlcommand(<insert name=ecasound_tail>)

@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "19\&.08\&.2001" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "28\&.09\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -57,12 +57,12 @@ that support it\&. Defaults to \fIfalse\fP\&.
 Whether to ignore sample rate differences (and possibly avoid 
 resampling)\&. Currently only affects OSS-devices\&. Defaults to \fIfalse\fP\&.
 .IP 
-.IP "default-to-internal-buffering" 
+.IP "default-to-max-internal-buffering" 
 Whether to allow realtime devices to utilize extra internal
 buffering\&. Enabling this improves reliability, but at the 
 same time causes additional latency to the signal processing
 chain\&. Can be overridden with -z:intbuf and -z:nointbuf options\&. 
-Defaults to \fIfalse\fP\&.
+Defaults to \fItrue\fP\&.
 .IP 
 .IP "resource-directory" 
 Directory for global ecasound configuration files\&. 

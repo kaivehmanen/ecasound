@@ -53,6 +53,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	submitted: ecasound-list daemon :)
 (edi-6) 100% transparent implementation of -z:db system.
 	submitted: smassy, xx.06.2001
+	first version: kaiv, 03.10.2001, 2.1 CVS-tree
 (edi-7) Adding a 'loop x times' option to the ewf file format.
 	submitted: nolan_d, 09.07.2001
 (edi-9) Adding and removing audio and chainop objects on-the-fly. 
