@@ -81,7 +81,7 @@ bool ECA_FILE_IO_STREAM::is_file_error(void) const {
 
 void ECA_FILE_IO_STREAM::set_file_position(long int newpos) { 
   if (f1 != stdin && f1 != stdout)
-    ::fseek(f1, newpos, SEEK_SET);
+    fseek(f1, newpos, SEEK_SET);
 }
 
 void ECA_FILE_IO_STREAM::set_file_position_advance(long int fw) { 
@@ -90,8 +90,9 @@ void ECA_FILE_IO_STREAM::set_file_position_advance(long int fw) {
 }
 
 void ECA_FILE_IO_STREAM::set_file_position_end(void) { 
-  if (standard_mode == false)
+  if (standard_mode == false) {
     ::fseek(f1, 0, SEEK_END);
+  }
 }
 
 long int ECA_FILE_IO_STREAM::get_file_position(void) const { 

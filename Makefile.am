@@ -1,9 +1,9 @@
 EXTRA_DIST = BUGS NEWS TODO FAQ generic_oscillators effect_presets ecasound.spec
 
 if SYSTEM_READLINE
-SUBDIRS = kvutils libecasound ecasound ecatools Documentation
+SUBDIRS = kvutils libecasound libecasoundc pyecasound ecasound ecatools Documentation
 else
-SUBDIRS = kvutils readline-4.0 libecasound ecasound ecatools Documentation
+SUBDIRS = kvutils readline-4.0 libecasound libecasoundc pyecasound ecasound ecatools Documentation
 endif
 AUTOMAKE_OPTIONS = foreign
 

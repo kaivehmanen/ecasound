@@ -199,13 +199,12 @@ bool ECA_IAMODE_PARSER::action_requires_connected(int id) {
   switch(id) {
   case ec_start:
   case ec_run:
+  case ec_setpos:
   case ec_cs_disconnect:
   case ec_c_forward:
   case ec_c_rewind: 
-  case ec_c_setpos: 
   case ec_rewind:
   case ec_forward:
-  case ec_setpos:
 
     return(true);
     

@@ -962,13 +962,13 @@ void ECA_CONTROL_OBJECTS::forward_chains(double pos_in_seconds) {
  * Sets position of selected chains to 'pos_in_seconds' seconds
  *
  * require:
- *  is_selected() == true && is_connected() == true
+ *  is_selected() == true
  *  selected_chains().size() > 0
  */
 void ECA_CONTROL_OBJECTS::set_position_chains(double pos_in_seconds) { 
   // --------
   // require:
-  assert(is_selected() == true && is_connected() == true);
+  assert(is_selected() == true);
   assert(selected_chains().size() > 0);
   // --------
   if (connected_chainsetup() == selected_chainsetup()) {

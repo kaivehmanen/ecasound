@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 251100) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 271100) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -36,10 +36,17 @@ Last officially released version is -*> v1.8.2r14 <*-
 	           (for instance ~/.ecasoundrc and preset files)
 	- changed: output produced by -ev
 	- changed: updated ALSA 0.6.x support to match pcmfinal-state
+	- changed: minor changes to multitrack sync code; should 
+		   now be even more accurate
+	- changed: triggering of realtime outputs; now all rt-outputs
+		   are prefilled with two buffers before triggering
 	- fixed: nasty bug in effect preset mapping
 	- fixed: -ei:0 caused problems
 	- fixed: cdr-file endianess (should be _always_ big endian)
 	- fixed: yet more fixes to mono mp3 input handling
+	- fixed: input problems (easily triggered by using -sr)
+		 with .mp3, .mid and mikmod modules
+	- fixed: c-setpos didn't work if chainsetup wasn't connected
 07112000 (v1.8.4d15)
 	- added: pulse gate (-eemp); can be used to generate a
 	         metronome signal [rcs]

@@ -75,7 +75,7 @@ dit(-b:buffersize)
 Buffersize in sample frames. Defaults to 128.
 
 dit(-c)
-Enable cumulative mode. Counters are not resets after refresh.
+Enable cumulative mode. Counters are not reseted after refresh.
 
 dit(-d)
 Enable debug mode.
