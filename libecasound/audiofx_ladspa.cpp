@@ -21,8 +21,6 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_LADSPA_H
-
 #include <dlfcn.h>
 #include <kvutils.h>
 #include <kvutils/kvu_numtostr.h>
@@ -296,5 +294,3 @@ void EFFECT_LADSPA::process(void) {
   for(unsigned long m = 0; m < plugins_rep.size(); m++)
     plugin_desc->run(plugins_rep[m], buffer->length_in_samples());
 }
-
-#endif /* HAVE_LADSPA_H */

@@ -44,12 +44,14 @@
 #include "audiofx_timebased.h"
 #include "audiogate.h"
 
-#ifdef HAVE_LADSPA_H
-#include "audiofx_ladspa.h"
 extern "C" {
+#ifdef HAVE_LADSPA_H
 #include <ladspa.h>
-}
+#else
+#include "ladspa.h"
 #endif
+}
+#include "audiofx_ladspa.h"
 
 #ifdef FEELING_EXPERIMENTAL
 extern "C" {
@@ -81,6 +83,7 @@ extern "C" {
 #include "audioio-raw.h"
 #include "audioio-null.h"
 #include "audioio-rtnull.h"
+#include "audioio-typeselect.h"
 
 #include "midiio-raw.h"
 
@@ -107,15 +110,11 @@ void register_default_audio_objects(void);
 void register_default_controllers(void);
 void register_default_chainops(void);
 void register_default_presets(void);
-#ifdef HAVE_LADSPA_H
 void register_ladspa_plugins(void);
-#endif
 void register_internal_plugins(void);
 void register_default_midi_devices(void);
 
-#ifdef HAVE_LADSPA_H
 vector<EFFECT_LADSPA*> create_plugins(const std::string& fname);
-#endif
 
 void register_default_objects(void) {
   if (ecasound_default_map_ref_count > 0) return;
@@ -136,9 +135,7 @@ void register_default_objects(void) {
   register_default_audio_objects();
   register_default_midi_devices();
   register_internal_plugins();
-#ifdef HAVE_LADSPA_H
   register_ladspa_plugins();
-#endif
 }
 
 void unregister_default_objects(void) {
@@ -222,6 +219,7 @@ void register_default_audio_objects(void) {
   eca_audio_object_map->register_object("^stdin$", raw);
   eca_audio_object_map->register_object("^stdout$", raw);
   eca_audio_object_map->register_object("^null$", new NULLFILE());
+  eca_audio_object_map->register_object("^typeselect$", new AUDIO_IO_TYPESELECT());
 }
 
 void register_default_chainops(void) {
@@ -419,7 +417,6 @@ void register_default_midi_devices(void) {
   eca_midi_device_map->register_object("^rawmidi$", new MIDI_IO_RAW());
 }
 
-#ifdef HAVE_LADSPA_H
 void register_ladspa_plugins(void) {
   DIR *dp;
 
@@ -491,4 +488,3 @@ vector<EFFECT_LADSPA*> create_plugins(const std::string& fname) {
   
   return(plugins);
 }
-#endif /* HAVE_LADSPA_H */

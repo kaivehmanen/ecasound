@@ -418,13 +418,19 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
 }
 
 void AUDIO_IO_PROXY_SERVER::dump_profile_counters(void) {
-  std::cerr << "(audioio-proxy-server) *** profile begin ***" << endl;
-  std::cerr << "profile_not_full_set_rep: " << profile_not_full_set_rep << endl;
-  std::cerr << "profile_pauses_rep: " << profile_pauses_rep << endl;
-  std::cerr << "profile_full_and_active_rep: " << profile_full_and_active_rep << endl;
-  std::cerr << "profile_full_set_rep: " << profile_full_set_rep << endl;
-  std::cerr << "profile_not_full_rep: " << profile_not_full_rep <<  endl;
-  std::cerr << "(audioio-proxy-server) *** profile end   ***" << endl;
+  if (profile_not_full_set_rep > 0 ||
+      profile_pauses_rep > 0 ||
+      profile_full_and_active_rep > 0 ||
+      profile_full_set_rep > 0 ||
+      profile_not_full_rep > 0) {
+    std::cerr << "(audioio-proxy-server) *** profile begin ***" << endl;
+    std::cerr << "profile_not_full_set_rep: " << profile_not_full_set_rep << endl;
+    std::cerr << "profile_pauses_rep: " << profile_pauses_rep << endl;
+    std::cerr << "profile_full_and_active_rep: " << profile_full_and_active_rep << endl;
+    std::cerr << "profile_full_set_rep: " << profile_full_set_rep << endl;
+    std::cerr << "profile_not_full_rep: " << profile_not_full_rep <<  endl;
+    std::cerr << "(audioio-proxy-server) *** profile end   ***" << endl;
+  }
 }
 
 /**

@@ -78,7 +78,8 @@ ecasound_audioio_include = 	\
 			audioio-timidity.h \
 			audioio-proxy-server.h \
 			audioio-proxy-buffer.h \
-			audioio-buffered-proxy.h
+			audioio-buffered-proxy.h \
+			audioio-typeselect.h
 
 ecasound_midi_include =	\
 			midi-server.h \
@@ -149,6 +150,9 @@ ecasound_general_include = 	\
 			plugin-paths.h \
 			midiio.h
 
+ecasound_extra_include = \
+			ladspa.h
+
 # VST-support:
 #			eca-vst-plugin-map.h
 # vst_header_files = AEffEditor.hpp AEffect.h aeffectx.h AudioEffect.hpp
@@ -159,7 +163,8 @@ noinst_HEADERS = 	$(ecasound_audiofx_include) \
 			$(ecasound_audioio_include) \
 			$(ecasound_midi_include) \
 		 	$(ecasound_controller_include) \
-			$(ecasound_general_include)
+			$(ecasound_general_include) \
+			$(ecasound_extra_include)
 
 # ----------------------------------------------------------------------
 # source files
@@ -203,6 +208,7 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-proxy-server.cpp \
 			audioio-proxy-buffer.cpp \
 			audioio-buffered-proxy.cpp \
+			audioio-typeselect.cpp \
 			$(ecasound_audioio_oss_src)
 
 ecasound_midi_src =	\
@@ -271,7 +277,7 @@ libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
 
 # ---------------------------------------------------------------------
-# Install targets
+# Install targets - note! we don't install $ecasound_extra_include
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(pkgincludedir)
 	cd $(srcdir) ; \

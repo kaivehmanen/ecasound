@@ -12,6 +12,9 @@
 
 #ifdef HAVE_LADSPA_H
 #include <ladspa.h>
+#else
+#include "ladspa.h"
+#endif
 
 /**
  * Wrapper class for LADSPA plugins
@@ -75,5 +78,4 @@ public:
   EFFECT_LADSPA& operator=(const EFFECT_LADSPA& x) { return *this; }
 };
 
-#endif /* HAVE_LADSPA_H */
 #endif

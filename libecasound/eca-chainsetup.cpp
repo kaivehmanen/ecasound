@@ -139,7 +139,7 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
 
   /* delete chain objects */
   for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Deleting chain \"" + (*q)->name() + "\".");
+    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting chain \"" + (*q)->name() + "\".");
     delete *q;
     *q = 0;
   }
@@ -147,7 +147,7 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
   /* delete input proxy objects; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
     if (dynamic_cast<AUDIO_IO_BUFFERED_PROXY*>(*q) != 0) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Deleting audio proxy \"" + (*q)->label() + "\".");
+      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio proxy \"" + (*q)->label() + "\".");
       delete *q;
     }
     *q = 0;
@@ -155,8 +155,8 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
 
   /* delete all actual audio input objects except loop devices; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = inputs_direct_rep.begin(); q != inputs_direct_rep.end(); q++) {
-    if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Deleting audio object \"" + (*q)->label() + "\".");
+    if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) { 
+      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio object \"" + (*q)->label() + "\".");
       delete *q;
     }
     *q = 0;
@@ -165,7 +165,7 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
   /* delete output proxy objects; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
     if (dynamic_cast<AUDIO_IO_BUFFERED_PROXY*>(*q) != 0) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Deleting audio proxy \"" + (*q)->label() + "\".");
+      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio proxy \"" + (*q)->label() + "\".");
       delete *q;
     }
     *q = 0;
@@ -173,8 +173,9 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
 
   /* delete all actual audio output objects except loop devices; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = outputs_direct_rep.begin(); q != outputs_direct_rep.end(); q++) {
-    if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Deleting audio object \"" + (*q)->label() + "\".");
+    // trouble with dynamic_cast with libecasoundc apps like ecalength?
+    if (dynamic_cast<LOOP_DEVICE*>(*q) == 0) { 
+      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio object \"" + (*q)->label() + "\".");
       delete *q;
       *q = 0;
     }
@@ -182,14 +183,14 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
 
   /* delete loop objects */
   for(std::map<int,LOOP_DEVICE*>::iterator q = loop_map.begin(); q != loop_map.end(); q++) {
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Deleting loop device \"" + q->second->label() + "\".");
+    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting loop device \"" + q->second->label() + "\".");
     delete q->second;
     q->second = 0;
   }
 
   /* take the garbage out */
   for(list<AUDIO_IO*>::iterator q = aobj_garbage_rep.begin(); q != aobj_garbage_rep.end(); q++) {
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Deleting garbage audio object \"" + (*q)->label() + "\".");
+    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting garbage audio object \"" + (*q)->label() + "\".");
     delete *q;
     *q = 0;
   }
@@ -295,11 +296,15 @@ void ECA_CHAINSETUP::set_active_buffering_mode(void) {
   }
   else if (buffering_mode() == ECA_CHAINSETUP::cs_bmode_auto) {
     if (has_realtime_objects() == true) {
-      if (rtcaps_rep == true) 
-	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rtlowlatency;
-      else {
+      if (rtcaps_rep != true || 
+	  (number_of_chain_operators() == 0 &&
+	   (number_of_realtime_inputs() == 0 || 
+	    number_of_realtime_outputs() == 0))) {
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
 	toggle_raised_priority(false);
+      }
+      else {
+	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rtlowlatency;
       }
     }
     else
@@ -314,14 +319,20 @@ void ECA_CHAINSETUP::set_active_buffering_mode(void) {
     {
     case ECA_CHAINSETUP::cs_bmode_nonrt: { 
       bmode_active_rep = bmode_nonrt_rep;
+      ecadebug->msg(ECA_DEBUG::info, 
+		    "(eca-chainsetup) 'nonrt' buffering mode selected.");
       break; 
     }
     case ECA_CHAINSETUP::cs_bmode_rt: { 
       bmode_active_rep = bmode_rt_rep;
+      ecadebug->msg(ECA_DEBUG::info, 
+		    "(eca-chainsetup) 'rt' buffering mode selected.");
       break; 
     }
     case ECA_CHAINSETUP::cs_bmode_rtlowlatency: { 
       bmode_active_rep = bmode_rtlowlatency_rep;
+      ecadebug->msg(ECA_DEBUG::info, 
+		    "(eca-chainsetup) 'rtlowlatency' buffering mode selected.");
       break;
     }
     default: { /* error! */ }
@@ -347,6 +358,15 @@ void ECA_CHAINSETUP::set_active_buffering_mode(void) {
 		"(eca-chainsetup) Set buffering parameters to: \n--cut--" +
 		bmode_active_rep.to_string() +"\n--cut--");
 
+  enable_active_buffering_mode();
+}
+
+/**
+ * Enable chosen active buffering mode.
+ * 
+ * Called only from set_active_buffering_mode().
+ */
+void ECA_CHAINSETUP::enable_active_buffering_mode(void) {
   /* if requested, lock all memory */
   if (raised_priority() == true) {
     lock_all_memory();
@@ -377,7 +397,6 @@ void ECA_CHAINSETUP::set_active_buffering_mode(void) {
     ecadebug->msg(ECA_DEBUG::system_objects,
 		  "(eca-chainsetup) Hahaa, I guessed right. No need to switch.");
   }
-
 }
 
 void ECA_CHAINSETUP::switch_to_direct_mode(void) {
@@ -767,21 +786,52 @@ vector<string> ECA_CHAINSETUP::get_attached_chains_to_iodev(const
 }
 
 /**
+ * Returns number of realtime audio input objects.
+ */
+int ECA_CHAINSETUP::number_of_chain_operators(void) const {
+  int cops = 0;
+  vector<CHAIN*>::const_iterator q = chains.begin();
+  while(q != chains.end()) {
+    cops += (*q)->number_of_chain_operators();
+    ++q;
+  }
+  return(cops);
+}
+
+/**
  * Returns true if the connected chainsetup contains at least
  * one realtime audio input or output.
  */
 bool ECA_CHAINSETUP::has_realtime_objects(void) const {
-  for(size_t n = 0; n < inputs.size(); n++) {
-    AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(inputs[n]);
-    if (p != 0) return(true);
-  }
-
-  for(size_t n = 0; n < outputs.size(); n++) {
-    AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(outputs[n]);
-    if (p != 0) return(true);
-  }
+  if (number_of_realtime_inputs() > 0 ||
+      number_of_realtime_outputs() > 0) 
+    return(true);
 
   return(false);
+}
+
+/**
+ * Returns number of realtime audio input objects.
+ */
+int ECA_CHAINSETUP::number_of_realtime_inputs(void) const {
+  int res = 0;
+  for(size_t n = 0; n < inputs_direct_rep.size(); n++) {
+    AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(inputs_direct_rep[n]);
+    if (p != 0) res++;
+  }
+  return(res);
+}
+
+/**
+ * Returns number of realtime audio output objects.
+ */
+int ECA_CHAINSETUP::number_of_realtime_outputs(void) const {
+  int res = 0;
+  for(size_t n = 0; n < outputs_direct_rep.size(); n++) {
+    AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(outputs_direct_rep[n]);
+    if (p != 0) res++;
+  }
+  return(res);
 }
 
 /** 
@@ -799,15 +849,15 @@ AUDIO_IO* ECA_CHAINSETUP::add_audio_object_helper(AUDIO_IO* aio) {
 }
 
 /** 
- * Helper function used by add_output() and add_output().
+ * Helper function used by remove_audio_input() and remove_audio_output().
  */
-AUDIO_IO* ECA_CHAINSETUP::remove_audio_object_helper(AUDIO_IO* aio) {
+void ECA_CHAINSETUP::remove_audio_object_helper(AUDIO_IO* aio) {
   AUDIO_IO_BUFFERED_PROXY* p = dynamic_cast<AUDIO_IO_BUFFERED_PROXY*>(aio);
   if (p != 0) {
     /* a proxied object */
+    aobj_garbage_rep.push_back(aio);
     --proxy_clients_rep;
   }
-  return(aio);
 }
 
 /**
@@ -862,7 +912,7 @@ void ECA_CHAINSETUP::add_input(AUDIO_IO* aio) {
  * @pre aiod != 0
  * @pre chains.size() > 0
  * @pre is_enabled() != true
- * @post outputs.size() > 0
+ * @post outputs.size() == outputs_direct_rep.size()
  */
 void ECA_CHAINSETUP::add_output(AUDIO_IO* aio) {
   // --------
@@ -878,10 +928,10 @@ void ECA_CHAINSETUP::add_output(AUDIO_IO* aio) {
   output_start_pos.push_back(0);
   attach_output_to_selected_chains(layerobj);
 
-  // --------
+  // ---
   DBC_ENSURE(outputs.size() == old_outputs_size + 1);
   DBC_ENSURE(outputs.size() == outputs_direct_rep.size());
-  // --------
+  // ---
 }
 
 /**
@@ -890,28 +940,30 @@ void ECA_CHAINSETUP::add_output(AUDIO_IO* aio) {
  * @pre is_enabled() != true
  */
 void ECA_CHAINSETUP::remove_audio_input(const string& label) { 
-  // --------
+  // ---
   DBC_REQUIRE(is_enabled() != true);
-  // --------
+  // ---
 
-  vector<AUDIO_IO*>::iterator ci = inputs.begin();
-  while (ci != inputs.end()) {
-    if ((*ci)->label() == label) {
-
-      *ci = remove_audio_object_helper(*ci);
+  for(size_t n = 0; n < inputs.size(); n++) {
+    if (inputs[n]->label() == label) {
+      remove_audio_object_helper(inputs[n]);
 
       vector<CHAIN*>::iterator q = chains.begin();
       while(q != chains.end()) {
-	if (inputs[(*q)->connected_input()] == *ci) (*q)->disconnect_input();
+	if ((*q)->connected_input() == static_cast<int>(n)) (*q)->disconnect_input();
 	++q;
       }
 
-      delete *ci;
-      (*ci) = new NULLFILE("null");
-      //      ecadebug->msg("(eca-chainsetup) Removing input " + label + ".");
+      delete inputs[n];
+      inputs[n] = inputs_direct_rep[n] = new NULLFILE("null");
+
+      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Removing input " + label + ".");
     }
-    ++ci;
   }
+
+  // ---
+  DBC_ENSURE(inputs.size() == inputs_direct_rep.size());
+  // ---
 }
 
 /**
@@ -924,23 +976,26 @@ void ECA_CHAINSETUP::remove_audio_output(const string& label) {
   DBC_REQUIRE(is_enabled() != true);
   // --------
 
-  vector<AUDIO_IO*>::iterator ci = outputs.begin();
-  while (ci != outputs.end()) {
-    if ((*ci)->label() == label) {
-
-      *ci = remove_audio_object_helper(*ci);
+  for(size_t n = 0; n < outputs.size(); n++) {
+    if (outputs[n]->label() == label) {
+      remove_audio_object_helper(outputs[n]);
 
       vector<CHAIN*>::iterator q = chains.begin();
       while(q != chains.end()) {
-	if (outputs[(*q)->connected_output()] == *ci) (*q)->disconnect_output();
+	if ((*q)->connected_output() == static_cast<int>(n)) (*q)->disconnect_output();
 	++q;
       }
 
-      delete *ci;
-      (*ci) = new NULLFILE("null");
+      delete outputs[n];
+      outputs[n] = outputs_direct_rep[n] = new NULLFILE("null");
+
+      ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Removing output " + label + ".");
     }
-    ++ci;
   }
+
+  // ---
+  DBC_ENSURE(outputs.size() == outputs_direct_rep.size());
+  // ---
 }
 
 /**
@@ -1321,7 +1376,6 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
 
   AUDIO_STAMP_CLIENT* p = dynamic_cast<AUDIO_STAMP_CLIENT*>(csrc->source_pointer());
   if (p != 0) {
-//      cerr << "Found a stamp client!" << endl;
     p->register_server(&stamp_server_rep);
   }
 

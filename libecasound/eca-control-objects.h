@@ -56,7 +56,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   const ECA_CHAINSETUP* get_chainsetup_filename(const std::string& filename) const;
   std::vector<std::string> chainsetup_names(void) const;
   const std::string& chainsetup_filename(void) const;
-  long int chainsetup_buffersize(void) const;
+  int chainsetup_buffersize(void) const;
 
   void set_chainsetup_filename(const std::string& name);
   void set_chainsetup_parameter(const std::string& name);
@@ -65,6 +65,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void set_chainsetup_processing_length_in_samples(long int value);
   void set_chainsetup_output_mode(int output_mode);
   void toggle_chainsetup_looping(void);
+  void set_chainsetup_buffersize(int bsize);
 
   // -------------------------------------------------------------------
   // Chains (if not specified, active chainsetup is used)

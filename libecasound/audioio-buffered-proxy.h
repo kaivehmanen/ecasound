@@ -32,34 +32,41 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
 
  public:
 
-  // --
-  // public functions
-
+  /** @name Public functions */
+  /*@{*/
 
   AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver, AUDIO_IO* aobject, bool transfer_ownership); 
   virtual ~AUDIO_IO_BUFFERED_PROXY(void);
+
+  /*@}*/
   
-  // --
-  // reimplemented functions from ECA_OBJECT
-  
+  /** @name Reimplemented functions from ECA_OBJECT */
+  /*@{*/
+
   virtual string name(void) const { return(string("Buffering proxy => ") + child_repp->name()); }
   virtual string description(void) const { return(child_repp->description()); }
 
-  // --
-  // reimplemented functions from DYNAMIC_PARAMETERS<string>
+  /*@}*/
+
+  /** @name Reimplemented functions from DYNAMIC_PARAMETERS<string> */
+  /*@{*/
 
   virtual string parameter_names(void) const { return(child_repp->parameter_names()); }
   virtual void set_parameter(int param, string value) { child_repp->set_parameter(param,value); }
   virtual string get_parameter(int param) const { return(child_repp->get_parameter(param)); }
 
-  // --
-  // reimplemented functions from DYNAMIC_OBJECT<string>
+  /*@}*/
+
+  /** @name Reimplemented functions from DYNAMIC_OBJECT<string> */
+  /*@{*/
 
   AUDIO_IO_BUFFERED_PROXY* clone(void) { std::cerr << "Not implemented!" << std::endl; return this; }
   AUDIO_IO_BUFFERED_PROXY* new_expr(void) { std::cerr << "Not implemented!" << std::endl; return this; }
 
-  // --
-  // reimplemented functions from ECA_AUDIO_POSITION
+  /*@}*/
+
+  /** @name Reimplemented functions from ECA_AUDIO_POSITION */
+  /*@{*/
 
   virtual long length_in_samples(void) const { return(child_repp->length_in_samples()); }
   virtual void seek_position(void);
@@ -69,8 +76,10 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
    * virtual void position_in_samples(long pos) { child_repp->position_in_samples(pos); }
    */
 
-  // --
-  // reimplemented functions from AUDIO_IO
+  /*@}*/
+
+  /** @name Reimplemented functions from AUDIO_IO */
+  /*@{*/
 
   virtual int supported_io_modes(void) const { return(child_repp->supported_io_modes()); }
   virtual bool supports_nonblocking_mode(void) const { return(child_repp->supports_nonblocking_mode()); }
@@ -89,12 +98,16 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
 
   virtual bool finished(void) const;
 
+  /*@}*/
+
 protected:
 
-  // --
-  // functions reimplemented from AUDIO_IO
+  /** @name Functions reimplemented from AUDIO_IO */
+  /*@{*/
 
   virtual bool class_invariant(void) const { return(child_repp != 0); }
+
+  /*@}*/
 };
 
 #endif

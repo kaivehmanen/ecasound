@@ -107,13 +107,10 @@ class ECA_CONTROL_BASE {
   std::string resource_value(const std::string& key) const;
 
   // -------------------------------------------------------------------
-  // Modify session
+  // Session options
   // -------------------------------------------------------------------
 
-  void toggle_interactive_mode(bool v) { session_repp->iactive_rep = v; } 
-  void toggle_multitrack_mode(bool v);
-  void toggle_raise_priority(bool v);
-  void set_buffersize(int bsize);
+  void toggle_interactive_mode(bool v) { session_repp->toggle_interactive_mode(v); } 
 
   // -------------------------------------------------------------------
   // Session status

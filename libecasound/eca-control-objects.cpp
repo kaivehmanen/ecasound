@@ -297,7 +297,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
 	ecadebug->msg("(eca-controller) Can't connect; edited chainsetup not valid.");
 	select_chainsetup(origname);
 	connect_chainsetup();
-	engine_repp->command(ECA_ENGINE::ep_setpos, pos);
+	set_chainsetup_position(pos);
 	if (is_connected() == true) {
 	  if (restart == true) start();
 	}
@@ -305,7 +305,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
       }
       else {
 	connect_chainsetup();
-	engine_repp->command(ECA_ENGINE::ep_setpos, pos);
+	set_chainsetup_position(pos);
 	if (is_connected() == true) {
 	  select_chainsetup(origname);
 	  remove_chainsetup();
@@ -364,6 +364,18 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_output_mode(int output_mode) {
   DBC_REQUIRE(output_mode == AUDIO_IO::io_write || output_mode == AUDIO_IO::io_readwrite);
   // --------
   selected_chainsetup_repp->set_output_openmode(output_mode);
+}
+
+/**
+ * Sets chainsetup buffersize (in samples).
+ *
+ * @pre is_selected() == true
+ */
+void ECA_CONTROL_OBJECTS::set_chainsetup_buffersize(int bsize) { 
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  // --------
+  selected_chainsetup_repp->set_buffersize(bsize); 
 }
 
 /**
@@ -545,7 +557,7 @@ const ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup_filename(const std::st
  *
  * ®pre is_selected() == true
  */
-long int ECA_CONTROL_OBJECTS::chainsetup_buffersize(void) const {
+int ECA_CONTROL_OBJECTS::chainsetup_buffersize(void) const {
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -940,6 +952,11 @@ void ECA_CONTROL_OBJECTS::rename_chain(const std::string& name) {
 }
 
 void ECA_CONTROL_OBJECTS::send_chain_commands_to_engine(int command, double value) {
+  // --------
+  DBC_CHECK(is_engine_started() == true);
+  // --------
+  if (is_engine_started() != true) return; 
+
   const std::vector<std::string>& schains = selected_chainsetup_repp->selected_chains();
 
   std::vector<std::string>::const_iterator o = schains.begin();

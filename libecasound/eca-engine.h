@@ -94,6 +94,7 @@ class ECA_ENGINE {
   /*@{*/
 
   Engine_status_t status(void) const;
+  const ECA_SESSION* session(void) const { return(session_repp); }
 
   /*@}*/
 

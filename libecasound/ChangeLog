@@ -9,7 +9,12 @@
 	* eca-engine.h (status,finished): added
 	* eca-control-objects.h (set_default_audio_format_to_selected):
 	divided into _to_selected_input() and to_selected_output()
-	* eca-chainsetup.h (is_slave_output): renamed to is_realtime_target_output
+	* eca-chainsetup.h (is_slave_output): renamed to
+	is_realtime_target_output
+	* eca-session.h (session): added
+	* eca-control-base.h (set_buffersize): moved to eca-control-objects.h and renamed to 
+	set_chainsetup_buffersize()
+	* eca-control-base.h (toggle_raise_priority,toggle_multitrack_mode): removed
 		
 2001-10-05  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	

@@ -71,6 +71,7 @@ ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void) {
  * Start the processing engine
  *
  * @pre is_connected() == true
+ * @pre is_connected() == true
  * @post is_engine_started() == true
  */
 void ECA_CONTROL_BASE::start(void) {
@@ -307,11 +308,6 @@ std::string ECA_CONTROL_BASE::resource_value(const std::string& key) const {
   return(ecarc.resource(key)); 
 }
 
-void ECA_CONTROL_BASE::toggle_multitrack_mode(bool v) { 
-  if (selected_chainsetup_repp != 0)
-    selected_chainsetup_repp->multitrack_mode_rep = v; 
-}
-
 /**
  * Returns the length of the selected chainsetup (in samples).
  *
@@ -455,32 +451,6 @@ std::vector<std::string> ECA_CONTROL_BASE::attached_chains(const string& filenam
   // --------
 
   return(selected_chainsetup_repp->get_attached_chains_to_iodev(filename));
-}
-
-/**
- * Set the default buffersize (in samples).
- *
- * @pre is_editable() == true
- */
-void ECA_CONTROL_BASE::set_buffersize(int bsize) { 
-  // --------
-  // require:
-  assert(is_selected() == true);
-  // --------
-  selected_chainsetup_repp->set_buffersize(bsize); 
-}
-
-/**
- * Toggle whether raised priority mode is enabled or not.
- *
- * @pre is_editable() == true
- */
-void ECA_CONTROL_BASE::toggle_raise_priority(bool v) { 
-  // --------
-  // require:
-  assert(is_selected() == true);
-  // --------
-  selected_chainsetup_repp->toggle_raised_priority(v);
 }
 
 void ECA_CONTROL_BASE::set_last_string_list(const std::vector<std::string>& s) { 

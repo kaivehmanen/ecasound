@@ -155,8 +155,9 @@ void ECA_ENGINE::exec(void) {
 }
 
 /**
- * Sends 'cmd' to engines command queue. Commands are processed
- * in the server's main loop.
+ * Sends 'cmd' to engines command queue. If 
+ * session()->is_interactive() is true, commands are 
+ * processed in the server's main loop. 
  */
 void ECA_ENGINE::command(Engine_command_t cmd, double arg) {
   command_queue_rep.push_back(static_cast<int>(cmd),arg);

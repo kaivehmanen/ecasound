@@ -45,6 +45,8 @@ class ECA_SESSION {
   bool is_selected_chainsetup_connected(void) const { return(selected_chainsetup_repp == connected_chainsetup_repp); }
   bool is_interactive(void) const { return iactive_rep; }
 
+  void toggle_interactive_mode(bool v) { iactive_rep = v; }
+
   // --
   // Constructors and destructors
   // --

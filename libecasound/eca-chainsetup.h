@@ -287,7 +287,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /*@{*/
 
   AUDIO_IO* add_audio_object_helper(AUDIO_IO* aio);
-  AUDIO_IO* remove_audio_object_helper(AUDIO_IO* aio);
+  void remove_audio_object_helper(AUDIO_IO* aio);
 
   /** @name Functions for state<->string conversions */
   /*@{*/
@@ -300,6 +300,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /*@{*/
 
   void set_active_buffering_mode(void);
+  void enable_active_buffering_mode(void);
   void switch_to_direct_mode(void);
   void switch_to_direct_mode_helper(std::vector<AUDIO_IO*>* objs, const std::vector<AUDIO_IO*>& directobjs);
   void switch_to_proxy_mode(void);
@@ -307,6 +308,9 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void lock_all_memory(void);
   void unlock_all_memory(void);
   void set_defaults (void);
+  int number_of_realtime_inputs(void) const;
+  int number_of_realtime_outputs(void) const;
+  int number_of_chain_operators(void) const;
 
   /*@}*/
 

@@ -36,7 +36,6 @@
 
 // FIXME: add checks for uninitialized object maps (map == 0)
 
-#ifdef HAVE_LADSPA_H
 /**
  * Return the first effect that matches with 'keyword'
  */
@@ -50,7 +49,6 @@ EFFECT_LADSPA* ECA_OBJECT_FACTORY::ladspa_map_object(const std::string& keyword)
 EFFECT_LADSPA* ECA_OBJECT_FACTORY::ladspa_map_object(long int number) { 
   return(dynamic_cast<EFFECT_LADSPA*>(eca_ladspa_plugin_id_map->object(kvu_numtostr(number)))); 
 }
-#endif /* #HAVE_LADSPA_H */
 
 /**
  * Return the first controller object that matches with 'keyword'
@@ -82,11 +80,12 @@ AUDIO_IO* ECA_OBJECT_FACTORY::audio_io_map_object(const std::string& keyword, bo
  * @return the created object or 0 if an invalid format string was given 
  *         as the argument
  *
- * require:
- *  arg.empty() != true
+ *  @pre arg.empty() != true
  */
 AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const std::string& arg) {
-  assert(arg.empty() != true);
+  // --
+  DBC_REQUIRE(arg.empty() != true);
+  // --
  
   string fname = get_argument_number(1, arg);
   if (fname.find(".") != string::npos) {
