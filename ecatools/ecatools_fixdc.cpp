@@ -30,7 +30,7 @@
 #include <eca-control.h>
 #include <eca-main.h>
 #include <eca-session.h>
-#include <audiofx.h>
+#include <audiofx_misc.h>
 #include <audiofx_analysis.h>
 #include <audioio.h>
 #include <eca-version.h>
