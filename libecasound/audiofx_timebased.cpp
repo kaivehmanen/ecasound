@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audiofx_timebased.cpp: Routines for time-based effects.
-// Copyright (C) 1999-2003 Kai Vehmanen
+// Copyright (C) 1999-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 2
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +29,9 @@
 #include "eca-logger.h"
 
 #include "samplebuffer_iterators.h"
+#include "sample-ops_impl.h"
 #include "audiofx_timebased.h"
+
 
 EFFECT_DELAY::EFFECT_DELAY (CHAIN_OPERATOR::parameter_t delay_time, int surround_mode, 
 			    int num_of_delays, CHAIN_OPERATOR::parameter_t mix_percent,
@@ -111,17 +116,17 @@ CHAIN_OPERATOR::parameter_t EFFECT_DELAY::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(dtime_msec);
+    return dtime_msec;
   case 2:
-    return(surround);
+    return surround;
   case 3:
-    return(dnum);
+    return dnum;
   case 4:
-    return(mix * 100.0);
+    return mix * 100.0;
   case 5:
-    return(feedback * 100.0);
+    return feedback * 100.0;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
@@ -329,13 +334,13 @@ CHAIN_OPERATOR::parameter_t EFFECT_MULTITAP_DELAY::get_parameter(int param) cons
 {
   switch (param) {
   case 1: 
-    return(dtime_msec);
+    return dtime_msec;
   case 2:
-    return(dnum);
+    return dnum;
   case 3:
-    return(mix * 100.0);
+    return mix * 100.0;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_MULTITAP_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
@@ -381,7 +386,8 @@ void EFFECT_MULTITAP_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t
   }
 }
 
-void EFFECT_MULTITAP_DELAY::init(SAMPLE_BUFFER* insample) {
+void EFFECT_MULTITAP_DELAY::init(SAMPLE_BUFFER* insample)
+{
   i.init(insample);
 
   EFFECT_BASE::init(insample);
@@ -394,7 +400,8 @@ void EFFECT_MULTITAP_DELAY::init(SAMPLE_BUFFER* insample) {
 							       dnum));
 }
 
-void EFFECT_MULTITAP_DELAY::process(void) {
+void EFFECT_MULTITAP_DELAY::process(void)
+{
   long int len = dtime * dnum;
 
   i.begin();
@@ -448,9 +455,9 @@ CHAIN_OPERATOR::parameter_t EFFECT_FAKE_STEREO::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(dtime_msec);
+    return dtime_msec;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_FAKE_STEREO::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
@@ -568,13 +575,13 @@ CHAIN_OPERATOR::parameter_t EFFECT_REVERB::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(dtime_msec);
+    return dtime_msec;
   case 2:
-    return(surround);
+    return surround;
   case 3:
-    return(feedback * 100.0);
+    return feedback * 100.0;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
@@ -642,9 +649,10 @@ void EFFECT_REVERB::process(void)
 	*l.current() = (*l.current() * (1 - feedback));
 	*r.current() = (*r.current() * (1 - feedback));
     }
+    *l.current() = ecaops_flush_to_zero(*l.current());
+    *r.current() = ecaops_flush_to_zero(*r.current());
     buffer[SAMPLE_SPECS::ch_left].push_back(*l.current());
     buffer[SAMPLE_SPECS::ch_right].push_back(*r.current());
-
     l.next();
     r.next();
   }
@@ -719,18 +727,18 @@ CHAIN_OPERATOR::parameter_t EFFECT_MODULATING_DELAY::get_parameter(int param) co
 {
   switch (param) {
   case 1: 
-    return(dtime_msec);
+    return dtime_msec;
 
   case 2: 
-    return(vartime);
+    return vartime;
 
   case 3: 
-    return(feedback * 100.0);
+    return feedback * 100.0;
 
   case 4: 
-    return(lfo.get_parameter(1));
+    return lfo.get_parameter(1);
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_MODULATING_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
@@ -808,7 +816,7 @@ void EFFECT_FLANGER::process(void)
       DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
       temp1 = buffer[i.channel()][(dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2)];
     }
-    *i.current() = (*i.current() * (1.0 - feedback)) + (temp1 * feedback);
+    *i.current() = ecaops_flush_to_zero((*i.current() * (1.0 - feedback)) + (temp1 * feedback));
     buffer[i.channel()][delay_index[i.channel()]] = *i.current();
 
     ++(delay_index[i.channel()]);
@@ -861,7 +869,7 @@ void EFFECT_PHASER::process(void)
       //    	   << (delay_index[i.channel()] + static_cast<long int>(p)) % dtime
       //    	   << "," << p << ".\n";
     }
-    *i.current() = *i.current() * (1.0 - feedback) + (-1.0 * temp1 * feedback);
+    *i.current() = ecaops_flush_to_zero(*i.current() * (1.0 - feedback) + (-1.0 * temp1 * feedback));
     buffer[i.channel()][delay_index[i.channel()]] = *i.current();
 
     ++(delay_index[i.channel()]);

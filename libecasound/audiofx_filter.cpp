@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audiofx_filter.cpp: Routines for filter effects.
-// Copyright (C) 1999 Kai Vehmanen
+// Copyright (C) 1999,2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 2
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +25,17 @@
 #include <kvu_utils.h>
 
 #include "samplebuffer_iterators.h"
+#include "sample-ops_impl.h"
 #include "eca-logger.h"
 #include "audiofx_filter.h"
+
 
 EFFECT_FILTER::~EFFECT_FILTER(void)
 {
 }
 
-EFFECT_BANDPASS::EFFECT_BANDPASS (CHAIN_OPERATOR::parameter_t centerf, CHAIN_OPERATOR::parameter_t w) {
+EFFECT_BANDPASS::EFFECT_BANDPASS (CHAIN_OPERATOR::parameter_t centerf, CHAIN_OPERATOR::parameter_t w)
+{
   /* to avoid accessing uninitialized data */
   width = 1;
   center = 1;
@@ -39,7 +45,8 @@ EFFECT_BANDPASS::EFFECT_BANDPASS (CHAIN_OPERATOR::parameter_t centerf, CHAIN_OPE
   set_parameter(2, w);
 }
 
-void EFFECT_BANDPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_BANDPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     center = value;
@@ -60,23 +67,25 @@ void EFFECT_BANDPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_BANDPASS::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_BANDPASS::get_parameter(int param) const
+{ 
   switch (param) {
   case 1: 
-    return(center);
+    return center;
   case 2: 
-    return(width);
+    return width;
   }
-  return(0.0);
+  return 0.0;
 }
 
-EFFECT_BANDREJECT::EFFECT_BANDREJECT (CHAIN_OPERATOR::parameter_t centerf, CHAIN_OPERATOR::parameter_t w) 
+EFFECT_BANDREJECT::EFFECT_BANDREJECT (CHAIN_OPERATOR::parameter_t centerf, CHAIN_OPERATOR::parameter_t w)
 {
   set_parameter(1, centerf);
   set_parameter(2, w);
 }
 
-void EFFECT_BANDREJECT::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_BANDREJECT::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     center = value;
@@ -97,17 +106,19 @@ void EFFECT_BANDREJECT::set_parameter(int param, CHAIN_OPERATOR::parameter_t val
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_BANDREJECT::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_BANDREJECT::get_parameter(int param) const
+{ 
   switch (param) {
   case 1: 
-    return(center);
+    return center;
   case 2: 
-    return(width);
+    return width;
   }
-  return(0.0);
+  return 0.0;
 }
 
-void EFFECT_BW_FILTER::init(SAMPLE_BUFFER *insample) {
+void EFFECT_BW_FILTER::init(SAMPLE_BUFFER *insample)
+{
   i.init(insample);
 
   set_channels(insample->number_of_channels());
@@ -116,14 +127,15 @@ void EFFECT_BW_FILTER::init(SAMPLE_BUFFER *insample) {
   sout.resize(insample->number_of_channels(), std::vector<SAMPLE_SPECS::sample_t> (2));
 }
 
-void EFFECT_BW_FILTER::process(void) {
+void EFFECT_BW_FILTER::process(void)
+{
   i.begin();
   while(!i.end()) {
-    outputSample = a[0] * (*i.current()) + 
-                   a[1] * sin[i.channel()][0] + 
-                   a[2] * sin[i.channel()][1] - 
-                   b[0] * sout[i.channel()][0] - 
-                   b[1] * sout[i.channel()][1];
+    outputSample = ecaops_flush_to_zero(a[0] * (*i.current()) + 
+					a[1] * sin[i.channel()][0] + 
+					a[2] * sin[i.channel()][1] - 
+					b[0] * sout[i.channel()][0] - 
+					b[1] * sout[i.channel()][1]);
     sin[i.channel()][1] = sin[i.channel()][0];
     sin[i.channel()][0] = *i.current();
 
@@ -135,7 +147,8 @@ void EFFECT_BW_FILTER::process(void) {
   }
 }
 
-void EFFECT_BW_FILTER::process_notused(SAMPLE_BUFFER* sbuf) {
+void EFFECT_BW_FILTER::process_notused(SAMPLE_BUFFER* sbuf)
+{
 //    sbuf->first();
 //    while(sbuf->is_readable()) {
 //      outputSample = *sbuf->current_sample() * a[0]
@@ -155,7 +168,8 @@ void EFFECT_BW_FILTER::process_notused(SAMPLE_BUFFER* sbuf) {
 //    }
 }
 
-void EFFECT_BW_FILTER::init_values(void) {
+void EFFECT_BW_FILTER::init_values(void)
+{
 //    for(int j = 0; j < 2;j++) {
 //      sin[j].sample[SAMPLE_BUFFER::ch_left] = 0.0;
 //      sin[j].sample[SAMPLE_BUFFER::ch_right] = 0.0;
@@ -164,11 +178,13 @@ void EFFECT_BW_FILTER::init_values(void) {
 //    }
 }
 
-EFFECT_HIGHPASS::EFFECT_HIGHPASS (CHAIN_OPERATOR::parameter_t cutoff) {
+EFFECT_HIGHPASS::EFFECT_HIGHPASS (CHAIN_OPERATOR::parameter_t cutoff)
+{
   set_parameter(1, cutoff);
 }
 
-void EFFECT_HIGHPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_HIGHPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     cutOffFreq = value;
@@ -182,15 +198,17 @@ void EFFECT_HIGHPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_HIGHPASS::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_HIGHPASS::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(cutOffFreq);
+    return cutOffFreq;
   }
-  return(0.0);
+  return 0.0;
 }
 
-void EFFECT_ALLPASS_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_ALLPASS_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     D = value;
@@ -206,58 +224,66 @@ void EFFECT_ALLPASS_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_t
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_ALLPASS_FILTER::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_ALLPASS_FILTER::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(D);
+    return D;
   case 2: 
-    return(feedback_gain * 100.0);
+    return feedback_gain * 100.0;
   }
-  return(0.0);
+  return 0.0;
 }
 
-void EFFECT_ALLPASS_FILTER::init(SAMPLE_BUFFER* insample) {
+void EFFECT_ALLPASS_FILTER::init(SAMPLE_BUFFER* insample)
+{
   i.init(insample);
 
   set_channels(insample->number_of_channels());
 
   inbuf.resize(insample->number_of_channels());
-//  outbuf.resize(insample->number_of_channels());
+  //  outbuf.resize(insample->number_of_channels());
 }
 
-void EFFECT_ALLPASS_FILTER::process(void) {
+void EFFECT_ALLPASS_FILTER::process(void)
+{
   i.begin();
   while(!i.end()) {
     if (inbuf[i.channel()].size() >= D) {
       inbuf[i.channel()].push_back(*i.current());
-//      *i.current() = -feedback_gain * (*i.current()) +
-//	             inbuf[i.channel()].front() +
-//	             feedback_gain * outbuf[i.channel()].front();
-      *i.current() = -feedback_gain * (*i.current()) +
-	             (feedback_gain * inbuf[i.channel()].front() +
-		     *i.current()) * 
-		     (1.0 - feedback_gain * feedback_gain);
-//	             feedback_gain * outbuf[i.channel()].front();
-//      outbuf[i.channel()].push_back(*i.current());
+
+      //      *i.current() = -feedback_gain * (*i.current()) +
+      //	             inbuf[i.channel()].front() +
+      //	             feedback_gain * outbuf[i.channel()].front();
+
+      *i.current() = ecaops_flush_to_zero(-feedback_gain * (*i.current()) +
+					  (feedback_gain * inbuf[i.channel()].front() +
+					   *i.current()) * 
+					  (1.0 - feedback_gain * feedback_gain));
+
+      //      feedback_gain * outbuf[i.channel()].front();
+      //      outbuf[i.channel()].push_back(*i.current());
 
       inbuf[i.channel()].pop_front();
-//      outbuf[i.channel()].pop_front();
+      // outbuf[i.channel()].pop_front();
     } 
     else {
       inbuf[i.channel()].push_back(*i.current());
-      *i.current() = *i.current() * (1.0 - feedback_gain);
-//      outbuf[i.channel()].push_back(*i.current());
+      *i.current() = ecaops_flush_to_zero(*i.current() * (1.0 - feedback_gain));
+      // outbuf[i.channel()].push_back(*i.current());
     }
     i.next();
   }
 }
 
-EFFECT_COMB_FILTER::EFFECT_COMB_FILTER (int delay_in_samples, CHAIN_OPERATOR::parameter_t radius) {
+EFFECT_COMB_FILTER::EFFECT_COMB_FILTER (int delay_in_samples, CHAIN_OPERATOR::parameter_t radius)
+{
   set_parameter(1, (CHAIN_OPERATOR::parameter_t)delay_in_samples);
   set_parameter(2, radius);
 }
 
-void EFFECT_COMB_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_COMB_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     {
@@ -268,8 +294,8 @@ void EFFECT_COMB_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_t va
 	  p->resize(static_cast<unsigned int>(C));
 	}
 	++p;
-	break;
       }
+      break;
     }
 
   case 2: 
@@ -278,17 +304,19 @@ void EFFECT_COMB_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_t va
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_COMB_FILTER::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_COMB_FILTER::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(C);
+    return C;
   case 2: 
-    return(D);
+    return D;
   }
-  return(0.0);
+  return 0.0;
 }
 
-void EFFECT_COMB_FILTER::init(SAMPLE_BUFFER* insample) {
+void EFFECT_COMB_FILTER::init(SAMPLE_BUFFER* insample)
+{
   i.init(insample);
 
   set_channels(insample->number_of_channels());
@@ -296,7 +324,8 @@ void EFFECT_COMB_FILTER::init(SAMPLE_BUFFER* insample) {
   buffer.resize(insample->number_of_channels());
 }
 
-void EFFECT_COMB_FILTER::process(void) {
+void EFFECT_COMB_FILTER::process(void)
+{
   i.begin();
   while(!i.end()) {
     if (buffer[i.channel()].size() >= C) {
@@ -312,7 +341,8 @@ void EFFECT_COMB_FILTER::process(void) {
   }
 }
 
-EFFECT_INVERSE_COMB_FILTER::EFFECT_INVERSE_COMB_FILTER (int delay_in_samples, CHAIN_OPERATOR::parameter_t radius) {
+EFFECT_INVERSE_COMB_FILTER::EFFECT_INVERSE_COMB_FILTER (int delay_in_samples, CHAIN_OPERATOR::parameter_t radius)
+{
   // 
   // delay in number of samples
   // circle radius
@@ -321,7 +351,8 @@ EFFECT_INVERSE_COMB_FILTER::EFFECT_INVERSE_COMB_FILTER (int delay_in_samples, CH
   set_parameter(2, radius);
 }
 
-void EFFECT_INVERSE_COMB_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_INVERSE_COMB_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     C = value;
@@ -332,17 +363,19 @@ void EFFECT_INVERSE_COMB_FILTER::set_parameter(int param, CHAIN_OPERATOR::parame
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_INVERSE_COMB_FILTER::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_INVERSE_COMB_FILTER::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(C);
+    return C;
   case 2: 
-    return(D);
+    return D;
   }
-  return(0.0);
+  return 0.0;
 }
 
-void EFFECT_INVERSE_COMB_FILTER::init(SAMPLE_BUFFER* insample) {
+void EFFECT_INVERSE_COMB_FILTER::init(SAMPLE_BUFFER* insample)
+{
   i.init(insample);
 
   set_channels(insample->number_of_channels());
@@ -351,7 +384,8 @@ void EFFECT_INVERSE_COMB_FILTER::init(SAMPLE_BUFFER* insample) {
   laskuri.resize(insample->number_of_channels(), parameter_t(0.0));
 }
 
-void EFFECT_INVERSE_COMB_FILTER::process(void) {
+void EFFECT_INVERSE_COMB_FILTER::process(void)
+{
   i.begin();
   while(!i.end()) {
     buffer[i.channel()].push_back(*i.current());
@@ -368,7 +402,8 @@ void EFFECT_INVERSE_COMB_FILTER::process(void) {
   }
 }
 
-EFFECT_LOWPASS::EFFECT_LOWPASS (CHAIN_OPERATOR::parameter_t cutoff) {
+EFFECT_LOWPASS::EFFECT_LOWPASS (CHAIN_OPERATOR::parameter_t cutoff)
+{
   set_parameter(1, cutoff);
 }
 
@@ -380,15 +415,17 @@ void EFFECT_LOWPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_LOWPASS::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_LOWPASS::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(cutOffFreq);
+    return cutOffFreq;
   }
-  return(0.0);
+  return 0.0;
 }
 
-void EFFECT_LOWPASS::set_cutoff(CHAIN_OPERATOR::parameter_t value, long int srate) {
+void EFFECT_LOWPASS::set_cutoff(CHAIN_OPERATOR::parameter_t value, long int srate)
+{
   cutOffFreq = value;
   C = 1.0 / tan(M_PI * cutOffFreq / (CHAIN_OPERATOR::parameter_t)srate);
   a[0] = 1.0 / (1.0 + sqrt(2.0) * C + C * C);
@@ -398,11 +435,13 @@ void EFFECT_LOWPASS::set_cutoff(CHAIN_OPERATOR::parameter_t value, long int srat
   b[1] = (1.0 - sqrt(2.0) * C + C * C) * a[0];
 }
 
-EFFECT_LOWPASS_SIMPLE::EFFECT_LOWPASS_SIMPLE (CHAIN_OPERATOR::parameter_t cutoff) {
+EFFECT_LOWPASS_SIMPLE::EFFECT_LOWPASS_SIMPLE (CHAIN_OPERATOR::parameter_t cutoff)
+{
   set_parameter(1, cutoff);
 }
 
-void EFFECT_LOWPASS_SIMPLE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_LOWPASS_SIMPLE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     cutOffFreq = value;
@@ -412,15 +451,17 @@ void EFFECT_LOWPASS_SIMPLE::set_parameter(int param, CHAIN_OPERATOR::parameter_t
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_LOWPASS_SIMPLE::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_LOWPASS_SIMPLE::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(cutOffFreq);
+    return cutOffFreq;
   }
-  return(0.0);
+  return 0.0;
 }
 
-void EFFECT_LOWPASS_SIMPLE::init(SAMPLE_BUFFER *insample) {
+void EFFECT_LOWPASS_SIMPLE::init(SAMPLE_BUFFER *insample)
+{
   i.init(insample);
 
   set_channels(insample->number_of_channels());
@@ -430,7 +471,8 @@ void EFFECT_LOWPASS_SIMPLE::init(SAMPLE_BUFFER *insample) {
   temphist.resize(insample->number_of_channels());
 }
 
-void EFFECT_LOWPASS_SIMPLE::process(void) {
+void EFFECT_LOWPASS_SIMPLE::process(void)
+{
   i.begin();
   while(!i.end()) {
     tempin[i.channel()] = *i.current();
@@ -440,7 +482,7 @@ void EFFECT_LOWPASS_SIMPLE::process(void) {
     tempin[i.channel()] *= A * 0.5;
     temphist[i.channel()] *= B * 0.5;
 
-    *i.current() = tempin[i.channel()] + temphist[i.channel()];
+    *i.current() = ecaops_flush_to_zero(tempin[i.channel()] + temphist[i.channel()]);
 
     i.next();
   }
@@ -457,7 +499,8 @@ EFFECT_RESONANT_BANDPASS::EFFECT_RESONANT_BANDPASS (CHAIN_OPERATOR::parameter_t 
   set_parameter(2, w);
 }
 
-void EFFECT_RESONANT_BANDPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_RESONANT_BANDPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     center = value;
@@ -478,17 +521,19 @@ void EFFECT_RESONANT_BANDPASS::set_parameter(int param, CHAIN_OPERATOR::paramete
   b = 2.0 * R * cos(pole_angle);
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_RESONANT_BANDPASS::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_RESONANT_BANDPASS::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(center);
+    return center;
   case 2: 
-    return(width);
+    return width;
   }
-  return(0.0);
+  return 0.0;
 }
 
-void EFFECT_RESONANT_BANDPASS::init(SAMPLE_BUFFER* insample) {
+void EFFECT_RESONANT_BANDPASS::init(SAMPLE_BUFFER* insample)
+{
   i.init(insample);
 
   set_channels(insample->number_of_channels());
@@ -497,12 +542,13 @@ void EFFECT_RESONANT_BANDPASS::init(SAMPLE_BUFFER* insample) {
   outhist2.resize(insample->number_of_channels());
 }
 
-void EFFECT_RESONANT_BANDPASS::process(void) {
+void EFFECT_RESONANT_BANDPASS::process(void)
+{
   i.begin();
   while(!i.end()) {
-    *i.current() = a * (*i.current()) +
-                   b * outhist1[i.channel()] -
-                   c * outhist2[i.channel()];
+    *i.current() = ecaops_flush_to_zero(a * (*i.current()) +
+					b * outhist1[i.channel()] -
+					c * outhist2[i.channel()]);
   
     outhist2[i.channel()] = outhist1[i.channel()];
     outhist1[i.channel()] = *i.current();
@@ -546,7 +592,8 @@ EFFECT_RESONANT_LOWPASS::EFFECT_RESONANT_LOWPASS (CHAIN_OPERATOR::parameter_t co
   szxform(1);
 }
 
-void EFFECT_RESONANT_LOWPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_RESONANT_LOWPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     cutoff = value;
@@ -561,19 +608,21 @@ void EFFECT_RESONANT_LOWPASS::set_parameter(int param, CHAIN_OPERATOR::parameter
   refresh_values();
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_RESONANT_LOWPASS::get_parameter(int param) const {
+CHAIN_OPERATOR::parameter_t EFFECT_RESONANT_LOWPASS::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(cutoff);
+    return cutoff;
   case 2: 
-    return(Q);
+    return Q;
   case 3: 
-    return(gain_orig);
+    return gain_orig;
   }
-  return(0.0);
+  return 0.0;
 }
 
-void EFFECT_RESONANT_LOWPASS::refresh_values(void) {
+void EFFECT_RESONANT_LOWPASS::refresh_values(void)
+{
   if (cutoff == 0.0) cutoff = 0.1;
     
   gain = gain_orig;
@@ -596,7 +645,8 @@ void EFFECT_RESONANT_LOWPASS::refresh_values(void) {
   szxform(1);
 }
 
-void EFFECT_RESONANT_LOWPASS::szxform(int section) {
+void EFFECT_RESONANT_LOWPASS::szxform(int section)
+{
   wp = 2.0 * (CHAIN_OPERATOR::parameter_t)samples_per_second() * tan(pi * cutoff / (CHAIN_OPERATOR::parameter_t)samples_per_second());
 
   // ---
@@ -644,7 +694,8 @@ void EFFECT_RESONANT_LOWPASS::szxform(int section) {
   // alpha2
 }
 
-void EFFECT_RESONANT_LOWPASS::init(SAMPLE_BUFFER* insample) {
+void EFFECT_RESONANT_LOWPASS::init(SAMPLE_BUFFER* insample)
+{
   i.init(insample);
 
   set_channels(insample->number_of_channels());
@@ -658,7 +709,8 @@ void EFFECT_RESONANT_LOWPASS::init(SAMPLE_BUFFER* insample) {
   newhist1.resize(insample->number_of_channels());
 }
 
-void EFFECT_RESONANT_LOWPASS::process(void) {
+void EFFECT_RESONANT_LOWPASS::process(void)
+{
   i.begin();
   while(!i.end()) {
     *i.current() = (*i.current()) * gain;
@@ -668,7 +720,7 @@ void EFFECT_RESONANT_LOWPASS::process(void) {
     
     // poles:
     *i.current() =  (*i.current()) - outhist0[i.channel()] * Coef[0].A;
-    newhist0[i.channel()] = (*i.current()) - outhist1[i.channel()] * Coef[0].B;
+    newhist0[i.channel()] = ecaops_flush_to_zero((*i.current()) - outhist1[i.channel()] * Coef[0].B);
         
     // zeros:
     *i.current() = newhist0[i.channel()] + outhist0[i.channel()] * Coef[0].C;
@@ -682,7 +734,7 @@ void EFFECT_RESONANT_LOWPASS::process(void) {
     
     // poles:
     *i.current() =  (*i.current()) - outhist2[i.channel()] * Coef[1].A;
-    newhist1[i.channel()] = (*i.current()) - outhist3[i.channel()] * Coef[1].B;
+    newhist1[i.channel()] = ecaops_flush_to_zero((*i.current()) - outhist3[i.channel()] * Coef[1].B);
        
     // zeros:
     *i.current() = newhist1[i.channel()] + outhist2[i.channel()] * Coef[1].C;
@@ -701,7 +753,6 @@ void EFFECT_RESONANT_LOWPASS::process(void) {
 //  {
 //    outhist = x.outhist;
 //    newhist = x.newhist;
-
 //    for(vector<BIQUAD>::size_type p = 0; p != x.ProtoCoef.size(); p++) {
 //      ProtoCoef[p].a0 = x.ProtoCoef[p].a0;
 //      ProtoCoef[p].a1 = x.ProtoCoef[p].a1;
@@ -711,7 +762,6 @@ void EFFECT_RESONANT_LOWPASS::process(void) {
 //      ProtoCoef[p].b2 = x.ProtoCoef[p].b2;
 //      ++p;
 //    }
-
 //    for(vector<BIQUAD>::size_type p = 0; p != x.Coef.size(); p++) {
 //      Coef[p].A = x.Coef[p].A;
 //      Coef[p].B = x.Coef[p].B;
@@ -719,14 +769,12 @@ void EFFECT_RESONANT_LOWPASS::process(void) {
 //      Coef[p].D = x.Coef[p].D;
 //      ++p;
 //    }
-
 //    cutoff = x.cutoff;
 //    Q = x.Q;
 //    gain = x.gain;
 //    gain_orig = x.gain_orig;
 //    pi = x.pi;
 //    laskuri = x.laskuri;
-  
 //    ad = x.ad;
 //    bd = x.bd;
 //    wp = x.wp;
@@ -743,7 +791,7 @@ EFFECT_RESONATOR::EFFECT_RESONATOR (CHAIN_OPERATOR::parameter_t centerf, CHAIN_O
   set_parameter(2, w);
 }
 
-void EFFECT_RESONATOR::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) 
+void EFFECT_RESONATOR::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
 {
   switch (param) {
   case 1: 
@@ -762,11 +810,11 @@ void EFFECT_RESONATOR::set_parameter(int param, CHAIN_OPERATOR::parameter_t valu
 CHAIN_OPERATOR::parameter_t EFFECT_RESONATOR::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(center);
+    return center;
   case 2: 
-    return(width);
+    return width;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_RESONATOR::init(SAMPLE_BUFFER* insample) {
@@ -778,7 +826,8 @@ void EFFECT_RESONATOR::init(SAMPLE_BUFFER* insample) {
   saout1.resize(insample->number_of_channels());
 }
 
-void EFFECT_RESONATOR::process(void) {
+void EFFECT_RESONATOR::process(void)
+{
   i.begin();
   while(!i.end()) {
     *i.current() = cona[0] * (*i.current()) -
@@ -786,7 +835,7 @@ void EFFECT_RESONATOR::process(void) {
 		   conb[1] * saout1[i.channel()];
     
     saout1[i.channel()] = saout0[i.channel()];
-    saout0[i.channel()] = *i.current();
+    saout0[i.channel()] = ecaops_flush_to_zero(*i.current());
 				 
     i.next();
   }
