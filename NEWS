@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 150104) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 310104) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -20,6 +20,10 @@ xx012003 (v2.3.3)  -** stable release **-
 	- fixed: building against libsndfile-1.0.4 and older; if 
 		 libsndfile older than 1.0.0 is detected, sndfile 
 		 support is disabled altogether
+	- fixed: bug in ECI C impl that could cause segfaults [mewe]
+	- fixed: signal handling bugs in ecasignalview [mewe]
+	- fixed: bug in ecasound(1) caused man to not show the
+		 last three pages
 06122003 (v2.3.2)  -** stable release **-
 	- edi-entries: edi-33 closed
 	- added: support for libsndfile; enabled if libsndfile is

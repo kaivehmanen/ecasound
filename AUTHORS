@@ -40,6 +40,8 @@ Dye, Rob [rob]
 	OSS compilation fixes.
 Eure, Ian [ieure]
 	Work on the ecasound debian packages.
+Ewe, Michael [mewe]
+	Signal handling bugfixes to ecasignalview and the ECI C impl.
 Fendt, Stefan 
 	Original code for reverb (-ete) and RC-lowpass filter (-ef4).
 Fischer, Hans-Georg [hgfischer]
