@@ -94,7 +94,7 @@ void ecasv_signal_handler(int signum);
  * Static global variables
  */
 
-static const string ecatools_signalview_version = "20050316-6";
+static const string ecatools_signalview_version = "20050401-7";
 static const double ecasv_clipped_threshold_const = 1.0f - 1.0f / 16384.0f;
 static const int ecasv_bar_length_const = 32;
 static const int ecasv_header_height_const = 10;
@@ -110,6 +110,7 @@ static int ecasv_chcount = 0;
 static ECA_CONTROL_INTERFACE* ecasv_eci_repp = 0;
 
 static sig_atomic_t done = 0;
+static sig_atomic_t reset_stats = 0;
 
 /**
  * Function definitions
@@ -126,6 +127,7 @@ int main(int argc, char *argv[])
   sigaction(SIGINT, &es_handler, 0);
   sigaction(SIGQUIT, &es_handler, 0);
   sigaction(SIGABRT, &es_handler, 0);
+  sigaction(SIGHUP, &es_handler, 0);
 
   struct sigaction ign_handler;
   ign_handler.sa_handler = SIG_IGN;
@@ -304,6 +306,15 @@ void ecasv_output_cleanup(void)
 
 void ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci, vector<struct ecasv_channel_stats>* chstats)
 {
+  /* check wheter to reset peaks */
+  if (reset_stats) {
+    reset_stats = 0;
+    for(int n = 0; n < ecasv_chcount; n++) {
+      (*chstats)[n].max_peak = 0;
+      (*chstats)[n].clipped_samples = 0;
+    }
+  }
+
 #ifdef ECASV_USE_CURSES
   for(int n = 0; n < ecasv_chcount; n++) {
     eci->command("copp-select " + kvu_numtostr(n + 1));
@@ -379,6 +390,11 @@ void ecasv_print_usage(void)
 
 void ecasv_signal_handler(int signum)
 {
+  if (signum == SIGHUP) {
+    reset_stats = 1;
+  }
+  else {
     cerr << "Interrupted... cleaning up.\n";
     done=1;
+  }
 }
