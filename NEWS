@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 300103) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 030203) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -34,6 +34,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   multiple directories, separated by colons; this
 		   change was done to avoid any confusion with 
 	  	   the LADSPA_PATH syntax and ecasoundrc
+	- changed: rewritten much of the JACK slave-mode code; enables
+		   much faster and reliable transport-sync
 	- fixed: compiling pyecasound failed on alpha w/ gcc-3.2
 	- fixed: -t:xxx option did not work if chainsetup samplerate
 		 differed from the default; for instance rate change
@@ -46,6 +48,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: compile failed if JACK support was enabled, but no
 		 explicit --with-jack option was given
 	- fixed: rounding errors fixed in the resample object
+	- fixed: terminal was not properly resetted after a ctrl-c
+		 in interactive mode
 09012003 (v2.2.0)  -** stable release **-
 	- edi-entries: edi-1 closed
 	- changed: ecasound.el updated to version 0.8.1 [mlang]
