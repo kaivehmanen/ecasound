@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (21.08.2004)
+       (10.10.2004)
        ()
        (Multimedia software)
 
@@ -319,7 +319,10 @@ dit(Libsndfile)
 If libsndfile support was enabled at compile-time, this
 option allows you to force Ecasound to use libsndfile 
 for reading/writing a certain audio file. Option syntax 
-is bf(-i:sndfile,foobar.ext) (same for bf(-o)).
+is bf(-i:sndfile,foobar.ext[,.format-ext]) (same for bf(-o)).
+The optional third parameter "format" can be used to 
+override the audio format (for example you can create an
+AIFF file with filename "foo.wav").
 
 dit(Loop device) 
 Loop devices make it possible to route data between chains.

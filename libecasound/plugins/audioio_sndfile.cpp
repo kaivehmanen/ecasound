@@ -145,6 +145,9 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
     int file_format = -1;
     string teksti = real_filename;
+    if (!opt_format_rep.empty()) {
+      teksti = opt_format_rep;
+    }
     kvu_to_lowercase(teksti);
 
     // FIXME: add support for more output types
@@ -181,6 +184,11 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
       else if (bits() == 16) { file_format |= SF_FORMAT_PCM_16; }
       else if (bits() == 24) { file_format |= SF_FORMAT_PCM_24; }
       else if (bits() == 32) { file_format |= SF_FORMAT_PCM_32; }
+      else { file_format = 0; }
+    }
+    else if (format_string()[0] == 'f') {
+      if (bits() == 32) { file_format |= SF_FORMAT_FLOAT; }
+      else if (bits() == 64) { file_format |= SF_FORMAT_DOUBLE; }
       else { file_format = 0; }
     }
     else { file_format = 0; }
@@ -330,6 +338,10 @@ void SNDFILE_INTERFACE::set_parameter(int param,
   case 2: 
     opt_filename_rep = value;
     break;
+
+  case 3: 
+    opt_format_rep = value;
+    break;
   }
 }
 
@@ -341,6 +353,9 @@ string SNDFILE_INTERFACE::get_parameter(int param) const
 
   case 2: 
     return(opt_filename_rep);
+
+  case 3: 
+    return(opt_format_rep);
   }
   return("");
 }

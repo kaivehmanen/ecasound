@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 061004) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 101004) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -21,6 +21,8 @@ xx102004 (v2.3.4)  -** stable release **-
 		 new flac specific options to ecasoundrc
 	- added: basic AAC/M4A/MP4 input/output support faac/faad
 		 utils; new options to ecasoundrc
+	- added: optional 3rd parameter to 'sndfile' for specifying 
+		 audio file format (see ecasound(1)) [jesse]
 	- changed: set srate for mp3 input based on mp3 header
 	- fixed: multitrack offset was calculated incorrectly for
 		 ALSA devices which limit buffer period count to 2

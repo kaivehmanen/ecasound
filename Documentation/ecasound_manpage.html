@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>21.08.2004</h2>
+<h2>10.10.2004</h2>
 
 
     
@@ -278,7 +278,10 @@ is <strong>-i:audiofile,foobar.ext</strong> (same for <strong>-o</strong>).
 If libsndfile support was enabled at compile-time, this
 option allows you to force Ecasound to use libsndfile 
 for reading/writing a certain audio file. Option syntax 
-is <strong>-i:sndfile,foobar.ext</strong> (same for <strong>-o</strong>).
+is <strong>-i:sndfile,foobar.ext[,.format-ext]</strong> (same for <strong>-o</strong>).
+The optional third parameter "format" can be used to 
+override the audio format (for example you can create an
+AIFF file with filename "foo.wav").
 <p><p></p><dt><strong>Loop device</strong><dd> 
 Loop devices make it possible to route data between chains.
 Option syntax is <strong>-[io][:]loop,id_number</strong>. If you add a loop 
