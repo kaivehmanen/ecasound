@@ -85,6 +85,8 @@ xx.xx.2001 no history information
          - submitted: kaiv, 29.09.2002
 (edi-30): Turning libecasound and libkvutils into static libraries.
          - submitted: kaiv, 08.10.2002
+(edi-31): Support for dynamic sampling rate and buffersize changes.
+         - submitted: kaiv, 23.10.2002
 
 -----------------------------------------------------------------------
 [ Section: Closed items ]
