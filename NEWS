@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 031104) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 121104) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,9 +13,13 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??122004 (v2.3.5)  -** stable release **-
+12112004 (v2.3.5)  -** stable release **-
 	- changed: collected all email addresses from source files to 
 		   the AUTHORS file and added some antispam measures
+	- changed: do not raise an error when opening an OSS device that
+		   does not support SNDCTL_DSP_GETBLKSIZE
+	- changed: updated all the html-docs to match the new website
+		   style
 	- fixed: default to native-python ECI implementation on MacOSX
 	- fixed: link against coreaudio libs if JACK enabled on MacOSX
 	- fixed: ecasignalview build error if compiling without 

@@ -76,9 +76,9 @@ always something to improve.
 To run Ecasound, you need...:
 
 - operating system that provides standard POSIX interfaces; has been 
-  tested with various combinations of GNU/Linux (Linux 2.2/2.4/2.6 and 
-  glibc 2.1/2.2/2.3 combinations), FreeBSD 4.x, Solaris 2.8 and 
-  Cygwin 1.3.20
+  tested with various combinations of GNU/Linux (Linux 2.2-2.6 and 
+  glibc 2.1-2.3 combinations), FreeBSD 4.x, Solaris 2.6-2.8,
+  Mac OS X 10.3-10.3.5 and Cygwin 1.3.20
 - POSIX threads support; has been tested with glibc linuxthreads 
   and the Native POSIX Thread Library (NPTL)
   
@@ -168,15 +168,15 @@ ecasound-list at wakkanet dot fi:
 	problems compiling, installing or using Ecasound/Ecawave, this 
 	is a good place to ask for help. Reports of working 
 	software/hardware combinations are also welcome. You can
-	browse 	the message archives at
-	http://www.wakkanet.fi/~kaiv/ecasound/ecasound-list/current/ 
+	browse the message archives at
+	http://www.eca.cx/ecasound-list/current/ 
 
 ecasound-cvs at wakkanet dot fi:
 	A read-only list for reports about Ecasound CVS activity.
 
 You can join the lists by sending subscribe message to
 <majordomo at wakkanet dot fi>. You can also join using the following 
-web front-end: http://eca.cx/mlists.html
+web front-end: http://eca.cx/mlists.php
 
 -----------------------------------------------------------------------
  Web sites
@@ -245,8 +245,9 @@ LAD members - Always a great source of inspiration! Special thanks
 	      forward all these years.
 Philips, Dave - The 'Linux Sound & MIDI' website was the reason
 		why I initially got interested in Linux audio!
-SEUL (www.seul.org) - For hosting Ecasound ftp, http and CVS sites.
-Wakkanet Oy (www.wakkanet.fi) - For hosting the Ecasound web site.
+SEUL (www.seul.org) - For hosting Ecasound ftp, http and CVS services.
+SourceForge.net - For hosting Ecasound ftp and http sites.
+Wakkanet Oy (www.wakkanet.fi) - For various hosting services.
 
 And of course, to all the contributors (see the file 'AUTHORS')
 and to users who have given feedback, ideas and helped with testing!
