@@ -18,7 +18,7 @@ class ALSA_NAMED_PCM_DEVICE_06X : public ALSA_PCM_DEVICE_06X {
   virtual string get_parameter(int param) const;
 
   ALSA_NAMED_PCM_DEVICE_06X (void);
-  ~ALSA_NAMED_PCM_DEVICE_06X(void) { }
+  virtual ~ALSA_NAMED_PCM_DEVICE_06X(void);
   ALSA_NAMED_PCM_DEVICE_06X* clone(void) { cerr << "Not implemented!" << endl; return this; }
   ALSA_NAMED_PCM_DEVICE_06X* new_expr(void) { return new ALSA_NAMED_PCM_DEVICE_06X(); }
   

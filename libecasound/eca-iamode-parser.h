@@ -62,6 +62,7 @@ class ECA_IAMODE_PARSER {
     ec_c_selected,
     ec_c_select_all,
     ec_c_select_add,
+    ec_c_index_select,
     ec_c_deselect,
     ec_c_remove,
     ec_c_clear,
@@ -74,23 +75,36 @@ class ECA_IAMODE_PARSER {
     ec_c_status,
     ec_c_list,
     // --
-    ec_aio_add_input,
-    ec_aio_add_output,
-    ec_aio_remove,
-    ec_aio_select,
-    ec_aio_select_input,
-    ec_aio_select_output,
-    ec_aio_selected,
-    ec_aio_index_select,
-    ec_aio_attach,
-    ec_aio_status,
-    ec_aio_forward,
-    ec_aio_rewind,
-    ec_aio_set_position,
-    ec_aio_get_position,
-    ec_aio_get_length,
-    ec_aio_wave_edit,
     ec_aio_register,
+    ec_aio_status,
+    // --
+    ec_ai_add,
+    ec_ai_remove,
+    ec_ai_select,
+    ec_ai_selected,
+    ec_ai_index_select,
+    ec_ai_attach,
+    ec_ai_status,
+    ec_ai_forward,
+    ec_ai_rewind,
+    ec_ai_set_position,
+    ec_ai_get_position,
+    ec_ai_get_length,
+    ec_ai_wave_edit,
+    // --
+    ec_ao_add,
+    ec_ao_remove,
+    ec_ao_select,
+    ec_ao_selected,
+    ec_ao_index_select,
+    ec_ao_attach,
+    ec_ao_status,
+    ec_ao_forward,
+    ec_ao_rewind,
+    ec_ao_set_position,
+    ec_ao_get_position,
+    ec_ao_get_length,
+    ec_ao_wave_edit,
     // --
     ec_cop_add,
     ec_cop_remove,
@@ -123,10 +137,14 @@ class ECA_IAMODE_PARSER {
     ec_dump_length,
     ec_dump_cs_status,
     ec_dump_c_selected,
-    ec_dump_aio_selected,
-    ec_dump_aio_position,
-    ec_dump_aio_length,
-    ec_dump_aio_open_state,
+    ec_dump_ai_selected,
+    ec_dump_ai_position,
+    ec_dump_ai_length,
+    ec_dump_ai_open_state,
+    ec_dump_ao_selected,
+    ec_dump_ao_position,
+    ec_dump_ao_length,
+    ec_dump_ao_open_state,
     ec_dump_cop_value
   };
 
@@ -139,10 +157,11 @@ class ECA_IAMODE_PARSER {
   bool action_requires_connected(int id);
   bool action_requires_selected_not_connected(int id);
   bool action_requires_selected(int id);
-  bool action_requires_selected_audio_object(int id);
+  bool action_requires_selected_audio_input(int id);
+  bool action_requires_selected_audio_output(int id);
 
   ECA_IAMODE_PARSER(void) { register_commands(); }
-  virtual ~ECA_IAMODE_PARSER(void) { }
+  virtual ~ECA_IAMODE_PARSER(void);
 };
 
 void show_controller_help(void);

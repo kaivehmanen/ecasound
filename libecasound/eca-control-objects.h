@@ -12,9 +12,19 @@ class CHAIN_OPERATOR;
  */
 class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
 
+  AUDIO_IO* selected_audio_object_repp;
+
  protected:
 
-  AUDIO_IO* selected_audio_object_repp;
+  AUDIO_IO* selected_audio_input_repp;
+  AUDIO_IO* selected_audio_output_repp;
+
+  void audio_input_as_selected(void);
+  void audio_output_as_selected(void);
+  void rewind_audio_object(double seconds);
+  void forward_audio_object(double seconds);
+  void set_audio_object_position(double seconds);
+  void wave_edit_audio_object(void);
 
   void send_chain_commands_to_engine(int command, double value);
 
@@ -78,6 +88,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void rewind_chains(double pos_in_seconds);
   void forward_chains(double pos_in_seconds);
   void set_position_chains(double pos_in_seconds);
+  void change_position_chains(double change_in_seconds);
 
   // -------------------------------------------------------------------
   // Audio-devices  (active chainsetup is edited)
@@ -86,21 +97,20 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void add_audio_input(const string& filename);
   void add_audio_output(const string& filename);
   void add_default_output(void);
-  void remove_audio_object(void);
-  void attach_audio_object(void);
-  void rewind_audio_object(double seconds);
-  void forward_audio_object(double seconds);
-  void set_audio_object_position(double seconds);
-  void wave_edit_audio_object(void);
-  void select_audio_object(const string& name);
+  void remove_audio_input(void);
+  void remove_audio_output(void);
+  void attach_audio_input(void);
+  void attach_audio_output(void);
   void select_audio_input(const string& name);
   void select_audio_output(const string& name);
-  void select_audio_object_by_index(const string& name);
+  void select_audio_input_by_index(int index);
+  void select_audio_output_by_index(int index);
   void set_default_audio_format(const string& sfrm, int channels, long int srate, bool interleaving);
   void set_default_audio_format(const ECA_AUDIO_FORMAT& format);
 
-  AUDIO_IO* get_audio_object(void) const;
-  ECA_AUDIO_FORMAT get_audio_format(void);
+  AUDIO_IO* get_audio_output(void) const;
+  AUDIO_IO* get_audio_input(void) const;
+  ECA_AUDIO_FORMAT get_audio_format(AUDIO_IO* aobj) const;
 
   // -------------------------------------------------------------------
   // Chain operators (currently selected chainsetup and chains)

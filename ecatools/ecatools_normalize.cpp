@@ -21,8 +21,10 @@
 #include <string>
 #include <cstdio>
 #include <signal.h>
+#include <stdlib.h>
 
 #include <kvutils/com_line.h>
+#include <kvutils/temporary_file_directory.h>
 
 #include <eca-debug.h>
 #include <eca-error.h>
@@ -67,10 +69,21 @@ int main(int argc, char *argv[])
     double multiplier;
     EFFECT_ANALYZE* volume = 0;
     EFFECT_AMPLIFY* amp = 0;
-
-    ecatools_normalize_tempfile = string(tmpnam(NULL));
-    ecatools_normalize_tempfile += ".wav";
     
+    TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
+    string tmpdir ("ecatools-");
+    char* tmp_p = getenv("USER");
+    if (tmp_p != NULL) {
+      tmpdir += string(tmp_p);
+      tempfile_dir_rep.reserve_directory(tmpdir);
+    }
+    if (tempfile_dir_rep.is_valid() != true) {
+      cerr << "---\nError while creating temporary directory \"" << tmpdir << "\". Exiting...\n";
+      return(0);
+    }
+
+    ecatools_normalize_tempfile = tempfile_dir_rep.create_filename("normalize-tmp", ".wav");
+
     ECA_SESSION esession;
     ECA_CONTROL ectrl (&esession);
     ECA_PROCESSOR emain;  
@@ -89,15 +102,15 @@ int main(int argc, char *argv[])
 	if (m == 0) {
 	  cerr << "Analyzing file \"" << filename << "\".\n";
 	  ectrl.add_audio_input(filename);
-	  if (ectrl.get_audio_object() == 0) {
+	  if (ectrl.get_audio_input() == 0) {
 	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	    break;
 	  }
-	  aio_params = ectrl.get_audio_format();
+	  aio_params = ectrl.get_audio_format(ectrl.get_audio_input());
 	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(string(ecatools_normalize_tempfile));
-	  if (ectrl.get_audio_object() == 0) {
+	  if (ectrl.get_audio_output() == 0) {
 	    cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
 	    break;
 	  }
@@ -107,15 +120,15 @@ int main(int argc, char *argv[])
 	}
 	else {
 	  ectrl.add_audio_input(string(ecatools_normalize_tempfile));
-	  if (ectrl.get_audio_object() == 0) {
+	  if (ectrl.get_audio_input() == 0) {
 	    cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
 	    break;
 	  }
-	  aio_params = ectrl.get_audio_format();
+	  aio_params = ectrl.get_audio_format(ectrl.get_audio_input());
 	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(filename);
-	  if (ectrl.get_audio_object() == 0) {
+	  if (ectrl.get_audio_output() == 0) {
 	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	    break;
 	  }

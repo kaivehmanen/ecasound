@@ -173,9 +173,14 @@ void ECA_CONTROL::action(int action_id) {
     set_last_error("Can't perform requested action; argument omitted.");
     return;
   }
-  else if (selected_audio_object_repp == 0 &&
-      action_requires_selected_audio_object(action_id)) {
-    set_last_error("Can't perform requested action; no audio object selected.");
+  else if (get_audio_input() == 0 &&
+	   action_requires_selected_audio_input(action_id)) {
+    set_last_error("Can't perform requested action; no audio input selected.");
+    return;
+  }
+  else if (get_audio_output() == 0 &&
+	   action_requires_selected_audio_output(action_id)) {
+    set_last_error("Can't perform requested action; no audio output selected.");
     return;
   }
   else if (is_selected() == false &&
@@ -368,48 +373,80 @@ void ECA_CONTROL::action(int action_id) {
   case ec_c_list: { set_last_string_list(chain_names()); break; }
 
     // ---
-    // Audio objects
+    // Actions common to audio inputs and outputs
     // ---
-  case ec_aio_add_input: { add_audio_input(action_args_rep[0]); break; }
-  case ec_aio_add_output: { if (action_args_rep.size() == 0) add_default_output(); else add_audio_output(action_args_rep[0]); break; }
-  case ec_aio_select: { select_audio_object(action_args_rep[0]); break; }
-  case ec_aio_select_input: { select_audio_input(action_args_rep[0]); break; }
-  case ec_aio_select_output: { select_audio_output(action_args_rep[0]); break; }
-  case ec_aio_selected: { set_last_string(get_audio_object()->label()); break; }
-  case ec_aio_index_select: { 
-    if (action_args_rep[0].empty() != true) {
-      if (action_args_rep[0][0] != 'i' && action_args_rep[0][0] != 'o') {
-	set_last_error("Invalid audio-input/output index.");
-      }
-      else {
-	select_audio_object_by_index(action_args_rep[0]);
-      }
-    }
-    break; 
-  }
-  case ec_aio_attach: { attach_audio_object(); break; }
-  case ec_aio_remove: { remove_audio_object(); break; }
-  case ec_aio_status: 
+  case ec_aio_status:
+  case ec_ai_status:
+  case ec_ao_status:
     { 
       ecadebug->control_flow("Controller/Audio input/output status");
       set_last_string(aio_status()); 
       break; 
     }
-  case ec_aio_forward: 
+  case ec_aio_register: { aio_register(); break; }
+
+    // ---
+    // Audio input objects
+    // ---
+  case ec_ai_add: { add_audio_input(action_args_rep[0]); break; }
+  case ec_ai_select: { select_audio_input(action_args_rep[0]); break; }
+  case ec_ai_selected: { set_last_string(get_audio_input()->label()); break; }
+  case ec_ai_index_select: { 
+    if (action_args_rep[0].empty() != true) {
+	select_audio_input_by_index(atoi(action_args_rep[0].c_str()));
+    }
+    break; 
+  }
+  case ec_ai_attach: { attach_audio_input(); break; }
+  case ec_ai_remove: { remove_audio_input(); break; }
+
+  case ec_ai_forward: 
     { 
+      audio_input_as_selected();
       forward_audio_object(first_argument_as_number()); 
       break; 
     }
-  case ec_aio_rewind: 
+  case ec_ai_rewind: 
     { 
+      audio_input_as_selected();
       rewind_audio_object(first_argument_as_number()); 
       break; 
     }
-  case ec_aio_set_position: { set_audio_object_position(first_argument_as_number()); break; }
-  case ec_aio_get_position: { set_last_float(get_audio_object()->position().seconds()); break; }
-  case ec_aio_get_length: { set_last_float(get_audio_object()->length().seconds()); break; }
-  case ec_aio_wave_edit: { wave_edit_audio_object(); break; }
-  case ec_aio_register: { aio_register(); break; }
+  case ec_ai_set_position: { audio_input_as_selected(); set_audio_object_position(first_argument_as_number()); break; }
+  case ec_ai_get_position: { set_last_float(get_audio_input()->position().seconds()); break; }
+  case ec_ai_get_length: { set_last_float(get_audio_input()->length().seconds()); break; }
+  case ec_ai_wave_edit: { audio_input_as_selected(); wave_edit_audio_object(); break; }
+
+    // ---
+    // Audio output objects
+    // ---
+  case ec_ao_add: { if (action_args_rep.size() == 0) add_default_output(); else add_audio_output(action_args_rep[0]); break; }
+  case ec_ao_select: { select_audio_output(action_args_rep[0]); break; }
+  case ec_ao_selected: { set_last_string(get_audio_output()->label()); break; }
+  case ec_ao_index_select: { 
+    if (action_args_rep[0].empty() != true) {
+      select_audio_output_by_index(atoi(action_args_rep[0].c_str()));
+    }
+    break; 
+  }
+  case ec_ao_attach: { attach_audio_output(); break; }
+  case ec_ao_remove: { remove_audio_output(); break; }
+  case ec_ao_forward: 
+    { 
+      audio_output_as_selected();
+      forward_audio_object(first_argument_as_number()); 
+      break; 
+    }
+  case ec_ao_rewind: 
+    { 
+      audio_output_as_selected();
+      rewind_audio_object(first_argument_as_number()); 
+      break; 
+    }
+  case ec_ao_set_position: { audio_output_as_selected(); set_audio_object_position(first_argument_as_number()); break; }
+  case ec_ao_get_position: { set_last_float(get_audio_output()->position().seconds()); break; }
+  case ec_ao_get_length: { set_last_float(get_audio_output()->length().seconds()); break; }
+  case ec_ao_wave_edit: { audio_output_as_selected(); wave_edit_audio_object(); break; }
 
     // ---
     // Chain operators
@@ -495,10 +532,14 @@ void ECA_CONTROL::action(int action_id) {
   case ec_dump_length: { ctrl_dump_rep.dump_length(); break; }
   case ec_dump_cs_status: { ctrl_dump_rep.dump_chainsetup_status(); break; }
   case ec_dump_c_selected: { ctrl_dump_rep.dump_selected_chain(); break; }
-  case ec_dump_aio_selected: { ctrl_dump_rep.dump_selected_audio_object(); break; }
-  case ec_dump_aio_position: { ctrl_dump_rep.dump_audio_object_position(); break; }
-  case ec_dump_aio_length: { ctrl_dump_rep.dump_audio_object_length(); break; }
-  case ec_dump_aio_open_state: { ctrl_dump_rep.dump_audio_object_open_state(); break; }
+  case ec_dump_ai_selected: { ctrl_dump_rep.dump_selected_audio_input(); break; }
+  case ec_dump_ai_position: { ctrl_dump_rep.dump_audio_input_position(); break; }
+  case ec_dump_ai_length: { ctrl_dump_rep.dump_audio_input_length(); break; }
+  case ec_dump_ai_open_state: { ctrl_dump_rep.dump_audio_input_open_state(); break; }
+  case ec_dump_ao_selected: { ctrl_dump_rep.dump_selected_audio_output(); break; }
+  case ec_dump_ao_position: { ctrl_dump_rep.dump_audio_output_position(); break; }
+  case ec_dump_ao_length: { ctrl_dump_rep.dump_audio_output_length(); break; }
+  case ec_dump_ao_open_state: { ctrl_dump_rep.dump_audio_output_open_state(); break; }
   case ec_dump_cop_value: 
     { 
       if (action_args_rep.size() > 1) {
@@ -718,13 +759,13 @@ string ECA_CONTROL::aio_status(void) const {
   adev_citer = selected_chainsetup_repp->inputs.begin();
   
   while(adev_citer != selected_chainsetup_repp->inputs.end()) {
-    st_info_string += "Input (i" + kvu_numtostr(adev_sizet + 1) + "): \"";
+    st_info_string += "Input (" + kvu_numtostr(adev_sizet + 1) + "): \"";
     for(int n = 0; n < (*adev_citer)->number_of_params(); n++) {
       st_info_string += (*adev_citer)->get_parameter(n + 1);
       if (n + 1 < (*adev_citer)->number_of_params()) st_info_string += ",";
     }
     st_info_string += "\" - [" + (*adev_citer)->name() + "]";
-    if ((*adev_citer) == selected_audio_object_repp) st_info_string += " [selected]";
+    if ((*adev_citer) == selected_audio_input_repp) st_info_string += " [selected]";
     st_info_string += "\n -> connected to chains \"";
     vector<string> temp = selected_chainsetup_repp->get_attached_chains_to_input((selected_chainsetup_repp->inputs)[adev_sizet]);
     vector<string>::const_iterator p = temp.begin();
@@ -741,13 +782,13 @@ string ECA_CONTROL::aio_status(void) const {
   adev_sizet = 0;
   adev_citer = selected_chainsetup_repp->outputs.begin();
   while(adev_citer != selected_chainsetup_repp->outputs.end()) {
-    st_info_string += "Output (o" + kvu_numtostr(adev_sizet + 1) + "): \"";
+    st_info_string += "Output (" + kvu_numtostr(adev_sizet + 1) + "): \"";
     for(int n = 0; n < (*adev_citer)->number_of_params(); n++) {
       st_info_string += (*adev_citer)->get_parameter(n + 1);
       if (n + 1 < (*adev_citer)->number_of_params()) st_info_string += ",";
     }
     st_info_string += "\" - [" + (*adev_citer)->name() + "]";
-    if ((*adev_citer) == selected_audio_object_repp) st_info_string += " [selected]";
+    if ((*adev_citer) == selected_audio_output_repp) st_info_string += " [selected]";
     st_info_string += "\n -> connected to chains \"";
     vector<string> temp = selected_chainsetup_repp->get_attached_chains_to_output((selected_chainsetup_repp->outputs)[adev_sizet]);
     vector<string>::const_iterator p = temp.begin();

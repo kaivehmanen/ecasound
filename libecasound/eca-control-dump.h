@@ -54,27 +54,50 @@ class ECA_CONTROL_DUMP {
   // --
 
   /**
-   * Dumps label of currently selected audio object. If no
-   * object is selected, dumps an empty string.
+   * Dumps label of currently selected audio input. If no
+   * input is selected, dumps an empty string.
    */
-  void dump_selected_audio_object(void);
+  void dump_selected_audio_input(void);
 
   /**
-   * Dumps position of currently selected audio objects. 
+   * Dumps position of currently selected audio input. 
    * Printed in seconds, using a floating-point representation.
    */
-  void dump_audio_object_position(void);
+  void dump_audio_input_position(void);
 
   /**
-   * Dumps length of currently selected audio object. 
+   * Dumps length of currently selected audio input. 
    * Printed in seconds, using a floating-point representation.
    */
-  void dump_audio_object_length(void);
+  void dump_audio_input_length(void);
 
   /**
-   * Dumps audio object state info. Either 'open' or 'closed'.
+   * Dumps audio input state info. Either 'open' or 'closed'.
    */
-  void dump_audio_object_open_state(void);
+  void dump_audio_input_open_state(void);
+
+  /**
+   * Dumps label of currently selected audio output. If no
+   * output is selected, dumps an empty string.
+   */
+  void dump_selected_audio_output(void);
+
+  /**
+   * Dumps position of currently selected audio outputs. 
+   * Printed in seconds, using a floating-point representation.
+   */
+  void dump_audio_output_position(void);
+
+  /**
+   * Dumps length of currently selected audio output. 
+   * Printed in seconds, using a floating-point representation.
+   */
+  void dump_audio_output_length(void);
+
+  /**
+   * Dumps audio output state info. Either 'open' or 'closed'.
+   */
+  void dump_audio_output_open_state(void);
 
   // --
   // Chain operators

@@ -62,7 +62,10 @@ int MIDI_IO::io_mode(void) const { return(io_mode_rep); }
 void MIDI_IO::io_mode(int mode) { io_mode_rep = mode; }
 
 /**
- * Sets object label. Label is used to identify the object.
+ * Sets object label. Label is used to identify the object instance.
+ * Unlike ECA_OBJECT::name(), label() is not necessarily unique 
+ * among different class instances. Device and file names are typical 
+ * label values.
  *
  * require:
  *  is_open() != true
@@ -78,9 +81,8 @@ void MIDI_IO::label(const string& id_label) { id_label_rep = id_label; }
 void MIDI_IO::toggle_nonblocking_mode(bool value) { nonblocking_rep = value; }
 
 /**
- * Returns the current label. Label can be used for object
- * identification (although not necessarily unique among all
- * objects). Device and file names are typical label values.
+ * Returns the current label. See documentation for 
+ * label(const string&).
  */
 const string& MIDI_IO::label(void) const { return(id_label_rep); }
 

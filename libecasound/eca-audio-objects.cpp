@@ -50,7 +50,7 @@ ECA_AUDIO_OBJECTS::ECA_AUDIO_OBJECTS(void)
     double_buffering_rep (false),
     precise_sample_rates_rep (false),
     ignore_xruns_rep(true),
-    max_buffers_rep(true),
+    max_buffers_rep(false),
     output_openmode_rep (AUDIO_IO::io_readwrite),
     buffersize_rep(0),
     selected_chainids (0) { }
@@ -525,16 +525,18 @@ void ECA_AUDIO_OBJECTS::remove_midi_device(const string& mdev_name) {
 }
 
 string ECA_AUDIO_OBJECTS::midi_to_string(void) const { 
-  MESSAGE_ITEM t; 
+  MESSAGE_ITEM t;
   t.setprecision(3);
 
-  // FIXME: don't use name() fro saving, but use a set of 
-  //        set_/get_param calls like with audioio objs
   vector<MIDI_IO*>::size_type p = 0;
   while (p < midi_devices.size()) {
-    t << "-Md:" << midi_devices[p]->name() << " ";
+    t << "-Md:";
+    for(int n = 0; n < midi_devices[p]->number_of_params(); n++) {
+      t << midi_devices[p]->get_parameter(n + 1);
+      if (n + 1 < midi_devices[p]->number_of_params()) t << ",";
+    }
     ++p;
-    if (p < chains.size()) t << "\n";
+    if (p < midi_devices.size()) t << " ";
   }
 
   return(t.to_string());

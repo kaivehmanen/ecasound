@@ -1270,6 +1270,7 @@ void ECA_CHAINSETUP::save_to_file(const string& filename) throw(ECA_ERROR&) {
   }
 
   fout << options_general << "\n";
+  fout << midi_to_string() << "\n";
   fout << inputs_to_string() << "\n";
   fout << outputs_to_string() << "\n";
   fout << chains_to_string() << "\n";

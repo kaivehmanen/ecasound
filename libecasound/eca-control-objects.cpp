@@ -40,6 +40,8 @@
 ECA_CONTROL_OBJECTS::ECA_CONTROL_OBJECTS (ECA_SESSION* psession) 
   : ECA_CONTROL_BASE(psession) {
   selected_audio_object_repp = 0;
+  selected_audio_input_repp = 0;
+  selected_audio_output_repp = 0;
 }
 
 /**
@@ -998,10 +1000,15 @@ void ECA_CONTROL_OBJECTS::toggle_chain_bypass(void) {
 void ECA_CONTROL_OBJECTS::rewind_chains(double pos_in_seconds) { 
   // --------
   // require:
-  assert(is_selected() == true && is_connected() == true);
+  assert(is_selected() == true);
   assert(selected_chains().size() > 0);
   // --------
-  send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_rewind, pos_in_seconds);
+  if (connected_chainsetup() == selected_chainsetup()) {
+    send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_rewind, pos_in_seconds);
+  }
+  else {
+    change_position_chains(-pos_in_seconds);
+  }
 }
 
 /**
@@ -1014,14 +1021,59 @@ void ECA_CONTROL_OBJECTS::rewind_chains(double pos_in_seconds) {
 void ECA_CONTROL_OBJECTS::forward_chains(double pos_in_seconds) { 
   // --------
   // require:
-  assert(is_selected() == true && is_connected() == true);
+  assert(is_selected() == true);
   assert(selected_chains().size() > 0);
   // --------
-  send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_forward, pos_in_seconds);
+  if (connected_chainsetup() == selected_chainsetup()) {
+    send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_forward, pos_in_seconds);
+  }
+  else {
+    change_position_chains(pos_in_seconds);
+  }
+
 }
 
 /**
- * Sets position of selected chains to 'pos_in_seconds' seconds
+ * Change the relative position of selected chains by 
+ * 'pos_in_seconds' seconds. Affects all inputs and outputs
+ * connected to these chains.
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() > 0
+ */
+void ECA_CONTROL_OBJECTS::change_position_chains(double change_in_seconds) { 
+  // --------
+  // require:
+  assert(is_selected() == true);
+  assert(selected_chains().size() > 0);
+  // --------
+  if (connected_chainsetup() == selected_chainsetup()) {
+    send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_setpos, change_in_seconds);
+  }
+  else {
+    const vector<string>& schains = selected_chainsetup_repp->selected_chains();
+    vector<string>::const_iterator o = schains.begin();
+    while(o != schains.end()) {
+      for(vector<CHAIN*>::size_type p = 0; 
+	  p != selected_chainsetup_repp->chains.size();
+	  p++) {
+	if (selected_chainsetup_repp->chains[p]->name() == *o) {
+	  double previous = selected_chainsetup_repp->chains[p]->input_id_repp->position_in_seconds_exact();
+	  selected_chainsetup_repp->chains[p]->input_id_repp->seek_position_in_seconds(previous + change_in_seconds);
+	  previous = selected_chainsetup_repp->chains[p]->output_id_repp->position_in_seconds_exact();
+	  selected_chainsetup_repp->chains[p]->output_id_repp->seek_position_in_seconds(previous + change_in_seconds);
+	  break;
+	}
+      }
+      ++o;
+    }
+  }
+}
+
+/**
+ * Sets position of selected chains to 'pos_in_seconds' seconds.
+ * Affects all inputs and outputs connected to these chains.
  *
  * require:
  *  is_selected() == true
@@ -1052,6 +1104,14 @@ void ECA_CONTROL_OBJECTS::set_position_chains(double pos_in_seconds) {
       ++o;
     }
   }
+}
+
+void ECA_CONTROL_OBJECTS::audio_input_as_selected(void) {
+  selected_audio_object_repp = selected_audio_input_repp;
+}
+
+void ECA_CONTROL_OBJECTS::audio_output_as_selected(void) {
+  selected_audio_object_repp = selected_audio_output_repp;
 }
 
 /**
@@ -1112,21 +1172,6 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const ECA_AUDIO_FORMAT& forma
 }
 
 /**
- * Selects an audio object
- *
- * require:
- *  is_selected() == true
- */
-void ECA_CONTROL_OBJECTS::select_audio_object(const string& name) { 
-  // --------
-  // require:
-  assert(is_selected() == true);
-  // --------
-  select_audio_input(name);
-  if (selected_audio_object_repp == 0) select_audio_output(name);
-}
-
-/**
  * Selects an audio input
  *
  * require:
@@ -1138,11 +1183,11 @@ void ECA_CONTROL_OBJECTS::select_audio_input(const string& name) {
   assert(is_selected() == true);
   // --------
 
-  selected_audio_object_repp = 0;
+  selected_audio_input_repp = 0;
   vector<AUDIO_IO*>::size_type p = 0;  
   for(p = 0; p != selected_chainsetup_repp->inputs.size(); p++) {
     if (selected_chainsetup_repp->inputs[p]->label() == name) {
-      selected_audio_object_repp = selected_chainsetup_repp->inputs[p];
+      selected_audio_input_repp = selected_chainsetup_repp->inputs[p];
     }
   }
 }
@@ -1159,83 +1204,92 @@ void ECA_CONTROL_OBJECTS::select_audio_output(const string& name) {
   assert(is_selected() == true);
   // --------
 
-  selected_audio_object_repp = 0;
+  selected_audio_output_repp = 0;
   vector<AUDIO_IO*>::size_type p = 0;  
   for(p = 0; p != selected_chainsetup_repp->outputs.size(); p++) {
     if (selected_chainsetup_repp->outputs[p]->label() == name) {
-      selected_audio_object_repp = selected_chainsetup_repp->outputs[p];
+      selected_audio_output_repp = selected_chainsetup_repp->outputs[p];
     }
   }
 }
 
 /**
- * Selects an audio object by index (see aio_status())
+ * Selects an audio input by index.
  *
  * require:
  *  is_selected() == true
- *  index.empty() != true
- *  index[0] == 'i' || index[0] == 'o'
+ *  index > 0
  */
-void ECA_CONTROL_OBJECTS::select_audio_object_by_index(const string& index) { 
+void ECA_CONTROL_OBJECTS::select_audio_input_by_index(int index_number) { 
   // --------
   // require:
   assert(is_selected() == true);
-  assert(index.empty() != true);
-  assert(index[0] == 'i' || index[0] == 'o');
+  assert(index > 0);
   // --------
 
-  selected_audio_object_repp = 0;
-  int index_number = ::atoi(string(index.begin() + 1,
-				 index.end()).c_str());
-
+  selected_audio_input_repp = 0;
   vector<AUDIO_IO*>::size_type p = 0;
-  if (index[0] == 'i') {
-    for(p = 0; p != selected_chainsetup_repp->inputs.size(); p++) {
-      if (index_number == static_cast<int>(p + 1)) {
-	selected_audio_object_repp = selected_chainsetup_repp->inputs[p];
-      }
-    }
-  }  
-  else if (index[0] == 'o') {
-    for(p = 0; p != selected_chainsetup_repp->outputs.size(); p++) {
-      if (index_number == static_cast<int>(p + 1)) {
-	selected_audio_object_repp = selected_chainsetup_repp->outputs[p];
-      }
+  for(p = 0; p != selected_chainsetup_repp->inputs.size(); p++) {
+    if (index_number == static_cast<int>(p + 1)) {
+      selected_audio_input_repp = selected_chainsetup_repp->inputs[p];
     }
   }
 }
 
 /**
- * Gets audio format of currently selected audio object. 
- * Note! This function is not a const member, because
- * it will open the targer audio object, if necessary.
+ * Selects an audio output by index.
  *
  * require:
- *  get_audio_object() != 0
  *  is_selected() == true
+ *  index > 0
  */
-ECA_AUDIO_FORMAT ECA_CONTROL_OBJECTS::get_audio_format(void) {
+void ECA_CONTROL_OBJECTS::select_audio_output_by_index(int index_number) { 
   // --------
   // require:
   assert(is_selected() == true);
-  assert(get_audio_object() != 0);
+  assert(index > 0);
+  // --------
+
+  selected_audio_output_repp = 0;
+  vector<AUDIO_IO*>::size_type p = 0;
+  for(p = 0; p != selected_chainsetup_repp->outputs.size(); p++) {
+    if (index_number == static_cast<int>(p + 1)) {
+      selected_audio_output_repp = selected_chainsetup_repp->outputs[p];
+    }
+  }
+}
+
+/**
+ * Gets audio format information of the object given as argument.
+ * Note! To get audio format information, audio objects need
+ * to be opened. Because of this, object argument cannot be given 
+ * as a const pointer.
+ *
+ * require:
+ *  selected_audio_object_repp != 0
+ */
+ECA_AUDIO_FORMAT ECA_CONTROL_OBJECTS::get_audio_format(AUDIO_IO* aobj) const {
+  // --------
+  // require:
+  assert(is_selected() == true);
+  assert(aobj != 0);
   // --------
 
   bool was_open = true;
-  if (selected_audio_object_repp->is_open() == false) {
+  if (aobj->is_open() == false) {
     was_open = false;
     try {
-      selected_audio_object_repp->open();
+      aobj->open();
     }
     catch(AUDIO_IO::SETUP_ERROR&) { 
       // FIXME: what to do here?
     }
   }
-  ECA_AUDIO_FORMAT t (selected_audio_object_repp->channels(), 
-		      selected_audio_object_repp->samples_per_second(), 
-		      selected_audio_object_repp->sample_format(),
-		      selected_audio_object_repp->interleaved_channels());
-  if (was_open == false) selected_audio_object_repp->close();
+  ECA_AUDIO_FORMAT t (aobj->channels(), 
+		      aobj->samples_per_second(), 
+		      aobj->sample_format(),
+		      aobj->interleaved_channels());
+  if (was_open == false) aobj->close();
   return(t);
 }
 
@@ -1257,9 +1311,9 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
   // --------
 
   try {
-    selected_audio_object_repp = 0;
+    selected_audio_input_repp = 0;
     selected_chainsetup_repp->interpret_object_option("-i:" + filename);
-    select_audio_object(filename);
+    select_audio_input(filename);
     ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
   }
   catch(ECA_ERROR& e) {
@@ -1285,9 +1339,9 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
   assert(connected_chainsetup() != selected_chainsetup());
   // --------
   try {
-    selected_audio_object_repp = 0;
+    selected_audio_output_repp = 0;
     selected_chainsetup_repp->interpret_object_option("-o:" + filename);
-    select_audio_object(filename);
+    select_audio_output(filename);
     ecadebug->msg("(eca-controller) Added audio output \"" + filename +
 		  "\".");
   }
@@ -1316,72 +1370,130 @@ void ECA_CONTROL_OBJECTS::add_default_output(void) {
 }
 
 /** 
- * Gets a pointer to the currently selected audio object. 
+ * Gets a pointer to the currently selected audio input. 
  * Returns 0 if no audio object is selected.
  *
  * require:
  *  is_selected() == true
  */
-AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_object(void) const {
+AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_input(void) const {
   // --------
   REQUIRE(is_selected() == true);
   // --------
-  return(selected_audio_object_repp);
+  return(selected_audio_input_repp);
+}
+
+/** 
+ * Gets a pointer to the currently selected audio output.
+ * Returns 0 if no audio object is selected.
+ *
+ * require:
+ *  is_selected() == true
+ */
+AUDIO_IO* ECA_CONTROL_OBJECTS::get_audio_output(void) const {
+  // --------
+  REQUIRE(is_selected() == true);
+  // --------
+  return(selected_audio_output_repp);
 }
 
 /**
- * Removes selected audio input/output
+ * Removes the selected audio input.
  *
  * require:
  *  is_selected() == true
  *  connected_chainsetup() != selected_chainsetup()
- *  get_audio_object() != 0
+ *  get_audio_input() != 0
  *
  * ensure:
- *  selected_audio_object_repp = 0
+ *  selected_audio_input_repp = 0
  */
-void ECA_CONTROL_OBJECTS::remove_audio_object(void) { 
+void ECA_CONTROL_OBJECTS::remove_audio_input(void) { 
   // --------
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(get_audio_object() != 0);
+  assert(get_audio_input() != 0);
   // --------
-  ecadebug->msg("(eca-controller) Removing selected audio object \"" + selected_audio_object_repp->label() +
+  ecadebug->msg("(eca-controller) Removing selected audio input \"" + selected_audio_input_repp->label() +
 		"\" from selected chains.");
-  if (selected_audio_object_repp->io_mode() == AUDIO_IO::io_read) 
-    selected_chainsetup_repp->remove_audio_input(selected_audio_object_repp->label());
-  else 
-    selected_chainsetup_repp->remove_audio_output(selected_audio_object_repp->label());
-  selected_audio_object_repp = 0;
+  selected_chainsetup_repp->remove_audio_input(selected_audio_input_repp->label());
+  selected_audio_input_repp = 0;
 
   // --------
   // ensure:
-  assert(selected_audio_object_repp == 0);
+  assert(selected_audio_input_repp == 0);
   // --------
 }
 
 /**
- * Attaches selected audio object to selected chains
+ * Removes the selected audio output.
  *
  * require:
  *  is_selected() == true
  *  connected_chainsetup() != selected_chainsetup()
- *  get_audio_object() != 0
+ *  get_audio_output() != 0
+ *
+ * ensure:
+ *  selected_audio_output_repp = 0
  */
-void ECA_CONTROL_OBJECTS::attach_audio_object(void) {
+void ECA_CONTROL_OBJECTS::remove_audio_output(void) { 
   // --------
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(get_audio_object() != 0);
+  assert(get_audio_output() != 0);
   // --------
-  if (selected_audio_object_repp->io_mode() == AUDIO_IO::io_read) 
-    selected_chainsetup_repp->attach_input_to_selected_chains(selected_audio_object_repp);
-  else
-    selected_chainsetup_repp->attach_output_to_selected_chains(selected_audio_object_repp);
+  ecadebug->msg("(eca-controller) Removing selected audio output \"" + selected_audio_output_repp->label() +
+		"\" from selected chains.");
+  selected_chainsetup_repp->remove_audio_output(selected_audio_output_repp->label());
+  selected_audio_output_repp = 0;
 
-  ecadebug->msg("(eca-controller) Attached audio object \"" + selected_audio_object_repp->label() +
+  // --------
+  // ensure:
+  assert(selected_audio_output_repp == 0);
+  // --------
+}
+
+/**
+ * Attaches selected audio input to selected chains
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  get_audio_input() != 0
+ */
+void ECA_CONTROL_OBJECTS::attach_audio_input(void) {
+  // --------
+  // require:
+  assert(is_selected() == true);
+  assert(connected_chainsetup() != selected_chainsetup());
+  assert(get_audio_input() != 0);
+  // --------
+  selected_chainsetup_repp->attach_input_to_selected_chains(selected_audio_input_repp);
+
+  ecadebug->msg("(eca-controller) Attached audio input \"" + selected_audio_input_repp->label() +
+		"\" to selected chains.");
+}
+
+/**
+ * Attaches selected audio output to selected chains
+ *
+ * require:
+ *  is_selected() == true
+ *  connected_chainsetup() != selected_chainsetup()
+ *  get_audio_output() != 0
+ */
+void ECA_CONTROL_OBJECTS::attach_audio_output(void) {
+  // --------
+  // require:
+  assert(is_selected() == true);
+  assert(connected_chainsetup() != selected_chainsetup());
+  assert(get_audio_output() != 0);
+  // --------
+  selected_chainsetup_repp->attach_output_to_selected_chains(selected_audio_output_repp);
+
+  ecadebug->msg("(eca-controller) Attached audio output \"" + selected_audio_output_repp->label() +
 		"\" to selected chains.");
 }
 
@@ -1391,14 +1503,14 @@ void ECA_CONTROL_OBJECTS::attach_audio_object(void) {
  * require:
  *  is_selected() == true
  *  connected_chainsetup() != selected_chainsetup()
- *  get_audio_object() != 0
+ *  selected_audio_object_repp != 0
  */
 void ECA_CONTROL_OBJECTS::rewind_audio_object(double seconds) {
   // --------
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(get_audio_object() != 0);
+  assert(get_audio_input() != 0 || get_audio_output() != 0);
   // --------
   selected_audio_object_repp->seek_position_in_seconds(selected_audio_object_repp->position_in_seconds_exact() - seconds);
 }
@@ -1409,14 +1521,14 @@ void ECA_CONTROL_OBJECTS::rewind_audio_object(double seconds) {
  * require:
  *  is_selected() == true
  *  connected_chainsetup() != selected_chainsetup()
- *  get_audio_object() != 0
+ *  selected_audio_object_repp != 0
  */
 void ECA_CONTROL_OBJECTS::forward_audio_object(double seconds) {
   // --------
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(get_audio_object() != 0);
+  assert(selected_audio_object_repp != 0);
   // --------
   selected_audio_object_repp->seek_position_in_seconds(selected_audio_object_repp->position_in_seconds_exact() + seconds);
 }
@@ -1427,14 +1539,14 @@ void ECA_CONTROL_OBJECTS::forward_audio_object(double seconds) {
  * require:
  *  is_selected() == true
  *  connected_chainsetup() != selected_chainsetup()
- *  get_audio_object() != 0
+ *  selected_audio_object_repp != 0
  */
 void ECA_CONTROL_OBJECTS::set_audio_object_position(double seconds) {
   // --------
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(get_audio_object() != 0);
+  assert(selected_audio_object_repp != 0);
   // --------
   selected_audio_object_repp->seek_position_in_seconds(seconds);
 }
@@ -1445,14 +1557,14 @@ void ECA_CONTROL_OBJECTS::set_audio_object_position(double seconds) {
  * require:
  *  is_selected() 
  *  connected_chainsetup() != selected_chainsetup()
- *  get_audio_object() != 0
+ *  selected_audio_object_repp != 0
  */
 void ECA_CONTROL_OBJECTS::wave_edit_audio_object(void) {
   // --------
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(get_audio_object() != 0);
+  assert(selected_audio_object_repp != 0);
   // --------
   string name = selected_audio_object_repp->label();
 

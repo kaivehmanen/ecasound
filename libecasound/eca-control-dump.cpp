@@ -60,43 +60,82 @@ void ECA_CONTROL_DUMP::dump_selected_chain(void) {
     dump("dump-c-selected", "");
 }
 
-void ECA_CONTROL_DUMP::dump_selected_audio_object(void) { 
-  AUDIO_IO* t = ctrl_repp->get_audio_object();
+void ECA_CONTROL_DUMP::dump_selected_audio_input(void) { 
+  AUDIO_IO* t = ctrl_repp->get_audio_input();
   if (t != 0) {
-    dump("dump-aio-selected", t->label());
+    dump("dump-ai-selected", t->label());
   }
   else
-    dump("dump-aio-selected", "");
+    dump("dump-ai-selected", "");
 }
 
-void ECA_CONTROL_DUMP::dump_audio_object_position(void) { 
-  AUDIO_IO* t = ctrl_repp->get_audio_object();
+void ECA_CONTROL_DUMP::dump_selected_audio_output(void) { 
+  AUDIO_IO* t = ctrl_repp->get_audio_output();
   if (t != 0) {
-    dump("dump-aio-position", kvu_numtostr(t->position_in_seconds_exact()));
+    dump("dump-ao-selected", t->label());
   }
   else
-    dump("dump-aio-position", "");
+    dump("dump-ao-selected", "");
 }
 
-void ECA_CONTROL_DUMP::dump_audio_object_length(void) { 
-  AUDIO_IO* t = ctrl_repp->get_audio_object();
+void ECA_CONTROL_DUMP::dump_audio_input_position(void) { 
+  AUDIO_IO* t = ctrl_repp->get_audio_input();
   if (t != 0) {
-    dump("dump-aio-length", kvu_numtostr(t->length_in_seconds_exact()));
+    dump("dump-ai-position", kvu_numtostr(t->position_in_seconds_exact()));
   }
   else
-    dump("dump-aio-length", "");
+    dump("dump-ai-position", "");
 }
 
-void ECA_CONTROL_DUMP::dump_audio_object_open_state(void) { 
-  AUDIO_IO* t = ctrl_repp->get_audio_object();
+void ECA_CONTROL_DUMP::dump_audio_output_position(void) { 
+  AUDIO_IO* t = ctrl_repp->get_audio_output();
+  if (t != 0) {
+    dump("dump-ao-position", kvu_numtostr(t->position_in_seconds_exact()));
+  }
+  else
+    dump("dump-ao-position", "");
+}
+
+void ECA_CONTROL_DUMP::dump_audio_input_length(void) { 
+  AUDIO_IO* t = ctrl_repp->get_audio_input();
+  if (t != 0) {
+    dump("dump-ai-length", kvu_numtostr(t->length_in_seconds_exact()));
+  }
+  else
+    dump("dump-ai-length", "");
+}
+
+void ECA_CONTROL_DUMP::dump_audio_output_length(void) { 
+  AUDIO_IO* t = ctrl_repp->get_audio_output();
+  if (t != 0) {
+    dump("dump-ao-length", kvu_numtostr(t->length_in_seconds_exact()));
+  }
+  else
+    dump("dump-ao-length", "");
+}
+
+void ECA_CONTROL_DUMP::dump_audio_input_open_state(void) { 
+  AUDIO_IO* t = ctrl_repp->get_audio_input();
   if (t != 0) {
     if (t->is_open() == true) 
-      dump("dump-aio-open-state", "open");
+      dump("dump-ai-open-state", "open");
     else
-      dump("dump-aio-open-state", "closed");
+      dump("dump-ai-open-state", "closed");
   }
   else
-    dump("dump-aio-open-state", "");
+    dump("dump-ai-open-state", "");
+}
+
+void ECA_CONTROL_DUMP::dump_audio_output_open_state(void) { 
+  AUDIO_IO* t = ctrl_repp->get_audio_output();
+  if (t != 0) {
+    if (t->is_open() == true) 
+      dump("dump-ao-open-state", "open");
+    else
+      dump("dump-ao-open-state", "closed");
+  }
+  else
+    dump("dump-ao-open-state", "");
 }
 
 void ECA_CONTROL_DUMP::dump_chain_operator_value(int chainop, int param) { 

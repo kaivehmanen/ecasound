@@ -42,6 +42,8 @@ ALSA_NAMED_PCM_DEVICE_06X::ALSA_NAMED_PCM_DEVICE_06X (void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio_alsa3_pcm) construct");
 }
 
+ALSA_NAMED_PCM_DEVICE_06X::~ALSA_NAMED_PCM_DEVICE_06X(void) { }
+
 void ALSA_NAMED_PCM_DEVICE_06X::set_parameter(int param, 
 					      string value) {
   switch (param) {

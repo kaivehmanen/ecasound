@@ -29,6 +29,8 @@
 
 map<string,int> ECA_IAMODE_PARSER::cmd_map_rep;
 
+ECA_IAMODE_PARSER::~ECA_IAMODE_PARSER(void) { }
+
 vector<string> ECA_IAMODE_PARSER::registered_commands_list(void) {
   vector<string> cmdlist;
   const map<string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
@@ -113,26 +115,42 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["c-status"] = ec_c_status;
   cmd_map_rep["c-list"] = ec_c_list;
 
-  cmd_map_rep["aio-add-input"] = ec_aio_add_input;
-  cmd_map_rep["aio-add-output"] = ec_aio_add_output;
-  cmd_map_rep["aio-select"] = ec_aio_select;
-  cmd_map_rep["aio-select-input"] = ec_aio_select_input;
-  cmd_map_rep["aio-select-output"] = ec_aio_select_output;
-  cmd_map_rep["aio-index-select"] = ec_aio_index_select;
-  cmd_map_rep["aio-selected"] = ec_aio_selected;
-  cmd_map_rep["aio-attach"] = ec_aio_attach;
-  cmd_map_rep["aio-remove"] = ec_aio_remove;
-  cmd_map_rep["aio-status"] = ec_aio_status;
-  cmd_map_rep["aio-list"] = ec_aio_status;
-  cmd_map_rep["aio-forward"] = ec_aio_forward;
-  cmd_map_rep["aio-rewind"] = ec_aio_rewind;
-  cmd_map_rep["aio-setpos"] = ec_aio_set_position;
-  cmd_map_rep["aio-set-position"] = ec_aio_set_position;
-  cmd_map_rep["aio-getpos"] = ec_aio_get_position;
-  cmd_map_rep["aio-get-position"] = ec_aio_get_position;
-  cmd_map_rep["aio-get-length"] = ec_aio_get_length;
-  cmd_map_rep["aio-wave-edit"] = ec_aio_wave_edit;
   cmd_map_rep["aio-register"] = ec_aio_register;
+  cmd_map_rep["aio-status"] = ec_aio_status;
+
+  cmd_map_rep["ai-add"] = ec_ai_add;
+  cmd_map_rep["ai-select"] = ec_ai_select;
+  cmd_map_rep["ai-index-select"] = ec_ai_index_select;
+  cmd_map_rep["ai-selected"] = ec_ai_selected;
+  cmd_map_rep["ai-attach"] = ec_ai_attach;
+  cmd_map_rep["ai-remove"] = ec_ai_remove;
+  cmd_map_rep["ai-status"] = ec_ai_status;
+  cmd_map_rep["ai-list"] = ec_ai_status;
+  cmd_map_rep["ai-forward"] = ec_ai_forward;
+  cmd_map_rep["ai-rewind"] = ec_ai_rewind;
+  cmd_map_rep["ai-setpos"] = ec_ai_set_position;
+  cmd_map_rep["ai-set-position"] = ec_ai_set_position;
+  cmd_map_rep["ai-getpos"] = ec_ai_get_position;
+  cmd_map_rep["ai-get-position"] = ec_ai_get_position;
+  cmd_map_rep["ai-get-length"] = ec_ai_get_length;
+  cmd_map_rep["ai-wave-edit"] = ec_ai_wave_edit;
+
+  cmd_map_rep["ao-add"] = ec_ao_add;
+  cmd_map_rep["ao-select"] = ec_ao_select;
+  cmd_map_rep["ao-index-select"] = ec_ao_index_select;
+  cmd_map_rep["ao-selected"] = ec_ao_selected;
+  cmd_map_rep["ao-attach"] = ec_ao_attach;
+  cmd_map_rep["ao-remove"] = ec_ao_remove;
+  cmd_map_rep["ao-status"] = ec_ao_status;
+  cmd_map_rep["ao-list"] = ec_ao_status;
+  cmd_map_rep["ao-forward"] = ec_ao_forward;
+  cmd_map_rep["ao-rewind"] = ec_ao_rewind;
+  cmd_map_rep["ao-setpos"] = ec_ao_set_position;
+  cmd_map_rep["ao-set-position"] = ec_ao_set_position;
+  cmd_map_rep["ao-getpos"] = ec_ao_get_position;
+  cmd_map_rep["ao-get-position"] = ec_ao_get_position;
+  cmd_map_rep["ao-get-length"] = ec_ao_get_length;
+  cmd_map_rep["ao-wave-edit"] = ec_ao_wave_edit;
 
   cmd_map_rep["cop-add"] = ec_cop_add;
   cmd_map_rep["cop-remove"] = ec_cop_remove;
@@ -174,10 +192,14 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map_rep["dump-length"] = ec_dump_length;
   cmd_map_rep["dump-cs-status"] = ec_dump_cs_status;
   cmd_map_rep["dump-c-selected"] = ec_dump_c_selected;
-  cmd_map_rep["dump-aio-selected"] = ec_dump_aio_selected;
-  cmd_map_rep["dump-aio-position"] = ec_dump_aio_position;
-  cmd_map_rep["dump-aio-length"] = ec_dump_aio_length;
-  cmd_map_rep["dump-aio-open-state"] = ec_dump_aio_open_state;
+  cmd_map_rep["dump-ai-selected"] = ec_dump_ai_selected;
+  cmd_map_rep["dump-ai-position"] = ec_dump_ai_position;
+  cmd_map_rep["dump-ai-length"] = ec_dump_ai_length;
+  cmd_map_rep["dump-ai-open-state"] = ec_dump_ai_open_state;
+  cmd_map_rep["dump-ao-selected"] = ec_dump_ao_selected;
+  cmd_map_rep["dump-ao-position"] = ec_dump_ao_position;
+  cmd_map_rep["dump-ao-length"] = ec_dump_ao_length;
+  cmd_map_rep["dump-ao-open-state"] = ec_dump_ao_open_state;
   cmd_map_rep["dump-cop-value"] = ec_dump_cop_value;
 }
 
@@ -185,6 +207,7 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   switch(id) {
   case ec_direct_option:
   case ec_debug:
+
   case ec_cs_add:
   case ec_cs_select:
   case ec_cs_index_select:
@@ -196,6 +219,7 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_cs_rewind:
   case ec_cs_forward:
   case ec_cs_set_position:
+
   case ec_c_add:
   case ec_c_select:
   case ec_c_deselect:
@@ -204,21 +228,31 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_c_forward: 
   case ec_c_rewind: 
   case ec_c_setpos:
-  case ec_aio_add_input:
-  case ec_aio_select:
-  case ec_aio_select_input:
-  case ec_aio_select_output:
-  case ec_aio_index_select:
-  case ec_aio_forward:
-  case ec_aio_rewind:
-  case ec_aio_set_position:
+
+  case ec_ai_add:
+  case ec_ai_select:
+  case ec_ai_index_select:
+  case ec_ai_forward:
+  case ec_ai_rewind:
+  case ec_ai_set_position:
+
+  case ec_ao_add:
+  case ec_ao_select:
+  case ec_ao_index_select:
+  case ec_ao_forward:
+  case ec_ao_rewind:
+  case ec_ao_set_position:
+
   case ec_cop_add:
   case ec_cop_select:
   case ec_cop_set:
+
   case ec_copp_select:
   case ec_copp_set:
+
   case ec_ctrl_add:
   case ec_ctrl_select:
+
   case ec_dump_target:
   case ec_dump_cop_value:
 
@@ -234,10 +268,8 @@ bool ECA_IAMODE_PARSER::action_requires_connected(int id) {
   switch(id) {
   case ec_start:
   case ec_run:
-  case ec_cs_disconnect:
-  case ec_c_forward:
-  case ec_c_rewind: 
 
+  case ec_cs_disconnect:
     return(true);
     
   default: 
@@ -249,6 +281,7 @@ bool ECA_IAMODE_PARSER::action_requires_connected(int id) {
 bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   switch(id) {
   case ec_direct_option:
+
   case ec_cs_remove: 
   case ec_cs_edit:
   case ec_cs_is_valid:
@@ -263,6 +296,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_cs_get_length:
   case ec_cs_set_length:
   case ec_cs_loop:
+
   case ec_c_remove:
   case ec_c_clear:
   case ec_c_name:
@@ -273,28 +307,45 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_c_setpos:
   case ec_c_status:
   case ec_c_list:
-  case ec_aio_add_input:
-  case ec_aio_add_output:
-  case ec_aio_select:
-  case ec_aio_select_input:
-  case ec_aio_select_output:
-  case ec_aio_selected:
-  case ec_aio_index_select:
-  case ec_aio_remove:
-  case ec_aio_attach:
+
   case ec_aio_status:
-  case ec_aio_forward:
-  case ec_aio_rewind:
-  case ec_aio_set_position:
-  case ec_aio_get_position:
-  case ec_aio_get_length:
-  case ec_aio_wave_edit:
+
+  case ec_ai_add:
+  case ec_ai_select:
+  case ec_ai_selected:
+  case ec_ai_index_select:
+  case ec_ai_remove:
+  case ec_ai_attach:
+  case ec_ai_status:
+  case ec_ai_forward:
+  case ec_ai_rewind:
+  case ec_ai_set_position:
+  case ec_ai_get_position:
+  case ec_ai_get_length:
+  case ec_ai_wave_edit:
+
+  case ec_ao_add:
+  case ec_ao_select:
+  case ec_ao_selected:
+  case ec_ao_index_select:
+  case ec_ao_remove:
+  case ec_ao_attach:
+  case ec_ao_status:
+  case ec_ao_forward:
+  case ec_ao_rewind:
+  case ec_ao_set_position:
+  case ec_ao_get_position:
+  case ec_ao_get_length:
+  case ec_ao_wave_edit:
+
   case ec_cop_add:
   case ec_cop_select:
   case ec_cop_set:
   case ec_cop_status:
+
   case ec_copp_select:
   case ec_copp_set:
+
   case ec_ctrl_add:
   case ec_ctrl_select:
   case ec_ctrl_status:
@@ -310,22 +361,32 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
 bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) { 
   switch(id) {
   case ec_direct_option:
+
   case ec_cs_remove:
   case ec_cs_set_length:
   case ec_cs_loop:
   case ec_cs_set:
+
   case ec_c_add:
   case ec_c_remove:
   case ec_c_name:
   case ec_c_clear:
-  case ec_aio_add_input:
-  case ec_aio_add_output:
-  case ec_aio_remove:
-  case ec_aio_attach:
-  case ec_aio_forward:
-  case ec_aio_rewind:
-  case ec_aio_set_position:
-  case ec_aio_wave_edit:
+
+  case ec_ai_add:
+  case ec_ai_remove:
+  case ec_ai_attach:
+  case ec_ai_forward:
+  case ec_ai_rewind:
+  case ec_ai_set_position:
+  case ec_ai_wave_edit:
+
+  case ec_ao_add:
+  case ec_ao_remove:
+  case ec_ao_attach:
+  case ec_ao_forward:
+  case ec_ao_rewind:
+  case ec_ao_set_position:
+  case ec_ao_wave_edit:
 
     return(true);
     
@@ -336,17 +397,17 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
 
 }
 
-bool ECA_IAMODE_PARSER::action_requires_selected_audio_object(int id) { 
+bool ECA_IAMODE_PARSER::action_requires_selected_audio_input(int id) { 
   switch(id) {
-  case ec_aio_remove:
-  case ec_aio_attach:
-  case ec_aio_forward:
-  case ec_aio_rewind:
-  case ec_aio_set_position:
-  case ec_aio_selected:
-  case ec_aio_get_position:
-  case ec_aio_get_length:
-  case ec_aio_wave_edit:
+  case ec_ai_remove:
+  case ec_ai_attach:
+  case ec_ai_forward:
+  case ec_ai_rewind:
+  case ec_ai_set_position:
+  case ec_ai_selected:
+  case ec_ai_get_position:
+  case ec_ai_get_length:
+  case ec_ai_wave_edit:
     return(true);
     
   default: 
@@ -356,6 +417,25 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_object(int id) {
 
 }
 
+bool ECA_IAMODE_PARSER::action_requires_selected_audio_output(int id) { 
+  switch(id) {
+  case ec_ao_remove:
+  case ec_ao_attach:
+  case ec_ao_forward:
+  case ec_ao_rewind:
+  case ec_ao_set_position:
+  case ec_ao_selected:
+  case ec_ao_get_position:
+  case ec_ao_get_length:
+  case ec_ao_wave_edit:
+    return(true);
+    
+  default: 
+    break;
+  }
+  return(false);
+
+}
 
 void show_controller_help(void) {
   MESSAGE_ITEM mitem; 

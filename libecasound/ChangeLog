@@ -2,6 +2,42 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-04-23  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-iamode-parser.h (action_requires_selected_audio_input): added
+	* eca-iamode-parser.h (action_requires_selected_audio_output): added
+	* eca-iamode-parser.h (action_requires_selected_audio_object): removed
+	* eca-control-objects.h (get_audio_input): added
+	* eca-control-objects.h (get_audio_output): added
+	* eca-control-objects.h (get_audio_object): removed
+	* eca-control-objects.h (select_audio_input_by_index): added
+	* eca-control-objects.h (select_audio_output_by_index): added
+	* eca-control-objects.h (select_audio_object_by_index): removed
+	* eca-control-objects.h (attach_audio_input): added
+	* eca-control-objects.h (attach_audio_output): added
+	* eca-control-objects.h (attach_audio_object): removed
+	* eca-control-objects.h (remove_audio_input): added
+	* eca-control-objects.h (remove_audio_output): added
+	* eca-control-objects.h (remove_audio_object): removed
+	* eca-control-dump.h (dump_selected_audio_input): added
+	* eca-control-dump.h (dump_audio_input_position): added
+	* eca-control-dump.h (dump_audio_input_length): added
+	* eca-control-dump.h (dump_audio_input_open_state): added
+	* eca-control-dump.h (dump_selected_audio_output): added
+	* eca-control-dump.h (dump_audio_output_position): added
+	* eca-control-dump.h (dump_audio_output_length): added
+	* eca-control-dump.h (dump_audio_output_open_state): added
+	* eca-control-dump.h (dump_selected_audio_object): removed
+	* eca-control-dump.h (dump_audio_object_position): removed
+	* eca-control-dump.h (dump_audio_object_length): removed
+	* eca-control-dump.h (dump_audio_object_open_state): removed
+	* eca-control-objects.h (change_position_chains): added
+	* eca-control-objects.h (select_audio_object): removed
+	* eca-control-objects.h (rewind_audio_object): moved to protected scope	
+	* eca-control-objects.h (forward_audio_object): moved to protected scope
+	* eca-control-objects.h (set_audio_object_position): moved to protected scope
+	* eca-control-objects.h (wave_edit_audio_object): moved to protected scope	
+	
 2001-04-09  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-chainsetup-position.h (set_position_exact): added

@@ -131,14 +131,18 @@ int main(int argc, char *argv[])
     if (format_string.size() > 0)  
       ectrl.set_chainsetup_parameter(format_string);
     ectrl.add_audio_input(input);
+    if (ectrl.get_audio_input() == 0) {
+      cerr << "---\nError while opening \"" << input << "\". Exiting...\n";
+      exit(0);
+    }
     if (format_string.size() == 0) {
-      aio_params = ectrl.get_audio_format();
+      aio_params = ectrl.get_audio_format(ectrl.get_audio_input());
       ectrl.set_default_audio_format(aio_params);
       ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
     }
     ectrl.add_audio_output(output);
-    if (ectrl.get_audio_object() == 0) {
-      cerr << "---\nError while processing /dev/dsp. Exiting...\n";
+    if (ectrl.get_audio_output() == 0) {
+      cerr << "---\nError while opening \"" << output << "\". Exiting...\n";
       exit(0);
     }
     EFFECT_ANALYZE cop;

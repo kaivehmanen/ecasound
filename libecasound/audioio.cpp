@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio.cpp: Routines common for all audio IO-devices.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -103,7 +103,10 @@ int AUDIO_IO::io_mode(void) const { return(io_mode_rep); }
 void AUDIO_IO::io_mode(int mode) { io_mode_rep = mode; }
 
 /**
- * Sets object label. Label is used to identify the object.
+ * Sets object label. Label is used to identify the object instance.
+ * Unlike ECA_OBJECT::name(), label() is not necessarily unique 
+ * among different class instances. Device and file names are typical 
+ * label values.
  *
  * require:
  *  is_open() != true
@@ -120,9 +123,8 @@ void AUDIO_IO::toggle_nonblocking_mode(bool value) { nonblocking_rep =
 						       value; }
 
 /**
- * Returns the current label. Label can be used for object
- * identification (although not necessarily unique among all
- * objects). Device and file names are typical label values.
+ * Returns the current label. See documentation for 
+ * label(const string&).
  */
 const string& AUDIO_IO::label(void) const { return(id_label_rep); }
 

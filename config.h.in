@@ -73,6 +73,9 @@
 /* Define if you have the <inttypes.h> header file.  */
 #undef HAVE_INTTYPES_H
 
+/* Define if you have the <ladspa.h> header file.  */
+#undef HAVE_LADSPA_H
+
 /* Define if you have the <sched.h> header file.  */
 #undef HAVE_SCHED_H
 

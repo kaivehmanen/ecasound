@@ -21,8 +21,10 @@
 #include <vector>
 #include <cstdio>
 #include <signal.h>
+#include <stdlib.h>
 
 #include <kvutils/com_line.h>
+#include <kvutils/temporary_file_directory.h>
 
 #include <samplebuffer.h>
 #include <eca-debug.h>
@@ -75,29 +77,41 @@ int main(int argc, char *argv[])
     ECA_PROCESSOR emain;
     ECA_AUDIO_FORMAT aio_params;
 
+    TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
+    string tmpdir ("ecatools-");
+    char* tmp_p = getenv("USER");
+    if (tmp_p != NULL) {
+      tmpdir += string(tmp_p);
+      tempfile_dir_rep.reserve_directory(tmpdir);
+    }
+    if (tempfile_dir_rep.is_valid() != true) {
+      cerr << "---\nError while creating temporary directory \"" << tmpdir << "\". Exiting...\n";
+      return(0);
+    }
+
     ectrl.toggle_interactive_mode(false);
     cline.begin();
     cline.next(); // skip the program name
     while(cline.end() == false) {
       filename = cline.current();
 
-      ecatools_fixdc_tempfile = string(tmpnam(NULL));
-      ecatools_fixdc_tempfile += ".wav";
+      ecatools_fixdc_tempfile = tempfile_dir_rep.create_filename("fixdc-tmp", ".wav");
+
       for(int m = 0;m < 2; m++) {
 	ectrl.add_chainsetup("default");
 	ectrl.add_chain("default");
 	if (m == 0) {
 	  cerr << "Calculating DC-offset for file \"" << filename << "\".\n";
 	  ectrl.add_audio_input(filename);
-	  if (ectrl.get_audio_object() == 0) {
+	  if (ectrl.get_audio_input() == 0) {
 	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	    break;
 	  }
-	  aio_params = ectrl.get_audio_format();
+	  aio_params = ectrl.get_audio_format(ectrl.get_audio_input());
 	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.add_audio_output(ecatools_fixdc_tempfile);
-	  if (ectrl.get_audio_object() == 0) {
+	  if (ectrl.get_audio_output() == 0) {
 	    cerr << "---\nError while processing file " << ecatools_fixdc_tempfile << ". Exiting...\n";
 	    break;
 	  }
@@ -112,16 +126,16 @@ int main(int argc, char *argv[])
 	  cerr << ", right: " << dcfix_value[SAMPLE_SPECS::ch_right]
 	       << ").\n";
 	  ectrl.add_audio_input(ecatools_fixdc_tempfile);
-	  if (ectrl.get_audio_object() == 0) {
+	  if (ectrl.get_audio_input() == 0) {
 	    cerr << "---\nError while processing file " << ecatools_fixdc_tempfile << ". Exiting...\n";
 	    break;
 	  }
-	  aio_params = ectrl.get_audio_format();
+	  aio_params = ectrl.get_audio_format(ectrl.get_audio_input());
 	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	  ectrl.set_default_audio_format(aio_params);
 	  ectrl.add_audio_output(filename);
-	  if (ectrl.get_audio_object() == 0) {
+	  if (ectrl.get_audio_output() == 0) {
 	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	    break;
 	  }

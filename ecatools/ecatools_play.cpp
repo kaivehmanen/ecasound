@@ -91,11 +91,11 @@ int main(int argc, char *argv[])
       ectrl.add_chainsetup("default");
       ectrl.add_chain("default");
       ectrl.add_audio_input(filename);
-      if (ectrl.get_audio_object() == 0) {
+      if (ectrl.get_audio_input() == 0) {
 	cerr << "Error! Skipping file " << filename << "." << endl;
       }
       else {
-	aio_params = ectrl.get_audio_format();
+	aio_params = ectrl.get_audio_format(ectrl.get_audio_input());
 	ectrl.set_default_audio_format(aio_params);
 	ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
 	ectrl.add_default_output();

@@ -13,8 +13,9 @@ class ECA_OBJECT {
  public:
 
   /**
-   * Object name used to identify the object type.
-   * Must be implemented in subclasses.
+   * Object name used to identify the object type. In most 
+   * cases, object name is same for all class instances.
+   * Must be implemented in all subclasses.
    */
   virtual string name(void) const = 0;
 
