@@ -158,8 +158,8 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 			     char)((sample_type)(stemp / SAMPLE_SPECS::u8_to_st_constant) + SAMPLE_SPECS::u8_to_st_delta);
 	  // --- for debugging signal flow
 	  //	  printf("converted to u8 %u (hex:%x)\n", target[osize-1], target[osize-1]);
+	  break;
 	}
-	break;
       
       case ECA_AUDIO_FORMAT::sfmt_s16_le:
 	{
@@ -179,8 +179,8 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	
 	  target[osize++] = (unsigned char)(s16temp & 0xff);
 	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+	  break;
 	}
-	break;
       
       case ECA_AUDIO_FORMAT::sfmt_s16_be:
 	{
@@ -190,18 +190,13 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	  else 
 	    s16temp = (int16_t)(sample_type)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
 	
-	  // --- for debugging signal flow
-	  // if (isize == 0) 
-	  //  printf("converted to s16 %d (hex:%x)", s16temp, (unsigned short int)s16temp);
-	  // ------------------------------
-	
 	  // little endian: (LSB, MSB) (Intel).
 	  // big endian: (MSB, LSB) (Motorola).
 	  // ---
 	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
 	  target[osize++] = (unsigned char)(s16temp & 0xff);
+	  break;
 	}
-	break;
       
       case ECA_AUDIO_FORMAT::sfmt_s24_le:
 	{
@@ -221,8 +216,8 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	  //    				 target[osize-3],
 	  //    				 target[osize-2],
 	  //    				 target[osize-1])
+	  break;
 	}
-	break;
       
       case ECA_AUDIO_FORMAT::sfmt_s24_be:
 	{
@@ -238,8 +233,8 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	  target[osize++] = (unsigned char)(s32temp & 0xff);
 	
 	  if (s32temp < 0) target[osize - 3] |= 0x80;
+	  break;
 	}
-	break;
       
       case ECA_AUDIO_FORMAT::sfmt_s32_le:
 	{
@@ -253,8 +248,8 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+	  break;
 	}
-	break;
       
       case ECA_AUDIO_FORMAT::sfmt_s32_be:
 	{
@@ -268,8 +263,30 @@ void SAMPLE_BUFFER_BASE<T>::copy_from_buffer(unsigned char* target,
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
 	  target[osize++] = (unsigned char)(s32temp & 0xff);
+	  break;
 	}
-	break;      
+   
+      case ECA_AUDIO_FORMAT::sfmt_f32_le:
+	{
+	  union { int32_t i; float f; } f32temp;
+	  f32temp.f = (float)stemp;
+	  target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	  target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	  target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	  target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	  break;
+	}
+
+      case ECA_AUDIO_FORMAT::sfmt_f32_be:
+	{
+	  union { int32_t i; float f; } f32temp;
+	  f32temp.f = (float)stemp;
+	  target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+	  target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
+	  target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
+	  target[osize++] = (unsigned char)(f32temp.i & 0xff);
+	  break;
+	}
       
       default: 
 	{ 
@@ -306,27 +323,18 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
   long int isize = 0;
 
   for(long int osize = 0; osize < buffersize_rep; osize++) {
-    switch (fmt) {
-    case ECA_AUDIO_FORMAT::sfmt_u8: 
-      {
-	for(int c = 0; c < ch; c++) {
-	  // --- for debugging signal flow
-	  //	  if (osize == 0) 
-	  // printf("converting to u8 %u\n", source[isize]);
-
+    for(int c = 0; c < ch; c++) {
+      switch (fmt) {
+      case ECA_AUDIO_FORMAT::sfmt_u8: 
+	{
 	  buffer[c][osize] = (unsigned char)source[isize++];
 	  buffer[c][osize] -= SAMPLE_SPECS::u8_to_st_delta;
 	  buffer[c][osize] *= SAMPLE_SPECS::u8_to_st_constant;
-	  // --- for debugging signal flow
-	  //	  if (osize == 0) 
-	  //	    printf("converted to %.2f.\n", buffer[c][osize]);
 	}
-      }
-      break;
-
-    case ECA_AUDIO_FORMAT::sfmt_s16_le:
-      {
-	for(int c = 0; c < ch; c++) {
+	break;
+	
+      case ECA_AUDIO_FORMAT::sfmt_s16_le:
+	{
 	  // little endian: (LSB, MSB) (Intel)
 	  // big endian: (MSB, LSB) (Motorola)
 	  if (SAMPLE_SPECS::is_system_littleendian) {
@@ -338,20 +346,11 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 	    a[0] = source[isize++];
 	  }
 	  buffer[c][osize] = (sample_type)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
-	  // --- for debugging signal flow
-	  //  	  if (osize == 0) {
-	  //  	    printf(" ... converted to %d (hex:%x)...", (*(int16_t*)a), (*(int16_t*)a)); 
-	  //  	    printf(" (a0: %d, a1: %d) ", a[0], a[1]);
-	  //  	    printf(" ... and scaled to %.2f.\n", buffer[c][osize]);
-	  //  	  }
-	  // ------------------------------
 	}
-      }
-      break;
+	break;
 
-    case ECA_AUDIO_FORMAT::sfmt_s16_be:
-      {
-	for(int c = 0; c < ch; c++) {
+      case ECA_AUDIO_FORMAT::sfmt_s16_be:
+	{
 	  if (!SAMPLE_SPECS::is_system_littleendian) {
 	    a[0] = source[isize++];
 	    a[1] = source[isize++];
@@ -362,12 +361,10 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 	  }
 	  buffer[c][osize] = (sample_type)(*(int16_t*)a) / SAMPLE_SPECS::s16_to_st_constant;
 	}
-      }
-      break;
+	break;
 
-    case ECA_AUDIO_FORMAT::sfmt_s24_le:
-      {
-	for(int c = 0; c < ch; c++) {
+      case ECA_AUDIO_FORMAT::sfmt_s24_le:
+	{
 	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    b[0] = source[isize++];
 	    b[1] = source[isize++];
@@ -382,12 +379,10 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 	  }
 	  buffer[c][osize] = (sample_type)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
 	}
-      }
-      break;
+	break;
 
-    case ECA_AUDIO_FORMAT::sfmt_s24_be:
-      {
-	for(int c = 0; c < ch; c++) {
+      case ECA_AUDIO_FORMAT::sfmt_s24_be:
+	{
 	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    b[3] = source[isize++];
 	    b[2] = source[isize++];
@@ -402,12 +397,10 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 	  }
 	  buffer[c][osize] = (sample_type)((*(int32_t*)b) << 8) / SAMPLE_SPECS::s32_to_st_constant;
 	}
-      }
-      break;
+	break;
 
-    case ECA_AUDIO_FORMAT::sfmt_s32_le:
-      {
-	for(int c = 0; c < ch; c++) {
+      case ECA_AUDIO_FORMAT::sfmt_s32_le:
+	{
 	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    b[0] = source[isize++];
 	    b[1] = source[isize++];
@@ -422,12 +415,10 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 	  }
 	  buffer[c][osize] = (sample_type)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
 	}
-      }
-      break;
+	break;
 
-    case ECA_AUDIO_FORMAT::sfmt_s32_be:
-      {
-	for(int c = 0; c < ch; c++) {
+      case ECA_AUDIO_FORMAT::sfmt_s32_be:
+	{
 	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    b[3] = source[isize++];
 	    b[2] = source[isize++];
@@ -442,12 +433,48 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 	  }
 	  buffer[c][osize] = (sample_type)(*(int32_t*)b) / SAMPLE_SPECS::s32_to_st_constant;
 	}
-      }
-      break;
+	break;
 
-    default: 
-      { 
-	throw(new ECA_ERROR("SAMPLEBUFFER", "Unknown sample format! [c_to_b]."));
+      case ECA_AUDIO_FORMAT::sfmt_f32_le:
+	{
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    b[0] = source[isize++];
+	    b[1] = source[isize++];
+	    b[2] = source[isize++];
+	    b[3] = source[isize++];
+	  }
+	  else {
+	    b[3] = source[isize++];
+	    b[2] = source[isize++];
+	    b[1] = source[isize++];
+	    b[0] = source[isize++];
+	  }
+	  buffer[c][osize] = (sample_type)(*(float*)b);
+	}
+	break;
+
+      case ECA_AUDIO_FORMAT::sfmt_f32_be:
+	{
+	  if (SAMPLE_SPECS::is_system_littleendian) {
+	    b[3] = source[isize++];
+	    b[2] = source[isize++];
+	    b[1] = source[isize++];
+	    b[0] = source[isize++];
+	  }
+	  else {
+	    b[0] = source[isize++];
+	    b[1] = source[isize++];
+	    b[2] = source[isize++];
+	    b[3] = source[isize++];
+	  }
+	  buffer[c][osize] = (sample_type)(*(float*)b);
+	}
+	break;
+
+      default: 
+	{ 
+	  throw(new ECA_ERROR("SAMPLEBUFFER", "Unknown sample format! [c_to_b]."));
+	}
       }
     }
   }

@@ -37,7 +37,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>21.05.2000</h2>
+<h2>11.06.2000</h2>
 
 
     
@@ -104,14 +104,15 @@
 <p><p></p><dt><strong>ext-wave-editor</strong><dd>
 	Command line for executing an external wave editor. Defaults
 	to <em>snd</em>.
-<p><p></p><dt><strong>ext-mpg123-path</strong><dd>
-	Path to mpg123. Defaults to <em>mpg123</em>.
-<p><p></p><dt><strong>ext-mpg123-args</strong><dd>
-	Additional options that are passed to mpg123. Defaults to <em>"-b 0"</em>.
-<p><p></p><dt><strong>ext-lame-path</strong><dd>
-	Path to lame. Defaults to <em>lame</em>.
-<p><p></p><dt><strong>ext-lame-args</strong><dd>
-	Additional options that are passed to lame. Defaults to <em>"-b 128"</em>.
+<p><p></p><dt><strong>ext-mp3-input-cmd</strong><dd>
+	Command for starting mp3 input. All output should be directed
+	to standard output. Before execution, "%f" is replaced with 
+	path to the input mp3. If exists, "%o" is replaced with 
+	the start offset in mp3 frames. Defaults to <em>mpg123 -b 0 -q -s -k %o %f</em>.
+<p><p></p><dt><strong>ext-mp3-output-cmd</strong><dd>
+	Command for starting mp3 output. All input data should be read
+	from standard input. Before execution, "%f" is replaced with 
+	path to the output mp3. Defaults to <em>lame -b 128 -x -S - %f</em>.
 <p><p></p><dt><strong>ext-mikmod-path</strong><dd>
 	Path to mikmod. Defaults to <em>mikmod</em>.
 <p><p></p><dt><strong>ext-mikmod-args</strong><dd>

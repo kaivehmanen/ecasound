@@ -38,7 +38,7 @@ page]</A></H4></CENTER>
 <hr>
 
 <h1>ecasound</h1>
-<h2>29.05.2000</h2>
+<h2>25.06.2000</h2>
 
 
     
@@ -162,7 +162,8 @@ following number specifies sample size in bits. If sample is
 little endian, "_le" is added to the end. Similarly if big endian, 
 "_be" is added. If endianess is not specified, host byte-order is used. 
 Currently supported formats are "u8" (same as "8"), "s16_le" (same 
-as "16"), "s16_be", "s24_le", "s24_be", "s32_le" and "s32_be".
+as "16"), "s16_be", "s24_le", "s24_be", "s32_le", "s32_be", "f32_le" 
+and "f32_be".
 <p><p></p><dt><strong>-y:seconds</strong><dd>
 Set starting position for last specified input/output. If 
 you need more flexible control over audio objects, you should
@@ -199,6 +200,10 @@ conversions. Option syntax is <strong>-i[:]alsaplugin,card_number,device_number,
 By using the ALSA loopback system, you can grab audio data from any
 other pcm device. Option syntax is
 <strong>-i[:]alsalb,card_number,device_number,subdevice_number</strong>.
+<p><p></p><dt><strong>aRts input/output</strong><dd>
+If enabled at compile-time, ecasound supports audio input and 
+output using aRts audio server. Option syntax is <strong>-i:arts</strong>,
+<strong>-o:arts</strong>.
 <p><p></p><dt><strong>Ecasound Wave Files - .ewf</strong><dd>
 A simple wrapper class for handling other audio objects. 
 See <a href="users_guide/users_guide.html">ecasound user's guide</a> for more 
@@ -257,6 +262,8 @@ ranges from 1...n where n is the total number of channels.
 Amplifies signal by amplify-% percent. If number of consecutive
 clipped samples (resulting sample has the largest amplitude
 possible) reaches 'max-clipped-samples', a warning will be issued.
+<p><p></p><dt><strong>-eal:limit-%</strong><dd>
+Limiter effect. Limits audio level to 'limit-%'.
 <p><p></p><dt><strong>-ec:rate,threshold-%</strong><dd>
 Compressor (a simple one). 'rate' is the compression rate in
 decibels ('rate' dB change in input signal causes 1dB change 

@@ -100,6 +100,32 @@ class EFFECT_AMPLIFY_CHANNEL: public EFFECT_AMPLITUDE {
 };
 
 /**
+ * Limiter effect
+ * @author Kai Vehmanen
+ */
+class EFFECT_LIMITER: public EFFECT_AMPLITUDE {
+
+  parameter_type limit_rep;
+  SAMPLE_ITERATOR i;
+
+ public:
+
+  virtual string name(void) const { return("Limiter"); }
+  virtual string parameter_names(void) const  { return("limit-%"); }
+
+  virtual void set_parameter(int param, parameter_type value);
+  virtual parameter_type get_parameter(int param) const;
+
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
+
+  EFFECT_LIMITER (parameter_type multiplier_percent = 100.0);
+  virtual ~EFFECT_LIMITER(void) { }
+  EFFECT_LIMITER* clone(void)  { return new EFFECT_LIMITER(*this); }
+  EFFECT_LIMITER* new_expr(void)  { return new EFFECT_LIMITER(); }
+};
+
+/**
  * Dynamic compressor.
  * @author Kai Vehmanen
  */

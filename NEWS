@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 230600) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 250600) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -8,13 +8,13 @@ About the version numbers... "vx.y.zRt" :
   y = devel-series   - represents a set of planned features
   z = minor version  - version number of the current development series
   Rt = 'rx'          - stable release number x
-		  Rt = 'dx'  	     - development version
+  Rt = 'dx'  	     - development version
 
 -----------------------------------------------------------------------
 
-Last officially released version is -*> v1.7.8r12 <*-
+Last officially released version is -*> v1.7.9r13 <*-
 
-??062000 (v1.8.0d14)
+25062000 (v1.8.0d14)
 	- added: ecaconvert - a new ecatools app; converts a set of 
 		 files to target file format
 	- added: support for ALSA 0.6.x (plugin and direct) - thanks 
@@ -28,6 +28,11 @@ Last officially released version is -*> v1.7.8r12 <*-
 	- added: rpm-spec file for PLD-Linux - ecasound.pld.spec
 	- added: support for destdir env.variable - the last three
 		 added features were submitted by wrobell
+	- added: support for float samples (-f:f32_le and -f:f32_be)
+	- added: support for IEEE754 wav files (float)
+	- added: --enable-arts - use aRts daemon for audio input and
+	  	 output, see ecasound(1) man page for more info
+	- added: limiter effect (-eal:limit-%)
 	- changed: major changes in source tree organization
 	- changed: mp3 input and output now possible with all decoders
 		   and encoders which support standards i/o streams;

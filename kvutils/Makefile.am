@@ -30,13 +30,10 @@ DIST_COMMON = 	README \
 		COPYING \
 		INSTALL \
 		Makefile.in \
-		Makefile.am \
-		configure.in \
-		install-sh \
-		mkinstalldirs
+		Makefile.am
 
 noinst_HEADERS = $(kvutil_headers)
 
 install-data-local:
-	$(INSTALL) -d $(DESTDIR)$(pkgincludedir)
-	cd $(srcdir) ; cp  $(kvutil_headers) $(DESTDIR)$(pkgincludedir)
+	$(INSTALL) -d $(DESTDIR)$(includedir)/kvutils
+	cd $(srcdir) ; cp  $(kvutil_headers) $(DESTDIR)$(includedir)/kvutils

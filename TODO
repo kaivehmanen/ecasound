@@ -23,7 +23,6 @@
 Input/output devices:
 
 - ALSA 0.6.x support [--> update: already in CVS]
-- support for floating-point sample formats (-f option)
 - type override for audio objects
 - automatic handling of mono mp3s
 - mp3 bitrate as a command-line parameter
@@ -36,7 +35,6 @@ Interactive-mode:
 Effects, routing, dsp routines:
 
 - add threshold parameter to -eca
-- pitch-shifting mono streams doesn't work
 - better reverbs [--> update: -ete added to 1.7.8r12] 
 - embedded effect preset parameters
 	- "-p[fn]:string,par1,...,parN"
@@ -77,7 +75,6 @@ User-interface:
 
 Misc:
 
-- if libreadline is alreayd installed, use it!
 - smart mixing / dithering
 - better MIDI-support
 
@@ -92,5 +89,4 @@ Misc:
 - how current ecasound versions work with old gcc packages (2.7.x
   and older)?
 - ... and old libc-versions (2.x and 5.x)?
-- ecasound compiles out-of-the-box on Redhat 6.x system, what about
-  other distros?
+- ecasound compiles out-of-the-box on Redhat 6.x system, what about other distros?

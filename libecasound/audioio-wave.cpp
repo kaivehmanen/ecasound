@@ -222,15 +222,20 @@ void WAVEFILE::read_riff_fmt(void) throw(ECA_ERROR*)
     fio_repp->read_to_buffer(&riff_format_rep, sizeof(riff_format_rep));
     //    fread(&riff_format_rep,1,sizeof(riff_format_rep),fobject);
 
-    if (riff_format_rep.format != 1) {
-      throw(new ECA_ERROR("AUDIOIO-WAVE", "Only WAVE_FORMAT_PCM is supported."));
-      //      ecadebug->msg("(audioio-wave) WARNING: wave-format not '1'.");
+    if (riff_format_rep.format != 1 &&
+	riff_format_rep.format != 3) {
+      throw(new ECA_ERROR("AUDIOIO-WAVE", "Only WAVE_FORMAT_PCM and
+                           WAVE_FORMAT_IEEE_FLOAT are supported."));
     }
 
     set_samples_per_second(riff_format_rep.srate);
     set_channels(riff_format_rep.channels);
-    if (riff_format_rep.bits == 32)
-      set_sample_format(ECA_AUDIO_FORMAT::sfmt_s32_le);
+    if (riff_format_rep.bits == 32) {
+      if (riff_format_rep.format == 3)
+	set_sample_format(ECA_AUDIO_FORMAT::sfmt_f32_le);
+      else
+	set_sample_format(ECA_AUDIO_FORMAT::sfmt_s32_le);
+    }
     else if (riff_format_rep.bits == 24)
       set_sample_format(ECA_AUDIO_FORMAT::sfmt_s24_le);
     else if (riff_format_rep.bits == 16)
@@ -255,8 +260,16 @@ void WAVEFILE::write_riff_fmt(void)
   riff_format_rep.srate = samples_per_second();
   riff_format_rep.byte_second = bytes_per_second();
   riff_format_rep.align = frame_size();
-  riff_format_rep.format = 1;     // WAVE_FORMAT_PCM (0x0001) Microsoft Pulse Code
-                              //                          Modulation (PCM) format
+  if (sample_format() == sfmt_f32 ||
+      sample_format() == sfmt_f32_le ||
+      sample_format() == sfmt_f32_be ||
+      sample_format() == sfmt_f64 ||
+      sample_format() == sfmt_f64_le ||
+      sample_format() == sfmt_f64_be)
+    riff_format_rep.format = 3;     // WAVE_FORMAT_IEEE_FLOAT 0x0003 (Microsoft IEEE754 range [-1, +1))
+  else
+    riff_format_rep.format = 1;     // WAVE_FORMAT_PCM (0x0001) Microsoft Pulse Code
+                                    // Modulation (PCM) format
 
   memcpy(fblock.sig, "fmt ", 4);
   fblock.bsize=16;

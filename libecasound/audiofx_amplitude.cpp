@@ -150,6 +150,44 @@ void EFFECT_AMPLIFY_CHANNEL::process(void) {
   }
 }
 
+EFFECT_LIMITER::EFFECT_LIMITER (parameter_type limiting_percent) {
+  set_parameter(1, limiting_percent);
+}
+
+void EFFECT_LIMITER::set_parameter(int param, parameter_type value) {
+  switch (param) {
+  case 1:
+    limit_rep = value / 100.0;
+    break;
+  }
+}
+
+CHAIN_OPERATOR::parameter_type EFFECT_LIMITER::get_parameter(int param) const { 
+  switch (param) {
+  case 1: 
+    return(limit_rep * 100.0);
+  }
+  return(0.0);
+}
+
+void EFFECT_LIMITER::init(SAMPLE_BUFFER* sbuf) { i.init(sbuf); }
+
+void EFFECT_LIMITER::process(void) {
+  i.begin();
+  while(!i.end()) {
+    if (*i.current() < 0) {
+      if ((-(*i.current())) > limit_rep) 
+	*i.current() = -limit_rep;
+    }
+    else {
+      if (*i.current() > limit_rep)
+	*i.current() = limit_rep;
+     
+    }
+    i.next();
+  }
+}
+
 EFFECT_COMPRESS::EFFECT_COMPRESS (parameter_type compress_rate, parameter_type thold) {
   // map_parameters();
 

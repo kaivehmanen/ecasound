@@ -1,20 +1,33 @@
-.TH "ecatools" "1" "21\&.05\&.2000" "" "Multimedia software" 
+.TH "ecatools" "1" "07\&.06\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecatools \- audio processing utils based on ecasound
 .PP 
 .SH "SYNOPSIS" 
+\fBecaplay\fP file1 [ file2,\&.\&.\&.,fileN ]
+.PP 
+\fBecaconvert\fP \&.extension file1 [ file2,\&.\&.\&.,fileN ]
+.PP 
 \fBecafixdc\fP file1 [ file2,\&.\&.\&.,fileN ]
 .PP 
 \fBecanormalize\fP file1 [ file2,\&.\&.\&.,fileN ]
-.PP 
-\fBecaplay\fP file1 [ file2,\&.\&.\&.,fileN ]
 .PP 
 .SH "DESCRIPTION" 
 .PP 
 Ecatools are simple command line utils that do various audio
 processing tasks\&. Most of them support batch processing\&. They all
 use the ecasound engine (libecasound)\&.
+.PP 
+\fBECAPLAY\fP
+.PP 
+A simple command-line tool that plays input files using the
+default output specified in \fI~/\&.ecasoundrc\fP\&.
+.PP 
+\fBECACONVERT\fP
+.PP 
+A tool for converting a set of files to a common target format\&.
+This target format is given as the first command line
+argument, and its syntax is \fI\&.ext\fP\&.
 .PP 
 \fBECAFIXDC\fP
 .PP 
@@ -25,11 +38,6 @@ A simple command-line tool for fixing DC-offset\&.
 A simple command-line tool for normalizing sample volume\&. 
 Finds out how much input file can be amplified without clipping
 and, if necessary, does the amplification\&.
-.PP 
-\fBECAPLAY\fP
-.PP 
-A simple command-line tool that plays input files using the
-default output specified in \fI~/\&.ecasoundrc\fP\&.
 .PP 
 .SH "FILES" 
 .PP 

@@ -21,6 +21,9 @@
 /* whether to compile OSS input/output */
 #undef COMPILE_OSS
 
+/* whether to compile aRts input/output */
+#undef COMPILE_ARTS
+
 /* whether to use trigger OSS trigger functions */
 #undef DISABLE_OSS_TRIGGER
 

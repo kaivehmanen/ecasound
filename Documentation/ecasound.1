@@ -61,7 +61,7 @@ OOPPTTIIOONNSS
 
 
 
-                            29.05.2000                          1
+                            25.06.2000                          1
 
 
 
@@ -127,7 +127,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            29.05.2000                          2
+                            25.06.2000                          2
 
 
 
@@ -193,7 +193,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            29.05.2000                          3
+                            25.06.2000                          3
 
 
 
@@ -214,8 +214,8 @@ ecasound(1)            Multimedia software            ecasound(1)
               endian,  "_be" is added. If endianess is not speci-
               fied, host byte-order is used.  Currently supported
               formats  are  "u8" (same as "8"), "s16_le" (same as
-              "16"), "s16_be", "s24_le", "s24_be",  "s32_le"  and
-              "s32_be".
+              "16"),  "s16_be",  "s24_le",  "s24_be",   "s32_le",
+              "s32_be", "f32_le" and "f32_be".
 
 
        -y:seconds
@@ -259,7 +259,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            29.05.2000                          4
+                            25.06.2000                          4
 
 
 
@@ -286,6 +286,12 @@ ecasound(1)            Multimedia software            ecasound(1)
               audio data from any other pcm device. Option syntax
               is     --ii[[::]]aallssaallbb,,ccaarrdd__nnuummbbeerr,,ddeevviiccee__nnuummbbeerr,,ssuubbddee--
               vviiccee__nnuummbbeerr.
+
+
+       aRts input/output
+              If enabled at compile-time, ecasound supports audio
+              input  and  output  using aRts audio server. Option
+              syntax is --ii::aarrttss, --oo::aarrttss.
 
 
        Ecasound Wave Files - .ewf
@@ -318,14 +324,8 @@ ecasound(1)            Multimedia software            ecasound(1)
               with the proper file name extension before use.
 
 
-       EEFFFFEECCTT SSEETTUUPP
 
-       _P_R_E_S_E_T_S
-
-
-
-
-                            29.05.2000                          5
+                            25.06.2000                          5
 
 
 
@@ -333,6 +333,10 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 ecasound(1)            Multimedia software            ecasound(1)
 
+
+       EEFFFFEECCTT SSEETTUUPP
+
+       _P_R_E_S_E_T_S
 
        Ecasound has a powerful effect preset system  that  allows
        you create new effects by combining basic effects and con-
@@ -384,20 +388,23 @@ ecasound(1)            Multimedia software            ecasound(1)
               Amplifies signal by amplify-% percent. If number of
               consecutive  clipped  samples (resulting sample has
               the  largest  amplitude  possible)  reaches   'max-
-              clipped-samples', a warning will be issued.
 
 
 
-
-
-
-                            29.05.2000                          6
+                            25.06.2000                          6
 
 
 
 
 
 ecasound(1)            Multimedia software            ecasound(1)
+
+
+              clipped-samples', a warning will be issued.
+
+
+       -eal:limit-%
+              Limiter effect. Limits audio level to 'limit-%'.
 
 
        -ec:rate,threshold-%
@@ -446,18 +453,11 @@ ecasound(1)            Multimedia software            ecasound(1)
               is released during 'release' ms.
 
 
-       -ei:pitch-shift-%
-              Pitch shifter. Modifies audio pitch by altering its
-              length.
-
-
-       -epp:right-%
-              Normal  pan effect. Balance value of 0 means to pan
-              signal fully left  and  100  fully  right.  If  the
 
 
 
-                            29.05.2000                          7
+
+                            25.06.2000                          7
 
 
 
@@ -466,6 +466,14 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+       -ei:pitch-shift-%
+              Pitch shifter. Modifies audio pitch by altering its
+              length.
+
+
+       -epp:right-%
+              Normal  pan effect. Balance value of 0 means to pan
+              signal fully left  and  100  fully  right.  If  the
               panned  signal  is  a stereo signal, left and right
               channels aren't mixed together.  Use the  -erm  and
               -erc  effects  to  force  conversion to mono before
@@ -514,22 +522,19 @@ ecasound(1)            Multimedia software            ecasound(1)
               1.0).
 
 
-       -efb:center-freq,width
-              Bandpass filter. 'center_freq' is the  center  fre-
-              quency. Width is specified in Hz.
 
-
-
-
-
-
-                            29.05.2000                          8
+                            25.06.2000                          8
 
 
 
 
 
 ecasound(1)            Multimedia software            ecasound(1)
+
+
+       -efb:center-freq,width
+              Bandpass filter. 'center_freq' is the  center  fre-
+              quency. Width is specified in Hz.
 
 
        -efh:cutoff-freq
@@ -581,15 +586,10 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        -etc:delay-time-msec,variance-time-samples,feedback-%,lfo-
               freq
-              Chorus.
-
-
-       -etd:delay-time-msec,surround-mode,number-of-delays,mix-%
-              Delay  effect.  'delay  time'  is the delay time in
 
 
 
-                            29.05.2000                          9
+                            25.06.2000                          9
 
 
 
@@ -598,6 +598,11 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+              Chorus.
+
+
+       -etd:delay-time-msec,surround-mode,number-of-delays,mix-%
+              Delay  effect.  'delay  time'  is the delay time in
               milliseconds.  'surround-mode' is  a  integer  with
               following  meanings:  0 = normal, 1 = surround, 2 =
               stereo-spread. 'number_of_delays' should  be  obvi-
@@ -649,13 +654,8 @@ ecasound(1)            Multimedia software            ecasound(1)
               signal is fed back to the reverb.
 
 
-       _L_A_D_S_P_A_-_P_L_U_G_I_N_S
 
-
-
-
-
-                            29.05.2000                         10
+                            25.06.2000                         10
 
 
 
@@ -663,6 +663,8 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 ecasound(1)            Multimedia software            ecasound(1)
 
+
+       _L_A_D_S_P_A_-_P_L_U_G_I_N_S
 
        -el:plugin_unique_name,param-1,...,param-N
               Ecasound  supports  LADSPA-effect  plugins   (Linux
@@ -716,12 +718,10 @@ ecasound(1)            Multimedia software            ecasound(1)
               _p_l_e_s_._h_t_m_l for some more info.
 
 
-       -kos:fx-param,start-value,end-value,freq,i-phase
-              Sine  oscillator  with  frequency  of 'freq' Hz and
 
 
 
-                            29.05.2000                         11
+                            25.06.2000                         11
 
 
 
@@ -730,6 +730,8 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+       -kos:fx-param,start-value,end-value,freq,i-phase
+              Sine  oscillator  with  frequency  of 'freq' Hz and
               initial phase of 'i_phase' times pi.
 
 
@@ -783,11 +785,9 @@ FFIILLEESS
        _*_._e_w_s Ecasound Wave Stats. These files are used  to  cache
        waveform data.
 
-       _*_._e_c_s  Ecasound  Chainsetup  files. Syntax is more or less
 
 
-
-                            29.05.2000                         12
+                            25.06.2000                         12
 
 
 
@@ -796,6 +796,7 @@ FFIILLEESS
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+       _*_._e_c_s  Ecasound  Chainsetup  files. Syntax is more or less
        the same as with command-line arguments.
 
 
@@ -852,7 +853,6 @@ AAUUTTHHOORR
 
 
 
-
-                            29.05.2000                         13
+                            25.06.2000                         13
 
 

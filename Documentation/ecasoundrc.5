@@ -61,7 +61,7 @@ VVAARRIIAABBLLEESS
 
 
 
-                            21.05.2000                          1
+                            11.06.2000                          1
 
 
 
@@ -117,17 +117,17 @@ ecasoundrc(5)          Multimedia software          ecasoundrc(5)
               Defaults to _s_n_d.
 
 
-       ext-mpg123-path
-              Path to mpg123. Defaults to _m_p_g_1_2_3.
+       ext-mp3-input-cmd
+              Command  for  starting mp3 input. All output should
+              be directed to standard output.  Before  execution,
+              "%f"  is  replaced  with  path to the input mp3. If
+              exists, "%o" is replaced with the start  offset  in
+              mp3 frames. Defaults to _m_p_g_1_2_3 _-_b _0 _-_q _-_s _-_k _%_o _%_f.
 
 
-       ext-mpg123-args
-              Additional  options  that  are  passed  to  mpg123.
-              Defaults to _"_-_b _0_".
 
 
-
-                            21.05.2000                          2
+                            11.06.2000                          2
 
 
 
@@ -136,13 +136,11 @@ ecasoundrc(5)          Multimedia software          ecasoundrc(5)
 ecasoundrc(5)          Multimedia software          ecasoundrc(5)
 
 
-       ext-lame-path
-              Path to lame. Defaults to _l_a_m_e.
-
-
-       ext-lame-args
-              Additional  options  that  are  passed   to   lame.
-              Defaults to _"_-_b _1_2_8_".
+       ext-mp3-output-cmd
+              Command for starting mp3  output.  All  input  data
+              should  be  read from standard input. Before execu-
+              tion, "%f" is replaced with path to the output mp3.
+              Defaults to _l_a_m_e _-_b _1_2_8 _-_x _-_S _- _%_f.
 
 
        ext-mikmod-path
@@ -193,6 +191,8 @@ AAUUTTHHOORR
 
 
 
-                            21.05.2000                          3
+
+
+                            11.06.2000                          3
 
 

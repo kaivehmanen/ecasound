@@ -37,7 +37,7 @@
 <hr>
 
 <h1>ecatools</h1>
-<h2>21.05.2000</h2>
+<h2>07.06.2000</h2>
 
 
     
@@ -45,23 +45,28 @@
     ecatools - audio processing utils based on ecasound
 <p><h2>SYNOPSIS</h2>
     
-<strong>ecafixdc</strong> file1 [ file2,...,fileN ]
+<strong>ecaplay</strong> file1 [ file2,...,fileN ]
+<p><strong>ecaconvert</strong> .extension file1 [ file2,...,fileN ]
+<p><strong>ecafixdc</strong> file1 [ file2,...,fileN ]
 <p><strong>ecanormalize</strong> file1 [ file2,...,fileN ]
-<p><strong>ecaplay</strong> file1 [ file2,...,fileN ]
 <p><h2>DESCRIPTION</h2>
     
 <p>Ecatools are simple command line utils that do various audio
 processing tasks. Most of them support batch processing. They all
 use the ecasound engine (libecasound).
+<p><strong>ECAPLAY</strong>
+<p>A simple command-line tool that plays input files using the
+default output specified in <em>~/.ecasoundrc</em>.
+<p><strong>ECACONVERT</strong>
+<p>A tool for converting a set of files to a common target format.
+This target format is given as the first command line
+argument, and its syntax is <em>.ext</em>.
 <p><strong>ECAFIXDC</strong>
 <p>A simple command-line tool for fixing DC-offset.
 <p><strong>ECANORMALIZE</strong>
 <p>A simple command-line tool for normalizing sample volume. 
 Finds out how much input file can be amplified without clipping
 and, if necessary, does the amplification.
-<p><strong>ECAPLAY</strong>
-<p>A simple command-line tool that plays input files using the
-default output specified in <em>~/.ecasoundrc</em>.
 <p><h2>FILES</h2>
     
 <p><em>~/.ecasoundrc</em>

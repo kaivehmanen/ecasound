@@ -155,6 +155,9 @@ void ECA_AUDIO_FORMAT::set_sample_format(const string& f_str) throw(ECA_ERROR*) 
   else if (f_str == "s32") sfmt_rep = sfmt_s32;
   else if (f_str == "s32_le") sfmt_rep = sfmt_s32_le;
   else if (f_str == "s32_be") sfmt_rep = sfmt_s32_be;
+  else if (f_str == "f32") sfmt_rep = sfmt_f32;
+  else if (f_str == "f32_le") sfmt_rep = sfmt_f32_le;
+  else if (f_str == "f32_be") sfmt_rep = sfmt_f32_be;
   else if (f_str == "8") sfmt_rep = sfmt_u8;
   else if (f_str == "16") sfmt_rep = sfmt_s16;
   else if (f_str == "24") sfmt_rep = sfmt_s24;
@@ -177,6 +180,8 @@ string ECA_AUDIO_FORMAT::format_string(void) const throw(ECA_ERROR*) {
     case sfmt_s24_be: return("s24_be");
     case sfmt_s32_le: return("s32_le");
     case sfmt_s32_be: return("s32_be");
+    case sfmt_f32_le: return("f32_le");
+    case sfmt_f32_be: return("f32_be");
     default: { throw(new ECA_ERROR("ECA_AUDIO_FORMAT","Audio format not support!")); }
     }
 }

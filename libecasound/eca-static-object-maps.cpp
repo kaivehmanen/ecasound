@@ -60,6 +60,7 @@ extern "C" {
 #include "audioio-cdr.h"
 #include "audioio-wave.h"
 #include "audioio-oss.h"
+#include "audioio-arts.h"
 #include "audioio-ewf.h"
 #include "audioio-mp3.h"
 #include "audioio-mikmod.h"
@@ -176,6 +177,11 @@ void register_default_audio_objects(void) {
   eca_audio_device_map.register_object("alsa", device);
 #endif
 
+#ifdef COMPILE_ARTS
+  device = new ARTS_INTERFACE();
+  eca_audio_object_map.register_object("arts", device);
+#endif
+
   device = new REALTIME_NULL();
   eca_audio_object_map.register_object("rtnull", device);
   eca_audio_device_map.register_object("rtnull", device);
@@ -189,6 +195,7 @@ void register_default_audio_objects(void) {
 void register_default_chainops(void) {
   eca_chain_operator_map.register_object("ea", new EFFECT_AMPLIFY());
   eca_chain_operator_map.register_object("eac", new EFFECT_AMPLIFY_CHANNEL());
+  eca_chain_operator_map.register_object("eal", new EFFECT_LIMITER());
   eca_chain_operator_map.register_object("eaw", new EFFECT_AMPLIFY_CLIPCOUNT());
   eca_chain_operator_map.register_object("ec", new EFFECT_COMPRESS());
   eca_chain_operator_map.register_object("eca", new ADVANCED_COMPRESSOR());

@@ -5,6 +5,14 @@ AUTOMAKE_OPTIONS = foreign
 # defines
 # ----------------------------------------------------------------------
 
+if COMPILE_ARTS
+arts_libs = `artsc-config --libs`
+arts_cflags = `artsc-config --cflags`
+else
+arts_libs =
+arts_cflags =
+endif
+
 if COMPILE_ALSA
 alsa_libs = -lasound
 endif
@@ -31,7 +39,7 @@ else
 INSTALL_STRIP_FLAG = -s
 endif
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils
+INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils $(arts_cflags)
 
 if INCLUDE_DEBUG
 lib_LTLIBRARIES = libecasound_debug.la
@@ -80,7 +88,8 @@ ecasound_audioio_include = 	\
 			audioio-alsa2.h \
 			audioio-alsa2-plugin.h \
 			audioio-alsa3.h \
-			audioio-loop.h
+			audioio-loop.h \
+			audioio-arts.h
 
 ecasound_controller_include = \
 			generic-controller.h \
@@ -195,6 +204,7 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-rtnull.cpp \
 			audioio-types.cpp \
 			audioio-loop.cpp \
+			audioio-arts.cpp \
 			$(ecasound_audioio_oss_src) \
 			$(ecasound_audioio_alsa_src)
 
@@ -252,7 +262,7 @@ libecasound_la_SOURCES = $(ecasound_common_src)
 libecasound_debug_la_SOURCES = $(ecasound_common_src)
 libecasound_la_LIBADD = $(af_libs) $(alsa_libs) $(kvutils_libs)
 libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
-libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
+libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags) $(arts_libs)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
 
 install-data-local:

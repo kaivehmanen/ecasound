@@ -27,7 +27,6 @@
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
 
-#include "samplebuffer.h"
 #include "audioio-types.h"
 #include "audioio-oss_impl.h"
 #include "audioio-oss.h"
@@ -243,4 +242,3 @@ void OSSDEVICE::write_samples(void* target_buffer, long int samples) {
 OSSDEVICE::~OSSDEVICE(void) { close(); }
 
 #endif // COMPILE_OSS
-

@@ -1,5 +1,5 @@
-#ifndef _AUDIOIO_OSS_H
-#define _AUDIOIO_OSS_H
+#ifndef INCLUDED_AUDIOIO_OSS_H
+#define INCLUDED_AUDIOIO_OSS_H
 
 #include <string>
 #include <sys/time.h>
@@ -15,8 +15,6 @@
 #endif
 #ifdef COMPILE_OSS
 #include <sys/soundcard.h>
-
-#include "samplebuffer.h"
 
 /**
  * Class for handling Open Sound System -devices (OSS/Linux 
