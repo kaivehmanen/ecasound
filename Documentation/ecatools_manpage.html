@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecatools</h1>
-<h2>25.11.2000</h2>
+<h2>09.04.2001</h2>
 
 
     
@@ -43,7 +43,12 @@ processing tasks. Most of them support batch processing. They all
 use the ecasound engine (libecasound).
 <p><strong>ECAPLAY</strong>
 <p>A simple command-line tool that plays input files using the
-default output specified in <em>~/.ecasoundrc</em>.
+default output specified in <em>~/.ecasoundrc</em>. Note! You  can abort 
+ecaplay at any time by pressing Ctrl-C. If you are playing multiple 
+files, this will stop the current file and begin playing the next one.  
+If you want to abort playing immediately instead of skipping to the 
+next file, press Ctrl-C twice in short succession (around one
+second).
 <p><strong>ECACONVERT</strong>
 <p>A tool for converting a set of files to a common target format.
 This target format is given as the first command line

@@ -1,4 +1,4 @@
-.TH "ecatools" "1" "25\&.11\&.2000" "" "Multimedia software" 
+.TH "ecatools" "1" "09\&.04\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecatools \- audio processing utils based on ecasound
@@ -23,7 +23,12 @@ use the ecasound engine (libecasound)\&.
 \fBECAPLAY\fP
 .PP 
 A simple command-line tool that plays input files using the
-default output specified in \fI~/\&.ecasoundrc\fP\&.
+default output specified in \fI~/\&.ecasoundrc\fP\&. Note! You  can abort 
+ecaplay at any time by pressing Ctrl-C\&. If you are playing multiple 
+files, this will stop the current file and begin playing the next one\&.  
+If you want to abort playing immediately instead of skipping to the 
+next file, press Ctrl-C twice in short succession (around one
+second)\&.
 .PP 
 \fBECACONVERT\fP
 .PP 

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>21.03.2001</h2>
+<h2>09.04.2001</h2>
 
 
     
@@ -81,17 +81,6 @@ Help! <em>[-]</em>
 <p><h2>GLOBAL</h2>
     
 <p><dl>
-<p><p></p><dt><strong>rewind 'time-in-seconds', rw 'time-in-seconds'</strong><dd>
-Rewind the current position by 'time-in-seconds' seconds. <em>[-]</em>
-<p><p></p><dt><strong>forward 'time-in-seconds', fw 'ttime-in-seconds'</strong><dd>
-The current position is forwarded by 'time-in-seconds' seconds. <em>[-]</em>
-<p><p></p><dt><strong>setpos 'time-in-seconds', set-position 'time-in-seconds'</strong><dd>
-Sets the current position to 'time-in-seconds' seconds from the <em>[-]</em>
-beginning.
-<p><p></p><dt><strong>getpos, get-position</strong><dd>
-Returns the current position in seconds. <em>[f]</em>
-<p><p></p><dt><strong>get-length</strong><dd>
-Returns the chainsetup length in seconds (if known). <em>[f]</em>
 <p><p></p><dt><strong>status, st</strong><dd>
 General status info. <em>[s]</em>
 <p><p></p><dt><strong>engine-status</strong><dd>
@@ -152,12 +141,29 @@ can be connected at a time. <em>[-]</em>
 Disconnect currently connected chainsetup. <em>[-]</em>
 <p><p></p><dt><strong>cs-connected</strong><dd>
 Returns the name of currently connected chainsetup. <em>[s]</em>
-<p><p></p><dt><strong>cs-length 'seconds'</strong><dd>
-Set processing time in seconds (doesn't have to be an integer 
-value). <em>[-]</em>
+<p><p></p><dt><strong>cs-rewind 'time-in-seconds', rewind 'time-in-seconds', rw 'time-in-seconds'</strong><dd>
+Rewinds the current chainsetup position by 'time-in-seconds' seconds.
+Position of all inputs and outputs attached to the selected chainsetup
+is also affected. <em>[-]</em>
+<p><p></p><dt><strong>cs-forward 'time-in-seconds', forward 'time-in-seconds', fw 'ttime-in-seconds'</strong><dd>
+The current chainsetup position is forwarded by 'time-in-seconds'
+seconds. Position of all inputs and outputs attached to the selected chainsetup
+is also affected. <em>[-]</em>
+<p><p></p><dt><strong>cs-set-position 'time-in-seconds', cs-setpos 'time-in-seconds', setpos 'time-in-seconds', set-position 'time-in-seconds'</strong><dd>
+Sets the chainsetup position to 'time-in-seconds' seconds from the 
+beginning. Position of all inputs and outputs attached to the selected 
+chainsetup is also affected. <em>[-]</em>
+<p><p></p><dt><strong>cs-get-position, cs-getpos, getpos, get-position</strong><dd>
+Returns the current chainsetup position in seconds. <em>[f]</em>
+<p><p></p><dt><strong>cs-get-length, get-length</strong><dd>
+Returns the chainsetup length in seconds (if known). <em>[f]</em>
+<p><p></p><dt><strong>cs-set-length 'seconds'</strong><dd>
+Sets processing time in seconds (doesn't have to be an integer value). <em>[-]</em>
 <p><p></p><dt><strong>cs-loop</strong><dd>
 Enable looping. When processing is finished, engine will start 
-again from the initial position. <em>[-]</em>
+again from the initial position. It's not always possible to enable looping
+(for instance all inputs and outputs have infinite length and
+chainsetup length is not explicitly set with 'cs-set-length'). <em>[-]</em>
 <p><p></p><dt><strong>cs-set</strong><dd>
 Interpret general chainsetup parameters like for example
 "-b" (buffersize), "-m" (mixmode), "-n" (name), etc. 

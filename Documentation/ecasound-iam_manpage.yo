@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (21.03.2001)
+       (09.04.2001)
        ()
        (Multimedia software)
 
@@ -80,22 +80,6 @@ manpagesection(GLOBAL)
 
 startdit()
 
-dit(rewind 'time-in-seconds', rw 'time-in-seconds')
-Rewind the current position by 'time-in-seconds' seconds. em([-])
- 
-dit(forward 'time-in-seconds', fw 'ttime-in-seconds')
-The current position is forwarded by 'time-in-seconds' seconds. em([-])
- 
-dit(setpos 'time-in-seconds', set-position 'time-in-seconds')
-Sets the current position to 'time-in-seconds' seconds from the em([-])
-beginning.
-
-dit(getpos, get-position)
-Returns the current position in seconds. em([f])
-
-dit(get-length)
-Returns the chainsetup length in seconds (if known). em([f])
- 
 dit(status, st)
 General status info. em([s])
 
@@ -172,13 +156,35 @@ Disconnect currently connected chainsetup. em([-])
 dit(cs-connected)
 Returns the name of currently connected chainsetup. em([s])
 
-dit(cs-length 'seconds')
-Set processing time in seconds (doesn't have to be an integer 
-value). em([-])
+dit(cs-rewind 'time-in-seconds', rewind 'time-in-seconds', rw 'time-in-seconds')
+Rewinds the current chainsetup position by 'time-in-seconds' seconds.
+Position of all inputs and outputs attached to the selected chainsetup
+is also affected. em([-])
+ 
+dit(cs-forward 'time-in-seconds', forward 'time-in-seconds', fw 'ttime-in-seconds')
+The current chainsetup position is forwarded by 'time-in-seconds'
+seconds. Position of all inputs and outputs attached to the selected chainsetup
+is also affected. em([-])
+ 
+dit(cs-set-position 'time-in-seconds', cs-setpos 'time-in-seconds', setpos 'time-in-seconds', set-position 'time-in-seconds')
+Sets the chainsetup position to 'time-in-seconds' seconds from the 
+beginning. Position of all inputs and outputs attached to the selected 
+chainsetup is also affected. em([-])
+
+dit(cs-get-position, cs-getpos, getpos, get-position)
+Returns the current chainsetup position in seconds. em([f])
+
+dit(cs-get-length, get-length)
+Returns the chainsetup length in seconds (if known). em([f])
+
+dit(cs-set-length 'seconds')
+Sets processing time in seconds (doesn't have to be an integer value). em([-])
 
 dit(cs-loop)
 Enable looping. When processing is finished, engine will start 
-again from the initial position. em([-])
+again from the initial position. It's not always possible to enable looping
+(for instance all inputs and outputs have infinite length and
+chainsetup length is not explicitly set with 'cs-set-length'). em([-])
 
 dit(cs-set)
 Interpret general chainsetup parameters like for example

@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "06\&.03\&.2001" "" "Multimedia software" 
+.TH "ecasound" "1" "09\&.04\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -24,11 +24,11 @@ batch processing\&.
 .PP 
 .SH "OPTIONS" 
 .PP 
-Notice that the order of parameters given on the command
-line is important!
+Note! All options except those mentioned in \fIGlobal options\fP, can 
+be used in ecasound chainsetup files (\&.ecs)\&.
 .PP 
 \fBGLOBAL OPTIONS\fP
-.IP 
+.PP 
 .IP "-c" 
 Starts ecasound in interactive mode\&. In interactive mode you can
 control ecasound with simple commands ("start", "stop", "pause",
@@ -55,13 +55,14 @@ Show this help\&.
 .IP "--version" 
 Print version info\&.
 .IP 
-.PP 
-\fBCHAINSETUP OPTIONS\fP
-.IP 
-.IP "-n:name" 
-Set the name of chainsetup to \'name\'\&. If not specified, defaults
-either to "command-line-setup" or to the file name from which
-chainsetup was loaded\&. Whitespaces are not allowed\&.
+.IP "-r:sched_priority" 
+Use realtime scheduling policy (SCHED_FIFO)\&. This is impossible if 
+ecasound doesn\'t have root priviledges\&. Beware! This gives better 
+performance, but can cause total lock-ups if something goes wrong\&.
+The \'sched_priority\' can be omitted (0=omitted)\&. If given, 
+this is the static priority to the highest priority ecasound thread\&.
+Other ecasound threads run with priority \'sched_priority-1\&.\&.\&.n\'\&.
+Value \'-1\' can be used to disable raised-priority mode\&.
 .IP 
 .IP "-s[:]chainsetup-file" 
 Create a new chainsetup from file \'chainsetup-file\' and add
@@ -70,20 +71,16 @@ chains, effects, controllers, etc\&. A session, on the other hand,
 contains all the chainsetups\&. Although only one chainsetup can
 be connected at a time, you can switch between them on-the-fly\&.
 .IP 
-.IP "-sr:sample_rate" 
-Set internal sampling rate\&. This can be used to improve 
-realtime performance or to avoid resampling\&. Default is 44100 
-samples per second\&.
-.IP 
 .PP 
-\fBGENERAL\fP
+\fBGENERAL CHAINSETUP OPTIONS\fP
 .IP 
 .IP "-a:chainname1, chainname2, \&.\&.\&." 
-Select active signal chains\&. All effects, inputs and outputs are assigned to
-these chains\&. If there are no -a options given, default chain is used\&.
-Chain name \'all\' is reserved and means that all chains are selected\&. By giving 
-multiple -a options, you can control to which chains effects, inputs and outputs
-are assigned to\&. Look at the \fBEXAMPLES\fP
+Selects active signal chains\&. All effects, inputs and outputs following
+this \'-a\' option are assigned to selected chains (until a new -a
+option is specified)\&. If no -a option has been given, chain \'default\' is 
+used instead\&. Chain name \'all\' is also reserved and means that all chains
+are selected\&. By giving multiple -a options, you can control to which 
+chains effects, inputs and outputs are assigned to\&. Look at the \fBEXAMPLES\fP
 section for more detailed info about the usage of this option\&.
 .IP 
 .IP "-b:buffer size" 
@@ -97,19 +94,20 @@ in real-time (all inputs and outputs are normal files), values between
 512 - 4096 often give better results\&. Default is 1024\&.
 .IP 
 .IP "-m:mix-mode" 
-Force ecasound to use mix mode \'mix_mode\'\&. \'auto\' = automatic (default),
+Forces ecasound to use mix mode \'mix_mode\'\&. \'auto\' = automatic (default),
 \'simple\' =  only one input/chain/output and \'normal\' = normal 
 single-threaded mode\&. In most cases, ecasound is able to find out 
 the correct mode automatically\&.
 .IP 
-.IP "-r:sched_priority" 
-Use realtime scheduling policy (SCHED_FIFO)\&. This is impossible if 
-ecasound doesn\'t have root priviledges\&. Beware! This gives better 
-performance, but can cause total lock-ups if something goes wrong\&.
-The \'sched_priority\' can be omitted (0=omitted)\&. If given, 
-this is the static priority to the highest priority ecasound thread\&.
-Other ecasound threads run with priority \'sched_priority-1\&.\&.\&.n\'\&.
-Value \'-1\' can be used to disable raised-priority mode\&.
+.IP "-n:name" 
+Sets the name of chainsetup to \'name\'\&. If not specified, defaults
+either to "command-line-setup" or to the file name from which
+chainsetup was loaded\&. Whitespaces are not allowed\&.
+.IP 
+.IP "-sr:sample_rate" 
+Sets internal sampling rate\&. This can be used to improve 
+realtime performance or to avoid resampling\&. Default is 44100 
+samples per second\&.
 .IP 
 .IP "-x" 
 Truncate outputs\&. All output object are opened in overwrite mode\&. 
@@ -120,7 +118,7 @@ Open outputs for updating\&. Ecasound opens all outputs - if target
 format allows it - in readwrite mode\&.
 .IP 
 .IP "-z:feature" 
-Enable \'feature\'\&. Most features can be disabled using notation 
+Enables \'feature\'\&. Most features can be disabled using notation 
 \fI-z:nofeatures\fP\&. \'-z:db,dbsize\' enables double-buffering for audio 
 objects that support it (dbzise=0 for default, otherwise buffer
 size in sample frames)\&. \'-z:nodb\' disables double-buffering\&. 
@@ -133,13 +131,15 @@ mode for OSS-devices\&. See ecasoundrc(5)\&.
 .PP 
 \fBPROCESSING CONTROL\fP
 .IP "-t:seconds" 
-Set processing time in seconds (doesn\'t have to be an integer value)\&.
+Sets processing time in seconds (doesn\'t have to be an integer value)\&.
 If processing time isn\'t set, engine stops when all inputs are 
-finished\&.
+finished\&. This option is equivalent to the \'cs-set-length\' EIAM
+command\&.
 .IP 
 .IP "-tl" 
-Enable looping\&. When processing is finished, engine will start 
-again from the initial position\&.
+Enables looping\&. When processing is finished, engine will start 
+again from the initial position\&. This option is equivalent to the 
+\'cs-loop\' EIAM command\&.
 .IP 
 .PP 
 \fBINPUT/OUTPUT SETUP\fP
@@ -148,7 +148,7 @@ See ecasound user\'s guide for
 more detailed documentation\&.
 .PP 
 .IP "-f:sample_format,channel,sample-rate,interleaving" 
-Set default sampling parameters\&. These are used for all following
+Sets default sampling parameters\&. These are used for all following
 input and output files or until another -f is specified\&. If no -f
 option is present, ecasound uses s16_le/2ch/44100/interleaved as the 
 default value\&. Some audio objects may override this altogether (for 
@@ -167,7 +167,7 @@ The 4th parameter \'interleaving\' should either be \'i\' (default) for
 interleaved stream format, or \'n\' for noninterleaved\&.
 .IP 
 .IP "-y:seconds" 
-Set starting position for last specified input/output\&. If 
+Sets starting position for last specified input/output\&. If 
 you need more flexible control over audio objects, you should
 use the \fI\&.ewf\fP format\&.
 .IP 
@@ -248,7 +248,7 @@ create them with the proper file name extension before use\&.
 \fBMIDI SETUP\fP
 .PP 
 .IP "-Md:rawmidi,device_name" 
-Set the active MIDI-device\&. \'device_name\' can be anything that 
+Sets the active MIDI-device\&. \'device_name\' can be anything that 
 can be accessed using the normal UNIX file operations and 
 produces raw MIDI bytes\&. Valid devices are for example OSS rawmidi 
 devices (/dev/midi00), named pipes (see mkfifo(1) man page), and
@@ -256,7 +256,7 @@ normal files\&. If no MIDI-device is specified, the default MIDI-device
 is used (see ecasoundrc(5))\&.
 .IP 
 .IP "-Mms:device_id" 
-Send MMC start and stop to MIDI device-id \'device_id\'\&.
+Sends MMC start and stop to MIDI device-id \'device_id\'\&.
 .IP 
 .IP "-Mss" 
 Sends MIDI-sync to the selected MIDI-device\&. Note! Ecasound will not
@@ -274,7 +274,7 @@ detailed information\&.
 .PP 
 .IP 
 .IP "-pf:preset_file\&.eep" 
-Use the first preset found from file \'preset_file\&.eep\' as 
+Uses the first preset found from file \'preset_file\&.eep\' as 
 a chain operator\&.
 .IP 
 .IP "-pn:preset_name" 
@@ -287,14 +287,14 @@ preset database\&.
 .PP 
 .IP 
 .IP "-ev" 
-Analyze sample data to find out how much the signal can
+Analyzes sample data to find out how much the signal can
 be amplified without clipping\&. The resulting percent value
 can be used as a parameter to -ea and -eas effects\&. Also prints 
 a statistics table containing info about stereo-image and
 how different sample values are used\&.
 .IP 
 .IP "-ezf" 
-Find the optimal value for DC-adjusting\&. You can use the result
+Finds the optimal value for DC-adjusting\&. You can use the result
 as a parameter to -ezx effect\&.
 .IP 
 .PP 

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>06.03.2001</h2>
+<h2>09.04.2001</h2>
 
 
     
@@ -49,12 +49,12 @@ a Qt-based X-interface and various command-line utils suitable for
 batch processing.
 <p><h2>OPTIONS</h2>
     
-<p>Notice that the order of parameters given on the command
-line is important!
+<p>Note! All options except those mentioned in <em>Global options</em>, can 
+      be used in ecasound chainsetup files (.ecs).
 <p>
 <strong>GLOBAL OPTIONS</strong>
-<dl>
-<p><p></p><dt><strong>-c</strong><dd>
+<p><dl>
+<p></p><dt><strong>-c</strong><dd>
 Starts ecasound in interactive mode. In interactive mode you can
 control ecasound with simple commands ("start", "stop", "pause",
 etc.). See <a href="ecasound-iam_manpage.html">ecasound-iam(1)</a>.
@@ -73,34 +73,31 @@ Quiet mode, no output. Same as <em>-d:0</em>.
 Show this help.
 <p><p></p><dt><strong>--version</strong><dd>
 Print version info.
-<p></dl>
-<p>
-<strong>CHAINSETUP OPTIONS</strong>
-<dl>
-<p><p></p><dt><strong>-n:name</strong><dd>
-Set the name of chainsetup to 'name'. If not specified, defaults
-either to "command-line-setup" or to the file name from which
-chainsetup was loaded. Whitespaces are not allowed.
+<p><p></p><dt><strong>-r:sched_priority</strong><dd>
+Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
+ecasound doesn't have root priviledges. Beware! This gives better 
+performance, but can cause total lock-ups if something goes wrong.
+The 'sched_priority' can be omitted (0=omitted). If given, 
+this is the static priority to the highest priority ecasound thread.
+Other ecasound threads run with priority 'sched_priority-1...n'.
+Value '-1' can be used to disable raised-priority mode.
 <p><p></p><dt><strong>-s[:]chainsetup-file</strong><dd>
 Create a new chainsetup from file 'chainsetup-file' and add
 it to the current session. Chainsetup can contain inputs, outputs, 
 chains, effects, controllers, etc. A session, on the other hand, 
 contains all the chainsetups. Although only one chainsetup can
 be connected at a time, you can switch between them on-the-fly.
-<p><p></p><dt><strong>-sr:sample_rate</strong><dd>
-Set internal sampling rate. This can be used to improve 
-realtime performance or to avoid resampling. Default is 44100 
-samples per second.
 <p></dl>
 <p>
-<strong>GENERAL</strong>
+<strong>GENERAL CHAINSETUP OPTIONS</strong>
 <dl>
 <p><p></p><dt><strong>-a:chainname1, chainname2, ...</strong><dd>
-Select active signal chains. All effects, inputs and outputs are assigned to
-these chains. If there are no -a options given, default chain is used.
-Chain name 'all' is reserved and means that all chains are selected. By giving 
-multiple -a options, you can control to which chains effects, inputs and outputs
-are assigned to. Look at the <strong>EXAMPLES</strong>
+Selects active signal chains. All effects, inputs and outputs following
+this '-a' option are assigned to selected chains (until a new -a
+option is specified). If no -a option has been given, chain 'default' is 
+used instead. Chain name 'all' is also reserved and means that all chains
+are selected. By giving multiple -a options, you can control to which 
+chains effects, inputs and outputs are assigned to. Look at the <strong>EXAMPLES</strong>
 section for more detailed info about the usage of this option.
 <p><p></p><dt><strong>-b:buffer size</strong><dd>
 Sets the size of buffer in samples (must be an exponent of 2). This
@@ -112,18 +109,18 @@ buffer sizes will make envelopes act more smoothly. When not processing
 in real-time (all inputs and outputs are normal files), values between
 512 - 4096 often give better results. Default is 1024.
 <p><p></p><dt><strong>-m:mix-mode</strong><dd>
-Force ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
+Forces ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
 'simple' =  only one input/chain/output and 'normal' = normal 
 single-threaded mode. In most cases, ecasound is able to find out 
 the correct mode automatically.
-<p><p></p><dt><strong>-r:sched_priority</strong><dd>
-Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
-ecasound doesn't have root priviledges. Beware! This gives better 
-performance, but can cause total lock-ups if something goes wrong.
-The 'sched_priority' can be omitted (0=omitted). If given, 
-this is the static priority to the highest priority ecasound thread.
-Other ecasound threads run with priority 'sched_priority-1...n'.
-Value '-1' can be used to disable raised-priority mode.
+<p><p></p><dt><strong>-n:name</strong><dd>
+Sets the name of chainsetup to 'name'. If not specified, defaults
+either to "command-line-setup" or to the file name from which
+chainsetup was loaded. Whitespaces are not allowed.
+<p><p></p><dt><strong>-sr:sample_rate</strong><dd>
+Sets internal sampling rate. This can be used to improve 
+realtime performance or to avoid resampling. Default is 44100 
+samples per second.
 <p><p></p><dt><strong>-x</strong><dd>
 Truncate outputs. All output object are opened in overwrite mode. 
 Any existing files will be truncated.
@@ -131,7 +128,7 @@ Any existing files will be truncated.
 Open outputs for updating. Ecasound opens all outputs - if target
 format allows it - in readwrite mode.
 <p><p></p><dt><strong>-z:feature</strong><dd>
-Enable 'feature'. Most features can be disabled using notation 
+Enables 'feature'. Most features can be disabled using notation 
 <em>-z:nofeatures</em>. '-z:db,dbsize' enables double-buffering for audio 
 objects that support it (dbzise=0 for default, otherwise buffer
 size in sample frames). '-z:nodb' disables double-buffering. 
@@ -145,12 +142,14 @@ mode for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>.
 <strong>PROCESSING CONTROL</strong>
 <dl>
 <p></p><dt><strong>-t:seconds</strong><dd> 
-Set processing time in seconds (doesn't have to be an integer value).
+Sets processing time in seconds (doesn't have to be an integer value).
 If processing time isn't set, engine stops when all inputs are 
-finished.
+finished. This option is equivalent to the 'cs-set-length' EIAM
+command.
 <p><p></p><dt><strong>-tl</strong><dd>
-Enable looping. When processing is finished, engine will start 
-again from the initial position.
+Enables looping. When processing is finished, engine will start 
+again from the initial position. This option is equivalent to the 
+'cs-loop' EIAM command.
 <p></dl>
 <p>
 <strong>INPUT/OUTPUT SETUP</strong>
@@ -158,7 +157,7 @@ again from the initial position.
 more detailed documentation.
 <p><dl>
 <p></p><dt><strong>-f:sample_format,channel,sample-rate,interleaving</strong><dd>
-Set default sampling parameters. These are used for all following
+Sets default sampling parameters. These are used for all following
 input and output files or until another -f is specified. If no -f
 option is present, ecasound uses s16_le/2ch/44100/interleaved as the 
 default value. Some audio objects may override this altogether (for 
@@ -174,7 +173,7 @@ and "f32_be".
 <p>The 4th parameter 'interleaving' should either be 'i' (default) for
 interleaved stream format, or 'n' for noninterleaved.
 <p><p></p><dt><strong>-y:seconds</strong><dd>
-Set starting position for last specified input/output. If 
+Sets starting position for last specified input/output. If 
 you need more flexible control over audio objects, you should
 use the <em>.ewf</em> format.
 <p><p></p><dt><strong>-i[:]input-file-or-device</strong><dd>
@@ -245,14 +244,14 @@ create them with the proper file name extension before use.
 <strong>MIDI SETUP</strong>
 <p><dl>
 <p></p><dt><strong>-Md:rawmidi,device_name</strong><dd>
-Set the active MIDI-device. 'device_name' can be anything that 
+Sets the active MIDI-device. 'device_name' can be anything that 
 can be accessed using the normal UNIX file operations and 
 produces raw MIDI bytes. Valid devices are for example OSS rawmidi 
 devices (/dev/midi00), named pipes (see mkfifo(1) man page), and
 normal files. If no MIDI-device is specified, the default MIDI-device
 is used (see ecasoundrc(5)).
 <p><p></p><dt><strong>-Mms:device_id</strong><dd>
-Send MMC start and stop to MIDI device-id 'device_id'.
+Sends MMC start and stop to MIDI device-id 'device_id'.
 <p><p></p><dt><strong>-Mss</strong><dd>
 Sends MIDI-sync to the selected MIDI-device. Note! Ecasound will not
 send <em>MIDI-clock</em>, but only <em>start</em> and <em>stop</em> messages.
@@ -266,7 +265,7 @@ new effects by combining basic effects and controllers. See
 detailed information.
 <p><dl>
 <p><p></p><dt><strong>-pf:preset_file.eep</strong><dd>
-Use the first preset found from file 'preset_file.eep' as 
+Uses the first preset found from file 'preset_file.eep' as 
 a chain operator.
 <p><p></p><dt><strong>-pn:preset_name</strong><dd>
 Find preset 'preset_name' from global preset database and use
@@ -276,13 +275,13 @@ preset database.
 <p><em>SIGNAL ANALYSIS</em>
 <p><dl>
 <p><p></p><dt><strong>-ev</strong><dd>
-Analyze sample data to find out how much the signal can
+Analyzes sample data to find out how much the signal can
 be amplified without clipping. The resulting percent value
 can be used as a parameter to -ea and -eas effects. Also prints 
 a statistics table containing info about stereo-image and
 how different sample values are used.
 <p><p></p><dt><strong>-ezf</strong><dd>
-Find the optimal value for DC-adjusting. You can use the result
+Finds the optimal value for DC-adjusting. You can use the result
 as a parameter to -ezx effect.
 <p></dl>
 <p><em>GENERAL SIGNAL PROCESSING ALGORITHMS</em>

@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "21\&.03\&.2001" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "09\&.04\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -59,22 +59,6 @@ Help! \fI[-]\fP
 .IP 
 .SH "GLOBAL" 
 .IP 
-.PP 
-.IP "rewind \'time-in-seconds\', rw \'time-in-seconds\'" 
-Rewind the current position by \'time-in-seconds\' seconds\&. \fI[-]\fP
-.PP 
-.IP "forward \'time-in-seconds\', fw \'ttime-in-seconds\'" 
-The current position is forwarded by \'time-in-seconds\' seconds\&. \fI[-]\fP
-.PP 
-.IP "setpos \'time-in-seconds\', set-position \'time-in-seconds\'" 
-Sets the current position to \'time-in-seconds\' seconds from the \fI[-]\fP
-beginning\&.
-.PP 
-.IP "getpos, get-position" 
-Returns the current position in seconds\&. \fI[f]\fP
-.PP 
-.IP "get-length" 
-Returns the chainsetup length in seconds (if known)\&. \fI[f]\fP
 .PP 
 .IP "status, st" 
 General status info\&. \fI[s]\fP
@@ -150,13 +134,35 @@ Disconnect currently connected chainsetup\&. \fI[-]\fP
 .IP "cs-connected" 
 Returns the name of currently connected chainsetup\&. \fI[s]\fP
 .PP 
-.IP "cs-length \'seconds\'" 
-Set processing time in seconds (doesn\'t have to be an integer 
-value)\&. \fI[-]\fP
+.IP "cs-rewind \'time-in-seconds\', rewind \'time-in-seconds\', rw \'time-in-seconds\'" 
+Rewinds the current chainsetup position by \'time-in-seconds\' seconds\&.
+Position of all inputs and outputs attached to the selected chainsetup
+is also affected\&. \fI[-]\fP
+.PP 
+.IP "cs-forward \'time-in-seconds\', forward \'time-in-seconds\', fw \'ttime-in-seconds\'" 
+The current chainsetup position is forwarded by \'time-in-seconds\'
+seconds\&. Position of all inputs and outputs attached to the selected chainsetup
+is also affected\&. \fI[-]\fP
+.PP 
+.IP "cs-set-position \'time-in-seconds\', cs-setpos \'time-in-seconds\', setpos \'time-in-seconds\', set-position \'time-in-seconds\'" 
+Sets the chainsetup position to \'time-in-seconds\' seconds from the 
+beginning\&. Position of all inputs and outputs attached to the selected 
+chainsetup is also affected\&. \fI[-]\fP
+.PP 
+.IP "cs-get-position, cs-getpos, getpos, get-position" 
+Returns the current chainsetup position in seconds\&. \fI[f]\fP
+.PP 
+.IP "cs-get-length, get-length" 
+Returns the chainsetup length in seconds (if known)\&. \fI[f]\fP
+.PP 
+.IP "cs-set-length \'seconds\'" 
+Sets processing time in seconds (doesn\'t have to be an integer value)\&. \fI[-]\fP
 .PP 
 .IP "cs-loop" 
 Enable looping\&. When processing is finished, engine will start 
-again from the initial position\&. \fI[-]\fP
+again from the initial position\&. It\'s not always possible to enable looping
+(for instance all inputs and outputs have infinite length and
+chainsetup length is not explicitly set with \'cs-set-length\')\&. \fI[-]\fP
 .PP 
 .IP "cs-set" 
 Interpret general chainsetup parameters like for example
