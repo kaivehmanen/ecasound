@@ -2,7 +2,7 @@
  * ecaplay.c: A simple command-line tool for playing audio files
  *            using the default output device specified in 
  *            "~/.ecasoundrc".
- * Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+ * Copyright (C) 1999-2002,2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ static void setup_signal_handling(void);
 /** 
  * Global variables
  */
-static const char* ecaplay_version = "20021107-36";
+static const char* ecaplay_version = "20040417-37";
 static int ecaplay_debuglevel = ECAPLAY_EIAM_LOGLEVEL;
 static int ecaplay_skip = 0;
 static const char* ecaplay_output = NULL;
@@ -218,8 +218,9 @@ static const char* get_track(int n, int argc, char *argv[])
 
 static void print_usage(FILE* stream)
 {
-  fprintf(stream, "ecaplay v%s\n", ecaplay_version);
-  fprintf(stream, "Copyright (C) 1997-2002 Kai Vehmanen, released under GPL licence \n");
+  fprintf(stream, "Ecaplay v%s\n\n", ecaplay_version);
+
+  fprintf(stream, "Copyright (C) 1997-2002,2004 Kai Vehmanen, released under GPL licence \n");
   fprintf(stream, "Ecaplay comes with ABSOLUTELY NO WARRANTY.\n");
   fprintf(stream, "You may redistribute copies of ecasound under the terms of the GNU\n");
   fprintf(stream, "General Public License. For more information about these matters, see\n"); 

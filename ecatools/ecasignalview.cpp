@@ -109,6 +109,8 @@ static int ecasv_chcount = 0;
 
 static ECA_CONTROL_INTERFACE* ecasv_eci_repp = 0;
 
+static sig_atomic_t done = 0;
+
 /**
  * Function definitions
  */
@@ -182,12 +184,13 @@ int main(int argc, char *argv[])
 
   eci.command("start");
 
-  while(true) {
+  while(! done ) {
     kvu_sleep(secs, msecs * 1000000);
     ecasv_print_vu_meters(&eci, &chstats);
   }
 
   ecasv_output_cleanup();
+  endwin();
   
   return 0;
 }
@@ -374,7 +377,6 @@ void ecasv_print_usage(void)
 
 void ecasv_signal_handler(int signum)
 {
-  cerr << "Unexpected interrupt... cleaning up.\n";
-  ecasv_output_cleanup();
-  exit(1);
+    cerr << "Interrupted... cleaning up.\n";
+    done=1;
 }
