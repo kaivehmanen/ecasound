@@ -31,14 +31,17 @@ void MIKMOD_INTERFACE::set_mikmod_cmd(const std::string& value) { MIKMOD_INTERFA
 
 MIKMOD_INTERFACE::MIKMOD_INTERFACE(const std::string& name) {
   finished_rep = false;
-  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 }
 
 MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void) { close(); }
 
 void MIKMOD_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
   triggered_rep = false;
-  toggle_open_state(true); 
+  toggle_open_state(true);
+
+  /* s16 samples, 2 channels, srate configurable */
+  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
+  set_channels(2);
 }
 
 void MIKMOD_INTERFACE::close(void) {

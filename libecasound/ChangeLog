@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-11-19  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+	
+	* resource-file.h (is_modified): added
+	
 2001-10-30  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* samplebuffer.h (all): class de-templatized

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-ogg.cpp: Interface for ogg vorbis ecoders and encoders.
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include "eca-debug.h"
 
 string OGG_VORBIS_INTERFACE::default_ogg_input_cmd = "ogg123 -d raw --file=%F %f";
-string OGG_VORBIS_INTERFACE::default_ogg_output_cmd = "oggenc -b 128 --raw --output=%f -";
+string OGG_VORBIS_INTERFACE::default_ogg_output_cmd = "oggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -";
 
 void OGG_VORBIS_INTERFACE::set_ogg_input_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_ogg_input_cmd = value; }
 void OGG_VORBIS_INTERFACE::set_ogg_output_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_ogg_output_cmd = value; }
@@ -44,6 +44,11 @@ OGG_VORBIS_INTERFACE::~OGG_VORBIS_INTERFACE(void) { close(); }
 void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
   triggered_rep = false;
   toggle_open_state(true);
+
+  /**
+   * FIXME: we have no idea about the audio format of the 
+   *        stream we get from ogg123!
+   */
 }
 
 void OGG_VORBIS_INTERFACE::close(void) {
@@ -131,6 +136,11 @@ void OGG_VORBIS_INTERFACE::fork_ogg_output(void) {
   }
   set_fork_command(command_rep);
   set_fork_file_name(label());
+
+  set_fork_bits(bits());
+  set_fork_channels(channels());
+  set_fork_sample_rate(samples_per_second());
+
   fork_child_for_write();
   if (child_fork_succeeded() == true) {
     fd_rep = file_descriptor();

@@ -92,11 +92,14 @@ void AUDIO_IO_FORKED_STREAM::set_fork_channels(int channels) {
 
 /**
  * If found, replaces the string '%s' with value of parameter
- * 'sample_rate'.
+ * 'sample_rate', and '%S' with 'sample_rate/1000' (kHz).
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_sample_rate(long int sample_rate) {
   if (command_rep.find("%s") != std::string::npos) {
     command_rep.replace(command_rep.find("%s"), 2, kvu_numtostr(sample_rate));
+  }
+  if (command_rep.find("%S") != std::string::npos) {
+    command_rep.replace(command_rep.find("%S"), 2, kvu_numtostr(sample_rate/1000.0f));
   }
 }
 

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>29.10.2001</h2>
+<h2>19.11.2001</h2>
 
 
     
@@ -115,7 +115,8 @@
 <p><p></p><dt><strong>ext-mp3-output-cmd</strong><dd>
 	Command for starting mp3 output. All input data should be read
 	from standard input. Before execution, "%f" is replaced with 
-	path to the output mp3. Defaults to <em>lame -b 128 -x -S - %f</em>.
+	path to the output mp3, and %S with sample rate in kHz. 
+	Defaults to <em>lame -b 128 -s %S -x -S - %f</em>.
 <p><p></p><dt><strong>ext-ogg-input-cmd</strong><dd>
 	Command for starting ogg input. All output should be directed
 	to standard output. Before execution, "%f" is replaced with 
@@ -123,7 +124,9 @@
 <p><p></p><dt><strong>ext-ogg-output-cmd</strong><dd>
 	Command for starting ogg output. All input data should be read
 	from standard input. Before execution, "%f" is replaced with 
-	path to the output ogg. Defaults to <em>oggenc -b 128 --raw --output=%f -</em>.
+	path to the output ogg, and %c, %s and %b with equivalent
+        format parameters.
+	Defaults to <em>oggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -</em>.
 <p><p></p><dt><strong>ext-mikmod-cmd</strong><dd>
 	Command for starting mikmod input. Before execution, "%f" is replaced with 
 	file path, and %s with select sample rate. Defaults to 

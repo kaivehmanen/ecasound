@@ -31,14 +31,15 @@ void TIMIDITY_INTERFACE::set_timidity_cmd(const std::string& value) { TIMIDITY_I
 
 TIMIDITY_INTERFACE::TIMIDITY_INTERFACE(const std::string& name) {
   finished_rep = false;
-  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 }
 
 TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void) { close(); }
 
 void TIMIDITY_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
-  set_channels(2);
+  /* s16 samples, 2 channels, srate configurable */
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
+  set_channels(2);
+
   triggered_rep = false;
   toggle_open_state(true);
 }

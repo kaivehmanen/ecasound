@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-ewf.cpp: Ecasound wave format input/output
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 
 #include <algorithm>
 #include <string>
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 #include <cmath>
 
 #include <kvutils/message_item.h>
@@ -33,7 +33,10 @@
 
 #include "eca-error.h"
 #include "eca-debug.h"
-  
+
+using std::cerr;
+using std::endl;
+
 EWFFILE::~EWFFILE(void) {
   if (is_open()) close();
   if (child != 0) {

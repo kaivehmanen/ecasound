@@ -30,10 +30,6 @@ RESOURCE_FILE::RESOURCE_FILE(const std::string& resource_file) :
 }
 
 RESOURCE_FILE::~RESOURCE_FILE(void) { 
-  if (modified_rep == true) {
-    save();
-    modified_rep = false;
-  }
 }
 
 void RESOURCE_FILE::load(void) { 

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (29.10.2001)
+       (19.11.2001)
        ()
        (Multimedia software)
 
@@ -126,7 +126,8 @@ startdit()
 	dit(ext-mp3-output-cmd)
 	Command for starting mp3 output. All input data should be read
 	from standard input. Before execution, "%f" is replaced with 
-	path to the output mp3. Defaults to em(lame -b 128 -x -S - %f).
+	path to the output mp3, and %S with sample rate in kHz. 
+	Defaults to em(lame -b 128 -s %S -x -S - %f).
 
 	dit(ext-ogg-input-cmd)
 	Command for starting ogg input. All output should be directed
@@ -136,7 +137,9 @@ startdit()
 	dit(ext-ogg-output-cmd)
 	Command for starting ogg output. All input data should be read
 	from standard input. Before execution, "%f" is replaced with 
-	path to the output ogg. Defaults to em(oggenc -b 128 --raw --output=%f -).
+	path to the output ogg, and %c, %s and %b with equivalent
+        format parameters.
+	Defaults to em(oggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -).
 
 	dit(ext-mikmod-cmd)
 	Command for starting mikmod input. Before execution, "%f" is replaced with 

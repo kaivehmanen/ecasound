@@ -32,7 +32,11 @@ ECA_RESOURCES::ECA_RESOURCES(void) :
   set_defaults(); 
 }
 
-ECA_RESOURCES::~ECA_RESOURCES(void) { }
+ECA_RESOURCES::~ECA_RESOURCES(void) { 
+  if (is_modified() == true) {
+    save();
+  }
+}
 
 void ECA_RESOURCES::set_defaults(void) {
 
@@ -68,10 +72,10 @@ void ECA_RESOURCES::set_defaults(void) {
   if (has("ext-wave-editor") != true) resource("ext-wave-editor","ecawave");
 
   if (has("ext-mp3-input-cmd") != true) resource("ext-mp3-input-cmd","mpg123 --stereo -r %s -b 0 -q -s -k %o %f");
-  if (has("ext-mp3-output-cmd") != true) resource("ext-mp3-output-cmd", "lame -b 128 -x -S - %f");
+  if (has("ext-mp3-output-cmd") != true) resource("ext-mp3-output-cmd", "lame -b 128 -s %S -x -S - %f");
 
   if (has("ext-ogg-input-cmd") != true) resource("ext-ogg-input-cmd","ogg123 -d raw --file=%F %f");
-  if (has("ext-ogg-output-cmd") != true) resource("ext-ogg-output-cmd", "oggenc -b 128 --raw --output=%f -");
+  if (has("ext-ogg-output-cmd") != true) resource("ext-ogg-output-cmd", "oggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -");
 
   if (has("ext-mikmod-cmd") != true) resource("ext-mikmod-cmd","mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f");
   if (has("ext-timidity-cmd") != true) resource("ext-timidity-cmd", "timidity -Or1S -id -s %s -o - %f");

@@ -36,6 +36,7 @@ DISTFILES = 	Makefile.am \
 	    	ecasignalview.1 \
 	    	examples.html \
 		index.html \
+		manpages.html \
 		edi-list.txt
 
 # ---------------------------------------------------------------------

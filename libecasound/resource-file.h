@@ -60,6 +60,11 @@ class RESOURCE_FILE {
    */
   bool has(const std::string& tag) const;
 
+  /** 
+   * Has any resource value been added, removed or modified?
+   */
+  bool is_modified(void) const { return(modified_rep); }
+
   /**
    * Load/restore resources from file
    */

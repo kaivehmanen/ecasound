@@ -42,7 +42,7 @@
 #include "eca-debug.h"
 
 string MP3FILE::default_mp3_input_cmd = "mpg123 --stereo -r %s -b 0 -q -s -k %o %f";
-string MP3FILE::default_mp3_output_cmd = "lame -b 128 -x -S - %f";
+string MP3FILE::default_mp3_output_cmd = "lame -b 128 -s %S -x -S - %f";
 
 void MP3FILE::set_mp3_input_cmd(const std::string& value) { MP3FILE::default_mp3_input_cmd = value; }
 void MP3FILE::set_mp3_output_cmd(const std::string& value) { MP3FILE::default_mp3_output_cmd = value; }
@@ -329,6 +329,11 @@ void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   if (io_mode() == io_read) {
     get_mp3_params(label());
   }
+  else {
+    /* s16 samples, 2 channels, srate configurable */
+    set_channels(2);
+    set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16);
+  }
 
   toggle_open_state(true);
   triggered_rep = false;
@@ -491,30 +496,39 @@ void MP3FILE::fork_mp3_input(void) {
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) " + cmd);
   set_fork_command(cmd);
   set_fork_file_name(label());
-  set_fork_sample_rate(samples_per_second());
+
+  set_fork_bits(bits());
+  set_fork_channels(channels());
+  set_fork_sample_rate(samples_per_second()); /* lame */
+
 // for ecawave mp3 bug debugging:
-//    cerr << "About to fork! (5s)" << endl;
-//    sleep(5);
-//    cerr << "About to fork! (now)" << endl;
+//    cerr << "About to fork! " << endl;
+
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
+
 // for ecawave mp3 bug debugging:
 //      cerr << "Child fork succeeded!" << endl;
+
     fd_rep = file_descriptor();
     f1_rep = fdopen(fd_rep, "r");
     if (f1_rep == 0) finished_rep = true;
   }
+
 // for ecawave mp3 bug debugging:
 //    cerr << "My pid: " << ::getpid() << endl;
-//    sleep(5);
-//    cerr << "Fork exit()" << endl;
 }
 
 void MP3FILE::fork_mp3_output(void) {
   ecadebug->msg("(audioio-mp3) Starting to encode " + label() + " with lame.");
   last_position_rep = position_in_samples();
   set_fork_command(MP3FILE::default_mp3_output_cmd);
+
   set_fork_file_name(label());
+  set_fork_bits(bits());
+  set_fork_channels(channels());
+
+  set_fork_sample_rate(samples_per_second());
   fork_child_for_write();
   if (child_fork_succeeded() == true) {
     fd_rep = file_descriptor();

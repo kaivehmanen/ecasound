@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "29\&.10\&.2001" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "19\&.11\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -109,7 +109,8 @@ the start offset in mp3 frames\&. Defaults to \fImpg123 --stereo -r -b 0 -q -s -
 .IP "ext-mp3-output-cmd" 
 Command for starting mp3 output\&. All input data should be read
 from standard input\&. Before execution, "%f" is replaced with 
-path to the output mp3\&. Defaults to \fIlame -b 128 -x -S - %f\fP\&.
+path to the output mp3, and %S with sample rate in kHz\&. 
+Defaults to \fIlame -b 128 -s %S -x -S - %f\fP\&.
 .IP 
 .IP "ext-ogg-input-cmd" 
 Command for starting ogg input\&. All output should be directed
@@ -119,7 +120,9 @@ path to the input ogg\&. Defaults to \fIogg123 -d raw --file=%F %f\fP\&.
 .IP "ext-ogg-output-cmd" 
 Command for starting ogg output\&. All input data should be read
 from standard input\&. Before execution, "%f" is replaced with 
-path to the output ogg\&. Defaults to \fIoggenc -b 128 --raw --output=%f -\fP\&.
+path to the output ogg, and %c, %s and %b with equivalent
+format parameters\&.
+Defaults to \fIoggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -\fP\&.
 .IP 
 .IP "ext-mikmod-cmd" 
 Command for starting mikmod input\&. Before execution, "%f" is replaced with 
