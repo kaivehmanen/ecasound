@@ -1013,7 +1013,7 @@ void ECA_ENGINE::init_prefill(void)
   prefill_threshold_rep = 0;
 
   if (csetup_repp->max_buffers() == true) 
-    prefill_threshold_rep = ECA_ENGINE::prefill_threshold_constant / buffersize();
+    prefill_threshold_rep = ECA_ENGINE::prefill_threshold_constant / buffersize() / max_channels();
 
   if (prefill_threshold_rep < ECA_ENGINE::prefill_blocks_constant)
     prefill_threshold_rep = ECA_ENGINE::prefill_blocks_constant;

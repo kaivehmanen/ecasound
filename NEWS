@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 180502) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 060602) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,13 +17,17 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.4 *-
 
-??052002 (v2.1dev10)
+??062002 (v2.1dev10)
 	- added: -G:mgrtype,optstring switch for setting 
 		 audio object manager level options
 	- added: -G:jack,client_name,operation_mode option; see 
 	         ecasound(1) for details
 	- changed: major data structure cleanup in the JACK
 	 	   plugin
+	- fixed: 'unknown device state' errors with multichannel 
+		 soundcards like midiman deltaXX and rme 
+		 when starting processing and if -z:intbuf mode 
+		 was selected
 	- fixed: due to changes in autoconf variables, non-atomic
 		 locking was always used instead of atomic locking 
   		 in 2.1dev8 and 2.1dev9
