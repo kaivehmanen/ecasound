@@ -21,7 +21,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>04062001</h2>
+<h2>09072001</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -63,6 +63,12 @@
 <dt><a href="eci_doc.html#l24">3.4.1: Overview</a>
 <dt><a href="eci_doc.html#l25">3.4.2: Usage</a>
 <dt><a href="eci_doc.html#l26">3.4.3: Example</a>
+</dl><p>
+<dt><h3><a href="eci_doc.html#l27">3.5: Perl</a></h3>
+<dl><p>
+<dt><a href="eci_doc.html#l28">3.5.1: Overview</a>
+<dt><a href="eci_doc.html#l29">3.5.2: Usage</a>
+<dt><a href="eci_doc.html#l30">3.5.3: Example</a>
 </dl><p>
 </dl><p>
  
@@ -336,6 +342,10 @@ int main(int argc, char *argv[])
 <strong>3.4.1: Overview</strong><p>
 Python implementation is based around the ECA_CONTROL_INTERFACE class.
 Lists are used for representing collections of objects.
+<p>Note! Eric S. Tiedemann has written an alternative Python interface
+      to ECI. You'll find this interface included in the main 
+      ecasound packege, in pyecasound/esteci.py. To use this instead
+      of the standard interface, just 'import eci' and you're set! :)
 <p><a name="l25"></a>
 <strong>3.4.2: Usage</strong><p>
 <p><ol>
@@ -379,6 +389,55 @@ print "Chain operator status: ", e.last_string()
 
 </pre>
 
+<p>
+<a name="l27"></a>
+<h3>3.5: Perl</h3>
+<a name="l28"></a>
+<strong>3.5.1: Overview</strong><p>
+Audio::Ecasound provides perl bindings to the ecasound
+control interface of the ecasound program.  You can use
+perl to automate or interact with ecasound so you don't
+have to turn you back on the adoring masses packed into
+Wembly Stadium.
+<p>Audio::Ecasound was written by Brad Bowman. At the moment this module 
+is not distributed with ecasound. To get the latest version, check the 
+following <a href="http://search.cpan.org/search?mode=module&query=ecasound">CPAN link</a>.
+<p><a name="l29"></a>
+<strong>3.5.2: Usage</strong><p>
+See the below example. For more info, here's another 
+<a href="http://search.cpan.org/doc/BOWMANBS/Audio-Ecasound-0.2/README">CPAN link</a>.
+<p><a name="l30"></a>
+<strong>3.5.3: Example</strong><p>
+use Audio::Ecasound qw(:simple);
+<p><pre>
+
+eci("cs-add play_chainsetup");
+eci("c-add 1st_chain");
+eci("-i:some_file.wav");
+eci("-o:/dev/dsp");
+# multiple \n separated commands
+eci("cop-add -efl:100
+     # with comments
+     cop-select 1
+     copp-select 1
+     cs-connect");
+eci("start");
+my $cutoff_inc = 500.0;
+while (1) {
+    sleep(1);
+    last if eci("engine-status") ne "running";
+    my $curpos = eci("get-position");
+    last if $curpos &gt; 15;
+    my $next_cutoff = $cutoff_inc + eci("copp-get");
+    # Optional float argument
+    eci("copp-set", $next_cutoff);
+}
+eci("stop");
+eci("cs-disconnect");
+print "Chain operator status: ", eci("cop-status");
+
+</pre>
+
 <p><insert name=ecasound_tail>
-</body>
+<p></body>
 </html>

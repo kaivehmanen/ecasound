@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS 		= foreign
-EXTRA_DIST 			= pyeca.py
+EXTRA_DIST 			= pyeca.py eci.py
 
 # ----------------------------------------------------------------------
 # defines
@@ -53,11 +53,12 @@ libpyecasound_la_LDFLAGS 	= -avoid-version -export-dynamic
 install-data-hook:
 if COMPILE_PYECASOUND
 	$(INSTALL) -d $(DESTDIR)$(libdir)
-	cd $(srcdir) ; cp pyeca.py $(DESTDIR)$(libdir)
+	cd $(srcdir) ; cp pyeca.py eci.py $(DESTDIR)$(libdir)
 endif
 
 uninstall-local:
 if COMPILE_PYECASOUND
-	rm -f   $(DESTDIR)$(libdir)/pyeca.py
+	rm -f   $(DESTDIR)$(libdir)/pyeca.py \
+		$(DESTDIR)$(libdir)/eci.py
 	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(libdir)
 endif

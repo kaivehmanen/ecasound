@@ -12,7 +12,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (04062001)
+       (09072001)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -290,6 +290,11 @@ subsubsect(Overview)
 Python implementation is based around the ECA_CONTROL_INTERFACE class.
 Lists are used for representing collections of objects.
 
+Note! Eric S. Tiedemann has written an alternative Python interface
+      to ECI. You'll find this interface included in the main 
+      ecasound packege, in pyecasound/esteci.py. To use this instead
+      of the standard interface, just 'import eci' and you're set! :)
+
 subsubsect(Usage)
 
 starteit()
@@ -331,4 +336,53 @@ e.command("cop-status")
 print "Chain operator status: ", e.last_string()
 )
 
+COMMENT(----------------------------------------------------------------)
+subsect(Perl)
+subsubsect(Overview)
+Audio::Ecasound provides perl bindings to the ecasound
+control interface of the ecasound program.  You can use
+perl to automate or interact with ecasound so you don't
+have to turn you back on the adoring masses packed into
+Wembly Stadium.
+
+Audio::Ecasound was written by Brad Bowman. At the moment this module 
+is not distributed with ecasound. To get the latest version, check the 
+following url(CPAN link)
+(http://search.cpan.org/search?mode=module&query=ecasound).
+
+subsubsect(Usage)
+See the below example. For more info, here's another 
+url(CPAN link)(http://search.cpan.org/doc/BOWMANBS/Audio-Ecasound-0.2/README).
+
+subsubsect(Example)
+use Audio::Ecasound qw(:simple);
+
+verb(
+eci("cs-add play_chainsetup");
+eci("c-add 1st_chain");
+eci("-i:some_file.wav");
+eci("-o:/dev/dsp");
+# multiple \n separated commands
+eci("cop-add -efl:100
+     # with comments
+     cop-select 1
+     copp-select 1
+     cs-connect");
+eci("start");
+my $cutoff_inc = 500.0;
+while (1) {
+    sleep(1);
+    last if eci("engine-status") ne "running";
+    my $curpos = eci("get-position");
+    last if $curpos > 15;
+    my $next_cutoff = $cutoff_inc + eci("copp-get");
+    # Optional float argument
+    eci("copp-set", $next_cutoff);
+}
+eci("stop");
+eci("cs-disconnect");
+print "Chain operator status: ", eci("cop-status");
+)
+
 htmlcommand(<insert name=ecasound_tail>)
+
