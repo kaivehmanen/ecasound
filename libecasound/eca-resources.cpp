@@ -42,6 +42,7 @@ void ECA_RESOURCES::set_defaults(void) {
   if (has("default-to-double-buffering") != true) resource("default-to-double-buffering","false");
   if (has("default-double-buffer-size") != true) resource("default-double-buffer-size","100000");
   if (has("default-to-precise-sample-rates") != true) resource("default-to-precise-sample-rates","false");
+  if (has("default-to-internal-buffering") != true) resource("default-to-internal-buffering","false");
   if (has("resource-directory") != true) resource("resource-directory", ecasound_resource_path);
   if (has("resource-file-genosc-envelopes") != true) resource("resource-file-genosc-envelopes","generic_oscillators");
   if (has("resource-file-effect-presets") != true) resource("resource-file-effect-presets","effect_presets");

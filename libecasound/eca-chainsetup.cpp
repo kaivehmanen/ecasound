@@ -152,6 +152,7 @@ void ECA_CHAINSETUP::set_defaults(void) {
   toggle_double_buffering(ecaresources.boolean_resource("default-to-double-buffering"));
   set_double_buffer_size(atol(ecaresources.resource("default-double-buffer-size").c_str()));
   toggle_precise_sample_rates(ecaresources.boolean_resource("default-to-precise-sample-rates"));
+  toggle_max_buffers(ecaresources.boolean_resource("default-to-internal-buffering"));
 }
 
 /**

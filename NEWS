@@ -18,6 +18,8 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.0 *-
 
 ??052001 (v2.0.1)
+	- added: ecasoundrc - default-to-internal-buffering; select
+		 the default between -z:intbuf and -z:nointbuf
 	- changed: completely rewritten mp3 header parsing; should 
 		   fix most of the compatibility problems
 	- fixed: disk buffers weren't properly flushed in -z:db mode 
