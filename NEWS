@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 281103) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 061203) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -8,12 +8,12 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
   Y = minor version  - represents a set of planned features (see TODO)
   Z = revision       - small changes to major.minor version (optional)
 
-  extraT             - beta, pre and rc releases that are in preparation
-		       of major releases (optional)
+  extraT             - beta, pre and rc releases that are in 
+                       preparation of major releases (optional)
 
 -----------------------------------------------------------------------
 
-??112003 (v2.3.2)  -** stable release **-
+0612003 (v2.3.2)  -** stable release **-
 	- edi-entries: edi-33 closed
 	- added: support for libsndfile; enabled if libsndfile is
 	         detected succesfully by configure; can be disabled
@@ -32,6 +32,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   no longer printed to stderr - instead a summary 
 		   is printed at the end of the session if any xruns
 		   have occured
+	- changed: Ecasound PDF docs (user's, programmer's and ECI 
+		   guides) are now generated using AE fonts; the PDFs 
+		   can now be read with readers like xpdf and 
+		   probably look better in others [janweil]
 	- fixed: pyecasound/test1_stresstest.py was not included in
 		 the dist package
 	- fixed: libaudiofile - input file audio parameters
