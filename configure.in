@@ -378,10 +378,20 @@ dnl --
 dnl Checks for pyecasound
 dnl
 dnl defines: ECA_S_PYTHON_INCLUDES, ECA_S_PYTHON_DLMODULES, 
-dnl          ECA_AM_COMPILE_PYECASOUND
+dnl          ECA_AM_COMPILE_PYECASOUND, ECA_AM_HAVE_PYTHON
 dnl --
 
-compile_pyecasound=yes
+compile_pyecasound=no
+
+dnl --
+dnl Python interpreter
+
+AC_PATH_PROG(PYTHONPATH,python,none)
+if test x$PYTHONPATH = xnone; then
+  python_support=no
+else
+  python_support=yes
+fi
 
 dnl --
 dnl Python header files
@@ -415,7 +425,7 @@ then
 	AC_MSG_WARN([Python.h not found])
 	compile_pyecasound=no
 else
-	AC_MSG_RESULT($eca_python_incdir)
+	AC_MSG_RESULT($ECA_S_PYTHON_INCLUDES)
 	compile_pyecasound=yes
 fi
 
@@ -458,11 +468,12 @@ AC_SUBST(ECA_S_PYTHON_MODULES)
 AC_SUBST(ECA_S_PYTHON_DLMODULES)
 
 AC_ARG_ENABLE(pyecasound,
-[  --disable-pyecasound 	  Disable compilation of pyecasound (default = no)],
-[  compile_pyecasound=no ])
+[  --enable-pyecasound 	  Enable compilation of pyecasound (default = no)],
+[  compile_pyecasound=yes ])
 
 dnl if test x$disable_pyecasound = xyes ; then compile_pyecasound=no ; fi
 AM_CONDITIONAL(ECA_AM_COMPILE_PYECASOUND, test x$compile_pyecasound = xyes)
+AM_CONDITIONAL(ECA_AM_HAVE_PYTHON, test x$python_support = xyes)
 
 dnl ------------------------------------------------------------------
 

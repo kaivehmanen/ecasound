@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 040303) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 110303) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,8 +14,13 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ??032003 (v2.2.2)  -** stable release **-
+	- added: ecanative.py - a native python implementation of 
+		 the ECI API [jhalttun]
 	- added: stream ogg/mp3/mid directly from network if the 
 	         filename has a url-prefix
+	- added: author name to the description of LADSPA plugins
+	- added: latest config.guess and config.sub added to 
+	         the dist package
 	- changed: ecasound.el updated to 0.8.2, lots of small
 		   changes, see ecasound.el for details [mlang]
 	- changed: alsa-0.9 - better support for pcm devices such as 
@@ -27,6 +32,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 with fade lengths under 1s
 	- fixed: alsa-0.9 - prevent ecasound from prefilling too 
 		 much data to output devices 
+	- fixed: a ':' in LADSPA plugins parameter name confused
+		 ecasound (swh's sc4 is one example)
+	- fixed: theoretical problem with ecalength argument 
+		 parsing
 15022003 (v2.2.1)  -** stable release **-
 	- added: sane default param hints for chainops: -ec, -etd,
 		 -ete, -etf, -etl, -etm, -etp, -etr and -epp
