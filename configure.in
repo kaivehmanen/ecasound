@@ -38,23 +38,38 @@ AC_CHECK_CXX_NAMESPACE_SUPPORT
 dnl ------------------------------------------------------------------
 
 dnl --
-dnl Libtool
+dnl Autotools and libtool
+
+AM_PROG_LIBTOOL
 AC_PATH_PROG(LIBTOOL,libtool,none)
 if test x$LIBTOOL = xnone; then
  AC_MSG_ERROR([** Libtool package not installed! **])
 fi
+
 AC_PATH_PROG(GNUM4,m4,none)
 if test x$GNUM4 = xnone; then
  AC_MSG_ERROR([** GNU m4 not installed! **])
 fi
-AM_PROG_LIBTOOL
 
-ACLOCAL=aclocal
-AUTOMAKE=automake
-AUTOCONF=autoconf
-AC_SUBST(ACLOCAL)
-AC_SUBST(AUTOCONF)
-AC_SUBST(AUTOMAKE)
+AC_PATH_PROG(AUTOCONF,autoconf,none)
+if test x$AUTOCONF = xnone; then
+ AC_MSG_ERROR([** Autoconf package not installed! **])
+fi
+
+AC_PATH_PROG(AUTOHEADER,autoheader,none)
+if test x$AUTOHEADER = xnone; then
+ AC_MSG_ERROR([** Autoconf package not installed! **])
+fi
+
+AC_PATH_PROG(ACLOCAL,aclocal,none)
+if test x$ACLOCAL = xnone; then
+ AC_MSG_ERROR([** Automake package not installed! **])
+fi
+
+AC_PATH_PROG(AUTOMAKE,automake,none)
+if test x$AUTOMAKE = xnone; then
+ AC_MSG_ERROR([** Automake package not installed! **])
+fi
 
 dnl ------------------------------------------------------------------
 
