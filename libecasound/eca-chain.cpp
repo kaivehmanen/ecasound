@@ -83,7 +83,10 @@ CHAIN::~CHAIN (void)
 
   for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
 	chainops_rep.end(); p++) {
-    ECA_LOG_MSG(ECA_LOGGER::info, (*p)->status());
+    string tmp = (*p)->status();
+    if (tmp.size() > 0) {
+      ECA_LOG_MSG(ECA_LOGGER::info, tmp);
+    }
     delete *p;
   }
 
