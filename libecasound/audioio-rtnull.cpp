@@ -154,7 +154,7 @@ void REALTIME_NULL::calculate_device_position(void)
 /**
  * Calculates 'avail_data_rep'.
  */
-void REALTIME_NULL::calculate_available_data(void)
+void REALTIME_NULL::calculate_available_data(void) const
 { 
   if (io_mode() == io_read) {
     /* capture: device is always ahead */
