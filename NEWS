@@ -15,7 +15,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??112002 (v2.2.0-pre5)
+07112002 (v2.2.0-pre5)
 	- edi-entries: edi-29 closed
 	- added: ecasound emacs interface, ecasound.el, is now 
 	   	 distributed with ecasound (ecatools/ecasound.el);
