@@ -30,12 +30,14 @@
    (expr) ? (void)(0) :	(void)(fprintf(stderr, "Warning: DBC_ENSURE failed - \"%s\", %s, %d.\n", #expr,__FILE__, __LINE__))
 #define DBC_CHECK(expr)							      \
    (expr) ? (void)(0) :	(void)(fprintf(stderr, "Warning: DBC_CHECK failed - \"%s\", %s, %d.\n", #expr,__FILE__, __LINE__))
+#define DBC_DECLARE(expr)               expr
 
 #else /* DBC DISABLED --> */
 
 #define DBC_REQUIRE(expr)		((void) 0)
 #define DBC_ENSURE(expr)		((void) 0)
 #define DBC_CHECK(expr)		        ((void) 0)
+#define DBC_DECLARE(expr)               ((void) 0)
 
 #endif /* <-- DBC DISABLED */
 

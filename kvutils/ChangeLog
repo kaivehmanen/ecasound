@@ -2,6 +2,10 @@
 *** libkvutils - changes and additions to the public interfaces     ***
 -----------------------------------------------------------------------
 
+2001-10-03  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* dbc.h (DBC_DECLARE): added
+	
 2001-08-19  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* library version changed to 3:0:1
