@@ -43,11 +43,18 @@ ECA_LOGGER_INTERFACE& ECA_LOGGER::instance(void)
 
 void ECA_LOGGER::attach_logger(ECA_LOGGER_INTERFACE* logger)
 {
+  int oldloglevel = -1;
+  if (interface_impl_repp != 0) {
+    interface_impl_repp->get_log_level_bitmask();
+  }
   ECA_LOGGER::detach_logger();
   if (ECA_LOGGER::interface_impl_repp == 0) {
     KVU_GUARD_LOCK guard(&ECA_LOGGER::lock_rep);
     if (ECA_LOGGER::interface_impl_repp == 0) {
       ECA_LOGGER::interface_impl_repp = logger;
+      if (oldloglevel != -1) {
+	logger->set_log_level_bitmask(oldloglevel);
+      }
     }
   }
 }
