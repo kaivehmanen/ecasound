@@ -33,10 +33,13 @@ int main(int argc, char *argv[]) {
 		   " -t:5 2>/dev/null >/dev/null");
 
   string many_chains (ecasound_exec);
+  many_chains += " -a:";
   for(int n = 0; n < 128; n++) {
-    many_chains += " -a:" + kvu_numtostr(n) + " -i:" + input_file;
+    many_chains += kvu_numtostr(n);
+    if (n != 128) many_chains += ",";
   }
-  many_chains += " -a:all -o:null -t:5 2>/dev/null >/dev/null";
+  many_chains += " -i:" + input_file;
+  many_chains += " -o:null -t:5 2>/dev/null >/dev/null";
   eci_execute_test(many_chains);
 
   ECA_TEST_SUCCESS();

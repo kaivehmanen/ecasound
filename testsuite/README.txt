@@ -42,6 +42,8 @@ List of current tests
 
 CON-1 - Simple tests for command-line options and basic 
         operations.
+CON-2 - Tests for various rt and nonrt object combinations.
+        Should be run both with and without root-priviledges.
 
 ECI-1 - Initializing the ECI C-interface multiple times.
 ECI-2 - Like ECI-1, but uses re-entrant API functions.

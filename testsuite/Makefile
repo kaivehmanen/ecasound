@@ -1,11 +1,15 @@
 # ---
 # manual configuration
 srcdir=..
+ecasound_library=ecasound
+#ecasound_library=ecasound_debug
+ecasoundc_library=ecasoundc
+#ecasoundc_library=ecasoundc_debug
 # ---
 
 ECAFLAGS= -I${srcdir}/libecasound -I${srcdir}/libecasoundc -D_REENTRANT -g -Wall -Wstrict-prototypes -DVERBOSE
-ECALINK=-L${srcdir}/libecasound/.libs -lecasound_debug \
-	-L${srcdir}/libecasoundc/.libs -lecasoundc_debug \
+ECALINK=-L${srcdir}/libecasound/.libs -l${ecasound_library} \
+	-L${srcdir}/libecasoundc/.libs -l${ecasoundc_library} \
 	-L${srcdir}/kvutils/.libs -lkvutils
 
 CXXFLAGS += $(ECAFLAGS)
