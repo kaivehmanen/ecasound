@@ -281,6 +281,7 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
   DBC_REQUIRE(argu.size() > 0);
   DBC_REQUIRE(argu[0] == '-');
   DBC_REQUIRE(istatus_rep == false);
+  DBC_REQUIRE(csetup_repp->is_enabled() != true);
   // --------
 
   bool match = true;
@@ -492,6 +493,8 @@ void ECA_CHAINSETUP_PARSER::interpret_chains (const string& argu)
   switch(argu[1]) {
   case 'a':
     {
+      DBC_CHECK(csetup_repp->is_enabled() != true);
+
       std::vector<string> schains = kvu_get_arguments(argu);
       if (std::find(schains.begin(), schains.end(), "all") != schains.end()) {
 	csetup_repp->select_all_chains();
@@ -648,6 +651,8 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
   switch(argu[1]) {
   case 'i':
     {
+      DBC_CHECK(csetup_repp->is_enabled() != true);
+
       AUDIO_IO* audio_input = ECA_OBJECT_FACTORY::create_audio_object(argu);
       if (audio_input == 0) 
 	audio_input = ECA_OBJECT_FACTORY::create_loop_input(argu, &csetup_repp->loop_map);
@@ -672,6 +677,8 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 
   case 'o':
     {
+      DBC_CHECK(csetup_repp->is_enabled() != true);
+
       AUDIO_IO* audio_output = ECA_OBJECT_FACTORY::create_audio_object(argu);
 	
       if (audio_output == 0) audio_output = ECA_OBJECT_FACTORY::create_loop_output(argu, &csetup_repp->loop_map);
@@ -704,6 +711,8 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 
   case 'y':
     {
+      DBC_CHECK(csetup_repp->is_enabled() != true);
+
       if (last_audio_add_vector_repp == 0) {
 	ECA_LOG_MSG(ECA_LOGGER::info, 
 		    "Error! Non-existant last audio object.");
@@ -755,6 +764,8 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_manager(const string& argu)
   switch(argu[1]) {
   case 'G':
     {
+      DBC_CHECK(csetup_repp->is_enabled() != true);
+
       std::vector<string> args = kvu_get_arguments(argu);
       args.erase(args.begin());
       DBC_CHECK(args.size() == kvu_get_arguments(argu).size() - 1);
