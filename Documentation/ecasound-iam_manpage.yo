@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (14.12.2004)
+       (21.03.2005)
        ()
        (Multimedia software)
 
@@ -197,8 +197,8 @@ chainsetup length is not explicitly set with 'cs-set-length'). em([-])
 
 dit(cs-set-param)
 Interpret general chainsetup parameters like for example
-"-b" (buffersize), "-m" (mixmode), "-n" (name), etc. 
-See ecasound(1) for more info. em([-])
+"-b" (buffersize), "-n" (name), etc. See ecasound(1) for 
+more info. em([-])
 
 dit(cs-set-audio-format 'bits,channels,sample_rate')
 Set the default sample parameters for currently selected chainsetup. 
