@@ -158,14 +158,14 @@ string PRESET::parameter_names(void) const {
 }
 
 void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
-  if (param >= 0 && param < param_objects.size()) {
+  if (param > 0 && param <= param_objects.size()) {
     assert(param_objects.size() == param_arg_indices.size());
     param_objects[param-1]->set_parameter(param_arg_indices[param-1], value);
   }
 }
 
 CHAIN_OPERATOR::parameter_type PRESET::get_parameter(int param) const { 
-  if (param >= 0 && param < param_objects.size()) {
+  if (param > 0 && param <= param_objects.size()) {
     assert(param_objects.size() == param_arg_indices.size());
     return param_objects[param-1]->get_parameter(param_arg_indices[param-1]);
   }
