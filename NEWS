@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 060602) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 110602) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -33,6 +33,10 @@ Last officially released version is -*> v2.0.4 *-
   		 in 2.1dev8 and 2.1dev9
 	- fixed: configure failed if an old (<0.9) ALSA version was 
 		 installed even if --disable-alsa was specified
+	- fixed: loading chainsetup from interactive mode failed
+		 both with cs-load and after cs-edit
+	- fixed: compiling against readline 4.2 with 
+		 --enable-sys-readline failed
 17052002 (v2.1dev9)
 	- edi-entries: edi-22
 	- changed: optimized disk i/o subsystem (-z:db) performance
