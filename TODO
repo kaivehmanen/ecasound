@@ -23,6 +23,7 @@
 Input/output devices:
 
 - ALSA 0.6.x support [--> update: already in CVS]
+- support for floating-point sample formats (-f option)
 - type override for audio objects
 - automatic handling of mono mp3s
 - mp3 bitrate as a command-line parameter
@@ -73,6 +74,7 @@ User-interface:
 
 Misc:
 
+- if libreadline is alreayd installed, use it!
 - smart mixing / dithering
 - better MIDI-support
 

@@ -2,6 +2,7 @@
 #define INCLUDED_QE_CHAINSETUP_H
 
 #include <vector>
+#include <string>
 
 #include <qwidget.h>
 #include <qlayout.h>
@@ -36,6 +37,8 @@ public slots:
  void button_chain_muting(void);
  void button_chain_bypass(void);
 
+  void select_chains();
+
 private slots:
  void not_implemented(void);
 
@@ -46,12 +49,22 @@ protected:
 
   void closeEvent(QCloseEvent *);
   void timerEvent(QTimerEvent *);
+  void resizeEvent(QResizeEvent *);
+  void mousePressEvent(QMouseEvent *);
+  void mouseReleaseEvent(QMouseEvent *);
 
  private:
 
   void init_chain_list(void);
   void init_buttons(void);
 
+  /**
+   * Select chains 'chains'. Affects both the listview 
+   * and active chainsetup.
+   */
+  void select_chains(const vector<string>& chains);
+
+  bool user_input_lock_rep;
   QBoxLayout* top_layout_repp;
   QEButtonRow* buttons_repp;
 

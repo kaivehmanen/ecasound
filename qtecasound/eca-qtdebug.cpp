@@ -38,10 +38,6 @@ QEDebug::QEDebug( QWidget *parent, const char *name)
   tview_repp = new QTextView(this, "tview");
 }
 
-QSize QEDebug::sizeHint(void) const {
-  return(QSize(600,200));
-}
-
 void QEDebug::timerEvent(QTimerEvent *) {
   if (qtdebug_queue.cmds_available() == true) {
     string s = qtdebug_queue.front();

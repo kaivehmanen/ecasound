@@ -46,6 +46,7 @@ QEChainsetup::QEChainsetup (ECA_CONTROL* econtrol,
   : ctrl_repp(econtrol)
 {
   startTimer(1000);
+  user_input_lock_rep = false;
 
   top_layout_repp = new QVBoxLayout( this );
   init_buttons();
@@ -79,55 +80,114 @@ void QEChainsetup::init_chain_list(void) {
   chain_list_repp->addColumn("Input");
   chain_list_repp->addColumn("Output");
   chain_list_repp->addColumn("Status");
+  chain_list_repp->addColumn("Operators");
 
   chain_list_repp->setAllColumnsShowFocus(true); 
   chain_list_repp->setSorting(0);
+  chain_list_repp->setMultiSelection(true);
+//    chain_list_repp->setSorting(-1);
+
+  QObject::connect(chain_list_repp,
+  		   SIGNAL(selectionChanged()), 
+		   this,
+  		   SLOT(select_chains()));
 
   update_chain_list();
 }
 
 void QEChainsetup::update_chain_list(void) { 
-  // HEI!
-  // Tähän systeemi joka käy läpi listviewin (tyhjentämättä sitä) 
-  // ja päivittää vain tarvittavat. 
-  // --
-  // selected chainit merkataan myös widgetissä valituiksi!
-  // --
-  
-  QListViewItem* selected = chain_list_repp->selectedItem();
-  QString selname = ""; 
-  if (selected != 0) selname = selected->text(0);
-  chain_list_repp->clear();
-
+  QString chain_name, input_name, output_name, status_string, chain_string;
+  vector<string> saved = ctrl_repp->selected_chains();
   vector<string> chain_names = ctrl_repp->chain_names();
   vector<string>::const_iterator p = chain_names.begin();
-  while(p != chain_names.end()) {
+  QListViewItem* selected = chain_list_repp->firstChild();
+  while (p != chain_names.end()) {
     ctrl_repp->select_chain(*p);
     CHAIN* current_chain = ctrl_repp->get_chain();
-    QString chain_name = "";
-    QString input_name = "none";
-    QString output_name = "none";
-    QString status_string = "";
-    if (current_chain != 0) {
-      chain_name = current_chain->name().c_str();
-      if (current_chain->connected_input() != 0) 
-	input_name = current_chain->connected_input()->label().c_str();
-      if (current_chain->connected_output() != 0) 
-	output_name = current_chain->connected_output()->label().c_str();
-      if (current_chain->is_processing() != true)
-	status_string += "bypassed";
-      if (current_chain->is_muted() == true) {
-	if (status_string.isEmpty() != true) status_string += ",";
-	status_string += "muted";
-      }
+    if (current_chain == 0) continue;
+    chain_name = current_chain->name().c_str();
+    if (current_chain->connected_input() != 0) 
+      input_name = current_chain->connected_input()->label().c_str();
+    if (current_chain->connected_output() != 0) 
+      output_name = current_chain->connected_output()->label().c_str();
+    chain_string = current_chain->to_string().c_str();
+    if (current_chain->is_processing() != true)
+      status_string += "bypassed";
+    if (current_chain->is_muted() == true) {
+      if (status_string.isEmpty() != true) status_string += ",";
+      status_string += "muted";
     }
-    QListViewItem* newitem = new QListViewItem(chain_list_repp,
-					       chain_name,
-					       input_name,
-					       output_name,
-					       status_string);
-    if (newitem->text(0) == selname) chain_list_repp->setSelected(newitem, true);
+    if (selected != 0 && 
+	chain_name == selected->text(0)) {
+      selected->setText(1, input_name);
+      selected->setText(2, output_name);
+      selected->setText(3, status_string);
+      selected->setText(4, chain_string);
+      selected->repaint();
+    }
+    else {
+      QListViewItem* newitem = new QListViewItem(chain_list_repp,
+						 chain_name,
+						 input_name,
+						 output_name,
+						 status_string,
+						 chain_string);
+    }
+
+    if (selected != 0) selected = selected->nextSibling();
     ++p;
+  }
+
+  if (selected != 0) {
+    QListViewItem* next = 0;
+    while(selected != 0) {
+      next = selected->nextSibling();
+      chain_list_repp->takeItem(selected);
+      selected = next;
+    }
+  }
+  select_chains(saved);
+}
+
+void QEChainsetup::select_chains(const vector<string>& chains) {
+  ctrl_repp->select_chains(chains);
+  if (user_input_lock_rep != true) {
+    user_input_lock_rep = true;
+    cerr << "L3-on" << endl;
+    chain_list_repp->clearSelection();
+    vector<string>::const_iterator p = chains.begin();
+    while (p != chains.end()) {
+      QListViewItem* selected = chain_list_repp->firstChild();
+      while (selected != 0) {
+	if (QString(p->c_str()) == selected->text(0)) 
+	  selected->setSelected(true);
+
+	selected = selected->nextSibling();
+      }
+      ++p;
+    }
+    user_input_lock_rep = false;
+    cerr << "L3-off" << endl;
+  }
+}
+
+void QEChainsetup::select_chains(void) {
+  if (user_input_lock_rep != true) {
+    user_input_lock_rep = true;
+    cerr << "L4-on" << endl;
+    vector<string> selected_chains;
+    
+    QListViewItem* selected = chain_list_repp->firstChild();
+    while (selected != 0) {
+      if (selected->isSelected()) 
+	selected_chains.push_back(selected->text(0).latin1());
+      
+      selected = selected->nextSibling();
+    }
+    
+    ctrl_repp->select_chains(selected_chains);
+    user_input_lock_rep = false;
+    cerr << "L4-off" << endl;
   }
 }
 
@@ -252,6 +312,27 @@ void QEChainsetup::button_remove_file(void) {
 //      QMessageBox::information(this, "qtecasound", "No file selected!",0);
 }
 
-void QEChainsetup::timerEvent( QTimerEvent * ) {
-  update_chain_list();
+void QEChainsetup::timerEvent(QTimerEvent *) { update_chain_list(); }
+void QEChainsetup::resizeEvent(QResizeEvent *) {
+  int pixelsleft = width();
+  for(int n = 1; n < 5; n++) { // n < chain_list_repp->columns()
+    pixelsleft -= chain_list_repp->columnWidth(n);
+  }
+
+  if (pixelsleft > 0) {
+    chain_list_repp->setColumnWidthMode(0, QListView::Maximum);
+    chain_list_repp->setColumnWidth(0, pixelsleft - 4);
+  }
+}
+
+void QEChainsetup::mousePressEvent(QMouseEvent *) { 
+  cerr << "L1-on" << endl;
+  user_input_lock_rep = true;
+  cerr << "L1-off" << endl;
+}
+
+void QEChainsetup::mouseReleaseEvent(QMouseEvent *) {
+  cerr << "L2-on" << endl;
+  user_input_lock_rep = false;
+  cerr << "L2-off" << endl;
 }

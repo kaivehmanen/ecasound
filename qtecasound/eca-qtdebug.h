@@ -11,7 +11,6 @@ class QEDebug : public QWidget
   Q_OBJECT
 public:
   QEDebug(QWidget *parent = 0, const char *name = 0);
-  QSize sizeHint(void) const;
 
 protected:
   void	timerEvent(QTimerEvent *);
