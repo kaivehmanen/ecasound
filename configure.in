@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20030109-7
+dnl last modified: 20030122-8
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -326,8 +326,8 @@ AC_CHECK_HEADER(jack/jack.h,jack_support=yes,jack_support=no)
 AC_ARG_WITH(jack,
 	    [  --with-jack=DIR	Compile against JACK installed in DIR],
 	    [
-	        ECA_S_JACK_LIBS=$withval/lib
-		ECA_S_JACK_INCLUDES=$withval/include
+	        ECA_S_JACK_LIBS="-L${withval}/lib -ljack"
+		ECA_S_JACK_INCLUDES="-I${withval}/include"
 		jack_support=yes
 	    ])
 AC_ARG_ENABLE(jack,

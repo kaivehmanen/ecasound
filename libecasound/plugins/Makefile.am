@@ -33,8 +33,6 @@ af_target =
 endif
 
 if ECA_AM_COMPILE_JACK
-jack_libs = -L$(ECA_S_JACK_LIBS) -ljack
-jack_cflags = -I$(ECA_S_JACK_INCLUDES)
 jack_target = libaudioio_jack.la
 jack_src = audioio_jack.cpp audioio_jack_manager.cpp
 else
@@ -46,7 +44,7 @@ INCLUDES =	-I$(srcdir) \
 		-I$(top_srcdir)/libecasound \
 		-I$(top_srcdir)/kvutils \
 		$(arts_cflags) \
-		$(jack_cflags)
+		$(ECA_S_JACK_INCLUDES)
 
 #libdir = 	${exec_prefix}/lib/libecasound@LIBECASOUND_VERSION@-plugins
 
@@ -85,7 +83,7 @@ plugin_cond_sources = 	$(af_src) \
 
 libecasound_plugins_la_SOURCES          = audioio_dummy.cpp $(plugin_cond_sources)
 EXTRA_libecasound_plugins_la_SOURCES    = $(plugin_cond_sources)
-libecasound_plugins_la_LIBADD		= $(af_libs) $(alsa_libs) $(arts_libs) $(jack_libs)
+libecasound_plugins_la_LIBADD		= $(af_libs) $(alsa_libs) $(arts_libs) $(ECA_S_JACK_LIBS)
 libecasound_plugins_la_LDFLAGS 		= -static
 
 libecasound_plugins_debug_la_SOURCES	= $(libecasound_plugins_la_SOURCES)
