@@ -27,7 +27,7 @@
 
 #include "eca-error.h"
 
-EFFECT_LADSPA::EFFECT_LADSPA (const struct LADSPA_Descriptor *pdesc) throw(ECA_ERROR*) {
+EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR*) {
   plugin_desc = pdesc;
   if ((plugin_desc->Properties & LADSPA_PROPERTY_INPLACE_BROKEN) ==
       LADSPA_PROPERTY_INPLACE_BROKEN)

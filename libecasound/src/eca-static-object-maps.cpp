@@ -258,7 +258,7 @@ vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR*) {
   if (desc_func == 0)
     throw(new ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable find plugin LADSPA-descriptor."));
 
-  const struct LADSPA_Descriptor *plugin_desc = 0;
+  const LADSPA_Descriptor *plugin_desc = 0;
   for (int i = 0;; i++) {
     plugin_desc = desc_func(i);
     if (plugin_desc == 0) break;
