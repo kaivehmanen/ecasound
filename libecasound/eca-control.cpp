@@ -782,7 +782,7 @@ string ECA_CONTROL::chain_operator_status(void) const
       if (st_info_string.empty() == false) {
 	msg << "\n\tStatus info:\n" << st_info_string;
       }
-      if (p < (*chain_citer)->number_of_chain_operators()) msg << "\n";
+      if (p + 1 < (*chain_citer)->number_of_chain_operators()) msg << "\n";
     }
     ++chain_citer;
   }
@@ -819,7 +819,7 @@ string ECA_CONTROL::controller_status(void) const
       if (st_info_string.empty() == false) {
 	mitem << "\n\t -- Status info: " << st_info_string;
       }
-      if (p < (*chain_citer)->number_of_controllers()) mitem << "\n";
+      if (p + 1 < (*chain_citer)->number_of_controllers()) mitem << "\n";
     }
     ++chain_citer;
   }
