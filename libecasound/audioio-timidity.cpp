@@ -44,12 +44,20 @@ TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void)
 
 void TIMIDITY_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 { 
+  std::string urlprefix;
   struct stat buf;
   int ret = ::stat(label().c_str(), &buf);
   if (ret != 0) {
-    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-TIMIDITY: Can't open file " + label() + "."));
+    size_t offset = label().find_first_of("://");
+    if (offset == std::string::npos) {
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-TIMIDITY: Can't open file " + label() + "."));
+    }
+    else {
+      urlprefix = std::string(label(), 0, offset);
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-timidity) Found url; protocol '" + urlprefix + "'.");
+    }
   }
-
+  
   /* s16 samples, 2 channels, srate configurable */
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
   set_channels(2);

@@ -43,12 +43,20 @@ MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void)
 
 void MIKMOD_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 {
+  std::string urlprefix;
   triggered_rep = false;
 
   struct stat buf;
   int ret = ::stat(label().c_str(), &buf);
   if (ret != 0) {
-    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-MIKMOD: Can't open file " + label() + "."));
+    size_t offset = label().find_first_of("://");
+    if (offset == std::string::npos) {
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-MIKMOD: Can't open file " + label() + "."));
+    }
+    else {
+      urlprefix = std::string(label(), 0, offset);
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mikmod) Found url; protocol '" + urlprefix + "'.");
+    }
   }
 
   /* s16 samples, 2 channels, srate configurable */

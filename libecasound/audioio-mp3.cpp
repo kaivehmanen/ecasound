@@ -46,8 +46,8 @@
 
 #include "eca-logger.h"
 
-string MP3FILE::default_mp3_input_cmd = "mpg123 --stereo -r %s -b 0 -q -s -k %o %f";
-string MP3FILE::default_mp3_output_cmd = "lame -b %B -s %S -x -S - %f";
+std::string MP3FILE::default_mp3_input_cmd = "mpg123 --stereo -r %s -b 0 -q -s -k %o %f";
+std::string MP3FILE::default_mp3_output_cmd = "lame -b %B -s %S -x -S - %f";
 long int MP3FILE::default_mp3_output_default_bitrate = 128000;
 
 void MP3FILE::set_mp3_input_cmd(const std::string& value) { MP3FILE::default_mp3_input_cmd = value; }
@@ -428,7 +428,7 @@ void MP3FILE::seek_position(void)
   }
 }
 
-void MP3FILE::set_parameter(int param, string value)
+void MP3FILE::set_parameter(int param, std::string value)
 {
   switch (param) {
   case 1: 
@@ -445,7 +445,7 @@ void MP3FILE::set_parameter(int param, string value)
   }
 }
 
-string MP3FILE::get_parameter(int param) const
+std::string MP3FILE::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
@@ -498,51 +498,61 @@ void MP3FILE::get_mp3_params_old(const std::string& fname) throw(AUDIO_IO::SETUP
 
 void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERROR&)
 {
+  std::string urlprefix;
   struct frame fr;
+
   if (mpg123_detect_by_content(fname.c_str(), &fr) != true) {
-    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-MP3: Can't open " + label() + " for reading."));
+    /* not a file, next search for an URL */
+    size_t offset = fname.find_first_of("://");
+    if (offset == std::string::npos) {
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-MP3: Can't open " + label() + " for reading."));
+    }
+    else {
+      urlprefix = std::string(fname, 0, offset);
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Found url; protocol '" + urlprefix + "'.");
+    }
+  }
+  else {
+    /* file size */
+    struct stat buf;
+    ::stat(fname.c_str(), &buf);
+    double fsize = (double)buf.st_size;
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Total file size (bytes): " + kvu_numtostr(fsize));
+    
+    /* bitrate */
+    double bitrate = tabsel_123[fr.lsf][fr.lay - 1][fr.bitrate_index] * 1000;
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Bitrate (bits/s): " + kvu_numtostr(bitrate));
+
+    /* sample freq */
+    double sfreq = mpg123_freqs[fr.sampling_frequency];
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Sampling frequncy (Hz): " + kvu_numtostr(sfreq));
+
+    /* channels */
+    // notice! mpg123 always outputs 16bit samples, stereo
+    mono_input_rep = (fr.mode == MPG_MD_MONO) ? true : false;
+
+    /* temporal length */
+    long int numframes =  static_cast<long int>((fsize / mpg123_compute_bpf(&fr)));
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Total length (frames): " + kvu_numtostr(numframes));
+    double tpf = mpg123_compute_tpf(&fr);
+    set_length_in_seconds(tpf * numframes);
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Total length (seconds): " + kvu_numtostr(length_in_seconds()));
+
+    /* set pcm per frame value */
+    static int bs[4] = {0, 384, 1152, 1152};
+    pcm_rep = bs[fr.lay];
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Pcm per mp3 frames: " + kvu_numtostr(pcm_rep));
   }
 
-
-  /* file size */
-  struct stat buf;
-  ::stat(fname.c_str(), &buf);
-  double fsize = (double)buf.st_size;
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Total file size (bytes): " + kvu_numtostr(fsize));
-
-  /* bitrate */
-  double bitrate = tabsel_123[fr.lsf][fr.lay - 1][fr.bitrate_index] * 1000;
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Bitrate (bits/s): " + kvu_numtostr(bitrate));
-
-  /* sample freq */
-  double sfreq = mpg123_freqs[fr.sampling_frequency];
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Sampling frequncy (Hz): " + kvu_numtostr(sfreq));
-
-  /* channels */
-  // notice! mpg123 always outputs 16bit samples, stereo
-  mono_input_rep = (fr.mode == MPG_MD_MONO) ? true : false;
-  set_channels(2);
-
-  /* temporal length */
-  long int numframes =  static_cast<long int>((fsize / mpg123_compute_bpf(&fr)));
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Total length (frames): " + kvu_numtostr(numframes));
-  double tpf = mpg123_compute_tpf(&fr);
-  set_length_in_seconds(tpf * numframes);
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Total length (seconds): " + kvu_numtostr(length_in_seconds()));
-
   /* sample format (this comes from mpg123) */
+  set_channels(2);
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16);
-
-  /* set pcm per frame value */
-  static int bs[4] = {0, 384, 1152, 1152};
-  pcm_rep = bs[fr.lay];
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Pcm per mp3 frames: " + kvu_numtostr(pcm_rep));
 }
 
 
 void MP3FILE::fork_mp3_input(void) {
-  string cmd = MP3FILE::default_mp3_input_cmd;
-  if (cmd.find("%o") != string::npos) {
+  std::string cmd = MP3FILE::default_mp3_input_cmd;
+  if (cmd.find("%o") != std::string::npos) {
     cmd.replace(cmd.find("%o"), 2, kvu_numtostr((long)(position_in_samples() / pcm_rep)));
   }
   last_position_rep = position_in_samples();
@@ -578,8 +588,8 @@ void MP3FILE::fork_mp3_input(void) {
 void MP3FILE::fork_mp3_output(void) {
   ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-mp3) Starting to encode " + label() + " with lame.");
   last_position_rep = position_in_samples();
-  string cmd = MP3FILE::default_mp3_output_cmd;
-  if (cmd.find("%B") != string::npos) {
+  std::string cmd = MP3FILE::default_mp3_output_cmd;
+  if (cmd.find("%B") != std::string::npos) {
     cmd.replace(cmd.find("%B"), 2, kvu_numtostr((long int)(bitrate_rep / 1000)));
   }
 

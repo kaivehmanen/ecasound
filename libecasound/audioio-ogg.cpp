@@ -52,6 +52,7 @@ OGG_VORBIS_INTERFACE::~OGG_VORBIS_INTERFACE(void)
 
 void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 {
+  std::string urlprefix;
   triggered_rep = false;
 
   /**
@@ -63,7 +64,14 @@ void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
     struct stat buf;
     int ret = ::stat(label().c_str(), &buf);
     if (ret != 0) {
-      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-OGG: Can't open file " + label() + "."));
+      size_t offset = label().find_first_of("://");
+      if (offset == std::string::npos) {
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-OGG: Can't open file " + label() + "."));
+      }
+      else {
+	urlprefix = std::string(label(), 0, offset);
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-ogg) Found url; protocol '" + urlprefix + "'.");
+      }
     }
   }
 
