@@ -713,7 +713,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 	  truncate = true;
 	}
 	if (((audio_output->supported_io_modes() & mode_tmp) != mode_tmp)) {
-	  interpret_set_result(false, string("(eca-chainsetup-parser) None of the I/O-modes (io_write/io_readwrite) supported by output ") + audio_output->name());
+	  interpret_set_result(false, string("(eca-chainsetup-parser) io_write/io_readwrite access modes not supported by output '") + audio_output->name() + "'.");
 	}
 	else {
 	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");

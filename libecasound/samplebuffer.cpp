@@ -891,8 +891,10 @@ void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
   if (new_buffer_size > reserved_samples_rep) {
     reserved_samples_rep = new_buffer_size * 2;
 
+#ifdef ECA_DEBUG_MODE
     DBC_CHECK(impl_repp->rt_lock_rep != true);
     DBC_CHECK(impl_repp->lockref_rep == 0);
+#endif
 
     for(int c = 0; c < channel_count_rep; c++) {
       delete[] buffer[c];
@@ -901,12 +903,16 @@ void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
   }
 
   if (impl_repp->old_buffer_repp == 0) {
+#ifdef ECA_DEBUG_MODE
     DBC_CHECK(impl_repp->rt_lock_rep != true);
+#endif
     impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep];
   }
 
   if (impl_repp->resample_memory_rep.size() < static_cast<size_t>(channel_count_rep)) {
+#ifdef ECA_DEBUG_MODE
     DBC_CHECK(impl_repp->rt_lock_rep != true);
+#endif
     impl_repp->resample_memory_rep.resize(channel_count_rep, 0.0f);
   }
 }
@@ -979,7 +985,8 @@ void SAMPLE_BUFFER::resample_nofilter(SAMPLE_SPECS::sample_rate_t from,
   double step = static_cast<double>(to) / from;
   buf_size_t old_buffer_size = buffersize_rep;
 
-  length_in_samples(static_cast<buf_size_t>(std::floor(step * buffersize_rep + 0.5f)));
+  // truncate, not round, to integer
+  length_in_samples(static_cast<buf_size_t>(std::floor(step * buffersize_rep)));
 
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_no_f from " << from << " to " << to << "." << std::endl);
 
@@ -1032,7 +1039,8 @@ void SAMPLE_BUFFER::resample_with_memory(SAMPLE_SPECS::sample_rate_t from,
   double step = (double)to / from;
   buf_size_t old_buffer_size = buffersize_rep;
 
-  length_in_samples(static_cast<buf_size_t>(std::floor(step * buffersize_rep + 0.5f)));
+  // truncate, not round, to integer
+  length_in_samples(static_cast<buf_size_t>(std::floor(step * buffersize_rep)));
 
   DBC_CHECK(impl_repp->old_buffer_repp != 0);
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_w_m from " << from << " to " << to << "." << std::endl); 
@@ -1091,7 +1099,8 @@ void SAMPLE_BUFFER::resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from
   double step = static_cast<double>(to_srate) / from_srate;
   buf_size_t old_buffer_size = buffersize_rep;
 
-  length_in_samples(static_cast<buf_size_t>(std::floor(step * buffersize_rep + 0.5f)));
+  // truncate, not round, to integer
+  length_in_samples(static_cast<buf_size_t>(std::floor(step * buffersize_rep)));
 
   DBC_CHECK(impl_repp->old_buffer_repp != 0);
   DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_s_r_c from " << from_srate << " to " << to_srate << "." << std::endl); 
@@ -1124,12 +1133,16 @@ void SAMPLE_BUFFER::resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from
 
     DBC_CHECK(ret == 0);
     DBC_CHECK(std::labs(params.input_frames_used - old_buffer_size) <= 1);
+#ifdef ECA_DEBUG_MODE
     if (old_buffer_size != params.input_frames_used) { std::cerr << "input_frames_over=" << old_buffer_size - params.input_frames_used << ".\n"; }
+#endif
 
     if (c == 0) ch_out_count = params.output_frames_gen;
     DBC_CHECK(ch_out_count == params.output_frames_gen);
 
-    // if (buffersize_rep != params.output_frames_gen) { std::cerr << "output_frame_space_left=" << params.output_frames_gen - buffersize_rep << ".\n"; }
+#ifdef ECA_DEBUG_MODE
+    if (buffersize_rep != params.output_frames_gen) { std::cerr << "output_frame_space_left=" << params.output_frames_gen - buffersize_rep << ".\n"; }
+#endif
   }
 
   DBC_CHECK(std::labs(params.output_frames_gen - buffersize_rep) <= 1);

@@ -100,8 +100,7 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     child_buffersize_rep = static_cast<long int>(std::floor(buffersize() * (1.0f / psfactor_rep)));
   }
   else {
-    psfactor_rep = static_cast<float>(child_srate_rep) / samples_per_second();
-    child_buffersize_rep = static_cast<long int>(std::floor((buffersize() * (1.0f / psfactor_rep)) + 0.5f));
+    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-RESAMPLE: 'io_write' and 'io_readwrite' modes are not supported."));
   }
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
