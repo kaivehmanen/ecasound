@@ -50,7 +50,6 @@
 
 #include <fcntl.h>        /* POSIX: fcntl() */
 #include <sys/poll.h>     /* XPG4-UNIX: poll() */
-/* #include <signal.h> */       /* POSIX: kill() */
 #include <unistd.h>       /* POSIX: pipe(), fork() */
 #include <sys/stat.h>     /* POSIX: stat() */
 #include <sys/types.h>    /* POSIX: fork() */
@@ -62,7 +61,7 @@
  * Options
  */
 
-#define ECI_ENABLE_DEBUG
+/* #define ECI_ENABLE_DEBUG */
 
 /* --------------------------------------------------------------------- 
  * Definitions and constants
@@ -261,7 +260,7 @@ eci_handle_t eci_init_r(void)
       /* -c = interactive mode, -D = direct prompts and banners to stderr */
       const char* args[4] = { NULL, "-c", "-D", NULL };
       int res = 0;
-  
+
       args[0] = ecasound_exec;
 
       /* close all unused descriptors */
@@ -313,8 +312,8 @@ eci_handle_t eci_init_r(void)
 	eci_rep = NULL;
       }
       else {
-	write(eci_rep->cmd_write_fd_rep, "int-output-mode-wellformed\n", strlen("int-output-mode-wellformed\n"));
 	write(eci_rep->cmd_write_fd_rep, "debug 259\n", strlen("debug 259\n"));
+	write(eci_rep->cmd_write_fd_rep, "int-output-mode-wellformed\n", strlen("int-output-mode-wellformed\n"));
 	eci_rep->commands_counter_rep ++;
       
 	/* check that exec() succeeded */
@@ -392,7 +391,8 @@ void eci_command_r(eci_handle_t ptr, const char* command)
 
   eci_impl_check_handle(eci_rep);
 
-  /* ECI_DEBUG_1("\n(ecasoundc_sa) writing command '%s'.\n", command); */
+  ECI_DEBUG_2("\n(ecasoundc_sa) writing command '%s' (cmd-counter=%d).\n", 
+	      command, eci_rep->commands_counter_rep + 1);
 
   eci_impl_clean_last_values(eci_rep->parser_repp);
 
@@ -417,6 +417,9 @@ void eci_command_r(eci_handle_t ptr, const char* command)
       eci_rep->parser_repp->last_counter_rep) {
     eci_impl_read_return_value(eci_rep, timeout);
   }
+
+  ECI_DEBUG_2("\n(ecasoundc_sa) set return value type='%s' (read-counter=%d).\n", 
+	      eci_rep->parser_repp->last_type_repp, eci_rep->parser_repp->last_counter_rep);
   
   if (eci_rep->commands_counter_rep >
       eci_rep->parser_repp->last_counter_rep) {
@@ -993,7 +996,7 @@ void eci_impl_update_state(struct eci_parser* parser, char c)
 	/* handle empty content */
 	if (parser->msgsize_rep == 0) parser->buffer_repp[0] = 0;
 
-#if 0
+#if 1
 	ECI_DEBUG_2("(ecasoundc_sa) found content, loglevel=%d, msgsize=%d", parser->loglevel_rep, parser->msgsize_rep);
 	if (parser->state_msg_rep == ECI_STATE_MSG_GEN)
 	  ECI_DEBUG(".\n");
@@ -1036,12 +1039,12 @@ void eci_impl_update_state(struct eci_parser* parser, char c)
     case ECI_STATE_COMMON_LF_3:
       if (c == 0x0a) {
 	if (parser->state_msg_rep == ECI_STATE_MSG_RETURN) {
-	  /* ECI_DEBUG_1("(ecasoundc_sa) rettype-content validated: <<< %s >>>\n", parser->buffer_repp); */
+	  ECI_DEBUG_1("(ecasoundc_sa) rettype-content validated: <<< %s >>>\n", parser->buffer_repp);
 	  eci_impl_set_last_values(parser);
 	  parser->last_counter_rep++;
 	}
 	else {
-	  /* ECI_DEBUG_1("(ecasoundc_sa) gen-content validated: <<< %s >>>\n", parser->buffer_repp); */
+	  ECI_DEBUG_1("(ecasoundc_sa) gen-content validated: <<< %s >>>\n", parser->buffer_repp);
 	}
 	parser->state_rep = ECI_STATE_INIT; 
       }
