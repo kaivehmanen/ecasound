@@ -5,6 +5,7 @@
 2002-03-11  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
         * eca-chainsetup.h (set_mixmode, mixmode): removed
+	* audioio-device.h (supports_prefill): renamed to prefill_space
 
 2002-02-27  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 

@@ -17,6 +17,7 @@
 // ------------------------------------------------------------------------
 
 #include <algorithm> /* std::count() */
+#include <iostream>
 #include <string>
 
 #include <sys/time.h> /* gettimeofday() */
