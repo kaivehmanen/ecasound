@@ -43,7 +43,7 @@
 // --
 // Select features
 
-// #define PROXY_PROFILING
+#define PROXY_PROFILING
 
 // --
 // Macro definitions
