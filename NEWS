@@ -23,14 +23,13 @@ Last officially released version is -*> v2.0.3 *-
 		 default values now stored to 
 		 '{prefix}/share/ecasound/ecasoundrc' while
 		 individual values can be overridden in 
-		 ~/.ecasoundrc
+		 '~/.ecasound/ecasoundrc'
 	- added: bitrate (kbps) params to mp3 and ogg outputs
 	- added: initial JACK support; enable by giving
 		 --with-jack=install_prefix configure option
 	- removed: ecasoundrc - 'user-resource-directory' tag 
                    removed; user-specific preset/oscillator 
-		   definition directory hardcoded to be
-		   '~/ecasound-conf'
+		   definition directory now '~/.ecasound'
 	- changed: ecasoundrc - to avoid versioning conflicts, 
 		   all 'ext-*' tags are renamed; see ecasoundrc(5)
 	- changed: 'make install' will now overwrite old 

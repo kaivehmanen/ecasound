@@ -1,17 +1,17 @@
-.TH "ecasoundrc" "5" "06\&.12\&.2001" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "15\&.12\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
 .PP 
 .SH "SYNOPSIS" 
 {prefix}/share/ecasound/ecasoundrc (for instance \'/usr/local/share/ecasound/ecasoundrc\')
-$HOME/\&.ecasoundrc
+$HOME/\&.ecasound/ecasoundrc
 .PP 
 .SH "DESCRIPTION" 
 .PP 
 \fBecasoundrc\fP is the main configuration file for ecasound\&. 
 Any user-specific modification should be done to 
-$HOME/\&.ecasoundrc, not to the global resource file\&.
+$HOME/\&.ecasound/ecasoundrc, not to the global resource file\&.
 .PP 
 The format is quite simple\&. One line consists of 
 a configuration variable and its value\&. Variable and value 
@@ -65,9 +65,9 @@ See \'bmode-defaults-nonrt\'\&. Defaults to
 Directory for global ecasound configuration files\&. 
 Defaults to \fI{prefix-dir}/share/ecasound\fP\&.
 Note! User-specific resource files can be be stored 
-to \'$(HOME)/ecasound-conf\'\&. For instance you can 
+to \'$(HOME)/\&.ecasound/\'\&. For instance you can 
 add your own presets definitions to 
-\'$(HOME)/ecasound-conf/effect_presets\'\&.
+\'$(HOME)/\&.ecasound/effect_presets\'\&.
 .IP 
 .IP "resource-file-genosc-envelopes" 
 Configuration file for generic oscillators\&. Is located in the 

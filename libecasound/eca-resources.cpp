@@ -40,11 +40,11 @@ ECA_RESOURCES::ECA_RESOURCES(void) {
 
   char* home_dir = getenv("HOME");
   if (home_dir != NULL) {
-    std::string user_ecasoundrc_path = std::string(home_dir) + "/";
+    std::string user_ecasoundrc_path = std::string(home_dir) + "/.ecasound";
 
-    user_resource_directory_rep = user_ecasoundrc_path + "ecasound-conf";
+    user_resource_directory_rep = user_ecasoundrc_path;
 
-    userrc_rep.resource_file(user_ecasoundrc_path + ".ecasoundrc");
+    userrc_rep.resource_file(user_ecasoundrc_path + "/ecasoundrc");
     userrc_rep.load();
     if (userrc_rep.has("user-resource-directory") == true) {
       ecadebug->msg(ECA_DEBUG::info, "(eca-resources) Warning! Old resource data found in '" + user_ecasoundrc_path + ". You can reset configuration parameters by removing the old rc-file.");
