@@ -14,6 +14,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 12112004 (v2.3.5)  -** stable release **-
+	- note: website address changed to www.eca.cx/ecasound
 	- changed: collected all email addresses from source files to 
 		   the AUTHORS file and added some antispam measures
 	- changed: do not raise an error when opening an OSS device that
