@@ -82,6 +82,14 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     init_rep = true; /* must be set after dyn. parameters */
   }
 
+  if (child_srate_rep == 0) {
+    /* query the sampling rate from child object */
+    child()->set_io_mode(io_mode());
+    child()->open();
+    child_srate_rep = child()->samples_per_second();
+    child()->close();
+  }
+
   psfactor_rep = 1.0f;
   if (io_mode() == AUDIO_IO::io_read) {
     psfactor_rep = static_cast<float>(samples_per_second()) / child_srate_rep;
@@ -159,10 +167,17 @@ void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
       }
     }
     else if (param == 2) {
-      child_srate_rep = std::atoi(value.c_str());
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+      if (value == "auto") {
+	child_srate_rep = 0;
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		  "(audioio-resample) resampling with automatic detection of child srate");
+      }
+      else {
+	child_srate_rep = std::atoi(value.c_str());
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		  "(audioio-resample) resampling w/ child srate of " + 
 		  kvu_numtostr(child_srate_rep));
+      }
     }
   }
   
@@ -173,7 +188,6 @@ void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
 
 string AUDIO_IO_RESAMPLE::get_parameter(int param) const
 {
-
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-resample) get_parameter " + label() + ".");
 
