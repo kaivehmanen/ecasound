@@ -31,10 +31,11 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: implementation level improvements to db, ewf, 
 		   resample, reverse and typeselect audio object 
 		   types
-	- changed: edi-28 done; ECI standalone the only ECI 
+	- changed: edi-28 done; ECI standalone now the only ECI 
 	           implementation
 	- changed: ecasound now uses the new JACK (0.40.0 and newer) 
-	           ALSA PCM port names
+	           ALSA PCM port names (alsa_pcm:capture_X and 
+		   alsa_pcm:playback_X)
 	- changed: number of channels must be given as the first
 	           parameter to -ezx; this was needed to implement
 		   true multichannel support
@@ -52,9 +53,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 first channel
 	- fixed: LADSPA param descriptions were incorrectly 
 		 parsed
-	- fixed: ecasound ended up in cpu-intensive loop if 
+	- fixed: ecasound ended up in a cpu-intensive loop if 
 	         the standard input suddenly disappeared in 
-		 the -D output mode; this happens every now 
+		 the -D output mode; this happened every now 
 		 and then with ECI apps
 19102002 (v2.2.0-pre3)
 	- fixed: reverted to using old ALSA 0.9 hw-params API,
