@@ -44,6 +44,7 @@ class EFFECT_DELAY : public EFFECT_TIME_BASED {
 
   virtual std::string name(void) const { return("Delay"); }
   virtual std::string parameter_names(void) const { return("delay-time-msec,surround-mode,number-of-delays,mix-%,feedback-%"); }
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
 
   virtual parameter_t get_parameter(int param) const;
   virtual void set_parameter(int param, parameter_t value);
@@ -82,6 +83,7 @@ class EFFECT_MULTITAP_DELAY : public EFFECT_TIME_BASED {
 
   virtual std::string name(void) const { return("Multitap delay"); }
   virtual std::string parameter_names(void) const { return("delay-time-msec,number-of-delays,mix-%"); }
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
 
   virtual parameter_t get_parameter(int param) const;
   virtual void set_parameter(int param, parameter_t value);
@@ -108,6 +110,7 @@ class EFFECT_FAKE_STEREO : public EFFECT_TIME_BASED {
  public:
 
   std::string name(void) const { return("Fake stereo"); }
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
 
   virtual std::string parameter_names(void) const { return("delay-time-msec"); }
   virtual parameter_t get_parameter(int param) const;
@@ -141,6 +144,7 @@ class EFFECT_REVERB : public EFFECT_TIME_BASED {
 
   virtual std::string name(void) const { return("Reverb"); }
   virtual std::string parameter_names(void) const { return("delay-time,surround-mode,feedback-%"); }
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
 
   virtual parameter_t get_parameter(int param) const;
   virtual void set_parameter(int param, parameter_t value);
@@ -175,6 +179,8 @@ class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
 
  public:
 
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
+
   virtual parameter_t get_parameter(int param) const;
   virtual void set_parameter(int param, parameter_t value);
 
@@ -189,8 +195,8 @@ class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
   /*@}*/
 
   EFFECT_MODULATING_DELAY(parameter_t delay_time = 2.0,
-			  parameter_t feedback_percent = 20.0,
-			  long int vartime_in_samples = 50,
+			  long int vartime_in_samples = 20,
+			  parameter_t feedback_percent = 50.0,
 			  parameter_t lfo_freq = 0.4);
 };
 

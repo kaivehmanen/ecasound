@@ -1,7 +1,8 @@
 // ------------------------------------------------------------------------
 // audiofx_reverb.cpp: Reverb effect
 // Copyright (C) 2000 Stefan Fendt <stefan@lionfish.ping.de>,
-//                    Kai Vehmanen <kai.vehmanen@wakkanet.fi> (C++ version)
+// Copyright (C) 2000,2003 Kai Vehmanen <kai.vehmanen@wakkanet.fi> (C++
+//                         version)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +22,8 @@
 // ------------------------------------------------------------------------
 // History: 
 //
+// 2003-01-19 Kai Vehmanen
+//     - Added param hint information.
 // 2002-12-04 Hans-Georg Fischer
 //     - Fixed a bug in initializing the delay line, which cause
 //       unwanted audible noise at start of processing. 
@@ -43,7 +46,51 @@ ADVANCED_REVERB::ADVANCED_REVERB (parameter_t roomsize,
   set_parameter(3, wet_percent);
 }
 
-CHAIN_OPERATOR::parameter_t ADVANCED_REVERB::get_parameter(int param) const { 
+void ADVANCED_REVERB::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
+  switch (param) {
+  case 1:
+    pd->default_value = 10.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    // pd->upper_bound = 0.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 2:
+    pd->default_value = 50.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = true;
+    pd->upper_bound = 100.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 3:
+    pd->default_value = 50.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = true;
+    pd->upper_bound = 100.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  default: {}
+  }
+}
+
+CHAIN_OPERATOR::parameter_t ADVANCED_REVERB::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(roomsize_rep);
@@ -55,7 +102,8 @@ CHAIN_OPERATOR::parameter_t ADVANCED_REVERB::get_parameter(int param) const {
   return(0.0);
 }
 
-void ADVANCED_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void ADVANCED_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     roomsize_rep = value;
@@ -89,7 +137,8 @@ void ADVANCED_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value
   }
 }
 
-void ADVANCED_REVERB::init(SAMPLE_BUFFER *insample) {
+void ADVANCED_REVERB::init(SAMPLE_BUFFER *insample)
+{
   i_channels.init(insample);
   cdata.resize(insample->number_of_channels());
   std::vector<CHANNEL_DATA>::iterator p = cdata.begin();
@@ -107,7 +156,8 @@ void ADVANCED_REVERB::init(SAMPLE_BUFFER *insample) {
   }
 }
 
-void ADVANCED_REVERB::process(void) {
+void ADVANCED_REVERB::process(void)
+{
   i_channels.begin();
   while(!i_channels.end()) {
     cdata[i_channels.channel()].bufferpos_rep++;

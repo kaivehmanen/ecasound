@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_timebased.cpp: Routines for time-based effects.
-// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,74 @@ EFFECT_DELAY::EFFECT_DELAY (CHAIN_OPERATOR::parameter_t delay_time, int surround
   set_parameter(5, feedback_percent);
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_DELAY::get_parameter(int param) const { 
+void EFFECT_DELAY::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
+  switch (param) {
+  case 1:
+    pd->default_value = 100.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 2:
+    pd->default_value = 0.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = true;
+    pd->upper_bound = 1.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = true;
+    pd->integer = true;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 3:
+    pd->default_value = 1.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    // pd->upper_bound = 0.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 1.0f;
+    pd->toggled = false;
+    pd->integer = true;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 4:
+    pd->default_value = 50.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = true;
+    pd->upper_bound = 100.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 5:
+    pd->default_value = 100.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = true;
+    pd->upper_bound = 100.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  default: {}
+  }
+}
+
+CHAIN_OPERATOR::parameter_t EFFECT_DELAY::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(dtime_msec);
@@ -57,7 +124,8 @@ CHAIN_OPERATOR::parameter_t EFFECT_DELAY::get_parameter(int param) const {
   return(0.0);
 }
 
-void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1:
     {
@@ -109,7 +177,8 @@ void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   }
 }
 
-void EFFECT_DELAY::init(SAMPLE_BUFFER* insample) {
+void EFFECT_DELAY::init(SAMPLE_BUFFER* insample)
+{
   l.init(insample);
   r.init(insample);
 
@@ -120,7 +189,8 @@ void EFFECT_DELAY::init(SAMPLE_BUFFER* insample) {
   buffer.resize(2, std::vector<SINGLE_BUFFER> (static_cast<unsigned int>(dnum)));
 }
 
-void EFFECT_DELAY::process(void) {
+void EFFECT_DELAY::process(void)
+{
   l.begin(SAMPLE_SPECS::ch_left);
   r.begin(SAMPLE_SPECS::ch_right);
 
@@ -206,13 +276,57 @@ EFFECT_MULTITAP_DELAY::EFFECT_MULTITAP_DELAY (CHAIN_OPERATOR::parameter_t delay_
   : 
   delay_index(0),
   filled (0),
-  buffer (0) {
+  buffer (0)
+{
   set_parameter(1, delay_time);
   set_parameter(2, num_of_delays);
   set_parameter(3, mix_percent);
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_MULTITAP_DELAY::get_parameter(int param) const { 
+void EFFECT_MULTITAP_DELAY::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
+  switch (param) {
+  case 1:
+    pd->default_value = 100.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 2:
+    pd->default_value = 1.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    // pd->upper_bound = 0.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 1.0f;
+    pd->toggled = false;
+    pd->integer = true;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 3:
+    pd->default_value = 50.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = true;
+    pd->upper_bound = 100.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  default: {}
+  }
+}
+
+CHAIN_OPERATOR::parameter_t EFFECT_MULTITAP_DELAY::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(dtime_msec);
@@ -224,7 +338,8 @@ CHAIN_OPERATOR::parameter_t EFFECT_MULTITAP_DELAY::get_parameter(int param) cons
   return(0.0);
 }
 
-void EFFECT_MULTITAP_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_MULTITAP_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1:
     {
@@ -306,11 +421,31 @@ void EFFECT_MULTITAP_DELAY::process(void) {
   }
 }
 
-EFFECT_FAKE_STEREO::EFFECT_FAKE_STEREO (CHAIN_OPERATOR::parameter_t delay_time) {
+EFFECT_FAKE_STEREO::EFFECT_FAKE_STEREO (CHAIN_OPERATOR::parameter_t delay_time)
+{
    set_parameter(1, delay_time);
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_FAKE_STEREO::get_parameter(int param) const { 
+void EFFECT_FAKE_STEREO::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
+  switch (param) {
+  case 1:
+    pd->default_value = 20.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  default: {}
+  }
+}
+
+CHAIN_OPERATOR::parameter_t EFFECT_FAKE_STEREO::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(dtime_msec);
@@ -318,7 +453,8 @@ CHAIN_OPERATOR::parameter_t EFFECT_FAKE_STEREO::get_parameter(int param) const {
   return(0.0);
 }
 
-void EFFECT_FAKE_STEREO::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_FAKE_STEREO::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1:
     dtime_msec = value;
@@ -334,7 +470,8 @@ void EFFECT_FAKE_STEREO::set_parameter(int param, CHAIN_OPERATOR::parameter_t va
   }
 }
 
-void EFFECT_FAKE_STEREO::init(SAMPLE_BUFFER* insample) {
+void EFFECT_FAKE_STEREO::init(SAMPLE_BUFFER* insample)
+{
   l.init(insample);
   r.init(insample);
 
@@ -344,7 +481,8 @@ void EFFECT_FAKE_STEREO::init(SAMPLE_BUFFER* insample) {
   buffer.resize(2);
 }
 
-void EFFECT_FAKE_STEREO::process(void) {
+void EFFECT_FAKE_STEREO::process(void)
+{
   l.begin(SAMPLE_SPECS::ch_left);
   r.begin(SAMPLE_SPECS::ch_right);
   while(!l.end() && !r.end()) {
@@ -383,7 +521,51 @@ EFFECT_REVERB::EFFECT_REVERB (CHAIN_OPERATOR::parameter_t delay_time, int surrou
   set_parameter(3, feedback_percent);
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_REVERB::get_parameter(int param) const { 
+void EFFECT_REVERB::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
+  switch (param) {
+  case 1:
+    pd->default_value = 20.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    // pd->upper_bound = 0.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 2:
+    pd->default_value = 0.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = true;
+    pd->upper_bound = 1.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = true;
+    pd->integer = true;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 3:
+    pd->default_value = 50.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = true;
+    pd->upper_bound = 100.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  default: {}
+  }
+}
+
+CHAIN_OPERATOR::parameter_t EFFECT_REVERB::get_parameter(int param) const 
+{
   switch (param) {
   case 1: 
     return(dtime_msec);
@@ -395,7 +577,8 @@ CHAIN_OPERATOR::parameter_t EFFECT_REVERB::get_parameter(int param) const {
   return(0.0);
 }
 
-void EFFECT_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     {
@@ -421,7 +604,8 @@ void EFFECT_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) 
   }
 }
 
-void EFFECT_REVERB::init(SAMPLE_BUFFER* insample) {
+void EFFECT_REVERB::init(SAMPLE_BUFFER* insample)
+{
   l.init(insample);
   r.init(insample);
 
@@ -432,7 +616,8 @@ void EFFECT_REVERB::init(SAMPLE_BUFFER* insample) {
   buffer.resize(2);
 }
 
-void EFFECT_REVERB::process(void) {
+void EFFECT_REVERB::process(void)
+{
   l.begin(SAMPLE_SPECS::ch_left);
   r.begin(SAMPLE_SPECS::ch_right);
   while(!l.end() && !r.end()) {
@@ -466,17 +651,72 @@ void EFFECT_REVERB::process(void) {
 }
 
 EFFECT_MODULATING_DELAY::EFFECT_MODULATING_DELAY(CHAIN_OPERATOR::parameter_t delay_time, 
-						 CHAIN_OPERATOR::parameter_t feedback_percent,
 						 long int vartime_in_samples,
+						 CHAIN_OPERATOR::parameter_t feedback_percent,
 						 CHAIN_OPERATOR::parameter_t lfo_freq)
 {
   set_parameter(1, delay_time);
-  set_parameter(2, feedback_percent);
-  set_parameter(3, vartime_in_samples);
+  set_parameter(2, vartime_in_samples);
+  set_parameter(3, feedback_percent);
   set_parameter(4, lfo_freq);
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_MODULATING_DELAY::get_parameter(int param) const { 
+void EFFECT_MODULATING_DELAY::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
+  switch (param) {
+  case 1:
+    pd->default_value = 2.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 2:
+    pd->default_value = 20.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    // pd->upper_bound = 0.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = true;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 3:
+    pd->default_value = 50.0f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = true;
+    pd->upper_bound = 100.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  case 4:
+    pd->default_value = 0.4f;
+    pd->description = get_parameter_name(param);
+    pd->bounded_above = false;
+    // pd->upper_bound = 0.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  default: {}
+  }
+}
+
+CHAIN_OPERATOR::parameter_t EFFECT_MODULATING_DELAY::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(dtime_msec);
@@ -493,7 +733,8 @@ CHAIN_OPERATOR::parameter_t EFFECT_MODULATING_DELAY::get_parameter(int param) co
   return(0.0);
 }
 
-void EFFECT_MODULATING_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_MODULATING_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1:
     {

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_amplitude.cpp: Amplitude effects and dynamic processors.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000,2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,7 +77,8 @@ EFFECT_AMPLIFY_CLIPCOUNT::EFFECT_AMPLIFY_CLIPCOUNT (parameter_t multiplier_perce
   num_of_clipped = 0;
 }
 
-void EFFECT_AMPLIFY_CLIPCOUNT::set_parameter(int param, parameter_t value) {
+void EFFECT_AMPLIFY_CLIPCOUNT::set_parameter(int param, parameter_t value)
+{
   switch (param) {
   case 1: 
     gain = value / 100.0;
@@ -88,7 +89,8 @@ void EFFECT_AMPLIFY_CLIPCOUNT::set_parameter(int param, parameter_t value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CLIPCOUNT::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CLIPCOUNT::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(gain * 100.0);
@@ -100,7 +102,8 @@ CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CLIPCOUNT::get_parameter(int param) c
 
 void EFFECT_AMPLIFY_CLIPCOUNT::init(SAMPLE_BUFFER* sbuf) { i.init(sbuf); }
 
-void EFFECT_AMPLIFY_CLIPCOUNT::process(void) {
+void EFFECT_AMPLIFY_CLIPCOUNT::process(void)
+{
   i.begin();
   while(!i.end()) {
     *i.current() = *i.current() *  gain;
@@ -129,12 +132,14 @@ void EFFECT_AMPLIFY_CLIPCOUNT::parameter_description(int param, struct PARAM_DES
   OPERATOR::parameter_description(param, pd);
 }
 
-EFFECT_AMPLIFY_CHANNEL::EFFECT_AMPLIFY_CHANNEL (parameter_t multiplier_percent, int channel) {
+EFFECT_AMPLIFY_CHANNEL::EFFECT_AMPLIFY_CHANNEL (parameter_t multiplier_percent, int channel)
+{
   set_parameter(1, multiplier_percent);
   set_parameter(2, channel);
 }
 
-void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_t value) {
+void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_t value)
+{
   switch (param) {
     case 1: 
       gain = value / 100.0;
@@ -149,7 +154,8 @@ void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_t value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CHANNEL::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CHANNEL::get_parameter(int param) const
+{ 
   switch (param) {
   case 1: 
     return(gain * 100.0);
@@ -176,13 +182,20 @@ void EFFECT_AMPLIFY_CHANNEL::parameter_description(int param, struct PARAM_DESCR
   }
 }
 
-void EFFECT_AMPLIFY_CHANNEL::init(SAMPLE_BUFFER *insample) { i.init(insample); }
+void EFFECT_AMPLIFY_CHANNEL::init(SAMPLE_BUFFER *insample)
+{
+  EFFECT_BASE::init(insample);
+  i.init(insample);
+}
 
-void EFFECT_AMPLIFY_CHANNEL::process(void) {
-  i.begin(channel_rep);
-  while(!i.end()) {
-    *i.current() = *i.current() * gain;
-    i.next();
+void EFFECT_AMPLIFY_CHANNEL::process(void)
+{
+  if (channel_rep >= 0 && channel_rep < channels()) {
+    i.begin(channel_rep);
+    while(!i.end()) {
+      *i.current() = *i.current() * gain;
+      i.next();
+    }
   }
 }
 
@@ -275,10 +288,37 @@ CHAIN_OPERATOR::parameter_t EFFECT_COMPRESS::get_parameter(int param) const {
 
 void EFFECT_COMPRESS::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
-  OPERATOR::parameter_description(param, pd);
+  switch (param) {
+  case 1:
+    pd->default_value = 1.0f;
+    pd->description = "compression-rate-dB";
+    pd->bounded_above = true;
+    pd->upper_bound = 99.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = true;
+    pd->output = false;
+    break;
+  case 2:
+    pd->default_value = 30.0f;
+    pd->description = "threshold-%";
+    pd->bounded_above = true;
+    pd->upper_bound = 100.0f;
+    pd->bounded_below = true;
+    pd->lower_bound = 0.0f;
+    pd->toggled = false;
+    pd->integer = false;
+    pd->logarithmic = false;
+    pd->output = false;
+    break;
+  default: {}
+  }
 }
 
-void EFFECT_COMPRESS::init(SAMPLE_BUFFER *insample) { 
+void EFFECT_COMPRESS::init(SAMPLE_BUFFER *insample)
+{
   i.init(insample);
 
   set_channels(insample->number_of_channels());
@@ -288,7 +328,8 @@ void EFFECT_COMPRESS::init(SAMPLE_BUFFER *insample) {
   lastout.resize(insample->number_of_channels());
 } 
 
-void EFFECT_COMPRESS::process(void) {
+void EFFECT_COMPRESS::process(void)
+{
   i.begin();
   while(!i.end()) {
     if (first_time) {
@@ -317,7 +358,12 @@ void EFFECT_COMPRESS::process(void) {
   }
 }
 
-EFFECT_NOISEGATE::EFFECT_NOISEGATE (parameter_t thlevel_percent, parameter_t thtime, parameter_t a, parameter_t h, parameter_t r) {
+EFFECT_NOISEGATE::EFFECT_NOISEGATE (parameter_t thlevel_percent, 
+				    parameter_t thtime, 
+				    parameter_t a, 
+				    parameter_t h, 
+				    parameter_t r)
+{
   // map_parameters();
 
   set_parameter(1, thlevel_percent);
@@ -347,7 +393,8 @@ void EFFECT_NOISEGATE::set_parameter(int param, parameter_t value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_NOISEGATE::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_NOISEGATE::get_parameter(int param) const
+{ 
   switch (param) {
   case 1: 
     return(th_level * 100.0 / (parameter_t)SAMPLE_SPECS::max_amplitude);
@@ -368,7 +415,8 @@ void EFFECT_NOISEGATE::parameter_description(int param, struct PARAM_DESCRIPTION
   OPERATOR::parameter_description(param, pd);
 }
 
-void EFFECT_NOISEGATE::init(SAMPLE_BUFFER *insample) {
+void EFFECT_NOISEGATE::init(SAMPLE_BUFFER *insample)
+{
   i.init(insample);
 
   set_channels(insample->number_of_channels());
@@ -383,7 +431,8 @@ void EFFECT_NOISEGATE::init(SAMPLE_BUFFER *insample) {
   ng_status.resize(insample->number_of_channels(), int(ng_waiting));
 }
 
-void EFFECT_NOISEGATE::process(void) {
+void EFFECT_NOISEGATE::process(void)
+{
   i.begin();
   while(!i.end()) {
     bool below = fabs(*i.current()) <= th_level;
@@ -484,11 +533,13 @@ void EFFECT_NOISEGATE::process(void) {
   }
 }
 
-EFFECT_NORMAL_PAN::EFFECT_NORMAL_PAN (parameter_t right_percent) {
+EFFECT_NORMAL_PAN::EFFECT_NORMAL_PAN (parameter_t right_percent)
+{
   set_parameter(1, right_percent);
 }
 
-void EFFECT_NORMAL_PAN::set_parameter(int param, parameter_t value) {
+void EFFECT_NORMAL_PAN::set_parameter(int param, parameter_t value)
+{
   switch (param) {
   case 1: 
     right_percent_rep = value;
@@ -507,7 +558,8 @@ void EFFECT_NORMAL_PAN::set_parameter(int param, parameter_t value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_NORMAL_PAN::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_NORMAL_PAN::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(right_percent_rep);
@@ -526,14 +578,15 @@ void EFFECT_NORMAL_PAN::parameter_description(int param, struct PARAM_DESCRIPTIO
       pd->bounded_above = true;
       pd->upper_bound = 100.0f;
       pd->bounded_below = true;
-      pd->lower_bound = 100.0f;
+      pd->lower_bound = 0.0f;
     }
   }
 }
 
 void EFFECT_NORMAL_PAN::init(SAMPLE_BUFFER *insample) { i.init(insample); }
 
-void EFFECT_NORMAL_PAN::process(void) {
+void EFFECT_NORMAL_PAN::process(void)
+{
   i.begin(0);
   while(!i.end()) {
     *i.current() = *i.current() * l_gain;

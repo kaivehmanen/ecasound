@@ -47,7 +47,8 @@ void EFFECT_BASE::init(SAMPLE_BUFFER* sbuf)
   DBC_CHECK(samples_per_second() > 0);
 }
 
-int EFFECT_BASE::channels(void) const { 
+int EFFECT_BASE::channels(void) const
+{ 
   return(channels_rep);
 }
 
