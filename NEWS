@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 201001) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 211001) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,7 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.3 *-
 
-??102001 (v2.1dev3)
+21102001 (v2.1dev3)
 	- note: major changes to effect preset system which 
 		break some old preset definitions
 	- edi-entries: edi-3

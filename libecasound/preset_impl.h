@@ -18,11 +18,10 @@ class PRESET_impl {
 
  public:
 
-  friend PRESET;
+  friend class PRESET;
 
  private:
 
-  vector<int> preset_param_values_rep;
   vector<string> preset_param_names_rep;
 
   vector<vector<int> > slave_param_indices_rep;

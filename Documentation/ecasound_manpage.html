@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>14.10.2001</h2>
+<h2>18.10.2001</h2>
 
 
     
@@ -113,7 +113,9 @@ size in sample frames). '-z:nodb' disables double-buffering.
 '-z:intbuf' and '-z:nointbuf' control whether extra internal buffering 
 is allowed for realtime devices. Disabling this can reduce 
 latency times in some situations. With '-z:xruns', processing will be 
-halted if an under/overrun occurs. '-z:psr' enables the <em>precise-sample-rates</em> 
+halted if an under/overrun occurs. '-z:multitrack' and
+'z:nomultitrack' can be used to force ecasound to enable or disable
+multitrack-mode. '-z:psr' enables the <em>precise-sample-rates</em> 
 mode for OSS-devices. See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>.
 <p></dl>
 <p>

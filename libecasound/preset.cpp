@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <iostream>
 #include <vector>
 #include <string>
 
@@ -397,13 +398,11 @@ void PRESET::parse_operator_option(const string& arg) {
     for(int i = 0; i < static_cast<int>(arg_indices.size()); i++) {
 
       // NOTE: there's a one-to-many connection between 
-      //       presets parameters and 'object-param' pairs
-      //       (ie. one preset-parameter is stored to one
-      //       place (preset_param_values_rep), but can control 
+      //       presets' parameters and 'object-param' pairs
+      //       (ie. one preset-parameter can control 
       //       multiple object params (param_objects and 
       //       param_indices)
 
-      impl_repp->preset_param_values_rep.push_back(0.0f);
       size_t preset_index = arg_indices[i];
 
       // NOTE: for instance for LADSPA plugins -el:label,par1,par2 
@@ -439,7 +438,7 @@ string PRESET::parameter_names(void) const {
 void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   if (param > 0 && param <= static_cast<int>(impl_repp->slave_param_objects_rep.size())) {
     for(size_t n = 0; n < impl_repp->slave_param_objects_rep[param - 1].size(); n++) {
-      DBC_CHECK(impl_repp->slave_param_indices_rep.size() > param - 1);
+      DBC_CHECK(static_cast<int>(impl_repp->slave_param_indices_rep.size()) > param - 1);
       DBC_CHECK(impl_repp->slave_param_indices_rep[param - 1].size() > n);
       int index = impl_repp->slave_param_indices_rep[param - 1][n];
       //  cerr << "Setting preset " << name() << " param " << param << " (" << impl_repp->slave_param_objects_rep[param-1][n]->get_parameter_name(param) << "), of object " << impl_repp->slave_param_objects_rep[param-1][n]->name() << ", with index number " << index << ", to value " << value << "." << endl;
@@ -450,7 +449,7 @@ void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
 
 CHAIN_OPERATOR::parameter_type PRESET::get_parameter(int param) const { 
   if (param > 0 && param <= static_cast<int>(impl_repp->slave_param_objects_rep.size())) {
-    DBC_CHECK(impl_repp->slave_param_indices_rep.size() > param - 1);
+    DBC_CHECK(static_cast<int>(impl_repp->slave_param_indices_rep.size()) > param - 1);
     DBC_CHECK(impl_repp->slave_param_indices_rep[param - 1].size() > 0);
 
     int index = impl_repp->slave_param_indices_rep[param - 1][0];
