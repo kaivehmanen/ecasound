@@ -131,6 +131,7 @@ Kai Vehmanen - mailto:kaiv@wakkanet.fi
 Barton-Davis, Paul - Quasimodo and Hdr have given me a lot of ideas
 Dyson, John S. - advanced compressor (-eca)
 Endersz, Viktor - for sending me the adv.compressor source code!
+Fendt, Stefan - RC-lowpass filter (-ef4)
 Hall, Jeremy - extensive testing
 Hamara, Arto - ecasound logo, lots of great ideas!
 Laydier, Antoine aka SMF - layer.cpp (interprets mp3 headers)
@@ -139,8 +140,8 @@ Philips, Dave - Linux Sound+MIDI keeps Linux audio going strong!
 Tkachenko, Vadim - autoconf magic
 
 all LAD members - always a great source of inspiration
+SEUL - for hosting ecasound ftp, http and CVS sites
 WakkaNet Oy - for hosting ecasound web site
-SEUL - for hosting ecasound ftp and http sites
 
 -----------------------------------------------------------------------
  Licensing/distribution policy
