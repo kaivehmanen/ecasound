@@ -1,10 +1,10 @@
 // ------------------------------------------------------------------------
 // audioio-forked-streams.cpp: Helper class providing routines for
 //                             forking for piped input/output.
-// Copyright (C) 2000,2004 Kai Vehmanen
+// Copyright (C) 2000-2004 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 2
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,16 +45,48 @@
 #include "eca-logger.h"
 #include "audioio-forked-stream.h"
 
+using namespace std;
+
+/**
+ * Maximum number of arguments passed to exec()
+ */
+const static int afs_max_exec_args = 1024;
+
+/**
+ * Runs exec() with the given parameters.
+ * @return exec() return value
+ */
+static int afs_run_exec(const string& command, const string& filename)
+{
+  vector<string> temp = kvu_string_to_tokens_quoted(command);
+  if (static_cast<int>(temp.size()) > afs_max_exec_args) {
+    temp.resize(afs_max_exec_args);
+    ECA_LOG_MSG(ECA_LOGGER::info, "Warning: too many arguments for external application, truncating.");
+  }
+  const char* args[afs_max_exec_args];
+  vector<string>::size_type p = 0;
+  while(p < temp.size()) {
+    if (temp[p].find("%f") != string::npos) {
+      temp[p].replace(temp[p].find("%f"), 2, filename);
+      args[p] = temp[p].c_str();
+    }
+    else
+      args[p] = temp[p].c_str();
+    ++p;
+  }
+  args[p] = 0;
+  return execvp(temp[0].c_str(), const_cast<char**>(args));
+}
+
 /**
  * If found, replaces the string '%f' with 'filename'. This is
  * the file used by the forked child for input/output.
  */
-void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const std::string& filename)
+void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const string& filename)
 {
   object_rep = filename;
-  if (command_rep.find("%f") != std::string::npos) {
-    command_rep.replace(command_rep.find("%f"), 2, object_rep);
-  }
+  /* do not yet replace %f yet as it would make it more
+     difficult to tokenize the exec string */
 }
 
 /**
@@ -64,7 +96,7 @@ void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const std::string& filename)
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_pipe_name(void)
 {
-  if (command_rep.find("%F") != std::string::npos) {
+  if (command_rep.find("%F") != string::npos) {
     use_named_pipe_rep = true;
     init_temp_directory();
     if (tempfile_dir_rep.is_valid() == true) {
@@ -82,14 +114,14 @@ void AUDIO_IO_FORKED_STREAM::set_fork_pipe_name(void)
 
 void AUDIO_IO_FORKED_STREAM::init_temp_directory(void)
 {
-  std::string tmpdir ("ecasound-");
+  string tmpdir ("ecasound-");
   char* tmp_p = getenv("USER");
   if (tmp_p != NULL) {
-    tmpdir += std::string(tmp_p);
+    tmpdir += string(tmp_p);
     tempfile_dir_rep.reserve_directory(tmpdir);
   }
   if (tempfile_dir_rep.is_valid() != true) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-forked-stream) Warning! Unable to create temporary directory \"" + tmpdir + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Unable to create temporary directory \"" + tmpdir + "\".");
   }
 }
 
@@ -99,7 +131,7 @@ void AUDIO_IO_FORKED_STREAM::init_temp_directory(void)
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_channels(int channels)
 {
-  if (command_rep.find("%c") != std::string::npos) {
+  if (command_rep.find("%c") != string::npos) {
     command_rep.replace(command_rep.find("%c"), 2, kvu_numtostr(channels));
   }
 }
@@ -110,10 +142,10 @@ void AUDIO_IO_FORKED_STREAM::set_fork_channels(int channels)
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_sample_rate(long int sample_rate)
 {
-  if (command_rep.find("%s") != std::string::npos) {
+  if (command_rep.find("%s") != string::npos) {
     command_rep.replace(command_rep.find("%s"), 2, kvu_numtostr(sample_rate));
   }
-  if (command_rep.find("%S") != std::string::npos) {
+  if (command_rep.find("%S") != string::npos) {
     command_rep.replace(command_rep.find("%S"), 2, kvu_numtostr(sample_rate/1000.0f));
   }
 }
@@ -124,7 +156,7 @@ void AUDIO_IO_FORKED_STREAM::set_fork_sample_rate(long int sample_rate)
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_bits(int bits)
 {
-  if (command_rep.find("%b") != std::string::npos) {
+  if (command_rep.find("%b") != string::npos) {
     command_rep.replace(command_rep.find("%b"), 2, kvu_numtostr(bits));
   }
 }
@@ -163,23 +195,10 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void)
 	::close(fpipes[0]);
 	::close(fpipes[1]);
 	freopen("/dev/null", "w", stderr);
-	std::vector<std::string> temp = kvu_string_to_tokens_quoted(command_rep);
-	if (temp.size() > 1024) temp.resize(1024);
-	const char* args[1024];
-	// = new char* [temp.size() + 1];
-	std::vector<std::string>::size_type p = 0;
-	while(p < temp.size()) {
-	  if (temp[p] == "%f") 
-	    args[p] = object_rep.c_str();
-	  else
-	    args[p] = temp[p].c_str();
-	  ++p;
-	}
-	args[p] = 0;
-	int res = execvp(temp[0].c_str(), const_cast<char**>(args));
+	int res = afs_run_exec(command_rep, object_rep);
 	::close(1);
 	exit(res);
-	std::cerr << "You shouldn't see this!\n";
+	cerr << "You shouldn't see this!\n";
       }
       else if (pid_of_child_rep > 0) { 
 	// ---
@@ -219,31 +238,19 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void)
     // child 
     // ---
     freopen("/dev/null", "w", stderr);
-    std::vector<std::string> temp = kvu_string_to_tokens_quoted(command_rep);
-    if (temp.size() > 1024) temp.resize(1024);
-    const char* args[1024];
-    std::vector<std::string>::size_type p = 0;
-    while(p < temp.size()) {
-      if (temp[p] == "%f") 
-	args[p] = object_rep.c_str();
-      else
-	args[p] = temp[p].c_str();
-      ++p;
-    }
-    args[p] = 0;
-    int res = execvp(temp[0].c_str(), const_cast<char**>(args));
+    int res = afs_run_exec(command_rep, object_rep);
     if (res < 0) {
       /**
        * If execvp failed, make sure that the other end of 
        * the pipe doesn't block forever.
        */
-      std::cerr << "(audioio-forked-stream) execvp() failed!\n";
+      cerr << "execvp() failed!\n";
       int fd = open(tmpfile_repp.c_str(), O_WRONLY);
       close(fd);
     }
     
     exit(res);
-    std::cerr << "You shouldn't see this!\n";
+    cerr << "You shouldn't see this!\n";
   }
   else if (pid_of_child_rep > 0) { 
     // ---
@@ -286,24 +293,8 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
       ::close(fpipes[0]);
       ::close(fpipes[1]);
       freopen("/dev/null", "w", stderr);
-      std::vector<std::string> temp = kvu_string_to_tokens_quoted(command_rep);
-      if (temp.size() > 1024) temp.resize(1024);
-      const char* args[1024];
-      // = new char* [temp.size() + 1];
-      std::vector<std::string>::size_type p = 0;
-      while(p < temp.size()) {
-	if (temp[p] == "%f") 
-	  args[p] = object_rep.c_str();
-	else
-	  args[p] = temp[p].c_str();
-
-	++p;
-      }
-      args[p] = 0;
-      int res = execvp(temp[0].c_str(), const_cast<char**>(args));
-      ::close(0);
-      exit(res);
-      std::cerr << "You shouln't see this!\n";
+      exit(afs_run_exec(command_rep, object_rep));
+      cerr << "You shouln't see this!\n";
     }
     else if (pid_of_child_rep > 0) { 
       // ---
@@ -337,7 +328,7 @@ void AUDIO_IO_FORKED_STREAM::clean_child(void)
       pid_of_child_rep = 0;
     }
     else {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-forked-stream) Warning! Parent-pid changed!");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Warning! Parent-pid changed!");
     }
   }
   if (fd_rep > 0) ::close(fd_rep);
