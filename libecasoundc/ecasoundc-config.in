@@ -1,0 +1,51 @@
+#!/bin/sh
+
+usage()
+{
+	echo "usage: $0 [OPTIONS]"
+cat << EOH
+
+options:
+	[--libs]
+	[--debuglibs]
+	[--cflags]
+	[--version]
+EOH
+	exit 1;
+}
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+flags=""
+
+while test $# -gt 0
+do
+  case $1 in
+    --libs)
+	  flags="$flags -L$libdir -lecasound -lkvutils -lecasoundc"
+	  ;;
+    --libs_debug)
+	  flags="$flags -L$libdir -lecasound_debug -lkvutils -lecasoundc_debug"
+	  ;;
+    --cflags)
+	  flags="$flags -I$includedir/ecasound -I$includedir/ecasoundc"
+	  ;;
+    --version)
+	  echo @VERSION@
+	  ;;
+	*)
+	  echo "$0: unknown option $1"
+	  echo 
+	  usage
+	  ;;
+  esac
+  shift
+done
+
+if test -n "$flags"
+then
+  echo $flags
+fi

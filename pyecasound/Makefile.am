@@ -1,0 +1,55 @@
+AUTOMAKE_OPTIONS 		= foreign
+EXTRA_DIST 			= pyeca.py.in
+
+# ----------------------------------------------------------------------
+# defines
+# ----------------------------------------------------------------------
+
+if INCLUDE_DEBUG
+ecasound_libs 			= -lecasound_debug
+else
+ecasound_libs 			= -lecasound
+endif
+
+if KVUTILS_INSTALLED
+kvutils_libs 			= -lkvutils
+else
+kvutils_libs 			= -L$(top_srcdir)/kvutils/.libs -lkvutils
+endif
+
+# difficult from RPM point-of-view
+libdir = $(eca_python_dlmodules)
+datadir = $(eca_python_modules)
+# libdir = $(prefix)/lib/site-lisp
+
+INCLUDES 			= -I$(srcdir) -I$(top_srcdir) \
+				-I$(top_srcdir)/libecasound \
+				-I$(eca_python_incdir)
+
+# ----------------------------------------------------------------------
+# header files
+# ----------------------------------------------------------------------
+
+pyecasound_includes 		= pyecasound.h \
+				pyeca-control.h
+noinst_HEADERS 			= $(pyecasound_includes)
+
+# ----------------------------------------------------------------------
+# source files
+# ----------------------------------------------------------------------
+
+lib_LTLIBRARIES 		= libpyecasound.la
+
+libpyecasound_la_SOURCES	= pyecasound.cpp \
+				pyeca-control.cpp
+
+libpyecasound_la_LIBADD		= $(ecasound_libs) $(kvutils_libs)
+libpyecasound_la_LDFLAGS 	= -avoid-version -export-dynamic
+
+# ----------------------------------------------------------------------
+# hooks
+# ----------------------------------------------------------------------
+
+install-data-hook:
+	$(INSTALL) -d $(DESTDIR)$(libdir)
+	cd $(srcdir) ; cp pyeca.py $(DESTDIR)$(libdir)
