@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 280100) **
+** ecasound - user visible changes (NEWS)      (last edited: 290100) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,7 +14,10 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.12r10 <*-
 
-28012000 (v1.6.12r10)  -** public release **-
+??022000 (v1.6.13d11)
+	- changed: rtnull reports about over/underruns now
+		   level-1 debug messages (-d:1)
+29012000 (v1.6.12r10)  -** public release **-
 	- added: support for s24_le, s24_be, s32_le and s32_be 
 		 sample formats
 	- added: support for ALSA-subdevices (-o:alsa,card,dev,subdev)

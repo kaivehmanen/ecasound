@@ -92,7 +92,7 @@ long int REALTIME_NULL::read_samples(void* target_buffer,
  
   if (buffer_fill.tv_sec * 1000000 + buffer_fill.tv_usec > 
       (2 * (buffer_delay.tv_sec * 1000000 + buffer_delay.tv_usec))) {
-    cerr << "(audioio-rtnull) Overrun occured!\n";
+    ecadebug->msg(1, "(audioio-rtnull) Overrun occured!");
     buffer_fill.tv_sec = 0;
     buffer_fill.tv_usec = 0;
   }
@@ -127,6 +127,7 @@ long int REALTIME_NULL::read_samples(void* target_buffer,
 void REALTIME_NULL::write_samples(void* target_buffer, long int
 				  samples) { 
   if (is_triggered == false) {
+    gettimeofday(&start_time, NULL);
     gettimeofday(&access_time, NULL);
     buffer_fill.tv_sec = 0; 
     buffer_fill.tv_usec = 0;
@@ -152,7 +153,7 @@ void REALTIME_NULL::write_samples(void* target_buffer, long int
     }
 
     if (buffer_fill.tv_sec < 0) {
-      cerr << "(audioio-rtnull) Underrun occured!\n";
+      ecadebug->msg(1, "(audioio-rtnull) Underrun occured!");
       buffer_fill.tv_sec = 0; 
       buffer_fill.tv_usec = 0;
     }

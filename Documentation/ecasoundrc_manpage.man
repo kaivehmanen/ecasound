@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "03\&.01\&.2000" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "28\&.01\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -35,6 +35,10 @@ Output device to use\&. Defaults to \fI/dev/dsp\fP\&.
 .IP "default-buffersize" 
 Sets the size of buffer in samples (must be an exponent of 2)\&.
 Same as the \fB-b\fP command line options\&. Defaults to \fI1024\fP\&.
+.IP 
+.IP "default-double-buffer-size = 1048576" 
+Set buffersize for double-buffering (-z:db, see below)\&.
+Defaults to \fI131072\fP\&.
 .IP 
 .IP "default-to-interactive-mode" 
 Whether to always use interactive mode (true or false)\&. Same as the
