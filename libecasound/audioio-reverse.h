@@ -90,7 +90,6 @@ class AUDIO_IO_REVERSE : public AUDIO_IO_PROXY {
   mutable std::vector<std::string> params_rep;
   bool init_rep;
   bool finished_rep;
-  SAMPLE_SPECS::sample_pos_t curpos;
   SAMPLE_BUFFER* tempbuf_repp;
 
   AUDIO_IO_REVERSE& operator=(const AUDIO_IO_REVERSE& x) { return *this; }
