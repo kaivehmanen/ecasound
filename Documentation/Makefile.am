@@ -13,18 +13,23 @@ SCANDOC = /opt/p/scandoc/scandoc
 #top_distdir = $(distdir)
 # ---------------------------------------------------------------------
 # Files going into distribution:
-DISTFILES = Makefile.am Makefile.in ecasound.1 \
-	    ecasound_manpage.man  \
-	    ecasound_manpage.html \
-	    ecasoundrc_manpage.man ecasoundrc_manpage.html \
-	    ecatools_manpage.man ecatools_manpage.html \
-	    ecasound-iam_manpage.man ecasound-iam_manpage.yo \
-	    ecasound-iam.1 ecasound-iam_manpage.html \
-	    ecatools.1 ecatools_manpage.yo \
-            ecasoundrc.5 ecasound_faq.txt ecasound_faq.html \
-	    ecasound_manpage.yo \
-	    ecasoundrc_manpage.yo ecasound_faq.yo \
-	    examples.html index.html
+DISTFILES = 	Makefile.am \
+		Makefile.in \
+		ecasound.1 \
+		ecasound_manpage.html \
+		ecasoundrc_manpage.html \
+	    	ecatools_manpage.html \
+	    	ecasound-iam_manpage.yo \
+	    	ecasound-iam.1 \
+	    	ecasound-iam_manpage.html \
+	    	ecatools.1 ecatools_manpage.yo \
+		ecasoundrc.5 \
+		ecasound_faq.txt \
+		ecasound_faq.html \
+	    	ecasound_manpage.yo \
+	    	ecasoundrc_manpage.yo ecasound_faq.yo \
+	    	examples.html \
+		index.html
 
 # ---------------------------------------------------------------------
 docs: ecasound.1 ecasound_manpage.html \
@@ -117,14 +122,15 @@ doxygen:
 # Clean targets
 clean:
 clean-docs:
-	rm -f ecasound.1 \
-	      ecasound_manpage.html \
-	      ecasound_manpage.man \
-	      ecatools_manpage.man ecatools.1 \
-	      ecatools_manpage.html \
-	      ecasoundrc_manpage.man ecasoundrc_manpage.html \
-	      ecasoundrc.5 design.html \
-	      ecasound-iam.1 ecasound-iam_manpage.man ecasound-iam_manpage.html
+	rm -f 	ecasound.1 \
+	      	ecasound_manpage.html \
+		ecatools.1 \
+	      	ecatools_manpage.html \
+	      	ecasoundrc_manpage.html \
+	      	ecasoundrc.5 \
+		design.html \
+	      	ecasound-iam.1 \
+		ecasound-iam_manpage.html
 
 
 # ---------------------------------------------------------------------
