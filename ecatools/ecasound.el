@@ -368,7 +368,7 @@ Any existing files will be truncated."
   (interactive)
   (customize-variable 'ecasound-arguments))
 
-(defcustom ecasound-program "/home/mlang/bin/ecasound"
+(defcustom ecasound-program "ecasound"
   "*Ecasound's executable.
 This program is executed when the user invokes \\[ecasound]."
   :group 'ecasound
