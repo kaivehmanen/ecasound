@@ -49,9 +49,9 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   std::string connected_chainsetup(void) const;
 
   void change_chainsetup_position(double seconds);
-  void change_chainsetup_position_samples(SAMPLE_SPECS::sample_t samples);
+  void change_chainsetup_position_samples(SAMPLE_SPECS::sample_pos_t samples);
   void set_chainsetup_position(double seconds);
-  void set_chainsetup_position_samples(SAMPLE_SPECS::sample_t samples);
+  void set_chainsetup_position_samples(SAMPLE_SPECS::sample_pos_t samples);
 
   double chainsetup_position(double seconds) const;
   const ECA_CHAINSETUP* get_chainsetup(void) const;

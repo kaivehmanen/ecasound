@@ -30,7 +30,7 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   void clear_action_arguments(void);
   double first_argument_as_float(void) const;
   long int first_argument_as_long_int(void) const;
-  SAMPLE_SPECS::sample_t first_argument_as_samples(void) const;
+  SAMPLE_SPECS::sample_pos_t first_argument_as_samples(void) const;
 
   std::string chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const;
 

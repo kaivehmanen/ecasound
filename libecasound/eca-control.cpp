@@ -127,7 +127,7 @@ long int ECA_CONTROL::first_argument_as_long_int(void) const {
   return(atol(action_args_rep[0].c_str()));
 }
 
-SAMPLE_SPECS::sample_t ECA_CONTROL::first_argument_as_samples(void) const {
+SAMPLE_SPECS::sample_pos_t ECA_CONTROL::first_argument_as_samples(void) const {
 #ifdef HAVE_ATOLL
   return(atoll(action_args_rep[0].c_str()));
 #else

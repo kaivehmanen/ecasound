@@ -511,7 +511,7 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position(double seconds) {
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::change_chainsetup_position_samples(SAMPLE_SPECS::sample_t samples) {
+void ECA_CONTROL_OBJECTS::change_chainsetup_position_samples(SAMPLE_SPECS::sample_pos_t samples) {
   // --------
   DBC_REQUIRE(is_selected());
   // --------
@@ -555,7 +555,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds) {
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::set_chainsetup_position_samples(SAMPLE_SPECS::sample_t samples) {
+void ECA_CONTROL_OBJECTS::set_chainsetup_position_samples(SAMPLE_SPECS::sample_pos_t samples) {
   // --------
   DBC_REQUIRE(is_selected());
   // --------
