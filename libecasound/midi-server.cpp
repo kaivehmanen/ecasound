@@ -48,7 +48,6 @@ void* start_midi_server_io_thread(void *ptr) {
 void MIDI_SERVER::io_thread(void) { 
   fd_set fds;
   unsigned char buf[3];
-  int temp;
   struct timeval tv;
   
   ecadebug->msg(ECA_DEBUG::user_objects, "(midi-server) Hey, in the I/O loop!");
@@ -70,18 +69,22 @@ void MIDI_SERVER::io_thread(void) {
     tv.tv_sec = 1;
     tv.tv_usec = 0;
     int retval = select(fd + 1 , &fds, NULL, NULL, &tv);
-    
+
+    int read_bytes = 0;
     if (retval) {
-      temp = ::read(fd, buf, 1);
+      if (FD_ISSET(fd, &fds) == true) {
+	read_bytes = ::read(fd, buf, 1);
+      }
     }
 
-    if (temp < 0) {
+    if (read_bytes < 0) {
       cerr << "ERROR: Can't read from MIDI-device: " 
 	   << clients_rep[0]->label() << "." << endl;
       break;
     }
     else {
-      for(int n = 0; n < temp; n++) {
+//        cerr << "(midi-server) read bytes: " << read_bytes << endl;
+      for(int n = 0; n < read_bytes; n++) {
 	buffer_rep.push_back(buf[n]);
 	while(buffer_rep.size() > max_queue_size_rep) {
 	  cerr << "(eca-midi) dropping midi bytes" << endl;
