@@ -1,11 +1,11 @@
 if ECA_AM_DEBUG_MODE
 libecasound_path = $(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@_debug.la \
 	 	   $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@_debug.la
-libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc@LIBECASOUNDC_VERSION@_debug.la
+libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc_debug.la
 else
 libecasound_path = $(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@.la \
 		   $(top_builddir)/kvutils/libkvutils@LIBKVUTILS_VERSION@.la
-libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc@LIBECASOUNDC_VERSION@.la
+libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc.la
 endif
 
 if ECA_AM_USE_NCURSES
@@ -45,8 +45,9 @@ ecafixdc_SOURCES = ecatools_fixdc.cpp \
 			 ecatools_fixdc.h
 ecafixdc_LDADD = $(libecasound_path)
 
-ecalength_SOURCES = ecalength.cpp
-ecalength_LDADD = $(libecasoundc_path) $(libecasound_path)
+# ecalength.cpp
+ecalength_SOURCES = ecalength.c
+ecalength_LDADD = $(libecasoundc_path) #$(libecasound_path)
 
 ecanormalize_SOURCES = ecatools_normalize.cpp \
 	 		     ecatools_normalize.h

@@ -18,9 +18,14 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.4 *-
 
 ??102002 (v2.1dev12)
-	- edi-entries: edi-24, edi-29
+	- edi-entries: edi-24, edi-28, edi-29
 	- added: edi-24; resample audio object added
 	- added: edi-29; initial version of ecamonitor
+	- added: edi-28; eiam-command 'int-output-mode-wellformed'
+	- changed: ALSA support requires alsa-lib version 
+		   0.9rc4 or newer
+	- changed: libecasoundc versioning back to normal libtool 
+		   style; interface version reverted back to 1:0:0
 	- fixed: unnecessary warnings when closing OSS 
 	         audio objects
 	- fixed: unnecessary warnings when adding audio 

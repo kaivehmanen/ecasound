@@ -6,7 +6,7 @@
 
 \title{Ecasound Control Interface Guide}
 \author{Kai Vehmanen}
-\date{29092002}
+\date{05102002}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,7 @@ detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 05.10.2002 - Changed the libecasoundc link path.
 \item 29.09.2002 - ``PHP'' section added.
 \item 25.04.2002 - Changed headers path from ``<ecasoundc/file.h>'' to 
                    ``<file.h>'' and added library version number to 
@@ -261,8 +262,7 @@ pointer (const char*) to the string at index \emph{n}.
 \begin{enumerate}
 \item  \#include <ecasoundc.h>
 \item  use the eci\_* routines
-\item  link your app against libecasoundc (-lecasoundcX, 
-       where X is the interface number)
+\item  link your app against libecasoundc (-lecasoundc)
 \end{enumerate}
 
 \subsubsection{Example}
