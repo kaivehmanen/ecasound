@@ -548,6 +548,12 @@ void EFFECT_MODULATING_DELAY::process(void)
   lfo.seek_position_in_samples_advance(advance_len_rep);
 }
 
+void EFFECT_MODULATING_DELAY::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
+{
+  EFFECT_TIME_BASED::set_samples_per_second(v);
+  lfo.set_samples_per_second(v);
+}
+
 void EFFECT_FLANGER::process(void)
 {
   EFFECT_MODULATING_DELAY::process();

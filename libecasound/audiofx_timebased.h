@@ -181,6 +181,13 @@ class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
   virtual void init(SAMPLE_BUFFER* insample);
   virtual void process(void);
 
+  /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
+  /*@{*/
+
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
+
+  /*@}*/
+
   EFFECT_MODULATING_DELAY(parameter_t delay_time = 2.0,
 			  parameter_t feedback_percent = 20.0,
 			  long int vartime_in_samples = 50,
