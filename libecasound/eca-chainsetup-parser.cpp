@@ -3,6 +3,9 @@
 //                            option syntax.
 // Copyright (C) 2001-2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 3
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -89,7 +92,7 @@ void ECA_CHAINSETUP_PARSER::interpret_global_option (const string& arg)
 {
   interpret_entry();
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup-parser) Interpreting global option \"" + arg + "\".");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Interpreting global option \"" + arg + "\".");
   if (istatus_rep == false) interpret_general_option(arg);
   if (istatus_rep == false) interpret_processing_control(arg);
   if (istatus_rep == false) interpret_chains(arg);
@@ -111,7 +114,7 @@ void ECA_CHAINSETUP_PARSER::interpret_object_option (const string& arg)
 {
   interpret_entry();
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup-parser) Interpreting object option \"" + arg + "\".");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Interpreting object option \"" + arg + "\".");
   interpret_chains(arg);
   if (istatus_rep == false) interpret_audio_format(arg);
   if (istatus_rep == false) interpret_audioio_device(arg);
@@ -187,7 +190,7 @@ void ECA_CHAINSETUP_PARSER::interpret_options(std::vector<string>& opts)
 
   if (other_matches + global_matches != optcount) {
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		string("(eca-chainsetup-parser) Warning! Only ") + 
+		string("Warning! Only ") + 
 		kvu_numtostr(other_matches) +
 		"+" +
 		kvu_numtostr(global_matches) +
@@ -217,7 +220,7 @@ void ECA_CHAINSETUP_PARSER::preprocess_options(std::vector<string>& opts) const
 
     if (p->size() > 0 && (*p)[0] != '-') {
       /* hack1: rest as "-i:file" */
-      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Note! Interpreting option " +
+      ECA_LOG_MSG(ECA_LOGGER::info, "Note! Interpreting option " +
 		    *p +
 		    " as -i:" +
 		    *p +
@@ -295,7 +298,7 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
       int bsize = atoi(kvu_get_argument_number(1, argu).c_str());
       csetup_repp->set_buffersize(bsize);
       MESSAGE_ITEM mitemb;
-      mitemb << "(eca-chainsetup-parser) Setting buffersize to (samples) " << bsize << ".";
+      mitemb << "Setting buffersize to (samples) " << bsize << ".";
       ECA_LOG_MSG(ECA_LOGGER::info, mitemb.to_string()); 
       break;
     }
@@ -305,23 +308,23 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
       string temp = kvu_get_argument_number(1, argu);
       if (temp == "auto") {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_auto);
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Buffering mode is selected automatically.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Buffering mode is selected automatically.");
       }
       else if (temp == "nonrt") {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_nonrt);
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Buffering mode 'nonrt' selected.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Buffering mode 'nonrt' selected.");
       }
       else if (temp == "rt") {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_rt);
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Buffering mode 'rt' selected.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Buffering mode 'rt' selected.");
       }
       else if (temp == "rtlowlatency") {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_rtlowlatency);
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Buffering mode 'rtlowlatency' selected.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Buffering mode 'rtlowlatency' selected.");
       }
       else {
 	csetup_repp->set_buffering_mode(ECA_CHAINSETUP::cs_bmode_auto);
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Unknown buffering mode; 'auto' mode is used instead.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Unknown buffering mode; 'auto' mode is used instead.");
       }
       break;
     }
@@ -329,7 +332,7 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
   case 'n':
     {
       csetup_repp->set_name(kvu_get_argument_number(1, argu));
-      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Setting chainsetup name to \""
+      ECA_LOG_MSG(ECA_LOGGER::info, "Setting chainsetup name to \""
 		  + csetup_repp->name() + "\".");
       break;
     }
@@ -354,21 +357,21 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
   case 's':
     {
       if (argu.size() > 2 && argu[2] == 'r') {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Option '-sr' is obsolete. Use syntax '-f:sfmt,channels,srate,ileaving' instead.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Option '-sr' is obsolete. Use syntax '-f:sfmt,channels,srate,ileaving' instead.");
       }
       break;
     }
 
   case 'x':
     {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Truncating outputs (overwrite-mode).");
+      ECA_LOG_MSG(ECA_LOGGER::info, "Truncating outputs (overwrite-mode).");
       csetup_repp->set_output_openmode(AUDIO_IO::io_write);
       break;
     }
 
   case 'X':
     {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Updating outputs (rw-mode).");
+      ECA_LOG_MSG(ECA_LOGGER::info, "Updating outputs (rw-mode).");
       csetup_repp->set_output_openmode(AUDIO_IO::io_readwrite);
       break;
     }
@@ -379,24 +382,24 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
 	long int bufs = atol(kvu_get_argument_number(2, argu).c_str());
 	if (bufs == 0) bufs = 100000;
 	csetup_repp->set_double_buffer_size(bufs);
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Using double-buffer of " + 
+	ECA_LOG_MSG(ECA_LOGGER::info, "Using double-buffer of " + 
 		    kvu_numtostr(bufs) + " sample frames.");
 	csetup_repp->toggle_double_buffering(true);
       }
       else if (kvu_get_argument_number(1, argu) == "nodb") {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Double-buffering disabled.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Double-buffering disabled.");
 	csetup_repp->toggle_double_buffering(false);
       }
       else if (kvu_get_argument_number(1, argu) == "intbuf") {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Enabling extra buffering on realtime devices.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Enabling extra buffering on realtime devices.");
 	csetup_repp->toggle_max_buffers(true);
       }
       else if (kvu_get_argument_number(1, argu) == "nointbuf") {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Disabling extra buffering on realtime devices.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Disabling extra buffering on realtime devices.");
 	csetup_repp->toggle_max_buffers(false);
       }
       else if (kvu_get_argument_number(1, argu) == "multitrack") {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Enabling multitrack-mode (override).");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Enabling multitrack-mode (override).");
 	long int samples = -1;
 	if (kvu_get_number_of_arguments(argu) > 1) {
 	  /* -z:multitrack,XXX */
@@ -407,25 +410,25 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
 	csetup_repp->multitrack_mode_rep = true;
       }
       else if (kvu_get_argument_number(1, argu) == "nomultitrack") {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Disabling multitrack-mode (override).");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Disabling multitrack-mode (override).");
 	csetup_repp->multitrack_mode_override_rep = true;
 	csetup_repp->multitrack_mode_offset_rep = 0;
 	csetup_repp->multitrack_mode_rep = false;
       }
       else if (kvu_get_argument_number(1, argu) == "psr") {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Enabling precise-sample-rates with OSS audio devices.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Enabling precise-sample-rates with OSS audio devices.");
 	csetup_repp->toggle_precise_sample_rates(true);
       }
       else if (kvu_get_argument_number(1, argu) == "nopsr") {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Disabling precise-sample-rates with OSS audio devices.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Disabling precise-sample-rates with OSS audio devices.");
 	csetup_repp->toggle_precise_sample_rates(false);
       }
       else if (kvu_get_argument_number(1, argu) == "xruns") {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Processing is stopped if an xrun occurs.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Processing is stopped if an xrun occurs.");
 	csetup_repp->toggle_ignore_xruns(false);
       }
       else if (kvu_get_argument_number(1, argu) == "noxruns") {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Ignoring xruns during processing.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Ignoring xruns during processing.");
 	csetup_repp->toggle_ignore_xruns(true);
       }
       break;
@@ -461,7 +464,7 @@ void ECA_CHAINSETUP_PARSER::interpret_processing_control (const string& argu)
 	{
 	  /* note! here we set the _maximum_ length of the chainsetup */
 	  csetup_repp->set_max_length_in_seconds(atof(kvu_get_argument_number(1, argu).c_str()));
-	  ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Set processing time to "
+	  ECA_LOG_MSG(ECA_LOGGER::info, "Set processing time to "
 		      + kvu_numtostr(csetup_repp->max_length_in_seconds_exact()) + ".");
 	  break;
 	}
@@ -470,9 +473,9 @@ void ECA_CHAINSETUP_PARSER::interpret_processing_control (const string& argu)
 	{
 	  csetup_repp->toggle_looping(true);
 	  if (csetup_repp->max_length_set() != true)
-	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Looping enabled. Length of input objects will be used to set the loop point.");
+	    ECA_LOG_MSG(ECA_LOGGER::info, "Looping enabled. Length of input objects will be used to set the loop point.");
 	  else
-	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Looping enabled.");
+	    ECA_LOG_MSG(ECA_LOGGER::info, "Looping enabled.");
 	  break;
 	}
       }
@@ -508,13 +511,13 @@ void ECA_CHAINSETUP_PARSER::interpret_chains (const string& argu)
       std::vector<string> schains = kvu_get_arguments(argu);
       if (std::find(schains.begin(), schains.end(), "all") != schains.end()) {
 	csetup_repp->select_all_chains();
-	ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup-parser) Selected all chains.");
+	ECA_LOG_MSG(ECA_LOGGER::system_objects, "Selected all chains.");
       }
       else {
 	csetup_repp->select_chains(schains);
 	csetup_repp->add_new_chains(schains);
 	MESSAGE_ITEM mtempa;
-	mtempa << "(eca-chainsetup-parser) Selected chain ids: ";
+	mtempa << "Selected chain ids: ";
 	for (std::vector<string>::const_iterator p = schains.begin(); p !=
 	       schains.end(); p++) { mtempa << *p << " "; }
 	ECA_LOG_MSG(ECA_LOGGER::system_objects, mtempa.to_string());
@@ -559,7 +562,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audio_format (const string& argu)
       csetup_repp->set_default_audio_format(active_sinfo);
       
       MESSAGE_ITEM ftemp;
-      ftemp << "(eca-chainsetup-parser) Set active format to (bits/channels/srate/interleave): ";
+      ftemp << "Set active format to (bits/channels/srate/interleave): ";
       ftemp << csetup_repp->default_audio_format().format_string() 
 	    << "/" << csetup_repp->default_audio_format().channels() 
 	    << "/" << csetup_repp->default_audio_format().samples_per_second();
@@ -597,7 +600,7 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const string& argu)
   switch(argu[1]) {
   case 'p':
     {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-chainsetup-parser) Interpreting preset \"" + argu + "\".");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Interpreting preset \"" + argu + "\".");
       CHAIN_OPERATOR* cop = 0;
 
       if (argu.size() < 3) return;  
@@ -670,12 +673,12 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 	if ((audio_input->supported_io_modes() &
 	     AUDIO_IO::io_read) != AUDIO_IO::io_read) {
 	  interpret_set_result(false, 
-			       string("(eca-chainsetup-parser) Audio object '") + 
+			       string("Audio object '") + 
 			       tname +
 			       "' cannot be opened for input.");
 	}
 	else {
-	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
+	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"adding file \"" + tname + "\".");
 	  csetup_repp->add_input(audio_input);
 	  last_audio_add_vector_repp = &csetup_repp->inputs; /* for -y parsing */
 	}
@@ -707,10 +710,10 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 	  truncate = true;
 	}
 	if (((audio_output->supported_io_modes() & mode_tmp) != mode_tmp)) {
-	  interpret_set_result(false, string("(eca-chainsetup-parser) io_write/io_readwrite access modes not supported by output '") + audio_output->name() + "'.");
+	  interpret_set_result(false, string("io_write/io_readwrite access modes not supported by output '") + audio_output->name() + "'.");
 	}
 	else {
-	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
+	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"adding file \"" + tname + "\".");
 	  csetup_repp->add_output(audio_output, truncate);
 	  last_audio_add_vector_repp = &csetup_repp->outputs; /* for -y parsing */
 	}
@@ -741,7 +744,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 	  csetup_repp->output_start_pos[csetup_repp->output_start_pos.size() - 1] = last_object->position_in_seconds_exact();
 	}
 
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Setting starting position for audio object \""
+	ECA_LOG_MSG(ECA_LOGGER::info, "Setting starting position for audio object \""
 		    + last_object->label() 
 		    + "\": "
 		    + kvu_numtostr(last_object->position_in_seconds_exact()) 
@@ -757,7 +760,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 
   if (print_error == true) {
     interpret_set_result(false, 
-			 string("(eca-chainsetup-parser) Audio object '") +
+			 string("Audio object '") +
 			 tname + 
 			 "' does not match any of the known audio device types or "
 			 "file formats. You can check the list of supported "
@@ -826,7 +829,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 	case 'd': 
 	  {
 	    string tname = kvu_get_argument_number(1, argu);
-	    ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-chainsetup-parser) MIDI-config: Adding device \"" + tname + "\".");
+	    ECA_LOG_MSG(ECA_LOGGER::system_objects,"MIDI-config: Adding device \"" + tname + "\".");
 	    MIDI_IO* mdev = 0;
 	    mdev = ECA_OBJECT_FACTORY::create_midi_device(argu);
 	    if (mdev != 0) {
@@ -836,7 +839,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 		csetup_repp->midi_server_needed_rep = true;
 	      }
 	      else {
-		ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) MIDI-config: Warning! I/O-mode 'io_readwrite' not supported by " + mdev->name());
+		ECA_LOG_MSG(ECA_LOGGER::info, "MIDI-config: Warning! I/O-mode 'io_readwrite' not supported by " + mdev->name());
 	      }
 	    }
 	    break;
@@ -851,7 +854,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 	      // FIXME: not implemented!
 	      int id = atoi(kvu_get_argument_number(1, argu).c_str());
 	      ECA_LOG_MSG(ECA_LOGGER::info, 
-			    "(eca-chainsetup-parser) MIDI-config: Receiving MMC messages with id  \"" + 
+			    "MIDI-config: Receiving MMC messages with id  \"" + 
 			    kvu_numtostr(id) +
 			    "\".");
 	      csetup_repp->midi_server_repp->set_mmc_receive_id(id);
@@ -864,7 +867,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 	    {
 	      int id = atoi(kvu_get_argument_number(1, argu).c_str());
 	      ECA_LOG_MSG(ECA_LOGGER::info, 
-			    "(eca-chainsetup-parser) MIDI-config: Adding MMC-send to device id \"" + 
+			    "MIDI-config: Adding MMC-send to device id \"" + 
 			    kvu_numtostr(id) +
 			    "\".");
 	      csetup_repp->midi_server_repp->add_mmc_send_id(id);
@@ -883,7 +886,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 	    {
 	      // FIXME: not implemented
 	      ECA_LOG_MSG(ECA_LOGGER::info, 
-			    "(eca-chainsetup-parser) MIDI-config: Receiving MIDI-sync.");
+			    "MIDI-config: Receiving MIDI-sync.");
 	      csetup_repp->midi_server_needed_rep = true;
 	      csetup_repp->midi_server_repp->toggle_midi_sync_receive(true);
 	      break;
@@ -893,7 +896,7 @@ void ECA_CHAINSETUP_PARSER::interpret_midi_device (const string& argu)
 	    {
 	      // FIXME: not implemented
 	      ECA_LOG_MSG(ECA_LOGGER::info, 
-			    "(eca-chainsetup-parser) MIDI-config: Sending MIDI-sync.");
+			    "MIDI-config: Sending MIDI-sync.");
 	      csetup_repp->midi_server_repp->toggle_midi_sync_send(true);
 	      csetup_repp->midi_server_needed_rep = true;
 	      break;
@@ -980,7 +983,7 @@ string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const
 
   int setparams = csetup_repp->override_buffering_parameters().number_of_set();
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"(eca-chainsetup-parser) genopts tostring - " + kvu_numtostr(setparams) +
+		"genopts tostring - " + kvu_numtostr(setparams) +
 		" overridden parameters.");
 
   if (setparams > 0) {
@@ -1061,7 +1064,7 @@ string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const
   }
   if (csetup_repp->looping_enabled()) t << " -tl";
 
-  return(t.to_string());
+  return t.to_string();
 }
 
 string ECA_CHAINSETUP_PARSER::midi_to_string(void) const
@@ -1081,7 +1084,7 @@ string ECA_CHAINSETUP_PARSER::midi_to_string(void) const
     if (p < csetup_repp->midi_devices.size()) t << " ";
   }
 
-  return(t.to_string());
+  return t.to_string();
 }
 
 string ECA_CHAINSETUP_PARSER::inputs_to_string(void) const
@@ -1110,7 +1113,7 @@ string ECA_CHAINSETUP_PARSER::inputs_to_string(void) const
     if (p < csetup_repp->inputs.size()) t << "\n";
   }
 
-  return(t.to_string());
+  return t.to_string();
 }
 
 string ECA_CHAINSETUP_PARSER::outputs_to_string(void) const
@@ -1139,7 +1142,7 @@ string ECA_CHAINSETUP_PARSER::outputs_to_string(void) const
     if (p < csetup_repp->outputs.size()) t << "\n";
   }
 
-  return(t.to_string());
+  return t.to_string();
 }
 
 string ECA_CHAINSETUP_PARSER::chains_to_string(void) const
@@ -1157,7 +1160,7 @@ string ECA_CHAINSETUP_PARSER::chains_to_string(void) const
     ++p;
   }
 
-  return(t.to_string());
+  return t.to_string();
 }
 
 string ECA_CHAINSETUP_PARSER::audioio_to_string(const AUDIO_IO* aiod, const string& direction) const
@@ -1173,5 +1176,5 @@ string ECA_CHAINSETUP_PARSER::audioio_to_string(const AUDIO_IO* aiod, const stri
     if (n + 1 < aiod->number_of_params()) t << ",";
   }
 
-  return(t.to_string());
+  return t.to_string();
 }

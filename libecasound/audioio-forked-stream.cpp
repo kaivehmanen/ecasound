@@ -3,6 +3,9 @@
 //                             forking for piped input/output.
 // Copyright (C) 2000,2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 2
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -46,7 +49,8 @@
  * If found, replaces the string '%f' with 'filename'. This is
  * the file used by the forked child for input/output.
  */
-void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const std::string& filename) {
+void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const std::string& filename)
+{
   object_rep = filename;
   if (command_rep.find("%f") != std::string::npos) {
     command_rep.replace(command_rep.find("%f"), 2, object_rep);
@@ -58,7 +62,8 @@ void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const std::string& filename) {
  * temporary named pipe. This pipe will be used for communicating
  * with the forked child instead of standard input and output pipes.
  */
-void AUDIO_IO_FORKED_STREAM::set_fork_pipe_name(void) {
+void AUDIO_IO_FORKED_STREAM::set_fork_pipe_name(void)
+{
   if (command_rep.find("%F") != std::string::npos) {
     use_named_pipe_rep = true;
     init_temp_directory();
@@ -75,7 +80,8 @@ void AUDIO_IO_FORKED_STREAM::set_fork_pipe_name(void) {
     use_named_pipe_rep = false;
 }
 
-void AUDIO_IO_FORKED_STREAM::init_temp_directory(void) {
+void AUDIO_IO_FORKED_STREAM::init_temp_directory(void)
+{
   std::string tmpdir ("ecasound-");
   char* tmp_p = getenv("USER");
   if (tmp_p != NULL) {
@@ -91,7 +97,8 @@ void AUDIO_IO_FORKED_STREAM::init_temp_directory(void) {
  * If found, replaces the string '%c' with value of parameter
  * 'channels'.
  */
-void AUDIO_IO_FORKED_STREAM::set_fork_channels(int channels) {
+void AUDIO_IO_FORKED_STREAM::set_fork_channels(int channels)
+{
   if (command_rep.find("%c") != std::string::npos) {
     command_rep.replace(command_rep.find("%c"), 2, kvu_numtostr(channels));
   }
@@ -101,7 +108,8 @@ void AUDIO_IO_FORKED_STREAM::set_fork_channels(int channels) {
  * If found, replaces the string '%s' with value of parameter
  * 'sample_rate', and '%S' with 'sample_rate/1000' (kHz).
  */
-void AUDIO_IO_FORKED_STREAM::set_fork_sample_rate(long int sample_rate) {
+void AUDIO_IO_FORKED_STREAM::set_fork_sample_rate(long int sample_rate)
+{
   if (command_rep.find("%s") != std::string::npos) {
     command_rep.replace(command_rep.find("%s"), 2, kvu_numtostr(sample_rate));
   }
@@ -114,13 +122,15 @@ void AUDIO_IO_FORKED_STREAM::set_fork_sample_rate(long int sample_rate) {
  * If found, replaces the string '%b' with value of parameter
  * 'bits'.
  */
-void AUDIO_IO_FORKED_STREAM::set_fork_bits(int bits) {
+void AUDIO_IO_FORKED_STREAM::set_fork_bits(int bits)
+{
   if (command_rep.find("%b") != std::string::npos) {
     command_rep.replace(command_rep.find("%b"), 2, kvu_numtostr(bits));
   }
 }
 
-void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
+void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void)
+{
   last_fork_rep = false;
   fd_rep = 0;
 
@@ -190,7 +200,8 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
   }
 }
 
-void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
+void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void)
+{
   last_fork_rep = false;
   fd_rep = 0;
 
@@ -250,7 +261,8 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
   }
 }
 
-void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
+void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
+{
   last_fork_rep = false;
   fd_rep = 0;
 
@@ -316,7 +328,8 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
  * function must be called from the same thread as 
  * fork_child_for_read/write() was called.
  */
-void AUDIO_IO_FORKED_STREAM::clean_child(void) {
+void AUDIO_IO_FORKED_STREAM::clean_child(void)
+{
   if (pid_of_child_rep > 0) {
     kill(pid_of_child_rep, SIGTERM);
     if (::getpid() == pid_of_parent_rep) {
@@ -337,7 +350,8 @@ void AUDIO_IO_FORKED_STREAM::clean_child(void) {
  * Checks whether child is still active. Returns false 
  * if child has exited, otherwise true.
  */
-bool AUDIO_IO_FORKED_STREAM::wait_for_child(void) const {
+bool AUDIO_IO_FORKED_STREAM::wait_for_child(void) const
+{
   if (pid_of_child_rep > 0) {
     int pid = waitpid(pid_of_child_rep, 0, WNOHANG);
     if (pid > 0) {
