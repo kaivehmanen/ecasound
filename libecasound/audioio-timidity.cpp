@@ -58,8 +58,9 @@ void TIMIDITY_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
     }
   }
   
-  /* s16 samples, 2 channels, srate configurable */
-  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
+  /* decoder supports: s16 samples, 2 channels, srate configurable 
+     no support for: endianess (use native)  */
+  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16);
   set_channels(2);
 
   triggered_rep = false;

@@ -29,8 +29,8 @@
 
 #include "eca-logger.h"
 
-string OGG_VORBIS_INTERFACE::default_input_cmd = "ogg123 -d raw --file=- %f";
-string OGG_VORBIS_INTERFACE::default_output_cmd = "oggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -";
+string OGG_VORBIS_INTERFACE::default_input_cmd = "ogg123 -d raw -o byteorder:%E --file=- %f";
+string OGG_VORBIS_INTERFACE::default_output_cmd = "oggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --raw-endianness 0 --output=%f -";
 long int OGG_VORBIS_INTERFACE::default_output_default_bitrate = 128000;
 
 void OGG_VORBIS_INTERFACE::set_input_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_input_cmd = value; }
@@ -55,12 +55,6 @@ void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
   std::string urlprefix;
   triggered_rep = false;
 
-  /**
-   * FIXME: we have no idea about the audio format of the 
-   *        stream we get from ogg123... ybe we should force the decoder
-   *        to generate RIFF wave to a named pipe and parse the header...?
-   */
-
   if (io_mode() == io_read) {
     struct stat buf;
     int ret = ::stat(label().c_str(), &buf);
@@ -74,6 +68,18 @@ void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 	ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-ogg) Found url; protocol '" + urlprefix + "'.");
       }
     }
+
+    /* decoder supports: nothing configurable nor fixed
+     * 
+     * FIXME: we have no idea about the audio format of the 
+     *        stream we get from the decoder... ybe we should force the decoder
+     *        to generate RIFF wave to a named pipe and parse the header...? 
+     */
+  }
+  else {
+    /* encoder supports: coding, channel-count and srate configurable,
+     *                   fixed to little endian */
+    ECA_AUDIO_FORMAT::set_sample_endianess(ECA_AUDIO_FORMAT::se_little);
   }
 
   AUDIO_IO::open();
@@ -106,7 +112,7 @@ long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int sample
 
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-ogg) Can't start process \"" + OGG_VORBIS_INTERFACE::default_input_cmd + "\". Please check your ~/.ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-ogg) Can't start process \"" + fork_command() + "\". Please check your ~/.ecasound/ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }
@@ -182,8 +188,16 @@ string OGG_VORBIS_INTERFACE::get_parameter(int param) const
 
 void OGG_VORBIS_INTERFACE::fork_input_process(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, OGG_VORBIS_INTERFACE::default_input_cmd);
-  set_fork_command(OGG_VORBIS_INTERFACE::default_input_cmd);
+  string command = OGG_VORBIS_INTERFACE::default_input_cmd;
+
+  // replace with 'little/big' byteorder
+  if (command.find("%E") != string::npos) {
+    string byteorder ("big");
+    if (sample_endianess() == ECA_AUDIO_FORMAT::se_little) byteorder = "little";
+    command.replace(command.find("%E"), 2, byteorder);
+  }
+
+  set_fork_command(command);
   set_fork_file_name(label());
   set_fork_pipe_name();
   fork_child_for_read();
@@ -202,15 +216,14 @@ void OGG_VORBIS_INTERFACE::fork_input_process(void)
 void OGG_VORBIS_INTERFACE::fork_output_process(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-ogg) Starting to encode " + label() + " with vorbize.");
-  string command_rep = OGG_VORBIS_INTERFACE::default_output_cmd;
-  if (command_rep.find("%f") != string::npos) {
-    command_rep.replace(command_rep.find("%f"), 2, label());
-  }
-  if (command_rep.find("%B") != string::npos) {
-    command_rep.replace(command_rep.find("%B"), 2, kvu_numtostr((long int)(bitrate_rep / 1000)));
+  string command = OGG_VORBIS_INTERFACE::default_output_cmd;
+
+  // replace with bitrate
+  if (command.find("%B") != string::npos) {
+    command.replace(command.find("%B"), 2, kvu_numtostr((long int)(bitrate_rep / 1000)));
   }
 
-  set_fork_command(command_rep);
+  set_fork_command(command);
   set_fork_file_name(label());
 
   set_fork_bits(bits());

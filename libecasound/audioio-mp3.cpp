@@ -46,7 +46,7 @@
 
 #include "eca-logger.h"
 
-std::string MP3FILE::default_input_cmd = "mpg123 --stereo -r %s -b 0 -q -s -k %o %f";
+std::string MP3FILE::default_input_cmd = "mpg123 --stereo -b 0 -q -s -k %o %f";
 std::string MP3FILE::default_output_cmd = "lame -b %B -s %S -x -S - %f";
 long int MP3FILE::default_output_default_bitrate = 128000;
 
@@ -342,12 +342,15 @@ MP3FILE::~MP3FILE(void)
 void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 { 
   if (io_mode() == io_read) {
+    /* decoder supports: fixed channel cound and sample format, 
+                         sample rate set by parsing mp3 header */
     get_mp3_params(label());
   }
   else {
-    /* s16 samples, 2 channels, srate configurable */
+    /* encoder supports: srate configurable, fixed channel
+                         count and sample format */
     set_channels(2);
-    set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16);
+    set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
   }
 
   triggered_rep = false;
@@ -457,45 +460,6 @@ std::string MP3FILE::get_parameter(int param) const
   return("");
 }
 
-/*
-void MP3FILE::get_mp3_params_old(const std::string& fname) throw(AUDIO_IO::SETUP_ERROR&) {
-  Layer newlayer;
-
-  if (newlayer.get(fname.c_str()) != true) {
-    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-MP3: Can't open " + label() + " for reading."));
-  }
-
-  struct stat buf;
-  ::stat(fname.c_str(), &buf);
-  double fsize = (double)buf.st_size;
-  
-  double bitrate = newlayer.bitrate() * 1000.0;
-  double sfreq = newlayer.sfreq();
-
-  // notice! mpg123 always outputs 16bit samples, stereo
-  mono_input_rep = (newlayer.mode() == Layer::MPG_MD_MONO) ? true : false;
-  set_channels(2);
-  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
-
-  MESSAGE_ITEM m;
-  m << "(audioio-mp3) mp3 file size: " << fsize << "\n";
-  m << "(audioio-mp3) mp3 length value: " << newlayer.length() << "\n";
-  m << "(audioio-mp3) sfreq: " << sfreq << "\n";
-  m << "(audioio-mp3) bitrate: " << bitrate << "\n";
-  if (bitrate != 0)
-    length_in_samples((long)ceil(8.0 * fsize / bitrate * bytes_per_second() / frame_size()));
-  
-  if (bitrate == 0 ||
-      length_in_samples() < 0) length_in_samples(0);
-  
-  m << "(audioio-mp3) setting MP3 length_value: " << length_in_seconds() << "\n";
-  pcm_rep = newlayer.pcmPerFrame();
-  
-  m << "(audioio-mp3) MP3 pcm value: " << pcm_rep;
-  ECA_LOG_MSG(ECA_LOGGER::user_objects,m.to_string());
-}
-*/ 
-
 void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERROR&)
 {
   std::string urlprefix;
@@ -526,6 +490,7 @@ void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERR
     /* sample freq */
     double sfreq = mpg123_freqs[fr.sampling_frequency];
     ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Sampling frequncy (Hz): " + kvu_numtostr(sfreq));
+    set_samples_per_second(static_cast<SAMPLE_SPECS::sample_rate_t>(sfreq));
 
     /* channels */
     // notice! mpg123 always outputs 16bit samples, stereo
@@ -546,7 +511,7 @@ void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERR
 
   /* sample format (this comes from mpg123) */
   set_channels(2);
-  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16);
+  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 }
 
 
@@ -562,7 +527,7 @@ void MP3FILE::fork_input_process(void) {
 
   set_fork_bits(bits());
   set_fork_channels(channels());
-  set_fork_sample_rate(samples_per_second()); /* lame */
+  set_fork_sample_rate(samples_per_second()); /* for old mpg123 */
 
   fork_child_for_read();
   if (child_fork_succeeded() == true) {

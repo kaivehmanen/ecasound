@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-forked-streams.cpp: Helper class providing routines for
 //                             forking for piped input/output.
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,6 +48,9 @@
  */
 void AUDIO_IO_FORKED_STREAM::set_fork_file_name(const std::string& filename) {
   object_rep = filename;
+  if (command_rep.find("%f") != std::string::npos) {
+    command_rep.replace(command_rep.find("%f"), 2, object_rep);
+  }
 }
 
 /**
@@ -121,6 +124,8 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void) {
   last_fork_rep = false;
   fd_rep = 0;
 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Fork child-for-read: '" + fork_command() + "'");
+
   if (use_named_pipe_rep == true) {
     if (tmp_file_created_rep == true) {
       fork_child_for_fifo_read();
@@ -189,6 +194,8 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
   last_fork_rep = false;
   fd_rep = 0;
 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Fork child-for-fifo-read: '" + fork_command() + "'");
+
 #ifdef HAVE_SIGPROCMASK
   sigset_t oldset, newset;
   sigemptyset(&newset);
@@ -246,6 +253,8 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void) {
 void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void) {
   last_fork_rep = false;
   fd_rep = 0;
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Fork child-for-write: '" + fork_command() + "'");
   
   int fpipes[2];
   if (pipe(fpipes) == 0) {

@@ -30,6 +30,12 @@
 
 #include "eca-logger.h"
 
+/**
+ * References:
+ *    http://flac.sourceforge.net/
+ *    http://flac.sourceforge.net/format.html
+ */
+
 string FLAC_FORKED_INTERFACE::default_input_cmd = "flac -d -c %f";
 string FLAC_FORKED_INTERFACE::default_output_cmd = "flac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -";
 
@@ -73,6 +79,20 @@ void FLAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 	ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-flac) Found url; protocol '" + urlprefix + "'.");
       }
     }
+
+    /* decoder supports: nothing configurable nor fixed
+     * 
+     * FIXME: we have no idea about the audio format of the 
+     *        stream we get from the decoder... ybe we should force the decoder
+     *        to generate RIFF wave to a named pipe and parse the header...? 
+     * 
+     *        - possibly copy FLAC__metadata_get_streaminfo() from flac 
+     *          package... might be messy due to dependencies
+     *        - see http://flac.sourceforge.net/format.html
+     */
+  }
+  else {
+    /* encoder supports: coding, channel-count, srate and endianess configurable */
   }
 
   AUDIO_IO::open();
@@ -191,29 +211,23 @@ void FLAC_FORKED_INTERFACE::fork_input_process(void)
 void FLAC_FORKED_INTERFACE::fork_output_process(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-flac) Starting to encode FLAC stream to " + label() + ".");
-  string command_rep = FLAC_FORKED_INTERFACE::default_output_cmd;
-  string format = ECA_AUDIO_FORMAT::format_string();
+  string command = FLAC_FORKED_INTERFACE::default_output_cmd;
 
-  // replace with filename
-  if (command_rep.find("%f") != string::npos) {
-    command_rep.replace(command_rep.find("%f"), 2, label());
-  }
-
-  // replace with 'little/big'
-  if (command_rep.find("%E") != string::npos) {
+  // replace with 'little/big' byteorder
+  if (command.find("%E") != string::npos) {
     string byteorder ("big");
-    if (format.find("_le") !=  string::npos) byteorder = "little";
-    command_rep.replace(command_rep.find("%E"), 2, byteorder);
+    if (sample_endianess() == ECA_AUDIO_FORMAT::se_little) byteorder = "little";
+    command.replace(command.find("%E"), 2, byteorder);
   }
 
   // replace with 'signed/unsigned'
-  if (command_rep.find("%I") != string::npos) {
+  if (command.find("%I") != string::npos) {
     string sign ("signed");
-    if (format.find("u8") !=  string::npos) sign = "unsigned";
-    command_rep.replace(command_rep.find("%I"), 2, sign);
+    if (sample_coding() == ECA_AUDIO_FORMAT::sc_unsigned) sign = "unsigned";
+    command.replace(command.find("%I"), 2, sign);
   }
 
-  set_fork_command(command_rep);
+  set_fork_command(command);
   set_fork_file_name(label());
 
   set_fork_bits(bits());

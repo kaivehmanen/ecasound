@@ -16,8 +16,8 @@ ext-cmd-text-editor-use-getenv = true
 ext-cmd-wave-editor = ecawave
 ext-cmd-mp3-input = mpg123 --stereo -r %s -b 0 -q -s -k %o %f
 ext-cmd-mp3-output = lame -b %B -s %S -x -S - %f
-ext-cmd-ogg-input = ogg123 -d raw --file=- %f
-ext-cmd-ogg-output = oggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -
+ext-cmd-ogg-input = ogg123 -d raw -o byteorder:%E --file=- %f
+ext-cmd-ogg-output = oggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --raw-endianness 0 --output=%f -
 ext-cmd-mikmod = mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f
 ext-cmd-timidity = timidity -Or1S -id -s %s -o - %f
 ext-cmd-flac-input = flac -d -c %f

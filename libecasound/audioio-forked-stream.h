@@ -32,10 +32,11 @@ class AUDIO_IO_FORKED_STREAM {
  public:
   
   /**
-   * Set the command std::string. This must be done before other set_* 
+   * Initializes the command string. This must be done before any other set_* 
    * calls.
    */
   void set_fork_command(const std::string& cmd) { command_rep = cmd; }
+
   void set_fork_file_name(const std::string& filename);
   void set_fork_pipe_name(void);
   void set_fork_channels(int channels);
@@ -45,6 +46,8 @@ class AUDIO_IO_FORKED_STREAM {
   void fork_child_for_read(void);
   void fork_child_for_write(void);
   void clean_child(void);
+
+  const std::string& fork_command(void) const { return(command_rep); }
 
   bool wait_for_child(void) const;
   bool child_fork_succeeded(void) const { return(last_fork_rep); }
