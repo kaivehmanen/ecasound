@@ -24,8 +24,6 @@
 #include <iostream>
 #include <string>
 
-#include <pthread.h>   /* POSIX: pthread_create() */
-#include <signal.h>    /* POSIX: sigaction(), sigwait(), sig_atomic_t */
 #include <unistd.h>    /* POSIX: sleep() */
 
 #include <kvu_dbc.h>
@@ -40,25 +38,10 @@
 #include "eca-comhelp.h"
 #include "eca-console.h"
 #include "eca-curses.h"
+#include "eca-neteci-server.h"
 #include "eca-plaintext.h"
 #include "textdebug.h"
-
-/**
- * Type definitions
- */
-
-struct ecasound_state {
-  ECA_CONSOLE* console;
-  ECA_CONTROL* control;
-  ECA_LOGGER_INTERFACE* logger;
-  ECA_SESSION* session;
-  sig_atomic_t exit_request;
-  int retval;
-  bool daemon_mode;
-  bool cerr_output_only_mode;
-  bool interactive_mode;
-  bool quiet_mode;
-};
+#include "ecasound.h"
 
 /**
  * Static/private function definitions
@@ -83,7 +66,9 @@ static struct ecasound_state ecasound_state_global =
   { 0,        /* ECA_CONSOLE* */
     0,        /* ECA_CONTROL */
     0,        /* ECA_LOGGER_INTERFACE */
+    0,        /* ECA_NETECI_SERVER */
     0,        /* ECA_SESSION */
+    0,        /* pthread_t */
     0,        /* sig_wait_t */
     0,        /* return value */
     false,    /* daemon mode */
@@ -183,9 +168,11 @@ void ecasound_atexit_cleanup(void)
   }
 
   if (state != 0) {
+    if (state->eciserver != 0) { delete state->eciserver; state->eciserver = 0; }
     if (state->control != 0) { delete state->control; state->control = 0; }
     if (state->session != 0) { delete state->session; state->session = 0; }
     if (state->console != 0) { delete state->console; state->console = 0; }
+    if (state->daemon_thread != 0) { delete state->daemon_thread; state->daemon_thread = 0; }
   }    
 
   // cerr << "ecasound: atexit cleanup done." << endl << endl;
@@ -225,7 +212,25 @@ void ecasound_launch_daemon(struct ecasound_state* state)
 
   state->console->print("ecasound: starting the NetECI server.");
 
-  state->console->print("ecasound: NetECI server exiting");
+  state->daemon_thread = new pthread_t;
+  state->eciserver = new ECA_NETECI_SERVER();
+
+  int res = pthread_create(state->daemon_thread, 
+			   NULL,
+			   ECA_NETECI_SERVER::launch_server_thread, 
+			   reinterpret_cast<void*>(state));
+  if (res != 0) {
+    cerr << "ecasound: Warning! Unable to create watchdog thread." << endl;
+    delete state->daemon_thread;  state->daemon_thread = 0;
+    delete state->eciserver; state->eciserver = 0;
+  }
+
+#if 0 
+  state->neteci_server = new ECA_NETECI_SERVER();
+  while(true) { }
+#endif
+
+  state->console->print("ecasound: NetECI server started");
 }
 
 /**

@@ -21,11 +21,14 @@ bin_PROGRAMS = ecasound
 endif
 
 ecasound_SOURCES = 	ecasound.cpp \
+			ecasound.h \
 			eca-console.h \
 			eca-curses.h \
 			eca-curses.cpp \
 			eca-comhelp.cpp \
 			eca-comhelp.h \
+			eca-neteci-server.cpp \
+			eca-neteci-server.h \
 			eca-plaintext.h \
 			eca-plaintext.cpp \
 			textdebug.cpp \
