@@ -73,7 +73,7 @@ class AUDIO_IO_MANAGER : public DYNAMIC_OBJECT<std::string> {
   /**
    * Returns a list of all registered object ids.
    */
-  virtual const std::list<int>& get_object_list(void) const = 0;
+  virtual std::list<int> get_object_list(void) const = 0;
 
   /**
    * Unregisters object identified by 'id'.

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (29.04.2002)
+       (18.05.2002)
        ()
        (Multimedia software)
 
@@ -179,6 +179,10 @@ See url(ecasound user's guide)(users_guide/users_guide.html) for
 more detailed documentation.
 
 startdit()
+dit(-G:mgrtype,optstring)
+Sets options for audio object manager type 'mgrtype'. 
+For available options, see "OBJECT TYPE SPECIFIC NOTES" below.
+
 dit(-f:sample_format,channel,sample-rate,interleaving)
 Sets default sampling parameters. These are used for all following
 input and output files or until another -f is specified. If no -f
@@ -259,6 +263,15 @@ bf(-jack_multi,alsa_pcm:out,myport),
 bf(-jack_mono,alsa_pcm:out_X,myport) and bf(-o jack_generic,myport)
 are all valid JACK output definitions. Similar syntax can be used
 to create JACK inputs.
+
+Additionally global JACK options can be set using 
+bf(-G:jack,client_name,operation_mode). 'client_name' 
+is the name used when registering ecasound to the JACK system. 
+If 'operation_mode' is "streaming" (the default), ecasound
+will ignore any transport state changes in the JACK-system,
+in mode "master" it will act as the JACK timebase master 
+while in mode "slave" ecasound lets JACK control both the 
+transport state and current location.
 
 dit(Loop device) 
 Loop devices make it possible to route data between chains.

@@ -799,16 +799,25 @@ void ECA_ENGINE::reset_realtime_devices(void)
  *                         modifying position
  **********************************************************************/
 
-double ECA_ENGINE::current_position(void) const {
+SAMPLE_SPECS::sample_pos_t ECA_ENGINE::current_position_in_samples(void) const
+{
+  return(csetup_repp->position_in_samples());
+}
+
+double ECA_ENGINE::current_position_in_seconds_exact(void) const
+{
   return(csetup_repp->position_in_seconds_exact());
 }
 
+// FIXME: remove
+#if 0
 double ECA_ENGINE::current_position_chain(void) const
 {
   AUDIO_IO* ptr = (*inputs_repp)[(*chains_repp)[csetup_repp->active_chain_index_rep]->connected_input()]; 
     return(ptr->position_in_seconds_exact());
   return(0.0f);
 }
+#endif
 
 /**
  * Seeks to position 'seconds'. Affects all input and 

@@ -31,10 +31,11 @@ ecasound version.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
-\item 01.02.2001 - Updated the ``Current position'' section.
+\item 18.05.2002 - Fixed a few typos.
+\item 21.10.2001 - Added material from the ecasound FAQ.
 \item 21.10.2001 - Added this history section. Document was 
       restructured and all major chapters reviewed.
-\item 21.10.2001 - Added material from the ecasound FAQ.
+\item 01.02.2001 - Updated the ``Current position'' section.
 \end{itemize}
 
 % ----------------------------------------------------------------------
@@ -571,12 +572,12 @@ article on Oreillynet -
 \section{Miscellanous}
 
 % ----------------------------------------------------------------------
-\subsection{Security considerations when running with root priviledges}
+\subsection{Security considerations when running with root privileges}
 
 When given the -r option (raise priority), ecasound tries to raise 
 its scheduling priority (to so called SCHED\_FIFO realtime scheduling)
 and to avoid swapping, locks all its memory. To do this,
-root-priviledges are required. So either ecasound has to be run as
+root-privileges are required. So either ecasound has to be run as
 root (logged in as root, or using the 'sudo' program), or it has to be
 installed with the suid-root bit set. Now is this a safe thing to do?
 
@@ -586,8 +587,8 @@ not safe. Whether this is a real problem depends on the particular setup
 access, ...).
 
 The basic problem is that ecasound (or at least 2.0 and earlier) 
-doesn't contain any code for altering priviledge levels. If it is run
-with root-priviledges, it does everything as root - including forking
+doesn't contain any code for altering privilege levels. If it is run
+with root-privileges, it does everything as root - including forking
 external programs such as mp3 and ogg utilities and editors.
  
 But all in all, this shouldn't be that big of an issue. For noncritical
@@ -603,12 +604,12 @@ root):
 \end{verbatim} 
 
 In other words, ecasound binary is set as suid-root (so it is run with
-root-priviledges), but only root and members of the 'ecausers' groups can   
+root-privileges), but only root and members of the 'ecausers' groups can   
 start it. Now just add all trusted ecasound users to the group and you are
 set.
 
 The ideal solution would be that ecasound would not need to be run with
-full root-priviledges, only with priviledges for changing scheduling and
+full root-privileges, only with privileges for changing scheduling and
 locking memory. Tommi Ilmonen's (author of the Mustajuuri softsynth)
 ``givertcap'' program solves this very elegantly, but unfortunately it 
 requires a custom kernel patch (at least for now). You can check the 

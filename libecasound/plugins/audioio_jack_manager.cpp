@@ -64,6 +64,11 @@ static PROCEDURE_TIMER profile_callback_timer;
  */
 
 static int eca_jack_process(jack_nframes_t nframes, void *arg);
+static void eca_jack_process_engine_iteration(jack_nframes_t nframes, void *arg);
+#ifdef PROFILE_CALLBACK_EXECUTION
+static void eca_jack_process_profile_pre(void);
+static void eca_jack_process_profile_post(void);
+#endif
 static int eca_jack_bufsize (jack_nframes_t nframes, void *arg);
 static int eca_jack_srate (jack_nframes_t nframes, void *arg);
 static void eca_jack_shutdown (void *arg);
@@ -73,7 +78,6 @@ static void eca_jack_shutdown (void *arg);
 using std::cerr;
 using std::endl;
 using std::list;
-using std::map;
 using std::string;
 using std::vector;
 
@@ -92,78 +96,157 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
 {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
 
-  PROFILE_CE_STATEMENT(profile_callback_timer.start());
-  DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): entry ----> ");
+  PROFILE_CE_STATEMENT(eca_jack_process_profile_pre());
 
-  // FIXME/17.05.2002:
-  //  - if in transport-slave mode, verify that ecasound engine 
-  //    position matches JACK position
-  //  - if the position doesn't match, initiate seeking to 
-  //    the estimated position and skip processing for this round
-  
   /* 1. try to get the driver lock; if it fails or connection 
    *    is not fully establish, skip this processing cycly */
   int ret = pthread_mutex_trylock(&current->lock_rep);
   if (ret == 0 && current->connection_active_rep == true) {
 
     // FIXME/17.05.2002:
-    //  - make cb_buffers to be at least 2*buffersize in size;
-    //    and make it a ring-buffer
-    //  - if 'nframes < buffersize', only copy nframes to 
-    //    inport cb_buffers
-    //  - update (17.02): not necessarily needed anymore; see 
-    //    discussions on jackit-devel
+    //  - if in transport-slave mode, verify that ecasound engine 
+    //    position matches JACK position
+    //  - if the position doesn't match, initiate seeking to 
+    //    the estimated position and skip processing for this round
 
-    DBC_CHECK(current->buffersize_rep == static_cast<long int>(nframes));
+    /* 2. transport control processing in "slave" mode */
+    if (current->mode_rep == AUDIO_IO_JACK_MANAGER::Slave) {
 
-    /* 2. copy audio data from port input buffers to ecasound buffers */
-    for(size_t n = 0; n < current->inports_rep.size(); n++) {
-      if (current->inports_rep[n].cb_buffer != 0) {
-	jack_default_audio_sample_t* in_cb_buffer = static_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(current->inports_rep[n].jackport, nframes));
-	memcpy(current->inports_rep[n].cb_buffer, in_cb_buffer, current->buffersize_rep * sizeof(jack_default_audio_sample_t));
+      /* 2.1 fetch transport info */
+      current->transport_info_rep.valid = static_cast<jack_transport_bits_t>(JackTransportState | JackTransportPosition);
+      jack_get_transport_info(current->client_repp, &current->transport_info_rep);
+
+      /* 2.2 check transport state */
+      if (current->transport_info_rep.state == JackTransportStopped) {
+	// cerr << "JACK stopped" << endl;
+      }
+      else {
+	// cerr << "JACK running" << endl;
+	eca_jack_process_engine_iteration(nframes, current);
+      }
+      	
+      /* 2.3 check transport location */	
+      if (current->engine_repp->current_position_in_samples() != 
+	  current->transport_info_rep.position) {
+	// cerr << "engine curpos " << 
+	// 	  current->engine_repp->current_position_in_samples() << 
+	// 	  " doesn't match JACK curpos " << 
+	// 	  current->transport_info_rep.position << "!" << endl;
       }
     }
-    
-    DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine_iter_in");
+    /* 3. transport control processing in "master" mode */
+    else if (current->mode_rep == AUDIO_IO_JACK_MANAGER::Master) {
+      /* 3.1 set transport state */
+      current->transport_info_rep.state = JackTransportRolling;
 
-    // FIXME/17.05.2002:
-    //  - don't call engine_iteration() if there's 
-    //    less than buffersize of data in inport cb_buffers
-    //  - see above, not necessarily needed anymore
-    
-    /* 3. execute one engine iteration */
-    if (current->engine_repp->is_active()) {
-      current->engine_repp->engine_iteration();
-    }
-    
-    DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine_iter_out");
-
-    // FIXME/17.05.2002:
-    //  - only copy nframes of data to the output buffers
-    //  - see above, not necessarily needed anymore
-    
-    /* 4. copy data from ecasound buffers to port output buffers */
-    for(size_t n = 0; n < current->outports_rep.size(); n++) {
-      if (current->outports_rep[n].cb_buffer != 0) {
-	jack_default_audio_sample_t* out_cb_buffer = static_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(current->outports_rep[n].jackport, nframes));
-	// cerr << "(audioio_jack_manager) portbuf=" << out_cb_buffer << ", count=" << current->buffersize_rep << endl;
-	memcpy(out_cb_buffer, current->outports_rep[n].cb_buffer, current->buffersize_rep * sizeof(jack_default_audio_sample_t));
+#if 0      
+      if (current->is_running() == true) {
+	current->transport_info_rep.state = JackTransportRolling;
       }
+      else {
+	current->transport_info_rep.state = JackTransportStopped;
+      }
+#endif
+
+      /* 3.2 set transport location */
+      current->transport_info_rep.position = current->engine_repp->current_position_in_samples();
+
+      /* 3.3 export tranport info */
+      current->transport_info_rep.valid = static_cast<jack_transport_bits_t>(JackTransportState | JackTransportPosition);
+      jack_set_transport_info(current->client_repp, &current->transport_info_rep);
+
+      eca_jack_process_engine_iteration(nframes, current);
     }
-    
-    /* 5. update engine status based on the last iteration */
-    current->engine_repp->update_engine_state();
+    /* 4. transport control processing in "streaming" mode */
+    else {
+      eca_jack_process_engine_iteration(nframes, current);      
+    }
 
     pthread_mutex_unlock(&current->lock_rep);
   }
   else {
     DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process(): couldn't get lock" << endl);
   }
+  
+  PROFILE_CE_STATEMENT(eca_jack_process_profile_post());
+  
+  return(0);
+}
 
-  PROFILE_CE_STATEMENT(profile_callback_timer.stop());
+static void eca_jack_process_engine_iteration(jack_nframes_t nframes, void* arg)
+{
+  AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
+
+  // FIXME/17.05.2002:
+  //  - make cb_buffers to be at least 2*buffersize in size;
+  //    and make it a ring-buffer
+  //  - if 'nframes < buffersize', only copy nframes to 
+  //    inport cb_buffers
+  //  - update (17.02): not necessarily needed anymore; see 
+  //    discussions on jackit-devel
+  
+  DBC_CHECK(current->buffersize_rep == static_cast<long int>(nframes));
+
+  /* 1. copy audio data from port input buffers to ecasound buffers */
+  for(size_t n = 0; n < current->inports_rep.size(); n++) {
+    if (current->inports_rep[n]->cb_buffer != 0) {
+      jack_default_audio_sample_t* in_cb_buffer = 
+	static_cast<jack_default_audio_sample_t*>
+	(jack_port_get_buffer(current->inports_rep[n]->jackport, nframes));
+
+      memcpy(current->inports_rep[n]->cb_buffer, 
+	     in_cb_buffer, 
+	     current->buffersize_rep * sizeof(jack_default_audio_sample_t));
+    }
+  }
+    
+  DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine_iter_in");
+  
+  // FIXME/17.05.2002:
+  //  - don't call engine_iteration() if there's 
+  //    less than buffersize of data in inport cb_buffers
+  //  - see above, not necessarily needed anymore
+  
+  /* 2. execute one engine iteration */
+  if (current->engine_repp->is_active()) {
+    current->engine_repp->engine_iteration();
+  }
+  
+  DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine_iter_out");
+  
+  // FIXME/17.05.2002:
+  //  - only copy nframes of data to the output buffers
+  //  - see above, not necessarily needed anymore
+  
+  /* 3. copy data from ecasound buffers to port output buffers */
+  for(size_t n = 0; n < current->outports_rep.size(); n++) {
+    if (current->outports_rep[n]->cb_buffer != 0) {
+      jack_default_audio_sample_t* out_cb_buffer = 
+	static_cast<jack_default_audio_sample_t*>
+	(jack_port_get_buffer(current->outports_rep[n]->jackport, nframes));
+
+      memcpy(out_cb_buffer, 
+	     current->outports_rep[n]->cb_buffer, 
+	     current->buffersize_rep * sizeof(jack_default_audio_sample_t));
+    }
+  }
+  
+  /* 4. update engine status based on the last iteration */
+  current->engine_repp->update_engine_state();
+}
+
+#ifdef PROFILE_CALLBACK_EXECUTION
+static void eca_jack_process_profile_pre(void)
+{
+  profile_callback_timer.start();
+  DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): entry ----> ");
+}
+
+static void eca_jack_process_profile_post(void)
+{
+  profile_callback_timer.stop();
   DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): process out" << endl);
   
-#ifdef PROFILE_CALLBACK_EXECUTION
   if (profile_callback_timer.last_duration_seconds() > 0.005f) {
     cerr << "(audioio-jack-manager) event " << profile_callback_timer.event_count();
     cerr << ", process() took " << profile_callback_timer.last_duration_seconds() * 1000;
@@ -177,21 +260,19 @@ static int eca_jack_process(jack_nframes_t nframes, void *arg)
       
     }
   }
-#endif
-  
-  return(0);
 }
+#endif /* PROFILE_CALLBACK_EXECUTION */
 
 static int eca_jack_bufsize (jack_nframes_t nframes, void *arg)
 {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"(audioio-jack-manager) [callback] " +  current->jackname_rep + ": eca_jack_bufsize");
+	      "(audioio-jack-manager) [callback] " +  current->jackname_rep + ": eca_jack_bufsize");
 
   if (static_cast<long int>(nframes) != current->buffersize_rep) {
     current->shutdown_request_rep = true;
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "(audioio-jack-manager) Invalid new buffersize, shutting down.");
+		"(audioio-jack-manager) Invalid new buffersize, shutting down.");
   }
   
   return(0);
@@ -208,7 +289,7 @@ static int eca_jack_srate (jack_nframes_t nframes, void *arg)
   if (static_cast<long int>(nframes) != current->srate_rep) {
     current->shutdown_request_rep = true;
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "(audioio-jack-manager) Invalid new samplerate, shutting down.");
+		"(audioio-jack-manager) Invalid new samplerate, shutting down.");
   }
 
   return(0);
@@ -218,8 +299,8 @@ static void eca_jack_shutdown (void *arg)
 {
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"(audioio-jack-manager) " + current->jackname_rep + 
-		": [callback] jackd shutdown, stopping processing");
+	      "(audioio-jack-manager) " + current->jackname_rep + 
+	      ": [callback] jackd shutdown, stopping processing");
   current->shutdown_request_rep = true;
 }
 
@@ -231,16 +312,10 @@ AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) constructor");
 
-  total_nodes_rep = 0;
-  active_nodes_rep = 0;
-
-  last_in_port_rep = 0;
-  last_out_port_rep = 0;
-
   open_rep = false;
   connection_active_rep = false;
 
-  last_id_rep = 1;
+  last_node_id_rep = 1;
   jackname_rep = "ecasound";
 
   pthread_cond_init(&exit_cond_rep, NULL);
@@ -257,34 +332,36 @@ AUDIO_IO_JACK_MANAGER::~AUDIO_IO_JACK_MANAGER(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) destructor");
 
+  /* 1. close JACK connection */
   if (is_open() == true) close_connection();
 
-  list<int>::iterator p = objlist_rep.begin();
-  while(p != objlist_rep.end()) {
-    jack_node_t* tmp = jacknodemap_rep[*p];
-
-    // ownership was not transferred to us!
-    //   close(*p);
-    //   delete tmp->aobj;
-    tmp->aobj = 0;
-    
-    jacknodemap_rep.erase(*p);
-
-    ++p;
-  }
-
-  vector<jack_port_data_t>::iterator q = inports_rep.begin();
+  /* 2. clear input ports */
+  vector<eca_jack_port_data_t*>::iterator q = inports_rep.begin();
   while(q != inports_rep.end()) {
-    delete[] q->cb_buffer;
-    q->cb_buffer = 0;
+    if ((*q)->cb_buffer != 0) {
+      delete[] (*q)->cb_buffer;
+      (*q)->cb_buffer = 0;
+    }
+    delete *q;
     ++q;
   }
 
-  vector<jack_port_data_t>::iterator r = outports_rep.begin();
-  while(r != outports_rep.end()) {
-    delete[] r->cb_buffer;
-    r->cb_buffer = 0;
-    ++r;
+  /* 3. clear output ports */
+  q = inports_rep.begin();
+  while(q != inports_rep.end()) {
+    if ((*q)->cb_buffer != 0) {
+      delete[] (*q)->cb_buffer;
+      (*q)->cb_buffer = 0;
+    }
+    delete *q;
+    ++q;
+  }
+
+  /* 4. clear objects */
+  list<eca_jack_node_t*>::iterator p = node_list_rep.begin();
+  while(p != node_list_rep.end()) {
+    delete *p;
+    ++p;
   }
 }
 
@@ -312,20 +389,17 @@ void AUDIO_IO_JACK_MANAGER::register_object(AUDIO_IO* aobj)
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) register object " + aobj->label());  
 
-  objlist_rep.push_back(last_id_rep);
   AUDIO_IO_JACK* jobj = static_cast<AUDIO_IO_JACK*>(aobj);
 
-  jack_node_t* tmp = new jack_node_t;
+  eca_jack_node_t* tmp = new eca_jack_node_t;
   tmp->aobj = jobj;
   tmp->origptr = aobj;
-  tmp->in_ports = tmp->out_ports = 0;
-  tmp->first_in_port = tmp->first_out_port = -1;
-  jacknodemap_rep[last_id_rep] = tmp;
+  tmp->client_id = last_node_id_rep;
+  node_list_rep.push_back(tmp);
 
-  jobj->set_manager(this, last_id_rep);
+  jobj->set_manager(this, tmp->client_id);
 
-  ++last_id_rep;
-  ++total_nodes_rep;
+  ++last_node_id_rep;
 
   // ---
   DBC_ENSURE(is_managed_type(aobj) == true);
@@ -338,23 +412,28 @@ int AUDIO_IO_JACK_MANAGER::get_object_id(const AUDIO_IO* aobj) const
   DBC_REQUIRE(is_managed_type(aobj) == true);
   // ---
 
-  map<int,jack_node_t*>::const_iterator p = jacknodemap_rep.begin();
-  while(p != jacknodemap_rep.end()) {
-    if (p->second->origptr == aobj) {
+  list<eca_jack_node_t*>::const_iterator p = node_list_rep.begin();
+  while(p != node_list_rep.end()) {
+    if ((*p)->origptr == aobj) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		    "(audioio-jack-manager) found object id for aobj " +
-		    aobj->name() + ": " + kvu_numtostr(p->first));
-      return(p->first);
+		  "(audioio-jack-manager) found object id for aobj " +
+		  aobj->name() + ": " + kvu_numtostr((*p)->client_id));
+      return((*p)->client_id);
     }
     ++p;
   }
-
   return(-1);
 }
 
-const list<int>& AUDIO_IO_JACK_MANAGER::get_object_list(void) const
+list<int> AUDIO_IO_JACK_MANAGER::get_object_list(void) const
 {
-  return(objlist_rep);
+  list<int> object_list;
+  list<eca_jack_node_t*>::const_iterator p = node_list_rep.begin();
+  while(p != node_list_rep.end()) {
+    object_list.push_back((*p)->client_id);
+    ++p;
+  }
+  return(object_list);
 }
 
 /**
@@ -368,33 +447,31 @@ const list<int>& AUDIO_IO_JACK_MANAGER::get_object_list(void) const
 void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
 {
   // ---
-  DBC_DECLARE(int old_total_nodes = total_nodes_rep);
+  DBC_DECLARE(unsigned int old_total_nodes = node_list_rep.size());
   // ---
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) unregister object ");
 
-  objlist_rep.remove(id);
-
-  map<int,jack_node_t*>::iterator p = jacknodemap_rep.begin();
-  while(p != jacknodemap_rep.end()) {
-    if (p->first == id) {
+  list<eca_jack_node_t*>::iterator p = node_list_rep.begin();
+  while(p != node_list_rep.end()) {
+    if ((*p)->client_id == id) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects,
-		    "(audioio-jack-manager) removing object " + p->second->aobj->label());
-      p->second->aobj->set_manager(0, -1);
+		  "(audioio-jack-manager) removing object " + (*p)->aobj->label());
+      (*p)->aobj->set_manager(0, -1);
 
-      --total_nodes_rep;
+      delete *p;
+      node_list_rep.erase(p);
 
-      delete p->second;
-      jacknodemap_rep.erase(p);
       break;
     }
     ++p;
   }
 
   // ---
-  DBC_ENSURE(total_nodes_rep == old_total_nodes - 1);
-  DBC_ENSURE(std::count(get_object_list().begin(), get_object_list().end(), id) == 0);
+  DBC_ENSURE(node_list_rep.size() == old_total_nodes - 1);
+  DBC_DECLARE(list<int> ol = get_object_list());
+  DBC_ENSURE(std::count(ol.begin(), ol.end(), id) == 1);
   // ---
 }
 
@@ -402,32 +479,47 @@ void AUDIO_IO_JACK_MANAGER::set_parameter(int param, std::string value)
 {
   switch(param) 
     {
-    case 1: { 
-      if (value == "streaming") {
-	mode_rep = AUDIO_IO_JACK_MANAGER::Streaming;
+    case 1: 
+      {
+	jackname_rep = value;
 	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		    "(audioio-jack-manager) 'streaming' mode selected.");
+		    "(audioio-jack-manager) client name set to '" +
+		    value + "'.");
+	break;
       }
-      else if (value == "master") {
-	mode_rep = AUDIO_IO_JACK_MANAGER::Master;
-	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		    "(audioio-jack-manager) 'master' mode selected.");
+
+    case 2: 
+      {
+	if (value == "streaming") {
+	  mode_rep = AUDIO_IO_JACK_MANAGER::Streaming;
+	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		      "(audioio-jack-manager) 'streaming' mode selected.");
+	}
+	else if (value == "master") {
+	  mode_rep = AUDIO_IO_JACK_MANAGER::Master;
+	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		      "(audioio-jack-manager) 'master' mode selected.");
+	}
+	else {
+	  mode_rep = AUDIO_IO_JACK_MANAGER::Slave;
+	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		      "(audioio-jack-manager) 'slave' mode selected.");
+	}
+	break;
       }
-      else {
-	mode_rep = AUDIO_IO_JACK_MANAGER::Slave;
-	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		    "(audioio-jack-manager) 'slave' mode selected.");
-      }
-      break;
     }
-    }
-}      
+}
 
 std::string AUDIO_IO_JACK_MANAGER::get_parameter(int param) const
 {
   switch(param) 
     {
-    case 1: 
+    case 1:
+      {
+	return(jackname_rep);
+      }
+
+    case 2: 
       { 
 	switch(mode_rep) {
 	case AUDIO_IO_JACK_MANAGER::Master: return("master");
@@ -502,6 +594,10 @@ void AUDIO_IO_JACK_MANAGER::start(void)
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver start");
 
+  // FIXME: separate 'start connection' and 'start rolling' 
+  //        cases; we don't need to activate-deactivate 
+  //        on every start/stop
+
   /* we must take the lock to ensure that 
    * process callback does not run 
    * ECA_ENGINE::engine_iteration() until we
@@ -516,12 +612,7 @@ void AUDIO_IO_JACK_MANAGER::start(void)
     ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot active client!");
   }
 
-  /* connect all clients */
-  map<int,jack_node_t*>::iterator p = jacknodemap_rep.begin();
-  while(p != jacknodemap_rep.end()) {
-    connect_node(p->second);
-    ++p;
-  }
+  connect_all_nodes();
   
   /* update port-specific latency values */
   engine_repp->update_cache_latency_values();
@@ -534,6 +625,10 @@ void AUDIO_IO_JACK_MANAGER::start(void)
 void AUDIO_IO_JACK_MANAGER::stop(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) driver stop");
+
+  // FIXME: separate 'start connection' and 'start rolling' 
+  //        cases; we don't need to activate-deactivate 
+  //        on every start/stop
 
   if (is_connection_active() == true) stop_connection();
 }
@@ -557,11 +652,7 @@ void AUDIO_IO_JACK_MANAGER::stop_connection(void)
   pthread_mutex_lock(&lock_rep);
 
   /* disconnect all clients */
-  map<int,jack_node_t*>::iterator p = jacknodemap_rep.begin();
-  while(p != jacknodemap_rep.end()) {
-    disconnect_node(p->second);
-    ++p;
-  }
+  disconnect_all_nodes();
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_deactivate() ");
   if (jack_deactivate (client_repp)) {
@@ -587,20 +678,52 @@ void AUDIO_IO_JACK_MANAGER::exit(void)
 }
 
 /**
+ * Returns a pointer to a 'eca_jack_node_t' structure 
+ * matching client 'client_id'.
+ *
+ * @pre list<int> l = get_object_list(); std::count(l.begin(), l.end(), client_id) == 1
+ * @return non-zero pointer
+ */
+AUDIO_IO_JACK_MANAGER::eca_jack_node_t* AUDIO_IO_JACK_MANAGER::get_node(int client_id)
+{
+  // --
+  DBC_DECLARE(list<int> ol = get_object_list());
+  DBC_REQUIRE(std::count(ol.begin(), ol.end(), client_id) == 1);
+  // --
+
+  eca_jack_node_t* node = 0;
+  list<eca_jack_node_t*>::iterator p = node_list_rep.begin();
+  while(p != node_list_rep.end()) {
+    if ((*p)->client_id == client_id) { 
+      node = *p;
+      break;
+    }
+    ++p;
+  }
+
+  // --
+  DBC_ENSURE(node != 0);
+  // --
+
+  return(node);
+}
+
+/**
  * Sets up automatic port connection for client_id's port
  * 'portnum'. When jack client is activated, this port
  * is automatically connected to port 'portname'. The 
  * direction of the connection is based on audio objects I/O mode 
  * (@see AUDIO_IO::io_mode()).
  *
- * @pre std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1
+ * @pre list<int> l = get_object_list(); std::count(l.begin(), l.end(), client_id) == 1
  * @pre is_open() == true
  @ @pre portnum > 0
  */
 void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port(int client_id, int portnum, const string& portname)
 {
   // ---
-  DBC_REQUIRE(std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1);
+  DBC_DECLARE(list<int> ol = get_object_list());
+  DBC_REQUIRE(std::count(ol.begin(), ol.end(), client_id) == 1);
   DBC_REQUIRE(is_open() == true);
   DBC_REQUIRE(portnum > 0);
   // ---
@@ -608,14 +731,17 @@ void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port(int client_id, int portnum, c
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) auto-connect jack ports for client " + kvu_numtostr(client_id));
 
-  jack_node_t* node = jacknodemap_rep[client_id];
-  if (node->aobj->io_mode() == AUDIO_IO::io_read) {
-    int index = node->first_in_port + portnum - 1;
-    inports_rep[index].autoconnect = portname;
-  }
-  else {
-    int index = node->first_out_port + portnum - 1;
-    outports_rep[index].autoconnect = portname;
+  eca_jack_node_t* node = get_node(client_id);
+
+  list<eca_jack_port_data*>::const_iterator p = node->ports.begin();
+  int n = 1;
+  while(p != node->ports.end()) {
+    if (n == portnum) {
+      (*p)->autoconnect_string = portname;
+      break;
+    }
+    ++n;
+    ++p;
   }
 }
 
@@ -626,40 +752,24 @@ void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port(int client_id, int portnum, c
  */
 long int AUDIO_IO_JACK_MANAGER::client_latency(int client_id)
 {
-  jack_node_t* node = jacknodemap_rep[client_id];
-  
+  eca_jack_node_t* node = get_node(client_id);
   long int latency = -1;
-  if (node->aobj->io_mode() == AUDIO_IO::io_read) {
-    for(int n = node->first_in_port; 
-	n < node->first_in_port + node->in_ports; n++) {
-      if (latency == -1) {
-	latency = inports_rep[n].total_latency;
-      }
-      else {
-	if (static_cast<long int>(inports_rep[n].total_latency) > latency) {
-	  ECA_LOG_MSG(ECA_LOGGER::info,
-		      "(audioio-jack-manager) warning! input port latencies don't match for client " + kvu_numtostr(client_id));
-	  latency = inports_rep[n].total_latency;
-	}
+
+  list<eca_jack_port_data*>::const_iterator p = node->ports.begin();
+  while(p != node->ports.end()) {
+    if (latency == -1) {
+      latency = (*p)->total_latency;
+    }
+    else {
+      if (static_cast<long int>((*p)->total_latency) > latency) {
+	ECA_LOG_MSG(ECA_LOGGER::info,
+		    "(audioio-jack-manager) warning! port latencies don't match for client " + kvu_numtostr(client_id));
+	latency = (*p)->total_latency;
       }
     }
+    ++p;
   }
-  else {
-    for(int n = node->first_out_port;
-	n < node->first_out_port + node->out_ports; n++) {
-      if (latency == -1) {
-	latency = outports_rep[n].total_latency;
-      }
-      else {
-	if (static_cast<long int>(outports_rep[n].total_latency) > latency) {
-	  ECA_LOG_MSG(ECA_LOGGER::info, 
-		      "(audioio-jack-manager) warning! output port latencies don't match for client " + kvu_numtostr(client_id));
-	  latency = outports_rep[n].total_latency;
-	}
-      }
-    }
-  }
-  
+ 
   return(latency);
 }
 
@@ -668,118 +778,130 @@ long int AUDIO_IO_JACK_MANAGER::client_latency(int client_id)
  * the port is based on audio objects I/O mode (@see
  * AUDIO_IO::io_mode()). If 'portname' is a non-empty string, 
  * the port will be automatically connected to the 'portname' 
- * port once jack client is activated.
+ * port once JACK client is activated.
  *
  * The final port names are of the form 'clientname:portprefix_N', 
  * where N is 1...max_port.
  *
- * @pre std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1
+ * @pre list<int> l = get_object_list(); std::count(l.begin(), l.end(), client_id) == 1
  * @pre is_open() == true
  */
 void AUDIO_IO_JACK_MANAGER::register_jack_ports(int client_id, int ports, const string& portprefix)
 {
   // ---
-  DBC_REQUIRE(std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1);
+  DBC_DECLARE(list<int> ol = get_object_list());
+  DBC_REQUIRE(std::count(ol.begin(), ol.end(), client_id) == 1);
   DBC_REQUIRE(is_open() == true);
+  DBC_DECLARE(unsigned int old_port_count_vectors = inports_rep.size() + outports_rep.size());
   // ---
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"(audioio-jack-manager) register jack ports for client " + kvu_numtostr(client_id));
+	      "(audioio-jack-manager) register jack ports for client " + kvu_numtostr(client_id));
 
-  jack_node_t* node = jacknodemap_rep[client_id];
-  if (node->aobj->io_mode() == AUDIO_IO::io_read) {
-    node->first_in_port = last_in_port_rep;
-    node->first_out_port = -1;
-    node->in_ports = node->out_ports = 0;
-    for(int n = 0; n < ports; n++) {
-      node->in_ports++;
-      inports_rep.push_back(jack_port_data_t ());
-      inports_rep.back().cb_buffer = new jack_default_audio_sample_t [cb_allocated_frames_rep];
-      inports_rep.back().autoconnect = "";
-      inports_rep.back().total_latency = 0;
-      string tport = portprefix + "_" + kvu_numtostr(last_in_port_rep + 1);
-      inports_rep[last_in_port_rep].jackport = jack_port_register(client_repp, tport.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
-      ++last_in_port_rep;
+  eca_jack_node_t* node = get_node(client_id);
+
+  for(int n = 0; n < ports; n++) {
+    eca_jack_port_data_t* portdata = new eca_jack_port_data_t;
+
+    portdata->jackport = 0;
+    portdata->autoconnect_string = "";
+    portdata->total_latency = 0;
+    portdata->cb_buffer = new jack_default_audio_sample_t [cb_allocated_frames_rep];
+
+    if (node->aobj->io_mode() == AUDIO_IO::io_read) {
+      string tport = portprefix + "_" + kvu_numtostr(inports_rep.size() + 1);
+      portdata->jackport = jack_port_register(client_repp, 
+					      tport.c_str(), 
+					      JACK_DEFAULT_AUDIO_TYPE, 
+					      JackPortIsInput, 
+					      0);
+      inports_rep.push_back(portdata);
+    }
+    else {
+      string tport = portprefix + "_" + kvu_numtostr(outports_rep.size() + 1);
+      portdata->jackport = jack_port_register(client_repp, 
+					      tport.c_str(), 
+					      JACK_DEFAULT_AUDIO_TYPE, 
+					      JackPortIsOutput, 
+					      0);
+      outports_rep.push_back(portdata);
     }
 
-    DBC_CHECK(inports_rep.size() == static_cast<size_t>(last_in_port_rep));
-
+    node->ports.push_back(portdata);
   }
-  else {
-    node->first_out_port = last_out_port_rep;
-    node->first_in_port = -1;
-    node->in_ports = node->out_ports = 0;
-    for(int n = 0; n < ports; n++) {
-      node->out_ports++;
-      outports_rep.push_back(jack_port_data_t ());
-      outports_rep.back().cb_buffer = new jack_default_audio_sample_t [cb_allocated_frames_rep];
-      outports_rep.back().autoconnect = "";
-      outports_rep.back().total_latency = 0;
-      string tport = portprefix + "_" + kvu_numtostr(last_out_port_rep + 1);
-      outports_rep[last_out_port_rep].jackport = jack_port_register(client_repp, tport.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
-      ++last_out_port_rep;
-    }
 
-    DBC_CHECK(outports_rep.size() == static_cast<size_t>(last_out_port_rep));
-
-  }
-  
   // ---
-  DBC_ENSURE(node->in_ports == 0 || node->out_ports == 0);
+  DBC_ENSURE(inports_rep.size() + outports_rep.size() == 
+	     old_port_count_vectors + ports);
   // ---
 }
 
 /**
  * Unregisters all JACK ports for client 'client_id'.
  *
- * @pre std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1
+ * @pre list<int> l = get_object_list(); std::count(l.begin(), l.end(), client_id) == 1
  * @pre is_open() == true
  * @post node->in_ports == 0 && node->out_ports == 0
  */
 void AUDIO_IO_JACK_MANAGER::unregister_jack_ports(int client_id)
 {
   // ---
-  DBC_REQUIRE(std::count(get_object_list().begin(), get_object_list().end(), client_id) == 1);
+  DBC_DECLARE(list<int> ol = get_object_list());
+  DBC_REQUIRE(std::count(ol.begin(), ol.end(), client_id) == 1);
   DBC_REQUIRE(is_open() == true);
+  DBC_DECLARE(unsigned int old_node_port_count = get_node(client_id)->ports.size());
+  DBC_DECLARE(unsigned int old_port_count_vectors = inports_rep.size() + outports_rep.size());
   // ---
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"(audioio-jack-manager) unregister all jack ports for client " + kvu_numtostr(client_id));
 
-  /* FIXME: last_in_port_rep and last_out_port_rep
-   *        are never reseted...
-   */
+  eca_jack_node_t* node = get_node(client_id);
 
-  jack_node_t* node = jacknodemap_rep[client_id];
-
-  for(int n = 0; n < static_cast<int>(inports_rep.size()); n++) {
-    if (n >= node->first_in_port && 
-	n < node->first_in_port + node->in_ports) {
-      if (open_rep == true) 
-	jack_port_unregister(client_repp, inports_rep[n].jackport);
-      delete[] inports_rep[n].cb_buffer;
-      inports_rep[n].cb_buffer = 0;
+  list<eca_jack_port_data_t*>::iterator p = node->ports.begin();
+  while(p != node->ports.end()) {
+    /* 1. unregister port from JACK */
+    if (open_rep == true) {
+      jack_port_unregister(client_repp, (*p)->jackport);
     }
+
+    /* 2. delete the port from inports and outports vectors */
+    vector<eca_jack_port_data_t*>::iterator q = inports_rep.begin();
+    while(q != inports_rep.end()) {
+      if (*p == *q) {
+	inports_rep.erase(q);
+	break;
+      }
+      ++q;
+    }
+    
+    q = outports_rep.begin();
+    while(q != outports_rep.end()) {
+      if (*p == *q) {
+	outports_rep.erase(q);
+	break;
+      }
+      ++q;
+    }
+    
+    /* 3. delete sub-structures */
+      
+    delete[] (*p)->cb_buffer;
+    (*p)->cb_buffer = 0;
+
+    /* 4. delete the actual port_data object */
+    delete *p;
+
+    ++p;
   }
 
-  node->first_in_port = -1;
-  node->in_ports = 0;
-
-  for(int n = 0; n < static_cast<int>(outports_rep.size()); n++) {
-    if (n >= node->first_out_port && 
-	n < node->first_out_port + node->out_ports) {
-      if (open_rep == true)
-	jack_port_unregister(client_repp, outports_rep[n].jackport);
-      delete[] outports_rep[n].cb_buffer;
-      outports_rep[n].cb_buffer = 0;
-    }
-  }
-
-  node->first_out_port = -1;
-  node->out_ports = 0;
+  /* 5. clear the whole node port list */
+  node->ports.clear();
 
   // ---
-  DBC_ENSURE(node->in_ports == 0 && node->out_ports == 0);
+  DBC_ENSURE(node->ports.size() == 0);
+  DBC_ENSURE(inports_rep.size() + outports_rep.size() == 
+	     old_port_count_vectors - old_node_port_count);
   // ---
 }
 
@@ -803,9 +925,9 @@ void AUDIO_IO_JACK_MANAGER::close(int client_id)
 
   /* count how many open clients */
   int open_clients = 0;
-  map<int,jack_node_t*>::iterator p = jacknodemap_rep.begin();
-  while(p != jacknodemap_rep.end()) {
-    if (p->second->aobj->is_open() == true) open_clients++;
+  list<eca_jack_node_t*>::iterator p = node_list_rep.begin();
+  while(p != node_list_rep.end()) {
+    if ((*p)->aobj->is_open() == true) open_clients++;
     ++p;
   }
 
@@ -844,17 +966,17 @@ long int AUDIO_IO_JACK_MANAGER::read_samples(int client_id, void* target_buffer,
   DBC_CHECK(samples == buffersize_rep);
   DEBUG_CFLOW_STATEMENT(cerr << endl << "read_samples:" << client_id);
 
-  jack_default_audio_sample_t* ptr = static_cast<jack_default_audio_sample_t*>(target_buffer);
-  jack_node_t* node = jacknodemap_rep[client_id];
+  jack_default_audio_sample_t* ptr = 
+    static_cast<jack_default_audio_sample_t*>(target_buffer);
+  eca_jack_node_t* node = get_node(client_id);
 
-  for(int n = node->first_in_port; n < node->first_in_port + node->in_ports; n++) {
-
-    DBC_CHECK(n < static_cast<int>(inports_rep.size()));
-
-    if (inports_rep[n].cb_buffer != 0) {
-      memcpy(ptr, inports_rep[n].cb_buffer, buffersize_rep * sizeof(jack_default_audio_sample_t));
+  list<eca_jack_port_data*>::const_iterator p = node->ports.begin();
+  while(p != node->ports.end()) {
+    if ((*p)->cb_buffer != 0) {
+      memcpy(ptr, (*p)->cb_buffer, buffersize_rep * sizeof(jack_default_audio_sample_t));
       ptr += buffersize_rep;
     }
+    ++p;
   }
 
   return(buffersize_rep);
@@ -865,17 +987,17 @@ void AUDIO_IO_JACK_MANAGER::write_samples(int client_id, void* target_buffer, lo
   DEBUG_CFLOW_STATEMENT(cerr << endl << "write_samples:" << client_id);
 
   long int writesamples = (samples <= buffersize_rep) ? samples : buffersize_rep;
-  jack_default_audio_sample_t* ptr = static_cast<jack_default_audio_sample_t*>(target_buffer);
-  jack_node_t* node = jacknodemap_rep[client_id];
+  jack_default_audio_sample_t* ptr =
+    static_cast<jack_default_audio_sample_t*>(target_buffer);
 
-  for(int n = node->first_out_port; n < node->first_out_port + node->out_ports; n++) {
-
-    DBC_CHECK(n < static_cast<int>(outports_rep.size()));
-
-    if (outports_rep[n].cb_buffer != 0) {
-      memcpy(outports_rep[n].cb_buffer, ptr, writesamples * sizeof(jack_default_audio_sample_t));
+  eca_jack_node_t* node = get_node(client_id);
+  list<eca_jack_port_data*>::const_iterator p = node->ports.begin();
+  while(p != node->ports.end()) {
+    if ((*p)->cb_buffer != 0) {
+      memcpy((*p)->cb_buffer, ptr, writesamples * sizeof(jack_default_audio_sample_t));
       ptr += writesamples;
     }
+    ++p;
   }
 }
 
@@ -892,13 +1014,13 @@ void AUDIO_IO_JACK_MANAGER::open_connection(void)
   DBC_REQUIRE(is_open() != true);
   // --
 
-  string client_name ("ecasound");
+  string client_name (jackname_rep);
   int n;
 
   for(n = 0; n < AUDIO_IO_JACK_MANAGER::instance_limit; n++) {
     client_repp = jack_client_new (client_name.c_str());
     if (client_repp != 0) break;
-    client_name = "ecasound_" + kvu_numtostr(n + 2);
+    client_name = jackname_rep + "_" + kvu_numtostr(n + 2);
   }
 
   if (n != AUDIO_IO_JACK_MANAGER::instance_limit) {
@@ -961,7 +1083,7 @@ void AUDIO_IO_JACK_MANAGER::close_connection(void)
 /**
  * Fetches total port latency information.
  */
-void AUDIO_IO_JACK_MANAGER::get_total_port_latency(jack_client_t* client, jack_port_data_t* ports)
+void AUDIO_IO_JACK_MANAGER::get_total_port_latency(jack_client_t* client, eca_jack_port_data_t* ports)
 {
   ports->total_latency = jack_port_get_total_latency(client, ports->jackport);
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
@@ -976,86 +1098,67 @@ void AUDIO_IO_JACK_MANAGER::get_total_port_latency(jack_client_t* client, jack_p
  * @param node pointers to a node object
  * @param connect whether to connect (true) or disconnect (false)
  */
-void AUDIO_IO_JACK_MANAGER::set_node_connection(jack_node_t* node, bool connect)
+void AUDIO_IO_JACK_MANAGER::set_node_connection(eca_jack_node_t* node, bool connect)
 {
-  if (node->aobj->io_mode() == AUDIO_IO::io_read) {
-    for(int n = node->first_in_port; n < node->first_in_port + node->in_ports; n++) {
-      if (inports_rep[n].cb_buffer != 0) {
-	string tport = inports_rep[n].autoconnect;
-	if (tport.size() > 0) {
-	  if (connect == true) {
-	    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_port_connect() ");
-	    if (jack_connect (client_repp,
-			      tport.c_str(), 
-			      jack_port_name(inports_rep[n].jackport))) {
-	      ECA_LOG_MSG(ECA_LOGGER::info, 
-			    "(audioio-jack-manager) Error! Cannot connect input " + tport);
-	    }
-	    else {
-	      AUDIO_IO_JACK_MANAGER::get_total_port_latency(client_repp, &inports_rep[n]);
-	    }
+  list<eca_jack_port_data*>::iterator p = node->ports.begin();
+  while(p != node->ports.end()) {
+    if ((*p)->cb_buffer != 0) {
+      string ecaport = (*p)->autoconnect_string;
+      if (ecaport.size() > 0) {
+	string jackport (jack_port_name((*p)->jackport));
+	const string* fromport = &ecaport;
+	const string* toport = &jackport;
+	if (node->aobj->io_mode() != AUDIO_IO::io_read) {
+	  /* output object -> switch direction */
+	  fromport = &jackport;
+	  toport = &ecaport;
+	}
+	
+	if (connect == true) {
+	  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_port_connect() ");
+	  if (jack_connect (client_repp,
+			    fromport->c_str(), 
+			    toport->c_str())) {
+	    ECA_LOG_MSG(ECA_LOGGER::info, 
+			"(audioio-jack-manager) Error! Cannot make connection " + 
+			*fromport + " -> " + *toport + ".");
 	  }
 	  else {
-	    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
-	    /* don't call jack_disconnect() if engine has shut down */
-	    if (shutdown_request_rep != true &&
-		jack_disconnect(client_repp, 
-				tport.c_str(),
-				jack_port_name(inports_rep[n].jackport))) {
-	      ECA_LOG_MSG(ECA_LOGGER::info, 
-			    "(audioio-jack-manager) Error! Cannot disconnect input " + tport);
-	    }
+	    AUDIO_IO_JACK_MANAGER::get_total_port_latency(client_repp, *p);
+	  }
+	}
+	else {
+	  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
+	  /* don't call jack_disconnect() if engine has shut down */
+	  if (shutdown_request_rep != true &&
+	      jack_disconnect(client_repp, 
+			      fromport->c_str(),
+			      toport->c_str())) {
+	    ECA_LOG_MSG(ECA_LOGGER::info, 
+			"(audioio-jack-manager) Error! Cannot disconnect " + 
+			*fromport + " -> " + *toport + ".");
 	  }
 	}
       }
     }
+    
+    ++p;
   }
-  else {
-    for(int n = node->first_out_port; n < node->first_out_port + node->out_ports; n++) {
-      if (outports_rep[n].cb_buffer != 0) {
-	string tport = outports_rep[n].autoconnect;
-	if (tport.size() > 0) {
-	  if (connect == true) {
-	    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_port_connect()");
-	    if (jack_connect(client_repp, 
-			     jack_port_name(outports_rep[n].jackport), 
-			     tport.c_str())) {
-	      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot connect output " + tport);
-	    }
-	    else {
-	      AUDIO_IO_JACK_MANAGER::get_total_port_latency(client_repp, &outports_rep[n]);
-	    }
-	  }
-	  else {
-	    ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack-manager) jack_port_disconnect()");
-	    /* don't call jack_disconnect() if engine has shut down */
-	    if (shutdown_request_rep != true &&
-		jack_disconnect(client_repp, 
-				jack_port_name(outports_rep[n].jackport),
-				tport.c_str())) {
-	      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-jack-manager) Error! Cannot disconnect output " + tport);
-	    }
-	  }
-	}
-      }
-    }
-  }
-
-  if (connect == true)
-    ++active_nodes_rep;
-  else
-    --active_nodes_rep;
 }
 
 /**
- * Connects ports of node 'node'.
+ * Connects ports of all registered nodes.
  *
  * @see set_node_connection()
  */
-void AUDIO_IO_JACK_MANAGER::connect_node(jack_node_t* node)
+void AUDIO_IO_JACK_MANAGER::connect_all_nodes(void)
 { 
   if (shutdown_request_rep != true) {
-    set_node_connection(node, true);
+    list<eca_jack_node_t*>::iterator p = node_list_rep.begin();
+    while(p != node_list_rep.end()) {
+      set_node_connection(*p, true);
+      ++p;
+    }
   }
   else {
     if (is_open() == true) close_connection();
@@ -1063,13 +1166,17 @@ void AUDIO_IO_JACK_MANAGER::connect_node(jack_node_t* node)
 }
 
 /**
- * Disconnects ports of node 'node'.
+ * Disconnects all ports of registered nodes.
  *
  * @see set_node_connection()
  */
-void AUDIO_IO_JACK_MANAGER::disconnect_node(jack_node_t* node)
+void AUDIO_IO_JACK_MANAGER::disconnect_all_nodes(void)
 {
-  set_node_connection(node, false);
+  list<eca_jack_node_t*>::iterator p = node_list_rep.begin();
+  while(p != node_list_rep.end()) {
+    set_node_connection(*p, false);
+    ++p;
+  }
 }
 
 /**

@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
 	  if (ectrl.is_connected() == true) ectrl.disconnect_chainsetup();
 	}
       }
-      ectrl.remove_chainsetup();
+      if (ectrl.is_selected()) ectrl.remove_chainsetup();
       cline.next();
     }
   }

@@ -2,6 +2,7 @@
 #define INCLUDED_ECA_ENGINE_H
 
 #include <vector>
+#include "sample-specs.h"
 #include "eca-engine-driver.h"
 
 class AUDIO_IO;
@@ -143,6 +144,9 @@ class ECA_ENGINE {
   bool is_active(void) const;
   bool batch_mode(void) const { return(batchmode_enabled_rep); }
 
+  SAMPLE_SPECS::sample_pos_t current_position_in_samples(void) const;
+  double current_position_in_seconds_exact(void) const;
+
   const ECA_CHAINSETUP* connected_chainsetup(void) const { return(csetup_repp); }
 
   /*@}*/
@@ -253,8 +257,6 @@ private:
   /** @name Private functions for observing and modifying position  */
   /*@{*/
 
-  double current_position(void) const; // seconds, uses the master_input
-  double current_position_chain(void) const; // seconds
   void set_position(double seconds);
   void set_position(int seconds) { set_position((double)seconds); }
   void change_position(double seconds);

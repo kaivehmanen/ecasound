@@ -1,7 +1,6 @@
 #ifndef INCLUDED_AUDIOIO_JACK_MANAGER_H
 #define INCLUDED_AUDIOIO_JACK_MANAGER_H
 
-#include <map>
 #include <list>
 #include <string>
 #include <vector>
@@ -17,7 +16,6 @@
 
 class AUDIO_IO;
 
-using std::map;
 using std::list;
 using std::string;
 using std::vector;
@@ -36,6 +34,7 @@ class AUDIO_IO_JACK_MANAGER : public AUDIO_IO_MANAGER,
  public:
 
   friend int eca_jack_process(jack_nframes_t nframes, void *arg);
+  friend void eca_jack_process_engine_iteration(jack_nframes_t nframes, void *arg);
   friend int eca_jack_bufsize (jack_nframes_t nframes, void *arg);
   friend int eca_jack_srate (jack_nframes_t nframes, void *arg);
   friend void eca_jack_shutdown (void *arg);
@@ -44,22 +43,19 @@ class AUDIO_IO_JACK_MANAGER : public AUDIO_IO_MANAGER,
 
 public:
 
-  typedef struct jack_node {
-    AUDIO_IO_JACK* aobj;
-    AUDIO_IO* origptr;
-    int in_ports;
-    int first_in_port;
-    int out_ports;
-    int first_out_port;
-  } jack_node_t;
-
-  typedef struct jack_port_data {
+  typedef struct eca_jack_port_data {
     jack_port_t* jackport;
-    string autoconnect;
-    bool autoconnect_addprefix;
+    string autoconnect_string;
     jack_nframes_t total_latency;
     jack_default_audio_sample_t* cb_buffer;
-  } jack_port_data_t;
+  } eca_jack_port_data_t;
+
+  typedef struct eca_jack_node {
+    AUDIO_IO_JACK* aobj;
+    AUDIO_IO* origptr;
+    list<eca_jack_port_data*> ports;
+    int client_id;
+  } eca_jack_node_t;
 
  private:
 
@@ -85,7 +81,7 @@ public:
   virtual bool is_managed_type(const AUDIO_IO* aobj) const;
   virtual void register_object(AUDIO_IO* aobj);
   virtual int get_object_id(const AUDIO_IO* aobj) const;
-  virtual const list<int>& get_object_list(void) const;
+  virtual list<int> get_object_list(void) const;
   virtual void unregister_object(int id);
 
   /*@}*/
@@ -101,7 +97,7 @@ public:
   /** @name Function reimplemented from DYNAMIC_PARAMETERS */
   /*@{*/
 
-  virtual std::string parameter_names(void) const { return("mode"); }
+  virtual std::string parameter_names(void) const { return("clientname,mode"); }
   virtual void set_parameter(int param, std::string value);
   virtual std::string get_parameter(int param) const;
 
@@ -151,15 +147,17 @@ public:
 
 private:
 
-  static void get_total_port_latency(jack_client_t* client, jack_port_data_t* ports);
+  static void get_total_port_latency(jack_client_t* client, 
+				     eca_jack_port_data_t* ports);
 
   void open_connection(void);
   void close_connection(void);
   void stop_connection(void);
 
-  void set_node_connection(jack_node_t* node, bool connect);
-  void connect_node(jack_node_t* node);
-  void disconnect_node(jack_node_t* node);
+  void set_node_connection(eca_jack_node_t* node, bool connect);
+  void connect_all_nodes(void);
+  void disconnect_all_nodes(void);
+  eca_jack_node_t* get_node(int client_id);
 
   void wait_for_exit(void);
   void signal_exit(void);
@@ -174,29 +172,23 @@ private:
 
   Operation_mode_t mode_rep;
 
-  int total_nodes_rep;
-  int active_nodes_rep;
-
-  int last_in_port_rep;
-  int last_out_port_rep;
-
   bool open_rep;
   bool connection_active_rep;
 
   bool shutdown_request_rep;
   bool exit_request_rep;
 
-  int last_id_rep;
-  list<int> objlist_rep;
-  map<int,jack_node_t*> jacknodemap_rep;
+  int active_nodes;
+  int last_node_id_rep;
+
+  list<eca_jack_node_t*> node_list_rep;
+  vector<eca_jack_port_data_t*> inports_rep;
+  vector<eca_jack_port_data_t*> outports_rep;
+  jack_transport_info_t transport_info_rep;
 
   ECA_ENGINE* engine_repp;
-
   jack_client_t *client_repp;
   string jackname_rep;
-
-  vector<jack_port_data_t> inports_rep;
-  vector<jack_port_data_t> outports_rep;
 
   SAMPLE_SPECS::sample_rate_t srate_rep;
   long int buffersize_rep;
