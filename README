@@ -213,11 +213,12 @@ Sousa, Rui - OSS bug fixes.
 Stradling, Rob - MIDI-MMC bug fixes. [robstr]
 Tiedemann, Eric S. - Wrote the eci.py interface. [est]
 Tkachenko, Vadim - Autoconf magic. :)
+Westbrook, Tim - Autoconf 2.5x fixes. [iondiode]
 
 all LAD members - Always a great source of inspiration!
 www.niccx.com - For eca.cx, ecasound.cx and ecawave.cx domains.
 SEUL - For hosting ecasound ftp, http and CVS sites.
-WakkaNet Oy - For hosting ecasound web site.
+Wakkanet Oy - For hosting ecasound web site.
 
 Note! The developer tags are (for instance I have [kaiv]) are used
       throughout ecasound docs (NEWS, TODO-list, edi-list.txt, etc).
@@ -226,7 +227,7 @@ Note! The developer tags are (for instance I have [kaiv]) are used
  Licensing/distribution policy
 -----------------------------------------------------------------------
 
-Copyright (C) 1997-2001 Kai Vehmanen
+Copyright (C) 1997-2002 Kai Vehmanen
 
 Ecasound is freely distributable according to the terms of the 
 GNU General Public License (see the file 'COPYING').
