@@ -386,7 +386,7 @@ static void register_internal_audioio_plugin(const string& libdir,
 	  AUDIO_IO* aobj = desc_func();
 	  if (plugin_keyword != 0 && plugin_keyword_regex != 0) {
 	    eca_audio_object_map->register_object(plugin_keyword(), plugin_keyword_regex(), aobj);
-	    //  cerr << "Registering audio io type: " << aobj->name()  << "\nType keyword " << plugin_keyword() << ",  regex " << plugin_keyword_regex() << "." << endl;
+	    //  std::cerr << "Registering audio io type: " << aobj->name()  << "\nType keyword " << plugin_keyword() << ",  regex " << plugin_keyword_regex() << "." << std::endl;
 	  }
 	}
       }
@@ -442,6 +442,8 @@ static void register_internal_audioio_plugins(void) {
   if (aobj != 0) {
     eca_audio_object_map->register_object("alsa", "^alsa$", const_cast<ECA_OBJECT*>(aobj));
   }
+  else 
+    ecadebug->msg(ECA_DEBUG::info, "(eca-static-objects-map) Unable to load the ecasound ALSA 0.5.x plugin!");
 #endif
 
 #ifdef ALSALIB_060
@@ -455,6 +457,8 @@ static void register_internal_audioio_plugins(void) {
   if (aobj != 0) {
     eca_audio_object_map->register_object("alsa", "^alsa$", const_cast<ECA_OBJECT*>(aobj));
   }
+  else 
+    ecadebug->msg(ECA_DEBUG::info, "(eca-static-objects-map) Unable to load the ecasound ALSA 0.9.x plugin!");
 #endif
 }
 

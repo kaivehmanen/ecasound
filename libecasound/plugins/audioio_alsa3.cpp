@@ -297,9 +297,10 @@ void ALSA_PCM_DEVICE_06X::fill_and_set_sw_params(void) {
 
   snd_pcm_sw_params_current(audio_fd_repp, pcm_sw_params_repp);
 
-  int err = ::snd_pcm_sw_params_set_start_mode(audio_fd_repp, 
-					       pcm_sw_params_repp,
-					       SND_PCM_START_EXPLICIT);
+  /* FIXME: set a better boundary value */
+  int err = ::snd_pcm_sw_params_set_start_threshold(audio_fd_repp, 
+						    pcm_sw_params_repp,
+						    buffersize() * 1024);
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA3: Error when setting up pcm_sw_params_repp/start_mode: " + string(snd_strerror(err))));
 
   int align = buffersize();

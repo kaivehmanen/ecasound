@@ -14,8 +14,8 @@ namespace SAMPLE_SPECS {
   static const long int sample_rate_default = 44100;
   static const int channel_count_default = 2;
 
-  static const sample_type silent_value = 0;     // do not change!
-  static const sample_type max_amplitude = 1;
+  static const sample_type silent_value = 0.0f;     // do not change!
+  static const sample_type max_amplitude = 1.0f;
   static const sample_type impl_max_value = silent_value + max_amplitude;
   static const sample_type impl_min_value = silent_value - max_amplitude;
 

@@ -41,9 +41,7 @@ class SAMPLE_BUFFER {
   /*@{*/
 
   SAMPLE_BUFFER& operator= (const SAMPLE_BUFFER& t);
-  SAMPLE_BUFFER (buf_size_t buffersize = 0,
-		      channel_size_t channels = 0,
-		      srate_size_t sample_rate = 0);
+  SAMPLE_BUFFER (buf_size_t buffersize = 0, channel_size_t channels = 0, srate_size_t sample_rate = 0);
   ~SAMPLE_BUFFER(void);
   SAMPLE_BUFFER (const SAMPLE_BUFFER& x);
 
@@ -60,32 +58,34 @@ class SAMPLE_BUFFER {
   void add(const SAMPLE_BUFFER& x);
   void add_with_weight(const SAMPLE_BUFFER& x, int weight);
   void copy(const SAMPLE_BUFFER& x);
-  void copy_range(const SAMPLE_BUFFER& x, long int start_pos, long int end_pos, long int to_pos);
+  void copy_range(const SAMPLE_BUFFER& x, buf_size_t start_pos, buf_size_t end_pos, buf_size_t to_pos);
   void divide_by(sample_type dvalue);
+
   void limit_values(void);
   void make_silent(void);
-  void make_silent_range(long int start_pos, long int end_pos);
+  void make_silent_range(buf_size_t start_pos, buf_size_t end_pos);
+
   void copy_to_buffer(unsigned char* source,
-		      long int samples,
+		      buf_size_t samples,
 		      ECA_AUDIO_FORMAT::Sample_format fmt,
-		      int ch,
-		      long int srate);
+		      channel_size_t ch,
+		      buf_size_t srate);
 
   void copy_to_buffer_vector(unsigned char* source,
-			     long int samples,
+			     buf_size_t samples,
 			     ECA_AUDIO_FORMAT::Sample_format fmt,
-			     int ch,
-			     long int srate);
+			     channel_size_t ch,
+			     buf_size_t srate);
 
   void copy_from_buffer(unsigned char* target,
 			ECA_AUDIO_FORMAT::Sample_format fmt,
-			int ch,
-			long int srate);
+			channel_size_t ch,
+			buf_size_t srate);
 
   void copy_from_buffer_vector(unsigned char* target,
 			       ECA_AUDIO_FORMAT::Sample_format fmt,
-			       int ch,
-			       long int srate);
+			       channel_size_t ch,
+			       buf_size_t srate);
 
   /*@}*/
         
@@ -94,20 +94,20 @@ class SAMPLE_BUFFER {
   /** @name Routines for observing and modifying buffer setup */
   /*@{*/
 
-  void number_of_channels(int len);
-  inline int number_of_channels(void) const { return(channel_count_rep); }
+  void number_of_channels(channel_size_t len);
+  inline channel_size_t number_of_channels(void) const { return(channel_count_rep); }
 
-  void sample_rate(long int srate) { sample_rate_rep = srate; }
-  inline long int sample_rate(void) const { return(sample_rate_rep); }
-  void length_in_samples(long int len) { if (buffersize_rep != len) resize(len); }
-  inline long int length_in_samples(void) const { return(buffersize_rep); }
+  void sample_rate(srate_size_t srate) { sample_rate_rep = srate; }
+  inline srate_size_t sample_rate(void) const { return(sample_rate_rep); }
+  void length_in_samples(buf_size_t len) { if (buffersize_rep != len) resize(len); }
+  inline buf_size_t length_in_samples(void) const { return(buffersize_rep); }
   inline double length_in_seconds(void) const { return((double)buffersize_rep / sample_rate_rep); }
 
   /*@}*/
 
  private:
 
-  void resize(long int buffersize);
+  void resize(buf_size_t buffersize);
 
  public:
 
@@ -129,17 +129,18 @@ class SAMPLE_BUFFER {
 
  private:
 
-  /** @name Sample buffer data
-   * 
+  /** 
+   * @name Sample buffer data 
+   *
    * Only these variables (+ sample data) are processed when copying 
    * and contructing buffer objects 
    **/
   /*@{*/
 
-  int channel_count_rep;
-  long int buffersize_rep;
-  long int sample_rate_rep;
-  long int reserved_bytes_rep;
+  channel_size_t channel_count_rep;
+  buf_size_t buffersize_rep;
+  srate_size_t sample_rate_rep;
+  buf_size_t reserved_samples_rep;
 
   /*@}*/
 
