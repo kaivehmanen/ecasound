@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio.cpp: Routines common for all audio IO-devices.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,6 +58,22 @@ bool AUDIO_IO::supports_nonblocking_mode(void) const { return(false); }
  * By default, seeking is supported.
  */
 bool AUDIO_IO::supports_seeking(void) const { return(true); }
+
+/**
+ * Whether audio stream has a distinct length. It's important
+ * to note the difference between this attribute and 
+ * 'supports_seeking()'. For example, a file read through 
+ * a pipe mechanism is not seekable and its length is not 
+ * known until 'finished()´ becomes true, but still, it is 
+ * of finite length. A sine oscillator on the other hand 
+ * can go on producing a signal forever, and is thus infinite.
+ *
+ * This attributes directly affects how 'finished()' should
+ * to be interpreted. @see finished().
+ *
+ * By default, audio streams are finite length.
+ */
+bool AUDIO_IO::finite_length_stream(void) const { return(true); }
 
 /**
  * Whether audio format is locked. If this is true, audio object
@@ -142,13 +158,15 @@ string AUDIO_IO::get_parameter(int param) const {
 /**
  * If applicable, returns total length of the audio data stored
  * into current audio object. In many situations it's impossible
- * enquire the whole length of the object. For instace, if the 
+ * enquire the whole length of the object. For instance, if the 
  * object is streaming a finite length audio stream audio object
  * from other applications using some type of standard IPC, 
  * the actual length won't be known until the whole stream has
- * been read. As a general rule, if supports_seek() == true, 
- * length can be known right after initialization. Otherwise 
- * you have to rely on is_finished().
+ * been read. As a general rule, if 'supports_seeking() == true', 
+ * length can be known right after initialization. Then again,
+ * if 'finite_length_stream() == true', the whole stream must
+ * be processed before we know the actual length. In other
+ * cases, length is unknown or infinite.
  */
 ECA_AUDIO_TIME AUDIO_IO::length(void) const {
   return(ECA_AUDIO_TIME(length_in_samples(), samples_per_second()));

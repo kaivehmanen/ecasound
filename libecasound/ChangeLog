@@ -2,9 +2,14 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
-2000-10-14  Kai Vehmanen <kaiv@wakkanet.fi>	
+2000-10-17  Kai Vehmanen <kaiv@wakkanet.fi>
 	
-	* dynamic-parameters.h (): dropped inheritance of DEFINITION_BY_CONTRACT
+	* audioio.h (finite_length_stream): added
+	
+2000-10-14  Kai Vehmanen <kaiv@wakkanet.fi>
+	
+	* dynamic-parameters.h (): dropped inheritance of
+	DEFINITION_BY_CONTRACT (three days, I changed my mind :))
 	
 2000-10-11  Kai Vehmanen <kaiv@wakkanet.fi>
 

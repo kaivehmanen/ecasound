@@ -89,6 +89,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   virtual int supported_io_modes(void) const;
   virtual bool supports_nonblocking_mode(void) const;
   virtual bool supports_seeking(void) const;
+  virtual bool finite_length_stream(void) const;
   virtual bool locked_audio_format(void) const;
   
   // ===================================================================
@@ -222,6 +223,11 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * means that an error has occured (no space left, etc). After 
    * finished() has returned 'true', further calls to read_buffer() 
    * and/or write_buffer() won't process any data.
+   *
+   * For inputs for which 'finite_length_stream()' is true, when
+   * 'finished()' returns true, that means an error has occured. 
+   * Otherwise 'finished()' just tells that further attempts to do 
+   * i/o will fail.
    */
   virtual bool finished(void) const = 0;
 
