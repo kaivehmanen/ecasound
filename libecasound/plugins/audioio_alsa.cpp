@@ -31,7 +31,7 @@
 #endif
 #ifdef ALSALIB_032
 #include <sys/asoundlib.h>
-#include "audioio-alsa.h"
+#include "audioio_alsa.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"

@@ -34,7 +34,7 @@
 #include "audioio-types.h"
 
 #if (defined ALSALIB_032 || defined ALSALIB_050)
-#include "audioio-alsalb.h"
+#include "audioio_alsalb.h"
 #include <sys/asoundlib.h>
 
 #include "eca-error.h"

@@ -17,7 +17,7 @@ alsa_libs = -lasound
 endif
 
 if COMPILE_AF
-af_libs = -laudiofile
+af_libs = -laudiofile -lvorbis
 endif
 
 if KVUTILS_INSTALLED

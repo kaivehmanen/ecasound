@@ -36,7 +36,7 @@ extern "C" {
 
 #include "samplebuffer.h"
 #include "audioio-types.h"
-#include "audioio-alsa2-plugin.h"
+#include "audioio_alsa2_plugin.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"

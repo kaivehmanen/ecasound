@@ -24,6 +24,7 @@
 Input/output devices:
 
 - ALSA 0.6.x support [--> update: already in CVS]
+- ogg vorbis plugin
 - internal plugins (this makes it possible to support ALSA, aRts, etc 
   audio objects requiring external libraries to be conditionally
   loaded ==> only one binary-RPM needed)
