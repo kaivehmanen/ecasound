@@ -141,6 +141,13 @@ void ECA_ENGINE_DEFAULT_DRIVER::exit(void)
  **********************************************************************/
 
 /**
+ * Context help:
+ *  J = originates from driver callback
+ *  E = ----- " ------- engine thread (exec())
+ *  C = ----- " ------- control thread (external)
+ */
+
+/**
  * Class constructor. A pointer to an enabled 
  * ECA_CHAINSETUP object must be given as argument. 
  *
@@ -276,7 +283,8 @@ void ECA_ENGINE::exec(bool batch_mode)
  * Sends 'cmd' to engines command queue. Commands are 
  * processed in the server's main loop. 
  *
- * context: must no be called from exec() context
+ * context: C-level-0
+ *          must no be called from exec() context
  */
 void ECA_ENGINE::command(Engine_command_t cmd, double arg)
 {
@@ -288,7 +296,8 @@ void ECA_ENGINE::command(Engine_command_t cmd, double arg)
  * the signal is received or 'timeout' seconds
  * has elapsed.
  * 
- * context: must not be run from the engine 
+ * context: C-level-0
+ *          must not be run from the engine 
  *          driver context
  *
  * @see signal_stop()
@@ -307,6 +316,8 @@ void ECA_ENGINE::wait_for_stop(int timeout)
  * the signal is received or 'timeout' seconds
  * has elapsed.
  * 
+ * context: C-level-0
+ *
  * @see signal_exit()
  */
 void ECA_ENGINE::wait_for_exit(int timeout)
@@ -328,7 +339,8 @@ void ECA_ENGINE::wait_for_exit(int timeout)
  * Returns true engine's internal 
  * state is valid for processing.
  *
- * context: no limitations
+ * context: C-level-0
+ *          no limitations
  */
 bool ECA_ENGINE::is_valid(void) const
 {
@@ -350,6 +362,8 @@ bool ECA_ENGINE::is_valid(void) const
 
 /**
  * Whether current setup has finite length.
+ *
+ * context: C-level-0
  */
 bool ECA_ENGINE::is_finite_length(void) const
 {
@@ -366,7 +380,8 @@ bool ECA_ENGINE::is_finite_length(void) const
 /**
  * Returns engine's current status.
  *
- * context: no limitations
+ * context: C-level-0
+ *          no limitations
  */
 ECA_ENGINE::Engine_status_t ECA_ENGINE::status(void) const
 { 
@@ -398,8 +413,8 @@ ECA_ENGINE::Engine_status_t ECA_ENGINE::status(void) const
  * messages are available, function will return
  * immediately without blocking.
  *
- * context: can be run at the same time as 
- *          engine_iteration(); 
+ * context: E-level-1
+ *          can be run at the same time as engine_iteration(); 
  *          note! this is called with the engine lock held
  *          so no long operations allowed!
  */
@@ -413,7 +428,8 @@ void ECA_ENGINE::check_command_queue(void)
  * will block until at least one new message
  * is available or until a timeout occurs.
  *
- * context: can be run at the same time as 
+ * context: E-level-1
+ *          can be run at the same time as 
  *          engine_iteration()
  */
 void ECA_ENGINE::wait_for_commands(void)
@@ -424,7 +440,8 @@ void ECA_ENGINE::wait_for_commands(void)
 /**
  * Intializes internal state variables.
  *
- * context: must not be run at the same 
+ * context: E-level-1
+ *          must not be run at the same 
  *          time as engine_iteration()
  *
  * @see update_engine_state()
@@ -440,7 +457,8 @@ void ECA_ENGINE::init_engine_state(void)
  * Updates engine state to match current 
  * situation.
  *
- * context: must not be run at the same 
+ * context: J-level-0
+ *          must not be run at the same 
  *          time as engine_iteration()
  *
  * @see init_engine_state()
@@ -461,7 +479,6 @@ void ECA_ENGINE::update_engine_state(void)
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) all inputs finished - stop");
       // FIXME: this is still wrong, command() is not fully rt-safe
       // we are not allowed to call request_stop here
-      // request_stop();
       command(ECA_ENGINE::ep_stop, 0.0f);
     }
     finished_rep = true;
@@ -475,7 +492,6 @@ void ECA_ENGINE::update_engine_state(void)
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) output error - stop");
       // FIXME: this is still wrong, command() is not fully rt-safe
       // we are not allowed to call request_stop here
-      // request_stop();
       command(ECA_ENGINE::ep_stop, 0.0f);
     }
   }
@@ -484,7 +500,7 @@ void ECA_ENGINE::update_engine_state(void)
 /**
  * Executes one engine loop iteration.
  *
- * context: no limitations
+ * context: J-level-0
  */
 void ECA_ENGINE::engine_iteration(void)
 {
@@ -519,7 +535,8 @@ void ECA_ENGINE::engine_iteration(void)
  * driver before it starts iterating the 
  * engine's main loop.
  *
- * context: must not be run at the same time
+ * context: E-level-1/3
+ *          must not be run at the same time
  *          as engine_iteration()
  *
  * @pre is_running() != true
@@ -583,7 +600,8 @@ void ECA_ENGINE::prepare_operation(void)
  * driver just before it starts iterating the 
  * engine's main loop.
  *
- * context: must not be run at the same time
+ * context: E-level-1/3
+ *          must not be run at the same time
  *          as engine_iteration()
  *
  * @pre is_prepared() == true
@@ -616,7 +634,8 @@ void ECA_ENGINE::start_operation(void)
  * driver when it stops iterating the 
  * engine's main loop.
  *
- * context: must not be run at the same time
+ * context: E-level-1/3
+ *          must not be run at the same time
  *          as engine_iteration()
  *
  * @pre is_running() == true
@@ -725,6 +744,8 @@ int ECA_ENGINE::max_channels(void) const
  * interpret_queue().
  * 
  * @pre status() != engine_status_running
+ *
+ * context: E-level-2
  */
 void ECA_ENGINE::request_start(void)
 {
@@ -747,6 +768,8 @@ void ECA_ENGINE::request_start(void)
  *
  * @pre status() == ECA_ENGINE::engine_status_running ||
  *      status() == ECA_ENGINE::engine_status_finished
+ *
+ * context: E-level-2
  */
 void ECA_ENGINE::request_stop(void)
 { 
@@ -763,7 +786,9 @@ void ECA_ENGINE::request_stop(void)
 /**
  * Sends a stop signal indicating that engine
  * state has changed to stopped.
- * 
+ *
+ * context: E-level-1/4 
+ *
  * @see wait_for_stop()
  */
 void ECA_ENGINE::signal_stop(void)
@@ -777,6 +802,8 @@ void ECA_ENGINE::signal_stop(void)
 /**
  * Sends an exit signal indicating that engine
  * driver has exited.
+ *
+ * context: E-level-1/4 
  * 
  * @see wait_for_exit()
  */
@@ -791,6 +818,8 @@ void ECA_ENGINE::signal_exit(void)
 /**
  * Processing is start If and only if processing 
  * previously stopped with conditional_stop().
+ *
+ * context: E-level-2
  */
 void ECA_ENGINE::conditional_start(void)
 {
@@ -801,6 +830,8 @@ void ECA_ENGINE::conditional_start(void)
 
 /**
  * Processing is stopped.
+ *
+ * context: E-level-2
  *
  * @see conditional_stop()
  * @see request_stop()
@@ -931,11 +962,14 @@ double ECA_ENGINE::current_position_chain(void) const
 /**
  * Seeks to position 'seconds'. Affects all input and 
  * outputs objects, and the chainsetup object position.
+ *
+ * context: E-level-2
  */
 void ECA_ENGINE::set_position(double seconds)
 {
   conditional_stop();
   csetup_repp->seek_position_in_seconds(seconds);
+  // FIXME: calling init_engine_state() may lead to races
   init_engine_state();
   conditional_start();
 }
@@ -943,11 +977,14 @@ void ECA_ENGINE::set_position(double seconds)
 /**
  * Seeks to position 'samples'. Affects all input and 
  * outputs objects, and the chainsetup object position.
+ *
+ * context: E-level-2
  */
 void ECA_ENGINE::set_position_samples(SAMPLE_SPECS::sample_pos_t samples)
 {
   conditional_stop();
   csetup_repp->seek_position_in_samples(samples);
+  // FIXME: calling init_engine_state() may lead to races
   init_engine_state();
   conditional_start();
 }
@@ -956,16 +993,21 @@ void ECA_ENGINE::set_position_samples(SAMPLE_SPECS::sample_pos_t samples)
  * Seeks to position 'samples' without stopping the engine.
  * Affects all input and outputs objects, and the chainsetup 
  * object position.
+ *
+ * context: E-level-2
  */
 void ECA_ENGINE::set_position_samples_live(SAMPLE_SPECS::sample_pos_t samples)
 {
   csetup_repp->seek_position_in_samples(samples);
+  // FIXME: calling init_engine_state() may lead to races
   init_engine_state();
 }
 
 /**
  * Seeks to position 'current+seconds'. Affects all input and 
  * outputs objects, and the chainsetup object position.
+ *
+ * context: E-level-2
  */
 void ECA_ENGINE::change_position(double seconds)
 {
@@ -977,6 +1019,8 @@ void ECA_ENGINE::change_position(double seconds)
 /**
  * Calculates how much data we need to process and sets the
  * buffersize accordingly for all non-real-time inputs.
+ *
+ * context: J-level-1
  */
 void ECA_ENGINE::prehandle_control_position(void)
 {
@@ -1013,7 +1057,7 @@ void ECA_ENGINE::posthandle_control_position(void)
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) posthandle_c_p over_max - stop");
       if (status() == ECA_ENGINE::engine_status_running ||
 	  status() == ECA_ENGINE::engine_status_finished) {
-	request_stop();
+	command(ECA_ENGINE::ep_stop, 0.0f);
       }
       finished_rep = true;
     }
@@ -1029,8 +1073,8 @@ void ECA_ENGINE::posthandle_control_position(void)
  * If no messages are available, function
  * will return immediately.
  *
- * context: can be run at the same time as 
- *          engine_iteration(); 
+ * context: E-level-2
+ *          can be run at the same time as engine_iteration(); 
  *          note! this is called with the engine lock held
  *          so no long operations allowed!
  *
@@ -1049,11 +1093,14 @@ void ECA_ENGINE::interpret_queue(void)
       case ep_exit:
 	{
 	  edit_lock_rep = true;
+	  if (status() == engine_status_running || 
+	      status() == engine_status_finished) request_stop();
 	  while(impl_repp->command_queue_rep.is_empty() == false) impl_repp->command_queue_rep.pop_front();
 	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-engine) ecasound_queue: exit!");
 	  driver_repp->exit();
 	  return;
 	}
+
       case ep_prepare: { if (is_prepared() != true) prepare_operation(); break; }
       case ep_start: { if (status() != engine_status_running) request_start(); break; }
       case ep_stop: { if (status() == engine_status_running || 
@@ -1408,6 +1455,9 @@ void ECA_ENGINE::dump_profile_info(void)
  * Engine implementation - Private functions for signal routing
  **********************************************************************/
 
+/**
+ * context: J-level-1
+ */
 void ECA_ENGINE::inputs_to_chains(void)
 {
   for(size_t inputnum = 0; inputnum < inputs_repp->size(); inputnum++) {
@@ -1451,6 +1501,9 @@ void ECA_ENGINE::inputs_to_chains(void)
   }
 }
 
+/**
+ * context: J-level-1
+ */
 void ECA_ENGINE::process_chains(void)
 {
   vector<CHAIN*>::const_iterator p = chains_repp->begin();
@@ -1460,6 +1513,9 @@ void ECA_ENGINE::process_chains(void)
   }
 }
 
+/**
+ * context: J-level-1
+ */
 void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
 {
   for(size_t outputnum = 0; outputnum < outputs_repp->size(); outputnum++) {
@@ -1532,6 +1588,9 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
  * Engine implementation - Private functions for toggling features
  **********************************************************************/
 
+/**
+ * context: E-level-2
+ */
 void ECA_ENGINE::chain_muting(void)
 {
   if ((*chains_repp)[csetup_repp->active_chain_index_rep]->is_muted()) 
@@ -1540,6 +1599,9 @@ void ECA_ENGINE::chain_muting(void)
     (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_muting(true);
 }
 
+/**
+ * context: E-level-2
+ */
 void ECA_ENGINE::chain_processing(void)
 {
   if ((*chains_repp)[csetup_repp->active_chain_index_rep]->is_processing()) 
