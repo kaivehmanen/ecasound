@@ -57,6 +57,7 @@ extern "C" {
 #include "ctrl-source.h"
 #include "midi-cc.h"
 #include "osc-gen.h"
+#include "osc-gen-file.h"
 #include "osc-sine.h"
 #include "linear-envelope.h"
 #include "two-stage-linear-envelope.h"
@@ -209,7 +210,8 @@ void register_default_chainops(void) {
 }
 
 void register_default_controllers(void) {
-  eca_controller_map.register_object("kf", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR()));
+  eca_controller_map.register_object("kf", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR_FILE()));
+  eca_controller_map.register_object("kog", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR()));
   eca_controller_map.register_object("kl", new GENERIC_CONTROLLER(new LINEAR_ENVELOPE()));
   eca_controller_map.register_object("kl2", new GENERIC_CONTROLLER(new TWO_STAGE_LINEAR_ENVELOPE()));
   eca_controller_map.register_object("km", new GENERIC_CONTROLLER(new MIDI_CONTROLLER()));

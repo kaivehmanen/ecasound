@@ -17,142 +17,172 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <iostream>
 #include <vector>
 #include <string>
 
 #include <kvutils/kvu_numtostr.h>
-#include <kvutils/message_item.h>
 
 #include "osc-gen.h"
 #include "oscillator.h"
 #include "eca-debug.h"
-#include "eca-error.h"
-
-string GENERIC_OSCILLATOR::filename = "";
-void GENERIC_OSCILLATOR::set_preset_file(const string& value) { GENERIC_OSCILLATOR::filename = value; }
 
 CONTROLLER_SOURCE::parameter_type GENERIC_OSCILLATOR::value(void) {
-  if (ienvelope.size() == 0) curval = 0.0;
+  if (mode_rep == 0)
+    update_current_static();
+  else
+    update_current_linear();
 
-  if (linear) {
-    if (current + 1 < ienvelope.size()) { 
-      curval = pcounter / pdistance * ienvelope[current + 1];
-      curval += (1.0 - pcounter / pdistance) * ienvelope[current];
+  loop_pos_rep += step_length();
+  if (loop_pos_rep > loop_length_rep) {
+    loop_pos_rep = 0.0f;
+    pindex_rep = 0;
+    eindex_rep = 0;
+    if (epairs_rep > 0)
+      next_pos_rep = ienvelope_rep[0];
+    else
+      next_pos_rep = 1.0;
+    
+    last_pos_rep = 0;
+  }
+
+  if ((loop_pos_rep / loop_length_rep) >= next_pos_rep) {
+    ++pindex_rep;
+    eindex_rep += 2;
+    last_pos_rep = next_pos_rep;
+    if (eindex_rep + 1 > static_cast<int>(ienvelope_rep.size())) {
+      next_pos_rep = 1.0;
+    }
+    else {
+      next_pos_rep = ienvelope_rep[eindex_rep];
     }
   }
-  else {
-    curval = ienvelope[current];
-  }
 
-  pcounter += step_length();
-  if (pcounter > pdistance) {
-    pcounter -= pdistance;
-    ++current;
-  }
-
-  if (linear) {
-    if (current + 1 == ienvelope.size()) current = 0;
-  }
-  else {
-    if (current == ienvelope.size()) current = 0;
-  }
-
-  //  cerr << "(gen-osc) new value: " << curval << ".\n";
-  return(curval);
+//    cerr << "(gen-osc) new value: " << current_value_rep << ".\n";
+  return(current_value_rep);
 }
 
-GENERIC_OSCILLATOR::GENERIC_OSCILLATOR(double freq, int preset_number)
+void GENERIC_OSCILLATOR::update_current_static(void) {
+  if (pindex_rep == 0) {
+    current_value_rep = start_value_rep;
+  }
+  else {
+    if (eindex_rep - 1 > static_cast<int>(ienvelope_rep.size()))
+      current_value_rep = end_value_rep;
+    else
+      current_value_rep = ienvelope_rep[eindex_rep - 1];
+  }
+}
+
+void GENERIC_OSCILLATOR::update_current_linear(void) {
+  if (pindex_rep == 0) {
+    current_value_rep = start_value_rep;
+  }
+  else {
+    if (eindex_rep - 1 > static_cast<int>(ienvelope_rep.size()))
+      current_value_rep = end_value_rep;
+    else
+      current_value_rep = ienvelope_rep[eindex_rep - 1];
+  }
+
+  double next_value = end_value_rep;
+  if (epairs_rep != 0 &&
+      eindex_rep + 1 < static_cast<int>(ienvelope_rep.size())) {
+    next_value = ienvelope_rep[eindex_rep + 1];
+  }
+  current_value_rep += (next_value - current_value_rep) * (((loop_pos_rep / loop_length_rep) - last_pos_rep) / (next_pos_rep - last_pos_rep));
+}
+
+GENERIC_OSCILLATOR::GENERIC_OSCILLATOR(double freq, int mode)
   : OSCILLATOR(freq, 0.0)
 {
   set_parameter(1, get_parameter(1));
-  set_parameter(2, preset_number);
+  set_parameter(2, mode);
 }
 
 void GENERIC_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_type phasestep) {
   step_length(phasestep);
-  pcounter = 0.0;
-  current = 0;
-
-  MESSAGE_ITEM m;
-  m << "(osc-gen) Generic oscillator created using envelope preset number " << preset_rep << ".";
-  ecadebug->msg(m.to_string());
+  start_value_rep = end_value_rep = 0.0f;
+  loop_length_rep = 0.0f;
+  loop_pos_rep = 0.0f;
+  next_pos_rep = 0.0f;
+  epairs_rep = 0;
+  eindex_rep = 0;
+  pindex_rep = 0;
+  current_value_rep = 0.0f;
+  set_param_count(0);
+  ecadebug->msg("(osc-gen) Generic oscillator created.");
 }
 
-GENERIC_OSCILLATOR::~GENERIC_OSCILLATOR (void) {
-   while(ienvelope.size() > 0) ienvelope.pop_back();
-}
+GENERIC_OSCILLATOR::~GENERIC_OSCILLATOR (void) { }
 
-void GENERIC_OSCILLATOR::read_envelope(void) throw(ECA_ERROR&) {
-  preset_found = false;
-  linear = false;
-  ienvelope.resize(0);
-
-  ifstream fin (GENERIC_OSCILLATOR::filename.c_str());
-
-  if (!fin) {
-    throw(ECA_ERROR("OSC-GEN", "Unable to open envelope file" +
-			GENERIC_OSCILLATOR::filename + " (~/.ecasoundrc)"));
-  }
-
-  int curpreset;
-  string sana;
-  while(fin >> sana) {
-    if (sana.size() > 0 && sana[0] == '#') {
-      while(fin.get() != '\n' && fin.eof() == false);
-      continue;
-    }
-    else {
-      ecadebug->msg(ECA_DEBUG::user_objects, "(osc-gen) Next preset is " + sana + ".");
-      curpreset = atoi(sana.c_str());
-      if (curpreset == preset_rep) {
-	ecadebug->msg(ECA_DEBUG::user_objects, "(osc-gen) Found the right preset!");
-	preset_found = true;
-	fin >> sana; 
-	if (fin.eof()) break; 
-	else if (sana.size() > 0 && sana[0] == 'L') {
-	  linear = true;
-	  ecadebug->msg(ECA_DEBUG::user_objects,"(osc-gen) Using linear-interpolation between envelope points.");
-	}
-	else {
-	  linear = false;
-	  ecadebug->msg(ECA_DEBUG::user_objects,"(osc-gen) Using static envelope points.");
-	}
-	double newpoint; 
-	while(fin >> newpoint) {
-	  ecadebug->msg(ECA_DEBUG::user_objects, "(osc-gen) Added value: " + kvu_numtostr(newpoint));
-	  ienvelope.push_back(newpoint);
-	}
-      }
-      else 
-	while(fin.get() != '\n' && fin.eof() == false);
+void GENERIC_OSCILLATOR::set_param_count(int params) {
+  param_names_rep = "freq,mode,pcount,start_val,end_val";
+  if (params > 0) {
+    for(int n = 0; n < params; n++) {
+      string num = kvu_numtostr(n + 1);
+      param_names_rep += ",pos";
+      param_names_rep += num;
+      param_names_rep += ",val";
+      param_names_rep += num;
     }
   }
-  if (preset_found == false) {
-    throw(ECA_ERROR("OSC-GEN", "Preset " +
-			kvu_numtostr(preset_rep) + " not found from envelope file " + 
-			filename + "."));
-  }
 }
+
+string GENERIC_OSCILLATOR::parameter_names(void) const { 
+  return(param_names_rep);
+}
+
+void GENERIC_OSCILLATOR::prepare_envelope(void) {
+  if (ienvelope_rep.size() % 2 == 1)
+    ienvelope_rep.resize(ienvelope_rep.size() + 1);
+  epairs_rep = (ienvelope_rep.size() / 2);
+  if (epairs_rep > 0) 
+    next_pos_rep = ienvelope_rep[0];
+  else
+    next_pos_rep = 1.0;
+}
+
 
 void GENERIC_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_type value) {
   switch (param) {
   case 1: 
     frequency(value);
-    L = 1.0 / frequency();   // length of one wave in seconds
+    loop_length_rep = 1.0f / frequency(); // length of one wave in seconds
     break;
 
   case 2: 
-    preset_rep = static_cast<int>(value);
-    read_envelope();
-    if (linear) {
-      if (ienvelope.size() > 1) pdistance = L / (ienvelope.size() - 1);
-      else pdistance = L;
-    }
-    else {
-      if (ienvelope.size() > 0) pdistance = L / ienvelope.size();
-    }
-    
+    mode_rep = static_cast<int>(value);
     break;
+
+  case 3: 
+    set_param_count(static_cast<int>(value));
+    break;
+
+  case 4:
+    start_value_rep = value;
+    current_value_rep = value;
+    break;
+
+  case 5:
+    end_value_rep = value;
+    break;
+
+  default: {
+      int pointnum = param - 5;
+      if (pointnum > 0) {
+	if (pointnum > static_cast<int>(ienvelope_rep.size()))
+	  ienvelope_rep.resize(pointnum);
+	
+	ienvelope_rep[pointnum - 1] = value;
+      }
+
+      prepare_envelope();
+//        cerr << "Added point " << pointnum << ", envelope size " <<
+//  	ienvelope_rep.size() << "." << endl;
+     
+      break;
+    }
   }
 }
 
@@ -162,7 +192,24 @@ CONTROLLER_SOURCE::parameter_type GENERIC_OSCILLATOR::get_parameter(int param) c
     return(frequency());
 
   case 2:
-    return(static_cast<parameter_type>(preset_rep));
+    return(static_cast<parameter_type>(mode_rep));
+
+  case 3:
+    return(static_cast<parameter_type>(number_of_params() - 5));
+
+  case 4:
+    return(static_cast<parameter_type>(start_value_rep));
+
+  case 5:
+    return(static_cast<parameter_type>(end_value_rep));
+
+  default:
+    int pointnum = param - 5;
+    if (pointnum > 0) {
+      if (pointnum <= static_cast<int>(ienvelope_rep.size())) {
+	return(static_cast<parameter_type>(ienvelope_rep[pointnum - 1]));
+      }
+    }
   }
   return(0.0);
 }

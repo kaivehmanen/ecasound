@@ -42,7 +42,7 @@
 #include "audioio-timidity.h"
 #include "audioio-ogg.h"
 
-#include "osc-gen.h"
+#include "osc-gen-file.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"
@@ -123,7 +123,7 @@ void ECA_SESSION::set_defaults(void) {
     iactive_rep = false;
   schedpriority_rep = atoi(ecaresources.resource("default-schedpriority").c_str());
 
-  GENERIC_OSCILLATOR::set_preset_file(ecaresources.resource("resource-directory") + "/" + ecaresources.resource("resource-file-genosc-envelopes"));
+  GENERIC_OSCILLATOR_FILE::set_preset_file(ecaresources.resource("resource-directory") + "/" + ecaresources.resource("resource-file-genosc-envelopes"));
 
   MP3FILE::set_mp3_input_cmd(ecaresources.resource("ext-mp3-input-cmd"));
   MP3FILE::set_mp3_output_cmd(ecaresources.resource("ext-mp3-output-cmd"));

@@ -61,7 +61,7 @@ OOPPTTIIOONNSS
 
 
 
-                            05.12.2000                          1
+                            10.12.2000                          1
 
 
 
@@ -127,7 +127,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            05.12.2000                          2
+                            10.12.2000                          2
 
 
 
@@ -193,7 +193,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            05.12.2000                          3
+                            10.12.2000                          3
 
 
 
@@ -259,7 +259,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            05.12.2000                          4
+                            10.12.2000                          4
 
 
 
@@ -325,7 +325,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            05.12.2000                          5
+                            10.12.2000                          5
 
 
 
@@ -391,7 +391,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            05.12.2000                          6
+                            10.12.2000                          6
 
 
 
@@ -457,7 +457,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            05.12.2000                          7
+                            10.12.2000                          7
 
 
 
@@ -523,7 +523,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            05.12.2000                          8
+                            10.12.2000                          8
 
 
 
@@ -589,7 +589,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            05.12.2000                          9
+                            10.12.2000                          9
 
 
 
@@ -655,7 +655,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            05.12.2000                         10
+                            10.12.2000                         10
 
 
 
@@ -721,7 +721,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            05.12.2000                         11
+                            10.12.2000                         11
 
 
 
@@ -768,11 +768,32 @@ ecasound(1)            Multimedia software            ecasound(1)
               initial phase of 'i_phase' times pi.
 
 
-       -kf:fx-param,start-value,end-value,freq,genosc-number
-              Generic oscillator. 'genosc_number' is  the  number
-              of the oscillator preset to be loaded. The location
-              for the preset file is taken from ./ecasoundrc (see
-              _e_c_a_s_o_u_n_d_r_c_(_5_)).
+       -kog:fx-param,start-value,end-value,freq,mode,point-
+              pairs,start- value,end-value,pos1,value1,...
+              Generic  oscillator.  Frequency  'freq'  Hz,   mode
+              either  '0'  for  static  values  or '1' for linear
+              interpolation. 'point-pairs' specifies  the  number
+              of  'posN'  -  'valueN'  pairs to include.  'start-
+              value' and 'end-value' are used as border values.
+
+
+       -kf:fx-param,start-value,end-value,freq,mode,genosc-number
+              Generic  oscillator.  'genosc_number' is the number
+              of the oscillator preset  to  be  loaded.  Mode  is
+              either  '0'  for  static  values  or '1' for linear
+              interpolation. The location for the preset file  is
+              taken from ./ecasoundrc (see _e_c_a_s_o_u_n_d_r_c_(_5_)).
+
+
+
+
+                            10.12.2000                         12
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
 
 
        -kl:fx-param,start-value,end-value,time-seconds
@@ -784,18 +805,6 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        -kl2:fx-param,start-value,end-value,1st-stage-length-
               sec,2nd- stage-length-sec
-
-
-
-                            05.12.2000                         12
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
-
-
               Two-stage linear envelope, a  more  versatile  tool
               for   doing   fade-ins   and  fade-outs.  Stays  at
               'start_value' for  '1st_stage_length'  seconds  and
@@ -841,6 +850,18 @@ SSEEEE AALLSSOO
 
 BBUUGGSS
        See  file  BUGS.  If  ecasound  behaves  weirdly,  try  to
+
+
+
+                            10.12.2000                         13
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
        increase the debug level to see what's going on.
 
 
@@ -853,6 +874,51 @@ AAUUTTHHOORR
 
 
 
-                            05.12.2000                         13
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            10.12.2000                         14
 
 

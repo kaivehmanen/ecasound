@@ -72,6 +72,7 @@ const char* ecasound_parameter_help_rep =
 "     -ge:params               threshold gate\n"
 " --- \n"
 "     -kos:params              sine-oscillator \n"
+"     -kog:params               generic oscillator\n"
 "     -kf:params               file envelope (generic oscillator) \n"
 "     -kl:params               linear envelope (fade-in and fade-out)\n"
 "     -kl2:params              two-stage linear envelope\n"

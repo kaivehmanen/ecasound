@@ -43,7 +43,7 @@ commands from outside libecasound. When issuing EIAM commands using
 ECI, it's possible that commands also return information. Currently
 supported return value types are: strings [s], list of strings [S],
 integers [i], long integers [li] and floating-point numbers [f]. These
-definitions are used in the following documentation.
+definitions are used throughout this document.
 <p><h2>GENERAL</h2>
     
 <dl>
@@ -70,11 +70,18 @@ Help!
 Rewind the current position by 'time-in-seconds' seconds.
 <p><p></p><dt><strong>forward 'time-in-seconds', fw 'ttime-in-seconds'</strong><dd>
 The current position is forwarded by 'time-in-seconds' seconds.
-<p><p></p><dt><strong>setpos 'time-in-seconds'</strong><dd>
+<p><p></p><dt><strong>setpos 'time-in-seconds', set-position 'time-in-seconds'</strong><dd>
 Sets the current position to 'time-in-seconds' seconds from the
 beginning.
-<p><p></p><dt><strong>status','st','u'</strong><dd>
-General status info.
+<p><p></p><dt><strong>get-position</strong><dd>
+Returns the current position in seconds. <em>[f]</em>
+<p><p></p><dt><strong>get-position</strong><dd>
+Returns the chainsetup length in seconds (if known). <em>[f]</em>
+<p><p></p><dt><strong>status, st</strong><dd>
+General status info. <em>[s]</em>
+<p><p></p><dt><strong>engine-status</strong><dd>
+Returns a string describing the engine status (running, stopped,
+finished, not ready). <em>[s]</em>
 <p></dl>
 <p><h2>DIRECT ARGUMENTS</h2>
     
@@ -108,7 +115,6 @@ a list of all chainsetups (and their indexes) with the 'cs-status'
 command.
 <p><p></p><dt><strong>cs-selected</strong><dd>
 Returns the name of currently selected chainsetup. <em>[s]</em>
-**not implemented**
 <p><p></p><dt><strong>cs-load 'filename'</strong><dd>
 Adds a new chainsetup by loading it from file 'filename'. 
 'filename' is now the selected chainsetup.
@@ -127,13 +133,11 @@ Connect currently selected chainsetup to engine. Only one chainsetup
 can be connected at a time.
 <p><p></p><dt><strong>cs-disconnect</strong><dd>
 Disconnect currently connected chainsetup.
-<p><p></p><dt><strong>cs-connected</strong><dd> **not implemented**
+<p><p></p><dt><strong>cs-connected</strong><dd>
 Returns the name of currently connected chainsetup. <em>[s]</em>
 <p><p></p><dt><strong>cs-length 'seconds'</strong><dd>
 Set processing time in seconds (doesn't have to be an integer 
 value).
-<p><p></p><dt><strong>cs-get-length</strong><dd> **not implemented**
-Returns the processing time in seconds. <em>[f]</em>
 <p><p></p><dt><strong>cs-loop</strong><dd>
 Enable looping. When processing is finished, engine will start 
 again from the initial position.
@@ -145,9 +149,9 @@ See ecasound(1) for more info.
 Set the default sample parameters for currently selected chainsetup. 
 For example cd-quality audio would be "16,2,44100". This does the
 same as command-line argument "-f" (see ecasound(1)).
-<p><p></p><dt><strong>cs-status, cstatus, cs, a</strong><dd>
+<p><p></p><dt><strong>cs-status, cs</strong><dd>
 Print status info about all chainsetups. <em>[s]</em>
-</dl>
+<p></dl>
 <p><h2>CHAINS</h2>
     
 Chain is a simple signal flow abstraction. Every chain has one input
@@ -168,7 +172,7 @@ Selects all chains.
 Selects more chains.
 <p><p></p><dt><strong>c-selected</strong><dd>
 Returns a list of selected chains. <em>[S]</em>
-<p><p></p><dt><strong>c-list</strong><dd> **not implemented**
+<p><p></p><dt><strong>c-list</strong><dd>
 Returns a list of all chains. <em>[S]</em>
 <p><p></p><dt><strong>c-remove</strong><dd>
 Removes selected chains.
@@ -232,6 +236,8 @@ these long names when selecting audio objects. 'aobject_index' format
 is "i&lt;number&gt;" for inputs and similarly "o&lt;number&gt;" for outputs. 
 You can get a list of all audio objects and their indexes with the
 'aio-status' and 'aio-list' commands. 
+<p><p></p><dt><strong>aio-selected</strong><dd>
+Returns the name of the currently selected audio object. <em>[r]</em>
 <p><p></p><dt><strong>aio-attach</strong><dd>
 Attaches the currently selected audio object to all selected chains.
 <p><p></p><dt><strong>aio-remove</strong><dd>
@@ -248,20 +254,25 @@ Time should be given as a floating point value (eg. 0.001 is the
 same as 1ms).
 <p><p></p><dt><strong>aio-setpos 'time_in_seconds'</strong><dd>
 Set audio object position to 'time_in_seconds'.
-<p><p></p><dt><strong>aio-getpos</strong><dd>
+<p><p></p><dt><strong>aio-get-position</strong><dd>
 Returns the audio object position in seconds. <em>[f]</em>
-<p><p></p><dt><strong>aio-length</strong><dd>
+<p><p></p><dt><strong>aio-get-length</strong><dd>
 Returns the audio object length in seconds. <em>[f]</em>
 <p><p></p><dt><strong>aio-wave-edit</strong><dd> 
 The currently selected audio object is loaded into an external
 wave editor (see ecasoundrc(5)).
 <p><p></p><dt><strong>aio-register</strong><dd>
 Prints a list of registered audio object types. <em>[s]</em>
+<p><p></p><dt><strong>aio-input-list</strong><dd> **not implemented**
+Returns a list of all input objects. <em>[S]</em>
+<p><p></p><dt><strong>aio-output-list</strong><dd> **not implemented**
+Returns a list of all output objects. <em>[S]</em>
+<p></dl>
 <p><h2>CHAIN OPERATORS</h2>
     
 Chain operators are used to process and analyze sample data.
 They are attached to chains. If not otherwise stated,
-currently selected chainsetup and chains are used. Also, 
+currently selected chainsetup and chain are used. Also, 
 'chainop_id' and 'param_id' are used to select chain operators 
 and their parameters. First valid value for these parameters 
 is 1.
@@ -271,13 +282,24 @@ Adds a new chain operator. Argument format is
 "-&lt;id_string&gt;:par1,...,parN". In addition to normal chain operators, 
 this commmand can also be used to add effect presets and various 
 plugins. See ecasound(1) man page for more info.
-<p><p></p><dt><strong>cop-remove 'chainop_id'</strong><dd> 
-Removes chain operator.
+<p><p></p><dt><strong>cop-select 'param_id'</strong><dd>
+Selects a chain operator.
+<p><p></p><dt><strong>cop-remove</strong><dd> 
+Removes the selected chain operator.
 <p><p></p><dt><strong>cop-set 'chainop_id, param_id, value'</strong><dd>
 Changes the value of a single chain operator parameter. Unlike other
 chain operator commands, this can also be used during processing.
+<p><p></p><dt><strong>copp-select 'param_id'</strong><dd>
+Selects a chain operator parameter.
+<p><p></p><dt><strong>copp-set 'value'</strong><dd>
+Sets the selected parameter value to 'value'.
+<p><p></p><dt><strong>copp-get</strong><dd>
+Returns the selected parameter value. <em>[f]</em>
 <p><p></p><dt><strong>cop-status</strong><dd>
 Returns info about chain operator status. <em>[s]</em>
+<p><p></p><dt><strong>cop-list</strong><dd> **not implemented**
+Returns a list of all chain operators attached to the currently
+selected chain. <em>[S]</em>
 <p><p></p><dt><strong>cop-register</strong><dd>
 Prints a list of registered chain operators. <em>[s]</em>
 <p><p></p><dt><strong>preset-register</strong><dd>
@@ -295,19 +317,26 @@ Adds a new controller and attach it to currently selected chain
 operator. Argument format is "-&lt;id_string&gt;:&lt;param_id&gt;,&lt;range_low&gt;,
 &lt;range_high&gt;,par1,...,parN".  See ecasound(1) man page for more 
 info.
-<p><p></p><dt><strong>cop-remove-controller 'param_id'</strong><dd>
-Removes the controller that is attached to the currently selected chain
-operator.
+<p><p></p><dt><strong>cop-select-controller 'param_id'</strong><dd>
+Selects a controller.
+<p><p></p><dt><strong>cop-remove-controller</strong><dd>
+Removes the selected controller.
 <p><p></p><dt><strong>ctrl-status</strong><dd> 
 Returns info about controller status. <em>[s]</em>
+<p><p></p><dt><strong>ctrl-list</strong><dd> **not implemented**
+Returns a list of all controllers attached to the currently
+selected chain. <em>[S]</em>
 <p><p></p><dt><strong>ctrl-register</strong><dd>
 Prints a list of registered controllers. <em>[s]</em>
 <p></dl>
 <p><h2>OBJECT MAPS</h2>
     
-FIXME: insert description from ecasound man page.
-<p><p></p><dt><strong>map-aio-register</strong><dd> **not implemented**
-Prints a list of registered audio object types. <em>[s]</em>
+Object maps are a central repositories for commonly used objects.
+When object is registered to a map, a regular expression is attached 
+to it. When object map receives a request for a new object, it 
+goes through all registered regular expressions, and returns an 
+object attached to the matching expression. Object maps can also provide
+a list of all registered objects. 
 <p><p></p><dt><strong>map-aio-list</strong><dd> **not implemented**
 Returns a list of regular expressions matching 
 registered audio object types. <em>[S]</em>.
@@ -316,6 +345,22 @@ Returns a list of regular expressions matching
 registered realtime audio object types. <em>[S]</em>.
 <p><p></p><dt><strong>map-aio-type 'regexp'</strong><dd> **not implemented**
 Returns the type name handling regular expression 'regexp'. <em>[s]</em>.
+<p><p></p><dt><strong>map-cop-list</strong><dd> **not implemented**
+Returns a list of regular expressions (chainop prefixes) matching 
+registered chain operator types types. <em>[S]</em>.
+<p><p></p><dt><strong>map-cop-type 'regexp'</strong><dd> **not implemented**
+Returns the type name handling regular expression 'regexp'. <em>[s]</em>.
+<p><p></p><dt><strong>map-ctrl-list</strong><dd> **not implemented**
+Returns a list of regular expressions (controller prefixes) matching 
+registered controller types types. <em>[S]</em>.
+<p><p></p><dt><strong>map-ctrl-type 'regexp'</strong><dd> **not implemented**
+Returns the type name handling regular expression 'regexp'. <em>[s]</em>.
+<p><p></p><dt><strong>map-preset-list</strong><dd> **not implemented**
+Returns a list of regular expressions (preset names) matching
+available operator presets. <em>[S]</em>.
+<p><p></p><dt><strong>map-ladspa-list</strong><dd> **not implemented**
+Returns a list of regular expressions (LADSPA unique id numbers) matching
+registered LADSPA plugins. <em>[S]</em>.
 <p></dl>
 <p><h2>DUMP COMMANDS</h2>
     

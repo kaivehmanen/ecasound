@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-12-10  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* osc-gen.h (all): completely rewritten
+	* osc-gen-file.h (all): added
+	
 2000-12-09  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-control-base.h (destructor): changed into non-virtual

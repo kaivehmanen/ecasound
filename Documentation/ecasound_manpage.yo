@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (08.12.2000)
+       (10.12.2000)
        ()
        (Multimedia software)
 
@@ -541,10 +541,17 @@ dit(-kos:fx-param,start-value,end-value,freq,i-phase)
 Sine oscillator with frequency of 'freq' Hz and initial phase
 of 'i_phase' times pi.
 
-dit(-kf:fx-param,start-value,end-value,freq,genosc-number)
+dit(-kog:fx-param,start-value,end-value,freq,mode,point-pairs,start-value,end-value,pos1,value1,...)
+Generic oscillator. Frequency 'freq' Hz, mode either '0' for
+static values or '1' for linear interpolation. 'point-pairs'
+specifies the number of 'posN' - 'valueN' pairs to include.
+'start-value' and 'end-value' are used as border values.
+
+dit(-kf:fx-param,start-value,end-value,freq,mode,genosc-number)
 Generic oscillator. 'genosc_number' is the number of the 
-oscillator preset to be loaded. The location for the preset
-file is taken from ./ecasoundrc (see em(ecasoundrc(5))).
+oscillator preset to be loaded. Mode is either '0' for
+static values or '1' for linear interpolation. The location for 
+the preset file is taken from ./ecasoundrc (see em(ecasoundrc(5))).
 
 dit(-kl:fx-param,start-value,end-value,time-seconds)
 Linear envelope that starts from 'start_value' and linearly 

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 071200) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 101200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -25,7 +25,13 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- added: ecasound detect all eiam return types and
 		 automatically prints their values after eiam commands
 		 are issued
+	- added: example code (under ./examples) - ecidoc_example.c, 
+		 ecidoc_example.cpp, ecidoc_example.py, normalize.py
+	- added: -kog - a new generic oscillator
 	- removed: eiam-cmds; u, a, cstatus, l, fstatus, estatus
+	- changed: -kf - 'mode' parameter added
+	- changed: format of the file 'generic_oscillators'
+	- changed: ECI - last_list_of_strings() to last_string_list()
 	- fixed: "-x -i file.ext" style cmd-line arg sequences weren't
 		parsed correctly [jhall]
 	- fixed: ECI - command_float_arg() was broken (all languages)

@@ -17,7 +17,7 @@ commands from outside libecasound\&. When issuing EIAM commands using
 ECI, it\'s possible that commands also return information\&. Currently
 supported return value types are: strings [s], list of strings [S],
 integers [i], long integers [li] and floating-point numbers [f]\&. These
-definitions are used in the following documentation\&.
+definitions are used throughout this document\&.
 .PP 
 .SH "GENERAL" 
 .IP "quit, q" 
@@ -50,12 +50,22 @@ Rewind the current position by \'time-in-seconds\' seconds\&.
 .IP "forward \'time-in-seconds\', fw \'ttime-in-seconds\'" 
 The current position is forwarded by \'time-in-seconds\' seconds\&.
 .PP 
-.IP "setpos \'time-in-seconds\'" 
+.IP "setpos \'time-in-seconds\', set-position \'time-in-seconds\'" 
 Sets the current position to \'time-in-seconds\' seconds from the
 beginning\&.
 .PP 
-.IP "status\',\'st\',\'u\'" 
-General status info\&.
+.IP "get-position" 
+Returns the current position in seconds\&. \fI[f]\fP
+.PP 
+.IP "get-position" 
+Returns the chainsetup length in seconds (if known)\&. \fI[f]\fP
+.PP 
+.IP "status, st" 
+General status info\&. \fI[s]\fP
+.PP 
+.IP "engine-status" 
+Returns a string describing the engine status (running, stopped,
+finished, not ready)\&. \fI[s]\fP
 .PP 
 .IP 
 .SH "DIRECT ARGUMENTS" 
@@ -93,7 +103,6 @@ command\&.
 .PP 
 .IP "cs-selected" 
 Returns the name of currently selected chainsetup\&. \fI[s]\fP
-**not implemented**
 .PP 
 .IP "cs-load \'filename\'" 
 Adds a new chainsetup by loading it from file \'filename\'\&. 
@@ -120,16 +129,11 @@ can be connected at a time\&.
 Disconnect currently connected chainsetup\&.
 .PP 
 .IP "cs-connected" 
-**not implemented**
 Returns the name of currently connected chainsetup\&. \fI[s]\fP
 .PP 
 .IP "cs-length \'seconds\'" 
 Set processing time in seconds (doesn\'t have to be an integer 
 value)\&.
-.PP 
-.IP "cs-get-length" 
-**not implemented**
-Returns the processing time in seconds\&. \fI[f]\fP
 .PP 
 .IP "cs-loop" 
 Enable looping\&. When processing is finished, engine will start 
@@ -145,8 +149,9 @@ Set the default sample parameters for currently selected chainsetup\&.
 For example cd-quality audio would be "16,2,44100"\&. This does the
 same as command-line argument "-f" (see ecasound(1))\&.
 .PP 
-.IP "cs-status, cstatus, cs, a" 
+.IP "cs-status, cs" 
 Print status info about all chainsetups\&. \fI[s]\fP
+.PP 
 .IP 
 .SH "CHAINS" 
 Chain is a simple signal flow abstraction\&. Every chain has one input
@@ -174,7 +179,6 @@ Selects more chains\&.
 Returns a list of selected chains\&. \fI[S]\fP
 .PP 
 .IP "c-list" 
-**not implemented**
 Returns a list of all chains\&. \fI[S]\fP
 .PP 
 .IP "c-remove" 
@@ -254,6 +258,9 @@ is "i<number>" for inputs and similarly "o<number>" for outputs\&.
 You can get a list of all audio objects and their indexes with the
 \'aio-status\' and \'aio-list\' commands\&. 
 .PP 
+.IP "aio-selected" 
+Returns the name of the currently selected audio object\&. \fI[r]\fP
+.PP 
 .IP "aio-attach" 
 Attaches the currently selected audio object to all selected chains\&.
 .PP 
@@ -276,10 +283,10 @@ same as 1ms)\&.
 .IP "aio-setpos \'time_in_seconds\'" 
 Set audio object position to \'time_in_seconds\'\&.
 .PP 
-.IP "aio-getpos" 
+.IP "aio-get-position" 
 Returns the audio object position in seconds\&. \fI[f]\fP
 .PP 
-.IP "aio-length" 
+.IP "aio-get-length" 
 Returns the audio object length in seconds\&. \fI[f]\fP
 .PP 
 .IP "aio-wave-edit" 
@@ -289,67 +296,101 @@ wave editor (see ecasoundrc(5))\&.
 .IP "aio-register" 
 Prints a list of registered audio object types\&. \fI[s]\fP
 .PP 
+.IP "aio-input-list" 
+**not implemented**
+Returns a list of all input objects\&. \fI[S]\fP
+.PP 
+.IP "aio-output-list" 
+**not implemented**
+Returns a list of all output objects\&. \fI[S]\fP
+.PP 
+.IP 
 .SH "CHAIN OPERATORS" 
 Chain operators are used to process and analyze sample data\&.
 They are attached to chains\&. If not otherwise stated,
-currently selected chainsetup and chains are used\&. Also, 
+currently selected chainsetup and chain are used\&. Also, 
 \'chainop_id\' and \'param_id\' are used to select chain operators 
 and their parameters\&. First valid value for these parameters 
 is 1\&.
-.PP 
+.IP 
 .IP "cop-add \'cop_format_string\'" 
 Adds a new chain operator\&. Argument format is
 "-<id_string>:par1,\&.\&.\&.,parN"\&. In addition to normal chain operators, 
 this commmand can also be used to add effect presets and various 
 plugins\&. See ecasound(1) man page for more info\&.
-.IP 
-.IP "cop-remove \'chainop_id\'" 
-Removes chain operator\&.
-.IP 
+.PP 
+.IP "cop-select \'param_id\'" 
+Selects a chain operator\&.
+.PP 
+.IP "cop-remove" 
+Removes the selected chain operator\&.
+.PP 
 .IP "cop-set \'chainop_id, param_id, value\'" 
 Changes the value of a single chain operator parameter\&. Unlike other
 chain operator commands, this can also be used during processing\&.
-.IP 
+.PP 
+.IP "copp-select \'param_id\'" 
+Selects a chain operator parameter\&.
+.PP 
+.IP "copp-set \'value\'" 
+Sets the selected parameter value to \'value\'\&.
+.PP 
+.IP "copp-get" 
+Returns the selected parameter value\&. \fI[f]\fP
+.PP 
 .IP "cop-status" 
 Returns info about chain operator status\&. \fI[s]\fP
-.IP 
+.PP 
+.IP "cop-list" 
+**not implemented**
+Returns a list of all chain operators attached to the currently
+selected chain\&. \fI[S]\fP
+.PP 
 .IP "cop-register" 
 Prints a list of registered chain operators\&. \fI[s]\fP
-.IP 
+.PP 
 .IP "preset-register" 
 Prints a list of registered effect presets\&. \fI[s]\fP
-.IP 
+.PP 
 .IP "ladspa-register" 
 Prints a list of registered LADSPA-plugins\&. \fI[s]\fP
-.PP 
+.IP 
 .SH "CONTROLLERS" 
 Controllers are used to control individual chain operator parameters\&.
 They are attached to chains\&. If not otherwise stated, currently 
 selected chainsetup and chains are used\&. 
-.PP 
+.IP 
 .IP "cop-add-controller \'copc_format_string\'" 
 Adds a new controller and attach it to currently selected chain 
 operator\&. Argument format is "-<id_string>:<param_id>,<range_low>,
 <range_high>,par1,\&.\&.\&.,parN"\&.  See ecasound(1) man page for more 
 info\&.
-.PP 
-.IP "cop-remove-controller \'param_id\'" 
-Removes the controller that is attached to the currently selected chain
-operator\&.
-.PP 
+.IP 
+.IP "cop-select-controller \'param_id\'" 
+Selects a controller\&.
+.IP 
+.IP "cop-remove-controller" 
+Removes the selected controller\&.
+.IP 
 .IP "ctrl-status" 
 Returns info about controller status\&. \fI[s]\fP
-.PP 
+.IP 
+.IP "ctrl-list" 
+**not implemented**
+Returns a list of all controllers attached to the currently
+selected chain\&. \fI[S]\fP
+.IP 
 .IP "ctrl-register" 
 Prints a list of registered controllers\&. \fI[s]\fP
-.PP 
+.IP 
 .IP 
 .SH "OBJECT MAPS" 
-FIXME: insert description from ecasound man page\&.
-.IP 
-.IP "map-aio-register" 
-**not implemented**
-Prints a list of registered audio object types\&. \fI[s]\fP
+Object maps are a central repositories for commonly used objects\&.
+When object is registered to a map, a regular expression is attached 
+to it\&. When object map receives a request for a new object, it 
+goes through all registered regular expressions, and returns an 
+object attached to the matching expression\&. Object maps can also provide
+a list of all registered objects\&. 
 .IP 
 .IP "map-aio-list" 
 **not implemented**
@@ -364,6 +405,34 @@ registered realtime audio object types\&. \fI[S]\fP\&.
 .IP "map-aio-type \'regexp\'" 
 **not implemented**
 Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
+.IP 
+.IP "map-cop-list" 
+**not implemented**
+Returns a list of regular expressions (chainop prefixes) matching 
+registered chain operator types types\&. \fI[S]\fP\&.
+.IP 
+.IP "map-cop-type \'regexp\'" 
+**not implemented**
+Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
+.IP 
+.IP "map-ctrl-list" 
+**not implemented**
+Returns a list of regular expressions (controller prefixes) matching 
+registered controller types types\&. \fI[S]\fP\&.
+.IP 
+.IP "map-ctrl-type \'regexp\'" 
+**not implemented**
+Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
+.IP 
+.IP "map-preset-list" 
+**not implemented**
+Returns a list of regular expressions (preset names) matching
+available operator presets\&. \fI[S]\fP\&.
+.IP 
+.IP "map-ladspa-list" 
+**not implemented**
+Returns a list of regular expressions (LADSPA unique id numbers) matching
+registered LADSPA plugins\&. \fI[S]\fP\&.
 .IP 
 .IP 
 .SH "DUMP COMMANDS" 

@@ -908,11 +908,13 @@ GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
     gcontroller->init((double)buffersize() / sample_rate());
 
     otemp << "Setting parameters: ";
-    for(int n = 0; n < gcontroller->number_of_params(); n++) {
+    int numparams = gcontroller->number_of_params();
+    for(int n = 0; n < numparams; n++) {
       gcontroller->set_parameter(n + 1, atof(get_argument_number(n + 1, argu).c_str()));
       otemp << gcontroller->get_parameter_name(n + 1) << " = ";
       otemp << gcontroller->get_parameter(n +1);
-      if (n + 1 < gcontroller->number_of_params()) otemp << ", ";
+      numparams = gcontroller->number_of_params(); // in case 'n_o_p()' varies
+      if (n + 1 < numparams) otemp << ", ";
     }
     ecadebug->msg(otemp.to_string());
     return(gcontroller);

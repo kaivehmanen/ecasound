@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "05\&.12\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "10\&.12\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -497,10 +497,17 @@ and \'end_value\' set the value range\&. You really should see
 Sine oscillator with frequency of \'freq\' Hz and initial phase
 of \'i_phase\' times pi\&.
 .IP 
-.IP "-kf:fx-param,start-value,end-value,freq,genosc-number" 
+.IP "-kog:fx-param,start-value,end-value,freq,mode,point-pairs,start-value,end-value,pos1,value1,\&.\&.\&." 
+Generic oscillator\&. Frequency \'freq\' Hz, mode either \'0\' for
+static values or \'1\' for linear interpolation\&. \'point-pairs\'
+specifies the number of \'posN\' - \'valueN\' pairs to include\&.
+\'start-value\' and \'end-value\' are used as border values\&.
+.IP 
+.IP "-kf:fx-param,start-value,end-value,freq,mode,genosc-number" 
 Generic oscillator\&. \'genosc_number\' is the number of the 
-oscillator preset to be loaded\&. The location for the preset
-file is taken from \&./ecasoundrc (see \fIecasoundrc(5)\fP)\&.
+oscillator preset to be loaded\&. Mode is either \'0\' for
+static values or \'1\' for linear interpolation\&. The location for 
+the preset file is taken from \&./ecasoundrc (see \fIecasoundrc(5)\fP)\&.
 .IP 
 .IP "-kl:fx-param,start-value,end-value,time-seconds" 
 Linear envelope that starts from \'start_value\' and linearly 

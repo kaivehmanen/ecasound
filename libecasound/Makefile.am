@@ -87,6 +87,7 @@ ecasound_controller_include = \
 			midi-cc.h \
 			oscillator.h \
 			osc-gen.h \
+			osc-gen-file.h \
 			osc-sine.h \
 			finite-envelope.h \
 			linear-envelope.h \
@@ -128,8 +129,6 @@ ecasound_general_include = 	\
 			eca-control-dump.h \
 			eca-iamode-parser.h \
 			eca-control-interface.h \
-			osc-gen.h \
-			midi-cc.h \
 			eca-audio-position.h \
 			eca-fileio.h  \
 			eca-fileio-stream.h \
@@ -200,6 +199,7 @@ ecasound_controller_src = \
 			generic-controller.cpp \
 			midi-cc.cpp \
 			osc-gen.cpp \
+			osc-gen-file.cpp \
 			osc-sine.cpp \
 			linear-envelope.cpp \
 			two-stage-linear-envelope.cpp

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>05.12.2000</h2>
+<h2>10.12.2000</h2>
 
 
     
@@ -444,10 +444,16 @@ and 'end_value' set the value range. You really should see
 <p><p></p><dt><strong>-kos:fx-param,start-value,end-value,freq,i-phase</strong><dd>
 Sine oscillator with frequency of 'freq' Hz and initial phase
 of 'i_phase' times pi.
-<p><p></p><dt><strong>-kf:fx-param,start-value,end-value,freq,genosc-number</strong><dd>
+<p><p></p><dt><strong>-kog:fx-param,start-value,end-value,freq,mode,point-pairs,start-value,end-value,pos1,value1,...</strong><dd>
+Generic oscillator. Frequency 'freq' Hz, mode either '0' for
+static values or '1' for linear interpolation. 'point-pairs'
+specifies the number of 'posN' - 'valueN' pairs to include.
+'start-value' and 'end-value' are used as border values.
+<p><p></p><dt><strong>-kf:fx-param,start-value,end-value,freq,mode,genosc-number</strong><dd>
 Generic oscillator. 'genosc_number' is the number of the 
-oscillator preset to be loaded. The location for the preset
-file is taken from ./ecasoundrc (see <em>ecasoundrc(5)</em>).
+oscillator preset to be loaded. Mode is either '0' for
+static values or '1' for linear interpolation. The location for 
+the preset file is taken from ./ecasoundrc (see <em>ecasoundrc(5)</em>).
 <p><p></p><dt><strong>-kl:fx-param,start-value,end-value,time-seconds</strong><dd>
 Linear envelope that starts from 'start_value' and linearly 
 changes to 'end_value' during 'time_in_seconds'. Can

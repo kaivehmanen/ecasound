@@ -328,6 +328,8 @@ Returns a list of all input objects. em([S])
 dit(aio-output-list) **not implemented**
 Returns a list of all output objects. em([S])
 
+enddit()
+
 manpagesection(CHAIN OPERATORS)
 Chain operators are used to process and analyze sample data.
 They are attached to chains. If not otherwise stated,

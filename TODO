@@ -46,7 +46,6 @@ Input/output devices:
 
 - wrapper objects for triggering file input/output based on volume
   level or timers
-- changed from virtual to a concrte
 - type override for audio objects
 - shorten support
 - wrapper object for using effects as audio inputs/outputs
@@ -74,7 +73,7 @@ User-interfaces:
 
 - daemon mode for ecasound (ecad, ecasoundd)
 
-Other ares:
+Other areas:
 
 - interactive mode: cs-copy 'chainsetupname' (duplicate chainsetup)
 - smart mixing / dithering
