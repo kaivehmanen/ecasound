@@ -30,6 +30,10 @@ EFFECT_FILTER::~EFFECT_FILTER(void)
 }
 
 EFFECT_BANDPASS::EFFECT_BANDPASS (CHAIN_OPERATOR::parameter_t centerf, CHAIN_OPERATOR::parameter_t w) {
+  /* to avoid accessing uninitialized data */
+  width = 1;
+  center = 1;
+
   set_parameter(1, centerf);
   set_parameter(2, w);
 }
@@ -444,6 +448,9 @@ void EFFECT_LOWPASS_SIMPLE::process(void) {
 EFFECT_RESONANT_BANDPASS::EFFECT_RESONANT_BANDPASS (CHAIN_OPERATOR::parameter_t centerf,
 						    CHAIN_OPERATOR::parameter_t w) 
 {
+  /* to avoid accessing uninitialized data */
+  width = 1;
+  center = 1;
 
   set_parameter(1, centerf);
   set_parameter(2, w);
@@ -727,6 +734,10 @@ void EFFECT_RESONANT_LOWPASS::process(void) {
 EFFECT_RESONATOR::EFFECT_RESONATOR (CHAIN_OPERATOR::parameter_t centerf, CHAIN_OPERATOR::parameter_t w) 
   : cona(1), conb(2) 
 {
+  /* to avoid accessing uninitialized data */
+  width = 1;
+  center = 1;
+
   set_parameter(1, centerf);
   set_parameter(2, w);
 }
