@@ -88,7 +88,8 @@ Optional when running Ecasound:
 - for JACK-support, the JACK runtime environment
 - for mp3 support, mpg123 (input) and lame (output) packages
 - for tracker module support, MikMod package
-- for .aiff/.au/.snd support, libaudiofile (SGI audio file) library
+- for .aiff/.au/.snd/etc support, libaudiofile (SGI audio file) library
+- for .w64/.aiff/.snd/etc support, libsndfile library
 - for Ogg Vorbis support, the vorbis-tools package (ogg123 and vorbize)
 - for .mid input support, Timidity++
 - for aRts support, the aRts server package
@@ -110,6 +111,7 @@ Optional when compiling Ecasound:
 - for ALSA support, the ALSA devel package
 - for JACK support, the JACK devel package
 - for .aiff/.au/.snd support libaudiofile devel package
+- for .w64/.aiff/.snd/etc support, libsndfile library
 - for aRts support, the aRts C-API devel package
 - for higher quality resampling, libsamplerate devel package
 
