@@ -6,7 +6,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{01022002}
+\date{17072002}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,7 @@ ecasound version.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 17.07.2002 - Added documentation for ecasignalview.
 \item 18.05.2002 - Fixed a few typos.
 \item 21.10.2001 - Added material from the ecasound FAQ.
 \item 21.10.2001 - Added this history section. Document was 
@@ -77,6 +78,7 @@ continue to improve and develop ecasound.
 
 % ----------------------------------------------------------------------
 \subsection{Audio object}
+
 Audio objects are used to transfer audio from and to ecasound. 
 Usually audio objects are either files (like wav, mp3 or ogg) 
 or devices (soundcard input\&output). There are also some
@@ -85,6 +87,7 @@ applications.
 
 % ----------------------------------------------------------------------
 \subsection{Chain}
+
 Chain is the central signal flow abstraction. In many ways chains
 are similar to audio cables. You have one input and one output 
 to which you can connect audio producers and consumers 
@@ -104,6 +107,7 @@ In addition to chain operators, chains also have separate
 
 % ----------------------------------------------------------------------
 \subsection{Chain operators and controllers}
+
 Chain operators are used to process and analyze sample data.
 They can be divided into gates, converters, signal analyzers and 
 to traditional effects like reverbs, delays and filters.
@@ -119,6 +123,7 @@ operators and controllers.
 
 % ----------------------------------------------------------------------
 \subsection{Chainsetup}
+
 Chainsetup is the central data object. All other objects (inputs,
 outputs, chains, etc) are connected to some chainsetup. 
 Many chainsetups can exist at the same time (during one session),
@@ -140,6 +145,7 @@ See \texttt{ecasound(1)} man page for details.
 
 % ----------------------------------------------------------------------
 \subsection{Current position}
+
 Information about current position is only stored for audio 
 objects and chainsetups. When you change chainsetup position,
 all audio objects are affected. On the other hand, positions 
@@ -200,6 +206,7 @@ parts of libecasound. To name a few places:
 
 % ----------------------------------------------------------------------
 \subsection{Where to start?}
+
 There's no one single way to use ecasound. You can use it as 
 a simple glue component for doing tasks that aren't handled by
 other applications you are using, or because ecasound does these tasks
@@ -218,6 +225,7 @@ actually quite easy to do.
 
 % ----------------------------------------------------------------------
 \subsection{Rules for editing chainsetups}
+
 Here are a few rules that help writing valid chainsetups.
 Whether you are editing chainsetup files (.ecs),  some 
 graphical frontend, just using command-line options, etc;
@@ -335,22 +343,93 @@ files.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
-\section{User interfaces}
+\section{User interfaces and Applications}
 
-Best place to look is ecasound's web site at ``www.eca.cx''. 
-
-% ----------------------------------------------------------------------
-\subsection{ecasound}
-See \texttt{ecasound(1)} man page.
+For a complete list of user-interfaces and applications built
+on top of ecasound, visit ecasound's web site at ``http://www.eca.cx''.
 
 % ----------------------------------------------------------------------
-\subsection{ecatools}
-See \texttt{ecatools(1)} mag page.
+\subsection{Ecasound}
+
+The standalone program ``ecasound'' is the primary user interface
+for ecasound. 
+
+% FIXME: add examples from the 'examples' page
+
+\subsubsection{Further Reading}
+See \texttt{ecasound(1)} man page and \texttt{Examples} web page - 
+``http://www.eca.cx/ecasound -> Documentation -> Examples''
+
+% ----------------------------------------------------------------------
+\subsection{Ecasignalview}
+
+Ecasignalview is an utility program for monitoring signal amplitude 
+and peak statistics. It's primarily used when adjusting 
+signal levels for recording. 
+
+\subsubsection{Basic use}
+
+The basic use scenario is to record audio from a soundcard device,
+visualize it with vu-meters and write it to a null output. 
+
+\begin{verbatim}
+# OSS-drivers (or properly installed ALSA OSS-emulation)
+ecasignalview /dev/dsp null
+
+# native ALSA-mode, recording from the 'default' device
+ecasignalview alsa,default null
+\end{verbatim}
+
+To monitor the input signal you can either use the soundcard's
+analog (or in some case, digital) monitoring functions by 
+enabling line/mic-in monitoring using \em{alsamixer} (ALSA),
+\em{aumix} (OSS) or some other mixer application. Other option is to
+use ecasignalview to do the monitoring. In this case the correct
+command is:
+
+\begin{verbatim}
+# OSS input and output
+ecasignalview /dev/dsp /dev/dsp
+
+# corresponding ALSA command
+ecasignalview alsa,default alsa,default
+\end{verbatim}
+
+Ecasignalview command-line options allow you to fine-tune
+the way monitoring is done:
+
+\begin{verbatim}
+# increased refresh rate 20Hz
+ecasignalview -r:50 /dev/dsp null
+
+# larger buffersize (1024 samples)
+ecasignalview -b:1024 /dev/dsp null
+
+# recording in mode 32bit/10channels/96000Hz with
+# interleaved channels 
+ecasignalview -f:s32,10,96000,i /dev/dsp null
+\end{verbatim}
+
+\subsubsection{Monitoring Non-realtime Sources}
+
+% FIXME: add text
+
+\subsubsection{Use with JACK}
+
+% FIXME: add text
+
+\subsubsection{Further Reading}
+
+See \texttt{ecatools(1)} man page for detailed listing of 
+available command-line options.
+
+% ----------------------------------------------------------------------
+\subsection{Ecatools}
+See \texttt{ecatools(1)} man page.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
 \section{Advanced features}
-
 
 % ----------------------------------------------------------------------
 \subsection{Audio loop devices}
@@ -545,11 +624,13 @@ case, both entry and close thresholds are ``5\%'' (peak volume).
 
 % ----------------------------------------------------------------------
 \subsection{LADSPA plugins}
+
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's 
 Simple Plugin API). See \texttt{ecasound(1)} man page and 
 the LADSPA web site at ``www.ladspa.org'' for more information.
 
 \subsubsection{Ecasound is not able to find any LADSPA plugins I have installed!}
+
 Just installing the LADSPA SDK - ``www.ladspa.org)(http://www.ladspa.org''
 - should be enough. The plugins themselves are stored in shared library 
 files (.so). They are usually stored in ``/usr/local/lib/ladspa''. To test 

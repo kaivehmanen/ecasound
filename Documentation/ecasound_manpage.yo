@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (16.06.2002)
+       (17.07.2002)
        ()
        (Multimedia software)
 
@@ -366,6 +366,11 @@ be amplified without clipping. The resulting percent value
 can be used as a parameter to -ea and -eas effects. Also prints 
 a statistics table containing info about stereo-image and
 how different sample values are used.
+
+dit(-evp)
+Peak amplitude watcher. Maintains peak information for 
+each processed channels. Peak information is resetted
+on every read.
 
 dit(-ezf)
 Finds the optimal value for DC-adjusting. You can use the result

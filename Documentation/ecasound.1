@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "16\&.06\&.2002" "" "Multimedia software" 
+.TH "ecasound" "1" "17\&.07\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -328,6 +328,11 @@ be amplified without clipping\&. The resulting percent value
 can be used as a parameter to -ea and -eas effects\&. Also prints 
 a statistics table containing info about stereo-image and
 how different sample values are used\&.
+.IP 
+.IP "-evp" 
+Peak amplitude watcher\&. Maintains peak information for 
+each processed channels\&. Peak information is resetted
+on every read\&.
 .IP 
 .IP "-ezf" 
 Finds the optimal value for DC-adjusting\&. You can use the result
