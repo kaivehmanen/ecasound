@@ -58,12 +58,18 @@ void AUDIO_IO_DB_BUFFER::reset(void)
 
 /**
  * Number of sample buffer available for reading.
+ *
+ * Note! As concurrent access is allowed by
+ *       the implement, the actual number of 
+ *       samples available for reading can
+ *       be greater than that reported by 
+ *       read_space().
  */
 int AUDIO_IO_DB_BUFFER::read_space(void)
 {
   int write = writeptr_rep.get();
   int read = readptr_rep.get();
-  
+
   if (write >= read)
     return(write - read);
   else
@@ -72,6 +78,12 @@ int AUDIO_IO_DB_BUFFER::read_space(void)
 
 /**
  * Number of sample buffers available for writing.
+ *
+ * Note! As concurrent access is allowed by
+ *       the implement, the actual number of 
+ *       samples available for writing can
+ *       be greater than that reported by 
+ *       write_space().
  */
 int AUDIO_IO_DB_BUFFER::write_space(void)
 {
@@ -86,10 +98,24 @@ int AUDIO_IO_DB_BUFFER::write_space(void)
     return(sbufs_rep.size() - 1);
 }
 
-void AUDIO_IO_DB_BUFFER::advance_read_pointer(void) {
+/**
+ * Increment the read pointer by one.
+ *
+ * Note! Cannot be called from multiple concurrent
+ *       execution contexts.
+ **/
+void AUDIO_IO_DB_BUFFER::advance_read_pointer(void)
+{
   readptr_rep.set((readptr_rep.get() + 1) % sbufs_rep.size());
 }
 
-void AUDIO_IO_DB_BUFFER::advance_write_pointer(void) {
+/**
+ * Increment the write pointer by one.
+ *
+ * Note! Cannot be called from multiple concurrent
+ *       execution contexts.
+ **/
+void AUDIO_IO_DB_BUFFER::advance_write_pointer(void)
+{
   writeptr_rep.set((writeptr_rep.get() + 1) % sbufs_rep.size());
 }
