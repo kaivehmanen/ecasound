@@ -79,8 +79,8 @@ It's probably the easiest and the most straigthforward way to
 install this software. 
 
 If you need to compile ecasound, the file 'INSTALL' contains detailed 
-instructions. To compile from rpm source packages, "rpm --rebuild 
-ecasound-x.y.x.src.rpm".
+instructions. To create rpm source and binary packages, issue "rpm 
+-ta ecasound-x.y.x.tar.gz".
 
 -----------------------------------------------------------------------
  Documentation
