@@ -104,6 +104,11 @@ case "$host" in
 		  echo "Sun Workshop C++ compiler detected. Enabling static template instantation."
 	       fi
                ;;
+	alpha*-*-linux-*)
+	       CFLAGS="$CFLAGS -mieee"
+	       CXXFLAGS="$CXXFLAGS -mieee"
+	       echo "Enabling fully IEEE compliant floating-point code generation on Alpha."
+	       ;;
 	*)
 	       echo "Using generic settings for POSIX thread support."
 	       ;;

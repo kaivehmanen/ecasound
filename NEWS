@@ -23,6 +23,7 @@ Last officially released version is -*> v2.0.4 *-
         - fixed: a long-standing bug in ecaplay that caused it 
 		 to segfault with big playlists
 	- fixed: LADSPA_PATH env.variable not parsed correctly
+	- fixex: floating-point exceptions when run on alpha-linux
 24062002 (v2.1dev10)
 	- added: -G:mgrtype,optstring switch for setting 
 		 audio object manager level options
