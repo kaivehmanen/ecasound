@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 020501) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 050501) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,6 +17,11 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.0 *-
 
+??052001 (v2.0.1)
+	- fixed: disk buffers weren't properly flushed in -z:db mode 
+		 when changing or setting processing position
+	- fixed: bugs in assigning LADSPA plugin audio ports to 
+	  	 ecasound chain channels
 02052001 (v2.0.0)  -** stable release **-
 	- added: -klg - a generic linear envelope; a controller source
 		 that can be used to map custom envelopes to chain 
