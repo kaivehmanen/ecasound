@@ -23,6 +23,7 @@ import curses
 import re
 import socket
 import string
+import sys
 import time
 
 ecamonitor_remote_host = "localhost"
@@ -30,8 +31,7 @@ ecamonitor_remote_port = 2868
 ecamonitor_version     = "v20021031-5"
 
 # TODO:
-#  - add a ecamonitor.1 man page
-#  - add possibility to specify a port number
+#  - nothing at the moment
 
 # References:
 #  - http://www.python.org/doc/essays/styleguide.html
@@ -42,7 +42,7 @@ ecamonitor_version     = "v20021031-5"
 #  - http://py-howto.sourceforge.net/sockets/sockets.html
 #  - http://www.python.org/doc/2.2.2/lib/module-string.html
 
-def connect_to_server():
+def connect_to_server(remote_host, remote_port):
     """Connects to the ecasound server.
 
     @return Socket object for the connection.
@@ -51,7 +51,7 @@ def connect_to_server():
     while 1:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((ecamonitor_remote_host, ecamonitor_remote_port))
+            s.connect((remote_host, remote_port))
             s.setblocking(1)
             return(s)
 
@@ -133,6 +133,16 @@ def main():
 
     s = None
 
+    remote_host = ecamonitor_remote_host
+    remote_port = ecamonitor_remote_port
+
+    if len(sys.argv) > 1:
+        destination = sys.argv[1]
+        address = string.split(destination, ':')
+        remote_host = address[0]
+        if len(address) > 1:
+            remote_port = int(address[1])
+
     try:
         stdscr = curses.initscr()
         pad = curses.newpad(255, 80)
@@ -144,9 +154,10 @@ def main():
                 pad.addstr(0, 0, "ecamonitor " + ecamonitor_version, curses.A_BOLD)
 
                 if s == None:
-                    pad.addstr(2, 0, "No connection. Trying to connect to " + ecamonitor_remote_host + ":" + str(ecamonitor_remote_port) + ".\n")
+                    pad.addstr(2, 0, "No connection. Trying to connect to " + remote_host + ":" + str(remote_port) + ".\n")
                     pad.refresh(0, 0, 0, 0, stdscr.getmaxyx()[0]-1, stdscr.getmaxyx()[1]-1)
-                    s = connect_to_server()
+                    #time.sleep(3)
+                    s = connect_to_server(remote_host, remote_port)
                     pad.addstr(3, 0, "Connection established.\n")
                     pad.refresh(0, 0, 0, 0, stdscr.getmaxyx()[0]-1, stdscr.getmaxyx()[1]-1)
                     pad.addstr(1, 0, "")
