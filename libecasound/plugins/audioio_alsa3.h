@@ -43,14 +43,17 @@ class ALSA_PCM_DEVICE_06X : public AUDIO_IO_DEVICE {
   bool is_triggered_rep;
   bool is_prepared_rep;
   bool using_plugin_rep;
+  bool trigger_request_rep;
 
   void open_device(void);
   void get_pcm_info(void);
-  void get_pcm_hw_info(void);
+  void get_pcm_hw_info(snd_pcm_hw_info_t* pcm_hw_info_rep);
   void set_audio_format_params(void);
   void fill_and_set_hw_params(void);
   void fill_and_set_sw_params(void);
   void print_pcm_info(void);
+  void handle_xrun_capture(void);
+  void handle_xrun_playback(void);
 
  public:
 
