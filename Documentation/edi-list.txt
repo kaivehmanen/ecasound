@@ -83,7 +83,7 @@ xx.xx.2001 no history information
          - submitted: kaiv, 29.09.2002
 (edi-29): Ecamonitor - ecasound monitor client implemented using NetECI.
          - submitted: kaiv, 29.09.2002
-(edi-30): Turning libecasound and libkvutils into shared libraries.
+(edi-30): Turning libecasound and libkvutils into static libraries.
          - submitted: kaiv, 08.10.2002
 
 -----------------------------------------------------------------------
