@@ -24,9 +24,9 @@
 #include <qpushbutton.h>
 #include <qaccel.h>
 
-#include "qstringdialog.h"
+#include "qestringdialog.h"
 
-QStringDialog::QStringDialog (const QString& prompt, QWidget *parent, const char *name) 
+QEStringDialog::QEStringDialog (const QString& prompt, QWidget *parent, const char *name) 
   : QDialog(parent, name, true) {
 
   setCaption("Input - " + prompt);
@@ -65,12 +65,12 @@ QStringDialog::QStringDialog (const QString& prompt, QWidget *parent, const char
 		 SLOT(inputGiven()));
 }
 
-void QStringDialog::inputGiven(void) {
+void QEStringDialog::inputGiven(void) {
   input_text = tekstirivi->text();
   accept();
 }
 
-void QStringDialog::keyPressEvent(QKeyEvent* kevent) {
+void QEStringDialog::keyPressEvent(QKeyEvent* kevent) {
   switch(tolower(kevent->ascii())) {
   case 'c': 
     {
