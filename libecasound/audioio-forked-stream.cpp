@@ -321,6 +321,8 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
  */
 void AUDIO_IO_FORKED_STREAM::clean_child(void)
 {
+  if (fd_rep > 0) ::close(fd_rep);
+
   if (pid_of_child_rep > 0) {
     kill(pid_of_child_rep, SIGTERM);
     if (::getpid() == pid_of_parent_rep) {
@@ -331,7 +333,6 @@ void AUDIO_IO_FORKED_STREAM::clean_child(void)
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "WARNING: Parent-pid changed!");
     }
   }
-  if (fd_rep > 0) ::close(fd_rep);
   if (tmp_file_created_rep == true) {
     ::remove(tmpfile_repp.c_str());
   }
