@@ -3,16 +3,8 @@
 
 #include <vector>
 #include <string>
-#include <map>
-#include <pthread.h>
 
-#include <kvutils/kvutils.h>
 #include <kvutils/com_line.h>
-#include <kvutils/value_queue.h>
-
-#include "samplebuffer.h"
-
-#include "eca-resources.h"
 #include "eca-error.h"
 
 class AUDIO_IO;
@@ -20,20 +12,17 @@ class ECA_CHAIN;
 class ECA_CHAINSETUP;
 
 /**
- * Ecasound runtime setup and parameters.
+ * Class representing a set of chainsetups. Provided
+ * functionality includes creating, removing, 
+ * selecting and connecting of chainsetups. 
  *
- * Notes: This class is closely tied to 
- *        the ECA_PROCESSOR and ECA_CONTROL classes.
+ * Notes: Friendship access to data members is 
+ *        allowed for the ECA_CONTROL and 
+ *        ECA_ENGINE classes.
  */
 class ECA_SESSION {
 
  public:
-
-  enum Engine_status { ep_status_running,
-		       ep_status_stopped, 
-		       ep_status_finished,
-		       ep_status_error,
-		       ep_status_notready };
 
   // --
   // type definitions and constants
@@ -41,7 +30,7 @@ class ECA_SESSION {
   friend class ECA_CONTROL_BASE;
   friend class ECA_CONTROL_OBJECTS;
   friend class ECA_CONTROL;
-  friend class ECA_PROCESSOR;
+  friend class ECA_ENGINE;
 
  public:
 
@@ -65,12 +54,9 @@ class ECA_SESSION {
 
  private:
 
-  ECA_RESOURCES ecaresources;
-
   // ---
   // Status data
   // ---
-  Engine_status ep_status_rep;
   std::vector<ECA_CHAINSETUP*> chainsetups_rep;
 
   ECA_CHAINSETUP* connected_chainsetup_repp;
@@ -166,21 +152,12 @@ class ECA_SESSION {
   std::vector<std::string> chainsetup_names(void) const;
 
   void update_controller_sources(void);
-  void status(Engine_status status);
-
-  // ---
-  // Status/info functions
-  // ---
-  Engine_status status(void) const;
 
   // ---
   // Status data
   // ---
   bool iactive_rep;          // Should engine use 'cqueue'?
 
-  VALUE_QUEUE ecasound_queue_rep;
-  pthread_cond_t *ecasound_stop_cond_repp;
-  pthread_mutex_t *ecasound_stop_mutex_repp;
 
   // --
   // Make sure that objects of this class aren't copy constucted/assigned

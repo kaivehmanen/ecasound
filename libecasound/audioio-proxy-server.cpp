@@ -68,6 +68,7 @@ void* start_proxy_server_io_thread(void *ptr) {
  * Constructor.
  */
 AUDIO_IO_PROXY_SERVER::AUDIO_IO_PROXY_SERVER (void) { 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) constructor");
   buffercount_rep = buffercount_default;
   buffersize_rep = buffersize_default;
   samplerate_rep = SAMPLE_SPECS::sample_rate_default;
@@ -97,6 +98,7 @@ AUDIO_IO_PROXY_SERVER::AUDIO_IO_PROXY_SERVER (void) {
  * Destructor. Doesn't delete any client objects.
  */
 AUDIO_IO_PROXY_SERVER::~AUDIO_IO_PROXY_SERVER(void) { 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) destructor");
   stop_request_rep.set(1);
   exit_request_rep.set(1);
   exit_ok_rep.set(0);
@@ -116,6 +118,7 @@ AUDIO_IO_PROXY_SERVER::~AUDIO_IO_PROXY_SERVER(void) {
  * Starts the proxy server.
  */
 void AUDIO_IO_PROXY_SERVER::start(void) { 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) start");
   if (thread_running_rep != true) {
     int ret = pthread_create(&io_thread_rep,
 			     0,
@@ -141,15 +144,16 @@ void AUDIO_IO_PROXY_SERVER::start(void) {
   for(unsigned int p = 0; p < clients_rep.size(); p++) {
     buffers_rep[p]->finished_rep.set(0);
   }
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audio_io_proxy_server) starting processing");
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audio_io_proxy_server) starting processing");
 }
 
 /**
  * Stops the proxy server.
  */
 void AUDIO_IO_PROXY_SERVER::stop(void) { 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) stop");
   stop_request_rep.set(1);
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audio_io_proxy_server) stopping processing");
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audio_io_proxy_server) stopping processing");
 }
 
 /**
@@ -173,6 +177,7 @@ bool AUDIO_IO_PROXY_SERVER::is_full(void) const {
  * that all its buffers are full.
  */
 void AUDIO_IO_PROXY_SERVER::wait_for_full(void) {
+  wait_for_full_debug_rep.set(1);
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_full entry");
   ::pthread_mutex_lock(&full_mutex_rep);
   if (full_rep.get() == 0) 
@@ -180,6 +185,7 @@ void AUDIO_IO_PROXY_SERVER::wait_for_full(void) {
 			&full_mutex_rep);
   pthread_mutex_unlock(&full_mutex_rep);
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_full ok");
+  wait_for_full_debug_rep.set(0);
 }
 
 /**
@@ -216,11 +222,13 @@ void AUDIO_IO_PROXY_SERVER::wait_for_flush(void) {
  * are fulls.
  */
 void AUDIO_IO_PROXY_SERVER::signal_full(void) {
-  //  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_full entry");
+  if (wait_for_full_debug_rep.get() == 1)
+    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_full entry");
   pthread_mutex_lock(&full_mutex_rep);
   pthread_cond_signal(&full_cond_rep);
   pthread_mutex_unlock(&full_mutex_rep);
-  //  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_full ok");
+  if (wait_for_full_debug_rep.get() == 1)
+    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_full ok");
 }
 
 /**
@@ -228,10 +236,11 @@ void AUDIO_IO_PROXY_SERVER::signal_full(void) {
  * stopped.
  */
 void AUDIO_IO_PROXY_SERVER::signal_stop(void) {
-  //  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_stop");
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_stop entry");
   pthread_mutex_lock(&stop_mutex_rep);
   pthread_cond_signal(&stop_cond_rep);
   pthread_mutex_unlock(&stop_mutex_rep);
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_stop ok");
 }
 
 /**
@@ -262,7 +271,7 @@ void AUDIO_IO_PROXY_SERVER::set_buffer_defaults(int buffers,
  */
 void AUDIO_IO_PROXY_SERVER::register_client(AUDIO_IO* aobject) { 
   clients_rep.push_back(aobject);
-  ecadebug->msg(ECA_DEBUG::user_objects, 
+  ecadebug->msg(ECA_DEBUG::system_objects, 
 		"(audioio-proxy-server) Registering client " +
 		kvu_numtostr(clients_rep.size() - 1) +
 		". Buffer count " +
@@ -282,6 +291,7 @@ void AUDIO_IO_PROXY_SERVER::register_client(AUDIO_IO* aobject) {
  * resources are freed during this call.
  */
 void AUDIO_IO_PROXY_SERVER::unregister_client(AUDIO_IO* aobject) { 
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) unregister_client " + aobject->label() + ".");
   clients_rep[client_map_rep[aobject]] = 0;
 }
 
@@ -303,7 +313,7 @@ AUDIO_IO_PROXY_BUFFER* AUDIO_IO_PROXY_SERVER::get_client_buffer(AUDIO_IO* aobjec
  * Slave thread.
  */
 void AUDIO_IO_PROXY_SERVER::io_thread(void) { 
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audio_io_proxy_server) Hey, in the I/O loop!");
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audio_io_proxy_server) Hey, in the I/O loop!");
   //  long int sleep_counter = 0;
   int prev_processed = 0;
   int processed = 0;

@@ -29,7 +29,7 @@
 #include <kvutils/value_queue.h>
 #include <kvutils/temporary_file_directory.h>
 
-#include "eca-main.h"
+#include "eca-engine.h"
 #include "eca-session.h"
 #include "eca-chainop.h"
 #include "eca-chainsetup.h"
@@ -297,7 +297,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
 	ecadebug->msg("(eca-controller) Can't connect; edited chainsetup not valid.");
 	select_chainsetup(origname);
 	connect_chainsetup();
-	session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_setpos, pos);
+	engine_repp->command(ECA_ENGINE::ep_setpos, pos);
 	if (is_connected() == true) {
 	  if (restart == true) start();
 	}
@@ -305,7 +305,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
       }
       else {
 	connect_chainsetup();
-	session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_setpos, pos);
+	engine_repp->command(ECA_ENGINE::ep_setpos, pos);
 	if (is_connected() == true) {
 	  select_chainsetup(origname);
 	  remove_chainsetup();
@@ -478,10 +478,10 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position(double seconds) {
 
   if (connected_chainsetup() == selected_chainsetup()) {
     if (seconds < 0)
-      send_chain_commands_to_engine(ECA_PROCESSOR::ep_rewind, 
+      send_chain_commands_to_engine(ECA_ENGINE::ep_rewind, 
 				    -seconds);
     else
-      send_chain_commands_to_engine(ECA_PROCESSOR::ep_forward,
+      send_chain_commands_to_engine(ECA_ENGINE::ep_forward,
 				    seconds);
   }
   else {
@@ -502,7 +502,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds) {
   // --------
 
   if (connected_chainsetup() == selected_chainsetup()) {
-    send_chain_commands_to_engine(ECA_PROCESSOR::ep_setpos, seconds);
+    send_chain_commands_to_engine(ECA_ENGINE::ep_setpos, seconds);
   }
   else {
     selected_chainsetup_repp->set_position_exact(seconds);
@@ -948,8 +948,8 @@ void ECA_CONTROL_OBJECTS::send_chain_commands_to_engine(int command, double valu
 	p != selected_chainsetup_repp->chains.size();
 	p++) {
       if (selected_chainsetup_repp->chains[p]->name() == *o) {
-	session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_c_select, p);
-	session_repp->ecasound_queue_rep.push_back(command, value);
+	engine_repp->command(ECA_ENGINE::ep_c_select, p);
+	engine_repp->command(static_cast<ECA_ENGINE::Engine_command_t>(command), value);
 	break;
       }
     }
@@ -970,7 +970,7 @@ void ECA_CONTROL_OBJECTS::toggle_chain_muting(void) {
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
   if (connected_chainsetup() == selected_chainsetup()) {
-    send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_mute, 0.0);
+    send_chain_commands_to_engine(ECA_ENGINE::ep_c_mute, 0.0);
   } 
   else {
     selected_chainsetup_repp->toggle_chain_muting();
@@ -990,7 +990,7 @@ void ECA_CONTROL_OBJECTS::toggle_chain_bypass(void) {
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
   if (connected_chainsetup() == selected_chainsetup()) {
-    send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_bypass, 0.0);
+    send_chain_commands_to_engine(ECA_ENGINE::ep_c_bypass, 0.0);
   }
   else {
     selected_chainsetup_repp->toggle_chain_bypass();
@@ -1010,7 +1010,7 @@ void ECA_CONTROL_OBJECTS::rewind_chains(double pos_in_seconds) {
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
   if (connected_chainsetup() == selected_chainsetup()) {
-    send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_rewind, pos_in_seconds);
+    send_chain_commands_to_engine(ECA_ENGINE::ep_c_rewind, pos_in_seconds);
   }
   else {
     change_position_chains(-pos_in_seconds);
@@ -1030,7 +1030,7 @@ void ECA_CONTROL_OBJECTS::forward_chains(double pos_in_seconds) {
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
   if (connected_chainsetup() == selected_chainsetup()) {
-    send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_forward, pos_in_seconds);
+    send_chain_commands_to_engine(ECA_ENGINE::ep_c_forward, pos_in_seconds);
   }
   else {
     change_position_chains(pos_in_seconds);
@@ -1053,7 +1053,7 @@ void ECA_CONTROL_OBJECTS::change_position_chains(double change_in_seconds) {
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
   if (connected_chainsetup() == selected_chainsetup()) {
-    send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_setpos, change_in_seconds);
+    send_chain_commands_to_engine(ECA_ENGINE::ep_c_setpos, change_in_seconds);
   }
   else {
     const std::vector<std::string>& schains = selected_chainsetup_repp->selected_chains();
@@ -1089,7 +1089,7 @@ void ECA_CONTROL_OBJECTS::set_position_chains(double pos_in_seconds) {
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
   if (connected_chainsetup() == selected_chainsetup()) {
-    send_chain_commands_to_engine(ECA_PROCESSOR::ep_c_setpos, pos_in_seconds);
+    send_chain_commands_to_engine(ECA_ENGINE::ep_c_setpos, pos_in_seconds);
   }
   else {
     const std::vector<std::string>& schains = selected_chainsetup_repp->selected_chains();
@@ -1297,19 +1297,37 @@ ECA_AUDIO_FORMAT ECA_CONTROL_OBJECTS::get_audio_format(AUDIO_IO* aobj) const {
 
 /**
  * Sets the default audio format to the match the currently 
- * select audio object's audio format.
+ * select audio input's audio format.
  *
  *  @pre is_selected() == true
  *  @pre connected_chainsetup() != selected_chainsetup()
  *  @pre selected_audio_object_repp != 0
  */
-void ECA_CONTROL_OBJECTS::set_default_audio_format_to_selected(void) {
+void ECA_CONTROL_OBJECTS::set_default_audio_format_to_selected_input(void) {
   // --------
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
-  DBC_REQUIRE(get_audio_input() != 0 || get_audio_output() != 0);
+  DBC_REQUIRE(get_audio_input() != 0);
   // --------
-  set_default_audio_format(get_audio_format(selected_audio_object_repp));
+  set_default_audio_format(get_audio_format(get_audio_input()));
+
+}
+
+/**
+ * Sets the default audio format to the match the currently 
+ * select audio output's audio format.
+ *
+ *  @pre is_selected() == true
+ *  @pre connected_chainsetup() != selected_chainsetup()
+ *  @pre selected_audio_object_repp != 0
+ */
+void ECA_CONTROL_OBJECTS::set_default_audio_format_to_selected_output(void) {
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
+  DBC_REQUIRE(get_audio_output() != 0);
+  // --------
+  set_default_audio_format(get_audio_format(get_audio_output()));
 }
 
 /** 
@@ -1382,7 +1400,7 @@ void ECA_CONTROL_OBJECTS::add_default_output(void) {
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
-  add_audio_output(session_repp->ecaresources.resource("default-output"));
+  add_audio_output(resource_value("default-output"));
   ecadebug->msg("(eca-controller) Added default output to selected chains.");
 }
 
@@ -1652,7 +1670,7 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(const std::string& chainop_params) 
   }
 
   if (was_running == true)
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
+    engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 
 /**
@@ -1686,7 +1704,7 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   selected_chainsetup_repp->add_chain_operator(cotmp);
 
   if (was_running == true)
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
+    engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 
 /** 
@@ -1785,7 +1803,7 @@ void ECA_CONTROL_OBJECTS::remove_chain_operator(void) {
     selected_chainsetup_repp->chains[p]->remove_chain_operator();
 
   if (was_running == true)
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
+    engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 
 /**
@@ -1806,8 +1824,8 @@ void ECA_CONTROL_OBJECTS::select_chain_operator(int chainop_id) {
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
     if (selected_chainsetup() == connected_chainsetup()) {
-      session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_c_select, p);
-      session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_cop_select, chainop_id);
+      engine_repp->command(ECA_ENGINE::ep_c_select, p);
+      engine_repp->command(ECA_ENGINE::ep_cop_select, chainop_id);
     }
     if (chainop_id < selected_chainsetup_repp->chains[p]->number_of_chain_operators() + 1) {
       selected_chainsetup_repp->chains[p]->select_chain_operator(chainop_id);
@@ -1867,7 +1885,7 @@ void ECA_CONTROL_OBJECTS::select_chain_operator_parameter(int param) {
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
     if (selected_chainsetup() == connected_chainsetup()) {
-      session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_copp_select, param);
+      engine_repp->command(ECA_ENGINE::ep_copp_select, param);
     }
     else {
       selected_chainsetup_repp->active_chainop_param_index_rep = param;
@@ -1896,7 +1914,7 @@ void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(CHAIN_OPERATOR::parameter
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
     if (selected_chainsetup() == connected_chainsetup()) {
-      session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_copp_value, value);
+      engine_repp->command(ECA_ENGINE::ep_copp_value, value);
     }
     else {
       if (selected_chainsetup_repp->chains[p]->selected_chain_operator() > 0 &&
@@ -1980,7 +1998,7 @@ void ECA_CONTROL_OBJECTS::add_controller(const std::string& gcontrol_params) {
   }
 
   if (was_running == true)
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
+    engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 
 /**
@@ -2011,7 +2029,7 @@ void ECA_CONTROL_OBJECTS::select_controller(int controller_id) {
   }
   
   if (was_running == true)
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
+    engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 
 /**
@@ -2042,7 +2060,7 @@ void ECA_CONTROL_OBJECTS::remove_controller(void) {
   }
 
   if (was_running == true)
-    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
+    engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 }
 
 /** 

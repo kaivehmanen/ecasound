@@ -103,10 +103,6 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(void)
   ecadebug->control_flow("Chainsetup created (empty)");
   setup_name_rep = "";
   set_defaults();
-
-  // --------
-  DBC_ENSURE(buffersize() != 0);
-  // --------
 }
 
 /**
@@ -271,6 +267,7 @@ bool ECA_CHAINSETUP::is_valid_for_connection(void) const {
   }
   for(vector<CHAIN*>::const_iterator q = chains.begin(); q != chains.end();
       q++) {
+    // debug info printed in CHAIN::is_valid()
     if ((*q)->is_valid() == false) return(false);
   }
   return(true);
@@ -364,10 +361,17 @@ void ECA_CHAINSETUP::set_active_buffering_mode(void) {
 		  "(eca-chainsetup) Switching to direct mode.");
     switch_to_direct_mode();
   }
-  else if (proxy_clients_rep == 0 && double_buffering() == true) {
-    ecadebug->msg(ECA_DEBUG::system_objects,
-		  "(eca-chainsetup) Switching to proxy mode.");
-    switch_to_proxy_mode();
+  else if (double_buffering() == true) {
+    if (has_realtime_objects() != true) {
+      ecadebug->msg(ECA_DEBUG::system_objects,
+		    "(eca-chainsetup) No realtime objects; switching to direct mode.");
+      switch_to_direct_mode();
+    }
+    else if (proxy_clients_rep == 0) {
+      ecadebug->msg(ECA_DEBUG::system_objects,
+		    "(eca-chainsetup) Switching to proxy mode.");
+      switch_to_proxy_mode();
+    }
   }
   else {
     ecadebug->msg(ECA_DEBUG::system_objects,
@@ -865,7 +869,7 @@ void ECA_CHAINSETUP::add_output(AUDIO_IO* aio) {
   outputs.push_back(layerobj);
   outputs_direct_rep.push_back(aio);
   output_start_pos.push_back(0);
-  attach_output_to_selected_chains(aio);
+  attach_output_to_selected_chains(layerobj);
 
   // --------
   DBC_ENSURE(outputs.size() == old_outputs_size + 1);
@@ -1088,7 +1092,7 @@ bool ECA_CHAINSETUP::ok_audio_object_helper(const AUDIO_IO* aobj,
  * chain operators if necessary.
  *
  * This action is performed before connecting the chainsetup
- * to a engine object (for instance ECA_PROCESSOR). 
+ * to a engine object (for instance ECA_ENGINE). 
  * 
  * @post is_enabled() == true
  */
@@ -1155,9 +1159,9 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
 /**
  * Disable chainsetup. Closes all devices. 
  * 
-  * This action is performed before disconnecting the 
+ * This action is performed before disconnecting the 
  * chainsetup from a engine object (for instance 
- * ECA_PROCESSOR). 
+ * ECA_ENGINE). 
  * 
  * @post is_enabled() != true
  */
@@ -1258,6 +1262,8 @@ void ECA_CHAINSETUP::interpret_global_option (const string& arg) {
  */
 void ECA_CHAINSETUP::interpret_object_option (const string& arg) {
   // --------
+  // FIXME: this requirement is broken by eca-control.h (for 
+  //        adding effects on-the-fly, just stopping the engine)
   DBC_REQUIRE(is_enabled() != true);
   // --------
 

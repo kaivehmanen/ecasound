@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-control-base.cpp: Base class providing basic functionality
 //                       for controlling the ecasound library
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,17 +25,17 @@
 #include <algorithm>
 #include <pthread.h>
 #include <unistd.h>
-#include <sys/time.h>
 #include <signal.h>
 
 #include <kvutils/value_queue.h>
 #include <kvutils/message_item.h>
 #include <kvutils/dbc.h>
 
-#include "eca-main.h"
+#include "eca-engine.h"
 #include "eca-session.h"
 #include "eca-chainsetup.h"
 #include "eca-control-base.h"
+#include "eca-resources.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"
@@ -60,7 +60,7 @@ void* start_normal_thread(void *ptr) {
 ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession) {
   session_repp = psession;
   selected_chainsetup_repp = psession->selected_chainsetup_repp;
-  engine_started_rep = false;
+  engine_repp = 0;
 }
 
 ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void) {
@@ -75,28 +75,27 @@ ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void) {
  */
 void ECA_CONTROL_BASE::start(void) {
   // --------
-  // require:
-  assert(is_connected() == true);
+  DBC_REQUIRE(is_connected() == true);
   // --------
 
-  if (session_repp->status() == ECA_SESSION::ep_status_running) return;
+  if (is_engine_started() == true &&
+      engine_repp->status() == ECA_ENGINE::engine_status_running) return;
+
   ecadebug->control_flow("Controller/Processing started");
 
-//    while(::ecasound_queue.is_empty() == false) ::ecasound_queue.pop_front();
-  if (session_repp->status() == ECA_SESSION::ep_status_notready) {
+  if (is_engine_started() != true) {
     start_engine();
   }
 
-  if (is_engine_started() == false) {
+  if (is_engine_started() != true) {
     ecadebug->msg("(eca-controller) Can't start processing: couldn't start engine.");
     return;
   }  
 
-  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
+  engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 
   // --------
-  // ensure:
-  assert(is_engine_started() == true);
+  DBC_ENSURE(is_engine_started() == true);
   // --------
 }
 
@@ -107,15 +106,15 @@ void ECA_CONTROL_BASE::start(void) {
  * @pre is_connected() == true
  * @post is_finished() == true || 
  * @post (processing_started == true && is_running() != true) ||
- * @post (processing_started != true && session_repp->status() != ECA_SESSION::ep_status_stopped)
+ * @post (processing_started != true && engine_repp->status() != ECA_ENGINE::engine_status_stopped)
  */
 void ECA_CONTROL_BASE::run(void) {
   // --------
-  // require:
-  assert(is_connected() == true);
+  DBC_REQUIRE(is_connected() == true);
   // --------
 
-  if (session_repp->status() == ECA_SESSION::ep_status_running) return;
+  if (is_engine_started() == true &&
+      engine_repp->status() == ECA_ENGINE::engine_status_running) return;
 
   start();
 
@@ -128,7 +127,7 @@ void ECA_CONTROL_BASE::run(void) {
     ::nanosleep(&sleepcount, NULL);
     if (processing_started != true) {
       if (is_running() == true) processing_started = true;
-      else if (session_repp->status() != ECA_SESSION::ep_status_stopped) break;
+      else if (engine_repp->status() != ECA_ENGINE::engine_status_stopped) break;
     }
     else {
       if (is_running() != true) break;
@@ -138,10 +137,9 @@ void ECA_CONTROL_BASE::run(void) {
   ecadebug->control_flow("Controller/Processing finished");
 
   // --------
-  // ensure:
-  assert(is_finished() == true || 
-	 (processing_started == true && is_running() != true) ||
-	 (processing_started != true && session_repp->status() != ECA_SESSION::ep_status_stopped));
+  DBC_ENSURE(is_finished() == true || 
+	     (processing_started == true && is_running() != true) ||
+	     (processing_started != true && engine_repp->status() != ECA_ENGINE::engine_status_stopped));
   // --------
 }
 
@@ -153,13 +151,12 @@ void ECA_CONTROL_BASE::run(void) {
  */
 void ECA_CONTROL_BASE::stop(void) {
   // --------
-  // require:
-  assert(is_engine_started() == true);
+  DBC_REQUIRE(is_engine_started() == true);
   // --------
 
-  if (session_repp->status() != ECA_SESSION::ep_status_running) return;
+  if (engine_repp->status() != ECA_ENGINE::engine_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped");
-  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_stop, 0.0);
+  engine_repp->command(ECA_ENGINE::ep_stop, 0.0);
 
   // --------
   // ensure:
@@ -177,28 +174,20 @@ void ECA_CONTROL_BASE::stop(void) {
  */
 void ECA_CONTROL_BASE::stop_on_condition(void) {
   // --------
-  // require:
-  assert(is_engine_started() == true);
+  DBC_REQUIRE(is_engine_started() == true);
   // --------
 
-  if (session_repp->status() != ECA_SESSION::ep_status_running) return;
+  if (engine_repp->status() != ECA_ENGINE::engine_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped (cond)");
-  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_stop, 0.0);
-  struct timeval now;
-  gettimeofday(&now, 0);
-  struct timespec sleepcount;
-  sleepcount.tv_sec = now.tv_sec + 60;
-  sleepcount.tv_nsec = now.tv_usec * 1000;
-  ::pthread_mutex_lock(session_repp->ecasound_stop_mutex_repp);
-  ::pthread_cond_timedwait(session_repp->ecasound_stop_cond_repp, 
-			   session_repp->ecasound_stop_mutex_repp, 
-			   &sleepcount);
+  engine_repp->command(ECA_ENGINE::ep_stop, 0.0);
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-controller-base) Received stop-cond");
-  ::pthread_mutex_unlock(session_repp->ecasound_stop_mutex_repp);
+
+  // --
+  // blocks until engine has stopped (or 60sec has passed);
+  engine_repp->wait_for_stop(60);
 
   // --------
-  // ensure:
-  assert(is_running() == false); 
+  DBC_ENSURE(is_running() == false); 
   // --------
 }
 
@@ -211,21 +200,19 @@ void ECA_CONTROL_BASE::quit(void) { close_engine(); }
  * Starts the processing engine.
  *
  * @pre is_connected() == true
+ * @pre is_engine_started() != true
  */
 void ECA_CONTROL_BASE::start_engine(void) {
   // --------
-  // require:
-  assert(is_connected() == true);
+  DBC_REQUIRE(is_connected() == true);
+  DBC_REQUIRE(is_engine_started() != true);
   // --------
-
-  if (engine_started_rep == true) {
-    ecadebug->msg(ECA_DEBUG::info, "(eca-controller) Can't execute; processing engine already running!");
-    return;
-  }
 
   unsigned int p = session_repp->connected_chainsetup_repp->first_selected_chain();
   if (p < session_repp->connected_chainsetup_repp->chains.size())
     session_repp->connected_chainsetup_repp->active_chain_index_rep = p;
+
+  engine_repp = new ECA_ENGINE (session_repp);
 
   pthread_attr_t th_attr;
   pthread_attr_init(&th_attr);
@@ -235,36 +222,41 @@ void ECA_CONTROL_BASE::start_engine(void) {
 				   static_cast<void *>(this));
   if (retcode_rep != 0) {
     ecadebug->msg(ECA_DEBUG::info, "Warning! Unable to create a new thread for engine.");
-    engine_started_rep = false;
+    engine_repp = 0;
   }
-  else
-    engine_started_rep = true;
 }
 
 /**
  * Routine used for launching the engine.
  */
 void ECA_CONTROL_BASE::run_engine(void) {
-  ECA_PROCESSOR epros (session_repp);
-  epros.exec();
+  // --
+  // launch the engine - blocks until processing 
+  // has stopped (or exit command is issued)
+  engine_repp->exec();
+
+  delete engine_repp;
+  engine_repp = 0;
 }
 
 /**
  * Closes the processing engine.
  *
  * ensure:
- *  is_engine_started() == false
+ *  is_engine_started() != true
  */
 void ECA_CONTROL_BASE::close_engine(void) {
-  if (engine_started_rep != true) return;
-  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_exit, 0.0);
-  ::pthread_join(th_cqueue_rep,NULL);
-  engine_started_rep = false;
+  if (is_engine_started() != true) return;
 
-  // --------
-  // ensure:
-  assert(is_engine_started() == false);
-  // --------
+  engine_repp->command(ECA_ENGINE::ep_exit, 0.0);
+
+  // --
+  // wait until run_engine() is finished
+  ::pthread_join(th_cqueue_rep,NULL);
+
+  // ---
+  DBC_ENSURE(is_engine_started() != true);
+  // ---
 }
 
 /**
@@ -298,16 +290,22 @@ bool ECA_CONTROL_BASE::is_selected(void) const { return(selected_chainsetup_repp
 /**
  * Returns true if processing engine is running.
  */
-bool ECA_CONTROL_BASE::is_running(void) const { return(session_repp->status() == ECA_SESSION::ep_status_running); } 
+bool ECA_CONTROL_BASE::is_running(void) const { return(is_engine_started() == true && engine_repp->status() == ECA_ENGINE::engine_status_running); } 
 
 /**
  * Returns true if engine has finished processing. Engine state is 
  * either "finished" or "error".
  */
 bool ECA_CONTROL_BASE::is_finished(void) const { 
-  return(session_repp->status() == ECA_SESSION::ep_status_finished ||
-	 session_repp->status() == ECA_SESSION::ep_status_error); 
+  return(is_engine_started() == true && 
+	 (engine_repp->status() == ECA_ENGINE::engine_status_finished ||
+	  engine_repp->status() == ECA_ENGINE::engine_status_error)); 
 } 
+
+std::string ECA_CONTROL_BASE::resource_value(const std::string& key) const { 
+  ECA_RESOURCES ecarc;
+  return(ecarc.resource(key)); 
+}
 
 void ECA_CONTROL_BASE::toggle_multitrack_mode(bool v) { 
   if (selected_chainsetup_repp != 0)
@@ -370,32 +368,35 @@ double ECA_CONTROL_BASE::position_in_seconds_exact(void) const {
  * Return info about engine status.
  */
 string ECA_CONTROL_BASE::engine_status(void) const {
-  switch(session_repp->status()) {
-  case ECA_SESSION::ep_status_running: 
-    {
-    return("running"); 
-    }
-  case ECA_SESSION::ep_status_stopped: 
-    {
-    return("stopped"); 
-    }
-  case ECA_SESSION::ep_status_finished:
-    {
-    return("finished"); 
-    }
-  case ECA_SESSION::ep_status_error:
-    {
-    return("error"); 
-    }
-  case ECA_SESSION::ep_status_notready: 
-    {
-    return("not ready"); 
-    }
-  default: 
-    {
-    return("unknown status"); 
+  if (is_engine_started() == true) {
+    switch(engine_repp->status()) {
+    case ECA_ENGINE::engine_status_running: 
+      {
+	return("running"); 
+      }
+    case ECA_ENGINE::engine_status_stopped: 
+      {
+	return("stopped"); 
+      }
+    case ECA_ENGINE::engine_status_finished:
+      {
+	return("finished"); 
+      }
+    case ECA_ENGINE::engine_status_error:
+      {
+	return("error"); 
+      }
+    case ECA_ENGINE::engine_status_notready: 
+      {
+	return("not ready"); 
+      }
+    default: 
+      {
+	return("unknown status"); 
+      }
     }
   }
+  return("not started");
 }
 
 /**

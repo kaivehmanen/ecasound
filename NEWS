@@ -49,14 +49,10 @@ Last officially released version is -*> v2.0.3 *-
 		   with invalid or incorrect parameters
 	- changed: use of libstdc++ namespace now explicitly
 		   marked using the 'std::' prefix [rpolton]
-	- changed: -z:intbuf made the default once again
-	- changed: ecasoundrc - default-to-internal-buffering
-		   renamed to default-to-max-internal-buffering
-		   to avoid conflicts with the old defaults
 	- changed: new layout for saved ecs-files
 	- changed: docs - converted ecasound user's and 
 		   programmer's guide from yodl to latex 
-	- changed: shocking changes to startup printouts
+	- changed: shocking changes to startup printouts :)
 	- fixed: gcc3.x fixes to ALSA 0.5.x plugin [juekawa]
 	- fixed: problems with ALSA 0.9beta7 (dlopen() issue)
 	- fixed: minor samplerated bug with LADSPA plugins
@@ -66,7 +62,7 @@ Last officially released version is -*> v2.0.3 *-
 		 circumstances
 	- fixed: ecasound.spec - dropped the hardcoded python 
 	         module path that was passed to configure
-	- fixed: seg.fault if ppening wav/raw files for 
+	- fixed: seg.fault if opening wav/raw files for 
 		 output failed for some reason (access
 		 denied, etc)
 ????2001 (v2.0.4)  -** stable release **-

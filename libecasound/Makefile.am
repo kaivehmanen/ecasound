@@ -107,7 +107,7 @@ ecasound_general_include = 	\
 			eca-error.h \
 			eca-debug.h \
 			eca-comhelp.h \
-			eca-main.h \
+			eca-engine.h \
 			eca-session.h \
 			eca-resources.h \
 			resource-file.h \
@@ -224,7 +224,7 @@ ecasound_controller_src = \
 			generic-linear-envelope.cpp
 
 ecasound_general_src = 	eca-chain.cpp \
-			eca-main.cpp \
+			eca-engine.cpp \
 			eca-session.cpp \
 			eca-resources.cpp \
 			resource-file.cpp \

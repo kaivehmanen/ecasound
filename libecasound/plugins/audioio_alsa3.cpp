@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include <kvutils/dbc.h>
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
 #include <kvutils.h>
@@ -76,7 +77,6 @@ ALSA_PCM_DEVICE_06X::ALSA_PCM_DEVICE_06X (int card,
 
 ALSA_PCM_DEVICE_06X::~ALSA_PCM_DEVICE_06X(void) { 
   if (is_open() == true) close(); 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) destruct");
 
   if (io_mode() != io_read) {
     if (underruns_rep != 0) {
@@ -99,10 +99,10 @@ ALSA_PCM_DEVICE_06X::~ALSA_PCM_DEVICE_06X(void) {
 
 void ALSA_PCM_DEVICE_06X::allocate_structs(void) {
   int err = snd_pcm_hw_params_malloc(&pcm_hw_params_repp);
-  assert(!err);
+  DBC_CHECK(!err);
 
   err = snd_pcm_sw_params_malloc(&pcm_sw_params_repp);
-  assert(!err);
+  DBC_CHECK(!err);
 
 //    if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected,
 //  				 "AUDIOIO-ALSA3: Error when allocating memory: " + string(snd_strerror(err))));
@@ -332,8 +332,10 @@ void ALSA_PCM_DEVICE_06X::fill_and_set_sw_params(void) {
 }
 
 void ALSA_PCM_DEVICE_06X::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
-  assert(is_open() == false);
-  assert(is_triggered_rep == false);
+  // --
+  DBC_REQUIRE(is_open() == false);
+  DBC_REQUIRE(is_triggered_rep == false);
+  // --
 
   open_device();
   set_audio_format_params();
@@ -347,8 +349,10 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
 }
 
 void ALSA_PCM_DEVICE_06X::stop(void) {
-  assert(is_open() == true);
-  assert(is_prepared_rep == true);
+  // --
+  DBC_REQUIRE(is_open() == true);
+  DBC_REQUIRE(is_prepared_rep == true);
+  // --
 
   AUDIO_IO_DEVICE::stop();
   ::snd_pcm_drop(audio_fd_repp); // non-blocking 
@@ -361,7 +365,9 @@ void ALSA_PCM_DEVICE_06X::stop(void) {
 }
 
 void ALSA_PCM_DEVICE_06X::close(void) {
-  assert(is_open() == true);
+  // --
+  DBC_REQUIRE(is_open() == true);
+  // --
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) close");
 
@@ -369,13 +375,15 @@ void ALSA_PCM_DEVICE_06X::close(void) {
   ::snd_pcm_close(audio_fd_repp);
   toggle_open_state(false);
 
-  assert(is_triggered_rep == false);
+  DBC_REQUIRE(is_triggered_rep == false);
 }
 
 void ALSA_PCM_DEVICE_06X::prepare(void) {
-  assert(is_triggered_rep == false);
-  assert(is_open() == true);
-  assert(is_prepared_rep == false);
+  // --
+  DBC_REQUIRE(is_triggered_rep == false);
+  DBC_REQUIRE(is_open() == true);
+  DBC_REQUIRE(is_prepared_rep == false);
+  // --
 
   AUDIO_IO_DEVICE::prepare();
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) prepare");
@@ -387,9 +395,11 @@ void ALSA_PCM_DEVICE_06X::prepare(void) {
 }
 
 void ALSA_PCM_DEVICE_06X::start(void) {
-  assert(is_triggered_rep == false);
-  assert(is_open() == true);
-  assert(is_prepared_rep == true);
+  // --
+  DBC_REQUIRE(is_triggered_rep == false);
+  DBC_REQUIRE(is_open() == true);
+  DBC_REQUIRE(is_prepared_rep == true);
+  // --
 
   AUDIO_IO_DEVICE::start();
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa3) start");
@@ -400,7 +410,10 @@ void ALSA_PCM_DEVICE_06X::start(void) {
 
 long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer, 
 					   long int samples) {
-  assert(samples <= fragment_size_rep);
+  // --
+  DBC_REQUIRE(samples <= fragment_size_rep);
+  // --
+
   long int realsamples = 0;
 
   if (interleaved_channels() == true) {

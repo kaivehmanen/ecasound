@@ -10,6 +10,7 @@
 #include "eca-iamode-parser.h"
 
 class ECA_CHAINSETUP;
+class ECA_ENGINE;
 
 /**
  * Base class providing basic functionality for controlling the 
@@ -22,10 +23,10 @@ class ECA_CONTROL_BASE {
 
   int retcode_rep;
   pthread_t th_cqueue_rep;
-  bool engine_started_rep;
 
  protected:
 
+  ECA_ENGINE* engine_repp;
   ECA_SESSION* session_repp;
   ECA_CHAINSETUP* selected_chainsetup_repp;
 
@@ -103,7 +104,7 @@ class ECA_CONTROL_BASE {
   /**
    * Get resource values from ~/.ecasoundrc
    */
-  std::string resource_value(const std::string& key) const { return session_repp->ecaresources.resource(key); }
+  std::string resource_value(const std::string& key) const;
 
   // -------------------------------------------------------------------
   // Modify session
@@ -127,7 +128,7 @@ class ECA_CONTROL_BASE {
   /**
    * Returns true if engine has been started. 
    */
-  bool is_engine_started(void) const { return(engine_started_rep); }
+  bool is_engine_started(void) const { return(engine_repp != 0); }
  std::string engine_status(void) const;
 
   ECA_CONTROL_BASE (ECA_SESSION* psession);

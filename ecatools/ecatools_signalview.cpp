@@ -33,7 +33,7 @@
 #include <eca-debug.h>
 #include <eca-error.h>
 #include <eca-control.h>
-#include <eca-main.h>
+#include <eca-engine.h>
 #include <eca-session.h>
 #include <audiofx_analysis.h>
 #include <audiofx_amplitude.h>
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
       exit(0);
     }
     if (format_string.size() == 0) {
-      ectrl.set_default_audio_format_to_selected();
+      ectrl.set_default_audio_format_to_selected_input();
       aio_params = ectrl.default_audio_format();
       ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
     }

@@ -42,12 +42,10 @@ AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver
   xruns_rep = 0;
   finished_rep = false;
 
-  if (false) {
-    ecadebug->msg(ECA_DEBUG::user_objects, 
-		  std::string("(audioio-buffered-proxy) Proxy created for ") +
-		  child_repp->label() +
-		  ".");
-  }
+  ecadebug->msg(ECA_DEBUG::user_objects, 
+		std::string("(audioio-buffered-proxy) Proxy created for ") +
+		child_repp->label() +
+		".");
 
   if (child_repp->is_open() == true) {
     // just in case the child object has already been configured
@@ -65,6 +63,8 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
     pbuffer_repp->io_mode_rep = AUDIO_IO::io_write;
 
   set_audio_format(child_repp->audio_format());
+
+  position_in_samples(child_repp->position_in_samples());
   
   int channels = child_repp->channels();
   int buffersize = child_repp->buffersize();
@@ -79,15 +79,16 @@ void AUDIO_IO_BUFFERED_PROXY::fetch_child_data(void) {
  * server.
  */
 AUDIO_IO_BUFFERED_PROXY::~AUDIO_IO_BUFFERED_PROXY(void) {
-  if (child_repp != 0) {
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) destructor " + label() + ".");
+  if (pbuffer_repp != 0) {
     pserver_repp->unregister_client(child_repp);
-  
-    if (free_child_rep == true) {
-      delete child_repp;
-    }
-    child_repp = 0;
   }
   
+  if (free_child_rep == true) {
+    delete child_repp;
+  }
+  child_repp = 0;
+    
   if (xruns_rep > 0) 
     std::cerr << "(audioio-buffered-proxy) There were total " << xruns_rep << " xruns." << std::endl;
 }
@@ -171,6 +172,7 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
  * Seeks to the current position.
  */
 void AUDIO_IO_BUFFERED_PROXY::seek_position(void) { 
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) seek " + label() + ".");
   bool was_running = false;
   if (pserver_repp->is_running() == true) {
     was_running = true;
@@ -194,6 +196,7 @@ void AUDIO_IO_BUFFERED_PROXY::seek_position(void) {
  * loading libraries, etc. 
  */
 void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) { 
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) open " + label() + ".");
   if (child_repp->is_open() != true) {
     child_repp->open();
   }
@@ -210,5 +213,6 @@ void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
  * (they can be used by other processes).
  */
 void AUDIO_IO_BUFFERED_PROXY::close(void) { 
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) close " + label() + ".");
   child_repp->close();
 }

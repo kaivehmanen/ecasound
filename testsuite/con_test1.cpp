@@ -44,6 +44,11 @@ int main(int argc, char *argv[]) {
 
 void eci_execute_test(const string& cmd) {
   ECA_TEST_CASE();
+
+  cout << endl << "---" << endl;
+  cout << "Running test case:" << endl;
+  cout << cmd << endl;
+
   if (system(cmd.c_str()) != 0) {
     ECA_TEST_FAIL(1, cmd.c_str());
   }

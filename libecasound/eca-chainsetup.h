@@ -30,7 +30,7 @@ class CHAIN;
  * information about how they are connected.
  * 
  * Notes: ECA_CHAINSETUP is closely coupled to the 
- *        ECA_CHAINSETUP_PARSER and ECA_PROCESSOR.
+ *        ECA_CHAINSETUP_PARSER and ECA_ENGINE.
  *        In addition, to ease implementation, 
  *        also ECA_CONTROL classes have direct access
  *        to ECA_CHAINSETUP's implementation.
@@ -41,7 +41,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
  public:
 
-  friend class ECA_PROCESSOR;
+  friend class ECA_ENGINE;
   friend class ECA_CONTROL;
   friend class ECA_CONTROL_BASE;
   friend class ECA_CONTROL_OBJECTS;

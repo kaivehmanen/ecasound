@@ -33,7 +33,6 @@
 #include <kvutils/value_queue.h>
 #include <kvutils/message_item.h>
 
-#include "eca-main.h"
 #include "eca-session.h"
 #include "eca-control.h"
 #include "eca-chainop.h"

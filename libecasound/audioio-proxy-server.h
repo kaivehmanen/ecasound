@@ -39,6 +39,7 @@ class AUDIO_IO_PROXY_SERVER {
   ATOMIC_INTEGER stop_request_rep;
   ATOMIC_INTEGER running_rep;
   ATOMIC_INTEGER full_rep;
+  ATOMIC_INTEGER wait_for_full_debug_rep;
 
   int buffercount_rep;
   long int buffersize_rep;

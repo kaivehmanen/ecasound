@@ -23,12 +23,11 @@
 #include <vector>
 #include <iostream>
 
-#include <pthread.h>
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
+#include <kvutils/kvutils.h>
 #include <kvutils/com_line.h>
 #include <kvutils/message_item.h>
 #include <kvutils/dbc.h>
@@ -54,9 +53,8 @@
 #include "eca-session.h"
 #include "eca-chainsetup.h"
 
-#ifdef USE_CXX_STD_NAMESPACE
-using namespace std;
-#endif
+using std::string;
+using std::vector;
 
 ECA_SESSION::ECA_SESSION(void) {
   ecadebug->control_flow("Session created (empty)");
@@ -66,14 +64,10 @@ ECA_SESSION::ECA_SESSION(void) {
 ECA_SESSION::~ECA_SESSION(void) {
 //    ecadebug->msg(ECA_DEBUG::system_objects,"ECA_SESSION destructor!");
 
-  status(ep_status_notready);
-
   for(std::vector<ECA_CHAINSETUP*>::iterator q = chainsetups_rep.begin(); q != chainsetups_rep.end(); q++) {
     delete *q;
   }
 
-  delete ecasound_stop_cond_repp;
-  delete ecasound_stop_mutex_repp;
   
   /* delete static object maps */
   unregister_default_objects();
@@ -102,6 +96,8 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&) {
     else {
       add_chainsetup(comline_setup); /* ownership object transfered */
       if (selected_chainsetup_repp->is_valid()) connect_chainsetup();
+      else 
+	ecadebug->msg("(eca-session) Warning! Unable to create a valid chainsetup from command-line arguments.");
     }
   }
 }
@@ -110,21 +106,18 @@ void ECA_SESSION::set_defaults(void) {
   /* create static object maps */
   register_default_objects();
 
-  status(ep_status_notready);
   connected_chainsetup_repp = 0;
   selected_chainsetup_repp = 0;
 
-  // --
-  // Engine locks and mutexes
-
-  ecasound_stop_cond_repp = new pthread_cond_t;
-  ecasound_stop_mutex_repp = new pthread_mutex_t;
-
-  ::pthread_cond_init(ecasound_stop_cond_repp, NULL);
-  ::pthread_mutex_init(ecasound_stop_mutex_repp, NULL);
-
   // ---
   // Interpret resources 
+
+  ECA_RESOURCES ecaresources;
+
+  if (ecaresources.resource("default-to-interactive-mode") == "true") 
+    iactive_rep = true;
+  else
+    iactive_rep = false;
 
   MP3FILE::set_mp3_input_cmd(ecaresources.resource("ext-mp3-input-cmd"));
   MP3FILE::set_mp3_output_cmd(ecaresources.resource("ext-mp3-output-cmd"));
@@ -334,10 +327,10 @@ void ECA_SESSION::disconnect_chainsetup(void) {
   DBC_REQUIRE(connected_chainsetup_repp != 0);
   // --------
 
-  ecadebug->control_flow("Chainsetup disconnected");
-
   connected_chainsetup_repp->disable();
   connected_chainsetup_repp = 0;
+
+  ecadebug->control_flow("Chainsetup disconnected");
 
   // --------
   // ensure:
@@ -496,5 +489,3 @@ void ECA_SESSION::interpret_chainsetup_option (const std::string& argu) {
   }
 }
 
-void ECA_SESSION::status(ECA_SESSION::Engine_status temp) { ep_status_rep = temp; }
-ECA_SESSION::Engine_status ECA_SESSION::status(void) const { return(ep_status_rep); }

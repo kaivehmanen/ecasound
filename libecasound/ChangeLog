@@ -2,6 +2,14 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-10-06  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-main.h (all): renamed to eca-engine.h
+	* eca-engine.h (ECA_PROCESSOR): renamed to ECA_ENGINE
+	* eca-engine.h (status,finished): added
+	* eca-control-objects.h (set_default_audio_format_to_selected):
+	divided into _to_selected_input() and to_selected_output()
+		
 2001-10-05  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	
 	* eca-chainsetup.h (ok_audio_object): added

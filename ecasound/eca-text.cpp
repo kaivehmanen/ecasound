@@ -33,7 +33,7 @@
 #include <eca-iamode-parser.h>
 #include <eca-control.h>
 #include <eca-session.h>
-#include <eca-main.h>
+#include <eca-engine.h>
 #include <eca-version.h>
 #include <eca-debug.h>
 #include <eca-error.h>
@@ -54,8 +54,8 @@
 #include "textdebug.h"
 #include "eca-text.h"
 
-static ECA_PROCESSOR* global_pointer_to_ecaprocessor = 0; 
-static bool global_processor_deleted = false;
+static ECA_ENGINE* global_pointer_to_ecaengine = 0; 
+static bool global_engine_deleted = false;
 static ECA_SESSION* global_pointer_to_ecasession = 0; 
 static bool global_session_deleted = false;
 static ECA_CONTROL* global_pointer_to_ecacontrol = 0; 
@@ -116,8 +116,8 @@ int main(int argc, char *argv[])
       }
       else {
 	if (session->is_selected_chainsetup_connected() == true) {
-	  ECA_PROCESSOR* epros = new ECA_PROCESSOR(session);
-	  global_pointer_to_ecaprocessor = epros;
+	  ECA_ENGINE* epros = new ECA_ENGINE(session);
+	  global_pointer_to_ecaengine = epros;
 	  epros->exec();
 	}
       }
@@ -188,11 +188,11 @@ void clean_exit(int n) {
     }
   }
 
-  if (global_processor_deleted == false) {
-    global_processor_deleted = true;
-    if (global_pointer_to_ecaprocessor != 0) {
-      global_pointer_to_ecaprocessor->~ECA_PROCESSOR();
-      global_pointer_to_ecaprocessor = 0;
+  if (global_engine_deleted == false) {
+    global_engine_deleted = true;
+    if (global_pointer_to_ecaengine != 0) {
+      global_pointer_to_ecaengine->~ECA_ENGINE();
+      global_pointer_to_ecaengine = 0;
     }
   }
   if (global_session_deleted == false) {

@@ -1,5 +1,5 @@
-#ifndef INCLUDED_ECA_MAIN_H
-#define INCLUDED_ECA_MAIN_H
+#ifndef INCLUDED_ECA_ENGINE_H
+#define INCLUDED_ECA_ENGINE_H
 
 #include <vector>
 #include <string>
@@ -7,6 +7,8 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/time.h>
+
+#include <kvutils/value_queue.h>
 
 #include "samplebuffer.h"
 #include "eca-chainsetup.h"
@@ -25,19 +27,29 @@ class AUDIO_IO_BUFFERED_PROXY;
  *        the ECA_SESSION and ECA_CHAINSETUP, 
  *        which all allow friend-access to all 
  *        their private data and members to 
- *        ECA_PROCESSOR.
+ *        ECA_ENGINE.
  */
-class ECA_PROCESSOR {
+class ECA_ENGINE {
 
  public:
 
   /** @name Public type definitions and constants */
   /*@{*/
+
+  /** 
+   * Engine operation states
+   */
+  enum Engine_status { engine_status_running,
+		       engine_status_stopped, 
+		       engine_status_finished,
+		       engine_status_error,
+		       engine_status_notready };
+  typedef enum Engine_status Engine_status_t;
   
   /**
-   * Commands used in ECA_PROCESSOR<->ECA_CONTROL communication.
+   * Commands used in ECA_ENGINE<->ECA_CONTROL communication.
    */
-  enum COMMANDS {
+  enum Engine_command {
     ep_start,
     ep_stop,
     ep_debug,
@@ -65,16 +77,23 @@ class ECA_PROCESSOR {
     ep_forward,
     ep_setpos
   };
+  typedef enum Engine_command Engine_command_t;
 
   /*@}*/
 
   /** @name Public functions */
   /*@{*/
 
+  ECA_ENGINE(ECA_SESSION* eparam);
+  ~ECA_ENGINE(void);
   void exec(void);
+  void command(Engine_command_t cmd, double arg);
+  void wait_for_stop(int timeout);
 
-  ECA_PROCESSOR(ECA_SESSION* eparam);
-  ~ECA_PROCESSOR(void);
+  /** @name Public functions for observing engine status information */
+  /*@{*/
+
+  Engine_status_t status(void) const;
 
   /*@}*/
 
@@ -83,7 +102,8 @@ private:
   /** @name Private data and functions */
   /*@{*/
 
-  ECA_SESSION* eparams_repp;
+  pthread_cond_t *ecasound_stop_cond_repp;
+  pthread_mutex_t *ecasound_stop_mutex_repp;
 
   bool was_running_rep;
   bool rt_running_rep;
@@ -95,6 +115,8 @@ private:
   bool use_midi_rep;
   bool input_not_finished_rep;
   bool output_finished_rep;
+
+  VALUE_QUEUE command_queue_rep;
   
   int trigger_counter_rep;
   struct timeval multitrack_input_stamp_rep;
@@ -104,6 +126,7 @@ private:
   /** @name Pointers to connected chainsetup  */
   /*@{*/
 
+  ECA_SESSION* session_repp;
   ECA_CHAINSETUP* csetup_repp;
   std::vector<CHAIN*>* chains_repp;
   std::vector<AUDIO_IO*>* inputs_repp;
@@ -142,6 +165,8 @@ private:
   int chain_count_rep;
   int max_channels_rep;
   long int buffersize_rep;
+
+  Engine_status_t engine_status_rep;
   ECA_CHAINSETUP::Mix_mode mixmode_rep;
 
   /*@}*/
@@ -167,6 +192,8 @@ private:
    * Stop processing and notifies all devices.
    */
   void stop(void);
+
+  void signal_stop(void);
 
   /**
    * Start processing if it was conditionally stopped
@@ -231,7 +258,8 @@ private:
    */
   void interpret_queue(void);
 
-  void interactive_loop(void);
+  void update_requests(void);
+  void update_engine_state(void);
 
   /*@}*/
 
@@ -276,10 +304,15 @@ private:
 
   /*@}*/
 
-  /** @name Private functions for getting status info */
+  /** @name Private functions for modifying engine status information */
   /*@{*/
 
-  bool finished(void);
+  /**
+   * Set engine status to 'state'.
+   *
+   * @see status()
+   */
+  void set_status(Engine_status_t state);
 
   /*@}*/
 
@@ -297,7 +330,7 @@ private:
   /** @name Hidden/unimplemented functions */
   /*@{*/
 
-  ECA_PROCESSOR& operator=(const ECA_PROCESSOR& x) { return *this; }
+  ECA_ENGINE& operator=(const ECA_ENGINE& x) { return *this; }
 
   /*@}*/
 };

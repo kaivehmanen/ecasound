@@ -111,7 +111,8 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void select_audio_output_by_index(int index);
   void set_default_audio_format(const std::string& sfrm, int channels, long int srate, bool interleaving);
   void set_default_audio_format(const ECA_AUDIO_FORMAT& format);
-  void set_default_audio_format_to_selected(void);
+  void set_default_audio_format_to_selected_input(void);
+  void set_default_audio_format_to_selected_output(void);
 
   const AUDIO_IO* get_audio_input(void);
   std::vector<std::string> audio_input_names(void) const;
