@@ -20,6 +20,8 @@ else
 bin_PROGRAMS = ecasound
 endif
 
+bin_SCRIPTS = ecamonitor
+
 ecasound_SOURCES = 	ecasound.cpp \
 			ecasound.h \
 			eca-console.h \
