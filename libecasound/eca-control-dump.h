@@ -1,14 +1,15 @@
 #ifndef INCLUDED_ECA_CONTROL_DUMP_H
 #define INCLUDED_ECA_CONTROL_DUMP_H
 
-#include "eca-control-objects.h"
 #include <fstream>
+
+class ECA_CONTROL;
 
 /**
  * Class for dumping status information to a standard output stream.
  * @author Kai Vehmanen
  */
-class ECA_CONTROL_DUMP : public ECA_CONTROL_OBJECTS {
+class ECA_CONTROL_DUMP {
 
  public:
 
@@ -100,15 +101,16 @@ class ECA_CONTROL_DUMP : public ECA_CONTROL_OBJECTS {
   /**
    * Class constructor
    */ 
-  ECA_CONTROL_DUMP (ECA_SESSION* psession) : ECA_CONTROL_OBJECTS(psession), dostream_repp(&cout), internal_rep(false) { }
+  ECA_CONTROL_DUMP (ECA_CONTROL* ctrl) : ctrl_repp(ctrl), dostream_repp(&cout), internal_rep(false) { }
 
   /**
    * Virtual destructor
    */
-  virtual ~ECA_CONTROL_DUMP (void) { if (internal_rep == true) delete dostream_repp; }
+  ~ECA_CONTROL_DUMP (void) { if (internal_rep == true) delete dostream_repp; }
 
  private:
 
+  ECA_CONTROL* ctrl_repp;
   ostream* dostream_repp;
   bool internal_rep;
 

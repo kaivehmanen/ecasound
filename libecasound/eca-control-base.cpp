@@ -47,6 +47,7 @@ void* start_normal_thread(void *ptr) {
   ecadebug->msg(ECA_DEBUG::system_objects,"(eca-controller) Engine-thread pid: " + kvu_numtostr(getpid()));
   ECA_CONTROL_BASE* ctrl_base = static_cast<ECA_CONTROL_BASE*>(ptr);
   ctrl_base->run_engine();
+  return(0);
 }
 
 ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession) {

@@ -81,6 +81,7 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   void toggle_chain_bypass(void);
 
   const vector<string>& selected_chains(void) const { return(selected_chainids); }
+  unsigned int first_selected_chain(void) const; 
   vector<string> chain_names(void) const;
 
   // ---

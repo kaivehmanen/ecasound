@@ -61,7 +61,7 @@ GGLLOOBBAALL
 
 
 
-                            05.12.2000                          1
+                            08.12.2000                          1
 
 
 
@@ -106,20 +106,20 @@ CCHHAAIINNSSEETTUUPPSS
 
 
        cs-add 'name'
-              Add a new chainsetup with name  'name'.  'name'  is
+              Adds a new chainsetup with name 'name'.  'name'  is
               now the selected chainsetup.
 
 
        cs-remove
-              Remove currently selected chainsetup.
+              Removes currently selected chainsetup.
 
 
        cs-select 'name'
-              Select chainsetup 'name'.
+              Selects chainsetup 'name'.
 
 
        cs-index-select 'cs_index'
-              Select  chainsetup  based  on a short index string.
+              Selects a chainsetup based on a short index string.
               Chainsetup names can be rather long.  This  command
               can  be  used  to  avoid  typing  these long names.
               'cs_index' format is "c<number>".  You  can  get  a
@@ -127,7 +127,7 @@ CCHHAAIINNSSEETTUUPPSS
 
 
 
-                            05.12.2000                          2
+                            08.12.2000                          2
 
 
 
@@ -139,20 +139,27 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
               the 'cs-status' command.
 
 
+       cs-selected
+              Returns the name of currently selected  chainsetup.
+              _[_s_] **not implemented**
+
+
        cs-load 'filename'
-              Add a new chainsetup by loading it from file 'file-
-              name'.   'filename' is now the selected chainsetup.
+              Adds  a  new  chainsetup  by  loading  it from file
+              'filename'.  'filename' is now the selected  chain-
+              setup.
 
 
        cs-save
-              Save currently  selected  chainsetup  to  file.  If
-              chainsetup  was  loaded  from a file, it's saved to
-              the same file. If it doesn't have a  default  file-
-              name, it's saved to "chainsetup_name.ecs".
+              Saves the currently selected chainsetup to file. If
+              chainsetup was loaded from a file, the  saved  ver-
+              sion  will replace the original. If it doesn't have
+              a  default  filename,   it's   saved   to   "chain-
+              setup_name.ecs".
 
 
        cs-save-as 'filename'
-              Save  currently  selected chainsetup to file 'file-
+              Saves  currently selected chainsetup to file 'file-
               name'.
 
 
@@ -172,9 +179,32 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
               Disconnect currently connected chainsetup.
 
 
+       cs-connected
+              **not implemented** Returns the name  of  currently
+              connected chainsetup. _[_s_]
+
+
        cs-length 'seconds'
-              Set processing time in seconds (doesn't have to  be
+              Set  processing time in seconds (doesn't have to be
               an integer value).
+
+
+
+
+
+
+                            08.12.2000                          3
+
+
+
+
+
+ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
+       cs-get-length
+              **not implemented** Returns the processing time  in
+              seconds. _[_f_]
 
 
        cs-loop
@@ -190,10 +220,46 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
        cs-format 'bits,channels,sample_rate'
               Set the default  sample  parameters  for  currently
               selected  chainsetup.  For example cd-quality audio
+              would be "16,2,44100". This does the same  as  com-
+              mand-line argument "-f" (see ecasound(1)).
+
+
+       cs-status, cstatus, cs, a
+              Print status info about all chainsetups. _[_s_]
+
+
+CCHHAAIINNSS
+       Chain is a simple signal flow abstraction. Every chain has
+       one input and one output. All chain  operators  and  their
+       controllers  are  attached to chains. Chains can be muted,
+       unmuted and be bypassed.  If  not  otherwise  stated,  all
+       operations are done to currently selected chainsetup.
+
+
+       c-add 'cname1,...,cnameN'
+              Adds  a  set  of chains. Added chains are automati-
+              cally selected.
+
+
+       c-select 'cname1,...,cnameN'
+              Selects chains. Other chains are automatically des-
+              elected.
+
+
+       c-deselect 'cname1,...,cnameN'
+              Deselects chains.
+
+
+       c-select-all
+              Selects all chains.
+
+
+       c-select-add 'cname1,...,cnameN'
+              Selects more chains.
 
 
 
-                            05.12.2000                          3
+                            08.12.2000                          4
 
 
 
@@ -202,50 +268,16 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
-              would be "16,2,44100". This does the same  as  com-
-              mand-line argument "-f" (see ecasound(1)).
-
-
-       cs-status, cstatus, cs, a
-              Print status info about all chainsetups.
-
-
-CCHHAAIINNSS
-       Chain is a simple signal flow abstraction. Every chain has
-       one input and one output. All chain  operators  and  their
-       controllers  are  attached  to chains. Chain can be muted,
-       unmuted and it can be bypassed.  If not otherwise  stated,
-       all  operations are done to currently selected chainsetup.
-
-
-       c-add 'cname1,...,cnameN'
-              Add  chains.   Added   chains   are   automatically
-              selected.
-
-
-       c-select 'cname1,...,cnameN'
-              Select chains. Other chains are automatically dese-
-              lected.
-
-
-       c-deselect 'cname1,...,cnameN'
-              Deselect chains.
-
-
-       c-select-all
-              Select all chains.
-
-
-       c-select-add 'cname1,...,cnameN'
-              Select more chains.
-
-
        c-selected
               Returns a list of selected chains. _[_S_]
 
 
+       c-list **not  implemented**  Returns a list of all chains.
+              _[_S_]
+
+
        c-remove
-              Remove selected chains.
+              Removes selected chains.
 
 
        c-clear
@@ -255,20 +287,8 @@ CCHHAAIINNSS
 
 
        c-name 'new_name'
-              Rename selected chains. When  using  this  command,
-
-
-
-                            05.12.2000                          4
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
-              only one chain must selected.
+              Renames the selected chain. When  using  this  com-
+              mand, only one chain must selected.
 
 
        c-muting
@@ -304,8 +324,18 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
               selected chains to 'time_in_seconds'.
 
 
+
+                            08.12.2000                          5
+
+
+
+
+
+ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
        c-status
-              Print status info about all chains.
+              Print status info about all chains. _[_s_]
 
 
 
@@ -316,82 +346,52 @@ AAUUDDIIOO IINNPPUUTT//OOUUTTPPUUTT OOBBJJEECCTTSS
 
 
        aio-add-input 'input_format_string'
-              Add  a  new  input object. See ecasound(1) man page
+              Adds  a  new input object. See ecasound(1) man page
               for more  info  about  the  argument  format  ('-i'
               option).
 
 
-
-
-
-
-                            05.12.2000                          5
-
-
-
-
-
-ecasound-iam(1)        Multimedia software        ecasound-iam(1)
-
-
        aio-add-output 'output_format_string'
-              Add  a  new output object. See ecasound(1) man page
+              Adds  a new output object. See ecasound(1) man page
               for more  info  about  the  argument  format  ('-o'
               option).  If  argument is omitted, a default output
               device is added (see ecasoundrc(5)).
 
 
        aio-select 'aobject_name'
-              Select some audio object. 'aobject_name' is usually
-              a file name, but not always.
+              Selects an audio object. 'aobject_name'  refers  to
+              the  string  used  when  creating  the  object (see
+              above). Note! All input object names  are  required
+              to be unique. Similarly all output names need to be
+              unique. However, it's possible that the same object
+              name  exists  both as an input and as an output. If
+              this is the case, only the last matching object  is
+              selected ( normally this is the output).
 
 
        aio-select-input 'aobject_name'
-              Select some audio input.
+              Selects an audio input.
 
 
        aio-select-output 'aobject_name'
-              Select some audio output.
+              Selects an audio output.
 
 
        aio-index-select 'aobject_index'
-              Select  some  audio  object  based  on  short index
+              Select  some  audio  object  based on a short index
               string. Especially file names can be  rather  long.
               This command can be used to avoid typing these long
               names when selecting audio objects. 'aobject_index'
               format  is  "i<number>"  for  inputs  and similarly
               "o<number>" for outputs.  You can get a list of all
               audio  objects and their indexes with the 'aio-sta-
-              tus' command.
-
-
-       aio-attach
-              Attach  currently  selected  audio  object  to  all
-              selected chains.
-
-
-       aio-remove
-              Remove currently selected audio object.
-
-
-       aio-status
-              Audio   object  status  (index  strings,  position,
-              length, etc).
-
-
-       aio-forward 'time_in_seconds', aio-fw 'time_in_seconds'
-              Selected audio object is forwarded by 'time-in-sec-
-              onds'  seconds.  Time should be given as a floating
-              point value (eg. 0.001 is the same as 1ms).
-
-
-       aio-rewind 'time_in_seconds', aio-rw 'time_in_seconds'
-              Selected audio object is rewinded by  'time-in-sec-
-              onds'  seconds.  Time should be given as a floating
+              tus' and 'aio-list' commands.
 
 
 
-                            05.12.2000                          6
+
+
+                            08.12.2000                          6
 
 
 
@@ -400,6 +400,30 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
+       aio-attach
+              Attaches the currently selected audio object to all
+              selected chains.
+
+
+       aio-remove
+              Removes  the  currently  selected audio object from
+              the chainsetup.
+
+
+       aio-status
+              Audio  object  status  (index  strings,   position,
+              length, etc). _[_s_]
+
+
+       aio-forward 'time_in_seconds', aio-fw 'time_in_seconds'
+              Selected audio object is forwarded by 'time-in-sec-
+              onds' seconds.  Time should be given as a  floating
+              point value (eg. 0.001 is the same as 1ms).
+
+
+       aio-rewind 'time_in_seconds', aio-rw 'time_in_seconds'
+              Selected  audio object is rewinded by 'time-in-sec-
+              onds' seconds.  Time should be given as a  floating
               point value (eg. 0.001 is the same as 1ms).
 
 
@@ -407,14 +431,21 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
               Set audio object position to 'time_in_seconds'.
 
 
+       aio-getpos
+              Returns the audio object position in seconds. _[_f_]
+
+
+       aio-length
+              Returns the audio object length in seconds. _[_f_]
+
+
        aio-wave-edit
-              Currently selected audio object is loaded  into  an
-              external wave editor (see ecasoundrc(5)).
+              The  currently selected audio object is loaded into
+              an external wave editor (see ecasoundrc(5)).
 
 
        aio-register
-              Prints a list of registered audio objects.
-
+              Prints a list of registered audio object types. _[_s_]
 
 
 CCHHAAIINN OOPPEERRAATTOORRSS
@@ -423,41 +454,10 @@ CCHHAAIINN OOPPEERRAATTOORRSS
        stated, currently selected chainsetup and chains are used.
        Also, 'chainop_id' and 'param_id' are used to select chain
        operators  and  their  parameters.  First  valid value for
-       these parameters is 1.
-
-
-       cop-add 'cop_format_string'
-              Add  a  new  chain  operator.  Argument  format  is
-              "-<id_string>:par1,...,parN". In addition to normal
-              chain operators, this commmand can also be used  to
-              add  effect  presets  and various plugins. See eca-
-              sound(1) man page for more info.
-
-
-       cop-remove 'chainop_id'
-              Remove chain operator.
-
-
-       cop-set 'chainop_id, param_id, value'
-              Change the value of a single chain operator parame-
-              ter. Unlike other chain operator commands, this can
-              also be used during processing.
-
-
-       cop-status
-              Info about chain operator status.
-
-
-       cop-register
-              Prints a list of registered chain operators.
-
-
-       preset-register
-              Prints a list of registered effect presets.
 
 
 
-                            05.12.2000                          7
+                            08.12.2000                          7
 
 
 
@@ -466,8 +466,41 @@ CCHHAAIINN OOPPEERRAATTOORRSS
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
+       these parameters is 1.
+
+
+       cop-add 'cop_format_string'
+              Adds a  new  chain  operator.  Argument  format  is
+              "-<id_string>:par1,...,parN". In addition to normal
+              chain operators, this commmand can also be used  to
+              add  effect  presets  and various plugins. See eca-
+              sound(1) man page for more info.
+
+
+       cop-remove 'chainop_id'
+              Removes chain operator.
+
+
+       cop-set 'chainop_id, param_id, value'
+              Changes the value of a single chain operator param-
+              eter.  Unlike  other  chain operator commands, this
+              can also be used during processing.
+
+
+       cop-status
+              Returns info about chain operator status. _[_s_]
+
+
+       cop-register
+              Prints a list of registered chain operators. _[_s_]
+
+
+       preset-register
+              Prints a list of registered effect presets. _[_s_]
+
+
        ladspa-register
-              Prints a list of registered LADSPA-plugins.
+              Prints a list of registered LADSPA-plugins. _[_s_]
 
 
 CCOONNTTRROOLLLLEERRSS
@@ -477,7 +510,7 @@ CCOONNTTRROOLLLLEERRSS
 
 
        cop-add-controller 'copc_format_string'
-              Add  a  new  controller  and attach it to currently
+              Adds  a  new  controller and attach it to currently
               selected  chain  operator.   Argument   format   is
               "-<id_string>:<param_id>,<range_low>,
               <range_high>,par1,...,parN".  See  ecasound(1)  man
@@ -485,16 +518,53 @@ CCOONNTTRROOLLLLEERRSS
 
 
        cop-remove-controller 'param_id'
-              Remove  the controller that is attached to the cur-
+              Removes the controller that is attached to the cur-
               rently selected chain operator.
 
 
+
+                            08.12.2000                          8
+
+
+
+
+
+ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
        ctrl-status
-              Info about controller status.
+              Returns info about controller status. _[_s_]
 
 
        ctrl-register
-              Prints a list of registered controllers.
+              Prints a list of registered controllers. _[_s_]
+
+
+
+OOBBJJEECCTT MMAAPPSS
+       FIXME: insert description from ecasound man page.
+
+
+       map-aio-register
+              **not implemented** Prints  a  list  of  registered
+              audio object types. _[_s_]
+
+
+       map-aio-list
+              **not  implemented**  Returns  a  list  of  regular
+              expressions matching registered audio object types.
+              _[_S_].
+
+
+       map-aio-device-list
+              **not  implemented**  Returns  a  list  of  regular
+              expressions  matching  registered  realtime   audio
+              object types. _[_S_].
+
+
+       map-aio-type 'regexp'
+              **not  implemented** Returns the type name handling
+              regular expression 'regexp'. _[_s_].
 
 
 
@@ -515,21 +585,22 @@ DDUUMMPP CCOOMMMMAANNDDSS
               ished' or 'notready'.
 
 
-       dump-position
-              Dumps the global position. Printed in seconds using
-              a floating-point representation.
 
 
 
 
-
-                            05.12.2000                          8
+                            08.12.2000                          9
 
 
 
 
 
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
+       dump-position
+              Dumps the global position. Printed in seconds using
+              a floating-point representation.
 
 
        dump-length
@@ -580,6 +651,19 @@ SSEEEE AALLSSOO
               soundrc(5)
 
 
+
+
+
+
+                            08.12.2000                         10
+
+
+
+
+
+ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
 AAUUTTHHOORR
               Kai Vehmanen, <kaiv@wakkanet.fi>
 
@@ -589,6 +673,54 @@ AAUUTTHHOORR
 
 
 
-                            05.12.2000                          9
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            08.12.2000                         11
 
 

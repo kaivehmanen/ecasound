@@ -259,15 +259,15 @@ void ALSA_PCM_DEVICE_06X::fill_and_set_hw_params(void) {
   else
     ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Using noninterleaved stream format.");
   
-  if (static_cast<unsigned int>(samples_per_second()) < pcm_hw_info_rep.rate_min ||
-      static_cast<unsigned int>(samples_per_second()) > pcm_hw_info_rep.rate_max)
-    throw(SETUP_ERROR(SETUP_ERROR::sample_rate, "AUDIOIO-ALSA3: Sample rate " +
-  		      kvu_numtostr(samples_per_second()) + " is out of range!"));
+//    if (static_cast<unsigned int>(samples_per_second()) < pcm_hw_info_rep.rate_min ||
+//        static_cast<unsigned int>(samples_per_second()) > pcm_hw_info_rep.rate_max)
+//      throw(SETUP_ERROR(SETUP_ERROR::sample_rate, "AUDIOIO-ALSA3: Sample rate " +
+//    		      kvu_numtostr(samples_per_second()) + " is out of range!"));
 
-  if (static_cast<unsigned int>(channels()) < pcm_hw_info_rep.channels_min ||
-      static_cast<unsigned int>(channels()) > pcm_hw_info_rep.channels_max)
-    throw(SETUP_ERROR(SETUP_ERROR::channels, "AUDIOIO-ALSA3: Channel count " +
-		      kvu_numtostr(channels()) + " is out of range!"));
+//    if (static_cast<unsigned int>(channels()) < pcm_hw_info_rep.channels_min ||
+//        static_cast<unsigned int>(channels()) > pcm_hw_info_rep.channels_max)
+//      throw(SETUP_ERROR(SETUP_ERROR::channels, "AUDIOIO-ALSA3: Channel count " +
+//  		      kvu_numtostr(channels()) + " is out of range!"));
 
   pcm_hw_params_rep.format = format_rep;
   pcm_hw_params_rep.rate = samples_per_second();
@@ -283,17 +283,22 @@ void ALSA_PCM_DEVICE_06X::fill_and_set_hw_params(void) {
     pcm_hw_params_rep.access = SND_PCM_ACCESS_RW_NONINTERLEAVED;
   pcm_hw_params_rep.subformat = 0;
 
-  if (using_plugin_rep != true && 
-      (static_cast<unsigned int>(buffersize()) < pcm_hw_info_rep.fragment_size_min ||
-       static_cast<unsigned int>(buffersize()) > pcm_hw_info_rep.fragment_size_max))
-    throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-ALSA3: buffersize " +
-		      kvu_numtostr(buffersize()) + " is out of range!"));
+  unsigned int bsize_msec = 1000 * buffersize() / samples_per_second();
+//    if (using_plugin_rep != true && 
+//        (bsize_msec < pcm_hw_info_rep.fragment_length_min ||
+//         bsize_msec > pcm_hw_info_rep.fragment_length_max))
+//      throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-ALSA3: buffersize " +
+//  		      kvu_numtostr(buffersize()) + " is out of range!"));
 
   pcm_hw_params_rep.fragment_size = buffersize();
 //    pcm_hw_params_rep.fragments = 16 * 1024 / buffersize();
   if (using_plugin_rep == true)
-    pcm_hw_info_rep.buffer_size_max = 64 * 1024;
-  pcm_hw_params_rep.fragments =  pcm_hw_info_rep.buffer_size_max / pcm_hw_params_rep.fragment_size / frame_size();
+    pcm_hw_info_rep.buffer_length_max = 1000 * 64 * 1024 / samples_per_second();
+
+  // pcm_hw_params_rep.fragments =  pcm_hw_info_rep.buffer_length_max / bsize_msec;
+  // pcm_hw_params_rep.fragment_size / frame_size()
+
+  pcm_hw_info_rep.buffer_length_max = 1000 * 64 * 1024 / samples_per_second();
   pcm_hw_params_rep.fail_mask = 0;
   
   int err = ::snd_pcm_hw_params(audio_fd_repp, &pcm_hw_params_rep);

@@ -2,6 +2,7 @@
 #define INCLUDED_ECA_CONTROL_H
 
 #include "eca-iamode-parser.h"
+#include "eca-control-objects.h"
 #include "eca-control-dump.h"
 
 class CHAIN_OPERATOR;
@@ -10,7 +11,7 @@ class CHAIN_OPERATOR;
  * Class for controlling the whole ecasound library
  * @author Kai Vehmanen
  */
-class ECA_CONTROL : public ECA_CONTROL_DUMP,
+class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
 		    public ECA_IAMODE_PARSER {
 
  private:
@@ -18,6 +19,7 @@ class ECA_CONTROL : public ECA_CONTROL_DUMP,
   vector<string> action_args_rep;
   double action_arg_f_rep; 
   bool action_arg_f_set_rep;
+  ECA_CONTROL_DUMP ctrl_dump_rep;
 
   void action(int action_id);
   void direct_command(const string& cmd);

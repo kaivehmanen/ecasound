@@ -823,14 +823,22 @@ void ECA_PROCESSOR::interpret_queue(void) {
     // ---
     // Chain operators
     // ---
-    case ep_cop_select: { active_chainop_index_rep = static_cast<size_t>(item.second); break; }
-    case ep_copp_select: { active_chainop_param_index_rep = static_cast<size_t>(item.second); break; }
+    case ep_cop_select: { 
+      active_chainop_index_rep =  static_cast<size_t>(item.second);
+      if (active_chainop_index_rep - 1 < (*chains_repp)[active_chain_index_rep]->chainops_rep.size())
+	(*chains_repp)[active_chain_index_rep]->select_chain_operator(active_chainop_index_rep);
+      else 
+	active_chainop_index_rep = 0;
+      break;
+    }
+    case ep_copp_select: { 
+      active_chainop_param_index_rep = static_cast<size_t>(item.second);
+      (*chains_repp)[active_chain_index_rep]->select_chain_operator_parameter(active_chainop_param_index_rep);
+      break;
+    }
     case ep_copp_value: { 
       assert(chains_repp != 0);
-      if (active_chainop_index_rep - 1 < (*chains_repp)[active_chain_index_rep]->chainops_rep.size()) {
-	(*chains_repp)[active_chain_index_rep]->select_chain_operator(active_chainop_index_rep);
-	(*chains_repp)[active_chain_index_rep]->set_parameter(active_chainop_param_index_rep, item.second);
-      }
+      (*chains_repp)[active_chain_index_rep]->set_parameter(item.second);
       break;
     }
 

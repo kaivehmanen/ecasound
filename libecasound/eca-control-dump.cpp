@@ -27,31 +27,32 @@
 
 #include "audioio.h"
 #include "eca-chainop.h"
+#include "eca-control.h"
 #include "eca-control-dump.h"
 
 void ECA_CONTROL_DUMP::dump_status(void) { 
-  dump("dump-status", engine_status());
+  dump("dump-status", ctrl_repp->engine_status());
 }
 
 void ECA_CONTROL_DUMP::dump_position(void) { 
-  dump("dump-position", kvu_numtostr(position_in_seconds_exact()));
+  dump("dump-position", kvu_numtostr(ctrl_repp->position_in_seconds_exact()));
 }
 
 void ECA_CONTROL_DUMP::dump_length(void) { 
-  dump("dump-length", kvu_numtostr(length_in_seconds_exact()));
+  dump("dump-length", kvu_numtostr(ctrl_repp->length_in_seconds_exact()));
 }
 
 void ECA_CONTROL_DUMP::dump_chainsetup_status(void) { 
-  if (is_connected() == true) 
+  if (ctrl_repp->is_connected() == true) 
     dump("dump-cs-status", "connected");
-  else if (is_selected() == true) 
+  else if (ctrl_repp->is_selected() == true) 
     dump("dump-cs-status", "selected");
   else
     dump("dump-cs-status", "");
 }
 
 void ECA_CONTROL_DUMP::dump_selected_chain(void) { 
-  const vector<string>& t = selected_chains();
+  const vector<string>& t = ctrl_repp->selected_chains();
   if (t.empty() == false) {
     dump("dump-c-selected", vector_to_string(t, ","));
   }
@@ -60,7 +61,7 @@ void ECA_CONTROL_DUMP::dump_selected_chain(void) {
 }
 
 void ECA_CONTROL_DUMP::dump_selected_audio_object(void) { 
-  AUDIO_IO* t = get_audio_object();
+  AUDIO_IO* t = ctrl_repp->get_audio_object();
   if (t != 0) {
     dump("dump-aio-selected", t->label());
   }
@@ -69,7 +70,7 @@ void ECA_CONTROL_DUMP::dump_selected_audio_object(void) {
 }
 
 void ECA_CONTROL_DUMP::dump_audio_object_position(void) { 
-  AUDIO_IO* t = get_audio_object();
+  AUDIO_IO* t = ctrl_repp->get_audio_object();
   if (t != 0) {
     dump("dump-aio-position", kvu_numtostr(t->position_in_seconds_exact()));
   }
@@ -78,7 +79,7 @@ void ECA_CONTROL_DUMP::dump_audio_object_position(void) {
 }
 
 void ECA_CONTROL_DUMP::dump_audio_object_length(void) { 
-  AUDIO_IO* t = get_audio_object();
+  AUDIO_IO* t = ctrl_repp->get_audio_object();
   if (t != 0) {
     dump("dump-aio-length", kvu_numtostr(t->length_in_seconds_exact()));
   }
@@ -87,7 +88,7 @@ void ECA_CONTROL_DUMP::dump_audio_object_length(void) {
 }
 
 void ECA_CONTROL_DUMP::dump_audio_object_open_state(void) { 
-  AUDIO_IO* t = get_audio_object();
+  AUDIO_IO* t = ctrl_repp->get_audio_object();
   if (t != 0) {
     if (t->is_open() == true) 
       dump("dump-aio-open-state", "open");
@@ -99,7 +100,8 @@ void ECA_CONTROL_DUMP::dump_audio_object_open_state(void) {
 }
 
 void ECA_CONTROL_DUMP::dump_chain_operator_value(int chainop, int param) { 
-  CHAIN_OPERATOR* t = get_chain_operator(chainop);
+  ctrl_repp->select_chain_operator(chainop);
+  CHAIN_OPERATOR* t = ctrl_repp->get_chain_operator();
   if (t != 0) {
     dump("dump-cop-value", kvu_numtostr(t->get_parameter(param)));
   }

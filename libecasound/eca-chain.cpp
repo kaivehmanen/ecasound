@@ -51,6 +51,8 @@ CHAIN::CHAIN (void) {
 
   selected_chainop_number_rep = 0;
   selected_controller_number_rep = 0;
+  selected_chainop_parameter_rep = 0;
+  selected_controller_parameter_rep = 0;
 }
 
 CHAIN::~CHAIN (void) { 
@@ -217,16 +219,16 @@ void CHAIN::remove_controller(void) {
  * @param value new value
  *
  * require:
- *  selected_chainop_number > 0 && selected_chainop_number <= number_of_chain_operators()
- *  index > 0
+ *  selected_chainop_number > 0 && selected_chainop_number <= number_of_chain_operators() &&
+ *  selected_chainop_parameter > 0
  */
-void CHAIN::set_parameter(int par_index, CHAIN_OPERATOR::parameter_type value) {
+void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_type value) {
   // --------
   // require:
   assert(selected_chainop_number_rep > 0 && selected_chainop_number_rep <= number_of_chain_operators());
-  assert(par_index > 0);
+  assert(selected_chainop_parameter_rep > 0);
   // --------
-  selected_chainop_repp->set_parameter(par_index, value);
+  selected_chainop_repp->set_parameter(selected_chainop_parameter_rep, value);
 }
 
 /**
@@ -235,15 +237,15 @@ void CHAIN::set_parameter(int par_index, CHAIN_OPERATOR::parameter_type value) {
  * @param index parameter number
  *
  * require:
- *  index > 0 &&
+ *  selected_chainop_parameter > 0 &&
  *  selected_chain_operator() != ""
  */
-CHAIN_OPERATOR::parameter_type CHAIN::get_parameter(int index) const {
+CHAIN_OPERATOR::parameter_type CHAIN::get_parameter(void) const {
   // --------
   // require:
   assert(index > 0 && selected_chain_operator() != 0);
   // --------
-  return(selected_chainop_repp->get_parameter(index));
+  return(selected_chainop_repp->get_parameter(selected_chainop_parameter_rep));
 }
 
 /**
@@ -300,6 +302,22 @@ void CHAIN::select_chain_operator(int index) {
 }
 
 /**
+ * Selects a chain operator parameter
+ *
+ * require:
+ *  index > 0
+ *  selected_chain_operator() != 0
+ *  index <= selected_chain_operator()->number_of_params()
+ *
+ * ensure:
+ *  index == selected_chain_operator_parameter()
+ */
+void CHAIN::select_chain_operator_parameter(int index) {
+  selected_chainop_parameter_rep = index;
+}
+
+
+/**
  * Select controller
  *
  * require:
@@ -315,6 +333,21 @@ void CHAIN::select_controller(int index) {
       selected_controller_number_rep = index;
     }
   }
+}
+
+/**
+ * Selects a controller parameter
+ *
+ * require:
+ *  index > 0
+ *  selected_controller() != 0
+ *  index <= selected_controller()->number_of_params()
+ *
+ * ensure:
+ *  index == selected_controller_parameter()
+ */
+void CHAIN::select_controller_parameter(int index) {
+  selected_controller_parameter_rep = index;
 }
 
 /**

@@ -40,7 +40,9 @@ class CHAIN {
   OPERATOR* selected_dynobj_repp;
 
   int selected_chainop_number_rep;
+  int selected_chainop_parameter_rep;
   int selected_controller_number_rep;
+  int selected_controller_parameter_rep;
 
   AUDIO_IO* input_id_repp;
   AUDIO_IO* output_id_repp;
@@ -82,24 +84,28 @@ class CHAIN {
   void clear(void);
   void add_chain_operator(CHAIN_OPERATOR* chainop);
   void remove_chain_operator(void);
-  void set_parameter(int index, CHAIN_OPERATOR::parameter_type value);
   void select_chain_operator(int index);
-  CHAIN_OPERATOR::parameter_type get_parameter(int index) const;
+  void select_chain_operator_parameter(int index);
+  void set_parameter(CHAIN_OPERATOR::parameter_type value);
+  CHAIN_OPERATOR::parameter_type get_parameter(void) const;
 
   /**
    * Index of selected chain operator
    */
   int selected_chain_operator(void) const { return(selected_chainop_number_rep); }
+  int selected_chain_operator_parameter(void) const { return(selected_chainop_parameter_rep); }
   int number_of_chain_operators(void) const { return(chainops_rep.size()); }
 
   void add_controller(GENERIC_CONTROLLER* gcontroller);
   void remove_controller(void);
   void select_controller(int index);
+  void select_controller_parameter(int index);
 
   /**
    * Index of selected chain operator
    */
   int selected_controller(void) const { return(selected_controller_number_rep); }
+  int selected_controller_parameter(void) const { return(selected_controller_parameter_rep); }
   int number_of_controllers(void) const { return(gcontrollers_rep.size()); }
 
   void selected_chain_operator_as_target(void);

@@ -106,15 +106,17 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
 
   void add_chain_operator(const string& chainop_params);
   void add_chain_operator(CHAIN_OPERATOR* cotmp);
-  void remove_chain_operator(int chainop_id);
-  void set_chain_operator_parameter(int chainop_id,
-				    int param,
-				    CHAIN_OPERATOR::parameter_type value);
+  void remove_chain_operator(void);
+  void select_chain_operator(int chainop_id);
+  void select_chain_operator_parameter(int param);
+  void set_chain_operator_parameter(CHAIN_OPERATOR::parameter_type value);
   void add_controller(const string& gcontrol_params);
-  void remove_controller(int controler_id);
+  void select_controller(int ctrl_id);
+  void remove_controller(void);
 
-  CHAIN_OPERATOR* get_chain_operator(int chainop_id) const;
-  GENERIC_CONTROLLER* get_controller(int controller_id) const;
+  CHAIN_OPERATOR* get_chain_operator(void) const;
+  CHAIN_OPERATOR::parameter_type get_chain_operator_parameter(void) const;
+  GENERIC_CONTROLLER* get_controller(void) const;
 
   // -------------------------------------------------------------------
   // Constructors and destructors

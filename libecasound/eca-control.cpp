@@ -48,7 +48,9 @@
 #include "eca-debug.h"
 
 ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession) 
-  : ECA_CONTROL_DUMP(psession) { }
+  : ECA_CONTROL_OBJECTS(psession),
+    ctrl_dump_rep(this)
+{ }
 
 ECA_CONTROL::~ECA_CONTROL(void) { }
 
@@ -242,6 +244,7 @@ void ECA_CONTROL::action(int action_id) {
     }
   case ec_cs_remove: { remove_chainsetup(); break; }
   case ec_cs_select: { select_chainsetup(action_args_rep[0]); break; }
+  case ec_cs_selected: { set_last_string(selected_chainsetup()); break; }
   case ec_cs_index_select: { 
     if (action_args_rep[0].empty() != true) {
       if (action_args_rep[0][0] != 'c') {
@@ -267,6 +270,7 @@ void ECA_CONTROL::action(int action_id) {
       }
       break; 
     }
+  case ec_cs_connected: { set_last_string(connected_chainsetup()); break; }
   case ec_cs_disconnect: { disconnect_chainsetup(); break; }
   case ec_cs_set: { set_chainsetup_parameter(action_args_rep[0]); break; }
   case ec_cs_format: { set_chainsetup_sample_format(action_args_rep[0]); break; }
@@ -335,6 +339,7 @@ void ECA_CONTROL::action(int action_id) {
       set_last_string(chain_status()); 
       break; 
     }
+  case ec_c_list: { set_last_list_of_strings(selected_chains()); break; }
 
     // ---
     // Audio objects
@@ -344,6 +349,7 @@ void ECA_CONTROL::action(int action_id) {
   case ec_aio_select: { select_audio_object(action_args_rep[0]); break; }
   case ec_aio_select_input: { select_audio_input(action_args_rep[0]); break; }
   case ec_aio_select_output: { select_audio_output(action_args_rep[0]); break; }
+  case ec_aio_selected: { set_last_string(get_audio_object()->label()); break; }
   case ec_aio_index_select: { 
     if (action_args_rep[0].empty() != true) {
       if (action_args_rep[0][0] != 'i' && action_args_rep[0][0] != 'o') {
@@ -381,6 +387,8 @@ void ECA_CONTROL::action(int action_id) {
       set_audio_object_position(value); 
       break; 
     }
+  case ec_aio_get_position: { set_last_float(get_audio_object()->position().seconds()); break; }
+  case ec_aio_get_length: { set_last_float(get_audio_object()->length().seconds()); break; }
   case ec_aio_wave_edit: { wave_edit_audio_object(); break; }
   case ec_aio_register: { aio_register(); break; }
 
@@ -388,16 +396,8 @@ void ECA_CONTROL::action(int action_id) {
     // Chain operators
     // ---
   case ec_cop_add: { add_chain_operator(action_args_rep[0]); break; }
-  case ec_cop_remove: 
-    { 
-      vector<string> a = string_to_vector(action_args_rep[0], ',');
-      int id = atoi(a[0].c_str());
-      if (id > 0)
-	remove_chain_operator(id);
-      else
-	set_last_error("Chain operator indexing starts from 1.");
-      break; 
-    }
+  case ec_cop_select: { select_chain_operator(atoi((action_args_rep[0]).c_str())); break; }
+  case ec_cop_remove: { remove_chain_operator(); break; }
     
   case ec_cop_set: 
     { 
@@ -411,12 +411,18 @@ void ECA_CONTROL::action(int action_id) {
       CHAIN_OPERATOR::parameter_type v = atof(a[2].c_str());
 
       if (id1 > 0 && id2 > 0) {
-	set_chain_operator_parameter(id1,id2, v);
+	select_chain_operator(id1);
+	select_chain_operator_parameter(id2);
+	set_chain_operator_parameter(v);
       }
       else
 	set_last_error("Chain operator indexing starts from 1.");
       break; 
     }
+  case ec_copp_select: { select_chain_operator_parameter(atoi((action_args_rep[0]).c_str())); break; }
+  case ec_copp_set: { set_chain_operator_parameter(atof((action_args_rep[0]).c_str()));  break; }
+  case ec_copp_get: { set_last_float(get_chain_operator_parameter()); break; }
+
   case ec_cop_status: 
     { 
       ecadebug->control_flow("Chain operator status");
@@ -432,6 +438,8 @@ void ECA_CONTROL::action(int action_id) {
     // Controllers
     // ---
   case ec_ctrl_add: { add_controller(action_args_rep[0]); break; }
+  case ec_ctrl_select: { select_controller(atoi((action_args_rep[0]).c_str())); break; }
+  case ec_ctrl_remove: {  remove_chain_operator(); break; }
   case ec_ctrl_status: 
     { 
       ecadebug->control_flow("Controller status");
@@ -455,6 +463,8 @@ void ECA_CONTROL::action(int action_id) {
     session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_setpos, atof(action_args_rep[0].c_str()));
     break;
   }
+  case ec_get_position: { set_last_float(position_in_seconds_exact()); break; }
+  case ec_get_length: { set_last_float(length_in_seconds_exact()); break; }
 
   // ---
   // Session status
@@ -464,25 +474,26 @@ void ECA_CONTROL::action(int action_id) {
       ecadebug->control_flow("Controller/General Status");
       print_general_status(); break; 
     }
+  case ec_engine_status: { set_last_string(engine_status()); break; }
 
   // ---
   // Dump commands
   // ---
-  case ec_dump_target: { set_dump_target(action_args_rep[0]); break; }
-  case ec_dump_status: { dump_status(); break; }
-  case ec_dump_position: { dump_position(); break; }
-  case ec_dump_length: { dump_length(); break; }
-  case ec_dump_cs_status: { dump_chainsetup_status(); break; }
-  case ec_dump_c_selected: { dump_selected_chain(); break; }
-  case ec_dump_aio_selected: { dump_selected_audio_object(); break; }
-  case ec_dump_aio_position: { dump_audio_object_position(); break; }
-  case ec_dump_aio_length: { dump_audio_object_length(); break; }
-  case ec_dump_aio_open_state: { dump_audio_object_open_state(); break; }
+  case ec_dump_target: { ctrl_dump_rep.set_dump_target(action_args_rep[0]); break; }
+  case ec_dump_status: { ctrl_dump_rep.dump_status(); break; }
+  case ec_dump_position: { ctrl_dump_rep.dump_position(); break; }
+  case ec_dump_length: { ctrl_dump_rep.dump_length(); break; }
+  case ec_dump_cs_status: { ctrl_dump_rep.dump_chainsetup_status(); break; }
+  case ec_dump_c_selected: { ctrl_dump_rep.dump_selected_chain(); break; }
+  case ec_dump_aio_selected: { ctrl_dump_rep.dump_selected_audio_object(); break; }
+  case ec_dump_aio_position: { ctrl_dump_rep.dump_audio_object_position(); break; }
+  case ec_dump_aio_length: { ctrl_dump_rep.dump_audio_object_length(); break; }
+  case ec_dump_aio_open_state: { ctrl_dump_rep.dump_audio_object_open_state(); break; }
   case ec_dump_cop_value: 
     { 
       if (action_args_rep.size() > 1) {
-	dump_chain_operator_value(atoi(action_args_rep[0].c_str()),
-				  atoi(action_args_rep[1].c_str())); 
+	ctrl_dump_rep.dump_chain_operator_value(atoi(action_args_rep[0].c_str()),
+						atoi(action_args_rep[1].c_str())); 
       }
       break; 
     }
@@ -520,7 +531,7 @@ void ECA_CONTROL::print_last_value(void) {
     result = kvu_numtostr(last_float());
    
   if (result.size() > 0) {
-    ecadebug->msg("(eca-control) " + result);
+    ecadebug->msg(result);
   }
 }
 

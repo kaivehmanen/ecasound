@@ -15,6 +15,17 @@ About the version numbers... "vx.y.zRt" :
 Last officially released version is -*> v1.8.2r14 <*-
 
 ??122000 (v1.8.6d15)
+	- added: eiam-cmds; set-position, get-position, get-length, 
+		 cs-connected, cs-selected, engine-status, c-list,
+		 aio-get-position, aio-get-length, aio-selected,
+		 ctrl-select, ctrl-remove, cop-select, copp-select, 
+		 copp-set, copp-get
+	- added: eiam command return type documentation to
+	 	 ecasound-iam man page
+	- added: ecasound detect all eiam return types and
+		 automatically prints their values after eiam commands
+		 are issued
+	- removed: eiam-cmds; u, a, cstatus, l, fstatus, estatus
 	- fixed: "-x -i file.ext" style cmd-line arg sequences weren't
 		parsed correctly [jhall]
 07122000 (v1.8.5d15)

@@ -246,6 +246,24 @@ void ECA_AUDIO_OBJECTS::select_all_chains(void) {
   }
 }
 
+/**
+ * Returns the index number of first selected chains. If no chains 
+ * are selected, returns 'last_index + 1' (chains.size()).
+ */
+unsigned int ECA_AUDIO_OBJECTS::first_selected_chain(void) const {
+  const vector<string>& schains = selected_chains();
+  vector<string>::const_iterator o = schains.begin();
+  unsigned int p = chains.size();
+  while(o != schains.end()) {
+    for(p = 0; p != chains.size(); p++) {
+      if (chains[p]->name() == *o)
+	return(p);
+    }
+    ++o;
+  }
+  return(p);
+}
+
 void ECA_AUDIO_OBJECTS::toggle_chain_muting(void) {
   for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {

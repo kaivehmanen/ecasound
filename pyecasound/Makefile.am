@@ -55,11 +55,3 @@ if COMPILE_PYECASOUND
 	$(INSTALL) -d $(DESTDIR)$(libdir)
 	cd $(srcdir) ; cp pyeca.py $(DESTDIR)$(libdir)
 endif
-
-
-
-
-
-
-
-

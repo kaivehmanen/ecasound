@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "05\&.12\&.2000" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "08\&.12\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -75,33 +75,37 @@ are done on the selected chainsetup\&. Some operations also require
 that selected chainsetup is not connected\&.
 .IP 
 .IP "cs-add \'name\'" 
-Add a new chainsetup with name \'name\'\&. \'name\' is now 
+Adds a new chainsetup with name \'name\'\&. \'name\' is now 
 the selected chainsetup\&.
 .PP 
 .IP "cs-remove" 
-Remove currently selected chainsetup\&.
+Removes currently selected chainsetup\&.
 .PP 
 .IP "cs-select \'name\'" 
-Select chainsetup \'name\'\&.
+Selects chainsetup \'name\'\&.
 .PP 
 .IP "cs-index-select \'cs_index\'" 
-Select chainsetup based on a short index string\&. Chainsetup names
+Selects a chainsetup based on a short index string\&. Chainsetup names
 can be rather long\&. This command can be used to avoid typing
 these long names\&. \'cs_index\' format is "c<number>"\&. You can get 
 a list of all chainsetups (and their indexes) with the \'cs-status\'
-command\&. 
+command\&.
+.PP 
+.IP "cs-selected" 
+Returns the name of currently selected chainsetup\&. \fI[s]\fP
+**not implemented**
 .PP 
 .IP "cs-load \'filename\'" 
-Add a new chainsetup by loading it from file \'filename\'\&. 
+Adds a new chainsetup by loading it from file \'filename\'\&. 
 \'filename\' is now the selected chainsetup\&.
 .PP 
 .IP "cs-save" 
-Save currently selected chainsetup to file\&. If chainsetup was loaded
-from a file, it\'s saved to the same file\&. If it doesn\'t have a default
-filename, it\'s saved to "chainsetup_name\&.ecs"\&.
+Saves the currently selected chainsetup to file\&. If chainsetup was loaded
+from a file, the saved version will replace the original\&. If it doesn\'t 
+have a default filename, it\'s saved to "chainsetup_name\&.ecs"\&.
 .PP 
 .IP "cs-save-as \'filename\'" 
-Save currently selected chainsetup to file \'filename\'\&.
+Saves currently selected chainsetup to file \'filename\'\&.
 .PP 
 .IP "cs-edit" 
 Currently selected chainsetup is saved to a temporary file\&. This
@@ -115,9 +119,17 @@ can be connected at a time\&.
 .IP "cs-disconnect" 
 Disconnect currently connected chainsetup\&.
 .PP 
+.IP "cs-connected" 
+**not implemented**
+Returns the name of currently connected chainsetup\&. \fI[s]\fP
+.PP 
 .IP "cs-length \'seconds\'" 
 Set processing time in seconds (doesn\'t have to be an integer 
 value)\&.
+.PP 
+.IP "cs-get-length" 
+**not implemented**
+Returns the processing time in seconds\&. \fI[f]\fP
 .PP 
 .IP "cs-loop" 
 Enable looping\&. When processing is finished, engine will start 
@@ -134,42 +146,46 @@ For example cd-quality audio would be "16,2,44100"\&. This does the
 same as command-line argument "-f" (see ecasound(1))\&.
 .PP 
 .IP "cs-status, cstatus, cs, a" 
-Print status info about all chainsetups\&.
+Print status info about all chainsetups\&. \fI[s]\fP
 .IP 
 .SH "CHAINS" 
 Chain is a simple signal flow abstraction\&. Every chain has one input
 and one output\&. All chain operators and their controllers are attached
-to chains\&. Chain can be muted, unmuted and it can be bypassed\&.
-If not otherwise stated, all operations are done to currently selected
+to chains\&. Chains can be muted, unmuted and be bypassed\&. If not 
+otherwise stated, all operations are done to currently selected
 chainsetup\&.
 .IP 
 .IP "c-add \'cname1,\&.\&.\&.,cnameN\'" 
-Add chains\&. Added chains are automatically selected\&.
+Adds a set of chains\&. Added chains are automatically selected\&.
 .PP 
 .IP "c-select \'cname1,\&.\&.\&.,cnameN\'" 
-Select chains\&. Other chains are automatically deselected\&.
+Selects chains\&. Other chains are automatically deselected\&.
 .PP 
 .IP "c-deselect \'cname1,\&.\&.\&.,cnameN\'" 
-Deselect chains\&.
+Deselects chains\&.
 .PP 
 .IP "c-select-all" 
-Select all chains\&.
+Selects all chains\&.
 .PP 
 .IP "c-select-add \'cname1,\&.\&.\&.,cnameN\'" 
-Select more chains\&.
+Selects more chains\&.
 .PP 
 .IP "c-selected" 
 Returns a list of selected chains\&. \fI[S]\fP
 .PP 
+.IP "c-list" 
+**not implemented**
+Returns a list of all chains\&. \fI[S]\fP
+.PP 
 .IP "c-remove" 
-Remove selected chains\&.
+Removes selected chains\&.
 .PP 
 .IP "c-clear" 
 Clear selected chains by removing all chain operators and controllers\&.
 Doesn\'t change how chains are connected to inputs and outputs\&.
 .PP 
 .IP "c-name \'new_name\'" 
-Rename selected chains\&. When using this command, only one chain must
+Renames the selected chain\&. When using this command, only one chain must
 selected\&.
 .PP 
 .IP "c-muting" 
@@ -198,7 +214,7 @@ Set position of all inputs and outputs connected to selected chains to
 \'time_in_seconds\'\&.
 .PP 
 .IP "c-status" 
-Print status info about all chains\&.
+Print status info about all chains\&. \fI[s]\fP
 .PP 
 .IP 
 .SH "AUDIO INPUT/OUTPUT OBJECTS" 
@@ -207,40 +223,45 @@ chainsetup\&.
 .IP 
 .PP 
 .IP "aio-add-input \'input_format_string\'" 
-Add a new input object\&. See ecasound(1) man page for more info about 
+Adds a new input object\&. See ecasound(1) man page for more info about 
 the argument format (\'-i\' option)\&.
 .PP 
 .IP "aio-add-output \'output_format_string\'" 
-Add a new output object\&. See ecasound(1) man page for more info about 
+Adds a new output object\&. See ecasound(1) man page for more info about 
 the argument format (\'-o\' option)\&. If argument is omitted, 
 a default output device is added (see ecasoundrc(5))\&.
 .PP 
 .IP "aio-select \'aobject_name\'" 
-Select some audio object\&. \'aobject_name\' is usually a file name, but
-not always\&.
+Selects an audio object\&. \'aobject_name\' refers to the string
+used when creating the object (see above)\&. Note! All input
+object names are required to be unique\&. Similarly all output
+names need to be unique\&. However, it\'s possible that the same
+object name exists both as an input and as an output\&. If this
+is the case, only the last matching object is selected (
+normally this is the output)\&. 
 .PP 
 .IP "aio-select-input \'aobject_name\'" 
-Select some audio input\&.
+Selects an audio input\&.
 .PP 
 .IP "aio-select-output \'aobject_name\'" 
-Select some audio output\&.
+Selects an audio output\&.
 .PP 
 .IP "aio-index-select \'aobject_index\'" 
-Select some audio object based on short index string\&. Especially file
+Select some audio object based on a short index string\&. Especially file
 names can be rather long\&. This command can be used to avoid typing
 these long names when selecting audio objects\&. \'aobject_index\' format
 is "i<number>" for inputs and similarly "o<number>" for outputs\&. 
 You can get a list of all audio objects and their indexes with the
-\'aio-status\' command\&. 
+\'aio-status\' and \'aio-list\' commands\&. 
 .PP 
 .IP "aio-attach" 
-Attach currently selected audio object to all selected chains\&.
+Attaches the currently selected audio object to all selected chains\&.
 .PP 
 .IP "aio-remove" 
-Remove currently selected audio object\&. 
+Removes the currently selected audio object from the chainsetup\&.
 .PP 
 .IP "aio-status" 
-Audio object status (index strings, position, length, etc)\&.
+Audio object status (index strings, position, length, etc)\&. \fI[s]\fP
 .PP 
 .IP "aio-forward \'time_in_seconds\', aio-fw \'time_in_seconds\'" 
 Selected audio object is forwarded by \'time-in-seconds\' seconds\&. 
@@ -255,14 +276,19 @@ same as 1ms)\&.
 .IP "aio-setpos \'time_in_seconds\'" 
 Set audio object position to \'time_in_seconds\'\&.
 .PP 
+.IP "aio-getpos" 
+Returns the audio object position in seconds\&. \fI[f]\fP
+.PP 
+.IP "aio-length" 
+Returns the audio object length in seconds\&. \fI[f]\fP
+.PP 
 .IP "aio-wave-edit" 
-Currently selected audio object is loaded into an external
+The currently selected audio object is loaded into an external
 wave editor (see ecasoundrc(5))\&.
 .PP 
 .IP "aio-register" 
-Prints a list of registered audio objects\&.
+Prints a list of registered audio object types\&. \fI[s]\fP
 .PP 
-.IP 
 .SH "CHAIN OPERATORS" 
 Chain operators are used to process and analyze sample data\&.
 They are attached to chains\&. If not otherwise stated,
@@ -270,52 +296,74 @@ currently selected chainsetup and chains are used\&. Also,
 \'chainop_id\' and \'param_id\' are used to select chain operators 
 and their parameters\&. First valid value for these parameters 
 is 1\&.
-.IP 
+.PP 
 .IP "cop-add \'cop_format_string\'" 
-Add a new chain operator\&. Argument format is
+Adds a new chain operator\&. Argument format is
 "-<id_string>:par1,\&.\&.\&.,parN"\&. In addition to normal chain operators, 
 this commmand can also be used to add effect presets and various 
 plugins\&. See ecasound(1) man page for more info\&.
-.PP 
-.IP "cop-remove \'chainop_id\'" 
-Remove chain operator\&.
-.PP 
-.IP "cop-set \'chainop_id, param_id, value\'" 
-Change the value of a single chain operator parameter\&. Unlike other
-chain operator commands, this can also be used during processing\&.
-.PP 
-.IP "cop-status" 
-Info about chain operator status\&.
-.PP 
-.IP "cop-register" 
-Prints a list of registered chain operators\&.
-.PP 
-.IP "preset-register" 
-Prints a list of registered effect presets\&.
-.PP 
-.IP "ladspa-register" 
-Prints a list of registered LADSPA-plugins\&.
 .IP 
+.IP "cop-remove \'chainop_id\'" 
+Removes chain operator\&.
+.IP 
+.IP "cop-set \'chainop_id, param_id, value\'" 
+Changes the value of a single chain operator parameter\&. Unlike other
+chain operator commands, this can also be used during processing\&.
+.IP 
+.IP "cop-status" 
+Returns info about chain operator status\&. \fI[s]\fP
+.IP 
+.IP "cop-register" 
+Prints a list of registered chain operators\&. \fI[s]\fP
+.IP 
+.IP "preset-register" 
+Prints a list of registered effect presets\&. \fI[s]\fP
+.IP 
+.IP "ladspa-register" 
+Prints a list of registered LADSPA-plugins\&. \fI[s]\fP
+.PP 
 .SH "CONTROLLERS" 
 Controllers are used to control individual chain operator parameters\&.
 They are attached to chains\&. If not otherwise stated, currently 
 selected chainsetup and chains are used\&. 
-.IP 
+.PP 
 .IP "cop-add-controller \'copc_format_string\'" 
-Add a new controller and attach it to currently selected chain 
+Adds a new controller and attach it to currently selected chain 
 operator\&. Argument format is "-<id_string>:<param_id>,<range_low>,
 <range_high>,par1,\&.\&.\&.,parN"\&.  See ecasound(1) man page for more 
 info\&.
-.IP 
+.PP 
 .IP "cop-remove-controller \'param_id\'" 
-Remove the controller that is attached to the currently selected chain
+Removes the controller that is attached to the currently selected chain
 operator\&.
-.IP 
+.PP 
 .IP "ctrl-status" 
-Info about controller status\&.
-.IP 
+Returns info about controller status\&. \fI[s]\fP
+.PP 
 .IP "ctrl-register" 
-Prints a list of registered controllers\&.
+Prints a list of registered controllers\&. \fI[s]\fP
+.PP 
+.IP 
+.SH "OBJECT MAPS" 
+FIXME: insert description from ecasound man page\&.
+.IP 
+.IP "map-aio-register" 
+**not implemented**
+Prints a list of registered audio object types\&. \fI[s]\fP
+.IP 
+.IP "map-aio-list" 
+**not implemented**
+Returns a list of regular expressions matching 
+registered audio object types\&. \fI[S]\fP\&.
+.IP 
+.IP "map-aio-device-list" 
+**not implemented**
+Returns a list of regular expressions matching
+registered realtime audio object types\&. \fI[S]\fP\&.
+.IP 
+.IP "map-aio-type \'regexp\'" 
+**not implemented**
+Returns the type name handling regular expression \'regexp\'\&. \fI[s]\fP\&.
 .IP 
 .IP 
 .SH "DUMP COMMANDS" 

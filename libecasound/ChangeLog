@@ -2,6 +2,17 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-12-08  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-control.h (): now inherits ECA_CONTROL_OBJECTS directly
+	* eca-contro-dump.h (): dropped inheritance of
+	ECA_CONTROL_OBJECTS; now a non-virtual, concrete class
+	* eca-chain.h (various): added support for selecting individual
+	chainops, controllers and their parameters
+	* eca-control-objects (all chainop and ctrl related routines):
+	layout changes
+	* eca-audio-objects (first_selected_chain): added
+	
 2000-12-07  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-operator.h (is_toggled, default_parameter_range): removed

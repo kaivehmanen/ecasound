@@ -33,11 +33,10 @@
 - comments in ecs (chainsetup) files [done! 1.8.x]
 - embedded effect preset parameters ("-p[fn]:string,par1,...,parN") [done! 1.8.x]
 - metronome signal [done! 1.8.x]
-- mp3 bitrate as a command-line parameter
 - ia-mode: make separate xxx-list and xxx-status commands (a pure list, and a more
   verbose xxx-status command
-- add threshold parameter to -eca
 - better MIDI-support (separate MIDI input/output objects) [under work]
+- add threshold parameter to -eca
   
 -----------------------------------------------------------------------
 
@@ -47,6 +46,7 @@ Input/output devices:
 
 - wrapper objects for triggering file input/output based on volume
   level or timers
+- changed from virtual to a concrte
 - type override for audio objects
 - shorten support
 - wrapper object for using effects as audio inputs/outputs
@@ -62,6 +62,11 @@ Input/output devices:
 
 Effects, routing, dsp routines:
 
+- "audio stamp" chainops that store the bypassing signal; this 
+  signal can be later fed into controllers and other points 
+  in the pro
+- feeding audio into controllers
+- gates which truncate the input signal instread of muting it
 - generic envelope followers
 - more effects (for instance, a Schroeder reverb)
 
