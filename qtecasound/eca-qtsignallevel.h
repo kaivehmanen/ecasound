@@ -12,7 +12,7 @@ class QESignalLevel : public QWidget
 {
   Q_OBJECT
 public:
-  QESignalLevel(vector<SAMPLE_BUFFER>* c, QWidget *parent=0, const char *name=0 );
+  QESignalLevel(vector<SAMPLE_BUFFER>* c, QWidget *parent, const char *name);
 
 public slots:
   void update(int);

@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "07\&.01\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "17\&.01\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -130,9 +130,9 @@ Sample format is given as a a formatted string\&. The first letter is
 either "u", "s" and "f" (unsigned, signed, floating point)\&. The 
 following number specifies sample size in bits\&. If sample is 
 little endian, "_le" is added to the end\&. Similarly if big endian, 
-"_be" is added\&. If endianess is not specified, host byte-oder is used\&. 
+"_be" is added\&. If endianess is not specified, host byte-order is used\&. 
 Currently supported formats are "u8" (same as "8"), "s16_le" (same 
-as "16") and "s16_be"\&.
+as "16"), "s16_be", "s24_le", "s24_be", "s32_le" and "s32_be"\&.
 .IP 
 .IP "-y:seconds" 
 Set starting position for last specified input/output\&.
@@ -161,7 +161,8 @@ be obvious) nor to ALSA\'s loopback device\&.
 \fISPECIAL INPUT/OUTPUT DEVICES\fP
 .IP "ALSA devices" 
 When using ALSA drivers, in addition to /dev/snd/pcm* files, you can 
-also use option syntax \fB-i[:]alsa,card_number,device_number\fP\&.
+also use option syntax \fB-i[:]alsa,card_number,device_number\fP\&. You
+can also use individual subdevices, \fB-i[:]alsa,card_number,device_number,subdevice_number\fP\&.
 .IP 
 .IP "ALSA loopback device" 
 By using the ALSA loopback system, you can grab audio data from any

@@ -32,7 +32,7 @@
 #include "eca-qtlevelmeter.h"
 #include "eca-qtsignallevel.h"
 
-QESignalLevel::QESignalLevel(vector<SAMPLE_BUFFER>* c, QWidget *parent=0, const char *name=0 ) 
+QESignalLevel::QESignalLevel(vector<SAMPLE_BUFFER>* c, QWidget *parent, const char *name) 
         : QWidget( parent, name )
 {
   string caption = "qtEcasound - output level monitoring";
@@ -45,11 +45,11 @@ QESignalLevel::QESignalLevel(vector<SAMPLE_BUFFER>* c, QWidget *parent=0, const 
 
   for (int q = 0; q < inputs->size(); q++) {
     topLayout->addWidget(new QLabel("Left", this, "left"), 5);
-    levelmeters.push_back(new QELevelMeter((double)SAMPLE_BUFFER::max_amplitude, this,"level_left"));
+    levelmeters.push_back(new QELevelMeter((double)SAMPLE_SPECS::max_amplitude, this,"level_left"));
     topLayout->addWidget(levelmeters.back(), 2);
 
     topLayout->addWidget(new QLabel("Right", this, "right"),5);
-    levelmeters.push_back(new QELevelMeter((double)SAMPLE_BUFFER::max_amplitude, this,"level_right"));
+    levelmeters.push_back(new QELevelMeter((double)SAMPLE_SPECS::max_amplitude, this,"level_right"));
     topLayout->addWidget(levelmeters.back(), 2);
   }
 }
@@ -80,8 +80,8 @@ void QESignalLevel::update(int p) {
   //  levelmeters[p]->set_value(temp);
   //  levelmeters[p + 1]->set_value(temp);
 
-  levelmeters[p]->set_value((*inputs)[p].average_RMS_volume(SAMPLE_BUFFER::ch_left,64));
-  levelmeters[p+1]->set_value((*inputs)[p].average_RMS_volume(SAMPLE_BUFFER::ch_right,64));
+  levelmeters[p]->set_value((*inputs)[p].average_RMS_volume(SAMPLE_SPECS::ch_left,64));
+  levelmeters[p+1]->set_value((*inputs)[p].average_RMS_volume(SAMPLE_SPECS::ch_right,64));
 }
 
 void QESignalLevel::mute(void) {

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-main.cpp: Main processing engine
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,16 +43,17 @@
 VALUE_QUEUE ecasound_queue;
 
 ECA_PROCESSOR::ECA_PROCESSOR(void) :
-  mixslot(0, SAMPLE_BUFFER::channel_count_default)
+  mixslot(0, SAMPLE_SPECS::channel_count_default)
 {
   eparams = 0;
   active_chain_index = 0;
 }
 
 ECA_PROCESSOR::ECA_PROCESSOR(ECA_SESSION* params) :
-  mixslot(params->connected_chainsetup->buffersize(), SAMPLE_BUFFER::channel_count_default),
-  buffersize_rep(params->connected_chainsetup->buffersize()),
-  eparams(params)
+  eparams(params),
+  mixslot(params->connected_chainsetup->buffersize(), SAMPLE_SPECS::channel_count_default),
+  buffersize_rep(params->connected_chainsetup->buffersize())
+
 {
   init();
   active_chain_index = 0;
@@ -128,6 +129,8 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR*) {
   input_start_pos.resize(input_count);
   input_chain_count.resize(input_count);
   for(int adev_sizet = 0; adev_sizet < input_count; adev_sizet++) {
+    (*inputs)[adev_sizet]->buffersize(buffersize_rep, SAMPLE_BUFFER::sample_rate);
+
     input_start_pos[adev_sizet] =
       (*inputs)[adev_sizet]->position_in_samples();
     input_chain_count[adev_sizet] =
@@ -138,7 +141,6 @@ void ECA_PROCESSOR::init_connection_to_chainsetup(void) throw(ECA_ERROR*) {
 		     ", number of connected chain " +
 		     kvu_numtostr(input_chain_count[adev_sizet]) +
 		     " .\n");
-    (*inputs)[adev_sizet]->buffersize(buffersize_rep, SAMPLE_BUFFER::sample_rate);
   }
 
   output_start_pos.resize(output_count);
@@ -449,9 +451,7 @@ void ECA_PROCESSOR::change_position_chain(double seconds) {
   conditional_start();
 }
 
-double ECA_PROCESSOR::current_position(void) const {
-  return(eparams->master_input()->position_in_seconds_exact());
-}
+double ECA_PROCESSOR::current_position(void) const { return(csetup->position_in_seconds_exact()); }
 
 double ECA_PROCESSOR::current_position_chain(void) const {
   return((*chains)[active_chain_index]->input_id->position_in_seconds_exact());

@@ -46,7 +46,7 @@
 #include "eca-error.h"
 
 QESession::QESession (ECA_CONTROLLER* econtrol, const ECA_SESSION*
-		      esession, QWidget *parent=0, const char *name=0)
+		      esession, QWidget *parent, const char *name)
 
   : QWidget( parent, name ), ctrl(econtrol), ecasession(esession)
 {

@@ -310,14 +310,6 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-com_line.lo com_line.o : com_line.cpp com_line.h
-command_queue.lo command_queue.o : command_queue.cpp command_queue.h
-kvu_numtostr.lo kvu_numtostr.o : kvu_numtostr.cpp kvu_numtostr.h
-kvutils.lo kvutils.o : kvutils.cpp kvutils.h message_item.h com_line.h \
-	command_queue.h value_queue.h kvu_numtostr.h
-message_item.lo message_item.o : message_item.cpp message_item.h
-value_queue.lo value_queue.o : value_queue.cpp value_queue.h
-
 info-am:
 info: info-am
 dvi-am:
@@ -399,7 +391,7 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 install-data-local:
 	$(INSTALL) -d $(pkgincludedir)
-	cp  $(kvutil_headers) $(pkgincludedir)
+	cd $(srcdir) ; cp  $(kvutil_headers) $(pkgincludedir)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

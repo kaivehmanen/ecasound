@@ -36,7 +36,7 @@
 #include "eca-qtinte.h"
 #include "eca-debug.h"
 
-QEWaveForm::QEWaveForm(AUDIO_IO_FILE* iod, QWidget *parent=0, const char *name=0 )
+QEWaveForm::QEWaveForm(AUDIO_IO_FILE* iod, QWidget *parent, const char *name)
         : QWidget( parent, name )
 {
   setMinimumSize(400, 200);

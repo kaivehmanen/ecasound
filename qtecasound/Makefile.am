@@ -67,13 +67,13 @@ ecasound_qt_mocs = 	eca-qtdebug_moc.cpp \
 qtecasound_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
 qtecasound_debug_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
 #qtecasound_LDFLAGS = -s -lstdc++ 
-qtecasound_LDADD =  -lqt -L$(top_srcdir)/kvutils \
-		    -L$(top_srcdir)/kvutils/.libs \
-		    -lkvutils $(top_srcdir)/libecasound/src/libecasound.la
-qtecasound_debug_LDADD =  -L$(top_srcdir)/kvutils \
-			  -L$(top_srcdir)/kvutils/.libs \
+qtecasound_LDADD =  -lqt -L$(top_builddir)/kvutils \
+		    -L$(top_builddir)/kvutils/.libs \
+		    -lkvutils $(top_builddir)/libecasound/src/libecasound.la
+qtecasound_debug_LDADD =  -L$(top_builddir)/kvutils \
+			  -L$(top_builddir)/kvutils/.libs \
 			  -lkvutils -L$(qt_libraries) \
-			  -lqt $(top_srcdir)/libecasound/src/libecasound_debug.la
+			  -lqt $(top_builddir)/libecasound/src/libecasound_debug.la
 qtecasound_LDFLAGS = $(all_libraries)
 qtecasound_debug_LDFLAGS = $(qtecasound_LDFLAGS)
 #qtecasound_LDADD   = -lm -lpthread -lqt $(top_srcdir)/libecasound/src/libecasound.la
@@ -90,29 +90,29 @@ dist-hook:
 
 #qlistview-dumb.cpp: qlistview-dumb.h
 #	$(MOC) -o qlistview-dumb_moc.cpp qlistview-dumb.h
-qstringdialog_moc.cpp: qstringdialog.h
-	$(MOC) -o qstringdialog_moc.cpp qstringdialog.h
+qstringdialog_moc.cpp: $(srcdir)/qstringdialog.h
+	$(MOC) -o qstringdialog_moc.cpp $(srcdir)/qstringdialog.h
 
-eca-qtinte_moc.cpp: eca-qtinte.h
-	$(MOC) -o eca-qtinte_moc.cpp eca-qtinte.h
-eca-qtdebug.cpp: eca-qtdebug.h
-	$(MOC) -o eca-qtdebug_moc.cpp eca-qtdebug.h
-eca-qtwaveform_moc.cpp: eca-qtwaveform.h
-	$(MOC) -o eca-qtwaveform_moc.cpp eca-qtwaveform.h
-eca-qtsignallevel_moc.cpp: eca-qtsignallevel.h
-	$(MOC) -o eca-qtsignallevel_moc.cpp eca-qtsignallevel.h
-eca-qtrtposition_moc.cpp: eca-qtrtposition.h
-	$(MOC) -o eca-qtrtposition_moc.cpp eca-qtrtposition.h
-eca-qtsession_moc.cpp: eca-qtsession.h
-	$(MOC) -o eca-qtsession_moc.cpp eca-qtsession.h
-eca-qtchainsetup_moc.cpp: eca-qtchainsetup.h
-	$(MOC) -o eca-qtchainsetup_moc.cpp eca-qtchainsetup.h
-eca-qtchain_moc.cpp: eca-qtchain.h
-	$(MOC) -o eca-qtchain_moc.cpp eca-qtchain.h
-eca-qtiodevdialog_moc.cpp: eca-qtiodevdialog.h
-	$(MOC) -o eca-qtiodevdialog_moc.cpp eca-qtiodevdialog.h
-eca-qtchainselectdialog_moc.cpp: eca-qtchainselectdialog.h
-	$(MOC) -o eca-qtchainselectdialog_moc.cpp eca-qtchainselectdialog.h
+eca-qtinte_moc.cpp: $(srcdir)/eca-qtinte.h
+	$(MOC) -o eca-qtinte_moc.cpp $(srcdir)/eca-qtinte.h
+eca-qtdebug_moc.cpp: $(srcdir)/eca-qtdebug.h
+	$(MOC) -o eca-qtdebug_moc.cpp $(srcdir)/eca-qtdebug.h
+eca-qtwaveform_moc.cpp: $(srcdir)/eca-qtwaveform.h
+	$(MOC) -o eca-qtwaveform_moc.cpp $(srcdir)/eca-qtwaveform.h
+eca-qtsignallevel_moc.cpp: $(srcdir)/eca-qtsignallevel.h
+	$(MOC) -o eca-qtsignallevel_moc.cpp $(srcdir)/eca-qtsignallevel.h
+eca-qtrtposition_moc.cpp: $(srcdir)/eca-qtrtposition.h
+	$(MOC) -o eca-qtrtposition_moc.cpp $(srcdir)/eca-qtrtposition.h
+eca-qtsession_moc.cpp: $(srcdir)/eca-qtsession.h
+	$(MOC) -o eca-qtsession_moc.cpp $(srcdir)/eca-qtsession.h
+eca-qtchainsetup_moc.cpp: $(srcdir)/eca-qtchainsetup.h
+	$(MOC) -o eca-qtchainsetup_moc.cpp $(srcdir)/eca-qtchainsetup.h
+eca-qtchain_moc.cpp: $(srcdir)/eca-qtchain.h
+	$(MOC) -o eca-qtchain_moc.cpp $(srcdir)/eca-qtchain.h
+eca-qtiodevdialog_moc.cpp: $(srcdir)/eca-qtiodevdialog.h
+	$(MOC) -o eca-qtiodevdialog_moc.cpp $(srcdir)/eca-qtiodevdialog.h
+eca-qtchainselectdialog_moc.cpp: $(srcdir)/eca-qtchainselectdialog.h
+	$(MOC) -o eca-qtchainselectdialog_moc.cpp $(srcdir)/eca-qtchainselectdialog.h
 endif
 # --- qtecasound, end
 

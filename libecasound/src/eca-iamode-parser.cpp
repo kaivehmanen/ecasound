@@ -62,7 +62,9 @@ void ECA_IAMODE_PARSER::register_commands(void) {
 
   cmd_map["c-add"] = ec_c_add;
   cmd_map["c-select"] = ec_c_select;
+  cmd_map["c-deselect"] = ec_c_deselect;
   cmd_map["c-select-all"] = ec_c_select_all;
+  cmd_map["c-select-add"] = ec_c_select_add;
   cmd_map["c-remove"] = ec_c_remove;
   cmd_map["c-clear"] = ec_c_clear;
   cmd_map["c-name"] = ec_c_name;
@@ -118,37 +120,6 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map["setpos"] = ec_setpos;
 }
 
-void ECA_IAMODE_PARSER::command(const string& cmd) throw(ECA_ERROR*) {
-  vector<string> cmds = string_to_words(string_search_and_replace(cmd, '_', '-'));
-  vector<string>::iterator p = cmds.begin();
-  if (p != cmds.end()) {
-    if (*p == "") return;
-    if (ECA_IAMODE_PARSER::cmd_map.find(*p) == ECA_IAMODE_PARSER::cmd_map.end()) {
-      if (p->size() > 0 && (*p)[0] == '-') {
-	action(ec_direct_option, cmds);
-      }
-      else {
-	ecadebug->msg("(eca-iamode-parser) ERROR: Unknown command!");
-      }
-    }
-    else {
-      if (ECA_IAMODE_PARSER::cmd_map[*p] == ec_help) {
-	show_controller_help();
-      }
-      else {
-	string first = *p;
-	++p;
-	if (p == cmds.end()) {
-	  action(ECA_IAMODE_PARSER::cmd_map[first], vector<string> (0));
-	}
-	else {
-	  action(ECA_IAMODE_PARSER::cmd_map[first], vector<string> (p, cmds.end()));
-	}
-      }
-    }
-  }
-}
-
 bool ECA_IAMODE_PARSER::action_requires_params(int id) { 
   switch(id) {
   case ec_direct_option:
@@ -163,6 +134,8 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_cs_length:
   case ec_c_add:
   case ec_c_select:
+  case ec_c_deselect:
+  case ec_c_select_add:
   case ec_c_name:
   case ec_c_forward: 
   case ec_c_rewind: 

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-controller.cpp: Class for controlling the whole ecasound library
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,6 +38,38 @@
 
 ECA_CONTROLLER::ECA_CONTROLLER (ECA_SESSION* psession) 
   : ECA_CONTROLLER_OBJECTS(psession) { }
+
+void ECA_CONTROLLER::command(const string& cmd) throw(ECA_ERROR*) {
+  vector<string> cmds = string_to_words(string_search_and_replace(cmd, '_', '-'));
+  vector<string>::iterator p = cmds.begin();
+  if (p != cmds.end()) {
+    if (*p == "") return;
+    if (ECA_IAMODE_PARSER::cmd_map.find(*p) == ECA_IAMODE_PARSER::cmd_map.end()) {
+      if (p->size() > 0 && (*p)[0] == '-') {
+	action(ec_direct_option, cmds);
+      }
+      else {
+	ecadebug->msg("(eca-controller) ERROR: Unknown command!");
+      }
+    }
+    else {
+      if (ECA_IAMODE_PARSER::cmd_map[*p] == ec_help) {
+	show_controller_help();
+      }
+      else {
+	string first = *p;
+	++p;
+	if (p == cmds.end()) {
+	  vector<string> empty;
+	  action(ECA_IAMODE_PARSER::cmd_map[first], empty);
+	}
+	else {
+	  action(ECA_IAMODE_PARSER::cmd_map[first], vector<string> (p, cmds.end()));
+	}
+      }
+    }
+  }
+}
 
 void ECA_CONTROLLER::action(int action_id, 
 			       const vector<string>& args) throw(ECA_ERROR*) {
@@ -171,6 +203,13 @@ void ECA_CONTROLLER::action(int action_id,
   // ---
   case ec_c_add: { add_chains(string_to_vector(args[0], ',')); break; }
   case ec_c_select: { select_chains(string_to_vector(args[0], ',')); break; }
+  case ec_c_deselect: { deselect_chains(string_to_vector(args[0], ',')); break; }
+  case ec_c_select_add: 
+    { 
+      select_chains(string_to_vector(args[0] + "," +
+				     vector_to_string(selected_chains(), ","), ',')); 
+      break; 
+    }
   case ec_c_select_all: { select_all_chains(); break; }
   case ec_c_remove: { remove_chains(); break; }
   case ec_c_clear: { clear_chains(); break; }
@@ -482,9 +521,7 @@ string ECA_CONTROLLER::aio_status(void) const {
       ++p;
       if (p != temp.end())  st_info_string += ",";
     }
-    st_info_string += "\": ";
-    st_info_string += (*adev_citer)->status();
-    st_info_string += "\n";
+    st_info_string += "\": " + (*adev_citer)->status() + "\n";
     ++adev_sizet;
     ++adev_citer;
   }

@@ -47,8 +47,8 @@
 
 QEChainsetup::QEChainsetup (ECA_CONTROLLER* econtrol, 
 			    const ECA_CHAINSETUP* csetup, 
-			    QWidget *parent=0,
-			    const char *name=0) 
+			    QWidget *parent,
+			    const char *name) 
   : ctrl(econtrol), chainsetup(csetup)
 {
   setMinimumSize( 600, 0 );

@@ -27,7 +27,7 @@
 
 #include "eca-debug.h"
 
-QEChainselectDialog::QEChainselectDialog (const ECA_CHAINSETUP* csetup, QWidget *parent=0, const char *name=0) 
+QEChainselectDialog::QEChainselectDialog (const ECA_CHAINSETUP* csetup, QWidget *parent, const char *name) 
   : QDialog(parent, name, true), chainsetup(csetup) {
 
   setMinimumSize(300, 300);

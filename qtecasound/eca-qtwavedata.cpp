@@ -40,7 +40,7 @@
 #include "eca-qtwavedata.h"
 #include "eca-debug.h"
 
-QEWaveData::QEWaveData(AUDIO_IO_FILE* iod, QWidget *parent=0, const char *name=0 )
+QEWaveData::QEWaveData(AUDIO_IO_FILE* iod, QWidget *parent, const char *name)
         : QWidget( parent, name )
 {
   startTimer(250);
@@ -145,10 +145,10 @@ void QEWaveData::updateWaveData(bool force)
     if (progress.wasCancelled()) break;
 
     for(char ch = 0; ch < t->number_of_channels() && ch < channels; ch++) {
-      blocktmp.max = (int)(32767.0 * t->max_value(ch) / SAMPLE_BUFFER::max_amplitude);
+      blocktmp.max = (int)(32767.0 * t->max_value(ch) / SAMPLE_SPECS::max_amplitude);
       //      cerr << blocktmp.max[ch];
       //      cerr << "-";
-      blocktmp.min = (int)(32767.0 * t->min_value(ch) / SAMPLE_BUFFER::max_amplitude);
+      blocktmp.min = (int)(32767.0 * t->min_value(ch) / SAMPLE_SPECS::max_amplitude);
       //      cerr << blocktmp.min[ch];
       //      cerr << "<br>\n";
       waveblocks[ch].push_back(blocktmp);

@@ -2,7 +2,7 @@
 // eca-audio-objects.cpp: A specialized container class for
 //                        representing a group of inputs, outputs and
 //                        chains. Not meant for general use.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,12 +51,13 @@
 #include "eca-audio-objects.h"
 
 ECA_AUDIO_OBJECTS::ECA_AUDIO_OBJECTS(void) 
-  : buffersize_rep(0),
+  : 
     double_buffering_rep (false),
     precise_sample_rates_rep (false),
     output_openmode_rep (si_readwrite),
-    selected_chainids (0),
-    last_audio_object(0) { }
+    buffersize_rep(0),
+    last_audio_object(0),
+    selected_chainids (0) { }
 
 ECA_AUDIO_OBJECTS::~ECA_AUDIO_OBJECTS(void) {
   ecadebug->msg(1,"ECA_AUDIO_OBJECTS destructor!");
@@ -353,7 +354,7 @@ void ECA_AUDIO_OBJECTS::add_default_chain(void) {
   assert(buffersize() >= 0 && chains.size() == 0);
   // --------
 
-  chains.push_back(new CHAIN(buffersize(), SAMPLE_BUFFER::channel_count_default));
+  chains.push_back(new CHAIN(buffersize(), SAMPLE_SPECS::channel_count_default));
   chains.back()->name("default");
   ecadebug->msg(1,"add_default_chain() ");
   selected_chainids.push_back("default");
@@ -372,7 +373,7 @@ void ECA_AUDIO_OBJECTS::add_new_chains(const vector<string>& newchains) {
       if (*p == (*q)->name()) exists = true;
     }
     if (exists == false) {
-      chains.push_back(new CHAIN(buffersize(), SAMPLE_BUFFER::channel_count_default));
+      chains.push_back(new CHAIN(buffersize(), SAMPLE_SPECS::channel_count_default));
       chains.back()->name(*p);
       ecadebug->msg(1,"add_new_chains() added chain " + *p);
     }

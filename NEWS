@@ -20,6 +20,7 @@ Last officially released version is -*> v1.6.9r9 <*-
 	- added: support for ALSA-subdevices (-o:alsa,card,dev,subdev)
 	- added: to ia-mode - 'c-deselect', 'c-select-add'
 	- changed: ALSA pcm2-devices now opened in nonblock-mode
+	- changed: ecasound can now be compiled in a separate obj-dir
 	- fixed: bugs in channel routing and output mixing
 14012000 (v1.6.11d10)
 	- added: -ef4 - 2th-order, 24dB filter which simulates

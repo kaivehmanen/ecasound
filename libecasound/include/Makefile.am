@@ -82,5 +82,5 @@ noinst_HEADERS = $(ecasound_audiofx_src) $(ecasound_audioio_src) \
 
 install-data-local:
 	$(INSTALL) -d $(pkgincludedir)
-	cp $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_general_src) \
+	cd $(srcdir) ; cp $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_general_src) \
 	$(pkgincludedir)

@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "02\&.12\&.1999" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "17\&.01\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -138,10 +138,16 @@ chainsetup\&.
 Add chains\&. Added chains are automatically selected\&.
 .PP 
 .IP "c-select \'cname1,\&.\&.\&.,cnameN\'" 
-Select chains\&.
+Select chains\&. Other chains are automatically deselected\&.
+.PP 
+.IP "c-deselect \'cname1,\&.\&.\&.,cnameN\'" 
+Deselect chains\&.
 .PP 
 .IP "c-select-all" 
 Select all chains\&.
+.PP 
+.IP "c-select-add \'cname1,\&.\&.\&.,cnameN\'" 
+Select more chains\&.
 .PP 
 .IP "c-remove" 
 Remove selected chains\&.

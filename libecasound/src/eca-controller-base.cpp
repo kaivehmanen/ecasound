@@ -163,6 +163,33 @@ bool ECA_CONTROLLER_BASE::is_running(void) const {
   else return(false);
 }
 
+long ECA_CONTROLLER_BASE::length_in_samples(void) const { 
+  if (is_connected() == true)
+      return session_rep->connected_chainsetup->length_in_samples(); 
+  else
+    return(0);
+}
+
+double ECA_CONTROLLER_BASE::length_in_seconds_exact(void) const { 
+  if (is_connected() == true)
+      return session_rep->connected_chainsetup->length_in_seconds_exact(); 
+  else
+    return(0.0);
+}
+
+long ECA_CONTROLLER_BASE::position_in_samples(void) const { 
+  if (is_connected() == true)
+      return session_rep->connected_chainsetup->position_in_samples(); 
+  else
+    return(0);
+}
+double ECA_CONTROLLER_BASE::position_in_seconds_exact(void) const {
+  if (is_connected() == true)
+      return session_rep->connected_chainsetup->position_in_seconds_exact(); 
+  else
+    return(0.0);
+}
+
 string ECA_CONTROLLER_BASE::engine_status(void) const {
   switch(session_rep->status()) {
   case ep_status_running: 
@@ -238,9 +265,9 @@ void ECA_CONTROLLER_BASE::toggle_raise_priority(bool v) {
   session_rep->toggle_raised_priority(v);
 }
 
-void start_normal_thread(ECA_SESSION* param, int retcode, pthread_t*
+void start_normal_thread(ECA_SESSION* session, int retcode, pthread_t*
 			 th_ecasound_cqueue, pthread_attr_t* th_attr) {
-  retcode = pthread_create(th_ecasound_cqueue, th_attr, start_normal, (void*)param);
+  retcode = pthread_create(th_ecasound_cqueue, th_attr, start_normal, (void*)session);
   if (retcode != 0)
     throw(new ECA_ERROR("ECA-CONTROLLER", "Unable to create a new thread (start_normal)."));
 }
@@ -254,9 +281,9 @@ void* start_normal(void* param) {
   return(0);
 }
 
-void start_normal(ECA_SESSION* param) {
+void start_normal(ECA_SESSION* session) {
   try {
-    ECA_PROCESSOR epros (param);
+    ECA_PROCESSOR epros (session);
     epros.exec();
   }
   catch(ECA_ERROR* e) {

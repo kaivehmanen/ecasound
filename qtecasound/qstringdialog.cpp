@@ -26,7 +26,7 @@
 
 #include "qstringdialog.h"
 
-QStringDialog::QStringDialog (const QString& prompt, QWidget *parent=0, const char *name=0) 
+QStringDialog::QStringDialog (const QString& prompt, QWidget *parent, const char *name) 
   : QDialog(parent, name, true) {
 
   setCaption("Input - " + prompt);

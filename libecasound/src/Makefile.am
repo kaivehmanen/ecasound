@@ -20,7 +20,7 @@ endif
 
 INCLUDES = -I$(top_srcdir)/include
 
-INCLUDES = -I. -I$(top_srcdir) -I$(top_srcdir)/kvutils -I../include
+INCLUDES = -I. -I$(top_srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound//include
 
 #SUBDIRS = kvutils
 #DIST_SUBDIRS = kvutils
@@ -108,7 +108,7 @@ libecasound_debug_la_SOURCES = $(ecasound_common_src)
 #libecasound_la_LIBADD = -lm -lpthread -lkvutils $(af_libs) $(alsa_libs)
 #libecasound_la_LIBADD = -lm -lpthread -ldl -lkvutils $(af_libs)
 #libecasound_la_LIBADD = $(af_libs) $(top_srcdir)/kvutils/libkvutils.la
-libecasound_la_LIBADD = $(af_libs) -L$(top_srcdir)/kvutils -lkvutils
+libecasound_la_LIBADD = $(af_libs) -L$(top_builddir)/kvutils -lkvutils
 libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)
 #libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD) -lefence
 libecasound_la_LDFLAGS = --export-dynamic $(eca_ldflags)

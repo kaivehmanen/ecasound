@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-position.cpp: Global position controller
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,9 +37,17 @@ void ECA_CONTROL_POSITION::length_in_seconds(double pos_in_seconds) {
 }
 
 long int ECA_CONTROL_POSITION::length_in_seconds(void) const {
-  return(length_rep / srate_rep);
+  return(static_cast<double>(length_rep) / srate_rep);
 }
 
 long int ECA_CONTROL_POSITION::position_in_seconds(void) const {
+  return(static_cast<double>(curpos_rep) / srate_rep);
+}
+
+double ECA_CONTROL_POSITION::length_in_seconds_exact(void) const {
+  return(length_rep / srate_rep);
+}
+
+double ECA_CONTROL_POSITION::position_in_seconds_exact(void) const {
   return(curpos_rep / srate_rep);
 }

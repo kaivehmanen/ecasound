@@ -29,7 +29,7 @@
 #include "qtdebug_if.h"
 #include "eca-qtdebug.h"
 
-QEDebug::QEDebug( QWidget *parent=0, const char *name=0 ) 
+QEDebug::QEDebug( QWidget *parent=0, const char *name) 
         : QWidget( parent, name )
 {
   startTimer(10);

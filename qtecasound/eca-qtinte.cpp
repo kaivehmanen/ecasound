@@ -197,7 +197,7 @@ void QEInterface::init_qtbuttons(QBoxLayout* buttons) {
   //  buttons->addWidget( waveform, 2, 0 );
   //  connect(waveform, SIGNAL(clicked()), this, SLOT(init_waveform())
   //  );
-  rpos = new QERuntimePosition(ecaparams->length_in_seconds_exact(),
+  rpos = new QERuntimePosition(ctrl->length_in_seconds_exact(),
 			       this, "rpos");
   buttons->addWidget( rpos, 10, 0 );
   connect( rpos, SIGNAL(position_changed_from_widget(double)), this, SLOT(emsg_setpos(double)));
@@ -212,8 +212,8 @@ void QEInterface::init_qtbuttons(QBoxLayout* buttons) {
 
 void QEInterface::update_qtbuttons(void) {
   if (rpos->does_widget_have_control() == false) {
-    rpos->position_in_seconds(ecaparams->position_in_seconds_exact());
-    rpos->length_in_seconds(ecaparams->length_in_seconds_exact());
+    rpos->position_in_seconds(ctrl->position_in_seconds_exact());
+    rpos->length_in_seconds(ctrl->length_in_seconds_exact());
   }
 }
 

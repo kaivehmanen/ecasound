@@ -103,8 +103,8 @@ bin_PROGRAMS = $(qt_binaries)
 @COMPILE_QTECASOUND_TRUE@qtecasound_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
 #qtecasound_LDFLAGS = -s -lstdc++ 
-@COMPILE_QTECASOUND_TRUE@qtecasound_LDADD = -lqt -L$(top_srcdir)/kvutils 		    -L$(top_srcdir)/kvutils/.libs 		    -lkvutils $(top_srcdir)/libecasound/src/libecasound.la
-@COMPILE_QTECASOUND_TRUE@qtecasound_debug_LDADD = -L$(top_srcdir)/kvutils 			  -L$(top_srcdir)/kvutils/.libs 			  -lkvutils -L$(qt_libraries) 			  -lqt $(top_srcdir)/libecasound/src/libecasound_debug.la
+@COMPILE_QTECASOUND_TRUE@qtecasound_LDADD = -lqt -L$(top_builddir)/kvutils 		    -L$(top_builddir)/kvutils/.libs 		    -lkvutils $(top_builddir)/libecasound/src/libecasound.la
+@COMPILE_QTECASOUND_TRUE@qtecasound_debug_LDADD = -L$(top_builddir)/kvutils 			  -L$(top_builddir)/kvutils/.libs 			  -lkvutils -L$(qt_libraries) 			  -lqt $(top_builddir)/libecasound/src/libecasound_debug.la
 @COMPILE_QTECASOUND_TRUE@qtecasound_LDFLAGS = $(all_libraries)
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_LDFLAGS = $(qtecasound_LDFLAGS)
 #qtecasound_LDADD   = -lm -lpthread -lqt $(top_srcdir)/libecasound/src/libecasound.la
@@ -139,7 +139,7 @@ LIBS = @LIBS@
 @COMPILE_QTECASOUND_TRUE@eca-qtsession_moc.o eca-qtwaveform_moc.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.o eca-qtrtposition_moc.o
 @COMPILE_QTECASOUND_TRUE@qtecasound_DEPENDENCIES =  \
-@COMPILE_QTECASOUND_TRUE@$(top_srcdir)/libecasound/src/libecasound.la
+@COMPILE_QTECASOUND_TRUE@$(top_builddir)/libecasound/src/libecasound.la
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_OBJECTS =  eca-qtdebug.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtinte.o eca-qtlevelmeter.o eca-qtmain.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtrtposition.o eca-qtsignallevel.o \
@@ -154,7 +154,7 @@ LIBS = @LIBS@
 @COMPILE_QTECASOUND_TRUE@eca-qtsession_moc.o eca-qtwaveform_moc.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.o eca-qtrtposition_moc.o
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_DEPENDENCIES =  \
-@COMPILE_QTECASOUND_TRUE@$(top_srcdir)/libecasound/src/libecasound_debug.la
+@COMPILE_QTECASOUND_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -174,6 +174,18 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
+DEP_FILES =  .deps/eca-qtchain.P .deps/eca-qtchain_moc.P \
+.deps/eca-qtchainselectdialog.P .deps/eca-qtchainselectdialog_moc.P \
+.deps/eca-qtchainsetup.P .deps/eca-qtchainsetup_moc.P \
+.deps/eca-qtdebug.P .deps/eca-qtdebug_moc.P .deps/eca-qtinte.P \
+.deps/eca-qtinte_moc.P .deps/eca-qtiodevdialog.P \
+.deps/eca-qtiodevdialog_moc.P .deps/eca-qtlevelmeter.P \
+.deps/eca-qtmain.P .deps/eca-qtrtposition.P \
+.deps/eca-qtrtposition_moc.P .deps/eca-qtsession.P \
+.deps/eca-qtsession_moc.P .deps/eca-qtsignallevel.P \
+.deps/eca-qtsignallevel_moc.P .deps/eca-qtwavedata.P \
+.deps/eca-qtwaveform.P .deps/eca-qtwaveform_moc.P .deps/qstringdialog.P \
+.deps/qstringdialog_moc.P .deps/qtdebug_if.P
 SOURCES = $(qtecasound_SOURCES) $(qtecasound_debug_SOURCES)
 OBJECTS = $(qtecasound_OBJECTS) $(qtecasound_debug_OBJECTS)
 
@@ -181,9 +193,9 @@ all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .S .c .cpp .lo .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps qtecasound/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu qtecasound/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
@@ -213,9 +225,6 @@ uninstall-binPROGRAMS:
 	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	done
 
-.c.o:
-	$(COMPILE) -c $<
-
 .s.o:
 	$(COMPILE) -c $<
 
@@ -231,9 +240,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 maintainer-clean-compile:
-
-.c.lo:
-	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
 
 .s.lo:
 	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
@@ -297,6 +303,11 @@ distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 subdir = qtecasound
 
 distdir: $(DISTFILES)
+	here=`cd $(top_builddir) && pwd`; \
+	top_distdir=`cd $(top_distdir) && pwd`; \
+	distdir=`cd $(distdir) && pwd`; \
+	cd $(top_srcdir) \
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu qtecasound/Makefile
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -308,6 +319,57 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 	$(MAKE) $(AM_MAKEFLAGS) top_distdir="$(top_distdir)" distdir="$(distdir)" dist-hook
+
+DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
+
+-include $(DEP_FILES)
+
+mostlyclean-depend:
+
+clean-depend:
+
+distclean-depend:
+	-rm -rf .deps
+
+maintainer-clean-depend:
+
+%.o: %.c
+	@echo '$(COMPILE) -c $<'; \
+	$(COMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.c
+	@echo '$(LTCOMPILE) -c $<'; \
+	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
+
+%.o: %.cpp
+	@echo '$(CXXCOMPILE) -c $<'; \
+	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.cpp
+	@echo '$(LTCXXCOMPILE) -c $<'; \
+	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
 info-am:
 info: info-am
 dvi-am:
@@ -346,26 +408,27 @@ distclean-generic:
 
 maintainer-clean-generic:
 mostlyclean-am:  mostlyclean-binPROGRAMS mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-tags \
+		mostlyclean-libtool mostlyclean-tags mostlyclean-depend \
 		mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
 clean-am:  clean-binPROGRAMS clean-compile clean-libtool clean-tags \
-		clean-generic mostlyclean-am
+		clean-depend clean-generic mostlyclean-am
 
 clean: clean-am
 
 distclean-am:  distclean-binPROGRAMS distclean-compile distclean-libtool \
-		distclean-tags distclean-generic clean-am
+		distclean-tags distclean-depend distclean-generic \
+		clean-am
 	-rm -f libtool
 
 distclean: distclean-am
 
 maintainer-clean-am:  maintainer-clean-binPROGRAMS \
 		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-tags maintainer-clean-generic \
-		distclean-am
+		maintainer-clean-tags maintainer-clean-depend \
+		maintainer-clean-generic distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
@@ -376,12 +439,14 @@ maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
 mostlyclean-compile distclean-compile clean-compile \
 maintainer-clean-compile mostlyclean-libtool distclean-libtool \
 clean-libtool maintainer-clean-libtool tags mostlyclean-tags \
-distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
-dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
-install-exec install-data-am install-data install-am install \
-uninstall-am uninstall all-redirect all-am all installdirs \
-mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+distclean-tags clean-tags maintainer-clean-tags distdir \
+mostlyclean-depend distclean-depend clean-depend \
+maintainer-clean-depend info-am info dvi-am dvi check check-am \
+installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
 
 
 @COMPILE_QTECASOUND_TRUE@dist-hook:
@@ -389,29 +454,29 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 #qlistview-dumb.cpp: qlistview-dumb.h
 #	$(MOC) -o qlistview-dumb_moc.cpp qlistview-dumb.h
-@COMPILE_QTECASOUND_TRUE@qstringdialog_moc.cpp: qstringdialog.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o qstringdialog_moc.cpp qstringdialog.h
+@COMPILE_QTECASOUND_TRUE@qstringdialog_moc.cpp: $(srcdir)/qstringdialog.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o qstringdialog_moc.cpp $(srcdir)/qstringdialog.h
 
-@COMPILE_QTECASOUND_TRUE@eca-qtinte_moc.cpp: eca-qtinte.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtinte_moc.cpp eca-qtinte.h
-@COMPILE_QTECASOUND_TRUE@eca-qtdebug.cpp: eca-qtdebug.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtdebug_moc.cpp eca-qtdebug.h
-@COMPILE_QTECASOUND_TRUE@eca-qtwaveform_moc.cpp: eca-qtwaveform.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtwaveform_moc.cpp eca-qtwaveform.h
-@COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.cpp: eca-qtsignallevel.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtsignallevel_moc.cpp eca-qtsignallevel.h
-@COMPILE_QTECASOUND_TRUE@eca-qtrtposition_moc.cpp: eca-qtrtposition.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtrtposition_moc.cpp eca-qtrtposition.h
-@COMPILE_QTECASOUND_TRUE@eca-qtsession_moc.cpp: eca-qtsession.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtsession_moc.cpp eca-qtsession.h
-@COMPILE_QTECASOUND_TRUE@eca-qtchainsetup_moc.cpp: eca-qtchainsetup.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtchainsetup_moc.cpp eca-qtchainsetup.h
-@COMPILE_QTECASOUND_TRUE@eca-qtchain_moc.cpp: eca-qtchain.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtchain_moc.cpp eca-qtchain.h
-@COMPILE_QTECASOUND_TRUE@eca-qtiodevdialog_moc.cpp: eca-qtiodevdialog.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtiodevdialog_moc.cpp eca-qtiodevdialog.h
-@COMPILE_QTECASOUND_TRUE@eca-qtchainselectdialog_moc.cpp: eca-qtchainselectdialog.h
-@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtchainselectdialog_moc.cpp eca-qtchainselectdialog.h
+@COMPILE_QTECASOUND_TRUE@eca-qtinte_moc.cpp: $(srcdir)/eca-qtinte.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtinte_moc.cpp $(srcdir)/eca-qtinte.h
+@COMPILE_QTECASOUND_TRUE@eca-qtdebug_moc.cpp: $(srcdir)/eca-qtdebug.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtdebug_moc.cpp $(srcdir)/eca-qtdebug.h
+@COMPILE_QTECASOUND_TRUE@eca-qtwaveform_moc.cpp: $(srcdir)/eca-qtwaveform.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtwaveform_moc.cpp $(srcdir)/eca-qtwaveform.h
+@COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.cpp: $(srcdir)/eca-qtsignallevel.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtsignallevel_moc.cpp $(srcdir)/eca-qtsignallevel.h
+@COMPILE_QTECASOUND_TRUE@eca-qtrtposition_moc.cpp: $(srcdir)/eca-qtrtposition.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtrtposition_moc.cpp $(srcdir)/eca-qtrtposition.h
+@COMPILE_QTECASOUND_TRUE@eca-qtsession_moc.cpp: $(srcdir)/eca-qtsession.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtsession_moc.cpp $(srcdir)/eca-qtsession.h
+@COMPILE_QTECASOUND_TRUE@eca-qtchainsetup_moc.cpp: $(srcdir)/eca-qtchainsetup.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtchainsetup_moc.cpp $(srcdir)/eca-qtchainsetup.h
+@COMPILE_QTECASOUND_TRUE@eca-qtchain_moc.cpp: $(srcdir)/eca-qtchain.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtchain_moc.cpp $(srcdir)/eca-qtchain.h
+@COMPILE_QTECASOUND_TRUE@eca-qtiodevdialog_moc.cpp: $(srcdir)/eca-qtiodevdialog.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtiodevdialog_moc.cpp $(srcdir)/eca-qtiodevdialog.h
+@COMPILE_QTECASOUND_TRUE@eca-qtchainselectdialog_moc.cpp: $(srcdir)/eca-qtchainselectdialog.h
+@COMPILE_QTECASOUND_TRUE@	$(MOC) -o eca-qtchainselectdialog_moc.cpp $(srcdir)/eca-qtchainselectdialog.h
 # --- qtecasound, end
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

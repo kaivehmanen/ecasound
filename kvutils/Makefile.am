@@ -36,7 +36,7 @@ noinst_HEADERS = $(kvutil_headers)
 
 install-data-local:
 	$(INSTALL) -d $(pkgincludedir)
-	cp  $(kvutil_headers) $(pkgincludedir)
+	cd $(srcdir) ; cp  $(kvutil_headers) $(pkgincludedir)
 
 
 

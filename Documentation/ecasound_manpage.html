@@ -38,7 +38,7 @@ page]</A></H4></CENTER>
 <hr>
 
 <h1>ecasound</h1>
-<h2>07.01.2000</h2>
+<h2>17.01.2000</h2>
 
 
     
@@ -154,9 +154,9 @@ RIFF WAVE inputs and outputs).
 either "u", "s" and "f" (unsigned, signed, floating point). The 
 following number specifies sample size in bits. If sample is 
 little endian, "_le" is added to the end. Similarly if big endian, 
-"_be" is added. If endianess is not specified, host byte-oder is used. 
+"_be" is added. If endianess is not specified, host byte-order is used. 
 Currently supported formats are "u8" (same as "8"), "s16_le" (same 
-as "16") and "s16_be".
+as "16"), "s16_be", "s24_le", "s24_be", "s32_le" and "s32_be".
 <p><p></p><dt><strong>-y:seconds</strong><dd>
 Set starting position for last specified input/output.
 <p><p></p><dt><strong>-i[:]input-file-or-device</strong><dd>
@@ -181,7 +181,8 @@ be obvious) nor to ALSA's loopback device.
 <p><em>SPECIAL INPUT/OUTPUT DEVICES</em>
 <p></p><dt><strong>ALSA devices</strong><dd>
 When using ALSA drivers, in addition to /dev/snd/pcm* files, you can 
-also use option syntax <strong>-i[:]alsa,card_number,device_number</strong>.
+also use option syntax <strong>-i[:]alsa,card_number,device_number</strong>. You
+can also use individual subdevices, <strong>-i[:]alsa,card_number,device_number,subdevice_number</strong>.
 <p><p></p><dt><strong>ALSA loopback device</strong><dd>
 By using the ALSA loopback system, you can grab audio data from any
 other ALSA pcm device. Option syntax is 

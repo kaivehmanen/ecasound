@@ -33,7 +33,7 @@
 
 #include "eca-debug.h"
 
-QEIodevDialog::QEIodevDialog (const ECA_CHAINSETUP* csetup, QWidget *parent=0, const char *name=0) 
+QEIodevDialog::QEIodevDialog (const ECA_CHAINSETUP* csetup, QWidget *parent, const char *name) 
   : QDialog(parent, name, true), chainsetup(csetup) {
 
   setMinimumSize(0, 300);

@@ -27,8 +27,8 @@
 
 #include "eca-qtrtposition.h"
 
-QERuntimePosition::QERuntimePosition (double length, QWidget *parent=0, const char
-				      *name=0) :
+QERuntimePosition::QERuntimePosition (double length, QWidget *parent, const char
+				      *name) :
 QSlider(QSlider::Horizontal, parent, name)
 {
   length_in_seconds(length);

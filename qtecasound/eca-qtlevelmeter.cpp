@@ -27,7 +27,7 @@
 
 #include "eca-qtlevelmeter.h"
 
-QELevelMeter::QELevelMeter(double max_value, QWidget *parent=0, const char *name=0 ) 
+QELevelMeter::QELevelMeter(double max_value, QWidget *parent, const char *name) 
         : QWidget( parent, name )
 {
   startTimer(5);

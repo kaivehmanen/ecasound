@@ -29,17 +29,17 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-long int SAMPLE_BUFFER::sample_rate = SAMPLE_BUFFER::sample_rate_default;
+long int SAMPLE_BUFFER::sample_rate = SAMPLE_SPECS::sample_rate_default;
 
 void SAMPLE_BUFFER::set_sample_rate(long int srate) {
   SAMPLE_BUFFER::sample_rate = srate;
 }
 
-SAMPLE_BUFFER::sample_type SAMPLE_BUFFER::max_value(int channel) {
+SAMPLE_SPECS::sample_type SAMPLE_BUFFER::max_value(int channel) {
   return(*max_element(buffer[channel].begin(), buffer[channel].end()));
 }
 
-SAMPLE_BUFFER::sample_type SAMPLE_BUFFER::min_value(int channel) {
+SAMPLE_SPECS::sample_type SAMPLE_BUFFER::min_value(int channel) {
   return(*min_element(buffer[channel].begin(), buffer[channel].end()));
 }
 
@@ -252,7 +252,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 	for(buf_channel_size_t c = 0; c < ch; c++) {
 	  // little endian: (LSB, MSB) (Intel)
 	  // big endian: (MSB, LSB) (Motorola)
-	  if (SAMPLE_BUFFER::is_system_littleendian) {
+	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    a[0] = source[isize++];
 	    a[1] = source[isize++];
 	  }
@@ -275,7 +275,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
     case ECA_AUDIO_FORMAT::sfmt_s16_be:
       {
 	for(buf_channel_size_t c = 0; c < ch; c++) {
-	  if (!SAMPLE_BUFFER::is_system_littleendian) {
+	  if (!SAMPLE_SPECS::is_system_littleendian) {
 	    a[0] = source[isize++];
 	    a[1] = source[isize++];
 	  }
@@ -291,7 +291,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
     case ECA_AUDIO_FORMAT::sfmt_s24_le:
       {
 	for(buf_channel_size_t c = 0; c < ch; c++) {
-	  if (SAMPLE_BUFFER::is_system_littleendian) {
+	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    //	    if (osize == 0) cerr << "sisään:" << (*(int32_t*)(source+isize)) << "|\n";
 	    b[0] = source[isize++];
 	    b[1] = source[isize++];
@@ -313,7 +313,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
     case ECA_AUDIO_FORMAT::sfmt_s24_be:
       {
 	for(buf_channel_size_t c = 0; c < ch; c++) {
-	  if (SAMPLE_BUFFER::is_system_littleendian) {
+	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    b[3] = source[isize++];
 	    b[2] = source[isize++];
 	    b[1] = source[isize++];
@@ -333,7 +333,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
     case ECA_AUDIO_FORMAT::sfmt_s32_le:
       {
 	for(buf_channel_size_t c = 0; c < ch; c++) {
-	  if (SAMPLE_BUFFER::is_system_littleendian) {
+	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    b[0] = source[isize++];
 	    b[1] = source[isize++];
 	    b[2] = source[isize++];
@@ -353,7 +353,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
     case ECA_AUDIO_FORMAT::sfmt_s32_be:
       {
 	for(buf_channel_size_t c = 0; c < ch; c++) {
-	  if (SAMPLE_BUFFER::is_system_littleendian) {
+	  if (SAMPLE_SPECS::is_system_littleendian) {
 	    b[3] = source[isize++];
 	    b[2] = source[isize++];
 	    b[1] = source[isize++];
@@ -384,7 +384,7 @@ void SAMPLE_BUFFER::make_silent(void) {
   while(buf_iter != buffer.end()) {
     buf_sample_iter_t p = buf_iter->begin();
     while(p != buf_iter->end()) {
-      *p = SAMPLE_BUFFER::silent_value;
+      *p = SAMPLE_SPECS::silent_value;
       ++p;
     }
     ++buf_iter;
@@ -406,7 +406,7 @@ void SAMPLE_BUFFER::limit_values(void) {
   }
 }
 
-void SAMPLE_BUFFER::divide_by(SAMPLE_BUFFER::sample_type dvalue) {
+void SAMPLE_BUFFER::divide_by(SAMPLE_SPECS::sample_type dvalue) {
   buf_channel_iter_t buf_iter = buffer.begin();
   while(buf_iter != buffer.end()) {
     buf_sample_iter_t p = buf_iter->begin();
@@ -456,13 +456,13 @@ void SAMPLE_BUFFER::copy(const SAMPLE_BUFFER& x) {
   }
 }
 
-SAMPLE_BUFFER::sample_type SAMPLE_BUFFER::average_volume(void) {
+SAMPLE_SPECS::sample_type SAMPLE_BUFFER::average_volume(void) {
   sample_type temp_avg = 0.0;
   buf_channel_citer_t buf_iter = buffer.begin();
   while(buf_iter != buffer.end()) {
     buf_sample_citer_t p = buf_iter->begin();
     while(p != buf_iter->end()) {
-      temp_avg += fabs((*p) - SAMPLE_BUFFER::silent_value);
+      temp_avg += fabs((*p) - SAMPLE_SPECS::silent_value);
       ++p;
     }
     ++buf_iter;
@@ -471,7 +471,7 @@ SAMPLE_BUFFER::sample_type SAMPLE_BUFFER::average_volume(void) {
   return(temp_avg / (sample_type)number_of_channels());
 }
 
-SAMPLE_BUFFER::sample_type SAMPLE_BUFFER::average_RMS_volume(void) {
+SAMPLE_SPECS::sample_type SAMPLE_BUFFER::average_RMS_volume(void) {
   sample_type temp_avg = 0.0;
   buf_channel_citer_t buf_iter = buffer.begin();
   while(buf_iter != buffer.end()) {
@@ -485,7 +485,7 @@ SAMPLE_BUFFER::sample_type SAMPLE_BUFFER::average_RMS_volume(void) {
   return(sqrt(temp_avg / (sample_type)number_of_channels()));
 }
 
-SAMPLE_BUFFER::sample_type SAMPLE_BUFFER::average_volume(int channel,
+SAMPLE_SPECS::sample_type SAMPLE_BUFFER::average_volume(int channel,
 							 int count_samples) 
 {
   sample_type temp_avg = 0.0;
@@ -493,14 +493,14 @@ SAMPLE_BUFFER::sample_type SAMPLE_BUFFER::average_volume(int channel,
 
   buf_sample_citer_t p = buffer[channel].begin();
   while(p != buffer[channel].end()) {
-    temp_avg += fabs(*p - SAMPLE_BUFFER::silent_value);
+    temp_avg += fabs(*p - SAMPLE_SPECS::silent_value);
     ++p;
   }
 
   return(temp_avg / (sample_type)count_samples);
 }
 
-SAMPLE_BUFFER::sample_type SAMPLE_BUFFER::average_RMS_volume(int channel,
+SAMPLE_SPECS::sample_type SAMPLE_BUFFER::average_RMS_volume(int channel,
 							     int count_samples) 
 {
   sample_type temp_avg = 0.0;
@@ -554,7 +554,7 @@ void SAMPLE_BUFFER::resample_nofilter(unsigned int long from,
 	for(size_t t = last_sizet + 1; t < newbuf_sizet; t++) {
 	  buffer[c][t] = old_buffer[buf_sizet - 1] + ((old_buffer[buf_sizet]
 						      - old_buffer[buf_sizet-1])
-						     * static_cast<SAMPLE_BUFFER::sample_type>(t - last_sizet)
+						     * static_cast<SAMPLE_SPECS::sample_type>(t - last_sizet)
 						     / (newbuf_sizet - last_sizet));
 	  //  	buffer[c][t] *= 0.5;
 	  //  	buffer[c][t] += (buffer[c][t-1] * 0.5);
@@ -597,7 +597,7 @@ void SAMPLE_BUFFER::resize(long int buffersize) {
 }
 
 SAMPLE_BUFFER::SAMPLE_BUFFER (long int buffersize, int channels) 
-  : buffer(channels, vector<SAMPLE_BUFFER::sample_type> (buffersize, sample_type(0.0))),
+  : buffer(channels, vector<SAMPLE_SPECS::sample_type> (buffersize, sample_type(0.0))),
     buffersize_rep(buffersize),
     channel_count_rep(channels) {
 
@@ -608,7 +608,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (long int buffersize, int channels)
 }
 
 SAMPLE_BUFFER::SAMPLE_BUFFER (void) 
-  : buffer(0, vector<SAMPLE_BUFFER::sample_type> (0)),
+  : buffer(0, vector<SAMPLE_SPECS::sample_type> (0)),
     buffersize_rep(0),
     channel_count_rep(0) {
 

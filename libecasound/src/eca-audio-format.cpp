@@ -50,8 +50,8 @@ ECA_AUDIO_FORMAT& ECA_AUDIO_FORMAT::operator=(const ECA_AUDIO_FORMAT& x) {
     set_samples_per_second(x.srate_rep);
     set_sample_format(x.sfmt_rep);
     toggle_interleaved_channels(x.ileaved_rep);
-    return *this;
   }
+  return *this;
 }
 
 void ECA_AUDIO_FORMAT::set_sample_format(SAMPLE_FORMAT v) throw(ECA_ERROR*) {

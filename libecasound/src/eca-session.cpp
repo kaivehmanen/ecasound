@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-session.cpp: Ecasound runtime setup and parameters.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -290,14 +290,12 @@ void ECA_SESSION::connect_chainsetup(void) {
   ecadebug->msg(1, "Connecting connected chainsetup to engine.");
 
   inputs = &(connected_chainsetup->inputs);
-  select_master_input();
-
   outputs = &(connected_chainsetup->outputs);
   chains = &(connected_chainsetup->chains);
   
   while(inslots.size() != 0) inslots.pop_back();
   while(inslots.size() != inputs->size())
-    inslots.push_back(SAMPLE_BUFFER(connected_chainsetup->buffersize(), SAMPLE_BUFFER::channel_count_default));
+    inslots.push_back(SAMPLE_BUFFER(connected_chainsetup->buffersize(), SAMPLE_SPECS::channel_count_default));
 
   // --------
   // ensure:
@@ -324,22 +322,6 @@ void ECA_SESSION::disconnect_chainsetup(void) {
   // ensure:
   assert(connected_chainsetup == 0);
   // --------
-}
-
-void ECA_SESSION::select_master_input(void) {
-  master_input_length = 0;
-  int p = 0;
-  while (p < static_cast<int>(inputs->size())) {
-    if ((*inputs)[p]->length_in_samples() > master_input_length) {
-      master_input_length = (*inputs)[p]->length_in_samples();
-      master_input_id = p;
-    }
-    ++p;
-  }
-
-  ecadebug->msg(1, "(eca-session) Setting master_input_id: " +
-		kvu_numtostr(master_input_id) + ", length: " +
-		kvu_numtostr(master_input_length) + ".");
 }
 
 void ECA_SESSION::interpret_general_options(COMMAND_LINE& cline) {
@@ -440,36 +422,5 @@ bool ECA_SESSION::is_slave_output(AUDIO_IO* aiod) const {
   return(false);
 }
 
-void ECA_SESSION::status(EP_STATUS temp) {
-  //  pthread_mutex_lock(&status_lock);
-  ep_status = temp;
-  //  pthread_mutex_unlock(&status_lock);
-}
-
+void ECA_SESSION::status(EP_STATUS temp) { ep_status = temp; }
 EP_STATUS ECA_SESSION::status(void) const { return(ep_status); }
-//  pthread_mutex_lock(&status_lock);
-//  EP_STATUS temp = ep_status;
-//  pthread_mutex_unlock(&status_lock);
-//  return(temp);
-
-long ECA_SESSION::length_in_samples(void) const { 
-  if (selected_chainsetup == 0) return(0);
-  if (is_selected_chainsetup_connected() == false) return(0);
-  if (inputs->size() < master_input_id + 1) return(0);
-  return((*inputs)[master_input_id]->length_in_samples()); 
-}
-
-double ECA_SESSION::length_in_seconds_exact(void) const { 
-  return((double)length_in_samples() / SAMPLE_BUFFER::sample_rate); 
-}
-
-long ECA_SESSION::position_in_samples(void) const { 
-  if (selected_chainsetup == 0) return(0);
-  if (is_selected_chainsetup_connected() == false) return(0);
-  if (inputs->size() < master_input_id + 1) return(0);
-  return((*inputs)[master_input_id]->position_in_samples()); 
-}
-
-double ECA_SESSION::position_in_seconds_exact(void) const {
-    return((double)position_in_samples() / SAMPLE_BUFFER::sample_rate); 
-}
