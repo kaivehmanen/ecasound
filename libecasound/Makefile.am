@@ -33,7 +33,7 @@ libecasound_tester_libs =	$(top_builddir)/libecasound/.libs/libecasound@LIBECASO
 				$(top_builddir)/kvutils/.libs/libkvutils@LIBKVUTILS_VERSION@_debug.a
 else
 libecasound_tester_libs =  	$(top_builddir)/libecasound/.libs/libecasound@LIBECASOUND_VERSION@.a \
-				$(top_builddir)/kvutils/.libs/libkvutils@LIBKVUTILS_VERSION@.a \
+				$(top_builddir)/kvutils/.libs/libkvutils@LIBKVUTILS_VERSION@.a
 endif
 
 # note! Automake >= 1.5 will install stripped libraries
