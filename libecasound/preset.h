@@ -23,7 +23,7 @@ class PRESET : public CHAIN_OPERATOR,
  public:
 
   /** @name Public virtual functions to notify about changes 
-   *        (Reimplemented from ECA_RESAMPLE_AWARE) */
+   *        (Reimplemented from ECA_SAMPLERATE_AWARE) */
   /*@{*/
 
   virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
