@@ -81,6 +81,9 @@
 #ifdef ECA_COMPILE_AUDIOFILE
 #include "plugins/audioio_af.h"
 #endif
+#ifdef ECA_COMPILE_SNDFILE
+#include "plugins/audioio_sndfile.h"
+#endif
 #ifdef ECA_COMPILE_ALSA
 #include "plugins/audioio_alsa.h"
 #include "plugins/audioio_alsa_named.h"
@@ -224,6 +227,10 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
 #ifdef ECA_COMPILE_AUDIOFILE
   AUDIO_IO* af = new AUDIOFILE_INTERFACE();
   objmap->register_object("audiofile_aiff_au_snd", "(aif*$)|(au$)|(snd$)", af);
+#endif
+#ifdef ECA_COMPILE_SNDFILE
+  AUDIO_IO* sndfile = new SNDFILE_INTERFACE();
+  objmap->register_object("sndfile", "(^sndfile$)|(w64$)|(vox$)|(paf$)|(iff$)|(nist$)|($mat[45])|(nist$)|(xi$)|(htk$)", sndfile);
 #endif
 #endif /* ECA_ENABLE_AUDIOIO_PLUGINS */
 

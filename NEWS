@@ -13,6 +13,12 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+??112003 (v2.3.1)  -** stable release **-
+	- added: support for libsndfile; enabled if libsndfile is
+	         detected succesfully in configure; FIXME: add ref
+ 		 to docs
+	- fixed: pyecasound/test1_stresstest.py was not included in
+		 the dist package
 19112003 (v2.3.1)  -** stable release **-
 	- added: --disable-effects configure option; build ecasound 
 		 without effect and controller components

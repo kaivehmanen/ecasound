@@ -23,7 +23,7 @@ echo "------------------------------------------------------------------"
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 2.3.1)
+AM_INIT_AUTOMAKE(ecasound, 2.3.2)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
@@ -784,6 +784,40 @@ fi
 dnl ------------------------------------------------------------------
 
 dnl ---
+dnl Libsndfile support
+dnl 
+dnl defines: ECA_AM_COMPILE_SNDFILE, ECA_COMPILE_SNDFILE
+dnl ---
+AC_CHECK_LIB(sndfile,main,sndfile_support=yes,sndfile_support=no)
+AC_ARG_ENABLE(sndfile,
+  [  --disable-sndfile			  Disable libsndfile (default = no)],
+  [
+    case "$enableval" in
+      y | yes)
+        AC_MSG_RESULT(yes)
+	sndfile_support=yes
+      ;;
+
+      n | no)
+        AC_MSG_RESULT(no)
+	sndfile_support=no
+      ;;
+        
+      *)
+        AC_MSG_ERROR([Invalid parameter value for --enable-sndfile: $enableval])
+      ;;
+    esac
+ ]
+)
+AM_CONDITIONAL(ECA_AM_COMPILE_SNDFILE, test x$sndfile_support = xyes)
+
+if test x$sndfile_support = xyes; then
+    AC_DEFINE(ECA_COMPILE_SNDFILE)
+fi                                     
+
+dnl ------------------------------------------------------------------
+
+dnl ---
 dnl Check for ALSA driver support
 dnl
 dnl defines: ECA_AM_COMPILE_ALSA
@@ -1095,6 +1129,11 @@ if test x$af_support = xyes ; then
 	echo "Libaudiofile:		yes"
 else
 	echo "Libaudiofile:		no"
+fi
+if test x$sndfile_support = xyes ; then
+	echo "Libsndfile:		yes"
+else
+	echo "Libsndfile:		no"
 fi
 if test x$alsa_support = xyes ; then
 	echo "ALSA support		yes"

@@ -32,6 +32,14 @@ else
 af_target = 
 endif
 
+if ECA_AM_COMPILE_SNDFILE
+sndfile_libs = -lsndfile
+sndfile_target = libaudioio_sndfile.la
+sndfile_src = audioio_sndfile.cpp
+else
+sndfile_target = 
+endif
+
 if ECA_AM_COMPILE_JACK
 jack_target = libaudioio_jack.la
 jack_src = audioio_jack.cpp audioio_jack_manager.cpp
@@ -58,7 +66,8 @@ plugin_includes = 	\
 			audioio_alsa_named.h \
 			audioio_arts.h \
 			audioio_jack.h \
-			audioio_jack_manager.h
+			audioio_jack_manager.h \
+			audioio_sndfile.h
 
 noinst_HEADERS =   	$(plugin_includes)
 
@@ -75,7 +84,8 @@ endif
 plugin_cond_sources = 	$(af_src) \
                         $(alsa_src) \
 			$(arts_src) \
-			$(jack_src)
+			$(jack_src) \
+			$(sndfile_src)
 
 # ----------------------------------------------------------------------
 # source files
@@ -83,7 +93,7 @@ plugin_cond_sources = 	$(af_src) \
 
 libecasound_plugins_la_SOURCES          = audioio_dummy.cpp $(plugin_cond_sources)
 EXTRA_libecasound_plugins_la_SOURCES    = $(plugin_cond_sources)
-libecasound_plugins_la_LIBADD		= $(af_libs) $(alsa_libs) $(arts_libs) $(ECA_S_JACK_LIBS)
+libecasound_plugins_la_LIBADD		= $(af_libs) $(alsa_libs) $(arts_libs) $(sndfile_libs) $(ECA_S_JACK_LIBS)
 libecasound_plugins_la_LDFLAGS 		= -static
 
 libecasound_plugins_debug_la_SOURCES	= $(libecasound_plugins_la_SOURCES)

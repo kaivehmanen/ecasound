@@ -1,6 +1,6 @@
 /** 
  * acconfig.h for ecasound
- * last modified: 20031003-8
+ * last modified: 20031119-9
  */
 
 /* Package name */
@@ -44,6 +44,9 @@
 
 /* whether to compile libaudiofile input/output */
 #undef ECA_COMPILE_AUDIOFILE
+
+/* whether to compile libsndfile input/output */
+#undef ECA_COMPILE_SNDFILE
 
 /* whether to compile JACK input/output */
 #undef ECA_COMPILE_JACK
