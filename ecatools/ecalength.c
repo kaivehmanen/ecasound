@@ -49,7 +49,8 @@
 #include <stdio.h> 
 #include <unistd.h> 
 #include <string.h>
-#include <ecasound/ecasoundc.h> 
+
+#include "ecasoundc.h"
 
 #define FALSE          0 
 #define TRUE           1 

@@ -8,12 +8,14 @@
 #include <eca-debug.h>
 #include "textdebug.h"
 
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
 #ifdef ECA_HAVE_NCURSES_CURSES_H
 #include <ncurses/curses.h>
 #include <ncurses/term.h>
 #else
 #include <curses.h>
 #include <term.h>
+#endif
 #endif
 
 void TEXTDEBUG::stream(std::ostream* dos) {

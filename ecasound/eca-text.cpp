@@ -44,12 +44,14 @@
 #include <eca-error.h>
 #include <eca-comhelp.h>
 
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
 #ifdef ECA_HAVE_NCURSES_CURSES_H
 #include <ncurses/curses.h>
 #include <ncurses/term.h>
 #else
 #include <curses.h>
 #include <term.h>
+#endif
 #endif
 
 #define READLINE_LIBRARY
@@ -239,6 +241,7 @@ void ecasound_start_iactive_readline(ECA_SESSION* param) {
   }
   while(cmd != 0);
 }
+#endif
 
 /**
  * Parses the command lines options in 'cline'.
@@ -375,6 +378,7 @@ void ecasound_print_header(std::ostream* dostream) {
   *dostream << "****************************************************************************\n";
 }
 
+#if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
 /* **************************************************************** */
 /*                                                                  */
 /*                  Interface to Readline Completion                */
