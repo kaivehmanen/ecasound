@@ -26,55 +26,88 @@ engine.
 
 <!-- ###  new section ### -->
 <p>
-<a name=fconversions><b>Format conversions</b></a>
+<a name="fconversions"><b>Format Conversions</b></a>
 </p>
 <ol>
 <p>
-<li> ecasound -i:somefile.wav -o:somefile.cdr
-<li> ecasound -i somefile.wav -o somefile.cdr
+<li> ecasound -i:somefile.wav -o:somefile.cdr</li>
+<li> ecasound -i somefile.wav -o somefile.cdr</li>
 </p><p>
 These do the same thing, convert <i>somefile.wav</i> to
 <i>somefile.cdr</i>. As no chains are specified, <i>default</i>
 chain is used. 
 </p><p>
-<li> ecasound -a:1,2 -i somefile.wav -a:1 -o somefile.cdr -a:2 -o somefile.mp3
+<li> ecasound -a:1,2 -i somefile.wav -a:1 -o somefile.cdr -a:2 -o somefile.mp3</li>
 </p><p>
 This is not a very useful example, but hopefully helps to understand 
 the way chains work. First, two new chains <i>1</i> and <i>2</i>
-(you can also use strings: <i>-a:some_name_with_no_whitespaces,some_other_name</i>) are created.
+(you can also use strings: '-a:some_name_with_no_whitespaces,some_other_name') are created.
 They are now the active chains. After this, input <i>somefile.wav</i> is
 connected to both these chains. The rest follows the same scheme.
-Chain <i>1</i> is set active and output <i>somefile.cdr</i> is
+Chain '1' is set active and output <i>somefile.cdr</i> is
 attached to it. In the same way, <i>somefile.mp3</i> is attached to
-chain <i>2</i>. 
+chain '2'. 
 </p><p>
-<li> ecasound -c -i somefile.wav -o somefile.cdr
+<li> ecasound -c -i somefile.wav -o somefile.cdr</li>
 </p><p>
 Like before, but ecasound is now started in interactive mode. 
 </p>
 </ol>
+
 <!-- ###  new section ### -->
-<a name=playback><p><b>Realtime outputs (soundcard playback)</b></p></a>
+<p>
+<a name="fcresampling"><b>Format Conversions - Resampling</b></a>
+</p>
+
+<ol>
+
+<li> ecasound -f:16,2,96000 -i resample,44100,foo.wav -o bar.wav</li>
+<li> ecasound -f:16,2,44100 -i resample,96000,bar.wav -o foo.wav</li>
+<li> ecasound -f:16,2,44100 -i resample-hq,48000,foo.wav -o bar.wav</li>
+
+<p>
+To do resampling, a special 'resample' input type must be used. 
+In the first example above, the 44100Hz file <i>foo.wav</i> is 
+resampled to 96000Hz and the result is written to <i>bar.wav</i>.
+In the second example the reverse is done, sample rate is converted
+from 96000hz to 44100Hz.
+</p>
+
+<p>
+In the last example we do a 48000Hz to 44100Hz conversion using
+the 'resample-hq' input type. If Ecasound was built with support
+for the libsamplerate package, 'resample-hq' selects
+the high-quality conversion mode. In this mode the conversion
+process requires more CPU power, but the results are of
+higher quality. Using libsamplerate also improves quality 
+of the default 'resample' mode.
+</p>
+
+</ol>
+
+
+<!-- ###  new section ### -->
+<a name="playback"><p><b>Realtime Outputs (soundcard playback)</b></p></a>
 <ol>
 <p>
-<li> ecasound somefile.wav
-<li> ecasound -i somefile.wav
-<li> ecasound -i:somefile.wav 
-<li> ecasound -i somefile.wav -o /dev/dsp
+<li> ecasound somefile.wav</li>
+<li> ecasound -i somefile.wav</li>
+<li> ecasound -i:somefile.wav </li>
+<li> ecasound -i somefile.wav -o /dev/dsp</li>
 </p><p>
 If you haven't touched your <b>~/.ecasound/ecasoundrc</b> configuration file,
 these should all do the same thing, output <i>somefile.wav</i> to
 <i>/dev/dsp</i> using the <i>default</i> chain. If no inputs are 
 specified, ecasound tries to use the first non-option argument on the
 command line as a default input. If no chains are specified, the chain
-<i>default</i> is created and set active. If no outputs are specified,
+'default' is created and set active. If no outputs are specified,
 the default-output defined in <b>~/.ecasound/ecasoundrc</b> is used. 
 This is normally <i>/dev/dsp</i>.
 </p>
 <p>
-<li> ecasound -i somefile.mp3 -o alsahw,0,0
-<li> ecasound -i somefile.mp3 -o alsaplugin,0,0
-<li> ecasound -i somefile.mp3 -o alsa,soundcard_name
+<li> ecasound -i somefile.mp3 -o alsahw,0,0</li>
+<li> ecasound -i somefile.mp3 -o alsaplugin,0,0</li>
+<li> ecasound -i somefile.mp3 -o alsa,soundcard_name</li>
 </p><p>
 The ALSA drivers have a somewhat different option syntax. You 
 first specify either "alsahw" (to indicate you want use the 
@@ -87,7 +120,7 @@ ALSA configuration files (either ~/.asoundrc or the global settings
 file). Otherwise ALSA inputs/outputs work just like OSS-devices.
 </p>
 <p>
-<li> mpg123 -s sometune.mp3 | ecasound -i:stdin -o alsahw,0,0
+<li> mpg123 -s sometune.mp3 | ecasound -i:stdin -o alsahw,0,0</li>
 </p><p>
 Send the output of mpg123 to standard output (-s option) and 
 read it from standard input with ecasound (-i:stdin option). If you
@@ -100,15 +133,15 @@ to standard streams containing audio data.
 <p><b>Realtime inputs (recording from soundcard)</b></p>
 <p>
 <ol>
-<li> ecasound -i:/dev/dsp0 -o somefile.wav
-<li> ecasound -i:/dev/dsp0 -o somefile.wav -c
-<li> ecasound -i alsahw,1,0 -o somefile.wav
+<li> ecasound -i:/dev/dsp0 -o somefile.wav</li>
+<li> ecasound -i:/dev/dsp0 -o somefile.wav -c</li>
+<li> ecasound -i alsahw,1,0 -o somefile.wav</li>
 </p><p>
 These are simple examples of recording. Notice that when recording 
 it's often useful to run ecasound in interactive mode (-c).
 </ol>
 <!-- ###  new section ### -->
-<a name=effects><p><b>Effect processing</b></p></a>
+<a name="effects"><p><b>Effect Processing</b></p></a>
 <ol>
 <p> 
 Ecasound is an extremely versatile tool when it comes to effect
@@ -116,14 +149,14 @@ processing. After all, it was originally programmed for non-realtime
 dsp processing. Because of this, these examples just scratch 
 the surface.
 </p><p>
-<li> ecasound -i somefile.mp3 -o /dev/dsp -ea:120
-<li> ecasound -a:default -i somefile.mp3 -o /dev/dsp -ea:120
+<li> ecasound -i somefile.mp3 -o /dev/dsp -ea:120</li>
+<li> ecasound -a:default -i somefile.mp3 -o /dev/dsp -ea:120</li>
 <p>
 Let's start with a simple one. These do the same thing: mp3 input, 
 OSS output and an amplify effect, which amplifies the signal
 by 120%, are added to the default chain. 
 </p><p>
-<li> ecasound -i somefile.mp3 -o /dev/dsp -etr:40,0,55 -ea:120
+<li> ecasound -i somefile.mp3 -o /dev/dsp -etr:40,0,55 -ea:120</li>
 </p><p>
 Like the previous example, but now a reverb effect, with a delay of 40
 milliseconds, surround disabled and mix-% of 55, is added to chain 
@@ -136,70 +169,80 @@ always use output to a file.
 <ul>
      -a:1 -etr:40,0,55 -ea:120 \<br>
      -a:2 -efl:400
-</ul>
-</p><p>
+</ul></li>
+</p>
+<p>
 Ok, let's do some paraller processing. This time two chains are
 created and the input file is assigned to both of them. The output
-file is assigned to a special chain called <b>all</b>. <i>-a:1,2</i>
+file is assigned to a special chain called <b>all</b>. '-a:1,2'
 would also work. This way we can use one signal in multiple chains 
 and process each chains with different effects. You can create as many
 chains as you want.
 </p>
 </ol>
+
 <!-- ###  new section ### -->
 <p><b>Using controller sources with effects</b></p>
 <ol>
 <p>
-<li> ecasound -i somefile.wav -o /dev/dsp -ef3:800,1.5,0.9 -kos:1,400,4200,0.2,0 -kos:2,0.1,1.5,0.15,0 
-<li> ecasound -i somefile.wav -o /dev/dsp -ef3:800,1.5,0.9 -km:1,400,4200,74,1 -km:2,0.1,1.5,71,1
-</p><p>
+<li> ecasound -i somefile.wav -o /dev/dsp -ef3:800,1.5,0.9 -kos:1,400,4200,0.2,0 -kos:2,0.1,1.5,0.15,0 </li>
+<li> ecasound -i somefile.wav -o /dev/dsp -ef3:800,1.5,0.9 -km:1,400,4200,74,1 -km:2,0.1,1.5,71,1</li>
+</p>
+<p>
 The first example uses two sine oscillators
-(<i>-kos:parameter,range_low,range_high,speed_in_Hz,initial_phase</i>)
+('-kos:parameter,range_low,range_high,speed_in_Hz,initial_phase')
 to control a resonant lowpass filter. The cutoff frequency varies
 betweeen 400 and 4200 Hz, while resonance varies between 0.1 and 1.5.
 The initial phase is 0 (times pi). The second example uses MIDI continuous
 controllers
-(<i>-km:parameter,range_low,range_high,controller_number,midi-channel</i>)
+('-km:parameter,range_low,range_high,controller_number,midi-channel')
 as controller sources. The ranges are the same as in the
 in first example. Controller numbers used are 74 (cutoff) and 71
 (resonance). In other words you can use your synth's cutoff and
 resonance knobs.
-</p><p>
+</p>
+<p>
 It's also possible to control controllers with other controllers 
-using the <i>-kx</i> option. Normally when you add a controller,
-you're controlling the last specified chain operator. <i>-kx</i> 
-changes this. Let's take an example:
-</p><p>
+using the '-kx' option. Normally when you add a controller,
+you're controlling the last specified chain operator. 
+'-kx' changes this. Let's take an example:
+</p>
+<p>
 <li> ecasound -i file.wav -o /dev/dsp -ea:100 -kos:1,0,100,0.5,0 -kx -kos:4,0.1,5,0.5,0
-</p><p>
+</p>
+<p>
 Same as before, but now another 0.5Hz sine oscillator is controlling 
 the frequency of the first oscillator.
-</p><p>
+</p>
+<p>
 <li>ecasound -i file.wav -o /dev/dsp -ef3:1000,1.0,1.0 -kos:1,500,2000,1,0 \<br>
 				 -kos:2,0.2,1.0,0.5,0  \<br>
-				 -kx -km:1,0.1,1.5,2,1
-</p><p>
+				 -kx -km:1,0.1,1.5,2,1</li>
+</p>
+<p>
 Ok, let's get real whacky. Here a 1Hz sine oscillator is assigned to
 the cutoff frequency, while other controller is controlling resonance.
 Now we add a MIDI-controller, that controls the second sine
 oscillator.
 </p>
 </ol>
+
 <!-- ###  new section ### -->
-<a name=multitrack><p><b>Multitrack recording</b></p></a>
+<a name="multitrack"><p><b>Multitrack Recording</b></p></a>
 <ol>
 <p>
 <li> ecasound -c -b:256 -r -f:16,2,44100 \<br>
 <ul>
 	      -a:1 -i monitor-track.wav -o /dev/dsp \<br>
   	      -a:2 -i /dev/dsp -o new-track.wav
-</ul>
-</p><p>
+</ul></li>
+</p>
+<p>
 It really is this simple. To minimize syncronization problems,
-a small buffersize is set with <i>-b:buffer_size_in_samples</i>.
+a small buffersize is set with '-b:buffer_size_in_samples'.
 This time I set it to 256 samples. To ensure flawless recording,
-runtime priority is risen with <i>-r</i>. Then a default sample format
-is set with <i>-f:bits,channels,sample_rate</i>. Now all that's left
+runtime priority is risen with '-r'. Then a default sample format
+is set with '-f:bits,channels,sample_rate'. Now all that's left
 is to specify two chains: one for monitoring and one for recording.
 When using the above command, you need to have some way of monitoring 
 the signal that's been recorded. A common way is to enable
@@ -213,7 +256,7 @@ chain for it:</p>
         -a:2,3 -i /dev/dsp \<br>
         -a:2 -o new-track.wav \<br>
         -a:1,3 -o /dev/dsp<br>
-</ul>
+</ul></li>
 </p>
 <p>
 One thing to note that there are some differences in how OSS soundcard
@@ -228,10 +271,10 @@ levels (using the soundcard mixer apps and adjusting source volume),
 but ecasound offers a better way to do this. This is a bit ugly,
 but what's most important, it works in text-mode:</p>
 <p>
-<li> ecasound -c -f:16,2,44100 -a:1 -i /dev/dsp0 -o /dev/dsp3 -ev
+<li> ecasound -c -f:16,2,44100 -a:1 -i /dev/dsp0 -o /dev/dsp3 -ev</li>
 </p>
 <p>Basicly this just records from one OSS input, puts the signal through
-an analyze (<i>-ev</i>) effect and outputs to an OSS output. The secret
+an analyze ('-ev') effect and outputs to an OSS output. The secret
 here is that you can get volume statistics with the <u>estatus</u> (or
 <u>es</u>) command in interactive mode. Qtecasound also offers 
 a <u>estatus</u> pushbutton. This way you can adjust the mixer
@@ -253,13 +296,15 @@ can monitor signal level in realtime.
      -a:3 -i bass-guitar_take-2.ewf \<br>
      -a:4 -i brass-house-lead.wav \<br>
      -a:all -o /dev/dsp
-</ul>
-</p><p>
-First of all, interactive-mode is selected with <i>-c</i>. Then 
+</ul></li>
+</p>
+<p>
+First of all, interactive-mode is selected with '-c'. Then 
 four inputs (all stereo) are added. All four chains are then assigned
 to one output, which this time is the soundcard (/dev/dsp). That's
 all.
-</p><p>
+</p>
+<p>
 <li> ecasound -c -r -b:2048 \<br>
 <ul>
      -a:1,5 -i drums.wav -ea:200 \<br>
@@ -268,39 +313,41 @@ all.
      -a:4,8 -i brass-house-lead.wav -epp:60 -ea:50 \<br>
      -a:1,2,3,4 -o /dev/dsp \<br>
      -a:5,6,7,8 -o current_mix.wav
-</ul>
-</p><p>
+</ul></li>
+</p>
+<p>
 This second example is more complex. The same inputs are used, but
-this time effects (amplify <i>-ea:mix_percent</i> and normal
-pan <i>-epp:left_right_balance</i>) are also used. First four chains are
+this time effects (amplify '-ea:mix_percent' and normal
+pan '-epp:left_right_balance') are also used. First four chains are
 assigned to the soundcard output as in the first example, but now we
 also have another set of chains that are assigned to a WAVE file
 <i>current_mix.wav</i>. In this example, runtime priority is also
-risen with <i>-r</i>. A bigger buffersize is also used.
+risen with '-r'. A bigger buffersize is also used.
 </p>
 </ol>
 
 <!-- ###  new section ### -->
-<a name=cutcopypaste><p><b>Cut, copy and paste</b></p></a>
+<a name="cutcopypaste"><p><b>Cut, Copy and Paste</b></p></a>
 <ol>
 <p>
-<li> ecasound -i bigfile.wav -o part1.wav -t:60.0
-<li> ecasound -i bigfile.wav -y:60.0 -o part2.wav
+<li> ecasound -i bigfile.wav -o part1.wav -t:60.0</li>
+<li> ecasound -i bigfile.wav -y:60.0 -o part2.wav</li>
 </p>
 <p> 
 Here's a simple example where first 60 seconds of 
 bigfile.wav is written to part1.wav and the rest to 
 part2.wav. If you want to combine these files back to 
 one big file:
-</p><p>
-<li> ecasound -i part2.wav -o part1.wav -y:500
+</p>
+<p>
+<li> ecasound -i part2.wav -o part1.wav -y:500</li>
 </p>
 part2.wav is appended to part1.wav.
 </p>
 </ol>
 
 <!-- ###  new section ### -->
-<a name=multichannel><p><b>Multichannel processing</b></p></a>
+<a name="multichannel"><p><b>Multichannel Processing</b></p></a>
 <ol>
 You need to worry about channel routing only if input and 
 output channel counts don't match. Here's how you 
@@ -312,30 +359,31 @@ divide a 4-channel audio file into 4 mono files.
  	    -a:2 -f:16,1,44100 -o mono-2.wav -erc:2,1 \<br>
  	    -a:3 -f:16,1,44100 -o mono-3.wav -erc:3,1 \<br>
  	    -a:4 -f:16,1,44100 -o mono-4.wav -erc:4,1
-</ul>
+</ul></li>
 </p>
 </ol>
 
 <!-- ###  new section ### -->
-<a name=srouting><p><b>Signal routing through external devices</b></p></a>
+<a name=srouting><p><b>Signal Routing through External Devices</b></p></a>
 <ol>
 <p>
 <li> ecasound -c -b:128 -r -f:16,2,44100 \<br>
 <ul>
 	      -a:1 -i source-track.wav -o /dev/dsp3 \<br>
   	      -a:2 -i /dev/dsp0 -o target-track.wav
-</ul>
-</p><p>
+</ul></li>
+</p>
+<p>
 So basicly, this is just like multirack recording. The only difference
 is that realtime input and output are externally connected.
 </p>
 </ol>
 
 <!-- ###  new section ### -->
-<a name=presets><p><b>Presets and LADSPA effect plugins</b></p></a>
+<a name="presets"><p><b>Presets and LADSPA Effect Plugins</b></p></a>
 <ol>
 <p>
-<li> ecasound -i null -o /dev/dsp -el:sine_fcac,440,1
+<li> ecasound -i null -o /dev/dsp -el:sine_fcac,440,1</li>
 </p><p>
 This produces a 440Hz sine tone (great for tuning your instruments!).
 For the above to work, LADSPA SDK needs to be installed (see 
@@ -343,16 +391,16 @@ For the above to work, LADSPA SDK needs to be installed (see
 </p>
 
 <p>
-<li> ecasound -i:null -o:/dev/dsp -el:sine_fcac,880,1 -eemb:120,10
--efl:2000
-</p><p>
+<li> ecasound -i:null -o:/dev/dsp -el:sine_fcac,880,1 -eemb:120,10 -efl:2000</li>
+</p>
+<p>
 This results in audible metrome signal with tempo of 120BPM. Now 
 the syntax might look a bit difficult for everyday use. Luckily
 ecasound's preset system will help in this situation. You can get the
 same exact result with:
 </p>
 <p>
-<li> ecasound -i:null -o:/dev/dsp -pn:metronome,120
+<li> ecasound -i:null -o:/dev/dsp -pn:metronome,120</li>
 </p>
 <p>
 See the file 'effect_presets' for a list of available effect

@@ -1,6 +1,6 @@
 /** 
  * acconfig.h for ecasound
- * last modified: 20031119-9
+ * last modified: 20031128-10
  */
 
 /* Package name */
@@ -65,6 +65,9 @@
 
 /* well, are you? :) */
 #undef ECA_FEELING_EXPERIMENTAL
+
+/* debugging mode build */
+#undef ECA_DEBUG_MODE
 
 /* whether to disable all use of shared libs */
 #undef ECA_ALL_STATIC
