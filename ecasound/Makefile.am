@@ -4,7 +4,7 @@ else
 INSTALL_STRIP_FLAG = -s
 endif
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir)/libecasound/include -I$(top_srcdir)/kvutils
+INCLUDES = -I$(srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils
 
 if USE_NCURSES
 termcap_library = -lncurses
@@ -23,16 +23,10 @@ ecasound_debug_SOURCES = $(ecasound_SOURCES)
 
 ecasound_LDADD = $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a \
                  $(termcap_library) \
-		 $(top_builddir)/libecasound/src/libecasound.la \
+		 $(top_builddir)/libecasound/libecasound.la \
 		 -L$(top_builddir)/kvutils/.libs -lkvutils
 ecasound_debug_LDADD = $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a \
 			$(termcap_library) \
-		 	$(top_builddir)/libecasound/src/libecasound_debug.la \
+		 	$(top_builddir)/libecasound/libecasound_debug.la \
 			-L$(top_builddir)/kvutils/.libs -lkvutils
-#		       -ltermcap
-#			 /usr/lib/libreadline.a /usr/lib/libhistory.a
-#ecasound_debug_LDFLAGS = -lkvutils
-# ecasound_LDADD = -lm -lpthread $(top_srcdir)/libecasound/src/libecasound.la
-# ../kvutils/.libs/libkvutils.a
-
 

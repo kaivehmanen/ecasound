@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "14\&.05\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "29\&.05\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -158,9 +158,9 @@ audio-cd tracks (\&.cdr), ecasound ewf-files (\&.ewf), RAW audio data
 SGI audiofile library: AIFF (\&.aiff, \&.aifc, \&.aif) and Sun/NeXT audio 
 files (\&.au, \&.snd)\&. MikMod is also supported (\&.xm, \&.mod, \&.s3m, 
 \&.it, etc)\&. Supported devices are OSS audio devices (/dev/dsp*),
-ALSA audio and loopback devices (/dev/snd/pcm*, alsalb)\&. If no inputs 
-are specified, the first non-option (doesn\'t start with \'-\') command
-line argument is considered to be an input\&.
+ALSA audio and loopback devices\&. If no inputs are specified, the first 
+non-option (doesn\'t start with \'-\') command line argument is
+considered to be an input\&.
 .IP 
 .IP "-o[:]output-file-or-device" 
 Works in the same way as the -i option\&. If no outputs are specified,
@@ -290,6 +290,9 @@ is activated\&. If the signal stays below the threshold for
 and stays there over \'hold\' ms the gate is released during 
 \'release\' ms\&.
 .IP 
+.IP "-ei:pitch-shift-%" 
+Pitch shifter\&. Modifies audio pitch by altering its length\&.
+.IP 
 .IP "-epp:right-%" 
 Normal pan effect\&. Balance value of 0 means to pan signal fully
 left and 100 fully right\&. If the panned signal is
@@ -316,9 +319,9 @@ is the normal level)\&. With high resonance values it often is useful
 to reduce the gain value\&.
 .IP 
 .IP "-ef4:cutoff, resonance" 
-Resonant lowpass filter (3rd-order, 36dB)\&. Simulates 
-an analog active RC-lowpass design\&. Cutoff is a value between [0,1],
-while resonance is between [0,infinity)\&. 
+Resonant lowpass filter (3rd-order, 36dB, original algorithm by Stefan
+M\&. Fendt)\&. Simulates an analog active RC-lowpass design\&. Cutoff is a
+value between [0,1], while resonance is between [0,infinity)\&.
 .IP 
 .IP "-efa:delay-samples,feedback-%" 
 Allpass filter\&. Passes all frequencies with no change in amplitude\&.
@@ -380,6 +383,12 @@ obvious\&. Beware that large number of delays and huge delay times
 need a lot of CPU power\&. \'mix-%\' determines how much effected (wet)
 signal is mixed to the original\&.
 .IP 
+.IP "-ete:room_size,feedback-%,wet-%" 
+A more advanced reverb effect (original algorithm by Stefan M\&. Fendt)\&. 
+\'room_size\' is given in meters, \'feedback-%\' is the feedback level
+given in percents and \'wet-%\' is the amount of reverbed signal added 
+to the original signal\&.
+.IP 
 .IP "-etf:delay-time-msec" 
 Fake-stereo effect\&. The input signal is summed to mono\&. The
 original signal goes to the left channels while a delayed 
@@ -412,17 +421,23 @@ Plugin API)\&. Plugins are located in shared library (\&.so) files in
 /usr/local/share/ladspa (configured in ecasoundrc(5))\&. One shared
 library file can contain multiple plugin objects, but every plugin 
 has a unique plugin name\&. This name is used for selecting plugins\&. 
-See LAD home page for more info 
-about LADSPA\&. Other useful sites are
-LADSPA home page and
-LADSPA documentation\&.
+See LAD mailing list web site for
+more info about LADSPA\&. Other useful sites are LADSPA home
+page and LADSPA
+documentation\&.
+.IP 
+.IP "-eli:plugin_unique_number,param-1,\&.\&.\&.,param-N" 
+Same as above expect plugin\'s unique id-number is used\&. It
+is guaranteed that these id-numbers are unique among all 
+LADSPA plugins\&.
+.IP 
 .PP 
 \fBGATE SETUP\fP
 .PP 
 .IP 
 .IP "-gc:start-time,len" 
 Time crop gate\&. Initially gate is closed\&. After \'start-time\' seconds
-has elapse, gate opens and remains open for \'len\' seconds\&.
+has elapsed, gate opens and remains open for \'len\' seconds\&.
 .IP 
 .IP "-ge:open-threshold-%, close-thold-%,volume-mode" 
 Threshold gate\&. Initially gate is closed\&. It is opened when volume 

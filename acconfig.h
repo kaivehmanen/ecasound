@@ -6,17 +6,14 @@
 /* whether to compile libaudiofile support */
 #undef COMPILE_AF
 
-/* whether to compile ALSA input/output */
-#undef COMPILE_ALSA
-
-/* whether ALSA lib version is 0.3.1 or older */
-#undef ALSALIB_031
-
 /* whether ALSA lib version is 0.3.2 or newer */
 #undef ALSALIB_032
 
 /* whether ALSA lib version is 0.5.0 or newer */
 #undef ALSALIB_050
+
+/* whether ALSA lib version is 0.6.0 or newer */
+#undef ALSALIB_060
 
 /* whether to compile ESD input/output */
 #undef COMPILE_ESD

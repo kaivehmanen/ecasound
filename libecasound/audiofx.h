@@ -1,5 +1,5 @@
-#ifndef _AUDIOFX_H
-#define _AUDIOFX_H
+#ifndef INCLUDED_AUDIOFX_H
+#define INCLUDED_AUDIOFX_H
 
 #include <vector>
 
@@ -24,8 +24,8 @@ class EFFECT_DCFIX : public EFFECT_BASE {
 
 private:
 
-  SAMPLE_SPECS::sample_type deltafix[2];
-  SAMPLE_ITERATOR_CHANNEL i;
+  SAMPLE_SPECS::sample_type deltafix_rep[2];
+  SAMPLE_ITERATOR_CHANNEL i_rep;
 
 public:
 
@@ -54,9 +54,9 @@ class EFFECT_PITCH_SHIFT : public EFFECT_BASE {
 
 private:
 
-  parameter_type pmod;
-  long int target_rate;
-  SAMPLE_BUFFER* sbuf;
+  parameter_type pmod_rep;
+  long int target_rate_rep;
+  SAMPLE_BUFFER* sbuf_repp;
 
 public:
 
@@ -72,7 +72,7 @@ public:
 
   virtual long int output_samples(long int i_samples);
 
-  EFFECT_PITCH_SHIFT(void) : pmod(100.0), target_rate(0), sbuf(0) { }
+  EFFECT_PITCH_SHIFT(void) : pmod_rep(100.0), target_rate_rep(0), sbuf_repp(0) { }
   EFFECT_PITCH_SHIFT (const EFFECT_PITCH_SHIFT& x);
   EFFECT_PITCH_SHIFT* clone(void)  { return new EFFECT_PITCH_SHIFT(*this); }
   EFFECT_PITCH_SHIFT* new_expr(void)  { return new EFFECT_PITCH_SHIFT(); }

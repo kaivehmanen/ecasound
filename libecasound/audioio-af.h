@@ -1,15 +1,17 @@
 #ifndef _AUDIOIO_AF_H
 #define _AUDIOIO_AF_H
 
-#include <config.h>
-#ifdef COMPILE_AF
-
 #include <string>
 #include <audiofile.h>
 #include "samplebuffer.h"
 
 #include "audioio-types.h"
 #include "samplebuffer.h"
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#ifdef COMPILE_AF
 
 /**
  * Interface to SGI audiofile library.
@@ -62,5 +64,3 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
 
 #endif
 #endif
-
-

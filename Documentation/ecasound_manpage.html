@@ -38,7 +38,7 @@ page]</A></H4></CENTER>
 <hr>
 
 <h1>ecasound</h1>
-<h2>14.05.2000</h2>
+<h2>29.05.2000</h2>
 
 
     
@@ -178,9 +178,9 @@ audio-cd tracks (.cdr), ecasound ewf-files (.ewf), RAW audio data
 SGI audiofile library: AIFF (.aiff, .aifc, .aif) and Sun/NeXT audio 
 files (.au, .snd). MikMod is also supported (.xm, .mod, .s3m, 
 .it, etc). Supported devices are OSS audio devices (/dev/dsp*),
-ALSA audio and loopback devices (/dev/snd/pcm*, alsalb). If no inputs 
-are specified, the first non-option (doesn't start with '-') command
-line argument is considered to be an input.
+ALSA audio and loopback devices. If no inputs are specified, the first 
+non-option (doesn't start with '-') command line argument is
+considered to be an input.
 <p><p></p><dt><strong>-o[:]output-file-or-device</strong><dd>
 Works in the same way as the -i option. If no outputs are specified,
 the default output device is used (see &amp;tilde;/.ecasoundrc). Note! 
@@ -288,6 +288,8 @@ is activated. If the signal stays below the threshold for
 'attack' ms. If the signal raises above the 'threshold_level' 
 and stays there over 'hold' ms the gate is released during 
 'release' ms.
+<p><p></p><dt><strong>-ei:pitch-shift-%</strong><dd>
+Pitch shifter. Modifies audio pitch by altering its length.
 <p><p></p><dt><strong>-epp:right-%</strong><dd>
 Normal pan effect. Balance value of 0 means to pan signal fully
 left and 100 fully right. If the panned signal is
@@ -311,9 +313,9 @@ resonance are between 1.0 and 2.0, but you can use even bigger values.
 is the normal level). With high resonance values it often is useful 
 to reduce the gain value.
 <p><p></p><dt><strong>-ef4:cutoff, resonance</strong><dd>
-Resonant lowpass filter (3rd-order, 36dB). Simulates 
-an analog active RC-lowpass design. Cutoff is a value between [0,1],
-while resonance is between [0,infinity). 
+Resonant lowpass filter (3rd-order, 36dB, original algorithm by Stefan
+M. Fendt). Simulates an analog active RC-lowpass design. Cutoff is a
+value between [0,1], while resonance is between [0,infinity).
 <p><p></p><dt><strong>-efa:delay-samples,feedback-%</strong><dd>
 Allpass filter. Passes all frequencies with no change in amplitude.
 However, at the same time it imposes a frequency-dependent 
@@ -362,6 +364,11 @@ Delay effect. 'delay time' is the delay time in milliseconds.
 obvious. Beware that large number of delays and huge delay times 
 need a lot of CPU power. 'mix-%' determines how much effected (wet)
 signal is mixed to the original.
+<p><p></p><dt><strong>-ete:room_size,feedback-%,wet-%</strong><dd>
+A more advanced reverb effect (original algorithm by Stefan M. Fendt). 
+'room_size' is given in meters, 'feedback-%' is the feedback level
+given in percents and 'wet-%' is the amount of reverbed signal added 
+to the original signal.
 <p><p></p><dt><strong>-etf:delay-time-msec</strong><dd>
 Fake-stereo effect. The input signal is summed to mono. The
 original signal goes to the left channels while a delayed 
@@ -390,16 +397,20 @@ Plugin API). Plugins are located in shared library (.so) files in
 /usr/local/share/ladspa (configured in ecasoundrc(5)). One shared
 library file can contain multiple plugin objects, but every plugin 
 has a unique plugin name. This name is used for selecting plugins. 
-See <a href="http://audio.netpedia.net/lad">LAD home page</a> for more info 
-about LADSPA. Other useful sites are
-<a href="http://www.muse.demon.co.uk/ladspa.html">LADSPA home page</a> and
-<a href="http://www.ffem.org/gdam/ladspa-doc/ladspa.html">LADSPA documentation</a>.
-</dl>
+See <a href="http://audio.netpedia.net/lad">LAD mailing list web site</a> for
+more info about LADSPA. Other useful sites are <a href="http://www.ladspa.org">LADSPA home
+page</a> and <a href="http://www.ffem.org/gdam/ladspa-doc/ladspa.html">LADSPA
+documentation</a>.
+<p><p></p><dt><strong>-eli:plugin_unique_number,param-1,...,param-N</strong><dd>
+Same as above expect plugin's unique id-number is used. It
+is guaranteed that these id-numbers are unique among all 
+LADSPA plugins.
+<p></dl>
 <p><strong>GATE SETUP</strong>
 <p><dl>
 <p><p></p><dt><strong>-gc:start-time,len</strong><dd>
 Time crop gate. Initially gate is closed. After 'start-time' seconds
-has elapse, gate opens and remains open for 'len' seconds.
+has elapsed, gate opens and remains open for 'len' seconds.
 <p><p></p><dt><strong>-ge:open-threshold-%, close-thold-%,volume-mode</strong><dd>
 Threshold gate. Initially gate is closed. It is opened when volume 
 goes over 'othreshold' percent. After this, if volume drops below 

@@ -13,7 +13,7 @@
 <A HREF=manpages.html>[Man pages]</A>
 <A HREF=users_guide/index.html>[User's guide]</A>
 <A HREF=programmers_guide/index.html>[Programmer's guide]</A>
-<A HREF=kdoc_pages.html>[Source tree]</A>
+<A HREF=doxygen_pages.html>[Source tree]</A>
 <A HREF=http://www.wakkanet.fi/~kaiv/ecasound/>[ecasound home page]</A></H4></CENTER>
 <CENTER><H4><A HREF=ecasound_manpage.html>[ecasound(1)]</A>
 <A HREF=qtecasound_manpage.html>[qtecasound(1)]</A>
@@ -22,7 +22,7 @@
 <A HREF=ecasoundrc_manpage.html>[ecasoundrc(5)]</A></H4></CENTER>
 <p>
 <hr>
-<center><h2> Ecasound documentation - manual pages </h2></center>
+<center><h2> ecasound documentation - manual pages </h2></center>
 </p>
 
 
@@ -37,7 +37,7 @@
 <hr>
 
 <h1>ecatools</h1>
-<h2>28.08.1999</h2>
+<h2>21.05.2000</h2>
 
 
     
@@ -45,21 +45,21 @@
     ecatools - audio processing utils based on ecasound
 <p><h2>SYNOPSIS</h2>
     
-<strong>ecatools_fixdc</strong> file1 [ file2,...,fileN ]
-<p><strong>ecatools_normalize</strong> file1 [ file2,...,fileN ]
-<p><strong>ecatools_play</strong> file1 [ file2,...,fileN ]
+<strong>ecafixdc</strong> file1 [ file2,...,fileN ]
+<p><strong>ecanormalize</strong> file1 [ file2,...,fileN ]
+<p><strong>ecaplay</strong> file1 [ file2,...,fileN ]
 <p><h2>DESCRIPTION</h2>
     
 <p>Ecatools are simple command line utils that do various audio
 processing tasks. Most of them support batch processing. They all
 use the ecasound engine (libecasound).
-<p><strong>ECATOOLS_FIXDC</strong>
+<p><strong>ECAFIXDC</strong>
 <p>A simple command-line tool for fixing DC-offset.
-<p><strong>ECATOOLS_NORMALIZE</strong>
+<p><strong>ECANORMALIZE</strong>
 <p>A simple command-line tool for normalizing sample volume. 
 Finds out how much input file can be amplified without clipping
 and, if necessary, does the amplification.
-<p><strong>ECATOOLS_PLAY</strong>
+<p><strong>ECAPLAY</strong>
 <p>A simple command-line tool that plays input files using the
 default output specified in <em>~/.ecasoundrc</em>.
 <p><h2>FILES</h2>

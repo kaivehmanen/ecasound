@@ -1,5 +1,5 @@
-#ifndef _AUDIOIO_TYPES_H
-#define _AUDIOIO_TYPES_H
+#ifndef INCLUDED_AUDIOIO_TYPES_H
+#define INCLUDED_AUDIOIO_TYPES_H
 
 #include "audioio.h"
 
@@ -40,8 +40,8 @@ class AUDIO_IO_BUFFERED : public AUDIO_IO {
   long int buffersize_rep;
   long int target_srate_rep;
   long int target_samples_rep;
-  unsigned char* iobuf_uchar;  // buffer for raw-I/O
-  size_t iobuf_size;
+  unsigned char* iobuf_uchar_repp;  // buffer for raw-I/O
+  size_t iobuf_size_rep;
 };
 
 /**

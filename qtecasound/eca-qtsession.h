@@ -1,5 +1,5 @@
-#ifndef _ECA_QT_SESSION_H
-#define _ECA_QT_SESSION_H
+#ifndef INCLUDED_ECA_QT_SESSION_H
+#define INCLUDED_ECA_QT_SESSION_H
 
 #include <qwidget.h>
 #include <qlistview.h>

@@ -28,7 +28,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>14052000</h2>
+<h2>06062000</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -46,8 +46,8 @@
 </dl><p>
 <dt><h3><a href="programmers_guide.html#l10">2.2: Coding style</a></h3>
 <dl><p>
-<dt><a href="programmers_guide.html#l11">2.2.1: libecasound, ecasound, ecatools, libkvutils</a>
-<dt><a href="programmers_guide.html#l12">2.2.2: libqtecasound, qtecasound, ecawave</a>
+<dt><a href="programmers_guide.html#l11">2.2.1: General guide lines</a>
+<dt><a href="programmers_guide.html#l12">2.2.2: Package specific</a>
 </dl><p>
 <dt><h3><a href="programmers_guide.html#l13">2.3: Documentation style</a></h3>
 </dl><p>
@@ -160,16 +160,23 @@ work and experimenting. It's not meant for e-commerce. ;)
 <a name="l10"></a>
 <h3>2.2: Coding style</h3>
 <a name="l11"></a>
-<strong>2.2.1: libecasound, ecasound, ecatools, libkvutils</strong><p>
+<strong>2.2.1: General guide lines</strong><p>
 Variable names are all lower case and words are separated with
-underscores (int very_long_variable_name_with_underscores). Class names
-are all in upper case and words separated with underscores
-(class ECA_CONTROLLER_BASE). Index-style short variable names (n, m, etc.) 
-are only used in local scopes.
+underscores (int very_long_variable_name_with_underscores). Class data
+members are marked with <em>_rep</em> postfix. Data members which are
+pointers are marked with <em>_repp</em>. Index-style short variable names 
+(<em>n</em>, <em>m</em>, etc.) are only used in local scopes. Enum types 
+have capitalized names (<em>Some_enum</em>).
 <p><a name="l12"></a>
-<strong>2.2.2: libqtecasound, qtecasound, ecawave</strong><p>
+<strong>2.2.2: Package specific</strong><p>
+<dl>
+<p></p><dt><strong>libecasound, ecasound, ecatools, libkvutils</strong><dd>
+Class names are all in upper case and words separated with underscores
+(class ECA_CONTROLLER_BASE). .
+<p><p></p><dt><strong>libqtecasound, qtecasound, ecawave</strong><dd>
 Qt-style is used when naming classes (class QELevelMeter), otherwise
 same as above.
+</dl>
 <p>
 <a name="l13"></a>
 <h3>2.3: Documentation style</h3>
@@ -411,9 +418,9 @@ like any other ecasound effect (parameters control, effect presets, etc).
 <a name="l35"></a>
 <h3>5.2: LADSPA plugins</h3>
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
-Plugin API). See <a href="http://audio.netpedia.net/lad">LAD home page</a> for 
+Plugin API). See <a href="http://audio.netpedia.net/lad">LAD mailing list web site</a> for 
 more info about LADSPA. Other useful sites are 
-<a href="http://www.muse.demon.co.uk/ladspa.html">LADSPA home page</a> and
+<a href="http://www.ladspa.org">LADSPA home page</a> and
 <a href="http://www.ffem.org/gdam/ladspa-doc/ladspa.html">LADSPA documentation</a>.
 <p><insert name=ecasound_tail>
 </body>

@@ -55,20 +55,23 @@ void QEChainOperatorInput::init_layout(void) {
   QObject::connect(maptab_rep, SIGNAL(selected(const QString&)), 
 		   this, SLOT(operator_updated(const QString&)));
 
+  chainop_rep = 0;
   chainop_rep = dynamic_cast<CHAIN_OPERATOR*>(omap_inputs[0]->result());
-  opconf = new QEOperatorConfiguration(chainop_rep, this, "qeopconf");
-  top->addWidget(opconf);
+  if (chainop_rep != 0) {
+    opconf = new QEOperatorConfiguration(chainop_rep, this, "qeopconf");
+    top->addWidget(opconf);
+  }
 }
 
 void QEChainOperatorInput::update_results(void) { 
   QEObjectMap* omap = dynamic_cast<QEObjectMap*>(maptab_rep->currentPage());
   chainop_rep = dynamic_cast<CHAIN_OPERATOR*>(omap->result());
-  opconf->update_results();
+  if (chainop_rep != 0) opconf->update_results();
 }
 
 void QEChainOperatorInput::operator_updated(void) {
   update_results();
-  opconf->change_operator(chainop_rep);
+  if (chainop_rep != 0) opconf->change_operator(chainop_rep);
 }
 
 void QEChainOperatorInput::operator_updated(const QString& a) { operator_updated(); }

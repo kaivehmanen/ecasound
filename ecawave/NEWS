@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecawave - User-visible changes (NEWS)       (last edited: 280500) **
+** Ecawave - User-visible changes (NEWS)       (last edited: 290500) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.yRt" :
@@ -14,6 +14,9 @@ About the version numbers... "vx.yRt" :
 
 Last officially released version is -*> v0.2.2r2 <*-
 
+??052000 (v0.2.3d3)
+	- changed: updated the 'INSTALL' file
+	- fixed: Makefile fixes (inline and const macros)
 28052000 (v0.2.2r2)
 	- added: --version and --help command-line options (for GNU 
 		 compliance)

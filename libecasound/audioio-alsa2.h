@@ -1,37 +1,38 @@
-#ifndef _AUDIOIO_ALSA2_PLUGIN_H
-#define _AUDIOIO_ALSA2_PLUGIN_H
-
-#include <config.h>
-#ifdef COMPILE_ALSA
+#ifndef INCLUDED_AUDIOIO_ALSA2_H
+#define INCLUDED_AUDIOIO_ALSA2_H
 
 #include <string>
-
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <fcntl.h>
 
-extern "C" {
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef ALSALIB_050
 #include <sys/asoundlib.h>
-}
 
 #include "samplebuffer.h"
 #include "audioio-types.h"
 
 /**
- * Class for handling ALSA pcm2-devices using the pcm-plugin API.
+ * Class for handling ALSA pcm2-devices (Advanced Linux Sound Architecture).
  * @author Kai Vehmanen
  */
-class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
+class ALSA_PCM2_DEVICE : public AUDIO_IO_DEVICE {
 
   snd_pcm_t *audio_fd;
   snd_pcm_channel_info_t pcm_info;
 
   long int fragment_size;
+ 
   int card_number, device_number, subdevice_number;
   int pcm_mode, pcm_channel;
 
+  long int bytes_read;
   long underruns, overruns;
 
   bool is_triggered;
@@ -39,8 +40,8 @@ class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
 
  public:
 
-  virtual string name(void) const { return("ALSA PCM-plugin device"); }
-  virtual string description(void) const { return("ALSA PCM-plugin devices. Library versions 0.5.x and newer."); }
+  virtual string name(void) const { return("ALSA PCM-v2 device"); }
+  virtual string description(void) const { return("ALSA PCM-v2 devices. Library versions 0.5.x and newer."); }
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
   virtual string parameter_names(void) const { return("label,card,device,subdevice"); }
@@ -60,17 +61,17 @@ class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;
 
-  ALSA_PCM2_PLUGIN_DEVICE (int card = 0, int device = 0, int subdevice = -1);
-  ~ALSA_PCM2_PLUGIN_DEVICE(void);
-  ALSA_PCM2_PLUGIN_DEVICE* clone(void) { cerr << "Not implemented!" << endl; return this; }
-  ALSA_PCM2_PLUGIN_DEVICE* new_expr(void) { return new ALSA_PCM2_PLUGIN_DEVICE(); }
+  ALSA_PCM2_DEVICE (int card = 0, int device = 0, int subdevice = -1);
+  ~ALSA_PCM2_DEVICE(void);
+  ALSA_PCM2_DEVICE* clone(void) { cerr << "Not implemented!" << endl; return this; }
+  ALSA_PCM2_DEVICE* new_expr(void) { return new ALSA_PCM2_DEVICE(); }
   
  private:
 
   void print_status_debug(void);
-  ALSA_PCM2_PLUGIN_DEVICE (const ALSA_PCM2_PLUGIN_DEVICE& x) { }
-  ALSA_PCM2_PLUGIN_DEVICE& operator=(const ALSA_PCM2_PLUGIN_DEVICE& x) { return *this; }
+  ALSA_PCM2_DEVICE (const ALSA_PCM2_DEVICE& x) { }
+  ALSA_PCM2_DEVICE& operator=(const ALSA_PCM2_DEVICE& x) { return *this; }
 };
 
-#endif // COMPILE_ALSA
+#endif // ALSALIB_050
 #endif

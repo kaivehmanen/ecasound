@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 210500) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 060600) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -12,22 +12,29 @@ About the version numbers... "vx.y.zRt" :
 
 -----------------------------------------------------------------------
 
-Last officially released version is -*> v1.7.7r11 <*-
+Last officially released version is -*> v1.7.8r12 <*-
 
-??052000 (v1.7.8d12)
+??062000 (v1.8.0d13)
+	- changed: major changes in source tree organization
+	- fixed: stdin, stdout and '-' were all broken
+05062000 (v1.7.8r12)  -** public release **-
 	- added: files 'TODO' and 'ecasound.mdk.spec'
 	- added: support for LADSPA_PATH env.variable
 	- added: support for multichannel LADSPA plugins
 	- added: -eli options, select a LADSPA plugin using its 
 		 unique id-number
+	- added: -ete - a new, more advanced reverb (thanks to
+		 Stefan M. Fendt for the algorithm!)
 	- changed: qtecasound - major layout changes
 	- changed: ecatools renamed to ecaplay, ecanormalize and
  		   ecafixdc
+	- changed: updated the 'INSTALL' file
 	- fixed: qtecasound - bugs in debug output
 	- fixed: some minor bugs in LADSPA support
 	- fixed: compile problems with 2.95.x
 	- fixed: errors loading some LADSPA plugins
 	- fixed: the ".mp3.wav" bug
+	- fixed: config.h fixes
 03052000 (v1.7.7r11)  -** public release **-
 	- added: --version and --help command-line options (for GNU 
 		 compliance)

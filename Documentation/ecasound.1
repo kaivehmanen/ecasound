@@ -61,7 +61,7 @@ OOPPTTIIOONNSS
 
 
 
-                            14.05.2000                          1
+                            29.05.2000                          1
 
 
 
@@ -127,7 +127,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            14.05.2000                          2
+                            29.05.2000                          2
 
 
 
@@ -193,7 +193,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            14.05.2000                          3
+                            29.05.2000                          3
 
 
 
@@ -238,28 +238,28 @@ ecasound(1)            Multimedia software            ecasound(1)
               (.aiff, .aifc, .aif) and Sun/NeXT audio files (.au,
               .snd). MikMod is also supported (.xm,  .mod,  .s3m,
               .it,  etc). Supported devices are OSS audio devices
-              (/dev/dsp*),  ALSA  audio  and   loopback   devices
-              (/dev/snd/pcm*,  alsalb).  If  no inputs are speci-
-              fied, the first non-option (doesn't start with '-')
-              command line argument is considered to be an input.
+              (/dev/dsp*), ALSA audio and loopback devices. If no
+              inputs are specified, the first non-option (doesn't
+              start with '-') command line argument is considered
+              to be an input.
 
 
        -o[:]output-file-or-device
-              Works in the same way as the -i option. If no  out-
-              puts  are  specified,  the default output device is
-              used (see &tilde;/.ecasoundrc).  Note!   you  can't
-              output  to module formats supported by MikMod (this
+              Works  in the same way as the -i option. If no out-
+              puts are specified, the default  output  device  is
+              used  (see  &tilde;/.ecasoundrc).  Note!  you can't
+              output to module formats supported by MikMod  (this
               should be obvious) nor to ALSA's loopback device.
 
               _O_B_J_E_C_T _T_Y_P_E _S_P_E_C_I_F_I_C _N_O_T_E_S
 
        ALSA devices
-              When using ALSA drivers, instead of a device  file-
-              name,  you need to use the following option syntax:
+              When  using ALSA drivers, instead of a device file-
+              name, you need to use the following option  syntax:
 
 
 
-                            14.05.2000                          4
+                            29.05.2000                          4
 
 
 
@@ -268,53 +268,53 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
-              --ii[[::]]aallssaa,,ccaarrdd__nnuummbbeerr,,ddeevviiccee__nnuummbbeerr.  If  you  need
+              --ii[[::]]aallssaa,,ccaarrdd__nnuummbbeerr,,ddeevviiccee__nnuummbbeerr.   If  you need
               to       specify       individual       subdevices:
               --ii[[::]]aallssaa,,ccaarrdd__nnuummbbeerr,,ddeevviiccee__nnuummbbeerr,,ssuubbddeevviiccee__nnuumm--
               bbeerr.
 
 
        ALSA pcm-plugin layer
-              Just  like  normal ALSA devices, but with automatic
-              sample rate and format conversions.  Option  syntax
+              Just like normal ALSA devices, but  with  automatic
+              sample  rate  and format conversions. Option syntax
               is --ii[[::]]aallssaapplluuggiinn,,ccaarrdd__nnuummbbeerr,,ddeevviiccee__nnuummbbeerr,,ssuubbddee--
               vviiccee__nnuummbbeerr.
 
 
        ALSA loopback device
-              By using the ALSA loopback  system,  you  can  grab
+              By  using  the  ALSA  loopback system, you can grab
               audio data from any other pcm device. Option syntax
               is     --ii[[::]]aallssaallbb,,ccaarrdd__nnuummbbeerr,,ddeevviiccee__nnuummbbeerr,,ssuubbddee--
               vviiccee__nnuummbbeerr.
 
 
        Ecasound Wave Files - .ewf
-              A  simple  wrapper  class  for handling other audio
-              objects.   See  ecasound  user's  guide  for   more
+              A simple wrapper class  for  handling  other  audio
+              objects.    See  ecasound  user's  guide  for  more
               detailed information.
 
 
        Loop device
               Loop devices make it possible to route data between
-              chains.  Option syntax  is  --[[iioo]][[::]]lloooopp,,iidd__nnuummbbeerr.
-              If  you  add  a  loop  output with id '1', all data
+              chains.   Option  syntax is --[[iioo]][[::]]lloooopp,,iidd__nnuummbbeerr.
+              If you add a loop output  with  id  '1',  all  data
               written to this output is routed to all loop inputs
               with id '1'. You can attach the same loop device to
               multiple inputs and outputs.
 
 
        Null inputs/outputs
-              If you specify "null" or "/dev/null" as  the  input
-              or  output, a null audio device is created. This is
-              useful if you just  want  to  analyze  sample  data
+              If  you  specify "null" or "/dev/null" as the input
+              or output, a null audio device is created. This  is
+              useful  if  you  just  want  to analyze sample data
               without writing it to a file.
 
 
        System standard streams and named pipes
-              You  can use standard streams (stdin and stdout) by
-              giving "stdin" or "stdout" as the file name.  Audio
+              You can use standard streams (stdin and stdout)  by
+              giving  "stdin" or "stdout" as the file name. Audio
               data is assumed to be in raw/headerless (.raw) for-
-              mat. If you want to use named  pipes,  create  them
+              mat.  If  you  want to use named pipes, create them
               with the proper file name extension before use.
 
 
@@ -325,7 +325,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            14.05.2000                          5
+                            29.05.2000                          5
 
 
 
@@ -334,21 +334,21 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
-       Ecasound  has  a powerful effect preset system that allows
+       Ecasound has a powerful effect preset system  that  allows
        you create new effects by combining basic effects and con-
-       trollers.  See  ecasound  user's  guide  for more detailed
+       trollers. See ecasound  user's  guide  for  more  detailed
        information.
 
 
 
        -pf:preset_file.eep
-              Use  the  first  preset  found  from   file   'pre-
+              Use   the   first  preset  found  from  file  'pre-
               set_file.eep' as a chain operator.
 
 
        -pn:preset_name
-              Find   preset   'preset_name'  from  global  preset
-              database and use it as a chain operator.  See  eca-
+              Find  preset  'preset_name'  from   global   preset
+              database  and  use it as a chain operator. See eca-
               soundrc(5) for info about the preset database.
 
 
@@ -357,14 +357,14 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -ev    Analyze sample data to find out how much the signal
-              can be amplified without  clipping.  The  resulting
+              can  be  amplified  without clipping. The resulting
               percent value can be used as a parameter to -ea and
-              -eas effects. Also prints a statistics  table  con-
-              taining  info  about stereo-image and how different
+              -eas  effects.  Also prints a statistics table con-
+              taining info about stereo-image and  how  different
               sample values are used.
 
 
-       -ezf   Find the optimal value for  DC-adjusting.  You  can
+       -ezf   Find  the  optimal  value for DC-adjusting. You can
               use the result as a parameter to -ezx effect.
 
 
@@ -375,15 +375,15 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -eac:amplify-%,channel
-              Amplifies  signal of channel 'channel' by amplify-%
+              Amplifies signal of channel 'channel' by  amplify-%
               percent. 'channel' ranges from 1...n where n is the
               total number of channels.
 
 
        -eaw:amplify-%,max-clipped-samples
               Amplifies signal by amplify-% percent. If number of
-              consecutive clipped samples (resulting  sample  has
-              the   largest  amplitude  possible)  reaches  'max-
+              consecutive  clipped  samples (resulting sample has
+              the  largest  amplitude  possible)  reaches   'max-
               clipped-samples', a warning will be issued.
 
 
@@ -391,7 +391,7 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
 
-                            14.05.2000                          6
+                            29.05.2000                          6
 
 
 
@@ -401,69 +401,75 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -ec:rate,threshold-%
-              Compressor (a simple one). 'rate' is  the  compres-
-              sion  rate  in  decibels ('rate' dB change in input
-              signal causes 1dB change  in  output).  'threshold'
-              varies  between  0.0  (silence) and 1.0 (max ampli-
+              Compressor  (a  simple one). 'rate' is the compres-
+              sion rate in decibels ('rate' dB  change  in  input
+              signal  causes  1dB  change in output). 'threshold'
+              varies between 0.0 (silence) and  1.0  (max  ampli-
               tude).
 
 
        -eca:peak-level-%, release-time-sec, fast-crate, crate
-              A more advanced compressor (original  algorithm  by
-              John  S.  Dyson).   If you give a value of 0 to any
-              parameter, the  default  is  used.   'peak-level-%'
-              essentially  specifies how hard the peak limiter is
+              A  more  advanced compressor (original algorithm by
+              John S. Dyson).  If you give a value of  0  to  any
+              parameter,  the  default  is  used.  'peak-level-%'
+              essentially specifies how hard the peak limiter  is
               pushed.  The default of 69% is good. 'release_time'
               is  given  in  seconds.  This  compressor  is  very
-              sophisticated, and actually  the  release  time  is
-              complex.   This is one of the dominant release time
-              controls, but the actual release time is  dependent
-              on  a  lot of factors regarding the dynamics of the
-              audio in. 'fastrate' is the compression  ratio  for
-              the  fast  compressor.  This is not really the com-
-              pression ratio.  Value of 1.0 is infinity  to  one,
+              sophisticated,  and  actually  the  release time is
+              complex.  This is one of the dominant release  time
+              controls,  but the actual release time is dependent
+              on a lot of factors regarding the dynamics  of  the
+              audio  in.  'fastrate' is the compression ratio for
+              the fast compressor.  This is not really  the  com-
+              pression  ratio.   Value of 1.0 is infinity to one,
               while the default 0.50 is 2:1.  Another really good
-              value is special cased in the code: 0.25  is  some-
+              value  is  special cased in the code: 0.25 is some-
               what  less  than  2:1,  and  sounds  super  smooth.
               'rate' is the compression ratio for the entire com-
-              pressor  chain.   The default is 1.0, and holds the
-              volume  very  constant  without  many  nasty   side
-              effects.    However   the  dynamics  in  music  are
-              severely restricted, and a value of 0.5 might  keep
+              pressor chain.  The default is 1.0, and  holds  the
+              volume   very  constant  without  many  nasty  side
+              effects.   However  the  dynamics  in   music   are
+              severely  restricted, and a value of 0.5 might keep
               the music more intact.
 
 
        -enm:threshold-level-%,pre-hold-time-msec,attack-time-
               msec,post- hold-time-msec,release-time-msec
-              Noise  gate. Supports multichannel processing (each
-              channel processed separately). When  signal  ampli-
-              tude  falls below 'threshold_level_%' percent (100%
+              Noise gate. Supports multichannel processing  (each
+              channel  processed  separately). When signal ampli-
+              tude falls below 'threshold_level_%' percent  (100%
               means maximum amplitude), gate is activated. If the
-              signal  stays below the threshold for 'th_time' ms,
-              it's faded out during the attack phase of  'attack'
-              ms.   If  the  signal  raises  above  the  'thresh-
-              old_level' and stays there over 'hold' ms the  gate
+              signal stays below the threshold for 'th_time'  ms,
+              it's  faded out during the attack phase of 'attack'
+              ms.  If  the  signal  raises  above  the   'thresh-
+              old_level'  and stays there over 'hold' ms the gate
               is released during 'release' ms.
+
+
+       -ei:pitch-shift-%
+              Pitch shifter. Modifies audio pitch by altering its
+              length.
 
 
        -epp:right-%
               Normal  pan effect. Balance value of 0 means to pan
               signal fully left  and  100  fully  right.  If  the
-              panned  signal  is  a stereo signal, left and right
-              channels aren't mixed together.  Use the  -erm  and
-              -erc  effects  to  force  conversion to mono before
-              panning.
 
 
 
-
-                            14.05.2000                          7
+                            29.05.2000                          7
 
 
 
 
 
 ecasound(1)            Multimedia software            ecasound(1)
+
+
+              panned  signal  is  a stereo signal, left and right
+              channels aren't mixed together.  Use the  -erm  and
+              -erc  effects  to  force  conversion to mono before
+              panning.
 
 
        -ezx:left-dc-fix-value,right-dc-fix-value
@@ -490,10 +496,10 @@ ecasound(1)            Multimedia software            ecasound(1)
 
 
        -ef4:cutoff, resonance
-              Resonant  lowpass  filter  (3rd-order, 36dB). Simu-
-              lates an analog active RC-lowpass design. Cutoff is
-              a  value  between [0,1], while resonance is between
-              [0,infinity).
+              Resonant  lowpass filter (3rd-order, 36dB, original
+              algorithm by Stefan M. Fendt). Simulates an  analog
+              active RC-lowpass design. Cutoff is a value between
+              [0,1], while resonance is between [0,infinity).
 
 
        -efa:delay-samples,feedback-%
@@ -513,17 +519,11 @@ ecasound(1)            Multimedia software            ecasound(1)
               quency. Width is specified in Hz.
 
 
-       -efh:cutoff-freq
-              Highpass   filter.  Only  frequencies  above  'cut-
-              off_freq' are passed through.
-
-
-       -efi:delay-samples,radius
-              Inverse comb filter. Filters out the spikes of  the
 
 
 
-                            14.05.2000                          8
+
+                            29.05.2000                          8
 
 
 
@@ -532,6 +532,13 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
+       -efh:cutoff-freq
+              Highpass   filter.  Only  frequencies  above  'cut-
+              off_freq' are passed through.
+
+
+       -efi:delay-samples,radius
+              Inverse comb filter. Filters out the spikes of  the
               comb.  There are 'delay_in_samples-2' spikes. Value
               of 'radius' should be between [0, 1.0). The  closer
               it  is to the maximum value, the deeper the dips of
@@ -579,6 +586,18 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        -etd:delay-time-msec,surround-mode,number-of-delays,mix-%
               Delay  effect.  'delay  time'  is the delay time in
+
+
+
+                            29.05.2000                          9
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
               milliseconds.  'surround-mode' is  a  integer  with
               following  meanings:  0 = normal, 1 = surround, 2 =
               stereo-spread. 'number_of_delays' should  be  obvi-
@@ -588,14 +607,12 @@ ecasound(1)            Multimedia software            ecasound(1)
               the original.
 
 
-
-                            14.05.2000                          9
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
+       -ete:room_size,feedback-%,wet-%
+              A more advanced reverb effect  (original  algorithm
+              by  Stefan  M.  Fendt).   'room_size'  is  given in
+              meters, 'feedback-%' is the feedback level given in
+              percents and 'wet-%' is the amount of reverbed sig-
+              nal added to the original signal.
 
 
        -etf:delay-time-msec
@@ -634,28 +651,11 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        _L_A_D_S_P_A_-_P_L_U_G_I_N_S
 
-       -el:plugin_unique_name,param-1,...,param-N
-              Ecasound  supports  LADSPA-effect  plugins   (Linux
-              Audio  Developer's  Simple Plugin API). Plugins are
-              located  in   shared   library   (.so)   files   in
-              /usr/local/share/ladspa    (configured    in   eca-
-              soundrc(5)). One shared library  file  can  contain
-              multiple  plugin  objects,  but  every plugin has a
-              unique plugin name. This name is used for selecting
-              plugins.   See  LAD  home  page for more info about
-              LADSPA. Other useful sites are LADSPA home page and
-              LADSPA documentation.
-
-       GGAATTEE SSEETTUUPP
 
 
 
-       -gc:start-time,len
-              Time  crop  gate.  Initially  gate is closed. After
 
-
-
-                            14.05.2000                         10
+                            29.05.2000                         10
 
 
 
@@ -664,7 +664,32 @@ ecasound(1)            Multimedia software            ecasound(1)
 ecasound(1)            Multimedia software            ecasound(1)
 
 
-              'start-time' seconds has  elapse,  gate  opens  and
+       -el:plugin_unique_name,param-1,...,param-N
+              Ecasound  supports  LADSPA-effect  plugins   (Linux
+              Audio  Developer's  Simple Plugin API). Plugins are
+              located  in   shared   library   (.so)   files   in
+              /usr/local/share/ladspa    (configured    in   eca-
+              soundrc(5)). One shared library  file  can  contain
+              multiple  plugin  objects,  but  every plugin has a
+              unique plugin name. This name is used for selecting
+              plugins.   See  LAD  mailing list web site for more
+              info about LADSPA. Other useful  sites  are  LADSPA
+              home page and LADSPA documentation.
+
+
+       -eli:plugin_unique_number,param-1,...,param-N
+              Same  as  above expect plugin's unique id-number is
+              used. It is guaranteed that  these  id-numbers  are
+              unique among all LADSPA plugins.
+
+
+       GGAATTEE SSEETTUUPP
+
+
+
+       -gc:start-time,len
+              Time  crop  gate.  Initially  gate is closed. After
+              'start-time' seconds has elapsed,  gate  opens  and
               remains open for 'len' seconds.
 
 
@@ -693,6 +718,18 @@ ecasound(1)            Multimedia software            ecasound(1)
 
        -kos:fx-param,start-value,end-value,freq,i-phase
               Sine  oscillator  with  frequency  of 'freq' Hz and
+
+
+
+                            29.05.2000                         11
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
               initial phase of 'i_phase' times pi.
 
 
@@ -717,17 +754,6 @@ ecasound(1)            Multimedia software            ecasound(1)
               'start_value' for  '1st_stage_length'  seconds  and
               then  linearly  changes  towards 'end_value' during
               '2nd_stage_length' seconds.
-
-
-
-
-                            14.05.2000                         11
-
-
-
-
-
-ecasound(1)            Multimedia software            ecasound(1)
 
 
        -km:fx-param,start-value,end-value,controller,channel
@@ -758,6 +784,18 @@ FFIILLEESS
        waveform data.
 
        _*_._e_c_s  Ecasound  Chainsetup  files. Syntax is more or less
+
+
+
+                            29.05.2000                         12
+
+
+
+
+
+ecasound(1)            Multimedia software            ecasound(1)
+
+
        the same as with command-line arguments.
 
 
@@ -787,6 +825,34 @@ AAUUTTHHOORR
 
 
 
-                            14.05.2000                         12
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            29.05.2000                         13
 
 

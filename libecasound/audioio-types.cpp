@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-types.cpp: Top-level classes for audio-I/O.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,27 +32,27 @@ AUDIO_IO_BUFFERED::AUDIO_IO_BUFFERED(void)
   : buffersize_rep(0),
     target_srate_rep(0),
     target_samples_rep(0),
-    iobuf_uchar(0),
-    iobuf_size(0) { }
+    iobuf_uchar_repp(0),
+    iobuf_size_rep(0) { }
 
 
 AUDIO_IO_BUFFERED::~AUDIO_IO_BUFFERED(void) { 
-  if (iobuf_uchar != 0) { 
-    delete[] iobuf_uchar; 
-    iobuf_uchar = 0;
-    iobuf_size = 0;
+  if (iobuf_uchar_repp != 0) { 
+    delete[] iobuf_uchar_repp; 
+    iobuf_uchar_repp = 0;
+    iobuf_size_rep = 0;
   }
 }
 
 void AUDIO_IO_BUFFERED::reserve_buffer_space(long int bytes) {
-  if (bytes > static_cast<long int>(iobuf_size)) {
-    if (iobuf_uchar != 0) {
-      delete[] iobuf_uchar;
-      iobuf_uchar = 0;
+  if (bytes > static_cast<long int>(iobuf_size_rep)) {
+    if (iobuf_uchar_repp != 0) {
+      delete[] iobuf_uchar_repp;
+      iobuf_uchar_repp = 0;
     }
     //    cerr << "Reserving " << bytes << " bytes (" << label() << ").\n";
-    iobuf_uchar = new unsigned char [bytes];
-    iobuf_size = bytes;
+    iobuf_uchar_repp = new unsigned char [bytes];
+    iobuf_size_rep = bytes;
   }
 }
 
@@ -90,11 +90,11 @@ void AUDIO_IO_BUFFERED::buffersize(long int samples,
 void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf) {
   // --------
   // require:
-  assert(iobuf_uchar != 0);
-  assert(static_cast<long int>(iobuf_size) >= buffersize_rep * frame_size());
+  assert(iobuf_uchar_repp != 0);
+  assert(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
   // --------
-  sbuf->copy_to_buffer(iobuf_uchar,
-		       read_samples(iobuf_uchar, buffersize_rep),
+  sbuf->copy_to_buffer(iobuf_uchar_repp,
+		       read_samples(iobuf_uchar_repp, buffersize_rep),
 		       sample_format(),
 		       channels(),
 		       samples_per_second());
@@ -104,15 +104,15 @@ void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf) {
 void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   // --------
   // require:
-  assert(iobuf_uchar != 0);
-  assert(static_cast<long int>(iobuf_size) >= buffersize_rep * frame_size());
+  assert(iobuf_uchar_repp != 0);
+  assert(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
   // --------
   if (buffersize_rep != sbuf->length_in_samples()) buffersize(sbuf->length_in_samples(), samples_per_second());
-  sbuf->copy_from_buffer(iobuf_uchar,
+  sbuf->copy_from_buffer(iobuf_uchar_repp,
 			 sample_format(),
 			 channels(),
 			 samples_per_second());
-  write_samples(iobuf_uchar, sbuf->length_in_samples());
+  write_samples(iobuf_uchar_repp, sbuf->length_in_samples());
   position_in_samples_advance(sbuf->length_in_samples());
   extend_position();
 }

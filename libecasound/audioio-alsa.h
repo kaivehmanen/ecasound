@@ -1,8 +1,5 @@
-#ifndef _AUDIOIO_ALSA_H
-#define _AUDIOIO_ALSA_H
-
-#include <config.h>
-#ifdef COMPILE_ALSA
+#ifndef INCLUDED_AUDIOIO_ALSA_H
+#define INCLUDED_AUDIOIO_ALSA_H
 
 #include <string>
 
@@ -11,6 +8,11 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#ifdef ALSALIB_032
 #include <sys/asoundlib.h>
 
 #include "samplebuffer.h"
@@ -21,9 +23,8 @@
  */
 class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
 
-#ifdef ALSALIB_031
-  typedef snd_pcm_t void*;
-#endif
+ private:
+
   snd_pcm_t *audio_fd;
 
   int card_number, device_number;
@@ -70,5 +71,6 @@ class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
   ALSA_PCM_DEVICE& operator=(const ALSA_PCM_DEVICE& x) { return *this; }
 };
 
-#endif // COMPILE_ALSA
+#endif // ALSALIB_032
 #endif
+

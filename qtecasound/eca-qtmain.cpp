@@ -40,8 +40,7 @@ ECA_SESSION* global_pointer_to_ecaparams = 0;
 bool global_session_deleted = false;
 QTDEBUG_IF qtdebug_if;
 
-int main( int argc, char **argv )
-{
+int main(int argc, char **argv) {
   signal(SIGTERM, signal_handler);
   signal(SIGINT, signal_handler);
   signal(SIGQUIT, signal_handler);
@@ -68,19 +67,12 @@ int main( int argc, char **argv )
     global_pointer_to_ecaparams = param;  // used only for signal handling! 
 
     ECA_CONTROLLER* ctrl = new ECA_CONTROLLER (param);
-
-    //    ctrl->enable_mthreaded_use();
-
     QEInterface w (ctrl, param);
-
-    //    start_normal_thread(param);
-
     QObject::connect( &w, SIGNAL(is_finished()), &a, SLOT(quit()));
     QObject::connect( &a, SIGNAL( lastWindowClosed() ), &a, SLOT( quit() ) );
     a.setMainWidget(&w);
     w.show();
     a.exec();
-    //    a.~QApplication();
   }
   catch(int n) {
     if (n == ECA_QUIT) 
@@ -129,8 +121,9 @@ void parse_command_line(COMMAND_LINE& cline) {
       cout << "qtecasound v" << ecasound_library_version << endl;
       cout << "Copyright (C) 1997-2000 Kai Vehmanen" << endl;
       cout << "Qtecasound comes with ABSOLUTELY NO WARRANTY." << endl;
-      cout << "You may redistribute copies of qtecasound under the terms of the GNU General Public License." << endl; 
-      cout << "For more information about these matters, see the file named COPYING." << endl;
+      cout << "You may redistribute copies of qtecasound under the terms of the GNU" << endl;
+      cout << "General Public License. For more information about these matters, see" << endl; 
+      cout << "the file named COPYING." << endl;
       exit(0);
     }
     else if (cline.current() == "--help") {

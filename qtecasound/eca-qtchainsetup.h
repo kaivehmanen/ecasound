@@ -13,11 +13,14 @@ class ECA_CHAINSETUP;
 class QEButtonRow;
 class QEChain;
 
+/**
+ * Qt widget representing a ecasound chainsetup.
+ */
 class QEChainsetup : public QWidget
 {
   Q_OBJECT
 public:
-  QEChainsetup (ECA_CONTROLLER* econtrol, const ECA_CHAINSETUP* setup, QWidget *parent=0, const char *name=0);
+  QEChainsetup (ECA_CONTROLLER* econtrol, QWidget *parent=0, const char *name=0);
   
 public slots:
  void update_filesetuplist(bool clean);
@@ -72,8 +75,7 @@ protected:
   QEButtonRow* file_buttons;
   QEButtonRow* chain_buttons;
 
-  ECA_CONTROLLER* ctrl;
-  const ECA_CHAINSETUP* chainsetup;
+  ECA_CONTROLLER* ctrl_rep;
   QListView* filesetupview;
   QListView* chainsetupview;
   QEChain* child_chain;

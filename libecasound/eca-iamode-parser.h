@@ -20,7 +20,7 @@ class ECA_IAMODE_PARSER {
 
  public:
   
-  enum COMMANDS {
+  enum Commands {
     ec_direct_option,
     // --
     ec_help,

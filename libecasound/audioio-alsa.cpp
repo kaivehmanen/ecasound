@@ -17,10 +17,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <config.h>
-#ifdef COMPILE_ALSA
-#ifdef ALSALIB_032
-
 #include <string>
 #include <cstring>
 #include <cstdio>
@@ -30,9 +26,10 @@
 
 #include "samplebuffer.h"
 #include "audioio-types.h"
-#include "audioio-alsa.h"
 
+#ifdef ALSALIB_032
 #include <sys/asoundlib.h>
+#include "audioio-alsa.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"
@@ -52,17 +49,10 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 
   int err;
   if (io_mode() == io_read) {
-#ifdef ALSALIB_031
-    err = ::snd_pcm_open(&audio_fd, 
-			  card_number, 
-			  device_number,
-			  SND_PCM_OPEN_RECORD);
-#else
     err = ::snd_pcm_open(&audio_fd, 
 			  card_number, 
 			  device_number,
 			  SND_PCM_OPEN_CAPTURE);
-#endif
     if (err != 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA", "unable to open ALSA-device for recording; error: " + string(snd_strerror(err))));
     }
@@ -95,13 +85,8 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
     throw(new ECA_ERROR("AUDIOIO-ALSA", "buffersize() is 0!", ECA_ERROR::stop));
     
   if (io_mode() == io_read) {
-#ifdef ALSALIB_031
-    snd_pcm_record_info_t pcm_info;
-    snd_pcm_record_params_t pp;
-#else
     snd_pcm_capture_info_t pcm_info;
     snd_pcm_capture_params_t pp;
-#endif
     ::snd_pcm_capture_info(audio_fd, &pcm_info);
     memset(&pp, 0, sizeof(pp));
 
@@ -203,11 +188,7 @@ void ALSA_PCM_DEVICE::close(void) {
       ::snd_pcm_drain_playback(audio_fd);
     }
     else if (io_mode() == io_read) {
-#ifdef ALSALIB_031
-      snd_pcm_record_status_t ca_status;
-#else
       snd_pcm_capture_status_t ca_status;
-#endif
       ::snd_pcm_capture_status(audio_fd, &ca_status);
       overruns += ca_status.overrun;
       ::snd_pcm_flush_capture(audio_fd);
@@ -252,11 +233,7 @@ long ALSA_PCM_DEVICE::position_in_samples(void) const {
     double time = pb_status.stime.tv_sec * 1000000.0 + pb_status.stime.tv_usec;
     return(static_cast<long>(time * samples_per_second() / 1000000.0));
   }
-#ifdef ALSALIB_031
-  snd_pcm_record_status_t ca_status;
-#else
   snd_pcm_capture_status_t ca_status;
-#endif
   ::snd_pcm_capture_status(audio_fd, &ca_status);
   double time = ca_status.stime.tv_sec * 1000000.0 + ca_status.stime.tv_usec;
   return(static_cast<long>(time * samples_per_second() / 1000000.0));
@@ -316,4 +293,3 @@ string ALSA_PCM_DEVICE::get_parameter(int param) const {
 }
 
 #endif // ALSALIB_032
-#endif // COMPILE_ALSA

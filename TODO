@@ -4,26 +4,17 @@
 
 [ Development goals ]
 
-1.7.x series:
-
-- qtecasound - major improvements
-- new libqtecasound package
-- updates to .ewf (ecasound wave format)
-- new effect preset system
-- new effects - filters, allpass filter
-- plugin support (LADSPA)
-
 1.8.x series:
 
-- effect preset parameters
+- qtecasound - major improvements
+- embedded effect preset parameters
 - new effects - Schroeder reverb
 
 2.x series (1.x -> 2.x requirements):
 
-- libecasound ready for general use
-- easy to use qtecasound (see features.html)
-- users's and programmer's guide cover all essential aspects of 
-  ecasound
+- central libecasound APIs ready for general use
+- usable qtecasound (see features.html)
+- users's and programmer's guide cover all ecasound basics
 
 -----------------------------------------------------------------------
 
@@ -31,6 +22,7 @@
 
 Input/output devices:
 
+- ALSA 0.6.x support
 - type override for audio objects
 - automatic handling of mono mp3s
 - mp3 bitrate as a command-line parameter
@@ -45,14 +37,15 @@ Interactive-mode:
 
 Effects, routing, dsp routines:
 
+- add threshold parameter to -eca
 - pitch-shifting mono streams doesn't work
 - better reverbs
-- effect preset parameters
+- embedded effect preset parameters
 	- "-p[fn]:string,par1,...,parN"
 	
 Ecatools:
 
-- make the executable names shorter (eg. ecaplay, ecanormalize, ecafixdc)
+- commas confuse file name handling
 
 -----------------------------------------------------------------------
 

@@ -185,9 +185,24 @@ void QEInterface::emsg_general(void) {
   if (s == "q" || s == "quit") {
     qApp->closeAllWindows();
   }
-  else 
-    ctrl->command(s);
-
+  else {
+    try {
+      ctrl->command(s);
+    }
+    catch(ECA_ERROR* e) {
+      if (e->error_action() != ECA_ERROR::stop) {
+	QMessageBox* mbox = new QMessageBox(this, "mbox");
+	QString errormsg = "";
+	errormsg += "Ecasound engine error: \"";
+	errormsg += e->error_section().c_str();
+	errormsg += "\"; ";
+	errormsg += e->error_msg().c_str();
+	mbox->information(this, "qtecasound", errormsg,0);
+      }
+      else throw;
+    }
+  }
+  
   emit clear_textinput();
 }
 

@@ -1,6 +1,5 @@
 // ------------------------------------------------------------------------
-// eca-qtchainsetup: Qt widget representing a ECA_CHAINSETUP object and 
-//                   its state.
+// eca-qtchainsetup: Qt widget representing a ecasound chainsetup.
 // Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -44,10 +43,9 @@
 #include "eca-qtchainselectdialog.h"
 
 QEChainsetup::QEChainsetup (ECA_CONTROLLER* econtrol, 
-			    const ECA_CHAINSETUP* csetup, 
 			    QWidget *parent,
 			    const char *name) 
-  : ctrl(econtrol), chainsetup(csetup)
+  : ctrl_rep(econtrol)
 {
   startTimer(1000);
 
@@ -111,7 +109,7 @@ void QEChainsetup::init_chainview(QListViewItem* item) {
       if (child_chain != 0) {
 	child_chain->close(true);
       }
-      child_chain = new QEChain(ctrl, chain);
+      child_chain = new QEChain(ctrl_rep, chain);
       child_chain->show();
       connect(child_chain, SIGNAL(widget_closed()), this, SLOT(child_closed()));
     }

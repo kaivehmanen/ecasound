@@ -1,5 +1,9 @@
-#ifndef _SAMPLE_SPECS_H
-#define _SAMPLE_SPECS_H
+#ifndef INCLUDED_SAMPLE_SPECS_H
+#define INCLUDED_SAMPLE_SPECS_H
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 /**
  * Sample value defaults and constants.

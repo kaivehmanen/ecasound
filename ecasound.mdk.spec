@@ -3,10 +3,10 @@ Prefix: /usr
 Packager: Kai Vehmanen <kaiv@wakkanet.fi>
 Distribution: Red Hat Contrib
 Name: ecasound
-Version: 1.7.8d12
+Version: 1.7.8r12
 Release: 1
 Copyright: GPL
-Source: http://ecasound.seul.org/download/ecasound-1.7.8d12.tar.gz
+Source: http://ecasound.seul.org/download/ecasound-1.7.8r12.tar.gz
 
 # Needs to know about qt2
 %define moc /usr/bin/moc2
@@ -50,7 +50,7 @@ Requires: ecasound
 Qt-based X-interface to ecasound.
 
 %prep
-%setup -n ecasound-1.7.8d12
+%setup -n ecasound-1.7.8r12
 %build
 export MOC=%{moc};
 ./configure --prefix=%prefix --disable-static --with-qt-includes=%{qtinc} --with-qt-libraries=%{qtlib}
@@ -94,8 +94,8 @@ make prefix=$RPM_BUILD_ROOT%prefix strip-shared-libs
 /usr/lib/libqtecasound.*
 
 %changelog
-* Sun May 21 2000 Kai Vehmanen <kaiv@wakkanet.fi>
-- Renamed ecatools programs to ecaplay, ecanormalize and ecafixdc.
+* Mon Jun 05 2000 Kai Vehmanen <kaiv@wakkanet.fi>
+- Renamed ecatools programs.
 
 * Thu May 02 2000 Marc Lavallée <odradek@videotron.ca>
 - Adapted the spec for Mandrake.

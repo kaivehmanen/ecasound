@@ -1,0 +1,32 @@
+#ifndef _TWO_STAGE_LINEAR_ENVELOPE_H
+#define _TWO_STAGE_LINEAR_ENVELOPE_H
+
+#include <string>
+
+#include "finite-envelope.h"
+
+/**
+ * Linear envelope
+ */
+class TWO_STAGE_LINEAR_ENVELOPE : public FINITE_ENVELOPE {
+
+ public:
+
+  string name(void) const { return("Two-stage linear envelope"); }
+  parameter_type value(void);
+
+  void init(parameter_type step);
+
+  string parameter_names(void) const { return("1st_stage_sec,2nd_stage_sec,mid_level_%"); }
+  void set_parameter(int param, parameter_type value);
+  parameter_type get_parameter(int param) const;
+
+  TWO_STAGE_LINEAR_ENVELOPE_ENVELOPE(parameter_type time_in_seconds = 0.0); 
+  TWO_STAGE_LINEAR_ENVELOPE_ENVELOPE* clone(void)  { return new TWO_STAGE_LINEAR_ENVELOPE_ENVELOPE(*this); }
+
+  private:
+
+  parameter_type curpos, curval;
+};
+
+#endif

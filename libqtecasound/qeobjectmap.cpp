@@ -45,12 +45,14 @@ void QEObjectMap::init_layout(void) {
   QGroupBox* objgroup = new QVGroupBox(this, "objgroup");
   QListBox* objlist = new QListBox(objgroup, "objlist");
 
+  empty_rep = false;
   const map<string,string>& omap = omap_rep->registered_objects();
   map<string,string>::const_iterator p = omap.begin();
   while(p != omap.end()) {
     objlist->insertItem(p->first.c_str());
     ++p;
   }
+  if (omap.size() == 0) empty_rep = true;
   top->addWidget(objgroup);
 
   objlist->setSelected(0, true);
@@ -80,6 +82,6 @@ void QEObjectMap::update_object(int index) {
   }
 
   // --------
-  ENSURE(object_rep != 0);
+  ENSURE(object_rep != 0 || empty_rep == true);
   // --------
 }

@@ -1,7 +1,10 @@
 #ifndef _ECA_STATIC_OBJECT_MAPS_H
 #define _ECA_STATIC_OBJECT_MAPS_H
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include <string>
 
 #include "eca-object-map.h"
@@ -26,4 +29,3 @@ extern ECA_VST_PLUGIN_MAP eca_vst_plugin_map;
 void register_default_objects(void);
 
 #endif
-

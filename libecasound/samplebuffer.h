@@ -1,16 +1,12 @@
-#ifndef _SAMPLEBUFFER_H
-#define _SAMPLEBUFFER_H
-
-#include <config.h>
+#ifndef INCLUDED_SAMPLEBUFFER_H
+#define INCLUDED_SAMPLEBUFFER_H
 
 #include <vector>
 #include <sys/types.h>
 
 #include <kvutils/kvu_numtostr.h>
-
 #include "eca-audio-format.h"
 #include "sample-specs.h"
-
 #include "eca-debug.h"
 #include "eca-error.h"
 
@@ -172,8 +168,8 @@ class SAMPLE_BUFFER_BASE {
   // ---
   // Other member variables
   // ---
-  sample_type* old_buffer; // for resampling
-  vector<sample_type> resample_memory;
+  sample_type* old_buffer_repp; // for resampling
+  vector<sample_type> resample_memory_rep;
 
   void resize(long int buffersize);
 

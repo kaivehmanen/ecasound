@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (20052000)
+       (06062000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -95,16 +95,24 @@ work and experimenting. It's not meant for e-commerce. ;)
 
 COMMENT(----------------------------------------------------------------)
 subsect(Coding style)
-subsubsect(libecasound, ecasound, ecatools, libkvutils)
+subsubsect(General guide lines)
 Variable names are all lower case and words are separated with
-underscores (int very_long_variable_name_with_underscores). Class names
-are all in upper case and words separated with underscores
-(class ECA_CONTROLLER_BASE). Index-style short variable names (n, m, etc.) 
-are only used in local scopes.
+underscores (int very_long_variable_name_with_underscores). Class data
+members are marked with em(_rep) postfix. Data members which are
+pointers are marked with em(_repp). Index-style short variable names 
+(em(n), em(m), etc.) are only used in local scopes. Enum types 
+have capitalized names (em(Some_enum)).
 
-subsubsect(libqtecasound, qtecasound, ecawave)
+subsubsect(Package specific)
+startdit()
+dit(libecasound, ecasound, ecatools, libkvutils)
+Class names are all in upper case and words separated with underscores
+(class ECA_CONTROLLER_BASE). .
+
+dit(libqtecasound, qtecasound, ecawave)
 Qt-style is used when naming classes (class QELevelMeter), otherwise
 same as above.
+enddit()
 
 COMMENT(----------------------------------------------------------------)
 subsect(Documentation style)

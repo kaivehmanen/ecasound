@@ -96,7 +96,12 @@ file or directory
 
 Add /usr/local/lib to your /etc/ld.so.conf and run "/sbin/ldconfig". If
 you haven't installed ecasound to the default location, replace
-/usr/local/lib with the correct library path.
+/usr/local/lib with the correct library path. If the it still doesn't
+work, use "ldd /usr/local/bin/ecasound/" to see what library ecasound 
+tries to use. 
+
+Same applies to other libraries used by ecasound (libkvutils, libqt, 
+libaudiofile, etc).
 
 COMMENT(----------------------------------------------------------------)
 subsect(How do I use the parameter xxx?)

@@ -1,16 +1,18 @@
-#ifndef _AUDIOIO_ALSALB_H
-#define _AUDIOIO_ALSALB_H
-
-#include <config.h>
-#ifdef COMPILE_ALSA
+#ifndef INCLUDED_AUDIOIO_ALSALB_H
+#define INCLUDED_AUDIOIO_ALSALB_H
 
 #include <string>
-
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if (defined ALSALIB_032 || defined ALSALIB_050)
 #include <sys/asoundlib.h>
 
 #include "samplebuffer.h"
@@ -66,5 +68,5 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
   ALSA_LOOPBACK_DEVICE& operator=(const ALSA_LOOPBACK_DEVICE& x) { return *this; }
 };
 
-#endif // COMPILE_ALSA
+#endif // (defined ALSALIB_032 || defined ALSALIB_050)
 #endif

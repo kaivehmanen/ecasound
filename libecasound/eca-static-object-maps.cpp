@@ -151,7 +151,7 @@ void register_default_audio_objects(void) {
   eca_audio_device_map.register_object("/dev/dsp", device);
 #endif
 
-#ifdef COMPILE_ALSA
+#if (defined ALSALIB_032 || defined ALSALIB_050)
   device = new ALSA_LOOPBACK_DEVICE();
   eca_audio_object_map.register_object("alsalb", device);
   eca_audio_device_map.register_object("alsalb", device);
@@ -177,6 +177,7 @@ void register_default_audio_objects(void) {
 
   eca_audio_object_map.register_object("stdin", raw);
   eca_audio_object_map.register_object("stdout", raw);
+  eca_audio_object_map.register_object("-", raw);
   eca_audio_object_map.register_object("null", new NULLFILE());
 }
 

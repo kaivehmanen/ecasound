@@ -48,6 +48,7 @@ private slots:
   ECA_OBJECT_MAP* omap_rep;
   ECA_OBJECT* object_rep;
   int selected_index;
+  bool empty_rep;
 
   /**
    * Creates and initializes widget layout

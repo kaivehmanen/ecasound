@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (21.05.2000)
+       (29.05.2000)
        ()
        (Multimedia software)
 
@@ -366,9 +366,9 @@ is the normal level). With high resonance values it often is useful
 to reduce the gain value.
 
 dit(-ef4:cutoff, resonance)
-Resonant lowpass filter (3rd-order, 36dB). Simulates 
-an analog active RC-lowpass design. Cutoff is a value between [0,1],
-while resonance is between [0,infinity). 
+Resonant lowpass filter (3rd-order, 36dB, original algorithm by Stefan
+M. Fendt). Simulates an analog active RC-lowpass design. Cutoff is a
+value between [0,1], while resonance is between [0,infinity).
 
 dit(-efa:delay-samples,feedback-%)
 Allpass filter. Passes all frequencies with no change in amplitude.
@@ -433,6 +433,12 @@ Delay effect. 'delay time' is the delay time in milliseconds.
 obvious. Beware that large number of delays and huge delay times 
 need a lot of CPU power. 'mix-%' determines how much effected (wet)
 signal is mixed to the original.
+
+dit(-ete:room_size,feedback-%,wet-%)
+A more advanced reverb effect (original algorithm by Stefan M. Fendt). 
+'room_size' is given in meters, 'feedback-%' is the feedback level
+given in percents and 'wet-%' is the amount of reverbed signal added 
+to the original signal.
 
 dit(-etf:delay-time-msec)
 Fake-stereo effect. The input signal is summed to mono. The

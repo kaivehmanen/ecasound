@@ -1,13 +1,13 @@
 dnl ---
 dnl Process this file with autoconf to produce a configure script.
 dnl ---
-AC_INIT(libecasound/include/audiofx.h)
+AC_INIT(libecasound/audiofx.h)
 AC_CONFIG_SUBDIRS(kvutils readline-4.0)
 
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 1.7.8d12)
+AM_INIT_AUTOMAKE(ecasound, 1.8.0d13)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
@@ -119,17 +119,17 @@ fi
 dnl ---
 dnl Audio drivers
 dnl ---
-AC_CHECK_LIB(asound,snd_cards,alsa_support=yes,alsa_support=no)
+AC_CHECK_LIB(asound,main,alsa_support=yes,alsa_support=no)
 AC_ARG_ENABLE(alsa,
 [  --disable-alsa		  Disable ALSA (default = no)],
 alsa_support=no)
-AM_CONDITIONAL(COMPILE_ALSA, test x$alsa_support = xyes) 
+AM_CONDITIONAL(COMPILE_ALSA, test x$alsa_support = xyes)
 if test x$alsa_support = xyes; then
-AC_DEFINE(COMPILE_ALSA)
-AC_CHECK_LIB(asound,snd_pcm_record_params,
-	AC_MSG_ERROR([ALSA <0.3.1 not supported - update to a newer version or compile with --disable-alsa]))
-AC_CHECK_LIB(asound,snd_pcm_capture_params,AC_DEFINE(ALSALIB_032))
-AC_CHECK_LIB(asound,snd_pcm_channel_params,AC_DEFINE(ALSALIB_050))
+AC_CHECK_LIB(asound,snd_pcm_plug_open,AC_DEFINE(ALSALIB_060),
+	AC_CHECK_LIB(asound,snd_pcm_channel_params,AC_DEFINE(ALSALIB_050),
+		AC_CHECK_LIB(asound,snd_pcm_capture_params,AC_DEFINE(ALSALIB_032),
+			AC_CHECK_LIB(asound,snd_pcm_record_params,
+				AC_MSG_ERROR([ALSA <0.3.2 not supported - update to a newer version or compile with --disable-alsa])))))
 AC_CHECK_LIB(asound,main)
 fi
 
@@ -248,8 +248,6 @@ Makefile
 ecasound.spec
 ecasound.mdk.spec
 libecasound/Makefile
-libecasound/include/Makefile
-libecasound/src/Makefile
 ecasound/Makefile
 libqtecasound/Makefile
 qtecasound/Makefile

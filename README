@@ -41,7 +41,7 @@ continue to improve and develop ecasound.
 
 To run ecasound, you need...:
 
-- POSIX compliant UNIX system; tested with Linux 2.2.x, glibc 2.1.x
+- POSIX compliant UNIX system; tested with Linux 2.2.x and 2.4.x, glibc 2.1.x
 - POSIX threads; tested with linuxthreads 0.7 (libpthread, comes with glibc)
 - for soundcard input/output: OSS, OSS/Lite or ALSA drivers
 - for mp3 support, mpg123 (input) and lame (output) packages
@@ -174,8 +174,8 @@ Kai Vehmanen -	mailto:kaiv@wakkanet.fi
 Barton-Davis, Paul - Quasimodo and Hdr have given me a lot of ideas.
 Dyson, John S. - Wrote the original advanced compressor (-eca) core.
 Endersz, Viktor - For sending me the adv.compressor source code!
-Fendt, Stefan - Wrote the original code for RC-lowpass filter (-ef4).
-Hall, Jeremy - Extensive testing, many design ideas.
+Fendt, Stefan - Original code for reverb (-ete) and RC-lowpass filter (-ef4).
+Hall, Jeremy - Extensive testing, ALSA 0.6.x support, many design ideas.
 Hamara, Arto - Ecasound logo, lots of great ideas!
 Lavallée, Marc - Rpm-spec for Mandrake.
 Laydier, Antoine aka SMF - layer.cpp (interprets mp3 headers)
@@ -186,7 +186,7 @@ Sousa, Rui - OSS bug fixes.
 Tkachenko, Vadim - Autoconf magic. :)
 
 all LAD members - Always a great source of inspiration!
-nic.cx - For eca.cx, ecasound.cx and ecawave.cx domains.
+www.niccx.com - For eca.cx, ecasound.cx and ecawave.cx domains.
 SEUL - For hosting ecasound ftp, http and CVS sites.
 WakkaNet Oy - For hosting ecasound web site.
 

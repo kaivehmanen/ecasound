@@ -2,6 +2,14 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-06-06  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* library version changed to 6:0:0
+	* development of ecasound 1.8.x started
+	* moved all files from src/ and include/ subdirs to the same 
+	directory (top-level libecasound dir)
+	* audioio.h (enum Io_type): replaces the unnamed enums
+	
 2000-05-29  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* audiofx_reverb.h: a new file containing more advanced 

@@ -39,7 +39,7 @@ ecawave user's guide.
 
 To run ecawave, you need...:
 
-- POSIX compliant UNIX system; tested with Linux 2.2.x, glibc 2.1.x
+- POSIX compliant UNIX system; tested with Linux 2.2.x, 2.4.x and glibc 2.1.x
 - POSIX threads; tested with linuxthreads 0.7 (libpthread, comes with glibc)
 - ecasound libraries
 - qt 2.x runtime libraries
@@ -88,7 +88,7 @@ Kai Vehmanen -	mailto:kaiv@wakkanet.fi
 -----------------------------------------------------------------------
 
 all LAD members - always a great source of inspiration
-nic.cx - for eca.cx, ecasound.cx and ecawave.cx domains
+www.niccx.com - for eca.cx, ecasound.cx and ecawave.cx domains
 SEUL - for hosting ftp, http and CVS sites
 WakkaNet Oy - for hosting ecawave web site
 

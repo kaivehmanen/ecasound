@@ -5,7 +5,7 @@ INSTALL_STRIP_FLAG = -s
 endif
 
 INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils \
-		-I$(top_srcdir)/libecasound/include \
+		-I$(top_srcdir)/libecasound \
 		-I$(top_srcdir)/libqtecasound \
 		-I$(qt_includes) \
 		-I$(all_includes)
@@ -64,22 +64,19 @@ ecasound_qt_mocs = 	eca-qtdebug_moc.cpp \
 
 qtecasound_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
 qtecasound_debug_SOURCES = $(ecasound_qt_src) $(ecasound_qt_mocs) $(ecasound_qt_includes)
-#qtecasound_LDFLAGS = -s -lstdc++ 
 qtecasound_LDADD = 	-L$(top_builddir)/kvutils \
 		   	-L$(top_builddir)/kvutils/.libs \
 		   	-lkvutils \
 		   	-L$(qt_libraries) -lqt \
-		   	$(top_builddir)/libecasound/src/libecasound.la \
+		   	$(top_builddir)/libecasound/libecasound.la \
 			$(top_builddir)/libqtecasound/libqtecasound.la
 qtecasound_debug_LDADD =  -L$(top_builddir)/kvutils \
 			  -L$(top_builddir)/kvutils/.libs \
 			  -lkvutils -L$(qt_libraries) -lqt \
-			   $(top_builddir)/libecasound/src/libecasound_debug.la \
+			   $(top_builddir)/libecasound/libecasound_debug.la \
 			   $(top_builddir)/libqtecasound/libqtecasound_debug.la
 qtecasound_LDFLAGS = $(all_libraries)
 qtecasound_debug_LDFLAGS = $(qtecasound_LDFLAGS)
-#qtecasound_LDADD   = -lm -lpthread -lqt $(top_srcdir)/libecasound/src/libecasound.la
-#qtecasound_METASOURCES = USE_AUTOMOC
 
 # qt-moc: 
 

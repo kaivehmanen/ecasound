@@ -1,5 +1,5 @@
-#ifndef _ECA_QTINTE_H
-#define _ECA_QTINTE_H
+#ifndef INCLUDED_ECA_QTINTE_H
+#define INCLUDED_ECA_QTINTE_H
 
 #include <qapplication.h>
 #include <qwidget.h>
@@ -18,7 +18,7 @@ class QEInterface : public QWidget
 {
   Q_OBJECT
 public:
-  QEInterface(ECA_CONTROLLER* control, const ECA_SESSION* session, QWidget *parent=0, const char *name=0 );
+  QEInterface(ECA_CONTROLLER* control, QWidget *parent=0, const char *name=0);
 
 public slots:
   void emsg_general(void);
@@ -57,8 +57,7 @@ private:
   QERuntimePosition* rpos;
   QESession* session_rep;
 
-  ECA_CONTROLLER* ctrl;
-  const ECA_SESSION* ecaparams;
+  ECA_CONTROLLER* ctrl_rep;
 
   void init_layout(void);
   void init_statusbar(void);

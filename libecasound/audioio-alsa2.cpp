@@ -17,10 +17,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <config.h>
-#ifdef COMPILE_ALSA
-#ifdef ALSALIB_050
-
 #include <string>
 #include <cstring>
 #include <cstdio>
@@ -31,6 +27,7 @@
 #include <kvutils/kvu_numtostr.h>
 #include <kvutils.h>
 
+#ifdef ALSALIB_050
 #include <sys/asoundlib.h>
 
 #include "samplebuffer.h"
@@ -383,4 +380,3 @@ string ALSA_PCM2_DEVICE::get_parameter(int param) const {
 }
 
 #endif // ALSALIB_050
-#endif // COMPILE_ALSA

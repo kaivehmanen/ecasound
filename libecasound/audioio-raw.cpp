@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-raw.cpp: Raw/headerless audio file format input/output
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ void RAWFILE::open(void) {
   switch(io_mode()) {
   case io_read:
     {
-      if (label().at(0) == '-') {
+      if (label() == "stdin" || label().at(0) == '-') {
 	fio = new ECA_FILE_IO_STREAM();
 	fio->open_stdin();
       }
@@ -74,7 +74,7 @@ void RAWFILE::open(void) {
   case io_write: 
     {
       fio = new ECA_FILE_IO_STREAM();
-      if (label().at(0) == '-') {
+      if (label() == "stdout" || label().at(0) == '-') {
 	cerr << "(audioio-raw) Outputting to standard output [r].\n";
 	fio->open_stdout();
       }
@@ -86,7 +86,7 @@ void RAWFILE::open(void) {
   case io_readwrite: 
     {
       fio = new ECA_FILE_IO_STREAM();
-      if (label().at(0) == '-') {
+      if (label() == "stdout" || label().at(0) == '-') {
 	cerr << "(audioio-raw) Outputting to standard output [rw].\n";
 	fio->open_stdout();
       }
@@ -142,5 +142,4 @@ void RAWFILE::set_length_in_bytes(void) {
 
   fio->set_file_position(savetemp);
 }
-
 

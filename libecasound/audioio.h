@@ -1,5 +1,5 @@
-#ifndef _AUDIOIO_H
-#define _AUDIOIO_H
+#ifndef INCLUDED_AUDIOIO_H
+#define INCLUDED_AUDIOIO_H
 
 #include <string>
 
@@ -40,7 +40,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * When switching from read to write or vica versa,
    * position should be reset before using the device.
    **/
-  enum { io_read = 1, io_write = 2, io_readwrite = 4 };
+  enum Io_mode { io_read = 1, io_write = 2, io_readwrite = 4 };
 
   // ===================================================================
   // Buffering
@@ -153,12 +153,12 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   /**
    * Returns info about the current I/O mode.
    */
-  int io_mode(void) const { return(si_mode); }
+  int io_mode(void) const { return(si_mode_rep); }
 
   /**
    * The device name (usually set to device/file name).
    */
-  const string& label(void) const { return(id_label); }
+  const string& label(void) const { return(id_label_rep); }
 
   /**
    * Get a string containing info about sample format parameters.
@@ -188,12 +188,12 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * require:
    *  is_open() == false
    */
-  void io_mode(int newmode) { si_mode = newmode; }
+  void io_mode(int mode) { si_mode_rep = mode; }
 
   /**
    * Set object label
    */
-  void label(const string& newlabel) { id_label = newlabel; }
+  void label(const string& id_label) { id_label_rep = id_label; }
 
  protected:
 
@@ -228,8 +228,8 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
 
  private:
   
-  int si_mode;
-  string id_label;
+  int si_mode_rep;
+  string id_label_rep;
 
   bool readable_rep;
   bool writable_rep;

@@ -5,7 +5,7 @@ INSTALL_STRIP_FLAG = -s
 endif
 
 INCLUDES = -I$(srcdir) -I$(top_srcdir)/kvutils \
-		-I$(top_srcdir)/libecasound/include \
+		-I$(top_srcdir)/libecasound \
 		-I$(top_srcdir)/libqtecasound \
 		-I$(qt_includes) -I$(all_includes)
 

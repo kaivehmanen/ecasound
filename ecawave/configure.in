@@ -6,7 +6,7 @@ AC_INIT(src/ecawave.h)
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecawave, 0.2.2r2)
+AM_INIT_AUTOMAKE(ecawave, 0.2.3d3)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---

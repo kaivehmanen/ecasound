@@ -2,20 +2,16 @@
 *** ecawave - INSTALL                                               ***
 =======================================================================
 
-Basic Installation
-==================
-
-   These are generic installation instructions.
-
    The `configure' shell script attempts to guess correct values for
 various system-dependent variables used during compilation.  It uses
 those values to create a `Makefile' in each directory of the package.
-It may also create one or more `.h' files containing system-dependent
-definitions.  Finally, it creates a shell script `config.status' that
-you can run in the future to recreate the current configuration, a file
-`config.cache' that saves the results of its tests to speed up
-reconfiguring, and a file `config.log' containing compiler output
-(useful mainly for debugging `configure').
+It also creates the file `config.h' in the top-level source directory.
+This file contains system-dependent definitions.  Finally, it creates
+a shell script `config.status' that you can run in the future to
+recreate the current configuration, a file `config.cache' that saves
+the results of its tests to speed up reconfiguring, and a file 
+`config.log' containing compiler output (useful mainly for debugging 
+`configure').
 
    If you need to do unusual things to compile the package, please try
 to figure out how `configure' could check whether to do them, and mail
@@ -40,11 +36,11 @@ The simplest way to compile this package is:
 
   2. Type `make' to compile the package.
 
-  3. Optionally, type `make check' to run any self-tests that come with
-     the package.
-
-  4. Type `make install' to install the programs and any data files and
+  3. Type `make install' to install the programs and any data files and
      documentation.
+
+  4. Make sure that you have `/usr/local/lib´ in your
+     `/etc/ld.so.conf' and run `/sbin/ldconfig´.
 
   5. You can remove the program binaries and object files from the
      source code directory by typing `make clean'.  To also remove the
@@ -76,23 +72,6 @@ this:
 Or on systems that have the `env' program, you can do it like this:
      env CPPFLAGS=-I/usr/local/include LDFLAGS=-s ./configure
 
-Compiling For Multiple Architectures
-====================================
-
-   You can compile the package for more than one kind of computer at the
-same time, by placing the object files for each architecture in their
-own directory.  To do this, you must use a version of `make' that
-supports the `VPATH' variable, such as GNU `make'.  `cd' to the
-directory where you want the object files and executables to go and run
-the `configure' script.  `configure' automatically checks for the
-source code in the directory that `configure' is in and in `..'.
-
-   If you have to use a `make' that does not supports the `VPATH'
-variable, you have to compile the package for one architecture at a time
-in the source code directory.  After you have installed the package for
-one architecture, use `make distclean' before reconfiguring for another
-architecture.
-
 Installation Names
 ==================
 
@@ -116,21 +95,6 @@ you can set and what kinds of files go in them.
 with an extra prefix or suffix on their names by giving `configure' the
 option `--program-prefix=PREFIX' or `--program-suffix=SUFFIX'.
 
-Optional Features
-=================
-
-   Some packages pay attention to `--enable-FEATURE' options to
-`configure', where FEATURE indicates an optional part of the package.
-They may also pay attention to `--with-PACKAGE' options, where PACKAGE
-is something like `gnu-as' or `x' (for the X Window System).  The
-`README' should mention any `--enable-' and `--with-' options that the
-package recognizes.
-
-   For packages that use the X Window System, `configure' can usually
-find the X include and library files automatically, but if it doesn't,
-you can use the `configure' options `--x-includes=DIR' and
-`--x-libraries=DIR' to specify their locations.
-
 Specifying the System Type
 ==========================
 
@@ -150,17 +114,6 @@ need to know the host type.
 use the `--target=TYPE' option to select the type of system they will
 produce code for and the `--build=TYPE' option to select the type of
 system on which you are compiling the package.
-
-Sharing Defaults
-================
-
-   If you want to set default values for `configure' scripts to share,
-you can create a site shell script called `config.site' that gives
-default values for variables like `CC', `cache_file', and `prefix'.
-`configure' looks for `PREFIX/share/config.site' if it exists, then
-`PREFIX/etc/config.site' if it exists.  Or, you can set the
-`CONFIG_SITE' environment variable to the location of the site script.
-A warning: not all `configure' scripts look for a site script.
 
 Operation Controls
 ==================

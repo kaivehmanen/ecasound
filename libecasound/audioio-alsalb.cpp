@@ -17,9 +17,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <config.h>
-#ifdef COMPILE_ALSA
-
 #include <string>
 #include <cstring>
 #include <cstdio>
@@ -35,14 +32,14 @@
 
 #include "samplebuffer.h"
 #include "audioio-types.h"
-#include "audioio-alsalb.h"
 
+#if (defined ALSALIB_032 || defined ALSALIB_050)
+#include "audioio-alsalb.h"
 #include <sys/asoundlib.h>
 
 #include "eca-error.h"
 #include "eca-debug.h"
 
-#ifdef ALSALIB_050
 void *loopback_controller(void* params);
 
 void loopback_callback_data(void *private_data, char *buffer, size_t count);
@@ -59,7 +56,6 @@ bool loopback_format_change = false;
 pthread_cond_t loopback_cond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t loopback_mutex = PTHREAD_MUTEX_INITIALIZER;
 bool loopback_locked = false;
-#endif
 
 ALSA_LOOPBACK_DEVICE::ALSA_LOOPBACK_DEVICE (int card, 
 					    int device,
@@ -76,12 +72,6 @@ ALSA_LOOPBACK_DEVICE::ALSA_LOOPBACK_DEVICE (int card,
 }
 
 void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
-  // #ifdef ALSALIB_050
-  //  throw(new ECA_ERROR("AUDIOIO-ALSALB", "support for ALSA versions >0.5.0 not implemented"));
-  //#endif
-
-  //  ::eca_alsa_load_dynamic_support();
-
   if (is_open() == true) return;
   int err;
   if (io_mode() == io_read) {
@@ -366,4 +356,4 @@ string ALSA_LOOPBACK_DEVICE::get_parameter(int param) const {
   return("");
 }
 
-#endif // COMPILE_ALSA
+#endif // (defined ALSALIB_032 || defined ALSALIB_050)

@@ -51,7 +51,10 @@ void ADVANCED_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_type va
     break;
 
   case 2: 
-    feedback_rep = value / 100.0;
+    if (value == 0) 
+      feedback_rep = 0.001;
+    else
+      feedback_rep = value / 100.0;
     break;
 
   case 3: 
