@@ -16,6 +16,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+//
+// ------------------------------------------------------------------------
+// 
+// History: 
+//
+// 2003-08-21 Kai Vehmanen
+//     - Fixed a timing resolution bug in the envelope modulation code.
+//       This involved changing from float to fixed point presentation for 
+//       the position counters to avoid loss of precision (led to unexpected
+//       drift in pulse timing).
+// 2000-11-01 Rob Coker
+//     - Initial version.
+//
 // ------------------------------------------------------------------------
 
 #include <cmath>
@@ -37,11 +50,22 @@ EFFECT_PULSE_GATE::EFFECT_PULSE_GATE (parameter_t freq_Hz,
 {
   set_parameter(1, freq_Hz);
   set_parameter(2, onTime_percent);
-  currentTime = 0.0;
+
+  freq_rep = 1.0;
+  on_time_rep = 0;
+  current_rep = 0;
+  period_rep = 0;
+  on_from_rep = 0;
 }
 
 EFFECT_PULSE_GATE::~EFFECT_PULSE_GATE(void)
 {
+}
+
+void EFFECT_PULSE_GATE::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
+{
+  /* NOP, see audiofx.cpp:set_samples_per_second(); */
+  EFFECT_ENV_MOD::set_samples_per_second(v);
 }
 
 void EFFECT_PULSE_GATE::set_parameter(int param, parameter_t value)
@@ -50,7 +74,8 @@ void EFFECT_PULSE_GATE::set_parameter(int param, parameter_t value)
   case 1: 
     if (value > 0)
       {
-	period = 1.0/value; // seconds
+	freq_rep = value;
+	period_rep = static_cast<long int>(1.0f / freq_rep * samples_per_second() + 0.5f); // samples
       }
     else
       {
@@ -59,10 +84,12 @@ void EFFECT_PULSE_GATE::set_parameter(int param, parameter_t value)
 	ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
       }
     break;
+
   case 2:
     if ((value > 0) && (value < 100))
       {
-	stopTime = (value/100.0)*period; // seconds
+	on_time_rep = value;
+	on_from_rep = static_cast<long int>((on_time_rep / 100.0) * period_rep + 0.5f);
       }
     else
       {
@@ -78,11 +105,10 @@ CHAIN_OPERATOR::parameter_t EFFECT_PULSE_GATE::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(1.0/period);
-    break;
+    return(freq_rep);
+
   case 2:
-    return (stopTime/period)*100.0;
-    break;
+    return (on_time_rep);
   }
   return(0.0);
 }
@@ -91,7 +117,6 @@ void EFFECT_PULSE_GATE::init(SAMPLE_BUFFER* sbuf)
 { 
   i.init(sbuf); 
   set_channels(sbuf->number_of_channels());
-  incrTime = 1.0/samples_per_second();
   EFFECT_ENV_MOD::init(sbuf);
 }
 
@@ -100,17 +125,15 @@ void EFFECT_PULSE_GATE::process(void)
   i.begin(); // iterate through all samples, one sample-frame at a
              // time (interleaved)
   while(!i.end()) {
-    currentTime += incrTime;
-    if (currentTime > period)
-      {
-	currentTime = 0.0;
+    ++current_rep;
+    if (current_rep >= period_rep) {
+	current_rep = 0;
+    }
+    if (current_rep > on_from_rep) {
+      for(int n = 0; n < channels(); n++) {
+	*i.current(n) = 0.0;
       }
-    if (currentTime > stopTime)
-      {
-	for(int n = 0; n < channels(); n++) {
-	  *i.current(n) = 0.0;
-	}
-      }
+    }
     i.next();
   }
 }
@@ -130,7 +153,7 @@ void EFFECT_PULSE_GATE_BPM::set_parameter(int param, parameter_t value)
 {
   switch (param) {
   case 1: 
-    pulsegate_rep.set_parameter(1, value / 60.0);
+    pulsegate_rep.set_parameter(1, value / 60.0f);
     break;
   case 2:
     pulsegate_rep.set_parameter(2, value);
@@ -141,7 +164,7 @@ void EFFECT_PULSE_GATE_BPM::set_parameter(int param, parameter_t value)
 CHAIN_OPERATOR::parameter_t EFFECT_PULSE_GATE_BPM::get_parameter(int param) const {
   switch (param) {
   case 1: 
-    return (pulsegate_rep.get_parameter(1) * 60.0);
+    return (pulsegate_rep.get_parameter(1) * 60.0f);
     break;
   case 2:
     return (pulsegate_rep.get_parameter(2));

@@ -23,10 +23,11 @@ class EFFECT_ENV_MOD : public EFFECT_BASE {
 class EFFECT_PULSE_GATE: public EFFECT_ENV_MOD {
 
   SAMPLE_ITERATOR_INTERLEAVED i;
-  parameter_t period;
-  parameter_t stopTime;
-  parameter_t currentTime;
-  parameter_t incrTime;
+  parameter_t freq_rep;
+  parameter_t on_time_rep;
+  long int period_rep;
+  long int on_from_rep;
+  long int current_rep;
 
  public:
 
@@ -43,6 +44,14 @@ class EFFECT_PULSE_GATE: public EFFECT_ENV_MOD {
   virtual ~EFFECT_PULSE_GATE(void);
   EFFECT_PULSE_GATE* clone(void) const { return new EFFECT_PULSE_GATE(*this); }
   EFFECT_PULSE_GATE* new_expr(void) const { return new EFFECT_PULSE_GATE(); }
+
+  /** @name Protected virtual functions to notify about changes 
+   *        (Reimplemented from ECA_SAMPLERATE_AWARE) */
+  /*@{*/
+
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
+
+  /*@}*/
 };
 
 /**

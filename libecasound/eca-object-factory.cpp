@@ -379,6 +379,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu)
   // --------
 
   MESSAGE_ITEM otemp;
+  otemp.setprecision(3);
   const CHAIN_OPERATOR* cop = 0;
   string prefix = kvu_get_argument_prefix(argu);
   if (prefix == "el" || prefix == "eli") {
@@ -429,6 +430,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const string& argu) {
   // --------
 
   MESSAGE_ITEM otemp;
+  otemp.setprecision(3);
   const CHAIN_OPERATOR* cop = 0;
   string prefix = kvu_get_argument_prefix(argu);
 
@@ -470,6 +472,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const string& argu) {
   string prefix = kvu_get_argument_prefix(argu);
 
   MESSAGE_ITEM otemp;
+  otemp.setprecision(3);
   const CHAIN_OPERATOR* cop = 
     dynamic_cast<const CHAIN_OPERATOR*>(ECA_OBJECT_FACTORY::chain_operator_map().object(prefix));
   CHAIN_OPERATOR* new_cop = 0;
@@ -528,6 +531,7 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu) {
       ECA_LOG_MSG(ECA_LOGGER::user_objects, "(eca-object-factory) Creating controller source \"" +  new_gcontroller->name() + "\"");
 
       MESSAGE_ITEM otemp;
+      otemp.setprecision(3);
       otemp << "(eca-object-factory) Setting parameters: ";
       int numparams = new_gcontroller->number_of_params();
       for(int n = 0; n < numparams; n++) {

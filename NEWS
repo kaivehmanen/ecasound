@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 210803) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 220803) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -70,6 +70,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 certain locales (for example "fi_FI")
 	- fixed: without at least one '-Md' or one '-km' option 
 		 specified, MIDI-services did not work
+	- fixed: pulse gate timing inaccuracy (-eemp); also affected
+		 the bpm pulse gate (-eemb) and thus the metronome
+		 preset (-pn:metronome)
 27042003 (v2.2.3)  -** stable release **-
 	- added: support for both -0.64 and 0.65- JACK versions; 
 		 transport functionality is only enabled with the 
