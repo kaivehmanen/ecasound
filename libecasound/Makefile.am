@@ -291,7 +291,7 @@ libecasound8_debug_la_SOURCES = $(ecasound_common_src)
 libecasound8_la_CFLAGS = $(eca_cxxflags)
 libecasound8_la_LIBADD = 
 libecasound8_la_LDFLAGS = -export-dynamic $(eca_ldflags)
-libecasound8_la_CFLAGS = $(libecasound8_la_CFLAGS)
+libecasound8_debug_la_CFLAGS = $(libecasound8_la_CFLAGS)
 libecasound8_debug_la_LDFLAGS = $(libecasound8_la_LDFLAGS)
 libecasound8_debug_la_LIBADD = $(libecasound8_la_LIBADD)
 
