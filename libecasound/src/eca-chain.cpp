@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing abstract audio signal chain.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,8 +39,13 @@ CHAIN::CHAIN (int bsize, int channels)
   sfx = false;
   initialized_rep = false;
   input_id = output_id = 0;
+
   selected_chainop = 0;
+  selected_controller_rep = 0;
+  selected_dynobj = 0;
+
   selected_chainop_number = 0;
+  selected_controller_number = 0;
 }
 
 CHAIN::~CHAIN (void) { 
@@ -145,10 +150,13 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller) {
   // --------
   // require:
   assert(gcontroller != 0);
+  assert(selected_dynobj != 0);
   // --------
-  DYNAMIC_OBJECT* t = selected_chainop;
-  gcontroller->assign_target(t);
+  gcontroller->assign_target(selected_dynobj);
   gcontrollers.push_back(gcontroller);
+  ecadebug->msg("(eca-chain) " + gcontroller->status());
+  selected_controller_rep = gcontroller;
+  selected_controller_number = gcontrollers.size();
 }
 
 void CHAIN::clear(void) {
@@ -164,12 +172,45 @@ void CHAIN::clear(void) {
 }
 
 void CHAIN::select_chain_operator(int index) {
-  for(int chainop_sizet = 0; chainop_sizet != chainops.size(); chainop_sizet++) {
+  for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops.size()); chainop_sizet++) {
     if (chainop_sizet + 1 == index) {
       selected_chainop = chainops[chainop_sizet];
       selected_chainop_number = index;
     }
   }
+}
+
+void CHAIN::select_controller(int index) {
+  for(int gcontroller_sizet = 0; gcontroller_sizet != static_cast<int>(gcontrollers.size()); gcontroller_sizet++) {
+    if (gcontroller_sizet + 1 == index) {
+      selected_controller_rep = gcontrollers[gcontroller_sizet];
+      selected_controller_number = index;
+    }
+  }
+}
+
+void CHAIN::selected_chain_operator_as_target(void) {
+  // --------
+  // require:
+  assert(selected_chainop != 0);
+  // --------
+  selected_dynobj = selected_chainop;
+  // --------
+  // ensure:
+  assert(selected_dynobj == selected_chainop);
+  // --------
+}
+
+void CHAIN::selected_controller_as_target(void) {
+  // --------
+  // require:
+  assert(selected_controller_rep != 0);
+  // --------
+  selected_dynobj = selected_controller_rep;
+  // --------
+  // ensure:
+  assert(selected_dynobj == selected_controller_rep);
+  // --------
 }
 
 void CHAIN::init(void) {
@@ -184,7 +225,7 @@ void CHAIN::init(void) {
 
   int init_channels = in_channels_rep;
   audioslot.number_of_channels(init_channels);
-  for(int p = 0; p != chainops.size(); p++) {
+  for(int p = 0; p != static_cast<int>(chainops.size()); p++) {
     chainops[p]->init(&audioslot);
     init_channels = chainops[p]->output_channels(init_channels);
     audioslot.number_of_channels(init_channels);
@@ -208,7 +249,7 @@ void CHAIN::process(void) {
   controller_update();
   if (muted == false) {
     if (sfx == true) {
-      for(int p = 0; p != chainops.size(); p++) {
+      for(int p = 0; p != static_cast<int>(chainops.size()); p++) {
 	audioslot.number_of_channels(chainops[p]->output_channels(audioslot.number_of_channels()));
 	chainops[p]->process();
       }
@@ -221,13 +262,13 @@ void CHAIN::process(void) {
 }
 
 void CHAIN::controller_update(void) {
-  for(int gcontroller_sizet = 0; gcontroller_sizet < gcontrollers.size(); gcontroller_sizet++) {
+  for(int gcontroller_sizet = 0; gcontroller_sizet < static_cast<int>(gcontrollers.size()); gcontroller_sizet++) {
     gcontrollers[gcontroller_sizet]->process();
   }
 }
 
 void CHAIN::refresh_parameters(void) {
-  for(int chainop_sizet = 0; chainop_sizet != chainops.size(); chainop_sizet++) {
+  for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops.size()); chainop_sizet++) {
     for(int n = 0; n < chainops[chainop_sizet]->number_of_params(); n++) {
       chainops[chainop_sizet]->set_parameter(n + 1, 
 					       chainops[chainop_sizet]->get_parameter(n + 1));
@@ -239,7 +280,7 @@ string CHAIN::to_string(void) const {
   MESSAGE_ITEM t; 
 
   int q = 0;
-  while (q < chainops.size()) {
+  while (q < static_cast<int>(chainops.size())) {
     t << chain_operator_to_string(chainops[q]) << " ";
     ++q;
   }

@@ -30,7 +30,7 @@ htmlcommand(
 
 manpage(ecasound-iam)
        (1)
-       (05.02.2000)
+       (08.02.2000)
        ()
        (Multimedia software)
 
@@ -291,11 +291,11 @@ enddit()
 
 manpagesection(CHAIN OPERATORS)
 Chain operators are used to process and analyze sample data.
-Controllers are used to control individual chain operator parameters.
-Both types of objects are attached to chains. If not otherwise stated,
-currently selected chainsetup and chains are used. Also, 'chainop_id' 
-and 'param_id' are used to selected chain operators and their
-parameters. First valid value for these parameters is 1.
+They are attached to chains. If not otherwise stated,
+currently selected chainsetup and chains are used. Also, 
+'chainop_id' and 'param_id' are used to select chain operators 
+and their parameters. First valid value for these parameters 
+is 1.
 
 startdit()
 dit(cop-add 'cop_format_string')
@@ -306,25 +306,32 @@ info.
 dit(cop-remove 'chainop_id') 
 Remove chain operator.
 
+dit(cop-set 'chainop_id, param_id, value')
+Change the value of a single chain operator parameter. Unlike other
+chain operator commands, this can also be used during processing.
+
+dit(cop-status) 
+Info about chain operator status.
+enddit()
+
+manpagesection(CONTROLLERS)
+Controllers are used to control individual chain operator parameters.
+They are attached to chains. If not otherwise stated, currently 
+selected chainsetup and chains are used. 
+
 dit(cop-add-controller 'copc_format_string')
 Add a new controller and attach it to currently selected chain 
 operator. Argument format is "-<id_string>:<param_id>,<range_low>,
 <range_high>,par1,...,parN".  See ecasound(1) man page for more 
 info.
 
-dit(cop-set 'chainop_id, param_id, value')
-Change the value of a single chain operator parameter. Unlike other
-chain operator commands, this can also be used during processing.
-
 dit(cop-remove-controller 'param_id')
 Remove the controller that is attached to the currently selected chain
 operator.
 
-dit(cop-status) 
-Info about chain operator status.
-
+dit(ctrl-status) 
+Info about controller status.
 enddit()
-
 
 manpageseealso()
 

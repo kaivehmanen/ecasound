@@ -83,9 +83,11 @@ class ECA_IAMODE_PARSER {
     ec_cop_remove,
     ec_cop_select,  // not implemented
     ec_cop_set,
-    ec_cop_add_controller,
-    ec_cop_remove_controller, // not implemented
-    ec_cop_status
+    ec_cop_status,
+    // --
+    ec_ctrl_add,
+    ec_ctrl_remove, // not implemented
+    ec_ctrl_status
   };
 
   /**

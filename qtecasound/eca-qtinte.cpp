@@ -197,6 +197,10 @@ void QEInterface::init_buttons(void) {
 			ALT+Key_X,
 			this, SLOT(emsg_estatus()));
 
+  buttonrow->add_button(new QPushButton("(C)trls",buttonrow), 
+			ALT+Key_C,
+			this, SLOT(emsg_ctrlstatus()));
+
   buttonrow->add_button(new QPushButton("Ch(a)ins",buttonrow), 
 			ALT+Key_A,
 			this, SLOT(emsg_cstatus()));
@@ -245,6 +249,7 @@ void QEInterface::emsg_forward(void) { ctrl->command("fw 5"); }
 void QEInterface::emsg_rewind(void) { ctrl->command("rw 5"); }
 void QEInterface::emsg_status(void) { ctrl->command("st"); }
 void QEInterface::emsg_csstatus(void) { ctrl->command("cs-status"); }
+void QEInterface::emsg_ctrlstatus(void) { ctrl->command("ctrl-status"); }
 void QEInterface::emsg_estatus(void) { ctrl->command("es"); }
 void QEInterface::emsg_fstatus(void) { ctrl->command("fs"); }
 void QEInterface::emsg_cstatus(void) { ctrl->command("cs"); }

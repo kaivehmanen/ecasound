@@ -23,6 +23,7 @@ class GENERIC_CONTROLLER : public DYNAMIC_OBJECT, public DEFINITION_BY_CONTRACT 
  public:
 
   string name(void) const { return(source->name()); }
+  string status(void) const;
 
   string parameter_names(void) const { return("param-id,range-low,range-high," +  source->parameter_names()); }
   void set_parameter(int param, parameter_type value);

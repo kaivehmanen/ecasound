@@ -76,8 +76,15 @@ const char* ecasound_parameter_help_rep =
 "         freq, gen-osc_number\n"
 "     -kl:fx_param, low, high,  linear envelope (fade-in and fade-out)\n"
 "         time_in_seconds\n"
+"     -kl2:fx_param, low, high, two-stage linear envelope\n"
+"         1st_stage_length,\n"
+"         2nd_stage_length,\n"
+"         midpoint_value_%%\n"
 "     -km:fx_param, low, high,  MIDI-controlled envelope\n"
 "         controller, channel \n"
+" --- \n"
+"     -kx                       use last specified controller as\n"
+"                               controller target\n"
 "\n\n";
 
 const char* ecasound_parameter_help(void) {

@@ -2,9 +2,21 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-02-08  Kai Vehmanen <kaiv@wakkanet.fi>
+        
+	* eca-chain.h (select_controller): added 
+	* eca-chain.h (selected_controller): added
+	* eca-chain.h (number_of_controllers): added
+	* eca-chain.h (selected_chain_operator_as_target): added
+	* eca-chain.h (selected_controller_as_target): added
+	* eca-chainsetup.h (set_target_to_controller): added
+	* generic-controller.h (status): added
+	* eca-controller.h (controller_status): added
+		
 2000-02-05  Kai Vehmanen <kaiv@wakkanet.fi>
         
 	* eca-audio-objects.h (create_audio_object): const removed
+	* eca-controller-base.h (run): added
 	
 2000-02-04  Kai Vehmanen <kaiv@wakkanet.fi>
         

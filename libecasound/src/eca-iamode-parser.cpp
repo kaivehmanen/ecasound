@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-iamode-parser.cpp: Class that handles registering and querying 
 //                        interactive mode commands.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -94,9 +94,11 @@ void ECA_IAMODE_PARSER::register_commands(void) {
   cmd_map["cop-remove"] = ec_cop_remove;
   cmd_map["cop-select"] = ec_cop_select;
   cmd_map["cop-set"] = ec_cop_set;
-  cmd_map["cop-add-controller"] = ec_cop_add_controller;
-  cmd_map["cop-remove-controller"] = ec_cop_remove_controller;
   cmd_map["cop-status"] = ec_cop_status;
+
+  cmd_map["ctrl-add"] = ec_ctrl_add;
+  cmd_map["ctrl-remove"] = ec_ctrl_remove;
+  cmd_map["ctrl-status"] = ec_ctrl_status;
 
   cmd_map["status"] = ec_st_general;
   cmd_map["st"] = ec_st_general;
@@ -152,8 +154,8 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id) {
   case ec_cop_remove:
   case ec_cop_select:
   case ec_cop_set:
-  case ec_cop_add_controller:
-  case ec_cop_remove_controller:
+  case ec_ctrl_add:
+  case ec_ctrl_remove:
   case ec_rewind:
   case ec_forward:
   case ec_setpos:
@@ -221,9 +223,10 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id) {
   case ec_cop_remove:
   case ec_cop_select:
   case ec_cop_set:
-  case ec_cop_add_controller:
-  case ec_cop_remove_controller:
   case ec_cop_status:
+  case ec_ctrl_add:
+  case ec_ctrl_remove:
+  case ec_ctrl_status:
 
     return(true);
 
@@ -254,8 +257,8 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
   case ec_aio_wave_edit:
   case ec_cop_add:
   case ec_cop_remove:
-  case ec_cop_add_controller:
-  case ec_cop_remove_controller:
+  case ec_ctrl_add:
+  case ec_ctrl_remove:
 
     return(true);
     
@@ -291,25 +294,16 @@ void show_controller_help(void) {
   mitem << "\n-------------------------------------------------------------------";
 
   mitem << "\n'q' - Quits ecasound";
- 
   mitem << "\n'start', 't' - Processing is started (play)";
- 
   mitem << "\n'stop', 's' - Stops processing"; 
- 
   mitem << "\n'rewind time-in-seconds', 'rw time-in-seconds' - Rewind";
- 
   mitem << "\n'forward time-in-seconds', 'fw time-in-seconds' - Forward";
- 
   mitem << "\n'setpos time-in-seconds' - Sets the current position to 'time-in-seconds' seconds from the beginning.";
- 
   mitem << "\n'status','st','u' - General status info";
- 
   mitem << "\n'cs-status' - Chainsetup status";
-
   mitem << "\n'c-status', 'cstatus','cs','a' - Chain status";
- 
   mitem << "\n'cop-status', 'estatus', 'es','x' - Chain operator status";
- 
+  mitem << "\n'ctrl-status' - Controller status"; 
   mitem << "\n'aio-status', 'fstatus', 'fs','l' - Audio input/output status";
 
   mitem << "\n--- see ecasound-iam(1) manual page for more info -----------------\n";

@@ -328,11 +328,21 @@ void ECA_CONTROLLER::action(int action_id,
 	ecadebug->msg("(eca-controller) ERROR! Chain operator indexing starts from 1.");
       break; 
     }
-  case ec_cop_add_controller: { add_controller(args[0]); break; }
   case ec_cop_status: 
     { 
-      ecadebug->control_flow("Controller/Chain operator status");
+      ecadebug->control_flow("Chain operator status");
       ecadebug->msg(chain_operator_status()); 
+      break; 
+    }
+
+    // ---
+    // Controllers
+    // ---
+  case ec_ctrl_add: { add_controller(args[0]); break; }
+  case ec_ctrl_status: 
+    { 
+      ecadebug->control_flow("Controller status");
+      ecadebug->msg(controller_status()); 
       break; 
     }
 
@@ -491,6 +501,39 @@ string ECA_CONTROLLER::chain_operator_status(void) const {
 	mitem << "\n\tStatus info:\n" << st_info_string;
       }
       if (p < (*chain_citer)->chainops.size()) mitem << "\n";
+    }
+    ++chain_citer;
+  }
+  return(mitem.to_string());
+}
+
+string ECA_CONTROLLER::controller_status(void) const {
+  // --------
+  // require:
+  assert(is_selected() == true);
+  // --------
+
+  MESSAGE_ITEM mitem;
+  string st_info_string;
+  vector<CHAIN*>::const_iterator chain_citer;
+  vector<GENERIC_CONTROLLER*>::size_type p;
+
+  for(chain_citer = selected_chainsetup_rep->chains.begin(); chain_citer != selected_chainsetup_rep->chains.end();) {
+    mitem << "Chain \"" << (*chain_citer)->name() << "\":\n";
+    for(p = 0; p < (*chain_citer)->gcontrollers.size(); p++) {
+      mitem << "\t" << p + 1 << ". " << (*chain_citer)->gcontrollers[p]->name() << ": ";
+      for(int n = 0; n < (*chain_citer)->gcontrollers[p]->number_of_params(); n++) {
+	mitem << "[" << n + 1 << "] ";
+	mitem << (*chain_citer)->gcontrollers[p]->get_parameter_name(n + 1);
+	mitem << " ";
+	mitem << kvu_numtostr((*chain_citer)->gcontrollers[p]->get_parameter(n + 1));
+	if (n + 1 < (*chain_citer)->gcontrollers[p]->number_of_params()) mitem <<  ", ";
+      }
+      st_info_string = (*chain_citer)->gcontrollers[p]->status();
+      if (st_info_string.empty() == false) {
+	mitem << "\n\tStatus info:\n\t" << st_info_string;
+      }
+      if (p < (*chain_citer)->gcontrollers.size()) mitem << "\n";
     }
     ++chain_citer;
   }

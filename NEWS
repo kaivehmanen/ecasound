@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 050200) **
+** ecasound - user visible changes (NEWS)      (last edited: 080200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -21,12 +21,23 @@ Last officially released version is -*> v1.6.12r10 <*-
 	- added: two-stage linear envelope (-kl2)
 	- added: 'run' command to ia-mode - like 'start' but blocks
 		 until processing is finished
+	- added: '-kx' option - this can be used for controlling 
+		 controller parameters with other controllers
+	- added: ia-mode command "ctrl-status" (controller status)
+	- added: qtecasound - controller status pushbutton
 	- removed: qtecasound - waveform view
 	- changed: ecawave is now the default ext. wave-editor
 	- changed: all shortcuts are now alt+key combinations
+	- changed: ia-mode commands "cop-add-controller" to
+		   "ctrl-add" and "cop-remove-controller" to
+		   "ctrl-remove"
 	- fixed: qtecasound - position slider wasn't working
 	- fixed: instead of just outputting raw ANSI-codes, 
 		 standard ncurses routines are now used
+	- fixed: recording from realtime inputs didn't work 
+		 when processing length was not set
+	- fixed: setting processing length didn't work in normal 
+		 passive mixing mode (multiple chains)
 30012000 (v1.6.13d11)
 	- changed: rtnull reports about over/underruns now
 		   level-1 debug messages (-d:1)

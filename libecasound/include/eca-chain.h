@@ -8,6 +8,7 @@
 #include "audioio.h"
 #include "samplebuffer.h"
 #include "eca-chainop.h"
+#include "dynamic-object.h"
 #include "generic-controller.h"
 
 #include "eca-chainop-map.h"
@@ -38,7 +39,11 @@ class CHAIN : public ECA_CONTROLLER_MAP {
   vector<GENERIC_CONTROLLER*> gcontrollers;
 
   CHAIN_OPERATOR* selected_chainop;
+  GENERIC_CONTROLLER* selected_controller_rep;
+  DYNAMIC_OBJECT* selected_dynobj;
+
   int selected_chainop_number;
+  int selected_controller_number;
 
   vector<CHAIN_OPERATOR*>::const_iterator chainop_citer;
 
@@ -138,32 +143,73 @@ class CHAIN : public ECA_CONTROLLER_MAP {
   DYNAMIC_PARAMETERS::parameter_type get_parameter(int index) const;
 
   /**
-   * Add a generic controller and assign it to selected chain operator
-   *
-   * require:
-   *  csrc != 0 && selected_chain_operator() != 0
-   */
-  void add_controller(GENERIC_CONTROLLER* gcontroller);
-
-  /**
    * Select chain operator
    *
    * require:
    *  index > 0
    *
    * ensure:
-   *  index == select_chain_operator()
+   *  index == selected_chain_operator()
    */
   void select_chain_operator(int index);
 
   /**
    * Index of selected chain operator
-   *
-   * ensure:
    */
   int selected_chain_operator(void) const { return(selected_chainop_number); }
 
   int number_of_chain_operators(void) const { return(chainops.size()); }
+
+  /**
+   * Add a generic controller and assign it to selected dynamic object
+   *
+   * require:
+   *  gcontroller != 0
+   *  selected_dynobj != 0
+   */
+  void add_controller(GENERIC_CONTROLLER* gcontroller);
+
+  int number_of_controllers(void) const { return(gcontrollers.size()); }
+
+  /**
+   * Select controller
+   *
+   * require:
+   *  index > 0
+   *
+   * ensure:
+   *  index == selected_controller()
+   */
+  void select_controller(int index);
+
+  /**
+   * Index of selected chain operator
+   */
+  int selected_controller(void) const { return(selected_controller_number); }
+
+  /**
+   * Use current selected chain operator as 
+   * target for parameters control.
+   *
+   * require:
+   *   selected_chainop != 0
+   *
+   * ensure:
+   *   selected_dynobj == selected_chainop
+   */
+  void selected_chain_operator_as_target(void);
+
+  /**
+   * Use current selected controller as 
+   * target for parameter control.
+   *
+   * require:
+   *   selected_controller != 0
+   *
+   * ensure:
+   *   selected_dynobj == selected_controller
+   */
+  void selected_controller_as_target(void);
 
   /**
    * Prepare chain for processing.

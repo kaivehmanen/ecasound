@@ -37,6 +37,7 @@ public slots:
   void emsg_rw_begin(void);
   void emsg_status(void);
   void emsg_csstatus(void);
+  void emsg_ctrlstatus(void);
   void emsg_estatus(void);
   void emsg_fstatus(void);
   void emsg_cstatus(void);

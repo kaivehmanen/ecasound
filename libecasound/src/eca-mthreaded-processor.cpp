@@ -92,7 +92,6 @@ void *mthread_process_chains(void* params) {
 	    // so we don't need to mix anything
 	    // --
 	    (*outputs)[audioslot_sizet]->write_buffer(&(*chains)[n]->audioslot);
-	    if ((*outputs)[audioslot_sizet]->finished() == true) ecamain->output_finished = true;
 	  }
 	  else {
 	    ++count;
@@ -107,7 +106,6 @@ void *mthread_process_chains(void* params) {
 	      mixslot->add_with_weight((*chains)[n]->audioslot, ecamain->output_chain_count[audioslot_sizet]);
 	      if (count == ecamain->output_chain_count[audioslot_sizet]) {
 		(*outputs)[audioslot_sizet]->write_buffer(mixslot);
-		if ((*outputs)[audioslot_sizet]->finished() == true) ecamain->output_finished = true;
 	      }
 	    }
 	  }

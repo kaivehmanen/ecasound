@@ -58,6 +58,14 @@ class ECA_CONTROLLER : public ECA_CONTROLLER_OBJECTS,
    */
   string chain_operator_status(void) const;
 
+  /**
+   * Return info about controllers (selected chainsetup)
+   *
+   * require:
+   *  is_selected() == true
+   */
+  string controller_status(void) const;
+
   ECA_CONTROLLER (ECA_SESSION* psession);
   virtual ~ECA_CONTROLLER (void) { }
 };

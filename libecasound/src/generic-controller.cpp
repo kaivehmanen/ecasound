@@ -59,13 +59,20 @@ GENERIC_CONTROLLER::GENERIC_CONTROLLER(CONTROLLER_SOURCE* src, DYNAMIC_OBJECT* d
   param_id = par_id;
   rangelow = range_low;
   rangehigh = range_high;
+}
 
+string GENERIC_CONTROLLER::status(void) const {
   if (is_valid() == true) {
-    ecadebug->msg("(generic-controller) Created a new general controller; chainop \"" +
-		  target->name() + "\" source \"" + source->name() + "\" param number " +
-		  kvu_numtostr((int)param_id) + " range from " + 
-		  kvu_numtostr(rangelow) + " to " + 
-		  kvu_numtostr(rangehigh) + ".");
+    return("Source \"" + source->name() + 
+	   "\" connected to target \"" +
+	   target->name() + "\"." +
+	   " Current source value is " + 
+	   kvu_numtostr(source->value()) + 
+	   " and target " + 
+	   kvu_numtostr(target->get_parameter(param_id)) + ".");
+  }
+  else {
+    return("Controller not valid.");
   }
 }
 

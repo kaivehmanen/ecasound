@@ -144,6 +144,11 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
    */
   void add_controller(GENERIC_CONTROLLER* csrc);
 
+  /**
+   * Select controllers as targets for parameter control
+   */
+  void set_target_to_controller(void);
+
   // ---
   // Setup load/save functions
   // ---

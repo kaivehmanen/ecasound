@@ -64,8 +64,8 @@ private:
   bool end_request;
   bool continue_request;
   bool trigger_outputs_request;
-  bool output_finished;
   bool input_not_finished;
+  bool processing_range_set;
 
   size_t active_chain_index;
   size_t active_chainop_index;

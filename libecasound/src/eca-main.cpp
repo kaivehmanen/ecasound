@@ -157,13 +157,17 @@ void ECA_PROCESSOR::init_inputs(void) {
     //  		     kvu_numtostr(input_chain_count[adev_sizet]) + " .\n");
   }
 
-  if (csetup->length_set() == false) csetup->length_in_samples(max_input_length);
+  if (csetup->length_set() == false) {
+    processing_range_set = false;
+    csetup->length_in_samples(max_input_length);
+  }
+  else
+    processing_range_set = true;
 
   while(inslots.size() < inputs->size()) inslots.push_back(SAMPLE_BUFFER(buffersize_rep, max_channels));
 }
 
 void ECA_PROCESSOR::init_outputs(void) {
-  output_finished = false;
   trigger_outputs_request = false;
 
   outputs = &(csetup->outputs);
@@ -362,6 +366,7 @@ void ECA_PROCESSOR::exec_normal_passive(void) {
   ecadebug->control_flow("Engine/Mixmode \"normal passive\" selected");
   while (!finished()) {
     input_not_finished = false;
+    prehandle_control_position();
     inputs_to_chains();
     chain_i chain_iter = chains->begin();
     while(chain_iter != chains->end()) {
@@ -370,6 +375,7 @@ void ECA_PROCESSOR::exec_normal_passive(void) {
     }
     mix_to_outputs();
     trigger_outputs();
+    posthandle_control_position();
   }
 }
 
@@ -387,7 +393,6 @@ void ECA_PROCESSOR::exec_simple_iactive(void) {
     if ((*inputs)[0]->finished() == false) input_not_finished = true;
     (*chains)[0]->process();
     (*outputs)[0]->write_buffer(&((*chains)[0]->audioslot));
-    if ((*outputs)[0]->finished() == true) output_finished = true;
     trigger_outputs();
     posthandle_control_position();
   }
@@ -406,7 +411,6 @@ void ECA_PROCESSOR::exec_simple_passive(void) {
     if ((*inputs)[0]->finished() == false) input_not_finished = true;
     (*chains)[0]->process();
     (*outputs)[0]->write_buffer(&((*chains)[0]->audioslot));
-    if ((*outputs)[0]->finished() == true) output_finished = true;
     trigger_outputs();
     posthandle_control_position();
   }
@@ -479,7 +483,9 @@ double ECA_PROCESSOR::current_position_chain(void) const {
 
 void ECA_PROCESSOR::prehandle_control_position(void) {
   csetup->change_position(buffersize_rep);
-  if (csetup->is_over() == true) {
+  if (csetup->is_over() == true &&
+      processing_range_set == true) {
+    eparams->status(ep_status_finished);
     int buffer_remain = csetup->position_in_samples() -
                         csetup->length_in_samples();
     for(int adev_sizet = 0; adev_sizet < input_count; adev_sizet++) {
@@ -489,11 +495,9 @@ void ECA_PROCESSOR::prehandle_control_position(void) {
 }
 
 void ECA_PROCESSOR::posthandle_control_position(void) {
-  if (csetup->is_over() == true) {
-    if (csetup->looping_enabled() == false) {
-      eparams->status(ep_status_finished);
-    }
-    else {
+  if (csetup->is_over() == true &&
+      processing_range_set == true) {
+    if (csetup->looping_enabled() == true) {
       rewind_to_start_position();
       csetup->set_position(0);
       for(int adev_sizet = 0; adev_sizet < input_count; adev_sizet++) {
@@ -545,7 +549,6 @@ void ECA_PROCESSOR::start(void) {
     trigger_outputs_request = true;
   }
 
-  output_finished = false;
   eparams->status(ep_status_running);
 }
 
@@ -610,7 +613,6 @@ void ECA_PROCESSOR::multitrack_sync(void) {
       if ((*chains)[n]->output_id == (*outputs)[audioslot_sizet]) {
 	if (output_chain_count[audioslot_sizet] == 1) {
 	  (*outputs)[audioslot_sizet]->write_buffer(&(*chains)[n]->audioslot);
-	  if ((*outputs)[audioslot_sizet]->finished() == true) output_finished = true;
 	  break;
 	}
 	else {
@@ -624,7 +626,6 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 	    
 	    if (count == output_chain_count[audioslot_sizet]) {
 	      (*outputs)[audioslot_sizet]->write_buffer(&mixslot);
-	      if ((*outputs)[audioslot_sizet]->finished() == true) output_finished = true;
 	    }
 	  }
 	}
@@ -689,13 +690,12 @@ void ECA_PROCESSOR::interpret_queue(void) {
 }
 
 bool ECA_PROCESSOR::finished(void) {
-  // output_finished == true || 
-  if (input_not_finished == false) {
-    stop();
-    eparams->status(ep_status_finished);
-    return(true);
-  }
-  return(eparams->status() == ep_status_finished);
+  if (input_not_finished == true &&
+      eparams->status() != ep_status_finished) return(false);
+
+  stop();
+  eparams->status(ep_status_finished);
+  return(true);
 }
 
 void ECA_PROCESSOR::inputs_to_chains(void) {
@@ -759,7 +759,6 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 	  // so we don't need to mix anything
 	  // --
 	  (*outputs)[audioslot_sizet]->write_buffer(&(*chains)[n]->audioslot);
-	  if ((*outputs)[audioslot_sizet]->finished() == true) output_finished = true;
 	  break;
 	}
 	else {
@@ -778,7 +777,6 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 	  
 	  if (count == output_chain_count[audioslot_sizet]) {
 	    (*outputs)[audioslot_sizet]->write_buffer(&mixslot);
-	    if ((*outputs)[audioslot_sizet]->finished() == true) output_finished = true;
 	  }
 	}
       }

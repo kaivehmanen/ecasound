@@ -159,6 +159,12 @@ as controller sources. The ranges are the same as in the
 in first example. Controller numbers used are 74 (cutoff) and 71
 (resonance). In other words you can use your synth's cutoff and
 resonance knobs.
+</p><p>
+It's also possible to control controllers with other controllers 
+using the <i>-kx</i> option.
+</p><p>
+<li> ecasound -i somefile.wav -o /dev/dsp -efl:800
+     -kos:1,400,8000,0.2,0 -kx -kos:2,200,5000,0.15,0
 </p>
 </ol>
 <!-- ###  new section ### -->

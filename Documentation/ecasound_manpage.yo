@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (05.02.2000)
+       (07.02.2000)
        ()
        (Multimedia software)
 
@@ -423,7 +423,7 @@ startdit()
 
 Controllers can be used to dynamically change effect parameters
 during processing. All controllers are attached to the selected
-(=usually the last specified effect/chainop) effect. The first 
+(=usually the last specified effect/controller) effect. The first
 three parameters are common for all controllers. 'fx_param' 
 specifies the parameter to be controlled. Value '1' means 
 the first parameter, '2' the second and so on. 'start_value' 
@@ -432,7 +432,7 @@ em(examples.html) for some more info.
 
 dit(-kos:fx_param,start_value,end_value,freq,i_phase)
 Sine oscillator with frequency of 'freq' Hz and initial phase
-of 'i_phase' times pi. 
+of 'i_phase' times pi.
 
 dit(-kf:fx_param,start_value,end_value,freq,genosc_number)
 Generic oscillator. 'genosc_number' is the number of the 

@@ -460,7 +460,6 @@ void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
   string prefix = get_argument_prefix(argu);
 
   MESSAGE_ITEM otemp;
-  
   map<string, DYNAMIC_OBJECT*>::const_iterator p = ECA_CHAIN_OPERATOR_MAP::object_map.find(prefix);
   if (p != ECA_CHAIN_OPERATOR_MAP::object_map.end()) {
     CHAIN_OPERATOR* cop = dynamic_cast<CHAIN_OPERATOR*>(ECA_CHAIN_OPERATOR_MAP::object_map[prefix]);
@@ -487,6 +486,11 @@ void ECA_CHAINSETUP::interpret_controller (const string& argu) {
     return;
   
   string prefix = get_argument_prefix(argu);
+  if (prefix == "kx") {
+    set_target_to_controller();
+    ecadebug->msg(1, "Selected controllers as parameter control targets.");
+    return;
+  }
 
   MESSAGE_ITEM otemp;
   
@@ -506,6 +510,18 @@ void ECA_CHAINSETUP::interpret_controller (const string& argu) {
     }
     ecadebug->msg(otemp.to_string());
     add_controller(gcontroller->clone());
+  }
+}
+
+void ECA_CHAINSETUP::set_target_to_controller(void) {
+  vector<string> schains = selected_chains();
+  for(vector<string>::const_iterator a = schains.begin(); a != schains.end(); a++) {
+    for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+      if (*a == (*q)->name()) {
+	(*q)->selected_controller_as_target();
+	return;
+      }
+    }
   }
 }
 
@@ -540,6 +556,7 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
       if (*p == (*q)->name()) {
 	ecadebug->msg(1, "Adding chainop to chain " + (*q)->name() + ".");
 	(*q)->add_chain_operator(cotmp);
+	(*q)->selected_chain_operator_as_target();
 	return;
 	//	(*q)->add_chain_operator(cotmp->clone());
       }
