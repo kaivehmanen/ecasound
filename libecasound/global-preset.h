@@ -1,5 +1,5 @@
-#ifndef _GLOBAL_PRESET_H
-#define _GLOBAL_PRESET_H
+#ifndef INCLUDED_GLOBAL_PRESET_H
+#define INCLUDED_GLOBAL_PRESET_H
 
 #include "preset.h"
 
@@ -17,7 +17,7 @@ class GLOBAL_PRESET : public PRESET {
 
  public:
 
-  virtual GLOBAL_PRESET* clone(void) { return(new GLOBAL_PRESET(preset_name_rep)); }
+  virtual GLOBAL_PRESET* clone(void);
   virtual GLOBAL_PRESET* new_expr(void) { return(new GLOBAL_PRESET(preset_name_rep)); }
   virtual ~GLOBAL_PRESET (void) { }
 

@@ -32,3 +32,15 @@ FILE_PRESET::FILE_PRESET(const string& file_name) {
   set_filename(file_name);
   parse(pfile.resource(pname));
 }
+
+FILE_PRESET* FILE_PRESET::clone(void) {
+  vector<parameter_type> param_values;
+  for(int n = 0; n < number_of_params(); n++) {
+    param_values.push_back(get_parameter(n + 1));
+  }
+  FILE_PRESET* preset = new FILE_PRESET(filename());
+  for(int n = 0; n < preset->number_of_params(); n++) {
+    preset->set_parameter(n + 1, param_values[n]);
+  }
+  return(preset);
+}

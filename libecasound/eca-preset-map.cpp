@@ -30,8 +30,9 @@ ECA_PRESET_MAP::ECA_PRESET_MAP(void) {
   string filename =
     ecarc.resource("resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
 
+  RESOURCE_FILE preset_file;
   preset_file.resource_file(filename);
-  
+  preset_file.load();
   const vector<string>& pmap = preset_file.keywords();
   vector<string>::const_iterator p = pmap.begin();
   while(p != pmap.end()) {
@@ -60,6 +61,10 @@ ECA_OBJECT* ECA_PRESET_MAP::object(const string& keyword, bool use_regex) const 
   PRESET* gp = 0;
   try {
     gp = dynamic_cast<PRESET*>(new GLOBAL_PRESET(keyword));
+    if (gp != 0) {
+      object_map[keyword] = gp;
+      object_keyword_map[keyword] = gp->name();
+    }
   }
   catch(...) { gp = 0; }
   return(gp);

@@ -43,3 +43,15 @@ GLOBAL_PRESET::GLOBAL_PRESET(const string& preset_name)
     throw(ECA_ERROR("GLOBAL_PRESET", "requested preset was not found from " + filename + "."));
   }
 }
+
+GLOBAL_PRESET* GLOBAL_PRESET::clone(void) {
+  vector<parameter_type> param_values;
+  for(int n = 0; n < number_of_params(); n++) {
+    param_values.push_back(get_parameter(n + 1));
+  }
+  GLOBAL_PRESET* preset = new GLOBAL_PRESET(preset_name_rep);
+  for(int n = 0; n < preset->number_of_params(); n++) {
+    preset->set_parameter(n + 1, param_values[n]);
+  }
+  return(preset);
+}

@@ -29,32 +29,20 @@ class PRESET : public CHAIN_OPERATOR,
 
   vector<SAMPLE_BUFFER*> buffers;
   vector<CHAIN*> chains;
-
-  //vector< pair<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>*, int> > param_objects;
-  //map<string, int> param_names; // maps parameter names to indexes
-  vector< string > param_names;
-  vector< DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > param_objects;
-  vector< int > param_arg_indices;
-
-
-/*    vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > param_objects; */
-/*    vector<int> param_numbers; */
-
-  ECA_CHAINSETUP csetup;
-
+  vector<string> param_names;
+  vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > param_objects;
+  vector<int> param_arg_indices;
   bool parsed_rep;
   string parse_string_rep;
-
   string name_rep;
 
   void add_chain(void);
-
-  PRESET (const PRESET& x) : csetup("untitled", false) { }
   PRESET& operator=(const PRESET& x) { return *this; }
+  PRESET(const PRESET& x) { }
 
  public:
 
-  virtual PRESET* clone(void) { return(new PRESET(parse_string_rep)); }
+  virtual PRESET* clone(void);
   virtual PRESET* new_expr(void) { return(new PRESET(parse_string_rep)); }
   virtual ~PRESET (void);
 

@@ -21,26 +21,32 @@
 #include <string>
 
 #include <kvutils.h>
-
-#include "preset.h"
-
 #include "eca-chain.h"
 #include "eca-chainop.h"
 #include "generic-controller.h"
 #include "samplebuffer.h"
-
 #include "eca-debug.h"
 #include "eca-error.h"
+#include "preset.h"
 
-PRESET::PRESET(void) 
-  : csetup ("untitled", false) {
+PRESET::PRESET(void) {
   parsed_rep = false;
 }
 
-PRESET::PRESET(const string& formatted_string) 
-  : csetup ("untitled", false),
-    parse_string_rep(formatted_string) {
+PRESET::PRESET(const string& formatted_string) {
   parse(formatted_string);
+}
+
+PRESET* PRESET::clone(void) {
+  vector<parameter_type> param_values;
+  for(int n = 0; n < number_of_params(); n++) {
+    param_values.push_back(get_parameter(n + 1));
+  }
+  PRESET* preset = new PRESET(parse_string_rep);
+  for(int n = 0; n < preset->number_of_params(); n++) {
+    preset->set_parameter(n + 1, param_values[n]);
+  }
+  return(preset);
 }
 
 PRESET::~PRESET(void) {
@@ -64,6 +70,7 @@ void PRESET::parse(const string& formatted_string) {
   REQUIRE(formatted_string.empty() == false);
   // --------
 
+  parse_string_rep = formatted_string;
   chains.clear();
   chains.push_back(new CHAIN());
 
@@ -98,13 +105,10 @@ void PRESET::parse(const string& formatted_string) {
         }
     }
     string ps = "-" + get_argument_prefix(*p) + ":" + vector_to_string(ps_parts, ",");
-    //ps += ps_parts[0];
-    //for(int i = 1; i < ps_parts.size(); i++)
-    //    ps += "," + ps_parts[i];
-//      cerr << "ps = " << ps << endl;
 
     DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* object = 0;
 
+    ECA_CHAINSETUP csetup ("untitled", false);
     cop = 0;
     cop = csetup.create_chain_operator(ps);
     if (cop == 0) cop = csetup.create_ladspa_plugin(ps);

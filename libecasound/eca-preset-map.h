@@ -18,7 +18,6 @@ class ECA_PRESET_MAP : public ECA_OBJECT_MAP {
 
  private:
 
-  RESOURCE_FILE preset_file;
   mutable map<string, PRESET*> object_map;
   mutable map<string,string> object_keyword_map;
 
@@ -29,7 +28,11 @@ class ECA_PRESET_MAP : public ECA_OBJECT_MAP {
 
   /**
    * Returns the first object that matches 'keyword'. Regular 
-   * expressions are not used.
+   * expressions are not used. For practical reasons a non-const 
+   * pointer is returned. However, in most cases the returned 
+   * object should be cloned before actual use. In other words, 
+   * the returned pointer refers to the object stored in the object 
+   * map.
    */
   ECA_OBJECT* object(const string& keyword, bool use_regexp = false) const;
   string object_identifier(const PRESET* object) const;
