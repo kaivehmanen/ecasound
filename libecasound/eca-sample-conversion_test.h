@@ -50,13 +50,13 @@ void ECA_SAMPLE_CONVERSION_TEST::do_run(void)
   double dzero = 0.0f;
 
   uint8_t u8min = eca_sample_convert_float_to_u8(dmin);
-  if (abs(u8min - UINT8_MIN) > 1) {
+  if (abs((int)(u8min - UINT8_MIN)) > 1) {
     cout << "u8min=" << (int)u8min << "\n";
     ECA_TEST_FAILURE("abs(u8min - UINT8_MIN) > 1");
   }
 
   uint8_t u8max = eca_sample_convert_float_to_u8(dmax);
-  if (abs(u8max - UINT8_MAX) > 1) {
+  if (abs((int)(u8max - UINT8_MAX)) > 1) {
     cout << "u8max=" << (int)u8max << "\n";
     ECA_TEST_FAILURE("abs(u8max - UINT8_MAX) > 1");
   }
