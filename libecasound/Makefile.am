@@ -136,6 +136,7 @@ ecasound_general_include = 	\
 			samplebuffer_functions.h \
 			samplebuffer_iterators.h \
 			sample-specs.h \
+			eca-sample-conversion.h \
 			eca-version.h \
 			eca-object-factory.h \
 			eca-chainsetup.h \
@@ -174,6 +175,7 @@ ecasound_test_framework_include = \
 			eca-chainsetup_test.h \
 			eca-control_test.h \
 			eca-object-factory_test.h \
+			eca-sample-conversion_test.h \
 			audioio_test.h \
 			audioio-device_test.h
 

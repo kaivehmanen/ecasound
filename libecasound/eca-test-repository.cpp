@@ -50,6 +50,7 @@ ECA_TEST_REPOSITORY& ECA_TEST_REPOSITORY::instance(void)
 
 #include "eca-control_test.h"
 #include "eca-object-factory_test.h"
+#include "eca-sample-conversion_test.h"
 
 /** 
  * Class constructor.
@@ -61,6 +62,7 @@ ECA_TEST_REPOSITORY::ECA_TEST_REPOSITORY(void)
 {
   test_cases_rep.push_back(new ECA_CONTROL_TEST());
   test_cases_rep.push_back(new ECA_OBJECT_FACTORY_TEST());
+  test_cases_rep.push_back(new ECA_SAMPLE_CONVERSION_TEST());
 }
 
 /** 
@@ -75,6 +77,7 @@ void ECA_TEST_REPOSITORY::do_run(void)
   list<ECA_TEST_CASE*>::const_iterator p = test_cases_rep.begin();
   int n = 0;
   while(p != test_cases_rep.end()) {
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Running test case '" + (*p)->name() + "'.");
     (*p)->run();
     if ((*p)->success() != true) {
       string errormsg = (string("Test case ") + (*p)->name() + string(" FAILED."));
@@ -89,7 +92,7 @@ void ECA_TEST_REPOSITORY::do_run(void)
       }
     }
     else {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Test case " + (*p)->name() + " passed.");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Test case '" + (*p)->name() + "' passed.");
     }
     ++p;
   }
