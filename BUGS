@@ -13,6 +13,8 @@ on the web at http://www.eca.cx/ecasound -> 'EDIs' menu item.
 -----------------------------------------------------------------------
 [ Known Bugs and Features ]
 
+- ecasound cannot parse ogg and flac headers so correct audio
+  format parameters must be set manually with ecasound's -f option
 - pitch shifter (-ei) doesn't work with all real-time audio object
   types (for instance JACK)
 - ecasound crashes if /dev/midi points to an invalid rawmidi device
