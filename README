@@ -240,8 +240,9 @@ GNU General Public License (see the file 'COPYING.GPL').
 This program is distributed without any warranty. See the file 
 'COPYING.GPL' for details. 
 
-As an exception to the above, the C implementation of the Ecasound 
-Control Interface (libecasoundc) is licensed under the LGPL 
-(see the file 'COPYING.LGPL').
+As an exception to the above, the C, C++ and python implementations 
+of the Ecasound Control Interface (ECI) are licensed under the LGPL 
+(see the file 'COPYING.LGPL'). This allows writing ECI applications 
+that are not licensed under GPL.
 
 =======================================================================
