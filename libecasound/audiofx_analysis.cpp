@@ -28,12 +28,12 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-static const int EFFECT_ANALYSIS::range_count = 16;
-static const SAMPLE_SPECS::sample_t EFFECT_ANALYSIS::clip_amplitude = SAMPLE_SPECS::max_amplitude - SAMPLE_SPECS::max_amplitude / 16384.0f; // max-(max/2^15)
-
 EFFECT_ANALYSIS::~EFFECT_ANALYSIS(void)
 {
 }
+
+const int EFFECT_ANALYZE::range_count = 16;
+const SAMPLE_SPECS::sample_t EFFECT_ANALYZE::clip_amplitude = SAMPLE_SPECS::max_amplitude - SAMPLE_SPECS::max_amplitude / 16384.0f; // max-(max/2^15)
 
 EFFECT_ANALYZE::EFFECT_ANALYZE (void) { 
   reset_stats();
