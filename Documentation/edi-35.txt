@@ -1,0 +1,28 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-35): JACK support to ecasound's interactive mode (EIAM)
+	 - submitted: kaiv, 16.11.2002
+
+------------------------------------------------------------------------
+Details:
+
+- add a set of commands to control JACK using EIAM commands
+- provided services
+    - connecting and disconnection ports
+        - jack-connect <srcport>,<targetport>
+	- jack-disconnect --"--
+    - querying list of (all) connections
+        - jack-get-connections <port>
+    - querying port and total latency
+        - jack-get-latency <port>
+	- jack-get-total-latency <port>
+    - querying timebase state
+    - and so on...
+- new functionality compared to existing command-line JACK tools
+    - interactive shell with command completion and command 
+      history
+    - use via the ecasound control API (interfaces available 
+      for C++, C, lisp, perl, php, python)
+
+------------------------------------------------------------------------
