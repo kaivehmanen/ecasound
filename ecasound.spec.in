@@ -5,8 +5,9 @@
 %define python_compile_opt python -O -c "import compileall; compileall.compile_dir('.')"
 %define python_compile python -c "import compileall; compileall.compile_dir('.')"
 
-# until Documentation/Makefile.am is updated to use 'share/man'
-%define eca_mandir %{_prefix}/man
+%define ver     @VERSION@
+%define pkgver  @VERSION@
+%define pkgrel  1
 
 # ---
 # global settings
@@ -14,17 +15,19 @@
 Packager: 	Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 Distribution: 	www.eca.cx audio software
 
+# allow relocation
+Prefix: 	%{_prefix}
+
 # ---
 # main package
 
 Name: 		ecasound
-Version: 	@VERSION@
-Release: 	1
+Version: 	%{pkgver}
+Release: 	%{pkgrel}
 Copyright: 	GPL
-Source: 	http://ecasound.seul.org/download/ecasound-@VERSION@.tar.gz
+Source: 	http://ecasound.seul.org/download/ecasound-%{ver}.tar.gz
 URL: 		http://www.eca.cx/ecasound
 BuildRoot:	/var/tmp/%{name}-%{version}-root-%(id -u -n)
-
 Summary: 	ecasound - multitrack audio processing tool
 Group: 		Applications/Sound
 
@@ -83,7 +86,7 @@ Python bindings to Ecasound Control Interface (ECI).
 %prep
 %setup -n ecasound-@VERSION@
 %build
-./configure --prefix=%{_prefix} --disable-static $extra_params
+./configure --prefix=%{_prefix} --mandir=%{_mandir} --disable-static $extra_params
 make
 
 %install
@@ -98,15 +101,18 @@ make DESTDIR="$RPM_BUILD_ROOT" install-strip
 
 # note! this is needed for automake 1.4 and older
 strip --strip-unneeded \
-	${RPM_BUILD_ROOT}/%{_bindir}/ecasound \
-	${RPM_BUILD_ROOT}/%{_bindir}/ecaconvert \
-	${RPM_BUILD_ROOT}/%{_bindir}/ecafixdc \
-	${RPM_BUILD_ROOT}/%{_bindir}/ecanormalize \
-	${RPM_BUILD_ROOT}/%{_bindir}/ecaplay \
-	${RPM_BUILD_ROOT}/%{_bindir}/ecasignalview \
-	${RPM_BUILD_ROOT}/%{_libdir}/libecasound.a \
-	${RPM_BUILD_ROOT}/%{_libdir}/libecasoundc.a \
-	${RPM_BUILD_ROOT}/%{_libdir}/libkvutils.a
+	${RPM_BUILD_ROOT}%{_bindir}/ecasound \
+	${RPM_BUILD_ROOT}%{_bindir}/ecaconvert \
+	${RPM_BUILD_ROOT}%{_bindir}/ecafixdc \
+	${RPM_BUILD_ROOT}%{_bindir}/ecanormalize \
+	${RPM_BUILD_ROOT}%{_bindir}/ecaplay \
+	${RPM_BUILD_ROOT}%{_bindir}/ecasignalview \
+	${RPM_BUILD_ROOT}%{_libdir}/libecasound.a \
+	${RPM_BUILD_ROOT}%{_libdir}/libecasoundc.a \
+	${RPM_BUILD_ROOT}%{_libdir}/libkvutils.a
+
+# ---
+# cleanup after build
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -116,9 +122,11 @@ strip --strip-unneeded \
 
 %files
 %defattr(-, root, root)
-%doc NEWS COPYING COPYING.GPL COPYING.LGPL README INSTALL BUGS TODO Documentation examples
-%doc %{eca_mandir}/man1/eca*.1*
-%doc %{eca_mandir}/man5/ecasoundrc.5
+%doc NEWS COPYING COPYING.GPL COPYING.LGPL README INSTALL BUGS TODO examples
+%doc Documentation/*.html
+%doc Documentation/*.txt
+%{_mandir}/man1/eca*
+%{_mandir}/man5/eca*
 %{_bindir}/ecasound
 %{_bindir}/ecaconvert
 %{_bindir}/ecafixdc
@@ -163,11 +171,22 @@ strip --strip-unneeded \
 %attr(755,root,root) %{python_sitepkgsdir}/*.so
 %{python_sitepkgsdir}/*.pyo
 %{python_sitepkgsdir}/*.pyc
+%{python_sitepkgsdir}/*.py
 
 # ---
 # changelog
 
 %changelog
+* Sat Nov 02 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+- ported Fernando Lopez-Lezcano's changes to unify this
+  spec file with PlanetCCRMA's ecasound package; see
+  http://ccrma-www.stanford.edu/planetccrma/software/soundapps.html
+- ecasound.el added to package (installed as a data
+  file to avoid dependency to emacs/elisp)
+- removed unnecessary raw documentation source files
+- man files are no longer installed as doc files
+- use redhat style mandir location 
+
 * Thu Oct 31 2002 Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 - minor layout changes
 - added TODO to the package
