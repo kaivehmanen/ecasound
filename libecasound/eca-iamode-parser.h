@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <pthread.h>
 
 #include "eca-error.h"
 
