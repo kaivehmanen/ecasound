@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 041003) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 031103) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -19,6 +19,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: libtool is setup to only create object files for
 		   static linkage; you can revert to the old behaviour
 		   with the --enable-shared configure option
+	- changed: ecasound.el updated to 0.8.3, lots of small
+		   changes, see ecasound.el for details [mlang]
         - fixed: makefile errors when building against system librealine
         - fixed: processing did not start in the default transport mode
 	  	 with JACK versions 0.80 and older
