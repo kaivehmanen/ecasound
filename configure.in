@@ -51,13 +51,6 @@ dnl ---
 dnl Check pthread support
 dnl ---
 
-dnl switch to C while testing for pthread support
-AC_LANG_C
-AC_SEARCH_LIBS(pthread_create, pthread c_r, [],
-		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **]))
-dnl switch back to C++
-AC_LANG_CPLUSPLUS
-
 dnl ---
 dnl Sets up some operating system specific options for POSIX threads
 dnl
@@ -84,6 +77,13 @@ case "$host" in
 	       echo "Using generic settings for POSIX thread support."
 	       ;;
 esac
+
+dnl switch to C while testing for pthread support
+AC_LANG_C
+AC_SEARCH_LIBS(pthread_create, pthread c_r, [],
+		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **]))
+dnl switch back to C++
+AC_LANG_CPLUSPLUS
 
 echo "------------------------------------------------------------------"
 echo "2. Section: Options for the configure script"
@@ -584,9 +584,9 @@ AC_HEADER_STDC
 dnl --- AC_CHECK_HEADER(stl.h,, 
 dnl ---	AC_MSG_WARN([** C++/STL header files not found! ***]))
 AC_LANG_CPLUSPLUS
-AC_CHECK_HEADER(map.h,nostlmap=0,nostlmap=1)
+AC_CHECK_HEADER(map,nostlmap=0,nostlmap=1)
 if test "x$nostlmap" = "x1" ; then
-	AC_MSG_ERROR([C++ header files not found! Searched for 'map.h' (STL).])
+	AC_MSG_ERROR([C++ header files not found! Searched for '<map>' (STL).])
 fi
 
 dnl ------------------------------------------------------------------
