@@ -43,16 +43,21 @@ ECA_CONTROL_INTERFACE::~ECA_CONTROL_INTERFACE (void) {
  * Parse string mode command and act accordingly.
  */
 void ECA_CONTROL_INTERFACE::command(const string& cmd) { 
-  try {
-    control_repp->command(cmd);
-  }
-  catch(int n) {
-    cerr << "Caught an exception (1)!" << endl;
-  }
-  catch(ECA_ERROR& e) {
-    cerr << "Caught an exception (2)!" << endl;
-  }
-  catch(...) {
-    cerr << "Caught an exceptiong (3)!" << endl;
-  }
+  control_repp->command(cmd);
 }
+
+void ECA_CONTROL_INTERFACE::command_float_arg(const string& cmd, double arg) {
+  control_repp->command_float_arg(cmd, arg);
+}
+
+const vector<string>& ECA_CONTROL_INTERFACE::last_list_of_strings(void) const { return(control_repp->last_list_of_strings()); }
+const string& ECA_CONTROL_INTERFACE::last_string(void) const { return(control_repp->last_string()); }
+double ECA_CONTROL_INTERFACE::last_float(void) const { return(control_repp->last_float()); }
+int ECA_CONTROL_INTERFACE::last_integer(void) const { return(control_repp->last_integer()); }
+long int ECA_CONTROL_INTERFACE::last_long_integer(void) const { return(control_repp->last_long_integer()); }
+const string& ECA_CONTROL_INTERFACE::last_error(void) const { return(control_repp->last_error()); }
+const string& ECA_CONTROL_INTERFACE::last_type(void) const { return(control_repp->last_type()); }
+
+bool ECA_CONTROL_INTERFACE::events_available(void) { return(false); }
+void ECA_CONTROL_INTERFACE::next_event(void) { }
+const string& ECA_CONTROL_INTERFACE::current_event(void) { return(current_event_rep); }

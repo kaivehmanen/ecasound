@@ -55,6 +55,7 @@ class ECA_IAMODE_PARSER {
     // --
     ec_c_add,
     ec_c_select,
+    ec_c_selected,
     ec_c_select_all,
     ec_c_select_add,
     ec_c_deselect,

@@ -52,7 +52,7 @@ ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession)
 
 ECA_CONTROL::~ECA_CONTROL(void) { }
 
-void ECA_CONTROL::command(const string& cmd) throw(ECA_ERROR&) {
+void ECA_CONTROL::command(const string& cmd) {
   clear_last_values();
   clear_action_arguments();
   vector<string> cmds = string_to_words(cmd);
@@ -102,7 +102,7 @@ void ECA_CONTROL::clear_action_arguments(void) {
   action_arg_f_set_rep = false;
 }
 
-void ECA_CONTROL::command_float_arg(const string& cmd, double arg) throw(ECA_ERROR&) {
+void ECA_CONTROL::command_float_arg(const string& cmd, double arg) {
   clear_action_arguments();
   set_action_argument(arg);
   int action_id = ec_unknown;
@@ -142,14 +142,14 @@ void ECA_CONTROL::direct_command(const string& cmd) {
 }
 
 void ECA_CONTROL::action(int action_id, 
-			 const vector<string>& args) throw(ECA_ERROR&)
+			 const vector<string>& args) 
 {
   clear_action_arguments();
   set_action_argument(args);
   action(action_id);
 }
 
-void ECA_CONTROL::action(int action_id) throw(ECA_ERROR&) {
+void ECA_CONTROL::action(int action_id) {
   clear_last_values();
   bool reconnect = false;
   bool restart = false;
@@ -288,6 +288,7 @@ void ECA_CONTROL::action(int action_id) throw(ECA_ERROR&) {
   // ---
   case ec_c_add: { add_chains(string_to_vector(action_args_rep[0], ',')); break; }
   case ec_c_select: { select_chains(string_to_vector(action_args_rep[0], ',')); break; }
+  case ec_c_selected: { set_last_list_of_strings(selected_chains()); break; }
   case ec_c_deselect: { deselect_chains(string_to_vector(action_args_rep[0], ',')); break; }
   case ec_c_select_add: 
     { 

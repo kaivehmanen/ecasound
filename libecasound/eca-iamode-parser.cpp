@@ -64,7 +64,9 @@ void ECA_IAMODE_PARSER::register_commands(void) {
 
   cmd_map_rep["c-add"] = ec_c_add;
   cmd_map_rep["c-select"] = ec_c_select;
+  cmd_map_rep["c-selected"] = ec_c_selected;
   cmd_map_rep["c-deselect"] = ec_c_deselect;
+  cmd_map_rep["c-selected"] = ec_c_selected;
   cmd_map_rep["c-select-all"] = ec_c_select_all;
   cmd_map_rep["c-select-add"] = ec_c_select_add;
   cmd_map_rep["c-remove"] = ec_c_remove;

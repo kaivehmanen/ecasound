@@ -19,7 +19,7 @@ class ECA_CONTROL : public ECA_CONTROL_DUMP,
   double action_arg_f_rep; 
   bool action_arg_f_set_rep;
 
-  void action(int action_id) throw(ECA_ERROR&);
+  void action(int action_id);
   void direct_command(const string& cmd);
   void set_action_argument(const vector<string>& s);
   void set_action_argument(double v);
@@ -31,19 +31,19 @@ class ECA_CONTROL : public ECA_CONTROL_DUMP,
    * Parses a string containing set of ecasound interactive mode (EIAM)
    * commands and acts accordingly.
    */
-  void command(const string& cmd) throw(ECA_ERROR&);
+  void command(const string& cmd);
 
   /**
    * A special version of 'command()' which parses a string-float-arg 
    * pair. The string argument is required to contain exactly one EIAM 
    * command, while the float argument contains one numerical parameter.
    */
-  void command_float_arg(const string& cmd, double arg) throw(ECA_ERROR&);
+  void command_float_arg(const string& cmd, double arg);
  
   /**
    * See ECA_IAMODE_PARSER for detailed decsription of 'action_id'.
    */
-   void action(int action_id, const vector<string>& args) throw(ECA_ERROR&);
+   void action(int action_id, const vector<string>& args);
 
   // -------------------------------------------------------------------
   // Session info

@@ -37,6 +37,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 to the distribution package
 	- added: ecasound control interface documentation added - 
 		 see 'Documentation/programmers_guide/eci_doc.html'
+	- added: eiam - new commands; c-selected, 
 	- removed: the "LADSPA/" prefix removed from plugin labels
 	- removed: support for underscores in EIAM-commands
 	- changed: more intelligent handling of resource files
