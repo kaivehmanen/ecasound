@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // preset.cpp: Class for representing effect presets
-// Copyright (C) 2000-2002,2004 Kai Vehmanen
+// Copyright (C) 2000-2002,2004-2005 Kai Vehmanen
 // Copyright (C) 2001 Arto Hamara
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,12 +93,12 @@ PRESET* PRESET::clone(void) const
   for(int n = 0; n < preset->number_of_params(); n++) {
     preset->set_parameter(n + 1, param_values[n]);
   }
-  return(preset);
+  return preset;
 }
 
 PRESET* PRESET::new_expr(void) const
 {
-  return(new PRESET(impl_repp->parse_string_rep)); 
+  return new PRESET(impl_repp->parse_string_rep);
 }
 
 void PRESET::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
@@ -114,12 +117,12 @@ void PRESET::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 
 string PRESET::name(void) const
 {
-  return(impl_repp->name_rep); 
+  return impl_repp->name_rep;
 }
 
 string PRESET::description(void) const
 {
-  return(impl_repp->description_rep); 
+  return impl_repp->description_rep;
 }
 
 void PRESET::set_name(const string& v)
@@ -132,7 +135,7 @@ void PRESET::set_name(const string& v)
  */
 bool PRESET::is_parsed(void) const
 {
-  return(impl_repp->parsed_rep); 
+  return impl_repp->parsed_rep;
 }
 
 void PRESET::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
@@ -195,23 +198,23 @@ void PRESET::parse(const string& formatted_string)
 bool PRESET::is_preset_option(const string& arg) const
 {
   if (arg.size() < 2 ||
-      arg[0] != '-') return(false);
+      arg[0] != '-') return false;
 
   switch(arg[1]) {
   case 'p':
     {
-      if (arg.size() < 3) return(false);
+      if (arg.size() < 3) return false;
       switch(arg[2]) {
       case 'd':
       case 'p':
-	return(true);
+	return true;
 	
       default: { }
       }
     }
   default: { }
   }
-  return(false);
+  return false;
 }
 
 void PRESET::parse_preset_option(const string& arg)
@@ -271,7 +274,7 @@ void PRESET::parse_preset_option(const string& arg)
 	    
 	  default: 
 	    { 
-	      ECA_LOG_MSG(ECA_LOGGER::info, "(preset) Unknown preset option (1) " + arg + ".");
+	      ECA_LOG_MSG(ECA_LOGGER::info, "Unknown preset option (1) " + arg + ".");
 	      break; 
 	    }
 	  }
@@ -279,7 +282,7 @@ void PRESET::parse_preset_option(const string& arg)
 	  break; /* -pp */
 	}
 
-      default: { ECA_LOG_MSG(ECA_LOGGER::info, "(preset) Unknown preset option (2) " + arg + "."); break; }
+      default: { ECA_LOG_MSG(ECA_LOGGER::info, "Unknown preset option (2) " + arg + "."); break; }
 	
       }
 
@@ -287,7 +290,7 @@ void PRESET::parse_preset_option(const string& arg)
  
     }
 
-  default: { ECA_LOG_MSG(ECA_LOGGER::info, "(preset) Unknown preset option (3) " + arg + "."); break; }
+  default: { ECA_LOG_MSG(ECA_LOGGER::info, "Unknown preset option (3) " + arg + "."); break; }
     
   }
 }
@@ -302,7 +305,8 @@ void PRESET::extend_pardesc_vector(int number)
   }
 }
 
-void PRESET::set_preset_defaults(const vector<string>& args) {
+void PRESET::set_preset_defaults(const vector<string>& args)
+{
   extend_pardesc_vector(args.size());
   for(size_t n = 0; n < args.size(); n++) {
     if (args[n].size() > 0 && args[n][0] == '-') continue;
@@ -312,7 +316,8 @@ void PRESET::set_preset_defaults(const vector<string>& args) {
   }
 }
 
-void PRESET::set_preset_param_names(const vector<string>& args) {
+void PRESET::set_preset_param_names(const vector<string>& args)
+{
   impl_repp->preset_param_names_rep.resize(args.size());
   for(size_t n = 0; n < args.size(); n++) {
     impl_repp->preset_param_names_rep[n] = args[n];
@@ -350,21 +355,35 @@ void PRESET::set_preset_upper_bounds(const vector<string>& args)
   }
 }
 
-void PRESET::set_preset_toggles(const vector<string>& args) {
+void PRESET::set_preset_toggles(const vector<string>& args)
+{
   extend_pardesc_vector(args.size());
   for(size_t n = 0; n < args.size(); n++) {
 
     impl_repp->pardesclist_rep[n]->integer = false;
-    impl_repp->pardesclist_rep[n]->output = false;
     impl_repp->pardesclist_rep[n]->logarithmic = false;
+    impl_repp->pardesclist_rep[n]->output = false;
     impl_repp->pardesclist_rep[n]->toggled = false;
 
-    // FIXME: add the missing toggle-code
-
-    if (args[n] == "integer") {
+    if (args[n].find("i") != string::npos) 
       impl_repp->pardesclist_rep[n]->integer = true;
-      //  cerr << "(preset) setting toggle integer for " << n << " to " << impl_repp->pardesclist_rep[n]->integer << "." << endl;
-    }
+    if (args[n].find("l") != string::npos) 
+      impl_repp->pardesclist_rep[n]->logarithmic = true;
+    if (args[n].find("o") != string::npos) 
+      impl_repp->pardesclist_rep[n]->output = true;
+    if (args[n].find("t") != string::npos) 
+      impl_repp->pardesclist_rep[n]->toggled = true;
+
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		string("Setting preset toggles: integer=")
+		+ kvu_numtostr(impl_repp->pardesclist_rep[n]->integer)
+		+ ", log="
+		+ kvu_numtostr(impl_repp->pardesclist_rep[n]->logarithmic)
+		+ ", output="
+		+ kvu_numtostr(impl_repp->pardesclist_rep[n]->output)
+		+ ", toggle="
+		+ kvu_numtostr(impl_repp->pardesclist_rep[n]->toggled)
+		+ ".");
   }
 }
 
@@ -500,10 +519,10 @@ CHAIN_OPERATOR::parameter_t PRESET::get_parameter(int param) const
       DBC_CHECK(index > 0);
 
       //  cerr << "Getting preset " << name() << " param " << param << ", index number " << index cerr << " with value " << impl_repp->slave_param_objects_rep[param-1][0]->get_parameter(index) << "." << endl;
-      return(impl_repp->slave_param_objects_rep[param-1][0]->get_parameter(index));
+      return impl_repp->slave_param_objects_rep[param-1][0]->get_parameter(index);
     }
   }
-  return(0.0f);
+  return 0.0f;
 }
 
 void PRESET::init(SAMPLE_BUFFER *insample)
