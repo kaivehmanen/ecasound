@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "26\&.11\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "05\&.12\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -80,8 +80,7 @@ Select active signal chains\&. All effects, inputs and outputs are assigned to
 these chains\&. If there are no -a options given, default chain is used\&.
 Chain name \'all\' is reserved and means that all chains are selected\&. By giving 
 multiple -a options, you can control to which chains effects, inputs and outputs
-are assigned to\&. Look at the 
-\fBEXAMPLES\fP
+are assigned to\&. Look at the \fBEXAMPLES\fP
 section for more detailed info about the usage of this option\&.
 .IP 
 .IP "-b:buffer size" 

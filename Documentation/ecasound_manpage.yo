@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (26.11.2000)
+       (05.12.2000)
        ()
        (Multimedia software)
 
@@ -100,8 +100,7 @@ Select active signal chains. All effects, inputs and outputs are assigned to
 these chains. If there are no -a options given, default chain is used.
 Chain name 'all' is reserved and means that all chains are selected. By giving 
 multiple -a options, you can control to which chains effects, inputs and outputs
-are assigned to. Look at the 
-bf(EXAMPLES)
+are assigned to. Look at the bf(EXAMPLES)
 section for more detailed info about the usage of this option.
 
 dit(-b:buffer size)

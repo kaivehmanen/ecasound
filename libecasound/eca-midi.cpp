@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-midi.cpp: Routines for accessing raw MIDI -devices (OSS or ALSA).
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,22 +38,45 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
+void *start_midi_queues(void *ptr);
+
 MIDI_IN_QUEUE midi_in_queue;
-pthread_mutex_t midi_in_lock;     // mutex ensuring exclusive access to MIDI-buffer
-pthread_cond_t midi_in_cond;
-bool midi_in_locked;
+
+void init_midi_queues(void) throw(ECA_ERROR&) {
+  static bool ready = false;
+
+  if (ready == true) return; 
+  else ready = true;
+
+  pthread_t th_midi;
+  int retcode = ::pthread_create(&th_midi,
+				 0,
+				 start_midi_queues,
+				 static_cast<void *>(&midi_in_queue));
+  if (retcode != 0)
+    throw(ECA_ERROR("ECA-MIDI", "unable to create MIDI-thread"));
+}
+
+/**
+ * Helper function for starting the slave thread.
+ */
+void* start_midi_queues(void *ptr) {
+  ::pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);  // other threads can cancel this one
+  MIDI_IN_QUEUE* mqueue = static_cast<MIDI_IN_QUEUE*>(ptr);
+  mqueue->update_midi_queues();
+}
 
 MIDI_IN_QUEUE::MIDI_IN_QUEUE(void) {
   right = false;
-
   current_put = 0;
   current_get = 0;
-
   bufsize = MIDI_IN_QUEUE_SIZE;
-
   controller_value = 0.0;
-
   buffer = vector<char> (bufsize, char(0));
+
+  ::pthread_mutex_init(&midi_in_lock_rep, 0);
+  ::pthread_cond_init(&midi_in_cond_rep, 0);
+  midi_in_locked_rep = false;
 }
 
 bool MIDI_IN_QUEUE::is_status_byte(char byte) const {
@@ -73,10 +96,10 @@ double MIDI_IN_QUEUE::last_controller_value(void) const {
 }
 
 bool MIDI_IN_QUEUE::update_controller_value(double controller, double channel) {
-  ::pthread_mutex_lock(&::midi_in_lock);
-  while (midi_in_locked == true) pthread_cond_wait(&::midi_in_cond,
-						   &::midi_in_lock);
-  ::midi_in_locked = true;
+  ::pthread_mutex_lock(&midi_in_lock_rep);
+  while (midi_in_locked_rep == true) pthread_cond_wait(&midi_in_cond_rep,
+						       &midi_in_lock_rep);
+  midi_in_locked_rep = true;
 
   bool value_found = false;
   int value_used = 0;
@@ -125,9 +148,9 @@ bool MIDI_IN_QUEUE::update_controller_value(double controller, double channel) {
   //  cerr << current_get << ".\n";
   //  if (value_found) cerr << "vu:" << value_used << "\n";
 
-  ::midi_in_locked = false;
-  ::pthread_cond_signal(&midi_in_cond);
-  ::pthread_mutex_unlock(&midi_in_lock);
+  midi_in_locked_rep = false;
+  ::pthread_cond_signal(&midi_in_cond_rep);
+  ::pthread_mutex_unlock(&midi_in_lock_rep);
   
   return(value_found);
 }
@@ -141,29 +164,13 @@ bool MIDI_IN_QUEUE::forth_get(void) {
   return(true);
 };
 
-void init_midi_queues(void) throw(ECA_ERROR&) {
-  static bool ready = false;
-
-  if (ready == true) return; 
-  else ready = true;
-
-  ::pthread_mutex_init(&::midi_in_lock, NULL);
-  ::pthread_cond_init(&::midi_in_cond, NULL);
-  ::midi_in_locked = false;
-  pthread_t th_midi;
-  int retcode = ::pthread_create(&th_midi, NULL, update_midi_queues, NULL);
-  if (retcode != 0)
-    throw(ECA_ERROR("ECA-MIDI", "unable to create MIDI-thread"));
-}
-
-void *update_midi_queues(void *) {
+void MIDI_IN_QUEUE::update_midi_queues(void) {
   struct timeval tv;
   int fd;
   char buf[MIDI_IN_QUEUE_SIZE];
   int temp;
   
-  ::pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);  // other threads can cancel this one
-    
+  
   ECA_RESOURCES erc;
   string midi_dev = erc.resource("midi-device");
 
@@ -232,10 +239,10 @@ void *update_midi_queues(void *) {
       temp = ::read(fd, buf, 1);
     }
 
-    ::pthread_mutex_lock(&::midi_in_lock);
-    while (::midi_in_locked == true) ::pthread_cond_wait(&::midi_in_cond,
-							 &::midi_in_lock);
-    ::midi_in_locked = true;
+    ::pthread_mutex_lock(&midi_in_lock_rep);
+    while (midi_in_locked_rep == true) ::pthread_cond_wait(&midi_in_cond_rep,
+							   &midi_in_lock_rep);
+    midi_in_locked_rep = true;
     if (temp < 0) {
       cerr << "ERROR: Can't read from MIDI-device: " << midi_dev << ".\n";
       break;
@@ -243,9 +250,9 @@ void *update_midi_queues(void *) {
     for(int n = 0; n < temp; n++) {
       ::midi_in_queue.put(buf[n]);
     }
-    ::midi_in_locked = false;
-    ::pthread_cond_signal(&::midi_in_cond);
-    ::pthread_mutex_unlock(&::midi_in_lock);
+    midi_in_locked_rep = false;
+    ::pthread_cond_signal(&midi_in_cond_rep);
+    ::pthread_mutex_unlock(&midi_in_lock_rep);
   }
 
   if (use_alsa) {

@@ -12,7 +12,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (26092000)
+       (03122000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -58,10 +58,8 @@ continue to improve and develop ecasound.
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
-sect(Ecasound library features)
+sect(Ecasound library concepts)
 
-COMMENT(----------------------------------------------------------------)
-subsect(Concepts)
 subsubsect(Chain)
 Chain is a simple signal flow abstraction. Every chain has one input
 and one output. All chain operators and their controllers are attached
@@ -101,6 +99,46 @@ subsubsect(Interactive-mode)
 Ecasound library can be controlled with simple commands. 
 This is called the interactive-mode. All programs linked
 to ecasound library can use this facility. 
+
+COMMENT(----------------------------------------------------------------)
+COMMENT(----------------------------------------------------------------)
+sect(Using)
+
+COMMENT(----------------------------------------------------------------)
+subsect(Where to start?)
+There's no one single way to use ecasound. You can use it as 
+a simple glue component for doing tasks, which aren't handled by
+other applications you are using, or because ecasound does these tasks
+more easily. But ecasound can also serve as the centre of your studio 
+setup, doing everything from effects processing to multitrack
+recording and mixing. 
+
+But this flexibility doesn't come for free. It's difficult to describe
+ecasound's features in a few phrases. Because of this, I encourage
+new users to start from ecasound url(examples.html)(../examples.html)
+page. It isn't a perfect introduction, and definitely not the only way 
+to use ecasound, but it does give an overall view of what can be done
+with ecasound, and more importantly, that most tasks are actually
+quite easy to perform.
+
+COMMENT(----------------------------------------------------------------)
+subsect(Creating ecasound chainsetups)
+Here are a few rules that help writing valid chainsetups. Whether
+you are writing chainsetup files (.ecs), using command-line arguments, 
+using a graphical frontend, etc, these rules are always useful:
+
+startit()
+it()Every chain has exactly _one_ input and _one_ output.
+it()All inputs and outputs must be connected to some chain.
+it()For every input/output, there must be exactly _one_
+    input/output specification (example specification: '-i:file.ext').
+it()All routing from/to chains is based on selecting a set of chains
+    and then specifying an input or output (example: '-a:1,2 -i:file.ext').
+it()All audio copying and mixing is done channel-wise. If you attach 
+    a 4-channel input and a two-channel output to a chain, chain 
+    will have 4 channels of audio, but only the first two channels
+    will be written to the output file.
+endit()
 
 COMMENT(----------------------------------------------------------------)
 subsect(Configuration)
@@ -179,9 +217,5 @@ See url(ecasound(1))(../ecasound_manpage.html).
 COMMENT(----------------------------------------------------------------)
 subsect(ecatools)
 See url(ecatools(1))(../ecatools_manpage.html).
-
-COMMENT(----------------------------------------------------------------)
-COMMENT(----------------------------------------------------------------)
-sect(Documentation)
 
 htmlcommand(<insert name=ecasound_tail>)

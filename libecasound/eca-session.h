@@ -8,6 +8,7 @@
 
 #include <kvutils/kvutils.h>
 #include <kvutils/com_line.h>
+#include <kvutils/value_queue.h>
 
 #include "samplebuffer.h"
 
@@ -192,6 +193,9 @@ class ECA_SESSION {
   enum ECA_CHAINSETUP::Mix_mode mixmode_rep;
   bool raisepriority_rep;
   int schedpriority_rep;
+  VALUE_QUEUE ecasound_queue_rep;
+  pthread_cond_t *ecasound_stop_cond_repp;
+  pthread_mutex_t *ecasound_stop_mutex_repp;
 
   // --
   // Public/const routines

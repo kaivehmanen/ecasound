@@ -8,8 +8,6 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-#include <kvutils/value_queue.h>
-
 #include "samplebuffer.h"
 #include "eca-chainsetup.h"
 #include "audioio-buffered-proxy.h"
@@ -19,10 +17,6 @@ class AUDIO_IO_DEVICE;
 class ECA_SESSION;
 class CHAIN;
 class CHAIN_OPERATOR;
-
-extern VALUE_QUEUE ecasound_queue;
-extern pthread_cond_t ecasound_stop_cond;
-extern pthread_mutex_t ecasound_stop_mutex;
 
 /**
  * Main processing engine
@@ -62,79 +56,79 @@ class ECA_PROCESSOR {
 
 private:
 
-  ECA_SESSION* eparams;
-  struct timespec sleepcount;
+  ECA_SESSION* eparams_repp;
 
-  bool was_running;
-  bool rt_running;
-  bool end_request;
-  bool continue_request;
-  bool trigger_outputs_request;
-  bool input_not_finished;
-  bool processing_range_set;
+  bool was_running_rep;
+  bool rt_running_rep;
+  bool end_request_rep;
+  bool continue_request_rep;
+  bool trigger_outputs_request_rep;
+  bool input_not_finished_rep;
+  bool processing_range_set_rep;
   
   int trigger_counter_rep;
-  struct timeval multitrack_input_stamp_rep;  
+  struct timeval multitrack_input_stamp_rep;
 
-  size_t active_chain_index;
-  size_t active_chainop_index;
-  size_t active_chainop_param_index;
+  size_t active_chain_index_rep;
+  size_t active_chainop_index_rep;
+  size_t active_chainop_param_index_rep;
 
   // ---
   // Pointers to connected chainsetup
   // ---
-  ECA_CHAINSETUP* csetup;
+  ECA_CHAINSETUP* csetup_repp;
+  vector<CHAIN*>* chains_repp;
+
+  // -> pointers to input objects
+  //    (when proxies are used, inputsr_inputs != inputs)
+  vector<AUDIO_IO*>* inputs_repp;
+  vector<AUDIO_IO*>* csetup_inputs_repp;
+  
   // -> pointers to input objects in csetup
-  vector<AUDIO_IO*>* inputs;
-  // -> pointers used for runtime-i/o calls only 
-  //    (only when proxies are used, r_inputs != inputs)
-  vector<AUDIO_IO*>* r_inputs;
-  // -> pointers to input objects in csetup
-  vector<AUDIO_IO*>* outputs;
-  // -> pointers used for runtime-i/o calls only 
+  // -> r_outputs used for runtime-i/o calls
   //    (only when proxies are used, r_outputs != outputs)
-  vector<AUDIO_IO*>* r_outputs;
-  // -> pointers to chain objects in csetup
-  vector<CHAIN*>* chains;
+  vector<AUDIO_IO*>* outputs_repp;
+  vector<AUDIO_IO*>* csetup_outputs_repp;
+
+  mutable map<AUDIO_IO*,AUDIO_IO*> csetup_orig_ptr_map_rep;
 
   // ---
   // Various audio objects groupings
   // ---
   // - pointers to all realtime inputs
-  vector<AUDIO_IO_DEVICE*> realtime_inputs; 
+  vector<AUDIO_IO_DEVICE*> realtime_inputs_rep;
   // - pointers to all realtime outputs
-  vector<AUDIO_IO_DEVICE*> realtime_outputs;
+  vector<AUDIO_IO_DEVICE*> realtime_outputs_rep;
   // - pointers to all realtime inputs and outputs
-  vector<AUDIO_IO_DEVICE*> realtime_objects;
+  vector<AUDIO_IO_DEVICE*> realtime_objects_rep;
   // - pointers to all non_realtime inputs
-  vector<AUDIO_IO*> non_realtime_inputs;
+  vector<AUDIO_IO*> non_realtime_inputs_rep;
   // - pointers to all non_realtime outputs
-  vector<AUDIO_IO*> non_realtime_outputs;
+  vector<AUDIO_IO*> non_realtime_outputs_rep;
   // - pointers to all non_realtime inputs and outputs
-  vector<AUDIO_IO*> non_realtime_objects;
+  vector<AUDIO_IO*> non_realtime_objects_rep;
   // - pointers to proxy input objects (if used, assigned to r_inputs)
-  vector<AUDIO_IO*> proxy_inputs;
+  vector<AUDIO_IO*> proxy_inputs_rep;
   // - pointers to proxy output objects (if used, assigned to r_inputs)
-  vector<AUDIO_IO*> proxy_outputs;
+  vector<AUDIO_IO*> proxy_outputs_rep;
   vector<AUDIO_IO_BUFFERED_PROXY*> proxies_rep;
 
   // ---
   // Data objects
   // ---
-  vector<bool> chain_ready_for_submix;
-  vector<long int> input_start_pos;
-  vector<long int> output_start_pos;
-  vector<int> input_chain_count;
-  vector<int> output_chain_count;
+  vector<int> input_start_pos_rep;
+  vector<int> output_start_pos_rep;
+  vector<int> input_chain_count_rep;
+  vector<int> output_chain_count_rep;
 
   AUDIO_IO_PROXY_SERVER pserver_rep;
-  SAMPLE_BUFFER mixslot;
-  vector<SAMPLE_BUFFER> cslots;
+  SAMPLE_BUFFER mixslot_rep;
+  vector<SAMPLE_BUFFER> cslots_rep;
 
   long int buffersize_rep;
   ECA_CHAINSETUP::Mix_mode mixmode_rep;
 
-  int input_count, output_count, chain_count, max_channels;
+  int input_count_rep, output_count_rep, chain_count_rep, max_channels_rep;
 
   /**
    * Start processing if it was conditionally stopped
@@ -200,13 +194,15 @@ private:
   void trigger_outputs(void);
 
   void init_variables(void);
-  void init_connection_to_chainsetup(void) throw(ECA_ERROR&);
+  void init_connection_to_chainsetup(void);
   void init_multitrack_mode(void);
   void init_mix_method(void);
   void init_pserver(void);
   void init_inputs(void);
   void init_outputs(void);
   void init_chains(void);
+  void create_sorted_input_map(void);
+  void create_sorted_output_map(void);
 
   bool is_slave_output(AUDIO_IO* aiod) const;
 

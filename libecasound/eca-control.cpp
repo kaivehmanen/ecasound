@@ -50,12 +50,14 @@
 ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession) 
   : ECA_CONTROL_DUMP(psession) { }
 
-void ECA_CONTROL::command(const string& cmd) throw(ECA_ERROR&) {
-  vector<string> cmds = string_to_words(cmd);
+ECA_CONTROL::~ECA_CONTROL(void) { }
 
+void ECA_CONTROL::command(const string& cmd) throw(ECA_ERROR&) {
+  clear_last_values();
+  clear_action_arguments();
+  vector<string> cmds = string_to_words(cmd);
   vector<string>::iterator p = cmds.begin();
   if (p != cmds.end()) {
-    if (*p == "") return;
     if (ECA_IAMODE_PARSER::cmd_map_rep.find(string_search_and_replace(*p, '_', '-')) == ECA_IAMODE_PARSER::cmd_map_rep.end()) {
       // ---
       // *p is not recognized as a iamode command
@@ -64,92 +66,130 @@ void ECA_CONTROL::command(const string& cmd) throw(ECA_ERROR&) {
 	direct_command(cmd);
       }
       else {
-	ecadebug->msg("(eca-controller) ERROR: Unknown command!");
+	set_last_error("Unknown command!");
       }
     }
     else {
-      if (ECA_IAMODE_PARSER::cmd_map_rep[string_search_and_replace(*p, '_', '-')] == ec_help) {
+      int action_id = ECA_IAMODE_PARSER::cmd_map_rep[*p];
+      if (action_id == ec_help) {
 	show_controller_help();
       }
       else {
 	string first = *p;
 	++p;
-	if (p == cmds.end()) {
-	  vector<string> empty;
-	  action(ECA_IAMODE_PARSER::cmd_map_rep[string_search_and_replace(first, '_', '-')], empty);
+	if (p != cmds.end()) {
+	  set_action_argument(vector<string> (p, cmds.end()));
 	}
-	else {
-	  action(ECA_IAMODE_PARSER::cmd_map_rep[string_search_and_replace(first, '_', '-')], vector<string> (p, cmds.end()));
-	}
+	action(action_id);
       }
     }
   }
 }
 
+void ECA_CONTROL::set_action_argument(const vector<string>& s) {
+  action_args_rep = s;
+  action_arg_f_set_rep = false;
+}
+
+void ECA_CONTROL::set_action_argument(double v) {
+  action_arg_f_rep = v;
+  action_arg_f_set_rep = true;
+}
+
+void ECA_CONTROL::clear_action_arguments(void) {
+  action_args_rep.clear();
+  action_arg_f_rep = 0.0f;
+  action_arg_f_set_rep = false;
+}
+
+void ECA_CONTROL::command_float_arg(const string& cmd, double arg) throw(ECA_ERROR&) {
+  clear_action_arguments();
+  set_action_argument(arg);
+  int action_id = ec_unknown;
+  if (ECA_IAMODE_PARSER::cmd_map_rep.find(cmd) != ECA_IAMODE_PARSER::cmd_map_rep.end()) {
+    action_id = ECA_IAMODE_PARSER::cmd_map_rep[cmd];
+  }
+  action(action_id);
+}
+
+/**
+ * Performs a direct EIAM command (prefixed with '-').
+ */
 void ECA_CONTROL::direct_command(const string& cmd) {
   string prefix = get_argument_prefix(cmd);
   if (prefix == "el" || prefix == "pn") { // --- LADSPA plugins and presets
     if (selected_chains().size() == 1) 
       add_chain_operator(cmd);
     else
-      ecadebug->msg("(eca-controller) When adding chain operators, only one chain can be selected.");
+      set_last_error("When adding chain operators, only one chain can be selected.");
   }
   else if (ECA_CHAIN_OPERATOR_MAP::object(prefix) != 0) {
     if (selected_chains().size() == 1) 
       add_chain_operator(cmd);
     else
-      ecadebug->msg("(eca-controller) When adding chain operators, only one chain can be selected.");
+      set_last_error("When adding chain operators, only one chain can be selected.");
   }
   else if (ECA_CONTROLLER_MAP::object(prefix) != 0) {
     if (selected_chains().size() == 1) 
       add_controller(cmd);
     else
-      ecadebug->msg("(eca-controller) When adding controllers, only one chain can be selected.");
+      set_last_error("When adding controllers, only one chain can be selected.");
   }
-  else
-    action(ec_direct_option, string_to_words(cmd));
+  else {
+    set_action_argument(string_to_words(cmd));
+    action(ec_direct_option);
+  }
 }
 
 void ECA_CONTROL::action(int action_id, 
-			       const vector<string>& args) throw(ECA_ERROR&) {
+			 const vector<string>& args) throw(ECA_ERROR&)
+{
+  clear_action_arguments();
+  set_action_argument(args);
+  action(action_id);
+}
+
+void ECA_CONTROL::action(int action_id) throw(ECA_ERROR&) {
+  clear_last_values();
   bool reconnect = false;
   bool restart = false;
-  if (args.empty() == true &&
+  if (action_arg_f_set_rep == false && 
+      action_args_rep.size() == 0 &&
       action_requires_params(action_id)) {
-    ecadebug->msg("(eca-controller) Can't perform requested action; argument omitted.");
+    set_last_error("Can't perform requested action; argument omitted.");
     return;
   }
   else if (selected_audio_object_repp == 0 &&
       action_requires_selected_audio_object(action_id)) {
-    ecadebug->msg("(eca-controller) Can't perform requested action; no audio object selected.");
+    set_last_error("Can't perform requested action; no audio object selected.");
     return;
   }
   else if (is_selected() == false &&
       action_requires_selected(action_id)) {
     if (!is_connected()) {
-      ecadebug->msg("(eca-controller) Can't perform requested action; no chainsetup selected.");
+      set_last_error("Can't perform requested action; no chainsetup selected.");
       return;
     }
     else {
-      ecadebug->msg("(eca-controller) Warning! No chainsetup selected. Connected chainsetup will be selected.");
+      set_last_error("Warning! No chainsetup selected. Connected chainsetup will be selected.");
       select_chainsetup(connected_chainsetup());
     }
   }
   else if (is_connected() == false &&
       action_requires_connected(action_id)) {
     if (!is_selected()) {
-      ecadebug->msg("(eca-controller) Can't perform requested action; no chainsetup connected.");
+      set_last_error("Can't perform requested action; no chainsetup connected.");
       return;
     }
     else {
-      ecadebug->msg("(eca-controller) Warning! No chainsetup connected. Trying to connect currently selected chainsetup.");
+      set_last_error("Warning! No chainsetup connected. Trying to connect currently selected chainsetup.");
       if (is_valid() == true) connect_chainsetup();
       else return;
     }
   }
   else if (selected_chainsetup() == connected_chainsetup() &&
       action_requires_selected_not_connected(action_id)) {
-    ecadebug->msg("(eca-controller) Warning! This operation requires that chainsetup is disconnected. Temporarily disconnecting...");
+    set_last_error("Warning! This operation requires that chainsetup is disconnected. Temporarily disconnecting...");
     if (is_running()) restart = true;
     disconnect_chainsetup();
     reconnect = true;
@@ -161,15 +201,16 @@ void ECA_CONTROL::action(int action_id,
     // ---
   case ec_direct_option: 
     {
-      vector<string> nargs = args;
       try {
-	selected_chainsetup_repp->interpret_options(nargs);
+	selected_chainsetup_repp->interpret_options(action_args_rep);
       }
       catch(ECA_ERROR& e) {
-	ecadebug->msg("(eca-control) ERROR: [" + e.error_section() + "] : \"" + e.error_message() + "\"");
+	set_last_error("[" + e.error_section() + "] : \"" + e.error_message() + "\"");
       }
       break;
     }
+
+  case ec_unknown: { set_last_error("Unknown command!"); break; }
 
     // ---
     // General
@@ -178,17 +219,16 @@ void ECA_CONTROL::action(int action_id,
   case ec_start: 
     { 
       start();
-      // ecadebug->msg("(eca-controller) Can't perform requested action; no chainsetup connected.");
+      // ecadebug->msg("(eca-control) Can't perform requested action; no chainsetup connected.");
       break; 
     }
   case ec_stop: { if (is_engine_started() == true) stop(); break; }
   case ec_run: { run(); break; }
   case ec_debug:
     {
-      int level = atoi((args[0]).c_str());
+      int level = atoi((action_args_rep[0]).c_str());
       ecadebug->set_debug_level(level);
-      ecadebug->msg("Debug level set to " + kvu_numtostr(level) +
-		    ".");
+      set_last_string("Debug level set to " + kvu_numtostr(level) + ".");
       break;
     }
 
@@ -197,47 +237,47 @@ void ECA_CONTROL::action(int action_id,
     // ---
   case ec_cs_add:
     {
-      add_chainsetup(args[0]);
+      add_chainsetup(action_args_rep[0]);
       break;
     }
   case ec_cs_remove: { remove_chainsetup(); break; }
-  case ec_cs_select: { select_chainsetup(args[0]); break; }
+  case ec_cs_select: { select_chainsetup(action_args_rep[0]); break; }
   case ec_cs_index_select: { 
-    if (args[0].empty() != true) {
-      if (args[0][0] != 'c') {
-	ecadebug->msg("(eca-controller) ERROR! Invalid chainsetup index.");
+    if (action_args_rep[0].empty() != true) {
+      if (action_args_rep[0][0] != 'c') {
+	set_last_error("Invalid chainsetup index.");
       }
       else {
-	select_chainsetup_by_index(args[0]);
+	select_chainsetup_by_index(action_args_rep[0]);
       }
     }
     break; 
   }
   case ec_cs_edit: { edit_chainsetup(); break; }
-  case ec_cs_load: { load_chainsetup(args[0]); break; }
+  case ec_cs_load: { load_chainsetup(action_args_rep[0]); break; }
   case ec_cs_save: { save_chainsetup(""); break; }
-  case ec_cs_save_as: { save_chainsetup(args[0]); break; }
+  case ec_cs_save_as: { save_chainsetup(action_args_rep[0]); break; }
   case ec_cs_connect: 
     { 
       if (is_valid() != false) {
 	connect_chainsetup(); 
       }
       else {
-	ecadebug->msg("(eca-controller) Can't connect; chainsetup not valid!");
+	set_last_error("Can't connect; chainsetup not valid!");
       }
       break; 
     }
   case ec_cs_disconnect: { disconnect_chainsetup(); break; }
-  case ec_cs_set: { set_chainsetup_parameter(args[0]); break; }
-  case ec_cs_format: { set_chainsetup_sample_format(args[0]); break; }
+  case ec_cs_set: { set_chainsetup_parameter(action_args_rep[0]); break; }
+  case ec_cs_format: { set_chainsetup_sample_format(action_args_rep[0]); break; }
   case ec_cs_status: { 
     ecadebug->control_flow("Controller/Chainsetup status");
-    ecadebug->msg(chainsetup_status()); 
+    set_last_string(chainsetup_status()); 
     break; 
   }
   case ec_cs_length: 
     { 
-      double value = atof((args[0]).c_str());
+      double value = atof((action_args_rep[0]).c_str());
       set_chainsetup_processing_length_in_seconds(value); 
       break; 
     }
@@ -246,12 +286,12 @@ void ECA_CONTROL::action(int action_id,
   // ---
   // Chains
   // ---
-  case ec_c_add: { add_chains(string_to_vector(args[0], ',')); break; }
-  case ec_c_select: { select_chains(string_to_vector(args[0], ',')); break; }
-  case ec_c_deselect: { deselect_chains(string_to_vector(args[0], ',')); break; }
+  case ec_c_add: { add_chains(string_to_vector(action_args_rep[0], ',')); break; }
+  case ec_c_select: { select_chains(string_to_vector(action_args_rep[0], ',')); break; }
+  case ec_c_deselect: { deselect_chains(string_to_vector(action_args_rep[0], ',')); break; }
   case ec_c_select_add: 
     { 
-      select_chains(string_to_vector(args[0] + "," +
+      select_chains(string_to_vector(action_args_rep[0] + "," +
 				     vector_to_string(selected_chains(), ","), ',')); 
       break; 
     }
@@ -261,10 +301,10 @@ void ECA_CONTROL::action(int action_id,
   case ec_c_name: 
     { 
       if (selected_chains().size() != 1) {
-	ecadebug->msg("(eca-controller) When renaming chains, only one chain canbe selected.");
+	set_last_error("When renaming chains, only one chain canbe selected.");
       }
       else {
-	rename_chain(args[0]); 
+	rename_chain(action_args_rep[0]); 
       }
       break;
     }
@@ -272,44 +312,44 @@ void ECA_CONTROL::action(int action_id,
   case ec_c_bypass: { toggle_chain_bypass(); break; }
   case ec_c_forward: 
     { 
-      double value = atof((args[0]).c_str());
+      double value = atof((action_args_rep[0]).c_str());
       forward_chains(value); 
       break; 
     }
   case ec_c_rewind: 
     { 
-      double value = atof((args[0]).c_str());
+      double value = atof((action_args_rep[0]).c_str());
       rewind_chains(value); 
       break; 
     }
   case ec_c_setpos: 
     { 
-      double value = atof((args[0]).c_str());
+      double value = atof((action_args_rep[0]).c_str());
       set_position_chains(value); 
       break; 
     }
   case ec_c_status: 
     { 
       ecadebug->control_flow("Controller/Chain status");
-      ecadebug->msg(chain_status()); 
+      set_last_string(chain_status()); 
       break; 
     }
 
     // ---
     // Audio objects
     // ---
-  case ec_aio_add_input: { add_audio_input(args[0]); break; }
-  case ec_aio_add_output: { if (args.size() == 0) add_default_output(); else add_audio_output(args[0]); break; }
-  case ec_aio_select: { select_audio_object(args[0]); break; }
-  case ec_aio_select_input: { select_audio_input(args[0]); break; }
-  case ec_aio_select_output: { select_audio_output(args[0]); break; }
+  case ec_aio_add_input: { add_audio_input(action_args_rep[0]); break; }
+  case ec_aio_add_output: { if (action_args_rep.size() == 0) add_default_output(); else add_audio_output(action_args_rep[0]); break; }
+  case ec_aio_select: { select_audio_object(action_args_rep[0]); break; }
+  case ec_aio_select_input: { select_audio_input(action_args_rep[0]); break; }
+  case ec_aio_select_output: { select_audio_output(action_args_rep[0]); break; }
   case ec_aio_index_select: { 
-    if (args[0].empty() != true) {
-      if (args[0][0] != 'i' && args[0][0] != 'o') {
-	ecadebug->msg("(eca-controller) ERROR! Invalid audio-input/output index.");
+    if (action_args_rep[0].empty() != true) {
+      if (action_args_rep[0][0] != 'i' && action_args_rep[0][0] != 'o') {
+	set_last_error("Invalid audio-input/output index.");
       }
       else {
-	select_audio_object_by_index(args[0]);
+	select_audio_object_by_index(action_args_rep[0]);
       }
     }
     break; 
@@ -319,24 +359,24 @@ void ECA_CONTROL::action(int action_id,
   case ec_aio_status: 
     { 
       ecadebug->control_flow("Controller/Audio input/output status");
-      ecadebug->msg(aio_status()); 
+      set_last_string(aio_status()); 
       break; 
     }
   case ec_aio_forward: 
     { 
-      double value = atof((args[0]).c_str());
+      double value = atof((action_args_rep[0]).c_str());
       forward_audio_object(value); 
       break; 
     }
   case ec_aio_rewind: 
     { 
-      double value = atof((args[0]).c_str());
+      double value = atof((action_args_rep[0]).c_str());
       rewind_audio_object(value); 
       break; 
     }
   case ec_aio_setpos: 
     { 
-      double value = atof((args[0]).c_str());
+      double value = atof((action_args_rep[0]).c_str());
       set_audio_object_position(value); 
       break; 
     }
@@ -346,23 +386,23 @@ void ECA_CONTROL::action(int action_id,
     // ---
     // Chain operators
     // ---
-  case ec_cop_add: { add_chain_operator(args[0]); break; }
+  case ec_cop_add: { add_chain_operator(action_args_rep[0]); break; }
   case ec_cop_remove: 
     { 
-      vector<string> a = string_to_vector(args[0], ',');
+      vector<string> a = string_to_vector(action_args_rep[0], ',');
       int id = atoi(a[0].c_str());
       if (id > 0)
 	remove_chain_operator(id);
       else
-	ecadebug->msg("(eca-controller) ERROR! Chain operator indexing starts from 1.");
+	set_last_error("Chain operator indexing starts from 1.");
       break; 
     }
     
   case ec_cop_set: 
     { 
-      vector<string> a = string_to_vector(args[0], ',');
+      vector<string> a = string_to_vector(action_args_rep[0], ',');
       if (a.size() < 3) {
-	ecadebug->msg("(eca-controller) ERROR! Not enough parameters!");
+	set_last_error("Not enough parameters!");
 	break;
       }
       int id1 = atoi(a[0].c_str());
@@ -373,13 +413,13 @@ void ECA_CONTROL::action(int action_id,
 	set_chain_operator_parameter(id1,id2, v);
       }
       else
-	ecadebug->msg("(eca-controller) ERROR! Chain operator indexing starts from 1.");
+	set_last_error("Chain operator indexing starts from 1.");
       break; 
     }
   case ec_cop_status: 
     { 
       ecadebug->control_flow("Chain operator status");
-      ecadebug->msg(chain_operator_status()); 
+      set_last_string(chain_operator_status()); 
       break; 
     }
   case ec_cop_register: { cop_register(); break; }
@@ -390,11 +430,11 @@ void ECA_CONTROL::action(int action_id,
     // ---
     // Controllers
     // ---
-  case ec_ctrl_add: { add_controller(args[0]); break; }
+  case ec_ctrl_add: { add_controller(action_args_rep[0]); break; }
   case ec_ctrl_status: 
     { 
       ecadebug->control_flow("Controller status");
-      ecadebug->msg(controller_status()); 
+      set_last_string(controller_status()); 
       break; 
     }
   case ec_ctrl_register: { ctrl_register(); break; }
@@ -403,15 +443,15 @@ void ECA_CONTROL::action(int action_id,
     // Changing position
     // ---
   case ec_rewind: {
-    ecasound_queue.push_back(ECA_PROCESSOR::ep_rewind, atof(args[0].c_str()));
+    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_rewind, atof(action_args_rep[0].c_str()));
     break;
   }
   case ec_forward: {
-    ecasound_queue.push_back(ECA_PROCESSOR::ep_forward, atof(args[0].c_str()));
+    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_forward, atof(action_args_rep[0].c_str()));
     break;
   }
   case ec_setpos: {
-    ecasound_queue.push_back(ECA_PROCESSOR::ep_setpos, atof(args[0].c_str()));
+    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_setpos, atof(action_args_rep[0].c_str()));
     break;
   }
 
@@ -427,7 +467,7 @@ void ECA_CONTROL::action(int action_id,
   // ---
   // Dump commands
   // ---
-  case ec_dump_target: { set_dump_target(args[0]); break; }
+  case ec_dump_target: { set_dump_target(action_args_rep[0]); break; }
   case ec_dump_status: { dump_status(); break; }
   case ec_dump_position: { dump_position(); break; }
   case ec_dump_length: { dump_length(); break; }
@@ -439,9 +479,9 @@ void ECA_CONTROL::action(int action_id,
   case ec_dump_aio_open_state: { dump_audio_object_open_state(); break; }
   case ec_dump_cop_value: 
     { 
-      if (args.size() > 1) {
-	dump_chain_operator_value(atoi(args[0].c_str()),
-				  atoi(args[1].c_str())); 
+      if (action_args_rep.size() > 1) {
+	dump_chain_operator_value(atoi(action_args_rep[0].c_str()),
+				  atoi(action_args_rep[1].c_str())); 
       }
       break; 
     }
@@ -450,17 +490,42 @@ void ECA_CONTROL::action(int action_id,
   if (reconnect == true) {
     if (is_valid() == false || 
 	is_selected() == false) {
-      ecadebug->msg("(eca-controller) ERROR! Can't reconnect chainsetup.");
+      set_last_error("Can't reconnect chainsetup.");
     }
     else {
       connect_chainsetup();
       if (selected_chainsetup() != connected_chainsetup()) {
-	ecadebug->msg("(eca-controller) ERROR! Can't reconnect chainsetup.");
+	set_last_error("Can't reconnect chainsetup.");
       }
       else {
 	if (restart == true) start();
       }
     }
+  }
+}
+
+void ECA_CONTROL::print_last_value(void) {
+  string type = last_type();
+  string result;
+  if (type == "s") 
+    result = last_string();
+  else if (type == "S")
+    result = vector_to_string(last_list_of_strings(), ",");
+  else if (type == "i")
+    result = kvu_numtostr(last_integer());
+  else if (type == "li")
+    result = kvu_numtostr(last_long_integer());
+  else if (type == "f")
+    result = kvu_numtostr(last_float());
+   
+  if (result.size() > 0) {
+    ecadebug->msg("(eca-control) " + result);
+  }
+}
+
+void ECA_CONTROL::print_last_error(void) {
+  if (last_error().size() > 0) {
+    ecadebug->msg("(eca-control) ERROR: " + last_error());
   }
 }
 
@@ -483,7 +548,7 @@ void ECA_CONTROL::print_general_status(void) {
   else st_info_string << "Multitrack-mode: disabled\n";
   if (session_repp->raised_priority()) st_info_string << "Raised-priority mode: enabled\n";
 
-  ecadebug->msg(st_info_string.to_string());
+  set_last_string(st_info_string.to_string());
 }
 
 string ECA_CONTROL::chainsetup_status(void) const { 
@@ -677,8 +742,9 @@ string ECA_CONTROL::aio_status(void) const {
   return(st_info_string);
 }
 
-void ECA_CONTROL::aio_register(void) const { 
+void ECA_CONTROL::aio_register(void) { 
   ecadebug->control_flow("Registered audio objects");
+  string result;
   const map<string,string>& kmap = ::eca_audio_object_map.registered_objects();
   int count = 1;
   map<string,string>::const_iterator p = kmap.begin();
@@ -694,15 +760,17 @@ void ECA_CONTROL::aio_register(void) const {
       }
       temp += ")";
     }
-    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + ", handled by \"" + p->second
-		  + "\"."  + temp);
+    result += "\n";
+    result += kvu_numtostr(count) + ". " + p->first + ", handled by \"" + p->second + "\"."  + temp;
     ++count;
     ++p;
   }
+  set_last_string(result);
 }
 
-void ECA_CONTROL::cop_register(void) const { 
+void ECA_CONTROL::cop_register(void) { 
   ecadebug->control_flow("Registered chain operators");
+  string result;
   const map<string,string>& kmap = ECA_CHAIN_OPERATOR_MAP::registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
@@ -715,28 +783,32 @@ void ECA_CONTROL::cop_register(void) const {
       temp += q->get_parameter_name(n + 1);
       if (n + 1 < params) temp += ",";
     }
-
-    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + " - " + p->second
-		  + temp);
+    result += kvu_numtostr(count) + ". " + p->first + " - " + p->second + temp;
+    result += "\n";
     ++count;
     ++p;
   }
+  set_last_string(result);
 }
 
-void ECA_CONTROL::preset_register(void) const { 
+void ECA_CONTROL::preset_register(void) { 
   ecadebug->control_flow("Registered effect presets");
+  string result;
   const map<string,string>& kmap = ::eca_preset_map.registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
-    ecadebug->msg(kvu_numtostr(count) + ". " + p->first);
+    result += "\n";
+    result += kvu_numtostr(count) + ". " + p->first;
     ++count;
     ++p;
   }
+  set_last_string(result);
 }
 
-void ECA_CONTROL::ladspa_register(void) const { 
+void ECA_CONTROL::ladspa_register(void) { 
   ecadebug->control_flow("Registered LADSPA plugins");
+  string result;
   const map<string,string>& kmap = ECA_LADSPA_PLUGIN_MAP::registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
@@ -749,14 +821,17 @@ void ECA_CONTROL::ladspa_register(void) const {
       if (n + 1 < params) temp += ",";
     }
 
-    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + temp);
+    result += "\n";
+    result += kvu_numtostr(count) + ". " + p->first + temp;
     ++count;
     ++p;
   }
+  set_last_string(result);
 }
 
-void ECA_CONTROL::ctrl_register(void) const { 
+void ECA_CONTROL::ctrl_register(void) { 
   ecadebug->control_flow("Registered controllers");
+  string result;
   const map<string,string>& kmap = ECA_CONTROLLER_MAP::registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
@@ -769,9 +844,10 @@ void ECA_CONTROL::ctrl_register(void) const {
       temp += q->get_parameter_name(n + 1);
       if (n + 1 < params) temp += ",";
     }
-    ecadebug->msg(kvu_numtostr(count) + ". " + p->first + " -" + p->second
-		  + temp);
+    result += "\n";
+    result += kvu_numtostr(count) + ". " + p->first + " -" + p->second + temp;
     ++count;
     ++p;
   }
+  set_last_string(result);
 }

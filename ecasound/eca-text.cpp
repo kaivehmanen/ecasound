@@ -177,7 +177,6 @@ void signal_handler(int signum) {
     global_session_deleted = true;
     if (global_pointer_to_ecaparams != 0) delete global_pointer_to_ecaparams;
   }
-  remove(ecasound_lockfile.c_str());
   exit(0);
 }
 
@@ -209,6 +208,7 @@ void start_iactive(ECA_SESSION* param) {
       if (cmd.size() > 0) {
 	try { 
 	  ctrl.command(cmd);
+	  if (cmd == "quit" || cmd == "q") break;
 	}
 	catch(ECA_ERROR& e) {
 	  cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
@@ -217,10 +217,6 @@ void start_iactive(ECA_SESSION* param) {
       cout << "ecasound ('h' for help)>\n";
     }
     while(getline(cin,cmd));
-  }
-  catch(int n) {
-    if (n == ECA_QUIT) 
-      ecadebug->msg(1, "(eca-text) Exiting...");
   }
   catch(...) {
     cerr << "---\nCaught an unknown exception!\n";
@@ -238,10 +234,11 @@ void start_iactive_readline(ECA_SESSION* param) {
     if (cmd != 0) {
       add_history(cmd);
       try {
-	ctrl.command(string(cmd));
-      }
-      catch(int n) {
-	if (n == ECA_QUIT) {
+	string str (cmd);
+	ctrl.command(str);
+	ctrl.print_last_error();
+	ctrl.print_last_value();
+	if (str == "quit" || str == "q") {
 	  cerr << "---\nExiting...\n";
 	  free(cmd);
 	  exit(0);

@@ -9,7 +9,6 @@
 class ECA_ERROR;
 
 void init_midi_queues(void) throw(ECA_ERROR&);
-void *update_midi_queues(void *);
 
 /**
  * Routines for accessing raw MIDI -devices (OSS or ALSA).
@@ -18,24 +17,27 @@ class MIDI_IN_QUEUE {
 
 private:
 
-    vector<char> buffer;
+  pthread_mutex_t midi_in_lock_rep;     // mutex ensuring exclusive access to MIDI-buffer
+  pthread_cond_t midi_in_cond_rep;
+  bool midi_in_locked_rep;
 
-    bool right;
+  vector<char> buffer;
+  bool right;
 
-    size_t current_put, current_get;
-    size_t bufsize;
-
-    double controller_value;
-
-    bool is_status_byte(char byte) const;
-    bool forth_get(void);
-
-public:
-
-    void put(char byte);  
-    double last_controller_value(void) const;
-    bool update_controller_value(double controller, double channel);
-    MIDI_IN_QUEUE(void);
+  size_t current_put, current_get;
+  size_t bufsize;
+  double controller_value;
+  
+  bool is_status_byte(char byte) const;
+  bool forth_get(void);
+  
+ public:
+  
+  void update_midi_queues(void);
+  void put(char byte);  
+  double last_controller_value(void) const;
+  bool update_controller_value(double controller, double channel);
+  MIDI_IN_QUEUE(void);
 };
 
 extern MIDI_IN_QUEUE midi_in_queue;

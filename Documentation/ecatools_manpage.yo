@@ -63,7 +63,7 @@ statistics. It accepts the following options:
 
 startdit()
 dit(input)
-The first option not starting with with a '-' is interpreted 
+The first option not starting with a '-' is interpreted 
 as input string. This can be a device or a filename. All formats
 supported by libecasound are accepted. Defaults to '/dev/dsp'.
 
@@ -83,7 +83,7 @@ Enable debug mode.
 dit(-f:format_string)
 Specify default audio format. See ecasound(1) for details.
 
-dit(r:rate_msec)
+dit(-r:rate_msec)
 Specify screen refresh rate in milliseconds.
 enddit()
 

@@ -2,18 +2,18 @@
 *** Ecasound - To do list / plans                                   ***
 -----------------------------------------------------------------------
 
-[ Development goals ]
+[ Development goals and current status ]
 
 1.8.x series:
 
-- C-API for libecasound [working on the specs]
-- new disk i/o buffering subsystem [implementing]
+- ecasound control interface (ECI) API [implementation phase]
+- new disk i/o buffering subsystem [done!]
 - embedded effect preset parameters [done!]
 - internal plugin support [done!]
 
 1.9.x series:
 
-- MIDI-subsystem updates [specs ready]
+- MIDI-subsystem updates [some of the specs ready]
 
 2.x series (1.x -> 2.x requirements):
 
@@ -31,13 +31,13 @@
 
 [ Upcoming features - implemented as soon as possible ]
 
-- comments in ecs (chainsetup) files
+- comments in ecs (chainsetup) files [done! 1.8.x]
+- embedded effect preset parameters ("-p[fn]:string,par1,...,parN") [done! 1.8.x]
+- metronome signal [done! 1.8.x]
 - mp3 bitrate as a command-line parameter
 - ia-mode: make separate xxx-list and xxx-status commands (a pure list, and a more
   verbose xxx-status command
 - add threshold parameter to -eca
-- embedded effect preset parameters ("-p[fn]:string,par1,...,parN") [done! 1.8.x]
-- metronome signal [done! 1.8.x]
 - better MIDI-support (separate MIDI input/output objects) [under work]
   
 -----------------------------------------------------------------------

@@ -49,7 +49,7 @@ ECA_CONTROL_OBJECTS::ECA_CONTROL_OBJECTS (ECA_SESSION* psession)
  *  name != ""
  *
  * ensure:
- *  selected_chainsetup() == name || no_errors != true
+ *  selected_chainsetup() == name || (last_error().size() > 0 && no_errors != true)
  */
 void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name) {
   // --------
@@ -63,12 +63,12 @@ void ECA_CONTROL_OBJECTS::add_chainsetup(const string& name) {
     ecadebug->msg("(eca-controller) Added a new chainsetup with name \"" + name + "\".");
   }
   catch(ECA_ERROR& e) {
-    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
     no_errors = false;
   }
 
   // --------
-  ENSURE(selected_chainsetup() == name || no_errors != true);
+  ENSURE(selected_chainsetup() == name || (last_error().size() > 0 && no_errors != true));
   // --------
 }
 
@@ -117,7 +117,7 @@ void ECA_CONTROL_OBJECTS::load_chainsetup(const string& filename) {
     ecadebug->msg("(eca-controller) Loaded chainsetup from file \"" + filename + "\".");
   }
   catch(ECA_ERROR& e) {
-    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
   }
 }
 
@@ -144,7 +144,7 @@ void ECA_CONTROL_OBJECTS::save_chainsetup(const string& filename) {
   ecadebug->msg("(eca-controller) Saved selected chainsetup \"" + selected_chainsetup() + "\".");
   }
   catch(ECA_ERROR& e) {
-    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
   }
 }
 
@@ -170,8 +170,10 @@ void ECA_CONTROL_OBJECTS::select_chainsetup(const string& name) {
   selected_chainsetup_repp = session_repp->selected_chainsetup_repp;
   if (selected_chainsetup_repp != 0)
     ecadebug->msg("(eca-controller) Selected chainsetup:  \"" + selected_chainsetup() + "\".");
-  else
+  else {
     ecadebug->msg("(eca-controller) Chainsetup \"" + name + "\" doesn't exist!");
+    set_last_error("Chainsetup \"" + name + "\" doesn't exist!");
+  }
 
   // --------
   // ensure:
@@ -290,7 +292,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
 	ecadebug->msg("(eca-controller) Can't connect; edited chainsetup not valid.");
 	select_chainsetup(origname);
 	connect_chainsetup();
-	ecasound_queue.push_back(ECA_PROCESSOR::ep_setpos, pos);
+	session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_setpos, pos);
 	if (is_connected() == true) {
 	  if (restart == true) start();
 	}
@@ -298,7 +300,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void) {
       }
       else {
 	connect_chainsetup();
-	ecasound_queue.push_back(ECA_PROCESSOR::ep_setpos, pos);
+	session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_setpos, pos);
 	if (is_connected() == true) {
 	  select_chainsetup(origname);
 	  remove_chainsetup();
@@ -391,7 +393,7 @@ void ECA_CONTROL_OBJECTS::toggle_chainsetup_looping(void) {
  *  is_valid() == true
  *
  * ensure:
- *  is_connected() == true || no_errors != true
+ *  is_connected() == true || (last_error().size() > 0 && no_errors != true)
  */
 void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
   // --------
@@ -409,13 +411,13 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void) {
     ecadebug->msg("(eca-controller) Connected chainsetup:  \"" + connected_chainsetup() + "\".");
   }
   catch(ECA_ERROR& e) {
-    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+    set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
     no_errors = false;
   }
 
   // --------
   // ensure:
-  assert(is_connected() || no_errors != true);
+  assert(is_connected() || (last_error().size() > 0 && no_errors != true));
   // --------
 }
 
@@ -554,7 +556,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_sample_format(const string& name) {
     selected_chainsetup_repp->interpret_object_option("-f:" + name);
   }
   catch(ECA_ERROR& e) {
-    ecadebug->msg("(eca-control-objects) ERROR: [" + e.error_section() + "] : \"" + e.error_message() + "\"");
+    set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
   }
 
 }
@@ -842,7 +844,7 @@ void ECA_CONTROL_OBJECTS::clear_chains(void) {
   bool was_running = false;
   if (selected_chainsetup() == connected_chainsetup() && is_running() == true) { was_running = true; stop_on_condition(); }
   selected_chainsetup_repp->clear_chains();
-  if (was_running == true) ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
+  if (was_running == true) session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
 /**
@@ -875,8 +877,8 @@ void ECA_CONTROL_OBJECTS::send_chain_commands_to_engine(int command, double valu
 	p != selected_chainsetup_repp->chains.size();
 	p++) {
       if (selected_chainsetup_repp->chains[p]->name() == *o) {
-	ecasound_queue.push_back(ECA_PROCESSOR::ep_c_select, p);
-	ecasound_queue.push_back(command, value);
+	session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_c_select, p);
+	session_repp->ecasound_queue_rep.push_back(command, value);
 	break;
       }
     }
@@ -1025,8 +1027,7 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const string& sfrm,
     selected_chainsetup_repp->interpret_object_option(format);
   }
   catch(ECA_ERROR& e) {
-    ecadebug->msg("(eca-control-objects) ERROR: [" +
-		  e.error_section() + "] : \"" + e.error_message() + "\"");
+    set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
   }
 
 }
@@ -1198,7 +1199,7 @@ void ECA_CONTROL_OBJECTS::add_audio_input(const string& filename) {
     ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
   }
   catch(ECA_ERROR& e) {
-    ecadebug->msg("(eca-control-objects) ERROR: [" + e.error_section() + "] : \"" + e.error_message() + "\"");
+    set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
   }
 }
 
@@ -1226,7 +1227,7 @@ void ECA_CONTROL_OBJECTS::add_audio_output(const string& filename) {
 		  "\".");
   }
   catch(ECA_ERROR& e) {
-    ecadebug->msg("(eca-control-objects) ERROR: [" + e.error_section() + "] : \"" + e.error_message() + "\"");
+    set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
   }
 }
 
@@ -1420,12 +1421,11 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(const string& chainop_params) {
     selected_chainsetup_repp->interpret_object_option(chainop_params);
   }
   catch(ECA_ERROR& e) {
-    ecadebug->msg("(eca-control-objects) ERROR: [" +
-		  e.error_section() + "] : \"" + e.error_message() + "\"");
+    set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
   }
 
   if (was_running == true)
-    ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
+    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
 /**
@@ -1460,7 +1460,7 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   selected_chainsetup_repp->add_chain_operator(cotmp);
 
   if (was_running == true)
-    ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
+    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
 /** 
@@ -1539,7 +1539,7 @@ void ECA_CONTROL_OBJECTS::remove_chain_operator(int chainop_id) {
   }
 
   if (was_running == true)
-    ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
+    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
 /**
@@ -1570,10 +1570,10 @@ void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(int chainop_id,
 	p++) {
       if (selected_chainsetup_repp->chains[p]->name() == *o) {
 	if (selected_chainsetup() == connected_chainsetup()) {
-	  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_c_select, p);
-	  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_cop_select, chainop_id);
-	  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_copp_select, param);
-	  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_copp_value, value);
+	  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_c_select, p);
+	  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_cop_select, chainop_id);
+	  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_copp_select, param);
+	  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_copp_value, value);
 	}
 	else {
 	  if (chainop_id < static_cast<int>(selected_chainsetup_repp->chains[p]->chainops_rep.size() + 1)) {
@@ -1613,11 +1613,11 @@ void ECA_CONTROL_OBJECTS::add_controller(const string& gcontrol_params) {
     selected_chainsetup_repp->interpret_object_option(gcontrol_params);
   }
   catch(ECA_ERROR& e) {
-    ecadebug->msg("(eca-control-objects) ERROR: [" + e.error_section() + "] : \"" + e.error_message() + "\"");
+    set_last_error(e.error_section() + ": \"" + e.error_message() + "\"");
   }
 
   if (was_running == true)
-    ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
+    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
 /**
@@ -1659,7 +1659,7 @@ void ECA_CONTROL_OBJECTS::remove_controller(int controller_id) {
   }
 
   if (was_running == true)
-    ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
+    session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
 /** 

@@ -21,7 +21,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>17092000</h2>
+<h2>03122000</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -31,33 +31,35 @@
 <dt><h3><a href="users_guide.html#l3">2.1: What is ecasound?</a></h3>
 <dt><h3><a href="users_guide.html#l4">2.2: History</a></h3>
 </dl><p>
-<dt><h2><a href="users_guide.html#l5">3: Ecasound library features</a></h2>
+<dt><h2><a href="users_guide.html#l5">3: Ecasound library concepts</a></h2>
 <dl><p>
-<dt><h3><a href="users_guide.html#l6">3.1: Concepts</a></h3>
+<dt><a href="users_guide.html#l6">3.0.1: Chain</a>
+<dt><a href="users_guide.html#l7">3.0.2: Audio object</a>
+<dt><a href="users_guide.html#l8">3.0.3: Chain operators and controllers</a>
+<dt><a href="users_guide.html#l9">3.0.4: Chainsetup</a>
+<dt><a href="users_guide.html#l10">3.0.5: Concept of current position</a>
+<dt><a href="users_guide.html#l11">3.0.6: Interactive-mode</a>
+</dl><p>
+</dl><p>
+<dt><h2><a href="users_guide.html#l12">4: Using</a></h2>
 <dl><p>
-<dt><a href="users_guide.html#l7">3.1.1: Chain</a>
-<dt><a href="users_guide.html#l8">3.1.2: Audio object</a>
-<dt><a href="users_guide.html#l9">3.1.3: Chain operators and controllers</a>
-<dt><a href="users_guide.html#l10">3.1.4: Chainsetup</a>
-<dt><a href="users_guide.html#l11">3.1.5: Concept of current position</a>
-<dt><a href="users_guide.html#l12">3.1.6: Interactive-mode</a>
-</dl><p>
-<dt><h3><a href="users_guide.html#l13">3.2: Configuration</a></h3>
-<dt><h3><a href="users_guide.html#l14">3.3: Audio objects</a></h3>
+<dt><h3><a href="users_guide.html#l13">4.1: Where to start?</a></h3>
+<dt><h3><a href="users_guide.html#l14">4.2: Creating ecasound chainsetups</a></h3>
+<dt><h3><a href="users_guide.html#l15">4.3: Configuration</a></h3>
+<dt><h3><a href="users_guide.html#l16">4.4: Audio objects</a></h3>
 <dl><p>
-<dt><a href="users_guide.html#l15">3.3.1: ewf - ecasound wave file</a>
+<dt><a href="users_guide.html#l17">4.4.1: ewf - ecasound wave file</a>
 </dl><p>
-<dt><h3><a href="users_guide.html#l16">3.4: Chain operators</a></h3>
-<dt><h3><a href="users_guide.html#l17">3.5: Controllers</a></h3>
-<dt><h3><a href="users_guide.html#l18">3.6: Effect presets</a></h3>
-<dt><h3><a href="users_guide.html#l19">3.7: LADSPA plugins</a></h3>
+<dt><h3><a href="users_guide.html#l18">4.5: Chain operators</a></h3>
+<dt><h3><a href="users_guide.html#l19">4.6: Controllers</a></h3>
+<dt><h3><a href="users_guide.html#l20">4.7: Effect presets</a></h3>
+<dt><h3><a href="users_guide.html#l21">4.8: LADSPA plugins</a></h3>
 </dl><p>
-<dt><h2><a href="users_guide.html#l20">4: User interfaces</a></h2>
+<dt><h2><a href="users_guide.html#l22">5: User interfaces</a></h2>
 <dl><p>
-<dt><h3><a href="users_guide.html#l21">4.1: ecasound</a></h3>
-<dt><h3><a href="users_guide.html#l22">4.2: ecatools</a></h3>
+<dt><h3><a href="users_guide.html#l23">5.1: ecasound</a></h3>
+<dt><h3><a href="users_guide.html#l24">5.2: ecatools</a></h3>
 </dl><p>
-<dt><h2><a href="users_guide.html#l23">5: Documentation</a></h2>
  
 <p><hr><p><br>
 <p>
@@ -67,7 +69,7 @@
 <p>This document describes ecasound's use from user's point of view. 
 In addition to the actual user/client-programs, all essential ecasound 
 library concepts and features are also discussed. To avoid duplicating
-documentation, I've used referenced to other sources whenever suitable. 
+documentation, I've used references to other sources whenever suitable. 
 For instance, ecasound's man pages are in a very good shape.
 They are also available in HTML-format.
 <p>
@@ -102,63 +104,98 @@ continue to improve and develop ecasound.
 <p>
 
 <a name="l5"></a>
-<h2>3: Ecasound library features</h2>
-<p>
-<a name="l6"></a>
-<h3>3.1: Concepts</h3>
-<a name="l7"></a>
-<strong>3.1.1: Chain</strong><p>
+<h2>3: Ecasound library concepts</h2>
+<p><a name="l6"></a>
+<strong>3.0.1: Chain</strong><p>
 Chain is a simple signal flow abstraction. Every chain has one input
 and one output. All chain operators and their controllers are attached
 to chains. Chain can be muted and bypassed.
-<p><a name="l8"></a>
-<strong>3.1.2: Audio object</strong><p>
+<p><a name="l7"></a>
+<strong>3.0.2: Audio object</strong><p>
 Audio object is a really generic concept. Practically anything that 
 is able to produce or receive audio data can be an ecasound audio 
 object. Currently there's support for soundcard drivers/subsystems, 
 various file formats and various types of data-piping.
-Notice that inputs and outputs are not separated in any way. 
-<p><a name="l9"></a>
-<strong>3.1.3: Chain operators and controllers</strong><p>
+Notice that objects can be used both for input and output.
+<p><a name="l8"></a>
+<strong>3.0.3: Chain operators and controllers</strong><p>
 Chain operators are used to process and analyze sample data.
 Controllers are used to control individual chain operator parameters.
-Both types of objects are attached to chains. <em>Chain objects</em> refers
+Both types of objects are attached to chains. Term <em>chain object</em> refers
 to all objects that can be attached to chains - ie. operators and 
 controllers.
-<p><a name="l10"></a>
-<strong>3.1.4: Chainsetup</strong><p>
+<p><a name="l9"></a>
+<strong>3.0.4: Chainsetup</strong><p>
 Chainsetup is the central data object. All other objects (inputs,
 outputs, chains, etc) are connected to some chainsetup. There can be 
 many chainsetups but only one can be connected. Similarly only
 one chainsetup can be selected. Chainsetups are also used for
-loading and saving. The format used is identical to the command-line
-syntax used by the console mode user-interface, which makes it 
-easy to edit saved chainsetups. See
+loading and saving state information. The format used is identical to 
+the command-line syntax used by the console mode user-interface, which 
+makes it easy to edit saved chainsetups. See
 <a href="../ecasound_manpage.html">ecasound(1)</a> for details.
-<p><a name="l11"></a>
-<strong>3.1.5: Concept of current position</strong><p>
+<p><a name="l10"></a>
+<strong>3.0.5: Concept of current position</strong><p>
 Only audio objects have a current position. When you change 
 position of a chain, you're changing position of audio objects
 connected to that chain. When you change global engine position,
 all chains (= all audio objects attached to them) are affected.
-<p><a name="l12"></a>
-<strong>3.1.6: Interactive-mode</strong><p>
+<p><a name="l11"></a>
+<strong>3.0.6: Interactive-mode</strong><p>
 Ecasound library can be controlled with simple commands. 
 This is called the interactive-mode. All programs linked
 to ecasound library can use this facility. 
 <p>
+
+<a name="l12"></a>
+<h2>4: Using</h2>
+<p>
 <a name="l13"></a>
-<h3>3.2: Configuration</h3>
+<h3>4.1: Where to start?</h3>
+There's no one single way to use ecasound. You can use it as 
+a simple glue component for doing tasks, which aren't handled by
+other applications you are using, or because ecasound does these tasks
+more easily. But ecasound can also serve as the centre of your studio 
+setup, doing everything from effects processing to multitrack
+recording and mixing. 
+<p>But this flexibility doesn't come for free. It's difficult to describe
+ecasound's features in a few phrases. Because of this, I encourage
+new users to start from ecasound <a href="../examples.html">examples.html</a>
+page. It isn't a perfect introduction, and definitely not the only way 
+to use ecasound, but it does give an overall view of what can be done
+with ecasound, and more importantly, that most tasks are actually
+quite easy to perform.
+<p>
+<a name="l14"></a>
+<h3>4.2: Creating ecasound chainsetups</h3>
+Here are a few rules that help writing valid chainsetups. Whether
+you are writing chainsetup files (.ecs), using command-line arguments, 
+using a graphical frontend, etc, these rules are always useful:
+<p><dl>
+<li >Every chain has exactly _one_ input and _one_ output.
+<li >All inputs and outputs must be connected to some chain.
+<li >For every input/output, there must be exactly _one_
+    input/output specification (example specification: '-i:file.ext').
+<li >All routing from/to chains is based on selecting a set of chains
+    and then specifying an input or output (example: '-a:1,2 -i:file.ext').
+<li >All audio copying and mixing is done channel-wise. If you attach 
+    a 4-channel input and a two-channel output to a chain, chain 
+    will have 4 channels of audio, but only the first two channels
+    will be written to the output file.
+</dl>
+<p>
+<a name="l15"></a>
+<h3>4.3: Configuration</h3>
 User preferences are stored to <em>~/.ecasouncrc</em>. See 
 <a href="../ecasoundrc_manpage.html">ecasoundrc(5)</a> manual page for more 
 info.
 <p>By default, files for effects and oscillator presets are 
 in <em>/usr/local/share/ecasound</em>.
 <p>
-<a name="l14"></a>
-<h3>3.3: Audio objects</h3>
-<a name="l15"></a>
-<strong>3.3.1: ewf - ecasound wave file</strong><p>
+<a name="l16"></a>
+<h3>4.4: Audio objects</h3>
+<a name="l17"></a>
+<strong>4.4.1: ewf - ecasound wave file</strong><p>
 Ecasound wave file (.ewf) is a simple wrapper format for controlling 
 other audio objects. One important feature of ewf is the ability to seek
 beyond end position. When first write operation is performed, current 
@@ -179,17 +216,17 @@ info. Currently recognized keywords are:
 <li > looping - whether to loop sample data (true or false) [read]
 </dl>
 <p>
-<a name="l16"></a>
-<h3>3.4: Chain operators</h3>
-See <a href="../ecasound_manpage.html">ecasound(1)</a>.
-<p>
-<a name="l17"></a>
-<h3>3.5: Controllers</h3>
-See <a href="../ecasound_manpage.html">ecasound(1)</a>.
-<p>
 <a name="l18"></a>
-<h3>3.6: Effect presets</h3>
-Ecasound has a powerful effect preset system that allows you create
+<h3>4.5: Chain operators</h3>
+See <a href="../ecasound_manpage.html">ecasound(1)</a>.
+<p>
+<a name="l19"></a>
+<h3>4.6: Controllers</h3>
+See <a href="../ecasound_manpage.html">ecasound(1)</a>.
+<p>
+<a name="l20"></a>
+<h3>4.7: Effect presets</h3>
+Ecasound has a powerful effect preset system that allows you to create
 new effects by combining basic effects and controllers.
 <p>Presets can be stored into separate files or they can be stored
 into a global database. Either way, the preset format is the same
@@ -201,32 +238,28 @@ preset_name = effects controllers | ... | effects controllers
 
 Effects and controllers are specified using the same format as 
 used in command-line parsing (-ea:100, -kl:1,0,100,5, etc). You 
-can add a new chain using the pipe characher '|'. '\' sign is 
+can add a new parallel chain using the pipe characher '|'. '\' sign is 
 used to continue preset definition on the next line.
 <p>
-<a name="l19"></a>
-<h3>3.7: LADSPA plugins</h3>
+<a name="l21"></a>
+<h3>4.8: LADSPA plugins</h3>
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
 Plugin API). See <a href="../ecasound_manpage.html">ecasound(1)</a> for more
 info.
 <p>
 
-<a name="l20"></a>
-<h2>4: User interfaces</h2>
+<a name="l22"></a>
+<h2>5: User interfaces</h2>
 <p>Probably the best place to start is the examples section of 
 ecasound HTML-documentation: <a href="../examples.html">examples.html</a>.
 <p>
-<a name="l21"></a>
-<h3>4.1: ecasound</h3>
+<a name="l23"></a>
+<h3>5.1: ecasound</h3>
 See <a href="../ecasound_manpage.html">ecasound(1)</a>.
 <p>
-<a name="l22"></a>
-<h3>4.2: ecatools</h3>
+<a name="l24"></a>
+<h3>5.2: ecatools</h3>
 See <a href="../ecatools_manpage.html">ecatools(1)</a>.
-<p>
-
-<a name="l23"></a>
-<h2>5: Documentation</h2>
 <p><insert name=ecasound_tail>
 </body>
 </html>

@@ -50,7 +50,7 @@ void ECA_RESOURCES::set_defaults(void) {
   if (has("ext-text-editor-use-getenv") != true) resource("ext-text-editor-use-getenv","true");
   if (has("ext-wave-editor") != true) resource("ext-wave-editor","ecawave");
 
-  if (has("ext-mp3-input-cmd") != true) resource("ext-mp3-input-cmd","mpg123 -b 0 -q -s -k %o %f");
+  if (has("ext-mp3-input-cmd") != true) resource("ext-mp3-input-cmd","mpg123 --stereo -r %s -b 0 -q -s -k %o %f");
   if (has("ext-mp3-output-cmd") != true) resource("ext-mp3-output-cmd", "lame -b 128 -x -S - %f");
 
   if (has("ext-ogg-input-cmd") != true) resource("ext-ogg-input-cmd","ogg123 -d wav -o file:%F %f");

@@ -47,7 +47,7 @@ Ecasignalview is meant for monitoring signal amplitude and peak
 statistics\&. It accepts the following options:
 .PP 
 .IP "input" 
-The first option not starting with with a \'-\' is interpreted 
+The first option not starting with a \'-\' is interpreted 
 as input string\&. This can be a device or a filename\&. All formats
 supported by libecasound are accepted\&. Defaults to \'/dev/dsp\'\&.
 .IP 
@@ -67,7 +67,7 @@ Enable debug mode\&.
 .IP "-f:format_string" 
 Specify default audio format\&. See ecasound(1) for details\&.
 .IP 
-.IP "r:rate_msec" 
+.IP "-r:rate_msec" 
 Specify screen refresh rate in milliseconds\&.
 .PP 
 .SH "FILES" 

@@ -63,6 +63,10 @@ ECA_SESSION::~ECA_SESSION(void) {
   for(vector<ECA_CHAINSETUP*>::iterator q = chainsetups_rep.begin(); q != chainsetups_rep.end(); q++) {
     delete *q;
   }
+
+  delete ecasound_stop_cond_repp;
+  delete ecasound_stop_mutex_repp;
+
 //    ecadebug->control_flow("Closing session");
 }
 
@@ -96,6 +100,15 @@ void ECA_SESSION::set_defaults(void) {
   status(ep_status_notready);
   connected_chainsetup_repp = 0;
   selected_chainsetup_repp = 0;
+
+  // --
+  // Engine locks and mutexes
+
+  ecasound_stop_cond_repp = new pthread_cond_t;
+  ecasound_stop_mutex_repp = new pthread_mutex_t;
+
+  ::pthread_cond_init(ecasound_stop_cond_repp, NULL);
+  ::pthread_mutex_init(ecasound_stop_mutex_repp, NULL);
 
   // ---
   // Interpret resources 

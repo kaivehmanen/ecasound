@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "27\&.03\&.2000" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "05\&.12\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -6,12 +6,18 @@ ecasound-iam \- ecasound interactive mode
 .PP 
 .SH "DESCRIPTION" 
 .PP 
-Ecasound library can be controlled with simple commands\&. 
-This is called the interactive-mode\&. All programs linked
-to ecasound library can use this facility\&. 
+Ecasound library contains an interpreter module that understands 
+a set of commands aimed at controlling various library services\&. 
+This is called the ecasound interactive mode (EIAM)\&. All programs 
+linked to ecasound library can use this facility\&.
 .PP 
-Notice! Hyphens and underlines are both accepted in
-command names (ie\&. c-add and c_add both work)\&.
+A special case of EIAM use is ecasound\'s control interface (ECI), 
+which is a small library providing easy access to the EIAM 
+commands from outside libecasound\&. When issuing EIAM commands using 
+ECI, it\'s possible that commands also return information\&. Currently
+supported return value types are: strings [s], list of strings [S],
+integers [i], long integers [li] and floating-point numbers [f]\&. These
+definions are used in the following documentation\&.
 .PP 
 .SH "GENERAL" 
 .IP "quit, q" 

@@ -55,7 +55,7 @@ void EFFECT_ANALYZE::reset_stats(void) {
       ranges[nm][ch] = 0;
   for(unsigned int nm = 0; nm < num_of_samples.size(); nm++)
     num_of_samples[nm] = 0;
-  max_peak = max_pos = max_neg = 0.0f;
+  max_pos = max_neg = 0.0f;
   max_pos_period = max_neg_period = 0.0f;
   clipped_pos_period =  clipped_neg_period = 0;
   clipped_pos = clipped_neg = 0;
@@ -125,13 +125,12 @@ CHAIN_OPERATOR::parameter_type EFFECT_ANALYZE::get_parameter(int param) const {
 }
 
 CHAIN_OPERATOR::parameter_type EFFECT_ANALYZE::max_multiplier(void) const { 
-  CHAIN_OPERATOR::parameter_type k;
-  
-  if (max_peak != 0.0) k = SAMPLE_SPECS::max_amplitude / max_peak;
-  else k = 0.0;
-
-  if (k < 1.0) k = 1.0;
-
+  parameter_type k;
+  SAMPLE_SPECS::sample_type max_peak = max_pos;
+  if (max_neg > max_pos) max_peak = max_neg;
+  if (max_peak != 0.0f) k = SAMPLE_SPECS::max_amplitude / max_peak;
+  else k = 0.0f;
+  if (k < 1.0f) k = 1.0f;
   return(k);
 }
 
@@ -145,13 +144,12 @@ void EFFECT_ANALYZE::init(SAMPLE_BUFFER* insample) {
 void EFFECT_ANALYZE::process(void) {
   i.begin();
   while(!i.end()) {
-    if (fabs(*i.current() > max_peak)) max_peak = fabs(*i.current());
     num_of_samples[i.channel()]++;
     if (*i.current() >= 0) {
       if (*i.current() > max_pos) max_pos = *i.current();
       if (*i.current() > max_pos_period) max_pos_period = *i.current();
       if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.891f) {
-	if (*i.current() >= SAMPLE_SPECS::max_amplitude) {
+	if (*i.current() >= clip_amplitude) {
 	  clipped_pos_period++; clipped_pos++;
 	}
 	ranges[0][i.channel()]++;  // 0-1dB
@@ -165,10 +163,10 @@ void EFFECT_ANALYZE::process(void) {
       else ranges[7][i.channel()]++; // 64-infdB
     }
     else {
-      if (fabs(*i.current()) > max_neg) max_neg = fabs(*i.current());
-      if (fabs(*i.current()) > max_neg_period) max_neg_period = fabs(*i.current());
+      if (-(*i.current()) > max_neg) max_neg = -(*i.current());
+      if (-(*i.current()) > max_neg_period) max_neg_period = -(*i.current());
       if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.891f) {
-	if (*i.current() <= -SAMPLE_SPECS::max_amplitude) {
+	if (*i.current() <= -clip_amplitude) {
 	  clipped_neg_period++; clipped_neg++;
 	}
 	ranges[15][i.channel()]++;  // 0-1dB

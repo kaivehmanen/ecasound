@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>27.03.2000</h2>
+<h2>05.12.2000</h2>
 
 
     
@@ -33,11 +33,17 @@
     
 <p><h2>DESCRIPTION</h2>
     
-<p>Ecasound library can be controlled with simple commands. 
-This is called the interactive-mode. All programs linked
-to ecasound library can use this facility. 
-<p>Notice! Hyphens and underlines are both accepted in
-	command names (ie. c-add and c_add both work).
+<p>Ecasound library contains an interpreter module that understands 
+a set of commands aimed at controlling various library services. 
+This is called the ecasound interactive mode (EIAM). All programs 
+linked to ecasound library can use this facility.
+<p>A special case of EIAM use is ecasound's control interface (ECI), 
+which is a small library providing easy access to the EIAM 
+commands from outside libecasound. When issuing EIAM commands using 
+ECI, it's possible that commands also return information. Currently
+supported return value types are: strings [s], list of strings [S],
+integers [i], long integers [li] and floating-point numbers [f]. These
+definions are used in the following documentation.
 <p><h2>GENERAL</h2>
     
 <dl>

@@ -21,6 +21,7 @@ class ECA_IAMODE_PARSER {
  public:
   
   enum Commands {
+    ec_unknown,
     ec_direct_option,
     // --
     ec_help,
@@ -129,4 +130,3 @@ void show_controller_help(void);
 void show_controller_help_more(void);
 
 #endif
-

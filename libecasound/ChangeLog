@@ -2,9 +2,18 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-12-05  Kai Vehmanen <kaiv@wakkanet.fi>
+	
+	* eca-main.h (ecasound_queue, ecasound_stop_cond, ecasound_stop_mutex): removed from global namespace
+	* eca-control-base.h (ecasound_lockfile): removed from global namespace
+	* eca-control-base.h (start_engine, start): 1st argument dropped
+	* eca-control-base.h (start_normal, start_normal_thread): removed from global namespace
+	* eca-control-base.h (various routines for ECI implementation): added
+	* eca-control.h (print_last_error, print_last_value): added
+	
 2000-11-22  Kai Vehmanen <kaiv@wakkanet.fi>
 	
-	* eca-audio-objects (set_double_buffer_size,double_buffer_size): added
+	* eca-audio-objects.h (set_double_buffer_size,double_buffer_size): added
 	
 2000-11-19  Kai Vehmanen <kaiv@wakkanet.fi>
 

@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "26\&.11\&.2000" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "05\&.12\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -92,7 +92,7 @@ to \fIsnd\fP\&.
 Command for starting mp3 input\&. All output should be directed
 to standard output\&. Before execution, "%f" is replaced with 
 path to the input mp3\&. If exists, "%o" is replaced with 
-the start offset in mp3 frames\&. Defaults to \fImpg123 -b 0 -q -s -k %o %f\fP\&.
+the start offset in mp3 frames\&. Defaults to \fImpg123 --stereo -r -b 0 -q -s -k %o %f\fP\&.
 .IP 
 .IP "ext-mp3-output-cmd" 
 Command for starting mp3 output\&. All input data should be read

@@ -30,13 +30,14 @@ class EFFECT_ANALYSIS : public EFFECT_BASE {
 class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
 
   static const int range_count = 16;
+  static const SAMPLE_SPECS::sample_type clip_amplitude = SAMPLE_SPECS::max_amplitude - SAMPLE_SPECS::max_amplitude / 16384.0f; // max-(max/2^15)
 
   mutable vector<unsigned long int> num_of_samples; // number of samples processed
   mutable vector<vector<unsigned long int> > ranges;
 
   mutable parameter_type max_pos_period, max_neg_period;
   mutable unsigned long int clipped_pos_period, clipped_neg_period;
-  parameter_type max_peak, max_pos, max_neg;
+  SAMPLE_SPECS::sample_type max_pos, max_neg;
   unsigned long int clipped_pos, clipped_neg;
   bool cumulativemode_rep;
   SAMPLE_ITERATOR_CHANNELS i;

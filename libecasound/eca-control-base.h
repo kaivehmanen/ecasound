@@ -10,14 +10,6 @@
 #include "dynamic-parameters.h"
 #include "eca-iamode-parser.h"
 
-extern string ecasound_lockfile;
-
-enum { ECA_QUIT = 1 };
-
-void start_normal_thread(ECA_SESSION* param, int retcode, pthread_t* th_cqueue, pthread_attr_t* th_attr);
-void* start_normal(void* param);
-void start_normal(ECA_SESSION* param);
-
 class ECA_CHAINSETUP;
 
 /**
@@ -40,18 +32,53 @@ class ECA_CONTROL_BASE : public DEFINITION_BY_CONTRACT {
 
  public:
 
-  void start_engine(bool ignore_lock = false);
+  void start_engine(void);
+  void run_engine(void);
   void close_engine(void);
 
   // -------------------------------------------------------------------
   // Runtime control
   // -------------------------------------------------------------------
 
-  void start(bool ignore_lock = false);
+  void start(void);
   void stop(void);
   void stop_on_condition(void);
   void run(void);
   void quit(void);
+
+  // -------------------------------------------------------------------
+  // ECI specific routines
+  // -------------------------------------------------------------------
+
+ private:
+
+  vector<string> last_los_rep;
+  string last_s_rep;
+  long int last_li_rep;
+  int last_i_rep;
+  double last_f_rep;
+  string last_error_rep;
+  string last_type_rep;
+
+ protected:
+
+  void set_last_list_of_strings(const vector<string>& s);
+  void set_last_string(const string& s);
+  void set_last_float(double v);
+  void set_last_integer(int v);
+  void set_last_long_integer(int v);
+  void set_last_error(const string& s);
+  void clear_last_values(void);
+
+ public:
+
+  const vector<string>& last_list_of_strings(void) const;
+  const string& last_string(void) const;
+  double last_float(void) const;
+  int last_integer(void) const;
+  long int last_long_integer(void) const;
+  const string& last_error(void) const;
+  const string& last_type(void) const;
 
   // -------------------------------------------------------------------
   // Session info / functions

@@ -1,5 +1,5 @@
-#ifndef _VALUE_QUEUE_H
-#define _VALUE_QUEUE_H
+#ifndef INCLUDE_VALUE_QUEUE_H
+#define INCLUDE_VALUE_QUEUE_H
 
 #include <pthread.h>
 #include <utility>
@@ -49,11 +49,7 @@ public:
    */
   bool is_empty(void) const;
   
-  VALUE_QUEUE(void) { 
-    pthread_mutex_init(&lock, NULL);
-    locked_rep = false;
-  }
+  VALUE_QUEUE(void);
 };
 
 #endif
-

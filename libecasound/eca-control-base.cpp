@@ -38,13 +38,21 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-string ecasound_lockfile;
+void* start_normal_thread(void *ptr);
+
+/**
+ * Helper function for starting the slave thread.
+ */
+void* start_normal_thread(void *ptr) {
+  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-controller) Engine-thread pid: " + kvu_numtostr(getpid()));
+  ECA_CONTROL_BASE* ctrl_base = static_cast<ECA_CONTROL_BASE*>(ptr);
+  ctrl_base->run_engine();
+}
 
 ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession) {
   session_repp = psession;
   selected_chainsetup_repp = psession->selected_chainsetup_repp;
   engine_started_rep = false;
-  ::ecasound_lockfile = "/var/lock/ecasound.lck." + kvu_numtostr(getpid());
 }
 
 /**
@@ -56,7 +64,7 @@ ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession) {
  * ensure:
  *  is_engine_started() == true
  */
-void ECA_CONTROL_BASE::start(bool ignore_lock) {
+void ECA_CONTROL_BASE::start(void) {
   // --------
   // require:
   assert(is_connected() == true);
@@ -67,7 +75,7 @@ void ECA_CONTROL_BASE::start(bool ignore_lock) {
 
 //    while(::ecasound_queue.is_empty() == false) ::ecasound_queue.pop_front();
   if (session_repp->status() == ECA_SESSION::ep_status_notready) {
-    start_engine(ignore_lock);
+    start_engine();
   }
 
   if (is_engine_started() == false) {
@@ -75,7 +83,7 @@ void ECA_CONTROL_BASE::start(bool ignore_lock) {
     return;
   }  
 
-  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
+  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_start, 0.0);
 
   // --------
   // ensure:
@@ -91,7 +99,7 @@ void ECA_CONTROL_BASE::start(bool ignore_lock) {
  *  is_connected() == true
  *
  * ensure:
- *  is_finished() == true
+ *  is_finished() == true || (processing_started == true && is_running() != true)
  */
 void ECA_CONTROL_BASE::run(void) {
   // --------
@@ -101,26 +109,33 @@ void ECA_CONTROL_BASE::run(void) {
 
   if (session_repp->status() == ECA_SESSION::ep_status_running) return;
 
-  start(true);
+  start();
 
   struct timespec sleepcount;
   sleepcount.tv_sec = 1;
   sleepcount.tv_nsec = 0;
 
+  bool processing_started = false;
   while(is_finished() == false) {
     ::nanosleep(&sleepcount, NULL);
+    if (processing_started != true) {
+      if (is_running() == true) processing_started = true;
+    }
+    else {
+      if (is_running() != true) break;
+    }
   }      
 
   ecadebug->control_flow("Controller/Processing finished");
 
   // --------
   // ensure:
-  assert(is_finished() == true);
+  assert(is_finished() == true || (processing_started == true && is_running() != true));
   // --------
 }
 
 /**
- * Stop the processing engine
+ * Stops the processing engine.
  *
  * require:
  *  is_engine_started() == true
@@ -136,7 +151,7 @@ void ECA_CONTROL_BASE::stop(void) {
 
   if (session_repp->status() != ECA_SESSION::ep_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped");
-  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_stop, 0.0);
+  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_stop, 0.0);
 
   // --------
   // ensure:
@@ -163,16 +178,19 @@ void ECA_CONTROL_BASE::stop_on_condition(void) {
 
   if (session_repp->status() != ECA_SESSION::ep_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped");
-  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_stop, 0.0);
+  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_stop, 0.0);
   struct timeval now;
   gettimeofday(&now, 0);
   struct timespec sleepcount;
   sleepcount.tv_sec = now.tv_sec + 60;
   sleepcount.tv_nsec = now.tv_usec * 1000;
-  ::pthread_mutex_lock(&ecasound_stop_mutex);
-  int res = ::pthread_cond_timedwait(&ecasound_stop_cond, &ecasound_stop_mutex, &sleepcount);
+  ::pthread_mutex_lock(session_repp->ecasound_stop_mutex_repp);
+  int res =
+    ::pthread_cond_timedwait(session_repp->ecasound_stop_cond_repp, 
+			     session_repp->ecasound_stop_mutex_repp, 
+			     &sleepcount);
   ecadebug->msg(ECA_DEBUG::system_objects, "(eca-controller-base) Received stop-cond");
-  ::pthread_mutex_unlock(&ecasound_stop_mutex);
+  ::pthread_mutex_unlock(session_repp->ecasound_stop_mutex_repp);
 
   // --------
   // ensure:
@@ -181,61 +199,66 @@ void ECA_CONTROL_BASE::stop_on_condition(void) {
 }
 
 /**
- * Stop the processing engine and throw an ECA_QUIT exception.
+ * Stops the processing engine.
  */
-void ECA_CONTROL_BASE::quit(void) {
-  close_engine();
-  int n = ECA_QUIT;
-  throw(n);
-}
+void ECA_CONTROL_BASE::quit(void) { close_engine(); }
 
 /**
- * Start the processing engine
+ * Starts the processing engine.
  *
  * require:
  *  is_connected() == true
- *
- * ensure:
- *  is_engine_started() == true
  */
-void ECA_CONTROL_BASE::start_engine(bool ignore_lock) {
+void ECA_CONTROL_BASE::start_engine(void) {
   // --------
   // require:
   assert(is_connected() == true);
   // --------
 
-  if (engine_started_rep == true) return;
-
-  ifstream fin(ecasound_lockfile.c_str());
-  if (!fin || ignore_lock) {
-    pthread_attr_t th_attr;
-    pthread_attr_init(&th_attr);
-    start_normal_thread(session_repp, retcode_rep, &th_cqueue_rep, &th_attr);
+  if (engine_started_rep == true) {
+    ecadebug->msg(ECA_DEBUG::info, "(eca-controller) Can't execute; processing engine already running!");
+    return;
   }
-  else {
-    MESSAGE_ITEM mitem;
-    mitem << "(eca-controller) Can't execute; processing module already running!" << 'c' << "\n";
-    ecadebug->msg(ECA_DEBUG::system_objects,mitem.to_string());
+
+  pthread_attr_t th_attr;
+  pthread_attr_init(&th_attr);
+  int retcode_rep = pthread_create(&th_cqueue_rep,
+				   &th_attr,
+				   start_normal_thread, 
+				   static_cast<void *>(this));
+  if (retcode_rep != 0) {
+    ecadebug->msg(ECA_DEBUG::info, "Warning! Unable to create a new thread for engine.");
+    engine_started_rep = false;
   }
-  fin.close();
-
-  engine_started_rep = true;
-
-  // --------
-  // ensure:
-  assert(is_engine_started() == true);
-  // --------
+  else
+    engine_started_rep = true;
 }
 
 /**
- * Close the processing engine
+ * Routine used for launching the engine.
+ */
+void ECA_CONTROL_BASE::run_engine(void) {
+  try {
+    ECA_PROCESSOR epros (session_repp);
+    epros.exec();
+  }
+  catch(ECA_ERROR& e) {
+    cerr << "---\n(eca-controller) ERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+  }
+  catch(...) {
+    cerr << "---\n(eca-controller) Caught an unknown exception!\n";
+  }
+}
+
+/**
+ * Closes the processing engine.
  *
  * ensure:
  *  is_engine_started() == false
  */
 void ECA_CONTROL_BASE::close_engine(void) {
   if (!engine_started_rep) return;
-  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_exit, 0.0);
+  session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_exit, 0.0);
   ::pthread_join(th_cqueue_rep,NULL);
   engine_started_rep = false;
 
@@ -429,31 +452,48 @@ void ECA_CONTROL_BASE::toggle_raise_priority(bool v) {
   session_repp->toggle_raised_priority(v);
 }
 
-void start_normal_thread(ECA_SESSION* session, int retcode_rep, pthread_t*
-			 th_ecasound_cqueue, pthread_attr_t* th_attr) {
-  retcode_rep = pthread_create(th_ecasound_cqueue, th_attr, start_normal, (void*)session);
-  if (retcode_rep != 0)
-    throw(ECA_ERROR("ECA-CONTROLLER", "Unable to create a new thread (start_normal)."));
+void ECA_CONTROL_BASE::set_last_list_of_strings(const vector<string>& s) { 
+  last_los_rep = s; 
+  last_type_rep = "S";
 }
 
-void* start_normal(void* param) {
-  ofstream fout(ecasound_lockfile.c_str());
-  fout.close();
-  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-controller) Engine-thread pid: " + kvu_numtostr(getpid()));
-  start_normal((ECA_SESSION*)param);
-  remove(ecasound_lockfile.c_str());
-  return(0);
+void ECA_CONTROL_BASE::set_last_string(const string& s) { 
+  last_s_rep = s; 
+  last_type_rep = "s";
 }
 
-void start_normal(ECA_SESSION* session) {
-  try {
-    ECA_PROCESSOR epros (session);
-    epros.exec();
-  }
-  catch(ECA_ERROR& e) {
-    cerr << "---\n(eca-controller) ERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
-  }
-  catch(...) {
-    cerr << "---\n(eca-controller) Caught an unknown exception!\n";
-  }
+void ECA_CONTROL_BASE::set_last_float(double v) { 
+  last_f_rep = v; 
+  last_type_rep = "f";
+}
+
+void ECA_CONTROL_BASE::set_last_integer(int v) { 
+  last_i_rep = v; 
+  last_type_rep = "i";
+}
+ 
+void ECA_CONTROL_BASE::set_last_long_integer(int v) { 
+  last_li_rep = v; 
+  last_type_rep = "li";
+}
+
+void ECA_CONTROL_BASE::set_last_error(const string& s) {
+  last_error_rep = s;
+}
+
+const vector<string>& ECA_CONTROL_BASE::last_list_of_strings(void) const { return(last_los_rep); }
+const string& ECA_CONTROL_BASE::last_string(void) const { return(last_s_rep); }
+double ECA_CONTROL_BASE::last_float(void) const { return(last_f_rep); }
+int ECA_CONTROL_BASE::last_integer(void) const { return(last_i_rep); } 
+long int ECA_CONTROL_BASE::last_long_integer(void) const { return(last_li_rep); }
+const string& ECA_CONTROL_BASE::last_error(void) const { return(last_error_rep); }
+const string& ECA_CONTROL_BASE::last_type(void) const { return(last_type_rep); }
+
+void ECA_CONTROL_BASE::clear_last_values(void) { 
+  last_los_rep.clear();
+  last_s_rep = "";
+  last_li_rep = 0;
+  last_i_rep = 0;
+  last_f_rep = 0.0f;
+  last_error_rep = "";
 }

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (26.11.2000)
+       (05.12.2000)
        ()
        (Multimedia software)
 
@@ -109,7 +109,7 @@ startdit()
 	Command for starting mp3 input. All output should be directed
 	to standard output. Before execution, "%f" is replaced with 
 	path to the input mp3. If exists, "%o" is replaced with 
-	the start offset in mp3 frames. Defaults to em(mpg123 -b 0 -q -s -k %o %f).
+	the start offset in mp3 frames. Defaults to em(mpg123 --stereo -r -b 0 -q -s -k %o %f).
 
 	dit(ext-mp3-output-cmd)
 	Command for starting mp3 output. All input data should be read

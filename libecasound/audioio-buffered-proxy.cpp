@@ -78,6 +78,7 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
   else {
     if (pbuffer_repp->finished_rep.get() == 1) finished_rep = true;
     else {
+      finished_rep = false;
       xruns_rep++;
       cerr << "Underrun! Exiting!" << endl;
       exit(0);
@@ -95,6 +96,7 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
   else {
     if (pbuffer_repp->finished_rep.get() == 1) finished_rep = true;
     else {
+      finished_rep = false;
       xruns_rep++;
       cerr << "Overrun! Exiting" << endl;
       exit(0);

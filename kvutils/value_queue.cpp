@@ -23,6 +23,12 @@
 
 #include "value_queue.h"
 
+VALUE_QUEUE::VALUE_QUEUE(void) { 
+  pthread_mutex_init(&lock, NULL);
+  pthread_cond_init(&cond, NULL);
+  locked_rep = false;
+}
+
 void VALUE_QUEUE::push_back(int key, double value) {
   pthread_mutex_lock(&lock);
   while (locked_rep == true) {

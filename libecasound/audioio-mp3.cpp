@@ -40,7 +40,7 @@
 
 FILE* audioio_mp3_pipe;
 
-string MP3FILE::default_mp3_input_cmd = "mpg123 -b 0 -q -s -k %o %f";
+string MP3FILE::default_mp3_input_cmd = "mpg123 --stereo -r %s -b 0 -q -s -k %o %f";
 string MP3FILE::default_mp3_output_cmd = "lame -b 128 -x -S - %f";
 
 void MP3FILE::set_mp3_input_cmd(const string& value) { MP3FILE::default_mp3_input_cmd = value; }
@@ -86,8 +86,6 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples) {
   if (triggered_rep != true) triggered_rep = true;
 //    bytes_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
   bytes_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
-  if (mono_input_rep == true)
-    process_mono_fix(static_cast<char*>(target_buffer), bytes_rep);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
       ecadebug->msg(ECA_DEBUG::info, "(audioio-mp3) Can't start process \"" + MP3FILE::default_mp3_input_cmd + "\". Please check your ~/.ecasoundrc.");
@@ -142,33 +140,30 @@ void MP3FILE::get_mp3_params(const string& fname) throw(SETUP_ERROR&) {
   ::stat(fname.c_str(), &buf);
   double fsize = (double)buf.st_size;
   
-  double bitrate = ((double)newlayer.bitrate() * 1000.0);
-  double bsecond = (double)bytes_per_second();
+  double bitrate = newlayer.bitrate() * 1000.0;
+  double sfreq = newlayer.sfreq();
+
+  // notice! mpg123 always outputs 16bit samples, stereo
+  mono_input_rep = (newlayer.mode() == Layer::MPG_MD_MONO) ? true : false;
+  set_channels(2);
+  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
+
   MESSAGE_ITEM m;
-  m << "MP3 file size: " << fsize << "\n.";
-  m << "MP3 length_value: " << newlayer.length() << "\n.";
-  m << "bsecond: " << bsecond << "\n.";
-  m << "bitrate: " << bitrate << "\n.";
+  m << "(audioio-mp3) mp3 file size: " << fsize << "\n.";
+  m << "(audioio-mp3) mp3 length value: " << newlayer.length() << "\n.";
+  m << "(audioio-mp3) sfreq: " << sfreq << "\n.";
+  m << "(audioio-mp3) bitrate: " << bitrate << "\n.";
   if (bitrate != 0)
-    length_in_samples((long)ceil(8.0 * fsize / bitrate * bsecond / frame_size()));
+    length_in_samples((long)ceil(8.0 * fsize / bitrate * bytes_per_second() / frame_size()));
   
   if (bitrate == 0 ||
       length_in_samples() < 0) length_in_samples(0);
   
-  m << "Setting MP3 length_value: " << length_in_seconds() << "\n.";
+  m << "(audioio-mp3) setting MP3 length_value: " << length_in_seconds() << "\n.";
   pcm_rep = newlayer.pcmPerFrame();
   
-  m << "MP3 pcm value: " << pcm_rep << ".";
+  m << "(audioio-mp3) MP3 pcm value: " << pcm_rep << ".";
   ecadebug->msg(ECA_DEBUG::user_objects,m.to_string());
-  
-  // notice! mpg123 always outputs 16bit stereo
-  mono_input_rep = (newlayer.mode() == Layer::MPG_MD_MONO) ? true : false;
-  set_channels(2); /*  */
-  if (mono_input_rep)
-    set_samples_per_second(bsecond / 8);
-  else
-    set_samples_per_second(bsecond / 4);
-  set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 }
 
 void MP3FILE::kill_mpg123(void) {
@@ -184,6 +179,7 @@ void MP3FILE::fork_mpg123(void) {
   ecadebug->msg(ECA_DEBUG::user_objects,cmd);
   set_fork_command(cmd);
   set_fork_file_name(label());
+  set_fork_sample_rate(samples_per_second());
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
 //      cerr << "Child fork succeeded!" << endl;

@@ -9,12 +9,20 @@ NNAAMMEE
 
 SSYYNNOOPPSSIISS
 DDEESSCCRRIIPPTTIIOONN
-       Ecasound  library  can be controlled with simple commands.
-       This is called the interactive-mode. All  programs  linked
-       to ecasound library can use this facility.
+       Ecasound  library  contains  an  interpreter  module  that
+       understands a set of commands aimed at controlling various
+       library services.  This is called the ecasound interactive
+       mode (EIAM). All programs linked to ecasound  library  can
+       use this facility.
 
-       Notice!  Hyphens  and underlines are both accepted in com-
-       mand names (ie. c-add and c_add both work).
+       A special case of EIAM use is ecasound's control interface
+       (ECI), which is a small library providing easy  access  to
+       the  EIAM  commands from outside libecasound. When issuing
+       EIAM commands using ECI, it's possible that commands  also
+       return information. Currently supported return value types
+       are: strings [s], list of strings [S], integers [i],  long
+       integers [li] and floating-point numbers [f]. These defin-
+       ions are used in the following documentation.
 
 
 GGEENNEERRAALL
@@ -52,22 +60,19 @@ GGLLOOBBAALL
               seconds.
 
 
-       forward 'time-in-seconds', fw 'ttime-in-seconds'
-              The current position is forwarded by  'time-in-sec-
-              onds' seconds.
 
-
-
-
-
-
-                            27.03.2000                          1
+                            05.12.2000                          1
 
 
 
 
 
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
+       forward 'time-in-seconds', fw 'ttime-in-seconds'
+              The current position is forwarded by  'time-in-sec-
+              onds' seconds.
 
 
        setpos 'time-in-seconds'
@@ -119,15 +124,10 @@ CCHHAAIINNSSEETTUUPPSS
               can  be  used  to  avoid  typing  these long names.
               'cs_index' format is "c<number>".  You  can  get  a
               list  of  all  chainsetups (and their indexes) with
-              the 'cs-status' command.
-
-
-       cs-load 'filename'
-              Add a  new  chainsetup  by  loading  it  from  file
 
 
 
-                            27.03.2000                          2
+                            05.12.2000                          2
 
 
 
@@ -136,8 +136,12 @@ CCHHAAIINNSSEETTUUPPSS
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
-              'filename'.   'filename' is now the selected chain-
-              setup.
+              the 'cs-status' command.
+
+
+       cs-load 'filename'
+              Add a new chainsetup by loading it from file 'file-
+              name'.   'filename' is now the selected chainsetup.
 
 
        cs-save
@@ -186,20 +190,20 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
        cs-format 'bits,channels,sample_rate'
               Set the default  sample  parameters  for  currently
               selected  chainsetup.  For example cd-quality audio
-              would be "16,2,44100". This does the same  as  com-
-              mand-line argument "-f" (see ecasound(1)).
 
 
 
-
-
-                            27.03.2000                          3
+                            05.12.2000                          3
 
 
 
 
 
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
+              would be "16,2,44100". This does the same  as  com-
+              mand-line argument "-f" (see ecasound(1)).
 
 
        cs-status, cstatus, cs, a
@@ -251,21 +255,22 @@ CCHHAAIINNSS
               only one chain must selected.
 
 
-       c-muting
-              Toggle  chain muting. When chain is muted, all data
-              that goes through is muted.
 
 
 
 
-
-                            27.03.2000                          4
+                            05.12.2000                          4
 
 
 
 
 
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
+
+
+       c-muting
+              Toggle  chain muting. When chain is muted, all data
+              that goes through is muted.
 
 
        c-bypass
@@ -317,15 +322,10 @@ AAUUDDIIOO IINNPPUUTT//OOUUTTPPUUTT OOBBJJEECCTTSS
               Add  a  new output object. See ecasound(1) man page
               for more  info  about  the  argument  format  ('-o'
               option).  If  argument is omitted, a default output
-              device is added (see ecasoundrc(5)).
-
-
-       aio-select 'aobject_name'
-              Select some audio object. 'aobject_name' is usually
 
 
 
-                            27.03.2000                          5
+                            05.12.2000                          5
 
 
 
@@ -334,6 +334,11 @@ AAUUDDIIOO IINNPPUUTT//OOUUTTPPUUTT OOBBJJEECCTTSS
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
+              device is added (see ecasoundrc(5)).
+
+
+       aio-select 'aobject_name'
+              Select some audio object. 'aobject_name' is usually
               a file name, but not always.
 
 
@@ -382,16 +387,11 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
               point value (eg. 0.001 is the same as 1ms).
 
 
-       aio-setpos 'time_in_seconds'
-              Set audio object position to 'time_in_seconds'.
-
-
-       aio-wave-edit
-              Currently selected audio object is loaded  into  an
 
 
 
-                            27.03.2000                          6
+
+                            05.12.2000                          6
 
 
 
@@ -400,6 +400,12 @@ ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
+       aio-setpos 'time_in_seconds'
+              Set audio object position to 'time_in_seconds'.
+
+
+       aio-wave-edit
+              Currently selected audio object is loaded  into  an
               external wave editor (see ecasoundrc(5)).
 
 
@@ -447,17 +453,11 @@ CCHHAAIINN OOPPEERRAATTOORRSS
               Prints a list of registered effect presets.
 
 
-       ladspa-register
-              Prints a list of registered LADSPA-plugins.
-
-
-CCOONNTTRROOLLLLEERRSS
-       Controllers are used to control individual chain  operator
-       parameters.  They are attached to chains. If not otherwise
 
 
 
-                            27.03.2000                          7
+
+                            05.12.2000                          7
 
 
 
@@ -466,6 +466,13 @@ CCOONNTTRROOLLLLEERRSS
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
+       ladspa-register
+              Prints a list of registered LADSPA-plugins.
+
+
+CCOONNTTRROOLLLLEERRSS
+       Controllers are used to control individual chain  operator
+       parameters.  They are attached to chains. If not otherwise
        stated, currently selected chainsetup and chains are used.
 
 
@@ -513,17 +520,10 @@ DDUUMMPP CCOOMMMMAANNDDSS
               a floating-point representation.
 
 
-       dump-length
-              Dumps the overall  processing  length.  Printed  in
-              seconds using a floating-point representation.
-
-
-       dump-cs-status
-              Dumps  status  string  for  the  currently selected
 
 
 
-                            27.03.2000                          8
+                            05.12.2000                          8
 
 
 
@@ -532,6 +532,13 @@ DDUUMMPP CCOOMMMMAANNDDSS
 ecasound-iam(1)        Multimedia software        ecasound-iam(1)
 
 
+       dump-length
+              Dumps the overall  processing  length.  Printed  in
+              seconds using a floating-point representation.
+
+
+       dump-cs-status
+              Dumps  status  string  for  the  currently selected
               chainsetup - 'connected', 'selected'  or  an  empty
               string.
 
@@ -582,13 +589,6 @@ AAUUTTHHOORR
 
 
 
-
-
-
-
-
-
-
-                            27.03.2000                          9
+                            05.12.2000                          9
 
 

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 011200) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 051200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -33,7 +33,12 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 see ecatools(1) man page for details
 	- added: new modules - libecasoundc and pyecasound
 	- added: --disable-pyecasound configure switch
+	- added: './contrib' and './examples' directories added
+		 to the distribution package
+	- added: ecasound control interface documentation added - 
+		 see 'Documentation/programmers_guide/eci_doc.html'
 	- removed: the "LADSPA/" prefix removed from plugin labels
+	- removed: support for underscores in EIAM-commands
 	- changed: more intelligent handling of resource files
 	           (for instance ~/.ecasoundrc and preset files)
 	- changed: output produced by -ev
@@ -42,6 +47,8 @@ Last officially released version is -*> v1.8.2r14 <*-
 		   now be even more accurate
 	- changed: triggering of realtime outputs; now all rt-outputs
 		   are prefilled with two buffers before triggering
+	- changed: Mandrake and PLD Linux RPM-spec files moved into
+		   the new './contrib' directory
 	- fixed: nasty bug in effect preset mapping
 	- fixed: -ei:0 caused problems
 	- fixed: cdr-file endianess (should be _always_ big endian)
