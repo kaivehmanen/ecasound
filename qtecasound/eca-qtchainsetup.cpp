@@ -87,6 +87,13 @@ void QEChainsetup::init_chain_list(void) {
 }
 
 void QEChainsetup::update_chain_list(void) { 
+  // HEI!
+  // Tähän systeemi joka käy läpi listviewin (tyhjentämättä sitä) 
+  // ja päivittää vain tarvittavat. 
+  // --
+  // selected chainit merkataan myös widgetissä valituiksi!
+  // --
+  
   QListViewItem* selected = chain_list_repp->selectedItem();
   QString selname = ""; 
   if (selected != 0) selname = selected->text(0);
