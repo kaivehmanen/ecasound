@@ -14,6 +14,11 @@
 #include "eca-engine-driver.h"
 #include "audioio_jack.h"
 
+/* for ECA_JACK_TRANSPORT_API */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 class AUDIO_IO;
 
 using std::list;
@@ -192,9 +197,6 @@ private:
   list<eca_jack_node_t*> node_list_rep;
   vector<eca_jack_port_data_t*> inports_rep;
   vector<eca_jack_port_data_t*> outports_rep;
-#if ECA_JACK_TRANSPORT_API >= 2
-  jack_transport_info_t transport_info_rep;
-#endif
 
   int jackslave_seekahead_rep;
   long int jackslave_seekahead_target_rep;
@@ -207,6 +209,10 @@ private:
   SAMPLE_SPECS::sample_rate_t srate_rep;
   long int buffersize_rep;
   long int cb_allocated_frames_rep;
+
+#if ECA_JACK_TRANSPORT_API >= 2
+  jack_transport_info_t transport_info_rep;
+#endif
 };
 
 #endif
