@@ -18,6 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <iostream>
 #include <string>
 #include <cstdio>
@@ -105,8 +109,8 @@ int main(int argc, char *argv[])
 void print_usage(void)
 {
   cerr << "****************************************************************************\n";
-  cerr << "* ecaconvert, v" << ecatools_play_version << "\n";
-  cerr << "* (C) 2000,2002 Kai Vehmanen, released under GPL licence \n";
+  cerr << "* ecaconvert, v" << ecatools_play_version << " (" << VERSION << ")\n";
+  cerr << "* (C) 2000-2004 Kai Vehmanen, released under GPL licence \n";
   cerr << "****************************************************************************\n";
 
   cerr << "\nUSAGE: ecaconvert .extension file1 [ file2, ... fileN ]\n\n";

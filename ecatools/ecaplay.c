@@ -19,6 +19,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <assert.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -218,9 +222,9 @@ static const char* get_track(int n, int argc, char *argv[])
 
 static void print_usage(FILE* stream)
 {
-  fprintf(stream, "Ecaplay v%s\n\n", ecaplay_version);
+  fprintf(stream, "Ecaplay v%s (%s)\n\n", ecaplay_version, VERSION);
 
-  fprintf(stream, "Copyright (C) 1997-2002,2004 Kai Vehmanen, released under GPL licence \n");
+  fprintf(stream, "Copyright (C) 1997-2004 Kai Vehmanen, released under GPL licence \n");
   fprintf(stream, "Ecaplay comes with ABSOLUTELY NO WARRANTY.\n");
   fprintf(stream, "You may redistribute copies of ecasound under the terms of the GNU\n");
   fprintf(stream, "General Public License. For more information about these matters, see\n"); 

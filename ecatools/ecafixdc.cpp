@@ -17,6 +17,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -225,8 +229,8 @@ int main(int argc, char *argv[])
 static void ecafixdc_print_usage(void)
 {
   std::cerr << "****************************************************************************\n";
-  std::cerr << "* ecafixdc, v" << ecatools_fixdc_version << "\n";
-  std::cerr << "* (C) 1997-2002 Kai Vehmanen, released under the GPL license\n";
+  std::cerr << "* ecafixdc, v" << ecatools_fixdc_version << " (" << VERSION << ")\n";
+  std::cerr << "* (C) 1997-2004 Kai Vehmanen, released under the GPL license\n";
   std::cerr << "****************************************************************************\n";
 
   std::cerr << "\nUSAGE: ecafixdc file1 [ file2, ... fileN ]\n\n";

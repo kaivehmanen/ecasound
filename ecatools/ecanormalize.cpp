@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
-// ecatools-normalize.cpp: A simple command-line tools for normalizing
-//                         sample volume.
-// Copyright (C) 1999-2003 Kai Vehmanen
+// ecanormalize.cpp: A simple command-line tools for normalizing
+//                   sample volume.
+// Copyright (C) 1999-2004 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <string>
 #include <iostream>
@@ -214,8 +218,8 @@ int main(int argc, char *argv[])
 static void ecanormalize_print_usage(void) 
 {
   cerr << "****************************************************************************\n";
-  cerr << "* [1mecanormalize, v" << ecatools_normalize_version << "\n";
-  cerr << "* (C) 1997-2002 Kai Vehmanen, released under the GPL license[0m \n";
+  cerr << "* ecanormalize, v" << ecatools_normalize_version << " (" << VERSION << ")\n";
+  cerr << "* (C) 1997-2004 Kai Vehmanen, released under the GPL license\n";
   cerr << "****************************************************************************\n";
 
   cerr << "\nUSAGE: ecanormalize file1 [ file2, ... fileN ]\n\n";
