@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-neteci-server.c: NetECI server implementation.
-// Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2002,2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,6 +45,9 @@
  * Options
  */
 // #define NETECI_DEBUG_ENABLED
+
+#define ECA_NETECI_START_BUFFER_SIZE    128
+#define ECA_NETECI_MAX_BUFFER_SIZE      65536
 
 /**
  * Macro definitions
@@ -331,8 +334,8 @@ void ECA_NETECI_SERVER::handle_connection(int fd)
     NETECI_DEBUG(cerr << "(eca-neteci-server) incoming connection accepted" << endl);
     struct ecasound_neteci_server_client* client = new struct ecasound_neteci_server_client; /* add a new client */
     client->fd = connfd; 
-    client->buffer = new char [32]; 
-    client->buffer_length = 32;
+    client->buffer_length = ECA_NETECI_START_BUFFER_SIZE;
+    client->buffer = new char [client->buffer_length];
     client->buffer_current_ptr = 0;
     client->peername = peername;
     clients_rep.push_back(client);
@@ -390,42 +393,56 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
   for(int n = 0; n < bytes; n++) {
     DBC_CHECK(client->buffer_current_ptr <= client->buffer_length);
     if (client->buffer_current_ptr == client->buffer_length) {
-      cerr << "(eca-neteci-server) client buffer overflow, flushing." << endl;
-      client->buffer_current_ptr = 0;
-    }
-    else {
-      NETECI_DEBUG(cerr << "(eca-neteci-server) copying '" << buffer[n] << "'\n");
-      client->buffer[client->buffer_current_ptr] = buffer[n];
-      if (client->buffer_current_ptr > 0 &&
-	  client->buffer[client->buffer_current_ptr] == '\n' &&
-	  client->buffer[client->buffer_current_ptr - 1] == '\r') {
+      int new_buffer_length = client->buffer_length * 2;
+      char *new_buffer = new char [new_buffer_length];
 
-	string cmd (client->buffer, client->buffer_current_ptr - 1);
-	NETECI_DEBUG(cerr << "(eca-neteci-server) storing command '" <<	cmd << "'" << endl);
-	parsed_cmd_queue_rep.push_back(cmd);
-
-	NETECI_DEBUG(cerr << "(eca-neteci-server) copying " 
-		     << client->buffer_length - client->buffer_current_ptr - 1
-		     << " bytes from " << client->buffer_current_ptr + 1 
-		     << " to the beginning of the buffer."
-		     << " Index is " << client->buffer_current_ptr << endl);
-
-	DBC_CHECK(client->buffer_current_ptr < client->buffer_length);
-
-#if 0
-	/* must not use memcpy() as the 
-	   affected areas may overlap! */
-	for(int o = 0, p = index + 1; 
-	    p < client->buffer_length; o++, p++) {
-	  client->buffer[o] = client->buffer[p];
-	}
-#endif
+      if (new_buffer_length > ECA_NETECI_MAX_BUFFER_SIZE) {
+	cerr << "(eca-neteci-server) client buffer overflow, unable to increase buffer size. flushing..." << endl;
 	client->buffer_current_ptr = 0;
       }
       else {
-	// NETECI_DEBUG(cerr << "(eca-neteci-server) crlf not found, index=" << index << ", n=" << n << "cur_ptr=" << client->buffer_current_ptr << ".\n");
-	client->buffer_current_ptr++;
+	NETECI_DEBUG(cerr << "(eca-neteci-server) client buffer overflow, increasing buffer size from "
+		     << client->buffer_length << " to " << new_buffer_length << " bytes." << endl);
+	
+	for(int i = 0; i < client->buffer_length; i++) new_buffer[i] = client->buffer[i];
+	
+	delete[] client->buffer;
+	client->buffer = new_buffer;
+	client->buffer_length = new_buffer_length;
       }
+    }
+
+    NETECI_DEBUG(cerr << "(eca-neteci-server) copying '" << buffer[n] << "'\n");
+    client->buffer[client->buffer_current_ptr] = buffer[n];
+    if (client->buffer_current_ptr > 0 &&
+	client->buffer[client->buffer_current_ptr] == '\n' &&
+	client->buffer[client->buffer_current_ptr - 1] == '\r') {
+
+      string cmd (client->buffer, client->buffer_current_ptr - 1);
+      NETECI_DEBUG(cerr << "(eca-neteci-server) storing command '" <<	cmd << "'" << endl);
+      parsed_cmd_queue_rep.push_back(cmd);
+      
+      NETECI_DEBUG(cerr << "(eca-neteci-server) copying " 
+		   << client->buffer_length - client->buffer_current_ptr - 1
+		   << " bytes from " << client->buffer_current_ptr + 1 
+		   << " to the beginning of the buffer."
+		   << " Index is " << client->buffer_current_ptr << endl);
+      
+      DBC_CHECK(client->buffer_current_ptr < client->buffer_length);
+      
+#if 0
+      /* must not use memcpy() as the 
+	 affected areas may overlap! */
+      for(int o = 0, p = index + 1; 
+	  p < client->buffer_length; o++, p++) {
+	client->buffer[o] = client->buffer[p];
+      }
+#endif
+      client->buffer_current_ptr = 0;
+    }
+    else {
+      // NETECI_DEBUG(cerr << "(eca-neteci-server) crlf not found, index=" << index << ", n=" << n << "cur_ptr=" << client->buffer_current_ptr << ".\n");
+      client->buffer_current_ptr++;
     }
   }
 

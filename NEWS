@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 310104) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 170404) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-xx012003 (v2.3.3)  -** stable release **-
+xx052004 (v2.3.3)  -** stable release **-
 	- added: eiam - 'map-ladspa-id-list' command
 	- changed: lots of typo fixes and other corrections to 
 	           the user's guide [ericdr]
@@ -24,6 +24,9 @@ xx012003 (v2.3.3)  -** stable release **-
 	- fixed: signal handling bugs in ecasignalview [mewe]
 	- fixed: bug in ecasound(1) caused man to not show the
 		 last three pages
+	- fixed: bug in the daemon-mode (NetECI) protocol parser
+		 that caused parsing long (over 32 chars) commands 
+		 to fail
 06122003 (v2.3.2)  -** stable release **-
 	- edi-entries: edi-33 closed
 	- added: support for libsndfile; enabled if libsndfile is
