@@ -1,12 +1,10 @@
 EXTRA_DIST = ecasound.el
 
 if ECA_AM_DEBUG_MODE
-libecasound_path = $(top_builddir)/libecasound/libecasound_debug.la \
-	 	   $(top_builddir)/kvutils/libkvutils_debug.la
+libkvutils_path = $(top_builddir)/kvutils/libkvutils_debug.la
 libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc_debug.la
 else
-libecasound_path = $(top_builddir)/libecasound/libecasound.la \
-		   $(top_builddir)/kvutils/libkvutils.la
+libkvutils_path = $(top_builddir)/kvutils/libkvutils.la
 libecasoundc_path = $(top_builddir)/libecasoundc/libecasoundc.la
 endif
 
@@ -39,28 +37,23 @@ endif
 
 # --
 
-ecaconvert_SOURCES = ecatools_convert.cpp \
-			ecatools_convert.h
-ecaconvert_LDADD = $(libecasound_path)
+ecaconvert_SOURCES = ecaconvert.cpp
+ecaconvert_LDADD = $(libecasoundc_path) $(libkvutils_path)
 
-ecafixdc_SOURCES = ecatools_fixdc.cpp \
-			ecatools_fixdc.h
-ecafixdc_LDADD = $(libecasound_path)
+ecafixdc_SOURCES = ecafixdc.cpp
+ecafixdc_LDADD = $(libecasoundc_path) $(libkvutils_path)
 
-# ecalength.cpp
 ecalength_SOURCES = ecalength.c
 ecalength_LDADD = $(libecasoundc_path)
 
-ecanormalize_SOURCES = ecatools_normalize.cpp \
-	 		     ecatools_normalize.h
-ecanormalize_LDADD = $(libecasound_path)
+ecanormalize_SOURCES = ecanormalize.cpp
+ecanormalize_LDADD = $(libecasoundc_path) $(libkvutils_path)
 
 ecaplay_SOURCES = ecaplay.c
 ecaplay_LDADD = $(libecasoundc_path)
 
-ecasignalview_SOURCES = ecatools_signalview.cpp \
-	 		     ecatools_signalview.h
-ecasignalview_LDADD =  $(libecasound_path) $(termcap_library) $(ncurses_library)
+ecasignalview_SOURCES = ecasignalview.cpp
+ecasignalview_LDADD =  $(libecasoundc_path) $(libkvutils_path) $(termcap_library) $(ncurses_library)
 
 # --
 
@@ -75,6 +68,7 @@ ecalength_debug_LDADD = $(ecalength_LDADD)
 
 ecanormalize_debug_SOURCES = $(ecanormalize_SOURCES)
 ecanormalize_debug_LDADD = $(ecanormalize_LDADD)
+ecanormalize_debug_LDFLAGS = $(ecanormalize_LDFLAGS)
 
 ecaplay_debug_SOURCES = $(ecaplay_SOURCES)
 ecaplay_debug_LDADD = $(ecaplay_LDADD)

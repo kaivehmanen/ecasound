@@ -112,6 +112,13 @@ static void add_track_to_chainsetup(eci_handle_t eci, const char* nexttrack)
   assert(tmpbuf != NULL);
   snprintf(tmpbuf, 8 + strlen(nexttrack), "ai-add %s", nexttrack);
   eci_command_r(eci, tmpbuf);
+
+  /* check that add succeeded */
+  eci_command_r(eci, "ai-list");
+  if (eci_last_string_list_count_r(eci) != 1) {
+    fprintf(stderr, "(ecaplay) Warning! Failed to add input '%s'.\n", nexttrack);
+  }
+
   free(tmpbuf);
 }
 
@@ -126,14 +133,28 @@ static void set_track_to_chainsetup(eci_handle_t* eci, const char* nexttrack)
   }
 
   eci_command_r(*eci, "cs-add ecaplay_chainsetup");
+  /* check that add succeeded */
+  eci_command_r(*eci, "cs-list");
+  if (eci_last_string_list_count_r(*eci) != 2) {
+    fprintf(stderr, "(ecaplay) Warning! Failed to add a new chainsetup.\n");
+  }
+
+  /* as this is a new chainsetup, we can assume that 
+   * adding chains succeeds */
   eci_command_r(*eci, "c-add ecaplay_chain");
   
   add_track_to_chainsetup(*eci, nexttrack);
 
-  /* FIXME: add support for fetcing input audio format */
+  /* FIXME: add support for fetcing input audio format, see ecanormalize.cpp */
 
   if (ecaplay_output == NULL) {
     eci_command_r(*eci, "ao-add-default");
+
+    /* check that add succeeded */
+    eci_command_r(*eci, "ao-list");
+    if (eci_last_string_list_count_r(*eci) != 1) {
+      fprintf(stderr, "(ecaplay) Warning! Failed to add default output.\n");
+    }
   }
   else {
     int len = strlen("ao-add ") + strlen(ecaplay_output) + 1;
@@ -143,13 +164,17 @@ static void set_track_to_chainsetup(eci_handle_t* eci, const char* nexttrack)
     free(tmpbuf);
   }
 
-  /* FIXME: add check for whether cs-connect succeeds or not; 
-   *        then exit() if x consecutive errors */
+  /* FIXME: add detection of consecutive errors */
   eci_command_r(*eci, "cs-connect");
-
-  printf("(ecaplay) Playing file '%s'.\n", nexttrack);
-
-  eci_command_r(*eci, "start");
+  eci_command_r(*eci, "cs-connected");
+  const char* ret = eci_last_string_r(*eci);
+  if (strncmp(ret, "ecaplay_chainsetup", strlen("ecaplay_chainsetup")) != 0) {
+    fprintf(stderr, "(ecaplay) Error while playing file '%s' . Skipping...\n", nexttrack);
+  }
+  else {
+    printf("(ecaplay) Playing file '%s'.\n", nexttrack);
+    eci_command_r(*eci, "start");
+  }
 }
 
 /**

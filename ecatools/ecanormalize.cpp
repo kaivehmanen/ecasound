@@ -19,6 +19,7 @@
 // ------------------------------------------------------------------------
 
 #include <string>
+#include <iostream>
 #include <cstdio>
 #include <signal.h>
 #include <stdlib.h>
@@ -27,34 +28,39 @@
 #include <kvutils/kvu_temporary_file_directory.h>
 #include <kvutils/kvu_numtostr.h>
 
-#include <eca-logger.h>
-#include <eca-error.h>
-#include <eca-control.h>
-#include <eca-engine.h>
-#include <eca-session.h>
-#include <audiofx_analysis.h>
-#include <audiofx_amplitude.h>
-#include <audioio.h>
-#include <eca-version.h>
+#include <eca-control-interface.h>
 
-#include "ecatools_normalize.h"
+/**
+ * Function declarations
+ */
+
+int main(int argc, char *argv[]);
+void print_usage(void);
+void signal_handler(int signum);
+
+/**
+ * Definitions and options 
+ */
 
 using std::cerr;
+using std::cout;
 using std::endl;
+using std::string;
 
-static const string ecatools_normalize_version = "20020717-24";
+/** 
+ * Global variables
+ */
+
+static const string ecatools_normalize_version = "20021028-25";
 static string ecatools_normalize_tempfile;
+
+
+/**
+ * Function definitions
+ */
 
 int main(int argc, char *argv[])
 {
-#ifdef NDEBUG
-  ECA_LOGGER::instance().disable();
-#else
-  ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
-  ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
-  ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
-#endif
-
   struct sigaction es_handler;
   es_handler.sa_handler = signal_handler;
   sigemptyset(&es_handler.sa_mask);
@@ -75,8 +81,6 @@ int main(int argc, char *argv[])
   try {
     string filename;
     double multiplier = 1.0f;
-    EFFECT_VOLUME_BUCKETS* volume = 0;
-    EFFECT_AMPLIFY* amp = 0;
     
     TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
     string tmpdir ("ecatools-");
@@ -92,95 +96,128 @@ int main(int argc, char *argv[])
 
     ecatools_normalize_tempfile = tempfile_dir_rep.create_filename("normalize-tmp", ".wav");
 
-    ECA_SESSION esession;
-    ECA_CONTROL ectrl (&esession);
-    ECA_AUDIO_FORMAT aio_params;
+    ECA_CONTROL_INTERFACE eci;
 
     cline.begin();
     cline.next(); // skip the program name
     while(cline.end() == false) {
       filename = cline.current();
 
-      for(int m = 0;m < 2; m++) {
+      for(int m = 0; m < 2; m++) {
 
-	ectrl.add_chainsetup("default");
-	ectrl.add_chain("default");
+	eci.command("cs-add default");
+	eci.command("c-add default");
 	if (m == 0) {
-	  cerr << "Analyzing file \"" << filename << "\".\n";
-	  ectrl.add_audio_input(filename);
-	  if (ectrl.get_audio_input() == 0) {
-	    cerr << ectrl.last_error() << endl;
+	  cout << "Analyzing file \"" << filename << "\".\n";
+	  eci.command("ai-add " + filename);
+	  eci.command("ai-list");
+	  if (eci.last_string_list().size() == 0) {
+	    cerr << eci.last_error() << endl;
 	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	    break;
 	  }
-	  ectrl.set_default_audio_format_to_selected_input();
-	  aio_params = ectrl.default_audio_format();
-	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
-	  ectrl.add_audio_output(string(ecatools_normalize_tempfile));
-	  if (ectrl.get_audio_output() == 0) {
-	    cerr << ectrl.last_error() << endl;
+
+	  eci.command("ai-get-format");
+	  string format = eci.last_string();
+	  cout << "Using audio format -f:" << format << "\n";
+	  eci.command("cs-set-audio-format " +  format);
+
+	  cout << "Opening temp file \"" << ecatools_normalize_tempfile << "\".\n";
+
+	  eci.command("ao-add " + ecatools_normalize_tempfile);
+	  eci.command("ao-list");
+	  if (eci.last_string_list().size() != 1) {
+	    cerr << eci.last_error() << endl;
 	    cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
 	    break;
 	  }
 
-	  volume = new EFFECT_VOLUME_BUCKETS();
-	  ectrl.add_chain_operator((CHAIN_OPERATOR*)volume);
+	  eci.command("cop-add -ev");
+	  eci.command("cop-list");
+	  if (eci.last_string_list().size() != 1) {
+	    cerr << eci.last_error() << endl;
+	    cerr << "---\nError while adding -ev chainop. Exiting...\n";
+	    break;
+	  }
 	}
 	else {
-	  ectrl.add_audio_input(string(ecatools_normalize_tempfile));
-	  if (ectrl.get_audio_input() == 0) {
-	    cerr << ectrl.last_error() << endl;
+	  eci.command("ai-add " + string(ecatools_normalize_tempfile));
+	  eci.command("ai-list");
+	  if (eci.last_string_list().size() != 1) {
+	    cerr << eci.last_error() << endl;
 	    cerr << "---\nError while processing file " << ecatools_normalize_tempfile << ". Exiting...\n";
-	    break;
+ 	    break;
 	  }
-	  ectrl.set_default_audio_format_to_selected_input();
-	  aio_params = ectrl.default_audio_format();	  
-	  ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
-	  ectrl.add_audio_output(filename);
-	  if (ectrl.get_audio_output() == 0) {
-	    cerr << ectrl.last_error() << endl;
+
+	  eci.command("ai-get-format");
+	  string format = eci.last_string();
+	  cout << "Using audio format -f:" << format << "\n";
+	  eci.command("cs-set-audio-format " +  format);
+
+	  eci.command("ao-add " + filename);
+	  eci.command("ao-list");
+	  if (eci.last_string_list().size() != 1) {
+	    cerr << eci.last_error() << endl;
 	    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	    break;
 	  }
-	  
-	  amp = new EFFECT_AMPLIFY(multiplier * 100.0);
-	  ectrl.add_chain_operator((CHAIN_OPERATOR*)amp);
+
+	  eci.command("cop-add -ea:" + kvu_numtostr(multiplier * 100.0f));
+	  eci.command("cop-list");
+	  if (eci.last_string_list().size() != 1) {
+	    cerr << eci.last_error() << endl;
+	    cerr << "---\nError while adding -ev chainop. Exiting...\n";
+	    break;
+	  }
 	}
-	ectrl.connect_chainsetup();
-	if (ectrl.is_connected() == false) {
-	  cerr << ectrl.last_error() << endl;
+
+	cout << "Starting processing...\n";	
+
+	eci.command("cs-connect");
+	eci.command("cs-connected");
+	if (eci.last_string() != "default") {
+	  cerr << eci.last_error() << endl;
 	  cerr << "---\nError while processing file " << filename << ". Exiting...\n";
 	  break;
 	}
 	else {
 	  // blocks until processing is done
-	  ectrl.run();
+	  eci.command("run");
 	}
 
 	if (m == 0) {
-	  multiplier = volume->max_multiplier();
-	  if (multiplier <= 1.0) {
-	    cerr << "File \"" << filename << "\" is already normalized.\n";
-	    ectrl.disconnect_chainsetup();
-	    ectrl.select_chainsetup("default");
-	    ectrl.remove_chainsetup();
+	  eci.command("cop-select 1");
+	  eci.command("copp-select 2"); /* 2nd param of -ev, first one
+	                                 * sets the mode */
+	  eci.command("copp-get");
+	  multiplier = eci.last_float();
+ 	  if (multiplier <= 1.0) {
+	    cout << "File \"" << filename << "\" is already normalized.\n";
+
+	    eci.command("cs-disconnect");
+	    eci.command("cs-select default");
+	    eci.command("cs-remove");
 	    break;
 	  }
 	  else {
-	    cerr << "Normalizing file \"" << filename << "\" (amp-%: ";
-	    cerr << multiplier * 100.0 << ").\n";
+	    cout << "Normalizing file \"" << filename << "\" (amp-%: ";
+	    cout << multiplier * 100.0 << ").\n";
 	  }
 	}
-	ectrl.disconnect_chainsetup();
-	ectrl.select_chainsetup("default");
-	ectrl.remove_chainsetup();
+
+	cout << "Processing finished.\n";
+
+	eci.command("cs-disconnect");
+	eci.command("cs-select default");
+	eci.command("cs-remove");
       }
+
+      cout << "Removing temp file \"" << ecatools_normalize_tempfile << "\".\n";
+
       remove(ecatools_normalize_tempfile.c_str());
+
       cline.next();
     }
-  }
-  catch(ECA_ERROR& e) {
-    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
   }
   catch(...) {
     cerr << "\nCaught an unknown exception.\n";
@@ -188,18 +225,18 @@ int main(int argc, char *argv[])
   return(0);
 }
 
-void print_usage(void) {
+void print_usage(void) 
+{
   cerr << "****************************************************************************\n";
-  cerr << "* [1mecatools_normalize, v" << ecatools_normalize_version;
-  cerr << " (linked to ecasound v" << ecasound_library_version 
-       << ")\n";
-  cerr << "* (C) 1997-2000 Kai Vehmanen, released under GPL licence[0m \n";
+  cerr << "* [1mecanormalize, v" << ecatools_normalize_version << "\n";
+  cerr << "* (C) 1997-2002 Kai Vehmanen, released under the GPL license[0m \n";
   cerr << "****************************************************************************\n";
 
-  cerr << "\nUSAGE: ecatools_normalize file1 [ file2, ... fileN ]\n\n";
+  cerr << "\nUSAGE: ecanormalize file1 [ file2, ... fileN ]\n\n";
 }
 
-void signal_handler(int signum) {
+void signal_handler(int signum)
+{
   cerr << "Unexpected interrupt... cleaning up.\n";
   remove(ecatools_normalize_tempfile.c_str());
   exit(1);

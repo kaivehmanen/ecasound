@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// ecatools-signalview.cpp: A simple command-line tools for monitoring
-//                          signal amplitude.
+// ecasignalview.cpp: A simple command-line tools for monitoring
+//                    signal amplitude.
 // Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -22,27 +22,20 @@
 #include <config.h>
 #endif
 
-#include <cmath>
-#include <cstdio>
+#include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
+#include <cstdio>
 
 #include <signal.h>
+#include <unistd.h>
 
 #include <kvutils/kvu_com_line.h>
 #include <kvutils/kvu_utils.h>
 #include <kvutils/kvu_numtostr.h>
 
-#include <eca-logger.h>
-#include <eca-error.h>
-#include <eca-control.h>
-#include <eca-engine.h>
-#include <eca-resources.h>
-#include <eca-session.h>
-#include <audiofx_analysis.h>
-#include <audiofx_amplitude.h>
-#include <audioio.h>
-#include <eca-version.h>
+#include <eca-control-interface.h>
 
 #if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
 #ifdef ECA_HAVE_NCURSES_CURSES_H
@@ -54,13 +47,44 @@
 #endif
 #endif
 
-#include "ecatools_signalview.h"
+/**
+ * Import namespaces 
+ */
+
+using namespace std;
+
+/**
+ * Type definitions
+ */
+
+struct ecasv_channel_stats {
+  double last_peak;
+  double drawn_peak;
+  double max_peak;
+  long int clipped_samples;
+};
+
+/**
+ * Function declarations
+ */
+
+int main(int argc, char *argv[]);
+void ecasv_parse_command_line(int argc, char *argv[]);
+void ecasv_fill_defaults(void);
+std::string ecasv_cop_to_string(ECA_CONTROL_INTERFACE* cop);
+void ecasv_output_init(void);
+void ecasv_output_cleanup(void);
+void ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci, std::vector<struct ecasv_channel_stats>* chstats);
+void ecasv_update_chstats(std::vector<struct ecasv_channel_stats>* chstats, int ch, double value);
+void ecasv_create_bar(double value, int barlen, unsigned char* barbuf);
+void ecasv_print_usage(void);
+void ecasv_signal_handler(int signum);
 
 /**
  * Static global variables
  */
 
-static const string ecatools_signalview_version = "20020717-4";
+static const string ecatools_signalview_version = "20021028-5";
 static const double ecasv_clipped_threshold_const = 1.0f - 1.0f / 16384.0f;
 static const int ecasv_bar_length_const = 32;
 static const int ecasv_header_height_const = 10;
@@ -71,14 +95,9 @@ static unsigned char ecasv_bar_buffer[ecasv_bar_length_const + 1] = { 0 };
 static bool ecasv_enable_debug, ecasv_enable_cumulative_mode;
 static long int ecasv_buffersize, ecasv_rate_msec;
 static string ecasv_input, ecasv_output, ecasv_format_string;
+static int ecasv_chcount = 0;
 
-static EFFECT_VOLUME_BUCKETS* ecasv_volbuckets_repp = 0;
-
-/**
- * Import namespaces 
- */
-
-using namespace std;
+static ECA_CONTROL_INTERFACE* ecasv_eci_repp = 0;
 
 /**
  * Function definitions
@@ -98,87 +117,78 @@ int main(int argc, char *argv[])
 
   ecasv_parse_command_line(argc,argv);
 
-  if (ecasv_enable_debug) {
-    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
-    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
-    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
+  ECA_CONTROL_INTERFACE eci;
+
+  eci.command("cs-add default");
+  eci.command("c-add default");
+  eci.command("cs-set-param -b:" + kvu_numtostr(ecasv_buffersize));
+
+  if (ecasv_format_string.size() > 0) {
+    eci.command("cs-set-audio-format " + ecasv_format_string);
   }
-  else {
-    ECA_LOGGER::instance().disable();
+
+  eci.command("ai-add " + ecasv_input);
+  eci.command("ai-list");
+  if (eci.last_string_list().size() == 0) {
+    cerr << eci.last_error() << endl;
+    cerr << "---\nError while opening input " << ecasv_input << ". Exiting...\n";
+    return -1;
+  }  
+
+  eci.command("ai-get-format");
+  string format = eci.last_string();
+  cout << "Using audio format -f:" << format << "\n";
+  std::vector<std::string> tokens = kvu_string_to_vector(format, ',');
+  assert(tokens.size() >= 3);
+  ecasv_chcount = atoi(tokens[1].c_str());
+  cout << "Setting up " << ecasv_chcount << " separate channels for analysis." << endl;
+  
+  eci.command("ao-add " + ecasv_output);
+  eci.command("ao-list");
+  if (eci.last_string_list().size() == 0) {
+    cerr << eci.last_error() << endl;
+    cerr << "---\nError while opening output " << ecasv_input << ". Exiting...\n";
+    return -1;
+  }  
+  
+  ecasv_eci_repp = &eci;
+
+  vector<struct ecasv_channel_stats> chstats;
+
+  eci.command("cop-add -evp");
+  eci.command("cop-add -ev");
+  if (ecasv_enable_cumulative_mode == true) {
+    eci.command("cop-set 2,1,1");
   }
 
-  try {
-    ECA_SESSION esession;
-    ECA_CONTROL ectrl (&esession);
-    // ectrl.toggle_interactive_mode(true);
-    ECA_AUDIO_FORMAT aio_params;
-    ectrl.add_chainsetup("default");
-    ectrl.add_chain("default");
-    ectrl.set_chainsetup_buffersize(ecasv_buffersize);
-    if (ecasv_format_string.size() > 0) {
-      ectrl.set_chainsetup_parameter(ecasv_format_string);
-    }
-    ectrl.add_audio_input(ecasv_input);
-    if (ectrl.get_audio_input() == 0) {
-      cerr << ectrl.last_error() << endl;
-      cerr << "---\nError while opening \"" << ecasv_input << "\". Exiting...\n";
-      exit(0);
-    }
-    if (ecasv_format_string.size() == 0) {
-      ectrl.set_default_audio_format_to_selected_input();
-      aio_params = ectrl.default_audio_format();
-      ectrl.set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
-    }
-    ectrl.add_audio_output(ecasv_output);
-    if (ectrl.get_audio_output() == 0) {
-      cerr << ectrl.last_error() << endl;
-      cerr << "---\nError while opening \"" << ecasv_output << "\". Exiting...\n";
-      exit(0);
-    }
-    
-    EFFECT_VOLUME_BUCKETS volbuckets;
-    ecasv_volbuckets_repp = &volbuckets;
-    EFFECT_VOLUME_PEAK volpeaks;
+  eci.command("cop-select 1");
 
-    vector<struct ecasv_channel_stats> chstats;
-
-    if (ecasv_enable_cumulative_mode == true)
-      volbuckets.set_parameter(1, 1);
-
-    ectrl.add_chain_operator((CHAIN_OPERATOR*)&volpeaks);
-    ectrl.add_chain_operator((CHAIN_OPERATOR*)&volbuckets);
-
-    ectrl.connect_chainsetup();
-    if (ectrl.is_connected() == false) {
-      cerr << ectrl.last_error() << endl;
-      cerr << "---\nError while connecting chainsetup.\n";
-      exit(0);
-
-    }
-
-    int secs = 0, msecs = ecasv_rate_msec;
-    while(msecs > 999) {
-      ++secs;
-      msecs -= 1000;
-    }
-
-    ecasv_output_init(&volpeaks);
-
-    ectrl.start();
-    while(true) {
-      kvu_sleep(secs, msecs * 1000000);
-      ecasv_print_vu_meters(&volpeaks, &chstats);
-    }
-    ecasv_output_cleanup();
-
+  eci.command("cs-connect");
+  eci.command("cs-connected");
+  if (eci.last_string() != "default") {
+    cerr << eci.last_error() << endl;
+    cerr << "---\nUnable to start processing. Exiting...\n";
+    return -1;
   }
-  catch(ECA_ERROR& e) {
-    cerr << "---\nERROR: [" << e.error_section() << "] : \"" << e.error_message() << "\"\n\n";
+
+  int secs = 0, msecs = ecasv_rate_msec;
+  while(msecs > 999) {
+    ++secs;
+    msecs -= 1000;
   }
-  catch(...) {
-    cerr << "\nCaught an unknown exception.\n";
+
+  ecasv_output_init();
+
+  eci.command("start");
+
+  while(true) {
+    kvu_sleep(secs, msecs * 1000000);
+    ecasv_print_vu_meters(&eci, &chstats);
   }
-  return(0);
+
+  ecasv_output_cleanup();
+  
+  return 0;
 }
 
 void ecasv_parse_command_line(int argc, char *argv[])
@@ -229,31 +239,24 @@ void ecasv_parse_command_line(int argc, char *argv[])
 
 void ecasv_fill_defaults(void)
 {
-  ECA_RESOURCES ecarc;
+  // ECA_RESOURCES ecarc;
 
   if (ecasv_input.size() == 0) ecasv_input = "/dev/dsp";
   if (ecasv_output.size() == 0) ecasv_output = "null";
   if (ecasv_buffersize == 0) ecasv_buffersize = ecasv_buffersize_default_const;
   if (ecasv_rate_msec == 0) ecasv_rate_msec = ecasv_rate_default_const;
-  if (ecasv_format_string.size() == 0) ecasv_format_string = ecarc.resource("default-audio-format");
+  if (ecasv_format_string.size() == 0) ecasv_format_string = "s16_le,2,44100,i";
+
+  // ecarc.resource("default-audio-format");
 }
 
-string ecasv_cop_to_string(CHAIN_OPERATOR* cop)
+string ecasv_cop_to_string(ECA_CONTROL_INTERFACE* eci)
 {
-  string msg;
-  msg = "\t" +	cop->name();
-  for(int n = 0; n < cop->number_of_params(); n++) {
-    if (n == 0) msg + ": ";
-    msg += "[" + kvu_numtostr(n + 1) + "] ";
-    msg += cop->get_parameter_name(n + 1);
-    msg += " ";
-    msg += kvu_numtostr(cop->get_parameter(n + 1));
-    if (n + 1 < cop->number_of_params()) msg +=  ", ";
-  }
-  return(msg);
+  eci->command("cop-status");
+  return(eci->last_string());
 }
 
-void ecasv_output_init(EFFECT_VOLUME_PEAK* cop)
+void ecasv_output_init(void)
 {
 #if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
     initscr();
@@ -283,16 +286,23 @@ void ecasv_output_cleanup(void)
 #if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
     endwin();
 #endif
-    if (ecasv_volbuckets_repp != 0) {
-      cout << endl << endl << endl << ecasv_volbuckets_repp->status();
+
+    // FIXME: should be enabled
+#if 0    
+    if (ecasv_eci_repp != 0) {
+      cout << endl << endl << endl;
+      ecasv_eci_repp->command("cop-status");
     }
+#endif
 }
 
-void ecasv_print_vu_meters(EFFECT_VOLUME_PEAK* cop, vector<struct ecasv_channel_stats>* chstats)
+void ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci, vector<struct ecasv_channel_stats>* chstats)
 {
 #if defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP
-  for(int n = 0; n < cop->channels(); n++) {
-    EFFECT_VOLUME_PEAK::parameter_t value = cop->get_parameter(n + 1);
+  for(int n = 0; n < ecasv_chcount; n++) {
+    eci->command("copp-select " + kvu_numtostr(n + 1));
+    eci->command("copp-get");
+    double value = eci->last_float();
 
     ecasv_update_chstats(chstats, n, value);
 
@@ -300,10 +310,10 @@ void ecasv_print_vu_meters(EFFECT_VOLUME_PEAK* cop, vector<struct ecasv_channel_
     mvprintw(ecasv_header_height_const+n, 0, "Ch-%d: %s| %.5f       %ld\n", 
 	     n + 1, ecasv_bar_buffer, (*chstats)[n].max_peak, (*chstats)[n].clipped_samples);
   }
-  move(ecasv_header_height_const + 2 + cop->channels(), 0);
+  move(ecasv_header_height_const + 2 + ecasv_chcount, 0);
   refresh();
 #else
-  cout << ecasv_cop_to_string(cop) << endl;
+  cout << ecasv_cop_to_string(eci) << endl;
 #endif
 }
 
@@ -348,8 +358,7 @@ void ecasv_create_bar(double value, int barlen, unsigned char* barbuf)
 void ecasv_print_usage(void)
 {
   cerr << "****************************************************************************\n";
-  cerr << "* ecasignalview, v" << ecatools_signalview_version;
-  cerr << " (linked to ecasound v" << ecasound_library_version << ")\n";
+  cerr << "* ecasignalview, v" << ecatools_signalview_version << "\n";
   cerr << "* (C) 1999-2002 Kai Vehmanen, released under GPL licence\n";
   cerr << "****************************************************************************\n";
 
