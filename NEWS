@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 101203) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 181203) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,6 +14,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 xx012003 (v2.3.3)  -** stable release **-
+	- changed: lots of typo fixes and other corrections to 
+	           the user's guide [ericdr]
 	- fixed: building against libsndfile-1.0.4 and older; if 
 		 libsndfile older than 1.0.0 is detected, sndfile 
 		 support is disabled altogether
