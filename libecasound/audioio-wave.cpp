@@ -382,12 +382,7 @@ void WAVEFILE::write_riff_fmt(void)
   riff_format_rep.srate = little_endian_uint32(samples_per_second());
   riff_format_rep.byte_second = little_endian_uint32(bytes_per_second());
   riff_format_rep.align = little_endian_uint16(frame_size());
-  if (sample_format() == sfmt_f32 ||
-      sample_format() == sfmt_f32_le ||
-      sample_format() == sfmt_f32_be ||
-      sample_format() == sfmt_f64 ||
-      sample_format() == sfmt_f64_le ||
-      sample_format() == sfmt_f64_be) {
+  if (sample_coding() == ECA_AUDIO_FORMAT::sc_float) {
     // WAVE_FORMAT_IEEE_FLOAT 0x0003 (Microsoft IEEE754 range [-1, +1))
     riff_format_rep.format = little_endian_uint16(3);
   }

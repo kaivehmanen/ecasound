@@ -51,6 +51,18 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
     sfmt_f64_be
   };    
 
+  enum Sample_endianess {
+    se_native,
+    se_big,
+    se_little
+  };
+
+  enum Sample_coding {
+    sc_signed,
+    sc_unsigned,
+    sc_float
+  };
+
   /*@}*/
 
  public:
@@ -89,7 +101,17 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
   /**
    * Returns sample format specification. See @ref Sample_format
    */
-  Sample_format sample_format(void) const { return(sfmt_rep); }
+  Sample_format sample_format(void) const;
+
+  /**
+   * Returns sample coding. See @ref Sample_coding
+   */
+  Sample_coding sample_coding(void) const { return(sc_rep); }
+
+  /**
+   * Returns sample endianess. See @ref Sample_endianess
+   */
+  Sample_endianess sample_endianess(void) const { return(se_rep); }
 
   /**
    * Returns sampling rate in bytes per second (data transfer 
@@ -149,16 +171,29 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
    */
   void set_sample_format_string(const std::string& f_str) throw(ECA_ERROR&);
 
+  /**
+   * Sets the sample endianess to big endian.
+   */
+  void set_sample_coding(Sample_coding v);
+
+  /**
+   * Sets the sample endianess to big endian.
+   */
+  void set_sample_endianess(Sample_endianess v);
+
   /*@}*/
 
  private:
 
-  void convert_to_host_byte_order(void);
+  Sample_format string_to_sample_format(const std::string& str) const throw(ECA_ERROR&);
+  void update_sample_endianess(Sample_endianess v);
 
   bool ileaved_rep;
   SAMPLE_SPECS::channel_t channels_rep;
   size_t align_rep;            // the size of one sample value in bytes
   Sample_format sfmt_rep;
+  Sample_coding sc_rep;
+  Sample_endianess se_rep;
 };
 
 #endif

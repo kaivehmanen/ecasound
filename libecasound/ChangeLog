@@ -1,3 +1,10 @@
+2004-07-09  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* eca-audio-format.h (Sample_endianess, set_sample_endianess, sample_endianess): Added.
+	* eca-audio-format.h (Sample_coding, set_sample_coding, sample_coding): Added.
+	* audioio-forked-stream.h (fork_command): Added.
+        * library interface version to 13:0:4
+
 2004-05-05  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
         * library interface version 12 frozen
