@@ -685,6 +685,11 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_parameter(const string& name) {
   // --------
 
   selected_chainsetup_repp->interpret_global_option(name);
+  if (selected_chainsetup_repp->interpret_result() != true) {
+    /* for instance -f:xxx options are handle by 
+     * object-specific parsing */
+    selected_chainsetup_repp->interpret_object_option(name);
+  }
 }
 
 /**
