@@ -1,21 +1,10 @@
-mailto(observer@colba.net)
-
-htmlcommand(
-<insert file=../es-makrot.txt>
-<insert name=ecasound_indexbar>
-
-<p>
-<hr>
-<center><h2> ecasound documentation - manual pages </h2></center>
-</p>
-)
+mailto(observer .at. colba .dot. net)
 
 manpage(ecalength)
        (1)
        (18.04.2004)
        ()
        (Multimedia software)
-
 
 manpagename(ecalength)(prints audio file lenght and other information)
 
@@ -84,5 +73,3 @@ manpageseealso()
 manpageauthor()
 
 S.Massy, <email(observer |at| colba.net)>
-
-htmlcommand(<insert name="ecasound_tail" />)

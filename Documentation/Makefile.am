@@ -37,6 +37,7 @@ DISTFILES = 	Makefile.am \
 	    	examples.html \
 		manpages.html \
 		tutorials.html \
+		style_ecasound.css \
 		edi-list.txt
 
 # ---------------------------------------------------------------------

@@ -1,0 +1,6 @@
+body { background-color: #ffffff }
+a { color: #662a00 }
+a:visited {color: #666655 }
+p.desc { text-align: center; margin-left: 3cm; margin-right: 3cm }
+p.index { text-align: center; font-weight: bold }
+p.mirrors { text-align: center; font-variant: small-caps}

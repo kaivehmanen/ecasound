@@ -1,15 +1,5 @@
 mailto(kvehmanen -at- eca -dot- cx)
 
-htmlcommand(
-<insert file="../es-makrot.txt" />
-<insert name="ecasound_indexbar" />
-
-<p>
-<hr>
-<center><h2> ecasound documentation - manual pages </h2></center>
-</p>
-)
-
 manpage(ecasound)
        (1)
        (10.10.2004)
@@ -820,5 +810,3 @@ manpagebugs()
 manpageauthor()
 
 	Kai Vehmanen, <email(kvehmanen -at- eca -dot- cx)>
-
-htmlcommand(<insert name="ecasound_tail" />)
