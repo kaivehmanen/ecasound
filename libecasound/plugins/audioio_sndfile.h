@@ -23,8 +23,9 @@ class SNDFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   long samples_read;
   bool finished_rep;
 
-  SNDFILE_INTERFACE& operator=(const SNDFILE_INTERFACE& x) {
-    return *this; }
+  void open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::SETUP_ERROR&);
+
+  SNDFILE_INTERFACE& operator=(const SNDFILE_INTERFACE& x) { return *this; }
   
  public:
 

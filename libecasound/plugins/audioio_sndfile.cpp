@@ -36,7 +36,7 @@
 
 #ifdef ECA_ENABLE_AUDIOIO_PLUGINS
 static const char* audio_io_keyword_const = "sndfile";
-static const char* audio_io_keyword_regex_const = "(^sndfile$)|(w64$)|(vox$)|(paf$)|(iff$)|(nist$)|($mat[45])|(nist$)|(xi$)|(htk$)";
+static const char* audio_io_keyword_regex_const = "(^sndfile$)|(w64$)";
 
 const char* audio_io_keyword(void){return(audio_io_keyword_const); }
 const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
@@ -68,6 +68,39 @@ SNDFILE_INTERFACE* SNDFILE_INTERFACE::clone(void) const
   return(target);
 }
 
+/**
+ * Parses the information given in 'sfinfo'. 
+ */ 
+void SNDFILE_INTERFACE::open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::SETUP_ERROR&)
+{
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-sndfile) audio file format: " + kvu_numtostr(sfinfo->format)); 
+
+  string format;
+
+  set_samples_per_second(static_cast<long int>(sfinfo->samplerate));
+  set_channels(sfinfo->channels);
+
+  switch(sfinfo->format & SF_FORMAT_SUBMASK) 
+    {
+    case SF_FORMAT_PCM_S8: { format = "s8"; break; }
+    case SF_FORMAT_PCM_U8: { format = "u8"; break; }
+    case SF_FORMAT_PCM_16: { format = "s16"; break; }
+    case SF_FORMAT_PCM_24: { format = "s24"; break; }
+    case SF_FORMAT_PCM_32: { format = "s32"; break; }
+    case SF_FORMAT_FLOAT: { format = "f32"; break; }
+      // FIXME: add missing SF_FORMAT_* SUBTYPES fields
+    default: { throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Unknown sample format.")); }
+    }
+  
+  if (sfinfo->format & SF_ENDIAN_LITTLE) 
+    format += "_le";
+  else if (sfinfo->format & SF_ENDIAN_BIG) 
+    format += "_be";
+  
+  set_sample_format_string(format);
+  set_length_in_samples(sfinfo->frames);
+}
+
 void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   AUDIO_IO::open();
@@ -85,32 +118,10 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
       snd_repp = sf_open(real_filename.c_str(), SFM_READ, &sfinfo);
       if (snd_repp == NULL) {
 	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
-			  + "\" using libsndfile."));
+			  + "\" for reading."));
       }
       else {
-	ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-sndfile) format: " + kvu_numtostr(sfinfo.format)); 
-	set_samples_per_second((long int)sfinfo.samplerate);
-	set_channels(sfinfo.channels);
-	string format;
-	switch(sfinfo.format & SF_FORMAT_SUBMASK) 
-	  {
-	  case SF_FORMAT_PCM_S8: { format = "s8"; break; }
-	  case SF_FORMAT_PCM_U8: { format = "u8"; break; }
-	  case SF_FORMAT_PCM_16: { format = "s16"; break; }
-	  case SF_FORMAT_PCM_24: { format = "s24"; break; }
-	  case SF_FORMAT_PCM_32: { format = "s32"; break; }
-	  case SF_FORMAT_FLOAT: { format = "f32"; break; }
-	    // FIXME: add missing SF_FORMAT_* SUBTYPES fields
-	  default: { throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Unknown sample format.")); }
-	  }
-	
-	if (sfinfo.format & SF_ENDIAN_LITTLE) 
-	  format += "_le";
-	else if (sfinfo.format & SF_ENDIAN_BIG) 
-	  format += "_be";
-	
-	set_sample_format_string(format);
-	set_length_in_samples(sfinfo.frames);
+	open_parse_info(&sfinfo);
       }
       break;
     }
@@ -118,53 +129,62 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     {
       ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Using libsndfile to open file \"" +
 		    real_filename + "\" for writing.");
-#if 0
-      AFfilesetup fsetup;
-      fsetup = afNewFileSetup();
 
       int file_format = -1;
       string teksti = real_filename;
       kvu_to_lowercase(teksti);
 
-      if (strstr(teksti.c_str(),".aiffc") != 0) { file_format = AF_FILE_AIFFC; }
-      else if (strstr(teksti.c_str(),".aifc") != 0) { file_format = AF_FILE_AIFFC; }
-      else if (strstr(teksti.c_str(),".aiff") != 0) { file_format = AF_FILE_AIFF; }
-      else if (strstr(teksti.c_str(),".aif") != 0) { file_format = AF_FILE_AIFF; }
-      else if (strstr(teksti.c_str(),".au") != 0) { file_format = AF_FILE_NEXTSND; }
-      else if (strstr(teksti.c_str(),".snd") != 0) { file_format = AF_FILE_NEXTSND; }
+      if (strstr(teksti.c_str(),".w64") != 0) { file_format = SF_FORMAT_W64; }
+      else if (strstr(teksti.c_str(),".voc") != 0) { file_format = SF_FORMAT_VOC; }
+      else if (strstr(teksti.c_str(),".wav") != 0) { file_format = SF_FORMAT_WAV; }
+      else if (strstr(teksti.c_str(),".aiff") != 0) { file_format = SF_FORMAT_AIFF; }
       else {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-af) Warning! Unknown audio format, using raw format instead.");
-	file_format = AF_FILE_RAWDATA;
-      }
-      ::afInitFileFormat(fsetup, file_format);
-      ::afInitChannels(fsetup, AF_DEFAULT_TRACK, channels());
-
-      if (format_string()[0] == 'u')
-	::afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_UNSIGNED, bits());
-      else if (format_string()[0] == 's')
-	::afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, bits());
-      else if (format_string()[0] == 'f') {
-	if (bits() == 32) 
-	  ::afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_FLOAT, bits());
-	else
-	  ::afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_DOUBLE, bits());
+	ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Warning! Unknown audio format, using raw format instead.");
+	file_format = SF_FORMAT_RAW;
       }
 
-      ::afInitRate(fsetup, AF_DEFAULT_TRACK, static_cast<double>(samples_per_second()));
+      if (format_string()[0] == 'u' && bits() == 8)
+	file_format |= SF_FORMAT_PCM_S8;
+      else if (format_string()[0] == 's') {
+	if (bits() == 8) { file_format |= SF_FORMAT_PCM_S8; }
+	else if (bits() == 16) { file_format |= SF_FORMAT_PCM_16; }
+	else if (bits() == 24) { file_format |= SF_FORMAT_PCM_24; }
+	else if (bits() == 32) { file_format |= SF_FORMAT_PCM_32; }
+	else { file_format = 0; }
+      }
+      else { file_format = 0; }
 
-      afhandle = ::afOpenFile(real_filename.c_str(), "w", fsetup);
-      if (afhandle == AF_NULL_FILEHANDLE) 
+      if (file_format == 0) {
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Error! Unknown audio format requested."));
+      }
+
+      // FIXME: set endianess
+
+      /* set samplerate and channels */
+      sfinfo.samplerate = samples_per_second();
+      sfinfo.channels = channels();
+      sfinfo.format = file_format;
+
+      /* open the file */
+      snd_repp = sf_open(real_filename.c_str(), SFM_RDWR, &sfinfo);
+      if (snd_repp == NULL) {
 	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
-			  + "\" using libaudiofile."));
-#endif
-      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Output-mode not yet supported."));
+			  + "\" for writing."));
+      }
       break;
-
     }
   
   case io_readwrite:
     {
-      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Simultaneous intput/output not yet supported."));
+      snd_repp = sf_open(real_filename.c_str(), SFM_RDWR, &sfinfo);
+      if (snd_repp == NULL) {
+	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
+			  + "\" for updating (read/write)."));
+      }
+      else {
+	open_parse_info(&sfinfo);
+      }
+      break;
     }
   }
 }
