@@ -127,6 +127,7 @@ ecasound_general_include = 	\
 			eca-control-objects.h \
 			eca-control-dump.h \
 			eca-iamode-parser.h \
+			eca-control-interface.h \
 			osc-gen.h \
 			midi-cc.h \
 			eca-audio-position.h \
@@ -221,6 +222,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-control-objects.cpp \
 			eca-control-dump.cpp \
 			eca-iamode-parser.cpp \
+			eca-control-interface.cpp \
 			eca-chainsetup-position.cpp \
 			eca-audio-position.cpp \
 			eca-audio-objects.cpp \

@@ -135,7 +135,7 @@ void MP3FILE::get_mp3_params(const string& fname) throw(SETUP_ERROR&) {
   Layer newlayer;
 
   if (newlayer.get(fname.c_str()) != true) {
-    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-CDR: Can't open " + label() + " for reading."));
+    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-MP3: Can't open " + label() + " for reading."));
   }
 
   struct stat buf;

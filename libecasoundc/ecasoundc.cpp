@@ -21,14 +21,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <eca-control.h>
+#include <eca-control-interface.h>
 #include <eca-debug.h>
+#include <eca-error.h>
 #include "ecasoundc.h"
 
 static struct ecac_control_internals {
-  ECA_SESSION* session;
-  ECA_CONTROL* ctrl;
-} ecac_rep = { 0, 0 };
+  ECA_CONTROL_INTERFACE* eci;
+} ecac_rep = { 0 };
 
 static int ecac_error_rep;
 static string ecac_error_string_rep;
@@ -40,17 +40,14 @@ static string ecac_error_string_rep;
  */
 void ecac_init(void) {
   cerr << "(ecasoundc) ecac_init" << endl;
-  if (ecac_rep.ctrl != 0)
-    delete ecac_rep.ctrl;
-  if (ecac_rep.session != 0)
-    delete ecac_rep.session;
+  if (ecac_rep.eci != 0)
+    delete ecac_rep.eci;
 
   ecadebug->set_debug_level(ECA_DEBUG::info |
 			    ECA_DEBUG::module_flow);
 
-  if (ecac_rep.ctrl == 0) {
-    ecac_rep.session = new ECA_SESSION();
-    ecac_rep.ctrl = new ECA_CONTROL (ecac_rep.session);
+  if (ecac_rep.eci == 0) {
+    ecac_rep.eci = new ECA_CONTROL_INTERFACE();
   }
 }
 
@@ -59,10 +56,8 @@ void ecac_init(void) {
  */
 void ecac_cleanup(void) {
   cerr << "(ecasoundc) ecac_cleanup" << endl;
-  if (ecac_rep.ctrl != 0)
-    delete ecac_rep.ctrl;
-  if (ecac_rep.session != 0)
-    delete ecac_rep.session;
+  if (ecac_rep.eci != 0)
+    delete ecac_rep.eci;
 }
 
 /**
@@ -73,7 +68,7 @@ void ecac_command(const char* command) {
   cerr << "(ecasoundc) ecac_command" << endl;
   try {
     ecac_error_rep = 0;
-    ecac_rep.ctrl->command(command);
+    ecac_rep.eci->command(command);
   }
   catch(ECA_ERROR& e) {
     ecac_error_rep = 1;
