@@ -191,6 +191,8 @@ char* ecasound_command_generator (char* text, int state)
 
 #else
 
+ECA_CURSES::ECA_CURSES(void) {}
+ECA_CURSES::~ECA_CURSES(void) {}
 void ECA_CURSES::print(const std::string& msg) {}
 void ECA_CURSES::print_banner(void) {}
 void ECA_CURSES::read_command(const string& promp) {}
