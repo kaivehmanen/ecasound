@@ -17,6 +17,7 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.3 *-
 
+??122001 (v2.1dev6)
 05122001 (v2.1dev5)
 	- added: docs - Documentation/manpages.html
 	- added: ecalength - -su option added [smassy]
