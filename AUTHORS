@@ -31,7 +31,7 @@ Campbell, Ross [rcampbel]
 Carmack, Michael [karmak]
 	Tips concerning Solaris.
 Chappell, Jesse [jesse]
-	Bug fixes.
+	Improvements to libsndfile support, various bugfixes.
 Claassen, Julien [julien]
 	Ideas for interface development, marketing work.
 Coker, Rob  [rcs]

@@ -1,6 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio_sndfile.cpp: Interface to the sndfile library.
-// Copyright (C) 2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2003-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2004 Jesse Chappell (jesse@essej.net)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -126,7 +127,19 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     real_filename = opt_filename_rep;
   }
 
-  if (io_mode() == io_read) {
+  string teksti = real_filename;
+  if (!opt_format_rep.empty()) {
+    teksti = opt_format_rep;
+  }
+  kvu_to_lowercase(teksti);
+
+  // need to treat raw specially for read-only opening
+  bool is_raw = false;
+  if (strstr(teksti.c_str(),".raw") != 0) {
+	  is_raw = true;
+  }
+  
+  if (io_mode() == io_read && !is_raw) {
     ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Using libsndfile to open file \"" +
 		real_filename + "\" for reading.");
 
@@ -144,11 +157,6 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     /* write or readwrite */
 
     int file_format = -1;
-    string teksti = real_filename;
-    if (!opt_format_rep.empty()) {
-      teksti = opt_format_rep;
-    }
-    kvu_to_lowercase(teksti);
 
     // FIXME: add support for more output types
     
@@ -197,7 +205,13 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
       throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Error! Unknown audio format requested."));
     }
 
-    // FIXME: set endianess
+    // set endianess
+    if (sample_endianess() == se_little) {
+      file_format |= SF_ENDIAN_LITTLE;
+    }
+    else if (sample_endianess() == se_big) {
+      file_format |= SF_ENDIAN_BIG;
+    }
 
     /* set samplerate and channels */
     sfinfo.samplerate = samples_per_second();
@@ -213,6 +227,20 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
       if (snd_repp == NULL) {
 	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
 			  + "\" for writing."));
+      }
+    }
+    else if (io_mode() == io_read) {
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Using libsndfile to open file \"" +
+		real_filename + "\" for reading.");
+
+
+      snd_repp = sf_open(real_filename.c_str(), SFM_READ, &sfinfo);
+      if (snd_repp == NULL) {
+        throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
+			+ "\" for reading."));
+      }
+      else {
+        open_parse_info(&sfinfo);
       }
     }
     else {
