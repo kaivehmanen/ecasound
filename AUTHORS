@@ -115,9 +115,11 @@ Code from other Projects
 =========================
 
 Davis Paul
-	pthread_mutex_spinlock() from libpbd
+	pthread_mutex_spinlock() from libpbd.
 Dyson, John S.
 	The original advanced compressor (-eca) code.
+Harris, Steve and Tim Blechmann
+	Denormal handling code from swh-plugins package.
 Laydier, Antoine [SMF]
 	Mp3 header parsing (layer.cpp).
 
