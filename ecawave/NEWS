@@ -24,6 +24,8 @@ Last officially released version is -*> v0.1.0r1 <*-
 	- changed: many internal updates - ecasound version 1.7.x is
 	           now required to run ecawave
 	- fixed: numerous bugs
+	- fixed: autoconf macro AC_C_CONST caused compile problems
+		 with gcc 2.95.2 and libstdc++-v3
 28012000 (v0.1.0r1)  -** public release **-
 	- notice: initial release
 	

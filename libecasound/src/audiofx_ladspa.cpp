@@ -56,6 +56,16 @@ EFFECT_LADSPA::~EFFECT_LADSPA (void) {
   }
 }
 
+EFFECT_LADSPA* EFFECT_LADSPA::clone(void) { 
+  EFFECT_LADSPA* result = new EFFECT_LADSPA(plugin_desc);
+  map_parameters();
+  result->map_parameters();
+  for(int n = 0; n < number_of_params(); n++) {
+    result->set_parameter(n + 1, get_parameter(n + 1));
+  }
+  return(result);
+}
+
 void EFFECT_LADSPA::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   if (param > 0 && param < static_cast<int>(params.size() + 1)) {
     params[param - 1] = value;

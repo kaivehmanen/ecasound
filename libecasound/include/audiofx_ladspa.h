@@ -36,7 +36,7 @@ public:
   void init(SAMPLE_BUFFER *insample);
   void process(void);
 
-  EFFECT_LADSPA* clone(void)  { return new EFFECT_LADSPA(plugin_desc); }
+  EFFECT_LADSPA* clone(void);
   EFFECT_LADSPA* new_expr(void)  { return new EFFECT_LADSPA(plugin_desc); }
   EFFECT_LADSPA (const struct LADSPA_Descriptor *plugin_desc = 0) throw(ECA_ERROR*);
   ~EFFECT_LADSPA (void);

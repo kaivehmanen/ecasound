@@ -236,7 +236,7 @@ fi
 dnl ---
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl ---
-AC_C_CONST
+dnl AC_C_CONST
 AC_C_INLINE
 AC_C_BIGENDIAN
 AC_TYPE_SIZE_T

@@ -31,6 +31,7 @@ QESaveEvent::QESaveEvent(ECA_CONTROLLER* ctrl,
   ectrl->add_chain("default");
   set_input(input);
   set_default_audio_format(input);
-  ectrl->set_chainsetup_parameter("-x");
+  if (input != output)
+    ectrl->set_chainsetup_parameter("-x");
   set_output(output);
 }

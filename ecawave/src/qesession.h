@@ -88,6 +88,7 @@ signals:
 
   enum { 
     state_orig_file, // original file open, not edited
+    state_orig_direct, // orig. file open, direct-mode
     state_edit_file, // original and temp file open
     state_new_file,  // no original file, temp file open
     state_invalid    // unspecified

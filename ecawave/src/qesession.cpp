@@ -72,6 +72,8 @@ QESession::QESession (const string& filename,
     state_rep = state_new_file;
   }
 
+  if (direct_mode_rep == true) state_rep = state_orig_direct;
+
   esession = new ECA_SESSION();
   ectrl = new ECA_CONTROLLER(esession);
 
@@ -173,7 +175,8 @@ void QESession::init_layout(void) {
   QAccel* a = new QAccel (this);
   a->connectItem(a->insertItem(ALT+Key_D), this, SLOT(debug_event()));
 
-  if (state_rep == state_orig_file) 
+  if (state_rep == state_orig_file ||
+      state_rep == state_orig_direct) 
     file = new QEFile(active_filename_rep,
 		      wcache_toggle_rep,
 		      refresh_toggle_rep, 
@@ -279,6 +282,7 @@ void QESession::open_file(void) {
     remove_temps();
     file->new_file(fdialog->result_filename());
     state_rep = state_orig_file;
+    if (direct_mode_rep == true) state_rep = state_orig_direct;
     orig_filename_rep = file->filename();
     active_filename_rep = orig_filename_rep;
     emit filename_changed(orig_filename_rep);
@@ -349,7 +353,8 @@ void QESession::update_wave_data(void) {
     file->update_wave_form_data();
   }
   
-  if (state_rep != state_orig_file) {
+  if (state_rep != state_orig_file ||
+      state_rep != state_orig_direct) {
     statusbar->toggle_editing(true);
   }
 }
@@ -372,12 +377,14 @@ void QESession::prepare_temp(void) {
     stat(active_filename_rep.c_str(), &stattemp1);
     stat(temp.c_str(), &stattemp2);
     if (stattemp1.st_size != stattemp2.st_size) {
-      copy_file(active_filename_rep, temp);
-      copy_file(active_filename_rep + ".ews", temp + ".ews");
+      QECopyEvent p (ectrl, active_filename_rep, temp, 0, 0);
+      if (p.is_valid() == true) {
+	p.start();
+	copy_file(active_filename_rep + ".ews", temp + ".ews");
+      }
     }
-    stat(active_filename_rep.c_str(), &stattemp1);
     stat(temp.c_str(), &stattemp2);
-    if (stattemp1.st_size != stattemp2.st_size) {
+    if (stattemp2.st_size == 0) {
       QMessageBox* mbox = new QMessageBox(this, "mbox");
       mbox->information(this, "ecawave", QString("Error while creating temporary file ") + QString(temp.c_str()),0);
       state_rep = state_invalid;
