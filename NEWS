@@ -17,14 +17,19 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v2.0.4 *-
 
-??062002 (v2.1dev10)
+24062002 (v2.1dev10)
 	- added: -G:mgrtype,optstring switch for setting 
 		 audio object manager level options
 	- added: -G:jack,client_name,operation_mode option; see 
 	         ecasound(1) for details
 	- added: --enable-all-static configure option
+	- added: --disable-jack configure option; disable JACK
+		 support even if all required libs and headers
+		 are found
 	- changed: major data structure cleanup in the JACK
 	 	   plugin
+	- changed: JACK support is now enabled if 'jack/jack.h'
+		   is found; also --with-jack=PATH still works
 	- fixed: 'unknown device state' errors with multichannel 
 		 soundcards like midiman deltaXX and rme 
 		 when starting processing and if -z:intbuf mode 
@@ -40,6 +45,7 @@ Last officially released version is -*> v2.0.4 *-
 		 --enable-sys-readline failed
 	- fixed: bugs in the -z:db subsystem caused segfaults
 	- fixed: problems with -z:db and small files
+	- fixed: eiam - 'cs-get-length' always returned 0
 17052002 (v2.1dev9)
 	- edi-entries: edi-22
 	- changed: optimized disk i/o subsystem (-z:db) performance

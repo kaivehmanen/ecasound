@@ -54,44 +54,85 @@ The simplest way to compile this package is:
 Ecasound specific options
 =========================
 
+`--enable-all-static'
+	Build static binaries that are not linked against any
+	shared libraries. Disabled by default.
+
 `--enable-debug'
 	Disables optimizations and other things preventing 
 	efficient debugging. Created executables and libraries
-	have a "_debug" suffix.
-
-`--enable-sys-readline'
-	If installed, link to system's default libreadline.
+	have a "_debug" suffix. Disabled by default.
 
 `--enable-experimental' 
 	Turns on some suspicious features. Not recommended.
+	Disabled by default.
+
+`--enable-python-force-site-packages' 
+	Force install of python modules into site-packages 
+	directory even when it doesn't exist. Disabled by 
+	default.
+
+`--enable-sys-readline'
+	If installed, link to system's default libreadline.
+	Disabled by default.
 
 `--disable-alsa'
 	Don't compile support for ALSA-drivers (otherwise 
-	links to libasound)
+	links to libasound). By default ALSA support is
+	enabled if all the necessary header and library
+	files are found.
 
 `--disable-arts'
 	Don't compile aRts client support. See http://www.arts-project.org 
-	for more info about aRts.
+	for more info about aRts. By default aRts support is
+	enabled if all the necessary header and library
+	files are found.
 
 `--disable-audiofile'
-	Don't link to libaudiofile
+	Don't link to libaudiofile. By default libaudiofile support is
+	enabled if all the necessary header and library
+	files are found.
 
-`--disable-oss'
-	Don't compile support for OSS-drivers.
+`--disable-dbc'
+	Don't check design-by-contract assertions. Enabled by default.
 
-`--disable-osstrigger'
-	Disable the use of OSS trigger functions.
-
-`--disable-pyecasound'
-	Disable compilation of pyecasound.
+`--disable-jack'
+	Don't compile JACK client support. See 
+	http://jackit.sf.net for more info about JACK. 
+	By default JACK support is enabled if all the 
+	necessary header and library files are found.
 
 `--disable-ncurses'
 	Don't link against ncurses (known bug: even if this is 
 	specified, you're still required to have a working
-	ncurses/termcap installation to compile)
+	ncurses/termcap installation to compile). Enabled
+	by default.
+
+`--disable-oss'
+	Don't compile support for OSS-drivers. Enabled by
+	default.
+
+`--disable-osstrigger'
+	Disable the use of OSS trigger functions. Enabled
+	by default.
+
+`--disable-pyecasound'
+	Disable compilation of pyecasound. Enable by default.
+
+`--with-jack=JACK_PREFIX'
+	Enable JACK support and compile against JACK installed
+	in 'JACK_PREFIX'.
 
 `--with-largefile'
-	Compile with support for large files (>2GB).
+	Compile with support for large files (>2GB). Disabled
+	by default.
+
+`--with-python-includes=DIR'
+	Python include files are located in 'DIR'.
+
+`--with-python-modules=DIR'
+	Python modules are installed to 'DIR'.
+
 
 Compilers and Options
 =====================

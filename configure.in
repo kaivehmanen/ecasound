@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 28.04.2002
+dnl last modified: 24.06.2002
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -159,9 +159,9 @@ AC_ARG_ENABLE(debug,
 )
 AM_CONDITIONAL(ECA_AM_DEBUG_MODE, test x$include_debug = xyes)
 if test x$include_debug = xyes; then
-EXTRADEBUGFLAGS="-Wall -Wstrict-prototypes -O0"
+    EXTRADEBUGFLAGS="-Wall -Wstrict-prototypes -O0"
 else
-EXTRADEBUGFLAGS="-DNDEBUG"
+    EXTRADEBUGFLAGS="-DNDEBUG"
 fi                                     
 CXXFLAGS="$CXXFLAGS $EXTRADEBUGFLAGS"
 CFLAGS="$CFLAGS $EXTRADEBUGFLAGS"
@@ -174,10 +174,10 @@ dnl
 dnl defines: ECA_FEELING_EXPERIMENTAL, ECA_AM_FEELING_EXPERIMENTAL
 dnl ---
 AC_ARG_ENABLE(experimental,
-[  --enable-experimental	  Enable experimental code (default = no)],
-experimental=yes)
+	      [  --enable-experimental	  Enable experimental code (default = no)],
+	      experimental=yes)
 if test x$experimental = xyes; then
-AC_DEFINE(ECA_FEELING_EXPERIMENTAL)
+    AC_DEFINE(ECA_FEELING_EXPERIMENTAL)
 fi
 AM_CONDITIONAL(ECA_AM_FEELING_EXPERIMENTAL, test x$experimental = xyes)
 
@@ -191,9 +191,9 @@ dnl ---
 
 dnl Define ecaprefix depending on wether our user gives us one or not
 if test "x${prefix}" = "xNONE"; then
-  ecaprefix=${ac_default_prefix}
+    ecaprefix=${ac_default_prefix}
 else
-  ecaprefix=${prefix}
+    ecaprefix=${prefix}
 fi
 ECA_S_PREFIX=${ecaprefix}
 
@@ -259,11 +259,11 @@ dnl ---
 
 AC_CHECK_HEADER(sys/soundcard.h,oss_support=yes,oss_support=no)
 AC_ARG_ENABLE(oss,
-[  --disable-oss		  Disable OSS (default = no)],
-oss_support=no)
+              [  --disable-oss		  Disable OSS (default = no)],
+	      oss_support=no)
 AM_CONDITIONAL(ECA_AM_COMPILE_OSS, test x$oss_support = xyes)
 if test x$oss_support = xyes; then
-AC_DEFINE(ECA_COMPILE_OSS)
+    AC_DEFINE(ECA_COMPILE_OSS)
 fi                                     
 
 dnl ---
@@ -272,10 +272,10 @@ dnl
 dnl defines: ECA_DISABLE_OSS_TRIGGER
 dnl ---
 AC_ARG_ENABLE(osstrigger,
-[  --disable-osstrigger 	  Disable the use of OSS trigger functions (default = no)],
-osstrigger=yes)
+	      [  --disable-osstrigger 	  Disable the use of OSS trigger functions (default = no)],
+	      osstrigger=yes)
 if test x$osstrigger = xyes; then
-AC_DEFINE(ECA_DISABLE_OSS_TRIGGER)
+    AC_DEFINE(ECA_DISABLE_OSS_TRIGGER)
 fi
 
 dnl ------------------------------------------------------------------
@@ -293,9 +293,9 @@ else
 fi
 
 AC_ARG_ENABLE(arts,
-[  --disable-arts		  Disable aRts support (default = no)],
-arts_support=no)
-AM_CONDITIONAL(ECA_AM_COMPILE_ARTS, test x$arts_support = xyes) 
+	      [  --disable-arts		  Disable aRts support (default = no)],
+	      arts_support=no)
+	      AM_CONDITIONAL(ECA_AM_COMPILE_ARTS, test x$arts_support = xyes) 
 
 ECA_S_ARTSC_CFLAGS="`$ARTSC_CONFIG --cflags`"
 ECA_S_ARTSC_LIBS="`$ARTSC_CONFIG --libs`"
@@ -310,14 +310,17 @@ dnl Check for JACK support
 dnl
 dnl defines: ECA_AM_COMPILE_JACK, ECA_S_JACK_LIBS, ECA_S_JACK_INCLUDES
 dnl --
+AC_CHECK_HEADER(jack/jack.h,jack_support=yes,jack_support=no)
 AC_ARG_WITH(jack,
-  [  --with-jack=DIR	Compile against JACK installed in DIR],
-  [
-    ECA_S_JACK_LIBS=$withval/lib
-    ECA_S_JACK_INCLUDES=$withval/include
-    jack_support=yes
-  ])
-
+	    [  --with-jack=DIR	Compile against JACK installed in DIR],
+	    [
+	        ECA_S_JACK_LIBS=$withval/lib
+		ECA_S_JACK_INCLUDES=$withval/include
+		jack_support=yes
+	    ])
+AC_ARG_ENABLE(jack,
+	      [  --disable-jack		  Disable JACK support (default = no)],
+	      jack_support=no)
 AM_CONDITIONAL(ECA_AM_COMPILE_JACK, test x$jack_support = xyes)
 
 AC_SUBST(ECA_S_JACK_LIBS)
@@ -375,16 +378,16 @@ dnl Python modules
 
 AC_MSG_CHECKING([for Python libraries])
 AC_ARG_WITH(python-modules,
-	[  --with-python-modules=DIR install Python modules in DIR])
+	    [  --with-python-modules=DIR install Python modules in DIR])
 
 if test "X$with_python_modules" = "X"
 then
-	pymoddirs="/usr/local/lib /usr/lib"
-	dnl -- Double-brackets to espace the real brackets
-	pymoddirsmore=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[[:3]])"`
-	pymoddirs="$pymoddirs $pymoddirsmore"
+    pymoddirs="/usr/local/lib /usr/lib"
+    dnl -- Double-brackets to espace the real brackets
+    pymoddirsmore=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[[:3]])"`
+    pymoddirs="$pymoddirs $pymoddirsmore"
 else
-	pymoddirs=$with_python_modules
+    pymoddirs=$with_python_modules
 fi
 AC_MSG_RESULT($pymoddirs)
 
@@ -400,10 +403,10 @@ AC_FIND_FILE(lib-dynload,$pymoddirs,ECA_S_PYTHON_MODULES)
 dnl Use site-packages in preference if it is there.
 if test -d $ECA_S_PYTHON_MODULES/site-packages -o "X$python_force_site_packages" = "Xyes"
 then
-	ECA_S_PYTHON_MODULES=$ECA_S_PYTHON_MODULES/site-packages
-	ECA_S_PYTHON_DLMODULES=$ECA_S_PYTHON_MODULES
+    ECA_S_PYTHON_MODULES=$ECA_S_PYTHON_MODULES/site-packages
+    ECA_S_PYTHON_DLMODULES=$ECA_S_PYTHON_MODULES
 else
-	ECA_S_PYTHON_DLMODULES=$ECA_S_PYTHON_MODULES/lib-dynload
+    ECA_S_PYTHON_DLMODULES=$ECA_S_PYTHON_MODULES/lib-dynload
 fi
 AC_SUBST(ECA_S_PYTHON_MODULES)
 AC_SUBST(ECA_S_PYTHON_DLMODULES)
@@ -471,18 +474,18 @@ termcap_library=none)
 AM_CONDITIONAL(ECA_AM_USE_NCURSES, test $termcap_library = ncurses)
 AM_CONDITIONAL(ECA_AM_USE_TERMCAP, test $termcap_library = termcap)
 if test x$termcap_library = xtermcap; then
-	AC_DEFINE(ECA_USE_TERMCAP)
+   AC_DEFINE(ECA_USE_TERMCAP)
 fi
 if test x$termcap_library = xncurses; then
-	AC_CHECK_HEADER(curses.h,
-               [AC_CHECK_HEADER(term.h,, [AC_MSG_ERROR([*** curses headers not installed ***])])],
-                       [AC_CHECK_HEADER(ncurses/curses.h, [ 
-                                AC_CHECK_HEADER(ncurses/term.h,, AC_MSG_ERROR([*** curses headers not installed ***]))
-					AC_DEFINE(ECA_HAVE_NCURSES_CURSES_H)
-                                        ],
-                                       AC_MSG_ERROR([*** curses headers not installed ***]))]
-        )
-	AC_DEFINE(ECA_USE_NCURSES)
+   AC_CHECK_HEADER(curses.h,
+       [AC_CHECK_HEADER(term.h,, [AC_MSG_ERROR([*** curses headers not installed ***])])],
+           [AC_CHECK_HEADER(ncurses/curses.h, [ 
+	       AC_CHECK_HEADER(ncurses/term.h,, AC_MSG_ERROR([*** curses headers not installed ***]))
+	           AC_DEFINE(ECA_HAVE_NCURSES_CURSES_H)
+	   ],
+	       AC_MSG_ERROR([*** curses headers not installed ***]))]
+    )
+    AC_DEFINE(ECA_USE_NCURSES)
 fi
 
 dnl ------------------------------------------------------------------
