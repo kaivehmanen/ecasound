@@ -1029,7 +1029,7 @@ void ECA_CHAINSETUP::interpret_controller (const string& argu) {
     MIDI_CLIENT* p = dynamic_cast<MIDI_CLIENT*>(t->source_pointer());
     if (p != 0) {
       if (midi_devices.size() == 0) 
-	interpret_midi_device("-Md:rawmidi," + default_midi_device());
+	interpret_midi_device("-Md:" + default_midi_device());
       p->register_server(&midi_server_rep);
     }
     add_controller(t);
