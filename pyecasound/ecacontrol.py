@@ -110,7 +110,11 @@ class ECA_CONTROL_INTERFACE:
 	   
 	global _ecasound
 
-        ecasound_binary = os.getenv("ECASOUND","")
+	try:
+            ecasound_binary = os.environ['ECASOUND']
+        except KeyError:
+	    ecasound_binary = ''
+
         if ecasound_binary == '':
             ecasound_binary = 'ecasound'
 	
