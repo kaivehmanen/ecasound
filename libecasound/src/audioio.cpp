@@ -65,3 +65,13 @@ string AUDIO_IO::status(void) const {
   return(mitem.to_string());
 }
 
+void AUDIO_IO::set_parameter(int param, 
+			     string value) {
+  if (param == 1) label(value);
+}
+
+string AUDIO_IO::get_parameter(int param) const {
+  if (param == 1) return(label());
+  return("");
+}
+		      

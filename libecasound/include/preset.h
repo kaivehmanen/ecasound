@@ -7,10 +7,11 @@
 
 #include "eca-chainop.h"
 #include "eca-chain.h"
-#include "samplebuffer.h"
+#include "sample-specs.h"
 #include "eca-chainsetup.h"
 
 class AUDIO_IO;
+class SAMPLE_BUFFER;
 
 /**
  * Class for representing effect presets
@@ -27,7 +28,7 @@ class PRESET : public CHAIN_OPERATOR,
   vector<SAMPLE_BUFFER*> buffers;
   vector<CHAIN*> chains;
 
-  vector<DYNAMIC_OBJECT*> param_objects;
+  vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* > param_objects;
   vector<int> param_numbers;
 
   ECA_CHAINSETUP csetup;
@@ -40,6 +41,7 @@ class PRESET : public CHAIN_OPERATOR,
  public:
 
   virtual PRESET* clone(void) { return(new PRESET(*this)); }
+  virtual PRESET* new_expr(void) { return(new PRESET()); }
   virtual ~PRESET (void);
 
   string name(void) const { return(name_rep); }

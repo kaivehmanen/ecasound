@@ -20,37 +20,11 @@
  */
 class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
 
- public:
-
-  enum {
-    TYPE_NOT_OPENED =   -1,
-    TYPE_UNKNOWN =       0,
-    TYPE_WAVE =          1,
-    TYPE_DART =          2,
-    TYPE_CDR =           3,
-    TYPE_OSS =           4,
-    TYPE_EWF =           5,
-    TYPE_ESS =           6,
-    TYPE_OSSDMA =        7,
-    TYPE_MP3 =           8,
-    TYPE_ALSA =          9,
-    TYPE_ALSAFILE =     10,
-    TYPE_ALSALOOPBACK = 16,
-    TYPE_AUDIOFILE =    11,
-    TYPE_RAWFILE =      12,
-    TYPE_STDIN =        13,
-    TYPE_STDOUT =       14,
-    TYPE_NULL =         15,
-    TYPE_RTNULL =       18,
-    TYPE_MIKMOD =       17,
-    TYPE_LOOP =         19
-  };
-
  private:
 
   bool double_buffering_rep;
   bool precise_sample_rates_rep;
-  SIMODE output_openmode_rep;
+  int output_openmode_rep;
   long int buffersize_rep;
   ECA_AUDIO_FORMAT default_audio_format_rep;
 
@@ -87,18 +61,28 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
  public:
 
   /**
-   * Recognise file format from the file name.
-   */
-  static int get_type_from_extension (const string& teksti);
-
-  /**
-   * Create a new audio object based on given arguments.
+   * Create a new audio object based on the formatted argument string
    *
    * require:
-   *  argu.empty() != true &&
-   *  buffersize > 0
+   *  argu.empty() != true
    */
-  AUDIO_IO* create_audio_object(const string& tname, const SIMODE mode, const ECA_AUDIO_FORMAT& format, long int buffersize_rep) throw(ECA_ERROR*);
+  static AUDIO_IO* create_audio_object(const string& tname);
+
+  /**
+   * Create a new loop input object
+   *
+   * require:
+   *  argu.empty() != true
+   */
+  AUDIO_IO* create_loop_input(const string& tname);
+
+  /**
+   * Create a new loop output object
+   *
+   * require:
+   *  argu.empty() != true
+   */
+  AUDIO_IO* create_loop_output(const string& tname);
 
   /**
    * Print format and id information
@@ -127,7 +111,7 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
    *  argu.size() > 0
    *  argu[0] == '-'
    */
-  void interpret_audioio_device (const string& argu);
+  void interpret_audioio_device (const string& argu) throw(ECA_ERROR*);
 
   /**
    * Add a new input object and attach it to selected chains.
@@ -190,7 +174,7 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
 
   void toggle_double_buffering(bool value) { double_buffering_rep = value; }
   void toggle_precise_sample_rates(bool value) { precise_sample_rates_rep = value; }
-  void set_output_openmode(SIMODE value) { output_openmode_rep = value; }
+  void set_output_openmode(int value) { output_openmode_rep = value; }
   void set_buffersize(long int value) { buffersize_rep = value; }
   void set_default_audio_format(ECA_AUDIO_FORMAT& value) { default_audio_format_rep = value; }
 
@@ -198,7 +182,7 @@ class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
   bool precise_sample_rates(void) const { return(precise_sample_rates_rep); }
   long int buffersize(void) const { return(buffersize_rep); }
   const ECA_AUDIO_FORMAT& default_audio_format(void) const { return(default_audio_format_rep); }
-  const SIMODE output_openmode(void) const { return(output_openmode_rep); }
+  int output_openmode(void) const { return(output_openmode_rep); }
   bool is_valid(void) const;
 
   /**

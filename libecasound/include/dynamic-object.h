@@ -11,7 +11,8 @@
  *
  * @author Kai Vehmanen
  */
-class DYNAMIC_OBJECT : public DYNAMIC_PARAMETERS {
+template<class T>
+class DYNAMIC_OBJECT : public DYNAMIC_PARAMETERS<T> {
 
  public:
 
@@ -26,6 +27,12 @@ class DYNAMIC_OBJECT : public DYNAMIC_PARAMETERS {
    * a pointer to it. This must be implemented by all subclasses!
    */
   virtual DYNAMIC_OBJECT* clone(void) = 0;
+
+  /**
+   * Virtual method that creates a new object of current type.
+   * This must be implemented by all subclasses!
+   */
+  virtual DYNAMIC_OBJECT* new_expr(void) = 0;
 
   virtual ~DYNAMIC_OBJECT (void) { }
 };

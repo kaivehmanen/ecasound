@@ -34,7 +34,7 @@ public:
 
   string parameter_names(void) const { return("from-channel,to-channel"); }
 
-  int output_channels(int i_channels);
+  int output_channels(int i_channels) const;
 
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
@@ -43,6 +43,7 @@ public:
   void process(void);
 
   EFFECT_CHANNEL_COPY* clone(void)  { return new EFFECT_CHANNEL_COPY(*this); }
+  EFFECT_CHANNEL_COPY* new_expr(void)  { return new EFFECT_CHANNEL_COPY(); }
   EFFECT_CHANNEL_COPY (parameter_type from_channel = 1.0, parameter_type to_channel = 1.0);
 };
 
@@ -69,7 +70,7 @@ public:
 
   string parameter_names(void) const { return("to-channel"); }
 
-  int output_channels(int i_channels);
+  int output_channels(int i_channels) const;
 
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
@@ -78,6 +79,7 @@ public:
   void process(void);
 
   EFFECT_MIX_TO_CHANNEL* clone(void)  { return new EFFECT_MIX_TO_CHANNEL(*this); }
+  EFFECT_MIX_TO_CHANNEL* new_expr(void)  { return new EFFECT_MIX_TO_CHANNEL(); }
   EFFECT_MIX_TO_CHANNEL (parameter_type to_channel = 1.0);
 };
 

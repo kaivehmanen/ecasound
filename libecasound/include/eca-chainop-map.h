@@ -5,35 +5,44 @@
 #include <map>
 
 #include "eca-chainop.h"
+#include "eca-object-map.h"
 
 /**
  * Dynamic register for chain operators and their id-strings
  *
  * @author Kai Vehmanen
  */
-class ECA_CHAIN_OPERATOR_MAP {
+class ECA_CHAIN_OPERATOR_MAP : public ECA_OBJECT_MAP<CHAIN_OPERATOR> {
+
+  bool defaults_registered;
+  mutable map<string, CHAIN_OPERATOR*> object_map;
+  mutable map<string,string> object_prefix_map;
+  vector<string> object_names;
 
  public:
 
   /**
-   * 'id-string' - 'object pointer' map
-   */
-  static map<string, CHAIN_OPERATOR*> object_map;
-
-  /**
-   * 'object-name' - 'prefix-string' map
-   */
-  static map<string, string> object_prefix_map;
-
-  /**
    * Register a new effect.
    */
-  static void register_object(const string& id_string, CHAIN_OPERATOR* object);
+  void register_object(const string& id_string, CHAIN_OPERATOR* object);
 
   /**
-   * Register default chain operators
+   * List of registered objects (keywords).
    */
-  static void register_default_objects(void);
+  const vector<string>& registered_objects(void) const;
+
+  /**
+   * Return the first object that matches with 'keyword'
+   */
+  CHAIN_OPERATOR* object(const string& keyword) const;
+
+  /**
+   * Return the matching keyword for 'object'.
+   */
+  string object_identifier(const CHAIN_OPERATOR* object) const;
+
+  ECA_CHAIN_OPERATOR_MAP(void) : defaults_registered(false) { }
+  virtual ~ECA_CHAIN_OPERATOR_MAP(void) { }
 };
 
 #endif

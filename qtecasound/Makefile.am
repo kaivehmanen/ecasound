@@ -10,20 +10,18 @@ INCLUDES = -I. -I$(top_srcdir)/kvutils \
 		-I$(qt_includes) \
 		-I$(all_includes)
 
-if COMPILE_QTECASOUND
-qt_binaries = qtecasound
-endif
-
 if INCLUDE_DEBUG
-qt_binaries = qtecasound_debug
+qtecasound_target = qtecasound_debug
+else
+qtecasound_target = qtecasound
 endif
 
-bin_PROGRAMS = $(qt_binaries)
+if COMPILE_QTECASOUND
+bin_PROGRAMS = $(qtecasound_target)
 
 # ---
 # qtecasound
 # ---
-if COMPILE_QTECASOUND
 ecasound_qt_src = 	eca-qtdebug.cpp \
 			eca-qtinte.cpp \
 			eca-qtlevelmeter.cpp \

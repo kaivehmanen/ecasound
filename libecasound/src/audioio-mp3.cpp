@@ -48,22 +48,21 @@ void MP3FILE::set_mpg123_args(const string& value) { MP3FILE::default_mpg123_arg
 void MP3FILE::set_lame_path(const string& value) { MP3FILE::default_lame_path = value; }
 void MP3FILE::set_lame_args(const string& value) { MP3FILE::default_lame_args = value; }
 
-MP3FILE::MP3FILE(const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& fmt) 
-  :  AUDIO_IO_FILE(name, mode, fmt) 
-{
-  toggle_open_state(false);
+MP3FILE::MP3FILE(const string& name) {
+  label(name);
   finished_rep = false;
-  if (io_mode() == si_read) {
-    get_mp3_params(label());
-  }
 }
 
 MP3FILE::~MP3FILE(void) { close(); }
 
-void MP3FILE::open(void) { }
+void MP3FILE::open(void) { 
+  if (io_mode() == io_read) {
+    get_mp3_params(label());
+  }
+}
 
 void MP3FILE::close(void) {
-  if (io_mode() == si_read) {
+  if (io_mode() == io_read) {
     kill_mpg123();
   }
   else {
@@ -99,7 +98,7 @@ void MP3FILE::write_samples(void* target_buffer, long int samples) {
 void MP3FILE::seek_position(void) {
   if (is_open() == true) {
     finished_rep = false;
-    if (io_mode() == si_read) {
+    if (io_mode() == io_read) {
       kill_mpg123();
     }
     else {

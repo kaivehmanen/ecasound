@@ -45,6 +45,7 @@ public:
   void process(void);
 
   EFFECT_RC_LOWPASS_FILTER* clone(void)  { return new EFFECT_RC_LOWPASS_FILTER(*this); }
+  EFFECT_RC_LOWPASS_FILTER* new_expr(void)  { return new EFFECT_RC_LOWPASS_FILTER(); }
   EFFECT_RC_LOWPASS_FILTER (parameter_type cutoff = 0.25,
 			   parameter_type resonance = 1.0);
 };

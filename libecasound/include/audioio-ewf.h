@@ -40,6 +40,8 @@ class EWFFILE : public AUDIO_IO {
 
  public:
 
+  string name(void) const { return("Ecasound wave file"); }
+
   /**
    * Set start offset for child object
    */
@@ -69,15 +71,14 @@ class EWFFILE : public AUDIO_IO {
 
   void read_buffer(SAMPLE_BUFFER* sbuf);
   void write_buffer(SAMPLE_BUFFER* sbuf);
+
   void seek_position(void);
-  void open(void);
+  void open(void) throw(ECA_ERROR*);
   void close(void);
  
   EWFFILE* clone(void) { return new EWFFILE(*this); }
-  EWFFILE (const string& name, 
-	   const SIMODE mode, 
-	   const ECA_AUDIO_FORMAT& form,
-	   long int buffersize) throw(ECA_ERROR*);
+  EWFFILE* new_expr(void) { return new EWFFILE(); }
+  EWFFILE (const string& name = "") { label(name); }
   ~EWFFILE(void);
 };
 

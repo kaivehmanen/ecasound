@@ -609,7 +609,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    */
   void set_chain_operator_parameter(int chainop_id,
 				    int param,
-				    DYNAMIC_PARAMETERS::parameter_type value);
+				    CHAIN_OPERATOR::parameter_type value);
 
   /**
    * Add a new controller

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_amplitude.cpp: Amplitude effects and dynamic processors.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ void EFFECT_AMPLIFY::set_parameter(int param, parameter_type value) {
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_AMPLIFY::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_AMPLIFY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(kerroin * 100.0);
@@ -74,7 +74,7 @@ void EFFECT_AMPLIFY_CLIPCOUNT::set_parameter(int param, parameter_type value) {
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_AMPLIFY_CLIPCOUNT::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_AMPLIFY_CLIPCOUNT::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(kerroin * 100.0);
@@ -129,7 +129,7 @@ void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_type value) {
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_AMPLIFY_CHANNEL::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_AMPLIFY_CHANNEL::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(kerroin * 100.0);
@@ -181,7 +181,7 @@ void EFFECT_COMPRESS::set_parameter(int param, parameter_type value) {
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_COMPRESS::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_COMPRESS::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return((log (crate)) / (log (2)) * 6.0);
@@ -260,7 +260,7 @@ void EFFECT_NOISEGATE::set_parameter(int param, parameter_type value) {
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_NOISEGATE::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_NOISEGATE::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(th_level * 100.0 / (parameter_type)SAMPLE_SPECS::max_amplitude);
@@ -415,7 +415,7 @@ void EFFECT_NORMAL_PAN::set_parameter(int param, parameter_type value) {
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_NORMAL_PAN::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_NORMAL_PAN::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(right_percent_rep);

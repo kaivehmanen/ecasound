@@ -21,6 +21,8 @@ class LOOP_DEVICE : public AUDIO_IO {
 
  public:
 
+  string name(void) const { return("Internal loop device"); }
+
   void buffersize(long int samples, long int sample_rate) { };
   long int buffersize(void) const { return(0); };
 
@@ -46,9 +48,10 @@ class LOOP_DEVICE : public AUDIO_IO {
   int id(void) const { return(id_rep); }
 
   LOOP_DEVICE(int id);
-
+  LOOP_DEVICE(void) { }
   ~LOOP_DEVICE(void) { }
   LOOP_DEVICE* clone(void) { return new LOOP_DEVICE(*this); }
+  LOOP_DEVICE* new_expr(void) { return new LOOP_DEVICE(); }
 };
 
 #endif

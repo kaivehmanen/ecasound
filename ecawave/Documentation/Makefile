@@ -68,11 +68,11 @@ CC = gcc
 CPP = gcc -E
 CXX = c++
 MAKEINFO = makeinfo
-MOC = /usr/bin/moc
-QT_INCLUDES = -I/usr/lib/qt/include
-QT_LDFLAGS = -L/usr/lib/qt/lib
-qt_includes = /usr/lib/qt/include
-qt_libraries = /usr/lib/qt/lib
+MOC = /usr/lib/qt-2.0.1/bin/moc
+QT_INCLUDES = -I/usr/lib/qt-2.0.1/include
+QT_LDFLAGS = -L/usr/lib/qt-2.0.1/lib
+qt_includes = /usr/lib/qt-2.0.1/include
+qt_libraries = /usr/lib/qt-2.0.1/lib
 
 prefix = /usr/local
 mandir = $(prefix)/man

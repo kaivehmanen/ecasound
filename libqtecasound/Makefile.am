@@ -13,9 +13,13 @@ libqtecasound_ldflags = -s -version-info 0:0:0 -lkvutils
 endif
 
 if INCLUDE_DEBUG
-lib_LTLIBRARIES = libqtecasound_debug.la
+libqtecasound_target = libqtecasound_debug.la
 else
-lib_LTLIBRARIES = libqtecasound.la
+libqtecasound_target = libqtecasound.la
+endif
+
+if COMPILE_QTECASOUND
+lib_LTLIBRARIES = $(libqtecasound_target)
 endif
 
 libqtecasound_general_src = 	qebuttonrow.cpp \

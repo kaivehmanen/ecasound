@@ -1,16 +1,16 @@
 /****************************************************************************
 ** QEChainopEvent meta object code from reading C++ file 'qechainopevent.h'
 **
-** Created: Sat Feb 19 00:57:30 2000
-**      by: The Qt MOC ($Id: qechainopevent_moc.cpp,v 1.2 2000-02-21 23:21:48 kaiv Exp $)
+** Created: Tue Mar 7 00:36:02 2000
+**      by: The Qt Meta Object Compiler ($Revision: 1.3 $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
 #define Q_MOC_QEChainopEvent
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#define Q_MOC_OUTPUT_REVISION 7
-#elif Q_MOC_OUTPUT_REVISION != 7
+#define Q_MOC_OUTPUT_REVISION 3
+#elif Q_MOC_OUTPUT_REVISION != 3
 #error "Moc format conflict - please regenerate all moc files"
 #endif
 
@@ -32,13 +32,21 @@ const char *QEChainopEvent::className() const
 
 QMetaObject *QEChainopEvent::metaObj = 0;
 
+
+#if QT_VERSION >= 199
+static QMetaObjectInit init_QEChainopEvent(&QEChainopEvent::staticMetaObject);
+
+#endif
+
 void QEChainopEvent::initMetaObject()
 {
     if ( metaObj )
 	return;
     if ( strcmp(QDialog::className(), "QDialog") != 0 )
 	badSuperclassWarning("QEChainopEvent","QDialog");
-    (void) staticMetaObject();
+
+#if QT_VERSION >= 199
+    staticMetaObject();
 }
 
 QString QEChainopEvent::tr(const char* s)
@@ -46,11 +54,16 @@ QString QEChainopEvent::tr(const char* s)
     return ((QNonBaseApplication*)qApp)->translate("QEChainopEvent",s);
 }
 
-QMetaObject* QEChainopEvent::staticMetaObject()
+void QEChainopEvent::staticMetaObject()
 {
     if ( metaObj )
-	return metaObj;
-    (void) QDialog::staticMetaObject();
+	return;
+    QDialog::staticMetaObject();
+#else
+
+    QDialog::initMetaObject();
+#endif
+
     typedef void(QEChainopEvent::*m1_t0)();
     typedef void(QEChainopEvent::*m1_t1)();
     m1_t0 v1_0 = Q_AMPERSAND QEChainopEvent::process;
@@ -68,11 +81,7 @@ QMetaObject* QEChainopEvent::staticMetaObject()
     metaObj = QMetaObject::new_metaobject(
 	"QEChainopEvent", "QDialog",
 	slot_tbl, 2,
-	signal_tbl, 1,
-	0, 0,
-	0, 0,
-	0, 0 );
-    return metaObj;
+	signal_tbl, 1 );
 }
 
 // SIGNAL finished

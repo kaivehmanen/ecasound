@@ -21,32 +21,38 @@
 #include <string>
 #include <algorithm>
 
-#include "eca-resources.h"
-#include "resource-file.h"
 #include "eca-preset-map.h"
 
-vector<string> ECA_PRESET_MAP::preset_map;
+void ECA_PRESET_MAP::register_object(const string& id_string,
+					     PRESET* object) {
+  object->map_parameters();
+  object_names.push_back(object->name());
+  object_map[id_string] = object;
+  object_prefix_map[object->name()] = id_string;
+}
 
-const vector<string>& ECA_PRESET_MAP::available_presets(void) {
-  static bool defaults_registered = false;
-  if (defaults_registered == false) {
-    defaults_registered = true;
+const vector<string>& ECA_PRESET_MAP::registered_objects(void) const {
+  return(object_names);
+}
 
-    ECA_RESOURCES ecarc;
-    ecadebug->msg(ECA_DEBUG::system_objects,"(global-preset) Opening sc-preset file.");
-    string filename =
-      ecarc.resource("resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
-
-    RESOURCE_FILE rc (filename);
-    ECA_PRESET_MAP::preset_map = rc.keywords();
+PRESET* ECA_PRESET_MAP::object(const string& keyword) const {
+  map<string, PRESET*>::const_iterator p = object_map.begin();
+  while(p != object_map.end()) {
+    if (p->first == keyword) 
+      return(dynamic_cast<PRESET*>(p->second));
+    ++p;
   }
-  return(ECA_PRESET_MAP::preset_map);
+  return(0);
 }
 
-bool ECA_PRESET_MAP::has(const string& preset_name) {
-  const vector<string>& t = ECA_PRESET_MAP::available_presets();
-  if (find(t.begin(), t.end(), preset_name) == t.end())
-    return(false);
-
-  return(true);
+string ECA_PRESET_MAP::object_identifier(const PRESET* object) const {
+  assert(object != 0);
+  map<string, string>::const_iterator p = object_prefix_map.begin();
+  while(p != object_prefix_map.end()) {
+    if (p->first == object->name())
+      return(p->second);
+    ++p;
+  }
+  return("");
 }
+

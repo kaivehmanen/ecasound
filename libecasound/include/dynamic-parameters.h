@@ -3,22 +3,18 @@
 
 #include <map>
 #include <string>
+#include <utility>
 
 #include <kvutils/kvutils.h>
 
-#include "samplebuffer.h"
-
 /**
- * Virtual class that provides a system for dynamically controlling 
- * a set of parameters. Supports naming of parameters, minimum and 
- * maximum values and validity checks.
+ * Virtual template class that provides a system for dynamically 
+ * controlling a set of parameters. Supports naming of parameters, 
+ * default parameter ranges, parameter naming, etc.
  * @author Kai Vehmanen
  */
+template<class T>
 class DYNAMIC_PARAMETERS {
-
- public:
-
-  typedef SAMPLE_SPECS::sample_type parameter_type;
 
  private:
 
@@ -65,44 +61,37 @@ class DYNAMIC_PARAMETERS {
   const string& get_parameter_name(int id) { return(param_revmap[id]); }
 
   /**
-   * Object name. Identifies the type represented by dynamic parameters.
-   * Must be implemented in subclasses.
-   */
-  virtual string name(void) const = 0;
-
-  /**
    * A comma-separated list of parameters names. Derived classes 
    * must implement this.
    */
   virtual string parameter_names(void) const = 0;
 
   /**
-   * Set parameter value
+   * Set parameter value. Implementations should be able to
+   * handle arbitrary values of 'value'.
    *
    * @param param parameter id
    * @param value new value
    */
-  virtual void set_parameter(int param, parameter_type value) = 0;
+  virtual void set_parameter(int param, T value) = 0;
 
   /**
    * Get parameter value
    *
    * @param param parameter id
    */
-  virtual parameter_type get_parameter(int param) const = 0;
+  virtual T get_parameter(int param) const = 0;
 
   /**
-   * If implemented in subclasses, this can be used for doing 
-   * sanity checks on parameter values before using them.
+   * An optional virtual function returning a suggested 
+   * default range for the specified parameter. This 
+   * is useful when building generic user-interfaces.
    *
    * @param param parameter id
-   * @param value value to check
    */
-  virtual bool valid_parameter(int param, parameter_type value) { return(true); }
+  virtual pair<T,T> default_parameter_range(int param) const { return(make_pair(T(),T())); }
 
   virtual ~DYNAMIC_PARAMETERS (void) { }
 };
 
 #endif
-
-

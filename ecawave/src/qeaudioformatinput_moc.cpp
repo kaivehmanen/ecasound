@@ -1,16 +1,16 @@
 /****************************************************************************
 ** QEAudioFormatInput meta object code from reading C++ file 'qeaudioformatinput.h'
 **
-** Created: Sat Feb 19 00:55:34 2000
-**      by: The Qt MOC ($Id: qeaudioformatinput_moc.cpp,v 1.2 2000-02-21 23:21:48 kaiv Exp $)
+** Created: Tue Mar 7 00:35:42 2000
+**      by: The Qt Meta Object Compiler ($Revision: 1.3 $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
 #define Q_MOC_QEAudioFormatInput
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#define Q_MOC_OUTPUT_REVISION 7
-#elif Q_MOC_OUTPUT_REVISION != 7
+#define Q_MOC_OUTPUT_REVISION 3
+#elif Q_MOC_OUTPUT_REVISION != 3
 #error "Moc format conflict - please regenerate all moc files"
 #endif
 
@@ -32,13 +32,21 @@ const char *QEAudioFormatInput::className() const
 
 QMetaObject *QEAudioFormatInput::metaObj = 0;
 
+
+#if QT_VERSION >= 199
+static QMetaObjectInit init_QEAudioFormatInput(&QEAudioFormatInput::staticMetaObject);
+
+#endif
+
 void QEAudioFormatInput::initMetaObject()
 {
     if ( metaObj )
 	return;
     if ( strcmp(QWidget::className(), "QWidget") != 0 )
 	badSuperclassWarning("QEAudioFormatInput","QWidget");
-    (void) staticMetaObject();
+
+#if QT_VERSION >= 199
+    staticMetaObject();
 }
 
 QString QEAudioFormatInput::tr(const char* s)
@@ -46,11 +54,16 @@ QString QEAudioFormatInput::tr(const char* s)
     return ((QNonBaseApplication*)qApp)->translate("QEAudioFormatInput",s);
 }
 
-QMetaObject* QEAudioFormatInput::staticMetaObject()
+void QEAudioFormatInput::staticMetaObject()
 {
     if ( metaObj )
-	return metaObj;
-    (void) QWidget::staticMetaObject();
+	return;
+    QWidget::staticMetaObject();
+#else
+
+    QWidget::initMetaObject();
+#endif
+
     typedef void(QEAudioFormatInput::*m1_t0)(int);
     typedef void(QEAudioFormatInput::*m1_t1)(int);
     typedef void(QEAudioFormatInput::*m1_t2)(int);
@@ -75,9 +88,5 @@ QMetaObject* QEAudioFormatInput::staticMetaObject()
     metaObj = QMetaObject::new_metaobject(
 	"QEAudioFormatInput", "QWidget",
 	slot_tbl, 5,
-	0, 0,
-	0, 0,
-	0, 0,
 	0, 0 );
-    return metaObj;
 }

@@ -14,9 +14,10 @@ class GLOBAL_PRESET : public PRESET {
  public:
 
   virtual GLOBAL_PRESET* clone(void) { return(new GLOBAL_PRESET(*this)); }
+  virtual GLOBAL_PRESET* new_expr(void) { return(new GLOBAL_PRESET()); }
   virtual ~GLOBAL_PRESET (void) { }
 
-  GLOBAL_PRESET(const string& preset_name);
+  GLOBAL_PRESET(const string& preset_name = "");
 };
 
 #endif

@@ -30,7 +30,7 @@
 string GENERIC_OSCILLATOR::filename = "";
 void GENERIC_OSCILLATOR::set_preset_file(const string& value) { GENERIC_OSCILLATOR::filename = value; }
 
-DYNAMIC_PARAMETERS::parameter_type GENERIC_OSCILLATOR::value(void) {
+CONTROLLER_SOURCE::parameter_type GENERIC_OSCILLATOR::value(void) {
   if (ienvelope.size() == 0) curval = 0.0;
 
   if (linear) {
@@ -67,7 +67,7 @@ GENERIC_OSCILLATOR::GENERIC_OSCILLATOR(double freq, int preset_number)
   set_parameter(2, preset_number);
 }
 
-void GENERIC_OSCILLATOR::init(DYNAMIC_PARAMETERS::parameter_type phasestep) {
+void GENERIC_OSCILLATOR::init(CONTROLLER_SOURCE::parameter_type phasestep) {
   step_length(phasestep);
   pcounter = 0.0;
   current = 0;
@@ -133,7 +133,7 @@ void GENERIC_OSCILLATOR::read_envelope(void) throw(ECA_ERROR*) {
   }
 }
 
-void GENERIC_OSCILLATOR::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void GENERIC_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_type value) {
   switch (param) {
   case 1: 
     frequency(value);
@@ -155,7 +155,7 @@ void GENERIC_OSCILLATOR::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type GENERIC_OSCILLATOR::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_type GENERIC_OSCILLATOR::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(frequency());

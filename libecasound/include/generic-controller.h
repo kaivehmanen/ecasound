@@ -5,15 +5,17 @@
 
 #include "ctrl-source.h"
 #include "dynamic-object.h"
+#include "sample-specs.h"
 
 /**
  * Generic controller class that connects controller sources
  * to objects supporting dynamic parameter control (classes 
  * which inherit DYNAMIC_PARAMETERS).
  */
-class GENERIC_CONTROLLER : public DYNAMIC_OBJECT, public DEFINITION_BY_CONTRACT {
+class GENERIC_CONTROLLER : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>, 
+			   public DEFINITION_BY_CONTRACT {
 
-  DYNAMIC_OBJECT* target;
+  DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* target;
   CONTROLLER_SOURCE* source;
 
   int param_id;
@@ -22,6 +24,8 @@ class GENERIC_CONTROLLER : public DYNAMIC_OBJECT, public DEFINITION_BY_CONTRACT 
 
  public:
 
+  typedef SAMPLE_SPECS::sample_type parameter_type;
+
   string name(void) const { return(source->name()); }
   string status(void) const;
 
@@ -29,10 +33,10 @@ class GENERIC_CONTROLLER : public DYNAMIC_OBJECT, public DEFINITION_BY_CONTRACT 
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
 
-  void assign_target(DYNAMIC_OBJECT* obj) { target  = obj; }
+  void assign_target(DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* obj) { target  = obj; }
   void assign_source(CONTROLLER_SOURCE* obj) { source = obj; }
 
-  DYNAMIC_OBJECT* target_pointer(void) const { return(target); }
+  DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* target_pointer(void) const { return(target); }
 
   /**
    * Initialize controller source
@@ -58,9 +62,10 @@ class GENERIC_CONTROLLER : public DYNAMIC_OBJECT, public DEFINITION_BY_CONTRACT 
   void process(void);
 
   GENERIC_CONTROLLER* clone(void);
+  GENERIC_CONTROLLER* new_expr(void) { return(new GENERIC_CONTROLLER(0)); }
 
   GENERIC_CONTROLLER(CONTROLLER_SOURCE* source,
-		     DYNAMIC_OBJECT* dobj = 0, 
+		     DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* dobj = 0, 
 		     int param_id = 0, 
 		     double range_low = 0.0, 
 		     double range_high = 0.0);

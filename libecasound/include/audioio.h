@@ -5,40 +5,43 @@
 
 #include "eca-audio-position.h"
 #include "eca-audio-time.h"
+#include "dynamic-object.h"
 
 class SAMPLE_BUFFER;
-
-/**
- * Input/Output mode
- *
- * si_read
- *
- * Device is opened for input. If opening a file, 
- * it must exist.
- *
- * si_write
- *
- * Device is opened for output. If opening a file and
- * and output exists, it is first truncated.
- * 
- * si_readwrite
- *
- * Device is opened for both reading and writing. If
- * opening a file, a new file is created if needed. 
- * When switching from read to write or vica versa,
- * position should be reset before using the device.
- *
- */
-enum SIMODE { si_read, si_write, si_readwrite };
 
 /**
  * Virtual base for all audio I/O classes (files, audio devices,
  * sound producing program modules, etc.)
  * @author Kai Vehmanen
  */
-class AUDIO_IO : public ECA_AUDIO_POSITION {
+class AUDIO_IO : public DYNAMIC_OBJECT<string>,
+		 public ECA_AUDIO_POSITION {
 
  public:
+
+  /**
+   * Input/Output mode
+   *
+   * @see io_mode()
+   *
+   * io_read
+   *
+   * Device is opened for input. If opening a file, 
+   * it must exist.
+   *
+   * io_write
+   *
+   * Device is opened for output. If opening a file and
+   * and output exists, it is first truncated.
+   * 
+   * io_readwrite
+   *
+   * Device is opened for both reading and writing. If
+   * opening a file, a new file is created if needed. 
+   * When switching from read to write or vica versa,
+   * position should be reset before using the device.
+   **/
+  enum { io_read = 1, io_write = 2, io_readwrite = 4 };
 
   // ===================================================================
   // Buffering
@@ -92,8 +95,6 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
    * this means that end of stream has been reached. If opened in 
    * 'si_write' or 'si_readwrite' modes, finished status usually
    * means that an error has occured (no space left, etc).
-   *
-   * @see SIMODE
    */
   virtual bool finished(void) const = 0;
 
@@ -125,6 +126,15 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
   virtual void close(void) = 0;
 
   // ===================================================================
+  // Parameter handling
+
+  virtual string name(void) const = 0;
+  virtual string parameter_names(void) const { return("label"); }
+
+  virtual void set_parameter(int param, string value);
+  virtual string get_parameter(int param) const;
+
+  // ===================================================================
   // Status and info
 
   /**
@@ -133,10 +143,14 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
   virtual string status(void) const;
 
   /**
-   * Returns info about the I/O mode of this device.
-   * @ref SIMODE
+   * Returns info about supported I/O modes (bitwise-OR)
    */
-  inline const SIMODE io_mode(void) const { return(si_mode); }
+  virtual int supported_io_modes(void) const { return(io_read | io_readwrite | io_write); }
+
+  /**
+   * Returns info about the current I/O mode.
+   */
+  int io_mode(void) const { return(si_mode); }
 
   /**
    * The device name (usually set to device/file name).
@@ -156,29 +170,32 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
   ECA_AUDIO_TIME length(void) const;
   ECA_AUDIO_TIME position(void) const;
 
-  virtual bool readable(void) const { return(is_open() && io_mode() != si_write); }
-  virtual bool writable(void) const { return(is_open() && io_mode() != si_read); }
-
- protected:
-
-  void position(const ECA_AUDIO_TIME& v);
-  void length(const ECA_AUDIO_TIME& v);
-
-  virtual AUDIO_IO* clone(void) = 0;
+  virtual bool readable(void) const { return(is_open() && io_mode() != io_write); }
+  virtual bool writable(void) const { return(is_open() && io_mode() != io_read); }
 
   // --
   // Format setup
   // --
 
   /**
-   * Set IO-mode.
+   * Set object input/output-mode. If the requested mode isn't
+   * supported, the nearest supported mode is used. Because 
+   * of this, it's wise to check the mode afterwards.
+   *
+   * require:
+   *  is_open() == false
    */
-  void io_mode(SIMODE newmode) { si_mode = newmode; }
+  void io_mode(int newmode) { si_mode = newmode; }
 
   /**
-   * Set device with name.
+   * Set object label
    */
   void label(const string& newlabel) { id_label = newlabel; }
+
+ protected:
+
+  void position(const ECA_AUDIO_TIME& v);
+  void length(const ECA_AUDIO_TIME& v);
 
   /**
    * Set device state to enabled or disabled.
@@ -190,9 +207,11 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
 
  public:
 
+  virtual AUDIO_IO* clone(void) = 0;
+  virtual AUDIO_IO* new_expr(void) = 0;
   virtual ~AUDIO_IO(void) { }
   AUDIO_IO(const string& name = "unknown", 
-	   const SIMODE mode = si_read, 
+	   int mode = io_read, 
 	   const ECA_AUDIO_FORMAT& fmt = ECA_AUDIO_FORMAT())
     : ECA_AUDIO_POSITION(fmt)
     {
@@ -206,7 +225,7 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
 
  private:
   
-  SIMODE si_mode;
+  int si_mode;
   string id_label;
 
   bool readable_rep;

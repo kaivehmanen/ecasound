@@ -57,6 +57,7 @@ public:
   void analyze(SAMPLE_BUFFER* insample);
 
   TIME_CROP_GATE* clone(void)  { return new TIME_CROP_GATE(*this); }
+  TIME_CROP_GATE* new_expr(void)  { return new TIME_CROP_GATE(); }
   TIME_CROP_GATE (parameter_type open_at, parameter_type duration);
   TIME_CROP_GATE (void) : curtime(0.0) {
     close_gate();
@@ -93,6 +94,7 @@ public:
   void analyze(SAMPLE_BUFFER* insample);
 
   THRESHOLD_GATE* clone(void)  { return new THRESHOLD_GATE(*this); }
+  THRESHOLD_GATE* new_expr(void)  { return new THRESHOLD_GATE(); }
   THRESHOLD_GATE (parameter_type threshold_openlevel, parameter_type
 		  threshold_closelevel,  bool use_rms = false);
   THRESHOLD_GATE (void) 

@@ -13,11 +13,10 @@ class SAMPLE_BUFFER;
 #include "samplebuffer.h"
 
 /**
- * 
- * Interface to SGI audiofile library. 
+ * Interface to SGI audiofile library.
  * @author Kai Vehmanen
  */
-class AUDIOFILE_INTERFACE : public AUDIO_IO_FILE {
+class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
 
   long samples_read;
   bool finished_rep;
@@ -39,6 +38,9 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_FILE {
   void format_query(void) throw(ECA_ERROR*);
   
  public:
+
+  string name(void) const { return("SGI libaudiofile object"); }
+  int supported_io_modes(void) const { return(io_read | io_write); }
   
   void open(void) throw(ECA_ERROR*);
   void close(void);
@@ -50,10 +52,9 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_FILE {
   void seek_position(void);
     
   AUDIOFILE_INTERFACE* clone(void) { return new AUDIOFILE_INTERFACE(*this); }
-  
-  AUDIOFILE_INTERFACE (const string& name, 
-		       const SIMODE mode, 
-		       const ECA_AUDIO_FORMAT& form);
+  AUDIOFILE_INTERFACE* new_expr(void) { return new AUDIOFILE_INTERFACE(); }  
+
+  AUDIOFILE_INTERFACE (const string& name = "");
   ~AUDIOFILE_INTERFACE(void);
 };
 

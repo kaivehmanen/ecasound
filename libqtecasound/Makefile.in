@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -46,7 +46,7 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 transform = @program_transform_name@
@@ -87,8 +87,10 @@ qt_libraries = @qt_libraries@
 INCLUDES = -I. -I$(qt_includes) -I$(all_includes)
 @INCLUDE_DEBUG_TRUE@libqtecasound_ldflags = -version-info 0:0:0 -lkvutils
 @INCLUDE_DEBUG_FALSE@libqtecasound_ldflags = -s -version-info 0:0:0 -lkvutils
-@INCLUDE_DEBUG_TRUE@lib_LTLIBRARIES = libqtecasound_debug.la
-@INCLUDE_DEBUG_FALSE@lib_LTLIBRARIES = libqtecasound.la
+@INCLUDE_DEBUG_TRUE@libqtecasound_target = libqtecasound_debug.la
+@INCLUDE_DEBUG_FALSE@libqtecasound_target = libqtecasound.la
+
+@COMPILE_QTECASOUND_TRUE@lib_LTLIBRARIES = $(libqtecasound_target)
 
 libqtecasound_general_src = qebuttonrow.cpp 			    	qestringdialog.cpp
 
@@ -265,7 +267,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -346,7 +348,7 @@ uninstall: uninstall-am
 all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
 installdirs:
 	$(mkinstalldirs)  $(DESTDIR)$(libdir)
 

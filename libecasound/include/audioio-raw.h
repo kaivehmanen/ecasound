@@ -16,7 +16,7 @@ class SAMPLE_BUFFER;
  *
  * @author Kai Vehmanen
  */
-class RAWFILE : public AUDIO_IO_FILE {
+class RAWFILE : public AUDIO_IO_BUFFERED {
 
   ECA_FILE_IO* fio;
   bool double_buffering_rep;
@@ -39,6 +39,8 @@ class RAWFILE : public AUDIO_IO_FILE {
 
  public:
 
+  string name(void) const { return("Raw audio file"); }
+
   void open(void);
   void close(void);
 
@@ -48,10 +50,11 @@ class RAWFILE : public AUDIO_IO_FILE {
   bool finished(void) const;
   void seek_position(void);
 
-  RAWFILE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& format, bool double_buffering = false);
+  RAWFILE (const string& name = "", bool double_buffering = false);
   ~RAWFILE(void);
     
   RAWFILE* clone(void) { return new RAWFILE(*this); }    
+  RAWFILE* new_expr(void) { return new RAWFILE(); }    
 };
 
 #endif

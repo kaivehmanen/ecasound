@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_analysis.cpp: Signal analyzing.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,11 +37,11 @@ string EFFECT_ANALYZE::status(void) const {
     otemp << "(audiofx) Vol-range: ";
     otemp << nm << "\t L: ";
     otemp << ranges[nm][SAMPLE_SPECS::ch_left] << " (";
-    otemp << ((DYNAMIC_PARAMETERS::parameter_type)ranges[nm][SAMPLE_SPECS::ch_left] / (DYNAMIC_PARAMETERS::parameter_type)num_of_samples[SAMPLE_SPECS::ch_left] * 100.0);
+    otemp << ((CHAIN_OPERATOR::parameter_type)ranges[nm][SAMPLE_SPECS::ch_left] / (CHAIN_OPERATOR::parameter_type)num_of_samples[SAMPLE_SPECS::ch_left] * 100.0);
     otemp << ") \t\t";
     otemp << "R: ";
     otemp << ranges[nm][SAMPLE_SPECS::ch_right] << " (";
-    otemp << ((DYNAMIC_PARAMETERS::parameter_type)ranges[nm][SAMPLE_SPECS::ch_right] / (DYNAMIC_PARAMETERS::parameter_type)num_of_samples[SAMPLE_SPECS::ch_right] * 100.0);
+    otemp << ((CHAIN_OPERATOR::parameter_type)ranges[nm][SAMPLE_SPECS::ch_right] / (CHAIN_OPERATOR::parameter_type)num_of_samples[SAMPLE_SPECS::ch_right] * 100.0);
     otemp << ").\n";
   
   }
@@ -62,8 +62,8 @@ string EFFECT_ANALYZE::status(void) const {
   return(otemp.to_string());
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_ANALYZE::max_multiplier(void) const { 
-  DYNAMIC_PARAMETERS::parameter_type kerroin;
+CHAIN_OPERATOR::parameter_type EFFECT_ANALYZE::max_multiplier(void) const { 
+  CHAIN_OPERATOR::parameter_type kerroin;
   
   if (max != 0.0) kerroin = SAMPLE_SPECS::max_amplitude / max;
   else kerroin = 0.0;
@@ -115,13 +115,13 @@ string EFFECT_DCFIND::status(void) const {
     return(mitem.to_string());
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_DCFIND::get_deltafix(int channel) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_DCFIND::get_deltafix(int channel) const { 
   SAMPLE_SPECS::sample_type deltafix;
 
   if (pos_sum[channel] > neg_sum[channel]) deltafix = -(pos_sum[channel] - neg_sum[channel]) / num_of_samples[channel];
   else deltafix = (neg_sum[channel] - pos_sum[channel]) / num_of_samples[channel];
 
-  return((DYNAMIC_PARAMETERS::parameter_type)deltafix); 
+  return((CHAIN_OPERATOR::parameter_type)deltafix); 
 }
 
 void EFFECT_DCFIND::init(SAMPLE_BUFFER *insample) {

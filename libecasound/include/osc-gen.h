@@ -7,6 +7,8 @@
 
 #include "oscillator.h"
 
+class ECA_ERROR;
+
 /**
  * Generic oscillator
  *
@@ -48,6 +50,7 @@ class GENERIC_OSCILLATOR : public OSCILLATOR {
   string name(void) const { return("Generic oscillator"); }
 
   GENERIC_OSCILLATOR* clone(void)  { return new GENERIC_OSCILLATOR(*this); }
+  GENERIC_OSCILLATOR* new_expr(void)  { return new GENERIC_OSCILLATOR(*this); }
   GENERIC_OSCILLATOR(void) : OSCILLATOR(0.0, 0.0) { }
   GENERIC_OSCILLATOR(double freq, int preset_number);
   virtual ~GENERIC_OSCILLATOR (void);

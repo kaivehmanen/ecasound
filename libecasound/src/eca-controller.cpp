@@ -43,11 +43,12 @@ ECA_CONTROLLER::ECA_CONTROLLER (ECA_SESSION* psession)
   : ECA_CONTROLLER_OBJECTS(psession) { }
 
 void ECA_CONTROLLER::command(const string& cmd) throw(ECA_ERROR*) {
-  vector<string> cmds = string_to_words(string_search_and_replace(cmd, '_', '-'));
+  vector<string> cmds = string_to_words(cmd);
+
   vector<string>::iterator p = cmds.begin();
   if (p != cmds.end()) {
     if (*p == "") return;
-    if (ECA_IAMODE_PARSER::cmd_map.find(*p) == ECA_IAMODE_PARSER::cmd_map.end()) {
+    if (ECA_IAMODE_PARSER::cmd_map.find(string_search_and_replace(*p, '_', '-')) == ECA_IAMODE_PARSER::cmd_map.end()) {
       if (p->size() > 0 && (*p)[0] == '-') {
 	action(ec_direct_option, cmds);
       }
@@ -56,7 +57,7 @@ void ECA_CONTROLLER::command(const string& cmd) throw(ECA_ERROR*) {
       }
     }
     else {
-      if (ECA_IAMODE_PARSER::cmd_map[*p] == ec_help) {
+      if (ECA_IAMODE_PARSER::cmd_map[string_search_and_replace(*p, '_', '-')] == ec_help) {
 	show_controller_help();
       }
       else {
@@ -64,10 +65,10 @@ void ECA_CONTROLLER::command(const string& cmd) throw(ECA_ERROR*) {
 	++p;
 	if (p == cmds.end()) {
 	  vector<string> empty;
-	  action(ECA_IAMODE_PARSER::cmd_map[first], empty);
+	  action(ECA_IAMODE_PARSER::cmd_map[string_search_and_replace(first, '_', '-')], empty);
 	}
 	else {
-	  action(ECA_IAMODE_PARSER::cmd_map[first], vector<string> (p, cmds.end()));
+	  action(ECA_IAMODE_PARSER::cmd_map[string_search_and_replace(first, '_', '-')], vector<string> (p, cmds.end()));
 	}
       }
     }
@@ -322,7 +323,7 @@ void ECA_CONTROLLER::action(int action_id,
       }
       int id1 = atoi(a[0].c_str());
       int id2 = atoi(a[1].c_str());
-      DYNAMIC_PARAMETERS::parameter_type v = atof(a[2].c_str());
+      CHAIN_OPERATOR::parameter_type v = atof(a[2].c_str());
 
       if (id1 > 0 && id2 > 0) {
 	set_chain_operator_parameter(id1,id2, v);

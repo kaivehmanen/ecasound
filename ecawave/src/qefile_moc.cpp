@@ -1,16 +1,16 @@
 /****************************************************************************
 ** QEFile meta object code from reading C++ file 'qefile.h'
 **
-** Created: Sat Feb 19 00:54:39 2000
-**      by: The Qt MOC ($Id: qefile_moc.cpp,v 1.2 2000-02-21 23:21:48 kaiv Exp $)
+** Created: Tue Mar 7 00:35:32 2000
+**      by: The Qt Meta Object Compiler ($Revision: 1.3 $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
 #define Q_MOC_QEFile
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#define Q_MOC_OUTPUT_REVISION 7
-#elif Q_MOC_OUTPUT_REVISION != 7
+#define Q_MOC_OUTPUT_REVISION 3
+#elif Q_MOC_OUTPUT_REVISION != 3
 #error "Moc format conflict - please regenerate all moc files"
 #endif
 
@@ -32,13 +32,21 @@ const char *QEFile::className() const
 
 QMetaObject *QEFile::metaObj = 0;
 
+
+#if QT_VERSION >= 199
+static QMetaObjectInit init_QEFile(&QEFile::staticMetaObject);
+
+#endif
+
 void QEFile::initMetaObject()
 {
     if ( metaObj )
 	return;
     if ( strcmp(QWidget::className(), "QWidget") != 0 )
 	badSuperclassWarning("QEFile","QWidget");
-    (void) staticMetaObject();
+
+#if QT_VERSION >= 199
+    staticMetaObject();
 }
 
 QString QEFile::tr(const char* s)
@@ -46,11 +54,16 @@ QString QEFile::tr(const char* s)
     return ((QNonBaseApplication*)qApp)->translate("QEFile",s);
 }
 
-QMetaObject* QEFile::staticMetaObject()
+void QEFile::staticMetaObject()
 {
     if ( metaObj )
-	return metaObj;
-    (void) QWidget::staticMetaObject();
+	return;
+    QWidget::staticMetaObject();
+#else
+
+    QWidget::initMetaObject();
+#endif
+
     typedef void(QEFile::*m1_t0)();
     typedef void(QEFile::*m1_t1)(const ECA_AUDIO_FORMAT&);
     typedef void(QEFile::*m1_t2)(long int);
@@ -104,11 +117,7 @@ QMetaObject* QEFile::staticMetaObject()
     metaObj = QMetaObject::new_metaobject(
 	"QEFile", "QWidget",
 	slot_tbl, 8,
-	signal_tbl, 4,
-	0, 0,
-	0, 0,
-	0, 0 );
-    return metaObj;
+	signal_tbl, 4 );
 }
 
 // SIGNAL selection_changed

@@ -23,6 +23,7 @@ class LINEAR_ENVELOPE : public FINITE_ENVELOPE {
 
   LINEAR_ENVELOPE(parameter_type time_in_seconds = 0.0); 
   LINEAR_ENVELOPE* clone(void)  { return new LINEAR_ENVELOPE(*this); }
+  LINEAR_ENVELOPE* new_expr(void)  { return new LINEAR_ENVELOPE(*this); }
 
   private:
 

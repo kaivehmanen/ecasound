@@ -34,8 +34,8 @@
 #include <qmessagebox.h>
 #include <qaccel.h>
 
-#include <ecasound/qebuttonrow.h>
-#include <ecasound/qestringdialog.h>
+#include "qebuttonrow.h"
+#include "qestringdialog.h"
 
 #include "eca-qtchainsetup.h"
 #include "eca-session.h"

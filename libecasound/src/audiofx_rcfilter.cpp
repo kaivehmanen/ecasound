@@ -25,13 +25,13 @@
 #include "eca-debug.h"
 #include "audiofx_rcfilter.h"
 
-EFFECT_RC_LOWPASS_FILTER::EFFECT_RC_LOWPASS_FILTER (DYNAMIC_PARAMETERS::parameter_type cutoff, 
-						    DYNAMIC_PARAMETERS::parameter_type resonance) {
+EFFECT_RC_LOWPASS_FILTER::EFFECT_RC_LOWPASS_FILTER (CHAIN_OPERATOR::parameter_type cutoff, 
+						    CHAIN_OPERATOR::parameter_type resonance) {
   set_parameter(1, cutoff);
   set_parameter(2, resonance);
 }
 
-void EFFECT_RC_LOWPASS_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_RC_LOWPASS_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     cutoff_rep = value;
@@ -42,7 +42,7 @@ void EFFECT_RC_LOWPASS_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::para
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_RC_LOWPASS_FILTER::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_RC_LOWPASS_FILTER::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(cutoff_rep);

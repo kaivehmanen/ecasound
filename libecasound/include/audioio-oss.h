@@ -40,6 +40,9 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
   
  public:
 
+  string name(void) const { return("OSS soundcard device"); }
+  int supported_io_modes(void) const { return(io_read | io_write); }
+
   void open(void) throw(ECA_ERROR*);
   void close(void) throw(ECA_ERROR*);
   
@@ -52,9 +55,10 @@ class OSSDEVICE : public AUDIO_IO_DEVICE {
 
   long position_in_samples(void) const;
 
-  OSSDEVICE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& form, long int buffersize, bool precise_sample_rates = false);
+  OSSDEVICE (const string& name = "/dev/dsp", bool precise_sample_rates = false);
   ~OSSDEVICE(void);
   OSSDEVICE* clone(void) { return new OSSDEVICE(*this); }
+  OSSDEVICE* new_expr(void) { return new OSSDEVICE(); }
 
  private:
   

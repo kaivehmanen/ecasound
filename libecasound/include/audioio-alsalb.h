@@ -37,6 +37,10 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
   
  public:
 
+  string name(void) const { return("ALSA PCM-loopback device"); }
+  int supported_io_modes(void) const { return(io_read); }
+  string parameter_names(void) const { return("label,card,device"); }
+
   void open(void) throw(ECA_ERROR*);
   void close(void);
   
@@ -49,11 +53,13 @@ class ALSA_LOOPBACK_DEVICE : public AUDIO_IO_DEVICE {
 
   long position_in_samples(void) const { return(0); }
 
-  ALSA_LOOPBACK_DEVICE (int card, int device, const SIMODE mode, const
-		ECA_AUDIO_FORMAT& form, long int buffersize,
-		bool playback_mode = true);
+  void set_parameter(int param, string value);
+  string get_parameter(int param) const;
+
+  ALSA_LOOPBACK_DEVICE (int card = 0, int device = 0, bool playback_mode = true);
   ~ALSA_LOOPBACK_DEVICE(void);
   ALSA_LOOPBACK_DEVICE* clone(void) { return new ALSA_LOOPBACK_DEVICE(*this); }
+  ALSA_LOOPBACK_DEVICE* new_expr(void) { return new ALSA_LOOPBACK_DEVICE(); }
   
  private:
   

@@ -29,7 +29,7 @@ const char* ecasound_parameter_help_rep =
 "     -pn:preset_name          insert a preset 'preset_name'\n"
 " --- \n"
 "     -ea:amplify_%            amplify_% (100% means no change) \n"
-"     -eac:amplify_%,channel   amplify_%, channel is value between 0...n-1 \n"
+"     -eac:amplify_%,channel   amplify_%, channel is value between 1...n \n"
 "                              (n channels total)\n"
 "     -eaw:amplify_%, cmax     amplify_% warns if over cmax consecutive\n"
 "                              clipped samples \n"

@@ -3,38 +3,47 @@
 
 #include <string>
 #include <map>
+#include <algorithm>
 
 #include "generic-controller.h"
+#include "eca-object-map.h"
 
 /**
  * Dynamic register for controller sources
  *
  * @author Kai Vehmanen
  */
-class ECA_CONTROLLER_MAP {
+class ECA_CONTROLLER_MAP : public ECA_OBJECT_MAP<GENERIC_CONTROLLER> {
+
+  bool defaults_registered;
+  mutable map<string, GENERIC_CONTROLLER*> object_map;
+  mutable map<string,string> object_prefix_map;
+  vector<string> object_names;
 
  public:
 
   /**
-   * 'id-string' - 'object pointer' map
+   * Register a new effect.
    */
-  static map<string, GENERIC_CONTROLLER*> object_map;
+  void register_object(const string& id_string, GENERIC_CONTROLLER* object);
 
   /**
-   * 'object-name' - 'prefix-string' map
+   * List of registered objects (keywords).
    */
-  static map<string, string> object_prefix_map;
+  const vector<string>& registered_objects(void) const;
 
   /**
-   * Register a new controller
+   * Return the first object that matches with 'keyword'
    */
-  static void register_object(const string& id_string, GENERIC_CONTROLLER* object);
+  GENERIC_CONTROLLER* object(const string& keyword) const;
 
   /**
-   * Register default controllers
+   * Return the matching keyword for 'object'.
    */
-  static void register_default_objects(void);
+  string object_identifier(const GENERIC_CONTROLLER* object) const;
+
+  ECA_CONTROLLER_MAP(void) : defaults_registered(false) { }
+  virtual ~ECA_CONTROLLER_MAP(void) { }
 };
 
 #endif
-

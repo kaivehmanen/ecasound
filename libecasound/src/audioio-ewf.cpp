@@ -32,35 +32,25 @@
 #include "eca-error.h"
 #include "eca-debug.h"
   
-EWFFILE::EWFFILE (const string& name, 
-		  const SIMODE mode, 
-		  const ECA_AUDIO_FORMAT& fmt,
-		  long int bsize) throw(ECA_ERROR*) 
-  :  AUDIO_IO(name, mode, fmt),
-     ewf_rc(name) {
-  
-  read_ewf_data();
-
-  ECA_AUDIO_OBJECTS t;
-  child = t.create_audio_object(child_name_rep, mode, fmt, bsize);
-  if (child == 0) 
-    throw(new ECA_ERROR("AUDIOIO-EWF", "Couldn't open child object.",ECA_ERROR::retry));
-
-  ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: Opening ewf-child:" + child->label() + ".");
-   
-  // ---
-  // Initialize attributes.
-  // ---
-  child_active = false;
-}
-
 EWFFILE::~EWFFILE(void) {
   if (is_open()) close();
   write_ewf_data();
   delete child;
 }
 
-void EWFFILE::open(void) {
+void EWFFILE::open(void) throw(ECA_ERROR*) {
+  child_active = false;
+
+  ewf_rc.resource_file(label());
+  read_ewf_data();
+
+  ECA_AUDIO_OBJECTS t;
+  child = t.create_audio_object(child_name_rep);
+  if (child == 0) 
+    throw(new ECA_ERROR("AUDIOIO-EWF", "Couldn't open child object.",ECA_ERROR::retry));
+
+  ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: Opening ewf-child:" + child->label() + ".");
+   
   child->open();
 
   if (child_length_rep.samples() == 0) child_length_rep = child->length();

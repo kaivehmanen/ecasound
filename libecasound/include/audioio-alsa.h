@@ -37,6 +37,10 @@ class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
   
  public:
 
+  string name(void) const { return("ALSA PCM-v1 device"); }
+  int supported_io_modes(void) const { return(io_read | io_write); }
+  string parameter_names(void) const { return("label,card,device"); }
+
   void open(void) throw(ECA_ERROR*);
   void close(void);
   
@@ -49,9 +53,13 @@ class ALSA_PCM_DEVICE : public AUDIO_IO_DEVICE {
 
   long position_in_samples(void) const;
 
-  ALSA_PCM_DEVICE (int card, int device, const SIMODE mode, const ECA_AUDIO_FORMAT& form, long int buffersize);
+  void set_parameter(int param, string value);
+  string get_parameter(int param) const;
+
+  ALSA_PCM_DEVICE (int card = 0, int device = 0);
   ~ALSA_PCM_DEVICE(void);
   ALSA_PCM_DEVICE* clone(void) { return new ALSA_PCM_DEVICE(*this); }
+  ALSA_PCM_DEVICE* new_expr(void) { return new ALSA_PCM_DEVICE(); }
   
  private:
   

@@ -108,7 +108,7 @@ void PRESET::add_chain(void) {
   buffers.push_back(new SAMPLE_BUFFER());
 }
 
-void PRESET::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
 
@@ -116,7 +116,7 @@ void PRESET::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) 
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type PRESET::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type PRESET::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(0.0);

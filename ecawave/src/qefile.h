@@ -13,7 +13,7 @@
 
 #include "qewaveform.h"
 
-class AUDIO_IO_FILE;
+class AUDIO_IO;
 
 /**
  * Single audio file
@@ -126,7 +126,7 @@ signals:
   long int coord_to_samples(int coord);
   long int blocks_to_samples(long int blocks);
 
-  AUDIO_IO_FILE* io_object;
+  AUDIO_IO* io_object;
   int waveform_count;
   int buffersize_rep;
   string filename_rep;

@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -46,10 +46,9 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -92,7 +91,7 @@ ecasound_audioio_src = audioio-cdr.h 			audioio-cdr_impl.h 			audioio-ewf.h 			a
 ecasound_controller_src =  	generic-controller.h 	ctrl-source.h 	midi-cc.h 	oscillator.h 	osc-gen.h 	osc-sine.h 	finite-envelope.h 	linear-envelope.h 	two-stage-linear-envelope.h
 
 
-ecasound_general_src = eca-chain.h 			eca-chainop.h 			eca-error.h 			eca-debug.h 			eca-comhelp.h 			eca-midi.h 			eca-main.h 			eca-session.h 			eca-resources.h 			resource-file.h 			generic-controller.h 			layer.h 			eca-chainop-map.h 			eca-controller-map.h 			samplebuffer.h 			eca-version.h 			eca-chainsetup.h 			eca-controller.h 			eca-controller-base.h 			eca-controller-objects.h 			eca-iamode-parser.h 			osc-gen.h 			midi-cc.h 			eca-control-position.h 			eca-audio-position.h 			eca-fileio.h  			eca-fileio-stream.h 			eca-fileio-mmap.h 			eca-fileio-mmap-fthread.h 			eca-alsa-dyn.h 			eca-mthreaded-processor.h 			dynamic-parameters.h 			dynamic-object.h 			samplebuffer_iterators.h 			eca-audio-objects.h 			eca-audio-format.h 			eca-audio-time.h 			eca-preset-map.h 			preset.h 			file-preset.h 			global-preset.h
+ecasound_general_src = eca-chain.h 			eca-chainop.h 			eca-error.h 			eca-debug.h 			eca-comhelp.h 			eca-midi.h 			eca-main.h 			eca-session.h 			eca-resources.h 			resource-file.h 			generic-controller.h 			layer.h 			eca-static-object-maps.h 			eca-object-map.h 			eca-chainop-map.h 			eca-controller-map.h 			eca-audio-object-map.h 			eca-preset-map.h 			samplebuffer.h 			sample-specs.h 			eca-version.h 			eca-chainsetup.h 			eca-controller.h 			eca-controller-base.h 			eca-controller-objects.h 			eca-iamode-parser.h 			osc-gen.h 			midi-cc.h 			eca-control-position.h 			eca-audio-position.h 			eca-fileio.h  			eca-fileio-stream.h 			eca-fileio-mmap.h 			eca-fileio-mmap-fthread.h 			eca-alsa-dyn.h 			eca-mthreaded-processor.h 			dynamic-parameters.h 			dynamic-object.h 			samplebuffer_iterators.h 			eca-audio-objects.h 			eca-audio-format.h 			eca-audio-time.h 			preset.h 			file-preset.h 			global-preset.h
 
 
 #pkgincludedir_HEADERS = $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_general_src)
@@ -163,7 +162,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -192,7 +191,7 @@ uninstall: uninstall-am
 all-am: Makefile $(HEADERS)
 all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
 installdirs:
 
 
@@ -236,7 +235,8 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 install-data-local:
 	$(INSTALL) -d $(pkgincludedir)
-	cd $(srcdir) ; cp $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_general_src) \
+	cd $(srcdir) ; \
+	cp $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_controller_src) $(ecasound_general_src) \
 	$(pkgincludedir)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

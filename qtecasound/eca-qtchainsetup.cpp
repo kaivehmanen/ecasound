@@ -27,10 +27,10 @@
 #include <qmessagebox.h>
 #include <qpushbutton.h>
 
-#include <ecasound/qestringdialog.h>
-#include <ecasound/qebuttonrow.h>
-
 #include <kvutils.h>
+
+#include "qestringdialog.h"
+#include "qebuttonrow.h"
 
 #include "eca-chain.h"
 #include "audioio-types.h"
@@ -334,7 +334,7 @@ void QEChainsetup::update_filesetup_clean (const vector<AUDIO_IO*>&
     cs_namestring = QString(flist[aiod_sizet]->label().c_str());
 
     cs_chainstring = ""; 
-    if (flist[aiod_sizet]->io_mode() == si_read) {
+    if (flist[aiod_sizet]->io_mode() == AUDIO_IO::io_read) {
       cs_modestring = "input"; 
       cs_chainstring = ctrl->connected_chains_input(flist[aiod_sizet]).c_str();
     }

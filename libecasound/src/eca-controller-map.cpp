@@ -17,37 +17,37 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <vector>
-#include <string>
-
 #include "eca-controller-map.h"
-#include "generic-controller.h"
-#include "ctrl-source.h"
-#include "midi-cc.h"
-#include "osc-gen.h"
-#include "osc-sine.h"
-#include "linear-envelope.h"
-#include "two-stage-linear-envelope.h"
-
-map<string, GENERIC_CONTROLLER*> ECA_CONTROLLER_MAP::object_map;
-map<string, string> ECA_CONTROLLER_MAP::object_prefix_map;
 
 void ECA_CONTROLLER_MAP::register_object(const string& id_string,
 					 GENERIC_CONTROLLER* object) {
   object->map_parameters();
+  object_names.push_back(object->name());
   object_map[id_string] = object;
   object_prefix_map[object->name()] = id_string;
 }
 
-void ECA_CONTROLLER_MAP::register_default_objects(void) { 
-  static bool defaults_registered = false;
-  if (defaults_registered) return;
-  defaults_registered = true;
-
-  register_object("kf", new GENERIC_CONTROLLER(new GENERIC_OSCILLATOR()));
-  register_object("kl", new GENERIC_CONTROLLER(new LINEAR_ENVELOPE()));
-  register_object("kl2", new GENERIC_CONTROLLER(new TWO_STAGE_LINEAR_ENVELOPE()));
-  register_object("km", new GENERIC_CONTROLLER(new MIDI_CONTROLLER()));
-  register_object("kos", new GENERIC_CONTROLLER(new SINE_OSCILLATOR()));
+const vector<string>& ECA_CONTROLLER_MAP::registered_objects(void) const {
+  return(object_names);
 }
 
+GENERIC_CONTROLLER* ECA_CONTROLLER_MAP::object(const string& keyword) const {
+  map<string, GENERIC_CONTROLLER*>::const_iterator p = object_map.begin();
+  while(p != object_map.end()) {
+    if (p->first == keyword) 
+      return(dynamic_cast<GENERIC_CONTROLLER*>(p->second));
+    ++p;
+  }
+  return(0);
+}
+
+string ECA_CONTROLLER_MAP::object_identifier(const GENERIC_CONTROLLER* object) const {
+  assert(object != 0);
+  map<string, string>::const_iterator p = object_prefix_map.begin();
+  while(p != object_prefix_map.end()) {
+    if (p->first == object->name())
+      return(p->second);
+    ++p;
+  }
+  return("");
+}

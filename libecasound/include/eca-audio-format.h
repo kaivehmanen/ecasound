@@ -93,7 +93,7 @@ class ECA_AUDIO_FORMAT {
   void toggle_interleaved_channels(bool v);
 
   /**
-   * Set sample format based on the formatted string given as 
+   * Set audio format based on the formatted string given as 
    * argument.
    *
    * The first letter is either "u", "s" and "f" (unsigned, 
@@ -106,6 +106,11 @@ class ECA_AUDIO_FORMAT {
    * can be omitted if applicable. 
    */
   void set_sample_format(const string& f_str) throw(ECA_ERROR*);
+
+  /**
+   * Set audio format
+   */
+  void set_audio_format(const ECA_AUDIO_FORMAT& f_str);
 
   /**
    * Return the current sample format as a formatted string.

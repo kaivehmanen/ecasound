@@ -42,6 +42,7 @@ class EFFECT_AMPLIFY: public EFFECT_AMPLITUDE {
   EFFECT_AMPLIFY (parameter_type multiplier_percent = 100.0);
   virtual ~EFFECT_AMPLIFY(void) { }
   EFFECT_AMPLIFY* clone(void)  { return new EFFECT_AMPLIFY(*this); }
+  EFFECT_AMPLIFY* new_expr(void)  { return new EFFECT_AMPLIFY(); }
 };
 
 /**
@@ -66,6 +67,7 @@ class EFFECT_AMPLIFY_CLIPCOUNT : public EFFECT_AMPLITUDE {
   void init(SAMPLE_BUFFER *insample);
   void process(void);
 
+  EFFECT_AMPLIFY_CLIPCOUNT* new_expr(void)  { return new EFFECT_AMPLIFY_CLIPCOUNT(); }
   EFFECT_AMPLIFY_CLIPCOUNT* clone(void)  { return new EFFECT_AMPLIFY_CLIPCOUNT(*this); }
   EFFECT_AMPLIFY_CLIPCOUNT (parameter_type multiplier_percent = 100.0, int max_clipped = 0);
 };
@@ -93,6 +95,7 @@ class EFFECT_AMPLIFY_CHANNEL: public EFFECT_AMPLITUDE {
   void process(void);
 
   EFFECT_AMPLIFY_CHANNEL* clone(void)  { return new EFFECT_AMPLIFY_CHANNEL(*this); }
+  EFFECT_AMPLIFY_CHANNEL* new_expr(void)  { return new EFFECT_AMPLIFY_CHANNEL(); }
   EFFECT_AMPLIFY_CHANNEL (parameter_type multiplier_percent = 100.0, int channel = 1);
 };
 
@@ -124,6 +127,7 @@ class EFFECT_COMPRESS : public EFFECT_AMPLITUDE {
   void process(void);
 
   EFFECT_COMPRESS* clone(void)  { return new EFFECT_COMPRESS(*this); }
+  EFFECT_COMPRESS* new_expr(void)  { return new EFFECT_COMPRESS(); }
   EFFECT_COMPRESS (const EFFECT_COMPRESS& x);
   EFFECT_COMPRESS (parameter_type compress_rate, parameter_type thold);
   EFFECT_COMPRESS (void) : first_time(true) { 
@@ -168,6 +172,7 @@ class EFFECT_NOISEGATE : public EFFECT_AMPLITUDE {
   void process(void);
 
   EFFECT_NOISEGATE* clone(void)  { return new EFFECT_NOISEGATE(*this); }
+  EFFECT_NOISEGATE* new_expr(void)  { return new EFFECT_NOISEGATE(); }
   EFFECT_NOISEGATE (parameter_type thlevel_percent, parameter_type thtime, parameter_type atime, parameter_type htime, parameter_type rtime);
   EFFECT_NOISEGATE (void) { 
     map_parameters();
@@ -190,8 +195,9 @@ private:
 public:
 
   string name(void) const { return("Normal pan"); }
-
   string parameter_names(void) const { return("right-%"); }
+
+  int output_channels(int i_channels) const { return(2); }
     
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
@@ -200,6 +206,7 @@ public:
   void process(void);
     
   EFFECT_NORMAL_PAN* clone(void)  { return new EFFECT_NORMAL_PAN(*this); }
+  EFFECT_NORMAL_PAN* new_expr(void)  { return new EFFECT_NORMAL_PAN(); }
   EFFECT_NORMAL_PAN(parameter_type right_percent = 50.0);
 };
 

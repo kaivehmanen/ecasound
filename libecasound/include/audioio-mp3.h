@@ -11,7 +11,7 @@ class SAMPLE_BUFFER;
  * with mpg123 (input) and lame (output).
  * @author Kai Vehmanen
  */
-class MP3FILE : public AUDIO_IO_FILE {
+class MP3FILE : public AUDIO_IO_BUFFERED {
 
  private:
   
@@ -51,6 +51,8 @@ class MP3FILE : public AUDIO_IO_FILE {
   
  public:
 
+  string name(void) const { return("MP3 file"); }
+
   void open(void);
   void close(void);
   
@@ -64,11 +66,12 @@ class MP3FILE : public AUDIO_IO_FILE {
   // Realtime related functions
   // --
   
-  MP3FILE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& format);
+  MP3FILE (const string& name = "");
   ~MP3FILE(void);
     
   //    MP3FILE* new_expr(void) { return new MP3FILE(); }
   MP3FILE* clone(void) { return new MP3FILE(*this); }
+  MP3FILE* new_expr(void) { return new MP3FILE(*this); }
 };
 
 #endif

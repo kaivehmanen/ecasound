@@ -2,7 +2,7 @@
 // audiofx_compressor.cpp: C++ implementation of John S. Dyson's 
 //                         compressor code. If you want the original
 //			   C-sources, mail me. 
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // Copyright for the actual algorithm (compressor2.c):
 // ***************************************************
@@ -130,7 +130,7 @@ void ADVANCED_COMPRESSOR::init_values(void) {
     rlevelsqe[i] = 0.0;
 }
 
-void ADVANCED_COMPRESSOR::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void ADVANCED_COMPRESSOR::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
 
   //  cerr << "Param: " << param << ", value: " << value << ".\n";
 
@@ -187,7 +187,7 @@ void ADVANCED_COMPRESSOR::set_parameter(int param, DYNAMIC_PARAMETERS::parameter
   }
 }   
 
-DYNAMIC_PARAMETERS::parameter_type ADVANCED_COMPRESSOR::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type ADVANCED_COMPRESSOR::get_parameter(int param) const { 
   switch (param) 
     {
     case 1: 

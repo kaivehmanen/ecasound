@@ -22,7 +22,7 @@ typedef struct {
  *
  * @author Kai Vehmanen
  */
-class CDRFILE : public AUDIO_IO_FILE {
+class CDRFILE : public AUDIO_IO_BUFFERED {
 
   static const int sectorsize = 2352;
 
@@ -56,6 +56,8 @@ class CDRFILE : public AUDIO_IO_FILE {
 
  public:
 
+  string name(void) const { return("CD-R audio file"); }
+
   void open(void) throw(ECA_ERROR*);
   void close(void);
 
@@ -65,10 +67,11 @@ class CDRFILE : public AUDIO_IO_FILE {
   bool finished(void) const;
   void seek_position(void);
     
-  CDRFILE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& format);
+  CDRFILE (const string& name = "");
   ~CDRFILE(void);
     
-  CDRFILE* clone(void) { return new CDRFILE(*this); }    
+  CDRFILE* clone(void) { return new CDRFILE(*this); }
+  CDRFILE* new_expr(void) { return new CDRFILE(); }
 };
 
 #endif

@@ -6,16 +6,20 @@
 
 #include "dynamic-object.h"
 #include "eca-audio-format.h"
-#include "samplebuffer.h"
+#include "sample-specs.h"
+
+class SAMPLE_BUFFER;
 
 /**
  * Virtual base class for chain operators. 
  * @author Kai Vehmanen
  */
-class CHAIN_OPERATOR : public DYNAMIC_OBJECT,
+class CHAIN_OPERATOR : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>,
                        public ECA_AUDIO_FORMAT {
 
  public:
+
+  typedef SAMPLE_SPECS::sample_type parameter_type;
 
   /**
    * Prepare chain operator for processing. All following 
@@ -52,12 +56,6 @@ class CHAIN_OPERATOR : public DYNAMIC_OBJECT,
    * during processing.
    */
   virtual int output_channels(int i_channels) const { return(i_channels); }
-
-  /**
-   * Virtual method that clones the current object and returns 
-   * a pointer to it. This must be implemented by all subclasses!
-   */
-  virtual CHAIN_OPERATOR* clone(void) = 0;
 
   /**
    * Virtual destructor.

@@ -6,13 +6,14 @@
 
 #include "eca-debug.h"
 #include "dynamic-object.h"
+#include "sample-specs.h"
 
+#include "eca-chainop.h"
 #include "eca-chainop-map.h"
 #include "eca-controller-map.h"
 
 class SAMPLE_BUFFER;
 class GENERIC_CONTROLLER;
-class CHAIN_OPERATOR;
 class AUDIO_IO;
 
 class CHAIN : public ECA_CONTROLLER_MAP {
@@ -41,7 +42,7 @@ class CHAIN : public ECA_CONTROLLER_MAP {
 
   CHAIN_OPERATOR* selected_chainop;
   GENERIC_CONTROLLER* selected_controller_rep;
-  DYNAMIC_OBJECT* selected_dynobj;
+  DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type>* selected_dynobj;
 
   int selected_chainop_number;
   int selected_controller_number;
@@ -130,7 +131,7 @@ class CHAIN : public ECA_CONTROLLER_MAP {
    *  selected_chainop_number > 0 && selected_chainop_number <= number_of_chain_operators()
    *  index > 0
    */
-  void set_parameter(int index, DYNAMIC_PARAMETERS::parameter_type value);
+  void set_parameter(int index, CHAIN_OPERATOR::parameter_type value);
 
   /**
    * Get parameter value (selected chain operator) 
@@ -141,7 +142,7 @@ class CHAIN : public ECA_CONTROLLER_MAP {
    *  index > 0 &&
    *  selected_chain_operator() != ""
    */
-  DYNAMIC_PARAMETERS::parameter_type get_parameter(int index) const;
+  CHAIN_OPERATOR::parameter_type get_parameter(int index) const;
 
   /**
    * Select chain operator

@@ -22,7 +22,7 @@
 #include "linear-envelope.h"
 #include "eca-debug.h"
 
-DYNAMIC_PARAMETERS::parameter_type LINEAR_ENVELOPE::value(void) {
+CONTROLLER_SOURCE::parameter_type LINEAR_ENVELOPE::value(void) {
   curpos += step_length();
   if (curpos <= length_in_seconds()) {
     curval = (curpos / length_in_seconds());
@@ -30,12 +30,12 @@ DYNAMIC_PARAMETERS::parameter_type LINEAR_ENVELOPE::value(void) {
   return(curval);
 }
 
-LINEAR_ENVELOPE::LINEAR_ENVELOPE(DYNAMIC_PARAMETERS::parameter_type time_in_seconds)
+LINEAR_ENVELOPE::LINEAR_ENVELOPE(CONTROLLER_SOURCE::parameter_type time_in_seconds)
   : FINITE_ENVELOPE(time_in_seconds) {
   set_parameter(1, get_parameter(1));
 } 
 
-void LINEAR_ENVELOPE::init(DYNAMIC_PARAMETERS::parameter_type step) {
+void LINEAR_ENVELOPE::init(CONTROLLER_SOURCE::parameter_type step) {
   step_length(step);
 
   MESSAGE_ITEM otemp;
@@ -46,7 +46,7 @@ void LINEAR_ENVELOPE::init(DYNAMIC_PARAMETERS::parameter_type step) {
   ecadebug->msg(ECA_DEBUG::user_objects, otemp.to_string());
 }
 
-void LINEAR_ENVELOPE::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_type value) {
   switch (param) {
   case 1:
     length_in_seconds(value);
@@ -56,7 +56,7 @@ void LINEAR_ENVELOPE::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_typ
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type LINEAR_ENVELOPE::get_parameter(int param) const {
+CONTROLLER_SOURCE::parameter_type LINEAR_ENVELOPE::get_parameter(int param) const {
   switch (param) {
   case 1:
     return(length_in_seconds());

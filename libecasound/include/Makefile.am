@@ -52,9 +52,14 @@ ecasound_general_src = 	eca-chain.h \
 			resource-file.h\
 			generic-controller.h \
 			layer.h \
+			eca-static-object-maps.h \
+			eca-object-map.h \
 			eca-chainop-map.h \
 			eca-controller-map.h \
+			eca-audio-object-map.h \
+			eca-preset-map.h \
 			samplebuffer.h \
+			sample-specs.h \
 			eca-version.h \
 			eca-chainsetup.h \
 			eca-controller.h \
@@ -77,7 +82,6 @@ ecasound_general_src = 	eca-chain.h \
 			eca-audio-objects.h \
 			eca-audio-format.h \
 			eca-audio-time.h \
-			eca-preset-map.h \
 			preset.h \
 			file-preset.h \
 			global-preset.h
@@ -89,5 +93,6 @@ noinst_HEADERS = $(ecasound_audiofx_src) $(ecasound_audioio_src) \
 
 install-data-local:
 	$(INSTALL) -d $(pkgincludedir)
-	cd $(srcdir) ; cp $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_general_src) \
+	cd $(srcdir) ; \
+	cp $(ecasound_audiofx_src) $(ecasound_audioio_src) $(ecasound_controller_src) $(ecasound_general_src) \
 	$(pkgincludedir)

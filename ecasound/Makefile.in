@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -46,7 +46,7 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 transform = @program_transform_name@
@@ -93,11 +93,9 @@ INCLUDES = -I. -I$(top_srcdir)/libecasound/include -I$(top_srcdir)/kvutils
 ecasound_SOURCES = eca-text.cpp eca-text.h textdebug.cpp textdebug.h
 ecasound_debug_SOURCES = $(ecasound_SOURCES)
 
-ecasound_LDADD = $(top_builddir)/libecasound/src/libecasound.la 		 $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a                  $(termcap_library) 		 -L$(top_builddir)/kvutils 		 -L$(top_builddir)/kvutils/.libs -lkvutils
+ecasound_LDADD = $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a                  $(termcap_library) 		 $(top_builddir)/libecasound/src/libecasound.la 		 -L$(top_builddir)/kvutils/.libs -lkvutils
 
-#		 -ltermcap
-#		 -lreadline -lhistory
-ecasound_debug_LDADD = $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a 		       $(top_builddir)/libecasound/src/libecasound_debug.la 		       $(termcap_library) 		      -L$(top_builddir)/kvutils 		      -L$(top_builddir)/kvutils/.libs -lkvutils
+ecasound_debug_LDADD = $(top_builddir)/readline-4.0/libreadline.a $(top_builddir)/readline-4.0/libhistory.a 			$(termcap_library) 		 	$(top_builddir)/libecasound/src/libecasound_debug.la 			-L$(top_builddir)/kvutils/.libs -lkvutils
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
@@ -121,13 +119,13 @@ ecasound_debug_OBJECTS =  eca-text.o textdebug.o
 ecasound_debug_LDFLAGS = 
 ecasound_OBJECTS =  eca-text.o textdebug.o
 @USE_NCURSES_FALSE@ecasound_DEPENDENCIES =  \
-@USE_NCURSES_FALSE@$(top_builddir)/libecasound/src/libecasound.la \
 @USE_NCURSES_FALSE@$(top_builddir)/readline-4.0/libreadline.a \
-@USE_NCURSES_FALSE@$(top_builddir)/readline-4.0/libhistory.a
+@USE_NCURSES_FALSE@$(top_builddir)/readline-4.0/libhistory.a \
+@USE_NCURSES_FALSE@$(top_builddir)/libecasound/src/libecasound.la
 @USE_NCURSES_TRUE@ecasound_DEPENDENCIES =  \
-@USE_NCURSES_TRUE@$(top_builddir)/libecasound/src/libecasound.la \
 @USE_NCURSES_TRUE@$(top_builddir)/readline-4.0/libreadline.a \
-@USE_NCURSES_TRUE@$(top_builddir)/readline-4.0/libhistory.a
+@USE_NCURSES_TRUE@$(top_builddir)/readline-4.0/libhistory.a \
+@USE_NCURSES_TRUE@$(top_builddir)/libecasound/src/libecasound.la
 ecasound_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -175,8 +173,8 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@list='$(bin_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo " $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
-	    $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	    echo " $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	    $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 
@@ -272,7 +270,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -352,7 +350,7 @@ uninstall: uninstall-am
 all-am: Makefile $(PROGRAMS)
 all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
 installdirs:
 	$(mkinstalldirs)  $(DESTDIR)$(bindir)
 

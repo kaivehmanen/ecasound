@@ -25,25 +25,25 @@
 #include "eca-debug.h"
 #include "audiofx_filter.h"
 
-EFFECT_BANDPASS::EFFECT_BANDPASS (DYNAMIC_PARAMETERS::parameter_type centerf, DYNAMIC_PARAMETERS::parameter_type w) {
+EFFECT_BANDPASS::EFFECT_BANDPASS (CHAIN_OPERATOR::parameter_type centerf, CHAIN_OPERATOR::parameter_type w) {
   // map_parameters();
 
   set_parameter(1, centerf);
   set_parameter(2, w);
 }
 
-void EFFECT_BANDPASS::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_BANDPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     center = value;
-    D = 2 * cos(2 * M_PI * center / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
+    D = 2 * cos(2 * M_PI * center / (CHAIN_OPERATOR::parameter_type)samples_per_second());
     b[0] = -C * D * a[0];
     break;
   case 2: 
     if (value != 0) width = value;
     else width = center / 2;
-    C = 1.0 / tan(M_PI * width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
-    D = 2 * cos(2 * M_PI * center / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
+    C = 1.0 / tan(M_PI * width / (CHAIN_OPERATOR::parameter_type)samples_per_second());
+    D = 2 * cos(2 * M_PI * center / (CHAIN_OPERATOR::parameter_type)samples_per_second());
     a[0] = 1.0 / (1.0 + C);
     a[1] = 0.0;
     a[2] = -a[0];
@@ -53,7 +53,7 @@ void EFFECT_BANDPASS::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_typ
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_BANDPASS::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_BANDPASS::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(center);
@@ -63,7 +63,7 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_BANDPASS::get_parameter(int param) con
   return(0.0);
 }
 
-EFFECT_BANDREJECT::EFFECT_BANDREJECT (DYNAMIC_PARAMETERS::parameter_type centerf, DYNAMIC_PARAMETERS::parameter_type w) 
+EFFECT_BANDREJECT::EFFECT_BANDREJECT (CHAIN_OPERATOR::parameter_type centerf, CHAIN_OPERATOR::parameter_type w) 
 {
   // map_parameters();
 
@@ -71,18 +71,18 @@ EFFECT_BANDREJECT::EFFECT_BANDREJECT (DYNAMIC_PARAMETERS::parameter_type centerf
   set_parameter(2, w);
 }
 
-void EFFECT_BANDREJECT::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_BANDREJECT::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     center = value;
-    D = 2 * cos(2 * M_PI * center / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
+    D = 2 * cos(2 * M_PI * center / (CHAIN_OPERATOR::parameter_type)samples_per_second());
     a[1] = -D * a[0];
     b[0] = a[1];
     break;
   case 2: 
     if (value != 0) width = value;
     else width = center / 2;
-    C = tan(M_PI * width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
+    C = tan(M_PI * width / (CHAIN_OPERATOR::parameter_type)samples_per_second());
     a[0] = 1.0 / (1.0 + C);
     a[1] = -D * a[0];
     a[2] = a[0];
@@ -92,7 +92,7 @@ void EFFECT_BANDREJECT::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_t
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_BANDREJECT::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_BANDREJECT::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(center);
@@ -160,15 +160,15 @@ void EFFECT_BW_FILTER::init_values(void) {
 //    }
 }
 
-EFFECT_HIGHPASS::EFFECT_HIGHPASS (DYNAMIC_PARAMETERS::parameter_type cutoff) {
+EFFECT_HIGHPASS::EFFECT_HIGHPASS (CHAIN_OPERATOR::parameter_type cutoff) {
   set_parameter(1, cutoff);
 }
 
-void EFFECT_HIGHPASS::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_HIGHPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     cutOffFreq = value;
-    C = tan(M_PI * cutOffFreq / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
+    C = tan(M_PI * cutOffFreq / (CHAIN_OPERATOR::parameter_type)samples_per_second());
     a[0] = 1.0 / (1.0 + sqrt(2.0) * C + C * C);
     a[1] = -2.0 * a[0];
     a[2] = a[0];
@@ -178,7 +178,7 @@ void EFFECT_HIGHPASS::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_typ
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_HIGHPASS::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_HIGHPASS::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(cutOffFreq);
@@ -186,7 +186,7 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_HIGHPASS::get_parameter(int param) con
   return(0.0);
 }
 
-void EFFECT_ALLPASS_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_ALLPASS_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     D = value;
@@ -202,7 +202,7 @@ void EFFECT_ALLPASS_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::paramet
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_ALLPASS_FILTER::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_ALLPASS_FILTER::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(D);
@@ -249,12 +249,12 @@ void EFFECT_ALLPASS_FILTER::process(void) {
   }
 }
 
-EFFECT_COMB_FILTER::EFFECT_COMB_FILTER (int delay_in_samples, DYNAMIC_PARAMETERS::parameter_type radius) {
-  set_parameter(1, (DYNAMIC_PARAMETERS::parameter_type)delay_in_samples);
+EFFECT_COMB_FILTER::EFFECT_COMB_FILTER (int delay_in_samples, CHAIN_OPERATOR::parameter_type radius) {
+  set_parameter(1, (CHAIN_OPERATOR::parameter_type)delay_in_samples);
   set_parameter(2, radius);
 }
 
-void EFFECT_COMB_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_COMB_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     {
@@ -275,7 +275,7 @@ void EFFECT_COMB_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_COMB_FILTER::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_COMB_FILTER::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(C);
@@ -310,18 +310,18 @@ void EFFECT_COMB_FILTER::process(void) {
   }
 }
 
-EFFECT_INVERSE_COMB_FILTER::EFFECT_INVERSE_COMB_FILTER (int delay_in_samples, DYNAMIC_PARAMETERS::parameter_type radius) {
+EFFECT_INVERSE_COMB_FILTER::EFFECT_INVERSE_COMB_FILTER (int delay_in_samples, CHAIN_OPERATOR::parameter_type radius) {
   // 
   // delay in number of samples
   // circle radius
   //
   // map_parameters();
 
-  set_parameter(1, (DYNAMIC_PARAMETERS::parameter_type)delay_in_samples);
+  set_parameter(1, (CHAIN_OPERATOR::parameter_type)delay_in_samples);
   set_parameter(2, radius);
 }
 
-void EFFECT_INVERSE_COMB_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_INVERSE_COMB_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     C = value;
@@ -332,7 +332,7 @@ void EFFECT_INVERSE_COMB_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::pa
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_INVERSE_COMB_FILTER::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_INVERSE_COMB_FILTER::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(C);
@@ -369,11 +369,11 @@ void EFFECT_INVERSE_COMB_FILTER::process(void) {
   }
 }
 
-EFFECT_LOWPASS::EFFECT_LOWPASS (DYNAMIC_PARAMETERS::parameter_type cutoff) {
+EFFECT_LOWPASS::EFFECT_LOWPASS (CHAIN_OPERATOR::parameter_type cutoff) {
   set_parameter(1, cutoff);
 }
 
-void EFFECT_LOWPASS::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_LOWPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     set_cutoff(value, samples_per_second());
@@ -381,7 +381,7 @@ void EFFECT_LOWPASS::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_LOWPASS::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_LOWPASS::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(cutOffFreq);
@@ -389,9 +389,9 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_LOWPASS::get_parameter(int param) cons
   return(0.0);
 }
 
-void EFFECT_LOWPASS::set_cutoff(DYNAMIC_PARAMETERS::parameter_type value, long int srate) {
+void EFFECT_LOWPASS::set_cutoff(CHAIN_OPERATOR::parameter_type value, long int srate) {
   cutOffFreq = value;
-  C = 1.0 / tan(M_PI * cutOffFreq / (DYNAMIC_PARAMETERS::parameter_type)srate);
+  C = 1.0 / tan(M_PI * cutOffFreq / (CHAIN_OPERATOR::parameter_type)srate);
   a[0] = 1.0 / (1.0 + sqrt(2.0) * C + C * C);
   a[1] = 2.0 * a[0];
   a[2] = a[0];
@@ -399,11 +399,11 @@ void EFFECT_LOWPASS::set_cutoff(DYNAMIC_PARAMETERS::parameter_type value, long i
   b[1] = (1.0 - sqrt(2.0) * C + C * C) * a[0];
 }
 
-EFFECT_LOWPASS_SIMPLE::EFFECT_LOWPASS_SIMPLE (DYNAMIC_PARAMETERS::parameter_type cutoff) {
+EFFECT_LOWPASS_SIMPLE::EFFECT_LOWPASS_SIMPLE (CHAIN_OPERATOR::parameter_type cutoff) {
   set_parameter(1, cutoff);
 }
 
-void EFFECT_LOWPASS_SIMPLE::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_LOWPASS_SIMPLE::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     cutOffFreq = value;
@@ -413,7 +413,7 @@ void EFFECT_LOWPASS_SIMPLE::set_parameter(int param, DYNAMIC_PARAMETERS::paramet
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_LOWPASS_SIMPLE::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_LOWPASS_SIMPLE::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(cutOffFreq);
@@ -448,15 +448,15 @@ void EFFECT_LOWPASS_SIMPLE::process(void) {
   }
 }
 
-EFFECT_RESONANT_BANDPASS::EFFECT_RESONANT_BANDPASS (DYNAMIC_PARAMETERS::parameter_type centerf,
-						    DYNAMIC_PARAMETERS::parameter_type w) 
+EFFECT_RESONANT_BANDPASS::EFFECT_RESONANT_BANDPASS (CHAIN_OPERATOR::parameter_type centerf,
+						    CHAIN_OPERATOR::parameter_type w) 
 {
 
   set_parameter(1, centerf);
   set_parameter(2, w);
 }
 
-void EFFECT_RESONANT_BANDPASS::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_RESONANT_BANDPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     center = value;
@@ -466,18 +466,18 @@ void EFFECT_RESONANT_BANDPASS::set_parameter(int param, DYNAMIC_PARAMETERS::para
     else width = center / 2.0;
     break;
   }
-  //  R = 1.0 - M_PI * width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second();
-  //  R = 1.0 - ((width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second()) / 2.0);
-  R = 1.0 - M_PI * (width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
+  //  R = 1.0 - M_PI * width / (CHAIN_OPERATOR::parameter_type)samples_per_second();
+  //  R = 1.0 - ((width / (CHAIN_OPERATOR::parameter_type)samples_per_second()) / 2.0);
+  R = 1.0 - M_PI * (width / (CHAIN_OPERATOR::parameter_type)samples_per_second());
   c = R * R;
   pole_angle = (((2.0 * R) / (1.0 + c)) * cos((center / 
-					       (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * 2.0 * M_PI)));
+					       (CHAIN_OPERATOR::parameter_type)samples_per_second() * 2.0 * M_PI)));
   pole_angle = acos(pole_angle);
   a = (1.0 - c) * sin(pole_angle);
   b = 2.0 * R * cos(pole_angle);
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_RESONANT_BANDPASS::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_RESONANT_BANDPASS::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(center);
@@ -511,8 +511,8 @@ void EFFECT_RESONANT_BANDPASS::process(void) {
   }
 }
 
-EFFECT_RESONANT_LOWPASS::EFFECT_RESONANT_LOWPASS (DYNAMIC_PARAMETERS::parameter_type co, DYNAMIC_PARAMETERS::parameter_type
-						  res, DYNAMIC_PARAMETERS::parameter_type g) 
+EFFECT_RESONANT_LOWPASS::EFFECT_RESONANT_LOWPASS (CHAIN_OPERATOR::parameter_type co, CHAIN_OPERATOR::parameter_type
+						  res, CHAIN_OPERATOR::parameter_type g) 
   : ProtoCoef(2), Coef(2)
 {
   cutoff = co;
@@ -546,7 +546,7 @@ EFFECT_RESONANT_LOWPASS::EFFECT_RESONANT_LOWPASS (DYNAMIC_PARAMETERS::parameter_
   szxform(1);
 }
 
-void EFFECT_RESONANT_LOWPASS::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_RESONANT_LOWPASS::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     cutoff = value;
@@ -561,7 +561,7 @@ void EFFECT_RESONANT_LOWPASS::set_parameter(int param, DYNAMIC_PARAMETERS::param
   refresh_values();
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_RESONANT_LOWPASS::get_parameter(int param) const {
+CHAIN_OPERATOR::parameter_type EFFECT_RESONANT_LOWPASS::get_parameter(int param) const {
   switch (param) {
   case 1: 
     return(cutoff);
@@ -597,7 +597,7 @@ void EFFECT_RESONANT_LOWPASS::refresh_values(void) {
 }
 
 void EFFECT_RESONANT_LOWPASS::szxform(int section) {
-  wp = 2.0 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * tan(pi * cutoff / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
+  wp = 2.0 * (CHAIN_OPERATOR::parameter_type)samples_per_second() * tan(pi * cutoff / (CHAIN_OPERATOR::parameter_type)samples_per_second());
 
   // ---
   // a0 and b0 are presumed to be 1, so...
@@ -610,12 +610,12 @@ void EFFECT_RESONANT_LOWPASS::szxform(int section) {
 
   // ---
   // alpha (Numerator in s-domain)
-  ad = 4.0 * ProtoCoef[section].a2 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + 2.0 * ProtoCoef[section].a1
-    * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + ProtoCoef[section].a0;
+  ad = 4.0 * ProtoCoef[section].a2 * (CHAIN_OPERATOR::parameter_type)samples_per_second() * (CHAIN_OPERATOR::parameter_type)samples_per_second() + 2.0 * ProtoCoef[section].a1
+    * (CHAIN_OPERATOR::parameter_type)samples_per_second() + ProtoCoef[section].a0;
   // ---
   // beta (Denominator in s-domain)
-  bd = 4.0 * ProtoCoef[section].b2 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + 2.0 * ProtoCoef[section].b1
-    * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + ProtoCoef[section].b0;
+  bd = 4.0 * ProtoCoef[section].b2 * (CHAIN_OPERATOR::parameter_type)samples_per_second() * (CHAIN_OPERATOR::parameter_type)samples_per_second() + 2.0 * ProtoCoef[section].b1
+    * (CHAIN_OPERATOR::parameter_type)samples_per_second() + ProtoCoef[section].b0;
 
   // ---
   /* update gain constant for this section */
@@ -624,22 +624,22 @@ void EFFECT_RESONANT_LOWPASS::szxform(int section) {
   // ---
   // Denominator
   Coef[section].A = (2.0 * ProtoCoef[section].b0 - 8.0 * ProtoCoef[section].b2
-		     * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second()) / bd;
+		     * (CHAIN_OPERATOR::parameter_type)samples_per_second() * (CHAIN_OPERATOR::parameter_type)samples_per_second()) / bd;
   // ---
   // beta1
-  Coef[section].B = (4.0 * ProtoCoef[section].b2 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() - 2.0 * ProtoCoef[section].b1
-		     * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + ProtoCoef[section].b0) / bd;
+  Coef[section].B = (4.0 * ProtoCoef[section].b2 * (CHAIN_OPERATOR::parameter_type)samples_per_second() * (CHAIN_OPERATOR::parameter_type)samples_per_second() - 2.0 * ProtoCoef[section].b1
+		     * (CHAIN_OPERATOR::parameter_type)samples_per_second() + ProtoCoef[section].b0) / bd;
   // ---
   // beta2
 
   // ---
   // Nominator
   Coef[section].C = (2.0 * ProtoCoef[section].a0 - 8.0 * ProtoCoef[section].a2
-		     * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second()) / ad;
+		     * (CHAIN_OPERATOR::parameter_type)samples_per_second() * (CHAIN_OPERATOR::parameter_type)samples_per_second()) / ad;
   // ---
   // alpha1
-  Coef[section].D = (4.0 * ProtoCoef[section].a2 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() - 2.0
-		     * ProtoCoef[section].a1 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + ProtoCoef[section].a0) / ad;
+  Coef[section].D = (4.0 * ProtoCoef[section].a2 * (CHAIN_OPERATOR::parameter_type)samples_per_second() * (CHAIN_OPERATOR::parameter_type)samples_per_second() - 2.0
+		     * ProtoCoef[section].a1 * (CHAIN_OPERATOR::parameter_type)samples_per_second() + ProtoCoef[section].a0) / ad;
   // ---
   // alpha2
 }
@@ -733,14 +733,14 @@ void EFFECT_RESONANT_LOWPASS::process(void) {
 //    wp = x.wp;
 //  }
 
-EFFECT_RESONATOR::EFFECT_RESONATOR (DYNAMIC_PARAMETERS::parameter_type centerf, DYNAMIC_PARAMETERS::parameter_type w) 
+EFFECT_RESONATOR::EFFECT_RESONATOR (CHAIN_OPERATOR::parameter_type centerf, CHAIN_OPERATOR::parameter_type w) 
   : cona(1), conb(2) 
 {
   set_parameter(1, centerf);
   set_parameter(2, w);
 }
 
-void EFFECT_RESONATOR::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) 
+void EFFECT_RESONATOR::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) 
 {
   switch (param) {
   case 1: 
@@ -751,12 +751,12 @@ void EFFECT_RESONATOR::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_ty
     else width = center / 2;
     break;
   }
-  conb[1] = exp(-(2 * M_PI) * (width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second()));
-  conb[0] = (-4.0 * conb[1]) / (1.0 + conb[1]) * cos(2 * M_PI * (center / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second()));
+  conb[1] = exp(-(2 * M_PI) * (width / (CHAIN_OPERATOR::parameter_type)samples_per_second()));
+  conb[0] = (-4.0 * conb[1]) / (1.0 + conb[1]) * cos(2 * M_PI * (center / (CHAIN_OPERATOR::parameter_type)samples_per_second()));
   cona[0] = (1.0 - conb[1]) * sqrt(1.0 - (conb[0] * conb[0]) / (4.0 * conb[1]));
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_RESONATOR::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_RESONATOR::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(center);

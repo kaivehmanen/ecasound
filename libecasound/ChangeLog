@@ -2,6 +2,47 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-03-05  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* audioio-types.h (various): major changes in class hiearchy
+	* audioio.h (supported_io_modes): added
+	
+2000-03-03  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* eca-audio-format.h (set_audio_format): renamed from
+	set_sample_format, added a new overloaded version
+	
+2000-03-03  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-audio-objecs (create_loop_input, create_loop_output): added
+	* eca-audio-objecs (create_audio_object): now a static member,
+	removed exceptions
+	
+2000-03-02  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* dynamic-parameters.h (new_expr): added, affects all 
+	subclasses
+	* audioio-types.h (constructor): removed default arguments, 
+	affects all subclasses
+	* resource-file.h (resource_file): added
+	* audioio.h (SI_MODE): enum removed, replaced with 
+	AUDIO_IO::{io_read,io_write,io_readwrite}
+	* eca-static-object-maps.h (various): added
+	* eca-audio-object-map.h (various): added
+	
+2000-02-29  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* dynamic-parameters.h (various): converted to a class template 
+	* dynamic-objects.h (various): converted to template class,
+	affects all subclasses
+	* audioio-types.h (various): reorganized file, device and
+	buffering classes
+	* audioio.h (label,io_mode): protected -> public
+	* audioio.h (constructor): all arguments now optional
+	* dynamic-parameters.h (valid_parameter): removed
+	* dynamic-parameters.h (default_parameter_range): added
+	* dynamic-parameters.h (name): removed
+	
 2000-02-24  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* audiofx_timebased.h (various) EFFECT_MODULATING_DELAY,

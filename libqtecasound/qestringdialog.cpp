@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // qstringdialog.cpp: Qt dialog widget that asks user for a string.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -10,7 +10,7 @@ class SAMPLE_BUFFER;
  * Interface class for MikMod input. Uses FIFO pipes.
  * @author Kai Vehmanen
  */
-class MIKMOD_INTERFACE : public AUDIO_IO_FILE {
+class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED {
 
  private:
   
@@ -37,6 +37,9 @@ class MIKMOD_INTERFACE : public AUDIO_IO_FILE {
   
  public:
 
+  string name(void) const { return("MikMod tracker module"); }
+  int supported_io_modes(void) const { return(io_read); }
+
   void open(void);
   void close(void);
   
@@ -46,10 +49,11 @@ class MIKMOD_INTERFACE : public AUDIO_IO_FILE {
   bool finished(void) const { return(finished_rep); }
   void seek_position(void);
  
-  MIKMOD_INTERFACE (const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& format);
+  MIKMOD_INTERFACE (const string& name = "");
   ~MIKMOD_INTERFACE(void);
     
   MIKMOD_INTERFACE* clone(void) { return new MIKMOD_INTERFACE(*this); }
+  MIKMOD_INTERFACE* new_expr(void) { return new MIKMOD_INTERFACE(); }
 };
 
 #endif

@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "26\&.02\&.2000" "" "Multimedia software" 
+.TH "ecasound" "1" "07\&.03\&.2000" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.

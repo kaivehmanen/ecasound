@@ -27,23 +27,17 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-REALTIME_NULL::REALTIME_NULL(const string& name,
-			     SIMODE mode,
-			     const ECA_AUDIO_FORMAT& fmt,
-			     long int bsize)
-  :  AUDIO_IO_DEVICE(name, mode, fmt) 
-{
-  buffersize(bsize, samples_per_second());
+REALTIME_NULL::REALTIME_NULL(const string& name) {
   is_triggered = false;
-  double t = static_cast<double>(buffersize()) / samples_per_second();
-  buffer_delay.tv_sec = static_cast<time_t>(floor(t));
-  buffer_delay.tv_usec = static_cast<long>((t - buffer_delay.tv_sec) * 1000000.0);
   //cerr << "delay " << buffer_delay.tv_sec << "sec.\n";
   //cerr << "delay " << buffer_delay.tv_usec << "usec.\n";
 }
 
 void REALTIME_NULL::open(void) {
   toggle_open_state(true);
+  double t = static_cast<double>(buffersize()) / samples_per_second();
+  buffer_delay.tv_sec = static_cast<time_t>(floor(t));
+  buffer_delay.tv_usec = static_cast<long>((t - buffer_delay.tv_sec) * 1000000.0);
 }
 
 void REALTIME_NULL::close(void) {
@@ -51,7 +45,7 @@ void REALTIME_NULL::close(void) {
 }
 
 void REALTIME_NULL::start(void) {
-  if (io_mode() == si_read) {
+  if (io_mode() == io_read) {
     if (is_triggered == false) {
       buffer_fill.tv_sec = 0; 
       buffer_fill.tv_usec = 0;

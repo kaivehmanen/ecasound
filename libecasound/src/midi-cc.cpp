@@ -26,7 +26,7 @@
 
 #include "eca-debug.h"
 
-DYNAMIC_PARAMETERS::parameter_type MIDI_CONTROLLER::value(void) {
+CONTROLLER_SOURCE::parameter_type MIDI_CONTROLLER::value(void) {
   pthread_mutex_lock(&midi_in_lock);
   if (midi_in_queue.update_controller_value(controller,channel)) {
     value_rep = midi_in_queue.last_controller_value();
@@ -42,7 +42,7 @@ MIDI_CONTROLLER::MIDI_CONTROLLER(int controller_number,
     channel(midi_channel),
     value_rep(0.0) { }
 
-void MIDI_CONTROLLER::init(DYNAMIC_PARAMETERS::parameter_type phasestep) {
+void MIDI_CONTROLLER::init(CONTROLLER_SOURCE::parameter_type phasestep) {
     init_midi_queues();
 
     MESSAGE_ITEM otemp;
@@ -52,7 +52,7 @@ void MIDI_CONTROLLER::init(DYNAMIC_PARAMETERS::parameter_type phasestep) {
     ecadebug->msg(0, otemp.to_string());
 }
 
-void MIDI_CONTROLLER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void MIDI_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_type value) {
   switch (param) {
   case 1: 
     controller = static_cast<int>(value);
@@ -63,7 +63,7 @@ void MIDI_CONTROLLER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_typ
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type MIDI_CONTROLLER::get_parameter(int param) const { 
+CONTROLLER_SOURCE::parameter_type MIDI_CONTROLLER::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(static_cast<parameter_type>(controller));

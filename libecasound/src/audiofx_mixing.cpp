@@ -27,13 +27,13 @@ EFFECT_CHANNEL_COPY::EFFECT_CHANNEL_COPY (parameter_type from,
   set_parameter(2, to);
 }
 
-int EFFECT_CHANNEL_COPY::output_channels(int i_channels) {
+int EFFECT_CHANNEL_COPY::output_channels(int i_channels) const {
   int c = static_cast<int>(to_channel);
   ++c;
   return(c > i_channels ? c : i_channels);
 }
 
-void EFFECT_CHANNEL_COPY::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_CHANNEL_COPY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     from_channel = static_cast<ch_type>(value);
@@ -48,7 +48,7 @@ void EFFECT_CHANNEL_COPY::set_parameter(int param, DYNAMIC_PARAMETERS::parameter
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_CHANNEL_COPY::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_CHANNEL_COPY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(from_channel + 1);
@@ -77,13 +77,13 @@ EFFECT_MIX_TO_CHANNEL::EFFECT_MIX_TO_CHANNEL (parameter_type to) {
   set_parameter(1, to);
 }
 
-int EFFECT_MIX_TO_CHANNEL::output_channels(int i_channels) {
+int EFFECT_MIX_TO_CHANNEL::output_channels(int i_channels) const {
   int c = static_cast<int>(to_channel);
   ++c;
   return(c > i_channels ? c : i_channels);
 }
 
-void EFFECT_MIX_TO_CHANNEL::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_MIX_TO_CHANNEL::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     to_channel = static_cast<ch_type>(value);
@@ -93,7 +93,7 @@ void EFFECT_MIX_TO_CHANNEL::set_parameter(int param, DYNAMIC_PARAMETERS::paramet
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_MIX_TO_CHANNEL::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_MIX_TO_CHANNEL::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(to_channel + 1);

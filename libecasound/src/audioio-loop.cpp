@@ -29,7 +29,7 @@
 #include "eca-debug.h"
 
 LOOP_DEVICE::LOOP_DEVICE(int id) 
-  :  AUDIO_IO("loop," + kvu_numtostr(id), si_readwrite),
+  :  AUDIO_IO("loop," + kvu_numtostr(id), io_readwrite),
      id_rep(id) { 
   registered_inputs_rep = 0;
   writes_rep = 0;

@@ -31,6 +31,7 @@
 #include <qmessagebox.h>
 #include <qlabel.h>
 
+#include <ecasound/audioio.h>
 #include <ecasound/eca-audio-objects.h>
 #include <ecasound/samplebuffer.h>
 #include <ecasound/qebuttonrow.h>
@@ -311,11 +312,10 @@ void QEFile::open_io_object(void) {
   // --------
 
   try {
-    ECA_AUDIO_OBJECTS t;
-    io_object = dynamic_cast<AUDIO_IO_FILE*>(t.create_audio_object(filename_rep,
-								   si_read,
-								   aformat, 
-								   max_buffer_size));
+    io_object = dynamic_cast<AUDIO_IO*>(ECA_AUDIO_OBJECTS::create_audio_object(filename_rep));
+    io_object->io_mode(AUDIO_IO::io_read);
+    io_object->set_audio_format(aformat);
+    io_object->buffersize(max_buffer_size, io_object->samples_per_second());
     io_object->open();
     channels_rep = io_object->channels();
     length_rep = io_object->length_in_samples();

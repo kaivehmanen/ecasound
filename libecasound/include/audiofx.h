@@ -40,6 +40,7 @@ public:
   void process(void);
 
   EFFECT_DCFIX* clone(void)  { return new EFFECT_DCFIX(*this); }
+  EFFECT_DCFIX* new_expr(void)  { return new EFFECT_DCFIX(); }
   EFFECT_DCFIX (const EFFECT_DCFIX& x);
   EFFECT_DCFIX (parameter_type delta_left = 0.0, parameter_type delta_right = 0.0);
 };
@@ -71,6 +72,7 @@ public:
 
   EFFECT_PITCH_SHIFT(void) : pmod(0.0), target_rate(0), sbuf(0) { }
   EFFECT_PITCH_SHIFT* clone(void)  { return new EFFECT_PITCH_SHIFT(*this); }
+  EFFECT_PITCH_SHIFT* new_expr(void)  { return new EFFECT_PITCH_SHIFT(); }
 };
 
 #endif

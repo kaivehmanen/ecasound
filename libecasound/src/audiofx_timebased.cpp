@@ -26,8 +26,8 @@
 #include "samplebuffer_iterators.h"
 #include "audiofx_timebased.h"
 
-EFFECT_DELAY::EFFECT_DELAY (DYNAMIC_PARAMETERS::parameter_type delay_time, int surround_mode, 
-			    int num_of_delays, DYNAMIC_PARAMETERS::parameter_type mix_percent) 
+EFFECT_DELAY::EFFECT_DELAY (CHAIN_OPERATOR::parameter_type delay_time, int surround_mode, 
+			    int num_of_delays, CHAIN_OPERATOR::parameter_type mix_percent) 
 {
   laskuri = 0.0;
 
@@ -37,10 +37,10 @@ EFFECT_DELAY::EFFECT_DELAY (DYNAMIC_PARAMETERS::parameter_type delay_time, int s
   set_parameter(4, mix_percent);
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_DELAY::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_DELAY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(dtime / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * 1000.0);
+    return(dtime / (CHAIN_OPERATOR::parameter_type)samples_per_second() * 1000.0);
   case 2:
     return(surround);
   case 3:
@@ -51,11 +51,11 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_DELAY::get_parameter(int param) const 
   return(0.0);
 }
 
-void EFFECT_DELAY::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1:
     {
-      dtime = value * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() / 1000;
+      dtime = value * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
       vector<vector<SINGLE_BUFFER> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
 	vector<SINGLE_BUFFER>::iterator q = p->begin();
@@ -173,9 +173,9 @@ void EFFECT_DELAY::process(void) {
   }
 }
 
-EFFECT_MULTITAP_DELAY::EFFECT_MULTITAP_DELAY (DYNAMIC_PARAMETERS::parameter_type delay_time, 
+EFFECT_MULTITAP_DELAY::EFFECT_MULTITAP_DELAY (CHAIN_OPERATOR::parameter_type delay_time, 
 					      int num_of_delays, 
-					      DYNAMIC_PARAMETERS::parameter_type mix_percent)
+					      CHAIN_OPERATOR::parameter_type mix_percent)
   : 
   delay_index(0),
   filled (0),
@@ -185,10 +185,10 @@ EFFECT_MULTITAP_DELAY::EFFECT_MULTITAP_DELAY (DYNAMIC_PARAMETERS::parameter_type
   set_parameter(3, mix_percent);
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_MULTITAP_DELAY::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_MULTITAP_DELAY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(dtime / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * 1000.0);
+    return(dtime / (CHAIN_OPERATOR::parameter_type)samples_per_second() * 1000.0);
   case 2:
     return(dnum);
   case 3:
@@ -197,11 +197,11 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_MULTITAP_DELAY::get_parameter(int para
   return(0.0);
 }
 
-void EFFECT_MULTITAP_DELAY::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_MULTITAP_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1:
     {
-      dtime = static_cast<long int>(value * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() / 1000);
+      dtime = static_cast<long int>(value * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000);
       assert(buffer.size() == filled.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
 	if ((dtime * dnum) > static_cast<int>(buffer[n].size())) {
@@ -277,22 +277,22 @@ void EFFECT_MULTITAP_DELAY::process(void) {
   }
 }
 
-EFFECT_FAKE_STEREO::EFFECT_FAKE_STEREO (DYNAMIC_PARAMETERS::parameter_type delay_time) {
+EFFECT_FAKE_STEREO::EFFECT_FAKE_STEREO (CHAIN_OPERATOR::parameter_type delay_time) {
    set_parameter(1, delay_time);
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_FAKE_STEREO::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_FAKE_STEREO::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(dtime / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * 1000.0);
+    return(dtime / (CHAIN_OPERATOR::parameter_type)samples_per_second() * 1000.0);
   }
   return(0.0);
 }
 
-void EFFECT_FAKE_STEREO::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_FAKE_STEREO::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1:
-    dtime = value * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() / 1000;
+    dtime = value * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
     vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
     while(p != buffer.end()) {
       if (p->size() > dtime) {
@@ -345,18 +345,18 @@ void EFFECT_FAKE_STEREO::process(void) {
   }
 }
 
-EFFECT_REVERB::EFFECT_REVERB (DYNAMIC_PARAMETERS::parameter_type delay_time, int surround_mode, 
-			      DYNAMIC_PARAMETERS::parameter_type feedback_percent) 
+EFFECT_REVERB::EFFECT_REVERB (CHAIN_OPERATOR::parameter_type delay_time, int surround_mode, 
+			      CHAIN_OPERATOR::parameter_type feedback_percent) 
 {
   set_parameter(1, delay_time);
   set_parameter(2, surround_mode);
   set_parameter(3, feedback_percent);
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_REVERB::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_REVERB::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(dtime / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * 1000.0);
+    return(dtime / (CHAIN_OPERATOR::parameter_type)samples_per_second() * 1000.0);
   case 2:
     return(surround);
   case 3:
@@ -365,11 +365,11 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_REVERB::get_parameter(int param) const
   return(0.0);
 }
 
-void EFFECT_REVERB::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     {
-      dtime = value * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() / 1000;
+      dtime = value * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000;
       vector<deque<SAMPLE_SPECS::sample_type> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
 	if (p->size() > dtime) {
@@ -433,10 +433,10 @@ void EFFECT_REVERB::process(void) {
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_MODULATING_DELAY::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_MODULATING_DELAY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(dtime / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * 1000.0);
+    return(dtime / (CHAIN_OPERATOR::parameter_type)samples_per_second() * 1000.0);
 
   case 2: 
     return(vartime);
@@ -450,11 +450,11 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_MODULATING_DELAY::get_parameter(int pa
   return(0.0);
 }
 
-void EFFECT_MODULATING_DELAY::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_MODULATING_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1:
     {
-      dtime = static_cast<long int>(value * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() / 1000);
+      dtime = static_cast<long int>(value * (CHAIN_OPERATOR::parameter_type)samples_per_second() / 1000);
       assert(buffer.size() == delay_index.size());
       assert(buffer.size() == filled.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {

@@ -36,18 +36,9 @@
 #include "eca-error.h"
 #include "eca-debug.h"
   
-AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name, 
-					  const SIMODE mode, 
-					  const ECA_AUDIO_FORMAT& fmt) 
-  :  AUDIO_IO_FILE(name, mode, fmt) {
-
+AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name) {
   finished_rep = false;
-
-  try { 
-    open();
-  }
-  catch(ECA_ERROR*) { }
-  //  format_query();
+  label(name);
 }
 
 void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR*) {
@@ -58,7 +49,7 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR*) {
 
   int sample_format, sample_width;
     
-  if (io_mode() == si_read) {
+  if (io_mode() == io_read) {
     afhandle = afOpenFile(label().c_str(), "r", NULL);
     if (afhandle == AF_NULL_FILEHANDLE) {
       throw(new ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
@@ -98,7 +89,7 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR*) {
 void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR*) {
 
   switch(io_mode()) {
-  case si_read:
+  case io_read:
     {
       ecadebug->msg("(audioio-af) Using audiofile library to open file \"" +
 		    label() + "\" for reading.");
@@ -110,7 +101,7 @@ void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR*) {
       }
       break;
     }
-  case si_write:
+  case io_write:
     {
       ecadebug->msg("(audioio-af) Using audiofile library to open file \"" +
 		    label() + "\" for writing.");
@@ -155,7 +146,7 @@ void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR*) {
      break;
     }
   
-  case si_readwrite:
+  case io_readwrite:
     {
       throw(new ECA_ERROR("AUDIOIO-AF", "Simultaneous intput/ouput not supported."));
     }
@@ -192,7 +183,7 @@ void AUDIOFILE_INTERFACE::debug_print_type(void) {
 
 bool AUDIOFILE_INTERFACE::finished(void) const {
   if (finished_rep == true || 
-      (io_mode() == si_read && out_position())) return(true);
+      (io_mode() == io_read && out_position())) return(true);
 
   return false;
 }

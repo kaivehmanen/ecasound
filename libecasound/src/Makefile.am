@@ -99,8 +99,10 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-fileio-mmap.cpp \
 			eca-fileio-mmap-fthread.cpp \
 			eca-alsa-dyn.cpp eca-mthreaded-processor.cpp \
+			eca-audio-object-map.cpp \
 			eca-chainop-map.cpp \
 			eca-controller-map.cpp \
+			eca-static-object-maps.cpp \
 			eca-preset-map.cpp \
 			preset.cpp \
 			file-preset.cpp \

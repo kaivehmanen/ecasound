@@ -1,16 +1,16 @@
 /****************************************************************************
 ** QESaveFileDialog meta object code from reading C++ file 'qesavefiledialog.h'
 **
-** Created: Sat Feb 19 00:56:07 2000
-**      by: The Qt MOC ($Id: qesavefiledialog_moc.cpp,v 1.2 2000-02-21 23:21:48 kaiv Exp $)
+** Created: Tue Mar 7 00:35:47 2000
+**      by: The Qt Meta Object Compiler ($Revision: 1.3 $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
 #define Q_MOC_QESaveFileDialog
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#define Q_MOC_OUTPUT_REVISION 7
-#elif Q_MOC_OUTPUT_REVISION != 7
+#define Q_MOC_OUTPUT_REVISION 3
+#elif Q_MOC_OUTPUT_REVISION != 3
 #error "Moc format conflict - please regenerate all moc files"
 #endif
 
@@ -32,13 +32,21 @@ const char *QESaveFileDialog::className() const
 
 QMetaObject *QESaveFileDialog::metaObj = 0;
 
+
+#if QT_VERSION >= 199
+static QMetaObjectInit init_QESaveFileDialog(&QESaveFileDialog::staticMetaObject);
+
+#endif
+
 void QESaveFileDialog::initMetaObject()
 {
     if ( metaObj )
 	return;
     if ( strcmp(QDialog::className(), "QDialog") != 0 )
 	badSuperclassWarning("QESaveFileDialog","QDialog");
-    (void) staticMetaObject();
+
+#if QT_VERSION >= 199
+    staticMetaObject();
 }
 
 QString QESaveFileDialog::tr(const char* s)
@@ -46,17 +54,18 @@ QString QESaveFileDialog::tr(const char* s)
     return ((QNonBaseApplication*)qApp)->translate("QESaveFileDialog",s);
 }
 
-QMetaObject* QESaveFileDialog::staticMetaObject()
+void QESaveFileDialog::staticMetaObject()
 {
     if ( metaObj )
-	return metaObj;
-    (void) QDialog::staticMetaObject();
+	return;
+    QDialog::staticMetaObject();
+#else
+
+    QDialog::initMetaObject();
+#endif
+
     metaObj = QMetaObject::new_metaobject(
 	"QESaveFileDialog", "QDialog",
 	0, 0,
-	0, 0,
-	0, 0,
-	0, 0,
 	0, 0 );
-    return metaObj;
 }

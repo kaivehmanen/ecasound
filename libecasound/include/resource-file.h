@@ -24,6 +24,11 @@ class RESOURCE_FILE {
   const string& resource_file(void) const { return(res_file); }
 
   /**
+   * Set resource file name.
+   */
+  void resource_file(const string& v) { res_file = v; }
+
+  /**
    * Returns value of resource 'tag'.
    */
   string resource(const string& tag) const;
@@ -44,7 +49,7 @@ class RESOURCE_FILE {
    */
   bool has(const string& tag) const;
 
-  RESOURCE_FILE(const string& resource_file) : res_file(resource_file) { }
+  RESOURCE_FILE(const string& resource_file = "") : res_file(resource_file) { }
   ~RESOURCE_FILE(void);
 };
 

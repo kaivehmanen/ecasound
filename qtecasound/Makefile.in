@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -46,7 +46,7 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 transform = @program_transform_name@
@@ -86,11 +86,10 @@ qt_libraries = @qt_libraries@
 
 INCLUDES = -I. -I$(top_srcdir)/kvutils 		-I$(top_srcdir)/libecasound/include 		-I$(top_srcdir)/libqtecasound 		-I$(qt_includes) 		-I$(all_includes)
 
+@INCLUDE_DEBUG_TRUE@qtecasound_target = qtecasound_debug
+@INCLUDE_DEBUG_FALSE@qtecasound_target = qtecasound
 
-@COMPILE_QTECASOUND_TRUE@qt_binaries = qtecasound
-@INCLUDE_DEBUG_TRUE@qt_binaries = qtecasound_debug
-
-bin_PROGRAMS = $(qt_binaries)
+@COMPILE_QTECASOUND_TRUE@bin_PROGRAMS = $(qtecasound_target)
 
 # ---
 # qtecasound
@@ -126,20 +125,6 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-@COMPILE_QTECASOUND_TRUE@qtecasound_OBJECTS =  eca-qtdebug.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtinte.o eca-qtlevelmeter.o eca-qtmain.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtrtposition.o eca-qtsignallevel.o \
-@COMPILE_QTECASOUND_TRUE@qtdebug_if.o eca-qtsession.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtchainsetup.o eca-qtchain.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtiodevdialog.o eca-qtchainselectdialog.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtdebug_moc.o eca-qtinte_moc.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtchainselectdialog_moc.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtiodevdialog_moc.o eca-qtchain_moc.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtchainsetup_moc.o eca-qtsession_moc.o \
-@COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.o eca-qtrtposition_moc.o
-@COMPILE_QTECASOUND_TRUE@qtecasound_DEPENDENCIES =  \
-@COMPILE_QTECASOUND_TRUE@$(top_builddir)/libecasound/src/libecasound.la \
-@COMPILE_QTECASOUND_TRUE@$(top_builddir)/libqtecasound/libqtecasound.la
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_OBJECTS =  eca-qtdebug.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtinte.o eca-qtlevelmeter.o eca-qtmain.o \
 @COMPILE_QTECASOUND_TRUE@eca-qtrtposition.o eca-qtsignallevel.o \
@@ -154,6 +139,20 @@ LIBS = @LIBS@
 @COMPILE_QTECASOUND_TRUE@qtecasound_debug_DEPENDENCIES =  \
 @COMPILE_QTECASOUND_TRUE@$(top_builddir)/libecasound/src/libecasound_debug.la \
 @COMPILE_QTECASOUND_TRUE@$(top_builddir)/libqtecasound/libqtecasound_debug.la
+@COMPILE_QTECASOUND_TRUE@qtecasound_OBJECTS =  eca-qtdebug.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtinte.o eca-qtlevelmeter.o eca-qtmain.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtrtposition.o eca-qtsignallevel.o \
+@COMPILE_QTECASOUND_TRUE@qtdebug_if.o eca-qtsession.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtchainsetup.o eca-qtchain.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtiodevdialog.o eca-qtchainselectdialog.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtdebug_moc.o eca-qtinte_moc.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtchainselectdialog_moc.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtiodevdialog_moc.o eca-qtchain_moc.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtchainsetup_moc.o eca-qtsession_moc.o \
+@COMPILE_QTECASOUND_TRUE@eca-qtsignallevel_moc.o eca-qtrtposition_moc.o
+@COMPILE_QTECASOUND_TRUE@qtecasound_DEPENDENCIES =  \
+@COMPILE_QTECASOUND_TRUE@$(top_builddir)/libecasound/src/libecasound.la \
+@COMPILE_QTECASOUND_TRUE@$(top_builddir)/libqtecasound/libqtecasound.la
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -183,8 +182,8 @@ DEP_FILES =  .deps/eca-qtchain.P .deps/eca-qtchain_moc.P \
 .deps/eca-qtrtposition_moc.P .deps/eca-qtsession.P \
 .deps/eca-qtsession_moc.P .deps/eca-qtsignallevel.P \
 .deps/eca-qtsignallevel_moc.P .deps/qtdebug_if.P
-SOURCES = $(qtecasound_SOURCES) $(qtecasound_debug_SOURCES)
-OBJECTS = $(qtecasound_OBJECTS) $(qtecasound_debug_OBJECTS)
+SOURCES = $(qtecasound_debug_SOURCES) $(qtecasound_SOURCES)
+OBJECTS = $(qtecasound_debug_OBJECTS) $(qtecasound_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -211,8 +210,8 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@list='$(bin_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo " $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
-	    $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	    echo " $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	    $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 
@@ -254,13 +253,13 @@ distclean-libtool:
 
 maintainer-clean-libtool:
 
-qtecasound: $(qtecasound_OBJECTS) $(qtecasound_DEPENDENCIES)
-	@rm -f qtecasound
-	$(CXXLINK) $(qtecasound_LDFLAGS) $(qtecasound_OBJECTS) $(qtecasound_LDADD) $(LIBS)
-
 qtecasound_debug: $(qtecasound_debug_OBJECTS) $(qtecasound_debug_DEPENDENCIES)
 	@rm -f qtecasound_debug
 	$(CXXLINK) $(qtecasound_debug_LDFLAGS) $(qtecasound_debug_OBJECTS) $(qtecasound_debug_LDADD) $(LIBS)
+
+qtecasound: $(qtecasound_OBJECTS) $(qtecasound_DEPENDENCIES)
+	@rm -f qtecasound
+	$(CXXLINK) $(qtecasound_LDFLAGS) $(qtecasound_OBJECTS) $(qtecasound_LDADD) $(LIBS)
 .cpp.o:
 	$(CXXCOMPILE) -c $<
 .cpp.lo:
@@ -308,7 +307,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -389,7 +388,7 @@ uninstall: uninstall-am
 all-am: Makefile $(PROGRAMS) $(HEADERS)
 all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
 installdirs:
 	$(mkinstalldirs)  $(DESTDIR)$(bindir)
 

@@ -59,6 +59,13 @@ ECA_AUDIO_FORMAT& ECA_AUDIO_FORMAT::operator=(const ECA_AUDIO_FORMAT& x) {
   return *this;
 }
 
+void ECA_AUDIO_FORMAT::set_audio_format(const ECA_AUDIO_FORMAT& f) {
+  set_channels(f.channels());
+  set_sample_format(f.sample_format());
+  set_samples_per_second(f.samples_per_second());
+  toggle_interleaved_channels(f.interleaved_channels());
+}
+
 void ECA_AUDIO_FORMAT::set_sample_format(SAMPLE_FORMAT v) throw(ECA_ERROR*) {
   sfmt_rep = v;
   convert_to_host_byte_order();

@@ -32,13 +32,10 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-RAWFILE::RAWFILE(const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& fmt, bool double_buffering) 
-  :  AUDIO_IO_FILE(name, mode, fmt) {
+RAWFILE::RAWFILE(const string& name, bool double_buffering) {
+  label(name);
   double_buffering_rep = double_buffering;
   fio = 0;
-
-  open();
-  //  format_query();
 }
 
 RAWFILE::~RAWFILE(void) { close(); }
@@ -61,7 +58,7 @@ void RAWFILE::format_query(void) {
 
 void RAWFILE::open(void) { 
   switch(io_mode()) {
-  case si_read:
+  case io_read:
     {
       if (label().at(0) == '-') {
 	fio = new ECA_FILE_IO_STREAM();
@@ -74,7 +71,7 @@ void RAWFILE::open(void) {
       }
       break;
     }
-  case si_write: 
+  case io_write: 
     {
       fio = new ECA_FILE_IO_STREAM();
       if (label().at(0) == '-') {
@@ -86,7 +83,7 @@ void RAWFILE::open(void) {
       }
       break;
     }
-  case si_readwrite: 
+  case io_readwrite: 
     {
       fio = new ECA_FILE_IO_STREAM();
       if (label().at(0) == '-') {

@@ -10,6 +10,8 @@
 class REALTIME_NULL : public AUDIO_IO_DEVICE {
  public:
 
+  string name(void) const { return("Realtime null device"); }
+
   void open(void);
   void close(void);
 
@@ -24,12 +26,10 @@ class REALTIME_NULL : public AUDIO_IO_DEVICE {
 
   long position_in_samples(void) const;
 
-  REALTIME_NULL(const string& name = "realtime null",
-		SIMODE mode = si_read,
-		const ECA_AUDIO_FORMAT& fmt = ECA_AUDIO_FORMAT(),
-		long int buffersize = 0);
+  REALTIME_NULL(const string& name = "realtime null");
   ~REALTIME_NULL(void);
   REALTIME_NULL* clone(void) { return new REALTIME_NULL(*this); }
+  REALTIME_NULL* new_expr(void) { return new REALTIME_NULL(); }
 
  private:
 

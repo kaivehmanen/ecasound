@@ -743,7 +743,7 @@ void ECA_CONTROLLER_OBJECTS::remove_audio_object(void) {
   assert(connected_chainsetup() != selected_chainsetup());
   assert(selected_audio_object_rep != 0);
   // --------
-  if (selected_audio_object_rep->io_mode() == si_read) 
+  if (selected_audio_object_rep->io_mode() == AUDIO_IO::io_read) 
     selected_chainsetup_rep->remove_audio_input(selected_audio_object_rep->label());
   else 
     selected_chainsetup_rep->remove_audio_output(selected_audio_object_rep->label());
@@ -767,7 +767,7 @@ void ECA_CONTROLLER_OBJECTS::attach_audio_object(void) {
   assert(selected_chains().size() > 0);
   assert(selected_audio_object_rep != 0);
   // --------
-  if (selected_audio_object_rep->io_mode() == si_read) 
+  if (selected_audio_object_rep->io_mode() == AUDIO_IO::io_read) 
     selected_chainsetup_rep->attach_input_to_selected_chains(selected_audio_object_rep->label());
   else
     selected_chainsetup_rep->attach_output_to_selected_chains(selected_audio_object_rep->label());
@@ -898,7 +898,7 @@ void ECA_CONTROLLER_OBJECTS::remove_chain_operator(int chainop_id) {
 
 void ECA_CONTROLLER_OBJECTS::set_chain_operator_parameter(int chainop_id,
 						  int param,
-						  DYNAMIC_PARAMETERS::parameter_type value) {
+						  CHAIN_OPERATOR::parameter_type value) {
   // --------
   // require:
   assert(is_selected() == true);

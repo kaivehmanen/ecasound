@@ -54,6 +54,7 @@ class EFFECT_DELAY : public EFFECT_TIME_BASED {
   parameter_type get_delta_in_samples(void) { return(dnum * dtime); }
 
   EFFECT_DELAY* clone(void)  { return new EFFECT_DELAY(*this); }
+  EFFECT_DELAY* new_expr(void)  { return new EFFECT_DELAY(); }
   EFFECT_DELAY (parameter_type delay_time = 0.0, int surround_mode = 0, int num_of_delays = 1, parameter_type mix_percent = 50.0);
 };
 
@@ -87,6 +88,7 @@ class EFFECT_MULTITAP_DELAY : public EFFECT_TIME_BASED {
   void process(void);
 
   EFFECT_MULTITAP_DELAY* clone(void)  { return new EFFECT_MULTITAP_DELAY(*this); }
+  EFFECT_MULTITAP_DELAY* new_expr(void)  { return new EFFECT_MULTITAP_DELAY(); }
   EFFECT_MULTITAP_DELAY (parameter_type delay_time = 0.0, int num_of_delays = 1, parameter_type mix_percent = 50.0);
 };
 
@@ -114,6 +116,7 @@ class EFFECT_FAKE_STEREO : public EFFECT_TIME_BASED {
   int output_channels(int i_channels) const { return(2); }
 
   EFFECT_FAKE_STEREO* clone(void)  { return new EFFECT_FAKE_STEREO(*this); }
+  EFFECT_FAKE_STEREO* new_expr(void)  { return new EFFECT_FAKE_STEREO(); }
   EFFECT_FAKE_STEREO (parameter_type delay_time = 0.0);
 };
 
@@ -147,6 +150,7 @@ class EFFECT_REVERB : public EFFECT_TIME_BASED {
   parameter_type get_delta_in_samples(void) { return(dtime); }
 
   EFFECT_REVERB* clone(void)  { return new EFFECT_REVERB(*this); }
+  EFFECT_REVERB* new_expr(void)  { return new EFFECT_REVERB(); }
   EFFECT_REVERB (parameter_type delay_time = 0.0, int surround_mode = 0, parameter_type feedback_percent = 50.0);
 };
 
@@ -186,6 +190,7 @@ class EFFECT_FLANGER : public EFFECT_MODULATING_DELAY {
   void process(void);
 
   EFFECT_FLANGER* clone(void)  { return new EFFECT_FLANGER(*this); }
+  EFFECT_FLANGER* new_expr(void)  { return new EFFECT_FLANGER(); }
 };
 
 /*
@@ -201,6 +206,7 @@ class EFFECT_CHORUS : public EFFECT_MODULATING_DELAY {
   void process(void);
 
   EFFECT_CHORUS* clone(void)  { return new EFFECT_CHORUS(*this); }
+  EFFECT_CHORUS* new_expr(void)  { return new EFFECT_CHORUS(); }
 };
 
 /*
@@ -216,6 +222,7 @@ class EFFECT_PHASER : public EFFECT_MODULATING_DELAY {
   void process(void);
 
   EFFECT_PHASER* clone(void)  { return new EFFECT_PHASER(*this); }
+  EFFECT_PHASER* new_expr(void)  { return new EFFECT_PHASER(); }
 };
 
 #endif

@@ -41,10 +41,7 @@ string MIKMOD_INTERFACE::default_mikmod_args = "-p 0 --noloops";
 void MIKMOD_INTERFACE::set_mikmod_path(const string& value) { MIKMOD_INTERFACE::default_mikmod_path = value; }
 void MIKMOD_INTERFACE::set_mikmod_args(const string& value) { MIKMOD_INTERFACE::default_mikmod_args = value; }
 
-MIKMOD_INTERFACE::MIKMOD_INTERFACE(const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& fmt) 
-  :  AUDIO_IO_FILE(name, mode, fmt) 
-{
-  toggle_open_state(false);
+MIKMOD_INTERFACE::MIKMOD_INTERFACE(const string& name) {
   finished_rep = false;
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
 }
@@ -54,7 +51,7 @@ MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void) { close(); }
 void MIKMOD_INTERFACE::open(void) { }
 
 void MIKMOD_INTERFACE::close(void) {
-  if (io_mode() == si_read) {
+  if (io_mode() == io_read) {
     kill_mikmod();
   }
   toggle_open_state(false);
@@ -74,7 +71,7 @@ long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {
 
 void MIKMOD_INTERFACE::seek_position(void) {
   if (is_open() == true) {
-    if (io_mode() == si_read) {
+    if (io_mode() == io_read) {
       kill_mikmod();
     }
   }

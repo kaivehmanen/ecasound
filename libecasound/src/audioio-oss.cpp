@@ -34,26 +34,22 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-OSSDEVICE::OSSDEVICE(const string& name, 
-		     const SIMODE mode, 
-		     const ECA_AUDIO_FORMAT& fmt, 
-		     long int bsize, 
+OSSDEVICE::OSSDEVICE(const string& name,
 		     bool precise_sample_rates) 
-  :  AUDIO_IO_DEVICE(name, mode, fmt)
 {
-  buffersize(bsize, samples_per_second());
+  label(name);
   is_triggered = false;
   precise_srate_mode = precise_sample_rates;
 }
 
 void OSSDEVICE::open(void) throw(ECA_ERROR*) {
   if (is_open() == true) return;
-  if (io_mode() == si_read) {
+  if (io_mode() == io_read) {
     if ((audio_fd = ::open(label().c_str(), O_RDONLY, 0)) == -1) {
       throw(new ECA_ERROR("AUDIOIO-OSS", "unable to open OSS-device to O_RDONLY"));
     }
   }
-  else if (io_mode() == si_write) {
+  else if (io_mode() == io_write) {
     if ((audio_fd = ::open(label().c_str(), O_WRONLY, 0)) == -1) {
       // Opening device failed
       perror("(eca-oss)");
@@ -75,12 +71,12 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
 
 #ifndef DISABLE_OSS_TRIGGER
   if (oss_caps & DSP_CAP_TRIGGER == DSP_CAP_TRIGGER) {
-    if (io_mode() == si_read) {
+    if (io_mode() == io_read) {
       int enable_bits = ~PCM_ENABLE_INPUT; // This disables recording
       if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
 	throw(new ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
     }      
-    else if (io_mode() == si_write) {
+    else if (io_mode() == io_write) {
       int enable_bits = ~PCM_ENABLE_OUTPUT; // This disables playback
       if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
 	throw(new ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
@@ -204,8 +200,8 @@ void OSSDEVICE::start(void) throw(ECA_ERROR*) {
     ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" started.");
     if (oss_caps & DSP_CAP_TRIGGER == DSP_CAP_TRIGGER) {
       int enable_bits;
-      if (io_mode() == si_read) enable_bits = PCM_ENABLE_INPUT;
-      else if (io_mode() == si_write) enable_bits = PCM_ENABLE_OUTPUT;
+      if (io_mode() == io_read) enable_bits = PCM_ENABLE_INPUT;
+      else if (io_mode() == io_write) enable_bits = PCM_ENABLE_OUTPUT;
       if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
         throw(new ECA_ERROR("AUDIOIO-OSS", "general OSS-error SNDCTL_DSP_SETTRIGGER"));
     }   
@@ -219,7 +215,7 @@ long OSSDEVICE::position_in_samples(void) const {
   if (oss_caps & DSP_CAP_REALTIME == DSP_CAP_REALTIME) {
     count_info info;
     info.bytes = 0;
-    if (io_mode() == si_read) {
+    if (io_mode() == io_read) {
       ioctl(audio_fd, SNDCTL_DSP_GETIPTR, &info);
     }
     else {

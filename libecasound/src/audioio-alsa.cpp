@@ -37,25 +37,20 @@
 #include "eca-debug.h"
 
 ALSA_PCM_DEVICE::ALSA_PCM_DEVICE (int card, 
-			int device, 
-			const SIMODE mode, 
-			const ECA_AUDIO_FORMAT& form, 
-			long int bsize)
-  :  AUDIO_IO_DEVICE(string("alsa,") + kvu_numtostr(card) +
-		   string(",") + kvu_numtostr(device) , mode, form)
-{
+				  int device) {
   card_number = card;
   device_number = device;
   is_triggered = false;
   overruns = underruns = 0;
-  eca_alsa_load_dynamic_support();
-  buffersize(bsize, samples_per_second());
 }
 
 void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   if (is_open() == true) return;
+
+  eca_alsa_load_dynamic_support();
+
   int err;
-  if (io_mode() == si_read) {
+  if (io_mode() == io_read) {
 #ifdef ALSALIB_031
     err = dl_snd_pcm_open(&audio_fd, 
 			  card_number, 
@@ -71,7 +66,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
       throw(new ECA_ERROR("AUDIOIO-ALSA", "unable to open ALSA-device for recording; error: " + string(dl_snd_strerror(err))));
     }
   }    
-  else if (io_mode() == si_write) {
+  else if (io_mode() == io_write) {
     err = dl_snd_pcm_open(&audio_fd, 
 			  card_number, 
 			  device_number,
@@ -83,7 +78,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
     // output triggering
     dl_snd_pcm_playback_pause(audio_fd, 1);
   }
-  else if (io_mode() == si_readwrite) {
+  else if (io_mode() == io_readwrite) {
       throw(new ECA_ERROR("AUDIOIO-ALSA", "Simultaneous intput/ouput not supported."));
   }
 
@@ -98,7 +93,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   if (buffersize() == 0) 
     throw(new ECA_ERROR("AUDIOIO-ALSA", "buffersize() is 0!", ECA_ERROR::stop));
     
-  if (io_mode() == si_read) {
+  if (io_mode() == io_read) {
 #ifdef ALSALIB_031
     snd_pcm_record_info_t pcm_info;
     snd_pcm_record_params_t pp;
@@ -165,7 +160,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   pf.rate = samples_per_second();
   pf.channels = channels();
 
-  if (io_mode() == si_read) {
+  if (io_mode() == io_read) {
     dl_snd_pcm_capture_time(audio_fd, 1);
     err = dl_snd_pcm_capture_format(audio_fd, &pf);
     if (err < 0) {
@@ -179,12 +174,15 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
       throw(new ECA_ERROR("AUDIOIO-ALSA", "Error when setting up playback parameters: " + string(dl_snd_strerror(err))));
     }
   }
+
+  is_triggered = false;
+  is_prepared = false;
   toggle_open_state(true);
 }
 
 void ALSA_PCM_DEVICE::stop(void) {
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) Audio device \"" + label() + "\" disabled.");
-  if (io_mode() == si_write) {
+  if (io_mode() == io_write) {
     dl_snd_pcm_playback_pause(audio_fd, 1);
   }
   else {
@@ -195,13 +193,13 @@ void ALSA_PCM_DEVICE::stop(void) {
 
 void ALSA_PCM_DEVICE::close(void) {
   if (is_open()) {
-    if (io_mode() != si_read) {
+    if (io_mode() != io_read) {
       snd_pcm_playback_status_t pb_status;
       dl_snd_pcm_playback_status(audio_fd, &pb_status);
       underruns += pb_status.underrun;
       dl_snd_pcm_drain_playback(audio_fd);
     }
-    else if (io_mode() == si_read) {
+    else if (io_mode() == io_read) {
 #ifdef ALSALIB_031
       snd_pcm_record_status_t ca_status;
 #else
@@ -221,7 +219,7 @@ void ALSA_PCM_DEVICE::start(void) {
     open();
   }
   if (is_triggered == false) {
-    if (io_mode() == si_write) {
+    if (io_mode() == io_write) {
       snd_pcm_playback_status_t pb_status;
       dl_snd_pcm_playback_status(audio_fd, &pb_status);
       ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) Bytes in output-queue: " + kvu_numtostr(pb_status.queue) + ".");
@@ -245,7 +243,7 @@ void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
 
 long ALSA_PCM_DEVICE::position_in_samples(void) const {
   if (is_triggered == false) return(0);
-  if (io_mode() != si_read) {
+  if (io_mode() != io_read) {
     snd_pcm_playback_status_t pb_status;
     dl_snd_pcm_playback_status(audio_fd, &pb_status);
     double time = pb_status.stime.tv_sec * 1000000.0 + pb_status.stime.tv_usec;
@@ -265,7 +263,7 @@ long ALSA_PCM_DEVICE::position_in_samples(void) const {
 ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) { 
   close(); 
 
-  if (io_mode() != si_read) {
+  if (io_mode() != io_read) {
     if (underruns != 0) {
       cerr << "(audioio-alsa) WARNING! While writing to ALSA-pcm device ";
       cerr << "C" << card_number << "D" << device_number;
@@ -281,6 +279,37 @@ ALSA_PCM_DEVICE::~ALSA_PCM_DEVICE(void) {
   }
 
   eca_alsa_unload_dynamic_support();
+}
+
+void ALSA_PCM_DEVICE::set_parameter(int param, 
+				     string value) {
+  switch (param) {
+  case 1: 
+    label(value);
+    break;
+
+  case 2: 
+    card_number = atoi(value.c_str());
+    break;
+
+  case 3: 
+    device_number = atoi(value.c_str());
+    break;
+  }
+}
+
+string ALSA_PCM_DEVICE::get_parameter(int param) const {
+  switch (param) {
+  case 1: 
+    return(label());
+
+  case 2: 
+    return(kvu_numtostr(card_number));
+
+  case 3: 
+    return(kvu_numtostr(device_number));
+  }
+  return("");
 }
 
 #endif // ALSALIB_032

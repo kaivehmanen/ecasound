@@ -36,29 +36,24 @@
 #include "eca-debug.h"
 
 ALSA_LOOPBACK_DEVICE::ALSA_LOOPBACK_DEVICE (int card, 
-			    int device, 
-			    const SIMODE mode, 
-			    const ECA_AUDIO_FORMAT& form, 
-			    long int bsize,
-			    bool playback_mode)
-  :  AUDIO_IO_DEVICE(string("alsa_loopback,") + kvu_numtostr(card) +
-		     string(",") + kvu_numtostr(device) , mode, form)
-{
-#ifdef ALSALIB_050
-  throw(new ECA_ERROR("AUDIOIO-ALSALB", "support for ALSA versions >0.5.0 not implemented"));
-#endif
-  buffersize(bsize, samples_per_second());
+					    int device,
+					    bool playback_mode) {
   card_number = card;
   device_number = device;
   is_triggered = false;
   pb_mode = playback_mode;
-  eca_alsa_load_dynamic_support();
 }
 
 void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
+#ifdef ALSALIB_050
+  throw(new ECA_ERROR("AUDIOIO-ALSALB", "support for ALSA versions >0.5.0 not implemented"));
+#endif
+
+  eca_alsa_load_dynamic_support();
+
   if (is_open() == true) return;
   int err;
-  if (io_mode() == si_read) {
+  if (io_mode() == io_read) {
     if (pb_mode) {
       if ((err = dl_snd_pcm_loopback_open(&audio_fd, 
 					  card_number, 
@@ -123,7 +118,7 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
   pf.voices = channels();
 #endif
 
-  if (io_mode() == si_read) {
+  if (io_mode() == io_read) {
     err = dl_snd_pcm_loopback_format(audio_fd, &pf);
     if (err < 0) {
     throw(new ECA_ERROR("AUDIOIO-ALSALB", "Error when setting up record parameters: " + string(dl_snd_strerror(err))));
@@ -171,5 +166,36 @@ void loopback_callback_format_change(void *private_data,
 
 }
 #endif
+
+void ALSA_LOOPBACK_DEVICE::set_parameter(int param, 
+					 string value) {
+  switch (param) {
+  case 1: 
+    label(value);
+    break;
+
+  case 2: 
+    card_number = atoi(value.c_str());
+    break;
+
+  case 3: 
+    device_number = atoi(value.c_str());
+    break;
+  }
+}
+
+string ALSA_LOOPBACK_DEVICE::get_parameter(int param) const {
+  switch (param) {
+  case 1: 
+    return(label());
+
+  case 2: 
+    return(kvu_numtostr(card_number));
+
+  case 3: 
+    return(kvu_numtostr(device_number));
+  }
+  return("");
+}
 
 #endif // COMPILE_ALSA

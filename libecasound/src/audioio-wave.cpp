@@ -32,19 +32,10 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-WAVEFILE::WAVEFILE (const string& name, const SIMODE mode, const
-		    ECA_AUDIO_FORMAT& fmt, bool double_buffering)
-  :  AUDIO_IO_FILE(name, mode, fmt)
-{
+WAVEFILE::WAVEFILE (const string& name, bool double_buffering) {
+  label(name);
   double_buffering_rep = double_buffering;
   fio = 0;
-
-  try { 
-    open();
-  }
-  catch(ECA_ERROR*) { }
- 
-  //  format_query();
 }
 
 WAVEFILE::~WAVEFILE(void) {
@@ -59,7 +50,7 @@ void WAVEFILE::format_query(void) throw(ECA_ERROR*) {
   assert(!is_open());
   // --------
 
-  if (io_mode() == si_write) return;
+  if (io_mode() == io_write) return;
 
   fio = new ECA_FILE_IO_STREAM();
   if (fio == 0) {
@@ -84,18 +75,8 @@ void WAVEFILE::format_query(void) throw(ECA_ERROR*) {
 
 
 void WAVEFILE::open(void) throw(ECA_ERROR*) {
-
-  if (riff_format.bits > 8 && 
-      format_string()[0] == 'u')
-    throw(new ECA_ERROR("AUDIOIO-WAVE", "unsigned sample format accepted only with 8bit."));
-
-  if (riff_format.bits > 8 && 
-      format_string().size() > 4 &&
-      format_string()[4] == 'b')
-    throw(new ECA_ERROR("AUDIOIO-WAVE", "bigendian byte-order not supported by RIFF wave files."));
-
   switch(io_mode()) {
-  case si_read:
+  case io_read:
     {
       if (double_buffering_rep) fio = new ECA_FILE_IO_MMAP();
       else  fio = new ECA_FILE_IO_STREAM();
@@ -110,7 +91,7 @@ void WAVEFILE::open(void) throw(ECA_ERROR*) {
       find_riff_datablock();
       break;
     }
-  case si_write:
+  case io_write:
     {
       fio = new ECA_FILE_IO_STREAM();
       if (fio == 0) {
@@ -123,7 +104,7 @@ void WAVEFILE::open(void) throw(ECA_ERROR*) {
       break;
     }
 
-  case si_readwrite:
+  case io_readwrite:
     {
       fio = new ECA_FILE_IO_STREAM();
       if (fio == 0) {
@@ -143,6 +124,16 @@ void WAVEFILE::open(void) throw(ECA_ERROR*) {
       }
     }
   }
+
+  if (riff_format.bits > 8 && 
+      format_string()[0] == 'u')
+    throw(new ECA_ERROR("AUDIOIO-WAVE", "unsigned sample format accepted only with 8bit."));
+
+  if (riff_format.bits > 8 && 
+      format_string().size() > 4 &&
+      format_string()[4] == 'b')
+    throw(new ECA_ERROR("AUDIOIO-WAVE", "bigendian byte-order not supported by RIFF wave files."));
+
   toggle_open_state(true);
   seek_position();
 }
@@ -158,7 +149,7 @@ void WAVEFILE::close(void) {
 }
 
 void WAVEFILE::update (void) {
-  if (io_mode() != si_read) {
+  if (io_mode() != io_read) {
     update_riff_datablock();
     write_riff_header();
     set_length_in_bytes();

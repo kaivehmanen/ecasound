@@ -25,7 +25,8 @@
 #include <qpushbutton.h>
 
 #include <kvutils.h>
-#include <ecasound/qebuttonrow.h>
+
+#include "qebuttonrow.h"
 
 #include "eca-chain.h"
 #include "eca-controller.h"

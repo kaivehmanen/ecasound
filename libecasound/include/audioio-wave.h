@@ -43,7 +43,7 @@ typedef struct {
  * - if 16 bits, least significant byte first as specified
  *   in the stantard
  */
-class WAVEFILE : public AUDIO_IO_FILE {
+class WAVEFILE : public AUDIO_IO_BUFFERED {
 
   ECA_FILE_IO* fio;
 
@@ -67,6 +67,8 @@ class WAVEFILE : public AUDIO_IO_FILE {
     
  public:
 
+  string name(void) const { return("RIFF wave file"); }
+
   void open(void) throw(ECA_ERROR*);
   void close(void);
 
@@ -76,12 +78,10 @@ class WAVEFILE : public AUDIO_IO_FILE {
   bool finished(void) const;
   void seek_position(void);
 
-  WAVEFILE (const string& name,
-	    const SIMODE mode,
-	    const ECA_AUDIO_FORMAT& form,
-	    bool double_buffering = false);
+  WAVEFILE (const string& name = "", bool double_buffering = false);
   ~WAVEFILE(void);
   WAVEFILE* clone(void) { return new WAVEFILE(*this); }
+  WAVEFILE* new_expr(void) { return new WAVEFILE(); }
 
  private:
 

@@ -34,7 +34,8 @@
 #include <qtimer.h>
 
 #include <kvutils.h>
-#include <ecasound/qebuttonrow.h>
+
+#include "qebuttonrow.h"
 
 #include "eca-version.h"
 // #include "eca-main.h"

@@ -26,6 +26,7 @@ class SINE_OSCILLATOR : public OSCILLATOR {
   parameter_type value(void);
 
   SINE_OSCILLATOR* clone(void)  { return new SINE_OSCILLATOR(*this); }
+  SINE_OSCILLATOR* new_expr(void)  { return new SINE_OSCILLATOR(); }
   SINE_OSCILLATOR (double freq = 0, double initial_phase = 0);
 };
 

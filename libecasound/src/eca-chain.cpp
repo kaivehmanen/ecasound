@@ -30,9 +30,10 @@
 #include "file-preset.h"
 #include "global-preset.h"
 
-#include "eca-chainop-map.h"
-#include "eca-controller-map.h"
+#include "eca-static-object-maps.h"
+
 #include "eca-chain.h"
+#include "eca-chainop.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"
@@ -133,7 +134,7 @@ void CHAIN::remove_chain_operator(void) {
   // --------
 }
 
-void CHAIN::set_parameter(int par_index, DYNAMIC_PARAMETERS::parameter_type value) {
+void CHAIN::set_parameter(int par_index, CHAIN_OPERATOR::parameter_type value) {
   // --------
   // require:
   assert(selected_chainop_number > 0 && selected_chainop_number <= number_of_chain_operators());
@@ -142,7 +143,7 @@ void CHAIN::set_parameter(int par_index, DYNAMIC_PARAMETERS::parameter_type valu
   selected_chainop->set_parameter(par_index, value);
 }
 
-DYNAMIC_PARAMETERS::parameter_type CHAIN::get_parameter(int index) const {
+CHAIN_OPERATOR::parameter_type CHAIN::get_parameter(int index) const {
   // --------
   // require:
   assert(index > 0 && selected_chain_operator() != 0);
@@ -315,7 +316,7 @@ string CHAIN::to_string(void) const {
 
 string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
   MESSAGE_ITEM t;
-  t << "-" << ECA_CHAIN_OPERATOR_MAP::object_prefix_map[chainop->name()];
+  t << "-" << eca_chain_operator_map.object_identifier(chainop);
   if (chainop->number_of_params() > 0) t << ":";
   for(int n = 0; n < chainop->number_of_params(); n++) {
     t << chainop->get_parameter(n + 1);
@@ -335,7 +336,7 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
 
 string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const {
   MESSAGE_ITEM t; 
-  t << "-" << ECA_CONTROLLER_MAP::object_prefix_map[gctrl->name()];
+  t << "-" << eca_controller_map.object_identifier(gctrl);
   t << ":";
   for(int n = 0; n < gctrl->number_of_params(); n++) {
     t << gctrl->get_parameter(n + 1);

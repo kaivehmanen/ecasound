@@ -32,18 +32,13 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-CDRFILE::CDRFILE(const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& fmt) 
-  :  AUDIO_IO_FILE(name, mode, fmt) {
+CDRFILE::CDRFILE(const string& name) {
+  
+  label(name);
 
   set_channels(2);
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_be);
   set_samples_per_second(44100);
-
-  try { 
-    open();
-  }
-  catch(ECA_ERROR*) { }
-  //  format_query();
 }
 
 CDRFILE::~CDRFILE(void) {
@@ -73,7 +68,7 @@ void CDRFILE::open(void) throw(ECA_ERROR*) {
   // --------
 
   switch(io_mode()) {
-  case si_read:
+  case io_read:
     {
       fobject=fopen(label().c_str(),"rb");
       if (!fobject)
@@ -81,14 +76,14 @@ void CDRFILE::open(void) throw(ECA_ERROR*) {
       set_length_in_bytes();
       break;
     }
-  case si_write: 
+  case io_write: 
     {
       fobject=fopen(label().c_str(),"wb");
       if (!fobject) 
 	throw(new ECA_ERROR("AUDIOIO-CDR","Can't open " + label() + " for writing."));
       break;
     }
-  case si_readwrite:
+  case io_readwrite:
     {
       fobject=fopen(label().c_str(),"r+b");
       if (!fobject) {
@@ -105,7 +100,7 @@ void CDRFILE::open(void) throw(ECA_ERROR*) {
 }
 
 void CDRFILE::close(void) { 
-  if (io_mode() != si_read)
+  if (io_mode() != io_read)
     pad_to_sectorsize();
 
   fclose(fobject);

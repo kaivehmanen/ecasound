@@ -26,7 +26,7 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-EFFECT_DCFIX::EFFECT_DCFIX (DYNAMIC_PARAMETERS::parameter_type delta_left, DYNAMIC_PARAMETERS::parameter_type delta_right) {
+EFFECT_DCFIX::EFFECT_DCFIX (CHAIN_OPERATOR::parameter_type delta_left, CHAIN_OPERATOR::parameter_type delta_right) {
 
   deltafix[0] = delta_left;
   deltafix[1] = delta_right;
@@ -38,7 +38,7 @@ EFFECT_DCFIX::EFFECT_DCFIX (const EFFECT_DCFIX& x) {
   }
 }
 
-void EFFECT_DCFIX::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_DCFIX::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     deltafix[0] = value;
@@ -49,7 +49,7 @@ void EFFECT_DCFIX::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type v
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_DCFIX::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_DCFIX::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(deltafix[0]);
@@ -71,7 +71,7 @@ void EFFECT_DCFIX::process(void) {
   }
 }
 
-void EFFECT_PITCH_SHIFT::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
   switch (param) {
   case 1: 
     pmod = value;
@@ -79,7 +79,7 @@ void EFFECT_PITCH_SHIFT::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_
   }
 }
 
-DYNAMIC_PARAMETERS::parameter_type EFFECT_PITCH_SHIFT::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_type EFFECT_PITCH_SHIFT::get_parameter(int param) const { 
   switch (param) {
   case 1: 
     return(pmod);

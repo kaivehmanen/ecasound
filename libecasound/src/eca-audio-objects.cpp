@@ -28,22 +28,10 @@
 #include <kvutils.h>
 
 #include "audioio.h"
-#include "audioio-types.h"
-#include "audioio-cdr.h"
-#include "audioio-wave.h"
-#include "audioio-oss.h"
-// #include "audioio-oss_dma.h"
-#include "audioio-ewf.h"
-#include "audioio-mp3.h"
-#include "audioio-mikmod.h"
-#include "audioio-alsa.h"
-#include "audioio-alsa2.h"
-#include "audioio-alsalb.h"
-#include "audioio-af.h"
-#include "audioio-raw.h"
-#include "audioio-null.h"
-#include "audioio-rtnull.h"
 #include "audioio-loop.h"
+#include "audioio-null.h"
+#include "eca-audio-object-map.h"
+#include "eca-static-object-maps.h"
 
 #include "eca-chain.h"
 #include "samplebuffer.h"
@@ -55,7 +43,7 @@ ECA_AUDIO_OBJECTS::ECA_AUDIO_OBJECTS(void)
   : 
     double_buffering_rep (false),
     precise_sample_rates_rep (false),
-    output_openmode_rep (si_readwrite),
+    output_openmode_rep (AUDIO_IO::io_readwrite),
     buffersize_rep(0),
     last_audio_object(0),
     selected_chainids (0) { }
@@ -110,7 +98,7 @@ bool ECA_AUDIO_OBJECTS::is_valid(void) const {
   return(true);
 }
 
-void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu) {
+void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu) throw(ECA_ERROR*) { 
   // --------
   REQUIRE(argu.size() > 0);
   REQUIRE(argu[0] == '-');
@@ -119,22 +107,56 @@ void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu) {
   string tname = get_argument_number(1, argu);
   ecadebug->msg(ECA_DEBUG::system_objects,"(eca-audio-objects) adding file \"" + tname + "\".");
 
-  if (argu.size() < 2) return;  
-
+  if (argu.size() < 2) return;
   switch(argu[1]) {
   case 'i':
     {
       ecadebug->control_flow("Eca-audio-objects/Adding a new input");
-      last_audio_object = create_audio_object(tname, si_read, default_audio_format(), buffersize());
-      add_input(last_audio_object);
+      last_audio_object = create_audio_object(tname);
+      if (last_audio_object == 0) 
+	last_audio_object = create_loop_input(tname);
+      if (last_audio_object != 0) {
+	if ((last_audio_object->supported_io_modes() &
+	    AUDIO_IO::io_read) != AUDIO_IO::io_read) {
+	  throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "I/O-mode 'io_read' not supported by " + last_audio_object->name()));
+	}
+	last_audio_object->io_mode(AUDIO_IO::io_read);
+	last_audio_object->set_audio_format(default_audio_format_rep);
+	add_input(last_audio_object);
+      }
+      else {
+	throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "Format of input " +
+			    tname + " not recognized."));
+      }
       break;
     }
 
   case 'o':
     {
       ecadebug->control_flow("Eca-audio-objects/Adding a new output");
-      last_audio_object = create_audio_object(tname, output_openmode(), default_audio_format(), buffersize());
-      add_output(last_audio_object);
+      last_audio_object = create_audio_object(tname);
+      if (last_audio_object == 0) last_audio_object = create_loop_output(tname);
+      if (last_audio_object != 0) {
+	int mode_tmp = output_openmode_rep;
+	if (mode_tmp == AUDIO_IO::io_readwrite) {
+	  if ((last_audio_object->supported_io_modes() &
+	      AUDIO_IO::io_readwrite) != AUDIO_IO::io_readwrite) {
+	    mode_tmp = AUDIO_IO::io_write;
+	  }
+	}
+	if ((last_audio_object->supported_io_modes() &
+	    mode_tmp != mode_tmp)) {
+	    throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "I/O-mode 'io_write' not supported by " + last_audio_object->name()));
+	}
+      
+	last_audio_object->io_mode(mode_tmp);
+	last_audio_object->set_audio_format(default_audio_format_rep);
+	add_output(last_audio_object);
+      }
+      else {
+	throw(new ECA_ERROR("ECA-AUDIO-OBJECTS", "Format of output " +
+			    tname + " not recognized."));
+      }
       break;
     }
 
@@ -144,7 +166,7 @@ void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu) {
 	ecadebug->msg("Error! No audio object defined.");
 
       last_audio_object->seek_position_in_seconds(atof(get_argument_number(1, argu).c_str()));
-      if (last_audio_object->io_mode() == si_read) {
+      if (last_audio_object->io_mode() == AUDIO_IO::io_read) {
 	input_start_pos[input_start_pos.size() - 1] = last_audio_object->position_in_seconds_exact();
       }
       else {
@@ -163,206 +185,62 @@ void ECA_AUDIO_OBJECTS::interpret_audioio_device (const string& argu) {
   }
 }
 
-AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu, 
-						 const SIMODE mode, 
-						 const ECA_AUDIO_FORMAT& format,
-						 long int buffersize_arg) throw(ECA_ERROR*) {
-  // --------
-  REQUIRE(argu.empty() != true);
-  REQUIRE(buffersize_arg > 0);
-  // --------
-
+AUDIO_IO* ECA_AUDIO_OBJECTS::create_audio_object(const string& argu) {
+  assert(argu.empty() != true);
+ 
   string tname = get_argument_number(1, argu);
 
-  AUDIO_IO* main_file;
-  int type = get_type_from_extension(tname);
-  switch(type) {
-  case TYPE_WAVE:
-    main_file = new WAVEFILE (tname, mode, format, double_buffering());
-    break;
-    
-  case TYPE_CDR:
-    main_file = new CDRFILE (tname, mode, format);
-    break;
-    
-  case TYPE_OSS:
-#ifdef COMPILE_OSS
-    if (mode != si_read) 
-      main_file = new OSSDEVICE (tname, si_write, format, buffersize_arg, precise_sample_rates());
-    else
-      main_file = new OSSDEVICE (tname, mode, format, buffersize_arg, precise_sample_rates());
-#endif
-    break;
-    
-  case TYPE_EWF:
-    main_file = new EWFFILE (tname, mode, format, buffersize_arg);
-    break;
-    
-    //  case TYPE_OSSDMA:
-    // #ifdef COMPILE_OSS
-    //    main_file = new OSSDMA (tname, mode, format, buffersize_arg);
-    // #endif
-    //    break;
-    
-  case TYPE_MP3:
-    if (mode != si_read) 
-      main_file = new MP3FILE (tname, si_write, format);
-    else
-      main_file = new MP3FILE (tname, mode, format);
-    break;
+  AUDIO_IO* main_file = 0;
+  main_file = eca_audio_object_map.object(tname);
 
-  case TYPE_MIKMOD:
-    if (mode == si_read) 
-      main_file = new MIKMOD_INTERFACE (tname, si_read, format);
-    break;
-
-  case TYPE_ALSAFILE:
-    {
-      string cardstr,devicestr;
-      string::const_iterator p = tname.begin();
-      while(p != tname.end() && *p != 'C') ++p;
-      ++p;
-      while(p != tname.end() && isdigit(*p)) {
-	cardstr += " ";
-	cardstr[cardstr.size() - 1] = *p;
-	++p;
-      }
-      while(p != tname.end() && *p != 'D') ++p;
-      ++p;
-      while(p != tname.end() && isdigit(*p)) {
-	devicestr += " ";
-	devicestr[devicestr.size() - 1] = *p;
-	++p;
-      }
-      
-      int card = atoi(cardstr.c_str());
-      int device = atoi(devicestr.c_str());
-
-#ifdef ALSALIB_050
-      if (mode != si_read)
-	main_file = new ALSA_PCM2_DEVICE (card, device, -1, si_write, format,
-					  buffersize_arg);
-      else
-	main_file = new ALSA_PCM2_DEVICE (card, device, -1, mode, format, buffersize_arg);
-#endif
-#ifdef ALSALIB_032
-      if (mode != si_read)
-	main_file = new ALSA_PCM_DEVICE (card, device, si_write, format,
-				    buffersize_arg);
-      else
-	main_file = new ALSA_PCM_DEVICE (card, device, mode, format, buffersize_arg);
-#endif
-      break;
-    }
-
-  case TYPE_ALSALOOPBACK:
-    {
-      int card = atoi(get_argument_number(2, argu).c_str());
-      int device = atoi(get_argument_number(3, argu).c_str());
-      bool loop_mode = true;
-      
-      if (get_argument_number(4, argu) == "c") {
-	loop_mode = false;
-      }
-
-#ifdef COMPILE_ALSA
-      if (mode != si_read)
-	main_file = new ALSA_LOOPBACK_DEVICE (card, device, si_write, format, buffersize_arg, loop_mode);
-      else
-	main_file = new ALSA_LOOPBACK_DEVICE (card, device, mode, format, buffersize_arg, loop_mode);
-#endif
-      break;
-    }
-
-  case TYPE_ALSA:
-    {
-      vector<string> temp = get_arguments(argu);
-      int card = 0;
-      int device = 0;
-      int subdevice = -1;
-      if (temp.size() > 1) card = atoi(temp[1].c_str());
-      if (temp.size() > 2) device = atoi(temp[2].c_str());
-      if (temp.size() > 3) subdevice = atoi(temp[3].c_str());
-
-#ifdef ALSALIB_050
-      if (mode != si_read)
-	main_file = new ALSA_PCM2_DEVICE (card, device, subdevice, si_write, format,
-					  buffersize_arg);
-      else
-	main_file = new ALSA_PCM2_DEVICE (card, device, subdevice, mode, format, buffersize_arg);
-#endif
-#ifdef ALSALIB_032
-      if (mode != si_read)
-	main_file = new ALSA_PCM_DEVICE (card, device, si_write, format,
-					 buffersize_arg);
-      else
-	main_file = new ALSA_PCM_DEVICE (card, device, mode, format, buffersize_arg);
-#endif
-      break;
-    }
-
-  case TYPE_AUDIOFILE:
-    {
-#ifdef COMPILE_AF
-      if (mode != si_read) 
-	main_file = new AUDIOFILE_INTERFACE (tname, si_write, format);
-      else
-	main_file = new AUDIOFILE_INTERFACE (tname, mode, format);
-#endif
-      break;
-    }
-
-  case TYPE_RAWFILE:
-    {
-      main_file = new RAWFILE (tname, mode, format, double_buffering());
-      break;
-    }
-
-  case TYPE_STDIN:
-    {
-      main_file = new RAWFILE ("-", si_read, format);
-      break;
-    }
-
-  case TYPE_STDOUT:
-    {
-      main_file = new RAWFILE ("-", si_write, format);
-      break;
-    }
-
-  case TYPE_RTNULL:
-    {
-      main_file = new REALTIME_NULL ("rtnull", mode, format, buffersize_arg);
-      break;
-    }
-
-  case TYPE_NULL:
-    {
-      main_file = new NULLFILE ("null", mode, format);
-      break;
-    }
-
-  case TYPE_LOOP:
-    {
-      int id = atoi(get_argument_number(2, argu).c_str());
-      if (loop_map.find(id) == loop_map.end()) { 
-	loop_map[id] = new LOOP_DEVICE(id);
-      }
-      main_file = static_cast<AUDIO_IO*>(loop_map[id]);
-      if (mode == si_read)
-	loop_map[id]->register_input();
-      else 
-	loop_map[id]->register_output();
-   
-      break;
-    }
-
-  default: 
-    {
-      throw(new ECA_ERROR("ECA_AUDIO_OBJECTS", "unknown file format; unable to open file " + tname + "."));
+  if (main_file != 0) {
+    main_file = main_file->new_expr();
+    main_file->map_parameters();
+    ecadebug->msg(ECA_DEBUG::system_objects, "(e-a-o) number of params: " + main_file->name() + "=" + 
+		  kvu_numtostr(main_file->number_of_params()));
+    for(int n = 0; n < main_file->number_of_params(); n++) {
+      main_file->set_parameter(n + 1, get_argument_number(n + 1, argu));
     }
   }
   return(main_file);
+}
+
+AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_input(const string& argu) {
+  // --------
+  REQUIRE(argu.empty() != true);
+  // --------
+
+  LOOP_DEVICE* p = 0;
+  string tname = get_argument_number(1, argu);
+  if (tname.find("loop") != string::npos) {
+    int id = atoi(get_argument_number(2, argu).c_str());
+    p = new LOOP_DEVICE(id);
+    if (loop_map.find(id) == loop_map.end()) { 
+      loop_map[id] = p;
+    }
+    loop_map[id]->register_input();
+  }
+  
+  return(p);
+}
+
+AUDIO_IO* ECA_AUDIO_OBJECTS::create_loop_output(const string& argu) {
+  // --------
+  REQUIRE(argu.empty() != true);
+  // --------
+
+  LOOP_DEVICE* p = 0;
+  string tname = get_argument_number(1, argu);
+  if (tname.find("loop") != string::npos) {
+    int id = atoi(get_argument_number(2, argu).c_str());
+    p = new LOOP_DEVICE(id);
+    if (loop_map.find(id) == loop_map.end()) { 
+      loop_map[id] = p;
+    }
+    loop_map[id]->register_output();
+  }
+  
+  return(p);
 }
 
 void ECA_AUDIO_OBJECTS::add_default_chain(void) {
@@ -554,7 +432,7 @@ void ECA_AUDIO_OBJECTS::add_input(AUDIO_IO* aio) {
 
   inputs.push_back(aio);
   input_start_pos.push_back(0);
-  ecadebug->msg(audio_object_info(aio));
+  //  ecadebug->msg(audio_object_info(aio));
   attach_input_to_selected_chains(aio->label());
 
   // --------
@@ -570,7 +448,7 @@ void ECA_AUDIO_OBJECTS::add_output(AUDIO_IO* aiod) {
 
   outputs.push_back(aiod);
   output_start_pos.push_back(0);
-  ecadebug->msg(audio_object_info(aiod));
+  //  ecadebug->msg(audio_object_info(aiod));
   attach_output_to_selected_chains(aiod->label());
 
   // --------
@@ -585,9 +463,9 @@ string ECA_AUDIO_OBJECTS::audio_object_info(const AUDIO_IO* aio) const {
 
   string temp = "(eca-audio-objects) Added audio object \"" + aio->label();
   temp += "\", mode \"";
-  if (aio->io_mode() == si_read) temp += "read";
-  if (aio->io_mode() == si_write) temp += "write";
-  if (aio->io_mode() == si_readwrite) temp += "read/write";
+  if (aio->io_mode() == AUDIO_IO::io_read) temp += "read";
+  if (aio->io_mode() == AUDIO_IO::io_write) temp += "write";
+  if (aio->io_mode() == AUDIO_IO::io_readwrite) temp += "read/write";
   temp += "\".\n";
   temp += aio->format_info();
   return(temp);
@@ -603,7 +481,7 @@ void ECA_AUDIO_OBJECTS::remove_audio_input(const string& label) {
 	++q;
       }
       delete *ci;
-      (*ci) = new NULLFILE("null", si_read);
+      (*ci) = new NULLFILE("null");
       //      ecadebug->msg("(eca-chainsetup) Removing input " + label + ".");
     }
     ++ci;
@@ -620,7 +498,7 @@ void ECA_AUDIO_OBJECTS::remove_audio_output(const string& label) {
 	++q;
       }
       delete *ci;
-      (*ci) = new NULLFILE("null", si_write);
+      (*ci) = new NULLFILE("null");
     }
     ++ci;
   }
@@ -704,7 +582,10 @@ string ECA_AUDIO_OBJECTS::audioio_to_string(const AUDIO_IO* aiod, const string& 
   t << "-f:" << aiod->format_string() << "," <<
     aiod->channels() << ","  << aiod->samples_per_second();
   t << " -" << direction << ":";
-  t << aiod->label();
+  for(int n = 0; n < aiod->number_of_params(); n++) {
+    t << aiod->get_parameter(n + 1);
+    if (n + 1 < aiod->number_of_params()) t << ",";
+  }
 
   return(t.to_string());
 }
@@ -758,54 +639,4 @@ void ECA_AUDIO_OBJECTS::attach_output_to_selected_chains(const string& filename)
     ++c;
   }
   ecadebug->msg(temp);
-}
-
-int ECA_AUDIO_OBJECTS::get_type_from_extension(const string& filename) {
-  int typevar = TYPE_UNKNOWN;
-  string teksti = filename;
-  to_lowercase(teksti);
-
-  if (strstr(teksti.c_str(),".wav") != 0) typevar = TYPE_WAVE;
-  else if (strstr(teksti.c_str(),".ewf") != 0) typevar = TYPE_EWF;
-  else if (strstr(teksti.c_str(),".cdr") != 0) typevar = TYPE_CDR;
-  else if (strstr(teksti.c_str(),".raw") != 0) typevar = TYPE_RAWFILE;
-
-  else if (strstr(teksti.c_str(),"/dev/dsp") != 0) typevar = TYPE_OSS;
-  else if (strstr(teksti.c_str(),"alsalb") != 0) typevar = TYPE_ALSALOOPBACK;
-  else if (strstr(teksti.c_str(),"alsa") != 0) typevar = TYPE_ALSA;
-
-  else if (strstr(teksti.c_str(),".mp3") != 0) typevar = TYPE_MP3;
-  else if (strstr(teksti.c_str(),".mp2") != 0) typevar = TYPE_MP3;
-
-  else if (strstr(teksti.c_str(),".669") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".amf") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".dsm") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".far") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".gdm") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".imf") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".it") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".m15") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".med") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".mod") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".mod") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".mtm") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".s3m") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".stm") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".stx") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".ult") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".uni") != 0) typevar = TYPE_MIKMOD;
-  else if (strstr(teksti.c_str(),".xm") != 0) typevar = TYPE_MIKMOD;
-
-  else if (strstr(teksti.c_str(),"/dev/snd/pcm") != 0) typevar = TYPE_ALSAFILE;
-  else if (strstr(teksti.c_str(),".aif") != 0) typevar = TYPE_AUDIOFILE;
-  else if (strstr(teksti.c_str(),".au") != 0) typevar = TYPE_AUDIOFILE;
-  else if (strstr(teksti.c_str(),".snd") != 0) typevar = TYPE_AUDIOFILE;
-
-  else if (teksti == "stdin") typevar = TYPE_STDIN;
-  else if (teksti == "stdout") typevar = TYPE_STDOUT;
-  else if (strstr(teksti.c_str(),"rtnull") != 0) typevar = TYPE_RTNULL;
-  else if (strstr(teksti.c_str(),"null") != 0) typevar = TYPE_NULL;
-  else if (strstr(teksti.c_str(),"loop") != 0) typevar = TYPE_LOOP;
-
-  return(typevar);
 }

@@ -4,13 +4,16 @@
 #include <string>
 
 #include "dynamic-object.h"
+#include "sample-specs.h"
 
 /**
  * Base class for all controller sources
  */
-class CONTROLLER_SOURCE : public DYNAMIC_OBJECT {
+class CONTROLLER_SOURCE : public DYNAMIC_OBJECT<SAMPLE_SPECS::sample_type> {
 
  public:
+
+  typedef SAMPLE_SPECS::sample_type parameter_type;
 
   /**
    * Initialize controller source

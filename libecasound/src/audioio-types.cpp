@@ -27,11 +27,8 @@
 
 #include "eca-debug.h"
 
-AUDIO_IO_BUFFERED::AUDIO_IO_BUFFERED(const string& name, 
-				     const SIMODE mode, 
-				     const ECA_AUDIO_FORMAT& fmt) 
-  : AUDIO_IO(name, mode, fmt),
-    buffersize_rep(0),
+AUDIO_IO_BUFFERED::AUDIO_IO_BUFFERED(void) 
+  : buffersize_rep(0),
     target_srate_rep(0),
     target_samples_rep(0),
     iobuf_uchar(0),
@@ -108,7 +105,7 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   assert(iobuf_uchar != 0);
   assert(static_cast<long int>(iobuf_size) >= buffersize_rep * frame_size());
   // --------
-  buffersize(sbuf->length_in_samples(), samples_per_second());
+  if (buffersize_rep != sbuf->length_in_samples()) buffersize(sbuf->length_in_samples(), samples_per_second());
   sbuf->copy_from_buffer(iobuf_uchar,
 			 sample_format(),
 			 channels(),

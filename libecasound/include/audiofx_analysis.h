@@ -47,6 +47,7 @@ class EFFECT_ANALYZE : public EFFECT_ANALYSIS {
   string status(void) const;
   
   EFFECT_ANALYZE* clone(void)  { return new EFFECT_ANALYZE(*this); }
+  EFFECT_ANALYZE* new_expr(void)  { return new EFFECT_ANALYZE(); }
   EFFECT_ANALYZE (void);
 };
 
@@ -76,6 +77,7 @@ public:
   string status(void) const;
 
   EFFECT_DCFIND* clone(void)  { return new EFFECT_DCFIND(*this); }
+  EFFECT_DCFIND* new_expr(void)  { return new EFFECT_DCFIND(); }
   EFFECT_DCFIND (void);
 };
 

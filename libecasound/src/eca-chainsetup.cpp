@@ -36,9 +36,9 @@
 #include "file-preset.h"
 #include "global-preset.h"
 
+#include "eca-static-object-maps.h"
+
 #include "eca-control-position.h"
-#include "eca-chainop-map.h"
-#include "eca-controller-map.h"
 #include "eca-preset-map.h"
 #include "eca-audio-objects.h"
 
@@ -126,13 +126,12 @@ vector<string> ECA_CHAINSETUP::combine_options(const vector<string>& opts) {
 }
 
 void ECA_CHAINSETUP::set_defaults(void) {
-  ECA_CHAIN_OPERATOR_MAP::register_default_objects();
-  ECA_CONTROLLER_MAP::register_default_objects();
+  register_default_objects();
 
   is_enabled_rep = false;
   mixmode_rep = ep_mm_auto;
 
-  set_output_openmode(si_readwrite);
+  set_output_openmode(AUDIO_IO::io_readwrite);
 
   ECA_RESOURCES ecaresources;
   set_buffersize(atoi(ecaresources.resource("default-buffersize").c_str()));
@@ -150,13 +149,13 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
 void ECA_CHAINSETUP::enable(void) {
   if (is_enabled_rep == false) {
     for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
+      (*q)->buffersize(buffersize(), sample_rate());
       if ((*q)->is_open() == false) (*q)->open();
-      //      ecadebug->msg(ECA_DEBUG::system_objects, open_info(*q));
     }
     
     for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
+      (*q)->buffersize(buffersize(), sample_rate());
       if ((*q)->is_open() == false) (*q)->open();
-      //      ecadebug->msg(ECA_DEBUG::system_objects, open_info(*q));
     }
   }
   is_enabled_rep = true;
@@ -294,7 +293,7 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
   case 'x':
     {
       ecadebug->msg("(eca-chainsetup) Truncating outputs.");
-      set_output_openmode(si_write);
+      set_output_openmode(AUDIO_IO::io_write);
       break;
     }
 
@@ -430,9 +429,9 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
       case 'n': 
 	{
 	  string name = get_argument_number(1,argu);
-	  if (ECA_PRESET_MAP::has(name) == true) {
+	  //	  if (ECA_PRESET_MAP::has(name) == true) {
 	    add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new GLOBAL_PRESET(name)));
-	  }
+	    //	  }
 	  break;
 	}
 	
@@ -463,9 +462,11 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
   string prefix = get_argument_prefix(argu);
 
   MESSAGE_ITEM otemp;
-  map<string, CHAIN_OPERATOR*>::const_iterator p = ECA_CHAIN_OPERATOR_MAP::object_map.find(prefix);
-  if (p != ECA_CHAIN_OPERATOR_MAP::object_map.end()) {
-    CHAIN_OPERATOR* cop = ECA_CHAIN_OPERATOR_MAP::object_map[prefix];
+  CHAIN_OPERATOR* cop = eca_chain_operator_map.object(prefix);
+  if (cop != 0) {
+    cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
+    cop->map_parameters();
+
     ecadebug->control_flow("Chainsetup/Adding chain operator \"" +
 			   cop->name() + "\"");
     //    otemp << "(eca-chainsetup) Adding effect " << cop->name();
@@ -477,7 +478,7 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
       if (n + 1 < cop->number_of_params()) otemp << ", ";
     }
     ecadebug->msg(otemp.to_string());
-    return(cop->clone());
+    return(cop);
   }
   return(0);
 }
@@ -507,10 +508,12 @@ GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
   }
 
   MESSAGE_ITEM otemp;
-  
-  map<string, GENERIC_CONTROLLER*>::const_iterator p = ECA_CONTROLLER_MAP::object_map.find(prefix);
-  if (p != ECA_CONTROLLER_MAP::object_map.end()) {
-    GENERIC_CONTROLLER* gcontroller = ECA_CONTROLLER_MAP::object_map[prefix];
+
+  GENERIC_CONTROLLER* gcontroller = eca_controller_map.object(prefix);
+  if (gcontroller != 0) {
+    gcontroller = gcontroller->clone();
+    gcontroller->map_parameters();
+
     ecadebug->control_flow("Chainsetup/Adding controller source \"" +  gcontroller->name() + "\"");
 
     gcontroller->init((double)buffersize() / sample_rate());
@@ -523,7 +526,7 @@ GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
       if (n + 1 < gcontroller->number_of_params()) otemp << ", ";
     }
     ecadebug->msg(otemp.to_string());
-    return(gcontroller->clone());
+    return(gcontroller);
   }
   return(0);
 }
@@ -657,7 +660,7 @@ string ECA_CHAINSETUP::general_options_to_string(void) const {
   default: { }
   }
 
-  if (output_openmode() == si_write) t << " -x";
+  if (output_openmode() == AUDIO_IO::io_write) t << " -x";
   if (double_buffering()) t << " -z:db";
   if (precise_sample_rates()) t << " -z:psr";
 
