@@ -39,8 +39,12 @@ int main(int argc, char *argv[]) {
 
   repo.run();
 
+  cerr << "-------------------------------------------------------------------------" << endl;
+  cerr << "libecasound_tester summary:" << endl;
+  cerr << "-------------------------------------------------------------------------" << endl;
+  cerr << endl;
+
   if (repo.success() != true) {
-    cerr << "---" << endl;
     cerr << repo.failures().size() << " failed test cases ";
     cerr << "in ECA_TEST_REPOSITORY:" << endl << endl;
 
@@ -52,10 +56,15 @@ int main(int argc, char *argv[]) {
       ++q;
     }
     
-    cerr << "---" << endl << endl;
-    
     return -1;
   }
+  else {
+    cerr << "All tests succesful." << endl;
+  }
+
+  cerr << endl;
+  cerr << "-------------------------------------------------------------------------";
+  cerr << endl << endl;
 
   return 0;
 }

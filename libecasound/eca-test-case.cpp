@@ -18,12 +18,13 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <iostream>
 #include "kvu_numtostr.h"
 #include "kvu_dbc.h"
 
 #include "eca-test-case.h"
 
-using std::string;
+using namespace std;
 
 ECA_TEST_CASE::ECA_TEST_CASE(void)
 {
@@ -90,6 +91,8 @@ const std::list<std::string>& ECA_TEST_CASE::failures(void) const
  */
 void ECA_TEST_CASE::report_failure(const string& filename, int lineno, const string& description)
 {
+  string failure (filename + ":" + kvu_numtostr(lineno) + " " + description);
+  cerr << failure << endl;
   failures_rep.push_back(filename + ":" + kvu_numtostr(lineno) + 
 			 " " + description);
 }

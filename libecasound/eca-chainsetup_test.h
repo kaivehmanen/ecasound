@@ -43,9 +43,18 @@ public:
 
   virtual ~ECA_CHAINSETUP(void) { }
 
+private:
+
+  void do_run_save_and_restore(void);
+
 };
 
 void ECA_CHAINSETUP_TEST::do_run(void)
+{
+  do_run_save_and_restore();
+}
+
+void ECA_CHAINSETUP::do_run_save_and_restore(void)
 {
   /**
    * - create simple setup with multiple instance of all basic
