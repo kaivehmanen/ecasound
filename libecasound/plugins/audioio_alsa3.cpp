@@ -146,8 +146,6 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
   // -------------------------------------------------------------------
   // Select audio format
 
-  ::snd_pcm_drain(audio_fd_repp);
-
   snd_pcm_format_t pf;
   ::memset(&pf, 0, sizeof(pf));
 
@@ -195,7 +193,7 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
   params.start_mode = SND_PCM_START_EXPLICIT;
   params.xfer_mode = SND_PCM_XFER_INTERLEAVED;
   params.xrun_mode = SND_PCM_XRUN_FRAGMENT;
-  params.xrun_act = SND_PCM_XRUN_ACT_RESTART;
+//    params.xrun_act = SND_PCM_XRUN_ACT_RESTART;
 
   // -------------------------------------------------------------------
   // Fetch stream info (2nd time, now getting frame size info)
@@ -217,7 +215,7 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
   params.buffer_size = pcm_params_info_rep.buffer_size;
   params.frag_size = buffersize();
   params.xfer_align = params.frag_size;
-  params.xrun_max = ~0U;
+//    params.xrun_max = ~0U;
   params.xfer_min = params.frag_size;
   params.avail_min = params.frag_size;
 
@@ -235,8 +233,7 @@ void ALSA_PCM_DEVICE_06X::open(void) throw(SETUP_ERROR&) {
 
   fragment_size_rep = setup.frag_size;
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Fragment size: " +
-		kvu_numtostr(setup.frag_size) + ", max: " +
-		kvu_numtostr(setup.xrun_max) + ", min: " +
+		kvu_numtostr(setup.frag_size) + ", xfermin: " +
 		kvu_numtostr(setup.xfer_min) + ", current: " +
 		kvu_numtostr(setup.frags) + ".");
 
@@ -256,12 +253,14 @@ void ALSA_PCM_DEVICE_06X::stop(void) {
   snd_pcm_status_t status;
   ::memset(&status, 0, sizeof(status));
   ::snd_pcm_status(audio_fd_repp, &status);
-  if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK)
-    underruns_rep += status.xruns;
-  else if (pcm_stream_rep == SND_PCM_STREAM_CAPTURE)
-    overruns_rep += status.xruns;
+  if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK &&
+      status.state == SND_PCM_STATE_XRUN)
+    underruns_rep++;
+  else if (pcm_stream_rep == SND_PCM_STREAM_CAPTURE &&
+	   status.state == SND_PCM_STATE_XRUN)
+    overruns_rep++;
 
-  ::snd_pcm_stop(audio_fd_repp);
+  ::snd_pcm_drop(audio_fd_repp);
   
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa3) Audio device \"" + label() + "\" disabled.");
   
@@ -316,12 +315,13 @@ void ALSA_PCM_DEVICE_06X::print_status_debug(void) {
   snd_pcm_status_t status;
   memset(&status, 0, sizeof(status));
   ::snd_pcm_status(audio_fd_repp, &status);
-  if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK)
-    underruns_rep += status.xruns;
-  else if (pcm_stream_rep == SND_PCM_STREAM_CAPTURE)
-    overruns_rep += status.xruns;
-  cerr << "status:" << status.avail << "," << status.appl_ptr << "," <<
-    status.xruns << "," << status.state << " ";
+  if (pcm_stream_rep == SND_PCM_STREAM_PLAYBACK &&
+      status.state == SND_PCM_STATE_XRUN)
+    underruns_rep++;
+  else if (pcm_stream_rep == SND_PCM_STREAM_CAPTURE &&
+	   status.state == SND_PCM_STATE_XRUN)
+    overruns_rep++;
+  cerr << "status; avail:" << status.avail << ", state" << status.state << "." << endl;
   print_time_stamp();
 }
 
@@ -356,7 +356,11 @@ long ALSA_PCM_DEVICE_06X::position_in_samples(void) const {
   snd_pcm_status_t status;
   memset(&status, 0, sizeof(status));
   ::snd_pcm_status(audio_fd_repp, &status);
-  return (status.appl_ptr);
+
+  // FIXME: this doesn't work!!!
+  double time = status.tstamp.tv_sec * 1000000.0 + status.tstamp.tv_usec
+    -  status.trigger_time.tv_sec * 1000000.0 - status.trigger_time.tv_usec;
+  return(static_cast<long>(time * samples_per_second() / 1000000.0));
 }
 
 ALSA_PCM_DEVICE_06X::~ALSA_PCM_DEVICE_06X(void) { 
