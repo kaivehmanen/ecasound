@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>09.04.2001</h2>
+<h2>23.04.2001</h2>
 
 
     
@@ -232,65 +232,58 @@ Print status info about all chains. <em>[s]</em>
 <p><h2>AUDIO INPUT/OUTPUT OBJECTS</h2>
     
 If not otherwise stated, all operations are done to currently selected
-chainsetup.
+object. All commands with <em>ai-</em> prefix operate on audio inputs,
+while commands with <em>ao-</em> operate on outputs.
 <p><dl>
-<p><p></p><dt><strong>aio-add-input 'input_format_string'</strong><dd>
+<p><p></p><dt><strong>ai-add 'input_format_string'</strong><dd>
 Adds a new input object. See ecasound(1) man page for more info about 
 the argument format ('-i' option). <em>[-]</em>
-<p><p></p><dt><strong>aio-add-output 'output_format_string'</strong><dd>
+<p><p></p><dt><strong>ao-add 'output_format_string'</strong><dd>
 Adds a new output object. See ecasound(1) man page for more info about 
 the argument format ('-o' option). If argument is omitted, 
 a default output device is added (see ecasoundrc(5)). <em>[-]</em>
-<p><p></p><dt><strong>aio-select 'aobject_name'</strong><dd>
+<p><p></p><dt><strong>ai-select 'aobject_name', ao-select 'aobject_name'</strong><dd>
 Selects an audio object. 'aobject_name' refers to the string
 used when creating the object (see above). Note! All input
 object names are required to be unique. Similarly all output
 names need to be unique. However, it's possible that the same
-object name exists both as an input and as an output. If this
-is the case, only the last matching object is selected (
-normally this is the output). <em>[-]</em>
-<p><p></p><dt><strong>aio-select-input 'aobject_name'</strong><dd>
-Selects an audio input. <em>[-]</em>
-<p><p></p><dt><strong>aio-select-output 'aobject_name'</strong><dd>
-Selects an audio output. <em>[-]</em>
-<p><p></p><dt><strong>aio-index-select 'aobject_index'</strong><dd>
+object name exists both as an input and as an output. <em>[-]</em>
+<p><p></p><dt><strong>ai-index-select 'aobject_index', ao-index-select 'aobject_index'</strong><dd>
 Select some audio object based on a short index string. Especially file
 names can be rather long. This command can be used to avoid typing
-these long names when selecting audio objects. 'aobject_index' format
-is "i&lt;number&gt;" for inputs and similarly "o&lt;number&gt;" for outputs. 
-You can get a list of all audio objects and their indexes with the
-'aio-status' and 'aio-list' commands. <em>[-]</em>
-<p><p></p><dt><strong>aio-selected</strong><dd>
+these long names when selecting audio objects. 'aobject_index' is
+an integer value, where '1' refers to the first audio input/output. 
+You can use 'ai-list' and 'ao-list' to get a full list of currently
+available inputs/outputs. <em>[-]</em>
+<p><p></p><dt><strong>ai-selected, ao-selected</strong><dd>
 Returns the name of the currently selected audio object. <em>[s]</em>
-<p><p></p><dt><strong>aio-attach</strong><dd>
+<p><p></p><dt><strong>ai-attach, ao-attach</strong><dd>
 Attaches the currently selected audio object to all selected chains. <em>[-]</em>
-<p><p></p><dt><strong>aio-remove</strong><dd>
+<p><p></p><dt><strong>ai-remove, ao-remove</strong><dd>
 Removes the currently selected audio object from the chainsetup. <em>[-]</em>
-<p><p></p><dt><strong>aio-status</strong><dd>
-Audio object status (index strings, position, length, etc). <em>[s]</em>
-<p><p></p><dt><strong>aio-forward 'time_in_seconds', aio-fw 'time_in_seconds'</strong><dd>
+<p><p></p><dt><strong>ai-forward 'time_in_seconds', ai-fw 'time_in_seconds', ao-forward 'time_in_seconds', ao-fw 'time_in_seconds'</strong><dd>
 Selected audio object is forwarded by 'time-in-seconds' seconds. 
 Time should be given as a floating point value (eg. 0.001 is the 
 same as 1ms). <em>[-]</em>
-<p><p></p><dt><strong>aio-rewind 'time_in_seconds', aio-rw 'time_in_seconds'</strong><dd>
+<p><p></p><dt><strong>ai-rewind 'time_in_seconds', ai-rw 'time_in_seconds', ao-rewind 'time_in_seconds', ao-rw 'time_in_seconds'</strong><dd>
 Selected audio object is rewinded by 'time-in-seconds' seconds. 
 Time should be given as a floating point value (eg. 0.001 is the 
 same as 1ms). <em>[-]</em>
-<p><p></p><dt><strong>aio-setpos 'time_in_seconds', aio-set-position 'time_in_seconds'</strong><dd>
+<p><p></p><dt><strong>ai-setpos 'time_in_seconds', ai-set-position 'time_in_seconds', ao-setpos 'time_in_seconds', ao-set-position 'time_in_seconds'</strong><dd>
 Set audio object position to 'time_in_seconds'. <em>[-]</em>
-<p><p></p><dt><strong>aio-getpos, aio-get-position</strong><dd>
+<p><p></p><dt><strong>ai-getpos, ai-get-position, ao-getpos, ao-get-position</strong><dd>
 Returns the audio object position in seconds. <em>[f]</em>
-<p><p></p><dt><strong>aio-get-length</strong><dd>
+<p><p></p><dt><strong>ai-get-length, ao-get-length</strong><dd>
 Returns the audio object length in seconds. <em>[f]</em>
-<p><p></p><dt><strong>aio-wave-edit</strong><dd> 
+<p><p></p><dt><strong>ai-wave-edit, ao-wave-edit</strong><dd> 
 The currently selected audio object is loaded into an external
 wave editor (see ecasoundrc(5)). <em>[-]</em>
+<p><p></p><dt><strong>ai-list, ao-list</strong><dd> **not implemented**
+Returns a list of all input/output objects. <em>[S]</em>
 <p><p></p><dt><strong>aio-register</strong><dd>
 Prints a list of registered audio object types. <em>[s]</em>
-<p><p></p><dt><strong>aio-input-list</strong><dd> **not implemented**
-Returns a list of all input objects. <em>[S]</em>
-<p><p></p><dt><strong>aio-output-list</strong><dd> **not implemented**
-Returns a list of all output objects. <em>[S]</em>
+<p><p></p><dt><strong>aio-status</strong><dd>
+Audio object status (index strings, position, length, etc). <em>[s]</em>
 <p></dl>
 <p><h2>CHAIN OPERATORS</h2>
     
@@ -428,17 +421,28 @@ Dumps status string for the currently selected chainsetup - 'connected',
 'selected' or an empty string. <em>[-]</em>
 <p><p></p><dt><strong>dump-c-selected</strong><dd>
 Dumps the name of currently selected chain. <em>[-]</em>
-<p><p></p><dt><strong>dump-aio-selected</strong><dd>
-Dumps label of currently selected audio object. If no object is
+<p><p></p><dt><strong>dump-ai-selected</strong><dd>
+Dumps label of currently selected audio input. If no input is
 selected, dumps an empty string. <em>[-]</em>
-<p><p></p><dt><strong>dump-aio-position</strong><dd>
-Dumps position of currently selected audio objects. Printed in
+<p><p></p><dt><strong>dump-ai-position</strong><dd>
+Dumps position of currently selected audio inputs. Printed in
 seconds, using a floating-point representation. <em>[-]</em>
-<p><p></p><dt><strong>dump-aio-length</strong><dd>
-Dumps length of currently selected audio object. Printed in seconds,
+<p><p></p><dt><strong>dump-ai-length</strong><dd>
+Dumps length of currently selected audio input. Printed in seconds,
 using a floating-point representation. <em>[-]</em>
-<p><p></p><dt><strong>dump-aio-open-state</strong><dd>
-Dumps audio object state info. Either 'open' or 'closed'. <em>[-]</em>
+<p><p></p><dt><strong>dump-ai-open-state</strong><dd>
+Dumps audio input state info. Either 'open' or 'closed'. <em>[-]</em>
+<p><p></p><dt><strong>dump-ao-selected</strong><dd>
+Dumps label of currently selected audio output. If no output is
+selected, dumps an empty string. <em>[-]</em>
+<p><p></p><dt><strong>dump-ao-position</strong><dd>
+Dumps position of currently selected audio outputs. Printed in
+seconds, using a floating-point representation. <em>[-]</em>
+<p><p></p><dt><strong>dump-ao-length</strong><dd>
+Dumps length of currently selected audio output. Printed in seconds,
+using a floating-point representation. <em>[-]</em>
+<p><p></p><dt><strong>dump-ao-open-state</strong><dd>
+Dumps audio output state info. Either 'open' or 'closed'. <em>[-]</em>
 <p><p></p><dt><strong>dump-cop-value 'chainop,param'</strong><dd>
 Dumps chain operator parameter value. 'chainop' and 'param' are 
 operator and parameter index values (1...n). <em>[-]</em>
