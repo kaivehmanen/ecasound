@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>06.03.2001</h2>
+<h2>03.06.2001</h2>
 
 
     
@@ -73,6 +73,12 @@
 <p><p></p><dt><strong>default-to-precise-sample-rates</strong><dd> 
 	Whether to ignore sample rate differences (and possibly avoid 
 	resampling). Currently only affects OSS-devices. Defaults to <em>false</em>.
+<p><p></p><dt><strong>default-to-internal-buffering</strong><dd> 
+	Whether to allow realtime devices to utilize extra internal
+	buffering. Enabling this improves reliability, but at the 
+	same time causes additional latency to the signal processing
+	chain. Can be overridden with -z:intbuf and -z:nointbuf options. 
+	Defaults to <em>false</em>.
 <p><p></p><dt><strong>resource-directory</strong><dd> 
   	Directory for global ecasound configuration files. 
   	Defaults to <em>{prefix-dir}/share/ecasound</em>.

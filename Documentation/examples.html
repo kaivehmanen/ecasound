@@ -65,17 +65,22 @@ the default-output defined in <b>~/.ecasoundrc</b> is used. This is
 normally <i>/dev/dsp</i>. 
 </p>
 <p>
-<li> ecasound -i somefile.mp3 -o alsa,0,0
-<li> ecasound -i somefile.mp3 -o /dev/snd/pcmC0D0
+<li> ecasound -i somefile.mp3 -o alsahw,0,0
+<li> ecasound -i somefile.mp3 -o alsaplugin,0,0
+<li> ecasound -i somefile.mp3 -o alsa,soundcard_name
 </p><p>
 The ALSA drivers have a somewhat different option syntax. You 
-first specify "alsa" (to indicate you want to add a ALSA input/output)
+first specify either "alsahw" (to indicate you want use the 
+ALSA direct hw interface) or "alsaplugin" (for ALSA plugin layer), 
 and then specify the card number and the device number (optionally
-also subdevice can be given). Otherwise ALSA inputs/outputs work just 
-like OSS-devices.
+also subdevice can be given). The plugin layer is able to handle
+some type conversions automatically. The third option is specific
+to ALSA 0.9.x (and newer). 'soundcard_name' must be defined in the 
+ALSA configuration files (either ~/.asoundrc or the global settings
+file). Otherwise ALSA inputs/outputs work just like OSS-devices.
 </p>
 <p>
-<li> mpg123 -s sometune.mp3 | ecasound -i:stdin -o alsa,0,0
+<li> mpg123 -s sometune.mp3 | ecasound -i:stdin -o alsahw,0,0
 </p><p>
 Send the output of mpg123 to standard output (-s option) and 
 read it from standard input with ecasound (-i:stdin option). If you
@@ -90,7 +95,7 @@ to standard streams containing audio data.
 <ol>
 <li> ecasound -i:/dev/dsp0 -o somefile.wav
 <li> ecasound -i:/dev/dsp0 -o somefile.wav -c
-<li> ecasound -i alsa,1,0 -o somefile.wav
+<li> ecasound -i alsahw,1,0 -o somefile.wav
 </p><p>
 These are simple examples of recording. Notice that when recording 
 it's often useful to run ecasound in interactive mode (-c).
