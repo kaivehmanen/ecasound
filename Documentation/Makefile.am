@@ -105,7 +105,7 @@ kdoc:
 	 -d ../Documentation/qtecasound/ \
 	 -L ../Documentation/ *.h -llibecasound -lqt
 	cd @top_srcdir@/Documentation/qtecasound ; \
-	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/local/qt/doc/
+	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/local/qt/html/
 	cd @top_srcdir@/ecatools ; \
 	 kdoc -f html -u \
 	 "http://www.wakkanet.fi/~kaiv/ecasound/Documentation/ecatools/" \

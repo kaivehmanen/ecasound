@@ -45,7 +45,7 @@ void QEButtonRow::set_font(const QFont& v) {
 void QEButtonRow::add_button(QButton* v, int key) {
   v->setFont(font_rep);
   accel->connectItem(accel->insertItem(key), v, SLOT(animateClick()));
-  box->addWidget(v);
+  box->addWidget(v, 1);
   buttons.push_back(v);
 }
 

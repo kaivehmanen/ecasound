@@ -28,10 +28,10 @@ QEEvent::QEEvent(ECA_CONTROLLER* ctrl)
 {
 #ifdef NDEBUG
   ecadebug->set_debug_level(0);
-  ecadebug->disable();
 #else
-  ecadebug->set_debug_level(2);
-  ecadebug->enable();
+  ecadebug->set_debug_level(ECA_DEBUG::info |
+			    ECA_DEBUG::module_flow |
+			    ECA_DEBUG::user_objects);
 #endif
 }
 
@@ -132,7 +132,7 @@ void QEEvent::get_default_audio_format(const string& name) {
     ectrl->select_audio_object(name);
     ECA_AUDIO_FORMAT aio_params = ectrl->get_audio_format();
     ectrl->set_default_audio_format(&aio_params);
-    cerr << "Setting sample rate of: " << aio_params.samples_per_second() << ".\n";
+    //    cerr << "Setting sample rate of: " << aio_params.samples_per_second() << ".\n";
     ectrl->set_chainsetup_parameter("-sr:" + kvu_numtostr(aio_params.samples_per_second()));
   }
   catch(ECA_ERROR* e) {

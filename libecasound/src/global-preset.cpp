@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// qtdebug_if.cpp: Qt-interface to ecasound debug-routines.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// global_preset.cpp: Global effect preset
+// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,30 +17,28 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <string>
-#include <eca-debug.h>
+#include <kvutils.h>
 
-#include "qtdebug_if.h"
+#include "resource-file.h"
+#include "eca-resources.h"
+#include "eca-debug.h"
+#include "eca-error.h"
+#include "global-preset.h"
 
-COMMAND_QUEUE qtdebug_queue;
+GLOBAL_PRESET::GLOBAL_PRESET(const string& preset_name) {
+  ECA_RESOURCES ecarc;
+  ecadebug->msg(ECA_DEBUG::system_objects,"(global-preset) Opening sc-preset file.");
+  string filename =
+    ecarc.resource("resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
 
-void QTDEBUG_IF::control_flow(const string& part) {
-  if ((get_debug_level() & ECA_DEBUG::module_flow) != ECA_DEBUG::module_flow) return;
-   qtdebug_queue.push_back("--- [ <b> " + part + "</b> ] ---");
-}
-
-void QTDEBUG_IF::msg(int level, const string& info) {
-  if ((get_debug_level() & level) != level) return;
-  qtdebug_queue.push_back(info);
-}
-
-QTDEBUG_IF::QTDEBUG_IF(void) { }
-QTDEBUG_IF::~QTDEBUG_IF(void) { 
-  if (get_debug_level() > 0) {
-    while(qtdebug_queue.cmds_available() == true) {
-      cerr << qtdebug_queue.front() << "\n";
-      qtdebug_queue.pop_front();
-    }
+  RESOURCE_FILE rc (filename);
+  string raw = rc.resource(preset_name);
+  if (raw != "") {
+    parse(raw);
+    set_name(preset_name);
+  }
+  else {
+    set_name("empty");
+    throw(new ECA_ERROR("GLOBAL_PRESET", "requested preset was not found from " + filename + "."));
   }
 }
-

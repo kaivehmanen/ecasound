@@ -214,9 +214,20 @@ raw/headerless (.raw) format. If you want to use named pipes,
 create a them with the proper file name extension.
 <p></dl>
 <p><strong>EFFECT SETUP</strong>
-<p><p></p><dt><strong>-ps:preset_name</strong><dd>
-Insert single-chain preset 'preset_name' to active chains.
-See ecasoundrc(5) for info about the preset file. 
+<p><em>PRESETS</em>
+<p>Ecasound has a powerful effect preset system that allows you create
+new effects by combining basic effects and controllers. See
+<a href="users_guide/users_guide.html">ecasound user's guide</a> for more 
+detailed information.
+<p><dl>
+<p><p></p><dt><strong>-pf:preset_file.eep</strong><dd>
+Use the first preset found from file 'preset_file.eep' as 
+a chain operator.
+<p><p></p><dt><strong>-pn:preset_name</strong><dd>
+Find preset 'preset_name' from global preset database and use
+it as a chain operator. See ecasoundrc(5) for info about the 
+preset database.
+<p></dl>
 <p><em>SIGNAL ANALYSIS</em>
 <p><dl>
 <p><p></p><dt><strong>-ev</strong><dd>

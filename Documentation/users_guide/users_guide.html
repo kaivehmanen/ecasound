@@ -28,7 +28,7 @@
 <hr>
 
 <h2>Kai Vehmanen</h2>
-<h2>14022000</h2>
+<h2>21022000</h2>
 
 <h1>Table of Contents </h1><p></p>
 <dl><p>
@@ -56,14 +56,15 @@
 </dl><p>
 <dt><h3><a href="users_guide.html#l16">3.4: Chain operators</a></h3>
 <dt><h3><a href="users_guide.html#l17">3.5: Controllers</a></h3>
+<dt><h3><a href="users_guide.html#l18">3.6: Effect presets</a></h3>
 </dl><p>
-<dt><h2><a href="users_guide.html#l18">4: User interfaces</a></h2>
+<dt><h2><a href="users_guide.html#l19">4: User interfaces</a></h2>
 <dl><p>
-<dt><h3><a href="users_guide.html#l19">4.1: ecasound</a></h3>
-<dt><h3><a href="users_guide.html#l20">4.2: qtecasound</a></h3>
-<dt><h3><a href="users_guide.html#l21">4.3: ecatools</a></h3>
+<dt><h3><a href="users_guide.html#l20">4.1: ecasound</a></h3>
+<dt><h3><a href="users_guide.html#l21">4.2: qtecasound</a></h3>
+<dt><h3><a href="users_guide.html#l22">4.3: ecatools</a></h3>
 </dl><p>
-<dt><h2><a href="users_guide.html#l22">5: Documentation</a></h2>
+<dt><h2><a href="users_guide.html#l23">5: Documentation</a></h2>
  
 <p><hr><p><br>
 <p>
@@ -174,17 +175,16 @@ is opened for writing. When reading, you get silence until the offset
 position is reached. Shortly put, this is a practical way to save disk 
 space when doing multitrack recording. Newer versions of ewf-format 
 support looping, ranges, etc
-<p>Ewf-files are simple ascii files that contain key-value pairs. The 
+<p>Ewf-files themselves are simple ascii files that contain key-value pairs. The 
 format used is the same as with ecasound resource files. See
 <a href="../ecasoundrc_manpage.html">ecasoundrc(5)</a> manual page for more
 info. Currently recognized keywords are:
 <p><dl>
-<li > source - audio object name
-<li > offset - insert audio object at offset (seconds)
-<li > start-position - start offset inside audio object (seconds)
-<li > length - how much of audio object data is used (seconds)
-<li > looping - whether to loop sample data (true or false)
-<li > loop-start-position - start offset for looping (seconds)
+<li > source - audio object name [read,write]
+<li > offset - insert audio object at offset (seconds) [read,write] 
+<li > start-position - start offset inside audio object (seconds) [read]
+<li > length - how much of audio object data is used (seconds) [read]
+<li > looping - whether to loop sample data (true or false) [read]
 </dl>
 <p>
 <a name="l16"></a>
@@ -195,26 +195,43 @@ See <a href="../ecasound_manpage.html">ecasound(1)</a>.
 <h3>3.5: Controllers</h3>
 See <a href="../ecasound_manpage.html">ecasound(1)</a>.
 <p>
-
 <a name="l18"></a>
+<h3>3.6: Effect presets</h3>
+Ecasound has a powerful effect preset system that allows you create
+new effects by combining basic effects and controllers.
+<p>Presets can be stored into separate files or they can be stored
+into a global database. Either way, the preset format is the same
+(also see <a href="../ecasoundrc_manpage.html">ecasoundrc(5)</a> man page, 
+the same parsing engine is used):
+<pre>
+preset_name = effects controllers | ... | effects controllers
+</pre>
+
+Effects and controllers are specified using the same format as 
+used in command-line parsing (-ea:100, -kl:1,0,100,5, etc). You 
+can add a new chain using the pipe characher '|'. '\' sign is 
+used to continue preset definition on the next line.
+<p>
+
+<a name="l19"></a>
 <h2>4: User interfaces</h2>
 <p>Probably the best place to start is the examples section of 
-ecasound HTML-documentation (../examples.html).
+ecasound HTML-documentation: <a href="../examples.html">examples.html</a>.
 <p>
-<a name="l19"></a>
+<a name="l20"></a>
 <h3>4.1: ecasound</h3>
 See <a href="../ecasound_manpage.html">ecasound(1)</a>.
 <p>
-<a name="l20"></a>
+<a name="l21"></a>
 <h3>4.2: qtecasound</h3>
 See <a href="../qtecasound_manpage.html">qtecasound(1)</a>.
 <p>
-<a name="l21"></a>
+<a name="l22"></a>
 <h3>4.3: ecatools</h3>
 See <a href="../ecatools_manpage.html">ecatools(1)</a>.
 <p>
 
-<a name="l22"></a>
+<a name="l23"></a>
 <h2>5: Documentation</h2>
 <p><insert name=ecasound_tail>
 </body>

@@ -23,13 +23,12 @@
 
 #include "resources.h"
 
-QEResources::QEResources(void) { 
-  set_resource_file(string(getenv("HOME")) + "/" + ".ecawaverc");
+QEResources::QEResources(void) 
+  : RESOURCE_FILE(string(getenv("HOME")) + "/" + ".ecawaverc")
+{ 
   set_defaults(); 
 }
 
 void QEResources::set_defaults(void) {
-  resource("default-output","/dev/dsp");
-
-  set_modified_state(false);
+  if (resource("default-output") == "") resource("default-output","/dev/dsp");
 }

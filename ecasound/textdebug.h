@@ -22,6 +22,7 @@ public:
     void msg(int level, const string& info);
 
     TEXTDEBUG(void);
+    ~TEXTDEBUG(void);
 };
 
 extern TEXTDEBUG textdebug;

@@ -30,9 +30,8 @@ QEStatusBar::QEStatusBar (ECA_CONTROLLER* ctrl,
 			  QWidget *parent, 
 			  const char *name)
   : QStatusBar( parent, name ),
-    filename_rep(filename),
-    ectrl(ctrl) { 
-  message("ecawave ready"); 
+    ectrl(ctrl),
+    filename_rep(filename) { 
   editing_rep = false;
 
   QTimer *timer = new QTimer(this);
@@ -55,19 +54,25 @@ void QEStatusBar::update(void) {
   if (ectrl->is_running() == true) status = "running";
   else status = " - ";
 
-  string begin;
-  if (editing_rep == true) 
-    begin = filename_rep + " [mod]";
-  else 
-    begin = filename_rep;
 
-  message(string(begin + 
+  if (filename_rep.empty() == true) {
+    message("ecawave ready - no file loaded"); 
+  }
+  else {
+    string begin;
+    if (editing_rep == true) 
+      begin = filename_rep + " (*)";
+    else 
+      begin = filename_rep;
+    
+    message(string(begin + 
 		 " - visible [ " +
-		 vstartpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s - " + 
-		 vendpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s ] - marked [ " +
-		 mstartpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s - " + 
-		 mendpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s ] - current " +
-		 curpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s - " +
-		 " status [" +
-		 status + "]").c_str()); 
+		   vstartpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s - " + 
+		   vendpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s ] - marked [ " +
+		   mstartpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s - " + 
+		   mendpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s ] - current " +
+		   curpos.to_string(ECA_AUDIO_TIME::format_seconds) + "s - " +
+		   " status [" +
+		   status + "]").c_str()); 
+  }
 }

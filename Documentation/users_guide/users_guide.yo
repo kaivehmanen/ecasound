@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (16022000)
+       (21022000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -131,7 +131,7 @@ position is reached. Shortly put, this is a practical way to save disk
 space when doing multitrack recording. Newer versions of ewf-format 
 support looping, ranges, etc
 
-Ewf-files are simple ascii files that contain key-value pairs. The 
+Ewf-files themselves are simple ascii files that contain key-value pairs. The 
 format used is the same as with ecasound resource files. See
 url(ecasoundrc(5))(../ecasoundrc_manpage.html) manual page for more
 info. Currently recognized keywords are:
@@ -153,11 +153,26 @@ subsect(Controllers)
 See url(ecasound(1))(../ecasound_manpage.html).
 
 COMMENT(----------------------------------------------------------------)
+subsect(Effect presets)
+Ecasound has a powerful effect preset system that allows you create
+new effects by combining basic effects and controllers.
+
+Presets can be stored into separate files or they can be stored
+into a global database. Either way, the preset format is the same
+(also see url(ecasoundrc(5))(../ecasoundrc_manpage.html) man page, 
+the same parsing engine is used):
+verb(preset_name = effects controllers | ... | effects controllers)
+Effects and controllers are specified using the same format as 
+used in command-line parsing (-ea:100, -kl:1,0,100,5, etc). You 
+can add a new chain using the pipe characher '|'. '\' sign is 
+used to continue preset definition on the next line.
+
+COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
 sect(User interfaces)
 
 Probably the best place to start is the examples section of 
-ecasound HTML-documentation (../examples.html).
+ecasound HTML-documentation: url(examples.html)(../examples.html).
 
 COMMENT(----------------------------------------------------------------)
 subsect(ecasound)

@@ -33,6 +33,9 @@
 #include "eca-chainop.h"
 #include "eca-chainsetup.h"
 
+#include "generic-controller.h"
+#include "eca-chainop.h"
+
 #include "eca-error.h"
 #include "eca-debug.h"
 
@@ -488,8 +491,9 @@ string ECA_CONTROLLER::chain_operator_status(void) const {
   for(chain_citer = selected_chainsetup_rep->chains.begin(); chain_citer != selected_chainsetup_rep->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\":\n";
     for(p = 0; p < (*chain_citer)->chainops.size(); p++) {
-      mitem << "\t" << p + 1 << ". " << (*chain_citer)->chainops[p]->name() << ": ";
+      mitem << "\t" << p + 1 << ". " <<	(*chain_citer)->chainops[p]->name();
       for(int n = 0; n < (*chain_citer)->chainops[p]->number_of_params(); n++) {
+	if (n == 0) mitem << ": ";
 	mitem << "[" << n + 1 << "] ";
 	mitem << (*chain_citer)->chainops[p]->get_parameter_name(n + 1);
 	mitem << " ";

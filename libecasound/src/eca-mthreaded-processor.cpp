@@ -91,7 +91,7 @@ void *mthread_process_chains(void* params) {
 	    // there's only one output connected to this chain,
 	    // so we don't need to mix anything
 	    // --
-	    (*outputs)[audioslot_sizet]->write_buffer(&(*chains)[n]->audioslot);
+	    (*outputs)[audioslot_sizet]->write_buffer(&(ecamain->cslots[n]));
 	  }
 	  else {
 	    ++count;
@@ -99,11 +99,11 @@ void *mthread_process_chains(void* params) {
 	      // -- 
 	      // this is the first chain connected to this output
 	      // --
-	      mixslot->copy((*chains)[n]->audioslot);
+	      mixslot->copy(ecamain->cslots[n]);
 	      mixslot->divide_by(ecamain->output_chain_count[audioslot_sizet]);
 	    }
 	    else {
-	      mixslot->add_with_weight((*chains)[n]->audioslot, ecamain->output_chain_count[audioslot_sizet]);
+	      mixslot->add_with_weight(ecamain->cslots[n], ecamain->output_chain_count[audioslot_sizet]);
 	      if (count == ecamain->output_chain_count[audioslot_sizet]) {
 		(*outputs)[audioslot_sizet]->write_buffer(mixslot);
 	      }

@@ -69,7 +69,7 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*) {
   interpret_general_options(cline);
 
   if (chainsetups.size() == 0) {
-    ECA_CHAINSETUP* comline_setup = new ECA_CHAINSETUP(&ecaresources, cline);
+    ECA_CHAINSETUP* comline_setup = new ECA_CHAINSETUP(cline);
     try {
       //      select_chainsetup(comline_setup->name());
       add_chainsetup(comline_setup);
@@ -146,8 +146,7 @@ void ECA_SESSION::add_chainsetup(const string& name) {
   assert(name != "");
   // --------
 
-  ECA_CHAINSETUP* newsetup = new ECA_CHAINSETUP (&ecaresources, name,
-						  false);
+  ECA_CHAINSETUP* newsetup = new ECA_CHAINSETUP (name, false);
   add_chainsetup(newsetup);
 
   // --------
@@ -254,8 +253,7 @@ void ECA_SESSION::load_chainsetup(const string& filename) throw(ECA_ERROR*) {
   assert(filename.empty() != true);
   // --------
 
-  ECA_CHAINSETUP* new_setup = new ECA_CHAINSETUP(&ecaresources,
-						 filename, 
+  ECA_CHAINSETUP* new_setup = new ECA_CHAINSETUP(filename, 
 						 true);
   add_chainsetup(new_setup);
 

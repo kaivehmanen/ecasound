@@ -241,9 +241,25 @@ enddit()
 
 bf(EFFECT SETUP)
 
-dit(-ps:preset_name)
-Insert single-chain preset 'preset_name' to active chains.
-See ecasoundrc(5) for info about the preset file. 
+em(PRESETS)
+
+Ecasound has a powerful effect preset system that allows you create
+new effects by combining basic effects and controllers. See
+url(ecasound user's guide)(users_guide/users_guide.html) for more 
+detailed information.
+
+startdit()
+
+dit(-pf:preset_file.eep)
+Use the first preset found from file 'preset_file.eep' as 
+a chain operator.
+
+dit(-pn:preset_name)
+Find preset 'preset_name' from global preset database and use
+it as a chain operator. See ecasoundrc(5) for info about the 
+preset database.
+
+enddit()
 
 em(SIGNAL ANALYSIS)
 

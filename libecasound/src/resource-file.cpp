@@ -79,8 +79,19 @@ string RESOURCE_FILE::resource(const string& tag) const {
 
     first = remove_surrounding_spaces(first);
     second = remove_surrounding_spaces(second);
+    string::iterator p = second.end();
+    --p;
+    while (*p == '\\') {
+      second.erase(p);
+      if (getline(fin, line)) {
+	line = remove_surrounding_spaces(line);
+	second += line;
+	p = second.end();
+	--p;
+      }
+    }
 
-    ecadebug->msg(ECA_DEBUG::user_objects, "(resource-file) found key-value pair: " + 
+    ecadebug->msg(ECA_DEBUG::system_objects, "(resource-file) found key-value pair: " + 
 		  first + "-" + second + ".");
     if (first == tag) return(second);
   }

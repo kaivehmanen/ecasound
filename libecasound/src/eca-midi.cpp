@@ -142,9 +142,8 @@ void init_midi_queues(void) throw(ECA_ERROR*) {
 }
 
 void *update_midi_queues(void *) {
-  fd_set rfds;
   struct timeval tv;
-  int retval, fd;
+  int fd;
   char buf[MIDI_IN_QUEUE_SIZE];
   int temp;
   
@@ -224,7 +223,7 @@ void *update_midi_queues(void *) {
       cerr << "ERROR: Can't read from MIDI-device: " << midi_dev << ".\n";
       break;
     }
-    for(size_t n = 0; n < temp; n++) {
+    for(int n = 0; n < temp; n++) {
       midi_in_queue.put(buf[n]);
     }
     pthread_mutex_unlock(&midi_in_lock);

@@ -64,8 +64,6 @@ QESession::QESession (const string& filename,
   else
     tempfile_rep = "";
 
-  ecawaverc.load();
-
   esession = new ECA_SESSION();
   ectrl = new ECA_CONTROLLER(esession);
 
@@ -106,8 +104,6 @@ QESession::~QESession(void) {
     delete child_sessions.back();
     child_sessions.pop_back();
   }
-
-  ecawaverc.save();
 }
 
 void QESession::position_update(void) {

@@ -727,7 +727,7 @@ fi
 
 PACKAGE=ecasound
 
-VERSION=1.7.0d11
+VERSION=1.7.1d11
 
 if test "`cd $srcdir && pwd`" != "`pwd`" && test -f $srcdir/config.status; then
   { echo "configure: error: source directory already configured; run "make distclean" there first" 1>&2; exit 1; }

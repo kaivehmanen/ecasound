@@ -1,16 +1,16 @@
 /****************************************************************************
 ** QEStatusBar meta object code from reading C++ file 'qestatusbar.h'
 **
-** Created: Tue Jan 25 21:02:09 2000
-**      by: The Qt Meta Object Compiler ($Revision: 1.1 $)
+** Created: Sat Feb 19 00:57:15 2000
+**      by: The Qt MOC ($Id: qestatusbar_moc.cpp,v 1.2 2000-02-21 23:21:48 kaiv Exp $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
 #define Q_MOC_QEStatusBar
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#define Q_MOC_OUTPUT_REVISION 3
-#elif Q_MOC_OUTPUT_REVISION != 3
+#define Q_MOC_OUTPUT_REVISION 7
+#elif Q_MOC_OUTPUT_REVISION != 7
 #error "Moc format conflict - please regenerate all moc files"
 #endif
 
@@ -32,21 +32,13 @@ const char *QEStatusBar::className() const
 
 QMetaObject *QEStatusBar::metaObj = 0;
 
-
-#if QT_VERSION >= 199
-static QMetaObjectInit init_QEStatusBar(&QEStatusBar::staticMetaObject);
-
-#endif
-
 void QEStatusBar::initMetaObject()
 {
     if ( metaObj )
 	return;
     if ( strcmp(QStatusBar::className(), "QStatusBar") != 0 )
 	badSuperclassWarning("QEStatusBar","QStatusBar");
-
-#if QT_VERSION >= 199
-    staticMetaObject();
+    (void) staticMetaObject();
 }
 
 QString QEStatusBar::tr(const char* s)
@@ -54,16 +46,11 @@ QString QEStatusBar::tr(const char* s)
     return ((QNonBaseApplication*)qApp)->translate("QEStatusBar",s);
 }
 
-void QEStatusBar::staticMetaObject()
+QMetaObject* QEStatusBar::staticMetaObject()
 {
     if ( metaObj )
-	return;
-    QStatusBar::staticMetaObject();
-#else
-
-    QStatusBar::initMetaObject();
-#endif
-
+	return metaObj;
+    (void) QStatusBar::staticMetaObject();
     typedef void(QEStatusBar::*m1_t0)(ECA_AUDIO_TIME);
     typedef void(QEStatusBar::*m1_t1)(ECA_AUDIO_TIME,ECA_AUDIO_TIME);
     typedef void(QEStatusBar::*m1_t2)(ECA_AUDIO_TIME,ECA_AUDIO_TIME);
@@ -88,5 +75,9 @@ void QEStatusBar::staticMetaObject()
     metaObj = QMetaObject::new_metaobject(
 	"QEStatusBar", "QStatusBar",
 	slot_tbl, 5,
+	0, 0,
+	0, 0,
+	0, 0,
 	0, 0 );
+    return metaObj;
 }

@@ -43,3 +43,7 @@ void TEXTDEBUG::msg(int level, const string& info) {
 TEXTDEBUG::TEXTDEBUG(void) {
   dostream = &cout;
 }
+
+TEXTDEBUG::~TEXTDEBUG(void) {
+  flush();
+}

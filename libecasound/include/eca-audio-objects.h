@@ -5,6 +5,8 @@
 #include <map>
 #include <string>
 
+#include "definition_by_contract.h"
+
 #include "eca-chain.h"
 #include "audioio.h"
 #include "audioio-loop.h"
@@ -16,7 +18,7 @@
  * outputs and chains. Not meant for general use.
  * @author Kai Vehmanen
  */
-class ECA_AUDIO_OBJECTS {
+class ECA_AUDIO_OBJECTS : public DEFINITION_BY_CONTRACT {
 
  public:
 
@@ -120,8 +122,12 @@ class ECA_AUDIO_OBJECTS {
 
   /**
    * Handle audio-IO-devices and files.
+   *
+   * require:
+   *  argu.size() > 0
+   *  argu[0] == '-'
    */
-  void interpret_audioio_device (const string& argu, const string& argu_param);
+  void interpret_audioio_device (const string& argu);
 
   /**
    * Add a new input object and attach it to selected chains.
@@ -203,10 +209,7 @@ class ECA_AUDIO_OBJECTS {
   /**
    * Destructor
    */
-  ~ECA_AUDIO_OBJECTS(void);
+  virtual ~ECA_AUDIO_OBJECTS(void);
 };
 
 #endif
-
-
-

@@ -74,7 +74,7 @@ bool QEFile::eventFilter(QObject *, QEvent *e) {
   //  cerr << "F3\n";
   if (e->type() == QEvent::MouseButtonPress) {
     QMouseEvent* me = static_cast<QMouseEvent*>(e);
-    for(int n = 0; n < waveforms.size(); n++) {
+    for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
       waveforms[n]->current_position_relative(me->x());
     }
     emit current_position_changed(ECA_AUDIO_TIME(coord_to_samples(me->x()), sample_rate_rep));
@@ -94,7 +94,7 @@ bool QEFile::eventFilter(QObject *, QEvent *e) {
   }
   else if (e->type() == QEvent::MouseButtonDblClick) {
     marking_rep = false;
-    for(int n = 0; n < waveforms.size(); n++) waveforms[n]->toggle_marking(false);
+    for(int n = 0; n < static_cast<int>(waveforms.size()); n++) waveforms[n]->toggle_marking(false);
     //    cerr << "MouseButtonDblClick\n";
     return(true);
   }
@@ -147,12 +147,12 @@ void QEFile::init_layout(void) {
     waveforms.push_back(w);
   }
 
-  for(int n = 0; n < waveforms.size(); n++) {
+  for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
     waveforms[n]->update_wave_blocks(&(waveblocks[n]));
   }
 
   // --------
-  ENSURE(waveforms.size() == channels_rep);
+  ENSURE(static_cast<int>(waveforms.size()) == channels_rep);
   // --------
 }
 
@@ -168,7 +168,7 @@ bool QEFile::is_valid(void) const {
 }
 
 void QEFile::current_position(long int samples) {
-  for(int n = 0; n < waveforms.size(); n++) {
+  for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
     waveforms[n]->current_position(waveblocks[n].size() * (static_cast<double>(samples) / length_rep));
     emit current_position_changed(ECA_AUDIO_TIME(samples, sample_rate_rep));
   }
@@ -176,7 +176,7 @@ void QEFile::current_position(long int samples) {
 
 void QEFile::visible_area(long int startpos_samples, long int endpos_samples) {
   //  cerr << "F6\n";
-  for(int n = 0; n < waveforms.size(); n++) {
+  for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
     waveforms[n]->visible_area(waveblocks[n].size() *
 			       (static_cast<double>(startpos_samples) /
 				length_rep),
@@ -204,7 +204,7 @@ void QEFile::mark_area_relative(int from, int to) {
   if (last_mousemove_xpos < rpos1) rpos1 = last_mousemove_xpos;
   else if (last_mousemove_xpos > rpos2) rpos2 = last_mousemove_xpos;
   
-  for(int n = 0; n < waveforms.size(); n++) {
+  for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
     waveforms[n]->mark_area_relative(pos1,pos2);
     //      cerr << "Mouse area blocks: " << to << " to " << from << ".\n";
     waveforms[n]->toggle_marking(true);
@@ -218,21 +218,21 @@ void QEFile::mark_area_relative(int from, int to) {
 long int QEFile::coord_to_samples(int coord) {
   if (waveforms.size() == 0) return(0);
   
-  long int preceding_samples = length_rep * (static_cast<double>(waveforms[0]->visible_area_begin()) / waveblocks[0].size());
+  long int preceding_samples = static_cast<long int>(length_rep * (static_cast<double>(waveforms[0]->visible_area_begin()) / waveblocks[0].size()));
 
   long int visible_blocks = waveforms[0]->visible_area_end() - waveforms[0]->visible_area_begin();
-  long int visible_position = visible_blocks * (static_cast<double>(coord) / width());
-  return(preceding_samples + (length_rep * static_cast<double>(visible_position) / waveblocks[0].size()));
+  long int visible_position = static_cast<long int>(visible_blocks * (static_cast<double>(coord) / width()));
+  return(static_cast<long int>(preceding_samples + (length_rep * static_cast<double>(visible_position) / waveblocks[0].size())));
 }
 
 long int QEFile::blocks_to_samples(long int blocks) {
   if (waveforms.size() == 0) return(0);
-  return(length_rep * static_cast<double>(blocks) / waveblocks[0].size());
+  return(static_cast<long int>(length_rep * static_cast<double>(blocks) / waveblocks[0].size()));
 }
 
 void QEFile::unmark(void) {
   //  cerr << "F9\n";
-  for(int n = 0; n < waveforms.size(); n++) {
+  for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
     waveforms[n]->toggle_marking(false);
     waveforms[n]->repaint(false);
   }
@@ -241,7 +241,7 @@ void QEFile::unmark(void) {
 
 void QEFile::zoom_to_marked(void) { 
   //  cerr << "F10\n";
-  for(int n = 0; n < waveforms.size(); n++) {
+  for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
     waveforms[n]->zoom_to_marked();
     emit visible_area_changed(ECA_AUDIO_TIME(blocks_to_samples(waveforms[n]->visible_area_begin()), sample_rate_rep),
 			      ECA_AUDIO_TIME(blocks_to_samples(waveforms[n]->visible_area_end()), sample_rate_rep));
@@ -250,7 +250,7 @@ void QEFile::zoom_to_marked(void) {
 
 void QEFile::zoom_out(void) {
   //  cerr << "F11\n";
-  for(int n = 0; n < waveforms.size(); n++) {
+  for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
     waveforms[n]->visible_area(0, waveblocks[n].size());
   }
   emit visible_area_changed(ECA_AUDIO_TIME(0, sample_rate_rep),
@@ -264,7 +264,7 @@ long int QEFile::current_position(void) const {
   if (waveforms[0]->is_marked() == true) {
     double pos = waveforms[0]->marked_area_begin();
     //    cerr << "c_p1:" << length_rep * (pos / waveblocks[0].size()) << ".\n";
-    return(length_rep * (pos / waveblocks[0].size()));
+    return(static_cast<long int>(length_rep * (pos / waveblocks[0].size())));
   }
   //  cerr << "c:";
 //    cerr << length_rep << ",";
@@ -272,7 +272,7 @@ long int QEFile::current_position(void) const {
 //    cerr << waveblocks[0].size();
 //    cerr << "c_p2:" << length_rep *
   //    (static_cast<double>(waveforms[0]->current_position()) / waveblocks[0].size()) << ".\n";
-  return(length_rep * (static_cast<double>(waveforms[0]->current_position()) / waveblocks[0].size()));
+  return(static_cast<long int>(length_rep * (static_cast<double>(waveforms[0]->current_position()) / waveblocks[0].size())));
 }
 
 long int QEFile::selection_length(void) const {
@@ -282,7 +282,7 @@ long int QEFile::selection_length(void) const {
   if (waveforms[0]->is_marked() == true) {
     double pos = waveforms[0]->marked_area_end() -
       waveforms[0]->marked_area_begin();
-    return(length_rep * (pos / waveblocks[0].size()));
+    return(static_cast<long int>(length_rep * (pos / waveblocks[0].size())));
   }
   else 
     return(length_rep);
@@ -296,7 +296,7 @@ QSize QEFile::sizeHint(void) const {
     t.setHeight(400);
   }
   else {
-    for(int n = 0; n < waveforms.size(); n++) {
+    for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
       t += waveforms[n]->sizeHint();
     }
   }
@@ -370,7 +370,7 @@ void QEFile::update_wave_form_data(void) {
     SAMPLE_BUFFER* t = new SAMPLE_BUFFER (buffersize_rep, io_object->channels());
     QEWaveBlock blocktmp;
 
-    vector<QEWaveBlock>::size_type bnum = 0;
+    long int bnum = 0;
     while(io_object->finished() == false &&
 	  io_object->position_in_samples() <= end_pos) {
       io_object->read_buffer(t);
@@ -400,7 +400,7 @@ void QEFile::update_wave_form_data(void) {
   }
   io_object->close();
 
-  for(int n = 0; n < waveforms.size(); n++) {
+  for(int n = 0; n < static_cast<int>(waveforms.size()); n++) {
     waveforms[n]->update_wave_blocks(&(waveblocks[n]));
   }
   if (refresh_toggle_rep == true) refresh_toggle_rep = false;
@@ -444,7 +444,7 @@ bool QEFile::check_ews_data(void) {
   stat(nEWWaveForm.c_str(), &ewsfile);
   
   if (wfile.st_ctime >= ewsfile.st_ctime) {
-    for(int n = 0; n < waveblocks.size(); n++) {
+    for(int n = 0; n < static_cast<int>(waveblocks.size()); n++) {
       waveblocks[n].resize(0);
     }
     return(false);
@@ -478,7 +478,7 @@ void QEFile::load_ews_data(void) {
 		      (length_rep / buffersize_rep));
 
     if (!f1) return;
-    for(char ch = 0; ch < waveblocks.size(); ch++) {
+    for(char ch = 0; ch < static_cast<int>(waveblocks.size()); ch++) {
       for(int t = 0; t < static_cast<int>(waveblocks[ch].size()); t++) {
 	fread(&(waveblocks[ch][t].min), 1, sizeof(waveblocks[ch][t].min), f1);
 	fread(&(waveblocks[ch][t].max), 1, sizeof(waveblocks[ch][t].max), f1);
@@ -513,7 +513,7 @@ void QEFile::save_ews_data(bool forced) {
   fwrite(&buftemp, 1, sizeof(buftemp), f1);
   fseek(f1, 16, SEEK_SET);
   
-  for(char ch = 0; ch < waveblocks.size(); ch++) {
+  for(char ch = 0; ch < static_cast<int>(waveblocks.size()); ch++) {
     for(int t = 0; t < static_cast<int>(waveblocks[ch].size()); t++) {
       fwrite(&(waveblocks[ch][t].min), 1, sizeof(waveblocks[ch][t].min), f1);
       fwrite(&(waveblocks[ch][t].max), 1, sizeof(waveblocks[ch][t].max), f1);

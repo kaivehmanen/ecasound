@@ -5,14 +5,15 @@
 #include <vector>
 
 #include "eca-debug.h"
-#include "audioio.h"
-#include "samplebuffer.h"
-#include "eca-chainop.h"
 #include "dynamic-object.h"
-#include "generic-controller.h"
 
 #include "eca-chainop-map.h"
 #include "eca-controller-map.h"
+
+class SAMPLE_BUFFER;
+class GENERIC_CONTROLLER;
+class CHAIN_OPERATOR;
+class AUDIO_IO;
 
 class CHAIN : public ECA_CONTROLLER_MAP {
 
@@ -50,7 +51,7 @@ class CHAIN : public ECA_CONTROLLER_MAP {
   AUDIO_IO* input_id;
   AUDIO_IO* output_id;
 
-  SAMPLE_BUFFER audioslot;
+  SAMPLE_BUFFER* audioslot;
  
  public:
 
@@ -212,16 +213,18 @@ class CHAIN : public ECA_CONTROLLER_MAP {
   void selected_controller_as_target(void);
 
   /**
-   * Prepare chain for processing.
+   * Prepare chain for processing. All further processing
+   * will be done using the buffer pointer by 'sbuf'.
    *
    * require:
-   *  input_id != 0 &&
-   *  output_id != 0);
+   *  input_id != 0 || in_channels != 0
+   *  output_id != 0 || out_channels != 0
+   *  sbuf != 0
    *
    * ensure:
    *  is_initialized() == true
    */
-  void init(void);
+  void init(SAMPLE_BUFFER* sbuf, int in_channels = 0, int out_channels = 0);
 
   /**
    * Process chain data with all chain operators.
@@ -248,7 +251,7 @@ class CHAIN : public ECA_CONTROLLER_MAP {
   string chain_operator_to_string(CHAIN_OPERATOR* chainop) const;
   string controller_to_string(GENERIC_CONTROLLER* gctrl) const;
 
-  CHAIN (int bsize, int channels);
+  CHAIN (void);
   virtual ~CHAIN (void);
 };
 

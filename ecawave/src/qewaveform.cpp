@@ -64,7 +64,7 @@ void QEWaveForm::current_position(long int blocks) {
     double pos = current_position_rep - visible_area_begin_rep;
     pos /= (visible_area_end_rep - visible_area_begin_rep);
     pos *= width();
-    xpos = pos;
+    xpos = static_cast<int>(pos);
   }
   else {
     xpos = 0;
@@ -83,7 +83,7 @@ void QEWaveForm::current_position_relative(int xpos_coord) {
   xpos = xpos_coord;
   double pos = visible_area_begin_rep;
   pos += (static_cast<double>(xpos) / width()) * (visible_area_end_rep - visible_area_begin_rep);
-  current_position_rep = pos;
+  current_position_rep = static_cast<int>(pos);
 
   //  cerr << "cur_pos_rep[2]: " << current_position_rep << ", xpos: " <<  xpos << ".\n";
 
@@ -143,8 +143,8 @@ void QEWaveForm::repaint_current_position(void) {
     prev_inside_marked = false;
 
   prev_xpos = xpos;
-  prev_xpos_minimum = waveblock_minimum(current_position_rep, step) / 32767.0 * waveheight;
-  prev_xpos_maximum = waveblock_maximum(current_position_rep, step) / 32767.0 * waveheight;
+  prev_xpos_minimum = static_cast<int>(waveblock_minimum(current_position_rep, step) / 32767.0 * waveheight);
+  prev_xpos_maximum = static_cast<int>(waveblock_maximum(current_position_rep, step) / 32767.0 * waveheight);
 }
 
 void QEWaveForm::marked_area_begin(long int blocks) { 
@@ -158,11 +158,11 @@ void QEWaveForm::marked_area_end(long int blocks) {
 void QEWaveForm::mark_area_relative(int from, int to) {
   double pos1 = visible_area_begin_rep;
   pos1 += (static_cast<double>(from) / width()) * (visible_area_end_rep - visible_area_begin_rep);
-  marked_area_begin_rep = pos1; 
+  marked_area_begin_rep = static_cast<long int>(pos1); 
 
   pos1 = visible_area_begin_rep;
   pos1 += (static_cast<double>(to) / width()) * (visible_area_end_rep - visible_area_begin_rep);
-  marked_area_end_rep = pos1;
+  marked_area_end_rep = static_cast<long int>(pos1);
 }
 
 void QEWaveForm::visible_area(long int start_blocks, long int end_blocks) { 
@@ -213,7 +213,7 @@ void QEWaveForm::paintEvent(QPaintEvent* e) {
   step = static_cast<double>(visible_area_end_rep - visible_area_begin_rep) / width();
   if (step == 0.0) step = 1.0;
 
-  long pos = static_cast<double>(width()) * current_position_rep / waveblock->size();
+  long int pos = static_cast<long int>(static_cast<double>(width()) * current_position_rep / waveblock->size());
   //  cerr << "New position (pixels): " << pos << ".\n";
 
   int waveheight = height() / 2 - 5;
@@ -242,8 +242,8 @@ void QEWaveForm::paintEvent(QPaintEvent* e) {
 	p.setPen(position_color);
       p.drawLine(xcoord, 0, xcoord, height());
       prev_xpos = xcoord;
-      prev_xpos_minimum = waveblock_minimum(bufindex, step) / 32767.0 * waveheight;
-      prev_xpos_maximum = waveblock_maximum(bufindex, step) / 32767.0 * waveheight;
+      prev_xpos_minimum = static_cast<int>(waveblock_minimum(bufindex, step) / 32767.0 * waveheight);
+      prev_xpos_maximum = static_cast<int>(waveblock_maximum(bufindex, step) / 32767.0 * waveheight);
     }
     else {
       // --
@@ -289,12 +289,12 @@ void QEWaveForm::paintEvent(QPaintEvent* e) {
 int QEWaveForm::waveblock_minimum(double from, double step) {
   int f = static_cast<int>(floor(from));
   int s = static_cast<int>(ceil(step));
-  if (f >= waveblock->size()) return(0);
+  if (f >= static_cast<int>(waveblock->size())) return(0);
   int minimum = (*waveblock)[f].min;
 
   int n = f;
   for(++n; n < f + s; n++) {
-    if (n >= (*waveblock).size()) break;
+    if (n >= static_cast<int>((*waveblock).size())) break;
     if ((*waveblock)[n].min < minimum) 
       minimum = (*waveblock)[n].min;
   }
@@ -305,12 +305,12 @@ int QEWaveForm::waveblock_minimum(double from, double step) {
 int QEWaveForm::waveblock_maximum(double from, double step) {
   int f = static_cast<int>(floor(from));
   int s = static_cast<int>(ceil(step));
-  if (f >= (*waveblock).size()) return(0);
+  if (f >= static_cast<int>((*waveblock).size())) return(0);
   int maximum = (*waveblock)[f].max;
   
   int n = f;
   for(++n; n < f + s; n++) {
-    if (n >= (*waveblock).size()) break;
+    if (n >= static_cast<int>((*waveblock).size())) break;
     if ((*waveblock)[n].max > maximum) 
       maximum = (*waveblock)[n].max;
   }

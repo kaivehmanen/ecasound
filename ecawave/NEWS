@@ -1,0 +1,23 @@
+-----------------------------------------------------------------------
+** ecawave - user visible changes (NEWS)       (last edited: 180200) **
+-----------------------------------------------------------------------
+
+About the version numbers... "vx.yRt" :
+
+  x = major version  - the overall development status
+  y = devel-series   - represents a set of planned features
+  z = minor version  - version number of the current development series
+  Rt = 'rx'          - stable release number x
+  Rt = 'dx'  	     - development version
+
+-----------------------------------------------------------------------
+
+Last officially released version is -*> v0.1.0r1 <*-
+
+??022000 (v0.2.0d2)
+	- changed: many internal updates - ecasound version 1.7.x is 
+	           now required to run ecawave
+28012000 (v0.1.0r1)  -** public release **-
+	- notice: initial release
+	
+-----------------------------------------------------------------------

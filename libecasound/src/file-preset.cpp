@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// qtdebug_if.cpp: Qt-interface to ecasound debug-routines.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// file_preset.cpp: File based effect preset
+// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,30 +17,18 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <string>
-#include <eca-debug.h>
+#include <kvutils.h>
 
-#include "qtdebug_if.h"
+#include "resource-file.h"
+#include "eca-debug.h"
+#include "eca-error.h"
+#include "file-preset.h"
 
-COMMAND_QUEUE qtdebug_queue;
-
-void QTDEBUG_IF::control_flow(const string& part) {
-  if ((get_debug_level() & ECA_DEBUG::module_flow) != ECA_DEBUG::module_flow) return;
-   qtdebug_queue.push_back("--- [ <b> " + part + "</b> ] ---");
+FILE_PRESET::FILE_PRESET(const string& file_name) {
+  RESOURCE_FILE pfile (file_name);
+  string pname = "empty";
+  if (pfile.keywords().size() > 0) pname = pfile.keywords()[0];
+  set_name(pname);
+  set_filename(file_name);
+  parse(pfile.resource(pname));
 }
-
-void QTDEBUG_IF::msg(int level, const string& info) {
-  if ((get_debug_level() & level) != level) return;
-  qtdebug_queue.push_back(info);
-}
-
-QTDEBUG_IF::QTDEBUG_IF(void) { }
-QTDEBUG_IF::~QTDEBUG_IF(void) { 
-  if (get_debug_level() > 0) {
-    while(qtdebug_queue.cmds_available() == true) {
-      cerr << qtdebug_queue.front() << "\n";
-      qtdebug_queue.pop_front();
-    }
-  }
-}
-

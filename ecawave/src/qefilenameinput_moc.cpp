@@ -1,16 +1,16 @@
 /****************************************************************************
 ** QEFilenameInput meta object code from reading C++ file 'qefilenameinput.h'
 **
-** Created: Thu Jan 27 01:53:00 2000
-**      by: The Qt Meta Object Compiler ($Revision: 1.1 $)
+** Created: Sat Feb 19 00:55:17 2000
+**      by: The Qt MOC ($Id: qefilenameinput_moc.cpp,v 1.2 2000-02-21 23:21:48 kaiv Exp $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
 #define Q_MOC_QEFilenameInput
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#define Q_MOC_OUTPUT_REVISION 3
-#elif Q_MOC_OUTPUT_REVISION != 3
+#define Q_MOC_OUTPUT_REVISION 7
+#elif Q_MOC_OUTPUT_REVISION != 7
 #error "Moc format conflict - please regenerate all moc files"
 #endif
 
@@ -32,21 +32,13 @@ const char *QEFilenameInput::className() const
 
 QMetaObject *QEFilenameInput::metaObj = 0;
 
-
-#if QT_VERSION >= 199
-static QMetaObjectInit init_QEFilenameInput(&QEFilenameInput::staticMetaObject);
-
-#endif
-
 void QEFilenameInput::initMetaObject()
 {
     if ( metaObj )
 	return;
     if ( strcmp(QWidget::className(), "QWidget") != 0 )
 	badSuperclassWarning("QEFilenameInput","QWidget");
-
-#if QT_VERSION >= 199
-    staticMetaObject();
+    (void) staticMetaObject();
 }
 
 QString QEFilenameInput::tr(const char* s)
@@ -54,16 +46,11 @@ QString QEFilenameInput::tr(const char* s)
     return ((QNonBaseApplication*)qApp)->translate("QEFilenameInput",s);
 }
 
-void QEFilenameInput::staticMetaObject()
+QMetaObject* QEFilenameInput::staticMetaObject()
 {
     if ( metaObj )
-	return;
-    QWidget::staticMetaObject();
-#else
-
-    QWidget::initMetaObject();
-#endif
-
+	return metaObj;
+    (void) QWidget::staticMetaObject();
     typedef void(QEFilenameInput::*m1_t0)();
     m1_t0 v1_0 = Q_AMPERSAND QEFilenameInput::button_browse;
     QMetaData *slot_tbl = QMetaObject::new_metadata(1);
@@ -77,7 +64,11 @@ void QEFilenameInput::staticMetaObject()
     metaObj = QMetaObject::new_metaobject(
 	"QEFilenameInput", "QWidget",
 	slot_tbl, 1,
-	signal_tbl, 1 );
+	signal_tbl, 1,
+	0, 0,
+	0, 0,
+	0, 0 );
+    return metaObj;
 }
 
 // SIGNAL file_selected

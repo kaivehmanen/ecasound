@@ -95,7 +95,7 @@ void QEChainopInput::update_chainop(int index) {
   DYNAMIC_OBJECT* dobj = 0;
 
   map<string, DYNAMIC_OBJECT*>::const_iterator p = ECA_CHAIN_OPERATOR_MAP::object_map.begin();
-  for(int n = 0; n < ECA_CHAIN_OPERATOR_MAP::object_map.size(); n++) {
+  for(int n = 0; n < static_cast<int>(ECA_CHAIN_OPERATOR_MAP::object_map.size()); n++) {
     assert(p != ECA_CHAIN_OPERATOR_MAP::object_map.end());
     if (n == index) {
       dobj = p->second;
@@ -109,13 +109,13 @@ void QEChainopInput::update_chainop(int index) {
   cop_desc->setText(dobj->name().c_str());
 
   for(int n = 0; n < dobj->number_of_params(); n++) {
-    if (n >= paramlist.size()) break;
+    if (n >= static_cast<int>(paramlist.size())) break;
     paramlist[n]->setText(QString(QString::number(n + 1) + 
 			  QString(". ") + 
 			  QString(dobj->get_parameter_name(n + 1).c_str())).leftJustify(12));
   }
 
-  for(int n = dobj->number_of_params(); n < paramlist.size(); n++) {
+  for(int n = dobj->number_of_params(); n < static_cast<int>(paramlist.size()); n++) {
     paramlist[n]->setText(QString(" - ").leftJustify(12));
   }
 }

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: A class representing a group of chains and their
 //                     configuration.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,26 +31,26 @@
 #include "eca-resources.h"
 #include "eca-session.h"
 
+#include "generic-controller.h"
+#include "eca-chainop.h"
+#include "file-preset.h"
+#include "global-preset.h"
+
 #include "eca-control-position.h"
 #include "eca-chainop-map.h"
 #include "eca-controller-map.h"
+#include "eca-preset-map.h"
 #include "eca-audio-objects.h"
 
 #include "eca-error.h"
 #include "eca-debug.h"
 #include "eca-chainsetup.h"
 
-ECA_CHAINSETUP::ECA_CHAINSETUP(ECA_RESOURCES* ecarc, COMMAND_LINE&
-			       cline) 
+ECA_CHAINSETUP::ECA_CHAINSETUP(COMMAND_LINE& cline) 
   : ECA_CONTROL_POSITION(SAMPLE_BUFFER::sample_rate) {
-  // --------
-  // require:
-  assert(ecarc != 0);
-  // --------
 
   setup_name = "command-line-setup";
   setup_filename = "";
-  ecaresources = ecarc;
 
   set_defaults();
 
@@ -67,21 +67,14 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(ECA_RESOURCES* ecarc, COMMAND_LINE&
   interpret_options(options);
 
   // --------
-  // ensure:
-  assert(buffersize() != 0);
+  ENSURE(buffersize() != 0);
   // --------
 }
 
-ECA_CHAINSETUP::ECA_CHAINSETUP(ECA_RESOURCES* ecarc, const string&
-			       setup_file, bool fromfile) 
+ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file, bool fromfile) 
   : ECA_CONTROL_POSITION(SAMPLE_BUFFER::sample_rate) {
-  // --------
-  // require:
-  assert(ecarc != 0);
-  // --------
 
   setup_name = "";
-  ecaresources = ecarc;
 
   set_defaults();
 
@@ -91,9 +84,45 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(ECA_RESOURCES* ecarc, const string&
   interpret_options(options);
 
   // --------
-  // ensure:
-  assert(buffersize() != 0);
+  ENSURE(buffersize() != 0);
   // --------
+}
+
+vector<string> ECA_CHAINSETUP::combine_options(const vector<string>& opts) {
+  vector<string> result;
+  string first;
+  vector<string>::const_iterator p = opts.begin();
+  while(p != opts.end()) {
+    if (p->size() == 0) {
+      ++p;
+      continue;
+    }
+    if ((*p)[0] == '-') {
+      if (find(p->begin(), p->end(), ':') == p->end()) {
+	first = *p;
+	++p;
+	if (p == opts.end()) {
+	  result.push_back(first);
+	  break;
+	}
+	if ((*p)[0] != '-') {
+	  first += ":" + *p;
+	  result.push_back(first);
+	}
+	else {
+	  result.push_back(first);
+	  result.push_back(*p);
+	}
+      }
+      else 
+	result.push_back(*p);
+    }
+    else 
+      result.push_back(*p);
+    
+    ++p;
+  }
+  return(result);
 }
 
 void ECA_CHAINSETUP::set_defaults(void) {
@@ -104,12 +133,14 @@ void ECA_CHAINSETUP::set_defaults(void) {
   mixmode_rep = ep_mm_auto;
 
   set_output_openmode(si_readwrite);
-  set_buffersize(atoi(ecaresources->resource("default-buffersize").c_str()));
 
-  set_sample_rate(atol(ecaresources->resource("default-samplerate").c_str()));
+  ECA_RESOURCES ecaresources;
+  set_buffersize(atoi(ecaresources.resource("default-buffersize").c_str()));
+
+  set_sample_rate(atol(ecaresources.resource("default-samplerate").c_str()));
   
-  toggle_double_buffering(ecaresources->boolean_resource("default-to-double-buffering"));
-  toggle_precise_sample_rates(ecaresources->boolean_resource("default-to-precise-sample-rates"));
+  toggle_double_buffering(ecaresources.boolean_resource("default-to-double-buffering"));
+  toggle_precise_sample_rates(ecaresources.boolean_resource("default-to-precise-sample-rates"));
 }
 
 ECA_CHAINSETUP::~ECA_CHAINSETUP(void) { 
@@ -130,16 +161,11 @@ void ECA_CHAINSETUP::enable(void) {
       (*q)->open();
       //      ecadebug->msg(ECA_DEBUG::system_objects, open_info(*q));
     }
-    
-    for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
-      (*q)->init();
-    }
   }
   is_enabled_rep = true;
 
   // --------
-  // ensure:
-  assert(is_enabled() == true);
+  ENSURE(is_enabled() == true);
   // --------
 }
 
@@ -161,13 +187,19 @@ void ECA_CHAINSETUP::disable(void) {
   }
 
   // --------
-  // ensure:
-  assert(is_enabled() == false);
+  ENSURE(is_enabled() == true);
   // --------
 }
 
-void ECA_CHAINSETUP::interpret_options(const vector<string>& opts) {
-  vector<string>::const_iterator p = opts.begin();
+void ECA_CHAINSETUP::interpret_options(const vector<string>& ops) {
+  vector<string> opts = ECA_CHAINSETUP::combine_options(ops);
+  vector<string>::iterator p = opts.begin();
+  while(p != opts.end()) {
+    if (p->size() > 0 && (*p)[0] != '-') *p = "-i:" + *p;
+    ++p;
+  }
+
+  p = opts.begin();
   while(p != opts.end()) {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting general option \""
 		  + *p + "\".");
@@ -185,51 +217,33 @@ void ECA_CHAINSETUP::interpret_options(const vector<string>& opts) {
   p = opts.begin();
   while(p != opts.end()) {
     temp = *p;
-    ++p;
-    if (p == opts.end()) {
-      another = "";
-      --p;
-    }
-    else {
-      another = *p;
-      if (another != "" && another[0] == '-') {
-	--p;
-	another = "";
-      }
-    }
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting setup, with args \""
 		  + temp + "\", \"" + another + "\".");
     interpret_chains(temp);
     interpret_audio_format(temp);
-    interpret_audioio_device(temp, another);
+    if (chains.size() == 0) add_default_chain();
+    interpret_audioio_device(temp);
     interpret_effect_preset(temp);
     interpret_chain_operator(temp);
     interpret_controller(temp);
     ++p;
   }
 
-  if (inputs.size() == 0) {
-    // No -i[:] options specified; let's try to be artificially intelligent 
-    p = opts.begin();
-    while(p != opts.end()) {
-      if ((*p) != "" && (*p)[0] != '-') {
-	if (chains.size() == 0) add_default_chain();
-	interpret_audioio_device("-i", *p);
-	break;
-      }
-      ++p;
-    }
-  }
   if (inputs.size() > 0 && outputs.size() == 0) {
-    // No -o[:] options specified; let's use the default output 
+    // No -o[:] options specified; let's use the default output
     select_all_chains();
-    interpret_audioio_device("-o", ecaresources->resource("default-output"));
+    ECA_RESOURCES ecaresources;
+    interpret_audioio_device("-o:" +  ecaresources.resource("default-output"));
   }
 }
 
 void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  // --------
+
   if (argu.size() < 2) return;
-  if (argu[0] != '-') return;
   switch(argu[1]) {
   case 'b':
     {
@@ -304,8 +318,13 @@ void ECA_CHAINSETUP::interpret_general_option (const string& argu) {
 }
 
 void ECA_CHAINSETUP::interpret_processing_control (const string& argu) {
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  // --------
+
   if (argu.size() < 2) return;
-  if (argu[0] != '-') return;
+
   switch(argu[1]) {
   case 't': 
     { 
@@ -333,8 +352,13 @@ void ECA_CHAINSETUP::interpret_processing_control (const string& argu) {
 }
 
 void ECA_CHAINSETUP::interpret_chains (const string& argu) {
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  // --------
+
   if (argu.size() < 2) return;  
-  if (argu[0] != '-') return;
+
   switch(argu[1]) {
   case 'a':
     {
@@ -360,8 +384,13 @@ void ECA_CHAINSETUP::interpret_chains (const string& argu) {
 }
 
 void ECA_CHAINSETUP::interpret_audio_format (const string& argu) {
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  // --------
+
   if (argu.size() < 2) return; 
-  if (argu[0] != '-') return;
+
   switch(argu[1]) {
   case 'f':
     {
@@ -383,21 +412,30 @@ void ECA_CHAINSETUP::interpret_audio_format (const string& argu) {
 }
 
 void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  // --------
+
   if (argu.size() < 2) return;
-  if (argu[0] != '-') return;
+
   switch(argu[1]) {
   case 'p':
     {
       if (argu.size() < 3) return;  
       switch(argu[2]) {
-      case 'm':
+      case 'f':
 	{
+	  add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(get_argument_number(1,argu))));
 	  break;
 	}
 
-      case 's': 
+      case 'n': 
 	{
-	  add_singlechain_preset(get_argument_number(1,argu));
+	  string name = get_argument_number(1,argu);
+	  if (ECA_PRESET_MAP::has(name) == true) {
+	    add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new GLOBAL_PRESET(name)));
+	  }
 	  break;
 	}
 	
@@ -409,54 +447,22 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
   }
 }
 
-void ECA_CHAINSETUP::add_singlechain_preset(const string& preset_name) throw(ECA_ERROR*) {
-  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup) Opening sc-preset file.");
-  string filename =
-    ecaresources->resource("resource-directory") + "/" + ecaresources->resource("resource-file-single-effect-presets");
-  ifstream fin (filename.c_str());
+void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  // --------
 
-  if (!fin) {
-    throw(new ECA_ERROR("ECA_CHAINSETUP", "Unable to open single-chain preset file: " + filename + "."));
-    return;
-  }
-  
-  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup) Starting to process sc-preset file. Trying to find \"" + preset_name + "\".");
-  string sana;
-  while(fin >> sana) {
-    if (sana.size() > 0 && sana[0] == '#') {
-      while(fin.get() != '\n' && fin.eof() == false);
-      continue;
-    }
-    else {
-      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Next sc-preset is " + sana + ".");
-      if (preset_name == sana) {
-	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Found the right preset!");
-
-	getline(fin,sana);
-	vector<string> chainops = string_to_words(sana);
-	vector<string>::const_iterator p = chainops.begin();
-	while (p != chainops.end()) {
-	  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding chainop " + *p + ".");
-	  interpret_chain_operator(*p);
-	  interpret_controller(*p);
-	  ++p;
-	}
-	break;
-      }
-      else 
-	while(fin.get() != '\n' && fin.eof() == false);
-    }
-  }
-
-  fin.close();
+  CHAIN_OPERATOR* t = create_chain_operator(argu);
+  if (t != 0) add_chain_operator(t);
 }
 
-void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
-  if (argu.size() < 2 ||
-      argu[0] != '-' ||
-      (argu[1] != 'e' && argu[1] != 'g')) 
-    return;
-  
+CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  // --------
+
   string prefix = get_argument_prefix(argu);
 
   MESSAGE_ITEM otemp;
@@ -474,22 +480,33 @@ void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
       if (n + 1 < cop->number_of_params()) otemp << ", ";
     }
     ecadebug->msg(otemp.to_string());
-    
-    add_chain_operator(cop->clone());
+    return(cop->clone());
   }
+  return(0);
 }
 
 void ECA_CHAINSETUP::interpret_controller (const string& argu) {
-  if (argu.size() < 2 ||
-      argu[0] != '-' ||
-      argu[1] != 'k') 
-    return;
-  
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  // --------
+
+  GENERIC_CONTROLLER* t = create_controller(argu);
+  if (t != 0) add_controller(t);
+}
+
+GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  // --------
+
+  if (argu.size() > 0 && argu[0] != '-') return(0);
   string prefix = get_argument_prefix(argu);
   if (prefix == "kx") {
     set_target_to_controller();
     ecadebug->msg(ECA_DEBUG::system_objects, "Selected controllers as parameter control targets.");
-    return;
+    return(0);
   }
 
   MESSAGE_ITEM otemp;
@@ -509,8 +526,9 @@ void ECA_CHAINSETUP::interpret_controller (const string& argu) {
       if (n + 1 < gcontroller->number_of_params()) otemp << ", ";
     }
     ecadebug->msg(otemp.to_string());
-    add_controller(gcontroller->clone());
+    return(gcontroller->clone());
   }
+  return(0);
 }
 
 void ECA_CHAINSETUP::set_target_to_controller(void) {
@@ -527,8 +545,7 @@ void ECA_CHAINSETUP::set_target_to_controller(void) {
 
 void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
   // --------
-  // require:
-  assert(csrc != 0);
+  REQUIRE(csrc != 0);
   // --------
 
   vector<string> schains = selected_chains();
@@ -543,11 +560,9 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
 }
 
 void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
-  // ---------
-  // require:
-  assert(cotmp != 0);
-  // selected_chains().size() == 1
-  // ---------
+  // --------
+  REQUIRE(cotmp != 0);
+  // --------
 
   vector<string> schains = selected_chains();
   assert(schains.size() == 1);
@@ -564,8 +579,7 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   }
 
   // --------
-  // ensure:
-  assert(chains.size() > 0);
+  ENSURE(chains.size() > 0);
   // --------
 }
 

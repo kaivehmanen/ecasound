@@ -15,6 +15,7 @@ public:
     void flush(void) { }
 
     QTDEBUG_IF(void);
+    ~QTDEBUG_IF(void);
 
     void control_flow(const string& part);
     void msg(int level, const string& info);

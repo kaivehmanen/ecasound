@@ -16,7 +16,7 @@
  * 
  * module_flow - high-level info about program control flow 
  *
- * system_objects - debug iinfo about internal objects
+ * system_objects - debug info about internal objects
  *
  * user_objects - debug info about user-visibe objects (audio i/o, chain operators, controllers)
  *

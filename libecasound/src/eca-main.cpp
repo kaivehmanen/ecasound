@@ -68,6 +68,23 @@ void ECA_PROCESSOR::init(ECA_SESSION* params) {
   eparams = params;
   mixslot.length_in_samples(eparams->connected_chainsetup->buffersize());
   buffersize_rep = eparams->connected_chainsetup->buffersize();
+
+  realtime_inputs.clear();
+  realtime_outputs.clear();
+  realtime_objects.clear();
+  non_realtime_inputs.clear();
+  non_realtime_outputs.clear();
+  non_realtime_objects.clear();
+
+  chain_ready_for_submix.clear();
+  chain_muts.clear();
+  chain_conds.clear();
+  input_start_pos.clear();
+  output_start_pos.clear();
+  input_chain_count.clear();
+  output_chain_count.clear();
+  cslots.clear();
+
   init();
 }
 
@@ -100,6 +117,7 @@ void ECA_PROCESSOR::init_variables(void) {
   active_chain_index = 0;
   sleepcount.tv_sec = 1;
   sleepcount.tv_nsec = 0;
+  max_channels = 0;
   continue_request = false;
   end_request = false;
 }
@@ -128,7 +146,6 @@ void ECA_PROCESSOR::init_inputs(void) {
   input_start_pos.resize(input_count);
   input_chain_count.resize(input_count);
   long int max_input_length = 0;
-  int max_channels = 0;
   for(int adev_sizet = 0; adev_sizet < input_count; adev_sizet++) {
     (*inputs)[adev_sizet]->buffersize(buffersize_rep, SAMPLE_BUFFER::sample_rate);
 
@@ -163,8 +180,6 @@ void ECA_PROCESSOR::init_inputs(void) {
   }
   else
     processing_range_set = true;
-
-  while(inslots.size() < inputs->size()) inslots.push_back(SAMPLE_BUFFER(buffersize_rep, max_channels));
 }
 
 void ECA_PROCESSOR::init_outputs(void) {
@@ -181,7 +196,6 @@ void ECA_PROCESSOR::init_outputs(void) {
   output_start_pos.resize(output_count);
   output_chain_count.resize(output_count);
 
-  int max_channels = 0;
   for(int adev_sizet = 0; adev_sizet < output_count; adev_sizet++) {
     (*outputs)[adev_sizet]->buffersize(buffersize_rep, SAMPLE_BUFFER::sample_rate);
 
@@ -236,6 +250,8 @@ void ECA_PROCESSOR::init_chains(void) {
     pthread_cond_init(cond, NULL);
     chain_conds[n] = cond;
   }
+
+  while(cslots.size() < chains->size()) cslots.push_back(SAMPLE_BUFFER(buffersize_rep, max_channels));
 }
 
 void ECA_PROCESSOR::init_multitrack_mode(void) {
@@ -337,6 +353,9 @@ void ECA_PROCESSOR::interactive_loop(void) {
 
 void ECA_PROCESSOR::exec_normal_iactive(void) {
   ecadebug->control_flow("Engine/Mixmode \"normal iactive\" selected");
+
+  for (int c = 0; c != chain_count; c++) 
+    (*chains)[c]->init(&(cslots[c]));
   
   while (true) {
     interactive_loop();
@@ -358,9 +377,8 @@ void ECA_PROCESSOR::exec_normal_iactive(void) {
 }
 
 void ECA_PROCESSOR::exec_normal_passive(void) {
-  // ---
-  // Enable devices.
-  // ---
+  for (int c = 0; c != chain_count; c++) 
+    (*chains)[c]->init(&(cslots[c]));
   start();
   
   ecadebug->control_flow("Engine/Mixmode \"normal passive\" selected");
@@ -381,6 +399,8 @@ void ECA_PROCESSOR::exec_normal_passive(void) {
 
 
 void ECA_PROCESSOR::exec_simple_iactive(void) {
+  (*chains)[0]->init(&mixslot);
+
   ecadebug->control_flow("Engine/Mixmode \"simple iactive\" selected");
   while (true) {
     interactive_loop();
@@ -389,28 +409,26 @@ void ECA_PROCESSOR::exec_simple_iactive(void) {
     input_not_finished = false;
 
     prehandle_control_position();
-    (*inputs)[0]->read_buffer(&((*chains)[0]->audioslot));
+    (*inputs)[0]->read_buffer(&mixslot);
     if ((*inputs)[0]->finished() == false) input_not_finished = true;
     (*chains)[0]->process();
-    (*outputs)[0]->write_buffer(&((*chains)[0]->audioslot));
+    (*outputs)[0]->write_buffer(&mixslot);
     trigger_outputs();
     posthandle_control_position();
   }
 }
 
 void ECA_PROCESSOR::exec_simple_passive(void) {
-  // ---
-  // Enable devices.
-  // ---
+  (*chains)[0]->init(&mixslot);
   start();
   ecadebug->control_flow("Engine/Mixmode \"simple passive\" selected");
   while (!finished()) {
     input_not_finished = false;
     prehandle_control_position();
-    (*inputs)[0]->read_buffer(&((*chains)[0]->audioslot));
+    (*inputs)[0]->read_buffer(&mixslot);
     if ((*inputs)[0]->finished() == false) input_not_finished = true;
     (*chains)[0]->process();
-    (*outputs)[0]->write_buffer(&((*chains)[0]->audioslot));
+    (*outputs)[0]->write_buffer(&mixslot);
     trigger_outputs();
     posthandle_control_position();
   }
@@ -582,12 +600,12 @@ void ECA_PROCESSOR::multitrack_sync(void) {
     for (int c = 0; c != chain_count; c++) {
       if ((*inputs)[audioslot_sizet] == (*chains)[c]->input_id) {
 	if (input_chain_count[audioslot_sizet] == 1) {
-	  (*inputs)[audioslot_sizet]->read_buffer(&(*chains)[c]->audioslot);
+	  (*inputs)[audioslot_sizet]->read_buffer(&(cslots[c]));
 	  if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
 	  break;
 	}
 	else {
-	  (*chains)[c]->audioslot.operator=(mixslot);
+	  cslots[c].operator=(mixslot);
 	}
       }
     }
@@ -617,16 +635,16 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 
       if ((*chains)[n]->output_id == (*outputs)[audioslot_sizet]) {
 	if (output_chain_count[audioslot_sizet] == 1) {
-	  (*outputs)[audioslot_sizet]->write_buffer(&(*chains)[n]->audioslot);
+	  (*outputs)[audioslot_sizet]->write_buffer(&(cslots[n]));
 	  break;
 	}
 	else {
 	  ++count;
 	  if (count == 1) {
-	    mixslot.copy((*chains)[n]->audioslot);
+	    mixslot.copy(cslots[n]);
 	  }
 	  else {
-	    mixslot.add_with_weight((*chains)[n]->audioslot,
+	    mixslot.add_with_weight(cslots[n],
 				    output_chain_count[audioslot_sizet]);
 	    
 	    if (count == output_chain_count[audioslot_sizet]) {
@@ -712,27 +730,13 @@ void ECA_PROCESSOR::inputs_to_chains(void) {
     for (int c = 0; c != chain_count; c++) {
       if ((*chains)[c]->input_id == (*inputs)[audioslot_sizet]) {
 	if (input_chain_count[audioslot_sizet] == 1) {
-	  (*inputs)[audioslot_sizet]->read_buffer(&(*chains)[c]->audioslot);
+	  (*inputs)[audioslot_sizet]->read_buffer(&(cslots[c]));
 	  if ((*inputs)[audioslot_sizet]->finished() == false) input_not_finished = true;
 	  break;
 	}
 	else {
-	  (*chains)[c]->audioslot.operator=(mixslot);
+	  cslots[c].operator=(mixslot);
 	}
-      }
-    }
-  }
-}
-
-void ECA_PROCESSOR::mix_to_chains(void) {
-  for (int c = 0; c != chain_count; c++) {
-    for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
-      if ((*chains)[c]->input_id ==  (*inputs)[audioslot_sizet]) {
-	(*chains)[c]->audioslot.operator=(inslots[audioslot_sizet]);
-	// --- for debugging signal flow
-	//	cerr << "[1]Mixing from sbuf eparams->inslots[]" << " nro " << eparams->inslots[audioslot_sizet]->nro <<  " " << eparams->inslots[audioslot_sizet]->average_volume() <<".\n";
-	//	cerr << "[1]Mixing to sbuf audioslot[c]" << " nro " << (*chains)[c]->audioslot->nro << " " << (*chains)[c]->audioslot->average_volume() << ".\n";
-	// -----------------------------
       }
     }
   }
@@ -763,7 +767,7 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 	  // there's only one output connected to this chain,
 	  // so we don't need to mix anything
 	  // --
-	  (*outputs)[audioslot_sizet]->write_buffer(&(*chains)[n]->audioslot);
+	  (*outputs)[audioslot_sizet]->write_buffer(&(cslots[n]));
 	  break;
 	}
 	else {
@@ -772,11 +776,11 @@ void ECA_PROCESSOR::mix_to_outputs(void) {
 	    // -- 
 	    // this is the first output connected to this chain
 	    // --
-	    mixslot.copy((*chains)[n]->audioslot);
+	    mixslot.copy(cslots[n]);
 	    mixslot.divide_by(output_chain_count[audioslot_sizet]);
 	  }
 	  else {
-	    mixslot.add_with_weight((*chains)[n]->audioslot,
+	    mixslot.add_with_weight(cslots[n],
 				    output_chain_count[audioslot_sizet]);
 	  }
 	  
@@ -826,6 +830,8 @@ bool ECA_PROCESSOR::is_slave_output(AUDIO_IO* aiod) const {
 }
 
 void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
+  for (int c = 0; c != chain_count; c++) 
+    (*chains)[c]->init(&(cslots[c]));
 
   ecadebug->control_flow("Engine/Mixmode \"multithreaded interactive\" selected");
   int submix_pid = pthread_create(&chain_thread, NULL, mthread_process_chains, ((void*)this));
@@ -844,6 +850,8 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
       ecadebug->msg("(eca-main) Using realtime-scheduling (SCHED_FIFO/10, mthread).");
   }
 
+  vector<SAMPLE_BUFFER> inslots (input_count, SAMPLE_BUFFER(buffersize_rep, max_channels));
+
   while (true) {
     interactive_loop();
     if (end_request) break;
@@ -858,7 +866,7 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
     
     for(int chain_sizet = 0; chain_sizet != chain_count; chain_sizet++) {
       if ((*chains)[chain_sizet]->output_id == 0) {
-	(*chains)[chain_sizet]->audioslot.make_silent();
+	cslots[chain_sizet].make_silent();
 	continue;
       }
 
@@ -870,7 +878,7 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
 
       for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
 	if ((*chains)[chain_sizet]->input_id == (*inputs)[audioslot_sizet]) {
-	  (*chains)[chain_sizet]->audioslot.operator=(inslots[audioslot_sizet]);
+	  cslots[chain_sizet].operator=(inslots[audioslot_sizet]);
 	}
       }
 	
@@ -885,6 +893,8 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
 }
 
 void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
+  for (int c = 0; c != chain_count; c++) 
+    (*chains)[c]->init(&(cslots[c]));
 
   ecadebug->control_flow("Engine/Mixmode \"multithreaded passive\" selected");
   start();
@@ -896,6 +906,10 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
 
   if (submix_pid != 0)
     throw(new ECA_ERROR("ECA-MAIN", "Unable to create a new thread (mthread_process_chains)."));
+
+  vector<SAMPLE_BUFFER> inslots (input_count,
+				 SAMPLE_BUFFER(buffersize_rep,
+					       max_channels));
 
   while (!finished()) {
     input_not_finished = false;
@@ -914,7 +928,7 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
 
       for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
 	if ((*chains)[chain_sizet]->input_id == (*inputs)[audioslot_sizet]) {
-	  (*chains)[chain_sizet]->audioslot.operator=(inslots[audioslot_sizet]);
+	  cslots[chain_sizet].operator=(inslots[audioslot_sizet]);
 	}
       }
       chain_ready_for_submix[chain_sizet] = true;

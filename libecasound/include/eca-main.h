@@ -95,17 +95,18 @@ private:
   vector<bool> chain_ready_for_submix;
   vector<pthread_mutex_t*> chain_muts;
   vector<pthread_cond_t*> chain_conds;
-  vector<SAMPLE_BUFFER> inslots;
   vector<long int> input_start_pos;
   vector<long int> output_start_pos;
   vector<int> input_chain_count;
   vector<int> output_chain_count;
 
   SAMPLE_BUFFER mixslot;
+  vector<SAMPLE_BUFFER> cslots;
+
   long int buffersize_rep;
   ECA_CHAINSETUP::EP_MM_MODE mixmode;
 
-  int input_count, output_count, chain_count;
+  int input_count, output_count, chain_count, max_channels;
 
   /**
    * Start processing if it was conditionally stopped

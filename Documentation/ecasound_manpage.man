@@ -201,9 +201,23 @@ create a them with the proper file name extension\&.
 .PP 
 \fBEFFECT SETUP\fP
 .PP 
-.IP "-ps:preset_name" 
-Insert single-chain preset \'preset_name\' to active chains\&.
-See ecasoundrc(5) for info about the preset file\&. 
+\fIPRESETS\fP
+.PP 
+Ecasound has a powerful effect preset system that allows you create
+new effects by combining basic effects and controllers\&. See
+ecasound user\'s guide for more 
+detailed information\&.
+.PP 
+.IP 
+.IP "-pf:preset_file\&.eep" 
+Use the first preset found from file \'preset_file\&.eep\' as 
+a chain operator\&.
+.IP 
+.IP "-pn:preset_name" 
+Find preset \'preset_name\' from global preset database and use
+it as a chain operator\&. See ecasoundrc(5) for info about the 
+preset database\&.
+.IP 
 .PP 
 \fISIGNAL ANALYSIS\fP
 .PP 

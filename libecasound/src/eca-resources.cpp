@@ -40,8 +40,7 @@ void ECA_RESOURCES::set_defaults(void) {
   if (resource("default-to-precise-sample-rates") == "") resource("default-to-precise-sample-rates","false");
   if (resource("resource-directory") == "") resource("resource-directory","/usr/local/share/ecasound");
   if (resource("resource-file-genosc-envelopes") == "") resource("resource-file-genosc-envelopes","generic_oscillators");
-  if (resource("resource-file-single-effect-presets") == "") resource("resource-file-single-effect-presets","singlechain_effect_presets");
-  if (resource("resource-file-multi-effect-presets") == "") resource("resource-file-multi-effect-presets","multichain_effect_presets");
+  if (resource("resource-file-effect-presets") == "") resource("resource-file-effect-presets","effect_presets");
 
   if (resource("ext-text-editor") == "") resource("ext-text-editor","pico");
   if (resource("ext-text-editor-use-getenv") == "") resource("ext-text-editor-use-getenv","true");

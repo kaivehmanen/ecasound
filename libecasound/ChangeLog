@@ -2,6 +2,30 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-02-22  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-audio-objects.h (interpret_audioio_device): second parameter
+	omitted
+	
+2000-02-21  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-chainsetup.h: ECA_RESOURCES removed from constructor
+	parameters
+	* eca-chain.h (init): more arguments
+	
+2000-02-20  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* preset.h: added
+	* file-preset.h: added
+	* global-preset.h: added
+	* eca-preset-map.h: added
+	
+2000-02-18  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-chainsetup.h (create_chain_operator, create_controller): added
+	* eca-chain.h (constructor): moved sample buffer objects outside,
+	now chain's just have a pointer to a buffer
+	
 2000-02-15  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* resource-file.h (keywords): added

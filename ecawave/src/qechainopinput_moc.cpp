@@ -1,16 +1,16 @@
 /****************************************************************************
 ** QEChainopInput meta object code from reading C++ file 'qechainopinput.h'
 **
-** Created: Sat Jan 22 23:24:28 2000
-**      by: The Qt Meta Object Compiler ($Revision: 1.1 $)
+** Created: Sat Feb 19 00:56:26 2000
+**      by: The Qt MOC ($Id: qechainopinput_moc.cpp,v 1.2 2000-02-21 23:21:48 kaiv Exp $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
 #define Q_MOC_QEChainopInput
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#define Q_MOC_OUTPUT_REVISION 3
-#elif Q_MOC_OUTPUT_REVISION != 3
+#define Q_MOC_OUTPUT_REVISION 7
+#elif Q_MOC_OUTPUT_REVISION != 7
 #error "Moc format conflict - please regenerate all moc files"
 #endif
 
@@ -32,21 +32,13 @@ const char *QEChainopInput::className() const
 
 QMetaObject *QEChainopInput::metaObj = 0;
 
-
-#if QT_VERSION >= 199
-static QMetaObjectInit init_QEChainopInput(&QEChainopInput::staticMetaObject);
-
-#endif
-
 void QEChainopInput::initMetaObject()
 {
     if ( metaObj )
 	return;
     if ( strcmp(QWidget::className(), "QWidget") != 0 )
 	badSuperclassWarning("QEChainopInput","QWidget");
-
-#if QT_VERSION >= 199
-    staticMetaObject();
+    (void) staticMetaObject();
 }
 
 QString QEChainopInput::tr(const char* s)
@@ -54,16 +46,11 @@ QString QEChainopInput::tr(const char* s)
     return ((QNonBaseApplication*)qApp)->translate("QEChainopInput",s);
 }
 
-void QEChainopInput::staticMetaObject()
+QMetaObject* QEChainopInput::staticMetaObject()
 {
     if ( metaObj )
-	return;
-    QWidget::staticMetaObject();
-#else
-
-    QWidget::initMetaObject();
-#endif
-
+	return metaObj;
+    (void) QWidget::staticMetaObject();
     typedef void(QEChainopInput::*m1_t0)(int);
     typedef void(QEChainopInput::*m1_t1)();
     m1_t0 v1_0 = Q_AMPERSAND QEChainopInput::update_chainop;
@@ -76,5 +63,9 @@ void QEChainopInput::staticMetaObject()
     metaObj = QMetaObject::new_metaobject(
 	"QEChainopInput", "QWidget",
 	slot_tbl, 2,
+	0, 0,
+	0, 0,
+	0, 0,
 	0, 0 );
+    return metaObj;
 }

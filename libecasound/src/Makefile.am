@@ -44,7 +44,7 @@ ecasound_audiofx_src =  audiofx.cpp \
 			audiofx_timebased.cpp \
 			audiogate.cpp \
 			audiofx_mixing.cpp
-
+		     
 ecasound_audioio_oss_src = audioio-oss.cpp
 
 ecasound_audioio_alsa_src = 	audioio-alsa.cpp \
@@ -99,7 +99,12 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-fileio-mmap.cpp \
 			eca-fileio-mmap-fthread.cpp \
 			eca-alsa-dyn.cpp eca-mthreaded-processor.cpp \
-			eca-chainop-map.cpp eca-controller-map.cpp
+			eca-chainop-map.cpp \
+			eca-controller-map.cpp \
+			eca-preset-map.cpp \
+			preset.cpp \
+			file-preset.cpp \
+			global-preset.cpp
 
 ecasound_common_src = $(ecasound_audiofx_src) $(ecasound_audioio_src) \
 		      $(ecasound_controller_src) $(ecasound_general_src)

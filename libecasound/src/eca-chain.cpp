@@ -23,18 +23,22 @@
 
 #include <kvutils.h>
 
-#include "eca-error.h"
-#include "eca-debug.h"
 #include "samplebuffer.h"
+#include "generic-controller.h"
+#include "eca-chainop.h"
+#include "audioio.h"
+#include "file-preset.h"
+#include "global-preset.h"
+
 #include "eca-chainop-map.h"
 #include "eca-controller-map.h"
 #include "eca-chain.h"
 
-CHAIN::CHAIN (int bsize, int channels) 
-  : audioslot(bsize, channels) {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(chain) constuctor: CHAIN( " 
-		+ kvu_numtostr(bsize) + ", " + 
-		  kvu_numtostr(channels) + ")");
+#include "eca-error.h"
+#include "eca-debug.h"
+
+CHAIN::CHAIN (void) {
+  ecadebug->msg(ECA_DEBUG::system_objects, "(chain) constuctor: CHAIN");
   muted = false;
   sfx = false;
   initialized_rep = false;
@@ -213,22 +217,26 @@ void CHAIN::selected_controller_as_target(void) {
   // --------
 }
 
-void CHAIN::init(void) {
+void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
   // --------
   // require:
-  assert(input_id != 0);
-  assert(output_id != 0);
+  assert(input_id != 0 || in_channels != 0);
+  assert(output_id != 0 || out_channels != 0);
   // --------
 
-  in_channels_rep = input_id->channels();
-  out_channels_rep = output_id->channels();
+  audioslot = sbuf;
+
+  in_channels_rep = in_channels;
+  out_channels_rep = out_channels;
+  if (in_channels == 0) in_channels_rep = input_id->channels();
+  if (out_channels == 0) out_channels_rep = output_id->channels();
 
   int init_channels = in_channels_rep;
-  audioslot.number_of_channels(init_channels);
+  audioslot->number_of_channels(init_channels);
   for(int p = 0; p != static_cast<int>(chainops.size()); p++) {
-    chainops[p]->init(&audioslot);
+    chainops[p]->init(audioslot);
     init_channels = chainops[p]->output_channels(init_channels);
-    audioslot.number_of_channels(init_channels);
+    audioslot->number_of_channels(init_channels);
   }
 
   refresh_parameters();
@@ -250,14 +258,14 @@ void CHAIN::process(void) {
   if (muted == false) {
     if (sfx == true) {
       for(int p = 0; p != static_cast<int>(chainops.size()); p++) {
-	audioslot.number_of_channels(chainops[p]->output_channels(audioslot.number_of_channels()));
+	audioslot->number_of_channels(chainops[p]->output_channels(audioslot->number_of_channels()));
 	chainops[p]->process();
       }
       //    audioslot.limit_values();
     }
   }
   else {
-    audioslot.make_silent();
+    audioslot->make_silent();
   }
 }
 
@@ -279,9 +287,26 @@ void CHAIN::refresh_parameters(void) {
 string CHAIN::to_string(void) const {
   MESSAGE_ITEM t; 
 
+  FILE_PRESET* fpreset;
+  GLOBAL_PRESET* gpreset;
+
   int q = 0;
   while (q < static_cast<int>(chainops.size())) {
-    t << chain_operator_to_string(chainops[q]) << " ";
+    fpreset = 0;
+    fpreset = dynamic_cast<FILE_PRESET*>(chainops[q]);
+    if (fpreset != 0) {
+      t << "-pf:" << fpreset->filename() << " ";
+    }
+    else {
+      gpreset = 0;
+      gpreset = dynamic_cast<GLOBAL_PRESET*>(chainops[q]);
+      if (gpreset != 0) {
+	t << "-pn:" << gpreset->name() << " ";
+      }
+      else {
+        t << chain_operator_to_string(chainops[q]) << " ";
+      }
+    }
     ++q;
   }
 

@@ -1,16 +1,16 @@
 /****************************************************************************
 ** QESession meta object code from reading C++ file 'qesession.h'
 **
-** Created: Thu Jan 27 01:47:54 2000
-**      by: The Qt Meta Object Compiler ($Revision: 1.1 $)
+** Created: Sat Feb 19 00:54:24 2000
+**      by: The Qt MOC ($Id: qesession_moc.cpp,v 1.2 2000-02-21 23:21:48 kaiv Exp $)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
 #define Q_MOC_QESession
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#define Q_MOC_OUTPUT_REVISION 3
-#elif Q_MOC_OUTPUT_REVISION != 3
+#define Q_MOC_OUTPUT_REVISION 7
+#elif Q_MOC_OUTPUT_REVISION != 7
 #error "Moc format conflict - please regenerate all moc files"
 #endif
 
@@ -32,21 +32,13 @@ const char *QESession::className() const
 
 QMetaObject *QESession::metaObj = 0;
 
-
-#if QT_VERSION >= 199
-static QMetaObjectInit init_QESession(&QESession::staticMetaObject);
-
-#endif
-
 void QESession::initMetaObject()
 {
     if ( metaObj )
 	return;
     if ( strcmp(QWidget::className(), "QWidget") != 0 )
 	badSuperclassWarning("QESession","QWidget");
-
-#if QT_VERSION >= 199
-    staticMetaObject();
+    (void) staticMetaObject();
 }
 
 QString QESession::tr(const char* s)
@@ -54,16 +46,11 @@ QString QESession::tr(const char* s)
     return ((QNonBaseApplication*)qApp)->translate("QESession",s);
 }
 
-void QESession::staticMetaObject()
+QMetaObject* QESession::staticMetaObject()
 {
     if ( metaObj )
-	return;
-    QWidget::staticMetaObject();
-#else
-
-    QWidget::initMetaObject();
-#endif
-
+	return metaObj;
+    (void) QWidget::staticMetaObject();
     typedef void(QESession::*m1_t0)();
     typedef void(QESession::*m1_t1)();
     typedef void(QESession::*m1_t2)();
@@ -116,5 +103,9 @@ void QESession::staticMetaObject()
     metaObj = QMetaObject::new_metaobject(
 	"QESession", "QWidget",
 	slot_tbl, 12,
+	0, 0,
+	0, 0,
+	0, 0,
 	0, 0 );
+    return metaObj;
 }

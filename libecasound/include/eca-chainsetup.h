@@ -16,7 +16,7 @@
 
 class CONTROLLER_SOURCE;
 class CHAIN_OPERATOR;
-class ECA_RESOURCES;
+class GENERIC_CONTROLLER;
 
 /**
  * Class that represents a single chainsetup.
@@ -37,8 +37,6 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
   bool is_enabled_rep;
   enum EP_MM_MODE mixmode_rep;
 
-  ECA_RESOURCES* ecaresources;
-
   vector<string> options;
   string options_general;
 
@@ -47,6 +45,11 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
   // ---
   void update_option_strings(void);
   string general_options_to_string(void) const;
+
+  /**
+   * Make sure that all option tokes start with a '-' sign
+   */
+  static vector<string> combine_options(const vector<string>& opts);
 
  public:
 
@@ -65,43 +68,84 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
 
   /**
    * Handle general options. 
+   *
+   * require:
+   *  argu.size() > 0
+   *  argu[0] == '-'
    */
   void interpret_general_option (const string& argu);
 
   /**
    * Handle processing control
+   *
+   * require:
+   *  argu.size() > 0
+   *  argu[0] == '-'
    */
   void interpret_processing_control (const string& argu);
 
   /**
    * Handle chainsetup options.
+   *
+   * require:
+   *  argu.size() > 0
+   *  argu[0] == '-'
    */
   void interpret_audio_format (const string& argu);
 
   /**
    * Handle chain options.
+   *
+   * require:
+   *  argu.size() > 0
+   *  argu[0] == '-'
    */
   void interpret_chains (const string& argu);
 
   /**
    * Handle chain operator options.
+   *
+   * require:
+   *  argu.size() > 0
+   *  argu[0] == '-'
    */
   void interpret_chain_operator (const string& argu);
 
   /**
+   * Create a new chain operator
+   *
+   * require:
+   *  argu.size() > 0
+   *  argu[0] == '-'
+   */
+  CHAIN_OPERATOR* create_chain_operator (const string& argu);
+
+  /**
    * Handle controller sources and general controllers.
+   *
+   * require:
+   *  argu.size() > 0
+   *  argu[0] == '-'
    */
   void interpret_controller (const string& argu);
 
   /**
-   * Handle effect preset options.
+   * Handle controller sources and general controllers.
+   *
+   * require:
+   *  argu.size() > 0
+   *  argu[0] == '-'
    */
-  void interpret_effect_preset (const string& argu);
+  GENERIC_CONTROLLER* create_controller (const string& argu);
 
   /**
-   * Process a singlechain effect preset.
+   * Handle effect preset options.
+   *
+   * require:
+   *  argu.size() > 0
+   *  argu[0] == '-'
    */
-  void add_singlechain_preset(const string& preset_name) throw(ECA_ERROR*);
+  void interpret_effect_preset (const string& argu);
 
   /**
    * Enable chainsetup. Opens all devices and reinitializes all 
@@ -171,24 +215,18 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
   /**
    * Construct from a command line object.
    *
-   * require:
-   *   ecarc != 0
-   *
    * ensure:
    *   buffersize != 0
    */
-  ECA_CHAINSETUP(ECA_RESOURCES* ecarc, COMMAND_LINE& cline);
+  ECA_CHAINSETUP(COMMAND_LINE& cline);
 
   /**
    * Construct from a chainsetup file.
    *
-   * require:
-   *   ecarc != 0
-   *
    * ensure:
    *   buffersize != 0
    */
-  ECA_CHAINSETUP(ECA_RESOURCES* ecarc, const string& setup_file, bool fromfile = true);
+  ECA_CHAINSETUP(const string& setup_file, bool fromfile = true);
     
   /**
    * Destructor

@@ -8,16 +8,25 @@ PACKAGE = @PACKAGE@
 VERSION = @VERSION@   
 # ---------------------------------------------------------------------
 # Files going into distribution:
-DISTFILES = Makefile.am Makefile.in ecawave.1 \
-	    ecawave_manpage.man \
-	    ecawave_manpage.html \
-	    users_guide.html
+DISTFILES = 	Makefile.am \
+		Makefile.in \
+		ecawave.1 \
+	    	ecawave_manpage.man \
+		ecawave_manpage.html \
+		ecawave_manpage.yo \
+	    	users_guide.yo \
+	    	users_guide.html
+
 # ---------------------------------------------------------------------
 all: docs
 
 distclean:
 
-docs: ecawave.1 ecawave_manpage.html users_guide.html kdoc
+docs: 	ecawave.1 \
+	ecawave_manpage.man \
+	ecawave_manpage.html \
+	users_guide.yo \
+	users_guide.html
 
 # ---------------------------------------------------------------------
 # Man pages
@@ -42,7 +51,7 @@ kdoc:
 	 -d ../Documentation/source-tree/ \
 	 -L ../Documentation/ *.h -lqt -llibecasound -llibkvutils
 	cd @top_srcdir@/Documentation/source-tree ; \
-	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/local/qt/doc/
+	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/local/qt/html/
 
 # ---------------------------------------------------------------------
 # Clean targets
