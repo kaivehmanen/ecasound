@@ -22,6 +22,7 @@
 #include <time.h> /* ANSI-C: clock() */
 
 #include "kvu_locks.h"
+#include "kvu_utils.h"
 
 /* --------------------------------------------------------------------- 
  * Options
@@ -55,10 +56,12 @@ typedef int (*kvu_test_t)(void);
  */
 
 static int kvu_test_1(void);
+static int kvu_test_2(void);
 static void* kvu_test_1_helper(void* ptr);
 
 static kvu_test_t kvu_funcs[] = { 
   kvu_test_1, 
+  kvu_test_2, 
   NULL 
 };
 
@@ -91,7 +94,8 @@ static void* kvu_test_1_helper(void* ptr)
   clock_t prev, now = clock();
 
   for(int n = 0, m = 0; n < stop_after;) {
-    // if (!(++m & 0xffff)) fprintf(stderr, "S");
+    // if (!(m & 0xffff)) fprintf(stderr, "S");
+    ++m;
     int j = i->get();
     if (j < 0) {
       ++j;
@@ -113,7 +117,7 @@ static void* kvu_test_1_helper(void* ptr)
 }
 
 /**
- * Test for the ATOMIC_INTEGER class defined 
+ * Tests the ATOMIC_INTEGER class defined 
  * in kvu_locks.h. 
  */
 static int kvu_test_1(void)
@@ -129,7 +133,8 @@ static int kvu_test_1(void)
   clock_t prev, now = clock();
   
   for(int n = 0, m = 0; n < stop_after;) {
-    // if (!(++m & 0xffff)) fprintf(stderr, "M");
+    // if (!(m & 0xffff)) fprintf(stderr, "M");
+    ++m;
     int j = i.get();
     if (j < 0) {
       ++j;
@@ -155,3 +160,61 @@ static int kvu_test_1(void)
   ECA_TEST_SUCCESS();
 }
 
+/**
+ * Tests the string handling functions defined 
+ * in kvu_utils.h. 
+ */
+static int kvu_test_2(void)
+{
+  ECA_TEST_ENTRY();
+
+  if (kvu_string_icmp(" foo ", " fOo ") != true) {
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_icmp"); 
+  }
+
+  std::vector<std::string> vec = kvu_string_to_tokens(" a foo string ");
+  if (vec.size() != 3) {
+    ECA_TEST_FAIL(2, "kvu_test_2 kvu_string_to_tokens (1)");
+  }
+  if (vec[2] != "string") {
+    ECA_TEST_FAIL(3, "kvu_test_2 kvu_string_to_tokens (2)"); 
+  }
+
+  vec = kvu_string_to_tokens_quoted("a foo\\ string");
+  if (vec.size() != 2) {
+    ECA_TEST_FAIL(4, "kvu_test_2 kvu_string_to_tokens_quoted (1)");
+  }
+  if (vec[1] != "foo string") {
+    ECA_TEST_FAIL(5, "kvu_test_2 kvu_string_to_tokens_quoted (2)"); 
+  }
+
+  const std::string argument ("-efoobarsouNd:arg1,arg2,arg3");
+
+  if (kvu_get_argument_prefix(argument) != "efoobarsouNd") {
+    ECA_TEST_FAIL(6, "kvu_test_2 kvu_get_argument_prefix"); 
+  }
+
+  if (kvu_get_argument_number(3, argument) != "arg3") {
+    ECA_TEST_FAIL(7, "kvu_test_2 kvu_get_argument_number"); 
+  }
+
+  vec = kvu_get_arguments(argument);
+  if (vec.size() != 3) {
+    ECA_TEST_FAIL(8, "kvu_test_2 kvu_get_arguments (1)"); 
+  }
+
+  if (vec[2] != "arg3" || vec[0] != "arg1") {
+    ECA_TEST_FAIL(9, "kvu_test_2 kvu_get_arguments (2)"); 
+  }
+
+  if (kvu_get_number_of_arguments(argument) != 3) {
+    ECA_TEST_FAIL(10, "kvu_test_2 kvu_get_number_of_arguments"); 
+  }
+
+  if (kvu_string_search_and_replace("foo bar", 'f', 'b')
+      != "boo bar") {
+    ECA_TEST_FAIL(11, "kvu_test_2 kvu_string_search_and_replace"); 
+  }
+
+  ECA_TEST_SUCCESS();
+}
