@@ -1,13 +1,19 @@
 :editor: -*- mode: fundamental; tab-width: 4; indent-tabs-mode: nil -*-
-:versio: 20050313-1
+:version: 20050328-2
 :syntax: loosely follows restructured text, http://docutils.sourceforge.net/rst.html
+:author: Kai Vehmanen
 
 ===========================
 Ecasound Programmer's Guide
 ===========================
 
+.. #################################################################
+.. #################################################################
+
+.. contents::
+
 Preface
--------
+~~~~~~~
 
 This document describes how Ecasound and the related libraries
 work, how to use them, how to extend and add features and other 
@@ -18,13 +24,19 @@ Ecasound Users's Guide).
 If not otherwise specified, all documentation refers to the latest
 Ecasound version.
 
+.. #################################################################
+.. #################################################################
+
 Document history
-----------------
+~~~~~~~~~~~~~~~~
 
 Hmm, why doesn't this work...?
 
 ::
 
+| 28.03.2005 - Added section about "Source code markup", update the
+|              "Design principles" section.
+| 13.03.2005 - Converted from LaTeX to ascii.
 | 23.10.2004 - Added section "EIAM commands" that covers adding
 |              new EIAM commands.
 | 18.11.2003 - Typo fixes. Updated documentation to reflect the new
@@ -51,36 +63,40 @@ Hmm, why doesn't this work...?
 | 28.10.2001 - Lots of changes to the "Object maps" chapter.
 | 21.10.2001 - Added this history section.
 
+.. #################################################################
+.. #################################################################
+
 General programming guidelines
-------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Design and programming principles
 =================================
 
-FIXME
+The following sections describe some of the key design 
+principles that have been guiding Ecasound development.
 
 Open and generic design
 -----------------------
 
-Over the years ecasound's core design has been revised many times.
-After rewriting some code sections hundreds of times, you start
-to appreciate genericity. :)
+Over the years Ecasound's core design has been revised many times.
+The aim has been to keep the core flexible enough, so it can
+be easily adapted to new use cases.
 
 Object-orientation
 ------------------
 
 Ecasound is written in C++ (as specified in 1997 ANSI/ISO C++ standard). 
-When designing classes and routines, I often use Eiffel language as 
-a reference. At same time overuse of object-orientation is another
-thing to avoid. Object-orientation is a very effective design method, 
-but not the only one. Sometimes other approaches work better.
+Common object-oriented design practices should be utilized. At same time 
+overuse of object-orientation should be avoided. Object-orientation is 
+a very effective design method, but not the only one. Sometimes other 
+approaches work better.
 
 Data hiding
 -----------
 
 This design principle deserves to be mentioned separately. Whenever 
-possible, the actual data representation and implementation 
-should always be hidden. This allows you to make local implementation 
+possible, the actual data representation and implementation details
+should always be hidden. This allows to make local implementation 
 changes without affecting other parts of the code base. It cannot
 be emphasized enough how important this goal is for large software 
 projects like Ecasound.
@@ -88,38 +104,37 @@ projects like Ecasound.
 Design by contract
 ------------------
 
-Design by contract means that when you write a new routine,
-in addition to the actual code, you also describe routine's 
-behaviour as accurately as possible by defining a set 
-of preconditions and postconditions. These conditions are
-usually defined using boolean assertations.
+When writing a new routine, in addition to the actual code,  
+also routine's behaviour should be described as accurately as 
+possible using preconditions and postconditions to describe
+the external side-effects (how it changes the object state, what 
+is the relation between arguments and return values).
 
-Routine must specify all requirements and assumptions. 
-If the caller violates this specification, routine is not 
-responsible for the error. This means that routine mustn't
-check argument validity. This must be done by the caller.
+The preconditions should specify all requirements and 
+assumptions related to routine's inputs. If the caller violates 
+this specification, routine is not responsible for the error.
 
-Routine should also specify, what conditions are true when
-returning to the caller. By doing this, routine ensures that
-it works correctly and calling routine knows what has been
-done.
+The postconditions should specify what statements hold true
+when routine has been executed. This information helps the
+caller to better understand how the routine works and
+to identify implementation bugs.
 
 Ideally, these conditions prove that the routine works 
-correctly. Unfortunately writing good conditions is not 
-always easy. Still, the benefits of this approach should be 
-clear. When you call a well-defined routine, a) you know what 
+correctly. Writing a complete description of a routine can be
+difficult, but the benefits of this approach should be clear. 
+When you call a well-defined routine, a) you know what 
 parameter values it accepts, b) you know what it does and c) if 
-errors occur, it's easier to pinpoint the faulty routine. In 
-practice this is done by using comments and pre/postconditions. 
+errors occur, it's easier to pinpoint the faulty routine. 
 
-As C++ doesn't directly support pre/postconditions, I've simulated 
-them using the DEFINITION_BY_CONTRACT and DBC tools provided by 
-libkvutils.
+In practice describing routines is done by combining verbose
+comments and defining pre/postconditions. As C++ doesn't directly 
+support pre/postconditions, the DEFINITION_BY_CONTRACT and DBC tools 
+provided by libkvutils are used.
 
 Routine side effects
 --------------------
 
-I try to make a clear distinction between routines that 
+A clear distinction should be made between routines that 
 have side-effects (=methods, processors, modifiers; routines that
 change object's state) and const routines (=functions, observers).
 
@@ -128,17 +143,18 @@ should be const-correct. A object is const-correct if a function
 taking only a single argument that is a const reference to that object
 is not able, without explicit casting, to obtain a non-const
 reference to that same object (or a portion thereof) from within
-the function body. \cite{Lakos96}
+the function body.
 
 Sanity checks
 -------------
 
 Sanity checks are done only to prevent crashes. All effects
-and operators happily accept "insane" parameters. For instance 
-you can give -100.0% to the amplifier effect. This of course 
-results in inverted sample data. I think this a reasonable 
-approach. After all, Ecasound is supposed to be a tool for creative
-work and experimenting. It's not meant for e-commerce. ;)
+and operators should accept also "insane" parameters. For example,
+the amplifier effect accepts -100.0% as the gain value. This of course 
+results in inverted sample data, which is a useful outcome. 
+As Ecasound is supposed to be a tool for creative work and 
+experimenting, the decisions on which parameters are useful
+for audio processing should not be made in source code.
 
 Error handling
 --------------
@@ -189,10 +205,13 @@ ECA_CHAINSETUP - load_from_file, save() and save_to_file
 ECA_SESSION - constructor
   TBD	   
 
-Coding style
-============
+Coding style, naming conventions and source code markup
+=======================================================
 
-TBD
+This section describes some of the conventions used in
+Ecasound development. As a general rule, one should 
+adapt to whatever style and conventions used in 
+already existing code.
 
 Variable and type naming
 ------------------------
@@ -203,6 +222,9 @@ members are marked with "_rep" postfix. Data members which are
 pointers are marked with "_repp". Index-style short variable names 
 (n, m, etc.) are only used in local scopes. Enum types 
 have capitalized names (Some_enum).
+
+Use of macro processing should be avoided, but when necessary,
+macro names should be capitalized.
 
 Package specific
 ----------------
@@ -221,7 +243,7 @@ Private classes
 Some classes are divided into public and private parts. This is
 done to make it easier to maintain binary-level compatibility 
 between library versions, and to get rid of header file 
-dependecies. 
+dependencies. 
 
 Private classes have a "_impl" postfix in their name. They
 are usually stored into separate files which also use the
@@ -247,6 +269,21 @@ the ECA_TEST_CASE interface. In addition, generic test cases
 should be added to ECA_TEST_REPOSITORY - see 
 "libecasound/eca-test-repository.cpp".
 
+Source code markup
+------------------
+
+In addition to the Javadoc-style source code documentation (see 
+'Documentation style' section), inline commentary markup is used 
+to document important code segments. Use of common markup notation 
+is preferred (for example it is nice to be able to grep for a list 
+of open items in certain part of the codebase):
+
+- Known bugs, unhandled cases, and missing features should 
+  be marked with "FIXME: description" comments.
+
+- Explanatory notes that help to understand the code
+  should be marked with "NOTE: description".
+
 Physical level organization
 ===========================
 
@@ -258,10 +295,8 @@ Include hierarchies
 
 Include statements that are not stricly necessary should be dropped!
 Not only do they cause unwanted dependencies, they also create more
-work for the compiler. Ecasound already takes painfully long to 
-compile, so there's no room for sloppy include work. Few distinct
-rules follow:
-
+work for the compiler (Ecasound already takes painfully long to 
+compile). Some rules to follow:
 
 - In header files, no extra header files should be defined.
   For instance in many cases it's enough to state that 
@@ -270,7 +305,7 @@ rules follow:
   "class SOME_TYPE;".
 
 - For modules with separate implementation and header files, 
-  dependencies to other modules don't need to be 
+  dependencies to other modules need not be 
   stated in both.
 
 - Direct dependencies to outside modules must always 
@@ -284,7 +319,7 @@ rules follow:
 Distribution packages
 ---------------------
 
-As an example, ecasound and ecawave are distributed as separate
+As an example, Ecasound and Ecawave are distributed as separate
 packages. This decision has been made because a) they are clearly 
 independent, b) they have different external dependencies, and c)
 they address different target uses. 
@@ -293,8 +328,8 @@ Directories
 -----------
 
 It's convenient to organize larger sets of source code into separate
-directories. For instance in Ecasound, libecasound and
-ecatools are in two separate directories.
+directories. For instance libecasound and ecatools components of 
+the Ecasound package are located in separate directories.
 
 File groups
 -----------
@@ -331,10 +366,10 @@ C++ std namespace
 
 The preferred way to access C++ standard library functions is 
 to use explicit namespace selectors ("std::string") in public 
-headers files, and using declarations in the implementation 
+headers files, and "using declarations" in the implementation 
 parts ("using std::string"). It's also possible to import the 
 whole std namespace ("using namespace std;") in the beginning
-of an implementation file.
+of an implementation file (but never in headers!).
 
 Documentation style
 ===================
@@ -362,8 +397,7 @@ All Ecasound releases have a distinct version number. The
 version number syntax is x.y[.z][-extraT], where x and
 y are the major and minor numbers, and z is an optional
 revision number. To test major changes, separate -preX or 
--rcX versions can be distributed before the actual new 
-release.
+-rcX versions can be distributed before the official release.
 
 In addition, all Ecasound libraries have a separate interface 
 version. The libtool-style version:revision:age versioning
@@ -386,8 +420,11 @@ changed quite a few times during the project's history. The
 rules described above only apply to Ecasound 2.2.0 and newer
 releases.
 
+.. #################################################################
+.. #################################################################
+
 How Ecasound works?
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 Example use cases
 =================
@@ -405,27 +442,28 @@ Multitrack mixing
 
 Multiple inputs are mixed into one output.
 
-Realtime effect processing
---------------------------
+Real-Time effect processing
+---------------------------
 
-There's at least one realtime input and one realtime output.
-Signal is sampled from the realtime input, processed and
-written to the realtime output.
+There's at least one real-time input and one real-time output.
+Signal is sampled from the real-time input, processed and
+written to the real-time output.
 
 One-track recording
 -------------------
 
-One input is processed and written to one or more outputs.
+One real-time input is processed and written to one or 
+more outputs.
 
 Multitrack recording
 --------------------
 
 The most common situation is that there are two separate
-chains. First one consists of realtime input routed to a
-non-realtime output. This is the recording chain. The
+chains. First one consists of real-time input routed to a
+non-real-time output. This is the recording chain. The
 other one is the monitor chain and it consists of one or
-more non-realtime inputs routed to a realtime output.
-You could also route your realtime input to the monitoring
+more non-real-time inputs routed to a real-time output.
+You could also route your real-time input to the monitoring
 chain, but this is not recommended because of severe
 timing problems. To synchronize these two separate chains,
 Ecasound uses a special multitrack mode (which should be
@@ -435,7 +473,7 @@ Recycling a signal through external devices
 -------------------------------------------
 
 Just like multirack recording. The only difference is
-that realtime input and output are externally
+that real-time input and output are externally
 connected.
 
 Audio signal routing
@@ -474,9 +512,6 @@ chains divides the audio signal generating multiple copies of
 the original input data. Similarly with an output object, data from
 multiple chains is mixed together to one output object.
 
-Control flow
-============
-
 Batch operation
 ---------------
 
@@ -513,8 +548,11 @@ added to the selected chainsetup. Similarly when
 you issue start(), the connected chainsetup is 
 started.
 
+.. #################################################################
+.. #################################################################
+
 Library organization
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 The primary source for class documentation is header files.
 A browsable version of header documentation is at
@@ -561,10 +599,10 @@ AUDIO_IO_PROXY_SERVER - audioio-proxy-server.h
 
 Implements a audio input/output subsystem that adds
 a second layer of buffering between the main processing 
-engine and non-realtime audio input and output objects.
+engine and non-real-time audio input and output objects.
 
-Double buffering is needed to guarantee a realtime constrained 
-data stream even when dealing with non-realtime objects like
+Double buffering is needed to guarantee a real-time constrained 
+data stream even when dealing with non-real-time objects like
 disk files.
 
 CHAIN - eca-chain.h
@@ -667,8 +705,8 @@ the object itself.
 ECA_AUDIO_FORMAT - eca-audio-format.h
 -------------------------------------
 
-Implemented by all classes that have a current audio format that
-can be observed and modified.
+Implemented by all classes that an audio format attribute
+set that can be observed and modified.
 
 ECA_AUDIO_POSITION - eca-audio-position.h
 -----------------------------------------
@@ -707,7 +745,7 @@ of audio objects include files, audio devices, sound
 producing program modules, audio server clients, and so on.
 
 More specialized interface classesa are AUDIO_IO_DEVICE (for
-realtime audio objects) and AUDIO_IO_BUFFERED (for POSIX-style
+real-time audio objects) and AUDIO_IO_BUFFERED (for POSIX-style
 buffered i/o). There's also a special AUDIO_IO_MANAGER
 interface for managing multiple audio objects of same 
 type inside one chainsetup.
@@ -819,8 +857,11 @@ eca-object-factory.h - ECA_OBJECT_FACTORY
 The public interface to Ecasound's object maps. All its functions
 are static.
 
+.. #################################################################
+.. #################################################################
+
 Adding new features and components to Ecasound?
------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Things to remember when writing new C++ classes
 ===============================================
@@ -832,7 +873,6 @@ Copy constructor and assignment operator
 
 Always take a moment to check your copy constructor and the assign 
 operation (=operation()). Basicly you have three alternatives: 
-
 
 - Trust the automatically created default definitons. If you don't
   have any pointers as data members, this isn't necessarily a bad
@@ -852,7 +892,7 @@ Audio objects
 To implement a new audio object type, you must first select which 
 top-level class to derive from. Usually this is either AUDIO_IO
 (the top-level class), AUDIO_IO_BUFFERED (a more low level interface)
-or AUDIO_IO_DEVICE (realtime devices).
+or AUDIO_IO_DEVICE (real-time devices).
 
 The second step is to implement the various virtual functions declared
 in the parent classes. These functions can be divided into four
@@ -969,8 +1009,11 @@ following files:
 - Documentation/ecasound-iam_manpage.yo: Documentation must be
   added.
 
+.. #################################################################
+.. #################################################################
+
 Application development using the Ecasound framework
-----------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Console mode ecasound - {[}all languages{]}
 ===========================================
@@ -1069,16 +1112,18 @@ This means more control, but it also means more work. Here's
 another short sample:
 
 | --cut--
-- create a SAMPLE_BUFFER object for storing the samples
-- read samples with an audio I/O object - for example WAVEFILE
-- process sample data with some effect class - for example EFFECT_LOWPASS
-- maybe change the filter frequency with EFFECT_LOWPASS::set_parameter(1, new_value)
-- write samples with an audio I/O object - OSSDEVICE, WAVEFILE, etc.
+| - create a SAMPLE_BUFFER object for storing the samples
+| - read samples with an audio I/O object - for example WAVEFILE
+| - process sample data with some effect class - for example EFFECT_LOWPASS
+| - maybe change the filter frequency with EFFECT_LOWPASS::set_parameter(1, new_value)
+| - write samples with an audio I/O object - OSSDEVICE, WAVEFILE, etc.
 | --cut--
 
+.. #################################################################
+.. #################################################################
 
 Protocols and Interfaces
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Ecasound Interactive Mode - Well-Formed Output Mode
 ===================================================
@@ -1109,4 +1154,3 @@ format:
 | <lf> = 0x0a                 ; line feed
 | <integer> = +<digit>        ; one or more digits
 | <digit> = 0x30-0x39         ; digits 0-9
-
