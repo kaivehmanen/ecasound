@@ -34,14 +34,16 @@ class PRESET : public CHAIN_OPERATOR,
   ECA_CHAINSETUP csetup;
 
   bool parsed_rep;
+  string parse_string_rep;
+
   string name_rep;
 
   void add_chain(void);
 
  public:
 
-  virtual PRESET* clone(void) { return(new PRESET(*this)); }
-  virtual PRESET* new_expr(void) { return(new PRESET()); }
+  virtual PRESET* clone(void) { return(new PRESET(parse_string_rep)); }
+  virtual PRESET* new_expr(void) { return(new PRESET(parse_string_rep)); }
   virtual ~PRESET (void);
 
   string name(void) const { return(name_rep); }

@@ -1,5 +1,5 @@
-#ifndef _QEOPERATORINPUT_H
-#define _QEOPERATORINPUT_H
+#ifndef _QEOPERATORCONFIGURATION_H
+#define _QEOPERATORCONFIGURATION_H
 
 #include <vector>
 
@@ -13,23 +13,24 @@
 
 class QLabel;
 class QLineEdit;
+class QGroupBox;
+class QGrid;
 
 /**
- * Input widget for dynamic objects with numeric parameters
+ * Input widget for configuring ecasound operators
  */
-class QEOperatorInput : public QEInput {
+class QEOperatorConfiguration : public QEInput {
   Q_OBJECT
  public:
 
-  QEOperatorInput (OPERATOR* op, QWidget *parent = 0, const char *name = 0);
+  QEOperatorConfiguration (OPERATOR* op, QWidget *parent = 0, const char *name = 0);
 
   OPERATOR* result(void) const { return(operator_rep); }
-
-  virtual bool class_invariant(void) const { return(operator_rep != 0); }
 
 public slots:
 
   virtual void update_results(void);
+  void change_operator(OPERATOR* op);
 
  private:
 
@@ -37,7 +38,16 @@ public slots:
   vector<QLabel*> paramlist;
   vector<QLineEdit*> inputlist;
 
+  QGrid* paramgrid;
+  QLabel* obj_desc;
+  QLabel* obj_name;
+  QGroupBox* paramgroup;
+
   void init_layout(void);
+
+ public:
+
+  virtual bool class_invariant(void) const { return(operator_rep != 0); }
 };
 
 #endif

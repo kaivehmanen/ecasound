@@ -73,6 +73,7 @@ CC = @CC@
 CPP = @CPP@
 CXX = @CXX@
 DLLTOOL = @DLLTOOL@
+GNUM4 = @GNUM4@
 LD = @LD@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
@@ -197,6 +198,8 @@ all:
 pguide: programmers_guide.yo
 	yodl2html programmers_guide.yo
 	ln -sf programmers_guide.html index.html
+
+distclean:
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

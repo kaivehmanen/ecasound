@@ -51,8 +51,10 @@ void QEObjectMap::init_layout(void) {
     objlist->insertItem(p->first.c_str());
     ++p;
   }
-  objlist->setSelected(0, true);
   top->addWidget(objgroup);
+
+  objlist->setSelected(0, true);
+  update_object(0);
 
   QObject::connect(objlist, SIGNAL(highlighted(int)), this, SLOT(update_object(int)));
 }

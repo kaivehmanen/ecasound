@@ -271,8 +271,7 @@ void ECA_PROCESSOR::init_multitrack_mode(void) {
       realtime_outputs.size() > 0 &&
       non_realtime_inputs.size() > 0 && 
       non_realtime_outputs.size() > 0 && 
-      chain_count > 1 && 
-      eparams->iactive == true)  {
+      chain_count > 1) {
     ecadebug->msg("(eca-main) Multitrack-mode enabled. Changed mixmode to \"normal iactive\"");
     eparams->multitrack_mode = true;
     ecadebug->msg(ECA_DEBUG::system_objects, "Using input " + realtime_inputs[0]->label() + " for multitrack sync.");

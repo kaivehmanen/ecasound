@@ -28,7 +28,7 @@
 
 #include "qeobjectmap.h"
 #include "qechainoperatorinput.h"
-// #include "qeoperatorconfiguration.h"
+#include "qeoperatorconfiguration.h"
 
 QEChainOperatorInput::QEChainOperatorInput (QWidget *parent, const char *name) 
   : QEInput(parent, name) {
@@ -41,32 +41,34 @@ void QEChainOperatorInput::init_layout(void) {
   maptab_rep = new QTabWidget(this, "maptab");
   omap_inputs.push_back(new QEObjectMap(&eca_chain_operator_map, this));
   maptab_rep->addTab(omap_inputs.back(), "&Chain operators");
+  QObject::connect(omap_inputs.back(), SIGNAL(changed()), this, SLOT(operator_updated()));
 
   omap_inputs.push_back(new QEObjectMap(&eca_preset_map, this));
   maptab_rep->addTab(omap_inputs.back(), "&Effect presets");
+  QObject::connect(omap_inputs.back(), SIGNAL(changed()), this, SLOT(operator_updated()));
 
   omap_inputs.push_back(new QEObjectMap(&eca_ladspa_plugin_map, this));
   maptab_rep->addTab(omap_inputs.back(), "&Ladspa plugins");
+  QObject::connect(omap_inputs.back(), SIGNAL(changed()), this, SLOT(operator_updated()));
 
   top->addWidget(maptab_rep);
+  QObject::connect(maptab_rep, SIGNAL(selected(const QString&)), 
+		   this, SLOT(operator_updated(const QString&)));
 
-//    QBoxLayout* d = new QHBoxLayout();
-//    QGroupBox* descgroup = new QHGroupBox(this, "descgroup");
-//    QLabel* desc = new QLabel("Description: ", descgroup, "desc1");
-//    cop_desc = new QLabel(" - ", descgroup, "desc2");
-//    d->addWidget(descgroup);
-//    top->addLayout(d);
-//    top->addSpacing(10);
-//    QGroupBox* paramgroup = new QVGroupBox(this, "paramgroup");
-//    QGrid* igrid = new QGrid(2, paramgroup);
-//    for(int n = 0; n < max_params; n++) {
-//      paramlist[n] = new QLabel(QString::number(n + 1).leftJustify(12),igrid);
-//      inputlist[n] = new QLineEdit(igrid);
-//    }
-//    top->addWidget(paramgroup);
+  chainop_rep = dynamic_cast<CHAIN_OPERATOR*>(omap_inputs[0]->result());
+  opconf = new QEOperatorConfiguration(chainop_rep, this);
+  top->addWidget(opconf);
 }
 
 void QEChainOperatorInput::update_results(void) { 
   QEObjectMap* omap = dynamic_cast<QEObjectMap*>(maptab_rep->currentPage());
   chainop_rep = dynamic_cast<CHAIN_OPERATOR*>(omap->result());
+  opconf->update_results();
 }
+
+void QEChainOperatorInput::operator_updated(void) {
+  update_results();
+  opconf->change_operator(chainop_rep);
+}
+
+void QEChainOperatorInput::operator_updated(const QString& a) { operator_updated(); }

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecawave - user visible changes (NEWS)       (last edited: 180200) **
+** ecawave - user visible changes (NEWS)       (last edited: 050400) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.yRt" :
@@ -19,6 +19,7 @@ Last officially released version is -*> v0.1.0r1 <*-
 	- added: 'clipboard-file' entry to ecawaverc - defaults to
 	         /tmp/ecawave-clipboard.wav
 	- added: configure checks for correct libecasound version
+	- added: effect presets and plugins added to effects dialog
 	- removed: 'close' button
 	- changed: many internal updates - ecasound version 1.7.x is
 	           now required to run ecawave

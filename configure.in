@@ -19,16 +19,25 @@ AC_PROG_CPP
 AC_PROG_MAKE_SET
 dnl AC_PROG_RANLIB
 AC_PROG_INSTALL
+
+dnl --
+dnl Libtool
+AC_PATH_PROG(LIBTOOL,libtool,none)
+if test x$LIBTOOL = xnone; then
+ AC_MSG_ERROR([** Libtool package not installed! **])
+fi
+AC_PATH_PROG(GNUM4,m4,none)
+if test x$GNUM4 = xnone; then
+ AC_MSG_ERROR([** GNU m4 not installed! **])
+fi
 AM_PROG_LIBTOOL
 
 ACLOCAL=aclocal
 AUTOMAKE=automake
 AUTOCONF=autoconf
-LIBTOOL=libtool
 AC_SUBST(ACLOCAL)
 AC_SUBST(AUTOCONF)
 AC_SUBST(AUTOMAKE)
-AC_SUBST(LIBTOOL)
 
 dnl ---
 dnl Sets experimental

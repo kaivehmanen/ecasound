@@ -9,3 +9,5 @@ all:
 uguide: users_guide.yo
 	yodl2html users_guide.yo
 	ln -sf users_guide.html index.html
+
+distclean:

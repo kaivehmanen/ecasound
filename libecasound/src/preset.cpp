@@ -38,7 +38,8 @@ PRESET::PRESET(void)
 }
 
 PRESET::PRESET(const string& formatted_string) 
-  : csetup ("untitled", false) {
+  : csetup ("untitled", false),
+    parse_string_rep(formatted_string) {
   parse(formatted_string);
 }
 

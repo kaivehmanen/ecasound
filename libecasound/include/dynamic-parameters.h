@@ -105,6 +105,7 @@ class DYNAMIC_PARAMETERS {
    * Add a new parameter.
    */
   void add_parameter(const string& name) { 
+    if (param_map.find(name) != param_map.end()) return;
     int id = (int)(param_map.size() + 1);
     param_map[name] = id;
     param_revmap[id] = name;

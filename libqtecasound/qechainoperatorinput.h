@@ -15,6 +15,7 @@
 class QLabel;
 class QTabWidget;
 class QEObjectMap;
+class QEOperatorConfiguration;
 
 /**
  * Chain operator input widget
@@ -30,9 +31,15 @@ public slots:
 
   virtual void update_results(void);
 
+private slots:
+
+ void operator_updated(void); 
+ void operator_updated(const QString& a); 
+
  private:
 
   CHAIN_OPERATOR* chainop_rep;
+  QEOperatorConfiguration* opconf;
   QTabWidget* maptab_rep;
   vector<QEObjectMap*> omap_inputs;
   QLabel* cop_desc;

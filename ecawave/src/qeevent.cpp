@@ -87,16 +87,21 @@ void QEEvent::blocking_start(void) {
     toggle_triggered_state(true);
 
     struct timespec sleepcount;
-    sleepcount.tv_sec = 1;
-    sleepcount.tv_nsec = 0;
+    sleepcount.tv_sec = 0;
+    sleepcount.tv_nsec = 20000000;
     
+    int progress_length = static_cast<int>(ectrl->length_in_seconds_exact() * 10.0);
+    if (progress_length == 0 && input_object != 0) 
+      progress_length = static_cast<int>(input_object->length_in_seconds_exact() * 10.0);
+    double progress_start = ectrl->position_in_seconds_exact();
+
     QProgressDialog progress ("Processing data...", 0,
-			      (int)(ectrl->length_in_seconds_exact() * 10.0), 0, 0, true);
+			      progress_length, 0, 0, true);
     progress.setProgress(0);
     progress.show();
     while(ectrl->is_finished() == false) {
       nanosleep(&sleepcount, NULL);
-      progress.setProgress((int)(ectrl->position_in_seconds_exact() * 10.0));	
+      progress.setProgress(static_cast<int>((ectrl->position_in_seconds_exact() - progress_start) * 10.0));
     }
     toggle_triggered_state(false);
   }

@@ -20,21 +20,18 @@
 #include <qapplication.h>
 
 #include <kvutils/definition_by_contract.h>
+#include <ecasound/eca-error.h>
 
 #include "qesession.h"
 
 int main(int argc, char **argv) {
   try {
     QApplication qapp (argc, argv);
-    QESession* ewsession;
-    if (argc > 1) {
-      ewsession = new QESession(argv[1]);
-    }
-    else {
-      ewsession = new QESession();
-    }
-    qapp.setMainWidget(ewsession);
-    ewsession->show();
+    string param;
+    if (argc > 1) param = string(argv[1]);
+    QESession ewsession (param);
+    qapp.setMainWidget(&ewsession);
+    ewsession.show();
     
     QObject::connect( &qapp, SIGNAL( lastWindowClosed() ), &qapp, SLOT( quit() ) );
     return(qapp.exec());
@@ -42,6 +39,9 @@ int main(int argc, char **argv) {
   catch(DBC_EXCEPTION* e) { 
     e->print();
     exit(1);
+  }
+  catch(ECA_ERROR* e) { 
+    cerr << "---\nlibecasound error while processing event: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
   }
   catch(...) {
     cerr << "---\nCaught an unknown exception!\n";

@@ -10,3 +10,5 @@ all:
 pguide: programmers_guide.yo
 	yodl2html programmers_guide.yo
 	ln -sf programmers_guide.html index.html
+
+distclean:

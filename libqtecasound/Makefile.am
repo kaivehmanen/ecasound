@@ -37,19 +37,22 @@ libqtecasound_inputs_src = 	qeinput.cpp \
 				qeokcancelinput.cpp \
 				qeaudioformatinput.cpp \
 				qechainoperatorinput.cpp \
-				qeobjectmap.cpp
+				qeobjectmap.cpp \
+				qeoperatorconfiguration.cpp
 libqtecasound_inputs_include = 	qeinput.h \
 				qefilenameinput.h \
 				qeokcancelinput.h \
 				qeaudioformatinput.h \
 				qechainoperatorinput.h \
-				qeobjectmap.h
+				qeobjectmap.h \
+				qeoperatorconfiguration.h
 libqtecasound_inputs_moc = 	qeinput_moc.cpp \
 				qefilenameinput_moc.cpp \
 				qeokcancelinput_moc.cpp \
 				qeaudioformatinput_moc.cpp \
 				qechainoperatorinput_moc.cpp \
-				qeobjectmap_moc.cpp
+				qeobjectmap_moc.cpp \
+				qeoperatorconfiguration_moc.cpp
 
 libqtecasound_dialogs_src = 	qedialog.cpp
 libqtecasound_dialogs_include = qedialog.h
@@ -97,6 +100,8 @@ qeaudioformatinput_moc.cpp: $(srcdir)/qeaudioformatinput.h
 	$(MOC) -o qeaudioformatinput_moc.cpp $(srcdir)/qeaudioformatinput.h
 qechainoperatorinput_moc.cpp: $(srcdir)/qechainoperatorinput.h
 	$(MOC) -o qechainoperatorinput_moc.cpp $(srcdir)/qechainoperatorinput.h
+qeoperatorconfiguration_moc.cpp: $(srcdir)/qeoperatorconfiguration.h
+	$(MOC) -o qeoperatorconfiguration_moc.cpp $(srcdir)/qeoperatorconfiguration.h
 qefilenameinput_moc.cpp: $(srcdir)/qefilenameinput.h
 	$(MOC) -o qefilenameinput_moc.cpp $(srcdir)/qefilenameinput.h
 qeinput_moc.cpp: $(srcdir)/qeinput.h
