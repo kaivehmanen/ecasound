@@ -20,7 +20,7 @@ namespace SAMPLE_SPECS {
    * Type used to represent position in sample 
    * frames (signed integer).
    */
-#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GLIBC__
+#if defined _ISOC99_SOURCE || defined _ISOC9X_SOURCE || defined __GNUG__
   typedef long long int sample_pos_t;
 #else
   typedef long int sample_pos_t;

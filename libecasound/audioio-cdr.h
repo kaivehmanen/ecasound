@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "sample-specs.h"
+#include <sys/types.h> /* off_t */
 
 typedef struct {
   public:

@@ -2,12 +2,6 @@
 #define INCLUDE_ECA_DEBUG_H
 
 #include <string>
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#ifdef USE_CXX_STD_NAMESPACE
-using std::string;
-#endif
 
 /**
  * A virtual base class representing a generic 

@@ -25,17 +25,6 @@ class RAWFILE : public AUDIO_IO_BUFFERED {
 
   void set_length_in_bytes(void);
 
-  /**
-   * Do a info query prior to actually opening the device.
-   *
-   * require:
-   *  !is_open()
-   *
-   * ensure:
-   *  !is_open()
-   */
-  void format_query(void);
-
  public:
 
   virtual std::string name(void) const { return("Raw audio file"); }

@@ -12,10 +12,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #ifdef COMPILE_OSS
 #include <sys/soundcard.h>
 #ifndef AFMT_S32_LE

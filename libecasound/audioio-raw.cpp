@@ -27,7 +27,6 @@
 
 #include "audioio-types.h"
 #include "audioio-raw.h"
-
 #include "eca-error.h"
 #include "eca-debug.h"
 
@@ -38,22 +37,6 @@ RAWFILE::RAWFILE(const std::string& name) {
 }
 
 RAWFILE::~RAWFILE(void) { close(); }
-
-void RAWFILE::format_query(void) {
-  // --------
-  // require:
-  assert(!is_open());
-  // --------
-
-  struct stat temp;
-  stat(label().c_str(), &temp);
-  length_in_samples(temp.st_size / frame_size());
-
-  // -------
-  // ensure:
-  assert(!is_open());
-  // -------
-}
 
 /**
  * Opens the raw audio i/o device. 
