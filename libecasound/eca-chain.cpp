@@ -39,6 +39,8 @@
 #include "global-preset.h"
 #include "audiofx_ladspa.h"
 #include "eca-object-factory.h"
+#include "eca-object-map.h"
+#include "eca-preset-map.h"
 #include "eca-chain.h"
 #include "eca-chainop.h"
 
@@ -675,7 +677,21 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const
     if (chainop->number_of_params() > 0) t << ",";
   }
   else {
-    t << "-" << ECA_OBJECT_FACTORY::object_identifier(chainop);
+    ECA_OBJECT_MAP& copmap = ECA_OBJECT_FACTORY::chain_operator_map();
+    ECA_PRESET_MAP& presetmap = ECA_OBJECT_FACTORY::preset_map();
+    
+    string idstring = copmap.object_identifier(chainop);
+    if (idstring.size() == 0) {
+      idstring = presetmap.object_identifier(chainop);
+    }
+    if (idstring.size() == 0) {
+      ECA_LOG_MSG(ECA_LOGGER::errors,
+		  "(eca-chain) Unable to save chain operator \"" +
+		  chainop->name() + "\".");
+      return(t.to_string());
+    }
+     
+    t << "-" << idstring;
     if (chainop->number_of_params() > 0) t << ":";
   }
   // --<
@@ -698,8 +714,18 @@ string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const
 
 string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const
 {
-  MESSAGE_ITEM t; 
-  t << "-" << ECA_OBJECT_FACTORY::object_identifier(gctrl);
+  MESSAGE_ITEM t;
+  ECA_OBJECT_MAP& ctrlmap = ECA_OBJECT_FACTORY::controller_map();
+  string idstring = ctrlmap.object_identifier(gctrl);
+
+  if (idstring.size() == 0) {
+    ECA_LOG_MSG(ECA_LOGGER::errors, 
+		"(eca-chain) Unable to save controller \"" +
+		gctrl->name() + "\".");
+    return(t.to_string());
+  }
+
+  t << "-" << idstring;
   t << ":";
   for(int n = 0; n < gctrl->number_of_params(); n++) {
     t << gctrl->get_parameter(n + 1);

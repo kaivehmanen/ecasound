@@ -1,15 +1,13 @@
 #ifndef INCLUDE_ECA_LOGGER_H
 #define INCLUDE_ECA_LOGGER_H
 
+#include <pthread.h>
+
 /**
  * Forward declarations
  */
 
 class ECA_LOGGER_INTERFACE;
-
-/**
- * Class definitions
- */
 
 /**
  * A logging subsystem implemented as a singleton
@@ -40,16 +38,16 @@ class ECA_LOGGER {
    *
    *   module_names   = include module names in log output
    *
-   *   user_objects   = debug info about user-visible objects (audio i/o, 
+   *   user_objects   = info about user-visible objects (audio i/o, 
    *                    chain operators, controllers); high volume
    * 
-   *   system_objects = debug info about internal objects; high volume
+   *   system_objects = info about internal objects; high volume
    *
-   *   buffer_level   = debug info that is printed for each processed 
-   *                    buffer block; very high volume
+   *   functions      = info about internal operation of individual 
+   *                    functions and algorithms; high volume bursts
    *
-   *   sample_level   = debug info printed for individual samples;
-   *                    very high volume 
+   *   continuous     = debug info printed for during processing;
+   *                    continuous high volume
    */
   typedef enum {
     disabled = 0,
@@ -59,8 +57,8 @@ class ECA_LOGGER {
     module_names = 8,
     user_objects = 16,
     system_objects = 32,
-    buffer_level = 64,
-    sample_level = 128
+    functions = 64,
+    continuous = 128
   } Msg_level_t;
 
   /**
@@ -90,11 +88,22 @@ class ECA_LOGGER {
   private:
 
   static ECA_LOGGER_INTERFACE* interface_impl_repp;
+  static pthread_mutex_t lock_rep;
+
+  /** 
+   * @name Constructors and destructors
+   * 
+   * To prevent accidental use, located in private scope and 
+   * without a valid definition.
+   */
+  /*@{*/
 
   ECA_LOGGER(void);
   ECA_LOGGER(const ECA_LOGGER&);
   ECA_LOGGER& operator=(const ECA_LOGGER&);
   ~ECA_LOGGER(void);
+
+  /*@}*/
 };
 
 /**

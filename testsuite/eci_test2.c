@@ -1,10 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "ecasoundc.h"
 #include "ecatestsuite.h"
 
 int main(int argc, char *argv[]) {
-  eci_handle_t* handle;
+  eci_handle_t handle;
 
   ECA_TEST_ENTRY();
 

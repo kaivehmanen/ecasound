@@ -15,9 +15,6 @@ class ECA_IAMODE_PARSER {
 
  protected:
 
-  static std::map<std::string,int> cmd_map_rep;
-  static void register_commands(void);
-
   enum Commands {
     ec_unknown,
     // --
@@ -171,7 +168,7 @@ class ECA_IAMODE_PARSER {
 
  public:
 
-  static const std::map<std::string,int>& registered_commands(void) { return(cmd_map_rep); }
+  static const std::map<std::string,int>& registered_commands(void);
   static std::vector<std::string> registered_commands_list(void);
 
   bool action_requires_params(int id);
@@ -183,6 +180,10 @@ class ECA_IAMODE_PARSER {
 
   ECA_IAMODE_PARSER(void);
   virtual ~ECA_IAMODE_PARSER(void);
+
+ protected:
+
+  static int command_to_action_id(const std::string& cmdstring);
   
  private:
 
@@ -197,6 +198,10 @@ class ECA_IAMODE_PARSER {
   static void register_commands_ctrl(void);
   static void register_commands_dump(void);
 
+  private:
+
+  static std::map<std::string,int>* cmd_map_repp;
+  static pthread_mutex_t lock_rep;
 };
 
 void show_controller_help(void);

@@ -127,7 +127,7 @@ string ECA_OBJECT_MAP::expr_to_keyword(const string& expr) const {
   while(p != object_expr_map.end()) {
     regcomp(&preg, p->second.c_str(), REG_EXTENDED | REG_NOSUB | REG_ICASE);
     if (regexec(&preg, expr.c_str(), 0, 0, 0) == 0) {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-object-map) match (1): " + expr + " to regexp " + p->second);
+      ECA_LOG_MSG(ECA_LOGGER::functions, "(eca-object-map) match (1): " + expr + " to regexp " + p->second);
       result = p->first;
       regfree(&preg);
       break;

@@ -39,8 +39,9 @@
 #include "eca-control.h"
 #include "eca-chainop.h"
 #include "eca-chainsetup.h"
-#include "eca-object-map.h"
 #include "eca-object-factory.h"
+#include "eca-object-map.h"
+#include "eca-preset-map.h"
 
 #include "generic-controller.h"
 #include "eca-chainop.h"
@@ -52,11 +53,23 @@
 #include "eca-error.h"
 #include "eca-logger.h"
 
+/**
+ * Import namespaces
+ */
 using std::string;
 using std::list;
 using std::vector;
 using std::cerr;
 using std::endl;
+
+/**
+ * Declarations for private static functions
+ */
+static string eca_aio_register_sub(ECA_OBJECT_MAP& objmap);
+
+/**
+ * Definitions for member functions
+ */
 
 ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession) 
   : ECA_CONTROL_OBJECTS(psession),
@@ -76,7 +89,8 @@ void ECA_CONTROL::command(const string& cmd)
   vector<string>::iterator p = cmds.begin();
   if (p != cmds.end()) {
 
-    if (ECA_IAMODE_PARSER::cmd_map_rep.find(*p) == ECA_IAMODE_PARSER::cmd_map_rep.end()) {
+    const std::map<std::string,int>& cmdmap = ECA_IAMODE_PARSER::registered_commands();
+    if (cmdmap.find(*p) == cmdmap.end()) {
       // ---
       // *p is not recognized as a iamode command
       // ---
@@ -89,7 +103,7 @@ void ECA_CONTROL::command(const string& cmd)
       }
     }
     else {
-      int action_id = ECA_IAMODE_PARSER::cmd_map_rep[*p];
+      int action_id = ECA_IAMODE_PARSER::command_to_action_id(*p);
       if (action_id == ec_help) {
 	show_controller_help();
       }
@@ -137,7 +151,8 @@ long int ECA_CONTROL::first_argument_as_long_int(void) const
   return(atol(action_args_rep[0].c_str()));
 }
 
-SAMPLE_SPECS::sample_pos_t ECA_CONTROL::first_argument_as_samples(void) const {
+SAMPLE_SPECS::sample_pos_t ECA_CONTROL::first_argument_as_samples(void) const
+{
 #ifdef HAVE_ATOLL
   return(atoll(action_args_rep[0].c_str()));
 #else
@@ -150,9 +165,7 @@ void ECA_CONTROL::command_float_arg(const string& cmd, double arg)
   clear_action_arguments();
   set_action_argument(arg);
   int action_id = ec_unknown;
-  if (ECA_IAMODE_PARSER::cmd_map_rep.find(cmd) != ECA_IAMODE_PARSER::cmd_map_rep.end()) {
-    action_id = ECA_IAMODE_PARSER::cmd_map_rep[cmd];
-  }
+  action_id = ECA_IAMODE_PARSER::command_to_action_id(cmd);
   action(action_id);
 }
 
@@ -168,13 +181,13 @@ void ECA_CONTROL::chainsetup_option(const string& cmd)
     else
       set_last_error("When adding chain operators, only one chain can be selected.");
   }
-  else if (ECA_OBJECT_FACTORY::chain_operator_map_object(prefix) != 0) {
+  else if (ECA_OBJECT_FACTORY::chain_operator_map().object(prefix) != 0) {
     if (selected_chains().size() == 1) 
       add_chain_operator(cmd);
     else
       set_last_error("When adding chain operators, only one chain can be selected.");
   }
-  else if (ECA_OBJECT_FACTORY::controller_map_object(prefix) != 0) {
+  else if (ECA_OBJECT_FACTORY::controller_map().object(prefix) != 0) {
     if (selected_chains().size() == 1) 
       add_controller(cmd);
     else
@@ -629,7 +642,8 @@ void ECA_CONTROL::action(int action_id)
   }
 }
 
-void ECA_CONTROL::print_last_value(void) {
+void ECA_CONTROL::print_last_value(void)
+{
   string type = last_type();
   string result;
   if (type == "s") 
@@ -648,13 +662,15 @@ void ECA_CONTROL::print_last_value(void) {
   }
 }
 
-void ECA_CONTROL::print_last_error(void) {
+void ECA_CONTROL::print_last_error(void)
+{
   if (last_error().size() > 0) {
     ECA_LOG_MSG(ECA_LOGGER::info, "(eca-control) ERROR: " + last_error());
   }
 }
 
-string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const {
+string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
+{
   string result;
 
   result += "\n -> Objects: " + kvu_numtostr(cs->inputs.size());
@@ -673,7 +689,8 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
   return(result);
 }
 
-string ECA_CONTROL::chainsetup_status(void) const { 
+string ECA_CONTROL::chainsetup_status(void) const 
+{
   ECA_LOG_MSG(ECA_LOGGER::info, "### Chainsetup status ###");
 
   vector<ECA_CHAINSETUP*>::const_iterator cs_citer = session_repp->chainsetups_rep.begin();
@@ -693,7 +710,8 @@ string ECA_CONTROL::chainsetup_status(void) const {
   return(result);
 }
 
-string ECA_CONTROL::chain_status(void) const {
+string ECA_CONTROL::chain_status(void) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -721,7 +739,8 @@ string ECA_CONTROL::chain_status(void) const {
   return(mitem.to_string());
 }
 
-string ECA_CONTROL::chain_operator_status(void) const {
+string ECA_CONTROL::chain_operator_status(void) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -756,7 +775,8 @@ string ECA_CONTROL::chain_operator_status(void) const {
   return(msg.to_string());
 }
 
-string ECA_CONTROL::controller_status(void) const {
+string ECA_CONTROL::controller_status(void) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -790,7 +810,8 @@ string ECA_CONTROL::controller_status(void) const {
   return(mitem.to_string());
 }
 
-string ECA_CONTROL::aio_status(void) const {
+string ECA_CONTROL::aio_status(void) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -849,15 +870,27 @@ string ECA_CONTROL::aio_status(void) const {
   return(st_info_string);
 }
 
-void ECA_CONTROL::aio_register(void) { 
-  ECA_LOG_MSG(ECA_LOGGER::info, "Registered audio objects:\n");
+void ECA_CONTROL::aio_register(void)
+{
+  ECA_LOG_MSG(ECA_LOGGER::info, "Registered audio object types:\n");
+  string result (eca_aio_register_sub(ECA_OBJECT_FACTORY::audio_io_nonrt_map()));
+
+  result += "\n";
+
+  result += eca_aio_register_sub(ECA_OBJECT_FACTORY::audio_io_rt_map());
+
+  set_last_string(result);  
+}
+
+static string eca_aio_register_sub(ECA_OBJECT_MAP& objmap)
+{
   string result;
-  const list<string>& objlist = ECA_OBJECT_FACTORY::audio_io_list();
+  const list<string>& objlist = objmap.registered_objects();
   list<string>::const_iterator p = objlist.begin();
   int count = 1;
   while(p != objlist.end()) {
     string temp;
-    const AUDIO_IO* q = ECA_OBJECT_FACTORY::audio_io_map_object(*p);
+    const AUDIO_IO* q = dynamic_cast<const AUDIO_IO*>(objmap.object_expr(*p));
     
     DBC_CHECK(q != 0);
 
@@ -872,7 +905,7 @@ void ECA_CONTROL::aio_register(void) {
       }
 
       result += kvu_numtostr(count) + ". " + q->name() + ", regex: " + 
-	        ECA_OBJECT_FACTORY::audio_io_map()->keyword_to_expr(*p) + ", params" + temp;
+	        objmap.keyword_to_expr(*p) + ", params" + temp;
       result += "\n";
 
       ++count;
@@ -881,18 +914,19 @@ void ECA_CONTROL::aio_register(void) {
 
     ++p;
   }
-  set_last_string(result);
+  return(result);
 }
 
-void ECA_CONTROL::cop_register(void) { 
+void ECA_CONTROL::cop_register(void)
+{
   ECA_LOG_MSG(ECA_LOGGER::info, "Registered chain operators:\n");
   string result;
-  const list<string>& objlist = ECA_OBJECT_FACTORY::chain_operator_list();
+  const list<string>& objlist = ECA_OBJECT_FACTORY::chain_operator_map().registered_objects();
   list<string>::const_iterator p = objlist.begin();
   int count = 1;
   while(p != objlist.end()) {
     string temp;
-    const CHAIN_OPERATOR* q = ECA_OBJECT_FACTORY::chain_operator_map_object(*p);
+    const CHAIN_OPERATOR* q = dynamic_cast<const CHAIN_OPERATOR*>(ECA_OBJECT_FACTORY::chain_operator_map().object(*p));
     if (q != 0) {
       int params = q->number_of_params();
       for(int n = 0; n < params; n++) {
@@ -909,15 +943,16 @@ void ECA_CONTROL::cop_register(void) {
   set_last_string(result);
 }
 
-void ECA_CONTROL::preset_register(void) { 
+void ECA_CONTROL::preset_register(void)
+{
   ECA_LOG_MSG(ECA_LOGGER::info, "Registered effect presets:\n");
   string result;
-  const list<string>& objlist = ECA_OBJECT_FACTORY::preset_list();
+  const list<string>& objlist = ECA_OBJECT_FACTORY::preset_map().registered_objects();
   list<string>::const_iterator p = objlist.begin();
   int count = 1;
   while(p != objlist.end()) {
     string temp;
-    const PRESET* q = ECA_OBJECT_FACTORY::preset_object(*p);
+    const PRESET* q = dynamic_cast<const PRESET*>(ECA_OBJECT_FACTORY::preset_map().object(*p));
     if (q != 0) {
       int params = q->number_of_params();
       for(int n = 0; n < params; n++) {
@@ -936,14 +971,15 @@ void ECA_CONTROL::preset_register(void) {
   set_last_string(result);
 }
 
-void ECA_CONTROL::ladspa_register(void) { 
+void ECA_CONTROL::ladspa_register(void)
+{
   ECA_LOG_MSG(ECA_LOGGER::info, "Registered LADSPA plugins:\n");
   string result;
-  const list<string>& objlist = ECA_OBJECT_FACTORY::ladspa_list();
+  const list<string>& objlist = ECA_OBJECT_FACTORY::ladspa_plugin_map().registered_objects();
   list<string>::const_iterator p = objlist.begin();
   int count = 1;
   while(p != objlist.end()) {
-    const EFFECT_LADSPA* q = ECA_OBJECT_FACTORY::ladspa_map_object(*p);
+    const EFFECT_LADSPA* q = dynamic_cast<const EFFECT_LADSPA*>(ECA_OBJECT_FACTORY::ladspa_plugin_map().object(*p));
     if (q != 0) {
       string temp = "\n\t-el:" + q->unique() + ",";
       int params = q->number_of_params();
@@ -962,15 +998,16 @@ void ECA_CONTROL::ladspa_register(void) {
   set_last_string(result);
 }
 
-void ECA_CONTROL::ctrl_register(void) { 
+void ECA_CONTROL::ctrl_register(void)
+{
   ECA_LOG_MSG(ECA_LOGGER::info, "Registered controllers:\n");
   string result;
-  const list<string>& objlist = ECA_OBJECT_FACTORY::controller_list();
+  const list<string>& objlist = ECA_OBJECT_FACTORY::controller_map().registered_objects();
   list<string>::const_iterator p = objlist.begin();
   int count = 1;
   while(p != objlist.end()) {
     string temp;
-    const GENERIC_CONTROLLER* q = ECA_OBJECT_FACTORY::controller_map_object(*p);
+    const GENERIC_CONTROLLER* q = dynamic_cast<const GENERIC_CONTROLLER*>(ECA_OBJECT_FACTORY::controller_map().object(*p));
     if (q != 0) {
       int params = q->number_of_params();
       for(int n = 0; n < params; n++) {

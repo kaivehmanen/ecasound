@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 280402) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 290402) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -38,6 +38,8 @@ Last officially released version is -*> v2.0.4 *-
 	   	 controller sources
 	- added: initial implementation of edi-22
 	- added: support for devfs /dev/sound/dsp devices [karmak]
+	- added: new debugging system in libecasound; semantics 
+	         of -d:xxx debug levels have been modified
 	- removed: support for old ALSA driver versions 0.3.x, 
  		   0.4.x and 0.5.x
 	- removed: ecasoundrc - 'default-samplerate'

@@ -595,7 +595,7 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const std::string& argu)
       case 'n': 
 	{
 	  std::string name = kvu_get_argument_number(1,argu);
-	  const PRESET* preset = ECA_OBJECT_FACTORY::preset_object(name);
+	  const PRESET* preset = dynamic_cast<const PRESET*>(ECA_OBJECT_FACTORY::preset_map().object(name));
 	  if (preset != 0)
 	    cop = dynamic_cast<CHAIN_OPERATOR*>(preset->new_expr());
 	  else
@@ -843,7 +843,6 @@ void ECA_CHAINSETUP_PARSER::interpret_chain_operator (const std::string& argu)
 
   CHAIN_OPERATOR* t = ECA_OBJECT_FACTORY::create_chain_operator(argu);
   if (t == 0) t = ECA_OBJECT_FACTORY::create_ladspa_plugin(argu);
-  if (t == 0) t = ECA_OBJECT_FACTORY::create_vst_plugin(argu);
   if (t != 0) {
     csetup_repp->add_chain_operator(t);
     istatus_rep = true;

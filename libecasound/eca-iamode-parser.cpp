@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-iamode-parser.cpp: Class that handles registering and querying 
 //                        interactive mode commands.
-// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,25 +21,57 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <pthread.h>
 
-#include <kvu_message_item.h>
+#include "kvu_message_item.h"
+#include "kvu_locks.h"
 
 #include "eca-iamode-parser.h"
 #include "eca-logger.h"
 
-std::map<std::string,int> ECA_IAMODE_PARSER::cmd_map_rep;
+using namespace std;
+
+map<string,int>* ECA_IAMODE_PARSER::cmd_map_repp = 0;
+pthread_mutex_t ECA_IAMODE_PARSER::lock_rep = PTHREAD_MUTEX_INITIALIZER;
 
 ECA_IAMODE_PARSER::ECA_IAMODE_PARSER(void)
 { 
-  register_commands(); 
 }
 
-ECA_IAMODE_PARSER::~ECA_IAMODE_PARSER(void) { }
+ECA_IAMODE_PARSER::~ECA_IAMODE_PARSER(void)
+{
+}
 
-std::vector<std::string> ECA_IAMODE_PARSER::registered_commands_list(void) {
-  std::vector<std::string> cmdlist;
-  const std::map<std::string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
-  std::map<std::string,int>::const_iterator p = map_ref.begin();
+const map<string,int>& ECA_IAMODE_PARSER::registered_commands(void)
+{
+  //
+  // Note! Below we use the Double-Checked Locking Pattern
+  //       to protect against concurrent access
+
+  if (cmd_map_repp == 0) {
+    KVU_GUARD_LOCK guard(&ECA_IAMODE_PARSER::lock_rep);
+    if (cmd_map_repp == 0) {
+      cmd_map_repp = new map<string,int>;
+      register_commands_misc();
+      register_commands_cs();
+      register_commands_c();
+      register_commands_aio();
+      register_commands_ai();
+      register_commands_ao();
+      register_commands_cop();
+      register_commands_copp();
+      register_commands_ctrl();
+      register_commands_dump();
+    }
+  }
+  return(*cmd_map_repp);
+}
+
+vector<string> ECA_IAMODE_PARSER::registered_commands_list(void)
+{
+  vector<string> cmdlist;
+  const map<string,int>& map_ref = ECA_IAMODE_PARSER::registered_commands();
+  map<string,int>::const_iterator p = map_ref.begin();
   while (p != map_ref.end()) {
     cmdlist.push_back(p->first);
     ++p;
@@ -47,219 +79,212 @@ std::vector<std::string> ECA_IAMODE_PARSER::registered_commands_list(void) {
   return(cmdlist);
 }
 
-void ECA_IAMODE_PARSER::register_commands(void) {
-  register_commands_misc();
-  register_commands_cs();
-  register_commands_c();
-  register_commands_aio();
-  register_commands_ai();
-  register_commands_ao();
-  register_commands_cop();
-  register_commands_copp();
-  register_commands_ctrl();
-  register_commands_dump();
-}
+void ECA_IAMODE_PARSER::register_commands_misc(void)
+{
+  (*cmd_map_repp)["help"] = ec_help;
+  (*cmd_map_repp)["?"] = ec_help;
+  (*cmd_map_repp)["h"] = ec_help;
 
-void ECA_IAMODE_PARSER::register_commands_misc(void) {
-  cmd_map_rep["help"] = ec_help;
-  cmd_map_rep["?"] = ec_help;
-  cmd_map_rep["h"] = ec_help;
-
-  cmd_map_rep["quit"] = ec_exit;
-  cmd_map_rep["q"] = ec_exit;
+  (*cmd_map_repp)["quit"] = ec_exit;
+  (*cmd_map_repp)["q"] = ec_exit;
    
-  cmd_map_rep["start"] = ec_start;
-  cmd_map_rep["t"] = ec_start;
-  cmd_map_rep["stop"] = ec_stop;
-  cmd_map_rep["s"] = ec_stop;
-  cmd_map_rep["run"] = ec_run;
+  (*cmd_map_repp)["start"] = ec_start;
+  (*cmd_map_repp)["t"] = ec_start;
+  (*cmd_map_repp)["stop"] = ec_stop;
+  (*cmd_map_repp)["s"] = ec_stop;
+  (*cmd_map_repp)["run"] = ec_run;
 
-  cmd_map_rep["debug"] = ec_debug;
+  (*cmd_map_repp)["debug"] = ec_debug;
 
-  cmd_map_rep["engine-status"] = ec_engine_status;
-  cmd_map_rep["status"] = ec_cs_status;
-  cmd_map_rep["st"] = ec_cs_status;
-  cmd_map_rep["cs"] = ec_c_status;
-  cmd_map_rep["es"] = ec_cop_status;
-  cmd_map_rep["fs"] = ec_aio_status;
+  (*cmd_map_repp)["engine-status"] = ec_engine_status;
+  (*cmd_map_repp)["status"] = ec_cs_status;
+  (*cmd_map_repp)["st"] = ec_cs_status;
+  (*cmd_map_repp)["cs"] = ec_c_status;
+  (*cmd_map_repp)["es"] = ec_cop_status;
+  (*cmd_map_repp)["fs"] = ec_aio_status;
 
-  cmd_map_rep["int-cmd-list"] = ec_int_cmd_list;
-  cmd_map_rep["int-version-string"] = ec_int_version_string;
-  cmd_map_rep["int-version-lib-current"] = ec_int_version_lib_current;
-  cmd_map_rep["int-version-lib-revision"] = ec_int_version_lib_revision;
-  cmd_map_rep["int-version-lib-age"] = ec_int_version_lib_age;
+  (*cmd_map_repp)["int-cmd-list"] = ec_int_cmd_list;
+  (*cmd_map_repp)["int-version-string"] = ec_int_version_string;
+  (*cmd_map_repp)["int-version-lib-current"] = ec_int_version_lib_current;
+  (*cmd_map_repp)["int-version-lib-revision"] = ec_int_version_lib_revision;
+  (*cmd_map_repp)["int-version-lib-age"] = ec_int_version_lib_age;
 
-  cmd_map_rep["preset-register"] = ec_preset_register;
-  cmd_map_rep["ladspa-register"] = ec_ladspa_register;
+  (*cmd_map_repp)["preset-register"] = ec_preset_register;
+  (*cmd_map_repp)["ladspa-register"] = ec_ladspa_register;
 }
 
 void ECA_IAMODE_PARSER::register_commands_cs(void) {
-  cmd_map_rep["cs-add"] = ec_cs_add;
-  cmd_map_rep["cs-remove"] = ec_cs_remove;
-  cmd_map_rep["cs-list"] = ec_cs_list;
-  cmd_map_rep["cs-select"] = ec_cs_select;
-  cmd_map_rep["cs-selected"] = ec_cs_selected;
-  cmd_map_rep["cs-index-select"] = ec_cs_index_select;
-  cmd_map_rep["cs-iselect"] = ec_cs_index_select;
-  cmd_map_rep["cs-load"] = ec_cs_load;
-  cmd_map_rep["cs-save"] = ec_cs_save;
-  cmd_map_rep["cs-save-as"] = ec_cs_save_as;
-  cmd_map_rep["cs-edit"] = ec_cs_edit;
-  cmd_map_rep["cs-is-valid"] = ec_cs_is_valid;
-  cmd_map_rep["cs-connect"] = ec_cs_connect;
-  cmd_map_rep["cs-connected"] = ec_cs_connected;
-  cmd_map_rep["cs-disconnect"] = ec_cs_disconnect;
-  cmd_map_rep["cs-set-param"] = ec_cs_set_param;
-  cmd_map_rep["cs-set-audio-format"] = ec_cs_set_audio_format;
-  cmd_map_rep["cs-status"] = ec_cs_status;
-  cmd_map_rep["cs-rewind"] = ec_cs_rewind;
-  cmd_map_rep["rewind"] = ec_cs_rewind;
-  cmd_map_rep["rw"] = ec_cs_rewind;
-  cmd_map_rep["cs-forward"] = ec_cs_forward;
-  cmd_map_rep["forward"] = ec_cs_forward;
-  cmd_map_rep["fw"] = ec_cs_forward;
-  cmd_map_rep["cs-setpos"] = ec_cs_set_position;
-  cmd_map_rep["cs-set-position"] = ec_cs_set_position;
-  cmd_map_rep["cs-set-position-samples"] = ec_cs_set_position_samples;
-  cmd_map_rep["setpos"] = ec_cs_set_position;
-  cmd_map_rep["set-position"] = ec_cs_set_position;
-  cmd_map_rep["cs-getpos"] = ec_cs_get_position;
-  cmd_map_rep["cs-get-position"] = ec_cs_get_position;
-  cmd_map_rep["cs-get-position-samples"] = ec_cs_get_position_samples;
-  cmd_map_rep["getpos"] = ec_cs_get_position;
-  cmd_map_rep["get-position"] = ec_cs_get_position;
-  cmd_map_rep["cs-get-length"] = ec_cs_get_length;
-  cmd_map_rep["cs-get-length-samples"] = ec_cs_get_length_samples;
-  cmd_map_rep["get-length"] = ec_cs_get_length;
-  cmd_map_rep["cs-set-length"] = ec_cs_set_length;
-  cmd_map_rep["cs-set-length-samples"] = ec_cs_set_length_samples;
-  cmd_map_rep["cs-toggle-loop"] = ec_cs_toggle_loop;
-  cmd_map_rep["cs-option"] = ec_cs_option;
+  (*cmd_map_repp)["cs-add"] = ec_cs_add;
+  (*cmd_map_repp)["cs-remove"] = ec_cs_remove;
+  (*cmd_map_repp)["cs-list"] = ec_cs_list;
+  (*cmd_map_repp)["cs-select"] = ec_cs_select;
+  (*cmd_map_repp)["cs-selected"] = ec_cs_selected;
+  (*cmd_map_repp)["cs-index-select"] = ec_cs_index_select;
+  (*cmd_map_repp)["cs-iselect"] = ec_cs_index_select;
+  (*cmd_map_repp)["cs-load"] = ec_cs_load;
+  (*cmd_map_repp)["cs-save"] = ec_cs_save;
+  (*cmd_map_repp)["cs-save-as"] = ec_cs_save_as;
+  (*cmd_map_repp)["cs-edit"] = ec_cs_edit;
+  (*cmd_map_repp)["cs-is-valid"] = ec_cs_is_valid;
+  (*cmd_map_repp)["cs-connect"] = ec_cs_connect;
+  (*cmd_map_repp)["cs-connected"] = ec_cs_connected;
+  (*cmd_map_repp)["cs-disconnect"] = ec_cs_disconnect;
+  (*cmd_map_repp)["cs-set-param"] = ec_cs_set_param;
+  (*cmd_map_repp)["cs-set-audio-format"] = ec_cs_set_audio_format;
+  (*cmd_map_repp)["cs-status"] = ec_cs_status;
+  (*cmd_map_repp)["cs-rewind"] = ec_cs_rewind;
+  (*cmd_map_repp)["rewind"] = ec_cs_rewind;
+  (*cmd_map_repp)["rw"] = ec_cs_rewind;
+  (*cmd_map_repp)["cs-forward"] = ec_cs_forward;
+  (*cmd_map_repp)["forward"] = ec_cs_forward;
+  (*cmd_map_repp)["fw"] = ec_cs_forward;
+  (*cmd_map_repp)["cs-setpos"] = ec_cs_set_position;
+  (*cmd_map_repp)["cs-set-position"] = ec_cs_set_position;
+  (*cmd_map_repp)["cs-set-position-samples"] = ec_cs_set_position_samples;
+  (*cmd_map_repp)["setpos"] = ec_cs_set_position;
+  (*cmd_map_repp)["set-position"] = ec_cs_set_position;
+  (*cmd_map_repp)["cs-getpos"] = ec_cs_get_position;
+  (*cmd_map_repp)["cs-get-position"] = ec_cs_get_position;
+  (*cmd_map_repp)["cs-get-position-samples"] = ec_cs_get_position_samples;
+  (*cmd_map_repp)["getpos"] = ec_cs_get_position;
+  (*cmd_map_repp)["get-position"] = ec_cs_get_position;
+  (*cmd_map_repp)["cs-get-length"] = ec_cs_get_length;
+  (*cmd_map_repp)["cs-get-length-samples"] = ec_cs_get_length_samples;
+  (*cmd_map_repp)["get-length"] = ec_cs_get_length;
+  (*cmd_map_repp)["cs-set-length"] = ec_cs_set_length;
+  (*cmd_map_repp)["cs-set-length-samples"] = ec_cs_set_length_samples;
+  (*cmd_map_repp)["cs-toggle-loop"] = ec_cs_toggle_loop;
+  (*cmd_map_repp)["cs-option"] = ec_cs_option;
 }
 
 void ECA_IAMODE_PARSER::register_commands_c(void) {
-  cmd_map_rep["c-add"] = ec_c_add;
-  cmd_map_rep["c-remove"] = ec_c_remove;
-  cmd_map_rep["c-list"] = ec_c_list;
-  cmd_map_rep["c-select"] = ec_c_select;
-  cmd_map_rep["c-selected"] = ec_c_selected;
-  cmd_map_rep["c-index-select"] = ec_c_index_select;
-  cmd_map_rep["c-iselect"] = ec_c_index_select;
-  cmd_map_rep["c-deselect"] = ec_c_deselect;
-  cmd_map_rep["c-selected"] = ec_c_selected;
-  cmd_map_rep["c-select-all"] = ec_c_select_all;
-  cmd_map_rep["c-select-add"] = ec_c_select_add;
-  cmd_map_rep["c-clear"] = ec_c_clear;
-  cmd_map_rep["c-rename"] = ec_c_rename;
-  cmd_map_rep["c-mute"] = ec_c_mute;
-  cmd_map_rep["c-bypass"] = ec_c_bypass;
-  cmd_map_rep["c-status"] = ec_c_status;
+  (*cmd_map_repp)["c-add"] = ec_c_add;
+  (*cmd_map_repp)["c-remove"] = ec_c_remove;
+  (*cmd_map_repp)["c-list"] = ec_c_list;
+  (*cmd_map_repp)["c-select"] = ec_c_select;
+  (*cmd_map_repp)["c-selected"] = ec_c_selected;
+  (*cmd_map_repp)["c-index-select"] = ec_c_index_select;
+  (*cmd_map_repp)["c-iselect"] = ec_c_index_select;
+  (*cmd_map_repp)["c-deselect"] = ec_c_deselect;
+  (*cmd_map_repp)["c-selected"] = ec_c_selected;
+  (*cmd_map_repp)["c-select-all"] = ec_c_select_all;
+  (*cmd_map_repp)["c-select-add"] = ec_c_select_add;
+  (*cmd_map_repp)["c-clear"] = ec_c_clear;
+  (*cmd_map_repp)["c-rename"] = ec_c_rename;
+  (*cmd_map_repp)["c-mute"] = ec_c_mute;
+  (*cmd_map_repp)["c-bypass"] = ec_c_bypass;
+  (*cmd_map_repp)["c-status"] = ec_c_status;
 }
 
 void ECA_IAMODE_PARSER::register_commands_aio(void) {
-  cmd_map_rep["aio-register"] = ec_aio_register;
-  cmd_map_rep["aio-status"] = ec_aio_status;
+  (*cmd_map_repp)["aio-register"] = ec_aio_register;
+  (*cmd_map_repp)["aio-status"] = ec_aio_status;
 }
 
 void ECA_IAMODE_PARSER::register_commands_ai(void) {
-  cmd_map_rep["ai-add"] = ec_ai_add;
-  cmd_map_rep["ai-remove"] = ec_ai_remove;
-  cmd_map_rep["ai-list"] = ec_ai_list;
-  cmd_map_rep["ai-select"] = ec_ai_select;
-  cmd_map_rep["ai-index-select"] = ec_ai_index_select;
-  cmd_map_rep["ai-iselect"] = ec_ai_index_select;
-  cmd_map_rep["ai-selected"] = ec_ai_selected;
-  cmd_map_rep["ai-attach"] = ec_ai_attach;
-  cmd_map_rep["ai-status"] = ec_ai_status;
-  cmd_map_rep["ai-forward"] = ec_ai_forward;
-  cmd_map_rep["ai-rewind"] = ec_ai_rewind;
-  cmd_map_rep["ai-setpos"] = ec_ai_set_position;
-  cmd_map_rep["ai-set-position"] = ec_ai_set_position;
-  cmd_map_rep["ai-set-position-samples"] = ec_ai_set_position_samples;
-  cmd_map_rep["ai-getpos"] = ec_ai_get_position;
-  cmd_map_rep["ai-get-position"] = ec_ai_get_position;
-  cmd_map_rep["ai-get-position-samples"] = ec_ai_get_position_samples;
-  cmd_map_rep["ai-get-length"] = ec_ai_get_length;
-  cmd_map_rep["ai-get-length-samples"] = ec_ai_get_length_samples;
-  cmd_map_rep["ai-get-format"] = ec_ai_get_format;
-  cmd_map_rep["ai-wave-edit"] = ec_ai_wave_edit;
+  (*cmd_map_repp)["ai-add"] = ec_ai_add;
+  (*cmd_map_repp)["ai-remove"] = ec_ai_remove;
+  (*cmd_map_repp)["ai-list"] = ec_ai_list;
+  (*cmd_map_repp)["ai-select"] = ec_ai_select;
+  (*cmd_map_repp)["ai-index-select"] = ec_ai_index_select;
+  (*cmd_map_repp)["ai-iselect"] = ec_ai_index_select;
+  (*cmd_map_repp)["ai-selected"] = ec_ai_selected;
+  (*cmd_map_repp)["ai-attach"] = ec_ai_attach;
+  (*cmd_map_repp)["ai-status"] = ec_ai_status;
+  (*cmd_map_repp)["ai-forward"] = ec_ai_forward;
+  (*cmd_map_repp)["ai-rewind"] = ec_ai_rewind;
+  (*cmd_map_repp)["ai-setpos"] = ec_ai_set_position;
+  (*cmd_map_repp)["ai-set-position"] = ec_ai_set_position;
+  (*cmd_map_repp)["ai-set-position-samples"] = ec_ai_set_position_samples;
+  (*cmd_map_repp)["ai-getpos"] = ec_ai_get_position;
+  (*cmd_map_repp)["ai-get-position"] = ec_ai_get_position;
+  (*cmd_map_repp)["ai-get-position-samples"] = ec_ai_get_position_samples;
+  (*cmd_map_repp)["ai-get-length"] = ec_ai_get_length;
+  (*cmd_map_repp)["ai-get-length-samples"] = ec_ai_get_length_samples;
+  (*cmd_map_repp)["ai-get-format"] = ec_ai_get_format;
+  (*cmd_map_repp)["ai-wave-edit"] = ec_ai_wave_edit;
 }
 
 void ECA_IAMODE_PARSER::register_commands_ao(void) {
-  cmd_map_rep["ao-add"] = ec_ao_add;
-  cmd_map_rep["ao-list"] = ec_ao_list;
-  cmd_map_rep["ao-select"] = ec_ao_select;
-  cmd_map_rep["ao-index-select"] = ec_ao_index_select;
-  cmd_map_rep["ao-iselect"] = ec_ao_index_select;
-  cmd_map_rep["ao-selected"] = ec_ao_selected;
-  cmd_map_rep["ao-attach"] = ec_ao_attach;
-  cmd_map_rep["ao-remove"] = ec_ao_remove;
-  cmd_map_rep["ao-status"] = ec_ao_status;
-  cmd_map_rep["ao-forward"] = ec_ao_forward;
-  cmd_map_rep["ao-rewind"] = ec_ao_rewind;
-  cmd_map_rep["ao-setpos"] = ec_ao_set_position;
-  cmd_map_rep["ao-set-position"] = ec_ao_set_position;
-  cmd_map_rep["ao-set-position-samples"] = ec_ao_set_position_samples;
-  cmd_map_rep["ao-getpos"] = ec_ao_get_position;
-  cmd_map_rep["ao-get-position"] = ec_ao_get_position;
-  cmd_map_rep["ao-get-position-samples"] = ec_ao_get_position_samples;
-  cmd_map_rep["ao-get-length"] = ec_ao_get_length;
-  cmd_map_rep["ao-get-length-samples"] = ec_ao_get_length_samples;
-  cmd_map_rep["ao-get-format"] = ec_ao_get_format;
-  cmd_map_rep["ao-wave-edit"] = ec_ao_wave_edit;
+  (*cmd_map_repp)["ao-add"] = ec_ao_add;
+  (*cmd_map_repp)["ao-list"] = ec_ao_list;
+  (*cmd_map_repp)["ao-select"] = ec_ao_select;
+  (*cmd_map_repp)["ao-index-select"] = ec_ao_index_select;
+  (*cmd_map_repp)["ao-iselect"] = ec_ao_index_select;
+  (*cmd_map_repp)["ao-selected"] = ec_ao_selected;
+  (*cmd_map_repp)["ao-attach"] = ec_ao_attach;
+  (*cmd_map_repp)["ao-remove"] = ec_ao_remove;
+  (*cmd_map_repp)["ao-status"] = ec_ao_status;
+  (*cmd_map_repp)["ao-forward"] = ec_ao_forward;
+  (*cmd_map_repp)["ao-rewind"] = ec_ao_rewind;
+  (*cmd_map_repp)["ao-setpos"] = ec_ao_set_position;
+  (*cmd_map_repp)["ao-set-position"] = ec_ao_set_position;
+  (*cmd_map_repp)["ao-set-position-samples"] = ec_ao_set_position_samples;
+  (*cmd_map_repp)["ao-getpos"] = ec_ao_get_position;
+  (*cmd_map_repp)["ao-get-position"] = ec_ao_get_position;
+  (*cmd_map_repp)["ao-get-position-samples"] = ec_ao_get_position_samples;
+  (*cmd_map_repp)["ao-get-length"] = ec_ao_get_length;
+  (*cmd_map_repp)["ao-get-length-samples"] = ec_ao_get_length_samples;
+  (*cmd_map_repp)["ao-get-format"] = ec_ao_get_format;
+  (*cmd_map_repp)["ao-wave-edit"] = ec_ao_wave_edit;
 }
 
 void ECA_IAMODE_PARSER::register_commands_cop(void) {
-  cmd_map_rep["cop-add"] = ec_cop_add;
-  cmd_map_rep["cop-remove"] = ec_cop_remove;
-  cmd_map_rep["cop-list"] = ec_cop_list;
-  cmd_map_rep["cop-select"] = ec_cop_select;
-  cmd_map_rep["cop-index-select"] = ec_cop_select;
-  cmd_map_rep["cop-iselect"] = ec_cop_select;
-  cmd_map_rep["cop-register"] = ec_cop_register;
-  cmd_map_rep["cop-selected"] = ec_cop_selected;
-  cmd_map_rep["cop-set"] = ec_cop_set;
-  cmd_map_rep["cop-status"] = ec_cop_status;
+  (*cmd_map_repp)["cop-add"] = ec_cop_add;
+  (*cmd_map_repp)["cop-remove"] = ec_cop_remove;
+  (*cmd_map_repp)["cop-list"] = ec_cop_list;
+  (*cmd_map_repp)["cop-select"] = ec_cop_select;
+  (*cmd_map_repp)["cop-index-select"] = ec_cop_select;
+  (*cmd_map_repp)["cop-iselect"] = ec_cop_select;
+  (*cmd_map_repp)["cop-register"] = ec_cop_register;
+  (*cmd_map_repp)["cop-selected"] = ec_cop_selected;
+  (*cmd_map_repp)["cop-set"] = ec_cop_set;
+  (*cmd_map_repp)["cop-status"] = ec_cop_status;
 }
 
 void ECA_IAMODE_PARSER::register_commands_copp(void) {
-  cmd_map_rep["copp-list"] = ec_copp_list;
-  cmd_map_rep["copp-select"] = ec_copp_select;
-  cmd_map_rep["copp-index-select"] = ec_copp_select;
-  cmd_map_rep["copp-iselect"] = ec_copp_select;
-  cmd_map_rep["copp-selected"] = ec_copp_selected;
-  cmd_map_rep["copp-set"] = ec_copp_set;
-  cmd_map_rep["copp-get"] = ec_copp_get;
+  (*cmd_map_repp)["copp-list"] = ec_copp_list;
+  (*cmd_map_repp)["copp-select"] = ec_copp_select;
+  (*cmd_map_repp)["copp-index-select"] = ec_copp_select;
+  (*cmd_map_repp)["copp-iselect"] = ec_copp_select;
+  (*cmd_map_repp)["copp-selected"] = ec_copp_selected;
+  (*cmd_map_repp)["copp-set"] = ec_copp_set;
+  (*cmd_map_repp)["copp-get"] = ec_copp_get;
 }
 
 void ECA_IAMODE_PARSER::register_commands_ctrl(void) {
-  cmd_map_rep["ctrl-add"] = ec_ctrl_add;
-  cmd_map_rep["ctrl-remove"] = ec_ctrl_remove;
-  cmd_map_rep["ctrl-list"] = ec_ctrl_list;
-  cmd_map_rep["ctrl-select"] = ec_ctrl_select;
-  cmd_map_rep["ctrl-index-select"] = ec_ctrl_select;
-  cmd_map_rep["ctrl-iselect"] = ec_ctrl_select;
-  cmd_map_rep["ctrl-register"] = ec_ctrl_register;
-  cmd_map_rep["ctrl-selected"] = ec_ctrl_selected;
-  cmd_map_rep["ctrl-status"] = ec_ctrl_status;
+  (*cmd_map_repp)["ctrl-add"] = ec_ctrl_add;
+  (*cmd_map_repp)["ctrl-remove"] = ec_ctrl_remove;
+  (*cmd_map_repp)["ctrl-list"] = ec_ctrl_list;
+  (*cmd_map_repp)["ctrl-select"] = ec_ctrl_select;
+  (*cmd_map_repp)["ctrl-index-select"] = ec_ctrl_select;
+  (*cmd_map_repp)["ctrl-iselect"] = ec_ctrl_select;
+  (*cmd_map_repp)["ctrl-register"] = ec_ctrl_register;
+  (*cmd_map_repp)["ctrl-selected"] = ec_ctrl_selected;
+  (*cmd_map_repp)["ctrl-status"] = ec_ctrl_status;
 }
 
 void ECA_IAMODE_PARSER::register_commands_dump(void) {
-  cmd_map_rep["dump-target"] = ec_dump_target;
-  cmd_map_rep["dump-status"] = ec_dump_status;
-  cmd_map_rep["dump-position"] = ec_dump_position;
-  cmd_map_rep["dump-length"] = ec_dump_length;
-  cmd_map_rep["dump-cs-status"] = ec_dump_cs_status;
-  cmd_map_rep["dump-c-selected"] = ec_dump_c_selected;
-  cmd_map_rep["dump-ai-selected"] = ec_dump_ai_selected;
-  cmd_map_rep["dump-ai-position"] = ec_dump_ai_position;
-  cmd_map_rep["dump-ai-length"] = ec_dump_ai_length;
-  cmd_map_rep["dump-ai-open-state"] = ec_dump_ai_open_state;
-  cmd_map_rep["dump-ao-selected"] = ec_dump_ao_selected;
-  cmd_map_rep["dump-ao-position"] = ec_dump_ao_position;
-  cmd_map_rep["dump-ao-length"] = ec_dump_ao_length;
-  cmd_map_rep["dump-ao-open-state"] = ec_dump_ao_open_state;
-  cmd_map_rep["dump-cop-value"] = ec_dump_cop_value;
+  (*cmd_map_repp)["dump-target"] = ec_dump_target;
+  (*cmd_map_repp)["dump-status"] = ec_dump_status;
+  (*cmd_map_repp)["dump-position"] = ec_dump_position;
+  (*cmd_map_repp)["dump-length"] = ec_dump_length;
+  (*cmd_map_repp)["dump-cs-status"] = ec_dump_cs_status;
+  (*cmd_map_repp)["dump-c-selected"] = ec_dump_c_selected;
+  (*cmd_map_repp)["dump-ai-selected"] = ec_dump_ai_selected;
+  (*cmd_map_repp)["dump-ai-position"] = ec_dump_ai_position;
+  (*cmd_map_repp)["dump-ai-length"] = ec_dump_ai_length;
+  (*cmd_map_repp)["dump-ai-open-state"] = ec_dump_ai_open_state;
+  (*cmd_map_repp)["dump-ao-selected"] = ec_dump_ao_selected;
+  (*cmd_map_repp)["dump-ao-position"] = ec_dump_ao_position;
+  (*cmd_map_repp)["dump-ao-length"] = ec_dump_ao_length;
+  (*cmd_map_repp)["dump-ao-open-state"] = ec_dump_ao_open_state;
+  (*cmd_map_repp)["dump-cop-value"] = ec_dump_cop_value;
+}
+
+int ECA_IAMODE_PARSER::command_to_action_id(const std::string& cmdstring)
+{
+  return((*cmd_map_repp)[cmdstring]);
 }
 
 bool ECA_IAMODE_PARSER::action_requires_params(int id) { 

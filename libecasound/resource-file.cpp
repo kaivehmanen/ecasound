@@ -34,7 +34,7 @@ RESOURCE_FILE::~RESOURCE_FILE(void) {
 }
 
 void RESOURCE_FILE::load(void) { 
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(resource-file) Loading file " + resfile_rep + ".");
+  ECA_LOG_MSG(ECA_LOGGER::functions, "(resource-file) Loading file " + resfile_rep + ".");
   lines_rep.resize(0);
   std::ifstream fin (resfile_rep.c_str());
   if (fin) {

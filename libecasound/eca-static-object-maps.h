@@ -1,13 +1,15 @@
 #ifndef INCLUDED_ECA_STATIC_OBJECT_MAPS_H
 #define INCLUDED_ECA_STATIC_OBJECT_MAPS_H
 
-class ECA_FACTORY_MAP;
+class ECA_OBJECT_FACTORY;
 class ECA_OBJECT_MAP;
 class ECA_PRESET_MAP;
 
 /**
  * A private classed used by ECA_OBJECT_FACTORY
  * to access object maps.
+ *
+ * @author Kai Vehmanen
  */
 class ECA_STATIC_OBJECT_MAPS {
 
@@ -17,17 +19,29 @@ class ECA_STATIC_OBJECT_MAPS {
 
  private:
 
-  static ECA_OBJECT_MAP* audio_object_map(void);
-  static ECA_OBJECT_MAP* chain_operator_map(void);
-  static ECA_OBJECT_MAP* ladspa_plugin_map(void);
-  static ECA_OBJECT_MAP* ladspa_plugin_id_map(void);
-  static ECA_OBJECT_MAP* controller_map(void);
-  static ECA_OBJECT_MAP* midi_device_map(void);
-  static ECA_PRESET_MAP* preset_map(void);
+  static void register_audio_io_rt_objects(ECA_OBJECT_MAP* objmap);
+  static void register_audio_io_nonrt_objects(ECA_OBJECT_MAP* objmap);
+  static void register_chain_operator_objects(ECA_OBJECT_MAP* objmap);
+  static void register_ladspa_plugin_objects(ECA_OBJECT_MAP* objmap);
+  static void register_ladspa_plugin_id_objects(ECA_OBJECT_MAP* objmap);
+  static void register_preset_objects(ECA_PRESET_MAP* objmap);
+  static void register_controller_objects(ECA_OBJECT_MAP* objmap);
+  static void register_midi_device_objects(ECA_OBJECT_MAP* objmap);
 
-  static bool default_objects_registered(void);
-  static void register_default_objects(void);
-  static void unregister_default_objects(void);
+  /** 
+   * @name Constructors and destructors
+   * 
+   * To prevent accidental use, located in private scope and 
+   * without a valid definition.
+   */
+  /*@{*/
+
+  ECA_STATIC_OBJECT_MAPS(void);
+  ECA_STATIC_OBJECT_MAPS(const ECA_STATIC_OBJECT_MAPS&);
+  ECA_STATIC_OBJECT_MAPS& operator=(const ECA_STATIC_OBJECT_MAPS&);
+  ~ECA_STATIC_OBJECT_MAPS(void);
+
+  /*@}*/
 };
 
 #endif

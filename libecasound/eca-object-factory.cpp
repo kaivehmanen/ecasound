@@ -1,6 +1,7 @@
 // ------------------------------------------------------------------------
-// eca-object-factory.cpp: Class for creating various ecasound objects.
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// eca-object-factory.cpp: Abstract factory for creating libecasound 
+//                         objects.
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +18,19 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <list>
-#include <map>
-#include <string>
-
-#include <kvu_dbc.h>
-#include <kvu_numtostr.h>
-#include <kvu_message_item.h>
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#include <list>
+#include <map>
+#include <string>
+#include <pthread.h>
+
+#include <kvu_dbc.h>
+#include "kvu_locks.h"
+#include <kvu_numtostr.h>
+#include <kvu_message_item.h>
 
 #include "audioio.h"
 #include "audioio-loop.h"
@@ -40,131 +43,167 @@
 #include "eca-object-factory.h"
 #include "eca-logger.h"
 
+/**
+ * Import std namespace.
+ */
 using std::list;
 using std::map;
 using std::string;
 
 /**
- * Reserves object factory for use. Must be called before 
- * using any other object factory services. When 
- * the first factory client calls reserve_factory(), 
- * all required resources are allocated. Reference 
- * counting is used to track down individual uses of 
- * the factory.
+ * Initialize static member variables.
+ */
+
+ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::audio_io_rt_map_repp = 0;
+ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::audio_io_nonrt_map_repp = 0;
+ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::chain_operator_map_repp = 0;
+ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::ladspa_plugin_map_repp = 0;
+ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::ladspa_plugin_id_map_repp = 0;
+ECA_PRESET_MAP* ECA_OBJECT_FACTORY::preset_map_repp = 0;
+ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::controller_map_repp = 0;
+ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::midi_device_map_repp = 0;
+
+pthread_mutex_t ECA_OBJECT_FACTORY::lock_rep = PTHREAD_MUTEX_INITIALIZER;
+
+/**
+ * Definitions for static member functions.
+ */
+
+/**
+ * Returns an object map containing all registered
+ * realtime audio i/o object types.
+ */
+ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::audio_io_rt_map(void) 
+{
+  //
+  // Note! Below we use the Double-Checked Locking Pattern
+  //       to protect against concurrent access
+
+  if (audio_io_rt_map_repp == 0) {
+    KVU_GUARD_LOCK guard(&ECA_OBJECT_FACTORY::lock_rep);
+    if (audio_io_rt_map_repp == 0) {
+      audio_io_rt_map_repp = new ECA_OBJECT_MAP();
+      ECA_STATIC_OBJECT_MAPS::register_audio_io_rt_objects(audio_io_rt_map_repp);
+    }
+  }
+  return(*audio_io_rt_map_repp);
+}
+
+/**
+ * Returns an object map containing all registered
+ * non-realtime audio i/o object types.
+ */
+ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::audio_io_nonrt_map(void) 
+{
+  if (audio_io_nonrt_map_repp == 0) {
+    KVU_GUARD_LOCK guard(&ECA_OBJECT_FACTORY::lock_rep);
+    if (audio_io_nonrt_map_repp == 0) {
+      audio_io_nonrt_map_repp = new ECA_OBJECT_MAP();
+      ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(audio_io_nonrt_map_repp);
+    }
+  }
+  return(*audio_io_nonrt_map_repp);
+}
+
+/**
+ * Returns an object map containing all registered
+ * chain operator object types.
+ */
+ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::chain_operator_map(void) 
+{
+  if (chain_operator_map_repp == 0) {
+    KVU_GUARD_LOCK guard(&ECA_OBJECT_FACTORY::lock_rep);
+    if (chain_operator_map_repp == 0) {
+      chain_operator_map_repp = new ECA_OBJECT_MAP();
+      ECA_STATIC_OBJECT_MAPS::register_chain_operator_objects(chain_operator_map_repp);
+    }
+  }
+  return(*chain_operator_map_repp);
+}
+
+/**
+ * Returns an object map containing all registered
+ * LADSPA plugin types.
  * 
- * @see free_factory()
+ * @see ladspa_plugin_id_map()
  */
-void ECA_OBJECT_FACTORY::reserve_factory(void) {
-  ECA_STATIC_OBJECT_MAPS::register_default_objects();
+ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::ladspa_plugin_map(void) 
+{
+  if (ladspa_plugin_map_repp == 0) {
+    KVU_GUARD_LOCK guard(&ECA_OBJECT_FACTORY::lock_rep);
+    if (ladspa_plugin_map_repp == 0) {
+      ladspa_plugin_map_repp = new ECA_OBJECT_MAP();
+      ECA_STATIC_OBJECT_MAPS::register_ladspa_plugin_objects(ladspa_plugin_map_repp);
+    }
+  }
+  return(*ladspa_plugin_map_repp);
 }
 
 /**
- * Free the object factory. Must be called when 
- * factory is not used anymore. Once the last 
- * independent factory client issues free_factory(), 
- * all resources are freed.
+ * Returns an object map containing all registered
+ * LADSPA plugin types. Plugins are identified using
+ * their unique LADSPA id number.
  * 
- * @see reserve_factory()
+ * @see ladspa_plugin_map()
  */
-void ECA_OBJECT_FACTORY::free_factory(void) {
-  ECA_STATIC_OBJECT_MAPS::unregister_default_objects();
-}
-
-string ECA_OBJECT_FACTORY::object_identifier(const ECA_OBJECT* obj) {
-  string result;
-
-  if (ECA_STATIC_OBJECT_MAPS::audio_object_map()->has_object(obj) == true) {
-    result = ECA_STATIC_OBJECT_MAPS::audio_object_map()->object_identifier(obj);
-  }
-  else if (ECA_STATIC_OBJECT_MAPS::chain_operator_map()->has_object(obj) == true) {
-    result = ECA_STATIC_OBJECT_MAPS::chain_operator_map()->object_identifier(obj);
-  }
-  else if (ECA_STATIC_OBJECT_MAPS::ladspa_plugin_map()->has_object(obj) == true) {
-    result = ECA_STATIC_OBJECT_MAPS::ladspa_plugin_map()->object_identifier(obj);
-  }
-  else if (ECA_STATIC_OBJECT_MAPS::ladspa_plugin_id_map()->has_object(obj) == true) {
-    result = ECA_STATIC_OBJECT_MAPS::ladspa_plugin_id_map()->object_identifier(obj);
-  }
-  else if (ECA_STATIC_OBJECT_MAPS::controller_map()->has_object(obj) == true) {
-    result = ECA_STATIC_OBJECT_MAPS::controller_map()->object_identifier(obj);
-  }
-  else if (ECA_STATIC_OBJECT_MAPS::midi_device_map()->has_object(obj) == true) {
-    result = ECA_STATIC_OBJECT_MAPS::midi_device_map()->object_identifier(obj);
-  }
-  else if (ECA_STATIC_OBJECT_MAPS::preset_map()->has_object(obj) == true) {
-    result = ECA_STATIC_OBJECT_MAPS::preset_map()->object_identifier(obj);
-  }
-
-  return(result);
-}
-
-const list<string>& ECA_OBJECT_FACTORY::audio_io_list(void)
+ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::ladspa_plugin_id_map(void) 
 {
-  return(ECA_STATIC_OBJECT_MAPS::audio_object_map()->registered_objects());
-}
-
-const list<string>& ECA_OBJECT_FACTORY::chain_operator_list(void) 
-{
-  return(ECA_STATIC_OBJECT_MAPS::chain_operator_map()->registered_objects());
-}
-
-const list<string>& ECA_OBJECT_FACTORY::preset_list(void)
-{
-  return(ECA_STATIC_OBJECT_MAPS::preset_map()->registered_objects());
-}
-
-const list<string>& ECA_OBJECT_FACTORY::ladspa_list(void)
-{
-  return(ECA_STATIC_OBJECT_MAPS::ladspa_plugin_map()->registered_objects());
-}
-
-const list<string>& ECA_OBJECT_FACTORY::controller_list(void)
-{
-  return(ECA_STATIC_OBJECT_MAPS::controller_map()->registered_objects());
+  if (ladspa_plugin_id_map_repp == 0) {
+    KVU_GUARD_LOCK guard(&ECA_OBJECT_FACTORY::lock_rep);
+    if (ladspa_plugin_id_map_repp == 0) {
+      ladspa_plugin_id_map_repp = new ECA_OBJECT_MAP();
+      ECA_STATIC_OBJECT_MAPS::register_ladspa_plugin_id_objects(ladspa_plugin_id_map_repp);
+    }
+  }
+  return(*ladspa_plugin_id_map_repp);
 }
 
 /**
- * Returns the first audio object that matches with 'keyword'.
+ * Returns an object map containing all registered
+ * chain operator preset object types.
  */
-const AUDIO_IO* ECA_OBJECT_FACTORY::audio_io_map_object(const string& keyword) 
+ECA_PRESET_MAP& ECA_OBJECT_FACTORY::preset_map(void) 
 {
-  return(dynamic_cast<const AUDIO_IO*>(ECA_STATIC_OBJECT_MAPS::audio_object_map()->object_expr(keyword)));
+  if (preset_map_repp == 0) {
+    KVU_GUARD_LOCK guard(&ECA_OBJECT_FACTORY::lock_rep);
+    if (preset_map_repp == 0) {
+      preset_map_repp = new ECA_PRESET_MAP();
+      ECA_STATIC_OBJECT_MAPS::register_preset_objects(preset_map_repp);
+    }
+  }
+  return(*preset_map_repp);
 }
 
 /**
- * Returns the first effect that matches with 'keyword'
+ * Returns an object map containing all registered
+ * controller object types.
  */
-const CHAIN_OPERATOR* ECA_OBJECT_FACTORY::chain_operator_map_object(const string& keyword) {
-  return(dynamic_cast<const CHAIN_OPERATOR*>(ECA_STATIC_OBJECT_MAPS::chain_operator_map()->object_expr(keyword)));
-}
-
-/**
- * Returns the first effect preset that matches with 'keyword'
- */
-const PRESET* ECA_OBJECT_FACTORY::preset_object(const string& keyword)
+ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::controller_map(void) 
 {
-  return(dynamic_cast<const PRESET*>(ECA_STATIC_OBJECT_MAPS::preset_map()->object_expr(keyword)));
+  if (controller_map_repp == 0) {
+    KVU_GUARD_LOCK guard(&ECA_OBJECT_FACTORY::lock_rep);
+    if (controller_map_repp == 0) {
+      controller_map_repp = new ECA_OBJECT_MAP();
+      ECA_STATIC_OBJECT_MAPS::register_controller_objects(controller_map_repp);
+    }
+  }
+  return(*controller_map_repp);
 }
 
 /**
- * Return the first LADSPA effect that matches with 'keyword'
+ * Returns an object map containing all registered
+ * MIDI-device types.
  */
-const EFFECT_LADSPA* ECA_OBJECT_FACTORY::ladspa_map_object(const string& keyword) { 
-  return(dynamic_cast<const EFFECT_LADSPA*>(ECA_STATIC_OBJECT_MAPS::ladspa_plugin_map()->object_expr(keyword))); 
-}
-
-/**
- * Return the first LADSPA effect that matches with 'number'
- */
-const EFFECT_LADSPA* ECA_OBJECT_FACTORY::ladspa_map_object(long int number) { 
-  return(dynamic_cast<const EFFECT_LADSPA*>(ECA_STATIC_OBJECT_MAPS::ladspa_plugin_id_map()->object_expr(kvu_numtostr(number)))); 
-}
-
-/**
- * Return the first controller object that matches with 'keyword'
- */
-const GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::controller_map_object(const string& keyword) {
-  return(dynamic_cast<const GENERIC_CONTROLLER*>(ECA_STATIC_OBJECT_MAPS::controller_map()->object_expr(keyword)));
+ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::midi_device_map(void) 
+{
+  if (midi_device_map_repp == 0) {
+    KVU_GUARD_LOCK guard(&ECA_OBJECT_FACTORY::lock_rep);
+    if (midi_device_map_repp == 0) {
+      midi_device_map_repp = new ECA_OBJECT_MAP();
+      ECA_STATIC_OBJECT_MAPS::register_midi_device_objects(midi_device_map_repp);
+    }
+  }
+  return(*midi_device_map_repp);
 }
 
 /**
@@ -188,7 +227,10 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg) {
   }
 
   const AUDIO_IO* main_file = 0;
-  main_file = ECA_OBJECT_FACTORY::audio_io_map_object(fname);
+  main_file = dynamic_cast<const AUDIO_IO*>(ECA_OBJECT_FACTORY::audio_io_rt_map().object_expr(fname));
+  if (main_file == 0) {
+    main_file = dynamic_cast<const AUDIO_IO*>(ECA_OBJECT_FACTORY::audio_io_nonrt_map().object_expr(fname));
+  }
 
   AUDIO_IO* new_file = 0;
   if (main_file != 0) {
@@ -212,16 +254,16 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg) {
  * require:
  *  arg.empty() != true
  */
-MIDI_IO* ECA_OBJECT_FACTORY::create_midi_device(const string& arg) {
+MIDI_IO* ECA_OBJECT_FACTORY::create_midi_device(const string& arg)
+{
   // --------
   DBC_REQUIRE(arg.empty() != true);
   // --------
  
-  ECA_STATIC_OBJECT_MAPS::register_default_objects();
   string fname = kvu_get_argument_number(1, arg);
 
   const MIDI_IO* device = 0;
-  device = dynamic_cast<const MIDI_IO*>(ECA_STATIC_OBJECT_MAPS::midi_device_map()->object_expr(fname));
+  device = dynamic_cast<const MIDI_IO*>(ECA_OBJECT_FACTORY::midi_device_map().object_expr(fname));
 
   MIDI_IO* new_device = 0;
   if (device != 0) {
@@ -324,9 +366,9 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu) {
   if (prefix == "el" || prefix == "eli") {
     string unique = kvu_get_argument_number(1, argu);
     if (prefix == "el") 
-      cop = ECA_OBJECT_FACTORY::ladspa_map_object(unique);
+      cop = dynamic_cast<const CHAIN_OPERATOR*>(ECA_OBJECT_FACTORY::ladspa_plugin_map().object(unique));
     else 
-      cop = ECA_OBJECT_FACTORY::ladspa_map_object(atol(unique.c_str()));
+      cop = dynamic_cast<const CHAIN_OPERATOR*>(ECA_OBJECT_FACTORY::ladspa_plugin_id_map().object(unique));
 
     CHAIN_OPERATOR* new_cop = 0;
     if (cop != 0) {
@@ -350,6 +392,11 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu) {
 }
 
 /**
+ * VST not currently actively supported due to licensing
+ * issues.
+ */
+#if 0
+/**
  * Creates a new VST1.0/2.0 plugin.
  *
  * Notes: VST support is currently not used 
@@ -367,9 +414,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const string& argu) {
   const CHAIN_OPERATOR* cop = 0;
   string prefix = kvu_get_argument_prefix(argu);
 
-#ifdef FEELING_EXPERIMENTAL
   cop = dynamic_cast<const CHAIN_OPERATOR*>(ECA_STATIC_OBJECT_MAPS::vst_plugin_map().object(prefix));
-#endif
   CHAIN_OPERATOR* new_cop = 0;
   if (cop != 0) {
     
@@ -385,6 +430,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_vst_plugin (const string& argu) {
   }
   return(new_cop);
 }
+#endif /* VST ifdef 0 */
 
 /**
  * Creates a new chain operator object.
@@ -406,7 +452,8 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const string& argu) {
   string prefix = kvu_get_argument_prefix(argu);
 
   MESSAGE_ITEM otemp;
-  const CHAIN_OPERATOR* cop = ECA_OBJECT_FACTORY::chain_operator_map_object(prefix);
+  const CHAIN_OPERATOR* cop = 
+    dynamic_cast<const CHAIN_OPERATOR*>(ECA_OBJECT_FACTORY::chain_operator_map().object(prefix));
   CHAIN_OPERATOR* new_cop = 0;
   if (cop != 0) {
     new_cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
@@ -447,7 +494,8 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu) {
   if (argu.size() > 0 && argu[0] != '-') return(0);
   string prefix = kvu_get_argument_prefix(argu);
 
-  const GENERIC_CONTROLLER* gcontroller = ECA_OBJECT_FACTORY::controller_map_object(prefix);
+  const GENERIC_CONTROLLER* gcontroller = 
+    dynamic_cast<const GENERIC_CONTROLLER*>(ECA_OBJECT_FACTORY::controller_map().object(prefix));
   GENERIC_CONTROLLER* new_gcontroller = 0;
   if (gcontroller != 0) {
     new_gcontroller = gcontroller->new_expr();
@@ -477,39 +525,4 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu) {
     }
   }
   return(0);
-}
-
-const ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::audio_io_map(void) 
-{
-  return(ECA_STATIC_OBJECT_MAPS::audio_object_map());
-}
-
-const ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::chain_operator_map(void)
-{
-  return(ECA_STATIC_OBJECT_MAPS::chain_operator_map());
-}
-
-const ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::ladspa_map(void)
-{
-  return(ECA_STATIC_OBJECT_MAPS::ladspa_plugin_map());
-}
-
-const ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::preset_map(void)
-{
-  return(ECA_STATIC_OBJECT_MAPS::preset_map());
-}
-
-const ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::controller_map(void)
-{
-  return(ECA_STATIC_OBJECT_MAPS::controller_map());
-}
-
-void ECA_OBJECT_FACTORY::register_chain_operator(const string& keyword, const string& expr, CHAIN_OPERATOR* object)
-{
-  ECA_STATIC_OBJECT_MAPS::chain_operator_map()->register_object(keyword, expr, static_cast<ECA_OBJECT*>(object));
-}
-
-void ECA_OBJECT_FACTORY::register_controller(const string& keyword, const string& expr, GENERIC_CONTROLLER* object)
-{
-  ECA_STATIC_OBJECT_MAPS::controller_map()->register_object(keyword, expr, static_cast<ECA_OBJECT*>(object));
 }

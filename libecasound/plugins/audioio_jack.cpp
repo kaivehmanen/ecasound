@@ -40,7 +40,7 @@ int audio_io_interface_version(void) { return(ecasound_library_version_current);
 
 AUDIO_IO_JACK::AUDIO_IO_JACK (void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) constructor");
+  ECA_LOG_MSG(ECA_LOGGER::functions, "(audioio-jack) constructor");
   
   jackmgr_rep = 0;
   myid_rep = 0;

@@ -8,6 +8,7 @@
 
 class CHAIN_OPERATOR;
 class ECA_CHAINSETUP;
+class ECA_OBJECT_MAP;
 
 /**
  * Class for controlling the whole ecasound library

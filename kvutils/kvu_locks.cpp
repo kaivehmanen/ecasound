@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvu_locks.cpp: Various lock related helper functions.
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,12 +29,16 @@
 #endif
 #endif
 
+#include <iostream> /* FIXME: remove me! */
+
 #include <pthread.h>
 #include <sys/errno.h>
 
+#include "kvu_dbc.h"
 #include "kvu_locks.h"
 
-ATOMIC_INTEGER::ATOMIC_INTEGER(int value) {
+ATOMIC_INTEGER::ATOMIC_INTEGER(int value)
+{
 #ifdef USE_ASM_ATOMIC
   atomic_t* ptr = new atomic_t;
   value_repp = reinterpret_cast<void*>(ptr);
@@ -47,7 +51,8 @@ ATOMIC_INTEGER::ATOMIC_INTEGER(int value) {
 #endif
 }
  
-ATOMIC_INTEGER::~ATOMIC_INTEGER(void) {
+ATOMIC_INTEGER::~ATOMIC_INTEGER(void)
+{
 #ifdef USE_ASM_ATOMIC
   atomic_t* ptr = reinterpret_cast<atomic_t*>(value_repp);
   delete ptr;
@@ -58,7 +63,8 @@ ATOMIC_INTEGER::~ATOMIC_INTEGER(void) {
 }
 
 
-int ATOMIC_INTEGER::get(void) const {
+int ATOMIC_INTEGER::get(void) const
+{
 #ifdef USE_ASM_ATOMIC
   return(atomic_read(reinterpret_cast<atomic_t*>(value_repp)));
 #else
@@ -71,7 +77,8 @@ int ATOMIC_INTEGER::get(void) const {
 #endif
 }
 
-void ATOMIC_INTEGER::set(int value) {
+void ATOMIC_INTEGER::set(int value)
+{
 #ifdef USE_ASM_ATOMIC
   atomic_set(reinterpret_cast<atomic_t*>(value_repp), value);
 #else
@@ -82,7 +89,8 @@ void ATOMIC_INTEGER::set(int value) {
 #endif
 }
 
-void ATOMIC_INTEGER::add(int value) {
+void ATOMIC_INTEGER::add(int value)
+{
 #ifdef USE_ASM_ATOMIC
   atomic_add(value, reinterpret_cast<atomic_t*>(value_repp));
 #else
@@ -93,7 +101,8 @@ void ATOMIC_INTEGER::add(int value) {
 #endif
 }
 
-void ATOMIC_INTEGER::subtract(int value) {
+void ATOMIC_INTEGER::subtract(int value)
+{
 #ifdef USE_ASM_ATOMIC
   atomic_sub(value, reinterpret_cast<atomic_t*>(value_repp));
 #else
@@ -104,7 +113,8 @@ void ATOMIC_INTEGER::subtract(int value) {
 #endif
 }
 
-void ATOMIC_INTEGER::increment(void) {
+void ATOMIC_INTEGER::increment(void)
+{
 #ifdef USE_ASM_ATOMIC
   atomic_inc(reinterpret_cast<atomic_t*>(value_repp));
 #else
@@ -115,7 +125,8 @@ void ATOMIC_INTEGER::increment(void) {
 #endif
 }
 
-void ATOMIC_INTEGER::decrement(void) {
+void ATOMIC_INTEGER::decrement(void)
+{
 #ifdef USE_ASM_ATOMIC
   atomic_dec(reinterpret_cast<atomic_t*>(value_repp));
 #else
@@ -126,3 +137,13 @@ void ATOMIC_INTEGER::decrement(void) {
 #endif
 }
 
+KVU_GUARD_LOCK::KVU_GUARD_LOCK(pthread_mutex_t* lock_arg)
+{
+  lock_repp = lock_arg;
+  DBC_CHECK(pthread_mutex_lock(lock_repp) == 0);
+}
+
+KVU_GUARD_LOCK::~KVU_GUARD_LOCK(void)
+{
+  DBC_CHECK(pthread_mutex_unlock(lock_repp) == 0);
+}

@@ -17,20 +17,26 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include "kvu_locks.h"
+
 #include "eca-logger-interface.h"
 #include "eca-logger-default.h"
 #include "eca-logger.h"
 
 ECA_LOGGER_INTERFACE* ECA_LOGGER::interface_impl_repp = 0;
+pthread_mutex_t ECA_LOGGER::lock_rep = PTHREAD_MUTEX_INITIALIZER;
 
 ECA_LOGGER_INTERFACE& ECA_LOGGER::instance(void)
 {
-  // FIXME: add support for multithreaded access 
-  //        using double-checked locking pattern 
-  //        and pthread mutex objects
+  //
+  // Note! Below we use the Double-Checked Locking Pattern
+  //       to protect against concurrent access
 
   if (interface_impl_repp == 0) {
-    interface_impl_repp = new ECA_LOGGER_DEFAULT();
+    KVU_GUARD_LOCK guard(&ECA_LOGGER::lock_rep);
+    if (interface_impl_repp == 0) {
+      interface_impl_repp = new ECA_LOGGER_DEFAULT();
+    }
   }
   return(*interface_impl_repp);
 }
