@@ -6,15 +6,15 @@ EXTRA_DIST 			= pyeca.py
 # ----------------------------------------------------------------------
 
 if INCLUDE_DEBUG
-ecasound_libs 			= -lecasound_debug
+ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound_debug
 else
-ecasound_libs 			= -lecasound
+ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound
 endif
 
 if KVUTILS_INSTALLED
 kvutils_libs 			= -lkvutils
 else
-kvutils_libs 			= -L$(top_srcdir)/kvutils/.libs -lkvutils
+kvutils_libs 			= -L$(top_builddir)/kvutils/.libs -lkvutils
 endif
 
 # difficult from RPM point-of-view

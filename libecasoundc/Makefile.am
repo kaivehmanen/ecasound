@@ -12,13 +12,13 @@ eca_ldflags = -version-info 0:0:0
 ecasound_libs = -L$(top_builddir)/libecasound/.libs -lecasound_debug
 else
 eca_ldflags = -s -version-info 0:0:0
-ecasound_libs = -L$(top_builddir)/libecasound/.libs-lecasound
+ecasound_libs = -L$(top_builddir)/libecasound/.libs -lecasound
 endif
 
 if KVUTILS_INSTALLED
 kvutils_libs = -lkvutils
 else
-kvutils_libs = -L$(top_srcdir)/kvutils/.libs -lkvutils
+kvutils_libs = -L$(top_builddir)/kvutils/.libs -lkvutils
 endif
 
 if INCLUDE_DEBUG
