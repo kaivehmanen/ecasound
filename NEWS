@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 160203) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 270203) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -16,6 +16,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 ??032003 (v2.2.2)  -** stable release **-
 	- added: stream ogg/mp3/mid directly from network if the 
 	         filename has a url-prefix
+	- changed: ecasound.el updated to 0.8.2, lots of small
+		   changes, see ecasound.el for details [mlang]
 	- fixed: libecasound sample conversion unit test failed when 
 		 compiled with gcc-2.91.66 on certain platforms
 	- fixed: compile failed on systems that don't have nanosleep()
