@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS 		= foreign
-EXTRA_DIST 			= pyeca.py.in
+EXTRA_DIST 			= pyeca.py
 
 # ----------------------------------------------------------------------
 # defines
@@ -38,7 +38,9 @@ noinst_HEADERS 			= $(pyecasound_includes)
 # source files
 # ----------------------------------------------------------------------
 
+if COMPILE_PYECASOUND
 lib_LTLIBRARIES 		= libpyecasound.la
+endif
 
 libpyecasound_la_SOURCES	= pyecasound.cpp \
 				pyeca-control.cpp
@@ -53,3 +55,12 @@ libpyecasound_la_LDFLAGS 	= -avoid-version -export-dynamic
 install-data-hook:
 	$(INSTALL) -d $(DESTDIR)$(libdir)
 	cd $(srcdir) ; cp pyeca.py $(DESTDIR)$(libdir)
+
+
+
+
+
+
+
+
+

@@ -54,17 +54,16 @@ The simplest way to compile this package is:
 Ecasound specific options
 =========================
 
-`--disable-audiofile'
-	Don't link to libaudiofile
+`--enable-debug'
+	Disables optimizations and other things preventing 
+	efficient debugging. Created executables and libraries
+	have a "_debug" suffix.
 
-`--disable-qt','-enable-qt'
-	Whether to compile qtecasound (enabled by default).
+`--enable-sys-readline'
+	If installed, link to system's default libreadline.
 
-`--disable-oss'
-	Don't compile support for OSS-drivers.
-
-`--disable-osstrigger'
-	Disable the use of OSS trigger functions.
+`--enable-experimental' 
+	Turns on some suspicious features. Not recommended.
 
 `--disable-alsa'
 	Don't compile support for ALSA-drivers (otherwise 
@@ -77,16 +76,17 @@ Ecasound specific options
 	Don't compile aRts client support. See http://www.arts-project.org 
 	for more info about aRts.
 
-`--enable-debug'
-	Disables optimizations and other things preventing 
-	efficient debugging. Created executables and libraries
-	have a "_debug" suffix.
+`--disable-audiofile'
+	Don't link to libaudiofile
 
-`--enable-sys-readline'
-	If installed, link to system's default libreadline.
+`--disable-oss'
+	Don't compile support for OSS-drivers.
 
-`--enable-experimental' 
-	Turns on some suspicious features. Not recommended.
+`--disable-osstrigger'
+	Disable the use of OSS trigger functions.
+
+`--disable-pyecasound'
+	Disable compilation of pyecasound.
 
 Compilers and Options
 =====================

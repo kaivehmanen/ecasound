@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 271100) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 281100) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -31,6 +31,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 loading chainsetups from file
 	- added: ecatools - ecasignalview added to the package; 
 		 see ecatools(1) man page for details
+	- added: --disable-pyecasound configure switch
 	- removed: the "LADSPA/" prefix removed from plugin labels
 	- changed: more intelligent handling of resource files
 	           (for instance ~/.ecasoundrc and preset files)
