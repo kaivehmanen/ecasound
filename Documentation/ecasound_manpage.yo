@@ -709,7 +709,7 @@ dit(-kos:fx-param,start-value,end-value,freq,i-phase)
 Sine oscillator with frequency of 'freq' Hz and initial phase
 of 'i_phase' times pi.
 
-dit(-kog:fx-param,start-value,end-value,freq,mode,point-pairs,start-value,end-value,pos1,value1,...)
+dit(-kog:fx-param,freq,mode,point-pairs,start-value,end-value,pos1,value1,...)
 Generic oscillator. Frequency 'freq' Hz, mode either '0' for
 static values or '1' for linear interpolation. 'point-pairs'
 specifies the number of 'posN' - 'valueN' pairs to include.
