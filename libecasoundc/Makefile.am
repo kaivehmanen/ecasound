@@ -9,10 +9,10 @@ AUTOMAKE_OPTIONS = foreign
 # remember to update eca-version.cpp
 if INCLUDE_DEBUG
 eca_ldflags = -version-info 0:0:0
-ecasound_libs = -lecasound_debug
+ecasound_libs = -L$(top_builddir)/libecasound/.libs -lecasound_debug
 else
 eca_ldflags = -s -version-info 0:0:0
-ecasound_libs = -lecasound
+ecasound_libs = -L$(top_builddir)/libecasound/.libs-lecasound
 endif
 
 if KVUTILS_INSTALLED
