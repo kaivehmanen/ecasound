@@ -157,7 +157,7 @@ void ECA_FILE_IO_STREAM::set_file_position(off_t newpos)
     }
 #else
     DBC_CHECK(sizeof(long int) == sizeof(off_t));
-    std::fseek(f1, curpos_rep, SEEK_SET);
+    std::fseek(f1, static_cast<long>(curpos_rep), SEEK_SET);
 #endif
   }
 }

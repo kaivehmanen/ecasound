@@ -14,8 +14,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 xx082004 (v2.3.4)  -** stable release **-
+	- edi-entries: edi-14 closed, edi-40 added
 	- fixed: multitrack offset was calculated incorrectly for
 		 ALSA devices which limit buffer period count to 2
+	- fixed: compile errors on MacOS X 10.3.2 [smbolton]
 05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command

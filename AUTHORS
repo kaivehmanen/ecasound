@@ -22,6 +22,8 @@ Anarcat  [anarcat]
 	Work on ecasound's FreeBSD port.
 Beaupre, Antoine  [beaupran]
 	Patches for FreeBSD compatibility.
+Bolton, Sean [smbolton]
+	Patches for Mac OS X compability.
 Bowman, Brad [bowman]
 	Perl ECI binding, bug hunting.
 Campbell, Ross [rcampbel]

@@ -16,6 +16,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <iostream>
 
 #include <jack/jack.h>
@@ -75,7 +79,11 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) open");
 
+#ifdef WORDS_BIGENDIAN
+  set_sample_format(ECA_AUDIO_FORMAT::sfmt_f32_be);
+#else
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_f32_le);
+#endif
   toggle_interleaved_channels(false);
 
   if (jackmgr_rep != 0) {

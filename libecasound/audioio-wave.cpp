@@ -69,7 +69,7 @@ static uint32_t little_endian_uint32(uint32_t arg);
 
 static uint16_t little_endian_uint16(uint16_t arg)
 {
-  if (SAMPLE_SPECS::is_system_littleendian != true) {
+  if (is_system_littleendian != true) {
     return(((arg >> 8) & 0x00ff) | ((arg << 8) & 0xff00));
   }
   return(arg);
@@ -77,7 +77,7 @@ static uint16_t little_endian_uint16(uint16_t arg)
 
 static uint32_t little_endian_uint32(uint32_t arg)
 {
-  if (SAMPLE_SPECS::is_system_littleendian != true) {
+  if (is_system_littleendian != true) {
     return(((arg >> 24) & 0x000000ff) |
 	   ((arg >> 8)  & 0x0000ff00) |
 	   ((arg << 8)  & 0x00ff0000) |

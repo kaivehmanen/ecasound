@@ -603,7 +603,7 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
     {
       // little endian: (LSB, MSB) (Intel)
       // big endian: (MSB, LSB) (Motorola)
-      if (SAMPLE_SPECS::is_system_littleendian) {
+      if (is_system_littleendian) {
 	a[0] = ibuffer[(*iptr)++];
 	a[1] = ibuffer[(*iptr)++];
       }
@@ -617,7 +617,7 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 
   case ECA_AUDIO_FORMAT::sfmt_s16_be:
     {
-      if (!SAMPLE_SPECS::is_system_littleendian) {
+      if (!is_system_littleendian) {
 	a[0] = ibuffer[(*iptr)++];
 	a[1] = ibuffer[(*iptr)++];
       }
@@ -631,7 +631,7 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 
   case ECA_AUDIO_FORMAT::sfmt_s24_le:
     {
-      if (SAMPLE_SPECS::is_system_littleendian) {
+      if (is_system_littleendian) {
 	b[0] = 0; /* LSB */
 	b[1] = ibuffer[(*iptr)++];
 	b[2] = ibuffer[(*iptr)++];
@@ -649,7 +649,7 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 
   case ECA_AUDIO_FORMAT::sfmt_s24_be:
     {
-      if (SAMPLE_SPECS::is_system_littleendian) {
+      if (is_system_littleendian) {
 	b[3] = ibuffer[(*iptr)++];
 	b[2] = ibuffer[(*iptr)++];
 	b[1] = ibuffer[(*iptr)++];
@@ -667,7 +667,7 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 
   case ECA_AUDIO_FORMAT::sfmt_s32_le:
     {
-      if (SAMPLE_SPECS::is_system_littleendian) {
+      if (is_system_littleendian) {
 	b[0] = ibuffer[(*iptr)++];
 	b[1] = ibuffer[(*iptr)++];
 	b[2] = ibuffer[(*iptr)++];
@@ -685,7 +685,7 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 
   case ECA_AUDIO_FORMAT::sfmt_s32_be:
     {
-      if (SAMPLE_SPECS::is_system_littleendian) {
+      if (is_system_littleendian) {
 	b[3] = ibuffer[(*iptr)++];
 	b[2] = ibuffer[(*iptr)++];
 	b[1] = ibuffer[(*iptr)++];
@@ -703,7 +703,7 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 
   case ECA_AUDIO_FORMAT::sfmt_f32_le:
     {
-      if (SAMPLE_SPECS::is_system_littleendian) {
+      if (is_system_littleendian) {
 	b[0] = ibuffer[(*iptr)++];
 	b[1] = ibuffer[(*iptr)++];
 	b[2] = ibuffer[(*iptr)++];
@@ -721,7 +721,7 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 
   case ECA_AUDIO_FORMAT::sfmt_f32_be:
     {
-      if (SAMPLE_SPECS::is_system_littleendian) {
+      if (is_system_littleendian) {
 	b[3] = ibuffer[(*iptr)++];
 	b[2] = ibuffer[(*iptr)++];
 	b[1] = ibuffer[(*iptr)++];

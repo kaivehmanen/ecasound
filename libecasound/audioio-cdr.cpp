@@ -155,7 +155,7 @@ void CDRFILE::seek_position(void) {
     }
 #else
     DBC_CHECK(sizeof(long int) == sizeof(off_t));
-    std::fseek(fobject, curpos_rep, SEEK_SET);
+    std::fseek(fobject, static_cast<long int>(curpos_rep), SEEK_SET);
 #endif
   }
 }
