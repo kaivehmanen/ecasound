@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 120305) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 130305) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,6 +13,18 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+??032005 (v2.4.1)  -** stable release **-
+	- note: verified to work with automake versions 1.5, 1.6 
+		and 1.9
+	- changed: moved definitions from acconfig.h to configure.in
+	- changed: Ecasound Programmer's Guide converted from latex
+		   to ascii/rst
+	- fixed: aRts plugin was not included in the 2.4.0 release 
+		 package
+	- fixed: mp3-header parsing code has been partly rewritten;
+		 the new parser is designed to better handle garbage
+		 and unknown frame types in mp3 files [juliand,kaiv] 
+	- fixed: compile errors with egcs-2.91.66
 12032005 (v2.4.0)  -** stable release **-
 	- edi-entries: edi-40 progress
 	- added: support for having commas in arguments by escaping 
