@@ -19,6 +19,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   set for pitchshifter's (-ei) shift-% arg; note! high
 		   values of shift-% can still cause crashes if using 
 		   libsamplerate
+	- changed: if available, use pthread API for setting scheduler 
+		   params; might improve real-time reliability on 
+		   rh9.0 machines and others that have NPTL
 	- fixed: use of the JACK transport API was never actually 
                  enabled in 2.2.3
 	- fixed: .aiff/.snd/.au input/output was not working at all

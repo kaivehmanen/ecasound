@@ -211,15 +211,17 @@ void MIDI_SERVER::enable(void)
     }
 #ifdef HAVE_SCHED_GETSCHEDULER
     if (sched_getscheduler(0) == SCHED_FIFO) {
+#ifdef HAVE_PTHREAD_SETSCHEDPARAM
       struct sched_param sparam;
       sparam.sched_priority = schedpriority_rep;
       if (::pthread_setschedparam(io_thread_rep, SCHED_FIFO, &sparam) != 0)
 	ECA_LOG_MSG(ECA_LOGGER::info, "Unable to change scheduling policy to SCHED_FIFO!");
       else 
 	ECA_LOG_MSG(ECA_LOGGER::info, "Using realtime-scheduling (SCHED_FIFO).");
+#endif
     }
 #else
-	ECA_LOG_MSG(ECA_LOGGER::info, "Warning! sched_getscheduler() not available!");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Functions to query scheduler settings not available!");
 #endif
     thread_running_rep = true;
   }

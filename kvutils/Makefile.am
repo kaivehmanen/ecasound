@@ -42,7 +42,7 @@ kvutil_headers = 	kvu_dbc.h \
 			kvu_inttypes.h
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
-libkvutils_la_LDFLAGS = -version-info @LIBKVUTILS_VERSION@:0:0 -static
+libkvutils_la_LDFLAGS = -version-info @LIBKVUTILS_VERSION@:0:@LIBKVUTILS_VERSION_AGE@ -static
 
 libkvutils_debug_la_SOURCES = $(libkvutils_la_SOURCES)
 libkvutils_debug_la_LDFLAGS = $(libkvutils_la_LDFLAGS)

@@ -31,9 +31,10 @@
 #include <sys/time.h> /* gettimeofday() */
 
 #include <kvu_dbc.h>
-#include <kvu_threads.h>
 #include <kvu_numtostr.h>
 #include <kvu_procedure_timer.h>
+#include <kvu_rtcaps.h>
+#include <kvu_threads.h>
 
 #include "samplebuffer.h"
 #include "audioio.h"
@@ -540,11 +541,9 @@ void ECA_ENGINE::prepare_operation(void)
 
   /* 2. enable rt-scheduling */
   if (csetup_repp->raised_priority() == true) {
-    struct sched_param sparam;
-    sparam.sched_priority = csetup_repp->get_sched_priority();
-    if (::sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
+    if (kvu_set_thread_scheduling(SCHED_FIFO, csetup_repp->get_sched_priority()) != 0)
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Unable to change scheduling policy!");
-    else 
+    else
       ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Using realtime-scheduling (SCHED_FIFO).");
   }
 
@@ -648,9 +647,7 @@ void ECA_ENGINE::stop_operation(void)
 
   /* lower priority back to normal */
   if (csetup_repp->raised_priority() == true) {
-    struct sched_param sparam;
-    sparam.sched_priority = 0;
-    if (::sched_setscheduler(0, SCHED_OTHER, &sparam) == -1)
+    if (kvu_set_thread_scheduling(SCHED_OTHER, 0) != 0)
       ECA_LOG_MSG(ECA_LOGGER::info, "(eca-engine) Unable to change scheduling back to SCHED_OTHER!");
     else
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-engine) Changed back to non-realtime scheduling SCHED_OTHER.");

@@ -32,7 +32,7 @@ eca_libadd =  	$(top_builddir)/libecasound/plugins/libecasound_plugins.la \
 		$(ECA_S_SAMPLERATE_LIBS)
 endif
 
-eca_ldflags = -version-info @LIBECASOUND_VERSION@:0:0
+eca_ldflags = -version-info @LIBECASOUND_VERSION@:0:@LIBECASOUND_VERSION_AGE@
 
 #if ECA_AM_DEBUG_MODE
 #libecasound_tester_libs =	$(top_builddir)/libecasound/.libs/libecasound@LIBECASOUND_VERSION@_debug.a \

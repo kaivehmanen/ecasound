@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// kvu_rtcaps.h: Routines for checking realtime-related capabilities.
-// Copyright (C) 2001,2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// kvu_rtcaps.h: Routines for utilizing POSIX RT extensions.
+// Copyright (C) 2001-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h> /* mlockall(), munlockall() */
 #endif
+#include <pthread.h>
 
 #include "kvu_rtcaps.h"
 
@@ -74,7 +75,8 @@ bool kvu_check_for_sched_sub(int policy)
  * Checks whether current process has privileges
  * to set scheduler to SCHED_FIFO.
  */
-bool kvu_check_for_sched_fifo(void) {
+bool kvu_check_for_sched_fifo(void)
+{
 #ifdef HAVE_SCHED_H
   return(kvu_check_for_sched_sub(SCHED_FIFO));
 #else
@@ -86,14 +88,14 @@ bool kvu_check_for_sched_fifo(void) {
  * Checks whether current process has privileges
  * to set scheduler to SCHED_RR.
  */
-bool kvu_check_for_sched_rr(void) {
+bool kvu_check_for_sched_rr(void)
+{
 #ifdef HAVE_SCHED_H
   return(kvu_check_for_sched_sub(SCHED_RR));
 #else
   std::cerr << "(libkvutils) kvu_rtcaps: warning! sched.h not available" << std::endl;
 #endif
 }
-
 
 /**
  * Checks whether mlockall() call is available 
@@ -104,7 +106,8 @@ bool kvu_check_for_sched_rr(void) {
  *       which will free all previously locked
  *       memory areas for this process.
  */
-bool kvu_check_for_mlockall(void) {
+bool kvu_check_for_mlockall(void)
+{
   bool result = false;
 #if defined(_POSIX_MEMLOCK) && defined(HAVE_MLOCKALL) && defined(HAVE_MUNLOCKALL) /* unistd.h */
   int ret = mlockall(MCL_CURRENT);
@@ -116,4 +119,34 @@ bool kvu_check_for_mlockall(void) {
   std::cerr << "(libkvutils) kvu_rtcaps: warning! POSIX_MEMLOCK not supported" << std::endl;
 #endif
   return(result);
+}
+
+/**
+ * Sets the scheduler settings for calling thread.
+ * If thread specific scheduler API (pthread_setscheduler, etc) 
+ * is not available, function will fall back to process level
+ * functions (sched_setscheduler).
+ *
+ * @param policy SCHED_OTHER, SCHED_FIFO, SCHED_RR (see sched_setscheduler(2))
+ * @param priority value between 0 and 99 (see sched_setscheduler(2))
+ *
+ * @return Zero on success, non-zero on error.
+ */
+int kvu_set_thread_scheduling(int policy, int priority)
+{
+  int ret = 0;
+
+#if defined(HAVE_PTHREAD_SETSCHEDPARAM) && defined(HAVE_PTHREAD_SELF)
+  struct sched_param sparam;
+  sparam.sched_priority = priority;
+  ret = pthread_setschedparam(pthread_self(), policy, &sparam);
+#elif defined(HAVE_SCHED_SETSCHEDULER)
+  struct sched_param sparam;
+  sparam.sched_priority = priority;
+  ret = sched_setscheduler(0, policy, &sparam);
+#else
+  std::cerr << "(libkvutils) kvu_rtcaps: warning! unable to set scheduler settings" << std::endl;
+#endif
+  
+  return ret;
 }
