@@ -1,13 +1,11 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 090103) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 110103) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
 
   X = major version  - the overall development status
-  Y = minor version  - represents a set of planned features (see TODO);
-		       an even number means stable while odd marks 
-		       development releases
+  Y = minor version  - represents a set of planned features (see TODO)
   Z = revision       - small changes to major.minor version (optional)
 
   extraT             - beta, pre and rc releases that are in preparation
@@ -15,6 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+??012003 (v2.2.1)
 09012003 (v2.2.0)  -** stable release **-
 	- edi-entries: edi-1 closed
 	- changed: ecasound.el updated to version 0.8.1 [mlang]
