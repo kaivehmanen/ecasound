@@ -24,7 +24,7 @@ private:
   SAMPLE_BUFFER* buffer;
   
   const LADSPA_Descriptor *plugin_desc;
-  vector<LADSPA_Handle> plugins;
+  vector<LADSPA_Handle> plugins_rep;
 
   unsigned long port_count_rep;
   int in_audio_ports;

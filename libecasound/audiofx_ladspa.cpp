@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_ladspa.cpp: Wrapper class for LADSPA plugins
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2001 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,9 +25,11 @@
 
 #include <dlfcn.h>
 #include <kvutils.h>
+#include <kvutils/kvu_numtostr.h>
 #include "samplebuffer.h"
 #include "audiofx_ladspa.h"
 #include "eca-error.h"
+#include "eca-debug.h"
 
 EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&) {
   plugin_desc = pdesc;
@@ -46,9 +48,9 @@ EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&) 
 
 EFFECT_LADSPA::~EFFECT_LADSPA (void) {
   if (plugin_desc != 0) {
-    for(unsigned int n = 0; n < plugins.size(); n++) {
-      if (plugin_desc->deactivate != 0) plugin_desc->deactivate(plugins[n]);
-      plugin_desc->cleanup(plugins[n]);
+    for(unsigned int n = 0; n < plugins_rep.size(); n++) {
+      if (plugin_desc->deactivate != 0) plugin_desc->deactivate(plugins_rep[n]);
+      plugin_desc->cleanup(plugins_rep[n]);
     }
   }
 }
@@ -163,55 +165,78 @@ CHAIN_OPERATOR::parameter_type EFFECT_LADSPA::get_parameter(int param) const {
 
 void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) { 
   buffer = insample;
-  if (in_audio_ports > 1 &&
-      in_audio_ports == out_audio_ports &&
-      in_audio_ports == buffer->number_of_channels()) {
-    plugins.resize(1);
-    plugins[0] = reinterpret_cast<LADSPA_Handle*>(plugin_desc->instantiate(plugin_desc, buffer->sample_rate()));
+
+// the fancy definition :)
+//    if ((in_audio_ports > 1 &&
+//         in_audio_ports <= buffer->number_of_channels() &&
+//         out_audio_ports <= buffer->number_of_channels()) ||
+//        (out_audio_ports > 1 &&
+//         in_audio_ports <= buffer->number_of_channels() &&
+//         in_audio_ports <= buffer->number_of_channels())) {}
+
+  if (in_audio_ports > 1 ||
+      out_audio_ports > 1) {
+    plugins_rep.resize(1);
+    plugins_rep[0] = reinterpret_cast<LADSPA_Handle*>(plugin_desc->instantiate(plugin_desc, buffer->sample_rate()));
     int inport = 0;
     int outport = 0;
     for(unsigned long m = 0; m < port_count_rep; m++) {
       if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
 	if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_INPUT) == LADSPA_PORT_INPUT) {
-	  plugin_desc->connect_port(plugins[0], m, buffer->buffer[inport]);
+	  plugin_desc->connect_port(plugins_rep[0], m, buffer->buffer[inport]);
 	  ++inport;
+	  if (inport == buffer->number_of_channels()) inport--;
 	}
 	else {
-	  plugin_desc->connect_port(plugins[0], m, buffer->buffer[outport]);
+	  plugin_desc->connect_port(plugins_rep[0], m, buffer->buffer[outport]);
 	  ++outport;
+	  if (outport == buffer->number_of_channels()) outport--;
 	}
       }
     }
-  } else {
-    plugins.resize(buffer->number_of_channels());
-    for(unsigned int n = 0; n < plugins.size(); n++) {
-      plugins[n] = reinterpret_cast<LADSPA_Handle*>(plugin_desc->instantiate(plugin_desc, buffer->sample_rate()));
+  } 
+  else {
+    plugins_rep.resize(buffer->number_of_channels());
+    for(unsigned int n = 0; n < plugins_rep.size(); n++) {
+      plugins_rep[n] = reinterpret_cast<LADSPA_Handle*>(plugin_desc->instantiate(plugin_desc, buffer->sample_rate()));
     }
     for(unsigned long m = 0; m < port_count_rep; m++) {
-      for(unsigned int n = 0; n < plugins.size(); n++) {
+      for(unsigned int n = 0; n < plugins_rep.size(); n++) {
 	if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
-	  plugin_desc->connect_port(plugins[n], m, buffer->buffer[n]);
+	  plugin_desc->connect_port(plugins_rep[n], m, buffer->buffer[n]);
 	}
       }
     }
   }
+
+  ecadebug->msg(ECA_DEBUG::system_objects, 
+		"(audiofx_ladspa) Instantiated " +
+		kvu_numtostr(plugins_rep.size()) + 
+		" LADSPA plugin(s), each with " + 
+		kvu_numtostr(in_audio_ports) + 
+		" audio input port(s) and " +
+		kvu_numtostr(out_audio_ports) +
+		" output port(s), to chain with " +
+		kvu_numtostr(buffer->number_of_channels()) +
+		" channel(s).");
+
   int data_index = 0;
   for(unsigned long m = 0; m < port_count_rep; m++) {
     if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) ==
 	LADSPA_PORT_CONTROL) {
-      for(unsigned int n = 0; n < plugins.size(); n++) {
-	plugin_desc->connect_port(plugins[n], m, &(params[data_index]));
+      for(unsigned int n = 0; n < plugins_rep.size(); n++) {
+	plugin_desc->connect_port(plugins_rep[n], m, &(params[data_index]));
       }
       ++data_index;
     }
   }
-  for(unsigned long m = 0; m < plugins.size(); m++)
-    if (plugin_desc->activate != 0) plugin_desc->activate(plugins[m]);
+  for(unsigned long m = 0; m < plugins_rep.size(); m++)
+    if (plugin_desc->activate != 0) plugin_desc->activate(plugins_rep[m]);
 }
 
 void EFFECT_LADSPA::process(void) {
-  for(unsigned long m = 0; m < plugins.size(); m++)
-    plugin_desc->run(plugins[m], buffer->length_in_samples());
+  for(unsigned long m = 0; m < plugins_rep.size(); m++)
+    plugin_desc->run(plugins_rep[m], buffer->length_in_samples());
 }
 
 #endif /* HAVE_LADSPA_H */
