@@ -105,13 +105,3 @@ void print_usage(void) {
 
   cerr << "\nUSAGE: ecatools_play file1 [ file2, ... fileN ]\n\n";
 }
-
-
-
-
-
-
-
-
-
-
