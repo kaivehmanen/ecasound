@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 300702) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 220802) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -32,6 +32,8 @@ Last officially released version is -*> v2.0.4 *-
 		   consumes less cpu-resources, better interface
 	- changed: ecasoundrc - default command for ogg playback
 		   to catch up with the ogg 1.0 release
+	- changed: new sample format conversion routines along
+	  	   with unit tests
         - fixed: a long-standing bug in ecaplay that caused it 
 		 to segfault with big playlists
 	- fixed: LADSPA_PATH env.variable not parsed correctly
