@@ -32,11 +32,11 @@
 /* whether to compile aRts input/output */
 #undef COMPILE_ARTS
 
+/* whether to compile JACK plugin */
+#undef COMPILE_JACK
+
 /* whether to use trigger OSS trigger functions */
 #undef DISABLE_OSS_TRIGGER
-
-/* whether to compile qtecasound */
-#undef COMPILE_QTECASOUND
 
 /* well, are you? :) */
 #undef FEELING_EXPERIMENTAL
