@@ -393,8 +393,6 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	    s16temp = (int16_t)(sample_t)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
   
 	  // little endian: (LSB, MSB) (Intel).
-	  // big endian: (MSB, LSB) (Motorola).
-	
 	  target[osize++] = (unsigned char)(s16temp & 0xff);
 	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
 	  break;
@@ -408,9 +406,7 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	  else 
 	    s16temp = (int16_t)(sample_t)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
 	
-	  // little endian: (LSB, MSB) (Intel).
 	  // big endian: (MSB, LSB) (Motorola).
-	  // ---
 	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
 	  target[osize++] = (unsigned char)(s16temp & 0xff);
 	  break;
@@ -428,7 +424,6 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);	
-
 	  break;
 	}
       
@@ -444,7 +439,6 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
 	  /* skip the LSB-byte of s32temp (s32temp & 0xff) */
-	
 	  break;
 	}
       
@@ -455,7 +449,7 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
 	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
-	
+
 	  target[osize++] = (unsigned char)(s32temp & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
@@ -559,10 +553,9 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	    s16temp = (int16_t)(sample_t)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
 	
 	  // little endian: (LSB, MSB) (Intel).
-	  // big endian: (MSB, LSB) (Motorola).
-	
 	  target[osize++] = (unsigned char)(s16temp & 0xff);
 	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
+
 	  break;
 	}
       
@@ -574,11 +567,10 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	  else 
 	    s16temp = (int16_t)(sample_t)(stemp * (SAMPLE_SPECS::s16_to_st_constant - 1) + 0.5);
 	
-	  // little endian: (LSB, MSB) (Intel).
 	  // big endian: (MSB, LSB) (Motorola).
-	  // ---
 	  target[osize++] = (unsigned char)((s16temp >> 8) & 0xff);
 	  target[osize++] = (unsigned char)(s16temp & 0xff);
+
 	  break;
 	}
       
@@ -621,11 +613,12 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	    s32temp = (int32_t)(sample_t)(stemp * SAMPLE_SPECS::s32_to_st_constant - 0.5);
 	  else 
 	    s32temp = (int32_t)(sample_t)(stemp * (SAMPLE_SPECS::s32_to_st_constant - 1) + 0.5);
-	
+
 	  target[osize++] = (unsigned char)(s32temp & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 24) & 0xff);
+
 	  break;
 	}
       
@@ -641,6 +634,7 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	  target[osize++] = (unsigned char)((s32temp >> 16) & 0xff);
 	  target[osize++] = (unsigned char)((s32temp >> 8) & 0xff);
 	  target[osize++] = (unsigned char)(s32temp & 0xff);
+
 	  break;
 	}
    
@@ -648,10 +642,12 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	{
 	  union { int32_t i; float f; } f32temp;
 	  f32temp.f = (float)stemp;
+
 	  target[osize++] = (unsigned char)(f32temp.i & 0xff);
 	  target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
 	  target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
 	  target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
+
 	  break;
 	}
 
@@ -659,10 +655,12 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 	{
 	  union { int32_t i; float f; } f32temp;
 	  f32temp.f = (float)stemp;
+
 	  target[osize++] = (unsigned char)((f32temp.i >> 24) & 0xff);
 	  target[osize++] = (unsigned char)((f32temp.i >> 16) & 0xff);
 	  target[osize++] = (unsigned char)((f32temp.i >> 8) & 0xff);
 	  target[osize++] = (unsigned char)(f32temp.i & 0xff);
+
 	  break;
 	}
       

@@ -724,6 +724,7 @@ void ECA_ENGINE::start_servers(void)
     csetup_repp->pserver_repp->start();
     ecadebug->msg(ECA_DEBUG::info, "(eca-engine) Prefilling i/o buffers.");
     csetup_repp->pserver_repp->wait_for_full();
+    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-engine) i/o buffers prefilled.");
   }
   
   if (use_midi_rep == true) {

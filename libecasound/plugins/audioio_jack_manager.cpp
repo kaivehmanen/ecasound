@@ -409,7 +409,7 @@ void AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
       break;
     }
 
-    /* case 2: externa stop request */
+    /* case 2: external stop request */
     if (stop_request_rep == true) {
       stop_request_rep = false;
       ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack-manager) stop request in exec");
