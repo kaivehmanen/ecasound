@@ -25,7 +25,7 @@
 #include "audioio-timidity.h"
 #include "eca-debug.h"
 
-string TIMIDITY_INTERFACE::default_timidity_cmd = "timidity -Or1S  -s %s -o - %f";
+string TIMIDITY_INTERFACE::default_timidity_cmd = "timidity -Or1S -id -s %s -o - %f";
 
 void TIMIDITY_INTERFACE::set_timidity_cmd(const string& value) { TIMIDITY_INTERFACE::default_timidity_cmd = value; }
 
@@ -39,6 +39,11 @@ TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void) { close(); }
 void TIMIDITY_INTERFACE::open(void) { 
   set_channels(2);
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
+  fork_timidity();
+  if (wait_for_child() != true) {
+    finished_rep = true;
+  }
+  toggle_open_state(true);
 }
 
 void TIMIDITY_INTERFACE::close(void) {
@@ -49,13 +54,6 @@ void TIMIDITY_INTERFACE::close(void) {
 }
 
 long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, long int samples) {
-  if (is_open() == false) {
-    fork_timidity();
-    if (wait_for_child() != true) {
-      finished_rep = true;
-      return(0);
-    }
-  }
   bytes_read_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
@@ -72,13 +70,16 @@ void TIMIDITY_INTERFACE::seek_position(void) {
       kill_timidity();
     }
   }
+  fork_timidity();
+  if (wait_for_child() != true) {
+    finished_rep = true;
+  }
 }
 
 void TIMIDITY_INTERFACE::kill_timidity(void) {
   if (is_open()) {
     ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-timidity) Killing Timidity++-child with pid " + kvu_numtostr(pid_of_child()) + ".");
     clean_child();
-    toggle_open_state(false);
   }
 }
 
@@ -92,7 +93,6 @@ void TIMIDITY_INTERFACE::fork_timidity(void) {
     fork_child_for_read();
     if (child_fork_succeeded() == true) {
       fd_rep = file_descriptor();
-      toggle_open_state(true);
     }
   }
 }

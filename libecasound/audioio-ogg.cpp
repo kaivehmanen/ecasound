@@ -42,7 +42,11 @@ OGG_VORBIS_INTERFACE::OGG_VORBIS_INTERFACE(const string& name) {
 OGG_VORBIS_INTERFACE::~OGG_VORBIS_INTERFACE(void) { close(); }
 
 void OGG_VORBIS_INTERFACE::open(void) { 
-
+  fork_ogg123();
+  if (feof(f1_rep) || ferror(f1_rep)) {
+    finished_rep = true;
+  }
+  toggle_open_state(true);
 }
 
 void OGG_VORBIS_INTERFACE::close(void) {
@@ -56,13 +60,6 @@ void OGG_VORBIS_INTERFACE::close(void) {
 }
 
 long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int samples) {
-  if (is_open() != true) {
-    fork_ogg123();
-    if (feof(f1_rep) || ferror(f1_rep)) {
-      finished_rep = true;
-      return(0);
-    }
-  }
   bytes_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
@@ -76,7 +73,6 @@ long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int sample
 }
 
 void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples) {
-  if (is_open() == false) fork_vorbize();
   if (wait_for_child() != true) {
     finished_rep = true;
   }
@@ -97,6 +93,13 @@ void OGG_VORBIS_INTERFACE::seek_position(void) {
       kill_vorbize();
     }
   }
+  if (io_mode() == io_read) {
+    fork_ogg123();
+    if (feof(f1_rep) || ferror(f1_rep))
+      finished_rep = true;
+  }
+  else
+    fork_vorbize();
 }
 
 void OGG_VORBIS_INTERFACE::kill_ogg123(void) {
@@ -104,7 +107,6 @@ void OGG_VORBIS_INTERFACE::kill_ogg123(void) {
     ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-ogg) Killing ogg123-child." + kvu_numtostr(pid_of_child()) + ".");
     clean_child();
     fclose(f1_rep);
-    toggle_open_state(false);
   }
 }
 
@@ -118,7 +120,6 @@ void OGG_VORBIS_INTERFACE::fork_ogg123(void) {
     if (child_fork_succeeded() == true) {
       fd_rep = file_descriptor();
       f1_rep = fdopen(fd_rep, "r");
-      toggle_open_state(true);
     }
   }
 }
@@ -127,7 +128,6 @@ void OGG_VORBIS_INTERFACE::kill_vorbize(void) {
   if (is_open()) {
     ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-ogg) Killing vorbize-child with pid " + kvu_numtostr(pid_of_child()) + ".");
     clean_child();
-    toggle_open_state(false);
   }
 }
 
@@ -143,7 +143,6 @@ void OGG_VORBIS_INTERFACE::fork_vorbize(void) {
     fork_child_for_write();
     if (child_fork_succeeded() == true) {
       fd_rep = file_descriptor();
-      toggle_open_state(true);
     }
   }
 }

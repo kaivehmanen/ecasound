@@ -57,6 +57,8 @@ void MP3FILE::open(void) throw(SETUP_ERROR&) {
   if (io_mode() == io_read) {
     get_mp3_params(label());
   }
+  fork_mpg123();
+  toggle_open_state(true);
 }
 
 void MP3FILE::close(void) {
@@ -70,7 +72,6 @@ void MP3FILE::close(void) {
 }
 
 long int MP3FILE::read_samples(void* target_buffer, long int samples) {
-  if (is_open() == false) fork_mpg123();
   bytes_rep =  ::read(fd_rep, target_buffer, frame_size() * samples);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
@@ -83,7 +84,6 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples) {
 }
 
 void MP3FILE::write_samples(void* target_buffer, long int samples) {
-  if (is_open() == false) fork_lame();
   if (wait_for_child() != true) {
     finished_rep = true;
   }
@@ -101,13 +101,15 @@ void MP3FILE::write_samples(void* target_buffer, long int samples) {
 void MP3FILE::seek_position(void) {
   if (is_open() == true) {
     finished_rep = false;
-    if (io_mode() == io_read) {
+    if (io_mode() == io_read)
       kill_mpg123();
-    }
-    else {
+    else
       kill_lame();
-    }
   }
+  if (io_mode() == io_read)
+    fork_mpg123();
+  else
+    fork_lame();
 }
 
 void MP3FILE::get_mp3_params(const string& fname) throw(SETUP_ERROR&) {
@@ -148,7 +150,6 @@ void MP3FILE::get_mp3_params(const string& fname) throw(SETUP_ERROR&) {
 void MP3FILE::kill_mpg123(void) {
   if (is_open()) {
     ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing mpg123-child." + kvu_numtostr(pid_of_child()) + ".");    clean_child();
-    toggle_open_state(false);
   }
 }
 
@@ -164,7 +165,6 @@ void MP3FILE::fork_mpg123(void) {
     fork_child_for_read();
     if (child_fork_succeeded() == true) {
       fd_rep = file_descriptor();
-      toggle_open_state(true);
     }
   }
 }
@@ -173,7 +173,6 @@ void MP3FILE::kill_lame(void) {
   if (is_open()) {
     ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Killing lame-child with pid " + kvu_numtostr(pid_of_child()) + ".");
     clean_child();
-    toggle_open_state(false);
   }
 }
 
@@ -185,7 +184,6 @@ void MP3FILE::fork_lame(void) {
     fork_child_for_write();
     if (child_fork_succeeded() == true) {
       fd_rep = file_descriptor();
-      toggle_open_state(true);
     }
   }
 }
