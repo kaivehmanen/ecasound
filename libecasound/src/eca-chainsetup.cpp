@@ -462,7 +462,40 @@ void ECA_CHAINSETUP::interpret_chain_operator (const string& argu) {
   // --------
 
   CHAIN_OPERATOR* t = create_chain_operator(argu);
+  if (t == 0) t = create_ladspa_plugin(argu);
   if (t != 0) add_chain_operator(t);
+}
+
+CHAIN_OPERATOR* ECA_CHAINSETUP::create_ladspa_plugin (const string& argu) {
+  // --------
+  REQUIRE(argu.size() > 0);
+  REQUIRE(argu[0] == '-');
+  // --------
+
+  MESSAGE_ITEM otemp;
+  CHAIN_OPERATOR* cop = 0;
+  string prefix = get_argument_prefix(argu);
+  if (prefix == "el") {
+    prefix = get_argument_number(1, argu);
+    cop = eca_ladspa_plugin_map.object(prefix);
+    if (cop != 0) {
+      cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
+      cop->map_parameters();
+
+      ecadebug->control_flow("Chainsetup/Adding LADSPA-plugin \"" +
+			     cop->name() + "\"");
+      otemp << "Setting parameters: ";
+      for(int n = 0; n < cop->number_of_params(); n++) {
+	cop->set_parameter(n + 1, atof(get_argument_number(n + 2, argu).c_str()));
+	otemp << cop->get_parameter_name(n + 1) << " = ";
+	otemp << cop->get_parameter(n + 1);
+	if (n + 1 < cop->number_of_params()) otemp << ", ";
+      }
+      ecadebug->msg(otemp.to_string());
+    }
+    return(cop);
+  }
+  return(0);
 }
 
 CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {

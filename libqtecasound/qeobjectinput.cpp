@@ -28,8 +28,8 @@
 
 #include <string>
 
-#include <ecasound/eca-object.h>
-#include <ecasound/eca-object-map.h>
+#include "eca-object.h"
+#include "eca-object-map.h"
 
 #include "qeobjectinput.h"
 

@@ -19,6 +19,12 @@
 
 #include <config.h>
 
+#include <dlfcn.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <string>
+#include <algorithm>
+
 #include "eca-chainop.h"
 #include "audiofx.h"
 #include "audiofx_amplitude.h"
@@ -28,6 +34,8 @@
 #include "audiofx_mixing.h"
 #include "audiofx_timebased.h"
 #include "audiogate.h"
+#include "audiofx_ladspa.h"
+#include "ladspa.h"
 
 #include "eca-static-object-maps.h"
 #include "generic-controller.h"
@@ -53,9 +61,13 @@
 #include "audioio-null.h"
 #include "audioio-rtnull.h"
 
+#include "eca-resources.h"
+#include "eca-error.h"
+
 ECA_AUDIO_OBJECT_MAP eca_audio_object_map;
 ECA_AUDIO_OBJECT_MAP eca_audio_device_map;
 ECA_CHAIN_OPERATOR_MAP eca_chain_operator_map;
+ECA_LADSPA_PLUGIN_MAP eca_ladspa_plugin_map;
 ECA_CONTROLLER_MAP eca_controller_map;
 ECA_PRESET_MAP eca_preset_map;
 
@@ -63,6 +75,8 @@ void register_default_audio_objects(void);
 void register_default_controllers(void);
 void register_default_chainops(void);
 void register_default_presets(void);
+void register_ladspa_plugins(void);
+vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR*);
 
 void register_default_objects(void) {
   static bool defaults_registered = false;
@@ -72,6 +86,7 @@ void register_default_objects(void) {
   register_default_controllers();
   register_default_chainops();
   register_default_audio_objects();
+  register_ladspa_plugins();
 }
 
 void register_default_audio_objects(void) {
@@ -187,3 +202,57 @@ void register_default_controllers(void) {
 }
 
 void register_default_presets(void) { }
+
+void register_ladspa_plugins(void) {
+  DIR *dp;
+
+  ECA_RESOURCES ecarc;
+  string dir_name = ecarc.resource("ladspa-plugin-directory");
+  
+  struct stat statbuf;
+  dp = opendir(dir_name.c_str());
+  if (dp != 0) {
+    struct dirent *entry = readdir(dp);
+    while(entry != 0) {
+      lstat(entry->d_name, &statbuf);
+      if (string(entry->d_name).find(".so") != string::npos) {
+	vector<EFFECT_LADSPA*> ladspa_plugins;
+	try {
+	  ladspa_plugins = create_plugins(dir_name + "/" + string(entry->d_name));
+	}
+	catch(ECA_ERROR *e) { cerr << e->error_msg() << endl; }
+	for(unsigned int n = 0; n < ladspa_plugins.size(); n++) {
+	  eca_ladspa_plugin_map.register_object(ladspa_plugins[n]->unique(), ladspa_plugins[n]);
+	}
+      }
+      entry = readdir(dp);
+    }
+  }
+}
+
+vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR*) { 
+  vector<EFFECT_LADSPA*> plugins;
+
+  void *plugin_handle = dlopen(fname.c_str(), RTLD_NOW);
+  if (plugin_handle == 0) 
+    throw(new ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable to open plugin file."));
+
+  vector<LADSPA_Descriptor_Function> desc_funcs;
+  desc_funcs.push_back(reinterpret_cast<LADSPA_Descriptor_Function>(dlsym(plugin_handle, "descriptor")));
+  if (desc_funcs[0] == 0)
+    throw(new ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable find plugin LADSPA-descriptor."));
+
+  struct LADSPA_Descriptor *plugin_desc = 0;
+  for (int i = 0;; i++) {
+    plugin_desc = desc_funcs[0](i);
+    if (plugin_desc == 0) break;
+    try {
+      plugins.push_back(new EFFECT_LADSPA(plugin_desc));
+    }
+    catch (ECA_ERROR*) { }
+    plugin_desc = 0;
+  }
+
+  //  if (plugin_handle != 0) dlclose(plugin_handle);
+  return(plugins);
+}

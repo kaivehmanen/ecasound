@@ -2,6 +2,14 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-03-20  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* eca-static-object-maps.h (eca_ladspa_plugin_map): added
+	* audiofx_ladspa.h (various): added
+	* eca-chainsetup.h (create_ladspa_plugin): added
+	* ladspa.h (various): added
+	* eca-ladspa-plugin-map.h (various): added
+	
 2000-03-18  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* eca-controller-dump.h (various): added, affects ECA_CONTROLLER,

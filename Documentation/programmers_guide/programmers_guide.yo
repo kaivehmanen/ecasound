@@ -19,7 +19,7 @@ htmlcommand(
 
 article()
        (Kai Vehmanen)
-       (18032000)
+       (20032000)
 
 COMMENT(----------------------------------------------------------------)
 COMMENT(----------------------------------------------------------------)
@@ -95,7 +95,7 @@ work and experimenting. It's not meant for e-commerce. ;)
 
 COMMENT(----------------------------------------------------------------)
 subsect(Coding style)
-subsubsect(libecasound, ecasound, ecatools)
+subsubsect(libecasound, ecasound, ecatools, libkvutils)
 Variable names are all lower case and words are separated with
 underscores (int very_long_variable_name_with_underscores). Class names
 are all in upper case and words separated with underscores

@@ -30,7 +30,7 @@
 #include <string>
 #include <map>
 
-#include <ecasound/eca-static-object-maps.h>
+#include "eca-static-object-maps.h"
 
 #include "qechainopinput.h"
 

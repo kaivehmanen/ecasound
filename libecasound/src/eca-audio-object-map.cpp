@@ -35,5 +35,5 @@ AUDIO_IO* ECA_AUDIO_OBJECT_MAP::object(const string& keyword) const {
 }
 
 string ECA_AUDIO_OBJECT_MAP::object_identifier(const AUDIO_IO* object) const {
-  return(object_identifier(object));
+  return(omap.object_identifier(object));
 }

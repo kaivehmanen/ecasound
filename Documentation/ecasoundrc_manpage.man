@@ -98,6 +98,9 @@ Path to mikmod\&. Defaults to \fImikmod\fP\&.
 .IP "ext-mikmod-args" 
 Additional options that are passed to mikmod\&. Defaults to \fI"-p 0 --noloops"\fP\&.
 .IP 
+.IP "ladspa-plugin-directory" 
+Directory containing LADPSA effect plugins\&. Defaults to \fI/usr/local/share/ladspa\fP\&.
+.IP 
 .PP 
 .SH "SEE ALSO" 
 .PP 

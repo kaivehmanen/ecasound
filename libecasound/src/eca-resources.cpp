@@ -54,4 +54,9 @@ void ECA_RESOURCES::set_defaults(void) {
 
   if (resource("ext-mikmod-path") == "") resource("ext-mikmod-path","mikmod");
   if (resource("ext-mikmod-args") == "") resource("ext-mikmod-args","-p 0 --noloops");
+
+  if (resource("ladspa-plugin-directory") == "") resource("ladspa-plugin-directory","/usr/local/share/ladspa");
 }
+
+
+

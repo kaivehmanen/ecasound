@@ -84,7 +84,8 @@ qt_libraries = @qt_libraries@
 @INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
 @INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
 
-INCLUDES = -I. -I$(qt_includes) -I$(all_includes)
+INCLUDES = -I. -I$(top_srcdir)/kvutils 		-I$(top_srcdir)/libecasound/include 		-I$(top_srcdir)/libqtecasound 		-I$(qt_includes) -I$(all_includes)
+
 @INCLUDE_DEBUG_TRUE@libqtecasound_ldflags = -version-info 0:0:0 -lkvutils
 @INCLUDE_DEBUG_FALSE@libqtecasound_ldflags = -s -version-info 0:0:0 -lkvutils
 @INCLUDE_DEBUG_TRUE@libqtecasound_target = libqtecasound_debug.la

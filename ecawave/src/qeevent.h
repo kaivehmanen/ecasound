@@ -5,71 +5,41 @@
 #include <ecasound/eca-controller.h>
 
 /**
- * Virtual base for representing libecasound processing events
+ * Virtual base for processing events
  */
 class QEEvent : public DEFINITION_BY_CONTRACT {
 
  public:
 
   /**
-   * Start processing
+   * Starts processing
    */
-  virtual void start(bool blocking = false);
+  virtual void start(void) = 0;
 
   /**
-   * Stop processing
-   */
-  void stop(void);
-
-  /**
-   * Test whether processing has ended
+   * Tests whether processing has started
    */
   bool is_triggered(void) const { return(triggered_rep); }
 
   /**
-   * Test whether event is ready for triggering
-   */
-  bool is_valid(void) const { return(valid_rep); }
-
-  /**
    * Current position in samples
    */
-  long int position(void) const { return(ectrl->position_in_samples()); }
+  long int position(void) const = 0;
 
   /**
    * Returns processing length in samples
    */
-  long int length(void) const { return(ectrl->length_in_samples()); }
+  long int length(void) const = 0;
 
-  /**
-   * Returns name of current input as a formatted string
-   */
-  const string& input_name(void) const { return(input_object->label()); }
-
-  /**
-   * Returns name of current output as a formatted string
-   */
-  const string& output_name(void) const { return(output_object->label()); }
-
-  /**
-   * Restart event with new position parameters
-   */
-  virtual void restart(long int start_pos, long int length) { }
-
-  /**
-   * Initialize event data to its original state
-   */
-  void init(void);
-
-  QEEvent(ECA_CONTROLLER* ctrl);
+  QEEvent(void);
   virtual ~QEEvent(void);
 
  protected:
 
-  void process(bool blocking);
+  const ECA_CONTROLLER* controller(void) const = 0;
 
+  void process(bool blocking);
   void toggle_triggered_state(bool v) { triggered_rep = v; }
-  void toggle_valid_state(bool v) { valid_rep = v; }
 
   /**
    * Use audio format of file/device 'name' as the default.
@@ -101,13 +71,19 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
    */
   void set_length(long int pos);
 
-  ECA_CONTROLLER* ectrl;
+  /**
+   * Returns name of current input as a formatted string
+   */
+  const string& input_name(void) const { return(input_object->label()); }
 
-  bool class_invariant(void) { return(ectrl != 0); }
-  
+  /**
+   * Returns name of current output as a formatted string
+   */
+  const string& output_name(void) const { return(output_object->label()); }
+
  private:
 
-  bool triggered_rep, valid_rep;
+  bool triggered_rep;
   AUDIO_IO* input_object;
   AUDIO_IO* output_object;
 };

@@ -94,7 +94,7 @@ INCLUDES = -I. -I$(top_srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasou
 @INCLUDE_DEBUG_TRUE@lib_LTLIBRARIES = libecasound_debug.la
 @INCLUDE_DEBUG_FALSE@lib_LTLIBRARIES = libecasound.la
 
-ecasound_audiofx_src = audiofx.cpp 			audiofx_amplitude.cpp 			audiofx_compressor.cpp 			audiofx_analysis.cpp 			audiofx_filter.cpp 			audiofx_rcfilter.cpp 			audiofx_timebased.cpp 			audiogate.cpp 			audiofx_mixing.cpp
+ecasound_audiofx_src = audiofx.cpp 			audiofx_amplitude.cpp 			audiofx_compressor.cpp 			audiofx_analysis.cpp 			audiofx_filter.cpp 			audiofx_rcfilter.cpp 			audiofx_timebased.cpp 			audiogate.cpp 			audiofx_mixing.cpp 			audiofx_ladspa.cpp
 
 
 ecasound_audioio_oss_src = audioio-oss.cpp
@@ -145,12 +145,13 @@ LIBS = @LIBS@
 libecasound_debug_la_OBJECTS =  audiofx.lo audiofx_amplitude.lo \
 audiofx_compressor.lo audiofx_analysis.lo audiofx_filter.lo \
 audiofx_rcfilter.lo audiofx_timebased.lo audiogate.lo audiofx_mixing.lo \
-audioio-cdr.lo audioio-ewf.lo audioio-mp3.lo audioio-wave.lo audioio.lo \
-audioio-af.lo audioio-raw.lo audioio-mikmod.lo audioio-rtnull.lo \
-audioio-types.lo audioio-loop.lo audioio-oss.lo audioio-alsa.lo \
-audioio-alsa2.lo audioio-alsalb.lo generic-controller.lo midi-cc.lo \
-osc-gen.lo osc-sine.lo linear-envelope.lo two-stage-linear-envelope.lo \
-eca-chain.lo eca-main.lo eca-midi.lo eca-session.lo eca-resources.lo \
+audiofx_ladspa.lo audioio-cdr.lo audioio-ewf.lo audioio-mp3.lo \
+audioio-wave.lo audioio.lo audioio-af.lo audioio-raw.lo \
+audioio-mikmod.lo audioio-rtnull.lo audioio-types.lo audioio-loop.lo \
+audioio-oss.lo audioio-alsa.lo audioio-alsa2.lo audioio-alsalb.lo \
+generic-controller.lo midi-cc.lo osc-gen.lo osc-sine.lo \
+linear-envelope.lo two-stage-linear-envelope.lo eca-chain.lo \
+eca-main.lo eca-midi.lo eca-session.lo eca-resources.lo \
 resource-file.lo eca-comhelp.lo eca-debug.lo layer.lo \
 samplebuffer_iterators.lo samplebuffer.lo eca-version.lo \
 eca-chainsetup.lo eca-controller.lo eca-controller-base.lo \
@@ -167,12 +168,13 @@ global-preset.lo
 libecasound_la_OBJECTS =  audiofx.lo audiofx_amplitude.lo \
 audiofx_compressor.lo audiofx_analysis.lo audiofx_filter.lo \
 audiofx_rcfilter.lo audiofx_timebased.lo audiogate.lo audiofx_mixing.lo \
-audioio-cdr.lo audioio-ewf.lo audioio-mp3.lo audioio-wave.lo audioio.lo \
-audioio-af.lo audioio-raw.lo audioio-mikmod.lo audioio-rtnull.lo \
-audioio-types.lo audioio-loop.lo audioio-oss.lo audioio-alsa.lo \
-audioio-alsa2.lo audioio-alsalb.lo generic-controller.lo midi-cc.lo \
-osc-gen.lo osc-sine.lo linear-envelope.lo two-stage-linear-envelope.lo \
-eca-chain.lo eca-main.lo eca-midi.lo eca-session.lo eca-resources.lo \
+audiofx_ladspa.lo audioio-cdr.lo audioio-ewf.lo audioio-mp3.lo \
+audioio-wave.lo audioio.lo audioio-af.lo audioio-raw.lo \
+audioio-mikmod.lo audioio-rtnull.lo audioio-types.lo audioio-loop.lo \
+audioio-oss.lo audioio-alsa.lo audioio-alsa2.lo audioio-alsalb.lo \
+generic-controller.lo midi-cc.lo osc-gen.lo osc-sine.lo \
+linear-envelope.lo two-stage-linear-envelope.lo eca-chain.lo \
+eca-main.lo eca-midi.lo eca-session.lo eca-resources.lo \
 resource-file.lo eca-comhelp.lo eca-debug.lo layer.lo \
 samplebuffer_iterators.lo samplebuffer.lo eca-version.lo \
 eca-chainsetup.lo eca-controller.lo eca-controller-base.lo \
@@ -198,20 +200,20 @@ TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/audiofx.P .deps/audiofx_amplitude.P \
 .deps/audiofx_analysis.P .deps/audiofx_compressor.P \
-.deps/audiofx_filter.P .deps/audiofx_mixing.P .deps/audiofx_rcfilter.P \
-.deps/audiofx_timebased.P .deps/audiogate.P .deps/audioio-af.P \
-.deps/audioio-alsa.P .deps/audioio-alsa2.P .deps/audioio-alsalb.P \
-.deps/audioio-cdr.P .deps/audioio-ewf.P .deps/audioio-loop.P \
-.deps/audioio-mikmod.P .deps/audioio-mp3.P .deps/audioio-oss.P \
-.deps/audioio-raw.P .deps/audioio-rtnull.P .deps/audioio-types.P \
-.deps/audioio-wave.P .deps/audioio.P .deps/eca-alsa-dyn.P \
-.deps/eca-audio-format.P .deps/eca-audio-object-map.P \
-.deps/eca-audio-objects.P .deps/eca-audio-position.P \
-.deps/eca-audio-time.P .deps/eca-chain.P .deps/eca-chainop-map.P \
-.deps/eca-chainsetup.P .deps/eca-comhelp.P .deps/eca-control-position.P \
-.deps/eca-controller-base.P .deps/eca-controller-dump.P \
-.deps/eca-controller-map.P .deps/eca-controller-objects.P \
-.deps/eca-controller.P .deps/eca-debug.P \
+.deps/audiofx_filter.P .deps/audiofx_ladspa.P .deps/audiofx_mixing.P \
+.deps/audiofx_rcfilter.P .deps/audiofx_timebased.P .deps/audiogate.P \
+.deps/audioio-af.P .deps/audioio-alsa.P .deps/audioio-alsa2.P \
+.deps/audioio-alsalb.P .deps/audioio-cdr.P .deps/audioio-ewf.P \
+.deps/audioio-loop.P .deps/audioio-mikmod.P .deps/audioio-mp3.P \
+.deps/audioio-oss.P .deps/audioio-raw.P .deps/audioio-rtnull.P \
+.deps/audioio-types.P .deps/audioio-wave.P .deps/audioio.P \
+.deps/eca-alsa-dyn.P .deps/eca-audio-format.P \
+.deps/eca-audio-object-map.P .deps/eca-audio-objects.P \
+.deps/eca-audio-position.P .deps/eca-audio-time.P .deps/eca-chain.P \
+.deps/eca-chainop-map.P .deps/eca-chainsetup.P .deps/eca-comhelp.P \
+.deps/eca-control-position.P .deps/eca-controller-base.P \
+.deps/eca-controller-dump.P .deps/eca-controller-map.P \
+.deps/eca-controller-objects.P .deps/eca-controller.P .deps/eca-debug.P \
 .deps/eca-fileio-mmap-fthread.P .deps/eca-fileio-mmap.P \
 .deps/eca-fileio-stream.P .deps/eca-iamode-parser.P .deps/eca-main.P \
 .deps/eca-midi.P .deps/eca-mthreaded-processor.P .deps/eca-object-map.P \

@@ -35,5 +35,5 @@ CHAIN_OPERATOR* ECA_CHAIN_OPERATOR_MAP::object(const string& keyword) const {
 }
 
 string ECA_CHAIN_OPERATOR_MAP::object_identifier(const CHAIN_OPERATOR* object) const {
-  return(object_identifier(object));
+  return(omap.object_identifier(object));
 }

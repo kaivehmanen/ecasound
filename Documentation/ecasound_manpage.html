@@ -38,7 +38,7 @@ page]</A></H4></CENTER>
 <hr>
 
 <h1>ecasound</h1>
-<h2>19.03.2000</h2>
+<h2>20.03.2000</h2>
 
 
     
@@ -376,6 +376,17 @@ If 'surround-mode' is 'surround', reverbed signal moves around the
 stereo image. 'feedback-%' determines how much effected (wet)
 signal is fed back to the reverb.
 <p></dl>
+<p><em>LADSPA-PLUGINS</em>
+<dl>
+<p></p><dt><strong>-el:plugin_unique_name,param-1,...,param-N</strong><dd>
+Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
+Plugin API). Plugins are located in shared library (.so) files in 
+/usr/local/share/ladspa (configured in ecasoundrc(5)). One shared
+library file can contain multiple plugin objects, but it is guaranteed 
+that every plugin has a unique plugin name. This name is used
+for selecting plugins. See <a href="http://audio.netpedia.net/lad">LAD home page</a> 
+for more info about LADSPA.
+</dl>
 <p><strong>GATE SETUP</strong>
 <p><dl>
 <p><p></p><dt><strong>-gc:start-time,len</strong><dd>

@@ -7,7 +7,9 @@ ecasound_audiofx_src =  audiofx.h \
 			audiofx_rcfilter.h \
 			audiofx_timebased.h \
 			audiogate.h \
-			audiofx_mixing.h
+			audiofx_mixing.h \
+			audiofx_ladspa.h \
+			ladspa.h
 
 ecasound_audioio_src = 	audioio-cdr.h \
 			audioio-cdr_impl.h \
@@ -55,6 +57,7 @@ ecasound_general_src = 	eca-chain.h \
 			eca-static-object-maps.h \
 			eca-object-map.h \
 			eca-preset-map.h \
+			eca-ladspa-plugin-map.h \
 			eca-chainop-map.h \
 			eca-controller-map.h \
 			eca-audio-object-map.h \

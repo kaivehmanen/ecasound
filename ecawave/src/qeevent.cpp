@@ -23,9 +23,7 @@
 
 #include "qeevent.h"
 
-QEEvent::QEEvent(ECA_CONTROLLER* ctrl) 
-  : ectrl(ctrl) 
-{
+QEEvent::QEEvent(void) {
 #ifdef NDEBUG
   ecadebug->set_debug_level(0);
 #else

@@ -129,6 +129,9 @@ startdit()
 	dit(ext-mikmod-args)
 	Additional options that are passed to mikmod. Defaults to em("-p 0 --noloops").
 
+	dit(ladspa-plugin-directory)
+	Directory containing LADPSA effect plugins. Defaults to em(/usr/local/share/ladspa).
+
 enddit()
 
 manpageseealso()

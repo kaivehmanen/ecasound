@@ -5,12 +5,12 @@
 
 #include <kvutils/definition_by_contract.h>
 
-#include "qeevent.h"
+#include "qenonblockingevent.h"
 
 /**
  * Simple audio-playback using the default output device
  */
-class QEPlayEvent : public QEEvent {
+class QEPlayEvent : public QENonblockingEvent {
 
  public:
 

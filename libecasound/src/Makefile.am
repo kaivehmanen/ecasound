@@ -43,7 +43,8 @@ ecasound_audiofx_src =  audiofx.cpp \
 			audiofx_rcfilter.cpp \
 			audiofx_timebased.cpp \
 			audiogate.cpp \
-			audiofx_mixing.cpp
+			audiofx_mixing.cpp \
+			audiofx_ladspa.cpp
 
 ecasound_audioio_oss_src = audioio-oss.cpp
 

@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// QEAudioFormatInput.cpp: Dialog for selecting audio format
+// qeaudioformatinput.cpp: Dialog for selecting audio format
 // Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify

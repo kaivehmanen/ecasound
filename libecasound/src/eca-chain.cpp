@@ -30,6 +30,8 @@
 #include "file-preset.h"
 #include "global-preset.h"
 
+#include "audiofx_ladspa.h"
+
 #include "eca-static-object-maps.h"
 
 #include "eca-chain.h"
@@ -316,8 +318,21 @@ string CHAIN::to_string(void) const {
 
 string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const {
   MESSAGE_ITEM t;
-  t << "-" << eca_chain_operator_map.object_identifier(chainop);
-  if (chainop->number_of_params() > 0) t << ":";
+  
+  // >--
+  // special handling for LADPSA-plugins
+  EFFECT_LADSPA* ladspa = dynamic_cast<EFFECT_LADSPA*>(chainop);
+  if (ladspa != 0) {
+    t << "-" << eca_ladspa_plugin_map.object_identifier(ladspa) << ":";
+    t << ladspa->unique();
+    if (chainop->number_of_params() > 0) t << ",";
+  }
+  else {
+    t << "-" << eca_chain_operator_map.object_identifier(chainop);
+    if (chainop->number_of_params() > 0) t << ":";
+  }
+  // --<
+
   for(int n = 0; n < chainop->number_of_params(); n++) {
     t << chainop->get_parameter(n + 1);
     if (n + 1 < chainop->number_of_params()) t << ",";

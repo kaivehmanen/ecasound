@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 190300) **
+** ecasound - user visible changes (NEWS)      (last edited: 200300) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -15,6 +15,10 @@ About the version numbers... "vx.y.zRt" :
 Last officially released version is -*> v1.6.12r10 <*-
 
 ??032000 (v1.7.3d11)
+	- added: initial LADSPA support (-el), see ecasound(1) man page
+	- added: 'ladspa-plugin-directory' entry to ~/.ecasoundrc
+	- fixed: nasty bug when adding effects on-the-fly (caused
+	         infinite recursion inside the object maps)
 19032000 (v1.7.2d11)
 	- added: support for ALSA 0.5.x pcm-loopback
 	- added: more effect presets

@@ -119,6 +119,16 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
    */
   CHAIN_OPERATOR* create_chain_operator (const string& argu);
 
+
+  /**
+   * Create a new LADSPA-plugin
+   *
+   * require:
+   *  argu.size() > 0
+   *  argu[0] == '-'
+   */
+  CHAIN_OPERATOR* create_ladspa_plugin (const string& argu);
+
   /**
    * Handle controller sources and general controllers.
    *

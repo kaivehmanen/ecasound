@@ -33,5 +33,5 @@ GENERIC_CONTROLLER* ECA_CONTROLLER_MAP::object(const string& keyword) const {
 }
 
 string ECA_CONTROLLER_MAP::object_identifier(const GENERIC_CONTROLLER* object) const {
-  return(object_identifier(object));
+  return(omap.object_identifier(object));
 }

@@ -726,7 +726,7 @@ fi
 
 PACKAGE=ecasound
 
-VERSION=1.7.2d11
+VERSION=1.7.3d11
 
 if test "`cd $srcdir && pwd`" != "`pwd`" && test -f $srcdir/config.status; then
   { echo "configure: error: source directory already configured; run "make distclean" there first" 1>&2; exit 1; }
@@ -1845,7 +1845,7 @@ else
   INCLUDE_DEBUG_FALSE=
 fi
 if test x$include_debug = xyes; then
-CXXFLAGS="-D_REENTRANT -DENABLE_DBC -g -fstrict-aliasing -Wall -Wstrict-prototypes -pedantic -O2 -ffast-math -funroll-loops"
+CXXFLAGS="-D_REENTRANT -DENABLE_DBC -g -fstrict-aliasing -Wall -Wstrict-prototypes -O2 -ffast-math"
 fi                                     
 
 # Check whether --enable-dbc or --disable-dbc was given.

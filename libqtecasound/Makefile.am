@@ -4,7 +4,10 @@ else
 INSTALL_STRIP_FLAG = -s
 endif
 
-INCLUDES = -I. -I$(qt_includes) -I$(all_includes)
+INCLUDES = -I. -I$(top_srcdir)/kvutils \
+		-I$(top_srcdir)/libecasound/include \
+		-I$(top_srcdir)/libqtecasound \
+		-I$(qt_includes) -I$(all_includes)
 
 if INCLUDE_DEBUG
 libqtecasound_ldflags = -version-info 0:0:0 -lkvutils
