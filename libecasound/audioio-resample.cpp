@@ -189,6 +189,7 @@ void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* sbuf)
 {
   // std::cerr << "pre-pre-resample: " << child_buffersize_rep << " samples.\n";
   child()->read_buffer(sbuf);
+  /* FIXME: not really rt-safe: */
   sbuf->resample_init_memory(child_srate_rep, samples_per_second());
   // std::cerr << "pre-resample: " << sbuf->length_in_samples() << " samples.\n";
   sbuf->resample(child_srate_rep, samples_per_second());
@@ -198,6 +199,7 @@ void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* sbuf)
 
 void AUDIO_IO_RESAMPLE::write_buffer(SAMPLE_BUFFER* sbuf)
 {
+  /* FIXME: not really rt-safe: */
   sbuf->resample_init_memory(samples_per_second(), child_srate_rep);
   sbuf->resample(samples_per_second(), child_srate_rep);
   child()->write_buffer(sbuf);
