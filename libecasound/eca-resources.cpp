@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca_resources.cpp: User settings (ecasoundrc)
-// Copyright (C) 1999-2002,2004 Kai Vehmanen
+// Copyright (C) 1999-2002,2004,2005 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -39,8 +39,8 @@ using std::string;
 ECA_RESOURCES::ECA_RESOURCES(void) 
   : resources_found_rep(true)
 {
-  string ecasound_prefix (ECA_PREFIX);
-  string ecasound_resource_path = ecasound_prefix + "/share/ecasound";
+  string ecasound_datadir (ECA_DATADIR);
+  string ecasound_resource_path = ecasound_datadir + "/ecasound";
 
   globalrc_repp = new RESOURCE_FILE();
   globalrc_repp->resource_file(ecasound_resource_path + "/ecasoundrc");
