@@ -1,0 +1,27 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-36): Addition of position markers.
+	 - submitted: julien, 17.03.2003
+
+------------------------------------------------------------------------
+Details:
+
+- discussed a few times on ecasound-list but so far no implementations
+- the original idea was proposed by Jeremy Hall
+
+------------------------------------------------------------------------
+- Julien Claassen one casound-list, 16.03.2003
+
+  I just had the idea of having marks in ecasound. so that you could set them
+and use them for finding certain positions. I thought this commands might be
+necessary:
+  cs-setmark - set  a mark at a specific position
+  cs-remove-mark - remove the selected mark
+  cs-goto-mark - goto the selected mark
+  cs-play-to-mark - just play from the current position to the selected mark
+(to
+see if it is set correctly)
+  cs-list-mark - list all the marks with their positions
+
+------------------------------------------------------------------------

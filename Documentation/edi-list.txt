@@ -27,6 +27,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+17.03.2003 - edi-36 and edi-37 added
 07.12.2002 - edi-1 closed
 16.11.2002 - edi-35 added
 07.11.2002 - edi-29 closed
@@ -46,7 +47,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 31.01.2002 - edi-18 closed
 12.01.2002 - edi-12 closed
 
-xx.xx.2001 no history information
+2001 - no history information
 
 -----------------------------------------------------------------------
 [ Section: Bugs, problems ]
@@ -90,6 +91,10 @@ xx.xx.2001 no history information
 	 - submitted: jhalttun, 28.10.2002
 (edi-35): JACK support to ecasound's interactive mode (EIAM)
 	 - submitted: kaiv, 16.11.2002
+(edi-36): Addition of position markers.
+	 - submitted: julien, 17.03.2003
+(edi-37): Porting Steve Harris' dither code from JACK to ecasound
+         - submitted: jhall, 17.03.2003
 
 -----------------------------------------------------------------------
 [ Section: Closed items ]
