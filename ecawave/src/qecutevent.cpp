@@ -44,19 +44,21 @@ QECutEvent::QECutEvent(ECA_CONTROLLER* ctrl,
 }
 
 void QECutEvent::start(void) {
-  // copy before cut-area to clipboard
+  // copy cut-area to clipboard
   blocking_start(); 
 
   // copy before-cut to temporary file
-  init("cutevent-phase2", "default");
-  set_input(input_rep);
-  set_input_position(0);
-  set_default_audio_format(input_rep);
   string tmpfile = string(tmpnam(0)) + ".wav";
-  ectrl->set_chainsetup_output_mode(AUDIO_IO::io_write);
-  set_output(tmpfile);
-  set_length(start_pos_rep);
-  blocking_start();
+  if (start_pos_rep != 0) {
+    init("cutevent-phase2", "default");
+    set_input(input_rep);
+    set_input_position(0);
+    set_default_audio_format(input_rep);
+    ectrl->set_chainsetup_output_mode(AUDIO_IO::io_write);
+    set_output(tmpfile);
+    set_length(start_pos_rep);
+    blocking_start();
+  }
 
   // copy after-cut to temporary file
   init("cutevent-phase3", "default");
@@ -70,7 +72,7 @@ void QECutEvent::start(void) {
 
   // copy temporary over the input file  
   init("cutevent-phase4", "default");
-  ectrl->set_chainsetup_output_mode(AUDIO_IO::io_write);  
+  ectrl->set_chainsetup_output_mode(AUDIO_IO::io_write);
   set_input(tmpfile);
   set_default_audio_format(tmpfile);
   set_output(input_rep);

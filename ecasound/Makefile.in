@@ -85,7 +85,7 @@ qt_libraries = @qt_libraries@
 @INCLUDE_DEBUG_TRUE@INSTALL_STRIP_FLAG = 
 @INCLUDE_DEBUG_FALSE@INSTALL_STRIP_FLAG = -s
 
-INCLUDES = -I. -I$(top_srcdir)/libecasound/include -I$(top_srcdir)/kvutils
+INCLUDES = -I$(srcdir) -I$(top_srcdir)/libecasound/include -I$(top_srcdir)/kvutils
 @USE_NCURSES_TRUE@termcap_library = -lncurses
 @USE_NCURSES_FALSE@termcap_library = -ltermcap
 @INCLUDE_DEBUG_TRUE@bin_PROGRAMS = ecasound_debug

@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-04-26  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-chain.h (selected_target): added
+	
 2000-04-15  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-controller-objects.h (set_default_audio_format): signature

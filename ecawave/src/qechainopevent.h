@@ -42,7 +42,8 @@ private:
 
 public:
 
-  void restart(long int start_pos, long int length);
+  virtual long int position_in_samples(void) const;
+  virtual void restart(long int start_pos, long int length);
 
   QSize sizeHint(void) const { return(QSize(400,400)); }
   QEChainopEvent (ECA_CONTROLLER* ctrl, 

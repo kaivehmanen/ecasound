@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS = foreign
 # ---
 # Makefile.am for building libkvutils.a
 # ---
-CXXFLAGS+=-D_REENTRANT -s -O2 -ffast-math -I.
+CXXFLAGS+=-D_REENTRANT -s -O2 -ffast-math -I$(srcdir)
 
 lib_LTLIBRARIES = libkvutils.la
 

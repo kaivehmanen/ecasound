@@ -203,10 +203,10 @@ class CHAIN {
    * target for parameters control.
    *
    * require:
-   *   selected_chainop != 0
+   *   selected_chain_operator() != 0
    *
    * ensure:
-   *   selected_dynobj == selected_chainop
+   *   selected_target() == selected_chain_operator()
    */
   void selected_chain_operator_as_target(void);
 
@@ -215,12 +215,18 @@ class CHAIN {
    * target for parameter control.
    *
    * require:
-   *   selected_controller != 0
+   *   selected_controller() != 0
    *
    * ensure:
-   *   selected_dynobj == selected_controller
+   *   selected_target() == selected_controller()
    */
   void selected_controller_as_target(void);
+
+  /**
+   * Returns the object that is the current target for 
+   * parameter control, or 0 if none selected.
+   */
+  OPERATOR* selected_target(void) const { return(selected_dynobj); }
 
   /**
    * Prepares chain for processing. All further processing

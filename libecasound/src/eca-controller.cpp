@@ -91,6 +91,12 @@ void ECA_CONTROLLER::direct_command(const string& cmd) {
     else
       ecadebug->msg("(eca-controller) When adding chain operators, only one chain can be selected.");
   }
+  else if (ECA_CHAIN_OPERATOR_MAP::object(prefix) != 0) {
+    if (selected_chains().size() == 1) 
+      add_chain_operator(cmd);
+    else
+      ecadebug->msg("(eca-controller) When adding chain operators, only one chain can be selected.");
+  }
   else if (ECA_CONTROLLER_MAP::object(prefix) != 0) {
     if (selected_chains().size() == 1) 
       add_controller(cmd);

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 140400) **
+** ecasound - user visible changes (NEWS)      (last edited: 260400) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,15 +14,23 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.6.12r10 <*-
 
-17042000 (v1.7.6d11)
+26042000 (v1.7.6d11)
 	- added: new input/output device 'alsaplugin' - similar to 
 		 normal ALSA pcm-devices, but uses the pcm-plugin 
 		 layer (automatic sample rate and format conversions)
+	- added: safety-checks against invalid command-line parameters
+                 and ia-mode commands (adding inputs, outputs,
+                 parameter control)
 	- changed: much faster communication between engine and ui
 	- changed: qtecasound - replaced some old widgets with 
 		   new libqtecasound widgets
+	- changed: ia-mode - c-clear now works on-the-fly
 	- fixed: qtecasound - core dumps when removing audio objects
 	- fixed: qtecasound - many minor bugs
+	- fixed: core dumps when adding parameter controllers for 
+		 non-existent chainops
+	- fixed: include-file problems when compiling in a separate dir
+	- fixed: problems in mixing multiple mono-inputs
 12042000 (v1.7.5d11)
 	- added: ALSA support for s32_le and s32_be sample formats
 	- added: numerous fixes and small improvements to ALSA 0.5.x 

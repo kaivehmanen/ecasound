@@ -18,7 +18,7 @@
 // ------------------------------------------------------------------------
 
 #include <config.h>
-// #ifdef COMPILE_ALSA
+#ifdef COMPILE_ALSA
 #ifdef ALSALIB_032
 
 #include <string>
@@ -316,4 +316,4 @@ string ALSA_PCM_DEVICE::get_parameter(int param) const {
 }
 
 #endif // ALSALIB_032
-// #endif // COMPILE_ALSA
+#endif // COMPILE_ALSA

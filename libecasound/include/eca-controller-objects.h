@@ -62,7 +62,7 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    *  filename != ""
    *
    * ensure:
-   *  loaded chainsetup == selected_chainsetup()
+   *  filename exists implies loaded chainsetup == selected_chainsetup()
    */
   void load_chainsetup(const string& filename);
 
@@ -406,7 +406,8 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
 
   /** 
    * Adds a new audio input (file, soundcard device, etc). Input 
-   * is attached to currently selected chains (if any).
+   * is attached to currently selected chains (if any). If 'filename' 
+   * doesn't exist or is otherwise invalid, no input is added.
    *
    * require:
    *   filename.empty() == false
@@ -417,7 +418,8 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
 
   /** 
    * Adds a new audio output (file, soundcard device, etc). Output 
-   * is attached to currently selected chains (if any).
+   * is attached to currently selected chains (if any). If 'filename' 
+   * doesn't exist or is otherwise invalid, no input is added.
    *
    * require:
    *   filename.empty() == false

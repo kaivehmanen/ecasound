@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecawave - user visible changes (NEWS)       (last edited: 170400) **
+** ecawave - user visible changes (NEWS)       (last edited: 260400) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.yRt" :
@@ -14,9 +14,11 @@ About the version numbers... "vx.yRt" :
 
 Last officially released version is -*> v0.1.0r1 <*-
 
-17042000 (v0.2.1d2)
+26042000 (v0.2.1d2)
 	- added: 'mark all' and 'redraw' buttons
 	- changed: new color scheme - hopefully looks better :)
+	- fixed: quite a few cut-copy-paste related bugs
+	- fixed: statusbar sometimes showed out-of-range values
 12042000 (v0.2.0d2)
 	- added: 'copy', 'cut' and 'paste' buttons
 	- added: 'clipboard-file' entry to ecawaverc - defaults to

@@ -4,7 +4,7 @@ else
 INSTALL_STRIP_FLAG = -s
 endif
 
-INCLUDES = -I. -I$(top_srcdir)/libecasound/include -I$(top_srcdir)/kvutils
+INCLUDES = -I$(srcdir) -I$(top_srcdir)/libecasound/include -I$(top_srcdir)/kvutils
 
 if USE_NCURSES
 termcap_library = -lncurses

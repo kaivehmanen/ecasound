@@ -71,7 +71,7 @@ void SAMPLE_BUFFER_BASE<T>::add(const SAMPLE_BUFFER_BASE<T>& x) {
   int c_count = (channel_count_rep <= x.channel_count_rep) ? channel_count_rep : x.channel_count_rep;
   for(int q = 0; q != c_count; q++) {
     //    long int s_count = (buffer[q].size() <= x.buffer[q].size()) ? buffer[q].size() : x.buffer[q].size();
-    for(long int t = 0; t != length_in_samples(); t++) {
+    for(long int t = 0; t != x.length_in_samples(); t++) {
       buffer[q][t] += x.buffer[q][t];
     }
   }
@@ -85,7 +85,7 @@ void SAMPLE_BUFFER_BASE<T>::add_with_weight(const SAMPLE_BUFFER_BASE<T>& x, int 
   int c_count = (channel_count_rep <= x.channel_count_rep) ? channel_count_rep : x.channel_count_rep;
   for(int q = 0; q != c_count; q++) {
     //    long int s_count = (buffer[q].size() <= x.buffer[q].size()) ? buffer[q].size() : x.buffer[q].size();
-    for(long int t = 0; t != length_in_samples(); t++) {
+    for(long int t = 0; t != x.length_in_samples(); t++) {
       buffer[q][t] += x.buffer[q][t] / weight;
     }
   }
@@ -98,7 +98,7 @@ void SAMPLE_BUFFER_BASE<T>::copy(const SAMPLE_BUFFER_BASE<T>& x) {
   }
   int c_count = (channel_count_rep <= x.channel_count_rep) ? channel_count_rep : x.channel_count_rep;
   for(int q = 0; q != c_count; q++) {
-    for(long int t = 0; t != length_in_samples(); t++) {
+    for(long int t = 0; t != x.length_in_samples(); t++) {
       buffer[q][t] = x.buffer[q][t];
     }
   }
@@ -119,7 +119,7 @@ void SAMPLE_BUFFER_BASE<T>::copy_range(const SAMPLE_BUFFER_BASE<T>& x,
   if (end_pos >= x.length_in_samples()) end_pos = x.length_in_samples();
 
   for(int q = 0; q != c_count; q++) {
-    for(long int s = start_pos; s != end_pos && t < length_in_samples(); s++) {
+    for(long int s = start_pos; s != end_pos && t < x.length_in_samples(); s++) {
       buffer[q][t] = x.buffer[q][s];
       ++t;
     }

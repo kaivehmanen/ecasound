@@ -44,23 +44,27 @@ ECA_CONTROLLER_OBJECTS::ECA_CONTROLLER_OBJECTS (ECA_SESSION* psession)
 
 void ECA_CONTROLLER_OBJECTS::add_chainsetup(const string& name) {
   // --------
-  require(name != "", __FILE__, __LINE__);
+  REQUIRE(name != "");
   // --------
 
-  session_rep->add_chainsetup(name);
-  select_chainsetup(name);
-  ecadebug->msg("(eca-controller) Added a new chainsetup with name \"" + name + "\".");
+  try {
+    session_rep->add_chainsetup(name);
+    select_chainsetup(name);
+    ecadebug->msg("(eca-controller) Added a new chainsetup with name \"" + name + "\".");
+  }
+  catch(ECA_ERROR* e) {
+    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  }
 
   // --------
-  ensure(selected_chainsetup() == name,__FILE__, __LINE__);
+  ENSURE(selected_chainsetup() == name);
   // --------
 }
 
 void ECA_CONTROLLER_OBJECTS::remove_chainsetup(void) {
   // --------
-  // require:
-  assert(connected_chainsetup() != selected_chainsetup());
-  assert(is_selected() == true);
+  REQUIRE(connected_chainsetup() != selected_chainsetup());
+  REQUIRE(is_selected() == true);
   // --------
 
   ecadebug->msg("(eca-controller) Removing chainsetup:  \"" + selected_chainsetup() + "\".");
@@ -68,15 +72,19 @@ void ECA_CONTROLLER_OBJECTS::remove_chainsetup(void) {
   selected_chainsetup_rep = 0;
 
   // --------
-  // ensure:
-  assert(selected_chainsetup().empty() == true);
+  ENSURE(selected_chainsetup().empty() == true);
   // --------
 }
 
 void ECA_CONTROLLER_OBJECTS::load_chainsetup(const string& filename) {
-  session_rep->load_chainsetup(filename);
-  select_chainsetup(get_chainsetup_filename(filename)->name());
-  ecadebug->msg("(eca-controller) Loaded chainsetup from file \"" + filename + "\".");
+  try {
+    session_rep->load_chainsetup(filename);
+    select_chainsetup(get_chainsetup_filename(filename)->name());
+    ecadebug->msg("(eca-controller) Loaded chainsetup from file \"" + filename + "\".");
+  }
+  catch(ECA_ERROR* e) {
+    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  }
 }
 
 void ECA_CONTROLLER_OBJECTS::save_chainsetup(const string& filename) {
@@ -84,13 +92,18 @@ void ECA_CONTROLLER_OBJECTS::save_chainsetup(const string& filename) {
   // require:
   assert(selected_chainsetup().empty() != true);
   // --------
-
-  if (filename.empty() == true) 
-    session_rep->save_chainsetup();
-  else 
-    session_rep->save_chainsetup(filename);
   
+  try {
+    if (filename.empty() == true) 
+      session_rep->save_chainsetup();
+    else 
+      session_rep->save_chainsetup(filename);
+    
   ecadebug->msg("(eca-controller) Saved selected chainsetup \"" + selected_chainsetup() + "\".");
+  }
+  catch(ECA_ERROR* e) {
+    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  }
 }
 
 void ECA_CONTROLLER_OBJECTS::select_chainsetup(const string& name) {
@@ -227,7 +240,6 @@ void ECA_CONTROLLER_OBJECTS::set_chainsetup_processing_length_in_seconds(double 
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(value > 0.0);
   // --------
   selected_chainsetup_rep->length_in_seconds(value);
   ecadebug->msg("(eca-controller) Set processing length to \"" + kvu_numtostr(value) + "\" seconds.");
@@ -238,11 +250,10 @@ void ECA_CONTROLLER_OBJECTS::set_chainsetup_processing_length_in_samples(long in
   // require:
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
-  assert(value > 0);
   // --------
   selected_chainsetup_rep->length_in_samples(value);
   ecadebug->msg("(eca-controller) Set processing length to \"" + 
-		 kvu_numtostr(selected_chainsetup_rep->length_in_seconds()) + "\" seconds.");
+		 kvu_numtostr(selected_chainsetup_rep->length_in_seconds_exact()) + "\" seconds.");
 }
 
 void ECA_CONTROLLER_OBJECTS::set_chainsetup_output_mode(int output_mode) {
@@ -500,10 +511,12 @@ void ECA_CONTROLLER_OBJECTS::clear_chains(void) {
  // --------
   // require:
   assert(is_selected() == true);
-  assert(connected_chainsetup() != selected_chainsetup());
   assert(selected_chains().size() > 0);
   // --------
+  bool was_running = false;
+  if (selected_chainsetup() == connected_chainsetup() && is_running() == true) { was_running = true; stop_on_condition(); }
   selected_chainsetup_rep->clear_chains();
+  if (was_running == true) ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
 void ECA_CONTROLLER_OBJECTS::rename_chain(const string& name) { 
@@ -729,9 +742,14 @@ void ECA_CONTROLLER_OBJECTS::add_audio_input(const string& filename) {
   REQUIRE(connected_chainsetup() != selected_chainsetup());
   // --------
 
-  selected_chainsetup_rep->interpret_audioio_device("-i:" + filename);
-  select_audio_object(filename);
-  ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
+  try {
+    selected_chainsetup_rep->interpret_audioio_device("-i:" + filename);
+    select_audio_object(filename);
+    ecadebug->msg("(eca-controller) Added audio input \"" + filename + "\".");
+  }
+  catch(ECA_ERROR* e) {
+    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  }
 }
 
 void ECA_CONTROLLER_OBJECTS::add_audio_output(const string& filename) {
@@ -741,10 +759,15 @@ void ECA_CONTROLLER_OBJECTS::add_audio_output(const string& filename) {
   assert(is_selected() == true);
   assert(connected_chainsetup() != selected_chainsetup());
   // --------
-  selected_chainsetup_rep->interpret_audioio_device("-o:" + filename);
-  select_audio_object(filename);
-  ecadebug->msg("(eca-controller) Added audio output \"" + filename +
-		"\".");
+  try {
+    selected_chainsetup_rep->interpret_audioio_device("-o:" + filename);
+    select_audio_object(filename);
+    ecadebug->msg("(eca-controller) Added audio output \"" + filename +
+		  "\".");
+  }
+  catch(ECA_ERROR* e) {
+    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+  }
 }
 
 void ECA_CONTROLLER_OBJECTS::add_default_output(void) {

@@ -595,6 +595,7 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
   vector<string> schains = selected_chains();
   for(vector<string>::const_iterator a = schains.begin(); a != schains.end(); a++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+      if ((*q)->selected_target() == 0) return;
       if (*a == (*q)->name()) {
 	(*q)->add_controller(csrc);
 	return;

@@ -34,6 +34,11 @@ public slots:
   void update_wave_form_data(void);
 
   /**
+   * Emit all status info
+   */
+  void emit_status(void);
+
+  /**
    * Set the default audio format used when updating wave form data
    */
   void set_audio_format(const ECA_AUDIO_FORMAT& afrm) { aformat = afrm; }
@@ -175,7 +180,6 @@ signals:
 
   void init_layout(void);
   void update_layout(void);
-  void emit_status(void);
 
   long int coord_to_samples(int coord);
   long int blocks_to_samples(long int blocks);

@@ -32,6 +32,7 @@
 #include <ecasound/eca-session.h>
 #include <ecasound/eca-controller.h>
 #include <ecasound/qebuttonrow.h>
+#include <ecasound/eca-version.h>
 
 #include "qefile.h"
 #include "qeopenfiledialog.h"
@@ -87,6 +88,11 @@ QESession::QESession (const string& filename,
 	  refresh_toggle_rep(force_refresh),
 	  wcache_toggle_rep(use_wave_cache),
           direct_mode_rep(direct_mode) {
+  setCaption(string("ecawave " + 
+		    ecawave_version + 
+		    " [" +
+		    ecasound_library_version +
+		    "] . (C) 1999-2000 Kai Vehmanen . ").c_str());
 
   active_filename_rep = orig_filename_rep;
   if (orig_filename_rep.empty() == true) {
@@ -162,18 +168,19 @@ void QESession::remove_temps(void) {
 
 void QESession::position_update(void) {
   static bool toggle = false;
-  if (ectrl->is_running()) {
+  long int pos = 0;
+  if (ectrl->is_running() == true) {
     toggle = true;
-    file->current_position(start_pos + ectrl->position_in_samples() - ectrl->get_chainsetup()->buffersize());
+    if (nb_event != 0)
+      pos = nb_event->position_in_samples();
+    else
+      pos = ectrl->position_in_samples() - ectrl->get_chainsetup()->buffersize();
   }
-  else {
-    if (toggle == true) {
-      file->current_position(0);
-      toggle = false;
-    }
-    else 
-      toggle = false;
+  if (toggle == true) {
+    if (pos > 0) file->current_position(pos);
+    else file->current_position(0);
   }
+  if (ectrl->is_running() != true) toggle = false;
 }
 
 void QESession::init_layout(void) {
@@ -390,11 +397,7 @@ void QESession::update_wave_data(void) {
       state_rep = state_new_file;
     }
     file->update_wave_form_data();
-  }
-  
-  if (state_rep != state_orig_file ||
-      state_rep != state_orig_direct) {
-
+    file->emit_status();
   }
 }
 

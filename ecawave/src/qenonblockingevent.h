@@ -38,6 +38,11 @@ class QENonblockingEvent : public QEEvent {
    */
   bool is_finished(void) const { return(ectrl->is_finished()); }
 
+  /**
+   * Returns the current position in samples
+   */
+  virtual long int position_in_samples(void) const;
+
   QENonblockingEvent(ECA_CONTROLLER* ctrl) : QEEvent(ctrl), ectrl(ctrl) { }
   virtual ~QENonblockingEvent(void) { }
 

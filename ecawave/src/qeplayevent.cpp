@@ -29,7 +29,8 @@ QEPlayEvent::QEPlayEvent(ECA_CONTROLLER* ctrl,
 			 long int start_pos, 
 			 long int length) 
   : QENonblockingEvent(ctrl),
-    ectrl(ctrl) {
+    ectrl(ctrl),
+    start_pos_rep(start_pos) {
 
   toggle_triggered_state(false);
   init("playevent", "default");
@@ -44,3 +45,12 @@ QEPlayEvent::QEPlayEvent(ECA_CONTROLLER* ctrl,
 //    ectrl->add_chain_operator(sl);
 //    sl->show();
 }
+
+long int QEPlayEvent::position_in_samples(void) const {
+  if (ectrl->is_running() == true)
+    return(start_pos_rep + ectrl->position_in_samples() - ectrl->get_chainsetup()->buffersize());
+  return(start_pos_rep);
+}
+
+
+

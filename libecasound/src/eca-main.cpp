@@ -551,6 +551,7 @@ void ECA_PROCESSOR::posthandle_control_position(void) {
     }
     else {
       stop();
+      csetup->set_position(0);
       eparams->status(ep_status_finished);
     }
   }

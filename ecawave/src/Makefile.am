@@ -4,7 +4,7 @@ else
 INSTALL_STRIP_FLAG = -s
 endif
 
-INCLUDES = -I. -I$(qt_includes) -I$(all_includes)
+INCLUDES = -I$(srcdir) -I$(qt_includes) -I$(all_includes)
 
 if INCLUDE_DEBUG
 bin_PROGRAMS = ecawave_debug

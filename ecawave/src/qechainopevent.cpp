@@ -57,6 +57,12 @@ void QEChainopEvent::restart(long int start_pos, long int length) {
   else preview();
 }
 
+long int QEChainopEvent::position_in_samples(void) const {
+  if (ectrl->is_running() == true)
+    return(start_pos_rep + ectrl->position_in_samples() - ectrl->get_chainsetup()->buffersize());
+  return(start_pos_rep);
+}
+
 void QEChainopEvent::preview(void) {
   mode = preview_mode;
   init("chainopevent-preview", "default");

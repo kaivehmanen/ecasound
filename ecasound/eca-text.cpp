@@ -153,7 +153,12 @@ void start_iactive(ECA_SESSION* param) {
   try {
     do {
       if (cmd.size() > 0) {
-	ctrl.command(cmd);
+	try { 
+	  ctrl.command(cmd);
+	}
+	catch(ECA_ERROR* e) {
+	  cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+	}
       }
       cout << "ecasound ('h' for help)>\n";
     }
@@ -162,9 +167,6 @@ void start_iactive(ECA_SESSION* param) {
   catch(int n) {
     if (n == ECA_QUIT) 
       ecadebug->msg(1, "(eca-text) Exiting...");
-  }
-  catch(ECA_ERROR* e) {
-    cerr << "---\nERROR: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
   }
   catch(...) {
     cerr << "---\nCaught an unknown exception!\n";

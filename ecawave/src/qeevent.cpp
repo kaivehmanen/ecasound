@@ -209,7 +209,5 @@ void QEEvent::set_length(long int pos) {
   // --------
   REQUIRE(ectrl->is_running() == false);
   // --------
-
-  if (pos != 0)
-    ectrl->set_chainsetup_processing_length_in_samples(pos);
+  ectrl->set_chainsetup_processing_length_in_samples(pos);
 }
