@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>05.05.2004</h2>
+<h2>09.07.2004</h2>
 
 
     
@@ -113,32 +113,43 @@
 	to <em>snd</em>.
 <p><p></p><dt><strong>ext-cmd-mp3-input</strong><dd>
 	Command for starting mp3 input. All output should be directed
-	to standard output. Before execution, "%f" is replaced with 
+	to standard output. Before execution, %f is replaced with 
 	path to the input mp3. If exists, "%o" is replaced with 
 	the start offset in mp3 frames. Defaults to <em>mpg123 --stereo -r -b 0 -q -s -k %o %f</em>.
 <p><p></p><dt><strong>ext-cmd-mp3-output</strong><dd>
 	Command for starting mp3 output. All input data should be read
-	from standard input. Before execution, "%f" is replaced with 
+	from standard input. Before execution, %f is replaced with 
 	path to the output mp3, %S with sample rate in kHz, and 
 	%B with encoding bitrate in kbps. Defaults to <em>lame -b %B -s %S -x -S - %f</em>.
 <p><p></p><dt><strong>ext-cmd-ogg-input</strong><dd>
-	Command for starting ogg input. All output should be directed
-	to standard output. Before execution, "%f" is replaced with 
+	Command for starting Ogg Vorbis input. All output should be directed
+	to standard output. Before execution, %f is replaced with 
 	path to the input ogg. Defaults to <em>ogg123 -d raw --file=- %f</em>.
 <p><p></p><dt><strong>ext-cmd-ogg-output</strong><dd>
-	Command for starting ogg output. All input data should be read
-	from standard input. Before execution, "%f" is replaced with 
+	Command for starting Ogg Vorbis output. All input data should be read
+	from standard input. Before execution, %f is replaced with 
 	path to the output ogg, %c, %s and %b with equivalent
         format parameters, and %B with encoding bitrate in kbps.
 	Defaults to <em>oggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -</em>.
 <p><p></p><dt><strong>ext-cmd-mikmod</strong><dd>
-	Command for starting mikmod input. Before execution, "%f" is replaced with 
+	Command for starting mikmod input. Before execution, %f is replaced with 
 	file path, and %s with select sample rate. Defaults to 
 	<em>mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f</em>.
 <p><p></p><dt><strong>ext-cmd-timidity</strong><dd>
-	Command for starting timidity++ input. Before execution, "%f"
+	Command for starting timidity++ input. Before execution, %f
 	is replaced with file path. Defaults to 
 	<em>timidity -Or -o - %f</em>.
+<p><p></p><dt><strong>ext-cmd-flac-input</strong><dd>
+	Command for starting FLAC input. All output should be directed
+	to standard output. Before execution, %f is replaced with 
+	path to the input ogg. Defaults to <em>flac -d -c %f</em>.
+<p><p></p><dt><strong>ext-cmd-flac-output</strong><dd>
+	Command for starting FLAC output. All input data should be read
+	from standard input. Before execution, %f is replaced with 
+	path to the output ogg, %c, %b and %s with equivalent
+        format parameters, %I with either 'signed' or 'unsinged', and
+	%E with either 'little' or 'big'.
+	Defaults to <em>flac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -</em>.
 <p></dl>
 <p><h2>SEE ALSO</h2>
     

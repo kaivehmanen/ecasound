@@ -42,6 +42,7 @@
 #include "audioio-mikmod.h"
 #include "audioio-timidity.h"
 #include "audioio-ogg.h"
+#include "audioio-flac.h"
 
 #include "osc-gen-file.h"
 
@@ -123,13 +124,14 @@ void ECA_SESSION::set_defaults(void)
 
   ECA_RESOURCES ecaresources;
 
-  MP3FILE::set_mp3_input_cmd(ecaresources.resource("ext-cmd-mp3-input"));
-  MP3FILE::set_mp3_output_cmd(ecaresources.resource("ext-cmd-mp3-output"));
+  MP3FILE::set_input_cmd(ecaresources.resource("ext-cmd-mp3-input"));
+  MP3FILE::set_output_cmd(ecaresources.resource("ext-cmd-mp3-output"));
   MIKMOD_INTERFACE::set_mikmod_cmd(ecaresources.resource("ext-cmd-mikmod"));
   TIMIDITY_INTERFACE::set_timidity_cmd(ecaresources.resource("ext-cmd-timidity"));
-  OGG_VORBIS_INTERFACE::set_ogg_input_cmd(ecaresources.resource("ext-cmd-ogg-input"));
-  OGG_VORBIS_INTERFACE::set_ogg_output_cmd(ecaresources.resource("ext-cmd-ogg-output"));
-
+  OGG_VORBIS_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-ogg-input"));
+  OGG_VORBIS_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-ogg-output"));
+  FLAC_FORKED_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-flac-input"));
+  FLAC_FORKED_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-flac-output"));
 }
 
 

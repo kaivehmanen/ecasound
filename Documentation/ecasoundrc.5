@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "05\&.05\&.2004" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "09\&.07\&.2004" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -103,37 +103,50 @@ to \fIsnd\fP\&.
 .IP 
 .IP "ext-cmd-mp3-input" 
 Command for starting mp3 input\&. All output should be directed
-to standard output\&. Before execution, "%f" is replaced with 
+to standard output\&. Before execution, %f is replaced with 
 path to the input mp3\&. If exists, "%o" is replaced with 
 the start offset in mp3 frames\&. Defaults to \fImpg123 --stereo -r -b 0 -q -s -k %o %f\fP\&.
 .IP 
 .IP "ext-cmd-mp3-output" 
 Command for starting mp3 output\&. All input data should be read
-from standard input\&. Before execution, "%f" is replaced with 
+from standard input\&. Before execution, %f is replaced with 
 path to the output mp3, %S with sample rate in kHz, and 
 %B with encoding bitrate in kbps\&. Defaults to \fIlame -b %B -s %S -x -S - %f\fP\&.
 .IP 
 .IP "ext-cmd-ogg-input" 
-Command for starting ogg input\&. All output should be directed
-to standard output\&. Before execution, "%f" is replaced with 
+Command for starting Ogg Vorbis input\&. All output should be directed
+to standard output\&. Before execution, %f is replaced with 
 path to the input ogg\&. Defaults to \fIogg123 -d raw --file=- %f\fP\&.
 .IP 
 .IP "ext-cmd-ogg-output" 
-Command for starting ogg output\&. All input data should be read
-from standard input\&. Before execution, "%f" is replaced with 
+Command for starting Ogg Vorbis output\&. All input data should be read
+from standard input\&. Before execution, %f is replaced with 
 path to the output ogg, %c, %s and %b with equivalent
 format parameters, and %B with encoding bitrate in kbps\&.
 Defaults to \fIoggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -\fP\&.
 .IP 
 .IP "ext-cmd-mikmod" 
-Command for starting mikmod input\&. Before execution, "%f" is replaced with 
+Command for starting mikmod input\&. Before execution, %f is replaced with 
 file path, and %s with select sample rate\&. Defaults to 
 \fImikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f\fP\&.
 .IP 
 .IP "ext-cmd-timidity" 
-Command for starting timidity++ input\&. Before execution, "%f"
+Command for starting timidity++ input\&. Before execution, %f
 is replaced with file path\&. Defaults to 
 \fItimidity -Or -o - %f\fP\&.
+.IP 
+.IP "ext-cmd-flac-input" 
+Command for starting FLAC input\&. All output should be directed
+to standard output\&. Before execution, %f is replaced with 
+path to the input ogg\&. Defaults to \fIflac -d -c %f\fP\&.
+.IP 
+.IP "ext-cmd-flac-output" 
+Command for starting FLAC output\&. All input data should be read
+from standard input\&. Before execution, %f is replaced with 
+path to the output ogg, %c, %b and %s with equivalent
+format parameters, %I with either \'signed\' or \'unsinged\', and
+%E with either \'little\' or \'big\'\&.
+Defaults to \fIflac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -\fP\&.
 .IP 
 .PP 
 .SH "SEE ALSO" 

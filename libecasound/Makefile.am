@@ -104,7 +104,8 @@ ecasound_audioio_include = 	\
 			audioio-proxy.h \
 			audioio-typeselect.h \
 			audioio-resample.h \
-			audioio-reverse.h
+			audioio-reverse.h \
+			audioio-flac.h
 
 ecasound_midi_include =	\
 			midi-server.h \
@@ -243,7 +244,8 @@ ecasound_audioio1_src = audioio-cdr.cpp \
 			audioio-typeselect.cpp \
 			audioio-resample.cpp \
 			audioio-reverse.cpp \
-			audioio-proxy.cpp
+			audioio-proxy.cpp \
+			audioio-flac.cpp
 
 if ECA_AM_COMPILE_OSS
 ecasound_audioio2_src = audioio-oss.cpp
