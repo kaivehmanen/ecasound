@@ -13,15 +13,16 @@ on the web at http://www.eca.cx/ecasound -> 'EDIs' menu item.
 -----------------------------------------------------------------------
 [ Known Bugs and Features ]
 
+- certain combinations of glibc and linux-2.6 kernels cause the 'cs-edit' 
+  EIAM command to fail (ecasound exits back to shell after the command); 
+  as a workaround, set the LD_ASSUME_KERNEL=2.2.5 environment variable
+  before running ecasound
 - ecasound cannot parse ogg and flac headers so correct audio
   format parameters must be set manually with ecasound's -f option
 - pitch shifter (-ei) doesn't work with all real-time audio object
   types (for instance JACK)
 - ecasound crashes if /dev/midi points to an invalid rawmidi device
 - MIDI-ops like -km can't be used in presets
-- RIFF WAVE files
-	- doesn't preserve extra RIFF-blocks
-- controller sources
-	- big buffersizes cause problems; for instance 
-	  there's distortion when using sine-oscillators
-  	  with big buffers
+- controller sources and big buffersizes
+	- distortion results for example if sine-oscillators
+  	  are used with big buffersize (-b:X) settings
