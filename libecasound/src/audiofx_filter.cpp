@@ -36,14 +36,14 @@ void EFFECT_BANDPASS::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_typ
   switch (param) {
   case 1: 
     center = value;
-    D = 2 * cos(2 * M_PI * center / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate);
+    D = 2 * cos(2 * M_PI * center / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
     b[0] = -C * D * a[0];
     break;
   case 2: 
     if (value != 0) width = value;
     else width = center / 2;
-    C = 1.0 / tan(M_PI * width / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate);
-    D = 2 * cos(2 * M_PI * center / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate);
+    C = 1.0 / tan(M_PI * width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
+    D = 2 * cos(2 * M_PI * center / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
     a[0] = 1.0 / (1.0 + C);
     a[1] = 0.0;
     a[2] = -a[0];
@@ -75,14 +75,14 @@ void EFFECT_BANDREJECT::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_t
   switch (param) {
   case 1: 
     center = value;
-    D = 2 * cos(2 * M_PI * center / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate);
+    D = 2 * cos(2 * M_PI * center / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
     a[1] = -D * a[0];
     b[0] = a[1];
     break;
   case 2: 
     if (value != 0) width = value;
     else width = center / 2;
-    C = tan(M_PI * width / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate);
+    C = tan(M_PI * width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
     a[0] = 1.0 / (1.0 + C);
     a[1] = -D * a[0];
     a[2] = a[0];
@@ -104,6 +104,9 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_BANDREJECT::get_parameter(int param) c
 
 void EFFECT_BW_FILTER::init(SAMPLE_BUFFER *insample) {
   i.init(insample);
+
+  set_channels(insample->number_of_channels());
+  set_samples_per_second(insample->sample_rate());
 
   sin.resize(insample->number_of_channels(), vector<SAMPLE_SPECS::sample_type> (2));
   sout.resize(insample->number_of_channels(), vector<SAMPLE_SPECS::sample_type> (2));
@@ -165,7 +168,7 @@ void EFFECT_HIGHPASS::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_typ
   switch (param) {
   case 1: 
     cutOffFreq = value;
-    C = tan(M_PI * cutOffFreq / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate);
+    C = tan(M_PI * cutOffFreq / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
     a[0] = 1.0 / (1.0 + sqrt(2.0) * C + C * C);
     a[1] = -2.0 * a[0];
     a[2] = a[0];
@@ -181,6 +184,111 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_HIGHPASS::get_parameter(int param) con
     return(cutOffFreq);
   }
   return(0.0);
+}
+
+void EFFECT_ALLPASS_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+  switch (param) {
+  case 1: 
+    D = value;
+    break;
+  case 2: 
+    feedback_gain = value / 100.0;
+    break;
+  }
+}
+
+DYNAMIC_PARAMETERS::parameter_type EFFECT_ALLPASS_FILTER::get_parameter(int param) const { 
+  switch (param) {
+  case 1: 
+    return(D);
+  case 2: 
+    return(feedback_gain * 100.0);
+  }
+  return(0.0);
+}
+
+void EFFECT_ALLPASS_FILTER::init(SAMPLE_BUFFER* insample) {
+  i.init(insample);
+
+  set_channels(insample->number_of_channels());
+  set_samples_per_second(insample->sample_rate());
+
+  inbuf.resize(insample->number_of_channels());
+  outbuf.resize(insample->number_of_channels());
+}
+
+void EFFECT_ALLPASS_FILTER::process(void) {
+  i.begin();
+  while(!i.end()) {
+    if (inbuf[i.channel()].size() >= D) {
+      inbuf[i.channel()].push_back(*i.current());
+      *i.current() = -feedback_gain * (*i.current()) +
+	             inbuf[i.channel()].front() +
+	             feedback_gain * outbuf[i.channel()].front();
+      outbuf[i.channel()].push_back(*i.current());
+
+      inbuf[i.channel()].pop_front();
+      outbuf[i.channel()].pop_front();
+    } 
+    else {
+      inbuf[i.channel()].push_back(*i.current());
+      outbuf[i.channel()].push_back(*i.current());
+    }
+    i.next();
+  }
+}
+
+EFFECT_COMB_FILTER::EFFECT_COMB_FILTER (int delay_in_samples, DYNAMIC_PARAMETERS::parameter_type radius) {
+  set_parameter(1, (DYNAMIC_PARAMETERS::parameter_type)delay_in_samples);
+  set_parameter(2, radius);
+}
+
+void EFFECT_COMB_FILTER::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+  switch (param) {
+  case 1: 
+    C = value;
+    break;
+  case 2: 
+    D = value;
+    break;
+  }
+}
+
+DYNAMIC_PARAMETERS::parameter_type EFFECT_COMB_FILTER::get_parameter(int param) const { 
+  switch (param) {
+  case 1: 
+    return(C);
+  case 2: 
+    return(D);
+  }
+  return(0.0);
+}
+
+void EFFECT_COMB_FILTER::init(SAMPLE_BUFFER* insample) {
+  i.init(insample);
+
+  set_channels(insample->number_of_channels());
+  set_samples_per_second(insample->sample_rate());
+
+  buffer.resize(insample->number_of_channels());
+  laskuri.resize(insample->number_of_channels(), parameter_type(0.0));
+}
+
+void EFFECT_COMB_FILTER::process(void) {
+  i.begin();
+  while(!i.end()) {
+    if (laskuri[i.channel()] >= C && buffer[i.channel()].size() > 0) {
+      *i.current() = (*i.current())  + (pow(D, C) *
+					buffer[i.channel()].front());
+      buffer[i.channel()].push_back(*i.current());
+      buffer[i.channel()].pop_front();
+    } 
+    else {
+      buffer[i.channel()].push_back(*i.current());
+      laskuri[i.channel()]++;
+    }
+    i.next();
+  }
 }
 
 EFFECT_INVERSE_COMB_FILTER::EFFECT_INVERSE_COMB_FILTER (int delay_in_samples, DYNAMIC_PARAMETERS::parameter_type radius) {
@@ -217,6 +325,10 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_INVERSE_COMB_FILTER::get_parameter(int
 
 void EFFECT_INVERSE_COMB_FILTER::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
+
+  set_channels(insample->number_of_channels());
+  set_samples_per_second(insample->sample_rate());
+
   buffer.resize(insample->number_of_channels());
   laskuri.resize(insample->number_of_channels(), parameter_type(0.0));
 }
@@ -245,7 +357,7 @@ EFFECT_LOWPASS::EFFECT_LOWPASS (DYNAMIC_PARAMETERS::parameter_type cutoff) {
 void EFFECT_LOWPASS::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
   switch (param) {
   case 1: 
-    set_cutoff(value, SAMPLE_BUFFER::sample_rate);
+    set_cutoff(value, samples_per_second());
     break;
   }
 }
@@ -276,8 +388,8 @@ void EFFECT_LOWPASS_SIMPLE::set_parameter(int param, DYNAMIC_PARAMETERS::paramet
   switch (param) {
   case 1: 
     cutOffFreq = value;
-    A = 2.0 * M_PI * cutOffFreq / SAMPLE_BUFFER::sample_rate;
-    B = exp(-A / SAMPLE_BUFFER::sample_rate);
+    A = 2.0 * M_PI * cutOffFreq / samples_per_second();
+    B = exp(-A / samples_per_second());
     break;
   }
 }
@@ -292,6 +404,9 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_LOWPASS_SIMPLE::get_parameter(int para
 
 void EFFECT_LOWPASS_SIMPLE::init(SAMPLE_BUFFER *insample) {
   i.init(insample);
+
+  set_channels(insample->number_of_channels());
+  set_samples_per_second(insample->sample_rate());
 
   outhist.resize(insample->number_of_channels());
   tempin.resize(insample->number_of_channels());
@@ -332,12 +447,12 @@ void EFFECT_RESONANT_BANDPASS::set_parameter(int param, DYNAMIC_PARAMETERS::para
     else width = center / 2.0;
     break;
   }
-  //  R = 1.0 - M_PI * width / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate;
-  //  R = 1.0 - ((width / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate) / 2.0);
-  R = 1.0 - M_PI * (width / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate);
+  //  R = 1.0 - M_PI * width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second();
+  //  R = 1.0 - ((width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second()) / 2.0);
+  R = 1.0 - M_PI * (width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
   c = R * R;
   pole_angle = (((2.0 * R) / (1.0 + c)) * cos((center / 
-					       (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate * 2.0 * M_PI)));
+					       (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * 2.0 * M_PI)));
   pole_angle = acos(pole_angle);
   a = (1.0 - c) * sin(pole_angle);
   b = 2.0 * R * cos(pole_angle);
@@ -355,6 +470,9 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_RESONANT_BANDPASS::get_parameter(int p
 
 void EFFECT_RESONANT_BANDPASS::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
+
+  set_channels(insample->number_of_channels());
+  set_samples_per_second(insample->sample_rate());
 
   outhist1.resize(insample->number_of_channels());
   outhist2.resize(insample->number_of_channels());
@@ -460,7 +578,7 @@ void EFFECT_RESONANT_LOWPASS::refresh_values(void) {
 }
 
 void EFFECT_RESONANT_LOWPASS::szxform(int section) {
-  wp = 2.0 * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate * tan(pi * cutoff / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate);
+  wp = 2.0 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * tan(pi * cutoff / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second());
 
   // ---
   // a0 and b0 are presumed to be 1, so...
@@ -473,12 +591,12 @@ void EFFECT_RESONANT_LOWPASS::szxform(int section) {
 
   // ---
   // alpha (Numerator in s-domain)
-  ad = 4.0 * ProtoCoef[section].a2 * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate + 2.0 * ProtoCoef[section].a1
-    * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate + ProtoCoef[section].a0;
+  ad = 4.0 * ProtoCoef[section].a2 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + 2.0 * ProtoCoef[section].a1
+    * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + ProtoCoef[section].a0;
   // ---
   // beta (Denominator in s-domain)
-  bd = 4.0 * ProtoCoef[section].b2 * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate + 2.0 * ProtoCoef[section].b1
-    * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate + ProtoCoef[section].b0;
+  bd = 4.0 * ProtoCoef[section].b2 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + 2.0 * ProtoCoef[section].b1
+    * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + ProtoCoef[section].b0;
 
   // ---
   /* update gain constant for this section */
@@ -487,28 +605,31 @@ void EFFECT_RESONANT_LOWPASS::szxform(int section) {
   // ---
   // Denominator
   Coef[section].A = (2.0 * ProtoCoef[section].b0 - 8.0 * ProtoCoef[section].b2
-		     * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate) / bd;
+		     * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second()) / bd;
   // ---
   // beta1
-  Coef[section].B = (4.0 * ProtoCoef[section].b2 * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate - 2.0 * ProtoCoef[section].b1
-		     * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate + ProtoCoef[section].b0) / bd;
+  Coef[section].B = (4.0 * ProtoCoef[section].b2 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() - 2.0 * ProtoCoef[section].b1
+		     * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + ProtoCoef[section].b0) / bd;
   // ---
   // beta2
 
   // ---
   // Nominator
   Coef[section].C = (2.0 * ProtoCoef[section].a0 - 8.0 * ProtoCoef[section].a2
-		     * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate) / ad;
+		     * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second()) / ad;
   // ---
   // alpha1
-  Coef[section].D = (4.0 * ProtoCoef[section].a2 * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate - 2.0
-		     * ProtoCoef[section].a1 * (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate + ProtoCoef[section].a0) / ad;
+  Coef[section].D = (4.0 * ProtoCoef[section].a2 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() - 2.0
+		     * ProtoCoef[section].a1 * (DYNAMIC_PARAMETERS::parameter_type)samples_per_second() + ProtoCoef[section].a0) / ad;
   // ---
   // alpha2
 }
 
 void EFFECT_RESONANT_LOWPASS::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
+
+  set_channels(insample->number_of_channels());
+  set_samples_per_second(insample->sample_rate());
 
   outhist0.resize(insample->number_of_channels());
   outhist1.resize(insample->number_of_channels());
@@ -611,8 +732,8 @@ void EFFECT_RESONATOR::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_ty
     else width = center / 2;
     break;
   }
-  conb[1] = exp(-(2 * M_PI) * (width / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate));
-  conb[0] = (-4.0 * conb[1]) / (1.0 + conb[1]) * cos(2 * M_PI * (center / (DYNAMIC_PARAMETERS::parameter_type)SAMPLE_BUFFER::sample_rate));
+  conb[1] = exp(-(2 * M_PI) * (width / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second()));
+  conb[0] = (-4.0 * conb[1]) / (1.0 + conb[1]) * cos(2 * M_PI * (center / (DYNAMIC_PARAMETERS::parameter_type)samples_per_second()));
   cona[0] = (1.0 - conb[1]) * sqrt(1.0 - (conb[0] * conb[0]) / (4.0 * conb[1]));
 }
 
@@ -628,6 +749,9 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_RESONATOR::get_parameter(int param) co
 
 void EFFECT_RESONATOR::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
+
+  set_channels(insample->number_of_channels());
+  set_samples_per_second(insample->sample_rate());
 
   saout0.resize(insample->number_of_channels());
   saout1.resize(insample->number_of_channels());

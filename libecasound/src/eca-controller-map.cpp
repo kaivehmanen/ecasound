@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainop-map: Dynamic register for chain operators
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,11 +29,11 @@
 #include "linear-envelope.h"
 #include "two-stage-linear-envelope.h"
 
-map<string, DYNAMIC_OBJECT*> ECA_CONTROLLER_MAP::object_map;
+map<string, GENERIC_CONTROLLER*> ECA_CONTROLLER_MAP::object_map;
 map<string, string> ECA_CONTROLLER_MAP::object_prefix_map;
 
 void ECA_CONTROLLER_MAP::register_object(const string& id_string,
-				      DYNAMIC_OBJECT* object) {
+					 GENERIC_CONTROLLER* object) {
   object->map_parameters();
   object_map[id_string] = object;
   object_prefix_map[object->name()] = id_string;

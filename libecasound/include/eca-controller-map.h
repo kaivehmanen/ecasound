@@ -4,7 +4,7 @@
 #include <string>
 #include <map>
 
-#include "ctrl-source.h"
+#include "generic-controller.h"
 
 /**
  * Dynamic register for controller sources
@@ -18,7 +18,7 @@ class ECA_CONTROLLER_MAP {
   /**
    * 'id-string' - 'object pointer' map
    */
-  static map<string, DYNAMIC_OBJECT*> object_map;
+  static map<string, GENERIC_CONTROLLER*> object_map;
 
   /**
    * 'object-name' - 'prefix-string' map
@@ -28,7 +28,7 @@ class ECA_CONTROLLER_MAP {
   /**
    * Register a new controller
    */
-  static void register_object(const string& id_string, DYNAMIC_OBJECT* object);
+  static void register_object(const string& id_string, GENERIC_CONTROLLER* object);
 
   /**
    * Register default controllers

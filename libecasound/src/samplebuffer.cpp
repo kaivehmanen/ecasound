@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // samplebuffer.cpp: Routines and classes for handling sample buffers.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 // 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,12 +29,6 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-long int SAMPLE_BUFFER::sample_rate = SAMPLE_SPECS::sample_rate_default;
-
-void SAMPLE_BUFFER::set_sample_rate(long int srate) {
-  SAMPLE_BUFFER::sample_rate = srate;
-}
-
 SAMPLE_SPECS::sample_type SAMPLE_BUFFER::max_value(int channel) {
   return(*max_element(buffer[channel].begin(), buffer[channel].end()));
 }
@@ -55,7 +49,7 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
   // --------
 
   if (ch != channel_count_rep) number_of_channels(ch);
-  if (srate != SAMPLE_BUFFER::sample_rate) resample_to(srate);
+  if (srate != sample_rate_rep) resample_to(srate);
 
   assert(ch == channel_count_rep);
 
@@ -377,7 +371,7 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
       }
     }
   }
-  if (srate != SAMPLE_BUFFER::sample_rate) resample_from(srate);
+  if (srate != sample_rate_rep) resample_from(srate);
 }
 
 void SAMPLE_BUFFER::make_silent(void) {
@@ -552,18 +546,18 @@ SAMPLE_SPECS::sample_type SAMPLE_BUFFER::average_RMS_volume(int channel,
   return(temp_avg);
 }
 
-void SAMPLE_BUFFER::resample_from(unsigned int long from_srate) {
-  resample_nofilter(from_srate, SAMPLE_BUFFER::sample_rate);
+void SAMPLE_BUFFER::resample_from(long int from_srate) {
+  resample_nofilter(from_srate, sample_rate_rep);
 }
 
-void SAMPLE_BUFFER::resample_to(unsigned int long to_srate) {
-  resample_nofilter(SAMPLE_BUFFER::sample_rate, to_srate);
+void SAMPLE_BUFFER::resample_to(long int to_srate) {
+  resample_nofilter(sample_rate_rep, to_srate);
 }
 
-void SAMPLE_BUFFER::resample_nofilter(unsigned int long from, 
-				      unsigned int long to) {
+void SAMPLE_BUFFER::resample_nofilter(long int from, 
+				      long int to) {
   double step = (double)to / from;
-  buffersize_rep *= static_cast<long int>(step);
+  buffersize_rep = static_cast<long int>(step * buffersize_rep);
 
   for(int c = 0; c < channel_count_rep; c++) {
     old_buffer = buffer[c];
@@ -609,13 +603,12 @@ void SAMPLE_BUFFER::resample_nofilter(unsigned int long from,
   }
 }
 
-void SAMPLE_BUFFER::resample_extfilter(unsigned int long from_srate,
-					unsigned int long to_srate) {}
-void SAMPLE_BUFFER::resample_simplefilter(unsigned int long
-					  from_srate,
-					  unsigned int long to_srate) { }
+void SAMPLE_BUFFER::resample_extfilter(long int from_srate,
+					long int to_srate) {}
+void SAMPLE_BUFFER::resample_simplefilter(long int from_srate,
+					  long int to_srate) { }
 
-void SAMPLE_BUFFER::length_in_samples(int len) {
+void SAMPLE_BUFFER::length_in_samples(long int len) {
   if (buffersize_rep != len) resize(len); 
 }
 
@@ -637,28 +630,23 @@ void SAMPLE_BUFFER::resize(long int buffersize) {
   buffersize_rep = buffersize;
 }
 
-SAMPLE_BUFFER::SAMPLE_BUFFER (long int buffersize, int channels) 
+SAMPLE_BUFFER::SAMPLE_BUFFER (long int buffersize, 
+			      int channels, 
+			      long int srate) 
   : channel_count_rep(channels),
     buffersize_rep(buffersize),
-    buffer(channels, vector<SAMPLE_SPECS::sample_type> (buffersize,
-							sample_type(0.0))) {
+    sample_rate_rep(srate),
+    buffer(channels, 
+	   vector<SAMPLE_SPECS::sample_type> (buffersize, sample_type(0.0))) {
 
-  MESSAGE_ITEM mitem;
-  mitem << "Created a sample_buffer with " << buffer.size() << " channels";
-  mitem << " that are " << buffersize << " samples long.";
-  ecadebug->msg(ECA_DEBUG::system_objects, mitem.to_string());
+  ecadebug->msg(ECA_DEBUG::system_objects, 
+		"(samplebuffer) Buffer created, channels: " +
+		kvu_numtostr(buffer.size()) + ", length-samples: " +
+		kvu_numtostr(buffersize_rep) + ", sample rate: " +
+		kvu_numtostr(sample_rate_rep) + ".");
 }
 
-SAMPLE_BUFFER::SAMPLE_BUFFER (void) 
-  : channel_count_rep(0), 
-    buffersize_rep(0),
-    buffer(0, vector<SAMPLE_SPECS::sample_type> (0)) {
-  ecadebug->msg(ECA_DEBUG::system_objects, "Created a empty sample_buffer.");
-}
-
-SAMPLE_BUFFER::~SAMPLE_BUFFER (void) {
-  buffer.clear();
-}
+SAMPLE_BUFFER::~SAMPLE_BUFFER (void) { }
 
 SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x) {
   // ---
@@ -671,24 +659,24 @@ SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x) {
     buffer = x.buffer;
     buffersize_rep = x.buffersize_rep;
     channel_count_rep = x.channel_count_rep;
+    sample_rate_rep = x.sample_rate_rep;
   }
   return *this;
 }
 
-SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x) throw(ECA_ERROR*)
+SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
   : channel_count_rep(x.channel_count_rep),
     buffersize_rep(x.buffersize_rep),
+    sample_rate_rep(x.sample_rate_rep),
     buffer(x.buffer)
 {
   // ---
   // For better performance, doesn't copy IO-buffers.
   // ---
 
-  if (x.number_of_channels() == 0)
-    throw(new ECA_ERROR("SAMPLEBUFFER", "Tried to construct an empty buffer."));
-
-  MESSAGE_ITEM mitem;
-  mitem << "Created a sample_buffer with " << number_of_channels() << " channels";
-  mitem << " that are " << buffer[0].size() << " samples long.";
-  ecadebug->msg(ECA_DEBUG::system_objects, mitem.to_string());
+  ecadebug->msg(ECA_DEBUG::system_objects, 
+		"(samplebuffer) Buffer copy-constructed, channels: " +
+		kvu_numtostr(buffer.size()) + ", length-samples: " +
+		kvu_numtostr(buffersize_rep) + ", sample rate: " +
+		kvu_numtostr(sample_rate_rep) + ".");
 }

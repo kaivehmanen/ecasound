@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 
-#include "definition_by_contract.h"
+#include <kvutils/definition_by_contract.h>
 
 #include "eca-chain.h"
 #include "audioio.h"

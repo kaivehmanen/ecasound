@@ -36,7 +36,9 @@ RAWFILE::RAWFILE(const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& 
   :  AUDIO_IO_FILE(name, mode, fmt) {
   double_buffering_rep = double_buffering;
   fio = 0;
-  format_query();
+
+  open();
+  //  format_query();
 }
 
 RAWFILE::~RAWFILE(void) { close(); }

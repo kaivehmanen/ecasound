@@ -45,7 +45,8 @@ VALUE_QUEUE ecasound_queue;
 
 ECA_PROCESSOR::ECA_PROCESSOR(ECA_SESSION* params) 
   :  eparams(params),
-     mixslot(params->connected_chainsetup->buffersize(), SAMPLE_SPECS::channel_count_default),
+     mixslot(params->connected_chainsetup->buffersize(), 
+	     SAMPLE_SPECS::channel_count_default),
      buffersize_rep(params->connected_chainsetup->buffersize()) {
   init();
 }
@@ -147,7 +148,7 @@ void ECA_PROCESSOR::init_inputs(void) {
   input_chain_count.resize(input_count);
   long int max_input_length = 0;
   for(int adev_sizet = 0; adev_sizet < input_count; adev_sizet++) {
-    (*inputs)[adev_sizet]->buffersize(buffersize_rep, SAMPLE_BUFFER::sample_rate);
+    (*inputs)[adev_sizet]->buffersize(buffersize_rep, csetup->sample_rate());
 
     if ((*inputs)[adev_sizet]->channels() > max_channels)
       max_channels = (*inputs)[adev_sizet]->channels();
@@ -197,7 +198,7 @@ void ECA_PROCESSOR::init_outputs(void) {
   output_chain_count.resize(output_count);
 
   for(int adev_sizet = 0; adev_sizet < output_count; adev_sizet++) {
-    (*outputs)[adev_sizet]->buffersize(buffersize_rep, SAMPLE_BUFFER::sample_rate);
+    (*outputs)[adev_sizet]->buffersize(buffersize_rep, csetup->sample_rate());
 
     if ((*outputs)[adev_sizet]->channels() > max_channels)
       max_channels = (*outputs)[adev_sizet]->channels();
@@ -224,6 +225,7 @@ void ECA_PROCESSOR::init_outputs(void) {
     //  		     kvu_numtostr(output_chain_count[adev_sizet]) + " .\n");
   }
   mixslot.number_of_channels(max_channels);
+  mixslot.sample_rate(csetup->sample_rate());
 }
 
 void ECA_PROCESSOR::init_chains(void) {
@@ -251,7 +253,7 @@ void ECA_PROCESSOR::init_chains(void) {
     chain_conds[n] = cond;
   }
 
-  while(cslots.size() < chains->size()) cslots.push_back(SAMPLE_BUFFER(buffersize_rep, max_channels));
+  while(cslots.size() < chains->size()) cslots.push_back(SAMPLE_BUFFER(buffersize_rep, max_channels, csetup->sample_rate()));
 }
 
 void ECA_PROCESSOR::init_multitrack_mode(void) {
@@ -437,7 +439,7 @@ void ECA_PROCESSOR::exec_simple_passive(void) {
 void ECA_PROCESSOR::set_position(double seconds) {
   conditional_stop();
 
-  csetup->set_position(seconds * SAMPLE_BUFFER::sample_rate);
+  csetup->set_position(seconds * csetup->sample_rate());
 
   for (int adev_sizet = 0; adev_sizet != static_cast<int>(non_realtime_objects.size()); adev_sizet++) {
     non_realtime_objects[adev_sizet]->seek_position_in_seconds(seconds);
@@ -506,7 +508,7 @@ void ECA_PROCESSOR::prehandle_control_position(void) {
     int buffer_remain = csetup->position_in_samples() -
                         csetup->length_in_samples();
     for(int adev_sizet = 0; adev_sizet < input_count; adev_sizet++) {
-      (*inputs)[adev_sizet]->buffersize(buffer_remain, SAMPLE_BUFFER::sample_rate);
+      (*inputs)[adev_sizet]->buffersize(buffer_remain, csetup->sample_rate());
     }
   }
 }
@@ -518,7 +520,7 @@ void ECA_PROCESSOR::posthandle_control_position(void) {
       rewind_to_start_position();
       csetup->set_position(0);
       for(int adev_sizet = 0; adev_sizet < input_count; adev_sizet++) {
-	(*inputs)[adev_sizet]->buffersize(buffersize_rep, SAMPLE_BUFFER::sample_rate);
+	(*inputs)[adev_sizet]->buffersize(buffersize_rep, csetup->sample_rate());
       }
     }
     else
@@ -850,7 +852,7 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
       ecadebug->msg("(eca-main) Using realtime-scheduling (SCHED_FIFO/10, mthread).");
   }
 
-  vector<SAMPLE_BUFFER> inslots (input_count, SAMPLE_BUFFER(buffersize_rep, max_channels));
+  vector<SAMPLE_BUFFER> inslots (input_count, SAMPLE_BUFFER(buffersize_rep, max_channels, csetup->sample_rate()));
 
   while (true) {
     interactive_loop();
@@ -909,7 +911,8 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
 
   vector<SAMPLE_BUFFER> inslots (input_count,
 				 SAMPLE_BUFFER(buffersize_rep,
-					       max_channels));
+					       max_channels, 
+					       csetup->sample_rate()));
 
   while (!finished()) {
     input_not_finished = false;

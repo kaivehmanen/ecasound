@@ -157,7 +157,7 @@ void ADVANCED_COMPRESSOR::set_parameter(int param, DYNAMIC_PARAMETERS::parameter
       releasetime = value;
       if (releasetime == 0) releasetime = 0.01;
       rgainfilter = 1.0 / (releasetime * 44100.0);
-      //      rgainfilter = 1.0 / (releasetime * SAMPLE_BUFFER::sample_rate);
+      //      rgainfilter = 1.0 / (releasetime * samples_per_second());
       break;
     }
 
@@ -224,6 +224,9 @@ double ADVANCED_COMPRESSOR::hardlimit(double value, double knee, double limit)
 
 void ADVANCED_COMPRESSOR::init(SAMPLE_BUFFER* insample) {
   iter.init(insample);
+
+  set_channels(insample->number_of_channels());
+  set_samples_per_second(insample->sample_rate());
 }
 
 void ADVANCED_COMPRESSOR::process(void) {

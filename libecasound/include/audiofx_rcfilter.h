@@ -8,9 +8,9 @@
 #include "samplebuffer_iterators.h"
 
 /**
- * Simulation of an 2nd-order 24dB active RC-lowpass
+ * Simulation of an 3rd-order 36dB active RC-lowpass
  *
- * 5th of january 2000 by Stefan Fendt
+ * 5th of February 2000 by Stefan Fendt
  * 
  * This is a quite realistic simulation of an analouge 
  * RC-lowpass as used in many old synthesisers. You can
@@ -28,7 +28,7 @@ class EFFECT_RC_LOWPASS_FILTER : public EFFECT_FILTER {
 
   SAMPLE_ITERATOR_CHANNELS i;
   SAMPLE_SPECS::sample_type output_temp;
-  vector<SAMPLE_SPECS::sample_type> lp1_old, lp2_old, feedback;
+  vector<SAMPLE_SPECS::sample_type> lp1_old, lp2_old, lp3_old, hp1_old, feedback;
     
   parameter_type cutoff_rep;
   parameter_type resonance_rep;

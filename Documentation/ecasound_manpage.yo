@@ -27,7 +27,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (14.02.2000)
+       (24.02.2000)
        ()
        (Multimedia software)
 
@@ -292,13 +292,13 @@ Amplifies signal by amplify-% percent. If number of consecutive
 clipped samples (resulting sample has the largest amplitude
 possible) reaches 'max-clipped-samples', a warning will be issued.
  
-dit(-ec:rate,threshold)
+dit(-ec:rate,threshold-%)
 Compressor (a simple one). 'rate' is the compression rate in
 decibels ('rate'dB change in input signal causes 1dB change 
 in output). 'threshold' varies between 0.0 (silence) and
 1.0 (max amplitude).
 
-dit(-eca:peak-level-%, release_time, fastrate, rate)
+dit(-eca:peak-level-%, release-time-sec, fast-crate, crate)
 A more advanced compressor (original algorithm by John S. Dyson). 
 If you give a value of 0 to any parameter, the default is used.
 'peak-level-%' essentially specifies how hard the peak limiter
@@ -316,7 +316,7 @@ The default is 1.0, and holds the volume very constant without many nasty
 side effects.  However the dynamics in music are severely restricted,
 and a value of 0.5 might keep the music more intact.
 
-dit(-enm:threshold_level_%,th_time,attack,hold,release)
+dit(-enm:threshold-level-%,pre-hold-time-msec,attack-time-msec,post-hold-time-msec,release-time-msec)
 Noise gate. Supports multichannel processing (each channel 
 processed separately). When signal amplitude falls below
 'threshold_level_%' percent (100% means maximum amplitude), gate 
@@ -354,33 +354,42 @@ is the normal level). With high resonance values it often is useful
 to reduce the gain value.
 
 dit(-ef4:cutoff, resonance)
-Resonant lowpass filter (2nd-order, 24dB). Simulates 
+Resonant lowpass filter (3rd-order, 36dB). Simulates 
 an analog active RC-lowpass design. Cutoff is a value between [0,1],
 while resonance is between [0,infinity). 
 
-dit(-efb:center_freq,width)
+dit(-efa:delay-samples,feedback-%)
+Allpass filter. Passes all frequencies with no change in amplitude.
+However, at the same time it imposes a frequency-dependent 
+phase-shift.
+
+dit(-efc:delay-samples,radius)
+Comb filter. Allows the spikes of the comb to pass through.
+Value of 'radius' should be between [0, 1.0).
+
+dit(-efb:center-freq,width)
 Bandpass filter. 'center_freq' is the center frequency. Width
 is specified in Hz. 
 
-dit(-efh:cutoff_freq)
+dit(-efh:cutoff-freq)
 Highpass filter. Only frequencies above 'cutoff_freq' are passed
 through.
 
-dit(-efi:delay_in_samples,radius)
-Inverse comb filter. Allows the spikes of the comb to pass through.
-The comb consists of 'delay_in_samples/2' spikes. The maximum
-value for 'radius' is 1.0. The closer it is to the maximum value,
-the deeper the dips of the comb.
+dit(-efi:delay-samples,radius)
+Inverse comb filter. Filters out the spikes of the comb. There
+are 'delay_in_samples-2' spikes. Value of 'radius' should be 
+between [0, 1.0). The closer it is to the maximum value,
+the deeper the dips of the comb are.
 
-dit(-efl:cutoff_freq)
+dit(-efl:cutoff-freq)
 Lowpass filter. Only frequencies below 'cutoff_freq' are passed
 through.
 
-dit(-efr:center_freq,width)
+dit(-efr:center-freq,width)
 Bandreject filter. 'center_freq' is the center frequency. Width
 is specified in Hz. 
 
-dit(-efs:center_freq,width)
+dit(-efs:center-freq,width)
 Resonator. 'center_freq' is the center frequency. Width is specified
 in Hz. Basicly just another resonating bandpass filter.
 
@@ -389,11 +398,11 @@ enddit()
 em(CHANNEL MIXING / ROUTING)
 startdit()
 
-dit(-erc:from_channel, to_channel)
+dit(-erc:from-channel, to-channel)
 Copy channel 'from_channel' to 'to_channel'. If 'to_channel' 
 doesn't exist, it is created. Channel indexing is started from 0.
 
-dit(-erm:to_channel)
+dit(-erm:to-channel)
 Mix all channels to channel 'to_channel'.  If 'to_channel' 
 doesn't exist, it is created. Channel indexing is started from 0.
 Channel indexing is started from 0.
@@ -403,7 +412,7 @@ enddit()
 em(TIME-BASED EFFECTS)
 startdit()
 
-dit(-etd:delay_time,surround-mode,number_of_delays,mix-%)
+dit(-etd:delay-time-msec,surround-mode,number-of-delays,mix-%)
 Delay effect. 'delay time' is the delay time in milliseconds.
 'surround-mode' is a integer with following meanings: 0 = normal, 
 1 = surround, 2 = stereo-spread. 'number_of_delays' should be 
@@ -411,13 +420,21 @@ obvious. Beware that large number of delays and huge delay times
 need a lot of CPU power. 'mix-%' determines how much effected (wet)
 signal is mixed to the original.
 
+dit(-etl:delay-time-msec,variance-time-samples,feedback-%,lfo-freq)
+Flanger.
+
+dit(-etm:delay-time-msec,number-of-delays,mix-%)
+Multitap delay. 'delay time' is the delay time in milliseconds.
+'number_of_delays' should be obvious. 'mix-%' determines how much 
+effected (wet) signal is mixed to the original.
+
 dit(-etr:delay-time,surround-mode,feedback-%)
 Reverb effect. 'delay time' is the delay time in milliseconds.
 If 'surround-mode' is 'surround', reverbed signal moves around the
 stereo image. 'feedback-%' determines how much effected (wet)
 signal is fed back to the reverb.
 
-dit(-etf:delay_time)
+dit(-etf:delay-time-msec)
 Fake-stereo effect. The input signal is summed to mono. The
 original signal goes to the left channels while a delayd 
 version (with delay of 'delay time' milliseconds) is goes to
@@ -434,7 +451,7 @@ dit(-gc:start-time,len)
 Time crop gate. Initially gate is closed. After 'start-time' seconds
 has elapse, gate opens and remains open for 'len' seconds.
 
-dit(-ge:othreshold%, cthold%,volume_mode)
+dit(-ge:open-threshold-%, close-thold-%,volume-mode)
 Threshold gate. Initially gate is closed. It is opened when volume 
 goes over 'othreshold' percent. After this, if volume drops below 
 'cthold' percent, gate is closed and won't be opened again. 
@@ -455,27 +472,27 @@ the first parameter, '2' the second and so on. 'start_value'
 and 'end_value' set the value range. You really should see
 em(examples.html) for some more info. 
 
-dit(-kos:fx_param,start_value,end_value,freq,i_phase)
+dit(-kos:fx-param,start-value,end-value,freq,i-phase)
 Sine oscillator with frequency of 'freq' Hz and initial phase
 of 'i_phase' times pi.
 
-dit(-kf:fx_param,start_value,end_value,freq,genosc_number)
+dit(-kf:fx-param,start-value,end-value,freq,genosc-number)
 Generic oscillator. 'genosc_number' is the number of the 
 oscillator preset to be loaded. The location for the preset
 file is taken from ./ecasoundrc (see em(ecasoundrc(5))).
 
-dit(-kl:fx_param,start_value,end_value,time_in_seconds)
+dit(-kl:fx-param,start-value,end-value,time-seconds)
 Linear envelope that starts from 'start_value' and linearly 
 changes to 'end_value' during 'time_in_seconds'. Can
 be used for fadeins and fadeouts.
 
-dit(-kl2:fx_param,start_value,end_value,1st_stage_length,2nd_stage_length)
+dit(-kl2:fx-param,start-value,end-value,1st-stage-length-sec,2nd-stage-length-sec)
 Two-stage linear envelope, a more versatile tool for doing fade-ins
 and fade-outs. Stays at 'start_value' for '1st_stage_length' seconds
 and then linearly changes towards 'end_value' during
 '2nd_stage_length' seconds.
 
-dit(-km:fx_param,start_value,end_value,controller,channel)
+dit(-km:fx-param,start-value,end-value,controller,channel)
 MIDI continuous controller (control change messages). 
 Messages on the MIDI-channel 'channel' that are coming from
 controller number 'controller' are used as the controller

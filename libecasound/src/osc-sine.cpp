@@ -43,7 +43,7 @@ void SINE_OSCILLATOR::init(DYNAMIC_PARAMETERS::parameter_type phasestep) {
 
   MESSAGE_ITEM otemp;
   otemp << "(osc-sine) Sine oscillator created; frequency ";
-  otemp.setprecision(1);
+  otemp.setprecision(3);
   otemp << frequency();
   otemp << " and initial phase of "; 
   otemp << phase_offset() << ".";

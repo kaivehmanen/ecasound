@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx.cpp: Generel effect processing routines.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -71,3 +71,38 @@ void EFFECT_DCFIX::process(void) {
   }
 }
 
+void EFFECT_PITCH_SHIFT::set_parameter(int param, DYNAMIC_PARAMETERS::parameter_type value) {
+  switch (param) {
+  case 1: 
+    pmod = value;
+    break;
+  }
+}
+
+DYNAMIC_PARAMETERS::parameter_type EFFECT_PITCH_SHIFT::get_parameter(int param) const { 
+  switch (param) {
+  case 1: 
+    return(pmod);
+  }
+  return(0.0);
+}
+
+void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample) { 
+  sbuf = insample;
+  target_rate = static_cast<long int>(sbuf->sample_rate() * 100.0 / pmod);
+  ecadebug->msg(ECA_DEBUG::user_objects, "(audiofx) resampling from " +
+		                         kvu_numtostr(sbuf->sample_rate()) + 
+		                         " to " + 
+		                         kvu_numtostr(target_rate) + "."); 
+}
+
+void EFFECT_PITCH_SHIFT::process(void) { 
+  sbuf->resample_to(target_rate); 
+}
+
+long int EFFECT_PITCH_SHIFT::output_samples(long int i_samples) {
+  assert(sbuf != 0);
+  return(static_cast<long int>(static_cast<double>(target_rate) /
+			       sbuf->sample_rate() *
+			       i_samples));
+}

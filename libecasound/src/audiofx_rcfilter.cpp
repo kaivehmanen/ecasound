@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
-// audiofx_rcfilter.cpp: Simulation of an 2nd-order 24dB active RC-lowpass
-// Copyright (C) 2000 Stefan Fendt <stefan@lionfish.ping.de>, 
-//                    Kai Vehmanen <kaiv@wakkanet.fi>
+// audiofx_rcfilter.cpp: Simulation of an 3rd-order 36dB active RC-lowpass
+// Copyright (C) 2000 Stefan Fendt <stefan@lionfish.ping.de>,
+//                    Kai Vehmanen <kaiv@wakkanet.fi> (C++ version)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,6 +57,8 @@ void EFFECT_RC_LOWPASS_FILTER::init(SAMPLE_BUFFER *insample) {
 
   lp1_old.resize(insample->number_of_channels(), 0.0015);
   lp2_old.resize(insample->number_of_channels(), -0.00067);
+  lp3_old.resize(insample->number_of_channels(), 0.0);
+  hp1_old.resize(insample->number_of_channels(), 0.0);
   feedback.resize(insample->number_of_channels(), 0.0);
 }
 
@@ -81,28 +83,28 @@ void EFFECT_RC_LOWPASS_FILTER::process(void) {
 
     // --
     // Ok, this is the first step of the filter. We simulate an simple
-    // non-active RC-lowpass in the two lines above ... 
+    // non-active RC-lowpass ... 
 
     lp1_old[i.channel()] = output_temp * cutoff_rep + lp1_old[i.channel()] * (1.0 - cutoff_rep);
+    lp2_old[i.channel()] = lp1_old[i.channel()] * cutoff_rep + lp2_old[i.channel()] * (1.0 - cutoff_rep);
+    lp3_old[i.channel()] = lp2_old[i.channel()] * cutoff_rep + lp3_old[i.channel()] * (1.0 - cutoff_rep);
 
     // --
-    // this is the second step of the filter. We simulate an simple
-    // non-active RC-highpass (inverting the lp-filter) in the three 
-    // lines above ...
+    // A simple non-active highpass
 
-    lp2_old[i.channel()] = lp1_old[i.channel()] * cutoff_rep + lp2_old[i.channel()] * (1.0 - cutoff_rep);
+    hp1_old[i.channel()] = output_temp - lp3_old[i.channel()];
 
     // --
     // Now we add a feedback of this bandpass-filtered signal to the
     // input of the filter again. (Look some lines above for that!)
 
-    feedback[i.channel()] = lp1_old[i.channel()] - lp2_old[i.channel()];
+    feedback[i.channel()] = hp1_old[i.channel()];
 
     // --
     // We catch the out-value of the filter after the second lp-filter
     // this provides 24-db filtering even with moderate resonance.
 
-    *i.current() = lp2_old[i.channel()];
+    *i.current() = lp3_old[i.channel()];
     i.next();
   }
 }

@@ -45,13 +45,12 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
 
   /**
    * Set buffersize. Instead of specifying buffer length in seconds,
-   * we use 'samples' and 'samples_rate' parameters to determinate the 
+   * parameters 'samples' and 'samples_rate' are used to determinate the 
    * exact temporal length. When reading, this means that 'buffersize' of 
-   * sample data is read. When writing, 'buffersize' is the maximum count of 
-   * samples written at a time. If audio object's sampling rate is 
-   * changed, buffersize must also be adjusted.
-   *
-   * Value 0 is allowed for both 'samples' and 'sample_rate' (no change).
+   * sample data is read. When writing, 'buffersize' is only used for 
+   * initializing devices and data structures. Device should be able 
+   * to write all sample data independent from current buffersize value.
+   * If audio object's sampling rate is changed, buffersize must also be adjusted.
    */
   virtual void buffersize(long int samples, long int sample_rate) = 0;
 
@@ -70,7 +69,7 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
    * @see read_samples
    *
    * require:
-   *  io_mode() == si_read
+   *  io_mode() == si_read || io_mode() == si_readwrite
    *  readable() == true
    *  sbuf != 0
    */
@@ -79,7 +78,7 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
   /**
    * Write all data from sample buffer pointer by 'sbuf'.
    *
-   * write samples
+   * @see write samples
    *
    * require:
    *  io_mode() == si_write || io_mode() == si_readwrite
@@ -129,12 +128,12 @@ class AUDIO_IO : public ECA_AUDIO_POSITION {
   // Status and info
 
   /**
-   * Optional status string.
+   * Optional status string
    */
   virtual string status(void) const;
 
   /**
-   * Returns info about the I/O mode of this device. 
+   * Returns info about the I/O mode of this device.
    * @ref SIMODE
    */
   inline const SIMODE io_mode(void) const { return(si_mode); }

@@ -18,7 +18,7 @@ class ECA_CHAIN_OPERATOR_MAP {
   /**
    * 'id-string' - 'object pointer' map
    */
-  static map<string, DYNAMIC_OBJECT*> object_map;
+  static map<string, CHAIN_OPERATOR*> object_map;
 
   /**
    * 'object-name' - 'prefix-string' map
@@ -28,7 +28,7 @@ class ECA_CHAIN_OPERATOR_MAP {
   /**
    * Register a new effect.
    */
-  static void register_object(const string& id_string, DYNAMIC_OBJECT* object);
+  static void register_object(const string& id_string, CHAIN_OPERATOR* object);
 
   /**
    * Register default chain operators

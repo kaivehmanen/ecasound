@@ -43,11 +43,10 @@ void QEChainopInput::init_layout(void) {
 
   QGroupBox* copgroup = new QVGroupBox(this, "copgroup");
   QListBox* coplist = new QListBox(copgroup, "coplist");
-  QObject::connect(coplist, SIGNAL(highlighted(int)), this, SLOT(update_chainop(int)));
 
   int max_params = 0;
   ECA_CHAIN_OPERATOR_MAP::register_default_objects();
-  map<string, DYNAMIC_OBJECT*>::const_iterator p = ECA_CHAIN_OPERATOR_MAP::object_map.begin();
+  map<string, CHAIN_OPERATOR*>::const_iterator p = ECA_CHAIN_OPERATOR_MAP::object_map.begin();
   while(p != ECA_CHAIN_OPERATOR_MAP::object_map.end()) {
     coplist->insertItem(p->second->name().c_str());
     if (p->second->number_of_params() > max_params) max_params = p->second->number_of_params();
@@ -77,6 +76,9 @@ void QEChainopInput::init_layout(void) {
     inputlist[n] = new QLineEdit(igrid);
   }
   top->addWidget(paramgroup);
+  cerr << "\na";
+  QObject::connect(coplist, SIGNAL(highlighted(int)), this, SLOT(update_chainop(int)));
+  cerr << "\nb";
 }
 
 CHAIN_OPERATOR* QEChainopInput::clone_result(void) {
@@ -92,30 +94,30 @@ void QEChainopInput::set_parameters(void) {
 }
 
 void QEChainopInput::update_chainop(int index) {
-  DYNAMIC_OBJECT* dobj = 0;
+  chainop_rep = 0;
 
-  map<string, DYNAMIC_OBJECT*>::const_iterator p = ECA_CHAIN_OPERATOR_MAP::object_map.begin();
+  map<string, CHAIN_OPERATOR*>::const_iterator p = ECA_CHAIN_OPERATOR_MAP::object_map.begin();
   for(int n = 0; n < static_cast<int>(ECA_CHAIN_OPERATOR_MAP::object_map.size()); n++) {
     assert(p != ECA_CHAIN_OPERATOR_MAP::object_map.end());
     if (n == index) {
-      dobj = p->second;
-      chainop_rep = reinterpret_cast<CHAIN_OPERATOR*>(dobj);
+      chainop_rep = p->second;
       selected_index = n;
     }   
     ++p;
   }
-  if (dobj == 0) return;
+  if (chainop_rep != 0) {
 
-  cop_desc->setText(dobj->name().c_str());
+    cop_desc->setText(chainop_rep->name().c_str());
 
-  for(int n = 0; n < dobj->number_of_params(); n++) {
-    if (n >= static_cast<int>(paramlist.size())) break;
-    paramlist[n]->setText(QString(QString::number(n + 1) + 
-			  QString(". ") + 
-			  QString(dobj->get_parameter_name(n + 1).c_str())).leftJustify(12));
-  }
+    for(int n = 0; n < chainop_rep->number_of_params(); n++) {
+      if (n >= static_cast<int>(paramlist.size())) break;
+      paramlist[n]->setText(QString(QString::number(n + 1) + 
+				    QString(". ") + 
+				    QString(chainop_rep->get_parameter_name(n + 1).c_str())).leftJustify(12));
+    }
 
-  for(int n = dobj->number_of_params(); n < static_cast<int>(paramlist.size()); n++) {
-    paramlist[n]->setText(QString(" - ").leftJustify(12));
+    for(int n = chainop_rep->number_of_params(); n < static_cast<int>(paramlist.size()); n++) {
+      paramlist[n]->setText(QString(" - ").leftJustify(12));
+    }
   }
 }

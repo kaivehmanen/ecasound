@@ -41,11 +41,13 @@ AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name,
 					  const ECA_AUDIO_FORMAT& fmt) 
   :  AUDIO_IO_FILE(name, mode, fmt) {
 
-  // --
-  // Initialize attributes.
-  // --
-  format_query();
   finished_rep = false;
+
+  try { 
+    open();
+  }
+  catch(ECA_ERROR*) { }
+  //  format_query();
 }
 
 void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR*) {

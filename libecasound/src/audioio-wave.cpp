@@ -33,12 +33,18 @@
 #include "eca-debug.h"
 
 WAVEFILE::WAVEFILE (const string& name, const SIMODE mode, const
-		    ECA_AUDIO_FORMAT& fmt, bool double_buffering) 
+		    ECA_AUDIO_FORMAT& fmt, bool double_buffering)
   :  AUDIO_IO_FILE(name, mode, fmt)
 {
   double_buffering_rep = double_buffering;
   fio = 0;
-  format_query();
+
+  try { 
+    open();
+  }
+  catch(ECA_ERROR*) { }
+ 
+  //  format_query();
 }
 
 WAVEFILE::~WAVEFILE(void) {

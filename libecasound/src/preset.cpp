@@ -131,6 +131,7 @@ void PRESET::init(SAMPLE_BUFFER *insample) {
     assert(q - 1 < static_cast<int>(buffers.size()));
     buffers[q - 1]->length_in_samples(first_buffer->length_in_samples());
     buffers[q - 1]->number_of_channels(first_buffer->number_of_channels());
+    buffers[q - 1]->sample_rate(first_buffer->sample_rate());
     chains[q]->init(buffers[q - 1], first_buffer->number_of_channels(), first_buffer->number_of_channels());
   }
 }

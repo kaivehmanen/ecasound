@@ -77,7 +77,7 @@ qt_libraries = /usr/lib/qt/lib
 prefix = /usr/local
 mandir = $(prefix)/man
 PACKAGE = ecawave
-VERSION = 0.1.0r1   
+VERSION = 0.2.0d2   
 # ---------------------------------------------------------------------
 # Files going into distribution:
 DISTFILES = Makefile.am 		Makefile.in 		ecawave.1 	    	ecawave_manpage.man 		ecawave_manpage.html 		ecawave_manpage.yo 	    	users_guide.yo 	    	users_guide.html
@@ -213,7 +213,7 @@ kdoc:
 	 -d ../Documentation/source-tree/ \
 	 -L ../Documentation/ *.h -lqt -llibecasound -llibkvutils
 	cd ../Documentation/source-tree ; \
-	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/local/qt/doc/
+	 qt2kdoc -u "http://www.troll.no/qt/" -o . /usr/local/qt/html/
 
 # ---------------------------------------------------------------------
 # Clean targets

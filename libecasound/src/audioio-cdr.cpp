@@ -38,8 +38,12 @@ CDRFILE::CDRFILE(const string& name, const SIMODE mode, const ECA_AUDIO_FORMAT& 
   set_channels(2);
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_be);
   set_samples_per_second(44100);
-  
-  format_query();
+
+  try { 
+    open();
+  }
+  catch(ECA_ERROR*) { }
+  //  format_query();
 }
 
 CDRFILE::~CDRFILE(void) {
@@ -63,6 +67,11 @@ void CDRFILE::format_query(void) {
 }
 
 void CDRFILE::open(void) throw(ECA_ERROR*) { 
+  // --------
+  // require:
+  assert(!is_open());
+  // --------
+
   switch(io_mode()) {
   case si_read:
     {

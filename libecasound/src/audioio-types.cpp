@@ -113,8 +113,7 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   // --------
   // require:
   assert(iobuf_uchar != 0);
-  assert(static_cast<int>(iobuf_size) >= buffersize_rep * frame_size() ||
-	 samples_per_second() != SAMPLE_BUFFER::sample_rate);
+  assert(static_cast<long int>(iobuf_size) >= buffersize_rep * frame_size());
   // --------
   sbuf->copy_from_buffer(iobuf_uchar,
 			 sample_format(),

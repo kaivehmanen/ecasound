@@ -163,10 +163,9 @@ EFFECT_COMPRESS::EFFECT_COMPRESS (const EFFECT_COMPRESS& x) {
   crate = x.crate;
   threshold = x.threshold;
   delta = x.delta;
+  ratio = x.ratio;
   first_time = x.first_time;
 
-  s = x.s;
-  temp = x.temp;
   lastin = x.lastin;
   lastout = x.lastout;
 }
@@ -174,10 +173,10 @@ EFFECT_COMPRESS::EFFECT_COMPRESS (const EFFECT_COMPRESS& x) {
 void EFFECT_COMPRESS::set_parameter(int param, parameter_type value) {
   switch (param) {
   case 1: 
-    crate = pow(2.0, value / 3.0);
+    crate = pow(2.0, value / 6.0);
     break;
   case 2: 
-    threshold = value;
+    threshold = value / 100.0;
     break;
   }
 }
@@ -185,18 +184,19 @@ void EFFECT_COMPRESS::set_parameter(int param, parameter_type value) {
 DYNAMIC_PARAMETERS::parameter_type EFFECT_COMPRESS::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return((log (crate)) / (log (2)) * 3.0);
+    return((log (crate)) / (log (2)) * 6.0);
   case 2: 
-    return(threshold);
+    return(threshold * 100.0);
   }
   return(0.0);
 }
 
 void EFFECT_COMPRESS::init(SAMPLE_BUFFER *insample) { 
   i.init(insample);
-  
-  s.resize(insample->number_of_channels());
-  temp.resize(insample->number_of_channels());
+
+  set_channels(insample->number_of_channels());
+  set_samples_per_second(insample->sample_rate());
+
   lastin.resize(insample->number_of_channels());
   lastout.resize(insample->number_of_channels());
 } 
@@ -209,25 +209,23 @@ void EFFECT_COMPRESS::process(void) {
       lastin[i.channel()] = lastout[i.channel()] = *i.current();
     }
     else {
-      delta = *i.current() / lastin[i.channel()];
-      
       if (fabs(*i.current()) > threshold) {
-	if (delta > 1.0) {
-	  delta = (delta - 1.0) / crate;
-	  delta += 1.0;
-	}
-	new_value = lastout[i.channel()] * delta;
+	delta = *i.current() - lastin[i.channel()];
+	delta /= crate;
+	new_value = lastin[i.channel()] + delta;
+	ratio = new_value / lastin[i.channel()];
+	new_value = lastout[i.channel()] * ratio;
+
+	if (new_value > SAMPLE_SPECS::impl_max_value) new_value = SAMPLE_SPECS::impl_max_value;
+	else if (new_value < SAMPLE_SPECS::impl_min_value) new_value = SAMPLE_SPECS::impl_min_value;
+
+	lastin[i.channel()] = *i.current();
+	*i.current() = lastout[i.channel()] = new_value;
       }
-      else
-	new_value = lastin[i.channel()] * delta;
-      
-      if (new_value > SAMPLE_SPECS::impl_max_value) new_value = SAMPLE_SPECS::impl_max_value;
-      else if (new_value < SAMPLE_SPECS::impl_min_value) new_value = SAMPLE_SPECS::impl_min_value;
-      temp[i.channel()] = new_value;
+      else {
+	lastin[i.channel()] = lastout[i.channel()] = *i.current();
+      }
     }
-    lastin[i.channel()] = *i.current();
-    lastout[i.channel()] = temp[i.channel()];
-    *i.current() = temp[i.channel()];
     i.next();
   }
 }
@@ -248,16 +246,16 @@ void EFFECT_NOISEGATE::set_parameter(int param, parameter_type value) {
     th_level = SAMPLE_SPECS::max_amplitude * (value / 100.0);
     break;
   case 2: 
-    th_time = (value * (parameter_type)SAMPLE_BUFFER::sample_rate / 1000.0);
+    th_time = (value * (parameter_type)samples_per_second() / 1000.0);
     break;
   case 3: 
-    atime = (value * (parameter_type)SAMPLE_BUFFER::sample_rate / 1000.0);
+    atime = (value * (parameter_type)samples_per_second() / 1000.0);
     break;
   case 4: 
-    htime = (value * (parameter_type)SAMPLE_BUFFER::sample_rate / 1000.0);
+    htime = (value * (parameter_type)samples_per_second() / 1000.0);
     break;
   case 5: 
-    rtime = (value * (parameter_type)SAMPLE_BUFFER::sample_rate / 1000.0);
+    rtime = (value * (parameter_type)samples_per_second() / 1000.0);
     break;
   }
 }
@@ -267,19 +265,22 @@ DYNAMIC_PARAMETERS::parameter_type EFFECT_NOISEGATE::get_parameter(int param) co
   case 1: 
     return(th_level * 100.0 / (parameter_type)SAMPLE_SPECS::max_amplitude);
   case 2: 
-    return(th_time * 1000.0 / (parameter_type)SAMPLE_BUFFER::sample_rate);
+    return(th_time * 1000.0 / (parameter_type)samples_per_second());
   case 3: 
-    return(atime * 1000.0 / (parameter_type)SAMPLE_BUFFER::sample_rate);
+    return(atime * 1000.0 / (parameter_type)samples_per_second());
   case 4: 
-    return(htime * 1000.0 / (parameter_type)SAMPLE_BUFFER::sample_rate);
+    return(htime * 1000.0 / (parameter_type)samples_per_second());
   case 5: 
-    return(rtime * 1000.0 / (parameter_type)SAMPLE_BUFFER::sample_rate);
+    return(rtime * 1000.0 / (parameter_type)samples_per_second());
   }
   return(0.0);
 }
 
 void EFFECT_NOISEGATE::init(SAMPLE_BUFFER *insample) {
   i.init(insample);
+
+  set_channels(insample->number_of_channels());
+  set_samples_per_second(insample->sample_rate());
 
   th_time_lask.resize(insample->number_of_channels());
   attack_lask.resize(insample->number_of_channels());

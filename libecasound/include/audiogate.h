@@ -52,7 +52,7 @@ public:
 
   string name(void) const { return("Time crop gate"); }
 
-  string parameter_names(void) const { return("open_at_sec,duration_sec"); }
+  string parameter_names(void) const { return("open-at-sec,duration-sec"); }
 
   void analyze(SAMPLE_BUFFER* insample);
 
@@ -88,7 +88,7 @@ public:
 
   string name(void) const { return("Threshold gate"); }
 
-  string parameter_names(void) const { return("threshold_openlevel_%,threshold_closelevel_%,rms_enabled"); }
+  string parameter_names(void) const { return("threshold-openlevel-%,threshold-closelevel-%,rms-enabled"); }
 
   void analyze(SAMPLE_BUFFER* insample);
 

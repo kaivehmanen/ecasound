@@ -167,7 +167,7 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
   /**
    * Checks whethers chainsetup is enabled (device ready for use).
    */
-  bool is_enabled(void) { return(is_enabled_rep); }
+  bool is_enabled(void) const { return(is_enabled_rep); }
 
   /**
    * Add chain operator to selected chain.

@@ -38,7 +38,7 @@ page]</A></H4></CENTER>
 <hr>
 
 <h1>ecasound</h1>
-<h2>14.02.2000</h2>
+<h2>24.02.2000</h2>
 
 
     
@@ -251,12 +251,12 @@ ranges from 1...n where n is the total number of channels.
 Amplifies signal by amplify-% percent. If number of consecutive
 clipped samples (resulting sample has the largest amplitude
 possible) reaches 'max-clipped-samples', a warning will be issued.
-<p><p></p><dt><strong>-ec:rate,threshold</strong><dd>
+<p><p></p><dt><strong>-ec:rate,threshold-%</strong><dd>
 Compressor (a simple one). 'rate' is the compression rate in
 decibels ('rate'dB change in input signal causes 1dB change 
 in output). 'threshold' varies between 0.0 (silence) and
 1.0 (max amplitude).
-<p><p></p><dt><strong>-eca:peak-level-%, release_time, fastrate, rate</strong><dd>
+<p><p></p><dt><strong>-eca:peak-level-%, release-time-sec, fast-crate, crate</strong><dd>
 A more advanced compressor (original algorithm by John S. Dyson). 
 If you give a value of 0 to any parameter, the default is used.
 'peak-level-%' essentially specifies how hard the peak limiter
@@ -273,7 +273,7 @@ the code: 0.25 is somewhat less than 2:1, and sounds super smooth.
 The default is 1.0, and holds the volume very constant without many nasty
 side effects.  However the dynamics in music are severely restricted,
 and a value of 0.5 might keep the music more intact.
-<p><p></p><dt><strong>-enm:threshold_level_%,th_time,attack,hold,release</strong><dd>
+<p><p></p><dt><strong>-enm:threshold-level-%,pre-hold-time-msec,attack-time-msec,post-hold-time-msec,release-time-msec</strong><dd>
 Noise gate. Supports multichannel processing (each channel 
 processed separately). When signal amplitude falls below
 'threshold_level_%' percent (100% means maximum amplitude), gate 
@@ -305,55 +305,68 @@ resonance are between 1.0 and 2.0, but you can use even bigger values.
 is the normal level). With high resonance values it often is useful 
 to reduce the gain value.
 <p><p></p><dt><strong>-ef4:cutoff, resonance</strong><dd>
-Resonant lowpass filter (2nd-order, 24dB). Simulates 
+Resonant lowpass filter (3rd-order, 36dB). Simulates 
 an analog active RC-lowpass design. Cutoff is a value between [0,1],
 while resonance is between [0,infinity). 
-<p><p></p><dt><strong>-efb:center_freq,width</strong><dd>
+<p><p></p><dt><strong>-efa:delay-samples,feedback-%</strong><dd>
+Allpass filter. Passes all frequencies with no change in amplitude.
+However, at the same time it imposes a frequency-dependent 
+phase-shift.
+<p><p></p><dt><strong>-efc:delay-samples,radius</strong><dd>
+Comb filter. Allows the spikes of the comb to pass through.
+Value of 'radius' should be between [0, 1.0).
+<p><p></p><dt><strong>-efb:center-freq,width</strong><dd>
 Bandpass filter. 'center_freq' is the center frequency. Width
 is specified in Hz. 
-<p><p></p><dt><strong>-efh:cutoff_freq</strong><dd>
+<p><p></p><dt><strong>-efh:cutoff-freq</strong><dd>
 Highpass filter. Only frequencies above 'cutoff_freq' are passed
 through.
-<p><p></p><dt><strong>-efi:delay_in_samples,radius</strong><dd>
-Inverse comb filter. Allows the spikes of the comb to pass through.
-The comb consists of 'delay_in_samples/2' spikes. The maximum
-value for 'radius' is 1.0. The closer it is to the maximum value,
-the deeper the dips of the comb.
-<p><p></p><dt><strong>-efl:cutoff_freq</strong><dd>
+<p><p></p><dt><strong>-efi:delay-samples,radius</strong><dd>
+Inverse comb filter. Filters out the spikes of the comb. There
+are 'delay_in_samples-2' spikes. Value of 'radius' should be 
+between [0, 1.0). The closer it is to the maximum value,
+the deeper the dips of the comb are.
+<p><p></p><dt><strong>-efl:cutoff-freq</strong><dd>
 Lowpass filter. Only frequencies below 'cutoff_freq' are passed
 through.
-<p><p></p><dt><strong>-efr:center_freq,width</strong><dd>
+<p><p></p><dt><strong>-efr:center-freq,width</strong><dd>
 Bandreject filter. 'center_freq' is the center frequency. Width
 is specified in Hz. 
-<p><p></p><dt><strong>-efs:center_freq,width</strong><dd>
+<p><p></p><dt><strong>-efs:center-freq,width</strong><dd>
 Resonator. 'center_freq' is the center frequency. Width is specified
 in Hz. Basicly just another resonating bandpass filter.
 <p></dl>
 <p><em>CHANNEL MIXING / ROUTING</em>
 <dl>
-<p><p></p><dt><strong>-erc:from_channel, to_channel</strong><dd>
+<p><p></p><dt><strong>-erc:from-channel, to-channel</strong><dd>
 Copy channel 'from_channel' to 'to_channel'. If 'to_channel' 
 doesn't exist, it is created. Channel indexing is started from 0.
-<p><p></p><dt><strong>-erm:to_channel</strong><dd>
+<p><p></p><dt><strong>-erm:to-channel</strong><dd>
 Mix all channels to channel 'to_channel'.  If 'to_channel' 
 doesn't exist, it is created. Channel indexing is started from 0.
 Channel indexing is started from 0.
 <p></dl>
 <p><em>TIME-BASED EFFECTS</em>
 <dl>
-<p><p></p><dt><strong>-etd:delay_time,surround-mode,number_of_delays,mix-%</strong><dd>
+<p><p></p><dt><strong>-etd:delay-time-msec,surround-mode,number-of-delays,mix-%</strong><dd>
 Delay effect. 'delay time' is the delay time in milliseconds.
 'surround-mode' is a integer with following meanings: 0 = normal, 
 1 = surround, 2 = stereo-spread. 'number_of_delays' should be 
 obvious. Beware that large number of delays and huge delay times 
 need a lot of CPU power. 'mix-%' determines how much effected (wet)
 signal is mixed to the original.
+<p><p></p><dt><strong>-etl:delay-time-msec,feedback-%,lfo-freq</strong><dd>
+Flanger.
+<p><p></p><dt><strong>-etm:delay-time-msec,number-of-delays,mix-%</strong><dd>
+Multitap delay. 'delay time' is the delay time in milliseconds.
+'number_of_delays' should be obvious. 'mix-%' determines how much 
+effected (wet) signal is mixed to the original.
 <p><p></p><dt><strong>-etr:delay-time,surround-mode,feedback-%</strong><dd>
 Reverb effect. 'delay time' is the delay time in milliseconds.
 If 'surround-mode' is 'surround', reverbed signal moves around the
 stereo image. 'feedback-%' determines how much effected (wet)
 signal is fed back to the reverb.
-<p><p></p><dt><strong>-etf:delay_time</strong><dd>
+<p><p></p><dt><strong>-etf:delay-time-msec</strong><dd>
 Fake-stereo effect. The input signal is summed to mono. The
 original signal goes to the left channels while a delayd 
 version (with delay of 'delay time' milliseconds) is goes to
@@ -365,7 +378,7 @@ adds a stereo-feel to mono-signals.
 <p><p></p><dt><strong>-gc:start-time,len</strong><dd>
 Time crop gate. Initially gate is closed. After 'start-time' seconds
 has elapse, gate opens and remains open for 'len' seconds.
-<p><p></p><dt><strong>-ge:othreshold%, cthold%,volume_mode</strong><dd>
+<p><p></p><dt><strong>-ge:open-threshold-%, close-thold-%,volume-mode</strong><dd>
 Threshold gate. Initially gate is closed. It is opened when volume 
 goes over 'othreshold' percent. After this, if volume drops below 
 'cthold' percent, gate is closed and won't be opened again. 
@@ -382,23 +395,23 @@ specifies the parameter to be controlled. Value '1' means
 the first parameter, '2' the second and so on. 'start_value' 
 and 'end_value' set the value range. You really should see
 <em>examples.html</em> for some more info. 
-<p><p></p><dt><strong>-kos:fx_param,start_value,end_value,freq,i_phase</strong><dd>
+<p><p></p><dt><strong>-kos:fx-param,start-value,end-value,freq,i-phase</strong><dd>
 Sine oscillator with frequency of 'freq' Hz and initial phase
 of 'i_phase' times pi.
-<p><p></p><dt><strong>-kf:fx_param,start_value,end_value,freq,genosc_number</strong><dd>
+<p><p></p><dt><strong>-kf:fx-param,start-value,end-value,freq,genosc-number</strong><dd>
 Generic oscillator. 'genosc_number' is the number of the 
 oscillator preset to be loaded. The location for the preset
 file is taken from ./ecasoundrc (see <em>ecasoundrc(5)</em>).
-<p><p></p><dt><strong>-kl:fx_param,start_value,end_value,time_in_seconds</strong><dd>
+<p><p></p><dt><strong>-kl:fx-param,start-value,end-value,time-seconds</strong><dd>
 Linear envelope that starts from 'start_value' and linearly 
 changes to 'end_value' during 'time_in_seconds'. Can
 be used for fadeins and fadeouts.
-<p><p></p><dt><strong>-kl2:fx_param,start_value,end_value,1st_stage_length,2nd_stage_length</strong><dd>
+<p><p></p><dt><strong>-kl2:fx-param,start-value,end-value,1st-stage-length-sec,2nd-stage-length-sec</strong><dd>
 Two-stage linear envelope, a more versatile tool for doing fade-ins
 and fade-outs. Stays at 'start_value' for '1st_stage_length' seconds
 and then linearly changes towards 'end_value' during
 '2nd_stage_length' seconds.
-<p><p></p><dt><strong>-km:fx_param,start_value,end_value,controller,channel</strong><dd>
+<p><p></p><dt><strong>-km:fx-param,start-value,end-value,controller,channel</strong><dd>
 MIDI continuous controller (control change messages). 
 Messages on the MIDI-channel 'channel' that are coming from
 controller number 'controller' are used as the controller

@@ -58,7 +58,7 @@ class EFFECT_AMPLIFY_CLIPCOUNT : public EFFECT_AMPLITUDE {
 
   string name(void) const { return("Amplify with clipping control"); }
 
-  string parameter_names(void) const { return("amp-%,max-clipped"); }
+  string parameter_names(void) const { return("amp-%,max-clipped-samples"); }
 
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
@@ -106,16 +106,16 @@ class EFFECT_COMPRESS : public EFFECT_AMPLITUDE {
   parameter_type threshold;
   SAMPLE_ITERATOR_CHANNELS i;
 
-  parameter_type delta, new_value;
+  parameter_type delta, ratio, new_value;
   bool first_time;
 
-  vector<SAMPLE_SPECS::sample_type> s, temp, lastin, lastout;
+  vector<SAMPLE_SPECS::sample_type> lastin, lastout;
 
  public:
 
   string name(void) const { return("Compress"); }
 
-  string parameter_names(void) const  { return("compression_rate,threshold"); }
+  string parameter_names(void) const  { return("compression-rate-dB,threshold-%"); }
 
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
@@ -158,7 +158,7 @@ class EFFECT_NOISEGATE : public EFFECT_AMPLITUDE {
   string name(void) const { return("Noisegate"); }
 
   string parameter_names(void) const {
-    return("threshold_level_%,th_time_msec,attack_msec,hold_msec,release_msec");
+    return("threshold-level-%,pre-hold-time-msec,attack-time-msec,post-hold-time-msec,release-time-msec");
   }
 
   void set_parameter(int param, parameter_type value);

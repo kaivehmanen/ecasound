@@ -86,7 +86,7 @@ class ADVANCED_COMPRESSOR : public EFFECT_AMPLITUDE {
 
   string name(void) const { return("Advanced compressor"); }
 
-  string parameter_names(void) const { return("peak_limit_%,release_time_in_sec,cfrate,crate"); }
+  string parameter_names(void) const { return("peak-limit-%,release-time-sec,fast-crate,overall-crate"); }
 
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;

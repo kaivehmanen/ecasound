@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** ecasound - user visible changes (NEWS)      (last edited: 210200) **
+** ecasound - user visible changes (NEWS)      (last edited: 240200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -17,7 +17,17 @@ Last officially released version is -*> v1.6.12r10 <*-
 ??022000 (v1.7.1d11)
 	- added: a new effect preset system, see user's guide and 
 		 ecasound man page for more info
+	- added: an allpass filter (-efa)
+	- added: a comb filter (-efc)
+	- added: a simple pitch shifter (-ei)
+	- added: a flanger (-etl)
 	- removed: old effect preset files and command line options
+	- changed: rewrote the normal compressor (-ec), now takes 
+		   the threshold argument as percents
+	- changed: updated Stefan Fendt's rc-lowpass, now a 3rd
+		   stage, 36dB lowpass filter
+	- changed: parsing of command line parameters - most changes
+		   don't affect the user-interface side
 	- fixed: ecatools crashed with multiple inputs
 17022000 (v1.7.0d11)
 	- added: qtecasound - chainsetup status

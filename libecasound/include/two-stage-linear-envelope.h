@@ -17,7 +17,7 @@ class TWO_STAGE_LINEAR_ENVELOPE : public FINITE_ENVELOPE {
 
   void init(parameter_type step);
 
-  string parameter_names(void) const { return("1st_stage_sec,2nd_stage_sec"); }
+  string parameter_names(void) const { return("1st-stage-sec,2nd-stage-sec"); }
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
 

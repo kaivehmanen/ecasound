@@ -52,18 +52,15 @@ class SAMPLE_BUFFER {
 
  public:
 
+  typedef int channel_sizet_t;
+  typedef long int buf_sizet_t;
+  typedef long int srate_sizet_t;
+
   typedef vector<vector<sample_type> >::iterator buf_channel_iter_t;
   typedef vector<vector<sample_type> >::const_iterator buf_channel_citer_t;
 
   typedef vector<sample_type>::iterator buf_sample_iter_t;
   typedef vector<sample_type>::const_iterator buf_sample_citer_t;
-
-  // ---
-  // Static members
-  // ---
-
-  static long int sample_rate;
-  static void set_sample_rate(long int srate);
 
  private:
 
@@ -74,30 +71,29 @@ class SAMPLE_BUFFER {
 
   int channel_count_rep;
   long int buffersize_rep;
+  long int sample_rate_rep;
   vector<vector<sample_type> > buffer;
 
   // ---
   // Other member variables
   // ---
-
   vector<sample_type> old_buffer; // for resampling
 
   void resize(long int buffersize);
 
-
  public:
     
-  void resample_from(unsigned int long from_srate);
-  void resample_to(unsigned int long to_srate);
+  void resample_from(long int from_srate);
+  void resample_to(long int to_srate);
 
  private:
 
-  void resample_extfilter(unsigned int long from_srate,
-			  unsigned int long to_srate);
-  void resample_simplefilter(unsigned int long from_srate,
-			     unsigned int long to_srate);
-  void resample_nofilter(unsigned int long from_srate,
-			 unsigned int long to_srate);
+  void resample_extfilter(long int from_srate,
+			  long int to_srate);
+  void resample_simplefilter(long int from_srate,
+			     long int to_srate);
+  void resample_nofilter(long int from_srate,
+			 long int to_srate);
 
  public:
     
@@ -196,19 +192,23 @@ class SAMPLE_BUFFER {
 
   void number_of_channels(int len);
   inline int number_of_channels(void) const { return(channel_count_rep); }
-  void length_in_samples(int len);
-  inline int length_in_samples(void) const { return(buffersize_rep); }
-  inline double length_in_seconds(void) const { return((double)buffersize_rep / sample_rate); }
+
+  void sample_rate(long int srate) { sample_rate_rep = srate; }
+  inline long int sample_rate(void) const { return(sample_rate_rep); }
+  void length_in_samples(long int len);
+  inline long int length_in_samples(void) const { return(buffersize_rep); }
+  inline double length_in_seconds(void) const { return((double)buffersize_rep / sample_rate_rep); }
 
   // ---
   // Constructors/destructors
   // ---
 
   SAMPLE_BUFFER& operator= (const SAMPLE_BUFFER& t);
-  SAMPLE_BUFFER (long int buffersize, int channels);
-  SAMPLE_BUFFER (void);
+  SAMPLE_BUFFER (long int buffersize = 0,
+		 int channels = SAMPLE_SPECS::channel_count_default,
+		 long int sample_rate = SAMPLE_SPECS::sample_rate_default);
   ~SAMPLE_BUFFER (void);
-  SAMPLE_BUFFER (const SAMPLE_BUFFER& x) throw(ECA_ERROR*);
+  SAMPLE_BUFFER (const SAMPLE_BUFFER& x);
 };
 
 #endif

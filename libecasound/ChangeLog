@@ -2,6 +2,18 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-02-23  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* audiofx_filter.h (various): class EFFECT_ALLPASS_FILTER added
+	* audiofx_filter.h (various): class EFFECT_COMB_FILTER added
+	* samplebuffer.h (various): made sample_rate a normal class
+	member instead of a static member -> affect many other classes
+	* eca-chainop.h (output_samples): added
+	* eca-chainop.h (class): now inherits ECA_AUDIO_FORMAT
+	* eca-chainsetup.h (is_enabled): added const member modifier
+	* audiofx_timebased.h (various): class DELAY interface has
+	changed
+		
 2000-02-22  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-audio-objects.h (interpret_audioio_device): second parameter

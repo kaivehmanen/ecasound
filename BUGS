@@ -2,9 +2,6 @@
 *** Known bugs                                                      ***
 -----------------------------------------------------------------------
 
-- effects
-	- when saving chainsetups, presets are not saved as presets
-	  (actual effect definitions are used)
 - RIFF WAVE files
 	- doesn't preserve extra RIFF-blocks
 - controller sources

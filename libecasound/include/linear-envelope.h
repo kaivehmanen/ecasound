@@ -17,7 +17,7 @@ class LINEAR_ENVELOPE : public FINITE_ENVELOPE {
 
   void init(parameter_type step);
 
-  string parameter_names(void) const { return("length_in_sec"); }
+  string parameter_names(void) const { return("length-sec"); }
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
 

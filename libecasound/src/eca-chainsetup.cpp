@@ -47,7 +47,7 @@
 #include "eca-chainsetup.h"
 
 ECA_CHAINSETUP::ECA_CHAINSETUP(COMMAND_LINE& cline) 
-  : ECA_CONTROL_POSITION(SAMPLE_BUFFER::sample_rate) {
+  : ECA_CONTROL_POSITION(SAMPLE_SPECS::sample_rate_default) {
 
   setup_name = "command-line-setup";
   setup_filename = "";
@@ -72,7 +72,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(COMMAND_LINE& cline)
 }
 
 ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file, bool fromfile) 
-  : ECA_CONTROL_POSITION(SAMPLE_BUFFER::sample_rate) {
+  : ECA_CONTROL_POSITION(SAMPLE_SPECS::sample_rate_default) {
 
   setup_name = "";
 
@@ -149,16 +149,13 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
 
 void ECA_CHAINSETUP::enable(void) {
   if (is_enabled_rep == false) {
-
-    SAMPLE_BUFFER::set_sample_rate(sample_rate());
-    
     for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
-      (*q)->open();
+      if ((*q)->is_open() == false) (*q)->open();
       //      ecadebug->msg(ECA_DEBUG::system_objects, open_info(*q));
     }
     
     for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
-      (*q)->open();
+      if ((*q)->is_open() == false) (*q)->open();
       //      ecadebug->msg(ECA_DEBUG::system_objects, open_info(*q));
     }
   }
@@ -187,7 +184,7 @@ void ECA_CHAINSETUP::disable(void) {
   }
 
   // --------
-  ENSURE(is_enabled() == true);
+  ENSURE(is_enabled() == false);
   // --------
 }
 
@@ -466,9 +463,9 @@ CHAIN_OPERATOR* ECA_CHAINSETUP::create_chain_operator (const string& argu) {
   string prefix = get_argument_prefix(argu);
 
   MESSAGE_ITEM otemp;
-  map<string, DYNAMIC_OBJECT*>::const_iterator p = ECA_CHAIN_OPERATOR_MAP::object_map.find(prefix);
+  map<string, CHAIN_OPERATOR*>::const_iterator p = ECA_CHAIN_OPERATOR_MAP::object_map.find(prefix);
   if (p != ECA_CHAIN_OPERATOR_MAP::object_map.end()) {
-    CHAIN_OPERATOR* cop = dynamic_cast<CHAIN_OPERATOR*>(ECA_CHAIN_OPERATOR_MAP::object_map[prefix]);
+    CHAIN_OPERATOR* cop = ECA_CHAIN_OPERATOR_MAP::object_map[prefix];
     ecadebug->control_flow("Chainsetup/Adding chain operator \"" +
 			   cop->name() + "\"");
     //    otemp << "(eca-chainsetup) Adding effect " << cop->name();
@@ -511,9 +508,9 @@ GENERIC_CONTROLLER* ECA_CHAINSETUP::create_controller (const string& argu) {
 
   MESSAGE_ITEM otemp;
   
-  map<string, DYNAMIC_OBJECT*>::const_iterator p = ECA_CONTROLLER_MAP::object_map.find(prefix);
+  map<string, GENERIC_CONTROLLER*>::const_iterator p = ECA_CONTROLLER_MAP::object_map.find(prefix);
   if (p != ECA_CONTROLLER_MAP::object_map.end()) {
-    GENERIC_CONTROLLER* gcontroller = dynamic_cast<GENERIC_CONTROLLER*>(ECA_CONTROLLER_MAP::object_map[prefix]);
+    GENERIC_CONTROLLER* gcontroller = ECA_CONTROLLER_MAP::object_map[prefix];
     ecadebug->control_flow("Chainsetup/Adding controller source \"" +  gcontroller->name() + "\"");
 
     gcontroller->init((double)buffersize() / sample_rate());

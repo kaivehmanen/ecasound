@@ -141,6 +141,66 @@ public:
 };
 
 /**
+ * Allpass filter
+ */
+class EFFECT_ALLPASS_FILTER : public EFFECT_FILTER {
+
+  vector<deque<SAMPLE_SPECS::sample_type> > inbuf, outbuf;
+  SAMPLE_ITERATOR_CHANNELS i;
+
+  parameter_type feedback_gain;
+  parameter_type D;
+
+public:
+
+  string name(void) const { return("Allpass filter"); }
+
+  string parameter_names(void) const { return("delay-samples,feedback-%"); }
+
+  void set_parameter(int param, parameter_type value);
+  parameter_type get_parameter(int param) const;
+
+  void init(SAMPLE_BUFFER *insample);
+  void process(void);
+
+  EFFECT_ALLPASS_FILTER* clone(void)  { return new EFFECT_ALLPASS_FILTER(*this); }  
+  EFFECT_ALLPASS_FILTER (void) { }
+};
+
+
+/**
+ * Comb filter
+ *
+ * The basic theory behind this can be found from Ken Steiglitz's book 
+ * "A digital signal processing primer", page 103.
+ */
+class EFFECT_COMB_FILTER : public EFFECT_FILTER {
+
+  vector<parameter_type> laskuri;
+  vector<deque<SAMPLE_SPECS::sample_type> > buffer;
+  vector<SAMPLE_SPECS::sample_type> temp;
+  SAMPLE_ITERATOR_CHANNELS i;
+
+  parameter_type C;
+  parameter_type D;
+
+public:
+
+  string name(void) const { return("Comb filter"); }
+
+  string parameter_names(void) const { return("delay-samples,radius"); }
+
+  void set_parameter(int param, parameter_type value);
+  parameter_type get_parameter(int param) const;
+
+  void init(SAMPLE_BUFFER *insample);
+  void process(void);
+
+  EFFECT_COMB_FILTER* clone(void)  { return new EFFECT_COMB_FILTER(*this); }  
+  EFFECT_COMB_FILTER (int delay_in_samples = 0, parameter_type constant = 1.0);
+};
+
+/**
  * Inverse comb filter
  *
  * The basic theory behind this can be found from Ken Steiglitz's book 
@@ -160,7 +220,7 @@ public:
 
   string name(void) const { return("Inverse comb filter"); }
 
-  string parameter_names(void) const { return("delay,radius"); }
+  string parameter_names(void) const { return("delay-samples,radius"); }
 
   void set_parameter(int param, parameter_type value);
   parameter_type get_parameter(int param) const;
@@ -308,7 +368,7 @@ class EFFECT_RESONANT_LOWPASS : public EFFECT_FILTER {
 
 public:
 
-  string name(void) const { return("Resonant Lowpass filter"); }
+  string name(void) const { return("Resonant lowpass filter"); }
 
   string parameter_names(void) const { return("cutoff-freq,resonance,gain"); }
 
