@@ -16,6 +16,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 xx082004 (v2.3.4)  -** stable release **-
 	- edi-entries: edi-14 and edi-32 closed, edi-40 added
 	- note: verified to compile ok on MacOS X 10.3.2 [smbolton]
+	- note: verified to compile ok with gcc-3.4.1
 	- added: basic FLAC input/output support using flac utils;
 		 new flac specific options to ecasoundrc
 	- added: basic AAC/M4A/MP4 input/output support faac/faad
