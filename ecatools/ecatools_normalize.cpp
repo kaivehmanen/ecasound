@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // ecatools-normalize.cpp: A simple command-line tools for normalizing
 //                         sample volume.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,6 +42,9 @@
 using std::cerr;
 using std::endl;
 
+static const string ecatools_normalize_version = "20020717-24";
+static string ecatools_normalize_tempfile;
+
 int main(int argc, char *argv[])
 {
 #ifdef NDEBUG
@@ -72,7 +75,7 @@ int main(int argc, char *argv[])
   try {
     string filename;
     double multiplier = 1.0f;
-    EFFECT_ANALYZE* volume = 0;
+    EFFECT_VOLUME_BUCKETS* volume = 0;
     EFFECT_AMPLIFY* amp = 0;
     
     TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
@@ -120,7 +123,7 @@ int main(int argc, char *argv[])
 	    break;
 	  }
 
-	  volume = new EFFECT_ANALYZE();
+	  volume = new EFFECT_VOLUME_BUCKETS();
 	  ectrl.add_chain_operator((CHAIN_OPERATOR*)volume);
 	}
 	else {
