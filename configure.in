@@ -83,6 +83,8 @@ dnl Checks for libraries.
 dnl ---
 AC_SEARCH_LIBS(nanosleep, rt)
 AC_SEARCH_LIBS(sched_setscheduler, rt)
+AC_SEARCH_LIBS(nanosleep, posix4)
+AC_SEARCH_LIBS(sched_setscheduler, posix4)
 AC_CHECK_LIB(m, sin)
 AC_CHECK_LIB(dl, dlopen)
 AC_CHECK_LIB(ncurses, main, termcap_library=ncurses,
