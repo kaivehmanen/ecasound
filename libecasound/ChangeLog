@@ -1,3 +1,7 @@
+2004-12-09  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* sample-ops_impl.h: Added, not part of the public interface.
+
 2004-10-27  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
         * library interface version 13 frozen

@@ -150,6 +150,7 @@ ecasound_general_include = 	\
 			samplebuffer_functions.h \
 			samplebuffer_iterators.h \
 			sample-specs.h \
+			sample-ops_impl.h \
 			eca-sample-conversion.h \
 			eca-version.h \
 			eca-object-factory.h \
