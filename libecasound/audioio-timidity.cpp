@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-timidity.cpp: Interface class for Timidity++ input.
-// Copyright (C) 2000,2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000,2002,2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ long int TIMIDITY_INTERFACE::read_samples(void* target_buffer,
   bytes_read_rep = std::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-timidity) Can't start process \"" + TIMIDITY_INTERFACE::default_timidity_cmd + "\". Please check your ~/.ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-timidity) Can't start process \"" + TIMIDITY_INTERFACE::default_timidity_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-ogg.cpp: Interface for ogg vorbis ecoders and encoders.
-// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002,2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,18 +29,18 @@
 
 #include "eca-logger.h"
 
-string OGG_VORBIS_INTERFACE::default_ogg_input_cmd = "ogg123 -d raw --file=- %f";
-string OGG_VORBIS_INTERFACE::default_ogg_output_cmd = "oggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -";
-long int OGG_VORBIS_INTERFACE::default_ogg_output_default_bitrate = 128000;
+string OGG_VORBIS_INTERFACE::default_input_cmd = "ogg123 -d raw --file=- %f";
+string OGG_VORBIS_INTERFACE::default_output_cmd = "oggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -";
+long int OGG_VORBIS_INTERFACE::default_output_default_bitrate = 128000;
 
-void OGG_VORBIS_INTERFACE::set_ogg_input_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_ogg_input_cmd = value; }
-void OGG_VORBIS_INTERFACE::set_ogg_output_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_ogg_output_cmd = value; }
+void OGG_VORBIS_INTERFACE::set_input_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_input_cmd = value; }
+void OGG_VORBIS_INTERFACE::set_output_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_output_cmd = value; }
 
 OGG_VORBIS_INTERFACE::OGG_VORBIS_INTERFACE(const std::string& name)
 {
   set_label(name);
   finished_rep = false;
-  bitrate_rep = OGG_VORBIS_INTERFACE::default_ogg_output_default_bitrate;
+  bitrate_rep = OGG_VORBIS_INTERFACE::default_output_default_bitrate;
 }
 
 OGG_VORBIS_INTERFACE::~OGG_VORBIS_INTERFACE(void)
@@ -57,7 +57,8 @@ void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 
   /**
    * FIXME: we have no idea about the audio format of the 
-   *        stream we get from ogg123!
+   *        stream we get from ogg123... ybe we should force the decoder
+   *        to generate RIFF wave to a named pipe and parse the header...?
    */
 
   if (io_mode() == io_read) {
@@ -93,7 +94,7 @@ long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int sample
 {
   if (triggered_rep != true) { 
     triggered_rep = true;
-    fork_ogg_input();
+    fork_input_process();
   }
 
   if (f1_rep != 0) {
@@ -105,7 +106,7 @@ long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int sample
 
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-ogg) Can't start process \"" + OGG_VORBIS_INTERFACE::default_ogg_input_cmd + "\". Please check your ~/.ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-ogg) Can't start process \"" + OGG_VORBIS_INTERFACE::default_input_cmd + "\". Please check your ~/.ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }
@@ -119,7 +120,7 @@ void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples)
 {
   if (triggered_rep != true) {
     triggered_rep = true;
-    fork_ogg_output();
+    fork_output_process();
   }
 
   if (wait_for_child() != true) {
@@ -162,7 +163,7 @@ void OGG_VORBIS_INTERFACE::set_parameter(int param, string value)
     if (numvalue > 0) 
       bitrate_rep = numvalue;
     else
-      bitrate_rep = OGG_VORBIS_INTERFACE::default_ogg_output_default_bitrate;
+      bitrate_rep = OGG_VORBIS_INTERFACE::default_output_default_bitrate;
     break;
   }
 }
@@ -179,10 +180,10 @@ string OGG_VORBIS_INTERFACE::get_parameter(int param) const
   return("");
 }
 
-void OGG_VORBIS_INTERFACE::fork_ogg_input(void)
+void OGG_VORBIS_INTERFACE::fork_input_process(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
-  set_fork_command(OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, OGG_VORBIS_INTERFACE::default_input_cmd);
+  set_fork_command(OGG_VORBIS_INTERFACE::default_input_cmd);
   set_fork_file_name(label());
   set_fork_pipe_name();
   fork_child_for_read();
@@ -198,10 +199,10 @@ void OGG_VORBIS_INTERFACE::fork_ogg_input(void)
     f1_rep = 0;
 }
 
-void OGG_VORBIS_INTERFACE::fork_ogg_output(void)
+void OGG_VORBIS_INTERFACE::fork_output_process(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-ogg) Starting to encode " + label() + " with vorbize.");
-  string command_rep = OGG_VORBIS_INTERFACE::default_ogg_output_cmd;
+  string command_rep = OGG_VORBIS_INTERFACE::default_output_cmd;
   if (command_rep.find("%f") != string::npos) {
     command_rep.replace(command_rep.find("%f"), 2, label());
   }

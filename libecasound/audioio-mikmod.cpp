@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-mikmod.cpp: Interface class for MikMod input. Uses FIFO pipes.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000,2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples)
   bytes_read_rep = ::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-mikmod) Can't start process \"" + MIKMOD_INTERFACE::default_mikmod_cmd + "\". Please check your ~/.ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-mikmod) Can't start process \"" + MIKMOD_INTERFACE::default_mikmod_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }

@@ -7,8 +7,9 @@
 #include "audioio-forked-stream.h"
 
 /**
- * Interface for module players that support i/o using standard streams. 
- * Defaults to MikMod.
+ * Interface to module players such as MikMod that support 
+ * UNIX pipe i/o.
+ *
  * @author Kai Vehmanen
  */
 class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
@@ -31,7 +32,7 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
   virtual MIKMOD_INTERFACE* new_expr(void) const { return new MIKMOD_INTERFACE(); }
 
   virtual std::string name(void) const { return("MikMod tracker module"); }
-  virtual std::string description(void) const { return("Interface for module players that support i/o using standard streams."); }
+  virtual std::string description(void) const { return("Interface to module players that support UNIX pipe i/o."); }
 
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;

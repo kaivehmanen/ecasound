@@ -7,9 +7,8 @@
 #include "audioio-forked-stream.h"
 
 /**
- * Interface to ogg decoders and encoders that support i/o 
- * using standard streams. By default ogg123 and vorbize are
- * used.
+ * Interface for Ogg Vorbis decoders and encoders using UNIX 
+ * pipe i/o. By default ogg123 and vorbize are used.
  *
  * @author Kai Vehmanen
  */
@@ -18,14 +17,14 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
 
  private:
   
-  static std::string default_ogg_input_cmd;
-  static std::string default_ogg_output_cmd;
+  static std::string default_input_cmd;
+  static std::string default_output_cmd;
 
  public:
 
-  static void set_ogg_input_cmd(const std::string& value);
-  static void set_ogg_output_cmd(const std::string& value);
-  static long int default_ogg_output_default_bitrate;
+  static void set_input_cmd(const std::string& value);
+  static void set_output_cmd(const std::string& value);
+  static long int default_output_default_bitrate;
 
  public:
 
@@ -36,8 +35,8 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   virtual OGG_VORBIS_INTERFACE* new_expr(void) const { return new OGG_VORBIS_INTERFACE(*this); }
 
   virtual std::string name(void) const { return("Ogg Vorbis stream"); }
-  virtual std::string description(void) const { return("Interface for ogg decoders and encoders that support i/o using standard streams."); }
-  virtual std::string parameter_names(void) const { return("label,birate"); }
+  virtual std::string description(void) const { return("Interface for Ogg Vorbis decoders and encoders using UNIX pipe i/o."); }
+  virtual std::string parameter_names(void) const { return("label,bitrate"); }
   virtual bool locked_audio_format(void) const { return(true); }
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
@@ -68,8 +67,8 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   int fd_rep;
   FILE* f1_rep;
   
-  void fork_ogg_input(void);
-  void fork_ogg_output(void);
+  void fork_input_process(void);
+  void fork_output_process(void);
 };
 
 #endif

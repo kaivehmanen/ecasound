@@ -7,8 +7,8 @@
 #include "audioio-forked-stream.h"
 
 /**
- * Interface for MIDI-to-audio converters that support i/o using 
- * standard streams. By default, Timidity++ is used.
+ * Interface to MIDI-to-audio converters that support 
+ * UNIX pipe i/o. By default, Timidity++ is used.
  *
  * @author Kai Vehmanen
  */
@@ -32,7 +32,7 @@ class TIMIDITY_INTERFACE : public AUDIO_IO_BUFFERED,
   virtual TIMIDITY_INTERFACE* new_expr(void) const { return new TIMIDITY_INTERFACE(); }
 
   virtual std::string name(void) const { return("MIDI-to-audio stream"); }
-  virtual std::string description(void) const { return("Interface for MIDI->audio converters that support i/o using standard streams."); }
+  virtual std::string description(void) const { return("Interface to MIDI-to-audio converters that support UNIX pipe i/o."); }
   virtual int supported_io_modes(void) const { return(io_read); }
   virtual bool supports_seeking(void) const { return(false); }
 

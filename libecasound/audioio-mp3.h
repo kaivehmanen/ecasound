@@ -18,14 +18,14 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
 
  private:
   
-  static std::string default_mp3_input_cmd;
-  static std::string default_mp3_output_cmd;
+  static std::string default_input_cmd;
+  static std::string default_output_cmd;
 
  public:
 
-  static void set_mp3_input_cmd(const std::string& value);
-  static void set_mp3_output_cmd(const std::string& value);
-  static long int default_mp3_output_default_bitrate;
+  static void set_input_cmd(const std::string& value);
+  static void set_output_cmd(const std::string& value);
+  static long int default_output_default_bitrate;
  
  public:
 
@@ -78,8 +78,9 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   //  MP3FILE(const MP3FILE& x) { }
   MP3FILE& operator=(const MP3FILE& x) { return *this; }
 
-  void fork_mp3_input(void);
-  void fork_mp3_output(void);
+
+  void fork_input_process(void);
+  void fork_output_process(void);
 };
 
 #endif
