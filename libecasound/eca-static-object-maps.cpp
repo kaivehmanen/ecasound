@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // eca-static-object-maps.h: Static object map instances
-// Copyright (C) 2000-2003 Kai Vehmanen
+// Copyright (C) 2000-2004 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,6 +35,7 @@
 #include <unistd.h>
 
 #include <kvu_numtostr.h>
+#include <kvu_utils.h>
 
 #include "eca-version.h"
 #include "eca-chainop.h"
@@ -387,7 +391,7 @@ static void eca_import_internal_audioio_plugin(ECA_OBJECT_MAP* objmap,
 	  ecasound_library_version_age ||
 	  version > ecasound_library_version_current) {
 	ECA_LOG_MSG(ECA_LOGGER::info, 
-		      "(eca-static-object-maps) Opening internal plugin file \"" + 
+		      "Opening internal plugin file \"" + 
 		      file + 
 		      "\" failed. Plugin version " + 
 		      kvu_numtostr(version) +
@@ -416,7 +420,7 @@ static void eca_import_internal_audioio_plugin(ECA_OBJECT_MAP* objmap,
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"(eca-static-object-maps) dlopen() failed; " + file +
+		"dlopen() failed; " + file +
 		+ ": \"" + string(dlerror()) + "\".");
   }
 
@@ -426,8 +430,8 @@ static void eca_import_internal_audioio_plugin(ECA_OBJECT_MAP* objmap,
       plugin_keyword_regex == 0 ||
       desc_func == 0) {
     ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		  "(eca-static-object-maps) Opening internal plugin file \"" + 
-		  file + "\" failed.");
+		"Opening internal plugin file \"" + 
+		file + "\" failed.");
   }
 }
 #endif
@@ -481,7 +485,9 @@ static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id)
 				    ladspa_plugins[n]);
 	  }
 	  else {
-	    objmap->register_object(ladspa_plugins[n]->unique(), "^" + ladspa_plugins[n]->unique() + "$", ladspa_plugins[n]);
+	    objmap->register_object(ladspa_plugins[n]->unique(), "^" + 
+				    kvu_string_regex_meta_escape(ladspa_plugins[n]->unique()) + 
+				    "$", ladspa_plugins[n]);
 	  }
 	}
 
@@ -516,16 +522,14 @@ static vector<EFFECT_LADSPA*> eca_create_ladspa_plugins(const string& fname)
     }
     else { 
       ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		    string("(eca-static-object-maps) ") + 
-		    "Unable find plugin LADSPA-descriptor.");
+		  "Unable find plugin LADSPA-descriptor.");
     }
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		  string("(eca-static-object-maps) ") + 
-		  "Unable to open plugin file \"" + fname + "\".");
+		string("Unable to open plugin file \"") + fname + "\".");
   }
 #endif
   
-  return(plugins);
+  return plugins;
 }
