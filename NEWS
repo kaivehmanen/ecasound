@@ -23,6 +23,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- removed: the "LADSPA/" prefix removed from plugin labels
 	- changed: more intelligent handling of resource files
 	           (for instance ~/.ecasoundrc and preset files)
+	- changed: updated ALSA 0.6.x support to match pcmfinal-state
 	- fixed: nasty bug in effect preset mapping
 	- fixed: -ei:0 caused problems
 07112000 (v1.8.4d15)
