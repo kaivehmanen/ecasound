@@ -5,13 +5,6 @@
 -----------------------------------------------------------------------
 [ Development goals and current status ]
 
-1.8.x and 1.9.x series:
-
-- ecasound control interface (ECI) API [initial implementation done!]
-- new disk i/o buffering subsystem [done!]
-- embedded effect preset parameters [done!]
-- internal plugin support [done!]
-
 2.x series:
 
 - MIDI-subsystem updates [partly implemented]
@@ -34,9 +27,6 @@
 -----------------------------------------------------------------------
 [ Upcoming features - implemented sooner or later ]
 
-- comments in ecs (chainsetup) files [done! 1.8.x]
-- embedded effect preset parameters ("-p[fn]:string,par1,...,parN") [done! 1.8.x]
-- metronome signal [done! 1.8.x]
 - ia-mode: make separate xxx-list and xxx-status commands (a pure list, and a more
   verbose xxx-status command [ partly done - 1.9.x ]
 - better MIDI-support (separate MIDI input/output objects) [under work]
@@ -68,10 +58,6 @@ Input/output devices:
 
 Effects, routing, dsp routines:
 
-- "audio stamp" chainops that store the bypassing signal; this 
-  signal can be later fed into controllers and other points 
-  in the pro [done! 1.8.6- ]
-- gates which truncate the input signal instread of muting it  [done! 1.8.6- ]
 - generic envelope followers
 - more effects (for instance, a Schroeder reverb)
 

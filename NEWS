@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 160601) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 200601) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -18,6 +18,8 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.1 *-
 
 ??062001 (v2.0.2)  -** stable release **-
+ 	- added: current position tracking to loop devices
+	- added: more verbose xrun info from ALSA 0.9.x devices
 	- changed: improved configure checks for python include 
 		   and library directories
 	- changed: -tl now works without -t

@@ -42,6 +42,18 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
+#ifndef timersub
+#define	timersub(a, b, result) \
+do { \
+	(result)->tv_sec = (a)->tv_sec - (b)->tv_sec; \
+	(result)->tv_usec = (a)->tv_usec - (b)->tv_usec; \
+	if ((result)->tv_usec < 0) { \
+		--(result)->tv_sec; \
+		(result)->tv_usec += 1000000; \
+	} \
+} while (0)
+#endif
+
 ALSA_PCM_DEVICE_06X::ALSA_PCM_DEVICE_06X (int card, 
 					  int device, 
 					  int subdevice) 
@@ -398,6 +410,7 @@ long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer,
 	  handle_xrun_capture();
 	  realsamples = ::snd_pcm_readi(audio_fd_repp, target_buffer,
 					fragment_size_rep);
+	  if (realsamples < 0) realsamples = 0;
 	}
 	else {
 	  cerr << "(audioio-alsa3) Overrun! Stopping operation!" << endl;
@@ -424,6 +437,7 @@ long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer,
 	if (ignore_xruns() == true) {
 	  handle_xrun_capture();
 	  realsamples = ::snd_pcm_readn(audio_fd_repp, reinterpret_cast<void**>(target_buffer), fragment_size_rep);
+	  if (realsamples < 0) realsamples = 0;
 	}
 	else {
 	  cerr << "(audioio-alsa3) Overrun! Stopping operation!" << endl;
@@ -443,11 +457,33 @@ long int ALSA_PCM_DEVICE_06X::read_samples(void* target_buffer,
 }
 
 void ALSA_PCM_DEVICE_06X::handle_xrun_capture(void) {
-  overruns_rep++;
-  stop();
-  ecadebug->msg(ECA_DEBUG::info, "(audioio-alsa3) warning! overrun - samples lost!");
-  prepare();
-  start();
+  snd_pcm_status_t *status;
+  snd_pcm_status_alloca(&status);
+
+  int res = snd_pcm_status(audio_fd_repp, status);
+  if (res >= 0) {
+    if (snd_pcm_status_get_state(status) == SND_PCM_STATE_XRUN) {
+ 
+      struct timeval now, diff, tstamp;
+      gettimeofday(&now, 0);
+      snd_pcm_status_get_trigger_tstamp(status, &tstamp);
+      timersub(&now, &tstamp, &diff);
+      
+      ecadebug->msg(ECA_DEBUG::info, 
+		    string("(audioio-alsa3) warning! capture overrun - samples lost! ") + 
+		    " Break was at least " + 
+		    kvu_numtostr(diff.tv_sec * 1000 + diff.tv_usec / 1000.0) + 
+		  " ms long.");
+    }
+
+    overruns_rep++;
+    stop();
+    prepare();
+    start();
+  }
+  else {
+    ecadebug->msg(ECA_DEBUG::info, "(audioio-alsa3) snd_pcm_status() failed!");
+  }
 }
 
 void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
@@ -473,7 +509,7 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
 	}
       }
       else {
-	cerr << "(audioio-alsa3) Write  error! Stopping operation." << endl;
+	cerr << "(audioio-alsa3) Write error! Stopping operation." << endl;
 	stop();
 	close();
       }
@@ -533,11 +569,32 @@ void ALSA_PCM_DEVICE_06X::write_samples(void* target_buffer, long int samples) {
 }
 
 void ALSA_PCM_DEVICE_06X::handle_xrun_playback(void) {
-  underruns_rep++;
-  ecadebug->msg(ECA_DEBUG::info, "(audioio-alsa3) underrun! stopping device");
-  stop();
-  prepare();
-  trigger_request_rep = true;
+  snd_pcm_status_t *status;
+  snd_pcm_status_alloca(&status);
+
+  int res = snd_pcm_status(audio_fd_repp, status);
+  if (res >= 0) {
+    if (snd_pcm_status_get_state(status) == SND_PCM_STATE_XRUN) {
+
+    struct timeval now, diff, tstamp;
+    gettimeofday(&now, 0);
+    snd_pcm_status_get_trigger_tstamp(status, &tstamp);
+    timersub(&now, &tstamp, &diff);
+    
+    ecadebug->msg(ECA_DEBUG::info, 
+		  string("(audioio-alsa3) warning! playback underrun - samples lost! ") +
+		  " Break was at least " + 
+		  kvu_numtostr(diff.tv_sec * 1000 + diff.tv_usec / 1000.0) + 
+		  " ms long.");
+    }
+    underruns_rep++;
+    stop();
+    prepare();
+    trigger_request_rep = true;
+  }
+  else {
+    ecadebug->msg(ECA_DEBUG::info, "(audioio-alsa3) snd_pcm_status() failed!");
+  }
 }
 
 long ALSA_PCM_DEVICE_06X::position_in_samples(void) const {

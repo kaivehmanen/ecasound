@@ -65,6 +65,8 @@ void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer) {
 void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer) {
   ++writes_rep;
   if (writes_rep == 1) {
+    position_in_samples_advance(buffer->length_in_samples());
+    extend_position();
     sbuf.number_of_channels(buffer->number_of_channels());
     sbuf.make_silent();
   }
