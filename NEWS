@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 240804) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 050904) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -37,6 +37,9 @@ xx082004 (v2.3.4)  -** stable release **-
 	- fixed: engine state not fully updated after a 'run' 
 		 command has completed; caused commands such as
 		 'cs-set-position' to fail when used after 'run'
+	- fixed: ecasound sample formats s24_le/_be were mapped
+		 to 4-byte ALSA formats S24_LE/_BE; now mapped
+		 to the correct 3-byte S24_3LE/_3BE formats
 05052004 (v2.3.3)  -** stable release **-
 	- note: verified to compile ok with gcc-3.4
 	- added: eiam - 'map-ladspa-id-list' command
