@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 090202) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 190202) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -71,6 +71,9 @@ Last officially released version is -*> v2.0.4 *-
 		 without doing a disconnect-connect
 	- fixed: better handling of situations where JACK server
 		 is abruptly shutdown and then restarted
+	- fixed: sometimes an incorrect length-field written to 
+		 newly created wav-files 
+	- fixed: problems with using ewf-files with doublebuffering
 16012002 (v2.1dev7)
 	- edi-entries: edi-12
 	- added: a watchdog thread that handles thread cleanup; 
