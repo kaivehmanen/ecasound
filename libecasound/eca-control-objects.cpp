@@ -1309,7 +1309,7 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format_to_selected_input(void) {
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   DBC_REQUIRE(get_audio_input() != 0);
   // --------
-  set_default_audio_format(get_audio_format(get_audio_input()));
+  set_default_audio_format(get_audio_format(selected_audio_input_repp));
 
 }
 
@@ -1327,7 +1327,7 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format_to_selected_output(void) {
   DBC_REQUIRE(connected_chainsetup() != selected_chainsetup());
   DBC_REQUIRE(get_audio_output() != 0);
   // --------
-  set_default_audio_format(get_audio_format(get_audio_output()));
+  set_default_audio_format(get_audio_format(selected_audio_output_repp));
 }
 
 /** 
