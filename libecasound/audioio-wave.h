@@ -18,7 +18,7 @@
  * Format 1 sample data: Pulse Code Modulation (PCM) Format
  *
  * Format 3 sample data: IEEE754 floats, range [-1, +1)
-
+ *
  * - multiple channels are interleaved
  *
  * - 8, 16, 24 and 32 bit data supported
