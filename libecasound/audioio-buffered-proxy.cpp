@@ -151,7 +151,7 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
  */
 void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) { 
   if (pbuffer_repp->write_space() > 0) {
-    SAMPLE_BUFFER* target = pbuffer_repp->sbufs_rep[pbuffer_repp->readptr_rep.get()];
+    SAMPLE_BUFFER* target = pbuffer_repp->sbufs_rep[pbuffer_repp->writeptr_rep.get()];
     target->number_of_channels(sbuf->number_of_channels());
     target->copy(*sbuf);
     pbuffer_repp->advance_write_pointer();
