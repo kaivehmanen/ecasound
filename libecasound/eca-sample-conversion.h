@@ -88,7 +88,10 @@ static inline int32_t eca_sample_convert_float_to_s32(float inval)
 
 static inline float eca_sample_convert_u8_to_float(uint8_t inval)
 {
-  if (inval <= INT8_MAX)
+  /* NOTE: this is sub-optimal, but at least gcc-2.91.66 otherwise
+   *       compiles the test incorrectly) */
+  int16_t inval_b = inval;
+  if (inval_b <= INT8_MAX)
     return(((((float)inval) - INT8_MAX) / INT8_MAX));
 
   return(((((float)inval) - (INT8_MAX + 1)) / INT8_MAX));
