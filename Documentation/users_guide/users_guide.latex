@@ -746,6 +746,7 @@ of the all apps connected to one JACK server from a single
 application. Ecasound can support this functionality both
 in master and slave modes.
 
+% FIXME: fix to new transprot modes
 To use ecasound as a transport master:
 
 \begin{verbatim}
