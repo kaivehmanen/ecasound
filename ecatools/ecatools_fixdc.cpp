@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // ecatools-fixdc.cpp: A simple command-line tools for fixing DC-offset.
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
     ECA_PROCESSOR emain;
     ECA_AUDIO_FORMAT aio_params;
 
+    ectrl.toggle_interactive_mode(false);
     cline.begin();
     cline.next(); // skip the program name
     while(cline.end() == false) {

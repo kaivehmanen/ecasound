@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 230700) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 120800) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,7 +14,7 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.7.9r13 <*-
 
-??072000 (v1.8.1d14)
+??082000 (v1.8.1d14)
 	- added: support for internal plugins; modules using external 
 		 libraries (ALSA, aRts, libaudiofile, etc) are now 
   	         dynamically loaded on runtime (no unnecessary 
@@ -28,6 +28,9 @@ Last officially released version is -*> v1.7.9r13 <*-
 	- changed: small change in licensing - see the file COPYING.Qt
 	- changed: behaviour of -ete effects wet-% parameter
 	- fixed: system readline related fixes (wrobell)
+	- fixed: few ewf output fixes
+	- fixed: compile problems with ALSA 0.5.x
+	- fixed: ecatools hang if interactive-mode enabled by default
 25062000 (v1.8.0d14)
 	- added: ecaconvert - a new ecatools app; converts a set of 
 		 files to target file format

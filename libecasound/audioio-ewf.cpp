@@ -51,7 +51,8 @@ void EWFFILE::open(void) throw(ECA_ERROR*) {
     throw(new ECA_ERROR("AUDIOIO-EWF", "Couldn't open child object.",ECA_ERROR::retry));
 
   ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: Opening ewf-child:" + child->label() + ".");
-   
+
+  child->io_mode(io_mode());
   child->open();
 
   if (child_length_rep.samples() == 0) child_length_rep = child->length();
@@ -204,12 +205,16 @@ void EWFFILE::write_buffer(SAMPLE_BUFFER* sbuf) {
 
 void EWFFILE::seek_position(void) {
   if (is_open()) {
-    if (position_in_samples() >= child_offset_rep.samples()) {
-      child->seek_position_in_samples(position_in_samples() - child_offset_rep.samples());
-    }
-    else {
-      child_active = false;
-      child->seek_first();
+    if (io_mode() == AUDIO_IO::io_read ||
+	(io_mode() != AUDIO_IO::io_read &&
+	 child_active == true)) {
+      if (position_in_samples() >= child_offset_rep.samples()) {
+	child->seek_position_in_samples(position_in_samples() - child_offset_rep.samples());
+      }
+      else {
+	child_active = false;
+	child->seek_first();
+      }
     }
   }
 }
@@ -258,6 +263,7 @@ void EWFFILE::write_ewf_data(void) {
   if (child_offset_rep.samples() != 0) ewf_rc.resource("offset", kvu_numtostr(child_offset_rep.seconds(),6));
   if (child_start_pos_rep.samples() != 0) ewf_rc.resource("start-position", kvu_numtostr(child_start_pos_rep.seconds(), 6));
   if (child_looping_rep == true) ewf_rc.resource("looping","true");
+  if (io_mode() != AUDIO_IO::io_read) child_length_rep = child->length();    
   if (child_length_rep.samples() != child->length_in_samples()) 
     ewf_rc.resource("length", kvu_numtostr(child_length_rep.seconds(), 6));
 }

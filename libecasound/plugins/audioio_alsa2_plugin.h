@@ -37,8 +37,8 @@ class ALSA_PCM2_PLUGIN_DEVICE : public AUDIO_IO_DEVICE {
 
   long underruns_rep, overruns_rep;
 
-  bool is_triggered;
-  bool is_prepared;
+  bool is_triggered_rep;
+  bool is_prepared_rep;
 
  public:
 

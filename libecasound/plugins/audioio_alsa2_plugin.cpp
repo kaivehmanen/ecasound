@@ -49,14 +49,14 @@ ALSA_PCM2_PLUGIN_DEVICE::ALSA_PCM2_PLUGIN_DEVICE (int card,
   device_number_rep = device;
   subdevice_number_rep = subdevice;
   pcm_mode_rep = SND_PCM_MODE_BLOCK;
-  is_triggered = false;
-  is_prepared = false;
+  is_triggered_rep = false;
+  is_prepared_rep = false;
   overruns_rep = underruns_rep = 0;
 }
 
 void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(ECA_ERROR*) {
   assert(is_open() == false);
-  assert(is_triggered == false);
+  assert(is_triggered_rep == false);
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2-plugin) open");
 
@@ -205,15 +205,15 @@ void ALSA_PCM2_PLUGIN_DEVICE::open(void) throw(ECA_ERROR*) {
 //  if (err < 0)
 //    throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "Error when preparing channel: " + string(snd_strerror(err))));
 
-  is_triggered = false;
-  is_prepared = false;
+  is_triggered_rep = false;
+  is_prepared_rep = false;
   toggle_open_state(true);
 }
 
 void ALSA_PCM2_PLUGIN_DEVICE::stop(void) {
-  assert(is_triggered == true);
+  assert(is_triggered_rep == true);
   assert(is_open() == true);
-  assert(is_prepared == true);
+  assert(is_prepared_rep == true);
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2-plugin) stop");
 
@@ -230,8 +230,8 @@ void ALSA_PCM2_PLUGIN_DEVICE::stop(void) {
 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa2-plugin) Audio device \"" + label() + "\" disabled.");
 
-  is_triggered = false;
-  is_prepared = false;
+  is_triggered_rep = false;
+  is_prepared_rep = false;
 }
 
 void ALSA_PCM2_PLUGIN_DEVICE::close(void) {
@@ -239,36 +239,36 @@ void ALSA_PCM2_PLUGIN_DEVICE::close(void) {
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2-plugin) close");
 
-  if (is_triggered == true) stop();
+  if (is_triggered_rep == true) stop();
   ::snd_pcm_close(audio_fd_repp);
   toggle_open_state(false);
 
-  assert(is_triggered == false);
+  assert(is_triggered_rep == false);
 }
 
 void ALSA_PCM2_PLUGIN_DEVICE::prepare(void) {
-  assert(is_triggered == false);
+  assert(is_triggered_rep == false);
   assert(is_open() == true);
-  assert(is_prepared == false);
+  assert(is_prepared_rep == false);
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2-plugin) prepare");
 
   int err = ::snd_pcm_plugin_prepare(audio_fd_repp, pcm_channel_rep);
   if (err < 0)
     throw(new ECA_ERROR("AUDIOIO-ALSA2-PLUGIN", "Error when preparing channel: " + string(snd_strerror(err))));
-  is_prepared = true;
+  is_prepared_rep = true;
 }
 
 void ALSA_PCM2_PLUGIN_DEVICE::start(void) {
-  assert(is_triggered == false);
+  assert(is_triggered_rep == false);
   assert(is_open() == true);
-  assert(is_prepared == true);
+  assert(is_prepared_rep == true);
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2-plugin) start");
 
   if (pcm_channel_rep == SND_PCM_CHANNEL_PLAYBACK)
     ::snd_pcm_channel_go(audio_fd_repp, pcm_channel_rep);
-  is_triggered = true;
+  is_triggered_rep = true;
   //  if (io_mode() == io_write) print_status_debug();
 }
 
@@ -285,11 +285,11 @@ void ALSA_PCM2_PLUGIN_DEVICE::write_samples(void* target_buffer, long int sample
   else {
     if ((samples * frame_size()) < pcm_info_rep.min_fragment_size ||
 	(samples * frame_size()) > pcm_info_rep.max_fragment_size) {
-      if (is_triggered) stop();
+      if (is_triggered_rep) stop();
       return; 
     }
     bool was_triggered = false;
-    if (is_triggered == true) { stop(); was_triggered = true; }
+    if (is_triggered_rep == true) { stop(); was_triggered = true; }
     close();
     buffersize(samples, samples_per_second());
     open();
@@ -301,7 +301,7 @@ void ALSA_PCM2_PLUGIN_DEVICE::write_samples(void* target_buffer, long int sample
 }
 
 long ALSA_PCM2_PLUGIN_DEVICE::position_in_samples(void) const {
-  if (is_triggered == false) return(0);
+  if (is_triggered_rep == false) return(0);
   snd_pcm_channel_status_t status;
   memset(&status, 0, sizeof(status));
   status.channel = pcm_channel_rep;

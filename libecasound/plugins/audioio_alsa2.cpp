@@ -56,7 +56,7 @@ ALSA_PCM_DEVICE::ALSA_PCM_DEVICE (int card,
 
 void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   assert(is_open() == false);
-  assert(is_triggered == false);
+  assert(is_triggered_rep == false);
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-alsa2) open");
 
