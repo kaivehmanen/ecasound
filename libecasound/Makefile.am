@@ -32,10 +32,8 @@ if ECA_AM_DEBUG_MODE
 libecasound_tester_libs =	$(top_builddir)/libecasound/.libs/libecasound@LIBECASOUND_VERSION@_debug.a \
 				$(top_builddir)/kvutils/.libs/libkvutils@LIBKVUTILS_VERSION@_debug.a
 else
-libecasound_tester_libs =	$(top_builddir)/kvutils/.libs/libkvutils@LIBKVUTILS_VERSION@.a \
-				$(top_builddir)/libecasound/.libs/libecasound@LIBECASOUND_VERSION@.a
-#libecasound_tester_libs =	$(eca_libadd) \
-#				$(top_builddir)/libecasound/libecasound@LIBECASOUND_VERSION@.la
+libecasound_tester_libs =  	$(top_builddir)/libecasound/.libs/libecasound@LIBECASOUND_VERSION@.a \
+				$(top_builddir)/kvutils/.libs/libkvutils@LIBKVUTILS_VERSION@.a \
 endif
 
 # note! Automake >= 1.5 will install stripped libraries
