@@ -5,7 +5,7 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_ASM_ATOMIC_H
+#ifdef USE_ASM_ATOMIC
 #include <asm/atomic.h>
 #endif
 #include <pthread.h>
@@ -23,7 +23,7 @@ class ATOMIC_INTEGER {
  public:
 
   int get(void) const {
-#ifdef HAVE_ASM_ATOMIC_H
+#ifdef USE_ASM_ATOMIC
     return(atomic_read(&value_rep));
 #else
     int temp;
@@ -35,7 +35,7 @@ class ATOMIC_INTEGER {
   }
 
   void set(int value) {
-#ifdef HAVE_ASM_ATOMIC_H
+#ifdef USE_ASM_ATOMIC
     atomic_set(&value_rep, value);
 #else
     pthread_mutex_lock(&mutex_rep);
@@ -45,7 +45,7 @@ class ATOMIC_INTEGER {
   }
 
   void add(int value) {
-#ifdef HAVE_ASM_ATOMIC_H
+#ifdef USE_ASM_ATOMIC
     atomic_add(value, &value_rep);
 #else
     pthread_mutex_lock(&mutex_rep);
@@ -55,7 +55,7 @@ class ATOMIC_INTEGER {
   }
 
   void subtract(int value) {
-#ifdef HAVE_ASM_ATOMIC_H
+#ifdef USE_ASM_ATOMIC
     atomic_sub(value, &value_rep);
 #else
     pthread_mutex_lock(&mutex_rep);
@@ -65,7 +65,7 @@ class ATOMIC_INTEGER {
   }
 
   void increment(void) {
-#ifdef HAVE_ASM_ATOMIC_H
+#ifdef USE_ASM_ATOMIC
     atomic_inc(&value_rep);
 #else
     pthread_mutex_lock(&mutex_rep);
@@ -75,7 +75,7 @@ class ATOMIC_INTEGER {
   }
 
   void decrement(void) {
-#ifdef HAVE_ASM_ATOMIC_H
+#ifdef USE_ASM_ATOMIC
     atomic_dec(&value_rep);
 #else
     pthread_mutex_lock(&mutex_rep);
@@ -85,7 +85,7 @@ class ATOMIC_INTEGER {
   }
 
   ATOMIC_INTEGER(int value = 0) {
-#ifdef HAVE_ASM_ATOMIC_H
+#ifdef USE_ASM_ATOMIC
     atomic_set(&value_rep, value);
 #else
     pthread_mutex_init(&mutex_rep, NULL);
@@ -94,7 +94,7 @@ class ATOMIC_INTEGER {
   }
  
   ~ATOMIC_INTEGER(void) {
-#ifdef HAVE_ASM_ATOMIC_H
+#ifdef USE_ASM_ATOMIC
 #else
     pthread_mutex_destroy(&mutex_rep);
 #endif
@@ -102,7 +102,7 @@ class ATOMIC_INTEGER {
 
  private:
 
-#ifdef HAVE_ASM_ATOMIC_H
+#ifdef USE_ASM_ATOMIC
   atomic_t value_rep;
 #else
   mutable pthread_mutex_t mutex_rep;
