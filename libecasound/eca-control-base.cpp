@@ -182,7 +182,7 @@ void ECA_CONTROL_BASE::stop_on_condition(void) {
   // --------
 
   if (session_repp->status() != ECA_SESSION::ep_status_running) return;
-  ecadebug->control_flow("Controller/Processing stopped");
+  ecadebug->control_flow("Controller/Processing stopped (cond)");
   session_repp->ecasound_queue_rep.push_back(ECA_PROCESSOR::ep_stop, 0.0);
   struct timeval now;
   gettimeofday(&now, 0);

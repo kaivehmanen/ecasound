@@ -238,7 +238,7 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void) {
     }
   }
   flush();
-  cerr << "Exiting proxy server thread." << endl;
+//    cerr << "Exiting proxy server thread." << endl;
 }
 
 /**
