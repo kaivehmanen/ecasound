@@ -19,6 +19,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 
 ??032001 (v1.9dev4)
 	- fixed: mpg123 instances weren't always properly cleaned
+	- fixed: loop-device code wasn't working
 02032001 (v1.9dev3)
 	- added: ecaplay - ctrl-c skips to the next file
 	- changed: -Md syntax to '-Md:rawmidi,device_name', where

@@ -36,15 +36,27 @@ LOOP_DEVICE::LOOP_DEVICE(int id)
 	  SAMPLE_SPECS::channel_count_default,
 	  SAMPLE_SPECS::sample_rate_default)
 { 
-  registered_inputs_rep = 0;
   writes_rep = 0;
+  registered_inputs_rep = 0;
   registered_outputs_rep = 0;
   filled_rep = false;
+  finished_rep = false;
+  writes_finished_rep = false;
+}
+
+bool LOOP_DEVICE::finished(void) const {
+  return(finished_rep);
 }
 
 void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer) {
-  if (filled_rep == false) buffer->make_silent();
-  else *buffer = sbuf;
+  if (writes_finished_rep != true) {
+    if (filled_rep == false) buffer->make_silent();
+    else *buffer = sbuf;
+  }
+  else {
+    finished_rep = true;
+    buffer->make_silent();
+  }
 }
 
 void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer) {
@@ -53,9 +65,16 @@ void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer) {
     sbuf.number_of_channels(buffer->number_of_channels());
     sbuf.make_silent();
   }
-  sbuf.add_with_weight(*buffer, registered_outputs_rep);
+  if (writes_finished_rep == true ||
+      buffer->length_in_samples() > 0) {
+    writes_finished_rep = finished_rep = false;
+    sbuf.add_with_weight(*buffer, registered_outputs_rep);
+    filled_rep = true;
+  }
+  else {
+    writes_finished_rep = true;
+  }
   if (writes_rep == registered_outputs_rep) writes_rep = 0;
-  filled_rep = true;
 }
 
 void LOOP_DEVICE::set_parameter(int param, 
