@@ -207,7 +207,7 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
       format_string().size() > 4 &&
       format_string()[4] == 'b') {
     /* force little-endian operation / affects only write-mode */
-    set_sample_format_string(format_string()[0] + kvu_numtostr(bits() + "_le"));
+    set_sample_format_string(format_string()[0] + kvu_numtostr(bits()) + "_le");
     ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-wave) forcing little-endian operation (" + format_string() + ")");
     DBC_CHECK(format_string().size() > 4 && format_string()[4] != 'b');
   }
@@ -442,7 +442,7 @@ bool WAVEFILE::next_riff_block(RB *t, off_t *offtmp)
   }
     
   if (!fio_repp->is_file_ready()) return(false);
-  *offtmp = t->bsize + fio_repp->get_file_position();
+  *offtmp = little_endian_uint32(t->bsize) + fio_repp->get_file_position();
   return (true);
 }
 
