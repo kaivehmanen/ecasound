@@ -173,7 +173,5 @@ off_t ECA_FILE_IO_STREAM::get_file_length(void) const {
   stat(fname_rep.c_str(), &temp);
   off_t lentemp = temp.st_size;
 
-  std::cerr << "File-length: " << lentemp << "." << std::endl;
-
   return(lentemp); 
 }
