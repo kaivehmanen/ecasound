@@ -37,9 +37,9 @@ static bool kvu_check_for_sched_sub(int policy);
 
 bool kvu_check_for_sched_sub(int policy)
 {
+  bool result = false;
 #ifdef HAVE_SCHED_GETPARAM
   int curpid = getpid();
-  bool result = false;
 
   /* store old scheduling params */
   struct sched_param prev_sparam;
