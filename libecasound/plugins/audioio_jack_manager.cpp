@@ -261,6 +261,11 @@ static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
   current->transport_info_rep.valid = static_cast<jack_transport_bits_t>(JackTransportState | JackTransportPosition);
   jack_get_transport_info(current->client_repp, &current->transport_info_rep);
 
+  DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process_timebase_slave(): engine curpos=" << 
+			current->engine_repp->current_position_in_samples() << 
+			", JACK curpos=" << 
+			current->transport_info_rep.position << "!" << endl);
+
   /* 1. transport stopped */
   if (current->transport_info_rep.state == JackTransportStopped) {
     DEBUG_CFLOW_STATEMENT(cerr << "JACK stopped" << endl);
@@ -279,30 +284,35 @@ static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
 	  (current->transport_info_rep.position < 
 	   current->engine_repp->current_position_in_samples())) {
 	current->engine_repp->command(ECA_ENGINE::ep_start, 0.0f);
+	current->engine_repp->command(ECA_ENGINE::ep_setpos_live_samples, 
+				      current->transport_info_rep.position + current->buffersize());
       }
       need_mute = true;
     }
     else {
       SAMPLE_SPECS::sample_pos_t enginepos = current->engine_repp->current_position_in_samples();
       if (enginepos == current->transport_info_rep.position) {
-	// DEBUG_CFLOW_STATEMENT(cerr << "JACK running" << endl);
+	DEBUG_CFLOW_STATEMENT(cerr << "JACK running; correct position");
 	/* execute engine iteration */
 	eca_jack_process_engine_iteration(nframes, current);
 	current->trace_position_count_rep = 0;
       }
       else {
+	DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine curpos '" << 
+			      current->engine_repp->current_position_in_samples() << 
+			      "' doesn't match JACK curpos '" << 
+			      current->transport_info_rep.position << "'!" << endl);
+	
 	if ((enginepos < current->transport_info_rep.position + current->buffersize() && 
-	     enginepos - 16 * current->buffersize() < current->transport_info_rep.position) ||
+	     enginepos - 8 * current->buffersize() < current->transport_info_rep.position) ||
 	    current->trace_position_count_rep > 8) {
 	  /* engine position incorrect; request seek to new pos */
-	  DEBUG_CFLOW_STATEMENT(cerr << endl << "eca_jack_process(): engine curpos '" << 
-				current->engine_repp->current_position_in_samples() << 
-				"' doesn't match JACK curpos '" << 
-				current->transport_info_rep.position << "'!" << endl);
+	  /* note: we seek 8 periods ahead to give time for the disk
+	     i/o subsystem to catch up */
 	  current->engine_repp->command(ECA_ENGINE::ep_setpos_live_samples, 
-					current->transport_info_rep.position + 16 * current->buffersize());
+					current->transport_info_rep.position + 8 * current->buffersize());
 	  DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process(): setpos request sent; seeking to "
-				<< current->transport_info_rep.position + 16 * current->buffersize() << endl);
+				<< current->transport_info_rep.position + 8 * current->buffersize() << endl);
 	  if (current->trace_position_count_rep > 8) current->trace_position_count_rep = 0;
 	}
 	else {
