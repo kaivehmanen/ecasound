@@ -22,6 +22,7 @@
 #include <cstdio>
 
 #include <kvutils/com_line.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include <eca-debug.h>
 #include <eca-error.h>

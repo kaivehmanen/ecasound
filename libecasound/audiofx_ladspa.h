@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 
-#include "samplebuffer.h"
 #include "audiofx.h"
 
 #ifdef HAVE_CONFIG_H
@@ -16,6 +15,8 @@
 #else
 #include "ladspa.h"
 #endif
+
+class SAMPLE_BUFFER;
 
 /**
  * Wrapper class for LADSPA plugins

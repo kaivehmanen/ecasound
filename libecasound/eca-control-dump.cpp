@@ -24,6 +24,7 @@
 #include <vector>
 
 #include <kvutils.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "audioio.h"
 #include "eca-chainop.h"

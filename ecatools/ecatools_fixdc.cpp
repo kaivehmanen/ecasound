@@ -25,6 +25,7 @@
 
 #include <kvutils/com_line.h>
 #include <kvutils/temporary_file_directory.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include <samplebuffer.h>
 #include <eca-debug.h>

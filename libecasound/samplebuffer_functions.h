@@ -8,14 +8,13 @@
  * Various simple functions that operate on sample buffer data. This 
  * class really is just an extension of class SAMPLE_BUFFER.
  */
-template<class T>
-class SAMPLE_BUFFER_FUNCTIONS_BASE {
+class SAMPLE_BUFFER_FUNCTIONS {
 
  public:
 
-  typedef SAMPLE_BUFFER_BASE<T>::sample_type sample_type;
+  typedef SAMPLE_BUFFER::sample_type sample_type;
 
-  static sample_type max_value(const SAMPLE_BUFFER_BASE<T>& buf, 
+  static sample_type max_value(const SAMPLE_BUFFER& buf, 
 			       SAMPLE_BUFFER::channel_size_t channel) {
     sample_type t = SAMPLE_SPECS::impl_min_value;
     for(SAMPLE_BUFFER::buf_size_t m = 0; m < buf.buffersize_rep; m++) {
@@ -24,7 +23,7 @@ class SAMPLE_BUFFER_FUNCTIONS_BASE {
     return(t);
   }
 
-  static sample_type min_value(const SAMPLE_BUFFER_BASE<T>& buf, 
+  static sample_type min_value(const SAMPLE_BUFFER& buf, 
 			SAMPLE_BUFFER::channel_size_t channel) {
     sample_type t = SAMPLE_SPECS::impl_max_value;
     for(SAMPLE_BUFFER::buf_size_t m = 0; m < buf.buffersize_rep; m++) {
@@ -33,7 +32,7 @@ class SAMPLE_BUFFER_FUNCTIONS_BASE {
     return(t);
   }
 
-  static sample_type average_amplitude(const SAMPLE_BUFFER_BASE<T>& buf) {
+  static sample_type average_amplitude(const SAMPLE_BUFFER& buf) {
     sample_type temp_avg = 0.0;
     for(int n = 0; n < buf.channel_count_rep; n++) {
       for(SAMPLE_BUFFER::buf_size_t m = 0; m < buf.buffersize_rep; m++) {
@@ -43,7 +42,7 @@ class SAMPLE_BUFFER_FUNCTIONS_BASE {
     return(temp_avg / buf.channel_count_rep / buf.buffersize_rep);
   }
 
-  static sample_type RMS_volume(const SAMPLE_BUFFER_BASE<T>& buf) {
+  static sample_type RMS_volume(const SAMPLE_BUFFER& buf) {
     sample_type temp_avg = 0.0;
     for(int n = 0; n < buf.channel_count_rep; n++) {
       for(SAMPLE_BUFFER::buf_size_t m = 0; m < buf.buffersize_rep; m++) {
@@ -53,9 +52,9 @@ class SAMPLE_BUFFER_FUNCTIONS_BASE {
     return(sqrt(temp_avg / buf.channel_count_rep / buf.buffersize_rep));
   }
 
-  static sample_type average_amplitude(const SAMPLE_BUFFER_BASE<T>& buf,
-				SAMPLE_BUFFER::channel_size_t channel,
-				SAMPLE_BUFFER::buf_size_t count_samples) {
+  static sample_type average_amplitude(const SAMPLE_BUFFER& buf,
+				       SAMPLE_BUFFER::channel_size_t channel,
+				       SAMPLE_BUFFER::buf_size_t count_samples) {
       sample_type temp_avg = 0.0;
       if (count_samples == 0) count_samples = static_cast<int>(buf.channel_count_rep);
       
@@ -66,7 +65,7 @@ class SAMPLE_BUFFER_FUNCTIONS_BASE {
       return(temp_avg / count_samples);
   }
   
-  static sample_type RMS_volume(const SAMPLE_BUFFER_BASE<T>& buf,
+  static sample_type RMS_volume(const SAMPLE_BUFFER& buf,
 				SAMPLE_BUFFER::channel_size_t channel,
 				SAMPLE_BUFFER::buf_size_t count_samples) {
     sample_type temp_avg = 0.0;
@@ -77,7 +76,5 @@ class SAMPLE_BUFFER_FUNCTIONS_BASE {
     return(sqrt(temp_avg / count_samples));
   }
 };
-
-typedef SAMPLE_BUFFER_FUNCTIONS_BASE<SAMPLE_BUFFER::sample_type> SAMPLE_BUFFER_FUNCTIONS;
 
 #endif

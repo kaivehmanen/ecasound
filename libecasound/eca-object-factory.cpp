@@ -38,6 +38,7 @@
 #include "eca-object-map.h"
 #include "eca-preset-map.h"
 #include "eca-object-factory.h"
+#include "eca-debug.h"
 
 using std::list;
 using std::map;

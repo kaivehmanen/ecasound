@@ -19,6 +19,7 @@
 
 #include <kvutils/kvu_numtostr.h>
 
+#include "samplebuffer.h"
 #include "samplebuffer_functions.h"
 #include "audiogate.h"
 #include "eca-debug.h"

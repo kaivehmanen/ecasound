@@ -4,7 +4,8 @@
 #include <string>
 #include <cstdio>
 #include <iostream>
-#include "samplebuffer.h"
+
+#include "sample-specs.h"
 
 typedef struct {
   public:
@@ -80,14 +81,3 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-
-

@@ -6,7 +6,8 @@
 #include "eca-audio-position.h"
 #include "eca-audio-time.h"
 #include "dynamic-object.h"
-#include "samplebuffer.h"
+
+class SAMPLE_BUFFER;
 
 /**
  * Virtual base for all audio I/O classes (files, audio devices,

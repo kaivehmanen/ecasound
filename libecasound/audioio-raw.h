@@ -7,7 +7,6 @@
 #include "eca-fileio.h"
 #include "eca-fileio-mmap.h"
 #include "eca-fileio-stream.h"
-#include "samplebuffer.h"
 
 /**
  * Class for handling raw/headerless audio files

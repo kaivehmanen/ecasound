@@ -6,8 +6,8 @@
 
 class PRESET_impl;
 class CHAIN;
+class SAMPLE_BUFFER;
 
-#include "samplebuffer.h"
 #include "eca-chainop.h"
 
 /**

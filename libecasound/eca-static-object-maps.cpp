@@ -31,6 +31,7 @@
 #include <algorithm>
 
 #include <kvutils/kvu_numtostr.h>
+
 #include "eca-version.h"
 #include "eca-chainop.h"
 #include "audiofx.h"
@@ -93,6 +94,7 @@ extern "C" {
 #include "eca-static-object-maps.h"
 
 #include "eca-resources.h"
+#include "eca-debug.h"
 #include "eca-error.h"
 
 using std::cerr;
@@ -116,7 +118,7 @@ static int eca_default_objects_registered = 0;
 static void register_default_audio_objects(void);
 static void register_default_controllers(void);
 static void register_default_chainops(void);
-static void register_default_presets(void);
+//  static void register_default_presets(void);
 static void register_ladspa_plugins(void);
 static void register_internal_audioio_plugins(void);
 static void register_default_midi_devices(void);
@@ -344,7 +346,7 @@ static void register_default_controllers(void) {
   eca_controller_map->register_object("ksv", "^ksv$", new GENERIC_CONTROLLER(new VOLUME_ANALYZE_CONTROLLER()));
 }
 
-static void register_default_presets(void) { }
+//  static void register_default_presets(void) { }
 
 static void register_internal_audioio_plugin(const string& libdir,
 					     const string& filename) {
@@ -393,6 +395,8 @@ static void register_internal_audioio_plugin(const string& libdir,
 
   if (plugin_handle == 0 ||
       plugin_version == 0 ||
+      plugin_keyword == 0 ||
+      plugin_keyword_regex == 0 ||
       desc_func == 0) {
     ecadebug->msg(ECA_DEBUG::user_objects, 
 		  "(eca-static-object-maps) Opening internal plugin file \"" + 

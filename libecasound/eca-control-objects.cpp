@@ -28,6 +28,7 @@
 #include <kvutils/dbc.h> /* DBC_* */
 #include <kvutils/value_queue.h>
 #include <kvutils/temporary_file_directory.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "eca-engine.h"
 #include "eca-session.h"

@@ -5,11 +5,11 @@
 #include <vector>
 
 #include "eca-chainop.h"
-#include "samplebuffer.h"
 #include "eca-debug.h"
 
 class GENERIC_CONTROLLER;
 class OPERATOR;
+class SAMPLE_BUFFER;
 
 /**
  * Class representing an abstract audio signal chain.

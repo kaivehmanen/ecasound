@@ -24,8 +24,6 @@
 
 #include "eca-error.h"
 #include "audioio.h"
-#include "samplebuffer.h"
-
 #include "eca-debug.h"
 
 const std::string& AUDIO_IO::SETUP_ERROR::message(void) const { return(message_rep); }

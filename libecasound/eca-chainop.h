@@ -6,7 +6,9 @@
 
 #include "eca-operator.h"
 #include "eca-audio-format.h"
-#include "samplebuffer.h"
+#include "sample-specs.h"
+
+class SAMPLE_BUFFER;
 
 /**
  * Virtual base class for chain operators. 

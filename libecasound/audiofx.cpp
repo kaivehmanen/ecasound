@@ -18,6 +18,7 @@
 // ------------------------------------------------------------------------
 
 #include "sample-specs.h"
+#include "samplebuffer.h"
 #include "audiofx.h"
 
 EFFECT_BASE::EFFECT_BASE(void) : 

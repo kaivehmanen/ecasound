@@ -2,26 +2,21 @@
 #define INCLUDED_SAMPLEBUFFER_H
 
 #include <vector>
-#include <sys/types.h>
 
-#include <kvutils/kvu_numtostr.h>
 #include "eca-audio-format.h"
 #include "sample-specs.h"
-#include "eca-debug.h"
-#include "eca-error.h"
 
-template<class T> class SAMPLE_BUFFER_FUNCTIONS_BASE;
+class SAMPLE_BUFFER_FUNCTIONS;
+class SAMPLE_BUFFER_impl;
 
 /**
- * Represents a buffer of samples. The primary goal of this class is to 
+ * Class representing a buffer of audio samples. The primary goal of this class is to 
  * provide a reasonably efficient implementation while still hiding the
  * the actual type information.
  */
-template<class T>
-class SAMPLE_BUFFER_BASE {
+class SAMPLE_BUFFER {
 
-  friend class SAMPLE_BUFFER_FUNCTIONS_BASE<T>;
-
+  friend class SAMPLE_BUFFER_FUNCTIONS;
   friend class SAMPLE_ITERATOR;
   friend class SAMPLE_ITERATOR_CHANNEL;
   friend class SAMPLE_ITERATOR_CHANNELS;
@@ -29,11 +24,97 @@ class SAMPLE_BUFFER_BASE {
 
  public:
 
+  /** @name Public type definitions */
+  /*@{*/
+
   typedef int channel_size_t;
   typedef long int buf_size_t;
   typedef long int srate_size_t;
 
-  typedef T sample_type;
+  typedef SAMPLE_SPECS::sample_type sample_type;
+
+  /*@}*/
+
+ public:
+
+  /** @name Constructors/destructors */
+  /*@{*/
+
+  SAMPLE_BUFFER& operator= (const SAMPLE_BUFFER& t);
+  SAMPLE_BUFFER (buf_size_t buffersize = 0,
+		      channel_size_t channels = 0,
+		      srate_size_t sample_rate = 0);
+  ~SAMPLE_BUFFER(void);
+  SAMPLE_BUFFER (const SAMPLE_BUFFER& x);
+
+  /*@}*/
+
+ public:
+    
+  void resample_from(srate_size_t from_srate) { resample_with_memory(from_srate, sample_rate_rep); }
+  void resample_to(srate_size_t to_srate) { resample_with_memory(sample_rate_rep, to_srate); }
+
+  /** @name Public member routines */
+  /*@{*/
+
+  void add(const SAMPLE_BUFFER& x);
+  void add_with_weight(const SAMPLE_BUFFER& x, int weight);
+  void copy(const SAMPLE_BUFFER& x);
+  void copy_range(const SAMPLE_BUFFER& x, long int start_pos, long int end_pos, long int to_pos);
+  void divide_by(sample_type dvalue);
+  void limit_values(void);
+  void make_silent(void);
+  void make_silent_range(long int start_pos, long int end_pos);
+  void copy_to_buffer(unsigned char* source,
+		      long int samples,
+		      ECA_AUDIO_FORMAT::Sample_format fmt,
+		      int ch,
+		      long int srate);
+
+  void copy_to_buffer_vector(unsigned char* source,
+			     long int samples,
+			     ECA_AUDIO_FORMAT::Sample_format fmt,
+			     int ch,
+			     long int srate);
+
+  void copy_from_buffer(unsigned char* target,
+			ECA_AUDIO_FORMAT::Sample_format fmt,
+			int ch,
+			long int srate);
+
+  void copy_from_buffer_vector(unsigned char* target,
+			       ECA_AUDIO_FORMAT::Sample_format fmt,
+			       int ch,
+			       long int srate);
+
+  /*@}*/
+        
+ public:
+
+  /** @name Routines for observing and modifying buffer setup */
+  /*@{*/
+
+  void number_of_channels(int len);
+  inline int number_of_channels(void) const { return(channel_count_rep); }
+
+  void sample_rate(long int srate) { sample_rate_rep = srate; }
+  inline long int sample_rate(void) const { return(sample_rate_rep); }
+  void length_in_samples(long int len) { if (buffersize_rep != len) resize(len); }
+  inline long int length_in_samples(void) const { return(buffersize_rep); }
+  inline double length_in_seconds(void) const { return((double)buffersize_rep / sample_rate_rep); }
+
+  /*@}*/
+
+ private:
+
+  void resize(long int buffersize);
+
+ public:
+
+  void resample_extfilter(srate_size_t from_srate, srate_size_t to_srate);
+  void resample_simplefilter(srate_size_t from_srate, srate_size_t to_srate);
+  void resample_nofilter(srate_size_t from_srate, srate_size_t to_srate);
+  void resample_with_memory(srate_size_t from_srate, srate_size_t to_srate);
 
  public:
 
@@ -46,173 +127,24 @@ class SAMPLE_BUFFER_BASE {
    */
   std::vector<sample_type*> buffer;
 
- public:
-    
-  void resample_from(long int from_srate) { resample_with_memory(from_srate, sample_rate_rep); }
-  void resample_to(long int to_srate) { resample_with_memory(sample_rate_rep, to_srate); }
-
- public:
-    
-  // ---
-  // Public member routines
-  // ---
-  
-  /**
-   * Channel-wise addition. Buffer length is increased if necessary.
-   */
-  void add(const SAMPLE_BUFFER_BASE<T>& x);
-
-  /**
-   * Channel-wise, weighted addition. Before addition every sample is 
-   * multiplied by '1/weight'. Buffer length is increased if necessary.
-   */
-  void add_with_weight(const SAMPLE_BUFFER_BASE<T>& x, int weight);
-
-  /**
-   * Channel-wise copy. Buffer length is increased if necessary.
-   */
-  void copy(const SAMPLE_BUFFER_BASE<T>& x);
-
-  /**
-   * Ranged channel-wise copy. Copies samples in range 
-   * 'start_pos' - 'end_pos' from buffer 'x' to current 
-   * buffer and position 'to_pos'. 
-   */
-  void copy_range(const SAMPLE_BUFFER_BASE<T>& x, long int start_pos, long int end_pos, long int to_pos);
-
-  /**
-   * Divide all samples by 'dvalue'.
-   */
-  void divide_by(sample_type dvalue);
-
-  /**
-   * Limit all samples to valid values. 
-   */
-  void limit_values(void);
-
-  /**
-   * Mute the whole buffer.
-   */
-  void make_silent(void);
-
-  /**
-   * Mute a range of samples.
-   */
-  void make_silent_range(long int start_pos, long int end_pos);
-
-  /**
-   * Fill buffer from external buffer source. 
-   * Sample data will be converted to internal sample format 
-   * using the given arguments (sample rate, sample format 
-   * and endianess).
-   *
-   * ensure:
-   *  channels == channel_count_rep
-   */
-  void copy_to_buffer(unsigned char* source,
-		      long int samples,
-		      ECA_AUDIO_FORMAT::Sample_format fmt,
-		      int ch,
-		      long int srate) throw(ECA_ERROR&);
-
-  /**
-   * Same as 'copy_to_buffer()', but 'source' data is 
-   * assumed be in non-interleaved format.
-   *
-   * ensure:
-   *  channels == channel_count_rep
-   */
-  void copy_to_buffer_vector(unsigned char* source,
-			     long int samples,
-			     ECA_AUDIO_FORMAT::Sample_format fmt,
-			     int ch,
-			     long int srate) throw(ECA_ERROR&);
-
-  /**
-   * Copy contents of sample buffer to 'target'. Sample data 
-   * will be converted according to the given arguments
-   * (sample rate, sample format and endianess).
-   *
-   * ensure:
-   *  channels == channel_count_rep
-   */
-  void copy_from_buffer(unsigned char* target,
-			ECA_AUDIO_FORMAT::Sample_format fmt,
-			int ch,
-			long int srate) throw(ECA_ERROR&);
-
-  /**
-   * Same as 'copy_from_buffer()', but 'target' data is 
-   * written in non-interleaved format.
-   *
-   * ensure:
-   *  channels == channel_count_rep
-   */
-  void copy_from_buffer_vector(unsigned char* target,
-			       ECA_AUDIO_FORMAT::Sample_format fmt,
-			       int ch,
-			       long int srate) throw(ECA_ERROR&);
-  
-        
-  // ---
-  // Buffer setup
-  // ---
-
- public:
-
-  void number_of_channels(int len);
-  inline int number_of_channels(void) const { return(channel_count_rep); }
-
-  void sample_rate(long int srate) { sample_rate_rep = srate; }
-  inline long int sample_rate(void) const { return(sample_rate_rep); }
-  void length_in_samples(long int len) { if (buffersize_rep != len) resize(len); }
-  inline long int length_in_samples(void) const { return(buffersize_rep); }
-  inline double length_in_seconds(void) const { return((double)buffersize_rep / sample_rate_rep); }
-
-  // ---
-  // Constructors/destructors
-  // ---
-  SAMPLE_BUFFER_BASE<T>& operator= (const SAMPLE_BUFFER_BASE<T>& t);
-  SAMPLE_BUFFER_BASE (long int buffersize = 0,
-		      int channels = 0,
-		      long int sample_rate = 0);
-  ~SAMPLE_BUFFER_BASE(void);
-  SAMPLE_BUFFER_BASE (const SAMPLE_BUFFER_BASE<T>& x);
-
  private:
 
-  // ---
-  // Sample buffer data - only these variables (+ sample data) are processed when copying 
-  // and contructing buffer objects
-  // ---
+  /** @name Sample buffer data
+   * 
+   * Only these variables (+ sample data) are processed when copying 
+   * and contructing buffer objects 
+   **/
+  /*@{*/
 
   int channel_count_rep;
   long int buffersize_rep;
   long int sample_rate_rep;
   long int reserved_bytes_rep;
 
-  // ---
-  // Other member variables
-  // ---
-  sample_type* old_buffer_repp; // for resampling
-  std::vector<sample_type> resample_memory_rep;
+  /*@}*/
 
-  void resize(long int buffersize);
+  SAMPLE_BUFFER_impl* impl_repp;
 
- public:
-
-  void resample_extfilter(long int from_srate,
-			  long int to_srate);
-  void resample_simplefilter(long int from_srate,
-			     long int to_srate);
-  void resample_nofilter(long int from_srate,
-			 long int to_srate);
-  void resample_with_memory(long int from_srate,
-			    long int to_srate);
 };
-
-typedef SAMPLE_BUFFER_BASE<SAMPLE_SPECS::sample_type> SAMPLE_BUFFER;
-
-#include "samplebuffer_impl.h"
 
 #endif

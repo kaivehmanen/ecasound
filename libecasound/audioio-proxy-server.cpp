@@ -27,6 +27,7 @@
 #include <errno.h> /* ETIMEDOUT */
 
 #include <kvutils/dbc.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "sample-specs.h"
 #include "eca-debug.h"

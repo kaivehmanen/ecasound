@@ -20,6 +20,7 @@
 
 #include <unistd.h> /* open(), close() */
 
+#include "samplebuffer.h"
 #include "eca-debug.h"
 #include "audioio-buffered-proxy.h"
 

@@ -5,8 +5,9 @@
 #include <iostream>
 
 #include "audioio.h"
-#include "samplebuffer.h"
 #include "audioio-proxy-server.h"
+
+class SAMPLE_BUFFER;
 
 /**
  * Proxy class providing additional layer of buffering

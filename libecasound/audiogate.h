@@ -4,7 +4,8 @@
 #include <string>
 
 #include "eca-chainop.h"
-#include "samplebuffer.h"
+
+class SAMPLE_BUFFER;
 
 /**
  * Interface to gate effects. Gate processes sample data, but

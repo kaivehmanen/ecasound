@@ -30,6 +30,7 @@
 #include <kvutils/value_queue.h>
 #include <kvutils/message_item.h>
 #include <kvutils/dbc.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "eca-engine.h"
 #include "eca-session.h"
