@@ -251,6 +251,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   bool is_in_use_rep;
   bool is_enabled_rep;
   bool multitrack_mode_rep;
+  bool multitrack_mode_override_rep;
   bool memory_locked_rep;
   int active_chain_index_rep;
   int active_chainop_index_rep;
@@ -307,6 +308,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void set_defaults (void);
   int number_of_realtime_inputs(void) const;
   int number_of_realtime_outputs(void) const;
+  int number_of_non_realtime_inputs(void) const;
+  int number_of_non_realtime_outputs(void) const;
   int number_of_chain_operators(void) const;
   void toggle_is_in_use(bool value) { is_in_use_rep=value; }
 

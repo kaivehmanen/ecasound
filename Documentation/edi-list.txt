@@ -64,6 +64,8 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	- submitted: 30.09.2001, William Goldsmith
 (edi-18) Intelligent system for setting the internal sample rate.
 	- submitted: smassy, 17.10.2001
+(edi-19) Separate file format for multitrack setups (.emt).
+	- submitted: kaiv, 18.10.2001
 
 -----------------------------------------------------------------------
 [ Closed items ]

@@ -20,6 +20,8 @@ Last officially released version is -*> v2.0.3 *-
 ??102001 (v2.1dev3)
 	- added: ecasound-config - --ldflags and --prefix for 
 	- added: engine profiling info (printed to stderr)
+	- added: -z:multitrack, -z:nomultitrack for forced enabling
+		 and disabling of multitrack-mode
 	- changed: pyecasound - makefile-hack that allows pyecasound
 		   to work even though compiled against libecasound 
 		   and libkvutils that are not installed to 
@@ -31,10 +33,14 @@ Last officially released version is -*> v2.0.3 *-
 		   scheduling if -r is enabled
 	- changed: ALSA xrun reports are now printed to stderr 
 		   instead of ecasound debug-subsystem
+	- changed: -B:rt selected as the default bmode for 
+		   multitrack-setups (instead of -B:lowlatency)
 	- fixed: major bugs in interpreting LADSPA plugin 
 		 parameter hint flags
 	- fixed: a nasty bug in bufmode activation code prevented
 		 -kos, -kl, and others from working properly
+	- fixed: loop devices didn't work well with -z:db; fixes
+		 ecasound testsuite case con_test1-8
 14102001 (v2.1dev2)
 	- added: ecaplay - -k, -d and -h options, see 'man ecaplay'
 	- added: eiam - ai-get-length-samples, ao-get-length-samples,

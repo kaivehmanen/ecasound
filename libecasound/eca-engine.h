@@ -262,7 +262,6 @@ private:
 
   void init_variables(void);
   void init_connection_to_chainsetup(void);
-  void init_multitrack_mode(void);
   void init_mix_method(void);
   void init_servers(void);
   void init_inputs(void);

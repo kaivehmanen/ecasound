@@ -242,6 +242,7 @@ void ECA_CHAINSETUP::set_defaults(void) {
   proxy_clients_rep = 0;
   is_enabled_rep = false;
   multitrack_mode_rep = false;
+  multitrack_mode_override_rep = false;
   memory_locked_rep = false;
   is_in_use_rep = false;
   active_chain_index_rep = 0;
@@ -307,27 +308,63 @@ void ECA_CHAINSETUP::set_buffering_mode(Buffering_mode_t value) {
  */ 
 void ECA_CHAINSETUP::select_active_buffering_mode(void) {
   if (buffering_mode() == ECA_CHAINSETUP::cs_bmode_none) {
-    active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_nonrt;
+    active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_auto;
   }
-  else if (buffering_mode() == ECA_CHAINSETUP::cs_bmode_auto) {
+  
+  if (buffering_mode() == ECA_CHAINSETUP::cs_bmode_auto) {
+
+    /* initialize to 'nonrt', mt-disabled */
+    active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_nonrt;
+
     if (has_realtime_objects() == true) {
-      if (rtcaps_rep != true ||
-	  (number_of_chain_operators() == 0 &&
-	   (number_of_realtime_inputs() == 0 || 
-	    number_of_realtime_outputs() == 0))) {
+      /* case 1: a multitrack setup */
+      if (!(multitrack_mode_override_rep == true && 
+	      multitrack_mode_rep != true) && 
+	  ((multitrack_mode_override_rep == true && 
+	    multitrack_mode_rep == true) ||
+	   (number_of_realtime_inputs() > 0 && 
+	    number_of_realtime_outputs() > 0 &&
+	    number_of_non_realtime_inputs() > 0 && 
+	    number_of_non_realtime_outputs() > 0 &&
+	    chains.size() > 1))) {
+	ecadebug->msg("(eca-chainsetup) Multitrack-mode enabled.");
+	multitrack_mode_rep = true;
+	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
+	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection case-1");
+      }
+
+      /* case 2: rt-objects without priviledges for rt-scheduling */
+      else if (rtcaps_rep != true) {
 	toggle_raised_priority(false);
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
+	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection case-2");
       }
+
+      /* case 3: no chain operators and "one-way rt-operation" */
+      else if (number_of_chain_operators() == 0 &&
+	       (number_of_realtime_inputs() == 0 || 
+		number_of_realtime_outputs() == 0)) {
+	toggle_raised_priority(false);
+	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
+	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection case-3");
+      }
+
+      /* case 4: default for rt-setups */
       else {
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rtlowlatency;
+	ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection case-4");
       }
     }
-    else
+    else { 
+      /* case 5: no rt-objects */
       active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_nonrt;
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection case-5");
+    }
   }
   else {
     /* user has explicitly selected the buffering mode */
     active_buffering_mode_rep = buffering_mode();
+    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) bmode-selection explicit");
   }
   
   switch(active_buffering_mode_rep) 
@@ -871,14 +908,29 @@ int ECA_CHAINSETUP::number_of_realtime_outputs(void) const {
   return(res);
 }
 
+/**
+ * Returns number of non-realtime audio input objects.
+ */
+int ECA_CHAINSETUP::number_of_non_realtime_inputs(void) const {
+  return(inputs.size() - number_of_realtime_inputs());
+}
+
+/**
+ * Returns number of non-realtime audio input objects.
+ */
+int ECA_CHAINSETUP::number_of_non_realtime_outputs(void) const {
+  return(outputs.size() - number_of_realtime_outputs());
+}
+
 /** 
  * Helper function used by add_input() and add_output().
  */
 AUDIO_IO* ECA_CHAINSETUP::add_audio_object_helper(AUDIO_IO* aio) {
   AUDIO_IO* retobj = aio;
   AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(aio);
-  if (p == 0) {
-    /* not a realtime device */
+  LOOP_DEVICE* q = dynamic_cast<LOOP_DEVICE*>(aio);
+  if (p == 0 && q == 0) {
+    /* not a realtime or loop device */
     retobj = new AUDIO_IO_BUFFERED_PROXY(&impl_repp->pserver_rep, aio, false);
     ++proxy_clients_rep;
   }

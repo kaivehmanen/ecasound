@@ -75,7 +75,6 @@ ECA_ENGINE::ECA_ENGINE(ECA_SESSION* arg)
 
   init_variables();
   init_connection_to_chainsetup();
-  init_multitrack_mode();
   init_mix_method();
   init_profiling();
 
@@ -492,25 +491,6 @@ void ECA_ENGINE::init_chains(void) {
   }
 
   while(cslots_rep.size() < chains_repp->size()) cslots_rep.push_back(SAMPLE_BUFFER(buffersize_rep, max_channels_rep, csetup_repp->sample_rate()));
-}
-
-/**
- * Called only from class constructor.
- */
-void ECA_ENGINE::init_multitrack_mode(void) {
-  // ---
-  // Are we doing multitrack-recording?
-  // ---    
-  if (realtime_inputs_rep.size() > 0 && 
-      realtime_outputs_rep.size() > 0 &&
-      non_realtime_inputs_rep.size() > 0 && 
-      non_realtime_outputs_rep.size() > 0 &&
-      chains_repp->size() > 1) {
-    ecadebug->msg("(eca-engine) Multitrack-mode enabled. Changed mixmode to \"normal\"");
-    csetup_repp->multitrack_mode_rep = true;
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Using input " + realtime_inputs_rep[0]->label() + " for multitrack sync.");
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-engine) Using output " + realtime_outputs_rep[0]->label() + " for multitrack sync.");
-  }
 }
 
 /**
@@ -942,11 +922,11 @@ void ECA_ENGINE::multitrack_sync(void) {
 }
 
 void ECA_ENGINE::process_chains(void) {
-    chain_i chain_iter = chains_repp->begin();
-    while(chain_iter != chains_repp->end()) {
-      (*chain_iter)->process();
-      ++chain_iter;
-    }
+  chain_i chain_iter = chains_repp->begin();
+  while(chain_iter != chains_repp->end()) {
+    (*chain_iter)->process();
+    ++chain_iter;
+  }
 }
 
 void ECA_ENGINE::inputs_to_chains(bool skip_realtime_inputs) {

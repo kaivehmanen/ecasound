@@ -403,6 +403,16 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
 	ecadebug->msg("(eca-chainsetup-parser) Disabling extra buffering on realtime devices.");
 	csetup_repp->toggle_max_buffers(false);
       }
+      else if (get_argument_number(1, argu) == "multitrack") {
+	ecadebug->msg("(eca-chainsetup-parser) Enabling multitrack-mode (override).");
+	csetup_repp->multitrack_mode_override_rep = true;
+	csetup_repp->multitrack_mode_rep = true;
+      }
+      else if (get_argument_number(1, argu) == "nomultitrack") {
+	ecadebug->msg("(eca-chainsetup-parser) Disabling multitrack-mode (override).");
+	csetup_repp->multitrack_mode_override_rep = true;
+	csetup_repp->multitrack_mode_rep = false;
+      }
       else if (get_argument_number(1, argu) == "psr") {
 	ecadebug->msg("(eca-chainsetup-parser) Enabling precise-sample-rates with OSS audio devices.");
 	csetup_repp->toggle_precise_sample_rates(true);
@@ -957,6 +967,8 @@ std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const {
   else
     t << " -X";
 
+
+  // FIXME: -z:multitrack, -z:nomultitrack not saved
 
   if (csetup_repp->ignore_xruns() == true) 
     t << " -z:noxruns";
