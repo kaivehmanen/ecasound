@@ -1,4 +1,36 @@
 ## ------------------------------------------------------------------------
+## Check whether atomic locking primitives are defined in asm/atomic.h
+## ------------------------------------------------------------------------
+##
+AC_DEFUN(AC_HEADER_ASM_ATOMIC,
+[
+AC_MSG_CHECKING(whether atomic locking primitives are defined in asm/atomic.h)
+
+AC_LANG_CPLUSPLUS
+AC_TRY_RUN([
+#include <asm/atomic.h>
+
+int main(void)
+{	
+	atomic_t i;
+   	atomic_read(&i);
+   	atomic_set(&i, 0);
+	atomic_add(0, &i);
+	atomic_sub(0, &i);
+    	atomic_inc(&i);
+    	atomic_dec(&i);
+  	return(0);
+}
+],
+[ 	AC_MSG_RESULT(yes.)
+	AC_DEFINE(USE_ASM_ATOMIC)
+],
+[
+	AC_MSG_RESULT(not found.)
+]
+)])
+
+## ------------------------------------------------------------------------
 ## Find the meta object compiler in the PATH, in $QTDIR/bin, and some
 ## more usual places
 ## ------------------------------------------------------------------------

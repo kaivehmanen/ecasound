@@ -46,3 +46,7 @@
 
 /* use libtermcap for termcap info */
 #undef USE_TERMCAP
+
+/* use locking primitives found in asm/atomic.h */
+#undef USE_ASM_ATOMIC
+

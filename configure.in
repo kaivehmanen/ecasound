@@ -171,6 +171,11 @@ AM_CONDITIONAL(KVUTILS_INSTALLED, test x$kvutils_installed = xyes)
 dnl ------------------------------------------------------------------
 
 dnl ---
+dnl Atomic locking operations in asm/atomic.h
+dnl ---
+AC_HEADER_ASM_ATOMIC
+
+dnl ---
 dnl Audiofile library
 dnl ---
 AC_CHECK_LIB(audiofile,main,af_support=yes,af_support=no)
@@ -393,9 +398,17 @@ else
 	pymoddirs=$with_python_modules
 fi
 
+dnl ---
+dnl a hack to support broken debian python installs
+dnl ---
+AC_ARG_ENABLE(python-force-site-packages,
+       [  --enable-python-force-site-packages force install Python modules into
+site-packages even when it doesn't exist [default=no] ],
+python_force_site_packages=yes)
+            
 AC_FIND_FILE(lib-dynload,$pymoddirs,eca_python_modules)
 dnl Use site-packages in preference if it is there.
-if test -d $eca_python_modules/site-packages
+if test -d $eca_python_modules/site-packages -o "X$python_force_site_packages" = "Xyes"
 then
 	eca_python_modules=$eca_python_modules/site-packages
 	eca_python_dlmodules=$eca_python_modules
