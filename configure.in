@@ -78,29 +78,6 @@ dnl CXXFLAGS="-O2 -D_REENTRANT -fomit-frame-pointer -finline-functions -ffast-ma
 
 dnl ------------------------------------------------------------------
 
-dnl ---
-dnl Set up some operating system specific options for POSIX threads
-dnl ---
-case "$host" in
-	*-*-openbsd*)
-               CFLAGS="$CFLAGS -pthread"
-               CXXFLAGS="$CXXFLAGS -pthread"
-               echo "Setting OpenBSD compilation options for POSIX threads"
-               ;;
-	*-*-freebsd*)
-               CFLAGS="$CFLAGS -pthread"
-               CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE"
-               CXXFLAGS="$CXXFLAGS -pthread"
-               echo "Setting FreeBSD compilation options for POSIX threads"
-               ;;
-	*-*-solaris*)
-               CPPFLAGS="$CPPFLAGS -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS"
-               echo "Setting Solaris compilation options for POSIX threads"
-               ;;
-esac
-
-dnl ------------------------------------------------------------------
-
 AC_ARG_ENABLE(debug,
 [  --enable-debug		Enable debugging (default = no)],
 include_debug=yes)
@@ -120,9 +97,39 @@ fi
 dnl ------------------------------------------------------------------
 
 dnl ---
+dnl Set up some operating system specific options for POSIX threads
+dnl ---
+case "$host" in
+	*-*-openbsd*)
+               CFLAGS="$CFLAGS -pthread"
+               CXXFLAGS="$CXXFLAGS -pthread"
+               echo "Setting OpenBSD compilation options for POSIX threads"
+               ;;
+	*-*-freebsd*)
+               CFLAGS="$CFLAGS -pthread"
+               CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE"
+               CXXFLAGS="$CXXFLAGS -pthread"
+               echo "Setting FreeBSD compilation options for POSIX threads"
+               ;;
+	*-*-solaris*)
+               CPPFLAGS="$CPPFLAGS -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS"
+               echo "Setting Solaris compilation options for POSIX threads"
+               ;;
+	*)
+	       echo "Using generic settings for POSIX thread support."
+	       ;;
+esac
+
+AC_SEARCH_LIBS(pthread_create, pthread c_r, [],
+		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **]))
+
+dnl ------------------------------------------------------------------
+
+dnl ---
 dnl Checks for functions.
 dnl ---
 AC_FUNC_MMAP
+AC_CHECK_FUNCS(mlockall)
 
 dnl ---
 dnl Checks for libraries.
@@ -152,15 +159,6 @@ if test x$termcap_library = xncurses; then
         )
 	AC_DEFINE(USE_NCURSES)
 fi
-
-dnl ------------------------------------------------------------------
-
-dnl ---
-dnl POSIX.4 threads
-dnl ---
-AC_CHECK_LIB(pthread,pthread_create, [],
-	AC_CHECK_LIB(c_r,pthread_create, [],
-		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **])))
 
 dnl ------------------------------------------------------------------
 
@@ -339,7 +337,7 @@ dnl --- AC_CHECK_HEADER(stl.h,,
 dnl ---	AC_MSG_WARN([** C++/STL header files not found! ***]))
 AC_LANG_CPLUSPLUS
 AC_HEADER_TIME
-AC_CHECK_HEADERS(fcntl.h dlfcn.h sys/ioctl.h sys/time.h sys/resource.h sys/stat.h sys/wait.h signal.h sys/types.h sys/mman.h errno.h pthread.h sched.h unistd.h inttypes.h asm/atomic.h)
+AC_CHECK_HEADERS(fcntl.h dlfcn.h sys/ioctl.h sys/time.h sys/resource.h sys/stat.h sys/wait.h signal.h sys/types.h sys/mman.h errno.h sched.h unistd.h inttypes.h asm/atomic.h)
 AC_CHECK_HEADER(map.h,nostlmap=0,nostlmap=1)
 if test "x$nostlmap" = "x1" ; then
 	AC_MSG_ERROR([C++ header files not found! Searched for 'map.h' (STL).])

@@ -52,6 +52,9 @@
 /* Define if you have the getpagesize function.  */
 #undef HAVE_GETPAGESIZE
 
+/* Define if you have the mlockall function.  */
+#undef HAVE_MLOCKALL
+
 /* Define if you have the <asm/atomic.h> header file.  */
 #undef HAVE_ASM_ATOMIC_H
 
@@ -66,9 +69,6 @@
 
 /* Define if you have the <inttypes.h> header file.  */
 #undef HAVE_INTTYPES_H
-
-/* Define if you have the <pthread.h> header file.  */
-#undef HAVE_PTHREAD_H
 
 /* Define if you have the <sched.h> header file.  */
 #undef HAVE_SCHED_H
@@ -111,9 +111,6 @@
 
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM
-
-/* Define if you have the pthread library (-lpthread).  */
-#undef HAVE_LIBPTHREAD
 
 /* Define if you have the readline library (-lreadline).  */
 #undef HAVE_LIBREADLINE
