@@ -94,7 +94,7 @@ class ControlInterface
             # child
             # stderr has to be redirected to avoid buffering problems 
             $stderr.reopen(open("/dev/null", "w"))
-            exec("#{@@ecasound} -c -D " + args)
+            exec("#{@@ecasound} -c -D -d:256" + args)
         else
             # parent
             command("int-output-mode-wellformed")
@@ -132,6 +132,10 @@ class ControlInterface
         case $~[2]
             when "e"
                 raise(EcasoundError, "command '#{cmd}' failed: #{content}")
+            when "-"
+                return nil
+            when "s"
+                return content
             when "S"
                 return content.split(",")
             when "f"
@@ -139,7 +143,7 @@ class ControlInterface
             when "i", "li"
                 return content.to_i()
             else
-                return content
+                raise(EcasoundError, "parsing of ecasound's output produced an unknown return type")
         end
     end
 
