@@ -114,13 +114,13 @@ ECA_OBJECT_MAP::~ECA_OBJECT_MAP (void) {
   while(p != object_map.end()) {
     if (p->second != 0) {
       ECA_OBJECT* next_obj = p->second;
-      cerr << "Deleting " << next_obj->name() << "." << endl;
+//        cerr << "Deleting " << next_obj->name() << "." << endl;
       map<string, ECA_OBJECT*>::iterator q = p;
       ++q;
       while(q != object_map.end()) {
 	if (q->second != 0 &&
 	    q->second == p->second) {
-	  cerr << "Deleting sub-object with keyword " << q->first << "." << endl;
+//  	  cerr << "Deleting sub-object with keyword " << q->first << "." << endl;
 	  q->second = 0;
 	}
 	++q;
