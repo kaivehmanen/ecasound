@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
     ECA_AUDIO_FORMAT aio_params;
     ectrl.add_chainsetup("default");
     ectrl.add_chain("default");
-    ectrl.set_buffersize(buffersize);
+    ectrl.set_chainsetup_buffersize(buffersize);
     if (format_string.size() > 0)  
       ectrl.set_chainsetup_parameter(format_string);
     ectrl.add_audio_input(input);
