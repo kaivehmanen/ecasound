@@ -160,6 +160,8 @@ Kai Vehmanen -	mailto:kaiv@wakkanet.fi
 -----------------------------------------------------------------------
 
 Barton-Davis, Paul - For the work his done for linux audio
+Beaupre, Antoine - Patches for FreeBSD compatibility. [beaupran]
+Campbell, Ross - Tips concerning Solaris. [rcampbel]
 Dyson, John S. - Wrote the original advanced compressor (-eca) code.
 Endersz, Viktor - For sending me the adv.compressor source code!
 Eure, Ian and Junichi Uekawa  - For creating ecasound debian packages [ieure,juekawa]

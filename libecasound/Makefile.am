@@ -129,8 +129,6 @@ ecasound_general_include = 	\
 			eca-fileio.h  \
 			eca-fileio-stream.h \
 			eca-fileio-mmap.h \
-			eca-fileio-mmap-fthread.h \
-			eca-mthreaded-processor.h \
 			dynamic-parameters.h \
 			dynamic-object.h \
 			eca-object.h \
@@ -222,8 +220,6 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-audio-time.cpp \
 			eca-fileio-stream.cpp \
 			eca-fileio-mmap.cpp \
-			eca-fileio-mmap-fthread.cpp \
-			eca-mthreaded-processor.cpp \
 			eca-static-object-maps.cpp \
 			preset.cpp \
 			file-preset.cpp \

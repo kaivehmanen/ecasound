@@ -69,13 +69,13 @@ long int ECA_FILE_IO_STREAM::file_bytes_processed(void) const { return(bytes_rep
 
 bool ECA_FILE_IO_STREAM::is_file_ready(void) const { 
   if (mode_rep == "" ||
-      ::feof(f1) ||
-      ::ferror(f1)) return(false);
+      feof(f1) ||
+      ferror(f1)) return(false);
   return(true);
 }
 
 bool ECA_FILE_IO_STREAM::is_file_error(void) const { 
-  if (::ferror(f1)) return(true);
+  if (ferror(f1)) return(true);
   return(false);
 }
 

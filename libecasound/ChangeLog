@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-10-21  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-mthreaded-processor.h (): file removed
+	* eca-fileio-mmap-fthread.h (): file removed
+	
 2000-10-17  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-control-objects (set_default_audio_format): added parameter 'interleaving'

@@ -32,9 +32,8 @@
 
 #include "eca-debug.h"
 
-WAVEFILE::WAVEFILE (const string& name, bool double_buffering) {
+WAVEFILE::WAVEFILE (const string& name) {
   label(name);
-  double_buffering_rep = double_buffering;
   fio_repp = 0;
 }
 
@@ -78,7 +77,7 @@ void WAVEFILE::open(void) throw(SETUP_ERROR&) {
   switch(io_mode()) {
   case io_read:
     {
-      if (double_buffering_rep) fio_repp = new ECA_FILE_IO_MMAP();
+      if (mmaptoggle_rep == "1") fio_repp = new ECA_FILE_IO_MMAP();
       else  fio_repp = new ECA_FILE_IO_STREAM();
       if (fio_repp == 0) {
 	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-WAVE: Critical error when opening file " + label() + " for reading."));
@@ -400,3 +399,26 @@ void WAVEFILE::set_length_in_bytes(void) {
   fio_repp->set_file_position(savetemp);
 }
 
+void WAVEFILE::set_parameter(int param, 
+			     string value) {
+  switch (param) {
+  case 1: 
+    label(value);
+    break;
+
+  case 2: 
+    mmaptoggle_rep = value;
+    break;
+  }
+}
+
+string WAVEFILE::get_parameter(int param) const {
+  switch (param) {
+  case 1: 
+    return(label());
+
+  case 2: 
+    return(mmaptoggle_rep);
+  }
+  return("");
+}

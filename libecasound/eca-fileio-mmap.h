@@ -5,28 +5,32 @@
 
 #include "eca-fileio.h"
 
+#ifndef MAP_FAILED
+#define MAP_FAILED	((__ptr_t) -1)
+#endif
+
 #if !defined _CADDR_T && !defined __USE_BSD
 #define _CADDR_T
 typedef char* caddr_t;
 #endif
 
 /**
- * File-io and buffering using  mmap for data transfers.
+ * File-io and buffering using mmap for data transfers.
  */
 class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
 
  private:
 
-  int f1;
-  caddr_t internal_buffer;
-  long int internal_bsize;
+  int fd_rep;
+  caddr_t buffer_repp;
   long int bytes_rep;
-  long int fposition, flength;
-  long int fmaxbsize;
+  long int fposition_rep;
+  long int flength_rep;
 
-  bool file_ready;
-  bool file_ended;
+  bool file_ready_rep;
+  bool file_ended_rep;
   string mode_rep;
+  string fname_rep;
    
  public:
 
@@ -62,9 +66,7 @@ class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
   long int file_bytes_processed(void) const;
   const string& file_mode(void) const { return(mode_rep); }
 
-  ECA_FILE_IO_MMAP(void) {
-    internal_bsize = 0;
-  }
+  ECA_FILE_IO_MMAP(void);
   ~ECA_FILE_IO_MMAP(void);
 };
 

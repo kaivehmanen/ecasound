@@ -57,7 +57,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
   RF riff_format_rep;
 
   long int data_start_position_rep;
-  bool double_buffering_rep;
+  string mmaptoggle_rep;
 
   /**
    * Do a info query prior to actually opening the device.
@@ -98,6 +98,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
 
   virtual string name(void) const { return("RIFF wave file"); }
   virtual bool locked_audio_format(void) const { return(true); }
+  virtual string parameter_names(void) const { return("label,toggle_mmap"); }
 
   virtual void open(void) throw(SETUP_ERROR&);
   virtual void close(void);
@@ -108,7 +109,10 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
   virtual bool finished(void) const;
   virtual void seek_position(void);
 
-  WAVEFILE (const string& name = "", bool double_buffering = false);
+  virtual void set_parameter(int param, string value);
+  virtual string get_parameter(int param) const;
+
+  WAVEFILE (const string& name = "");
   ~WAVEFILE(void);
   WAVEFILE* clone(void) { cerr << "Not implemented!" << endl; return this; }
   WAVEFILE* new_expr(void) { return new WAVEFILE(); }

@@ -18,7 +18,7 @@
 class RAWFILE : public AUDIO_IO_BUFFERED {
 
   ECA_FILE_IO* fio_repp;
-  bool double_buffering_rep;
+  string mmaptoggle_rep;
 
   RAWFILE(const RAWFILE& x) { }
   RAWFILE& operator=(const RAWFILE& x) { return *this; }
@@ -39,6 +39,7 @@ class RAWFILE : public AUDIO_IO_BUFFERED {
  public:
 
   virtual string name(void) const { return("Raw audio file"); }
+  virtual string parameter_names(void) const { return("label,toggle_mmap"); }
   
   virtual void open(void);
   virtual void close(void);
@@ -49,7 +50,10 @@ class RAWFILE : public AUDIO_IO_BUFFERED {
   virtual bool finished(void) const;
   virtual void seek_position(void);
 
-  RAWFILE (const string& name = "", bool double_buffering = false);
+  virtual void set_parameter(int param, string value);
+  virtual string get_parameter(int param) const;
+
+  RAWFILE (const string& name = "");
   ~RAWFILE(void);
     
   RAWFILE* clone(void) { cerr << "Not implemented!" << endl;  return this; }    

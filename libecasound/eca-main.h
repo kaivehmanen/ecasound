@@ -62,7 +62,6 @@ class ECA_PROCESSOR {
 private:
 
   ECA_SESSION* eparams;
-  pthread_t chain_thread;
   struct timespec sleepcount;
 
   bool was_running;
@@ -72,7 +71,6 @@ private:
   bool trigger_outputs_request;
   bool input_not_finished;
   bool processing_range_set;
-  bool subthread_initialized;
 
   size_t active_chain_index;
   size_t active_chainop_index;
@@ -100,8 +98,6 @@ private:
   // Data objects
   // ---
   vector<bool> chain_ready_for_submix;
-  vector<pthread_mutex_t*> chain_muts;
-  vector<pthread_cond_t*> chain_conds;
   vector<long int> input_start_pos;
   vector<long int> output_start_pos;
   vector<int> input_chain_count;
@@ -196,11 +192,7 @@ private:
   void chain_muting(void);
   
   void exec_normal_iactive(void);
-  void exec_normal_passive(void);
   void exec_simple_iactive(void);
-  void exec_simple_passive(void);
-  void exec_mthreaded_iactive(void) throw(ECA_ERROR&);
-  void exec_mthreaded_passive(void) throw(ECA_ERROR&);
   bool finished(void);
 
   typedef vector<AUDIO_IO*>::const_iterator audio_ci;
@@ -223,7 +215,5 @@ private:
 
   ECA_PROCESSOR& operator=(const ECA_PROCESSOR& x) { return *this; }
 };
-
-void *mthread_process_chains(void* ecaparams);
 
 #endif

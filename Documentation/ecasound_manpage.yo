@@ -26,7 +26,7 @@ page]</A></H4></CENTER>
 
 manpage(ecasound)
        (1)
-       (20.10.2000)
+       (21.10.2000)
        ()
        (Multimedia software)
 
@@ -130,9 +130,9 @@ in real-time (all inputs and outputs are normal files), values between
 
 dit(-m:mix-mode)
 Force ecasound to use mix mode 'mix_mode'. 'auto' = automatic (default),
-'simple' =  only one input/chain/output, 'normal' = normal single-threaded
-mode and 'mthreaded' = multithreaded mixing. In most cases, ecasound is 
-able to find out the correct mode automatically.
+'simple' =  only one input/chain/output and 'normal' = normal 
+single-threaded mode. In most cases, ecasound is able to find out 
+the correct mode automatically.
 
 dit(-r)
 Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
@@ -140,13 +140,13 @@ ecasound doesn't have root priviledges. Beware! This gives better
 performance, but can cause total lock-ups if something goes wrong.
 
 dit(-x)
-Truncate outputs. If this isn't set, ecasound opens all outputs 
-- if format allows it - in readwrite mode.
+Truncate outputs. If this is _not_ set, ecasound opens all outputs 
+- if format allows it - in readwrite mode (-> prevents truncation).
 
 dit(-z:feature)
-Enable 'feature'. 'db' enables double-buffering for audio inputs 
+Enable 'feature'. 'db' enables double-buffering for audio objects 
 that support it. 'psr' enables the em(precise-sample-rates) mode 
-for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html).
+for OSS-devices. See url(ecasoundrc(5))(ecasoundrc_manpage.html). 
 
 enddit()
 

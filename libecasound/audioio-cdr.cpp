@@ -106,8 +106,8 @@ void CDRFILE::close(void) {
 }
 
 bool CDRFILE::finished(void) const {
- if (::ferror(fobject) ||
-     ::feof(fobject))
+ if (ferror(fobject) ||
+     feof(fobject))
    return true;
 
  return false;

@@ -32,9 +32,8 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-RAWFILE::RAWFILE(const string& name, bool double_buffering) {
+RAWFILE::RAWFILE(const string& name) {
   label(name);
-  double_buffering_rep = double_buffering;
   fio_repp = 0;
 }
 
@@ -65,7 +64,7 @@ void RAWFILE::open(void) {
 	fio_repp->open_stdin();
       }
       else {
-	if (double_buffering_rep) fio_repp = new ECA_FILE_IO_MMAP();
+	if (mmaptoggle_rep == "1") fio_repp = new ECA_FILE_IO_MMAP();
 	else fio_repp = new ECA_FILE_IO_STREAM();
 	fio_repp->open_file(label(),"rb");
 	if (fio_repp->is_file_ready() != true) {
@@ -152,3 +151,27 @@ void RAWFILE::set_length_in_bytes(void) {
   fio_repp->set_file_position(savetemp);
 }
 
+
+void RAWFILE::set_parameter(int param, 
+			    string value) {
+  switch (param) {
+  case 1: 
+    label(value);
+    break;
+
+  case 2: 
+    mmaptoggle_rep = value;
+    break;
+  }
+}
+
+string RAWFILE::get_parameter(int param) const {
+  switch (param) {
+  case 1: 
+    return(label());
+
+  case 2: 
+    return(mmaptoggle_rep);
+  }
+  return("");
+}

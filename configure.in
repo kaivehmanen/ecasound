@@ -57,6 +57,32 @@ dnl ---
 CXXFLAGS="-O2 -D_REENTRANT -DNDEBUG -ffast-math -fstrict-aliasing -funroll-loops"
 dnl CXXFLAGS="-O2 -D_REENTRANT -fomit-frame-pointer -finline-functions -ffast-math -funroll-loops -Wall -Wstrict-prototypes -pedantic -fstrict-aliasing"
 
+dnl ---
+dnl Set up some operating system specific options
+dnl ---
+case "$host" in
+	*-*-openbsd*)
+               CFLAGS="$CFLAGS -pthread"
+               CPPFLAGS="$CPPFLAGS -D_REENTRANT"
+               CXXFLAGS="$CXXFLAGS -pthread"
+               echo "Setting OpenBSD compilation options"
+               ;;
+	*-*-freebsd*)
+               CFLAGS="$CFLAGS -pthread"
+               CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE"
+               CXXFLAGS="$CXXFLAGS -pthread"
+               echo "Setting FreeBSD compilation options"
+               ;;
+	*-*-solaris*)
+               CPPFLAGS="$CPPFLAGS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS -DPIC -fPIC"
+               echo "Setting Solaris compilation options"
+               ;;
+	*-*-linux*)
+               CPPFLAGS="$CPPFLAGS -fPIC -DPIC -D_REENTRANT"
+               echo "Setting Linux compilation options"
+               ;;
+esac
+
 AC_ARG_ENABLE(debug,
 [  --enable-debug		  Enable debugging (default = no)],
 include_debug=yes)
@@ -110,9 +136,8 @@ fi
 dnl ---
 dnl POSIX.4 threads
 dnl ---
-AC_CHECK_LIB(pthread,pthread_create, ,
-	AC_CHECK_LIB(c_r,pthread_create, 
-		LDFLAGS="-pthreads",
+AC_CHECK_LIB(pthread,pthread_create, [],
+	AC_CHECK_LIB(c_r,pthread_create, [],
 		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **])))
 
 dnl ---
