@@ -26,6 +26,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- added: "Supported automake/autoconf features" section to
 	         the INSTALL file
 	- added: new presets to the default effect_presets file
+	- added: support for describing full range of preset parameter 
+		 flags with -ppt (see effect_presets file and the
+		 relevant sections in User's Guide)
+	- added: new sections on preset parameters to User's Guide
 	- changed: moved definitions from acconfig.h to configure.in;
 		   gets rid of the AC_DEFINE warnings produced by
 		   recent versions of autoheader

@@ -6,14 +6,15 @@
 # - preset format:
 #   "preset_name_or_number = <chain-1object> | ... | <chain-N objects>"
 # - you can use '\' sign to split lines
-# - preset parameters:
+# - preset parameters and available descriptors:
 #     -efl:%1,100 = first param of -efl is a public preset parameter
 #     -pd:name_of_preset = preset description
 #     -ppn:par1,...,parN = parameter names (public params)
 #     -ppd:val1,...,valN = default param values
 #     -ppl:val1,...,valN = lower bounds for param values
 #     -ppu:val1,...,valN = upper bounds for param values
-#     -ppt:flags1,...,flagsN = special flags ('intr')
+#     -ppt:flags1,...,flagsN = special flags for parameter N
+#                              ('i'=integer, 'l'=logarithmic, 'o'=output, 't'=toggle)
 #
 # --------------------------------------------------------------------
 
@@ -183,11 +184,11 @@ lad_hermes = \
 lad_sc4 = \
 	-eli:1882,0,40,40,-18,6,6,6,%1,%2 \
 	-pd:LADSPA_SC4_compressor -ppn:output-amplitude-dB,output-gain-reduction-dB \
-	-ppd:0,0 -ppt:-,-
+	-ppd:0,0 -ppt:lo,lo
 lad_sc4_rg = \
 	-eli:1882,0,40,40,-18,%1,6,%2,%3,%4 \
 	-pd:LADSPA_SC4_compressor -ppn:ratio,gain-dB,output-amplitude-dB,output-gain-reduction-dB \
-	-ppd:6,3,0,0 -ppl:1,-40 -ppu:20,12 -ppt:-,-,-,-
+	-ppd:6,3,0,0 -ppl:1,-40 -ppu:20,12 -ppt:-,-,lo,lo
 lad_metronome = -el:sine_fcac,880,1 -eemb:%1,10 -efl:2000 \
 	-pd:LADSPA_sineosc_metronome -ppn:bpm -ppd:120 -ppl:1
 lad_oscillator_test = -eli:1205,%1,0 -ea:%2 \
@@ -202,7 +203,7 @@ lad_oscillator_stack = -el:analogueOsc,%1,%2 -ea:%4 | \
 	-ppn:freq,osctype1,osctype2,gain1,gain2 \
 	-ppd:200,0,0,100,100 \
 	-ppl:1,0,0,0,0 -ppu:1300,3,3,1000,1000 \
-	-ppt:-,integer,integer,-
+	-ppt:-,i,i,-
 
 # ======
 # Other / compatibility presets
