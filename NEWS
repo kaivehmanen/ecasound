@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 070200) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 080200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -15,6 +15,11 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
+??022001 (v1.9dev2)
+	- added: -z:nointbuf - minimize the use of internal buffering
+	         done by rt-devices
+	- added: -z:xruns - stop processing if an xrun occurs
+	- fixed: severe bugs with -km (midi-routines)
 07022001 (v1.9dev1)
 	- notice: new version numbering scheme
 	- added: eiam-cmds; set-position, get-position, get-length, 
