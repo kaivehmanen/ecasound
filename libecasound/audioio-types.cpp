@@ -104,18 +104,21 @@ void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf) {
   DBC_REQUIRE(iobuf_uchar_repp != 0);
   DBC_REQUIRE(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
   // --------
-  if (interleaved_channels() == true)
+
+  if (interleaved_channels() == true) {
     sbuf->copy_to_buffer(iobuf_uchar_repp,
 			 read_samples(iobuf_uchar_repp, buffersize_rep),
 			 sample_format(),
 			 channels(),
 			 samples_per_second());
-  else
+  }
+  else {
     sbuf->copy_to_buffer_vector(iobuf_uchar_repp,
 			 read_samples(iobuf_uchar_repp, buffersize_rep),
 			 sample_format(),
 			 channels(),
 			 samples_per_second());
+  }
   position_in_samples_advance(sbuf->length_in_samples());
 }
 
@@ -128,16 +131,18 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
     //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) buffersize() doesn't match - correcting");
     buffersize(sbuf->length_in_samples(), sbuf->sample_rate());
   }
-  if (interleaved_channels() == true)
+  if (interleaved_channels() == true) {
     sbuf->copy_from_buffer(iobuf_uchar_repp,
 			   sample_format(),
 			   channels(),
 			   samples_per_second());
-  else
+  }
+  else {
     sbuf->copy_from_buffer_vector(iobuf_uchar_repp,
 				  sample_format(),
 				  channels(),
 				  samples_per_second());
+  }
   write_samples(iobuf_uchar_repp, sbuf->length_in_samples());
   position_in_samples_advance(sbuf->length_in_samples());
   extend_position();

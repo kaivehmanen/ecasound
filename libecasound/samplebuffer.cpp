@@ -348,9 +348,13 @@ void SAMPLE_BUFFER::copy_range(const SAMPLE_BUFFER& x,
  * will be converted according to the given arguments
  * (sample rate, sample format and endianess).
  *
+ * Note! If chcount > number_of_channels(), empty
+ *       channels will be automatically added.
+ *
  * @pre target != 0
- * @pre chcount == number_of_channels()
+ * @pre chcount > 0
  * @pre srate > 0
+ * @ensure number_of_channels() >= chcount
  */
 void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 				     ECA_AUDIO_FORMAT::Sample_format fmt,
@@ -359,10 +363,11 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
 {
   // --------
   DBC_REQUIRE(target != 0);
-  DBC_REQUIRE(chcount == number_of_channels());
+  DBC_REQUIRE(chcount > 0);
   DBC_REQUIRE(srate > 0);
   // --------
 
+  if (chcount > channel_count_rep) number_of_channels(chcount);
   if (srate != sample_rate_rep) resample_to(srate);
 
   buf_size_t osize = 0;
@@ -505,27 +510,36 @@ void SAMPLE_BUFFER::copy_from_buffer(unsigned char* target,
       }
     }
   }
+  
+  // -------
+  DBC_ENSURE(number_of_channels() >= chcount);
+  // -------
 }
 
 /**
  * Same as 'copy_from_buffer()', but 'target' data is 
  * written in non-interleaved format.
  *
+ * Note! If chcount > number_of_channels(), empty
+ *       channels will be automatically added.
+ *
  * @pre target != 0
- * @pre chcount == number_of_channels()
+ * @pre chcount > 0
  * @pre srate > 0
+ * @ensure number_of_channels() >= chcount
  */
 void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
-						    ECA_AUDIO_FORMAT::Sample_format fmt,
-						    channel_size_t chcount,
-						    srate_size_t srate) 
+					    ECA_AUDIO_FORMAT::Sample_format fmt,
+					    channel_size_t chcount,
+					    srate_size_t srate) 
 {
   // --------
   DBC_REQUIRE(target != 0);
-  DBC_REQUIRE(chcount == number_of_channels());
+  DBC_REQUIRE(chcount > 0);
   DBC_REQUIRE(srate > 0);
   // --------
 
+  if (chcount > channel_count_rep) number_of_channels(chcount);
   if (srate != sample_rate_rep) resample_to(srate);
 
   buf_size_t osize = 0;
@@ -670,6 +684,10 @@ void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
       }
     }
   }
+
+  // -------
+  DBC_ENSURE(number_of_channels() >= chcount);
+  // -------
 }
 
 /**
@@ -679,7 +697,6 @@ void SAMPLE_BUFFER::copy_from_buffer_vector(unsigned char* target,
  * endianess).
  *
  * @pre source != 0
- * @pre chcount == number_of_channels()
  * @pre srate > 0
  * @pre samples_read >= 0
  */
@@ -690,11 +707,11 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
 				   srate_size_t srate) {
   // --------
   DBC_REQUIRE(source != 0);
-  DBC_REQUIRE(chcount == number_of_channels());
   DBC_REQUIRE(srate > 0);
   DBC_REQUIRE(samples_read >= 0);
   // --------
 
+  if (channel_count_rep != chcount) number_of_channels(chcount);
   if (buffersize_rep != samples_read) resize(samples_read);
 
   unsigned char a[2];
@@ -865,7 +882,6 @@ void SAMPLE_BUFFER::copy_to_buffer(unsigned char* source,
  * assumed be in non-interleaved format.
  *
  * @pre source != 0
- * @pre chcount == number_of_channels()
  * @pre srate > 0
  * @pre samples_read >= 0
  */
@@ -876,11 +892,11 @@ void SAMPLE_BUFFER::copy_to_buffer_vector(unsigned char* source,
 					  srate_size_t srate) {
   // --------
   DBC_REQUIRE(source != 0);
-  DBC_REQUIRE(chcount == number_of_channels());
   DBC_REQUIRE(srate > 0);
   DBC_REQUIRE(samples_read >= 0);
   // --------
 
+  if (channel_count_rep != chcount) number_of_channels(chcount);
   if (buffersize_rep != samples_read) resize(samples_read);
 
   unsigned char a[2];

@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-10-30  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* samplebuffer.h (all): class de-templatized
+	
 2001-10-28  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-static-object-maps.h (all): all global functions 

@@ -39,6 +39,8 @@ Last officially released version is -*> v2.0.3 *-
 	- fixed: eiam - minor 'cs-edit' bugs fixed
 	- fixed: 'make install' failed if srcdir != objdir
 	- fixed: didn't work with ALSA +0.9b8 CVS-tree
+	- fixed: additional noises when mixing mono and stereo
+		 streams in ecasound chains
 21102001 (v2.1dev3)
 	- note: major changes to effect preset system which 
 		break some old preset definitions
