@@ -164,7 +164,7 @@ AC_ARG_ENABLE(debug,
 )
 AM_CONDITIONAL(ECA_AM_DEBUG_MODE, test x$include_debug = xyes)
 if test x$include_debug = xyes; then
-    EXTRADEBUGFLAGS="-Wall -Wstrict-prototypes -O0"
+    EXTRADEBUGFLAGS="-Wall -Wstrict-prototypes -O"
 else
     EXTRADEBUGFLAGS="-DNDEBUG"
 fi                                     
