@@ -516,8 +516,9 @@ void ECA_PROCESSOR::set_position(double seconds) {
   conditional_stop();
 
   csetup_repp->set_position_exact(seconds);
+  if (csetup_repp->double_buffering() == true) pserver_rep.flush();
 
-//  obsolete: the below code fragment is moved to ECA_AUDIO_OBJECTS
+//  obsolete: the below code fragment is moved to ECA_CHAINSETUP
 //  for (unsigned int adev_sizet = 0; adev_sizet != non_realtime_objects_rep.size(); adev_sizet++) {
 //    non_realtime_objects_rep[adev_sizet]->seek_position_in_seconds(seconds);
 //  }
@@ -543,8 +544,9 @@ void ECA_PROCESSOR::change_position(double seconds) {
   conditional_stop();
 
   csetup_repp->change_position_exact(seconds);
+  if (csetup_repp->double_buffering() == true) pserver_rep.flush();
 
-//  obsolete: the below code fragment is moved to ECA_AUDIO_OBJECTS
+//  obsolete: the below code fragment is moved to ECA_CHAINSETUP
 //    for (unsigned int adev_sizet = 0; adev_sizet != non_realtime_objects_rep.size(); adev_sizet++) {
 //      non_realtime_objects_rep[adev_sizet]->seek_position_in_seconds(non_realtime_objects_rep[adev_sizet]->position_in_seconds_exact()
 //                                             + seconds);

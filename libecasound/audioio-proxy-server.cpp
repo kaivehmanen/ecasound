@@ -272,4 +272,7 @@ void AUDIO_IO_PROXY_SERVER::flush(void) {
       }
     }
   }
+  for(unsigned int p = 0; p < buffers_rep.size(); p++) {
+    buffers_rep[p]->reset();
+  }
 }
