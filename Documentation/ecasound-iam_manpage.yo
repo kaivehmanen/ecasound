@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (23.10.2004)
+       (14.11.2004)
        ()
        (Multimedia software)
 
@@ -228,7 +228,8 @@ chainsetup.
 
 startdit()
 dit(c-add 'cname1,...,cnameN') 
-Adds a set of chains. Added chains are automatically selected. em([-])
+Adds a set of chains. Added chains are automatically selected. Note
+that commas in chain names are not allowed. em([-])
 
 dit(c-remove)
 Removes selected chains. em([-])
