@@ -97,9 +97,9 @@ Optional when running Ecasound:
 
 To compile Ecasound, you also need...:
 
-- standard C++ build environment; tested with egcs 1.1.2, 
-  gcc 2.91.66, gcc 2.95.3, gcc 3.0.x, gcc 3.1.x, gcc 3.2.x, 
-  gcc-3.3 and Sun Workshop 6 C5.2 C++ (STL and exceptions 
+- standard C++ build environment (with support for STL and 
+  exceptions); tested with egcs 1.1.2, gcc 2.91.66, gcc 2.95.X, 
+  gcc 3.0-3.4, and Sun Workshop 6 C5.2 C++ (STL and exceptions 
   need to be supported)
 - GNU make, automake and autoconf packages
 
