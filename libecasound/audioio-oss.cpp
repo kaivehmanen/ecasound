@@ -135,7 +135,7 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   int fragsize = ((fragment_count << 16) | fr_size);
     
   if (::ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &fragsize)==-1)
-    throw(SETUP_ERROR(SETUP_ERROR::buffersize, "AUDIOIO-OSS: general OSS-error SNDCTL_DSP_SETFRAGMENT"));
+    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-oss) Warning: OSS-device doesn't support SNDCTL_DSP_SETFRAGMENT!");
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"(audioio-oss) set OSS fragment size to (2^x) " +

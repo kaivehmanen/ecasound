@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 031103) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 041103) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -24,6 +24,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
         - fixed: makefile errors when building against system librealine
         - fixed: processing did not start in the default transport mode
 	  	 with JACK versions 0.80 and older
+	- fixed: recording failed with a WinTv 401dbx and the btaudio 
+		 OSS driver
 29082003 (v2.3.0)  -** stable release **-
 	- edi-entries: edi-4, edi-19 and edi-35 frozen, edi-38 added 
 		       and frozen immediately, edi-39 added; frozen is 
