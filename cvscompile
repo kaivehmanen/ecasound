@@ -1,8 +1,0 @@
-#!/bin/sh
-libtoolize --copy --force
-aclocal
-autoheader
-automake --add-missing
-autoconf
-./configure $@ || exit 1
-make
