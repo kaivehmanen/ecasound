@@ -428,10 +428,10 @@ void MP3FILE::write_samples(void* target_buffer, long int samples)
 
 void MP3FILE::seek_position(void)
 {
+  finished_rep = false;
   if (triggered_rep == true &&
       last_position_rep != position_in_samples()) {
     if (is_open() == true) {
-      finished_rep = false;
       ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
       clean_child();
       triggered_rep = false;
