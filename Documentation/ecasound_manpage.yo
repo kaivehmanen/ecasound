@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (14.12.2004)
+       (21.12.2004)
        ()
        (Multimedia software)
 
@@ -349,7 +349,8 @@ bf(ecasound -f:16,2,44100 -i resample,auto,foo.wav -o /dev/dsp).
 
 If ecasound was compiled with support for libsamplerate, you can 
 use 'resample-hq' to use the highest quality resampling algorithm 
-available.
+available. To force ecasound to use the internal resampler, 
+'resampler-lq' (low-quality) can be used.
 
 dit(Reverse - process audio data backwards)
 Object type 'reverse' can be used to reverse audio 

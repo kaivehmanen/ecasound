@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "14\&.12\&.2004" "" "Multimedia software" 
+.TH "ecasound" "1" "21\&.12\&.2004" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -329,7 +329,8 @@ the audio file format\&. To use \'auto\' in the previous example,
 .IP 
 If ecasound was compiled with support for libsamplerate, you can 
 use \'resample-hq\' to use the highest quality resampling algorithm 
-available\&.
+available\&. To force ecasound to use the internal resampler, 
+\'resampler-lq\' (low-quality) can be used\&.
 .IP 
 .IP "Reverse - process audio data backwards" 
 Object type \'reverse\' can be used to reverse audio 
