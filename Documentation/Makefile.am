@@ -34,9 +34,6 @@ DISTFILES = 	Makefile.am \
 	    	ecaplay.1 \
 	    	ecanormalize.1 \
 	    	ecasignalview.1 \
-		ecasound_faq.txt \
-		ecasound_faq.html \
-		ecasound_faq.yo \
 	    	examples.html \
 		index.html \
 		edi-list.txt
@@ -51,7 +48,7 @@ docs_guides:
 	cd users_guide; $(MAKE) $(AM_MAKEFLAGS) docs
 
 docs_files: 	ecasound.1 ecasound_manpage.html \
-	    	ecasoundrc_manpage.html ecasoundrc.5 ecasound_faq.txt \
+	    	ecasoundrc_manpage.html ecasoundrc.5 \
 		ecatools.1 ecatools_manpage.man ecatools_manpage.html \
 		ecaconvert.1 \
 		ecafixdc.1 \
@@ -59,7 +56,7 @@ docs_files: 	ecasound.1 ecasound_manpage.html \
 		ecanormalize.1 \
 		ecaplay.1 \
 		ecasignalview.1 \
-		ecasound_faq.html ecasound-iam_manpage.html \
+		ecasound-iam_manpage.html \
 		ecasound-iam.1
 
 # ---------------------------------------------------------------------
@@ -91,13 +88,6 @@ ecasoundrc.5: ecasoundrc_manpage.man
 
 %.html: %.yo
 	yodl2html $<
-
-# ---------------------------------------------------------------------
-# FAQ, guides
-ecasound_faq.txt: ecasound_faq.yo
-	yodl2txt ecasound_faq.yo
-ecasound_faq.html: ecasound_faq.yo
-	yodl2html ecasound_faq.yo
 
 # ---------------------------------------------------------------------
 # doxygen
@@ -139,7 +129,6 @@ install-data-local:
 	cp $(srcdir)/ecasignalview.1 $(DESTDIR)$(mandir)/man1
 	cp $(srcdir)/ecasound-iam.1 $(DESTDIR)$(mandir)/man1
 	cp $(srcdir)/ecasoundrc.5 $(DESTDIR)$(mandir)/man5
-	cp $(srcdir)/ecasound_faq.txt ../$(topdir)/FAQ
 
 # ---------------------------------------------------------------------
 # Uninstall targets

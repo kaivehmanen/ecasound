@@ -10,27 +10,41 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{03102001}
+\date{21102001}
 \begin{document}
 
 \maketitle
 \tableofcontents 
 \clearpage
 
-
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{Preface}
 
-This document describes ecasound's use from user's point of view. 
-In addition to the actual user/client-programs, all essential ecasound 
+This document describes ecasound from user's point of view. In
+addition to the actual user/client-programs, all essential ecasound 
 library concepts and features are also discussed. To avoid duplicating
 documentation, I've used references to other sources whenever suitable. 
-For instance, ecasound's man pages are in a very good shape.
-They are also available in HTML-format.
+For instance, ecasound's man pages are a very good (and up-to-date!)
+source of information. They are also available in HTML-format.
 
+If not otherwise specified, all documentation refers to the latest
+ecasound version.
 
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
+\section{Document history}
+\begin{itemize}
+\item 21.10.2001 - Added this history section. Document was 
+      restructured and all major chapters reviewed.
+\item 21.10.2001 - Added material from the ecasound FAQ.
+\end{itemize}
 
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{Introduction}
 
+% ----------------------------------------------------------------------
 \subsection{What is ecasound?}
 
 Ecasound is a software package designed for multitrack audio
@@ -44,6 +58,7 @@ and MIDI-CCs. As most functionality is located in shared libraries,
 creating alternative user-interfaces is easy. A versatile console mode
 interface is included in the package.
 
+% ----------------------------------------------------------------------
 \subsection{History}
 
 I've programmed ecasound for my own recording purposes. The first 
@@ -58,110 +73,284 @@ get rid of all my Windows recording software. Nowadays I use
 ecasound for all my music projects. Because of this, I also 
 continue to improve and develop ecasound.
 
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
+\section{Ecasound concepts}
 
+% ----------------------------------------------------------------------
+\subsection{Audio object}
+Audio object are used to transfer audio from and to ecasound. 
+Usually audio objects are either files (like wav, mp3 or ogg) 
+or devices (soundcard input\&output). There are also some
+special audio object types for transfering data between 
+applications.
 
-\section{Ecasound library concepts}
+% ----------------------------------------------------------------------
+\subsection{Chain}
+Chain is the central signal flow abstraction. In many ways chains
+are similar to audio cables. You have one input and one output 
+to which you can connect audio producers and consumers 
+(like guitar and amplifier for instance).
 
-\subsubsection{Chain}
-Chain is a simple signal flow abstraction. Every chain has one input
-and one output. All chain operators and their controllers are attached
-to chains. Chain can be muted and bypassed.
+But there are some differences. First it's possible to attach 
+chain operators (usually effects) to chains. This is somewhat like 
+replacing one cable with two, and putting an effect box between 
+them, but with chains it's just easier. Second important difference 
+is that chains can transport multiple channels of audio. It's possible
+to attach mono, stereo or 24ch (or bigger) audio feeds to one 
+chain. Also all chain operators can handle these multichannels 
+streams.
 
-\subsubsection{Audio object}
-Audio object is a really generic concept. Practically anything that 
-is able to produce or receive audio data can be an ecasound audio 
-object. Currently there's support for soundcard drivers/subsystems, 
-various file formats and various types of data-piping.
-Notice that objects can be used both for input and output.
+In addition to chain operators, chains also have separate
+``mute'' and ``bypass'' functions.
 
-\subsubsection{Chain operators and controllers}
+% ----------------------------------------------------------------------
+\subsection{Chain operators and controllers}
 Chain operators are used to process and analyze sample data.
-Controllers are used to control individual chain operator parameters.
-Both types of objects are attached to chains. Term \emph{chain object} refers
-to all objects that can be attached to chains - ie. operators and 
-controllers.
+They can be divided into gates, converters, signal analyzers and 
+to traditional effects like reverbs, delays and filters.
 
-\subsubsection{Chainsetup}
+It's also possible to attach special controller objects to chains
+These controllers are used to control chain operator parameters.
+The typical examples are various oscillators and MIDI continous
+controllers (knobs, sliders, etc found on MIDI-devices).
+
+Both types of objects are attached to chains. Term \emph{chain object} 
+refers to all objects that can be attached to chains - ie. 
+operators and controllers.
+
+% ----------------------------------------------------------------------
+\subsection{Chainsetup}
 Chainsetup is the central data object. All other objects (inputs,
-outputs, chains, etc) are connected to some chainsetup. There can be 
-many chainsetups but only one can be connected. Similarly only
-one chainsetup can be selected. Chainsetups are also used for
-loading and saving state information. The format used is identical to 
-the command-line syntax used by the console mode user-interface, which 
-makes it easy to edit saved chainsetups. See
-\texttt{ecasound(1)} for details.
+outputs, chains, etc) are connected to some chainsetup. 
+Many chainsetups can exist at the same time (during one session),
+but only one of them can be in use. In ecasound documentation, 
+the term \emph{connected} is used to describe a chainsetup that
+is in use. 
 
-\subsubsection{Concept of current position}
-Only audio objects and chainsetups have a current position. When 
-you change position of a chain, you're changing position of audio 
-objects connected to that chain. Also, when you change chainsetup position,
+Another important chainsetup concept is that of a \emph{selected}
+chainsetup. If connected chainsetup is the one in use, selected
+chainsetup is the one that is currently edited. 
+
+Loading and saving chainsetups is the primary mechanism 
+for storing and restoring state information. When saving 
+to files, the \emph{.ecs} file format is used. The file syntax
+uses the same notation as ecasound's console (and command-line)
+interface. This makes it easy to edit the chainsetup files
+outside ecasound, either manually or using external utils.
+See \texttt{ecasound(1)} man page for details.
+
+% ----------------------------------------------------------------------
+\subsection{Current position}
+Information about current position is only stored for audio 
+objects and chainsetups. When you change position of a chain, 
+you're actually changing the position of audio objects connected 
+to that chain. Also, when you change chainsetup position,
 all chains (= all audio objects attached to them) are affected.
 
-\subsubsection{Interactive-mode}
-Ecasound library can be controlled with simple commands. 
-This is called the interactive-mode. All programs linked
-to ecasound library can use this facility. 
+On the other hand, positions of different audio objects can 
+be changed independently. Same applies to chainsetup objects.
 
+% ----------------------------------------------------------------------
+\subsection{Ecasound Control Interface - ECI}
 
+Ecasound Control Interface is an API for application
+developers who want to take advantage of libecasound 
+in their own apps. See ``Ecasound Control Interface Guide'' 
+and ``Ecasound Programmer's Guide'' for more information.
 
+% ----------------------------------------------------------------------
+\subsection{Ecasound Interactive Mode - EIAM}
+
+Most of ecasound's functionality is located in one 
+central library (libecasound). One thing that this library 
+provides is a simple interpreter, which can be used for
+controlling ecasound. This mode of operation is better
+known as ecasound's interactive mode.
+
+The most common frontend for EIAM is the console-mode
+ecasound program. You can enter interactive mode 
+by issuing ``ecasound -c''. For more detailed information
+about EIAM, see \texttt{ecasound-iam(1)} man page.
+
+% ----------------------------------------------------------------------
+\subsection{Ecasound Option Syntax - EOS}
+
+One very notable feature of the console-mode ecasound 
+program is its command-line option syntax. You can 
+do pretty much everything from the command-line.
+
+But it doesn't stop to the console-mode ecasound. In
+fact, interpreting these options is located in
+the main libecasound library, and is very closely tied
+to the interactive mode. 
+
+As a result, the same syntax (tokens that look like
+``-prefix:arg1,arg2,...,argN''), is used in various
+parts of libecasound. To name a few places:
+
+\begin{itemize}
+\item parsing command-line options
+\item the interactive-mode (as arguments to the 'cs-option' command
+      [2.1dev4 and newer])
+\item saved chainsetup-files (.ecs format)
+\item effect preset definitions (see for example 
+      ``/usr/local/share/ecasound/effect\_presets'')
+\item generic oscillator definitions (see for example 
+      ``/usr/local/share/ecasound/generic\_oscillators''
+\end{itemize}
+
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{Using}
 
-
+% ----------------------------------------------------------------------
 \subsection{Where to start?}
 There's no one single way to use ecasound. You can use it as 
-a simple glue component for doing tasks, which aren't handled by
+a simple glue component for doing tasks that aren't handled by
 other applications you are using, or because ecasound does these tasks
-more easily. But ecasound can also serve as the centre of your studio 
-setup, doing everything from effects processing to multitrack
-recording and mixing. 
+more easily (or better even :)). But ecasound can also serve as the 
+centre of your studio setup, doing everything from effects processing 
+to multitrack recording and mixing.
 
-But this flexibility doesn't come for free. It's difficult to describe
-ecasound's features in a few phrases. Because of this, I encourage
-new users to start from ecasound \texttt{examples.html}
-page. It isn't a perfect introduction, and definitely not the only way 
-to use ecasound, but it does give an overall view of what can be done
-with ecasound, and more importantly, that most tasks are actually
-quite easy to perform.
+This flexibility doesn't come for free. It's difficult to describe
+ecasound's features in a few phrases. Because of this, new users
+are encouraged to start from the \texttt{Examples} page - 
+``Ecasounds web site -> Documentation -> Examples''. It isn't 
+a perfect introduction, and definitely not the only way to use 
+ecasound, but it does give an overall view of what can be done
+with ecasound, and more importantly, it shows that most tasks are 
+actually quite easy to do.
 
-
-\subsection{Creating ecasound chainsetups}
-\subsubsection{General}
-Here are a few rules that help writing valid chainsetups. Whether
-you are writing chainsetup files (.ecs), using command-line arguments, 
-using a graphical frontend, etc, these rules are always useful:
+% ----------------------------------------------------------------------
+\subsection{Rules for editing chainsetups}
+Here are a few rules that help writing valid chainsetups.
+Whether you are editing chainsetup files (.ecs),  some 
+graphical frontend, just using command-line options, etc;
+these rules always apply:
 
 \begin{itemize}
 \item Every chain has exactly \_one\_ input and \_one\_ output.
 \item All inputs and outputs must be connected to some chain.
-\item For every input/output, there must be exactly \_one\_
-    input/output specification (example specification: '-i:file.ext').
-\item All routing from/to chains is based on selecting a set of chains
-    and then specifying an input or output (example: '-a:1,2 -i:file.ext').
+\item For every input/output, there is one and only one
+      definition (example: ``-i:file.wav'').
+\item All routing from and to chains is based on selecting a set of 
+      chains and then specifying an input or output (example: 
+      ``-a:1,2 -i:file.ext'').
 \item All audio copying and mixing is done channel-wise. If you attach 
-    a 4-channel input and a two-channel output to a chain, chain 
-    will have 4 channels of audio, but only the first two channels
-    will be written to the output file.
+      a 4-channel input and a two-channel output to a chain, chain 
+      will have 4 channels of audio, but only the first two channels
+      will be written to the output file.
 \end{itemize}
 
+% ----------------------------------------------------------------------
+\subsection{Chain operators and controllers}
+Best place to start is to read through the \texttt{ecasound(1)} man
+page, which contains documentation for all native ecasound 
+chain objects.
+
+% ----------------------------------------------------------------------
+\subsection{Configuration}
+User preferences are stored to \emph{\textasciitilde /.ecasouncrc}. See 
+\texttt{ecasoundrc(5)} manual page for details.
+
+By default, files for effect presets and oscillator presets are 
+in \emph{/usr/local/share/ecasound}.
+
+% ----------------------------------------------------------------------
+\subsection{Common problems}
+
+\subsubsection{I get occasional audio dropouts during operation? How to get rid of them?}
+Check ``http://www.oreillynet.com/pub/a/linux/2000/11/17/low\_latency.html''
+where you'll find a very good article written by Dave Phillips on
+Linux low-latency issues. If you are in a hurry (or desperate :)),
+here's a quick list of things to try:
+
+\begin{itemize}
+\item Tune your disks (see the article)
+\item Enable ecasound's double-buffering system by using the em(-z:db)
+      option [note! this only necessary with ecasound 2.0.x and older]
+\item If still having problems, run ecasound as root (or with SUID-bit
+      set) and use ecasound's em(-r) option. This will raise ecasound's
+      scheduling priority to realtime (SCHED\_FIFO). [with ecasound 2.1
+      and newer, just run ecasound as root and it will take care of
+      tuning the settings]
+\item Try increasing ecasound's buffersize with \emph{-b:sample\_frames}
+      options. Something like \emph{-b:4096} should do the trick.
+\item If all else fails, try the various low-latency kernel patches 
+      (again, check the article)
+\end{itemize}
+
+\subsubsection{Can I use multiple soundcards?}
+This is possible, but there are some issues you should be aware of. If 
+you try using multiple cheap soundcards to get more simultanious 
+inputs for recording, it's likely that the resulting streams will not
+be in sync. This problem is explained in detail in the Linux
+Audio-Quality HOWTO - ``http://www.linuxdj.com/audio/quality/'',
+section "Notes on Full Duplex Recording, and Other Realtime Issues".
+
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
+\section{User interfaces}
+
+Best place to look is ecasound's web site at ``www.eca.cx''. 
+
+% ----------------------------------------------------------------------
+\subsection{ecasound}
+See \texttt{ecasound(1)} man page.
+
+% ----------------------------------------------------------------------
+\subsection{ecatools}
+See \texttt{ecatools(1)} mag page.
+
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
+\section{Advanced features}
 
 
-\subsubsection{Audio objects}
+% ----------------------------------------------------------------------
+\subsection{Audio loop devices}
 
+Just by using normal chain connections it's not possible to 
+route audio from one ecasound chain to another. One way
+around this limitation is loop devices. They were introduced
+in ecasound 1.7.0.
 
-\paragraph{ewf - ecasound wave file}
+\subsubsection{Example of use}
+
+An example use-case where we route audio from chains ``1'' and ``2''
+to chain ``3'' which is connected to a soundcard output.
+
+\begin{verbatim} 
+--cut--
+# note, the second loop parameter is the loop id-number;
+# it is used to associate loop inputs with correct loop outputs
+ecasound -a:1 -i:some.mp3 -o:loop,1
+         -a:2 -i:another.mp3 -o:loop,1
+         -a:3 -i:loop,1 -o /dev/dsp -ea:200
+--cut--
+
+\end{verbatim} 
+
+Both inputs are eventually routed to chain "3", where a -ea:200 is
+applied to the signal. This does have one downside, loop device
+adds latency (-b:x -> latency of x frames). 
+
+% ----------------------------------------------------------------------
+\subsection{Ecasound wave files - the .ewf format}
+
+\subsubsection{General}
 Ecasound wave file (.ewf) is a simple wrapper format for controlling 
-other audio objects. One important feature of ewf is the ability to seek
-beyond end position. When first write operation is performed, current 
-file position is stored into the .ewf file and the actual audio object
-is opened for writing. When reading, you get silence until the offset 
-position is reached. Shortly put, this is a practical way to save disk 
-space when doing multitrack recording. Newer versions of ewf-format 
-support looping, ranges, etc
+other audio objects. Ewf files are useful for offseting or time-shifting
+audio files (for instance play a short audio clip in the middle of 
+a long multitrack mix), for minimizing diskspace usage during
+multitrack recording (output offsetting ) and looping.
 
-Ewf-files themselves are simple ascii files that contain key-value pairs. The 
-format used is the same as with ecasound resource files. See
-\texttt{ecasoundrc(5)} manual page for more
-info. Currently recognized keywords are:
+\subsubsection{File format}
+Ewf-files are stored in ascii format. The syntax is based on ``key=value''
+pairs. The same syntax is used with ecasound resource files. See
+\texttt{ecasoundrc(5)} man page for detailed info. Currently
+recognized ewf keywords are:
 
 \begin{itemize}
 \item  source - audio object name {[}read,write{]}
@@ -171,11 +360,10 @@ info. Currently recognized keywords are:
 \item  looping - whether to loop sample data (true or false) {[}read{]}
 \end{itemize}
 
+\subsubsection{Example of ewf use}
+Let's look at an simple example .ewf file:
 
-subsubsubsubsect(Example of ewf use)
-Let's take an example .ewf file:
 \begin{verbatim} 
-
 -- test.ewf --
 source = test.wav
 offset = 5.0
@@ -183,162 +371,163 @@ start-position = 2.0
 length = 3.0
 looping = true
 --cut--
- 
 \end{verbatim} 
 
-So what happens when you issue "ecasound -i test.ewf -o /dev/dsp". The
-first 5 secs will be silent, then ecasound starts to read data from
-test.wav (offset inside test.wav is 2 secs). After 8 secs (offset + 
-length) of playback, we'll loop back to start (2 sec from beginning of 
-test.wav).
+Now what happens when you issue "ecasound -i test.ewf -o /dev/dsp"? 
+Because of the ``offset'' definition, the first 5 seconds will be 
+silent. After that ecasound will start to read data from ``test.wav''.
+But as ``start-position'' is not zero, ecasound will skip the 
+first 2 seconds. After 8 seconds has passed (``offset'' + 
+``length''), ecasound will loop back to ``start-position''. 
+This looping will continue until user interrupts the operation.
 
+% ----------------------------------------------------------------------
+\subsection{Effect presets}
 
-\paragraph{Audio loop devices}
-Loop devices were added to ecasound version 1.7.0. You use them like this:
-\begin{verbatim} 
-
---cut--
-# note, the second loop parameter is the loop id-number;
-# it is used to associate loop inputs with correct loop outputs
-ecasound -a:1 -i:some.mp3 -o:loop,1
-         -a:2 -i:another.mp3 -o:loop,1
-         -a:3 -i:loop,1 -o /dev/dsp -ea:200
---cut--
- 
-\end{verbatim} 
-
-Both inputs are eventually routed to chain "3", where a -ea:200 is
-applied to the signal. This does have one downside, loop device
-adds latency (-b:x -> latency of x frames). 
-
-
-\subsubsection{Chain operators}
-See \texttt{ecasound(1)}.
-
-
-\paragraph{Some examples of the use of gate operators}
-Gates are just like any other chain operators. They are assigned to 
-a chain, and process buffers of samples data. With gates you can
-easily crop sections of audio files, and do automatic volume-based 
-cropping. For instance.
-\begin{verbatim} 
-
---cut--
-###| /empty1 |$ ls -la guitar.wav
--rw-rw-r--   1 kaiv     kaiv     15790124 Sep 30 23:27 guitar.wav
-
-###| /empty1 |$ ecasound_debug -i guitar.wav -o gate-test.wav -gc:60,1
-
-###| /empty1 |$ ls -la gate-test.wav
--rw-rw-r--   1 kaiv     kaiv       180268 Dec 12 22:13 gate-test.wav
---cut--
- 
-\end{verbatim} 
-
-This cut the section {[}60:00 sec -> 61:00 sec{]} from guitar.wav into
-gate-test.wav. The old '-gc' would have just muted all audio outside the
-{[}60,61{]} region. The threshold gate is used similarly:
-\begin{verbatim} 
-
---cut--
-###| /empty1 |$ ecasound_debug -i gate-test.wav -o gate-test-rms.wav -ge:11.2,5,1
-
-###| /empty1 |$ ecasound_debug -i gate-test.wav -o gate-test-peak.wav -ge:5,5,0
-
-###| /empty1 |$ ls -la gate*wav
--rw-rw-r--   1 kaiv     kaiv       163884 Dec 12 22:18 gate-test-peak.wav
--rw-rw-r--   1 kaiv     kaiv       143404 Dec 12 22:17 gate-test-rms.wav
--rw-rw-r--   1 kaiv     kaiv       180268 Dec 12 22:13 gate-test.wav
---cut--
- 
-\end{verbatim} 
-
-In the first one, gate is opened when the RMS-volume goes over the 11.2\%
-threshold, and closed when RMS-volume falls below 5\%. In the second,
-both entry and close thresholds are 5\% (peak volume). 
-
-
-\subsubsection{Controllers}
-See \texttt{ecasound(1)}.
-
-
-\subsubsection{Effect presets}
+\subsubsection{General}
 Ecasound has a powerful effect preset system that allows you to create
 new effects by combining basic effects and controllers.
 
 Presets can be stored into separate files or they can be stored
 into a global database. Either way, the preset format is the same
-(also see \texttt{ecasoundrc(5)} man page, 
-the same parsing engine is used):
+(also see \texttt{ecasoundrc(5)} man page, the same file format 
+and syntax is used):
+
 \begin{verbatim} 
 preset_name = effects controllers | ... | effects controllers 
 \end{verbatim} 
 
-Effects and controllers are specified using the same format as 
-used in command-line parsing (-ea:100, -kl:1,0,100,5, etc). You 
-can add a new parallel chain using the pipe characher '\textbar '. '\textbackslash ' sign is 
-used to continue preset definition on the next line.
+Effects and controllers are specified using the EOS syntax, 
+the same syntax that is used for parsing command-line options 
+(``-ea:100'', ``-kl:1,0,100,5'', etc). The pipe character is
+used separate parallel chains. 
 
+Just like in shell scripts, the '\textbackslash' character can
+be used to spread definitions across multiple lines.
 
-\paragraph{Example of preset use}
-Ecasound effect presets are in fact small ecasound engines pretending
-to be effects. Here's an example of multi-chain effect preset:
+\subsubsection{Example of preset use}
+Ecasound effect presets are in fact small ecasound engines that
+behave just like native effects. Here's an example of 
+multi-chain effect preset:
 
 \begin{verbatim} 
-
 -- file 'bassbooster.ecp' --
 # let's put the low freqs into one chain and high freqs in another
 bassbooster = -efl:2000 -ea:200 | -efh:2000 -ea:50
 # note, the '|' sign separates parallel chains
 --cut--
- 
 \end{verbatim} 
 
-
 Once defined, you can use the preset in the following way:
-\begin{verbatim} 
 
+\begin{verbatim} 
 --cut--
 ecasound -a:1 -i:some.mp3 -pf:bassbooster.ecp
          -a:2 -i:another.mp3 -pf:bassbooster.ecp
          -a:1,2 -o:/dev/dsp
 --cut--
- 
+ \end{verbatim} 
+
+When separate files are used (the ``-pf:name'' option), 
+ecasound always loads the first preset it finds. If the 
+file contains more presets (additional ``key=value'' -pairs),
+they are ignored.
+
+An alternative way to define presets is to put the 
+definition in the global preset list (usually in 
+``/usr/local/share/ecasound/effect\_presets''. Once you've
+added a line defining ``bassbooster'', you can use it 
+like:
+
+\begin{verbatim} 
+--cut--
+ecasound -a:1 -i:some.mp3 -pn:bassbooster
+         -a:2 -i:another.mp3 -pn:bassbooster
+         -a:1,2 -o:/dev/dsp
+--cut--
 \end{verbatim} 
 
+\subsubsection{Preset parameters}
 
+\emph{FIXME: to be written...}
 
-\subsubsection{LADSPA plugins}
-Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
-Plugin API). See \texttt{ecasound(1)} for more
-info.
+\subsubsection{Parameter descriptors}
 
+\emph{FIXME: to be written...}
 
-\subsection{Configuration}
-User preferences are stored to \emph{\textasciitilde /.ecasouncrc}. See 
-\texttt{ecasoundrc(5)} manual page for more 
-info.
+% ----------------------------------------------------------------------
+\subsection{Gate operators}
 
-By default, files for effects and oscillator presets are 
-in \emph{/usr/local/share/ecasound}.
+Gates are just like any other chain operators. They are assigned to 
+a chain, and process passing audio data buffers. One special feature
+of gates is the ability to crop sections of audio files, for instance 
+to achieve automatic volume-based cutting of audio streams:
 
+\subsubsection{Example of use}
 
+The following sequence cuts the section {[}60:00 sec -> 
+61:00 sec{]} from ``guitar.wav'' into ``gate-test.wav'':
 
-\section{User interfaces}
+\begin{verbatim} 
+--cut--
+|\$ ls -la guitar.wav
+-rw-rw-r--   1 kaiv     kaiv     15790124 Sep 30 23:27 guitar.wav
 
-Probably the best place to start is the examples section of 
-ecasound HTML-documentation: \texttt{examples.html}.
+|\$ ecasound -i guitar.wav -o gate-test.wav -gc:60,1
 
+|\$ ls -la gate-test.wav
+-rw-rw-r--   1 kaiv     kaiv       180268 Dec 12 22:13 gate-test.wav
+--cut--
+\end{verbatim} 
 
-\subsection{ecasound}
-See \texttt{ecasound(1)}.
+The threshold gate is used similarly:
 
+\begin{verbatim} 
+--cut--
+|\$ ecasound -i gate-test.wav -o gate-test-rms.wav -ge:11.2,5,1
 
-\subsection{ecatools}
-See \texttt{ecatools(1)}.
+|\$ ecasound -i gate-test.wav -o gate-test-peak.wav -ge:5,5,0
 
+|\$ ls -la gate*wav
+-rw-rw-r--   1 kaiv     kaiv       163884 Dec 12 22:18 gate-test-peak.wav
+-rw-rw-r--   1 kaiv     kaiv       143404 Dec 12 22:17 gate-test-rms.wav
+-rw-rw-r--   1 kaiv     kaiv       180268 Dec 12 22:13 gate-test.wav
+--cut--
+ \end{verbatim} 
+
+In the first case, gate is opened when the RMS-volume goes over the ``11.2\%''
+threshold, and closed when RMS-volume falls below ``5\%''. In the second,
+case, both entry and close thresholds are ``5\%'' (peak volume).
+
+% ----------------------------------------------------------------------
+\subsection{LADSPA plugins}
+Ecasound supports LADSPA-effect plugins (Linux Audio Developer's 
+Simple Plugin API). See \texttt{ecasound(1)} man page and 
+the LADSPA web site at ``www.ladspa.org'' for more information.
+
+\subsubsection{Ecasound is not able to find any LADSPA plugins I have installed!}
+Just installing the LADSPA SDK - ``www.ladspa.org)(http://www.ladspa.org''
+- should be enough. The plugins themselves are stored in shared library 
+files (.so). They are usually stored in ``/usr/local/lib/ladspa''. To test 
+whether ecasound finds the plugins, issue:
+
+echo "ladspa-register" | ecasound -c
+
+You should get a list of all installed LADSPA plugins. If this doesn't
+work, you need to make sure ecasound is compiled with LADSPA enabled (ie.
+ladspa.h header was present when ecasound was compiled). The precompiled
+rpm-binaries have this, but if you've compiled ecasound yourself you
+should recompile after installing the LADSPA SDK.
+
+Also, check Dave Phillips' great
+article on Oreillynet - 
+``http://www.oreillynet.com/pub/a/linux/2001/02/02/ladspa.html''.
+
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{Miscellanous}
 
+% ----------------------------------------------------------------------
 \subsection{Security considerations when running with root priviledges}
 
 When given the -r option (raise priority), ecasound tries to raise 
@@ -353,14 +542,14 @@ not safe. Whether this is a real problem depends on the particular setup
 (whether connected to network or not, any untrusted users with shell
 access, ...).
 
-The root of the problem is that ecasound (or at least 2.0 and earlier) 
-doesn't contain any code for altering priviledge levels. If it is runs 
+The basic problem is that ecasound (or at least 2.0 and earlier) 
+doesn't contain any code for altering priviledge levels. If it is run
 with root-priviledges, it does everything as root - including forking
 external programs such as mp3 and ogg utilities and editors.
  
 But all in all, this shouldn't be that big of an issue. For noncritical
 uses, just don't set the suid-bit, but run as a normal user. If you have
-an untrusted setup, you don't want to login as root, but still need 
+an untrusted setup, and you don't want to login as root, but still need 
 to run in raised-priority mode, the following helps a bit (execute as 
 root):
 
@@ -378,9 +567,9 @@ set.
 The ideal solution would be that ecasound would not need to be run with
 full root-priviledges, only with priviledges for changing scheduling and
 locking memory. Tommi Ilmonen's (author of the Mustajuuri softsynth)
-givertcap program solves this very elegantly, but unfortunately it 
+``givertcap'' program solves this very elegantly, but unfortunately it 
 requires a custom kernel patch (at least for now). You can check the 
 program at: 'http://www.tml.hut.fi/~tilmonen/givertcap/'. Ecasound 
-doesn't yet have support for givertcap.
+doesn't yet have explicit support for givertcap.
 
 \end{document}

@@ -8,9 +8,9 @@
 
 \bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
 
-\title{Ecasound Control Interface documentation}
+\title{Ecasound Control Interface Guide}
 \author{Kai Vehmanen}
-\date{03102001}
+\date{21102001}
 \begin{document}
 
 \maketitle
@@ -19,6 +19,8 @@
 
 
 
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{Introduction}
 Idea behind the Ecasound Control Interface (ECI) is to take a subset of 
 functionality provided by libecasound, write a simple API for it, and
@@ -29,8 +31,16 @@ interactive mode (EIAM), and the services it provides. See
 \texttt{ecasound-iam(1) manual page} for 
 detailed EIAM documentation.
 
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
+\section{Document history}
+\begin{itemize}
+\item 21.10.2001 - Added this history section. Minor changes to 
+      ECI examples.
+\end{itemize}
 
-
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{General}
 ECI doesn't provide any routines that directly manipulate audio or 
 ecasound objects. What is does provide is an easy and generic way
@@ -48,6 +58,7 @@ your specific app doesn't need the latest new features. In these
 cases, ECI is the best choice.
 
 
+% ----------------------------------------------------------------------
 \subsection{What's it good for?}
 
 Specific tasks ECI is aimed at:
@@ -59,6 +70,7 @@ Specific tasks ECI is aimed at:
 \end{itemize}
 
 
+% ----------------------------------------------------------------------
 \subsection{Services and behaviour}
 
 Here's a list of services provided by all ECI implementations:
@@ -127,6 +139,7 @@ Free all reserved resources.
 
 
 
+% ----------------------------------------------------------------------
 \subsection{Porting to new environments}
 Porting ECI to new languages should be easy. All there is to do is 
 to implement the services listed in the previous section to the target
@@ -135,9 +148,12 @@ as the underlying implementation.
 
 
 
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{Implementations}
 
 
+% ----------------------------------------------------------------------
 \subsection{General}
 \subsubsection{Overview}
 This section contains overview of how ECI is implemented in the 
@@ -161,6 +177,7 @@ Implementation of the following:
 \end{enumerate}
 
 
+% ----------------------------------------------------------------------
 \subsection{C++}
 \subsubsection{Overview}
 C++ implementation is based around the ECA\_CONTROL\_INTERFACE class.
@@ -189,8 +206,8 @@ int main(int argc, char *argv[])
   ECA_CONTROL_INTERFACE e;
   e.command("cs-add play_chainsetup");
   e.command("c-add 1st_chain");
-  e.command("-i:some_file.wav");
-  e.command("-o:/dev/dsp");
+  e.command("ai-add some_file.wav");
+  e.command("ao-add /dev/dsp");
   e.command("cop-add -efl:100");
   e.command("cop-select 1");
   e.command("copp-select 1");
@@ -220,6 +237,7 @@ int main(int argc, char *argv[])
 
 
 
+% ----------------------------------------------------------------------
 \subsection{C}
 \subsubsection{Overview}
 All C ECI functions are prefixed with "eci\_". When returning string
@@ -259,8 +277,8 @@ int main(int argc, char *argv[])
   eci_init();
   eci_command("cs-add play_chainsetup");
   eci_command("c-add 1st_chain");
-  eci_command("-i:some_file.wav");
-  eci_command("-o:/dev/dsp");
+  eci_command("ai-add some_file.wav");
+  eci_command("ao-add /dev/dsp");
   eci_command("cop-add -efl:100");
   eci_command("cop-select 1");
   eci_command("copp-select 1");
@@ -294,6 +312,7 @@ int main(int argc, char *argv[])
 
 
 
+% ----------------------------------------------------------------------
 \subsection{Python}
 \subsubsection{Overview}
 Python implementation is based around the ECA\_CONTROL\_INTERFACE class.
@@ -322,8 +341,8 @@ from pyeca import *
 e = ECA_CONTROL_INTERFACE()
 e.command("cs-add play_chainsetup")
 e.command("c-add 1st_chain")
-e.command("-i:some_file.wav")
-e.command("-o:/dev/dsp")
+e.command("ai-add some_file.wav")
+e.command("ao-add /dev/dsp")
 e.command("cop-add -efl:100")
 e.command("cop-select 1")
 e.command("copp-select 1")
@@ -349,6 +368,7 @@ print "Chain operator status: ", e.last_string()
 
 
 
+% ----------------------------------------------------------------------
 \subsection{Perl}
 \subsubsection{Overview}
 Audio::Ecasound provides perl bindings to the ecasound
@@ -372,8 +392,8 @@ use Audio::Ecasound qw(:simple);
 
 eci("cs-add play_chainsetup");
 eci("c-add 1st_chain");
-eci("-i:some_file.wav");
-eci("-o:/dev/dsp");
+eci("ai-add some_file.wav");
+eci("ao-add /dev/dsp");
 # multiple \n separated commands
 eci("cop-add -efl:100
      # with comments

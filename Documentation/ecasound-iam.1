@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "13\&.10\&.2001" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "21\&.10\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -66,12 +66,6 @@ finished, error, not ready)\&. See also \fIcs-status\fP\&. \fI[s]\fP
 .PP 
 .IP 
 .SH "DIRECT ARGUMENTS" 
-One powerful feature of interactive-mode is that it
-understands ecasound\'s command-line syntax directly\&. This 
-is often the easiest way to add effects and files\&. For instance,
-command "-efb:400,200" means that a bandpass filter is added 
-to the currently selected chainsetup-chains combination, with
-initial parameters 400 (center frequency) and 200 (width in Hz)\&.
 .IP 
 .SH "CHAINSETUPS" 
 Chainsetup is the central data object\&. All other objects (inputs,
@@ -190,6 +184,14 @@ same as command-line argument "-f" (see ecasound(1))\&. \fI[-]\fP
 .PP 
 .IP "cs-status, status, st" 
 Print status info about all chainsetups\&. \fI[s]\fP
+.PP 
+.IP "cs-option \'-prefix:arg1,\&.\&.\&.,argN\'" 
+One powerful feature of the interactive-mode is that it
+provides full access to ecasound\'s command-line syntax\&. 
+For instance, command "cs-option -efb:400,200" means that 
+a bandpass filter is added to the currently selected 
+chain, with initial parameters 400 (center frequency) 
+and 200 (width in Hz)\&.
 .PP 
 .IP 
 .SH "CHAINS" 

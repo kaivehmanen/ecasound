@@ -10,26 +10,37 @@
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{10102001}
+\date{21102001}
 \begin{document}
 
 \maketitle
 \tableofcontents 
 \clearpage
 
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{Preface}
-This document describes how ecasound library works, how to use it,
+This document describes how the ecasound library works, how to use it,
 how to extend and add features to it and so on. Before reading this
-document, you should first look at other available documentation
-(especially \texttt{ecasound users's guide}).
+document, you should first take a look at other available documentation
+(especially \texttt{Ecasound Users's Guide}).
 
-Unlike most web pages, this document really is under construction. :)
+If not otherwise specified, all documentation refers to the latest
+ecasound version.
+
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
+\section{Document history}
+\begin{itemize}
+\item 21.10.2001 - Added this history section.
+\end{itemize}
 
 
-
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{General guidelines}
 
-
+% ----------------------------------------------------------------------
 \subsection{Design and programming}
 \subsubsection{Open and generic design}
 Over the years ecasound's core design has been revised many times.
@@ -123,6 +134,7 @@ to achieve this.
 \end{description}
 
 
+% ----------------------------------------------------------------------
 \subsection{Coding style}
 \subsubsection{General guide lines}
 Variable names are all lower case and words are separated with
@@ -153,15 +165,16 @@ Private classes have a \emph{\_impl} postfix in their name. They
 are usually stored into separate files which also use the
 \emph{\_impl} notation.
 
-For instance the ECA_ENGINE class (eca-engine.h) has
-a private class ECA_ENGINE_impl (eca-engine_impl.h). 
-Access to ECA_ENGINE_impl is only allowed to ECA_ENGINE 
+For instance the ECA\_ENGINE class (eca-engine.h) has
+a private class ECA\_ENGINE\_impl (eca-engine\_impl.h). 
+Access to ECA\_ENGINE\_impl is only allowed to ECA\_ENGINE 
 member functions. In addition, the private header file 
-(eca-engine_impl.h) is only included from the ECA_ENGINE 
+(eca-engine\_impl.h) is only included from the ECA\_ENGINE 
 implementation file (eca-engine.cpp). This allows us to 
-add new data members to ECA_ENGINE_impl without breaking 
+add new data members to ECA\_ENGINE\_impl without breaking 
 the binary interface.
 
+% ----------------------------------------------------------------------
 \subsection{Physical level organization}
 Ecasound libraries and applications are divided into \emph{distribution 
 packages}, \emph{directories} and \emph{file groups}. 
@@ -208,6 +221,7 @@ You should note that these are just recommendations - there are no
 strict rules on how files should be named.
 
 
+% ----------------------------------------------------------------------
 \subsection{Documentation style}
 Javadoc-style class documentation is the preferred style.
 Class members can be documented either when they are declared (header
@@ -227,6 +241,7 @@ Here's a few general documentation guide lines:
 \end{description}
 
 
+% ----------------------------------------------------------------------
 \subsection{Versioning}
 All ecasound releases have a distinct version number. To emphasize the
 difference between stable and development releases, stable versions
@@ -253,10 +268,11 @@ specific \emph{ChangeLog} files. These files are usually located in the
 top-level source directory.
 
 
-
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{How ecasound works?}
 
-
+% ----------------------------------------------------------------------
 \subsection{Common use-cases}
 Here's some common cases how ecasound can be used.
 
@@ -292,15 +308,15 @@ Just like multirack recording. The only difference is
 that realtime input and output are externally
 connected.
 
-
+% ----------------------------------------------------------------------
 \subsection{Signal flow}
-This is simple. A group of inputs is routed to a group of chains.
-Audio data is processed in the chains and afterwards routed to 
-a group of outputs. Using internal loop devices, it' also possible to 
-route signals from one chain to another. It's also possible to assign
-inputs and outputs to multiple chains.
+A group of inputs is routed to a group of chains. Audio data is
+processed in the chains and afterwards routed to a group of outputs. 
+Using internal loop devices, it' also possible to route signals from 
+one chain to another. It's also possible to assign inputs and 
+outputs to multiple chains.
 
-
+% ----------------------------------------------------------------------
 \subsection{Control flow}
 \subsubsection{Passive operation}
 When ecasound is run in passive mode, the program flow is simple.
@@ -352,6 +368,7 @@ before completion
 \item[error] - an error has occured during prosessing
 \end{description}
 
+% ----------------------------------------------------------------------
 \subsection{Class descriptions}
 
 The primary source for class documentation is header files.
@@ -457,9 +474,12 @@ between ECA\_OBJECT<->EFFECT\_LADSPA.
 
 
 
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{Using ecasound from other programs}
 
 
+% ----------------------------------------------------------------------
 \subsection{Console mode ecasound - {[}all languages{]}}
 This is the easiest way to take advantage of ecasound features in your
 own programs. You can fork ecasound, pipe commands to ecasound's
@@ -472,14 +492,15 @@ configuration and status info as formatted text strings (easier to
 parse than normal output).
 
 
+% ----------------------------------------------------------------------
 \subsection{Ecasound Control Interface - {[}C++, C, Python{]}}
 
 Idea behind Ecasound Control Interface (ECI) is to take a subset of 
 functionality provided by libecasound, write a simple API for it, and
 port it to various languages. At the moment, at least C++, C and
 Python implementations of the ECI API are available and part of the
-main ecasound distribution. ECI is heavily based on ecasound's
-interactive mode (EIAM), and the services it provides. 
+main ecasound distribution. ECI is heavily based on the Ecasound
+Interactive Mode (EIAM), and the services it provides. 
 
 Specific tasks ECI is aimed at:
 
@@ -490,6 +511,7 @@ Specific tasks ECI is aimed at:
 \end{itemize}
 
 
+% ----------------------------------------------------------------------
 \subsection{Libecasound's ECA\_CONTROL class - {[}C++{]}}
 By linking your program to libecasound, you can use the ECA\_CONTROL
 class for controlling ecasound. This is a large interface class that
@@ -533,6 +555,7 @@ p.exec(); // blocks until processing is finished
 
 
 
+% ----------------------------------------------------------------------
 \subsection{Ecasound classes as building blocks - {[}C++{]}}
 And of course, you can also use individual ecasound classes directly.
 This means more control, but it also means more work. Here's
@@ -554,9 +577,12 @@ another short sample:
 
 
 
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
 \section{Adding new features and components?}
 
 
+% ----------------------------------------------------------------------
 \subsection{Things to remember when writing new C++ classes}
 \subsubsection{Copy constructor and assignment operator}
 Always take a moment to check your copy constructor and the assign 
@@ -576,6 +602,7 @@ nobody will use the functions by accident!
 \end{itemize}
 
 
+% ----------------------------------------------------------------------
 \subsection{Audio objects}
 To implement a new audio object type, you must first select which 
 top-level class to derive from. Usually this is either AUDIO\_IO
@@ -594,6 +621,7 @@ Adding the new object to ecasound is much like adding a new effect
 then register it to the appropriate object map (see below).
 
 
+% ----------------------------------------------------------------------
 \subsection{Effects and other chain operators}
 Write a new class that inherits from CHAIN\_OPERATOR or any of its
 successors. Implement the necessary routines (init, set/get\_parameter, 
@@ -609,6 +637,7 @@ example code available. See \texttt{www.ladspa.org}
 for more information.
 
 
+% ----------------------------------------------------------------------
 \subsection{Differences between audio objects and chain operators}
 Design-wise, audio objects and effects (chain operators) aren't that 
 far away from each other. Many audio apps don't separate these
@@ -656,6 +685,7 @@ as audio inputs by specifying:
 
 
 
+% ----------------------------------------------------------------------
 \subsection{LADSPA plugins}
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
 Plugin API). See \texttt{LAD mailing list web site} for 
