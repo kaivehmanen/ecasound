@@ -281,11 +281,15 @@ void register_default_presets(void) { }
 
 static AUDIO_IO* register_internal_plugin(const std::string& libdir,
 					       const std::string& filename) {
+
   std::string file = libdir + std::string("/") + filename;
+
   audio_io_descriptor desc_func = 0;
-  void *plugin_handle = dlopen(file.c_str(), RTLD_NOW);
+  audio_io_interface_version plugin_version = 0;
+
+  void *plugin_handle = dlopen(file.c_str(), RTLD_NOW | RTLD_GLOBAL); /* RTLD_LAZY */
+
   if (plugin_handle != 0) {
-    audio_io_interface_version plugin_version;
     plugin_version = (audio_io_interface_version)dlsym(plugin_handle, "audio_io_interface_version");
     if (plugin_version != 0) {
       int version = plugin_version();
@@ -308,10 +312,13 @@ static AUDIO_IO* register_internal_plugin(const std::string& libdir,
 	if (desc_func != 0) {
 	  return(desc_func());
 	}
+	
       }
     }
+
   }
   if (plugin_handle == 0 ||
+      plugin_version == 0 ||
       desc_func == 0) {
     ecadebug->msg(ECA_DEBUG::user_objects, 
 		  "(eca-static-object-maps) Opening internal plugin file \"" + 
