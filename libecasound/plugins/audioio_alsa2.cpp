@@ -180,7 +180,11 @@ void ALSA_PCM_DEVICE_05X::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
 			kvu_numtostr(buffersize()) + " is out of range!"));
   
   params.buf.block.frag_size = buffersize() * frame_size();
-  params.buf.block.frags_max = 1;
+
+  if (max_buffers() == true) 
+    params.buf.block.frags_max = -1;
+  else
+    params.buf.block.frags_max = 3;
   params.buf.block.frags_min = 1;
 
   // -------------------------------------------------------------------
