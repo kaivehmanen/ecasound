@@ -40,7 +40,7 @@
 
 #include "ecatools_fixdc.h"
 
-static const string ecatools_fixdc_version = "20020623";
+static const string ecatools_fixdc_version = "20020701-27";
 static string ecatools_fixdc_tempfile;
 
 using std::cerr;

@@ -43,7 +43,7 @@ static int ecaplay_exit_request_rep = 0;
 static int ecaplay_skip_files = 0;
 static int ecaplay_total_files = 0;
 
-static const string ecaplay_version = "20020626";
+static const string ecaplay_version = "20020701-34";
 
 int process_option(const string& option);
 

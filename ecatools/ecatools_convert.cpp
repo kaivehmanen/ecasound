@@ -33,7 +33,7 @@
 
 #include "ecatools_convert.h"
 
-static const string ecatools_play_version = "20020623";
+static const string ecatools_play_version = "20020701-15";
 
 using std::cerr;
 using std::endl;
