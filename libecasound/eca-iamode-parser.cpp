@@ -107,8 +107,10 @@ void ECA_IAMODE_PARSER::register_commands_misc(void)
   (*cmd_map_repp)["fs"] = ec_aio_status;
 
   (*cmd_map_repp)["int-cmd-list"] = ec_int_cmd_list;
+  (*cmd_map_repp)["int-log-history"] = ec_int_log_history;
   (*cmd_map_repp)["int-output-mode-wellformed"] = ec_int_output_mode_wellformed;
   (*cmd_map_repp)["int-set-float-to-string-precision"] = ec_int_set_float_to_string_precision;
+  (*cmd_map_repp)["int-set-log-history-length"] = ec_int_set_log_history_length;
 
   (*cmd_map_repp)["int-version-string"] = ec_int_version_string;
   (*cmd_map_repp)["int-version-lib-current"] = ec_int_version_lib_current;

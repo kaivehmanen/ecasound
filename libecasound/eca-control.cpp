@@ -2,6 +2,9 @@
 // eca-control.cpp: Class for controlling the whole ecasound library
 // Copyright (C) 1999-2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 3
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -246,7 +249,7 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
       action_ok = false;
     }
     else {
-      set_last_error("Warning! No chainsetup selected. Connected chainsetup will be selected.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "Warning! No chainsetup selected. Connected chainsetup will be selected.");
       select_chainsetup(connected_chainsetup());
     }
   }
@@ -258,13 +261,14 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
       action_ok = false;
     }
     else {
-      set_last_error("Warning! No chainsetup connected. Trying to connect currently selected chainsetup.");
+      set_last_error("");
       if (is_valid() == true) {
+	ECA_LOG_MSG(ECA_LOGGER::info, "Warning! No chainsetup connected. Trying to connect currently selected chainsetup.");
 	connect_chainsetup();
       }
       if (is_connected() != true) {
 	/* connect_chainsetup() sets last_error() so we just add to it */
-	set_last_error(last_error() + "\nWarning! Selected chainsetup cannot be connected. Can't perform requested action. ");
+	set_last_error(last_error() + " Selected chainsetup cannot be connected. Can't perform requested action. ");
 	action_ok = false;
       }
     }
@@ -273,7 +277,7 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
    *         but selected chainsetup is also connected */
   else if (selected_chainsetup() == connected_chainsetup() &&
 	   action_requires_selected_not_connected(action_id)) {
-    set_last_error("Warning! This operation requires that chainsetup is disconnected. Temporarily disconnecting...");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Warning! This operation requires that chainsetup is disconnected. Temporarily disconnecting...");
     if (is_running()) action_restart = true;
     disconnect_chainsetup();
     action_reconnect = true;
@@ -306,7 +310,7 @@ void ECA_CONTROL::action(int action_id)
   case ec_start: 
     { 
       if (is_running() != true) start();
-      // ECA_LOG_MSG(ECA_LOGGER::info, "(eca-control) Can't perform requested action; no chainsetup connected.");
+      // ECA_LOG_MSG(ECA_LOGGER::info, "Can't perform requested action; no chainsetup connected.");
       break; 
     }
   case ec_stop: { if (is_running() == true) stop(); break; }
@@ -607,12 +611,14 @@ void ECA_CONTROL::action(int action_id)
   // Internal commands
   // ---
   case ec_int_cmd_list: { set_last_string_list(registered_commands_list()); break; }
+  case ec_int_log_history: { set_last_string(ECA_LOGGER::instance().log_history()); break; }
   case ec_int_output_mode_wellformed: { 
     ECA_LOGGER::attach_logger(new ECA_LOGGER_WELLFORMED()); 
     wellformed_mode_rep = true;
     break; 
   }
-  case ec_int_set_float_to_string_precision: { set_float_to_string_precision(atoi((action_args_rep).c_str())); break; }
+  case ec_int_set_float_to_string_precision: { set_float_to_string_precision(atoi(action_args_rep.c_str())); break; }
+  case ec_int_set_log_history_length: { ECA_LOGGER::instance().set_log_history_length(atoi(action_args_rep.c_str())); break; }
   case ec_int_version_string: { set_last_string(ecasound_library_version); break; }
   case ec_int_version_lib_current: { set_last_integer(ecasound_library_version_current); break; }
   case ec_int_version_lib_revision: { set_last_integer(ecasound_library_version_revision); break; }
@@ -676,9 +682,9 @@ string ECA_CONTROL::last_value_to_string(void)
   }
   else if (type == "s")
     result = last_string();
-  else if (type == "S")
-    // FIXME: escape commas and double-backlashes
-    result = kvu_vector_to_string(last_string_list(), ",");
+  else if (type == "S") {
+    result = kvu_vector_to_string(kvu_vector_search_and_replace(last_string_list(), '\'', ';'), ",");
+  }
   else if (type == "i")
     result = kvu_numtostr(last_integer());
   else if (type == "li")
@@ -695,7 +701,7 @@ void ECA_CONTROL::print_last_value(void)
   string result;
 
   if (type == "e") {
-    result += "(eca-control) ERROR: ";
+    result += "ERROR: ";
   }
 
   result += last_value_to_string();
@@ -719,6 +725,9 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
   result += " inputs, " + kvu_numtostr(cs->outputs.size());
   result += " outputs, " + kvu_numtostr(cs->chains.size());
   result += " chains";
+
+  // FIXME: add explanations on why the chainsetup cannot be
+  //        connected
 
   if (cs->is_valid()) 
     result += "\n -> State:   valid (can be connected)";
