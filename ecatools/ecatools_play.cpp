@@ -22,7 +22,7 @@
 #include <string>
 #include <cstdio>
 
-#include <kvutils.h>
+#include <kvutils/com_line.h>
 
 #include <eca-debug.h>
 #include <eca-error.h>
@@ -57,8 +57,10 @@ int main(int argc, char *argv[])
     ECA_PROCESSOR emain;
     ECA_AUDIO_FORMAT aio_params;
 
-    for(int n = 1; n < static_cast<int>(cline.size()); n++) {
-      filename = cline[n];
+    cline.begin();
+    while(cline.end() == false) {
+      filename = cline.current();
+
       cerr << "Playing file \"" << filename << "\".\n";
 
       ectrl.add_chainsetup("default");
@@ -79,6 +81,8 @@ int main(int argc, char *argv[])
 
       ectrl.disconnect_chainsetup();
       ectrl.remove_chainsetup();
+
+      cline.next();
     }
   }
   catch(ECA_ERROR* e) {

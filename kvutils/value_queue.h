@@ -12,8 +12,11 @@
 class VALUE_QUEUE {
     
  private:
-  pthread_mutex_t lock;     // mutex ensuring exclusive access to buffer
-  
+
+  mutable pthread_mutex_t lock;     // mutex ensuring exclusive access to buffer
+  mutable pthread_cond_t cond;
+  mutable bool locked_rep;
+
   deque<pair<int,double> > cmds;
 
 public:
@@ -48,6 +51,7 @@ public:
   
   VALUE_QUEUE(void) { 
     pthread_mutex_init(&lock, NULL);
+    locked_rep = false;
   }
 };
 

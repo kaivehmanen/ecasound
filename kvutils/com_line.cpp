@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// com_line.cpp: A wrapper class for parsing command line arguments.
+// com_line.cpp: A wrapper class for parsing command line arguments
 // Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -19,93 +19,92 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 // #include "debug.h"
 #include "com_line.h"
 
 COMMAND_LINE::COMMAND_LINE(int argc, char *argv[]) {
-  current = 0;
+  current_rep = 0;
 
   for(int t = 0; t < argc; t++) {
     cparams.push_back(argv[t]);
   }
 }
 
-COMMAND_LINE::COMMAND_LINE(const vector<string>& params) {
-  cparams = params;
-}
+COMMAND_LINE::COMMAND_LINE(const vector<string>& params) {  cparams = params; }
+void COMMAND_LINE::push_back(const string& argu) { cparams.push_back(argu); }
 
-string COMMAND_LINE::next_argument(void) {
-  while (current < cparams.size()) {
-    ++current;
-    if (cparams[current - 1].size() > 0) {
-      if (cparams[current - 1].at(0) == '-') return(cparams[current -
-							   1]);
-    }
-  }
-  return("");
-}
 
-void COMMAND_LINE::push_back(const string& argu) {
-  cparams.push_back(argu);
-}
+bool COMMAND_LINE::has(char option) const {
+  vector<string>::size_type savepos = current_rep;
 
-string COMMAND_LINE::next_non_argument(void) {
-  while (current < cparams.size()) {
-    ++current;
-    if (cparams[current - 1].size() > 0) {
-      if (cparams[current - 1].at(0) != '-') return(cparams[current - 1]);
-    }
-  }
-  return("");
-}
-
-string COMMAND_LINE::next(void) {
-  if (ready() == false) return("");
-  ++current;    
-  return(cparams[current - 1]);
-}
-
-string COMMAND_LINE::previous(void) {
-  --current;
-  if (ready() == false) return("");
-  if (current > 0) return(cparams[current - 1]);
-  else return("");
-}
-
-bool COMMAND_LINE::has(char option) {
-  vector<string>::size_type savepos = current;
-
-  current = 0;
-  while (current < cparams.size()) {
-    ++current;
-    if (cparams[current - 1].size() > 0) {
-      if (cparams[current - 1].at(0) == '-' &&
-	  cparams[current - 1].at(1) == option) {
-	current = savepos;
+  current_rep = 0;
+  while (current_rep < cparams.size()) {
+    if (cparams[current_rep].size() > 1) {
+      if (cparams[current_rep].at(0) == '-' &&
+	  cparams[current_rep].at(1) == option) {
+	current_rep = savepos;
 	return(true);
       }
     }
+    ++current_rep;
   }
-  current = savepos;
+  current_rep = savepos;
   return(false);
 }
 
-bool COMMAND_LINE::has(const string& option) {
-  vector<string>::size_type savepos = current;
+bool COMMAND_LINE::has(const string& option) const {
+  vector<string>::size_type savepos = current_rep;
 
-  current = 0;
-  while (current < cparams.size()) {
-    ++current;
-    if (cparams[current - 1] == option) {
-      current = savepos;
+  current_rep = 0;
+  while (current_rep < cparams.size()) {
+    if (cparams[current_rep] == option) {
+      current_rep = savepos;
       return(true);
     }
+    ++current_rep;
   }
-  current = savepos;
+  current_rep = savepos;
   return(false);
 }
 
+void COMMAND_LINE::combine(void) {
+  vector<string> result;
+  string first;
+  vector<string>::const_iterator p = cparams.begin();
+  while(p != cparams.end()) {
+    if (p->size() == 0) {
+      ++p;
+      continue;
+    }
+    if ((*p)[0] == '-') {
+      if (find(p->begin(), p->end(), ':') == p->end()) {
+	first = *p;
+	++p;
+	if (p == cparams.end()) {
+	  result.push_back(first);
+	  break;
+	}
+	if ((*p)[0] != '-') {
+	  first += ":" + *p;
+	  result.push_back(first);
+	}
+	else {
+	  result.push_back(first);
+	  result.push_back(*p);
+	}
+      }
+      else 
+	result.push_back(*p);
+    }
+    else 
+      result.push_back(*p);
+    
+    ++p;
+  }
+  cparams = result;
+}
 
 
 

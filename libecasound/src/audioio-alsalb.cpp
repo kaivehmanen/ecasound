@@ -31,7 +31,7 @@
 #include <unistd.h>
 #include <sched.h>
 
-#include <kvutils.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "samplebuffer.h"
 #include "audioio-types.h"
@@ -118,8 +118,10 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Set fragment size.
 
+  
   if (buffersize() == 0) 
     throw(new ECA_ERROR("AUDIOIO-ALSALB", "Buffersize() is 0!", ECA_ERROR::stop));
+  callback_buffer_size = buffersize() * frame_size();
   
   // -------------------------------------------------------------------
   // Select audio format
@@ -174,15 +176,6 @@ long int ALSA_LOOPBACK_DEVICE::read_samples(void* target_buffer,
     int retcode = pthread_create(&loopback_thread, NULL, loopback_controller, audio_fd);
     if (retcode != 0)
       throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to create thread for alsalb"));
-    
-    if (sched_getscheduler(0) == SCHED_FIFO) {
-      struct sched_param sparam;
-      sparam.sched_priority = 10;
-      if (pthread_setschedparam(loopback_thread, SCHED_FIFO, &sparam) != 0)
-	ecadebug->msg("(audioio-alsalb) Unable to change scheduling policy!");
-      else 
-	ecadebug->msg("(audioio-alsalb) Using realtime-scheduling (SCHED_FIFO/10).");
-    }
   }
   first_time = false;
 
@@ -231,7 +224,7 @@ void *loopback_controller(void* params) {
   callbacks.position_change = loopback_callback_position_change;
   callbacks.format_change = loopback_callback_format_change;
   callbacks.silence = loopback_callback_silence;
-  callback_buffer_size = callbacks.max_buffer_size = 16 * 1024;
+  callbacks.max_buffer_size = callback_buffer_size;
   snd_pcm_loopback_t* handle = reinterpret_cast<snd_pcm_loopback_t*>(params);
   dl_snd_pcm_loopback_read(handle, &callbacks);
 

@@ -20,7 +20,8 @@
 #include <cmath>
 #include <string>
 
-#include <kvutils.h>
+#include <kvutils/message_item.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "samplebuffer.h"
 #include "audioio-types.h"

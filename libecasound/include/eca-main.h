@@ -6,7 +6,7 @@
 #include <ctime>
 #include <pthread.h>
 
-#include <kvutils/kvutils.h>
+#include <kvutils/value_queue.h>
 
 #include "samplebuffer.h"
 #include "eca-chainsetup.h"

@@ -66,9 +66,9 @@ class EWFFILE : public AUDIO_IO {
   bool finished(void) const;
   long length_in_samples(void) const;
 
-  void buffersize(long int samples, long int sample_rate) { child->buffersize(samples, sample_rate); }
-  long int buffersize(void) const { return(child->buffersize()); }
-  void buffersize_changed(void) { child->buffersize(buffersize(), samples_per_second()); }
+  void buffersize(long int samples, long int sample_rate) { if (child != 0) child->buffersize(samples, sample_rate); }
+  long int buffersize(void) const { if (child != 0) return(child->buffersize()); return(0); }
+  void buffersize_changed(void) { if (child != 0) child->buffersize(buffersize(), samples_per_second()); }
 
   void read_buffer(SAMPLE_BUFFER* sbuf);
   void write_buffer(SAMPLE_BUFFER* sbuf);
@@ -79,7 +79,7 @@ class EWFFILE : public AUDIO_IO {
  
   EWFFILE* clone(void) { return new EWFFILE(*this); }
   EWFFILE* new_expr(void) { return new EWFFILE(); }
-  EWFFILE (const string& name = "") { label(name); }
+  EWFFILE (const string& name = "") { label(name); child = 0; }
   ~EWFFILE(void);
 };
 

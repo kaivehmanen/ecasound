@@ -28,7 +28,8 @@
 #include <pthread.h>
 #include <utility>
 
-#include <kvutils.h>
+#include <kvutils/kvu_numtostr.h>
+#include <kvutils/value_queue.h>
 
 #include "samplebuffer.h"
 #include "eca-chain.h"

@@ -34,7 +34,7 @@ EFFECT_LADSPA::EFFECT_LADSPA (struct LADSPA_Descriptor *pdesc) throw(ECA_ERROR*)
     throw(new ECA_ERROR("AUDIOFX_LADSPA", "Inplace-broken plugins not supported."));
 
   label_rep = string(plugin_desc->Name);
-  unique_rep = string(plugin_desc->UniqueLabel);
+  unique_rep = string(plugin_desc->Label);
   port_count_rep = plugin_desc->PortCount;
 
   for(unsigned long m = 0; m < port_count_rep; m++) {
@@ -49,8 +49,10 @@ EFFECT_LADSPA::EFFECT_LADSPA (struct LADSPA_Descriptor *pdesc) throw(ECA_ERROR*)
 
 EFFECT_LADSPA::~EFFECT_LADSPA (void) {
   if (plugin_desc != 0) {
-    for(unsigned int n = 0; n < plugins.size(); n++)
+    for(unsigned int n = 0; n < plugins.size(); n++) {
+      if (plugin_desc->deactivate != 0) plugin_desc->deactivate(plugins[n]);
       plugin_desc->cleanup(plugins[n]);
+    }
   }
 }
 
@@ -90,6 +92,8 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) {
       ++data_index;
     }
   }
+  for(unsigned long m = 0; m < plugins.size(); m++)
+    if (plugin_desc->activate != 0) plugin_desc->activate(plugins[m]);
 }
 
 void EFFECT_LADSPA::process(void) {

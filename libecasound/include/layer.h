@@ -46,7 +46,7 @@ class Layer {
   unsigned int sfreq(void);
   unsigned long length(void);
   unsigned int pcmPerFrame(void);
-  bool get(FILE * file);
+  bool get(const char* filename);
 
   static const char * mode_names[5];
   static const char * layer_names[3];

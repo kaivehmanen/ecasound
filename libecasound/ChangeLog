@@ -2,6 +2,10 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2000-03-22  Kai Vehmanen <kaiv@wakkanet.fi>	
+
+	* eca-chainsetup.h (combine_options): moved to libkvutils
+	
 2000-03-20  Kai Vehmanen <kaiv@wakkanet.fi>	
 
 	* eca-static-object-maps.h (eca_ladspa_plugin_map): added

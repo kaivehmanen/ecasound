@@ -26,16 +26,17 @@ QESaveEvent::QESaveEvent(ECA_CONTROLLER* ctrl,
 			 const string& output,
 			 long int start_pos, 
 			 long int length) 
-  : QEEvent(ctrl) {
+  : QEBlockingEvent(ctrl),
+    ectrl(ctrl) {
 
-  // .ewf copying should be added
   toggle_valid_state(false);
-  init();
+
+  init("saveevent");
   ectrl->add_chain("default");
   set_input(input);
   set_input_position(start_pos);
   set_length(length);
-  get_default_audio_format(input);
+  set_default_audio_format(input);
   set_output(output);
   set_output_position(start_pos);
   toggle_valid_state(true);

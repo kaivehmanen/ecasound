@@ -23,7 +23,8 @@
 
 #include "qeevent.h"
 
-QEEvent::QEEvent(void) {
+QEEvent::QEEvent(ECA_CONTROLLER* ctrl) 
+  : ectrl(ctrl) {
 #ifdef NDEBUG
   ecadebug->set_debug_level(0);
 #else
@@ -33,9 +34,11 @@ QEEvent::QEEvent(void) {
 #endif
 }
 
-QEEvent::~QEEvent(void) { }
+void QEEvent::init(const string& chainsetup) {
+  // --------
+  REQUIRE(ectrl != 0);
+  // --------
 
-void QEEvent::init(void) {
   triggered_rep = false;
   input_object = 0;
   output_object = 0;
@@ -43,49 +46,14 @@ void QEEvent::init(void) {
 
   if (ectrl->is_running() == true) ectrl->stop();
   if (ectrl->is_connected() == true) ectrl->disconnect_chainsetup();
-  if (ectrl->selected_chainsetup() != "default") ectrl->add_chainsetup("default");
+  if (ectrl->selected_chainsetup() != chainsetup) ectrl->add_chainsetup(chainsetup);
   else {
     ectrl->remove_chainsetup();
-    ectrl->add_chainsetup("default");
-  }
-}
-
-void QEEvent::start(bool blocking) {
-  process(blocking);
-}
-
-void QEEvent::process(bool blocking) {
-  // --------
-  REQUIRE(is_valid() == true);
-  REQUIRE(ectrl->is_valid() == true);
-  REQUIRE(ectrl->is_selected() == true);
-  REQUIRE(is_triggered() == false);
-  // --------
-  try {
-    ectrl->connect_chainsetup();
-    ectrl->start();
-    toggle_triggered_state(true);
-    if (blocking == true) {
-      struct timespec sleepcount;
-      sleepcount.tv_sec = 1;
-      sleepcount.tv_nsec = 0;
-
-      QProgressDialog progress ("Processing data...", 0,
-				(int)(ectrl->length_in_seconds_exact() * 10.0), 0, 0, true);
-      progress.setProgress(0);
-      progress.show();
-      while(ectrl->is_finished() == false) {
-	nanosleep(&sleepcount, NULL);
-	progress.setProgress((int)(ectrl->position_in_seconds_exact() * 10.0));	
-      }      
-    }
-  }
-  catch(ECA_ERROR* e) {
-    cerr << "---\nlibecasound error while processing event: [" << e->error_section() << "] : \"" << e->error_msg() << "\"\n\n";
+    ectrl->add_chainsetup(chainsetup);
   }
 
   // --------
-  ENSURE(is_triggered() == true || ectrl->is_running() == false);
+  ENSURE(ectrl->selected_chainsetup() == chainsetup);
   // --------
 }
 
@@ -126,7 +94,7 @@ void QEEvent::set_input(const string& name) {
   // --------
 }
 
-void QEEvent::get_default_audio_format(const string& name) {
+void QEEvent::set_default_audio_format(const string& name) {
   // --------
   REQUIRE(name.empty() == false);
   // --------

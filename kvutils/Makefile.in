@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -46,10 +46,9 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -83,32 +82,21 @@ AUTOMAKE_OPTIONS = foreign
 # ---
 # Makefile.am for building libkvutils.a
 # ---
-#CXXFLAGS += -D_REENTRANT -fomit-frame-pointer -funroll-all-loops -s \
-#	     -finline-functions -ffast-math -I.
 CXXFLAGS =  -D_REENTRANT -s -O2 -ffast-math -I.
-# ---
-# You can add here more. This one gets installed 
-# ---
-#noinst_LIBRARIES = libkvutils.a
+
 lib_LTLIBRARIES = libkvutils.la
 
-kvutil_sources = kvutils.cpp message_item.cpp com_line.cpp command_queue.cpp 		 value_queue.cpp kvu_numtostr.cpp
+kvutil_sources = kvutils.cpp 			message_item.cpp 			com_line.cpp 			command_queue.cpp 		 	value_queue.cpp 			kvu_numtostr.cpp
 
 
-kvutil_headers = kvutils.h message_item.h com_line.h 		 command_queue.h value_queue.h 		 kvu_numtostr.h definition_by_contract.h
+kvutil_headers = kvutils.h 			message_item.h 			com_line.h 			command_queue.h 			value_queue.h 			kvu_numtostr.h 			definition_by_contract.h 			object_queue.h
 
 
-#libkvutils_a_SOURCES = $(kvutil_sources) $(kvutil_headers)
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
-#libkvutils_la_LDFLAGS = -static
-#libkvutils_la_LIBADD = -lpthread
-#libkvutils_la_LIBADD = -lpth
+libkvutils_la_LDFLAGS = -version-info 0:0:0
 
-DIST_COMMON = README COPYING INSTALL Makefile.in Makefile.am aclocal.m4 config.guess config.sub configure configure.in install-sh mkinstalldirs ltconfig ltmain.sh
+DIST_COMMON = README 		COPYING 		INSTALL 		Makefile.in 		Makefile.am 		aclocal.m4 		config.guess 		config.sub 		configure 		configure.in 		install-sh 		mkinstalldirs 		ltconfig 		ltmain.sh
 
-
-#nodist_COMMON =  AUTHORS NEWS ChangeLog 
-#EXTRA_DIST = Makefile
 
 noinst_HEADERS = $(kvutil_headers)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -121,7 +109,6 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-libkvutils_la_LDFLAGS = 
 libkvutils_la_LIBADD = 
 libkvutils_la_OBJECTS =  kvutils.lo message_item.lo com_line.lo \
 command_queue.lo value_queue.lo kvu_numtostr.lo
@@ -303,7 +290,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -332,7 +319,7 @@ uninstall: uninstall-am
 all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
 installdirs:
 	$(mkinstalldirs)  $(DESTDIR)$(libdir)
 

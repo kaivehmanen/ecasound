@@ -25,7 +25,7 @@
 #include <vector>
 #include <map>
 
-#include <kvutils.h>
+#include <kvutils/message_item.h>
 
 #include "audioio.h"
 #include "audioio-loop.h"

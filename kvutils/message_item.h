@@ -4,6 +4,9 @@
 #include <strstream>
 #include <string>
 
+/**
+ * A simple version of C++ stringstream
+ */
 class MESSAGE_ITEM {
   
   string stringtemp;

@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <pthread.h>
 
-#include <kvutils.h>
+#include <kvutils/value_queue.h>
 
 #include "eca-main.h"
 #include "eca-session.h"

@@ -26,7 +26,8 @@
 #include <fstream>
 #include <vector>
 
-#include <kvutils.h>
+#include <kvutils/message_item.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "eca-resources.h"
 #include "eca-session.h"
@@ -54,14 +55,16 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(COMMAND_LINE& cline)
 
   set_defaults();
 
-  cline.back_to_start();
-  cline.next(); // skip program name
   string temp;
-  while(cline.ready()) {
-    temp = cline.next();
-    if (temp == "") continue;
-    ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding \"" + temp + "\" to options.");
-    options.push_back(temp);
+  cline.begin();
+  cline.next(); // skip the program name
+  while(cline.end() == false) {
+    temp = cline.current();
+    if (temp != "") {
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Adding \"" + temp + "\" to options.");
+      options.push_back(temp);
+    }
+    cline.next();
   }
 
   interpret_options(options);
@@ -88,42 +91,6 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file, bool fromfile)
   // --------
 }
 
-vector<string> ECA_CHAINSETUP::combine_options(const vector<string>& opts) {
-  vector<string> result;
-  string first;
-  vector<string>::const_iterator p = opts.begin();
-  while(p != opts.end()) {
-    if (p->size() == 0) {
-      ++p;
-      continue;
-    }
-    if ((*p)[0] == '-') {
-      if (find(p->begin(), p->end(), ':') == p->end()) {
-	first = *p;
-	++p;
-	if (p == opts.end()) {
-	  result.push_back(first);
-	  break;
-	}
-	if ((*p)[0] != '-') {
-	  first += ":" + *p;
-	  result.push_back(first);
-	}
-	else {
-	  result.push_back(first);
-	  result.push_back(*p);
-	}
-      }
-      else 
-	result.push_back(*p);
-    }
-    else 
-      result.push_back(*p);
-    
-    ++p;
-  }
-  return(result);
-}
 
 void ECA_CHAINSETUP::set_defaults(void) {
   register_default_objects();
@@ -194,8 +161,7 @@ void ECA_CHAINSETUP::disable(void) {
   // --------
 }
 
-void ECA_CHAINSETUP::interpret_options(const vector<string>& ops) {
-  vector<string> opts = ECA_CHAINSETUP::combine_options(ops);
+void ECA_CHAINSETUP::interpret_options(vector<string>& opts) {
   vector<string>::iterator p = opts.begin();
   while(p != opts.end()) {
     if (p->size() > 0 && (*p)[0] != '-') *p = "-i:" + *p;

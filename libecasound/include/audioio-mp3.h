@@ -36,8 +36,6 @@ class MP3FILE : public AUDIO_IO_BUFFERED {
   long int bytes;
   int fd;
   
-  void seek_position_in_samples(long pos);
-  long int length_in_bytes(void) const;
   void get_mp3_params(const string& fname) throw(ECA_ERROR*);
   
   //  MP3FILE(const MP3FILE& x) { }

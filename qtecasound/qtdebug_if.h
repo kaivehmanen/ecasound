@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream.h>
 
-#include <kvutils.h>
+#include <kvutils/command_queue.h>
 
 #include <eca-debug.h>
 

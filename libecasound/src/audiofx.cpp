@@ -19,7 +19,7 @@
 
 #include <cmath>
 
-#include <kvutils.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "samplebuffer_iterators.h"
 #include "audiofx.h"

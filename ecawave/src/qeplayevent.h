@@ -14,7 +14,6 @@ class QEPlayEvent : public QENonblockingEvent {
 
  public:
 
-  const ECA_CONTROLLER* controller(void) const { return(ectrl); }
   bool class_invariant(void) { return(ectrl != 0); }
 
   QEPlayEvent(ECA_CONTROLLER* ctrl,

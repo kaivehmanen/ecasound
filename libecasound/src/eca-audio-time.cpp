@@ -20,7 +20,7 @@
 
 #include <cmath>
 
-#include <kvutils/kvutils.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "eca-audio-time.h"
 

@@ -19,7 +19,7 @@
 
 #include <string>
 
-#include <kvutils/kvutils.h>
+#include <kvutils/message_item.h>
 
 #include "eca-midi.h"
 #include "midi-cc.h"

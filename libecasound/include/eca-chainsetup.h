@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 
-#include <kvutils/kvutils.h>
+#include <kvutils/com_line.h>
 
 #include "eca-control-position.h"
 /*  #include "eca-chainop-map.h" */
@@ -45,11 +45,6 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
   void update_option_strings(void);
   string general_options_to_string(void) const;
 
-  /**
-   * Make sure that all option tokes start with a '-' sign
-   */
-  static vector<string> combine_options(const vector<string>& opts);
-
  public:
 
   /**
@@ -63,7 +58,7 @@ class ECA_CHAINSETUP : public ECA_CONTROL_POSITION,
   /**
    * Handle options. 
    */
-  void interpret_options(const vector<string>& opts);
+  void interpret_options(vector<string>& opts);
 
   /**
    * Handle general options. 

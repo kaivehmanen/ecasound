@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// kvutils.cpp: Misc helper routines.
+// kvutils.cpp: Misc helper routines
 // Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -179,9 +179,6 @@ string get_argument_number(int number, const string& argu) {
     if (b == argu.end()) {
       if (argu.size() > 0) b = argu.begin();
       else {
-	//	MESSAGE_ITEM mtemp;
-	//	mtemp << "hae_arvo() returned argument: \"\".";
-	//	ecadebug->msg(5, mtemp.to_string());
 	return("");
       }
     }
@@ -193,9 +190,6 @@ string get_argument_number(int number, const string& argu) {
 
         if (number == curnro) {
             target = string(b, e);
-	    //    MESSAGE_ITEM mtemp;
-	    //            mtemp << "hae_arvo() returned argument: " << target;
-	    //            ecadebug->msg(5, mtemp.to_string());
             break;
         }
         curnro++;
@@ -250,10 +244,6 @@ vector<string> get_arguments(const string& argu) {
     string target = string(b, e);
     if (target.size() > 0) {
       rvalue.push_back(target);
-      
-      //      MESSAGE_ITEM mtemp;
-      //      mtemp << "get_arguments(), added: " << target;
-      //      ecadebug->msg(5, mtemp.to_string());
     }
     if (e == argu.end()) break;
     b = e;
@@ -273,12 +263,9 @@ string get_argument_prefix(const string& argu) {
   if (b != argu.end()) {
     ++b;
     if (b !=  argu.end()) {
-      //      ecadebug->msg(6, "(eca-chainsetup) Returning argument prefix " + string(b,e)); 
       return(string(b,e));
     }
   }
-
-  //  ecadebug->msg(2, "(eca-chainsetup) No argument prefix found.\n");
 
   return("");
 
@@ -287,4 +274,3 @@ string get_argument_prefix(const string& argu) {
   assert(argu.size() >= 0);
   // --------
 }
-

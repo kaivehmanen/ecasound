@@ -83,28 +83,32 @@ unsigned int Layer::sfreq(void)
 unsigned long Layer::length(void) { return  bitrate() ? (fileSize / (unsigned long)bitrate() /125) : 0; }
 unsigned int Layer::pcmPerFrame(void) { return pcm; }
 
-bool Layer::get(FILE * file)
+bool Layer::get(const char* filename)
 {
   unsigned char *buff = new unsigned char[1024];
   unsigned char *buffer;
   size_t temp;
   size_t readsize;
   struct stat buf;
+  FILE *file;
 
-  /* BUG FIX (10/17/98 by SMF) */
-#ifndef __FreeBSD__
-  fstat(file->_fileno, &buf);
-#else
-  fstat(file->_file, &buf);
-#endif
+ // --
+ // 22.3.2000 - added the second parameter for getting 
+ // around FILE* compatibility issues, k@eca.cx 
+
+  stat(filename, &buf);
   fileSize = (unsigned long)buf.st_size;
 
   /* Theoretically reading 1024 instead of just 4 means a performance hit
    * if we transfer over net filesystems... However, no filesystem I know
    * of uses block sizes under 1024 bytes.
    */
+  file = fopen(filename,"r");
+  if (!file) return(false);
+  
   fseek(file, 0, SEEK_SET);
   readsize = fread(buff, 1, 1024, file);
+  fclose(file);
   readsize -= 4;
   if (readsize <= 0) {
     delete[] buff;

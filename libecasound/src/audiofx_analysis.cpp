@@ -19,7 +19,7 @@
 
 #include <cmath>
 
-#include <kvutils.h>
+#include <kvutils/message_item.h>
 
 #include "samplebuffer_iterators.h"
 #include "audiofx_analysis.h"

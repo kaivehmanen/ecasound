@@ -35,7 +35,10 @@
 #include "audiofx_timebased.h"
 #include "audiogate.h"
 #include "audiofx_ladspa.h"
+
+extern "C" {
 #include "ladspa.h"
+}
 
 #include "eca-static-object-maps.h"
 #include "generic-controller.h"
@@ -127,9 +130,11 @@ void register_default_audio_objects(void) {
   eca_audio_object_map.register_object(".snd", af);
 #endif
   
+#ifdef COMPILE_OSS
   AUDIO_IO* device = new OSSDEVICE();
   eca_audio_object_map.register_object("/dev/dsp", device);
   eca_audio_device_map.register_object("/dev/dsp", device);
+#endif
 
 #ifdef COMPILE_ALSA
   device = new ALSA_LOOPBACK_DEVICE();
@@ -237,14 +242,15 @@ vector<EFFECT_LADSPA*> create_plugins(const string& fname) throw(ECA_ERROR*) {
   if (plugin_handle == 0) 
     throw(new ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable to open plugin file."));
 
-  vector<LADSPA_Descriptor_Function> desc_funcs;
-  desc_funcs.push_back(reinterpret_cast<LADSPA_Descriptor_Function>(dlsym(plugin_handle, "descriptor")));
-  if (desc_funcs[0] == 0)
+  LADSPA_Descriptor_Function desc_func;
+  
+  desc_func = (LADSPA_Descriptor_Function)dlsym(plugin_handle, "descriptor");
+  if (desc_func == 0)
     throw(new ECA_ERROR("ECA_STATIC_OBJECT_MAPS", "Unable find plugin LADSPA-descriptor."));
 
   struct LADSPA_Descriptor *plugin_desc = 0;
   for (int i = 0;; i++) {
-    plugin_desc = desc_funcs[0](i);
+    plugin_desc = desc_func(i);
     if (plugin_desc == 0) break;
     try {
       plugins.push_back(new EFFECT_LADSPA(plugin_desc));

@@ -10,11 +10,9 @@
 /**
  * Simple audio-playback using the default output device
  */
-class QESaveEvent : public QEEvent {
+class QESaveEvent : public QEBlockingEvent {
 
  public:
-
-  void restart(long int start_pos, long int length) { }
 
   bool class_invariant(void) { return(ectrl != 0); }
   QESaveEvent(ECA_CONTROLLER* ctrl,
@@ -22,6 +20,10 @@ class QESaveEvent : public QEEvent {
 	      const string& output,
 	      long int start_pos, 
 	      long int length);
+
+ private:
+
+  ECA_CONTROLLER* ectrl;
 };
 
 #endif

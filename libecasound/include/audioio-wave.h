@@ -2,6 +2,7 @@
 #define _AUDIOIO_WAVE_H
 
 #include <string>
+#include <inttypes.h>
 #include <sys/types.h>
 
 #include "audioio-types.h"
@@ -9,23 +10,23 @@
 #include "eca-fileio.h"
 
 typedef struct {
-    u_int16_t format;
-    u_int16_t channels;
-    u_int32_t srate;
-    u_int32_t byte_second;
-    u_int16_t align;
-    u_int16_t bits;
+    uint16_t format;
+    uint16_t channels;
+    uint32_t srate;
+    uint32_t byte_second;
+    uint16_t align;
+    uint16_t bits;
 } RF;
 
 typedef struct {
-    u_int8_t sig[4];
-    u_int32_t bsize;
+    uint8_t sig[4];
+    uint32_t bsize;
 } RB;
 
 typedef struct {
-    u_int8_t id[4];
-    u_int32_t size;
-    u_int8_t wname[4];
+    uint8_t id[4];
+    uint32_t size;
+    uint8_t wname[4];
 } RH;
 
 /**

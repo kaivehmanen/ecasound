@@ -23,7 +23,7 @@
 #include <qlayout.h>
 #include <qspinbox.h>
 
-#include <kvutils/kvutils.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "qeaudioformatinput.h"
 

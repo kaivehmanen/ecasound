@@ -20,7 +20,7 @@
 #include <cmath>
 #include <string>
 
-#include <kvutils.h>
+#include <kvutils/message_item.h>
 
 #include "eca-error.h"
 #include "audioio.h"

@@ -20,7 +20,7 @@
 #include <cmath>
 #include <string>
 
-#include <kvutils.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "generic-controller.h"
 #include "eca-chainop.h"

@@ -6,6 +6,8 @@
 #include <vector>
 #include <sys/types.h>
 
+#include <kvutils/kvu_numtostr.h>
+
 #include "eca-audio-format.h"
 #include "sample-specs.h"
 
@@ -374,6 +376,7 @@ typedef SAMPLE_BUFFER_BASE<SAMPLE_SPECS::sample_type> SAMPLE_BUFFER;
 // typedef SAMPLE_BUFFER_OBSOLETE SAMPLE_BUFFER;
 #endif
 
+#pragma implementation
 template<class T>
 SAMPLE_BUFFER_BASE<T>::sample_type SAMPLE_BUFFER_BASE<T>::max_value(int channel) {
   sample_type t = SAMPLE_SPECS::impl_min_value;
@@ -971,7 +974,7 @@ template<class T>
 void SAMPLE_BUFFER_BASE<T>::resize(long int buffersize) {
   if (buffersize > reserved_bytes_rep) {
     reserved_bytes_rep = buffersize;
-    for(int n = 0; n < buffer.size(); n++) {
+    for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
       delete[] buffer[n];
       buffer[n] = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
     }
@@ -1019,10 +1022,10 @@ SAMPLE_BUFFER_BASE<T>& SAMPLE_BUFFER_BASE<T>::operator=(const SAMPLE_BUFFER_BASE
   if (this != &x) {
     if (x.buffersize_rep > reserved_bytes_rep) {
       reserved_bytes_rep = x.buffersize_rep;
-      for(int n = 0; n < buffer.size(); n++) delete[] buffer[n];
+      for(int n = 0; n < static_cast<int>(buffer.size()); n++) delete[] buffer[n];
       delete[] old_buffer;
       buffer.resize(x.buffer.size());
-      for(int n = 0; n < buffer.size(); n++) {
+      for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
 	buffer[n] = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
       }
       old_buffer = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
@@ -1030,7 +1033,7 @@ SAMPLE_BUFFER_BASE<T>& SAMPLE_BUFFER_BASE<T>::operator=(const SAMPLE_BUFFER_BASE
     buffersize_rep = x.buffersize_rep;
     channel_count_rep = x.channel_count_rep;
     sample_rate_rep = x.sample_rate_rep;
-    for(int n = 0; n < buffer.size(); n++) {
+    for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
       memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_type));
     }
   }

@@ -22,7 +22,7 @@
 #include <cstdio>
 #include <signal.h>
 
-#include <kvutils.h>
+#include <kvutils/com_line.h>
 
 #include <samplebuffer.h>
 #include <eca-debug.h>
@@ -76,8 +76,10 @@ int main(int argc, char *argv[])
     ECA_PROCESSOR emain;
     ECA_AUDIO_FORMAT aio_params;
 
-    for(int n = 1; n < static_cast<int>(cline.size()); n++) {
-      filename = cline[n];
+    cline.begin();
+    while(cline.end() == false) {
+      filename = cline.current();
+
       ecatools_fixdc_tempfile = string(tmpnam(NULL));
       ecatools_fixdc_tempfile += ".wav";
       for(int m = 0;m < 2; m++) {
@@ -129,6 +131,7 @@ int main(int argc, char *argv[])
 	ectrl.remove_chainsetup();
       }
       remove(ecatools_fixdc_tempfile.c_str());
+      cline.next();
     }
   }
   catch(ECA_ERROR* e) {

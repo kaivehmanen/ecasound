@@ -65,7 +65,7 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
   /**
    * Use audio format of file/device 'name' as the default.
    */
-  void get_default_audio_format(const string& name);
+  void set_default_audio_format(const string& name);
 
   /**
    * Set input source using a formatted string (refer to ecasound's documentation)
@@ -95,6 +95,7 @@ class QEEvent : public DEFINITION_BY_CONTRACT {
  private:
 
   bool triggered_rep;
+  ECA_CONTROLLER* ectrl;
 
  protected:
 

@@ -26,7 +26,8 @@
 
 #include <unistd.h>
 
-#include <kvutils.h>
+#include <kvutils/message_item.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "audioio-mp3.h"
 #include "audioio-mp3_impl.h"
@@ -80,6 +81,7 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples) {
   bytes =  ::read(fd, target_buffer, frame_size() * samples);
   if (bytes < samples * frame_size() || bytes == 0) finished_rep = true;
   else finished_rep = false;
+
   return(bytes / frame_size());
 }
 
@@ -109,13 +111,12 @@ void MP3FILE::seek_position(void) {
 
 void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR*) {
   Layer newlayer;
-  FILE *temp;
-  temp = fopen(fname.c_str(),"r");
-  if (!temp)
-    throw(new ECA_ERROR("ECA-MP3","Unable to open temp file " + fname, ECA_ERROR::retry));
-  newlayer.get(temp);
-  fseek(temp, 0, SEEK_END);
-  double fsize = (double)ftell(temp);
+  newlayer.get(fname.c_str());
+
+  struct stat buf;
+  stat(fname.c_str(), &buf);
+  double fsize = (double)buf.st_size;
+
   double bitrate = ((double)newlayer.bitrate() * 1000.0);
   double bsecond = (double)bytes_per_second();
   MESSAGE_ITEM m;
@@ -130,7 +131,6 @@ void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR*) {
 
   m << "MP3 pcm value: " << pcm << ".";
   ecadebug->msg(ECA_DEBUG::user_objects,m.to_string());
-  fclose(temp);
 }
 
 void MP3FILE::kill_mpg123(void) {

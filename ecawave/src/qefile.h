@@ -113,6 +113,8 @@ signals:
    */
   void toggle_cache_refresh(bool v) { refresh_toggle_rep = v; }
 
+  const string& filename(void) const { return(filename_rep); }
+
  private:
 
   void open_io_object(void);

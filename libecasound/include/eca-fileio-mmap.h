@@ -1,7 +1,13 @@
 #ifndef _FILEIO_MMAP_H
 #define _FILEIO_MMAP_H
 
+#include <sys/types.h>
+
 #include "eca-fileio.h"
+
+#if !defined CADDR_T && !defined __USE_BSD
+typedef unsigned char* caddr_t;
+#endif
 
 /**
  * File-io and buffering using  mmap for data transfers.
@@ -11,7 +17,7 @@ class ECA_FILE_IO_MMAP : public ECA_FILE_IO {
  private:
 
   int f1;
-  unsigned char* internal_buffer;
+  caddr_t internal_buffer;
   long int internal_bsize;
   long int bytes_rep;
   long int fposition, flength;

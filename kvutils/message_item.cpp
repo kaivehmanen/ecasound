@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// message_item.cpp: A simple version of C++ stringstream.
+// message_item.cpp: A simple version of C++ stringstream
 // Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify

@@ -26,7 +26,7 @@
 #include <signal.h>
 #include <cstdio>
 
-#include <kvutils.h>
+#include <kvutils/com_line.h>
 
 #include <eca-iamode-parser.h>
 #include <eca-controller.h>
@@ -63,7 +63,6 @@ int main(int argc, char *argv[])
   es_handler.sa_handler = signal_handler;
   sigemptyset(&es_handler.sa_mask);
   es_handler.sa_flags = 0;
-  es_handler.sa_restorer = 0;
 
   sigaction(SIGTERM, &es_handler, 0);
   sigaction(SIGINT, &es_handler, 0);

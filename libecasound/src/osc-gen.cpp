@@ -20,7 +20,8 @@
 #include <vector>
 #include <string>
 
-#include <kvutils.h>
+#include <kvutils/kvu_numtostr.h>
+#include <kvutils/message_item.h>
 
 #include "osc-gen.h"
 #include "oscillator.h"

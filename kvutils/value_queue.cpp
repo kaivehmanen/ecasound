@@ -25,7 +25,15 @@
 
 void VALUE_QUEUE::push_back(int key, double value) {
   pthread_mutex_lock(&lock);
+  while (locked_rep == true) {
+    pthread_cond_wait(&cond, &lock);
+  }
+  locked_rep = true;
+
   cmds.push_back(pair<int,double>(key, value));
+
+  locked_rep = false;
+  pthread_cond_broadcast(&cond);
   pthread_mutex_unlock(&lock);
 }
 
@@ -36,7 +44,15 @@ void VALUE_QUEUE::pop_front(void) {
   // --------
 
   pthread_mutex_lock(&lock);
+  while (locked_rep == true) {
+    pthread_cond_wait(&cond, &lock);
+  }
+  locked_rep = true;
+
   cmds.pop_front();
+
+  locked_rep = false;
+  pthread_cond_broadcast(&cond);
   pthread_mutex_unlock(&lock);
 }    
 
@@ -47,11 +63,31 @@ const pair<int,double>& VALUE_QUEUE::front(void) {
   // --------
 
   pthread_mutex_lock(&lock);
+  while (locked_rep == true) {
+    pthread_cond_wait(&cond, &lock);
+  }
+  locked_rep = true;
+
   const pair<int,double>& s = cmds.front();
+
+  locked_rep = false;
+  pthread_cond_broadcast(&cond);
   pthread_mutex_unlock(&lock);
   return(s);
 }
 
 bool VALUE_QUEUE::is_empty(void) const {
-  return cmds.empty(); 
+  pthread_mutex_lock(&lock);
+  while (locked_rep == true) {
+    pthread_cond_wait(&cond, &lock);
+  }
+  locked_rep = true;
+  
+  bool result = cmds.empty(); 
+
+  locked_rep = false;
+  pthread_cond_broadcast(&cond);
+  pthread_mutex_unlock(&lock);
+
+  return(result);
 }

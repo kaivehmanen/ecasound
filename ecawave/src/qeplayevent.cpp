@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // qeplayevent.cpp: Simple audio-playback using the default output device
-// Copyright (C) 1999 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,17 +26,19 @@ QEPlayEvent::QEPlayEvent(ECA_CONTROLLER* ctrl,
 			 const string& output,
 			 long int start_pos, 
 			 long int length) 
-  : QEEvent(ctrl) {
-  toggle_valid_state(false);
-  init();
+  : QENonblockingEvent(ctrl),
+    ectrl(ctrl) {
+
+  toggle_triggered_state(false);
+
+  init("playevent");
+
+  ectrl->toggle_interactive_mode(true);
   ectrl->add_chain("default");
   set_input(input);
   set_input_position(start_pos);
+  set_default_audio_format(input);
   set_output(output);
-  set_output_position(start_pos);
   set_length(length);
-  get_default_audio_format(input);
-  ectrl->add_default_output();
   toggle_valid_state(true);
 }
-

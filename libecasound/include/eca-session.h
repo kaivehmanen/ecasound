@@ -54,7 +54,7 @@ class ECA_SESSION {
   void set_scheduling();
   void interpret_general_options(COMMAND_LINE& cline);
   void interpret_general_option (const string& argu);
-  void interpret_chainsetup (const string& argu, const string& toinen);
+  void interpret_chainsetup (const string& argu);
 
   // ---
   // Function for handling chainsetups

@@ -19,7 +19,8 @@
 
 #include <cmath>
 
-#include <kvutils.h>
+#include <kvutils/kvu_numtostr.h>
+#include <kvutils/message_item.h>
 
 #include "oscillator.h"
 #include "osc-sine.h"

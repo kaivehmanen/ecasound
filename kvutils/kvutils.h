@@ -4,17 +4,9 @@
 #include <vector>
 #include <string>
 
-#include "message_item.h"
-#include "com_line.h"
-#include "command_queue.h"
-#include "value_queue.h"
-// #include <ring_buffer.h>
-#include "kvu_numtostr.h"
-
 /**
- * Case-insensitive string compare
- *
- * Ignores preceding and trailing white space
+ * Case-insensitive string compare. Ignores preceding and 
+ * trailing white space.
  */
 bool string_icmp(const string& a, const string& b);
 
@@ -122,4 +114,3 @@ int get_number_of_arguments(const string& argu);
 string get_argument_prefix(const string& argument);
 
 #endif
-

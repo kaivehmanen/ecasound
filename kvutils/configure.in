@@ -15,7 +15,6 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_MAKE_SET
-dnl AC_PROG_RANLIB
 AM_PROG_LIBTOOL
 AC_PROG_INSTALL
 
@@ -30,15 +29,11 @@ dnl ---
 dnl Checks for header files.
 dnl ---
 AC_STDC_HEADERS
-AC_CHECK_HEADERS(fcntl.h sys/ioctl.h sys/time.h unistd.h)
 
 dnl ---
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl ---
 AC_C_CONST
-AC_C_INLINE
-AC_TYPE_SIZE_T
-AC_HEADER_TIME
 
 dnl ---
 dnl Create outputs 

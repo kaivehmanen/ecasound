@@ -5,15 +5,20 @@
 #include <map>
 #include <unistd.h>
 #include <sys/mman.h>
+#include <sys/types.h>
 
 #ifndef MAP_FAILED
 #define MAP_FAILED	((__ptr_t) -1)
 #endif
 
+#if !defined CADDR_T && !defined __USE_BSD
+typedef unsigned char* caddr_t;
+#endif
+
 void ecasound_fiommap_register_fd(int fd, long int length);
 void ecasound_fiommap_close_fd(int fd);
 void ecasound_fiommap_reset(int fd, long fposition);
-unsigned char* ecasound_fiommap_active_buffer(int fd);
+caddr_t ecasound_fiommap_active_buffer(int fd);
 long int ecasound_fiommap_active_buffersize(int fd);
 long int ecasound_fiommap_maximum_buffersize(void);
 void ecasound_fiommap_next_buffer(int fd);
@@ -27,8 +32,8 @@ void ecasound_fiommap_clean(void*);
 class ECASOUND_FIOMMAP_BUFFER {
  public:
 
-  vector<unsigned char*> buffers;
-  vector<unsigned char*>::size_type locked_buffer;
+  vector<caddr_t> buffers;
+  vector<caddr_t>::size_type locked_buffer;
   map<int,bool> ready_for_fill;
   vector<long int> mmap_length;
 
@@ -47,7 +52,7 @@ class ECASOUND_FIOMMAP_BUFFER {
   }
 
   ~ECASOUND_FIOMMAP_BUFFER(void) {
-    for(vector<unsigned char*>::size_type p = 0;
+    for(vector<caddr_t>::size_type p = 0;
 	p < buffers.size();
 	p++) {
       munlock(buffers[p], mmap_length[p]);
@@ -64,4 +69,3 @@ class ECASOUND_FIOMMAP_BUFFER {
 };
 
 #endif
-

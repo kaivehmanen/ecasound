@@ -5,14 +5,13 @@
 Kvutils is a simple utility library, It is not meant for general use. 
 There is no documentation available.
 
-Kvutils was written by Kai Vehmanen in 1999. It is freely 
-distributable according to the terms of the GNU General 
-Public License (see the file 'COPYING').
+Kvutils is freely distributable according to the terms of the GNU
+General Public License (see the file 'COPYING').
 
 For more info about projects in which kvutils library is used,
-see:
-	http://www.wakkanet.fi/~kaiv/ - my personal page
-	http://www.wakkanet.fi/~kaiv/ecasound/ - ecasound
+see http://eca.cx
+
+Copyright (C) 1997-2000 Kai Vehmanen <kaiv@wakkanet.fi>
 
 =======================================================================
 

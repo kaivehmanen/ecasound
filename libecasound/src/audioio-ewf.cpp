@@ -23,7 +23,8 @@
 #include <fstream.h>
 #include <cmath>
 
-#include <kvutils.h>
+#include <kvutils/message_item.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "eca-audio-objects.h"
 #include "samplebuffer.h"
@@ -60,10 +61,10 @@ void EWFFILE::open(void) throw(ECA_ERROR*) {
 
   tmp_buffer.number_of_channels(child->channels());
   tmp_buffer.length_in_samples(child->buffersize());
-  
+  tmp_buffer.sample_rate(child->samples_per_second());
+ 
   seek_position();
   toggle_open_state(true);
-  child_active = true;
 }
 
 void EWFFILE::close(void) {
@@ -82,7 +83,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 //      cerr << "child-length(): " << child_length_rep.samples() << ".\n";
 
     if (position_in_samples() + sbuf->length_in_samples() < 
-	child_offset_rep.samples() + child_length_rep.samples()) {
+	child_offset_rep.samples() + child_length_rep.samples() - child_start_pos_rep.samples()) {
 	// ---
 	// case 1: reading child file
 	// ---
@@ -98,30 +99,30 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 	// case 2a: we're looping
 	// ---
 	ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-ewf) looping child-object" + label());
-//  	cerr << "Looping-pre:\n";
-//  	cerr << "Position: " << position_in_samples() << ", ";
-//  	cerr << "child: " << child->position_in_samples() << ".\n";
+//    	cerr << "Looping-pre:\n";
+//    	cerr << "Position: " << position_in_samples() << ", ";
+//    	cerr << "child: " << child->position_in_samples() << ".\n";
+//    	cerr << "child-len: " << child_length_rep.samples() << ".\n";
 	child->read_buffer(sbuf);
  	long int extra = child->position_in_samples() - child_length_rep.samples();
-	child->seek_position_in_samples(child_start_pos_rep.samples() +
-					position_in_samples() -
-					child_offset_rep.samples() -
-					child_length_rep.samples());
+	assert(extra < sbuf->length_in_samples());
+	child->seek_position_in_samples(child_start_pos_rep.samples() + extra);
 	position_in_samples(child_offset_rep.samples() + 
-			    child->position_in_samples());
+			    child->position_in_samples() - child_start_pos_rep.samples());
 	long int save_bsize = child->buffersize();
 	child->buffersize(extra, child->samples_per_second());
 	child->read_buffer(&tmp_buffer);
+	assert(tmp_buffer.length_in_samples() == extra);
 	child->buffersize(save_bsize, child->samples_per_second());
 	sbuf->copy_range(tmp_buffer, 
 			 0,
 			 tmp_buffer.length_in_samples(), 
 			 sbuf->length_in_samples() - extra);
 	position_in_samples(child_offset_rep.samples() + 
-			    child->position_in_samples());
-//  	cerr << "Looping-after:\n";
-//  	cerr << "Position: " << position_in_samples() << ", ";
-//  	cerr << "child: " << child->position_in_samples() << ".\n";
+			    child->position_in_samples() - child_start_pos_rep.samples());
+//    	cerr << "Looping-after:\n";
+//    	cerr << "Position: " << position_in_samples() << ", ";
+//    	cerr << "child: " << child->position_in_samples() << ".\n";
       }
       else {
 	// ---

@@ -72,7 +72,3 @@ void COMMAND_QUEUE::flush(void) {
  while (cmds.size() > 0) cmds.pop_front();
  pthread_mutex_unlock(&_cq_lock);
 }
-
-
-
-

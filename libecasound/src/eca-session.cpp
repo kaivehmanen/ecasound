@@ -25,7 +25,8 @@
 #include <vector>
 #include <pthread.h>
 
-#include <kvutils.h>
+#include <kvutils/com_line.h>
+#include <kvutils/message_item.h>
 
 #include "eca-resources.h"
 
@@ -66,6 +67,7 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR*) {
   //  pthread_mutex_init(&status_lock, NULL);
   set_defaults();
 
+  cline.combine();
   interpret_general_options(cline);
 
   if (chainsetups.size() == 0) {
@@ -129,15 +131,15 @@ void ECA_SESSION::set_defaults(void) {
 }
 
 void ECA_SESSION::set_scheduling(void) {
-  if (raisepriority_rep == true) {
-    struct sched_param sparam;
-    sparam.sched_priority = 10;
-
-    if (sched_setscheduler(0, SCHED_FIFO, &sparam) == -1) 
-      ecadebug->msg("(eca-session) Unable to change scheduling policy!");
-    else 
-      ecadebug->msg("(eca-session) Using realtime-scheduling (SCHED_FIFO/10).");
-  }
+  //  if (raisepriority_rep == true) {
+  //      struct sched_param sparam;
+  //      sparam.sched_priority = 10;
+  
+  //    if (sched_setscheduler(0, SCHED_FIFO, &sparam) == -1) 
+  //      ecadebug->msg("(eca-session) Unable to change scheduling policy!");
+  //    else 
+  //      ecadebug->msg("(eca-session) Using realtime-scheduling (SCHED_FIFO/10).");
+  //  }
 }
 
 void ECA_SESSION::add_chainsetup(const string& name) {
@@ -307,24 +309,18 @@ void ECA_SESSION::disconnect_chainsetup(void) {
 }
 
 void ECA_SESSION::interpret_general_options(COMMAND_LINE& cline) {
-  cline.back_to_start();
-  while(cline.ready()) {
-    string temp = cline.next_argument();
-    interpret_general_option(temp);
+  cline.begin();
+  while(cline.end() == false) {
+    if (cline.current().size() > 0 && cline.current()[0] == '-')
+      interpret_general_option(cline.current());
+    cline.next();
   }
 
- cline.back_to_start();    
- while(cline.ready()) {
-   string argu = cline.next_argument();
-   string argu_param = cline.next();
-   if (argu_param.size() > 0) {
-     if (argu_param[0] == '-') {
-       cline.previous();
-       argu_param == "";
-     }
-   }
-
-    interpret_chainsetup(argu, argu_param);
+  cline.begin();
+  while(cline.end() == false) {
+    if (cline.current().size() > 0 && cline.current()[0] == '-')
+      interpret_chainsetup(cline.current());
+    cline.next();
   }
 }
 
@@ -360,24 +356,16 @@ void ECA_SESSION::interpret_general_option (const string& argu) {
   }
 }
 
-void ECA_SESSION::interpret_chainsetup (const string& argu,
-					const string& toinen) {
+void ECA_SESSION::interpret_chainsetup (const string& argu) {
   if (argu.size() == 0) return;
   
   string tname = get_argument_number(1, argu);
-  if (tname == "") tname = toinen;
-  else if (tname[0] == '-') tname = toinen;
-  //  else tname = argu;
-
+ 
   if (argu.size() < 2) return;
   switch(argu[1]) {
   case 's':
     if (argu.size() > 2 && argu[2] == ':') {
       load_chainsetup(tname);
-      if (selected_chainsetup->is_valid()) connect_chainsetup();
-    }
-    else if (argu.size() == 2) {
-      load_chainsetup(toinen);
       if (selected_chainsetup->is_valid()) connect_chainsetup();
     }
     break;

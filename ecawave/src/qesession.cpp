@@ -53,17 +53,14 @@ QESession::QESession (const string& filename,
 		      QWidget *parent, 
 		      const char *name)
         : QWidget( parent, name ),
-	  filename_rep(filename),
+	  orig_file_rep(filename),
 	  refresh_toggle_rep(force_refresh),
 	  wcache_toggle_rep(use_wave_cache),
           direct_mode_rep(direct_mode) {
   event = 0;
-  editing_rep = false;
+  temp_created = false;
 
-  if (direct_mode_rep == true) 
-    tempfile_rep = filename_rep;
-  else
-    tempfile_rep = "";
+  active_file_rep = filename_rep;
 
   esession = new ECA_SESSION();
   ectrl = new ECA_CONTROLLER(esession);
@@ -96,9 +93,9 @@ QESession::~QESession(void) {
     delete event;
   }
 
-  if (tempfile_rep.empty() == false) {
-    remove(tempfile_rep.c_str());
-    remove((tempfile_rep + ".ews").c_str());
+  if (temp_created == true && active_file_rep.empty() == false) {
+    remove(active_file_rep.c_str());
+    remove((active_file_rep + ".ews").c_str());
   }
 
   while(child_sessions.size() > 0) {
@@ -156,17 +153,17 @@ void QESession::init_layout(void) {
 			this, SLOT(new_session()));
   vlayout->addWidget(buttonrow2);
 
-  if (filename_rep.empty() == false) file = new QEFile(filename_rep,
-						       wcache_toggle_rep,
-						       refresh_toggle_rep, 
-						       this, 
-						       "sessionfile");
+  if (active_file_rep.empty() == false) file = new QEFile(active_file_rep,
+							  wcache_toggle_rep,
+							  refresh_toggle_rep, 
+							  this, 
+							  "sessionfile");
   else file = new QEFile(this, "sessionfile");
   QObject::connect(file, SIGNAL(selection_changed()), this, SLOT(selection_update()));
 
   vlayout->addWidget(file,1);
 
-  statusbar = new QEStatusBar(ectrl, filename_rep, this);
+  statusbar = new QEStatusBar(ectrl, active_file_rep, this);
   statusbar->visible_area(ECA_AUDIO_TIME(0, file->samples_per_second()),
 			  ECA_AUDIO_TIME(file->length(), file->samples_per_second()));
   vlayout->addWidget(statusbar);
@@ -270,14 +267,16 @@ void QESession::effect_event(void) {
   if (file->is_valid() == false) return;
 
   QEChainopEvent* p;
-  if (tempfile_rep.empty() == true) {
-    tempfile_rep = string(tmpnam(NULL)) + ".wav";
-    p = new QEChainopEvent(ectrl, filename_rep, tempfile_rep, start_pos, sel_length);
+  if (temp_created == false) {
+    string temp = string(tmpnam(NULL)) + ".wav";
+    p = new QEChainopEvent(ectrl, active_file_rep, temp, start_pos, sel_length);
+    temp_created = true;
+    active_file_rep = temp;
     edit_start = start_pos;
     edit_length = sel_length;
   }
   else {
-    p = new QEChainopEvent(ectrl, tempfile_rep, tempfile_rep,
+    p = new QEChainopEvent(ectrl, active_file_rep, active_file_rep,
 			   start_pos, sel_length);
     if (start_pos < edit_start) edit_start = start_pos;
     if (sel_length > edit_length) edit_length = sel_length;
@@ -285,20 +284,27 @@ void QESession::effect_event(void) {
   QObject::connect(p, SIGNAL(finished()), this, SLOT(update_wave_data()));
   p->show();
   event = p;
+
+  // --------
+  // ensure:
+  assert(temp_created == true);
+  // --------
 }
 
 void QESession::update_wave_data(void) {
-  if (file == 0) return;
+  // --------
+  // require:
+  assert(file != 0);
+  // --------
 
-  if (editing_rep == false && direct_mode_rep == false) {
-    file->open(tempfile_rep);
+  if (active_file_rep != file->filename) {
+    file->open(active_file_rep);
   }
   else {
     file->update_wave_form_data();
   }
 
-  if (editing_rep == false) {
-    editing_rep = true;
+  if (temp_created == true) {
     statusbar->toggle_editing(true);
   }
 }
@@ -306,8 +312,8 @@ void QESession::update_wave_data(void) {
 bool QESession::temp_file_created(void) {
   struct stat stattemp1;
   struct stat stattemp2;
-  stat(filename_rep.c_str(), &stattemp1);
-  stat(tempfile_rep.c_str(), &stattemp2);
+  stat(active_file_rep.c_str(), &stattemp1);
+  stat(active_file_rep.c_str(), &stattemp2);
   if (stattemp1.st_size != stattemp2.st_size) return(false);
   return(true);
 }
@@ -318,10 +324,7 @@ void QESession::play_event(void) {
   if (file->is_valid() == false) return;
 
   QEPlayEvent* p;
-  if (temp_file_created() == true)
-    p = new QEPlayEvent(ectrl, tempfile_rep, ecawaverc.resource("default-output"), start_pos, sel_length);
-  else
-    p = new QEPlayEvent(ectrl, filename_rep, ecawaverc.resource("default-output"), start_pos, sel_length);
+  p = new QEPlayEvent(ectrl, active_file_rep, ecawaverc.resource("default-output"), start_pos, sel_length);
 
   if (p->is_valid() == true) {
     p->start();
@@ -340,7 +343,7 @@ void QESession::save_event(void) {
 
   stop_event();
 
-  QESaveEvent* p = new QESaveEvent(ectrl, tempfile_rep, filename_rep, edit_start, edit_length);
+  QESaveEvent* p = new QESaveEvent(ectrl, active_file_rep, orig_file_rep, edit_start, edit_length);
 
   if (p->is_valid() == true) {
     p->start(true);
@@ -356,10 +359,7 @@ void QESession::save_as_event(void) {
     stop_event();
 
     QESaveEvent* p;
-    if (temp_file_created() == true) 
-      p = new QESaveEvent(ectrl, tempfile_rep, fdialog->result_filename(), 0, file->length());
-    else
-      p = new QESaveEvent(ectrl, filename_rep, fdialog->result_filename(), 0, file->length());
+    p = new QESaveEvent(ectrl, active_file_rep, fdialog->result_filename(), 0, file->length());
 
     if (p->is_valid() == true) {
       p->start(true);
@@ -376,11 +376,8 @@ void QESession::copy_event(void) {
   if (file->is_valid() == false) return;
 
   QECopyEvent* p;
-  if (temp_file_created() == true)
-    p = new QECopyEvent(ectrl, tempfile_rep, ecawaverc.resource("clipboard-file"), start_pos, sel_length);
-  else
-    p = new QECopyEvent(ectrl, filename_rep, ecawaverc.resource("clipboard-file"), start_pos, sel_length);
-
+  p = new QECopyEvent(ectrl, active_file_rep, ecawaverc.resource("clipboard-file"), start_pos, sel_length);
+  
   if (p->is_valid() == true) {
     p->start();
     event = p;

@@ -77,16 +77,16 @@ private slots:
   void prepare_event(void);
   bool temp_file_created(void);
 
-  string filename_rep;
-  string tempfile_rep;
+  string orig_file_rep;
+  string active_file_rep;
+
+  bool temp_created;
 
   long int start_pos;
   long int sel_length;
 
   long int edit_start;
   long int edit_length;
-
-  bool editing_rep;
 
   QEResources ecawaverc;
   vector<QESession*> child_sessions;

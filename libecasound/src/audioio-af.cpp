@@ -28,7 +28,8 @@
 #include <cstring>
 #include <audiofile.h>
 
-#include <kvutils.h>
+#include <kvutils/message_item.h>
+#include <kvutils/kvu_numtostr.h>
 
 #include "audioio-af.h"
 #include "samplebuffer.h"
