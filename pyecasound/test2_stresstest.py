@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # -----------------------------------------------------------------------
-# Runs a stress test using the pyeca interface
+# A second stress test for the pyeca interface
 #
 # Copyright (C) 2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 # Licensed under GPL. See the file 'COPYING' for more information.
@@ -63,17 +63,17 @@ while 1 and e.last_type() != 'e':
     e.command("get-position")
     curpos = e.last_float()
     if curpos > runlen or e.last_type() == 'e': break
-    e.command("copp-get")
-    if debuglevel == 2:
-        #print curpos, e.last_float()
-        #if curpos == None:
-        #    curpos = 0.0
-        sys.stderr.write('%6.2f %6.4f\r' % (curpos,e.last_float()))
-    else:
-        if debuglevel == 1:
-            sys.stderr.write('.')
+
+    if debuglevel > 0:
+        sys.stderr.write('.')
             
-    total_cmds = total_cmds + 2
+    # some commands that return a lot
+    # of return data
+    e.command("cop-register")
+    e.command("aio-register")
+    e.command("int-cmd-list")
+    
+    total_cmds = total_cmds + 4
 
 if e.last_type() == 'e':
     print 'Ended to error:', e.last_error()

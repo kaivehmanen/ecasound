@@ -1,5 +1,7 @@
 AUTOMAKE_OPTIONS 		= foreign
-EXTRA_DIST 			= eci.py pyeca.py ecacontrol.py test1_stresstest.py
+EXTRA_DIST 			= eci.py pyeca.py ecacontrol.py \
+				  test1_stresstest.py \
+				  test2_stresstest.py
 
 # ----------------------------------------------------------------------
 # defines
@@ -29,7 +31,8 @@ INCLUDES 			= -I$(srcdir) \
 				-I$(ECA_S_PYTHON_INCLUDES)
 
 if ECA_AM_PYECASOUND_INSTALL
-TESTS				= test1_stresstest.py
+TESTS				= test1_stresstest.py \
+				  test2_stresstest.py
 endif
 
 # ----------------------------------------------------------------------

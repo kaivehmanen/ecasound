@@ -3,7 +3,7 @@
    Can be used to replace the C implementation 'pyecasound.so'.
 """
 
-# Version: $Id: ecacontrol.py,v 1.6 2003-11-17 18:41:59 kaiv Exp $
+# Version: $Id: ecacontrol.py,v 1.7 2003-11-26 17:02:33 kaiv Exp $
 
 authors="""Kai Vehmanen, Eric S. Tiedemann and Janne Halttunen."""
 
@@ -61,39 +61,40 @@ class ECA_CONTROL_INTERFACE:
 	return val	    
 
     def _readline(I):
-	return string.strip(I.eca.childerr.readline())
+        return string.strip(I.eca.fromchild.readline())
 	
     def _read_eca(I):
 	buffer=''
-	while select([I.eca.fromchild.fileno()],[],[],0)[0]:
+	while select([I.eca.fromchild.fileno()],[],[I.eca.fromchild.fileno()],0.01)[0]:
            buffer=buffer+I.eca.fromchild.read(1)
 	return buffer
     
     def _parse_response(I):
 	tm=''; r=(); failcount=0
-        if I.verbose > 1:
+        if I.verbose > 2:
             print 'c=' + I._cmd
 	while 1:
 	    
 	    s=I._read_eca()
             #print 'read s=' + s
-	    if s:
-		if I.verbose > 2:
-		    print 's=', s.strip()
+            if s:
+		if I.verbose > 3:
+      		    print 's=<', s, '>'
             else:
                 failcount = failcount + 1
                 if failcount < I._timeout * 10:
-                    time.sleep(0.1)
+                #if failcount < 0:
+                    time.sleep(0.01)
                     continue
                 else:
-                    #print 's=' + s, 'tm=' + tm, 'cmd=' + I._cmd
+                    print 'timeout: s=<' + s, '>, cmd=' + I._cmd + '.'
                     r=('e', eci_str_sync_lost)
                     break
 	    tm=tm+s
 	    m=expand_eiam_response(tm)
 	    r=parse_eiam_response(tm, m)
 	    if r:
-                if I.verbose > 1:
+                if I.verbose > 2:
                     print 'r=', r
 		break
 
@@ -139,7 +140,7 @@ class ECA_CONTROL_INTERFACE:
         if ecasound_binary == '':
             ecasound_binary = 'ecasound'
 
-        _ecasound.append(Popen3(ecasound_binary + ' -c -D', 1, 0))
+        _ecasound.append(Popen3(ecasound_binary + ' -c -d:256', 0, 0))
 	
 	I.eca=_ecasound[-1]
 	
@@ -163,8 +164,9 @@ class ECA_CONTROL_INTERFACE:
 	    print 'by', authors
 	    print '\n(to get rid of this message, pass zero to instance init)'
 	    
-	I._read_eca()
-	I.command('int-output-mode-wellformed')
+        I.command('int-output-mode-wellformed')
+	#I._read_eca()
+        #I.command('debug 256')
 	
     def cleanup(I):
 	"""Free all reserved resources"""
