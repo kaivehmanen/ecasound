@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 #include <cstdio>
+#include <cmath> /* fabs() */
 
 #include <signal.h>
 #include <stdlib.h>
