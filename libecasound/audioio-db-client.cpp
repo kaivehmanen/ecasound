@@ -143,24 +143,11 @@ void AUDIO_IO_DB_CLIENT::read_buffer(SAMPLE_BUFFER* sbuf)
     }
     else {
       xruns_rep++;
-
-      /* FIXME: replace the below with a non-blocking solution; 
-       *        for example return silence if the db-server can't keep up */
+      sbuf->length_in_samples(0);
 
       std::cerr << "(audioio-db-client) Warning! Underrun in reading from \"" 
 		<< child()->label() 
 		<< "\". Trying to recover." << std::endl;
-      pserver_repp->wait_for_full();
-      if (recursing_rep != true && pbuffer_repp->read_space() > 0) {
-	recursing_rep = true;
-	this->read_buffer(sbuf);
-	recursing_rep = false;
-      }
-      else {
-	std::cerr << "(audioio-db-client) Serious trouble with the disk-io subsystem! (1)" << std::endl;
-	seek_position(); // hack to force a restart of the db server
-	sbuf->length_in_samples(0);
-      }
     }
   }
 }
@@ -185,14 +172,15 @@ void AUDIO_IO_DB_CLIENT::write_buffer(SAMPLE_BUFFER* sbuf)
   else {
     if (pbuffer_repp->finished_rep.get() == 1) finished_rep = true;
     else {
-      xruns_rep++;
-
-      /* FIXME: replace the below with a non-blocking solution; 
-       *        for example return silence if the db-server can't keep up */
+      /* NOTE: not always rt-safe, but it's better to break rt-safety than
+       *       to lose recorded data */
 
       std::cerr << "(audioio-db-client) Warning! Overrun in writing to \"" 
 		<< child()->label() 
 		<< "\". Trying to recover." << std::endl;
+
+      xruns_rep++;
+
       pserver_repp->wait_for_full();
       if (recursing_rep != true && pbuffer_repp->write_space() > 0) {
 	recursing_rep = true;
@@ -201,7 +189,7 @@ void AUDIO_IO_DB_CLIENT::write_buffer(SAMPLE_BUFFER* sbuf)
       }
       else {
 	seek_position(); // hack to force a restart of the db server
-	std::cerr << "(audioio-db-client) Serious trouble with the disk-io subsystem! (2)" << std::endl;
+	std::cerr << "(audioio-db-client) Serious trouble with the disk-io subsystem! (output)" << std::endl;
       }
     }
   }
