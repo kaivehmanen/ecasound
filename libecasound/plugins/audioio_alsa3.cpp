@@ -469,18 +469,22 @@ void ALSA_PCM_DEVICE_06X::handle_xrun_capture(void) {
       gettimeofday(&now, 0);
       snd_pcm_status_get_trigger_tstamp(status, &tstamp);
       timersub(&now, &tstamp, &diff);
-      
-      ecadebug->msg(ECA_DEBUG::info, 
-		    string("(audioio-alsa3) warning! capture overrun - samples lost! ") + 
-		    " Break was at least " + 
-		    kvu_numtostr(diff.tv_sec * 1000 + diff.tv_usec / 1000.0) + 
-		  " ms long.");
-    }
 
-    overruns_rep++;
-    stop();
-    prepare();
-    start();
+      std::cerr << "(audioio-alsa3) warning! playback overrun - samples lost! " 
+		<< " Break was at least " << kvu_numtostr(diff.tv_sec *
+							  1000 +
+							  diff.tv_usec /
+							  1000.0) 
+		<< " ms long." << endl;
+
+      overruns_rep++;
+      stop();
+      prepare();
+      start();
+    }
+    else {
+      std::cerr << "(audioio-alsa3) unknown device state!" << endl;
+    }
   }
   else {
     ecadebug->msg(ECA_DEBUG::info, "(audioio-alsa3) snd_pcm_status() failed!");
@@ -578,21 +582,25 @@ void ALSA_PCM_DEVICE_06X::handle_xrun_playback(void) {
   if (res >= 0) {
     if (snd_pcm_status_get_state(status) == SND_PCM_STATE_XRUN) {
 
-    struct timeval now, diff, tstamp;
-    gettimeofday(&now, 0);
-    snd_pcm_status_get_trigger_tstamp(status, &tstamp);
-    timersub(&now, &tstamp, &diff);
-    
-    ecadebug->msg(ECA_DEBUG::info, 
-		  string("(audioio-alsa3) warning! playback underrun - samples lost! ") +
-		  " Break was at least " + 
-		  kvu_numtostr(diff.tv_sec * 1000 + diff.tv_usec / 1000.0) + 
-		  " ms long.");
+      struct timeval now, diff, tstamp;
+      gettimeofday(&now, 0);
+      snd_pcm_status_get_trigger_tstamp(status, &tstamp);
+      timersub(&now, &tstamp, &diff);
+      
+      std::cerr << "(audioio-alsa3) warning! playback underrun - samples lost! " 
+		<< " Break was at least " << kvu_numtostr(diff.tv_sec *
+							  1000 +
+							  diff.tv_usec /
+							  1000.0) 
+		<< " ms long." << endl;
+      underruns_rep++;
+      stop();
+      prepare();
+      trigger_request_rep = true;
     }
-    underruns_rep++;
-    stop();
-    prepare();
-    trigger_request_rep = true;
+    else {
+      std::cerr << "(audioio-alsa3) unknown device state!" << endl;
+    }
   }
   else {
     ecadebug->msg(ECA_DEBUG::info, "(audioio-alsa3) snd_pcm_status() failed!");

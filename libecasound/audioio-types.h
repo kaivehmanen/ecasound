@@ -39,6 +39,7 @@ class AUDIO_IO_BUFFERED : public AUDIO_IO {
  private:
 
   long int buffersize_rep;
+  long int buffersize_sig_rep;
   long int target_srate_rep;
   long int target_samples_rep;
   unsigned char* iobuf_uchar_repp;  // buffer for raw-I/O

@@ -62,6 +62,8 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	- submitted: jhalttun, 02.09.2001
 (edi-17) Add bitrate parameter to mp3 objects.
 	- submitted: 30.09.2001, William Goldsmith
+(edi-18) Intelligent system for setting the internal sample rate.
+	- submitted: smassy, 17.10.2001
 
 -----------------------------------------------------------------------
 [ Closed items ]

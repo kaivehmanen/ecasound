@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 151001) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 181001) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -29,8 +29,12 @@ Last officially released version is -*> v2.0.3 *-
 		   its cpu-load
 	- changed: db-subsystem - runs once again under sched_fifo
 		   scheduling if -r is enabled
+	- changed: ALSA xrun reports are now printed to stderr 
+		   instead of ecasound debug-subsystem
 	- fixed: major bugs in interpreting LADSPA plugin 
 		 parameter hint flags
+	- fixed: a nasty bug in bufmode activation code prevented
+		 -kos, -kl, and others from working properly
 14102001 (v2.1dev2)
 	- added: ecaplay - -k, -d and -h options, see 'man ecaplay'
 	- added: eiam - ai-get-length-samples, ao-get-length-samples,

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-types.cpp: Top-level classes for audio-I/O.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 
 AUDIO_IO_BUFFERED::AUDIO_IO_BUFFERED(void) 
   : buffersize_rep(0),
+    buffersize_sig_rep(0),
     target_srate_rep(0),
     target_samples_rep(0),
     iobuf_uchar_repp(0),
@@ -51,7 +52,7 @@ void AUDIO_IO_BUFFERED::reserve_buffer_space(long int bytes) {
       delete[] iobuf_uchar_repp;
       iobuf_uchar_repp = 0;
     }
-//      cerr << "Reserving " << bytes << " bytes (" << label() << ").\n";
+    // cerr << "Reserving " << bytes << " bytes (" << label() << ").\n";
     iobuf_uchar_repp = new unsigned char [bytes];
     iobuf_size_rep = bytes;
   }
@@ -59,11 +60,13 @@ void AUDIO_IO_BUFFERED::reserve_buffer_space(long int bytes) {
 
 void AUDIO_IO_BUFFERED::buffersize(long int samples, 
 				   long int sample_rate) {
-  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) " +
-		label() + ": " +
-		"Setting buffer size [" +
-		kvu_numtostr(samples) + "," +
-		kvu_numtostr(sample_rate) + "].");
+  //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) " +
+  //  		label() + ": " +
+  //  		"Setting public buffer size to [" +
+  //  		kvu_numtostr(samples) + "," +
+  //  		kvu_numtostr(sample_rate) + "]. Internal srate is " +
+  //  		kvu_numtostr(samples_per_second()) + " and buffersize " +
+  //  		kvu_numtostr(buffersize_rep) + ".");
   
   if (sample_rate != 0) {
     target_srate_rep = sample_rate;
@@ -75,21 +78,25 @@ void AUDIO_IO_BUFFERED::buffersize(long int samples,
     if (target_srate_rep != samples_per_second()) {
       buffersize_rep = static_cast<long int>(ceil(static_cast<double>(target_samples_rep) *
 						  samples_per_second() / target_srate_rep));
+      
     }
     else {
       buffersize_rep = target_samples_rep;
     }
+
+    buffersize_sig_rep = target_samples_rep * target_srate_rep;
     reserve_buffer_space(buffersize_rep * frame_size());
   }
-  else
+  else {
     buffersize_rep = 0;
+    buffersize_sig_rep = 0;
+  }
 
-  ecadebug->msg(ECA_DEBUG::user_objects, 
-		"(audioio-types/buffered) " +
-		label() + ": " +
-		" Set buffer size [" +
-		kvu_numtostr(buffersize_rep) + "].");
-
+  //    ecadebug->msg(ECA_DEBUG::user_objects, 
+  //  		"(audioio-types/buffered) " +
+  //  		label() + ": " +
+  //  		"Set internal object buffer size to " +
+  //  		kvu_numtostr(buffersize_rep) + ".");
 }
 
 void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf) {
@@ -117,8 +124,9 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf) {
   DBC_REQUIRE(iobuf_uchar_repp != 0);
   DBC_REQUIRE(static_cast<long int>(iobuf_size_rep) >= buffersize_rep * frame_size());
   // --------
-  if (buffersize_rep != sbuf->length_in_samples()) {
-    buffersize(sbuf->length_in_samples(), samples_per_second());
+  if (buffersize_sig_rep != sbuf->length_in_samples() * sbuf->sample_rate()) {
+    //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-types/buffered) buffersize() doesn't match - correcting");
+    buffersize(sbuf->length_in_samples(), sbuf->sample_rate());
   }
   if (interleaved_channels() == true)
     sbuf->copy_from_buffer(iobuf_uchar_repp,

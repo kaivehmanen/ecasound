@@ -254,8 +254,6 @@ void ECA_CHAINSETUP::set_defaults(void) {
 
   set_output_openmode(AUDIO_IO::io_readwrite);
 
-  
-
   ECA_RESOURCES ecaresources;
   set_default_midi_device(ecaresources.resource("midi-device"));
   set_sample_rate(atol(ecaresources.resource("default-samplerate").c_str()));
@@ -264,6 +262,8 @@ void ECA_CHAINSETUP::set_defaults(void) {
   impl_repp->bmode_nonrt_rep.set_all(ecaresources.resource("bmode-defaults-nonrt"));
   impl_repp->bmode_rt_rep.set_all(ecaresources.resource("bmode-defaults-rt"));
   impl_repp->bmode_rtlowlatency_rep.set_all(ecaresources.resource("bmode-defaults-rtlowlatency"));
+
+  impl_repp->bmode_active_rep = impl_repp->bmode_nonrt_rep;
 }
 
 /**
@@ -352,22 +352,6 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void) {
     }
     default: { /* error! */ }
     }
-
-  /* if any overridden values, use them to replace
-   * selected default values
-   */
-  if (impl_repp->bmode_override_rep.is_set_buffersize() == true)
-    impl_repp->bmode_active_rep.set_buffersize(impl_repp->bmode_override_rep.buffersize());
-  if (impl_repp->bmode_override_rep.is_set_raised_priority() == true)
-    impl_repp->bmode_active_rep.toggle_raised_priority(impl_repp->bmode_override_rep.raised_priority());
-  if (impl_repp->bmode_override_rep.is_set_sched_priority() == true)
-    impl_repp->bmode_active_rep.set_sched_priority(impl_repp->bmode_override_rep.sched_priority());
-  if (impl_repp->bmode_override_rep.is_set_double_buffering() == true)
-    impl_repp->bmode_active_rep.toggle_double_buffering(impl_repp->bmode_override_rep.double_buffering());
-  if (impl_repp->bmode_override_rep.is_set_double_buffer_size() == true)
-    impl_repp->bmode_active_rep.set_double_buffer_size(impl_repp->bmode_override_rep.double_buffer_size());
-  if (impl_repp->bmode_override_rep.is_set_max_buffers() == true)
-    impl_repp->bmode_active_rep.toggle_max_buffers(impl_repp->bmode_override_rep.max_buffers());
 
   ecadebug->msg(ECA_DEBUG::system_objects,
 		"(eca-chainsetup) Set buffering parameters to: \n--cut--" +
@@ -1429,12 +1413,47 @@ void ECA_CHAINSETUP::toggle_max_buffers(bool v) {
   impl_repp->bmode_override_rep.toggle_max_buffers(v); 
 }
 
-long int ECA_CHAINSETUP::buffersize(void) const { return(impl_repp->bmode_active_rep.buffersize()); }
-bool ECA_CHAINSETUP::raised_priority(void) const { return(impl_repp->bmode_active_rep.raised_priority()); }
-int ECA_CHAINSETUP::sched_priority(void) const { return(impl_repp->bmode_active_rep.sched_priority()); }
-bool ECA_CHAINSETUP::double_buffering(void) const { return(impl_repp->bmode_active_rep.double_buffering()); }
-long int ECA_CHAINSETUP::double_buffer_size(void) const { return(impl_repp->bmode_active_rep.double_buffer_size()); }
-bool ECA_CHAINSETUP::max_buffers(void) const { return(impl_repp->bmode_active_rep.max_buffers()); }
+long int ECA_CHAINSETUP::buffersize(void) const { 
+  if (impl_repp->bmode_override_rep.is_set_buffersize() == true)
+    return(impl_repp->bmode_override_rep.buffersize());
+  
+  return(impl_repp->bmode_active_rep.buffersize()); 
+}
+
+bool ECA_CHAINSETUP::raised_priority(void) const { 
+  if (impl_repp->bmode_override_rep.is_set_raised_priority() == true)
+    return(impl_repp->bmode_override_rep.raised_priority());
+
+  return(impl_repp->bmode_active_rep.raised_priority()); 
+}
+
+int ECA_CHAINSETUP::sched_priority(void) const { 
+  if (impl_repp->bmode_override_rep.is_set_sched_priority() == true)
+    return(impl_repp->bmode_override_rep.sched_priority());
+
+  return(impl_repp->bmode_active_rep.sched_priority()); 
+}
+
+bool ECA_CHAINSETUP::double_buffering(void) const { 
+  if (impl_repp->bmode_override_rep.is_set_double_buffering() == true)
+    return(impl_repp->bmode_override_rep.double_buffering());
+
+  return(impl_repp->bmode_active_rep.double_buffering()); 
+}
+
+long int ECA_CHAINSETUP::double_buffer_size(void) const { 
+  if (impl_repp->bmode_override_rep.is_set_double_buffer_size() == true)
+    return(impl_repp->bmode_override_rep.double_buffer_size());
+
+  return(impl_repp->bmode_active_rep.double_buffer_size()); 
+}
+
+bool ECA_CHAINSETUP::max_buffers(void) const { 
+  if (impl_repp->bmode_override_rep.is_set_max_buffers() == true)
+    return(impl_repp->bmode_override_rep.max_buffers());
+
+  return(impl_repp->bmode_active_rep.max_buffers()); 
+}
 
 void ECA_CHAINSETUP::set_default_audio_format(ECA_AUDIO_FORMAT& value) { 
   impl_repp->default_audio_format_rep = value; 
@@ -1476,6 +1495,9 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
   if (p != 0) {
     p->register_server(&impl_repp->stamp_server_rep);
   }
+
+  DBC_CHECK(buffersize() != 0);
+  DBC_CHECK(sample_rate() != 0);
 
   csrc->init((double)buffersize() / sample_rate());
 
