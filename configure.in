@@ -455,8 +455,10 @@ dnl ---
 dnl switch to C for testing
 AC_LANG_C
 dnl see also section 7 - functions 
+AC_SEARCH_LIBS(inet_ntoa, socket nsl)
 AC_SEARCH_LIBS(nanosleep, rt posix4)
 AC_SEARCH_LIBS(sched_setscheduler, rt posix4)
+AC_SEARCH_LIBS(socket, socket nsl)
 AC_CHECK_LIB(m, sin,, AC_MSG_ERROR([*** required sin() function not found! ***]))
 AC_CHECK_LIB(dl, dlopen,, AC_MSG_ERROR([*** required dlopen() function not found! ***]))
 dnl switch back to C++
