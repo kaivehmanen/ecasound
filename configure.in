@@ -416,10 +416,8 @@ dnl ---
 dnl Checks for header files.
 dnl ---
 AC_HEADER_TIME
-AC_CHECK_HEADERS(fcntl.h dlfcn.h sys/ioctl.h sys/time.h sys/resource.h
-			 sys/stat.h sys/wait.h signal.h sys/types.h
-			 sys/mman.h errno.h sched.h unistd.h
-			 inttypes.h stdint.h inttypes.h asm/atomic.h ladspa.h)
+dnl Note! Header filenames must be on the same line!
+AC_CHECK_HEADERS(fcntl.h dlfcn.h sys/ioctl.h sys/time.h sys/resource.h sys/stat.h sys/wait.h signal.h sys/types.h sys/mman.h errno.h sched.h unistd.h inttypes.h stdint.h inttypes.h asm/atomic.h ladspa.h)
 
 dnl ---
 dnl C++ specific checks
