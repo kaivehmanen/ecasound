@@ -44,13 +44,15 @@ noinst_LTLIBRARIES 		= libpyecasound.la
 endif
 
 libpyecasound_la_SOURCES	= pyecasound.c
-libpyecasound_la_LDFLAGS 	= -avoid-version -export-dynamic
+
+# libtool options to build for dlopen
+libpyecasound_la_LDFLAGS        = -avoid-version -export-dynamic
 
 if ECA_AM_PYECASOUND_CEXT
 all: pyecasound.so
 
 pyecasound.so: pyecasound.lo
-	$(CC) -o pyecasound.so -shared -nostartfiles $(libpyecasound_la_LDFLAGS) pyecasound.lo $(top_builddir)/libecasoundc/ecasoundc_sa.lo
+	$(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) ${libpyecasound_la_LDFLAGS} -shared -nostartfiles -o pyecasound.so pyecasound.lo ${top_builddir}/libecasoundc/ecasoundc_sa.lo
 endif
 
 # ----------------------------------------------------------------------

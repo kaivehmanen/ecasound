@@ -1,4 +1,7 @@
-"""Native python ECI (ecasound control interface) implementation"""
+"""Native python ECI (ecasound control interface) implementation
+"""
+
+# Version: $Id: ecacontrol.py,v 1.5 2003-11-17 00:41:38 kaiv Exp $
 
 authors="""Kai Vehmanen, Eric S. Tiedemann and Janne Halttunen."""
 
@@ -8,10 +11,12 @@ from select import select
 import os
 import signal
 import string
+import time
 
 _ecasound=[]
 
 type_override={}
+eci_str_sync_lost= 'Connection to the processing engine was lost.\n'
 
 class ECA_CONTROL_INTERFACE:
     
@@ -24,6 +29,7 @@ class ECA_CONTROL_INTERFACE:
 	
 	I._cmd=''
 	I._type=''
+        I._timeout=10 # in seconds
 	I._resp={}
 	I.initialize()
 	
@@ -58,22 +64,35 @@ class ECA_CONTROL_INTERFACE:
     def _read_eca(I):
 	buffer=''
 	while select([I.eca.fromchild.fileno()],[],[],0)[0]:
-	    buffer=buffer+I.eca.fromchild.read(1)
+           buffer=buffer+I.eca.fromchild.read(1)
 	return buffer
     
     def _parse_response(I):
-	tm=''; r=()
+	tm=''; r=(); failcount=0
+        if I.verbose > 1:
+            print 'c=' + I._cmd
 	while 1:
 	    
 	    s=I._read_eca()
+            #print 'read s=' + s
 	    if s:
-		if I.verbose>1:
-		    print s.strip()
+		if I.verbose > 2:
+		    print 's=', s.strip()
+            else:
+                failcount = failcount + 1
+                if failcount < I._timeout * 10:
+                    time.sleep(0.1)
+                    continue
+                else:
+                    #print 's=' + s, 'tm=' + tm, 'cmd=' + I._cmd
+                    r=('e', eci_str_sync_lost)
+                    break
 	    tm=tm+s
-	    
 	    m=expand_eiam_response(tm)
 	    r=parse_eiam_response(tm, m)
 	    if r:
+                if I.verbose > 1:
+                    print 'r=', r
 		break
 
 	if not r:
@@ -98,7 +117,7 @@ class ECA_CONTROL_INTERFACE:
 	    	I._resp[I._type]=long(r[1])
 	    else:
 	    	I._resp[I._type]=r[1]
-		
+
 	return I._resp[I._type]
 
     
@@ -117,8 +136,8 @@ class ECA_CONTROL_INTERFACE:
 
         if ecasound_binary == '':
             ecasound_binary = 'ecasound'
-	
-	_ecasound.append(Popen3(ecasound_binary + ' -c -D', 1, 0))
+
+        _ecasound.append(Popen3(ecasound_binary + ' -c -D', 1, 0))
 	
 	I.eca=_ecasound[-1]
 	
@@ -143,7 +162,7 @@ class ECA_CONTROL_INTERFACE:
 	    print '\n(to get rid of this message, pass zero to instance init)'
 	    
 	I._read_eca()
-	I.command('int-output-mode-wellformed')	
+	I.command('int-output-mode-wellformed')
 	
     def cleanup(I):
 	"""Free all reserved resources"""
@@ -274,13 +293,15 @@ def parse_eiam_response(st, m=None):
 	    return ()
 
     if m and len(m.groups()) == 0:
-        print "(pyeca) Matching groups failed: %s" % str(m.groups())
-	
+        #print "(pyeca) Matching groups failed: %s" % str(m.groups())
+	return ('e','Matching groups failed')
     
     if m and len(m.groups()) == 3:
         #print 'received=', len(m.group(3)), ', expected=', m.group(1)
         if int(m.group(1)) != len(m.group(3)):
-	    print "(pyeca) Response length error."
+            print '(pyeca) Response length error. Received ', len(m.group(3)), ', expected for ', m.group(1), '.'
+            #print 'g=', m.group(3)
+      	    return ('e', 'Response length error.')
 	    
     if m:
         return (m.group(2), m.group(3))
