@@ -20,6 +20,9 @@ Last officially released version is -*> v1.8.2r14 <*-
 ??032001 (v1.9dev5)
 	- added: eiam - new aliases 'getpos', 'c-set-position',
 		 'aio-set-position', 'aio-getpos'
+	- added: eiam - 'int-cmd-list', 'int-version-string'.
+		 'int-version-lib-current', 'int-version-lib-revision',
+		 'int-version-lib-age'
 	- fixed: mp3 output broken
 	- fixed: more zombie-problems with mpg123, lame, ogg123 
 	         and others
