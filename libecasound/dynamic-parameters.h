@@ -25,7 +25,7 @@ class DYNAMIC_PARAMETERS {
   /**
    * Gets the total number of of parameters.
    */
-  int number_of_params(void) const { return(kvu_string_to_vector(parameter_names(), ',').size()); }
+  int number_of_params(void) const { return kvu_get_number_of_arguments(parameter_names()); }
 
   /**
    * Gets name of parameter with index 'id'.
