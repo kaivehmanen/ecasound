@@ -124,6 +124,8 @@ static void add_track_to_chainsetup(eci_handle_t eci, const char* nexttrack)
 
 static void set_track_to_chainsetup(eci_handle_t* eci, const char* nexttrack)
 {
+  const char* ret = NULL;
+
   *eci = eci_init_r();
 
   if (ecaplay_debuglevel != -1) {
@@ -167,7 +169,7 @@ static void set_track_to_chainsetup(eci_handle_t* eci, const char* nexttrack)
   /* FIXME: add detection of consecutive errors */
   eci_command_r(*eci, "cs-connect");
   eci_command_r(*eci, "cs-connected");
-  const char* ret = eci_last_string_r(*eci);
+  ret = eci_last_string_r(*eci);
   if (strncmp(ret, "ecaplay_chainsetup", strlen("ecaplay_chainsetup")) != 0) {
     fprintf(stderr, "(ecaplay) Error while playing file '%s' . Skipping...\n", nexttrack);
   }
