@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20031127-28
+dnl last modified: 20031127-29
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -665,7 +665,7 @@ dnl Ruby interpreter and installation prefix
 
 AC_PATH_PROG(RUBYPATH,ruby,none)
 if test x$RUBYPATH = xnone; then
-  rubyecasound_support=yes
+  rubyecasound_support=no
   ECA_S_RUBY_SITEDIR=""
 else
   rubyecasound_support=yes
