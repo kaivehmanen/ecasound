@@ -6,7 +6,7 @@
 
 \title{Ecasound Control Interface Guide}
 \author{Kai Vehmanen}
-\date{05102002}
+\date{06102002}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,7 @@ detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 06.10.2002 - Added ``Application development'' section.
 \item 05.10.2002 - Changed the libecasoundc link path.
 \item 29.09.2002 - ``PHP'' section added.
 \item 25.04.2002 - Changed headers path from ``<ecasoundc/file.h>'' to 
@@ -499,6 +500,37 @@ eci_cleanup();
 ?>
 \end{verbatim} 
 
+% ----------------------------------------------------------------------
+% ----------------------------------------------------------------------
+\section{Application development}
 
+% ----------------------------------------------------------------------
+\subsection{Tips for debugging}
+
+Here's a few tips what to do if the ECI app you have developed
+is not working correctly.
+
+\begin{enumerate}
+\item Check your ecasound installation. Try to run the ``ecasound'' 
+      console user-interface and verify that the basic functionality
+      is working (ie. something like ``ecasound -i foo.wav -o
+      /dev/dsp''.
+
+\item If developing in C or C++, check that your application
+      is correcly linked: ``ldd /path/to/myapp''. All the libraries
+      should be properly found.
+
+\item Check error conditions. You should remember to check 
+      for errors in your ECI apps using the eci\_error() and
+      eci\_last\_error() functions. Especially when intializing
+      ECI for the first time and after important commands
+      like ``cs-connect'', you should always check for errors.
+
+\item Launch ecasound in interactive mode (``ecasound -c''), 
+      and issue the commands your ECI application is using, 
+      manually one-by-one and see what happens. If something
+      goes wrong, increase ecasound's debug level (for instance
+      ``-d:511'') and re-run the test. 
+\end{enumerate}
 
 \end{document}
