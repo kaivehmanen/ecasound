@@ -326,7 +326,7 @@ AC_CHECK_HEADER(jack/jack.h,jack_support=yes,jack_support=no)
 AC_ARG_WITH(jack,
 	    [  --with-jack=DIR	Compile against JACK installed in DIR],
 	    [
-	        ECA_S_JACK_LIBS="-L${withval}/lib -ljack"
+	        ECA_S_JACK_LIBS="-L${withval}/lib"
 		ECA_S_JACK_INCLUDES="-I${withval}/include"
 		jack_support=yes
 	    ])
@@ -336,6 +336,7 @@ AC_ARG_ENABLE(jack,
 AM_CONDITIONAL(ECA_AM_COMPILE_JACK, test x$jack_support = xyes)
 
 if test x$jack_support = xyes; then
+    ECA_S_JACK_LIB="${ECA_S_JACK_LIBS} -ljack"
     AC_DEFINE(ECA_COMPILE_JACK)
 fi                                     
 
