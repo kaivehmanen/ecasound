@@ -6,7 +6,7 @@
 
 \title{Ecasound Control Interface Guide}
 \author{Kai Vehmanen}
-\date{25042002}
+\date{29092002}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,7 @@ detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 29.09.2002 - ``PHP'' section added.
 \item 25.04.2002 - Changed headers path from ``<ecasoundc/file.h>'' to 
                    ``<file.h>'' and added library version number to 
                    link instructions.
@@ -418,6 +419,85 @@ print "Chain operator status: ", eci("cop-status");
  
 \end{verbatim} 
 
+% ----------------------------------------------------------------------
+\subsection{PHP}
+\subsubsection{Overview}
+This PHP extension provides bindings to the ecasound
+control interface.  It is useful both for scripting Ecasound
+and for writing graphical audio applications with PHP Gtk.
+
+
+The PHP Ecasound extension was written by Tony Leake. At the moment this module 
+is not distributed with ecasound. The latest version and example scripts, are 
+available from  \texttt{http://www.webwise-data.co.uk/php\_audio/php\_audio\_extension.html}.
+
+\subsubsection{Usage}
+\begin{enumerate}
+\item Obtain and build the Ecasound PHP extension
+\item Initialise Ecasound, eci\_int();
+\item Issue EAM commands eg, eci\_command("cs-add my\_chain\_setup");
+\item Free resources, eci\_cleanup();
+\end{enumerate}
+
+\subsubsection{Example}
+\begin{verbatim} 
+
+Implementation of the following:
+
+1. Setup ECI to read audio from file, apply a 100Hz lowpass filter, 
+and send it to the soundcard (/dev/dsp).
+2. Every second, check the current position. If the stream has been 
+running for over 15 seconds, exit immediately. Also, every second, 
+increase the lowpass filter's cutoff frequency by 500Hz.
+3. Stop the stream (if not already finished) and disconnect the chainsetup. 
+Print chain operator status info
+
+<?php
+
+$cutoff_inc = 500.0;
+$curpos=0;
+$next_cutoff=0;
+
+eci_init();
+eci_command("cs-add play_chainsetup");
+eci_command("c-add 1st_chain");
+eci_command("ai-add /tmp/somefile.wav");
+eci_command("ao-add /dev/dsp");
+eci_command("cop-add -efl:10");
+eci_command("cop-select 1");
+eci_command("copp-select 1");
+eci_command("cs-connect");
+eci_command("start");
+
+while(1) {
+
+    sleep(1);
+    
+    eci_command("engine-status");    
+    if (eci_last_string() !="running"){
+        break;
+    }
+
+    eci_command("get-position");
+    $curpos = eci_last_float();
+    if ($curpos > 15.0){
+        break;
+    }
+
+    eci_command("copp-get");
+    $next_cutoff = $cutoff_inc + eci_last_float();
+    eci_command_float_arg("copp-set",$next_cutoff);
+}
+
+eci_command("stop");
+eci_command("cs-disconnect");
+eci_command("cop-status");
+
+printf("Chain operator status: %s", eci_last_string());
+
+eci_cleanup();
+?>
+\end{verbatim} 
 
 
 
