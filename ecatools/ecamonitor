@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------
 # ecamonitor: Ecasound monitor client implemented using NetECI
-# Copyright (C) 2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+# Copyright (C) 2002-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import time
 
 ecamonitor_remote_host = "localhost"
 ecamonitor_remote_port = 2868
-ecamonitor_version     = "v20021031-5"
+ecamonitor_version     = "v20030317-6"
 
 # TODO:
 #  - nothing at the moment
@@ -135,6 +135,10 @@ def main():
 
     remote_host = ecamonitor_remote_host
     remote_port = ecamonitor_remote_port
+
+    if not hasattr(sys, 'version_info') or (hasattr(sys, 'version_info') and sys.version_info[1] <2):
+        print 'Error! Ecamonitor requires python-2.0 or newer to run!'
+        return 1
 
     if len(sys.argv) > 1:
         destination = sys.argv[1]
