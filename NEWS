@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 281100) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 011200) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vx.y.zRt" :
@@ -14,7 +14,7 @@ About the version numbers... "vx.y.zRt" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??112000 (v1.8.5d15)
+??122000 (v1.8.5d15)
 	- added: tremolo effect (-eemt) [rcs]
 	- added: -z:db; i/o double buffering layer is back! - 
 		 after complete rewrite, db-mode now supports all
@@ -31,6 +31,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 		 loading chainsetups from file
 	- added: ecatools - ecasignalview added to the package; 
 		 see ecatools(1) man page for details
+	- added: new modules - libecasoundc and pyecasound
 	- added: --disable-pyecasound configure switch
 	- removed: the "LADSPA/" prefix removed from plugin labels
 	- changed: more intelligent handling of resource files
@@ -50,6 +51,7 @@ Last officially released version is -*> v1.8.2r14 <*-
 	- fixed: c-setpos didn't work if chainsetup wasn't connected
 	- fixed: commas in descriptions of LADSPA plugin parameters
 		 confused ecasound, and usually ended up crashing
+		 (triggered at least by the hermes filter)
 07112000 (v1.8.4d15)
 	- added: pulse gate (-eemp); can be used to generate a
 	         metronome signal [rcs]
