@@ -43,7 +43,7 @@ if ECA_AM_COMPILE_PYECASOUND
 all: pyecasound.so
 
 pyecasound.so: pyecasound.o
-	$(CC) -o pyecasound.so -shared -nostartfiles $(libpyecasound_la_LDFLAGS) pyecasound.o $(top_builddir)/libecasoundc/ecasoundc_sa.o
+	$(CC) -o pyecasound.so -shared -nostartfiles $(libpyecasound_la_LDFLAGS) pyecasound.o $(top_builddir)/libecasoundc/ecasoundc_sa.lo
 endif
 
 # ----------------------------------------------------------------------
