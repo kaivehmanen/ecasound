@@ -194,8 +194,8 @@ void WAVEFILE::read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) {
   fio_repp->read_to_buffer(&riff_header_rep, sizeof(riff_header_rep));
 
   //  fread(&riff_header_rep,1,sizeof(riff_header_rep),fobject);
-  if (memcmp("RIFF",riff_header_rep.id,4) != 0 ||
-      memcmp("WAVE",riff_header_rep.wname,4) != 0) {
+  if ((memcmp("RIFF",riff_header_rep.id,4) == 0  &&
+       memcmp("WAVE",riff_header_rep.wname,4) == 0) != true) {
     throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: invalid RIFF-header"));
   }
 }

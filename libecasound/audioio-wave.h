@@ -1,6 +1,10 @@
 #ifndef INCLUDED_AUDIOIO_WAVE_H
 #define INCLUDED_AUDIOIO_WAVE_H
 
+#ifndef HAVE_CONFIG_H
+#define HAVE_INTTYPES_H
+#endif
+
 #include <string>
 #include <iostream>
 /* ANSI/ISO type defs: */
@@ -11,9 +15,7 @@
   #include <inttypes.h> /* uint32_t, etc types */
   #endif
 #endif
-#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* off_t, uint32_t, etc types */
-#endif
 #include "audioio-types.h"
 #include "samplebuffer.h"
 #include "eca-fileio.h"

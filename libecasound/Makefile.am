@@ -6,14 +6,6 @@ SUBDIRS = plugins
 # defines
 # ----------------------------------------------------------------------
 
-if KVUTILS_INSTALLED
-kvutils_libs =
-kvutils_debug_libs =
-else
-kvutils_libs = -L$(top_srcdir)/kvutils/.libs -lkvutils
-kvutils_debug_libs = -L$(top_srcdir)/kvutils/.libs -lkvutils_debug
-endif
-
 # !!!
 # remember to update eca-version.cpp
 if INCLUDE_DEBUG
@@ -277,10 +269,10 @@ ecasound_common_src = 	$(ecasound_audiofx_src) \
 
 libecasound_la_SOURCES = $(ecasound_common_src)
 libecasound_debug_la_SOURCES = $(ecasound_common_src)
-libecasound_la_LIBADD = $(kvutils_libs)
+libecasound_la_LIBADD =
 libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
-libecasound_debug_la_LIBADD = $(kvutils_debug_libs)
+libecasound_debug_la_LIBADD =
 
 # ---------------------------------------------------------------------
 # Install targets - note! we don't install $ecasound_extra_include

@@ -20,7 +20,6 @@ kvutil_sources = 	kvutils.cpp \
 			procedure_timer.cpp \
 			temporary_file_directory.cpp
 
-
 kvutil_headers = 	kvutils.h \
 			message_item.h \
 			com_line.h \

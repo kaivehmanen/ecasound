@@ -9,18 +9,8 @@ AUTOMAKE_OPTIONS = foreign
 # remember to update eca-version.cpp
 if INCLUDE_DEBUG
 eca_ldflags = -version-info 1:0:1
-ecasound_libs = -L$(top_builddir)/libecasound/.libs -lecasound_debug
 else
 eca_ldflags = -s -version-info 1:0:1
-ecasound_libs = -L$(top_builddir)/libecasound/.libs -lecasound
-endif
-
-if KVUTILS_INSTALLED
-kvutils_libs =
-kvutils_debug_libs =
-else
-kvutils_libs = -L$(top_srcdir)/kvutils/.libs -lkvutils
-kvutils_debug_libs = -L$(top_srcdir)/kvutils/.libs -lkvutils_debug
 endif
 
 if INCLUDE_DEBUG
@@ -57,10 +47,10 @@ ecasoundc_src = ecasoundc.cpp
 # ----------------------------------------------------------------------
 
 libecasoundc_la_SOURCES = $(ecasoundc_src)
-libecasoundc_debug_la_SOURCES = $(libecasoundc_la_SOURCES)
-libecasoundc_la_LIBADD = $(ecasound_libs) $(kvutils_libs)
+libecasoundc_la_LIBADD = 
 libecasoundc_la_LDFLAGS = -export-dynamic $(eca_ldflags)
-libecasoundc_debug_la_LIBADD = $(ecasound_libs) $(kvutils_debug_libs)
+libecasoundc_debug_la_SOURCES = $(libecasoundc_la_SOURCES)
+libecasoundc_debug_la_LIBADD = 
 libecasoundc_debug_la_LDFLAGS = $(libecasoundc_la_LDFLAGS)
 
 # ---------------------------------------------------------------------

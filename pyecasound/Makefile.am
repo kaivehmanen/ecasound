@@ -12,7 +12,7 @@ ecasound_libs 			= -L$(top_builddir)/libecasound/.libs -lecasound
 endif
 
 if INCLUDE_DEBUG
-kvutils_debug_libs              = -L$(top_srcdir)/kvutils/.libs -lkvutils_debug
+kvutils_debug_libs              = -L$(top_builddir)/kvutils/.libs -lkvutils_debug
 else
 kvutils_libs 			= -L$(top_builddir)/kvutils/.libs -lkvutils
 endif

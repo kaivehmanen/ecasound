@@ -24,6 +24,7 @@
 #include <string>
 #include <cstdlib> /* getenv */
 
+#include "eca-debug.h"
 #include "eca-resources.h"
 #include "eca-version.h"
 
@@ -33,6 +34,9 @@ ECA_RESOURCES::ECA_RESOURCES(void) {
   
   globalrc_rep.resource_file(ecasound_resource_path + "/ecasoundrc");
   globalrc_rep.load();
+  if (globalrc_rep.keywords().size() == 0) {
+    ecadebug->msg(ECA_DEBUG::info, "(eca-resources) Warning! Global resource file '" + ecasound_resource_path + "/ecasoundrc" + "' not available! Ecasound may not function properly!");
+  }
 
   char* home_dir = getenv("HOME");
   if (home_dir != NULL) {
@@ -42,6 +46,9 @@ ECA_RESOURCES::ECA_RESOURCES(void) {
 
     userrc_rep.resource_file(user_ecasoundrc_path + ".ecasoundrc");
     userrc_rep.load();
+    if (userrc_rep.has("user-resource-directory") == true) {
+      ecadebug->msg(ECA_DEBUG::info, "(eca-resources) Warning! Old resource data found in '" + user_ecasoundrc_path + ". You can reset configuration parameters by removing the old rc-file.");
+    }
   }
 
   set_defaults();

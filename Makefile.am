@@ -22,13 +22,16 @@ install-data-local:
 
 uninstall-local:
 	rm -f	$(DESTDIR)$(datadir)/ecasound/generic_oscillators \
-		$(DESTDIR)$(datadir)/ecasound/effect_presets
+		$(DESTDIR)$(datadir)/ecasound/effect_presets \
+		$(DESTDIR)$(datadir)/ecasound/ecasoundrc
 	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(datadir)/ecasound
 
 delete-static-libs:
 	rm -f $(DESTDIR)$(prefix)/lib/libkvutils.a
 	rm -f $(DESTDIR)$(prefix)/lib/libecasound.a
+	rm -f $(DESTDIR)$(prefix)/lib/libecasoundc.a
 
 strip-shared-libs:
-	strip $(DESTDIR)$(prefix)/lib/libecasound.so
 	strip $(DESTDIR)$(prefix)/lib/libkvutils.so
+	strip $(DESTDIR)$(prefix)/lib/libecasound.so
+	strip $(DESTDIR)$(prefix)/lib/libecasoundc.so
