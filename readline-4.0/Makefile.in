@@ -232,7 +232,7 @@ info dvi:
 	-( cd doc && $(MAKE) $(MFLAGS) $@ )
 
 install-info:
-check:
+check: all
 installcheck:
 
 dist:   force
