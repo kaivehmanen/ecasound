@@ -16,7 +16,7 @@ RELEASE = 1
 
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(datadir)/ecasound
-	$(INSTALL_DATA) $(top_srcdir)/ecasoundrc $(DESTDIR)$(datadir)/ecasound/ecasoundrc
+	$(INSTALL_DATA) $(top_builddir)/ecasoundrc $(DESTDIR)$(datadir)/ecasound/ecasoundrc
 	$(INSTALL_DATA) $(top_srcdir)/generic_oscillators $(DESTDIR)$(datadir)/ecasound/generic_oscillators
 	$(INSTALL_DATA) $(top_srcdir)/effect_presets $(DESTDIR)$(datadir)/ecasound/effect_presets
 
