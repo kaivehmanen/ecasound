@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-curses.cpp: Curses implementation of the console user interface.
-// Copyright (C) 1999-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2004 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ void ECA_CURSES::print_banner(void)
   putp(tigetstr("bold"));
   std::cout << "               ecasound v" 
        << ecasound_library_version
-       << " (C) 1997-2003 Kai Vehmanen                 ";
+       << " (C) 1997-2004 Kai Vehmanen                 ";
   putp(tigetstr("sgr0"));
   std::cout << "\n";
   std::cout << "****************************************************************************\n";
