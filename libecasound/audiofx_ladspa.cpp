@@ -99,7 +99,8 @@ void EFFECT_LADSPA::init_ports(void)
       params.push_back(pd.default_value);
       param_descs_rep.push_back(pd);
       if (params.size() > 1) param_names_rep += ",";
-      param_names_rep += kvu_string_search_and_replace(string(plugin_desc->PortNames[m]), ",", "\\,");
+      string tmp (kvu_string_search_and_replace(string(plugin_desc->PortNames[m]), ",", "\\,"));
+      param_names_rep += kvu_string_search_and_replace(tmp, ":", "\\:");
     }
   }
 }
