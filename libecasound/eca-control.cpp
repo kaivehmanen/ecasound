@@ -17,6 +17,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <iostream.h>
 #include <fstream.h>
 #include <string>
@@ -827,6 +831,7 @@ void ECA_CONTROL::preset_register(void) {
 }
 
 void ECA_CONTROL::ladspa_register(void) { 
+#ifdef HAVE_LADSPA_H
   ecadebug->control_flow("Registered LADSPA plugins");
   string result;
   const map<string,string>& kmap = eca_ladspa_plugin_map->registered_objects();
@@ -847,6 +852,7 @@ void ECA_CONTROL::ladspa_register(void) {
     ++p;
   }
   set_last_string(result);
+#endif
 }
 
 void ECA_CONTROL::ctrl_register(void) { 

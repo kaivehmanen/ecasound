@@ -54,7 +54,6 @@ ecasound_audiofx_include =  \
 			audiogate.h \
 			audiofx_mixing.h \
 			audiofx_ladspa.h \
-			ladspa.h \
 			audio-stamp.h
 
 ecasound_audioio_include = 	\
