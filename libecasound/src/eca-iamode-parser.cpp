@@ -290,6 +290,23 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
 
 }
 
+bool ECA_IAMODE_PARSER::action_requires_selected_audio_object(int id) { 
+  switch(id) {
+  case ec_aio_remove:
+  case ec_aio_attach:
+  case ec_aio_forward:
+  case ec_aio_rewind:
+  case ec_aio_setpos:
+  case ec_aio_wave_edit:
+    return(true);
+    
+  default: 
+    break;
+  }
+  return(false);
+
+}
+
 void show_controller_help(void) {
   MESSAGE_ITEM mitem; 
 

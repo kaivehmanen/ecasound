@@ -279,40 +279,6 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-eca-text.o: eca-text.cpp ../kvutils/kvutils.h ../kvutils/message_item.h \
-	../kvutils/com_line.h ../kvutils/command_queue.h \
-	../kvutils/value_queue.h ../kvutils/kvu_numtostr.h \
-	../libecasound/include/eca-iamode-parser.h \
-	../libecasound/include/eca-error.h \
-	../libecasound/include/eca-controller.h \
-	../kvutils/definition_by_contract.h \
-	../libecasound/include/audioio.h \
-	../libecasound/include/eca-audio-position.h \
-	../libecasound/include/eca-audio-format.h ../config.h \
-	../libecasound/include/eca-chain.h \
-	../libecasound/include/eca-debug.h \
-	../libecasound/include/samplebuffer.h \
-	../libecasound/include/eca-chainop.h \
-	../libecasound/include/dynamic-object.h \
-	../libecasound/include/dynamic-parameters.h \
-	../libecasound/include/generic-controller.h \
-	../libecasound/include/ctrl-source.h \
-	../libecasound/include/eca-chainop-map.h \
-	../libecasound/include/eca-controller-map.h \
-	../libecasound/include/eca-session.h \
-	../libecasound/include/eca-resources.h \
-	../libecasound/include/resource-file.h \
-	../libecasound/include/eca-chainsetup.h \
-	../libecasound/include/eca-control-position.h \
-	../libecasound/include/eca-audio-objects.h \
-	../libecasound/include/eca-main.h \
-	../libecasound/include/eca-version.h ../readline-4.0/readline.h \
-	../readline-4.0/rlstdc.h ../readline-4.0/keymaps.h \
-	../readline-4.0/chardefs.h ../readline-4.0/tilde.h \
-	../readline-4.0/history.h textdebug.h eca-text.h
-textdebug.o: textdebug.cpp ../libecasound/include/eca-debug.h \
-	textdebug.h
-
 info-am:
 info: info-am
 dvi-am:

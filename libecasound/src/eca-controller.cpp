@@ -57,6 +57,11 @@ void ECA_CONTROLLER::action(int action_id,
     ecadebug->msg("(eca-controller) Can't perform requested action; argument omitted.");
     return;
   }
+  else if (selected_audio_object_rep == 0 &&
+      action_requires_selected_audio_object(action_id)) {
+    ecadebug->msg("(eca-controller) Can't perform requested action; no audio object selected.");
+    return;
+  }
   else if (is_selected() == false &&
       action_requires_selected(action_id)) {
     if (!is_connected()) {
@@ -173,8 +178,8 @@ void ECA_CONTROLLER::action(int action_id,
   // ---
   // Chains
   // ---
-  case ec_c_add: { add_chains(args); break; }
-  case ec_c_select: { select_chains(args); break; }
+  case ec_c_add: { add_chains(string_to_vector(args[0], ',')); break; }
+  case ec_c_select: { select_chains(string_to_vector(args[0], ',')); break; }
   case ec_c_select_all: { select_all_chains(); break; }
   case ec_c_remove: { remove_chains(); break; }
   case ec_c_clear: { clear_chains(); break; }
@@ -866,7 +871,7 @@ string ECA_CONTROLLER::chainsetup_status(void) const {
     result += "\n\tFlags:\t\t\t";
     if ((*cs_citer)->double_buffering()) result += "D";
     if ((*cs_citer)->precise_sample_rates()) result += "P";
-    if ((*cs_citer)->raised_priority()) result += "P";
+    if ((*cs_citer)->raised_priority()) result += "R";
     if ((*cs_citer)->is_valid()) 
       result += "\n\tState: \t\t\tvalid - can be connected";
     else

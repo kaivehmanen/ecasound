@@ -25,6 +25,7 @@ Last officially released version is -*> v1.6.9r9 <*-
 		 parameters 
 	- fixed: under/overrun problems with ALSA drivers
 	- fixed: stdin/stdout not working
+	- fixed: c-add and c-select didn't accept multiple parameters
 03012000 (v1.6.10d10)
 	- added: a realtime null audio device 'rtnull' - simulates
 		 soundcard behaviour (warns about over/underruns)

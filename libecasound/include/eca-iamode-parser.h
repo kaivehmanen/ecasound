@@ -101,6 +101,7 @@ class ECA_IAMODE_PARSER {
   bool action_requires_connected(int id);
   bool action_requires_selected_not_connected(int id);
   bool action_requires_selected(int id);
+  bool action_requires_selected_audio_object(int id);
 
   ECA_IAMODE_PARSER(void) { register_commands(); }
   virtual ~ECA_IAMODE_PARSER(void) { }
@@ -110,3 +111,4 @@ void show_controller_help(void);
 void show_controller_help_more(void);
 
 #endif
+
