@@ -35,6 +35,7 @@
 AUDIO_IO_RESAMPLE::AUDIO_IO_RESAMPLE (void)
 {
   init_rep = false;
+  quality_rep = 50;
 }
 
 /**
@@ -147,7 +148,16 @@ void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
 
   if (param > 0) {
     params_rep[param - 1] = value;
-    if (param == 2) {
+
+    if (param == 1) {
+      if (value == "resample-hq") {
+	quality_rep = 100;
+      }
+      else {
+	quality_rep = 50;
+      }
+    }
+    else if (param == 2) {
       child_srate_rep = std::atoi(value.c_str());
       ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		  "(audioio-resample) resampling w/ child srate of " + 
@@ -210,6 +220,7 @@ void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* sbuf)
   child()->read_buffer(sbuf);
   /* FIXME: not really rt-safe: */
   sbuf->resample_init_memory(child_srate_rep, samples_per_second());
+  sbuf->resample_set_quality(quality_rep);
   // std::cerr << "pre-resample: " << sbuf->length_in_samples() << " samples.\n";
   sbuf->resample(child_srate_rep, samples_per_second());
   // std::cerr << "post-resample: " << sbuf->length_in_samples() << " samples.\n";
@@ -222,6 +233,7 @@ void AUDIO_IO_RESAMPLE::write_buffer(SAMPLE_BUFFER* sbuf)
 
   /* FIXME: not really rt-safe: */
   sbuf->resample_init_memory(samples_per_second(), child_srate_rep);
+  sbuf->resample_set_quality(quality_rep);
   sbuf->resample(samples_per_second(), child_srate_rep);
   child()->write_buffer(sbuf);
   change_position_in_samples(sbuf->length_in_samples());

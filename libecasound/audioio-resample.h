@@ -104,6 +104,7 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
   SAMPLE_SPECS::sample_rate_t child_srate_rep;
   long int child_buffersize_rep;
   float psfactor_rep;
+  int quality_rep;
 
   AUDIO_IO_RESAMPLE& operator=(const AUDIO_IO_RESAMPLE& x) { return *this; }
   AUDIO_IO_RESAMPLE (const AUDIO_IO_RESAMPLE& x) { }

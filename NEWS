@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 290103) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 300103) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,13 +13,23 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??012003 (v2.2.1)  -** stable release **-
+??022003 (v2.2.1)  -** stable release **-
 	- added: sane default param hints for chainops: -ec, -etd,
 		 -ete, -etf, -etl, -etm, -etp, -etr and -epp
 	- added: if configured with JACK-support, ecasound will
 	  	 fetch the correct bufsize and srate parameters from 
 		 the JACK server when connecting a chainsetup with 
 	 	 JACK inputs or outputs
+	- added: support for Erik de Castro Lopo's libsamplerate
+		 resampling library; used both by the resample 
+		 audio i/o object and the pitch shifter chainop (-ei);
+	         enable with --with-libsamplerate
+	- added: --disable-libsamplerate; don't enable libsamplerate
+		 support even if the library is found during configure
+	- added: resample-hq audio object type; like resample, but 
+		 use the highest available resampling quality; 
+		 currently only has an effect if libsamplerate 
+		 support is enabled
 	- changed: ecasoundrc - ladspa-plugin-directory can contain 
 		   multiple directories, separated by colons; this
 		   change was done to avoid any confusion with 

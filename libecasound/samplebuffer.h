@@ -78,6 +78,8 @@ class SAMPLE_BUFFER {
   void make_silent(void);
   void make_silent_range(buf_size_t start_pos, buf_size_t end_pos);
   void resample(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
+  void resample_set_quality(int quality);
+  int resample_get_quality(void) const;
 
   /*@}*/
 
@@ -126,6 +128,7 @@ class SAMPLE_BUFFER {
  private:
 
   void resample_extfilter(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
+  void resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from_srate, SAMPLE_SPECS::sample_rate_t to_srate);
   void resample_simplefilter(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
   void resample_nofilter(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
   void resample_with_memory(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);

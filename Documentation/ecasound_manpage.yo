@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (07.01.2003)
+       (30.01.2003)
        ()
        (Multimedia software)
 
@@ -314,7 +314,9 @@ object's audio data to match the sampling rate used
 in the active chainsetup. For example, 
 bf(ecasound -f:16,2,44100 -i resample,22050,foo.wav -o /dev/dsp),
 will resample file from 22.05kHz to 44.1kHz and write the
-result to the soundcard device.
+result to the soundcard device. If ecasound was compiled
+with support for libsamplerate, you can use 'resample-hq' 
+to use the highest quality resampling algorithm available.
 
 dit(Reverse - process audio data backwards)
 Object type 'reverse' can be used to reverse audio 

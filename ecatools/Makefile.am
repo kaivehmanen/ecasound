@@ -78,3 +78,11 @@ ecaplay_debug_LDADD = $(ecaplay_LDADD)
 
 ecasignalview_debug_SOURCES = $(ecasignalview_SOURCES)
 ecasignalview_debug_LDADD = $(ecasignalview_LDADD)
+
+# --
+
+# special targets with dependency tracking
+ecainstall:
+	$(MAKE) -C $(srcdir)/../libecasound -q 2>/dev/null || make -C $(srcdir)/../libecasound
+	$(MAKE) -C $(srcdir)/../kvutils -q 2>/dev/null || make -C $(srcdir)/../kvutils
+	$(MAKE) install

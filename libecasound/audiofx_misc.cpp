@@ -173,6 +173,7 @@ void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample)
 		kvu_numtostr(lowlimit) + " bytes.");
 
   sbuf_repp->resample_init_memory(samples_per_second(), target_rate_rep);
+  sbuf_repp->resample_set_quality(50);
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audiofx) resampling from " +
 		                         kvu_numtostr(samples_per_second()) + 
 		                         " to " + 

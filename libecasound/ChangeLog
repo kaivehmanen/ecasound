@@ -1,3 +1,11 @@
+2003-01-30  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* samplebuffer.cpp (resample_get_quality): added
+
+	* samplebuffer.cpp (resample_set_quality): added
+
+	* library version to 10:0:1
+
 2003-01-07  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* library version 9:0:0 frozen

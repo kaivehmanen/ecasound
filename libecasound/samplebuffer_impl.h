@@ -16,6 +16,7 @@ class SAMPLE_BUFFER_impl {
   
   bool rt_lock_rep;
   int lockref_rep;
+  int quality_rep;
 
   SAMPLE_BUFFER::sample_t* old_buffer_repp; // for resampling
   std::vector<SAMPLE_BUFFER::sample_t> resample_memory_rep;

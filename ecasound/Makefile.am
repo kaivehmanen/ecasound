@@ -63,3 +63,11 @@ ecasound_debug_LDADD = $(top_builddir)/readline-4.0/libreadline.a \
 		$(top_builddir)/kvutils/libkvutils_debug.la
 ecasound_debug_LDFLAGS = $(ecasound_LDFLAGS)
 endif
+
+# --
+
+# special targets with dependency tracking
+ecainstall:
+	$(MAKE) -C $(srcdir)/../libecasound -q 2>/dev/null || make -C $(srcdir)/../libecasound
+	$(MAKE) -C $(srcdir)/../kvutils -q 2>/dev/null || make -C $(srcdir)/../kvutils
+	$(MAKE) install

@@ -17,6 +17,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <iostream>
 #include <vector>
 
@@ -27,6 +31,10 @@
 
 #include <kvu_dbc.h>
 #include <kvu_numtostr.h>
+
+#ifdef ECA_COMPILE_SAMPLERATE
+#include <samplerate.h>
+#endif
 
 #include "eca-sample-conversion.h"
 #include "samplebuffer.h"
@@ -65,6 +73,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels)
 
   impl_repp->rt_lock_rep = false;
   impl_repp->lockref_rep = 0;
+  impl_repp->quality_rep = 50;
   impl_repp->old_buffer_repp = 0;
  
   ECA_LOG_MSG(ECA_LOGGER::functions, 
@@ -346,7 +355,31 @@ void SAMPLE_BUFFER::limit_values(void)
 void SAMPLE_BUFFER::resample(SAMPLE_SPECS::sample_rate_t from_rate,
 			     SAMPLE_SPECS::sample_rate_t to_rate)
 {
+#ifdef ECA_COMPILE_SAMPLERATE
+  resample_secret_rabbit_code(from_rate, to_rate);
+#else
   resample_with_memory(from_rate, to_rate); 
+#endif
+}
+
+/**
+ * Set resampling quality. 
+ *
+ * @param quality value between 0 (lowest) to 100 (highest)
+ */
+void SAMPLE_BUFFER::resample_set_quality(int quality)
+{
+  impl_repp->quality_rep = quality;
+}
+
+/**
+ * Returns current resampling quality.
+ *
+ * @param value between 0 (lowest) to 100 (highest)
+ */
+int SAMPLE_BUFFER::resample_get_quality(void) const
+{
+  return(impl_repp->quality_rep);
 }
 
 void SAMPLE_BUFFER::export_helper(unsigned char* obuffer, 
@@ -878,7 +911,7 @@ void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
 {
   double step = 1.0;
   if (from_srate != 0) { step = static_cast<double>(to_srate) / from_srate; }
-  buf_size_t new_buffer_size = static_cast<buf_size_t>((step * buffersize_rep) + 0.5f);
+  buf_size_t new_buffer_size = static_cast<buf_size_t>((step * buffersize_rep) + 1.0f);
 
   if (new_buffer_size > reserved_samples_rep) {
     reserved_samples_rep = new_buffer_size;
@@ -1070,6 +1103,52 @@ void SAMPLE_BUFFER::resample_with_memory(SAMPLE_SPECS::sample_rate_t from,
     }
     impl_repp->resample_memory_rep[c] = impl_repp->old_buffer_repp[old_buffer_size - 1];
   }
+}
+
+void SAMPLE_BUFFER::resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from_srate,
+						SAMPLE_SPECS::sample_rate_t to_srate) 
+{
+#ifdef ECA_COMPILE_SAMPLERATE
+  SRC_DATA params;
+  double step = static_cast<double>(to_srate) / from_srate;
+  buf_size_t old_buffer_size = buffersize_rep;
+  buffersize_rep = static_cast<buf_size_t>((step * buffersize_rep) + 0.5f);
+
+  DBC_CHECK(impl_repp->old_buffer_repp != 0);
+  DEBUG_RESAMPLING_STATEMENT(std::cerr << "(samplebuffer) resample_s_r_c from " << from_srate << " to " << to_srate << "." << std::endl); 
+
+  if (impl_repp->resample_memory_rep.size() < static_cast<size_t>(channel_count_rep)) {
+    DBC_CHECK(impl_repp->rt_lock_rep != true);
+    impl_repp->resample_memory_rep.resize(channel_count_rep);
+  }
+
+  length_in_samples(buffersize_rep);
+
+  for(int c = 0; c < channel_count_rep; c++) {
+    std::memcpy(impl_repp->old_buffer_repp, buffer[c], old_buffer_size * sizeof(sample_t));
+
+    DBC_CHECK(buffersize_rep <= reserved_samples_rep);
+
+    // A pointer to the input data samples.
+    params.data_in = impl_repp->old_buffer_repp; 
+    // The number of frames of data pointed to by data_in.
+    params.input_frames = old_buffer_size;
+    // A pointer to the output data samples.
+    params.data_out = buffer[c];
+    // Maximum number of frames pointer to by data_out.
+    params.output_frames = reserved_samples_rep;
+    // Equal to output_sample_rate / input_sample_rate.
+    params.src_ratio = step;
+
+    // Perform the sample rate conversion
+    int ret = src_simple(&params, 
+			 (impl_repp->quality_rep > 75) ? SRC_SINC_BEST_QUALITY : SRC_SINC_MEDIUM_QUALITY, 1);
+
+    DBC_CHECK(ret == 0);
+    DBC_CHECK(params.output_frames_gen == buffersize_rep);
+    DBC_CHECK(params.input_frames_used == old_buffer_size);
+  }
+#endif
 }
 
 void SAMPLE_BUFFER::resample_extfilter(SAMPLE_SPECS::sample_rate_t from_srate,

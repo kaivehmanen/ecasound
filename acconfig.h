@@ -1,6 +1,6 @@
 /** 
  * acconfig.h for ecasound
- * last modified: 20021104-4
+ * last modified: 20030130-6
  */
 
 /* Package name */
@@ -11,6 +11,9 @@
 
 /* libecasound interface version */
 #undef LIBECASOUND_VERSION
+
+/* libecasound interface age */
+#undef LIBECASOUND_VERSION_AGE
 
 /* libecasoundc interface version */
 #undef LIBECASOUNDC_VERSION
@@ -41,6 +44,9 @@
 
 /* whether to compile JACK input/output */
 #undef ECA_COMPILE_JACK
+
+/* whether to compile libsamplerate input/output */
+#undef ECA_COMPILE_SAMPLERATE
 
 /* whether to compile OSS input/output */
 #undef ECA_COMPILE_OSS

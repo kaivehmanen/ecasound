@@ -51,6 +51,7 @@ Optional when running ecasound:
 - for Ogg Vorbis support, the vorbis-tools package (ogg123 and vorbize)
 - for .mid input support, Timidity++
 - for aRts support, the aRts server package
+- for higher quality resampling, libsamplerate
 
 To compile ecasound, you also need...:
 
@@ -69,6 +70,7 @@ Optional when compiling ecasound:
 - for JACK support, the JACK devel package
 - for .aiff/.au/.snd support libaudiofile devel package
 - for aRts support, the aRts C-API devel package
+- for higher quality resampling, libsamplerate devel package
 
 -----------------------------------------------------------------------
  Installing

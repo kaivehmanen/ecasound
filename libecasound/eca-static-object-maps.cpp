@@ -233,6 +233,7 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("null", "^null$", new NULLFILE());
   objmap->register_object("typeselect", "^typeselect$", new AUDIO_IO_TYPESELECT());
   objmap->register_object("resample", "^resample$", new AUDIO_IO_RESAMPLE());
+  objmap->register_object("resample-hq", "^resample-hq$", new AUDIO_IO_RESAMPLE());
   objmap->register_object("reverse", "^reverse$", new AUDIO_IO_REVERSE());
 }
 

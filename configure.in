@@ -32,21 +32,18 @@ dnl
 dnl defines: LIBECASOUND_VERSION, LIBECASOUNDC_VERSION, LIBKVUTILS_VERSION
 dnl ---
 
-dnl # when creating a new library interface version:
-dnl #   1. edit the below version numbers
-dnl #   2. replace instances of libpackageX with libpackageY 
-dnl #      in package/Makefile.am
-dnl #   3. "find . -type f |xargs gre libpackageX"
-
-LIBECASOUND_VERSION=9
+LIBECASOUND_VERSION=10
+LIBECASOUND_VERSION_AGE=1
 LIBECASOUNDC_VERSION=1
 LIBKVUTILS_VERSION=4
 
 AC_SUBST(LIBECASOUND_VERSION)
+AC_SUBST(LIBECASOUND_VERSION_AGE)
 AC_SUBST(LIBECASOUNDC_VERSION)
 AC_SUBST(LIBKVUTILS_VERSION)
 
 AC_DEFINE_UNQUOTED(LIBECASOUND_VERSION, ${LIBECASOUND_VERSION})
+AC_DEFINE_UNQUOTED(LIBECASOUND_VERSION_AGE, ${LIBECASOUND_VERSION_AGE})
 AC_DEFINE_UNQUOTED(LIBECASOUNDC_VERSION, ${LIBECASOUNDC_VERSION})
 AC_DEFINE_UNQUOTED(LIBKVUTILS_VERSION, ${LIBKVUTILS_VERSION})
 
@@ -342,6 +339,35 @@ fi
 
 AC_SUBST(ECA_S_JACK_LIBS)
 AC_SUBST(ECA_S_JACK_INCLUDES)
+
+dnl ------------------------------------------------------------------
+
+dnl --
+dnl Check for libsamplerate
+dnl
+dnl defines: ECA_AM_COMPILE_SAMPLERATE, ECA_S_SAMPLERATE_LIBS, ECA_S_SAMPLERATE_INCLUDES,
+dnl          ECA_COMPILE_SAMPLERATE
+dnl --
+AC_CHECK_HEADER(samplerate.h,samplerate_support=yes,samplerate_support=no)
+AC_ARG_WITH(libsamplerate,
+	    [  --with-libsamplerate=DIR	Compile against libsamplerate installed in DIR],
+	    [
+	        ECA_S_SAMPLERATE_LIBS="-L${withval}/lib"
+		ECA_S_SAMPLERATE_INCLUDES="-I${withval}/include"
+		samplerate_support=yes
+	    ])
+AC_ARG_ENABLE(libsamplerate,
+	      [  --disable-libsamplerate	  Disable libsamplerate support (default = no)],
+	      samplerate_support=no)
+AM_CONDITIONAL(ECA_AM_COMPILE_SAMPLERATE, test x$samplerate_support = xyes)
+
+if test x$samplerate_support = xyes; then
+    ECA_S_SAMPLERATE_LIBS="${ECA_S_SAMPLERATE_LIBS} -lsamplerate"
+    AC_DEFINE(ECA_COMPILE_SAMPLERATE)
+fi                                     
+
+AC_SUBST(ECA_S_SAMPLERATE_LIBS)
+AC_SUBST(ECA_S_SAMPLERATE_INCLUDES)
 
 dnl ------------------------------------------------------------------
 
@@ -819,6 +845,11 @@ if test x$jack_support = xyes ; then
 else
 	echo "JACK support		no"
 fi
+if test x$samplerate_support = xyes ; then
+	echo "Libsamplerate support	yes"
+else
+	echo "Libsamplerate support	no"
+fi
 if test x$enable_sysreadline = xyes ; then
 	echo "Use system readline	yes"
 else
@@ -834,7 +865,11 @@ if test x$compile_pyecasound = xyes ; then
 fi
 if test x$jack_support = xyes ; then
 	echo "JACK headers:		"$ECA_S_JACK_INCLUDES
-	echo "JACK libraries:		"$ECA_S_JACK_LIBS
+	echo "JACK libs:		"$ECA_S_JACK_LIBS
+fi
+if test x$samplerate_support = xyes ; then
+	echo "Libsamplerate headers:	"$ECA_S_SAMPLERATE_INCLUDES
+	echo "Libsamplerate libs:	"$ECA_S_SAMPLERATE_LIBS
 fi
 if test x$enable_sysreadline = xyes ; then
   	echo "readline includes:	"$ECA_S_READLINE_INCLUDES
