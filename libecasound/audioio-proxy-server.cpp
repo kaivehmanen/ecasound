@@ -388,7 +388,7 @@ void AUDIO_IO_PROXY_SERVER::register_client(AUDIO_IO* aobject) {
  * resources are freed during this call.
  */
 void AUDIO_IO_PROXY_SERVER::unregister_client(AUDIO_IO* aobject) { 
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) unregister_client " + aobject->label() + ".");
+  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) unregister_client " + aobject->name() + ".");
   if (client_map_rep.find(aobject) != client_map_rep.end()) {
     size_t index = client_map_rep[aobject];
     if (index >= 0 && index < clients_rep.size()) 

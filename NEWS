@@ -44,13 +44,17 @@ Last officially released version is -*> v2.0.3 *-
 	- changed: -B:rt selected as the default bmode for 
 		   multitrack-setups (instead of -B:lowlatency)
 	- changed: preset definitions in 'effect_presets' changed
-		   to take advantage of the new preset system
+		   to take advantage of the preset system improvements
 	- fixed: major bugs in interpreting LADSPA plugin 
 		 parameter hint flags
 	- fixed: a nasty bug in bufmode activation code prevented
 		 -kos, -kl, and others from working properly
 	- fixed: loop devices didn't work well with -z:db; fixes
 		 ecasound testsuite case con_test1-8
+	- fixed: memory leak in LADSPA handling code; was triggered
+	 	 by recent versions of ecamegapedal
+	- fixed: pyecasound - make target 'install-exec-hook' failed
+		 if --disable-pyecasound was given to configure
 14102001 (v2.1dev2)
 	- added: ecaplay - -k, -d and -h options, see 'man ecaplay'
 	- added: eiam - ai-get-length-samples, ao-get-length-samples,

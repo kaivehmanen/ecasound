@@ -47,21 +47,29 @@ all: libpyecasound.so
 
 libpyecasound.so: pyecasound.o
 	$(CXX) -o libpyecasound.so pyecasound.o -shared -nostartfiles  $(libpyecasound_la_LDFLAGS) $(ecasound_libs) $(kvutils_libs)
+endif
 
 # ----------------------------------------------------------------------
 # hooks
 # ----------------------------------------------------------------------
 
+if COMPILE_PYECASOUND
 CLEANFILES=libpyecasound.so
+endif
 
-install-exec-hook:
+install-exec-hook: libpyecasound.so
+if COMPILE_PYECASOUND
 	$(INSTALL) libpyecasound.so $(DESTDIR)$(eca_python_dlmodules)/libpyecasound.so
+endif
 
 install-data-hook:
+if COMPILE_PYECASOUND
 	$(INSTALL) -d $(DESTDIR)$(libdir)
 	cd $(srcdir) ; cp pyeca.py eci.py $(DESTDIR)$(libdir)
+endif
 
 uninstall-local:
+if COMPILE_PYECASOUND
 	rm -f   $(DESTDIR)$(libdir)/pyeca.py \
 		$(DESTDIR)$(libdir)/eci.py
 	rm -f 	$(DESTDIR)$(eca_python_dlmodules)/libpyecasound.so
