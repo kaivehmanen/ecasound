@@ -2,6 +2,17 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-04-09  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-chainsetup-position.h (set_position_exact): added
+	* eca-chainsetup-position.h (change_position_exact): renamed from change_position(double)
+	* eca-chainsetup.h (change_position, set_position): added
+	
+2001-04-08  Kai Vehmanen <kaiv@wakkanet.fi>
+
+	* eca-control-objects.h (change_chainsetup_position): added
+	* eca-control-objects.h (set_chainsetup_position): added
+	
 2001-03-20  Kai Vehmanen <kaiv@wakkanet.fi>
 
 	* eca-iamode-parser.h (registered_commands_list): added
