@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 120503) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 290503) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,6 +14,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ??0?2003 (v2.2.4)  -** stable release **-
+	- note: verified to compile ok with gcc-3.3
 	- changed: to avoid resampling faults, upper limit of 2000%
 		   set for pitchshifter's (-ei) shift-% arg; note! high
 		   values of shift-% can still cause crashes if using 
@@ -22,6 +23,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
                  enabled in 2.2.3
 	- fixed: .aiff/.snd/.au input/output was not working at all
   	 	 due to a typo in source code
+	- fixed: a chain with a short input file could cause a nasty
+ 		 feedback loop if processed with certain effects 
+		 and mixed with audio from other chains
 27042003 (v2.2.3)  -** stable release **-
 	- added: support for both -0.64 and 0.65- JACK versions; 
 		 transport functionality is only enabled with the 

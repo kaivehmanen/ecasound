@@ -1421,6 +1421,9 @@ void ECA_ENGINE::inputs_to_chains(void)
 	      inputs_not_finished_rep++;
 	    }
 	  }
+	  else {
+	    cslots_rep[c]->make_silent();
+	  }
 
 	  break;
 	}
