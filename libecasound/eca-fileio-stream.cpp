@@ -158,6 +158,9 @@ void ECA_FILE_IO_STREAM::set_file_position_end(void) {
     if (res != 0) {
       ecadebug->msg(ECA_DEBUG::info, "(eca-fileio-stream) fseek() error! (seek_end).");
     }
+    else {
+      curpos_rep = get_file_length();
+    }
   }
 }
 
