@@ -1,0 +1,44 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-18) Intelligent system for setting the internal sample rate.
+	- submitted: smassy, 17.10.2001
+
+------------------------------------------------------------------------
+Details:
+
+- work still to be done
+  - track down all places where sample rate values are used (at least
+    chainsetups, some of the effect objects, audio objects, 
+    controller objects, samplebuffer objs) 
+  - make all components able to react to changing sample rate
+
+------------------------------------------------------------------------
+- S.Massy, 17.10.2001:
+
+--cut--
+  - When all objects have the same sr, use it as internal sr also.
+  - When objects have different sr always set internal sr equal to the highest
+    sr connected in the cs.
+  example: 
+  if (-i:48000 && -o:48000) { sr = 48000 }
+  if (-i:44100 && -o:22050 && -o:48000) { sr = 48000 }
+ 
+  That would improve ecasound's ease of use for many as well as its
+  apparent sound quality to a new user; because right now as soon as the
+  internal sr and the objects' sr differ, sound quality drops
+  dramatically because of the way ecasound converts sr's (as we
+  discussed on the list a while ago.)
+  Also maybe something similar should be done for rt objects.  Because
+  if you have something like `-i:test.wav -o:alsa" though test.wav is at
+  a sample rate of 11025, alsa device is still open at 44100; ideally,
+  -f and -sr should only be used to override (or for headerless
+  formats).
+--cut--
+
+- kaiv, 24.01.2002
+  - should be placed to ECA_CHAINSETUP::enable() (after input
+    and output init)
+  - ECA_ENGINE takes caref of initializing chains, so it's 
+    not a problem
+  - issue a warning if -sr was not given and resampling results

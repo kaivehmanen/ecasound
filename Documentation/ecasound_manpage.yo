@@ -273,8 +273,8 @@ process apps. It is different from other audio server efforts in that
 it has been designed from the ground up to be suitable for low-latency
 professional audio work. Ecasound provides multiple ways to
 communicate with JACK servers. bf(-o jack_alsa,myport),
--bf(jack_multi,alsa_pcm:out,myport), 
--bf(jack_mono,alsa_pcm:out_X,myport) and -bf(-o jack_generic,myport)
+bf(-jack_multi,alsa_pcm:out,myport), 
+bf(-jack_mono,alsa_pcm:out_X,myport) and bf(-o jack_generic,myport)
 are all valid JACK output definitions. Similar syntax can be used
 to create JACK inputs.
 

@@ -1,0 +1,28 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-20) Ewf-v2 format.
+	- submitted: kaiv, 26.11.2001
+
+------------------------------------------------------------------------
+Details:
+
+------------------------------------------------------------------------
+- kaiv, 26.11.2001:
+
+I think it's time to redesign the ewf code (ewf-v2). The current
+format is not ideal to work with and to extend. Few ideas I've had
+in mind:
+
+- support for exact position information (ie. samples or seconds,
+  probably a toggle setting that lets ecasound know which format
+  to use when saving ewf-files)
+- support for multiple audio objects
+- well-defined behaviour when ewf-files is used as input and
+  output
+- ....
+
+Any others? Ideas on how to implement the above are welcome (for instance, 
+how the multiple files should be specified in ewf-v2 files, how to handle
+multiple ewf-versions, xml/ascii/bin, etc)? Hmm, I guess I'll make an EDI
+entry for this... "(edi-20) Ewf-v2 format.

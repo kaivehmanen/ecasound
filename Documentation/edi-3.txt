@@ -1,0 +1,40 @@
+------------------------------------------------------------------------
+Status: CLOSED
+
+(edi-3) Extra parameters for effect presets describing its parameters,
+        author, etc
+        - submitted: kaiv, 17.08.2001
+	- done: kaiv, 20.10.2001
+------------------------------------------------------------------------
+Details:
+
+------------------------------------------------------------------------
+- kaiv, 18.10.2001:
+
+--cut--
+I've been thinking about adding new preset-specific options. Something
+like:
+
+- pd* (preset description)
+    - descripton:       -pd:"A more verbose description of the preset."
+- pp* (preset parameter information)
+    - upper bounds:     -ppu:200,1.2,-,-
+    - lower bounds:     -ppl:100,-1.0,0,-
+    - default values:   -ppd:150,0,0,0
+    - type flags:       -ppt:-,log,int,toggle
+ 
+The above matches with hint-information provided by LADSPA plugins and
+ecasound's internal effects (libecasound/eca-operator.h). Let's try to
+compose a complete example
+ 
+two_filters = -efl:800 -ea:%lowgain | -efh:800 -ea:%highgain \
+              -pd:"Parallel highpass and lowpass filters." \
+              -ppu:-,- \
+              -ppl:0,0 \
+              -ppd:100,100 \
+              -ppt:-,-
+  
+This would set the default for %lowgain and %highgain to 100, and
+low-bound them to positive values. As no type flags are specified, the
+parameters are to be treated as normal floating-point values.
+--cut--

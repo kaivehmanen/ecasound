@@ -1,0 +1,269 @@
+------------------------------------------------------------------------
+Status: OPEN
+
+(edi-19) Separate file format for multitrack setups (.emt).
+	- submitted: kaiv, 18.10.2001
+
+------------------------------------------------------------------------
+Details:
+
+------------------------------------------------------------------------
+- kaiv, 18.10.2001
+
+--cut--
+What if ecasound could understand the following file format:
+
+file "my_next_big_hit.emt"
+--cut--
+[globals]
+input = /dev/dsp
+output = /dev/dsp
+options = -t:20
+[tracks]
+# name          mon/rec gain-%  pan-%   chain ops
+drums.wav       mon     100     50      -efl:4000
+303line.wav     mon     120     50      -etr:60,0,7
+lead.wav        rec     100     50      
+--cut--
+
+You'd write the above (or use a separate frontend app that can save to
+.emt), and then use it like:
+
+ecasound my_next_big_hit.emt -c
+[...]
+ecasound ('h' for help)> start
+
+... and so on. The benefits of .emt would be:
+
+- easier to use (hides ecasound's input, output and chain concepts);
+  anyone who knows how to use cakewalk, cooledit or an analog 
+  4-track should be able to understand how the above works (perhaps 
+  a gui is needed, but that doesn't change the concept)
+- faster changing between mix-to-dsp, mix-to-file and
+  record-new-track modes (only one .emt file instead of 
+  multiple ecs-files)
+
+Negative things:
+
+- conversion from .ecs to .emt might prove to be trickier 
+  (.emt cannot express all chainsetup configurations), 
+  which again means that changes made in iactive 
+  mode are not (necessarily) stored to .emt files
+
+Internally ecasound would convert the .emt files to chainsetup (.ecs)
+files before loading. So something like:
+
+--cut--
+# ecasound chainsetup file
+
+# general
+-sr:44100 -t:20 -z:noxruns -z:nopsr
+
+# audio inputs
+-a:mon1 -i:drums.wav
+-a:mon2 -i:303line.wav
+
+# audio outputs
+-a:mon1,mon2 -o:/dev/dsp
+
+# chain operators and controllers
+-a:mon1 -ea:100.00 -epp:50.00 -efl:4000.00
+-a:mon2 -ea:120.00 -epp:50.00 -etr:60.00,0.00,7.00
+-a:rec1 -ea:100.00 -epp:50.00
+--cut--
+ 
+--cut--
+
+------------------------------------------------------------------------
+- Luis Pablo Gasparotto, 18.10.2001
+
+--cut--
+What do you think about this?
+
+# name          mon/rec Start time      gain-%  pan-%   chain ops
+drums.wav       mon      00:00          100     50      -efl:4000
+303line.wav     mon      00:00          120     50      -etr:60,0,7
+lead.wav        rec      01:30          100     50
+ --cut--
+
+------------------------------------------------------------------------
+- S. Massy, 19.10.2001
+
+--cut--
+> What if ecasound could understand the following file format:
+Very interesting...
+> 
+> file "my_next_big_hit.emt"
+> --cut--
+> [globals]
+> input = /dev/dsp
+> output = /dev/dsp
+> options = -t:20
+> [tracks]
+> # name		mon/rec	gain-%	pan-%	chain ops
+> drums.wav	mon	100	50	-efl:4000
+> 303line.wav	mon	120	50	-etr:60,0,7
+> lead.wav 	rec	100	50	
+> --cut--
+- I like the way you divide it into either rec (read `input' and write to 
+  `name) and mon (read from `name' and write to `output')
+- Why use up fields for gain and pan while they can be expressed as cops?
+  To make it look like an analog multitrack recorder?
+- You'd need a field to specify the format for each file.
+- Cruel lack of identifiers. (see below)
+
+> 
+> You'd write the above (or use a separate frontend app that can save to
+> .emt), and then use it like:
+> 
+> ecasound my_next_big_hit.emt -c
+> [...]
+> ecasound ('h' for help)> start
+While I agree that it's nice for a new user to have a more simple format to 
+specify a cs, I only see it as I side benefit (if the user is into asci files 
+he might as well write an .ecs.) The real benefit in such format I deem would 
+be for front-ends.
+- Ability to store information into a file format already understood by 
+  ecasound.
+- Ability to store information in a way that is compatible between different 
+  front-ends.
+  (You can have a simple shell script to create a multitrack spec and then 
+  load it into a full-featured x-based c++ program.)
+You'll say that programs might as well write directly to .ecs and do the 
+vulgarization on its own; that may be true, but .emt would simplify the job 
+greatly.
+
+So here we come to my point which is the need for identifiers in an 
+hypothetical .emt file; wouldn't it be nice if you could always reuse the 
+template of an .emt file, only changing the filenames? Also, identifiers 
+help make it more concrete (names) and more coherent between different 
+front-ends (you load your .emt file in another app and the tracks are still 
+described the same way.)
+So here's my idea of an .emt format with a setup that is frequent to me (it
+uses braces though, be warned, I know some don't like braces.):
+
+my_next_big_hit.emt
+----------
+guitar_recording_stage {
+   # Always have comments allowed in a file format.
+   input = /dev/dsp
+   output = /dev/dsp
+   format = 16,2,44100
+   options = -t:500
+
+   rt_monitor {
+      type = mon
+      target = /dev/dsp
+      operators = -erc:1,2 -ea:120
+   }
+
+   bass_monitor {
+      type = mon
+      target = bass/take2.wav
+      format = 16,1,44100
+      operators = -pn:bassboost
+   }
+
+   drums_monitor {
+      type = mon
+      target = drums/drums.ewf
+   }
+
+   metronome {
+      type = mon
+      target = null
+      operators = -pn:metronome,120
+   }
+
+   guitar_rec {
+      type = rec
+      target = guitar/take1.raw
+      operators = -erc:1,2
+   }
+}      
+
+Of course, you seldom need a metronome when you already have other tracks 
+to monitor, I'm just trying to show what we need to have to be happy. :)
+
+One thing that I'd like to see would be the ability to set offsets directly 
+from the command-line (and from a file like .emt) because, to quote Janne in 
+an approximate way, "You need to take a breath between the moment you hit 
+start and the moment you start to play." Also, while a metronome isn't 
+altogether required while monitoring with other tracks, some sort of clicks 
+at the beginning would be quite welcome, but right now there aren't any 
+simple way to do it, is there? Apart from wrapping every file into an ewf?
+Wouldn't it be nice if we could do:
+----------
+my_project {
+   [...]
+   offset = 25 # 25 seconds to go from the keyboard to the guitar.
+   [...]
+   clicks {
+      type = mon
+      target = null
+      length = 4 # 8 clicks
+      operators = -pn:metronome,120
+   }
+
+   monitor {
+      [...]
+      offset = 4 # += general offset
+      [...]
+   }
+
+   recording {
+      [...]
+      offset = 4 # += general offset
+      [...]
+   }
+}
+----------
+
+> 
+> ... and so on. The benefits of .emt would be:
+> 
+> - easier to use (hides ecasound's input, output and chain concepts);
+>   anyone who knows how to use cakewalk, cooledit or an analog 
+>   4-track should be able to understand how the above works (perhaps 
+>   a gui is needed, but that doesn't change the concept)
+> - faster changing between mix-to-dsp, mix-to-file and
+>   record-new-track modes (only one .emt file instead of 
+>   multiple ecs-files)
+I'm not sure to understand what you mean here...
+> 
+> Negative things:
+> 
+> - conversion from .ecs to .emt might prove to be trickier 
+>   (.emt cannot express all chainsetup configurations), 
+>   which again means that changes made in iactive 
+>   mode are not (necessarily) stored to .emt files
+Ah, well, that's the price to pay for gained simplicity.
+> 
+> Internally ecasound would convert the .emt files to chainsetup (.ecs)
+> files before loading. So something like:
+BTW, with the format I described above, you could store multiple templates 
+in one .emt file, possibly describing each stage of a recording. Then, it 
+would be transformed into multiple cs by ecasound and you'd only have to 
+select the appropriate one.
+> 
+> --cut--
+> # ecasound chainsetup file
+> 
+> # general
+> -sr:44100 -t:20 -z:noxruns -z:nopsr
+> 
+> # audio inputs
+> -a:mon1 -i:drums.wav
+> -a:mon2 -i:303line.wav
+> 
+> # audio outputs
+> -a:mon1,mon2 -o:/dev/dsp
+> 
+> # chain operators and controllers
+> -a:mon1 -ea:100.00 -epp:50.00 -efl:4000.00
+> -a:mon2 -ea:120.00 -epp:50.00 -etr:60.00,0.00,7.00
+> -a:rec1 -ea:100.00 -epp:50.00
+> --cut-- 
+Here comes again the problem of identifiers that I spoke of earlier, in 
+this way, how would the front-end app know which chain is which?
+--cut--

@@ -1,0 +1,53 @@
+------------------------------------------------------------------------
+Status: CLOSED
+
+(edi-15) A more intelligent system for selecting buffering modes 
+        and sizes for optimal out-of-the-box performance.
+	- submitted: kaiv, 09.08.2001
+	- done: kaiv, 06.10.2001, ecasound 2.1.0
+------------------------------------------------------------------------
+Details:
+
+------------------------------------------------------------------------
+Inputs the engine should consider:
+
+- command-line options
+- ~/.ecasoundrc
+  - bmode-XXX-raisedpriority (-r)
+  - bmode-XXX-buffersize (-b:x)
+  - bmode-XXX-double-buffering (-z:db)
+  - bmode-XXX-double-buffer-size (-z:db,size)
+  - bmode-XXX-max-internal-buffering (-z:intbuf)
+- system user priviledges
+  - do we have root-permission for enabling rt-scheduling?
+- used chainsetup
+  - multitrack-recording setup (recording w/ monitoring)
+  - recording from one or more realtime sources
+  - playback to one or more realtime sources
+  - playback to one or more realtime sources with 
+    one or more chain operators 
+
+Outputs - ie. what is set:
+
+- buffersize; -b:x
+- use of per-object buffering (internal buffering); -z:intbuf / -z:nointbuf
+- enabling/disabling rt-scheduling mode; -r
+- enabling/disabling double-buffering; -z:db / -z:nodb
+
+Possible solution - operating modes:
+
+- rtreliable, rtlowlatency, normal/batch, auto
+- set with -B:mode_name
+- the mode determinates what default values are used
+- possible mode-rtreliable-buffersize, etc
+- rules for selecting a mode
+  1) if we have root-priviledges (access to SCHED_FIFO),
+     default rt-mode is rtlowlatency
+  2) if we have rt inputs or rt outputs, use
+     rt-mode (depending on (1), either rtlowlatency
+     or rtreliable)
+  3) otherwise use 'normal'
+- defaults could be:
+  - -B:rtlowlatency -->	-b:256  -z:nointbuf -r -z:db
+  - -B:rtreliable   -->	-b:1024 -z:intbuf -r -z:db
+  - -B:batch	    -->	-b:1024 -z:intbuf -z:nodb

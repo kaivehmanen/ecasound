@@ -1,0 +1,23 @@
+------------------------------------------------------------------------
+Status: OPEN/CLOSED
+
+(edi-xxx): Short description of the item. This should be no more 
+	   than a few lines. 
+	   - submitted: who submitted, date
+	   - action: what happened, who and when
+------------------------------------------------------------------------
+Details:
+
+- more detailed description
+- solution ideas 
+- todo-lists (work left to be done)
+- this section should be edited to match the current 
+  situation
+
+------------------------------------------------------------------------
+
+- rest of the sections are reserverd for quotes from ecasound-list, 
+  comments, etc
+- each section should contain information about who wrote the comment 
+  and when
+- sections not edited

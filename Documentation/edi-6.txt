@@ -1,0 +1,84 @@
+------------------------------------------------------------------------
+Status: CLOSED
+
+(edi-6) 100% transparent implementation of -z:db system.
+	- submitted: smassy, xx.06.2001
+	- first version: kaiv, 03.10.2001, 2.1 CVS-tree
+	- done: 06.10.2001, ecasound 2.1dev0
+
+------------------------------------------------------------------------
+Details:
+
+------------------------------------------------------------------------
+- test #1, 15.10.2001, 2.1dev2-CVS
+  --> root, -B:rtlowlatency, 
+  --> runtime 90s 
+  --> setup 9ch-16bit + 10ch-32bit (mixing-test.ecs)
+
+  (eca-engine) *** profile begin ***
+  Loops faster than realtime: 7785 (<5.8 msec)
+  Loops slower than realtime: 8303 (>=5.8 msec)
+  Loops slower than realtime: 1 (>11.6 msec)
+  Loops exceeding all buffering: 0 (>17.4 msec)
+  Total loops: 16088
+  Fastest/slowest/average loop time: 0.4/11.7/5.8 msec.
+  (eca-engine) *** profile end   ***
+  (audioio-proxy-server) *** profile begin ***
+  Profile_full_rep: 1
+  Profile_no_processing_rep: 148
+  Profile_not_full_anymore_rep: 15551
+  Profile_processing_rep: 913
+  Profile_read_xrun_danger_rep: 42296
+  Profile_write_xrun_danger_rep: 0
+  Profile_rounds_total_rep: 16613
+  Fastest/slowest/average loop time: 0.0/421.5/3.7 msec.
+  (audioio-proxy-server) *** profile end   ***
+- test #2, 15.10.2001
+  --> like #1, but run as non-root  (mixing-test.ecs)
+
+  (eca-engine) *** profile begin ***
+  Loops faster than realtime: 7506 (<5.8 msec)
+  Loops slower than realtime: 7996 (>=5.8 msec)
+  Loops slower than realtime: 29 (>11.6 msec)
+  Loops exceeding all buffering: 2 (>17.4 msec)
+  Total loops: 15504
+  Fastest/slowest/average loop time: 0.4/19.0/5.8 msec.
+  (eca-engine) *** profile end   ***
+  (audioio-proxy-server) *** profile begin ***
+  Profile_full_rep: 2
+  Profile_no_processing_rep: 142
+  Profile_not_full_anymore_rep: 15002
+  Profile_processing_rep: 891
+  Profile_read_xrun_danger_rep: 41117
+  Profile_write_xrun_danger_rep: 0
+  Profile_rounds_total_rep: 16037
+  Fastest/slowest/average loop time: 0.0/446.2/3.7 msec.
+  (audioio-proxy-server) *** profile end   ***
+- test #2, 15.10.2001
+  --> root, -B:auto, -z:db running with sched_fifo, ecasound_debug v2.1dev2-CVS
+  --> runtime 200s (mixing-test.ecs)
+  --> setup 3x 1ch 16bit-wavs
+            3x 2ch 16bit-wavs
+	    1x 10ch 32bit-wav,
+	    4x 2ch mp3
+	    1x 2ch ogg
+	    total -> 29ch
+
+  (eca-engine) *** profile begin ***
+  Loops faster than realtime: 4427 (<23.2 msec)
+  Loops slower than realtime: 4076 (>=23.2 msec)
+  Loops slower than realtime: 595 (>46.4 msec)
+  Loops exceeding all buffering: 0 (>185.8 msec)
+  Total loops: 8503
+  Fastest/slowest/average loop time: 6.9/53.1/23.2 msec.
+  (eca-engine) *** profile end   ***
+  (audioio-proxy-server) *** profile begin ***
+  Profile_full_rep: 1
+  Profile_no_processing_rep: 275
+  Profile_not_full_anymore_rep: 5833
+  Profile_processing_rep: 2765
+  Profile_read_xrun_danger_rep: 1504
+  Profile_write_xrun_danger_rep: 0
+  Profile_rounds_total_rep: 8874
+  Fastest/slowest/average loop time: 0.0/323.7/15.1 msec.
+  (audioio-proxy-server) *** profile end   ***
