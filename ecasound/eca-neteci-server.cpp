@@ -102,7 +102,9 @@ void ECA_NETECI_SERVER::run(void)
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		"(eca-neteci-server) Unable to start NetECI server. Please check that no other program is using the 2868 TCP port used by NetECI.");
+		"(eca-neteci-server) Unable to start NetECI server. Please check that no other program is using the TCP port "
+		+ kvu_numtostr(state_repp->daemon_port)
+		+ ".");
   }
   close_server_socket();
 
@@ -134,7 +136,7 @@ void ECA_NETECI_SERVER::create_server_socket(void)
     srvfd_rep = socket(PF_INET, SOCK_STREAM, 0);
     if (srvfd_rep >= 0) {
       addr_in_rep.sin_family = AF_INET;
-      addr_in_rep.sin_port = htons(2868);
+      addr_in_rep.sin_port = htons(state_repp->daemon_port);
       addr_in_rep.sin_addr.s_addr = INADDR_ANY;
       
       addr_repp = reinterpret_cast<struct sockaddr*>(&addr_in_rep);
@@ -352,7 +354,14 @@ void ECA_NETECI_SERVER::handle_client_messages(struct ecasound_neteci_server_cli
   if (c > 0) {
     parse_raw_incoming_data(reinterpret_cast<char*>(buf), c, client);
     while(parsed_cmd_queue_rep.size() > 0) {
-      handle_eci_command(parsed_cmd_queue_rep.front(), client);
+      const string& nextcmd = parsed_cmd_queue_rep.front();
+      if (nextcmd == "quit" || nextcmd == "q") {
+	NETECI_DEBUG(cerr << "(eca-neteci-server) client initiated quit, removing client-fd " << connfd << "." << endl);
+	remove_client(client);
+      }
+      else {
+	handle_eci_command(nextcmd, client);
+      }
       parsed_cmd_queue_rep.pop_front();
     }
     /* ... */
@@ -379,7 +388,7 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
 	       << client->buffer_length << endl);
   
   for(int n = 0; n < bytes; n++) {
-    DBC_CHECK(client->buffer_current_ptr < client->buffer_length + 1);
+    DBC_CHECK(client->buffer_current_ptr <= client->buffer_length);
     if (client->buffer_current_ptr == client->buffer_length) {
       cerr << "(eca-neteci-server) client buffer overflow, flushing." << endl;
       client->buffer_current_ptr = 0;
@@ -391,8 +400,8 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
 	  client->buffer[client->buffer_current_ptr] == '\n' &&
 	  client->buffer[client->buffer_current_ptr - 1] == '\r') {
 
-	string cmd (client->buffer, client->buffer_current_ptr);
-	NETECI_DEBUG(cerr << "(eca-neteci-server) storing command " << cmd << endl);
+	string cmd (client->buffer, client->buffer_current_ptr - 1);
+	NETECI_DEBUG(cerr << "(eca-neteci-server) storing command '" <<	cmd << "'" << endl);
 	parsed_cmd_queue_rep.push_back(cmd);
 
 	NETECI_DEBUG(cerr << "(eca-neteci-server) copying " 

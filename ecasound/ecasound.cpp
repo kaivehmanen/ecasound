@@ -23,11 +23,13 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include <unistd.h>    /* POSIX: sleep() */
 
 #include <kvu_dbc.h>
 #include <kvu_com_line.h>
+#include <kvu_utils.h>
 
 #include <eca-control.h>
 #include <eca-error.h>
@@ -68,9 +70,11 @@ static struct ecasound_state ecasound_state_global =
     0,        /* ECA_LOGGER_INTERFACE */
     0,        /* ECA_NETECI_SERVER */
     0,        /* ECA_SESSION */
-    0,        /* pthread_t */
-    0,        /* sig_wait_t */
-    0,        /* return value */
+    0,        /* pthread_t - daemon_thread */
+    0,        /* pthread_mutex_t - lock */
+    0,        /* sig_wait_t - exit_request */
+    0,        /* int - return value */
+    2868,     /* int - default daemon mode TCP-port */
     false,    /* daemon mode */
     false,    /* cerr-output-only mode */
     false,    /* interactive mode */
@@ -330,6 +334,19 @@ void ecasound_parse_command_line(struct ecasound_state* state,
       else if (cline.current() == "--daemon") {
 	state->daemon_mode = true;
 	state->interactive_mode = true;
+      }
+
+      else if (cline.current().find("--daemon-port") != string::npos) {
+	std::vector<std::string> argpair = 
+	  kvu_string_to_vector(cline.current(), '=');
+	if (argpair.size() > 1) {
+	  /* --daemon-port=XXXX */
+	  state->daemon_port = atoi(argpair[1].c_str());
+	}
+      }
+
+      else if (cline.current() == "--nodaemon") {
+	state->daemon_mode = false;
       }
 
       else if (cline.current() == "-h" ||

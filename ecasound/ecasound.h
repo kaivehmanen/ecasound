@@ -15,6 +15,9 @@ class ECA_SESSION;
  * Type definitions
  */
 
+/* Note! Check the initialization in ecasound.cpp if
+ *       you change the state struct! */
+
 struct ecasound_state {
   ECA_CONSOLE* console;
   ECA_CONTROL* control;
@@ -25,6 +28,7 @@ struct ecasound_state {
   pthread_mutex_t* lock;
   sig_atomic_t exit_request;
   int retval;
+  int daemon_port;
   bool daemon_mode;
   bool cerr_output_only_mode;
   bool interactive_mode;
