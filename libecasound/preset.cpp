@@ -450,7 +450,6 @@ void PRESET::set_parameter(int param, CHAIN_OPERATOR::parameter_type value) {
 
 CHAIN_OPERATOR::parameter_type PRESET::get_parameter(int param) const { 
   if (param > 0 && param <= static_cast<int>(impl_repp->slave_param_objects_rep.size())) {
-    DBC_CHECK(impl_repp->slave_param_objects_rep.size() == impl_repp->preset_param_values_rep.size());
     DBC_CHECK(impl_repp->slave_param_indices_rep.size() > param - 1);
     DBC_CHECK(impl_repp->slave_param_indices_rep[param - 1].size() > 0);
 
