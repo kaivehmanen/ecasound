@@ -17,7 +17,7 @@ alsa_libs = -lasound
 endif
 
 if COMPILE_AF
-af_libs = -laudiofile -lvorbis
+af_libs = -laudiofile
 endif
 
 if KVUTILS_INSTALLED
@@ -27,7 +27,7 @@ kvutils_libs = -L$(top_srcdir)/kvutils/.libs -lkvutils
 endif
 
 INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils $(arts_cflags)
-libdir = ${exec_prefix}/lib/ecasound-plugins
+libdir = ${exec_prefix}/lib/ecasound/plugins
 
 # ----------------------------------------------------------------------
 # header files

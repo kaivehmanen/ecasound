@@ -141,6 +141,9 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   pcm_info_rep.stream = pcm_stream_rep;
   ::snd_pcm_info(audio_fd_repp, &pcm_info_rep);
 
+  ::memset(&pcm_params_info_rep, 0, sizeof(pcm_params_info_rep));
+  ::snd_pcm_params_info(audio_fd_repp, &pcm_params_info_rep);
+
   // -------------------------------------------------------------------
   // Select audio format
 
@@ -173,18 +176,18 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
     }
 
   unsigned int format_mask = (1 << format);
-  if ((pcm_info_rep.formats & format_mask) != format_mask)
+  if ((pcm_params_info_rep.formats & format_mask) != format_mask)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Selected sample format not supported by the device!", ECA_ERROR::stop));
   pf.format = format;
 
-  if (samples_per_second() < pcm_info_rep.min_rate ||
-      samples_per_second() > pcm_info_rep.max_rate)
+  if (samples_per_second() < pcm_params_info_rep.min_rate ||
+      samples_per_second() > pcm_params_info_rep.max_rate)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Sample rate " +
 			kvu_numtostr(samples_per_second()) + " is out of range!", ECA_ERROR::stop));
   pf.rate = samples_per_second();
 
-  if (channels() < pcm_info_rep.min_channels ||
-      channels() > pcm_info_rep.max_channels)
+  if (channels() < pcm_params_info_rep.min_channels ||
+      channels() > pcm_params_info_rep.max_channels)
     throw(new ECA_ERROR("AUDIOIO-ALSA3", "Channel count " +
 			kvu_numtostr(channels()) + " is out of range!", ECA_ERROR::stop));
   pf.channels = channels();
@@ -204,12 +207,18 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Set fragment size.
 
-  if (buffersize() * frame_size() < pcm_info_rep.min_fragment_size ||
-      buffersize() * frame_size() > pcm_info_rep.max_fragment_size) 
-    throw(new ECA_ERROR("AUDIOIO-ALSA3", "buffersize " +
-			kvu_numtostr(buffersize()) + " is out of range!", ECA_ERROR::stop));
+  // FIXME: for some reason, min/max_fragment_size doesn't work with
+  // current ALSA 0.6.x CVS snapshot
+  // <--
+  //   cerr << "Min-frag-s: " << pcm_params_info_rep.min_fragment_size
+  //        << ", max-frag-s:"  << pcm_params_info_rep.min_fragment_size << endl;
+  //  if (buffersize() < pcm_params_info_rep.min_fragment_size ||
+  //      buffersize() > pcm_params_info_rep.max_fragment_size) 
+  //    throw(new ECA_ERROR("AUDIOIO-ALSA3", "buffersize " +
+  //			kvu_numtostr(buffersize()) + " is out of range!", ECA_ERROR::stop));
+  // <--
   
-  params.buffer_size = pcm_info_rep.buffer_size;
+  params.buffer_size = pcm_params_info_rep.buffer_size;
   params.frag_size = buffersize();
   params.frames_xrun_max = ~0U;
   params.frames_min = params.frag_size;
@@ -302,7 +311,7 @@ void ALSA_PCM_DEVICE::start(void) {
 long int ALSA_PCM_DEVICE::read_samples(void* target_buffer, 
 					long int samples) {
   assert(samples <= fragment_size_rep);
-  return(::snd_pcm_read(audio_fd_repp, target_buffer, fragment_size_rep) / frame_size());
+  return(::snd_pcm_read(audio_fd_repp, target_buffer, fragment_size_rep));
 }
 
 void ALSA_PCM_DEVICE::print_status_debug(void) {
@@ -320,11 +329,11 @@ void ALSA_PCM_DEVICE::print_status_debug(void) {
 
 void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
   if (samples == fragment_size_rep) {
-    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep * frame_size());
+    ::snd_pcm_write(audio_fd_repp, target_buffer, fragment_size_rep);
   }
   else {
-    if (samples * frame_size() < pcm_info_rep.min_fragment_size ||
-	samples * frame_size() > pcm_info_rep.max_fragment_size) {
+    if (samples * frame_size() < pcm_params_info_rep.min_fragment_size ||
+	samples * frame_size() > pcm_params_info_rep.max_fragment_size) {
       if (is_triggered_rep) stop();
       return; 
     }

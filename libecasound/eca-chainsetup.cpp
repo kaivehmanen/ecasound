@@ -388,10 +388,10 @@ void ECA_CHAINSETUP::interpret_effect_preset (const string& argu) {
   // --------
 
   if (argu.size() < 2) return;
-
   switch(argu[1]) {
   case 'p':
     {
+      ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Interpreting preset \"" + argu + "\".");
       if (argu.size() < 3) return;  
       switch(argu[2]) {
       case 'f':
