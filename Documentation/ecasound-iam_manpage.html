@@ -54,7 +54,7 @@ string explaining the condition is returned.
 It's not possible to use all EIAM commands to modify and control 
 objects that belong to a connected chainsetup. Commands that
 do support this are: 'start', 'stop', 'setpos', 'rewind', 'forward',
-'c-select', 'c-mute', 'c-bypass', 'cop-select', 'copp-select' 
+'c-select', 'c-muting', 'c-bypass', 'cop-select', 'copp-select' 
 and 'copp-value'.
 <p>Another set of commands are those which can be used with connected
 chainsetups, but not without an audible break. These are: 'cop-add', 
@@ -226,6 +226,8 @@ be selected. <em>[-]</em>
 <p><p></p><dt><strong>c-muting</strong><dd>
 Toggle chain muting. When chain is muted, all data that goes through
 is muted. <em>[-]</em>
+<p><p></p><dt><strong>c-mute</strong><dd>
+Toggle chain muting. Note! Deprecated, use <em>c-muting</em> instead. <em>[-]</em>
 <p><p></p><dt><strong>c-bypass</strong><dd>
 Toggle chain bypassing. When chain is bypassed, sample data is passed 
 through untouched. <em>[-]</em>

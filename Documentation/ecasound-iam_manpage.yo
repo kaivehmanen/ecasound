@@ -43,7 +43,7 @@ manpagesection(Realtime commands)
 It's not possible to use all EIAM commands to modify and control 
 objects that belong to a connected chainsetup. Commands that
 do support this are: 'start', 'stop', 'setpos', 'rewind', 'forward',
-'c-select', 'c-mute', 'c-bypass', 'cop-select', 'copp-select' 
+'c-select', 'c-muting', 'c-bypass', 'cop-select', 'copp-select' 
 and 'copp-value'.
 
 Another set of commands are those which can be used with connected
@@ -268,6 +268,9 @@ be selected. em([-])
 dit(c-muting)
 Toggle chain muting. When chain is muted, all data that goes through
 is muted. em([-])
+
+dit(c-mute)
+Toggle chain muting. Note! Deprecated, use em(c-muting) instead. em([-])
 
 dit(c-bypass)
 Toggle chain bypassing. When chain is bypassed, sample data is passed 
