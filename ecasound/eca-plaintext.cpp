@@ -3,6 +3,9 @@
 //                    interface.
 // Copyright (C) 2002-2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 2
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -25,6 +28,7 @@
 
 #include <eca-version.h>
 
+#include "ecasound.h"
 #include "eca-plaintext.h"
 
 using namespace std;
@@ -45,13 +49,13 @@ void ECA_PLAIN_TEXT::print(const std::string& msg)
 
 void ECA_PLAIN_TEXT::print_banner(void)
 {
-  *ostream_repp << "****************************************************************************\n";
+  *ostream_repp << ECASOUND_BANNER_ASTERISK_BAR;
   *ostream_repp << "*";
-  *ostream_repp << "               ecasound v" 
+  *ostream_repp << "                 ecasound v" 
        << ecasound_library_version
-       << " (C) 1997-2004 Kai Vehmanen                 ";
+       << ECASOUND_COPYRIGHT;
   *ostream_repp << "\n";
-  *ostream_repp << "****************************************************************************\n";
+  *ostream_repp << ECASOUND_BANNER_ASTERISK_BAR;
 }
 
 void ECA_PLAIN_TEXT::read_command(const string& prompt)
@@ -73,5 +77,5 @@ void ECA_PLAIN_TEXT::read_command(const string& prompt)
 
 const string& ECA_PLAIN_TEXT::last_command(void) const
 {
-  return(last_cmd_rep);
+  return last_cmd_rep;
 }

@@ -2,6 +2,9 @@
 // eca-curses.cpp: Curses implementation of the console user interface.
 // Copyright (C) 1999-2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 2
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -46,6 +49,7 @@
 #include <eca-version.h>
 #include <kvu_utils.h> /* kvu_string_search_and_replace() */
 
+#include "ecasound.h"
 #include "eca-curses.h"
 
 #if defined(RL_READLINE_VERSION) && RL_READLINE_VERSION >= 0x0402
@@ -77,15 +81,15 @@ void ECA_CURSES::print(const std::string& msg)
 
 void ECA_CURSES::print_banner(void)
 {
-  std::cout << "****************************************************************************\n";
+  std::cout << ECASOUND_BANNER_ASTERISK_BAR;
   std::cout << "*";
   putp(tigetstr("bold"));
-  std::cout << "               ecasound v" 
+  std::cout << "                 ecasound v" 
        << ecasound_library_version
-       << " (C) 1997-2004 Kai Vehmanen                 ";
+       << ECASOUND_COPYRIGHT;
   putp(tigetstr("sgr0"));
   std::cout << "\n";
-  std::cout << "****************************************************************************\n";
+  std::cout << ECASOUND_BANNER_ASTERISK_BAR;
 }
 
 void ECA_CURSES::read_command(const std::string& prompt)
@@ -105,7 +109,7 @@ void ECA_CURSES::read_command(const std::string& prompt)
 
 const std::string& ECA_CURSES::last_command(void) const
 {
-  return(last_cmd_rep);
+  return last_cmd_rep;
 }
 
 void ECA_CURSES::init_readline_support(void)
@@ -155,7 +159,7 @@ char** ecasound_completion (char *text, int start, int end)
     matches = completion_matches (text, (CPFunction *)ecasound_command_generator);
 #endif
   }
-  return (matches);
+  return matches;
 }
 
 /**
@@ -192,11 +196,11 @@ char* ecasound_command_generator (char* text, int state)
       if (p != map_ref.end()) {
 	std::string hyphenstr = kvu_string_search_and_replace(text, '_', '-');
 	if (strncmp(hyphenstr.c_str(), cmd.c_str(), len) == 0) {
-	  return(strdup(cmd.c_str()));
+	  return strdup(cmd.c_str());
 	}
       }
   }
-  return ((char *)0);
+  return (char *)0;
 }
 
 #else
@@ -208,7 +212,7 @@ ECA_CURSES::~ECA_CURSES(void) {}
 void ECA_CURSES::print(const std::string& msg) {}
 void ECA_CURSES::print_banner(void) {}
 void ECA_CURSES::read_command(const std::string& prompt) {}
-const std::string& ECA_CURSES::last_command(void) const { static std::string empty; return(empty); }
+const std::string& ECA_CURSES::last_command(void) const { static std::string empty; return empty; }
 void ECA_CURSES::init_readline_support(void) {}
 
 #endif /* defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP */

@@ -12,6 +12,13 @@ class ECA_NETECI_SERVER;
 class ECA_SESSION;
 
 /**
+ * String constants
+ */
+
+#define ECASOUND_BANNER_ASTERISK_BAR "********************************************************************************\n"
+#define ECASOUND_COPYRIGHT           " (C) 1997-2004 Kai Vehmanen               "
+
+/**
  * Type definitions
  */
 

@@ -132,6 +132,7 @@ int main(int argc, char *argv[])
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::eiam_return_values, true);
+    ECA_LOGGER::instance().set_log_level(ECA_LOGGER::module_names, true);
     
     /* 6. create eca objects */
     ecasound_create_eca_objects(state, *clineout);
@@ -295,7 +296,10 @@ void ecasound_main_loop(struct ecasound_state* state)
       DBC_CHECK(res == 0);
     }
 
-    ctrl->connect_chainsetup();
+    if (ctrl->is_valid() == true) {
+      ctrl->connect_chainsetup();
+    }
+
     if (ctrl->is_connected() == true) {
       ctrl->run();
     }
