@@ -1,7 +1,8 @@
-#ifndef INCLUDED_AUDIOIO_ALSA_H
-#define INCLUDED_AUDIOIO_ALSA_H
+#ifndef INCLUDED_AUDIO_IO_ALSA_PCM_H
+#define INCLUDED_AUDIO_IO_ALSA_PCM_H
 
 #include <string>
+#include <iostream>
 
 #include <sys/time.h>
 #include <sys/types.h>
@@ -12,42 +13,69 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef ALSALIB_032
-#include <sys/asoundlib.h>
-#endif
 
 #include "sample-specs.h"
 #include "samplebuffer.h"
+#include "audioio-device.h"
 
-/**
- * Class for handling ALSA-devices (Advanced Linux Sound Architecture).
- * @author Kai Vehmanen
- */
-class ALSA_PCM_DEVICE_032 : public AUDIO_IO_DEVICE {
-
- private:
-
-#ifdef ALSALIB_032
-  snd_pcm_t *audio_fd_repp;
+#ifdef ALSALIB_060
+#include <alsa/asoundlib.h>
 #endif
 
-  int card_number_rep, device_number_rep;
-  int pcm_mode_rep, pcm_channel_rep;
+using namespace std;
+
+/**
+ * Class for handling ALSA pcm-devices (Advanced Linux Sound Architecture).
+ */
+class AUDIO_IO_ALSA_PCM : public AUDIO_IO_DEVICE {
+
+#ifdef ALSALIB_060
+  snd_pcm_t *audio_fd_repp;
+  snd_pcm_stream_t pcm_stream_rep;
+  snd_pcm_format_t format_rep;
+  snd_pcm_hw_params_t* pcm_hw_params_repp;
+  snd_pcm_sw_params_t* pcm_sw_params_repp;
+#endif
+
+  SAMPLE_SPECS::sample_pos_t position_in_samples_rep;
+ 
+  int card_number_rep, device_number_rep, subdevice_number_rep;
+  int pcm_mode_rep;
 
   long int bytes_read_rep;
-
   long underruns_rep, overruns_rep;
+  unsigned char **nbufs_repp;
 
-  bool is_triggered_rep;
-  bool is_prepared_rep;
-  
+  string pcm_device_name_rep;
+  static const string default_pcm_device_rep;
+
+  bool using_plugin_rep;
+  bool trigger_request_rep;
+
+  void open_device(void);
+
+  void allocate_structs(void);
+  void deallocate_structs(void);
+
+  void set_audio_format_params(void);
+  void fill_and_set_hw_params(void);
+  void fill_and_set_sw_params(void);
+  void print_pcm_info(void);
+  void handle_xrun_capture(void);
+  void handle_xrun_playback(void);
+
+ protected:
+
+  void set_pcm_device_name(const string& n);
+  const string& pcm_device_name(void) const { return(pcm_device_name_rep); }
+
  public:
 
   virtual string name(void) const { return("ALSA PCM device"); }
-  virtual string description(void) const { return("ALSA PCM devices. Library versions 0.4.x and older."); }
+  virtual string description(void) const { return("ALSA PCM devices. Library versions 0.6.x and newer."); }
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
-  virtual string parameter_names(void) const { return("label,card,device"); }
+  virtual string parameter_names(void) const { return("label,card,device,subdevice"); }
 
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
   virtual void close(void);
@@ -57,28 +85,29 @@ class ALSA_PCM_DEVICE_032 : public AUDIO_IO_DEVICE {
 
   virtual void stop(void);
   virtual void start(void);
+  virtual void prepare(void);
 
   virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const;
 
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;
 
-  ALSA_PCM_DEVICE_032 (int card = 0, int device = 0);
-  ~ALSA_PCM_DEVICE_032(void);
-  ALSA_PCM_DEVICE_032* clone(void) const { cerr << "Not implemented!" << endl; return 0; }
-  ALSA_PCM_DEVICE_032* new_expr(void) const { return new ALSA_PCM_DEVICE_032(); }
+  AUDIO_IO_ALSA_PCM (int card = 0, int device = 0, int subdevice = -1);
+  virtual ~AUDIO_IO_ALSA_PCM(void);
+  AUDIO_IO_ALSA_PCM* clone(void) const { cerr << "Not implemented!" << endl; return 0; }
+  AUDIO_IO_ALSA_PCM* new_expr(void) const { return new AUDIO_IO_ALSA_PCM(); }
   
  private:
-  
-  ALSA_PCM_DEVICE_032 (const ALSA_PCM_DEVICE_032& x) { }
-  ALSA_PCM_DEVICE_032& operator=(const ALSA_PCM_DEVICE_032& x) { return *this; }
+
+  AUDIO_IO_ALSA_PCM (const AUDIO_IO_ALSA_PCM& x) { }
+  AUDIO_IO_ALSA_PCM& operator=(const AUDIO_IO_ALSA_PCM& x) { return *this; }
 };
 
 extern "C" {
-AUDIO_IO* audio_io_descriptor(void) { return(new ALSA_PCM_DEVICE_032()); }
+AUDIO_IO* audio_io_descriptor(void);
 int audio_io_interface_version(void);
 const char* audio_io_keyword(void);
 const char* audio_io_keyword_regex(void);
 };
 
-#endif
+#endif /* INCLUDED_AUDIO_IO_ALSA_PCM_H */

@@ -139,6 +139,11 @@ void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop) {
   DBC_REQUIRE(chainop != 0);
   // --------
 
+  ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(chainop);
+  if (srateobj != 0) {
+    srateobj->set_samples_per_second(samples_per_second());
+  }
+
   chainops_rep.push_back(chainop);
   selected_chainop_repp = chainop;
   selected_chainop_number_rep = chainops_rep.size();
@@ -304,6 +309,11 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller) {
   DBC_REQUIRE(gcontroller != 0);
   DBC_REQUIRE(selected_dynobj_repp != 0);
   // --------
+
+  ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(gcontroller);
+  if (srateobj != 0) {
+    srateobj->set_samples_per_second(samples_per_second());
+  }
   gcontroller->assign_target(selected_dynobj_repp);
   gcontrollers_rep.push_back(gcontroller);
   ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chain) " + gcontroller->status());
@@ -493,6 +503,8 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
   DBC_REQUIRE(sbuf != 0 || audioslot_repp != 0);
   // --------
 
+  DBC_CHECK(samples_per_second() > 0);
+
   if (sbuf != 0) audioslot_repp = sbuf;
   if (in_channels != 0) in_channels_rep = in_channels;
   if (out_channels != 0) out_channels_rep = out_channels;
@@ -658,4 +670,24 @@ string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const {
   } 
 
   return(t.to_string());
+}
+
+void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
+{
+  for(size_t p = 0; p != chainops_rep.size(); p++) {
+    CHAIN_OPERATOR* temp = chainops_rep[p];
+    ECA_SAMPLERATE_AWARE* srateobj = dynamic_cast<ECA_SAMPLERATE_AWARE*>(temp);
+    if (srateobj != 0) {
+      ecadebug->msg(ECA_DEBUG::user_objects,
+		    "(eca-chain) sample rate change, chain " +
+		    name() +
+		    " object " + 
+		    temp->name() + 
+		    " rate " + 
+		    kvu_numtostr(v) + ".");
+      srateobj->set_samples_per_second(v);
+    }
+  }
+    
+  ECA_SAMPLERATE_AWARE::set_samples_per_second(v);
 }

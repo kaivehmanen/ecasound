@@ -41,20 +41,17 @@ typedef long int off_t;
 #include "audioio-cdr.h"
 #include "eca-debug.h"
 
-CDRFILE::CDRFILE(const std::string& name) {
-  label(name);
+CDRFILE::CDRFILE(const std::string& name)
+{
+  set_label(name);
 }
 
-CDRFILE::~CDRFILE(void) {
-  if (is_open() == true)
-    close();
+CDRFILE::~CDRFILE(void)
+{
 }
 
-void CDRFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) { 
-  // --------
-  DBC_REQUIRE(!is_open());
-  // --------
-
+void CDRFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
+{
   set_channels(2);
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_be);
   set_samples_per_second(44100);
@@ -87,8 +84,8 @@ void CDRFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
       break;
     }
   }
-  toggle_open_state(true);
-  seek_position();
+
+  AUDIO_IO::open();
 }
 
 void CDRFILE::close(void) { 
@@ -96,7 +93,8 @@ void CDRFILE::close(void) {
     pad_to_sectorsize();
 
   std::fclose(fobject);
-  toggle_open_state(false);
+
+  AUDIO_IO::close();
 }
 
 bool CDRFILE::finished(void) const {

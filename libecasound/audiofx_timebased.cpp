@@ -526,7 +526,7 @@ void EFFECT_MODULATING_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter
 void EFFECT_MODULATING_DELAY::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
   lfo.init(1.0 /
-	   insample->sample_rate() /
+	   samples_per_second() /
 	   insample->number_of_channels());
 
   EFFECT_BASE::init(insample);

@@ -108,9 +108,8 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
   virtual AUDIO_IO* clone(void) const = 0;
   virtual AUDIO_IO* new_expr(void) const = 0;
   virtual ~AUDIO_IO(void);
-  AUDIO_IO(const std::string& name = "unknown", 
-	   int mode = io_read, 
-	   const ECA_AUDIO_FORMAT& fmt = ECA_AUDIO_FORMAT());
+  AUDIO_IO(const std::string& name = "uninitialized", 
+	   int mode = io_read);
 
   /*@}*/
 
@@ -132,20 +131,27 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
   /*@{*/
 
   /**
-   * Sets the sample buffer size in sample frames. Instead of specifying buffer 
-   * length in seconds, parameters 'samples' and 'sample_rate' are used to 
-   * determinate the length. When reading, this means that 'buffersize' 
-   * sample frames of data is read. When writing, 'buffersize' is only used for 
-   * initializing devices and data structures. Device should be able 
-   * to write all sample data independently from current buffersize value.
-   * When audio object's sampling rate is changed, it's often wise to adjust
-   * the buffersize. Otherwise the real length of the buffer changes whenever
-   * sampling parameters are changed.
+   * Sets the sample buffer size in sample frames. 
+   * 
+   * When reading data with read_buffer(), buffersize()
+   * determines how many sample frames of data is 
+   * processed per call.
+   *
+   * Otherwise buffersize() is only used for initializing 
+   * devices and data structures. 
+   *
+   * Device should always be able to write all sample 
+   * data passed to write_buffer(), independently from current 
+   * buffersize() value.
+   *
+   * @see buffersize()
    */
-  virtual void buffersize(long int samples, SAMPLE_SPECS::sample_rate_t sample_rate) = 0;
+  virtual void set_buffersize(long int samples) = 0;
 
   /**
-   * Returns the buffersize in sample frames.
+   * Returns the current buffersize in sample frames.
+   *
+   * @see set_buffersize()
    */
   virtual long int buffersize(void) const = 0;
 
@@ -153,8 +159,8 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
   const std::string& label(void) const;
   std::string format_info(void) const;
 
-  void io_mode(int mode);
-  void label(const std::string& id_label);
+  void set_io_mode(int mode);
+  void set_label(const std::string& id_label);
   void toggle_nonblocking_mode(bool value);
 
   virtual std::string parameter_names(void) const { return("label"); }
@@ -215,19 +221,21 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
    * matching, or in the worst case, throw an SETUP_ERROR 
    * exception (see above).
    *
+   * @pre is_open() != true
    * @post readable() == true || writable() == true || is_open() != true
    */
-  virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) = 0;
+  virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &);
 
   /**
    * Closes audio object. After calling this routine, 
    * all resources (for instance files and devices) must 
    * be freed so that they can be used by other processes.
    *
+   * @pre is_open() == true
    * @post readable() != true
    * @post writable() != true
    */
-  virtual void close(void) = 0;
+  virtual void close(void);
 
   /*@}*/
 
@@ -292,18 +300,13 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
   void position(const ECA_AUDIO_TIME& v);
   void length(const ECA_AUDIO_TIME& v);
 
-  void toggle_open_state(bool value);
-
   /*@{*/
 
  private:
   
   int io_mode_rep;
   std::string id_label_rep;
-
   bool nonblocking_rep;
-  bool readable_rep;
-  bool writable_rep;
   bool open_rep;
 };
 

@@ -88,7 +88,7 @@ class AUDIO_IO_BUFFERED_PROXY : public AUDIO_IO {
   virtual bool finite_length_stream(void) const { return(child_repp->finite_length_stream()); }
   virtual bool locked_audio_format(void) const { return(child_repp->locked_audio_format()); }
 
-  virtual void buffersize(long int samples, long int sample_rate) { child_repp->buffersize(samples, sample_rate); }
+  virtual void set_buffersize(long int samples) { child_repp->set_buffersize(samples); }
   virtual long int buffersize(void) const { return(child_repp->buffersize()); }
 
   virtual void read_buffer(SAMPLE_BUFFER* sbuf);

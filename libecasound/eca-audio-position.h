@@ -15,6 +15,7 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
   /** @name Constructors and destructors */
   /*@{*/
 
+  ECA_AUDIO_POSITION(void);
   ECA_AUDIO_POSITION(const ECA_AUDIO_FORMAT& fmt);
   virtual ~ECA_AUDIO_POSITION(void);
 
@@ -110,12 +111,12 @@ class ECA_AUDIO_POSITION : public ECA_AUDIO_FORMAT {
 
   /*@}*/
 
- protected:
+ public:
 
-  /** @name Functions reimplemented from ECA_AUDIO_FORMAT */
+  /** @name Functions reimplemented from ECA_SAMPLERATE_AWARE */
   /*@{*/
 
-  virtual void samples_per_second_changed(SAMPLE_SPECS::sample_rate_t old_value);
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_value);
 
   /*@}*/
 

@@ -102,7 +102,6 @@ void EFFECT_BW_FILTER::init(SAMPLE_BUFFER *insample) {
   i.init(insample);
 
   set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
 
   sin.resize(insample->number_of_channels(), std::vector<SAMPLE_SPECS::sample_t> (2));
   sout.resize(insample->number_of_channels(), std::vector<SAMPLE_SPECS::sample_t> (2));
@@ -212,7 +211,6 @@ void EFFECT_ALLPASS_FILTER::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
 
   set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
 
   inbuf.resize(insample->number_of_channels());
 //  outbuf.resize(insample->number_of_channels());
@@ -285,7 +283,6 @@ void EFFECT_COMB_FILTER::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
 
   set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
 
   buffer.resize(insample->number_of_channels());
 }
@@ -340,7 +337,6 @@ void EFFECT_INVERSE_COMB_FILTER::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
 
   set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
 
   buffer.resize(insample->number_of_channels());
   laskuri.resize(insample->number_of_channels(), parameter_t(0.0));
@@ -419,7 +415,6 @@ void EFFECT_LOWPASS_SIMPLE::init(SAMPLE_BUFFER *insample) {
   i.init(insample);
 
   set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
 
   outhist.resize(insample->number_of_channels());
   tempin.resize(insample->number_of_channels());
@@ -485,7 +480,6 @@ void EFFECT_RESONANT_BANDPASS::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
 
   set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
 
   outhist1.resize(insample->number_of_channels());
   outhist2.resize(insample->number_of_channels());
@@ -642,7 +636,6 @@ void EFFECT_RESONANT_LOWPASS::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
 
   set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
 
   outhist0.resize(insample->number_of_channels());
   outhist1.resize(insample->number_of_channels());
@@ -764,7 +757,6 @@ void EFFECT_RESONATOR::init(SAMPLE_BUFFER* insample) {
   i.init(insample);
 
   set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
 
   saout0.resize(insample->number_of_channels());
   saout1.resize(insample->number_of_channels());

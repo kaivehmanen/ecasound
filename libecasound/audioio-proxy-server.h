@@ -57,7 +57,7 @@ class AUDIO_IO_PROXY_SERVER {
   /** @name Public functions for configuration */
   /*@{*/
 
-  void set_buffer_defaults(int buffers, long int buffersize, long int sample_rate);
+  void set_buffer_defaults(int buffers, long int buffersize);
   void set_schedpriority(int v) { schedpriority_rep = v; }
 
   void register_client(AUDIO_IO* abject);
@@ -88,7 +88,6 @@ class AUDIO_IO_PROXY_SERVER {
   
   int buffercount_rep;
   long int buffersize_rep;
-  long int samplerate_rep;
   int schedpriority_rep;
 
   AUDIO_IO_PROXY_SERVER& operator=(const AUDIO_IO_PROXY_SERVER& x) { return *this; }

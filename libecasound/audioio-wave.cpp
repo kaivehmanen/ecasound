@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-wave.cpp: RIFF WAVE audio file input/output.
-// Copyright (C) 1999,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,19 +45,21 @@
 #define UINT32_MAX 4294967295U
 #endif
 
-WAVEFILE::WAVEFILE (const std::string& name) {
-  label(name);
+WAVEFILE::WAVEFILE (const std::string& name)
+{
+  set_label(name);
   fio_repp = 0;
   mmaptoggle_rep = "0";
 }
 
-WAVEFILE::~WAVEFILE(void) {
-  if (is_open() == true) close();
+WAVEFILE::~WAVEFILE(void)
+{
 }
 
-void WAVEFILE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
+void WAVEFILE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&)
+{
   // --------
-  DBC_REQUIRE(!is_open());
+  DBC_REQUIRE(is_open() != true);
   // --------
 
   if (io_mode() == io_write) return;
@@ -82,8 +84,8 @@ void WAVEFILE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
   // -------
 }
 
-
-void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
+void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
+{
   switch(io_mode()) {
   case io_read:
     {
@@ -158,11 +160,11 @@ void WAVEFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
       format_string()[4] == 'b')
     throw(SETUP_ERROR(SETUP_ERROR::sample_format, "AUDIOIO-WAVE: bigendian byte-order not supported by RIFF wave files."));
 
-  toggle_open_state(true);
-  seek_position();
+  AUDIO_IO::open();
 }
 
-void WAVEFILE::close(void) {
+void WAVEFILE::close(void)
+{
   ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-wave) Closing file " + label());
   if (is_open() && fio_repp != 0) {
     update();
@@ -170,10 +172,12 @@ void WAVEFILE::close(void) {
     delete fio_repp;
     fio_repp = 0;
   }
-  toggle_open_state(false);
+
+  AUDIO_IO::close();
 }
 
-void WAVEFILE::update (void) {
+void WAVEFILE::update (void)
+{
   if (io_mode() != io_read) {
     update_riff_datablock();
     write_riff_header();
@@ -181,14 +185,16 @@ void WAVEFILE::update (void) {
   }
 }
 
-void WAVEFILE::find_riff_datablock (void) throw(AUDIO_IO::SETUP_ERROR&) {
+void WAVEFILE::find_riff_datablock (void) throw(AUDIO_IO::SETUP_ERROR&)
+{
   if (find_block("data") != true) {
     throw(ECA_ERROR("AUDIOIO-WAVE", "no RIFF data block found", ECA_ERROR::retry));
   }
   data_start_position_rep = fio_repp->get_file_position();
 }
 
-void WAVEFILE::read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) {
+void WAVEFILE::read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) 
+{
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) read_riff_header()");
    
   fio_repp->read_to_buffer(&riff_header_rep, sizeof(riff_header_rep));
@@ -200,7 +206,8 @@ void WAVEFILE::read_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) {
   }
 }
 
-void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) {
+void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&) 
+{
   //  ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-wave) write_riff_header()");
 
   off_t savetemp = fio_repp->get_file_position();
@@ -426,10 +433,11 @@ void WAVEFILE::set_length_in_bytes(void) {
 }
 
 void WAVEFILE::set_parameter(int param, 
-			     string value) {
+			     string value)
+{
   switch (param) {
   case 1: 
-    label(value);
+    set_label(value);
     break;
 
   case 2: 
@@ -438,7 +446,8 @@ void WAVEFILE::set_parameter(int param,
   }
 }
 
-string WAVEFILE::get_parameter(int param) const {
+string WAVEFILE::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(label());

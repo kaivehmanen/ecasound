@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>15.12.2001</h2>
+<h2>01.02.2002</h2>
 
 
     
@@ -54,8 +54,11 @@
 	Defaults to <em>rawmidi,/dev/midi</em>.
 <p><p></p><dt><strong>default-output</strong><dd>
   	Output device to use. Defaults to <em>/dev/dsp</em>.
-<p><p></p><dt><strong>default-samplerate</strong><dd>
-  	Default internal sample-rate used internally by the ecasound engine. Defaults to <em>44100</em>.
+<p><p></p><dt><strong>default-audio-format</strong><dd>
+  	Default values for sample format, channel count, sampling rate
+  	and channel interleaving. Syntax is the same as used by
+  	ecasound's <em>-f</em> option (see ecasound(1)). 
+	Defaults to <em>s16_le,2,44100,i</em>.
 <p><p></p><dt><strong>default-to-precise-sample-rates</strong><dd> 
 	Whether to ignore sample rate differences (and possibly avoid 
 	resampling). Currently only affects OSS-devices. Defaults to <em>false</em>.

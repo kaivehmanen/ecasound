@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>29.01.2002</h2>
+<h2>01.02.2002</h2>
 
 
     
@@ -95,10 +95,6 @@ section for more detailed info about the usage of this option.
 Sets the name of chainsetup to 'name'. If not specified, defaults
 either to "command-line-setup" or to the file name from which
 chainsetup was loaded. Whitespaces are not allowed.
-<p><p></p><dt><strong>-sr:sample_rate</strong><dd>
-Sets internal sampling rate. This can be used to improve 
-realtime performance or to avoid resampling. Default is 44100 
-samples per second.
 <p><p></p><dt><strong>-x</strong><dd>
 Truncate outputs. All output object are opened in overwrite mode. 
 Any existing files will be truncated.
@@ -208,24 +204,18 @@ line argument is considered to be an input.
 Works in the same way as the -i option. If no outputs are specified,
 the default output device is used (see &amp;tilde;/.ecasoundrc). Note! 
 you can't output to module formats supported by MikMod (this should
-be obvious) nor to ALSA's loopback device.
+be obvious).
 <p><em>OBJECT TYPE SPECIFIC NOTES</em>
 <p></p><dt><strong>ALSA devices</strong><dd>
 When using ALSA drivers, instead of a device filename, you need to
 use the following option syntax: <strong>-i[:]alsa,pcm_device_name</strong>.
-Note! Pcm device naming was introduced in ALSA 0.6.x (doesn't work
-with older ALSA versions; see below for the old syntax).  
 <p><p></p><dt><strong>ALSA direct-gw and plugin access</strong><dd>
 It's also possible to use a specific card and device combination
 using the following notation: <strong>-i[:]alsahw,card_number,device_number,subdevice_number</strong>.
-The ALSA plugin layer works just like the normal ALSA pcm-devices, but 
-with automatic sample rate and format conversions. Option syntax is 
+Another option is the ALSA PCM plugin layer. It works just like 
+the normal ALSA pcm-devices, but with automatic channel count and 
+sample format conversions. Option syntax is 
 <strong>-i[:]alsaplugin,card_number,device_number,subdevice_number</strong>.
-<p><p></p><dt><strong>ALSA loopback device</strong><dd>
-By using the ALSA loopback system, you can grab audio data from any
-other pcm device. Option syntax is
-<strong>-i[:]alsalb,card_number,device_number,subdevice_number</strong>.
-Note! Only works with ALSA 0.5.x and older.
 <p><p></p><dt><strong>aRts input/output</strong><dd>
 If enabled at compile-time, ecasound supports audio input and 
 output using aRts audio server. Option syntax is <strong>-i:arts</strong>,
@@ -259,21 +249,21 @@ objects, except all i/o is done at realtime speed.
 <p><p></p><dt><strong>Reverse - process audio data backwards</strong><dd>
 Object type 'reverse' can be used to reverse audio 
 data coming from an audio object. As an example, 
-"ecasound -i reverse,foo.wav -o /dev/dsp" will play 'foo.wav'
-backwards. Reversing output objects is not supported. 
-Note! Trying to reverse audio object types with really 
+<strong>ecasound -i reverse,foo.wav -o /dev/dsp</strong> will play 
+'foo.wav' backwards. Reversing output objects is not 
+supported. Note! Trying to reverse audio object types with really 
 slow seek operation (like mp3), works extremely badly.
 Try converting to an uncompressed format (wav or raw)
 first, and then do reversation.
 <p><p></p><dt><strong>System standard streams and named pipes</strong><dd>
-You can use standard streams (stdin and stdout) by giving "stdin" 
-or "stdout" as the file name. Audio data is assumed to be in
+You can use standard streams (stdin and stdout) by giving <strong>stdin</strong>
+or <strong>stdout</strong> as the file name. Audio data is assumed to be in
 raw/headerless (.raw) format. If you want to use named pipes, 
 create them with the proper file name extension before use.
 <p><p></p><dt><strong>Typeselect - overriding object type settings</strong><dd>
 The special 'typeselect' object type can be used to override 
 how ecasound maps filename extensions and object types. For 
-instance "ecasound -i typeselect,.mp3,an_mp3_file.wav -o /dev/dsp".
+instance <strong>ecasound -i typeselect,.mp3,an_mp3_file.wav -o /dev/dsp</strong>.
 would play the file 'an_mp3_file.wav' as an mp3-file and not
 as an wav-file as would happen without typeselect.
 <p></dl>

@@ -47,11 +47,7 @@ libdir = ${exec_prefix}/lib/ecasound-plugins
 plugin_includes = 	\
 			audioio_af.h \
 			audioio_alsa.h \
-			audioio_alsalb.h \
-			audioio_alsa2.h \
-			audioio_alsa2_plugin.h \
-			audioio_alsa3.h \
-			audioio_alsa3_pcm.h \
+			audioio_alsa_named.h \
 			audioio_arts.h \
 			audioio_jack.h \
 			audioio_jack_manager.h
@@ -64,41 +60,25 @@ noinst_HEADERS = $(plugin_includes)
 
 lib_LTLIBRARIES = 	$(af_target) \
 			libaudioio_alsa.la \
-			libaudioio_alsalb.la \
-			libaudioio_alsa2.la \
-			libaudioio_alsa2_plugin.la \
-			libaudioio_alsa3.la \
-			libaudioio_alsa3_pcm.la \
+			libaudioio_alsa_named.la \
 			$(arts_target) \
 			$(jack_target)
 
 libaudioio_af_la_SOURCES	     	= audioio_af.cpp
-libaudioio_alsa_la_SOURCES	     	= audioio_alsa.cpp
-libaudioio_alsalb_la_SOURCES	     	= audioio_alsalb.cpp
-libaudioio_alsa2_la_SOURCES     	= audioio_alsa2.cpp
-libaudioio_alsa2_plugin_la_SOURCES 	= audioio_alsa2_plugin.cpp
-libaudioio_alsa3_la_SOURCES		= audioio_alsa3.cpp audioio_alsa3_hw.cpp
-libaudioio_alsa3_pcm_la_SOURCES		= audioio_alsa3.cpp audioio_alsa3_pcm.cpp
+libaudioio_alsa_la_SOURCES	     	= audioio_alsa.cpp audioio_alsa_hw.cpp
+libaudioio_alsa_named_la_SOURCES	= audioio_alsa.cpp audioio_alsa_named.cpp
 libaudioio_arts_la_SOURCES	        = audioio_arts.cpp
 libaudioio_jack_la_SOURCES	        = audioio_jack.cpp audioio_jack_manager.cpp
 
 libaudioio_af_la_LIBADD	     		= $(af_libs)
 libaudioio_alsa_la_LIBADD	     	= $(alsa_libs)
-libaudioio_alsalb_la_LIBADD	     	= $(alsa_libs)
-libaudioio_alsa2_la_LIBADD     		= $(alsa_libs)
-libaudioio_alsa2_plugin_la_LIBADD 	= $(alsa_libs)
-libaudioio_alsa3_la_LIBADD		= $(alsa_libs)
-libaudioio_alsa3_pcm_la_LIBADD		= $(alsa_libs)
+libaudioio_alsa_named_la_LIBADD	     	= $(alsa_libs)
 libaudioio_arts_la_LIBADD		= 
 libaudioio_jack_la_LIBADD		= $(jack_libs)
 
 libaudioio_af_la_LDFLAGS	     	= -avoid-version -export-dynamic
 libaudioio_alsa_la_LDFLAGS	     	= -avoid-version -export-dynamic
-libaudioio_alsalb_la_LDFLAGS	     	= -avoid-version -export-dynamic
-libaudioio_alsa2_la_LDFLAGS     	= -avoid-version -export-dynamic
-libaudioio_alsa2_plugin_la_LDFLAGS 	= -avoid-version -export-dynamic
-libaudioio_alsa3_la_LDFLAGS		= -avoid-version -export-dynamic
-libaudioio_alsa3_pcm_la_LDFLAGS		= -avoid-version -export-dynamic
+libaudioio_alsa_named_la_LDFLAGS     	= -avoid-version -export-dynamic
 libaudioio_arts_la_LDFLAGS	        = -avoid-version -export-dynamic $(arts_libs)
 libaudioio_jack_la_LDFLAGS	        = -avoid-version -export-dynamic $(jack_libs)
 

@@ -77,9 +77,7 @@ ECA_ENGINE::ECA_ENGINE(ECA_SESSION* arg)
   ecadebug->msg(ECA_DEBUG::system_objects,"(eca-engine) Engine/Initializing");
 
   impl_repp = new ECA_ENGINE_impl;
-  mixslot_repp = new SAMPLE_BUFFER(arg->connected_chainsetup_repp->buffersize(),
-				   SAMPLE_SPECS::channel_count_default,
-				   SAMPLE_SPECS::sample_rate_default);
+  mixslot_repp = new SAMPLE_BUFFER(arg->connected_chainsetup_repp->buffersize(), 0);
 
   init_variables();
   init_connection_to_chainsetup();
@@ -235,9 +233,9 @@ void ECA_ENGINE::signal_stop(void) {
  * Called only from class constructor.
  */
 void ECA_ENGINE::init_profiling(void) {
-  impl_repp->looptimer_low_rep = static_cast<double>(buffersize_rep) / csetup_repp->sample_rate();
-  impl_repp->looptimer_mid_rep = static_cast<double>(buffersize_rep * 2) / csetup_repp->sample_rate();
-  impl_repp->looptimer_high_rep = static_cast<double>(buffersize_rep) * prefill_threshold_rep / csetup_repp->sample_rate();
+  impl_repp->looptimer_low_rep = static_cast<double>(buffersize_rep) / csetup_repp->samples_per_second();
+  impl_repp->looptimer_mid_rep = static_cast<double>(buffersize_rep * 2) / csetup_repp->samples_per_second();
+  impl_repp->looptimer_high_rep = static_cast<double>(buffersize_rep) * prefill_threshold_rep / csetup_repp->samples_per_second();
 
   impl_repp->looptimer_rep.set_lower_bound_seconds(impl_repp->looptimer_low_rep);
   impl_repp->looptimer_rep.set_upper_bound_seconds(impl_repp->looptimer_high_rep);
@@ -414,7 +412,7 @@ void ECA_ENGINE::init_inputs(void) {
   input_chain_count_rep.resize(inputs_repp->size());
   long int max_input_length = 0;
   for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
-    (*inputs_repp)[adev_sizet]->buffersize(buffersize_rep, csetup_repp->sample_rate());
+    (*inputs_repp)[adev_sizet]->set_buffersize(buffersize_rep);
 
     if (csetup_repp->inputs[adev_sizet]->channels() > max_channels_rep)
       max_channels_rep = csetup_repp->inputs[adev_sizet]->channels();
@@ -465,7 +463,7 @@ void ECA_ENGINE::init_outputs(void) {
   output_chain_count_rep.resize(outputs_repp->size());
 
   for(unsigned int adev_sizet = 0; adev_sizet < outputs_repp->size(); adev_sizet++) {
-    (*outputs_repp)[adev_sizet]->buffersize(buffersize_rep, csetup_repp->sample_rate());
+    (*outputs_repp)[adev_sizet]->set_buffersize(buffersize_rep);
 
     if (csetup_repp->outputs[adev_sizet]->channels() > max_channels_rep)
       max_channels_rep = csetup_repp->outputs[adev_sizet]->channels();
@@ -486,7 +484,6 @@ void ECA_ENGINE::init_outputs(void) {
 		  kvu_numtostr(output_chain_count_rep[adev_sizet]) + " .");
   }
   mixslot_repp->number_of_channels(max_channels_rep);
-  mixslot_repp->sample_rate(csetup_repp->sample_rate());
 }
 
 /**
@@ -504,7 +501,7 @@ void ECA_ENGINE::init_chains(void) {
 
   cslots_rep.resize(chains_repp->size());
   for(size_t n = 0; n < cslots_rep.size(); n++) {
-    cslots_rep[n] = new SAMPLE_BUFFER(buffersize_rep, max_channels_rep, csetup_repp->sample_rate());
+    cslots_rep[n] = new SAMPLE_BUFFER(buffersize_rep, max_channels_rep);
   }
 }
 
@@ -806,7 +803,7 @@ void ECA_ENGINE::multitrack_start(void) {
   gettimeofday(&now, NULL);
   double time = now.tv_sec * 1000000.0 + now.tv_usec -
     impl_repp->multitrack_input_stamp_rep.tv_sec * 1000000.0 - impl_repp->multitrack_input_stamp_rep.tv_usec;
-  long int sync_fix = static_cast<long>(time * csetup_repp->sample_rate() / 1000000.0);
+  long int sync_fix = static_cast<long>(time * csetup_repp->samples_per_second() / 1000000.0);
 
   std::cerr << "(eca-engine) sync fix is " << time << " usecs." << std::endl;
 
@@ -1071,7 +1068,7 @@ void ECA_ENGINE::prehandle_control_position(void) {
     int buffer_remain = csetup_repp->position_in_samples() -
                         csetup_repp->length_in_samples();
     for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
-      (*inputs_repp)[adev_sizet]->buffersize(buffer_remain, csetup_repp->sample_rate());
+      (*inputs_repp)[adev_sizet]->set_buffersize(buffer_remain);
     }
   }
 }
@@ -1084,7 +1081,7 @@ void ECA_ENGINE::posthandle_control_position(void) {
       rewind_to_start_position();
       csetup_repp->set_position(0);
       for(unsigned int adev_sizet = 0; adev_sizet < inputs_repp->size(); adev_sizet++) {
-	(*inputs_repp)[adev_sizet]->buffersize(buffersize_rep, csetup_repp->sample_rate());
+	(*inputs_repp)[adev_sizet]->set_buffersize(buffersize_rep);
       }
     }
     else {

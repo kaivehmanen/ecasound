@@ -393,13 +393,13 @@ static void register_internal_audioio_plugin(const string& libdir,
       }
     }
     else {
-      // std::cerr << "(eca-static-object-maps) dlsym() failed; " << file;
-      // std::cerr << ": \"" << dlerror() << "\"." << std::endl;
+      std::cerr << "(eca-static-object-maps) dlsym() failed; " << file;
+      std::cerr << ": \"" << dlerror() << "\"." << std::endl;
     }
   }
   else {
-    // std::cerr << "(eca-static-object-maps) dlopen() failed; " << file;
-    // std::cerr << ": \"" << dlerror() << "\"." << std::endl;
+    std::cerr << "(eca-static-object-maps) dlopen() failed; " << file;
+    std::cerr << ": \"" << dlerror() << "\"." << std::endl;
   }
 
   if (plugin_handle == 0 ||
@@ -429,29 +429,11 @@ static void register_internal_audioio_plugins(void) {
 
   register_internal_audioio_plugin(libdir, "libaudioio_af.so");
   register_internal_audioio_plugin(libdir, "libaudioio_alsa.so");
-  register_internal_audioio_plugin(libdir, "libaudioio_alsalb.so");
-  register_internal_audioio_plugin(libdir, "libaudioio_alsa2.so");
-  register_internal_audioio_plugin(libdir, "libaudioio_alsa2_plugin.so");
-  register_internal_audioio_plugin(libdir, "libaudioio_alsa3.so");
-  register_internal_audioio_plugin(libdir, "libaudioio_alsa3_pcm.so");
+  register_internal_audioio_plugin(libdir, "libaudioio_alsa_named.so");
   register_internal_audioio_plugin(libdir, "libaudioio_arts.so");
   register_internal_audioio_plugin(libdir, "libaudioio_jack.so");
 
   const ECA_OBJECT* aobj = 0;
-
-#ifdef ALSALIB_050
-  aobj = eca_audio_object_map->object("alsaplugin_05");
-  if (aobj != 0) {
-    eca_audio_object_map->register_object("alsaplugin", "^alsaplugin$", const_cast<ECA_OBJECT*>(aobj));
-  }
-
-  aobj = eca_audio_object_map->object("alsa_05");
-  if (aobj != 0) {
-    eca_audio_object_map->register_object("alsa", "^alsa$", const_cast<ECA_OBJECT*>(aobj));
-  }
-  else 
-    ecadebug->msg(ECA_DEBUG::info, "(eca-static-objects-map) Unable to load the ecasound ALSA 0.5.x plugin!");
-#endif
 
 #ifdef ALSALIB_060
   aobj = eca_audio_object_map->object("alsahw_09");

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "sample-specs.h"
+#include "eca-samplerate-aware.h"
 #include "eca-error.h"
 
 /**
@@ -14,11 +15,9 @@
  *
  * - channels interleaving
  *
- * - sampling rate in samples per second
- *
  * - representation of individual sample
  */
-class ECA_AUDIO_FORMAT {
+class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
 
  public:
 
@@ -26,6 +25,8 @@ class ECA_AUDIO_FORMAT {
   /*@{*/
 
   enum Sample_format {
+    sfmt_none,
+
     sfmt_u8,
     sfmt_s8,
 
@@ -60,8 +61,6 @@ class ECA_AUDIO_FORMAT {
   /*@{*/
 
   ECA_AUDIO_FORMAT (int ch, long int srate, Sample_format format, bool ileaved = false);
-  ECA_AUDIO_FORMAT (const ECA_AUDIO_FORMAT& x);
-  ECA_AUDIO_FORMAT& operator=(const ECA_AUDIO_FORMAT& x);
   ECA_AUDIO_FORMAT (void);
   virtual ~ECA_AUDIO_FORMAT (void);
 
@@ -93,16 +92,10 @@ class ECA_AUDIO_FORMAT {
   Sample_format sample_format(void) const { return(sfmt_rep); }
 
   /**
-   * Returns sampling rate in samples per second.
-   * Note! Sometimes also called frames_per_second().
-   */
-  SAMPLE_SPECS::sample_rate_t samples_per_second(void) const { return(srate_rep); }
-
-  /**
    * Returns sampling rate in bytes per second (data transfer 
    * rate).
    */
-  int bytes_per_second(void) const { return(srate_rep * align_rep * channels_rep); }
+  long int bytes_per_second(void) const { return(samples_per_second() * align_rep * channels_rep); }
 
   /** 
    * Returns number of channels.
@@ -128,16 +121,20 @@ class ECA_AUDIO_FORMAT {
 
   /*@}*/
 
+  /** @name Public virtual functions for setting audio format information */
+  /*@{*/
+
+  virtual void set_channels(SAMPLE_SPECS::channel_t v);
+  virtual void set_sample_format(Sample_format v) throw(ECA_ERROR&);
+  virtual void toggle_interleaved_channels(bool v);
+  
+  /*@}*/
+
   /** @name Public functions for setting audio format information */
   /*@{*/
 
-  void set_channels(SAMPLE_SPECS::channel_t v);
-  void set_sample_format(Sample_format v) throw(ECA_ERROR&);
-  void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
-  void toggle_interleaved_channels(bool v);
-
   /**
-   * Set audio format based on the formatted std::string given as 
+   * Sets audio format based on the formatted std::string given as 
    * argument.
    *
    * The first letter is either "u", "s" and "f" (unsigned, 
@@ -151,22 +148,7 @@ class ECA_AUDIO_FORMAT {
    */
   void set_sample_format(const std::string& f_str) throw(ECA_ERROR&);
 
-  /**
-   * Sets audio format to that of 'f_str'.
-   */
   void set_audio_format(const ECA_AUDIO_FORMAT& f_str);
-
-  /*@}*/
-
- protected:
-
-  /** @name Protected virtual functions to notify about changes */
-  /*@{*/
-
-  virtual void channels_changed(SAMPLE_SPECS::channel_t old_value) { }
-  virtual void sample_format_changed(Sample_format old_value) { }
-  virtual void samples_per_second_changed(SAMPLE_SPECS::sample_rate_t old_value) { }
-  virtual void interleaved_channels_changed(bool old_value) { }
 
   /*@}*/
 
@@ -176,7 +158,6 @@ class ECA_AUDIO_FORMAT {
 
   bool ileaved_rep;
   SAMPLE_SPECS::channel_t channels_rep;
-  SAMPLE_SPECS::sample_rate_t srate_rep;
   size_t align_rep;            // the size of one sample value in bytes
   Sample_format sfmt_rep;
 };

@@ -25,8 +25,7 @@
  */
 AUDIO_IO_PROXY_BUFFER::AUDIO_IO_PROXY_BUFFER(int number_of_buffers,
 					     long int buffersize,
-					     int channels,
-					     long int sample_rate)
+					     int channels)
   :  readptr_rep(0),
      writeptr_rep(0),
      finished_rep(0),
@@ -34,7 +33,7 @@ AUDIO_IO_PROXY_BUFFER::AUDIO_IO_PROXY_BUFFER(int number_of_buffers,
 {
 
   for(size_t n = 0; n < sbufs_rep.size(); n++) {
-    sbufs_rep[n] = new SAMPLE_BUFFER(buffersize, channels, sample_rate);
+    sbufs_rep[n] = new SAMPLE_BUFFER(buffersize, channels);
   }
 
   // std::cerr << "Created a new client buffer with "  << sbufs_rep.size() << " buffers." << std::endl;

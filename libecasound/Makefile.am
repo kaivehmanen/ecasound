@@ -149,6 +149,7 @@ ecasound_general_include = 	\
 			dynamic-object.h \
 			eca-object.h \
 			eca-operator.h \
+			eca-samplerate-aware.h \
 			eca-audio-format.h \
 			eca-audio-time.h \
 			preset.h \
@@ -261,6 +262,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-control-dump.cpp \
 			eca-iamode-parser.cpp \
 			eca-control-interface.cpp \
+			eca-samplerate-aware.cpp \
 			eca-audio-position.cpp \
 			eca-audio-format.cpp \
 			eca-audio-time.cpp \

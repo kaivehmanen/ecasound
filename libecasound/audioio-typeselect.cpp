@@ -71,21 +71,23 @@ void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     }
   }
   
-  child_repp->buffersize(buffersize(), samples_per_second());
-  child_repp->io_mode(io_mode());
+  child_repp->set_buffersize(buffersize());
+  child_repp->set_io_mode(io_mode());
   child_repp->set_audio_format(audio_format());
   child_repp->open();
   if (child_repp->locked_audio_format() == true) {
     set_audio_format(child_repp->audio_format());
   }
-  label(child_repp->label());
-  toggle_open_state(true);
+  set_label(child_repp->label());
+
+  AUDIO_IO::open();
 }
 
 void AUDIO_IO_TYPESELECT::close(void)
 { 
-  child_repp->close();
-  toggle_open_state(false);
+  if (child_repp->is_open() == true) child_repp->close();
+
+  AUDIO_IO::close();
 }
 
 string AUDIO_IO_TYPESELECT::parameter_names(void) const

@@ -20,7 +20,9 @@
 #include <cmath>
 #include <string>
 #include <time.h>
-#include <kvutils.h>
+
+#include <kvutils/dbc.h>
+#include <kvutils/kvutils.h>
 
 #include "audioio-device.h"
 #include "audioio-rtnull.h"
@@ -33,44 +35,54 @@ REALTIME_NULL::REALTIME_NULL(const std::string& name) {
   //cerr << "delay " << buffer_delay.tv_usec << "usec.\n";
 }
 
-void REALTIME_NULL::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
+REALTIME_NULL::~REALTIME_NULL(void)
+{ 
+}
+
+void REALTIME_NULL::open(void) throw (AUDIO_IO::SETUP_ERROR &)
+{
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) open");
-  toggle_open_state(true);
   double t = static_cast<double>(buffersize()) / samples_per_second();
   buffer_delay.tv_sec = static_cast<time_t>(floor(t));
   buffer_delay.tv_usec = static_cast<long>((t - buffer_delay.tv_sec) * 1000000.0);
+
+  AUDIO_IO_DEVICE::open();
 }
 
-void REALTIME_NULL::close(void) {
-  // ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) close");
-  toggle_open_state(false);
+void REALTIME_NULL::close(void)
+{
+  AUDIO_IO_DEVICE::close();
 }
 
-void REALTIME_NULL::prepare(void) {
+void REALTIME_NULL::prepare(void)
+{
+  AUDIO_IO_DEVICE::prepare();
+
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) prepare");
   if (io_mode() == io_read) {
     buffer_fill.tv_sec = 0; 
     buffer_fill.tv_usec = 0;
     ::gettimeofday(&access_time, NULL);
     ::gettimeofday(&start_time, NULL);
-    toggle_prepared_state(true);
   }
 }
 
-void REALTIME_NULL::start(void) {
+void REALTIME_NULL::start(void)
+{
+  AUDIO_IO_DEVICE::start();
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) start");
-  toggle_running_state(true);
 }
 
-void REALTIME_NULL::stop(void) {
+void REALTIME_NULL::stop(void)
+{
+  AUDIO_IO_DEVICE::stop();
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-rtnull) stop");
-  toggle_running_state(false);
-  toggle_prepared_state(false);
 }
 
 long int REALTIME_NULL::read_samples(void* target_buffer, 
-				     long int samples) {
-  assert(is_running() == true);
+				     long int samples)
+{
+  DBC_CHECK(is_running() == true);
 
   for(int n = 0; n < samples * frame_size(); n++) ((char*)target_buffer)[n] = 0;
 
@@ -126,8 +138,9 @@ long int REALTIME_NULL::read_samples(void* target_buffer,
   return(buffersize());
 }
 
-void REALTIME_NULL::write_samples(void* target_buffer, long int
-				  samples) { 
+void REALTIME_NULL::write_samples(void* target_buffer, 
+				  long int samples)
+{ 
   if (is_running() != true) {
     ::gettimeofday(&start_time, NULL);
     ::gettimeofday(&access_time, NULL);
@@ -186,11 +199,13 @@ void REALTIME_NULL::write_samples(void* target_buffer, long int
   }
 }
 
-long int REALTIME_NULL::latency(void) const {
+long int REALTIME_NULL::latency(void) const
+{
   return(buffersize());
 }
 
-SAMPLE_SPECS::sample_pos_t REALTIME_NULL::position_in_samples(void) const { 
+SAMPLE_SPECS::sample_pos_t REALTIME_NULL::position_in_samples(void) const
+{ 
   if (is_running() != true) return(0);
   struct timeval now;
   ::gettimeofday(&now, NULL);
@@ -198,5 +213,3 @@ SAMPLE_SPECS::sample_pos_t REALTIME_NULL::position_in_samples(void) const {
     start_time.tv_sec * 1000000.0 - start_time.tv_usec;
   return(static_cast<SAMPLE_SPECS::sample_pos_t>(time * samples_per_second() / 1000000.0));
 }
-
-REALTIME_NULL::~REALTIME_NULL(void) { close(); }

@@ -30,13 +30,16 @@
 #include "eca-error.h"
 #include "eca-debug.h"
 
-RAWFILE::RAWFILE(const std::string& name) {
-  label(name);
+RAWFILE::RAWFILE(const std::string& name)
+{
+  set_label(name);
   fio_repp = 0;
   mmaptoggle_rep = "0";
 }
 
-RAWFILE::~RAWFILE(void) { close(); }
+RAWFILE::~RAWFILE(void)
+{
+}
 
 /**
  * Opens the raw audio i/o device. 
@@ -44,7 +47,8 @@ RAWFILE::~RAWFILE(void) { close(); }
  * Note! Cases where label() matches either "stdin", "stdout"
  *       or "stderr" are handled as special cases.
  */
-void RAWFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
+void RAWFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
+{ 
   switch(io_mode()) {
   case io_read:
     {
@@ -102,20 +106,23 @@ void RAWFILE::open(void) throw (AUDIO_IO::SETUP_ERROR &) {
     }
   }
   set_length_in_bytes();
-  toggle_open_state(true);
-  seek_position();
+
+  AUDIO_IO::open();
 }
 
-void RAWFILE::close(void) {
-  if (is_open() && fio_repp != 0) {
+void RAWFILE::close(void)
+{
+  if (fio_repp != 0) {
     fio_repp->close_file();
     delete fio_repp;
     fio_repp = 0;
   }
-  toggle_open_state(false);
+
+  AUDIO_IO::close();
 }
 
-bool RAWFILE::finished(void) const {
+bool RAWFILE::finished(void) const
+{
  if (fio_repp->is_file_error() ||
      !fio_repp->is_file_ready()) 
    return true;
@@ -123,31 +130,35 @@ bool RAWFILE::finished(void) const {
  return false;
 }
 
-long int RAWFILE::read_samples(void* target_buffer, long int samples) {
+long int RAWFILE::read_samples(void* target_buffer, long int samples)
+{
   fio_repp->read_to_buffer(target_buffer, frame_size() * samples);
   return(fio_repp->file_bytes_processed() / frame_size());
 }
 
-void RAWFILE::write_samples(void* target_buffer, long int samples) {
+void RAWFILE::write_samples(void* target_buffer, long int samples)
+{
   fio_repp->write_from_buffer(target_buffer, frame_size() * samples);  
 }
 
-void RAWFILE::seek_position(void) {
+void RAWFILE::seek_position(void)
+{
   if (is_open()) {
     fio_repp->set_file_position(position_in_samples() * frame_size());
   }
 }
 
-void RAWFILE::set_length_in_bytes(void) {
+void RAWFILE::set_length_in_bytes(void)
+{
   length_in_samples(fio_repp->get_file_length() / frame_size());
 }
 
-
 void RAWFILE::set_parameter(int param, 
-			    string value) {
+			    string value)
+{
   switch (param) {
   case 1: 
-    label(value);
+    set_label(value);
     break;
 
   case 2: 
@@ -156,7 +167,8 @@ void RAWFILE::set_parameter(int param,
   }
 }
 
-string RAWFILE::get_parameter(int param) const {
+string RAWFILE::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(label());

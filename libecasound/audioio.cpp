@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio.cpp: Routines common for all audio IO-devices.
-// Copyright (C) 1999-2001 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <cmath>
 #include <string>
 
+#include <kvutils/dbc.h>
 #include <kvutils/message_item.h>
 
 #include "eca-error.h"
@@ -98,7 +99,7 @@ int AUDIO_IO::io_mode(void) const { return(io_mode_rep); }
  * require:
  *  is_open() != true
  */
-void AUDIO_IO::io_mode(int mode) { io_mode_rep = mode; }
+void AUDIO_IO::set_io_mode(int mode) { io_mode_rep = mode; }
 
 /**
  * Sets object label. Label is used to identify the object instance.
@@ -109,7 +110,7 @@ void AUDIO_IO::io_mode(int mode) { io_mode_rep = mode; }
  * require:
  *  is_open() != true
  */
-void AUDIO_IO::label(const std::string& id_label) { id_label_rep = id_label; }
+void AUDIO_IO::set_label(const std::string& id_label) { id_label_rep = id_label; }
 
 /**
  * Enable/disbale nonblocking mode.
@@ -117,8 +118,10 @@ void AUDIO_IO::label(const std::string& id_label) { id_label_rep = id_label; }
  * require:
  *  is_open() != true
  */
-void AUDIO_IO::toggle_nonblocking_mode(bool value) { nonblocking_rep =
-						       value; }
+void AUDIO_IO::toggle_nonblocking_mode(bool value)
+{ 
+  nonblocking_rep = value;
+}
 
 /**
  * Returns the current label. See documentation for 
@@ -130,7 +133,8 @@ const std::string& AUDIO_IO::label(void) const { return(id_label_rep); }
 /**
  * Returns a string containing info about sample format parameters.
  */
-string AUDIO_IO::format_info(void) const {
+string AUDIO_IO::format_info(void) const
+{
   MESSAGE_ITEM otemp;
   otemp << "(audio-io) ";
 
@@ -149,14 +153,38 @@ string AUDIO_IO::format_info(void) const {
 }
 
 void AUDIO_IO::set_parameter(int param, 
-			     string value) {
-  if (param == 1) label(value);
+			     string value)
+{
+  if (param == 1) set_label(value);
 }
 
-string AUDIO_IO::get_parameter(int param) const {
+string AUDIO_IO::get_parameter(int param) const
+{
   if (param == 1) return(label());
   return("");
 }
+
+// ===================================================================
+// Main functionality
+
+void AUDIO_IO::open(void) throw (AUDIO_IO::SETUP_ERROR &)
+{
+  DBC_REQUIRE(is_open() != true);
+
+  DBC_CHECK(channels() > 0);
+  DBC_CHECK(sample_format() != ECA_AUDIO_FORMAT::sfmt_none);
+  DBC_CHECK(samples_per_second() > 0);
+
+  open_rep = true;
+  seek_position();
+}
+
+void AUDIO_IO::close(void)
+{
+  DBC_REQUIRE(is_open() == true);
+  open_rep = false;
+}
+
 
 // ===================================================================
 // Runtime information
@@ -174,14 +202,16 @@ string AUDIO_IO::get_parameter(int param) const {
  * be processed before we know the actual length. In other
  * cases, length is unknown or infinite.
  */
-ECA_AUDIO_TIME AUDIO_IO::length(void) const {
+ECA_AUDIO_TIME AUDIO_IO::length(void) const
+{
   return(ECA_AUDIO_TIME(length_in_samples(), samples_per_second()));
 }
 
 /**
  * Returns the current position.
  */
-ECA_AUDIO_TIME AUDIO_IO::position(void) const {
+ECA_AUDIO_TIME AUDIO_IO::position(void) const
+{
   return(ECA_AUDIO_TIME(position_in_samples(), samples_per_second()));
 }
 
@@ -203,21 +233,18 @@ bool AUDIO_IO::writable(void) const { return(is_open() && io_mode() != io_read);
 /**
  * Sets the total length of audio object data.
  */
-void AUDIO_IO::length(const ECA_AUDIO_TIME& v) {
+void AUDIO_IO::length(const ECA_AUDIO_TIME& v)
+{
   length_in_samples(v.samples());
 }
 
 /**
  * Sets the current position.
  */
-void AUDIO_IO::position(const ECA_AUDIO_TIME& v) {
+void AUDIO_IO::position(const ECA_AUDIO_TIME& v)
+{
   position_in_samples(v.samples());
 }
-
-/**
- * Sets device's state to enabled or disabled.
- */
-void AUDIO_IO::toggle_open_state(bool value) { open_rep = value; }
 
 /**
  * Optional status string
@@ -236,10 +263,16 @@ string AUDIO_IO::status(void) const {
   if (is_open() == true) 
     mitem << "open, ";
   else 
-    mitem << "closed, ";
+    mitem << "closed";
 
-  mitem << format_string() << "/" << channels() << "ch/" << samples_per_second();
-  mitem << "Hz, buffer " << buffersize() << ".";
+  if (locked_audio_format() == true &&
+      is_open() != true) {
+    mitem << ", audio format not available until object is opened.";
+  }
+  else {
+    mitem << ", " << format_string() << "/" << channels() << "ch/" << samples_per_second();
+    mitem << "Hz, buffer " << buffersize() << ".";
+  }
 
   return(mitem.to_string());
 }
@@ -247,18 +280,22 @@ string AUDIO_IO::status(void) const {
 // ===================================================================
 // Constructors and destructors
 
-AUDIO_IO::~AUDIO_IO(void) { }
+AUDIO_IO::~AUDIO_IO(void)
+{
+  if (is_open() == true) {
+    close();
+  }
+  DBC_CHECK(is_open() != true);
+}
 
 AUDIO_IO::AUDIO_IO(const std::string& name, 
-		   int mode, 
-		   const ECA_AUDIO_FORMAT& fmt)
-  : ECA_AUDIO_POSITION(fmt)
+		   int mode)
 {
-  label(name);
-  io_mode(mode);
+  set_label(name);
+  set_io_mode(mode);
  
   position_in_samples(0);
 
-  nonblocking_rep = false;  
-  readable_rep = writable_rep = open_rep = false;
+  nonblocking_rep = false; 
+  open_rep = false;
 }

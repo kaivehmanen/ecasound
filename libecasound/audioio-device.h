@@ -98,7 +98,7 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    * ensure:
    *  (io_mode() == si_read && readable() == true) || writable()
    */
-  virtual void prepare(void) { toggle_prepared_state(true); }
+  virtual void prepare(void) { is_prepared_rep = true; }
 
   /**
    * Start prosessing sample data. Underruns will occur if the 
@@ -115,7 +115,7 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    * ensure:
    *  is_running() == true
    */
-  virtual void start(void) { toggle_running_state(true); }
+  virtual void start(void) { is_running_rep = true; }
 
   /**
    * Stop processing. Doesn't usually concern non-realtime devices.
@@ -131,7 +131,7 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    *  readable() == false
    *  writable() == false
    */
-  virtual void stop(void) { toggle_running_state(false); toggle_prepared_state(false); }
+  virtual void stop(void) { is_running_rep = false; is_prepared_rep = false; }
 
   /*@}*/
 
@@ -141,12 +141,12 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
   /**
    * Whether device has been started?
    */
-  virtual bool is_running(void) const { return(is_running_rep); }
+  bool is_running(void) const { return(is_running_rep); }
 
   /**
    * Whether device has been prepared for processing?
    */
-  virtual bool is_prepared(void) const { return(is_prepared_rep); }
+  bool is_prepared(void) const { return(is_prepared_rep); }
 
   virtual bool finished(void) const { return(is_open() == false); }
 
@@ -161,13 +161,8 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    */
   virtual void seek_position(void) { }
 
- protected:
-  
-  void toggle_running_state(bool v) { is_running_rep = v; }
-  void toggle_prepared_state(bool v) { is_prepared_rep = v; }
-
  private:
-
+  
   bool is_running_rep;
   bool is_prepared_rep;
   bool ignore_xruns_rep;

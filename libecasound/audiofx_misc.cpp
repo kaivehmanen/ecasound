@@ -29,20 +29,24 @@
 #include "eca-debug.h"
 #include "eca-error.h"
 
-EFFECT_DCFIX::EFFECT_DCFIX (CHAIN_OPERATOR::parameter_t delta_left, CHAIN_OPERATOR::parameter_t delta_right) {
+EFFECT_DCFIX::EFFECT_DCFIX (CHAIN_OPERATOR::parameter_t delta_left,
+			    CHAIN_OPERATOR::parameter_t delta_right)
+{
 
   deltafix_rep[0] = delta_left;
   deltafix_rep[1] = delta_right;
 }
 
-EFFECT_DCFIX::EFFECT_DCFIX (const EFFECT_DCFIX& x) {
+EFFECT_DCFIX::EFFECT_DCFIX (const EFFECT_DCFIX& x)
+{
   for(int nm = 0; nm < 2; nm++) {
     deltafix_rep[nm] = x.deltafix_rep[nm];
   }
   i_rep = x.i_rep;
 }
 
-void EFFECT_DCFIX::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_DCFIX::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     deltafix_rep[0] = value;
@@ -53,7 +57,8 @@ void EFFECT_DCFIX::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_DCFIX::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_DCFIX::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(deltafix_rep[0]);
@@ -70,7 +75,8 @@ void EFFECT_DCFIX::parameter_description(int param, struct PARAM_DESCRIPTION *pd
 
 void EFFECT_DCFIX::init(SAMPLE_BUFFER *insample) { i_rep.init(insample); }
 
-void EFFECT_DCFIX::process(void) {
+void EFFECT_DCFIX::process(void)
+{
   for(int n = 0; n < 2; n++) {
     i_rep.begin(n);
     while(!i_rep.end()) {
@@ -82,13 +88,15 @@ void EFFECT_DCFIX::process(void) {
 
 const int EFFECT_PITCH_SHIFT::resample_low_limit = 8;
 
-EFFECT_PITCH_SHIFT::EFFECT_PITCH_SHIFT (const EFFECT_PITCH_SHIFT& x) {
+EFFECT_PITCH_SHIFT::EFFECT_PITCH_SHIFT (const EFFECT_PITCH_SHIFT& x)
+{
   pmod_rep = x.pmod_rep;
   target_rate_rep = x.target_rate_rep;
   sbuf_repp = 0;
 }
 
-void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   switch (param) {
   case 1: 
     double lowlimit = 1.0f / EFFECT_PITCH_SHIFT::resample_low_limit * 100.0f;
@@ -103,7 +111,7 @@ void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_t va
       pmod_rep = value;
     }
     if (sbuf_repp != 0) {
-      target_rate_rep = static_cast<long int>(sbuf_repp->sample_rate() * 100.0 / pmod_rep);
+      target_rate_rep = static_cast<long int>(samples_per_second() * 100.0 / pmod_rep);
     }
     else {
       target_rate_rep = 0;
@@ -112,7 +120,8 @@ void EFFECT_PITCH_SHIFT::set_parameter(int param, CHAIN_OPERATOR::parameter_t va
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_PITCH_SHIFT::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_PITCH_SHIFT::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(pmod_rep);
@@ -136,9 +145,10 @@ void EFFECT_PITCH_SHIFT::parameter_description(int param, struct PARAM_DESCRIPTI
     }
 }
 
-void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample) { 
+void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample)
+{
   sbuf_repp = insample;
-  target_rate_rep = static_cast<long int>(sbuf_repp->sample_rate() * 100.0 / pmod_rep);
+  target_rate_rep = static_cast<long int>(samples_per_second() * 100.0 / pmod_rep);
 
   long int lowlimit = sbuf_repp->length_in_samples() * EFFECT_PITCH_SHIFT::resample_low_limit; 
   sbuf_repp->reserve_length_in_samples(lowlimit);
@@ -146,21 +156,23 @@ void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample) {
 		"(audiofx) setting resampling lowlimit to " + 
 		kvu_numtostr(lowlimit) + " bytes.");
 
-  sbuf_repp->resample_init_memory(sbuf_repp->sample_rate(), target_rate_rep);
+  sbuf_repp->resample_init_memory(samples_per_second(), target_rate_rep);
   ecadebug->msg(ECA_DEBUG::user_objects, "(audiofx) resampling from " +
-		                         kvu_numtostr(sbuf_repp->sample_rate()) + 
+		                         kvu_numtostr(samples_per_second()) + 
 		                         " to " + 
 		                         kvu_numtostr(target_rate_rep) + "."); 
 }
 
-void EFFECT_PITCH_SHIFT::process(void) { 
-  sbuf_repp->resample_to(target_rate_rep); 
+void EFFECT_PITCH_SHIFT::process(void)
+{
+  sbuf_repp->resample(samples_per_second(), target_rate_rep); 
 }
 
-long int EFFECT_PITCH_SHIFT::output_samples(long int i_samples) {
+long int EFFECT_PITCH_SHIFT::output_samples(long int i_samples)
+{
   DBC_CHECK(sbuf_repp != 0);
   return(static_cast<long int>(static_cast<double>(target_rate_rep) /
-			       sbuf_repp->sample_rate() *
+			       samples_per_second() *
 			       i_samples));
 }
 

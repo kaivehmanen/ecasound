@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiogate.cpp: Signal gates.
-// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,19 +24,21 @@
 #include "audiogate.h"
 #include "eca-debug.h"
 
-void GATE_BASE::process(void) {
+void GATE_BASE::process(void)
+{
   analyze(target);
   if (is_open() == false) {
-//      target->make_silent();
     target->length_in_samples(0);
   }
 }
 
-void GATE_BASE::init(SAMPLE_BUFFER* sbuf) { 
+void GATE_BASE::init(SAMPLE_BUFFER* sbuf)
+{ 
   target = sbuf;
 }
 
-void TIME_CROP_GATE::analyze(SAMPLE_BUFFER* sbuf) {
+void TIME_CROP_GATE::analyze(SAMPLE_BUFFER* sbuf)
+{
   if (curtime >= btime) {
     if (btime == etime) open_gate();
     else if (curtime < etime) open_gate();
@@ -45,7 +47,7 @@ void TIME_CROP_GATE::analyze(SAMPLE_BUFFER* sbuf) {
   else 
     close_gate();
 
-  curtime += sbuf->length_in_seconds();
+  curtime += static_cast<double>(sbuf->length_in_samples() / samples_per_second());
 }
 
 TIME_CROP_GATE::TIME_CROP_GATE (CHAIN_OPERATOR::parameter_t open_at, CHAIN_OPERATOR::parameter_t duration) {
@@ -58,7 +60,8 @@ TIME_CROP_GATE::TIME_CROP_GATE (CHAIN_OPERATOR::parameter_t open_at, CHAIN_OPERA
 		kvu_numtostr(duration) + " seconds.\n");
 }
 
-CHAIN_OPERATOR::parameter_t TIME_CROP_GATE::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t TIME_CROP_GATE::get_parameter(int param) const 
+{ 
   switch (param) {
   case 1: 
     return(btime);
@@ -68,7 +71,8 @@ CHAIN_OPERATOR::parameter_t TIME_CROP_GATE::get_parameter(int param) const {
   return(0.0);
 }
 
-void TIME_CROP_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void TIME_CROP_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) 
+{
   switch (param) {
   case 1: 
     btime = value;
@@ -82,7 +86,8 @@ void TIME_CROP_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
 
 THRESHOLD_GATE::THRESHOLD_GATE (CHAIN_OPERATOR::parameter_t threshold_openlevel, 
 				CHAIN_OPERATOR::parameter_t threshold_closelevel,
-				bool use_rms) {
+				bool use_rms) 
+{
   openlevel = threshold_openlevel / 100.0;
   closelevel = threshold_closelevel / 100.0;
   rms = use_rms;
@@ -101,7 +106,8 @@ THRESHOLD_GATE::THRESHOLD_GATE (CHAIN_OPERATOR::parameter_t threshold_openlevel,
   }
 }
 
-void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf) {
+void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf)
+{
   if (rms == true) avolume = SAMPLE_BUFFER_FUNCTIONS::RMS_volume(*sbuf) /
 		     SAMPLE_SPECS::max_amplitude;
   else avolume = SAMPLE_BUFFER_FUNCTIONS::average_amplitude(*sbuf) / SAMPLE_SPECS::max_amplitude;
@@ -122,7 +128,8 @@ void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf) {
   }
 }
 
-CHAIN_OPERATOR::parameter_t THRESHOLD_GATE::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t THRESHOLD_GATE::get_parameter(int param) const
+{ 
   switch (param) {
   case 1: 
     return(openlevel * 100.0);
@@ -135,7 +142,9 @@ CHAIN_OPERATOR::parameter_t THRESHOLD_GATE::get_parameter(int param) const {
   return(0.0);
 }
 
-void THRESHOLD_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
+void THRESHOLD_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) 
+{
+
   switch (param) {
   case 1: 
     openlevel = value / 100.0;
@@ -149,6 +158,3 @@ void THRESHOLD_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
     break;
   }
 }
-
-
-

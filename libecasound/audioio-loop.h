@@ -25,7 +25,7 @@ class LOOP_DEVICE : public AUDIO_IO {
   virtual std::string name(void) const { return("Internal loop device"); }
   virtual std::string description(void) const { return("Loop device that routes data from output to input."); }
 
-  virtual void buffersize(long int samples, long int sample_rate) { };
+  virtual void set_buffersize(long int samples) { };
   virtual long int buffersize(void) const { return(0); };
 
   virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) { }

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-oss.cpp: OSS (/dev/dsp) input/output.
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,12 +39,16 @@
 OSSDEVICE::OSSDEVICE(const std::string& name,
 		     bool precise_sample_rates) 
 {
-  label(name);
+  set_label(name);
   precise_srate_mode = precise_sample_rates;
 }
 
-void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
-  if (is_open() == true) return;
+OSSDEVICE::~OSSDEVICE(void)
+{
+}
+
+void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
+{
   if (io_mode() == io_read) {
     if ((audio_fd = ::open(label().c_str(), O_RDONLY, 0)) == -1) {
       throw(SETUP_ERROR(SETUP_ERROR::io_mode, 
@@ -64,7 +68,6 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
   else {
       throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-OSS: Simultanious intput/output not supported."));
   }
-  toggle_open_state(true);
 
   // -------------------------------------------------------------------
   // Check capabilities
@@ -192,25 +195,30 @@ void OSSDEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-oss) OSS set to use fragment size of " + 
 		   kvu_numtostr(fragment_size) + ".");
+
+  AUDIO_IO_DEVICE::open();
 }
 
-void OSSDEVICE::stop(void) {
+void OSSDEVICE::stop(void)
+{
   // FIXME: should close and re-open the device - otherwise triggering 
   //        won't work properly (see OSS adv.prog.guide)
-  AUDIO_IO_DEVICE::stop();
+
   ::ioctl(audio_fd, SNDCTL_DSP_POST, 0);
   ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" disabled.");
+
+  AUDIO_IO_DEVICE::stop();
 }
 
-void OSSDEVICE::close(void) {
-  if (is_open()) { 
-    toggle_open_state(false);
-    ::close(audio_fd);
-  }
+void OSSDEVICE::close(void)
+{
+  ::close(audio_fd);
+
+  AUDIO_IO_DEVICE::close();
 }
 
-void OSSDEVICE::start(void) {
-  AUDIO_IO_DEVICE::start();
+void OSSDEVICE::start(void)
+{
   ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" started.");
   if ((oss_caps & DSP_CAP_TRIGGER) == DSP_CAP_TRIGGER) {
     int enable_bits;
@@ -219,9 +227,12 @@ void OSSDEVICE::start(void) {
       ::ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits);
   }   
   gettimeofday(&start_time, NULL);
+
+  AUDIO_IO_DEVICE::start();
 }
 
-SAMPLE_SPECS::sample_pos_t OSSDEVICE::position_in_samples(void) const { 
+SAMPLE_SPECS::sample_pos_t OSSDEVICE::position_in_samples(void) const 
+{
   if (is_running() != true) return(0);
   if ((oss_caps & DSP_CAP_REALTIME) == DSP_CAP_REALTIME) {
     count_info info;
@@ -242,14 +253,15 @@ SAMPLE_SPECS::sample_pos_t OSSDEVICE::position_in_samples(void) const {
 }
 
 long int OSSDEVICE::read_samples(void* target_buffer, 
-				 long int samples) {
+				 long int samples)
+{
   return(::read(audio_fd,target_buffer, frame_size() * samples) / frame_size());
 }
 
-void OSSDEVICE::write_samples(void* target_buffer, long int samples) {
+void OSSDEVICE::write_samples(void* target_buffer, long int samples)
+{
   ::write(audio_fd, target_buffer, frame_size() * samples);
 }
 
-OSSDEVICE::~OSSDEVICE(void) { close(); }
 
 #endif // COMPILE_OSS

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "eca-chainop.h"
+#include "eca-samplerate-aware.h"
 
 class SAMPLE_BUFFER;
 
@@ -42,7 +43,9 @@ public:
  * 'duration' seconds. If 'duration' is 0, gate will stay open
  * forever.
  */
-class TIME_CROP_GATE : public GATE_BASE {
+class TIME_CROP_GATE : public GATE_BASE,
+		       public ECA_SAMPLERATE_AWARE
+{
 
 public:
 

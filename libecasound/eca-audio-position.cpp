@@ -21,6 +21,12 @@
 #include <cmath> /* ceil() */
 #include "eca-audio-position.h"
 
+ECA_AUDIO_POSITION::ECA_AUDIO_POSITION(void)
+{
+  position_in_samples_rep = 0;
+  length_in_samples_rep = 0;
+}
+
 ECA_AUDIO_POSITION::ECA_AUDIO_POSITION(const ECA_AUDIO_FORMAT& fmt) : ECA_AUDIO_FORMAT(fmt)
 {
   position_in_samples_rep = 0;
@@ -126,10 +132,11 @@ void ECA_AUDIO_POSITION::seek_position_in_seconds(double pos_in_seconds)
   seek_position_in_samples(pos_in_seconds * samples_per_second());
 }
 
-void ECA_AUDIO_POSITION::samples_per_second_changed(SAMPLE_SPECS::sample_rate_t old_value)
+void ECA_AUDIO_POSITION::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_value)
 {
-  double ratio (samples_per_second());
-  ratio /= old_value;
+  double ratio (new_value);
+  ratio /= samples_per_second();
   position_in_samples(position_in_samples() * ratio);
-  length_in_samples(position_in_samples() * ratio);
+  length_in_samples(length_in_samples() * ratio);
+  ECA_SAMPLERATE_AWARE::set_samples_per_second(new_value);
 }

@@ -39,7 +39,8 @@ const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
 int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
 
 
-AUDIO_IO_JACK::AUDIO_IO_JACK (void) {
+AUDIO_IO_JACK::AUDIO_IO_JACK (void)
+{
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) constructor");
   
   jackmgr_rep = 0;
@@ -48,16 +49,17 @@ AUDIO_IO_JACK::AUDIO_IO_JACK (void) {
   thirdparam_rep = "";
 }
 
-AUDIO_IO_JACK::~AUDIO_IO_JACK(void) { 
-  // ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) destructor");
-  if (is_open() == true) close();
+AUDIO_IO_JACK::~AUDIO_IO_JACK(void)
+{ 
 }
 
-AUDIO_IO_MANAGER* AUDIO_IO_JACK::create_object_manager(void) const {
+AUDIO_IO_MANAGER* AUDIO_IO_JACK::create_object_manager(void) const
+{
   return(new AUDIO_IO_JACK_MANAGER());
 }
 
-void AUDIO_IO_JACK::set_manager(AUDIO_IO_JACK_MANAGER* mgr, int id) {
+void AUDIO_IO_JACK::set_manager(AUDIO_IO_JACK_MANAGER* mgr, int id)
+{
   string mgrname = (mgr == 0 ? mgr->name() : "null");
   ecadebug->msg(ECA_DEBUG::system_objects, 
 		"(audioio-jack) setting manager to " + mgr->name());
@@ -65,7 +67,8 @@ void AUDIO_IO_JACK::set_manager(AUDIO_IO_JACK_MANAGER* mgr, int id) {
   myid_rep = id;
 }
 
-void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
+void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
+{
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) open");
 
   curpos_rep = 0;
@@ -116,27 +119,18 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
     }
   }
 
-  toggle_open_state(true);
-
-  // ---
-  DBC_ENSURE(is_open() == true);
-  // ---
+  AUDIO_IO_DEVICE::open();
 }
 
 void AUDIO_IO_JACK::close(void) {
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) close");
 
-  if (is_open() == true) {
-    if (jackmgr_rep != 0) {
-      jackmgr_rep->unregister_jack_ports(myid_rep);
-      jackmgr_rep->close(myid_rep);
-    }
-    toggle_open_state(false);
+  if (jackmgr_rep != 0) {
+    jackmgr_rep->unregister_jack_ports(myid_rep);
+    jackmgr_rep->close(myid_rep);
   }
-
-  // ---
-  DBC_ENSURE(is_open() != true);
-  // ---
+  
+  AUDIO_IO_DEVICE::close();
 }
 
 long int AUDIO_IO_JACK::read_samples(void* target_buffer, long int samples) {
@@ -163,7 +157,6 @@ void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples) {
 
 void AUDIO_IO_JACK::stop(void) { 
   bool was_running = is_running();
-  AUDIO_IO_DEVICE::stop();
 
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) stop / " + label());
 
@@ -171,36 +164,34 @@ void AUDIO_IO_JACK::stop(void) {
     jackmgr_rep->stop(myid_rep);
   }
 
-  // ---
-  DBC_ENSURE(is_running() != true);
-  // ---
+  AUDIO_IO_DEVICE::stop();
 }
 
 void AUDIO_IO_JACK::start(void) { 
   bool was_running = is_running();
-  AUDIO_IO_DEVICE::start();
+
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) start / " + label());
 
   if (jackmgr_rep != 0 && was_running != true) {
     jackmgr_rep->start(myid_rep);
   }
 
-  // ---
-  DBC_ENSURE(is_running() == true || jackmgr_rep == 0);
-  // ---
+  AUDIO_IO_DEVICE::start();
 }
 
-void AUDIO_IO_JACK::prepare(void) {
-  AUDIO_IO_DEVICE::prepare();
-
+void AUDIO_IO_JACK::prepare(void)
+{
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-jack) prepare / " + label());
+  AUDIO_IO_DEVICE::prepare();
 }
 
-SAMPLE_SPECS::sample_pos_t AUDIO_IO_JACK::position_in_samples(void) const {
+SAMPLE_SPECS::sample_pos_t AUDIO_IO_JACK::position_in_samples(void) const
+{
   return(curpos_rep);
 }
 
-std::string AUDIO_IO_JACK::parameter_names(void) const { 
+std::string AUDIO_IO_JACK::parameter_names(void) const
+{ 
   if (label() == "jack_alsa")
     return("label,portgroup");
   if (label() == "jack_multi")
@@ -211,16 +202,18 @@ std::string AUDIO_IO_JACK::parameter_names(void) const {
   return("label,portgroup");
 }
 
-void AUDIO_IO_JACK::set_parameter(int param, std::string value) {
+void AUDIO_IO_JACK::set_parameter(int param, std::string value)
+{
   switch(param) 
     {
-    case 1: { label(value); break; }
+    case 1: { set_label(value); break; }
     case 2: { secondparam_rep = value; break; }
     case 3: { thirdparam_rep = value; break; }
     }
 }
 
-std::string AUDIO_IO_JACK::get_parameter(int param) const {
+std::string AUDIO_IO_JACK::get_parameter(int param) const
+{
   switch(param) 
     {
     case 1: { return(label()); }

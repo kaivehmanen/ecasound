@@ -25,8 +25,8 @@
 
 ADVANCED_REVERB::ADVANCED_REVERB (parameter_t roomsize,
 				  parameter_t feedback_percent, 
-				  parameter_t wet_percent) {
-  srate_rep = SAMPLE_SPECS::sample_rate_default;
+				  parameter_t wet_percent)
+{
   set_parameter(1, roomsize);
   set_parameter(2, feedback_percent);
   set_parameter(3, wet_percent);
@@ -64,7 +64,7 @@ void ADVANCED_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value
   if (param == 1 || param == 2) {
     std::vector<CHANNEL_DATA>::iterator p = cdata.begin();
     while(p != cdata.end()) {
-      p->dpos[0] = static_cast<long int>(roomsize_rep * srate_rep / 333);
+      p->dpos[0] = static_cast<long int>(roomsize_rep * samples_per_second() / 333);
       p->mul[0] = 0.035;
       p->bufferpos_rep = 0;
       for(int i = 1; i < 64; i++) {
@@ -78,11 +78,10 @@ void ADVANCED_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value
 
 void ADVANCED_REVERB::init(SAMPLE_BUFFER *insample) {
   i_channels.init(insample);
-  srate_rep = insample->sample_rate();
   cdata.resize(insample->number_of_channels());
   std::vector<CHANNEL_DATA>::iterator p = cdata.begin();
   while(p != cdata.end()) {
-    p->dpos[0] = static_cast<long int>(roomsize_rep * srate_rep / 333);
+    p->dpos[0] = static_cast<long int>(roomsize_rep * samples_per_second() / 333);
     p->mul[0] = 0.035;
     p->bufferpos_rep = 0;
     for(int i = 1; i < 64; i++) {

@@ -35,9 +35,7 @@ using std::string;
 LOOP_DEVICE::LOOP_DEVICE(int id) 
   :  AUDIO_IO("loop," + kvu_numtostr(id), io_readwrite),
      id_rep(id),
-     sbuf(buffersize(),
-	  SAMPLE_SPECS::channel_count_default,
-	  SAMPLE_SPECS::sample_rate_default)
+     sbuf(buffersize(), 0)
 { 
   writes_rep = 0;
   registered_inputs_rep = 0;
@@ -47,11 +45,13 @@ LOOP_DEVICE::LOOP_DEVICE(int id)
   empty_rounds_rep = 0;
 }
 
-bool LOOP_DEVICE::finished(void) const {
+bool LOOP_DEVICE::finished(void) const
+{
   return(finished_rep);
 }
 
-void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer) {
+void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer)
+{
   buffer->number_of_channels(channels());
   if (empty_rounds_rep == 0) {
     if (filled_rep == true) {
@@ -71,13 +71,10 @@ void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer) {
   DBC_CHECK(buffer->number_of_channels() == channels());
 }
 
-void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer) {
+void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer)
+{
   ++writes_rep;
 
-  if (buffer->sample_rate() != sbuf.sample_rate()) {
-    sbuf.sample_rate(buffer->sample_rate());
-  }
-  
   /* first write after an read (or reset) */
   if (writes_rep == 1) {
     position_in_samples_advance(buffer->length_in_samples());
@@ -106,10 +103,11 @@ void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer) {
 }
 
 void LOOP_DEVICE::set_parameter(int param, 
-				string value) {
+				string value)
+{
   switch (param) {
   case 1: 
-    label(value);
+    set_label(value);
     break;
 
   case 2: 

@@ -268,7 +268,7 @@ void EFFECT_COMPRESS::init(SAMPLE_BUFFER *insample) {
   i.init(insample);
 
   set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
+  set_samples_per_second(samples_per_second());
 
   lastin.resize(insample->number_of_channels());
   lastout.resize(insample->number_of_channels());
@@ -358,7 +358,7 @@ void EFFECT_NOISEGATE::init(SAMPLE_BUFFER *insample) {
   i.init(insample);
 
   set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
+  set_samples_per_second(samples_per_second());
 
   th_time_lask.resize(insample->number_of_channels());
   attack_lask.resize(insample->number_of_channels());

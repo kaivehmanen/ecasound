@@ -12,8 +12,8 @@ class NULLFILE : public AUDIO_IO_BUFFERED {
 
   virtual std::string name(void) const { return("Null audio object"); }
 
-  virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) { }
-  virtual void close(void) { }
+  virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) { AUDIO_IO::open(); }
+  virtual void close(void) { AUDIO_IO::close(); }
 
   virtual long int read_samples(void* target_buffer, long int samples) { 
     for(long int n = 0; n < static_cast<long int>(samples * frame_size()); n++) ((char*)target_buffer)[n] = 0;
@@ -25,7 +25,7 @@ class NULLFILE : public AUDIO_IO_BUFFERED {
   virtual bool supports_seeking(void) const { return(false); }
   virtual void seek_position(void) { } 
 
-  NULLFILE(const std::string& name = "null") { label(name); }
+  NULLFILE(const std::string& name = "null") { set_label(name); }
   virtual ~NULLFILE(void) { }
   NULLFILE* clone(void) const { return new NULLFILE(*this); }
   NULLFILE* new_expr(void) const { return new NULLFILE(); }

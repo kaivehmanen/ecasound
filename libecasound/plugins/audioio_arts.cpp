@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-arts.cpp: Interface for communicating with aRts/MCOP.
-// Copyright (C) 2000 Kai Vehmanen (kaiv@wakkanet.fi)
+// Copyright (C) 2000,2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,13 +39,11 @@ int ARTS_INTERFACE::ref_rep = 0;
 
 ARTS_INTERFACE::ARTS_INTERFACE(const string& name)
 {
-  label(name);
+  set_label(name);
 }
 
 void ARTS_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  if (is_open() == true) return;
-
   if (ref_rep == 0) {
     int err = ::arts_init();
     if (err < 0) {
@@ -67,24 +65,32 @@ void ARTS_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   ::arts_stream_set(stream_rep, ARTS_P_BUFFER_SIZE, buffersize() * frame_size());
   ::arts_stream_set(stream_rep, ARTS_P_BLOCKING, 1);
   samples_rep = 0;
-  toggle_open_state(true);
+
+  AUDIO_IO::open();
 }
 
-void ARTS_INTERFACE::stop(void) { 
+void ARTS_INTERFACE::stop(void)
+{
   AUDIO_IO_DEVICE::stop();
 }
 
 void ARTS_INTERFACE::close(void)
 {
-  toggle_open_state(false);
   ::arts_close_stream(stream_rep);
+
+  AUDIO_IO::close();
 }
 
-void ARTS_INTERFACE::start(void) { 
+void ARTS_INTERFACE::start(void)
+{ 
   AUDIO_IO_DEVICE::start();
 }
 
-SAMPLE_SPECS::sample_pos_t ARTS_INTERFACE::position_in_samples(void) const { return(samples_rep); }
+SAMPLE_SPECS::sample_pos_t ARTS_INTERFACE::position_in_samples(void) const
+{ 
+  return(samples_rep); 
+}
+
 long int ARTS_INTERFACE::read_samples(void* target_buffer, 
 				      long int samples) 
 {

@@ -334,17 +334,21 @@ static bool mpg123_detect_by_content(const char* filename, struct frame* frp) {
  * MP3FILE specific parts.
  **************************************************************/
 
-MP3FILE::MP3FILE(const std::string& name) {
-  label(name);
+MP3FILE::MP3FILE(const std::string& name)
+{
+  set_label(name);
   finished_rep = false;
   mono_input_rep = false;
   pcm_rep = 1;
   bitrate_rep = MP3FILE::default_mp3_output_default_bitrate;
 }
 
-MP3FILE::~MP3FILE(void) { close(); }
+MP3FILE::~MP3FILE(void)
+{
+}
 
-void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) { 
+void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
+{ 
   if (io_mode() == io_read) {
     get_mp3_params(label());
   }
@@ -354,17 +358,20 @@ void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
     set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16);
   }
 
-  toggle_open_state(true);
   triggered_rep = false;
+
+  AUDIO_IO::open();
 }
 
-void MP3FILE::close(void) {
+void MP3FILE::close(void)
+{
   if (pid_of_child() > 0) {
       ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mp3) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
       clean_child();
       triggered_rep = false;
   }
-  toggle_open_state(false);
+
+  AUDIO_IO::close();
 }
 
 void MP3FILE::process_mono_fix(char* target_buffer, long int bytes_rep) {
@@ -375,7 +382,8 @@ void MP3FILE::process_mono_fix(char* target_buffer, long int bytes_rep) {
   }
 }
 
-long int MP3FILE::read_samples(void* target_buffer, long int samples) {
+long int MP3FILE::read_samples(void* target_buffer, long int samples)
+{
   if (triggered_rep != true) { 
     triggered_rep = true;
     fork_mp3_input();
@@ -392,7 +400,8 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples) {
   return(bytes_rep / frame_size());
 }
 
-void MP3FILE::write_samples(void* target_buffer, long int samples) {
+void MP3FILE::write_samples(void* target_buffer, long int samples)
+{
   if (triggered_rep != true) {
     triggered_rep = true;
     fork_mp3_output();
@@ -412,7 +421,8 @@ void MP3FILE::write_samples(void* target_buffer, long int samples) {
   }
 }
 
-void MP3FILE::seek_position(void) {
+void MP3FILE::seek_position(void)
+{
   if (triggered_rep == true &&
       last_position_rep != position_in_samples()) {
     if (is_open() == true) {
@@ -424,10 +434,11 @@ void MP3FILE::seek_position(void) {
   }
 }
 
-void MP3FILE::set_parameter(int param, string value) {
+void MP3FILE::set_parameter(int param, string value)
+{
   switch (param) {
   case 1: 
-    label(value);
+    set_label(value);
     break;
 
   case 2: 
@@ -440,7 +451,8 @@ void MP3FILE::set_parameter(int param, string value) {
   }
 }
 
-string MP3FILE::get_parameter(int param) const {
+string MP3FILE::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
     return(label());
@@ -490,7 +502,8 @@ void MP3FILE::get_mp3_params_old(const std::string& fname) throw(AUDIO_IO::SETUP
 }
 */ 
 
-void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERROR&) {
+void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERROR&)
+{
   struct frame fr;
   if (mpg123_detect_by_content(fname.c_str(), &fr) != true) {
     throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-MP3: Can't open " + label() + " for reading."));

@@ -36,9 +36,6 @@ namespace SAMPLE_SPECS {
    */
   typedef int channel_t;
 
-  static const sample_rate_t sample_rate_default = 44100;
-  static const channel_t channel_count_default = 2;
-
   static const sample_t silent_value = 0.0f;     // do not change!
   static const sample_t max_amplitude = 1.0f;
   static const sample_t impl_max_value = silent_value + max_amplitude;

@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasound)
        (1)
-       (29.01.2002)
+       (01.02.2002)
        ()
        (Multimedia software)
 
@@ -98,11 +98,6 @@ dit(-n:name)
 Sets the name of chainsetup to 'name'. If not specified, defaults
 either to "command-line-setup" or to the file name from which
 chainsetup was loaded. Whitespaces are not allowed.
-
-dit(-sr:sample_rate)
-Sets internal sampling rate. This can be used to improve 
-realtime performance or to avoid resampling. Default is 44100 
-samples per second.
 
 dit(-x)
 Truncate outputs. All output object are opened in overwrite mode. 
@@ -235,27 +230,20 @@ dit(-o[:]output-file-or-device)
 Works in the same way as the -i option. If no outputs are specified,
 the default output device is used (see &tilde;/.ecasoundrc). Note! 
 you can't output to module formats supported by MikMod (this should
-be obvious) nor to ALSA's loopback device.
+be obvious).
 
 em(OBJECT TYPE SPECIFIC NOTES)
 dit(ALSA devices)
 When using ALSA drivers, instead of a device filename, you need to
 use the following option syntax: bf(-i[:]alsa,pcm_device_name).
-Note! Pcm device naming was introduced in ALSA 0.6.x (doesn't work
-with older ALSA versions; see below for the old syntax).  
 
 dit(ALSA direct-gw and plugin access)
 It's also possible to use a specific card and device combination
 using the following notation: bf(-i[:]alsahw,card_number,device_number,subdevice_number).
-The ALSA plugin layer works just like the normal ALSA pcm-devices, but 
-with automatic sample rate and format conversions. Option syntax is 
+Another option is the ALSA PCM plugin layer. It works just like 
+the normal ALSA pcm-devices, but with automatic channel count and 
+sample format conversions. Option syntax is 
 bf(-i[:]alsaplugin,card_number,device_number,subdevice_number).
-
-dit(ALSA loopback device)
-By using the ALSA loopback system, you can grab audio data from any
-other pcm device. Option syntax is
-bf(-i[:]alsalb,card_number,device_number,subdevice_number).
-Note! Only works with ALSA 0.5.x and older.
 
 dit(aRts input/output)
 If enabled at compile-time, ecasound supports audio input and 
@@ -295,23 +283,23 @@ objects, except all i/o is done at realtime speed.
 dit(Reverse - process audio data backwards)
 Object type 'reverse' can be used to reverse audio 
 data coming from an audio object. As an example, 
-"ecasound -i reverse,foo.wav -o /dev/dsp" will play 'foo.wav'
-backwards. Reversing output objects is not supported. 
-Note! Trying to reverse audio object types with really 
+bf(ecasound -i reverse,foo.wav -o /dev/dsp) will play 
+'foo.wav' backwards. Reversing output objects is not 
+supported. Note! Trying to reverse audio object types with really 
 slow seek operation (like mp3), works extremely badly.
 Try converting to an uncompressed format (wav or raw)
 first, and then do reversation.
 
 dit(System standard streams and named pipes)
-You can use standard streams (stdin and stdout) by giving "stdin" 
-or "stdout" as the file name. Audio data is assumed to be in
+You can use standard streams (stdin and stdout) by giving bf(stdin)
+or bf(stdout) as the file name. Audio data is assumed to be in
 raw/headerless (.raw) format. If you want to use named pipes, 
 create them with the proper file name extension before use.
 
 dit(Typeselect - overriding object type settings)
 The special 'typeselect' object type can be used to override 
 how ecasound maps filename extensions and object types. For 
-instance "ecasound -i typeselect,.mp3,an_mp3_file.wav -o /dev/dsp".
+instance bf(ecasound -i typeselect,.mp3,an_mp3_file.wav -o /dev/dsp).
 would play the file 'an_mp3_file.wav' as an mp3-file and not
 as an wav-file as would happen without typeselect.
 

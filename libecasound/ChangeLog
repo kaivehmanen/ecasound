@@ -2,6 +2,36 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2002-01-31  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* samplebuffer.h (constructor): srate param removed
+	* samplebuffer.h (resample_to,resample_from): replaced with resample()
+	* samplebuffer.h (export_*,import_): srate param removed
+	* samplebuffer.h (sample_rate): function removed
+	* samplebuffer.h (length_in_seconds): function removed
+	* eca-audio-time.h (): all samplerate information moved to ECA_SAMPLERATE_AWARE 
+	* eca-audio-time.h (bytes_per_second): return changed to 'long int'
+	* audiofx.h (): added inheritance of ECA_SAMPLERATE_AWARE
+	* eca-audio-format.h (channels_changed): removed
+	* eca-audio-format.h (sample_format_changed): removed
+	* eca-audio-format.h (samples_per_second_changed): removed
+	* eca-audio-format.h (interleaved_channels_changed): removed
+	* eca-audio-format.h (set_channels): turned into virtual
+	* eca-audio-format.h (set_sample_format): turned into virtual
+	* eca-audio-format.h (toggle_interleaved_channels): turned into
+	virtual
+	* audioio.h (buffersize): modifying version renamed to
+	set_buffersize; second
+	parameter dropped
+	* audioio.h (io_mode,label): modifying versions renamed to 
+	set_io_mode and set_label
+	* audioio.h (toggle_open_state): removed
+	* audioio.h (open, closed): added a default implementation
+	* audioio-device.h (is_running, is_prepared): turned into non-virtual
+	* sample-specs.h (channel_count_default, sample_rate_default):
+	removed
+	* eca-chain.h (): added inheritance of ECA_SAMPLERATE_AWARE
+	
 2002-01-28  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* audioio-proxy-server.h (wait_for_data): added

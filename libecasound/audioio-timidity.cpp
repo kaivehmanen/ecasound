@@ -29,31 +29,40 @@ string TIMIDITY_INTERFACE::default_timidity_cmd = "timidity -Or1S -id -s %s -o -
 
 void TIMIDITY_INTERFACE::set_timidity_cmd(const std::string& value) { TIMIDITY_INTERFACE::default_timidity_cmd = value; }
 
-TIMIDITY_INTERFACE::TIMIDITY_INTERFACE(const std::string& name) {
+TIMIDITY_INTERFACE::TIMIDITY_INTERFACE(const std::string& name)
+{
   finished_rep = false;
 }
 
-TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void) { close(); }
+TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void)
+{
+}
 
-void TIMIDITY_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
+void TIMIDITY_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
+{ 
   /* s16 samples, 2 channels, srate configurable */
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
   set_channels(2);
 
   triggered_rep = false;
-  toggle_open_state(true);
+
+  AUDIO_IO::open();
 }
 
-void TIMIDITY_INTERFACE::close(void) {
+void TIMIDITY_INTERFACE::close(void)
+{
   if (pid_of_child() > 0) {
     if (io_mode() == io_read) {
       kill_timidity();
     }
   }
-  toggle_open_state(false);
+
+  AUDIO_IO::close();
 }
 
-long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, long int samples) {
+long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, 
+					  long int samples)
+{
   if (triggered_rep != true) { 
     triggered_rep = true;
     fork_timidity();
@@ -69,7 +78,8 @@ long int TIMIDITY_INTERFACE::read_samples(void* target_buffer, long int samples)
   return(bytes_read_rep / frame_size());
 }
 
-void TIMIDITY_INTERFACE::seek_position(void) {
+void TIMIDITY_INTERFACE::seek_position(void)
+{
   if (triggered_rep == true) {
     if (io_mode() == io_read) {
       kill_timidity();
@@ -77,13 +87,15 @@ void TIMIDITY_INTERFACE::seek_position(void) {
   }
 }
 
-void TIMIDITY_INTERFACE::kill_timidity(void) {
+void TIMIDITY_INTERFACE::kill_timidity(void)
+{
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-timidity) Cleaning Timidity++-child with pid " + kvu_numtostr(pid_of_child()) + ".");
   clean_child();
   triggered_rep = false;
 }
 
-void TIMIDITY_INTERFACE::fork_timidity(void) {
+void TIMIDITY_INTERFACE::fork_timidity(void)
+{
   set_fork_command(TIMIDITY_INTERFACE::default_timidity_cmd);
   set_fork_file_name(label());
   set_fork_bits(bits());

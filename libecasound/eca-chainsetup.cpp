@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: Class representing an ecasound chainsetup object.
-// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,12 +77,14 @@ using std::list;
  * error description.
  */
 ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts) 
-  : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default),
-    cparser_rep(this) {
+  : cparser_rep(this) 
+{
 
   ecadebug->control_flow("Chainsetup created (cmdline)");
 
   impl_repp = new ECA_CHAINSETUP_impl;
+
+  // FIXME: set default audio format here!
 
   setup_name_rep = "command-line-setup";
   setup_filename_rep = "";
@@ -101,9 +103,8 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
  * @post buffersize != 0
  */
 ECA_CHAINSETUP::ECA_CHAINSETUP(void) 
-  : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default),
-    cparser_rep(this) {
-
+  : cparser_rep(this)
+{
   ecadebug->control_flow("Chainsetup created (empty)");
 
   impl_repp = new ECA_CHAINSETUP_impl;
@@ -123,9 +124,8 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(void)
  * @post buffersize != 0
  */
 ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file) 
-  : ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_default),
-    cparser_rep(this) {
-
+  : cparser_rep(this)
+{
   ecadebug->control_flow("Chainsetup created (file)");
 
   impl_repp = new ECA_CHAINSETUP_impl;
@@ -144,12 +144,21 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file)
 /**
  * Destructor
  */
-ECA_CHAINSETUP::~ECA_CHAINSETUP(void) { 
+ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
+{ 
   ecadebug->msg(ECA_DEBUG::system_objects,"ECA_CHAINSETUP destructor!");
 
   /* delete chain objects */
   for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
     ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting chain \"" + (*q)->name() + "\".");
+    delete *q;
+    *q = 0;
+  }
+
+  /* take the garbage out (must be done before deleting input 
+   * and output objects) */
+  for(list<AUDIO_IO*>::iterator q = aobj_garbage_rep.begin(); q != aobj_garbage_rep.end(); q++) {
+    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting garbage audio object \"" + (*q)->label() + "\".");
     delete *q;
     *q = 0;
   }
@@ -205,20 +214,14 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
     *q = 0;
   }
 
-  /* take the garbage out */
-  for(list<AUDIO_IO*>::iterator q = aobj_garbage_rep.begin(); q != aobj_garbage_rep.end(); q++) {
-    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting garbage audio object \"" + (*q)->label() + "\".");
-    delete *q;
-    *q = 0;
-  }
-  
   delete impl_repp;
 }
 
 /**
  * Tests whether chainsetup is in a valid state.
  */
-bool ECA_CHAINSETUP::is_valid(void) const {
+bool ECA_CHAINSETUP::is_valid(void) const
+{
   // FIXME: waiting for a better implementation...
   return(is_valid_for_connection());
 }
@@ -228,7 +231,8 @@ bool ECA_CHAINSETUP::is_valid(void) const {
  *
  * @pre is_enabled() != true
  */
-void ECA_CHAINSETUP::set_defaults(void) {
+void ECA_CHAINSETUP::set_defaults(void)
+{
   // --------
   DBC_REQUIRE(is_enabled() != true);
   // --------
@@ -265,7 +269,11 @@ void ECA_CHAINSETUP::set_defaults(void) {
 
   ECA_RESOURCES ecaresources;
   set_default_midi_device(ecaresources.resource("midi-device"));
-  set_sample_rate(atol(ecaresources.resource("default-samplerate").c_str()));
+
+  string aformat_temp = ecaresources.resource("default-audio-format");
+  cparser_rep.interpret_object_option("-f:" + aformat_temp);
+  set_samples_per_second(default_audio_format().samples_per_second());
+
   toggle_precise_sample_rates(ecaresources.boolean_resource("default-to-precise-sample-rates"));
 
   impl_repp->bmode_nonrt_rep.set_all(ecaresources.resource("bmode-defaults-nonrt"));
@@ -279,7 +287,8 @@ void ECA_CHAINSETUP::set_defaults(void) {
  * Checks whether chainsetup is valid for 
  * enabling/connecting.
  */
-bool ECA_CHAINSETUP::is_valid_for_connection(void) const {
+bool ECA_CHAINSETUP::is_valid_for_connection(void) const 
+{
   if (inputs.size() == 0) {
     ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) No inputs in the current chainsetup.");
     return(false);
@@ -314,7 +323,8 @@ void ECA_CHAINSETUP::set_buffering_mode(Buffering_mode_t value) {
  * are different from current ones, a state change is
  * performed.
  */ 
-void ECA_CHAINSETUP::select_active_buffering_mode(void) {
+void ECA_CHAINSETUP::select_active_buffering_mode(void)
+{
   if (buffering_mode() == ECA_CHAINSETUP::cs_bmode_none) {
     active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_auto;
   }
@@ -413,7 +423,8 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void) {
  * 
  * Called only from enable().
  */
-void ECA_CHAINSETUP::enable_active_buffering_mode(void) {
+void ECA_CHAINSETUP::enable_active_buffering_mode(void)
+{
   /* if requested, lock all memory */
   if (raised_priority() == true) {
     lock_all_memory();
@@ -443,8 +454,7 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void) {
     }
 
     impl_repp->pserver_rep.set_buffer_defaults(double_buffer_size() / buffersize(), 
-					       buffersize(),
-					       sample_rate());
+					       buffersize());
     impl_repp->pserver_rep.set_schedpriority(sched_priority() - 1);
   }
   else {
@@ -457,7 +467,8 @@ void ECA_CHAINSETUP::enable_active_buffering_mode(void) {
   }
 }
 
-void ECA_CHAINSETUP::switch_to_direct_mode(void) {
+void ECA_CHAINSETUP::switch_to_direct_mode(void)
+{
   switch_to_direct_mode_helper(&inputs, inputs_direct_rep);
   switch_to_direct_mode_helper(&outputs, outputs_direct_rep);
   // --
@@ -466,7 +477,8 @@ void ECA_CHAINSETUP::switch_to_direct_mode(void) {
 }
 
 void ECA_CHAINSETUP::switch_to_direct_mode_helper(vector<AUDIO_IO*>* objs, 
-						  const vector<AUDIO_IO*>& directobjs) {
+						  const vector<AUDIO_IO*>& directobjs)
+{
   // --
   DBC_CHECK(objs->size() == directobjs.size());
   // --
@@ -505,7 +517,8 @@ void ECA_CHAINSETUP::switch_to_proxy_mode_helper(vector<AUDIO_IO*>* objs,
 /**
  * Locks all memory with mlockall().
  */
-void ECA_CHAINSETUP::lock_all_memory(void) {
+void ECA_CHAINSETUP::lock_all_memory(void)
+{
 #ifdef HAVE_MLOCKALL
   if (::mlockall (MCL_CURRENT|MCL_FUTURE)) {
     ecadebug->msg("(eca-chainsetup) Warning! Couldn't lock all memory!");
@@ -522,7 +535,8 @@ void ECA_CHAINSETUP::lock_all_memory(void) {
 /**
  * Unlocks all memory with munlockall().
  */
-void ECA_CHAINSETUP::unlock_all_memory(void) {
+void ECA_CHAINSETUP::unlock_all_memory(void)
+{
 #ifdef HAVE_MUNLOCKALL
   if (memory_locked_rep == true) {
     if (::munlockall()) {
@@ -546,7 +560,8 @@ void ECA_CHAINSETUP::unlock_all_memory(void) {
  * @post chains.back()->name() == "default" && 
  * @post active_chainids.back() == "default"
  */
-void ECA_CHAINSETUP::add_default_chain(void) {
+void ECA_CHAINSETUP::add_default_chain(void)
+{
   // --------
   DBC_REQUIRE(buffersize() >= 0);
   DBC_REQUIRE(chains.size() == 0);
@@ -566,7 +581,8 @@ void ECA_CHAINSETUP::add_default_chain(void) {
  * 
  * @pre is_enabled() != true
  */
-void ECA_CHAINSETUP::add_new_chains(const vector<string>& newchains) {
+void ECA_CHAINSETUP::add_new_chains(const vector<string>& newchains)
+{
   // --------
   DBC_REQUIRE(is_enabled() != true);
   // --------
@@ -582,7 +598,8 @@ void ECA_CHAINSETUP::add_new_chains(const vector<string>& newchains) {
   }
 }
 
-void ECA_CHAINSETUP::add_chain_helper(const string& name) {
+void ECA_CHAINSETUP::add_chain_helper(const string& name)
+{
   chains.push_back(new CHAIN());
   chains.back()->name(name);
   ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Chain \"" + name + "\" created.");
@@ -591,7 +608,8 @@ void ECA_CHAINSETUP::add_chain_helper(const string& name) {
 /**
  * Removes all selected chains from this chainsetup.
  */
-void ECA_CHAINSETUP::remove_chains(void) {
+void ECA_CHAINSETUP::remove_chains(void)
+{
   // --------
   DBC_REQUIRE(is_enabled() != true);
   DBC_DECLARE(size_t old_chains_size = chains.size());
@@ -622,7 +640,8 @@ void ECA_CHAINSETUP::remove_chains(void) {
  *
  * @pre is_in_use() != true
  */
-void ECA_CHAINSETUP::clear_chains(void) {
+void ECA_CHAINSETUP::clear_chains(void)
+{
   // --------
   DBC_REQUIRE(is_in_use() != true);
   // --------
@@ -636,7 +655,8 @@ void ECA_CHAINSETUP::clear_chains(void) {
   }
 }
 
-void ECA_CHAINSETUP::rename_chain(const string& name) {
+void ECA_CHAINSETUP::rename_chain(const string& name)
+{
   for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
@@ -650,8 +670,8 @@ void ECA_CHAINSETUP::rename_chain(const string& name) {
 /**
  * Selects all chains present in this chainsetup.
  */
-void ECA_CHAINSETUP::select_all_chains(void) {
-
+void ECA_CHAINSETUP::select_all_chains(void)
+{
   vector<CHAIN*>::const_iterator p = chains.begin();
   selected_chainids.resize(0);
   while(p != chains.end()) {
@@ -664,7 +684,8 @@ void ECA_CHAINSETUP::select_all_chains(void) {
  * Returns the index number of first selected chains. If no chains 
  * are selected, returns 'last_index + 1' (chains.size()).
  */
-unsigned int ECA_CHAINSETUP::first_selected_chain(void) const {
+unsigned int ECA_CHAINSETUP::first_selected_chain(void) const
+{
   const vector<string>& schains = selected_chains();
   vector<string>::const_iterator o = schains.begin();
   unsigned int p = chains.size();
@@ -678,7 +699,8 @@ unsigned int ECA_CHAINSETUP::first_selected_chain(void) const {
   return(p);
 }
 
-void ECA_CHAINSETUP::toggle_chain_muting(void) {
+void ECA_CHAINSETUP::toggle_chain_muting(void)
+{
   for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
@@ -691,7 +713,8 @@ void ECA_CHAINSETUP::toggle_chain_muting(void) {
   }
 }
 
-void ECA_CHAINSETUP::toggle_chain_bypass(void) {
+void ECA_CHAINSETUP::toggle_chain_bypass(void)
+{
   for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
@@ -704,15 +727,18 @@ void ECA_CHAINSETUP::toggle_chain_bypass(void) {
   }
 }
 
-const ECA_CHAINSETUP_BUFPARAMS& ECA_CHAINSETUP::active_buffering_parameters(void) const {
+const ECA_CHAINSETUP_BUFPARAMS& ECA_CHAINSETUP::active_buffering_parameters(void) const 
+{
   return(impl_repp->bmode_active_rep);
 }
 
-const ECA_CHAINSETUP_BUFPARAMS& ECA_CHAINSETUP::override_buffering_parameters(void) const {
+const ECA_CHAINSETUP_BUFPARAMS& ECA_CHAINSETUP::override_buffering_parameters(void) const 
+{
   return(impl_repp->bmode_override_rep);
 }
 
-vector<string> ECA_CHAINSETUP::chain_names(void) const {
+vector<string> ECA_CHAINSETUP::chain_names(void) const
+{
   vector<string> result;
   vector<CHAIN*>::const_iterator p = chains.begin();
   while(p != chains.end()) {
@@ -722,7 +748,8 @@ vector<string> ECA_CHAINSETUP::chain_names(void) const {
   return(result);
 }
 
-vector<string> ECA_CHAINSETUP::audio_input_names(void) const {
+vector<string> ECA_CHAINSETUP::audio_input_names(void) const
+{
   vector<string> result;
   vector<AUDIO_IO*>::const_iterator p = inputs.begin();
   while(p != inputs.end()) {
@@ -744,8 +771,8 @@ vector<string> ECA_CHAINSETUP::audio_output_names(void) const {
 
 
 
-vector<string>
-ECA_CHAINSETUP::get_attached_chains_to_input(AUDIO_IO* aiod) const{ 
+vector<string> ECA_CHAINSETUP::get_attached_chains_to_input(AUDIO_IO* aiod) const 
+{ 
   vector<string> res;
   
   vector<CHAIN*>::const_iterator q = chains.begin();
@@ -759,8 +786,8 @@ ECA_CHAINSETUP::get_attached_chains_to_input(AUDIO_IO* aiod) const{
   return(res); 
 }
 
-vector<string>
-ECA_CHAINSETUP::get_attached_chains_to_output(AUDIO_IO* aiod) const { 
+vector<string> ECA_CHAINSETUP::get_attached_chains_to_output(AUDIO_IO* aiod) const
+{ 
   vector<string> res;
   
   vector<CHAIN*>::const_iterator q = chains.begin();
@@ -774,7 +801,8 @@ ECA_CHAINSETUP::get_attached_chains_to_output(AUDIO_IO* aiod) const {
   return(res); 
 }
 
-int ECA_CHAINSETUP::number_of_attached_chains_to_input(AUDIO_IO* aiod) const {
+int ECA_CHAINSETUP::number_of_attached_chains_to_input(AUDIO_IO* aiod) const
+{
   int count = 0;
   
   vector<CHAIN*>::const_iterator q = chains.begin();
@@ -788,7 +816,8 @@ int ECA_CHAINSETUP::number_of_attached_chains_to_input(AUDIO_IO* aiod) const {
   return(count); 
 }
 
-int ECA_CHAINSETUP::number_of_attached_chains_to_output(AUDIO_IO* aiod) const {
+int ECA_CHAINSETUP::number_of_attached_chains_to_output(AUDIO_IO* aiod) const
+{
   int count = 0;
   
   vector<CHAIN*>::const_iterator q = chains.begin();
@@ -1201,7 +1230,7 @@ void ECA_CHAINSETUP::remove_audio_output(const string& label) {
  *
  * @pre aio != 0
  */
-void ECA_CHAINSETUP::audio_object_info(const AUDIO_IO* aio) const {
+void ECA_CHAINSETUP::audio_object_info(const AUDIO_IO* aio) {
   // --------
   DBC_REQUIRE(aio != 0);
   // --------
@@ -1340,11 +1369,27 @@ bool ECA_CHAINSETUP::ok_audio_object(const AUDIO_IO* aobj) const {
 }
 
 bool ECA_CHAINSETUP::ok_audio_object_helper(const AUDIO_IO* aobj,
-					    const vector<AUDIO_IO*>& aobjs) const {
+					    const vector<AUDIO_IO*>& aobjs) {
   for(size_t n = 0; n < aobjs.size(); n++) {
     if (aobjs[n] == aobj) return(true);
   }
   return(false);
+}
+
+void ECA_CHAINSETUP::check_object_samplerate(const AUDIO_IO* obj,
+					     SAMPLE_SPECS::sample_rate_t srate) throw(ECA_ERROR&)
+{
+  if (obj->samples_per_second() != srate) {
+    throw(ECA_ERROR("ECA-CHAINSETUP", 
+		    string("All audio objects must have a common") +
+		    " sampling rate; sampling rate of audio object '" +
+ 		    obj->label() +
+		    "' differs from engine rate (" +
+		    kvu_numtostr(obj->samples_per_second()) +
+		    " <-> " + 
+		    kvu_numtostr(srate) + 
+		    "); unable to continue."));
+  }
 }
 
 /**
@@ -1356,26 +1401,18 @@ bool ECA_CHAINSETUP::ok_audio_object_helper(const AUDIO_IO* aobj,
  * 
  * @post is_enabled() == true
  */
-void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
+void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
+{
   try {
     if (is_enabled_rep != true) {
 
+      /* 1. select and enable buffering parameters */
       select_active_buffering_mode();
       enable_active_buffering_mode();
 
+      /* 2. open input devices */
       for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
-	(*q)->buffersize(buffersize(), sample_rate());
-	AUDIO_IO_DEVICE* dev = dynamic_cast<AUDIO_IO_DEVICE*>(*q);
-	if (dev != 0) {
-	  dev->toggle_max_buffers(max_buffers());
-	  dev->toggle_ignore_xruns(ignore_xruns());
-	}
-	if ((*q)->is_open() == false) (*q)->open();
-	audio_object_info(*q);
-      }
-      
-      for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
-	(*q)->buffersize(buffersize(), sample_rate());
+	(*q)->set_buffersize(buffersize());
 	AUDIO_IO_DEVICE* dev = dynamic_cast<AUDIO_IO_DEVICE*>(*q);
 	if (dev != 0) {
 	  dev->toggle_max_buffers(max_buffers());
@@ -1385,9 +1422,41 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&) {
 	audio_object_info(*q);
       }
 
+      /* 3. make sure that all input devices have a common 
+       *    sampling rate */
+      SAMPLE_SPECS::sample_rate_t first_srate = 0;
+      for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
+	if (q == inputs.begin()) {
+	  first_srate = (*q)->samples_per_second();
+	}
+	else {
+	  check_object_samplerate(*q, first_srate);
+	}
+      }
+
+      /* 4. set chainsetup sampling rate to 'first_srate'. */
+      set_samples_per_second(first_srate);
+   
+      /* 5. open output devices */
+      for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
+	(*q)->set_buffersize(buffersize());
+	AUDIO_IO_DEVICE* dev = dynamic_cast<AUDIO_IO_DEVICE*>(*q);
+	if (dev != 0) {
+	  dev->toggle_max_buffers(max_buffers());
+	  dev->toggle_ignore_xruns(ignore_xruns());
+	}
+	if ((*q)->is_open() != true) (*q)->open();
+
+	check_object_samplerate(*q, first_srate);
+	
+	audio_object_info(*q);
+      }
+
+      /* 6. enable the MIDI server */
       if (impl_repp->midi_server_rep.is_enabled() != true &&
 	  midi_devices.size() > 0) impl_repp->midi_server_rep.enable();
 
+      /* 7. enable all MIDI-devices */
       for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {
 	(*q)->toggle_nonblocking_mode(true);
 	if ((*q)->is_open() != true) {
@@ -1432,12 +1501,12 @@ void ECA_CHAINSETUP::disable(void) {
     ecadebug->msg(ECA_DEBUG::system_objects, "Closing chainsetup \"" + name() + "\"");
     for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
-      (*q)->close();
+      if ((*q)->is_open() == true) (*q)->close();
     }
     
     for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
       ecadebug->msg(ECA_DEBUG::system_objects, "(eca-chainsetup) Closing audio device/file \"" + (*q)->label() + "\".");
-      (*q)->close();
+      if ((*q)->is_open() == true) (*q)->close();
     }
 
     if (impl_repp->midi_server_rep.is_enabled() == true) impl_repp->midi_server_rep.disable();
@@ -1452,6 +1521,32 @@ void ECA_CHAINSETUP::disable(void) {
   // --------
   DBC_ENSURE(is_enabled() != true);
   // --------
+}
+
+/**
+ * Reimplemented from ECA_CHAINSETUP_POSITION.
+ */
+void ECA_CHAINSETUP::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_value)
+{
+  ecadebug->msg(ECA_DEBUG::user_objects,
+		"(eca-chainsetup) sample rate change, chainsetup " +
+		name() +
+		" to rate " + 
+		kvu_numtostr(new_value) + ".");
+
+  for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
+    (*q)->set_samples_per_second(new_value);
+  }
+  
+  for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
+    (*q)->set_samples_per_second(new_value);
+  }
+
+  for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
+    (*q)->set_samples_per_second(new_value);
+  }
+  
+  ECA_CHAINSETUP_POSITION::set_samples_per_second(new_value);
 }
 
 /**
@@ -1658,9 +1753,9 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc) {
   }
 
   DBC_CHECK(buffersize() != 0);
-  DBC_CHECK(sample_rate() != 0);
+  DBC_CHECK(samples_per_second() != 0);
 
-  csrc->init((double)buffersize() / sample_rate());
+  csrc->init((double)buffersize() / samples_per_second());
 
   vector<string> schains = selected_chains();
   for(vector<string>::const_iterator a = schains.begin(); a != schains.end(); a++) {
@@ -1691,6 +1786,7 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp) {
   if (p != 0) {
     impl_repp->stamp_server_rep.register_stamp(p);
   }
+
   vector<string> schains = selected_chains();
   for(vector<string>::const_iterator p = schains.begin(); p != schains.end(); p++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {

@@ -27,8 +27,7 @@ class AUDIO_IO_PROXY_BUFFER {
 
   AUDIO_IO_PROXY_BUFFER(int number_of_buffers,
 			long int buffersize,
-			int channels,
-			long int sample_rate);
+			int channels);
   ~AUDIO_IO_PROXY_BUFFER(void);
 };
 

@@ -80,11 +80,13 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void remove_audio_output(const std::string& label);
   void attach_input_to_selected_chains(const AUDIO_IO* obj);
   void attach_output_to_selected_chains(const AUDIO_IO* obj);
-  void audio_object_info(const AUDIO_IO* aio) const;
   bool ok_audio_object(const AUDIO_IO* aobj) const;
   bool is_realtime_target_output(int output_id) const;
   std::vector<std::string> audio_input_names(void) const;
   std::vector<std::string> audio_output_names(void) const;
+
+  static void audio_object_info(const AUDIO_IO* aio);
+
 
   /*@}*/
 
@@ -177,6 +179,13 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   const std::string& name(void) const { return(setup_name_rep); }
   const std::string& filename(void) const { return(setup_filename_rep); }
+
+  /*@}*/
+
+  /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
+  /*@{*/
+
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
 
   /*@}*/
 
@@ -330,8 +339,16 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   std::vector<std::string> get_attached_chains_to_output(AUDIO_IO* aiod) const;
   int number_of_attached_chains_to_input(AUDIO_IO* aiod) const;
   int number_of_attached_chains_to_output(AUDIO_IO* aiod) const;
-  bool ok_audio_object_helper(const AUDIO_IO* aobj, const std::vector<AUDIO_IO*>& aobjs) const;
   void add_chain_helper(const std::string& name);
+
+  /*@}*/
+
+  /** @name Static private helper functions */
+  /*@{*/
+
+  static bool ok_audio_object_helper(const AUDIO_IO* aobj, const std::vector<AUDIO_IO*>& aobjs);
+  static void check_object_samplerate(const AUDIO_IO* obj,
+				      SAMPLE_SPECS::sample_rate_t srate) throw(ECA_ERROR&);
 
   /*@}*/
 

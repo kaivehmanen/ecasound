@@ -2,19 +2,20 @@
 #define INCLUDED_ECA_CONTROL_POSITION_H
 
 #include "sample-specs.h"
+#include "eca-samplerate-aware.h"
 
 /**
  * Virtual class implementing position and
  * length related chainsetup features.
  */
-class ECA_CHAINSETUP_POSITION {
+class ECA_CHAINSETUP_POSITION : public ECA_SAMPLERATE_AWARE {
 
  public:
 
   // --
   // init and cleanup
 
-  ECA_CHAINSETUP_POSITION(SAMPLE_SPECS::sample_rate_t srate);
+  ECA_CHAINSETUP_POSITION(void);
 
   // --
   // functions for setting and observing position
@@ -55,17 +56,20 @@ class ECA_CHAINSETUP_POSITION {
   // --
   // functions for setting and observing sample rate and looping
 
-  void set_sample_rate(long int srate) { srate_rep = srate; }
-  long int sample_rate(void) const { return(srate_rep); }
-
   void toggle_looping(bool v) { looping_rep = v; }
   bool looping_enabled(void) const { return(looping_rep); }
+
+  /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
+  /*@{*/
+
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
+
+  /*@}*/
 
  private:
 
   bool length_set_rep;
   bool looping_rep;
-  long int srate_rep;
 
   long int length_rep;
   long int curpos_rep;

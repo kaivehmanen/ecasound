@@ -18,17 +18,14 @@ class SAMPLE_BUFFER_impl;
  *
  * Dynamic attributes are:
  *  - number of channels
- *  - data length
- *  - sampling rate
- *  - temporal length (data length + samplerate)
+ *  - length in samples
  *
  * Provided services:
  *  - copying from/to other samplebuffer objects
  *  - basic audio operations
  *  - importing and exporting data from/to\n
  *    raw buffers of audio data
- *  - changing channel count, length and \n
- *    sample-rate
+ *  - changing channel count and length
  *  - reserving space before-hand
  *  - realtime-safety and pointer locking
  */
@@ -47,7 +44,6 @@ class SAMPLE_BUFFER {
 
   typedef SAMPLE_SPECS::channel_t channel_size_t;
   typedef long int buf_size_t;
-  typedef SAMPLE_SPECS::sample_rate_t srate_size_t;
   typedef SAMPLE_SPECS::sample_t sample_t;
 
   /*@}*/
@@ -57,7 +53,7 @@ class SAMPLE_BUFFER {
   /** @name Constructors/destructors */
   /*@{*/
 
-  SAMPLE_BUFFER (buf_size_t buffersize = 0, channel_size_t channels = 0, srate_size_t sample_rate = 0);
+  SAMPLE_BUFFER (buf_size_t buffersize = 0, channel_size_t channels = 0);
   ~SAMPLE_BUFFER(void);
 
   /*@}*/
@@ -81,8 +77,7 @@ class SAMPLE_BUFFER {
   void limit_values(void);
   void make_silent(void);
   void make_silent_range(buf_size_t start_pos, buf_size_t end_pos);
-  void resample_from(srate_size_t from_srate) { resample_with_memory(from_srate, sample_rate_rep); }
-  void resample_to(srate_size_t to_srate) { resample_with_memory(sample_rate_rep, to_srate); }
+  void resample(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
 
   /*@}*/
 
@@ -90,10 +85,10 @@ class SAMPLE_BUFFER {
    * @name Importing and exporting data from/to raw buffers of audio data */
   /*@{*/
 
-  void import_interleaved(unsigned char* source, buf_size_t samples, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch, buf_size_t srate);
-  void import_noninterleaved(unsigned char* source, buf_size_t samples, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch, buf_size_t srate);
-  void export_interleaved(unsigned char* target, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch, buf_size_t srate);
-  void export_noninterleaved(unsigned char* target, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch, buf_size_t srate);
+  void import_interleaved(unsigned char* source, buf_size_t samples, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch);
+  void import_noninterleaved(unsigned char* source, buf_size_t samples, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch);
+  void export_interleaved(unsigned char* target, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch);
+  void export_noninterleaved(unsigned char* target, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch);
   
   /*@}*/
         
@@ -105,19 +100,15 @@ class SAMPLE_BUFFER {
   void number_of_channels(channel_size_t num);
   inline channel_size_t number_of_channels(void) const { return(channel_count_rep); }
 
-  void sample_rate(srate_size_t srate);
-  inline srate_size_t sample_rate(void) const { return(sample_rate_rep); }
-
   void length_in_samples(buf_size_t len);
   inline buf_size_t length_in_samples(void) const { return(buffersize_rep); }
-  inline double length_in_seconds(void) const { return(static_cast<double>(buffersize_rep) / sample_rate_rep); }
 
   /*@}*/
 
   /** @name Reserving space before-hand */
   /*@{*/
 
-  void resample_init_memory(srate_size_t from_srate, srate_size_t to_srate);
+  void resample_init_memory(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
   void reserve_channels(channel_size_t num);
   void reserve_length_in_samples(buf_size_t len);
 
@@ -134,10 +125,10 @@ class SAMPLE_BUFFER {
 
  private:
 
-  void resample_extfilter(srate_size_t from_srate, srate_size_t to_srate);
-  void resample_simplefilter(srate_size_t from_srate, srate_size_t to_srate);
-  void resample_nofilter(srate_size_t from_srate, srate_size_t to_srate);
-  void resample_with_memory(srate_size_t from_srate, srate_size_t to_srate);
+  void resample_extfilter(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
+  void resample_simplefilter(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
+  void resample_nofilter(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
+  void resample_with_memory(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
 
  public:
 
@@ -165,7 +156,6 @@ class SAMPLE_BUFFER {
 
   channel_size_t channel_count_rep;
   buf_size_t buffersize_rep;
-  srate_size_t sample_rate_rep;
   buf_size_t reserved_samples_rep;
 
   /*@}*/

@@ -70,7 +70,7 @@ class EWFFILE : public AUDIO_IO {
   virtual bool finished(void) const;
   virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const;
 
-  virtual void buffersize(long int samples, long int sample_rate) { if (child != 0) child->buffersize(samples, sample_rate); }
+  virtual void set_buffersize(long int samples) { if (child != 0) child->set_buffersize(samples); }
   virtual long int buffersize(void) const { if (child != 0) return(child->buffersize()); return(0); }
 
   virtual void read_buffer(SAMPLE_BUFFER* sbuf);
@@ -82,7 +82,7 @@ class EWFFILE : public AUDIO_IO {
  
   EWFFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
   EWFFILE* new_expr(void) const { return new EWFFILE(); }
-  EWFFILE (const std::string& name = "") { label(name); child = 0; }
+  EWFFILE (const std::string& name = "") { set_label(name); child = 0; }
   ~EWFFILE(void);
 };
 

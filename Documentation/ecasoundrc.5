@@ -1,4 +1,4 @@
-.TH "ecasoundrc" "5" "15\&.12\&.2001" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "01\&.02\&.2002" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
@@ -32,8 +32,11 @@ Defaults to \fIrawmidi,/dev/midi\fP\&.
 .IP "default-output" 
 Output device to use\&. Defaults to \fI/dev/dsp\fP\&.
 .IP 
-.IP "default-samplerate" 
-Default internal sample-rate used internally by the ecasound engine\&. Defaults to \fI44100\fP\&.
+.IP "default-audio-format" 
+Default values for sample format, channel count, sampling rate
+and channel interleaving\&. Syntax is the same as used by
+ecasound\'s \fI-f\fP option (see ecasound(1))\&. 
+Defaults to \fIs16_le,2,44100,i\fP\&.
 .IP 
 .IP "default-to-precise-sample-rates" 
 Whether to ignore sample rate differences (and possibly avoid 

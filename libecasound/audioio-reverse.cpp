@@ -51,7 +51,6 @@ AUDIO_IO_REVERSE::~AUDIO_IO_REVERSE (void)
 
 void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-reverse) open " + label() + ".");  
 
   if (io_mode() != AUDIO_IO::io_read) {
@@ -90,22 +89,23 @@ void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     throw(SETUP_ERROR(SETUP_ERROR::dynamic_params, "AUDIOIO-REVERSE: Unable to reverse audio object types that don't support seek (" + child_repp->label() + ")."));
   }
   
-  child_repp->buffersize(buffersize(), samples_per_second());
-  child_repp->io_mode(io_mode());
+  child_repp->set_buffersize(buffersize());
+  child_repp->set_io_mode(io_mode());
   child_repp->set_audio_format(audio_format());
   child_repp->open();
   if (child_repp->locked_audio_format() == true) {
     set_audio_format(child_repp->audio_format());
   }
-  label(child_repp->label());
-  toggle_open_state(true);
-  seek_position();
+  set_label(child_repp->label());
+
+  AUDIO_IO::open();
 }
 
 void AUDIO_IO_REVERSE::close(void)
 {
-  child_repp->close();
-  toggle_open_state(false);
+  if (child_repp->is_open() == true) child_repp->close();
+
+  AUDIO_IO::close();
 }
 
 bool AUDIO_IO_REVERSE::finished(void) const
@@ -161,7 +161,6 @@ void AUDIO_IO_REVERSE::seek_position(void)
 
 void AUDIO_IO_REVERSE::read_buffer(SAMPLE_BUFFER* sbuf)
 {
-  tempbuf_repp->sample_rate(sbuf->sample_rate());
   tempbuf_repp->number_of_channels(sbuf->number_of_channels());
 
   /* phase 1: seek to correct position and read one buffer */
@@ -170,9 +169,9 @@ void AUDIO_IO_REVERSE::read_buffer(SAMPLE_BUFFER* sbuf)
   if (newpos <= 0) {
     child_repp->seek_position_in_samples(0);
     int oldbufsize = child_repp->buffersize();
-    child_repp->buffersize(-newpos, samples_per_second());
+    child_repp->set_buffersize(-newpos);
     child_repp->read_buffer(tempbuf_repp);
-    child_repp->buffersize(oldbufsize, samples_per_second());
+    child_repp->set_buffersize(oldbufsize);
     finished_rep = true;
     DBC_CHECK(-newpos == tempbuf_repp->length_in_samples());
   }

@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <kvutils/dbc.h>
 #include <kvutils/message_item.h>
 
 #include "audioio-device.h"
@@ -26,17 +27,26 @@ AUDIO_IO_DEVICE::AUDIO_IO_DEVICE(void)
     is_prepared_rep(false),
     ignore_xruns_rep(true),
     max_buffers_rep(true) 
-{ }
+{
+}
 
-AUDIO_IO_DEVICE::~AUDIO_IO_DEVICE(void) { }
+AUDIO_IO_DEVICE::~AUDIO_IO_DEVICE(void)
+{
+  if (is_open() == true && is_running()) stop();
 
-bool AUDIO_IO_DEVICE::is_realtime_object(const AUDIO_IO* aobj) {
+  DBC_CHECK(is_prepared() != true);
+  DBC_CHECK(is_running() != true);
+}
+
+bool AUDIO_IO_DEVICE::is_realtime_object(const AUDIO_IO* aobj)
+{
   const AUDIO_IO_DEVICE* p = dynamic_cast<const AUDIO_IO_DEVICE*>(aobj);
   if (p != 0) return(true);
   return(false);
 }
 
-string AUDIO_IO_DEVICE::status(void) const {
+string AUDIO_IO_DEVICE::status(void) const
+{
   MESSAGE_ITEM mitem;
 
   mitem << "realtime-device, processed ";

@@ -16,7 +16,7 @@ class AUDIO_IO_BUFFERED : public AUDIO_IO {
   virtual void read_buffer(SAMPLE_BUFFER* sbuf);
   virtual void write_buffer(SAMPLE_BUFFER* sbuf);
 
-  virtual void buffersize(long int samples, long int sample_rate);
+  virtual void set_buffersize(long int samples);
   virtual long int buffersize(void) const { return(buffersize_rep); }
 
   /**
@@ -41,9 +41,6 @@ class AUDIO_IO_BUFFERED : public AUDIO_IO {
  private:
 
   long int buffersize_rep;
-  long int buffersize_sig_rep;
-  long int target_srate_rep;
-  long int target_samples_rep;
   unsigned char* iobuf_uchar_repp;  // buffer for raw-I/O
   size_t iobuf_size_rep;
 };

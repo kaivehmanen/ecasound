@@ -12,7 +12,7 @@ htmlcommand(
 
 manpage(ecasoundrc)
        (5)
-       (15.12.2001)
+       (01.02.2002)
        ()
        (Multimedia software)
 
@@ -49,8 +49,11 @@ startdit()
   	dit(default-output)
   	Output device to use. Defaults to em(/dev/dsp).
 
-  	dit(default-samplerate)
-  	Default internal sample-rate used internally by the ecasound engine. Defaults to em(44100).
+  	dit(default-audio-format)
+  	Default values for sample format, channel count, sampling rate
+  	and channel interleaving. Syntax is the same as used by
+  	ecasound's em(-f) option (see ecasound(1)). 
+	Defaults to em(s16_le,2,44100,i).
 
 	dit(default-to-precise-sample-rates) 
 	Whether to ignore sample rate differences (and possibly avoid 

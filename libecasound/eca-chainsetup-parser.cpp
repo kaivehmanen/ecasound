@@ -359,9 +359,7 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const std::string& argu) {
   case 's':
     {
       if (argu.size() > 2 && argu[2] == 'r') {
-	csetup_repp->set_sample_rate(atol(get_argument_number(1,argu).c_str()));
-	ecadebug->msg("(eca-chainsetup-parser) Setting internal sample rate to: "
-		      + get_argument_number(1,argu));
+	ecadebug->msg("(eca-chainsetup-parser) Option '-sr' is obsolete. Use syntax '-f:sfmt,bits,srate,ileaving' instead.");
       }
       break;
     }
@@ -553,8 +551,16 @@ void ECA_CHAINSETUP_PARSER::interpret_audio_format (const std::string& argu) {
       csetup_repp->set_default_audio_format(active_sinfo);
       
       MESSAGE_ITEM ftemp;
-      ftemp << "(eca-chainsetup-parser) Set active format to (bits/channels/srate): ";
-      ftemp << active_sinfo.format_string() << "/" << (int)active_sinfo.channels() << "/" << active_sinfo.samples_per_second();
+      ftemp << "(eca-chainsetup-parser) Set active format to (bits/channels/srate/interleave): ";
+      ftemp << csetup_repp->default_audio_format().format_string() 
+	    << "/" << csetup_repp->default_audio_format().channels() 
+	    << "/" << csetup_repp->default_audio_format().samples_per_second();
+      if (csetup_repp->default_audio_format().interleaved_channels() == true) {
+	ftemp << "/i";
+      }
+      else { 
+	ftemp << "/n";
+      }
       ecadebug->msg(ECA_DEBUG::user_objects, ftemp.to_string());
       break;
     }
@@ -655,7 +661,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu) {
 	}
 	else {
 	  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
-	  last_audio_object_repp->io_mode(AUDIO_IO::io_read);
+	  last_audio_object_repp->set_io_mode(AUDIO_IO::io_read);
 	  last_audio_object_repp->set_audio_format(csetup_repp->default_audio_format());
 	  csetup_repp->add_input(last_audio_object_repp);
 	}
@@ -685,7 +691,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const std::string& argu) {
 	}
 	else {
 	  ecadebug->msg(ECA_DEBUG::system_objects,"(eca-chainsetup-parser) adding file \"" + tname + "\".");
-	  last_audio_object_repp->io_mode(mode_tmp);
+	  last_audio_object_repp->set_io_mode(mode_tmp);
 	  last_audio_object_repp->set_audio_format(csetup_repp->default_audio_format());
 	  csetup_repp->add_output(last_audio_object_repp);
 	}
@@ -940,7 +946,7 @@ std::string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const {
       }
   }
 
-  t << " -sr:" << csetup_repp->sample_rate();
+  t << " -sr:" << csetup_repp->samples_per_second();
 
   t << " -n:" << csetup_repp->name();
 

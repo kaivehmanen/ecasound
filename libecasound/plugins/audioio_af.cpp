@@ -45,14 +45,20 @@ const char* audio_io_keyword(void){return(audio_io_keyword_const); }
 const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
 int audio_io_interface_version(void) { return(ECASOUND_LIBRARY_VERSION_CURRENT); }
 
-AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name) {
+AUDIOFILE_INTERFACE::AUDIOFILE_INTERFACE (const string& name)
+{
   finished_rep = false;
-  label(name);
+  set_label(name);
 }
 
-void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
+AUDIOFILE_INTERFACE::~AUDIOFILE_INTERFACE(void)
+{
+}
+
+void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&)
+{
   // --------
-  DBC_REQUIRE(!is_open());
+  DBC_REQUIRE(is_open() != true);
   // --------
 
   int sample_format, sample_width;
@@ -77,10 +83,10 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
 	}
       format += kvu_numtostr(sample_width);
 
-//        if (afGetByteOrder(afhandle, AF_DEFAULT_TRACK) == AF_BYTEORDER_BIGENDIAN)
-//  	format += "_be";
-//        else
-//  	format += "_le";
+      //        if (afGetByteOrder(afhandle, AF_DEFAULT_TRACK) == AF_BYTEORDER_BIGENDIAN)
+      //  	format += "_be";
+      //        else
+      //  	format += "_le";
 	
       set_sample_format(format);
 
@@ -90,11 +96,13 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(AUDIO_IO::SETUP_ERROR&) {
   }
 
   // -------
-  DBC_ENSURE(!is_open());
+  DBC_ENSURE(is_open() != true);
   // -------
 }
 
-void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
+void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
+{
+  AUDIO_IO::open();
 
   switch(io_mode()) {
   case io_read:
@@ -169,47 +177,46 @@ void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
   //    afSetVirtualByteOrder(afhandle, AF_DEFAULT_TRACK, AF_BYTEORDER_BIGENDIAN);
 
   debug_print_type();
-  toggle_open_state(true);
-  if (position_in_samples() != 0) seek_position();
 }
 
-void AUDIOFILE_INTERFACE::close(void) {
-  if (is_open()) {
-    ::afCloseFile(afhandle);
-    toggle_open_state(false);
-  }
+void AUDIOFILE_INTERFACE::close(void)
+{
+  AUDIO_IO::close();
+  ::afCloseFile(afhandle);
 }
 
-AUDIOFILE_INTERFACE::~AUDIOFILE_INTERFACE(void) {
-  close();
-}
 
 void AUDIOFILE_INTERFACE::debug_print_type(void) {
   int temp = ::afGetFileFormat(afhandle, 0);
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-af) afFileformat: " + kvu_numtostr(temp) + "."); 
 }
 
-bool AUDIOFILE_INTERFACE::finished(void) const {
+bool AUDIOFILE_INTERFACE::finished(void) const
+{
   if (finished_rep == true || 
       (io_mode() == io_read && out_position())) return(true);
 
   return false;
 }
 
-long int AUDIOFILE_INTERFACE::read_samples(void* target_buffer, long int samples) {
+long int AUDIOFILE_INTERFACE::read_samples(void* target_buffer, 
+					   long int samples)
+{
   samples_read = ::afReadFrames(afhandle, AF_DEFAULT_TRACK,
-			      target_buffer, samples);
+				target_buffer, samples);
   finished_rep = (samples_read < samples) ? true : false;
   return(samples_read);
 }
 
-void AUDIOFILE_INTERFACE::write_samples(void* target_buffer, long int samples) {
+void AUDIOFILE_INTERFACE::write_samples(void* target_buffer, 
+					long int samples)
+{
   ::afWriteFrames(afhandle, AF_DEFAULT_TRACK, target_buffer, samples);
 }
 
-void AUDIOFILE_INTERFACE::seek_position(void) {
-  if (is_open())
-    ::afSeekFrame(afhandle, AF_DEFAULT_TRACK, position_in_samples());
+void AUDIOFILE_INTERFACE::seek_position(void)
+{
+  ::afSeekFrame(afhandle, AF_DEFAULT_TRACK, position_in_samples());
   finished_rep = false;
 }
 

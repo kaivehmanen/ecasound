@@ -38,7 +38,7 @@ AUDIO_IO_BUFFERED_PROXY::AUDIO_IO_BUFFERED_PROXY (AUDIO_IO_PROXY_SERVER *pserver
     child_repp(aobject),
     free_child_rep(transfer_ownership) 
 {
-  label(child_repp->label());
+  set_label(child_repp->label());
   pbuffer_repp = 0;
   xruns_rep = 0;
   finished_rep = false;
@@ -201,6 +201,7 @@ void AUDIO_IO_BUFFERED_PROXY::seek_position(void) {
  */
 void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) { 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) open " + label() + ".");
+
   if (child_repp->is_open() != true) {
     child_repp->open();
   }
@@ -209,7 +210,8 @@ void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
     pbuffer_repp = pserver_repp->get_client_buffer(child_repp);
   }
   fetch_child_data();
-  toggle_open_state(true);
+
+  AUDIO_IO::open();
 }
 
 /**
@@ -219,6 +221,8 @@ void AUDIO_IO_BUFFERED_PROXY::open(void) throw(AUDIO_IO::SETUP_ERROR&) {
  */
 void AUDIO_IO_BUFFERED_PROXY::close(void) { 
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-buffered-proxy) close " + label() + ".");
-  child_repp->close();
-  toggle_open_state(false);
+
+  if (child_repp->is_open() == true) child_repp->close();
+
+  AUDIO_IO::close();
 }

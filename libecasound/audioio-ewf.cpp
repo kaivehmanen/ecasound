@@ -37,15 +37,16 @@
 using std::cerr;
 using std::endl;
 
-EWFFILE::~EWFFILE(void) {
-  if (is_open()) close();
+EWFFILE::~EWFFILE(void)
+{
   if (child != 0) {
     delete child;
     child = 0;
   }
 }
 
-void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
+void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
+{
   child_active = false;
 
   ewf_rc.resource_file(label());
@@ -58,7 +59,7 @@ void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
 
   ecadebug->msg(ECA_DEBUG::user_objects, "AUDIOIO-EWF: Opening ewf-child:" + child->label() + ".");
 
-  child->io_mode(io_mode());
+  child->set_io_mode(io_mode());
   child->set_audio_format(audio_format());
   child->open();
   if (child->locked_audio_format() == true) {
@@ -73,17 +74,17 @@ void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &) {
 
   tmp_buffer.number_of_channels(child->channels());
   tmp_buffer.length_in_samples(child->buffersize());
-  tmp_buffer.sample_rate(child->samples_per_second());
- 
-  seek_position();
-  toggle_open_state(true);
+
+  AUDIO_IO::open();
 }
 
-void EWFFILE::close(void) {
-  child->close();
-  toggle_open_state(false);
+void EWFFILE::close(void)
+{
+  if (child->is_open() == true) child->close();
   write_ewf_data();
   child_active = false;
+
+  AUDIO_IO::close();
 }
 
 void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
@@ -177,12 +178,12 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf) {
 
 	child->seek_position_in_samples(child_start_pos_rep.samples());
 	long int save_bsize = child->buffersize();
-	child->buffersize(tail, child->samples_per_second());
+	child->set_buffersize(tail);
 	child->read_buffer(&tmp_buffer);
 
 	DBC_CHECK(tmp_buffer.length_in_samples() == tail);
 
-	child->buffersize(save_bsize, child->samples_per_second());
+	child->set_buffersize(save_bsize);
 	sbuf->length_in_samples(buffersize());
 	sbuf->copy_range(tmp_buffer, 
 			 0,

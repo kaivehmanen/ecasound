@@ -13,7 +13,6 @@ class ADVANCED_REVERB : public EFFECT_TIME_BASED {
  private:
 
   SAMPLE_ITERATOR_CHANNELS i_channels;
-  long int srate_rep;
   parameter_t roomsize_rep;
   parameter_t feedback_rep;
   parameter_t wet_rep;

@@ -1,17 +1,20 @@
 ------------------------------------------------------------------------
-Status: OPEN
+Status: CLOSED
 
 (edi-18) Intelligent system for setting the internal sample rate.
 	- submitted: smassy, 17.10.2001
+	- done: kaiv, 31.01.2002
 
 ------------------------------------------------------------------------
 Details:
 
-- work still to be done
-  - track down all places where sample rate values are used (at least
-    chainsetups, some of the effect objects, audio objects, 
-    controller objects, samplebuffer objs) 
-  - make all components able to react to changing sample rate
+- added: edi-18 implemented; engine samplerate is now
+	 set automatically - if object sample rates don't
+         match, an error is printed
+- added: ecasoundrc - 'default-audio-format'; same syntax
+	 as with the -f option; defaults to s16_le,2,44100,i
+- removed: ecasoundrc - 'default-samplerate'
+- removed: -sr option; no needed anymore
 
 ------------------------------------------------------------------------
 - S.Massy, 17.10.2001:

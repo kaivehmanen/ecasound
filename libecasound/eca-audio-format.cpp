@@ -24,66 +24,59 @@
 #include "eca-audio-format.h"
 #include "eca-error.h"
 
-static const ECA_AUDIO_FORMAT default_ecasound_audio_format (2, 
-							     44100, 
-							     ECA_AUDIO_FORMAT::sfmt_s16_le,
-							     true);
-ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT (int ch, 
-				    long int srate, 
-				    ECA_AUDIO_FORMAT::Sample_format format, 
-				    bool ileaved) {
-  set_channels(ch);
+ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT(int channels, 
+				   long int srate,
+				   ECA_AUDIO_FORMAT::Sample_format format, 
+				   bool ileaved)
+{
+  set_channels(channels);
   set_samples_per_second(srate);
   set_sample_format(format);
   toggle_interleaved_channels(ileaved);
 }
 
-ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT (void) { 
-  set_channels(default_ecasound_audio_format.channels());
-  set_samples_per_second(default_ecasound_audio_format.samples_per_second());
-  set_sample_format(default_ecasound_audio_format.sample_format());
-  toggle_interleaved_channels(default_ecasound_audio_format.interleaved_channels());
+ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT(void)
+{ 
+  set_channels(0);
+  set_samples_per_second(-1);
+  set_sample_format(sfmt_none);
+  toggle_interleaved_channels(true);
+
 }
 
-ECA_AUDIO_FORMAT::ECA_AUDIO_FORMAT (const ECA_AUDIO_FORMAT& x) {
-  set_channels(x.channels_rep);
-  set_samples_per_second(x.srate_rep);
-  set_sample_format(x.sfmt_rep);
-  toggle_interleaved_channels(x.ileaved_rep);
+ECA_AUDIO_FORMAT::~ECA_AUDIO_FORMAT(void) 
+{
 }
 
-ECA_AUDIO_FORMAT::~ECA_AUDIO_FORMAT (void) { }
-
-ECA_AUDIO_FORMAT& ECA_AUDIO_FORMAT::operator=(const ECA_AUDIO_FORMAT& x) {
-  if (this != &x) {
-    set_channels(x.channels_rep);
-    set_samples_per_second(x.srate_rep);
-    set_sample_format(x.sfmt_rep);
-    toggle_interleaved_channels(x.ileaved_rep);
-  }
-  return *this;
-}
-
-ECA_AUDIO_FORMAT ECA_AUDIO_FORMAT::audio_format(void) const {
+ECA_AUDIO_FORMAT ECA_AUDIO_FORMAT::audio_format(void) const
+{
   return(ECA_AUDIO_FORMAT(channels(),
 			  samples_per_second(),
 			  sample_format(),
 			  interleaved_channels()));
 }
 
-void ECA_AUDIO_FORMAT::set_audio_format(const ECA_AUDIO_FORMAT& f) {
+/**
+ * Sets audio format to that of 'f'.
+ */
+void ECA_AUDIO_FORMAT::set_audio_format(const ECA_AUDIO_FORMAT& f)
+{
   set_channels(f.channels());
   set_sample_format(f.sample_format());
   set_samples_per_second(f.samples_per_second());
   toggle_interleaved_channels(f.interleaved_channels());
 }
 
-void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format v) throw(ECA_ERROR&) {
-  Sample_format old_value = sfmt_rep;
+void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format v) throw(ECA_ERROR&)
+{
   sfmt_rep = v;
   convert_to_host_byte_order();
   switch(sfmt_rep) 
     {
+    case sfmt_none:
+      align_rep = 0; 
+      break;
+
     case sfmt_u8:
     case sfmt_s8:
       align_rep = 1;
@@ -110,13 +103,12 @@ void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format v) thro
       align_rep = 8;
       break;
 
-    default: { throw(ECA_ERROR("ECA_AUDIO_FORMAT","Audio format not support!")); }
+    default: { throw(ECA_ERROR("ECA_AUDIO_FORMAT","Audio format not supported!")); }
     }
-
-  sample_format_changed(old_value);
 }
 
-void ECA_AUDIO_FORMAT::convert_to_host_byte_order(void) {
+void ECA_AUDIO_FORMAT::convert_to_host_byte_order(void)
+{
   switch(sfmt_rep) 
     {
 #ifdef WORDS_BIGENDIAN
@@ -136,7 +128,8 @@ void ECA_AUDIO_FORMAT::convert_to_host_byte_order(void) {
     }
 }
 
-int ECA_AUDIO_FORMAT::bits(void) const {
+int ECA_AUDIO_FORMAT::bits(void) const
+{
   switch(sfmt_rep) 
     {
     case sfmt_s24_le:
@@ -148,25 +141,18 @@ int ECA_AUDIO_FORMAT::bits(void) const {
     }
 }
 
-void ECA_AUDIO_FORMAT::set_samples_per_second(long int v) {
-  long int old_value = srate_rep;
-  srate_rep = v;
-  samples_per_second_changed(old_value);
-}
-
-void ECA_AUDIO_FORMAT::set_channels(int v) {
-  int old_value = channels_rep;
+void ECA_AUDIO_FORMAT::set_channels(int v)
+{
   channels_rep = v; 
-  channels_changed(old_value);
 }
 
-void ECA_AUDIO_FORMAT::toggle_interleaved_channels(bool v) {
-  bool old_value;
+void ECA_AUDIO_FORMAT::toggle_interleaved_channels(bool v)
+{
   ileaved_rep = v; 
-  interleaved_channels_changed(old_value);
 }
 
-void ECA_AUDIO_FORMAT::set_sample_format(const std::string& f_str) throw(ECA_ERROR&) {
+void ECA_AUDIO_FORMAT::set_sample_format(const std::string& f_str) throw(ECA_ERROR&)
+{
   if (f_str == "u8") sfmt_rep = sfmt_u8;
   else if (f_str == "s16") sfmt_rep = sfmt_s16;
   else if (f_str == "s16_le") sfmt_rep = sfmt_s16_le;
@@ -191,9 +177,11 @@ void ECA_AUDIO_FORMAT::set_sample_format(const std::string& f_str) throw(ECA_ERR
   set_sample_format(sfmt_rep);
 }
 
-string ECA_AUDIO_FORMAT::format_string(void) const throw(ECA_ERROR&) {
+string ECA_AUDIO_FORMAT::format_string(void) const throw(ECA_ERROR&)
+{
   switch(sfmt_rep) 
     {
+    case sfmt_none: return("none");
     case sfmt_u8: return("u8");
     case sfmt_s8: return("s8");
     case sfmt_s16_le: return("s16_le");
@@ -204,6 +192,6 @@ string ECA_AUDIO_FORMAT::format_string(void) const throw(ECA_ERROR&) {
     case sfmt_s32_be: return("s32_be");
     case sfmt_f32_le: return("f32_le");
     case sfmt_f32_be: return("f32_be");
-    default: { throw(ECA_ERROR("ECA_AUDIO_FORMAT","Audio format not support!")); }
+    default: { throw(ECA_ERROR("ECA_AUDIO_FORMAT","Audio format not supported!")); }
     }
 }

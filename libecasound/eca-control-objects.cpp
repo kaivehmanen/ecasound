@@ -519,7 +519,7 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position_samples(SAMPLE_SPECS::sampl
 
   if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     change_chainsetup_position(static_cast<double>(samples) /
-			       selected_chainsetup_repp->sample_rate());
+			       selected_chainsetup_repp->samples_per_second());
   }
   else {
     selected_chainsetup_repp->change_position(samples);
@@ -563,7 +563,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position_samples(SAMPLE_SPECS::sample_p
 
   if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
     set_chainsetup_position(static_cast<double>(samples) /
-			    selected_chainsetup_repp->sample_rate());
+			    selected_chainsetup_repp->samples_per_second());
   }
   else {
     selected_chainsetup_repp->set_position(samples);

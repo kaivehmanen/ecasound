@@ -67,7 +67,7 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
   virtual void seek_position(void);
     
   CDRFILE (const std::string& name = "");
-  ~CDRFILE(void);
+  virtual ~CDRFILE(void);
     
   CDRFILE* clone(void) const { std::cerr << "Not implemented!" << std::endl; return 0; }
   CDRFILE* new_expr(void) const { return new CDRFILE(); }

@@ -9,6 +9,7 @@ class CHAIN;
 class SAMPLE_BUFFER;
 
 #include "eca-chainop.h"
+#include "eca-samplerate-aware.h"
 
 /**
  * Class for representing effect presets
@@ -16,7 +17,8 @@ class SAMPLE_BUFFER;
  * @author Arto Hamara
  * @author Kai Vehmanen
  */
-class PRESET : public CHAIN_OPERATOR {
+class PRESET : public CHAIN_OPERATOR,
+	       public ECA_SAMPLERATE_AWARE {
 
  public:
 

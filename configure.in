@@ -289,10 +289,7 @@ alsa_support=no)
 AM_CONDITIONAL(COMPILE_ALSA, test x$alsa_support = xyes)
 if test x$alsa_support = xyes; then
 AC_CHECK_LIB(asound,snd_pcm_delay,AC_DEFINE(ALSALIB_060),
-	AC_CHECK_LIB(asound,snd_pcm_channel_params,AC_DEFINE(ALSALIB_050),
-		AC_CHECK_LIB(asound,snd_pcm_capture_params,AC_DEFINE(ALSALIB_032),
-			AC_CHECK_LIB(asound,snd_pcm_record_params,
-				AC_MSG_ERROR([ALSA <0.3.2 not supported - update to a newer version or compile with --disable-alsa])))))
+	AC_MSG_ERROR([ALSA version older than 0.9.0 not supported - update to a newer version or compile with --disable-alsa]))
 fi
 
 dnl ---

@@ -226,7 +226,7 @@ void ADVANCED_COMPRESSOR::init(SAMPLE_BUFFER* insample) {
   iter.init(insample);
 
   set_channels(insample->number_of_channels());
-  set_samples_per_second(insample->sample_rate());
+  set_samples_per_second(samples_per_second());
 }
 
 void ADVANCED_COMPRESSOR::process(void) {

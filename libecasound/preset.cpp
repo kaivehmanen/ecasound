@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // preset.cpp: Class for representing effect presets
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 // Copyright (C) 2001 Arto Hamara (artham@utu.fi)
 //
 // This program is free software; you can redistribute it and/or modify
@@ -464,21 +464,25 @@ CHAIN_OPERATOR::parameter_t PRESET::get_parameter(int param) const {
 }
 
 void PRESET::init(SAMPLE_BUFFER *insample) {
+
+  DBC_CHECK(samples_per_second() > 0);
+
   first_buffer = insample;
+  chains[0]->set_samples_per_second(samples_per_second());
   chains[0]->init(first_buffer, first_buffer->number_of_channels(), first_buffer->number_of_channels());
   for(size_t q = 1; q < chains.size(); q++) {
     DBC_CHECK(q - 1 < buffers.size());
     buffers[q - 1]->length_in_samples(first_buffer->length_in_samples());
     buffers[q - 1]->number_of_channels(first_buffer->number_of_channels());
-    buffers[q - 1]->sample_rate(first_buffer->sample_rate());
+    chains[q]->set_samples_per_second(samples_per_second());
     chains[q]->init(buffers[q - 1], 
-			       first_buffer->number_of_channels(), 
-			       first_buffer->number_of_channels());
+		    first_buffer->number_of_channels(), 
+		    first_buffer->number_of_channels());
   }
 
   for(size_t n = 0; n < impl_repp->gctrls_rep.size(); n++) {
     impl_repp->gctrls_rep[n]->init(static_cast<double>(first_buffer->length_in_samples()) / 
-				   first_buffer->sample_rate());
+				   samples_per_second());
   }
 }
 

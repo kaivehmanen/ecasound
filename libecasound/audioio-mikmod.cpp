@@ -33,24 +33,29 @@ MIKMOD_INTERFACE::MIKMOD_INTERFACE(const std::string& name) {
   finished_rep = false;
 }
 
-MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void) { close(); }
+MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void) 
+{
+}
 
-void MIKMOD_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &) { 
+void MIKMOD_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
+{
   triggered_rep = false;
-  toggle_open_state(true);
 
   /* s16 samples, 2 channels, srate configurable */
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
   set_channels(2);
+
+  AUDIO_IO::open();
 }
 
-void MIKMOD_INTERFACE::close(void) {
+void MIKMOD_INTERFACE::close(void)
+{
   if (pid_of_child() > 0) {
     if (io_mode() == io_read) {
       kill_mikmod();
     }
   }
-  toggle_open_state(false);
+  AUDIO_IO::close();
 }
 
 long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples) {

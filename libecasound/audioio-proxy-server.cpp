@@ -89,7 +89,6 @@ AUDIO_IO_PROXY_SERVER::AUDIO_IO_PROXY_SERVER (void)
   ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) constructor");
   buffercount_rep = buffercount_default;
   buffersize_rep = buffersize_default;
-  samplerate_rep = SAMPLE_SPECS::sample_rate_default;
 
   impl_repp = new AUDIO_IO_PROXY_SERVER_impl;
 
@@ -377,12 +376,10 @@ void AUDIO_IO_PROXY_SERVER::signal_flush(void) {
  * Sets new default values for sample buffers.
  */
 void AUDIO_IO_PROXY_SERVER::set_buffer_defaults(int buffers, 
-						long int buffersize, 
-						long int sample_rate)
+						long int buffersize)
 { 
   buffercount_rep = buffers;
   buffersize_rep = buffersize;
-  samplerate_rep = sample_rate;
 }
 
 /**
@@ -401,14 +398,10 @@ void AUDIO_IO_PROXY_SERVER::register_client(AUDIO_IO* aobject)
 		"(audioio-proxy-server) Registering client " +
 		kvu_numtostr(clients_rep.size() - 1) +
 		". Buffer count " +
-		kvu_numtostr(buffercount_rep) +
-		", sample rate " +
-		kvu_numtostr(samplerate_rep) +
-		".");
+		kvu_numtostr(buffercount_rep) + ".");
   buffers_rep.push_back(new AUDIO_IO_PROXY_BUFFER(buffercount_rep,
 						  buffersize_rep,
-						  SAMPLE_SPECS::channel_count_default,
-						  samplerate_rep));
+						  aobject->channels()));
   client_map_rep[aobject] = clients_rep.size() - 1;
 }
 
@@ -457,10 +450,10 @@ void AUDIO_IO_PROXY_SERVER::io_thread(void)
   int passive_rounds = 0;
   bool one_time_full = false;
 
-  /* set idle timeout to 10% of total buffersize */
+  /* set idle timeout to ~10% of total buffersize (using 44.1Hz as a reference) */
   struct timespec sleepcount; /* was: 100ms */
   sleepcount.tv_sec = 0; 
-  sleepcount.tv_nsec = buffersize_rep * buffercount_rep * 1000 / samplerate_rep / 10 * 1000000;
+  sleepcount.tv_nsec = buffersize_rep * buffercount_rep * 1000 / 44100 / 10 * 1000000;
   
   ecadebug->msg(ECA_DEBUG::system_objects, 
 		"(audio_io_proxy_server) Using idle timeout of " +

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_ladspa.cpp: Wrapper class for LADSPA plugins
-// Copyright (C) 2000,2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2000-2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,13 +23,15 @@
 
 #include <dlfcn.h>
 #include <kvutils.h>
+#include <kvutils/dbc.h>
 #include <kvutils/kvu_numtostr.h>
 #include "samplebuffer.h"
 #include "audiofx_ladspa.h"
 #include "eca-error.h"
 #include "eca-debug.h"
 
-EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&) {
+EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&)
+{
   plugin_desc = pdesc;
   if ((plugin_desc->Properties & LADSPA_PROPERTY_INPLACE_BROKEN) ==
       LADSPA_PROPERTY_INPLACE_BROKEN)
@@ -43,7 +45,8 @@ EFFECT_LADSPA::EFFECT_LADSPA (const LADSPA_Descriptor *pdesc) throw(ECA_ERROR&) 
   init_ports();
 }
 
-EFFECT_LADSPA::~EFFECT_LADSPA (void) {
+EFFECT_LADSPA::~EFFECT_LADSPA (void)
+{
   if (buffer_repp != 0) {
     buffer_repp->release_pointer_reflock();
   }
@@ -56,7 +59,8 @@ EFFECT_LADSPA::~EFFECT_LADSPA (void) {
   }
 }
 
-EFFECT_LADSPA* EFFECT_LADSPA::clone(void) const { 
+EFFECT_LADSPA* EFFECT_LADSPA::clone(void) const
+{ 
   EFFECT_LADSPA* result = new EFFECT_LADSPA(plugin_desc);
   for(int n = 0; n < number_of_params(); n++) {
     result->set_parameter(n + 1, get_parameter(n + 1));
@@ -68,6 +72,11 @@ void EFFECT_LADSPA::init_ports(void) {
   port_count_rep = plugin_desc->PortCount;
   in_audio_ports = 0;
   out_audio_ports = 0;
+
+  /* if srate not set, use 44.1kHz (used only for calculating
+   * param hint values */
+  SAMPLE_SPECS::sample_rate_t srate = samples_per_second();
+  if (srate <= 0) { srate = 44100; }
 
   for(unsigned long m = 0; m < port_count_rep; m++) {
     if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
@@ -100,12 +109,12 @@ void EFFECT_LADSPA::init_ports(void) {
       parameter_t init_value, lowb, upperb;
 
       if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
-	lowb = plugin_desc->PortRangeHints[m].LowerBound * samples_per_second();
+	lowb = plugin_desc->PortRangeHints[m].LowerBound * srate;
       else
 	lowb = plugin_desc->PortRangeHints[m].LowerBound;
 
       if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
-	upperb = plugin_desc->PortRangeHints[m].UpperBound * samples_per_second();
+	upperb = plugin_desc->PortRangeHints[m].UpperBound * srate;
       else
 	upperb = plugin_desc->PortRangeHints[m].UpperBound;
 
@@ -140,7 +149,7 @@ void EFFECT_LADSPA::init_ports(void) {
 	       !LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor));
 
 	if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
-	  init_value = samples_per_second();
+	  init_value = srate;
 	else
 	  init_value = 1.0f;
       }
@@ -152,8 +161,15 @@ void EFFECT_LADSPA::init_ports(void) {
   }
 }
 
-void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *pd) {
+void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *pd)
+{
   int ctrl_port_n = 0; 
+
+  /* if srate not set, use 44.1kHz (used only for calculating
+   * param hint values */
+  SAMPLE_SPECS::sample_rate_t srate = samples_per_second();
+  if (srate <= 0) { srate = 44100; }
+
   for(unsigned long m = 0; m < port_count_rep; m++) {
     if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_CONTROL) == LADSPA_PORT_CONTROL) {
       ++ctrl_port_n;
@@ -164,7 +180,7 @@ void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *p
 	if (LADSPA_IS_HINT_BOUNDED_ABOVE(plugin_desc->PortRangeHints[m].HintDescriptor)) {
 	  pd->bounded_above = true;
 	  if (LADSPA_IS_HINT_SAMPLE_RATE(plugin_desc->PortRangeHints[m].HintDescriptor)) 
-	    pd->upper_bound = plugin_desc->PortRangeHints[m].UpperBound * samples_per_second();
+	    pd->upper_bound = plugin_desc->PortRangeHints[m].UpperBound * srate;
 	  else
 	    pd->upper_bound = plugin_desc->PortRangeHints[m].UpperBound;
 	}
@@ -207,15 +223,16 @@ void EFFECT_LADSPA::parameter_description(int param, struct PARAM_DESCRIPTION *p
   }
 }
 
-void EFFECT_LADSPA::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) {
-  
+void EFFECT_LADSPA::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
   if (param > 0 && (param - 1 < static_cast<int>(params.size()))) {
     //  cerr << "ladspa: setting param " << param << " to " << value << "." << endl;
     params[param - 1] = value;
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_LADSPA::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_LADSPA::get_parameter(int param) const 
+{
   if (param > 0 && (param - 1 < static_cast<int>(params.size()))) {
     //  cerr << "ladspa: getting param " << param << " with value " << params[param - 1] << "." << endl;
     return(params[param - 1]);
@@ -223,9 +240,11 @@ CHAIN_OPERATOR::parameter_t EFFECT_LADSPA::get_parameter(int param) const {
   return(0.0);
 }
 
-void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) { 
-
+void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample)
+{ 
   EFFECT_BASE::init(insample);
+
+  DBC_CHECK(samples_per_second() > 0);
 
   if (buffer_repp != insample) {
     if (buffer_repp != 0) {
@@ -243,13 +262,13 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) {
   }
 
 
-// NOTE: the fancy definition :)
-//       if ((in_audio_ports > 1 &&
-//            in_audio_ports <= channels() &&
-//            out_audio_ports <= channels()) ||
-//           (out_audio_ports > 1 &&
-//            in_audio_ports <= channels() &&
-//            out_audio_ports <= channels())) {}
+  // NOTE: the fancy definition :)
+  //       if ((in_audio_ports > 1 &&
+  //            in_audio_ports <= channels() &&
+  //            out_audio_ports <= channels()) ||
+  //           (out_audio_ports > 1 &&
+  //            in_audio_ports <= channels() &&
+  //            out_audio_ports <= channels())) {}
 
   if (in_audio_ports > 1 ||
       out_audio_ports > 1) {
@@ -312,7 +331,8 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample) {
     if (plugin_desc->activate != 0) plugin_desc->activate(plugins_rep[m]);
 }
 
-void EFFECT_LADSPA::process(void) {
+void EFFECT_LADSPA::process(void)
+{
   for(unsigned long m = 0; m < plugins_rep.size(); m++)
     plugin_desc->run(plugins_rep[m], buffer_repp->length_in_samples());
 }

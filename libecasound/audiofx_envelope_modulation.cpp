@@ -78,7 +78,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_PULSE_GATE::get_parameter(int param) const {
 
 void EFFECT_PULSE_GATE::init(SAMPLE_BUFFER* sbuf) { 
   i.init(sbuf); 
-  set_samples_per_second(sbuf->sample_rate());
+  set_samples_per_second(samples_per_second());
   set_channels(sbuf->number_of_channels());
   incrTime = 1.0/samples_per_second();
 }
@@ -175,7 +175,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_TREMOLO::get_parameter(int param) const {
 
 void EFFECT_TREMOLO::init(SAMPLE_BUFFER* sbuf) {
   i.init(sbuf);
-  set_samples_per_second(sbuf->sample_rate());
+  set_samples_per_second(samples_per_second());
   set_channels(sbuf->number_of_channels());
   incrTime = 1.0/samples_per_second();
 }
