@@ -409,7 +409,7 @@ void PRESET::parse_operator_option(const string& arg) {
       // NOTE: for instance for LADSPA plugins -el:label,par1,par2 
       //       number_of_args is 3, but number_of_params is 2!
       int slave_index = arg_slave_indices[i];
-      slave_index -= get_number_of_arguments(arg) - cop->number_of_params();
+      slave_index -= get_number_of_arguments(arg) - object->number_of_params();
 
       if (preset_index > impl_repp->slave_param_objects_rep.size()) {
 	impl_repp->slave_param_objects_rep.resize(preset_index);
