@@ -1,73 +1,109 @@
-#ifndef _OBJECT_QUEUE_H
-#define _OBJECT_QUEUE_H
+// ------------------------------------------------------------------------
+// object_queue.cpp: Thread-safe way to transmit generic objects (FIFO).
+// Copyright (C) 1999-2000 Kai Vehmanen (kaiv@wakkanet.fi)
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// ------------------------------------------------------------------------
+
+#ifndef INCLUDED_OBJECT_QUEUE_H
+#define INCLUDED_OBJECT_QUEUE_H
 
 #include <pthread.h>
 #include <string>
 #include <deque>
 
-extern pthread_mutex_t _cq_lock;
-
 /**
- * Thread-safe way to transmit generic objects
+ * Thread-safe way to transmit generic objects (FIFO-queue).
  */
-template<class C>
+template<class T>
 class OBJECT_QUEUE {
     
 private:
 
-    deque<C> objs;
+    deque<T> cmds_rep;
+    pthread_mutex_t lock_rep;
 
 public:
     
     /**
-     * Inserts 'cmd' into the queue
+     * Inserts 'obj' into the queue. If some other process is 
+     * accessing the queue, this call will block.
      */
-    void push_back(const C& obj) {
-      pthread_mutex_lock(&_cq_lock);
-      objs.push_back(obj);
-      pthread_mutex_unlock(&_cq_lock);
+    void push_back(const T& obj)  {
+      pthread_mutex_lock(&lock_rep);
+      cmds_rep.push_back(obj);
+      pthread_mutex_unlock(&lock_rep);
     }
 
     /**
-     * Pops the first item
+     * Pops the first item. If some other process is 
+     * accessing the queue, this call will block.
      */
     void pop_front(void) {
-      pthread_mutex_lock(&_cq_lock);
-      objs.pop_front();
-      pthread_mutex_unlock(&_cq_lock);
+      pthread_mutex_lock(&lock_rep);
+      cmds_rep.pop_front();
+      pthread_mutex_unlock(&lock_rep);
     }
 
     /**
-     * Returns the first item
+     * Returns the first item. If some other process is 
+     * accessing the queue, this call will block.
      */
-    C& front(void) const {
-      assert(objs.size() > 0);
-      return(objs.front());
+    T front(void) const  {
+      T temporary;
+      pthread_mutex_lock(&lock_rep);
+      if (cmds_rep.size() > 0) {
+	temporary = cmds_rep.front();
+      }
+      pthread_mutex_unlock(&lock_rep);
+      return(temporary);
     }
 
     /**
-     * Returns true if at least one command is available
+     * Returns true if the queue is empty. Unlike other calls,
+     * this call will not block if some other process is 
+     * accessing the queue. In this case, the returned result
+     * will be 'true' even if the queue wasn't empty.
      */
-    bool objs_available(void) const {
-      if (pthread_mutex_trylock(&_cq_lock) != 0)
-        return(false);
-      bool temp = false;
-      if (objs.size() > 0) temp = true;
-      pthread_mutex_unlock(&_cq_lock);
+    bool is_empty(void) const {
+      if (pthread_mutex_trylock(&lock_rep) != 0)
+	return(true);
+  
+      bool temp = true;
+      if (cmds_rep.size() > 0) temp = false;
+      pthread_mutex_unlock(&lock_rep);
       return(temp);
-    }
+    }    
     
     /**
-     * Flush all items
+     * Clears the queue. If some other process is 
+     * accessing the queue, this call will block.
      */
-    void flush(void) {
-      int n = pthread_mutex_trylock(&_cq_lock);
-      if (n != 0) return;
-      while (objs.size() > 0) objs.pop_front();
-      pthread_mutex_unlock(&_cq_lock);
+    void clear(void) {
+      pthread_mutex_lock(&lock_rep);
+      while (cmds_repsize() > 0) cmds_rep.pop_front();
+      pthread_mutex_unlock(&lock_rep);
     }
 
-    OBJECT_QUEUE(void) { _cq_lock = PTHREAD_MUTEX_INITIALIZER; }
+    OBJECT_QUEUE(void) {
+      pthread_mutex_init(&lock_rep, NULL);
+    }
+
+    ~OBJECT_QUEUE(void) {
+      pthread_mutex_destroy(&lock_rep, NULL);      
+    }
 };
 
 #endif

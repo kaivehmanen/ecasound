@@ -10,21 +10,21 @@ lib_LTLIBRARIES = libkvutils.la
 kvutil_sources = 	kvutils.cpp \
 			message_item.cpp \
 			com_line.cpp \
-			command_queue.cpp \
 		 	value_queue.cpp \
-			kvu_numtostr.cpp
+			kvu_numtostr.cpp \
+			locks.cpp
 
 kvutil_headers = 	kvutils.h \
 			message_item.h \
 			com_line.h \
-			command_queue.h \
 			value_queue.h \
 			kvu_numtostr.h \
 			definition_by_contract.h \
-			object_queue.h
+			object_queue.h \
+			locks.h
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
-libkvutils_la_LDFLAGS = -version-info 1:0:0
+libkvutils_la_LDFLAGS = -version-info 2:0:0
 
 DIST_COMMON = 	README \
 		COPYING \
