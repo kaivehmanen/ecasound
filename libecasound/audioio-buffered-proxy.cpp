@@ -130,10 +130,9 @@ void AUDIO_IO_BUFFERED_PROXY::read_buffer(SAMPLE_BUFFER* sbuf) {
     }
     else {
       xruns_rep++;
-      ecadebug->msg(ECA_DEBUG::user_objects, 
-		    std::string("(audioio-buffered-proxy) Warning! Underrun for ") +
-		    child_repp->label() +
-		    ". Trying to recover.");
+      std::cerr << "(audioio-buffered-proxy) Warning! Overrun in reading from \"" 
+		<< child_repp->label() 
+		<< "\". Trying to recover." << std::endl;
       pserver_repp->wait_for_data(); 
       if (pbuffer_repp->read_space() > 0) {
 	// std::cerr << "(audioio-buffered-proxy) recursing, read_space: " << pbuffer_repp->read_space() << "." << std::endl;
@@ -164,10 +163,9 @@ void AUDIO_IO_BUFFERED_PROXY::write_buffer(SAMPLE_BUFFER* sbuf) {
     if (pbuffer_repp->finished_rep.get() == 1) finished_rep = true;
     else {
       xruns_rep++;
-      ecadebug->msg(ECA_DEBUG::user_objects, 
-		    std::string("(audioio-buffered-proxy) Warning! Overrun for ") +
-		    child_repp->label() +
-		    ". Trying to recover.");
+      std::cerr << "(audioio-buffered-proxy) Warning! Overrun in writing to \"" 
+		<< child_repp->label() 
+		<< "\". Trying to recover." << std::endl;
       pserver_repp->wait_for_data(); 
       if (pbuffer_repp->write_space() > 0) {
 	this->write_buffer(sbuf);
