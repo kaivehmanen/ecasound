@@ -24,7 +24,7 @@
 #include <kvutils.h>
 
 #include "samplebuffer.h"
-#include "audioio-types.h"
+#include "audioio-device.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

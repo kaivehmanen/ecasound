@@ -8,10 +8,12 @@
 #include "dynamic-object.h"
 
 class SAMPLE_BUFFER;
+class AUDIO_IO_MANAGER;
 
 /**
- * Virtual base for all audio I/O classes (files, audio devices,
- * sound producing program modules, etc.)
+ * Virtual base class for all audio I/O objects. Different types
+ * of audio objects include files, audio devices, sound 
+ * producing program modules, audio server clients, and so on.
  *
  * The class interface is divided into following sections:
  *
@@ -88,6 +90,18 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
 
   /*@}*/
 
+  /** @name Public functions for handling object managers */
+  /*@{*/
+
+  /**
+   * Creates an object manager for this audio object type. 
+   *
+   * @return 0 if no manager objects are not supported
+   */
+  virtual AUDIO_IO_MANAGER* create_object_manager(void) const { return(0); }
+
+  /*@}*/
+
   /** @name Constructors and destructors */
   /*@{*/
 
@@ -155,38 +169,31 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
   /*@{*/
 
   /**
-   * Reads samples to buffer pointed by 'sbuf'. If necessary, the target 
-   * buffer will be resized.
+   * Reads samples and store them to buffer pointed by 'sbuf'. If 
+   * necessary, the target buffer will be resized.
    *
    * It's important to note that SAMPLE_BUFFER audio format cannot be
    * changed during processing. This means that audio data must be converted
-   * from audio object's format to buffer object's format. SAMPLE_BUFFER 
-   * class provides tools for all normal conversion operations. If you need
-   * direct access to object's data, a lower abstraction level should be used
-   * (@see AUDIO_IO_BUFFERED).
+   * from audio object's internal format to that of 'sbuf' given as 
+   * argument. SAMPLE_BUFFER class provides tools for all normal conversion 
+   * operations. If you need direct access to object's data, a lower 
+   * abstraction level should be used (@see AUDIO_IO_BUFFERED).
    *
-   * @see read_samples
-   *
-   * require:
-   *  io_mode() == io_read || io_mode() == io_readwrite
-   *  readable() == true
-   *  sbuf != 0
-   *
-   * ensure:
-   *  sbuf->length_in_samples() <= buffersize()
+   * @pre io_mode() == io_read || io_mode() == io_readwrite
+   * @pre readable() == true
+   * @pre sbuf != 0
+   * @post sbuf->length_in_samples() <= buffersize()
    */
   virtual void read_buffer(SAMPLE_BUFFER* sbuf) = 0;
 
   /**
-   * Writes all data from sample buffer pointed by 'sbuf'. Notes
-   * concerning read_buffer() also apply to this routine.
+   * Writes all data from sample buffer pointed by 'sbuf' to
+   * this object. Notes concerning read_buffer() also apply to 
+   * this routine.
    *
-   * @see write samples
-   *
-   * require:
-   *  io_mode() == io_write || io_mode() == io_readwrite
-   *  writable() == true
-   *  sbuf != 0
+   * @pre io_mode() == io_write || io_mode() == io_readwrite
+   * @pre writable() == true
+   * @pre  sbuf != 0
    */
   virtual void write_buffer(SAMPLE_BUFFER* sbuf) = 0;
 
@@ -208,19 +215,17 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
    * matching, or in the worst case, throw an SETUP_ERROR 
    * exception (see above).
    *
-   * ensure:
-   *  readable() == true || writable() == true || is_open() != true
+   * @post readable() == true || writable() == true || is_open() != true
    */
   virtual void open(void) throw (AUDIO_IO::SETUP_ERROR &) = 0;
 
   /**
    * Closes audio object. After calling this routine, 
-   * all resources (ie. soundcard) must be freed
-   * (they can be used by other processes).
+   * all resources (for instance files and devices) must 
+   * be freed so that they can be used by other processes.
    *
-   * ensure:
-   *  readable() != true
-   *  writable() != true
+   * @post readable() != true
+   * @post writable() != true
    */
   virtual void close(void) = 0;
 
@@ -238,8 +243,8 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
 
   /**
    * Effectively this is meant for implementing nonblocking 
-   * input and output with devices supporting it. If supports_nonblocking_mode() 
-   * == true, this function can be used to check how many samples are 
+   * input and output with devices supporting it. If 'supports_nonblocking_mode() 
+   * == true', this function can be used to check how many samples are 
    * available for reading, or alternatively, how many samples can be 
    * written without blocking.  Note, you should use buffersize() call 
    * for setting how many bytes read_buffer() will ask from the device.
@@ -262,7 +267,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
    * finished() has returned 'true', further calls to read_buffer() 
    * and/or write_buffer() won't process any data.
    *
-   * For inputs for which 'finite_length_stream()' is true, when
+   * For output for which 'finite_length_stream()' is true, when
    * 'finished()' returns true, that means an error has occured. 
    * Otherwise 'finished()' just tells that further attempts to do 
    * i/o will fail.
@@ -281,10 +286,15 @@ class AUDIO_IO : public DYNAMIC_OBJECT<std::string>,
 
  protected:
 
+  /** @name Functions provided for subclasses. */
+  /*@{*/
+
   void position(const ECA_AUDIO_TIME& v);
   void length(const ECA_AUDIO_TIME& v);
 
   void toggle_open_state(bool value);
+
+  /*@{*/
 
  private:
   

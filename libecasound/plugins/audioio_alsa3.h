@@ -16,8 +16,7 @@
 
 #include "sample-specs.h"
 #include "samplebuffer.h"
-#include "audioio-types.h"
-#include "audioio-types.h"
+#include "audioio-device.h"
 
 #ifdef ALSALIB_060
 #include <alsa/asoundlib.h>

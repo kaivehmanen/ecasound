@@ -1,10 +1,6 @@
 \documentclass{article}
 \usepackage[T1]{fontenc}
 \usepackage{html}
-\hfuzz=4pt % don't fuss when less than 4pt
-\input{/usr/share/yodl/xlatin1.tex}
-\setlength{\parskip}{3mm} % height between par
-\setlength{\parindent}{0mm} % no par indent
 
 \bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
 

@@ -1,16 +1,12 @@
 \documentclass{article}
 \usepackage[T1]{fontenc}
 \usepackage{html}
-\hfuzz=4pt % don't fuss when less than 4pt
-\input{/usr/share/yodl/xlatin1.tex}
-\setlength{\parskip}{3mm} % height between par
-\setlength{\parindent}{0mm} % no par indent
 
 \bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
 
 \title{Ecasound Programmer's Guide}
 \author{Kai Vehmanen}
-\date{28102001}
+\date{19122001}
 \begin{document}
 
 \maketitle
@@ -32,8 +28,9 @@ ecasound version.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
-\item 21.10.2001 - Added this history section.
+\item 19.12.2001 - Added chapter 3.3.1 about include hierarchies.
 \item 28.10.2001 - Lots of changes to the ``Object maps'' chapter.
+\item 21.10.2001 - Added this history section.
 \end{itemize}
 
 
@@ -51,12 +48,11 @@ for testing new ideas, they are just design aids.
 
 \subsubsection{Object-orientation}
 Ecasound is written in C++ (as specified in 1997 ANSI/ISO C++ standard). 
-Because C++ language itself doesn't force you to follow OO-principles, 
-I often use Eiffel language as a reference when designing classes and 
-routines.
+When designing classes and routines, I often use Eiffel language as 
+a reference.
 
 \subsubsection{Data hiding} 
-This OO-feature deserves to be mentioned separately. Whenever 
+This design principle deserves to be mentioned separately. Whenever 
 possible, I always try to hide the actual data representation. 
 This allows you to make local implementation changes without
 affecting other parts of the code base. One thing I've especially 
@@ -180,6 +176,29 @@ the binary interface.
 Ecasound libraries and applications are divided into \emph{distribution 
 packages}, \emph{directories} and \emph{file groups}. 
 
+\subsubsection{Include hierarchies}
+Include statements that are not stricly necessary should be dropped!
+Not only do they cause unwanted dependencies, they also create more
+work for the compiler. Ecasound already takes painfully long to 
+compile, so there's no room for sloppy include work. Few distinct
+rules follow:
+
+\begin{itemize}
+\item In header files, no extra header files should be defined.
+      For instance in many cases it's enough to state that 
+      object SOME\_TYPE is a class without need for the full 
+      implementation; so instead of ``\#include ``sometype.h'', use
+      ``class SOME\_TYPE;''.
+\item For modules with separate implementation and header files, 
+      dependencies to other modules don't need to be 
+      stated in both.
+\item Direct dependencies to outside modules must always 
+      be mentioned directly. It's easy to include a required
+      header file indirecly.
+\item When including headers for more special services, it's
+      good to add a comment why this header file is needed.
+\end{itemize}
+
 \subsubsection{Distribution packages}
 As an example, \emph{ecasound} and \emph{qtecasound} are distributed as separate
 packages. This decision has been made because a) they are clearly 
@@ -221,7 +240,6 @@ Routines and helper functions for processing audio data buffers.
 You should note that these are just recommendations - there are no
 strict rules on how files should be named.
 
-
 % ----------------------------------------------------------------------
 \subsection{Documentation style}
 Javadoc-style class documentation is the preferred style.
@@ -240,7 +258,6 @@ Here's a few general documentation guide lines:
 \item[This instead of the]
 "Get controllers connected to this effect." instead of "Get controllers connected to the effect.
 \end{description}
-
 
 % ----------------------------------------------------------------------
 \subsection{Versioning}
@@ -368,6 +385,7 @@ before completion
 \item[finished] - processing has been completed
 \item[error] - an error has occured during prosessing
 \end{description}
+
 
 % ----------------------------------------------------------------------
 \subsection{Class descriptions}

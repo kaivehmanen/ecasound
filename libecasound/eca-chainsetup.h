@@ -14,6 +14,7 @@ class CONTROLLER_SOURCE;
 class CHAIN_OPERATOR;
 class GENERIC_CONTROLLER;
 class AUDIO_IO;
+class AUDIO_IO_MANAGER;
 class MIDI_IO;
 class LOOP_DEVICE;
 class CHAIN;
@@ -271,6 +272,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   std::vector<AUDIO_IO*> inputs_direct_rep;
   std::vector<AUDIO_IO*> outputs;
   std::vector<AUDIO_IO*> outputs_direct_rep;
+  std::vector<AUDIO_IO_MANAGER*> aio_managers_rep;
   std::vector<CHAIN*> chains;
   std::vector<MIDI_IO*> midi_devices;
   std::list<AUDIO_IO*> aobj_garbage_rep;
@@ -284,6 +286,10 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   /** @name Functions for handling audio objects */
   /*@{*/
 
+  AUDIO_IO_MANAGER* get_audio_object_manager(AUDIO_IO* aio) const;
+  AUDIO_IO_MANAGER* get_audio_object_type_manager(AUDIO_IO* aio) const;
+  void register_audio_object_to_manager(AUDIO_IO* aio);
+  void unregister_audio_object_from_manager(AUDIO_IO* aio);
   AUDIO_IO* add_audio_object_helper(AUDIO_IO* aio);
   void remove_audio_object_helper(AUDIO_IO* aio);
 

@@ -1,7 +1,7 @@
 #ifndef INCLUDED_AUDIOIO_NULL_H
 #define INCLUDED_AUDIOIO_NULL_H
 
-#include "audioio-types.h"
+#include "audioio-buffered.h"
 
 /**
  * Audio object that endlessly consumes and produces audio data.

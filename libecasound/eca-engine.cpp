@@ -36,7 +36,8 @@
 
 #include "samplebuffer.h"
 #include "audioio.h"
-#include "audioio-types.h"
+#include "audioio-buffered.h"
+#include "audioio-device.h"
 #include "audioio-buffered-proxy.h"
 #include "midi-server.h"
 #include "eca-chain.h"
@@ -782,7 +783,7 @@ void ECA_ENGINE::multitrack_start(void) {
     impl_repp->multitrack_input_stamp_rep.tv_sec * 1000000.0 - impl_repp->multitrack_input_stamp_rep.tv_usec;
   long int sync_fix = static_cast<long>(time * csetup_repp->sample_rate() / 1000000.0);
 
-  cerr << "(eca-engine) sync fix is " << time << " usecs." << endl;
+  std::cerr << "(eca-engine) sync fix is " << time << " usecs." << std::endl;
 
   //  sync_fix -= prefill_threshold_rep * buffersize_rep;
   

@@ -30,7 +30,6 @@
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
 
-#include "audioio-types.h"
 #include "audioio-oss_impl.h"
 #include "audioio-oss.h"
 

@@ -2,38 +2,31 @@
 #define INCLUDED_AUDIOIO_JACK_H
 
 #include <string>
-#include <vector>
 
-#include <pthread.h>
-
-#include "audioio-types.h"
+#include "audioio-device.h"
 #include "sample-specs.h"
+
+class AUDIO_IO_MANAGER;
+class AUDIO_IO_JACK_MANAGER;
 
 /**
  * Interface to JACK audio framework.
  *
  * @author Kai Vehmanen
  */
-class JACK_INTERFACE : public AUDIO_IO_DEVICE {
+class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
 
  public:
 
-  friend int eca_jack_process(nframes_t nframes, void *arg);
-  friend int eca_jack_bufsize (nframes_t nframes, void *arg);
-  friend int eca_jack_srate (nframes_t nframes, void *arg);
-  friend void eca_jack_shutdown (void *arg);
-
- public:
-
-  virtual string name(void) const { return("JACK interface"); }
-  virtual string description(void) const { return(name()); }
-  virtual string parameter_names(void) const { return("label,jackname"); }
+  virtual std::string name(void) const { return("JACK interface"); }
+  virtual std::string description(void) const { return(name()); }
+  virtual std::string parameter_names(void) const { return("label,jackname"); }
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
   virtual bool locked_audio_format(void) const { return(true); }
 
-  JACK_INTERFACE (void);
-  ~JACK_INTERFACE(void);
+  AUDIO_IO_JACK (void);
+  ~AUDIO_IO_JACK(void);
   
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
   virtual void close(void);
@@ -49,43 +42,31 @@ class JACK_INTERFACE : public AUDIO_IO_DEVICE {
 
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;
-    
-  JACK_INTERFACE* clone(void) const { return new JACK_INTERFACE(*this); }
-  JACK_INTERFACE* new_expr(void) const { return new JACK_INTERFACE(); }  
+
+  virtual AUDIO_IO_MANAGER* create_object_manager(void) const;
+
+  void set_manager(AUDIO_IO_JACK_MANAGER* mgr, int id);
+
+  AUDIO_IO_JACK* clone(void) const { return new AUDIO_IO_JACK(*this); }
+  AUDIO_IO_JACK* new_expr(void) const { return new AUDIO_IO_JACK(); }  
 
  private:
 
-  pthread_cond_t token_cond_rep;
-  pthread_mutex_t token_mutex_rep;
-  pthread_cond_t completion_cond_rep;
-  pthread_mutex_t completion_mutex_rep;
-  bool token_rep;
-  bool completion_rep;
 
-  jack_client_t *client_repp;
-  std::vector<jack_port_t*> ports_rep;
-  std::vector<sample_t*> portbufs_rep;
-  std::vector<void*> cb_buffers_rep;
-  long int cb_nframes_rep;
+  AUDIO_IO_JACK_MANAGER* jackmgr_rep;
+  int myid_rep;
+
   std::string jackname_rep;
   SAMPLE_SPECS::sample_pos_t curpos_rep;
 
  private:
 
-  void connect_ports(void);
-  void disconnect_ports(void);
-
-  void wait_for_token(void);
-  void signal_token(void);
-  void wait_for_completion(void);
-  void signal_completion(void);
-
-  JACK_INTERFACE (const JACK_INTERFACE& x) { }
-  JACK_INTERFACE& operator=(const JACK_INTERFACE& x) {  return *this; }
+  AUDIO_IO_JACK (const AUDIO_IO_JACK& x) { }
+  AUDIO_IO_JACK& operator=(const AUDIO_IO_JACK& x) {  return *this; }
 };
 
 extern "C" {
-AUDIO_IO* audio_io_descriptor(void) { return(new JACK_INTERFACE()); }
+AUDIO_IO* audio_io_descriptor(void);
 int audio_io_interface_version(void);
 const char* audio_io_keyword(void);
 const char* audio_io_keyword_regex(void);

@@ -22,7 +22,7 @@
 #include <time.h>
 #include <kvutils.h>
 
-#include "audioio-types.h"
+#include "audioio-device.h"
 #include "audioio-rtnull.h"
 
 #include "eca-error.h"

@@ -18,7 +18,7 @@
 
 #include "sample-specs.h"
 #include "samplebuffer.h"
-#include "audioio-types.h"
+#include "audioio-device.h"
 
 /**
  * Class for handling ALSA PCM-devices (Advanced Linux Sound Architecture).

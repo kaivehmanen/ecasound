@@ -53,7 +53,8 @@ plugin_includes = 	\
 			audioio_alsa3.h \
 			audioio_alsa3_pcm.h \
 			audioio_arts.h \
-			audioio_jack.h
+			audioio_jack.h \
+			audioio_jack_manager.h
 
 noinst_HEADERS = $(plugin_includes)
 
@@ -79,7 +80,7 @@ libaudioio_alsa2_plugin_la_SOURCES 	= audioio_alsa2_plugin.cpp
 libaudioio_alsa3_la_SOURCES		= audioio_alsa3.cpp audioio_alsa3_hw.cpp
 libaudioio_alsa3_pcm_la_SOURCES		= audioio_alsa3.cpp audioio_alsa3_pcm.cpp
 libaudioio_arts_la_SOURCES	        = audioio_arts.cpp
-libaudioio_jack_la_SOURCES	        = audioio_jack.cpp
+libaudioio_jack_la_SOURCES	        = audioio_jack.cpp audioio_jack_manager.cpp
 
 libaudioio_af_la_LIBADD	     		= $(af_libs)
 libaudioio_alsa_la_LIBADD	     	= $(alsa_libs)

@@ -73,7 +73,6 @@ extern "C" {
 #include "generic-linear-envelope.h"
 
 #include "audioio-plugin.h"
-#include "audioio-types.h"
 #include "audioio-cdr.h"
 #include "audioio-wave.h"
 #include "audioio-oss.h"

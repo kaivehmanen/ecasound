@@ -38,7 +38,6 @@ typedef long int off_t;
 #include <kvutils/dbc.h>
 
 #include "sample-specs.h"
-#include "audioio-types.h"
 #include "audioio-cdr.h"
 #include "eca-debug.h"
 

@@ -2,6 +2,13 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-12-19  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* audioio-types.h (all): removed - replaced by audioio-buffered.h 
+	and audioio-device.h
+	* audioio-manager.h (all): added
+	* audioio.h (create_object_manager): added
+	
 2001-12-08  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 	
 	* samplebuffer.h (resample_init_memory): added

@@ -1,16 +1,12 @@
 \documentclass{article}
 \usepackage[T1]{fontenc}
 \usepackage{html}
-\hfuzz=4pt % don't fuss when less than 4pt
-\input{/usr/share/yodl/xlatin1.tex}
-\setlength{\parskip}{3mm} % height between par
-\setlength{\parindent}{0mm} % no par indent
 
 \bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{21102001}
+\date{19122001}
 \begin{document}
 
 \maketitle
@@ -251,8 +247,8 @@ chain objects.
 
 % ----------------------------------------------------------------------
 \subsection{Configuration}
-User preferences are stored to \emph{\textasciitilde /.ecasouncrc}. See 
-\texttt{ecasoundrc(5)} manual page for details.
+User preferences are stored to \emph{\textasciitilde /.ecasound/ecasoundrc}.
+See \texttt{ecasoundrc(5)} manual page for details.
 
 By default, files for effect presets and oscillator presets are 
 in \emph{/usr/local/share/ecasound}.

@@ -5,8 +5,10 @@
 #include <cstdio>
 #include <iostream>
 
-#include "sample-specs.h"
 #include <sys/types.h> /* off_t */
+
+#include "sample-specs.h"
+#include "audioio-buffered.h"
 
 typedef struct {
   public:

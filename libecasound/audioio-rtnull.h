@@ -2,7 +2,7 @@
 #define INCLUDED_AUDIOIO_RTNULL_H
 
 #include <sys/time.h>
-#include "audioio-types.h"
+#include "audioio-device.h"
 
 /**
  * Null audio object with realtime behaviour

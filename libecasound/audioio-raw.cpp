@@ -25,7 +25,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "audioio-types.h"
+#include "audioio-buffered.h"
 #include "audioio-raw.h"
 #include "eca-error.h"
 #include "eca-debug.h"

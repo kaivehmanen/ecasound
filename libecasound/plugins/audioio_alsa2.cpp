@@ -35,7 +35,7 @@
 #include <sys/asoundlib.h>
 
 #include "samplebuffer.h"
-#include "audioio-types.h"
+#include "audioio-device.h"
 #include "audioio_alsa2.h"
 
 #include "eca-error.h"

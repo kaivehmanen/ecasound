@@ -3,7 +3,7 @@
 
 #include <string>
 #include <cstdio>
-#include "audioio-types.h"
+#include "audioio-buffered.h"
 #include "audioio-forked-stream.h"
 #include "sample-specs.h"
 

@@ -21,6 +21,8 @@
 #define AFMT_S32_BE              0x00002000
 #endif
 
+#include "audioio-device.h"
+
 /**
  * Class for handling Open Sound System -devices (OSS/Linux 
  * and OSS/Lite).

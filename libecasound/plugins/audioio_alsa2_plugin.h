@@ -22,7 +22,7 @@ extern "C" {
 
 #include "sample-specs.h"
 #include "samplebuffer.h"
-#include "audioio-types.h"
+#include "audioio-device.h"
 
 /**
  * Class for handling ALSA pcm2-devices using the pcm-plugin API.

@@ -51,6 +51,9 @@ ecasound_audiofx_include =  \
 			audio-stamp.h
 
 ecasound_audioio_include = 	\
+			audioio.h \
+			audioio-buffered.h \
+			audioio-device.h \
 			audioio-plugin.h \
 			audioio-cdr.h \
 			audioio-cdr_impl.h \
@@ -59,14 +62,12 @@ ecasound_audioio_include = 	\
 			audioio-mp3_impl.h \
 			audioio-ogg.h \
 			audioio-wave.h \
-			audioio.h \
 			audioio-raw.h \
 			audioio-oss.h \
 			audioio-oss_impl.h \
 			audioio-null.h \
 			audioio-rtnull.h \
 			audioio-mikmod.h \
-			audioio-types.h \
 			audioio-loop.h \
 			audioio-forked-stream.h \
 			audioio-timidity.h \
@@ -195,10 +196,11 @@ ecasound_audioio_src = 	audioio-cdr.cpp \
 			audioio-ogg.cpp \
 			audioio-wave.cpp \
 			audioio.cpp \
+			audioio-buffered.cpp \
+			audioio-device.cpp \
 			audioio-raw.cpp \
 			audioio-mikmod.cpp \
 			audioio-rtnull.cpp \
-			audioio-types.cpp \
 			audioio-loop.cpp \
 			audioio-forked-stream.cpp \
 			audioio-timidity.cpp \

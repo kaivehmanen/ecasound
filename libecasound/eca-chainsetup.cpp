@@ -43,7 +43,9 @@
 #include "eca-chain.h"
 
 #include "audioio.h"
-#include "audioio-types.h"
+#include "audioio-manager.h"
+#include "audioio-device.h"
+#include "audioio-buffered.h"
 #include "audioio-loop.h"
 #include "audioio-null.h"
 
@@ -148,6 +150,13 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void) {
   /* delete chain objects */
   for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
     ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting chain \"" + (*q)->name() + "\".");
+    delete *q;
+    *q = 0;
+  }
+
+  /* delete aio manager objects */
+  for(vector<AUDIO_IO_MANAGER*>::iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
+    ecadebug->msg(ECA_DEBUG::user_objects, "(eca-chainsetup) Deleting audio manager \"" + (*q)->name() + "\".");
     delete *q;
     *q = 0;
   }
@@ -927,11 +936,99 @@ int ECA_CHAINSETUP::number_of_non_realtime_outputs(void) const {
   return(outputs.size() - number_of_realtime_outputs());
 }
 
+/**
+ * Returns a pointer to the manager handling audio object 'aobj'.
+ *
+ * @return 0 if 'aobj' is not handled by any manager
+ */
+AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_manager(AUDIO_IO* aio) const {
+  for(vector<AUDIO_IO_MANAGER*>::const_iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
+    if ((*q)->get_object_id(aio) != -1) {
+      ecadebug->msg(ECA_DEBUG::system_objects, 
+		    "(eca-chainsetup) Found object manager '" +
+		    (*q)->name() + 
+		    "' for aio '" +
+		    aio->label() + "'.");
+      
+      return(*q);
+    }
+  }
+  return(0);
+}
+
+/**
+ * Returns a pointer to the manager handling audio 
+ * objects of type 'aobj'.
+ *
+ * @return 0 if 'aobj' type is not handled by any manager
+ */
+AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_type_manager(AUDIO_IO* aio) const {
+  for(vector<AUDIO_IO_MANAGER*>::const_iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
+    if ((*q)->is_managed_type(aio) == true) {
+      ecadebug->msg(ECA_DEBUG::system_objects, 
+		    "(eca-chainsetup) Found object manager '" +
+		    (*q)->name() + 
+		    "' for aio type '" +
+		    aio->name() + "'.");
+      
+      return(*q);
+    }
+  }
+  return(0);
+}
+
+/**
+ * Registers audio object to a manager. If no managers are
+ * available for object's type, and it can create one,
+ * a new managers is created for this chainsetup.
+ */
+void ECA_CHAINSETUP::register_audio_object_to_manager(AUDIO_IO* aio) {
+  AUDIO_IO_MANAGER* mgr = get_audio_object_type_manager(aio);
+  if (mgr == 0) {
+    mgr = aio->create_object_manager();
+    if (mgr != 0) {
+      ecadebug->msg(ECA_DEBUG::system_objects, 
+		    "(eca-chainsetup) Creating object manager '" +
+		    mgr->name() + 
+		    "' for aio '" +
+		    aio->name() + "'.");
+      aio_managers_rep.push_back(mgr);
+      mgr->register_object(aio);
+    }
+  }
+  else {
+    mgr->register_object(aio);
+  }
+}
+
+/**
+ * Unregisters audio object from manager.
+ */
+void ECA_CHAINSETUP::unregister_audio_object_from_manager(AUDIO_IO* aio) {
+  AUDIO_IO_MANAGER* mgr = get_audio_object_manager(aio);
+  if (mgr != 0) {
+    int id = mgr->get_object_id(aio);
+    if (id != -1) {
+      ecadebug->msg(ECA_DEBUG::system_objects, 
+		    "(eca-chainsetup) Unregistering object '" +
+		    aio->name() + 
+		    "' from manager '" +
+		    mgr->name() + "'.");
+      mgr->unregister_object(id);
+    }
+  }
+}
+
 /** 
  * Helper function used by add_input() and add_output().
+ * 
+ * All audio object creates go through this function,
+ * so this is good place to do global operations that
+ * apply to both inputs and outputs.
  */
 AUDIO_IO* ECA_CHAINSETUP::add_audio_object_helper(AUDIO_IO* aio) {
   AUDIO_IO* retobj = aio;
+  
   AUDIO_IO_DEVICE* p = dynamic_cast<AUDIO_IO_DEVICE*>(aio);
   LOOP_DEVICE* q = dynamic_cast<LOOP_DEVICE*>(aio);
   if (p == 0 && q == 0) {
@@ -980,6 +1077,7 @@ void ECA_CHAINSETUP::add_input(AUDIO_IO* aio) {
   DBC_DECLARE(size_t old_inputs_size = inputs.size());
   // --------
 
+  register_audio_object_to_manager(aio);
   AUDIO_IO* layerobj = add_audio_object_helper(aio);
   inputs.push_back(layerobj);
   inputs_direct_rep.push_back(aio);
@@ -1017,6 +1115,7 @@ void ECA_CHAINSETUP::add_output(AUDIO_IO* aio) {
   DBC_DECLARE(size_t old_outputs_size = outputs.size());
   // --------
 
+  register_audio_object_to_manager(aio);
   AUDIO_IO* layerobj = add_audio_object_helper(aio);
   outputs.push_back(layerobj);
   outputs_direct_rep.push_back(aio);
@@ -1051,6 +1150,8 @@ void ECA_CHAINSETUP::remove_audio_input(const string& label) {
 	++q;
       }
 
+      unregister_audio_object_from_manager(inputs_direct_rep[n]);
+
       delete inputs_direct_rep[n];
       inputs[n] = inputs_direct_rep[n] = new NULLFILE("null");
     }
@@ -1082,6 +1183,8 @@ void ECA_CHAINSETUP::remove_audio_output(const string& label) {
 	if ((*q)->connected_output() == static_cast<int>(n)) (*q)->disconnect_output();
 	++q;
       }
+
+      unregister_audio_object_from_manager(outputs_direct_rep[n]);
 
       delete outputs_direct_rep[n];
       outputs[n] = outputs_direct_rep[n] = new NULLFILE("null");

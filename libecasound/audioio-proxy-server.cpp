@@ -121,7 +121,7 @@ AUDIO_IO_PROXY_SERVER::~AUDIO_IO_PROXY_SERVER(void) {
   exit_request_rep.set(1);
   exit_ok_rep.set(0);
   if (thread_running_rep == true) {
-    ::pthread_join(impl_repp->io_thread_rep, 0);
+    pthread_join(impl_repp->io_thread_rep, 0);
   }
   for(unsigned int p = 0; p < buffers_rep.size(); p++) {
     delete buffers_rep[p];
@@ -158,7 +158,7 @@ void AUDIO_IO_PROXY_SERVER::start(void) {
    if (sched_getscheduler(0) == SCHED_FIFO) {
      struct sched_param sparam;
      sparam.sched_priority = schedpriority_rep;
-     if (::pthread_setschedparam(impl_repp->io_thread_rep, SCHED_FIFO, &sparam) != 0)
+     if (pthread_setschedparam(impl_repp->io_thread_rep, SCHED_FIFO, &sparam) != 0)
        ecadebug->msg("(audioio-proxy-server) Unable to change scheduling policy to SCHED_FIFO!");
      else 
        ecadebug->msg("(audioio-proxy-server) Using realtime-scheduling (SCHED_FIFO).");
@@ -220,8 +220,6 @@ bool AUDIO_IO_PROXY_SERVER::is_full(void) const {
  * that all its buffers are full.
  */
 void AUDIO_IO_PROXY_SERVER::wait_for_full(void) {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_full entry");
-
   if (is_running() == true &&
       clients_rep.size() > 0) {
     struct timeval now;
@@ -233,18 +231,18 @@ void AUDIO_IO_PROXY_SERVER::wait_for_full(void) {
     
     full_request_rep.set(1);
     pthread_mutex_lock(&impl_repp->full_mutex_rep);
-    ret = ::pthread_cond_timedwait(&impl_repp->full_cond_rep, 
+    ret = pthread_cond_timedwait(&impl_repp->full_cond_rep, 
 				   &impl_repp->full_mutex_rep,
 				   &sleepcount);
     pthread_mutex_unlock(&impl_repp->full_mutex_rep);
     full_request_rep.set(0);
-    
-    if (ret == 0)
-      ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_full ok");
-    else if (ret == -ETIMEDOUT)
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_full failed; timeout");
-    else
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_full failed");
+
+    if (ret < 0) {
+      if (ret == -ETIMEDOUT)
+	ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_full failed; timeout");
+      else
+	ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_full failed");
+    }
   }
   else {
     ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_full failed; not running");
@@ -256,8 +254,6 @@ void AUDIO_IO_PROXY_SERVER::wait_for_full(void) {
  * that it has stopped.
  */
 void AUDIO_IO_PROXY_SERVER::wait_for_stop(void) {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_stop entry");
-
   struct timeval now;
   gettimeofday(&now, 0);
   struct timespec sleepcount;
@@ -266,19 +262,19 @@ void AUDIO_IO_PROXY_SERVER::wait_for_stop(void) {
   int ret = 0;
 
   if (running_rep.get() == 1) {
-  ::pthread_mutex_lock(&impl_repp->stop_mutex_rep);
-  ret = ::pthread_cond_timedwait(&impl_repp->stop_cond_rep, 
+  pthread_mutex_lock(&impl_repp->stop_mutex_rep);
+  ret = pthread_cond_timedwait(&impl_repp->stop_cond_rep, 
 				 &impl_repp->stop_mutex_rep,
 				 &sleepcount);
   }
   pthread_mutex_unlock(&impl_repp->stop_mutex_rep);
 
-  if (ret == 0)
-    ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_stop ok");
-  else if (ret == -ETIMEDOUT)
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_stop failed; timeout");
-  else
-    ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_stop failed");
+  if (ret < 0) {
+    if (ret == -ETIMEDOUT)
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_stop failed; timeout");
+    else
+      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_stop failed");
+  }
 }
 
 /**
@@ -287,8 +283,6 @@ void AUDIO_IO_PROXY_SERVER::wait_for_stop(void) {
  * exit request).
  */
 void AUDIO_IO_PROXY_SERVER::wait_for_flush(void) {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_flush entry");
-
   if (is_running() == true) {
     struct timeval now;
     gettimeofday(&now, 0);
@@ -304,13 +298,13 @@ void AUDIO_IO_PROXY_SERVER::wait_for_flush(void) {
 				 &sleepcount);
       pthread_mutex_unlock(&impl_repp->flush_mutex_rep);
     }
-    
-    if (ret == 0)
-      ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_flush ok");
-    else if (ret == -ETIMEDOUT)
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_flush failed; timeout");
-    else
-      ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_flush failed");
+  
+    if (ret < 0) {
+      if (ret == -ETIMEDOUT)
+	ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_flush failed; timeout");
+      else
+	ecadebug->msg(ECA_DEBUG::info, "(audioio-proxy-server) wait_for_flush failed");
+    }
   }
   else {
     ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) wait_for_flush failed; not running");
@@ -332,11 +326,9 @@ void AUDIO_IO_PROXY_SERVER::signal_full(void) {
  * stopped.
  */
 void AUDIO_IO_PROXY_SERVER::signal_stop(void) {
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_stop entry");
   pthread_mutex_lock(&impl_repp->stop_mutex_rep);
   pthread_cond_broadcast(&impl_repp->stop_cond_rep);
   pthread_mutex_unlock(&impl_repp->stop_mutex_rep);
-  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_stop ok");
 }
 
 /**
@@ -344,7 +336,6 @@ void AUDIO_IO_PROXY_SERVER::signal_stop(void) {
  * flushed all buffers (after an exit request).
  */
 void AUDIO_IO_PROXY_SERVER::signal_flush(void) {
-  //  ecadebug->msg(ECA_DEBUG::system_objects, "(audioio-proxy-server) signal_flush");
   pthread_mutex_lock(&impl_repp->flush_mutex_rep);
   pthread_cond_broadcast(&impl_repp->flush_cond_rep);
   pthread_mutex_unlock(&impl_repp->flush_mutex_rep);

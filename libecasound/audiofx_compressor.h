@@ -1,5 +1,5 @@
-#ifndef _AUDIOFX_COMPRESSOR_H
-#define _AUDIOFX_COMPRESSOR_H
+#ifndef INCLUDED_AUDIOFX_COMPRESSOR_H
+#define INCLUDED_AUDIOFX_COMPRESSOR_H
 
 #include <vector>
 #include "audiofx_amplitude.h"

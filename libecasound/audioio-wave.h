@@ -16,7 +16,7 @@
   #endif
 #endif
 #include <sys/types.h> /* off_t, uint32_t, etc types */
-#include "audioio-types.h"
+#include "audioio-buffered.h"
 #include "samplebuffer.h"
 #include "eca-fileio.h"
 

@@ -24,7 +24,7 @@
 
 #include "samplebuffer.h"
 #include "sample-specs.h"
-#include "audioio-types.h"
+#include "audioio-buffered.h"
 #include "audioio-loop.h"
 
 #include "eca-error.h"

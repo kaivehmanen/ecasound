@@ -31,7 +31,7 @@
 #include <kvutils/kvu_numtostr.h>
 
 #include "samplebuffer.h"
-#include "audioio-types.h"
+#include "audioio-device.h"
 
 #if (defined ALSALIB_032 || defined ALSALIB_050)
 #include "audioio_alsalb.h"

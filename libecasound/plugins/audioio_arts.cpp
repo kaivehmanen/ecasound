@@ -21,7 +21,7 @@
 #include <config.h>
 #endif
 
-#include "audioio-types.h"
+#include "audioio-device.h"
 #include "eca-debug.h"
 #include "eca-version.h"
 
