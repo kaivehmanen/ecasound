@@ -8,5 +8,6 @@
 	- big buffersizes cause problems; for instance 
 	  there's distortion when using sine-oscillators
   	  with big buffers
+- ecasound crashes if /dev/midi points to an invalid rawmidi device
 
 

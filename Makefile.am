@@ -37,6 +37,7 @@ dist-build-rpm: ecasound.spec dist
 
 move-to-seul:
 	mv -v /usr/src/redhat/SOURCES/$(PACKAGE)-$(VERSION).tar.gz /opt/http/ecasound.seul/
+	rm -f $(PACKAGE)-$(VERSION).tar.gz
 	mv -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
 	mv -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-plugins-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/
 	mv -v /usr/src/redhat/RPMS/i386/$(PACKAGE)-devel-$(VERSION)-$(RELEASE).i386.rpm /opt/http/ecasound.seul/

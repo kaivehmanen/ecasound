@@ -49,7 +49,7 @@ Additional ecasound plugins (ALSA, Audiofile, aRts).
 make
 
 %install
-make DESTDIR=$RPM_BUILD_ROOT%prefix install
+make DESTDIR=$RPM_BUILD_ROOT%prefix install-strip
 make DESTDIR=$RPM_BUILD_ROOT%prefix delete-static-libs
 make DESTDIR=$RPM_BUILD_ROOT%prefix strip-shared-libs
 
