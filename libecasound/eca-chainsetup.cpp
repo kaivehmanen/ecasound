@@ -294,6 +294,7 @@ void ECA_CHAINSETUP::set_defaults(void)
   active_chain_index_rep = 0;
   active_chainop_index_rep = 0;
   active_chainop_param_index_rep = 0;
+  multitrack_mode_offset_rep = -1;
 
   buffering_mode_rep = cs_bmode_auto;
   active_buffering_mode_rep = cs_bmode_none;

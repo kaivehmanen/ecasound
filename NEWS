@@ -25,6 +25,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 JACK transport functions
 	- added: separate AUTHORS file; also added to the website
 	- added: -d, -dd and -d command-line options, see ecasound(1)
+	- added: recording offset parameter -z:multitrack,offset option
 	- changed: to avoid resampling faults, upper limit of 2000%
 		   set for pitchshifter's (-ei) shift-% arg; note! high
 		   values of shift-% can still cause crashes if using 
@@ -77,6 +78,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: a 'setpos' on a not yet connected chainsetup would
 		 cause seeks to the wrong position for objects with 
 		 non-default samplerates
+	- fixed: pay regard to -z:multitrack and -z:nomultitrack when
+		 saving chainsetups to .ecs files
 27042003 (v2.2.3)  -** stable release **-
 	- added: support for both -0.64 and 0.65- JACK versions; 
 		 transport functionality is only enabled with the 

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup-parser.cpp: Functionality for parsing chainsetup 
 //                            option syntax.
-// Copyright (C) 2001,2002 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 2001-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -394,12 +394,19 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
       }
       else if (kvu_get_argument_number(1, argu) == "multitrack") {
 	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Enabling multitrack-mode (override).");
+	long int samples = -1;
+	if (kvu_get_number_of_arguments(argu) > 1) {
+	  /* -z:multitrack,XXX */
+	  samples = atol(kvu_get_argument_number(2, argu).c_str());
+	}
+	csetup_repp->multitrack_mode_offset_rep = samples;
 	csetup_repp->multitrack_mode_override_rep = true;
 	csetup_repp->multitrack_mode_rep = true;
       }
       else if (kvu_get_argument_number(1, argu) == "nomultitrack") {
 	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup-parser) Disabling multitrack-mode (override).");
 	csetup_repp->multitrack_mode_override_rep = true;
+	csetup_repp->multitrack_mode_offset_rep = 0;
 	csetup_repp->multitrack_mode_rep = false;
       }
       else if (kvu_get_argument_number(1, argu) == "psr") {
@@ -1021,14 +1028,22 @@ string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const
   else
     t << " -X";
 
-
-  // FIXME: -z:multitrack, -z:nomultitrack not saved
+  if (csetup_repp->multitrack_mode_override_rep == true) {
+    if (csetup_repp->multitrack_mode() == true) {
+      t << "-z:multitrack";
+      if (csetup_repp->multitrack_mode_offset_rep != -1) {
+	t << "," << csetup_repp->multitrack_mode_offset_rep;
+      }
+    }
+    else {
+      t << "-z:nomultitrack";
+    }
+  }
 
   if (csetup_repp->ignore_xruns() == true) 
     t << " -z:noxruns";
   else
     t << " -z:xruns";
-
 
   if (csetup_repp->precise_sample_rates() == true) 
     t << " -z:psr";

@@ -1,3 +1,7 @@
+2003-08-26  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* eca-chainsetup.h (multitrack_mode_offset): Added.
+
 2003-08-14  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* eca-control-base.h (engine_start): Moved to public
@@ -12,6 +16,10 @@
 	* eca-audio-time.h (set_samples_per_second_keeptime): Added. 
 	* library version to 11:0:2
 
+2003-02-15  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
+
+	* library interface version 10 frozen
+	
 2003-02-05  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* eca-engine.cpp (is_finite_length): Added.
@@ -38,7 +46,7 @@
 
 2003-01-07  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
-	* library version 9:0:0 frozen
+	* library interface version 9 frozen
 
 2002-11-18  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
@@ -443,7 +451,7 @@
 	
 2001-04-27  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
-	* library version 7:0:0 frozen
+	* library interface version 7 frozen
 		
 2001-04-25  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
@@ -727,7 +735,7 @@
 2000-09-16  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* ecasound 1.8.2r14 released
-	* library version 6:0:0 frozen
+	* library interface version 6 frozen
 
 2000-06-27  Kai Vehmanen <kai.vehmanen@wakkanet.fi>	
 
@@ -784,7 +792,7 @@
 	
 2000-05-02  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
-	* library version 5:0:0 frozen
+	* library interface version 5 frozen
 	
 2000-04-26  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
@@ -1010,7 +1018,7 @@
 	
 2000-01-29  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
-	* library version 4:0:0 frozen
+	* library interface version 4 frozen
 	* ecasound 1.6.12r10 released
 
 2000-01-28  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
@@ -1059,7 +1067,7 @@
 1999-12-15  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* 1.6.9r9 released
-	* library version 3:0:0 frozen
+	* library interface version 3 frozen
 	
 1999-12-11  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
@@ -1085,7 +1093,7 @@
 1999-12-04  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* 1.6.8r8 released
-	* library version 2:0:1 frozen
+	* library interface version 2 frozen
 	* library version changed to 2:0:1
 	
 1999-12-02  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
@@ -1095,7 +1103,7 @@
 1999-11-23  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>
 
 	* 1.6.7r7 released
-	* library version 1:0:0 frozen
+	* library interface version 1 frozen
 
 1999-11-08  Kai Vehmanen  <kai.vehmanen@wakkanet.fi>	
 

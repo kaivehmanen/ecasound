@@ -75,11 +75,13 @@ always something to improve.
 
 To run Ecasound, you need...:
 
-- POSIX compliant UNIX system; has been tested with various 
-  Linux 2.2/2.4/2.6 and glibc 2.1/2.2/2.3 combinations, FreeBSD 4.x, 
-  Solaris 2.8 and Cygwin 1.3.20
-- POSIX threads support; has been tested with linuxthreads
-
+- operating system that provides standard POSIX interfaces; has been 
+  tested with various combinations of GNU/Linux (Linux 2.2/2.4/2.6 and 
+  glibc 2.1/2.2/2.3 combinations), FreeBSD 4.x, Solaris 2.8 and 
+  Cygwin 1.3.20
+- POSIX threads support; has been tested with glibc linuxthreads 
+  and Native POSIX Thread Library (NPTL)
+  
 Optional when running Ecasound:
 
 - for soundcard input/output: OSS, OSS/Lite or ALSA drivers

@@ -1323,7 +1323,8 @@ void ECA_ENGINE::update_cache_chain_connections(void)
  */
 void ECA_ENGINE::update_cache_latency_values(void)
 {
-  if (csetup_repp->multitrack_mode() == true) {
+  if (csetup_repp->multitrack_mode() == true &&
+      csetup_repp->multitrack_mode_offset() == -1) {
     long int in_latency = -1;
     for(unsigned int n = 0; n < realtime_inputs_rep.size(); n++) {
       if (in_latency == -1) {
@@ -1379,6 +1380,10 @@ void ECA_ENGINE::update_cache_latency_values(void)
 		  "(eca-engine) recording offset is " +
 		  kvu_numtostr(recording_offset_rep) +
 		  	" samples.");
+  }
+  else if (csetup_repp->multitrack_mode() == true) {
+    /* multitrack_mode_offset() explicitly given (not -1) */
+    recording_offset_rep = csetup_repp->multitrack_mode_offset();
   }
   else {
     recording_offset_rep = 0;

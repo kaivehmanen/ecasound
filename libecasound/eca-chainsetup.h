@@ -158,6 +158,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   Buffering_mode_t buffering_mode(void) const { return(buffering_mode_rep); }
   bool is_valid_for_connection(void) const;
   bool multitrack_mode(void) const { return(multitrack_mode_rep); }
+  long int multitrack_mode_offset(void) const { return(multitrack_mode_offset_rep); } 
 
   /*@}*/
 
@@ -286,6 +287,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   int active_chainop_index_rep;
   int active_chainop_param_index_rep;
   int db_clients_rep;
+  long int multitrack_mode_offset_rep;
   string setup_name_rep;
   string setup_filename_rep;
 
