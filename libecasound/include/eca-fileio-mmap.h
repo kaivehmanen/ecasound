@@ -5,8 +5,9 @@
 
 #include "eca-fileio.h"
 
-#if !defined CADDR_T && !defined __USE_BSD
-typedef unsigned char* caddr_t;
+#if !defined _CADDR_T && !defined __USE_BSD
+#define _CADDR_T
+typedef char* caddr_t;
 #endif
 
 /**

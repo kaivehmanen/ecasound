@@ -133,11 +133,3 @@ libecasound_la_LDFLAGS = --export-dynamic $(eca_ldflags)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
 
 #libecasound_la_LDFLAGS = -release $(VERSION)
-
-
-
-
-
-
-
-

@@ -54,7 +54,13 @@ void ECA_CONTROLLER::command(const string& cmd) throw(ECA_ERROR*) {
     if (*p == "") return;
     if (ECA_IAMODE_PARSER::cmd_map.find(string_search_and_replace(*p, '_', '-')) == ECA_IAMODE_PARSER::cmd_map.end()) {
       if (p->size() > 0 && (*p)[0] == '-') {
-	action(ec_direct_option, cmds);
+	string prefix = get_argument_prefix(*p);
+	if (prefix == "el" || eca_chain_operator_map.object(prefix) != 0) 
+	  add_chain_operator(*p);
+	else if (eca_controller_map.object(prefix) != 0)
+	  add_controller(*p);
+	else
+	  action(ec_direct_option, cmds);
       }
       else {
 	ecadebug->msg("(eca-controller) ERROR: Unknown command!");
@@ -644,12 +650,12 @@ string ECA_CONTROLLER::aio_status(void) const {
 
 void ECA_CONTROLLER::aio_register(void) const { 
   ecadebug->control_flow("Registered audio objects");
-  const map<string,string>& kmap = eca_audio_object_map.registered_objects();
+  const map<string,string>& kmap = ::eca_audio_object_map.registered_objects();
   int count = 1;
   map<string,string>::const_iterator p = kmap.begin();
   while(p != kmap.end()) {
     string temp;
-    AUDIO_IO* q = eca_audio_object_map.object(p->second);
+    AUDIO_IO* q = ::eca_audio_object_map.object(p->second);
     q->map_parameters();
     int params = q->number_of_params();
     for(int n = 1; n < params; n++) {
@@ -666,12 +672,12 @@ void ECA_CONTROLLER::aio_register(void) const {
 
 void ECA_CONTROLLER::cop_register(void) const { 
   ecadebug->control_flow("Registered chain operators");
-  const map<string,string>& kmap = eca_chain_operator_map.registered_objects();
+  const map<string,string>& kmap = ::eca_chain_operator_map.registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
     string temp;
-    CHAIN_OPERATOR* q = eca_chain_operator_map.object(p->second);
+    CHAIN_OPERATOR* q = ::eca_chain_operator_map.object(p->second);
     q->map_parameters();
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
@@ -689,7 +695,7 @@ void ECA_CONTROLLER::cop_register(void) const {
 
 void ECA_CONTROLLER::preset_register(void) const { 
   ecadebug->control_flow("Registered effect presets");
-  const map<string,string>& kmap = eca_preset_map.registered_objects();
+  const map<string,string>& kmap = ::eca_preset_map.registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
@@ -701,12 +707,12 @@ void ECA_CONTROLLER::preset_register(void) const {
 
 void ECA_CONTROLLER::ladspa_register(void) const { 
   ecadebug->control_flow("Registered LADSPA plugins");
-  const map<string,string>& kmap = eca_ladspa_plugin_map.registered_objects();
+  const map<string,string>& kmap = ::eca_ladspa_plugin_map.registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
     string temp = "\n\t-el:" + p->second + ",";
-    EFFECT_LADSPA* q = eca_ladspa_plugin_map.object(p->second);
+    EFFECT_LADSPA* q = ::eca_ladspa_plugin_map.object(p->second);
     q->map_parameters();
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {
@@ -722,12 +728,12 @@ void ECA_CONTROLLER::ladspa_register(void) const {
 
 void ECA_CONTROLLER::ctrl_register(void) const { 
   ecadebug->control_flow("Registered controllers");
-  const map<string,string>& kmap = eca_controller_map.registered_objects();
+  const map<string,string>& kmap = ::eca_controller_map.registered_objects();
   map<string,string>::const_iterator p = kmap.begin();
   int count = 1;
   while(p != kmap.end()) {
     string temp;
-    GENERIC_CONTROLLER* q = eca_controller_map.object(p->second);
+    GENERIC_CONTROLLER* q = ::eca_controller_map.object(p->second);
     q->map_parameters();
     int params = q->number_of_params();
     for(int n = 0; n < params; n++) {

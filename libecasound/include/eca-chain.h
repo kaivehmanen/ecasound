@@ -76,32 +76,37 @@ class CHAIN {
   bool is_valid(void) const;
 
   /**
-   * Connect input to chain
+   * Connects input to chain
    */
   void connect_input(AUDIO_IO* input);
 
   /**
-   * Disconnect input
+   * Disconnects input
    */
   void disconnect_input(void) { input_id = 0; initialized_rep = false; }
 
   /**
-   * Connect output to chain
+   * Connects output to chain
    */
   void connect_output(AUDIO_IO* output);
 
   /**
-   * Disconnect output
+   * Disconnects output
    */
   void disconnect_output(void) { output_id = 0; initialized_rep = false; }
 
   /**
-   * Clear chain (removes all chain operators and controllers)
+   * Disconnects the sample buffer
+   */
+  void disconnect_buffer(void) { audioslot = 0; initialized_rep = false; }
+
+  /**
+   * Clears chain (removes all chain operators and controllers)
    */
   void clear(void);
 
   /**
-   * Add chain operator to the end of the chain
+   * Adds the chain operator to the end of the chain
    *
    * require:
    *  chainop != 0
@@ -113,7 +118,7 @@ class CHAIN {
   void add_chain_operator(CHAIN_OPERATOR* chainop);
 
   /**
-   * Remove selected chain operator
+   * Removes the selected chain operator
    *
    * require:
    *  selected_chain_operator() <= number_of_chain_operators();
@@ -126,7 +131,7 @@ class CHAIN {
   void remove_chain_operator(void);
 
   /**
-   * Set parameter value (selected chain operator) 
+   * Sets the parameter value (selected chain operator) 
    *
    * @param index parameter number
    * @param value new value
@@ -138,7 +143,7 @@ class CHAIN {
   void set_parameter(int index, CHAIN_OPERATOR::parameter_type value);
 
   /**
-   * Get parameter value (selected chain operator) 
+   * Gets the parameter value (selected chain operator) 
    *
    * @param index parameter number
    *
@@ -149,7 +154,7 @@ class CHAIN {
   CHAIN_OPERATOR::parameter_type get_parameter(int index) const;
 
   /**
-   * Select chain operator
+   * Selects a chain operator
    *
    * require:
    *  index > 0
@@ -167,7 +172,7 @@ class CHAIN {
   int number_of_chain_operators(void) const { return(chainops.size()); }
 
   /**
-   * Add a generic controller and assign it to selected dynamic object
+   * Adds a generic controller and assign it to selected dynamic object
    *
    * require:
    *  gcontroller != 0
@@ -218,7 +223,7 @@ class CHAIN {
   void selected_controller_as_target(void);
 
   /**
-   * Prepare chain for processing. All further processing
+   * Prepares chain for processing. All further processing
    * will be done using the buffer pointer by 'sbuf'.
    *
    * require:
@@ -232,7 +237,7 @@ class CHAIN {
   void init(SAMPLE_BUFFER* sbuf, int in_channels = 0, int out_channels = 0);
 
   /**
-   * Process chain data with all chain operators.
+   * Processes chain data with all chain operators.
    *
    * require:
    *  is_initialized() == true
@@ -240,7 +245,7 @@ class CHAIN {
   void process(void);
 
   /**
-   * Calculate/fetch new values for all controllers.
+   * Calculates/fetches new values for all controllers.
    */
   void controller_update(void);
 
@@ -250,7 +255,7 @@ class CHAIN {
   void refresh_parameters(void);
 
   /**
-   * Convert chain to a formatted string.
+   * Converts chain to a formatted string.
    */
   string to_string(void) const;
   string chain_operator_to_string(CHAIN_OPERATOR* chainop) const;

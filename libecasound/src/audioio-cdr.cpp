@@ -70,7 +70,7 @@ void CDRFILE::open(void) throw(ECA_ERROR*) {
   switch(io_mode()) {
   case io_read:
     {
-      fobject=fopen(label().c_str(),"rb");
+      fobject = ::fopen(label().c_str(),"rb");
       if (!fobject)
 	throw(new ECA_ERROR("AUDIOIO-CDR", "Can't open " + label() + " for reading."));
       set_length_in_bytes();
@@ -78,16 +78,16 @@ void CDRFILE::open(void) throw(ECA_ERROR*) {
     }
   case io_write: 
     {
-      fobject=fopen(label().c_str(),"wb");
+      fobject = ::fopen(label().c_str(),"wb");
       if (!fobject) 
 	throw(new ECA_ERROR("AUDIOIO-CDR","Can't open " + label() + " for writing."));
       break;
     }
   case io_readwrite:
     {
-      fobject=fopen(label().c_str(),"r+b");
+      fobject = ::fopen(label().c_str(),"r+b");
       if (!fobject) {
-	fobject=fopen(label().c_str(),"w+b");
+	fobject = ::fopen(label().c_str(),"w+b");
 	if (!fobject)
 	  throw(new ECA_ERROR("AUDIOIO-CDR","Can't open " + label() + " for read-wre."));
       }
@@ -103,29 +103,29 @@ void CDRFILE::close(void) {
   if (io_mode() != io_read)
     pad_to_sectorsize();
 
-  fclose(fobject);
+  ::fclose(fobject);
   toggle_open_state(false);
 }
 
 bool CDRFILE::finished(void) const {
- if (ferror(fobject) ||
-     feof(fobject))
+ if (::ferror(fobject) ||
+     ::feof(fobject))
    return true;
 
  return false;
 }
 
 long int CDRFILE::read_samples(void* target_buffer, long int samples) {
-  return(fread(target_buffer, frame_size(), samples, fobject));
+  return(::fread(target_buffer, frame_size(), samples, fobject));
 }
 
 void CDRFILE::write_samples(void* target_buffer, long int samples) {
-  fwrite(target_buffer, frame_size(), samples, fobject);
+  ::fwrite(target_buffer, frame_size(), samples, fobject);
 }
 
 void CDRFILE::seek_position(void) {
   if (is_open())
-    fseek(fobject, position_in_samples() * frame_size(), SEEK_SET);
+    ::fseek(fobject, position_in_samples() * frame_size(), SEEK_SET);
 }
 
 void CDRFILE::pad_to_sectorsize(void) {
@@ -135,13 +135,13 @@ void CDRFILE::pad_to_sectorsize(void) {
   if (padsamps == CDRFILE::sectorsize) {
     return;
   }
-  for(int n = 0; n < padsamps; n++) fputc(0,fobject);
-  assert(ftell(fobject) %  CDRFILE::sectorsize == 0);
+  for(int n = 0; n < padsamps; n++) ::fputc(0,fobject);
+  assert(::ftell(fobject) %  CDRFILE::sectorsize == 0);
 }
 
 void CDRFILE::set_length_in_bytes(void) {
-  long int save = ftell(fobject);
-  fseek(fobject,0,SEEK_END);
+  long int save = ::ftell(fobject);
+  ::fseek(fobject,0,SEEK_END);
   length_in_samples(ftell(fobject) / frame_size());
-  fseek(fobject,save,SEEK_SET);
+  ::fseek(fobject,save,SEEK_SET);
 }

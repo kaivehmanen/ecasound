@@ -47,17 +47,17 @@ ALSA_PCM_DEVICE::ALSA_PCM_DEVICE (int card,
 void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   if (is_open() == true) return;
 
-  eca_alsa_load_dynamic_support();
+  ::eca_alsa_load_dynamic_support();
 
   int err;
   if (io_mode() == io_read) {
 #ifdef ALSALIB_031
-    err = dl_snd_pcm_open(&audio_fd, 
+    err = ::dl_snd_pcm_open(&audio_fd, 
 			  card_number, 
 			  device_number,
 			  SND_PCM_OPEN_RECORD);
 #else
-    err = dl_snd_pcm_open(&audio_fd, 
+    err = ::dl_snd_pcm_open(&audio_fd, 
 			  card_number, 
 			  device_number,
 			  SND_PCM_OPEN_CAPTURE);
@@ -67,7 +67,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
     }
   }    
   else if (io_mode() == io_write) {
-    err = dl_snd_pcm_open(&audio_fd, 
+    err = ::dl_snd_pcm_open(&audio_fd, 
 			  card_number, 
 			  device_number,
 			  SND_PCM_OPEN_PLAYBACK);
@@ -76,7 +76,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
     }
     // ---
     // output triggering
-    dl_snd_pcm_playback_pause(audio_fd, 1);
+    ::dl_snd_pcm_playback_pause(audio_fd, 1);
   }
   else if (io_mode() == io_readwrite) {
       throw(new ECA_ERROR("AUDIOIO-ALSA", "Simultaneous intput/ouput not supported."));
@@ -85,7 +85,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Set blocking mode.
 
-  dl_snd_pcm_block_mode(audio_fd, 1);    // enable block mode
+  ::dl_snd_pcm_block_mode(audio_fd, 1);    // enable block mode
 
   // -------------------------------------------------------------------
   // Set fragment size.
@@ -101,7 +101,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
     snd_pcm_capture_info_t pcm_info;
     snd_pcm_capture_params_t pp;
 #endif
-    dl_snd_pcm_capture_info(audio_fd, &pcm_info);
+    ::dl_snd_pcm_capture_info(audio_fd, &pcm_info);
     memset(&pp, 0, sizeof(pp));
 
     if (buffersize() * frame_size() > (int)pcm_info.buffer_size) 
@@ -110,7 +110,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
     pp.fragment_size = buffersize() * frame_size();
     pp.fragments_min = 1;
 
-    err = dl_snd_pcm_capture_params(audio_fd, &pp);
+    err = ::dl_snd_pcm_capture_params(audio_fd, &pp);
 
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA", "Error when setting up buffer fragments: " + string(dl_snd_strerror(err))));
@@ -118,7 +118,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   }
   else {
     snd_pcm_playback_info_t pcm_info;
-    dl_snd_pcm_playback_info(audio_fd, &pcm_info);
+    ::dl_snd_pcm_playback_info(audio_fd, &pcm_info);
 
     snd_pcm_playback_params_t pp;
     memset(&pp, 0, sizeof(pp));
@@ -128,7 +128,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
     pp.fragments_max = -1;
     pp.fragments_room = 1;
     
-    err = dl_snd_pcm_playback_params(audio_fd, &pp);
+    err = ::dl_snd_pcm_playback_params(audio_fd, &pp);
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA", "Error when setting up buffer fragments: " + string(dl_snd_strerror(err))));
     }
@@ -161,15 +161,15 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
   pf.channels = channels();
 
   if (io_mode() == io_read) {
-    dl_snd_pcm_capture_time(audio_fd, 1);
-    err = dl_snd_pcm_capture_format(audio_fd, &pf);
+    ::dl_snd_pcm_capture_time(audio_fd, 1);
+    err = ::dl_snd_pcm_capture_format(audio_fd, &pf);
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA", "Error when setting up record parameters: " + string(dl_snd_strerror(err))));
     }
   }
   else {
-    dl_snd_pcm_playback_time(audio_fd, 1);
-    err = dl_snd_pcm_playback_format(audio_fd, &pf);
+    ::dl_snd_pcm_playback_time(audio_fd, 1);
+    err = ::dl_snd_pcm_playback_format(audio_fd, &pf);
     if (err < 0) {
       throw(new ECA_ERROR("AUDIOIO-ALSA", "Error when setting up playback parameters: " + string(dl_snd_strerror(err))));
     }
@@ -183,7 +183,7 @@ void ALSA_PCM_DEVICE::open(void) throw(ECA_ERROR*) {
 void ALSA_PCM_DEVICE::stop(void) {
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) Audio device \"" + label() + "\" disabled.");
   if (io_mode() == io_write) {
-    dl_snd_pcm_playback_pause(audio_fd, 1);
+    ::dl_snd_pcm_playback_pause(audio_fd, 1);
   }
   else {
     if (is_open()) close();
@@ -195,9 +195,9 @@ void ALSA_PCM_DEVICE::close(void) {
   if (is_open()) {
     if (io_mode() != io_read) {
       snd_pcm_playback_status_t pb_status;
-      dl_snd_pcm_playback_status(audio_fd, &pb_status);
+      ::dl_snd_pcm_playback_status(audio_fd, &pb_status);
       underruns += pb_status.underrun;
-      dl_snd_pcm_drain_playback(audio_fd);
+      ::dl_snd_pcm_drain_playback(audio_fd);
     }
     else if (io_mode() == io_read) {
 #ifdef ALSALIB_031
@@ -205,11 +205,11 @@ void ALSA_PCM_DEVICE::close(void) {
 #else
       snd_pcm_capture_status_t ca_status;
 #endif
-      dl_snd_pcm_capture_status(audio_fd, &ca_status);
+      ::dl_snd_pcm_capture_status(audio_fd, &ca_status);
       overruns += ca_status.overrun;
-      dl_snd_pcm_flush_capture(audio_fd);
+      ::dl_snd_pcm_flush_capture(audio_fd);
     }
-    dl_snd_pcm_close(audio_fd);
+    ::dl_snd_pcm_close(audio_fd);
   }    
   toggle_open_state(false);
 }
@@ -221,12 +221,12 @@ void ALSA_PCM_DEVICE::start(void) {
   if (is_triggered == false) {
     if (io_mode() == io_write) {
       snd_pcm_playback_status_t pb_status;
-      dl_snd_pcm_playback_status(audio_fd, &pb_status);
+      ::dl_snd_pcm_playback_status(audio_fd, &pb_status);
       ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-alsa) Bytes in output-queue: " + kvu_numtostr(pb_status.queue) + ".");
-      dl_snd_pcm_playback_pause(audio_fd, 0);
+      ::dl_snd_pcm_playback_pause(audio_fd, 0);
     }
     else {
-      dl_snd_pcm_flush_capture(audio_fd);
+      ::dl_snd_pcm_flush_capture(audio_fd);
     }
     is_triggered = true;
   }
@@ -234,18 +234,18 @@ void ALSA_PCM_DEVICE::start(void) {
 
 long int ALSA_PCM_DEVICE::read_samples(void* target_buffer, 
 				 long int samples) {
-  return(dl_snd_pcm_read(audio_fd, target_buffer, frame_size() * samples) / frame_size());
+  return(::dl_snd_pcm_read(audio_fd, target_buffer, frame_size() * samples) / frame_size());
 }
 
 void ALSA_PCM_DEVICE::write_samples(void* target_buffer, long int samples) {
-  dl_snd_pcm_write(audio_fd, target_buffer, frame_size() * samples);
+  ::dl_snd_pcm_write(audio_fd, target_buffer, frame_size() * samples);
 }
 
 long ALSA_PCM_DEVICE::position_in_samples(void) const {
   if (is_triggered == false) return(0);
   if (io_mode() != io_read) {
     snd_pcm_playback_status_t pb_status;
-    dl_snd_pcm_playback_status(audio_fd, &pb_status);
+    ::dl_snd_pcm_playback_status(audio_fd, &pb_status);
     double time = pb_status.stime.tv_sec * 1000000.0 + pb_status.stime.tv_usec;
     return(static_cast<long>(time * samples_per_second() / 1000000.0));
   }
@@ -254,7 +254,7 @@ long ALSA_PCM_DEVICE::position_in_samples(void) const {
 #else
   snd_pcm_capture_status_t ca_status;
 #endif
-  dl_snd_pcm_capture_status(audio_fd, &ca_status);
+  ::dl_snd_pcm_capture_status(audio_fd, &ca_status);
   double time = ca_status.stime.tv_sec * 1000000.0 + ca_status.stime.tv_usec;
   return(static_cast<long>(time * samples_per_second() / 1000000.0));
     //  return(ca_status.scount / frame_size());

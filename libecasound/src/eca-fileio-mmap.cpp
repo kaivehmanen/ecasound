@@ -38,7 +38,7 @@ void ECA_FILE_IO_MMAP::open_file(const string& fname,
 			    bool handle_errors) throw(ECA_ERROR*)
 { 
   if (fmode == "rb") {
-    f1 = open(fname.c_str(), O_RDWR);
+    f1 = ::open(fname.c_str(), O_RDWR);
     if (!f1) {
       if (handle_errors) {
 	throw(new ECA_ERROR("ECA-FILEIO", "unable to open file " + fname +
@@ -52,8 +52,8 @@ void ECA_FILE_IO_MMAP::open_file(const string& fname,
       mode_rep = fmode;
       fposition = 0;
       flength = get_file_length();
-      fmaxbsize = ecasound_fiommap_maximum_buffersize();
-      ecasound_fiommap_register_fd(f1, flength);
+      fmaxbsize = ::ecasound_fiommap_maximum_buffersize();
+      ::ecasound_fiommap_register_fd(f1, flength);
     }
   }
   else {
@@ -65,8 +65,8 @@ void ECA_FILE_IO_MMAP::open_file(const string& fname,
 }
 
 void ECA_FILE_IO_MMAP::close_file(void) { 
-  ecasound_fiommap_close_fd(f1);
-  close(f1);
+  ::ecasound_fiommap_close_fd(f1);
+  ::close(f1);
 }
 
 void ECA_FILE_IO_MMAP::read_to_buffer(void* obuf, long int bytes) {
@@ -76,29 +76,29 @@ void ECA_FILE_IO_MMAP::read_to_buffer(void* obuf, long int bytes) {
     return;
   }
 
-  internal_buffer = ecasound_fiommap_active_buffer(f1);
+  internal_buffer = ::ecasound_fiommap_active_buffer(f1);
   if (internal_buffer == MAP_FAILED) {
     bytes_rep = 0;
     fposition = flength;
-    perror(0);
+    ::perror(0);
   }
   else {
-    internal_bsize = ecasound_fiommap_active_buffersize(f1);
+    internal_bsize = ::ecasound_fiommap_active_buffersize(f1);
     assert(internal_bsize > 0);
     long int internal_bindex = fposition % fmaxbsize;
     assert(internal_bindex >= 0);
     assert(internal_bindex < internal_bsize);
     if (internal_bindex + bytes > internal_bsize) {
       bytes_rep = internal_bsize - internal_bindex;
-      memcpy(obuf, internal_buffer + internal_bindex, bytes_rep);
-      ecasound_fiommap_next_buffer(f1);
-      internal_buffer = ecasound_fiommap_active_buffer(f1);
+      ::memcpy(obuf, internal_buffer + internal_bindex, bytes_rep);
+      ::ecasound_fiommap_next_buffer(f1);
+      internal_buffer = ::ecasound_fiommap_active_buffer(f1);
       if (internal_buffer == MAP_FAILED) {
 	fposition = flength;
-	perror(0);
+	::perror(0);
       }
       else {
-	internal_bsize = ecasound_fiommap_active_buffersize(f1);
+	internal_bsize = ::ecasound_fiommap_active_buffersize(f1);
 	assert(internal_bsize >= 0);
 	bytes_rep = bytes - bytes_rep;
 	if (bytes_rep > internal_bsize) {
@@ -106,13 +106,13 @@ void ECA_FILE_IO_MMAP::read_to_buffer(void* obuf, long int bytes) {
 	  bytes -= bytes_rep;
 	  bytes_rep = internal_bsize;
 	}
-	memcpy(obuf, internal_buffer, bytes_rep);
+	::memcpy(obuf, internal_buffer, bytes_rep);
       }
     }
     else {
       if (internal_bindex + bytes > internal_bsize ||
-	  internal_bindex + bytes == fmaxbsize) ecasound_fiommap_next_buffer(f1);
-      memcpy(obuf, internal_buffer + internal_bindex, bytes);
+	  internal_bindex + bytes == fmaxbsize) ::ecasound_fiommap_next_buffer(f1);
+      ::memcpy(obuf, internal_buffer + internal_bindex, bytes);
     }
     set_file_position(fposition + bytes, false);
     bytes_rep = bytes;
@@ -137,7 +137,7 @@ void ECA_FILE_IO_MMAP::set_file_position(long int newpos, bool seek) {
   else {
     file_ready = true;
     file_ended = false;
-    if (seek == true) ecasound_fiommap_reset(f1, fposition);
+    if (seek == true) ::ecasound_fiommap_reset(f1, fposition);
   }
 }
 
@@ -156,5 +156,3 @@ long int ECA_FILE_IO_MMAP::get_file_length(void) const {
   fstat(f1, &stattemp);
   return((long int)stattemp.st_size);
 }
-
-

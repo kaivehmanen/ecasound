@@ -18,6 +18,8 @@ class CHAIN;
 class CHAIN_OPERATOR;
 
 extern VALUE_QUEUE ecasound_queue;
+extern pthread_cond_t ecasound_stop_cond;
+extern pthread_mutex_t ecasound_stop_mutex;
 
 /**
  * Main processing engine

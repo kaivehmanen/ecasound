@@ -129,9 +129,10 @@ void register_default_audio_objects(void) {
   eca_audio_object_map.register_object(".au", af);
   eca_audio_object_map.register_object(".snd", af);
 #endif
-  
+
+  AUDIO_IO* device = 0;  
 #ifdef COMPILE_OSS
-  AUDIO_IO* device = new OSSDEVICE();
+  device = new OSSDEVICE();
   eca_audio_object_map.register_object("/dev/dsp", device);
   eca_audio_device_map.register_object("/dev/dsp", device);
 #endif

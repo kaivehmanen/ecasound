@@ -69,8 +69,8 @@ ALSA_LOOPBACK_DEVICE::ALSA_LOOPBACK_DEVICE (int card,
   pb_mode = playback_mode;
 
 #ifdef ALSALIB_050
-  loopback_buffer = new char [64 * 1024];
-  loopback_buffer_size = 64 * 1024;
+  ::loopback_buffer = new char [64 * 1024];
+  ::loopback_buffer_size = 64 * 1024;
 #endif
 }
 
@@ -79,13 +79,13 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
   //  throw(new ECA_ERROR("AUDIOIO-ALSALB", "support for ALSA versions >0.5.0 not implemented"));
   //#endif
 
-  eca_alsa_load_dynamic_support();
+  ::eca_alsa_load_dynamic_support();
 
   if (is_open() == true) return;
   int err;
   if (io_mode() == io_read) {
     if (pb_mode) {
-      if ((err = dl_snd_pcm_loopback_open(&audio_fd, 
+      if ((err = ::dl_snd_pcm_loopback_open(&audio_fd, 
 					  card_number, 
 					  device_number,
 #ifdef ALSALIB_050
@@ -96,7 +96,7 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
       }
     }
     else {
-      if ((err = dl_snd_pcm_loopback_open(&audio_fd, 
+      if ((err = ::dl_snd_pcm_loopback_open(&audio_fd, 
 					  card_number, 
 					  device_number,
 #ifdef ALSALIB_050
@@ -114,7 +114,7 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Set blocking mode.
 
-  dl_snd_pcm_loopback_block_mode(audio_fd, 1);    // enable block mode
+  ::dl_snd_pcm_loopback_block_mode(audio_fd, 1);    // enable block mode
 
   // -------------------------------------------------------------------
   // Set fragment size.
@@ -151,7 +151,7 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
 #endif
 
   if (io_mode() == io_read) {
-    err = dl_snd_pcm_loopback_format(audio_fd, &loopback_format);
+    err = ::dl_snd_pcm_loopback_format(audio_fd, &loopback_format);
     if (err < 0) {
     throw(new ECA_ERROR("AUDIOIO-ALSALB", "Error when setting up record parameters: " + string(dl_snd_strerror(err))));
     }
@@ -161,7 +161,7 @@ void ALSA_LOOPBACK_DEVICE::open(void) throw(ECA_ERROR*) {
 
 void ALSA_LOOPBACK_DEVICE::close(void) {
   if (is_open()) {
-    dl_snd_pcm_loopback_close(audio_fd);
+    ::dl_snd_pcm_loopback_close(audio_fd);
   }    
   toggle_open_state(false);
 }
@@ -169,21 +169,21 @@ void ALSA_LOOPBACK_DEVICE::close(void) {
 long int ALSA_LOOPBACK_DEVICE::read_samples(void* target_buffer, 
 					    long int samples) {
 #ifdef ALSALIB_032
-  return(dl_snd_pcm_loopback_read(audio_fd, target_buffer, frame_size() * samples) / frame_size());
+  return(::dl_snd_pcm_loopback_read(audio_fd, target_buffer, frame_size() * samples) / frame_size());
 #else
   static bool first_time = true;
   if (first_time == true) {
     pthread_t loopback_thread;
-    int retcode = pthread_create(&loopback_thread, NULL, loopback_controller, audio_fd);
+    int retcode = ::pthread_create(&loopback_thread, NULL, loopback_controller, audio_fd);
     if (retcode != 0)
       throw(new ECA_ERROR("AUDIOIO-ALSALB", "unable to create thread for alsalb"));
   }
   first_time = false;
 
-  pthread_mutex_lock(&loopback_mutex);
-  while(loopback_locked == true || loopback_count == callback_count) {
-    pthread_cond_signal(&loopback_cond);
-    pthread_cond_wait(&loopback_cond, &loopback_mutex);
+  ::pthread_mutex_lock(&loopback_mutex);
+  while(::loopback_locked == true || loopback_count == callback_count) {
+    ::pthread_cond_signal(&loopback_cond);
+    ::pthread_cond_wait(&loopback_cond, &loopback_mutex);
   }
   loopback_locked = true;
 
@@ -193,17 +193,17 @@ long int ALSA_LOOPBACK_DEVICE::read_samples(void* target_buffer,
   }
   if (loopback_count + samples * frame_size() > loopback_buffer_size) {
     //    cerr << "C1" << 0 << " - " << loopback_count << " - " << loopback_buffer_size - loopback_count << ".\n";
-    memcpy(target_buffer,
+    ::memcpy(target_buffer,
 	   loopback_buffer + loopback_count, 
 	   loopback_buffer_size - loopback_count);
     //    cerr << "C2" << loopback_buffer_size - loopback_count << " - " << 0 << " - " << samples * frame_size()- loopback_buffer_size + loopback_count << ".\n";
-    memcpy(reinterpret_cast<char*>(target_buffer) + loopback_buffer_size - loopback_count, 
+    ::memcpy(reinterpret_cast<char*>(target_buffer) + loopback_buffer_size - loopback_count, 
 	   loopback_buffer, 
 	   samples * frame_size() - loopback_buffer_size + loopback_count);
   }
   else {
     //    cerr << "C3" << 0 << " - " << loopback_count << " - " << samples << ".\n";
-    memcpy(target_buffer, 
+    ::memcpy(target_buffer, 
 	   loopback_buffer + loopback_count, 
 	   samples * frame_size());
   }
@@ -212,32 +212,32 @@ long int ALSA_LOOPBACK_DEVICE::read_samples(void* target_buffer,
   if (loopback_count > loopback_buffer_size) loopback_count -= loopback_buffer_size;
 
   loopback_locked = false;
-  pthread_cond_signal(&loopback_cond);
-  pthread_mutex_unlock(&loopback_mutex);
+  ::pthread_cond_signal(&loopback_cond);
+  ::pthread_mutex_unlock(&loopback_mutex);
   return(samples);
 #endif
 }
 
 void *loopback_controller(void* params) {
-  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-  pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
+  ::pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+  ::pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
   
   snd_pcm_loopback_callbacks_t callbacks;
-  memset(&callbacks, 0, sizeof(callbacks));
+  ::memset(&callbacks, 0, sizeof(callbacks));
   callbacks.data = loopback_callback_data;
   callbacks.position_change = loopback_callback_position_change;
   callbacks.format_change = loopback_callback_format_change;
   callbacks.silence = loopback_callback_silence;
   callbacks.max_buffer_size = callback_buffer_size;
   snd_pcm_loopback_t* handle = reinterpret_cast<snd_pcm_loopback_t*>(params);
-  dl_snd_pcm_loopback_read(handle, &callbacks);
+  ::dl_snd_pcm_loopback_read(handle, &callbacks);
 
   return(0);
 }
 
 ALSA_LOOPBACK_DEVICE::~ALSA_LOOPBACK_DEVICE(void) {
   close();
-  eca_alsa_unload_dynamic_support();
+  ::eca_alsa_unload_dynamic_support();
 }
 
 #ifdef ALSALIB_050
@@ -248,19 +248,19 @@ void loopback_callback_data(void *private_data,
   //  cerr << "buffer " << (int)buffer[0] << ", ";
   //  cerr << "count " << count << ".\n";
 
-  pthread_mutex_lock(&loopback_mutex);
+  ::pthread_mutex_lock(&loopback_mutex);
   while(loopback_locked == true) {
-    pthread_cond_wait(&loopback_cond, &loopback_mutex);
+    ::pthread_cond_wait(&loopback_cond, &loopback_mutex);
   }
   loopback_locked = true;
 
   if (callback_count + count > loopback_buffer_size) {
     //    cerr << "C2-1: "<< callback_count << " - " << loopback_buffer_size - callback_count << ".\n";
-    memcpy(loopback_buffer + callback_count, 
+    ::memcpy(loopback_buffer + callback_count, 
 	   buffer,
 	   loopback_buffer_size - callback_count);
     //    cerr << "C2-2: " <<  loopback_buffer_size - callback_count << " - " << count - loopback_buffer_size + callback_count << ".\n";
-    memcpy(loopback_buffer + loopback_buffer_size - callback_count, 
+    ::memcpy(loopback_buffer + loopback_buffer_size - callback_count, 
 	   buffer, 
 	   count - loopback_buffer_size + callback_count);
   }
@@ -273,8 +273,8 @@ void loopback_callback_data(void *private_data,
   if (callback_count > loopback_buffer_size) callback_count -= loopback_buffer_size;
 
   loopback_locked = false;
-  pthread_cond_signal(&loopback_cond);
-  pthread_mutex_unlock(&loopback_mutex);
+  ::pthread_cond_signal(&loopback_cond);
+  ::pthread_mutex_unlock(&loopback_mutex);
 }
 
 void loopback_callback_position_change(void *private_data, 
@@ -285,39 +285,39 @@ void loopback_callback_position_change(void *private_data,
 void loopback_callback_format_change(void *private_data,
 				     snd_pcm_format_t *format) {
   //  cerr << "(audioio-alsalb) loopback_callback_format_change.\n";
-  pthread_mutex_lock(&loopback_mutex);
+  ::pthread_mutex_lock(&loopback_mutex);
   loopback_format_change = true;
   //  loopback_format = format;
-  pthread_mutex_unlock(&loopback_mutex);
+  ::pthread_mutex_unlock(&loopback_mutex);
 }
 
 void loopback_callback_silence(void *private_data,
 			       size_t count) {
   //  cerr << "(audioio-alsalb) loopback_callback_silence - count " << count << ".\n";
-  pthread_mutex_lock(&loopback_mutex);
+  ::pthread_mutex_lock(&loopback_mutex);
   while(loopback_locked == true || loopback_count == callback_count) {
-    pthread_cond_wait(&loopback_cond, &loopback_mutex);
+    ::pthread_cond_wait(&loopback_cond, &loopback_mutex);
   }
   loopback_locked = true;
 
   if (callback_count + count > loopback_buffer_size) {
-    memset(loopback_buffer + callback_count, 
+    ::memset(loopback_buffer + callback_count, 
 	   0,
 	   loopback_buffer_size - callback_count);
-    memset(loopback_buffer + loopback_buffer_size - callback_count, 
+    ::memset(loopback_buffer + loopback_buffer_size - callback_count, 
 	   0, 
 	   count - loopback_buffer_size + callback_count);
   }
   else {
-    memset(loopback_buffer + callback_count, 0, count);
+    ::memset(loopback_buffer + callback_count, 0, count);
   }
   
   callback_count += count;
   if (callback_count > loopback_buffer_size) callback_count -= loopback_buffer_size;
 
   loopback_locked = false;
-  pthread_cond_signal(&loopback_cond);
-  pthread_mutex_unlock(&loopback_mutex);
+  ::pthread_cond_signal(&loopback_cond);
+  ::pthread_mutex_unlock(&loopback_mutex);
 }
 #endif
 

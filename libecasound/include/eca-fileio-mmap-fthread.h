@@ -11,8 +11,9 @@
 #define MAP_FAILED	((__ptr_t) -1)
 #endif
 
-#if !defined CADDR_T && !defined __USE_BSD
-typedef unsigned char* caddr_t;
+#if !defined _CADDR_T && !defined __USE_BSD
+#define _CADDR_T
+typedef char* caddr_t;
 #endif
 
 void ecasound_fiommap_register_fd(int fd, long int length);

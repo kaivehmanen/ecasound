@@ -71,10 +71,10 @@ double MIDI_IN_QUEUE::last_controller_value(void) const {
 }
 
 bool MIDI_IN_QUEUE::update_controller_value(double controller, double channel) {
-  pthread_mutex_lock(&midi_in_lock);
-  while (midi_in_locked == true) pthread_cond_wait(&midi_in_cond,
-						   &midi_in_lock);
-  midi_in_locked = true;
+  ::pthread_mutex_lock(&::midi_in_lock);
+  while (midi_in_locked == true) pthread_cond_wait(&::midi_in_cond,
+						   &::midi_in_lock);
+  ::midi_in_locked = true;
 
   bool value_found = false;
   int value_used = 0;
@@ -123,9 +123,9 @@ bool MIDI_IN_QUEUE::update_controller_value(double controller, double channel) {
   //  cerr << current_get << ".\n";
   //  if (value_found) cerr << "vu:" << value_used << "\n";
 
-  midi_in_locked = false;
-  pthread_cond_signal(&midi_in_cond);
-  pthread_mutex_unlock(&midi_in_lock);
+  ::midi_in_locked = false;
+  ::pthread_cond_signal(&midi_in_cond);
+  ::pthread_mutex_unlock(&midi_in_lock);
   
   return(value_found);
 }
@@ -145,11 +145,11 @@ void init_midi_queues(void) throw(ECA_ERROR*) {
   if (ready == true) return; 
   else ready = true;
 
-  pthread_mutex_init(&midi_in_lock, NULL);
-  pthread_cond_init(&midi_in_cond, NULL);
-  midi_in_locked = false;
+  ::pthread_mutex_init(&::midi_in_lock, NULL);
+  ::pthread_cond_init(&::midi_in_cond, NULL);
+  ::midi_in_locked = false;
   pthread_t th_midi;
-  int retcode = pthread_create(&th_midi, NULL, update_midi_queues, NULL);
+  int retcode = ::pthread_create(&th_midi, NULL, update_midi_queues, NULL);
   if (retcode != 0)
     throw(new ECA_ERROR("ECA-MIDI", "unable to create MIDI-thread"));
 }
@@ -160,14 +160,12 @@ void *update_midi_queues(void *) {
   char buf[MIDI_IN_QUEUE_SIZE];
   int temp;
   
-  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);  // other threads can cancel this one
+  ::pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);  // other threads can cancel this one
     
   ECA_RESOURCES erc;
   string midi_dev = erc.resource("midi-device");
 
   bool use_alsa = false;
-
-
 
 #ifdef COMPILE_ALSA
   snd_rawmidi_t *midihandle;
@@ -190,30 +188,28 @@ void *update_midi_queues(void *) {
       ++p;
     }
     
-    int card = atoi(cardstr.c_str());
-    int device = atoi(devicestr.c_str());
+    int card = ::atoi(cardstr.c_str());
+    int device = ::atoi(devicestr.c_str());
     
     use_alsa = true;
 #ifdef COMPILE_ALSA
-    eca_alsa_load_dynamic_support();
+    ::eca_alsa_load_dynamic_support();
 
-
-    if (dl_snd_rawmidi_open(&midihandle, card, device, SND_RAWMIDI_OPEN_INPUT) < 0) {
+    if (::dl_snd_rawmidi_open(&midihandle, card, device, SND_RAWMIDI_OPEN_INPUT) < 0) {
       throw(new ECA_ERROR("ECA-MIDI", "unable to open ALSA raw-MIDI device " +
 			erc.resource("midi-device") + "."));
     }
 
-    fd = dl_snd_rawmidi_file_descriptor(midihandle);
+    fd = ::dl_snd_rawmidi_file_descriptor(midihandle);
 #else 
     throw(new ECA_ERROR("ECA-MIDI", "Unable to open ALSA raw-MIDI device, because ALSA was disabled during compilation."));
 #endif
   }
   else {
-    cerr << "b";
     tv.tv_sec = 0;
     tv.tv_usec = 0;
 
-    fd = open("/dev/midi", O_RDONLY);
+    fd = ::open("/dev/midi", O_RDONLY);
     if (fd == -1) {
       throw(new ECA_ERROR("ECA-MIDI", "unable to open OSS raw-MIDI device " +
 			  erc.resource("midi-device") + "."));
@@ -225,35 +221,37 @@ void *update_midi_queues(void *) {
   while(true) {
     if (use_alsa) {
 #ifdef COMPILE_ALSA
-      temp = dl_snd_rawmidi_read(midihandle, buf, 1);
+      temp = ::dl_snd_rawmidi_read(midihandle, buf, 1);
 #endif
     }
     else {
-      temp = read(fd, buf, 1);
+      temp = ::read(fd, buf, 1);
     }
-    pthread_mutex_lock(&midi_in_lock);
-    while (midi_in_locked == true) pthread_cond_wait(&midi_in_cond,
-						     &midi_in_lock);
-    midi_in_locked = true;
+    ::pthread_mutex_lock(&::midi_in_lock);
+    while (::midi_in_locked == true) ::pthread_cond_wait(&::midi_in_cond,
+							 &::midi_in_lock);
+    ::midi_in_locked = true;
     if (temp < 0) {
       cerr << "ERROR: Can't read from MIDI-device: " << midi_dev << ".\n";
       break;
     }
     for(int n = 0; n < temp; n++) {
-      midi_in_queue.put(buf[n]);
+      ::midi_in_queue.put(buf[n]);
     }
-    midi_in_locked = false;
-    pthread_cond_signal(&midi_in_cond);
-    pthread_mutex_unlock(&midi_in_lock);
+    ::midi_in_locked = false;
+    ::pthread_cond_signal(&::midi_in_cond);
+    ::pthread_mutex_unlock(&::midi_in_lock);
   }
 
   if (use_alsa) {
 #ifdef COMPILE_ALSA
-    dl_snd_rawmidi_close(midihandle);
-    eca_alsa_unload_dynamic_support();   
+    ::dl_snd_rawmidi_close(midihandle);
+    ::eca_alsa_unload_dynamic_support();   
 #endif
   }
   else {
-    close(fd);
+    ::close(fd);
   }
+
+  return(0);
 }

@@ -74,12 +74,12 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
   if ((oss_caps & DSP_CAP_TRIGGER) == DSP_CAP_TRIGGER) {
     if (io_mode() == io_read) {
       int enable_bits = ~PCM_ENABLE_INPUT; // This disables recording
-      if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
+      if (::ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
 	throw(new ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
     }      
     else if (io_mode() == io_write) {
       int enable_bits = ~PCM_ENABLE_OUTPUT; // This disables playback
-      if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
+      if (::ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
 	throw(new ECA_ERROR("AUDIOIO-OSS", "OSS-device doesn't support SNDCTL_DSP_SETTRIGGER"));
     }
   }
@@ -108,7 +108,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
 
   fragsize = ((fr_count << 16) | fr_size);
     
-  if (ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &fragsize)==-1)
+  if (::ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &fragsize)==-1)
     throw(new ECA_ERROR("AUDIOIO-OSS", "general OSS-error SNDCTL_DSP_SETFRAGMENT"));
 
   ecadebug->msg(ECA_DEBUG::user_objects, "set OSS fragment size to (2^x) " +
@@ -132,7 +132,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
     }
 
   int f = format;
-  if (ioctl(audio_fd, SNDCTL_DSP_SETFMT, &f)==-1)
+  if (::ioctl(audio_fd, SNDCTL_DSP_SETFMT, &f)==-1)
     throw(new ECA_ERROR("AUDIOIO-OSS", "audio format not supported (2)"));
   if (f != format)
     throw(new ECA_ERROR("AUDIOIO-OSS", "audio format not supported (3)"));
@@ -147,7 +147,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
     stereo = 0;
 
   int t = stereo;
-  if (ioctl(audio_fd, SNDCTL_DSP_STEREO, &t)==-1)
+  if (::ioctl(audio_fd, SNDCTL_DSP_STEREO, &t)==-1)
     ecadebug->msg("(audioio-oss) Warning! Error when setting sample rate."); 
 
   if (stereo != t)
@@ -157,7 +157,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
   // Select sample rate
   // ---
   int speed = samples_per_second();
-  if (ioctl(audio_fd, SNDCTL_DSP_SPEED, &speed) == -1)
+  if (::ioctl(audio_fd, SNDCTL_DSP_SPEED, &speed) == -1)
     throw(new ECA_ERROR("AUDIOIO-OSS", "audio format not supported SNDCTL_DSP_SPEED"));
   
   if (speed != samples_per_second()) {
@@ -172,7 +172,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
   // -------------------------------------------------------------------
   // Get fragment size.
 
-  if (ioctl(audio_fd, SNDCTL_DSP_GETBLKSIZE, &fragment_size) == -1)
+  if (::ioctl(audio_fd, SNDCTL_DSP_GETBLKSIZE, &fragment_size) == -1)
     throw(new ECA_ERROR("AUDIOIO-OSS", "general OSS error SNDCTL_DSP_GETBLKSIZE"));
 
   ecadebug->msg(ECA_DEBUG::user_objects, "OSS set to use fragment size of " + 
@@ -182,7 +182,7 @@ void OSSDEVICE::open(void) throw(ECA_ERROR*) {
 }
 
 void OSSDEVICE::stop(void) {
-  ioctl(audio_fd, SNDCTL_DSP_POST, 0);
+  ::ioctl(audio_fd, SNDCTL_DSP_POST, 0);
   ecadebug->msg(ECA_DEBUG::user_objects,"(audioio-oss) Audio device \"" + label() + "\" disabled.");
   is_triggered = false;
   //  if (is_open()) close_device();
@@ -203,7 +203,7 @@ void OSSDEVICE::start(void) throw(ECA_ERROR*) {
       int enable_bits;
       if (io_mode() == io_read) enable_bits = PCM_ENABLE_INPUT;
       else if (io_mode() == io_write) enable_bits = PCM_ENABLE_OUTPUT;
-      if (ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
+      if (::ioctl(audio_fd, SNDCTL_DSP_SETTRIGGER, &enable_bits) == -1)
         throw(new ECA_ERROR("AUDIOIO-OSS", "general OSS-error SNDCTL_DSP_SETTRIGGER"));
     }   
     gettimeofday(&start_time, NULL);
@@ -217,10 +217,10 @@ long OSSDEVICE::position_in_samples(void) const {
     count_info info;
     info.bytes = 0;
     if (io_mode() == io_read) {
-      ioctl(audio_fd, SNDCTL_DSP_GETIPTR, &info);
+      ::ioctl(audio_fd, SNDCTL_DSP_GETIPTR, &info);
     }
     else {
-      ioctl(audio_fd, SNDCTL_DSP_GETOPTR, &info);
+      ::ioctl(audio_fd, SNDCTL_DSP_GETOPTR, &info);
     }
     return(info.bytes / frame_size());
   }
@@ -233,7 +233,7 @@ long OSSDEVICE::position_in_samples(void) const {
 
 long int OSSDEVICE::read_samples(void* target_buffer, 
 				 long int samples) {
-  return(read(audio_fd,target_buffer, frame_size() * samples) / frame_size());
+  return(::read(audio_fd,target_buffer, frame_size() * samples) / frame_size());
 }
 
 void OSSDEVICE::write_samples(void* target_buffer, long int samples) {

@@ -22,5 +22,5 @@ DEFAULTDEBUG ddebug;
 ECA_DEBUG* ecadebug = &ddebug;
 
 void attach_debug_object(ECA_DEBUG* newdebug) {
-  ecadebug = newdebug;
+  ::ecadebug = newdebug;
 }

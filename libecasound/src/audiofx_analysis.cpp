@@ -155,10 +155,3 @@ void EFFECT_DCFIND::process(void) {
     i.next();
   }
 }
-
-
-
-
-
-
-

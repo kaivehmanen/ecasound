@@ -571,7 +571,6 @@ class ECA_CONTROLLER_OBJECTS : public ECA_CONTROLLER_BASE {
    *
    * require:
    *  is_selected() == true
-   *  connected_chainsetup() != selected_chainsetup()
    *  selected_chains().size() == 1
    */
   void add_chain_operator(const string& chainop_params);

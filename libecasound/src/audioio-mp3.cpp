@@ -114,7 +114,7 @@ void MP3FILE::get_mp3_params(const string& fname) throw(ECA_ERROR*) {
   newlayer.get(fname.c_str());
 
   struct stat buf;
-  stat(fname.c_str(), &buf);
+  ::stat(fname.c_str(), &buf);
   double fsize = (double)buf.st_size;
 
   double bitrate = ((double)newlayer.bitrate() * 1000.0);

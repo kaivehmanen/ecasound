@@ -88,6 +88,18 @@ class ECA_CONTROLLER_BASE : public DEFINITION_BY_CONTRACT {
   void stop(void);
 
   /**
+   * Stop the processing engine using thread-to-thread condition
+   * signaling.
+   *
+   * require:
+   *  is_engine_started() == true
+   *
+   * ensure:
+   *   is_running() == false
+   */
+  void stop_on_condition(void);
+
+  /**
    * Start the processing engine and block until 
    * processing is finished.
    *

@@ -120,7 +120,7 @@ void ECA_CONTROLLER_OBJECTS::select_chainsetup_by_index(const string& index) {
   assert(index[0] == 'c');
   // --------
 
-  int index_number = atoi(string(index.begin() + 1,
+  int index_number = ::atoi(string(index.begin() + 1,
 				 index.end()).c_str());
 
   for(vector<ECA_CHAINSETUP*>::size_type p = 0; 
@@ -154,7 +154,7 @@ void ECA_CONTROLLER_OBJECTS::edit_chainsetup(void) {
   }
   string origname = selected_chainsetup_rep->name();
   string origfilename = selected_chainsetup_rep->filename();
-  string filename = string(tmpnam(NULL));
+  string filename = string(::tmpnam(NULL));
   filename += ".ecs";
 
   if (hot_swap == true)
@@ -181,7 +181,7 @@ void ECA_CONTROLLER_OBJECTS::edit_chainsetup(void) {
   }
 
   editori += " " + filename;
-  int res = system(editori.c_str());
+  int res = ::system(editori.c_str());
 
   if (res == 127 || res == -1) {
     ecadebug->msg("(eca-controller) Can't edit; unable to open file in text editor \"" + string(editori.c_str()) + "\".");
@@ -675,7 +675,7 @@ void ECA_CONTROLLER_OBJECTS::select_audio_object_by_index(const string& index) {
   assert(index[0] == 'i' || index[0] == 'o');
   // --------
 
-  int index_number = atoi(string(index.begin() + 1,
+  int index_number = ::atoi(string(index.begin() + 1,
 				 index.end()).c_str());
 
   vector<AUDIO_IO*>::size_type p = 0;
@@ -837,7 +837,7 @@ void ECA_CONTROLLER_OBJECTS::wave_edit_audio_object(void) {
   // --------
   string name = selected_audio_object_rep->label();
 
-  int res = system(string(resource_value("ext-wave-editor") + " " + name).c_str());
+  int res = ::system(string(resource_value("ext-wave-editor") + " " + name).c_str());
   if (res == 127 || res == -1) {
     ecadebug->msg("(eca-controller) Can't edit; unable to open wave editor \"" 
 		  + resource_value("x-wave-editor") + "\".");
@@ -848,21 +848,38 @@ void ECA_CONTROLLER_OBJECTS::add_chain_operator(const string& chainop_params) {
   // --------
   // require:
   assert(is_selected() == true);
-  assert(connected_chainsetup() != selected_chainsetup());
   assert(selected_chains().size() == 1);
   // --------
+  bool was_running = false;
+  if (selected_chainsetup() == connected_chainsetup()) {
+    if (is_running() == true) was_running = true;
+    stop_on_condition();
+  }
+
   selected_chainsetup_rep->interpret_chain_operator(chainop_params);
+
+  if (was_running == true)
+    ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
 void ECA_CONTROLLER_OBJECTS::add_chain_operator(CHAIN_OPERATOR* cotmp) { 
   // --------
   // require:
   assert(is_selected() == true);
-  assert(connected_chainsetup() != selected_chainsetup());
   assert(selected_chains().size() == 1);
   assert(cotmp != 0);
   // --------
+
+  bool was_running = false;
+  if (selected_chainsetup() == connected_chainsetup()) {
+    if (is_running() == true) was_running = true;
+    stop_on_condition();
+  }
+
   selected_chainsetup_rep->add_chain_operator(cotmp);
+
+  if (was_running == true)
+    ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
 CHAIN_OPERATOR* ECA_CONTROLLER_OBJECTS::get_chain_operator(int chainop_id) const {
@@ -896,11 +913,16 @@ void ECA_CONTROLLER_OBJECTS::remove_chain_operator(int chainop_id) {
   // --------
   // require:
   assert(is_selected() == true);
-  assert(connected_chainsetup() != selected_chainsetup());
   assert(selected_chains().size() == 1);
   assert(chainop_id > 0);
   // --------
 
+  bool was_running = false;
+  if (selected_chainsetup() == connected_chainsetup()) {
+    if (is_running() == true) was_running = true;
+    stop_on_condition();
+  }
+  
   vector<string> schains = selected_chainsetup_rep->selected_chains();
   vector<string>::const_iterator o = schains.begin();
   while(o != schains.end()) {
@@ -915,6 +937,9 @@ void ECA_CONTROLLER_OBJECTS::remove_chain_operator(int chainop_id) {
     }
     ++o;
   }
+
+  if (was_running == true)
+    ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }
 
 
@@ -937,10 +962,10 @@ void ECA_CONTROLLER_OBJECTS::set_chain_operator_parameter(int chainop_id,
 	p++) {
       if (selected_chainsetup_rep->chains[p]->name() == *o) {
 	if (selected_chainsetup() == connected_chainsetup()) {
-	  ecasound_queue.push_back(ECA_PROCESSOR::ep_c_select, p);
-	  ecasound_queue.push_back(ECA_PROCESSOR::ep_cop_select, chainop_id);
-	  ecasound_queue.push_back(ECA_PROCESSOR::ep_copp_select, param);
-	  ecasound_queue.push_back(ECA_PROCESSOR::ep_copp_value, value);
+	  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_c_select, p);
+	  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_cop_select, chainop_id);
+	  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_copp_select, param);
+	  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_copp_value, value);
 	}
 	else {
 	  if (chainop_id < static_cast<int>(selected_chainsetup_rep->chains[p]->chainops.size() + 1)) {
@@ -959,8 +984,17 @@ void ECA_CONTROLLER_OBJECTS::add_controller(const string& gcontrol_params) {
   // --------
   // require:
   assert(is_selected() == true);
-  assert(connected_chainsetup() != selected_chainsetup());
   assert(selected_chains().size() > 0);
   // --------
+
+  bool was_running = false;
+  if (selected_chainsetup() == connected_chainsetup()) {
+    if (is_running() == true) was_running = true;
+    stop_on_condition();
+  }
+
   selected_chainsetup_rep->interpret_controller(gcontrol_params);
+
+  if (was_running == true)
+    ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 }

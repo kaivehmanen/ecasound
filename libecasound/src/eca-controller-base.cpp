@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <pthread.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #include <kvutils/value_queue.h>
 #include <kvutils/message_item.h>
@@ -43,7 +44,7 @@ ECA_CONTROLLER_BASE::ECA_CONTROLLER_BASE (ECA_SESSION* psession) {
   session_rep = psession;
   selected_chainsetup_rep = psession->selected_chainsetup;
   engine_started = false;
-  ecasound_lockfile = "/var/lock/ecasound.lck." + kvu_numtostr(getpid());
+  ::ecasound_lockfile = "/var/lock/ecasound.lck." + kvu_numtostr(getpid());
 }
 
 void ECA_CONTROLLER_BASE::start(bool ignore_lock) {
@@ -55,7 +56,7 @@ void ECA_CONTROLLER_BASE::start(bool ignore_lock) {
   if (session_rep->status() == ep_status_running) return;
   ecadebug->control_flow("Controller/Processing started");
 
-  while(ecasound_queue.is_empty() == false) ecasound_queue.pop_front();
+  while(::ecasound_queue.is_empty() == false) ::ecasound_queue.pop_front();
   if (session_rep->status() == ep_status_notready) {
     start_engine(ignore_lock);
   }
@@ -65,7 +66,7 @@ void ECA_CONTROLLER_BASE::start(bool ignore_lock) {
     return;
   }  
 
-  ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
+  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_start, 0.0);
 
   // --------
   // ensure:
@@ -88,7 +89,7 @@ void ECA_CONTROLLER_BASE::run(void) {
   sleepcount.tv_nsec = 0;
 
   while(is_finished() == false) {
-    nanosleep(&sleepcount, NULL);
+    ::nanosleep(&sleepcount, NULL);
   }      
 
   ecadebug->control_flow("Controller/Processing finished");
@@ -107,12 +108,36 @@ void ECA_CONTROLLER_BASE::stop(void) {
 
   if (session_rep->status() != ep_status_running) return;
   ecadebug->control_flow("Controller/Processing stopped");
-  ecasound_queue.push_back(ECA_PROCESSOR::ep_stop, 0.0);
+  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_stop, 0.0);
 
   // --------
   // ensure:
   // assert(is_running() == false); 
   // -- there's a small timeout so assertion cannot be checked
+  // --------
+}
+
+void ECA_CONTROLLER_BASE::stop_on_condition(void) {
+  // --------
+  // require:
+  assert(is_engine_started() == true);
+  // --------
+
+  if (session_rep->status() != ep_status_running) return;
+  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_stop, 0.0);
+  struct timeval now;
+  gettimeofday(&now, 0);
+  struct timespec sleepcount;
+  sleepcount.tv_sec = now.tv_sec + 60;
+  sleepcount.tv_nsec = now.tv_usec * 1000;
+  ::pthread_mutex_lock(&ecasound_stop_mutex);
+  int res = ::pthread_cond_timedwait(&ecasound_stop_cond, &ecasound_stop_mutex, &sleepcount);
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-controller-base) Received stop-cond");
+  ::pthread_mutex_unlock(&ecasound_stop_mutex);
+
+  // --------
+  // ensure:
+  assert(is_running() == false); 
   // --------
 }
 
@@ -156,8 +181,8 @@ void ECA_CONTROLLER_BASE::start_engine(bool ignore_lock) {
 
 void ECA_CONTROLLER_BASE::close_engine(void) {
   if (!engine_started) return;
-  ecasound_queue.push_back(ECA_PROCESSOR::ep_exit, 0.0);
-  pthread_join(th_cqueue,NULL);
+  ::ecasound_queue.push_back(ECA_PROCESSOR::ep_exit, 0.0);
+  ::pthread_join(th_cqueue,NULL);
   engine_started = false;
 
   // --------

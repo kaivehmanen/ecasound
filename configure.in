@@ -7,7 +7,7 @@ AC_CONFIG_SUBDIRS(kvutils readline-4.0)
 dnl ---
 dnl Init automake
 dnl ---
-AM_INIT_AUTOMAKE(ecasound, 1.7.4d11)
+AM_INIT_AUTOMAKE(ecasound, 1.7.5d11)
 AM_CONFIG_HEADER(config.h)
 
 dnl ---
@@ -70,6 +70,8 @@ AC_FUNC_MMAP
 dnl ---
 dnl Checks for libraries.
 dnl ---
+AC_SEARCH_LIBS(nanosleep, rt)
+AC_SEARCH_LIBS(sched_setscheduler, rt)
 AC_CHECK_LIB(m, sin)
 AC_CHECK_LIB(dl, dlopen)
 AC_CHECK_LIB(ncurses, main, termcap_library=ncurses,
@@ -212,8 +214,13 @@ dnl AC_HEADER_STDC
 AC_HEADER_STDC
 dnl --- AC_CHECK_HEADER(stl.h,, 
 dnl ---	AC_MSG_WARN([** C++/STL header files not found! ***]))
-AC_CHECK_HEADERS(fcntl.h sys/ioctl.h sys/time.h unistd.h)
+AC_LANG_CPLUSPLUS
 AC_HEADER_TIME
+AC_CHECK_HEADERS(fcntl.h dlfcn.h sys/ioctl.h sys/time.h sys/resource.h sys/stat.h sys/wait.h signal.h sys/types.h sys/mman.h errno.h pthread.h sched.h unistd.h inttypes.h)
+AC_CHECK_HEADER(map.h,nostlmap=0,nostlmap=1)
+if test "x$nostlmap" = "x1" ; then
+	AC_MSG_ERROR([C++ header files not found!])
+fi
 
 dnl ---
 dnl Checks for typedefs, structures, and compiler characteristics.

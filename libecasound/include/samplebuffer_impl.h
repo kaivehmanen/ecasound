@@ -463,16 +463,6 @@ void SAMPLE_BUFFER_BASE<T>::copy_to_buffer(unsigned char* source,
 }
 
 template<class T>
-void SAMPLE_BUFFER_BASE<T>::resample_from(long int from_srate) {
-  resample_nofilter(from_srate, sample_rate_rep);
-}
-
-template<class T>
-void SAMPLE_BUFFER_BASE<T>::resample_to(long int to_srate) {
-  resample_nofilter(sample_rate_rep, to_srate);
-}
-
-template<class T>
 void SAMPLE_BUFFER_BASE<T>::resample_nofilter(long int from, 
 				      long int to) {
   double step = (double)to / from;
@@ -489,32 +479,82 @@ void SAMPLE_BUFFER_BASE<T>::resample_nofilter(long int from,
     }
     
     double counter = 0.0;
-    long int newbuf_size = 0;
-    long int last_size = 0;
+    long int new_buffer_index = 0;
+    long int interpolate_index = 0;
      
     buffer[c][0] = old_buffer[0];
-    for(long int buf_size = 1; buf_size < old_buffer_size; buf_size++) {
+    for(long int old_buffer_index = 1; old_buffer_index < old_buffer_size; old_buffer_index++) {
       counter += step;
       if (step <= 1) {
-	if (counter >= newbuf_size + 1) {
-	  newbuf_size++;
-	  if (newbuf_size >= buffersize_rep) break;
-	  buffer[c][newbuf_size] = old_buffer[buf_size];
+	if (counter >= new_buffer_index + 1) {
+	  new_buffer_index++;
+	  if (new_buffer_index >= buffersize_rep) break;
+	  buffer[c][new_buffer_index] = old_buffer[old_buffer_index];
 	}
       }
       else {
-	newbuf_size = static_cast<long int>(ceil(counter));
-	if (newbuf_size >= buffersize_rep) newbuf_size = buffersize_rep - 1;
-	for(long int t = last_size + 1; t < newbuf_size; t++) {
-	  buffer[c][t] = old_buffer[buf_size - 1] + ((old_buffer[buf_size]
-						      - old_buffer[buf_size-1])
-						     * static_cast<SAMPLE_BUFFER_BASE<T>::sample_type>(t - last_size)
-						     / (newbuf_size - last_size));
+	new_buffer_index = static_cast<long int>(ceil(counter));
+	if (new_buffer_index >= buffersize_rep) new_buffer_index = buffersize_rep - 1;
+	for(long int t = interpolate_index + 1; t < new_buffer_index; t++) {
+	  buffer[c][t] = old_buffer[old_buffer_index - 1] + ((old_buffer[old_buffer_index]
+						      - old_buffer[old_buffer_index-1])
+						     * static_cast<SAMPLE_BUFFER_BASE<T>::sample_type>(t - interpolate_index)
+						     / (new_buffer_index - interpolate_index));
 	}
-	buffer[c][newbuf_size] = old_buffer[buf_size];
+	buffer[c][new_buffer_index] = old_buffer[old_buffer_index];
       }
-      last_size = newbuf_size;
+      interpolate_index = new_buffer_index;
     }
+  }
+}
+
+template<class T>
+void SAMPLE_BUFFER_BASE<T>::resample_with_memory(long int from, 
+						 long int to) {
+  double step = (double)to / from;
+  long int old_buffer_size = buffersize_rep;
+  buffersize_rep = static_cast<long int>(step * buffersize_rep);
+  resample_memory.resize(channel_count_rep, SAMPLE_SPECS::silent_value);
+
+  for(int c = 0; c < channel_count_rep; c++) {
+    memcpy(old_buffer, buffer[c], old_buffer_size * sizeof(sample_type));
+
+    if (buffersize_rep > reserved_bytes_rep) {
+      reserved_bytes_rep = buffersize_rep;
+      delete[] buffer[c];
+      buffer[c] = new sample_type [reserved_bytes_rep * sizeof(sample_type)];
+    }
+    
+    double counter = 0.0;
+    long int new_buffer_index = 0;
+    long int interpolate_index = -1;
+    sample_type from_point;
+
+    for(long int old_buffer_index = 0; old_buffer_index < old_buffer_size; old_buffer_index++) {
+      counter += step;
+      if (step <= 1) {
+	if (counter >= new_buffer_index + 1) {
+	  new_buffer_index++;
+	  if (new_buffer_index >= buffersize_rep) break;
+	  buffer[c][new_buffer_index] = old_buffer[old_buffer_index];
+	}
+      }
+      else {
+	new_buffer_index = static_cast<long int>(ceil(counter));
+	if (old_buffer_index == 0) from_point = resample_memory[c];
+	else from_point = old_buffer[old_buffer_index-1];
+	if (new_buffer_index >= buffersize_rep) new_buffer_index = buffersize_rep - 1;
+	for(long int t = interpolate_index + 1; t < new_buffer_index; t++) {
+	  buffer[c][t] = from_point + ((old_buffer[old_buffer_index]
+					- from_point)
+				       * static_cast<SAMPLE_BUFFER_BASE<T>::sample_type>(t - interpolate_index)
+				       / (new_buffer_index - interpolate_index));
+	}
+	buffer[c][new_buffer_index] = old_buffer[old_buffer_index];
+      }
+      interpolate_index = new_buffer_index;
+    }
+    resample_memory[c] = old_buffer[old_buffer_size - 1];
   }
 }
 
@@ -525,11 +565,6 @@ void SAMPLE_BUFFER_BASE<T>::resample_extfilter(long int from_srate,
 template<class T>
 void SAMPLE_BUFFER_BASE<T>::resample_simplefilter(long int from_srate,
 					  long int to_srate) { }
-
-template<class T>
-void SAMPLE_BUFFER_BASE<T>::length_in_samples(long int len) {
-  if (buffersize_rep != len) resize(len); 
-}
 
 template<class T>
 void SAMPLE_BUFFER_BASE<T>::number_of_channels(int len) {

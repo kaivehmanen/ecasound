@@ -81,8 +81,8 @@ void MIKMOD_INTERFACE::seek_position(void) {
 void MIKMOD_INTERFACE::kill_mikmod(void) {
   if (is_open()) {
     ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-mikmod) Killing mikmod-child with pid " + kvu_numtostr(pid_of_child) + ".");
-    kill(pid_of_child, SIGKILL);
-    waitpid(pid_of_child, 0, 0);
+    ::kill(pid_of_child, SIGKILL);
+    ::waitpid(pid_of_child, 0, 0);
     ::close(fd);
     toggle_open_state(false);
   }
@@ -111,10 +111,10 @@ void MIKMOD_INTERFACE::fork_mikmod(void) throw(ECA_ERROR*) {
 	// child 
 	// ---
 	::close(1);
-	dup2(fpipes[1], 1);
+	::dup2(fpipes[1], 1);
 	::close(fpipes[0]);
 	::close(fpipes[1]);
-	freopen("/dev/null", "w", stderr);
+	::freopen("/dev/null", "w", stderr);
 	vector<string> temp = string_to_words(komen);
 	if (temp.size() > 1024) temp.resize(1024);
 	const char* args[1024];
@@ -125,7 +125,7 @@ void MIKMOD_INTERFACE::fork_mikmod(void) throw(ECA_ERROR*) {
 	  ++p;
 	}
 	args[p] = 0;
-	execvp(temp[0].c_str(), const_cast<char**>(args));
+	::execvp(temp[0].c_str(), const_cast<char**>(args));
 	::close(1);
 	exit(0);
 	cerr << "You shouln't see this!\n";

@@ -36,8 +36,8 @@
 #include "eca-mthreaded-processor.h"
 
 void *mthread_process_chains(void* params) {
-  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL); // other threads can stop this one
-  pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
+  ::pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL); // other threads can stop this one
+  ::pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
 
   ECA_PROCESSOR* ecamain = static_cast<ECA_PROCESSOR*>(params);
 
@@ -51,11 +51,11 @@ void *mthread_process_chains(void* params) {
   vector<bool> chain_locked (ecamain->output_count);
   while(true) {
     for(int n = 0; n != ecamain->chain_count;) {
-      pthread_mutex_lock(ecamain->chain_muts[n]);
+      ::pthread_mutex_lock(ecamain->chain_muts[n]);
       chain_locked[n] = true;
       while(ecamain->chain_ready_for_submix[n] == false) {
-	pthread_cond_signal(ecamain->chain_conds[n]);
-	pthread_cond_wait(ecamain->chain_conds[n], ecamain->chain_muts[n]);
+	::pthread_cond_signal(ecamain->chain_conds[n]);
+	::pthread_cond_wait(ecamain->chain_conds[n], ecamain->chain_muts[n]);
       }
       (*chains)[n]->process();
       ++n;
@@ -77,8 +77,8 @@ void *mthread_process_chains(void* params) {
 	  // --
 	  ecamain->chain_ready_for_submix[n] = false;
 	  chain_locked[n] = false;
-	  pthread_cond_signal(ecamain->chain_conds[n]);
-	  pthread_mutex_unlock(ecamain->chain_muts[n]);
+	  ::pthread_cond_signal(ecamain->chain_conds[n]);
+	  ::pthread_mutex_unlock(ecamain->chain_muts[n]);
 	  continue;
 	}
 
@@ -111,13 +111,13 @@ void *mthread_process_chains(void* params) {
 	  }
 	  ecamain->chain_ready_for_submix[n] = false;
 	  chain_locked[n] = false;
-	  pthread_cond_signal(ecamain->chain_conds[n]);
-	  pthread_mutex_unlock(ecamain->chain_muts[n]);
+	  ::pthread_cond_signal(ecamain->chain_conds[n]);
+	  ::pthread_mutex_unlock(ecamain->chain_muts[n]);
 	}
       }
     }
     ecamain->trigger_outputs();
-    pthread_testcancel();
+    ::pthread_testcancel();
   }
   cerr << "(eca-main/submix) You should never see this message!\n";
 }

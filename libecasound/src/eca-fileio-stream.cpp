@@ -32,7 +32,7 @@ void ECA_FILE_IO_STREAM::open_file(const string& fname,
 			    const string& fmode,
 			    bool handle_errors) throw(ECA_ERROR*)
 { 
-  f1 = fopen(fname.c_str(), fmode.c_str());
+  f1 = ::fopen(fname.c_str(), fmode.c_str());
   if (!f1) {
     if (handle_errors) {
       throw(new ECA_ERROR("ECA-FILEIO", "unable to open file " + fname +
@@ -59,56 +59,56 @@ void ECA_FILE_IO_STREAM::open_stdout(void) {
 }
 
 void ECA_FILE_IO_STREAM::close_file(void) { 
-  if (standard_mode == false) fclose(f1);
+  if (standard_mode == false) ::fclose(f1);
   mode_rep = "";
 }
 
 void ECA_FILE_IO_STREAM::read_to_buffer(void* obuf, long int bytes) { 
-  bytes_rep = fread(obuf, 1, bytes, f1);
+  bytes_rep = ::fread(obuf, 1, bytes, f1);
 }
 
 void ECA_FILE_IO_STREAM::write_from_buffer(void* obuf, long int bytes) { 
-  bytes_rep = fwrite(obuf, 1, bytes, f1);
+  bytes_rep = ::fwrite(obuf, 1, bytes, f1);
 }
 
 long int ECA_FILE_IO_STREAM::file_bytes_processed(void) const { return(bytes_rep); }
 
 bool ECA_FILE_IO_STREAM::is_file_ready(void) const { 
-  if (feof(f1) ||
-      ferror(f1)) return(false);
+  if (::feof(f1) ||
+      ::ferror(f1)) return(false);
   return(true);
 }
 
 bool ECA_FILE_IO_STREAM::is_file_error(void) const { 
-  if (ferror(f1)) return(true);
+  if (::ferror(f1)) return(true);
   return(false);
 }
 
 void ECA_FILE_IO_STREAM::set_file_position(long int newpos) { 
   if (f1 != stdin && f1 != stdout)
-    fseek(f1, newpos, SEEK_SET);
+    ::fseek(f1, newpos, SEEK_SET);
 }
 
 void ECA_FILE_IO_STREAM::set_file_position_advance(long int fw) { 
   if (standard_mode == false)
-    fseek(f1, fw, SEEK_CUR);
+    ::fseek(f1, fw, SEEK_CUR);
 }
 
 void ECA_FILE_IO_STREAM::set_file_position_end(void) { 
   if (standard_mode == false)
-    fseek(f1, 0, SEEK_END);
+    ::fseek(f1, 0, SEEK_END);
 }
 
 long int ECA_FILE_IO_STREAM::get_file_position(void) const { 
-  if (standard_mode == false) return(ftell(f1));
+  if (standard_mode == false) return(::ftell(f1));
   return(0);
 }
 
 long int ECA_FILE_IO_STREAM::get_file_length(void) const {
   if (standard_mode == true) return(0);
-  long int savetemp = ftell(f1);
-  fseek(f1, 0, SEEK_END);
+  long int savetemp = ::ftell(f1);
+  ::fseek(f1, 0, SEEK_END);
   long int lentemp = ftell(f1);
-  fseek(f1, savetemp, SEEK_SET);
+  ::fseek(f1, savetemp, SEEK_SET);
   return(lentemp); 
 }

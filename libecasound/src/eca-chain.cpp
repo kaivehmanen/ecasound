@@ -94,6 +94,9 @@ void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop) {
   selected_chainop_number = chainops.size();
   sfx = true;
 
+  if (initialized_rep == true) 
+    init(audioslot, in_channels_rep, out_channels_rep);
+
   // --------
   // ensure:
   assert(selected_chain_operator() == number_of_chain_operators());
@@ -129,6 +132,8 @@ void CHAIN::remove_chain_operator(void) {
   if (chainops.size() == 0) {
     sfx = false;
   }
+  if (initialized_rep == true) 
+    init(audioslot, in_channels_rep, out_channels_rep);
 
   // --------
   // ensure:
@@ -230,10 +235,14 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
 
   audioslot = sbuf;
 
+  cerr << "a";
+
   in_channels_rep = in_channels;
   out_channels_rep = out_channels;
   if (in_channels == 0) in_channels_rep = input_id->channels();
   if (out_channels == 0) out_channels_rep = output_id->channels();
+
+  cerr << "b";
 
   int init_channels = in_channels_rep;
   audioslot->number_of_channels(init_channels);
@@ -243,8 +252,12 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels) {
     audioslot->number_of_channels(init_channels);
   }
 
+  cerr << "c";
+
   refresh_parameters();
   initialized_rep = true;
+  
+  cerr << "d";
 
   // --------
   // ensure:

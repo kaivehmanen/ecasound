@@ -51,15 +51,15 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR*) {
   int sample_format, sample_width;
     
   if (io_mode() == io_read) {
-    afhandle = afOpenFile(label().c_str(), "r", NULL);
+    afhandle = ::afOpenFile(label().c_str(), "r", NULL);
     if (afhandle == AF_NULL_FILEHANDLE) {
       throw(new ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
 			  + "\" using libaudiofile."));
     }
     else {
-      set_samples_per_second((long int)afGetRate(afhandle, AF_DEFAULT_TRACK));
-      set_channels(afGetChannels(afhandle, AF_DEFAULT_TRACK));
-      afGetSampleFormat(afhandle, AF_DEFAULT_TRACK, &sample_format, &sample_width);
+      set_samples_per_second((long int)::afGetRate(afhandle, AF_DEFAULT_TRACK));
+      set_channels(::afGetChannels(afhandle, AF_DEFAULT_TRACK));
+      ::afGetSampleFormat(afhandle, AF_DEFAULT_TRACK, &sample_format, &sample_width);
       string format;
       switch(sample_format) 
 	{
@@ -76,8 +76,8 @@ void AUDIOFILE_INTERFACE::format_query(void) throw(ECA_ERROR*) {
 	
       set_sample_format(format);
 
-      length_in_samples(afGetFrameCount(afhandle, AF_DEFAULT_TRACK));
-      afCloseFile(afhandle);
+      length_in_samples(::afGetFrameCount(afhandle, AF_DEFAULT_TRACK));
+      ::afCloseFile(afhandle);
     }
   }
 
@@ -95,7 +95,7 @@ void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR*) {
       ecadebug->msg("(audioio-af) Using audiofile library to open file \"" +
 		    label() + "\" for reading.");
 
-      afhandle = afOpenFile(label().c_str(), "r", NULL);
+      afhandle = ::afOpenFile(label().c_str(), "r", NULL);
       if (afhandle == AF_NULL_FILEHANDLE) {
 	throw(new ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
 			    + "\" using libaudiofile."));
@@ -124,23 +124,23 @@ void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR*) {
 	ecadebug->msg("(audioio-af) Warning! Unknown audio format, using raw format instead.");
 	file_format = AF_FILE_RAWDATA;
       }
-      afInitFileFormat(fsetup, file_format);
-      afInitChannels(fsetup, AF_DEFAULT_TRACK, channels());
+      ::afInitFileFormat(fsetup, file_format);
+      ::afInitChannels(fsetup, AF_DEFAULT_TRACK, channels());
 
       if (format_string()[0] == 'u')
-	afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_UNSIGNED, bits());
+	::afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_UNSIGNED, bits());
       else if (format_string()[0] == 's')
-	afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, bits());
+	::afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, bits());
       else if (format_string()[0] == 'f') {
 	if (bits() == 32) 
-	  afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_FLOAT, bits());
+	  ::afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_FLOAT, bits());
 	else
-	  afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_DOUBLE, bits());
+	  ::afInitSampleFormat(fsetup, AF_DEFAULT_TRACK, AF_SAMPFMT_DOUBLE, bits());
       }
 
-      afInitRate(fsetup, AF_DEFAULT_TRACK, static_cast<double>(samples_per_second()));
+      ::afInitRate(fsetup, AF_DEFAULT_TRACK, static_cast<double>(samples_per_second()));
 
-      afhandle = afOpenFile(label().c_str(), "w", fsetup);
+      afhandle = ::afOpenFile(label().c_str(), "w", fsetup);
       if (afhandle == AF_NULL_FILEHANDLE) 
 	throw(new ECA_ERROR("AUDIOIO-AF", "Can't open file \"" + label()
 			    + "\" using libaudiofile."));
@@ -168,7 +168,7 @@ void AUDIOFILE_INTERFACE::open(void) throw(ECA_ERROR*) {
 
 void AUDIOFILE_INTERFACE::close(void) {
   if (is_open()) {
-    afCloseFile(afhandle);
+    ::afCloseFile(afhandle);
     toggle_open_state(false);
   }
 }
@@ -178,7 +178,7 @@ AUDIOFILE_INTERFACE::~AUDIOFILE_INTERFACE(void) {
 }
 
 void AUDIOFILE_INTERFACE::debug_print_type(void) {
-  int temp = afGetFileFormat(afhandle, 0);
+  int temp = ::afGetFileFormat(afhandle, 0);
   ecadebug->msg(ECA_DEBUG::user_objects, "(audioio-af) afFileformat: " + kvu_numtostr(temp) + "."); 
 }
 
@@ -190,19 +190,19 @@ bool AUDIOFILE_INTERFACE::finished(void) const {
 }
 
 long int AUDIOFILE_INTERFACE::read_samples(void* target_buffer, long int samples) {
-  samples_read = afReadFrames(afhandle, AF_DEFAULT_TRACK,
+  samples_read = ::afReadFrames(afhandle, AF_DEFAULT_TRACK,
 			      target_buffer, samples);
   finished_rep = (samples_read < samples) ? true : false;
   return(samples_read);
 }
 
 void AUDIOFILE_INTERFACE::write_samples(void* target_buffer, long int samples) {
-  afWriteFrames(afhandle, AF_DEFAULT_TRACK, target_buffer, samples);
+  ::afWriteFrames(afhandle, AF_DEFAULT_TRACK, target_buffer, samples);
 }
 
 void AUDIOFILE_INTERFACE::seek_position(void) {
   if (is_open())
-    afSeekFrame(afhandle, AF_DEFAULT_TRACK, position_in_samples());
+    ::afSeekFrame(afhandle, AF_DEFAULT_TRACK, position_in_samples());
   finished_rep = false;
 }
 

@@ -280,10 +280,6 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id) {
   case ec_aio_rewind:
   case ec_aio_setpos:
   case ec_aio_wave_edit:
-  case ec_cop_add:
-  case ec_cop_remove:
-  case ec_ctrl_add:
-  case ec_ctrl_remove:
 
     return(true);
     

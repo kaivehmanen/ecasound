@@ -98,7 +98,7 @@ void EFFECT_PITCH_SHIFT::init(SAMPLE_BUFFER *insample) {
 
 void EFFECT_PITCH_SHIFT::process(void) { 
   target_rate = static_cast<long int>(sbuf->sample_rate() * 100.0 / pmod);
-  sbuf->resample_to(target_rate); 
+  sbuf->resample_with_memory(sbuf->sample_rate(), target_rate); 
 }
 
 long int EFFECT_PITCH_SHIFT::output_samples(long int i_samples) {

@@ -52,8 +52,8 @@ class SAMPLE_BUFFER_BASE {
 
  public:
     
-  void resample_from(long int from_srate);
-  void resample_to(long int to_srate);
+  void resample_from(long int from_srate) { resample_with_memory(from_srate, sample_rate_rep); }
+  void resample_to(long int to_srate) { resample_with_memory(sample_rate_rep, to_srate); }
 
  public:
     
@@ -143,7 +143,7 @@ class SAMPLE_BUFFER_BASE {
 
   void sample_rate(long int srate) { sample_rate_rep = srate; }
   inline long int sample_rate(void) const { return(sample_rate_rep); }
-  void length_in_samples(long int len);
+  void length_in_samples(long int len) { if (buffersize_rep != len) resize(len); }
   inline long int length_in_samples(void) const { return(buffersize_rep); }
   inline double length_in_seconds(void) const { return((double)buffersize_rep / sample_rate_rep); }
 
@@ -173,8 +173,11 @@ class SAMPLE_BUFFER_BASE {
   // Other member variables
   // ---
   sample_type* old_buffer; // for resampling
+  vector<sample_type> resample_memory;
 
   void resize(long int buffersize);
+
+ public:
 
   void resample_extfilter(long int from_srate,
 			  long int to_srate);
@@ -182,6 +185,8 @@ class SAMPLE_BUFFER_BASE {
 			     long int to_srate);
   void resample_nofilter(long int from_srate,
 			 long int to_srate);
+  void resample_with_memory(long int from_srate,
+			    long int to_srate);
 };
 
 typedef SAMPLE_BUFFER_BASE<SAMPLE_SPECS::sample_type> SAMPLE_BUFFER;

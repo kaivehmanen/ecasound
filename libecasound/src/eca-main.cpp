@@ -43,6 +43,8 @@
 #include "eca-main.h"
 
 VALUE_QUEUE ecasound_queue;
+pthread_cond_t ecasound_stop_cond = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t ecasound_stop_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 ECA_PROCESSOR::ECA_PROCESSOR(ECA_SESSION* params) 
   :  eparams(params),
@@ -57,11 +59,17 @@ ECA_PROCESSOR::ECA_PROCESSOR(void) { }
 ECA_PROCESSOR::~ECA_PROCESSOR(void) {
   ecadebug->msg(ECA_DEBUG::system_objects,"ECA_PROCESSOR destructor!");
 
-  stop();
   if (eparams != 0) eparams->status(ep_status_notready);
+  stop();
 
-  pthread_cancel(chain_thread);
-  pthread_join(chain_thread,NULL);
+  vector<CHAIN*>::iterator q = csetup->chains.begin();
+  while(q != csetup->chains.end()) {
+    (*q)->disconnect_buffer();
+    ++q;
+  }
+
+  ::pthread_cancel(chain_thread);
+  ::pthread_join(chain_thread,NULL);
 
   ecadebug->control_flow("Engine/Exiting");
 }
@@ -108,7 +116,7 @@ void ECA_PROCESSOR::init(void) {
   if (eparams->raised_priority() == true) {
     struct sched_param sparam;
     sparam.sched_priority = 10;
-    if (sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
+    if (::sched_setscheduler(0, SCHED_FIFO, &sparam) == -1)
       ecadebug->msg("(eca-main) Unable to change scheduling policy!");
     else 
       ecadebug->msg("(eca-main) Using realtime-scheduling (SCHED_FIFO/10).");
@@ -117,8 +125,6 @@ void ECA_PROCESSOR::init(void) {
 
 void ECA_PROCESSOR::init_variables(void) {
   active_chain_index = 0;
-  sleepcount.tv_sec = 1;
-  sleepcount.tv_nsec = 0;
   max_channels = 0;
   continue_request = false;
   end_request = false;
@@ -246,11 +252,11 @@ void ECA_PROCESSOR::init_chains(void) {
     chain_ready_for_submix[n] = false;
 
     pthread_mutex_t* mut = new pthread_mutex_t;
-    pthread_mutex_init(mut, NULL);
+    ::pthread_mutex_init(mut, NULL);
     chain_muts[n] = mut;
 
     pthread_cond_t* cond = new pthread_cond_t;
-    pthread_cond_init(cond, NULL);
+    ::pthread_cond_init(cond, NULL);
     chain_conds[n] = cond;
   }
 
@@ -347,7 +353,7 @@ void ECA_PROCESSOR::interactive_loop(void) {
     //      sched_yield();
     sleepcount.tv_sec = 1;
     sleepcount.tv_nsec = 0;
-    nanosleep(&sleepcount, NULL);
+    ::nanosleep(&sleepcount, NULL);
     continue_request = true;
   }
   else 
@@ -538,6 +544,10 @@ void ECA_PROCESSOR::stop(void) {
   }
 
   eparams->status(ep_status_stopped);
+  ::pthread_mutex_lock(&ecasound_stop_mutex);
+  ecadebug->msg(ECA_DEBUG::system_objects, "(eca-main) Signaling stop-cond");
+  ::pthread_cond_signal(&ecasound_stop_cond);
+  ::pthread_mutex_unlock(&ecasound_stop_mutex);
 }
 
 void ECA_PROCESSOR::start(void) {
@@ -661,8 +671,8 @@ void ECA_PROCESSOR::multitrack_sync(void) {
 }
 
 void ECA_PROCESSOR::interpret_queue(void) {
-  while(ecasound_queue.is_empty() == false) {
-    pair<int,double> item = ecasound_queue.front();
+  while(::ecasound_queue.is_empty() == false) {
+    pair<int,double> item = ::ecasound_queue.front();
     ecadebug->msg(ECA_DEBUG::system_objects,"(eca-main) ecasound_queue: cmds available; first one is " 
 		  + kvu_numtostr(item.first));
     switch(item.first) {
@@ -671,7 +681,7 @@ void ECA_PROCESSOR::interpret_queue(void) {
     // ---            
     case ep_exit:
       {
-	while(ecasound_queue.is_empty() == false) ecasound_queue.pop_front();
+	while(::ecasound_queue.is_empty() == false) ::ecasound_queue.pop_front();
 	ecadebug->msg(ECA_DEBUG::system_objects,"(eca-main) ecasound_queue: exit!");
 	stop();
 	end_request = true;
@@ -711,7 +721,7 @@ void ECA_PROCESSOR::interpret_queue(void) {
     case ep_forward: { change_position(item.second); break; }
     case ep_setpos: { set_position(item.second); break; }
     }
-    ecasound_queue.pop_front();
+    ::ecasound_queue.pop_front();
   }
 }
 
@@ -837,7 +847,7 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
     (*chains)[c]->init(&(cslots[c]));
 
   ecadebug->control_flow("Engine/Init - mixmode \"multithreaded interactive\"");
-  int submix_pid = pthread_create(&chain_thread, NULL, mthread_process_chains, ((void*)this));
+  int submix_pid = ::pthread_create(&chain_thread, NULL, ::mthread_process_chains, ((void*)this));
   if (submix_pid != 0)
     throw(new ECA_ERROR("ECA-MAIN", "Unable to create a new thread (mthread_process_chains)."));
 
@@ -847,7 +857,7 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
   if (sched_getscheduler(0) == SCHED_FIFO) {
     struct sched_param sparam;
     sparam.sched_priority = 10;
-    if (pthread_setschedparam(chain_thread, SCHED_FIFO, &sparam) != 0)
+    if (::pthread_setschedparam(chain_thread, SCHED_FIFO, &sparam) != 0)
       ecadebug->msg("(eca-main) Unable to change scheduling policy (mthread)!");
     else 
       ecadebug->msg("(eca-main) Using realtime-scheduling (SCHED_FIFO/10, mthread).");
@@ -873,10 +883,10 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
 	continue;
       }
 
-      pthread_mutex_lock(chain_muts[chain_sizet]);
+      ::pthread_mutex_lock(chain_muts[chain_sizet]);
       while(chain_ready_for_submix[chain_sizet] == true) {
-	pthread_cond_signal(chain_conds[chain_sizet]);
-	pthread_cond_wait(chain_conds[chain_sizet], chain_muts[chain_sizet]);
+	::pthread_cond_signal(chain_conds[chain_sizet]);
+	::pthread_cond_wait(chain_conds[chain_sizet], chain_muts[chain_sizet]);
       }
 
       for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
@@ -886,13 +896,13 @@ void ECA_PROCESSOR::exec_mthreaded_iactive(void) throw(ECA_ERROR*) {
       }
 	
       chain_ready_for_submix[chain_sizet] = true;
-      pthread_cond_signal(chain_conds[chain_sizet]);
-      pthread_mutex_unlock(chain_muts[chain_sizet]);
+      ::pthread_cond_signal(chain_conds[chain_sizet]);
+      ::pthread_mutex_unlock(chain_muts[chain_sizet]);
     }
     posthandle_control_position();
   }
-  pthread_cancel(chain_thread);
-  pthread_join(chain_thread,NULL);
+  ::pthread_cancel(chain_thread);
+  ::pthread_join(chain_thread,NULL);
 }
 
 void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
@@ -905,7 +915,7 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
   for (int chain_sizet = 0; chain_sizet < chain_count; chain_sizet++)
     chain_ready_for_submix[chain_sizet] = false;
 
-  int submix_pid = pthread_create(&chain_thread, NULL, mthread_process_chains, ((void*)this));
+  int submix_pid = ::pthread_create(&chain_thread, NULL, mthread_process_chains, ((void*)this));
 
   if (submix_pid != 0)
     throw(new ECA_ERROR("ECA-MAIN", "Unable to create a new thread (mthread_process_chains)."));
@@ -924,10 +934,10 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
     }
 
     for(int chain_sizet = 0; chain_sizet < chain_count; chain_sizet++) {
-      pthread_mutex_lock(chain_muts[chain_sizet]);
+      ::pthread_mutex_lock(chain_muts[chain_sizet]);
 
       while(chain_ready_for_submix[chain_sizet] == true) {
-	pthread_cond_wait(chain_conds[chain_sizet], chain_muts[chain_sizet]);
+	::pthread_cond_wait(chain_conds[chain_sizet], chain_muts[chain_sizet]);
       }
 
       for(int audioslot_sizet = 0; audioslot_sizet < input_count; audioslot_sizet++) {
@@ -936,11 +946,11 @@ void ECA_PROCESSOR::exec_mthreaded_passive(void) throw(ECA_ERROR*) {
 	}
       }
       chain_ready_for_submix[chain_sizet] = true;
-      pthread_cond_signal(chain_conds[chain_sizet]);
-      pthread_mutex_unlock(chain_muts[chain_sizet]);
+      ::pthread_cond_signal(chain_conds[chain_sizet]);
+      ::pthread_mutex_unlock(chain_muts[chain_sizet]);
     }
     posthandle_control_position();
   }
-  pthread_cancel(chain_thread);
-  pthread_join(chain_thread,NULL);
+  ::pthread_cancel(chain_thread);
+  ::pthread_join(chain_thread,NULL);
 }
