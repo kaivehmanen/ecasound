@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 220301) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 090401) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][devT]" :
@@ -17,7 +17,15 @@ About the version numbers... "vX.Y[.Z][devT]" :
 
 Last officially released version is -*> v1.8.2r14 <*-
 
-??032001 (v1.9dev6)
+??042001 (v1.9dev6)
+	- added: eiam - cs-setpos, cs-set-position; aliases for setpos
+	- added: eiam - cs-getpos, cs-get-position; aliases for getpos
+	- added: eiam - cs-rewind and cs-forward; aliases for rewind 
+		 and forward
+	- added: eiam - cs-get-length; alias for get-length
+	- added: ecatools - repeated ctrl-c causes ecaplay to exit
+		 immediately (like mpg123)
+	- changed: eiam - cs-length renamed to cs-set-length
 22032001 (v1.9dev5)
 	- added: eiam - new aliases 'getpos', 'c-set-position',
 		 'aio-set-position', 'aio-getpos'
