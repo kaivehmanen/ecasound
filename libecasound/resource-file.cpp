@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // resource-file.cpp: Generic resource file class
-// Copyright (C) 1999-2000 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+// Copyright (C) 1999-2001 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 #include <kvutils.h>
 #include "resource-file.h"
+#include "eca-debug.h"
 
 RESOURCE_FILE::RESOURCE_FILE(const std::string& resource_file) :
   resfile_rep(resource_file) { 
@@ -33,6 +34,7 @@ RESOURCE_FILE::~RESOURCE_FILE(void) {
 }
 
 void RESOURCE_FILE::load(void) { 
+  ecadebug->msg(ECA_DEBUG::user_objects, "(resource-file) Loading file " + resfile_rep + ".");
   lines_rep.resize(0);
   std::ifstream fin (resfile_rep.c_str());
   if (fin) {
@@ -81,6 +83,7 @@ void RESOURCE_FILE::load(void) {
 }
 
 void RESOURCE_FILE::save(void) { 
+  ecadebug->msg(ECA_DEBUG::user_objects, "(resource-file) Saving file " + resfile_rep + ".");
   std::ofstream fout (resfile_rep.c_str(), std::ios::out | std::ios::trunc);
   if (fout) {
     std::vector<std::string>::const_iterator p = lines_rep.begin();

@@ -18,6 +18,8 @@
 // ------------------------------------------------------------------------
 
 #include <string>
+#include <cstdlib> /* atol() */
+
 #include <unistd.h>
 
 #include <kvutils/message_item.h>
@@ -29,6 +31,7 @@
 
 string OGG_VORBIS_INTERFACE::default_ogg_input_cmd = "ogg123 -d raw --file=%F %f";
 string OGG_VORBIS_INTERFACE::default_ogg_output_cmd = "oggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -";
+long int OGG_VORBIS_INTERFACE::default_ogg_output_default_bitrate = 128000;
 
 void OGG_VORBIS_INTERFACE::set_ogg_input_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_ogg_input_cmd = value; }
 void OGG_VORBIS_INTERFACE::set_ogg_output_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_ogg_output_cmd = value; }
@@ -37,6 +40,7 @@ OGG_VORBIS_INTERFACE::OGG_VORBIS_INTERFACE(const std::string& name) {
   label(name);
   finished_rep = false;
   toggle_open_state(false);
+  bitrate_rep = OGG_VORBIS_INTERFACE::default_ogg_output_default_bitrate;
 }
 
 OGG_VORBIS_INTERFACE::~OGG_VORBIS_INTERFACE(void) { close(); }
@@ -113,6 +117,33 @@ void OGG_VORBIS_INTERFACE::seek_position(void) {
   }
 }
 
+void OGG_VORBIS_INTERFACE::set_parameter(int param, string value) {
+  switch (param) {
+  case 1: 
+    label(value);
+    break;
+
+  case 2: 
+    long int numvalue = atol(value.c_str());
+    if (numvalue > 0) 
+      bitrate_rep = numvalue;
+    else
+      bitrate_rep = OGG_VORBIS_INTERFACE::default_ogg_output_default_bitrate;
+    break;
+  }
+}
+
+string OGG_VORBIS_INTERFACE::get_parameter(int param) const {
+  switch (param) {
+  case 1: 
+    return(label());
+
+  case 2: 
+    return(kvu_numtostr(bitrate_rep));
+  }
+  return("");
+}
+
 void OGG_VORBIS_INTERFACE::fork_ogg_input(void) {
   ecadebug->msg(ECA_DEBUG::user_objects, OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
   set_fork_command(OGG_VORBIS_INTERFACE::default_ogg_input_cmd);
@@ -134,6 +165,10 @@ void OGG_VORBIS_INTERFACE::fork_ogg_output(void) {
   if (command_rep.find("%f") != string::npos) {
     command_rep.replace(command_rep.find("%f"), 2, label());
   }
+  if (command_rep.find("%B") != string::npos) {
+    command_rep.replace(command_rep.find("%B"), 2, kvu_numtostr((long int)(bitrate_rep / 1000)));
+  }
+
   set_fork_command(command_rep);
   set_fork_file_name(label());
 

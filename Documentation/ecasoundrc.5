@@ -1,18 +1,17 @@
-.TH "ecasoundrc" "5" "19\&.11\&.2001" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "06\&.12\&.2001" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasoundrc \- ecasound rcfile
 .PP 
 .SH "SYNOPSIS" 
+{prefix}/share/ecasound/ecasoundrc (for instance \'/usr/local/share/ecasound/ecasoundrc\')
 $HOME/\&.ecasoundrc
 .PP 
 .SH "DESCRIPTION" 
 .PP 
 \fBecasoundrc\fP is the main configuration file for ecasound\&. 
-If it doesn\'t exist, ecasound creates it with default 
-values\&. If it exists, all name-value pairs are read\&. When 
-you quit ecasound, \fBecasoundrc\fP is rewritten if resource
-values have been modified\&.
+Any user-specific modification should be done to 
+$HOME/\&.ecasoundrc, not to the global resource file\&.
 .PP 
 The format is quite simple\&. One line consists of 
 a configuration variable and its value\&. Variable and value 
@@ -65,6 +64,10 @@ See \'bmode-defaults-nonrt\'\&. Defaults to
 .IP "resource-directory" 
 Directory for global ecasound configuration files\&. 
 Defaults to \fI{prefix-dir}/share/ecasound\fP\&.
+Note! User-specific resource files can be be stored 
+to \'$(HOME)/ecasound-conf\'\&. For instance you can 
+add your own presets definitions to 
+\'$(HOME)/ecasound-conf/effect_presets\'\&.
 .IP 
 .IP "resource-file-genosc-envelopes" 
 Configuration file for generic oscillators\&. Is located in the 
@@ -74,12 +77,6 @@ resource directory\&. Defaults to \fIgeneric_oscillators\fP\&.
 Configuration file for effect presets\&. Is located in the 
 resource directory\&. Defaults to \fIeffect_presets\fP\&.
 .IP 
-.IP "user-resource-directory" 
-Directory for user-specific ecasound configuration files\&.
-If this directory exists, ecasound will search for 
-filenames assigned to global resources (specified 
-with resource-file-*)\&. Defaults to \fI~/ecasound-config\fP\&.
-.IP 
 .IP "internal-plugin-directory" 
 Directory containing ecasound\'s internal plugins\&. Defaults to \fI{prefix-dir}/lib/ecasound-plugins\fP\&.
 .IP 
@@ -88,48 +85,48 @@ Directory containing LADSPA effect plugins\&. Defaults to \fI{prefix-dir}/lib/la
 If environment variable \fILADSPA_PATH\fP exists, directories
 specified in it are automatically searched for plugins\&.
 .IP 
-.IP "ext-text-editor" 
-If \fIext-text-editor-use-getenv\fP is \fIfalse\fP or "EDITOR" 
+.IP "ext-cmd-text-editor" 
+If \fIext-cmd-text-editor-use-getenv\fP is \fIfalse\fP or "EDITOR" 
 is null, value of this field is used\&. Defaults to \fIpico\fP\&.
 .IP 
-.IP "ext-text-editor-use-getenv" 
+.IP "ext-cmd-text-editor-use-getenv" 
 Should ecasound try to query environment variable "EDITOR"\&.
 Defaults to \fItrue\fP\&.
 .IP 
-.IP "ext-wave-editor" 
+.IP "ext-cmd-wave-editor" 
 Command line for executing an external wave editor\&. Defaults
 to \fIsnd\fP\&.
 .IP 
-.IP "ext-mp3-input-cmd" 
+.IP "ext-cmd-mp3-input" 
 Command for starting mp3 input\&. All output should be directed
 to standard output\&. Before execution, "%f" is replaced with 
 path to the input mp3\&. If exists, "%o" is replaced with 
 the start offset in mp3 frames\&. Defaults to \fImpg123 --stereo -r -b 0 -q -s -k %o %f\fP\&.
 .IP 
-.IP "ext-mp3-output-cmd" 
+.IP "ext-cmd-mp3-output" 
 Command for starting mp3 output\&. All input data should be read
 from standard input\&. Before execution, "%f" is replaced with 
-path to the output mp3, and %S with sample rate in kHz\&. 
-Defaults to \fIlame -b 128 -s %S -x -S - %f\fP\&.
+path to the output mp3, %S with sample rate in kHz, and 
+%B with encoding bitrate in kbps\&. Defaults to \fIlame -b %B -s %S -x -S - %f\fP\&.
 .IP 
-.IP "ext-ogg-input-cmd" 
+.IP "ext-cmd-ogg-input" 
 Command for starting ogg input\&. All output should be directed
 to standard output\&. Before execution, "%f" is replaced with 
 path to the input ogg\&. Defaults to \fIogg123 -d raw --file=%F %f\fP\&.
 .IP 
-.IP "ext-ogg-output-cmd" 
+.IP "ext-cmd-ogg-output" 
 Command for starting ogg output\&. All input data should be read
 from standard input\&. Before execution, "%f" is replaced with 
-path to the output ogg, and %c, %s and %b with equivalent
-format parameters\&.
-Defaults to \fIoggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -\fP\&.
+path to the output ogg, %c, %s and %b with equivalent
+format parameters, and %B with encoding bitrate in kbps\&.
+Defaults to \fIoggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -\fP\&.
 .IP 
-.IP "ext-mikmod-cmd" 
+.IP "ext-cmd-mikmod" 
 Command for starting mikmod input\&. Before execution, "%f" is replaced with 
 file path, and %s with select sample rate\&. Defaults to 
 \fImikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f\fP\&.
 .IP 
-.IP "ext-timidity-cmd" 
+.IP "ext-cmd-timidity" 
 Command for starting timidity++ input\&. Before execution, "%f"
 is replaced with file path\&. Defaults to 
 \fItimidity -Or -o - %f\fP\&.

@@ -1,0 +1,23 @@
+ecasound-version = @VERSION@
+midi-device = rawmidi,/dev/midi
+default-output = /dev/dsp
+default-samplerate = 44100
+default-to-precise-sample-rates = false
+default-to-interactive-mode = false
+bmode-defaults-nonrt = 1024,false,50,false,100000,true
+bmode-defaults-rt = 1024,true,50,true,100000,true
+bmode-defaults-rtlowlatency = 256,true,50,true,100000,false
+resource-directory = @prefix@/share/ecasound
+resource-file-genosc-envelopes = generic_oscillators
+resource-file-effect-presets = effect_presets
+internal-plugin-directory = @prefix@/lib/ecasound-plugins
+ladspa-plugin-directory = @prefix@/lib/ladspa
+ext-cmd-text-editor = pico
+ext-cmd-text-editor-use-getenv = true
+ext-cmd-wave-editor = ecawave
+ext-cmd-mp3-input = mpg123 --stereo -r %s -b 0 -q -s -k %o %f
+ext-cmd-mp3-output = lame -b %B -s %S -x -S - %f
+ext-cmd-ogg-input = ogg123 -d raw --file=%F %f
+ext-cmd-ogg-output = oggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -
+ext-cmd-mikmod = mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f
+ext-cmd-timidity = timidity -Or1S -id -s %s -o - %f

@@ -39,6 +39,7 @@ ECA_PRESET_MAP::ECA_PRESET_MAP(void) {
 
   string filename =
     ecarc.resource("user-resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
+
   string global_filename =
     ecarc.resource("resource-directory") + "/" + ecarc.resource("resource-file-effect-presets");
 

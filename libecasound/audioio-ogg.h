@@ -25,12 +25,14 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
 
   static void set_ogg_input_cmd(const std::string& value);
   static void set_ogg_output_cmd(const std::string& value);
+  static long int default_ogg_output_default_bitrate;
 
  private:
 
   bool triggered_rep;
   bool finished_rep;
   long int bytes_rep;
+  long int bitrate_rep;
   int fd_rep;
   FILE* f1_rep;
   
@@ -41,7 +43,9 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
 
   virtual std::string name(void) const { return("Ogg Vorbis stream"); }
   virtual std::string description(void) const { return("Interface for ogg decoders and encoders that support i/o using standard streams."); }
+  virtual std::string parameter_names(void) const { return("label,birate"); }
   virtual bool locked_audio_format(void) const { return(true); }
+
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
   virtual bool supports_seeking(void) const { return(false); }
 
@@ -53,6 +57,9 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
 
   virtual bool finished(void) const { return(finished_rep); }
   virtual void seek_position(void);
+
+  virtual void set_parameter(int param, std::string value);
+  virtual std::string get_parameter(int param) const;
 
   // --
   // Realtime related functions

@@ -18,6 +18,21 @@ About the version numbers... "vX.Y[.Z][devT]" :
 Last officially released version is -*> v2.0.3 *-
 
 ??122001 (v2.1dev6)
+	- edi-entries: edi-11, edi-17
+	- added: edi-11; hierarchy-based config file system; 
+		 default values now stored to 
+		 '{prefix}/share/ecasound/ecasoundrc' while
+		 individual values can be overridden in 
+		 ~/.ecasoundrc
+	- added: bitrate (kbps) params to mp3 and ogg outputs
+	- removed: ecasoundrc - 'user-resource-directory' tag 
+                   removed; user-specific preset/oscillator 
+		   definition directory hardcoded to be
+		   '~/ecasound-conf'
+	- changed: ecasoundrc - to avoid versioning conflicts, 
+		   all 'ext-*' tags are renamed; see ecasoundrc(5)
+	- changed: 'make install' will now overwrite old 
+		   data files ({prefix}/share/ecasound/*)
 	- fixed: problems with automake1.5
 	- fixed: eiam - 'ao-get-position' returned an integer 
 		 value instead of a float as it should

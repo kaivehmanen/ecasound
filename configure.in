@@ -567,6 +567,7 @@ dnl ---
 AC_OUTPUT([
 Makefile
 ecasound.spec
+ecasoundrc
 libecasound/Makefile
 libecasound/ecasound-config
 libecasound/plugins/Makefile

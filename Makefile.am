@@ -16,8 +16,9 @@ RELEASE = 1
 
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(datadir)/ecasound
-	if [ ! -f $(DESTDIR)$(datadir)/ecasound/generic_oscillators ]; then $(INSTALL_DATA) $(top_srcdir)/generic_oscillators $(DESTDIR)$(datadir)/ecasound/generic_oscillators ; fi
-	if [ ! -f $(DESTDIR)$(datadir)/ecasound/effect_presets ]; then $(INSTALL_DATA) $(top_srcdir)/effect_presets $(DESTDIR)$(datadir)/ecasound/effect_presets; fi
+	$(INSTALL_DATA) $(top_srcdir)/ecasoundrc $(DESTDIR)$(datadir)/ecasound/ecasoundrc
+	$(INSTALL_DATA) $(top_srcdir)/generic_oscillators $(DESTDIR)$(datadir)/ecasound/generic_oscillators
+	$(INSTALL_DATA) $(top_srcdir)/effect_presets $(DESTDIR)$(datadir)/ecasound/effect_presets
 
 uninstall-local:
 	rm -f	$(DESTDIR)$(datadir)/ecasound/generic_oscillators \

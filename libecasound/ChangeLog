@@ -2,6 +2,11 @@
 *** ecasound - changes and additions to libecasound interface       ***
 -----------------------------------------------------------------------
 
+2001-12-06  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
+
+	* eca-resources.h (all): dropped inheritance of RESOURCE_FILE
+	* audioio-mp3.h (default_mp3_output_default_bitrate): added
+	
 2001-11-29  Kai Vehmanen <kai.vehmanen@wakkanet.fi>
 
 	* eca-fileio.h, eca-fileio-mmap.h, eca-fileio-stream.h (all):

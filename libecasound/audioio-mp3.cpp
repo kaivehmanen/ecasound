@@ -27,9 +27,11 @@
 #define HAVE_INTTYPES_H
 #endif
 
-#include <cmath>
 #include <string>
+#include <cmath>
 #include <cstring>
+#include <cstdlib> /* atol() */
+
 #include <signal.h>
 #include <unistd.h> /* stat() */
 #include <sys/stat.h> /* stat() */
@@ -45,6 +47,7 @@
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* uint32_t, etc types */
 #endif
+
 #include <kvutils/message_item.h>
 #include <kvutils/kvu_numtostr.h>
 
@@ -56,7 +59,8 @@
 #include "eca-debug.h"
 
 string MP3FILE::default_mp3_input_cmd = "mpg123 --stereo -r %s -b 0 -q -s -k %o %f";
-string MP3FILE::default_mp3_output_cmd = "lame -b 128 -s %S -x -S - %f";
+string MP3FILE::default_mp3_output_cmd = "lame -b %B -s %S -x -S - %f";
+long int MP3FILE::default_mp3_output_default_bitrate = 128000;
 
 void MP3FILE::set_mp3_input_cmd(const std::string& value) { MP3FILE::default_mp3_input_cmd = value; }
 void MP3FILE::set_mp3_output_cmd(const std::string& value) { MP3FILE::default_mp3_output_cmd = value; }
@@ -335,6 +339,7 @@ MP3FILE::MP3FILE(const std::string& name) {
   finished_rep = false;
   mono_input_rep = false;
   pcm_rep = 1;
+  bitrate_rep = MP3FILE::default_mp3_output_default_bitrate;
 }
 
 MP3FILE::~MP3FILE(void) { close(); }
@@ -417,6 +422,33 @@ void MP3FILE::seek_position(void) {
       triggered_rep = false;
     }
   }
+}
+
+void MP3FILE::set_parameter(int param, string value) {
+  switch (param) {
+  case 1: 
+    label(value);
+    break;
+
+  case 2: 
+    long int numvalue = atol(value.c_str());
+    if (numvalue > 0) 
+      bitrate_rep = numvalue;
+    else
+      bitrate_rep = MP3FILE::default_mp3_output_default_bitrate;
+    break;
+  }
+}
+
+string MP3FILE::get_parameter(int param) const {
+  switch (param) {
+  case 1: 
+    return(label());
+
+  case 2: 
+    return(kvu_numtostr(bitrate_rep));
+  }
+  return("");
 }
 
 /*
@@ -515,8 +547,8 @@ void MP3FILE::fork_mp3_input(void) {
   set_fork_channels(channels());
   set_fork_sample_rate(samples_per_second()); /* lame */
 
-// for ecawave mp3 bug debugging:
-//    cerr << "About to fork! " << endl;
+  // for ecawave mp3 bug debugging:
+  //   cerr << "About to fork! " << endl;
 
   fork_child_for_read();
   if (child_fork_succeeded() == true) {
@@ -536,7 +568,12 @@ void MP3FILE::fork_mp3_input(void) {
 void MP3FILE::fork_mp3_output(void) {
   ecadebug->msg("(audioio-mp3) Starting to encode " + label() + " with lame.");
   last_position_rep = position_in_samples();
-  set_fork_command(MP3FILE::default_mp3_output_cmd);
+  string cmd = MP3FILE::default_mp3_output_cmd;
+  if (cmd.find("%B") != string::npos) {
+    cmd.replace(cmd.find("%B"), 2, kvu_numtostr((long int)(bitrate_rep / 1000)));
+  }
+
+  set_fork_command(cmd);
 
   set_fork_file_name(label());
   set_fork_bits(bits());

@@ -117,12 +117,12 @@ void ECA_SESSION::set_defaults(void) {
   else
     iactive_rep = false;
 
-  MP3FILE::set_mp3_input_cmd(ecaresources.resource("ext-mp3-input-cmd"));
-  MP3FILE::set_mp3_output_cmd(ecaresources.resource("ext-mp3-output-cmd"));
-  MIKMOD_INTERFACE::set_mikmod_cmd(ecaresources.resource("ext-mikmod-cmd"));
-  TIMIDITY_INTERFACE::set_timidity_cmd(ecaresources.resource("ext-timidity-cmd"));
-  OGG_VORBIS_INTERFACE::set_ogg_input_cmd(ecaresources.resource("ext-ogg-input-cmd"));
-  OGG_VORBIS_INTERFACE::set_ogg_output_cmd(ecaresources.resource("ext-ogg-output-cmd"));
+  MP3FILE::set_mp3_input_cmd(ecaresources.resource("ext-cmd-mp3-input"));
+  MP3FILE::set_mp3_output_cmd(ecaresources.resource("ext-cmd-mp3-output"));
+  MIKMOD_INTERFACE::set_mikmod_cmd(ecaresources.resource("ext-cmd-mikmod"));
+  TIMIDITY_INTERFACE::set_timidity_cmd(ecaresources.resource("ext-cmd-timidity"));
+  OGG_VORBIS_INTERFACE::set_ogg_input_cmd(ecaresources.resource("ext-cmd-ogg-input"));
+  OGG_VORBIS_INTERFACE::set_ogg_output_cmd(ecaresources.resource("ext-cmd-ogg-output"));
 }
 
 

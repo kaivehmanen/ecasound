@@ -49,16 +49,12 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	- submitted: nolan_d, 09.07.2001
 (edi-9) Adding and removing audio and chainop objects on-the-fly. 
 	- submitted: jhalttun, xx.06.2001
-(edi-11) Hierarchy-based config file system. 
-	- submitted: kaiv, xx.07.2001
 (edi-14) Making ALSA the default output device with a compile 
 	time options. 
 	- submitted: Patrick Shirkey, 18.8.2001
 (edi-16) More flexible system for assigning controllers of 
         controllers (-kx).
 	- submitted: jhalttun, 02.09.2001
-(edi-17) Add bitrate parameter to mp3 objects.
-	- submitted: 30.09.2001, William Goldsmith
 (edi-18) Intelligent system for setting the internal sample rate.
 	- submitted: smassy, 17.10.2001
 (edi-19) Separate file format for multitrack setups (.emt).
@@ -84,10 +80,16 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-10) Adding ecalength to ecatools package.
 	- submitted: kaiv, xx.07.2001
 	- done: kaiv, 06.10.2001, to ecasound 2.1dev0
+(edi-11) Hierarchy-based config file system. 
+	- submitted: kaiv, xx.07.2001
+	- done: kaiv, 06.12.2001, ecasound 2.1dev6
 (edi-15) More intelligent system for selecting buffering modes 
         and sizes for optimal out-of-the-box performance.
 	- submitted: kaiv, 09.08.2001
 	- first	version: kaiv, 05.10.2001, 2.1 CVS-tree
 	- done: kaiv, 06.10.2001, ecasound 2.1dev0
+(edi-17) Add bitrate parameter to mp3 objects.
+	- submitted: 30.09.2001, William Goldsmith
+	- done: 06.12.2001, Kai Vehmanen
 
 -----------------------------------------------------------------------

@@ -23,7 +23,7 @@
 <hr>
 
 <h1>ecasoundrc</h1>
-<h2>19.11.2001</h2>
+<h2>06.12.2001</h2>
 
 
     
@@ -31,14 +31,13 @@
     ecasoundrc - ecasound rcfile
 <p><h2>SYNOPSIS</h2>
     
+    {prefix}/share/ecasound/ecasoundrc (for instance '/usr/local/share/ecasound/ecasoundrc')
     $HOME/.ecasoundrc
 <p><h2>DESCRIPTION</h2>
     
 <p><strong>ecasoundrc</strong> is the main configuration file for ecasound. 
-	If it doesn't exist, ecasound creates it with default 
-        values. If it exists, all name-value pairs are read. When 
-	you quit ecasound, <strong>ecasoundrc</strong> is rewritten if resource
-	values have been modified.
+	Any user-specific modification should be done to 
+	$HOME/.ecasoundrc, not to the global resource file.
 <p>The format is quite simple. One line consists of 
 	a configuration variable and its value. Variable and value 
 	are separated with either '=' or ' '. Lines beginning with a
@@ -81,57 +80,56 @@
 <p><p></p><dt><strong>resource-directory</strong><dd> 
   	Directory for global ecasound configuration files. 
   	Defaults to <em>{prefix-dir}/share/ecasound</em>.
+	Note! User-specific resource files can be be stored 
+	to '$(HOME)/ecasound-conf'. For instance you can 
+	add your own presets definitions to 
+	'$(HOME)/ecasound-conf/effect_presets'.
 <p><p></p><dt><strong>resource-file-genosc-envelopes</strong><dd> 
   	Configuration file for generic oscillators. Is located in the 
   	resource directory. Defaults to <em>generic_oscillators</em>.
 <p><p></p><dt><strong>resource-file-effect-presets</strong><dd>
   	Configuration file for effect presets. Is located in the 
   	resource directory. Defaults to <em>effect_presets</em>.
-<p><p></p><dt><strong>user-resource-directory</strong><dd>
-  	Directory for user-specific ecasound configuration files.
-	If this directory exists, ecasound will search for 
-	filenames assigned to global resources (specified 
-	with resource-file-*). Defaults to <em>~/ecasound-config</em>.
 <p><p></p><dt><strong>internal-plugin-directory</strong><dd>
 	Directory containing ecasound's internal plugins. Defaults to <em>{prefix-dir}/lib/ecasound-plugins</em>.
 <p><p></p><dt><strong>ladspa-plugin-directory</strong><dd>
 	Directory containing LADSPA effect plugins. Defaults to <em>{prefix-dir}/lib/ladspa</em>.
 	If environment variable <em>LADSPA_PATH</em> exists, directories
 	specified in it are automatically searched for plugins.
-<p><p></p><dt><strong>ext-text-editor</strong><dd>
-	If <em>ext-text-editor-use-getenv</em> is <em>false</em> or "EDITOR" 
+<p><p></p><dt><strong>ext-cmd-text-editor</strong><dd>
+	If <em>ext-cmd-text-editor-use-getenv</em> is <em>false</em> or "EDITOR" 
 	is null, value of this field is used. Defaults to <em>pico</em>.
-<p><p></p><dt><strong>ext-text-editor-use-getenv</strong><dd>
+<p><p></p><dt><strong>ext-cmd-text-editor-use-getenv</strong><dd>
 	Should ecasound try to query environment variable "EDITOR".
 	Defaults to <em>true</em>.
-<p><p></p><dt><strong>ext-wave-editor</strong><dd>
+<p><p></p><dt><strong>ext-cmd-wave-editor</strong><dd>
 	Command line for executing an external wave editor. Defaults
 	to <em>snd</em>.
-<p><p></p><dt><strong>ext-mp3-input-cmd</strong><dd>
+<p><p></p><dt><strong>ext-cmd-mp3-input</strong><dd>
 	Command for starting mp3 input. All output should be directed
 	to standard output. Before execution, "%f" is replaced with 
 	path to the input mp3. If exists, "%o" is replaced with 
 	the start offset in mp3 frames. Defaults to <em>mpg123 --stereo -r -b 0 -q -s -k %o %f</em>.
-<p><p></p><dt><strong>ext-mp3-output-cmd</strong><dd>
+<p><p></p><dt><strong>ext-cmd-mp3-output</strong><dd>
 	Command for starting mp3 output. All input data should be read
 	from standard input. Before execution, "%f" is replaced with 
-	path to the output mp3, and %S with sample rate in kHz. 
-	Defaults to <em>lame -b 128 -s %S -x -S - %f</em>.
-<p><p></p><dt><strong>ext-ogg-input-cmd</strong><dd>
+	path to the output mp3, %S with sample rate in kHz, and 
+	%B with encoding bitrate in kbps. Defaults to <em>lame -b %B -s %S -x -S - %f</em>.
+<p><p></p><dt><strong>ext-cmd-ogg-input</strong><dd>
 	Command for starting ogg input. All output should be directed
 	to standard output. Before execution, "%f" is replaced with 
 	path to the input ogg. Defaults to <em>ogg123 -d raw --file=%F %f</em>.
-<p><p></p><dt><strong>ext-ogg-output-cmd</strong><dd>
+<p><p></p><dt><strong>ext-cmd-ogg-output</strong><dd>
 	Command for starting ogg output. All input data should be read
 	from standard input. Before execution, "%f" is replaced with 
-	path to the output ogg, and %c, %s and %b with equivalent
-        format parameters.
-	Defaults to <em>oggenc -b 128 --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -</em>.
-<p><p></p><dt><strong>ext-mikmod-cmd</strong><dd>
+	path to the output ogg, %c, %s and %b with equivalent
+        format parameters, and %B with encoding bitrate in kbps.
+	Defaults to <em>oggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --output=%f -</em>.
+<p><p></p><dt><strong>ext-cmd-mikmod</strong><dd>
 	Command for starting mikmod input. Before execution, "%f" is replaced with 
 	file path, and %s with select sample rate. Defaults to 
 	<em>mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f</em>.
-<p><p></p><dt><strong>ext-timidity-cmd</strong><dd>
+<p><p></p><dt><strong>ext-cmd-timidity</strong><dd>
 	Command for starting timidity++ input. Before execution, "%f"
 	is replaced with file path. Defaults to 
 	<em>timidity -Or -o - %f</em>.
