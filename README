@@ -1,5 +1,5 @@
 =======================================================================
-*** Ecasound - README                    (maintainer: Kai Vehmanen) ***
+*** Ecasound - README             (author/maintainer: Kai Vehmanen) ***
 =======================================================================
 -----------------------------------------------------------------------
  What is it?
@@ -20,7 +20,7 @@ works on many UNIX-derived systems such as FreeBSD and Solaris.
 Limited support for Windows is available through Cygwin.
 
 -----------------------------------------------------------------------
- How do you?
+ How do you...                                  (author: Kai Vehmanen)
 -----------------------------------------------------------------------
 
 ... spell the name? 
@@ -41,7 +41,7 @@ Any way you want! :) Personally I say something to the effect of
 in the word "car".
 
 -----------------------------------------------------------------------
- Why?
+ Story behind Ecasound                          (author: Kai Vehmanen)
 -----------------------------------------------------------------------
 
 I started developing Ecasound because I needed an application to
@@ -122,32 +122,34 @@ Optional when compiling Ecasound:
  Installing
 -----------------------------------------------------------------------
 
-First of all, you should first try to install from a binary package 
-(in rpm, dpkg, etc format, depending on your system). This is probably 
-the easiest and most straigthforward way to install Ecasound.
+You should first try installing Ecasound from a binary package (files
+in rpm, dpkg, etc format -- depends on your system). On some systems 
+Ecasound is part of the distribution and can be installed easily with 
+tools such as apt-get, yum and others. This is probably the easiest and 
+most straightforward way to install Ecasound.
 
 If you need to compile Ecasound, the file 'INSTALL' contains detailed 
-instructions. To build RPM source and binary packages from the 
-source tar package, issue "rpm -ta ecasound-x.y.x.tar.gz".
+instructions on how to do this.
 
 -----------------------------------------------------------------------
  Documentation
 -----------------------------------------------------------------------
 
 Ecasound documentation is updated whenever new features are added 
-or old features have been modified. Some things are not documented
-in great detail, but on the other hand, all documentation is kept
-up-to-date. The primary documentation sources are:
+or existing features are modified. Some things are not documented
+in great detail, but on the other hand, documentation is kept
+up-to-date. So in short, correctness over volume. The primary 
+documentation sources are:
 
 - Ecasound User's Guide
 - Ecasound Programmer's Guide
 - Ecasound Control Interface Guide
 - manual pages
 	- ecasound(1)
-	- ecatools(1)
+	- ecatools(1): ecaplay(1), ecaconvert(1), ...
 	- ecasound-iam(1)
 	- ecasoundrc(5)
-- misc HTML-formatted docs (Documentation/ directory)
+- misc HTML-formatted docs (Documentation/*.html)
 - command line help
 	- ecasound --help
 
@@ -192,7 +194,7 @@ Download releases
 - http://ecawave.sf.net/download/	(mirror)
 - http://eca.cx/download/		(mirror)
 
-Eca projects page (links, apps based on Ecasound, etc)
+Eca projects portal (links, apps based on Ecasound, etc)
 - http://eca.cx 
 - http://ecasound.seul.org (US mirror)
 - http://ecasound.sourceforge.net (another US mirror)
@@ -207,6 +209,7 @@ Examples of real-life Ecasound usage
 You should keep in mind that FOSS [1] development process differs
 greatly from closed commercial development. Active participation, 
 both from developers and users, is what pushes a FOSS project forward. 
+
 Every succesful FOSS project has an active userbase behind it. This 
 means that your comments, ideas and bug reports are extremely
 important. If something does not work, or some feature is missing, 
@@ -216,22 +219,27 @@ on the ecasound-list mailing list.
 [1] Although Ecasound is free software (http://www.gnu.org), it also 
     fits the definition of open-source software (http://www.opensource.org/).
     Although the two initiatives have different goals, they also share
-    a lot in common. I use the term FOSS to refer to both of them,
+    a lot in common. The term FOSS is used to refer to both of them,
     while still acknowledging the difference between the two.
 
 -----------------------------------------------------------------------
- Stable and development versions
+ How stable is stable?
 -----------------------------------------------------------------------
 
 Although publically released versions are called stable, this is not 
-a guarantee of any kind. Before releases I run through a small set 
-of test cases to verify that all basic features are working. I also 
-use the latest versions for my own work. But other than that, there
-is no guarantee that Ecasound won't eat your data. On the other hand,
-as Ecasound is free software, you have the possibility to review
-Ecasound's source code, perform tests, and fix any bugs you might find. 
-The more people there are that do this, the more stable Ecasound 
-will eventually become! So join the fun! :)
+a guarantee of any kind. Before releases a small set of test cases is
+run to verify that all basic features are working. The developers 
+also use the very latest versions themselves, so hopefully at least 
+all obvious bugs are found before stable releases are made. But 
+otherwise no guarantees are given. 
+
+On the other hand, as Ecasound is free software, you have the 
+possibility to review the code yourself, perform tests, and fix any 
+bugs you might find, or get someone to fix them for you. In the end 
+you have the control. 
+
+The more people there are participate in Ecasound development, testing
+and related discussions, the better Ecasound will become!
 
 -----------------------------------------------------------------------
  Authors
