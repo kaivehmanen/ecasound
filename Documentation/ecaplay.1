@@ -158,6 +158,10 @@ Specify default audio format\&. See ecasound(1) for details\&.
 .IP "-r:rate_msec" 
 Specify screen refresh rate in milliseconds\&.
 .PP 
+It is possible to reset the max-peak and clipped-samples 
+counters by sending a SIGHUP signal to the process (i\&.e\&.
+from another console: "killall -v -HUP ecasignalview")\&.
+.PP 
 More complete documentation for ecasignalview can be found 
 from "Ecasound User\&'s Guide" (see \&'\&'http://www\&.eca\&.cx/ecasound 
 -> Documentation\&'\&')\&.

@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "21\&.12\&.2004" "" "Multimedia software" 
+.TH "ecasound" "1" "31\&.03\&.2005" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -31,7 +31,7 @@ control ecasound with simple commands ("start", "stop", "pause",
 etc\&.)\&. See ecasound-iam(1)\&.
 .IP 
 .IP "-C" 
-Disables ecasound\'s interactive mode (see \'-c\')\&.
+Disables ecasound\&'s interactive mode (see \&'-c\&')\&.
 .IP 
 .IP "-d, -dd, -ddd" 
 Increase the amount of printed debug messages\&. \fI-d\fP adds 
@@ -39,7 +39,7 @@ some verbosity, while \fI-ddd\fP results in very detailed
 output\&.
 .IP 
 .IP "-d:debug_level" 
-Set the debug level mask to \'debug_level\'\&. This a bitmasked value, 
+Set the debug level mask to \&'debug_level\&'\&. This a bitmasked value, 
 that defaults to 271\&. See ECA_LOGGER class documentation for 
 more detailed info about various debug_level values\&.
 .IP 
@@ -51,20 +51,20 @@ without ncurses)\&.
 Quiet mode, no output\&. Same as \fI-d:0\fP\&.
 .IP 
 .IP "-s[:]chainsetup-file" 
-Create a new chainsetup from file \'chainsetup-file\' and add
+Create a new chainsetup from file \&'chainsetup-file\&' and add
 it to the current session\&. Chainsetup can contain inputs, outputs, 
 chains, effects, controllers, etc\&. A session, on the other hand, 
 contains all the chainsetups\&. Although only one chainsetup can
 be connected at a time, you can switch between them on-the-fly\&.
 .IP 
 .IP "--daemon" 
-Enable ecasound\'s daemon mode\&. If this option is given,
+Enable ecasound\&'s daemon mode\&. If this option is given,
 ecasound will allow clients to connect to the running 
 ecasound session using a TCP/IP network connection\&.
 The clients can both observe and control the session\&. 
 .IP 
 \fIWarning!\fP As there is no access control implemented,
-be sure to block ecasound\'s port in your firewall 
+be sure to block ecasound\&'s port in your firewall 
 if the machine running ecasound is connected to 
 a public network! Otherwise anyone can connect to 
 your ecasound sessions\&.
@@ -74,7 +74,7 @@ Set the TCP port used by the daemon mode\&. By default
 ecasound will use port number \fI2868\fP\&.
 .IP 
 .IP "--nodaemon" 
-Disable ecasound\'s daemon mode\&. This is the default\&.
+Disable ecasound\&'s daemon mode\&. This is the default\&.
 .IP 
 .IP "--help" 
 Show this help\&.
@@ -87,17 +87,17 @@ Print version info\&.
 .IP 
 .IP "-a:chainname1, chainname2, \&.\&.\&." 
 Selects active signal chains\&. All inputs and outputs following
-this \'-a\' option are assigned to selected chains (until a new -a
+this \&'-a\&' option are assigned to selected chains (until a new -a
 option is specified)\&. When adding effects, controllers and other
 chain operators, only one chain can be selected at a time\&. If no -a option 
-has been given, chain \'default\' is used instead when adding objects\&. 
-Chain name \'all\' is also reserved\&. It will cause all existing chains
+has been given, chain \&'default\&' is used instead when adding objects\&. 
+Chain name \&'all\&' is also reserved\&. It will cause all existing chains
 to be selected\&. By giving multiple -a options, you can control to which 
 chains effects, inputs and outputs are assigned to\&. Look at the \fBEXAMPLES\fP
 section for more detailed info about the usage of this option\&.
 .IP 
 .IP "-n:name" 
-Sets the name of chainsetup to \'name\'\&. If not specified, defaults
+Sets the name of chainsetup to \&'name\&'\&. If not specified, defaults
 either to "command-line-setup" or to the file name from which
 chainsetup was loaded\&. Whitespaces are not allowed\&.
 .IP 
@@ -110,21 +110,21 @@ Open outputs for updating\&. Ecasound opens all outputs - if target
 format allows it - in readwrite mode\&.
 .IP 
 .IP "-z:feature" 
-Enables \'feature\'\&. Most features can be disabled using notation 
-\fI-z:nofeature\fP\&. \'-z:db,dbsize\' enables double-buffering for audio 
+Enables \&'feature\&'\&. Most features can be disabled using notation 
+\fI-z:nofeature\fP\&. \&'-z:db,dbsize\&' enables double-buffering for audio 
 objects that support it (dbsize=0 for default, otherwise buffer
-size in sample frames)\&. \'-z:nodb\' disables double-buffering\&. 
-\'-z:intbuf\' and \'-z:nointbuf\' control whether extra internal buffering 
+size in sample frames)\&. \&'-z:nodb\&' disables double-buffering\&. 
+\&'-z:intbuf\&' and \&'-z:nointbuf\&' control whether extra internal buffering 
 is allowed for realtime devices\&. Disabling this can reduce 
-latency times in some situations\&. With \'-z:xruns\', processing will be 
-halted if an under/overrun occurs\&. \'-z:multitrack\' and
-\'z:nomultitrack\' can be used to force ecasound to enable or disable
+latency times in some situations\&. With \&'-z:xruns\&', processing will be 
+halted if an under/overrun occurs\&. \&'-z:multitrack\&' and
+\&'z:nomultitrack\&' can be used to force ecasound to enable or disable
 multitrack-mode\&. In rare cases you may want to explicitly specify 
-the recording offset with \'-z:multitrack,offset-in-samples\'\&. The
+the recording offset with \&'-z:multitrack,offset-in-samples\&'\&. The
 offset is the amount of samples skipped when recording from 
-real-time inputs\&. \'-z:psr\' enables the \fIprecise-sample-rates\fP mode 
-for OSS-devices\&. \'-z:mixmode,sum\' enables mixing mode where channels
-are mixed by summing all channels\&. The default is \'-z:mixmode,avg\',
+real-time inputs\&. \&'-z:psr\&' enables the \fIprecise-sample-rates\fP mode 
+for OSS-devices\&. \&'-z:mixmode,sum\&' enables mixing mode where channels
+are mixed by summing all channels\&. The default is \&'-z:mixmode,avg\&',
 in which channels are mixed by averaging\&. 
 See ecasoundrc(5)\&.
 .IP 
@@ -132,8 +132,8 @@ See ecasoundrc(5)\&.
 \fBCHAINSETUP BUFFERING AND PERFORMANCE OPTIONS\fP
 .IP 
 .IP "-B:buffering_mode" 
-Selects the default buffering mode\&. Mode is one of: \'auto\' (default),
-\'nonrt\', \'rt\', \'rtlowlatency\'\&.
+Selects the default buffering mode\&. Mode is one of: \&'auto\&' (default),
+\&'nonrt\&', \&'rt\&', \&'rtlowlatency\&'\&.
 .IP 
 .IP "-b:buffer size" 
 Sets the size of buffer in samples (must be an exponent of 2)\&. This
@@ -147,12 +147,12 @@ in real-time (all inputs and outputs are normal files), values between
 .IP 
 .IP "-r:sched_priority" 
 Use realtime scheduling policy (SCHED_FIFO)\&. This is impossible if 
-ecasound doesn\'t have root priviledges\&. Beware! This gives better 
+ecasound doesn\&'t have root priviledges\&. Beware! This gives better 
 performance, but can cause total lock-ups if something goes wrong\&.
-The \'sched_priority\' can be omitted (0=omitted)\&. If given, 
+The \&'sched_priority\&' can be omitted (0=omitted)\&. If given, 
 this is the static priority to the highest priority ecasound thread\&.
-Other ecasound threads run with priority \'sched_priority-1\&.\&.\&.n\'\&.
-Value \'-1\' can be used to disable raised-priority mode\&.
+Other ecasound threads run with priority \&'sched_priority-1\&.\&.\&.n\&'\&.
+Value \&'-1\&' can be used to disable raised-priority mode\&.
 .IP 
 .IP "-z:feature" 
 Relevant features are -z:db,xxx (-z:nodb) and -z:intbuf (-z:nointbuf)\&.
@@ -161,25 +161,25 @@ See section \fIGeneral chainsetup options\fP for details\&.
 .PP 
 \fBPROCESSING CONTROL\fP
 .IP "-t:seconds" 
-Sets processing time in seconds (doesn\'t have to be an integer value)\&.
-If processing time isn\'t set, engine stops when all inputs are 
-finished\&. This option is equivalent to the \'cs-set-length\' EIAM
-command\&. A special-case value of \'-1\' will set the chainsetup length 
+Sets processing time in seconds (doesn\&'t have to be an integer value)\&.
+If processing time isn\&'t set, engine stops when all inputs are 
+finished\&. This option is equivalent to the \&'cs-set-length\&' EIAM
+command\&. A special-case value of \&'-1\&' will set the chainsetup length 
 according to the longest input object\&.
 .IP 
 .IP "-tl" 
 Enables looping\&. When processing is finished, engine will start 
-again from beginning\&. This option is equivalent to the \'cs-loop\' 
+again from beginning\&. This option is equivalent to the \&'cs-loop\&' 
 EIAM command\&.
 .IP 
 .PP 
 \fBINPUT/OUTPUT SETUP\fP
 .PP 
-See ecasound user\'s guide for 
+See ecasound user\&'s guide for 
 more detailed documentation\&.
 .PP 
 .IP "-G:mgrtype,optstring" 
-Sets options for audio object manager type \'mgrtype\'\&. 
+Sets options for audio object manager type \&'mgrtype\&'\&. 
 For available options, see "OBJECT TYPE SPECIFIC NOTES" below\&.
 .IP 
 .IP "-f:sample_format,channel,sample-rate,interleaving" 
@@ -198,8 +198,8 @@ Currently supported formats are "u8" (same as "8"), "s16_le" (same
 as "16"), "s16_be", "s24_le", "s24_be", "s32_le", "s32_be", "f32_le" 
 and "f32_be"\&.
 .IP 
-The 4th parameter \'interleaving\' should either be \'i\' (default) for
-interleaved stream format, or \'n\' for noninterleaved\&.
+The 4th parameter \&'interleaving\&' should either be \&'i\&' (default) for
+interleaved stream format, or \&'n\&' for noninterleaved\&.
 .IP 
 .IP "-y:seconds" 
 Sets starting position for last specified input/output\&. If 
@@ -208,7 +208,7 @@ use the \fI\&.ewf\fP format\&.
 .IP 
 .IP "-i[:]input-file-or-device" 
 Specifies a new input source that is connected to all selected chains\&.
-Connecting multiple inputs to the same chain isn\'t possible\&. Input
+Connecting multiple inputs to the same chain isn\&'t possible\&. Input
 can be a a file, device or some other audio object (see below)\&. 
 If the input is a file, its type is determined using the file name 
 extension\&. Currently supported formats are RIFF WAVE files (\&.wav), 
@@ -222,13 +222,13 @@ are installed, FLAC files (\&.flac) with flac command-line tools,
 and AAC files (\&.aac/\&.m4a/\&.mp4) with faad2/faac tools\&. Supported realtime 
 devices are OSS audio devices (/dev/dsp*), ALSA audio and loopback 
 devices and JACK audio subsystem\&. If no inputs are specified, the first 
-non-option (doesn\'t start with \'-\') command line argument is considered 
+non-option (doesn\&'t start with \&'-\&') command line argument is considered 
 to be an input\&.
 .IP 
 .IP "-o[:]output-file-or-device" 
 Works in the same way as the -i option\&. If no outputs are specified,
 the default output device is used (see ~/\&.ecasoundrc)\&. Note! 
-you can\'t output to module formats supported by MikMod (this should
+you can\&'t output to module formats supported by MikMod (this should
 be obvious)\&.
 .IP 
 \fIOBJECT TYPE SPECIFIC NOTES\fP
@@ -237,7 +237,7 @@ When using ALSA drivers, instead of a device filename, you need to
 use the following option syntax: \fB-i[:]alsa,pcm_device_name\fP\&.
 .IP 
 .IP "ALSA direct-hw and plugin access" 
-It\'s also possible to use a specific card and device combination
+It\&'s also possible to use a specific card and device combination
 using the following notation: \fB-i[:]alsahw,card_number,device_number,subdevice_number\fP\&.
 Another option is the ALSA PCM plugin layer\&. It works just like 
 the normal ALSA pcm-devices, but with automatic channel count and 
@@ -251,7 +251,7 @@ output using aRts audio server\&. Option syntax is \fB-i:arts\fP,
 .IP 
 .IP "Ecasound Wave Files - \&.ewf" 
 A simple wrapper class for handling other audio objects\&. 
-See ecasound user\'s guide for more 
+See ecasound user\&'s guide for more 
 detailed information\&.
 .IP 
 .IP "JACK input/outputs" 
@@ -269,9 +269,9 @@ any automatic connections, there are \fBjack\fP and
 \fBjack_generic,local_portprefix\fP\&.
 .IP 
 Additionally global JACK options can be set using 
-\fB-G:jack,client_name,operation_mode\fP\&. \'client_name\' 
+\fB-G:jack,client_name,operation_mode\fP\&. \&'client_name\&' 
 is the name used when registering ecasound to the JACK system\&. 
-If \'operation_mode\' is "notransport",  ecasound will ignore 
+If \&'operation_mode\&' is "notransport",  ecasound will ignore 
 any transport state changes in the JACK-system; in mode 
 "send" it will send all start, stop and 
 position-change events to other JACK clients; in 
@@ -279,8 +279,8 @@ mode "recv" ecasound will follow JACK start, stop and
 position-change events; and mode "sendrecv" (the default) which 
 is a combination of the two previous modes\&.
 .IP 
-More details about ecasound\'s JACK support can be found
-from ecasound user\'s guide\&.
+More details about ecasound\&'s JACK support can be found
+from ecasound user\&'s guide\&.
 .IP 
 .IP "Libaudiofile" 
 If libaudiofile support was enabled at compile-time, this
@@ -300,8 +300,8 @@ AIFF file with filename "foo\&.wav")\&.
 .IP "Loop device" 
 Loop devices make it possible to route data between chains\&.
 Option syntax is \fB-[io][:]loop,id_number\fP\&. If you add a loop 
-output with id \'1\', all data written to this output is routed
-to all loop inputs with id \'1\'\&. You can attach the same loop
+output with id \&'1\&', all data written to this output is routed
+to all loop inputs with id \&'1\&'\&. You can attach the same loop
 device to multiple inputs and outputs\&.
 .IP 
 .IP "Mikmod" 
@@ -313,33 +313,33 @@ is \fB-i:mikmod,foobar\&.ext\fP\&.
 .IP "Null inputs/outputs" 
 If you specify "null" or "/dev/null" as the input or output, 
 a null audio device is created\&. This is useful if you just want
-to analyze sample data without writing it to a file\&. There\'s 
+to analyze sample data without writing it to a file\&. There\&'s 
 also a realtime variant, "rtnull", which behaves just like "null" 
 objects, except all i/o is done at realtime speed\&.
 .IP 
 .IP "Resample - access object of different sample rates" 
-Object type \'resample\' can be used to resample audio 
-object\'s audio data to match the sampling rate used
+Object type \&'resample\&' can be used to resample audio 
+object\&'s audio data to match the sampling rate used
 in the active chainsetup\&. For example, 
 \fBecasound -f:16,2,44100 -i resample,22050,foo\&.wav -o /dev/dsp\fP,
 will resample file from 22\&.05kHz to 44\&.1kHz and write the
 result to the soundcard device\&. Child sampling rate can be 
-replaced with keyword \'auto\'\&. In this case ecasound will try 
+replaced with keyword \&'auto\&'\&. In this case ecasound will try 
 to query the child object for its sampling rate\&. This works with 
 files formats such as \&.wav which store meta information about 
-the audio file format\&. To use \'auto\' in the previous example, 
+the audio file format\&. To use \&'auto\&' in the previous example, 
 \fBecasound -f:16,2,44100 -i resample,auto,foo\&.wav -o /dev/dsp\fP\&.
 .IP 
 If ecasound was compiled with support for libsamplerate, you can 
-use \'resample-hq\' to use the highest quality resampling algorithm 
+use \&'resample-hq\&' to use the highest quality resampling algorithm 
 available\&. To force ecasound to use the internal resampler, 
-\'resampler-lq\' (low-quality) can be used\&.
+\&'resampler-lq\&' (low-quality) can be used\&.
 .IP 
 .IP "Reverse - process audio data backwards" 
-Object type \'reverse\' can be used to reverse audio 
+Object type \&'reverse\&' can be used to reverse audio 
 data coming from an audio object\&. As an example, 
 \fBecasound -i reverse,foo\&.wav -o /dev/dsp\fP will play 
-\'foo\&.wav\' backwards\&. Reversing output objects is not 
+\&'foo\&.wav\&' backwards\&. Reversing output objects is not 
 supported\&. Note! Trying to reverse audio object types with really 
 slow seek operation (like mp3), works extremely badly\&.
 Try converting to an uncompressed format (wav or raw)
@@ -352,17 +352,17 @@ raw/headerless (\&.raw) format\&. If you want to use named pipes,
 create them with the proper file name extension before use\&.
 .IP 
 .IP "Typeselect - overriding object type settings" 
-The special \'typeselect\' object type can be used to override 
+The special \&'typeselect\&' object type can be used to override 
 how ecasound maps filename extensions and object types\&. For 
 instance \fBecasound -i typeselect,\&.mp3,an_mp3_file\&.wav -o /dev/dsp\fP\&.
-would play the file \'an_mp3_file\&.wav\' as an mp3-file and not
+would play the file \&'an_mp3_file\&.wav\&' as an mp3-file and not
 as an wav-file as would happen without typeselect\&.
 .IP 
 .PP 
 \fBMIDI SETUP\fP
 .PP 
 .IP "-Md:rawmidi,device_name" 
-Sets the active MIDI-device\&. \'device_name\' can be anything that 
+Sets the active MIDI-device\&. \&'device_name\&' can be anything that 
 can be accessed using the normal UNIX file operations and 
 produces raw MIDI bytes\&. Valid devices are for example OSS rawmidi 
 devices (/dev/midi00), named pipes (see mkfifo(1) man page), and
@@ -370,7 +370,7 @@ normal files\&. If no MIDI-device is specified, the default MIDI-device
 is used (see ecasoundrc(5))\&.
 .IP 
 .IP "-Mms:device_id" 
-Sends MMC start and stop to MIDI device-id \'device_id\'\&.
+Sends MMC start and stop to MIDI device-id \&'device_id\&'\&.
 .IP 
 .IP "-Mss" 
 Sends MIDI-sync to the selected MIDI-device\&. Note! Ecasound will not
@@ -383,16 +383,16 @@ send \fIMIDI-clock\fP, but only \fIstart\fP and \fIstop\fP messages\&.
 .PP 
 Ecasound has a powerful effect preset system that allows you create
 new effects by combining basic effects and controllers\&. See
-ecasound user\'s guide for more 
+ecasound user\&'s guide for more 
 detailed information\&.
 .PP 
 .IP 
 .IP "-pf:preset_file\&.eep" 
-Uses the first preset found from file \'preset_file\&.eep\' as 
+Uses the first preset found from file \&'preset_file\&.eep\&' as 
 a chain operator\&.
 .IP 
 .IP "-pn:preset_name" 
-Find preset \'preset_name\' from global preset database and use
+Find preset \&'preset_name\&' from global preset database and use
 it as a chain operator\&. See ecasoundrc(5) for info about the 
 preset database\&.
 .IP 
@@ -420,44 +420,44 @@ as a parameter to -ezx effect\&.
 \fIGENERAL SIGNAL PROCESSING ALGORITHMS\fP
 .IP "-eS:stamp-id" 
 Audio stamp\&. Takes a snapshot of passing audio data and stores
-it using id \'stamp-id\' (integer number)\&. This data can later be
+it using id \&'stamp-id\&' (integer number)\&. This data can later be
 used by controllers and other operators\&.
 .IP 
 .IP "-ea:amplify-%" 
 Amplifies signal by amplify-% percent\&. 
 .IP 
 .IP "-eac:amplify-%,channel" 
-Amplifies signal of channel \'channel\' by amplify-% percent\&. \'channel\'
+Amplifies signal of channel \&'channel\&' by amplify-% percent\&. \&'channel\&'
 ranges from 1\&.\&.\&.n where n is the total number of channels\&.
 .IP 
 .IP "-eaw:amplify-%,max-clipped-samples" 
 Amplifies signal by amplify-% percent\&. If number of consecutive
 clipped samples (resulting sample has the largest amplitude
-possible) reaches \'max-clipped-samples\', a warning will be issued\&.
+possible) reaches \&'max-clipped-samples\&', a warning will be issued\&.
 .IP 
 .IP "-eal:limit-%" 
-Limiter effect\&. Limits audio level to \'limit-%\'\&.
+Limiter effect\&. Limits audio level to \&'limit-%\&'\&.
 .IP 
 .IP "-ec:rate,threshold-%" 
-Compressor (a simple one)\&. \'rate\' is the compression rate in
-decibels (\'rate\' dB change in input signal causes 1dB change 
-in output)\&. \'threshold\' varies between 0\&.0 (silence) and
+Compressor (a simple one)\&. \&'rate\&' is the compression rate in
+decibels (\&'rate\&' dB change in input signal causes 1dB change 
+in output)\&. \&'threshold\&' varies between 0\&.0 (silence) and
 1\&.0 (max amplitude)\&.
 .IP 
 .IP "-eca:peak-level-%, release-time-sec, fast-crate, crate" 
 A more advanced compressor (original algorithm by John S\&. Dyson)\&. 
 If you give a value of 0 to any parameter, the default is used\&.
-\'peak-level-%\' essentially specifies how hard the peak limiter
-is pushed\&.  The default of 69% is good\&. \'release_time\' is given 
+\&'peak-level-%\&' essentially specifies how hard the peak limiter
+is pushed\&.  The default of 69% is good\&. \&'release_time\&' is given 
 in seconds\&. This compressor is very sophisticated, and actually
 the release time is complex\&.  This is one of the dominant release 
 time controls, but the actual release time is dependent on a lot of 
-factors regarding the dynamics of the audio in\&. \'fastrate\' is the 
+factors regarding the dynamics of the audio in\&. \&'fastrate\&' is the 
 compression ratio for the fast compressor\&.  This is not really 
 the compression ratio\&.  Value of 1\&.0 is infinity to one, while the 
 default 0\&.50 is 2:1\&.  Another really good value is special cased in 
 the code: 0\&.25 is somewhat less than 2:1, and sounds super smooth\&.
-\'rate\' is the compression ratio for the entire compressor chain\&.  
+\&'rate\&' is the compression ratio for the entire compressor chain\&.  
 The default is 1\&.0, and holds the volume very constant without many nasty
 side effects\&.  However the dynamics in music are severely restricted,
 and a value of 0\&.5 might keep the music more intact\&.
@@ -465,24 +465,24 @@ and a value of 0\&.5 might keep the music more intact\&.
 .IP "-enm:threshold-level-%,pre-hold-time-msec,attack-time-msec,post-hold-time-msec,release-time-msec" 
 Noise gate\&. Supports multichannel processing (each channel 
 processed separately)\&. When signal amplitude falls below
-\'threshold_level_%\' percent (100% means maximum amplitude), gate 
+\&'threshold_level_%\&' percent (100% means maximum amplitude), gate 
 is activated\&. If the signal stays below the threshold for 
-\'th_time\' ms, it\'s faded out during the attack phase of 
-\'attack\' ms\&. If the signal raises above the \'threshold_level\' 
-and stays there over \'hold\' ms the gate is released during 
-\'release\' ms\&.
+\&'th_time\&' ms, it\&'s faded out during the attack phase of 
+\&'attack\&' ms\&. If the signal raises above the \&'threshold_level\&' 
+and stays there over \&'hold\&' ms the gate is released during 
+\&'release\&' ms\&.
 .IP 
 .IP "-ei:pitch-shift-%" 
 Pitch shifter\&. Modifies audio pitch by altering its length\&.
 .IP 
 .IP "-epp:right-%" 
 Stereo panner\&. Changes the relative balance between the first
-two channels\&. When \'right-%\' is 0, only signal on the left 
-(1st) channel is passed through\&. Similarly if it is \'100\', 
+two channels\&. When \&'right-%\&' is 0, only signal on the left 
+(1st) channel is passed through\&. Similarly if it is \&'100\&', 
 only right (2nd) channel is let through\&.
 .IP 
 .IP "-ezx:channel-count,delta-ch1,\&.\&.\&.,delta-chN" 
-Adjusts the signal DC by \'delta-chX\', where X is the 
+Adjusts the signal DC by \&'delta-chX\&', where X is the 
 channel number\&. Use -ezf to find the optimal delta 
 values\&.
 .IP 
@@ -501,14 +501,14 @@ Tremolo effect (tremolo speed given as beats-per-minute)\&.
 .PP 
 \fIFILTER EFFECTS\fP
 .IP "-ef1:center_freq, width" 
-Resonant bandpass filter\&. \'center_freq\' is the center frequency\&. Width
+Resonant bandpass filter\&. \&'center_freq\&' is the center frequency\&. Width
 is specified in Hz\&. 
 .IP 
 .IP "-ef3:cutoff_freq, reso, gain" 
-Resonant lowpass filter\&. \'cutoffr_freq\' is the filter cutoff
-frequency\&. \'reso\' means resonance\&. Usually the best values for
+Resonant lowpass filter\&. \&'cutoffr_freq\&' is the filter cutoff
+frequency\&. \&'reso\&' means resonance\&. Usually the best values for
 resonance are between 1\&.0 and 2\&.0, but you can use even bigger values\&.
-\'gain\' is the overall gain-factor\&. It\'s a simple multiplier (1\&.0 
+\&'gain\&' is the overall gain-factor\&. It\&'s a simple multiplier (1\&.0 
 is the normal level)\&. With high resonance values it often is useful 
 to reduce the gain value\&.
 .IP 
@@ -524,44 +524,44 @@ phase-shift\&.
 .IP 
 .IP "-efc:delay-samples,radius" 
 Comb filter\&. Allows the spikes of the comb to pass through\&.
-Value of \'radius\' should be between [0, 1\&.0)\&.
+Value of \&'radius\&' should be between [0, 1\&.0)\&.
 .IP 
 .IP "-efb:center-freq,width" 
-Bandpass filter\&. \'center_freq\' is the center frequency\&. Width
+Bandpass filter\&. \&'center_freq\&' is the center frequency\&. Width
 is specified in Hz\&. 
 .IP 
 .IP "-efh:cutoff-freq" 
-Highpass filter\&. Only frequencies above \'cutoff_freq\' are passed
+Highpass filter\&. Only frequencies above \&'cutoff_freq\&' are passed
 through\&.
 .IP 
 .IP "-efi:delay-samples,radius" 
 Inverse comb filter\&. Filters out the spikes of the comb\&. There
-are \'delay_in_samples-2\' spikes\&. Value of \'radius\' should be 
+are \&'delay_in_samples-2\&' spikes\&. Value of \&'radius\&' should be 
 between [0, 1\&.0)\&. The closer it is to the maximum value,
 the deeper the dips of the comb are\&.
 .IP 
 .IP "-efl:cutoff-freq" 
-Lowpass filter\&. Only frequencies below \'cutoff_freq\' are passed
+Lowpass filter\&. Only frequencies below \&'cutoff_freq\&' are passed
 through\&.
 .IP 
 .IP "-efr:center-freq,width" 
-Bandreject filter\&. \'center_freq\' is the center frequency\&. Width
+Bandreject filter\&. \&'center_freq\&' is the center frequency\&. Width
 is specified in Hz\&. 
 .IP 
 .IP "-efs:center-freq,width" 
-Resonator\&. \'center_freq\' is the center frequency\&. Width is specified
+Resonator\&. \&'center_freq\&' is the center frequency\&. Width is specified
 in Hz\&. Basicly just another resonating bandpass filter\&.
 .IP 
 .PP 
 \fICHANNEL MIXING / ROUTING\fP
 .IP 
 .IP "-erc:from-channel, to-channel" 
-Copy channel \'from_channel\' to \'to_channel\'\&. If \'to_channel\' 
-doesn\'t exist, it is created\&. Channel indexing is started from 1\&.
+Copy channel \&'from_channel\&' to \&'to_channel\&'\&. If \&'to_channel\&' 
+doesn\&'t exist, it is created\&. Channel indexing is started from 1\&.
 .IP 
 .IP "-erm:to-channel" 
-Mix all channels to channel \'to_channel\'\&.  If \'to_channel\' 
-doesn\'t exist, it is created\&. Channel indexing is started from 1\&.
+Mix all channels to channel \&'to_channel\&'\&.  If \&'to_channel\&' 
+doesn\&'t exist, it is created\&. Channel indexing is started from 1\&.
 .IP 
 .PP 
 \fITIME-BASED EFFECTS\fP
@@ -570,29 +570,29 @@ doesn\'t exist, it is created\&. Channel indexing is started from 1\&.
 Chorus\&.
 .IP 
 .IP "-etd:delay-time-msec,surround-mode,number-of-delays,mix-%,feedback-%" 
-Delay effect\&. \'delay time\' is the delay time in milliseconds\&.
-\'surround-mode\' is a integer with following meanings: 0 = normal, 
-1 = surround, 2 = stereo-spread\&. \'number_of_delays\' should be 
+Delay effect\&. \&'delay time\&' is the delay time in milliseconds\&.
+\&'surround-mode\&' is a integer with following meanings: 0 = normal, 
+1 = surround, 2 = stereo-spread\&. \&'number_of_delays\&' should be 
 obvious\&. Beware that large number of delays and huge delay times 
-need a lot of CPU power\&. \'mix-%\' determines how much effected (wet)
-signal is mixed to the original\&. \'feedback-%\' represents how much of
+need a lot of CPU power\&. \&'mix-%\&' determines how much effected (wet)
+signal is mixed to the original\&. \&'feedback-%\&' represents how much of
 the signal is recycled in each delay or, if you prefer, at what rate
 the repeated snippet of delayed audio fades\&. Note that sufficiently
 low feedback values may result in a number of audible repetitions
-lesser than what you have specified for \'number_of_delays\', especially
-if you have set a low value for \'mix-%\'\&. By default the value for this
+lesser than what you have specified for \&'number_of_delays\&', especially
+if you have set a low value for \&'mix-%\&'\&. By default the value for this
 parameter is 100% (No signal loss\&.)\&.
 .IP 
 .IP "-ete:room_size,feedback-%,wet-%" 
 A more advanced reverb effect (original algorithm by Stefan M\&. Fendt)\&. 
-\'room_size\' is given in meters, \'feedback-%\' is the feedback level
-given in percents and \'wet-%\' is the amount of reverbed signal added 
+\&'room_size\&' is given in meters, \&'feedback-%\&' is the feedback level
+given in percents and \&'wet-%\&' is the amount of reverbed signal added 
 to the original signal\&.
 .IP 
 .IP "-etf:delay-time-msec" 
 Fake-stereo effect\&. The input signal is summed to mono\&. The
 original signal goes to the left channels while a delayed 
-version (with delay of \'delay time\' milliseconds) is goes to
+version (with delay of \&'delay time\&' milliseconds) is goes to
 the right\&. With a delay time of 1-40 milliseconds this 
 adds a stereo-feel to mono-signals\&. 
 .IP 
@@ -600,23 +600,23 @@ adds a stereo-feel to mono-signals\&.
 Flanger\&.
 .IP 
 .IP "-etm:delay-time-msec,number-of-delays,mix-%" 
-Multitap delay\&. \'delay time\' is the delay time in milliseconds\&.
-\'number_of_delays\' should be obvious\&. \'mix-%\' determines how much 
+Multitap delay\&. \&'delay time\&' is the delay time in milliseconds\&.
+\&'number_of_delays\&' should be obvious\&. \&'mix-%\&' determines how much 
 effected (wet) signal is mixed to the original\&.
 .IP 
 .IP "-etp:delay-time-msec,variance-time-samples,feedback-%,lfo-freq" 
 Phaser\&.
 .IP 
 .IP "-etr:delay-time,surround-mode,feedback-%" 
-Reverb effect\&. \'delay time\' is the delay time in milliseconds\&.
-If \'surround-mode\' is \'surround\', reverbed signal moves around the
-stereo image\&. \'feedback-%\' determines how much effected (wet)
+Reverb effect\&. \&'delay time\&' is the delay time in milliseconds\&.
+If \&'surround-mode\&' is \&'surround\&', reverbed signal moves around the
+stereo image\&. \&'feedback-%\&' determines how much effected (wet)
 signal is fed back to the reverb\&.
 .IP 
 .PP 
 \fILADSPA-PLUGINS\fP
 .IP "-el:plugin_unique_name,param-1,\&.\&.\&.,param-N" 
-Ecasound supports LADSPA-effect plugins (Linux Audio Developer\'s Simple
+Ecasound supports LADSPA-effect plugins (Linux Audio Developer\&'s Simple
 Plugin API)\&. Plugins are located in shared library (\&.so) files in 
 /usr/local/share/ladspa (configured in ecasoundrc(5))\&. One shared
 library file can contain multiple plugin objects, but every plugin 
@@ -627,7 +627,7 @@ page and LADSPA
 documentation\&.
 .IP 
 .IP "-eli:plugin_unique_number,param-1,\&.\&.\&.,param-N" 
-Same as above expect plugin\'s unique id-number is used\&. It
+Same as above expect plugin\&'s unique id-number is used\&. It
 is guaranteed that these id-numbers are unique among all 
 LADSPA plugins\&.
 .IP 
@@ -636,15 +636,15 @@ LADSPA plugins\&.
 .PP 
 .IP 
 .IP "-gc:start-time,len" 
-Time crop gate\&. Initially gate is closed\&. After \'start-time\' seconds
-has elapsed, gate opens and remains open for \'len\' seconds\&. When
+Time crop gate\&. Initially gate is closed\&. After \&'start-time\&' seconds
+has elapsed, gate opens and remains open for \&'len\&' seconds\&. When
 closed, passing audio buffers are trucated to zero length\&.
 .IP 
 .IP "-ge:open-threshold-%, close-thold-%,volume-mode" 
 Threshold gate\&. Initially gate is closed\&. It is opened when volume 
-goes over \'othreshold\' percent\&. After this, if volume drops below 
-\'cthold\' percent, gate is closed and won\'t be opened again\&. 
-If \'value_mode\' is \'rms\', average RMS volume is used\&. Otherwise
+goes over \&'othreshold\&' percent\&. After this, if volume drops below 
+\&'cthold\&' percent, gate is closed and won\&'t be opened again\&. 
+If \&'value_mode\&' is \&'rms\&', average RMS volume is used\&. Otherwise
 peak average is used\&.  When closed, passing audio buffers are trucated 
 to zero length\&.
 .IP 
@@ -654,51 +654,51 @@ to zero length\&.
 Controllers can be used to dynamically change effect parameters
 during processing\&. All controllers are attached to the selected
 (=usually the last specified effect/controller) effect\&. The first
-three parameters are common for all controllers\&. \'fx_param\' 
-specifies the parameter to be controlled\&. Value \'1\' means 
-the first parameter, \'2\' the second and so on\&. \'start_value\' 
-and \'end_value\' set the value range\&. You really should see
+three parameters are common for all controllers\&. \&'fx_param\&' 
+specifies the parameter to be controlled\&. Value \&'1\&' means 
+the first parameter, \&'2\&' the second and so on\&. \&'start_value\&' 
+and \&'end_value\&' set the value range\&. You really should see
 \fIexamples\&.html\fP for some more info\&. 
 .IP 
 .IP "-kos:fx-param,start-value,end-value,freq,i-phase" 
-Sine oscillator with frequency of \'freq\' Hz and initial phase
-of \'i_phase\' times pi\&.
+Sine oscillator with frequency of \&'freq\&' Hz and initial phase
+of \&'i_phase\&' times pi\&.
 .IP 
 .IP "-kog:fx-param,freq,mode,point-pairs,start-value,end-value,pos1,value1,\&.\&.\&." 
-Generic oscillator\&. Frequency \'freq\' Hz, mode either \'0\' for
-static values or \'1\' for linear interpolation\&. \'point-pairs\'
-specifies the number of \'posN\' - \'valueN\' pairs to include\&.
-\'start-value\' and \'end-value\' are used as border values\&.
-All \'posN\' and \'valueN\' must be between 0\&.0 and 1\&.0\&. Also, 
-for all \'posN\' values \'pos1 < pos2 < \&.\&.\&. < posN\' must be true\&.
+Generic oscillator\&. Frequency \&'freq\&' Hz, mode either \&'0\&' for
+static values or \&'1\&' for linear interpolation\&. \&'point-pairs\&'
+specifies the number of \&'posN\&' - \&'valueN\&' pairs to include\&.
+\&'start-value\&' and \&'end-value\&' are used as border values\&.
+All \&'posN\&' and \&'valueN\&' must be between 0\&.0 and 1\&.0\&. Also, 
+for all \&'posN\&' values \&'pos1 < pos2 < \&.\&.\&. < posN\&' must be true\&.
 .IP 
 .IP "-kf:fx-param,start-value,end-value,freq,mode,genosc-number" 
-Generic oscillator\&. \'genosc_number\' is the number of the 
-oscillator preset to be loaded\&. Mode is either \'0\' for
-static values or \'1\' for linear interpolation\&. The location for 
+Generic oscillator\&. \&'genosc_number\&' is the number of the 
+oscillator preset to be loaded\&. Mode is either \&'0\&' for
+static values or \&'1\&' for linear interpolation\&. The location for 
 the preset file is taken from \&./ecasoundrc (see \fIecasoundrc(5)\fP)\&.
 .IP 
 .IP "-kl:fx-param,start-value,end-value,time-seconds" 
-Linear envelope that starts from \'start_value\' and linearly 
-changes to \'end_value\' during \'time_in_seconds\'\&. Can
+Linear envelope that starts from \&'start_value\&' and linearly 
+changes to \&'end_value\&' during \&'time_in_seconds\&'\&. Can
 be used for fadeins and fadeouts\&.
 .IP 
 .IP "-kl2:fx-param,start-value,end-value,1st-stage-length-sec,2nd-stage-length-sec" 
 Two-stage linear envelope, a more versatile tool for doing fade-ins
-and fade-outs\&. Stays at \'start_value\' for \'1st_stage_length\' seconds
-and then linearly changes towards \'end_value\' during
-\'2nd_stage_length\' seconds\&.
+and fade-outs\&. Stays at \&'start_value\&' for \&'1st_stage_length\&' seconds
+and then linearly changes towards \&'end_value\&' during
+\&'2nd_stage_length\&' seconds\&.
 .IP 
 .IP "-klg:fx-param,start-value,end-value,point_count,pos1,value1,\&.\&.\&.,posN,valueN" 
 Generic linear envelope\&. This controller source can be 
 used to map custom envelopes to chain operator parameters\&. 
-All \'posX\' parameters are given as seconds (from start of the stream)\&.
-\'valueX\' parameters  must be in the range [0,1]\&.
+All \&'posX\&' parameters are given as seconds (from start of the stream)\&.
+\&'valueX\&' parameters  must be in the range [0,1]\&.
 .IP 
 .IP "-km:fx-param,start-value,end-value,controller,channel" 
 MIDI continuous controller (control change messages)\&. 
-Messages on the MIDI-channel \'channel\' that are coming from
-controller number \'controller\' are used as the controller
+Messages on the MIDI-channel \&'channel\&' that are coming from
+controller number \&'controller\&' are used as the controller
 source\&. As recommended by the MIDI-specification, channel
 numbering goes from 1 to 16\&. Possible controller numbers 
 are values from 0 to 127\&. The MIDI-device where bytes
@@ -709,8 +709,8 @@ Defaults to \fI/dev/midi\fP\&.
 .IP 
 .IP "-ksv:fx-param,start-value,end-value,stamp-id,rms-toggle" 
 Volume analyze controller\&. Analyzes the audio stored in 
-stamp \'stamp-id\' (see \'-eS:id\' docs), and creates
-control data based on the results\&. If \'rms-toggle\' is non-zero, 
+stamp \&'stamp-id\&' (see \&'-eS:id\&' docs), and creates
+control data based on the results\&. If \&'rms-toggle\&' is non-zero, 
 RMS-volume is used to calculate the control value\&. Otherwise
 average peak-amplitude is used\&.
 .IP 
@@ -744,7 +744,7 @@ same as with command-line arguments\&.
 .PP 
 \fI*\&.ecp\fP 
 Ecasound Chain Preset files\&. Used for storing effect
-and chain operator presets\&. See ecasound user\'s guide for
+and chain operator presets\&. See ecasound user\&'s guide for
 more better documentation\&.
 .PP 
 \fI*\&.ews\fP 
@@ -761,7 +761,7 @@ ecasoundrc(5),
 .SH "BUGS" 
 .PP 
 See file BUGS\&. If ecasound behaves weirdly, try to
-increase the debug level to see what\'s going on\&.
+increase the debug level to see what\&'s going on\&.
 .PP 
 .SH "AUTHOR" 
 .PP 
