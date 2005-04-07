@@ -52,7 +52,7 @@ int main(int argc, char *argv[]);
 
 static void add_input_to_chainsetup(eci_handle_t eci, const char* nextrack);
 static int flush_tracks(void);
-static const char* get_next_track(int tracknum, int argc, char *argv[], eci_handle_t *eci);
+static const char* get_next_track(int *tracknum, int argc, char *argv[], eci_handle_t *eci);
 static char* get_playlist_path(void);
 static const char* get_track_cmdline(int n, int argc, char *argv[]);
 static const char* get_track_playlist(int n);
@@ -87,7 +87,7 @@ static void signal_handler(int signum);
  * Global variables
  */
 
-static const char* ecaplay_version = "20050317-39";
+static const char* ecaplay_version = "20050407-40";
 static char ecaplay_next[PATH_MAX];
 static char ecaplay_audio_format[ECAPLAY_AFMT_MAXLEN];
 static int ecaplay_debuglevel = ECAPLAY_EIAM_LOGLEVEL;
@@ -260,14 +260,14 @@ static void initialize_chainsetup_for_playback(eci_handle_t* eci, const char* ne
   }
 }
 
-static const char* get_next_track(int tracknum, int argc, char *argv[], eci_handle_t *eci)
+static const char* get_next_track(int *tracknum, int argc, char *argv[], eci_handle_t *eci)
 {
   const char *nexttrack = NULL;
 
   if (ecaplay_mode == ECAPLAY_MODE_PL_PLAY)
-    nexttrack = get_track_playlist(tracknum);
+    nexttrack = get_track_playlist(*tracknum);
   else
-    nexttrack = get_track_cmdline(tracknum, argc, argv);
+    nexttrack = get_track_cmdline(*tracknum, argc, argv);
   
   if (nexttrack != NULL) {
     /* queue nexttrack for playing */
@@ -285,15 +285,15 @@ static const char* get_next_track(int tracknum, int argc, char *argv[], eci_hand
     }
     else {
       /* if in playlist mode, loop from beginning */
-      tracknum = 1;
+      *tracknum = 1;
 
       /* FIXME: if in playlist mode; query the current lenght of
        *        playlist and set 'tracknum = (tracknum % pllen)' */
 
       if (ecaplay_mode == ECAPLAY_MODE_PL_PLAY)
-	nexttrack = get_track_playlist(tracknum);
+	nexttrack = get_track_playlist(*tracknum);
       else
-	nexttrack = get_track_cmdline(tracknum, argc, argv);
+	nexttrack = get_track_cmdline(*tracknum, argc, argv);
 
       /* printf("(ecaplay) Looping back to start of playlist...(%s)\n", nexttrack); */
 
@@ -472,7 +472,7 @@ static int play_tracks(int argc, char *argv[])
 
   tracknum += ecaplay_skip;
 
-  nexttrack = get_next_track(tracknum, argc, argv, &eci);
+  nexttrack = get_next_track(&tracknum, argc, argv, &eci);
 
   if (nexttrack != NULL) {
     setup_signal_handling();
@@ -504,8 +504,8 @@ static int play_tracks(int argc, char *argv[])
       if (ecaplay_skip_flag != 0 || strcmp(eci_last_string_r(eci), "running") != 0) {
 	ecaplay_skip_flag = 0;
 	++tracknum;
-	nexttrack = get_next_track(tracknum, argc, argv, &eci);
-	printf("Next track is %s.\n", nexttrack);
+	nexttrack = get_next_track(&tracknum, argc, argv, &eci);
+	/* printf("Next track is %s.\n", nexttrack); */
       }
     }
   
