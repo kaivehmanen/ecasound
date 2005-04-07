@@ -61,6 +61,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: bug in handling LADSPA plugins with colon chars in 
 		 their port descriptions (such as the SC1-4 
 		 compressors)
+	- fixed: do not print "Session created" even if -q option has
+		 been given (quiet output mode)
 12032005 (v2.4.0)  -** stable release **-
 	- edi-entries: edi-40 progress
 	- added: support for having commas in arguments by escaping 

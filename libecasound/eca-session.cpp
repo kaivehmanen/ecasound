@@ -78,8 +78,6 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)
 {
   int errors = 0;
 
-  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Session created");
-
   set_defaults();
 
   cline.combine();
@@ -88,6 +86,10 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)
   create_chainsetup_options(cline, &options);
   preprocess_options(&options);
   errors += interpret_general_options(options,&csoptions);
+
+  /* NOTE: must be printed after general options are parsed 
+  *        in case user has specified -q (quiet operation) */
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Session created");
 
   if (errors > 0) {
     throw(ECA_ERROR("ECA-SESSION", "Errors parsing session-level options. Unable to create session."));
