@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 010405) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 080405) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-??032005 (v2.4.1)  -** stable release **-
+08042005 (v2.4.1)  -** stable release **-
 	- note: verified to work with automake versions 1.6 and 1.9;
 		automake 1.5 and older, as well as autoconf versions
 	        older than 2.50, are no longer supported; these
@@ -22,7 +22,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		 output device audio parameters for each new input 
 		 file, support for ECAPLAY_OUTPUT_DEVICE environment
 		 variable; see ecatools(1) for more info
-	- added: playlist mode to ecaplay
+	- added: playlist mode to ecaplay (new -q, and -p options;
+		 see ecaplay(1) for more info)
 	- added: "Supported automake/autoconf features" section to
 	         the INSTALL file
 	- added: new presets to the default effect_presets file
@@ -41,6 +42,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 		   specify a custom pkgdatadir when running make [junichi]
 	- changed: various small improvements to all ecatools and 
 		   the related manpages
+	- changed: updated config.guess and config.sub to more recent
+		   versions (timestamp 2005-03-24)
+	- changed: various updates to the README file
 	- fixed: sources for the aRts plugin were not present in the
 		 2.4.0 release package
 	- fixed: mp3-header parsing code has been partly rewritten;
