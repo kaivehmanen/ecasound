@@ -237,9 +237,9 @@ to multitrack recording and mixing.
 
 This flexibility doesn't come for free. It's difficult to describe
 Ecasound's features in a few phrases. Because of this, new users
-are encouraged to start from the \texttt{Examples} page - 
-``Ecasound's web site -> Documentation -> Examples''. It isn't 
-a perfect introduction, and definitely not the only way to use 
+are encouraged to start from the \texttt{Examples page} at 
+\ahrefurl{http://www.eca.cx/ecasound/Documentation/examples.html}.
+It isn't a perfect introduction, and definitely not the only way to use 
 Ecasound, but it does give an overall view of what can be done
 with Ecasound, and more importantly, it shows that most tasks are 
 actually quite easy to do.
@@ -414,8 +414,8 @@ for Ecasound.
 % FIXME: add examples from the 'examples' page
 
 \subsection{Further Reading}
-See \texttt{ecasound(1)} man page and \texttt{Examples} web page - 
-\ahrefurl{http://www.eca.cx/ecasound} -> Documentation -> Examples''
+See \texttt{ecasound(1)} man page and the \texttt{Examples web page}
+at \ahrefurl{http://www.eca.cx/ecasound/Documentation/examples.html}.
 
 % ----------------------------------------------------------------------
 \section{Ecasignalview}
