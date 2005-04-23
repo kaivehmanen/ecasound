@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audioio-rtnull.cpp: Null audio object with realtime behaviour
-// Copyright (C) 1999,2002 Kai Vehmanen
+// Copyright (C) 1999,2002,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -104,7 +107,7 @@ REALTIME_NULL::~REALTIME_NULL(void)
 
 void REALTIME_NULL::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-rtnull) open");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "open");
 
   double t = static_cast<double>(buffersize()) / samples_per_second();
 
@@ -128,7 +131,7 @@ void REALTIME_NULL::close(void)
 
 void REALTIME_NULL::prepare(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-rtnull) prepare");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "prepare");
 
   timerclear(&data_processed_rep);
 
@@ -137,7 +140,7 @@ void REALTIME_NULL::prepare(void)
 
 void REALTIME_NULL::start(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-rtnull) start");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "start");
 
   gettimeofday(&start_time_rep, NULL);
 
@@ -146,7 +149,7 @@ void REALTIME_NULL::start(void)
 
 void REALTIME_NULL::stop(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-rtnull) stop");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "stop");
 
   AUDIO_IO_DEVICE::stop();
 }
@@ -213,7 +216,7 @@ long int REALTIME_NULL::read_samples(void* target_buffer,
   /* read one buffer of audio */
   timeradd(&data_processed_rep, &buffer_length_rep, &data_processed_rep);
 
-  return(buffersize());
+  return buffersize();
 }
 
 void REALTIME_NULL::write_samples(void* target_buffer, 
@@ -236,8 +239,8 @@ void REALTIME_NULL::write_samples(void* target_buffer,
 
 long int REALTIME_NULL::prefill_space(void) const
 {
-  if (io_mode() != io_read) return(total_buffers_rep * buffersize());
-  return(0);
+  if (io_mode() != io_read) return total_buffers_rep * buffersize();
+  return 0;
 }
 
 long int REALTIME_NULL::delay(void) const
@@ -253,5 +256,5 @@ long int REALTIME_NULL::delay(void) const
   }
 
   DBC_CHECK(delay >= 0);
-  return(delay);
+  return delay;
 }
