@@ -1,13 +1,11 @@
 \documentclass{report}
 \usepackage[T1]{fontenc}
 \usepackage{ae}
-
-%\usepackage{html}
-%\bodytext{link="#662a00" vlink="#666655" bgcolor="#ffffff"}
+\usepackage{hevea}
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{01042005}
+\date{23042005}
 \begin{document}
 
 \maketitle
@@ -32,6 +30,12 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 23.04.2005 - Started using the ``hevea'' style-package and converted 
+                   all links to use the hevea macros (resulting in real hyperlinks
+		   in the HTML output). Renamed the section 
+		   ``Security considerations when running with root privileges''
+		   to shorter ``Security Considerations'', added info
+		   about Realtime LSM module.
 \item 01.04.2005 - Updated ``Ecasignalview'' documentation.
 \item 30.03.2005 - Added sections on ``Preset parameters'' and 
                    ``Parameter descriptors''.
@@ -283,7 +287,7 @@ in \emph{/usr/local/share/ecasound}.
 
 \subsection{I get occasional audio dropouts during operation? How to get rid of them?}
 
-Check ``http://www.oreillynet.com/pub/a/linux/2000/11/17/low\_latency.html''
+Check \ahrefurl{http://www.oreillynet.com/pub/a/linux/2000/11/17/low\_latency.html}
 where you'll find a very good article written by Dave Phillips on
 Linux low-latency issues. If you are in a hurry (or desperate :)),
 here's a quick list of things to try:
@@ -303,13 +307,25 @@ here's a quick list of things to try:
       (again, check the article)
 \end{itemize}
 
+There has been a lot of discussion about tuning your system for better
+performance on linux-audio-dev and linux-audio-user mailing lists. You
+can browse the list archives at ``''.
+
+Here are links to selected messages from the ecasound-list archives:
+\begin{itemize}
+\item Tuning parameters for reliable recording, \ahrefurl{http://eca.cx/ecasound-list/2005/04/0038.html}
+\item Smart Buffering, \ahrefurl{http://eca.cx/ecasound-list/2001/10/0020.html}
+\item Ecasound for Recording, \ahrefurl{http://eca.cx/ecasound-list/2001/06/0016.html}
+\end{itemize}
+
 \subsection{Can I use multiple soundcards?}
 
 This is possible, but there are some issues you should be aware of. If 
 you try using multiple cheap soundcards to get more simultaneous 
 inputs for recording, it's likely that the resulting streams will not
 be in sync. This problem is explained in detail in the Linux
-Audio-Quality HOWTO - ``http://www.linuxdj.com/audio/quality/'',
+Audio-Quality HOWTO,
+\ahrefurl{http://www.linuxdj.com/audio/quality/},
 section "Notes on Full Duplex Recording, and Other Realtime Issues".
 
 \subsection{Problems with panning mono files}
@@ -387,7 +403,7 @@ one of the backslashes away before passing the string to ecasound.
 \chapter{User interfaces and Applications}
 
 For a complete list of user-interfaces and applications built
-on top of Ecasound, visit Ecasound's web site at ``http://www.eca.cx''.
+on top of Ecasound, visit Ecasound's web site at \ahrefurl{http://www.eca.cx}.
 
 % ----------------------------------------------------------------------
 \section{Ecasound}
@@ -399,7 +415,7 @@ for Ecasound.
 
 \subsection{Further Reading}
 See \texttt{ecasound(1)} man page and \texttt{Examples} web page - 
-``http://www.eca.cx/ecasound -> Documentation -> Examples''
+\ahrefurl{http://www.eca.cx/ecasound} -> Documentation -> Examples''
 
 % ----------------------------------------------------------------------
 \section{Ecasignalview}
@@ -744,7 +760,7 @@ should recompile after installing the LADSPA SDK.
 
 Also, check Dave Phillips' great
 article on Oreillynet - 
-``http://www.oreillynet.com/pub/a/linux/2001/02/02/ladspa.html''.
+\ahrefurl{http://www.oreillynet.com/pub/a/linux/2001/02/02/ladspa.html}.
 
 % ----------------------------------------------------------------------
 \section{JACK Audio Server}
@@ -919,7 +935,7 @@ problem. This issue is covered by Ecasound development item
 \chapter{Miscellaneous}
 
 % ----------------------------------------------------------------------
-\section{Security considerations when running with root privileges}
+\section{Security Considerations}
 
 When given the -r option (raise priority), Ecasound tries to raise 
 its scheduling priority (to so called SCHED\_FIFO realtime scheduling)
@@ -957,10 +973,13 @@ set.
 
 The ideal solution would be that ecasound would not need to be run with
 full root-privileges, only with privileges for changing scheduling and
-locking memory. Tommi Ilmonen's (author of the Mustajuuri softsynth)
-``givertcap'' program solves this very elegantly, but unfortunately it 
-requires a custom kernel patch (at least for now). You can check out the 
-program at: 'http://www.tml.hut.fi/~tilmonen/givertcap/'. Ecasound 
-doesn't yet have explicit support for givertcap.
+locking memory. 
+
+The Realtime Linux Security Module (LSM) is one practical solution 
+(see \ahrefurl{http://sourceforge.net/projects/realtime-lsm/}).
+This module is a loadable extension for Linux 2.6 kernels. It selectively grants 
+realtime permissions to specific user groups or applications. Unfortunately Realtime
+LSM does not yet come with the standard Linux kernel, so you need to install it 
+separately.
 
 \end{document}
