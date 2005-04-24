@@ -124,10 +124,11 @@ int AUDIO_IO::io_mode(void) const { return io_mode_rep; }
 void AUDIO_IO::set_io_mode(int mode) { io_mode_rep = mode; }
 
 /**
- * Sets object label. Label is used to identify the object instance.
- * Unlike ECA_OBJECT::name(), label() is not necessarily unique 
- * among different class instances. Device and file names are typical 
- * label values.
+ * Sets the object label. Label is used to identify the object instance.
+ * Unlike ECA_OBJECT::name(), which is typically the same for all 
+ * instances of the class, label() is instance specific. Still it
+ * is not guaranteed to be unique for each object. Device and file 
+ * names are typical label values.
  *
  * require:
  *  is_open() != true
