@@ -178,6 +178,10 @@ strip --strip-unneeded \
 # changelog
 
 %changelog
+* Mon Apr 25 2005 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
+- fixed problems using ecasound.spec with recent versions of rpm
+  by removing macro-statements from the changelog entries
+
 * Wed Nov 03 2004 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - spam-protected all email-addresses
 
