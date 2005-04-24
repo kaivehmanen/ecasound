@@ -206,7 +206,6 @@ strip --strip-unneeded \
 * Thu Oct 24 2002 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - added the COPYING files to the package
 
-%changelog
 * Thu Oct 17 2002 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - added the -devel package
 - fixed the build procedure to handle static builds
@@ -247,7 +246,7 @@ strip --strip-unneeded \
 
 * Thu Aug 31 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - Added /etc/ld.so.conf modification script.
-- Added DESTDIR to %install.
+- Added DESTDIR to install-section.
 
 * Wed Aug 30 2000 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - 'ecasound-config' script added.
