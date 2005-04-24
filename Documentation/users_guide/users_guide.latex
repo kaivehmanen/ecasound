@@ -5,7 +5,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{23042005}
+\date{25042005}
 \begin{document}
 
 \maketitle
@@ -30,6 +30,8 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 25.04.2005 - From now on, only major changes are logged to this changelog
+                   section. For detailed change history, refer to CVS history.
 \item 23.04.2005 - Started using the ``hevea'' style-package and converted 
                    all links to use the hevea macros (resulting in real hyperlinks
 		   in the HTML output). Renamed the section 
@@ -294,10 +296,10 @@ here's a quick list of things to try:
 
 \begin{itemize}
 \item Tune your disks (see the article)
-\item Enable ecasound's double-buffering system by using the em(-z:db)
+\item Enable ecasound's double-buffering system by using the \emph{-z:db}
       option [note! this is only necessary with Ecasound 2.0.x and older]
 \item If you're still having problems, run ecasound as root (or with SUID-bit
-      set) and use ecasound's em(-r) option. This will raise ecasound's
+      set) and use ecasound's \emph{-r} option. This will raise ecasound's
       scheduling priority to realtime (SCHED\_FIFO). [with ecasound 2.1
       and newer, just run ecasound as root and it will take care of
       tuning the settings]
@@ -309,7 +311,7 @@ here's a quick list of things to try:
 
 There has been a lot of discussion about tuning your system for better
 performance on linux-audio-dev and linux-audio-user mailing lists. You
-can browse the list archives at ``''.
+can browse the list archives at \ahrefurl{http://www.linuxdj.com/audio/lad/archive.php}.
 
 Here are links to selected messages from the ecasound-list archives:
 \begin{itemize}

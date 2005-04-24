@@ -42,22 +42,22 @@ Hmm, why doesn't this work...?
 |              new EIAM commands.
 | 18.11.2003 - Typo fixes. Updated documentation to reflect the new
 |              naming convention (ecasound refers to the binary,
-|	           Ecasound refers to the whole package).
+|              Ecasound refers to the whole package).
 | 07.11.2002 - Added documentation for NetECI.
 | 25.10.2002 - Added "Checklist for Audio Object Implementations".
 | 17.10.2002 - Added a warning against direct use of libecasound
 |              and libkvutils. Using ECI is from now on the 
-|	           preferred way of using ecasound as a development
-|	           platform. Rewrote the "Versioning" section.
+|              preferred way of using ecasound as a development
+|              platform. Rewrote the "Versioning" section.
 | 02.10.2002 - Added the "Protocols and Interfaces" chapter.
 | 29.04.2002 - Added chapter about "Unit Tests".
 | 28.04.2002 - Revised namespace policy (see chapter
 |              on namespaces), replaced references to
-|	           obsolete ECA_DEBUG with a description
-|	           of the new ECA_LOGGER subsystem.
+|              obsolete ECA_DEBUG with a description
+|              of the new ECA_LOGGER subsystem.
 | 27.02.2002 - Rewrote the "Control flows" chapter according 
 |              to the structural changes made in 2.1dev8. Added
-|	           a "References" section.
+|              a "References" section.
 | 31.01.2002 - Reorganization of document structure. New chapter 
 |              about "Library organization".
 | 19.12.2001 - Added chapter about include hierarchies.
