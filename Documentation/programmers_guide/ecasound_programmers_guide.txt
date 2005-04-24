@@ -1,5 +1,5 @@
 :editor: -*- mode: fundamental; tab-width: 4; indent-tabs-mode: nil -*-
-:version: 20050328-2
+:version: 20050425-3
 :syntax: loosely follows restructured text, http://docutils.sourceforge.net/rst.html
 :author: Kai Vehmanen
 
@@ -34,6 +34,7 @@ Hmm, why doesn't this work...?
 
 ::
 
+| 25.04.2005 - Minor updates.
 | 28.03.2005 - Added section about "Source code markup", update the
 |              "Design principles" section.
 | 13.03.2005 - Converted from LaTeX to ascii.
@@ -41,22 +42,22 @@ Hmm, why doesn't this work...?
 |              new EIAM commands.
 | 18.11.2003 - Typo fixes. Updated documentation to reflect the new
 |              naming convention (ecasound refers to the binary,
-|	       Ecasound refers to the whole package).
+|	           Ecasound refers to the whole package).
 | 07.11.2002 - Added documentation for NetECI.
 | 25.10.2002 - Added "Checklist for Audio Object Implementations".
 | 17.10.2002 - Added a warning against direct use of libecasound
 |              and libkvutils. Using ECI is from now on the 
-|	       preferred way of using ecasound as a development
-|	       platform. Rewrote the "Versioning" section.
+|	           preferred way of using ecasound as a development
+|	           platform. Rewrote the "Versioning" section.
 | 02.10.2002 - Added the "Protocols and Interfaces" chapter.
 | 29.04.2002 - Added chapter about "Unit Tests".
 | 28.04.2002 - Revised namespace policy (see chapter
 |              on namespaces), replaced references to
-|	       obsolete ECA_DEBUG with a description
-|	       of the new ECA_LOGGER subsystem.
+|	           obsolete ECA_DEBUG with a description
+|	           of the new ECA_LOGGER subsystem.
 | 27.02.2002 - Rewrote the "Control flows" chapter according 
 |              to the structural changes made in 2.1dev8. Added
-|	       a "References" section.
+|	           a "References" section.
 | 31.01.2002 - Reorganization of document structure. New chapter 
 |              about "Library organization".
 | 19.12.2001 - Added chapter about include hierarchies.
@@ -204,6 +205,7 @@ ECA_CHAINSETUP - load_from_file, save() and save_to_file
 
 ECA_SESSION - constructor
   TBD	   
+
 
 Coding style, naming conventions and source code markup
 =======================================================
@@ -371,6 +373,7 @@ parts ("using std::string"). It's also possible to import the
 whole std namespace ("using namespace std;") in the beginning
 of an implementation file (but never in headers!).
 
+
 Documentation style
 ===================
 
@@ -389,6 +392,7 @@ Sentences start with a verb
     "Writes samples to memory." instead of "Samples are written to memory."
 This instead of 
     "Get controllers connected to this effect." instead of "Get controllers connected to the effect.
+
 
 Versioning
 ==========
@@ -476,6 +480,7 @@ Just like multirack recording. The only difference is
 that real-time input and output are externally
 connected.
 
+
 Audio signal routing
 ====================
 
@@ -558,6 +563,7 @@ The primary source for class documentation is header files.
 A browsable version of header documentation is at
 http://www.eca.cx/ecasound/Documentation
 Anyway, let's look at the some central classes.
+
 
 Interfaces for external use
 ===========================
@@ -683,6 +689,7 @@ Basic unit for representing blocks of sample data. The data type used
 to represent single samples, valid value ranges, channel count and system 
 endianess are all specified in "samplebuffer.h" and "sample_specs.h".
 
+
 Feature and capability interface classes
 ========================================
 
@@ -725,6 +732,7 @@ MIDI_CLIENT - midi-client.h
 
 Implemented b all classes that require a connection to 
 an instance of MIDI_SERVER.
+
 
 Object interfaces
 =================
@@ -783,6 +791,7 @@ implementation have no effect to other parts of the library.
 Similarly new object interface implementations can be added without
 modifying the core classes.
 
+
 Utility classes
 ===============
 
@@ -803,6 +812,7 @@ implemented using a Qt widget.
 New ECA_LOGGER_INTERFACE implementations can be registered at
 runtime with the ECA_LOGGER::attach_logger() member
 function (declared in eca-logger.h).
+
 
 Object maps
 ===========
@@ -886,6 +896,7 @@ operation (=operation()). Basicly you have three alternatives:
   functions, and put them in _private_ access scope. At least this way
   nobody will use the functions by accident!
 
+
 Audio objects
 =============
 
@@ -908,19 +919,27 @@ then register it to the appropriate object map (see below).
 Checklist for Audio Object Implementations
 ------------------------------------------
 
-1. Check the read_buffer() and write_buffer() change the
+1. Check that read_buffer() and write_buffer() change the
    internal position with either set_position_in_samples()
    or change_position_in_samples() functions of ECA_AUDIO_POSITION.
    Also, when writing a new file, extend_position() should
    also be called. All this is done automatically if using 
    read_samples() and write_samples() from AUDIO_IO_BUFFERED.
+
 2. If implementing a proxy object, separately consider all public 
    functions of audioio-proxy.h (whether to reimplement or use
    as they are).
+
 3. Check that open() and close() call AUDIO_IO::open() and
    AUDIO_IO::close(), and in the right order.
+
 4. If the object supports seeking, seek_position() must
    be implemented.
+
+5. Check that the set_parameter() and get_parameter() methods 
+   work correctly when they are used for saving and restoring
+   audio object state (for example cs-edit EIAM command).
+
 
 Effects and other chain operators
 =================================
@@ -937,6 +956,7 @@ Another way to add effects to Ecasound is to write them as LADSPA
 plugins. The API is well documented and there's plenty of
 example code available. See http://www.ladspa.org 
 for more information.
+
 
 Differences between audio objects and chain operators
 =====================================================
@@ -978,6 +998,7 @@ as audio inputs by specifying:
 ::
 
 "ecasound -i null -o /dev/dsp -el:sine_fcac,440,1"
+
  
 LADSPA plugins
 ==============
@@ -986,6 +1007,7 @@ Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
 Plugin API). See LAD mailing list web site for 
 more info about LADSPA. Other useful sites are 
 LADSPA home page and LADSPA documentation.
+
 
 EIAM commands
 =============
@@ -1015,8 +1037,8 @@ following files:
 Application development using the Ecasound framework
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Console mode ecasound - {[}all languages{]}
-===========================================
+Console mode ecasound - [all languages]
+=======================================
 
 This is the easiest way to take advantage of Ecasound features in your
 own programs. You can fork ecasound, pipe commands to ecasound's
@@ -1028,8 +1050,9 @@ a bit easier, Ecasound offers the wellformed output mode
 and dump-* commands. These can be used to easily parse configuration and 
 status information.
 
-Ecasound Control Interface - {[}C++, C, Python{]}
-=================================================
+
+Ecasound Control Interface - [C++, C, Python, Perl, ...]
+========================================================
 
 Idea behind Ecasound Control Interface (ECI) is to take a subset of 
 functionality provided by libecasound, write a simple API for it, and
@@ -1043,6 +1066,7 @@ Specific tasks ECI is aimed at:
 - 1. automating (scripting in its traditional sense)
 - 2. frontends (generic / specialized)
 - 3. sound services to other apps
+
 
 NetECI - {[}various{]}
 ======================
@@ -1061,6 +1085,7 @@ syntax.
 
 See implementation of ecamonitor (part of ecatools), 
 for a working example.
+
 
 Libecasound's ECA_CONTROL class - {[}C++{]}
 ===========================================
@@ -1099,6 +1124,7 @@ batch mode:
 | [... other setup routines ]
 | ctrl.run(); // blocks until processing is finished
 | --cut--
+
  
 Ecasound classes as building blocks - {[}C++{]}
 ===============================================
