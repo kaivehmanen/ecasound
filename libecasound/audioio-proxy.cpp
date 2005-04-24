@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // audioio-proxy.cpp: Generic interface for objects that act as
 //                    proxies for other objects of type AUDIO_IO.
-// Copyright (C) 2002 Kai Vehmanen
+// Copyright (C) 2002,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,15 +71,14 @@ void AUDIO_IO_PROXY::pre_child_open(void)
 
 /**
  * Checks if any audio parameters were changed
- * during child's open(), fetches any changes,
- * set object length and sets the label.
+ * during child's open(), fetches any changes and
+ * sets the object length.
  */
 void AUDIO_IO_PROXY::post_child_open(void)
 {
   if (child()->locked_audio_format() == true) {
     set_audio_format(child()->audio_format());
   }
-  set_label(child()->label());
   set_length_in_samples(child()->length_in_samples());
 }
 
@@ -118,7 +120,7 @@ void AUDIO_IO_PROXY::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 
 std::string AUDIO_IO_PROXY::parameter_names(void) const
 {
-  return(child_repp->parameter_names()); 
+  return child_repp->parameter_names();
 }
 
 void AUDIO_IO_PROXY::set_parameter(int param, std::string value)
@@ -129,5 +131,5 @@ void AUDIO_IO_PROXY::set_parameter(int param, std::string value)
 
 std::string AUDIO_IO_PROXY::get_parameter(int param) const
 {
-  return(child_repp->get_parameter(param));
+  return child_repp->get_parameter(param);
 }
