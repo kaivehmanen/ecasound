@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (31.03.2005)
+       (29.05.2005)
        ()
        (Multimedia software)
 
@@ -205,9 +205,13 @@ For available options, see "OBJECT TYPE SPECIFIC NOTES" below.
 dit(-f:sample_format,channel,sample-rate,interleaving)
 Sets default sampling parameters. These are used for all following
 input and output files or until another -f is specified. If no -f
-option is present, ecasound uses s16_le/2ch/44100/interleaved as the 
-default value. Some audio objects may override this altogether (for 
-instance, RIFF WAVE inputs and outputs).
+option is present, ecasound will use the default audio parameters (see
+ecasoundrc(5) man page). Notice that when opening existing audio objects, 
+either for input or output, the default audio parameters set with -f are
+ignored if objects provide sufficient header information (as
+is the case for wav, aiff, etc formats). For output objects, the
+-x option can be used to completely overwrite existing files 
+(in other words, with -x, default audio parameters set with -f are used).
 
 Sample format is given as a a formatted string. The first letter is 
 either "u", "s" and "f" (unsigned, signed, floating point). The 

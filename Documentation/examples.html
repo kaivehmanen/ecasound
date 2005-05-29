@@ -61,16 +61,19 @@ Like before, but ecasound is now started in interactive mode.
 
 <ol>
 
-<li> ecasound -f:16,2,96000 -i resample,44100,foo.wav -o bar.wav</li>
-<li> ecasound -f:16,2,44100 -i resample,96000,bar.wav -o foo.wav</li>
-<li> ecasound -f:16,2,44100 -i resample-hq,48000,foo.wav -o bar.wav</li>
+<li> ecasound -f:16,2,96000 -i resample,auto,foo44100.wav -o bar96k.wav</li>
+<li> ecasound -f:16,2,44100 -i resample,auto,bar96k.wav -o foo44100.wav</li>
+<li> ecasound -f:16,2,44100 -i resample-hq,48k,foo48k.wav -o bar.wav</li>
+<li> ecasound -f:16,2,44100 -i resample,96k,third.raw -o foo44100.wav</li>
 
 <p>
 To do resampling, a special 'resample' input type must be used. 
-In the first example above, the 44100Hz file <i>foo.wav</i> is 
-resampled to 96000Hz and the result is written to <i>bar.wav</i>.
+In the first example above, the 44100Hz file <i>foo44100.wav</i> is 
+resampled to 96kHz and the result is written to <i>bar96k.wav</i>.
 In the second example the reverse is done, sample rate is converted
-from 96000hz to 44100Hz.
+from 96khz to 44100Hz. In the last example, the from rate has to
+be specified explicitly as raw audio files do not contain the 
+necessary header information.
 </p>
 
 <p>
