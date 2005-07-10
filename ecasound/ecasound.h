@@ -16,7 +16,7 @@ class ECA_SESSION;
  */
 
 #define ECASOUND_BANNER_ASTERISK_BAR "********************************************************************************\n"
-#define ECASOUND_COPYRIGHT           " (C) 1997-2005 Kai Vehmanen               "
+#define ECASOUND_COPYRIGHT           " (C) 1997-2005 Kai Vehmanen and others    "
 
 /**
  * Type definitions
