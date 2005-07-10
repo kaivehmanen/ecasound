@@ -51,7 +51,7 @@ void ECA_PLAIN_TEXT::print_banner(void)
 {
   *ostream_repp << ECASOUND_BANNER_ASTERISK_BAR;
   *ostream_repp << "*";
-  *ostream_repp << "                 ecasound v" 
+  *ostream_repp << "        ecasound v" 
        << ecasound_library_version
        << ECASOUND_COPYRIGHT;
   *ostream_repp << "\n";

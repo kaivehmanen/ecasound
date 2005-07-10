@@ -84,7 +84,7 @@ void ECA_CURSES::print_banner(void)
   std::cout << ECASOUND_BANNER_ASTERISK_BAR;
   std::cout << "*";
   putp(tigetstr("bold"));
-  std::cout << "                 ecasound v" 
+  std::cout << "        ecasound v" 
        << ecasound_library_version
        << ECASOUND_COPYRIGHT;
   putp(tigetstr("sgr0"));
