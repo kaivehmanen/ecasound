@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (21.03.2005)
+       (10.07.2005)
        ()
        (Multimedia software)
 
@@ -466,6 +466,26 @@ Returns info about controller status. em([s])
 
 dit(ctrl-register)
 Prints a list of registered controllers. em([s])
+
+dit(ctrl-get-target)
+Returns the index number of the chain operator that is
+connected to the selected controller. The returned index 
+refers to the currently selected chain (see 'cop-list'). em([i])
+
+dit(ctrlp-list)
+Returns a list of all controller parameters. em([S])
+
+dit(ctrlp-select)
+Selects a controller parameter. em([-])
+
+dit(ctrlp-selected)
+Returns the index number of currently selected controller parameter. em([i])
+
+dit(ctrlp-get)
+Returns the selected controller parameter value. em([f])
+
+dit(ctrlp-set)
+Sets the selected controller parameter value to 'value'. em([-])
 
 enddit()
 

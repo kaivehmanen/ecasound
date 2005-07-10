@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "21\&.03\&.2005" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "10\&.07\&.2005" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -447,6 +447,25 @@ Returns info about controller status\&. \fI[s]\fP
 .IP 
 .IP "ctrl-register" 
 Prints a list of registered controllers\&. \fI[s]\fP
+.IP 
+.IP "ctrl-get-target" 
+Returns the index number of the chain operator that is
+connected to this controller\&. \fI[i]\fP
+.IP 
+.IP "ctrlp-list" 
+Returns a list of all controller parameters\&. \fI[S]\fP
+.IP 
+.IP "ctrlp-select" 
+Selects a controller parameter\&. \fI[-]\fP
+.IP 
+.IP "ctrlp-selected" 
+Returns the index number of currently selected controller parameter\&. \fI[i]\fP
+.IP 
+.IP "ctrlp-get" 
+Returns the selected controller parameter value\&. \fI[f]\fP
+.IP 
+.IP "ctrlp-set" 
+Sets the selected controller parameter value to \&'value\&'\&. \fI[-]\fP
 .IP 
 .IP 
 .SH "INTERNAL COMMANDS" 
