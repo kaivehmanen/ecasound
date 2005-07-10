@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecatools)
        (1)
-       (17.03.2005)
+       (10.07.2005)
        ()
        (Multimedia software)
 
@@ -165,9 +165,30 @@ Specify default audio format. See ecasound(1) for details.
 
 dit(-r:rate_msec)
 Specify screen refresh rate in milliseconds.
+
+dit(-I)
+Use linear scale for showing audio sample amplitude.
+
+dit(-L)
+Use logarithmic scale for showing audio sample amplitude.
+
 enddit()
 
-It is possible to reset the max-peak and clipped-samples 
+When ecasignalview is running, the following keyboard 
+commands can be used to control the operation (requires 
+system support for UNIX terminal interface control):
+
+startdit()
+dit(spacebar)
+Reset statistics (max-peak, avg-amplitude and clipped
+samples count).
+
+dit(q or Q or Esc)
+Quit ecasignalview.
+
+enddit()
+
+It is also possible to reset the max-peak and clipped-samples 
 counters by sending a SIGHUP signal to the process (i.e.
 from another console: "killall -v -HUP ecasignalview").
 

@@ -1,4 +1,4 @@
-.TH "ecatools" "1" "17\&.03\&.2005" "" "Multimedia software" 
+.TH "ecatools" "1" "10\&.07\&.2005" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecatools \- audio processing utils based on ecasound
@@ -157,8 +157,27 @@ Specify default audio format\&. See ecasound(1) for details\&.
 .IP 
 .IP "-r:rate_msec" 
 Specify screen refresh rate in milliseconds\&.
+.IP 
+.IP "-I" 
+Use linear scale for showing audio sample amplitude\&.
+.IP 
+.IP "-L" 
+Use logarithmic scale for showing audio sample amplitude\&.
+.IP 
 .PP 
-It is possible to reset the max-peak and clipped-samples 
+When ecasignalview is running, the following keyboard 
+command can be used to control the operation (requires 
+system suppport for UNIX terminal interface control):
+.PP 
+.IP "spacebar" 
+Reset statistics (max-peak, avg-amplitude and clipped
+samples count)\&.
+.IP 
+.IP "q or Q or Esc" 
+Quit ecasignalview\&.
+.IP 
+.PP 
+It is also possible to reset the max-peak and clipped-samples 
 counters by sending a SIGHUP signal to the process (i\&.e\&.
 from another console: "killall -v -HUP ecasignalview")\&.
 .PP 

@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecatools</h1>
-<h2>17.03.2005</h2>
+<h2>10.07.2005</h2>
 
 
     
@@ -135,8 +135,22 @@ Enable debug mode.
 Specify default audio format. See ecasound(1) for details.
 <p><p></p><dt><strong>-r:rate_msec</strong><dd>
 Specify screen refresh rate in milliseconds.
-</dl>
-<p>It is possible to reset the max-peak and clipped-samples 
+<p><p></p><dt><strong>-I</strong><dd>
+Use linear scale for showing audio sample amplitude.
+<p><p></p><dt><strong>-L</strong><dd>
+Use logarithmic scale for showing audio sample amplitude.
+<p></dl>
+<p>When ecasignalview is running, the following keyboard 
+command can be used to control the operation (requires 
+system suppport for UNIX terminal interface control):
+<p><dl>
+<p></p><dt><strong>spacebar</strong><dd>
+Reset statistics (max-peak, avg-amplitude and clipped
+samples count).
+<p><p></p><dt><strong>q or Q or Esc</strong><dd>
+Quit ecasignalview.
+<p></dl>
+<p>It is also possible to reset the max-peak and clipped-samples 
 counters by sending a SIGHUP signal to the process (i.e.
 from another console: "killall -v -HUP ecasignalview").
 <p>More complete documentation for ecasignalview can be found 
