@@ -30,12 +30,12 @@ marked with [-]. Additionally, return type [e] marks an error condition.
 When an EIAM results in an error, a error string explaining the 
 condition is returned.
 
-manpagesection(Realtime commands)
+manpagesection(Real-time commands)
 It's not possible to use all EIAM commands to modify and control 
 objects that belong to a connected chainsetup. Commands that
 do support this are: 'start', 'stop', 'setpos', 'rewind', 'forward',
-'c-select', 'c-muting', 'c-bypass', 'cop-select', 'copp-select' 
-and 'copp-value'.
+'c-select', 'c-muting', 'c-bypass', 'cop-select', 'copp-select',
+'copp-value', 'ctrlp-select' and 'ctrlp-value'.
 
 Another set of commands are those which can be used with connected
 chainsetups, but not without an audible break. These are: 'cop-add', 
