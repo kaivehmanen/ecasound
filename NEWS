@@ -14,8 +14,9 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 xxxx2005 (v2.4.2)  -** stable release **-
-	- added: eiam - ctrlp-list, ctrlp-select, ctrlp-selected,
-		 ctrlp-get, ctrlp-set commands [allies]
+	- added: eiam - ctrlp-list, ctrlp-selected, ctrlp-get, ctrlp-select
+	         and ctrlp-set commands; the last two are RT-commands;
+		 see ecasound-iam(1) for more info [allies]
 	- changed: various small updates to User's Guide
 	- fixed: using ecasound.spec with recent versions of rpm 
 		 results in a "%package debuginfo" error

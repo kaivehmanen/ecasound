@@ -12,6 +12,8 @@ Kai Vehmanen [kaiv] (kvehmanen -at- eca -dot- cx)
 New functionality, refactoring old code
 =======================================
 
+Allie, Stuart [allies] (stuart -dot- allie -at- hydro -dot- com -dot- au)
+	Added EIAM command set for controller parameters (ctrlp-*), bugfixes.
 Bowman, Brad [bowman]
 	Perl ECI binding, bug hunting.
 Chappell, Jesse [jesse] (jesse -at- essej -dot- net)
