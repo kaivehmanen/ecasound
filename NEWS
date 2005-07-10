@@ -17,11 +17,19 @@ xxxx2005 (v2.4.2)  -** stable release **-
 	- added: eiam - ctrlp-list, ctrlp-selected, ctrlp-get, ctrlp-select
 	         and ctrlp-set commands; the last two are RT-commands;
 		 see ecasound-iam(1) for more info [allies]
+	- added: ecasignalview - ability to reset stats with 'spacebar'
+		 and quit with 'q/Q/Esc'; separate logarithmic mode (enable
+	 	 with -L, see also -I which is still the default);
+		 display of per-channel average amplitude; see 
+		 ecasignalview(1) man page for details [jeffrey]
 	- changed: various small updates to User's Guide
+	- changed: ecasound user-visible copyright string changed
+	- changed: minor changes to ecasignalview user-interface
+	           [jeffrey,kaiv]
 	- fixed: using ecasound.spec with recent versions of rpm 
-		 results in a "%package debuginfo" error
+		 results in a "%package debuginfo" error [kaiv]
 	- fixed: problems in saving ewf objects with cs-save,
-		 cs-save-as and cs-edit
+		 cs-save-as and cs-edit [kaiv]
 	- fixed: controllers were always added to the last 
 	 	 chainop, not to the selected chain operator [allies]
 08042005 (v2.4.1)  -** stable release **-

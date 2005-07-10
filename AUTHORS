@@ -20,6 +20,8 @@ Chappell, Jesse [jesse] (jesse -at- essej -dot- net)
 	Improvements to libsndfile support, various bugfixes.
 Coker, Rob  [rcs] (rcs -at- birch -dot- net)
 	Pulse gate (-eemp) code.
+Cunningham, Jeffrey [jeffrey] (jeffrey -at- cunningham -dot- net)
+	Various improvements to ecasignalview.
 Dobson, Julian [juliand]
 	Improved mechanism for mp3 header parsing.
 Ewe, Michael [mewe]
