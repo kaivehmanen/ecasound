@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audioio-ewf.cpp: Ecasound wave format input/output
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +37,7 @@
 #include "eca-error.h"
 #include "eca-logger.h"
 
-using std::cerr;
+using std::cout;
 using std::endl;
 
 EWFFILE::EWFFILE (const std::string& name)
@@ -52,7 +55,7 @@ EWFFILE* EWFFILE::clone(void) const
   for(int n = 0; n < number_of_params(); n++) {
     target->set_parameter(n + 1, get_parameter(n + 1));
   }
-  return(target);
+  return target;
 }
 
 void EWFFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
@@ -122,6 +125,8 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
    * note! all cases (if-else blocks) end to setting a new 
    *       position_in_samples value
    */
+
+  dump_child_debug();
 
   if (child_active != true) {
     // ---
@@ -237,11 +242,12 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
 
 void EWFFILE::dump_child_debug(void)
 {
-  cerr << "Global position (in samples): " << position_in_samples() << endl;
-  cerr << "child-pos: " << child()->position_in_samples() << endl;
-  cerr << "child-offset: " << child_offset_rep.samples() << endl;
-  cerr << "child-startpos: " << child_start_pos_rep.samples() << endl;
-  cerr << "child-length: " << child_length_rep.samples() << endl;
+  cout << "Global position (in samples): " << position_in_samples() << endl;
+  cout << "child-pos: " << child()->position_in_samples() << endl;
+  cout << "child-offset: " << child_offset_rep.samples() << endl;
+  cout << "child-startpos: " << child_start_pos_rep.samples() << endl;
+  cout << "child-length: " << child_length_rep.samples() << endl;
+  cout << "child-active: " << (int)child_active << endl;
 }
 
 void EWFFILE::write_buffer(SAMPLE_BUFFER* sbuf)
@@ -332,9 +338,19 @@ void EWFFILE::write_ewf_data(void)
   if (io_mode() != AUDIO_IO::io_read) ewf_rc.save();
 }
 
-void EWFFILE::child_offset(const ECA_AUDIO_TIME& v) { child_offset_rep = v; }
-void EWFFILE::child_start_position(const ECA_AUDIO_TIME& v) { child_start_pos_rep = v; }
-void EWFFILE::child_length(const ECA_AUDIO_TIME& v) { child_length_rep = v; }
+void EWFFILE::child_offset(const ECA_AUDIO_TIME& v)
+{
+  child_offset_rep = v;
+}
+
+void EWFFILE::child_start_position(const ECA_AUDIO_TIME& v)
+{
+  child_start_pos_rep = v;
+}
+
+void EWFFILE::child_length(const ECA_AUDIO_TIME& v) {
+  child_length_rep = v;
+}
 
 bool EWFFILE::finished(void) const
 {
@@ -346,6 +362,6 @@ bool EWFFILE::finished(void) const
       (child_looping_rep != true &&
        child_length_rep.samples() != 0 &&
        position_in_samples() > child_offset_rep.samples() + child_length_rep.samples()))
-    return(true);
-  return(false);
+    return true;
+  return false;
 }
