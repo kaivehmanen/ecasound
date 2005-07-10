@@ -42,6 +42,11 @@
 
 #include "ecicpp_helpers.h"
 
+#ifdef HAVE_TERMIOS_H
+/* see: http://www.opengroup.org/onlinepubs/007908799/xsh/termios.h.html */
+#include <termios.h> 
+#endif
+
 #if defined(ECA_USE_NCURSES_H) || defined(ECA_USE_NCURSES_NCURSES_H) || defined(ECA_USE_CURSES_H)
 #define ECASV_USE_CURSES 1
 
@@ -97,6 +102,9 @@ void ecasv_print_usage(void);
 void ecasv_signal_handler(int signum);
 void reset_stats_fcn(vector<struct ecasv_channel_stats>* chstats); // jkc: addition
 float dB(float v) { return 10.0*log10(v*v); } // jkc: addition
+void ecasv_set_buffered(void);
+void ecasv_set_unbuffered(void);
+int ecasv_kbhit();
 
 /**
  * Static global variables
@@ -106,7 +114,7 @@ static const string ecatools_signalview_version = "20050710-8";
 static bool  ecasv_log_display_mode = false; // jkc: addition
 static const double ecasv_clipped_threshold_const = 1.0f - 1.0f / 16384.0f;
 static const int ecasv_bar_length_const = 32;
-static const int ecasv_header_height_const = 10;
+static const int ecasv_header_height_const = 9;
 static const long int ecasv_rate_default_const = 50;
 static const long int ecasv_buffersize_default_const = 128;
 
@@ -122,43 +130,13 @@ static sig_atomic_t done = 0;
 static sig_atomic_t reset_stats = 0;
 static int avg_peak_buffer_sz=100;           // jkc: addition
 
+#ifdef HAVE_TERMIOS_H
+struct termios old_term, new_term;
+#endif
+
 /**
  * Function definitions
  */
-
-// jkc:addition (the following functions until main)
-#include <termios.h>
-struct termios old_term, new_term;
-void set_unbuffered ( void ) {
-  tcgetattr( STDIN_FILENO, &old_term );
-  new_term = old_term;
-  new_term.c_lflag &= ~( ICANON | ECHO );
-  tcsetattr( STDIN_FILENO, TCSANOW, &new_term );
-}
-
-void set_buffered ( void ) {
-  tcsetattr( STDIN_FILENO, TCSANOW, &old_term );
-}
-
-int kbhit ( void ) {
-    int result;
-    fd_set  set;
-    struct timeval tv;
-
-    FD_ZERO(&set);
-    FD_SET(STDIN_FILENO,&set);  /* watch stdin */
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;             /* don't wait */
-
-    /* quick peek at the input, to see if anything is there */
-    set_unbuffered();
-    result = select( STDIN_FILENO+1,&set,NULL,NULL,&tv);
-    set_buffered();
-
-    return result == 1;
-}
-// jkc:addition end
-
 
 int main(int argc, char *argv[])
 {
@@ -230,28 +208,29 @@ int main(int argc, char *argv[])
 
   eci.command("start");
 
-	int chr=0;                                 // jkc: addition
-	int rv=0;                                  // jkc: addition
+  int chr=0;                                 // jkc: addition
+  int rv=0;                                  // jkc: addition
   while(! done ) {
     kvu_sleep(secs, msecs * 1000000);
     ecasv_print_vu_meters(&eci, &chstats);
 
-		// jkc: addition until noted
-		if (kbhit()) {
-			switch (chr=getch()) {
-			case 'q':
-				done=true;
-				break;
-			case 27:
-			case 'Q':
-				rv=1;
-				done=true;
-			case ' ':
-				reset_stats_fcn(&chstats);
-				break;
-			}
-		}
+#if defined(ECASV_USE_CURSES)
+    // jkc: addition until noted
+    if (ecasv_kbhit()) {
+      /* note: getch() is a curses.h function */
+      switch (chr=getch()) {
+      case 'q':
+      case 27: /* Esc */
+      case 'Q':
+	done=true;
+	break;
+      case ' ':
+	reset_stats_fcn(&chstats);
+	break;
+      }
+    }
     // jkc: end of addition
+#endif
   }
 
   ecasv_output_cleanup();
@@ -259,7 +238,7 @@ int main(int argc, char *argv[])
   endwin();
 #endif
   
-  return rv;                                 // jkc: change from 0 to rv
+  return rv;
 }
 
 void ecasv_parse_command_line(int argc, char *argv[])
@@ -298,7 +277,8 @@ void ecasv_parse_command_line(int argc, char *argv[])
 	if (prefix == "d") ecasv_enable_debug = true;
 	if (prefix == "f")
 	  ecasv_format_string = string(arg.begin() + 3, arg.end());
-  if (prefix == "L") ecasv_log_display_mode = true; // jkc: addition
+	if (prefix == "I") ecasv_log_display_mode = false; // jkc: addition
+	if (prefix == "L") ecasv_log_display_mode = true; // jkc: addition
 	if (prefix == "r") 
 	  ecasv_rate_msec = atol(kvu_get_argument_number(1, arg).c_str());
       }
@@ -333,40 +313,37 @@ void ecasv_output_init(void)
 #ifdef ECASV_USE_CURSES
     initscr();
     erase();
-		int r=0;                   // jkc: added r for row indexing here and below
-    mvprintw(r++, 0, "******************************************************\n");
-    mvprintw(r++, 0, "* ecasignalview v%s (C) 1999-2005 Kai Vehmanen  \n", ecatools_signalview_version.c_str());
-    mvprintw(r++, 0, "* (modified by Jeff Cunningham)                      *\n");
-    mvprintw(r++, 0, "******************************************************\n\n");
+    int r=0; // jkc: added r for row indexing here and below
+    mvprintw(r++, 0, "ecasignalview v%s (%s) -- (C) K.Vehmanen, J.Cunningham", ecatools_signalview_version.c_str(), VERSION);
+    //mvprintw(r++, 0, "* (C) 1999-2005 Kai Vehmanen, Jeff Cunningham                    *\n");
+    //mvprintw(r++, 0, "******************************************************\n\n");
 
-    // jkc: commented out the following mvprintw:
-//     mvprintw(r++, 0, "input=\"%s\"\noutput=\"%s\"\naudio_format=\"%s\", refresh_rate_ms='%ld', buffersize='%ld'\n", 
-// 	     ecasv_input.c_str(), ecasv_output.c_str(), ecasv_format_string.c_str(), ecasv_rate_msec, ecasv_buffersize);
-    // jkc: and substituted the follwing until noted:
-    mvprintw(r++, 2, "input=\"%s\", output=\"%s\"",
-						 ecasv_input.c_str(),ecasv_output.c_str());
-		mvprintw(r++, 2, "audio format=\"%s\"",ecasv_format_string.c_str());
-		double avg_length = (double)ecasv_rate_msec * avg_peak_buffer_sz;
-    mvprintw(r++, 2, "refresh rate=%ld (msec), buffer size='%ld', "
-						 "avg-length=%.0f (msec)",
-						 ecasv_rate_msec, ecasv_buffersize, avg_length);
-		const char* bar="------------------------------------------------------------------------------\n";
+    ++r;
+    mvprintw(r++, 2, "Input/output: \"%s\" => \"%s\"",
+	     ecasv_input.c_str(),ecasv_output.c_str());
+    double avg_length = (double)ecasv_rate_msec * avg_peak_buffer_sz;
+    mvprintw(r++, 2, 
+	     "Settings: %s refresh=%ldms bsize=%ld avg-length=%.0fms",
+	     ecasv_format_string.c_str(), ecasv_rate_msec, ecasv_buffersize, avg_length);
+    /* mvprintw(r++, 0, "refresh rate = %ld (msec), buffer size = %ld, "
+	     "avg-length = %.0f (msec)", 
+	     ecasv_rate_msec, ecasv_buffersize, avg_length); */
+    ++r;
+    const char* bar="------------------------------------------------------------------------------\n";
     mvprintw(r++, 0, bar);
     mvprintw(r, 0, "channel");
-		if (ecasv_log_display_mode) 
+    if (ecasv_log_display_mode) 
       mvprintw(r++,38, "%s avg-peak dB  max-peak dB  clipped\n", ecasv_bar_buffer);
     else
       mvprintw(r++,38, "%s  avg-peak      max-peak   clipped\n", ecasv_bar_buffer);
     mvprintw(r++, 0, bar);
-    // jkc: end of substitution
     
     memset(ecasv_bar_buffer, ' ', ecasv_bar_length_const - 4);
     ecasv_bar_buffer[ecasv_bar_length_const - 4] = 0;
-    // jkc: commented out the following two lines
-//     mvprintw(8, 0, "channel-# %s| max-peak  clipped-samples\n", ecasv_bar_buffer);
-//     mvprintw(9, 0, "----------------------------------------------------------------\n");
-		mvprintw(13, 0, "Press spacebar to reset stats"); // jkc: addition
-    move(12, 0);
+    mvprintw(r + ecasv_chcount + 3, 0, "Press spacebar to reset stats"); // jkc: addition
+    move(r + ecasv_chcount - 2, 0);
+    
+    // 13 + 12
 
     refresh();
 #endif
@@ -391,14 +368,14 @@ void ecasv_output_cleanup(void)
 void reset_stats_fcn(vector<struct ecasv_channel_stats>* chstats)
 {
 #ifdef ECASV_USE_CURSES
-	vector<struct ecasv_channel_stats>::iterator s=chstats->begin();
-	while (s!=chstats->end()) {
-		s->last_peak=0;
-		s->max_peak=0;
-		s->drawn_peak=0;
-		s->clipped_samples=0;
-		s++;
-	}	
+  vector<struct ecasv_channel_stats>::iterator s=chstats->begin();
+  while (s!=chstats->end()) {
+    s->last_peak=0;
+    s->max_peak=0;
+    s->drawn_peak=0;
+    s->clipped_samples=0;
+    s++;
+  }	
 #endif
 }
 // jkc: end of addition
@@ -428,7 +405,7 @@ void ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci, vector<struct ecasv_chann
 // 	     n + 1, ecasv_bar_buffer, (*chstats)[n].max_peak, (*chstats)[n].clipped_samples);
 		// Calculate average peak value
 
-		if (ecasv_log_display_mode) 
+    if (ecasv_log_display_mode) 
       mvprintw(ecasv_header_height_const+n, 0,
                "Ch-%02d: %s  %.2f       %.2f       %ld\n", 
                n+1, ecasv_bar_buffer,
@@ -457,12 +434,12 @@ void ecasv_update_chstats(vector<struct ecasv_channel_stats>* chstats, int ch, d
   if (static_cast<int>(chstats->size()) <= ch) {
     chstats->resize(ch + 1);
     // jkc: added until noted
-		(*chstats)[ch].last_peak=0;
-		(*chstats)[ch].drawn_peak=0;
-		(*chstats)[ch].max_peak=0;
-		(*chstats)[ch].clipped_samples=0;
-		(*chstats)[ch].avg_peak.resize(avg_peak_buffer_sz,0);
-		(*chstats)[ch].avg_peak_ptr=0;
+    (*chstats)[ch].last_peak=0;
+    (*chstats)[ch].drawn_peak=0;
+    (*chstats)[ch].max_peak=0;
+    (*chstats)[ch].clipped_samples=0;
+    (*chstats)[ch].avg_peak.resize(avg_peak_buffer_sz,0);
+    (*chstats)[ch].avg_peak_ptr=0;
     // jkc: end of additions
   }
   
@@ -474,7 +451,7 @@ void ecasv_update_chstats(vector<struct ecasv_channel_stats>* chstats, int ch, d
   else {
     (*chstats)[ch].drawn_peak = (*chstats)[ch].last_peak;
   }
-
+  
   /* 3. update max_peak */
   if (value > (*chstats)[ch].max_peak) {
     (*chstats)[ch].max_peak = value;
@@ -486,15 +463,15 @@ void ecasv_update_chstats(vector<struct ecasv_channel_stats>* chstats, int ch, d
   }
 
   // jkc: added until noted
-	/* 5. update running average vector */
-	(*chstats)[ch].avg_peak[(*chstats)[ch].avg_peak_ptr] = value;
-	(*chstats)[ch].avg_peak_ptr = ((*chstats)[ch].avg_peak_ptr == avg_peak_buffer_sz-1)?
-		0 : (*chstats)[ch].avg_peak_ptr+1;
-	vector<double>::iterator p=(*chstats)[ch].avg_peak.begin();
-	(*chstats)[ch].avg_peak_val=0;
-	while (p!=(*chstats)[ch].avg_peak.end()) { (*chstats)[ch].avg_peak_val+=*p++;	}
-	(*chstats)[ch].avg_peak_val/=avg_peak_buffer_sz;
-	// jkc; end of addition
+  /* 5. update running average vector */
+  (*chstats)[ch].avg_peak[(*chstats)[ch].avg_peak_ptr] = value;
+  (*chstats)[ch].avg_peak_ptr = ((*chstats)[ch].avg_peak_ptr == avg_peak_buffer_sz-1)?
+    0 : (*chstats)[ch].avg_peak_ptr+1;
+  vector<double>::iterator p=(*chstats)[ch].avg_peak.begin();
+  (*chstats)[ch].avg_peak_val=0;
+  while (p!=(*chstats)[ch].avg_peak.end()) { (*chstats)[ch].avg_peak_val+=*p++;	}
+  (*chstats)[ch].avg_peak_val/=avg_peak_buffer_sz;
+  // jkc; end of addition
 }
 
 void ecasv_create_bar(double value, int barlen, unsigned char* barbuf)
@@ -508,20 +485,69 @@ void ecasv_create_bar(double value, int barlen, unsigned char* barbuf)
   }
 }
 
+/**
+ * Sets terminal to unbuffered mode (no echo,
+ * non-canonical input). -jkc
+ */
+void ecasv_set_unbuffered(void)
+{
+#ifdef HAVE_TERMIOS_H
+  tcgetattr( STDIN_FILENO, &old_term );
+  new_term = old_term;
+  new_term.c_lflag &= ~( ICANON | ECHO );
+  tcsetattr( STDIN_FILENO, TCSANOW, &new_term );
+#endif
+}
+
+/**
+ * Sets terminal to buffered mode -jkc
+ */
+void ecasv_set_buffered(void)
+{
+#ifdef HAVE_TERMIOS_H
+  tcsetattr( STDIN_FILENO, TCSANOW, &old_term );
+#endif
+}
+
+/**
+ * Reads a character from the terminal console. -jkc
+ */
+int ecasv_kbhit(void)
+{
+  int result;
+  fd_set  set;
+  struct timeval tv;
+  
+  FD_ZERO(&set);
+  FD_SET(STDIN_FILENO,&set);  /* watch stdin */
+  tv.tv_sec = 0;
+  tv.tv_usec = 0;             /* don't wait */
+  
+  /* quick peek at the input, to see if anything is there */
+  ecasv_set_unbuffered();
+  result = select( STDIN_FILENO+1,&set,NULL,NULL,&tv);
+  ecasv_set_buffered();
+  
+  return result == 1;
+}
+
 void ecasv_print_usage(void)
 {
   cerr << "****************************************************************************\n";
   cerr << "* ecasignalview, v" << ecatools_signalview_version << " (" << VERSION << ")\n";
-  cerr << "* (C) 1999-2005 Kai Vehmanen, Jeffrey Cunningham; released under GPL licence\n";
+  cerr << "* Copyright 1999-2005 Kai Vehmanen, Jeffrey Cunningham\n";
+  cerr << "* Licensed under the terms of the GNU General Public License\n";
   cerr << "****************************************************************************\n";
 
   cerr << "\nUSAGE: ecasignalview [options] [input] [output] \n";
-  cerr << "\toptions:\n";
-  cerr << "\t\t-b:buffersize\n";
+  cerr << "\nOptions:\n";
+  cerr << "\t-b:buffersize\n";
   // cerr << "\t\t-c (cumulative mode)\n";
-  cerr << "\t\t-d (debug mode)\n";
-  cerr << "\t\t-f:bits,channels,samplerate\n";
-  cerr << "\t\t-r:refresh_msec\n\n";
+  cerr << "\t-d (debug mode)\n";
+  cerr << "\t-f:bits,channels,samplerate\n";
+  cerr << "\t-r:refresh_msec\n\n";
+  cerr << "\t-I (linear-scale)\n";
+  cerr << "\t-L (logarithmic-scale)\n";
 }
 
 void ecasv_signal_handler(int signum)
