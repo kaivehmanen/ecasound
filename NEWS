@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 080405) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 100705) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,6 +13,16 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+xxxx2005 (v2.4.2)  -** stable release **-
+	- added: eiam - ctrlp-list, ctrlp-select, ctrlp-selected,
+		 ctrlp-get, ctrlp-set commands [allies]
+	- changed: various small updates to User's Guide
+	- fixed: using ecasound.spec with recent versions of rpm 
+		 results in a "%package debuginfo" error
+	- fixed: problems in saving ewf objects with cs-save,
+		 cs-save-as and cs-edit
+	- fixed: controllers were always added to the last 
+	 	 chainop, not to the selected chain operator [allies]
 08042005 (v2.4.1)  -** stable release **-
 	- note: verified to work with automake versions 1.6 and 1.9;
 		automake 1.5 and older, as well as autoconf versions

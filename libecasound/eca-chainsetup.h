@@ -311,6 +311,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   int active_chain_index_rep;
   int active_chainop_index_rep;
   int active_chainop_param_index_rep;
+  int active_ctrl_index_rep;
+  int active_ctrl_param_index_rep;
   int db_clients_rep;
   long int multitrack_mode_offset_rep;
   string setup_name_rep;

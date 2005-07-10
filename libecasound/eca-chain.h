@@ -75,16 +75,21 @@ class CHAIN : public ECA_AUDIO_POSITION {
   void remove_controller(void);
   void select_controller(int index);
   void select_controller_parameter(int index);
+  void set_controller_parameter(CHAIN_OPERATOR::parameter_t value);
   const GENERIC_CONTROLLER* get_controller(int index) const { return(gcontrollers_rep[index]); }
   const GENERIC_CONTROLLER* get_selected_controller(void) const { return(selected_controller_repp); }
+  int number_of_controller_parameters(void) const;
+  std::string controller_parameter_name(void) const;
+  CHAIN_OPERATOR::parameter_t get_controller_parameter(void) const;
 
   /**
-   * Index of selected chain operator
+   * Index of selected controller
    */
   int selected_controller(void) const { return(selected_controller_number_rep); }
   int selected_controller_parameter(void) const { return(selected_controller_parameter_rep); }
   int number_of_controllers(void) const { return(gcontrollers_rep.size()); }
   std::string controller_name(void) const;
+
   void selected_chain_operator_as_target(void);
 
   void selected_controller_as_target(void);

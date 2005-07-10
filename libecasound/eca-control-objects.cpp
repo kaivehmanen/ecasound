@@ -1,6 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-control-objects.cpp: Class for configuring libecasound objects
 // Copyright (C) 2000-2004 Kai Vehmanen
+// Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
 //     eca-style-version: 3
@@ -40,6 +41,8 @@
 #include "eca-chainop.h"
 #include "eca-chainsetup.h"
 #include "eca-control-objects.h"
+
+#include "generic-controller.h"
 
 #include "eca-error.h"
 #include "eca-logger.h"
@@ -2231,5 +2234,189 @@ int ECA_CONTROL_OBJECTS::selected_controller(void) const
     return  selected_chainsetup_repp->chains[p]->selected_controller();
 
   return 0;
+}
+
+/**
+ * Returns a list of the selected controller's parameter names
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ *  get_controller() != 0
+ */
+std::vector<string> ECA_CONTROL_OBJECTS::controller_parameter_names(void) const
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() == 1);
+  DBC_REQUIRE(get_controller() != 0);
+  // --------
+
+  std::vector<string> result; 
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    CHAIN* selected_chain = selected_chainsetup_repp->chains[p];
+    int save_selected_ctrlp = selected_chain->selected_controller_parameter();
+
+    for(int n = 0; 
+	  n < selected_chain->number_of_controller_parameters();
+	  n++) {
+	selected_chain->select_controller_parameter(n + 1);
+	result.push_back(selected_chain->controller_parameter_name());
+    }
+
+    selected_chain->select_controller_parameter(save_selected_ctrlp);
+  }
+  return result;
+    
+}
+
+/**
+ * Select a particular controller parameter
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ *  param > 0
+ */
+void ECA_CONTROL_OBJECTS::select_controller_parameter(int param)
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() == 1);
+  DBC_REQUIRE(param > 0);
+  // --------
+
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    if (is_engine_started() == true && 
+	selected_chainsetup() == connected_chainsetup()) {
+      engine_repp->command(ECA_ENGINE::ep_ctrlp_select, param);
+    }
+    else {
+      selected_chainsetup_repp->active_ctrl_param_index_rep = param;
+    }
+    selected_chainsetup_repp->chains[p]->select_controller_parameter(param);
+  } 
+}
+
+/**
+ * Returns the index number of selected  controller parameter.
+ * If no parameter is selected, 0 is returned.
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ *  get_controller() != 0
+ */
+int ECA_CONTROL_OBJECTS::selected_controller_parameter(void) const
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() == 1);
+  DBC_REQUIRE(get_controller() != 0);
+  // --------
+
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    return selected_chainsetup_repp->chains[p]->selected_controller_parameter();
+  }
+  return 0;
+}
+
+
+/**
+ * Set the currently selected controller parameter
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ *  get_controller() != 0
+ */
+void ECA_CONTROL_OBJECTS::set_controller_parameter(CHAIN_OPERATOR::parameter_t value)
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() == 1);
+  DBC_REQUIRE(get_controller() != 0);
+  // --------
+
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    if (is_engine_started() == true && 
+	selected_chainsetup() == connected_chainsetup()) {
+      engine_repp->command(ECA_ENGINE::ep_ctrlp_value, value);
+    }
+    else {
+      if (selected_chainsetup_repp->chains[p]->selected_controller() > 0 &&
+	  selected_chainsetup_repp->chains[p]->selected_controller_parameter() > 0)
+	selected_chainsetup_repp->chains[p]->set_controller_parameter(value);
+    }
+  }
+}
+
+/**
+ * Returns the value of the currently selected controller parameter
+ * If no controller or controller parameter is selected, 0.0 is returned.
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ */
+CONTROLLER_SOURCE::parameter_t ECA_CONTROL_OBJECTS::get_controller_parameter(void) const
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() == 1);
+  // --------
+
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    if (selected_chainsetup_repp->chains[p]->selected_controller() > 0 &&
+	selected_chainsetup_repp->chains[p]->selected_controller_parameter() > 0)
+      return selected_chainsetup_repp->chains[p]->get_controller_parameter();
+  }
+  return 0.0f;
+}
+
+/**
+ * Returns the index number of chain operator that is the target for the currently selected
+ * controller.
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ *  get_controller() != 0
+ */
+int ECA_CONTROL_OBJECTS::selected_controller_target(void) const
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() == 1);
+  DBC_REQUIRE(get_controller() != 0);
+  // --------
+
+  /*
+  We find the index of the chain_op that corresponds to the the selected controller's target
+  by looping through the chain ops and comparing the value of the chain operator (a CHAIN_OPERATOR*)
+  with the value of the controllers "target_pointer()".
+  */
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  int result = 0;
+  if (p < selected_chainsetup_repp->chains.size()) {
+  
+    CHAIN* selected_chain = selected_chainsetup_repp->chains[p];
+    OPERATOR* target = selected_chain->get_selected_controller()->target_pointer();
+    for(int n = 0; 
+	  n < selected_chain->number_of_chain_operators();
+	  n++) {
+      
+      if (selected_chain->get_chain_operator(n) == target) {
+        result = n+1;
+        break;
+      }
+    }
+  }
+  return result;
 }
 

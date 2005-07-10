@@ -1,6 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing an abstract audio signal chain.
 // Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
 //     eca-style-version: 3
@@ -250,6 +251,22 @@ string CHAIN::chain_operator_parameter_name(void) const
 }
 
 /**
+ * Returns the name of selected controller parameter.
+ *
+ * require:
+  *  selected_controller() != 0
+  *  selected_controller_parameter() != 0
+ */
+string CHAIN::controller_parameter_name(void) const
+{
+  // --------
+  DBC_REQUIRE(selected_controller() > 0);
+  DBC_REQUIRE(selected_controller_parameter() > 0);
+  // --------
+  return selected_controller_repp->get_parameter_name(selected_controller_parameter());
+}
+
+/**
  * Returns the total number of parameters for the 
  * selected chain operator.
  *
@@ -262,6 +279,20 @@ int CHAIN::number_of_chain_operator_parameters(void) const
   DBC_REQUIRE(selected_chain_operator() > 0);
   // --------
   return selected_chainop_repp->number_of_params();
+}
+
+/**
+ * Returns the total number of parameters for the selected controller.
+ *
+ * require:
+  *  selected_controller() != 0
+ */
+int CHAIN::number_of_controller_parameters(void) const
+{
+  // --------
+  DBC_REQUIRE(selected_controller() > 0);
+  // --------
+  return selected_controller_repp->number_of_params();
 }
 
 /**
@@ -407,6 +438,7 @@ void CHAIN::select_chain_operator(int index)
     if (chainop_sizet + 1 == index) {
       selected_chainop_repp = chainops_rep[chainop_sizet];
       selected_chainop_number_rep = index;
+      selected_chain_operator_as_target();
     }
   }
 }
@@ -464,6 +496,40 @@ void CHAIN::select_controller(int index)
 void CHAIN::select_controller_parameter(int index)
 {
   selected_controller_parameter_rep = index;
+}
+
+/**
+ * Gets the value of the currently selected controller parameter.
+ *
+ * require:
+ *  selected_controller() != 0
+ *  selected_controller_parameter() != 0
+ */
+CHAIN_OPERATOR::parameter_t CHAIN::get_controller_parameter(void) const
+{
+  // --------
+  DBC_REQUIRE(selected_controller_parameter() > 0);
+  DBC_REQUIRE(selected_controller() != 0);
+  // --------
+  return selected_controller_repp->get_parameter(selected_controller_parameter_rep);
+}
+
+/**
+ * Sets the value of the currently selected controller parameter.
+ *
+ * require:
+ * selected_controller_number_rep > 0 && selected_controller_number_rep <= number_of_controllers()
+ *  selected_controller() != 0
+ *  selected_controller_parameter() != 0
+ */
+void CHAIN::set_controller_parameter(CHAIN_OPERATOR::parameter_t value)
+{
+  // --------
+  DBC_REQUIRE(selected_controller_number_rep > 0 && selected_controller_number_rep <= number_of_controllers());
+  DBC_REQUIRE(selected_controller_parameter() > 0);
+  DBC_REQUIRE(selected_controller() != 0);
+  // --------
+  selected_controller_repp->set_parameter(selected_controller_parameter_rep, value);
 }
 
 /**

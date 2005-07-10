@@ -2,6 +2,7 @@
 // eca-iamode-parser.cpp: Class that handles registering and querying 
 //                        interactive mode commands.
 // Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 2005 Stuart Allie
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,6 +62,7 @@ const map<string,int>& ECA_IAMODE_PARSER::registered_commands(void)
       register_commands_cop();
       register_commands_copp();
       register_commands_ctrl();
+      register_commands_ctrlp();
       register_commands_dump();
     }
   }
@@ -286,6 +288,16 @@ void ECA_IAMODE_PARSER::register_commands_ctrl(void)
   (*cmd_map_repp)["ctrl-register"] = ec_ctrl_register;
   (*cmd_map_repp)["ctrl-selected"] = ec_ctrl_selected;
   (*cmd_map_repp)["ctrl-status"] = ec_ctrl_status;
+  (*cmd_map_repp)["ctrl-get-target"] = ec_ctrl_get_target;
+}
+
+void ECA_IAMODE_PARSER::register_commands_ctrlp(void)
+{
+  (*cmd_map_repp)["ctrlp-list"] = ec_ctrlp_list;
+  (*cmd_map_repp)["ctrlp-select"] = ec_ctrlp_select;
+  (*cmd_map_repp)["ctrlp-selected"] = ec_ctrlp_selected;
+  (*cmd_map_repp)["ctrlp-get"] = ec_ctrlp_get;
+  (*cmd_map_repp)["ctrlp-set"] = ec_ctrlp_set;
 }
 
 void ECA_IAMODE_PARSER::register_commands_dump(void)

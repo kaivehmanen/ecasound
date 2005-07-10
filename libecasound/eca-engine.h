@@ -98,6 +98,10 @@ class ECA_ENGINE {
     ep_copp_select,
     ep_copp_value,
     // --
+    ep_ctrl_select,
+    ep_ctrlp_select,
+    ep_ctrlp_value,
+    // --
     ep_rewind,
     ep_forward,
     ep_setpos,

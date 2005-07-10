@@ -1,6 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: Class representing an ecasound chainsetup object.
 // Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
 //     eca-style-version: 3
@@ -289,6 +290,8 @@ void ECA_CHAINSETUP::set_defaults(void)
   active_chain_index_rep = 0;
   active_chainop_index_rep = 0;
   active_chainop_param_index_rep = 0;
+  active_ctrl_index_rep = 0;
+  active_ctrl_param_index_rep = 0;
   multitrack_mode_offset_rep = -1;
 
   buffering_mode_rep = cs_bmode_auto;

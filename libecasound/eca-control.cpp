@@ -1,6 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-control.cpp: Class for controlling the whole ecasound library
 // Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
 //     eca-style-version: 3
@@ -591,6 +592,16 @@ void ECA_CONTROL::action(int action_id)
       set_last_string(controller_status()); 
       break; 
     }
+  case ec_ctrl_get_target: { set_last_integer(selected_controller_target()); break; }
+  
+    // ---
+    // Controller parameters
+    // ---
+  case ec_ctrlp_list: { set_last_string_list(controller_parameter_names()); break; }
+  case ec_ctrlp_select: { select_controller_parameter(atoi((action_args_rep).c_str())); break; }
+  case ec_ctrlp_selected: { set_last_integer(selected_controller_parameter()); break; }
+  case ec_ctrlp_get: { set_last_float(get_controller_parameter()); break; }
+  case ec_ctrlp_set: { set_controller_parameter(first_action_argument_as_float()); break; }
 
   case ec_cop_register: { cop_register(); break; }
   case ec_preset_register: { preset_register(); break; }

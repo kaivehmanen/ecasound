@@ -3,6 +3,7 @@
 
 #include "eca-control-base.h"
 #include "audioio.h"
+#include "ctrl-source.h"
 
 class CHAIN_OPERATOR;
 
@@ -132,21 +133,32 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void select_chain_operator(int chainop_id);
   void select_chain_operator_parameter(int param);
   void set_chain_operator_parameter(CHAIN_OPERATOR::parameter_t value);
-  void add_controller(const std::string& gcontrol_params);
-  void select_controller(int ctrl_id);
-  void remove_controller(void);
 
   int selected_chain_operator(void) const;
   int selected_chain_operator_parameter(void) const;
-  int selected_controller(void) const;
 
   const CHAIN_OPERATOR* get_chain_operator(void) const;
   CHAIN_OPERATOR::parameter_t get_chain_operator_parameter(void) const;
-  const GENERIC_CONTROLLER* get_controller(void) const;
-
   std::vector<std::string> chain_operator_names(void) const;
   std::vector<std::string> chain_operator_parameter_names(void) const;
+
+  // -------------------------------------------------------------------
+  // Controllers (currently selected chainsetup and chains)
+  // -------------------------------------------------------------------
+  void add_controller(const std::string& gcontrol_params);
+  void select_controller(int ctrl_id);
+  void select_controller_parameter(int param);
+  void set_controller_parameter(CHAIN_OPERATOR::parameter_t value);
+  void remove_controller(void);
+
+  int selected_controller(void) const;
+  int selected_controller_parameter(void) const;
+  int selected_controller_target(void) const;
+
+  const GENERIC_CONTROLLER* get_controller(void) const;
+  CONTROLLER_SOURCE::parameter_t get_controller_parameter(void) const;
   std::vector<std::string> controller_names(void) const;
+  std::vector<std::string> controller_parameter_names(void) const;
 
   // -------------------------------------------------------------------
   // Constructors and destructors

@@ -130,11 +130,12 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_ctrl_selected,
     ec_ctrl_status,
     ec_ctrl_register,
-    ec_ctrlp_list,     /* FIXME: not implemented */
-    ec_ctrlp_select,   /* FIXME: not implemented */
-    ec_ctrlp_selected, /* FIXME: not implemented */
-    ec_ctrlp_set,      /* FIXME: not implemented */
-    ec_ctrlp_get,      /* FIXME: not implemented */
+    ec_ctrlp_list,
+    ec_ctrlp_select,
+    ec_ctrlp_selected,
+    ec_ctrlp_set,
+    ec_ctrlp_get,
+    ec_ctrl_get_target, // [spa] added new command
     // --
     ec_int_cmd_list,
     ec_int_log_history,
