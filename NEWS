@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 100705) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 060805) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,6 +14,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 xxxx2005 (v2.4.2)  -** stable release **-
+	- note: verified to compile ok with gcc-4.0.0 and gcc-4.0.1
 	- added: eiam - ctrlp-list, ctrlp-selected, ctrlp-get, ctrlp-select
 	         and ctrlp-set commands; the last two are RT-commands;
 		 see ecasound-iam(1) for more info [allies]
@@ -32,6 +33,8 @@ xxxx2005 (v2.4.2)  -** stable release **-
 		 cs-save-as and cs-edit [kaiv]
 	- fixed: controllers were always added to the last 
 	 	 chainop, not to the selected chain operator [allies]
+	- fixed: --enable-jack and --disable-jack both disabled JACK
+		 support
 08042005 (v2.4.1)  -** stable release **-
 	- note: verified to work with automake versions 1.6 and 1.9;
 		automake 1.5 and older, as well as autoconf versions
