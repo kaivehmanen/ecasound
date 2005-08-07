@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 060805) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 070805) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -23,6 +23,7 @@ xxxx2005 (v2.4.2)  -** stable release **-
 	 	 with -L, see also -I which is still the default);
 		 display of per-channel average amplitude; see 
 		 ecasignalview(1) man page for details [jeffrey]
+	- added: 
 	- changed: various small updates to User's Guide
 	- changed: ecasound user-visible copyright string changed
 	- changed: minor changes to ecasignalview user-interface
@@ -35,6 +36,12 @@ xxxx2005 (v2.4.2)  -** stable release **-
 	 	 chainop, not to the selected chain operator [allies]
 	- fixed: --enable-jack and --disable-jack both disabled JACK
 		 support
+	- fixed: serious bug in the "reverse" audio objects, caused 
+		 audible noise in the reversed signal
+	- fixed: segfaults at exit when LADSPA plugins had been used;
+		 the error did not happen every time and with every type 	
+		 of plugin; problem was a race between atexit handlers
+		 of ecasound, and the dynamically loaded plugins
 08042005 (v2.4.1)  -** stable release **-
 	- note: verified to work with automake versions 1.6 and 1.9;
 		automake 1.5 and older, as well as autoconf versions
