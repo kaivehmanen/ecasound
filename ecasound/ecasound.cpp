@@ -157,7 +157,9 @@ int main(int argc, char *argv[])
 
   if (state->daemon_mode == true) {
     /* wait until daemon thread has exited */
-    state->exit_request = 1;
+    if (state->interactive_mode == true) {
+      state->exit_request = 1;
+    }
     pthread_join(*state->daemon_thread, NULL);
   }
 
@@ -309,7 +311,8 @@ void ecasound_main_loop(struct ecasound_state* state)
       DBC_CHECK(res == 0);
     }
 
-    if (ctrl->is_valid() == true) {
+    if (ctrl->is_selected() == true && 
+	ctrl->is_valid() == true) {
       ctrl->connect_chainsetup();
     }
 
@@ -366,7 +369,6 @@ void ecasound_parse_command_line(struct ecasound_state* state,
       
       else if (cline.current() == "--daemon") {
 	state->daemon_mode = true;
-	state->keep_running_mode = true;
       }
 
       else if (cline.current().find("--daemon-port") != string::npos) {

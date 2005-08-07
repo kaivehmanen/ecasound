@@ -305,7 +305,6 @@ void ECA_NETECI_SERVER::handle_connection(int fd)
   string peername;
   int connfd = 0;
 
-  
   if (unix_sockets_rep == true) {
     bytes = static_cast<socklen_t>(sizeof(addr_un_rep));
     connfd = accept(fd, reinterpret_cast<struct sockaddr*>(&addr_un_rep), &bytes);
@@ -319,12 +318,14 @@ void ECA_NETECI_SERVER::handle_connection(int fd)
       struct sockaddr_in peeraddr;
       socklen_t peernamelen;
       // struct in_addr peerip;
+      peername = "TCP/IP:";
       int res = getpeername(connfd, 
 			    reinterpret_cast<struct sockaddr*>(&peeraddr), 
 			    reinterpret_cast<socklen_t*>(&peernamelen));
-      DBC_CHECK(res == 0);
-      peername = "TCP/IP:" + string(inet_ntoa(peeraddr.sin_addr));
-      // peerip.s_addr = peeraddr.s_addr;
+      if (res == 0)
+	peername += string(inet_ntoa(peeraddr.sin_addr));
+      else
+	peername += string(inet_ntoa(addr_in_rep.sin_addr));
     }
   }
 
