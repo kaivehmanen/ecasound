@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-db-server.cpp: Audio i/o engine serving db clients.
-// Copyright (C) 2000-2004 Kai Vehmanen
+// Copyright (C) 2000-2005 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -166,7 +166,7 @@ void AUDIO_IO_DB_SERVER::start(void)
 			     start_db_server_io_thread,
 			     static_cast<void *>(this));
     if (ret != 0) {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audio_io_db_server) pthread_create failed, exiting");
+      ECA_LOG_MSG(ECA_LOGGER::info, "pthread_create failed, exiting");
       exit(1);
     }
     
@@ -175,7 +175,7 @@ void AUDIO_IO_DB_SERVER::start(void)
 
   stop_request_rep.set(0);
   running_rep.set(1);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audio_io_db_server) starting processing");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "starting processing");
 }
 
 /**
@@ -250,9 +250,9 @@ static void timed_wait_print_result(int result, const char* tag, bool verbose)
 
   if (result != 0) {
     if (result == -ETIMEDOUT)
-      ECA_LOG_MSG(level, string("(audioio-db-server) ") + tag + " failed; timeout");
+      ECA_LOG_MSG(level, std::string(tag) + " failed; timeout");
     else
-      ECA_LOG_MSG(level, string("(audioio-db-server) ") + tag + " failed");
+      ECA_LOG_MSG(level, std::string(tag) + " failed");
   }
 }
 
@@ -417,7 +417,7 @@ void AUDIO_IO_DB_SERVER::register_client(AUDIO_IO* aobject)
   
   clients_rep.push_back(aobject);
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"(audioio-db-server) Registering client " +
+		"Registering client " +
 		kvu_numtostr(clients_rep.size() - 1) +
 		". Buffer count " +
 		kvu_numtostr(buffercount_rep) + ".");
@@ -474,7 +474,7 @@ AUDIO_IO_DB_BUFFER* AUDIO_IO_DB_SERVER::get_client_buffer(AUDIO_IO* aobject)
  */
 void AUDIO_IO_DB_SERVER::io_thread(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audio_io_db_server) Hey, in the I/O loop!");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Hey, in the I/O loop!");
 
   int processed = 0;
   int passive_rounds = 0;
@@ -484,7 +484,7 @@ void AUDIO_IO_DB_SERVER::io_thread(void)
   long int sleeplen = buffersize_rep * buffercount_rep * 1000 / 44100 / 10 * 1000000;
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"(audio_io_db_server) Using idle timeout of " +
+		"Using idle timeout of " +
 		kvu_numtostr(sleeplen) + 
 		" nsecs.");
 
@@ -630,7 +630,6 @@ void AUDIO_IO_DB_SERVER::flush(void)
 	  ++not_finished;
 
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
-		      std::string("(audio_io_db_server) ") +
 		      "Flushing buffer " + 
 		      kvu_numtostr(buffers_rep[p]->readptr_rep.get()) +
 		      " of client " +

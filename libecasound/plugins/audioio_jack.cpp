@@ -1,6 +1,10 @@
 // ------------------------------------------------------------------------
 // audioio-jack.cpp: Interface to JACK audio framework
 // Copyright (C) 2001-2003 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -38,15 +42,15 @@
 static const char* audio_io_keyword_const = "jack";
 static const char* audio_io_keyword_regex_const = "(^jack$)|(^jack_alsa$)|(^jack_auto$)|(^jack_generic$)";
 
-AUDIO_IO* audio_io_descriptor(void) { return(new AUDIO_IO_JACK()); }
-const char* audio_io_keyword(void){return(audio_io_keyword_const); }
-const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
-int audio_io_interface_version(void) { return(ecasound_library_version_current); }
+AUDIO_IO* audio_io_descriptor(void) { return new AUDIO_IO_JACK(); }
+const char* audio_io_keyword(void) {return audio_io_keyword_const; }
+const char* audio_io_keyword_regex(void){return audio_io_keyword_regex_const; }
+int audio_io_interface_version(void) { return ecasound_library_version_current; }
 #endif
 
 AUDIO_IO_JACK::AUDIO_IO_JACK (void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::functions, "(audioio-jack) constructor");
+  ECA_LOG_MSG(ECA_LOGGER::functions, "constructor");
   
   jackmgr_rep = 0;
   myid_rep = 0;
@@ -63,21 +67,21 @@ AUDIO_IO_JACK::~AUDIO_IO_JACK(void)
 
 AUDIO_IO_MANAGER* AUDIO_IO_JACK::create_object_manager(void) const
 {
-  return(new AUDIO_IO_JACK_MANAGER());
+  return new AUDIO_IO_JACK_MANAGER();
 }
 
 void AUDIO_IO_JACK::set_manager(AUDIO_IO_JACK_MANAGER* mgr, int id)
 {
   string mgrname = (mgr == 0 ? mgr->name() : "null");
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"(audioio-jack) setting manager to " + mgr->name());
+		"setting manager to " + mgr->name());
   jackmgr_rep = mgr;
   myid_rep = id;
 }
 
 void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) open");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "open");
 
 #ifdef WORDS_BIGENDIAN
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_f32_be);
@@ -106,7 +110,7 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     if (samples_per_second() != jackmgr_rep->samples_per_second()) {
       set_samples_per_second(jackmgr_rep->samples_per_second());
       ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		  "(audioio-jack) Note! Locking to jackd samplerate " +
+		  "Note! Locking to jackd samplerate " +
 		  kvu_numtostr(samples_per_second()));
     }
     
@@ -153,7 +157,7 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
 void AUDIO_IO_JACK::close(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) close");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "close");
 
   if (jackmgr_rep != 0) {
     jackmgr_rep->unregister_jack_ports(myid_rep);
@@ -168,9 +172,9 @@ bool AUDIO_IO_JACK::finished(void) const
   if (is_open() != true ||
       jackmgr_rep == 0 ||
       jackmgr_rep->is_open() != true)
-    return(true);
+    return true;
 
-  return(false);
+  return false;
 }
 
 long int AUDIO_IO_JACK::read_samples(void* target_buffer, long int samples)
@@ -178,10 +182,10 @@ long int AUDIO_IO_JACK::read_samples(void* target_buffer, long int samples)
   if (jackmgr_rep != 0) {
     DBC_CHECK(samples == jackmgr_rep->buffersize());
     long int res = jackmgr_rep->read_samples(myid_rep, target_buffer, samples);
-    return(res);
+    return res;
   }
   
-  return(0);
+  return 0;
 }
 
 void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples)
@@ -197,37 +201,37 @@ void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples)
 
 void AUDIO_IO_JACK::prepare(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) prepare / " + label());
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "prepare / " + label());
   AUDIO_IO_DEVICE::prepare();
 }
 
 void AUDIO_IO_JACK::start(void)
 { 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) start / " + label());
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "start / " + label());
   AUDIO_IO_DEVICE::start();
 }
 
 void AUDIO_IO_JACK::stop(void)
 { 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(audioio-jack) stop / " + label());
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "stop / " + label());
   AUDIO_IO_DEVICE::stop();
 }
 
 long int AUDIO_IO_JACK::latency(void) const
 {
-  return(jackmgr_rep == 0 ? 0 : jackmgr_rep->client_latency(myid_rep));
+  return jackmgr_rep == 0 ? 0 : jackmgr_rep->client_latency(myid_rep);
 }
 
 std::string AUDIO_IO_JACK::parameter_names(void) const
 { 
   if (label() == "jack_generic")
-    return("label,portname");
+    return "label,portname";
 
   if (label() == "jack_auto")
-    return("label,client");
+    return "label,client";
 
   /* jack, jack_alsa */
-  return("label");
+  return "label";
 }
 
 void AUDIO_IO_JACK::set_parameter(int param, std::string value)
@@ -243,9 +247,9 @@ std::string AUDIO_IO_JACK::get_parameter(int param) const
 {
   switch(param) 
     {
-    case 1: { return(label()); }
-    case 2: { return(secondparam_rep); }
+    case 1: { return label(); }
+    case 2: { return secondparam_rep; }
     }  
 
-  return("");
+  return "";
 }
