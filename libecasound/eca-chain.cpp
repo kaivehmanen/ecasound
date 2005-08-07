@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing an abstract audio signal chain.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2005 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -698,7 +698,7 @@ void CHAIN::refresh_parameters(void)
   for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops_rep.size()); chainop_sizet++) {
     for(int n = 0; n < chainops_rep[chainop_sizet]->number_of_params(); n++) {
       chainops_rep[chainop_sizet]->set_parameter(n + 1, 
-					       chainops_rep[chainop_sizet]->get_parameter(n + 1));
+						 chainops_rep[chainop_sizet]->get_parameter(n + 1));
     }
   }
 }
