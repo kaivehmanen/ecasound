@@ -137,6 +137,9 @@ void ECA_CONTROL_BASE::start(void)
  * Starts the processing engine and blocks until 
  * processing is finished.
  *
+ * @param batchmode if true, runs until finished/stopped state is reached, and
+ *        then returns; if false, will run infinitely
+ *
  * @pre is_connected() == true
  * @pre is_running() != true
  * @post is_finished() == true || 
@@ -146,7 +149,7 @@ void ECA_CONTROL_BASE::start(void)
  *        is_engine_started() == true &&
  * 	  engine_repp->status() != ECA_ENGINE::engine_status_stopped))
  */
-void ECA_CONTROL_BASE::run(void)
+void ECA_CONTROL_BASE::run(bool batchmode)
 {
   // --------
   DBC_REQUIRE(is_connected() == true);
@@ -159,7 +162,7 @@ void ECA_CONTROL_BASE::run(void)
 
   if (is_engine_started() != true) {
     /* request_batchmode=true */
-    start_engine_sub(true);
+    start_engine_sub(batchmode);
   }
 
   if (is_engine_started() != true) {
@@ -170,7 +173,9 @@ void ECA_CONTROL_BASE::run(void)
 
     DBC_CHECK(is_finished() != true);
 
-    while(is_finished() != true) {
+    /* run until processing is finished; in batchmode run forever (or
+     * until error occurs) */
+    while(is_finished() != true || batchmode != true) {
       
       /* sleep for one second */
       kvu_sleep(1, 0);
@@ -201,8 +206,9 @@ void ECA_CONTROL_BASE::run(void)
       else {
 	/* engine was started succesfully (processing_started == true) */
 	if (is_running() != true) {
-	  /* operation succesfully completed, exit from run() */
-	  break;
+	  /* operation succesfully completed, exit from run() unless
+	   * infinite operation is requested (batchmode) */
+	  if (batchmode == true) break;
 	}
       }
     }

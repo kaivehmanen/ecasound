@@ -58,7 +58,7 @@ class ECA_CONTROL_BASE {
   void start(void);
   void stop(void);
   void stop_on_condition(void);
-  void run(void);
+  void run(bool batchmode = true);
   void quit(void);
 
   // -------------------------------------------------------------------

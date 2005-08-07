@@ -1,3 +1,8 @@
+2005-08-07  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-control-base.cpp (run): Added optional "batchmode"
+	parameter.
+
 2005-03-12  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
         * library interface version 14 frozen (2.4.0 release)
