@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "29\&.05\&.2005" "" "Multimedia software" 
+.TH "ecasound" "1" "07\&.08\&.2005" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -31,7 +31,7 @@ control ecasound with simple commands ("start", "stop", "pause",
 etc\&.)\&. See ecasound-iam(1)\&.
 .IP 
 .IP "-C" 
-Disables ecasound\&'s interactive mode (see \&'-c\&')\&.
+Disables ecasound\&'s interactive mode (see \&'-c\&' and \&'-K\&')\&.
 .IP 
 .IP "-d, -dd, -ddd" 
 Increase the amount of printed debug messages\&. \fI-d\fP adds 
@@ -76,7 +76,11 @@ ecasound will use port number \fI2868\fP\&.
 .IP "--nodaemon" 
 Disable ecasound\&'s daemon mode\&. This is the default\&.
 .IP 
-.IP "--help" 
+.IP "--keep-running,-K" 
+Do not exit when processing is finished/stopped\&. Only affects
+non-interactive operating mode (see -c/-C)\&.
+.IP 
+.IP "--help,-h" 
 Show this help\&.
 .IP 
 .IP "--version" 

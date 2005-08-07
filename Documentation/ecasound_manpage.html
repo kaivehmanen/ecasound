@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>29.05.2005</h2>
+<h2>07.08.2005</h2>
 
 
     
@@ -45,7 +45,7 @@ Starts ecasound in interactive mode. In interactive mode you can
 control ecasound with simple commands ("start", "stop", "pause",
 etc.). See <a href="ecasound-iam_manpage.html">ecasound-iam(1)</a>.
 <p><p></p><dt><strong>-C</strong><dd>
-Disables ecasound's interactive mode (see '-c').
+Disables ecasound's interactive mode (see '-c' and '-K').
 <p><p></p><dt><strong>-d, -dd, -ddd</strong><dd>
 Increase the amount of printed debug messages. <em>-d</em> adds 
 some verbosity, while <em>-ddd</em> results in very detailed 
@@ -80,7 +80,10 @@ Set the TCP port used by the daemon mode. By default
 ecasound will use port number <em>2868</em>.
 <p><p></p><dt><strong>--nodaemon</strong><dd>
 Disable ecasound's daemon mode. This is the default.
-<p><p></p><dt><strong>--help</strong><dd>
+<p><p></p><dt><strong>--keep-running,-K</strong><dd>
+Do not exit when processing is finished/stopped. Only affects
+non-interactive operating mode (see -c/-C).
+<p><p></p><dt><strong>--help,-h</strong><dd>
 Show this help.
 <p><p></p><dt><strong>--version</strong><dd>
 Print version info.

@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (29.05.2005)
+       (07.08.2005)
        ()
        (Multimedia software)
 
@@ -38,7 +38,7 @@ control ecasound with simple commands ("start", "stop", "pause",
 etc.). See url(ecasound-iam(1))(ecasound-iam_manpage.html).
 
 dit(-C)
-Disables ecasound's interactive mode (see '-c').
+Disables ecasound's interactive mode (see '-c' and '-K').
 
 dit(-d, -dd, -ddd)
 Increase the amount of printed debug messages. em(-d) adds 
@@ -83,7 +83,11 @@ ecasound will use port number em(2868).
 dit(--nodaemon)
 Disable ecasound's daemon mode. This is the default.
 
-dit(--help)
+dit(--keep-running,-K)
+Do not exit when processing is finished/stopped. Only affects
+non-interactive operating mode (see -c/-C).
+
+dit(--help,-h)
 Show this help.
 
 dit(--version)
