@@ -12,7 +12,7 @@ dnl ------------------------------------------------------------------
 dnl ---
 dnl Initialize autoconf and automake
 dnl ---
-AC_INIT(ecasound, 2.4.2-cvs)
+AC_INIT(ecasound, 2.4.2)
 AC_PREREQ(2.50)
 AC_CONFIG_SRCDIR(libecasound/audiofx.h)
 AM_INIT_AUTOMAKE(1.6.1)

@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-xxxx2005 (v2.4.2)  -** stable release **-
+07082005 (v2.4.2)  -** stable release **-
 	- note: verified to compile ok with gcc-4.0.0 and gcc-4.0.1 [kaiv]
 	- added: eiam - ctrlp-list, ctrlp-selected, ctrlp-get, ctrlp-select
 	         and ctrlp-set commands; the last two are RT-commands;
