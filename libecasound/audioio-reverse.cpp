@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // audioio-reverse.cpp: A proxy class that reverts the child 
 //                      object's data.
-// Copyright (C) 2002 Kai Vehmanen
+// Copyright (C) 2002,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,12 +55,12 @@ AUDIO_IO_REVERSE* AUDIO_IO_REVERSE::clone(void) const
   for(int n = 0; n < number_of_params(); n++) {
     target->set_parameter(n + 1, get_parameter(n + 1));
   }
-  return(target);
+  return target;
 }
 
 void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-reverse) open " + label() + ".");  
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "open " + label() + ".");  
 
   if (io_mode() != AUDIO_IO::io_read) {
       throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-REVERSE: Reversed writing not supported!"));
@@ -110,19 +113,19 @@ void AUDIO_IO_REVERSE::close(void)
 
 bool AUDIO_IO_REVERSE::finished(void) const
 {
-  return(finished_rep);
+  return finished_rep;
 }
 
 string AUDIO_IO_REVERSE::parameter_names(void) const
 {
-  return(string("reverse,") + child()->parameter_names()); 
+  return string("reverse,") + child()->parameter_names(); 
 }
 
 void AUDIO_IO_REVERSE::set_parameter(int param, string value)
 {
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"(audioio-reverse) set_parameter " + label() + ".");  
+		"set_parameter " + label() + ".");  
 
   /* total of n+1 params, where n is number of childobj params */
   if (param > static_cast<int>(params_rep.size())) params_rep.resize(param);
@@ -140,23 +143,23 @@ string AUDIO_IO_REVERSE::get_parameter(int param) const
 {
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"(audioio-reverse) get_parameter " + label() + ".");
+		"get_parameter " + label() + ".");
 
   if (param > 0 && param < static_cast<int>(params_rep.size()) + 1) {
     if (param > 1 && init_rep == true) {
       params_rep[param - 1] = child()->get_parameter(param - 1);
     }
-    return(params_rep[param - 1]);
+    return params_rep[param - 1];
   }
 
-  return(""); 
+  return ""; 
 }
 
 void AUDIO_IO_REVERSE::seek_position(void)
 {
   finished_rep = false;
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"(audioio-reverse) seek_position " + kvu_numtostr(position_in_samples()) + ".");
+		"seek_position " + kvu_numtostr(position_in_samples()) + ".");
   AUDIO_IO_PROXY::seek_position();
 }
 
@@ -189,7 +192,7 @@ void AUDIO_IO_REVERSE::read_buffer(SAMPLE_BUFFER* sbuf)
   sbuf->length_in_samples(tempbuf_repp->length_in_samples());
   for(int c = 0; c < sbuf->number_of_channels(); c++) {
     for(SAMPLE_BUFFER::buf_size_t n = 0; n < sbuf->length_in_samples(); n++) {
-      sbuf->buffer[c][n] = tempbuf_repp->buffer[c][sbuf->length_in_samples() - n];
+      sbuf->buffer[c][n] = tempbuf_repp->buffer[c][sbuf->length_in_samples() - n - 1];
     }
   }
 }
