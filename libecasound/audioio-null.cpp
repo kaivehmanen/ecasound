@@ -23,12 +23,11 @@
 #include <cstdio>
 #include "audioio-null.h"
 
-NULLFILE::NULLFILE(const std::string& name = "null")
+NULLFILE::NULLFILE(const std::string& name)
 {
   set_label(name);
 }
 
 NULLFILE::~NULLFILE(void)
 {
-  fprintf(stderr, "nullfile destructor...IN-OUT\n");
 }
