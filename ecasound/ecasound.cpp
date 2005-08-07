@@ -2,6 +2,9 @@
 // ecasound.cpp: Console mode user interface to ecasound.
 // Copyright (C) 2002-2005 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 3
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -159,9 +162,17 @@ int main(int argc, char *argv[])
 
   /* note: if we exist due to a signal, we never reach 
    *       the end of main() */
+
+  /* note: we prefer to run the cleanup routines before 
+   *       returning from main; there have been problems with
+   *       dynamic libraries and libecasound cleanup routines
+   *       when run from atexit handler
+   */
+  ecasound_atexit_cleanup();
+
   // cerr << endl << "ecasound: main() exiting..." << endl << endl;
 
-  return(state->retval);
+  return state->retval;
 }
 
 /**
@@ -172,7 +183,7 @@ void ecasound_atexit_cleanup(void)
 {
   struct ecasound_state* state = &ecasound_state_global;
 
-  // cerr << endl << "ecasound: atexit cleanup" << endl;
+  cerr << endl << "ecasound: atexit cleanup" << endl;
 
   if (state != 0 && 
       state->control != 0) {
@@ -509,5 +520,5 @@ void* ecasound_watchdog_thread(void* arg)
   exit(state->retval);
 
   /* to keep the compilers happy; never actually executed */
-  return(0);
+  return 0;
 }
