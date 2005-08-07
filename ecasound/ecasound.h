@@ -38,6 +38,7 @@ struct ecasound_state {
   int retval;
   int daemon_port;
   bool daemon_mode;
+  bool keep_running_mode;
   bool cerr_output_only_mode;
   bool interactive_mode;
   bool quiet_mode;

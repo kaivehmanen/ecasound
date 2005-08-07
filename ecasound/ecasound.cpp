@@ -82,6 +82,7 @@ static struct ecasound_state ecasound_state_global =
     0,        /* int - return value */
     2868,     /* int - default daemon mode TCP-port */
     false,    /* daemon mode */
+    false,    /* keep_running mode */
     false,    /* cerr-output-only mode */
     false,    /* interactive mode */
     false     /* quiet mode */
@@ -313,7 +314,7 @@ void ecasound_main_loop(struct ecasound_state* state)
     }
 
     if (ctrl->is_connected() == true) {
-      ctrl->run();
+      ctrl->run(!state->keep_running_mode);
     }
     else {
       ctrl->print_last_value();
@@ -365,7 +366,7 @@ void ecasound_parse_command_line(struct ecasound_state* state,
       
       else if (cline.current() == "--daemon") {
 	state->daemon_mode = true;
-	state->interactive_mode = true;
+	state->keep_running_mode = true;
       }
 
       else if (cline.current().find("--daemon-port") != string::npos) {
@@ -386,6 +387,11 @@ void ecasound_parse_command_line(struct ecasound_state* state,
 	ecasound_print_usage();
 	state->retval = -1;
 	break;
+      }
+
+      else if (cline.current() == "-K" ||
+	       cline.current() == "--keep-running") {
+	state->keep_running_mode = true;
       }
 
       else if (cline.current() == "--version") {
