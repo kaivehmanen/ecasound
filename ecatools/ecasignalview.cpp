@@ -110,7 +110,7 @@ int ecasv_kbhit();
  * Static global variables
  */
 
-static const string ecatools_signalview_version = "20050710-8";
+static const string ecatools_signalview_version = "20050807-9";
 static bool  ecasv_log_display_mode = false; // jkc: addition
 static const double ecasv_clipped_threshold_const = 1.0f - 1.0f / 16384.0f;
 static const int ecasv_bar_length_const = 32;
@@ -166,7 +166,11 @@ int main(int argc, char *argv[])
 
   eci.command("cs-add default");
   eci.command("c-add default");
+
+  /* set engine buffersize */
   eci.command("cs-set-param -b:" + kvu_numtostr(ecasv_buffersize));
+  /* in case JACK is used, do send nor receive transport events */
+  eci.command("cs-set-param -G:jack,ecasignalview,notransport");
 
   if (ecasv_format_string.size() > 0) {
     eci.command("cs-set-audio-format " + ecasv_format_string);
