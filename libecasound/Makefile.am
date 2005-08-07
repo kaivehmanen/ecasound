@@ -235,6 +235,7 @@ ecasound_audioio1_src = audioio-cdr.cpp \
 			audioio.cpp \
 			audioio-buffered.cpp \
 			audioio-device.cpp \
+			audioio-null.cpp \
 			audioio-raw.cpp \
 			audioio-mikmod.cpp \
 			audioio-rtnull.cpp \
