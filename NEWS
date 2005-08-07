@@ -14,7 +14,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 xxxx2005 (v2.4.2)  -** stable release **-
-	- note: verified to compile ok with gcc-4.0.0 and gcc-4.0.1
+	- note: verified to compile ok with gcc-4.0.0 and gcc-4.0.1 [kaiv]
 	- added: eiam - ctrlp-list, ctrlp-selected, ctrlp-get, ctrlp-select
 	         and ctrlp-set commands; the last two are RT-commands;
 		 see ecasound-iam(1) for more info [allies]
@@ -23,11 +23,17 @@ xxxx2005 (v2.4.2)  -** stable release **-
 	 	 with -L, see also -I which is still the default);
 		 display of per-channel average amplitude; see 
 		 ecasignalview(1) man page for details [jeffrey]
-	- added: 
-	- changed: various small updates to User's Guide
-	- changed: ecasound user-visible copyright string changed
+	- added: ecatrimsilence.sh to examples subdir [kaiv]
+	- added: --keep-running (or -K) option to ecasound, do not exit
+		 from batch mode when processing is finished/stopped;
+		 especially useful when used in combination with JACK
+		 inputs/outputs [kaiv]
+	- changed: various small updates to User's Guide [kaiv]
+	- changed: ecasound user-visible copyright string changed [kaiv]
 	- changed: minor changes to ecasignalview user-interface
 	           [jeffrey,kaiv]
+        - changed: --daemon-mode does not anymore require running in 
+		   interactive mode [kaiv]
 	- fixed: using ecasound.spec with recent versions of rpm 
 		 results in a "%package debuginfo" error [kaiv]
 	- fixed: problems in saving ewf objects with cs-save,
@@ -35,13 +41,17 @@ xxxx2005 (v2.4.2)  -** stable release **-
 	- fixed: controllers were always added to the last 
 	 	 chainop, not to the selected chain operator [allies]
 	- fixed: --enable-jack and --disable-jack both disabled JACK
-		 support
+		 support [kaiv]
 	- fixed: serious bug in the "reverse" audio objects, caused 
-		 audible noise in the reversed signal
+		 audible noise in the reversed signal [kaiv]
 	- fixed: segfaults at exit when LADSPA plugins had been used;
 		 the error did not happen every time and with every type 	
 		 of plugin; problem was a race between atexit handlers
-		 of ecasound, and the dynamically loaded plugins
+		 of ecasound, and the dynamically loaded plugins [kaiv]
+	- fixed: ecasignalview - do not send or receive transport 
+		 events [kaiv]
+	- fixed: ecasound daemon mode, correctly print hostnames without
+		 resolvable hostname
 08042005 (v2.4.1)  -** stable release **-
 	- note: verified to work with automake versions 1.6 and 1.9;
 		automake 1.5 and older, as well as autoconf versions
