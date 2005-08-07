@@ -183,7 +183,7 @@ void ecasound_atexit_cleanup(void)
 {
   struct ecasound_state* state = &ecasound_state_global;
 
-  cerr << endl << "ecasound: atexit cleanup" << endl;
+  // cerr << endl << "ecasound: atexit cleanup" << endl;
 
   if (state != 0 && 
       state->control != 0) {
