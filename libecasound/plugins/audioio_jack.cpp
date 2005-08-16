@@ -72,9 +72,9 @@ AUDIO_IO_MANAGER* AUDIO_IO_JACK::create_object_manager(void) const
 
 void AUDIO_IO_JACK::set_manager(AUDIO_IO_JACK_MANAGER* mgr, int id)
 {
-  string mgrname = (mgr == 0 ? mgr->name() : "null");
+  string mgrname = (mgr != 0 ? mgr->name() : "null");
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"setting manager to " + mgr->name());
+		"setting manager to " + mgrname);
   jackmgr_rep = mgr;
   myid_rep = id;
 }

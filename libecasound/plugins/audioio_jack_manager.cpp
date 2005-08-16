@@ -870,7 +870,7 @@ void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
   // ---
   DBC_ENSURE(node_list_rep.size() == old_total_nodes - 1);
   DBC_DECLARE(list<int> ol = get_object_list());
-  DBC_ENSURE(std::count(ol.begin(), ol.end(), id) == 1);
+  DBC_ENSURE(std::count(ol.begin(), ol.end(), id) == 0);
   // ---
 }
 
