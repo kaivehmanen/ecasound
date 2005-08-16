@@ -1,6 +1,6 @@
 dnl ---
 dnl acinclude.m4 for ecasound
-dnl last modified: 20050806-12
+dnl last modified: 20050816-13
 dnl ---
 
 ## ------------------------------------------------------------------------
@@ -15,7 +15,7 @@ AC_DEFUN([AC_CHECK_JACK],
 AC_CHECK_HEADER(jack/jack.h,jack_support=yes,jack_support=no)
 
 AC_ARG_WITH(jack,
-  [  --with-jack=DIR	Compile against JACK installed in DIR],
+  [  --with-jack=DIR	  Compile against JACK installed in DIR],
   [
     ECA_S_JACK_LIBS="-L${withval}/lib"
     ECA_S_JACK_INCLUDES="-I${withval}/include"
@@ -23,6 +23,7 @@ AC_ARG_WITH(jack,
   ])
 
 AC_ARG_ENABLE(jack,
+  [  --enable-jack		  Enable JACK support],
   [
     case "$enableval" in
       y | yes)

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 160805) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 170805) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -16,6 +16,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 xxyy2005 (v2.4.3)  -** stable release **-
 	- fixed: failed runtime check from eca-fileio-stream.cpp:159
 	- fixed: eiam - ao-remove'ing JACK input/outputs caused a segfault
+	- fixed: --disable-jack/--enable-jack did not work
 07082005 (v2.4.2)  -** stable release **-
 	- note: verified to compile ok with gcc-4.0.0 and gcc-4.0.1 [kaiv]
 	- added: eiam - ctrlp-list, ctrlp-selected, ctrlp-get, ctrlp-select
