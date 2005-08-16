@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20050710-47
+dnl last modified: 20050817-48
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-lisenced packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -174,7 +174,7 @@ dnl ---
 
 AC_MSG_CHECKING(whether to enable debugging)
 AC_ARG_ENABLE(debug,
-[  --enable-debug		Enable debugging (default = no)],
+[  --enable-debug	  Enable debugging (default = no)],
   [
     case "$enableval" in
       y | yes)
@@ -265,7 +265,7 @@ dnl ---
 AC_MSG_CHECKING(whether to check design-by-contract assertions)
 enable_dbc_d=yes
 AC_ARG_ENABLE(dbc,
-[  --disable-dbc 		  Don't check design-by-contract assertions (default = check)],
+[  --disable-dbc		  Don't check design-by-contract assertions (default = check)],
   [
     case "$enableval" in
       y | yes)
@@ -301,7 +301,7 @@ dnl ---
 
 AC_MSG_CHECKING(whether to enable effects)
 AC_ARG_ENABLE(effects,
-[  --disable-effects		Disable effects (default = no)],
+[  --disable-effects	  Disable effects (default = no)],
   [
     echo "Enableval: ${enableval}."
     case "$enableval" in
@@ -441,7 +441,7 @@ if test x$arts_support = xyes; then
 fi
 
 AC_ARG_ENABLE(arts,
-	      [  --disable-arts		  Disable aRts support (default = no)],
+	      [  --disable-arts	  Disable aRts support (default = no)],
 	      [
 	      case "$enableval" in
 	        y | yes)
@@ -483,7 +483,7 @@ AC_ARG_WITH(libsamplerate,
 		samplerate_support=yes
 	    ])
 AC_ARG_ENABLE(libsamplerate,
-	      [  --disable-libsamplerate	  Disable libsamplerate support (default = no)],
+	      [  --disable-libsamplerate Disable libsamplerate support (default = no)],
 	      [
 	      case "$enableval" in
 	        y | yes)
@@ -688,7 +688,7 @@ dnl default to enabled if Ruby interpreter available
 rubyecasound_support=yes
 
 AC_ARG_ENABLE(rubyecasound,
-	      [  --enable-rubyecasound 	  Enable rubyecasound (default = yes)],
+	      [  --enable-rubyecasound	  Enable rubyecasound (default = yes)],
 	      [
 	      case "$enableval" in
 	        y | yes)
@@ -777,7 +777,7 @@ AC_CHECK_LIB(ncurses, main, termcap_library=ncurses,
 	AC_CHECK_LIB(termcap, main, termcap_library=termcap,
 		termcap_library=none))
 AC_ARG_ENABLE(ncurses,
-	      [  --disable-ncurses	  	Disable ncurses (default = no)],
+	      [  --disable-ncurses	  Disable ncurses (default = no)],
 	      [
 	      case "$enableval" in
 	        y | yes)
@@ -825,7 +825,7 @@ dnl modifies: ECA_S_EXTRA_LIBS
 dnl ---
 AC_CHECK_LIB(audiofile,main,af_support=yes,af_support=no)
 AC_ARG_ENABLE(audiofile,
-  [  --disable-audiofile		  Disable libaudiofile (default = no)],
+  [  --disable-audiofile	  Disable libaudiofile (default = no)],
   [
     case "$enableval" in
       y | yes)
@@ -860,7 +860,7 @@ dnl defines: ECA_AM_COMPILE_SNDFILE, ECA_COMPILE_SNDFILE
 dnl ---
 AC_CHECK_LIB(sndfile,main,sndfile_support=yes,sndfile_support=no)
 AC_ARG_ENABLE(sndfile,
-  [  --disable-sndfile			  Disable libsndfile (default = no)],
+  [  --disable-sndfile	  Disable libsndfile (default = no)],
   [
     case "$enableval" in
       y | yes)
@@ -914,7 +914,7 @@ dnl defines: ECA_AM_COMPILE_ALSA
 dnl ---
 
 AC_ARG_ENABLE(alsa,
-              [  --disable-alsa		  Disable ALSA (default = no)],
+              [  --disable-alsa	  Disable ALSA (default = no)],
 	      [
 	      case "$enableval" in
 	        y | yes)
@@ -972,7 +972,7 @@ dnl --
 
 AC_MSG_CHECKING(whether to build with system readline)
 AC_ARG_ENABLE(sys_readline,
-  [  --enable-sys-readline		compile with system readline (default=no)],
+  [  --enable-sys-readline	  compile with system readline (default=no)],
   [
     case "$enableval" in
       y | yes)
