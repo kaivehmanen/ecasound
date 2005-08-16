@@ -208,6 +208,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
 
 	child()->set_buffersize(save_bsize);
 	sbuf->length_in_samples(buffersize());
+	DBC_CHECK(sbuf->length_in_samples() - tail < sbuf->length_in_samples());
 	sbuf->copy_range(tmp_buffer, 
 			 0,
 			 tmp_buffer.length_in_samples(), 
