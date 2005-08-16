@@ -156,8 +156,10 @@ void ECA_FILE_IO_STREAM::set_file_position(off_t newpos)
       seekpos += seekstep;
     }
 #else
-    DBC_CHECK(sizeof(long int) == sizeof(off_t));
-    std::fseek(f1, static_cast<long>(curpos_rep), SEEK_SET);
+    /* note: curpos_rep is of type off_t, there might be a size
+     *       mismatch between long int and off_t, but both 
+     *       are signed integers */
+    std::fseek(f1, static_cast<long int>(curpos_rep), SEEK_SET);
 #endif
   }
 }
