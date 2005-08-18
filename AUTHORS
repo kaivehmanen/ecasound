@@ -42,6 +42,8 @@ Lang, Mario [mlang]
 	Ecasound.el, the ecasound emacs module.
 Leake, Tony [tonyleake]
 	PHP ECI extension.
+Lopez-Cabanillas, Pedro [pedrolc] (pedro -dot- lopez-cabanillas -at- gmail -dot -com)
+	ALSA sequencer interfeca support.
 Massy, S. [smassy]
 	Ecalength utility, extensive testing and debugging.
 Poelstra, Remco [rjpoelstra]
