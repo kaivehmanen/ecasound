@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // midi-client.cpp: Top-level interface for MIDI-clients
-// Copyright (C) 2001 Kai Vehmanen
+// Copyright (C) 2001,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,15 +26,19 @@
 MIDI_CLIENT::MIDI_CLIENT(void) 
   : id_rep(0),
     id_set_rep(false),
-    server_repp(0) { }
+    server_repp(0)
+{
+}
 
 int MIDI_CLIENT::id(void) const { return(id_rep); }
 
-void MIDI_CLIENT::set_id(int n) {
+void MIDI_CLIENT::set_id(int n)
+{
   id_rep = n;
   id_set_rep = true;
 }
 
-void MIDI_CLIENT::register_server(MIDI_SERVER* server) {
+void MIDI_CLIENT::register_server(MIDI_SERVER* server)
+{
   server_repp = server;
 }

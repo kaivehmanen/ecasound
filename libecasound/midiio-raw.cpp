@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // midiio-raw.cpp: Input and output of raw MIDI streams using standard 
 //                 UNIX file operations.
-// Copyright (C) 2000 Kai Vehmanen
+// Copyright (C) 2000,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +32,8 @@ MIDI_IO_RAW::MIDI_IO_RAW(const std::string& name) { label("rawmidi"); device_nam
 
 MIDI_IO_RAW::~MIDI_IO_RAW(void) { if (is_open()) close(); }
 
-void MIDI_IO_RAW::open(void) { 
+void MIDI_IO_RAW::open(void)
+{
   int flags = 0;
 
   switch(io_mode()) {
@@ -51,7 +55,7 @@ void MIDI_IO_RAW::open(void) {
   }
   if (nonblocking_mode() == true) flags |= O_NONBLOCK;
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(midio-raw) Opening midi device \"" + device_name_rep + "\".");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Opening midi device \"" + device_name_rep + "\".");
   fd_rep = ::open(device_name_rep.c_str(), flags);
   if (fd_rep < 0) {
     toggle_open_state(false);
@@ -63,29 +67,33 @@ void MIDI_IO_RAW::open(void) {
   finished_rep = false;
 }
 
-void MIDI_IO_RAW::close(void) {
+void MIDI_IO_RAW::close(void)
+{
   ::close(fd_rep);
   toggle_open_state(false);
 }
 
-bool MIDI_IO_RAW::finished(void) const { return(finished_rep); }
+bool MIDI_IO_RAW::finished(void) const { return finished_rep; }
 
-long int MIDI_IO_RAW::read_bytes(void* target_buffer, long int bytes) {
+long int MIDI_IO_RAW::read_bytes(void* target_buffer, long int bytes)
+{
   long int res = ::read(fd_rep, target_buffer, bytes);
-  if (res >= 0) return(res);
+  if (res >= 0) return res;
   finished_rep = true;
-  return(0);
+  return 0;
 }
 
-long int MIDI_IO_RAW::write_bytes(void* target_buffer, long int bytes) {
+long int MIDI_IO_RAW::write_bytes(void* target_buffer, long int bytes)
+{
   long int res = ::write(fd_rep, target_buffer, bytes);
-  if (res >= 0) return(res);
+  if (res >= 0) return res;
   finished_rep = true;
-  return(0);
+  return 0;
 }
 
 void MIDI_IO_RAW::set_parameter(int param, 
-				std::string value) {
+				std::string value)
+{
   switch (param) {
   case 1: 
     label(value);
@@ -97,13 +105,14 @@ void MIDI_IO_RAW::set_parameter(int param,
   }
 }
 
-std::string MIDI_IO_RAW::get_parameter(int param) const {
+std::string MIDI_IO_RAW::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(label());
+    return label();
 
   case 2: 
-    return(device_name_rep);
+    return device_name_rep;
   }
-  return("");
+  return "";
 }
