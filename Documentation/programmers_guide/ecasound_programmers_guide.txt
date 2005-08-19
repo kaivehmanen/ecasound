@@ -1,5 +1,5 @@
 :editor: -*- mode: fundamental; tab-width: 4; indent-tabs-mode: nil -*-
-:version: 20050425-3
+:version: 20050819-4
 :syntax: loosely follows restructured text, http://docutils.sourceforge.net/rst.html
 :author: Kai Vehmanen
 
@@ -285,6 +285,32 @@ of open items in certain part of the codebase):
 
 - Explanatory notes that help to understand the code
   should be marked with "NOTE: description".
+
+Style updates
+-------------
+
+The general rule is to use consistant style within one
+source file (i.e. compilation unit). Updates to style issues 
+are also done with the same granularity. The following global 
+updates have been made so far to the sources:
+
+eca-style-version: 1
+    The opening braces of multi-line functions should be put on a separate
+    line, at column 1, instead of being on the same line with 
+    function signature. This change only applies to functions, IOW 
+    the K&R style is followed.
+
+eca-style-version: 2
+    Extra parenthesis around "return" values should be removed. 
+
+eca-style-version: 3
+    The module name prefix, for example "(eca-session) ", should
+    be removed from ECA_LOG_MSG() statements.
+
+If the file has been updated according to these guidelines,
+the appropriate style version should be mentioned at the
+start of the file ("Attributes: eca-style-version: XXX").
+     
 
 Physical level organization
 ===========================
