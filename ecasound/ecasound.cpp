@@ -88,6 +88,8 @@ static struct ecasound_state ecasound_state_global =
     false     /* quiet mode */
   };
 
+static sig_atomic_t ecasound_cleanup_done = 0;
+
 /**
  * Namespace imports
  */
@@ -188,19 +190,17 @@ void ecasound_atexit_cleanup(void)
 
   // cerr << endl << "ecasound: atexit cleanup" << endl;
 
-  if (state != 0 && 
-      state->control != 0) {
-
-    if (state->control->is_running() == true) {
-      state->control->stop_on_condition();
+  if (ecasound_cleanup_done == 0) {
+    ecasound_cleanup_done  = 1;  
+    if (state->control != 0) {
+      if (state->control->is_running() == true) {
+	state->control->stop_on_condition();
+      }
+      if (state->control->is_connected() == true) {
+	state->control->disconnect_chainsetup();
+      }
     }
-    
-    if (state->control->is_connected() == true) {
-      state->control->disconnect_chainsetup();
-    }
-  }
 
-  if (state != 0) {
     if (state->eciserver != 0) { delete state->eciserver; state->eciserver = 0; }
     if (state->control != 0) { delete state->control; state->control = 0; }
     if (state->session != 0) { delete state->session; state->session = 0; }
@@ -208,7 +208,7 @@ void ecasound_atexit_cleanup(void)
     if (state->daemon_thread != 0) { delete state->daemon_thread; state->daemon_thread = 0; }
     if (state->lock != 0) { delete state->lock; state->lock = 0; }
     if (state->signalset != 0) { delete state->signalset; state->signalset = 0; }
-  }    
+  }
 
   // cerr << "ecasound: atexit cleanup done." << endl << endl;
 }
