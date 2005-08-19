@@ -2,6 +2,10 @@
 // midiio-aseq.cpp: Input and output of MIDI streams using 
 //                  ALSA Sequencer
 // Copyright (C) 2005 Pedro Lopez-Cabanillas
+// Copyright (C) 2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +22,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#ifdef ECA_COMPILE_ALSA
+
 #include <cstdio>
 #include <fcntl.h>
 #include <unistd.h>
@@ -29,7 +38,8 @@ MIDI_IO_ASEQ::MIDI_IO_ASEQ(const std::string& name) { label("alsaseq"); device_n
 
 MIDI_IO_ASEQ::~MIDI_IO_ASEQ(void) { if (is_open()) close(); }
 
-void MIDI_IO_ASEQ::open(void) { 
+void MIDI_IO_ASEQ::open(void)
+{
   int open_flags = 0, port_flags = 0;
 
   switch(io_mode()) {
@@ -54,8 +64,8 @@ void MIDI_IO_ASEQ::open(void) {
     }
   }
   
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(midiio-aseq) Opening ALSA sequencer");
-  int err = snd_seq_open(&seq_handle_rep, "default", open_flags, SND_SEQ_NONBLOCK);
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Opening ALSA sequencer");
+  int err = snd_seq_open(&seq_handle_repp, "default", open_flags, SND_SEQ_NONBLOCK);
   if (err < 0) {
     toggle_open_state(false);
   }
@@ -64,58 +74,71 @@ void MIDI_IO_ASEQ::open(void) {
   }
 
   // Set client name.
-  snd_seq_set_client_name(seq_handle_rep, "ecasound");
+  snd_seq_set_client_name(seq_handle_repp, "ecasound");
   // Create a simple port
-  port_rep = snd_seq_create_simple_port( seq_handle_rep, "ecasound",  
+  port_rep = snd_seq_create_simple_port( seq_handle_repp, "ecasound",  
                                          port_flags, 
                                          SND_SEQ_PORT_TYPE_MIDI_GENERIC);
   // Parse the device name, and connect it to the port when successful
   snd_seq_addr_t subs;
-  err = snd_seq_parse_address(seq_handle_rep, &subs, device_name_rep.c_str());
+  err = snd_seq_parse_address(seq_handle_repp, &subs, device_name_rep.c_str());
   if( err == 0) {
     switch(io_mode()) {
     case io_read:
-      snd_seq_connect_to(seq_handle_rep, port_rep, subs.client, subs.port);
+      snd_seq_connect_to(seq_handle_repp, port_rep, subs.client, subs.port);
       break;
     case io_write: 
-      snd_seq_connect_from(seq_handle_rep, port_rep, subs.client, subs.port);
+      snd_seq_connect_from(seq_handle_repp, port_rep, subs.client, subs.port);
       break;
     case io_readwrite: 
-      snd_seq_connect_to(seq_handle_rep, port_rep, subs.client, subs.port);
-      snd_seq_connect_from(seq_handle_rep, port_rep, subs.client, subs.port);
+      snd_seq_connect_to(seq_handle_repp, port_rep, subs.client, subs.port);
+      snd_seq_connect_from(seq_handle_repp, port_rep, subs.client, subs.port);
       break;
     }
   }
   // Create the encoder/decoder instance
-  err = snd_midi_event_new( buffer_size_rep = 16, &coder_rep );
+  err = snd_midi_event_new( buffer_size_rep = 16, &coder_repp );
   // ...
   finished_rep = false;
 }
 
-void MIDI_IO_ASEQ::close(void) {
+void MIDI_IO_ASEQ::close(void)
+{
   // Release the xxcoder instance
-  snd_midi_event_free( coder_rep );
+  snd_midi_event_free( coder_repp );
   // Delete the port
-  snd_seq_delete_port( seq_handle_rep, port_rep );
+  snd_seq_delete_port( seq_handle_repp, port_rep );
   // Close the sequencer client
-  snd_seq_close( seq_handle_rep );
+  snd_seq_close( seq_handle_repp );
   toggle_open_state(false);
 }
 
-bool MIDI_IO_ASEQ::finished(void) const { return(finished_rep); }
+int MIDI_IO_ASEQ::poll_descriptor(void) const
+{
+  struct pollfd *pfds;
+  int npfds;
+  npfds = snd_seq_poll_descriptors_count(seq_handle_repp, POLLIN|POLLOUT);
+  pfds = reinterpret_cast<struct pollfd*>(alloca(sizeof(*pfds) * npfds));
+  snd_seq_poll_descriptors(seq_handle_repp, pfds, npfds, POLLIN|POLLOUT);
+  return pfds->fd;
+}
 
-long int MIDI_IO_ASEQ::read_bytes(void* target_buffer, long int bytes) {
+
+bool MIDI_IO_ASEQ::finished(void) const { return finished_rep; }
+
+long int MIDI_IO_ASEQ::read_bytes(void* target_buffer, long int bytes)
+{
   snd_seq_event_t *event;
   int err = 0, position = 0;
   if ( bytes > buffer_size_rep ) {
-     snd_midi_event_resize_buffer ( coder_rep, bytes );	
+     snd_midi_event_resize_buffer ( coder_repp, bytes );	
      buffer_size_rep = bytes;
   }
   while (true) {
-    if (snd_seq_event_input_pending(seq_handle_rep, 1) == 0) {
+    if (snd_seq_event_input_pending(seq_handle_repp, 1) == 0) {
     	return position;
     }
-    err = snd_seq_event_input(seq_handle_rep, &event);
+    err = snd_seq_event_input(seq_handle_repp, &event);
     if (err < 0) {
     	break;
     }
@@ -124,7 +147,7 @@ long int MIDI_IO_ASEQ::read_bytes(void* target_buffer, long int bytes) {
          event->type == SND_SEQ_EVENT_NONREGPARAM ||
          event->type == SND_SEQ_EVENT_REGPARAM ||
          event->type == SND_SEQ_EVENT_SYSEX ) {
-      err = snd_midi_event_decode( coder_rep, 
+      err = snd_midi_event_decode( coder_repp, 
                                    ((unsigned char *)target_buffer) + position, 
                                    bytes - position, 
                                    event );
@@ -143,19 +166,19 @@ long int MIDI_IO_ASEQ::write_bytes(void* target_buffer, long int bytes) {
   snd_seq_event_t ev;
   int err = 0;
   if ( bytes > buffer_size_rep ) {
-     snd_midi_event_resize_buffer ( coder_rep, bytes );	
+     snd_midi_event_resize_buffer ( coder_repp, bytes );	
      buffer_size_rep = bytes;
   }
   snd_seq_ev_clear(&ev);
   snd_seq_ev_set_source(&ev, port_rep);
   snd_seq_ev_set_subs(&ev);
   snd_seq_ev_set_direct(&ev);
-  err = snd_midi_event_encode( coder_rep, 
+  err = snd_midi_event_encode( coder_repp, 
                     	       (unsigned char *)target_buffer, 
                                bytes, &ev );
   if (err == bytes) {  
-     snd_seq_event_output(seq_handle_rep, &ev);
-     snd_seq_drain_output(seq_handle_rep);
+     snd_seq_event_output(seq_handle_repp, &ev);
+     snd_seq_drain_output(seq_handle_repp);
      return err;
   }
   finished_rep = true;
@@ -163,7 +186,8 @@ long int MIDI_IO_ASEQ::write_bytes(void* target_buffer, long int bytes) {
 }
 
 void MIDI_IO_ASEQ::set_parameter(int param, 
-				std::string value) {
+				std::string value)
+{
   switch (param) {
   case 1: 
     label(value);
@@ -175,23 +199,31 @@ void MIDI_IO_ASEQ::set_parameter(int param,
   }
 }
 
-std::string MIDI_IO_ASEQ::get_parameter(int param) const {
+std::string MIDI_IO_ASEQ::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return(label());
+    return label();
 
   case 2: 
-    return(device_name_rep);
+    return device_name_rep;
   }
-  return("");
+  return "";
 }
 
-bool MIDI_IO_ASEQ::pending_messages(unsigned long timeout) const { 
+/**
+ * FIXME: This is an alternative to using the poll_descriptor()
+ *        interface...
+ */
+bool MIDI_IO_ASEQ::pending_messages(unsigned long timeout) const
+{
   struct pollfd *pfds;
   int result = 0;
-  int npfds = snd_seq_poll_descriptors_count(seq_handle_rep, POLLIN);
+  int npfds = snd_seq_poll_descriptors_count(seq_handle_repp, POLLIN);
   pfds = (struct pollfd *)alloca(sizeof(*pfds) * npfds);
-  snd_seq_poll_descriptors(seq_handle_rep, pfds, npfds, POLLIN);
+  snd_seq_poll_descriptors(seq_handle_repp, pfds, npfds, POLLIN);
   result = poll(pfds, npfds, timeout);
   return (result > 0);
 }
+
+#endif /* COMPILE_ALSA */

@@ -32,6 +32,8 @@ class MIDI_IO_ASEQ : public MIDI_IO {
   virtual void open(void);
   virtual void close(void);
 
+  virtual int poll_descriptor(void) const;
+
   virtual long int read_bytes(void* target_buffer, long int bytes);
   virtual long int write_bytes(void* target_buffer, long int bytes);
 
@@ -40,8 +42,8 @@ class MIDI_IO_ASEQ : public MIDI_IO {
   
  private:
 
-  snd_seq_t* seq_handle_rep;
-  snd_midi_event_t* coder_rep;
+  snd_seq_t* seq_handle_repp;
+  snd_midi_event_t* coder_repp;
   int buffer_size_rep;
   int port_rep;
   bool finished_rep;
