@@ -1,3 +1,8 @@
+2005-08-19  Pedro Lopez-Cabanillas  <pedrolc@.devtag.AUTHORS>
+
+	* midiio-aseq.h: Added.
+        * library interface version updated to 15:0:1
+
 2005-08-07  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-control-base.cpp (run): Added optional "batchmode"
