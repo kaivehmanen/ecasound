@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // midi-server.cpp: MIDI i/o engine serving generic clients.
-// Copyright (C) 2001-2002 Kai Vehmanen
+// Copyright (C) 2001-2002,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,7 +55,7 @@ void* start_midi_server_io_thread(void *ptr)
   MIDI_SERVER* mserver =
     static_cast<MIDI_SERVER*>(ptr);
   mserver->io_thread();
-  return(0);
+  return 0;
 }
 
 /**
@@ -64,7 +67,7 @@ void MIDI_SERVER::io_thread(void)
   unsigned char buf[3];
   struct timeval tv;
   
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(midi-server) Hey, in the I/O loop!");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Hey, in the I/O loop!");
   while(true) {
     if (running_rep.get() == 0 ||
 	clients_rep[0]->is_open() != true) {
@@ -75,6 +78,10 @@ void MIDI_SERVER::io_thread(void)
 
     DBC_CHECK(clients_rep.size() > 0);
     DBC_CHECK(clients_rep[0]->supports_nonblocking_mode() == true);
+
+    // FIXME: add support for multiple clients; gather poll
+    //        descriptors from all clients and create the 'fds' set
+
     int fd = clients_rep[0]->poll_descriptor();
 
     FD_ZERO(&fds);
@@ -84,12 +91,13 @@ void MIDI_SERVER::io_thread(void)
     tv.tv_usec = 0;
     int retval = select(fd + 1 , &fds, NULL, NULL, &tv);
 
+    // FIXME: add multiple client support, go through 
+    //        all the fds
+
     int read_bytes = 0;
     if (retval) {
       if (FD_ISSET(fd, &fds) == true) {
-	// FIXME:: should use MIDI_IO::write_bytes() instead,
-	//         poll_descriptor is only meant for poll() and select()
-	read_bytes = ::read(fd, buf, 1);
+	read_bytes = clients_rep[0]->read_bytes(buf, 1);
       }
     }
 
@@ -119,7 +127,7 @@ void MIDI_SERVER::io_thread(void)
       running_rep.set(0);
     }
   }
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(midi-server) exiting MIDI-server thread");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "exiting MIDI-server thread");
 }
 
 /**
@@ -154,7 +162,7 @@ void MIDI_SERVER::start(void)
 {
   stop_request_rep.set(0);
   running_rep.set(1);
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(midi-server) starting processing");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "starting processing");
   send_mmc_start();
   if (is_midi_sync_send_enabled() == true) send_midi_start();
 
@@ -171,7 +179,7 @@ void MIDI_SERVER::start(void)
 void MIDI_SERVER::stop(void)
 {
   stop_request_rep.set(1);
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(midi-server) stopping processing");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "stopping processing");
   send_mmc_stop();
   if (is_midi_sync_send_enabled() == true) send_midi_stop();
 }
@@ -200,13 +208,13 @@ void MIDI_SERVER::enable(void)
   stop_request_rep.set(0);
   exit_request_rep.set(0);
   if (thread_running_rep != true) {
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(midi-server) enabling");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "enabling");
     int ret = pthread_create(&io_thread_rep,
 			     0,
 			     start_midi_server_io_thread,
 			     static_cast<void *>(this));
     if (ret != 0) {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(midi-server) pthread_create failed, exiting");
+      ECA_LOG_MSG(ECA_LOGGER::info, "pthread_create failed, exiting");
       exit(1);
     }
 #ifdef HAVE_SCHED_GETSCHEDULER
@@ -234,7 +242,7 @@ void MIDI_SERVER::enable(void)
 /**
  * Whether MIDI-server is enabled?
  */
-bool MIDI_SERVER::is_enabled(void) const { return(thread_running_rep); }
+bool MIDI_SERVER::is_enabled(void) const { return thread_running_rep; }
 
 /**
  * Disables the MIDI-server subsystems.
@@ -252,7 +260,7 @@ void MIDI_SERVER::disable(void)
   DBC_REQUIRE(is_enabled() == true);
   // --------
 
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(midi-server) disabling");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "disabling");
   stop_request_rep.set(1);
   exit_request_rep.set(1);
   if (thread_running_rep == true) {
@@ -271,8 +279,8 @@ void MIDI_SERVER::disable(void)
  */
 bool MIDI_SERVER::is_running(void) const
 {
-  if (running_rep.get() == 0) return(false); 
-  return(true);
+  if (running_rep.get() == 0) return false; 
+  return true;
 }
 
 /**
@@ -365,11 +373,8 @@ void MIDI_SERVER::send_midi_bytes(int dev_id, unsigned char* buf, int bytes) {
     DBC_CHECK(static_cast<int>(clients_rep.size()) >= dev_id);
     DBC_CHECK(clients_rep[dev_id - 1]->supports_nonblocking_mode() == true);
 
-    int fd = clients_rep[dev_id - 1]->poll_descriptor();
+    int err = clients_rep[dev_id - 1]->write_bytes(buf, bytes);
 
-    // FIXME:: should use MIDI_IO::write_bytes() instead,
-    //         poll_descriptor is only meant for poll() and select()
-    int err = ::write(fd, buf, bytes);
     DBC_CHECK(err == bytes);
   }
 }
@@ -389,7 +394,7 @@ void MIDI_SERVER::send_mmc_command(unsigned int cmd)
   std::list<int>::const_iterator p = mmc_send_ids_rep.begin();
   while(p != mmc_send_ids_rep.end()) {
     ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"(midi-server) Sending MMC message " + 
+		"Sending MMC message " + 
 		kvu_numtostr(cmd) + " to device-id " +
 		kvu_numtostr(*p) + ".");
     buf[2] = static_cast<unsigned char>(*p);
@@ -424,7 +429,7 @@ void MIDI_SERVER::send_midi_start(void)
   unsigned char byte[1] = { 0xfa };
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-	      "(midi-server) Sending MIDI-start message.");
+	      "Sending MIDI-start message.");
 
   send_midi_bytes(1, byte, 1);
 }
@@ -437,7 +442,7 @@ void MIDI_SERVER::send_midi_continue(void)
   unsigned char byte[1] = { 0xfb };
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-	      "(midi-server) Sending MIDI-continue message.");
+	      "Sending MIDI-continue message.");
 
   send_midi_bytes(1, byte, 1);
 }
@@ -450,7 +455,7 @@ void MIDI_SERVER::send_midi_stop(void)
   unsigned char byte[1] = { 0xfc };
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-	      "(midi-server) Sending MIDI-stop message.");
+	      "Sending MIDI-stop message.");
 
   send_midi_bytes(1, byte, 1);
 }
@@ -484,9 +489,9 @@ int MIDI_SERVER::last_controller_value(int channel, int ctrl) const
 {
   std::map<std::pair<int,int>,int>::iterator p = controller_values_rep.find(std::pair<int,int>(channel,ctrl));
   if (p != controller_values_rep.end()) {
-    return(controller_values_rep[std::pair<int,int>(channel,ctrl)]);
+    return controller_values_rep[std::pair<int,int>(channel,ctrl)];
   }
-  return(0);
+  return 0;
 }
 
 /**
