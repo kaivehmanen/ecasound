@@ -1,5 +1,5 @@
 :editor: -*- mode: fundamental; tab-width: 4; indent-tabs-mode: nil -*-
-:version: 20050819-4
+:version: 20050819-5
 :syntax: loosely follows restructured text, http://docutils.sourceforge.net/rst.html
 :author: Kai Vehmanen
 
@@ -307,7 +307,7 @@ eca-style-version: 3
     The module name prefix, for example "(eca-session) ", should
     be removed from ECA_LOG_MSG() statements.
 
-If the file has been updated according to these guidelines,
+If a file has been updated according to these guidelines,
 the appropriate style version should be mentioned at the
 start of the file ("Attributes: eca-style-version: XXX").
      
