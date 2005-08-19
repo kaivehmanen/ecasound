@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 170805) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 190805) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,6 +14,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 xxyy2005 (v2.4.3)  -** stable release **-
+	- added: support for ALSA sequencer support; see ecasound(1)
+	         and examples.html [pedrolc]
 	- fixed: failed runtime check from eca-fileio-stream.cpp:159
 	- fixed: eiam - ao-remove'ing JACK input/outputs caused a segfault
 	- fixed: --disable-jack/--enable-jack did not work
