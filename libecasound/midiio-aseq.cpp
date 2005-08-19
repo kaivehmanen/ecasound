@@ -30,8 +30,8 @@
 #include <cstdio>
 #include <fcntl.h>
 #include <unistd.h>
-#include "midiio-aseq.h"
 
+#include "midiio-aseq.h"
 #include "eca-logger.h"
 
 MIDI_IO_ASEQ::MIDI_IO_ASEQ(const std::string& name) { label("alsaseq"); device_name_rep = name; }
@@ -159,6 +159,8 @@ long int MIDI_IO_ASEQ::read_bytes(void* target_buffer, long int bytes)
     }
   }
   finished_rep = true;
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+	      std::string("error while reading from ALSA sequencer: ") + snd_strerror(err));
   return err;
 }
 
