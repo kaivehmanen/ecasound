@@ -77,7 +77,8 @@ bool MIDI_IO_RAW::finished(void) const { return finished_rep; }
 
 long int MIDI_IO_RAW::read_bytes(void* target_buffer, long int bytes)
 {
-  long int res = ::read(fd_rep, target_buffer, bytes);
+  /* note: ignore bytes, already read one byte at a time */
+  long int res = ::read(fd_rep, target_buffer, 1);
   if (res >= 0) return res;
   finished_rep = true;
   return 0;
