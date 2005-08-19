@@ -469,16 +469,17 @@ here the low-pass filter -efl. The above uses OSS rawmidi access, which
 is equivalent to adding -Md:rawmidi,/dev/midi to the command line.
 To do the same with ALSA, the syntax is as follows:</p>
 <p>
-<li> ecasound -i somefile.wav -o /dev/dsp -efl:400 -km:1,400,4200,74,1 -Md:rawmidi,/dev/snd/midiC0D0</li>
-<li> ecasound -i somefile.wav -o /dev/dsp -efl:400 -km:1,400,4200,74,1 -Md:alsaseq,80:1</li>
+<li> ecasound -i somefile.wav -o alsa -efl:400 -km:1,400,4200,74,1 -Md:rawmidi,/dev/snd/midiC0D0</li>
+<li> ecasound -i somefile.wav -o alsa -efl:400 -km:1,400,4200,74,1 -Md:alsaseq,80:1</li>
+<li> ecasound -i somefile.wav -o alsa -efl:400 -km:1,400,4200,74,1 -Md:alsaseq,KMidimon</li>
 </p>
 <p>
 The first one uses the ALSA rawmidi interface and opens an
 ALSA device (card 0, device 0) for raw MIDI I/0. The second
 example uses the ALSA sequencer API, which is more powerful as 
 you can route MIDI packets from and to other applications 
-supporting the sequencer API. "80,1" is an sequencr port to 
-which ecasound should connect. You can use the "aconnect" (part 
+supporting the sequencer API. "80,1" and "KMidimon" are sequencr ports 
+to which ecasound should connect. You can use the "aconnect" (part 
 of alsa-utils) tool to list all available sequencer ports.
 </<p>
 <p>
