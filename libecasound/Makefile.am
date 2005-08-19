@@ -114,7 +114,8 @@ ecasound_midi_include =	\
 			midi-client.h \
 			midi-parser.h \
 			midiio.h \
-			midiio-raw.h
+			midiio-raw.h \
+			midiio-aseq.h
 
 ecasound_controller_include = \
 			ctrl-source.h \
