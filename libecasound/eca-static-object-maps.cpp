@@ -103,6 +103,9 @@
 #endif /* ECA_ENABLE_AUDIOIO_PLUGINS */
 
 #include "midiio-raw.h"
+#ifdef ECA_COMPILE_ALSA
+#include "midiio-aseq.h"
+#endif
 
 #include "eca-object-map.h"
 #include "eca-preset-map.h"
@@ -356,6 +359,9 @@ void ECA_STATIC_OBJECT_MAPS::register_midi_device_objects(ECA_OBJECT_MAP* objmap
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "register_midi_device_objects()");
 
   objmap->register_object("rawmidi", "^rawmidi$", new MIDI_IO_RAW());
+#ifdef ECA_COMPILE_ALSA
+  objmap->register_object("alsaseq", "^alsaseq$", new MIDI_IO_ASEQ());
+#endif
 }
 
 /**

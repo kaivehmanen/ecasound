@@ -263,7 +263,8 @@ ecasound_midi_src =	\
 			midi-client.cpp \
 			midi-parser.cpp \
 			midiio.cpp \
-			midiio-raw.cpp
+			midiio-raw.cpp \
+			midiio-aseq.cpp
 
 ecasound_controller_src = \
 			midi-cc.cpp \
