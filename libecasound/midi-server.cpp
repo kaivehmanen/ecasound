@@ -64,7 +64,7 @@ void* start_midi_server_io_thread(void *ptr)
 void MIDI_SERVER::io_thread(void)
 {
   fd_set fds;
-  unsigned char buf[3];
+  unsigned char buf[16];
   struct timeval tv;
   
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "Hey, in the I/O loop!");
@@ -97,13 +97,14 @@ void MIDI_SERVER::io_thread(void)
     int read_bytes = 0;
     if (retval) {
       if (FD_ISSET(fd, &fds) == true) {
-	read_bytes = clients_rep[0]->read_bytes(buf, 1);
+	read_bytes = clients_rep[0]->read_bytes(buf, 16);
+	//std::cerr << "TRACE: Read from MIDI-device (bytes): " << read_bytes << "." << std::endl;
       }
     }
 
     if (read_bytes < 0) {
       std::cerr << "ERROR: Can't read from MIDI-device: " 
-	   << clients_rep[0]->label() << "." << std::endl;
+		<< clients_rep[0]->label() << "." << std::endl;
       break;
     }
     else {
@@ -533,10 +534,9 @@ void MIDI_SERVER::parse_receive_queue(void)
 	    if (controller_values_rep.find(std::pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)) 
 		!= controller_values_rep.end()) {
 	      controller_values_rep[std::pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] = static_cast<int>(byte);
-	      // cerr << endl << "(midi-server) Value:" 
-	      //      << controller_values_rep[pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] 
-	      //      << ", ch:" << current_ctrl_channel_rep 
-	      //      << ", ctrl:" << current_ctrl_number << ".";
+	      // std::cerr << std::endl << "(midi-server) Value:" 
+	      //      << controller_values_rep[std::pair<int,int>(current_ctrl_channel_rep,current_ctrl_number)] 
+	      //      << ", ch:" << current_ctrl_channel_rep << ", ctrl:" << current_ctrl_number << ".";
 	    }
 	    // else {
 	    //   cerr << endl << "E:" << " found an entry we are not following..." << endl;
