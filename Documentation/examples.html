@@ -14,7 +14,10 @@
 <hr />
 
 <p>Remember to also check out the 
-<a href="tutorials.html">Ecasound Tutorials and Articles</a> page.</p>
+<a href="tutorials.html">Ecasound Tutorials and Articles</a> page,
+the <a href="ecasound_manpage.html">ecasound(1)</a> manpage, and
+the <a href="http://eca.cx/ecasound/Documentation/users_guide/html_uguide/users_guide.html">
+Ecasound User&rsquo;s Guide</a>.</p>
 
 <p>
 The console mode user-interface, <i>ecasound</i>, is 
@@ -25,7 +28,7 @@ engine.
 </p>
 
 <!-- ###  new section ### -->
-<p>
+<p class="examplecat">
 <a name="fconversions"><b>Format Conversions</b></a>
 </p>
 <ol>
@@ -55,7 +58,7 @@ Like before, but ecasound is now started in interactive mode.
 </ol>
 
 <!-- ###  new section ### -->
-<p>
+<p class="examplecat">
 <a name="fcresampling"><b>Format Conversions - Resampling</b></a>
 </p>
 
@@ -90,7 +93,8 @@ of the default 'resample' mode.
 
 
 <!-- ###  new section ### -->
-<a name="playback"><p><b>Realtime Outputs (soundcard playback)</b></p></a>
+<p class="examplecat">
+<a name="playback"><b>Realtime Outputs (soundcard playback)</b></a></p>
 <ol>
 <p>
 <li> ecasound somefile.wav</li>
@@ -132,8 +136,10 @@ one way to do it easily. This can also be used to add effects
 to standard streams containing audio data.
 </p>
 </ol>
+
 <!-- ###  new section ### -->
-<p><b>Realtime inputs (recording from soundcard)</b></p>
+<p class="examplecat">
+<b>Realtime inputs (recording from soundcard)</b></p>
 <p>
 <ol>
 <li> ecasound -i:/dev/dsp0 -o somefile.wav</li>
@@ -143,8 +149,10 @@ to standard streams containing audio data.
 These are simple examples of recording. Notice that when recording 
 it's often useful to run ecasound in interactive mode (-c).
 </ol>
+
 <!-- ###  new section ### -->
-<a name="effects"><p><b>Effect Processing</b></p></a>
+<p class="examplecat">
+<a name="effects"><p><b>Effect Processing</b></a></p>
 <ol>
 <p> 
 Ecasound is an extremely versatile tool when it comes to effect
@@ -185,7 +193,8 @@ chains as you want.
 </ol>
 
 <!-- ###  new section ### -->
-<p><b>Using controller sources with effects</b></p>
+<p class="examplecat">
+<b>Using controller sources with effects</b></p>
 <ol>
 <p>
 <li> ecasound -i somefile.wav -o /dev/dsp -ef3:800,1.5,0.9 -kos:1,400,4200,0.2,0 -kos:2,0.1,1.5,0.15,0 </li>
@@ -231,7 +240,8 @@ oscillator.
 </ol>
 
 <!-- ###  new section ### -->
-<a name="multitrack"><p><b>Multitrack Recording</b></p></a>
+<p class="examplecat">
+<a name="multitrack"><b>Multitrack Recording</b></a></p>
 <ol>
 <p>
 <li> ecasound -c -b:256 -r -f:16,2,44100 \<br>
@@ -285,7 +295,8 @@ can monitor signal level in realtime.
 </p>
 </ol>
 <!-- ###  new section ### -->
-<p><b>Mixing</b></p>
+<p class="examplecat">
+<b>Mixing</b></p>
 <ol>
 <p>Here's a few real-life mixdown examples.</p>
 <p>
@@ -331,7 +342,8 @@ risen with '-r' (requires root privileges).
 </ol>
 
 <!-- ###  new section ### -->
-<a name="cutcopypaste"><p><b>Cut, Copy and Paste</b></p></a>
+<p class="examplecat">
+<a name="cutcopypaste"><b>Cut, Copy and Paste</b></a></p>
 <ol>
 <p>
 <li> ecasound -i bigfile.wav -o part1.wav -t:60.0</li>
@@ -351,7 +363,8 @@ part2.wav is appended to part1.wav.
 </ol>
 
 <!-- ###  new section ### -->
-<a name="multichannel"><p><b>Multichannel Processing</b></p></a>
+<p class="examplecat">
+<a name="multichannel"><b>Multichannel Processing</b></a></p>
 <ol>
 You need to worry about channel routing only if input and 
 output channel counts don't match. Here's how you 
@@ -368,7 +381,8 @@ divide a 4-channel audio file into 4 mono files.
 </ol>
 
 <!-- ###  new section ### -->
-<a name=srouting><p><b>Signal Routing through External Devices</b></p></a>
+<p class="examplecat">
+<a name=srouting><b>Signal Routing through External Devices</b></a></p>
 <ol>
 <p>
 <li> ecasound -c -b:128 -r -f:16,2,44100 \<br>
@@ -384,7 +398,8 @@ is that realtime input and output are externally connected.
 </ol>
 
 <!-- ###  new section ### -->
-<a name="presets"><p><b>Presets and LADSPA Effect Plugins</b></p></a>
+<p class="examplecat">
+<a name="presets"><b>Presets and LADSPA Effect Plugins</b></a></p>
 <ol>
 <p>
 <li> ecasound -i null -o /dev/dsp -el:sine_fcac,440,1</li>
@@ -410,7 +425,66 @@ same exact result with:
 See the file 'effect_presets' for a list of available effect
 presets. By default, location of this file is '/usr/local/share/ecasound/effect_presets'.
 </p>
+</ol>
 
+<!-- ###  new section ### -->
+<p class="examplecat">
+<a name"jack"><b>Use with JACK audio server</b></a></p>
+
+<ol>
+<p>
+<li>ecasound -i foo.wav -o jack_alsa</li>
+<li>ecasound -i foo.wav -o jack</li>
+</p>
+<p>
+This will create a separate JACK output port for each channel
+of foo.wav, and automatically connect these Ecasound ports to
+the ALSA PCM output ports in the JACK server.  The second
+example will create JACK output ports, but does not establish
+any connections (you have to do this yourself with jack_connect,
+qjackconnet, qjackctl, or other similar tool).
+</p>
+<p>
+<li>ecasound -c -i foo.wav -o jack_alsa -G:jack,eca_slave,recv</li>
+</p>
+<p>
+Like in previous examples, but the ecasound client name (as shown
+to other JACK clients) is set to "eca_slave", and ecasound is 
+configured to react to incoming transport changes (play, stop,
+seek, etc). By default ecasound both sends and reacts to 
+transport events.
+</p>
+</ol>
+
+<!-- ###  new section ### -->
+<p class="examplecat">
+<a name"midi-io"><b>More MIDI examples</b></a></p>
+<ol>
+<p>
+<li> ecasound -i somefile.wav -o /dev/dsp -efl:400 -km:1,400,4200,74,1</li>
+</p>
+<p>
+The above is a simple example how MIDI is used to control an effect -
+here the low-pass filter -efl. The above uses OSS rawmidi access, which
+is equivalent to adding -Md:rawmidi,/dev/midi to the command line.
+To do the same with ALSA, the syntax is as follows:</p>
+<p>
+<li> ecasound -i somefile.wav -o /dev/dsp -efl:400 -km:1,400,4200,74,1 -Md:rawmidi,/dev/snd/midiC0D0</li>
+<li> ecasound -i somefile.wav -o /dev/dsp -efl:400 -km:1,400,4200,74,1 -Md:alsaseq,80:1</li>
+</p>
+<p>
+The first one uses the ALSA rawmidi interface and opens an
+ALSA device (card 0, device 0) for raw MIDI I/0. The second
+example uses the ALSA sequencer API, which is more powerful as 
+you can route MIDI packets from and to other applications 
+supporting the sequencer API. "80,1" is an sequencr port to 
+which ecasound should connect. You can use the "aconnect" (part 
+of alsa-utils) tool to list all available sequencer ports.
+</<p>
+<p>
+Note: For ALSA sequencer support, you need ecasound-2.4.3 or
+newer.
+</p>
 </ol>
 
 <hr />
