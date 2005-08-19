@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>07.08.2005</h2>
+<h2>19.08.2005</h2>
 
 
     
@@ -339,13 +339,19 @@ as an wav-file as would happen without typeselect.
 <p>
 <strong>MIDI SETUP</strong>
 <p><dl>
-<p></p><dt><strong>-Md:rawmidi,device_name</strong><dd>
-Sets the active MIDI-device. 'device_name' can be anything that 
-can be accessed using the normal UNIX file operations and 
+<p></p><dt><strong>MIDI I/O devices - general</strong><dd>
+If no MIDI-device is specified, the default MIDI-device is 
+used (see ecasoundrc(5)).
+<p><p></p><dt><strong>-Md:rawmidi,device_name</strong><dd>
+Add a rawmidi MIDI I/O device to the setup. 'device_name' can be anything 
+that can be accessed using the normal UNIX file operations and 
 produces raw MIDI bytes. Valid devices are for example OSS rawmidi 
-devices (/dev/midi00), named pipes (see mkfifo(1) man page), and
-normal files. If no MIDI-device is specified, the default MIDI-device
-is used (see ecasoundrc(5)).
+devices (/dev/midi00), ALSA rawmidi devices (/dev/snd/midiC2D0), named 
+pipes (see mkfifo(1) man page), and normal files. 
+<p><p></p><dt><strong>-Md:alsaseq,sequencer-port</strong><dd>
+Adds a ALSA MIDI sequencer port to the setup. 'sequencer-port' identifies
+a port to connect to. It can be numerical (e.g. 128:1), or a client
+name (e.g. "KMidimon").
 <p><p></p><dt><strong>-Mms:device_id</strong><dd>
 Sends MMC start and stop to MIDI device-id 'device_id'.
 <p><p></p><dt><strong>-Mss</strong><dd>

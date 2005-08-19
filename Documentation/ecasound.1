@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "07\&.08\&.2005" "" "Multimedia software" 
+.TH "ecasound" "1" "19\&.08\&.2005" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -369,13 +369,21 @@ as an wav-file as would happen without typeselect\&.
 .PP 
 \fBMIDI SETUP\fP
 .PP 
+.IP "MIDI I/O devices - general" 
+If no MIDI-device is specified, the default MIDI-device is 
+used (see ecasoundrc(5))\&.
+.IP 
 .IP "-Md:rawmidi,device_name" 
-Sets the active MIDI-device\&. \&'device_name\&' can be anything that 
-can be accessed using the normal UNIX file operations and 
+Add a rawmidi MIDI I/O device to the setup\&. \&'device_name\&' can be anything 
+that can be accessed using the normal UNIX file operations and 
 produces raw MIDI bytes\&. Valid devices are for example OSS rawmidi 
-devices (/dev/midi00), named pipes (see mkfifo(1) man page), and
-normal files\&. If no MIDI-device is specified, the default MIDI-device
-is used (see ecasoundrc(5))\&.
+devices (/dev/midi00), ALSA rawmidi devices (/dev/snd/midiC2D0), named 
+pipes (see mkfifo(1) man page), and normal files\&. 
+.IP 
+.IP "-Md:alsaseq,sequencer-port" 
+Adds a ALSA MIDI sequencer port to the setup\&. \&'sequencer-port\&' identifies
+a port to connect to\&. It can be numerical (e\&.g\&. 128:1), or a client
+name (e\&.g\&. "KMidimon")\&.
 .IP 
 .IP "-Mms:device_id" 
 Sends MMC start and stop to MIDI device-id \&'device_id\&'\&.
