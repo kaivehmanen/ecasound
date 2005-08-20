@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: Class representing an ecasound chainsetup object.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2005 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -1800,7 +1800,11 @@ void ECA_CHAINSETUP::enable(void) throw(ECA_ERROR&)
 
       /* 6. enable the MIDI server */
       if (impl_repp->midi_server_rep.is_enabled() != true &&
-	  midi_devices.size() > 0) impl_repp->midi_server_rep.enable();
+	  midi_devices.size() > 0) {
+	impl_repp->midi_server_rep.set_schedrealtime(raised_priority());
+	impl_repp->midi_server_rep.set_schedpriority(get_sched_priority());
+	impl_repp->midi_server_rep.enable();
+      }
 
       /* 7. enable all MIDI-devices */
       for(vector<MIDI_IO*>::iterator q = midi_devices.begin(); q != midi_devices.end(); q++) {

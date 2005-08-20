@@ -29,12 +29,10 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/time.h>
-#ifdef HAVE_SCHED_H
-#include <sched.h>
-#endif
 
 #include <kvu_numtostr.h>
 #include <kvu_dbc.h>
+#include <kvu_rtcaps.h>
 
 #include "midi-parser.h"
 #include "midi-server.h"
@@ -54,7 +52,18 @@ void* start_midi_server_io_thread(void *ptr)
 
   MIDI_SERVER* mserver =
     static_cast<MIDI_SERVER*>(ptr);
+
+  if (mserver->schedrealtime_rep == true) {
+    if (kvu_set_thread_scheduling(SCHED_FIFO, mserver->schedpriority_rep) != 0)
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Unable to change scheduling policy!");
+    else
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  std::string("Using realtime-scheduling (SCHED_FIFO:") + kvu_numtostr(mserver->schedpriority_rep) + ").");
+  }
+
+  /* launch the worker thread */
   mserver->io_thread();
+
   return 0;
 }
 
@@ -197,7 +206,12 @@ void MIDI_SERVER::init(void)
 }
 
 /**
- * Enables the MIDI-server subsystems and prepared them for processing. 
+ * Enables the MIDI-server subsystems and prepared them for
+ * processing. 
+ *
+ * Use the set_schedrealtime() and set_schedpriority() functions
+ * to set the MIDI subsystem scheduling priority. These settings
+ * are set at enable().
  * 
  * ensure:
  *  is_enabled() == true
@@ -218,20 +232,6 @@ void MIDI_SERVER::enable(void)
       ECA_LOG_MSG(ECA_LOGGER::info, "pthread_create failed, exiting");
       exit(1);
     }
-#ifdef HAVE_SCHED_GETSCHEDULER
-    if (sched_getscheduler(0) == SCHED_FIFO) {
-#ifdef HAVE_PTHREAD_SETSCHEDPARAM
-      struct sched_param sparam;
-      sparam.sched_priority = schedpriority_rep;
-      if (::pthread_setschedparam(io_thread_rep, SCHED_FIFO, &sparam) != 0)
-	ECA_LOG_MSG(ECA_LOGGER::info, "Unable to change scheduling policy to SCHED_FIFO!");
-      else 
-	ECA_LOG_MSG(ECA_LOGGER::info, "Using realtime-scheduling (SCHED_FIFO).");
-#endif
-    }
-#else
-	ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Functions to query scheduler settings not available!");
-#endif
     thread_running_rep = true;
   }
 

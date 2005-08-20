@@ -34,41 +34,6 @@ class MIDI_SERVER {
 
   static const unsigned int max_queue_size_rep;
 
- private:
-
-  std::deque<unsigned char> buffer_rep;
-  mutable std::map<std::pair<int,int>,int> controller_values_rep;
-  unsigned char running_status_rep;
-  int current_ctrl_channel_rep;
-  int current_ctrl_number;
-
-  std::list<int> mmc_send_ids_rep;
-  int mmc_receive_id_rep;
-  std::vector<MIDI_IO*> clients_rep;
-  bool midi_sync_send_rep;
-  bool midi_sync_receive_rep;
-  std::vector<MIDI_HANDLER*> handlers_rep;
-
-  pthread_t io_thread_rep;
-  bool thread_running_rep;
-  int schedpriority_rep;
-  ATOMIC_INTEGER exit_request_rep;
-  ATOMIC_INTEGER stop_request_rep;
-  ATOMIC_INTEGER running_rep;
-
-  MIDI_SERVER& operator=(const MIDI_SERVER& x) { return *this; }
-  MIDI_SERVER (const MIDI_SERVER& x) { }
-
-  void io_thread(void);
-  void parse_receive_queue(void);
-
-  void send_mmc_command(unsigned int cmd);
-  void send_mmc_start(void);
-  void send_mmc_stop(void);
-  void send_midi_start(void);
-  void send_midi_continue(void);
-  void send_midi_stop(void);
-
  public:
 
   bool is_running(void) const;
@@ -81,6 +46,7 @@ class MIDI_SERVER {
   void start(void);
   void stop(void);
 
+  void set_schedrealtime(bool v) { schedrealtime_rep = v; }
   void set_schedpriority(int v) { schedpriority_rep = v; }
 
   void register_client(MIDI_IO* mobject);
@@ -107,6 +73,42 @@ class MIDI_SERVER {
 
   MIDI_SERVER (void);
   ~MIDI_SERVER(void);
+
+ private:
+
+  std::deque<unsigned char> buffer_rep;
+  mutable std::map<std::pair<int,int>,int> controller_values_rep;
+  unsigned char running_status_rep;
+  int current_ctrl_channel_rep;
+  int current_ctrl_number;
+
+  std::list<int> mmc_send_ids_rep;
+  int mmc_receive_id_rep;
+  std::vector<MIDI_IO*> clients_rep;
+  bool midi_sync_send_rep;
+  bool midi_sync_receive_rep;
+  std::vector<MIDI_HANDLER*> handlers_rep;
+
+  pthread_t io_thread_rep;
+  bool thread_running_rep;
+  bool schedrealtime_rep;
+  int schedpriority_rep;
+  ATOMIC_INTEGER exit_request_rep;
+  ATOMIC_INTEGER stop_request_rep;
+  ATOMIC_INTEGER running_rep;
+
+  MIDI_SERVER& operator=(const MIDI_SERVER& x) { return *this; }
+  MIDI_SERVER (const MIDI_SERVER& x) { }
+
+  void io_thread(void);
+  void parse_receive_queue(void);
+
+  void send_mmc_command(unsigned int cmd);
+  void send_mmc_start(void);
+  void send_mmc_stop(void);
+  void send_midi_start(void);
+  void send_midi_continue(void);
+  void send_midi_stop(void);
 };
 
 #endif

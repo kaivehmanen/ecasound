@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-engine.cpp: Main processing engine
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2005 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -587,23 +587,15 @@ void ECA_ENGINE::prepare_operation(void)
   }
   mixslot_repp->set_rt_lock(true);
 
-  /* 2. enable rt-scheduling */
-  if (csetup_repp->raised_priority() == true) {
-    if (kvu_set_thread_scheduling(SCHED_FIFO, csetup_repp->get_sched_priority()) != 0)
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Unable to change scheduling policy!");
-    else
-      ECA_LOG_MSG(ECA_LOGGER::info, "Using realtime-scheduling (SCHED_FIFO).");
-  }
-
-  /* 3. reinitialize chains if necessary */
+  /* 2. reinitialize chains if necessary */
   for(size_t i = 0; i != chains_repp->size(); i++) {
     if ((*chains_repp)[i]->is_initialized() != true) (*chains_repp)[i]->init(0, 0, 0);
   }
 
-  /* 4. start subsystem servers */
+  /* 3. start subsystem servers */
   start_servers();
 
-  /* 5. prepare rt objects */
+  /* 4. prepare rt objects */
   prepare_realtime_objects();
 
   /* ... initial offset is needed because preroll is 
@@ -611,7 +603,17 @@ void ECA_ENGINE::prepare_operation(void)
    * still in preroll mode */
   preroll_samples_rep = buffersize(); 
 
-  /* 6. change engine to active and running */
+  /* 6. enable rt-scheduling */
+  if (csetup_repp->raised_priority() == true) {
+    if (kvu_set_thread_scheduling(SCHED_FIFO, csetup_repp->get_sched_priority()) != 0)
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Unable to change scheduling policy!");
+    else
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  std::string("Using realtime-scheduling (SCHED_FIFO:")
+		  + kvu_numtostr(csetup_repp->get_sched_priority()) + ").");
+  }
+
+  /* 7. change engine to active and running */
   prepared_rep = true;
   init_engine_state();
 
